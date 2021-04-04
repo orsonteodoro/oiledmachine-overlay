@@ -10,50 +10,39 @@ inherit check-reqs linux-info python-single-r1 unpacker
 DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
 Blender"
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
-RadeonProRenderSharedComponents_LICENSE="
+# The default license is Apache-2.0, the rest are third party.
+RPRSC_LICENSE="
 	Apache-2.0
 	MIT
 	BSD
 	MPL-2.0
-	Boost-1.0
-"
-RadeonProRenderSDK_LICENSE="
+	Boost-1.0"
+RPRSDK_LICENSE="
 	Apache-2.0
 	BSD
 	MIT
 	Khronos-IP-framework
-	BSD-2
-"
-RadeonImageFilter_LICENSE="
+	BSD-2"
+RIF_LICENSE="
 	Apache-2.0
 	MIT
-	UoI-NCSA
-"
-
+	UoI-NCSA"
 # See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.1.0/src/rprblender/EULA.html
-RPR_LICENSES="
+RPRBLENDER_EULA_LICENSE="
 	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES
+	SPA-DISCLAIMER-DATA-AND-SOFTWARE
 	PSF-2
 	CC-BY
 	BSD
 	MIT
-	Khronos-IP-framework
-"
-
+	Khronos-IP-framework"
 LICENSE="Apache-2.0
-	${RadeonProRenderSharedComponents_LICENSE}
-	${RadeonProRenderSDK_LICENSE}
-	${RadeonImageFilter_LICENSE}
-	${THIRD_PARTY_LICENSES}
-	${RPR_LICENSES}
-	AMD-RADEON-PRORENDER-BLENDER-EULA
-"
+	${RPRSC_LICENSE}
+	${RPRSDK_LICENSE}
+	${RIF_LICENSE}
+	${RPRBLENDER_EULA_LICENSE}"
 KEYWORDS="~amd64"
-INTERNAL_PV="2.4.11"
 PLUGIN_NAME="rprblender"
-S_FN1="RadeonProRenderBlender_Ubuntu.zip"
-S_FN2="radeonprorendermateriallibraryinstaller.run"
-D_FN1="${P}-plugin.zip"
 # ceiling based on python compatibility matching the particular blender version
 MIN_BLENDER_V="2.80"
 MAX_BLENDER_V="2.84" # exclusive
@@ -64,6 +53,7 @@ video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_i965 \
 video_cards_iris video_cards_nvidia video_cards_radeonsi +vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
+# systemwide is preferred but currently doesn't work but did in the past in <2.0
 REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
 	!systemwide
 	opencl_orca? (
@@ -102,23 +92,33 @@ REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
 # Assumes U 18.04.03 minimal
 CDEPEND_NOT_LISTED="
 	dev-lang/python[xml]
-	sys-devel/gcc[openmp]
-"
+	sys-devel/gcc[openmp]"
+DEPEND_NOT_LISTED=""
 # See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.1.0/README-LNX.md#build-requirements
-DEPEND_NOT_LISTED="
-	dev-util/vulkan-headers
-"
 DEPEND+="  ${CDEPEND_NOT_LISTED}
 	${DEPEND_NOT_LISTED}
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_MULTI_USEDEP}]')
-	dev-python/imageio
+	$(python_gen_cond_dep 'dev-python/distro[${PYTHON_MULTI_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/imageio[${PYTHON_MULTI_USEDEP}]')
 	dev-util/opencl-headers
 	sys-apps/pciutils
-	virtual/python-cffi
+	$(python_gen_cond_dep 'virtual/python-cffi[${PYTHON_MULTI_USEDEP}]')
 	x11-libs/libdrm"
-# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.1.0/README-LNX.md#addon-runuse-linux-ubuntu-requirements
+# These are mentioned in the command line output and downloaded after install.
+# They are not really used on linux since athena_send is disabled on Linux but
+# may crash if not installed.
+# For details see,
+#   src/rprblender/utils/install_libs.py
+PIP_DOWNLOADED="
+	$(python_gen_cond_dep 'dev-python/boto3[${PYTHON_MULTI_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_MULTI_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/wheel[${PYTHON_MULTI_USEDEP}]')"
 RDEPEND_NOT_LISTED="
+	${PIP_DOWNLOADED}
+	dev-libs/libbsd
+	dev-libs/libffi
+	virtual/libc
 	x11-libs/libX11
 	x11-libs/libXau
 	x11-libs/libxcb
@@ -132,8 +132,8 @@ RDEPEND_NOT_LISTED="
 		dev-cpp/tbb
 		dev-lang/vtune
 		sys-libs/libomp
-	)
-"
+	)"
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.1.0/README-LNX.md#addon-runuse-linux-ubuntu-requirements
 RDEPEND+="  ${CDEPEND_NOT_LISTED}
 	${RDEPEND_NOT_LISTED}
 	>=media-gfx/blender-${MIN_BLENDER_V}[${PYTHON_SINGLE_USEDEP}]
@@ -148,7 +148,8 @@ RDEPEND+="  ${CDEPEND_NOT_LISTED}
 		video_cards_amdgpu-pro? (
 			!split-drivers? (
 				opengl_mesa? (
-x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?]
+x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,\
+opencl_orca?]
 				)
 				!opengl_mesa? (
 x11-drivers/amdgpu-pro[opencl,opencl_pal?,opencl_orca?]
@@ -162,7 +163,8 @@ x11-drivers/amdgpu-pro[opencl,opencl_pal?,opencl_orca?]
 		video_cards_amdgpu-pro-lts? (
 			!split-drivers? (
 				opengl_mesa? (
-x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?]
+x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl,\
+opencl_pal?,opencl_orca?]
 				)
 				!opengl_mesa? (
 x11-drivers/amdgpu-pro-lts[opencl,opencl_pal?,opencl_orca?]
@@ -227,9 +229,10 @@ BDEPEND+="  ${CDEPEND_NOT_LISTED}
 	app-arch/makeself
 	dev-util/patchelf
 	dev-cpp/castxml
-	dev-python/pip
-	>=dev-python/pytest-3
-	dev-util/cmake"
+	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_MULTI_USEDEP}]')
+	$(python_gen_cond_dep '>=dev-python/pytest-3[${PYTHON_MULTI_USEDEP}]')
+	>=dev-util/cmake-3.11
+	dev-vcs/git"
 RIF_V="1.6.1"
 RPRSDK_V="2.2.1"
 RPRSC_V="9999_p20201109"
@@ -237,20 +240,25 @@ EGIT_COMMIT_RPRSC="41d2e5fb8631ef2bfa60fa27f5dbf7c4a8e2e4aa"
 RIF_DF="RadeonImageFilter-${RIF_V}.tar.gz"
 RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_V}.tar.gz"
 RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_V}-${EGIT_COMMIT_RPRSC:0:7}.tar.gz"
+GH_ORG_BURI="https://github.com/GPUOpen-LibrariesAndSDKs"
 SRC_URI="
-https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/archive/refs/tags/v${PV}.tar.gz ->
-	${P}.tar.gz
-https://github.com/GPUOpen-LibrariesAndSDKs/RadeonImageFilter/archive/refs/tags/${RIF_V}.tar.gz ->
-	${RIF_DF}
-https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSDK/archive/refs/tags/v${RPRSDK_V}.tar.gz ->
-	${RPRSDK_DF}
-https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/archive/${EGIT_COMMIT_RPRSC}.tar.gz ->
-	${RPRSC_DF}"
+${GH_ORG_BURI}/RadeonProRenderBlenderAddon/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+${GH_ORG_BURI}/RadeonImageFilter/archive/refs/tags/${RIF_V}.tar.gz
+	-> ${RIF_DF}
+${GH_ORG_BURI}/RadeonProRenderSDK/archive/refs/tags/v${RPRSDK_V}.tar.gz
+	-> ${RPRSDK_DF}
+${GH_ORG_BURI}/RadeonProRenderSharedComponents/archive/${EGIT_COMMIT_RPRSC}.tar.gz
+	-> ${RPRSC_DF}"
 RESTRICT="mirror strip"
 S="${WORKDIR}/${P}"
 S_RIF="${WORKDIR}/RadeonImageFilter-${RIF_V}"
 S_RPRSDK="${WORKDIR}/RadeonProRenderSDK-${RPRSDK_V}"
 S_RPRSC="${WORKDIR}/RadeonProRenderSharedComponents-${EGIT_COMMIT_RPRSC}"
+PATCHES=(
+	"${FILESDIR}/rpr-3.1.0-gentoo-skip-libs_cffi_backend.patch"
+	"${FILESDIR}/rpr-3.1.0-disable-download-wheel-boto3.patch"
+)
 
 _set_check_reqs_requirements() {
 	CHECKREQS_DISK_BUILD="970M"
@@ -272,7 +280,8 @@ show_codename_docs() {
 	einfo "Radeon RX 4xx:  https://en.wikipedia.org/wiki/Radeon_RX_400_series"
 	einfo "Radeon R5/R7/R9:  https://en.wikipedia.org/wiki/Radeon_Rx_300_series"
 	einfo "APU:  https://en.wikipedia.org/wiki/AMD_Accelerated_Processing_Unit"
-	einfo "Device IDs <-> codename: https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c#L777"
+	einfo "Device IDs <-> codename: \
+https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c#L777"
 	einfo
 }
 
@@ -345,34 +354,26 @@ show_notice_pal_support() {
 }
 
 pkg_setup() {
-	if [[ -n "${OILEDMACHINE_OVERLAY_DEVELOPER}" ]] ; then
-		:;
-	else
-		die "Undergoing rework from binary only to mostly source.  This ebuild is a Work In Progress.  Return back for completion"
-	fi
-
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 	python-single-r1_pkg_setup
 
-	if ! use systemwide ; then
-		if [[ -z "${RPR_USERS}" ]] ; then
-			eerror "You must add RPR_USERS to your make.conf or per-package-wise"
-			eerror "Example RPR_USERS=\"johndoe janedoe\""
-			die
-		fi
-	fi
-
 	if ! use opencl ; then
-		einfo "The OpenCL USE flag is strongly recommended or else the GPU selection will not be available."
+		einfo \
+"The OpenCL USE flag is strongly recommended or else the GPU selection will \
+not be available."
 	fi
 
 	if ! use vulkan ; then
-		einfo "The vulkan USE flag is strongly recommended or rendering at any quality setting for Hybrid rendering will fail."
+		einfo \
+"The vulkan USE flag is strongly recommended or rendering at any quality \
+setting for Hybrid rendering will fail."
 	fi
 
 	if has_version "media-libs/mesa[opencl]" ; then
-		ewarn "${PN} may not be compatibile with media-libs/mesa[opencl] (Mesa Clover, OpenCL 1.1)"
+		ewarn \
+"${PN} may not be compatibile with media-libs/mesa[opencl] (Mesa Clover, \
+OpenCL 1.1)"
 	fi
 
 	# We know because of embree and may be statically linked.
@@ -388,9 +389,14 @@ pkg_setup() {
 		ERROR_HSA_AMD=\
 "Change CONFIG_HSA_AMD=y in kernel config.  It's required for opencl_rocm support."
 		linux-info_pkg_setup
-		if dmesg | grep kfd | grep "PCI rejects atomics" 2>/dev/null 1>/dev/null ; then
+		if dmesg \
+			| grep kfd \
+			| grep "PCI rejects atomics" \
+			2>/dev/null 1>/dev/null ; then
 			show_notice_pcie3_atomics_required
-		elif dmesg | grep -e '\[drm\] PCIE atomic ops is not supported' 2>/dev/null 1>/dev/null ; then
+		elif dmesg \
+			| grep -e '\[drm\] PCIE atomic ops is not supported' \
+			2>/dev/null 1>/dev/null ; then
 			show_notice_pcie3_atomics_required
 		fi
 	fi
@@ -398,11 +404,17 @@ pkg_setup() {
 	if use opencl_pal ; then
 		CONFIG_CHECK="HSA_AMD"
 		WARNING_HSA_AMD=\
-"Change CONFIG_HSA_AMD=y kernel config.  It may be required for opencl_pal support for pre-Vega 10."
+"Change CONFIG_HSA_AMD=y kernel config.  It may be required for opencl_pal \
+support for pre-Vega 10."
 		linux-info_pkg_setup
-		if dmesg | grep kfd | grep "PCI rejects atomics" 2>/dev/null 1>/dev/null ; then
+		if dmesg \
+			| grep kfd \
+			| grep "PCI rejects atomics" \
+			2>/dev/null 1>/dev/null ; then
 			show_notice_pal_support
-		elif dmesg | grep -e '\[drm\] PCIE atomic ops is not supported' 2>/dev/null 1>/dev/null ; then
+		elif dmesg \
+			| grep -e '\[drm\] PCIE atomic ops is not supported' \
+			2>/dev/null 1>/dev/null ; then
 			show_notice_pal_support
 		fi
 	fi
@@ -412,18 +424,46 @@ pkg_setup() {
 src_unpack() {
 	unpack ${A}
 	cd "${S}" || die
-	rm -rf RadeonProImageProcessingSDK RadeonProRenderSDK RadeonProRenderSharedComponents || die
+	rm -rf RadeonProImageProcessingSDK \
+		RadeonProRenderSDK \
+		RadeonProRenderSharedComponents || die
 	ln -s "${S_RIF}" "RadeonProImageProcessingSDK" || die
 	ln -s "${S_RPRSDK}" "RadeonProRenderSDK" || die
 	ln -s "${S_RPRSC}" "RadeonProRenderSharedComponents" || die
 }
 
-src_compile() {
-	cd "${S}" || die
-	./build.sh || die
+src_prepare() {
+	default
+	git init
+	touch dummy
+	git config user.email "name@example.com"
+	git config user.name "John Doe"
+	git add dummy
+	git commit -m "Dummy"
+	git tag v${PV}
 }
 
-src_install_systemwide_plugin() {
+src_compile() {
+	cd "${S}/BlenderPkg" || die
+	./build_linux.sh || die
+
+	if use systemwide ; then
+		local head_commit
+		# BlenderPkg/.build/rprblender-3.1.0-0422bc6-linux.zip
+		pushd "${S}" || die
+			head_commit=$(git rev-parse HEAD)
+		popd
+		D_FN="${PLUGIN_NAME}-${PV}-${head_commit:0:7}-linux.zip"
+
+		D_RPRUP="${WORKDIR}/rpr-unpacked"
+		mkdir -p "${D_RPRUP}" || die
+		pushd "${D_RPRUP}" || die
+			unpack "${S}/BlenderPkg/.build/${D_FN}"
+		popd
+	fi
+}
+
+src_install_systemwide_plugin_unpacked() {
 	cd "${S}" || die
 	local d
 	DIRS=$(find /usr/share/blender/ -maxdepth 1 | tail -n +2)
@@ -441,7 +481,7 @@ src_install_systemwide_plugin() {
 			d_install="${d_addon_base}/${PLUGIN_NAME}"
 			ed_install="${ED}/${d_install}"
 			dodir "${d_install}"
-			cp -a "${S}/${PLUGIN_NAME}/"* "${ed_install}" || die
+			cp -a "${D_RPRUP}/"* "${ed_install}" || die
 		else
 			einfo "Blender ${d_ver} not supported.  Skipping..."
 		fi
@@ -454,28 +494,36 @@ src_install_systemwide_plugin() {
 	fi
 }
 
-src_install_per_user() {
-	for u in ${RPR_USERS} ; do
-		einfo "Installing addon for user: ${u}"
-		local d_addon="/home/${u}/.local/share/${PLUGIN_NAME}"
-		local ed_addon="${ED}/${d_addon}"
-		cd "${S}" || die
-		insinto "${d_addon}/addon"
-		doins "${DISTDIR}/${D_FN1}"
-		mv "${ed_addon}/addon/${D_FN1}" "${ed_addon}/addon/addon.zip" || die
+src_install_packed_shared() {
+	local head_commit
+	# BlenderPkg/.build/rprblender-3.1.0-0422bc6-linux.zip
+	pushd "${S}" || die
+		head_commit=$(git rev-parse HEAD)
+	popd
+	D_FN="${PLUGIN_NAME}-${PV}-${head_commit:0:7}-linux.zip"
 
-		fowners -R ${u}:${u} "${d_addon}"
-	done
+	einfo "Installing addon in shared"
+	cd "${S}" || die
+	insinto "/usr/share/${PN}"
+	newins "${S}/BlenderPkg/.build/${D_FN}" "addon.zip"
 }
 
 src_install() {
 	if use systemwide ; then
-		src_install_systemwide_plugin
+		src_install_systemwide_plugin_unpacked
 	else
-		src_install_per_user
+		src_install_packed_shared
 	fi
-	cd "${S}/${PLUGIN_NAME}" || die
-	dodoc EULA.html
+	cd "${S}" || die
+	docinto licenses/RadeonProRenderSharedComponents
+	dodoc "${S_RPRSC}/License.txt"
+	docinto licenses/RadeonProRenderSDK
+	dodoc "${S_RPRSDK}/license.txt"
+	docinto licenses/RadeonImageFilter
+	dodoc "${S_RIF}/License.md"
+	docinto licenses/RadeonProRenderBlenderAddon
+	dodoc "${S}/LICENSE.txt"
+	dodoc "${S}/src/${PLUGIN_NAME}/EULA.html"
 }
 
 pkg_postinst() {
@@ -486,7 +534,8 @@ pkg_postinst() {
 		if [[ ! -f /usr/$(get_libdir)/libomp.so.5 ]] ; then
 			einfo "Adding symlink for the denoiser:"
 			einfo "/usr/$(get_libdir)/libomp.so -> /usr/$(get_libdir)/libiomp.so.5"
-			ln -s /usr/$(get_libdir)/libomp.so /usr/$(get_libdir)/libiomp.so.5
+			ln -s /usr/$(get_libdir)/libomp.so \
+				/usr/$(get_libdir)/libiomp.so.5 || die
 		fi
 	fi
 
@@ -495,23 +544,9 @@ pkg_postinst() {
 		einfo "It is listed under: Edit > Preferences > Add-ons > Testing > Render: Radeon ProRender"
 	else
 		einfo "You must install this product manually through blender per user."
-		for u in ${RPR_USERS} ; do
-			einfo
-			einfo "Edit > Preferences > Add-ons > Install"
-			einfo
-			einfo "Addon location: /home/${u}/.local/share/${PLUGIN_NAME}/addon/addon.zip"
-			einfo "Then, you must enable it at:"
-			einfo "Edit > Preferences > Add-ons > Community > Render: Radeon ProRender"
-			einfo
-			einfo "If you previously installed this plugin,"
-			einfo "You may try \`rm -rf ~/.config/blender/*/scripts/addons/${PLUGIN_NAME}\`"
-			einfo "Then check from Edit > Preferences > Add-ons > Community > Render: Radeon ProRender; then remove; then reinstall."
-		done
+		einfo "The addon can be found in /usr/share/${PN}/addon.zip"
 	fi
 
-	einfo
-	einfo "For this version, you are opt-in in sending render statistics to AMD.  See link below to disable this feature."
-	einfo "https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/debug.html"
 	einfo
 	einfo "You may need to clear the caches.  Run:"
 	einfo "rm -rf ~/.config/blender/*/cache/"
