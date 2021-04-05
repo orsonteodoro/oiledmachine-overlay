@@ -595,6 +595,6 @@ pkg_postinst() {
 	ewarn "may improve initial compilation time."
 
 	einfo
-	einfo "To see the material browswer, the renderer must be set to Radeon ProRender"
+	einfo "To see the material browser, the renderer must be set to Radeon ProRender"
 	einfo "It is located at the bottom of the materials property tab."
 }
