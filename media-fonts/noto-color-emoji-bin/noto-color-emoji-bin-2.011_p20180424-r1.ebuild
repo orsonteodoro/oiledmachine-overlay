@@ -3,7 +3,7 @@
 
 # See NotoColorEmoji.tmpl.ttx.tmpl for versioning at
 # <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
-EAPI=6
+EAPI=7
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
 LICENSE="OFL-1.1"
