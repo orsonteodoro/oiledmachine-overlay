@@ -354,8 +354,6 @@ show_notice_pal_support() {
 }
 
 pkg_setup() {
-	ewarn "This ebuild is undergoing testing and is a Work In Progress (WIP)"
-	ewarn "The ebuild may go through several revisions to resolve compatibilty and rendering problems."
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 	python-single-r1_pkg_setup
@@ -565,4 +563,10 @@ pkg_postinst() {
 	einfo "Don't forget to add your user account to the video group."
 	einfo "This can be done with: \`gpasswd -a USERNAME video\`"
 	einfo
+
+	ewarn
+	ewarn "If you notice artifacts such as long rectangles when rendering"
+	ewarn "the scene, please use only the amdgpu-pro drivers not the"
+	ewarn "split drivers to remedy this.  Also, performance is faster"
+	ewarn "when compiling kernels."
 }
