@@ -3,49 +3,32 @@
 
 EAPI=7
 
-inherit linux-info unpacker rpm
+inherit linux-info unpacker
 
-DESCRIPTION="AMDGPU DKMS kernel module"
-HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-50"
+DESCRIPTION="ROCk DKMS kernel module"
+HOMEPAGE="https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide/ROCk-kernel.html"
 LICENSE="GPL-2 MIT
 	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
-MY_RPR="${PV//_p/-}" # Remote PR
-PKG_VER=$(ver_cut 1-2 ${PV})
-PKG_VER_MAJ=$(ver_cut 1 ${PV})
-PKG_REV=$(ver_cut 3)
-PKG_ARCH_RPM="rhel"
-PKG_ARCH_VER_RPM="8.3"
-PKG_ARCH_DEB="ubuntu"
-PKG_ARCH_VER_DEB="18.04"
-PKG_VER_STRING=${PKG_VER}-${PKG_REV}
-PKG_VER_STRING_DIR_RPM=${PKG_VER}-${PKG_REV}-${PKG_ARCH_RPM}-${PKG_ARCH_VER_RPM}
-PKG_VER_STRING_DIR_DEB=${PKG_VER}-${PKG_REV}-${PKG_ARCH_DEB}-${PKG_ARCH_VER_DEB}
-PKG_VER_DKMS="5.9.10.69-1234664"
-FN_RPM="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH_RPM}-${PKG_ARCH_VER_RPM}.tar.xz"
-FN_DEB="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH_RPM}-${PKG_ARCH_VER_DEB}.tar.xz"
-SRC_URI="
-	rpm? ( https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN_RPM} )
-"
-# maybe if hwe was released
-#	deb? ( https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN_DEB} )
+REV=$(ver_cut 4 ${PV})
+PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+ROCK_VER="${PV_MAJOR_MINOR}"
+SUFFIX="${PV_MAJOR_MINOR}-${REV}"
+FN="rock-dkms_${SUFFIX}_all.deb"
+BASE_URL="http://repo.radeon.com/rocm/apt/${ROCK_VER}/"
+FOLDER="pool/main/r/rock-dkms/"
+SRC_URI="${BASE_URL}${FOLDER}/${FN}"
 SLOT="0/${PV}"
-IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu custom-kernel directgma firmware hybrid-graphics numa rock rt +sign-modules ssg"
-IUSE+=" -deb +rpm"
-REQUIRED_USE="rock? ( check-pcie check-gpu )
-	      hybrid-graphics? ( acpi )
-	      !deb
-	      rpm"
-if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
+IUSE="acpi +build +check-mmu-notifier +check-pcie +check-gpu custom-kernel directgma firmware hybrid-graphics numa rt +sign-modules ssg"
+REQUIRED_USE="hybrid-graphics? ( acpi )"
+if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
-# Based on the AMDGPU_VERSION
-KV_NOT_SUPPORTED_MAX="5.10"
+KV_NOT_SUPPORTED_MAX="5.7"
 KV_SUPPORTED_MIN="5.0"
 fi
-RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
+RDEPEND="firmware? ( sys-firmware/rock-firmware:${SLOT} )
 	 sys-kernel/dkms
 	 !custom-kernel? (
 	 || ( <sys-kernel/bliss-kernel-bin-${KV_NOT_SUPPORTED_MAX}
@@ -65,7 +48,8 @@ RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	      >=sys-kernel/pf-sources-${KV_SUPPORTED_MIN}
 	      >=sys-kernel/rt-sources-${KV_SUPPORTED_MIN}
 	      >=sys-kernel/vanilla-sources-${KV_SUPPORTED_MIN}
-	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} ) )
+	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} )
+	 )
 "
 DEPEND="${RDEPEND}"
 BDEPEND="${BDEPEND}
@@ -73,38 +57,28 @@ BDEPEND="${BDEPEND}
 	check-gpu? ( sys-apps/pciutils )
 	rt? ( dev-util/patchutils )
 	sys-apps/grep[pcre]"
-S="${WORKDIR}"
+S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
-DKMS_PKG_VER="${MY_RPR}"
-DC_VER="3.2.114"
-AMDGPU_VERSION="5.9.10.20.50"
-ROCK_VER="4.0.0" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/tree/rocm-4.0.0/drivers/gpu/drm/amd/amdkfd
+DKMS_PKG_VER="${SUFFIX}"
+DC_VER="3.2.116"
+AMDGPU_VERSION="5.9.15"
 
-PATCHES=( "${FILESDIR}/amdgpu-dkms-20.40.1147287-makefile-recognize-gentoo.patch"
-	  "${FILESDIR}/amdgpu-dkms-20.40.1147287-enable-mmu_notifier.patch"
-	  "${FILESDIR}/amdgpu-dkms-20.50.1234664-no-firmware-install-and-no-dracut-changes.patch"
-	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
-	  "${FILESDIR}/amdgpu-dkms-20.45.1188099-add-header-to-kcl_mn_c.patch" )
+PATCHES=( "${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
+	  "${FILESDIR}/rock-dkms-3.8_p30-enable-mmu_notifier.patch"
+	  "${FILESDIR}/rock-dkms-4.1_p26-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
 RT_FN="0087-dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
 
-get_fn() {
-	if use rpm ; then
-		echo "${FN_RPM}"
-	elif use deb ; then
-		echo "${FN_DEB}"
-	fi
-}
-
 pkg_nofetch() {
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	einfo "Please download"
-	einfo "  - $(get_fn)"
-	einfo "from ${HOMEPAGE} and place them in ${distdir}"
+        local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+        einfo "Please download"
+        einfo "  - ${FN}"
+        einfo "from ${BASE_URL} in the ${FOLDER} folder and place them in ${distdir}"
 }
 
 pkg_pretend() {
-	ewarn "Kernels 5.0.x <= x <= 5.9.x are only supported."
+	ewarn "Long Term Support (LTS) kernels 5.4.x are only supported."
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
 			die "${PN} require sandbox to be disabled in FEATURES when testing hardware with check-pcie USE flag."
@@ -144,7 +118,7 @@ pkg_setup_warn() {
 	check_extra_config
 
 	CONFIG_CHECK=" ~DRM_AMD_ACP"
-	WARNING_DRM_AMD_ACP=" CONFIG_DRM_AMD_ACP (Enable ACP IP support) must be set to =y in the kernel or it will fail in the link stage."
+	WARNING_MFD_CORE=" CONFIG_DRM_AMD_ACP (Enable ACP IP support) must be set to =y in the kernel or it will fail in the link stage."
 	check_extra_config
 
 	CONFIG_CHECK=" ~MFD_CORE"
@@ -218,7 +192,7 @@ pkg_setup_error() {
 	check_extra_config
 
 	CONFIG_CHECK=" DRM_AMD_ACP"
-	ERROR_DRM_AMD_ACP=" CONFIG_DRM_AMD_ACP (Enable ACP IP support) must be set to =y in the kernel or it will fail in the link stage."
+	ERROR_MFD_CORE=" CONFIG_DRM_AMD_ACP (Enable ACP IP support) must be set to =y in the kernel or it will fail in the link stage."
 	check_extra_config
 
 	CONFIG_CHECK=" MFD_CORE"
@@ -284,23 +258,23 @@ check_hardware() {
 		device_ids=$(lspci -nn | grep VGA | grep -P -o -e "[0-9a-f]{4}:[0-9a-f]{4}" | cut -f2 -d ":" | tr "[:lower:]" "[:upper:]")
 		for device_id in ${device_ids} ; do
 			if [[ -z "${device_id}" ]] ; then
-				ewarn "Your APU/GPU is not supported for ROCm support when device_id=${device_id}"
+				ewarn "Your APU/GPU is not supported for device_id=${device_id}"
 				continue
 			fi
 			# the format is asicname_needspciatomics
-			local asics="kaveri_0 carrizo_0 raven_1 hawaii_1 tonga_1 fiji_1 fijivf_0 polaris10_1 polaris10vf_0 polaris11_1 polaris12_1 vegam_1 vega10_0 vega10vf_0 vega12_0 vega20_0 navi10_0"
+			local asics="kaveri_0 carrizo_0 raven_1 hawaii_1 tonga_1 fiji_1 fijivf_0 polaris10_1 polaris10vf_0 polaris11_1 polaris12_1 vegam_1 vega10_0 vega10vf_0 vega12_0 vega20_0 arcturus_0 arcturusvf_0 navi10_0"
 			local no_support="tonga iceland vegam vega12" # See https://rocm-documentation.readthedocs.io/en/latest/InstallGuide.html#not-supported
-			local found_asic=$(grep -i "${device_id}" "${FILESDIR}/kfd_device.c_v${PV}" | grep -P -o -e "/\* [ a-zA-Z0-9]+\*/" | sed -e "s|[ /*]||g" | tr "[:upper:]" "[:lower:]")
+			local found_asic=$(grep -i "${device_id}" "${FILESDIR}/kfd_device.c_v${ROCK_VER}" | grep -P -o -e "/\* [ a-zA-Z0-9]+\*/" | sed -e "s|[ /*]||g" | tr "[:upper:]" "[:lower:]")
 			x_atomic_f=$(echo "${asics}" | grep -P -o -e "${found_asic}_[01]" | sed -e "s|${found_asic}_||g")
 			atomic_f=$(( ${atomic_f} | ${x_atomic_f} ))
 			if [[ "${no_support}" =~ "${found_asic}" ]] ; then
 				ewarn "Your ${found_asic} GPU is not supported."
 				blacklisted_gpu=1
 			elif [[ "${x_atomic_f}" == "1" ]] ; then
-				ewarn "Your APU/GPU requires PCIe atomics support for ROCm support when device_id=${device_id}"
+				ewarn "Your APU/GPU requires PCIe atomics support for device_id=${device_id}"
 			else
 				atomic_not_required=1
-				einfo "Your APU/GPU is supported for ROCm when device_id=${device_id}"
+				einfo "Your APU/GPU is supported for device_id=${device_id}"
 			fi
 		done
 	fi
@@ -312,11 +286,11 @@ check_hardware() {
 		elif (( ${#device_ids} == 1 )) && [[ "${atomic_not_required}" == "1" && "${blacklisted_gpu}" == "0" ]] ; then
 			einfo "Your setup is supported."
 		elif (( ${#device_ids} == 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" ]] ; then
-			die "Your APU/GPU and PCIe combo is not supported in ROCm.  You may disable check-pcie or check-gpu to continue."
+			die "Your APU/GPU and PCIe combo is not supported.  You may disable check-pcie or check-gpu to continue."
 		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" && "${atomic_not_required}" == "0" ]] ; then
-			die "You APU/GPU and PCIe combo is not supported for your multiple GPU setup in ROCm.  You may disable check-pcie or check-gpu to continue."
+			die "You APU/GPU and PCIe combo is not supported for your multiple GPU setup.  You may disable check-pcie or check-gpu to continue."
 		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" && "${atomic_not_required}" == "1" ]] ; then
-			ewarn "You APU/GPU and PCIe combo may not be supported for some of your GPUs in ROCm."
+			ewarn "You APU/GPU and PCIe combo may not be supported for some of your GPUs."
 		fi
 	fi
 }
@@ -325,10 +299,10 @@ check_kernel() {
 	local k="$1"
 	local kv=$(echo "${k}" | cut -f1 -d'-')
 	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED_MAX} ; then
-		die "Kernel version ${kv} is not supported.  Update your AMDGPU_DKMS_KERNELS environmental variable."
+		die "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS environmental variable."
 	fi
 	if ver_test ${kv} -lt ${KV_SUPPORTED_MIN} ; then
-		die "Kernel version ${kv} is not supported.  Update your AMDGPU_DKMS_KERNELS environmental variable."
+		die "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS environmental variable."
 	fi
 	KERNEL_DIR="/usr/src/linux-${k}"
 	get_version || die
@@ -352,16 +326,16 @@ check_kernel() {
 }
 
 pkg_setup() {
-	if [[ -z "${AMDGPU_DKMS_KERNELS}" ]] ; then
-		eerror "You must define a per-package env or add to /etc/portage/make.conf an environmental variable named AMDGPU_DKMS_KERNELS"
+	if [[ -z "${ROCK_DKMS_KERNELS}" ]] ; then
+		eerror "You must define a per-package env or add to /etc/portage/make.conf an environmental variable named ROCK_DKMS_KERNELS"
 		eerror "containing a space delimited <kernvel_ver>-<extra_version>."
 		eerror
-		eerror "It should look like AMDGPU_DKMS_KERNELS=\"5.2.17-pf 5.2.17-gentoo\""
+		eerror "It should look like ROCK_DKMS_KERNELS=\"5.2.17-pf 5.2.17-gentoo\""
 		die
 	fi
 
-if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
-	for k in ${AMDGPU_DKMS_KERNELS} ; do
+if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
+	for k in ${ROCK_DKMS_KERNELS} ; do
 		if [[ "${k}" =~ "*" ]] ; then
 			# pick all point releases: 5.2.*-ot
 			V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" | sort --version-sort -r | cut -f 4 -d "/" | sed -e "s|linux-||")
@@ -381,23 +355,8 @@ if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 fi
 }
 
-unpack_deb() {
-	echo ">>> Unpacking ${1##*/} to ${PWD}"
-	unpack $1
-	unpacker ./data.tar*
-	rm -f debian-binary {control,data}.tar*
-}
-
 src_unpack() {
-	default
-	if use rpm ; then
-		rpm_unpack \
-"${WORKDIR}/amdgpu-pro-${PKG_VER_STRING_DIR_RPM}/RPMS/noarch/amdgpu-dkms-${PKG_VER_DKMS}.el8.noarch.rpm"
-		export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER_DKMS}.el8"
-	elif use deb ; then
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms_${PKG_VER_DKMS}_all.deb"
-		export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER_DKMS}"
-	fi
+	unpack_deb ${A}
 	rm -rf "${S}/firmware" || die
 }
 
@@ -421,10 +380,14 @@ src_prepare() {
 	fi
 	einfo "DC_VER=${DC_VER}"
 	einfo "AMDGPU_VERSION=${AMDGPU_VERSION}"
-	einfo "ROCK_VER≈${ROCK_VER}"
-if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
+	einfo "ROCK_VER=${ROCK_VER}"
+if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 	check_hardware
 fi
+	chmod 0750 amd/dkms/autogen.sh || die
+	pushd amd/dkms || die
+	./autogen.sh || die
+	popd || die
 }
 
 src_configure() {
@@ -439,11 +402,9 @@ src_install() {
 	dodir usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	insinto usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	doins -r "${S}"/*
-	fperms 0750 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{amd/dkms/post-remove.sh,amd/dkms/pre-build.sh,amd/dkms/configure}
+	fperms 0750 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{amd/dkms/post-remove.sh,amd/dkms/pre-build.sh,amd/dkms/config/install-sh,amd/dkms/configure,amd/dkms/autogen.sh}
 	insinto /etc/modprobe.d
 	doins "${WORKDIR}/etc/modprobe.d/blacklist-radeon.conf"
-	insinto /lib/udev/rules.d
-	doins "${WORKDIR}/etc/udev/rules.d/70-amdgpu.rules"
 }
 
 get_arch() {
@@ -526,7 +487,7 @@ check_modprobe_conf() {
 pkg_postinst() {
 	dkms add ${DKMS_PKG_NAME}/${DKMS_PKG_VER}
 	if use build ; then
-		for k in ${AMDGPU_DKMS_KERNELS} ; do
+		for k in ${ROCK_DKMS_KERNELS} ; do
 			if [[ "${k}" =~ "*" ]] ; then
 				# pick all point releases: 5.2.*-ot
 				V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" | sort --version-sort -r | cut -f 4 -d "/" | sed -e "s|linux-||")
