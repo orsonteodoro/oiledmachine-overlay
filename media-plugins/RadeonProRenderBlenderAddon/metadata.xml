@@ -39,12 +39,19 @@
     <flag name="materials">Installs the material library.</flag>
     <flag name="opencl">Checks for proper OpenCL support for GPUs.</flag>
     <flag name="opencl_orca">Checks for proper OpenCL support for pre-Vega 10
-      from AMDGPU-PRO drivers.</flag>
+      from the split packages (<pkg>dev-libs/amdgpu-pro-opencl</pkg>) or
+      from the AMDGPU-PRO monolithic driver
+      package (<pkg>x11-drivers/amdgpu-pro</pkg> or
+      <pkg>x11-drivers/amdgpu-pro-lts</pkg>).</flag>
     <flag name="opencl_pal">Checks for proper OpenCL support for Vega 10
-      (GCN 5.x) or newer from AMDGPU-PRO drivers.</flag>
+      (GCN 5.x) or newer from only the AMDGPU-PRO drivers package
+      (<pkg>x11-drivers/amdgpu-pro</pkg> or
+      <pkg>x11-drivers/amdgpu-pro-lts</pkg>).</flag>
     <flag name="opencl_rocr">Checks for proper OpenCL support for Vega 10
-      (GCN 5.x) or newer from ROCm or from the AMDGPU-PRO monolithic
-      driver package.</flag>
+      (GCN 5.x) or newer from the split ROCm packages
+      (<pkg>dev-libs/rocm-opencl-runtime</pkg>) or from the AMDGPU-PRO
+      monolithic driver package (<pkg>x11-drivers/amdgpu-pro</pkg> or
+      <pkg>x11-drivers/amdgpu-pro-lts</pkg>).</flag>
     <flag name="opengl_mesa">Pulls the required dependencies if Pro support in
       the AMDGPU-PRO driver has not been installed.</flag>
     <flag name="materials">Installs the material library.</flag>
