@@ -20,7 +20,7 @@
 diff -urp RadeonProRenderBlenderAddon-3.1.0.orig/src/rprblender/utils/install_libs.py RadeonProRenderBlenderAddon-3.1.0/src/rprblender/utils/install_libs.py
 --- RadeonProRenderBlenderAddon-3.1.0.orig/src/rprblender/utils/install_libs.py	2021-03-25 09:39:53.000000000 -0700
 +++ RadeonProRenderBlenderAddon-3.1.0/src/rprblender/utils/install_libs.py	2021-04-03 14:11:49.125892971 -0700
-@@ -12,6 +12,11 @@
+@@ -12,6 +12,13 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
  #********************************************************************
@@ -28,6 +28,8 @@ diff -urp RadeonProRenderBlenderAddon-3.1.0.orig/src/rprblender/utils/install_li
 +# oteodoro changed this to disable downloading wheel and boto3 and it's \
 +#   dependencies.  It is preferred to do it though the package manager \
 +#   (with emerge) instead.
++
++import platform                                                               # oteodoro added this line
 +
  import sys
  import site

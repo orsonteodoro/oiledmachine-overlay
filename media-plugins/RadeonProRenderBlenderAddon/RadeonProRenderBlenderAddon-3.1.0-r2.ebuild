@@ -563,6 +563,15 @@ pkg_postinst() {
 	else
 		einfo "You must install this product manually through blender per user."
 		einfo "The addon can be found in /usr/share/${PN}/addon.zip"
+		einfo
+		einfo "The addon can be uninstalled/installed at:"
+		einfo "Edit > Preferences > Add-ons > Testing > Install button at top right > navigate to /usr/share/${PN}/addon.zip"
+		einfo
+		einfo "The addon can be found and check enabled on after installation by going to:"
+		einfo "Edit > Preferences > Add-ons > Testing > Render: Radeon ProRender"
+		ewarn
+		ewarn "You must completely uninstall and reinstall the addon through the same menu for changes or upgrades to take affect."
+		ewarn
 	fi
 
 	einfo
