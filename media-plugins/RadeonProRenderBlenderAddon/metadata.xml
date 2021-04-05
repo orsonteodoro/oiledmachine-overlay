@@ -23,10 +23,6 @@
     a Vulkan compatible device and Vulkan driver but will fall back to OpenCL if
     it doesn't meet requirements.  For details see:
     https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/full_spectrum_rendering.html
-
-    Using Full setting may be bugged for GPUs, but not for CPUs.  It
-    unfortunately was the default and possibly an experimental/unstable option.
-    Please use a lower setting for GPUs if it is problematic at Full.
   </longdescription>
   <upstream>
     <bugs-to>https://community.amd.com/community/prorender/blender</bugs-to>

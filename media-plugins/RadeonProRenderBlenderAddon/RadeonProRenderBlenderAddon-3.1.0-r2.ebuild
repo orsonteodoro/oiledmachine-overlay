@@ -581,9 +581,6 @@ pkg_postinst() {
 	einfo "You need to switch to the new renderer:"
 	einfo "See https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/switching.html"
 	einfo
-	einfo "Setting Quality > Render Quality > Full is likely bugged and will emit \"Error: Compiling CL to IR\"."
-	einfo "Lower settings work."
-	einfo
 	einfo "The Full Spectrum Rendering (FSR) modes Low, Medium, High require the vulkan USE flag.  For details, see"
 	einfo "https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/full_spectrum_rendering.html"
 	einfo
@@ -593,7 +590,7 @@ pkg_postinst() {
 
 	ewarn
 	ewarn "If you notice artifacts such as long rectangles when rendering"
-	ewarn "the scene, please use only the latest amdgpu-pro drivers"
-	ewarn "not the split drivers to remedy this.  Also, performance is"
-	ewarn "faster when compiling kernels."
+	ewarn "the scene, disable CPU rendering.  Edge artifacts may appear when"
+	ewarn "using medium or lower quality settings.  Using the latest drivers"
+	ewarn "may improve initial compilation time."
 }
