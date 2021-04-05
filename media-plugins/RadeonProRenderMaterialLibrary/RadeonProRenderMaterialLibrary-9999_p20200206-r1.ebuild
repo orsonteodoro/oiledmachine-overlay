@@ -20,7 +20,6 @@ MAX_BLENDER_V="2.93" # exclusive
 SHA512SUM_MATLIB="f119d9002c2f1d2b260777393816660cb88a84e3e88e0c353297e787d5ce5672899c5b99527d42d28a86f5e6167931c7761d674148dadba1fc11b5d26980c317"
 D_FN="${PN}-matlib-${SHA512SUM_MATLIB:0:7}.run"
 SLOT="0/${PV}"
-IUSE="systemwide"
 RDEPEND="media-plugins/RadeonProRenderBlenderAddon"
 RESTRICT="fetch strip"
 SRC_URI="${D_FN}"
@@ -54,14 +53,6 @@ pkg_setup() {
 	ewarn \
 "eclass/unpacker.eclass from the oiledmachine-overlay is required for \
 Makeself 2.3.0 compatibility if ebuild copied to local repo."
-
-	if ! use systemwide ; then
-		if [[ -z "${RPR_USERS}" ]] ; then
-			eerror "You must add RPR_USERS to your make.conf or per-package-wise"
-			eerror "Example RPR_USERS=\"johndoe janedoe\""
-			die
-		fi
-	fi
 }
 
 src_unpack() {
@@ -79,7 +70,8 @@ src_install_systemwide_matlib() {
 		"${ED}/${D_MATERIALS}" || die
 }
 
-src_install_systemwide_plugin() {
+src_install_systemwide_plugin_meta() {
+	mkdir -p "${S_PLUGIN}" || die
 	cd "${S_PLUGIN}" || die
 	local d
 	DIRS=$(find /usr/share/blender/ -maxdepth 1 | tail -n +2)
@@ -117,62 +109,29 @@ src_install_systemwide_plugin() {
 	fi
 }
 
-src_install_per_user() {
-	for u in ${RPR_USERS} ; do
-		einfo "Installing addon for user: ${u}"
-		local d_addon="/home/${u}/.local/share/${PLUGIN_NAME}"
-		local ed_addon="${ED}/${d_addon}"
-		local d_matlib_meta="/home/${u}/.local/share/rprmaterials"
-		local ed_matlib_meta="${ED}/${d_matlib_meta}"
-		local d_matlib="/home/${u}/${D_USER_MATLIB}"
-		local ed_matlib="${ED}/${d_matlib}"
-
-		cd "${S_MATLIB}" || die
-		insinto "${d_matlib}"
-		doins -r matlib/feature_MaterialLibrary/*
-		exeinto "${d_matlib_meta}"
-		doexe uninstall.py
-		dodir "${d_matlib_meta}"
-		dodir "${ed_addon}"
-		echo "${d_matlib}" > "${ed_matlib_meta}/.matlib_installed" || die
-		echo "${d_matlib}" > "${ed_addon}/.matlib_installed" || die
-		fowners -R ${u}:${u} "${d_matlib}"
-		fowners -R ${u}:${u} "${d_matlib_meta}"
-		fowners -R ${u}:${u} "${d_addon}"
-	done
-}
-
 src_install() {
-	if use systemwide ; then
-		src_install_systemwide_plugin # add metainfo
-		src_install_systemwide_matlib
+	src_install_systemwide_plugin_meta
+	src_install_systemwide_matlib
 
-		cat <<EOF > ${T}/50${P}-matlib
+	cat <<EOF > ${T}/50${P}-matlib
 RPR_MATERIAL_LIBRARY_PATH="${D_MATERIALS}/Xml"
 EOF
-		doenvd "${T}"/50${P}-matlib
-	else
-		src_install_per_user
-	fi
+	doenvd "${T}"/50${P}-matlib
 }
 
 pkg_postinst() {
-	if use systemwide ; then
-		einfo
-		einfo "The material library have been installed in:"
-		einfo "${D_MATERIALS}"
-	else
-		einfo "You must install this product manually through blender per user."
-		for u in ${RPR_USERS} ; do
-			local d_matlib="/home/${u}/${D_USER_MATLIB}/Xml"
-			local blender_ver=$(ls "${EROOT}/usr/share/blender/")
-			einfo "Materials location: ${d_matlib}"
-			einfo "To tell ${PN} the location of the materials directory:"
-			einfo
-			einfo "  Add the following to /home/${u}/.bashrc"
-			einfo "  export RPR_MATERIAL_LIBRARY_PATH=\"${d_matlib}\""
-			einfo "  Then, re-log."
-			einfo
-		done
-	fi
+	einfo
+	einfo "The material library have been installed in:"
+	einfo "${D_MATERIALS}"
+	einfo
+	env-update
+	einfo "You must \`source /etc/profile\` or reboot in order for the Addon to see the material library"
+	einfo
+	einfo
+	einfo "If you installed the material library previously, remove RPR_MATERIAL_LIBRARY_PATH from"
+	einfo "your ~/.bashrc to use the system wide RPR_MATERIAL_LIBRARY_PATH setting or change it"
+	einfo "per-profile to:"
+	einfo
+	einfo "export RPR_MATERIAL_LIBRARY_PATH=\"${D_MATERIALS}\""
+	einfo
 }
