@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-50-unified"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-50"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	dkms? ( AMDGPU-FIRMWARE GPL-2 MIT )
@@ -14,10 +14,8 @@ LICENSE="AMDGPUPROEULA
 		opengl? ( MIT SGI-B-2.0 )
 		opengl_mesa? ( all-rights-reserved MIT SGI-B-2.0 )
 		osmesa? ( all-rights-reserved MIT )
-		vaapi? ( MIT )
 		vdpau? ( MIT )
 		vulkan_open? ( MIT )
-		wayland? ( MIT )
 		xa? ( MIT )
 		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 BSD ) UoI-NCSA
 		developer? ( opengl_mesa? ( all-rights-reserved MIT ) )
@@ -25,17 +23,17 @@ LICENSE="AMDGPUPROEULA
 	)
 	pro-stack? (
 		AMDGPUPROEULA
+		amf? ( AMDGPUPROEULA )
 		clinfo? ( AMDGPUPROEULA )
 		egl? ( AMDGPUPROEULA )
 		gles2? ( AMDGPUPROEULA )
 		hip-clang? ( AMDGPUPROEULA )
 		opencl? ( AMDGPUPROEULA )
 		opencl-icd-loader? ( AMDGPUPROEULA )
-		opencl_pal? ( AMDGPUPROEULA )
+		opencl_rocr? ( AMDGPUPROEULA )
 		opencl_orca? ( AMDGPUPROEULA )
 		opengl? ( AMDGPUPROEULA )
 		opengl_pro? ( AMDGPUPROEULA )
-		roct? ( MIT )
 		vulkan_pro? ( AMDGPUPROEULA )
 	)
 	X? ( MIT all-rights-reserved )"
@@ -58,34 +56,56 @@ PKG_VER=$(ver_cut 1-2)
 PKG_VER_MAJ=$(ver_cut 1)
 PKG_REV=$(ver_cut 3)
 PKG_ARCH="rhel"
-PKG_ARCH_VER="8.1"
+PKG_ARCH_VER="8.3"
 PKG_ARCH_VER_MAJOR=$(ver_cut 1 ${PKG_ARCH_VER})
 PKG_ARCH_SUFFIX=".el${PKG_ARCH_VER_MAJOR}."
+PKG_VER_COMGR="1.9.0"
 PKG_VER_GCC="8.2.1"
 PKG_VER_GST_OMX="1.0.0.1"
+PKG_VER_HSART="1.2.0"
 PKG_VER_HSAKMT="1.0.6"
 PKG_VER_HSAKMT_A="1.0.9"
 PKG_VER_ID="1.0.0"
-PKG_VER_LIBDRM="2.4.99"
-PKG_VER_LIBWAYLAND="1.15.0"
-PKG_VER_LLVM_TRIPLE="9.0.0"
+PKG_VER_LIBDRM="2.4.100"
+PKG_VER_LLVM_TRIPLE="11.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="19.2.2"
+PKG_VER_MESA="20.2.4"
+PKG_VER_ROCM_DEVLIBS="1.0.0"
+PKG_VER_ROCM_LLVM="12.0"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_VA="1.8.3"
-PKG_VER_WAYLAND_PROTO="1.18"
-PKG_VER_WAYLAND="1.15.0"
-PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
-VULKAN_SDK_VER="1.1.121.1"
-FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
-SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
-RESTRICT="fetch strip"
-IUSE="bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang \
-+open-stack +opencl opencl-icd-loader +opencl_orca +opencl_pal +opengl \
-opengl_mesa +opengl_pro osmesa +pro-stack roct strict-pairing system-libva \
-+vaapi +vdpau +vulkan vulkan_open vulkan_pro wayland +X xa"
+PKG_VER_XORG_VIDEO_AMDGPU_DRV="24.1.0" # about the same as the mesa version
+VULKAN_SDK_VER="1.2.148"
+ROCK_V="4.0.0" # an approximate
+IUSE="amf bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang \
++open-stack +opencl opencl-icd-loader +opencl_orca +opencl_rocr +opengl \
+opengl_mesa +opengl_pro osmesa +pro-stack rocm strict-pairing system-roct \
+system-hsa-rt +vaapi +vdpau +vulkan vulkan_open vulkan_pro +X xa"
+REQUIRED_USE="
+	!abi_x86_32
+	amf? ( pro-stack opencl opencl_rocr vulkan_pro )
+	bindist? ( !doc !pro-stack )
+	clinfo? ( opencl pro-stack )
+	egl? ( || ( open-stack pro-stack ) X )
+	gles2? ( egl || ( open-stack pro-stack ) )
+	hip-clang? ( developer pro-stack rocm )
+	opencl? ( || ( opencl_orca opencl_rocr ) pro-stack )
+	opencl-icd-loader? ( open-stack )
+	opencl_orca? ( opencl )
+	opencl_rocr? ( dkms pro-stack opencl rocm )
+	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
+	opengl_mesa? ( open-stack opengl X )
+	opengl_pro? ( egl pro-stack opengl X )
+	osmesa? ( developer? ( X ) open-stack )
+	rocm? ( dkms open-stack pro-stack )
+	vaapi? ( open-stack X )
+	vdpau? ( open-stack )
+	vulkan? ( || ( vulkan_open vulkan_pro ) )
+	vulkan_open? ( open-stack vulkan )
+	vulkan_pro? ( pro-stack vulkan )
+	xa? ( open-stack )"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -98,10 +118,12 @@ SLOT="1"
 # Mesa subslots now automatically trigger re-emerging of this ebuild to sort out
 # the libglvnd/eselect-opengl mess and any new mess encountered.
 RDEPEND="!x11-drivers/amdgpu-pro-lts
+	 || ( >=dev-libs/libelf-0.174 virtual/libelf:0/1 )
 	 >=dev-util/cunit-2.1_p3
 	 >=dev-libs/expat-2.2.5
 	 >=dev-libs/libedit-3.1
-	 || ( >=dev-libs/libelf-0.174 virtual/libelf:0/1 )
+	 >=sys-devel/gcc-${PKG_VER_GCC}
+	 >=sys-libs/zlib-1.2.0
 	 developer? (
 		egl? (
 			x11-base/xorg-proto
@@ -130,34 +152,27 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 			virtual/libudev
 		)
 	 )
-	 dkms? (
-		|| (
-			sys-kernel/amdgpu-dkms
-			sys-kernel/rock-dkms
-		)
-	 )
-	 !strict-pairing? (
-		freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
-		>=virtual/amdgpu-drm-3.2.56[dkms?]
-	 )
-	 strict-pairing? (
-		~virtual/amdgpu-drm-3.2.56[dkms?,strict-pairing]
-	 )
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
 	 opencl? ( !opencl-icd-loader? ( >=virtual/opencl-3 ) )
-	 roct? (   !dev-libs/roct-thunk-interface
-		  >=sys-apps/pciutils-3.5.6
-		  >=sys-process/numactl-2.0.11 )
-	 >=sys-devel/gcc-${PKG_VER_GCC}
-	 system-libva? ( >=x11-libs/libva-2.1.0 )
+	 rocm? ( >=sys-apps/pciutils-3.5.6
+		 >=sys-process/numactl-2.0.11
+		  !strict-pairing? ( >=virtual/amdgpu-drm-3.2.114[dkms,firmware] )
+		   strict-pairing? ( ~virtual/amdgpu-drm-3.2.114[dkms,firmware] )
+		   system-roct? ( >=dev-libs/roct-thunk-interface-${ROCK_V} ) )
+	 !strict-pairing? (
+		freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
+		>=virtual/amdgpu-drm-3.2.114[dkms?]
+	 )
+	 strict-pairing? (
+		~virtual/amdgpu-drm-3.2.114[dkms?,strict-pairing]
+	 )
+	 vaapi? (  >=x11-libs/libva-${PKG_VER_VA} )
 	 vdpau? ( >=x11-libs/libvdpau-1.1.1 )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:= )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:=[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
-         wayland? ( >=dev-libs/wayland-${PKG_VER_LIBWAYLAND}
-		    dev-libs/libffi-compat[${MULTILIB_USEDEP}] )
 	 X? (
 	 >=sys-libs/libselinux-2.8
 	   virtual/libudev
@@ -171,39 +186,18 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 	   x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	   x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	   x11-libs/libXrender[${MULTILIB_USEDEP}] )"
+FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
+SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 S="${WORKDIR}"
-REQUIRED_USE="
-	!abi_x86_32
-	bindist? ( !doc !pro-stack )
-	clinfo? ( opencl pro-stack )
-	egl? ( || ( open-stack pro-stack ) X )
-	gles2? ( egl || ( open-stack pro-stack ) )
-	hip-clang? ( pro-stack )
-	opencl? ( || ( opencl_orca opencl_pal ) pro-stack )
-	opencl-icd-loader? ( open-stack )
-	opencl_orca? ( opencl )
-	opencl_pal? ( opencl )
-	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
-	opengl_mesa? ( open-stack opengl X )
-	opengl_pro? ( egl pro-stack opengl X )
-	osmesa? ( developer? ( X ) open-stack )
-	roct? ( dkms pro-stack )
-	vaapi? ( open-stack X )
-	vdpau? ( open-stack )
-	vulkan? ( || ( vulkan_open vulkan_pro ) )
-	vulkan_open? ( open-stack vulkan )
-	vulkan_pro? ( pro-stack vulkan )
-	wayland? ( open-stack )
-	xa? ( open-stack )
-"
+RESTRICT="fetch strip"
 
 _set_check_reqs_requirements() {
 	if use abi_x86_32 && use abi_x86_64 ; then
-		CHECKREQS_DISK_BUILD="977M"
-		CHECKREQS_DISK_USR="882M"
+		CHECKREQS_DISK_BUILD="1419M"
+		CHECKREQS_DISK_USR="805M"
 	else
-		CHECKREQS_DISK_BUILD="977M"
-		CHECKREQS_DISK_USR="882M"
+		CHECKREQS_DISK_BUILD="1419M"
+		CHECKREQS_DISK_USR="805M"
 	fi
 }
 
@@ -227,12 +221,6 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	if [ ! -L /lib64/libedit.so.2 ] ; then
-		einfo \
-"You need to do \`ln -s /lib64/libedit.so.0 /lib64/libedit.so.2\`"
-		die
-	fi
-
 	CONFIG_CHECK="~DRM_AMDGPU"
 
 	WARNING_DRM_AMDGPU=\
@@ -241,25 +229,19 @@ driver to work"
 
 	linux-info_pkg_setup
 
-	if use opencl_pal ; then
-		einfo "opencl_pal for Vega 10 or newer enabled"
+	if use opencl_rocr ; then
+		einfo "opencl_rocr for Vega 10 or newer is enabled"
+		ewarn "opencl_rocr is untested.  Please send issue request, fixes or pull request to oiledmachine-overlay if problems arise."
 	fi
 
 	if use opencl_orca ; then
-		einfo "opencl_orca for pre-Vega 10 enabled"
-	fi
-
-	if use roct ; then
-		ewarn "ROCt has not been tested"
-		ewarn \
-"It's recommended to use the dev-libs/roct-thunk-interface package instead of\n\
-the roct USE flag."
+		einfo "opencl_orca for pre-Vega 10 is enabled"
 	fi
 
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
-	if has_version 'media-libs/mesa[libglvnd]' ; then
+	if has_version 'media-libs/libglvnd' ; then
 		einfo "Detected mesa using libglvnd"
 		export MESA_USES_LIBGLVND="Y"
 		if [[ -f "${EROOT}/etc/env.d/000opengl" ]] ; then
@@ -324,6 +306,14 @@ src_unpack_open_stack() {
 		unpack_rpm "${d_rpms}/llvm-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
+	if use rocm ; then
+		if ! use system-roct ; then
+			unpack_rpm "${d_rpms}/hsakmt-roct-amdgpu-${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			use developer && \
+			unpack_rpm "${d_rpms}/hsakmt-roct-amdgpu-devel-${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		fi
+	fi
+
 	if use egl ; then
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libEGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		use developer && \
@@ -356,14 +346,7 @@ src_unpack_open_stack() {
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libxatracker-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
-	if use vaapi ; then
-		if use system-libva ; then
-			unpack_rpm "${d_rpms}/libva-amdgpu-${PKG_VER_VA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-			use developer && \
-			unpack_rpm "${d_rpms}/libva-amdgpu-devel-${PKG_VER_VA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		fi
-		# The VA-API driver is in the dri package.
-	fi
+	# The VA-API driver is in the dri package.
 
 	if use vdpau ; then
 		unpack_rpm "${d_rpms}/mesa-amdgpu-vdpau-drivers-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
@@ -371,17 +354,6 @@ src_unpack_open_stack() {
 
 	if use vulkan_open ; then
 		unpack_rpm "${d_rpms}/vulkan-amdgpu-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	fi
-
-	if use wayland ; then
-		unpack_rpm "${d_rpms}/libwayland-amdgpu-client-${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		use egl && \
-		unpack_rpm "${d_rpms}/libwayland-amdgpu-egl-${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		unpack_rpm "${d_rpms}/libwayland-amdgpu-server-${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		unpack_rpm "${d_rpms}/libwayland-amdgpu-cursor-${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		unpack_rpm "${d_noarch}/wayland-amdgpu-doc-${PKG_VER_WAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${noarch}.rpm"
-		use developer && \
-		unpack_rpm "${d_noarch}/wayland-protocols-amdgpu-devel-${PKG_VER_WAYLAND_PROTO}-${PKG_REV}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 	fi
 
 	if use X ; then
@@ -392,10 +364,16 @@ src_unpack_open_stack() {
 src_unpack_pro_stack() {
 	unpack_rpm "${d_rpms}/amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_noarch}/amdgpu-pro-core-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${noarch}.rpm"
-	unpack_rpm "${d_rpms}/amdgpu-pro-versionlist-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	unpack_rpm "${d_noarch}/amdgpu-pro-versionlist-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 
 	if use X ; then
 		unpack_rpm "${d_rpms}/libglapi-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	fi
+
+	if use amf ; then
+		if [[ "${ABI}" == "amd64" ]] ; then
+			unpack_rpm "${d_rpms}/amf-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		fi
 	fi
 
 	if use egl && ! use opengl_mesa ; then
@@ -405,9 +383,10 @@ src_unpack_pro_stack() {
 		fi
 	fi
 
-	if use hip-clang ; then
-		if [[ "${ABI}" == "amd64" ]] ; then
-			unpack_rpm "${d_rpms}/hip-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	if use opencl_rocr || use hip-clang ; then
+		unpack_rpm "${d_rpms}/comgr-amdgpu-pro-${PKG_VER_COMGR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		if use developer ; then
+			unpack_rpm "${d_rpms}/comgr-amdgpu-pro-devel-${PKG_VER_COMGR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
 	fi
 
@@ -417,18 +396,22 @@ src_unpack_pro_stack() {
 			unpack_rpm "${d_rpms}/clinfo-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
 		use opencl-icd-loader && \
-		unpack_rpm "${d_rpms}/libopencl-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		if use opencl_pal ; then
-			unpack_rpm "${d_rpms}/opencl-amdgpu-pro-comgr-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
-			if [[ "${ABI}" == "amd64" ]] ; then
-				unpack_rpm "${d_rpms}/opencl-amdgpu-pro-icd-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/ocl-icd-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		if use opencl_rocr ; then
+			unpack_rpm "${d_rpms}/amdgpu-pro-rocr-opencl-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			unpack_rpm "${d_rpms}/opencl-rocr-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			if use developer ; then
+				unpack_rpm "${d_rpms}/rocm-device-libs-amdgpu-pro-${PKG_VER_ROCM_DEVLIBS}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+				unpack_rpm "${d_rpms}/opencl-rocr-amdgpu-pro-devel-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 			fi
 		fi
 		if use opencl_orca ; then
 			unpack_rpm "${d_rpms}/opencl-orca-amdgpu-pro-icd-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
-		use developer && \
-		unpack_rpm "${d_rpms}/opencl-amdgpu-pro-devel-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		if use developer ; then
+			use opencl-icd-loader && \
+			unpack_rpm "${d_rpms}/ocl-icd-amdgpu-pro-devel-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		fi
 	fi
 
 	if use opengl_pro ; then
@@ -438,11 +421,20 @@ src_unpack_pro_stack() {
 		unpack_rpm "${d_rpms}/libgl-amdgpu-pro-dri-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
-	if use roct ; then
-		if [[ "${ABI}" == "amd64" ]] ; then
-			unpack_rpm "${d_rpms}/hsakmt-roct-amdgpu-${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-			use developer && \
-			unpack_rpm "${d_rpms}/hsakmt-roct-amdgpu-devel-${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	if use rocm ; then
+		unpack_rpm "${d_rpms}/llvm-amdgpu-pro-rocm-${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/llvm-amdgpu-pro-rocm-libs-${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		if use developer ; then
+			unpack_rpm "${d_rpms}/llvm-amdgpu-pro-rocm-devel-${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			if use hip-clang ; then
+				unpack_rpm "${d_rpms}/hip-rocr-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			fi
+			if ! use system-hsa-rt ; then
+				unpack_rpm "${d_rpms}/hsa-runtime-rocr-amdgpu-devel-${PKG_VER_HSART}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			fi
+		fi
+		if ! use system-hsa-rt ; then
+			unpack_rpm "${d_rpms}/hsa-runtime-rocr-amdgpu-${PKG_VER_HSART}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
 	fi
 
@@ -714,6 +706,11 @@ pkg_postinst() {
 		if has_version 'app-eselect/eselect-opencl' ; then
 			"${EROOT}"/usr/bin/eselect opencl set amdgpu-pro
 		fi
+	fi
+
+	if [[ "${MESA_USES_LIBGLVND}" == "Y" ]] ; then
+		env-update
+		einfo "You need to \`. /etc/profile\` or reboot before starting X"
 	fi
 
 	if use freesync ; then

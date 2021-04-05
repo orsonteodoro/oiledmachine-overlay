@@ -1,0 +1,30 @@
+A problem could happen if media-libs/libglvnd is missing or if the user does
+not `source /etc/profile`.
+
+Using opengl_pro should report for `glxinfo -B`:
+OpenGL vendor string: Advanced Micro Devices, Inc.
+
+Using opengl_mesa or mesa only drivers should report for `glxinfo -B`:
+OpenGL vendor string: AMD
+
+
+dpkg cheatsheet:
+
+  show summary, dependencies
+  dpkg -I <debfile>
+
+  show filelist
+  dpkg -c <debfile>
+
+
+The following script can be used to probe for consumer of a package
+--------------------------------------------------------------------------------
+#!/bin/bash
+# run as: ./find_package numa "<path goes here>"
+PKG_NAME="${1}"
+S="${2}" # path goes here
+for x in $(find "${S}" -name "*.deb") ; do
+	echo "Inspecting ${x}"
+	dpkg -I "${x}" | grep "${PKG_NAME}"
+done
+--------------------------------------------------------------------------------

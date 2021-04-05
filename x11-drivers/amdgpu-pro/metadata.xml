@@ -54,6 +54,8 @@
       </flag>
     <flag name="opencl_pal">Install the OpenCL driver for Vega 10 or newer
      (GCN 5.x+) products.</flag>
+    <flag name="opencl_rocr">Install the OpenCL driver for Vega 10 or newer
+     (GCN 5.x+) products.</flag>
     <flag name="opengl">Install OpenGL support.</flag>
     <flag name="opengl_mesa">Install and use Mesa OpenGL.</flag>
     <flag name="opengl_pro">Install and use Pro OpenGL.</flag>
@@ -61,8 +63,12 @@
       rendering (or headless) via the CPU.</flag>
     <flag name="pro-stack">Installs the pro-stack containing the Pro OpenGL
       recommended for Radeon PRO products.</flag>
-    <flag name="roct">Install the hsakmt library needed for API calls to
-      communicate with the ROCk kernel.</flag>
+    <flag name="rocm">Installs some of the ROCm parts (KFD [available in
+      amdgpu-dkms or rock-dkms], ROCt, HSA KMT) if available and HSA parts
+      (HSA runtime).</flag>
+    <flag name="system-roct">Install the hsakmt library needed for API calls to
+      communicate with the ROCk kernel.  Otherwise, use the internal if
+      the rocm USE flag is specified.</flag>
     <flag name="system-libva">Prefer the libva provided by the system over
       the one provided by the driver.</flag>
     <flag name="strict-pairing">Pairs the amdgpu-pro-lts package to the
