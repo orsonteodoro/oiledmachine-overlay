@@ -831,6 +831,8 @@ function _filter_genpatches() {
 	P_GENPATCHES_BLACKLIST=" 5010 5011 5012 5013"
 	# Already applied 5000-5007 ZSTD patches
 	P_GENPATCHES_BLACKLIST+=" 5000 5001 5002 5003 5004 5005 5006 5007"
+	# Already applied bmq.
+	P_GENPATCHES_BLACKLIST+=" 5020 5021"
 	if declare -f ot-kernel_filter_genpatches_blacklist_cb > /dev/null ; then
 		# Disable failing patches
 		P_GENPATCHES_BLACKLIST+=$(ot-kernel_filter_genpatches_blacklist_cb)
