@@ -48,14 +48,32 @@ REQUIRED_USE+="
 	video_cards_amdgpu? (
 		!video_cards_amdgpu-pro
 		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
+		!video_cards_radeonsi
 	)
 	video_cards_amdgpu-pro? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
+		!video_cards_radeonsi
 	)
 	video_cards_amdgpu-pro-lts? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro
+		!video_cards_r600
+		!video_cards_radeonsi
+	)
+	video_cards_r600? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+		!video_cards_radeonsi
+	)
+	video_cards_radeonsi? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
 	)
 "
 
