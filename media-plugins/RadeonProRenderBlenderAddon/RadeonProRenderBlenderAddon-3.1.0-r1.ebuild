@@ -47,7 +47,7 @@ PLUGIN_NAME="rprblender"
 MIN_BLENDER_V="2.80"
 MAX_BLENDER_V="2.84" # exclusive
 SLOT="0"
-IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocm opencl_orca \
+IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca \
 opencl_pal opengl_mesa split-drivers -systemwide test video_cards_amdgpu \
 video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_i965 \
 video_cards_iris video_cards_nvidia video_cards_radeonsi +vulkan"
@@ -63,32 +63,35 @@ REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
 	opencl_pal? (
 		|| ( video_cards_amdgpu-pro
 		video_cards_amdgpu-pro-lts ) )
-	opencl_rocm? (
+	opencl_rocr? (
 		|| ( video_cards_amdgpu
 			video_cards_amdgpu-pro
 			video_cards_amdgpu-pro-lts )
 		split-drivers )
 	split-drivers? ( || (
 		opencl_orca
-		opencl_rocm ) )
+		opencl_rocr ) )
 	video_cards_amdgpu? (
 		!video_cards_amdgpu-pro
 		!video_cards_amdgpu-pro-lts
+		!video_cards_radeonsi
 		|| ( opencl_orca
-			opencl_rocm )
+			opencl_rocr )
 		split-drivers )
 	video_cards_amdgpu-pro? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro-lts
+		!video_cards_radeonsi
 		|| ( opencl_orca
 			opencl_pal
-			opencl_rocm ) )
+			opencl_rocr ) )
 	video_cards_amdgpu-pro-lts? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro
+		!video_cards_radeonsi
 		|| ( opencl_orca
 			opencl_pal
-			opencl_rocm ) )"
+			opencl_rocr ) )"
 # Assumes U 18.04.03 minimal
 CDEPEND_NOT_LISTED="
 	dev-lang/python[xml]
@@ -103,7 +106,7 @@ DEPEND+="  ${CDEPEND_NOT_LISTED}
 	$(python_gen_cond_dep 'dev-python/imageio[${PYTHON_MULTI_USEDEP}]')
 	dev-util/opencl-headers
 	sys-apps/pciutils
-	$(python_gen_cond_dep 'virtual/python-cffi[${PYTHON_MULTI_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/python-cffi:=[${PYTHON_MULTI_USEDEP}]')
 	x11-libs/libdrm"
 # These are mentioned in the command line output and downloaded after install.
 # They are not really used on linux since athena_send is disabled on Linux but
@@ -148,37 +151,52 @@ RDEPEND+="  ${CDEPEND_NOT_LISTED}
 		video_cards_amdgpu-pro? (
 			!split-drivers? (
 				opengl_mesa? (
-x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,\
-opencl_orca?]
+					|| (
+<x11-drivers/amdgpu-pro-20.45[X,developer,open-stack,opencl,\
+opencl_orca?,opencl_pal?,opengl_mesa,-opengl_pro]
+>=x11-drivers/amdgpu-pro-20.45[X,developer,open-stack,opencl,\
+opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
+
+					)
 				)
 				!opengl_mesa? (
-x11-drivers/amdgpu-pro[opencl,opencl_pal?,opencl_orca?]
+					|| (
+<x11-drivers/amdgpu-pro-20.45[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
+>=x11-drivers/amdgpu-pro-20.45[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
+					)
 				)
 			)
 			split-drivers? (
 				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
-				opencl_rocm? ( dev-libs/rocm-opencl-runtime )
+				opencl_rocr? ( dev-libs/rocm-opencl-runtime )
 			)
 		)
 		video_cards_amdgpu-pro-lts? (
 			!split-drivers? (
 				opengl_mesa? (
-x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl,\
-opencl_pal?,opencl_orca?]
+					|| (
+<x11-drivers/amdgpu-pro-lts-20.45[X,developer,open-stack,opencl,\
+opencl_orca?,opencl_pal?,opengl_mesa,-opengl_pro]
+>=x11-drivers/amdgpu-pro-lts-20.45[X,developer,open-stack,opencl,\
+opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
+					)
 				)
 				!opengl_mesa? (
-x11-drivers/amdgpu-pro-lts[opencl,opencl_pal?,opencl_orca?]
+					|| (
+<x11-drivers/amdgpu-pro-lts-20.45[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
+>=x11-drivers/amdgpu-pro-lts-20.45[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
+					)
 				)
 			)
 			split-drivers? (
 				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
-				opencl_rocm? ( dev-libs/rocm-opencl-runtime )
+				opencl_rocr? ( dev-libs/rocm-opencl-runtime )
 			)
 		)
 		video_cards_amdgpu? (
 			split-drivers? (
 				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
-				opencl_rocm? ( dev-libs/rocm-opencl-runtime )
+				opencl_rocr? ( dev-libs/rocm-opencl-runtime )
 			)
 		)
 		video_cards_i965? (
@@ -347,7 +365,7 @@ show_notice_pal_support() {
 	einfo "raven"
 	einfo
 	einfo "If your device does not match one of the codenames above, use"
-	einfo "the opencl_rocm if CPU and Mobo both have PCIe 3.0 support;"
+	einfo "the opencl_rocr if CPU and Mobo both have PCIe 3.0 support;"
 	einfo "otherwise, try opencl_orca."
 	einfo
 	show_codename_docs
@@ -383,11 +401,11 @@ OpenCL 1.1)"
 		ewarn "CPU may not be compatible.  ${PN} requires SSE2."
 	fi
 
-	if use opencl_rocm ; then
+	if use opencl_rocr ; then
 		# No die checks for this kernel config in dev-libs/rocm-opencl-runtime.
 		CONFIG_CHECK="HSA_AMD"
 		ERROR_HSA_AMD=\
-"Change CONFIG_HSA_AMD=y in kernel config.  It's required for opencl_rocm support."
+"Change CONFIG_HSA_AMD=y in kernel config.  It's required for opencl_rocr support."
 		linux-info_pkg_setup
 		if dmesg \
 			| grep kfd \
@@ -566,7 +584,7 @@ pkg_postinst() {
 
 	ewarn
 	ewarn "If you notice artifacts such as long rectangles when rendering"
-	ewarn "the scene, please use only the amdgpu-pro drivers not the"
-	ewarn "split drivers to remedy this.  Also, performance is faster"
-	ewarn "when compiling kernels."
+	ewarn "the scene, please use only the latest amdgpu-pro drivers"
+	ewarn "not the split drivers to remedy this.  Also, performance is"
+	ewarn "faster when compiling kernels."
 }

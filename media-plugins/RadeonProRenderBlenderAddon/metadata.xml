@@ -43,8 +43,9 @@
       from AMDGPU-PRO drivers.</flag>
     <flag name="opencl_pal">Checks for proper OpenCL support for Vega 10
       (GCN 5.x) or newer from AMDGPU-PRO drivers.</flag>
-    <flag name="opencl_rocm">Checks for proper OpenCL support for Vega 10
-      (GCN 5.x) or newer from ROCm.</flag>
+    <flag name="opencl_rocr">Checks for proper OpenCL support for Vega 10
+      (GCN 5.x) or newer from ROCm or from the AMDGPU-PRO monolithic
+      driver package.</flag>
     <flag name="opengl_mesa">Pulls the required dependencies if Pro support in
       the AMDGPU-PRO driver has not been installed.</flag>
     <flag name="materials">Installs the material library.</flag>
