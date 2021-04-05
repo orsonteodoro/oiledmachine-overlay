@@ -252,7 +252,7 @@ BDEPEND+="  ${CDEPEND_NOT_LISTED}
 	>=dev-util/cmake-3.11
 	dev-vcs/git"
 RIF_V="1.6.1"
-RPRSDK_V="2.2.1"
+RPRSDK_V="2.1.7"
 RPRSC_V="9999_p20201109"
 EGIT_COMMIT_RPRSC="41d2e5fb8631ef2bfa60fa27f5dbf7c4a8e2e4aa"
 RIF_DF="RadeonImageFilter-${RIF_V}.tar.gz"
@@ -277,6 +277,7 @@ PATCHES=(
 	"${FILESDIR}/rpr-3.1.0-gentoo-skip-libs_cffi_backend.patch"
 	"${FILESDIR}/rpr-3.1.0-disable-download-wheel-boto3.patch"
 )
+MY_PV="2.5.29" # Upstream did not bump internally.
 
 _set_check_reqs_requirements() {
 	CHECKREQS_DISK_BUILD="970M"
@@ -518,7 +519,7 @@ src_install_packed_shared() {
 	pushd "${S}" || die
 		head_commit=$(git rev-parse HEAD)
 	popd
-	D_FN="${PLUGIN_NAME}-${PV}-${head_commit:0:7}-linux.zip"
+	D_FN="${PLUGIN_NAME}-${MY_PV}-${head_commit:0:7}-linux.zip"
 
 	einfo "Installing addon in shared"
 	cd "${S}" || die
