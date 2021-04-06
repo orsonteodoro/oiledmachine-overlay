@@ -9,7 +9,7 @@
 # using the same major.minor version.
 
 CXXABI_V=11
-LLVM_V=9
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
 LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{7,8} )
 
@@ -128,6 +128,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 	)
 	virtual/libintl
 	virtual/opengl
+	media-libs/libglvnd
 	alembic? ( >=media-gfx/alembic-1.7.12[boost(+),hdf(+)] )
 	boost? ( ${BOOST_DEPEND} )
 	collada? (

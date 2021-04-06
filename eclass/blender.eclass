@@ -246,10 +246,8 @@ blender_pkg_setup() {
 }
 
 check_amdgpu_pro() {
-	if ( has_version 'media-libs/mesa[libglvnd]' \
-		&& has_version 'x11-drivers/amdgpu-pro[opengl_pro]') \
-	|| ( has_version 'media-libs/mesa[libglvnd]' \
-		&& has_version 'x11-drivers/amdgpu-pro-lts[opengl_pro]'); then
+	if ( has_version 'x11-drivers/amdgpu-pro[opengl_pro]' ) \
+	|| ( has_version 'x11-drivers/amdgpu-pro-lts[opengl_pro]' ); then
 		die \
 "You must switch to x11-drivers/amdgpu-pro[opengl_mesa] or \
 x11-drivers/amdgpu-pro-lts[opengl_mesa] instead"
@@ -835,35 +833,19 @@ blender_configure_openvdb_cxxyy() {
 }
 
 blender_configure_mesa_match_llvm() {
-	if has_version 'blender-libs/mesa:'${LLVM_V}'[libglvnd]' ; then
-		mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
-		if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
-			mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
-		else
-			die "Install media-libs/libglvnd or indirectly through mesa[libglvnd]."
-		fi
-		if [[ -e "${EROOT}/usr/$(get_libdir)/libOpenGL.so" ]] ; then
-			mycmakeargs+=( -DOPENGL_opengl_LIBRARY="${EROOT}/usr/$(get_libdir)/libOpenGL.so" )
-		else
-			die "Install media-libs/libglvnd or indirectly through mesa[libglvnd]."
-		fi
-		if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
-			mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
-		fi
+	mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
+	if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
+		mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
 	else
-		mycmakeargs+=( -DOpenGL_GL_PREFERENCE=LEGACY )
-		if [[ -e "$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" ]] ; then
-			# legacy
-			mycmakeargs+=( -DOPENGL_gl_LIBRARY="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" )
-		else
-			die "Use either blender-libs/mesa or media-libs/mesa[libglvnd] or media-libs/libglvnd"
-		fi
-		if [[ -e "$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
-			mycmakeargs+=( -DOPENGL_egl_LIBRARY="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
-		fi
-		export CMAKE_INCLUDE_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
-		export CMAKE_LIBRARY_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
-		_LD_LIBRARY_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+		die "Install media-libs/libglvnd."
+	fi
+	if [[ -e "${EROOT}/usr/$(get_libdir)/libOpenGL.so" ]] ; then
+		mycmakeargs+=( -DOPENGL_opengl_LIBRARY="${EROOT}/usr/$(get_libdir)/libOpenGL.so" )
+	else
+		die "Install media-libs/libglvnd."
+	fi
+	if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
+		mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
 	fi
 
 	# Fix loading {vendor}_dri.so linked with LLVM-9
@@ -872,34 +854,19 @@ blender_configure_mesa_match_llvm() {
 }
 
 blender_configure_mesa_match_system_llvm() {
-	if has_version 'media-libs/mesa[libglvnd]' ; then
-		mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
-		if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
-			mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
-		else
-			die "Install media-libs/libglvnd or indirectly through mesa[libglvnd]."
-		fi
-		if [[ -e "${EROOT}/usr/$(get_libdir)/libOpenGL.so" ]] ; then
-			mycmakeargs+=( -DOPENGL_opengl_LIBRARY="${EROOT}/usr/$(get_libdir)/libOpenGL.so" )
-		else
-			die "Install media-libs/libglvnd or indirectly through mesa[libglvnd]."
-		fi
-		if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
-			mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
-		fi
+	mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
+	if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
+		mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
 	else
-		mycmakeargs+=( -DOpenGL_GL_PREFERENCE=LEGACY )
-		if [[ -e "${EROOT}/usr/$(get_libdir)/libGL.so" ]] ; then
-			# legacy
-			mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/libGL.so" )
-		else
-			die "Use either media-libs/mesa[libglvnd] or media-libs/libglvnd"
-		fi
-		if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
-			mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
-		fi
-		export CMAKE_INCLUDE_PATH="${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
-		export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+		die "Install media-libs/libglvnd."
+	fi
+	if [[ -e "${EROOT}/usr/$(get_libdir)/libOpenGL.so" ]] ; then
+		mycmakeargs+=( -DOPENGL_opengl_LIBRARY="${EROOT}/usr/$(get_libdir)/libOpenGL.so" )
+	else
+		die "Install media-libs/libglvnd."
+	fi
+	if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
+		mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
 	fi
 }
 
@@ -1181,8 +1148,8 @@ _src_install() {
 		blender_set_wrapper_deps
 	fi
 	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
-	_LIBGL_DRIVERS_DIR=$(echo -e "${_LIBGL_DRIVERS_DIR[@]}" | tr "\n" ":" | sed "s|: |:|g")
-	_LIBGL_DRIVERS_PATH=$(echo -e "${_LIBGL_DRIVERS_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
+	_LIBGL_DRIVERS_DIR=$(echo -e "${_LIBGL_DRIVERS_DIR[@]}" | head -n 1)
+	_LIBGL_DRIVERS_PATH=$(echo -e "${_LIBGL_DRIVERS_PATH[@]}" | head -n 1)
 	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 
 	local suffix=

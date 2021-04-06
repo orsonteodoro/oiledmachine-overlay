@@ -12,7 +12,7 @@
 
 CXXABI_V=11
 HAS_PLAYER=1
-LLVM_V=9
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
 LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python2_7 python3_{6,7} ) # The blender2.7 branch allowed for 2.7.
 
@@ -174,6 +174,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 	)
 	virtual/libintl
 	virtual/opengl
+	media-libs/libglvnd
 	alembic? ( >=media-gfx/alembic-1.7.1[boost(+),hdf(+)] )
 	boost? ( ${BOOST_DEPEND} )
 	build_portable? (
@@ -326,9 +327,7 @@ _src_prepare_patches() {
 		eapply "${FILESDIR}/blender-2.79b-oiio-2.x-compat-for-cycles.patch"
 	fi
 
-	if has_version 'blender-libs/mesa:'${LLVM_V}'=[libglvnd]' ; then
-		eapply "${FILESDIR}/blender-2.79b-backport-glvnd-compat.patch"
-	fi
+	eapply "${FILESDIR}/blender-2.79b-backport-glvnd-compat.patch"
 
 	if [[ "${EBLENDER}" == "build_portable" ]] ; then
 		sed -i -e "s|bf_intern_glew_mx|bf_intern_glew_mx ${BUILD_DIR}/lib/|g" \
