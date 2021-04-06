@@ -3,7 +3,9 @@
 
 EAPI=7
 
-inherit eutils flag-o-matic meson multilib-minimal
+PYTHON_COMPAT=( python3_{6..9} )
+
+inherit eutils flag-o-matic meson multilib-minimal python-single-r1
 
 MY_PN="gst-omx"
 DESCRIPTION="GStreamer OpenMAX IL wrapper plugin"
@@ -30,9 +32,12 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	>=dev-util/gtk-doc-am-1.3"
 BDEPEND="${BDEPEND}
+	${PYTHON_DEPS}
 	>=dev-util/meson-0.47
 	virtual/pkgconfig"
-REQUIRED_USE="^^ ( rpi omx-bellagio omx-tizonia )"
+REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
+	^^ ( rpi omx-bellagio omx-tizonia )"
 RESTRICT="mirror"
 
 S="${WORKDIR}/${MY_PN}-${PV}"
