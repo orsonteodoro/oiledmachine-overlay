@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python{2_7,3_{6,7,8}} )
+PYTHON_COMPAT=( python3_{7,8,9} )
 
 inherit flag-o-matic multiprocessing python-r1 toolchain-funcs multilib-minimal
 
@@ -17,7 +17,7 @@ SRC_URI="https://dl.bintray.com/boostorg/release/${PV}/source/boost_${MY_PV}.tar
 CXXABI="11"
 LICENSE="Boost-1.0"
 SLOT="${CXXABI}/${PVR}" # ${PV} instead ${MAJOR_V} due to bug 486122
-KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~ppc-aix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x86-solaris ~x86-winnt"
+KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="bzip2 context debug doc icu lzma +nls mpi numpy python static-libs +threads tools zlib zstd"
 REQUIRED_USE="
 	mpi? ( threads )
@@ -33,6 +33,7 @@ RESTRICT="test"
 RDEPEND="
 	!app-admin/eselect-boost
 	!dev-libs/boost-numpy
+	!<dev-libs/leatherman-1.12.0-r1
 	bzip2? ( app-arch/bzip2:=[${MULTILIB_USEDEP}] )
 	icu? ( >=dev-libs/icu-3.6:=[${MULTILIB_USEDEP}] )
 	!icu? ( virtual/libiconv[${MULTILIB_USEDEP}] )
@@ -40,12 +41,12 @@ RDEPEND="
 	mpi? ( >=virtual/mpi-2.0-r4[${MULTILIB_USEDEP},cxx,threads] )
 	python? (
 		${PYTHON_DEPS}
-		numpy? ( $(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]' -3) )
+		numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
 	)
 	zlib? ( sys-libs/zlib:=[${MULTILIB_USEDEP}] )
 	zstd? ( app-arch/zstd:=[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}"
-BDEPEND="=blender-libs/boost-build-${MAJOR_V}*"
+BDEPEND="=dev-util/boost-build-${MAJOR_V}*"
 
 S="${WORKDIR}/${PN}_${MY_PV}"
 
@@ -53,17 +54,12 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-1.71.0-disable_icu_rpath.patch
 	"${FILESDIR}"/${PN}-1.71.0-context-x32.patch
 	"${FILESDIR}"/${PN}-1.71.0-build-auto_index-tool.patch
-	# Bug 703294, incomplete Boost.Serialization refactoring
-	"${FILESDIR}"/${PN}-1.72.0-missing-serialization-split_member-include.patch
-	# Bug 703036, per python-impl Boost.MPI
-	"${FILESDIR}"/${PN}-1.72.0-boost-mpi-python.patch
-	# Bug 704128, missing include on Boost.Ranges
-	"${FILESDIR}"/${PN}-1.72.0-revert-cease-dependence-on-range.patch
+	# Boost.MPI's __init__.py doesn't work on Py3
+	"${FILESDIR}"/${PN}-1.73-boost-mpi-python-PEP-328.patch
+	# Remove annoying #pragma message
+	"${FILESDIR}"/${PN}-1.73-property-tree-include.patch
+	"${FILESDIR}"/${PN}-1.74-CVE-2012-2677.patch
 )
-
-iprfxbb() {
-        echo "/usr/$(get_libdir)/blender/boost-build/${MAJOR_V}/usr"
-}
 
 python_bindings_needed() {
 	multilib_is_native_abi && use python
@@ -133,7 +129,7 @@ pkg_setup() {
 		if ! grep -q 'gentoo\(debug\|release\)' "${EROOT}"/etc/site-config.jam; then
 			eerror "You are using custom ${EROOT}/etc/site-config.jam without defined gentoorelease/gentoodebug targets."
 			eerror "Boost can not be built in such configuration."
-			eerror "Please, either remove this file or add targets from ${EROOT}$(iprfxbb)/share/boost-build/site-config.jam to it."
+			eerror "Please, either remove this file or add targets from ${EROOT}/usr/share/boost-build/site-config.jam to it."
 			die "Unsupported target in ${EROOT}/etc/site-config.jam"
 		fi
 	fi
@@ -173,8 +169,6 @@ aed() {
 }
 
 src_configure() {
-	export PATH="$(iprfxbb):${PATH}"
-
 	# Workaround for too many parallel processes requested, bug #506064
 	[[ "$(makeopts_jobs)" -gt 64 ]] && MAKEOPTS="${MAKEOPTS} -j64"
 
@@ -190,7 +184,7 @@ src_configure() {
 		$(usex context '' '--without-context --without-coroutine --without-fiber')
 		$(usex threads '' '--without-thread')
 		--without-stacktrace
-		--boost-build="${BROOT}"$(iprfxbb)/share/boost-build
+		--boost-build="${BROOT}"/usr/share/boost-build
 		--prefix="$(aed)/usr"
 		--layout=system
 		# CMake has issues working with multiple python impls,
@@ -239,14 +233,12 @@ multilib_src_install_all() {
 	if use python; then
 		if use mpi; then
 			move_mpi_py_into_sitedir() {
-				local pyver="${EPYTHON#python}"
 				python_moduleinto boost
-				python_domodule "$(aed)"/usr/$(get_libdir)/mpi${pyver/./}.so
-				rm "$(aed)"/usr/$(get_libdir)/mpi${pyver/./}* || die
-				dosym mpi${pyver/./}.so $(python_get_sitedir)/boost/mpi.so
+				python_domodule "${S}"/libs/mpi/build/__init__.py
 
-				# create a proper python package
-				touch "$(aed)"/$(python_get_sitedir)/boost/__init__.py || die
+				python_domodule "$(aed)"/usr/$(get_libdir)/boost-${EPYTHON}/mpi.so
+				rm -r "$(aed)"/usr/$(get_libdir)/boost-${EPYTHON} || die
+
 				python_optimize
 			}
 			python_foreach_impl move_mpi_py_into_sitedir
@@ -369,7 +361,7 @@ pkg_postinst() {
 	elog
 	elog "Then you need to recompile Boost and all its reverse dependencies"
 	elog "using the same toolchain. In general, *every* change of the C++ toolchain"
-	elog "requires a complete rebuild of the boost-dependent ecosystem."
+	elog "requires a complete rebuild of the Boost-dependent ecosystem."
 	elog
 	elog "See for instance https://bugs.gentoo.org/638138"
 }
