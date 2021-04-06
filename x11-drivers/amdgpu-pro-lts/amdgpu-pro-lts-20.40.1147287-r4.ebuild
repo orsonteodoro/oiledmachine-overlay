@@ -128,8 +128,6 @@ SLOT="1"
 # For more info on VIDEODRV see https://www.x.org/wiki/XorgModuleABIVersions/
 # sys-libs/ncurses[tinfo] required by llvm in this package
 
-# Mesa subslots now automatically trigger re-emerging of this ebuild to sort out
-# the libglvnd/eselect-opengl mess and any new mess encountered.
 RDEPEND="!x11-drivers/amdgpu-pro
 	 || ( >=dev-libs/libelf-0.142 virtual/libelf:0/1 )
 	 >=dev-util/cunit-2.1
@@ -230,8 +228,6 @@ _set_check_reqs_requirements() {
 	fi
 }
 
-MESA_USES_LIBGLVND="N"
-
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo "Please download"
@@ -281,35 +277,16 @@ driver to work"
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
-	if has_version 'media-libs/libglvnd' ; then
-		einfo "Detected mesa using libglvnd"
-		export MESA_USES_LIBGLVND="Y"
-		if [[ -f "${EROOT}/etc/env.d/000opengl" ]] ; then
-			ewarn \
+	if [[ -f "${EROOT}/etc/env.d/000opengl" ]] ; then
+		ewarn \
 "Please remove /etc/env.d/000opengl and do ldconfig && env-update manually. \
 This is to remove leftovers from eselect-opengl removal that might cause \
 problems."
-		fi
-		if [[ -f "${EROOT}/etc/X11/xorg.conf.d/20opengl.conf" ]] ; then
-			ewarn \
+	fi
+	if [[ -f "${EROOT}/etc/X11/xorg.conf.d/20opengl.conf" ]] ; then
+		ewarn \
 "Please remove /etc/X11/xorg.conf.d/20opengl.conf manually.  This is to remove \
 leftovers from eselect-opengl removal that might cause problems."
-		fi
-	elif has_version '>=app-eselect/eselect-opengl-1.0.7' ; then
-		einfo "Detected mesa without libglvnd"
-		export MESA_USES_LIBGLVND="N"
-		if ! grep -q -e "Added amdgpu-pro, amdgpu-pro-lts support" \
-			"${EROOT}/usr/share/eselect/modules/opengl.eselect" ; then
-			die "You need eselect-opengl from the oiledmachine-overlay."
-		fi
-	else
-		if has_version '>=media-libs/mesa-2.1.8' ; then
-			:;
-		elif has_version 'media-libs/mesa[libglvnd]' ; then
-			:;
-		else
-			die "Either download >=eselect-opengl-1.0.7 or use media-libs/mesa[libglvnd] or >=media-libs/mesa-2.1.8"
-		fi
 	fi
 }
 
@@ -576,21 +553,19 @@ Section "Monitor"
 EndSection
 EOF
 
-	if [[ "${MESA_USES_LIBGLVND}" == "Y" ]] ; then
-		modulepaths=
-		[[ -d "${ED}/opt/amdgpu-pro/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu-pro/lib/xorg/modules\"\n"
-		[[ -d "${ED}/opt/amdgpu/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu/lib/xorg/modules\"\n"
-		[[ -d "${ED}/opt/amdgpu-pro/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu-pro/lib64/xorg/modules\"\n"
-		[[ -d "${ED}/opt/amdgpu/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu/lib64/xorg/modules\"\n"
-		[[ -d "${EROOT}/usr/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/usr/lib/xorg/modules\"\n"
-		[[ -d "${EROOT}/usr/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/usr/lib64/xorg/modules\"\n"
-		modulepaths=$(echo -e "${modulepaths}")
-		cat << EOF > "${T}/20-${PN}-opengl.conf"
+	modulepaths=
+	[[ -d "${ED}/opt/amdgpu-pro/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu-pro/lib/xorg/modules\"\n"
+	[[ -d "${ED}/opt/amdgpu/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu/lib/xorg/modules\"\n"
+	[[ -d "${ED}/opt/amdgpu-pro/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu-pro/lib64/xorg/modules\"\n"
+	[[ -d "${ED}/opt/amdgpu/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu/lib64/xorg/modules\"\n"
+	[[ -d "${EROOT}/usr/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/usr/lib/xorg/modules\"\n"
+	[[ -d "${EROOT}/usr/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/usr/lib64/xorg/modules\"\n"
+	modulepaths=$(echo -e "${modulepaths}")
+	cat << EOF > "${T}/20-${PN}-opengl.conf"
 Section "Files"
 ${modulepaths}
 EndSection
 EOF
-	fi
 }
 
 src_install() {
@@ -599,9 +574,7 @@ src_install() {
 		doins "${T}/10-screen.conf"
 		doins "${T}/10-monitor.conf"
 		doins "${T}/10-device.conf"
-		if [[ "${MESA_USES_LIBGLVND}" == "Y" ]] ; then
-			doins "${T}/20-${PN}-opengl.conf"
-		fi
+		doins "${T}/20-${PN}-opengl.conf"
 	fi
 
 	insinto /lib/udev/rules.d
@@ -728,34 +701,27 @@ src_install() {
 		doenvd "${T}"/50${P}-vdpau
 	fi
 
-	if [[ "${MESA_USES_LIBGLVND}" == "Y" ]] ; then
-		ldpaths=""
-		[[ -d "${ED}/opt/amdgpu-pro/lib/x86_64-linux-gnu" ]] && ldpaths+="/opt/amdgpu-pro/lib/x86_64-linux-gnu\n"
-		[[ -d "${ED}/opt/amdgpu-pro/lib/i386-linux-gnu" ]] && ldpaths+="/opt/amdgpu-pro/lib/i386-linux-gnu\n"
-		[[ -d "${ED}/opt/amdgpu/lib/x86_64-linux-gnu" ]] && ldpaths+="/opt/amdgpu/lib/x86_64-linux-gnu\n"
-		[[ -d "${ED}/opt/amdgpu/lib/i386-linux-gnu" ]] && ldpaths+="/opt/amdgpu/lib/i386-linux-gnu\n"
-		[[ -d "${ED}/opt/amdgpu-pro/lib64" ]] && ldpaths+="/opt/amdgpu-pro/lib64\n"
-		ldpaths=$(echo -e "${ldpaths}" | tr "\n" ":")
-		opengl_profile=
-		if use opengl_mesa ; then
-			opengl_profile=amdgpu
-		elif use opengl_pro ; then
-			opengl_profile=amdgpu-pro
-		fi
-		cat <<-EOF > "${T}"/000${PN}
-			LDPATH="${ldpaths}"
-			OPENGL_PROFILE="${opengl_profile}"
-		EOF
-		doenvd "${T}"/000${PN}
+	ldpaths=""
+	[[ -d "${ED}/opt/amdgpu-pro/lib/x86_64-linux-gnu" ]] && ldpaths+="/opt/amdgpu-pro/lib/x86_64-linux-gnu\n"
+	[[ -d "${ED}/opt/amdgpu-pro/lib/i386-linux-gnu" ]] && ldpaths+="/opt/amdgpu-pro/lib/i386-linux-gnu\n"
+	[[ -d "${ED}/opt/amdgpu/lib/x86_64-linux-gnu" ]] && ldpaths+="/opt/amdgpu/lib/x86_64-linux-gnu\n"
+	[[ -d "${ED}/opt/amdgpu/lib/i386-linux-gnu" ]] && ldpaths+="/opt/amdgpu/lib/i386-linux-gnu\n"
+	[[ -d "${ED}/opt/amdgpu-pro/lib64" ]] && ldpaths+="/opt/amdgpu-pro/lib64\n"
+	ldpaths=$(echo -e "${ldpaths}" | tr "\n" ":")
+	opengl_profile=
+	if use opengl_mesa ; then
+		opengl_profile=amdgpu
+	elif use opengl_pro ; then
+		opengl_profile=amdgpu-pro
 	fi
+	cat <<-EOF > "${T}"/000${PN}
+		LDPATH="${ldpaths}"
+		OPENGL_PROFILE="${opengl_profile}"
+	EOF
+	doenvd "${T}"/000${PN}
 }
 
 pkg_prerm() {
-	if use opengl && [[ "${MESA_USES_LIBGLVND}" == "N" ]] \
-		&& has_version 'app-eselect/eselect-opengl' ; then
-		"${EROOT}"/usr/bin/eselect opengl set xorg-x11
-	fi
-
 	if use opencl ; then
 		if has_version 'app-eselect/eselect-opencl' ; then
 			if "${EROOT}"/usr/bin/eselect opencl list | grep -q -e "mesa" ; then
@@ -768,25 +734,14 @@ pkg_prerm() {
 }
 
 pkg_postinst() {
-	if has_version 'app-eselect/eselect-opengl' \
-		&& [[ "${MESA_USES_LIBGLVND}" == "N" ]] ; then
-		if use opengl_pro ; then
-			"${EROOT}"/usr/bin/eselect opengl set amdgpu-pro
-		elif use opengl_mesa ; then
-			"${EROOT}"/usr/bin/eselect opengl set amdgpu
-		fi
-	fi
-
 	if use opencl ; then
 		if has_version 'app-eselect/eselect-opencl' ; then
 			"${EROOT}"/usr/bin/eselect opencl set amdgpu-pro
 		fi
 	fi
 
-	if [[ "${MESA_USES_LIBGLVND}" == "Y" ]] ; then
-		env-update
-		einfo "You need to \`. /etc/profile\` or reboot before starting X"
-	fi
+	env-update
+	einfo "You need to \`. /etc/profile\` or reboot before starting X"
 
 	if use freesync ; then
 		einfo \
