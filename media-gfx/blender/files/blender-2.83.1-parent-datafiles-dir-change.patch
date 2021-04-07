@@ -53,7 +53,7 @@
  static char *blender_version_decimal(const int ver)
  {
 -  static char version_str[5];
-+  static char version_str[7]; /* recalculate size of array for tag length */
++  static char version_str[8]; /* recalculate size of array for tag length */
    BLI_assert(ver < 1000);
 -  BLI_snprintf(version_str, sizeof(version_str), "%d.%02d", ver / 100, ver % 100);
 +  BLI_snprintf(version_str, sizeof(version_str), "%d.%02d.%s%s", ver / 100, ver % 100, STRINGIFY(BLENDER_VERSION_PATCH), STRINGIFY(BLENDER_VERSION_TAG));

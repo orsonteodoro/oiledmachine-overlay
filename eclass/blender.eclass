@@ -514,16 +514,12 @@ check_optimal_compiler_for_cycles_x86() {
 }
 
 _src_prepare() {
-	eapply ${_PATCHES[@]}
+	cd "${BUILD_DIR}" || die
 
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake-utils_src_prepare
-
-	if declare -f _src_prepare_patches > /dev/null ; then
-		_src_prepare_patches
-	fi
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		# we don't want static glew, but it's scattered across
@@ -549,8 +545,14 @@ _src_prepare() {
 
 blender_src_prepare() {
 	xdg_src_prepare
+
+	cd "${S}" || die
+	eapply ${_PATCHES[@]}
+	if declare -f _src_prepare_patches > /dev/null ; then
+		_src_prepare_patches
+	fi
+
 	blender_prepare() {
-		cd "${BUILD_DIR}" || die
 		_src_prepare
 	}
 	blender-multibuild_copy_sources
