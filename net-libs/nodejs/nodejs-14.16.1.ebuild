@@ -23,7 +23,7 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 RESTRICT="test"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date: Feb 22, 2021
+# Last deps commit date: Apr 4, 2021
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
@@ -32,7 +32,7 @@ RDEPEND+=" !net-libs/nodejs:0
 	>=net-libs/nghttp2-1.41.0
 	>=sys-libs/zlib-1.2.11
 	system-icu? ( >=dev-libs/icu-67.1:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1j:0= )"
+	system-ssl? ( >=dev-libs/openssl-1.1.1k:0= )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	sys-apps/coreutils
@@ -42,7 +42,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
 	  "${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.11" # See https://github.com/nodejs/node/blob/v14.16.0/deps/npm/package.json
+NPM_V="6.14.12" # See https://github.com/nodejs/node/blob/v14.16.1/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
