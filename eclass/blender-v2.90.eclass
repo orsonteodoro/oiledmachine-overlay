@@ -9,7 +9,7 @@
 # using the same major.minor version.
 
 CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
-LLVM_V=10 # originally 10, do not exceed LLVM_MAX_SLOT in mesa stable
+LLVM_V=10 # originally 10, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
 LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{7,8} )
 

@@ -11,12 +11,12 @@ DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
 KEYWORDS="~amd64 ~x86"
-CXXABI=11
-LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
-SLOT_MAJ="3"
+CXXABI=14 # originally 11
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
+SLOT_MAJ="4"
 SLOT="${SLOT_MAJ}/${PVR}"
 # python is enabled upstream
-IUSE+=" +abi3-compat +blosc -doc egl -log4cplus -numpy +openexr -pdf -pydoc \
+IUSE+=" +abi4-compat +blosc -doc egl -log4cplus -numpy +openexr -pdf -pydoc \
 -python test"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
@@ -25,7 +25,7 @@ IUSE+=" +abi3-compat +blosc -doc egl -log4cplus -numpy +openexr -pdf -pydoc \
 # CMakeLists.txt requires it in this version.
 REQUIRED_USE+="
 	!python
-	abi3-compat
+	abi4-compat
 	blosc
 	openexr
 	python? ( ${PYTHON_REQUIRED_USE} )"
@@ -35,7 +35,7 @@ REQUIRED_USE+="
 # Assumes U 14.04 LTS
 DEPEND+="
 	>=dev-cpp/tbb-3
-	>=blender-libs/boost-1.53:${CXXABI}=
+	>=dev-libs/boost-1.53:=
 	blender-libs/mesa:${LLVM_V}=
 	media-libs/libglvnd
 	>=media-libs/glfw-2.7
@@ -132,7 +132,7 @@ src_configure() {
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
 		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
-		-DOPENVDB_ENABLE_3_ABI_COMPATIBLE=ON
+		-DOPENVDB_ENABLE_3_ABI_COMPATIBLE=OFF
 		-DOPENVDB_ENABLE_RPATH=OFF
 		-DTBB_LOCATION="${myprefix}"
 		-DUSE_GLFW3=ON

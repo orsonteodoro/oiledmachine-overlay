@@ -11,12 +11,12 @@ DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
 KEYWORDS="~amd64 ~x86"
-CXXABI=11
-LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
-SLOT_MAJ="5"
+CXXABI=14 # originally 11
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
+SLOT_MAJ="4"
 SLOT="${SLOT_MAJ}/${PVR}"
 # python is enabled upstream
-IUSE+=" +abi5-compat +blosc -doc egl -log4cplus -numpy +openexr -pdf -pydoc \
+IUSE+=" +abi4-compat +blosc -doc egl -log4cplus -numpy +openexr -pdf -pydoc \
 -python test"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
@@ -25,7 +25,7 @@ IUSE+=" +abi5-compat +blosc -doc egl -log4cplus -numpy +openexr -pdf -pydoc \
 # CMakeLists.txt requires it in this version.
 REQUIRED_USE+="
 	!python
-	abi5-compat
+	abi4-compat
 	blosc
 	openexr
 	python? ( ${PYTHON_REQUIRED_USE} )"
@@ -35,7 +35,7 @@ REQUIRED_USE+="
 # Assumes U 14.04 LTS
 DEPEND+="
 	>=dev-cpp/tbb-3
-	>=blender-libs/boost-1.53:${CXXABI}=
+	>=dev-libs/boost-1.53:=
 	blender-libs/mesa:${LLVM_V}=
 	media-libs/libglvnd
 	>=media-libs/glfw-2.7

@@ -290,7 +290,7 @@ you change it."
 			# binary distribution.  This may be required
 			# when distributing games with Blender player.
 			RDEPEND_279=(
-				"blender-libs/boost"
+				"dev-libs/boost"
 				"blender-libs/mesa"
 				"blender-libs/openvdb"
 				"blender-libs/osl"
@@ -809,15 +809,6 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 }
 
-blender_configure_boost_cxxyy() {
-	if [[ -d "$(erdpfx)/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
-		mycmakeargs+=( -DBoost_NO_SYSTEM_PATHS=ON )
-		mycmakeargs+=( -DBoost_INCLUDE_DIR="$(erdpfx)/boost/${CXXABI_V}/usr/include" )
-		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="$(erdpfx)/boost/${CXXABI_V}/usr/$(get_libdir)" )
-		_LD_LIBRARY_PATH="$(erdpfx)/boost/${CXXABI_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
-	fi
-}
-
 blender_configure_openxr_cxxyy() {
 	if use openxr ; then
 		export XR_OPENXR_SDK_ROOT_DIR="$(erdpfx)/openxr/${CXXABI_V}/usr"
@@ -1148,8 +1139,8 @@ _src_install() {
 		blender_set_wrapper_deps
 	fi
 	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
-	_LIBGL_DRIVERS_DIR=$(echo -e "${_LIBGL_DRIVERS_DIR[@]}" | head -n 1)
-	_LIBGL_DRIVERS_PATH=$(echo -e "${_LIBGL_DRIVERS_PATH[@]}" | head -n 1)
+	_LIBGL_DRIVERS_DIR=$(echo -e "${_LIBGL_DRIVERS_DIR[0]}")
+	_LIBGL_DRIVERS_PATH=$(echo -e "${_LIBGL_DRIVERS_PATH[0]}")
 	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 
 	local suffix=

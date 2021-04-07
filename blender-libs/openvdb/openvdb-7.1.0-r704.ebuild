@@ -10,10 +10,10 @@ inherit cmake flag-o-matic python-single-r1
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
-KEYWORDS="~amd64 ~x86"
-CXXABI=11
-LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
-SLOT_MAJ="7-${CXXABI}"
+KEYWORDS="~amd64 ~ppc64 ~x86"
+CXXABI=14 # originally 11
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
+SLOT_MAJ="7"
 SLOT="${SLOT_MAJ}/${PVR}"
 IUSE+=" +abi7-compat +blosc cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc egl \
 +jemalloc -log4cplus -numpy -openexr -python +static-libs tbb test -vdb_lod \
@@ -32,11 +32,11 @@ REQUIRED_USE+="
 	python? ( ${PYTHON_REQUIRED_USE} )
 	vdb_render? ( openexr )"
 # For dependencies, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.0.0/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.0.0/ci/install.sh
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.1.0/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.1.0/ci/install.sh
 # Assumes U 16.04
 DEPEND+="
-	>=blender-libs/boost-1.61:${CXXABI}=
+	>=dev-libs/boost-1.61:=
 	>=dev-cpp/tbb-2017.6
 	>=media-libs/ilmbase-2.2:=
 	>=sys-libs/zlib-1.2.7:=
@@ -88,8 +88,8 @@ BDEPEND+="
 SRC_URI="\
  https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
-PATCHES=( "${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
-	  "${FILESDIR}/${PN}-7.1.0-0002-Fix-doc-install-dir.patch" )
+PATCHES=( "${FILESDIR}/${P}-0001-Fix-multilib-header-source.patch"
+	  "${FILESDIR}/${P}-0002-Fix-doc-install-dir.patch" )
 RESTRICT="!test? ( test )"
 
 pkg_setup() {
@@ -126,21 +126,8 @@ src_configure() {
 	# To stay in sync with blender-libs/boost
 	append-cxxflags -std=c++${CXXABI}
 
-	# Add extra checks for downgrading to c++11
-	append-cxxflags -Wall -Werror
-
 	# Relax some warnings
 	append-cxxflags -Wno-error=class-memaccess -Wno-error=int-in-bool-context
-
-	# make_unique is c++14 and is being used so disable parts that reference
-	#   it
-	# make_unique was referenced in a header
-
-	# SESI_OPENVDB and SESI_OPENVDB_PRIM code contains c++14 code
-	#   referencing make_unique but not used.
-
-	# tools/LevelSetMeasure.h contains make_unique but not used by Blender.
-	#   So most of it can be c++11 compiled.
 
 	export LD_LIBRARY_PATH=\
 "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir)"

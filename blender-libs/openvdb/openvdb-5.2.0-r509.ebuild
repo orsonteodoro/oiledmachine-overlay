@@ -11,12 +11,12 @@ DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
 KEYWORDS="~amd64 ~x86"
-CXXABI=11
-LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
-SLOT_MAJ="4"
+CXXABI=14 # originally 11
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
+SLOT_MAJ="5"
 SLOT="${SLOT_MAJ}/${PVR}"
 # python is enabled upstream
-IUSE+=" +abi4-compat +blosc -doc egl -log4cplus -numpy +openexr -pdf -pydoc \
+IUSE+=" +abi5-compat +blosc -doc egl -log4cplus -numpy +openexr -pdf -pydoc \
 -python test"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
@@ -25,17 +25,17 @@ IUSE+=" +abi4-compat +blosc -doc egl -log4cplus -numpy +openexr -pdf -pydoc \
 # CMakeLists.txt requires it in this version.
 REQUIRED_USE+="
 	!python
-	abi4-compat
+	abi5-compat
 	blosc
 	openexr
 	python? ( ${PYTHON_REQUIRED_USE} )"
 # For dependencies, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v4.0.2/openvdb/INSTALL
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v4.0.2/travis/travis.run
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v5.2.0/openvdb/INSTALL
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v5.2.0/travis/travis.run
 # Assumes U 14.04 LTS
 DEPEND+="
 	>=dev-cpp/tbb-3
-	>=blender-libs/boost-1.53:${CXXABI}=
+	>=dev-libs/boost-1.53:=
 	blender-libs/mesa:${LLVM_V}=
 	media-libs/libglvnd
 	>=media-libs/glfw-2.7
@@ -86,14 +86,11 @@ BDEPEND+="
 	test? ( >=dev-util/cppunit-1.10 )"
 SRC_URI="\
  https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz \
-	-> ${P}.tar.gz
- https://dev.gentoo.org/~dracwyrm/patches/${P}-patchset-02.tar.xz"
-PATCHES=( "${WORKDIR}/${P}-patchset-02/0001-use-gnuinstalldirs.patch"
-"${WORKDIR}/${P}-patchset-02/0002-use-pkgconfig-for-ilmbase-and-openexr.patch"
-	"${WORKDIR}/${P}-patchset-02/0003-boost-1.65-numpy-support.patch"
-	"${FILESDIR}/${P}-findboost-fix.patch"
-	"${FILESDIR}/${P}-fix-const-correctness-for-unittest.patch"
-	"${FILESDIR}/${P}-fix-build-docs.patch" )
+	-> ${P}.tar.gz"
+PATCHES=( "${FILESDIR}/${P}-use-gnuinstalldirs.patch"
+	  "${FILESDIR}/${P}-use-pkgconfig-for-ilmbase-and-openexr.patch"
+	  "${FILESDIR}/${PN}-4.0.2-fix-const-correctness-for-unittest.patch"
+	  "${FILESDIR}/${PN}-4.0.2-fix-build-docs.patch" )
 RESTRICT="!test? ( test )"
 
 pkg_setup() {
@@ -129,10 +126,10 @@ src_configure() {
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 		-DCMAKE_INSTALL_PREFIX="$(iprfx)"
 		-DGLFW3_LOCATION="${myprefix}"
+		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
 		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
-		-DOPENVDB_ENABLE_3_ABI_COMPATIBLE=OFF
 		-DOPENVDB_ENABLE_RPATH=OFF
 		-DTBB_LOCATION="${myprefix}"
 		-DUSE_GLFW3=ON
@@ -164,5 +161,5 @@ src_install() {
 	cmake_src_install
 	mv "${ED}/usr/share" "${ED}/$(iprfx)" || die
 	docinto licenses
-	dodoc openvdb/LICENSE openvdb/COPYRIGHT
+	dodoc LICENSE openvdb/COPYRIGHT
 }

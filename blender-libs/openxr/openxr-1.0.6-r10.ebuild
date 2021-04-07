@@ -13,8 +13,8 @@ HOMEPAGE="https://khronos.org/openxr"
 KEYWORDS="~amd64"
 LICENSE="Apache-2.0 MIT"
 ORG_GH="https://github.com/KhronosGroup"
-CXXABI="11"
-LLVM_V="11" # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
+CXXABI="14" # originally 11
+LLVM_V="11" # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
 SLOT="${CXXABI}/${PVR}"
 MY_PN="OpenXR-SDK-Source"
 SRC_URI="
@@ -89,8 +89,8 @@ iprfx() {
 
 src_configure() {
 	ewarn "This ebuild-package is a Work in Progress (WIP)"
-	# Match Blender's c++11 default
-	sed -i -e "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 11|g" \
+	# Match Blender's c++${CXXABI}
+	sed -i -e "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXABI}|g" \
 		src/CMakeLists.txt || die
 
 	# For scanning errors introduced by downgrading from c++14 to c++11

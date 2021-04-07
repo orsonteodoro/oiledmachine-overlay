@@ -11,11 +11,11 @@ DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
 KEYWORDS="~amd64 ~x86"
-CXXABI=14
-LLVM_V=11 # originally 10, do not exceed LLVM_MAX_SLOT in mesa stable
-SLOT_MAJ="7-${CXXABI}"
+CXXABI=14 # originally 11
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
+SLOT_MAJ="5"
 SLOT="${SLOT_MAJ}/${PVR}"
-IUSE+=" +abi7-compat +blosc cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc egl \
+IUSE+=" +abi5-compat +blosc cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc egl \
 +jemalloc -log4cplus -numpy -openexr -python +static-libs tbb test -vdb_lod \
 +vdb_print -vdb_render -vdb_view"
 # Blender only uses static-libs to avoid c++14
@@ -26,7 +26,7 @@ VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
 REQUIRED_USE+="
 	!python
 	!test
-	abi7-compat
+	abi5-compat
 	jemalloc? ( || ( test ${VDB_UTILS} ) )
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
@@ -36,7 +36,7 @@ REQUIRED_USE+="
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.0.0/ci/install.sh
 # Assumes U 16.04
 DEPEND+="
-	>=blender-libs/boost-1.61:${CXXABI}=
+	>=dev-libs/boost-1.61:=
 	>=dev-cpp/tbb-2017.6
 	>=media-libs/ilmbase-2.2:=
 	>=sys-libs/zlib-1.2.7:=
@@ -107,7 +107,8 @@ is greater than \$(nproc)/4"
 
 src_prepare() {
 	cmake_src_prepare
-	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXABI}|" \
+	# We are only interested parts that don't require c++14.
+	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 11|" \
 		CMakeLists.txt || die
 	sed -i \
 	"s|CMAKE_CXX_STANDARD_REQUIRED ON|CMAKE_CXX_STANDARD_REQUIRED OFF|" \
@@ -126,11 +127,18 @@ src_configure() {
 	# To stay in sync with blender-libs/boost
 	append-cxxflags -std=c++${CXXABI}
 
-	# Add extra checks for testing against c++${CXXABI}
-	append-cxxflags -Wall -Werror
-
 	# Relax some warnings
 	append-cxxflags -Wno-error=class-memaccess -Wno-error=int-in-bool-context
+
+	# make_unique is c++14 and is being used so disable parts that reference
+	#   it
+	# make_unique was referenced in a header
+
+	# SESI_OPENVDB and SESI_OPENVDB_PRIM code contains c++14 code
+	#   referencing make_unique but not used.
+
+	# tools/LevelSetMeasure.h contains make_unique but not used by Blender.
+	#   So most of it can be c++11 compiled.
 
 	export LD_LIBRARY_PATH=\
 "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir)"
@@ -141,7 +149,7 @@ src_configure() {
 		-DCHOST="${CHOST}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 		-DCMAKE_INSTALL_PREFIX="$(iprfx)"
-		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ%-*}
+		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
 		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON $(usex vdb_print ON \
 			$(usex vdb_render ON $(usex vdb_view ON OFF))))
 		-DOPENVDB_BUILD_DOCS=$(usex doc)

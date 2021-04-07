@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{7..9} )
+PYTHON_COMPAT=( python2_7 python3_{6..9} )
 
 inherit cmake flag-o-matic python-single-r1
 
@@ -11,83 +11,86 @@ DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
 KEYWORDS="~amd64 ~x86"
-CXXABI=11
-LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
-SLOT_MAJ="6"
+CXXABI=14 # originally 11
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
+SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PVR}"
 # python is enabled upstream
-IUSE+=" +abi6-compat +blosc doc egl +jemalloc -log4cplus -numpy -openexr \
--python +static-libs tbb test -vdb_lod +vdb_print -vdb_render -vdb_view"
+IUSE+=" +abi3-compat +blosc -doc egl -log4cplus -numpy +openexr -pdf -pydoc \
+-python test"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 # Prevent file collisions also with ABI masks
-VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
+# The docs say that blosc and openexr are optional but the openvdb folder
+# CMakeLists.txt requires it in this version.
 REQUIRED_USE+="
 	!python
-	abi6-compat
-	jemalloc? ( || ( test ${VDB_UTILS} ) )
-	python? ( ${PYTHON_REQUIRED_USE} )
-	vdb_render? ( openexr )"
+	abi3-compat
+	blosc
+	openexr
+	python? ( ${PYTHON_REQUIRED_USE} )"
 # For dependencies, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v6.2.1/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v6.2.1/ci/install.sh
-# Assumes U 16.04
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v5.2.0/openvdb/INSTALL
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v5.2.0/travis/travis.run
+# Assumes U 14.04 LTS
 DEPEND+="
-	>=blender-libs/boost-1.61:${CXXABI}=
-	>=dev-cpp/tbb-4.46
-	>=media-libs/ilmbase-2.2:=
-	>=sys-libs/zlib-1.2.7:=
-	blosc? ( >=dev-libs/c-blosc-1.5:= )
-	jemalloc? ( dev-libs/jemalloc:= )
+	>=dev-cpp/tbb-3
+	>=dev-libs/boost-1.53:=
+	blender-libs/mesa:${LLVM_V}=
+	media-libs/libglvnd
+	>=media-libs/glfw-2.7
+	media-libs/glu
+	media-libs/ilmbase:=
+	sys-libs/zlib:=
+	x11-libs/libX11
+	x11-libs/libXcursor
+	x11-libs/libXi
+	x11-libs/libXinerama
+	x11-libs/libXrandr
+	x11-libs/libXxf86vm
+	blosc? ( >=dev-libs/c-blosc-1.5.0:= )
+	egl? (
+		>=media-libs/glfw-3.3
+		blender-libs/mesa:${LLVM_V}=[egl?]
+	)
 	log4cplus? ( >=dev-libs/log4cplus-1.1.2:= )
-	openexr? ( >=media-libs/openexr-2.2:= )
+	openexr? ( media-libs/openexr:= )
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=blender-libs/boost-1.61:'${CXXABI}'=[numpy?,python?,${PYTHON_USEDEP}]
+			>=blender-libs/boost-1.57:'${CXXABI}'=[python?,${PYTHON_USEDEP}]
 			numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
 		')
-	)
-	vdb_view? (
-		media-libs/glu
-		>=media-libs/glfw-3.1
-		blender-libs/mesa:${LLVM_V}=
-		media-libs/libglvnd
-		x11-libs/libX11
-		x11-libs/libXcursor
-		x11-libs/libXi
-		x11-libs/libXinerama
-		x11-libs/libXrandr
-		x11-libs/libXxf86vm
-		egl? (
-			>=media-libs/glfw-3.3
-			blender-libs/mesa:${LLVM_V}=[egl?]
-		)
 	)"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
-	>=dev-util/cmake-3.16.2-r1
-	virtual/pkgconfig
 	|| (
 		>=sys-devel/clang-3.8
 		>=sys-devel/gcc-4.8
-		>=dev-lang/icc-17
+		>=dev-lang/icc-15
 	)
+	virtual/pkgconfig
 	doc? (
-		>=app-doc/doxygen-1.8.8
+		>=app-doc/doxygen-1.8.11
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
 		dev-texlive/texlive-latex
 		dev-texlive/texlive-latexextra
+		pdf? (
+			app-text/ghostscript-gpl
+			dev-texlive/texlive-latex
+		)
+		pydoc? ( >=dev-python/epydoc-3 )
 	)
 	test? ( >=dev-util/cppunit-1.10 )"
 SRC_URI="\
  https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
-PATCHES=( "${FILESDIR}/${P}-fix-multilib-header-source.patch"
+PATCHES=( "${FILESDIR}/${P}-use-gnuinstalldirs.patch"
+	  "${FILESDIR}/${P}-use-pkgconfig-for-ilmbase-and-openexr.patch"
 	  "${FILESDIR}/${PN}-4.0.2-fix-const-correctness-for-unittest.patch"
-	  "${FILESDIR}/${P}-use-gnuinstalldirs.patch" )
+	  "${FILESDIR}/${PN}-4.0.2-fix-build-docs.patch" )
 RESTRICT="!test? ( test )"
 
 pkg_setup() {
@@ -101,12 +104,6 @@ pkg_setup() {
 "${PN} may lock up or freeze the computer if the N value in MAKEOPTS=\"-jN\" \
 is greater than \$(nproc)/4"
 	fi
-}
-
-src_prepare() {
-	cmake_src_prepare
-	sed -i -e "s|lib/cmake/glfw|$(get_libdir)/lib/cmake/glfw|g" \
-		"cmake/OpenVDBGLFW3Setup.cmake" || die
 }
 
 iprfx() {
@@ -125,44 +122,34 @@ src_configure() {
 "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr"
 
 	local mycmakeargs=(
-		-DCHOST="${CHOST}"
+		-DBLOSC_LOCATION="${myprefix}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 		-DCMAKE_INSTALL_PREFIX="$(iprfx)"
+		-DGLFW3_LOCATION="${myprefix}"
 		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
-		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON $(usex vdb_print ON \
-			$(usex vdb_render ON $(usex vdb_view ON OFF))))
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
 		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
-		-DOPENVDB_BUILD_VDB_LOD=$(usex vdb_lod)
-		-DOPENVDB_BUILD_VDB_PRINT=$(usex vdb_print)
-		-DOPENVDB_BUILD_VDB_RENDER=$(usex vdb_render)
-		-DOPENVDB_BUILD_VDB_VIEW=$(usex vdb_view)
-		-DOPENVDB_CORE_STATIC=$(usex static-libs)
 		-DOPENVDB_ENABLE_RPATH=OFF
-		-DUSE_BLOSC=$(usex blosc)
-		-DUSE_EXR=$(use openexr)
-		-DUSE_LOG4CPLUS=$(usex log4cplus)
+		-DTBB_LOCATION="${myprefix}"
+		-DUSE_GLFW3=ON
 	)
 
-	if use vdb_view ; then
-		export CMAKE_INCLUDE_PATH=\
+	export CMAKE_INCLUDE_PATH=\
 "${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
-		export CMAKE_LIBRARY_PATH=\
+	export CMAKE_LIBRARY_PATH=\
 "${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
-		mycmakeargs+=(
-			-DOpenGL_GL_PREFERENCE=GLVND
-			-DOPENGL_egl_LIBRARY=/usr/$(get_libdir)/libEGL.so
-			-DOPENGL_glx_LIBRARY=/usr/$(get_libdir)/libGLX.so
-			-DOPENGL_opengl_LIBRARY=/usr/$(get_libdir)/libOpenGL.so
-		)
-	fi
+	mycmakeargs+=(
+		-DOpenGL_GL_PREFERENCE=GLVND
+		-DOPENGL_egl_LIBRARY=/usr/$(get_libdir)/libEGL.so
+		-DOPENGL_glx_LIBRARY=/usr/$(get_libdir)/libGLX.so
+		-DOPENGL_opengl_LIBRARY=/usr/$(get_libdir)/libOpenGL.so
+	)
 
 	if use python ; then
 		mycmakeargs+=(
 			-DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)"
-			-DUSE_NUMPY=$(usex numpy)
 		)
 	fi
 	use test && mycmakeargs+=( -DCPPUNIT_LOCATION="${myprefix}" )

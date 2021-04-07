@@ -1,21 +1,18 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# This is the first version with build system updated to c++14 but without any c++14 code.
-# See https://github.com/KhronosGroup/OpenXR-SDK-Source/blob/release-1.0.4/CHANGELOG.SDK.md
-
 EAPI=7
 
 PYTHON_COMPAT=( python3_{6..9} )
-inherit cmake-utils eutils python-single-r1 toolchain-funcs
+inherit cmake-utils eutils flag-o-matic python-single-r1 toolchain-funcs
 
 DESCRIPTION="Generated headers and sources for OpenXR loader."
 HOMEPAGE="https://khronos.org/openxr"
 KEYWORDS="~amd64"
 LICENSE="Apache-2.0 MIT"
 ORG_GH="https://github.com/KhronosGroup"
-CXXABI="11"
-LLVM_V="11" # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
+CXXABI="14" # originally 11
+LLVM_V="11" # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
 SLOT="${CXXABI}/${PVR}"
 MY_PN="OpenXR-SDK-Source"
 SRC_URI="
@@ -90,6 +87,14 @@ iprfx() {
 
 src_configure() {
 	ewarn "This ebuild-package is a Work in Progress (WIP)"
+	# Match Blender's c++${CXXABI}
+	sed -i -e "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXABI}|g" \
+		src/CMakeLists.txt || die
+
+	# For scanning errors introduced by downgrading from c++14 to c++11
+	# There's still a chance that it doesn't flag headers with c++14.
+	append-cxxflags -Wall -Werror
+
 	mycmakeargs=(
 		-DBUILD_API_LAYERS=OFF
 		-DBUILD_TESTS=OFF

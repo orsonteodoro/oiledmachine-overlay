@@ -12,7 +12,6 @@ inherit multibuild
 
 # @ECLASS-VARIABLE: EPLATFORMS
 # @DESCRIPTION: (Public) Generates a list of implementations for the platforms-multibuild context
-# EPLATFORMS="android arm native rpi web"
 
 IUSE+=" ${EPLATFORMS}"
 REQUIRED_USE="|| ( ${EPLATFORMS} )"
@@ -29,7 +28,7 @@ _platforms_multibuild_wrapper() {
 	mkdir -p "${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
 	HOME="${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
 
-	cd "${BUILD_DIR}" >/dev/null
+	cd "${BUILD_DIR}" 2>/dev/null
 
 	# run it
 	"${@}"

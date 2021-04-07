@@ -3,38 +3,41 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{6..9} )
+PYTHON_COMPAT=( python2_7 python3_{7..9} )
 
 inherit cmake flag-o-matic python-single-r1
 
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
-KEYWORDS="~amd64 ~x86"
-CXXABI=11
-LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
-SLOT_MAJ="4"
+KEYWORDS="~amd64 ~ppc64 ~x86"
+CXXABI=14 # originally 11
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
+SLOT_MAJ="6"
 SLOT="${SLOT_MAJ}/${PVR}"
-# python is enabled upstream
-IUSE+=" +abi4-compat +blosc doc egl +jemalloc -log4cplus -numpy -openexr \
--python +static-libs tbb test -vdb_lod +vdb_print -vdb_render -vdb_view"
+IUSE+=" +abi6-compat +blosc cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc egl \
++jemalloc -log4cplus -numpy -openexr -python +static-libs tbb test -vdb_lod \
++vdb_print -vdb_render -vdb_view"
+# Blender only uses static-libs to avoid c++14
+# Unit tests uses c++14 code
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
-# Prevent file collisions also with ABI masks
 VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
 REQUIRED_USE+="
 	!python
-	abi4-compat
+	!test
+	abi6-compat
 	jemalloc? ( || ( test ${VDB_UTILS} ) )
+	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	vdb_render? ( openexr )"
 # For dependencies, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v6.2.1/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v6.2.1/ci/install.sh
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.1.0/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.1.0/ci/install.sh
 # Assumes U 16.04
 DEPEND+="
-	>=blender-libs/boost-1.61:${CXXABI}=
-	>=dev-cpp/tbb-4.46
+	>=dev-libs/boost-1.61:=
+	>=dev-cpp/tbb-2017.6
 	>=media-libs/ilmbase-2.2:=
 	>=sys-libs/zlib-1.2.7:=
 	blosc? ( >=dev-libs/c-blosc-1.5:= )
@@ -44,7 +47,7 @@ DEPEND+="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=blender-libs/boost-1.61:'${CXXABI}'=[numpy?,python?,${PYTHON_USEDEP}]
+			>=blender-libs/boost-1.68:'${CXXABI}'=[numpy?,python?,${PYTHON_USEDEP}]
 			numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
 		')
 	)
@@ -70,7 +73,7 @@ BDEPEND+="
 	virtual/pkgconfig
 	|| (
 		>=sys-devel/clang-3.8
-		>=sys-devel/gcc-4.8
+		>=sys-devel/gcc-6.3.1
 		>=dev-lang/icc-17
 	)
 	doc? (
@@ -85,9 +88,8 @@ BDEPEND+="
 SRC_URI="\
  https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
-PATCHES=( "${FILESDIR}/${P}-fix-multilib-header-source.patch"
-	  "${FILESDIR}/${PN}-4.0.2-fix-const-correctness-for-unittest.patch"
-	  "${FILESDIR}/${P}-use-gnuinstalldirs.patch" )
+PATCHES=( "${FILESDIR}/${P}-0001-Fix-multilib-header-source.patch"
+	  "${FILESDIR}/${P}-0002-Fix-doc-install-dir.patch" )
 RESTRICT="!test? ( test )"
 
 pkg_setup() {
@@ -105,6 +107,12 @@ is greater than \$(nproc)/4"
 
 src_prepare() {
 	cmake_src_prepare
+	# We are only interested parts that don't require c++14.
+	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXABI}|" \
+		CMakeLists.txt || die
+	sed -i \
+	"s|CMAKE_CXX_STANDARD_REQUIRED ON|CMAKE_CXX_STANDARD_REQUIRED OFF|" \
+		CMakeLists.txt || die
 	sed -i -e "s|lib/cmake/glfw|$(get_libdir)/lib/cmake/glfw|g" \
 		"cmake/OpenVDBGLFW3Setup.cmake" || die
 }
@@ -119,6 +127,19 @@ src_configure() {
 	# To stay in sync with blender-libs/boost
 	append-cxxflags -std=c++${CXXABI}
 
+	# Relax some warnings
+	append-cxxflags -Wno-error=class-memaccess -Wno-error=int-in-bool-context
+
+	# make_unique is c++14 and is being used so disable parts that reference
+	#   it
+	# make_unique was referenced in a header
+
+	# SESI_OPENVDB and SESI_OPENVDB_PRIM code contains c++14 code
+	#   referencing make_unique but not used.
+
+	# tools/LevelSetMeasure.h contains make_unique but not used by Blender.
+	#   So most of it can be c++11 compiled.
+
 	export LD_LIBRARY_PATH=\
 "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir)"
 	export BOOST_ROOT=\
@@ -128,7 +149,7 @@ src_configure() {
 		-DCHOST="${CHOST}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 		-DCMAKE_INSTALL_PREFIX="$(iprfx)"
-		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
+		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ%-*}
 		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON $(usex vdb_print ON \
 			$(usex vdb_render ON $(usex vdb_view ON OFF))))
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
@@ -138,10 +159,13 @@ src_configure() {
 		-DOPENVDB_BUILD_VDB_PRINT=$(usex vdb_print)
 		-DOPENVDB_BUILD_VDB_RENDER=$(usex vdb_render)
 		-DOPENVDB_BUILD_VDB_VIEW=$(usex vdb_view)
+		-DOPENVDB_CORE_SHARED=ON
 		-DOPENVDB_CORE_STATIC=$(usex static-libs)
 		-DOPENVDB_ENABLE_RPATH=OFF
 		-DUSE_BLOSC=$(usex blosc)
-		-DUSE_EXR=$(use openexr)
+		-DUSE_CCACHE=OFF
+		-DUSE_COLORED_OUTPUT=ON
+		-DUSE_EXR=$(usex openexr)
 		-DUSE_LOG4CPLUS=$(usex log4cplus)
 	)
 
@@ -159,13 +183,19 @@ src_configure() {
 		)
 	fi
 
-	if use python ; then
+	if use python; then
 		mycmakeargs+=(
 			-DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)"
+			-DPython_EXECUTABLE="${EPYTHON}"
 			-DUSE_NUMPY=$(usex numpy)
 		)
 	fi
-	use test && mycmakeargs+=( -DCPPUNIT_LOCATION="${myprefix}" )
+
+	if use cpu_flags_x86_avx; then
+		mycmakeargs+=( -DOPENVDB_SIMD=AVX )
+	elif use cpu_flags_x86_sse4_2; then
+		mycmakeargs+=( -DOPENVDB_SIMD=SSE42 )
+	fi
 
 	cmake_src_configure
 }

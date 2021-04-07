@@ -11,11 +11,11 @@ DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
 KEYWORDS="~amd64 ~x86"
-CXXABI=11
-LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
-SLOT_MAJ="5"
+CXXABI=14 # originally 11
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
+SLOT_MAJ="6"
 SLOT="${SLOT_MAJ}/${PVR}"
-IUSE+=" +abi5-compat +blosc cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc egl \
+IUSE+=" +abi6-compat +blosc cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc egl \
 +jemalloc -log4cplus -numpy -openexr -python +static-libs tbb test -vdb_lod \
 +vdb_print -vdb_render -vdb_view"
 # Blender only uses static-libs to avoid c++14
@@ -26,7 +26,7 @@ VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
 REQUIRED_USE+="
 	!python
 	!test
-	abi5-compat
+	abi6-compat
 	jemalloc? ( || ( test ${VDB_UTILS} ) )
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
@@ -36,7 +36,7 @@ REQUIRED_USE+="
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.0.0/ci/install.sh
 # Assumes U 16.04
 DEPEND+="
-	>=blender-libs/boost-1.61:${CXXABI}=
+	>=dev-libs/boost-1.61:=
 	>=dev-cpp/tbb-2017.6
 	>=media-libs/ilmbase-2.2:=
 	>=sys-libs/zlib-1.2.7:=
@@ -127,14 +127,11 @@ src_configure() {
 	# To stay in sync with blender-libs/boost
 	append-cxxflags -std=c++${CXXABI}
 
-	# Add extra checks for downgrading to c++11
-	append-cxxflags -Wall -Werror
-
 	# Relax some warnings
 	append-cxxflags -Wno-error=class-memaccess -Wno-error=int-in-bool-context
 
 	# make_unique is c++14 and is being used so disable parts that reference
-	#  it
+	#   it
 	# make_unique was referenced in a header
 
 	# SESI_OPENVDB and SESI_OPENVDB_PRIM code contains c++14 code

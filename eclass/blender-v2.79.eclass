@@ -10,9 +10,12 @@
 
 # Based on blender-2.79b-r2 from the gentoo overlay.
 
-CXXABI_V=11
+# >=LLVM 6 <--> gnu++14 https://github.com/llvm/llvm-project/blob/llvmorg-6.0.1/clang/lib/Frontend/CompilerInvocation.cpp#L1768
+# >=LLVM 5 <--> gnu++11 https://github.com/llvm/llvm-project/blob/llvmorg-5.0.2/clang/lib/Frontend/CompilerInvocation.cpp#L1695
+
+CXXABI_V=14 # originally 11
 HAS_PLAYER=1
-LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
 LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python2_7 python3_{6,7} ) # The blender2.7 branch allowed for 2.7.
 
@@ -64,10 +67,6 @@ game-engine? (
 # extern/carve/include/carve/cbrt.h s_cbrt.c
 # release/scripts/addons/render_povray/templates_pov/chess2.pov AFL-3.0
 # release/scripts/addons/render_povray/templates_pov/abyss.pov CC-BY-SA-3.0
-
-SRC_URI+=" \
-https://github.com/blender/blender/commit/f1e6838376a0a07b5ce45d70ad18357c7c6cc2eb.patch -> \
-	blender-2.79b-find-blosc.patch"
 
 # The release USE flag depends on platform defaults.
 # openvdb requires openexr was applied >=2.83 but not 2.79.  Applied anyway.
@@ -146,7 +145,7 @@ REQUIRED_USE+="
 # The pugixml version was not declared in versions.cmake but based on 2.80.
 # openimageio is subslot triggered to apply oiio compat patch.
 BOOST_V="1.60"
-BOOST_DEPEND=">=blender-libs/boost-${BOOST_V}:${CXXABI_V}=[nls?,threads(+),static-libs]"
+BOOST_DEPEND=">=dev-libs/boost-${BOOST_V}:=[nls?,threads(+),static-libs]"
 TBB_DEPEND=">=dev-cpp/tbb-2017.7"
 RDEPEND+=" ${PYTHON_DEPS}
 	>=dev-lang/python-3.6.2
@@ -231,8 +230,8 @@ abi5-compat? ( >=blender-libs/openvdb-3.3.0:5=[${PYTHON_SINGLE_USEDEP},abi5-comp
 	        <blender-libs/openvdb-7.1:5=[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
 abi6-compat? ( >=blender-libs/openvdb-3.3.0:6=[${PYTHON_SINGLE_USEDEP},abi6-compat(+)]
 	        <blender-libs/openvdb-7.1:6=[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
-abi7-compat? ( >=blender-libs/openvdb-3.3.0:7-${CXXABI_V}=[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-	        <blender-libs/openvdb-7.1:7-${CXXABI_V}=[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
+abi7-compat? ( >=blender-libs/openvdb-3.3.0:7=[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	        <blender-libs/openvdb-7.1:7=[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
 		)
 		abi3-compat? (
 			>=blender-libs/openvdb-3.1.0:3=[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
@@ -277,6 +276,13 @@ BDEPEND+="
 	nls? ( sys-devel/gettext )
 "
 
+SRC_URI+=" \
+https://github.com/blender/blender/commit/f1e6838376a0a07b5ce45d70ad18357c7c6cc2eb.patch -> \
+	${P}-find-blosc-f1e6838.patch
+https://github.com/blender/blender/commit/171c4fb238a2a65291540ac5406187bc69f3a6bc.patch -> \
+	${P}-update-cxx14-171c4fb.patch
+"
+
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.79b-fix-install-rules.patch"
 	"${FILESDIR}/${PN}-2.79b-gcc-8.patch"
@@ -287,6 +293,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.79b-bundled-lib-search-path.patch"
 	"${FILESDIR}/${PN}-2.79b-portable-dest.patch"
 	"${DISTDIR}/${PN}-2.79b-find-blosc.patch"
+	"${DISTDIR}/${P}-update-cxx14-171c4fb.patch"
 )
 
 _blender_pkg_setup() {
@@ -294,7 +301,7 @@ _blender_pkg_setup() {
 	export OPENVDB_V=\
 $(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compat 4 3)))) "")
 	export OPENVDB_V_DIR=\
-$(usex openvdb $(usex abi7-compat 7-${CXXABI_V} $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compat 4 3)))) "")
+$(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compat 4 3)))) "")
 	if use openvdb ; then
 		if ! grep -q -F -e "delta()" \
 "$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" 2>/dev/null ; then
@@ -383,7 +390,6 @@ ebuild/upstream developers only."
 
 	blender_configure_simd_cycles
 	blender_configure_eigen
-	blender_configure_boost_cxxyy
 	blender_configure_openvdb_cxxyy
 	blender_configure_osl_match_llvm
 

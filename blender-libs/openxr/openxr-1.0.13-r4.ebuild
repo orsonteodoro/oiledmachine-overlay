@@ -11,15 +11,15 @@ HOMEPAGE="https://khronos.org/openxr"
 KEYWORDS="~amd64"
 LICENSE="Apache-2.0 MIT"
 ORG_GH="https://github.com/KhronosGroup"
-CXXABI="11"
-LLVM_V="11" # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
+CXXABI="14" # originally 11
+LLVM_V="11" # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
 SLOT="${CXXABI}/${PVR}"
 MY_PN="OpenXR-SDK-Source"
 SRC_URI="
 ${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
 	-> ${P}.tar.gz"
 NV_DRIVER_VERSION_VULKAN="390.132"
-IUSE+=" +system-jsoncpp video_cards_amdgpu video_cards_amdgpu-pro \
+IUSE+=" egl gles2 +system-jsoncpp video_cards_amdgpu video_cards_amdgpu-pro \
 video_cards_amdgpu-pro-lts video_cards_i965 video_cards_iris \
 video_cards_nvidia video_cards_radeonsi wayland xcb +xlib"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
@@ -53,7 +53,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	x11-base/xorg-drivers[video_cards_radeonsi]
 		)
 	)
-	blender-libs/mesa:${LLVM_V}=
+	blender-libs/mesa:${LLVM_V}=[egl?,gles2?]
 	media-libs/libglvnd
 	media-libs/vulkan-loader
 	system-jsoncpp? ( dev-libs/jsoncpp )
@@ -87,8 +87,8 @@ iprfx() {
 
 src_configure() {
 	ewarn "This ebuild-package is a Work in Progress (WIP)"
-	# Match Blender's c++11 default
-	sed -i -e "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 11|g" \
+	# Match Blender's c++${CXXABI}
+	sed -i -e "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXABI}|g" \
 		src/CMakeLists.txt || die
 
 	# For scanning errors introduced by downgrading from c++14 to c++11

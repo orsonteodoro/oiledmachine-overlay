@@ -8,8 +8,8 @@
 # The blender-v2.82.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
-CXXABI_V=11
-LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable
+CXXABI_V=14 # originally 11
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
 LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{7,8} )
 
@@ -100,7 +100,7 @@ REQUIRED_USE+="
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 # Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
 BOOST_V="1.70"
-BOOST_DEPEND=">=blender-libs/boost-${BOOST_V}:${CXXABI_V}=[nls?,threads(+)]"
+BOOST_DEPEND=">=dev-libs/boost-${BOOST_V}:=[nls?,threads(+)]"
 TBB_DEPEND=">=dev-cpp/tbb-2019.9"
 RDEPEND+=" ${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
@@ -176,8 +176,8 @@ RDEPEND+=" ${PYTHON_DEPS}
 		     >=dev-libs/boost-${BOOST_V}:=[nls?,threads(+)] )
 	)
 	openvdb? (
-	>=blender-libs/openvdb-7:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-	 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	>=blender-libs/openvdb-7:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
 		>=dev-libs/c-blosc-1.5.0
 	)
 	optix? ( >=dev-libs/optix-7 )
@@ -220,16 +220,21 @@ BDEPEND+="
 	nls? ( sys-devel/gettext )
 "
 
+SRC_URI+=" https://github.com/blender/blender/commit/171c4fb238a2a65291540ac5406187bc69f3a6bc.patch -> \
+	${P}-update-cxx14-171c4fb.patch
+"
+
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
 	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
+	"${DISTDIR}/${P}-update-cxx14-171c4fb.patch"
 )
 
 _blender_pkg_setup() {
 	# Needs OpenCL 1.2 (GCN 2)
 	export OPENVDB_V=$(usex openvdb 7 "")
-	export OPENVDB_V_DIR=$(usex openvdb 7-${CXXABI_V} "")
+	export OPENVDB_V_DIR=$(usex openvdb 7 "")
 	if use openvdb ; then
 		if ! grep -q -F -e "delta()" \
 "$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" 2>/dev/null ; then
@@ -277,7 +282,6 @@ ebuild/upstream developers only."
 
 	blender_configure_simd_cycles
 	blender_configure_eigen
-	blender_configure_boost_cxxyy
 	blender_configure_openvdb_cxxyy
 	blender_configure_osl_match_llvm
 

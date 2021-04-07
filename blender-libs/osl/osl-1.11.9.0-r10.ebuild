@@ -5,8 +5,8 @@ EAPI=7
 inherit cmake-utils llvm multilib-minimal static-libs toolchain-funcs
 
 # check this on updates
-CXXABI=11
-LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in stable mesa
+CXXABI=14 # originally 11
+LLVM_V=11 # originally 9, do not exceed LLVM_MAX_SLOT in stable mesa or make different from mesa stable
 LLVM_MAX_SLOT=${LLVM_V}
 
 DESCRIPTION="Advanced shading language for production GI renderers"
@@ -33,7 +33,7 @@ IUSE="doc optix partio test ${CPU_FEATURES[@]%:*}"
 #   https://github.com/imageworks/OpenShadingLanguage/releases/tag/Release-1.10.2
 RDEPEND="
 	sys-devel/llvm:${LLVM_V}
-	>=blender-libs/boost-1.55:${CXXABI}=
+	>=dev-libs/boost-1.55:=
 	dev-libs/pugixml
 	>=media-libs/openexr-2:=
 	>=media-libs/ilmbase-2:=
@@ -116,14 +116,11 @@ apfx() {
 src_configure() {
 	configure_abi() {
 		cd "${BUILD_DIR}" || die
-		export LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir)"
 		static-libs_configure() {
 			cd "${BUILD_DIR}" || die
 
 			unset CMAKE_INCLUDE_PATH
 			unset CMAKE_LIBRARY_PATH
-
-			export BOOST_ROOT="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr"
 
 			local cpufeature
 			local mysimd=()
@@ -158,7 +155,9 @@ src_configure() {
 				-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 				-DENABLERTTI=OFF
 				-DINSTALL_DOCS=$(usex doc)
+				-DLLVM_LIBRARY=$(/usr/lib/llvm/${LLVM_V}/bin/${CHOST}-llvm-config --libfiles | tr " " ";")
 				-DLLVM_STATIC=OFF
+				-DLLVM_VERSION=${LLVM_V}
 				-DOSL_BUILD_TESTS=$(usex test)
 				-DOSL_SHADER_INSTALL_DIR="include/OSL/shaders"
 				-DSTOP_ON_WARNING=OFF
