@@ -263,10 +263,10 @@ function ot-kernel_apply_tresor_fixes() {
 
 	if use tresor_x86_64 || use tresor_i686 ; then
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.4.patch"
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.5.patch"
 	else
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.4.patch"
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.5.patch"
 	fi
 
 	_dpatch "${PATCH_OPS}" \
@@ -274,7 +274,7 @@ function ot-kernel_apply_tresor_fixes() {
 	if use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
 			_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-256-bit-aes-support-i686-v3-for-5.10.patch"
+"${FILESDIR}/tresor-256-bit-aes-support-i686-v3.1-for-5.10.patch"
 		fi
 	fi
 

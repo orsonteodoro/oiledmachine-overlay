@@ -14,7 +14,7 @@ inherit multilib-minimal
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
-PATCHSET="3"
+PATCHSET="7"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
 SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-44.1.0.zip
@@ -23,11 +23,12 @@ SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="amd64 arm64 ~x86"
-IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio selinux +suid +system-ffmpeg +system-icu -tcmalloc vaapi wayland widevine"
+IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu -tcmalloc vaapi wayland widevine"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 REQUIRED_USE="
 	component-build? ( !suid )
+	screencast? ( wayland )
 "
 
 COMMON_X_DEPEND="
@@ -72,6 +73,7 @@ COMMON_DEPEND="
 	)
 	sys-apps/dbus:=[${MULTILIB_USEDEP}]
 	sys-apps/pciutils:=[${MULTILIB_USEDEP}]
+	<sys-libs/glibc-2.33[${MULTILIB_USEDEP}]
 	virtual/udev
 	x11-libs/cairo:=[${MULTILIB_USEDEP}]
 	x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
@@ -89,6 +91,7 @@ COMMON_DEPEND="
 		wayland? (
 			dev-libs/wayland:=[${MULTILIB_USEDEP}]
 			dev-libs/libffi:=[${MULTILIB_USEDEP}]
+			screencast? ( media-video/pipewire:0/0.3 )
 			x11-libs/gtk+:3[wayland,X,${MULTILIB_USEDEP}]
 			x11-libs/libdrm:=[${MULTILIB_USEDEP}]
 			x11-libs/libxkbcommon:=[${MULTILIB_USEDEP}]
@@ -230,12 +233,11 @@ src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
 
-	rm "${WORKDIR}/patches/chromium-84-blink-disable-clang-format.patch" || die
-
 	local PATCHES=(
 		"${WORKDIR}/patches"
-		"${FILESDIR}/chromium-88-ozone-deps.patch"
-		"${FILESDIR}/chromium-87-webcodecs-deps.patch"
+		"${FILESDIR}/chromium-89-webcodecs-deps.patch"
+		"${FILESDIR}/chromium-89-EnumTable-crash.patch"
+		"${FILESDIR}/chromium-shim_headers.patch"
 	)
 
 	default
@@ -271,13 +273,6 @@ src_prepare() {
 		third_party/angle/src/third_party/libXNVCtrl
 		third_party/angle/src/third_party/trace_event
 		third_party/angle/src/third_party/volk
-		third_party/angle/third_party/glslang
-		third_party/angle/third_party/spirv-headers
-		third_party/angle/third_party/spirv-tools
-		third_party/angle/third_party/vulkan-headers
-		third_party/angle/third_party/vulkan-loader
-		third_party/angle/third_party/vulkan-tools
-		third_party/angle/third_party/vulkan-validation-layers
 		third_party/apple_apsl
 		third_party/axe-core
 		third_party/blink
@@ -334,7 +329,7 @@ src_prepare() {
 		third_party/freetype
 		third_party/fusejs
 		third_party/libgifcodec
-		third_party/glslang
+		third_party/liburlpattern
 		third_party/google_input_tools
 		third_party/google_input_tools/third_party/closure_library
 		third_party/google_input_tools/third_party/closure_library/third_party/closure
@@ -360,6 +355,7 @@ src_prepare() {
 		third_party/libsrtp
 		third_party/libsync
 		third_party/libudev
+		third_party/libva_protected_content
 		third_party/libvpx
 		third_party/libvpx/source/libvpx/third_party/x86inc
 		third_party/libwebm
@@ -375,6 +371,7 @@ src_prepare() {
 		third_party/markupsafe
 		third_party/mesa
 		third_party/metrics_proto
+		third_party/minigbm
 		third_party/modp_b64
 		third_party/nasm
 		third_party/nearby
@@ -397,6 +394,7 @@ src_prepare() {
 		third_party/pdfium/third_party/libtiff
 		third_party/pdfium/third_party/skia_shared
 		third_party/perfetto
+		third_party/perfetto/protos/third_party/chromium
 		third_party/pffft
 		third_party/ply
 		third_party/polymer
@@ -410,7 +408,6 @@ src_prepare() {
 		third_party/s2cellid
 		third_party/schema_org
 		third_party/securemessage
-		third_party/shaka-player
 		third_party/shell-encryption
 		third_party/simplejson
 		third_party/skia
@@ -419,9 +416,6 @@ src_prepare() {
 		third_party/skia/third_party/skcms
 		third_party/skia/third_party/vulkan
 		third_party/smhasher
-		third_party/spirv-cross/spirv-cross
-		third_party/spirv-headers
-		third_party/SPIRV-Tools
 		third_party/sqlite
 		third_party/swiftshader
 		third_party/swiftshader/third_party/astc-encoder
@@ -461,7 +455,6 @@ src_prepare() {
 
 		# gyp -> gn leftovers
 		base/third_party/libevent
-		third_party/adobe
 		third_party/speech-dispatcher
 		third_party/usb_ids
 		third_party/xdg-utils
@@ -605,6 +598,7 @@ multilib_src_configure() {
 	myconf_gn+=" use_kerberos=$(usex kerberos true false)"
 	myconf_gn+=" use_pulseaudio=$(usex pulseaudio true false)"
 	myconf_gn+=" use_vaapi=$(usex vaapi true false)"
+	myconf_gn+=" rtc_use_pipewire=$(usex screencast true false) rtc_pipewire_version=\"0.3\""
 
 	# TODO: link_pulseaudio=true for GN.
 
@@ -624,14 +618,14 @@ multilib_src_configure() {
 
 	# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
 	# Note: these are for Gentoo use ONLY. For your own distribution,
-	# please get your own set of keys. Feel free to contact chromium@gentoo.org
-	# for more info.
+	# please get your own set of keys. Disable Client ID and secrets as requested by
+	# Google. Feel free to contact chromium@gentoo.org for more info.
 	local google_api_key="AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc"
-	local google_default_client_id="329227923882.apps.googleusercontent.com"
-	local google_default_client_secret="vgKG0NNv7GoDpbtoFNLxCUXu"
+#	local google_default_client_id="329227923882.apps.googleusercontent.com"
+#	local google_default_client_secret="vgKG0NNv7GoDpbtoFNLxCUXu"
 	myconf_gn+=" google_api_key=\"${google_api_key}\""
-	myconf_gn+=" google_default_client_id=\"${google_default_client_id}\""
-	myconf_gn+=" google_default_client_secret=\"${google_default_client_secret}\""
+#	myconf_gn+=" google_default_client_id=\"${google_default_client_id}\""
+#	myconf_gn+=" google_default_client_secret=\"${google_default_client_secret}\""
 	local myarch="$(tc-arch)"
 
 	# Avoid CFLAGS problems, bug #352457, bug #390147.
@@ -773,8 +767,7 @@ multilib_src_configure() {
 			tools/generate_shim_headers/generate_shim_headers.py || die
 		# Disable CFI: unsupported for GCC, requires clang+lto+lld
 		myconf_gn+=" is_cfi=false"
-		# Disable PGO, because profile data is missing in tarball
-		# (https://groups.google.com/a/chromium.org/g/chromium-packagers/c/2ID9c4j6UkY)
+		# Disable PGO, because profile data is only compatible with >=clang-11
 		myconf_gn+=" chrome_pgo_phase=0"
 	fi
 
@@ -876,7 +869,7 @@ multilib_src_install() {
 	doins out/Release/*.pak
 	(
 		shopt -s nullglob
-		local files=(out/Release/*.so)
+		local files=(out/Release/*.so out/Release/*.so.[0-9])
 		[[ ${#files[@]} -gt 0 ]] && doins "${files[@]}"
 	)
 
@@ -931,6 +924,12 @@ pkg_postinst() {
 		elog "VA-API is disabled by default at runtime. Either enable it"
 		elog "by navigating to chrome://flags/#enable-accelerated-video-decode"
 		elog "inside Chromium or add --enable-accelerated-video-decode"
+		elog "to CHROMIUM_FLAGS in /etc/chromium/default."
+	fi
+	if use screencast; then
+		elog "Screencast is disabled by default at runtime. Either enable it"
+		elog "by navigating to chrome://flags/#enable-webrtc-pipewire-capturer"
+		elog "inside Chromium or add --enable-webrtc-pipewire-capturer"
 		elog "to CHROMIUM_FLAGS in /etc/chromium/default."
 	fi
 

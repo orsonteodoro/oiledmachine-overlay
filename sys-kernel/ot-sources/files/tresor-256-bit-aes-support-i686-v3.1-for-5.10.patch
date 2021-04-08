@@ -1,6 +1,6 @@
 Patch Status: Complete, tested working
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
-Date: Jan 17, 2021
+Date: Apr 7, 2021
 Subject:  Add 256-bit AES support to TRESOR sse2 on 64-bit machines (x86-64) without AES-NI
 
 This patch is for the Linux Kernel 5.10 series.
@@ -16,12 +16,13 @@ tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.2.patch.
 * It may also fix compilation on i686 with more ifdef checks.
 * Removed rc_tab.
 
-v3 Fixed both 192- and 256- TRESOR AES key expansion.
-   Refactor and dedupe code blocks.
-   Document step-by-step word placement in registers.
-v2 Fixes to ctr keysize.
-   Deduped tresor_glue for duplicate encrypt/decrypt function pointer calls.
-v1 Initial implementation.
+v3.1 API update
+v3   Fixed both 192- and 256- TRESOR AES key expansion.
+     Refactor and dedupe code blocks.
+     Document step-by-step word placement in registers.
+v2   Fixes to ctr keysize.
+     Deduped tresor_glue for duplicate encrypt/decrypt function pointer calls.
+v1   Initial implementation.
 
 ----
 diff -urp linux-5.10.8-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.10.8-ot/arch/x86/crypto/tresor_asm.S
@@ -1578,7 +1579,7 @@ diff -urp linux-5.10.8-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.8-ot/arc
 -	tresor_epilog(&irq_flags);
 +	__tresor_encrypt(((struct tresor_ctx *)ctx)->key_length, (u8 *)&ctrblk, (u8 *)&ctrblk);
  
- 	u128_xor(dst, src, (u128 *)&ctrblk);
+ 	u128_xor((u128 *)dst, (u128 *)src, (u128 *)&ctrblk);
  }
 @@ -333,22 +371,14 @@ static int ctr_crypt(struct skcipher_req
  

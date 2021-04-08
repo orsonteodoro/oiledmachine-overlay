@@ -3,7 +3,7 @@
 
 EAPI=7
 CMAKE_MAKEFILE_GENERATOR="ninja"
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{7..9} )
 USE_RUBY="ruby24 ruby25 ruby26 ruby27"
 
 inherit check-reqs cmake flag-o-matic gnome2 pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
@@ -15,14 +15,29 @@ HOMEPAGE="https://www.webkitgtk.org"
 FN="${MY_P}.tar.xz"
 SRC_URI="https://www.webkitgtk.org/releases/${FN}"
 
-LICENSE="LGPL-2+ BSD"
+LICENSE="LGPL-2+ LGPL-2.1 BSD BSD-2 MIT GPL-3 Apache-2.0"
 LICENSE+=" unicode"
+
+# Some licenses are third party
+# BSD Source/ThirdParty/gtest/LICENSE
+# BSD-2 Source/ThirdParty/ANGLE/src/third_party/compiler/LICENSE
+# MIT Source/ThirdParty/ANGLE/src/third_party/libXNVCtrl/LICENSE
+# MIT Source/WTF/LICENSE-libc++.txt
+# unicode Source/WTF/icu/LICENSE
+# BSD Source/WTF/wtf/dtoa/LICENSE
+# LGPL-2.1 Source/WebCore/LICENSE-LGPL-2.1
+# LGPL2 Source/WebCore/LICENSE-LGPL-2
+# GPL-3 Source/ThirdParty/ANGLE/tools/flex-bison/third_party/m4sugar
+# GPL-3 Source/ThirdParty/ANGLE/tools/flex-bison/third_party/skeletons/LICENSE
+# Apache-2.0 Source/ThirdParty/ANGLE/src/tests/test_utils/third_party/LICENSE
+
 API_VERSION="4.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A), SOVERSION = C - A
-CURRENT="86"
-AGE="49"
+# WEBKITGTK_API_VERSION is 4.0
+CURRENT="90"
+AGE="53"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
@@ -69,7 +84,7 @@ RESTRICT="test"
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
 
-# Target 18.04
+# Target U 20.04.2
 
 # Aqua support in gtk3 is untested
 # Dependencies found at Source/cmake/OptionsGTK.cmake
@@ -77,74 +92,78 @@ RESTRICT="test"
 # Missing WebRTC support, but ENABLE_MEDIA_STREAM/ENABLE_WEB_RTC is experimental upstream (PRIVATE OFF) and shouldn't be used yet in 2.26
 # >=gst-plugins-opus-1.14.4-r1 for opusparse (required by MSE [Media Source Extensions])
 wpe_depend="
-	>=gui-libs/libwpe-1.3.0:1.0[${MULTILIB_USEDEP}]
-	>=gui-libs/wpebackend-fdo-1.3.1:1.0[${MULTILIB_USEDEP}]
+	>=gui-libs/libwpe-1.6.0:1.0[${MULTILIB_USEDEP}]
+	>=gui-libs/wpebackend-fdo-1.6.0:1.0[${MULTILIB_USEDEP}]
 "
 # TODO: gst-plugins-base[X] is only needed when build configuration ends up with GLX set, but that's a bit automagic too to fix
 # Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].  It is removed to only allow native abi to use it.
+CAIRO_V="1.20"
+GLIB_V="2.64.6"
+GSTREAMER_V="1.16.2"
+MESA_V="20.0.4"
 RDEPEND="
-	>=x11-libs/cairo-1.16.0:=[X?,${MULTILIB_USEDEP}]
-	>=media-libs/fontconfig-2.13.0:1.0[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.9.0:2[${MULTILIB_USEDEP}]
-	>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
-	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
-	>=media-libs/harfbuzz-1.4.2:=[icu(+),${MULTILIB_USEDEP}]
-	>=dev-libs/icu-60.2:=[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-2.13.1:1.0[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.10.1:2[${MULTILIB_USEDEP}]
+	>=dev-libs/libgcrypt-1.8.5:0=[${MULTILIB_USEDEP}]
+	>=x11-libs/gtk+-3.24.18:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
+	>=media-libs/harfbuzz-2.6.4:=[icu(+),${MULTILIB_USEDEP}]
+	>=dev-libs/icu-66.1:=[${MULTILIB_USEDEP}]
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.54:2.4[introspection?,${MULTILIB_USEDEP}]
-	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.4:0=[${MULTILIB_USEDEP}]
-	dev-db/sqlite:3=[${MULTILIB_USEDEP}]
-	sys-libs/zlib:0[${MULTILIB_USEDEP}]
-	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
-	media-libs/libwebp:=[${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.70.0:2.4[introspection?,${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-2.40.1:2[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-1.6.37:0=[${MULTILIB_USEDEP}]
+	>=dev-db/sqlite-3.31.1:3=[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
+	>=dev-libs/atk-2.35.1[${MULTILIB_USEDEP}]
+	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 
-	>=dev-libs/glib-2.44.0:2[${MULTILIB_USEDEP}]
-	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
+	>=dev-libs/libxslt-1.1.34[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
-	gnome-keyring? ( app-crypt/libsecret[${MULTILIB_USEDEP}] )
-	introspection? ( >=dev-libs/gobject-introspection-1.32.0:= )
-	dev-libs/libtasn1:=[${MULTILIB_USEDEP}]
-	spell? ( >=app-text/enchant-0.22:2[${MULTILIB_USEDEP}] )
+	gnome-keyring? ( >=app-crypt/libsecret-0.20.2[${MULTILIB_USEDEP}] )
+	introspection? ( >=dev-libs/gobject-introspection-1.64.0:= )
+	>=dev-libs/libtasn1-4.16.0:=[${MULTILIB_USEDEP}]
+	spell? ( >=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}] )
 	gstreamer? (
-		>=media-libs/gstreamer-1.14:1.0[${MULTILIB_USEDEP}]
-		>=media-libs/gst-plugins-base-1.14:1.0[egl?,opengl?,X?,${MULTILIB_USEDEP}]
-		gles2-only? ( media-libs/gst-plugins-base:1.0[gles2,${MULTILIB_USEDEP}] )
-		>=media-plugins/gst-plugins-opus-1.14.4-r1:1.0[${MULTILIB_USEDEP}]
-		>=media-libs/gst-plugins-bad-1.14:1.0[${MULTILIB_USEDEP}] )
+		>=media-libs/gstreamer-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[egl?,opengl?,X?,${MULTILIB_USEDEP}]
+		gles2-only? ( >=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2,${MULTILIB_USEDEP}] )
+		>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-bad-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}] )
 
 	X? (
-		x11-libs/libX11[${MULTILIB_USEDEP}]
-		x11-libs/libXcomposite[${MULTILIB_USEDEP}]
-		x11-libs/libXdamage[${MULTILIB_USEDEP}]
-		x11-libs/libXrender[${MULTILIB_USEDEP}]
-		x11-libs/libXt[${MULTILIB_USEDEP}] )
+		>=x11-libs/libX11-1.6.9[${MULTILIB_USEDEP}]
+		>=x11-libs/libXcomposite-0.4.5[${MULTILIB_USEDEP}]
+		>=x11-libs/libXdamage-1.1.5[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrender-0.9.10[${MULTILIB_USEDEP}]
+		>=x11-libs/libXt-1.1.5[${MULTILIB_USEDEP}] )
 
-	libnotify? ( x11-libs/libnotify[${MULTILIB_USEDEP}] )
-	dev-libs/hyphen[${MULTILIB_USEDEP}]
-	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
+	libnotify? ( >=x11-libs/libnotify-0.7.9[${MULTILIB_USEDEP}] )
+	>=dev-libs/hyphen-0.9.0[${MULTILIB_USEDEP}]
+	jpeg2k? ( >=media-libs/openjpeg-2.4.0:2=[${MULTILIB_USEDEP}] )
 
-	egl? ( media-libs/mesa[egl,${MULTILIB_USEDEP}] )
-	gles2-only? ( media-libs/mesa[gles2,${MULTILIB_USEDEP}] )
+	egl? ( >=media-libs/mesa-${MESA_V}[egl,${MULTILIB_USEDEP}] )
+	gles2-only? ( >=media-libs/mesa-${MESA_V}[gles2,${MULTILIB_USEDEP}] )
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	wayland? (
-		dev-libs/wayland[${MULTILIB_USEDEP}]
-		>=dev-libs/wayland-protocols-1.12[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-protocols-1.20[${MULTILIB_USEDEP}]
 		opengl? ( ${wpe_depend} )
 		gles2-only? ( ${wpe_depend} )
 	)
 
 	seccomp? (
-		>=sys-apps/bubblewrap-0.3.1
-		sys-libs/libseccomp[${MULTILIB_USEDEP}]
-		sys-apps/xdg-dbus-proxy
+		>=sys-apps/bubblewrap-0.4.0
+		>=sys-libs/libseccomp-2.4.3[${MULTILIB_USEDEP}]
+		>=sys-apps/xdg-dbus-proxy-0.1.2
 	)
 "
 RDEPEND+="
-	accelerated-2d-canvas? ( gles2-only? ( x11-libs/cairo[gles2-only,${MULTILIB_USEDEP}] )
-				 opengl? ( x11-libs/cairo[opengl,${MULTILIB_USEDEP}] ) )
-	dev-libs/gmp[-pgo(-),${MULTILIB_USEDEP}]
-	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )"
+	accelerated-2d-canvas? ( gles2-only? ( >=x11-libs/cairo-${CAIRO_V}[gles2-only,${MULTILIB_USEDEP}] )
+				 opengl? ( >=x11-libs/cairo-${CAIRO_V}[opengl,${MULTILIB_USEDEP}] ) )
+	>=dev-libs/gmp-6.2.0[-pgo(-),${MULTILIB_USEDEP}]
+	gamepad? ( >=dev-libs/libmanette-0.2.3[${MULTILIB_USEDEP}] )"
 unset wpe_depend
 DEPEND="${RDEPEND}"
 # paxctl needed for bug #407085
@@ -152,29 +171,29 @@ DEPEND="${RDEPEND}"
 BDEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
-	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
-	dev-util/glib-utils
+	>=app-accessibility/at-spi2-core-2.36.0[${MULTILIB_USEDEP}]
+	>=dev-util/glib-utils-${GLIB_V}
 	>=dev-util/gperf-3.1
-	>=sys-devel/bison-3.0.4
-	|| ( >=sys-devel/gcc-7.3 >=sys-devel/clang-6[${MULTILIB_USEDEP}] )
-	sys-devel/gettext[${MULTILIB_USEDEP}]
-	virtual/pkgconfig[${MULTILIB_USEDEP}]
+	>=sys-devel/bison-3.5.1
+	|| ( >=sys-devel/gcc-9.3.0 >=sys-devel/clang-10.0[${MULTILIB_USEDEP}] )
+	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
+	>=virtual/pkgconfig-0.29.1[${MULTILIB_USEDEP}]
 
-	>=dev-lang/perl-5.10
+	>=dev-lang/perl-5.30.0
 	virtual/perl-Data-Dumper
 	virtual/perl-Carp
 	virtual/perl-JSON-PP
 
-	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
-	geolocation? ( dev-util/gdbus-codegen )
-	>=dev-util/cmake-3.10
+	gtk-doc? ( >=dev-util/gtk-doc-1.32 )
+	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_V} )
+	>=dev-util/cmake-3.16.3
 "
 #	test? (
 #		dev-python/pygobject:3[python_targets_python2_7]
 #		x11-themes/hicolor-icon-theme
 #		jit? ( sys-apps/paxctl ) )
 RDEPEND="${RDEPEND}
-	geolocation? ( >=app-misc/geoclue-2.4.7:2.0 )
+	geolocation? ( >=app-misc/geoclue-2.5.6:2.0 )
 "
 
 S="${WORKDIR}/${MY_P}"

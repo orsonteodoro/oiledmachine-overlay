@@ -1,7 +1,8 @@
 Patch Status: Requires testing on aesni hardware.  Report back if it works by
               sending a git issue to oiledmachine-overlay.
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
-Date: Jan 11, 2021
+Date: Apr 7, 2021
+v2.5:  Address changes introduced by 9c1e8836edbbaf3656bc07437b59c04be034ac4e
 v2.4:  Changed from "struct crypto_aes_ctx" to "struct tresor_ctx"
 v2.3:  Fixed build time errors and refactor
 v2.2:  Fixed ECB, CBC, CTR, XTS glue with TRESOR AES-128
@@ -435,7 +436,7 @@ diff -urp linux-5.10.8-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.8-ot/arc
 +
 +	__tresor_encrypt(((struct tresor_ctx *)ctx)->key_length, (u8 *)&ctrblk, (u8 *)&ctrblk);
 +
-+	u128_xor(dst, src, (u128 *)&ctrblk);
++	u128_xor((u128 *)dst, (u128 *)src, (u128 *)&ctrblk);
 +}
 +
 +static const struct common_glue_ctx tresor_ctr = {
