@@ -1,36 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-<!-- only in this ebuild fork on the oiledmachine overlay -->
-<maintainer type="project">
-	<email>orsonteodoro@hotmail.com</email>
-	<name>Orson Teodoro</name>
-</maintainer>
-<!-- originator -->
-<maintainer type="project">
-	<email>gnome@gentoo.org</email>
-	<name>Gentoo GNOME Desktop</name>
-</maintainer>
-<use>
-	<flag name="accelerated-2d-canvas">Use hardware acceleration for
-		some 2D drawing operations.  This flag may be unstable.</flag>
-	<flag name="bmalloc">Uses a mmap based page allocator to improve
-		overall performance.  For this ebuild fork, it is not recommended
-		to turn it on for stability purposes.</flag>
-	<flag name="hardened">Ensures less problems with hardened build.</flag>
-	<flag name="coverage">Enable code coverage support</flag>
-	<flag name="egl">Enable EGL support</flag>
-	<flag name="examples">Install the MiniBrowser example application</flag>
-	<flag name="ftl-jit">Builds an additional tier for JIT used for
-		JavaScript scripts with longer than expected execution time
-		with marginal benefits.</flag>
-	<flag name="gamepad">Enable gamepad input support via <pkg>dev-libs/libmanette</pkg></flag>
-	<flag name="geolocation">Enable geolocation support through <pkg>app-misc/geoclue</pkg></flag>
-	<flag name="gles2">Enable GLESv2 support</flag>
-	<flag name="jit">Enables JIT support for JavaScriptCore for
-		significantly faster code execution.</flag>
-	<flag name="jumbo-build">Combine source files to speed up build process</flag>
-	<flag name="nsplugin">Enable full nsplugin support (GTK2 plugins)</flag>
-	<flag name="webgl">Build support for the WebGL HTML API using <pkg>virtual/opengl</pkg></flag>
-</use>
+  <maintainer type="project">
+    <!-- only in this ebuild fork on the oiledmachine overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- originator -->
+    <email>gnome@gentoo.org</email>
+    <name>Gentoo GNOME Desktop</name>
+  </maintainer>
+  <use>
+    <flag name="bmalloc">Uses a mmap based page allocator to improve
+      overall performance.  For this ebuild fork, it is not recommended
+      to turn it on for stability purposes.</flag>
+    <flag name="coverage">Enable code coverage support</flag>
+    <flag name="egl">Enable EGL support</flag>
+    <flag name="examples">Install the MiniBrowser example application</flag>
+    <flag name="dfg-jit">Builds with the teir that does the bulk
+      of the optimizing.</flag>
+    <flag name="features-experimental">Enables experimental features at the
+      expense of stability and development cost</flag>
+    <flag name="features-in-development">Access in development web technologies.
+      Disable for increased code quality.</flags>
+    <flag name="ftl-jit">Builds an additional tier for JIT used for
+      optimizing run-time performance marginally at the expense of 
+      faster load times or delayed execution time.</flag>
+    <flag name="gamepad">Enable gamepad input support via
+      <pkg>dev-libs/libmanette</pkg></flag>
+    <flag name="geolocation">Enable geolocation support through
+      <pkg>app-misc/geoclue</pkg></flag>
+    <flag name="gles2">Enable GLESv2 support</flag>
+    <flag name="hardened">Ensures less problems with hardened build.</flag>
+    <flag name="jit">Enables JIT support for JavaScriptCore for
+      significantly faster code execution.  Disable for increased compatibility
+      on alternative ARCHs and ABIs</flag>
+    <flag name="jumbo-build">Combine source files to speed up build
+      process</flag>
+    <flag name="nsplugin">Enable full nsplugin support (GTK2 plugins)</flag>
+    <flag name="webgl">Build support for the WebGL HTML API using
+      <pkg>virtual/opengl</pkg></flag>
+    <flag name="webassembly">Enables support for WebAssembly used for example
+      in web games.  Disable to decrease the attack surface.</webassembly>
+    <flag name="webassembly-b3-jit">Enables the B3 JIT support that does
+      additional optimizations beyond ftl-jit.</webassembly>
+    <flag name="webxr">Builds WebXR support.  (EXPERIMENTAL / IN DEVELOPMENT)</pkg>
+  </use>
 </pkgmetadata>

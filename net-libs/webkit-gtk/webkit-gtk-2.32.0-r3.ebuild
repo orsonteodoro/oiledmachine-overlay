@@ -38,31 +38,41 @@ AGE="53"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}"
 
-IUSE+=" aqua +egl examples +geolocation gles2-only gnome-keyring +gstreamer \
-gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell \
-wayland +X"
-LANGS=( ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hu \
-id it ja kn ko lt lv ml mr nb nl or pa pl pt_BR pt ro ru sl sr@latin sr sv ta \
+LANGS=( ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hu
+id it ja kn ko lt lv ml mr nb nl or pa pl pt_BR pt ro ru sl sr@latin sr sv ta
 te tr uk vi zh_CN )
-IUSE+=" ${LANGS[@]/#/l10n_} accelerated-2d-canvas bmalloc ftl-jit gamepad \
-hardened +jit systemd +webgl"
 
+# aqua (quartz) is enabled upstream but disabled
+# bmalloc is enabled upstream but disabled for stability reasons
+# systemd is enabled upstream but gentoo uses openrc by default
+# wayland is enabled upstream but disabled because it is not defacto default
+#   standard for desktop yet
+
+#
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+IUSE+=" ${LANGS[@]/#/l10n_} aqua -bmalloc +dfg-jit +egl +ftl-jit -gamepad
++geolocation gles2-only gnome-keyring +gstreamer -gtk-doc hardened
++introspection +jit +jpeg2k +jumbo-build +libnotify -minibrowser +opengl
+-seccomp -spell -systemd test wayland +webassembly +webassembly-b3-jit +webgl
++X"
+
+# See https://webkit.org/status/#specification-webxr for feature quality status
+# of emerging web technologies.  Also found in Source/WebCore/features.json
 # gstreamer with opengl/gles2 needs egl
 REQUIRED_USE+="
 	|| ( aqua wayland X )
+	dfg-jit? ( jit )
+	ftl-jit? ( jit )
+	geolocation? ( introspection )
 	gles2-only? ( egl !opengl )
 	gstreamer? ( opengl? ( egl ) )
-	wayland? ( egl )
-"
-REQUIRED_USE+="
-	!accelerated-2d-canvas
-	geolocation? ( introspection )
 	hardened? ( !jit )
+	wayland? ( egl )
+	webassembly? ( jit )
+	webassembly-b3-jit? ( ftl-jit webassembly )
 	webgl? ( gstreamer
-		|| ( gles2-only opengl ) )
-"
+		|| ( gles2-only opengl ) )"
 
-# accelerated-2d-canvas disabled because it may be unstable
 # cannot use introspection for 32 webkit on 64 bit because it requires 32 bit
 # libs/build for python from gobject-introspection.  It produces this error:
 #
@@ -98,7 +108,7 @@ WPE_DEPEND="
 #   GLX set, but that's a bit automagic too to fix
 # Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].
 #   It is removed to only allow native ABI to use it.
-CAIRO_V="1.20"
+CAIRO_V="1.16.0"
 GLIB_V="2.64.6"
 GSTREAMER_V="1.16.2"
 MESA_V="20.0.4"
@@ -107,7 +117,7 @@ RDEPEND+="
 	>=dev-libs/atk-2.35.1[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-66.1:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.8.5:0=[${MULTILIB_USEDEP}]
-	>=dev-libs/libxml2-2.40.1:2[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-2.9.10:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
 	>=dev-libs/gmp-6.2.0[-pgo(-),${MULTILIB_USEDEP}]
 	>=dev-libs/hyphen-0.9.0[${MULTILIB_USEDEP}]
@@ -124,10 +134,6 @@ RDEPEND+="
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
 	>=x11-libs/gtk+-3.24.18:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
-	accelerated-2d-canvas? (
-gles2-only? ( >=x11-libs/cairo-${CAIRO_V}[gles2-only,${MULTILIB_USEDEP}] )
-opengl? ( >=x11-libs/cairo-${CAIRO_V}[opengl,${MULTILIB_USEDEP}] )
-	)
 	egl? ( >=media-libs/mesa-${MESA_V}[egl,${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.3[${MULTILIB_USEDEP}] )
 	gnome-keyring? ( >=app-crypt/libsecret-0.20.2[${MULTILIB_USEDEP}] )
@@ -137,8 +143,9 @@ opengl? ( >=x11-libs/cairo-${CAIRO_V}[opengl,${MULTILIB_USEDEP}] )
 >=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[egl?,opengl?,X?,${MULTILIB_USEDEP}]
 		>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 		gles2-only? (
->=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2,${MULTILIB_USEDEP}] )
+>=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2,${MULTILIB_USEDEP}]
 		)
+	)
 	introspection? ( >=dev-libs/gobject-introspection-1.64.0:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.4.0:2=[${MULTILIB_USEDEP}] )
 	geolocation? ( >=app-misc/geoclue-2.5.6:2.0 )
@@ -313,27 +320,40 @@ multilib_src_configure() {
 	# opengl needs to be explictly handled, bug #576634
 
 	local use_wpe_renderer=OFF
-	local opengl_enabled
+	local opengl_enabled=OFF
 	if use opengl || use gles2-only; then
 		opengl_enabled=ON
 		use wayland && use_wpe_renderer=ON
-	else
-		opengl_enabled=OFF
 	fi
 
+	# For more custom options, see
+	# S="<sources dir>" grep -r -e "WEBKIT_OPTION_DEFINE" \
+	#	${S}/Source/cmake/GStreamerDefinitions.cmake \
+	#	${S}/Source/cmake/OptionsGTK.cmake \
+	#	${S}/Source/cmake/OptionsJSCOnly.cmake \
+	#	${S}/Source/cmake/WebKitFeatures.cmake
 	local mycmakeargs=(
 		${ruby_interpreter}
 		-DBWRAP_EXECUTABLE:FILEPATH="${EPREFIX}"/usr/bin/bwrap # \
 # If bubblewrap[suid] then portage makes it go-r and cmake find_program fails \
 # with that
+		-DCMAKE_CXX_LIBRARY_ARCHITECTURE=$(get_abi_CHOST ${ABI})
+		-DCMAKE_INSTALL_BINDIR=$(get_libdir)/webkit-gtk
+		-DCMAKE_INSTALL_LIBEXECDIR=$(get_libdir)/misc
+		-DCMAKE_LIBRARY_PATH=/usr/$(get_libdir)
 		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}"/usr/bin/xdg-dbus-proxy
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
+		-DENABLE_C_LOOP=$(usex !jit)
+		-DENABLE_DFG_JIT=$(usex dfg-jit)
+		-DENABLE_FTL_JIT=$(usex ftl-jit)
 		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation "ON" "OFF") # \
 		-DENABLE_GLES2=$(usex gles2-only)
 		-DENABLE_GTKDOC=$(usex gtk-doc)
+		-DENABLE_GAMEPAD=$(usex gamepad)
 		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection "ON" "OFF")
-		-DENABLE_MINIBROWSER=$(usex examples)
+		-DENABLE_JIT=$(usex jit)
+		-DENABLE_MINIBROWSER=$(usex minibrowser)
 		-DENABLE_OPENGL=${opengl_enabled}
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
 		-DENABLE_UNIFIED_BUILDS=$(usex jumbo-build)
@@ -342,32 +362,22 @@ multilib_src_configure() {
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
+		-DENABLE_WEBASSEMBLY=$(usex webassembly)
+		-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 		-DENABLE_WEBGL=$(usex webgl)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
 		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
+		-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
+		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
 # WPE renderer is used to implement accelerated compositing under wayland
 		$(cmake_use_find_package gles2-only OpenGLES2)
 		$(cmake_use_find_package egl EGL)
 		$(cmake_use_find_package opengl OpenGL)
-	)
-
-	mycmakeargs+=(
-		-DCMAKE_CXX_LIBRARY_ARCHITECTURE=$(get_abi_CHOST ${ABI})
-		-DCMAKE_INSTALL_BINDIR=$(get_libdir)/webkit-gtk
-		-DCMAKE_INSTALL_LIBEXECDIR=$(get_libdir)/misc
-		-DCMAKE_LIBRARY_PATH=/usr/$(get_libdir)
-		-DENABLE_ACCELERATED_2D_CANVAS=$(usex accelerated-2d-canvas)
-#		-DENABLE_C_LOOP=$(usex jit "OFF" "ON")
-#		-DENABLE_DFG_JIT=$(usex jit)
-#		-DENABLE_FTL_JIT=$(usex ftl-jit)
-#		-DENABLE_JIT=$(usex jit)
-		-DUSE_SYSTEM_MALLOC=$(usex bmalloc "OFF" "ON")
-		-DUSE_SYSTEMD=$(usex systemd "ON" "OFF")
 	)
 
 	# Use GOLD when possible as it has all the magic to
@@ -381,11 +391,6 @@ multilib_src_configure() {
 
 	# https://bugs.gentoo.org/761238
 	append-cppflags -DNDEBUG
-
-	if use accelerated-2d-canvas ; then
-		ewarn \
-"The accelerated-2d-canvas USE flag is unstable and not recommended."
-	fi
 
 	if [[ "${ABI}" == "x86" ]] ; then
 		mycmakeargs+=( -DFORCE_32BIT=ON )
@@ -415,7 +420,7 @@ multilib_src_install() {
 	pax-mark m "${d}/WebKitWebProcess"
 	pax-mark m "${d}/jsc"
 
-	if use examples ; then
+	if use minibrowser ; then
 		exeinto /usr/bin
 		newexe "${FILESDIR}/minibrowser" minibrowser-${ABI}
 		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
