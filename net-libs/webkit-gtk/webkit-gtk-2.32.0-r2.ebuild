@@ -17,15 +17,14 @@ LICENSE="LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
 # BSD Source/ThirdParty/gtest/LICENSE
 # BSD Source/WTF/wtf/dtoa/LICENSE
 # BSD-2 Source/ThirdParty/ANGLE/src/third_party/compiler/LICENSE
-# MIT Source/ThirdParty/ANGLE/src/third_party/libXNVCtrl/LICENSE
-# MIT Source/WTF/LICENSE-libc++.txt
-# unicode Source/WTF/icu/LICENSE
-# LGPL-2 (only) Source/WebCore/rendering/AutoTableLayout.cpp
-# LGPL-2.1+ for some files in Source/WebCore
-# Source/WebCore/rendering/AutoTableLayout.cpp
 # GPL-2+ Source/JavaScriptCore
 # GPL-3+ Source/ThirdParty/ANGLE/tools/flex-bison/third_party/m4sugar
 # GPL-3+ Source/ThirdParty/ANGLE/tools/flex-bison/third_party/skeletons
+# LGPL-2 (only) Source/WebCore/rendering/AutoTableLayout.cpp
+# LGPL-2.1+ for some files in Source/WebCore
+# MIT Source/ThirdParty/ANGLE/src/third_party/libXNVCtrl/LICENSE
+# MIT Source/WTF/LICENSE-libc++.txt
+# unicode Source/WTF/icu/LICENSE
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
 API_VERSION="4.0"
