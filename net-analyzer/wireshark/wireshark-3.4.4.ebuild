@@ -15,7 +15,7 @@ S="${WORKDIR}/${P/_/}"
 
 LICENSE="GPL-2"
 SLOT="0/${PV}"
-KEYWORDS="~alpha amd64 arm ~arm64 ~hppa ~ia64 ppc64 x86"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ppc64 x86"
 IUSE="
 	androiddump bcg729 brotli +capinfos +captype ciscodump +dftest doc dpauxmon
 	+dumpcap +editcap http2 ilbc kerberos libxml2 lto lua lz4 maxminddb
@@ -101,7 +101,8 @@ RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.6.0-redhat.patch
 	"${FILESDIR}"/${PN}-3.4.2-cmake-lua-version.patch
-	"${FILESDIR}"/${PN}-99999999-ui-needs-wiretap.patch
+	"${FILESDIR}"/${PN}-9999-ui-needs-wiretap.patch
+	"${FILESDIR}"/${P}-cmake-3.20.patch
 )
 
 pkg_setup() {
