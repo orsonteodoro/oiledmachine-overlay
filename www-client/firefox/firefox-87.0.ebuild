@@ -1,12 +1,12 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Originally based on the firefox-85.0.0.ebuild from the gentoo-overlay.
+# Originally based on the firefox-87.0.ebuild from the gentoo-overlay.
 # Revisions may change in the oiledmachine-overlay.
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-85-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-87-patches-03.tar.xz"
 
 LLVM_MAX_SLOT=11
 
@@ -80,8 +80,8 @@ REQUIRED_USE="debug? ( !system-av1 )
 BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
-	>=dev-util/cbindgen-0.15.0
-	>=net-libs/nodejs-10.22.1
+	>=dev-util/cbindgen-0.16.0
+	>=net-libs/nodejs-10.23.1
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
 	>=dev-lang/rust-1.47.0[${MULTILIB_USEDEP}]
 	!dev-lang/rust-bin
@@ -90,7 +90,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:11[${MULTILIB_USEDEP}]
 			sys-devel/llvm:11[${MULTILIB_USEDEP}]
 			clang? (
-				=sys-devel/lld-11*[${MULTILIB_USEDEP}]
+				=sys-devel/lld-11*
 				pgo? ( =sys-libs/compiler-rt-sanitizers-11*[profile] )
 			)
 		)
@@ -98,16 +98,8 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:10[${MULTILIB_USEDEP}]
 			sys-devel/llvm:10[${MULTILIB_USEDEP}]
 			clang? (
-				=sys-devel/lld-10*[${MULTILIB_USEDEP}]
+				=sys-devel/lld-10*
 				pgo? ( =sys-libs/compiler-rt-sanitizers-10*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:9[${MULTILIB_USEDEP}]
-			sys-devel/llvm:9[${MULTILIB_USEDEP}]
-			clang? (
-				=sys-devel/lld-9*[${MULTILIB_USEDEP}]
-				pgo? ( =sys-libs/compiler-rt-sanitizers-9*[profile] )
 			)
 		)
 	)
@@ -119,7 +111,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.60[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.62[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.29[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -152,7 +144,7 @@ CDEPEND="
 	)
 	screencast? ( media-video/pipewire:0/0.3 )
 	system-av1? (
-		>=media-libs/dav1d-0.3.0:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-0.8.1:=[${MULTILIB_USEDEP}]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
@@ -239,7 +231,7 @@ MOZ_LANGS=(
 	fa ff fi fr fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb hu hy-AM
 	ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my
 	nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru
-	si sk sl son sq sr sv-SE ta te th tl tr trs uk ur uz vi
+	si sk sl son sq sr sv-SE szl ta te th tl tr trs uk ur uz vi
 	xh zh-CN zh-TW
 )
 
@@ -419,9 +411,19 @@ pkg_setup() {
 			[[ -n ${version_lld} ]] && version_lld=$(ver_cut 1 "${version_lld}")
 			[[ -z ${version_lld} ]] && die "Failed to read ld.lld version!"
 
-			local version_llvm_rust=$(rustc -Vv 2>/dev/null | grep -F -- 'LLVM version:' | awk '{ print $3 }')
-			[[ -n ${version_llvm_rust} ]] && version_llvm_rust=$(ver_cut 1 "${version_llvm_rust}")
-			[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
+			# temp fix for https://bugs.gentoo.org/768543
+			# we can assume that rust 1.{49,50}.0 always uses llvm 11
+			local version_rust=$(rustc -Vv 2>/dev/null | grep -F -- 'release:' | awk '{ print $2 }')
+			[[ -n ${version_rust} ]] && version_rust=$(ver_cut 1-2 "${version_rust}")
+			[[ -z ${version_rust} ]] && die "Failed to read version from rustc!"
+
+			if ver_test "${version_rust}" -ge "1.49" && ver_test "${version_rust}" -le "1.50" ; then
+				local version_llvm_rust="11"
+			else
+				local version_llvm_rust=$(rustc -Vv 2>/dev/null | grep -F -- 'LLVM version:' | awk '{ print $3 }')
+				[[ -n ${version_llvm_rust} ]] && version_llvm_rust=$(ver_cut 1 "${version_llvm_rust}")
+				[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
+			fi
 
 			if ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
 				eerror "Rust is using LLVM version ${version_llvm_rust} but ld.lld version belongs to LLVM version ${version_lld}."
@@ -460,6 +462,17 @@ pkg_setup() {
 		# get your own set of keys.
 		if [[ -z "${MOZ_API_KEY_GOOGLE+set}" ]] ; then
 			MOZ_API_KEY_GOOGLE="AIzaSyDEAOvatFogGaPi0eTgsV_ZlEzx0ObmepsMzfAc"
+		fi
+
+		if [[ -z "${MOZ_API_KEY_LOCATION+set}" ]] ; then
+			MOZ_API_KEY_LOCATION="AIzaSyB2h2OuRgGaPicUgy5N-5hsZqiPW6sH3n_rptiQ"
+		fi
+
+		# Mozilla API keys (see https://location.services.mozilla.com/api)
+		# Note: These are for Gentoo Linux use ONLY. For your own distribution, please
+		# get your own set of keys.
+		if [[ -z "${MOZ_API_KEY_MOZILLA+set}" ]] ; then
+			MOZ_API_KEY_MOZILLA="edb3d487-3a84-46m0ap1e3-9dfd-92b5efaaa005"
 		fi
 
 		# Ensure we use C locale when building, bug #746215
@@ -549,6 +562,8 @@ src_prepare() {
 
 	# Write API keys to disk
 	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
+	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
+	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
 
 	xdg_src_prepare
 
@@ -598,10 +613,11 @@ _fix_paths() {
 multilib_src_configure() {
 	local chost=$(get_abi_CHOST ${ABI})
 	# Show flags set at the beginning
-	einfo "Current CFLAGS:    ${CFLAGS}"
-	einfo "Current CXXFLAGS:  ${CXXFLAGS}"
-	einfo "Current LDFLAGS:   ${LDFLAGS}"
-	einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
+	einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
+	einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
+	einfo "Current CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
+	einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
+	einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 
 	einfo "Cross-compile: chost=${chost}"
 	local have_switched_compiler=
@@ -637,6 +653,11 @@ multilib_src_configure() {
 	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
 
 	_fix_paths
+
+	# Pass the correct toolchain paths through cbindgen
+	if tc-is-cross-compiler ; then
+		export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --target=${chost} ${BINDGEN_CFLAGS-}"
+	fi
 
 	# Initialize MOZCONFIG
 	mozconfig_add_options_ac '' --enable-application=browser
@@ -692,10 +713,33 @@ multilib_src_configure() {
 		fi
 
 		mozconfig_add_options_ac "${key_origin}" \
-			--with-google-location-service-api-keyfile="${BUILD_DIR}/api-google.key" \
 			--with-google-safebrowsing-api-keyfile="${BUILD_DIR}/api-google.key"
 	else
 		einfo "Building without Google API key ..."
+	fi
+
+	if [[ -s "${BUILD_DIR}/api-location.key" ]] ; then
+		local key_origin="Gentoo default"
+		if [[ $(cat "${BUILD_DIR}/api-location.key" | md5sum | awk '{ print $1 }') != ffb7895e35dedf832eb1c5d420ac7420 ]] ; then
+			key_origin="User value"
+		fi
+
+		mozconfig_add_options_ac "${key_origin}" \
+			--with-google-location-service-api-keyfile="${S}/api-location.key"
+	else
+		einfo "Building without Location API key ..."
+	fi
+
+	if [[ -s "${BUILD_DIR}/api-mozilla.key" ]] ; then
+		local key_origin="Gentoo default"
+		if [[ $(cat "${BUILD_DIR}/api-mozilla.key" | md5sum | awk '{ print $1 }') != 3927726e9442a8e8fa0e46ccc39caa27 ]] ; then
+			key_origin="User value"
+		fi
+
+		mozconfig_add_options_ac "${key_origin}" \
+			--with-mozilla-api-keyfile="${BUILD_DIR}/api-mozilla.key"
+	else
+		einfo "Building without Mozilla API key ..."
 	fi
 
 	mozconfig_use_with system-av1
@@ -903,10 +947,11 @@ multilib_src_configure() {
 	mozconfig_add_options_ac '' --target=${chost%-*}
 
 	# Show flags we will use
-	einfo "Build CFLAGS:    ${CFLAGS}"
-	einfo "Build CXXFLAGS:  ${CXXFLAGS}"
-	einfo "Build LDFLAGS:   ${LDFLAGS}"
-	einfo "Build RUSTFLAGS: ${RUSTFLAGS}"
+	einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
+	einfo "Build CFLAGS:\t\t${CFLAGS:-no value set}"
+	einfo "Build CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
+	einfo "Build LDFLAGS:\t\t${LDFLAGS:-no value set}"
+	einfo "Build RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 
 	# Handle EXTRA_CONF and show summary
 	local ac opt hash reason
