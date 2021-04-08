@@ -11,7 +11,7 @@ pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
 
 DESCRIPTION="Open source web browser engine"
 HOMEPAGE="https://www.webkitgtk.org"
-LICENSE="LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2 GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode"
+LICENSE="LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode"
 # Some licenses are third party
 # Apache-2.0 Source/ThirdParty/ANGLE/src/tests/test_utils/third_party/LICENSE
 # BSD Source/ThirdParty/gtest/LICENSE
