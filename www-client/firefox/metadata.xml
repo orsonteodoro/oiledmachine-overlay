@@ -39,7 +39,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
 		(-Os, -O0, -O1, -O2, -O3) from CFLAGS (unsupported)</flag>
 	<flag name="eme-free">Disable EME (DRM plugin) cabability at build time</flag>
 	<flag name="jemalloc">Uses a memory allocator that will result in decreased memory
-		consumption; otherwisem it will use the default Linux allocator.  For this ebuild
+		consumption; otherwise it will use the default Linux allocator.  For this ebuild,
 		it is recommended to turn jemalloc off as it may be more stable in the worst case
 		high memory usage case.</flag>
 	<flag name="geckodriver">Enable WebDriver support</flag>
