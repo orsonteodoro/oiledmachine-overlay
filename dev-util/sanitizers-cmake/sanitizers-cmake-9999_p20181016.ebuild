@@ -5,11 +5,9 @@ EAPI=7
 DESCRIPTION="CMake modules to help use sanitizers"
 HOMEPAGE="https://github.com/arsenm/sanitizers-cmake"
 LICENSE="MIT" # project default license
-KEYWORDS="~amd64 ~x86"
-IUSE=""
-RDEPEND=""
-DEPEND="${RDEPEND}"
-REQUIRED_USE=""
+
+# Live ebuilds don't get KEYWORDed
+
 SLOT="0/${PV}"
 EGIT_COMMIT="99e159ec9bc8dd362b08d18436bd40ff0648417b"
 SRC_URI=\
