@@ -20,7 +20,7 @@ DEPEND+=" ${CDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-cpp/gflags[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${CDEPEND}"
-EGIT_COMMIT="d47031c0d42efa8f10842e36f7b8135b52bcd3d0"
+EGIT_COMMIT="2cd098f83b446067a999bb7ab4d856892c956cdc"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
 FN_DEST="${P}.tar.gz"
 FN_SRC="${EGIT_COMMIT}.tar.gz"
