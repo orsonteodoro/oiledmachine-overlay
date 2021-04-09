@@ -1,3 +1,13 @@
+The original license of the source code:
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+----
+The bintools package on Gentoo doesn't produce a
+/usr/bin/i686-pc-linux-gnu-readelf (target) only
+/usr/bin/x86_64-pc-linux-gnu-readelf (host).
+----
 --- a/build/unix/elfhack/Makefile.in.orig	2020-10-23 00:30:41.701329842 -0700
 +++ b/build/unix/elfhack/Makefile.in	2020-10-23 00:42:19.329255228 -0700
 @@ -14,13 +14,13 @@ test-array$(DLL_SUFFIX) test-ctors$(DLL_

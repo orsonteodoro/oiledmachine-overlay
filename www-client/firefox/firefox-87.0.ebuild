@@ -519,19 +519,15 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
-	eapply "${FILESDIR}/multiabi/${PN}-84.0.1-dont-check-rustc-host.patch"
-	eapply "${FILESDIR}/multiabi/${PN}-68.4.2-force-cross-compile.patch"
 	eapply "${FILESDIR}/multiabi/${PN}-82.0-elfhack-makefile-no-prefix-for-readelf.patch"
 	eapply "${FILESDIR}/multiabi/${PN}-84.0.1-check_binary-no-prefix-for-readelf.patch"
 	eapply "${FILESDIR}/multiabi/${PN}-84.0.1-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
 
-	# Disabled because they don't support multilib Python.  Only native ABI supported.
-	# This means cbindgen cannot load the 32 bit clang.  It will build the cargo
-	# parts.  When it links it, it fails because of cbindings is 64-bit and the
-	# dependencies use the build information for 64-bit linking.
-	#
-	# eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
-	# eapply "${FILESDIR}/multiabi/${PN}-84.0.1-compile-cargo-packages-same-abi-2.patch"
+	# Only partial patching was done because Gentoo doesn't support multilib
+	# Python.  Only native ABI is supported.  This means cbindgen cannot
+	# load the 32-bit clang.  It will build the cargo parts.  When it links
+	# it, it fails because of cbindings is 64-bit and the dependencies use
+	# the build information for 64-bit linking, which should be 32-bit.
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -577,12 +573,17 @@ src_prepare() {
 	multilib_copy_sources
 
 	_src_prepare() {
-		local chost=$(get_abi_CHOST ${ABI})
-		# sed-in toolchain prefix
-		sed -i \
-			-e "s/objdump/${chost}-objdump/" \
-			"${S}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py \
-			|| die "sed failed to set toolchain prefix"
+		local chost=$(get_abi_CHOST ${DEFAULT_ABI})
+		local ctarget=$(get_abi_CHOST ${ABI})
+		if [[ -f "${EPREFIX}/usr/bin/${ctarget}-objdump" ]] ; then
+			# sed-in toolchain prefix
+			sed -i \
+				-e "s/objdump/${ctarget}-objdump/" \
+				"${BUILD_DIR}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py \
+				|| die "sed failed to set toolchain prefix"
+		else
+			ewarn "Using ${chost} (host) for objdump"
+		fi
 	}
 
 	multilib_foreach_abi _src_prepare
@@ -591,9 +592,8 @@ src_prepare() {
 # corrections based on the ABI being compiled
 _fix_paths() {
 	# For proper rust cargo cross-compile for libloading and glslopt
-	export PKG_CONFIG=${chost}-pkg-config
-	export CROSSCOMPILE=$(rust_abi ${chost})
-	export CARGO_CFG_TARGET_ARCH=$(echo ${chost} | cut -f 1 -d "-")
+	export PKG_CONFIG=${ctarget}-pkg-config
+	export CARGO_CFG_TARGET_ARCH=$(echo ${ctarget} | cut -f 1 -d "-")
 	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 	export BUILD_OBJ_DIR="${BUILD_DIR}/ff"
 
@@ -602,17 +602,18 @@ _fix_paths() {
 
 	# for rust crates libloading and glslopt
 	if use clang && ! tc-is-clang ; then
-		CC=${chost}-clang
-		CXX=${chost}-clang++
+		CC=${ctarget}-clang
+		CXX=${ctarget}-clang++
 	elif ! use clang && ! tc-is-gcc ; then
-		CC=${chost}-gcc
-		CXX=${chost}-g++
+		CC=${ctarget}-gcc
+		CXX=${ctarget}-g++
 	fi
 	tc-export CC CXX
 }
 
 multilib_src_configure() {
-	local chost=$(get_abi_CHOST ${ABI})
+	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
+	local ctarget=$(get_abi_CHOST ${ABI})
 	# Show flags set at the beginning
 	einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
 	einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
@@ -620,15 +621,15 @@ multilib_src_configure() {
 	einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
 	einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 
-	einfo "Cross-compile: chost=${chost}"
+	einfo "Cross-compile: ctarget=${ctarget}"
 	local have_switched_compiler=
 	if use clang && ! tc-is-clang ; then
 		# Force clang
 		einfo "Enforcing the use of clang due to USE=clang ..."
 		have_switched_compiler=yes
 		AR=llvm-ar
-		CC=${chost}-clang
-		CXX=${chost}-clang++
+		CC=${ctarget}-clang
+		CXX=${ctarget}-clang++
 		NM=llvm-nm
 		RANLIB=llvm-ranlib
 	elif ! use clang && ! tc-is-gcc ; then
@@ -636,8 +637,8 @@ multilib_src_configure() {
 		have_switched_compiler=yes
 		einfo "Enforcing the use of gcc due to USE=-clang ..."
 		AR=gcc-ar
-		CC=${chost}-gcc
-		CXX=${chost}-g++
+		CC=${ctarget}-gcc
+		CXX=${ctarget}-g++
 		NM=gcc-nm
 		RANLIB=gcc-ranlib
 	fi
@@ -657,8 +658,11 @@ multilib_src_configure() {
 
 	# Pass the correct toolchain paths through cbindgen
 	if tc-is-cross-compiler ; then
-		export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --target=${chost} ${BINDGEN_CFLAGS-}"
+		export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --host=${chost} --target=${ctarget} ${BINDGEN_CFLAGS-}"
 	fi
+
+	# python/mach/mach/mixin/process.py fails to detect SHELL
+	export SHELL="${EPREFIX}/bin/bash"
 
 	# Initialize MOZCONFIG
 	mozconfig_add_options_ac '' --enable-application=browser
@@ -677,22 +681,22 @@ multilib_src_configure() {
 		--enable-release \
 		--enable-system-ffi \
 		--enable-system-pixman \
-		--host="${CBUILD:-${chost}}" \
+		--host="${chost}" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)" \
 		--prefix="${EPREFIX}/usr" \
-		--target="${chost}" \
+		--target="${ctarget}" \
 		--without-ccache \
 		--with-intl-api \
 		--with-system-nspr \
 		--with-system-nss \
 		--with-system-png \
 		--with-system-zlib \
-		--with-toolchain-prefix="${chost}-" \
+		--with-toolchain-prefix="${ctarget}-" \
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${SYSROOT}${EPREFIX}/usr/include" \
 		--x-libraries="${SYSROOT}${EPREFIX}/usr/$(get_libdir)"
 
-	# mozconfig_add_options_ac '' --with-libclang-path="$(${chost}-llvm-config --libdir)"
+	# mozconfig_add_options_ac '' --with-libclang-path="$(${ctarget}-llvm-config --libdir)"
 	#   disabled because Gentoo doesn't support multilib python, so full cross-compile is not supported.
 
 	#   the commented above is mutually exclusive with this line below.
@@ -726,7 +730,7 @@ multilib_src_configure() {
 		fi
 
 		mozconfig_add_options_ac "${key_origin}" \
-			--with-google-location-service-api-keyfile="${S}/api-location.key"
+			--with-google-location-service-api-keyfile="${BUILD_DIR}/api-location.key"
 	else
 		einfo "Building without Location API key ..."
 	fi
@@ -942,10 +946,8 @@ multilib_src_configure() {
 
 	einfo "Cross-compile: ${ABI} CFLAGS=${CFLAGS}"
 	einfo "Cross-compile: CC=${CC} CXX=${CXX}"
-	echo "export PKG_CONFIG=${chost}-pkg-config" >>${MOZCONFIG}
+	echo "export PKG_CONFIG=${ctarget}-pkg-config" >>${MOZCONFIG}
 	echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" >>${MOZCONFIG}
-	echo "export CROSSCOMPILE=${CROSSCOMPILE}" >>${MOZCONFIG}
-	mozconfig_add_options_ac '' --target=${chost%-*}
 
 	# Show flags we will use
 	einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
@@ -976,18 +978,14 @@ multilib_src_configure() {
 	echo "=========================================================="
 	echo
 
-	TARGET="${chost}" \
-	SHELL="${EPREFIX}/bin/bash" \
 	./mach configure || die
 }
 
 multilib_src_compile() {
-	local chost=$(get_abi_CHOST ${ABI})
+	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
+	local ctarget=$(get_abi_CHOST ${ABI})
 	_fix_paths
 	cd "${BUILD_DIR}" || die
-	einfo "BUILD_DIR=${BUILD_DIR}"
-	einfo "pwd="$(pwd)
-	einfo "PATH="${PATH}
 	local virtx_cmd=
 
 	if use pgo ; then
@@ -1001,13 +999,13 @@ multilib_src_compile() {
 
 	local -x GDK_BACKEND=x11
 
-	TARGET="${chost}" \
 	${virtx_cmd} ./mach build --verbose \
 		|| die
 }
 
 multilib_src_install() {
-	local chost=$(get_abi_CHOST ${ABI})
+	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
+	local ctarget=$(get_abi_CHOST ${ABI})
 	_fix_paths
 	cd "${BUILD_DIR}" || die
 	# xpcshell is getting called during install
@@ -1016,8 +1014,6 @@ multilib_src_install() {
 		"${BUILD_OBJ_DIR}"/dist/bin/${PN} \
 		"${BUILD_OBJ_DIR}"/dist/bin/plugin-container
 
-	TARGET="${chost}" \
-	MOZ_MAKE_FLAGS="${MAKEOPTS}" SHELL="${SHELL:-${EPREFIX}/bin/bash}" MOZ_NOSPAM=1 \
 	DESTDIR="${D}" ./mach install || die
 
 	# Upstream cannot ship symlink but we can (bmo#658850)
