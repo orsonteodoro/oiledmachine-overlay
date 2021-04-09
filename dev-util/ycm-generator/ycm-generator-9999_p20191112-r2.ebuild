@@ -4,7 +4,9 @@
 EAPI=7
 DESCRIPTION="Generates config files for YouCompleteMe"
 HOMEPAGE="https://github.com/rdnetto/YCM-Generator"
-KEYWORDS="~amd64 ~x86"
+
+# Live ebuilds don't get KEYWORDed
+
 LICENSE="GPL-3"
 SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
