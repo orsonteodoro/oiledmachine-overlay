@@ -27,7 +27,10 @@ LICENSE="GPL-3+ BSD
 	!system-waitress? ( ZPL )
 	!system-watchdog? ( Apache-2.0 )
 	test? ( BSD GPL-3+ )"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+
+# Live ebuilds do not get KEYWORDed.  No tagged version in repo.
+# Versoning based on CORE_VERSION.
+
 PYTHON_COMPAT=( python3_{6,7,8,9} )
 # slot 0 old hmac calculation, new one is
 #	 426833360adec8db72ed6cef9d7aa7f037e6a5b8 of (ycmd/hmac_plugin.py)
