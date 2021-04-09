@@ -24,10 +24,11 @@ REQUIRED_USE+="
 	^^ ( c11 c89 c99 gnu17 )
 	^^ ( c++98 c++11 c++14 )"
 # CMakeLists.txt lists versions
+# See https://github.com/civetweb/civetweb/tree/v1.14/src/third_party
 LUA_5_1_MIN="5.1.5"
 LUA_5_2_MIN="5.2.4"
-LUA_5_3_MIN="5.3.5"
-LUA_5_4_MIN="5.4.0"
+LUA_5_3_MIN="5.3.6"
+LUA_5_4_MIN="5.4.3"
 DEPEND+=" >=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
 	lua? (
 		${LUA_DEPS}
@@ -75,8 +76,6 @@ _PATCHES=(
 	"${FILESDIR}/civetweb-1.13-disable-pedantic-errors.patch"
 	"${FILESDIR}/civetweb-1.13-change-cmake-for-lua-dependencies-v2.patch"
 	"${FILESDIR}/civetweb-1.13-disable-fvisibility-for-c.patch"
-	"${FILESDIR}/civetweb-1.13-fix-lfs-5.1-compat.patch"
-	"${FILESDIR}/civetweb-1.13-fix-mod_lua.inl-5.1-compat.patch"
 )
 
 pkg_setup() {
