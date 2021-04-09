@@ -43,14 +43,11 @@ id it ja kn ko lt lv ml mr nb nl or pa pl pt_BR pt ro ru sl sr@latin sr sv ta
 te tr uk vi zh_CN )
 
 # aqua (quartz) is enabled upstream but disabled
-# bmalloc is enabled upstream but disabled for stability reasons
 # systemd is enabled upstream but gentoo uses openrc by default
 # wayland is enabled upstream but disabled because it is not defacto default
 #   standard for desktop yet
 
-#
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" ${LANGS[@]/#/l10n_} aqua -bmalloc +dfg-jit +egl +ftl-jit -gamepad
+IUSE+=" ${LANGS[@]/#/l10n_} aqua +bmalloc +dfg-jit +egl +ftl-jit -gamepad
 +geolocation gles2-only gnome-keyring +gstreamer -gtk-doc hardened
 +introspection +jit +jpeg2k +jumbo-build +libnotify -minibrowser +opengl
 -seccomp -spell -systemd test wayland +webassembly +webassembly-b3-jit +webgl
@@ -61,6 +58,7 @@ IUSE+=" ${LANGS[@]/#/l10n_} aqua -bmalloc +dfg-jit +egl +ftl-jit -gamepad
 # gstreamer with opengl/gles2 needs egl
 REQUIRED_USE+="
 	|| ( aqua wayland X )
+	jit? ( bmalloc )
 	dfg-jit? ( jit )
 	ftl-jit? ( jit )
 	geolocation? ( introspection )
@@ -274,7 +272,7 @@ multilib_src_configure() {
 	tc-export CC
 
 	# Arches without JIT support also need this to really disable it in all places
-#	use jit || append-cppflags -DENABLE_JIT=0 -DENABLE_YARR_JIT=0 -DENABLE_ASSEMBLER=0
+	use jit || append-cppflags -DENABLE_JIT=0 -DENABLE_YARR_JIT=0 -DENABLE_ASSEMBLER=0
 
 	# It does not compile on alpha without this in LDFLAGS
 	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648761
@@ -347,17 +345,17 @@ multilib_src_configure() {
 		-DENABLE_C_LOOP=$(usex !jit)
 		-DENABLE_DFG_JIT=$(usex dfg-jit)
 		-DENABLE_FTL_JIT=$(usex ftl-jit)
-		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation "ON" "OFF") # \
+		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation) # \
+# Runtime optional (talks over dbus service)
 		-DENABLE_GLES2=$(usex gles2-only)
 		-DENABLE_GTKDOC=$(usex gtk-doc)
 		-DENABLE_GAMEPAD=$(usex gamepad)
-		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection "ON" "OFF")
+		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection)
 		-DENABLE_JIT=$(usex jit)
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
 		-DENABLE_OPENGL=${opengl_enabled}
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
 		-DENABLE_UNIFIED_BUILDS=$(usex jumbo-build)
-# Runtime optional (talks over dbus service)
 		-DENABLE_SPELLCHECK=$(usex spell)
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
@@ -379,6 +377,10 @@ multilib_src_configure() {
 		$(cmake_use_find_package egl EGL)
 		$(cmake_use_find_package opengl OpenGL)
 	)
+
+	if ! use jit ; then
+		mycmakeargs+=( -DENABLE_SAMPLING_PROFILER=OFF )
+	fi
 
 	# Use GOLD when possible as it has all the magic to
 	# detect when to use it and using gold for this concrete package has
