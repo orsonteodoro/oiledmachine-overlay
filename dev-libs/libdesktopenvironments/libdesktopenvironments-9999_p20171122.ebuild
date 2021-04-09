@@ -6,7 +6,9 @@ DESCRIPTION="A library that simplifies native UI engineering on the Linux \
 desktop"
 HOMEPAGE="https://github.com/TheAssassin/libdesktopenvironments"
 LICENSE="MIT" # project's default license
-KEYWORDS="~amd64 ~x86"
+
+# Live ebuilds don't get keyworded
+
 SLOT="0/${PV}"
 IUSE="demo"
 EGIT_COMMIT="c5128a97a6fc34175ed0be604511efce32adc45d"
