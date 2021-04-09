@@ -388,6 +388,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	ewarn "This ebuild is a WIP (Work In Progress) with currently broken cross-compile as in building 32-bit on 64-bit"
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use pgo ; then
 			if ! has userpriv ${FEATURES} ; then
