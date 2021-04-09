@@ -5,8 +5,9 @@ EAPI=7
 DESCRIPTION="Very small JSON parser written in C."
 HOMEPAGE="https://github.com/yarosla/nxjson"
 LICENSE="LGPL-3+"
-KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc \
-~ppc64 ~riscv ~ppc-macos ~s390 ~sh ~sparc ~x64-macos ~x86 ~x86-macos"
+
+# Live ebuilds do not get keyworded
+
 SLOT="0/${PV}"
 IUSE="debug static test"
 EGIT_COMMIT="d2c6fba9d5b0d445722105dd2a64062c1309ac86"
