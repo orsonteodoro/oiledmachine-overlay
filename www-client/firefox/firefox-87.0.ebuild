@@ -629,7 +629,8 @@ src_prepare() {
 		cd "${BUILD_DIR}" || die
 		local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 		local ctarget=$(get_abi_CHOST ${ABI})
-		if [[ -f "/usr/bin/${ctarget}-objdump" ]] ; then
+		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-objdump" ) \
+			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${ctarget}-objdump" ) ; then
 			eapply "${WORKDIR}/firefox-patches/0026-build-Disable-Werror.patch"
 			# sed-in toolchain prefix
 			sed -i \
@@ -641,7 +642,8 @@ src_prepare() {
 			ewarn "Using objdump from chost"
 		fi
 
-		if [[ -f "/usr/bin/${ctarget}-readelf" ]] ; then
+		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-readelf" ) \
+			|| ( ! tc-is-cross-compiler && -f "/usr/bin/${ctarget}-readelf" ) ; then
 			eapply "${FILESDIR}/multiabi/${PN}-84.0.1-check_binary-no-prefix-for-readelf.patch"
 			eapply "${FILESDIR}/multiabi/${PN}-84.0.1-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
 			einfo "Using ${ctarget}-readelf for ctarget"
