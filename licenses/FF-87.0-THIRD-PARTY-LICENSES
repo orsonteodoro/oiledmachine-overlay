@@ -894,7 +894,7 @@ libraries:
 
     * Swedish_dictionary
 
-Copyright © 2007 Free Software Foundation, Inc.
+Copyright Â© 2007 Free Software Foundation, Inc.
  <https://www.fsf.org/>
 
 Everyone is permitted to copy and distribute verbatim copies
@@ -1043,7 +1043,7 @@ on one originally written by Disconnect.me.
 
 Version 3, 29 June 2007
 
-Copyright © 2007 Free Software Foundation, Inc.
+Copyright Â© 2007 Free Software Foundation, Inc.
 <https://www.fsf.org/>
 
 Everyone is permitted to copy and distribute verbatim copies
@@ -2225,7 +2225,7 @@ Apple/Mozilla NPRuntime License
 
 This license applies to the file dom/plugins/base/npruntime.h.
 
-Copyright © 2004, Apple Computer, Inc. and The Mozilla Foundation.
+Copyright Â© 2004, Apple Computer, Inc. and The Mozilla Foundation.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -2529,7 +2529,7 @@ are as follows:
     * 1987, 1988, 1989 Digital Equipment Corporation, Maynard, Massachusetts.
     * 1998 Keith Packard
     * 2003 Richard Henderson
-Copyright © <date> <copyright holder>
+Copyright Â© <date> <copyright holder>
 
 Permission to use, copy, modify, distribute, and sell this software
 and its documentation for any purpose is hereby granted without
@@ -3894,7 +3894,7 @@ libcubeb License
 
 This license applies to files in the directory media/libcubeb.
 
-Copyright © 2011 Mozilla Foundation
+Copyright Â© 2011 Mozilla Foundation
 
 Permission to use, copy, modify, and distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -4055,7 +4055,7 @@ libnestegg License
 
 This license applies to certain files in the directory media/libnestegg.
 
-Copyright © 2010 Mozilla Foundation
+Copyright Â© 2010 Mozilla Foundation
 
 Permission to use, copy, modify, and distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -4076,7 +4076,7 @@ libsoundtouch License
 This license applies to certain files in the directory media/libsoundtouch/
 src/.
 
-The SoundTouch Library Copyright © Olli Parviainen 2001-2012
+The SoundTouch Library Copyright Â© Olli Parviainen 2001-2012
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
