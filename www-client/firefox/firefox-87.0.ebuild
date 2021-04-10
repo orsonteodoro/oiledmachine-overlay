@@ -65,6 +65,8 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="0/$(ver_cut 1)"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
+LICENSE+=" Apache-2.0 MIT"
+# Other licenses are from third party
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
 	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast selinux
 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
@@ -1003,6 +1005,34 @@ multilib_src_compile() {
 		|| die
 }
 
+# @FUNCTION: _install_licenses
+# @DESCRIPTION:
+# Installs all licenses from third party rust cargo packages and other internal
+# packages.
+# Standardizes the process.
+_install_licenses() {
+	einfo "Copying third party licenses and copyright notices"
+	OIFS="${IFS}"
+	export IFS=$'\n'
+	for f in $(find "${S}" \
+	  -iname "*license*" -type f \
+	  -o -iname "*copyright*" \
+	  -o -iname "*copying*" \
+	  -o -iname "*patent*" \
+	  -o -iname "ofl.txt" \
+	  ) $(grep -i -l -e "copyright" $(find "${S}" -iname "*readme*")) ; \
+	do
+		if [[ -f "${f}" ]] ; then
+			d=$(dirname "${f}" | sed -e "s|^${S}||")
+		else
+			d=$(echo "${f}" | sed -e "s|^${S}||")
+		fi
+		docinto "licenses/${d}"
+		dodoc -r "${f}"
+	done
+	export IFS="${OIFS}"
+}
+
 multilib_src_install() {
 	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 	local ctarget=$(get_abi_CHOST ${ABI})
@@ -1181,6 +1211,8 @@ multilib_src_install() {
 			"${wrapper}" \
 			|| die
 	done
+
+	_install_licenses
 }
 
 pkg_preinst() {
