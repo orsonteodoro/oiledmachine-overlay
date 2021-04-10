@@ -631,7 +631,7 @@ src_prepare() {
 		local ctarget=$(get_abi_CHOST ${ABI})
 		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-objdump" ) \
 			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${ctarget}-objdump" ) ; then
-			eapply "${WORKDIR}/firefox-patches/0026-build-Disable-Werror.patch"
+			eapply "${WORKDIR}/firefox-patches/0028-Make-elfhack-use-toolchain.patch"
 			# sed-in toolchain prefix
 			sed -i \
 				-e "s/objdump/${ctarget}-objdump/" \
