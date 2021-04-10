@@ -69,8 +69,8 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 LICENSE+=" FF-87.0-THIRD-PARTY-LICENSES" # Converted toolkit/content/license.html by html2text -nobs
 LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions Boost-1.0 BSD BSD-2
-CC0-1.0 CC-BY-4.0 curl GPL-2+ GPL-3+ icu ISC Ispell libpng MIT OFL-1.1 OPENLDAP
-PSF-2 PSF-2.4 SunPro UoI-NCSA unicode W3C-document ZLIB"
+CC0-1.0 CC-BY-4.0 curl GPL-2+ GPL-3+ icu ISC Ispell libpng MIT OFL-1.1 Old-MIT
+OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode W3C-document ZLIB"
 # Other licenses are from third party (few are mentioned for a random license
 # audit out of 31 MLOC)
 #
@@ -96,6 +96,7 @@ PSF-2 PSF-2.4 SunPro UoI-NCSA unicode W3C-document ZLIB"
 # libpng media/libpng/pngconf.h
 # OFL-1.1 layout/reftests/fonts/Chunkfive-license.txt
 # OPENLDAP third_party/rust/lmdb-rkv-sys/lmdb/libraries/liblmdb/mdb.c
+# Old-MIT gfx/harfbuzz/
 # PSF-2.4 (is a variation of) third_party/python/virtualenv/__virtualenv__/typing-3.7.4.3-py2-none-any/typing-3.7.4.3.dist-info/LICENSE
 # PSF-2 third_party/python/virtualenv/__virtualenv__/contextlib2-0.6.0.post1-py2.py3-none-any/contextlib2-0.6.0.post1.dist-info/LICENSE.txt
 # M+ FONTS LICENSE_E - layout/reftests/fonts/mplus/mplus-license.txt *
