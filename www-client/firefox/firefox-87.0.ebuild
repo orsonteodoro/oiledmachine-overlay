@@ -65,8 +65,51 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="0/$(ver_cut 1)"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-LICENSE+=" Apache-2.0 MIT"
-# Other licenses are from third party
+# MPL-2.0 is the mostly used and default
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+LICENSE+=" FF-87.0-THIRD-PARTY-LICENSES" # Converted toolkit/content/license.html by html2text -nobs
+LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions Boost-1.0 BSD BSD-2 GPL-2+
+GPL-3+ icu ISC libpng MIT OFL-1.1 OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode
+W3C-document"
+# Other licenses are from third party (few are mentioned for a random license
+# audit out of 31 MLOC)
+#
+# ^^ ( GPL-3? ( FTL ) GPL-2 ) modules/freetype2/LICENSE.TXT - GPL-2 assumed # \
+#   since original ebuild cites it
+# Apache-2.0 for files listed in dom/encoding/test/stringencoding-license.txt
+# Apache-2.0-with-LLVM-exceptions tools/fuzzing/libfuzzer/FuzzerUtilLinux.cpp
+# Boost-1.0 - third_party/msgpack/include/msgpack/predef/compiler/ibm.h
+# BSD media/kiss_fft/_kiss_fft_guts.h
+# BSD dom/media/webrtc/transport/third_party/nrappkit/src/util/util.c
+# BSD-2 ISC third_party/dav1d/tools/compat/getopt.c
+# BSD, MIT, MIT Old Style with legal disclaimer 2 [1] nsprpub/pr/src/misc/praton.c
+# curl - toolkit/crashreporter/google-breakpad/src/third_party/curl/COPYING
+# custom testing/web-platform/tests/css/tools/w3ctestlib/catalog/xhtml11.dtd *
+# custom testing/web-platform/tests/css/CSS2/LICENSE-W3CTS *
+# custom js/src/tests/test262/built-ins/RegExp/S15.10.2_A1_T1.js *
+# FTL modules/freetype2/builds/windows/w32-icc.mk
+# GlyphWiki - layout/reftests/fonts/glyphwiki-license.txt *
+# GPL-2+ testing/talos/talos/tests/v8_7/deltablue.js
+# GPL-3+ js/src/devtools/rootAnalysis/run_complete
+# ISC ipc/chromium/src/third_party/libevent/arc4random.c
+# libpng media/libpng/pngconf.h
+# OFL-1.1 layout/reftests/fonts/Chunkfive-license.txt
+# OPENLDAP third_party/rust/lmdb-rkv-sys/lmdb/libraries/liblmdb/mdb.c
+# PSF-2.4 (is a variation of) third_party/python/virtualenv/__virtualenv__/typing-3.7.4.3-py2-none-any/typing-3.7.4.3.dist-info/LICENSE
+# PSF-2 third_party/python/virtualenv/__virtualenv__/contextlib2-0.6.0.post1-py2.py3-none-any/contextlib2-0.6.0.post1.dist-info/LICENSE.txt
+# M+ FONTS LICENSE_E - layout/reftests/fonts/mplus/mplus-license.txt *
+# MIT UoI-NCSA js/src/jit/arm/llvm-compiler-rt/assembly.h
+# UoI-NCSA tools/fuzzing/libfuzzer/LICENSE.TXT
+# unicode intl/icu/source/data/unidata/ucdterms.txt
+# unicode rust/regex-syntax/src/unicode_tables/LICENSE-UNICODE
+# unicode icu security/sandbox/chromium/base/third_party/icu/LICENSE
+# Spencer-94 js/src/editline/README *
+# SunPro modules/fdlibm/src/math_private.h
+# W3C-document testing/web-platform/tests/css/CSS2/LICENSE-W3CD
+
+
+# *TODO: add license to license folder
+
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
 	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast selinux
 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
