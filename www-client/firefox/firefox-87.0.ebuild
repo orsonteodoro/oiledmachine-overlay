@@ -643,7 +643,7 @@ src_prepare() {
 		fi
 
 		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-readelf" ) \
-			|| ( ! tc-is-cross-compiler && -f "/usr/bin/${ctarget}-readelf" ) ; then
+			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${ctarget}-readelf" ) ; then
 			einfo "Using ${ctarget}-readelf for ctarget"
 		else
 			eapply "${FILESDIR}/multiabi/${PN}-84.0.1-check_binary-no-prefix-for-readelf.patch"
@@ -1075,6 +1075,8 @@ multilib_src_compile() {
 # packages.
 # Standardizes the process.
 _install_licenses() {
+	[[ -f "${T}/.copied_licenses" ]] && return
+
 	einfo "Copying third party licenses and copyright notices"
 	OIFS="${IFS}"
 	export IFS=$'\n'
@@ -1095,6 +1097,7 @@ _install_licenses() {
 		dodoc -r "${f}"
 	done
 	export IFS="${OIFS}"
+	touch "${T}/.copied_licenses"
 }
 
 multilib_src_install() {
