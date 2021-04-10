@@ -573,7 +573,7 @@ npm-utils_install_licenses() {
 	  -o -iname "*patent*" \
 	  -o -iname "ofl.txt" \
 	  -o -iname "*notice*" \
-	  ) ; \
+	  ) $(grep -i -l -e "copyright" $(find "${S}" -iname "*readme*")) ; \
 	do
 		if [[ -f "${f}" ]] ; then
 			d=$(dirname "${f}" | sed -e "s|^${S}||")
