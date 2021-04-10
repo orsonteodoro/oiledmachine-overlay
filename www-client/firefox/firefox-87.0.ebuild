@@ -569,10 +569,12 @@ src_unpack() {
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
+
+	# defer 0028-Make-elfhack-use-toolchain.patch in multilib_foreach_abi
+	mv "${WORKDIR}/firefox-patches"/0028-Make-elfhack-use-toolchain.patch{,.bak}
+
 	eapply "${WORKDIR}/firefox-patches"
-	eapply "${FILESDIR}/multiabi/${PN}-82.0-elfhack-makefile-no-prefix-for-readelf.patch"
-	eapply "${FILESDIR}/multiabi/${PN}-84.0.1-check_binary-no-prefix-for-readelf.patch"
-	eapply "${FILESDIR}/multiabi/${PN}-84.0.1-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
+	mv "${WORKDIR}/firefox-patches"/0028-Make-elfhack-use-toolchain.patch{.bak,}
 
 	# Only partial patching was done because Gentoo doesn't support multilib
 	# Python.  Only native ABI is supported.  This means cbindgen cannot
@@ -624,16 +626,27 @@ src_prepare() {
 	multilib_copy_sources
 
 	_src_prepare() {
+		cd "${BUILD_DIR}" || die
 		local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 		local ctarget=$(get_abi_CHOST ${ABI})
 		if [[ -f "${EPREFIX}/usr/bin/${ctarget}-objdump" ]] ; then
+			eapply "${WORKDIR}/firefox-patches/0026-build-Disable-Werror.patch"
 			# sed-in toolchain prefix
 			sed -i \
 				-e "s/objdump/${ctarget}-objdump/" \
 				"${BUILD_DIR}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 				|| die "sed failed to set toolchain prefix"
+			einfo "Using ${ctarget}-objdump for ctarget"
 		else
-			ewarn "Using ${chost} (host) for objdump"
+			ewarn "Using objdump from chost"
+		fi
+
+		if [[ -f "${EPREFIX}/usr/bin/${ctarget}-readelf" ]] ; then
+			eapply "${FILESDIR}/multiabi/${PN}-84.0.1-check_binary-no-prefix-for-readelf.patch"
+			eapply "${FILESDIR}/multiabi/${PN}-84.0.1-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
+			einfo "Using ${ctarget}-readelf for ctarget"
+		else
+			ewarn "Using readelf from chost"
 		fi
 	}
 
