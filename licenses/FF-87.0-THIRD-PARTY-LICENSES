@@ -1074,6 +1074,7 @@ To protect your rights, we need to prevent others from denying you these rights
 or asking you to surrender the rights. Therefore, you have certain
 responsibilities if you distribute copies of the software, or if you modify it:
 responsibilities to respect the freedom of others.
+
 For example, if you distribute copies of such a program, whether gratis or for
 a fee, you must pass on to the recipients the same freedoms that you received.
 You must make sure that they, too, receive or can get the source code. And you
@@ -1087,6 +1088,7 @@ For the developers' and authors' protection, the GPL clearly explains that
 there is no warranty for this free software. For both users' and authors' sake,
 the GPL requires that modified versions be marked as changed, so that their
 problems will not be attributed erroneously to authors of previous versions.
+
 Some devices are designed to deny users access to install or run modified
 versions of the software inside them, although the manufacturer can do so. This
 is fundamentally incompatible with the aim of protecting users' freedom to
@@ -1096,6 +1098,7 @@ unacceptable. Therefore, we have designed this version of the GPL to prohibit
 the practice for those products. If such problems arise substantially in other
 domains, we stand ready to extend this provision to those domains in future
 versions of the GPL, as needed to protect the freedom of users.
+
 Finally, every program is threatened constantly by software patents. States
 should not allow patents to restrict development and use of software on
 general-purpose computers, but in those that do, we wish to avoid the special
@@ -6716,7 +6719,7 @@ projects for their contributions to this product:
     * The C++_Big_Integer_Library (Matt McCutchen)
 
 ===============================================================================
-[Applies to Windows Only]
+[Applies to Windows only]
 
 Proprietary Operating System Components
 
