@@ -68,9 +68,9 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 LICENSE+=" FF-87.0-THIRD-PARTY-LICENSES" # Converted toolkit/content/license.html by html2text -nobs
-LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions Boost-1.0 BSD BSD-2 GPL-2+
-GPL-3+ icu ISC libpng MIT OFL-1.1 OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode
-W3C-document"
+LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions Boost-1.0 BSD BSD-2
+curl GPL-2+ GPL-3+ icu ISC libpng MIT OFL-1.1 OPENLDAP PSF-2 PSF-2.4 SunPro
+UoI-NCSA unicode W3C-document"
 # Other licenses are from third party (few are mentioned for a random license
 # audit out of 31 MLOC)
 #
