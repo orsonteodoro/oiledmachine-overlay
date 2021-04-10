@@ -69,8 +69,8 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 LICENSE+=" FF-87.0-THIRD-PARTY-LICENSES" # Converted toolkit/content/license.html by html2text -nobs
 LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions Boost-1.0 BSD BSD-2
-curl GPL-2+ GPL-3+ icu ISC libpng MIT OFL-1.1 OPENLDAP PSF-2 PSF-2.4 SunPro
-UoI-NCSA unicode W3C-document"
+CC0-1.0 CC-BY-4.0 curl GPL-2+ GPL-3+ icu ISC Ispell libpng MIT OFL-1.1 OPENLDAP
+PSF-2 PSF-2.4 SunPro UoI-NCSA unicode W3C-document ZLIB"
 # Other licenses are from third party (few are mentioned for a random license
 # audit out of 31 MLOC)
 #
@@ -83,6 +83,7 @@ UoI-NCSA unicode W3C-document"
 # BSD dom/media/webrtc/transport/third_party/nrappkit/src/util/util.c
 # BSD-2 ISC third_party/dav1d/tools/compat/getopt.c
 # BSD, MIT, MIT Old Style with legal disclaimer 2 [1] nsprpub/pr/src/misc/praton.c
+# CC-BY-4.0 browser/fonts/TwemojiMozilla.ttf (See https://github.com/mozilla/twemoji-colr/blob/master/LICENSE.md)
 # curl - toolkit/crashreporter/google-breakpad/src/third_party/curl/COPYING
 # custom testing/web-platform/tests/css/tools/w3ctestlib/catalog/xhtml11.dtd *
 # custom testing/web-platform/tests/css/CSS2/LICENSE-W3CTS *
@@ -98,6 +99,7 @@ UoI-NCSA unicode W3C-document"
 # PSF-2.4 (is a variation of) third_party/python/virtualenv/__virtualenv__/typing-3.7.4.3-py2-none-any/typing-3.7.4.3.dist-info/LICENSE
 # PSF-2 third_party/python/virtualenv/__virtualenv__/contextlib2-0.6.0.post1-py2.py3-none-any/contextlib2-0.6.0.post1.dist-info/LICENSE.txt
 # M+ FONTS LICENSE_E - layout/reftests/fonts/mplus/mplus-license.txt *
+# MIT CC0-1.0 devtools/client/shared/vendor/lodash.js (more details can be found at https://github.com/lodash/lodash/blob/master/LICENSE)
 # MIT UoI-NCSA js/src/jit/arm/llvm-compiler-rt/assembly.h
 # UoI-NCSA tools/fuzzing/libfuzzer/LICENSE.TXT
 # unicode intl/icu/source/data/unidata/ucdterms.txt
@@ -106,6 +108,7 @@ UoI-NCSA unicode W3C-document"
 # Spencer-94 js/src/editline/README *
 # SunPro modules/fdlibm/src/math_private.h
 # W3C-document testing/web-platform/tests/css/CSS2/LICENSE-W3CD
+# ZLIB gfx/sfntly/cpp/src/test/tinyxml/tinyxml.cpp
 
 
 # *TODO: add license to license folder
