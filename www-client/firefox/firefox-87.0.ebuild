@@ -109,7 +109,9 @@ PSF-2 PSF-2.4 SunPro UoI-NCSA unicode W3C-document ZLIB"
 # SunPro modules/fdlibm/src/math_private.h
 # W3C-document testing/web-platform/tests/css/CSS2/LICENSE-W3CD
 # ZLIB gfx/sfntly/cpp/src/test/tinyxml/tinyxml.cpp
-
+# ZLIB media/ffvpx/libavutil/adler32.c
+# ZLIB third_party/rust/libz-sys/src/zlib/zlib.h
+# ZLIB MIT devtools/client/shared/vendor/jszip.js
 
 # *TODO: add license to license folder
 
