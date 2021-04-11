@@ -559,6 +559,42 @@ previous_broken_lock_count=${previous_broken_lock_count}"
 	einfo "npm_update_package_locks_recursive: done"
 }
 
+# @FUNCTION: npm-utils_install_header_license
+# @DESCRIPTION:
+# Installs a license header
+npm-utils_install_header_license() {
+	local dir_path="${1}"
+	local file_name="${2}"
+	local license_name="${3}"
+	local length="${4}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	head -n ${length} "${S}/${d}/${file_name}" > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
+# @FUNCTION: npm-utils_install_license_mid
+# @DESCRIPTION:
+# Installs a license from the middle of a file
+npm-utils_install_license_mid() {
+	local dir_path="${1}"
+	local file_name="${2}"
+	local license_name="${3}"
+	local start="${4}"
+	local length="${5}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	tail -n +${start} "${S}/${d}/${file_name}" \
+		| head -n ${length} > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
 # @FUNCTION: npm-utils_install_licenses
 # @DESCRIPTION:
 # Installs all licenses from main package and micropackages
@@ -567,13 +603,17 @@ npm-utils_install_licenses() {
 	OIFS="${IFS}"
 	export IFS=$'\n'
 	for f in $(find "${S}" \
-	  -iname "*license*" -type f \
+	  -iname "*licen*" -type f \
 	  -o -iname "*copyright*" \
 	  -o -iname "*copying*" \
 	  -o -iname "*patent*" \
 	  -o -iname "ofl.txt" \
 	  -o -iname "*notice*" \
-	  ) $(grep -i -l -e "copyright" $(find "${S}" -iname "*readme*")) ; \
+	  ) $(grep -i -G -l \
+		-e "copyright" \
+		-e "licen" \
+		-e "warrant" \
+		$(find "${S}" -iname "*readme*")) ; \
 	do
 		if [[ -f "${f}" ]] ; then
 			d=$(dirname "${f}" | sed -e "s|^${S}||")
