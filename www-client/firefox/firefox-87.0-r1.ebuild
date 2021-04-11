@@ -68,21 +68,24 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 LICENSE+=" FF-87.0-THIRD-PARTY-LICENSES" # Converted toolkit/content/license.html by html2text -nobs
-LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions Boost-1.0 BSD BSD-2
-CC0-1.0 CC-BY-4.0 curl GPL-2+ GPL-3+ icu ISC Ispell libpng MIT OFL-1.1 Old-MIT
-OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode W3C-document ZLIB"
+LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions all-rights-reserved
+Boost-1.0 BSD BSD-2 CC0-1.0 CC-BY-4.0 curl GPL-2+ GPL-3+ icu ISC Ispell libpng
+MIT NAIST-IPADIC OFL-1.1 Old-MIT OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode
+W3C-document ZLIB"
 # Other licenses are from third party (few are mentioned for a random license
-# audit out of 31 MLOC)
+# audit out of ~31M lines)
 #
 # ^^ ( GPL-3? ( FTL ) GPL-2 ) modules/freetype2/LICENSE.TXT - GPL-2 assumed # \
 #   since original ebuild cites it
+# all-rights-reserved MIT mfbt/Span.h -- the standard MIT license does not contain all rights reserved
+# all-rights-reserved MIT devtools/client/shared/widgets/CubicBezierWidget.js -- the standard MIT license does not contain all rights reserved
 # Apache-2.0 for files listed in dom/encoding/test/stringencoding-license.txt
 # Apache-2.0-with-LLVM-exceptions tools/fuzzing/libfuzzer/FuzzerUtilLinux.cpp
 # Boost-1.0 - third_party/msgpack/include/msgpack/predef/compiler/ibm.h
 # BSD media/kiss_fft/_kiss_fft_guts.h
 # BSD dom/media/webrtc/transport/third_party/nrappkit/src/util/util.c
 # BSD-2 ISC third_party/dav1d/tools/compat/getopt.c
-# BSD, MIT, MIT Old Style with legal disclaimer 2 [1] nsprpub/pr/src/misc/praton.c
+# BSD, MIT, ISC nsprpub/pr/src/misc/praton.c
 # CC-BY-4.0 browser/fonts/TwemojiMozilla.ttf (See https://github.com/mozilla/twemoji-colr/blob/master/LICENSE.md)
 # curl - toolkit/crashreporter/google-breakpad/src/third_party/curl/COPYING
 # custom testing/web-platform/tests/css/tools/w3ctestlib/catalog/xhtml11.dtd *
@@ -103,9 +106,10 @@ OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode W3C-document ZLIB"
 # MIT CC0-1.0 devtools/client/shared/vendor/lodash.js (more details can be found at https://github.com/lodash/lodash/blob/master/LICENSE)
 # MIT UoI-NCSA js/src/jit/arm/llvm-compiler-rt/assembly.h
 # UoI-NCSA tools/fuzzing/libfuzzer/LICENSE.TXT
+# unicode BSD NAIST-IPADIC intl/icu/source/data/brkitr/dictionaries/cjdict.txt
+# unicode icu security/sandbox/chromium/base/third_party/icu/LICENSE
 # unicode intl/icu/source/data/unidata/ucdterms.txt
 # unicode rust/regex-syntax/src/unicode_tables/LICENSE-UNICODE
-# unicode icu security/sandbox/chromium/base/third_party/icu/LICENSE
 # Spencer-94 js/src/editline/README *
 # SunPro modules/fdlibm/src/math_private.h
 # W3C-document testing/web-platform/tests/css/CSS2/LICENSE-W3CD
@@ -113,6 +117,7 @@ OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode W3C-document ZLIB"
 # ZLIB media/ffvpx/libavutil/adler32.c
 # ZLIB third_party/rust/libz-sys/src/zlib/zlib.h
 # ZLIB MIT devtools/client/shared/vendor/jszip.js
+# ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- the vanilla ZLIB lib license doesn't contain all rights reserved
 
 # *TODO: add license to license folder
 
@@ -439,7 +444,6 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	ewarn "This ebuild is a WIP (Work In Progress) with currently broken cross-compile as in building 32-bit on 64-bit"
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use pgo ; then
 			if ! has userpriv ${FEATURES} ; then
@@ -623,6 +627,7 @@ src_prepare() {
 		popd || die
 	fi
 
+	die
 	multilib_copy_sources
 
 	_src_prepare() {
@@ -1069,24 +1074,59 @@ multilib_src_compile() {
 		|| die
 }
 
+_install_header_license() {
+	local dir_path="${1}"
+	local file_name="${2}"
+	local license_name="${3}"
+	local length="${4}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	head -n ${length} "${S}/${d}/${file_name}" > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
+_install_header_license_mid() {
+	local dir_path="${1}"
+	local file_name="${2}"
+	local license_name="${3}"
+	local start="${4}"
+	local length="${5}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	tail -n +${start} "${S}/${d}/${file_name}" \
+		| head -n ${length} > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
 # @FUNCTION: _install_licenses
 # @DESCRIPTION:
-# Installs all licenses from third party rust cargo packages and other internal
-# packages.
-# Standardizes the process.
+# Installs licenses and copyright notices from third party rust cargo
+# packages and other internal packages.
 _install_licenses() {
 	[[ -f "${T}/.copied_licenses" ]] && return
 
 	einfo "Copying third party licenses and copyright notices"
-	OIFS="${IFS}"
 	export IFS=$'\n'
 	for f in $(find "${S}" \
-	  -iname "*license*" -type f \
+	  -iname "*licens*" -type f \
+	  -o -iname "*licenc*" \
 	  -o -iname "*copyright*" \
 	  -o -iname "*copying*" \
 	  -o -iname "*patent*" \
 	  -o -iname "ofl.txt" \
-	  ) $(grep -i -l -e "copyright" $(find "${S}" -iname "*readme*")) ; \
+	  -o -iname "Cargo.toml" \
+	  ) $(grep -i -G -l \
+		-e "copyright" \
+		-e "licens" \
+		-e "licenc"
+		-e "warrant" \
+		$(find "${S}" -iname "*readme*")) ; \
 	do
 		if [[ -f "${f}" ]] ; then
 			d=$(dirname "${f}" | sed -e "s|^${S}||")
@@ -1096,7 +1136,117 @@ _install_licenses() {
 		docinto "licenses/${d}"
 		dodoc -r "${f}"
 	done
-	export IFS="${OIFS}"
+	export IFS=$' \t\n'
+
+	_install_header_license \
+		"modules/fdlibm/src" \
+		"math_private.h" \
+		"SunPro.LICENSE" \
+		10
+	_install_header_license \
+		"js/src/tests/test262/built-ins/RegExp" \
+		"S15.10.2_A1_T1.js" \
+		"S15.10.2_A1_T1.js.LICENSE" \
+		17
+	_install_header_license \
+		"testing/web-platform/tests/css/tools/w3ctestlib/catalog" \
+		"xhtml11.dtd" \
+		"xhtml11.dtd.LICENSE" \
+		27
+
+	# Duped because of must not alter clause
+	_install_header_license \
+		"gfx/sfntly/cpp/src/test/tinyxml" \
+		"tinyxml.cpp" \
+		"tinyxml.LICENSE1" \
+		23
+	_install_header_license \
+		"gfx/sfntly/cpp/src/test/tinyxml" \
+		"tinyxmlerror.cpp" \
+		"tinyxml.LICENSE2" \
+		23
+	_install_header_license \
+		"gfx/sfntly/cpp/src/test/tinyxml" \
+		"tinyxml.h" \
+		"tinyxml.LICENSE3" \
+		23
+	_install_header_license \
+		"gfx/sfntly/cpp/src/test/tinyxml" \
+		"tinystr.cpp" \
+		"tinyxml.LICENSE4" \
+		22
+
+	_install_header_license \
+		"third_party/msgpack/include/msgpack/predef/compiler" \
+		"ibm.h" \
+		"ibm.h.copyright_notice" \
+		6
+
+	_install_header_license \
+		"media/ffvpx/libavutil" \
+		"adler32.c" \
+		"adler32.c.LICENSE" \
+		22
+
+	_install_header_license \
+		"js/src/octane" \
+		"box2d.js" \
+		"box2d.LICENSE" \
+		19
+
+	_install_header_license \
+		"devtools/client/shared/vendor" \
+		"jszip.js" \
+		"jszip.js.LICENSE1" \
+		11
+	_install_header_license_mid \
+		"devtools/client/shared/vendor" \
+		"jszip.js" \
+		"jszip.js.LICENSE2" \
+		5689 \
+		18
+
+	# Duped because of must not alter clause
+	for f in $(grep -r -l -F \
+	-e "The origin of this software must not be misrepresented" \
+		media/libjpeg) ; do
+		_install_header_license \
+			$(dirname "${f}" | sed -e "s|^./||g") \
+			$(basename "${f}") \
+			$(basename "${f}")".LICENSE" \
+			32
+	done
+
+	_install_header_license \
+		"mfbt/Span.h" \
+		"Span.h" \
+		"Span.h.LICENSE" \
+		15
+
+	_install_header_license \
+		"media/openmax_dl/dl/api" \
+		"omxtypes.h" \
+		"omxtypes.h.LICENSE" \
+		31
+
+	_install_header_license \
+		"devtools/client/shared/widgets" \
+		"CubicBezierWidget.js" \
+		"CubicBezierWidget.js.LICENSE" \
+		21
+
+	_install_header_license \
+		"netwerk/dns" \
+		"nsIDNKitInterface.h" \
+		"nsIDNKitInterface.h.LICENSE" \
+		41
+
+	_install_header_license \
+		"gfx/qcms" \
+		"qcms.h" \
+		"qcms.h.LICENSE" \
+		41
+
 	touch "${T}/.copied_licenses"
 }
 
@@ -1278,7 +1428,6 @@ multilib_src_install() {
 			"${wrapper}" \
 			|| die
 	done
-
 	_install_licenses
 }
 
