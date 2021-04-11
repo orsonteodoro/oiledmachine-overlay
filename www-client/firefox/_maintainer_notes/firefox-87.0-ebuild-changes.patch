@@ -583,7 +583,7 @@
  	local virtx_cmd=
  
  	if use pgo ; then
-@@ -903,12 +1074,192 @@ src_compile() {
+@@ -903,12 +1074,191 @@ src_compile() {
  		|| die
  }
  
@@ -634,7 +634,6 @@
 +	  -o -iname "*copying*" \
 +	  -o -iname "*patent*" \
 +	  -o -iname "ofl.txt" \
-+	  -o -iname "Cargo.toml" \
 +	  ) $(grep -i -G -l \
 +		-e "copyright" \
 +		-e "licens" \

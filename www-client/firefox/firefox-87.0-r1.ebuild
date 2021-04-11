@@ -1120,7 +1120,6 @@ _install_licenses() {
 	  -o -iname "*copying*" \
 	  -o -iname "*patent*" \
 	  -o -iname "ofl.txt" \
-	  -o -iname "Cargo.toml" \
 	  ) $(grep -i -G -l \
 		-e "copyright" \
 		-e "licens" \
