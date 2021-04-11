@@ -128,7 +128,7 @@ IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 \
 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
-IUSE+=" -jemalloc"
+IUSE+=" +jemalloc"
 
 REQUIRED_USE="debug? ( !system-av1 )
 	screencast? ( wayland )"
@@ -444,6 +444,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	ewarn "This ebuild is a Work In Progress (WIP) / Testing.  Investigating freeze / lock up for 32-bit build."
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use pgo ; then
 			if ! has userpriv ${FEATURES} ; then
