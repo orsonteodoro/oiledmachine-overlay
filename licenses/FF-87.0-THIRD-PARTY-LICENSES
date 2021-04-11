@@ -1728,6 +1728,7 @@ in the directory gfx/skia/.
 ANGLE License
 
 This license applies to files in the directory gfx/angle/.
+
 Copyright (C) 2002-2010 The ANGLE Project Authors.
 All rights reserved.
 
@@ -2319,9 +2320,14 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+===============================================================================
+
 Babylon License
+
 This license applies to this file in the directory devtools/client/debugger/
 debugger.js/.
+
 Copyright (C) 2012-2014 by various contributors (see AUTHORS)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -2413,9 +2419,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 BSD 3-Clause License
 
 This license applies to files in the following directories:
+
     * browser/components/newtab/vendor/react-transition-group.js
     * third_party/rust/bindgen/
     * third_party/rust/instant/
+
 See the individual LICENSE files for copyright owners.
 
 Redistribution and use in source and binary forms, with or without
@@ -2486,6 +2494,7 @@ POSSIBILITY OF SUCH DAMAGE.
 byteorder License
 
 This license applies to files in the directory third_party/rust/byteorder.
+
 The MIT License (MIT)
 
 Copyright (c) 2015 Andrew Gallant
@@ -4656,6 +4665,7 @@ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
+
 This license applies to certain files in the directory dom/media/webrtc/
 transport/third_party/nrappkit.
 
@@ -4773,6 +4783,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 praton License
 
 This license applies to the file nsprpub/pr/src/misc/praton.c.
+
 Copyright (c) 1983, 1990, 1993
    The Regents of the University of California.  All rights reserved.
 
@@ -5348,6 +5359,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ===============================================================================
 
 Reselect License
+
 This license applies to the files devtools/client/shared/vendor/reselect.js and
 browser/components/newtab/data/content/activity-stream.bundle.js.
 
@@ -6265,6 +6277,7 @@ SUCH DAMAGE.
 unreachable License
 
 This license applies to files in the directory third_party/rust/unreachable.
+
 The MIT License (MIT)
 
 Copyright (c) 2015 Jonathan Reem
@@ -6606,6 +6619,7 @@ WinToast License
 
 This license applies to all files in the directory third_party/WinToast unless
 otherwise specified.
+
 MIT License
 
 Copyright (c) 2016 Mohammed Boujemaoui Boulaghmoudi
