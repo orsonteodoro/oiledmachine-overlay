@@ -628,7 +628,6 @@ src_prepare() {
 		popd || die
 	fi
 
-	die
 	multilib_copy_sources
 
 	_src_prepare() {
