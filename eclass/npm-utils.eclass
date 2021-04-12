@@ -563,10 +563,10 @@ previous_broken_lock_count=${previous_broken_lock_count}"
 # @DESCRIPTION:
 # Installs a license header
 npm-utils_install_header_license() {
-	local dir_path="${1}"
-	local file_name="${2}"
-	local license_name="${3}"
-	local length="${4}"
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local length="${3}"
 	d="${dir_path}"
 	dl="licenses/${d}"
 	docinto "${dl}"
@@ -580,11 +580,11 @@ npm-utils_install_header_license() {
 # @DESCRIPTION:
 # Installs a license from the middle of a file
 npm-utils_install_license_mid() {
-	local dir_path="${1}"
-	local file_name="${2}"
-	local license_name="${3}"
-	local start="${4}"
-	local length="${5}"
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local start="${3}"
+	local length="${4}"
 	d="${dir_path}"
 	dl="licenses/${d}"
 	docinto "${dl}"
