@@ -1217,7 +1217,7 @@ _install_licenses() {
 	done
 
 	_install_header_license \
-		"mfbt/Span.h" \
+		"mfbt" \
 		"Span.h" \
 		"Span.h.LICENSE" \
 		15
