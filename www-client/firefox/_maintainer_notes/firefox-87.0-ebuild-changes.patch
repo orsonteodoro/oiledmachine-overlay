@@ -1,5 +1,5 @@
 --- firefox-87.0.ebuild.orig	2021-03-30 11:39:23.000000000 -0700
-+++ firefox-87.0.ebuild	2021-04-11 11:04:09.804797326 -0700
++++ firefox-87.0.ebuild	2021-04-12 10:07:58.043410654 -0700
 @@ -1,6 +1,9 @@
  # Copyright 1999-2021 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -85,7 +85,7 @@
 +_ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 \
 +abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 +IUSE+=" ${_ABIS}"
-+IUSE+=" -jemalloc"
++IUSE+=" +jemalloc"
  
  REQUIRED_USE="debug? ( !system-av1 )
  	screencast? ( wayland )"
@@ -258,7 +258,15 @@
  
  # Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or
  # overridden in the enviromnent (advanced hackers only)
-@@ -463,6 +534,24 @@ pkg_setup() {
+@@ -373,6 +444,7 @@ pkg_pretend() {
+ }
+ 
+ pkg_setup() {
++	ewarn "This ebuild is a Work In Progress (WIP) / Testing.  Investigating freeze / lock up for 32-bit build."
+ 	if [[ ${MERGE_TYPE} != binary ]] ; then
+ 		if use pgo ; then
+ 			if ! has userpriv ${FEATURES} ; then
+@@ -463,6 +535,24 @@ pkg_setup() {
  		# Ensure we use C locale when building, bug #746215
  		export LC_ALL=C
  	fi
@@ -283,7 +291,7 @@
  }
  
  src_unpack() {
-@@ -484,7 +573,18 @@ src_unpack() {
+@@ -484,7 +574,18 @@ src_unpack() {
  
  src_prepare() {
  	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
@@ -302,7 +310,7 @@
  
  	# Allow user to apply any additional patches without modifing ebuild
  	eapply_user
-@@ -501,11 +601,7 @@ src_prepare() {
+@@ -501,11 +602,7 @@ src_prepare() {
  		"${S}"/intl/icu_sources_data.py \
  		|| die "sed failed to set num_cores"
  
@@ -315,7 +323,7 @@
  
  	sed -i \
  		-e 's/ccache_stats = None/return None/' \
-@@ -518,19 +614,77 @@ src_prepare() {
+@@ -518,19 +615,76 @@ src_prepare() {
  	# Clearing checksums where we have applied patches
  	moz_clear_vendor_checksums target-lexicon-0.9.0
  
@@ -336,7 +344,6 @@
 +		popd || die
 +	fi
 +
-+	die
 +	multilib_copy_sources
 +
 +	_src_prepare() {
@@ -583,16 +590,16 @@
  	local virtx_cmd=
  
  	if use pgo ; then
-@@ -903,12 +1074,191 @@ src_compile() {
+@@ -903,12 +1074,173 @@ src_compile() {
  		|| die
  }
  
 -src_install() {
 +_install_header_license() {
-+	local dir_path="${1}"
-+	local file_name="${2}"
-+	local license_name="${3}"
-+	local length="${4}"
++	local dir_path=$(dirname "${1}")
++	local file_name=$(basename "${1}")
++	local license_name="${2}"
++	local length="${3}"
 +	d="${dir_path}"
 +	dl="licenses/${d}"
 +	docinto "${dl}"
@@ -603,11 +610,11 @@
 +}
 +
 +_install_header_license_mid() {
-+	local dir_path="${1}"
-+	local file_name="${2}"
-+	local license_name="${3}"
-+	local start="${4}"
-+	local length="${5}"
++	local dir_path=$(dirname "${1}")
++	local file_name=$(basename "${1}")
++	local license_name="${2}"
++	local start="${3}"
++	local length="${4}"
 +	d="${dir_path}"
 +	dl="licenses/${d}"
 +	docinto "${dl}"
@@ -652,69 +659,57 @@
 +	export IFS=$' \t\n'
 +
 +	_install_header_license \
-+		"modules/fdlibm/src" \
-+		"math_private.h" \
++		"modules/fdlibm/src/math_private.h" \
 +		"SunPro.LICENSE" \
 +		10
 +	_install_header_license \
-+		"js/src/tests/test262/built-ins/RegExp" \
-+		"S15.10.2_A1_T1.js" \
++		"js/src/tests/test262/built-ins/RegExp/S15.10.2_A1_T1.js" \
 +		"S15.10.2_A1_T1.js.LICENSE" \
 +		17
 +	_install_header_license \
-+		"testing/web-platform/tests/css/tools/w3ctestlib/catalog" \
-+		"xhtml11.dtd" \
++		"testing/web-platform/tests/css/tools/w3ctestlib/catalog/xhtml11.dtd" \
 +		"xhtml11.dtd.LICENSE" \
 +		27
 +
 +	# Duped because of must not alter clause
 +	_install_header_license \
-+		"gfx/sfntly/cpp/src/test/tinyxml" \
-+		"tinyxml.cpp" \
++		"gfx/sfntly/cpp/src/test/tinyxml/tinyxml.cpp" \
 +		"tinyxml.LICENSE1" \
 +		23
 +	_install_header_license \
-+		"gfx/sfntly/cpp/src/test/tinyxml" \
-+		"tinyxmlerror.cpp" \
++		"gfx/sfntly/cpp/src/test/tinyxml/tinyxmlerror.cpp" \
 +		"tinyxml.LICENSE2" \
 +		23
 +	_install_header_license \
-+		"gfx/sfntly/cpp/src/test/tinyxml" \
-+		"tinyxml.h" \
++		"gfx/sfntly/cpp/src/test/tinyxml/tinyxml.h" \
 +		"tinyxml.LICENSE3" \
 +		23
 +	_install_header_license \
-+		"gfx/sfntly/cpp/src/test/tinyxml" \
-+		"tinystr.cpp" \
++		"gfx/sfntly/cpp/src/test/tinyxml/tinystr.cpp" \
 +		"tinyxml.LICENSE4" \
 +		22
 +
 +	_install_header_license \
-+		"third_party/msgpack/include/msgpack/predef/compiler" \
-+		"ibm.h" \
++		"third_party/msgpack/include/msgpack/predef/compiler/ibm.h" \
 +		"ibm.h.copyright_notice" \
 +		6
 +
 +	_install_header_license \
-+		"media/ffvpx/libavutil" \
-+		"adler32.c" \
++		"media/ffvpx/libavutil/adler32.c" \
 +		"adler32.c.LICENSE" \
 +		22
 +
 +	_install_header_license \
-+		"js/src/octane" \
-+		"box2d.js" \
++		"js/src/octane/box2d.js" \
 +		"box2d.LICENSE" \
 +		19
 +
 +	_install_header_license \
-+		"devtools/client/shared/vendor" \
-+		"jszip.js" \
++		"devtools/client/shared/vendor/jszip.js" \
 +		"jszip.js.LICENSE1" \
 +		11
 +	_install_header_license_mid \
-+		"devtools/client/shared/vendor" \
-+		"jszip.js" \
++		"devtools/client/shared/vendor/jszip.js" \
 +		"jszip.js.LICENSE2" \
 +		5689 \
 +		18
@@ -724,39 +719,33 @@
 +	-e "The origin of this software must not be misrepresented" \
 +		media/libjpeg) ; do
 +		_install_header_license \
-+			$(dirname "${f}" | sed -e "s|^./||g") \
-+			$(basename "${f}") \
++			$(echo "${f}" | sed -e "s|^./||g") \
 +			$(basename "${f}")".LICENSE" \
 +			32
 +	done
 +
 +	_install_header_license \
-+		"mfbt" \
-+		"Span.h" \
++		"mfbt/Span.h" \
 +		"Span.h.LICENSE" \
 +		15
 +
 +	_install_header_license \
-+		"media/openmax_dl/dl/api" \
-+		"omxtypes.h" \
++		"media/openmax_dl/dl/api/omxtypes.h" \
 +		"omxtypes.h.LICENSE" \
 +		31
 +
 +	_install_header_license \
-+		"devtools/client/shared/widgets" \
-+		"CubicBezierWidget.js" \
++		"devtools/client/shared/widgets/CubicBezierWidget.js" \
 +		"CubicBezierWidget.js.LICENSE" \
 +		21
 +
 +	_install_header_license \
-+		"netwerk/dns" \
-+		"nsIDNKitInterface.h" \
++		"netwerk/dns/nsIDNKitInterface.h" \
 +		"nsIDNKitInterface.h.LICENSE" \
 +		41
 +
 +	_install_header_license \
-+		"gfx/qcms" \
-+		"qcms.h" \
++		"gfx/qcms/qcms.h" \
 +		"qcms.h.LICENSE" \
 +		41
 +
@@ -779,7 +768,7 @@
  
  	DESTDIR="${D}" ./mach install || die
  
-@@ -971,15 +1322,15 @@ src_install() {
+@@ -971,15 +1303,15 @@ src_install() {
  	# Install geckodriver
  	if use geckodriver ; then
  		einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
@@ -798,7 +787,7 @@
  	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
  
  	insinto /usr/share/icons/hicolor/symbolic/apps
-@@ -998,12 +1349,12 @@ src_install() {
+@@ -998,12 +1330,12 @@ src_install() {
  	done
  
  	# Install menus
@@ -814,7 +803,7 @@
  	local use_wayland="false"
  
  	if use wayland ; then
-@@ -1014,12 +1365,12 @@ src_install() {
+@@ -1014,12 +1346,12 @@ src_install() {
  	local app_name desktop_filename display_protocol exec_command
  	for display_protocol in ${display_protocols} ; do
  		app_name="${name} on ${display_protocol}"
@@ -830,7 +819,7 @@
  				;;
  			X11)
  				if ! use wayland ; then
-@@ -1028,13 +1379,15 @@ src_install() {
+@@ -1028,13 +1360,15 @@ src_install() {
  					continue
  				fi
  
@@ -850,7 +839,7 @@
  				;;
  		esac
  
-@@ -1054,25 +1407,28 @@ src_install() {
+@@ -1054,25 +1388,28 @@ src_install() {
  
  	# Install generic wrapper script
  	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
@@ -883,7 +872,7 @@
  }
  
  pkg_preinst() {
-@@ -1162,4 +1518,17 @@ pkg_postinst() {
+@@ -1162,4 +1499,17 @@ pkg_postinst() {
  		elog
  		elog "in about:config."
  	fi
