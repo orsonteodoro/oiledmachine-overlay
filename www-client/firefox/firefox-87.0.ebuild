@@ -1123,7 +1123,7 @@ _install_licenses() {
 	  ) $(grep -i -G -l \
 		-e "copyright" \
 		-e "licens" \
-		-e "licenc"
+		-e "licenc" \
 		-e "warrant" \
 		$(find "${S}" -iname "*readme*")) ; \
 	do
@@ -1194,8 +1194,7 @@ _install_licenses() {
 		18
 
 	# Duped because of must not alter clause
-	for f in $(grep -r -l -F \
-	-e "The origin of this software must not be misrepresented" \
+	for f in $(grep -r -l -F -e "origin of this software" \
 		media/libjpeg) ; do
 		_install_header_license \
 			$(echo "${f}" | sed -e "s|^./||g") \

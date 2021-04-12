@@ -1,5 +1,5 @@
 --- firefox-87.0.ebuild.orig	2021-03-30 11:39:23.000000000 -0700
-+++ firefox-87.0.ebuild	2021-04-12 10:07:58.043410654 -0700
++++ firefox-87.0.ebuild	2021-04-12 14:00:29.548355161 -0700
 @@ -1,6 +1,9 @@
  # Copyright 1999-2021 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -590,7 +590,7 @@
  	local virtx_cmd=
  
  	if use pgo ; then
-@@ -903,12 +1074,173 @@ src_compile() {
+@@ -903,12 +1074,172 @@ src_compile() {
  		|| die
  }
  
@@ -644,7 +644,7 @@
 +	  ) $(grep -i -G -l \
 +		-e "copyright" \
 +		-e "licens" \
-+		-e "licenc"
++		-e "licenc" \
 +		-e "warrant" \
 +		$(find "${S}" -iname "*readme*")) ; \
 +	do
@@ -715,8 +715,7 @@
 +		18
 +
 +	# Duped because of must not alter clause
-+	for f in $(grep -r -l -F \
-+	-e "The origin of this software must not be misrepresented" \
++	for f in $(grep -r -l -F -e "origin of this software" \
 +		media/libjpeg) ; do
 +		_install_header_license \
 +			$(echo "${f}" | sed -e "s|^./||g") \
@@ -768,7 +767,7 @@
  
  	DESTDIR="${D}" ./mach install || die
  
-@@ -971,15 +1303,15 @@ src_install() {
+@@ -971,15 +1302,15 @@ src_install() {
  	# Install geckodriver
  	if use geckodriver ; then
  		einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
@@ -787,7 +786,7 @@
  	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
  
  	insinto /usr/share/icons/hicolor/symbolic/apps
-@@ -998,12 +1330,12 @@ src_install() {
+@@ -998,12 +1329,12 @@ src_install() {
  	done
  
  	# Install menus
@@ -803,7 +802,7 @@
  	local use_wayland="false"
  
  	if use wayland ; then
-@@ -1014,12 +1346,12 @@ src_install() {
+@@ -1014,12 +1345,12 @@ src_install() {
  	local app_name desktop_filename display_protocol exec_command
  	for display_protocol in ${display_protocols} ; do
  		app_name="${name} on ${display_protocol}"
@@ -819,7 +818,7 @@
  				;;
  			X11)
  				if ! use wayland ; then
-@@ -1028,13 +1360,15 @@ src_install() {
+@@ -1028,13 +1359,15 @@ src_install() {
  					continue
  				fi
  
@@ -839,7 +838,7 @@
  				;;
  		esac
  
-@@ -1054,25 +1388,28 @@ src_install() {
+@@ -1054,25 +1387,28 @@ src_install() {
  
  	# Install generic wrapper script
  	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
@@ -872,7 +871,7 @@
  }
  
  pkg_preinst() {
-@@ -1162,4 +1499,17 @@ pkg_postinst() {
+@@ -1162,4 +1498,17 @@ pkg_postinst() {
  		elog
  		elog "in about:config."
  	fi
