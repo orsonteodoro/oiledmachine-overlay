@@ -953,10 +953,10 @@ ${sitedir}/certifi|g" \
 p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'idna' )|\
 ${sitedir}/idna|g" \
 				ycmd/server_utils.py || die
-#			sed -i -e "s|\
-#p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'urllib3', 'src' )|\
-#${sitedir}/urllib3|g" \
-#				ycmd/server_utils.py || die
+			sed -i -e "s|\
+p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'urllib3', 'src' )|\
+${sitedir}/urllib3|g" \
+				ycmd/server_utils.py || die
 		fi
 
 		if ! use system-typescript ; then
@@ -1437,7 +1437,6 @@ src_install() {
 		if ! use system-waitress ; then
 			python_domodule third_party/waitress
 		fi
-		#python_optimize
 	}
 	python_foreach_impl python_install_all
 

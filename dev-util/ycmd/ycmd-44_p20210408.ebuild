@@ -43,7 +43,7 @@ LICENSE="GPL-3+ BSD
 
 # Dependencies assume U 20.04
 # For dependencies, see also
-# https://github.com/ycm-core/ycmd/blob/8bed6c14bf560abb0a1d60da1d811dc7f751c29a/azure/linux/install_dependencies.sh
+# https://github.com/ycm-core/ycmd/blob/6f2f818364bb5c52f60e720741ff583bf77b4cd5/azure/linux/install_dependencies.sh
 
 SLOT_MAJ=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJ}/${PVR}"
@@ -51,7 +51,7 @@ IUSE+=" c clangd csharp cuda cxx debug developer doc examples go java javascript
 libclang minimal netcore netfx objc objcxx python regex rust system-bottle
 system-boost system-clangd system-go-tools system-jedi system-libclang
 system-mono system-mrab-regex system-requests system-pathtools system-rust
-system-rust system-tern system-typescript system-waitress system-watchdog test
+system-rust system-tern system-typescript system-watchdog test
 typescript vim"
 CLANG_V="11.0"
 CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
@@ -135,7 +135,6 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-rust? ( >=dev-lang/rust-1.51.0_pre20210211[clippy,rustfmt] )
 	system-tern? ( >=dev-nodejs/tern-0.21.0 )
 	system-typescript? ( >=dev-lang/typescript-4.1.5 )
-	system-waitress? ( >=dev-python/waitress-1.4.3[${PYTHON_USEDEP}] )
 	system-watchdog? ( >=dev-python/watchdog-${WATCHDOG_V} )
 	typescript? ( ${RDEPEND_NODEJS} )"
 RDEPEND+="  ${DEPEND}"
@@ -372,11 +371,7 @@ BD_REL="ycmd/${SLOT_MAJ}"
 BD_ABS=""
 
 pkg_setup() {
-	if [[ -z "${OILEDMACHINE_OVERLAY_DEVELOPER}" ]] ; then
-		die "This ebuild is still under construction.  Return back when it is completed."
-	else
-		ewarn "This ebuild is a Work in Progress and may not work at all."
-	fi
+	ewarn "This ebuild is in testing and is a Work In Progress (WIP)."
 
 	if \
 	   ( ! use system-tern && use javascript ) \
@@ -889,10 +884,6 @@ ${sitedir}/certifi|g" \
 os.path.join( DIR_OF_REQUESTS_DEPS, 'idna' )|\
 ${sitedir}/idna|g" \
 				ycmd/__main__.py || die
-#			sed -i -e "s|\
-#p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'urllib3', 'src' )|\
-#${sitedir}/urllib3|g" \
-#				ycmd/__main__.py || die
 		fi
 
 		if ! use system-typescript ; then
@@ -900,13 +891,6 @@ ${sitedir}/idna|g" \
 ___TSSERVER_BIN_PATH___|\
 ${BD_ABS}/third_party/tsserver/lib64/node_modules/typescript/bin/tsserver|g" \
 				ycmd/default_settings.json || die
-		fi
-
-		if use system-waitress ; then
-			sed -i -e "s|\
-os.path.join( DIR_OF_THIRD_PARTY, 'waitress' )|\
-${sitedir}/waitress|g" \
-				ycmd/__main__.py || die
 		fi
 
 		if use system-watchdog ; then
@@ -1079,8 +1063,7 @@ _shrink_install() {
 		-o -iname "*PATENTS*"
 		-o -iname "*README*" )
 	einfo "Cleaning third_party"
-	find {third_party/bottle,third_party/jedi_deps,\
-third_party/waitress,ycmd} \
+	find {third_party/bottle,third_party/jedi_deps,ycmd} \
 		! \( -name "*.py" \
 			-o -name "*.pyc" \
 			-o -name "*.pyi" \
@@ -1366,11 +1349,6 @@ src_install() {
 "${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsc" \
 "${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
 		fi
-
-		if ! use system-waitress ; then
-			python_domodule third_party/waitress
-		fi
-		#python_optimize
 	}
 	python_foreach_impl python_install_all
 
