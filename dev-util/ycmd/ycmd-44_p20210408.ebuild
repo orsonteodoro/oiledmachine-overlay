@@ -1,0 +1,1443 @@
+# Copyright 1999-2020 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=7
+
+PYTHON_COMPAT=( python3_{6..9} )
+
+inherit cmake-utils eutils flag-o-matic multilib-build python-r1
+
+DESCRIPTION="A code-completion & code-comprehension server"
+HOMEPAGE="https://ycm-core.github.io/ycmd/"
+LICENSE="GPL-3+ BSD
+	clangd? ( !system-clangd? ( Apache-2.0-with-LLVM-exceptions MIT
+		UoI-NCSA ) )
+	csharp? ( all-rights-reserved MIT Apache-2.0 )
+	examples? ( Apache-2.0 )
+	go? ( !system-go-tools? ( BSD MIT all-rights-reserved Apache-2.0 ) )
+	java? ( Apache-1.1 Apache-2.0 BSD BSD-2 BSD-4 CPL-1.0 dom4j EPL-2.0 icu
+		MPL-1.1 NAIST-IPADIC unicode W3C W3C-document )
+	javascript? ( !system-tern? ( MIT ) )
+	libclang? ( !system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT
+		UoI-NCSA ) )
+	python? ( !system-jedi? ( BSD-2 MIT PSF-2 ) )
+	regex? ( !system-mrab-regex? ( all-rights-reserved CNRI PSF-2 ) )
+	rust? ( !system-rust? ( || ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4
+		UoI-NCSA ) )
+	!system-bottle? ( MIT )
+	!system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA )
+	!system-mono? ( all-rights-reserved MIT )
+	!system-pathtools? ( BSD MIT ZPL )
+	!system-requests? ( Apache-2.0 BSD LGPL-2.1+ MIT MPL-2.0 PSF-2
+		unicode )
+	!system-waitress? ( ZPL )
+	!system-watchdog? ( Apache-2.0 )
+	test? ( BSD GPL-3+ )"
+
+# The vanilla MIT license doesn't contain all rights reserved but it is stated
+# in the .target(s), .prop files., .dll files (System.ComponentModel.Composition)
+# Additional licenses on internal omnisharp-rosyln refer to .target(s), .rsp, .config files
+
+# The vanilla MIT license doesn't contain all rights reserved.  It is mentioned in
+# third_party/go/src/github.com/sergi/go-diff/LICENSE
+
+# Live ebuilds do not get KEYWORDed.  No tagged version in repo.
+# Versioning based on CORE_VERSION.
+
+# Dependencies assume U 20.04
+# For dependencies, see also
+# https://github.com/ycm-core/ycmd/blob/8bed6c14bf560abb0a1d60da1d811dc7f751c29a/azure/linux/install_dependencies.sh
+
+SLOT_MAJ=$(ver_cut 1 ${PV})
+SLOT="${SLOT_MAJ}/${PVR}"
+IUSE+=" c clangd csharp cuda cxx debug developer doc examples go java javascript
+libclang minimal netcore netfx objc objcxx python regex rust system-bottle
+system-boost system-clangd system-go-tools system-jedi system-libclang
+system-mono system-mrab-regex system-requests system-pathtools system-rust
+system-rust system-tern system-typescript system-waitress system-watchdog test
+typescript vim"
+CLANG_V="11.0"
+CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
+PV_MAJ=$(ver_cut 1 ${PV})
+# Missing rust-analyzer (aka rust-analyzer-preview) from rust packages because
+# it is only available on nightly.  Forced nightly.
+REQUIRED_USE+="
+	!system-rust
+	c? ( || ( clangd libclang ) )
+	clangd? ( || ( c cxx objc objcxx ) )
+	csharp? ( || ( netcore netfx ) )
+	cxx? ( || ( clangd libclang ) )
+	libclang? ( || ( c cxx objc objcxx ) )
+	objc? ( || ( clangd libclang ) )
+	objcxx? ( || ( clangd libclang ) )
+	system-clangd? ( || ( c cxx objc objcxx ) clangd )
+	system-go-tools? ( go )
+	system-jedi? ( python )
+	system-libclang? ( || ( c cxx objc objcxx ) libclang )
+	system-mrab-regex? ( regex )
+	system-rust? ( rust )
+	system-tern? ( javascript )"
+
+# gopls is 0.4.1
+# See build.py for dependency versions.
+# See https://github.com/golang/tools/releases?after=gopls%2Fv0.4.2
+
+# For the rust version see src/version in https://github.com/rust-lang
+# and build.py in archive for nightly date.  Use committer-date:YYYY-MM-DD to search
+
+# For omnisharp-roslyn min requirements, see
+# .netcore version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.4/.pipelines/init.yml
+# .netfx version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.4/azure-pipelines.yml
+
+EGIT_COMMIT="6f2f818364bb5c52f60e720741ff583bf77b4cd5" # The last pull request (batch of related commits) before the CORE_VERSION is 45.
+#EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
+EGIT_COMMIT_MRAB_REGEX="fa9def53cf920ed9343a0afab54d5075d4c75394"
+EGIT_COMMIT_NUMPYDOC="c8513c5db6088a305711851519f944b33f7e1b25"
+EGIT_COMMIT_SCIPY_SPHINX_THEME="bc3b4b8383d4cd676fe75b7ca8c3e11d6afa8d97"
+EGIT_COMMIT_TYPESHED="d38645247816f862cafeed21a8f4466d306aacf3"
+BOTTLE_V="0.12.18"
+CLANGD_V="11.0.0"
+DJANGO_STUBS_V="jedi-v1"
+GOPLS_V="0.6.4"
+JDT_V="0.68.0-202101202016" # MILESTONE-TIMESTAMP in build.py
+JEDI_V="0.18.0"
+OMNISHARP_V="1.35.4"
+LIBCLANG_V="11.0.0"
+MRAB_REGEX_V="2020.10.15"
+PARSO_V="0.8.1"
+RUST_V="nightly-2021-02-11"
+WATCHDOG_V="2.0.1"
+
+RDEPEND_NODEJS="net-libs/nodejs"
+DEPEND_NODEJS="net-libs/nodejs[npm]"
+DEPEND+=" ${PYTHON_DEPS}
+	csharp? (
+		system-mono? (
+			netfx? ( >=dev-lang/mono-6.10.0 )
+			netcore? (
+				>=dev-lang/mono-6.10.0
+				>=dev-dotnet/dotnetcore-sdk-bin-3.1.201:3.1
+			)
+		)
+	)
+	java? ( virtual/jre:11 )
+	javascript? ( ${RDEPEND_NODEJS} )
+	system-boost? ( >=dev-libs/boost-1.72:=[python,threads,${PYTHON_USEDEP}] )
+	system-bottle? ( >=dev-python/bottle-${BOTTLE_V}[${PYTHON_USEDEP}] )
+	system-clangd? ( >=sys-devel/clang-${CLANGD_V}:${CLANG_V_MAJ} )
+	system-go-tools? ( >=dev-go/go-tools-0_pre20200701 )
+	system-jedi? ( >=dev-python/jedi-${JEDI_V}[${PYTHON_USEDEP}]
+			>=dev-python/numpydoc-0.9.0_pre20200408[${PYTHON_USEDEP}]
+			>=dev-python/parso-${PARSO_V}[${PYTHON_USEDEP}] )
+	system-libclang? ( >=sys-devel/clang-${LIBCLANG_V}:${CLANG_V_MAJ} )
+	system-mrab-regex? (
+		>=dev-python/regex-2020.10.15[${PYTHON_USEDEP}]
+	)
+	system-pathtools? ( >=dev-python/pathtools-0.1.1_pre20161006 )
+	system-rust? ( >=dev-lang/rust-1.51.0_pre20210211[clippy,rustfmt] )
+	system-tern? ( >=dev-nodejs/tern-0.21.0 )
+	system-typescript? ( >=dev-lang/typescript-4.1.5 )
+	system-waitress? ( >=dev-python/waitress-1.4.3[${PYTHON_USEDEP}] )
+	system-watchdog? ( >=dev-python/watchdog-${WATCHDOG_V} )
+	typescript? ( ${RDEPEND_NODEJS} )"
+RDEPEND+="  ${DEPEND}"
+BDEPEND+=" ${PYTHON_DEPS}
+	|| (
+		>=sys-devel/gcc-8
+		>=sys-devel/clang-7
+	)
+	javascript? ( ${DEPEND_NODEJS} )
+	test? ( >=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
+		>=dev-python/coverage-4.2[${PYTHON_USEDEP}]
+		>=dev-python/flake8-3.0[${PYTHON_USEDEP}]
+		dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
+		>=dev-python/flake8-ycm-0.1.0[${PYTHON_USEDEP}]
+		>=dev-python/psutil-5.6.6[${PYTHON_USEDEP}]
+		>=dev-python/pyhamcrest-1.10.1[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-cov[${PYTHON_USEDEP}]
+		dev-python/pytest-rerunfailures[${PYTHON_USEDEP}]
+		dev-python/pytest-xdist[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )
+	typescript? ( ${DEPEND_NODEJS} )"
+# Speed up downloads for rebuilds.  Precache outside of sandbox so we don't keep
+#   redownloading.
+# libclang archives are listed in cpp/ycm/CMakeLists.txt
+# For rust installers see,
+#   https://forge.rust-lang.org/infra/other-installation-methods.html
+# For rust precompiled binaries see,
+#   https://static.rust-lang.org/dist/2021-02-11/channel-rust-nightly.toml
+# For more info on Rust Release Channels see,
+#   https://forge.rust-lang.org/infra/channel-layout.html
+
+YCMD_FN="${P}-${EGIT_COMMIT:0:7}.tar.gz"
+BOTTLE_FN="bottle-${BOTTLE_V}.tar.gz"
+DJANGO_STUBS_FN="django-stubs-${DJANGO_STUBS_V}.tar.gz"
+MRAB_REGEX_FN="mrab-regex-${MRAB_REGEX_V}-${EGIT_COMMIT_MRAB_REGEX:0:12}.zip"
+NUMPYDOC_FN="numpydoc-${EGIT_COMMIT_NUMPYDOC:0:7}.tar.gz"
+JEDI_FN="jedi-${JEDI_V}.tar.gz"
+PARSO_FN="parso-${PARSO_V}.tar.gz"
+SCIPY_SPHINX_THEME_FN="scipy-sphinx-theme-${EGIT_COMMIT_SCIPY_SPHINX_THEME:0:7}.tar.gz"
+TYPESHED_FN="typeshed-${EGIT_COMMIT_TYPESHED:0:7}.tar.gz"
+WATCHDOG_FN="watchdog-${WATCHDOG_V}.tar.gz"
+
+SRC_URI="
+https://github.com/ycm-core/ycmd/archive/${EGIT_COMMIT}.tar.gz
+	-> ${YCMD_FN}
+https://github.com/bottlepy/bottle/archive/refs/tags/0.12.18.tar.gz
+	-> ${BOTTLE_FN}
+https://github.com/davidhalter/django-stubs/archive/refs/tags/${DJANGO_STUBS_V}.tar.gz
+	-> ${DJANGO_STUBS_FN}
+https://bitbucket.org/mrabarnett/mrab-regex/get/${EGIT_COMMIT_MRAB_REGEX}.zip
+	-> ${MRAB_REGEX_FN}
+https://github.com/numpy/numpydoc/archive/${EGIT_COMMIT_NUMPYDOC}.tar.gz
+	-> ${NUMPYDOC_FN}
+https://github.com/davidhalter/jedi/archive/refs/tags/v${JEDI_V}.tar.gz
+	-> ${JEDI_FN}
+https://github.com/davidhalter/parso/archive/refs/tags/v${PARSO_V}.tar.gz
+	-> ${PARSO_FN}
+https://github.com/scipy/scipy-sphinx-theme/archive/${EGIT_COMMIT_SCIPY_SPHINX_THEME}.tar.gz
+	-> ${SCIPY_SPHINX_THEME_FN}
+https://github.com/davidhalter/typeshed/archive/${EGIT_COMMIT_TYPESHED}.tar.gz
+	-> ${TYPESHED_FN}
+https://github.com/gorakhargosh/watchdog/archive/refs/tags/v${WATCHDOG_V}.tar.gz
+	-> ${WATCHDOG_FN}
+!system-clangd? (
+	clangd? (
+		amd64? (
+			elibc_glibc? (
+https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-x86_64-unknown-linux-gnu.tar.bz2
+			)
+		)
+		arm64? (
+			elibc_glibc? (
+https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-aarch64-linux-gnu.tar.bz2
+			)
+		)
+		arm? (
+			elibc_glibc? (
+https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-armv7a-linux-gnueabihf.tar.bz2
+			)
+		)
+	)
+)
+!system-libclang? (
+	libclang? (
+		amd64? (
+			elibc_glibc? (
+https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-x86_64-unknown-linux-gnu.tar.bz2
+			)
+		)
+		arm? (
+			elibc_glibc? (
+https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-armv7a-linux-gnueabihf.tar.bz2
+			)
+		)
+		arm64? (
+			elibc_glibc? (
+https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-aarch64-linux-gnu.tar.bz2
+			)
+		)
+	)
+)
+java? ( http://download.eclipse.org/jdtls/snapshots/jdt-language-server-${JDT_V}.tar.gz )
+csharp? (
+https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_V}/omnisharp.http-linux-x64.tar.gz
+	-> omnisharp-${OMNISHARP_V}.http-linux-x64.tar.gz
+https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_V}/omnisharp.http-linux-x86.tar.gz
+	-> omnisharp-${OMNISHARP_V}.http-linux-x86.tar.gz
+)
+rust? (
+	!system-rust? (
+		https://static.rust-lang.org/dist/${RUST_V#*-}/rust-src-nightly.tar.gz
+			-> rust-src-nightly-${RUST_V#*-}.tar.gz
+	)
+)
+"
+
+gen_rust_dls()
+{
+	local gentoo_arch="${1}"
+	local elibc_impl="${2}"
+	local pkg_name="${3}"
+	local arch_triple="${4}"
+	local nightly_date="${RUST_V#*-}"
+	out="
+rust? (
+	${gentoo_arch}? (
+		${elibc_impl}? (
+https://static.rust-lang.org/dist/${nightly_date}/${pkg_name}-nightly-${arch_triple}.tar.gz
+	-> ${pkg_name}-nightly-${nightly_date}-${arch_triple}.tar.gz
+		)
+	)
+)
+"
+	echo "${out}"
+}
+
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc cargo x86_64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc clippy x86_64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rust-docs x86_64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rust-std x86_64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rustc x86_64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rustfmt x86_64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc rust-analyzer x86_64-unknown-linux-gnu)
+
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl cargo x86_64-unknown-linux-musl)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl clippy x86_64-unknown-linux-musl)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rust-docs x86_64-unknown-linux-musl)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rust-std x86_64-unknown-linux-musl)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rustc x86_64-unknown-linux-musl)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rustfmt x86_64-unknown-linux-musl)
+SRC_URI+=" "$(gen_rust_dls amd64 elibc_musl rust-analyzer x86_64-unknown-linux-musl)
+
+SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc cargo aarch64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc clippy aarch64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rust-docs aarch64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rust-std aarch64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rustc aarch64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rustfmt aarch64-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls arm64 elibc_glibc rust-analyzer aarch64-unknown-linux-gnu)
+
+SRC_URI+=" "$(gen_rust_dls arm elibc_glibc cargo armv7-unknown-linux-gnueabihf)
+SRC_URI+=" "$(gen_rust_dls arm elibc_glibc clippy armv7-unknown-linux-gnueabihf)
+#SRC_URI+=" "$(gen_rust_dls arm elibc_glibc rust-docs armv7-unknown-linux-gnueabihf)
+SRC_URI+=" "$(gen_rust_dls arm elibc_glibc rust-std armv7-unknown-linux-gnueabihf)
+SRC_URI+=" "$(gen_rust_dls arm elibc_glibc rustc armv7-unknown-linux-gnueabihf)
+SRC_URI+=" "$(gen_rust_dls arm elibc_glibc rustfmt armv7-unknown-linux-gnueabihf)
+SRC_URI+=" "$(gen_rust_dls arm elibc_glibc rust-analyzer armv7-unknown-linux-gnueabihf)
+
+SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc cargo i686-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc clippy i686-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rust-docs i686-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rust-std i686-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rustc i686-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rustfmt i686-unknown-linux-gnu)
+SRC_URI+=" "$(gen_rust_dls x86 elibc_glibc rust-analyzer i686-unknown-linux-gnu)
+
+gen_go_dl_gh_url()
+{
+	local pkg_name="${1}"
+	local uri_frag="${2}"
+	local tag="${3}"
+	unset tag_split
+	readarray -d - -t tag_split <<<"${tag}"
+	local tag_commit="${tag_split[2]}"
+	local dest_name="${pkg_name//\//-}-${tag//\//-}"
+
+	if [[ -n "${tag_commit}" ]] ; then
+		echo "
+	go? (
+https://codeload.github.com/${uri_frag}/tar.gz/${tag_commit}
+	-> ${dest_name}.tar.gz
+	)"
+	else
+		echo "
+	go? (
+https://github.com/${uri_frag}/archive/refs/tags/${tag}.tar.gz
+	-> ${dest_name}.tar.gz
+	)"
+	fi
+
+}
+
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/tools/gopls golang/tools gopls/v0.6.4) # only the folder
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/tools golang/tools v0.1.1-0.20210119222907-0a1a9685734a) # the entire project
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/xerrors golang/xerrors v0.0.0-20200804184101-5ec99f83aff1)
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/sys golang/sys v0.0.0-20210119212857-b64e53b001e4)
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/mod golang/mod v0.4.0)
+SRC_URI+=" "$(gen_go_dl_gh_url honnef.co/go/tools dominikh/go-tools v0.0.1-2020.1.6)
+SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/sync golang/sync v0.0.0-20201020160332-67f06af15bc9)
+SRC_URI+=" "$(gen_go_dl_gh_url github.com/sergi/go-diff sergi/go-diff v1.1.0)
+SRC_URI+=" "$(gen_go_dl_gh_url mvdan.cc/gofumpt mvdan/gofumpt v0.1.0)
+SRC_URI+=" "$(gen_go_dl_gh_url mvdan.cc/xurls/v2 mvdan/xurls v2.2.0)
+SRC_URI+=" "$(gen_go_dl_gh_url github.com/google/go-cmp google/go-cmp v0.5.4)
+SRC_URI+=" "$(gen_go_dl_gh_url github.com/BurntSushi/toml BurntSushi/toml v0.3.1)
+
+
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S_BOTTLE="${WORKDIR}/bottle-${BOTTLE_V}"
+S_GO="${S}/third_party/go"
+S_DJANGO_STUBS="${WORKDIR}/django-stubs-${DJANGO_STUBS_V}"
+S_MRAB_REGEX="${WORKDIR}/mrabarnett-mrab-regex-${EGIT_COMMIT_MRAB_REGEX:0:12}"
+S_NUMPYDOC="${WORKDIR}/numpydoc-${EGIT_COMMIT_NUMPYDOC}"
+S_JEDI="${WORKDIR}/jedi-${JEDI_V}"
+S_PARSO="${WORKDIR}/parso-${PARSO_V}"
+S_RUST="${S}/third_party/rust-analyzer"
+S_SCIPY_SPHINX_THEME="${WORKDIR}/scipy-sphinx-theme-${EGIT_COMMIT_SCIPY_SPHINX_THEME}"
+S_TYPESHED="${WORKDIR}/typeshed-${EGIT_COMMIT_TYPESHED}"
+S_WATCHDOG="${WORKDIR}/watchdog-${WATCHDOG_V}"
+RESTRICT="mirror"
+DOCS=( JAVA_SUPPORT.md README.md )
+BD_REL="ycmd/${SLOT_MAJ}"
+BD_ABS=""
+
+pkg_setup() {
+	if [[ -z "${OILEDMACHINE_OVERLAY_DEVELOPER}" ]] ; then
+		die "This ebuild is still under construction.  Return back when it is completed."
+	else
+		ewarn "This ebuild is a Work in Progress and may not work at all."
+	fi
+
+	if \
+	   ( ! use system-tern && use javascript ) \
+	|| ( ! use system-typescript && use typescript ) ; then
+		if has network-sandbox $FEATURES ; then
+			die \
+"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
+download the internal dependencies."
+		fi
+		:;
+	fi
+	python_setup
+}
+
+src_unpack() {
+	# Manually unpacked to prevent double unpack with Rust or Go.
+	unpack ${YCMD_FN} \
+		${BOTTLE_FN} \
+		${DJANGO_STUBS_FN} \
+		${MRAB_REGEX_FN} \
+		${NUMPYDOC_FN} \
+		${JEDI_FN} \
+		${PARSO_FN} \
+		${SCIPY_SPHINX_THEME_FN} \
+		${TYPESHED_FN} \
+		${WATCHDOG_FN}
+
+	cd "${S}" || die
+	rm -rf third_party/bottle \
+		third_party/jedi_deps/jedi \
+		third_party/jedi_deps/numpydoc \
+		third_party/jedi_deps/numpydoc/doc/scipy-sphinx-theme \
+		third_party/jedi_deps/parso \
+		third_party/jedi_deps/jedi/jedi/third_party/typeshed \
+		third_party/jedi_deps/jedi/jedi/third_party/django-stubs \
+		third_party/mrab-regex \
+		third_party/watchdog_deps/watchdog || die
+
+	if ! use system-bottle ; then
+		mv "${S_BOTTLE}" \
+			third_party/bottle || die
+	fi
+	if ! use system-jedi && use python ; then
+		mv "${S_JEDI}" \
+			third_party/jedi_deps/jedi || die
+		mv "${S_NUMPYDOC}" \
+			third_party/jedi_deps/numpydoc || die
+		mv "${S_SCIPY_SPHINX_THEME}" \
+			third_party/jedi_deps/numpydoc/doc/scipy-sphinx-theme || die
+		mv "${S_PARSO}" \
+			third_party/jedi_deps/parso || die
+		mv "${S_TYPESHED}" \
+			third_party/jedi_deps/jedi/jedi/third_party/typeshed || die
+		mv "${S_DJANGO_STUBS}" \
+			third_party/jedi_deps/jedi/jedi/third_party/django-stubs || die
+	fi
+	if ! use system-mrab-regex && use regex ; then
+		mv "${S_MRAB_REGEX}" \
+			third_party/mrab-regex || die
+	fi
+	if ! use system-watchdog ; then
+		mv "${S_WATCHDOG}" \
+			third_party/watchdog_deps/watchdog || die
+	fi
+
+	if use clangd && ! use system-clangd ; then
+		mkdir -p third_party/clangd/cache || die
+		if use amd64 ; then
+			if use elibc_glibc ; then
+				cp -a $(realpath "${DISTDIR}/clangd-${CLANGD_V}-x86_64-unknown-linux-gnu.tar.bz2") \
+					third_party/clangd/cache || die
+			fi
+		fi
+		if use arm64 ; then
+			if use elibc_glibc ; then
+				cp -a $(realpath "${DISTDIR}/clangd-${CLANGD_V}-aarch64-linux-gnu.tar.bz2") \
+					third_party/clangd/cache || die
+			fi
+		fi
+		if use arm ; then
+			if use elibc_glibc ; then
+				cp -a $(realpath "${DISTDIR}/clangd-${CLANGD_V}-armv7a-linux-gnueabihf.tar.bz2") \
+					third_party/clangd/cache || die
+			fi
+		fi
+	fi
+
+	if use libclang && ! use system-libclang ; then
+		mkdir -p clang_archives || die
+		if use amd64 ; then
+			if use elibc_glibc ; then
+				cp -a $(realpath "${DISTDIR}/libclang-${LIBCLANG_V}-x86_64-unknown-linux-gnu.tar.bz2") \
+					clang_archives || die
+			fi
+		fi
+		if use arm64 ; then
+			if use elibc_glibc ; then
+				cp -a $(realpath "${DISTDIR}/libclang-${LIBCLANG_V}-aarch64-linux-gnu.tar.bz2") \
+					clang_archives || die
+			fi
+		fi
+		if use arm ; then
+			if use elibc_glibc ; then
+				cp -a $(realpath "${DISTDIR}/libclang-${LIBCLANG_V}-armv7a-linux-gnueabihf.tar.bz2") \
+					clang_archives || die
+			fi
+		fi
+	fi
+
+	if use csharp ; then
+		mkdir -p third_party/omnisharp-roslyn/v${OMNISHARP_V} || die
+		cp -a $(realpath "${DISTDIR}/omnisharp-${OMNISHARP_V}.http-linux-x64.tar.gz") \
+			third_party/omnisharp-roslyn/v${OMNISHARP_V}/omnisharp.http-linux-x64.tar.gz || die
+		cp -a $(realpath "${DISTDIR}/omnisharp-${OMNISHARP_V}.http-linux-x64.tar.gz") \
+			third_party/omnisharp-roslyn/v${OMNISHARP_V}/omnisharp.http-linux-x86.tar.gz || die
+	fi
+
+	if use go && ! use system-go-tools ; then
+		unpack_gopls
+	fi
+
+	if use java ; then
+		mkdir -p third_party/eclipse.jdt.ls/target/cache || die
+		cp -a $(realpath "${DISTDIR}/jdt-language-server-${JDT_V}.tar.gz") \
+			third_party/eclipse.jdt.ls/target/cache || die
+	fi
+
+	if use rust && ! use system-rust ; then
+		_install_rust_locally
+	fi
+}
+
+unpack_go_pkg()
+{
+	local pkg_name="${1}"
+	local uri_frag="${2}"
+	local tag="${3}"
+	local dest="${S_GO}/src/${pkg_name}"
+	local dest_name="${pkg_name//\//-}-${tag//\//-}"
+	einfo "Unpacking ${dest_name}.tar.gz"
+	mkdir -p "${dest}" || die
+	if [[ "${pkg_name}" == "golang.org/x/tools" ]] ; then
+		tar --strip-components=1 -x -C "${dest}" \
+			-f "${DISTDIR}/${dest_name}.tar.gz" \
+			--exclude=tools-${tag##*-}/gopls || die
+	elif [[ "${pkg_name}" == "golang.org/x/tools/gopls" ]] ; then
+		tar --strip-components=2 -x -C "${dest}" \
+			-f "${DISTDIR}/${dest_name}.tar.gz" \
+			tools-gopls-v${GOPLS_V}/gopls || die
+	else
+		tar --strip-components=1 -x -C "${dest}" \
+			-f "${DISTDIR}/${dest_name}.tar.gz" || die
+	fi
+}
+
+unpack_gopls()
+{
+	unpack_go_pkg golang.org/x/tools/gopls golang/tools gopls/v0.6.4
+	unpack_go_pkg golang.org/x/tools golang/tools v0.1.1-0.20210119222907-0a1a9685734a
+	unpack_go_pkg golang.org/x/xerrors golang/xerrors v0.0.0-20200804184101-5ec99f83aff1
+	unpack_go_pkg golang.org/x/sys golang/sys v0.0.0-20210119212857-b64e53b001e4
+	unpack_go_pkg golang.org/x/mod golang/mod v0.4.0
+	unpack_go_pkg honnef.co/go/tools dominikh/go-tools v0.0.1-2020.1.6
+	unpack_go_pkg golang.org/x/sync golang/sync v0.0.0-20201020160332-67f06af15bc9
+	unpack_go_pkg github.com/sergi/go-diff sergi/go-diff v1.1.0
+	unpack_go_pkg mvdan.cc/gofumpt mvdan/gofumpt v0.1.0
+	unpack_go_pkg mvdan.cc/xurls/v2 mvdan/xurls v2.2.0
+	unpack_go_pkg github.com/google/go-cmp google/go-cmp v0.5.4
+	unpack_go_pkg github.com/BurntSushi/toml BurntSushi/toml v0.3.1
+}
+
+src_compile_gopls()
+{
+	einfo "Building gopls"
+	export GO111MODULE=auto
+	export GOPATH="${BUILD_DIR}/third_party/go"
+	export GOBIN="${GOPATH}/bin"
+	mkdir -p "${GOBIN}" || die
+	pushd "${GOBIN}" || die
+		go build golang.org/x/tools/gopls || die
+	popd
+}
+
+unpack_rust_pkg()
+{
+	local pkg_name="${1}"
+	local arch_triple="${2}"
+	local alt_name="${3}"
+	local nightly_date="${RUST_V#*-}"
+	local dest="${S_RUST}"
+	if [[ -z "${alt_name}" ]] ; then
+		alt_name="${pkg_name}"
+	fi
+	mkdir -p "${dest}" || die
+	local fn=
+	if [[ -n "${arch_triple}" ]] ; then
+		fn="${pkg_name}-nightly-${nightly_date}-${arch_triple}.tar.gz"
+		root_path="${pkg_name}-nightly-${arch_triple}"
+	else
+		fn="${pkg_name}-nightly-${nightly_date}.tar.gz"
+		root_path="${pkg_name}-nightly"
+	fi
+	einfo "Unpacking ${fn}"
+	tar --overwrite \
+		--strip-components=2 \
+		-x -C "${dest}" \
+		-f "${DISTDIR}/${fn}" \
+		${root_path}/${alt_name} || die
+}
+
+_install_rust_locally()
+{
+	mkdir -p "${S_RUST}" || die
+	if ! use system-rust && use rust ; then
+		for abi in $(multilib_get_enabled_abis) ; do
+			local chost=$(get_abi_CHOST ${abi})
+			local arch="${chost%%-*}"
+			einfo "chost: ${chost}"
+			einfo "arch: ${arch}"
+			case ${arch} in
+				aarch64*)
+					if use elibc_glibc ; then
+			unpack_rust_pkg cargo aarch64-unknown-linux-gnu
+			unpack_rust_pkg clippy aarch64-unknown-linux-gnu clippy-preview
+			unpack_rust_pkg rust-docs aarch64-unknown-linux-gnu
+			unpack_rust_pkg rust-std aarch64-unknown-linux-gnu rust-std-aarch64-unknown-linux-gnu
+			unpack_rust_pkg rustc aarch64-unknown-linux-gnu
+			unpack_rust_pkg rustfmt aarch64-unknown-linux-gnu rustfmt-preview
+			unpack_rust_pkg rust-analyzer aarch64-unknown-linux-gnu rust-analyzer-preview
+					fi
+					;;
+				armv7a*h*)
+					if use elibc_glibc ; then
+			unpack_rust_pkg cargo armv7-unknown-linux-gnueabihf
+			unpack_rust_pkg clippy armv7-unknown-linux-gnueabihf clippy-preview
+			#unpack_rust_pkg rust-docs armv7-unknown-linux-gnueabihf
+			unpack_rust_pkg rust-std armv7-unknown-linux-gnueabihf rust-std-armv7-unknown-linux-gnueabihf
+			unpack_rust_pkg rustc armv7-unknown-linux-gnueabihf
+			unpack_rust_pkg rustfmt armv7-unknown-linux-gnueabihf rustfmt-preview
+			unpack_rust_pkg rust-analyzer armv7-unknown-linux-gnueabihf rust-analyzer-preview
+					fi
+					;;
+				x86_64*)
+					if use elibc_glibc ; then
+			unpack_rust_pkg cargo x86_64-unknown-linux-gnu
+			unpack_rust_pkg clippy x86_64-unknown-linux-gnu clippy-preview
+			unpack_rust_pkg rust-docs x86_64-unknown-linux-gnu
+			unpack_rust_pkg rust-std x86_64-unknown-linux-gnu rust-std-x86_64-unknown-linux-gnu
+			unpack_rust_pkg rustc x86_64-unknown-linux-gnu
+			unpack_rust_pkg rustfmt x86_64-unknown-linux-gnu rustfmt-preview
+			unpack_rust_pkg rust-analyzer x86_64-unknown-linux-gnu rust-analyzer-preview
+					fi
+					if use elibc_musl ; then
+			unpack_rust_pkg cargo x86_64-unknown-linux-musl
+			unpack_rust_pkg clippy x86_64-unknown-linux-musl clippy-preview
+			unpack_rust_pkg rust-docs x86_64-unknown-linux-musl
+			unpack_rust_pkg rust-std x86_64-unknown-linux-musl rust-std-x86_64-unknown-linux-musl
+			unpack_rust_pkg rustc x86_64-unknown-linux-musl
+			unpack_rust_pkg rustfmt x86_64-unknown-linux-musl rustfmt-preview
+			unpack_rust_pkg rust-analyzer x86_64-unknown-linux-musl rust-analyzer-preview
+					fi
+					;;
+				x86*)
+					if use elibc_glibc ; then
+			unpack_rust_pkg cargo i686-unknown-linux-gnu
+			unpack_rust_pkg clippy i686-unknown-linux-gnu clippy-preview
+			unpack_rust_pkg rust-docs i686-unknown-linux-gnu
+			unpack_rust_pkg rust-std i686-unknown-linux-gnu rust-std-i686-unknown-linux-gnu
+			unpack_rust_pkg rustc i686-unknown-linux-gnu
+			unpack_rust_pkg rustfmt i686-unknown-linux-gnu rustfmt-preview
+			unpack_rust_pkg rust-analyzer i686-unknown-linux-gnu rust-analyzer-preview
+					fi
+					;;
+				*)
+					einfo "chost: ${chost}"
+					einfo "arch: ${arch}"
+					die \
+			"Please use the system-rust USE flag instead"
+					;;
+			esac
+			unpack_rust_pkg rust-src ""
+			echo "${RUST_V}" > "${S_RUST}/TOOLCHAIN_VERSION" || die
+		done
+	fi
+}
+
+_check_abi_supported()
+{
+	if ! use system-libclang && use libclang ; then
+		if use elibc_musl ; then
+			die "Please use the system-libclang USE flag instead"
+		fi
+		for abi in $(multilib_get_enabled_abis) ; do
+			local chost=$(get_abi_CHOST ${abi})
+			local arch="${chost%%-*}"
+			einfo "chost: ${chost}"
+			einfo "arch: ${arch}"
+			case ${arch} in
+				aarch64*) einfo "Supported ${arch}" ;;
+				armv7a*h*) einfo "Supported ${arch}" ;;
+				x86_64*) einfo "Supported ${arch}" ;;
+				*)
+					einfo "chost: ${chost}"
+					einfo "arch: ${arch}"
+					die \
+			"Please use the system-libclang USE flag instead" ;;
+			esac
+		done
+	fi
+	if ! use system-rust && use rust ; then
+		for abi in $(multilib_get_enabled_abis) ; do
+			local chost=$(get_abi_CHOST ${abi})
+			local arch="${chost%%-*}"
+			einfo "chost: ${chost}"
+			einfo "arch: ${arch}"
+			case ${arch} in
+				aarch64*) einfo "Supported ${arch}" ;;
+				armv7a*h*) einfo "Supported ${arch}" ;;
+				x86_64*) einfo "Supported ${arch}" ;;
+				*)
+					einfo "chost: ${chost}"
+					einfo "arch: ${arch}"
+					die \
+			"Please use the system-rust USE flag instead" ;;
+			esac
+		done
+	fi
+}
+
+src_prepare() {
+	default
+	local sitedir="$(python_get_sitedir)"
+	_check_abi_supported
+	eapply "${FILESDIR}/${PN}-44_p20210408-skip-thirdparty-check.patch"
+	eapply "${FILESDIR}/${PN}-44_p20210408-system-third-party.patch"
+
+	if use clangd ; then
+		ewarn "Clangd is experimental and not recommended at this time."
+	fi
+
+	cat "${FILESDIR}/default_settings.json.42_p20200108" \
+		> ycmd/default_settings.json || die
+
+	if use system-libclang ; then
+		eapply \
+		"${FILESDIR}/${PN}-9999.20170107-force-python-libs-path.patch"
+		LIBCLANG_PATH=$(\
+ls /usr/$(get_libdir)/llvm/*/$(get_libdir)/libclang.so* | head -1)
+		sed -i -e "s|\
+EXTERNAL_LIBCLANG_PATH \${TEMP}|\
+EXTERNAL_LIBCLANG_PATH \"${LIBCLANG_PATH}\"|g" \
+			cpp/ycm/CMakeLists.txt || die
+		eapply \
+		"${FILESDIR}/${PN}-43_p20200516-system-libclang.patch"
+		sed -i -e "s|\
+__LIBCLANG_LIB_DIR__|\
+/usr/$(get_libdir)/llvm/${CLANG_V_MAJ}/$(get_libdir)/|" ycmd/utils.py || die
+	fi
+
+	CMAKE_USE_DIR="${S}/cpp" \
+	cmake-utils_src_prepare
+
+	if use system-clangd ; then
+		sed -i -e "s|\
+___CLANGD_BIN_PATH___|\
+/usr/$(get_libdir)/llvm/${CLANG_V_MAJ}/bin/clangd|g" \
+			ycmd/default_settings.json || die
+	fi
+
+	if use system-go-tools ; then
+		ewarn \
+"The system-go-tools USE flag is untested for this version.  It's\n\
+recommended to use the internal instead."
+		eapply "${FILESDIR}/${PN}-43_p20200516-system-go.patch"
+		sed -i -e "s|___GOPLS_BIN_PATH___|/usr/bin/gopls|g" \
+			ycmd/completers/go/go_completer.py || die
+		sed -i -e "s|___GOPLS_BIN_PATH___|/usr/bin/gopls|g" \
+			ycmd/default_settings.json || die
+	fi
+
+	if use system-mrab-regex ; then
+		ewarn "Using system-mrab-regex is WIP"
+		sed -i -e "s|  BuildRegexModule|  #BuildRegexModule|" \
+			build.py || die
+	fi
+
+	if use system-rust ; then
+		eapply "${FILESDIR}/${PN}-42_p20200108-system-rust.patch"
+		sed -i -e "s|___RUSTC_BIN_PATH___|/usr/bin/rustc|g" \
+			ycmd/completers/rust/rust_completer.py || die
+		sed -i -e "s|___RLS_BIN_PATH___|/usr/bin/rls|g" \
+			ycmd/completers/rust/rust_completer.py || die
+		sed -i -e "s|___RUSTC_BIN_PATH___|/usr/bin/rustc|g" \
+			ycmd/default_settings.json || die
+		sed -i -e "s|___RLS_BIN_PATH___|/usr/bin/rls|g" \
+			ycmd/default_settings.json || die
+	else
+		ewarn \
+"Using the internal rust.  You are responsible for maintaining the security\n\
+of internal rust and associated packages."
+	fi
+
+	if use system-tern ; then
+		eapply "${FILESDIR}/${PN}-42_p20200108-system-tern.patch"
+		sed -i -e "s|___TERN_BIN_PATH___|/usr/bin/tern|g" \
+			ycmd/completers/javascript/tern_completer.py || die
+	fi
+
+	if ! use vim ; then
+		eapply "${FILESDIR}/${PN}-42_p20200108-remove-ultisnips.patch"
+		sed -i -e 's|"use_ultisnips_completer": 1,||g' \
+			ycmd/default_settings.json || die
+	fi
+
+	if use system-typescript ; then
+		sed -i -e "s|___TSSERVER_BIN_PATH___|/usr/bin/tsserver|g" \
+			ycmd/default_settings.json || die
+	fi
+
+	if use system-watchdog ; then
+		ewarn "Using system-watchdog is WIP"
+		sed -i -e "s|  CompileWatchdog|  #CompileWatchdog|" \
+			build.py || die
+	fi
+
+	sed -i -e "s|\
+___HMAC_SECRET___|\
+$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" \
+		ycmd/default_settings.json || die
+
+	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|" \
+		ycmd/default_settings.json || die
+
+	python_copy_sources
+}
+
+
+src_configure() {
+	if use developer ; then
+		DOCS+=( CODE_OF_CONDUCT.md CONTRIBUTING.md )
+	fi
+	python_configure_all()
+	{
+		cd "${BUILD_DIR}" || die
+		local sitedir="$(python_get_sitedir)"
+		BD_ABS="$(python_get_sitedir)/${BD_REL}"
+
+		if use system-bottle ; then
+			sed -i -e "s|\
+os.path.join( DIR_OF_THIRD_PARTY, 'bottle' )|\
+${sitedir}/bottle|g" \
+				ycmd/__main__.py || die
+		fi
+
+		if ! use system-clangd ; then
+			sed -i -e "s|\
+___CLANGD_BIN_PATH___|\
+${BD_ABS}/third_party/clangd/output/bin/clangd|g" \
+			ycmd/default_settings.json || die
+		fi
+
+		if ! use system-go-tools ; then
+			sed -i -e "s|\
+___GOPLS_BIN_PATH___|\
+${BD_ABS}/third_party/go/bin/gopls|g" \
+				ycmd/default_settings.json || die
+		fi
+
+		if use system-jedi ; then
+			sed -i -e "s|\
+os.path.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'jedi' )|\
+${sitedir}/jedi|g" \
+				ycmd/__main__.py || die
+			sed -i -e "s|\
+os.path.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'numpydoc' )|\
+${sitedir}/numpydoc|g" \
+				ycmd/__main__.py || die
+			sed -i -e "s|\
+os.path.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'parso' )|\
+${sitedir}/parso|g" \
+				ycmd/__main__.py || die
+		fi
+
+		if use system-mrab-regex ; then
+			sed -i -e "s|\
+os.path.join( DIR_OF_THIRD_PARTY, 'regex-build' )|\
+${sitedir}/regex|g" \
+				ycmd/__main__.py || die
+		fi
+
+		if use system-pathtools ; then
+			sed -i -e "s|\
+os.path.join( DIR_OF_WATCHDOG_DEPS, 'pathtools' )|\
+${sitedir}/pathtools|g" \
+				ycmd/__main__.py || die
+		fi
+
+		if use system-requests ; then
+			sed -i -e "s|\
+os.path.join( DIR_OF_REQUESTS_DEPS, 'requests' )|\
+${sitedir}/requests|g" \
+				ycmd/__main__.py || die
+			sed -i -e "s|\
+os.path.join( DIR_OF_REQUESTS_DEPS, 'chardet' )|\
+${sitedir}/chardet|g" \
+				ycmd/__main__.py || die
+			sed -i -e "s|\
+os.path.join( DIR_OF_REQUESTS_DEPS, 'certifi' )|\
+${sitedir}/certifi|g" \
+				ycmd/__main__.py || die
+			sed -i -e "s|\
+os.path.join( DIR_OF_REQUESTS_DEPS, 'idna' )|\
+${sitedir}/idna|g" \
+				ycmd/__main__.py || die
+#			sed -i -e "s|\
+#p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'urllib3', 'src' )|\
+#${sitedir}/urllib3|g" \
+#				ycmd/__main__.py || die
+		fi
+
+		if ! use system-typescript ; then
+			sed -i -e "s|\
+___TSSERVER_BIN_PATH___|\
+${BD_ABS}/third_party/tsserver/lib64/node_modules/typescript/bin/tsserver|g" \
+				ycmd/default_settings.json || die
+		fi
+
+		if use system-waitress ; then
+			sed -i -e "s|\
+os.path.join( DIR_OF_THIRD_PARTY, 'waitress' )|\
+${sitedir}/waitress|g" \
+				ycmd/__main__.py || die
+		fi
+
+		if use system-watchdog ; then
+			sed -i -e "s|\
+os.path.join( DIR_OF_WATCHDOG_DEPS, 'watchdog', 'build', 'lib3' )|\
+${sitedir}/watchdog|g" \
+				ycmd/__main__.py || die
+		fi
+
+		sed -i -e "s|___PYTHON_BIN_PATH___|/usr/bin/${EPYTHON}|g" \
+			ycmd/default_settings.json || die
+
+		sed -i -e "s|\
+___PYTHON_LIB_PATH___|\
+/usr/$(get_libdir)/lib${EPYTHON}.so|g" \
+			build.py || die
+
+		# ---
+
+		filter-flags -O0 -O1 -O3 -O4
+		append-cxxflags -O2
+		append-cflags -O2
+		# We need to do this ourselves instead of rely on the build
+		# script.  The build script has racing error when it tries to
+		# do it through emerge.
+		local mycmakeargs=(
+			-DUSE_CLANG_COMPLETER=$(usex system-boost)
+			-DUSE_DEV_FLAGS=$(usex debug)
+			-DUSE_SYSTEM_BOOST=$(usex system-boost)
+			-DUSE_SYSTEM_LIBCLANG=$(usex system-libclang)
+			-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
+		)
+		local pyv=$(echo "${EPYTHON}" | sed -e "s|python||")
+		if [ -f /usr/$(get_libdir)/libpython${pyv}m.so ]; then
+			mycmakeargs+=\
+( -DPYTHON_LIBRARY=/usr/$(get_libdir)/libpython${pyv}m.so )
+			mycmakeargs+=\
+( -DPYTHON_INCLUDE_DIR=/usr/include/python${pyv}m )
+		else
+			mycmakeargs+=\
+( -DPYTHON_LIBRARY=/usr/$(get_libdir)/libpython${pyv}.so )
+			mycmakeargs+=\
+( -DPYTHON_INCLUDE_DIR=/usr/include/python${pyv} )
+		fi
+		if use c || use cxx || use objc || use objcxx ; then
+			mycmakeargs+=( -DUSE_CLANG_COMPLETER=ON )
+		fi
+		CMAKE_USE_DIR="${BUILD_DIR}/cpp" \
+		cmake-utils_src_configure
+	}
+	python_foreach_impl python_configure_all
+}
+
+src_compile() {
+	python_compile_all() {
+		cd "${BUILD_DIR}"
+		if use go && ! use system-go-tools ; then
+			src_compile_gopls
+		fi
+
+		local myargs=()
+		if use c || use cxx || use objc || use objcxx ; then
+			if use clangd ; then
+				myargs+=( --clangd-completer )
+			fi
+			if use libclang ; then
+				myargs+=( --clang-completer )
+			fi
+		fi
+		if use csharp ; then
+			myargs+=( --cs-completer )
+		fi
+		if use debug ; then
+			myargs+=( --enable-debug )
+		fi
+#		go already installed
+#		if use go \
+#			&& ! use system-go-tools ; then
+#			myargs+=( --go-completer )
+#		fi
+		if use java ; then
+			myargs+=( --java-completer )
+		fi
+		if use javascript \
+			&& ! use system-tern ; then
+			myargs+=( --tern-completer )
+		fi
+#		if ! use regex ; then
+#			myargs+=( --no-regex )
+#		fi
+#		rust already installed
+#		if use rust \
+#			&& ! use system-rust ; then
+#			myargs+=( --rust-completer )
+#		fi
+		if use system-boost ; then
+			myargs+=( --system-boost )
+		fi
+		if use system-libclang ; then
+			myargs+=( --system-libclang )
+		fi
+		if use typescript \
+			&& ! use system-typescript ; then
+			myargs+=( --ts-completer )
+		fi
+		if \
+			! use system-boost \
+			|| ! use system-clangd \
+			|| ! use system-go-tools \
+			|| ! use system-jedi \
+			|| ! use system-libclang \
+			|| ! use system-rust \
+			|| ! use system-tern \
+			|| ! use system-typescript ; then
+			einfo "Path A: Running build.py"
+			einfo "${EPYTHON} build.py ${myargs[@]}"
+			${EPYTHON} build.py ${myargs[@]}
+		elif use system-libclang ; then
+			einfo "Path B: Running cmake-utils_src_compile"
+			cmake-utils_src_compile
+		fi
+	}
+	python_foreach_impl python_compile_all
+}
+
+src_test() {
+	python_test_all() {
+		local allowed_completers=()
+		if use c || use cxx || use objc || use objcxx ; then
+			allowed_completers+=( cfamily )
+		fi
+		if use csharp ; then
+			allowed_completers+=( cs )
+		fi
+		if use java ; then
+			allowed_completers+=( java )
+		fi
+		if use python ; then
+			allowed_completers+=( python )
+		fi
+		if use typescript ; then
+			allowed_completers+=( typescript )
+		fi
+		cd "${BUILD_DIR}" || die
+		${EPYTHON} run_tests.py --skip-build --completers \
+			${allowed_completers[@]} || die
+	}
+	python_foreach_impl python_test_all
+}
+
+_shrink_install() {
+	local arg_docs=( -false )
+	if use doc ; then
+		arg_docs=( -ipath "*/*doc*/*" )
+	fi
+	local arg_developer=( -false )
+	if use developer ; then
+		arg_developer=( -iname "*CODE_OF_CONDUCT*"
+		-o -iname "*CONTRIBUT*"
+		-o -iname "*TODO*" )
+	fi
+	local arg_legal=( -iname "*AUTHORS*"
+		-o -iname "*CHANGELOG*"
+		-o -iname "*COPYING*"
+		-o -iname "*COPYRIGHT*"
+		-o -iname "*HISTORY*"
+		-o -iname "*license*"
+		-o -iname "*licence*"
+		-o -iname "*NOTICE*"
+		-o -iname "*PATENTS*"
+		-o -iname "*README*" )
+	einfo "Cleaning third_party"
+	find {third_party/bottle,third_party/jedi_deps,\
+third_party/requests_deps,third_party/waitress,ycmd} \
+		! \( -name "*.py" \
+			-o -name "*.pyc" \
+			-o -name "*.pyi" \
+			-o -name "*.so" \
+			-o -name "*.so.*" \
+			-o -iname "default_settings.json" \
+			-o -path "*/*.egg-info/*" \
+			-o ${arg_docs[@]} \
+			-o ${arg_developer[@]} \
+			-o ${arg_legal[@]} \) \
+		-exec rm -f "{}" + 2>/dev/null
+	rm -rf third_party/jedi_deps/jedi/scripts || die
+	rm -rf third_party/bottle/plugins || die
+	if use csharp ; then
+		einfo "Cleaning omnisharp-roslyn"
+		find third_party/omnisharp-roslyn \
+			! \(	-name "*.dll" \
+				-o -name "*.so" \
+				-o -name "*.config" \
+				-o -name "*.pdb" \
+				-o -name "*.exe" \
+				-o -name "config" \
+				-o -name "run" \
+				-o -name "machine.config" \
+				-o ${arg_docs[@]} \
+				-o ${arg_developer[@]} \
+				-o ${arg_legal[@]} \) \
+			-exec rm -f "{}" + 2>/dev/null
+		if ! use system-mono ; then
+			rm -rf third_party/omnisharp-roslyn/{bin,lib,etc} || die
+			# remove?
+			#rm -rf third_party/omnisharp-roslyn/omnisharp/.msbuild || die
+		fi
+	fi
+	if use regex \
+		&& ! use system-mrab-regex ; then
+		einfo "Cleaning regex"
+		rm -rf third_party/mrab-regex || die
+		find third_party/regex-build \
+			! \( -name "*.so" \
+				-o -path "*/*.egg-info/*" \
+				-o -name "*.pyc" \
+				-o -name "*.py" \
+				-o ${arg_legal[@]} \) \
+			-exec rm -f "{}" + 2>/dev/null
+	fi
+	if use system-watchdog ; then
+		einfo "Cleaning watchdog"
+		rm -rf third_party/watchdog_deps/watchdog || die
+	fi
+	if use system-pathtools ; then
+		einfo "Cleaning pathtools"
+		rm -rf third_party/watchdog_deps/pathtools || die
+	fi
+
+	einfo "Cleaning out cpp build time files"
+	rm -rf cpp || die
+
+	if use go ; then
+		einfo "Cleaning out go folders"
+		find third_party/go ! \( -executable \
+			-o ${arg_legal[@]} \) \
+			-exec rm "{}" +
+	fi
+
+	einfo "Cleaning out VCS, CI, testing"
+	find . \( -name ".git*" \
+			-o -name "azure" \
+			-o -name "azure-pipelines.yml" \
+			-o -name "_travis" \
+		\) \
+		-exec rm -rf "{}" +
+	if use rust \
+		&& ! use system-rust ; then
+		# TODO
+		rm -rf "third_party/rls/lib/rustlib/src/rust/src/stdarch/ci" \
+			|| die
+	fi
+
+	einfo "Cleaning out installer files"
+	find . \( -name "setup.py" \) \
+		-exec rm -rf "{}" +
+
+	einfo "Cleaning out completers"
+	pushd ycmd/completers || die
+		if ! use c ; then
+			rm -rf c || die
+		fi
+		if ! use cxx ; then
+			rm -rf cpp || die
+		fi
+		if ! use csharp ; then
+			rm -rf cs || die
+		fi
+		if ! use cuda ; then
+			rm -rf cuda || die
+		fi
+		if ! use go ; then
+			rm -rf go || die
+		fi
+		if ! use java ; then
+			rm -rf java || die
+		fi
+		if ! use javascript ; then
+			rm -rf javascript || die
+		fi
+		if ! use objc ; then
+			rm -rf objc || die
+		fi
+		if ! use objcxx ; then
+			rm -rf objcpp || die
+		fi
+		if ! use python ; then
+			rm -rf python || die
+		fi
+		if ! use rust ; then
+			rm -rf rust || die
+		fi
+		if ! use typescript ; then
+			rm -rf typescript typescriptreact || die
+		fi
+		if ! use vim ; then
+			rm -rf general/ultisnips_completer.py || die
+		fi
+	popd
+
+	einfo "Cleaning out test files"
+	find . \( -name "conftest.py" \
+			-o -name "test.py" \) \
+		-delete
+	if use javascript \
+		&& ! use system-tern ; then
+		rm -rf "third_party/tern_runtime/node_modules/tern/bin/test" \
+			"third_party/tern_runtime/node_modules/errno/build.js" \
+			|| die
+	fi
+	rm -rf third_party/requests_deps/urllib3/dummyserver || die
+	rm -rf third_party/generic_server
+
+	einfo "Cleaning out test folders"
+	find {third_party,ycmd} -ipath "*/*test*/*" \
+		-exec rm -rf "{}" +
+
+	einfo "Cleaning out unused platforms"
+	if use java ; then
+		rm -rf \
+		third_party/eclipse.jdt.ls/target/repository/config_{mac,win} \
+		|| die
+	fi
+
+	einfo "Cleaning out cached archives"
+	if use clangd \
+		&& ! use system-clangd ; then
+		rm -rf third_party/clangd/cache
+	fi
+
+	einfo "Cleaning out empty files and folders"
+	find . -empty -type f -delete
+	find . -empty -type d -delete
+}
+
+src_install() {
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+	python_install_all() {
+		cd "${BUILD_DIR}" || die
+		BD_ABS="$(python_get_sitedir)/${BD_REL}"
+		python_moduleinto "${BD_REL}"
+		python_domodule CORE_VERSION
+		exeinto "${BD_ABS}"
+		doexe $(ls ycm_core.cpython-*-*.so)
+		if use minimal ; then
+			_shrink_install
+		fi
+		python_domodule ycmd
+		insinto "/usr/share/${PN}-${PV_MAJ}"
+		if use examples ; then
+			doins -r examples
+		fi
+
+		python_moduleinto "${BD_REL}"
+
+		if ! use system-libclang \
+			&& ( use c || use cxx || use objc || use objcxx ) \
+			&& use libclang ; then
+			python_domodule lib
+			fperms 0755 "${BD_ABS}/lib/libclang.so.${CLANG_V_MAJ}"
+			python_moduleinto "${BD_REL}/third_party"
+			python_domodule third_party/clang
+			fperms 0755 \
+"${BD_ABS}/third_party/clang/lib/libclang.so.${CLANG_V_MAJ}"
+		else
+			# prevent from raising exception
+			sed -i -e "s|\
+^CLANG_RESOURCE_DIR = GetClangResourceDir|\
+#CLANG_RESOURCE_DIR = GetClangResourceDir|g" \
+				"${ED}/${BD_ABS}/ycmd/utils.py" || die
+		fi
+
+		python_moduleinto "${BD_REL}/third_party"
+		if use java ; then
+			python_domodule third_party/eclipse.jdt.ls
+		fi
+
+		if ! use system-bottle ; then
+			python_domodule third_party/bottle
+		fi
+
+		if ! use system-clangd \
+			&& ( use c || use cxx || use objc || use objcxx ) \
+			&& use clangd ; then
+			python_domodule third_party/clangd
+			fperms 0755 \
+				"${BD_ABS}/third_party/clangd/output/bin/clangd"
+		fi
+
+		if ! use system-mrab-regex \
+			&& use regex ; then
+			python_domodule third_party/regex-build
+			pushd "${ED}${BD_ABS}/third_party/regex-build/regex" || die
+				fperms 0755 \
+			"${BD_ABS}/third_party/regex-build/regex/"$(ls _regex.cpython-*-*.so)
+			popd
+		fi
+
+		if ! use system-go-tools \
+			&& use go ; then
+			python_domodule third_party/go
+			fperms 0755 \
+		"${BD_ABS}/third_party/go/bin/gopls"
+		fi
+
+		if ! use system-jedi \
+			&& use python ; then
+			python_domodule third_party/jedi_deps
+		fi
+
+		if use csharp ; then
+			use system-mono && \
+			eapply \
+"${FILESDIR}/${PN}-43_p20200516-omnisharp-use-system-omnisharp-run.patch"
+			python_domodule third_party/omnisharp-roslyn
+			pushd "${ED}${BD_ABS}/third_party/omnisharp-roslyn" || die
+				for f in $(find . -name "*.dll" \
+						-o -name "*.so" \
+						| sed -e "s|^./||g") ; do
+					fperms 0755 \
+				"${BD_ABS}/third_party/omnisharp-roslyn/${f}"
+				done
+			popd
+			fperms 0755 \
+		"${BD_ABS}/third_party/omnisharp-roslyn/run"
+			if ! use system-mono ; then
+				fperms 0755 \
+		"${BD_ABS}/third_party/omnisharp-roslyn/bin/mono"
+			fi
+		fi
+
+		if ! use system-requests ; then
+			python_domodule third_party/requests_deps
+		fi
+
+		if ! use system-rust \
+			&& use rust ; then
+			python_domodule third_party/rust-analyzer
+			pushd "${ED}${BD_ABS}/third_party/rust-analyzer" || die
+				for f in $(find . -name "*.so" \
+					-o \( -ipath "*/bin/*" -type f \) ) ; do
+					fperms 0755 "${BD_ABS}/third_party/rust-analyzer/${f}"
+				done
+			popd
+		fi
+
+		if ! use system-tern \
+			&& use javascript ; then
+			python_domodule third_party/tern_runtime
+			fperms 0755 \
+	"${BD_ABS}/third_party/tern_runtime/node_modules/errno/cli.js" \
+	"${BD_ABS}/third_party/tern_runtime/node_modules/acorn/bin/acorn" \
+	"${BD_ABS}/third_party/tern_runtime/node_modules/tern/bin/condense" \
+	"${BD_ABS}/third_party/tern_runtime/node_modules/tern/bin/tern"
+		fi
+
+		if ! use system-typescript \
+			&& use typescript ; then
+			python_domodule third_party/tsserver
+			fperms 0755 \
+"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsc" \
+"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
+		fi
+
+		if ! use system-waitress ; then
+			python_domodule third_party/waitress
+		fi
+		#python_optimize
+	}
+	python_foreach_impl python_install_all
+
+	if ! use system-libclang ; then
+		cat <<-EOF > "${T}"/50${P}-ycmd-${SLOT_MAJ}
+LDPATH="${BD_ABS}/lib"
+EOF
+		doenvd "${T}"/50${P}-ycmd-${SLOT_MAJ}
+	fi
+
+	if use doc ; then
+		einstalldocs
+	fi
+	docinto licenses
+	dodoc COPYING.txt
+	if use developer ; then
+		docinto developer
+		dodoc CODE_OF_CONDUCT.md CONTRIBUTING.md DEBUG.md TESTS.md
+	fi
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
+	fi
+}
+
+pkg_postinst() {
+	local m=\
+"Examples of the .json files can be found at:\n\
+\n\
+/usr/$(get_libdir)/python*/site-packages/${BD_REL}/ycmd/default_settings.json\n"
+
+	if use c || use cxx || use objc || use objcxx ; then
+		m+="\
+\n\
+Consider emerging ycm-generator to properly generate a .ycm_extra_conf.py\n\
+which is mandatory for the c/c++/objc/objc++ completer.\n\
+\n\
+After generating it, it may need to be slightly modified.\n"
+	fi
+
+	if use csharp ; then
+		m+="\
+\n\
+You need a .sln file in your project for C# support\n"
+	fi
+
+	if use javascript ; then
+		m+="\
+\n\
+You need a .tern-project in your project for javascript support.\n"
+	fi
+
+	if use system-rust ; then
+		m+="\
+\n\
+You need to download the rust source code manually and tell YCMD to locate it
+in the default_settings.json file.\n"
+	fi
+	einfo "${m}"
+}

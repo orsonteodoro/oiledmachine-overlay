@@ -20,8 +20,12 @@
 
     The simple protocol makes it easy to add these commericial text editor IDE 
     features in any free and open source text editor.
+
+    oiledmachine-overlay tracks the last commit for the previous CORE_VERSION
+    which is assumed to be feature complete and the final version.
   </longdescription>
   <upstream>
+    <!-- send reports to oiledmachine-overlay first -->
     <maintainer type="person">
       <name>Val Markovic</name>
     </maintainer>
@@ -51,6 +55,8 @@
     <flag name="lsp">Adds support for the Language Server Protocol.</flag>
     <flag name="minimal">Shrinks installation.  Enabling it may break
       functionality.</flag>
+    <flag name="netcore">Adds support for .NET core.</flag>
+    <flag name="netfx">Adds support for .NET Framework.</flag>
     <flag name="objc">Adds the Objective C completer.</flag>
     <flag name="objcxx">Adds the Objective C++ completer.</flag>
     <flag name="python">Adds the Python completer.</flag>
@@ -79,7 +85,7 @@
       instead of the internal package.</flag>
     <flag name="system-omnisharp-roslyn">Uses the system's OmniSharp-Roslyn
       package instead of the internal package.</flag>
-    <flag name="system-rls">Uses the system's Rust Language Server instead of
+    <flag name="system-rust">Uses the system's Rust instead of
       the internal package.</flag>
     <flag name="system-tern">Uses the system's Tern package instead of the
       internal package.</flag>
