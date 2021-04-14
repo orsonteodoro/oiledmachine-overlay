@@ -165,7 +165,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-waitress? ( >=dev-python/waitress-${WAITRESS_V}[${PYTHON_USEDEP}] )
 	system-watchdog? ( >=dev-python/watchdog-${WATCHDOG_V} )
 	typescript? ( ${RDEPEND_NODEJS} )"
-RDEPEND+="  ${CDEPEND}"
+RDEPEND+="  ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	|| (
 		>=sys-devel/gcc-4.8
