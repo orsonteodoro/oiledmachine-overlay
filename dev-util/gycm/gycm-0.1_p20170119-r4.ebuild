@@ -4,31 +4,33 @@
 # See gycm.cpp for versioning.
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_{6..9} )
+
+inherit cmake-utils eutils python-single-r1 toolchain-funcs
+
 DESCRIPTION="A Geany plugin to support the ycmd code completion server"
 LICENSE="GPL-3"
 HOMEPAGE="https://github.com/jakeanq/gycm"
 KEYWORDS="~amd64 ~x86"
 EGIT_COMMIT="3abe1419d22ad19acbd96f66864ec00a0a256689"
-PYTHON_COMPAT=( python3_{6,7,8} )
 SLOT="0"
-IUSE="debug system-clangd system-gocode system-godef \
-system-libclang system-racerd ycmd-43"
-inherit python-single-r1
+IUSE+=" debug system-clangd system-gocode system-godef system-libclang
+system-racerd ycmd-43"
 YCMD_SLOT_43_LLVM_V=10.0
 YCMD_SLOT_43_LLVM_V_MAJ=$(ver_cut 1 ${YCMD_SLOT_43_LLVM_V})
-REQUIRED_USE="${PYTHON_REQUIRED_USE}
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	^^ ( ycmd-43 )"
-DEPEND="${PYTHON_DEPS}
+DEPEND+=" ${PYTHON_DEPS}
         dev-libs/jsoncpp
         dev-libs/openssl
 	dev-util/geany
         net-libs/libssh
         net-libs/neon
 	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_MULTI_USEDEP}]') )"
-RDEPEND="${DEPEND}"
+RDEPEND+=" ${DEPEND}"
 SRC_URI=\
 "https://github.com/jakeanq/gycm/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
-inherit cmake-utils eutils toolchain-funcs
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
