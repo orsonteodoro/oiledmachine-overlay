@@ -1404,8 +1404,8 @@ src_install() {
 			&& use typescript ; then
 			python_domodule third_party/tsserver
 			fperms 0755 \
-"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsc" \
-"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
+"${BD_ABS}/third_party/tsserver/node_modules/typescript/bin/tsc" \
+"${BD_ABS}/third_party/tsserver/node_modules/typescript/bin/tsserver"
 		fi
 	}
 	python_foreach_impl python_install_all
