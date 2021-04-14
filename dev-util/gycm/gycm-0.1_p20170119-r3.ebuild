@@ -12,23 +12,19 @@ EGIT_COMMIT="3abe1419d22ad19acbd96f66864ec00a0a256689"
 PYTHON_COMPAT=( python3_{6,7,8} )
 SLOT="0"
 IUSE="debug system-clangd system-gocode system-godef \
-system-libclang system-racerd ycmd-slot-1 ycmd-slot-2"
+system-libclang system-racerd ycmd-43"
 inherit python-single-r1
-YCMD_SLOT_1_LLVM_V=6.0
-YCMD_SLOT_1_LLVM_V_MAJ=$(ver_cut 1 ${YCMD_SLOT_1_LLVM_V})
-YCMD_SLOT_2_LLVM_V=9.0
-YCMD_SLOT_2_LLVM_V_MAJ=$(ver_cut 1 ${YCMD_SLOT_2_LLVM_V})
+YCMD_SLOT_43_LLVM_V=10.0
+YCMD_SLOT_43_LLVM_V_MAJ=$(ver_cut 1 ${YCMD_SLOT_43_LLVM_V})
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	^^ ( ycmd-slot-1
-		ycmd-slot-2 )"
+	^^ ( ycmd-43 )"
 DEPEND="${PYTHON_DEPS}
         dev-libs/jsoncpp
         dev-libs/openssl
 	dev-util/geany
         net-libs/libssh
         net-libs/neon
-	ycmd-slot-1? ( $(python_gen_cond_dep 'dev-util/ycmd:1[${PYTHON_MULTI_USEDEP}]') )
-	ycmd-slot-2? ( $(python_gen_cond_dep 'dev-util/ycmd:2[${PYTHON_MULTI_USEDEP}]') )"
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_MULTI_USEDEP}]') )"
 RDEPEND="${DEPEND}"
 SRC_URI=\
 "https://github.com/jakeanq/gycm/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
@@ -56,71 +52,12 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-9999-20141216-debug-keep-log-files.patch"
 	fi
 
-	if use ycmd-slot-1 ; then
-		src_prepare_ycmd-slot-1
-	elif use ycmd-slot-2 ; then
-		src_prepare_ycmd-slot-2
+	if use ycmd-43 ; then
+		src_prepare_ycmd-43
 	fi
 }
 
-src_prepare_ycmd-slot-1() {
-	local sitedir=$(python_get_sitedir)
-	local ycmd_slot=1
-	local ycmd_dir="${sitedir}/ycmd/${ycmd_slot}"
-	eapply \
-"${FILESDIR}/gycm-0.1_p20170119-init-struct-for-ycmd-core-version-39.patch"
-	if use system-libclang ; then
-		sed -i -e "s|\
-../llvm/tools/clang/include|\
-$(realpath /usr/lib/clang/${YCMD_SLOT_1_LLVM_V_MAJ}.*/include \
-			| sort | tail -n 1)|g" \
-			.ycm_extra_conf.py || die
-	else
-		sed -i -e "s|\
-../llvm/tools/clang/include|\
-${ycmd_dir}/clang_includes/include|g" \
-			.ycm_extra_conf.py || die
-	fi
-	local json_config="${S}/ycmd.json"
-	cat "${FILESDIR}/default_settings.json.39_p20180821" > "${json_config}"
-	sed -i -e "s|___PYTHON_BIN_PATH___|/usr/bin/${EPYTHON}|g" \
-		"${json_config}" || die
-	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|g" \
-		"${json_config}" || die
-	sed -i -e "s|___YCMD_PATH___|${ycmd_dir}|g" \
-		"${json_config}" || die
-	sed -i -e "s|___RUST_SRC_PATH___|/usr/share/rust/src|g" \
-		"${json_config}" || die
-	if use system-gocode ; then
-		sed -i -e "s|___GOCODE_BIN_PATH___|/usr/bin/gocode|g" \
-			"${json_config}" || die
-	else
-		sed -i -e "s|\
-___GOCODE_BIN_PATH___|\
-${ycmd_dir}/third_party/gocode/gocode|g" \
-			"${json_config}" || die
-	fi
-	if use system-godef ; then
-		sed -i -e "s|___GODEF_BIN_PATH___|/usr/bin/godef|g" \
-			"${json_config}" || die
-	else
-		sed -i -e "s|\
-___GODEF_BIN_PATH___|\
-${ycmd_dir}/third_party/godef/godef|g" \
-			"${json_config}" || die
-	fi
-	if use system-racerd ; then
-		sed -i -e "s|___RACERD_BIN_PATH___|/usr/bin/racerd|g" \
-			"${json_config}" || die
-	else
-		sed -i -e "s|\
-___RACERD_BIN_PATH___|\
-${ycmd_dir}/third_party/racerd/racerd|g" \
-			"${json_config}" || die
-	fi
-}
-
-src_prepare_ycmd-slot-2() {
+src_prepare_ycmd-43() {
 	local sitedir=$(python_get_sitedir)
 	local ycmd_slot=2
 	local ycmd_dir="${sitedir}/ycmd/${ycmd_slot}"
@@ -129,7 +66,7 @@ src_prepare_ycmd-slot-2() {
 	if use system-libclang ; then
 		sed -i -e "s|\
 ../llvm/tools/clang/include|\
-$(realpath /usr/lib/clang/${YCMD_SLOT_2_LLVM_V_MAJ}.*/include \
+$(realpath /usr/lib/clang/${YCMD_SLOT_43_LLVM_V_MAJ}.*/include \
 			| sort | tail -n 1)|g" \
 			.ycm_extra_conf.py || die
 	else

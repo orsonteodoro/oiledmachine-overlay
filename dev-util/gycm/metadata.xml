@@ -27,7 +27,6 @@
       instead of ycmd internal godef.</flag>
     <flag name="system-racerd">Configure the plugin to use the system's racerd
       instead of ycmd internal racerd.</flag>
-    <flag name="ycmd-slot-1">Use ycmd:1 for plugin compatibility reasons.</flag>
-    <flag name="ycmd-slot-2">Use ycmd:2 for latest features.</flag>
+    <flag name="ycmd-43">Make it compatible ycmd core version 43.</flag>
   </use>
 </pkgmetadata>
