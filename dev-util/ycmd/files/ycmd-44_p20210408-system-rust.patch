@@ -1,0 +1,18 @@
+--- a/ycmd/completers/rust/rust_completer.py.orig	2021-04-08 16:39:00.000000000 -0700
++++ b/ycmd/completers/rust/rust_completer.py	2021-04-14 02:36:32.136410764 -0700
+@@ -25,13 +25,8 @@ from ycmd.utils import LOGGER, re
+ 
+ 
+ LOGFILE_FORMAT = 'ra_'
+-RUST_ROOT = os.path.abspath(
+-  os.path.join( os.path.dirname( __file__ ), '..', '..', '..', 'third_party',
+-                'rust-analyzer' ) )
+-RA_BIN_DIR = os.path.join( RUST_ROOT, 'bin' )
+-RUSTC_EXECUTABLE = utils.FindExecutable( os.path.join( RA_BIN_DIR, 'rustc' ) )
+-RA_EXECUTABLE = utils.FindExecutable( os.path.join(
+-    RA_BIN_DIR, 'rust-analyzer' ) )
++RUSTC_EXECUTABLE = "___RUSTC_BIN_PATH___"
++RA_EXECUTABLE = "___RA_BIN_PATH___"
+ RA_VERSION_REGEX = re.compile( r'^rust-analyzer (?P<version>.*)$' )
+ 
+ 

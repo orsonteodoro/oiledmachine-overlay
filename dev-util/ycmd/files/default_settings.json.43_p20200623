@@ -34,5 +34,12 @@
   "clangd_binary_path": "___CLANGD_BIN_PATH___",
   "clangd_args": [],
   "clangd_uses_ycmd_caching": 1,
-  "disable_signature_help": 0
+  "disable_signature_help": 0,
+  "gopls_binary_path": "___GOPLS_BIN_PATH___",
+  "gopls_args": [],
+  "rls_binary_path": "___RLS_BIN_PATH___",
+  "rustc_binary_path": "___RUSTC_BIN_PATH___",
+  "tsserver_binary_path": "___TSSERVER_BIN_PATH___",
+  "roslyn_binary_path": "___OMNISHARP_BIN_ABSPATH___",
+  "mono_binary_path": "___MONO_BIN_PATH___"
 }

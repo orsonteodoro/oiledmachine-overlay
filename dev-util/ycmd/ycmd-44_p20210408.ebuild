@@ -28,9 +28,6 @@ LICENSE="GPL-3+ BSD
 	!system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA )
 	!system-mono? ( all-rights-reserved MIT )
 	!system-pathtools? ( BSD MIT ZPL )
-	!system-requests? ( Apache-2.0 BSD LGPL-2.1+ MIT MPL-2.0 PSF-2
-		unicode )
-	!system-waitress? ( ZPL )
 	!system-watchdog? ( Apache-2.0 )
 	test? ( BSD GPL-3+ )"
 
@@ -76,7 +73,8 @@ REQUIRED_USE+="
 	system-libclang? ( || ( c cxx objc objcxx ) libclang )
 	system-mrab-regex? ( regex )
 	system-rust? ( rust )
-	system-tern? ( javascript )"
+	system-tern? ( javascript )
+	test? ( system-requests )"
 
 # gopls is 0.4.1
 # See build.py for dependency versions.
@@ -671,6 +669,7 @@ _check_abi_supported()
 		if use elibc_musl ; then
 			die "Please use the system-libclang USE flag instead"
 		fi
+		einfo "Checking precompiled libclang support"
 		for abi in $(multilib_get_enabled_abis) ; do
 			local chost=$(get_abi_CHOST ${abi})
 			local arch="${chost%%-*}"
@@ -688,24 +687,6 @@ _check_abi_supported()
 			esac
 		done
 	fi
-	if ! use system-rust && use rust ; then
-		for abi in $(multilib_get_enabled_abis) ; do
-			local chost=$(get_abi_CHOST ${abi})
-			local arch="${chost%%-*}"
-			einfo "chost: ${chost}"
-			einfo "arch: ${arch}"
-			case ${arch} in
-				aarch64*) einfo "Supported ${arch}" ;;
-				armv7a*h*) einfo "Supported ${arch}" ;;
-				x86_64*) einfo "Supported ${arch}" ;;
-				*)
-					einfo "chost: ${chost}"
-					einfo "arch: ${arch}"
-					die \
-			"Please use the system-rust USE flag instead" ;;
-			esac
-		done
-	fi
 }
 
 src_prepare() {
@@ -719,14 +700,14 @@ src_prepare() {
 		ewarn "Clangd is experimental and not recommended at this time."
 	fi
 
-	cat "${FILESDIR}/default_settings.json.42_p20200108" \
+	cat "${FILESDIR}/default_settings.json.44_p20200907" \
 		> ycmd/default_settings.json || die
 
 	if use system-libclang ; then
 		eapply \
-		"${FILESDIR}/${PN}-9999.20170107-force-python-libs-path.patch"
+		"${FILESDIR}/${PN}-25_20170108-force-python-libs-path.patch"
 		LIBCLANG_PATH=$(\
-ls /usr/$(get_libdir)/llvm/*/$(get_libdir)/libclang.so* | head -1)
+ls /usr/lib/llvm/${CLANG_V_MAJ}/$(get_libdir)/libclang.so* | head -1)
 		sed -i -e "s|\
 EXTERNAL_LIBCLANG_PATH \${TEMP}|\
 EXTERNAL_LIBCLANG_PATH \"${LIBCLANG_PATH}\"|g" \
@@ -735,7 +716,7 @@ EXTERNAL_LIBCLANG_PATH \"${LIBCLANG_PATH}\"|g" \
 		"${FILESDIR}/${PN}-43_p20200516-system-libclang.patch"
 		sed -i -e "s|\
 __LIBCLANG_LIB_DIR__|\
-/usr/$(get_libdir)/llvm/${CLANG_V_MAJ}/$(get_libdir)/|" ycmd/utils.py || die
+/usr/lib/llvm/${CLANG_V_MAJ}/$(get_libdir)/|" ycmd/utils.py || die
 	fi
 
 	CMAKE_USE_DIR="${S}/cpp" \
@@ -744,7 +725,7 @@ __LIBCLANG_LIB_DIR__|\
 	if use system-clangd ; then
 		sed -i -e "s|\
 ___CLANGD_BIN_PATH___|\
-/usr/$(get_libdir)/llvm/${CLANG_V_MAJ}/bin/clangd|g" \
+/usr/lib/llvm/${CLANG_V_MAJ}/bin/clangd|g" \
 			ycmd/default_settings.json || die
 	fi
 
@@ -766,14 +747,12 @@ recommended to use the internal instead."
 	fi
 
 	if use system-rust ; then
-		eapply "${FILESDIR}/${PN}-42_p20200108-system-rust.patch"
+		eapply "${FILESDIR}/${PN}-44_p20210408-system-rust.patch"
 		sed -i -e "s|___RUSTC_BIN_PATH___|/usr/bin/rustc|g" \
 			ycmd/completers/rust/rust_completer.py || die
-		sed -i -e "s|___RLS_BIN_PATH___|/usr/bin/rls|g" \
+		sed -i -e "s|___RA_BIN_PATH___|/usr/bin/rust-analyzer|g" \
 			ycmd/completers/rust/rust_completer.py || die
-		sed -i -e "s|___RUSTC_BIN_PATH___|/usr/bin/rustc|g" \
-			ycmd/default_settings.json || die
-		sed -i -e "s|___RLS_BIN_PATH___|/usr/bin/rls|g" \
+		sed -i -e "s|___RUST_TC_ROOT___|/usr|g" \
 			ycmd/default_settings.json || die
 	else
 		ewarn \
@@ -847,6 +826,11 @@ ${BD_ABS}/third_party/go/bin/gopls|g" \
 				ycmd/default_settings.json || die
 		fi
 
+		# TODO
+#		sed -i -e "s|___JAVA_BIN_PATH___||g" \
+#			ycmd/default_settings.json || die
+
+
 		if use system-jedi ; then
 			sed -i -e "s|\
 os.path.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'jedi' )|\
@@ -860,6 +844,18 @@ ${sitedir}/numpydoc|g" \
 os.path.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'parso' )|\
 ${sitedir}/parso|g" \
 				ycmd/__main__.py || die
+		fi
+
+		if use system-mono ; then
+			sed -i -e "s|\
+___MONO_BIN_PATH___|\
+/usr/bin/mono|g" \
+				ycmd/default_settings.json || die
+		else
+			sed -i -e "s|\
+___MONO_BIN_PATH___|\
+${BD_ABS}/third_party/omnisharp-roslyn/bin/mono|g" \
+				ycmd/default_settings.json || die
 		fi
 
 		if use system-mrab-regex ; then
@@ -1084,7 +1080,7 @@ _shrink_install() {
 		-o -iname "*README*" )
 	einfo "Cleaning third_party"
 	find {third_party/bottle,third_party/jedi_deps,\
-third_party/requests_deps,third_party/waitress,ycmd} \
+third_party/waitress,ycmd} \
 		! \( -name "*.py" \
 			-o -name "*.pyc" \
 			-o -name "*.pyi" \
@@ -1221,7 +1217,6 @@ third_party/requests_deps,third_party/waitress,ycmd} \
 			"third_party/tern_runtime/node_modules/errno/build.js" \
 			|| die
 	fi
-	rm -rf third_party/requests_deps/urllib3/dummyserver || die
 	rm -rf third_party/generic_server
 
 	einfo "Cleaning out test folders"
@@ -1341,10 +1336,6 @@ src_install() {
 				fperms 0755 \
 		"${BD_ABS}/third_party/omnisharp-roslyn/bin/mono"
 			fi
-		fi
-
-		if ! use system-requests ; then
-			python_domodule third_party/requests_deps
 		fi
 
 		if ! use system-rust \

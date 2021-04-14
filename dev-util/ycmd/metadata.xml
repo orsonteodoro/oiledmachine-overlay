@@ -21,8 +21,9 @@
     The simple protocol makes it easy to add these commericial text editor IDE 
     features in any free and open source text editor.
 
-    oiledmachine-overlay tracks the last commit for the previous CORE_VERSION
-    which is assumed to be feature complete and the final version.
+    oiledmachine-overlay tracks the last commit or before the last pull request
+    for the previous CORE_VERSION which is assumed to be feature complete and
+    the final version.  This ebuild does not track the current version.
   </longdescription>
   <upstream>
     <!-- send reports to oiledmachine-overlay first -->
