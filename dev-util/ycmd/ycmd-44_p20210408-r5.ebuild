@@ -174,7 +174,7 @@ RUST_V="nightly-2021-02-11"
 WATCHDOG_V="2.0.1"
 
 RDEPEND_NODEJS="net-libs/nodejs"
-DEPEND_NODEJS="net-libs/nodejs[npm]"
+BDEPEND_NODEJS="net-libs/nodejs[npm]"
 DEPEND+=" ${PYTHON_DEPS}
 	csharp? (
 		system-mono? (
@@ -209,7 +209,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 		>=sys-devel/gcc-8
 		>=sys-devel/clang-7
 	)
-	javascript? ( ${DEPEND_NODEJS} )
+	javascript? ( ${BDEPEND_NODEJS} )
 	test? ( >=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
 		>=dev-python/coverage-4.2[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.0[${PYTHON_USEDEP}]
@@ -223,7 +223,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )
-	typescript? ( ${DEPEND_NODEJS} )"
+	typescript? ( ${BDEPEND_NODEJS} )"
 # Speed up downloads for rebuilds.  Precache outside of sandbox so we don't keep
 #   redownloading.
 # libclang archives are listed in cpp/ycm/CMakeLists.txt
