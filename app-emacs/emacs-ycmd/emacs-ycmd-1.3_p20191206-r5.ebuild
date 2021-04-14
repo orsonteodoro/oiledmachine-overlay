@@ -2,6 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_{6..9} )
+
+inherit elisp eutils python-single-r1
+
 DESCRIPTION="Emacs client for ycmd, the code completion system"
 HOMEPAGE="https://github.com/abingham/emacs-ycmd"
 LICENSE="MIT GPL-3+
@@ -12,25 +17,22 @@ LICENSE="MIT GPL-3+
 	typescript-mode? ( GPL-3+ )"
 # The required dependencies are GPL-3+ but scripts or package alone itself is MIT.
 KEYWORDS="~amd64 ~x86"
-PYTHON_COMPAT=( python3_{6,7,8} )
 SLOT="0"
-inherit python-single-r1
-IUSE="builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error \
+IUSE+=" builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error \
 +rust-mode system-gocode system-godef system-gopls system-omnisharp system-racerd \
 system-rls system-rustc system-typescript +typescript-mode +ycmd-43"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-RDEPEND="${PYTHON_DEPS}
-	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{6,7,8} ) )"
-DEPEND="${RDEPEND}"
-BDEPEND="net-misc/curl"
-inherit eutils elisp
+REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
+	^^ ( ycmd-43 )"
+DEPEND+=" ${PYTHON_DEPS}
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{6,7,8,9} ) )"
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" net-misc/curl"
 EGIT_COMMIT="bc81b992f79100c98f56b7b83caf64cb8ea60477"
 SRC_URI=\
 "https://github.com/abingham/emacs-ycmd/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 SITEFILE="50emacs-ycmd-gentoo.el"
-REQUIRED_USE="^^ ( ycmd-43 )"
 PATCHES=( "${FILESDIR}/${PN}-1.3_p20191206-support-core-version-43.patch" )
 BD_REL="ycmd/${SLOT}"
 BD_ABS=""
