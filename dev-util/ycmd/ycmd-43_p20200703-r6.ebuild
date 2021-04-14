@@ -423,7 +423,7 @@ download the internal dependencies."
 }
 
 src_unpack() {
-	# Manually unpacke to prevent double unpack with Rust or Go.
+	# Manually unpacked to prevent double unpack with Rust or Go.
 	unpack ${YCMD_FN} \
 		${BOTTLE_FN} \
 		${CHARDET_FN} \
