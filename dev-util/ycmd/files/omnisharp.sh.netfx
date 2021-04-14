@@ -1,2 +1,0 @@
-#!/bin/bash
-mono ___OMNISHARP_DIR_PATH___/OmniSharp.exe $@

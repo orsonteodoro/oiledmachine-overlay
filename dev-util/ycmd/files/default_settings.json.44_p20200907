@@ -7,33 +7,14 @@
   "filetype_specific_completion_to_disable": {
     "gitcommit": 1
   },
-  "seed_identifiers_with_syntax": 0,
   "collect_identifiers_from_comments_and_strings": 0,
-  "collect_identifiers_from_tags_files": 0,
   "max_num_identifier_candidates": 10,
   "max_num_candidates": 50,
+  "max_num_candidates_to_detail": -1,
   "extra_conf_globlist": [],
   "global_ycm_extra_conf": "___GLOBAL_YCMD_EXTRA_CONF___",
   "confirm_extra_conf": 1,
-  "complete_in_comments": 0,
-  "complete_in_strings": 1,
   "max_diagnostics_to_display": 30,
-  "filetype_whitelist": {
-    "*": 1
-  },
-  "filetype_blacklist": {
-    "tagbar": 1,
-    "qf": 1,
-    "notes": 1,
-    "markdown": 1,
-    "netrw": 1,
-    "unite": 1,
-    "text": 1,
-    "vimwiki": 1,
-    "pandoc": 1,
-    "infolog": 1,
-    "mail": 1
-  },
   "filepath_blacklist": {
     "html": 1,
     "jsx": 1,
@@ -45,10 +26,21 @@
   "csharp_server_port": 0,
   "hmac_secret": "___HMAC_SECRET___",
   "server_keep_logfiles": 0,
-  "gocode_binary_path": "___GOCODE_BIN_PATH___",
-  "godef_binary_path": "___GODEF_BIN_PATH___",
-  "rust_src_path": "___RUST_SRC_PATH___",
-  "racerd_binary_path": "___RACERD_BIN_PATH___",
   "python_binary_path": "___PYTHON_BIN_PATH___",
-  "java_jdtls_use_clean_workspace": 1
+  "language_server": [],
+  "java_jdtls_use_clean_workspace": 1,
+  "java_jdtls_workspace_root_path": "",
+  "java_jdtls_extension_path": [],
+  "use_clangd": 1,
+  "clangd_binary_path": "___CLANGD_BIN_PATH___",
+  "clangd_args": [],
+  "clangd_uses_ycmd_caching": 1,
+  "disable_signature_help": 0,
+  "gopls_binary_path": "___GOPLS_BIN_PATH___",
+  "gopls_args": [],
+  "rust_toolchain_root": "___RUST_TC_ROOT___",
+  "tsserver_binary_path": "___TSSERVER_BIN_PATH___",
+  "roslyn_binary_path": "___OMNISHARP_BIN_ABSPATH___",
+  "mono_binary_path": "___MONO_BIN_PATH___",
+  "java_binary_path": "___JAVA_BIN_PATH___"
 }

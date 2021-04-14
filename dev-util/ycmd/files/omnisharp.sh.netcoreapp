@@ -1,2 +1,0 @@
-#!/bin/bash
-LD_LIBRARY_PATH="___NETCORE_LIB_PATH___" dotnet ___OMNISHARP_DIR_PATH___/OmniSharp.dll $@

@@ -736,6 +736,7 @@ _check_abi_supported()
 		if use elibc_musl ; then
 			die "Please use the system-libclang USE flag instead"
 		fi
+		einfo "Checking precompiled libclang support"
 		for abi in $(multilib_get_enabled_abis) ; do
 			local chost=$(get_abi_CHOST ${abi})
 			local arch="${chost%%-*}"
@@ -761,18 +762,17 @@ src_prepare() {
 	_check_abi_supported
 	eapply "${FILESDIR}/${PN}-42_p20200108-skip-thirdparty-check.patch"
 	eapply "${FILESDIR}/${PN}-43_p20200516-system-third-party.patch"
-	eapply "${FILESDIR}/${PN}-43_p20200516-flatten-watchdog-path.patch"
 
 	if use clangd ; then
 		ewarn "Clangd is experimental and not recommended at this time."
 	fi
 
-	cat "${FILESDIR}/default_settings.json.42_p20200108" \
+	cat "${FILESDIR}/default_settings.json.43_p20200623" \
 		> ycmd/default_settings.json || die
 
 	if use system-libclang ; then
 		eapply \
-		"${FILESDIR}/${PN}-9999.20170107-force-python-libs-path.patch"
+		"${FILESDIR}/${PN}-25_20170108-force-python-libs-path.patch"
 		LIBCLANG_PATH=$(\
 ls /usr/$(get_libdir)/llvm/*/$(get_libdir)/libclang.so* | head -1)
 		sed -i -e "s|\
@@ -814,7 +814,7 @@ recommended to use the internal instead."
 	fi
 
 	if use system-rust ; then
-		eapply "${FILESDIR}/${PN}-42_p20200108-system-rust.patch"
+		eapply "${FILESDIR}/${PN}-43_p20200703-system-rust.patch"
 		sed -i -e "s|___RUSTC_BIN_PATH___|/usr/bin/rustc|g" \
 			ycmd/completers/rust/rust_completer.py || die
 		sed -i -e "s|___RLS_BIN_PATH___|/usr/bin/rls|g" \
@@ -908,6 +908,18 @@ ${sitedir}/numpydoc|g" \
 p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'parso' )|\
 ${sitedir}/parso|g" \
 				ycmd/server_utils.py || die
+		fi
+
+		if use system-mono ; then
+			sed -i -e "s|\
+___MONO_BIN_PATH___|\
+/usr/bin/mono|g" \
+				ycmd/default_settings.json || die
+		else
+			sed -i -e "s|\
+___MONO_BIN_PATH___|\
+${BD_ABS}/third_party/omnisharp-roslyn/bin/mono|g" \
+				ycmd/default_settings.json || die
 		fi
 
 		if use system-mrab-regex ; then

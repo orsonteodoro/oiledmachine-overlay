@@ -1,6 +1,6 @@
---- a/ycmd/server_utils.py	2020-05-16 12:49:04.012131191 -0700
-+++ b/ycmd/server_utils.py	2020-05-16 12:53:02.741516562 -0700
-@@ -36,17 +36,12 @@ def SetUpPythonPath():
+--- a/ycmd/server_utils.py.orig	2020-07-03 11:41:07.000000000 -0700
++++ b/ycmd/server_utils.py	2021-04-14 01:31:23.854440033 -0700
+@@ -36,21 +36,14 @@ def SetUpPythonPath():
    sys.path[ 0:0 ] = [ p.join( ROOT_DIR ),
                        p.join( DIR_OF_THIRD_PARTY, 'bottle' ),
                        p.join( DIR_OF_THIRD_PARTY, 'cregex', 'regex_3' ),
@@ -15,8 +15,36 @@
 -                              'requests_deps',
 -                              'urllib3',
 -                              'src' ),
-                       p.join( DIR_OF_WATCHDOG_DEPS,
-                               'watchdog',
-                               'build',
-Only in ycmd-43_p20200516/ycmd: server_utils.py.orig
-Only in ycmd-43_p20200516/ycmd: server_utils.py.rej
+-                      p.join( DIR_OF_WATCHDOG_DEPS,
+-                              'watchdog',
+-                              'build',
+-                              'lib3' ),
++                      p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'urllib3', 'src' ),
++                      p.join( DIR_OF_WATCHDOG_DEPS, 'watchdog', 'build', 'lib3' ),
+                       p.join( DIR_OF_WATCHDOG_DEPS, 'pathtools' ),
+                       p.join( DIR_OF_THIRD_PARTY, 'waitress' ) ]
+   sys.path.append( p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'numpydoc' ) )
+--- a/run_tests.py.orig	2020-07-03 11:41:07.000000000 -0700
++++ b/run_tests.py	2021-04-14 01:31:25.874518890 -0700
+@@ -18,7 +18,6 @@ LIBCLANG_DIR = p.join( DIR_OF_THIRD_PART
+ python_path = [
+   p.join( DIR_OF_THIRD_PARTY, 'bottle' ),
+   p.join( DIR_OF_THIRD_PARTY, 'cregex', 'regex_3' ),
+-  p.join( DIR_OF_THIRD_PARTY, 'frozendict' ),
+   p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'jedi' ),
+   p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'parso' ),
+   p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'certifi' ),
+--- a/build.py.orig	2021-04-14 01:28:58.558767927 -0700
++++ b/build.py	2021-04-14 01:35:00.922913439 -0700
+@@ -40,10 +40,7 @@ LIBCLANG_DIR = p.join( DIR_OF_THIRD_PART
+ #    )
+ 
+ sys.path[ 0:0 ] = [ p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'requests' ),
+-                    p.join( DIR_OF_THIRD_PARTY,
+-                            'requests_deps',
+-                            'urllib3',
+-                            'src' ),
++                    p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'urllib3', 'src' ),
+                     p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'chardet' ),
+                     p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'certifi' ),
+                     p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'idna' ) ]
