@@ -4,55 +4,58 @@
 # This fork of nano is based on 4.9.3_p20200524
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_{6..9} )
+
+inherit autotools eutils flag-o-matic python-single-r1
+
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
 HOMEPAGE="https://www.nano-editor.org/ \
-https://wiki.gentoo.org/wiki/Nano/Basics_Guide
+https://wiki.gentoo.org/wiki/Nano/Basics_Guide \
 https://github.com/orsonteodoro/nano-ycmd"
 LICENSE="GPL-3+ LGPL-2+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-IUSE="bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls \
-slang +spell static openmp openssl system-clangd system-gnulib system-gocode \
-system-godef system-gopls system-omnisharp system-racerd system-rls \
+IUSE+=" bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls
+slang +spell static openmp openssl system-clangd system-gnulib system-gocode
+system-godef system-gopls system-omnisharp system-racerd system-rls
 system-rustc system-tsserver unicode +ycmd-43 ycm-generator"
-PYTHON_COMPAT=( python3_{6,7,8} )
-inherit python-single-r1
-REQUIRED_USE="${PYTHON_REQUIRED_USE}
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	      ^^ ( libgcrypt nettle openssl )
 	      ^^ ( ycmd-43 )
 	      bear? ( ycm-generator )
 	      ninja? ( ycm-generator )
 	      ycm-generator? ( || ( bear ninja ) )"
 LIB_DEPEND="
-	magic? ( sys-apps/file:=[static-libs(+)] )
 	!ncurses? ( slang? ( sys-libs/slang:=[static-libs(+)] ) )
-	nls? ( virtual/libintl )
 	>=sys-libs/ncurses-5.9-r1:0=[unicode?]
-	sys-libs/ncurses:0=[static-libs(+)]"
-RDEPEND="${PYTHON_DEPS}
+	sys-libs/ncurses:0=[static-libs(+)]
+	magic? ( sys-apps/file:=[static-libs(+)] )
+	nls? ( virtual/libintl )"
+RDEPEND+=" ${PYTHON_DEPS}
+	!static? ( ${LIB_DEPEND//\[static-libs(+)]} )
 	>=app-shells/bash-4
 	dev-libs/nxjson
-	bear? ( dev-util/bear[${PYTHON_SINGLE_USEDEP}] )
-	ninja? ( dev-util/ninja )
-	ycm-generator? ( $(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8}) )
-	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{6,7,8}) )
-	libgcrypt? ( dev-libs/libgcrypt )
-	nettle? ( dev-libs/nettle )
 	net-libs/neon
+	bear? ( dev-util/bear[${PYTHON_SINGLE_USEDEP}] )
+	libgcrypt? ( dev-libs/libgcrypt )
+	ninja? ( dev-util/ninja )
+	nettle? ( dev-libs/nettle )
 	openmp? ( sys-libs/libomp )
 	openssl? ( dev-libs/openssl
 		   dev-libs/glib )
-	!static? ( ${LIB_DEPEND//\[static-libs(+)]} )"
-DEPEND="system-gnulib? ( >=dev-libs/gnulib-2018.01.23.08.42.00 )"
-BDEPEND="nls? ( sys-devel/gettext )
-	static? ( ${LIB_DEPEND} )
-	virtual/pkgconfig"
-inherit autotools eutils flag-o-matic
+	ycm-generator? ( $(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8,9}) )
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{6,7,8,9}) )"
+DEPEND+=" ${RDEPEND}
+	system-gnulib? ( >=dev-libs/gnulib-2018.01.23.08.42.00 )"
+BDEPEND+=" virtual/pkgconfig
+	nls? ( sys-devel/gettext )
+	static? ( ${LIB_DEPEND} )"
 EGIT_COMMIT="d69e83799eab5a69f8e24e60d0b7c8690eb024f2"
 GNULIB_COMMIT="360979fd6fb84567e0ffc6839b0431fc00d6362f" # listed in ./autogen.sh
 GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
-SRC_URI=\
-"https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz \
+SRC_URI="\
+https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz
 http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz \
 	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz"
