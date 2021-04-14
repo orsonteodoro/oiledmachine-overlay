@@ -10,35 +10,76 @@ inherit cmake-utils eutils flag-o-matic multilib-build python-r1
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
 LICENSE="GPL-3+ BSD
-	clangd? ( !system-clangd? ( Apache-2.0-with-LLVM-exceptions MIT
-		UoI-NCSA ) )
-	csharp? ( all-rights-reserved MIT Apache-2.0 )
+	clangd? ( !system-clangd? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA ) )
+	csharp? ( all-rights-reserved MIT )
 	examples? ( Apache-2.0 )
 	go? ( !system-go-tools? ( BSD MIT all-rights-reserved Apache-2.0 ) )
 	java? ( Apache-1.1 Apache-2.0 BSD BSD-2 dom4j EPL-2.0 icu
 		JDOM MIT all-rights-reserved MPL-1.1 NAIST-IPADIC unicode W3C
 		W3C-document )
-	javascript? ( !system-tern? ( MIT ) )
+	javascript? ( !system-tern? ( MIT all-rights-reserved CC-BY-SA-4.0 ISC ) )
 	libclang? ( !system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT
 		UoI-NCSA ) )
-	python? ( !system-jedi? ( BSD-2 MIT PSF-2 ) )
+	python? ( !system-jedi? ( Apache-2.0 BSD BSD-2 MIT PSF-2 ) )
 	regex? ( !system-mrab-regex? ( all-rights-reserved CNRI PSF-2 ) )
-	rust? ( !system-rust? ( || ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4
-		UoI-NCSA ) )
+	rust? ( !system-rust? ( || ( MIT Apache-2.0 ) Apache-2.0
+		Apache-2.0-with-LLVM-exceptions BSD BSD-1 BSD-2 BSD-4
+		GPL-2-with-linking-exception LGPL-2.1 libcurl MIT OFL-1.1
+		all-rights-reserved openssl Unlicense UoI-NCSA ZLIB ) )
 	!system-bottle? ( MIT )
 	!system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA )
 	!system-mono? ( all-rights-reserved MIT )
-	!system-pathtools? ( BSD MIT ZPL )
+	!system-pathtools? ( BSD MIT )
 	!system-requests? ( Apache-2.0 BSD LGPL-2.1+ MIT MPL-2.0 PSF-2
 		unicode )
 	!system-waitress? ( ZPL )
 	!system-watchdog? ( Apache-2.0 )
+	typescript? ( !system-typescript? ( all-rights-reserved Apache-2.0 ) )
 	test? ( BSD GPL-3+ )"
 
+# Apache-2.0 with all-rights-reserved ./lib64/node_modules/typescript/CopyrightNotice.txt [3]
+# The original Apache-2.0 license does not contain all rights reserved
+
+# Third party tern dependencies:
+# MIT all-rights-reserved ./node_modules/string_decoder/LICENSE [1]
+# MIT all-rights-reserved ./node_modules/readable-stream/LICENSE [1]
+# MIT all-rights-reserved ./node_modules/core-util-is/LICENSE [1]
+# ISC CC-BY-SA-4.0 ./node_modules/glob/LICENSE
+
+# The license field for the rust USE flag was originally been copied from the
+#   dev-lang/rust ebuild but with additions based on cargo, rust-doc, ....
+#
+# Some of these licenses (such as some of the BSD variants, UoI-NCSA) may not
+#   be in the binary distribution of rust but may be found in the source code
+#   version or have been obsoleted.
+#
+# Licenses for the rust USE flag are repeated for the rust USE flag because of
+#   multiple packages.
+#
+# Apache-2.0-with-LLVM-exceptions libunwind in rust USE flag
+# Apache-2.0 ./lib/rustlib/src/rust/library/stdarch/LICENSE-APACHE
+# MIT Apache-2.0 ./lib/rustlib/src/rust/library/stdarch/crates/core_arch
+# MIT Apache-2.0 ./lib/rustlib/src/rust/library/stdarch/crates/std_detect
+# MIT Apache-2.0 ./lib/rustlib/src/rust/library/backtrace
+# Apache-2.0 ./share/doc/rust/html/nomicon/fonts/OPEN-SANS-LICENSE.txt
+# OFL-1.1 ./share/doc/rust/html/nomicon/fonts/SOURCE-CODE-PRO-LICENSE.txt
+# OFL-1.1 with all rights reserved ./share/doc/rust/html/SourceSerifPro-LICENSE.md [2]
+# openssl GPL-2-with-linking-exception MIT LGPL-2.1 BSD libcurl Unlicense ZLIB \
+#   ./share/doc/cargo/LICENSE-THIRD-PARTY
+
+# [2] The OFL-1.1 does not come with all rights reserved
+
+# The internal jedi with dependencies lists additional licenses for third party
+#   Apache-2.0 BSD PSF-2 - scipy-sphinx-theme
+#   Apache-2.0 MIT - jedi
+
 # In jdt-language-server-0.54.0-202004152304.tar.gz,
-# MIT with all rights reserved ./org.eclipse.m2e.maven.runtime.slf4j.simple_1.15.0.20200304-0718/about_files/slf4j-simple-LICENSE.txt
-# MIT with all rights reserved ./org.slf4j.api_1.7.2.v20121108-1250/about_files/SLF4J-LICENSE.txt
-# * There is no all rights reserved in the vanilla MIT license.
+# MIT with all rights reserved [1] \
+#   ./org.eclipse.m2e.maven.runtime.slf4j.simple_1.15.0.20200304-0718/about_files/slf4j-simple-LICENSE.txt
+# MIT with all rights reserved [1] \
+#   ./org.slf4j.api_1.7.2.v20121108-1250/about_files/SLF4J-LICENSE.txt
+
+# [1] There is no all rights reserved in the vanilla MIT license.
 
 # To unpack jdt*, use:
 # tar -xvf jdt*; \
