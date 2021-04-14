@@ -21,7 +21,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	      bear? ( ycm-generator )
 	      ninja? ( ycm-generator )
 	      ycm-generator? ( || ( bear ninja ) )"
-YCMD_SLOT="2"
+YCMD_SLOT="43"
 LIB_DEPEND="
 	magic? ( sys-apps/file:=[static-libs(+)] )
 	!ncurses? ( slang? ( sys-libs/slang:=[static-libs(+)] ) )

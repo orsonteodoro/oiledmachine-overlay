@@ -14,12 +14,12 @@ SLOT="0"
 IUSE="bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls \
 slang +spell static openmp openssl system-clangd system-gnulib system-gocode \
 system-godef system-gopls system-omnisharp system-racerd system-rls \
-system-rustc system-tsserver unicode ycmd-slot-1 +ycmd-slot-2 ycm-generator"
+system-rustc system-tsserver unicode +ycmd-43 ycm-generator"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	      ^^ ( libgcrypt nettle openssl )
-	      ^^ ( ycmd-slot-1 ycmd-slot-2 )
+	      ^^ ( ycmd-43 )
 	      bear? ( ycm-generator )
 	      ninja? ( ycm-generator )
 	      ycm-generator? ( || ( bear ninja ) )"
@@ -35,8 +35,7 @@ RDEPEND="${PYTHON_DEPS}
 	bear? ( dev-util/bear[${PYTHON_SINGLE_USEDEP}] )
 	ninja? ( dev-util/ninja )
 	ycm-generator? ( $(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8}) )
-	ycmd-slot-1? ( $(python_gen_cond_dep 'dev-util/ycmd:1[${PYTHON_USEDEP}]' python3_{6,7,8}) )
-	ycmd-slot-2? ( $(python_gen_cond_dep 'dev-util/ycmd:2[${PYTHON_USEDEP}]' python3_{6,7,8}) )
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{6,7,8}) )
 	libgcrypt? ( dev-libs/libgcrypt )
 	nettle? ( dev-libs/nettle )
 	net-libs/neon
@@ -79,7 +78,7 @@ src_prepare() {
 	fi
 }
 
-econf_ycmd_slot_2() {
+econf_ycmd_slot_43() {
 	GOPLS_PATH="${gopls_path}" \
 	NINJA_PATH="/usr/bin/ninja" \
 	RLS_PATH="${rls_path}" \
@@ -116,47 +115,9 @@ econf_ycmd_slot_2() {
 		$(usex ncurses --without-slang $(use_with slang))
 }
 
-econf_ycmd_slot_1() {
-	GOCODE_PATH="${gocode_path}" \
-	GODEF_PATH="${godef_path}" \
-	NINJA_PATH="/usr/bin/ninja" \
-	RACERD_PATH="${racerd_path}" \
-	RUST_SRC_PATH="/usr/share/rust/src" \
-	YCMD_PATH="${BD_ABS}/ycmd" \
-	YCMD_PYTHON_PATH="/usr/bin/${EPYTHON}" \
-	YCMG_PATH="/usr/bin/config_gen.py" \
-	YCMG_PYTHON_PATH="/usr/bin/${EPYTHON}" \
-	econf \
-		"${myconf[@]}" \
-		--bindir="${EPREFIX}"/bin \
-		--disable-wrapping-as-root \
-		--enable-ycmd \
-		--htmldir=/trash \
-		$(use_enable !minimal color) \
-		$(use_enable !minimal multibuffer) \
-		$(use_enable !minimal nanorc) \
-		$(use_enable debug) \
-		$(use_enable justify) \
-		$(use_enable magic libmagic) \
-		$(use_enable minimal tiny) \
-		$(use_enable nls) \
-		$(use_enable spell speller) \
-		$(use_enable unicode utf8) \
-		$(use_with bear) \
-		$(use_with libgcrypt) \
-		$(use_with nettle) \
-		$(use_with ninja) \
-		$(use_with openmp) \
-		$(use_with openssl) \
-		$(use_with ycm-generator) \
-		$(usex ncurses --without-slang $(use_with slang))
-}
-
 src_configure() {
-	if use ycmd-slot-1 ; then
-		ycmd_slot=1
-	elif use ycmd-slot-2 ; then
-		ycmd_slot=2
+	if use ycmd-43 ; then
+		ycmd_slot=43
 	fi
 	BD_REL="ycmd/${ycmd_slot}"
 	BD_ABS="$(python_get_sitedir)/${BD_REL}"
@@ -215,12 +176,8 @@ src_configure() {
 	if use system-omnisharp ; then
 		omnisharp_path="${BD_ABS}/ycmd/completers/cs/omnisharp.sh"
 	else
-		if use ycmd-slot-2 ; then
+		if use ycmd-43 ; then
 			omnisharp_path="${BD_ABS}/third_party/omnisharp-roslyn/run"
-		elif use ycmd-slot-1 ; then
-			omnisharp_path="${BD_ABS}/third_party/OmniSharpServer/OmniSharp/bin/Release/OmniSharp.exe"
-		else
-			omnisharp_path=""
 		fi
 	fi
 	if use system-tsserver ; then
@@ -229,12 +186,10 @@ src_configure() {
 		tsserver_path="${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
 	fi
 
-	if use ycmd-slot-1 ; then
-		econf_ycmd_slot_1
-	elif use ycmd-slot-2 ; then
-		econf_ycmd_slot_2
+	if use ycmd-43 ; then
+		econf_ycmd_slot_43
 	else
-		die "You must choose either ycmd-slot-1 or ycmd-slot-2"
+		die "You must choose either ycmd-43"
 	fi
 }
 
