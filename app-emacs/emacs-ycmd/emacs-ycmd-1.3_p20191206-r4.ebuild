@@ -17,11 +17,10 @@ SLOT="0"
 inherit python-single-r1
 IUSE="builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error \
 +rust-mode system-gocode system-godef system-gopls system-omnisharp system-racerd \
-system-rls system-rustc system-typescript +typescript-mode ycmd-slot-1 +ycmd-slot-2"
+system-rls system-rustc system-typescript +typescript-mode +ycmd-43"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RDEPEND="${PYTHON_DEPS}
-	ycmd-slot-1? ( $(python_gen_cond_dep 'dev-util/ycmd:1[${PYTHON_USEDEP}]' python3_{6,7,8} ) )
-	ycmd-slot-2? ( $(python_gen_cond_dep 'dev-util/ycmd:2[${PYTHON_USEDEP}]' python3_{6,7,8} ) )"
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{6,7,8} ) )"
 DEPEND="${RDEPEND}"
 BDEPEND="net-misc/curl"
 inherit eutils elisp
@@ -31,7 +30,7 @@ SRC_URI=\
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 SITEFILE="50emacs-ycmd-gentoo.el"
-REQUIRED_USE="^^ ( ycmd-slot-1 ycmd-slot-2 )"
+REQUIRED_USE="^^ ( ycmd-43 )"
 PATCHES=( "${FILESDIR}/${PN}-1.3_p20191206-support-core-version-43.patch" )
 BD_REL="ycmd/${SLOT}"
 BD_ABS=""
@@ -68,9 +67,7 @@ install_deps() {
 	cask install
 	cask build
 	local ycmd_slot
-	if use ycmd-slot-1 ; then
-		ycmd_slot=1
-	elif use ycmd-slot-2 ; then
+	if use ycmd-43 ; then
 		ycmd_slot=2
 	fi
 	BD_REL="ycmd/${ycmd_slot}"
@@ -181,12 +178,7 @@ ___YCMD-EMACS_ROSLYN_ABSPATH___|\
 ${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
 			"${sitefile_path}" || die
 	else
-		if use ycmd-slot-1 ; then
-			sed -i -e "s|\
-___YCMD-EMACS_ROSLYN_ABSPATH___|\
-${BD_ABS}/third_party/OmniSharpServer/OmniSharp/bin/Release/OmniSharp.exe|g" \
-			"${sitefile_path}" || die
-		elif use ycmd-slot-2 ; then
+		if use ycmd-43 ; then
 			sed -i -e "s|\
 ___YCMD-EMACS_ROSLYN_ABSPATH___|\
 ${BD_ABS}/third_party/omnisharp-roslyn/run|g" \
@@ -236,10 +228,7 @@ ${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserve
 			"${sitefile_path}" || die
 	fi
 
-	if use ycmd-slot-1 ; then
-		sed -i -e "s|___YCMD-EMACS_CORE_VERSION___|39|g" \
-			"${sitefile_path}" || die
-	elif use ycmd-slot-2 ; then
+	if use ycmd-43 ; then
 		sed -i -e "s|___YCMD-EMACS_CORE_VERSION___|43|g" \
 			"${sitefile_path}" || die
 	else

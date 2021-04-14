@@ -40,7 +40,6 @@
     <flag name="system-rls">Configures emacs-ycmd to use the system rls;
       otherwise, it falls back to the internal ycmd rls.</flag>
     <flag name="typescript-mode">Adds support for typescript-mode.</flag>
-    <flag name="ycmd-slot-1">Set up ycmd for core version 39</flag>
-    <flag name="ycmd-slot-2">Set up ycmd for core version 43</flag>
+    <flag name="ycmd-43">Set up ycmd for core version 43</flag>
   </use>
 </pkgmetadata>
