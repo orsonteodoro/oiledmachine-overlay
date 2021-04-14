@@ -23,24 +23,31 @@ LICENSE="GPL-3+ BSD
 	regex? ( !system-mrab-regex? ( all-rights-reserved CNRI PSF-2 ) )
 	rust? ( !system-rust? ( || ( MIT Apache-2.0 ) Apache-2.0
 		Apache-2.0-with-LLVM-exceptions BSD BSD-1 BSD-2 BSD-4
+		CC-BY-4.0
 		GPL-2-with-linking-exception LGPL-2.1 libcurl MIT OFL-1.1
 		all-rights-reserved openssl Unlicense UoI-NCSA ZLIB ) )
 	!system-bottle? ( MIT )
 	!system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA )
 	!system-mono? ( all-rights-reserved MIT )
 	!system-watchdog? ( Apache-2.0 )
-	typescript? ( !system-typescript? ( all-rights-reserved Apache-2.0 ) )
+	typescript? ( !system-typescript? ( all-rights-reserved Apache-2.0
+		CC-BY-4.0 MIT unicode W3C ) )
 	test? ( BSD GPL-3+ )"
 
-# Apache-2.0 with all-rights-reserved ./lib64/node_modules/typescript/CopyrightNotice.txt [3]
+# Apache-2.0 with all-rights-reserved third_party/tsserver/node_modules/typescript/CopyrightNotice.txt [3]
 # The original Apache-2.0 license does not contain all rights reserved
 
-# Third party tern dependencies:
-# MIT all-rights-reserved ./node_modules/string_decoder/LICENSE [1]
-# MIT all-rights-reserved ./node_modules/readable-stream/LICENSE [1]
-# MIT all-rights-reserved ./node_modules/core-util-is/LICENSE [1]
-# ISC CC-BY-SA-4.0 ./node_modules/glob/LICENSE
+# Additional typescript licenses can be found in
+#   third_party/tsserver/node_modules/typescript/ThirdPartyNoticeText.txt
 
+# Third party tern dependencies:
+# MIT all-rights-reserved third_party/tern_runtime/node_modules/string_decoder/LICENSE [1]
+# MIT all-rights-reserved third_party/tern_runtime/node_modules/readable-stream/LICENSE [1]
+# MIT all-rights-reserved third_party/tern_runtime/node_modules/core-util-is/LICENSE [1]
+# ISC CC-BY-SA-4.0 third_party/tern_runtime/node_modules/glob/LICENSE
+
+# Licenses under the rust USE flag:
+#
 # The license field for the rust USE flag was originally been copied from the
 #   dev-lang/rust ebuild but with additions based on cargo, rust-doc, ....
 #
@@ -51,16 +58,20 @@ LICENSE="GPL-3+ BSD
 # Licenses for the rust USE flag are repeated for the rust USE flag because of
 #   multiple packages.
 #
-# Apache-2.0-with-LLVM-exceptions libunwind in rust USE flag
-# Apache-2.0 ./lib/rustlib/src/rust/library/stdarch/LICENSE-APACHE
-# MIT Apache-2.0 ./lib/rustlib/src/rust/library/stdarch/crates/core_arch
-# MIT Apache-2.0 ./lib/rustlib/src/rust/library/stdarch/crates/std_detect
-# MIT Apache-2.0 ./lib/rustlib/src/rust/library/backtrace
-# Apache-2.0 ./share/doc/rust/html/nomicon/fonts/OPEN-SANS-LICENSE.txt
-# OFL-1.1 ./share/doc/rust/html/nomicon/fonts/SOURCE-CODE-PRO-LICENSE.txt
-# OFL-1.1 with all rights reserved ./share/doc/rust/html/SourceSerifPro-LICENSE.md [2]
+# Apache-2.0-with-LLVM-exceptions third_party/rust-analyzer/lib/rustlib/src/rust/src/llvm-project/libunwind
+# Apache-2.0 third_party/rust-analyzer/share/doc/rust/html/nomicon/fonts/OPEN-SANS-LICENSE.txt
+# BSD third_party/rust-analyzer/share/doc/rust/html/nomicon/highlight.js
+# CC-BY-4.0 third_party/rust-analyzer/share/doc/rust/html/nomicon/favicon.svg
+# MIT Apache-2.0 \
+#   third_party/rust-analyzer/lib/rustlib/src/rust/library/stdarch \
+#   third_party/rust-analyzer/lib/rustlib/src/rust/library/stdarch/crates/core_arch \
+#   third_party/rust-analyzer/lib/rustlib/src/rust/library/stdarch/crates/std_detect \
+#   third_party/rust-analyzer/lib/rustlib/src/rust/library/backtrace
+# OFL-1.1 MIT third_party/rust-analyzer/share/doc/rust/html/nomicon/FontAwesome/css/font-awesome.css
+# OFL-1.1 third_party/rust-analyzer/share/doc/rust/html/nomicon/fonts/SOURCE-CODE-PRO-LICENSE.txt
+# OFL-1.1 with all rights reserved third_party/rust-analyzer/share/doc/rust/html/SourceSerifPro-LICENSE.md [2]
 # openssl GPL-2-with-linking-exception MIT LGPL-2.1 BSD libcurl Unlicense ZLIB \
-#   ./share/doc/cargo/LICENSE-THIRD-PARTY
+#   third_party/rust-analyzer/share/doc/cargo/LICENSE-THIRD-PARTY
 
 # [2] The OFL-1.1 does not come with all rights reserved
 
@@ -327,6 +338,9 @@ https://static.rust-lang.org/dist/${nightly_date}/${pkg_name}-nightly-${arch_tri
 "
 	echo "${out}"
 }
+
+# The Rust x86_64-glibc dependency list is based on the output of rustup-init.
+# Other archs downloads are based on that x86-64 list.
 
 SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc cargo x86_64-unknown-linux-gnu)
 SRC_URI+=" "$(gen_rust_dls amd64 elibc_glibc clippy x86_64-unknown-linux-gnu)
