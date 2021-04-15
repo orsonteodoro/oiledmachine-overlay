@@ -8,6 +8,12 @@
   <longdescription>
     This is used to force updates of packages that use
     electron-builder or electron-packager so they pick
-    up security updates for the Chromium parts.
+    up security updates for the Chromium parts.  Ebuilds
+    that wish to update should add one of the following
+    corresponding to a LTS branch:
+
+    virtual/electron-builder:12=
+    virtual/electron-builder:11=
+    virtual/electron-builder:10=
   </longdescription>
 </pkgmetadata>
