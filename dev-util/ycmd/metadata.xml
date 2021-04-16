@@ -24,6 +24,14 @@
     oiledmachine-overlay tracks the last commit or before the last pull request
     for the previous CORE_VERSION which is assumed to be feature complete and
     the final version.  This ebuild does not track the current version.
+
+    system-jdtls per-package environmental variables:
+      EYCMD_JDT_LANGUAGE_SERVER_HOME_PATH - Absolute path of root directory of
+        unpacked JDT.LS.
+      EYCMD_JDT_WORKSPACE_ROOT_PATH - Absolute path of workspace which can be
+        relocated to a directory of a home directory.
+      EYCMD_JDT_EXTENSION_PATH - Absolute path of JDT.LS directories containing
+        extensions.
   </longdescription>
   <upstream>
     <!-- send reports to oiledmachine-overlay first -->
@@ -61,7 +69,6 @@
     <flag name="objc">Adds the Objective C completer.</flag>
     <flag name="objcxx">Adds the Objective C++ completer.</flag>
     <flag name="python">Adds the Python completer.</flag>
-    <flag name="regex">Compiles regular expression support.</flag>
     <flag name="rust">Adds the Rust programming language completer.</flag>
     <flag name="system-bottle">Use the system's bottle package instead of the
       internal package.</flag>
@@ -74,6 +81,8 @@
     </flag>
     <flag name="system-go-tools">Use the system's Go Tools package instead of
       the internal package.</flag>
+    <flag name="system-jdtls">Uses the system's JDT.LS package instead of the
+      internal.</flag>
     <flag name="system-jedi">Uses the system's Jedi package instead of the
       internal.</flag>
     <flag name="system-libclang">Uses the system's libclang instead of the

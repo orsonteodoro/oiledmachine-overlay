@@ -14,19 +14,18 @@ LICENSE="GPL-3+ BSD
 	csharp? ( all-rights-reserved MIT )
 	examples? ( Apache-2.0 )
 	go? ( !system-go-tools? ( BSD MIT all-rights-reserved Apache-2.0 ) )
-	java? ( Apache-1.1 Apache-2.0 BSD BSD-2 dom4j EPL-2.0 icu
+	java? ( !system-jdtls? ( Apache-1.1 Apache-2.0 BSD BSD-2 dom4j EPL-2.0 icu
 		JDOM MIT all-rights-reserved MPL-1.1 NAIST-IPADIC unicode W3C
-		W3C-document )
+		W3C-document ) )
 	javascript? ( !system-tern? ( MIT all-rights-reserved CC-BY-SA-4.0 ISC ) )
 	libclang? ( !system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT
 		UoI-NCSA ) )
 	python? ( !system-jedi? ( Apache-2.0 BSD BSD-2 MIT PSF-2 ) )
-	regex? ( !system-mrab-regex? ( all-rights-reserved CNRI PSF-2 ) )
+	!system-mrab-regex? ( all-rights-reserved CNRI PSF-2 )
 	rust? ( !system-rust? ( || ( MIT Apache-2.0 ) Apache-2.0
-		BSD BSD-1 BSD-2 BSD-4
-		CC-BY-SA-4.0
-		GPL-2-with-linking-exception LGPL-2.1 libcurl MIT OFL-1.1
-		all-rights-reserved openssl Unlicense UoI-NCSA ZLIB ) )
+		BSD BSD-1 BSD-2 BSD-4 CC-BY-SA-4.0 GPL-2-with-linking-exception
+		LGPL-2.1 libcurl MIT OFL-1.1 all-rights-reserved openssl
+		Unlicense UoI-NCSA ZLIB ) )
 	!system-bottle? ( MIT )
 	!system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA )
 	!system-mono? ( all-rights-reserved MIT )
@@ -117,8 +116,8 @@ LICENSE="GPL-3+ BSD
 SLOT_MAJ=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJ}/${PVR}"
 IUSE+=" c clangd csharp cuda cxx debug developer doc examples go java javascript
-libclang minimal netcore netfx objc objcxx python regex rust system-bottle
-system-boost system-clangd system-go-tools system-jedi system-libclang
+libclang minimal netcore netfx objc objcxx python rust system-bottle
+system-boost system-clangd system-go-tools system-jdtls system-jedi system-libclang
 system-mono system-mrab-regex system-requests system-pathtools system-rust
 system-rust system-tern system-typescript system-waitress system-watchdog test
 typescript vim"
@@ -135,9 +134,9 @@ REQUIRED_USE+="
 	objcxx? ( || ( clangd libclang ) )
 	system-clangd? ( || ( c cxx objc objcxx ) clangd )
 	system-go-tools? ( go )
+	system-jdtls? ( java )
 	system-jedi? ( python )
 	system-libclang? ( || ( c cxx objc objcxx ) libclang )
-	system-mrab-regex? ( regex )
 	system-rust? ( rust )
 	system-tern? ( javascript )"
 
@@ -169,7 +168,7 @@ CLANGD_V="10.0.0"
 CHARDET_V="3.0.4"
 GOPLS_V="0.4.2"
 IDNA_V="2.8"
-JDT_V="0.54.0-202004152304" # MILESTONE-TIMESTAMP in build.py
+JDTLS_V="0.54.0-202004152304" # MILESTONE-TIMESTAMP in build.py
 JEDI_V="0.17.0"
 OMNISHARP_V="1.35.3"
 PARSO_V="0.7.0"
@@ -199,6 +198,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-bottle? ( >=dev-python/bottle-${BOTTLE_V}[${PYTHON_USEDEP}] )
 	system-clangd? ( >=sys-devel/clang-${CLANGD_V}:${CLANG_V_MAJ} )
 	system-go-tools? ( >=dev-go/go-tools-0_pre20210119 )
+	system-jdtls? ( >=dev-java/jdt-${JDTLS_V%-*} )
 	system-jedi? ( >=dev-python/jedi-${JEDI_V}[${PYTHON_USEDEP}]
 			>=dev-python/numpydoc-0.9.0_pre20200408[${PYTHON_USEDEP}]
 			>=dev-python/parso-${PARSO_V}[${PYTHON_USEDEP}] )
@@ -333,7 +333,7 @@ https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-aarch64-linux-gn
 		)
 	)
 )
-java? ( http://download.eclipse.org/jdtls/snapshots/jdt-language-server-${JDT_V}.tar.gz )
+java? ( !system-jdtls? ( http://download.eclipse.org/jdtls/snapshots/jdt-language-server-${JDTLS_V}.tar.gz ) )
 csharp? (
 https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_V}/omnisharp.http-linux-x64.tar.gz
 	-> omnisharp-${OMNISHARP_V}.http-linux-x64.tar.gz
@@ -478,6 +478,9 @@ BD_REL="ycmd/${SLOT_MAJ}"
 BD_ABS=""
 
 pkg_setup() {
+	ewarn
+	ewarn "This ebuild is currently undergoing renovation / refactoring and is a (Work In Progress)"
+	ewarn
 	if \
 	   ( ! use system-tern && use javascript ) \
 	|| ( ! use system-typescript && use typescript ) ; then
@@ -488,6 +491,15 @@ download the internal dependencies."
 		fi
 		:;
 	fi
+
+	# No standard ebuild yet.
+	if use system-jdtls ; then
+		if [[ -z "${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}" ]] ; then
+			die \
+"You need to define EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH as a per-package envvar."
+		fi
+	fi
+
 	python_setup
 }
 
@@ -533,7 +545,7 @@ src_unpack() {
 		mv "${S_BOTTLE}" \
 			third_party/bottle || die
 	fi
-	if ! use system-mrab-regex && use regex ; then
+	if ! use system-mrab-regex ; then
 		mv "${S_YCM_CORE_REGEX}" \
 			third_party/cregex || die
 	fi
@@ -632,9 +644,9 @@ src_unpack() {
 		unpack_gopls
 	fi
 
-	if use java ; then
+	if use java && ! use system-jdtls ; then
 		mkdir -p third_party/eclipse.jdt.ls/target/cache || die
-		cp -a $(realpath "${DISTDIR}/jdt-language-server-${JDT_V}.tar.gz") \
+		cp -a $(realpath "${DISTDIR}/jdt-language-server-${JDTLS_V}.tar.gz") \
 			third_party/eclipse.jdt.ls/target/cache || die
 	fi
 
@@ -831,94 +843,21 @@ src_prepare() {
 	_check_abi_supported
 	eapply "${FILESDIR}/${PN}-42_p20200108-skip-thirdparty-check.patch"
 	eapply "${FILESDIR}/${PN}-43_p20200516-system-third-party.patch"
-
-	if use clangd ; then
-		ewarn "Clangd is experimental and not recommended at this time."
-	fi
+	eapply "${FILESDIR}/${PN}-43_p20200516-system-global-config.patch"
 
 	cat "${FILESDIR}/default_settings.json.43_p20200623" \
 		> ycmd/default_settings.json || die
 
+	if use clangd ; then
+		ewarn "Using clangd is experimental."
+	fi
+
 	if use system-libclang ; then
-		eapply \
-		"${FILESDIR}/${PN}-25_20170108-force-python-libs-path.patch"
-		LIBCLANG_PATH=$(\
-ls /usr/lib/llvm/${CLANG_V_MAJ}/$(get_libdir)/libclang.so* | head -1)
-		sed -i -e "s|\
-EXTERNAL_LIBCLANG_PATH \${TEMP}|\
-EXTERNAL_LIBCLANG_PATH \"${LIBCLANG_PATH}\"|g" \
-			cpp/ycm/CMakeLists.txt || die
-		eapply \
-		"${FILESDIR}/${PN}-43_p20200516-system-libclang.patch"
-		sed -i -e "s|\
-__LIBCLANG_LIB_DIR__|\
-/usr/lib/llvm/${CLANG_V_MAJ}/$(get_libdir)/|" ycmd/utils.py || die
-	fi
-
-	CMAKE_USE_DIR="${S}/cpp" \
-	cmake-utils_src_prepare
-
-	if use system-clangd ; then
-		sed -i -e "s|\
-___CLANGD_BIN_PATH___|\
-/usr/lib/llvm/${CLANG_V_MAJ}/bin/clangd|g" \
-			ycmd/default_settings.json || die
-	fi
-
-	if use system-go-tools ; then
-		ewarn \
-"The system-go-tools USE flag is untested for this version.  It's\n\
-recommended to use the internal instead."
-		eapply "${FILESDIR}/${PN}-43_p20200516-system-go.patch"
-		sed -i -e "s|___GOPLS_BIN_PATH___|/usr/bin/gopls|g" \
-			ycmd/completers/go/go_completer.py || die
-		sed -i -e "s|___GOPLS_BIN_PATH___|/usr/bin/gopls|g" \
-			ycmd/default_settings.json || die
-	fi
-
-	if use system-mrab-regex ; then
-		ewarn "Using system-mrab-regex is WIP"
-		sed -i -e "s|  BuildRegexModule|  #BuildRegexModule|" \
-			build.py || die
-	fi
-
-	if use system-rust ; then
-		eapply "${FILESDIR}/${PN}-43_p20200703-system-rust.patch"
-		sed -i -e "s|___RUSTC_BIN_PATH___|/usr/bin/rustc|g" \
-			ycmd/completers/rust/rust_completer.py || die
-		sed -i -e "s|___RLS_BIN_PATH___|/usr/bin/rls|g" \
-			ycmd/completers/rust/rust_completer.py || die
-		sed -i -e "s|___RUSTC_BIN_PATH___|/usr/bin/rustc|g" \
-			ycmd/default_settings.json || die
-		sed -i -e "s|___RLS_BIN_PATH___|/usr/bin/rls|g" \
-			ycmd/default_settings.json || die
-	else
-		ewarn \
-"Using the internal rust.  You are responsible for maintaining the security\n\
-of internal rust and associated packages."
-	fi
-
-	if use system-tern ; then
-		eapply "${FILESDIR}/${PN}-42_p20200108-system-tern.patch"
-		sed -i -e "s|___TERN_BIN_PATH___|/usr/bin/tern|g" \
-			ycmd/completers/javascript/tern_completer.py || die
+		eapply "${FILESDIR}/${PN}-25_20170108-force-python-libs-path.patch"
 	fi
 
 	if ! use vim ; then
 		eapply "${FILESDIR}/${PN}-42_p20200108-remove-ultisnips.patch"
-		sed -i -e 's|"use_ultisnips_completer": 1,||g' \
-			ycmd/default_settings.json || die
-	fi
-
-	if use system-typescript ; then
-		sed -i -e "s|___TSSERVER_BIN_PATH___|/usr/bin/tsserver|g" \
-			ycmd/default_settings.json || die
-	fi
-
-	if use system-watchdog ; then
-		ewarn "Using system-watchdog is WIP"
-		sed -i -e "s|  CompileWatchdog|  #CompileWatchdog|" \
-			build.py || die
 	fi
 
 	sed -i -e "s|\
@@ -929,14 +868,36 @@ $(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" \
 	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|" \
 		ycmd/default_settings.json || die
 
+	CMAKE_USE_DIR="${S}/cpp" \
+	cmake-utils_src_prepare
+
 	python_copy_sources
 }
 
+ycmd_config_use_system()
+{
+	local X=${1}
+	sed -i -e "s|USE_SYSTEM_${X} = False|USE_SYSTEM_${X} = True|" \
+		ycmd/extra_conf_store.py || die
+}
+
+ycmd_config_set_default_src_path()
+{
+	local i="${1}"
+	local path="${2}"
+	sed -i -e "s|${i}|${path}|g" \
+		ycmd/extra_conf_store.py || die
+}
+
+ycmd_config_set_default_json_path()
+{
+	local i="${1}"
+	local path="${2}"
+	sed -i -e "s|${i}|${path}|g" \
+		ycmd/default_settings.json || die
+}
 
 src_configure() {
-	if use developer ; then
-		DOCS+=( CODE_OF_CONDUCT.md CONTRIBUTING.md )
-	fi
 	python_configure_all()
 	{
 		cd "${BUILD_DIR}" || die
@@ -944,113 +905,196 @@ src_configure() {
 		BD_ABS="$(python_get_sitedir)/${BD_REL}"
 
 		if use system-bottle ; then
-			sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'bottle' )|\
-${sitedir}/bottle|g" \
-				ycmd/server_utils.py || die
+			ycmd_config_use_system BOTTLE
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_BOTTLE_PATH___" \
+				"${sitedir}/bottle"
 		fi
 
-		if ! use system-clangd ; then
-			sed -i -e "s|\
-___CLANGD_BIN_PATH___|\
-${BD_ABS}/third_party/clangd/output/bin/clangd|g" \
-			ycmd/default_settings.json || die
+#123456789001234567890012345678900123456789001234567890012345678900123456789001234567890
+		if use system-clangd ; then
+			ycmd_config_use_system CLANGD
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_CLANGD_PATH___" \
+				"/usr/lib/llvm/${CLANG_V_MAJ}/bin/clangd"
+			ycmd_config_set_default_json_path \
+				"___CLANGD_PATH___" \
+				"/usr/lib/llvm/${CLANG_V_MAJ}/bin/clangd"
+		else
+			ycmd_config_set_default_json_path \
+				"___CLANGD_PATH___" \
+				"${BD_ABS}/third_party/clangd/output/bin/clangd"
 		fi
 
-		if ! use system-go-tools ; then
-			sed -i -e "s|\
-___GOPLS_BIN_PATH___|\
-${BD_ABS}/third_party/go/bin/gopls|g" \
-				ycmd/default_settings.json || die
+		if use system-go-tools ; then
+			ycmd_config_use_system GOPLS
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_GOPLS_PATH___" \
+				"/usr/bin/gopls"
+			ycmd_config_set_default_json_path \
+				"___GOPLS_PATH___" \
+				"/usr/bin/gopls"
+		else
+			ycmd_config_set_default_json_path \
+				"___GOPLS_PATH___" \
+				"${BD_ABS}/third_party/go/bin/gopls"
+		fi
+
+		if use system-jdtls && use java ; then
+			ycmd_config_use_system JDT
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_JDTLS_LANGUAGE_SERVER_HOME_PATH___" \
+				"${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}"
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_JDTLS_WORKSPACE_ROOT_PATH___" \
+				"${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}"
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_JDTLS_EXTENSION_PATH___" \
+				"${EYCMD_JDTLS_EXTENSION_PATH}"
+			ycmd_config_set_default_json_path \
+				"___JDTLS_WORKSPACE_ROOT_PATH___" \
+				"${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}"
+			ycmd_config_set_default_json_path \
+				"___JDTLS_EXTENSION_PATH___" \
+				"${EYCMD_JDTLS_EXTENSION_PATH}"
+		else
+			ycmd_config_set_default_json_path \
+				"___JDTLS_WORKSPACE_ROOT_PATH___" \
+				"${BD_ABS}/third_party/eclipse.jdt.ls/workspace"
+			ycmd_config_set_default_json_path \
+				"___JDTLS_EXTENSION_PATH___" \
+				"${BD_ABS}/third_party/eclipse.jdt.ls/extensions"
 		fi
 
 		if use system-jedi ; then
+			ycmd_config_use_system JEDI
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_JEDI_PATH___" \
+				"${sitedir}/jedi"
+		fi
+
+		if use system-libclang ; then
+			ycmd_config_use_system LIBCLANG
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_CLANG_LIB_PATH___" \
+				"/usr/lib/llvm/${CLANG_V_MAJ}/$(get_libdir)"
 			sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'jedi' )|\
-${sitedir}/jedi|g" \
-				ycmd/server_utils.py || die
+EXTERNAL_LIBCLANG_PATH \${TEMP}|\
+EXTERNAL_LIBCLANG_PATH \"/usr/lib/llvm/${CLANG_V_MAJ}/$(get_libdir)/libclang.so\"|g" \
+				cpp/ycm/CMakeLists.txt || die
+
+			# Prevent from raising an exception.
 			sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'numpydoc' )|\
-${sitedir}/numpydoc|g" \
-				ycmd/server_utils.py || die
-			sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'parso' )|\
-${sitedir}/parso|g" \
-				ycmd/server_utils.py || die
+^CLANG_RESOURCE_DIR = GetClangResourceDir|\
+#CLANG_RESOURCE_DIR = GetClangResourceDir|g" \
+				ycmd/utils.py || die
 		fi
 
 		if use system-mono ; then
-			sed -i -e "s|\
-___MONO_BIN_PATH___|\
-/usr/bin/mono|g" \
-				ycmd/default_settings.json || die
+			ycmd_config_set_default_json_path \
+				"___MONO_PATH___" \
+				"/usr/bin/mono"
 		else
-			sed -i -e "s|\
-___MONO_BIN_PATH___|\
-${BD_ABS}/third_party/omnisharp-roslyn/bin/mono|g" \
-				ycmd/default_settings.json || die
+			ycmd_config_set_default_json_path \
+				"___MONO_PATH___" \
+				"${BD_ABS}/third_party/omnisharp-roslyn/bin/mono"
 		fi
 
 		if use system-mrab-regex ; then
-			sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'cregex', 'regex_3' )|\
-${sitedir}/regex|g" \
-				ycmd/server_utils.py || die
+			ycmd_config_use_system REGEX
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_REGEX_PATH___" \
+				"${sitedir}/regex"
+			sed -i -e "s|  BuildRegexModule|  #BuildRegexModule|" \
+				build.py || die
 		fi
 
-		if use system-pathtools ; then
-			sed -i -e "s|\
-p.join( DIR_OF_WATCHDOG_DEPS, 'pathtools' )|\
-${sitedir}/pathtools|g" \
-				ycmd/server_utils.py || die
-		fi
+		# Disabled because there is no standard package and version that matches.
+		#if use system-omnisharp ; then
+		#	ycmd_config_use_system ROSLYN_OMNISHARP
+		#	ycmd_config_set_default_src_path \
+		#		"___SYSTEM_OMNISHARP_PATH___" \
+		#		""
+		#	ycmd_config_set_default_src_path \
+		#		"___SYSTEM_ROSYLN_BINARY_PATH___" \
+		#		""
+		#	ycmd_config_set_default_json_path \
+		#		"___ROSYLN_BINARY_PATH___" \
+		#		""
+		#else
+			ycmd_config_set_default_json_path \
+				"___ROSYLN_BINARY_PATH___" \
+				"${BD_ABS}/third_party/omnisharp-roslyn/Omnisharp.exe"
+		#fi
 
 		if use system-requests ; then
-			sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'requests' )|\
-${sitedir}/requests|g" \
-				ycmd/server_utils.py || die
-			sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'chardet' )|\
-${sitedir}/chardet|g" \
-				ycmd/server_utils.py || die
-			sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'certifi' )|\
-${sitedir}/certifi|g" \
-				ycmd/server_utils.py || die
-			sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'idna' )|\
-${sitedir}/idna|g" \
-				ycmd/server_utils.py || die
-			sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'urllib3', 'src' )|\
-${sitedir}/urllib3|g" \
-				ycmd/server_utils.py || die
+			ycmd_config_use_system REQUESTS
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_REQUESTS_PATH___" \
+				"${sitedir}/requests"
 		fi
 
-		if ! use system-typescript ; then
-			sed -i -e "s|\
-___TSSERVER_BIN_PATH___|\
-${BD_ABS}/third_party/tsserver/lib64/node_modules/typescript/bin/tsserver|g" \
-				ycmd/default_settings.json || die
+		if use system-rust ; then
+			ycmd_config_use_system RUST
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_RLS_PATH___" \
+				"/usr/bin/rls"
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_RUSTC_PATH___" \
+				"/usr/bin/rustc"
+			ycmd_config_set_default_json_path \
+				"___RLS_PATH___" \
+				"/usr/bin/rls"
+			ycmd_config_set_default_json_path \
+				"___RUSTC_PATH___" \
+				"/usr/bin/rustc"
+		fi
+
+		if use system-tern ; then
+			ycmd_config_use_system TERN
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_TERN_PATH___" \
+				"/usr/bin/tern"
+		fi
+
+		if use system-typescript ; then
+			ycmd_config_use_system TYPESCRIPT
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_TSSERVER_PATH___" \
+				"/usr/bin/tsserver"
+			ycmd_config_set_default_json_path \
+				"___TSSERVER_PATH___" \
+				"/usr/bin/tsserver"
+		else
+			ycmd_config_set_default_json_path \
+				"___TSSERVER_PATH___" \
+"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
 		fi
 
 		if use system-waitress ; then
-			sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'waitress' )|\
-${sitedir}/waitress|g" \
-				ycmd/server_utils.py || die
+			ycmd_config_use_system WAITRESS
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_WAITRESS_PATH___" \
+				"${sitedir}/waitress"
 		fi
 
 		if use system-watchdog ; then
-			sed -i -e "s|\
-p.join( DIR_OF_WATCHDOG_DEPS, 'watchdog', 'build', 'lib3' )|\
-${sitedir}/watchdog|g" \
-				ycmd/server_utils.py || die
+			ycmd_config_use_system WATCHDOG
+			ycmd_config_set_default_src_path \
+				"___SYSTEM_WATCHDOG_PATH___" \
+				"${sitedir}/watchdog"
+			sed -i -e "s|  CompileWatchdog|  #CompileWatchdog|" \
+				build.py || die
 		fi
 
-		sed -i -e "s|___PYTHON_BIN_PATH___|/usr/bin/${EPYTHON}|g" \
-			ycmd/default_settings.json || die
+		if ! use vim ; then
+			sed -i -e 's|"use_ultisnips_completer": 1,||g' \
+				ycmd/default_settings.json || die
+		fi
+
+		ycmd_config_set_default_json_path \
+			"___SYSTEM_PYTHON_PATH___" \
+			"/usr/bin/${EPYTHON}"
 
 		sed -i -e "s|\
 ___PYTHON_LIB_PATH___|\
@@ -1072,17 +1116,16 @@ ___PYTHON_LIB_PATH___|\
 			-DUSE_SYSTEM_LIBCLANG=$(usex system-libclang)
 			-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 		)
-		local pyv=$(echo "${EPYTHON}" | sed -e "s|python||")
-		if [ -f /usr/$(get_libdir)/libpython${pyv}m.so ]; then
-			mycmakeargs+=\
-( -DPYTHON_LIBRARY=/usr/$(get_libdir)/libpython${pyv}m.so )
-			mycmakeargs+=\
-( -DPYTHON_INCLUDE_DIR=/usr/include/python${pyv}m )
+		if [ -f /usr/$(get_libdir)/lib${EPYTHON}m.so ] ; then
+			mycmakeargs+=(
+			-DPYTHON_INCLUDE_DIR=/usr/include/${EPYTHON}m
+			-DPYTHON_LIBRARY=/usr/$(get_libdir)/lib${EPYTHON}m.so
+			)
 		else
-			mycmakeargs+=\
-( -DPYTHON_LIBRARY=/usr/$(get_libdir)/libpython${pyv}.so )
-			mycmakeargs+=\
-( -DPYTHON_INCLUDE_DIR=/usr/include/python${pyv} )
+			mycmakeargs+=(
+			-DPYTHON_INCLUDE_DIR=/usr/include/${EPYTHON}
+			-DPYTHON_LIBRARY=/usr/$(get_libdir)/lib${EPYTHON}.so
+			)
 		fi
 		if use c || use cxx || use objc || use objcxx ; then
 			mycmakeargs+=( -DUSE_CLANG_COMPLETER=ON )
@@ -1115,22 +1158,19 @@ src_compile() {
 		if use debug ; then
 			myargs+=( --enable-debug )
 		fi
-		# go already installed
+#		go already installed
 #		if use go \
 #			&& ! use system-go-tools ; then
 #			myargs+=( --go-completer )
 #		fi
-		if use java ; then
+		if use java && ! use system-jdtls ; then
 			myargs+=( --java-completer )
 		fi
 		if use javascript \
 			&& ! use system-tern ; then
 			myargs+=( --tern-completer )
 		fi
-#		if ! use regex ; then
-#			myargs+=( --no-regex )
-#		fi
-		# rust already installed
+#		rust already installed
 #		if use rust \
 #			&& ! use system-rust ; then
 #			myargs+=( --rust-completer )
@@ -1161,6 +1201,11 @@ src_compile() {
 			einfo "Path B: Running cmake-utils_src_compile"
 			cmake-utils_src_compile
 		fi
+
+		if use csharp && use system-mono ; then
+			eapply \
+"${FILESDIR}/${PN}-43_p20200516-omnisharp-use-system-omnisharp-run.patch"
+		fi
 	}
 	python_foreach_impl python_compile_all
 }
@@ -1169,7 +1214,7 @@ src_test() {
 	python_test_all() {
 		local allowed_completers=()
 		if use c || use cxx || use objc || use objcxx ; then
-			allowed_completers+=" cfamily"
+			allowed_completers+=( cfamily )
 		fi
 		if use csharp ; then
 			allowed_completers+=( cs )
@@ -1248,8 +1293,7 @@ third_party/requests_deps,third_party/waitress,ycmd} \
 			#rm -rf third_party/omnisharp-roslyn/omnisharp/.msbuild || die
 		fi
 	fi
-	if use regex \
-		&& ! use system-mrab-regex ; then
+	if ! use system-mrab-regex ; then
 		einfo "Cleaning regex"
 		find third_party/cregex \
 			! \( -name "*.so" \
@@ -1358,7 +1402,7 @@ third_party/requests_deps,third_party/waitress,ycmd} \
 		-exec rm -rf "{}" +
 
 	einfo "Cleaning out unused platforms"
-	if use java ; then
+	if use java && ! use system-jdtls ; then
 		rm -rf \
 		third_party/eclipse.jdt.ls/target/repository/config_{mac,win} \
 		|| die
@@ -1376,6 +1420,9 @@ third_party/requests_deps,third_party/waitress,ycmd} \
 }
 
 src_install() {
+	if use developer ; then
+		DOCS+=( CODE_OF_CONDUCT.md CONTRIBUTING.md )
+	fi
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 	python_install_all() {
@@ -1405,16 +1452,10 @@ src_install() {
 			python_domodule third_party/clang
 			fperms 0755 \
 "${BD_ABS}/third_party/clang/lib/libclang.so.${CLANG_V_MAJ}"
-		else
-			# prevent from raising exception
-			sed -i -e "s|\
-^CLANG_RESOURCE_DIR = GetClangResourceDir|\
-#CLANG_RESOURCE_DIR = GetClangResourceDir|g" \
-				"${ED}/${BD_ABS}/ycmd/utils.py" || die
 		fi
 
 		python_moduleinto "${BD_REL}/third_party"
-		if use java ; then
+		if use java && ! use system-jdtls ; then
 			python_domodule third_party/eclipse.jdt.ls
 		fi
 
@@ -1430,8 +1471,7 @@ src_install() {
 				"${BD_ABS}/third_party/clangd/output/bin/clangd"
 		fi
 
-		if ! use system-mrab-regex \
-			&& use regex ; then
+		if ! use system-mrab-regex ; then
 			python_domodule third_party/cregex
 			fperms 0755 \
 			"${BD_ABS}/third_party/cregex/regex_3/_regex.so"
@@ -1440,8 +1480,7 @@ src_install() {
 		if ! use system-go-tools \
 			&& use go ; then
 			python_domodule third_party/go
-			fperms 0755 \
-		"${BD_ABS}/third_party/go/bin/gopls"
+			fperms 0755 "${BD_ABS}/third_party/go/bin/gopls"
 		fi
 
 		if ! use system-jedi \
@@ -1450,9 +1489,6 @@ src_install() {
 		fi
 
 		if use csharp ; then
-			use system-mono && \
-			eapply \
-"${FILESDIR}/${PN}-43_p20200516-omnisharp-use-system-omnisharp-run.patch"
 			python_domodule third_party/omnisharp-roslyn
 			pushd "${ED}${BD_ABS}/third_party/omnisharp-roslyn" || die
 				for f in $(find . -name "*.dll" \
@@ -1509,12 +1545,12 @@ src_install() {
 	}
 	python_foreach_impl python_install_all
 
-	if ! use system-libclang ; then
-		cat <<-EOF > "${T}"/50${P}-ycmd-${SLOT_MAJ}
-LDPATH="${BD_ABS}/lib"
-EOF
-		doenvd "${T}"/50${P}-ycmd-${SLOT_MAJ}
-	fi
+#	if ! use system-libclang ; then
+#		cat <<-EOF > "${T}"/50${P}-ycmd-${SLOT_MAJ}
+#LDPATH="${BD_ABS}/lib"
+#EOF
+#		doenvd "${T}"/50${P}-ycmd-${SLOT_MAJ}
+#	fi
 
 	if use doc ; then
 		einstalldocs

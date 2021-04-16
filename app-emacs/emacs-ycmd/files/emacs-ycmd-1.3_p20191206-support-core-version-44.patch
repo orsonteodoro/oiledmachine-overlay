@@ -1,0 +1,195 @@
+diff -urp emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477.orig/ycmd.el emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477/ycmd.el
+--- emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477.orig/ycmd.el	2019-12-06 04:23:09.000000000 -0800
++++ emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477/ycmd.el	2021-04-15 21:01:59.790251165 -0700
+@@ -135,6 +135,26 @@
+ Whitelisted configs are loaded without confirmation."
+   :type '(repeat string))
+ 
++(defcustom ycmd-clangd-args nil
++  "List of arguments to pass to clangd"
++  :type '(repeat string))
++
++(defcustom ycmd-filepath-blacklist nil
++  "List of glob expressions containing extensions to blacklist."
++  :type '(repeat string))
++
++(defcustom ycmd-gopls-args nil
++  "List of arguments to pass to gopls"
++  :type '(repeat string))
++
++(defcustom ycmd-java-jdtls-extension-path nil
++  "List of paths containing directories with extensions in the vscode-extension format.  See README.md in the ycmd repo for details."
++  :type '(repeat string))
++
++(defcustom ycmd-language-server nil
++  "List of json objects containing name, command line, filetype extension.  See README.md in the ycmd repo for details."
++  :type '(repeat string))
++
+ (defcustom ycmd-extra-conf-handler 'ask
+   "What to do when an un-whitelisted extra config is encountered.
+ 
+@@ -203,6 +223,10 @@ re-parsing the contents."
+   "Seconds to wait for the server to finish before killing the process."
+   :type '(number))
+ 
++(defcustom ycmd-use-clangd 1
++  "Use the clangd completer."
++  :type '(number))
++
+ (defcustom ycmd-parse-conditions '(save new-line mode-enabled)
+   "When ycmd should reparse the buffer.
+ 
+@@ -344,6 +368,10 @@ engine."
+   "Function to get keywords for current mode."
+   :type 'symbol)
+ 
++(defcustom ycmd-clangd-binary-path nil
++  "Clangd binary path."
++  :type 'string)
++
+ (defcustom ycmd-gocode-binary-path nil
+   "Gocode binary path."
+   :type 'string)
+@@ -352,22 +380,58 @@ engine."
+   "Godef binary path."
+   :type 'string)
+ 
+-(defcustom ycmd-rust-src-path nil
+-  "Rust source path."
++(defcustom ycmd-gopls-binary-path nil
++  "Gopls binary path."
+   :type 'string)
+ 
+-(defcustom ycmd-swift-src-path nil
+-  "Swift source path."
++(defcustom ycmd-java-binary-path nil
++  "Java binary path."
+   :type 'string)
+ 
+-(defcustom ycmd-racerd-binary-path nil
+-  "Racerd binary path."
++(defcustom ycmd-java-jdtls-workspace-root-path nil
++  "Java workspace root path."
++  :type 'string)
++
++(defcustom ycmd-mono-binary-path nil
++  "Mono binary path."
+   :type 'string)
+ 
+ (defcustom ycmd-python-binary-path nil
+   "Python binary path."
+   :type 'string)
+ 
++(defcustom ycmd-racerd-binary-path nil
++  "Racerd binary path."
++  :type 'string)
++
++(defcustom ycmd-rls-binary-path nil
++  "Rls binary path."
++  :type 'string)
++
++(defcustom ycmd-roslyn-binary-path nil
++  "OmniSharp Roslyn binary path."
++  :type 'string)
++
++(defcustom ycmd-rust-src-path nil
++  "Rust source path."
++  :type 'string)
++
++(defcustom ycmd-rust-toolchain-root nil
++  "Rust toolchain path."
++  :type 'string)
++
++(defcustom ycmd-rustc-binary-path nil
++  "Rustc binary path."
++  :type 'string)
++
++(defcustom ycmd-swift-src-path nil
++  "Swift source path."
++  :type 'string)
++
++(defcustom ycmd-tsserver-binary-path nil
++  "Tsserver binary path."
++  :type 'string)
++
+ (defcustom ycmd-global-modes t
+   "Modes for which `ycmd-mode' is turned on by `global-ycmd-mode'.
+ 
+@@ -2092,12 +2156,25 @@ file."
+         (global-config (or ycmd-global-config ""))
+         (extra-conf-whitelist (or ycmd-extra-conf-whitelist []))
+         (confirm-extra-conf (if (eq ycmd-extra-conf-handler 'load) 0 1))
++        (clangd-args (or ycmd-clangd-args []))
++        (clangd-binary-path (or ycmd-clangd-binary-path ""))
+         (gocode-binary-path (or ycmd-gocode-binary-path ""))
+         (godef-binary-path (or ycmd-godef-binary-path ""))
++        (gopls-args (or ycmd-gopls-args []))
++        (gopls-binary-path (or ycmd-gopls-binary-path ""))
++        (java-jdtls-extension-path (or ycmd-java-jdtls-extension-path []))
++        (java-jdtls-workspace-root-path (or ycmd-java-jdtls-workspace-root-path ""))
++        (language-server (or ycmd-language-server []))
++        (mono-binary-path (or ycmd-mono-binary-path ""))
++        (python-binary-path (or ycmd-python-binary-path ""))
++        (racerd-binary-path (or ycmd-racerd-binary-path ""))
++        (rls-binary-path (or ycmd-rls-binary-path ""))
++        (roslyn-binary-path (or ycmd-roslyn-binary-path ""))
+         (rust-src-path (or ycmd-rust-src-path ""))
++        (rust-toolchain-root (or ycmd-rust-toolchain-root ""))
++        (rustc-binary-path (or ycmd-rustc-binary-path ""))
+         (swift-src-path (or ycmd-swift-src-path ""))
+-        (racerd-binary-path (or ycmd-racerd-binary-path ""))
+-        (python-binary-path (or ycmd-python-binary-path ""))
++        (tsserver-binary-path (or ycmd-tsserver-binary-path ""))
+         (auto-trigger (if ycmd-auto-trigger-semantic-completion 1 0)))
+     `((filepath_completion_use_working_dir . 0)
+       (auto_trigger . ,auto-trigger)
+@@ -2107,22 +2184,43 @@ file."
+       (filetype_specific_completion_to_disable (gitcommit . 1))
+       (collect_identifiers_from_comments_and_strings . 0)
+       (max_num_identifier_candidates . ,ycmd-max-num-identifier-candidates)
++      (max_num_candidates . 50)
++      (if (>= ycmd-core-version 44) (max_num_candidates_to_detail . -1) '())
+       (extra_conf_globlist . ,extra-conf-whitelist)
+       (global_ycm_extra_conf . ,global-config)
+       (confirm_extra_conf . ,confirm-extra-conf)
++      (if (>= ycmd-core-version 39) (filepath_blacklist . ,ycmd-filepath-blacklist) '())
++      (if (>= ycmd-core-version 42) (language_server . ,language-server) '())
+       (max_diagnostics_to_display . 30)
+       (auto_start_csharp_server . 1)
+       (auto_stop_csharp_server . 1)
+       (use_ultisnips_completer . 1)
+       (csharp_server_port . 0)
+       (hmac_secret . ,hmac-secret)
++      (python_binary_path . ,python-binary-path)
+       (server_keep_logfiles . 1)
+-      (gocode_binary_path . ,gocode-binary-path)
+-      (godef_binary_path . ,godef-binary-path)
+-      (rust_src_path . ,rust-src-path)
+-      (swift_src_path . ,swift-src-path)
+-      (racerd_binary_path . ,racerd-binary-path)
+-      (python_binary_path . ,python-binary-path))))
++      (if (= (length swift_src_path) 0) (swift_src_path . ,swift-src-path) '())
++      (if (>= ycmd-core-version 41) (clangd_args . ,clangd-args) '())
++      (if (>= ycmd-core-version 41) (clangd_binary_path . ,clangd-binary-path) '())
++      (if (>= ycmd-core-version 41) (clangd_uses_ycmd_caching . 1) '())
++      (if (>= ycmd-core-version 42) (disable_signature_help . 0) '())
++      (if (< ycmd-core-version 42) (gocode_binary_path . ,gocode-binary-path) '())
++      (if (< ycmd-core-version 42) (godef_binary_path . ,godef-binary-path) '())
++      (if (>= ycmd-core-version 42) (gopls_args . ,gopls-args) '())
++      (if (>= ycmd-core-version 42) (gopls_binary_path . ,gopls-binary-path) '())
++      (if (>= ycmd-core-version 44) (java_binary_path . ,java-binary-path '())
++      (if (>= ycmd-core-version 42) (java_jdtls_extension_path . ,java-jdtls-extension-path) '())
++      (if (>= ycmd-core-version 31) (java_jdtls_use_clean_workspace . 1) '())
++      (if (>= ycmd-core-version 42) (java_jdtls_workspace_root_path . ,java-jdtls-workspace-root-path '())
++      (if (>= ycmd-core-version 43) (mono_binary_path . ,mono-binary-path) '())
++      (if (< ycmd-core-version 42) (racerd_binary_path . ,racerd-binary-path) '())
++      (if (and (>= ycmd-core-version 42) (< ycmd-core-version 44)) (rls_binary_path . ,rls-binary-path) '())
++      (if (>= ycmd-core-version 42) (roslyn_binary_path . ,roslyn-binary-path) '())
++      (if (< ycmd-core-version 42) (rust_src_path . ,rust-src-path) '())
++      (if (and (>= ycmd-core-version 42) (< ycmd-core-version 44)) (rustc_binary_path . ,rustc-binary-path) '())
++      (if (>= ycmd-core-version 44) (rust_toolchain_root . ,rust-toolchain-root) '())
++      (if (>= ycmd-core-version 42) (tsserver_binary_path . ,tsserver-binary-path) '())
++      (if (>= ycmd-core-version 41) (use_clangd . ,ycmd-use-clangd) '()))))
+ 
+ (defun ycmd--create-options-file (hmac-secret)
+   "Create a new options file for a ycmd server with HMAC-SECRET.

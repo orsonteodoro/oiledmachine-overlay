@@ -19,7 +19,8 @@
     <bugs-to>https://github.com/abingham/emacs-ycmd/issues</bugs-to>
   </upstream>
   <use>
-    <flag name="builtin-completion">Adds basic support for in-place completion.</flag>
+    <flag name="builtin-completion">Adds basic support for in-place
+      completion.</flag>
     <flag name="company-mode">Adds support for company-mode.</flag>
     <flag name="debug">Enables enhanced debug reporting.</flag>
     <flag name="eldoc">Adds eldoc support.</flag>
@@ -33,13 +34,16 @@
       otherwise, it falls back to the internal ycmd godef.</flag>
     <flag name="system-gopls">Configures emacs-ycmd to use the system gopls;
       otherwise, it falls back to the internal ycmd gopls.</flag>
-    <flag name="system-omnisharp">Configures emacs-ycmd to use the system omnisharp;
-      otherwise, it falls back to the internal ycmd omnisharp.</flag>
+    <flag name="system-omnisharp">Configures emacs-ycmd to use the system
+      omnisharp; otherwise, it falls back to the internal ycmd omnisharp.</flag>
     <flag name="system-racerd">Configures emacs-ycmd to use the system racerd;
       otherwise, it falls back to the internal ycmd racerd.</flag>
-    <flag name="system-rls">Configures emacs-ycmd to use the system rls;
-      otherwise, it falls back to the internal ycmd rls.</flag>
+    <flag name="system-rust">Configures emacs-ycmd to use the system rust;
+      otherwise, it falls back to the internal ycmd rust.</flag>
     <flag name="typescript-mode">Adds support for typescript-mode.</flag>
-    <flag name="ycmd-43">Set up ycmd for core version 43</flag>
+    <flag name="ycmd-43">Set up ycmd for compatibility with core
+      version 43</flag>
+    <flag name="ycmd-44">Set up ycmd for compatibility with core
+      version 44</flag>
   </use>
 </pkgmetadata>

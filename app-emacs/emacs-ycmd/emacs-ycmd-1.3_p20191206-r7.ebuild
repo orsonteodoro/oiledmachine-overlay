@@ -19,12 +19,13 @@ LICENSE="MIT GPL-3+
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 IUSE+=" builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error \
-+rust-mode system-gocode system-godef system-gopls system-omnisharp system-racerd \
-system-rls system-rustc system-typescript +typescript-mode +ycmd-43"
++rust-mode system-gocode system-godef system-gopls system-omnisharp system-mono \
+system-racerd system-rust system-typescript +typescript-mode +ycmd-43 ycmd-44"
 REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
-	^^ ( ycmd-43 )"
+	^^ ( ycmd-43 ycmd-44 )"
 DEPEND+=" ${PYTHON_DEPS}
-	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{6,7,8,9} ) )"
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{6,7,8,9} ) )
+	ycmd-44? ( $(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]' python3_{6,7,8,9} ) )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" net-misc/curl"
 EGIT_COMMIT="bc81b992f79100c98f56b7b83caf64cb8ea60477"
@@ -33,9 +34,9 @@ SRC_URI=\
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 SITEFILE="50emacs-ycmd-gentoo.el"
-PATCHES=( "${FILESDIR}/${PN}-1.3_p20191206-support-core-version-43.patch" )
 BD_REL="ycmd/${SLOT}"
 BD_ABS=""
+PATCHES=( "${FILESDIR}/${PN}-1.3_p20191206-support-core-version-44.patch" )
 
 pkg_setup() {
 	if has network-sandbox $FEATURES ; then
@@ -68,17 +69,18 @@ install_deps() {
 	fi
 	cask install
 	cask build
-	local ycmd_slot
 	if use ycmd-43 ; then
-		ycmd_slot=2
+		export YCMD_SLOT=43
+	elif use ycmd-44 ; then
+		export YCMD_SLOT=44
 	fi
-	BD_REL="ycmd/${ycmd_slot}"
+	BD_REL="ycmd/${YCMD_SLOT}"
 	BD_ABS="$(python_get_sitedir)/${BD_REL}"
 }
 
 src_unpack() {
 	unpack ${A}
-	cd "${S}"
+	cd "${S}" || die
 	install_deps
 }
 
@@ -180,7 +182,7 @@ ___YCMD-EMACS_ROSLYN_ABSPATH___|\
 ${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
 			"${sitefile_path}" || die
 	else
-		if use ycmd-43 ; then
+		if use ycmd-43 || use ycmd-44 ; then
 			sed -i -e "s|\
 ___YCMD-EMACS_ROSLYN_ABSPATH___|\
 ${BD_ABS}/third_party/omnisharp-roslyn/run|g" \
@@ -200,7 +202,7 @@ ${BD_ABS}/third_party/racerd/racerd|g" \
 			"${sitefile_path}" || die
 	fi
 
-	if use system-rls ; then
+	if use system-rust ; then
 		sed -i -e "s|___YCMD-EMACS_RLS_ABSPATH___|/usr/bin/rls|g" \
 			"${sitefile_path}" || die
 	else
@@ -210,7 +212,7 @@ ${BD_ABS}/third_party/rls/bin/rls|g" \
 			"${sitefile_path}" || die
 	fi
 
-	if use system-rustc ; then
+	if use system-rust ; then
 		sed -i -e "s|___YCMD-EMACS_RUSTC_ABSPATH___|/usr/bin/rustc|g" \
 			"${sitefile_path}" || die
 	else
@@ -230,13 +232,6 @@ ${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserve
 			"${sitefile_path}" || die
 	fi
 
-	if use ycmd-43 ; then
-		sed -i -e "s|___YCMD-EMACS_CORE_VERSION___|43|g" \
-			"${sitefile_path}" || die
-	else
-		die "Unsupported ycmd slot"
-	fi
-
 	sed -i -e "s|___YCMD-EMACS_RUST_ABSPATH___|/usr/share/rust/src|g" \
 		"${sitefile_path}" || die
 
@@ -247,6 +242,51 @@ ${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserve
 		"${sitefile_path}" || die
 
 	sed -i -e "s|___YCMD-EMACS_GLOBAL_CONFIG_ABSPATH___|/tmp/.ycm_extra_conf.py|g" \
+		"${sitefile_path}" || die
+
+	if use system-rust ; then
+		sed -i -e "s|___YCMD-EMACS_RUST_TC_DIR___|/usr|g" \
+			"${sitefile_path}" || die
+	else
+		sed -i -e "s|___YCMD-EMACS_RUST_TC_DIR___|${BD_ABS}/third_party/rust-analyzer|g" \
+			"${sitefile_path}" || die
+	fi
+
+	local jp=""
+	if use ycmd-44 ; then
+		  if [[ -h /usr/lib/jvm/icedtea-bin-11 ]] ; then
+			jp="/usr/lib/jvm/icedtea-bin-11"
+		elif [[ -h /usr/lib/jvm/icedtea-11 ]] ; then
+			jp="/usr/lib/jvm/icedtea-11"
+		elif [[ -h /usr/lib/jvm/openjdk-11 ]] ; then
+			jp="/usr/lib/jvm/openjdk-11"
+		elif [[ -h /usr/lib/jvm/openjdk-bin-11 ]] ; then
+			jp="/usr/lib/jvm/openjdk-bin-11"
+		fi
+	else
+		  if [[ -h /usr/lib/jvm/icedtea-bin-8 ]] ; then
+			jp="/usr/lib/jvm/icedtea-bin-8"
+		elif [[ -h /usr/lib/jvm/icedtea-8 ]] ; then
+			jp="/usr/lib/jvm/icedtea-8"
+		elif [[ -h /usr/lib/jvm/openjdk-8 ]] ; then
+			jp="/usr/lib/jvm/openjdk-8"
+		elif [[ -h /usr/lib/jvm/openjdk-bin-8 ]] ; then
+			jp="/usr/lib/jvm/openjdk-bin-8"
+		fi
+	fi
+	[[ -n "${jp}" ]] && jp="${bp}/bin/java"
+	sed -i -e "s|___YCMD-EMACS_JAVA_ABSPATH___|${jp}|g" \
+		"${sitefile_path}" || die
+
+	if use system-mono ; then
+		sed -i -e "s|___YCMD-EMACS_MONO_ABSPATH___|/usr/bin/mono|g" \
+			"${sitefile_path}" || die
+	else
+		sed -i -e "s|___YCMD-EMACS_MONO_ABSPATH___|${BD_ABS}/third_party/omnisharp-roslyn/bin/mono|g" \
+			"${sitefile_path}" || die
+	fi
+
+	sed -i -e "s|___YCMD-EMACS_CORE_VERSION___|${YCMD_SLOT}|g" \
 		"${sitefile_path}" || die
 }
 
