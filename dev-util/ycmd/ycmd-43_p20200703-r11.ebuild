@@ -1009,7 +1009,7 @@ EXTERNAL_LIBCLANG_PATH \"/usr/lib/llvm/${CLANG_V_MAJ}/$(get_libdir)/libclang.so\
 				build.py || die
 		fi
 
-		# Disabled because there is no standard package and version that matches.
+		# Disabled because there is no standard ebuild-package and version that matches.
 		#if use system-omnisharp ; then
 		#	ycmd_config_use_system ROSLYN_OMNISHARP
 		#	ycmd_config_set_default_src_path \
