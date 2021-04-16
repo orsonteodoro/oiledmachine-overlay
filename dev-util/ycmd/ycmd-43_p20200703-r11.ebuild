@@ -478,8 +478,11 @@ BD_REL="ycmd/${SLOT_MAJ}"
 BD_ABS=""
 
 pkg_setup() {
+	ewarn "/////     /////     //////     /////     /////     /////     /////     /////     /////     /////"
 	ewarn
-	ewarn "This ebuild is currently undergoing renovation / refactoring and is a (Work In Progress)"
+	ewarn "This ebuild is currently undergoing renovation / refactoring and is a Work In Progress (WIP)."
+	ewarn
+	ewarn "/////     /////     //////     /////     /////     /////     /////     /////     /////     /////"
 	ewarn
 	if \
 	   ( ! use system-tern && use javascript ) \
