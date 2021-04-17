@@ -63,7 +63,7 @@
     <flag name="libclang">Uses libclang for C/C++/ObjC/ObjC++ completion.</flag>
     <flag name="lsp">Adds support for the Language Server Protocol.</flag>
     <flag name="minimal">Shrinks installation.  Enabling it may break
-      functionality.</flag>
+      functionality such as missing documentation for GetDoc.</flag>
     <flag name="netcore">Adds support for .NET core.</flag>
     <flag name="netfx">Adds support for .NET Framework.</flag>
     <flag name="objc">Adds the Objective C completer.</flag>
