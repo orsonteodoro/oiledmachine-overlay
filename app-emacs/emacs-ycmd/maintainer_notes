@@ -1,0 +1,22 @@
+# Emacs cheat sheet
+
+C = ctrl
+M = alt
++ = same time
+- = do together
+
+A YCMd on the top status bar indicates the buffer is in ycmd major mode.
+
+C-x customize-themes		-- choose color theme
+C-x C-c				-- exit emacs
+C-c Y v				-- show debug info
+C-c Y V				-- show version
+C-x 0				-- close a window
+C-x o				-- switch window
+C-x <left>			-- switch buffer, keep pressing left until you see the ycmd traceback errors
+C-x <right>			-- switch buffer, keep pressing right until you see the ycmd traceback errors
+C-x C-s				-- save
+C-x k				-- kill buffer in same window
+
+Using C-x C-v should report:
+Server is running
