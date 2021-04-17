@@ -28,6 +28,8 @@ ___YCMD-EMACS_NEXT_ERROR___
 (set-variable 'ycmd-roslyn-binary-path "___YCMD-EMACS_ROSLYN_ABSPATH___")
 (set-variable 'ycmd-rustc-binary-path "___YCMD-EMACS_RUSTC_ABSPATH___")
 (set-variable 'ycmd-tsserver-binary-path "___YCMD-EMACS_TSSERVER_ABSPATH___")
+(set-variable 'ycmd-java-jdtls-workspace-root-path "___YCMD-EMACS_JDTLS_WORKSPACE_ROOT_ABSPATH___")
+(set-variable 'ycmd-java-jdtls-extension-path [___YCMD-EMACS_JDTLS_EXTENSION_ABSPATH___])
 
 ;; core version >=43
 (set-variable 'ycmd-mono-binary-path "___YCMD-EMACS_MONO_ABSPATH___")

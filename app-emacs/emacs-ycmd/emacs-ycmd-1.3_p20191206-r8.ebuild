@@ -18,9 +18,10 @@ LICENSE="MIT GPL-3+
 # The required dependencies are GPL-3+ but scripts or package alone itself is MIT.
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-IUSE+=" builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error \
-+rust-mode system-gocode system-godef system-gopls system-omnisharp system-mono \
-system-racerd system-rust system-typescript +typescript-mode +ycmd-43 ycmd-44"
+IUSE+=" builtin-completion +company-mode debug eldoc +flycheck +go-mode \
+next-error +rust-mode system-gocode system-godef system-gopls system-jdtls \
+system-mono system-omnisharp system-racerd system-rust system-typescript \
++typescript-mode +ycmd-43 ycmd-44"
 REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
 	^^ ( ycmd-43 ycmd-44 )"
 DEPEND+=" ${PYTHON_DEPS}
@@ -44,6 +45,15 @@ pkg_setup() {
 "FEATURES=\"-network-sandbox\" must be added per-package env to be able to download\n\
 the internal dependencies."
 	fi
+
+	# No standard ebuild yet.
+	if use system-jdtls ; then
+		if [[ -z "${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}" ]] ; then
+			die \
+"You need to define EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH as a per-package envvar."
+		fi
+	fi
+
 	python-single-r1_pkg_setup
 	elisp_pkg_setup
 }
@@ -54,9 +64,14 @@ install_deps() {
 	export PATH="${HOME}/.cask/bin:$PATH"
 	if ! use flycheck ; then
 		sed -i -e 's|(depends-on "flycheck")||g' Cask || die
+		sed -i -e 's|"flycheck-ycmd.el"||' Cask || die
 	fi
 	if ! use company-mode ; then
 		sed -i -e 's|(depends-on "company")||g' Cask || die
+		sed -i -e 's|"company-ycmd.el"||' Cask || die
+	fi
+	if ! use eldoc ; then
+		sed -i -e 's|"ycmd-eldoc.el"||' Cask || die
 	fi
 	if ! use go-mode ; then
 		sed -i -e 's|(depends-on "go-mode")||g' Cask || die
@@ -66,6 +81,10 @@ install_deps() {
 	fi
 	if ! use typescript-mode ; then
 		sed -i -e 's|(depends-on "typescript-mode")||g' Cask || die
+	fi
+	if ! use next-error ; then
+		sed -i -e 's|"contrib/ycmd-next-error.el"||' Cask || die
+		rm -rf "contrib/ycmd-next-error.el" || die
 	fi
 	cask install
 	cask build
@@ -176,6 +195,52 @@ ${BD_ABS}/third_party/godef/godef|g" \
 			"${sitefile_path}" || die
 	fi
 
+	local jp=""
+	if use ycmd-44 ; then
+		  if [[ -h /usr/lib/jvm/icedtea-bin-11 ]] ; then
+			jp="/usr/lib/jvm/icedtea-bin-11"
+		elif [[ -h /usr/lib/jvm/icedtea-11 ]] ; then
+			jp="/usr/lib/jvm/icedtea-11"
+		elif [[ -h /usr/lib/jvm/openjdk-11 ]] ; then
+			jp="/usr/lib/jvm/openjdk-11"
+		elif [[ -h /usr/lib/jvm/openjdk-bin-11 ]] ; then
+			jp="/usr/lib/jvm/openjdk-bin-11"
+		fi
+	else
+		  if [[ -h /usr/lib/jvm/icedtea-bin-8 ]] ; then
+			jp="/usr/lib/jvm/icedtea-bin-8"
+		elif [[ -h /usr/lib/jvm/icedtea-8 ]] ; then
+			jp="/usr/lib/jvm/icedtea-8"
+		elif [[ -h /usr/lib/jvm/openjdk-8 ]] ; then
+			jp="/usr/lib/jvm/openjdk-8"
+		elif [[ -h /usr/lib/jvm/openjdk-bin-8 ]] ; then
+			jp="/usr/lib/jvm/openjdk-bin-8"
+		fi
+	fi
+	[[ -n "${jp}" ]] && jp="${bp}/bin/java"
+	sed -i -e "s|___YCMD-EMACS_JAVA_ABSPATH___|${jp}|g" \
+		"${sitefile_path}" || die
+
+	if use system-jdtls ; then
+		sed -i -e "s|___YCMD-EMACS_JDTLS_WORKSPACE_ROOT_ABSPATH___|${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}|g" \
+			"${sitefile_path}" || die
+		sed -i -e "s|___YCMD-EMACS_JDTLS_EXTENSION_ABSPATH___|${EYCMD_JDTLS_EXTENSION_PATH}|g" \
+			"${sitefile_path}" || die
+	else
+		sed -i -e "s|___YCMD-EMACS_JDTLS_WORKSPACE_ROOT_ABSPATH___|${BD_ABS}/third_party/eclipse.jdt.ls/workspace|g" \
+			"${sitefile_path}" || die
+		sed -i -e "s|___YCMD-EMACS_JDTLS_EXTENSION_ABSPATH___|\"${BD_ABS}/third_party/eclipse.jdt.ls/extensions\"|g" \
+			"${sitefile_path}" || die
+	fi
+
+	if use system-mono ; then
+		sed -i -e "s|___YCMD-EMACS_MONO_ABSPATH___|/usr/bin/mono|g" \
+			"${sitefile_path}" || die
+	else
+		sed -i -e "s|___YCMD-EMACS_MONO_ABSPATH___|${BD_ABS}/third_party/omnisharp-roslyn/bin/mono|g" \
+			"${sitefile_path}" || die
+	fi
+
 	if use system-omnisharp ; then
 		sed -i -e "s|\
 ___YCMD-EMACS_ROSLYN_ABSPATH___|\
@@ -252,40 +317,6 @@ ${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserve
 			"${sitefile_path}" || die
 	fi
 
-	local jp=""
-	if use ycmd-44 ; then
-		  if [[ -h /usr/lib/jvm/icedtea-bin-11 ]] ; then
-			jp="/usr/lib/jvm/icedtea-bin-11"
-		elif [[ -h /usr/lib/jvm/icedtea-11 ]] ; then
-			jp="/usr/lib/jvm/icedtea-11"
-		elif [[ -h /usr/lib/jvm/openjdk-11 ]] ; then
-			jp="/usr/lib/jvm/openjdk-11"
-		elif [[ -h /usr/lib/jvm/openjdk-bin-11 ]] ; then
-			jp="/usr/lib/jvm/openjdk-bin-11"
-		fi
-	else
-		  if [[ -h /usr/lib/jvm/icedtea-bin-8 ]] ; then
-			jp="/usr/lib/jvm/icedtea-bin-8"
-		elif [[ -h /usr/lib/jvm/icedtea-8 ]] ; then
-			jp="/usr/lib/jvm/icedtea-8"
-		elif [[ -h /usr/lib/jvm/openjdk-8 ]] ; then
-			jp="/usr/lib/jvm/openjdk-8"
-		elif [[ -h /usr/lib/jvm/openjdk-bin-8 ]] ; then
-			jp="/usr/lib/jvm/openjdk-bin-8"
-		fi
-	fi
-	[[ -n "${jp}" ]] && jp="${bp}/bin/java"
-	sed -i -e "s|___YCMD-EMACS_JAVA_ABSPATH___|${jp}|g" \
-		"${sitefile_path}" || die
-
-	if use system-mono ; then
-		sed -i -e "s|___YCMD-EMACS_MONO_ABSPATH___|/usr/bin/mono|g" \
-			"${sitefile_path}" || die
-	else
-		sed -i -e "s|___YCMD-EMACS_MONO_ABSPATH___|${BD_ABS}/third_party/omnisharp-roslyn/bin/mono|g" \
-			"${sitefile_path}" || die
-	fi
-
 	sed -i -e "s|___YCMD-EMACS_CORE_VERSION___|${YCMD_SLOT}|g" \
 		"${sitefile_path}" || die
 }
@@ -303,6 +334,9 @@ src_install() {
 
 pkg_postinst() {
         elisp-site-regen
+	if ! use company-mode ; then
+		ewarn "company-mode is strongly recommended for popup suggestions."
+	fi
 }
 
 pkg_postrm() {

@@ -6,23 +6,23 @@ diff -urp emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477.orig/ycmd.el emacs
    :type '(repeat string))
  
 +(defcustom ycmd-clangd-args nil
-+  "List of arguments to pass to clangd"
++  "A vector or list of arguments to pass to clangd"
 +  :type '(repeat string))
 +
 +(defcustom ycmd-filepath-blacklist nil
-+  "List of glob expressions containing extensions to blacklist."
++  "An alist or plist of glob expressions containing extensions to blacklist."
 +  :type '(repeat string))
 +
 +(defcustom ycmd-gopls-args nil
-+  "List of arguments to pass to gopls"
++  "A vector or list of arguments to pass to gopls"
 +  :type '(repeat string))
 +
 +(defcustom ycmd-java-jdtls-extension-path nil
-+  "List of paths containing directories with extensions in the vscode-extension format.  See README.md in the ycmd repo for details."
++  "A vector or list of paths containing directories with extensions in the vscode-extension format.  See README.md in the ycmd repo for details."
 +  :type '(repeat string))
 +
 +(defcustom ycmd-language-server nil
-+  "List of json objects containing name, command line, filetype extension.  See README.md in the ycmd repo for details."
++  "A vector or list of alist or plist of json objects containing name, command line, filetype extension.  See README.md in the ycmd repo for details."
 +  :type '(repeat string))
 +
  (defcustom ycmd-extra-conf-handler 'ask

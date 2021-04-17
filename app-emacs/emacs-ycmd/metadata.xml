@@ -34,6 +34,11 @@
       otherwise, it falls back to the internal ycmd godef.</flag>
     <flag name="system-gopls">Configures emacs-ycmd to use the system gopls;
       otherwise, it falls back to the internal ycmd gopls.</flag>
+    <flag name="system-jdtls">Configures emacs-ycmd to use the system JDT.LS
+      settings; otherwise, it falls back to the internal ycmd JDT.LS
+      default settings for workspace and extensions.</flag>
+    <flag name="system-mono">Configures emacs-ycmd to use the system mono;
+      otherwise, it falls back to the internal ycmd mono.</flag>
     <flag name="system-omnisharp">Configures emacs-ycmd to use the system
       omnisharp; otherwise, it falls back to the internal ycmd omnisharp.</flag>
     <flag name="system-racerd">Configures emacs-ycmd to use the system racerd;
