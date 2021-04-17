@@ -442,15 +442,7 @@ BD_REL="ycmd/${SLOT_MAJ}"
 BD_ABS=""
 
 pkg_setup() {
-	ewarn "/////     /////     //////     /////     /////     /////     /////     /////     /////     /////"
-	ewarn
-	ewarn "This ebuild is currently undergoing renovation / refactoring and is a Work In Progress (WIP)."
-	ewarn "It is undergoing testing as well."
-	ewarn
-	ewarn "/////     /////     //////     /////     /////     /////     /////     /////     /////     /////"
-
-	if \
-	   ( ! use system-tern && use javascript ) \
+	if ( ! use system-tern && use javascript ) \
 	|| ( ! use system-typescript && use typescript ) ; then
 		if has network-sandbox $FEATURES ; then
 			die \
