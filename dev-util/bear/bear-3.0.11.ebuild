@@ -20,8 +20,7 @@ RBDEPEND=" >=net-libs/grpc-1.26
 	   >=dev-libs/protobuf-3.11"
 DEPEND+=" >=dev-cpp/nlohmann_json-3.7.3
 	  >=dev-libs/libfmt-6.1
-	  >=dev-libs/spdlog-1.5
-	  >=dev-db/sqlite-3.14"
+	  >=dev-libs/spdlog-1.5"
 RDEPEND+=" ${RBDEPEND}
 	   ${DEPEND}"
 BDEPEND+=" ${RBDEPEND}
