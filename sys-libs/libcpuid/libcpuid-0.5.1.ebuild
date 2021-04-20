@@ -2,24 +2,25 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_{6..9} )
+
+inherit autotools cmake-utils eutils multilib-minimal python-single-r1
+
 DESCRIPTION="a small C library for x86 CPU detection and feature extraction"
 HOMEPAGE="http://libcpuid.sourceforge.net/"
 LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="doc python test"
-PYTHON_COMPAT=( python3_{6,7,8} )
-inherit python-single-r1
-REQUIRED_USE="test? ( python )
+IUSE+=" doc python test"
+REQUIRED_USE+=" test? ( python )
 	      python? ( ${PYTHON_REQUIRED_USE} )"
-DEPEND="doc? ( app-doc/doxygen )
+BDEPEND+=" doc? ( app-doc/doxygen )
 	python? ( ${PYTHON_DEPS} )"
-EGIT_COMMIT="52c5f505cff57266b32aa8eb95eb7c7fc47db94b"
 SRC_URI=\
-"https://github.com/anrieff/${PN}/archive/${EGIT_COMMIT}.tar.gz \
+"https://github.com/anrieff/${PN}/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
-inherit autotools cmake-utils eutils multilib-minimal
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/${PN}-0.5.0-cmake-customize-libdir.patch" )
 
