@@ -97,9 +97,11 @@ https://github.com/orsonteodoro/nano-ycmd/blob/ymcd-code-completion/src/global.c
       instead of ycmd internal dependency.</flag>
     <flag name="system-gopls">Configures ycmd to use the system's gopls
       instead of ycmd internal dependency.</flag>
+    <flag name="system-mono">Configures ycmd to use the system's mono
+      instead of ycmd internal dependency.</flag>
     <flag name="system-racerd">Configures ycmd to use the system's racerd
       instead of ycmd internal dependency.</flag>
-    <flag name="system-rls">Configures ycmd to use the system's rls
+    <flag name="system-rust">Configures ycmd to use the system's rust
       instead of ycmd internal dependency.</flag>
     <flag name="system-rustc">Configures ycmd to use the system's rustc
       instead of ycmd internal dependency.</flag>

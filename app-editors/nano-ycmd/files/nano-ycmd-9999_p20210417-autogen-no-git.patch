@@ -1,0 +1,23 @@
+diff -urp nano-ycmd-f7199c52643b43dad27ffbd83219760323536bbe.orig/autogen.sh nano-ycmd-f7199c52643b43dad27ffbd83219760323536bbe/autogen.sh
+--- nano-ycmd-f7199c52643b43dad27ffbd83219760323536bbe.orig/autogen.sh	2021-04-17 04:24:13.000000000 -0700
++++ nano-ycmd-f7199c52643b43dad27ffbd83219760323536bbe/autogen.sh	2021-04-17 12:53:08.265414931 -0700
+@@ -28,18 +28,6 @@ modules="
+ 	wcwidth
+ "
+ 
+-# Make sure the local gnulib git repo is up-to-date.
+-if [ ! -d "gnulib" ]; then
+-	git clone --depth=1111 ${gnulib_url}
+-fi
+-cd gnulib >/dev/null || exit 1
+-curr_hash=$(git log -1 --format=%H)
+-if [ "${gnulib_hash}" != "${curr_hash}" ]; then
+-	git pull
+-	git checkout -f ${gnulib_hash}
+-fi
+-cd .. >/dev/null || exit 1
+-
+ rm -rf lib
+ ./gnulib/gnulib-tool \
+ 	--import \
+Only in nano-ycmd-f7199c52643b43dad27ffbd83219760323536bbe: autogen.sh.rej

@@ -1,18 +1,18 @@
-diff -urp nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e.orig/src/Makefile.am nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e/src/Makefile.am
---- nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e.orig/src/Makefile.am	2018-02-01 16:37:30.000000000 +0000
-+++ nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e/src/Makefile.am	2018-02-03 20:13:27.408019512 +0000
-@@ -70,8 +70,8 @@ revision.h: FORCE
+diff -urp nano-ycmd-f7199c52643b43dad27ffbd83219760323536bbe.orig/src/Makefile.am nano-ycmd-f7199c52643b43dad27ffbd83219760323536bbe/src/Makefile.am
+--- nano-ycmd-f7199c52643b43dad27ffbd83219760323536bbe.orig/src/Makefile.am	2021-04-17 04:24:13.000000000 -0700
++++ nano-ycmd-f7199c52643b43dad27ffbd83219760323536bbe/src/Makefile.am	2021-04-17 12:48:11.113607074 -0700
+@@ -133,8 +133,8 @@ revision.h: FORCE
  			echo "#define $(SOMETHING)" > $@
  FORCE:
  
 -bin_PROGRAMS = 	nano
--nano_SOURCES =	browser.c \
+-nano_SOURCES = \
 +bin_PROGRAMS = 	ynano
-+ynano_SOURCES =	browser.c \
- 		chars.c \
- 		color.c \
- 		cut.c \
-@@ -91,26 +91,26 @@ nano_SOURCES =	browser.c \
++ynano_SOURCES = \
+ 		definitions.h \
+ 		prototypes.h \
+ 		browser.c \
+@@ -155,26 +155,26 @@ nano_SOURCES = \
  		ycmd.c \
  		winio.c
  
@@ -47,5 +47,5 @@ diff -urp nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e.orig/src/Makefile.a
 +	cd $(DESTDIR)$(bindir) && rm -f rnano && $(LN_S) ynano rnano
  uninstall-hook:
  	cd $(DESTDIR)$(bindir) && rm -f rnano
-Only in nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e/src: Makefile.am.orig
-Only in nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e/src: Makefile.am.rej
+Only in nano-ycmd-f7199c52643b43dad27ffbd83219760323536bbe/src: Makefile.am.orig
+Only in nano-ycmd-f7199c52643b43dad27ffbd83219760323536bbe/src: Makefile.am.rej
