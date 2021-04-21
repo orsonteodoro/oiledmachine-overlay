@@ -2,19 +2,19 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils multilib-minimal
+
 DESCRIPTION="Improved JPEG encoder based on libjpeg-turbo"
 HOMEPAGE="https://github.com/mozilla/mozjpeg"
 LICENSE="BSD IJG ZLIB"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="-java +static-libs"
-inherit multilib-minimal
-RDEPEND="sys-libs/zlib:=[${MULTILIB_USEDEP},static-libs?]
+IUSE+=" +static-libs"
+RDEPEND+=" sys-libs/zlib:=[${MULTILIB_USEDEP},static-libs?]
 	 media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP},static-libs?]
-	 >=media-libs/libpng-1.6:=[${MULTILIB_USEDEP},static-libs?]
-	 java? ( virtual/jdk )"
-DEPEND="${RDEPEND}"
-inherit cmake-utils eutils
+	 >=media-libs/libpng-1.6:=[${MULTILIB_USEDEP},static-libs?]"
+DEPEND+=" ${RDEPEND}"
 SRC_URI="\
 https://github.com/mozilla/mozjpeg/archive/v${PV}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
@@ -42,7 +42,7 @@ src_configure() {
 		cd "${BUILD_DIR}"
 		local mycmakeargs=(
 			-DENABLE_STATIC:STRING=$(usex static-libs)
-			-DWITH_JAVA=$(usex java)
+			-DWITH_JAVA=OFF
 		)
 		cmake-utils_src_configure
 	}
