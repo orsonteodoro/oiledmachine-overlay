@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_6 )
+PYTHON_COMPAT=( python3_{6..9} )
 inherit cmake-multilib python-r1
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
@@ -51,6 +51,10 @@ LICENSE+=" demos? ( TurboSquid-Royalty-Free-License )"
 # docs/pybullet_quickstart_guide/WordpressPreview/PreviewBlogPage.htm
 LICENSE+=" doc? ( BSD-2 BSD GPL-2+ )"
 
+# examples/ThirdPartyLibs/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h
+# The LGPL-2.1+ does not have all rights reserved.
+LICENSE+=" examples? ( all-rights-reserved LGPL-2.1+ )"
+
 # examples/ThirdPartyLibs/openvr/bin/osx64/OpenVR.framework/Headers/openvr_api.cs
 # examples/ThirdPartyLibs/openvr/bin/osx64/OpenVR.framework/Headers/openvr_capi.h
 #  just contains all-rights-reserved but no mention of other license
@@ -93,13 +97,15 @@ LICENSE+=" extras? ( all-rights-reserved GPL-2+ ZLIB )"
 
 # build3/lcpp.lua,
 # Extras/VHACD/inc/vhacdMutex.h
+# examples/ThirdPartyLibs/glad/LICENSE.txt
 # examples/ThirdPartyLibs/glad/KHR/khrplatform.h
 # examples/ThirdPartyLibs/imgui
 # examples/ThirdPartyLibs/lua-5.2.3/src/lua.h
 # examples/ThirdPartyLibs/serial,
 # src/clew/clew.h,
-LICENSE+=" MIT examples? ( MIT ) extras? ( MIT )"
+LICENSE+=" MIT examples? ( MIT Apache-2.0 ) extras? ( MIT )"
 
+LICENSE+=" MPL-2.0" # some files in examples/ThirdPartyLibs/Eigen
 
 # examples/pybullet/gym/pybullet_envs/agents # Apache-2.0
 # examples/pybullet/gym/pybullet_data/husky/husky.urdf # BSD
@@ -114,10 +120,11 @@ KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
 SRC_URI=\
 "https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="0/${PV}"
-IUSE+=" +bullet3 +demos doc -double-precision examples +extras +networking -numpy -python test"
+IUSE+=" +bullet3 +demos doc -double-precision examples +extras +networking -numpy -openvr -python test"
 REQUIRED_USE+="
 	demos? ( extras )
 	numpy? ( python )
+	openvr? ( examples )
 	python? ( demos )"
 BRDEPEND="python? (
 		${PYTHON_DEPS}
@@ -207,7 +214,7 @@ pkg_postinst() {
 		einfo "To properly render the TwoJoint do:"
 		einfo "  cd /usr/share/bullet/demos/data"
 		einfo \
-"  /usr/share/bullet/demos/examples/TwoJoint/App_TwoJoint-2.88"
+"  /usr/share/bullet/demos/examples/TwoJoint/App_TwoJoint-2.89"
 		einfo
 		einfo "To properly render the pybullet models do:"
 		einfo "  cd /usr/share/bullet/demos/data"
