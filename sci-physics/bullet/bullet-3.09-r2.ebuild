@@ -184,6 +184,33 @@ src_compile() {
 	fi
 }
 
+_install_licenses() {
+	OIFS="${IFS}"
+	export IFS=$'\n'
+	for f in $(find "${S}" \
+	  -iname "*licen*" -type f \
+	  -o -iname "*copyright*" \
+	  -o -iname "*copying*" \
+	  -o -iname "*patent*" \
+	  -o -iname "ofl.txt" \
+	  -o -iname "*notice*" \
+	  ) $(grep -i -G -l \
+		-e "copyright" \
+		-e "licen" \
+		-e "warrant" \
+		$(find "${S}" -iname "*readme*")) ; \
+	do
+		if [[ -f "${f}" ]] ; then
+			d=$(dirname "${f}" | sed -e "s|^${S}||")
+		else
+			d=$(echo "${f}" | sed -e "s|^${S}||")
+		fi
+		docinto "licenses/${d}"
+		dodoc -r "${f}"
+	done
+	export IFS=$' \t\n'
+}
+
 src_install() {
 	cmake-multilib_src_install
 	use examples && DOCS+=( examples )
@@ -206,6 +233,7 @@ src_install() {
 		fi
 	}
 	multilib_foreach_abi install_abi
+	_install_licenses
 }
 
 pkg_postinst() {
