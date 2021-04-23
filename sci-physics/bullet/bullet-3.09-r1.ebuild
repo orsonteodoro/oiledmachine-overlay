@@ -126,19 +126,19 @@ REQUIRED_USE+="
 	numpy? ( python )
 	openvr? ( examples )
 	python? ( demos )"
-BRDEPEND="python? (
+CDEPEND="python? (
 		${PYTHON_DEPS}
 		numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
 	  )"
-DEPEND="demos? (
+DEPEND+=" ${CDEPEND}
+	demos? (
 		media-libs/mesa[${MULTILIB_USEDEP},egl]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
 	)
 	media-libs/freeglut[${MULTILIB_USEDEP}]
 	virtual/opengl[${MULTILIB_USEDEP}]"
-RDEPEND="${BRDEPEND}
-	 ${DEPEND}"
-BDEPEND="${BRDEPEND}
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" ${CDEPEND}
 	 doc? ( app-doc/doxygen[dot] )"
 PATCHES=( "${FILESDIR}"/${PN}-2.85-soversion.patch )
 DOCS=( AUTHORS.txt LICENSE.txt README.md )
