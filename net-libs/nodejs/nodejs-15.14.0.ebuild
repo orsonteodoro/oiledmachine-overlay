@@ -51,25 +51,49 @@ pkg_pretend() {
 
 pkg_setup() {
 	python-any-r1_pkg_setup
+
+	ewarn "This ebuild is End Of Life (EOL) as of 2021-06-01.  \
+Please switch soon to either v12, v14, v16 before the next update cycle."
+
 	# For man page reasons
-	if has 'net-libs/nodejs[npm]:multislot/10' ; then
+	if has 'net-libs/nodejs[npm]:10' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[npm]:multislot/10.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[npm]:10.  Only enable\n\
 npm on the highest slot."
 	fi
-	if has 'net-libs/nodejs[npm]:multislot/12' ; then
+	if has 'net-libs/nodejs[npm]:12' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[npm]:multislot/12.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[npm]:12.  Only enable\n\
 npm on the highest slot."
 	fi
-	if has 'net-libs/nodejs[man]:multislot/10' ; then
+	if has 'net-libs/nodejs[npm]:14' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[man]:multislot/10.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[npm]:14.  Only enable\n\
+npm on the highest slot."
+	fi
+	if has 'net-libs/nodejs[npm]:16' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[npm]:16.  Only enable\n\
+npm on the highest slot."
+	fi
+	if has 'net-libs/nodejs[man]:10' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[man]:10.  Only enable\n\
 man on the highest slot."
 	fi
-	if has 'net-libs/nodejs[man]:multislot/12' ; then
+	if has 'net-libs/nodejs[man]:12' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[man]:multislot/12.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[man]:12.  Only enable\n\
+man on the highest slot."
+	fi
+	if has 'net-libs/nodejs[man]:14' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[man]:14.  Only enable\n\
+man on the highest slot."
+	fi
+	if has 'net-libs/nodejs[man]:16' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[man]:16.  Only enable\n\
 man on the highest slot."
 	fi
 }

@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{6..8} )
 PYTHON_REQ_USE="threads(+)"
 inherit bash-completion-r1 flag-o-matic pax-utils python-any-r1 \
 	toolchain-funcs xdg-utils
@@ -12,13 +12,12 @@ LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector npm pax_kernel +snapshot \
-+ssl system-icu +system-ssl systemtap test"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
+IUSE+=" cpu_flags_x86_sse2 debug doc icu inspector npm +snapshot +ssl \
++system-ssl systemtap test"
 IUSE+=" man"
 REQUIRED_USE+=" inspector? ( icu ssl )
 		npm? ( ssl )
-		system-icu? ( icu )
 		system-ssl? ( ssl )"
 RESTRICT="test"
 # Keep versions in sync with deps folder
@@ -29,20 +28,22 @@ RDEPEND+=" !net-libs/nodejs:0
 	>=app-arch/brotli-1.0.9
 	>=dev-libs/libuv-1.40.0:=
 	>=net-dns/c-ares-1.16.1
+	>=net-libs/http-parser-2.9.4:=
 	>=net-libs/nghttp2-1.41.0
 	>=sys-libs/zlib-1.2.11
-	system-icu? ( >=dev-libs/icu-67.1:= )
+	icu? ( >=dev-libs/icu-67.1:= )
 	system-ssl? ( >=dev-libs/openssl-1.1.1k:0= )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	sys-apps/coreutils
 	systemtap? ( dev-util/systemtap )
-	test? ( net-misc/curl )
-	pax_kernel? ( sys-apps/elfix )"
+	test? ( net-misc/curl )"
 PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
-	  "${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch )
+	  "${FILESDIR}"/${PN}-12.20.1-fix_ppc64_crashes.patch
+	  "${FILESDIR}"/${PN}-12.22.1-v8_icu69.patch
+	  "${FILESDIR}"/${PN}-99999999-llhttp.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.12" # See https://github.com/nodejs/node/blob/v14.16.1/deps/npm/package.json
+NPM_V="6.14.12" # See https://github.com/nodejs/node/blob/v12.22.1/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
@@ -54,31 +55,54 @@ pkg_pretend() {
 
 pkg_setup() {
 	python-any-r1_pkg_setup
+
+	einfo "This ebuild is End Of Life (EOL) as of 2022-04-30."
+
 	# For man page reasons
-	if has 'net-libs/nodejs[npm]:multislot/10' ; then
+	if has 'net-libs/nodejs[npm]:10' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[npm]:multislot/10.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[npm]:10.  Only enable\n\
 npm on the highest slot."
 	fi
-	if has 'net-libs/nodejs[npm]:multislot/12' ; then
+	if has 'net-libs/nodejs[npm]:14' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[npm]:multislot/12.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[npm]:14.  Only enable\n\
 npm on the highest slot."
 	fi
-	if has 'net-libs/nodejs[man]:multislot/10' ; then
+	if has 'net-libs/nodejs[npm]:15' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[man]:multislot/10.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[npm]:15.  Only enable\n\
+npm on the highest slot."
+	fi
+	if has 'net-libs/nodejs[npm]:16' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[npm]:16.  Only enable\n\
+npm on the highest slot."
+	fi
+	if has 'net-libs/nodejs[man]:10' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[man]:10.  Only enable\n\
 man on the highest slot."
 	fi
-	if has 'net-libs/nodejs[man]:multislot/12' ; then
+	if has 'net-libs/nodejs[man]:14' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[man]:multislot/12.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[man]:14.  Only enable\n\
+man on the highest slot."
+	fi
+	if has 'net-libs/nodejs[man]:15' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[man]:15.  Only enable\n\
+man on the highest slot."
+	fi
+	if has 'net-libs/nodejs[man]:16' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[man]:16.  Only enable\n\
 man on the highest slot."
 	fi
 }
 
 src_prepare() {
-	tc-export AR CC CXX PKG_CONFIG
+	tc-export CC CXX PKG_CONFIG
 	export V=1
 	export BUILDTYPE=Release
 
@@ -112,9 +136,6 @@ src_prepare() {
 		BUILDTYPE=Debug
 	fi
 
-	# We need to disable mprotect on two files when it builds Bug 694100.
-	use pax_kernel && PATCHES+=( "${FILESDIR}"/${PN}-13.8.0-paxmarking.patch )
-
 	default
 }
 
@@ -124,18 +145,13 @@ src_configure() {
 	local myconf=(
 		--shared-brotli
 		--shared-cares
+		--shared-http-parser
 		--shared-libuv
 		--shared-nghttp2
 		--shared-zlib
 	)
 	use debug && myconf+=( --debug )
-	if use system-icu; then
-		myconf+=( --with-intl=system-icu )
-	elif use icu; then
-		myconf+=( --with-intl=full-icu )
-	else
-		myconf+=( --with-intl=none )
-	fi
+	use icu && myconf+=( --with-intl=system-icu ) || myconf+=( --with-intl=none )
 	use inspector || myconf+=( --without-inspector )
 	use npm || myconf+=( --without-npm )
 	use snapshot || myconf+=( --without-node-snapshot )
@@ -167,6 +183,8 @@ src_configure() {
 }
 
 src_compile() {
+	emake -C out mksnapshot
+	pax-mark m "out/${BUILDTYPE}/mksnapshot"
 	emake -C out
 }
 
@@ -251,10 +269,17 @@ src_install() {
 
 src_test() {
 	out/${BUILDTYPE}/cctest || die
-	"${EPYTHON}" tools/test.py --mode=${BUILDTYPE,,} -J message parallel sequential || die
+	"${PYTHON}" tools/test.py --mode=${BUILDTYPE,,} -J message parallel sequential || die
 }
 
 pkg_postinst() {
+	elog "The global npm config lives in /etc/npm. This deviates slightly"
+	elog "from upstream which otherwise would have it live in /usr/etc/."
+	elog ""
+	elog "Protip: When using node-gyp to install native modules, you can"
+	elog "avoid having to download extras by doing the following:"
+	elog "$ node-gyp --nodedir /usr/include/node <command>"
+
 	if has '>=net-libs/nodejs-${PV}' ; then
 		einfo \
 "Found higher slots, manually change the headers with \`eselect nodejs\`."
