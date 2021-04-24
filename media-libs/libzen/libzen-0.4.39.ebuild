@@ -8,18 +8,15 @@ inherit autotools multilib-minimal
 MY_PN="ZenLib"
 DESCRIPTION="Shared library for libmediainfo and mediainfo"
 HOMEPAGE="https://github.com/MediaArea/ZenLib"
-SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.bz2"
-
 LICENSE="all-rights-reserved ZLIB"
 # the vanilla ZLIB does not have all rights reserved but stated explictly in the
 # README.md
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~x86"
-IUSE="doc static-libs"
-
-DEPEND="virtual/pkgconfig[${MULTILIB_USEDEP}]
+IUSE+=" doc static-libs"
+BDEPEND+=" virtual/pkgconfig[${MULTILIB_USEDEP}]
 	doc? ( app-doc/doxygen )"
-
+SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.bz2"
 #S=${WORKDIR}/${MY_PN}/Project/GNU/Library
 S="${WORKDIR}/${MY_PN}"
 
