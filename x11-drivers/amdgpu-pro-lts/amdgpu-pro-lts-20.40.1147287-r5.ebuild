@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-20"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-40"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	dkms? ( AMDGPU-FIRMWARE GPL-2 MIT )
@@ -79,14 +79,14 @@ PKG_VER_LIBWAYLAND="1.16.0"
 PKG_VER_LLVM_TRIPLE="10.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="20.0.5"
+PKG_VER_MESA="20.1.5"
 PKG_VER_ROCT="1.0.9"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_WAYLAND_PROTO="1.17"
 PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.1.0" # about the same as the mesa version
-VULKAN_SDK_VER="1.2.135.0"
-ROCK_V="3.5.0_pre20200424" # an approximate
+VULKAN_SDK_VER="1.2.148"
+ROCK_V="3.8.0" # an approximate
 IUSE="+amf bindist clinfo developer dkms doc +egl +gles2 freesync glamor \
 hip-clang +hwe +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_pal \
 +opengl +opengl_pro opengl_mesa openmax osmesa +pro-stack rocm strict-pairing \
@@ -132,7 +132,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 || ( >=dev-libs/libelf-0.142 virtual/libelf:0/1 )
 	 >=dev-util/cunit-2.1
 	 >=dev-libs/expat-2.0.1
-	   dev-libs/libedit:2[${MULTILIB_USEDEP}]
+	 >=dev-libs/libedit-3.1[${MULTILIB_USEDEP}]
 	   dev-libs/libffi-compat[${MULTILIB_USEDEP}]
 	 >=sys-devel/gcc-${PKG_VER_GCC}
 	 >=sys-libs/zlib-1.2.0
@@ -175,15 +175,15 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		    >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
 	 rocm? (  >=sys-apps/pciutils-3.5.2
 		  >=sys-process/numactl-2.0.11
-		   !strict-pairing? ( >=virtual/amdgpu-drm-3.2.81[dkms,firmware] )
-		    strict-pairing? ( ~virtual/amdgpu-drm-3.2.81[dkms,firmware] )
+		   !strict-pairing? ( >=virtual/amdgpu-drm-3.2.97[dkms,firmware] )
+		    strict-pairing? ( ~virtual/amdgpu-drm-3.2.97[dkms,firmware] )
 		    >=dev-libs/roct-thunk-interface-${ROCK_V} )
 	 !strict-pairing? (
 		freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
-		>=virtual/amdgpu-drm-3.2.81[dkms?]
+		>=virtual/amdgpu-drm-3.2.97[dkms?]
 	 )
 	 strict-pairing? (
-		~virtual/amdgpu-drm-3.2.81[dkms?,strict-pairing]
+		~virtual/amdgpu-drm-3.2.97[dkms?,strict-pairing]
 	 )
 	 vaapi? ( >=x11-libs/libva-2.1.0 )
 	 vdpau? ( >=x11-libs/libvdpau-1.1.1 )
@@ -446,7 +446,7 @@ src_unpack_pro_stack() {
 
 	if use opencl ; then
 		use opencl-icd-loader && \
-		unpack_deb "${d_debs}/libopencl1-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/opencl-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		if use opencl_orca ; then
 			unpack_deb "${d_debs}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		fi

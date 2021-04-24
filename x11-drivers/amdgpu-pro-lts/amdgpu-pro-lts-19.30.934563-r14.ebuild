@@ -134,7 +134,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 || ( >=dev-libs/libelf-0.142 virtual/libelf:0/1 )
 	 >=dev-util/cunit-2.1
 	 >=dev-libs/expat-2.0.1
-	   dev-libs/libedit:2[${MULTILIB_USEDEP}]
+	 >=dev-libs/libedit-3.1[${MULTILIB_USEDEP}]
 	   dev-libs/libffi-compat[${MULTILIB_USEDEP}]
 	 >=sys-devel/gcc-${PKG_VER_GCC}
 	 >=sys-libs/zlib-1.2.0
