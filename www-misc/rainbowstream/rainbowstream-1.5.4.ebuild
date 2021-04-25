@@ -2,16 +2,19 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_7 )
+
+inherit distutils-r1 eutils
+
 DESCRIPTION="A smart and nice Twitter client on terminal written in Python."
 HOMEPAGE="http://www.rainbowstream.org/"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
-PYTHON_COMPAT=( python3_{6,7,8} )
-inherit distutils-r1
-EGIT_COMMIT="0e6d22d6fb2c54f5eb37028da1414279e2d1a625"
-IUSE="jpeg"
-DEPEND="dev-python/arrow[${PYTHON_USEDEP}]
+IUSE+=" jpeg"
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+DEPEND+=" dev-python/arrow[${PYTHON_USEDEP}]
 	dev-python/pillow[jpeg?,${PYTHON_USEDEP}]
 	dev-python/pocket[${PYTHON_USEDEP}]
 	dev-python/pyfiglet[${PYTHON_USEDEP}]
@@ -19,11 +22,11 @@ DEPEND="dev-python/arrow[${PYTHON_USEDEP}]
 	dev-python/python-dateutil[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/twitter[${PYTHON_USEDEP}]"
-RDEPEND="${DEPEND}"
+RDEPEND+=" ${DEPEND}"
+EGIT_COMMIT="be1eaa59e1549ac8fec72193ff19faa419900b84"
 SRC_URI="\
 https://github.com/orakaro/rainbowstream/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
-inherit eutils
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}"/${PN}-1.3.7-no-user-env.patch )
