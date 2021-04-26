@@ -8,21 +8,20 @@ inherit cmake-multilib
 DESCRIPTION="The Portable OpenGL FrameWork"
 HOMEPAGE="https://www.glfw.org/"
 SRC_URI="https://github.com/glfw/glfw/archive/${PV}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="ZLIB"
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~ppc64 ~x86"
-IUSE="wayland"
+IUSE+=" wayland"
 
 RDEPEND="
 	x11-libs/libxkbcommon[${MULTILIB_USEDEP}]
 	!wayland? (
-		virtual/opengl[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
 		x11-libs/libXcursor[${MULTILIB_USEDEP}]
 		x11-libs/libXinerama[${MULTILIB_USEDEP}]
 		x11-libs/libXrandr[${MULTILIB_USEDEP}]
 		x11-libs/libXxf86vm[${MULTILIB_USEDEP}]
+		virtual/opengl[${MULTILIB_USEDEP}]
 	)
 	wayland? (
 		dev-libs/wayland[${MULTILIB_USEDEP}]
@@ -32,7 +31,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	!wayland? ( x11-libs/libXi[${MULTILIB_USEDEP}] )
-	wayland? ( dev-libs/wayland-protocols[${MULTILIB_USEDEP}] )
+	wayland? ( >=dev-libs/wayland-protocols-1.15[${MULTILIB_USEDEP}] )
 "
 BDEPEND="
 	wayland? ( kde-frameworks/extra-cmake-modules )
