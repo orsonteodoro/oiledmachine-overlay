@@ -13,12 +13,11 @@ LICENSE="BSD-2
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 SLOT="0/${PV}"
 IUSE+=" doc pgo +opt -static-libs -test -threads zlib"
-LDEPEND=" zlib? ( sys-libs/zlib:=[static-libs?] )
+DEPEND+=" virtual/libc
+	 test? ( >=media-libs/libpng-1.6 )
 	 !zlib? ( dev-libs/miniz:=[static-libs?] )
-	 virtual/libc"
-DEPEND+=" ${LDEPEND}
-	test? (	>=media-libs/libpng-1.6	)"
-RDEPEND+=" ${LDEPEND}"
+	 zlib? ( sys-libs/zlib:=[static-libs?] )"
+RDEPEND+=" ${DEPEND}"
 BDEPEND+=" dev-util/pkgconfig
 	dev-util/meson-format-array
 	doc? (
@@ -27,15 +26,15 @@ BDEPEND+=" dev-util/pkgconfig
 	)"
 # GitHub is bugged?  The ZIP does not have a image so download manually
 BENCHMARK_IMAGES_COMMIT="2478ec174d74d66343449f850d22e0eabb0f01b0"
-SRC_URI="https://github.com/randy408/libspng/archive/v${PV}.tar.gz \
+SRC_URI="https://github.com/randy408/libspng/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	pgo? (
-https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/medium_rgb8.png ->
-	libspng-medium_rgb8-${BENCHMARK_IMAGES_COMMIT}.png
-https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/medium_rgba8.png ->
-	libspng-medium_rgba8-${BENCHMARK_IMAGES_COMMIT}.png
-https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/large_palette.png ->
-	libspng-large_palette-${BENCHMARK_IMAGES_COMMIT}.png
+https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/medium_rgb8.png
+	-> libspng-medium_rgb8-${BENCHMARK_IMAGES_COMMIT}.png
+https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/medium_rgba8.png
+	-> libspng-medium_rgba8-${BENCHMARK_IMAGES_COMMIT}.png
+https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/large_palette.png
+	-> libspng-large_palette-${BENCHMARK_IMAGES_COMMIT}.png
 	)"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
