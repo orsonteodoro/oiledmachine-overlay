@@ -82,7 +82,7 @@ archlinux asdf autoenv autojump autopep8 aws battery bazel bbedit bgnotify \
 boot2docker bower branch brew bundler cabal cake cakephp3 capistrano cargo \
 cask catimg celery chruby chucknorris cloudapp cloudfoundry codeclimate coffee \
 colemak colored-man-pages colorize command-not-found common-aliases compleat \
-composer copybuffer copydir copyfile cp cpanm dash debian dircycle direnv \
+composer copybuffer copydir copyfile cp cpanm dash debian deno dircycle direnv \
 dirhistory dirpersist django dnf dnote docker docker-compose docker-machine \
 doctl dotnet dotenv droplr drush eecms emacs ember-cli emoji emoji-clock \
 emotty encode64 extract fabric fancy-ctrl-z fasd fastfile fbterm fd fedora \
@@ -90,7 +90,8 @@ firewalld flutter forklift fossil frontend-search fzf gas gatsby gb gcloud \
 geeknote gem git git-auto-fetch git-escape-magic git-extras gitfast git-flow \
 git-flow-avh github git-hubflow gitignore git-lfs git-prompt git-remote-branch \
 glassfish globalias gnu-utils go golang gpg-agent gradle grails grc grunt gulp \
-hanami helm heroku hitokoto history history-substring-search homestead httpie \
+hanami helm heroku hitokoto history history-substring-search hitchhiker \
+homestead httpie \
 iterm2 jake-node jenv jfrog jhbuild jira jruby jsontools jump kate keychain \
 kitchen knife knife_ssh kops kubectl kube-ps1 lando laravel laravel4 laravel5 \
 last-working-dir ldx lein lighthouse lol macports magic-enter man marked2 \
@@ -186,6 +187,8 @@ PLUGINS_RDEPEND="
 	 omz_plugins_grc? ( app-misc/grc )
 	 omz_plugins_helm? ( app-admin/helm )
 	 omz_plugins_heroku? ( dev-util/heroku-cli )
+	 omz_plugins_hitchhiker? ( games-misc/cowsay
+				   games-misc/fortune-mod )
 	 omz_plugins_jira? ( dev-python/jira )
 	 omz_plugins_jfrog? ( dev-util/jfrog-cli )
 	 omz_plugins_kate? ( kde-apps/kate )

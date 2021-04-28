@@ -50,6 +50,7 @@ cp - Installs the cp plugin.
 cpanm - Installs the cpanm plugin.
 dash - Installs the dash plugin.
 debian - Installs the debian plugin.
+deno - Installs the deno plugin.
 dircycle - Installs the dircycle plugin.
 direnv - Installs the direnv plugin.
 dirhistory - Installs the dirhistory plugin.
@@ -121,6 +122,7 @@ heroku - Installs the heroku plugin.
 hitokoto - Installs the hitokoto plugin.
 history - Installs the history plugin.
 history-substring-search - Installs the history-substring-search plugin.
+hitchhiker - Installs the hitchhiker plugin.
 homestead - Installs the homestead plugin.
 httpie - Installs the httpie plugin.
 iterm2 - Installs the iterm2 plugin.
