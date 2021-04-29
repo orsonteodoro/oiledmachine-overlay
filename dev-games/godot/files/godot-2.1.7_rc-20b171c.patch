@@ -1,0 +1,24 @@
+Subject:  ccache fix
+Backport to 2.1.7rc of 20b171cc5ae2482896ca6612d1db21e45b21576c
+
+URI:
+https://github.com/godotengine/godot/commit/20b171cc5ae2482896ca6612d1db21e45b21576c
+https://github.com/godotengine/godot/commit/5d217a94414117438d92b094956baead8ec942fb
+
+----
+diff -urp godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/SConstruct godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/SConstruct
+--- godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/SConstruct	2020-10-01 10:50:39.000000000 -0700
++++ godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/SConstruct	2021-03-29 19:20:14.380531243 -0700
+@@ -65,11 +65,7 @@ elif (os.name == "nt"):
+     if (os.getenv("VCINSTALLDIR") == None or platform_arg == "android" or platform_arg == "javascript"):
+         custom_tools = ['mingw']
+ 
+-env_base = Environment(tools=custom_tools)
+-if 'TERM' in os.environ:
+-    env_base['ENV']['TERM'] = os.environ['TERM']
+-env_base.AppendENVPath('PATH', os.getenv('PATH'))
+-env_base.AppendENVPath('PKG_CONFIG_PATH', os.getenv('PKG_CONFIG_PATH'))
++env_base = Environment(ENV=os.environ, tools=custom_tools)
+ env_base.global_defaults = global_defaults
+ env_base.android_maven_repos = []
+ env_base.android_flat_dirs = []

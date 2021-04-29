@@ -1,0 +1,4 @@
+# Copyright 2021 Orson Teodoro
+# Distributed under the terms of the GNU General Public License v2
+
+wasm32 - Adds export templates for Mono C-Sharp scripted games to build for the Web using WebAssembly (WASM)

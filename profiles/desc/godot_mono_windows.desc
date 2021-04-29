@@ -1,0 +1,5 @@
+# Copyright 2021 Orson Teodoro
+# Distributed under the terms of the GNU General Public License v2
+
+x86 - Adds export templates for Mono scripted games to build for 32-bit x86 Windows
+x86_64 - Adds export templates for Mono scripted games to builds for 64-bit x86_64 Windows

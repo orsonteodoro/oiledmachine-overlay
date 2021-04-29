@@ -2,11 +2,11 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
-release=@release@
+configuration=@configuration@
 bitness=@bitness@
 
 Name: godot3-native-server
 Description: Godot 3.x GDNative server headers and library
 Version: @version@
 Cflags: -std=c11 -fPIC -I${includedir}
-Libs: -lgodot-cpp.linux${release}${bitness}.a
+Libs: -lgodot-cpp.linux${configuration}${bitness}.a

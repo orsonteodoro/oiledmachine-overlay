@@ -2,11 +2,11 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
-release=@release@
+configuration=@configuration@
 bitness=@bitness@
 
 Name: godot3-native-x11
 Description: Godot 3.x GDNative x11 headers and library
 Version: @version@
-Cflags: -std=c11 -fPIC -I${includedir}
-Libs: -lgodot-cpp.linux${release}${bitness}.a
+Cflags: -O3 -std=c++14 -fPIC -I${includedir}
+Libs: -lgodot-cpp.linux${configuration}${bitness}.a

@@ -1,11 +1,15 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# See profiles/desc/godot* for more related files.
+# Keep profiles/make.defaults up to date.
+
 EAPI=7
 
 STATUS="rc"
 
-EPLATFORMS="android linux server_dedicated server_headless web"
+GODOT_PLATFORMS_=(android ios linux osx web windows)
+EPLATFORMS="server_dedicated server_headless ${GODOT_PLATFORMS_[@]/#/godot_platforms_}"
 PYTHON_COMPAT=( python3_{6..9} )
 inherit check-reqs desktop eutils flag-o-matic multilib-build platforms \
 python-single-r1 scons-utils toolchain-funcs
@@ -28,7 +32,7 @@ MPL-2.0 OFL-1.1 openssl RSA Unlicense ZLIB"
 #   The original OFL-1.1 does not contain all rights reserved but stated in \
 #   LICENSE.SourceCodePro.txt
 
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+KEYWORDS="~amd64 ~x86"
 PND="${PN}-demo-projects"
 
 # tag 2.1 deterministic / static snapshot / 2.1 branch / 20200203
@@ -50,7 +54,7 @@ URI_PROJECT="${URI_ORG}/godot"
 URI_PROJECT_DEMO="${URI_ORG}/godot-demo-projects"
 URI_DL="${URI_PROJECT}/tree/${EGIT_COMMIT}"
 URI_A="${URI_PROJECT}/archive/${EGIT_COMMIT}.zip"
-SRC_URI="${URI_PROJECT}/archive/${FN_SRC} -> ${FN_DEST} 
+SRC_URI="${URI_PROJECT}/archive/${FN_SRC} -> ${FN_DEST}
 examples-snapshot? (
   ${URI_PROJECT_DEMO}/archive/${FN_SRC_ESN} \
 		-> ${FN_DEST_ESN}
@@ -62,31 +66,78 @@ examples-stable? (
 SLOT_MAJ="2"
 SLOT="${SLOT_MAJ}/${PV}"
 
+GODOT_ANDROID_=(arm6 arm7 arm64v8 x86 x86_64)
+GODOT_IOS_=(arm armv7 armv64 x86 x86_64)
+GODOT_LINUX_=(x86 x86_64)
+GODOT_OSX_=(x86_64)
+GODOT_WEB_=(asmjs)
+GODOT_WINDOWS_=(i686 x86_64)
+
+gen_required_use_template()
+{
+	local l=(${1})
+	for x in ${l[@]} ; do
+		echo "${x}? ( || ( ${2} ) )"
+	done
+}
+
+GODOT_ANDROID=" ${GODOT_ANDROID_[@]/#/godot_android_}"
+IUSE+=" ${GODOT_ANDROID}"
+GODOT_IOS=" ${GODOT_IOS_[@]/#/godot_iphone_}"
+IUSE+=" ${GODOT_IOS}"
+GODOT_LINUX=" ${GODOT_LINUX_[@]/#/godot_linux_}"
+IUSE+=" ${GODOT_LINUX}"
+GODOT_OSX=" ${GODOT_OSX_[@]/#/godot_osx_}"
+IUSE+=" ${GODOT_OSX}"
+GODOT_WINDOWS=" ${GODOT_WINDOWS_[@]/#/godot_windows_}"
+IUSE+=" ${GODOT_WINDOWS}"
+GODOT_WEB=" ${GODOT_WEB_[@]/#/godot_web_}"
+IUSE+=" ${GODOT_WEB}"
+GODOT_PLATFORMS=" ${GODOT_PLATFORMS_[@]/#/godot_platforms_}"
+IUSE+=" +godot_platforms_linux"
+REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_ANDROID}" godot_platforms_android)
+REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_IOS}" godot_platforms_ios)
+REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_LINUX}" godot_platforms_linux)
+REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_OSX}" godot_platforms_osx)
+REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_WEB}" godot_platforms_web)
+REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_WINDOWS}" godot_platforms_windows)
+
 IUSE+=" +3d +advanced-gui +clang debug docs examples-snapshot examples-stable \
 +linux lto portable server server_dedicated server_headless"
 IUSE+=" +bmp +dds +exr +etc1 +minizip +musepack +pbm +jpeg +mod +ogg +pvrtc \
-+svg +s3tc +speex +theora +vorbis +webm +webp +xml" # formats formats
++svg +s3tc +speex +theora +vorbis +webm +webp +xml" # encoding/container formats
 IUSE+=" +gdscript +visual-script web" # for scripting languages
 IUSE+=" +gridmap +ik +recast" # for 3d
 IUSE+=" +openssl" # for connections
 IUSE+=" -gamepad +touch" # for input
-IUSE+=" +freetype +pcre2 +pulseaudio +speex" # for libraries
+IUSE+=" +freetype +pulseaudio +speex" # for libraries
 IUSE+=" system-freetype system-glew system-libmpcdec system-libogg \
 system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp \
-system-openssl system-opus system-pcre2 system-recast system-speex \
+system-openssl system-opus system-recast system-speex \
 system-squish system-zlib"
 IUSE+=" android"
 IUSE+=" doxygen"
 IUSE+=" asan_server lsan_server"
 IUSE+=" asan_client lsan_client"
+IUSE+=" -ios-sim +icloud +game-center +store-kit" # ios
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	abi_x86_32? ( godot_linux_x86 godot_platforms_linux )
+	abi_x86_64? ( godot_linux_x86_64 godot_platforms_linux )
 	clang
 	docs? ( doxygen )
 	doxygen? ( docs )
 	examples-snapshot? ( !examples-stable )
 	examples-stable? ( !examples-snapshot )
-	linux
+	godot_linux_x86? ( abi_x86_32 godot_platforms_linux )
+	godot_linux_x86_64? ( abi_x86_64 godot_platforms_linux )
+	godot_platforms_android? ( || ( ${GODOT_ANDROID} ) )
+	godot_platforms_ios? ( || ( ${GODOT_IOS} ) )
+	godot_platforms_linux
+	godot_platforms_linux? ( || ( ${GODOT_LINUX} ) )
+	godot_platforms_osx? ( || ( ${GODOT_OSX} ) )
+	godot_platforms_web? ( || ( ${GODOT_WEB} ) )
+	godot_platforms_windows? ( || ( ${GODOT_WINDOWS} ) )
 	lsan_client? ( asan_client )
 	lsan_server? ( asan_server )
 	portable? (
@@ -103,7 +154,6 @@ REQUIRED_USE+="
 		!system-libwebp
 		!system-openssl
 		!system-opus
-		!system-pcre2
 		!system-recast
 		!system-speex
 		!system-squish
@@ -117,10 +167,34 @@ REQUIRED_USE+="
 # See https://github.com/godotengine/godot/tree/2.1/thirdparty for versioning
 # See https://docs.godotengine.org/en/2.1/development/compiling/compiling_for_android.html
 # See https://docs.godotengine.org/en/2.1/development/compiling/compiling_for_web.html
+# See https://github.com/tpoechtrager/osxcross/blob/master/build.sh#L36      ; for XCODE VERSION <-> EOSXCROSS_SDK
+# See https://developer.apple.com/ios/submit/ for app store requirement
 # Some are repeated because they were shown to be in the ldd list
+APST_REQ_STORE_DATE="April 2021"
+IOS_SDK_MIN_STORE="14"
+XCODE_SDK_MIN_STORE="12"
+EXPECTED_IOS_SDK_MIN_VERSION_SIM="9"
+EXPECTED_IOS_SDK_MIN_VERSION_=""
+EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.9"
 LIBOGG_V="1.3.3"
 LIBVORBIS_V="1.3.6"
+CDEPEND="
+	godot_android_x86? ( >=dev-util/android-ndk-21 )
+	godot_android_x86_64? ( >=dev-util/android-ndk-21 )
+	godot_android_arm64v8? ( >=dev-util/android-ndk-21 )
+	godot_platforms_android? (
+		dev-util/android-sdk-update-manager
+		>=dev-util/android-ndk-17:=
+		dev-java/gradle-bin
+		dev-java/openjdk:8
+	)
+	godot_platforms_ios? ( sys-devel/osxcross )
+	godot_platforms_osx? ( sys-devel/osxcross )
+	godot_platforms_web? ( <dev-util/emscripten-2[asmjs] )
+	godot_platforms_windows? ( sys-devel/crossdev )
+"
 DEPEND+=" ${PYTHON_DEPS}
+	${CDEPEND}
 	dev-libs/libbsd[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/flac[${MULTILIB_USEDEP}]
@@ -148,12 +222,6 @@ DEPEND+=" ${PYTHON_DEPS}
 	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
 	!portable? ( >=app-misc/ca-certificates-20180226 )
-	android? (
-		dev-util/android-sdk-update-manager
-		>=dev-util/android-ndk-17
-		dev-java/gradle-bin
-		dev-java/openjdk:8
-	)
         gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
 	system-freetype? ( >=media-libs/freetype-2.8.1[${MULTILIB_USEDEP}] )
 	system-glew? ( >=media-libs/glew-1.13.0[${MULTILIB_USEDEP}] )
@@ -170,23 +238,22 @@ DEPEND+=" ${PYTHON_DEPS}
 	)
 	system-openssl? ( || (	>=dev-libs/openssl-1.0.2u[${MULTILIB_USEDEP}]
 				>=dev-libs/openssl-compat-1.0.2u:1.0.0 ) )
-	system-pcre2? ( dev-libs/libpcre2[${MULTILIB_USEDEP}] )
 	system-recast? ( dev-games/recastnavigation[${MULTILIB_USEDEP}] )
 	system-speex? ( >=media-libs/speex-2.1_rc1[${MULTILIB_USEDEP}] )
 	system-squish? ( >=media-libs/libsquish-1.15[${MULTILIB_USEDEP}] )
-	system-zlib? ( >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}] )
-	web? (
-		<dev-util/emscripten-2[asmjs]
-	)"
+	system-zlib? ( >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND_SANTIZIER="
 	sys-devel/clang[${MULTILIB_USEDEP}]
-	sys-devel/gcc[${MULTILIB_USEDEP}]
-"
-BDEPEND+=" || ( sys-devel/clang[${MULTILIB_USEDEP}]
+	sys-devel/gcc[${MULTILIB_USEDEP}]"
+BDEPEND+=" ${CDEPEND}
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)
+	|| ( sys-devel/clang[${MULTILIB_USEDEP}]
 	    <sys-devel/gcc-6.0 )
         dev-util/scons
-        virtual/pkgconfig[${MULTILIB_USEDEP}]
 	asan_client? (
 		${BDEPEND_SANTIZIER}
 	)
@@ -204,6 +271,8 @@ BDEPEND+=" || ( sys-devel/clang[${MULTILIB_USEDEP}]
 	web? ( app-arch/zip )"
 S="${WORKDIR}/godot-${EGIT_COMMIT}"
 RESTRICT="fetch mirror"
+# 20b171c - used for ccache
+PATCHES=( "${FILESDIR}/godot-2.1.7_rc-20b171c.patch" )
 
 _set_check_req() {
 	if use linux && use server ; then
@@ -223,7 +292,36 @@ pkg_pretend() {
 	check-reqs_pkg_pretend
 }
 
-_check_emscripten()
+check_android_native()
+{
+	if [[ -z "${ANDROID_NDK_ROOT}" ]] ; then
+		ewarn \
+"ANDROID_NDK_ROOT must be set as a per-package environmental variable pointing\n\
+to the root of the NDK."
+	fi
+	if [[ -z "${ANDROID_HOME}" ]] ; then
+		ewarn \
+"ANDROID_HOME must be set as a per-package environmental variable pointing\n\
+to the root of the SDK."
+	fi
+	if [[ -z "${EGODOT_ANDROID_API_LEVEL}" ]] ; then
+		die \
+"EGODOT_ANDROID_API_LEVEL must be set as a per-package environmental variable.\n\
+See metadata.xml or \`epkginfo -x godot\` for more info."
+	fi
+}
+
+check_android_sandbox()
+{
+	# For gradle wrapper
+	if has network-sandbox $FEATURES ; then
+		die \
+"${PN} requires network-sandbox to be disabled in FEATURES for gradle wrapper\n\
+and the android USE flag."
+	fi
+}
+
+check_emscripten()
 {
 	if [[ -z "${EMCC_WASM_BACKEND}" \
 		|| ( -n "${EMCC_WASM_BACKEND}" \
@@ -259,33 +357,139 @@ are required."
 	fi
 }
 
-pkg_setup() {
-	if use android ; then
-		ewarn \
-"The android USE flag is untested and incomplete in the ebuild level."
-		if [[ -z "${ANDROID_NDK_ROOT}" ]] ; then
-			ewarn "ANDROID_NDK_ROOT must be set"
-		fi
-		if [[ -z "${EGODOT_ANDROID_ARCHES}" ]] ; then
-			ewarn \
-"EGODOT_ANDROID_ARCHES should be added as a per-package environmental\n\
-variable.  See metadata.xml or \`epkginfo -x godot\` for details"
-		fi
+check_ios()
+{
+	if [[ -z "${IPHONEPATH}" ]] ; then
+		die \
+"IPHONEPATH must be set as a per-package environmental variable."
+	fi
+	if [[ -z "${IPHONESDK}" ]] ; then
+		die \
+"IPHONESDK must be set as a per-package environmental variable."
+	fi
 
-		# For gradle wrapper
-		if has network-sandbox $FEATURES ; then
+	if [[ -z "${EIOS_SDK_VERSION}" ]] ; then
+		die \
+"EIOS_SDK_VERSION must be defined as a per-package environmental variable.\n\
+See metadata.xml or \`epkginfo -x godot\`for details."
+	fi
+
+	if [[ -z "${EXCODE_SDK_VERSION}" ]] ; then
+		die \
+"EXCODE_SDK_VERSION must be defined as a per-package environmental variable.\n\
+See metadata.xml or \`epkginfo -x godot\`for details."
+	fi
+}
+
+check_mingw()
+{
+	if [[ -z "${EGODOT_MINGW32_SYSROOT}" \
+		&& -z "${EGODOT_MINGW64_SYSROOT}" ]] ; then
+		ewarn \
+"EGODOT_MINGW32_SYSROOT or EGODOT_MINGW64_SYSROOT must be specified.\n\
+See metadata.xml or \`epkginfo -x godot\` for details"
+	fi
+
+	if [[ -n "${EGODOT_MINGW32_SYSROOT}" ]] ; then
+		if [[ -f "${EGODOT_MINGW32_SYSROOT}/i686-w64-mingw32-gcc" ]] ; then
 			die \
-"${PN} requires network-sandbox to be disabled in FEATURES for gradle wrapper\n\
-and the android USE flag."
+"${EGODOT_MINGW32_SYSROOT}/i686-w64-mingw32-gcc was not found."
 		fi
 	fi
+
+	if [[ -n "${EGODOT_MINGW64_SYSROOT}" ]] ; then
+		if [[ -f "${EGODOT_MINGW64_SYSROOT}/x86_64-w64-mingw32-gcc" ]] ; then
+			die \
+"${EGODOT_MINGW64_SYSROOT}/i686-w64-mingw32-gcc was not found."
+		fi
+	fi
+}
+
+
+check_osxcross()
+{
+	if [[ -z "${OSXCROSS_SDK}" ]] ; then
+		die \
+"OSXCROSS_SDK must be set as a per-package environmental variable.  See\n\
+metadata.xml or \`epkginfo -x godot\` for details."
+	fi
+	if which xcrun ; then
+		die \
+"Missing xcrun from the osxcross package."
+	fi
+	if [[ -z "${EOSXCROSS_SDK}" ]] ; then
+		die \
+"EOSXCROSS_SDK must be set as a per-package environmental variable.  See\n\
+metadata.xml or \`epkginfo -x godot\` for details."
+	fi
+	if [[ ! -f \
+"${EOSXCROSS_SDK}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc" \
+	   ]] ; then
+		die \
+"Cannot find x86_64-apple-${EOSXCROSS_SDK}-cc."
+	fi
+	if use godot_osx_x86_64 ; then
+		if ver_test ${EXCODE_SDK_VERSION} \
+			-lt ${EXPECTED_XCODE_SDK_MIN_VERSION_X86_64} ; then
+			die \
+"${PN} requires Xcode >= ${EXPECTED_XCODE_SDK_MIN_VERSION_X86_64}"
+		fi
+	fi
+}
+
+check_store_apl()
+{
+	if use godot_platforms_ios ; then
+		if ver_test ${EIOS_SDK_VERSION} -lt ${IOS_SDK_MIN_STORE} ; then
+			ewarn \
+"Your IOS SDK does not meet minimum store requirements of\n\
+>=${IOS_SDK_MIN_STORE} as of ${APST_REQ_STORE_DATE}."
+		fi
+	fi
+
+	if use godot_platforms_ios || use godot_platforms_osx ; then
+		if ver_test ${EXCODE_SDK_VERSION} -lt ${APST_REQ_STORE_DATE} ; then
+			ewarn \
+"Your Xcode SDK does not meet minimum store requirements of\n\
+>=${XCODE_SDK_MIN_STORE} as of ${APST_REQ_STORE_DATE}."
+		fi
+	fi
+}
+
+pkg_setup() {
 	if use gdscript ; then
-		ewarn "The gdscript USE flag is untested."
+		ewarn \
+"The gdscript USE flag is untested."
 	fi
-	if use web ; then
-		ewarn "The web USE flag is a Work In Progress (WIP)."
-		_check_emscripten
+	if use godot_platforms_android ; then
+		ewarn \
+"The godot_platforms_android USE flag is untested.  Help test and fix."
+		check_android_native
+		check_android_sandbox
 	fi
+	if use godot_platforms_ios ; then
+		ewarn \
+"The godot_platforms_ios USE flag is untested.  Help test and fix."
+		check_ios
+		check_osxcross
+	fi
+	if use godot_platforms_osx ; then
+		ewarn \
+"The godot_platforms_osx USE flag is untested.  Help test and fix."
+		check_osxcross
+	fi
+	if use godot_platforms_web ; then
+		ewarn \
+"The godot_platforms_web USE flag is a Work In Progress (WIP)."
+		check_emscripten
+	fi
+	if use godot_platforms_windows ; then
+		ewarn \
+"The godot_platforms_windows USE flag is untested.  Help test and fix."
+		check_mingw
+	fi
+	check_store_apl
+
 	_set_check_req
 	check-reqs_pkg_setup
 	python_setup
@@ -340,7 +544,7 @@ src_prepare() {
 	platforms_copy_sources
 
 	godot_prepare_impl1() {
-		if [[ "${EPLATFORM}" == "linux" \
+		if [[ "${EPLATFORM}" == "godot_platforms_linux" \
 			|| "${EPLATFORM}" == "server_dedicated" \
 			|| "${EPLATFORM}" == "server_headless" ]] ; then
 			cd "${BUILD_DIR}" || die
@@ -357,6 +561,22 @@ src_prepare() {
 	fi
 }
 
+_configure_emscripten()
+{
+	filter-flags -march=*
+	filter-ldflags -Wl,--as-needed
+	strip-flags
+	einfo "LDFLAGS=${LDFLAGS}"
+	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
+	local CFG=$(cat "${EM_CONFIG}")
+	BINARYEN_LIB_PATH=$(echo -e "${CFG}\nprint (BINARYEN_ROOT)" | python3)"/lib"
+	einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
+	export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
+	export EM_CACHE="${T}/emscripten/cache"
+	export EMMAKEN_CFLAGS="-c" # silence warning and build as .o files (default)
+}
+
 src_configure() {
 	default
 	if use portable ; then
@@ -367,10 +587,10 @@ src_configure() {
 
 # gen_fs() and gen_fs() common options.
 #	f[name] " # can only be "godot" or "godot_server"
-#	f[platform] # can only be ".x11"
+#	f[platform] # can only be ".android", ".iphone", ".osx", ".windows", ".x11"
 #	f[configuation] # can only be release = ".opt", debug = "" (default), release_debug = ".opt"
 #	f[tools] # can only be ".tools" (default) or ".debug" only.
-#	f[bitness] # can only be ".64" or ".32" (default is native bitness)
+#	f[bitness] # can only be ".64" or ".32" or "" (default)
 #	f[llvm] # can only be ".llvm" or "" (default)
 #	f[sanitizer] # can only be ".s" or ""
 # Generate filename source
@@ -393,27 +613,34 @@ gen_fd()
 
 src_compile_android()
 {
+	export CCACHE=${CCACHE_ANDROID}
+	local options_modules_
 	if [[ -n "${EGODOT_ANDROID_CONFIG}" ]] ; then
 		einfo "Using config override for Android"
 		einfo "${EGODOT_ANDROID_CONFIG}"
-		myoptions=(${EGODOT_ANDROID_CONFIG})
+		option_modules_=(${EGODOT_ANDROID_CONFIG})
+	else
+		option_modules_=(${options_modules[@]})
 	fi
-	einfo "Creating export templates for Android"
-	export TERM=linux # pretend to be outside of X
-	for aa in ${EGODOT_ANDROID_ARCHES} ; do
-		scons platform=android \
-			${myoptions[@]} \
-			android_arch=${aa} \
-			target=release \
-			|| die
-		scons platform=android \
-			${myoptions[@]} \
-			android_arch=${aa} \
-			debug_release=True \
-			target=release_debug \
-			|| die
+	for a in ${GODOT_ANDROID} ; do
+		if use ${a} ; then
+			einfo "Creating export templates for Android (${a})"
+			for c in release release_debug ; do
+				scons ${options_android[@]} \
+					${options_modules_[@]} \
+					$([[ -z "${EGODOT_ANDROID_CONFIG}" ]] \
+						&& echo ${options_modules_static[@]}) \
+					$([[ ${c} == release_debug ]] \
+						&& echo "debug_release=True") \
+					android_arch=${a} \
+					target=${c} \
+					tools=no \
+					|| die
+			done
+		fi
 	done
 	pushd platform/android/java || die
+		export TERM=linux # pretend to be outside of X
 		gradle_cmd=$(find /usr/bin/ \
 			-regextype posix-extended \
 			-regex '.*/gradle-[0-9]+.[0-9]+')
@@ -422,89 +649,65 @@ src_compile_android()
 	popd
 }
 
-src_compile_web()
+src_compile_ios()
 {
-	if [[ -n "${EGODOT_WEB_CONFIG}" ]] ; then
-		einfo "Using config override for Web"
-		einfo "${EGODOT_WEB_CONFIG}"
-		myoptions=(${EGODOT_WEB_CONFIG})
+	export CCACHE=${CCACHE_IOS}
+	local options_modules_
+	if [[ -n "${EGODOT_IOS_CONFIG}" ]] ; then
+		einfo "Using config override for IOS"
+		einfo "${EGODOT_IOS_CONFIG}"
+		options_modules_=(${EGODOT_IOS_CONFIG})
+	else
+		options_modules_=(${option_modules[@]})
 	fi
-	einfo "Creating export templates for Web (HTML5, Emscripten, JavaScript, Asm.js)"
-	filter-flags -march=*
-	filter-ldflags -Wl,--as-needed
-	strip-flags
-	einfo "LDFLAGS=${LDFLAGS}"
-	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
-	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
-	local CFG=$(cat "${EM_CONFIG}")
-	BINARYEN_LIB_PATH=$(echo -e "${CFG}\nprint (BINARYEN_ROOT)" | python3)"/lib"
-	einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
-	export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
-	export EM_CACHE="${T}/emscripten/cache"
-	export EMMAKEN_CFLAGS="-c" # silence warning and build as .o files (default)
-
-	scons platform=javascript \
-		${myoptions[@]} \
-		target=release \
-		tools=no \
-		|| die
-	scons platform=javascript \
-		${myoptions[@]} \
-		debug_release=True \
-		target=release_debug \
-		tools=no \
-		|| die
+	for a in ${GODOT_IOS} ; do
+		if use ${a} ; then
+			einfo "Creating export template for iOS (${a})"
+			for c in release release_debug ; do
+				scons ${options_iphone[@]} \
+					${options_modules_[@]} \
+					$([[ -z "${EGODOT_IOS_CONFIG}" ]] \
+						&& echo ${options_modules_static[@]}) \
+					$([[ ${c} == release_debug ]] \
+						&& echo "debug_release=True") \
+					arch=${a} \
+					target=${c} \
+					tools=no \
+					|| die
+			done
+		fi
+	done
 }
 
 src_compile_linux()
 {
-	einfo "Building Linux export templates"
-	if (use abi_x86_64 || use abi_mips_n64 || use ppc64 || use arm64) \
-		&& [[ $(get_libdir) =~ 64 ]] ; then
-		scons platform=x11 \
-			${myoptions[@]} \
-			bits=64 \
-			target=release \
-			tools=no \
-			use_leak_sanitizer=$(usex lsan_client) \
-			use_sanitizer=$(usex asan_client) \
-			|| die
-		scons platform=x11 \
-			${myoptions[@]} \
-			bits=64 \
-			debug_release=True \
-			target=release_debug \
-			tools=no \
-			use_leak_sanitizer=$(usex lsan_client) \
-			use_sanitizer=$(usex asan_client) \
-			|| die
-	fi
-	if (use abi_x86_32 || use abi_mips_o32 || use ppc || use arm) \
-		&& [[ $(get_libdir) =~ 32 ]] ; then
-		scons platform=x11 \
-			${myoptions[@]} \
-			bits=32 \
-			target=release \
-			tools=no \
-			use_leak_sanitizer=$(usex lsan_client) \
-			use_sanitizer=$(usex asan_client) \
-			|| die
-		scons platform=x11 \
-			${myoptions[@]} \
-			bits=32 \
-			debug_release=True \
-			target=release_debug \
-			tools=no \
-			use_leak_sanitizer=$(usex lsan_client) \
-			use_sanitizer=$(usex asan_client) \
-			|| die
-	fi
+	unset CCACHE
+	for b in 32 64 ; do
+		if [[ "${b}" == 32 ]] ; then
+			! use godot_linux_x86 && continue
+			einfo "Building Linux export templates for x86"
+		else
+			! use godot_linux_x86_64 && continue
+			einfo "Building Linux export templates for x86_64"
+		fi
+		for c in release release_debug ; do
+			scons ${options_x11[@]} \
+				${options_modules[@]} \
+				$([[ ${c} == release_debug ]] \
+					&& echo "debug_release=True") \
+				bits=${b} \
+				target=${c} \
+				tools=no \
+				|| die
+		done
+	done
+
 	if multilib_is_native_abi ; then
 		einfo "Building Linux editor"
-		scons platform=x11 \
-			${myoptions[@]} \
-			use_leak_sanitizer=$(usex lsan_client) \
-			use_sanitizer=$(usex asan_client) \
+		scons ${options_x11[@]} \
+			${options_modules[@]} \
+			$(usex debug "debug_release=True" "") \
+			$(usex debug "target=debug_release" "") \
 			"CFLAGS=${CFLAGS}" \
 			"CCFLAGS=${CXXFLAGS}" \
 			"LINKFLAGS=${LDFLAGS}" || die
@@ -526,36 +729,141 @@ src_compile_linux()
 
 src_compile_linux_server()
 {
+	unset CCACHE
+	local options_extra=(
+		$(usex debug "debug_release=True" "")
+		$(usex debug "target=debug_release" "")
+	)
+
 	if [[ "${EPLATFORM}" == "server_dedicated" ]] ; then
 		einfo "Building dedicated server"
-		scons platform=server \
-			${myoptions[@]} \
-			target=release \
+		scons ${options_server[@]} \
+			${options_modules[@]} \
+			${options_extra[@]} \
 			tools=no \
-			use_leak_sanitizer=$(usex lsan_server) \
-			use_sanitizer=$(usex asan_server) \
 			|| die
 	fi
 	if [[ "${EPLATFORM}" == "server_headless" ]] ; then
 		einfo "Building editor server"
-		scons platform=server \
-			${myoptions[@]} \
-			debug_release=True \
-			target=release_debug \
+		scons ${option_server[@]} \
+			${options_modules[@]} \
+			${options_extra[@]} \
 			tools=yes \
-			use_leak_sanitizer=$(usex lsan_server) \
-			use_sanitizer=$(usex asan_server) \
 			|| die
 	fi
 }
 
+src_compile_osx()
+{
+	export CCACHE=${CCACHE_OSX}
+	for a in ${GODOT_OSX} ; do
+		if use ${a} ; then
+			einfo "Creating export template for OSX (${a})"
+			for c in release release_debug ; do
+				scons ${options_osx[@]} \
+					${options_modules[@]} \
+					${options_modules_static[@]} \
+					target=${c} \
+					tools=no \
+					|| die
+			done
+		fi
+	done
+}
+
+src_compile_web()
+{
+	unset CCACHE
+	local options_modules_
+	if [[ -n "${EGODOT_WEB_CONFIG}" ]] ; then
+		einfo "Using config override for Web"
+		einfo "${EGODOT_WEB_CONFIG}"
+		options_modules_=(${EGODOT_WEB_CONFIG})
+	else
+		options_modules_=(${options_modules[@]})
+	fi
+	einfo "Creating export templates for the Web with Asm.js"
+	_configure_emscripten
+
+	for c in release release_debug ; do
+		scons ${options_javascript[@]} \
+			${options_modules_[@]} \
+			$([[ -z "${EGODOT_WEB_CONFIG}" ]] \
+				&& echo ${options_modules_static[@]}) \
+			$([[ ${c} == release_debug ]] \
+				&& echo "debug_release=True") \
+			target=${c} \
+			tools=no \
+			|| die
+	done
+}
+
+src_compile_windows()
+{
+	unset CCACHE
+	for a in ${GODOT_WINDOWS} ; do
+		if use ${a} ; then
+			local bitness
+			if [[ "${a}" == "x86_64" ]] ; then
+				bitness=64
+			else
+				bitness=32
+			fi
+			einfo "Creating export template for Windows (${a})"
+			for c in release release_debug ; do
+				scons ${options_windows[@]} \
+					${options_modules[@]} \
+					${options_modules_static[@]} \
+					bits=${bitness} \
+					target=${c} \
+					tools=no \
+					|| die
+			done
+		fi
+	done
+}
+
 src_compile() {
 	local myoptions=()
-
-	# The cscript is orphaned and was a rough draft.
-	myoptions+=(
-		disable_3d=$(usex !3d)
-		disable_advanced_gui=$(usex !advanced-gui)
+	local options_android=(
+		platform=android
+		ndk_platform=android-${EGODOT_ANDROID_API_LEVEL}
+	)
+	local options_iphone=(
+		platform=iphone
+		game_center=$(usex game-center)
+		icloud=$(usex icloud)
+		ios_sim=$(usex ios-sim)
+		use_lto=$(usex lto)
+		store_kit=$(usex store-kit)
+	)
+	local options_javascript=(
+		platform=javascript
+	)
+	local options_osx=(
+		platform=osx
+		osxcross_sdk=${EOSXCROSS_SDK}
+	)
+	local options_server=(
+		platform=server
+		use_llvm=$(usex clang)
+		use_leak_sanitizer=$(usex lsan_server)
+		use_sanitizer=$(usex asan_server)
+	)
+	local options_windows=(
+		platform=windows
+	)
+	local options_x11=(
+		platform=x11
+		pulseaudio=$(usex pulseaudio)
+		touch=$(usex touch)
+		use_leak_sanitizer=$(usex lsan_client)
+		use_llvm=$(usex clang)
+		use_lto=$(usex lto)
+		use_sanitizer=$(usex asan_client)
+		udev=$(usex gamepad)
+	)
+	local options_modules_shared=(
 		builtin_freetype=$(usex !system-freetype)
 		builtin_glew=$(usex !system-glew)
 		builtin_libmpcdec=$(usex !system-libmpcdec)
@@ -564,12 +872,34 @@ src_compile() {
 		builtin_libvorbis=$(usex !system-libvorbis)
 		builtin_libvpx=$(usex !system-libvpx)
 		builtin_libwebp=$(usex !system-libwebp)
-		builtin_pcre2=$(usex !system-pcre2)
 		builtin_opus=$(usex !system-opus)
 		builtin_recast=$(usex !system-recast)
 		builtin_speex=$(usex !system-speex)
 		builtin_squish=$(usex !system-squish)
 		builtin_zlib=$(usex !system-zlib)
+		use_static_cpp=$(usex portable)
+	)
+	local options_modules_static=(
+		builtin_freetype=True
+		builtin_glew=True
+		builtin_libmpcdec=True
+		builtin_libpng=True
+		builtin_libtheora=True
+		builtin_libvorbis=True
+		builtin_libvpx=True
+		builtin_libwebp=True
+		builtin_opus=True
+		builtin_recast=True
+		builtin_speex=True
+		builtin_squish=True
+		builtin_zlib=True
+		use_static_cpp=True
+	)
+
+	# The cscript is orphaned and was a rough draft.
+	options_modules+=(
+		disable_3d=$(usex !3d)
+		disable_advanced_gui=$(usex !advanced-gui)
 		minizip=$(usex minizip)
 		module_bmp_enabled=$(usex bmp)
 		module_chibi_enabled=$(usex mod)
@@ -586,7 +916,6 @@ src_compile() {
 		module_openssl_enabled=$(usex ogg)
 		module_pbm_enabled=$(usex pbm)
 		module_pvrtc_enabled=$(usex pvrtc)
-		module_regex_enabled=$(usex pcre2)
 		module_recast_enabled=$(usex recast)
 		module_squish_enabled=$(usex s3tc)
 		module_speex_enabled=$(usex speex)
@@ -597,12 +926,6 @@ src_compile() {
 		module_vorbis_enabled=$(usex vorbis)
 		module_webm_enabled=$(usex webm)
 		module_webp_enabled=$(usex webp)
-		pulseaudio=$(usex pulseaudio)
-		touch=$(usex touch)
-		udev=$(usex gamepad)
-		use_llvm=$(usex clang)
-		use_lto=$(usex lto)
-		use_static_cpp=$(usex portable)
 		xml=$(usex xml)
 		${EGODOT_ADDITIONAL_CONFIG} )
 
@@ -610,26 +933,35 @@ src_compile() {
 	# if gcc 4-5, use llvm
 
 	godot_compile_impl() {
-		einfo "${BUILD_DIR}"
 		cd "${BUILD_DIR}" || die
-		if [[ "${EPLATFORM}" == "android" ]] ; then
+		if [[ "${EPLATFORM}" == "godot_platforms_android" ]] ; then
 			src_compile_android
-		elif [[ "${EPLATFORM}" == "linux" ]] ; then
-			multilib_compile_impl() {
+		elif [[ "${EPLATFORM}" == "godot_platforms_ios" ]] ; then
+			src_compile_ios
+		elif [[ "${EPLATFORM}" == "godot_platforms_linux" ]] ; then
+			multilib_compile_linux() {
 				cd "${BUILD_DIR}" || die
 				src_compile_linux
 			}
-			multilib_foreach_abi multilib_compile_impl
+			multilib_foreach_abi multilib_compile_linux
+		elif [[ "${EPLATFORM}" == "godot_platforms_osx" ]] ; then
+			src_compile_osx
 		elif [[ "${EPLATFORM}" == "server_dedicated" \
 			|| "${EPLATFORM}" == "server_headless" ]] ; then
-			multilib_compile_impl() {
+			multilib_compile_server() {
 				cd "${BUILD_DIR}" || die
 				src_compile_linux_server
 			}
-			multilib_foreach_abi multilib_compile_impl
-		elif [[ "${EPLATFORM}" == "web" ]] ; then
+			multilib_foreach_abi multilib_compile_server
+		elif [[ "${EPLATFORM}" == "godot_platforms_web" ]] ; then
 			# int is 32-bit in asm.js
 			src_compile_web
+		elif [[ "${EPLATFORM}" == "godot_platforms_windows" ]] ; then
+			multilib_compile_windows() {
+				cd "${BUILD_DIR}" || die
+				src_compile_windows
+			}
+			multilib_foreach_abi multilib_compile_windows
 		fi
 	}
 	platforms_foreach_impl godot_compile_impl
@@ -715,10 +1047,20 @@ src_install_linux()
 {
 	local bitness=$(_get_bitness)
 	bitness=${bitness//./}
-	insinto /usr/share/godot/${SLOT_MAJ}/${EPLATFORM}/templates
+	exeinto /usr/share/godot/${SLOT_MAJ}/${EPLATFORM//godot_platforms_/}/templates
 	einfo "Installing export templates for Linux"
-	doins bin/linux_x11_${bitness}_debug \
-		bin/linux_x11_${bitness}_release
+	for bitness in 32 64 ; do
+		for c in debug release ; do
+			if [[ -f "bin/godot.x11.opt.${bitness}" && "${c}" == "release" ]] ; then
+				newexe bin/godot.x11.opt.${bitness} \
+					linux_x11_${bitness}_${c}
+			fi
+			if [[ -f "bin/godot.x11.opt.debug.${bitness}" && "${c}" == "debug" ]] ; then
+				newexe bin/godot.x11.opt.debug.${bitness} \
+					linux_x11_${bitness}_${c}
+			fi
+		done
+	done
 	if multilib_is_native_abi ; then
 		einfo "Setting up Linux editor environment"
 		make_desktop_entry \
@@ -743,8 +1085,8 @@ src_install_linux_server()
 {
 	local bitness=$(_get_bitness)
 	bitness=${bitness//./}
-	insinto /usr/share/godot/${SLOT_MAJ}/${EPLATFORM}/templates
-	einfo "Installing export templates for ${EPLATFORM}"
+	insinto /usr/share/godot/${SLOT_MAJ}/${EPLATFORM//godot_platforms_/}/templates
+	einfo "Installing export templates for ${EPLATFORM//godot_platforms_/}"
 	doins bin/linux_server_${bitness}
 }
 
@@ -758,11 +1100,12 @@ src_install_web()
 
 src_install() {
 	godot_install_impl() {
-		if [[ "${EPLATFORM}" == "linux"
+		if [[ "${EPLATFORM}" == "godot_platforms_linux"
 			|| "${EPLATFORM}" == "server_dedicated" \
 			|| "${EPLATFORM}" == "server_headless" ]] ; then
 			cd "${BUILD_DIR}" || die
 			multilib_install_impl() {
+				cd "${BUILD_DIR}" || die
 				# Generate the inputs for filename generation with e.
 				unset e
 				declare -A e
@@ -771,7 +1114,7 @@ src_install() {
 				else
 					e["name"]="godot"
 				fi
-				if [[ "${EPLATFORM}" == "linux" ]] ; then
+				if [[ "${EPLATFORM}" == "godot_platforms_linux" ]] ; then
 					# Destination name for symlinks
 					e["dname"]="godot"
 				elif [[ "${EPLATFORM}" == "server_dedicated" ]] ; then
@@ -781,13 +1124,13 @@ src_install() {
 				fi
 				e["platform"]=".x11"
 				e["configuation"]=".opt"
-				if [[ "${EPLATFORM}" == "linux" \
+				if [[ "${EPLATFORM}" == "godot_platforms_linux" \
 				  || "${EPLATFORM}" == "server_headless" ]] ; then
 					e["tools"]=".tools"
 				fi
 				e["bitness"]=$(_get_bitness)
 				e["llvm"]=$(usex clang ".llvm" "")
-				if [[ "${EPLATFORM}" == "linux" ]] \
+				if [[ "${EPLATFORM}" == "godot_platforms_linux" ]] \
 					&& (use asan_client || use lsan_client); then
 					e["sanitizer"]=".s"
 				elif [[ "${EPLATFORM}" == "server" ]] \
@@ -796,13 +1139,15 @@ src_install() {
 				else
 					e["sanitizer"]=""
 				fi
-				if [[ "${EPLATFORM}" == "linux" ]] \
+				if [[ "${EPLATFORM}" == "godot_platforms_linux" ]] \
 					&& ! multilib_is_native_abi ; then
 					:;
-				else
+				elif [[ "${EPLATFORM}" == "godot_platforms_linux" \
+					|| "${EPLATFORM}" == "server_dedicated" \
+					|| "${EPLATFORM}" == "server_headless" ]] ; then
 					_install_linux_editor_or_server e
 				fi
-				if [[ "${EPLATFORM}" == "linux" ]] ; then
+				if [[ "${EPLATFORM}" == "godot_platforms_linux" ]] ; then
 					src_install_linux
 				fi
 				if [[ "${EPLATFORM}" == "server_dedicated" \
@@ -811,10 +1156,16 @@ src_install() {
 				fi
 			}
 			multilib_foreach_abi multilib_install_impl
-		elif [[ "${EPLATFORM}" == "android" ]] ; then
+		elif [[ "${EPLATFORM}" == "godot_platforms_android" ]] ; then
 			src_install_android
-		elif [[ "${EPLATFORM}" == "web" ]] ; then
+		elif [[ "${EPLATFORM}" == "godot_platforms_ios" ]] ; then
+			:; # TODO
+		elif [[ "${EPLATFORM}" == "godot_platforms_osx" ]] ; then
+			:; # TODO
+		elif [[ "${EPLATFORM}" == "godot_platforms_web" ]] ; then
 			src_install_web
+		elif [[ "${EPLATFORM}" == "godot_platforms_windows" ]] ; then
+			:; # TODO
 		fi
 	}
 	platforms_foreach_impl godot_install_impl

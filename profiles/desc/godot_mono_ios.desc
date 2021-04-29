@@ -1,0 +1,9 @@
+# Copyright 2021 Orson Teodoro
+# Distributed under the terms of the GNU General Public License v2
+
+armv7 - Adds export templates to build Mono C-Sharp scripted games to arm7 for MonoTouch
+armv64 - Adds export templates to build Mono C-Sharp scripted games to armv64 for MonoTouch
+i386 - Adds export templates to build Mono C-Sharp scripted games to i386 for MonoTouch
+cross-armv7 - Adds export templates to build Mono C-Sharp scripted games to arm6 for MonoTouch with AOT (Ahead Of Time) precompilation optimization for faster load time
+cross-arm64 - Adds export templates to build Mono C-Sharp scripted games to arm7 for MonoTouch with AOT (Ahead Of Time) precompilation optimization for faster load time
+x86_64 - Adds export templates to build Mono C-Sharp scripted games to x86_64 for MonoTouch

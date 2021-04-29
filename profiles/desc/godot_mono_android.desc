@@ -1,0 +1,12 @@
+# Copyright 2021 Orson Teodoro
+# Distributed under the terms of the GNU General Public License v2
+
+arm6 - Adds export templates to build Mono C-Sharp scripted games to arm6 for MonoDroid
+arm7 - Adds export templates to build Mono C-Sharp scripted games to arm7 for MonoDroid
+arm64v8 - Adds export templates to build Mono C-Sharp scripted games to arm64v8 for MonoDroid
+x86 - Adds export templates to build Mono C-Sharp scripted games to x86 for MonoDroid
+x86_64 - Adds export templates to build Mono C-Sharp scripted games to x86_64 for MonoDroid
+cross-arm - Adds export templates to build Mono C-Sharp scripted games for the arm MonoDroid with additional AOT (Ahead Of Time) precompilation optimization for faster load time
+cross-arm64 - Adds export templates to build Mono C-Sharp scripted games for the arm64 MonoDroid with additional AOT (Ahead Of Time) precompilation optimization for faster load time
+cross-x86 - Adds export templates to build Mono C-Sharp scripted games for the x86 MonoDroid with additional AOT (Ahead Of Time) precompilation optimization for faster load time
+cross-x86_64 - Adds export templates to build Mono C-Sharp scripted games for the x86_64 MonoDroid with additional AOT (Ahead Of Time) precompilation optimization for faster load time

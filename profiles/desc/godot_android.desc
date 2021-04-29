@@ -1,0 +1,9 @@
+# Copyright 2021 Orson Teodoro
+# Distributed under the terms of the GNU General Public License v2
+
+arm6 - Exports natively to arm6 for Android
+arm64v8 - Exports natively to arm64v8 for Android
+arm7 - Exports natively to arm7 for Android
+x86 - Exports natively to x86 for Android
+x86_64 - Exports natively to x86_64 for Android
+

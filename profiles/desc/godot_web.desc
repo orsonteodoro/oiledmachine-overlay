@@ -1,0 +1,5 @@
+# Copyright 2021 Orson Teodoro
+# Distributed under the terms of the GNU General Public License v2
+
+asmjs - Adds export templates to build natively for the Web using Asm.js
+wasm32 - Adds export templates to build natively for the Web using WebAssembly (WASM)

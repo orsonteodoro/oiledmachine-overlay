@@ -1,0 +1,8 @@
+# Copyright 2021 Orson Teodoro
+# Distributed under the terms of the GNU General Public License v2
+
+arm - Adds export templates to natively build for arm for iOS device
+armv64 - Adds export templates to natively build for armv64 for iOS device
+armv7 - Adds export templates to natively build for armv7 for iOS device
+x86 - Adds export templates to natively build for x86 for the iPhone simulator
+x86_64 - Adds export templates to natively build for x86_64 for the iPhone simulator

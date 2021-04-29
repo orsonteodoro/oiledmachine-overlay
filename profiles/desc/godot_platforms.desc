@@ -1,0 +1,9 @@
+# Copyright 2021 Orson Teodoro
+# Distributed under the terms of the GNU General Public License v2
+
+android - Build support for the Android platform
+ios - Build support for the iOS platform
+linux - Builds support for the Linux platform
+osx - Build support for the OSX platform
+windows - Builds support for the Windows platform
+web - Builds support for the Web platform
