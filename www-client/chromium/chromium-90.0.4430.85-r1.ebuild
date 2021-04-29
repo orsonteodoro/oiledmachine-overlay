@@ -121,7 +121,10 @@ BDEPEND="
 	sys-apps/hwids[usb(+)]
 	>=sys-devel/bison-2.4.3
 	sys-devel/flex[${MULTILIB_USEDEP}]
-	virtual/pkgconfig[${MULTILIB_USEDEP}]
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)
 	js-type-check? ( virtual/jre )
 "
 

@@ -44,3 +44,4 @@ sed -i -e "s|^src_compile|multilib_src_compile|" $1.mod
 sed -i -e "s|^src_install|multilib_src_install|" $1.mod
 sed -i -e "s|\+tcmalloc|-tcmalloc|" $1.mod
 echo "The modified ebuild has been saved as $1.mod"
+echo "Manually edit pkgconfig section"
