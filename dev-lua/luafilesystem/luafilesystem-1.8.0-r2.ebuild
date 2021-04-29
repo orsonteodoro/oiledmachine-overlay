@@ -16,8 +16,12 @@ RESTRICT="!test? ( test )"
 RDEPEND="${LUA_DEPS}
 	dev-lang/lua:*[${MULTILIB_USEDEP}]
 	luajit? ( dev-lang/luajit:2 )"
-BDEPEND="test? ( ${RDEPEND} )
-	virtual/pkgconfig[${MULTILIB_USEDEP}]"
+BDEPEND="
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)
+	test? ( ${RDEPEND} )"
 DEPEND="${RDEPEND}"
 MY_PV=${PV//./_}
 SRC_URI=\
