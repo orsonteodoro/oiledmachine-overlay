@@ -128,7 +128,7 @@ IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 \
 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
-IUSE+=" +jemalloc"
+IUSE+=" -jemalloc"
 
 REQUIRED_USE="debug? ( !system-av1 )
 	screencast? ( wayland )"
@@ -138,7 +138,10 @@ BDEPEND="${PYTHON_DEPS}
 	app-arch/zip
 	>=dev-util/cbindgen-0.16.0
 	>=net-libs/nodejs-10.23.1
-	virtual/pkgconfig[${MULTILIB_USEDEP}]
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)
 	>=dev-lang/rust-1.47.0[${MULTILIB_USEDEP}]
 	!dev-lang/rust-bin
 	|| (
