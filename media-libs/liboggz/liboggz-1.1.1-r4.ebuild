@@ -12,12 +12,16 @@ SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.gz"
 LICENSE="BSD"
 SLOT="0/${PV}"
 KEYWORDS="alpha amd64 arm arm64 hppa ia64 ppc ppc64 sparc x86"
-IUSE="doc static-libs test"
+IUSE+=" doc static-libs test"
 RESTRICT="!test? ( test )"
 
-RDEPEND=">=media-libs/libogg-1.2.0[${MULTILIB_USEDEP}]"
-DEPEND="${RDEPEND}
-	virtual/pkgconfig[${MULTILIB_USEDEP}]
+RDEPEND+=" >=media-libs/libogg-1.2.0[${MULTILIB_USEDEP}]"
+DEPEND+=" ${RDEPEND}"
+BDEPEND+="
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)
 	doc? ( app-doc/doxygen )
 	test? ( app-text/docbook-sgml-utils )"
 
