@@ -12,15 +12,19 @@ SRC_URI="https://downloads.xiph.org/releases/libfishsound/${P}.tar.gz"
 LICENSE="BSD"
 SLOT="0/${PV}"
 KEYWORDS="amd64 x86"
-IUSE="flac speex"
+IUSE+=" flac speex"
 
-RDEPEND="
+DEPEND+="
 	media-libs/libogg[${MULTILIB_USEDEP}]
 	media-libs/libvorbis[${MULTILIB_USEDEP}]
 	flac? ( media-libs/flac[${MULTILIB_USEDEP}] )
 	speex? ( media-libs/speex[${MULTILIB_USEDEP}] )"
-DEPEND="${RDEPEND}
-	virtual/pkgconfig[${MULTILIB_USEDEP}]"
+DEPEND+=" ${RDEPEND}"
+BDEPEND+="
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)"
 
 # bug #395153
 RESTRICT="test"
