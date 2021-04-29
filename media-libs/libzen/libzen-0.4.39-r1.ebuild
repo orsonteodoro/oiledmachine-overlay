@@ -14,7 +14,11 @@ LICENSE="all-rights-reserved ZLIB"
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~x86"
 IUSE+=" doc static-libs"
-BDEPEND+=" virtual/pkgconfig[${MULTILIB_USEDEP}]
+BDEPEND+="
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)
 	doc? ( app-doc/doxygen )"
 SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.bz2"
 #S=${WORKDIR}/${MY_PN}/Project/GNU/Library
