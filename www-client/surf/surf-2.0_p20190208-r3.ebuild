@@ -2,6 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_{6..9} )
+inherit multilib-minimal python-single-r1
+
 DESCRIPTION="a simple web browser based on WebKit/GTK+"
 HOMEPAGE="https://surf.suckless.org/"
 LICENSE="MIT SURF
@@ -15,30 +19,31 @@ LICENSE="MIT SURF
 KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 ~sparc x86 ~x86-linux ~x86-macos"
 SLOT="0"
-IUSE="doc mod_adblock mod_adblock_spam404 mod_adblock_easylist mod_autoopen \
+IUSE+=" doc mod_adblock mod_adblock_spam404 mod_adblock_easylist mod_autoopen \
 mod_link_hints mod_searchengines mod_simple_bookmarking_redux update_adblock"
-REQUIRED_USE="mod_adblock_easylist? ( mod_adblock )
+REQUIRED_USE+=" mod_adblock_easylist? ( mod_adblock )
 	      mod_adblock_spam404? ( mod_adblock )
 	      mod_searchengines? ( savedconfig )
 	      mod_simple_bookmarking_redux? ( savedconfig )
 	      update_adblock? ( mod_adblock )"
-PYTHON_COMPAT=( python3_{6,7,8} )
-inherit multilib-minimal python-single-r1
-COMMON_DEPEND=" app-crypt/gcr[gtk,${MULTILIB_USEDEP}]
+DEPEND+=" app-crypt/gcr[gtk,${MULTILIB_USEDEP}]
 		dev-libs/glib:2[${MULTILIB_USEDEP}]
 		net-libs/webkit-gtk:4[${MULTILIB_USEDEP}]
 		x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}]"
-DEPEND="${COMMON_DEPEND}
-	virtual/pkgconfig[${MULTILIB_USEDEP}]"
-RDEPEND="${COMMON_DEPEND}
-	 mod_adblock? ( dev-python/future[${PYTHON_USEDEP}]
+RDEPEND+=" ${DEPEND}
+	 mod_adblock? ( $(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]' python3_{6,7,8,9} )
 			x11-apps/xprop )
 	 !savedconfig? (   net-misc/curl[${MULTILIB_USEDEP}]
 			   x11-apps/xprop
 			 >=x11-misc/dmenu-4.7
 			   x11-terms/st )
 	 !sci-chemistry/surf"
+BDEPEND+="
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)"
 EGIT_BRANCH="surf-webkit2"
 EGIT_COMMIT="d068a3878b6b9f2841a49cd7948cdf9d62b55585"
 EGIT_REPO_URI="https://git.suckless.org/surf"
