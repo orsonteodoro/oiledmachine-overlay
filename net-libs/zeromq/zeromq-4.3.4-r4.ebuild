@@ -29,12 +29,16 @@ RDEPEND+=" libbsd? ( dev-libs/libbsd[${MULTILIB_USEDEP}] )
 	nss? ( >=dev-libs/nss-3[${MULTILIB_USEDEP}] )
 	tls? ( >=net-libs/gnutls-3.6.7[${MULTILIB_USEDEP}] )"
 DEPEND+=" ${RDEPEND}"
-BDEPEND+=" >=dev-util/cmake-2.8.12
+BDEPEND+="
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)
+	>=dev-util/cmake-2.8.12
 	doc? (
 		app-text/asciidoc
 		app-text/xmlto
-	)
-	pgm? ( virtual/pkgconfig[${MULTILIB_USEDEP}] )"
+	)"
 SRC_URI="https://github.com/zeromq/libzmq/releases/download/v${PV}/${P}.tar.gz"
 
 PATCHES=( "${FILESDIR}/zeromq-4.3.4-build-curve_keygen.patch" )
