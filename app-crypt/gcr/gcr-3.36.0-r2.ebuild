@@ -14,23 +14,21 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"
 LICENSE="GPL-2+ LGPL-2+"
 SLOT="0/1" # subslot = suffix of libgcr-base-3 and co
 
-IUSE="gtk gtk-doc +introspection +vala"
-REQUIRED_USE="vala? ( introspection )"
+IUSE+=" gtk gtk-doc +introspection +vala"
+REQUIRED_USE+=" vala? ( introspection )"
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris"
 
-DEPEND="
+DEPEND+="
 	>=dev-libs/glib-2.44.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.2.2:0=[${MULTILIB_USEDEP}]
 	>=app-crypt/p11-kit-0.19.0[${MULTILIB_USEDEP}]
 	gtk? ( >=x11-libs/gtk+-3.12:3[X,introspection?,${MULTILIB_USEDEP}] )
 	>=sys-apps/dbus-1[${MULTILIB_USEDEP}]
-	introspection? ( >=dev-libs/gobject-introspection-1.58:= )
-"
-RDEPEND="${DEPEND}
-	app-crypt/gnupg
-"
-BDEPEND="
+	introspection? ( >=dev-libs/gobject-introspection-1.58:= )"
+RDEPEND+=" ${DEPEND}
+	app-crypt/gnupg"
+BDEPEND+="
 	${PYTHON_DEPS}
 	gtk? ( dev-libs/libxml2:2[${MULTILIB_USEDEP}] )
 	dev-util/gdbus-codegen
@@ -38,9 +36,11 @@ BDEPEND="
 	gtk-doc? ( >=dev-util/gtk-doc-1.9
 		app-text/docbook-xml-dtd:4.1.2 )
 	>=sys-devel/gettext-0.19.8[${MULTILIB_USEDEP}]
-	virtual/pkgconfig[${MULTILIB_USEDEP}]
-	vala? ( $(vala_depend) )
-"
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)
+	vala? ( $(vala_depend) )"
 
 PATCHES=(
 	"${FILESDIR}"/${PV}-fix-gck-slot-test.patch
