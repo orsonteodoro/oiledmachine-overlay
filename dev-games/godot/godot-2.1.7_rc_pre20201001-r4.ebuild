@@ -998,12 +998,11 @@ _package_web_templates()
 				godot.mem || die
 			cp tools/dist/html_fs/godot.html . || die
 			cp tools/dist/html_fs/godotfs.js . || die
-			zip bin/javascript_${release_type}.zip godot.asm.js \
+			zip bin/javascript_${t}.zip godot.asm.js \
 				godot.js godot.mem godotfs.js godot.html || die
 		fi
 	done
 }
-
 
 _get_d_base()
 {
