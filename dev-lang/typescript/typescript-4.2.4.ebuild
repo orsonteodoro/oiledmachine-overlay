@@ -3,7 +3,7 @@
 
 EAPI=7
 
-NPM_SECAUDIT_AT_TYPES_NODE_V="14.14.2"
+NPM_SECAUDIT_AT_TYPES_NODE_V="14.14.25"
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
 
