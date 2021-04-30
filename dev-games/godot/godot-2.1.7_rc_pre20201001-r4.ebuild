@@ -408,9 +408,9 @@ See metadata.xml or \`epkginfo -x godot\` for details"
 
 check_osxcross()
 {
-	if [[ -z "${OSXCROSS_SDK}" ]] ; then
+	if [[ -z "${OSXCROSS_ROOT}" ]] ; then
 		die \
-"OSXCROSS_SDK must be set as a per-package environmental variable.  See\n\
+"OSXCROSS_ROOT must be set as a per-package environmental variable.  See\n\
 metadata.xml or \`epkginfo -x godot\` for details."
 	fi
 	if which xcrun ; then
