@@ -705,7 +705,9 @@ metadata.xml or \`epkginfo -x godot\` for details."
 "${OSXCROSS_ROOT}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc" \
 	   ]] ; then
 		die \
-"Cannot find x86_64-apple-${EOSXCROSS_SDK}-cc."
+"Cannot find x86_64-apple-${EOSXCROSS_SDK}-cc.  Fix either OSXCROSS_ROOT \
+(${OSXCROSS_ROOT}) or EOSXCROSS_SDK (${EOSXCROSS_SDK}).  Did not find \
+${OSXCROSS_ROOT}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc"
 	fi
 	if use godot_osx_x86_64 ; then
 		if ver_test ${EXCODE_SDK_VERSION} \

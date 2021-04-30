@@ -426,13 +426,15 @@ metadata.xml or \`epkginfo -x godot\` for details."
 "${OSXCROSS_ROOT}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc" \
 	   ]] ; then
 		die \
-"Cannot find x86_64-apple-${EOSXCROSS_SDK}-cc."
+"Cannot find x86_64-apple-${EOSXCROSS_SDK}-cc.  Fix either OSXCROSS_ROOT \
+(${OSXCROSS_ROOT}) or EOSXCROSS_SDK (${EOSXCROSS_SDK}).  Did not find \
+${OSXCROSS_ROOT}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc"
 	fi
 	if use godot_osx_x86_64 ; then
 		if ver_test ${EXCODE_SDK_VERSION} \
 			-lt ${EXPECTED_XCODE_SDK_MIN_VERSION_X86_64} ; then
 			die \
-"${PN} requires Xcode >= ${EXPECTED_XCODE_SDK_MIN_VERSION_X86_64}"
+"${PN} requires Xcode >= ${EXPECTED_XCODE_SDK_MIN_VERSION_X86_64} for x86_64"
 		fi
 	fi
 }
