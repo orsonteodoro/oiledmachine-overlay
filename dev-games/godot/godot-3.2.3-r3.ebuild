@@ -2037,7 +2037,6 @@ src_install_gdnative()
 			local platform=".linux"
 			arch_suffix=".${bitness}"
 
-			# orson
 			if use portable ; then
 				einfo "lib=godot-cpp/bin/libgodot-cpp${platform}${configuration}${arch_suffix}${libext}"
 				dolib.a godot-cpp/bin/libgodot-cpp${platform}${configuration}${arch_suffix}${libext}
