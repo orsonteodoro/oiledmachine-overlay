@@ -702,7 +702,7 @@ metadata.xml or \`epkginfo -x godot\` for details."
 metadata.xml or \`epkginfo -x godot\` for details."
 	fi
 	if [[ ! -f \
-"${EOSXCROSS_SDK}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc" \
+"${OSXCROSS_ROOT}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc" \
 	   ]] ; then
 		die \
 "Cannot find x86_64-apple-${EOSXCROSS_SDK}-cc."
