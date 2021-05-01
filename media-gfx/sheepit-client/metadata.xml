@@ -34,20 +34,6 @@
   <use>
     <flag name="blender">Accepts Blender licenses common to all Blender
       versions and to choose to render Blender projects.</flag>
-    <flag name="blender279b">Allows the client to download Blender 2.79b</flag>
-    <flag name="blender279b_filmic">Allows the client to download Blender 2.79b
-      with Sobotka's Filmic Blender OpenColorIO profile instead of the one
-      provided by vanilla Blender.</flag>
-    <flag name="blender280">Allows the client to download Blender 2.80.</flag>
-    <flag name="blender281a">Allows the client to download Blender 2.81a.</flag>
-    <flag name="blender282">Allows the client to download Blender 2.82 with
-      additional libraries not found in vanilla Blender.</flag>
-    <flag name="blender2831">Allows the client to download Blender 2.83.1.</flag>
-    <flag name="blender2831-benchmark">Temporarly downloads Blender 2.83.1
-      and runs unskipable benchmark.</flag>
-    <flag name="blender2832">Allows the client to download Blender 2.83.2.</flag>
-    <flag name="blender2832">Allows the client to download Blender 2.83.6.</flag>
-    <flag name="blender2900">Allows the client to download Blender 2.90.0.</flag>
     <flag name="cuda">Checks for CUDA drivers.</flag>
     <flag name="disable-hard-version-blocks">Permits user choice to selectively
       choose renderers to download.</flag>

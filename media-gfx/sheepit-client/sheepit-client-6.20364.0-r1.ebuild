@@ -27,24 +27,24 @@ LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
 		SGI-B-2.0
 	)
 	!no-repacks? (
-		blender282? (
+		sheepit_client_blender_2_82? (
 			MIT
 			LGPL-2.1
 			LGPL-2.1+
 			WTFPL-2
 		)
-		blender281a? (
+		sheepit_client_blender_2_81a? (
 			MIT
 			LGPL-2.1
 			LGPL-2.1+
 			WTFPL-2
 		)
 	)
-	blender279b_filmic? (
+	sheepit_client_blender_2_79b_filmic? (
 		all-rights-reserved
 	)
-)
-"
+)"
+
 #
 # About the sheepit-client licenses
 #
@@ -89,6 +89,10 @@ LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
 #
 #   The tslib is under LGPL-2.1.
 #
+# Build time licenses:
+#
+#   gradle is Apache-2.0
+#
 #
 # Uncaught license corrections:
 #
@@ -98,33 +102,43 @@ LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
 KEYWORDS="~amd64"
 SLOT="0"
 
-IUSE=" +benchmark blender blender279b blender279b_filmic blender280 \
-blender281a blender282 blender2831 blender2831 blender2832 blender2836 \
-blender2839 blender2900 blender2901 blender2910 allow-unknown-renderers \
-disable-hard-version-blocks cuda doc firejail intel-ocl lts +opencl \
-opencl_rocm opencl_orca opencl_pal opengl_mesa pro-drivers split-drivers \
-system-blender gentoo-blender no-repacks video_cards_amdgpu video_cards_i965 \
+BLENDER_VERSIONS=(
+	2_79b
+	2_79b_filmic
+	2_80
+	2_81a
+	2_82
+	2_83_9
+	2_90_1
+	2_91_0
+	2_92_0
+)
+
+IUSE=" +benchmark blender allow-unknown-renderers
+disable-hard-version-blocks cuda doc firejail intel-ocl lts +opencl
+opencl_rocm opencl_orca opencl_pal opengl_mesa pro-drivers split-drivers
+system-blender gentoo-blender no-repacks video_cards_amdgpu video_cards_i965
 video_cards_iris video_cards_nvidia video_cards_radeonsi"
-REQUIRED_USE="
+IUSE_BLENDER_VERSIONS=( ${BLENDER_VERSIONS[@]/#/sheepit_client_blender_} )
+IUSE+=" ${IUSE_BLENDER_VERSIONS[@]}"
+
+gen_required_use_blender()
+{
+	local version="${1}"
+	local o=""
+	for x in ${IUSE_BLENDER_VERSIONS[@]} ; do
+		o+="${x}? ( blender )"
+	done
+	echo "${x}"
+}
+
+REQUIRED_USE+=" "$(gen_required_use_blender)
+REQUIRED_USE+="
 	allow-unknown-renderers? ( blender !system-blender )
 	benchmark
-	benchmark? ( blender blender2901 )
-	blender? ( || ( blender279b blender279b_filmic blender280 blender281a
-			blender282 blender2831 blender2832 blender2836
-			blender2839 blender2900 blender2901 blender2910
+	benchmark? ( blender sheepit_client_blender_2_90_1 )
+	blender? ( || ( ${IUSE_BLENDER_VERSIONS[@]}
 			allow-unknown-renderers ) )
-	blender279b? ( blender )
-	blender279b_filmic? ( blender )
-	blender280? ( blender )
-	blender281a? ( blender )
-	blender282? ( blender )
-	blender2831? ( blender )
-	blender2832? ( blender )
-	blender2836? ( blender )
-	blender2839? ( blender )
-	blender2900? ( blender )
-	blender2901? ( blender )
-	blender2910? ( blender )
 	|| ( cuda opencl )
 	no-repacks? ( !allow-unknown-renderers !system-blender )
 	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
@@ -149,7 +163,8 @@ REQUIRED_USE="
 
 # About the lib folder
 # 2.79, 2.80 contains glu libglapi, mesa
-# 2.82, 2.81a contains DirectFB, libcaca, libglapi, glu, mesa, slang, SDL:1.2, tslib, libXxf86vm
+# 2.82, 2.81a contains DirectFB, libcaca, libglapi, glu, mesa, slang, SDL:1.2, \
+#   tslib, libXxf86vm
 
 # Additional libraries referenced in the custom build of 2.82
 RDEPEND_BLENDER_SHEEPIT282="
@@ -196,45 +211,73 @@ RDEPEND_BLENDER="
 # Due to the many different Blender project requirements, the release config
 # flags will be used to match especially those that affect the rendering.
 #
-# If you use the gentoo-overlay ebuilds, you must match exactly the benchmark
-# version of Blender in order to progress to render other projects.  This
-# may require to maintain your own version on your local repository.
+# If you use the gentoo-overlay blender ebuilds, you must match exactly the
+# benchmark version of Blender in order to progress to render other projects.
+# This may require to maintain your own version on your local repository.  Bad
+# news is that you can only use the benchmark version since there is no
+# effort for multislot.
+#
+
 RDEPEND="
 	blender? (
 		firejail? ( sys-apps/firejail )
 		!system-blender? (
 			${RDEPEND_BLENDER}
-			blender281a? ( !no-repacks? ( ${RDEPEND_BLENDER_SHEEPIT282} ) )
-			blender282? ( !no-repacks? ( ${RDEPEND_BLENDER_SHEEPIT282} ) )
+			sheepit_client_blender_2_81a? (
+				!no-repacks? ( ${RDEPEND_BLENDER_SHEEPIT282} )
+			)
+			sheepit_client_blender_2_82? (
+				!no-repacks? ( ${RDEPEND_BLENDER_SHEEPIT282} )
+			)
 		)
 		system-blender? (
 			gentoo-blender? (
-				blender2836? (
-					~media-gfx/blender-2.83.9[bullet,collada,color-management,cycles,dds,-debug,elbeem,fftw,-headless,nls,openexr,openimagedenoise,openimageio,opensubdiv,openvdb,openxr,osl,tiff]
+				sheepit_client_blender_2_90_1? (
+~media-gfx/blender-2.90.1\
+[alembic,bullet,collada,color-management,cycles,dds,-debug,elbeem,embree,fftw,\
+-headless,nls,openexr,openimagedenoise,openimageio,opensubdiv,openvdb,openxr,\
+osl,tiff]
+					media-libs/embree[raymask]
 					sci-physics/bullet
 				)
-				blender2901? (
-					~media-gfx/blender-2.90.1[bullet,collada,color-management,cycles,dds,-debug,elbeem,embree,fftw,-headless,nls,openexr,openimagedenoise,openimageio,opensubdiv,openvdb,openxr,osl,tiff]
+				sheepit_client_blender_2_91_0? (
+~media-gfx/blender-2.90.1\
+[alembic,bullet,collada,color-management,cycles,dds,-debug,elbeem,embree,fftw,\
+-headless,nls,openexr,openimagedenoise,openimageio,opensubdiv,openvdb,\
+openxr,osl,tiff]
 					media-libs/embree[raymask]
 					sci-physics/bullet
 				)
 			)
 			!gentoo-blender? (
-				blender279b? ( ~media-gfx/blender-2.79b[cycles,build_creator(+),release(+)] )
-				blender279b_filmic? (
-					~media-gfx/blender-2.79b[cycles,build_creator(+),release(+)]
-					media-plugins/filmic-blender:sheepit
-				)
-				blender280? ( ~media-gfx/blender-2.80[cycles,build_creator(+),release(+)] )
-				blender281a? ( ~media-gfx/blender-2.81a[cycles,build_creator(+),release(+)] )
-				blender282? ( ~media-gfx/blender-2.82[cycles,build_creator(+),release(+)] )
-				blender2831? ( ~media-gfx/blender-2.83.1[cycles,build_creator(+),release(+)] )
-				blender2832? ( ~media-gfx/blender-2.83.2[cycles,build_creator(+),release(+)] )
-				blender2836? ( ~media-gfx/blender-2.83.6[cycles,build_creator(+),release(+)] )
-				blender2839? ( ~media-gfx/blender-2.83.9[cycles,build_creator(+),release(+)] )
-				blender2900? ( ~media-gfx/blender-2.90.0[cycles,build_creator(+),release(+)] )
-				blender2901? ( ~media-gfx/blender-2.90.1[cycles,build_creator(+),release(+)] )
-				blender2910? ( ~media-gfx/blender-2.91.0[cycles,build_creator(+),release(+)] )
+sheepit_client_blender_2_79b? (
+	~media-gfx/blender-2.79b[cycles,build_creator(+),release(+)]
+)
+sheepit_client_blender_2_79b_filmic? (
+	~media-gfx/blender-2.79b[cycles,build_creator(+),release(+)]
+	media-plugins/filmic-blender:sheepit
+)
+sheepit_client_blender_2_80? (
+	~media-gfx/blender-2.80[cycles,build_creator(+),release(+)]
+)
+sheepit_client_blender_2_81a? (
+	~media-gfx/blender-2.81a[cycles,build_creator(+),release(+)]
+)
+sheepit_client_blender_2_82? (
+	~media-gfx/blender-2.82[cycles,build_creator(+),release(+)]
+)
+sheepit_client_blender_2_83_9? (
+	~media-gfx/blender-2.83.9[cycles,build_creator(+),release(+)]
+)
+sheepit_client_blender_2_90_1? (
+	~media-gfx/blender-2.90.1[cycles,build_creator(+),release(+)]
+)
+sheepit_client_blender_2_91_0? (
+	~media-gfx/blender-2.91.0[cycles,build_creator(+),release(+)]
+)
+sheepit_client_blender_2_92_0? (
+	~media-gfx/blender-2.92.0[cycles,build_creator(+),release(+)]
+)
 			)
 		)
 	)
@@ -245,12 +288,24 @@ RDEPEND="
 			|| (
 				pro-drivers? (
 					opengl_mesa? (
-						!lts? ( x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?] )
-						lts? ( x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?] )
+						!lts? (
+x11-drivers/amdgpu-pro\
+[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?]
+						)
+						lts? (
+x11-drivers/amdgpu-pro-lts\
+[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?]
+						)
 					)
 					!opengl_mesa? (
-						!lts? ( x11-drivers/amdgpu-pro[opencl,opencl_pal?,opencl_orca?] )
-						lts? ( x11-drivers/amdgpu-pro-lts[opencl,opencl_pal?,opencl_orca?] )
+						!lts? (
+x11-drivers/amdgpu-pro\
+[opencl,opencl_pal?,opencl_orca?]
+						)
+						lts? (
+x11-drivers/amdgpu-pro-lts\
+[opencl,opencl_pal?,opencl_orca?]
+						)
 					)
 				)
 				split-drivers? (
@@ -285,8 +340,8 @@ BDEPEND="${RDEPEND}
 	dev-java/gradle-bin
 	virtual/jdk:1.8"
 inherit linux-info
-SRC_URI="https://gitlab.com/sheepitrenderfarm/client/-/archive/v${PV}/client-v${PV}.tar.bz2 \
--> ${PN}-${PV}.tar.bz2"
+SRC_URI="https://gitlab.com/sheepitrenderfarm/client/-/archive/v${PV}/client-v${PV}.tar.bz2
+	-> ${PN}-${PV}.tar.bz2"
 S="${WORKDIR}/client-v${PV}"
 RESTRICT="mirror"
 WRAPPER_VERSION="3.0.0" # .sh file
@@ -306,14 +361,16 @@ show_codename_docs() {
 	einfo "Radeon RX 4xx:  https://en.wikipedia.org/wiki/Radeon_RX_400_series"
 	einfo "Radeon R5/R7/R9:  https://en.wikipedia.org/wiki/Radeon_Rx_300_series"
 	einfo "APU: https://en.wikipedia.org/wiki/AMD_Accelerated_Processing_Unit"
-	einfo "Device IDs <-> codename: https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c#L777"
+	einfo "Device IDs <-> codename: \
+https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c#L777"
 	einfo
 }
 
 show_notice_pcie3_atomics_required() {
-	# See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-	# https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/master/runtime/device/rocm/rocdevice.cpp
-	# Device should be supported end-to-end from kfd to runtime.
+	# See \
+# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+# https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/master/runtime/device/rocm/rocdevice.cpp
+# Device should be supported end-to-end from kfd to runtime.
 	ewarn
 	ewarn "Detected no PCIe atomics."
 	ewarn
@@ -439,13 +496,13 @@ check_embree() {
 
 pkg_setup() {
 	if use gentoo-blender ; then
-		use blender279b_filmic && gbewarn "2.79b_filmic"
-		use blender280 && gbewarn "2.80"
-		use blender281a && gbewarn "2.81a"
-		use blender282 && gbewarn "2.82"
-		use blender2831 && gbewarn "2.83.1"
-		use blender2832 && gbewarn "2.83.2"
-		use blender2900 && gbewarn "2.90.0"
+		use sheepit_client_blender_2_79b_filmic && gbewarn "2.79b_filmic"
+		use sheepit_client_blender_2_80 && gbewarn "2.80"
+		use sheepit_client_blender_2_81a && gbewarn "2.81a"
+		use sheepit_client_blender_2_82 && gbewarn "2.82"
+		use sheepit_client_blender_2_83_1 && gbewarn "2.83.1"
+		use sheepit_client_blender_2_83_2 && gbewarn "2.83.2"
+		use sheepit_client_blender_2_90_0 && gbewarn "2.90.0"
 	fi
 
 	if has network-sandbox $FEATURES ; then
@@ -454,14 +511,20 @@ pkg_setup() {
 	fi
 
 	if use opencl_rocm ; then
-		# No die checks for this kernel config in dev-libs/rocm-opencl-runtime.
+		# No die checks for this kernel config in
+		# dev-libs/rocm-opencl-runtime.
 		CONFIG_CHECK="HSA_AMD"
 		ERROR_HSA_AMD=\
 "Change CONFIG_HSA_AMD=y in kernel config.  It's required for opencl_rocm support."
 		linux-info_pkg_setup
-		if dmesg | grep kfd | grep "PCI rejects atomics" 2>/dev/null 1>/dev/null ; then
+		if dmesg \
+			| grep kfd \
+			| grep "PCI rejects atomics" \
+				2>/dev/null 1>/dev/null ; then
 			show_notice_pcie3_atomics_required
-		elif dmesg | grep -e '\[drm\] PCIE atomic ops is not supported' 2>/dev/null 1>/dev/null ; then
+		elif dmesg \
+			| grep -e '\[drm\] PCIE atomic ops is not supported' \
+			2>/dev/null 1>/dev/null ; then
 			show_notice_pcie3_atomics_required
 		fi
 	fi
@@ -471,9 +534,14 @@ pkg_setup() {
 		WARNING_HSA_AMD=\
 "Change CONFIG_HSA_AMD=y kernel config.  It may be required for opencl_pal support for pre-Vega 10."
 		linux-info_pkg_setup
-		if dmesg | grep kfd | grep "PCI rejects atomics" 2>/dev/null 1>/dev/null ; then
+		if dmesg \
+			| grep kfd \
+			| grep "PCI rejects atomics" \
+				2>/dev/null 1>/dev/null ; then
 			show_notice_pal_support
-		elif dmesg | grep -e '\[drm\] PCIE atomic ops is not supported' 2>/dev/null 1>/dev/null ; then
+		elif dmesg \
+			| grep -e '\[drm\] PCIE atomic ops is not supported' \
+			2>/dev/null 1>/dev/null ; then
 			show_notice_pal_support
 		fi
 	fi
@@ -497,12 +565,16 @@ pkg_setup() {
 }
 
 enable_hardblock() {
-	sed -i -e "s|public static final boolean ${1} = false;|public static final boolean ${1} = true;|g" \
+	sed -i -e "s|\
+public static final boolean ${1} = false;|\
+public static final boolean ${1} = true;|g" \
 		src/com/sheepit/client/Configuration.java || die
 }
 
 disable_hardblock() {
-	sed -i -e "s|public static final boolean ${1} = true;|public static final boolean ${1} = false;|g" \
+	sed -i -e "s|\
+public static final boolean ${1} = true;|\
+public static final boolean ${1} = false;|g" \
 		src/com/sheepit/client/Configuration.java || die
 }
 
@@ -519,31 +591,40 @@ wrong checksum"
 	fi
 
 	if ! use system-blender ; then
-		ewarn
-		ewarn "Security notices:"
-		ewarn
-		ewarn "${PN} downloads Blender 2.79 with Python 3.5.3 having critical security CVE advisories"
-		ewarn "${PN} downloads Blender 2.80 with Python 3.7.0 having high security CVE advisory"
-		ewarn "${PN} downloads Blender 2.81a with Python 3.7.4 having high security CVE advisory"
-		ewarn "${PN} downloads Blender 2.82 with Python 3.7.4 having high security CVE advisory"
-		ewarn "${PN} downloads Blender 2.83.1 with Python 3.7.4 having high security CVE advisory"
-		ewarn "${PN} downloads Blender 2.83.2 with Python 3.7.4 having high security CVE advisory"
-		ewarn "${PN} downloads Blender 2.90.0 with Python 3.7.7 having high security CVE advisory"
-		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all"
-		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all"
-		ewarn
-		ewarn "${PN} downloads repackaged Blender 2.81a with DirectFB 1.2.10."
-		ewarn "https://security.gentoo.org/glsa/201701-55"
-		ewarn
-		ewarn "${PN} downloads repackaged Blender 2.82 with DirectFB 1.2.10."
-		ewarn "https://security.gentoo.org/glsa/201701-55"
-		ewarn
-		ewarn "${PN} downloads Blender 2.81a with SDL 1.2.14_pre20091018."
-		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl%201.2&search_type=all"
-		ewarn
-		ewarn "${PN} downloads Blender 2.82 with SDL 1.2.14_pre20091018."
-		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl%201.2&search_type=all"
-		ewarn
+		ewarn \
+"\n\
+Security notices:\n\
+\n\
+${PN} downloads Blender 2.79 with Python 3.5.3 having critical security CVE \
+advisories\n\
+https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all\n\
+\n\
+${PN} downloads Blender 2.80 with Python 3.7.0 having high security CVE \
+advisory\n\
+${PN} downloads Blender 2.81a with Python 3.7.4 having high security CVE \
+advisory\n\
+${PN} downloads Blender 2.82 with Python 3.7.4 having high security CVE \
+advisory\n\
+${PN} downloads Blender 2.83.1 with Python 3.7.4 having high security CVE \
+advisory\n\
+${PN} downloads Blender 2.83.2 with Python 3.7.4 having high security CVE \
+advisory\n\
+${PN} downloads Blender 2.90.0 with Python 3.7.7 having high security CVE \
+advisory\n\
+https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all\n\
+\n\
+${PN} downloads repackaged Blender 2.81a with DirectFB 1.2.10.\n\
+https://security.gentoo.org/glsa/201701-55\n\
+\n\
+${PN} downloads repackaged Blender 2.82 with DirectFB 1.2.10.\n\
+https://security.gentoo.org/glsa/201701-55\n\
+\n\
+${PN} downloads Blender 2.81a with SDL 1.2.14_pre20091018.\n\
+https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl%201.2&search_type=all\n\
+\n\
+${PN} downloads Blender 2.82 with SDL 1.2.14_pre20091018.\n\
+https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl%201.2&search_type=all\n\
+\n"
 	fi
 
 	default
@@ -552,7 +633,7 @@ wrong checksum"
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.20304.0-r3-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.20304.0-r4-renderer-version-picker.patch"
 
 	if use system-blender ; then
 		if use gentoo-blender ; then
@@ -568,12 +649,16 @@ wrong checksum"
 	fi
 
 	if ! use system-blender ; then
-		sed -i -e "s|USE_SYSTEM_RENDERERS = true|USE_SYSTEM_RENDERERS = false|g" \
+		sed -i -e "s|\
+USE_SYSTEM_RENDERERS = true|\
+USE_SYSTEM_RENDERERS = false|g" \
 			src/com/sheepit/client/Configuration.java || die
 	fi
 
 	if use no-repacks ; then
-		sed -i -e "s|USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = false|USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = true|g" \
+		sed -i -e "s|\
+USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = false|\
+USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = true|g" \
 			src/com/sheepit/client/Configuration.java || die
 	fi
 
@@ -582,73 +667,23 @@ wrong checksum"
 			enable_hardblock "HARDBLOCK_UNKNOWN_RENDERERS"
 		fi
 	fi
-	if ! use blender279b ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_279B"
+
+	for x in ${IUSE_BLENDER_VERSIONS[@]} ; do
+		if ! use ${x} ; then
+			local v=${x//sheepit_client_blender_}
+			v=${x^^}
+			enable_hardblock "HARDBLOCK_BLENDER_${v}"
 		fi
-	fi
-	if ! use blender279b_filmic ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_279B_FILMIC"
-		fi
-	fi
-	if ! use blender280 ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_280"
-		fi
-	fi
-	if ! use blender281a ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_281A"
-		fi
-	fi
-	if ! use blender282 ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_282"
-		fi
-	fi
-	if ! use blender2831 ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_2831"
-		fi
-	fi
-	if ! use blender2832 ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_2832"
-		fi
-	fi
-	if ! use blender2836 ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_2836"
-		fi
-	fi
-	if ! use blender2839 ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_2839"
-		fi
-	fi
-	if ! use blender2900 ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_2900"
-		fi
-	fi
-	if ! use blender2901 ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_2901"
-		fi
-	fi
-	if ! use blender2910 ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_2910"
-		fi
-	fi
+	done
 }
 
 src_compile() {
-	# Prevents: Could not open terminal for stdout: could not get termcap entry
+	# Prevents: Could not open terminal for stdout: could not get termcap
+	# entry
 	export TERM=linux # pretend to be outside of X
 
-	chmod +x gradlew
+	chmod +x gradlew || die
+	export GRADLE_USER_HOME="${HOME}/.gradle"
 	./gradlew shadowJar || die
 }
 
@@ -661,102 +696,26 @@ src_install() {
 	docinto licenses
 	dodoc LICENSE
 	local allowed_renderers=""
-	if use blender279b ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.79b-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.79b-readmes"
+
+	for x in ${IUSE_BLENDER_VERSIONS[@]} ; do
+		if use ${x} ; then
+			einfo "Installing ${x}"
+			local v0=${x//sheepit_client_blender_}
+			v1=${v0}
+			v0=${v0//_/.}
+
+			if ! use system-blender ; then
+		if ! use sheepit_client_blender_2_92_0 ; then
+				dodoc -r "${FILESDIR}/blender-${v0}-licenses"
+				use doc \
+				dodoc -r "${FILESDIR}/blender-${v0}-readmes"
 		fi
-		allowed_renderers+=" --allow-blender279b"
-	fi
-	if use blender279b_filmic ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.79b-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.79b-readmes"
+			fi
+			allowed_renderers+=" --allow-blender-${v1}"
+		else
+			einfo "Skipping ${x}"
 		fi
-		allowed_renderers+=" --allow-blender279b-filmic"
-	fi
-	if use blender280 ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.80-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.80-readmes"
-		fi
-		allowed_renderers+=" --allow-blender280"
-	fi
-	if use blender281a ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.81a-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.81a-readmes"
-		fi
-		allowed_renderers+=" --allow-blender281a"
-	fi
-	if use blender282 ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.82-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.82-readmes"
-		fi
-		allowed_renderers+=" --allow-blender282"
-	fi
-	if use blender2831 ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.83.1-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.83.1-readmes"
-		fi
-		allowed_renderers+=" --allow-blender2831"
-	fi
-	if use blender2832 ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.83.2-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.83.2-readmes"
-		fi
-		allowed_renderers+=" --allow-blender2832"
-	fi
-	if use blender2836 ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.83.6-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.83.6-readmes"
-		fi
-		allowed_renderers+=" --allow-blender2836"
-	fi
-	if use blender2839 ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.83.9-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.83.9-readmes"
-		fi
-		allowed_renderers+=" --allow-blender2839"
-	fi
-	if use blender2900 ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.90.0-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.90.0-readmes"
-		fi
-		allowed_renderers+=" --allow-blender2900"
-	fi
-	if use blender2901 ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.90.1-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.90.1-readmes"
-		fi
-		allowed_renderers+=" --allow-blender2901"
-	fi
-	if use blender2910 ; then
-		if ! use system-blender ; then
-			dodoc -r "${FILESDIR}/blender-2.91.0-licenses"
-			use doc \
-			dodoc -r "${FILESDIR}/blender-2.91.0-readmes"
-		fi
-		allowed_renderers+=" --allow-blender2910"
-	fi
+	done
 	if use allow-unknown-renderers ; then
 		allowed_renderers+=" --allow-unknown-renderers"
 	fi
@@ -764,6 +723,7 @@ src_install() {
 		docinto docs
 		dodoc protocol.txt README.md
 	fi
+	einfo "allowed_renderers=${allowed_renderers}"
 	sed -i -e "s|ALLOWED_RENDERERS|${allowed_renderers}|g" \
 		"${T}/sheepit-client" || die
 
@@ -779,15 +739,18 @@ src_install() {
 
 		insinto /etc/firejail
 		if use system-blender ; then
-			newins "${FILESDIR}/firejail-profiles/sheepit-client-system-blender.profile" \
-				"sheepit-client.profile"
+			newins \
+	"${FILESDIR}/firejail-profiles/sheepit-client-system-blender.profile" \
+	"sheepit-client.profile"
 		else
 			if use no-repacks ; then
-				newins "${FILESDIR}/firejail-profiles/sheepit-client-no-repacks.profile" \
-					"sheepit-client.profile"
+				newins \
+	"${FILESDIR}/firejail-profiles/sheepit-client-no-repacks.profile" \
+	"sheepit-client.profile"
 			else
-				newins "${FILESDIR}/firejail-profiles/sheepit-client-default.profile" \
-					"sheepit-client.profile"
+				newins \
+	"${FILESDIR}/firejail-profiles/sheepit-client-default.profile" \
+	"sheepit-client.profile"
 
 			fi
 		fi
@@ -811,7 +774,8 @@ no buttons or input boxes, you need to:\n\
 Run 'wmname LG3D' before you run '${PN}'"
 	if use opencl ; then
 		ewarn "OpenCL support is not officially supported for Linux."
-		ewarn "For details see, https://github.com/laurent-clouet/sheepit-client/issues/165"
+		ewarn "For details see, \
+https://github.com/laurent-clouet/sheepit-client/issues/165"
 	fi
 	einfo
 	einfo "Don't forget to add your user account to the video group."
