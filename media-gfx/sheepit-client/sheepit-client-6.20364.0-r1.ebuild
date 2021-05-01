@@ -129,7 +129,7 @@ gen_required_use_blender()
 	for x in ${IUSE_BLENDER_VERSIONS[@]} ; do
 		o+=" ${x}? ( blender )"
 	done
-	echo "${x}"
+	echo "${o}"
 }
 
 REQUIRED_USE+=" "$(gen_required_use_blender)
