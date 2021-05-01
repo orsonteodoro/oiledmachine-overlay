@@ -127,7 +127,7 @@ gen_required_use_blender()
 	local version="${1}"
 	local o=""
 	for x in ${IUSE_BLENDER_VERSIONS[@]} ; do
-		o+="${x}? ( blender )"
+		o+=" ${x}? ( blender )"
 	done
 	echo "${x}"
 }
