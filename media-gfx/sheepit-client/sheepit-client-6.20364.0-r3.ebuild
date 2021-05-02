@@ -807,7 +807,7 @@ USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = true|g" \
 	for x in ${IUSE_BLENDER_VERSIONS[@]} ; do
 		if ! use ${x} ; then
 			local v=${x//sheepit_client_blender_}
-			v=${x^^}
+			v=${v^^}
 			enable_hardblock "HARDBLOCK_BLENDER_${v}"
 		fi
 	done
@@ -860,21 +860,24 @@ src_install() {
 
 	for x in ${IUSE_BLENDER_VERSIONS[@]} ; do
 		if use ${x} ; then
-			einfo "Installing ${x}"
+			einfo "Installing for ${x}"
 			local v0=${x//sheepit_client_blender_}
 			v1=${v0}
 			v0=${v0//_/.}
+			v0=${v0%_*}
 
 			if ! use system-blender ; then
-		if ! use sheepit_client_blender_2_92_0 ; then
-				dodoc -r "${FILESDIR}/blender-${v0}-licenses"
-				use doc \
-				dodoc -r "${FILESDIR}/blender-${v0}-readmes"
-		fi
+				if [[ "${v0}" == "2.92.0" ]] ; then
+					ewarn "FIXME:  2.92.0"
+				else
+					dodoc -r "${FILESDIR}/blender-${v0}-licenses"
+					use doc \
+					dodoc -r "${FILESDIR}/blender-${v0}-readmes"
+				fi
 			fi
 			allowed_renderers+=" --allow-blender-${v1}"
 		else
-			einfo "Skipping ${x}"
+			einfo "Skipping installing for ${x}"
 		fi
 	done
 	if use allow-unknown-renderers ; then
