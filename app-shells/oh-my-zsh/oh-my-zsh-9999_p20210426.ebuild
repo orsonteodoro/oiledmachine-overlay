@@ -183,7 +183,7 @@ PLUGINS_RDEPEND="
 	 omz_plugins_go? ( dev-lang/go )
 	 omz_plugins_golang? ( dev-lang/go )
 	 omz_plugins_globalias? ( sys-apps/grep[pcre] )
-	 omz_plugins_gradle? ( virtual/gradle )
+	 omz_plugins_gradle? ( dev-java/gradle-bin )
 	 omz_plugins_grc? ( app-misc/grc )
 	 omz_plugins_helm? ( app-admin/helm )
 	 omz_plugins_heroku? ( dev-util/heroku-cli )
