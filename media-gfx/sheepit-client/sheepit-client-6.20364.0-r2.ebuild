@@ -837,8 +837,6 @@ compile_with_gradlew()
 	# entry
 	export TERM=linux # pretend to be outside of X
 
-	# TODO use system gradle instead
-	chmod +x gradlew || die
 	cd "${S}" || die
 	chmod +x gradlew || die
 	export GRADLE_USER_HOME="${HOME}/.gradle"
