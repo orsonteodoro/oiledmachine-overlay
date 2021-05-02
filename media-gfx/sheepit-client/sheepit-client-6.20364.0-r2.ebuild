@@ -3,9 +3,13 @@
 
 EAPI=7
 
+inherit java-utils-2 linux-info
+
 DESCRIPTION='Client for the free and distributed render farm "SheepIt Render Farm"'
 HOMEPAGE="https://github.com/laurent-clouet/sheepit-client"
 LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
+MIT
+|| ( CDDL GPL-2-with-classpath-exception )
 !system-blender? (
 	blender? (
 		Apache-2.0
@@ -92,7 +96,8 @@ LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
 # Build time licenses:
 #
 #   gradle is Apache-2.0
-#
+#   The various third-party jars are either MIT, Apache-2.0, \
+#     or || ( CDDL GPL-2-with-classpath-exception )
 #
 # Uncaught license corrections:
 #
@@ -168,23 +173,22 @@ REQUIRED_USE+="
 
 # Additional libraries referenced in the custom build of 2.82
 RDEPEND_BLENDER_SHEEPIT282="
-sys-apps/dbus
-sys-apps/util-linux
-media-libs/alsa-lib
-media-libs/flac
-media-libs/libogg
-media-libs/libsndfile
-media-libs/libvorbis
-media-libs/opus
-media-sound/pulseaudio
-net-libs/libasyncns
-sys-apps/tcp-wrappers
-sys-libs/ncurses-compat[tinfo]
-sys-libs/slang
-x11-libs/libICE
-x11-libs/libSM
-x11-libs/libXtst
-"
+	sys-apps/dbus
+	sys-apps/util-linux
+	media-libs/alsa-lib
+	media-libs/flac
+	media-libs/libogg
+	media-libs/libsndfile
+	media-libs/libvorbis
+	media-libs/opus
+	media-sound/pulseaudio
+	net-libs/libasyncns
+	sys-apps/tcp-wrappers
+	sys-libs/ncurses-compat[tinfo]
+	sys-libs/slang
+	x11-libs/libICE
+	x11-libs/libSM
+	x11-libs/libXtst"
 
 # For vanilla Blender 2.79-2.83.1
 RDEPEND_BLENDER="
@@ -205,8 +209,7 @@ RDEPEND_BLENDER="
 	x11-libs/libXrender
 	x11-libs/libXxf86vm
 	x11-libs/libxcb
-	x11-libs/libxshmfence
-"
+	x11-libs/libxshmfence"
 
 # Due to the many different Blender project requirements, the release config
 # flags will be used to match especially those that affect the rendering.
@@ -216,8 +219,8 @@ RDEPEND_BLENDER="
 # This may require to maintain your own version on your local repository.  Bad
 # news is that you can only use the benchmark version since there is no
 # effort for multislot.
-#
 
+JAVA_V="1.8"
 RDEPEND="
 	blender? (
 		firejail? ( sys-apps/firejail )
@@ -335,13 +338,66 @@ x11-drivers/amdgpu-pro-lts\
 		app-arch/tar
 		app-arch/xz-utils
 	)
-	virtual/jre:1.8"
+	>=virtual/jre-${JAVA_V}"
 BDEPEND="${RDEPEND}
 	dev-java/gradle-bin
-	virtual/jdk:1.8"
-inherit linux-info
+	>=virtual/jdk-${JAVA_V}"
+
+# Sorted output from gradlew
+GRADLE_DOWNLOADS="
+https://jcenter.bintray.com/args4j/args4j/2.33/args4j-2.33.jar
+https://jcenter.bintray.com/args4j/args4j/2.33/args4j-2.33.pom
+https://jcenter.bintray.com/args4j/args4j-site/2.33/args4j-site-2.33.pom
+https://jcenter.bintray.com/com/formdev/flatlaf/0.30/flatlaf-0.30.jar
+https://jcenter.bintray.com/com/formdev/flatlaf/0.30/flatlaf-0.30.pom
+https://jcenter.bintray.com/com/github/jengelman/gradle/plugins/shadow/4.0.4/shadow-4.0.4.jar
+https://jcenter.bintray.com/com/github/jengelman/gradle/plugins/shadow/4.0.4/shadow-4.0.4.pom
+https://jcenter.bintray.com/com/squareup/okhttp3/okhttp/4.7.2/okhttp-4.7.2.jar
+https://jcenter.bintray.com/com/squareup/okhttp3/okhttp/4.7.2/okhttp-4.7.2.pom
+https://jcenter.bintray.com/com/squareup/okhttp3/okhttp-urlconnection/4.7.2/okhttp-urlconnection-4.7.2.jar
+https://jcenter.bintray.com/com/squareup/okhttp3/okhttp-urlconnection/4.7.2/okhttp-urlconnection-4.7.2.pom
+https://jcenter.bintray.com/com/squareup/okio/okio/2.6.0/okio-2.6.0.jar
+https://jcenter.bintray.com/com/squareup/okio/okio/2.6.0/okio-2.6.0.pom
+https://jcenter.bintray.com/com/sun/activation/all/1.2.0/all-1.2.0.pom
+https://jcenter.bintray.com/javax/activation/javax.activation-api/1.2.0/javax.activation-api-1.2.0.jar
+https://jcenter.bintray.com/javax/activation/javax.activation-api/1.2.0/javax.activation-api-1.2.0.pom
+https://jcenter.bintray.com/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar
+https://jcenter.bintray.com/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.pom
+https://jcenter.bintray.com/javax/xml/bind/jaxb-api-parent/2.3.1/jaxb-api-parent-2.3.1.pom
+https://jcenter.bintray.com/net/java/dev/jna/jna/5.0.0/jna-5.0.0.jar
+https://jcenter.bintray.com/net/java/dev/jna/jna/5.0.0/jna-5.0.0.pom
+https://jcenter.bintray.com/net/java/dev/jna/jna-platform/5.0.0/jna-platform-5.0.0.jar
+https://jcenter.bintray.com/net/java/dev/jna/jna-platform/5.0.0/jna-platform-5.0.0.pom
+https://jcenter.bintray.com/net/java/jvnet-parent/1/jvnet-parent-1.pom
+https://jcenter.bintray.com/net/java/jvnet-parent/5/jvnet-parent-5.pom
+https://jcenter.bintray.com/net/lingala/zip4j/zip4j/1.3.3/zip4j-1.3.3.jar
+https://jcenter.bintray.com/net/lingala/zip4j/zip4j/1.3.3/zip4j-1.3.3.pom
+https://jcenter.bintray.com/org/codehaus/groovy/groovy-backports-compat23/2.4.15/groovy-backports-compat23-2.4.15.jar
+https://jcenter.bintray.com/org/codehaus/groovy/groovy-backports-compat23/2.4.15/groovy-backports-compat23-2.4.15.pom
+https://jcenter.bintray.com/org/jetbrains/annotations/13.0/annotations-13.0.jar
+https://jcenter.bintray.com/org/jetbrains/annotations/13.0/annotations-13.0.pom
+https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-stdlib/1.3.71/kotlin-stdlib-1.3.71.jar
+https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-stdlib/1.3.71/kotlin-stdlib-1.3.71.pom
+https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-stdlib-common/1.3.70/kotlin-stdlib-common-1.3.70.pom
+https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-stdlib-common/1.3.71/kotlin-stdlib-common-1.3.71.jar
+https://jcenter.bintray.com/org/jetbrains/kotlin/kotlin-stdlib-common/1.3.71/kotlin-stdlib-common-1.3.71.pom
+https://jcenter.bintray.com/org/kohsuke/pom/14/pom-14.pom
+https://jcenter.bintray.com/org/projectlombok/lombok/1.18.12/lombok-1.18.12.jar
+https://jcenter.bintray.com/org/projectlombok/lombok/1.18.12/lombok-1.18.12.pom
+https://jcenter.bintray.com/org/simpleframework/simple-xml/2.7.1/simple-xml-2.7.1.jar
+https://jcenter.bintray.com/org/simpleframework/simple-xml/2.7.1/simple-xml-2.7.1.pom
+https://jcenter.bintray.com/org/sonatype/oss/oss-parent/9/oss-parent-9.pom
+https://jcenter.bintray.com/stax/stax/1.2.0/stax-1.2.0.jar
+https://jcenter.bintray.com/stax/stax/1.2.0/stax-1.2.0.pom
+https://jcenter.bintray.com/stax/stax-api/1.0.1/stax-api-1.0.1.jar
+https://jcenter.bintray.com/stax/stax-api/1.0.1/stax-api-1.0.1.pom
+https://jcenter.bintray.com/xpp3/xpp3/1.1.3.3/xpp3-1.1.3.3.jar
+https://jcenter.bintray.com/xpp3/xpp3/1.1.3.3/xpp3-1.1.3.3.pom
+"
+
 SRC_URI="https://gitlab.com/sheepitrenderfarm/client/-/archive/v${PV}/client-v${PV}.tar.bz2
-	-> ${PN}-${PV}.tar.bz2"
+	-> ${PN}-${PV}.tar.bz2
+	${GRADLE_DOWNLOADS}"
 S="${WORKDIR}/client-v${PV}"
 RESTRICT="mirror"
 WRAPPER_VERSION="3.0.0" # .sh file
@@ -505,10 +561,10 @@ pkg_setup() {
 		use sheepit_client_blender_2_90_0 && gbewarn "2.90.0"
 	fi
 
-	if has network-sandbox $FEATURES ; then
-		die \
-"${PN} requires network-sandbox to be disabled in FEATURES."
-	fi
+#	if has network-sandbox $FEATURES ; then
+#		die \
+#"${PN} requires network-sandbox to be disabled in FEATURES."
+#	fi
 
 	if use opencl_rocm ; then
 		# No die checks for this kernel config in
@@ -562,6 +618,9 @@ pkg_setup() {
 			check_embree
 		fi
 	fi
+
+	java-pkg_init
+	java-pkg_ensure-vm-version-ge ${JAVA_V}
 }
 
 enable_hardblock() {
@@ -576,6 +635,81 @@ disable_hardblock() {
 public static final boolean ${1} = true;|\
 public static final boolean ${1} = false;|g" \
 		src/com/sheepit/client/Configuration.java || die
+}
+
+unpack_gradle()
+{
+	# from `find ${HOME}/.gradle/.gradle/caches/modules-2/files-2.1`
+	local pkgs=(
+                "args4j/args4j/2.33/168b592340292d4410a1d000bb7fa7144967fc12/args4j-2.33.pom"
+                "args4j/args4j/2.33/bd87a75374a6d6523de82fef51fc3cfe9baf9fc9/args4j-2.33.jar"
+                "args4j/args4j-site/2.33/9ba12fde00306694af3ce9f5ff302c858345edf/args4j-site-2.33.pom"
+                "com.formdev/flatlaf/0.30/1ebd625c1844170cebc7bcf02856e5e2dd396070/flatlaf-0.30.jar"
+                "com.formdev/flatlaf/0.30/3d886d1d5f7551b56553fa949c62055044d3a866/flatlaf-0.30.pom"
+                "com.github.jengelman.gradle.plugins/shadow/4.0.4/891b9d8131c22794b87d29be8968b24fafe5604e/shadow-4.0.4.jar"
+                "com.github.jengelman.gradle.plugins/shadow/4.0.4/ae03091ddcba917cfcafe93ef226796281208487/shadow-4.0.4.pom"
+                "com.squareup.okhttp3/okhttp/4.7.2/c9acfd63537db1d7d21d98a7405e22449bb881d6/okhttp-4.7.2.jar"
+                "com.squareup.okhttp3/okhttp/4.7.2/db4f01eaabed8c683fee36b4f5fa9af6cc0e6190/okhttp-4.7.2.pom"
+                "com.squareup.okhttp3/okhttp-urlconnection/4.7.2/7e1421fe4d6d63b4d2a4afcc89ae88090cafd74d/okhttp-urlconnection-4.7.2.pom"
+                "com.squareup.okhttp3/okhttp-urlconnection/4.7.2/812effc52e6988e36b5868c153276ab581af8394/okhttp-urlconnection-4.7.2.jar"
+                "com.squareup.okio/okio/2.6.0/c099e0689dcc10dd26a653ac0587c036d42b704c/okio-2.6.0.pom"
+                "com.squareup.okio/okio/2.6.0/f06923d428f3c8e6f571043ec29a45d0cd9d2bf/okio-2.6.0.jar"
+                "com.sun.activation/all/1.2.0/9b1023e38195ea19d1a0ac79192d486da1904f97/all-1.2.0.pom"
+                "javax.activation/javax.activation-api/1.2.0/1aa9ef58e50ba6868b2e955d61fcd73be5b4cea5/javax.activation-api-1.2.0.pom"
+                "javax.activation/javax.activation-api/1.2.0/85262acf3ca9816f9537ca47d5adeabaead7cb16/javax.activation-api-1.2.0.jar"
+                "javax.xml.bind/jaxb-api/2.3.1/8531ad5ac454cc2deb9d4d32c40c4d7451939b5d/jaxb-api-2.3.1.jar"
+                "javax.xml.bind/jaxb-api/2.3.1/c42c51ae84892b73ef7de5351188908e673f5c69/jaxb-api-2.3.1.pom"
+                "javax.xml.bind/jaxb-api-parent/2.3.1/26101e8a1a09e16cdf277a4591f6d29917b2e06e/jaxb-api-parent-2.3.1.pom"
+                "net.java.dev.jna/jna/5.0.0/a6b7cb36b5f8dba90275675571b4f4e127d64cd1/jna-5.0.0.pom"
+                "net.java.dev.jna/jna/5.0.0/a73c9c974cf7d3b1b84bca99e30d16ec3f371b44/jna-5.0.0.jar"
+                "net.java.dev.jna/jna-platform/5.0.0/15949855e46be4f528d7eb9904bb346bcedccbfa/jna-platform-5.0.0.jar"
+                "net.java.dev.jna/jna-platform/5.0.0/2eab4ec05d07ba88ed7831ba595b5f979342a668/jna-platform-5.0.0.pom"
+                "net.java/jvnet-parent/1/b55a1b046dbe82acdee8edde7476eebcba1e57d8/jvnet-parent-1.pom"
+                "net.java/jvnet-parent/5/5343c954d21549d039feebe5fadef023cdfc1388/jvnet-parent-5.pom"
+                "net.lingala.zip4j/zip4j/1.3.3/ae79277a25359a2657f7d7f6fd0fb4917cf2d0e7/zip4j-1.3.3.jar"
+                "net.lingala.zip4j/zip4j/1.3.3/e314de3702fb052338fe56d620603e177bda7469/zip4j-1.3.3.pom"
+                "org.codehaus.groovy/groovy-backports-compat23/2.4.15/96cbcd01eaa6038f900b7154d08aae462c5430e/groovy-backports-compat23-2.4.15.jar"
+                "org.codehaus.groovy/groovy-backports-compat23/2.4.15/ce562f829e998dfb3a30442aab9f7a5e6031aa01/groovy-backports-compat23-2.4.15.pom"
+                "org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar"
+                "org.jetbrains/annotations/13.0/fa7d3d07cc80547e2d15bf4839d3267c637c642f/annotations-13.0.pom"
+                "org.jetbrains.kotlin/kotlin-stdlib/1.3.71/47da9a84ba07a4de17cddff5e139f8d120627c62/kotlin-stdlib-1.3.71.pom"
+                "org.jetbrains.kotlin/kotlin-stdlib/1.3.71/898273189ad22779da6bed88ded39b14cb5fd432/kotlin-stdlib-1.3.71.jar"
+                "org.jetbrains.kotlin/kotlin-stdlib-common/1.3.70/bd1d0642aedfd3780a730235af7499706225ccb3/kotlin-stdlib-common-1.3.70.pom"
+                "org.jetbrains.kotlin/kotlin-stdlib-common/1.3.71/dc5b708b195cb44fcb098c96c5ed4774a53d5c93/kotlin-stdlib-common-1.3.71.pom"
+                "org.jetbrains.kotlin/kotlin-stdlib-common/1.3.71/e71c3fef58e26affeb03d675e91fd8abdd44aa7b/kotlin-stdlib-common-1.3.71.jar"
+                "org.kohsuke/pom/14/7e52f77bc3cd74f323816fadbcb9303df219b1ea/pom-14.pom"
+                "org.projectlombok/lombok/1.18.12/48e4e5d60309ebd833bc528dcf77668eab3cd72c/lombok-1.18.12.jar"
+                "org.projectlombok/lombok/1.18.12/4f6ff5ec7e7e286da5393d18f2214e0d8a5278be/lombok-1.18.12.pom"
+                "org.simpleframework/simple-xml/2.7.1/dd91fb744c2ff921407475cb29a1e3fee397d411/simple-xml-2.7.1.jar"
+                "org.simpleframework/simple-xml/2.7.1/e5272a3c03686ecb3e1adf929681fca23215f52b/simple-xml-2.7.1.pom"
+                "org.sonatype.oss/oss-parent/9/e5cdc4d23b86d79c436f16fed20853284e868f65/oss-parent-9.pom"
+                "stax/stax/1.2.0/25c804f06fe1d144906fb812b88e60711cc2b3fd/stax-1.2.0.pom"
+                "stax/stax/1.2.0/c434800de5e4bbe1822805be5fb1c32d6834f830/stax-1.2.0.jar"
+                "stax/stax-api/1.0.1/49c100caf72d658aca8e58bd74a4ba90fa2b0d70/stax-api-1.0.1.jar"
+                "stax/stax-api/1.0.1/e3a933099229a34b22e9e78b2b999e1eb03b3e4e/stax-api-1.0.1.pom"
+                "xpp3/xpp3/1.1.3.3/2bd55af9b5089d6a7aae908fc2a155a19ee88cba/xpp3-1.1.3.3.pom"
+                "xpp3/xpp3/1.1.3.3/64f9d2bb88f58ad2a15a4301487d977ee9b4294/xpp3-1.1.3.3.jar"
+	)
+
+	for x in ${pkgs[@]} ; do
+		local d_rel=$(dirname "${x}" \
+			| sed -r -e "s|/[0-9a-z]{39,40}||g" \
+			| tr "/" "\n" \
+			| sed -e "1s|[.]|/|g" \
+			| tr "\n" "/" \
+			| sed -e "s|/$||g")
+		#local d_base="${HOME}/.gradle/caches/modules-2/files-2.1"
+		local d_base="${HOME}/.m2/repository"
+		local d="${d_base}/${d_rel}"
+		mkdir -p "${d}" || die
+		local s=$(realpath "${DISTDIR}/"$(basename ${x}))
+		einfo "Copying ${s} to ${d}"
+		cp -a "${s}" "${d}" || die
+	done
+}
+
+src_unpack() {
+	unpack ${PN}-${PV}.tar.bz2
 }
 
 src_prepare() {
@@ -634,6 +768,8 @@ https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&q
 	fi
 
 	eapply "${FILESDIR}/sheepit-client-6.20304.0-r4-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.20304.0-use-maven-local.patch" # mutually exclusive with compile_with_gradlew
+	sed -i -e "s|__MAVEN_PATH__|${HOME}/.m2/repository|g" build.gradle || die
 
 	if use system-blender ; then
 		if use gentoo-blender ; then
@@ -677,19 +813,46 @@ USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = true|g" \
 	done
 }
 
-src_compile() {
+# For use in sandboxed build, normal use case
+compile_with_gradle()
+{
 	# Prevents: Could not open terminal for stdout: could not get termcap
 	# entry
 	export TERM=linux # pretend to be outside of X
 
+	# This has to be placed here because something is up with the sandbox.
+	unpack_gradle
+
+	export GRADLE_USER_HOME="${HOME}/.gradle"
+	export PATH="/usr/share/gradle-bin-${GRADLE_V}/bin:${PATH}"
+	einfo "GRADLE_USER_HOME=${GRADLE_USER_HOME}"
+	einfo "PATH=${PATH}"
+	gradle shadowJar || die
+}
+
+# For inspecting the dependency tree, ebuild development
+compile_with_gradlew()
+{
+	# Prevents: Could not open terminal for stdout: could not get termcap
+	# entry
+	export TERM=linux # pretend to be outside of X
+
+	# TODO use system gradle instead
+	chmod +x gradlew || die
+	cd "${S}" || die
 	chmod +x gradlew || die
 	export GRADLE_USER_HOME="${HOME}/.gradle"
 	./gradlew shadowJar || die
 }
 
+src_compile() {
+	compile_with_gradle
+}
+
 src_install() {
 	insinto /usr/share/${PN}
-	doins build/libs/sheepit-client-all.jar
+	local ext="" # -all <-> gradlew ; "" <-> gradle (i.e. the system's)
+	doins build/libs/sheepit-client${ext}.jar
 	exeinto /usr/bin
 	cat "${FILESDIR}/sheepit-client-v${WRAPPER_VERSION}" \
 		> "${T}/sheepit-client" || die
@@ -725,6 +888,7 @@ src_install() {
 	fi
 	einfo "allowed_renderers=${allowed_renderers}"
 	sed -i -e "s|ALLOWED_RENDERERS|${allowed_renderers}|g" \
+		-e "s|sheepit-client.jar|sheepit-client${ext}.jar|g" \
 		"${T}/sheepit-client" || die
 
 	if use system-blender ; then

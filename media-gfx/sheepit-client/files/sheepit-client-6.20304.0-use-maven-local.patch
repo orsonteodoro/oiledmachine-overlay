@@ -1,0 +1,22 @@
+diff -urp client-v6.20364.0.orig/build.gradle client-v6.20364.0/build.gradle
+--- client-v6.20364.0.orig/build.gradle	2020-12-29 09:59:25.000000000 -0800
++++ client-v6.20364.0/build.gradle	2021-05-01 03:22:53.264209183 -0700
+@@ -1,6 +1,6 @@
+ buildscript {
+ 	repositories {
+-		jcenter()
++		maven { url '__MAVEN_PATH__' }
+ 	}
+ 	dependencies {
+ 		classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+@@ -24,8 +24,7 @@ shadowJar {
+ }
+ 
+ repositories {
+-	jcenter()
+-	mavenCentral()
++	maven { url '__MAVEN_PATH__' }
+ }
+ 
+ dependencies {
+Only in client-v6.20364.0: build.gradle.orig
