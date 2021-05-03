@@ -33,7 +33,8 @@ PATCH_KGCCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8"
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/Y^..X.patch \
-#   | grep -E -o -e "From [0-9a-z]{40}"
+#   | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+# where Y is top and X is bottom
 PATCH_ZENSAUCE_COMMITS=\
 "dda238180bacda4c39f71dd16d754a48da38e676 \
 9a2e0d950bfd77fb51a42a5fc7e81a9187606c38 \
@@ -77,8 +78,10 @@ b5e9497d44347c16e732f6ea8838a79a64694b36 \
 0e9fea26940d7e6e784dcf57909428138b8109e8 \
 fade4cc2bf56ce6c563c04764224b6b84a45587f \
 b7b24b494b62e02c21a9a349da2d036849f9dd8b"
+PATCH_BFQ_DEFAULT="0cbcc41992693254e5e4c7952853c6aa7404f28e"
 PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
+	${PATCH_BFQ_DEFAULT}
 	${PATCH_KGCCP_COMMIT}
 	${PATCH_ZENTUNE_COMMITS}
 "
