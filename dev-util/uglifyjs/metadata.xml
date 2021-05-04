@@ -6,13 +6,6 @@
   <email>orsonteodoro@hotmail.com</email>
   <name>Orson Teodoro</name>
 </maintainer>
-<upstream>
-  <bugs-to>https://www.xpra.org/trac/wiki/ReportingBugs</bugs-to>
-  <doc lang="en">https://www.xpra.org/trac/wiki/Index</doc>
-  <maintainer type="person" status="active">
-    <name>Antoine Martin</name>
-  </maintainer>
-</upstream>
 <use>
   <flag name="brotli">Enables brotli compression for clipboard.</flag>
   <flag name="gzip">Enables accepting gzip compressed files.</flag>
