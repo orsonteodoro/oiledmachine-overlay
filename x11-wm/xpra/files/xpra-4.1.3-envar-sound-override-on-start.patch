@@ -1,9 +1,9 @@
-diff -urp xpra-3.0.9.orig/xpra/scripts/config.py xpra-3.0.9/xpra/scripts/config.py
---- xpra-3.0.9.orig/xpra/scripts/config.py	2020-03-21 06:16:55.000000000 -0700
-+++ xpra-3.0.9/xpra/scripts/config.py	2020-05-13 16:00:03.957585623 -0700
-@@ -1215,12 +1215,31 @@ def validate_config(d={}, discard=NO_FIL
-         nd[k] = v
-     return nd
+diff -urp xpra-4.1.3.orig/xpra/scripts/config.py xpra-4.1.3/xpra/scripts/config.py
+--- xpra-4.1.3.orig/xpra/scripts/config.py	2021-04-18 06:39:35.000000000 -0700
++++ xpra-4.1.3/xpra/scripts/config.py	2021-05-03 23:59:39.386895644 -0700
+@@ -1244,11 +1244,31 @@ def do_validate_config(d:dict, discard,
+ def make_defaults_struct(extras_defaults=None, extras_types=None, extras_validation=None, username="", uid=getuid(), gid=getgid()):
+     return do_make_defaults_struct(extras_defaults or {}, extras_types or {}, extras_validation or {}, username, uid, gid)
  
 +def get_speaker_override(d={}):
 +    from xpra.util import envbool
@@ -23,8 +23,8 @@ diff -urp xpra-3.0.9.orig/xpra/scripts/config.py xpra-3.0.9/xpra/scripts/config.
 +        speaker = d["speaker"]
 +    d.update({"speaker" : speaker})
 +    return d
- 
- def make_defaults_struct(extras_defaults={}, extras_types={}, extras_validation={}, username="", uid=getuid(), gid=getgid()):
++
+ def do_make_defaults_struct(extras_defaults:dict, extras_types:dict, extras_validation:dict, username:str, uid:int, gid:int):
      #populate config with default values:
      if not username and uid:
          username = get_username_for_uid(uid)
@@ -32,4 +32,4 @@ diff -urp xpra-3.0.9.orig/xpra/scripts/config.py xpra-3.0.9/xpra/scripts/config.
 +    defaults = get_speaker_override(defaults)
      return dict_to_validated_config(defaults, extras_defaults, extras_types, extras_validation)
  
- def dict_to_validated_config(d={}, extras_defaults={}, extras_types={}, extras_validation={}):
+ def dict_to_validated_config(d:dict, extras_defaults=None, extras_types=None, extras_validation=None):

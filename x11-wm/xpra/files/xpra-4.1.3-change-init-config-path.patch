@@ -1,0 +1,36 @@
+diff -urp xpra-4.1.3.orig/fs/lib/systemd/system/xpra-nosocketactivation.service xpra-4.1.3/fs/lib/systemd/system/xpra-nosocketactivation.service
+--- xpra-4.1.3.orig/fs/lib/systemd/system/xpra-nosocketactivation.service	2021-04-18 06:39:35.000000000 -0700
++++ xpra-4.1.3/fs/lib/systemd/system/xpra-nosocketactivation.service	2021-05-04 02:51:11.064056661 -0700
+@@ -6,7 +6,7 @@ After=network.target
+ 
+ [Service]
+ Type=simple
+-EnvironmentFile=-/etc/default/xpra
++EnvironmentFile=-/etc/conf.d/xpra
+ ExecStart=/usr/bin/xpra proxy :14500 --daemon=no \
+     --bind-tcp=0.0.0.0:14500 --tcp-auth=${TCP_AUTH} \
+     --ssl-cert=/etc/xpra/ssl-cert.pem --ssl=on \
+diff -urp xpra-4.1.3.orig/fs/lib/systemd/system/xpra.service xpra-4.1.3/fs/lib/systemd/system/xpra.service
+--- xpra-4.1.3.orig/fs/lib/systemd/system/xpra.service	2021-04-18 06:39:35.000000000 -0700
++++ xpra-4.1.3/fs/lib/systemd/system/xpra.service	2021-05-04 02:51:11.064056661 -0700
+@@ -7,7 +7,7 @@ Requires=xpra.socket
+ 
+ [Service]
+ Type=simple
+-EnvironmentFile=-/etc/sysconfig/xpra
++EnvironmentFile=-/etc/conf.d/xpra
+ ExecStart=/usr/bin/xpra proxy :14500 --daemon=no \
+     --tcp-auth=${TCP_AUTH} \
+     --ssl-cert=/etc/xpra/ssl-cert.pem --ssl=on \
+diff -urp xpra-4.1.3.orig/setup.py xpra-4.1.3/setup.py
+--- xpra-4.1.3.orig/setup.py	2021-05-04 02:49:37.010317194 -0700
++++ xpra-4.1.3/setup.py	2021-05-04 02:52:34.787388106 -0700
+@@ -1625,6 +1625,8 @@ else:
+                     cdir = "/etc/sysconfig"
+                 elif is_Debian() or is_Ubuntu():
+                     cdir = "/etc/default"
++                elif os.path.exists("/etc/conf.d"):
++                    cdir = "/etc/conf.d"
+                 elif os.path.exists("/etc/sysconfig"):
+                     cdir = "/etc/sysconfig"
+                 else:
