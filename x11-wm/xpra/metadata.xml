@@ -12,8 +12,8 @@
   <name>Andreas K. Huettel</name>
 </maintainer>
 <upstream>
-  <bugs-to>https://www.xpra.org/trac/wiki/ReportingBugs</bugs-to>
-  <doc lang="en">https://www.xpra.org/trac/wiki/Index</doc>
+  <bugs-to>https://github.com/Xpra-org/xpra/issues</bugs-to>
+  <doc lang="en">https://github.com/Xpra-org/xpra/tree/master/docs</doc>
   <maintainer type="person" status="active">
     <name>Antoine Martin</name>
   </maintainer>
@@ -43,8 +43,8 @@
   <flag name="gss">Adds gss authentication support.</flag>
   <flag name="gtk2">Uses GTK2 library to create the GUI.</flag>
   <flag name="gtk3">Uses GTK3 library to create the GUI.</flag>
-  <flag name="html5">Enables the HTML5 client allowing to view a xpra session
-    on a web browser.</flag>
+  <flag name="html5-client">Enables the HTML5 client allowing to view a xpra
+    session on a web browser.</flag>
   <flag name="html5_brotli">Enables brotli compression for clipboard.</flag>
   <flag name="html5_gzip">Enables accepting gzip compressed files.</flag>
   <flag name="jack">Adds support for the JACK audio sound server.</flag>
