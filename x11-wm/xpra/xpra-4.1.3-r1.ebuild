@@ -11,9 +11,16 @@ DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based \
 on wimpiggy"
 HOMEPAGE="http://xpra.org/ \
 	  https://github.com/Xpra-org/xpra"
-LICENSE="GPL-2 BSD"
+LICENSE="GPL-2+ BSD-2 CC-BY-SA-3.0 MIT LGPL-3+"
+# BSD-2 - xpra/buffers/xxhash.c
+# CC-BY-3.0 - xpra/platform/win32/printer_notify.py
+# GPL-2+ - xpra/gtk_common/about.p
+#	- fs/lib/cups/xpraforwarder
+# LGPL-3+ - xpra/gtk_common/gtk_notifier.py
+# MIT - xpra/platform/win32/lsa_logon_lib.py
+#	- xpra/client/gl/gl_colorspace_conversions.py
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
-IUSE="  avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups dbus
+IUSE+="  avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups dbus
 	dec_avcodec2 doc enc_ffmpeg enc_x264 enc_x265 firejail gtk3 gss
 	html5-client html5_gzip html5_brotli jpeg kerberos ldap ldap3 +lz4 lzo
 	opengl openrc mdns mysql +notifications nvenc nvfbc pam pillow png
@@ -52,7 +59,7 @@ CUDA_7_5_DRV_V="352.31"
 # From my experience, firejail doesn't need pillow with webp or with jpeg.
 # The encoding when set to auto may require jpeg and webp.
 # See https://github.com/Xpra-org/xpra/blob/v4.1.3/docs/Build/Dependencies.md for the full list.
-DEPEND="${PYTHON_DEPS}
+DEPEND+=" ${PYTHON_DEPS}
 	app-admin/sudo
 	avahi? ( net-dns/avahi[${PYTHON_USEDEP},python] )
 	dbus? ( dev-python/dbus-python[${PYTHON_USEDEP}] )
