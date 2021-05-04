@@ -8,7 +8,24 @@ inherit desktop python-r1 xdg
 
 DESCRIPTION="HTML5 client for Xpra"
 HOMEPAGE="https://github.com/Xpra-org/xpra-html5"
-LICENSE="MPL-2.0"
+LICENSE="MPL-2.0
+	Apache-2.0
+	all-rights-reserved
+	BSD
+	GPL-2
+	LGPL-2.1+
+	LGPL-3+
+	MIT"
+# MIT and GPL-2 - html5/js/lib/jquery.ba-throttle-debounce.js
+# BSD MIT all-rights-reserved ^^ ( BSD GPL-2 ) - html5/js/lib/forge.js *
+# Apache 2.0 - html5/js/lib/AudioContextMonkeyPatch.js
+# LGPL-2.1+ html5/js/lib/aurora/flac.js.map
+# LGPL-3+ html5/js/lib/aurora/aac.js
+# || ( MIT GPL-2 ) - html5/js/lib/jszip.js
+#
+# *Contains a modified MIT license with all rights reserved and retaining notice clauses \
+# the plain MIT license does not come with all rights reserved.
+# ^^ (MIT GPL-3)  html5/js/lib/jszip.js
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 IUSE+=" +brotli +gzip minify"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
