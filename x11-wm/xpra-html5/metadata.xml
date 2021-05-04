@@ -11,8 +11,8 @@ Environmental variables for building:
 XPRA_HTML5_BROWSER - sets the browser for the menu item
 </longdescription>
 <upstream>
-  <bugs-to>https://www.xpra.org/trac/wiki/ReportingBugs</bugs-to>
-  <doc lang="en">https://www.xpra.org/trac/wiki/Index</doc>
+  <bugs-to>https://github.com/Xpra-org/xpra-html5/issues</bugs-to>
+  <doc lang="en">https://github.com/Xpra-org/xpra-html5/blob/v4.1.2/README.md</doc>
   <maintainer type="person" status="active">
     <name>Antoine Martin</name>
   </maintainer>
