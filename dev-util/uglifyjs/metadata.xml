@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<!-- for this ebuild version only on the oiledmachine-overlay -->
+<maintainer type="person" status="active">
+  <email>orsonteodoro@hotmail.com</email>
+  <name>Orson Teodoro</name>
+</maintainer>
+<upstream>
+  <bugs-to>https://www.xpra.org/trac/wiki/ReportingBugs</bugs-to>
+  <doc lang="en">https://www.xpra.org/trac/wiki/Index</doc>
+  <maintainer type="person" status="active">
+    <name>Antoine Martin</name>
+  </maintainer>
+</upstream>
+<use>
+  <flag name="brotli">Enables brotli compression for clipboard.</flag>
+  <flag name="gzip">Enables accepting gzip compressed files.</flag>
+  <flag name="minify">Enables minifying the client.</flag>
+</use>
+</pkgmetadata>

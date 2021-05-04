@@ -1,0 +1,3 @@
+#!/bin/bash
+export PATH="/opt/uglifyjs/node_modules/.bin:${PATH}"
+node /opt/uglifyjs/bin/uglifyjs "${@}"
