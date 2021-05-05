@@ -27,8 +27,9 @@ LICENSE="MPL-2.0
 # the plain MIT license does not come with all rights reserved.
 # ^^ (MIT GPL-3)  html5/js/lib/jszip.js
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
-IUSE+=" +brotli +gzip httpd minify"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+IUSE+=" +brotli +gzip httpd menu-only local minify"
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+	^^ ( httpd local menu-only )"
 #RDEPEND+=" x11-wm/xpra" # avoid circular
 RDEPEND+=" httpd? ( virtual/httpd-basic )"
 BDEPEND+=" ${PYTHON_DEPS}
@@ -43,6 +44,23 @@ pkg_setup()
 {
 	webapp_pkg_setup
 	python_setup
+
+	if ( use menu-only || use httpd ) \
+	&& [[ -z "${XPRA_HTML5_BROWSER}" && -z "${XPRA_HTML5_PROTO}" \
+		&& -z "${XPRA_HTML5_SERVER}" && -z "${XPRA_HTML5_PORT}" ]] ; then
+		die \
+"You must set XPRA_HTML5_BROWSER, XPRA_HTML5_PROTO, XPRA_HTML5_SERVER, \
+XPRA_HTML5_PORT to able to be able to set the browser path for a desktop menu \
+entry.  See \`epkginfo -x www-apps/xpra-html5\` for details."
+	fi
+
+	if use local \
+	[[ -z "${XPRA_HTML5_BROWSER}" ]] ; then
+		ewarn \
+"Setting XPRA_HTML5_BROWSER as a per-package \
+environmental variable containing the browser path is recommended for a \
+desktop menu entry.  See \`epkginfo -x www-apps/xpra-html5\` for details."
+	fi
 }
 
 src_install() {
@@ -62,33 +80,36 @@ src_install() {
 		${EPYTHON} ./setup.py install "${D}/${MY_HTDOCSDIR}" ${minifier}
 
 		webapp_serverowned -R "${MY_HTDOCSDIR}"
-
-		if [[ -n "${XPRA_HTML5_BROWSER}" && -n "${XPRA_HTML5_PORT}" ]] ; then
-			einfo "Adding menu for ${PN} using ${XPRA_HTML5_BROWSER} with http://localhost:${XPRA_HTML5_PORT}"
-			make_desktop_entry \
-				"${XPRA_HTML5_BROWSER} http://localhost:${XPRA_HTML5_PORT}" \
-				"${PN}" \
-				"${MY_HTDOCSDIR}/favicon.png" \
-				"Network;VideoConference"
-		else
-			ewarn "Setting XPRA_HTML5_BROWSER and XPRA_HTML5_PORT as a per-package envvar containing the browser path is recommended for a desktop menu entry."
-		fi
 		webapp_src_install
 	else
 		dodir /usr/share/xpra/html5
 		einfo "${EPYTHON} ./setup.py install \"${D}/usr/share/xpra/html5\" ${minifier}"
 		${EPYTHON} ./setup.py install "${D}/usr/share/xpra/html5" ${minifier}
+	fi
 
-		if [[ -n "${XPRA_HTML5_BROWSER}" ]] ; then
-			einfo "Adding menu for ${PN} using ${XPRA_HTML5_BROWSER}"
-			make_desktop_entry \
-				"${XPRA_HTML5_BROWSER} file:///usr/share/xpra/html5/index.html" \
-				"${PN}" \
-				"/usr/share/xpra/html5/favicon.png" \
-				"Network;VideoConference"
-		else
-			ewarn "Setting XPRA_HTML5_BROWSER as a per-package envvar containing the browser path is recommended for a desktop menu entry."
+	if ( use httpd || use menu-only ) \
+	&& [[ -n "${XPRA_HTML5_BROWSER}" && -n "${XPRA_HTML5_PROTO}" \
+		&& -n "${XPRA_HTML5_SERVER}" && -n "${XPRA_HTML5_PORT}" ]] ; then
+		local iconp="${MY_HTDOCSDIR}/favicon.png"
+		if use menu-only ; then
+			iconp=""
 		fi
+
+		einfo \
+"Adding menu for ${PN} using ${XPRA_HTML5_BROWSER} with \
+http://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
+		make_desktop_entry \
+			"${XPRA_HTML5_BROWSER} ${XPRA_HTML5_PROTO}://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}" \
+			"${PN}" \
+			"${iconp}" \
+			"Network;VideoConference"
+	elif use local && [[ -n "${XPRA_HTML5_BROWSER}" ]] ; then
+		einfo "Adding menu for ${PN} using ${XPRA_HTML5_BROWSER}"
+		make_desktop_entry \
+			"${XPRA_HTML5_BROWSER} file:///usr/share/xpra/html5/index.html" \
+			"${PN}" \
+			"/usr/share/xpra/html5/favicon.png" \
+			"Network;VideoConference"
 	fi
 }
 

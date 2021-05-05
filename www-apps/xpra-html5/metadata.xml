@@ -9,6 +9,10 @@
 <longdescription>
 Environmental variables for building:
 XPRA_HTML5_BROWSER - sets the browser for the menu item
+XPRA_HTML5_PORT - sets the port to access the xpra-html5 frontend
+XPRA_HTML5_PROTO - set to either "http" or "https"
+XPRA_HTML5_SERVER - sets the hostname or IP address of the server to access the
+  xpra-html5 frontend.  Use localhost for this computer.
 </longdescription>
 <upstream>
   <bugs-to>https://github.com/Xpra-org/xpra-html5/issues</bugs-to>
@@ -20,7 +24,13 @@ XPRA_HTML5_BROWSER - sets the browser for the menu item
 <use>
   <flag name="brotli">Enables brotli compression for clipboard.</flag>
   <flag name="gzip">Enables accepting gzip compressed files.</flag>
-  <flag name="httpd">Installs for http server use.</flag>
+  <flag name="httpd">Installs the client for http server use.  
+    XPRA_HTML5_BROWSER, XPRA_HTML5_PROTO, XPRA_HTML5_SERVER, XPRA_HTML5_PORT
+    must all be set.</flag>
+  <flag name="local">Installs the client for local use.</flag>
+  <flag name="menu-only">Installs just the desktop menu to the http server.
+    XPRA_HTML5_BROWSER, XPRA_HTML5_PROTO, XPRA_HTML5_SERVER, XPRA_HTML5_PORT
+    must all be set.</flag>
   <flag name="minify">Enables minifying the client.</flag>
 </use>
 </pkgmetadata>
