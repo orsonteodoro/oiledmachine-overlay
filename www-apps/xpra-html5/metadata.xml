@@ -20,6 +20,7 @@ XPRA_HTML5_BROWSER - sets the browser for the menu item
 <use>
   <flag name="brotli">Enables brotli compression for clipboard.</flag>
   <flag name="gzip">Enables accepting gzip compressed files.</flag>
+  <flag name="httpd">Installs for http server use.</flag>
   <flag name="minify">Enables minifying the client.</flag>
 </use>
 </pkgmetadata>
