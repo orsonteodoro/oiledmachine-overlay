@@ -81,7 +81,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	enc_x265? ( >=media-video/ffmpeg-2:0=[x265]
 		      media-libs/x265 )
 	gss? ( dev-python/gssapi[${PYTHON_USEDEP}] )
-	html5-client? ( x11-wm/xpra-html5 )
+	html5-client? ( www-apps/xpra-html5 )
 	jpeg? ( >=media-libs/libjpeg-turbo-1.4 )
 	kerberos? ( dev-python/pykerberos[${PYTHON_USEDEP}] )
 	ldap? ( dev-python/python-ldap[${PYTHON_USEDEP}] )
