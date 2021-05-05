@@ -81,7 +81,7 @@ src_install() {
 
 		webapp_serverowned -R "${MY_HTDOCSDIR}"
 		webapp_src_install
-	else
+	elif use local ; then
 		dodir /usr/share/xpra/html5
 		einfo "${EPYTHON} ./setup.py install \"${D}/usr/share/xpra/html5\" ${minifier}"
 		${EPYTHON} ./setup.py install "${D}/usr/share/xpra/html5" ${minifier}
