@@ -39,6 +39,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 SRC_URI="https://github.com/Xpra-org/xpra-html5/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 RESTRICT="mirror"
+LOCAL_INSTALL_URI="file:///usr/share/xpra/html5/index.html"
 
 pkg_setup()
 {
@@ -106,7 +107,7 @@ http://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
 	elif use local && [[ -n "${XPRA_HTML5_BROWSER}" ]] ; then
 		einfo "Adding menu for ${PN} using ${XPRA_HTML5_BROWSER}"
 		make_desktop_entry \
-			"${XPRA_HTML5_BROWSER} file:///usr/share/xpra/html5/index.html" \
+			"${XPRA_HTML5_BROWSER} ${LOCAL_INSTALL_URI}" \
 			"${PN}" \
 			"/usr/share/xpra/html5/favicon.png" \
 			"Network;VideoConference"
@@ -120,11 +121,11 @@ pkg_postinst() {
 	einfo "To configure, see:"
 	einfo "See https://github.com/Xpra-org/xpra-html5/tree/v4.1.2#configuration"
 	einfo
-	if use httpd ; then
+	if use httpd || use menu-only ; then
 		einfo "To use the browser only client, you enter for the URI:"
-		einfo "http://localhost:${XPRA_HTML5_PORT}"
-	else
+		einfo "${XPRA_HTML5_PROTO}://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
+	elif use local ; then
 		einfo "To use the browser only client, you enter for the URI:"
-		einfo "file:///usr/share/xpra/html5/index.html"
+		einfo "${LOCAL_INSTALL_URI}"
 	fi
 }
