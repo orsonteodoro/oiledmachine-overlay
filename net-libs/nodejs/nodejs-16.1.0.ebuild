@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -13,7 +13,7 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector +npm pax_kernel +snapshot \
+IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm pax_kernel +snapshot \
 +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man"
 REQUIRED_USE+=" inspector? ( icu ssl )
@@ -24,7 +24,7 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 RESTRICT="test"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date: Apr 4, 2021
+# Last deps commit date: May 3, 2021
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
@@ -32,28 +32,42 @@ RDEPEND+=" !net-libs/nodejs:0
 	>=net-dns/c-ares-1.17.1
 	>=net-libs/nghttp2-1.42.0
 	>=sys-libs/zlib-1.2.11
-	system-icu? ( >=dev-libs/icu-68.2:= )
+	system-icu? ( >=dev-libs/icu-69.1:= )
 	system-ssl? ( >=dev-libs/openssl-1.1.1k:0= )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	sys-apps/coreutils
+	virtual/pkgconfig
 	systemtap? ( dev-util/systemtap )
-	test? ( net-misc/curl )
-	pax_kernel? ( sys-apps/elfix )"
-PATCHES=( "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
+	test? ( net-misc/curl )"
+PATCHES=( "${FILESDIR}"/${PN}-12.22.1-uvwasi_shared_libuv.patch
+	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="7.7.6" # See https://github.com/nodejs/node/blob/v15.14.0/deps/npm/package.json
+NPM_V="7.11.2" # See https://github.com/nodejs/node/blob/v16.1.0/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
 		die "Your CPU doesn't support the required SSE2 instruction."
+
+	if [[ ${MERGE_TYPE} != "binary" ]]; then
+		if use lto; then
+			if tc-is-gcc; then
+				if [[ $(gcc-major-version) -ge 11 ]]; then
+					# Bug #787158
+					die "LTO builds of ${PN} using gcc-11+ currently fail tests and produce runtime errors. Either switch to gcc-10 or unset USE=lto for this ebuild"
+				fi
+			else
+				# configure.py will abort on this later if we do not
+				die "${PN} only supports LTO for gcc"
+			fi
+		fi
+	fi
 }
 
 pkg_setup() {
 	python-any-r1_pkg_setup
 
-	ewarn "This ebuild is End Of Life (EOL) as of 2021-06-01.  \
-Please switch soon to either v12, v14, v16 before the next update cycle."
+	einfo "This ebuild is End Of Life (EOL) as of 2024-04-30."
 
 	# For man page reasons
 	if has 'net-libs/nodejs[npm]:10' ; then
@@ -71,9 +85,9 @@ npm on the highest slot."
 "You need to disable npm on net-libs/nodejs[npm]:14.  Only enable\n\
 npm on the highest slot."
 	fi
-	if has 'net-libs/nodejs[npm]:16' ; then
+	if has 'net-libs/nodejs[npm]:15' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[npm]:16.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[npm]:15.  Only enable\n\
 npm on the highest slot."
 	fi
 	if has 'net-libs/nodejs[man]:10' ; then
@@ -91,9 +105,9 @@ man on the highest slot."
 "You need to disable npm on net-libs/nodejs[man]:14.  Only enable\n\
 man on the highest slot."
 	fi
-	if has 'net-libs/nodejs[man]:16' ; then
+	if has 'net-libs/nodejs[man]:15' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[man]:16.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[man]:15.  Only enable\n\
 man on the highest slot."
 	fi
 }
@@ -142,6 +156,9 @@ src_prepare() {
 src_configure() {
 	xdg_environment_reset
 
+	# LTO compiler flags are handled by configure.py itself
+	filter-flags '-flto*'
+
 	local myconf=(
 		--shared-brotli
 		--shared-cares
@@ -150,6 +167,7 @@ src_configure() {
 		--shared-zlib
 	)
 	use debug && myconf+=( --debug )
+	use lto && myconf+=( --enable-lto )
 	if use system-icu; then
 		myconf+=( --with-intl=system-icu )
 	elif use icu; then
@@ -266,8 +284,14 @@ src_install() {
 }
 
 src_test() {
+	# parallel/test-fs-mkdir is known to fail with FEATURES=usersandbox
+	if has usersandbox ${FEATURES}; then
+		ewarn "You are emerging ${P} with 'usersandbox' enabled." \
+			"Expect some test failures or emerge with 'FEATURES=-usersandbox'!"
+	fi
+
 	out/${BUILDTYPE}/cctest || die
-	"${EPYTHON}" tools/test.py --mode=${BUILDTYPE,,} -J message parallel sequential || die
+	"${EPYTHON}" tools/test.py --mode=${BUILDTYPE,,} --flaky-tests=dontcare -J message parallel sequential || die
 }
 
 pkg_postinst() {

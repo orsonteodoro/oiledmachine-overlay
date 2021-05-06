@@ -64,6 +64,7 @@ sys-process/psdoom-ng
 
 # Old versions; EOL (End Of Life)?; no longer receiving security updates
 media-libs/alure
+=net-libs/nodejs-10*
 
 # Contains End Of Life (EOL) Electron versions with old Chromium parts
 # while project is active within ~2 years (2020).  May contain critical
