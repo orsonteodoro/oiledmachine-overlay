@@ -865,6 +865,7 @@ src_install() {
 			v1=${v0}
 			v0=${v0//_/.}
 			v0=${v0%_*}
+			v0=${v0//.filmic/}
 
 			if ! use system-blender ; then
 				if [[ "${v0}" == "2.92.0" ]] ; then

@@ -337,6 +337,10 @@ x11-drivers/amdgpu-pro-lts\
 	)
 	>=virtual/jre-${JAVA_V}"
 BDEPEND="${RDEPEND}
+	app-arch/bzip2
+	app-arch/tar
+	app-arch/unzip
+	app-arch/xz-utils
 	dev-java/gradle-bin
 	>=virtual/jdk-${JAVA_V}"
 
@@ -492,7 +496,7 @@ SRC_URI="https://gitlab.com/sheepitrenderfarm/client/-/archive/v${PV}/client-v${
 	${GRADLE_DOWNLOADS}
 	${RENDERER_DOWNLOADS}"
 S="${WORKDIR}/client-v${PV}"
-RESTRICT="mirror"
+RESTRICT="mirror strip"
 WRAPPER_VERSION="3.1.0" # .sh file
 GRADLE_V="6.3" # ~Mar 2020
 EXPECTED_GRADLE_WRAPPER_JAR_SHA256=\
@@ -1065,6 +1069,7 @@ src_install() {
 			v1=${v0}
 			v0=${v0//_/.}
 			v0=${v0%_*}
+			v0=${v0//.filmic/}
 
 			if ! use system-blender ; then
 				dodoc -r "${FILESDIR}/blender-${v0}-licenses"
@@ -1119,6 +1124,7 @@ src_install() {
 		-o -path "*/bin/python*" \
 		-o -path "*/lib/*.so" \
 		-o -path "*/lib/*.so.*" \
+		-o -path "*-linux-gnu.so" \
 		| sed -e "s|${WORKDIR}/blender||g")
 
 	exeinto /usr/bin
@@ -1159,13 +1165,13 @@ drivers.  Add them to /etc/firejail/sheepit-client.local.  Use ldd on the\n\
 shared libraries and drivers to add more private-lib or whitelist rules."
 	fi
 
-	einfo "The per user /usr/<user>/.sheepit-client/sheepit_binary_cache"
+	einfo "Since this ebuild automatically uses an unpacked shared folder"
+	einfo "of renderers, the per user /usr/<user>/.sheepit-client/sheepit_binary_cache"
 	einfo "is no longer required and can be deleted."
 	einfo
-	einfo "It is now uses a shared folder and the wrapper automatically uses it."
-
 	if ! use ${BENCHMARK_VERSION} ; then
-		ewarn "${PN} may ${BENCHMARK_VERSION} for benchmarks and to use the service"
-		ewarn "If it fails, try the latest stable or LTS version."
+		ewarn "${PN} may use the ${BENCHMARK_VERSION} for benchmarks"
+		ewarn "when using the service.  If it fails, try the latest"
+		ewarn "stable or LTS version."
 	fi
 }
