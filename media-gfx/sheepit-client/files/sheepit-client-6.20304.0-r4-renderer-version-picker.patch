@@ -1,3 +1,57 @@
+Original license headers
+
+src/com/sheepit/client/Client.java:
+src/com/sheepit/client/Configuration.java:
+src/com/sheepit/client/Job.java:
+src/com/sheepit/client/os/Linux.java:
+src/com/sheepit/client/os/Mac.java:
+src/com/sheepit/client/os/OS.java:
+src/com/sheepit/client/os/Windows.java:
+src/com/sheepit/client/standalone/Worker.java:
+src/com/sheepit/client/Server.java:
+
+/*
+ * Copyright (C) 2010-2014 Laurent CLOUET
+ * Author Laurent CLOUET <laurent.clouet@nopnop.net>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; version 2
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+src/com/sheepit/client/os/FreeBSD.java:
+src/com/sheepit/client/SettingsLoader.java:
+
+/*
+ * Copyright (C) 2010-2015 Laurent CLOUET
+ * Author Laurent CLOUET <laurent.clouet@nopnop.net>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; version 2
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+----
 Summary: Patch changes automatic opt-in to automatic opt-out policy for downloading
 renderers (e.g. Blender).
 
