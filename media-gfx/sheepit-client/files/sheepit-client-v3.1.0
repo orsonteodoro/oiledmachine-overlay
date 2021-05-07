@@ -35,7 +35,7 @@ fi
 
 d="${HOME}/.sheepit-client"
 
-for f in $(find "${d}"/{sheepit,sheepit_binary_cache} -maxdepth 1 -type f \
+for f in $(find "${d}"/sheepit -maxdepth 1 -type f \
 		-name "*.zip") ; do
 	[[ -n "${USE_SYSTEM_BLENDER}" && "${USE_SYSTEM_BLENDER}" == "1" \
 		&& "${f}" =~ "sheepit_binary_cache" ]] && continue
@@ -59,11 +59,14 @@ done
 
 mkdir -p "${d}"
 if [[ -n "${USE_FIREJAIL}" && "${USE_FIREJAIL}" == "1" ]] ; then
-firejail --profile="/etc/firejail/sheepit-client.profile" java -jar /usr/share/sheepit-client/sheepit-client.jar -cache-dir "${d}" \
-	ALLOWED_RENDERERS "$@"
+	firejail --profile="/etc/firejail/sheepit-client.profile" \
+		java -jar /usr/share/sheepit-client/sheepit-client.jar \
+			-cache-dir "${d}" \
+			"$@"
 else
-java -jar /usr/share/sheepit-client/sheepit-client.jar -cache-dir "${d}" \
-	ALLOWED_RENDERERS "$@"
+	java -jar /usr/share/sheepit-client/sheepit-client.jar \
+		-cache-dir "${d}" \
+		"$@"
 fi
 
 trap cleanup EXIT

@@ -6,7 +6,12 @@ Mesa: https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=over
 Python: https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python&search_type=all
 
 # This information is used for security audits
-Bundled in Blender 2.91.1:
+Bundled in Blender 2.92.0:
+GLU 9.0.1 (built with	GCC: (GNU) 9.3.1 20200408 (Red Hat 9.3.1-2))
+Mesa (libGL) 18.3.1
+Python 3.7.7
+
+Bundled in Blender 2.91.0:
 GLU 9.0.1
 Mesa (libGL) 18.3.1
 Python 3.7.7
@@ -22,7 +27,7 @@ Mesa (libGL) 18.3.1
 Python 3.7.7
 
 Bundled in Blender 2.83.9:
-GLU 9.0.1
+GLU 9.0.1 (built with GCC: (GNU) 6.3.1 20170216 (Red Hat 6.3.1-3))
 Mesa (libGL) 18.3.1
 Python 3.7.4
 
@@ -43,7 +48,7 @@ Python 3.7.4
 
 *Bundled in repackaged Blender 2.82:
 DirectFB 1.2.10
-GLU
+GLU 9.0.1
 libcaca 0.99.beta18
 Mesa (libGL) 18.3.1
 Python 3.7.4
@@ -52,7 +57,7 @@ slang 2.2.4
 
 *Bundled in repackaged Blender 2.81a:
 DirectFB 1.2.10
-GLU
+GLU 9.0.1
 libcaca 0.99.beta18
 Mesa (libGL) 18.3.1
 Python 3.7.4
@@ -76,5 +81,10 @@ Mesa (libGL) 8.0.5
 Python 3.5.3
 
 Comparison is done with sha256sum between the Sheepit service tarballs and tarballs from downloads.blender.org.
+
 All tarballs are repackaged with renamed blender as rend.exe.
+
 *Contains extra library files not found in downloads.blender.org tarball from unspecified source.
+
+GLU versions based on build_files/build_environment/cmake/versions.cmake and the hash in the same file as
+the cmake file, but the version for 2.80 is undocumented.
