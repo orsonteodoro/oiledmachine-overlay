@@ -5,7 +5,7 @@ EAPI=7
 DESCRIPTION="One framework for creating powerful cross-platform games."
 HOMEPAGE="http://www.monogame.net"
 LICENSE="Ms-PL"
-KEYWORDS="~amd64 ~x86"
+#KEYWORDS="~amd64 ~x86"  # disabled because ebuild is in development
 inherit multilib-build
 RDEPEND="addin? (
 		 >=dev-dotnet/mono-addins-1.0
@@ -47,6 +47,7 @@ S="${WORKDIR}/MonoGame-${PV}"
 RESTRICT="mirror"
 
 pkg_setup() {
+	ewarn "This ebuild in the past may not work today 2021-05-05.  To be replaced with newer version."
 	dotnet_pkg_setup
 }
 
