@@ -12,9 +12,11 @@ DESCRIPTION="appimagetool -- Generate, extract, and inspect AppImages"
 HOMEPAGE="https://github.com/AppImage/AppImageKit"
 LICENSE="MIT" # project's default license
 LICENSE+=" all-rights-reserved" # src/appimagetool.c ; The vanilla MIT license doesn't have all-rights-reserved
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-IUSE="additional-tools appstream appimagetool runtime"
-RDEPEND="additional-tools? ( dev-libs/openssl )
+
+# live ebuilds do not get keyworded
+
+IUSE+=" additional-tools appstream appimagetool runtime"
+RDEPEND+=" additional-tools? ( dev-libs/openssl )
 	app-arch/xz-utils:=[static-libs]
 	appimagetool? ( app-arch/go-appimage[-appimagetool] )
 	appstream? ( dev-libs/appstream:= )
@@ -23,16 +25,14 @@ RDEPEND="additional-tools? ( dev-libs/openssl )
 	sys-fs/squashfuse:=
 	sys-fs/squashfs-tools:=
 	dev-libs/libappimage:=[static-libs]"
-DEPEND="${RDEPEND}
+DEPEND+=" ${RDEPEND}
 	dev-util/sanitizers-cmake
 	sys-devel/binutils"
-REQUIRED_USE=""
 SLOT="0/${PV}"
 EGIT_COMMIT="08800854de05f4f6f7c1f3901dc165b8518822e1"
-SRC_URI=\
-"https://github.com/AppImage/AppImageKit/archive/${EGIT_COMMIT}.tar.gz
-	 -> ${P}.tar.gz
-"
+SRC_URI="
+https://github.com/AppImage/AppImageKit/archive/${EGIT_COMMIT}.tar.gz
+	 -> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror strip"
 inherit cmake-utils
