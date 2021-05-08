@@ -100,7 +100,6 @@ IUSE+=" bbrv2 +cfs disable_debug futex-wait-multiple futex2 \
 tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support \
 uksm zen-sauce -zen-tune zen-tune-muqss"
 REQUIRED_USE+="
-	!genpatches
 	^^ ( cfs muqss prjc )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
@@ -157,19 +156,15 @@ https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARB
 	   ${KERNEL_PATCH_URIS[@]}"
 fi
 
-# Upstream or the mirrors are almost always slow by a week or more.
-SRC_URI_WIP="
+SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
+	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
+	   futex2? ( ${FUTEX2_SRC_URI} )
 	   genpatches? (
 		${GENPATCHES_URI}
 		${GENPATCHES_BASE_SRC_URI}
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-"
-
-SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
-	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
-	   futex2? ( ${FUTEX2_SRC_URI} )
 	   kernel-gcc-patch? (
 		${KGCCP_SRC_4_9_URI}
 		${KGCCP_SRC_8_1_URI}
