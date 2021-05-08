@@ -6,11 +6,11 @@ EAPI="7"
 FETCH_VANILLA_SOURCES_BY_BRANCH=1
 K_LIVE_PATCHABLE=1
 # Keep in sync with https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/refs/tags
-TEST_REWIND_SOURCES_BACK_TO="1920f6c7afc4dc69b61fb22dad6e2c43eba0166a" # 5.4.116
-K_GENPATCHES_VER="117"
+TEST_REWIND_SOURCES_BACK_TO="e256645d05e240bc91bc5ae17912d7956656976c" # 5.4.117
+K_GENPATCHES_VER="119"
 PATCH_BMQ_VER="5.4-r2"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
-PATCH_RT_VER="5.4.109-rt56"
+PATCH_RT_VER="5.4.115-rt57"
 
 inherit ot-kernel-v5.4
 
