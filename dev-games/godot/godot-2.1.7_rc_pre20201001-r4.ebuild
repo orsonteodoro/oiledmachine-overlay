@@ -32,7 +32,7 @@ MPL-2.0 OFL-1.1 openssl RSA Unlicense ZLIB"
 #   The original OFL-1.1 does not contain all rights reserved but stated in \
 #   LICENSE.SourceCodePro.txt
 
-KEYWORDS="~amd64 ~x86"
+#KEYWORDS="~amd64 ~x86" # disabled because ebuilds are still in development
 PND="${PN}-demo-projects"
 
 # tag 2.1 deterministic / static snapshot / 2.1 branch / 20200203
