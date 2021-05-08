@@ -8,7 +8,9 @@ inherit cmake-utils eutils
 DESCRIPTION="Library for QtQuick apps with Material Design"
 HOMEPAGE="https://liri.io/docs/sdk/fluid/develop/"
 LICENSE="MPL-2.0 FDL-1.3+"
-KEYWORDS="~amd64 ~x86"
+
+# live ebuilds do not get KEYWORDed
+
 SLOT="0/${PV}"
 IUSE+=" doc test"
 QT_MIN_PV=5.10
@@ -29,8 +31,9 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 EGIT_COMMIT="60d5dc0c3dfbf440f814140713cf87b58317c95b"
-SRC_URI=\
-"https://github.com/lirios/fluid/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/fluid/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

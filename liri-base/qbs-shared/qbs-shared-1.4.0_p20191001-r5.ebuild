@@ -8,15 +8,17 @@ inherit eutils
 DESCRIPTION="Shared imports and modules for projects using the qbs build system"
 HOMEPAGE="https://github.com/lirios/qbs-shared"
 LICENSE="BSD"
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshots do not get KEYWORDed
+
 SLOT="0/${PV}"
 # Upstream requires qbs 1.11 in README, but qbs file requires 1.10
 # If building qbs fails with 1.12, try with 1.15 which works.
 BDEPEND+=" >=dev-util/qbs-1.11"
 EGIT_COMMIT="c176452261a562a8f319fe068bd635adbdce141b"
-SRC_URI=\
-"https://github.com/lirios/qbs-shared/archive/${EGIT_COMMIT}.tar.gz \
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/qbs-shared/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 QBS_CONFIG=( --settings-dir "${S}/qbs-config" )

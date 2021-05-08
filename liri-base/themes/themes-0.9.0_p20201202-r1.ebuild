@@ -10,7 +10,9 @@ HOMEPAGE="https://github.com/lirios/themes"
 LICENSE="GPL-3+ grub? ( GPL-3-with-font-exception OFL-1.1 )"
 # Noto fonts is OFL-1.1
 # The KDE Oxygen font is || ( OFL-1.1 GPL-3-with-font-exception )
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshot do not get KEYWORDS.
+
 SLOT="0/${PV}"
 IUSE+=" grub plymouth sddm"
 QT_MIN_PV=5.10
@@ -24,9 +26,9 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="ab914ebb01c9720eb4f43e9d05d9cf965c0589d3"
-SRC_URI=\
-"https://github.com/lirios/themes/archive/${EGIT_COMMIT}.tar.gz \
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/themes/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

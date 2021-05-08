@@ -8,7 +8,9 @@ inherit eutils cmake-utils xdg
 DESCRIPTION="Session manager"
 HOMEPAGE="https://github.com/lirios/session"
 LICENSE="GPL-3+ LGPL-3+"
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshots do not get KEYWORDed.
+
 SLOT="0/${PV}"
 IUSE+=" systemd"
 QT_MIN_PV=5.10
@@ -24,9 +26,9 @@ BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="bfae9be74ba57dc3e9c8467799e3b94a1ed3ae0d"
-SRC_URI=\
-"https://github.com/lirios/session/archive/${EGIT_COMMIT}.tar.gz
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/session/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 DESKTOP_DATABASE_DIR="/usr/share/wayland-sessions"

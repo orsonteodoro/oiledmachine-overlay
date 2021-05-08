@@ -8,7 +8,9 @@ inherit cmake-utils eutils
 DESCRIPTION="EGL fullscreen platform plugin"
 HOMEPAGE="https://github.com/lirios/eglfs"
 LICENSE="LGPL-3+ GPL-3+"
-KEYWORDS="~amd64 ~x86"
+
+# live ebuilds do not get KEYWORDed
+
 SLOT="0/${PV}"
 QT_MIN_PV=5.9
 DEPEND+=" dev-libs/libinput
@@ -27,9 +29,9 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	>=liri-base/cmake-shared-1.0.0
 	sys-kernel/linux-headers"
 EGIT_COMMIT="d55225b4edcfebabef3b2f2ff0f338ab31bad68a"
-SRC_URI=\
-"https://github.com/lirios/eglfs/archive/${EGIT_COMMIT}.tar.gz \
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/eglfs/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

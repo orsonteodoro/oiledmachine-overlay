@@ -3,49 +3,40 @@
 
 EAPI=7
 
-inherit cmake-utils eutils xdg
+inherit cmake-utils eutils
 
-DESCRIPTION="Terminal - A Material Design terminal"
-HOMEPAGE="https://github.com/lirios/terminal"
-LICENSE="LGPL-3+ MIT"
-KEYWORDS="~amd64 ~x86"
+DESCRIPTION="Qt platform theme plugin for apps integration with Liri"
+HOMEPAGE="https://github.com/lirios/platformtheme"
+LICENSE="GPL-3"
+
+# Live/snapshot ebuilds do not get KEYWORDed
+
 SLOT="0/${PV}"
-QT_MIN_PV=5.10
-DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
+QT_MIN_PV=5.8
+DEPEND+=" dev-libs/glib
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
-	>=dev-qt/qtnetwork-${QT_MIN_PV}:5=
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
-	>=liri-base/fluid-1.1.0
-	>=liri-base/qtgsettings-1.1.0"
+	>=liri-base/qtgsettings-1.3.0_p20200312"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
-	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
-	>=liri-base/cmake-shared-1.0.0"
-EGIT_COMMIT="3433cf36b7a19bae9d5af9a7d1963fd6b8acd252"
-SRC_URI=\
-"https://github.com/lirios/terminal/archive/${EGIT_COMMIT}.tar.gz
-	-> ${PN}-${PV}.tar.gz"
+	>=liri-base/cmake-shared-1.1.0"
+EGIT_COMMIT="3d74bbce60abf9ce918029ae51259e5efeba963d"
+SRC_URI="
+https://github.com/lirios/platformtheme/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
-	QTNETWORK_PV=$(pkg-config --modversion Qt5Network)
-	QTQML_PV=$(pkg-config --modversion Qt5Qml)
 	QTQUICKCONTROLS2_PV=$(pkg-config --modversion Qt5QuickControls2)
 	QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
 	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
 		die "Qt5Core is not the same version as Qt5Gui"
-	fi
-	if ver_test ${QTCORE_PV} -ne ${QTNETWORK_PV} ; then
-		die "Qt5Core is not the same version as Qt5Network"
-	fi
-	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
-		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTQUICKCONTROLS2_PV} ; then
 		die "Qt5Core is not the same version as Qt5QuickControls2"
@@ -53,11 +44,6 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTWIDGETS_PV} ; then
 		die "Qt5Core is not the same version as Qt5Widgets"
 	fi
-}
-
-src_prepare() {
-	xdg_src_prepare
-	cmake-utils_src_prepare
 }
 
 src_configure() {

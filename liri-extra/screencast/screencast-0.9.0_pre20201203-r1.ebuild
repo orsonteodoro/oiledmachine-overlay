@@ -2,28 +2,30 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils xdg
+
 DESCRIPTION="Utility to record a video of the screen of a Liri desktop"
 HOMEPAGE="https://github.com/lirios/screencast"
 LICENSE="GPL-3+"
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshots do not get KEYWORDS.
+
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
-IUSE=""
-RDEPEND="${RDEPEND}
-	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	  media-libs/gstreamer:1.0
 	  media-plugins/gst-plugins-meta:1.0"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils xdg
-EGIT_COMMIT="dfb68543c6ae48f32b45752ab8992a82fe679dcf"
-SRC_URI=\
-"https://github.com/lirios/screencast/archive/${EGIT_COMMIT}.tar.gz
-	-> ${PN}-${PV}.tar.gz"
+EGIT_COMMIT="a28ba6e0f041d86441dbe214ed4ce07b73cad13e"
+SRC_URI="
+https://github.com/lirios/screencast/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

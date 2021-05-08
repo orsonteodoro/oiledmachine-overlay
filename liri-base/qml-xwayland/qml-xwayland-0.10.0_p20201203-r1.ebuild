@@ -8,7 +8,9 @@ inherit cmake-utils eutils
 DESCRIPTION="XWayland support for QtQuick Wayland compositors like Liri Shell"
 HOMEPAGE="https://github.com/lirios/qml-xwayland"
 LICENSE="LGPL-3+ MIT"
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshots do not get KEYWORDed.
+
 SLOT="0/${PV}"
 QT_MIN_PV=5.9
 DEPEND+=" dev-libs/wayland
@@ -24,9 +26,9 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="f33df7385d1bb099a1b3e7eeceaa7f9dc55d3ad8"
-SRC_URI=\
-"https://github.com/lirios/qml-xwayland/archive/${EGIT_COMMIT}.tar.gz
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/qml-xwayland/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

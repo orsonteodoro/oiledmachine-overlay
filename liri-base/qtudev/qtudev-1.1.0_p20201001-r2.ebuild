@@ -8,7 +8,9 @@ inherit cmake-utils eutils
 DESCRIPTION="Qt-style wrapper around udev"
 HOMEPAGE="https://github.com/lirios/qtudev"
 LICENSE="LGPL-3+"
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshots do not get KEYWORDed
+
 SLOT="0/${PV}"
 QT_MIN_PV=5.8
 IUSE+=" test"
@@ -21,9 +23,9 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 EGIT_COMMIT="f80ba68becac258004c7e331a6bdbb001b4e5a4f"
-SRC_URI=\
-"https://github.com/lirios/qtudev/archive/${EGIT_COMMIT}.tar.gz \
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/qtudev/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

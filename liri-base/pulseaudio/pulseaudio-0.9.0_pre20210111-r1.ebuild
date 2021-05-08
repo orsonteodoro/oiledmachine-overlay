@@ -8,7 +8,9 @@ inherit cmake-utils eutils xdg
 DESCRIPTION="PulseAudio support for Liri"
 HOMEPAGE="https://github.com/lirios/pulseaudio"
 LICENSE="GPL-3+ LGPL-2.1+"
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshot ebuilds do not get KEYWORDed
+
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
 DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
@@ -20,9 +22,9 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="eabe5d3e8ec38606c3abe5b4fda677e8fc29e280"
-SRC_URI=\
-"https://github.com/lirios/pulseaudio/archive/${EGIT_COMMIT}.tar.gz
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/pulseaudio/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

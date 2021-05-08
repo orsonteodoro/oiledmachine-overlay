@@ -8,7 +8,9 @@ inherit cmake-utils eutils
 DESCRIPTION="Client-side decoration for all Qt-based Wayland clients"
 HOMEPAGE="https://github.com/lirios/materialdecoration"
 LICENSE="LGPL-3+"
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshot ebuild do not get KEYWORDed
+
 SLOT="0/${PV}"
 QT_MIN_PV=5.8
 DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
@@ -19,9 +21,9 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	   dev-util/pkgconfig
 	 >=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="6a5de23f2e5162fbee39d16f938473ff970a2ec0"
-SRC_URI=\
-"https://github.com/lirios/materialdecoration/archive/${EGIT_COMMIT}.tar.gz \
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/materialdecoration/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

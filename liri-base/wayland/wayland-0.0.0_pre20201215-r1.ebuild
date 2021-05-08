@@ -8,7 +8,9 @@ inherit cmake-utils eutils
 DESCRIPTION="Wayland client and server extensions "
 HOMEPAGE="https://github.com/lirios/wayland"
 LICENSE="LGPL-3+"
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshots ebuilds do not get KEYWORDS
+
 SLOT="0/${PV}"
 IUSE+=" test"
 QT_MIN_PV=5.12
@@ -24,9 +26,9 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	>=liri-base/cmake-shared-1.1.0_p20200511
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 EGIT_COMMIT="140f3831d2a089b8605a5f5805c6639582e06369"
-SRC_URI=\
-"https://github.com/lirios/wayland/archive/${EGIT_COMMIT}.tar.gz \
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/wayland/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

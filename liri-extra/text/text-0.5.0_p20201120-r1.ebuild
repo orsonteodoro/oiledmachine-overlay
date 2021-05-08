@@ -8,7 +8,9 @@ inherit cmake-utils eutils xdg
 DESCRIPTION="Liri Text is a cross-platform text editor made in accordance with Material Design."
 HOMEPAGE="https://github.com/lirios/text"
 LICENSE="GPL-3+"
-KEYWORDS="~amd64 ~x86"
+
+# Live ebuilds or snapshots do not get KEYWORDS.
+
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
 DEPEND+=" >=dev-db/sqlite-3.7.15
@@ -26,9 +28,9 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="17c038316d213d4926f674b7afb6b3ff9afc095a"
-SRC_URI=\
-"https://github.com/lirios/text/archive/${EGIT_COMMIT}.tar.gz
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/text/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

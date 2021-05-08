@@ -8,7 +8,9 @@ inherit cmake-utils eutils
 DESCRIPTION="A backend implementation of xdg-desktop-portal for Liri"
 HOMEPAGE="https://github.com/lirios/xdg-desktop-portal-liri"
 LICENSE="GPL-3+"
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshots do not get KEYWORDS.
+
 SLOT="0/${PV}"
 IUSE+=" flatpak pipewire systemd"
 QT_MIN_PV=5.10
@@ -36,9 +38,9 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.1.0_p20200511"
 EGIT_COMMIT="22ebac8f7f760071d7e1c4f39cf0707d5ab48929"
-SRC_URI=\
-"https://github.com/lirios/xdg-desktop-portal-liri/archive/${EGIT_COMMIT}.tar.gz \
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/xdg-desktop-portal-liri/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

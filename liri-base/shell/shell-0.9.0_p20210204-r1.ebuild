@@ -8,7 +8,9 @@ inherit cmake-utils eutils
 DESCRIPTION="QtQuick and Wayland shell for convergence"
 HOMEPAGE="https://github.com/lirios/shell"
 LICENSE="GPL-3+ LGPL-3+"
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshot do not get KEYWORDs.
+
 SLOT="0/${PV}"
 IUSE+=" systemd"
 QT_MIN_PV=5.15
@@ -44,9 +46,9 @@ BDEPEND+=" || (
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="ded359509328211e74346cdbfc6d67470b0fd872"
-SRC_URI=\
-"https://github.com/lirios/shell/archive/${EGIT_COMMIT}.tar.gz
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/lirios/shell/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

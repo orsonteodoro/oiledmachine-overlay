@@ -10,7 +10,9 @@ HOMEPAGE="https://github.com/lirios/music"
 LICENSE="GPL-3+ BSD FDL-1.3+ MPL-2.0"
 # FindTaglib.cmake is BSD
 # fluid contains files with MPL-2.0 FDL-1.3+
-KEYWORDS="~amd64 ~x86"
+
+# Live/snapshots do not get KEYWORDS.
+
 SLOT="0/${PV}"
 QT_MIN_PV=5.14
 IUSE+=" doc +system-fluid test"
@@ -49,15 +51,15 @@ EGIT_COMMIT="626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d"
 FLUID_COMMIT="a99dc04a067abeb9110664f5427e9a701e6744d4"
 CMAKE_SHARED_COMMIT="4fdf2cb6edd23aaa467cfdbc758ee8ed15cbfc81"
 QBS_SHARED_COMMIT="ebee5a8798ab0a063b56cf7c73be2a28ec353a2e"
-SRC_URI=\
-"https://github.com/lirios/music/archive/${EGIT_COMMIT}.tar.gz
-	-> ${PN}-${PV}.tar.gz
-https://github.com/lirios/fluid/archive/a99dc04a067abeb9110664f5427e9a701e6744d4.tar.gz
-	-> ${PN}-fluid-${FLUID_COMMIT}.tar.gz
+SRC_URI="
+https://github.com/lirios/music/archive/${EGIT_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz
+https://github.com/lirios/fluid/archive/${FLUID_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-fluid-${FLUID_COMMIT}.tar.gz
 https://github.com/lirios/cmake-shared/archive/${CMAKE_SHARED_COMMIT}.tar.gz
-	-> ${PN}-cmake-shared-${CMAKE_SHARED_COMMIT}.tar.gz
-https://github.com/lirios/qbs-shared/archive/ebee5a8798ab0a063b56cf7c73be2a28ec353a2e.tar.gz
-	-> ${PN}-qbs-shared-${QBS_SHARED_COMMIT}.tar.gz"
+	-> ${CATEGORY}-${PN}-cmake-shared-${CMAKE_SHARED_COMMIT}.tar.gz
+https://github.com/lirios/qbs-shared/archive/${QBS_SHARED_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-qbs-shared-${QBS_SHARED_COMMIT}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 _PATCHES=(
