@@ -19,7 +19,7 @@ BDEPEND+=" || (
 		sys-devel/clang
 		sys-devel/gcc
 	)
-	>=dev-util/cmake-3.49"
+	>=dev-util/cmake-3.4"
 SRC_URI="https://github.com/zeux/${PN}/releases/download/v${PV}/${P}.tar.gz"
 RESTRICT="mirror"
 DOCS=( readme.txt docs )
