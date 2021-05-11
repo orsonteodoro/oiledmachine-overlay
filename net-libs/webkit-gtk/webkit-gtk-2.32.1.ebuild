@@ -3,10 +3,13 @@
 
 EAPI=7
 
+LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
+# dependency (testing 21.x: llvm-12, stable 20.x: llvm-11).  U LTS uses 10.
+
 CMAKE_MAKEFILE_GENERATOR="ninja"
-PYTHON_COMPAT=( python3_{7..9} )
-USE_RUBY="ruby24 ruby25 ruby26 ruby27"
-inherit check-reqs cmake desktop flag-o-matic gnome2 multilib-minimal \
+PYTHON_COMPAT=( python3_{6..10} ) # relaxed, U LTS uses python 3.82
+USE_RUBY="ruby26 ruby27 ruby30" # relaxed, U LTS uses ruby 2.7
+inherit check-reqs cmake desktop flag-o-matic gnome2 llvm multilib-minimal \
 pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
 
 DESCRIPTION="Open source web browser engine"
@@ -49,9 +52,9 @@ te tr uk vi zh_CN )
 
 IUSE+=" ${LANGS[@]/#/l10n_} aqua +bmalloc +dfg-jit +egl +ftl-jit -gamepad
 +geolocation gles2-only gnome-keyring +gstreamer -gtk-doc hardened
-+introspection +jit +jpeg2k +jumbo-build +libnotify -minibrowser +opengl
--seccomp -spell -systemd test wayland +webassembly +webassembly-b3-jit +webgl
-+X"
++introspection +jit +jpeg2k +jumbo-build +libhyphen +libnotify thinlto lto -minibrowser
++opengl openmp -seccomp -spell -systemd test wayland +webassembly
++webassembly-b3-jit +webgl +X"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -106,21 +109,23 @@ WPE_DEPEND="
 #   GLX set, but that's a bit automagic too to fix
 # Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].
 #   It is removed to only allow native ABI to use it.
+# Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
 CAIRO_V="1.16.0"
+CLANG_V="10.0"
 GLIB_V="2.64.6"
 GSTREAMER_V="1.16.2"
 MESA_V="20.0.4"
-RDEPEND+="
+# The openmp? ( sys-libs/libomp ) depends is relevant to only clang.
+RDEPEND+=" !net-libs/webkit-gtk:4
 	>=dev-db/sqlite-3.31.1:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/atk-2.35.1[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-66.1:=[${MULTILIB_USEDEP}]
-	>=dev-libs/libgcrypt-1.8.5:0=[${MULTILIB_USEDEP}]
-	>=dev-libs/libxml2-2.9.10:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
 	>=dev-libs/gmp-6.2.0[-pgo(-),${MULTILIB_USEDEP}]
-	>=dev-libs/hyphen-0.9.0[${MULTILIB_USEDEP}]
-	>=dev-libs/libxslt-1.1.34[${MULTILIB_USEDEP}]
+	>=dev-libs/libgcrypt-1.8.5:0=[${MULTILIB_USEDEP}]
 	>=dev-libs/libtasn1-4.16.0:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-2.9.10:2[${MULTILIB_USEDEP}]
+	>=dev-libs/libxslt-1.1.34[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.13.1:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.10.1:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-2.6.4:=[icu(+),${MULTILIB_USEDEP}]
@@ -133,7 +138,9 @@ RDEPEND+="
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
 	>=x11-libs/gtk+-3.24.18:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	egl? ( >=media-libs/mesa-${MESA_V}[egl,${MULTILIB_USEDEP}] )
-	gamepad? ( >=dev-libs/libmanette-0.2.3[${MULTILIB_USEDEP}] )
+	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
+	geolocation? ( >=app-misc/geoclue-2.5.6:2.0 )
+	gles2-only? ( >=media-libs/mesa-${MESA_V}[gles2,${MULTILIB_USEDEP}] )
 	gnome-keyring? ( >=app-crypt/libsecret-0.20.2[${MULTILIB_USEDEP}] )
 	gstreamer? (
 		>=media-libs/gstreamer-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
@@ -146,10 +153,10 @@ RDEPEND+="
 	)
 	introspection? ( >=dev-libs/gobject-introspection-1.64.0:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.4.0:2=[${MULTILIB_USEDEP}] )
-	geolocation? ( >=app-misc/geoclue-2.5.6:2.0 )
-	gles2-only? ( >=media-libs/mesa-${MESA_V}[gles2,${MULTILIB_USEDEP}] )
+	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
 	libnotify? ( >=x11-libs/libnotify-0.7.9[${MULTILIB_USEDEP}] )
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
+	openmp? ( sys-libs/libomp[${MULTILIB_USEDEP}] )
 	seccomp? (
 		>=sys-apps/bubblewrap-0.4.0
 		>=sys-apps/xdg-dbus-proxy-0.1.2
@@ -174,14 +181,22 @@ DEPEND+=" ${RDEPEND}"
 BDEPEND+="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
+	lto? (
+		>=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
+		>=sys-devel/lld-${CLANG_V}
+	)
+	thinlto? (
+		>=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
+		>=sys-devel/lld-${CLANG_V}
+	)
+	|| ( >=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
+	     >=sys-devel/gcc-9.3.0 )
 	>=app-accessibility/at-spi2-core-2.36.0[${MULTILIB_USEDEP}]
 	>=dev-util/cmake-3.16.3
 	>=dev-util/glib-utils-${GLIB_V}
 	>=dev-util/gperf-3.1
 	>=dev-lang/perl-5.30.0
 	>=sys-devel/bison-3.5.1
-	|| ( >=sys-devel/clang-10.0[${MULTILIB_USEDEP}]
-	     >=sys-devel/gcc-9.3.0 )
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
 	>=virtual/pkgconfig-0.29.1[${MULTILIB_USEDEP}]
 	virtual/perl-Carp
@@ -253,6 +268,18 @@ pkg_setup() {
 		check-reqs_pkg_setup
 	fi
 	python-any-r1_pkg_setup
+
+	if use openmp ; then
+		tc-check-openmp
+		llvm_pkg_setup
+	fi
+
+	if use thinlto ; then
+		einfo "The thinlto USE flag is in testing."
+	fi
+	if use lto ; then
+		einfo "The lto USE flag is in testing."
+	fi
 }
 
 src_prepare() {
@@ -365,9 +392,12 @@ multilib_src_configure() {
 		-DENABLE_WEBGL=$(usex webgl)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
+		-DUSE_GTK4=OFF
+		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
+		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
@@ -377,6 +407,42 @@ multilib_src_configure() {
 		$(cmake_use_find_package egl EGL)
 		$(cmake_use_find_package opengl OpenGL)
 	)
+
+	if use thinlto ; then
+		MESA_LLVM_V=$(bzcat "${ESYSROOT}/var/db/pkg/media-libs/mesa-"*"/environment.bz2" \
+			| grep "LLVM_MAX_SLOT" \
+			| head -n 1 \
+			| cut -f 2 -d "\"")
+		einfo "MESA LLVM: ${MESA_LLVM_V}"
+		local llvmp=$(get_llvm_prefix ${MESA_LLVM_V})
+		einfo "LLVM path: ${llvmp}"
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="${llvmp}/bin/${ctarget}-clang"
+			-DCMAKE_CXX_COMPILER="${llvmp}/bin/${ctarget}-clang++"
+			-DLTO_MODE=thin
+			-DUSE_LD_LLD=ON
+			-DOpenMP_CXX_FLAGS="-fopenmp"
+			-DOpenMP_CXX_LIB_NAMES="libomp"
+			-DOpenMP_libomp_LIBRARY="libomp"
+		)
+	elif use lto ; then
+		MESA_LLVM_V=$(bzcat "${ESYSROOT}/var/db/pkg/media-libs/mesa-"*"/environment.bz2" \
+			| grep "LLVM_MAX_SLOT" \
+			| head -n 1 \
+			| cut -f 2 -d "\"")
+		einfo "MESA LLVM: ${MESA_LLVM_V}"
+		local llvmp=$(get_llvm_prefix ${MESA_LLVM_V})
+		einfo "LLVM path: ${llvmp}"
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="${llvmp}/bin/${ctarget}-clang"
+			-DCMAKE_CXX_COMPILER="${llvmp}/bin/${ctarget}-clang++"
+			-DLTO_MODE=full
+			-DUSE_LD_LLD=ON
+			-DOpenMP_CXX_FLAGS="-fopenmp"
+			-DOpenMP_CXX_LIB_NAMES="libomp"
+			-DOpenMP_libomp_LIBRARY="libomp"
+		)
+	fi
 
 	if ! use jit ; then
 		mycmakeargs+=( -DENABLE_SAMPLING_PROFILER=OFF )

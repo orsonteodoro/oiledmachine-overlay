@@ -31,6 +31,10 @@
     <flag name="geolocation">Enable geolocation support through
       <pkg>app-misc/geoclue</pkg></flag>
     <flag name="gles2">Enable GLESv2 support</flag>
+    <flag name="lto">Use full LTO [link time optimization] (with unicore) when
+      when linking</flag>
+    <flag name="thinlto">Use ThinLTO [link time optimization] (with multicore)
+      when linking</flag>
     <flag name="hardened">Ensures less problems with hardened build.</flag>
     <flag name="jit">Enables JIT support for JavaScriptCore for
       significantly faster code execution.  Disable for increased compatibility
@@ -38,6 +42,7 @@
     <flag name="jumbo-build">Combine source files to speed up build
       process</flag>
     <flag name="nsplugin">Enable full nsplugin support (GTK2 plugins)</flag>
+    <flag name="openmp">Use OpenMP to accelerate SVG filters</flag>
     <flag name="webgl">Build support for the WebGL HTML API using
       <pkg>virtual/opengl</pkg></flag>
     <flag name="webassembly">Enables support for WebAssembly used for example
