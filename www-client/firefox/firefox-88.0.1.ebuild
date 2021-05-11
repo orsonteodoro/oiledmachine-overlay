@@ -147,7 +147,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:12[${MULTILIB_USEDEP}]
 			sys-devel/llvm:12[${MULTILIB_USEDEP}]
 			clang? (
-				=sys-devel/lld-12*[${MULTILIB_USEDEP}]
+				=sys-devel/lld-12*
 				pgo? ( =sys-libs/compiler-rt-sanitizers-12*[profile] )
 			)
 		)
@@ -155,7 +155,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:11[${MULTILIB_USEDEP}]
 			sys-devel/llvm:11[${MULTILIB_USEDEP}]
 			clang? (
-				=sys-devel/lld-11*[${MULTILIB_USEDEP}]
+				=sys-devel/lld-11*
 				pgo? ( =sys-libs/compiler-rt-sanitizers-11*[profile] )
 			)
 		)
@@ -163,7 +163,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:10[${MULTILIB_USEDEP}]
 			sys-devel/llvm:10[${MULTILIB_USEDEP}]
 			clang? (
-				=sys-devel/lld-10*[${MULTILIB_USEDEP}]
+				=sys-devel/lld-10*
 				pgo? ( =sys-libs/compiler-rt-sanitizers-10*[profile] )
 			)
 		)
@@ -226,7 +226,7 @@ CDEPEND="
 	)
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	selinux? ( sec-policy/selinux-mozilla )
-	sndio? ( media-sound/sndio )"
+	sndio? ( media-sound/sndio[${MULTILIB_USEDEP}] )"
 
 RDEPEND="${CDEPEND}
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
