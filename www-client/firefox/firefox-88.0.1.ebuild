@@ -1,14 +1,14 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Originally based on the firefox-87.0.ebuild from the gentoo-overlay.
+# Originally based on the firefox-88.0.1.ebuild from the gentoo-overlay.
 # Revisions may change in the oiledmachine-overlay.
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-87-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-88-patches-03.tar.xz"
 
-LLVM_MAX_SLOT=11
+LLVM_MAX_SLOT=12
 
 PYTHON_COMPAT=( python3_{7..9} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -119,10 +119,8 @@ W3C-document ZLIB"
 # ZLIB MIT devtools/client/shared/vendor/jszip.js
 # ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- the vanilla ZLIB lib license doesn't contain all rights reserved
 
-# *TODO: add license to license folder
-
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
-	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast selinux
+	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast sndio selinux
 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 	+system-libvpx +system-webp wayland wifi"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 \
@@ -146,10 +144,18 @@ BDEPEND="${PYTHON_DEPS}
 	!dev-lang/rust-bin
 	|| (
 		(
+			sys-devel/clang:12[${MULTILIB_USEDEP}]
+			sys-devel/llvm:12[${MULTILIB_USEDEP}]
+			clang? (
+				=sys-devel/lld-12*[${MULTILIB_USEDEP}]
+				pgo? ( =sys-libs/compiler-rt-sanitizers-12*[profile] )
+			)
+		)
+		(
 			sys-devel/clang:11[${MULTILIB_USEDEP}]
 			sys-devel/llvm:11[${MULTILIB_USEDEP}]
 			clang? (
-				=sys-devel/lld-11*
+				=sys-devel/lld-11*[${MULTILIB_USEDEP}]
 				pgo? ( =sys-libs/compiler-rt-sanitizers-11*[profile] )
 			)
 		)
@@ -157,20 +163,16 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:10[${MULTILIB_USEDEP}]
 			sys-devel/llvm:10[${MULTILIB_USEDEP}]
 			clang? (
-				=sys-devel/lld-10*
+				=sys-devel/lld-10*[${MULTILIB_USEDEP}]
 				pgo? ( =sys-libs/compiler-rt-sanitizers-10*[profile] )
 			)
 		)
 	)
-	amd64? ( >=dev-lang/yasm-1.1 )
-	x86? ( >=dev-lang/yasm-1.1 )
-	!system-av1? (
-		amd64? ( >=dev-lang/nasm-2.13 )
-		x86? ( >=dev-lang/nasm-2.13 )
-	)"
+	amd64? ( >=dev-lang/nasm-2.13 )
+	x86? ( >=dev-lang/nasm-2.13 )"
 
 CDEPEND="
-	>=dev-libs/nss-3.62[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.63[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.29[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -207,7 +209,7 @@ CDEPEND="
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-2.6.8:0=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-2.7.4:0=[${MULTILIB_USEDEP}]
 		>=media-gfx/graphite2-1.3.13[${MULTILIB_USEDEP}]
 	)
 	system-icu? ( >=dev-libs/icu-67.1:=[${MULTILIB_USEDEP}] )
@@ -223,7 +225,8 @@ CDEPEND="
 		)
 	)
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
-	selinux? ( sec-policy/selinux-mozilla )"
+	selinux? ( sec-policy/selinux-mozilla )
+	sndio? ( media-sound/sndio )"
 
 RDEPEND="${CDEPEND}
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
@@ -578,11 +581,11 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	# defer 0028-Make-elfhack-use-toolchain.patch in multilib_foreach_abi
-	mv "${WORKDIR}/firefox-patches"/0028-Make-elfhack-use-toolchain.patch{,.bak}
+	# Defer 0028-Make-elfhack-use-toolchain.patch in multilib_foreach_abi
+	mv "${WORKDIR}/firefox-patches"/0029-Make-elfhack-use-toolchain.patch{,.bak}
 
 	eapply "${WORKDIR}/firefox-patches"
-	mv "${WORKDIR}/firefox-patches"/0028-Make-elfhack-use-toolchain.patch{.bak,}
+	mv "${WORKDIR}/firefox-patches"/0029-Make-elfhack-use-toolchain.patch{.bak,}
 
 	# Only partial patching was done because Gentoo doesn't support multilib
 	# Python.  Only native ABI is supported.  This means cbindgen cannot
@@ -618,6 +621,8 @@ src_prepare() {
 	# Clearing checksums where we have applied patches
 	moz_clear_vendor_checksums target-lexicon-0.9.0
 
+	# Removed creation of a single build dir
+
 	# Write API keys to disk
 	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
 	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
@@ -639,7 +644,7 @@ src_prepare() {
 		local ctarget=$(get_abi_CHOST ${ABI})
 		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-objdump" ) \
 			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${ctarget}-objdump" ) ; then
-			eapply "${WORKDIR}/firefox-patches/0028-Make-elfhack-use-toolchain.patch"
+			eapply "${WORKDIR}/firefox-patches/0029-Make-elfhack-use-toolchain.patch"
 			# sed-in toolchain prefix
 			sed -i \
 				-e "s/objdump/${ctarget}-objdump/" \
@@ -734,6 +739,8 @@ multilib_src_configure() {
 	if tc-is-cross-compiler ; then
 		export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --host=${chost} --target=${ctarget} ${BINDGEN_CFLAGS-}"
 	fi
+
+	# MOZILLA_FIVE_HOME and MOZCONFIG are dynamically generated per ABI
 
 	# python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
@@ -848,6 +855,8 @@ multilib_src_configure() {
 	if use kernel_linux && ! use pulseaudio ; then
 		mozconfig_add_options_ac '-pulseaudio' --enable-alsa
 	fi
+
+	mozconfig_use_enable sndio
 
 	mozconfig_use_enable wifi necko-wifi
 
