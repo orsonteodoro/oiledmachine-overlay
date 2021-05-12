@@ -7,7 +7,7 @@ LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (testing 21.x: llvm-12, stable 20.x: llvm-11).  U LTS uses 10.
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
-PYTHON_COMPAT=( python3_{6..10} ) # relaxed, U LTS uses python 3.82
+PYTHON_COMPAT=( python3_{7..10} ) # relaxed, U LTS uses python 3.82
 USE_RUBY="ruby26 ruby27 ruby30" # relaxed, U LTS uses ruby 2.7
 inherit check-reqs cmake desktop flag-o-matic gnome2 llvm multilib-minimal \
 pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
