@@ -2,22 +2,24 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_{7..10} )
+inherit eutils flag-o-matic meson multilib-minimal python-single-r1 xdg
+
 DESCRIPTION="Command-line cloud music player for Linux with support for \
 Spotify, Google Play Music, YouTube, SoundCloud, TuneIn, IHeartRadio, Plex \
 servers and Chromecast devices."
 HOMEPAGE="http://tizonia.org"
 LICENSE="LGPL-3.0+"
 KEYWORDS="~amd64 ~x86"
-PYTHON_COMPAT=( python3_{6,7,8} )
-inherit eutils flag-o-matic meson multilib-minimal python-single-r1 xdg
 SLOT="0/${PV}"
-IUSE="+aac +alsa +bash-completion -blocking-etb-ftb -blocking-sendcommand
+IUSE+=" +aac +alsa +bash-completion -blocking-etb-ftb -blocking-sendcommand
  +boost +curl +dbus +file-io +flac +fuzzywuzzy +inproc-io
  +mp4 +ogg +opus +lame +libsndfile +mad +mp3-metadata-eraser +mp2 +mpg123
  +player +pulseaudio +python +sdl +icecast-client +icecast-server
  +iheart -test +vorbis +vpx +webm +zsh-completion
  +chromecast +google-music +plex +soundcloud +spotify +tunein +youtube"
-REQUIRED_USE="chromecast? ( player python boost curl dbus google-music )
+REQUIRED_USE+=" chromecast? ( player python boost curl dbus google-music )
 	      google-music? ( player python boost fuzzywuzzy curl )
 	      icecast-client? ( player curl )
 	      icecast-server? ( player )
@@ -79,7 +81,7 @@ REQUIRED_USE="chromecast? ( player python boost curl dbus google-music )
 #
 # >=dev-python/dnspython-1.16.0 added to avoid merge conflict between pycrypto
 # and pycryptodome.  It should not be here but resolved in dnspython.
-RDEPEND="aac? (  media-libs/faad2[${MULTILIB_USEDEP}] )
+RDEPEND+=" aac? (  media-libs/faad2[${MULTILIB_USEDEP}] )
 	 alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
 	 bash-completion? ( app-shells/bash )
 	 boost? (
@@ -119,12 +121,15 @@ RDEPEND="aac? (  media-libs/faad2[${MULTILIB_USEDEP}] )
 	 webm? ( media-libs/nestegg[${MULTILIB_USEDEP}] )
 	 zsh-completion? ( app-shells/zsh )"
 
-DEPEND="${RDEPEND}
+DEPEND+=" ${RDEPEND}
 	>=dev-libs/check-0.9.4[${MULTILIB_USEDEP}]
 	>=dev-libs/log4c-1.2.1[${MULTILIB_USEDEP}]"
 SRC_URI=\
-"https://github.com/tizonia/tizonia-openmax-il/archive/v${PV}.tar.gz \
-	-> ${PN}-${PV}.tar.gz"
+"https://github.com/tizonia/tizonia-openmax-il/archive/v${PV}.tar.gz
+	-> ${PN}-${PV}.tar.gz
+https://github.com/tizonia/tizonia-openmax-il/commit/a1e8f8bddeae144ae634a031b547bc2a573db558.patch
+	-> ${PN}-${PV}-a1e8f8b-add-missin-placeholders-prefix.patch
+"
 MY_PN="tizonia-openmax-il"
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
@@ -144,6 +149,7 @@ _PATCHES=(
 	"${FILESDIR}/tizonia-0.22.0-modular-13.patch"
 	"${FILESDIR}/tizonia-0.22.0-modular-meson-build.patch"
 	"${FILESDIR}/tizonia-0.22.0-modular-meson-optional-python.patch"
+	"${DISTDIR}/${PN}-${PV}-a1e8f8b-add-missin-placeholders-prefix.patch"
 )
 
 pkg_setup() {
