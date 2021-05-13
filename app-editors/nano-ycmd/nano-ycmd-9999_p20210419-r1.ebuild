@@ -5,7 +5,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{7..10} )
 
 inherit autotools eutils flag-o-matic python-single-r1
 
@@ -19,7 +19,7 @@ SLOT="0"
 IUSE+=" bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls
 slang +spell static openmp openssl system-clangd system-gnulib system-gocode
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
-system-rustc system-tsserver unicode +ycmd-43 ycmd-44 ycm-generator"
+system-rustc system-tsserver unicode +ycmd-43 ycmd-44 ycmd-45 ycm-generator"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	      ^^ ( libgcrypt nettle openssl )
 	      ^^ ( ycmd-43 ycmd-44 )
@@ -44,9 +44,10 @@ RDEPEND+=" ${PYTHON_DEPS}
 	openmp? ( sys-libs/libomp )
 	openssl? ( dev-libs/openssl
 		   dev-libs/glib )
-	ycm-generator? ( $(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8,9}) )
-	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{6,7,8,9}) )
-	ycmd-44? ( $(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]' python3_{6,7,8,9}) )"
+	ycm-generator? ( $(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{7,8,9,10}) )
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{7,8,9,10}) )
+	ycmd-44? ( $(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]' python3_{7,8,9,10}) )
+	ycmd-45? ( $(python_gen_cond_dep 'dev-util/ycmd:45[${PYTHON_USEDEP}]' python3_{7,8,9,10}) )"
 DEPEND+=" ${RDEPEND}
 	system-gnulib? ( >=dev-libs/gnulib-2018.01.23.08.42.00 )"
 BDEPEND+=" virtual/pkgconfig
@@ -176,6 +177,8 @@ src_configure() {
 		ycmd_slot=43
 	elif use ycmd-44 ; then
 		ycmd_slot=44
+	elif use ycmd-45 ; then
+		ycmd_slot=45
 	fi
 	BD_REL="ycmd/${ycmd_slot}"
 	BD_ABS="$(python_get_sitedir)/${BD_REL}"
@@ -239,7 +242,7 @@ src_configure() {
 				rv=$(ver_cut 1-3 ${rv})
 				rls_path="/usr/lib/rust/${rv}/bin/rls"
 			fi
-		elif use ycmd-44 ; then
+		elif use ycmd-44 || use ycmd-45 ; then
 			if has_version 'dev-lang/rust-bin' ; then
 				local rv=$(best_version 'dev-lang/rust-bin' | sed -e "s|dev-lang/rust-bin-||")
 				rv=$(ver_cut 1-3 ${rv})
@@ -255,7 +258,7 @@ src_configure() {
 	else
 		if use ycmd-43 ; then
 			rls_path="${BD_ABS}/third_party/rls/bin/rls"
-		elif use ycmd-44 ; then
+		elif use ycmd-44 || use ycmd-45 ; then
 			rust_toolchain_path="${BD_ABS}/third_party/rust-analyzer"
 		fi
 	fi
@@ -267,26 +270,24 @@ src_configure() {
 	if use system-omnisharp ; then
 		omnisharp_path="${BD_ABS}/ycmd/completers/cs/omnisharp.sh"
 	else
-		if use ycmd-43 ; then
-			omnisharp_path="${BD_ABS}/third_party/omnisharp-roslyn/run"
-		fi
+		omnisharp_path="${BD_ABS}/third_party/omnisharp-roslyn/run"
 	fi
 	if use system-tsserver ; then
 		tsserver_path="/usr/bin/tsserver"
 	else
 		if use ycmd-43 ; then
 			tsserver_path="${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
-		elif use ycmd-44 ; then
+		elif use ycmd-44 || use ycmd-45 ; then
 			tsserver_path="${BD_ABS}/third_party/tsserver/node_modules/typescript/bin/tsserver"
 		fi
 	fi
 
 	if use ycmd-43 ; then
 		econf_ycmd_slot_43
-	elif use ycmd-44 ; then
+	elif use ycmd-44 || use ycmd-45 ; then
 		econf_ycmd_slot_44
 	else
-		die "You must choose either ycmd-43 or ycmd-44"
+		die "You must choose either ycmd-43, ycmd-44, or ycmd-45 USE flag."
 	fi
 }
 

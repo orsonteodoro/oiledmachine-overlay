@@ -111,6 +111,8 @@ https://github.com/orsonteodoro/nano-ycmd/blob/ymcd-code-completion/src/global.c
       instead of ycmd internal dependency.</flag>
     <flag name="unicode">Enables UTF-8 support.</flag>
     <flag name="ycmd-43">Use ycmd core version 43.</flag>
+    <flag name="ycmd-44">Use ycmd core version 44.</flag>
+    <flag name="ycmd-45">Use ycmd core version 45.</flag>
     <flag name="ycm-generator">Add C / C++ / ObjC / ObjC++ support for the
       clang completer.</flag>
   </use>
