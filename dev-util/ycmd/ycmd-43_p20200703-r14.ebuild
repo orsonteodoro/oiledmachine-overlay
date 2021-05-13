@@ -502,14 +502,14 @@ download the internal dependencies."
 	if use javascript ; then
 		# prevent unpack problem with clangd or incomplete build
 		if ! node --version 2> /dev/null 1>/dev/null ; then
-			die "Install or fix node installation."
+			die "Either install Node.js, fix node installation, or disable the javascript USE flag."
 		fi
 	fi
 
 	if use typescript ; then
 		# prevent unpack problem with clangd or incomplete build
 		if ! node --version 2> /dev/null 1>/dev/null ; then
-			die "Install or fix node installation."
+			die "Either install Node.js, fix node installation, or disable the typescript USE flag."
 		fi
 	fi
 }
