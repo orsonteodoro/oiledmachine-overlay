@@ -15,9 +15,9 @@ LICENSE="GPL-2"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 GAMBAS_MODULES=(bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer
-gtk2 gtk3 httpd imlib2 jit mime mixer mysql ncurses network odbc openal
+gtk3 httpd imlib2 jit mime mixer mysql ncurses network odbc openal
 opengl openssl pcre pdf pixbuf postgresql qt5 sdl sdl2 sqlite v4l
-X xml xslt zlib)
+X xml xslt zlib zstd)
 QT_MIN_PV="5.3"
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES[@]/#/+})
 # On each minor release, re-inspect the code quality.
@@ -49,13 +49,9 @@ DEPEND+=" bzip2? ( app-arch/bzip2 )
 	glu? ( media-libs/glu )
 	gsl? ( sci-libs/gsl )
 	gstreamer? ( >=media-libs/gstreamer-1 )
-	gtk2? ( >=gnome-base/librsvg-2.14.3
-		opengl? ( >=x11-libs/gtkglext-1 )
-		>=x11-libs/gtk+-2.16:2
-		x11-libs/libICE
-		x11-libs/libSM )
 	gtk3? ( >=gnome-base/librsvg-2.14.3
-		>=x11-libs/gtk+-3.4:3
+		>=net-libs/webkit-gtk-2.20
+		>=x11-libs/gtk+-3.4:3[X,wayland]
 		x11-libs/libICE
 		x11-libs/libSM )
 	httpd? ( sys-libs/glibc )
@@ -73,7 +69,7 @@ DEPEND+=" bzip2? ( app-arch/bzip2 )
 		media-libs/glew )
 	openssl? ( >=dev-libs/openssl-1 )
 	pcre? ( dev-libs/libpcre )
-	pdf? ( >=app-text/poppler-0.5 )
+	pdf? ( >=app-text/poppler-0.58 )
 	pixbuf? ( >=x11-libs/gdk-pixbuf-2.4.13 )
 	postgresql? ( dev-db/postgresql )
 	qt5? ( >=dev-qt/qtcore-${QT_MIN_PV}:5=
@@ -104,7 +100,8 @@ DEPEND+=" bzip2? ( app-arch/bzip2 )
 	x11-misc/xdg-utils
 	xml? ( >=dev-libs/libxml2-2 )
 	xslt? ( dev-libs/libxslt )
-	zlib? ( sys-libs/zlib )"
+	zlib? ( sys-libs/zlib )
+	zstd? ( >=app-arch/zstd-1.3.3 )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=sys-devel/autoconf-2.68
@@ -112,11 +109,10 @@ BDEPEND+="
 	>=sys-devel/libtool-2.4"
 REQUIRED_USE+="
 	glsl? ( opengl )
-	gtk2? ( X cairo )
 	gtk3? ( X cairo )
 	ide ( X network curl ^^ ( qt5 ) webkit )
 	mixer? ( || ( sdl sdl2 ) )
-	opengl? ( || ( gtk2 qt5 ) )
+	opengl? ( || ( qt5 ) )
 	remove_deprecated? ( !gnome-keyring !sdl !v4l )
 	remove_not_finished? ( !dbus !gsl !gtk3 !imlib2 !ncurses )
 	remove_stable_not_finished? ( !sdl2 )
@@ -126,7 +122,7 @@ REQUIRED_USE+="
 	xml? ( xslt )
 	xslt? ( xml )"
 S="${WORKDIR}/${PN}-${PV}"
-DOCS=( AUTHORS ChangeLog COPYING README )
+DOCS=( AUTHORS ChangeLog README )
 RESTRICT="mirror"
 declare -Ax USE_FLAG_TO_MODULE_NAME=( \
 	[bzip2]="bzlib2" \
@@ -138,7 +134,6 @@ declare -Ax USE_FLAG_TO_MODULE_NAME=( \
 	[gnome-keyring]="keyring" \
 	[gsl]="gsl"  \
 	[gstreamer]="media" \
-	[gtk2]="gtk2"  \
 	[gtk3]="gtk3" \
 	[httpd]="httpd" \
 	[imlib2]="imageimlib"  \
@@ -163,7 +158,8 @@ declare -Ax USE_FLAG_TO_MODULE_NAME=( \
 	[X]="X" \
 	[xslt]="xslt" \
 	[xml]="libxml" \
-	[zlib]="zlib" )
+	[zlib]="zlib" \
+	[zstd]="zstd" )
 
 pkg_setup() {
 	if [[ "$(tc-getCC)" == "clang" || "$(tc-getCXX)" == "clang++" ]]; then
@@ -258,6 +254,7 @@ src_prepare() {
 		echo "$USE" | grep -F -q -o "${m}" \
 			|| mod_off ${USE_FLAG_TO_MODULE_NAME[${m}]}
 	done
+	mod_off gtk
 	mod_off qt4
 	mod_off sqlite2
 	# prevent duplicate install failure
@@ -279,6 +276,8 @@ src_configure() {
 	filter-flags -O*
 
 	econf \
+		--disable-gtk2 \
+		--disable-gtkopengl \
 		--disable-qt4 \
 		--disable-sqlite2 \
 		$(use_enable bzip2) \
@@ -293,9 +292,6 @@ src_configure() {
 		$(use_enable gnome-keyring keyring) \
 		$(use_enable gnome-keyring gb_desktop_gnome_keyring) \
 		$(use_enable gstreamer media) \
-		$(use_enable gtk2) \
-		$(usex gtk2 \
-			$(use_enable opengl gtkopengl) ) \
 		$(use_enable gtk3) \
 		$(use_enable httpd) \
 		$(use_enable imlib2 image_imlib) \
@@ -338,7 +334,8 @@ src_configure() {
 		$(use_enable xml) \
 		$(usex xml $(usex xslt $(echo $(use_enable xslt xmlxslt) \
 				--enable-xmlhtml) ) ) \
-		$(use_enable zlib)
+		$(use_enable zlib) \
+		$(use_enable zstd)
 
 	for p in $(grep -l -F -e "State" $(find . -name "*.component")) ; do
 		if echo "${p}" | grep -q -E -e "gb.xml/.component$" ; then
@@ -428,16 +425,21 @@ src_install() {
 		find_remove_module "gb.util.web"
 		find_remove_module "gb.web.feed"
 		find_remove_module "gb.web.form"
-		find_remove_module "gb.xml.component"
+		find_remove_module "gb.web.gui"
 	fi
 
 	if use remove_unstable ; then
 		find_remove_module "gb.chart"
 		find_remove_module "gb.dbus.trayicon"
 		find_remove_module "gb.term.form"
-		find_remove_module "gb.web.gui"
 	fi
 	find "${D}" -name '*.la' -delete || die
+
+	use doc && \
+	einstalldocs
+
+	docinto licenses
+	dodoc COPYING
 }
 
 pkg_postinst() {
