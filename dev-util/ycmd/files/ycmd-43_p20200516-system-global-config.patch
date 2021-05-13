@@ -120,8 +120,8 @@ diff -Nurp ycmd-ef48cfe1b63bcc07b88e537fb5b6d17b513e319c.orig/ycmd/completers/cp
 -  'bin' ) )
 -PRE_BUILT_CLANDG_PATH = os.path.join( PRE_BUILT_CLANGD_DIR, 'clangd' )
 +if build_prefs.USE_SYSTEM_CLANGD:
-+  PRE_BUILT_CLANDG_PATH = build_prefs.SYSTEM_CLANGD_PATH
 +  PRE_BUILT_CLANGD_DIR = os.path.dirname( build_prefs.SYSTEM_CLANGD_PATH )
++  PRE_BUILT_CLANDG_PATH = build_prefs.SYSTEM_CLANGD_PATH
 +else:
 +  PRE_BUILT_CLANGD_DIR = os.path.abspath( os.path.join(
 +    os.path.dirname( __file__ ),

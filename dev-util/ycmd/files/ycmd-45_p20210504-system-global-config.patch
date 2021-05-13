@@ -1,6 +1,6 @@
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/build_prefs.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/build_prefs.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/build_prefs.py	1969-12-31 16:00:00.000000000 -0800
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/build_prefs.py	2021-04-16 20:44:55.431988563 -0700
+diff -Nurp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/build_prefs.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/build_prefs.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/build_prefs.py	1969-12-31 16:00:00.000000000 -0800
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/build_prefs.py	2021-04-16 20:44:55.431988563 -0700
 @@ -0,0 +1,59 @@
 +# Copyright (C) 2021 ycmd contributors
 +#
@@ -61,9 +61,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/build_prefs.p
 +
 +USE_CLANGD = False
 +USE_LIBCLANG = False
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/c/hook.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/c/hook.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/c/hook.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/c/hook.py	2021-04-16 20:44:53.891928782 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/c/hook.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/c/hook.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/c/hook.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/c/hook.py	2021-05-12 01:09:53.662974101 -0700
 @@ -15,16 +15,19 @@
  # You should have received a copy of the GNU General Public License
  # along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
@@ -89,16 +89,16 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/c/
 +  if build_prefs.USE_LIBCLANG and ycm_core.HasClangSupport():
      return ClangCompleter( user_options )
    return None
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cpp/clangd_completer.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/cpp/clangd_completer.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cpp/clangd_completer.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/cpp/clangd_completer.py	2021-04-16 20:39:18.328900850 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/cpp/clangd_completer.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/cpp/clangd_completer.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/cpp/clangd_completer.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/cpp/clangd_completer.py	2021-05-12 01:15:32.235654669 -0700
 @@ -33,22 +33,27 @@ from ycmd.utils import ( CLANG_RESOURCE_
                           OnMac,
                           PathsToAllParentFolders,
                           re )
 +from ycmd import build_prefs
  
- MIN_SUPPORTED_VERSION = ( 11, 0, 0 )
+ MIN_SUPPORTED_VERSION = ( 12, 0, 0 )
  INCLUDE_REGEX = re.compile(
    '(\\s*#\\s*(?:include|import)\\s*)(?:"[^"]*|<[^>]*)' )
  NOT_CACHED = 'NOT_CACHED'
@@ -130,9 +130,11 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cp
  
  
  def ParseClangdVersion( version_str ):
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cpp/hook.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/cpp/hook.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cpp/hook.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/cpp/hook.py	2021-04-16 20:44:52.841888019 -0700
+Only in ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/cpp: clangd_completer.py.orig
+Only in ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/cpp: clangd_completer.py.rej
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/cpp/hook.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/cpp/hook.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/cpp/hook.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/cpp/hook.py	2021-05-12 01:09:53.662974101 -0700
 @@ -15,16 +15,19 @@
  # You should have received a copy of the GNU General Public License
  # along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
@@ -158,9 +160,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cp
 +  if build_prefs.USE_LIBCLANG and ycm_core.HasClangSupport():
      return ClangCompleter( user_options )
    return None
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cs/cs_completer.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/cs/cs_completer.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cs/cs_completer.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/cs/cs_completer.py	2021-04-16 20:39:18.328900850 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/cs/cs_completer.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/cs/cs_completer.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/cs/cs_completer.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/cs/cs_completer.py	2021-05-12 01:09:53.662974101 -0700
 @@ -36,18 +36,23 @@ from ycmd.utils import ( ByteOffsetToCod
                           ToBytes )
  from ycmd import responses
@@ -191,9 +193,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cs
  if ( not os.path.isfile( PATH_TO_OMNISHARP_ROSLYN_BINARY )
       and os.path.isfile( os.path.join(
         PATH_TO_ROSLYN_OMNISHARP, 'omnisharp', 'OmniSharp.exe' ) ) ):
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cuda/hook.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/cuda/hook.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cuda/hook.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/cuda/hook.py	2021-04-16 20:44:43.701533193 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/cuda/hook.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/cuda/hook.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/cuda/hook.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/cuda/hook.py	2021-05-12 01:09:53.662974101 -0700
 @@ -15,16 +15,19 @@
  # You should have received a copy of the GNU General Public License
  # along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
@@ -219,9 +221,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/cu
 +  if build_prefs.USE_LIBCLANG and ycm_core.HasClangSupport():
      return ClangCompleter( user_options )
    return None
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/go/go_completer.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/go/go_completer.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/go/go_completer.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/go/go_completer.py	2021-04-16 20:39:18.328900850 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/go/go_completer.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/go/go_completer.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/go/go_completer.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/go/go_completer.py	2021-05-12 01:09:53.662974101 -0700
 @@ -22,16 +22,19 @@ import os
  from ycmd import responses
  from ycmd import utils
@@ -251,9 +253,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/go
  
  
  def ShouldEnableGoCompleter( user_options ):
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/java/java_completer.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/java/java_completer.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/java/java_completer.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/java/java_completer.py	2021-04-16 20:39:18.328900850 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/java/java_completer.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/java/java_completer.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/java/java_completer.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/java/java_completer.py	2021-05-12 01:09:53.662974101 -0700
 @@ -27,19 +27,10 @@ from ycmd import responses, utils
  from ycmd.completers.language_server import language_server_protocol as lsp
  from ycmd.completers.language_server import language_server_completer
@@ -331,9 +333,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/ja
  
  
  # The authors of jdt.ls say that we should re-use workspaces. They also say that
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/javascript/tern_completer.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/javascript/tern_completer.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/javascript/tern_completer.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/javascript/tern_completer.py	2021-04-16 20:39:18.338901238 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/javascript/tern_completer.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/javascript/tern_completer.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/javascript/tern_completer.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/javascript/tern_completer.py	2021-05-12 01:09:53.662974101 -0700
 @@ -27,21 +27,25 @@ from ycmd import utils, responses
  from ycmd.completers.completer import Completer
  from ycmd.completers.completer_utils import GetFileLines
@@ -372,9 +374,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/ja
  
  PATH_TO_NODE = utils.FindExecutable( 'node' )
  
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/objc/hook.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/objc/hook.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/objc/hook.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/objc/hook.py	2021-04-16 20:44:50.531798343 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/objc/hook.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/objc/hook.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/objc/hook.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/objc/hook.py	2021-05-12 01:09:53.672974474 -0700
 @@ -15,16 +15,19 @@
  # You should have received a copy of the GNU General Public License
  # along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
@@ -400,9 +402,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/ob
 +  if build_prefs.USE_LIBCLANG and ycm_core.HasClangSupport():
      return ClangCompleter( user_options )
    return None
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/objcpp/hook.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/objcpp/hook.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/objcpp/hook.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/objcpp/hook.py	2021-04-16 20:44:47.801692359 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/objcpp/hook.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/objcpp/hook.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/objcpp/hook.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/objcpp/hook.py	2021-05-12 01:09:53.672974474 -0700
 @@ -15,16 +15,19 @@
  # You should have received a copy of the GNU General Public License
  # along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
@@ -428,9 +430,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/ob
 +  if build_prefs.USE_LIBCLANG and ycm_core.HasClangSupport():
      return ClangCompleter( user_options )
    return None
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/rust/rust_completer.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/rust/rust_completer.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/rust/rust_completer.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/rust/rust_completer.py	2021-04-16 20:39:18.338901238 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/rust/rust_completer.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/rust/rust_completer.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/rust/rust_completer.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/rust/rust_completer.py	2021-05-12 01:09:53.672974474 -0700
 @@ -22,16 +22,21 @@ from subprocess import PIPE
  from ycmd import responses, utils
  from ycmd.completers.language_server import language_server_completer
@@ -459,9 +461,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/ru
  RA_VERSION_REGEX = re.compile( r'^rust-analyzer (?P<version>.*)$' )
  
  
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/typescript/typescript_completer.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/typescript/typescript_completer.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/typescript/typescript_completer.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/completers/typescript/typescript_completer.py	2021-04-16 20:39:18.338901238 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/typescript/typescript_completer.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/typescript/typescript_completer.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/completers/typescript/typescript_completer.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/completers/typescript/typescript_completer.py	2021-05-12 01:09:53.672974474 -0700
 @@ -32,15 +32,19 @@ from ycmd import utils
  from ycmd.completers.completer import Completer
  from ycmd.completers.completer_utils import GetFileLines
@@ -508,9 +510,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/completers/ty
      tsserver = utils.FindExecutable( executable )
      if tsserver:
        return tsserver
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/__main__.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/__main__.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/__main__.py	2021-04-16 20:38:24.886825713 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/__main__.py	2021-04-16 20:39:18.338901238 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/__main__.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/__main__.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/__main__.py	2021-05-12 01:09:17.141610226 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/__main__.py	2021-05-12 01:09:53.672974474 -0700
 @@ -17,21 +17,39 @@
  
  import sys
@@ -560,9 +562,9 @@ diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/__main__.py y
  
  import atexit
  import logging
-diff -Nurp ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/utils.py ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/utils.py
---- ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5.orig/ycmd/utils.py	2021-04-08 16:39:00.000000000 -0700
-+++ ycmd-6f2f818364bb5c52f60e720741ff583bf77b4cd5/ycmd/utils.py	2021-04-16 20:39:18.338901238 -0700
+diff -urp ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/utils.py ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/utils.py
+--- ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c.orig/ycmd/utils.py	2021-05-04 12:36:13.000000000 -0700
++++ ycmd-fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/ycmd/utils.py	2021-05-12 01:09:53.672974474 -0700
 @@ -25,11 +25,15 @@ import sys
  import tempfile
  import time
