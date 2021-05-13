@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{7..10} )
 
 inherit elisp eutils python-single-r1
 
@@ -18,15 +18,16 @@ LICENSE="MIT GPL-3+
 # The required dependencies are GPL-3+ but scripts or package alone itself is MIT.
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-IUSE+=" builtin-completion +company-mode debug eldoc +flycheck +go-mode \
-next-error +rust-mode system-gocode system-godef system-gopls system-jdtls \
-system-mono system-omnisharp system-racerd system-rust system-typescript \
-+typescript-mode +ycmd-43 ycmd-44"
+IUSE+=" builtin-completion +company-mode debug eldoc +flycheck +go-mode
+next-error +rust-mode system-gocode system-godef system-gopls system-jdtls
+system-mono system-omnisharp system-racerd system-rust system-typescript
++typescript-mode +ycmd-43 ycmd-44 ycmd-45"
 REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
-	^^ ( ycmd-43 ycmd-44 )"
+	^^ ( ycmd-43 ycmd-44 ycmd-45 )"
 DEPEND+=" ${PYTHON_DEPS}
-	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{6,7,8,9} ) )
-	ycmd-44? ( $(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]' python3_{6,7,8,9} ) )"
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{7,8,9,10} ) )
+	ycmd-44? ( $(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]' python3_{7,8,9,10} ) )
+	ycmd-45? ( $(python_gen_cond_dep 'dev-util/ycmd:45[${PYTHON_USEDEP}]' python3_{7,8,9,10} ) )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" net-misc/curl"
 EGIT_COMMIT="bc81b992f79100c98f56b7b83caf64cb8ea60477"
@@ -92,6 +93,8 @@ install_deps() {
 		export YCMD_SLOT=43
 	elif use ycmd-44 ; then
 		export YCMD_SLOT=44
+	elif use ycmd-45 ; then
+		export YCMD_SLOT=45
 	fi
 	BD_REL="ycmd/${YCMD_SLOT}"
 	BD_ABS="$(python_get_sitedir)/${BD_REL}"
@@ -196,7 +199,7 @@ ${BD_ABS}/third_party/godef/godef|g" \
 	fi
 
 	local jp=""
-	if use ycmd-44 ; then
+	if use ycmd-44 || use ycmd-45 ; then
 		  if [[ -h /usr/lib/jvm/icedtea-bin-11 ]] ; then
 			jp="/usr/lib/jvm/icedtea-bin-11"
 		elif [[ -h /usr/lib/jvm/icedtea-11 ]] ; then
@@ -247,7 +250,7 @@ ___YCMD-EMACS_ROSLYN_ABSPATH___|\
 ${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
 			"${sitefile_path}" || die
 	else
-		if use ycmd-43 || use ycmd-44 ; then
+		if use ycmd-43 || use ycmd-44 || use ycmd-45 ; then
 			sed -i -e "s|\
 ___YCMD-EMACS_ROSLYN_ABSPATH___|\
 ${BD_ABS}/third_party/omnisharp-roslyn/run|g" \
