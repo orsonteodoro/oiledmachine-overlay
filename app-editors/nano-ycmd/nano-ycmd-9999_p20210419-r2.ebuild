@@ -22,7 +22,7 @@ system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode +ycmd-43 ycmd-44 ycmd-45 ycm-generator"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	      ^^ ( libgcrypt nettle openssl )
-	      ^^ ( ycmd-43 ycmd-44 )
+	      ^^ ( ycmd-43 ycmd-44 ycmd-45 )
 	      bear? ( ycm-generator )
 	      ninja? ( ycm-generator )
 	      ycm-generator? ( || ( bear ninja ) )"
