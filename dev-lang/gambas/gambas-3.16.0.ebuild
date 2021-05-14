@@ -12,7 +12,7 @@ HOMEPAGE="http://gambas.sourceforge.net/en/main.html"
 SRC_URI=\
 "https://gitlab.com/gambas/gambas/-/archive/${PV}/gambas-${PV}.tar.bz2"
 LICENSE="GPL-2"
-KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
+# KEYWORDS="~amd64 ~ppc ~ppc64 ~x86" # Ebuild still in development
 SLOT="0"
 GAMBAS_MODULES=(bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer
 gtk3 httpd imlib2 jit mime mixer mysql ncurses network odbc openal
