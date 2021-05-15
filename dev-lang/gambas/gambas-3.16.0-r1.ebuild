@@ -12,7 +12,7 @@ HOMEPAGE="http://gambas.sourceforge.net/en/main.html"
 SRC_URI=\
 "https://gitlab.com/gambas/gambas/-/archive/${PV}/gambas-${PV}.tar.bz2"
 LICENSE="GPL-2"
-# KEYWORDS="~amd64 ~ppc ~ppc64 ~x86" # Ebuild still in development
+KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 GAMBAS_MODULES=(bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer
 gtk3 httpd imlib2 jit mime mixer mysql ncurses network odbc openal
@@ -110,7 +110,7 @@ BDEPEND+="
 REQUIRED_USE+="
 	glsl? ( opengl )
 	gtk3? ( X cairo )
-	ide ( X network curl ^^ ( qt5 ) webkit )
+	ide ( X network curl gsl || ( qt5 gtk3 ) webkit )
 	mixer? ( || ( sdl sdl2 ) )
 	opengl? ( || ( qt5 ) )
 	remove_deprecated? ( !gnome-keyring !sdl !v4l )
@@ -275,10 +275,11 @@ src_configure() {
 	# Upstream will supply -O flags.
 	filter-flags -O*
 
+#		--enable-qt4 \
 	econf \
+		--disable-qt4 \
 		--disable-gtk2 \
 		--disable-gtkopengl \
-		--disable-qt4 \
 		--disable-sqlite2 \
 		$(use_enable bzip2) \
 		$(use_enable bzip2 bzlib2) \
@@ -440,10 +441,24 @@ src_install() {
 
 	docinto licenses
 	dodoc COPYING
+
+	if use ide ; then
+		if [[ ! -f "${ED}/usr/bin/gambas3.gambas" ]] ; then
+			die "The IDE was not built.  Fix the USE flags."
+		fi
+	fi
 }
 
 pkg_postinst() {
 	einfo "Upstream code quality report:"
 	echo -e "${CODE_QUALITY_REPORT}"
 	xdg_pkg_postinst
+
+	if use ide && use gtk3 ; then
+		einfo "To run the IDE with gtk3 from command line do \`GB_GUI=gb.gtk3 gambas3\`"
+	fi
+
+	if use ide && use qt5 ; then
+		einfo "To run the IDE with Qt5 from command line do \`GB_GUI=gb.qt5 gambas3\`"
+	fi
 }
