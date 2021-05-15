@@ -445,7 +445,7 @@ dkms_build() {
 	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} || die
 	einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force\`"
 	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force || die
-	einfo "The modules where installed in $(get_modules_folder)/updates"
+	einfo "The modules were installed in $(get_modules_folder)/updates"
 	signing_modules ${k}
 }
 
