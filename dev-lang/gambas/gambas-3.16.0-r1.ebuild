@@ -275,7 +275,6 @@ src_configure() {
 	# Upstream will supply -O flags.
 	filter-flags -O*
 
-#		--enable-qt4 \
 	econf \
 		--disable-qt4 \
 		--disable-gtk2 \
