@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{7..10} )
-inherit eutils flag-o-matic meson multilib-minimal python-single-r1 xdg
+inherit eutils meson multilib-minimal python-single-r1 xdg
 
 DESCRIPTION="Command-line cloud music player for Linux with support for \
 Spotify, Google Play Music, YouTube, SoundCloud, TuneIn, IHeartRadio, Plex \
@@ -128,7 +128,7 @@ SRC_URI=\
 "https://github.com/tizonia/tizonia-openmax-il/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz
 https://github.com/tizonia/tizonia-openmax-il/commit/a1e8f8bddeae144ae634a031b547bc2a573db558.patch
-	-> ${PN}-${PV}-a1e8f8b-add-missin-placeholders-prefix.patch
+	-> ${PN}-${PV}-a1e8f8b-add-missing-placeholders-prefix.patch
 "
 MY_PN="tizonia-openmax-il"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -149,7 +149,7 @@ _PATCHES=(
 	"${FILESDIR}/tizonia-0.22.0-modular-13.patch"
 	"${FILESDIR}/tizonia-0.22.0-modular-meson-build.patch"
 	"${FILESDIR}/tizonia-0.22.0-modular-meson-optional-python.patch"
-	"${DISTDIR}/${PN}-${PV}-a1e8f8b-add-missin-placeholders-prefix.patch"
+	"${DISTDIR}/${PN}-${PV}-a1e8f8b-add-missing-placeholders-prefix.patch"
 )
 
 pkg_setup() {
