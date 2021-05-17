@@ -8,16 +8,25 @@ inherit cmake-utils eutils flag-o-matic multilib-build static-libs toolchain-fun
 DESCRIPTION="A small C++ wrapper for the native C ODBC API"
 HOMEPAGE="https://nanodbc.github.io/nanodbc/"
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+
+# Live ebuilds/snapshots won't get KEYWORed.
+
 SLOT="0/${PV}"
-IUSE+=" -boost_convert +debug +examples -handle_nodata_bug +libcxx -unicode -static-libs"
+IUSE+=" -boost_convert +debug doc +examples -handle_nodata_bug +libcxx -unicode -static-libs"
 REQUIRED_USE+=" !libcxx"
 #building with USE libcxx is broken?
 DEPEND+=" dev-libs/boost:=[${MULTILIB_USEDEP},nls,static-libs?]
 	 dev-db/unixODBC[${MULTILIB_USEDEP}]
 	 libcxx? ( sys-libs/libcxx[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" >=dev-util/cmake-2.6"
+BDEPEND+="
+	>=dev-util/cmake-2.6
+	doc? (
+		dev-python/rstcheck
+		dev-python/sphinx
+		dev-python/sphinx_rtd_theme
+		<=dev-python/breathe-4.29.0
+	)"
 EGIT_COMMIT="1a303f1028baf973d92bec037f92a2516d7060a9"
 SRC_URI=\
 "https://github.com/nanodbc/${PN}/archive/${EGIT_COMMIT}.tar.gz \
@@ -98,6 +107,12 @@ src_configure() {
 }
 
 src_compile() {
+	if use doc ; then
+		einfo "Building html documentation"
+		cd "${S}/doc" || die
+		emake html
+	fi
+
 	compile_abi() {
 		cd "${BUILD_DIR}" || die
 		static-libs_compile() {
