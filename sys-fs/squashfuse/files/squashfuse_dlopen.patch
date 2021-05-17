@@ -3,7 +3,7 @@ Originally from https://github.com/AppImage/libappimage/tree/master/src/patches
 ----
 diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/fuseprivate.c squashfuse-0.1.103-libsquashfuse-appimage/fuseprivate.c
 --- squashfuse-0.1.103-libsquashfuse-appimage.orig/fuseprivate.c	2018-04-03 22:44:40.000000000 -0700
-+++ squashfuse-0.1.103-libsquashfuse-appimage/fuseprivate.c	2020-08-10 23:04:53.710774501 -0700
++++ squashfuse-0.1.103-libsquashfuse-appimage/fuseprivate.c	2021-05-17 00:33:33.624308516 -0700
 @@ -94,15 +94,17 @@ int sqfs_listxattr(sqfs *fs, sqfs_inode
  }
  
@@ -27,7 +27,7 @@ diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/fuseprivate.c squashfus
  }
 diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/fuseprivate.h squashfuse-0.1.103-libsquashfuse-appimage/fuseprivate.h
 --- squashfuse-0.1.103-libsquashfuse-appimage.orig/fuseprivate.h	2018-04-03 22:44:40.000000000 -0700
-+++ squashfuse-0.1.103-libsquashfuse-appimage/fuseprivate.h	2020-08-10 23:04:53.710774501 -0700
++++ squashfuse-0.1.103-libsquashfuse-appimage/fuseprivate.h	2021-05-17 00:33:33.624308516 -0700
 @@ -27,7 +27,10 @@
  
  #include "squashfuse.h"
@@ -42,7 +42,7 @@ diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/fuseprivate.h squashfus
  
 diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/hl.c squashfuse-0.1.103-libsquashfuse-appimage/hl.c
 --- squashfuse-0.1.103-libsquashfuse-appimage.orig/hl.c	2018-04-03 22:44:40.000000000 -0700
-+++ squashfuse-0.1.103-libsquashfuse-appimage/hl.c	2020-08-10 23:04:53.710774501 -0700
++++ squashfuse-0.1.103-libsquashfuse-appimage/hl.c	2021-05-17 00:33:33.624308516 -0700
 @@ -33,6 +33,7 @@
  #include <stdlib.h>
  #include <string.h>
@@ -112,8 +112,8 @@ diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/hl.c squashfuse-0.1.103
  	return ret;
  }
 diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/ll.c squashfuse-0.1.103-libsquashfuse-appimage/ll.c
---- squashfuse-0.1.103-libsquashfuse-appimage.orig/ll.c	2020-08-10 22:55:18.898586507 -0700
-+++ squashfuse-0.1.103-libsquashfuse-appimage/ll.c	2020-08-10 23:14:38.693334984 -0700
+--- squashfuse-0.1.103-libsquashfuse-appimage.orig/ll.c	2021-05-17 00:26:36.608183220 -0700
++++ squashfuse-0.1.103-libsquashfuse-appimage/ll.c	2021-05-17 00:33:33.624308516 -0700
 @@ -53,6 +53,8 @@ static struct fuse_session *fuse_instanc
  
  static void sqfs_ll_op_getattr(fuse_req_t req, fuse_ino_t ino,
@@ -579,11 +579,9 @@ diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/ll.c squashfuse-0.1.103
  	
  	return -err;
  }
-Only in squashfuse-0.1.103-libsquashfuse-appimage: ll.c.orig
-Only in squashfuse-0.1.103-libsquashfuse-appimage: ll.c.rej
 diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/ll.h squashfuse-0.1.103-libsquashfuse-appimage/ll.h
 --- squashfuse-0.1.103-libsquashfuse-appimage.orig/ll.h	2018-04-03 22:44:40.000000000 -0700
-+++ squashfuse-0.1.103-libsquashfuse-appimage/ll.h	2020-08-10 23:04:53.710774501 -0700
++++ squashfuse-0.1.103-libsquashfuse-appimage/ll.h	2021-05-17 00:33:33.624308516 -0700
 @@ -27,7 +27,10 @@
  
  #include "squashfuse.h"
@@ -598,7 +596,7 @@ diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/ll.h squashfuse-0.1.103
  struct sqfs_ll {
 diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/ll_inode.c squashfuse-0.1.103-libsquashfuse-appimage/ll_inode.c
 --- squashfuse-0.1.103-libsquashfuse-appimage.orig/ll_inode.c	2018-04-03 22:44:40.000000000 -0700
-+++ squashfuse-0.1.103-libsquashfuse-appimage/ll_inode.c	2020-08-10 23:04:53.710774501 -0700
++++ squashfuse-0.1.103-libsquashfuse-appimage/ll_inode.c	2021-05-17 00:33:33.624308516 -0700
 @@ -348,12 +348,14 @@ sqfs_err sqfs_ll_inode(sqfs_ll *ll, sqfs
  
  
@@ -617,8 +615,8 @@ diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/ll_inode.c squashfuse-0
  	return err;
  }
 diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/Makefile.am squashfuse-0.1.103-libsquashfuse-appimage/Makefile.am
---- squashfuse-0.1.103-libsquashfuse-appimage.orig/Makefile.am	2020-08-10 22:55:18.898586507 -0700
-+++ squashfuse-0.1.103-libsquashfuse-appimage/Makefile.am	2020-08-10 23:05:28.542119307 -0700
+--- squashfuse-0.1.103-libsquashfuse-appimage.orig/Makefile.am	2021-05-17 00:26:36.608183220 -0700
++++ squashfuse-0.1.103-libsquashfuse-appimage/Makefile.am	2021-05-17 00:34:00.595355198 -0700
 @@ -1,6 +1,7 @@
  COMPRESSION_LIBS = $(ZLIB_LIBS) $(XZ_LIBS) $(LZO_LIBS) $(LZ4_LIBS) $(ZSTD_LIBS)
  
@@ -644,11 +642,18 @@ diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/Makefile.am squashfuse-
  
  # Helper for FUSE clients: libfuseprivate
  libfuseprivate_la_SOURCES = fuseprivate.c nonstd-makedev.c nonstd-enoattr.c \
-Only in squashfuse-0.1.103-libsquashfuse-appimage: Makefile.am.orig
-Only in squashfuse-0.1.103-libsquashfuse-appimage: Makefile.am.rej
+@@ -66,7 +67,7 @@ squashfuse_ls_LDADD = libsquashfuse.la $
+ noinst_PROGRAMS += squashfuse_extract
+ squashfuse_extract_CPPFLAGS = $(FUSE_CPPFLAGS)
+ squashfuse_extract_SOURCES = extract.c
+-squashfuse_extract_LDADD = libsquashfuse.la libfuseprivate.la $(COMPRESSION_LIBS) \
++squashfuse_extract_LDADD = -ldl libsquashfuse.la libfuseprivate.la $(COMPRESSION_LIBS) \
+   $(FUSE_LIBS)
+ endif
+ 
 diff -urp squashfuse-0.1.103-libsquashfuse-appimage.orig/nonstd-daemon.c squashfuse-0.1.103-libsquashfuse-appimage/nonstd-daemon.c
 --- squashfuse-0.1.103-libsquashfuse-appimage.orig/nonstd-daemon.c	2018-04-03 22:44:40.000000000 -0700
-+++ squashfuse-0.1.103-libsquashfuse-appimage/nonstd-daemon.c	2020-08-10 23:04:53.710774501 -0700
++++ squashfuse-0.1.103-libsquashfuse-appimage/nonstd-daemon.c	2021-05-17 00:33:33.624308516 -0700
 @@ -28,11 +28,16 @@
  #include "nonstd-internal.h"
  
