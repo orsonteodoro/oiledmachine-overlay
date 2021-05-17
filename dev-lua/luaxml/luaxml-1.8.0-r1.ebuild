@@ -6,7 +6,7 @@
 
 EAPI=7
 
-LUA_COMPAT=( lua5-{1..3} )
+LUA_COMPAT=( lua5-{2..3} )
 IS_MULTILIB=true
 
 inherit lua
@@ -34,7 +34,6 @@ src_prepare() {
 }
 
 lua_src_compile() {
-	[[ "${ELUA}" == "lua5.1" ]] && return
 	local myemakeargs=(
 		LUA_INC="$(lua_get_CFLAGS)"
 		LUA_VERSION="$(lua_get_version)"
