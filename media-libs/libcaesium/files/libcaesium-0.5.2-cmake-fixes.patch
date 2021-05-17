@@ -1,7 +1,7 @@
 diff -urp libcaesium-0.5.2.orig/caesium/CMakeLists.txt libcaesium-0.5.2/caesium/CMakeLists.txt
 --- libcaesium-0.5.2.orig/caesium/CMakeLists.txt	2020-02-28 06:09:56.000000000 -0800
-+++ libcaesium-0.5.2/caesium/CMakeLists.txt	2020-06-21 19:55:38.547987712 -0700
-@@ -4,9 +4,9 @@ else ()
++++ libcaesium-0.5.2/caesium/CMakeLists.txt	2021-05-17 10:45:00.619591492 -0700
+@@ -4,13 +4,13 @@ else ()
      set(CMAKE_C_FLAGS "--std=gnu99 ${CMAKE_C_FLAGS}")
  endif ()
  
@@ -14,6 +14,11 @@ diff -urp libcaesium-0.5.2.orig/caesium/CMakeLists.txt libcaesium-0.5.2/caesium/
  
  add_library(caesium SHARED caesium.c error.c utils.c png.c vendor/lodepng.c jpeg.c)
  
+-target_link_libraries(caesium jpeg turbojpeg zopfli zopflipng)
++target_link_libraries(caesium jpeg m turbojpeg zopfli zopflipng)
+ 
+ # Make sure the compiler can find include files for our Caesium library
+ # when other libraries or executables link to Caesium
 @@ -18,4 +18,4 @@ target_include_directories(caesium PUBLI
  
  install(FILES caesium.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
@@ -22,7 +27,7 @@ diff -urp libcaesium-0.5.2.orig/caesium/CMakeLists.txt libcaesium-0.5.2/caesium/
 +        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 diff -urp libcaesium-0.5.2.orig/CMakeLists.txt libcaesium-0.5.2/CMakeLists.txt
 --- libcaesium-0.5.2.orig/CMakeLists.txt	2020-02-28 06:09:56.000000000 -0800
-+++ libcaesium-0.5.2/CMakeLists.txt	2020-06-21 19:54:12.494622955 -0700
++++ libcaesium-0.5.2/CMakeLists.txt	2021-05-17 10:43:36.376210127 -0700
 @@ -30,7 +30,7 @@ elseif (WIN32)
      set(MOZJPEG_DEFAULT_PATH C:\\mozjpeg)
      set(ZOPFLI_DEFAULT_PATH C:\\zopfli)
