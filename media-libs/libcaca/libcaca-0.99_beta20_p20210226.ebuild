@@ -3,15 +3,17 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
-USE_RUBY="ruby24 ruby25 ruby26"
+PYTHON_COMPAT=( python3_{7..10} )
+USE_RUBY="ruby26 ruby27 ruby30"
 inherit autotools eutils flag-o-matic mono-env java-pkg-opt-2 \
 multilib-minimal python-single-r1 ruby-ng
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"
 LICENSE="ISC GPL-2 LGPL-2.1 WTFPL-2"
-KEYWORDS="alpha amd64 arm arm64 hppa ia64 ~mips ppc ppc64 s390 ~sh sparc x86"
+
+# Live/snapshots ebuilds do not get KEYWORDed
+
 IUSE="cxx doc imlib java mono ncurses network opengl python ruby slang
  static-libs test truetype X"
 IUSE+=" 256-colors-ncurses"
@@ -20,7 +22,8 @@ REQUIRED_USE="256-colors-ncurses? ( ncurses )
 	      python? ( ${PYTHON_REQUIRED_USE} )
 	      ruby? ( ^^ ( $(ruby_get_use_targets) ) )
 	      truetype? ( opengl )"
-CDEPEND="imlib? ( >=media-libs/imlib2-1.4.6-r2[${MULTILIB_USEDEP}] )
+RDEPEND="imlib? ( >=media-libs/imlib2-1.4.6-r2[${MULTILIB_USEDEP}] )
+	java? ( >=virtual/jre-1.5 )
 	mono? ( dev-lang/mono )
 	ncurses? ( >=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}] )
 	opengl? (  >=media-libs/freeglut-2.8.1[${MULTILIB_USEDEP}]
@@ -31,9 +34,8 @@ CDEPEND="imlib? ( >=media-libs/imlib2-1.4.6-r2[${MULTILIB_USEDEP}] )
 	slang? ( >=sys-libs/slang-2.2.4-r1[${MULTILIB_USEDEP}] )
 	X? ( >=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
 	     >=x11-libs/libXt-1.1.4[${MULTILIB_USEDEP}] )"
-RDEPEND="${CDEPEND}
-	 java? ( >=virtual/jre-1.5 )"
-DEPEND="${CDEPEND}
+DEPEND+=" ${RDEPEND}"
+BDEPEND+="
 	doc? (    app-doc/doxygen
 		>=dev-texlive/texlive-fontsrecommended-2012
 		>=dev-texlive/texlive-latexextra-2012
@@ -44,7 +46,7 @@ DEPEND="${CDEPEND}
 		app-forensics/zzuf )
 	virtual/pkgconfig"
 RUBY_OPTIONAL=yes
-EGIT_COMMIT="813baea7a7bc28986e474541dd1080898fac14d7"
+EGIT_COMMIT="e4968ba6e93e9fd35429eb16895c785c51072015"
 SRC_URI="\
 https://github.com/cacalabs/libcaca/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
