@@ -45,7 +45,7 @@ LICENSE="Apache-2.0
 PLUGIN_NAME="rprblender"
 # ceiling based on python compatibility matching the particular blender version
 MIN_BLENDER_V="2.80"
-MAX_BLENDER_V="2.94" # exclusive
+MAX_BLENDER_V="2.93" # exclusive
 SLOT="0"
 IUSE+=" +blender-lts +blender-stable blender-master"
 IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca \
