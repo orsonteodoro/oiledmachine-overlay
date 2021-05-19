@@ -3,9 +3,9 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_7 ) # same as blender
+PYTHON_COMPAT=( python3_{7,9} ) # same as blender
 
-inherit check-reqs linux-info python-single-r1 unpacker
+inherit check-reqs linux-info python-r1 unpacker
 
 DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
 Blender"
@@ -41,12 +41,13 @@ LICENSE="Apache-2.0
 	${RPRSDK_LICENSE}
 	${RIF_LICENSE}
 	${RPRBLENDER_EULA_LICENSE}"
-KEYWORDS="~amd64"
+# KEYWORDS="~amd64" ebuild is still a Work In Progress (WIP)
 PLUGIN_NAME="rprblender"
 # ceiling based on python compatibility matching the particular blender version
 MIN_BLENDER_V="2.80"
-MAX_BLENDER_V="2.84" # exclusive
+MAX_BLENDER_V="2.94" # exclusive
 SLOT="0"
+IUSE+=" +blender-lts +blender-stable blender-master"
 IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca \
 opencl_pal opengl_mesa split-drivers -systemwide test video_cards_amdgpu \
 video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_i965 \
@@ -55,7 +56,12 @@ NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
 # systemwide is preferred but currently doesn't work but did in the past in <2.0
 REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
+	|| ( blender-lts blender-master blender-stable )
 	!systemwide
+	python_targets_python3_7
+	blender-lts? ( python_targets_python3_7 )
+	blender-master? ( python_targets_python3_9 )
+	blender-stable? ( python_targets_python3_7 )
 	opencl_orca? (
 		|| ( video_cards_amdgpu
 			video_cards_amdgpu-pro
@@ -101,12 +107,12 @@ DEPEND_NOT_LISTED=""
 DEPEND+="  ${CDEPEND_NOT_LISTED}
 	${DEPEND_NOT_LISTED}
 	${PYTHON_DEPS}
-	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_MULTI_USEDEP}]')
-	$(python_gen_cond_dep 'dev-python/distro[${PYTHON_MULTI_USEDEP}]')
-	$(python_gen_cond_dep 'dev-python/imageio[${PYTHON_MULTI_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/distro[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/imageio[${PYTHON_USEDEP}]')
 	dev-util/opencl-headers
 	sys-apps/pciutils
-	$(python_gen_cond_dep 'dev-python/cffi:=[${PYTHON_MULTI_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/cffi:=[${PYTHON_USEDEP}]')
 	x11-libs/libdrm"
 # These are mentioned in the command line output and downloaded after install.
 # They are not really used on linux since athena_send is disabled on Linux but
@@ -114,9 +120,9 @@ DEPEND+="  ${CDEPEND_NOT_LISTED}
 # For details see,
 #   src/rprblender/utils/install_libs.py
 PIP_DOWNLOADED="
-	$(python_gen_cond_dep 'dev-python/boto3[${PYTHON_MULTI_USEDEP}]')
-	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_MULTI_USEDEP}]')
-	$(python_gen_cond_dep 'dev-python/wheel[${PYTHON_MULTI_USEDEP}]')"
+	$(python_gen_cond_dep 'dev-python/boto3[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/wheel[${PYTHON_USEDEP}]')"
 RDEPEND_NOT_LISTED="
 	${PIP_DOWNLOADED}
 	dev-libs/libbsd
@@ -137,10 +143,21 @@ RDEPEND_NOT_LISTED="
 		sys-libs/libomp
 	)"
 # See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.1.0/README-LNX.md#addon-runuse-linux-ubuntu-requirements
+
+
 RDEPEND+="  ${CDEPEND_NOT_LISTED}
 	${RDEPEND_NOT_LISTED}
-	>=media-gfx/blender-${MIN_BLENDER_V}[${PYTHON_SINGLE_USEDEP}]
-	 <media-gfx/blender-${MAX_BLENDER_V}[${PYTHON_SINGLE_USEDEP}]
+	blender-lts? (
+		>=media-gfx/blender-${MIN_BLENDER_V}[python_single_target_python3_7]
+		 <media-gfx/blender-${MAX_BLENDER_V}[python_single_target_python3_7]
+	)
+	blender-stable? (
+		>=media-gfx/blender-${MIN_BLENDER_V}[python_single_target_python3_7]
+		 <media-gfx/blender-${MAX_BLENDER_V}[python_single_target_python3_7]
+	)
+	blender-master? (
+		>=media-gfx/blender-9999[python_single_target_python3_9]
+	)
 	>=media-libs/embree-2.12.0
 	>=media-libs/openimageio-1.6
 	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
@@ -247,12 +264,12 @@ BDEPEND+="  ${CDEPEND_NOT_LISTED}
 	app-arch/makeself
 	dev-util/patchelf
 	dev-cpp/castxml
-	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_MULTI_USEDEP}]')
-	$(python_gen_cond_dep '>=dev-python/pytest-3[${PYTHON_MULTI_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep '>=dev-python/pytest-3[${PYTHON_USEDEP}]')
 	>=dev-util/cmake-3.11
 	dev-vcs/git"
 RIF_V="1.6.1"
-RPRSDK_V="2.1.7"
+RPRSDK_V="2.2.1"
 RPRSC_V="9999_p20201109"
 EGIT_COMMIT_RPRSC="41d2e5fb8631ef2bfa60fa27f5dbf7c4a8e2e4aa"
 RIF_DF="RadeonImageFilter-${RIF_V}.tar.gz"
@@ -274,10 +291,9 @@ S_RIF="${WORKDIR}/RadeonImageFilter-${RIF_V}"
 S_RPRSDK="${WORKDIR}/RadeonProRenderSDK-${RPRSDK_V}"
 S_RPRSC="${WORKDIR}/RadeonProRenderSharedComponents-${EGIT_COMMIT_RPRSC}"
 PATCHES=(
-	"${FILESDIR}/rpr-3.1.0-gentoo-skip-libs_cffi_backend.patch"
+	"${FILESDIR}/rpr-3.1.6-gentoo-skip-libs_cffi_backend.patch"
 	"${FILESDIR}/rpr-3.1.0-disable-download-wheel-boto3.patch"
 )
-MY_PV="2.5.29" # Upstream did not bump internally.
 
 _set_check_reqs_requirements() {
 	CHECKREQS_DISK_BUILD="970M"
@@ -375,7 +391,6 @@ show_notice_pal_support() {
 pkg_setup() {
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
-	python-single-r1_pkg_setup
 
 	if ! use opencl ; then
 		einfo \
@@ -462,6 +477,23 @@ src_prepare() {
 	git tag v${PV} || die
 }
 
+src_configure() {
+	default
+	cd "${S}" || die
+
+	if ! use python_targets_python3_7 ; then
+		einfo "Disabled python 3.7 bindings"
+		sed -i -e "/python3.7 build.py/d" \
+			build.sh || die
+	fi
+
+	if ! use python_targets_python3_9 ; then
+		einfo "Disabled python 3.9 bindings"
+		sed -i -e "/python3.9 build.py/d" \
+			build.sh || die
+	fi
+}
+
 src_compile() {
 	cd "${S}/BlenderPkg" || die
 	./build_linux.sh || die
@@ -519,7 +551,7 @@ src_install_packed_shared() {
 	pushd "${S}" || die
 		head_commit=$(git rev-parse HEAD)
 	popd
-	D_FN="${PLUGIN_NAME}-${MY_PV}-${head_commit:0:7}-linux.zip"
+	D_FN="${PLUGIN_NAME}-${PV}-${head_commit:0:7}-linux.zip"
 
 	einfo "Installing addon in shared"
 	cd "${S}" || die

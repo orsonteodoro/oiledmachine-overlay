@@ -452,13 +452,13 @@ src_unpack() {
 
 src_prepare() {
 	default
-	git init
-	touch dummy
-	git config user.email "name@example.com"
-	git config user.name "John Doe"
-	git add dummy
-	git commit -m "Dummy"
-	git tag v${PV}
+	git init || die
+	touch dummy || die
+	git config user.email "name@example.com" || die
+	git config user.name "John Doe" || die
+	git add dummy || die
+	git commit -m "Dummy" || die
+	git tag v${PV} || die
 }
 
 src_compile() {
