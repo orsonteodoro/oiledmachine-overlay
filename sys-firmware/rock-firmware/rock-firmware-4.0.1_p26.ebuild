@@ -5,16 +5,6 @@ EAPI=7
 DESCRIPTION="Radeon Open Compute (ROCk) firmware"
 HOMEPAGE="https://rocm.github.io/"
 LICENSE="AMDGPU-FIRMWARE"
-# LICENSE.ucode mentioned at
-#   https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide/ROCK-Kernel-Driver_readme.html
-# License found at:
-#   https://github.com/HSAFoundation/HSA-Drivers-Linux-AMD/blob/master/LICENSE.ucode
-# Same as:
-#   https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/LICENSE.amdgpu
-# The documentation may be outdated and the following license may apply:
-#   https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/LICENSE.radeon
-# See also mentioning the difference in firmware
-#   https://github.com/RadeonOpenCompute/ROCm#rocm-support-in-upstream-linux-kernels
 KEYWORDS="~amd64"
 REV=$(ver_cut 5 ${PV})
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
@@ -117,8 +107,7 @@ src_install() {
 	insinto /lib/firmware
 	doins -r usr/src/amdgpu-${SUFFIX}/firmware/amdgpu
 	docinto licenses
-	dodoc "${FILESDIR}"/LICENSE.amdgpu
-	# The archives should contain license files but don't.
+	dodoc usr/share/doc/amdgpu-dkms-firmware/LICENSE
 }
 
 pkg_postinst() {
