@@ -57,7 +57,10 @@
     <flag name="system-binaries">
       Uses the system packages and binaries instead of the
       older static binaries from the Alpine operating system statically
-      linked with musl.
+      linked with musl.  If enabled, it will allow for determinstic build or
+      downloads since upstream does not archive old builds of
+      these static packages.  Disable to increase portability with
+      possibility of download failures in fetch stage.
       </flag>
     <flag name="travis-ci">Adds support for Travis CI.</flag>
   </use>
