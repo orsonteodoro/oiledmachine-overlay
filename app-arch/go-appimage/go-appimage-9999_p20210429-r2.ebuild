@@ -27,19 +27,19 @@ LICENSE+=" !system-binaries? ( MIT LGPL-2 GPL-2 )" # from musl libc package
 
 # Live ebuilds don't get keyworded.
 
-IUSE+=" -appimaged -appimagetool disable_watching_desktop_folder \
-disable_watching_downloads_folder firejail gnome kde openrc overlayfs \
+IUSE+=" -appimaged -appimagetool disable_watching_desktop_folder
+disable_watching_downloads_folder firejail gnome kde openrc overlayfs
 +system-binaries systemd travis-ci"
-RDEPEND="
+RDEPEND+="
+	>=sys-fs/squashfs-tools-4.4:=
+	sys-apps/dbus
+	sys-fs/udisks[daemon]
 	appimaged? ( !app-arch/appimaged )
 	appimagetool? ( app-arch/AppImageKit[-appimagetool] )
 	firejail? ( sys-apps/firejail )
 	gnome? ( gnome-base/gvfs[udisks] )
 	kde? ( kde-frameworks/solid )
 	openrc? ( sys-apps/openrc )
-	sys-apps/dbus
-	>=sys-fs/squashfs-tools-4.4:=
-	sys-fs/udisks[daemon]
 	system-binaries? (
 		app-arch/AppImageKit[runtime]
 		>=app-arch/libarchive-3.3.2:=
@@ -52,9 +52,9 @@ RDEPEND="
 		dev-libs/openssl
 		dev-vcs/git
 	)"
-DEPEND="${RDEPEND}
-	>=dev-lang/go-1.13.4:="
-REQUIRED_USE="
+DEPEND+=" ${RDEPEND}"
+BDEPEND+=" >=dev-lang/go-1.13.4:="
+REQUIRED_USE+="
 	|| ( appimaged appimagetool )
 	|| ( gnome kde )
 	openrc? ( appimaged )
