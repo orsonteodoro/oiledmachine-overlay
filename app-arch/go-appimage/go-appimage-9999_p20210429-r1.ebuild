@@ -290,22 +290,11 @@ unpack_go_pkg()
 	local proj_name="${2#*/}"
 	local tag="${3}"
 	local dest="${S_GO}/src/${pkg_name}"
-	#local dest="${S_GO}/pkg/mod/$(dirname ${pkg_name})/${proj_name}@${tag}"
 	local dest_name="${pkg_name//\//-}-${tag//\//-}"
 	einfo "Unpacking ${dest_name}.tar.gz"
 	mkdir -p "${dest}" || die
-#	if [[ "${pkg_name}" == "golang.org/x/tools" ]] ; then
-#		tar --strip-components=1 -x -C "${dest}" \
-#			-f "${DISTDIR}/${dest_name}.tar.gz" \
-#			--exclude=tools-${tag##*-}/gopls || die
-#	elif [[ "${pkg_name}" == "golang.org/x/tools/gopls" ]] ; then
-#		tar --strip-components=2 -x -C "${dest}" \
-#			-f "${DISTDIR}/${dest_name}.tar.gz" \
-#			tools-gopls-v${GOPLS_V}/gopls || die
-#	else
-		tar --strip-components=1 -x -C "${dest}" \
-			-f "${DISTDIR}/${dest_name}.tar.gz" || die
-#	fi
+	tar --strip-components=1 -x -C "${dest}" \
+		-f "${DISTDIR}/${dest_name}.tar.gz" || die
 }
 
 unpack_go()
@@ -515,7 +504,6 @@ src_compile() {
 	use x86 && export GARCH="x86"
 	use arm64 && export GARCH="arm64"
 	use arm && export GARCH="arm"
-#	mkdir -p "${WORKDIR}/go_build/src/github.com/probonopd/go-appimage"
 	export GO_APPIMAGE_V="v0.0.0-20210430065939-1d57e84e82e8"
 	"${S}/scripts/build.sh" || die # move to src_unpack if you need the dependency graph
 }
@@ -526,16 +514,19 @@ src_compile() {
 # Standardizes the process.
 install_licenses() {
 	local source_dir="${1}"
-	OIFS="${IFS}"
 	export IFS=$'\n'
 	for f in $(find "${source_dir}" \
-	  -iname "*license*" -type f \
+	  -iname "*licen*" -type f \
 	  -o -iname "*copyright*" \
 	  -o -iname "*copying*" \
 	  -o -iname "*patent*" \
 	  -o -iname "ofl.txt" \
 	  -o -iname "*notice*" \
-	  ) ; \
+	  ) $(grep -i -G -l \
+		-e "copyright" \
+		-e "licen" \
+		-e "warrant" \
+		$(find "${source_dir}" -iname "*readme*")) ; \
 	do
 		if [[ -f "${f}" ]] ; then
 			d=$(dirname "${f}" | sed -r -e "s|^${source_dir}||")
@@ -545,7 +536,7 @@ install_licenses() {
 		docinto "licenses/${d}"
 		dodoc -r "${f}"
 	done
-	export IFS="${OIFS}"
+	export IFS=$' \t\n'
 }
 
 
