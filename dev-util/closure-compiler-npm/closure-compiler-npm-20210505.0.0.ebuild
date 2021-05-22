@@ -22,7 +22,7 @@ PV_CC=$(ver_cut 1 ${PV})
 SLOT="0/${PV}"
 NODE_SLOT="0"
 MY_PN="closure-compiler"
-JAVA_V="1.8"
+JAVA_V="11"
 IUSE+="	closure_compiler_java
 	closure_compiler_js
 	closure_compiler_native
@@ -36,31 +36,35 @@ REQUIRED_USE+="
 		closure_compiler_nodejs	)"
 # For the node version, see
 # https://github.com/google/closure-compiler-npm/blob/master/packages/google-closure-compiler/package.json
-NODE_V="10"
+NODE_V="12" # Upstream uses 10
 CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_V} )"
+JDK_DEPEND=" >=dev-java/openjdk-bin-${JAVA_V}:${JAVA_V}"
+JRE_DEPEND=" >=dev-java/openjdk-jre-bin-${JAVA_V}:${JAVA_V}"
+#JDK_DEPEND=" virtual/jdk:${JAVA_V}"
+#JRE_DEPEND=" virtual/jre:${JAVA_V}"
+# The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
 RDEPEND+=" ${CDEPEND}
-	${RBDEPEND}
 	!dev-lang/closure-compiler-bin
 	closure_compiler_java? (
-		>=virtual/jre-${JAVA_V}
+		${JRE_DEPEND}
 	)
 	closure_compiler_nodejs? (
-		>=virtual/jre-${JAVA_V}
+		${JRE_DEPEND}
 	)"
-BDDEPEND=">=virtual/jdk-${JAVA_V}" # common to {B,}DEPEND
-DEPEND+=" ${CDEPEND}
-	${BDDEPEND}"
+DEPEND+=" ${RDEPEND}
+	${JDK_DEPEND}"
 BDEPEND+=" ${CDEPEND}
-	${BDDEPEND}
-	${RBDEPEND}
+	${JDK_DEPEND}
 	dev-java/maven-bin
+	dev-util/bazel
+	dev-vcs/git
 	sys-apps/yarn"
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="closure-compiler-${PV}.tar.gz"
-SRC_URI=\
-"https://github.com/google/closure-compiler-npm/archive/v${PV}.tar.gz \
+SRC_URI="
+https://github.com/google/closure-compiler-npm/archive/v${PV}.tar.gz
 	-> ${FN_DEST}
-https://github.com/google/closure-compiler/archive/v${PV_CC}.tar.gz \
+https://github.com/google/closure-compiler/archive/v${PV_CC}.tar.gz
 	-> ${FN_DEST2}"
 S="${WORKDIR}/${PN}-${PV}"
 S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${PV_CC}"
@@ -78,6 +82,12 @@ pkg_pretend() {
 
 pkg_setup() {
 	java-pkg_init
+
+	# the eclass/eselect system is broken
+	X_JDK_V=$(best_version "dev-java/openjdk-bin:${JAVA_V}" | sed -e "s|dev-java/openjdk-bin-||g" -e "s|-r[0-9]$||g")
+	export JAVA_HOME="/opt/openjdk-bin-${X_JDK_V}" # basedir
+
+	einfo "JAVA_HOME=${JAVA_HOME}"
 	if [[ -n "${JAVA_HOME}" && -f "${JAVA_HOME}/bin/java" ]] ; then
 		export JAVA="${JAVA_HOME}/bin/java"
 	else
@@ -85,7 +95,10 @@ pkg_setup() {
 "JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java.\n\
 Use \`eselect java-vm\` to set this up."
 	fi
-	java-pkg_ensure-vm-version-ge ${JAVA_V}
+
+	if ver_test ${X_JDK_V} -lt 11 ; then
+		die "Must have SDK_V >= 11.  Best is ${X_JDK_V}."
+	fi
 
 	if ! which mvn 2>/dev/null 1>/dev/null ; then
 		die "Missing mvn.  Install dev-java/maven-bin"
@@ -100,40 +113,66 @@ download micropackages."
 
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
-	if use closure_compiler_nodejs ; then
-		# Check nodejs still in a multislot scenario
-		X_NODE_V=$(node --version | grep -E -o -e "[0-9.]+" \
-				| cut -f 1 -d ".")
-		if ver_test "${X_NODE_V}" -lt "${NODE_V}" ; then
-			die \
-"Your active nodejs needs to be at least >=${NODE_V}.  See \`eselect nodejs\`"
-		else
-			einfo "NODE_V:  ${NODE_V}"
-		fi
-	fi
+
+#	if [[ ! -e /usr/libexec/bin/java ]] ; then
+#		die "Missing /usr/libexec/bin/java"
+#	fi
+
+	ewarn "Re-emerge if it randomly fails with message: cb() never called!"
+	ewarn "Re-emerge if exitCode: 18 when downloading graal image for google-closure-compiler-linux."
 }
 
 src_unpack() {
 	unpack ${A}
 	rm -rf "${S}/compiler" || die
-	ln -s "${S_CLOSURE_COMPILER}" \
+	mv "${S_CLOSURE_COMPILER}" \
 		"${S}/compiler" || die
 
 	if ! use closure_compiler_java ; then
+		einfo "Removing Java support"
 		rm -rf "${S}/packages/google-closure-compiler-java" || die
 	fi
 	if ! use closure_compiler_js ; then
+		einfo "Removing JavaScript support"
 		rm -rf "${S}/packages/google-closure-compiler-js" || die
 	fi
 	if ! use closure_compiler_native ; then
+		einfo "Removing native binary support"
 		rm -rf "${S}/packages/google-closure-compiler-linux" || die
 	fi
 	if ! use closure_compiler_nodejs ; then
+		einfo "Removing Node.js support"
 		rm -rf "${S}/packages/google-closure-compiler" || die
 	fi
+	einfo "Removing unsupported platforms"
 	rm -rf "${S}/packages/google-closure-compiler-osx" || die
 	rm -rf "${S}/packages/google-closure-compiler-windows" || die
 	# Fetches and builds the closure compiler here.
+	cd "${S}" || die
+
+	# Prevent error
+	einfo "Adding .git folder"
+	git init || die
+	git add . || die
+	touch dummy || die
+	git config user.email "name@example.com" || die
+	git config user.name "John Doe" || die
+	git add dummy || die
+	git commit -m "Dummy" || die
+	git tag v${PV} || die
+
+	einfo "Adding package-lock.json file from project root."
+	npm i --package-lock-only || die
+	[[ ! -f package-lock.json ]] && die "Missing package-lock.json from dir=$(pwd)"
+
+	if use closure_compiler_nodejs ; then
+		pushd packages/google-closure-compiler || die
+			einfo "Adding package-lock.json file for closure_compiler_nodejs package."
+			npm i --package-lock-only || die
+			[[ ! -f package-lock.json ]] && die "Missing package-lock.json from dir=$(pwd)"
+		popd
+	fi
+
 	npm-secaudit_src_unpack
 }
 
@@ -165,7 +204,7 @@ src_install() {
 	fi
 
 	if use closure_compiler_nodejs ; then
-		local d_node="/usr/$(get_libdir)/node/${MY_PN}/${NODE_SLOT}"
+		local d_node="/opt/${MY_PN}"
 		insinto "${d_node}"
 		pushd ../ || die
 		doins -r node_modules package.json yarn.lock
@@ -189,7 +228,7 @@ src_install() {
 					|| die
 			done
 		done
-		export NPM_SECAUDIT_REG_PATH="${d_node}"
+		export NPM_SECAUDIT_INSTALL_PATH="${d_node}"
 	fi
 
 	if use closure_compiler_native ; then

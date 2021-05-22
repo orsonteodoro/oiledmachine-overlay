@@ -1,2 +1,2 @@
 #!/bin/bash
-/usr/bin/java -jar /usr/share/closure-compiler/lib/closure-compiler.jar $*
+/usr/bin/java -jar /usr/share/closure-compiler/lib/closure-compiler.jar "${@}"
