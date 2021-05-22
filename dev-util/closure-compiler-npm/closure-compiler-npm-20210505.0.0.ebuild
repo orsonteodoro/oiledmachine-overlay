@@ -174,6 +174,19 @@ src_unpack() {
 	fi
 
 	npm-secaudit_src_unpack
+
+	if grep -e "Read timed out" "${T}/build.log" ; then
+		die "Detected download failure.  Re-emerge."
+	fi
+	if grep -e "Error downloading" "${T}/build.log" ; then
+		die "Detected download failure.  Re-emerge."
+	fi
+	if grep -e "Build did NOT complete successfully" "${T}/build.log" ; then
+		die "Detected build failure.  Re-emerge."
+	fi
+	if grep -e "ERROR:" "${T}/build.log" ; then
+		die "Detected a failure.  Re-emerge."
+	fi
 }
 
 src_install() {
