@@ -184,7 +184,7 @@ src_unpack() {
 	if grep -e "Build did NOT complete successfully" "${T}/build.log" ; then
 		die "Detected build failure.  Re-emerge."
 	fi
-	if grep -e "ERROR:" "${T}/build.log" ; then
+	if grep -i -e "ERROR:" "${T}/build.log" ; then
 		die "Detected a failure.  Re-emerge."
 	fi
 }
