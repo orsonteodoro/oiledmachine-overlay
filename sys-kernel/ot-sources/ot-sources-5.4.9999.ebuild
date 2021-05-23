@@ -6,7 +6,7 @@ EAPI="7"
 FETCH_VANILLA_SOURCES_BY_BRANCH=1
 K_LIVE_PATCHABLE=1
 # Keep in sync with https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/refs/tags
-TEST_REWIND_SOURCES_BACK_TO="b5669695683777ccf4c857832c7bd036bed954e4" # 5.4.120
+TEST_REWIND_SOURCES_BACK_TO="385969838ccc3faa1ccaaee31919aae435413caf" # 5.4.121
 K_GENPATCHES_VER="123"
 PATCH_BMQ_VER="5.4-r2"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
