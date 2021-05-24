@@ -283,8 +283,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}"/2.28.2-opengl-without-X-fixes.patch
-	eapply "${FILESDIR}"/2.32.1-Properly-use-CompletionHandler-when-USE_OPENGL_OR_ES.patch
+	eapply "${FILESDIR}"/2.33.1-opengl-without-X-fixes.patch
 	cmake_src_prepare
 	gnome2_src_prepare
 	multilib_copy_sources
@@ -394,6 +393,7 @@ multilib_src_configure() {
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
+		-DUSE_SOUP2=ON
 		-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON

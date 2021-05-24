@@ -1,0 +1,31 @@
+diff -urp webkitgtk-2.33.1.orig/Source/WebCore/platform/graphics/GLContext.cpp webkitgtk-2.33.1/Source/WebCore/platform/graphics/GLContext.cpp
+--- webkitgtk-2.33.1.orig/Source/WebCore/platform/graphics/GLContext.cpp	2021-05-13 00:58:57.000000000 -0700
++++ webkitgtk-2.33.1/Source/WebCore/platform/graphics/GLContext.cpp	2021-05-23 22:41:57.610800891 -0700
+@@ -31,6 +31,9 @@
+ 
+ #if USE(GLX)
+ #include "GLContextGLX.h"
++#endif
++
++#if !USE(OPENGL_ES) && !USE(LIBEPOXY) && !USE(ANGLE)
+ #include "OpenGLShims.h"
+ #endif
+ 
+Only in webkitgtk-2.33.1/Source/WebCore/platform/graphics: GLContext.cpp.orig
+Only in webkitgtk-2.33.1/Source/WebCore/platform/graphics: GLContext.cpp.rej
+diff -urp webkitgtk-2.33.1.orig/Source/WebKit/UIProcess/API/glib/WebKitProtocolHandler.cpp webkitgtk-2.33.1/Source/WebKit/UIProcess/API/glib/WebKitProtocolHandler.cpp
+--- webkitgtk-2.33.1.orig/Source/WebKit/UIProcess/API/glib/WebKitProtocolHandler.cpp	2021-04-12 01:34:56.000000000 -0700
++++ webkitgtk-2.33.1/Source/WebKit/UIProcess/API/glib/WebKitProtocolHandler.cpp	2021-05-23 22:41:57.620801285 -0700
+@@ -65,7 +65,10 @@
+ 
+ #if USE(GLX)
+ #include <GL/glx.h>
+-#include <WebCore/OpenGLShims.h>
++#endif
++
++#if !USE(OPENGL_ES) && !USE(LIBEPOXY) && !USE(ANGLE)
++#include "WebCore/OpenGLShims.h"
+ #endif
+ 
+ #if USE(GSTREAMER)
+Only in webkitgtk-2.33.1/Source/WebKit/UIProcess/API/glib: WebKitProtocolHandler.cpp.orig
