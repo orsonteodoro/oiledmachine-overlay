@@ -163,7 +163,7 @@ REQUIRED_USE+="
 # https://github.com/ycm-core/ycmd/blob/master/build.py
 # May 4, 2021
 
-EGIT_COMMIT="fe4b75dc4d629db5db05b11d27b66cd4a621cc5c" # The last pull request (batch of related commits) CORE_VERSION is 45 but not last commit.
+EGIT_COMMIT="df3d7eb67e533f5d82cf4084fe4defc3a5c3f159" # The lastest commit snapshot
 #EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
 EGIT_COMMIT_MRAB_REGEX="fa9def53cf920ed9343a0afab54d5075d4c75394"
 EGIT_COMMIT_NUMPYDOC="c8513c5db6088a305711851519f944b33f7e1b25"
@@ -220,7 +220,8 @@ BDEPEND+=" ${PYTHON_DEPS}
 		>=sys-devel/clang-7
 	)
 	javascript? ( ${BDEPEND_NODEJS} )
-	test? ( >=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
+	test? ( >=dev-cpp/gtest-1.10
+		>=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
 		>=dev-python/coverage-4.2[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.0[${PYTHON_USEDEP}]
 		dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
@@ -232,7 +233,8 @@ BDEPEND+=" ${PYTHON_DEPS}
 		dev-python/pytest-rerunfailures[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )
+		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}]
+	)
 	typescript? ( ${BDEPEND_NODEJS} )"
 # Speed up downloads for rebuilds.  Precache outside of sandbox so we don't keep
 #   redownloading.
@@ -255,7 +257,10 @@ SCIPY_SPHINX_THEME_FN="scipy-sphinx-theme-${EGIT_COMMIT_SCIPY_SPHINX_THEME:0:7}.
 TYPESHED_FN="typeshed-${EGIT_COMMIT_TYPESHED:0:7}.tar.gz"
 WATCHDOG_FN="watchdog-${WATCHDOG_V}.tar.gz"
 
-#https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANG_V_MAJ}.0.0/clang-${CLANG_V_MAJ}.0.0.src.tar.xz
+# For the gtest version see:
+# https://github.com/ycm-core/ycmd/blob/df3d7eb67e533f5d82cf4084fe4defc3a5c3f159/cpp/ycm/tests/CMakeLists.txt
+
+# https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANG_V_MAJ}.0.0/clang-${CLANG_V_MAJ}.0.0.src.tar.xz
 SRC_URI="
 https://github.com/ycm-core/ycmd/archive/${EGIT_COMMIT}.tar.gz
 	-> ${YCMD_FN}
@@ -1085,6 +1090,13 @@ ___PYTHON_LIB_PATH___|\
 			-DUSE_SYSTEM_LIBCLANG=$(usex system-libclang)
 			-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 		)
+
+		if use test ; then
+			mycmakeargs+=(
+				-DUSE_SYSTEM_GMOCK=ON
+			)
+		fi
+
 		if [ -f /usr/$(get_libdir)/lib${EPYTHON}m.so ] ; then
 			mycmakeargs+=(
 			-DPYTHON_INCLUDE_DIR=/usr/include/${EPYTHON}m
