@@ -16,9 +16,12 @@ DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
 PATCHSET="7"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
+# ppc64le patchet origin: https://github.com/void-linux/void-packages/tree/master/srcpkgs/chromium/patches
+PPC64LE_COMMIT="3f575325dcc3bdfc419824518bac6d4c38241859"
 SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-44.1.0.zip
-	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz"
+	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
+	ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-ppc64le-${PPC64LE_COMMIT}.tar.xz )"
 
 LICENSE="BSD"
 SLOT="0"
@@ -76,6 +79,7 @@ COMMON_DEPEND="
 	virtual/udev
 	x11-libs/cairo:=[${MULTILIB_USEDEP}]
 	x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
+	x11-libs/libxkbcommon:=[${MULTILIB_USEDEP}]
 	x11-libs/pango:=[${MULTILIB_USEDEP}]
 	media-libs/flac:=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.4.0:=[${MULTILIB_USEDEP}]
@@ -89,11 +93,9 @@ COMMON_DEPEND="
 		x11-libs/gtk+:3[X,${MULTILIB_USEDEP}]
 		wayland? (
 			dev-libs/wayland:=[${MULTILIB_USEDEP}]
-			dev-libs/libffi:=[${MULTILIB_USEDEP}]
 			screencast? ( media-video/pipewire:0/0.3 )
 			x11-libs/gtk+:3[wayland,X,${MULTILIB_USEDEP}]
 			x11-libs/libdrm:=[${MULTILIB_USEDEP}]
-			x11-libs/libxkbcommon:=[${MULTILIB_USEDEP}]
 		)
 	)
 "
@@ -252,6 +254,8 @@ src_prepare() {
 			"${FILESDIR}/chromium-glibc-2.33.patch"
 		)
 	fi
+
+	use ppc64 && eapply -p0 "${WORKDIR}/${PN}-ppc64le-${PPC64LE_COMMIT}"
 
 	default
 
@@ -814,7 +818,8 @@ multilib_src_compile() {
 	python_setup
 
 	# https://bugs.gentoo.org/717456
-	local -x PYTHONPATH="${WORKDIR}/setuptools-44.1.0:${PYTHONPATH+:}${PYTHONPATH}"
+	# don't inherit PYTHONPATH from environment, bug #789021
+	local -x PYTHONPATH="${WORKDIR}/setuptools-44.1.0"
 
 	#"${EPYTHON}" tools/clang/scripts/update.py --force-local-build --gcc-toolchain /usr --skip-checkout --use-system-cmake --without-android || die
 
