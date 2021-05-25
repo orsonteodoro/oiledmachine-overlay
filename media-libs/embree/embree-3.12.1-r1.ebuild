@@ -72,7 +72,7 @@ BDEPEND+=" >=dev-util/cmake-3.1.0
 		media-gfx/imagemagick[jpeg]
 		media-gfx/xfig
 	)"
-# See .gitlab-ci.yml
+# See .gitlab-ci.yml (track: release-linux-x64-Release)
 DEPEND+=" media-libs/glfw
 	 virtual/opengl
 	 tbb? ( >=dev-cpp/tbb-2020.2 )

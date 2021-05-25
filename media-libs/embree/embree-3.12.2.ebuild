@@ -60,7 +60,7 @@ BDEPEND+=" >=dev-util/cmake-3.1.0
 			>=sys-devel/icc-${MIN_ICC_V_AVX512SKX}
 		)
 	 )"
-# See .gitlab-ci.yml
+# See .gitlab-ci.yml (track: release-linux-x64-Release)
 DEPEND+=" media-libs/glfw
 	 virtual/opengl
 	 tbb? ( >=dev-cpp/tbb-2021.1.1 )
