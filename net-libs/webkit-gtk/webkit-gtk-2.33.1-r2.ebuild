@@ -435,7 +435,7 @@ multilib_src_configure() {
 			)
 		fi
 		jit_enabled="0"
-	elif [[ "${ABI}" == "x64" || "${ABI}" == "arm64" ]] && use jit ; then
+	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && use jit ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
