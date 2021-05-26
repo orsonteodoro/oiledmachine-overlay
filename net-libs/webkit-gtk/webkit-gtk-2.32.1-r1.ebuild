@@ -50,17 +50,19 @@ te tr uk vi zh_CN )
 # wayland is enabled upstream but disabled because it is not defacto default
 #   standard for desktop yet
 
-IUSE+=" ${LANGS[@]/#/l10n_} aqua +bmalloc +dfg-jit +egl +ftl-jit -gamepad
-+geolocation gles2-only gnome-keyring +gstreamer -gtk-doc hardened
-+introspection +jit +jpeg2k +jumbo-build +libhyphen +libnotify thinlto lto -minibrowser
-+opengl openmp -seccomp -spell -systemd test wayland +webassembly
-+webassembly-b3-jit +webgl +X"
+IUSE+=" ${LANGS[@]/#/l10n_} aqua +bmalloc cpu_flags_arm_thumb2 +dfg-jit +egl
++ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer -gtk-doc
+hardened 64k-pages +introspection +jit +jpeg2k +jumbo-build +libhyphen
++libnotify thinlto lto -minibrowser +opengl openmp -seccomp -spell -systemd test
+wayland +webassembly +webassembly-b3-jit +webgl +X"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
 # gstreamer with opengl/gles2 needs egl
 REQUIRED_USE+="
 	|| ( aqua wayland X )
+	cpu_flags_arm_thumb2? ( bmalloc !ftl-jit )
+	64k-pages? ( !bmalloc !dfg-jit !ftl-jit !jit !webassembly !webassembly-b3-jit )
 	jit? ( bmalloc )
 	dfg-jit? ( jit )
 	ftl-jit? ( jit )
@@ -269,6 +271,20 @@ pkg_setup() {
 	fi
 	python-any-r1_pkg_setup
 
+	if use 64k-pages ; then
+		if [[ "${ABI}" == "arm64" \
+			|| "${ABI}" == "n32" \
+			|| "${ABI}" == "n64" \
+			|| "${ABI}" == "n64" \
+			|| "${ABI}" == "sparc32" \
+			|| "${ABI}" == "sparc64" \
+			]] ; then
+			:;
+		else
+			die "64k pages is not supported.  Remove the 64k-pages USE flag."
+		fi
+	fi
+
 	if use openmp ; then
 		tc-check-openmp
 		llvm_pkg_setup
@@ -293,9 +309,6 @@ src_prepare() {
 multilib_src_configure() {
 	# Respect CC, otherwise fails on prefix #395875
 	tc-export CC
-
-	# Arches without JIT support also need this to really disable it in all places
-	use jit || append-cppflags -DENABLE_JIT=0 -DENABLE_YARR_JIT=0 -DENABLE_ASSEMBLER=0
 
 	# It does not compile on alpha without this in LDFLAGS
 	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648761
@@ -365,16 +378,12 @@ multilib_src_configure() {
 		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}"/usr/bin/xdg-dbus-proxy
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
-		-DENABLE_C_LOOP=$(usex !jit)
-		-DENABLE_DFG_JIT=$(usex dfg-jit)
-		-DENABLE_FTL_JIT=$(usex ftl-jit)
 		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation) # \
 # Runtime optional (talks over dbus service)
 		-DENABLE_GLES2=$(usex gles2-only)
 		-DENABLE_GTKDOC=$(usex gtk-doc)
 		-DENABLE_GAMEPAD=$(usex gamepad)
 		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection)
-		-DENABLE_JIT=$(usex jit)
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
 		-DENABLE_OPENGL=${opengl_enabled}
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
@@ -384,7 +393,6 @@ multilib_src_configure() {
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
 		-DENABLE_WEBASSEMBLY=$(usex webassembly)
-		-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 		-DENABLE_WEBGL=$(usex webgl)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
@@ -394,7 +402,6 @@ multilib_src_configure() {
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
@@ -403,6 +410,78 @@ multilib_src_configure() {
 		$(cmake_use_find_package egl EGL)
 		$(cmake_use_find_package opengl OpenGL)
 	)
+
+	# See Source/cmake/WebKitFeatures.cmake
+	local jit_enabled=$(usex jit "1" "0")
+	if use 64k-pages ; then
+		einfo "Disabling JIT for ${ABI} with 64kb pages"
+		mycmakeargs+=(
+			-DENABLE_JIT=OFF
+			-DENABLE_DFG_JIT=OFF
+			-DENABLE_FTL_JIT=OFF
+			-DENABLE_WEBASSEMBLY_B3JIT=OFF
+			-DUSE_64KB_PAGE_BLOCK=ON
+			-DUSE_SYSTEM_MALLOC=ON
+		)
+		if [[ "${ABI}" == "arm64" ]] ; then
+			mycmakeargs+=(
+				-DENABLE_C_LOOP=OFF
+				-DENABLE_SAMPLING_PROFILER=ON
+			)
+		else
+			mycmakeargs+=(
+				-DENABLE_C_LOOP=ON
+				-DENABLE_SAMPLING_PROFILER=OFF
+			)
+		fi
+		jit_enabled="0"
+	elif [[ "${ABI}" == "x64" || "${ABI}" == "arm64" ]] && use jit ; then
+		mycmakeargs+=(
+			-DENABLE_C_LOOP=$(usex !jit)
+			-DENABLE_JIT=$(usex jit)
+			-DENABLE_DFG_JIT=$(usex dfg-jit)
+			-DENABLE_FTL_JIT=$(usex ftl-jit)
+			-DENABLE_SAMPLING_PROFILER=$(usex jit)
+			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
+			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
+		)
+	elif [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 && use jit ; then
+		mycmakeargs+=(
+			-DENABLE_C_LOOP=$(usex !jit)
+			-DENABLE_JIT=$(usex jit)
+			-DENABLE_DFG_JIT=$(usex dfg-jit)
+			-DENABLE_FTL_JIT=OFF
+			-DENABLE_SAMPLING_PROFILER=$(usex jit)
+			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
+			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
+		)
+	elif [[ "${ABI}" == "n32" ]] && use jit ; then
+		# mips32
+		mycmakeargs+=(
+			-DENABLE_C_LOOP=$(usex !jit)
+			-DENABLE_JIT=$(usex jit)
+			-DENABLE_DFG_JIT=$(usex dfg-jit)
+			-DENABLE_FTL_JIT=OFF
+			-DENABLE_SAMPLING_PROFILER=OFF
+			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
+			-DUSE_SYSTEM_MALLOC=$(usex jit OFF $(usex !bmalloc))
+		)
+	else
+		einfo "Disabling JIT for ${ABI}"
+		mycmakeargs+=(
+			-DENABLE_C_LOOP=ON
+			-DENABLE_JIT=OFF
+			-DENABLE_DFG_JIT=OFF
+			-DENABLE_FTL_JIT=OFF
+			-DENABLE_SAMPLING_PROFILER=OFF
+			-DENABLE_WEBASSEMBLY_B3JIT=OFF
+			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
+		)
+		jit_enabled="0"
+	fi
+
+	# Arches without JIT support also need this to really disable it in all places
+	[[ "${jit_enabled}" == "1" ]] || append-cppflags -DENABLE_JIT=0 -DENABLE_YARR_JIT=0 -DENABLE_ASSEMBLER=0
 
 	if use thinlto ; then
 		MESA_LLVM_V=$(bzcat "${ESYSROOT}/var/db/pkg/media-libs/mesa-"*"/environment.bz2" \
@@ -438,10 +517,6 @@ multilib_src_configure() {
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 			-DOpenMP_libomp_LIBRARY="libomp"
 		)
-	fi
-
-	if ! use jit ; then
-		mycmakeargs+=( -DENABLE_SAMPLING_PROFILER=OFF )
 	fi
 
 	# Use GOLD when possible as it has all the magic to

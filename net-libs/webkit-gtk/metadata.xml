@@ -12,6 +12,8 @@
     <name>Gentoo GNOME Desktop</name>
   </maintainer>
   <use>
+    <flag name="64k-pages">Uses 64k pages but reduces security and performance.
+      It also disables JIT.</flag>
     <flag name="bmalloc">Uses a mmap based page allocator to improve
       overall performance.  Disable to use the system allocator.</flag>
     <flag name="coverage">Enable code coverage support</flag>
