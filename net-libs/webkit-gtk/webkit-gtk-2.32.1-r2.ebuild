@@ -9,7 +9,7 @@ LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{7..10} ) # relaxed, U LTS uses python 3.82
 USE_RUBY="ruby26 ruby27 ruby30" # relaxed, U LTS uses ruby 2.7
-inherit check-reqs cmake desktop flag-o-matic gnome2 llvm multilib-minimal \
+inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm multilib-minimal \
 pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
 
 DESCRIPTION="Open source web browser engine"
@@ -276,12 +276,75 @@ pkg_setup() {
 			|| "${ABI}" == "n32" \
 			|| "${ABI}" == "n64" \
 			|| "${ABI}" == "n64" \
+			|| "${ABI}" == "ppc64" \
 			|| "${ABI}" == "sparc32" \
 			|| "${ABI}" == "sparc64" \
 			]] ; then
-			:;
+			local pagesize=$(getconf PAGESIZE)
+			if [[ "${pagesize}" != "16384" ]] ; then
+				ewarn \
+"Page size is not 16k but currently ${pagesize}.  Disable 64k-pages USE flag."
+			fi
 		else
-			die "64k pages is not supported.  Remove the 64k-pages USE flag."
+			die \
+"64k pages is not supported.  Remove the 64k-pages USE flag."
+		fi
+
+		if ! linux_config_exists ; then
+			die \
+"Missing .config for kernel."
+		fi
+
+		if [[ "${ABI}" == "arm64" ]] ; then
+			if ! linux_chkconfig_present "ARM64_64K_PAGES" ; then
+				die \
+"CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the 64k-pages \
+USE flag or change the kernel config."
+			fi
+		elif [[ "${ABI}" == "n32" ]] ; then
+			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
+				die \
+"CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the 64k-pages \
+USE flag or change the kernel config."
+			fi
+		elif [[ "${ABI}" == "n64" ]] ; then
+			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
+				die \
+"CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the 64k-pages \
+USE flag or change the kernel config."
+			fi
+		elif [[ "${ABI}" == "n64" ]] ; then
+			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
+				die \
+"CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the 64k-pages \
+USE flag or change the kernel config."
+			fi
+		elif [[ "${ABI}" == "ppc64" ]] ; then
+			if ! linux_chkconfig_present "PPC_64K_PAGES" ; then
+				die \
+"CONFIG_PPC_64K_PAGES is unset in the kernel config.  Remove the 64k-pages \
+USE flag or change the kernel config."
+			fi
+		elif [[ "${ABI}" == "sparc32" ]] ; then
+			if linux_chkconfig_present "HUGETLB_PAGE" ; then
+				:;
+			elif linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
+				:;
+			else
+				die \
+"CONFIG_HUGETLB_PAGE or CONFIG_TRANSPARENT_HUGEPAGE is unset in the kernel \
+config.  Remove the 64k-pages USE flag or change the kernel config."
+			fi
+		elif [[ "${ABI}" == "sparc64" ]] ; then
+			if linux_chkconfig_present "HUGETLB_PAGE" ; then
+				:;
+			elif linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
+				:;
+			else
+				die \
+"CONFIG_HUGETLB_PAGE or CONFIG_TRANSPARENT_HUGEPAGE is unset in the kernel \
+config.  Remove the 64k-pages USE flag or change the kernel config."
+			fi
 		fi
 	fi
 
