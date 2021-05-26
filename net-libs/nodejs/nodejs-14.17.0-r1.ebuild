@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{7..10} )
 PYTHON_REQ_USE="threads(+)"
 inherit bash-completion-r1 flag-o-matic pax-utils python-any-r1 \
 	toolchain-funcs xdg-utils
@@ -40,6 +40,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 	test? ( net-misc/curl )
 	pax_kernel? ( sys-apps/elfix )"
 PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
+	  "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-12.22.1-uvwasi_shared_libuv.patch
 	  "${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch
 	  "${FILESDIR}"/${PN}-14.16.1-v8_icu69.patch )
@@ -135,13 +136,6 @@ src_prepare() {
 
 	sed -i -e "/'-O3'/d" common.gypi node.gypi || die
 
-	# Avoid a test that I've only been able to reproduce from emerge. It doesnt
-	# seem sandbox related either (invoking it from a sandbox works fine).
-	# The issue is that no stdin handle is openened when asked for one.
-	# It doesn't really belong upstream , so it'll just be removed until someone
-	# with more gentoo-knowledge than me (jbergstroem) figures it out.
-	rm test/parallel/test-stdout-close-unref.js || die
-
 	# debug builds. change install path, remove optimisations and override buildtype
 	if use debug; then
 		sed -i -e "s|out/Release/|out/Debug/|g" tools/install.py || die
@@ -150,6 +144,13 @@ src_prepare() {
 
 	# We need to disable mprotect on two files when it builds Bug 694100.
 	use pax_kernel && PATCHES+=( "${FILESDIR}"/${PN}-13.8.0-paxmarking.patch )
+
+	# All this test does is check if the npm CLI produces warnings of any sort,
+	# failing if it does. Overkill, much? Especially given one possible warning
+	# is that there is a newer version of npm available upstream (yes, it does
+	# use the network if available), thus making it a real possibility for this
+	# test to begin failing one day even though it was fine before.
+	rm -f test/parallel/test-release-npm.js
 
 	default
 }
@@ -297,7 +298,7 @@ src_test() {
 	fi
 
 	out/${BUILDTYPE}/cctest || die
-	"${EPYTHON}" tools/test.py --mode=${BUILDTYPE,,} -J message parallel sequential || die
+	"${EPYTHON}" tools/test.py --mode=${BUILDTYPE,,} --flaky-tests=dontcare -J message parallel sequential || die
 }
 
 pkg_postinst() {
