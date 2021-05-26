@@ -24,7 +24,7 @@
     <flag name="features-experimental">Enables experimental features at the
       expense of stability and development cost</flag>
     <flag name="features-in-development">Access in development web technologies.
-      Disable for increased code quality.</flags>
+      Disable for increased code quality.</flag>
     <flag name="ftl-jit">Builds an additional tier for JIT used for
       optimizing run-time performance marginally at the expense of 
       faster load times or delayed execution time.</flag>
@@ -48,9 +48,9 @@
     <flag name="webgl">Build support for the WebGL HTML API using
       <pkg>virtual/opengl</pkg></flag>
     <flag name="webassembly">Enables support for WebAssembly used for example
-      in web games.  Disable to decrease the attack surface.</webassembly>
+      in web games.  Disable to decrease the attack surface.</flag>
     <flag name="webassembly-b3-jit">Enables the B3 JIT support that does
-      additional optimizations beyond ftl-jit.</webassembly>
-    <flag name="webxr">Builds WebXR support.  (EXPERIMENTAL / IN DEVELOPMENT)</pkg>
+      additional optimizations beyond ftl-jit.</flag>
+    <flag name="webxr">Builds WebXR support.  (EXPERIMENTAL / IN DEVELOPMENT)</flag>
   </use>
 </pkgmetadata>
