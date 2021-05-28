@@ -3,7 +3,9 @@
 
 EAPI=7
 
-inherit cmake-utils eutils flag-o-matic multilib-build static-libs toolchain-funcs
+PYTHON_COMPAT=( python3_{7..10} )
+inherit cmake-utils eutils flag-o-matic multilib-build python-r1 \
+static-libs toolchain-funcs
 
 DESCRIPTION="A small C++ wrapper for the native C ODBC API"
 HOMEPAGE="https://nanodbc.github.io/nanodbc/"
@@ -12,21 +14,35 @@ LICENSE="MIT"
 # Live ebuilds/snapshots won't get KEYWORed.
 
 SLOT="0/${PV}"
-IUSE+=" -boost_convert +debug doc +examples -handle_nodata_bug +libcxx -unicode -static-libs"
-REQUIRED_USE+=" !libcxx"
+IUSE+=" -boost_convert doxygen +debug html +examples -handle_nodata_bug
++libcxx man pdf -unicode -static-libs singlehtml texinfo"
+REQUIRED_USE+=" !libcxx
+	html? ( ${PYTHON_REQUIRED_USE} )
+	man? ( ${PYTHON_REQUIRED_USE} )
+	pdf? ( ${PYTHON_REQUIRED_USE} )
+	singlehtml? ( ${PYTHON_REQUIRED_USE} )
+	texinfo? ( ${PYTHON_REQUIRED_USE} )"
 #building with USE libcxx is broken?
 DEPEND+=" dev-libs/boost:=[${MULTILIB_USEDEP},nls,static-libs?]
 	 dev-db/unixODBC[${MULTILIB_USEDEP}]
 	 libcxx? ( sys-libs/libcxx[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
+DEPEND_SPHINX="
+	${PYTHON_DEPS}
+	dev-python/rstcheck[${PYTHON_USEDEP}]
+	dev-python/sphinx[${PYTHON_USEDEP}]
+	dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+	<dev-python/breathe-4.29.1[${PYTHON_USEDEP}]"
 BDEPEND+="
 	>=dev-util/cmake-2.6
-	doc? (
-		dev-python/rstcheck
-		dev-python/sphinx
-		dev-python/sphinx_rtd_theme
-		<=dev-python/breathe-4.29.0
-	)"
+	doxygen? ( app-doc/doxygen )
+	html? ( ${DEPEND_SPHINX} )
+	man? ( ${DEPEND_SPHINX} )
+	pdf? ( ${DEPEND_SPHINX}
+		dev-python/sphinx[${PYTHON_USEDEP},latex]
+		dev-tex/latexmk )
+	singlehtml? ( ${DEPEND_SPHINX} )
+	texinfo? ( ${DEPEND_SPHINX} )"
 EGIT_COMMIT="1a303f1028baf973d92bec037f92a2516d7060a9"
 SRC_URI=\
 "https://github.com/nanodbc/${PN}/archive/${EGIT_COMMIT}.tar.gz \
@@ -39,6 +55,19 @@ pkg_setup() {
 		if ! use libcxx; then
 			die "Clang requires libcxx for this ebuild."
 		fi
+	fi
+	if use texinfo ; then
+		ewarn \
+"The texinfo USE flags may need FEATURES=\"-network-sandbox\" as a per-package \
+environmental setting for doc generation completeness."
+	fi
+	if use pdf ; then
+		ewarn \
+"The pdf USE flags may need FEATURES=\"-network-sandbox\" as a per-package \
+environmental setting for doc generation completeness."
+	fi
+	if use html || use man || use pdf || use singlehtml || use texinfo ; then
+		python_setup
 	fi
 }
 
@@ -106,24 +135,101 @@ src_configure() {
 	multilib_foreach_abi configure_abi
 }
 
-src_compile() {
-	if use doc ; then
+src_compile_docs() {
+	cd doc || die
+	if use doxygen ; then
+		einfo "Building doxygen documentation"
+		mkdir -p ../docs/doxygen
+		pushd ../docs/doxygen || die
+			doxygen -g doxygen.conf
+			sed -i -e "s|My Project|${PN}|g" \
+				-e "s|GENERATE_XML           = NO|GENERATE_XML           = YES|g" \
+				-e "s|GENERATE_LATEX         = YES|GENERATE_LATEX         = NO|g" \
+				-e "s|INPUT                  =|INPUT                  = ${BUILD_DIR}/nanodbc|g" \
+				-e "s|JAVADOC_AUTOBRIEF      = NO|JAVADOC_AUTOBRIEF      = YES|g" \
+				-e "s|AUTOLINK_SUPPORT       = YES|AUTOLINK_SUPPORT       = NO|g" \
+				-e "s|XML_OUTPUT             = xml|XML_OUTPUT             = doxyxml|g" \
+				-e "s|MACRO_EXPANSION        = NO|MACRO_EXPANSION        = YES|g" \
+				-e "s|PREDEFINED             =|PREDEFINED             = DOXYGEN=1|g" \
+				doxygen.conf
+		popd
+		emake doxygen
+	fi
+
+	if use html ; then
 		einfo "Building html documentation"
-		cd "${S}/doc" || die
 		emake html
 	fi
 
+	if use man ; then
+		einfo "Building man documentation"
+		emake man
+	fi
+
+	if use pdf ; then
+		einfo "Building pdf documentation"
+		emake latexpdf
+	fi
+
+	if use singlehtml ; then
+		einfo "Building singlehtml documentation"
+		emake singlehtml
+	fi
+
+	if use texinfo ; then
+		einfo "Building texinfo documentation"
+		emake texinfo
+	fi
+}
+
+src_compile() {
 	compile_abi() {
 		cd "${BUILD_DIR}" || die
 		static-libs_compile() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_compile
+
+			if multilib_is_native_abi ; then
+				src_compile_docs
+			fi
 		}
 		static-libs_foreach_impl \
 			static-libs_compile
 	}
 	multilib_foreach_abi compile_abi
+}
+
+src_install_docs()
+{
+	if use doxygen ; then
+		insinto /usr/share/${P}/docs/doxygen
+		doins -r html
+		doins -r doc/build/breathe/doxygen/nanodbc/xml
+	fi
+
+	if use html ; then
+		insinto /usr/share/${P}/docs
+		doins -r doc/build/html
+	fi
+
+	if use man ; then
+		doman doc/build/man/nanodbc.1
+	fi
+
+	if use pdf ; then
+		insinto /usr/share/${P}/docs
+		doins -r doc/build/latex/nanodbc.pdf
+	fi
+
+	if use singlehtml ; then
+		insinto /usr/share/${P}/docs
+		doins -r doc/build/singlehtml
+	fi
+
+	if use texinfo ; then
+		doinfo doc/build/texinfo/nanodbc.texi
+	fi
 }
 
 src_install() {
@@ -133,6 +239,9 @@ src_install() {
 			pushd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_install
+			if multilib_is_native_abi ; then
+				src_install_docs
+			fi
 		}
 		static-libs_foreach_impl \
 			static-libs_install
