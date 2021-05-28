@@ -15,8 +15,8 @@ HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
 KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 # The download page can be found at https://cef-builds.spotifycdn.com/index.html
 # 05/05/2021 - 90.6.5+g7a604aa+chromium-90.0.4430.93 / Chromium 90.0.4430.93
-CHROMIUM_V="90.0.4430.93"
-CEF_COMMIT="g7a604aa"
+CHROMIUM_V="90.0.4430.93" # same as https://bitbucket.org/chromiumembedded/cef/src/4430/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4430
+CEF_COMMIT="g7a604aa" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 SRC_URI="
 	x86? (
 		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32_minimal.tar.bz2 )
