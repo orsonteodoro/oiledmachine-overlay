@@ -31,7 +31,7 @@ GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+ncurses/-ncurses})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+mysql/-mysql})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+pdf/-pdf})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+sdl2/-sdl2})
-IUSE+=" ${GAMBAS_MODULES_DEFAULTS[@]} debug doc +ide +jit +glsl +glu
+IUSE+=" ${GAMBAS_MODULES_DEFAULTS[@]} debug doc +glsl +glu +ide +jit +glsl
 lto +sge smtp +webkit"
 # The remove_stable_not_finished is intentionally kept disabled.
 # The remove_deprecated is intentionally kept disabled until upstream removes it.
