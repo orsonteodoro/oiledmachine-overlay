@@ -477,6 +477,6 @@ pkg_postinst() {
 	fi
 
 	if use jit ; then
-		einfo "Relog or do `source /etc/profile` for changes to take affect."
+		einfo "Relog or do \`source /etc/profile\` for changes to take affect."
 	fi
 }
