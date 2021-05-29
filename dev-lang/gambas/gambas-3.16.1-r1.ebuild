@@ -31,12 +31,12 @@ GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+ncurses/-ncurses})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+mysql/-mysql})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+pdf/-pdf})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+sdl2/-sdl2})
-IUSE+=" ${GAMBAS_MODULES_DEFAULTS[@]} debug doc +ide +glsl +glu \
+IUSE+=" ${GAMBAS_MODULES_DEFAULTS[@]} debug doc +ide +jit +glsl +glu
 lto +sge smtp +webkit"
 # The remove_stable_not_finished is intentionally kept disabled.
 # The remove_deprecated is intentionally kept disabled until upstream removes it.
 # The USE flags below have no config options but are removed manually.
-IUSE+=" remove_deprecated +remove_not_finished remove_stable_not_finished \
+IUSE+=" remove_deprecated +remove_not_finished remove_stable_not_finished
 +remove_unstable"
 DEPEND+=" bzip2? ( app-arch/bzip2 )
 	cairo? ( >=x11-libs/cairo-1.6 )
@@ -56,8 +56,9 @@ DEPEND+=" bzip2? ( app-arch/bzip2 )
 		x11-libs/libSM )
 	httpd? ( sys-libs/glibc )
 	imlib2? ( >=media-libs/imlib-1.4 )
-	jit? ( >=sys-devel/llvm-3.1
-		<sys-devel/llvm-3.6 )
+	jit? ( || ( sys-devel/gcc
+		sys-devel/clang
+		dev-lang/tcc ) )
 	mime? ( >=dev-libs/gmime-2.6 )
 	mixer? ( sdl? ( media-libs/sdl-mixer )
 		sdl2? ( >=media-libs/sdl2-mixer-2 ) )
@@ -116,7 +117,7 @@ REQUIRED_USE+="
 	remove_deprecated? ( !gnome-keyring !sdl !v4l )
 	remove_not_finished? ( !dbus !gsl !gtk3 !imlib2 !ncurses )
 	remove_stable_not_finished? ( !sdl2 )
-	remove_unstable? ( !jit !mysql !pdf )
+	remove_unstable? ( !mysql !pdf )
 	qt5? ( X )
 	sge? ( opengl )
 	xml? ( xslt )
@@ -276,6 +277,7 @@ src_configure() {
 	filter-flags -O*
 
 	econf \
+		--disable-jitllvm \
 		--disable-qt4 \
 		--disable-gtk2 \
 		--disable-gtkopengl \
@@ -296,7 +298,6 @@ src_configure() {
 		$(use_enable httpd) \
 		$(use_enable imlib2 image_imlib) \
 		$(use_enable imlib2 imageimlib) \
-		$(use_enable jit jitllvm) \
 		$(use_enable lto) \
 		$(use_enable mime) \
 		$(use_enable mysql) \
@@ -446,6 +447,20 @@ src_install() {
 			die "The IDE was not built.  Fix the USE flags."
 		fi
 	fi
+
+	if use jit ; then
+		cat <<-EOF > "${T}"/50${PN}-jit
+# Details can be found at http://gambaswiki.org/wiki/doc/jit
+GB_NO_JIT=${EGAMBAS_GB_NO_JIT:=0}
+GB_JIT_DEBUG=${EGAMBAS_GB_JIT_DEBUG:=0}
+GB_JIT_CC="${EGAMBAS_GB_JIT_CC:=gcc}"
+GB_JIT_CFLAGS="${EGAMBAS_GB_JIT_CFLAGS:=-O3}"
+EOF
+		einfo "Systemwide JIT settings:"
+		cat "${T}"/50${PN}-jit || die
+		doenvd "${T}"/50${PN}-jit
+		einfo "To change them see \`epkginfo -x gambas\` or metadata.xml"
+	fi
 }
 
 pkg_postinst() {
@@ -459,5 +474,9 @@ pkg_postinst() {
 
 	if use ide && use qt5 ; then
 		einfo "To run the IDE with Qt5 from command line do \`GB_GUI=gb.qt5 gambas3\`"
+	fi
+
+	if use jit ; then
+		einfo "Relog or do `source /etc/profile` for changes to take affect."
 	fi
 }

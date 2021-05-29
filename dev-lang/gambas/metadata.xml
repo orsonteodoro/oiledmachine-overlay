@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only for this ebuild fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+  Per-package environmental variables:
+    EGAMBAS_GB_NO_JIT -- Set 1 to disable JIT completely, 0 or unset to enable
+    EGAMBAS_GB_JIT_DEBUG -- Set 1 to see debug messages, 0 or unset to quiet
+    EGAMBAS_GB_JIT_CC -- Set to either gcc, clang, or tcc
+    EGAMBAS_GB_JIT_CFLAGS -- -O3 (default)
+  </longdescription>
+  <upstream>
+    <bugs-to>http://gambaswiki.org/wiki/doc/report</bugs-to>
+    <changelog>http://gambaswiki.org/wiki/doc/release</changelog>
+    <doc lang="en">http://gambas.sourceforge.net/en/main.html</doc>
+    <remote-id type="gitlab">gambas/gambas</remote-id>
+  </upstream>
+  <use>
+    <flag name="bzip2">Adds bzip2 compression support to compress files or 
+      strings</flag>
+    <flag name="cairo">Adds support for 2D graphics</flag>
+    <flag name="crypt">Adds MD5/DES support</flag>
+    <flag name="curl">Adds support for curl to retrieve files via http/ftp</flag>
+    <flag name="dbus">Adds support for D-Bus</flag>
+    <flag name="debug">Adds support for the IDE to debug gambas projects</flag>
+    <flag name="doc">Installs extra docs</flag>
+    <flag name="glsl">Adds support for GLSL (OpenGL shaders)</flag>
+    <flag name="glu">Adds support for GLU</flag>
+    <flag name="gmp">Adds support for GMP to represent numbers
+      with unlimited digits or rational numbers composed of
+      scientific numbers.</flag>
+    <flag name="gnome-keyring">Adds support for gnome keyring</flag>
+    <flag name="gsl">Adds support for GSL math routines</flag>
+    <flag name="gstreamer">Adds gstreamer support</flag>
+    <flag name="gtk3">Adds support for GTK+3</flag>
+    <flag name="httpd">Adds support for adding an embeddable HTTP server</flag>
+    <flag name="ide">Builds the IDE</flag>
+    <flag name="imlib2">Adds image processing support to blur, sharpen
+      rotate, stretch images</flag>
+    <flag name="jit">Configures system for the new JIT compatible with
+      current compiler versions</flag>
+    <flag name="lto">Optimize using Link Time Optimization (LTO)</flag>
+    <flag name="mime">Adds MIME message management support</flag>
+    <flag name="mixer">Adds support to play multiple sound files at the same
+      time used for typically games</flag>
+    <flag name="mysql">Adds support for MySQL</flag>
+    <flag name="ncurses">Adds support for NCurses</flag>
+    <flag name="network">Adds network support</flag>
+    <flag name="odbc">Adds ODBC support used for databases</flag>
+    <flag name="openal">Adds support for OpenAL</flag>
+    <flag name="opengl">Adds support for OpenGL</flag>
+    <flag name="openssl">Adds support for crypto ciphers and hashing via
+      OpenSSL</flag>
+    <flag name="pcre">Adds support for Perl compatible regular expressions
+      </flag>
+    <flag name="pdf">Adds support for PDF files</flag>
+    <flag name="pixbuf"></flag>
+    <flag name="postgresql">Adds support for PostgreSQL</flag>
+    <flag name="qt5">Adds support for QT5</flag>
+    <flag name="remove_deprecated">Deletes components if marked deprecated
+      meaning that they are marked for removal or indicate that newer projects
+      should not use these components or widgets from them</flag>
+    <flag name="remove_not_finished">Deletes poor quality components if marked
+      not finished</flag>
+    <flag name="remove_stable_not_finished">Deletes components if marked stable
+      and not finished</flag>
+    <flag name="remove_unstable">Deletes components if marked unstable</flag>
+    <flag name="sdl">Adds support SDL (deprecated)</flag>
+    <flag name="sdl2">Adds support for SDL2</flag>
+    <flag name="smtp">Adds support for sending email via SMTP</flag>
+    <flag name="sqlite">Adds support for sqlite databases</flag>
+    <flag name="sge">Adds the OpenGL based Simple Game Engine (SGE) that is
+      capable of loading 3D model assets in MD2 format</flag>
+    <flag name="v4l">Adds webcam and video capture support (deprecated)</flag>
+    <flag name="webkit">Adds support for adding a WebKit widget to gambas
+      projects to view HTML files</flag>
+    <flag name="X">Adds support for X</flag>
+    <flag name="xml">Adds support for XML files</flag>
+    <flag name="xslt">Adds support for XSLT tools</flag>
+    <flag name="zlib">Adds zlib compression support for compressing files or
+      strings</flag>
+    <flag name="zstd">Adds zstd compression support for compressing files or
+      strings</flag>
+  </use>
+</pkgmetadata>
