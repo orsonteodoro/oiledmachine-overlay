@@ -24,7 +24,7 @@
       strings</flag>
     <flag name="cairo">Adds support for 2D graphics</flag>
     <flag name="crypt">Adds MD5/DES support</flag>
-    <flag name="curl">Adds support for curl to retrieve files via http/ftp</flag>
+    <flag name="curl">Adds support for cURL to retrieve files via http/ftp</flag>
     <flag name="dbus">Adds support for D-Bus</flag>
     <flag name="debug">Adds support for the IDE to debug gambas projects</flag>
     <flag name="doc">Installs extra docs</flag>
@@ -35,7 +35,7 @@
       scientific numbers.</flag>
     <flag name="gnome-keyring">Adds support for gnome keyring</flag>
     <flag name="gsl">Adds support for GSL math routines</flag>
-    <flag name="gstreamer">Adds gstreamer support</flag>
+    <flag name="gstreamer">Adds GStreamer support</flag>
     <flag name="gtk3">Adds support for GTK+3</flag>
     <flag name="httpd">Adds support for adding an embeddable HTTP server</flag>
     <flag name="ide">Builds the IDE</flag>
@@ -48,12 +48,12 @@
     <flag name="mixer">Adds support to play multiple sound files at the same
       time used for typically games</flag>
     <flag name="mysql">Adds support for MySQL</flag>
-    <flag name="ncurses">Adds support for NCurses</flag>
+    <flag name="ncurses">Adds support for ncurses</flag>
     <flag name="network">Adds network support</flag>
     <flag name="odbc">Adds ODBC support used for databases</flag>
     <flag name="openal">Adds support for OpenAL</flag>
     <flag name="opengl">Adds support for OpenGL</flag>
-    <flag name="openssl">Adds support for crypto ciphers and hashing via
+    <flag name="openssl">Adds support for cryptographic ciphers and hashing via
       OpenSSL</flag>
     <flag name="pcre">Adds support for Perl compatible regular expressions
       </flag>
@@ -72,7 +72,7 @@
     <flag name="sdl">Adds support SDL (deprecated)</flag>
     <flag name="sdl2">Adds support for SDL2</flag>
     <flag name="smtp">Adds support for sending email via SMTP</flag>
-    <flag name="sqlite">Adds support for sqlite databases</flag>
+    <flag name="sqlite">Adds support for SQLite databases</flag>
     <flag name="sge">Adds the OpenGL based Simple Game Engine (SGE) that is
       capable of loading 3D model assets in MD2 format</flag>
     <flag name="v4l">Adds webcam and video capture support (deprecated)</flag>
