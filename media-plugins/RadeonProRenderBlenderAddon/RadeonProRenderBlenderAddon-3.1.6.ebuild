@@ -178,8 +178,10 @@ opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
 				)
 				!opengl_mesa? (
 					|| (
-<x11-drivers/amdgpu-pro-20.45[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
->=x11-drivers/amdgpu-pro-20.45[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
+<x11-drivers/amdgpu-pro-20.45\
+[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
+>=x11-drivers/amdgpu-pro-20.45\
+[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
 					)
 				)
 			)
@@ -200,8 +202,10 @@ opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
 				)
 				!opengl_mesa? (
 					|| (
-<x11-drivers/amdgpu-pro-lts-20.45[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
->=x11-drivers/amdgpu-pro-lts-20.45[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
+<x11-drivers/amdgpu-pro-lts-20.45\
+[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
+>=x11-drivers/amdgpu-pro-lts-20.45\
+[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
 					)
 				)
 			)
@@ -268,8 +272,10 @@ BDEPEND+="  ${CDEPEND_NOT_LISTED}
 	$(python_gen_cond_dep '>=dev-python/pytest-3[${PYTHON_USEDEP}]')
 	>=dev-util/cmake-3.11
 	dev-vcs/git"
-RIF_V="1.6.1"
-RPRSDK_V="2.2.1"
+#RIF_V="1.7.0" # new
+#RPRSDK_V="2.2.2" # new
+RIF_V="1.6.1" # old
+RPRSDK_V="2.2.1" # old
 RPRSC_V="9999_p20201109"
 EGIT_COMMIT_RPRSC="41d2e5fb8631ef2bfa60fa27f5dbf7c4a8e2e4aa"
 RIF_DF="RadeonImageFilter-${RIF_V}.tar.gz"

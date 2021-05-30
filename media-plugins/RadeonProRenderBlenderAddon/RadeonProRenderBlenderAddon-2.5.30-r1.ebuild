@@ -161,8 +161,10 @@ opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
 				)
 				!opengl_mesa? (
 					|| (
-<x11-drivers/amdgpu-pro-20.45[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
->=x11-drivers/amdgpu-pro-20.45[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
+<x11-drivers/amdgpu-pro-20.45\
+[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
+>=x11-drivers/amdgpu-pro-20.45\
+[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
 					)
 				)
 			)
@@ -183,8 +185,10 @@ opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
 				)
 				!opengl_mesa? (
 					|| (
-<x11-drivers/amdgpu-pro-lts-20.45[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
->=x11-drivers/amdgpu-pro-lts-20.45[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
+<x11-drivers/amdgpu-pro-lts-20.45\
+[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
+>=x11-drivers/amdgpu-pro-lts-20.45\
+[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
 					)
 				)
 			)
