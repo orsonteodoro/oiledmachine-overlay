@@ -169,10 +169,10 @@ RDEPEND+="  ${CDEPEND_NOT_LISTED}
 			!split-drivers? (
 				opengl_mesa? (
 					|| (
-<x11-drivers/amdgpu-pro-20.45[X,developer,open-stack,opencl,\
-opencl_orca?,opencl_pal?,opengl_mesa,-opengl_pro]
->=x11-drivers/amdgpu-pro-20.45[X,developer,open-stack,opencl,\
-opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
+<x11-drivers/amdgpu-pro-20.45\
+[X,developer,open-stack,opencl,opencl_orca?,opencl_pal?,opengl_mesa,-opengl_pro]
+>=x11-drivers/amdgpu-pro-20.45\
+[X,developer,open-stack,opencl,opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
 
 					)
 				)
@@ -194,10 +194,10 @@ opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
 			!split-drivers? (
 				opengl_mesa? (
 					|| (
-<x11-drivers/amdgpu-pro-lts-20.45[X,developer,open-stack,opencl,\
-opencl_orca?,opencl_pal?,opengl_mesa,-opengl_pro]
->=x11-drivers/amdgpu-pro-lts-20.45[X,developer,open-stack,opencl,\
-opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
+<x11-drivers/amdgpu-pro-lts-20.45\
+[X,developer,open-stack,opencl,opencl_orca?,opencl_pal?,opengl_mesa,-opengl_pro]
+>=x11-drivers/amdgpu-pro-lts-20.45\
+[X,developer,open-stack,opencl,opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
 					)
 				)
 				!opengl_mesa? (
