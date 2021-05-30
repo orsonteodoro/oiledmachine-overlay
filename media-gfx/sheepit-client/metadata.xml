@@ -65,6 +65,8 @@
       packages.</flag>
     <flag name="system-blender">Use the installed system blender instead
       of the ones provided by the Sheep it Render Farm service.</flag>
+    <flag name="system-gradle">Use the system's gradle instead of the
+      one that would be an internal build time downloaded one.</flag>
     <flag name="video_cards_amdgpu">
       Checks for OpenCL support for the AMDGPU-PRO drivers.</flag>
     <flag name="video_cards_i965">Checks for OpenCL support

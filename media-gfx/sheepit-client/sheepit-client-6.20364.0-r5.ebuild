@@ -119,13 +119,14 @@ BLENDER_VERSIONS=(
 	2_92_0
 )
 
-IUSE=" +benchmark blender allow-unknown-renderers
+IUSE=" blender
 disable-hard-version-blocks cuda doc firejail intel-ocl lts +opencl
 opencl_rocm opencl_orca opencl_pal opengl_mesa pro-drivers split-drivers
 system-blender gentoo-blender no-repacks video_cards_amdgpu video_cards_i965
 video_cards_iris video_cards_nvidia video_cards_radeonsi"
 IUSE_BLENDER_VERSIONS=( ${BLENDER_VERSIONS[@]/#/sheepit_client_blender_} )
 IUSE+=" ${IUSE_BLENDER_VERSIONS[@]}"
+BENCHMARK_VERSION="sheepit_client_blender_2_90_1"
 
 gen_required_use_blender()
 {
@@ -139,13 +140,9 @@ gen_required_use_blender()
 
 REQUIRED_USE+=" "$(gen_required_use_blender)
 REQUIRED_USE+="
-	allow-unknown-renderers? ( blender !system-blender )
-	benchmark
-	benchmark? ( blender sheepit_client_blender_2_90_1 )
-	blender? ( || ( ${IUSE_BLENDER_VERSIONS[@]}
-			allow-unknown-renderers ) )
+	blender? ( || ( ${IUSE_BLENDER_VERSIONS[@]} ) )
 	|| ( cuda opencl )
-	no-repacks? ( !allow-unknown-renderers !system-blender )
+	no-repacks? ( !system-blender )
 	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
 	opencl_orca? (
 		|| ( split-drivers pro-drivers )
@@ -160,7 +157,7 @@ REQUIRED_USE+="
 		video_cards_amdgpu
 	)
 	split-drivers? ( || ( opencl_orca opencl_rocm ) )
-	system-blender? ( !allow-unknown-renderers !no-repacks )
+	system-blender? ( !no-repacks )
 	video_cards_amdgpu? (
 		|| ( pro-drivers split-drivers )
 	)
@@ -380,6 +377,10 @@ x11-drivers/amdgpu-pro-lts\
 	)
 	>=virtual/jre-${JAVA_V}"
 BDEPEND="${RDEPEND}
+	app-arch/bzip2
+	app-arch/tar
+	app-arch/unzip
+	app-arch/xz-utils
 	dev-java/gradle-bin
 	>=virtual/jdk-${JAVA_V}"
 
@@ -435,17 +436,114 @@ https://jcenter.bintray.com/xpp3/xpp3/1.1.3.3/xpp3-1.1.3.3.jar
 https://jcenter.bintray.com/xpp3/xpp3/1.1.3.3/xpp3-1.1.3.3.pom
 "
 
+# See https://www.sheepit-renderfarm.com/servers.php
+# See profiles/thirdpartymirrors in this repo.
+# Currently gra-fr is publicly accessible.
+SI_RENDERER_MIRROR="mirror://sheepit-blender-binaries/"
+
+# See https://www.blender.org/about/website/
+# See profiles/thirdpartymirrors in this repo.
+VANILLA_RENDERER_MIRROR="mirror://vanilla-blender-binaries/release/"
+
+# The renders are fetched at the ebuild level instead of runtime.
+
+# For allowed renderers, see https://www.sheepit-renderfarm.com/index.php?show=binaries
+# For renderer archives, see https://static-binary-gra-fr.sheepit-renderfarm.com/
+SI_RENDERERS_X86_64=(
+	"sheepit_client_blender_2_92_0;blender292.0_linux_64bit.zip"
+	"sheepit_client_blender_2_91_0;blender291.0_linux_64bit.zip"
+	"sheepit_client_blender_2_90_1;blender290.1_linux_64bit.zip"
+	"sheepit_client_blender_2_83_9;blender283.9_linux_64bit.zip"
+	"sheepit_client_blender_2_82;blender282_linux_64bit.zip"
+	"sheepit_client_blender_2_81a;blender281a_linux_64bit.zip"
+	"sheepit_client_blender_2_80;blender280_linux_64bit.zip"
+	"sheepit_client_blender_2_79b_filmic;blender279b-filmic_linux_64bit.zip"
+	"sheepit_client_blender_2_79b;blender279b_linux_64bit.zip"
+)
+
+SI_RENDERERS_X86=(
+	"sheepit_client_blender_2_80;blender280_linux_32bit.zip"
+	"sheepit_client_blender_2_79b_filmic;blender279b-filmic_linux_32bit.zip"
+	"sheepit_client_blender_2_79b;blender279b_linux_32bit.zip"
+)
+
+VANILLA_RENDERERS_X86_64=(
+	"sheepit_client_blender_2_92_0;Blender2.92/blender-2.92.0-linux64.tar.xz"
+	"sheepit_client_blender_2_91_0;Blender2.91/blender-2.91.0-linux64.tar.xz"
+	"sheepit_client_blender_2_90_1;Blender2.90/blender-2.90.1-linux64.tar.xz"
+	"sheepit_client_blender_2_83_9;Blender2.83/blender-2.83.9-linux64.tar.xz"
+	"sheepit_client_blender_2_82;Blender2.82/blender-2.82-linux64.tar.xz"
+	"sheepit_client_blender_2_81a;Blender2.81/blender-2.81a-linux-glibc217-x86_64.tar.bz2"
+	"sheepit_client_blender_2_80;Blender2.80/blender-2.80-linux-glibc217-x86_64.tar.bz2"
+	"sheepit_client_blender_2_79b;Blender2.79/blender-2.79b-linux-glibc219-x86_64.tar.bz2"
+)
+
+VANILLA_RENDERERS_X86=(
+	"sheepit_client_blender_2_80;Blender2.80/blender-2.80-linux-glibc224-i686.tar.bz2"
+	"sheepit_client_blender_2_79b;Blender2.79/blender-2.79b-linux-glibc219-i686.tar.bz2"
+)
+
+gen_renderer_repack_urls()
+{
+	local arch="${1}"
+	local mirror_host="${2}"
+	unset filelist
+	local -n filelist=$3
+	local o=""
+	for x in ${filelist[@]} ; do
+		local r="${x%;*}"
+		local fn="${x#*;}"
+#		o+=" !no-repacks? ( ${arch}? ( ${r}? ( ${mirror_host}${fn} ) ) )"
+		o+=" ${mirror_host}${fn} "
+	done
+	echo "${o}"
+}
+
+gen_renderer_vanilla_urls()
+{
+	local arch="${1}"
+	local mirror_host="${2}"
+	unset filelist
+	local -n fileist=$3
+	local o=""
+	for x in ${filelist[@]} ; do
+		local r="${x%;*}"
+		local p="${x#*;}"
+#		o+=" no-repacks? ( ${arch}? ( ${r}? ( ${mirror_host}/${p} ) ) )"
+		o+=" ${mirror_host}${p} "
+	done
+	echo "${o}"
+}
+
+SOBOTKA_FILMIC_BLENDER_COMMIT="f94ebab8ad3ad917d3201230ebca1bc3a93b7c86"
+RENDERER_DOWNLOADS+=" "$(gen_renderer_repack_urls "amd64" "${SI_RENDERER_MIRROR}" SI_RENDERERS_X86_64)
+RENDERER_DOWNLOADS+=" "$(gen_renderer_repack_urls "x86" "${SI_RENDERER_MIRROR}" SI_RENDERERS_X86)
+RENDERER_DOWNLOADS+=" "$(gen_renderer_vanilla_urls "amd64" "${VANILLA_RENDERER_MIRROR}" VANILLA_RENDERERS_X86_64)
+RENDERER_DOWNLOADS+=" "$(gen_renderer_vanilla_urls "x86" "${VANILLA_RENDERER_MIRROR}" VANILLA_RENDERERS_X86)
+SOBOTKA_FILMIC_BLENDER_F94EBAB_FN="sobotka-filmic-blender-${SOBOTKA_FILMIC_BLENDER_COMMIT:0:7}.tar.gz"
+RENDERER_DOWNLOADS+="
+!system-blender? (
+	no-repacks? (
+		sheepit_client_blender_2_79b_filmic? (
+https://github.com/sobotka/filmic-blender/archive/${SOBOTKA_FILMIC_BLENDER_COMMIT}.tar.gz
+	-> ${SOBOTKA_FILMIC_BLENDER_F94EBAB_FN}
+		)
+	)
+)"
+
 SRC_URI="https://gitlab.com/sheepitrenderfarm/client/-/archive/v${PV}/client-v${PV}.tar.bz2
 	-> ${PN}-${PV}.tar.bz2
-	${GRADLE_DOWNLOADS}"
+	${GRADLE_DOWNLOADS}
+	${RENDERER_DOWNLOADS}"
 S="${WORKDIR}/client-v${PV}"
-RESTRICT="mirror"
-WRAPPER_VERSION="3.0.0" # .sh file
+RESTRICT="mirror strip"
+WRAPPER_VERSION="3.1.0" # .sh file
 GRADLE_V="6.3" # ~Mar 2020
 EXPECTED_GRADLE_WRAPPER_JAR_SHA256=\
 "1cef53de8dc192036e7b0cc47584449b0cf570a00d560bfaa6c9eabe06e1fc06"
 # For the Wrapper JAR Checksum, see also
 # https://gradle.org/release-checksums/
+GRADLE_BIN="gradle"
 
 show_codename_docs() {
 	einfo
@@ -679,7 +777,7 @@ public static final boolean ${1} = false;|g" \
 
 unpack_gradle()
 {
-	# from `find ${HOME}/.gradle/.gradle/caches/modules-2/files-2.1`
+	# from `find ${HOME}/.gradle/caches/modules-2/files-2.1`
 	local pkgs=(
                 "args4j/args4j/2.33/168b592340292d4410a1d000bb7fa7144967fc12/args4j-2.33.pom"
                 "args4j/args4j/2.33/bd87a75374a6d6523de82fef51fc3cfe9baf9fc9/args4j-2.33.jar"
@@ -748,8 +846,107 @@ unpack_gradle()
 	done
 }
 
+unpack_blender() {
+	if use amd64 ; then
+		if use no-repacks ; then
+			for x in ${VANILLA_RENDERERS_X86_64[@]} ; do
+				local useflag="${x%;*}"
+				local fn="${x#*;}"
+				if use ${useflag} ; then
+					md5_hash=$(md5sum $(realpath ${DISTDIR}/${fn}) \
+                                                | cut -f 1 -d " ")
+					d="${WORKDIR}/blender/opt/sheepit-client/renderers/${md5_hash}"
+					mkdir -p "${d}" || die
+					local arg=""
+					if [[ "${fn}" =~ ".tar.bz2" ]] ; then
+						arg="j"
+					elif [[ "${fn}" =~ ".tar.xz" ]] ; then
+						arg="J"
+					fi
+					tar --strip-components=1 \
+						-${arg}xvf \
+						"${DISTDIR}/${fn}" \
+						-C "${d}" \
+						|| die
+
+					if [[ "${useflag}" == "sheepit_client_blender_2_79b_filmic" ]] ; then
+						tar --strip-components=1 \
+							-zxvf \
+							"${DISTDIR}/${SOBOTKA_FILMIC_BLENDER_F94EBAB_FN}" \
+							-C "${d}/2.79/datafiles/colormanagement" || die
+					fi
+				fi
+			done
+		elif ! use system-blender ; then
+			for x in ${SI_RENDERERS_X86_64[@]} ; do
+				local useflag="${x%;*}"
+				local uri="${x#*;}"
+				local fn=$(basename ${uri})
+				if use ${useflag} ; then
+					md5_hash=$(md5sum $(realpath ${DISTDIR}/${fn}) \
+                                                | cut -f 1 -d " ")
+					d="${WORKDIR}/blender/opt/sheepit-client/renderers/${md5_hash}"
+					mkdir -p "${d}" || die
+					unzip "${DISTDIR}/${fn}" \
+						-d "${d}" \
+						|| die
+				fi
+			done
+		fi
+	elif use x86 ; then
+		if use no-repacks ; then
+			for x in ${VANILLA_RENDERERS_X86[@]} ; do
+				local useflag="${x%;*}"
+				local fn="${x#*;}"
+				if use ${useflag} ; then
+					md5_hash=$(md5sum $(realpath ${DISTDIR}/${fn}) \
+                                                | cut -f 1 -d " ")
+					d="${WORKDIR}/blender/opt/sheepit-client/renderers/${md5_hash}"
+					mkdir -p "${d}" || die
+					local arg=""
+					if [[ "${fn}" =~ ".tar.bz2" ]] ; then
+						arg="j"
+					elif [[ "${fn}" =~ ".tar.xz" ]] ; then
+						arg="J"
+					fi
+					tar --strip-components=1 \
+						-${arg}xvf \
+						"${DISTDIR}/${fn}" \
+						-C "${d}" \
+						|| die
+
+					if [[ "${useflag}" == "sheepit_client_blender_2_79b_filmic" ]] ; then
+						tar --strip-components=1 \
+							-zxvf \
+					"${SOBOTKA_FILMIC_BLENDER_F94EBAB_FN}" \
+					-C "${d}/2.79/datafiles/colormanagement" \
+							|| die
+					fi
+				fi
+			done
+		elif ! use system-blender ; then
+			for x in ${SI_RENDERERS_X86[@]} ; do
+				local useflag="${x%;*}"
+				local uri="${x#*;}"
+				local fn=$(basename ${uri})
+				if use ${useflag} ; then
+					md5_hash=$(md5sum $(realpath ${DISTDIR}/${fn}) \
+                                                | cut -f 1 -d " ")
+					d="${WORKDIR}/blender/opt/sheepit-client/renderers/${md5_hash}"
+					mkdir -p "${d}" || die
+					unzip "${fn}" \
+						-d "${DISTDIR}/${d}" \
+						|| die
+				fi
+			done
+		fi
+	fi
+}
+
 src_unpack() {
 	unpack ${PN}-${PV}.tar.bz2
+
+	unpack_blender
 }
 
 src_prepare() {
@@ -761,7 +958,7 @@ src_prepare() {
 		die \
 "X_GRADLE_WRAPPER_JAR_SHA256=${X_GRADLE_WRAPPER_JAR_SHA256} \
 EXPECTED_GRADLE_WRAPPER_JAR_SHA256=${EXPECTED_GRADLE_WRAPPER_JAR_SHA256} \
-wrong checksum"
+wrong checksum.  Ebuild maintainer:  Update the jars also."
 	fi
 
 	if ! use system-blender ; then
@@ -783,7 +980,11 @@ ${PN} downloads Blender 2.83.1 with Python 3.7.4 having high security CVE \
 advisory\n\
 ${PN} downloads Blender 2.83.2 with Python 3.7.4 having high security CVE \
 advisory\n\
-${PN} downloads Blender 2.90.0 with Python 3.7.7 having high security CVE \
+${PN} downloads Blender 2.90.1 with Python 3.7.7 having high security CVE \
+advisory\n\
+${PN} downloads Blender 2.91.0 with Python 3.7.7 having high security CVE \
+advisory\n\
+${PN} downloads Blender 2.92.0 with Python 3.7.7 having high security CVE \
 advisory\n\
 https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all\n\
 \n\
@@ -807,8 +1008,10 @@ https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&q
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.20304.0-r4-renderer-version-picker.patch"
-	eapply "${FILESDIR}/sheepit-client-6.20304.0-use-maven-local.patch" # mutually exclusive with compile_with_gradlew
+	eapply "${FILESDIR}/sheepit-client-6.20304.0-r5-renderer-version-picker.patch"
+	if [[ "${GRADLE_BIN}" == "gradle" ]] ; then
+		eapply "${FILESDIR}/sheepit-client-6.20304.0-use-maven-local.patch"
+	fi
 	sed -i -e "s|__MAVEN_PATH__|${HOME}/.m2/repository|g" build.gradle || die
 
 	if use system-blender ; then
@@ -838,13 +1041,8 @@ USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = true|g" \
 			src/com/sheepit/client/Configuration.java || die
 	fi
 
-	if ! use allow-unknown-renderers ; then
-		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_UNKNOWN_RENDERERS"
-		fi
-	fi
-
 	for x in ${IUSE_BLENDER_VERSIONS[@]} ; do
+		[[ "${x}" == "" ]] && continue
 		if ! use ${x} ; then
 			local v=${x//sheepit_client_blender_}
 			v=${v^^}
@@ -884,19 +1082,25 @@ compile_with_gradlew()
 }
 
 src_compile() {
-	compile_with_gradle
+	if [[ "${GRADLE_BIN}" == "gradle" ]] ; then
+		compile_with_gradle
+	else
+		compile_with_gradlew
+	fi
 }
 
 src_install() {
 	insinto /usr/share/${PN}
-	local ext="" # -all <-> gradlew ; "" <-> gradle (i.e. the system's)
+	local ext=""
+	if [[ "${GRADLE_BIN}" == "gradlew" ]] ; then
+		ext="-all"
+	fi
 	doins build/libs/sheepit-client${ext}.jar
 	exeinto /usr/bin
 	cat "${FILESDIR}/sheepit-client-v${WRAPPER_VERSION}" \
 		> "${T}/sheepit-client" || die
 	docinto licenses
 	dodoc LICENSE
-	local allowed_renderers=""
 
 	for x in ${IUSE_BLENDER_VERSIONS[@]} ; do
 		if use ${x} ; then
@@ -908,30 +1112,18 @@ src_install() {
 			v0=${v0//.filmic/}
 
 			if ! use system-blender ; then
-				if [[ "${v0}" == "2.92.0" ]] ; then
-					ewarn "FIXME:  2.92.0"
-				else
-					dodoc -r "${FILESDIR}/blender-${v0}-licenses"
-					use doc \
-					dodoc -r "${FILESDIR}/blender-${v0}-readmes"
-				fi
+				dodoc -r "${FILESDIR}/blender-${v0}-licenses"
+				use doc \
+				dodoc -r "${FILESDIR}/blender-${v0}-readmes"
 			fi
-			allowed_renderers+=" --allow-blender-${v1}"
 		else
 			einfo "Skipping installing for ${x}"
 		fi
 	done
-	if use allow-unknown-renderers ; then
-		allowed_renderers+=" --allow-unknown-renderers"
-	fi
 	if use doc ; then
 		docinto docs
 		dodoc protocol.txt README.md
 	fi
-	einfo "allowed_renderers=${allowed_renderers}"
-	sed -i -e "s|ALLOWED_RENDERERS|${allowed_renderers}|g" \
-		-e "s|sheepit-client.jar|sheepit-client${ext}.jar|g" \
-		"${T}/sheepit-client" || die
 
 	if use system-blender ; then
 		sed -i -e "s|^#USE_SYSTEM_BLENDER|USE_SYSTEM_BLENDER|g" \
@@ -962,6 +1154,20 @@ src_install() {
 		fi
 	fi
 
+	insinto /
+
+	# sanitize
+	doins -r "${WORKDIR}/blender/"*
+	fperms 0755 $(find "${WORKDIR}/blender" \
+		-path "*/rend.exe" \
+		-o -path "*/blender" \
+		-o -path "*/bin/python*" \
+		-o -path "*/lib/*.so" \
+		-o -path "*/lib/*.so.*" \
+		-o -path "*-linux-gnu.so" \
+		| sed -e "s|${WORKDIR}/blender||g")
+
+	exeinto /usr/bin
 	doexe "${T}/sheepit-client"
 }
 
@@ -997,5 +1203,15 @@ updates may occur to fix errors between different configurations."
 "The Firejail profile requires additional rules for your JRE and video card \n\
 drivers.  Add them to /etc/firejail/sheepit-client.local.  Use ldd on the\n\
 shared libraries and drivers to add more private-lib or whitelist rules."
+	fi
+
+	einfo "Since this ebuild automatically uses an unpacked shared folder"
+	einfo "of renderers, the per user /usr/<user>/.sheepit-client/sheepit_binary_cache"
+	einfo "is no longer required and can be deleted."
+	einfo
+	if ! use ${BENCHMARK_VERSION} ; then
+		ewarn "${PN} may use the ${BENCHMARK_VERSION} for benchmarks"
+		ewarn "when using the service.  If it fails, try the latest"
+		ewarn "stable or LTS version."
 	fi
 }
