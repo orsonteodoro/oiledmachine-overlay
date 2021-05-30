@@ -104,7 +104,7 @@ MIT
 #   In LICENSE-droidsans.ttf.txt at line 49 in Blender 2.82, it mentions
 #   GPL-2.1+.  It should be LGPL-2.1+.
 #
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # ebuild is still in development.  Connect errors needs to be fixed or reviewed.
 SLOT="0"
 
 BLENDER_VERSIONS=(
@@ -121,7 +121,7 @@ BLENDER_VERSIONS=(
 
 IUSE=" +benchmark blender allow-unknown-renderers
 disable-hard-version-blocks cuda doc firejail intel-ocl lts +opencl
-opencl_rocm opencl_orca opencl_pal opengl_mesa pro-drivers split-drivers
+opencl_rocr opencl_orca opencl_pal opengl_mesa pro-drivers split-drivers
 system-blender gentoo-blender no-repacks video_cards_amdgpu video_cards_i965
 video_cards_iris video_cards_nvidia video_cards_radeonsi"
 IUSE_BLENDER_VERSIONS=( ${BLENDER_VERSIONS[@]/#/sheepit_client_blender_} )
@@ -146,7 +146,7 @@ REQUIRED_USE+="
 			allow-unknown-renderers ) )
 	|| ( cuda opencl )
 	no-repacks? ( !allow-unknown-renderers !system-blender )
-	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
+	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocr ) )
 	opencl_orca? (
 		|| ( split-drivers pro-drivers )
 		video_cards_amdgpu
@@ -155,11 +155,11 @@ REQUIRED_USE+="
 		pro-drivers
 		video_cards_amdgpu
 	)
-	opencl_rocm? (
+	opencl_rocr? (
 		split-drivers
 		video_cards_amdgpu
 	)
-	split-drivers? ( || ( opencl_orca opencl_rocm ) )
+	split-drivers? ( || ( opencl_orca opencl_rocr ) )
 	system-blender? ( !allow-unknown-renderers !no-repacks )
 	video_cards_amdgpu? (
 		|| ( pro-drivers split-drivers )
@@ -292,68 +292,44 @@ sheepit_client_blender_2_92_0? (
 				pro-drivers? (
 					opengl_mesa? (
 						!lts? (
-							opencl_orca? (
-x11-drivers/amdgpu-pro\
-[X,developer,open-stack,opengl_mesa,opencl,opencl_orca]
-							)
-							opencl_pal? (
-x11-drivers/amdgpu-pro\
-[X,developer,open-stack,opengl_mesa,opencl,opencl_pal]
-							)
-							opencl_rocm? (
-x11-drivers/amdgpu-pro\
-[X,developer,open-stack,opengl_mesa,opencl,opencl_rocr]
+							|| (
+<x11-drivers/amdgpu-pro-20.45\
+[X,developer,open-stack,opengl_mesa,opencl,opencl_orca?,opencl_pal?]
+>=x11-drivers/amdgpu-pro-20.45\
+[X,developer,open-stack,opengl_mesa,opencl,opencl_orca?,opencl_pal?,opencl_rocr?]
 							)
 						)
 						lts? (
-							opencl_orca? (
-x11-drivers/amdgpu-pro-lts\
-[X,developer,open-stack,opengl_mesa,opencl,opencl_orca]
-							)
-							opencl_pal? (
-x11-drivers/amdgpu-pro-lts\
-[X,developer,open-stack,opengl_mesa,opencl,opencl_pal]
-							)
-							opencl_rocm? (
-x11-drivers/amdgpu-pro-lts\
-[X,developer,open-stack,opengl_mesa,opencl,opencl_rocr]
+							|| (
+<x11-drivers/amdgpu-pro-lts-20.45\
+[X,developer,open-stack,opengl_mesa,opencl,opencl_orca?,opencl_pal?]
+>=x11-drivers/amdgpu-pro-lts-20.45\
+[X,developer,open-stack,opengl_mesa,opencl,opencl_orca?,opencl_pal?,opencl_rocr?]
 							)
 						)
 					)
 					!opengl_mesa? (
 						!lts? (
-							opencl_orca? (
-x11-drivers/amdgpu-pro\
-[opencl,opencl_orca]
-							)
-							opencl_pal? (
-x11-drivers/amdgpu-pro\
-[opencl,opencl_pal]
-							)
-							opencl_rocm? (
-x11-drivers/amdgpu-pro\
-[opencl,opencl_rocr]
+							|| (
+<x11-drivers/amdgpu-pro-20.45\
+[opencl,opencl_orca?,opencl_pal?]
+>=x11-drivers/amdgpu-pro-20.45\
+[opencl,opencl_orca?,opencl_pal?,opencl_rocr?]
 							)
 						)
 						lts? (
-							opencl_orca? (
-x11-drivers/amdgpu-pro-lts\
-[opencl,opencl_orca]
-							)
-							opencl_pal? (
-x11-drivers/amdgpu-pro-lts\
-[opencl,opencl_pal]
-							)
-							opencl_rocm? (
-x11-drivers/amdgpu-pro-lts\
-[opencl,opencl_rocr]
+							|| (
+<x11-drivers/amdgpu-pro-lts-20.45\
+[opencl,opencl_orca?,opencl_pal?]
+>=x11-drivers/amdgpu-pro-lts-20.45\
+[opencl,opencl_orca?,opencl_pal?,opencl_rocr?]
 							)
 						)
 					)
 				)
 				split-drivers? (
 					opencl_orca? ( dev-libs/amdgpu-pro-opencl )
-					opencl_rocm? ( dev-libs/rocm-opencl-runtime )
+					opencl_rocr? ( dev-libs/rocm-opencl-runtime )
 				)
 			)
 		)
