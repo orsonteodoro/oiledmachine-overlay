@@ -104,7 +104,9 @@ MIT
 #   In LICENSE-droidsans.ttf.txt at line 49 in Blender 2.82, it mentions
 #   GPL-2.1+.  It should be LGPL-2.1+.
 #
-#KEYWORDS="~amd64" # ebuild still in development.  Build problems related to local cache.
+#KEYWORDS="~amd64" # ebuild still in development.  Problem still related to connecting
+# Error:
+# Server::getConfiguration: exception IOException java.io.IOException: Unexpected response from HTTP StackExpected a SETTINGS frame but was 7
 SLOT="0"
 
 BLENDER_VERSIONS=(

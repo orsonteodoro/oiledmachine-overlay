@@ -60,11 +60,11 @@ done
 mkdir -p "${d}"
 if [[ -n "${USE_FIREJAIL}" && "${USE_FIREJAIL}" == "1" ]] ; then
 	firejail --profile="/etc/firejail/sheepit-client.profile" \
-		java -jar /usr/share/sheepit-client/sheepit-client.jar \
+		java -jar /usr/share/sheepit-client/sheepit-client-all.jar \
 			-cache-dir "${d}" \
 			"$@"
 else
-	java -jar /usr/share/sheepit-client/sheepit-client.jar \
+	java -jar /usr/share/sheepit-client/sheepit-client-all.jar \
 		-cache-dir "${d}" \
 		"$@"
 fi
