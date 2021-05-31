@@ -260,7 +260,10 @@ BDEPEND+=" ${CDEPEND}
 	asan_server? (
 		${BDEPEND_SANTIZIER}
 	)
-	clang? ( sys-devel/clang[${MULTILIB_USEDEP}] )
+	clang? (
+		sys-devel/clang[${MULTILIB_USEDEP}]
+		lto? ( sys-devel/llvm[${MULTILIB_USEDEP},gold] )
+	)
 	doxygen? ( app-doc/doxygen )
 	lsan_client? (
 		${BDEPEND_SANTIZIER}
@@ -268,6 +271,7 @@ BDEPEND+=" ${CDEPEND}
 	lsan_server? (
 		${BDEPEND_SANTIZIER}
 	)
+	lto? ( clang? ( sys-devel/llvm[gold] ) )
 	web? ( app-arch/zip )"
 S="${WORKDIR}/godot-${EGIT_COMMIT}"
 RESTRICT="fetch mirror"

@@ -402,7 +402,10 @@ BDEPEND+=" ${CDEPEND}
 	asan_server? (
 		${BDEPEND_SANTIZIER}
 	)
-	clang? ( sys-devel/clang[${MULTILIB_USEDEP}] )
+	clang? (
+		sys-devel/clang[${MULTILIB_USEDEP}]
+		lto? ( sys-devel/llvm[${MULTILIB_USEDEP},gold] )
+	)
 	doxygen? ( app-doc/doxygen )
 	gdnative? ( linux? ( ${VIRTUALX_DEPEND} ) )
 	lsan_client? (
