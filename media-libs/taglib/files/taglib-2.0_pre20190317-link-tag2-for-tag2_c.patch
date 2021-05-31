@@ -1,0 +1,11 @@
+--- taglib-65a6a4e225fff1288148de92721418e1c634713b/bindings/c/CMakeLists.txt.orig	2021-05-30 21:13:06.973528044 -0700
++++ taglib-65a6a4e225fff1288148de92721418e1c634713b/bindings/c/CMakeLists.txt	2021-05-30 21:14:50.077589673 -0700
+@@ -20,7 +20,7 @@ set(tag2_c_HDRS tag_c.h)
+ 
+ add_library(tag2_c tag_c.cpp ${tag2_c_HDRS})
+ 
+-target_link_libraries(tag2_c tag)
++target_link_libraries(tag2_c tag2)
+ set_target_properties(tag2_c PROPERTIES
+   PUBLIC_HEADER "${tag2_c_HDRS}"
+   DEFINE_SYMBOL MAKE_TAGLIB_LIB

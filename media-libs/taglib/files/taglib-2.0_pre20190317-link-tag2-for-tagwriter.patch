@@ -1,0 +1,11 @@
+--- taglib-65a6a4e225fff1288148de92721418e1c634713b/examples/CMakeLists.txt.orig	2021-05-30 21:02:40.398845161 -0700
++++ taglib-65a6a4e225fff1288148de92721418e1c634713b/examples/CMakeLists.txt	2021-05-30 21:08:41.653076183 -0700
+@@ -25,7 +25,7 @@ target_link_libraries(tagreader_c tag2_c
+ ########### next target ###############
+ 
+ add_executable(tagwriter tagwriter.cpp)
+-target_link_libraries(tagwriter tag)
++target_link_libraries(tagwriter tag2)
+ 
+ ########### next target ###############
+ 

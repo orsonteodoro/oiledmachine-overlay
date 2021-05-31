@@ -105,7 +105,7 @@ RDEPEND+=" aac? (  media-libs/faad2[${MULTILIB_USEDEP}] )
 	 mpg123? ( >=media-sound/mpg123-1.16.0[${MULTILIB_USEDEP}] )
 	 opus? ( >=media-libs/opus-1.1[${MULTILIB_USEDEP}] )
 	 player? ( >=media-libs/libmediainfo-0.7.65[${MULTILIB_USEDEP}]
-		   >=media-libs/taglib-1.7.0[${MULTILIB_USEDEP}] )
+		   >=media-libs/taglib-1.7.0:0[${MULTILIB_USEDEP}] )
 	 plex? ( $(python_gen_cond_dep 'dev-python/python-plexapi[${PYTHON_MULTI_USEDEP}]') )
 	 pulseaudio? ( >=media-sound/pulseaudio-1.1[${MULTILIB_USEDEP}] )
 	 python? ( ${PYTHON_DEPS} )
