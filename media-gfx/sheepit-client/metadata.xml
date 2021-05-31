@@ -38,7 +38,8 @@
     <flag name="disable-hard-version-blocks">Permits user choice to selectively
       choose renderers to download.</flag>
     <flag name="doc">Installs extra documentation.</flag>
-    <flag name="firejail">Adds Firejail support for sandboxed isolation.</flag>
+    <flag name="firejail">Adds Firejail support for sandboxed isolation.
+      </flag>
     <flag name="intel-ocl">Checks for OpenCL support for Intel
       CPUs that may be required.</flag>
     <flag name="lts">Prefer AMDGPU-PRO drivers with HWE (aka LTS [long term
@@ -67,6 +68,8 @@
       of the ones provided by the Sheep it Render Farm service.</flag>
     <flag name="system-gradle">Use the system's gradle instead of the
       one that would be an internal build time downloaded one.</flag>
+    <flag name="vanilla">Disables all mods.  Used primarily for debugging.
+      </flag>
     <flag name="video_cards_amdgpu">
       Checks for OpenCL support for the AMDGPU-PRO drivers.</flag>
     <flag name="video_cards_i965">Checks for OpenCL support

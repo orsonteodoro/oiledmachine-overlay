@@ -105,8 +105,9 @@ MIT
 #   GPL-2.1+.  It should be LGPL-2.1+.
 #
 #KEYWORDS="~amd64" # ebuild still in development.  Problem still related to connecting
-# Error:
-# Server::getConfiguration: exception IOException java.io.IOException: Unexpected response from HTTP StackExpected a SETTINGS frame but was 7
+# Errors:
+# patched:    Server::getConfiguration: exception IOException java.io.IOException: Unexpected response from HTTP StackExpected a SETTINGS frame but was 7
+# unpatched:  Server::getConfiguration: exception IOException java.io.IOException: Unexpected response from HTTP Stackexhausted all routes
 SLOT="0"
 
 BLENDER_VERSIONS=(
@@ -123,8 +124,9 @@ BLENDER_VERSIONS=(
 
 IUSE=" blender disable-hard-version-blocks cuda doc firejail gentoo-blender
 intel-ocl lts no-repacks +opencl opencl_rocr opencl_orca opencl_pal opengl_mesa
-pro-drivers split-drivers system-blender system-gradle video_cards_amdgpu
-video_cards_i965 video_cards_iris video_cards_nvidia video_cards_radeonsi"
+pro-drivers split-drivers system-blender system-gradle vanilla
+video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia
+video_cards_radeonsi"
 IUSE_BLENDER_VERSIONS=( ${BLENDER_VERSIONS[@]/#/sheepit_client_blender_} )
 IUSE+=" ${IUSE_BLENDER_VERSIONS[@]}"
 BENCHMARK_VERSION="sheepit_client_blender_2_90_1"
@@ -159,6 +161,13 @@ REQUIRED_USE+="
 	)
 	split-drivers? ( || ( opencl_orca opencl_rocr ) )
 	system-blender? ( !no-repacks )
+	vanilla? (
+		!firejail
+		!gentoo-blender
+		!no-repacks
+		!system-blender
+		!system-gradle
+	)
 	video_cards_amdgpu? (
 		|| ( pro-drivers split-drivers )
 	)
@@ -661,9 +670,11 @@ https://github.com/sobotka/filmic-blender/archive/${SOBOTKA_FILMIC_BLENDER_COMMI
 
 SRC_URI="https://gitlab.com/sheepitrenderfarm/client/-/archive/v${PV}/client-v${PV}.tar.bz2
 	-> ${PN}-${PV}.tar.bz2
-	${GRADLE_PKGS_URIS}
-	${RENDERER_DOWNLOADS}
-	!system-gradle? ( ${GRADLE_DOWNLOAD} )"
+	!vanilla? (
+		${GRADLE_PKGS_URIS}
+		${RENDERER_DOWNLOADS}
+		!system-gradle? ( ${GRADLE_DOWNLOAD} )
+	)"
 S="${WORKDIR}/client-v${PV}"
 RESTRICT="mirror strip"
 WRAPPER_VERSION="3.1.0" # .sh launcher file not the gradlew wrapper
@@ -816,11 +827,7 @@ check_embree() {
 }
 
 pkg_setup() {
-	if [[ -n "${OILEDMACHINE_OVERLAY_DEVELOPER}" && "${OILEDMACHINE_OVERLAY_DEVELOPER}" == "1" ]] ; then
-		:;
-	else
-		die "This ebuild is currently undergoing development and does not work"
-	fi
+	ewarn "This ebuild is currently undergoing development and may not work even as vanilla (unpatched)."
 
 	if use gentoo-blender ; then
 		use sheepit_client_blender_2_79b_filmic && gbewarn "2.79b_filmic"
@@ -832,10 +839,12 @@ pkg_setup() {
 		use sheepit_client_blender_2_90_0 && gbewarn "2.90.0"
 	fi
 
-#	if has network-sandbox $FEATURES ; then
-#		die \
-#"${PN} requires network-sandbox to be disabled in FEATURES."
-#	fi
+	if use vanilla ; then
+		if has network-sandbox $FEATURES ; then
+			die \
+"${PN} requires network-sandbox to be disabled in FEATURES."
+		fi
+	fi
 
 	if use opencl_rocr ; then
 		# No die checks for this kernel config in
@@ -1033,7 +1042,58 @@ unpack_blender() {
 src_unpack() {
 	unpack ${PN}-${PV}.tar.bz2
 
-	unpack_blender
+	if ! use vanilla && ! use system-blender ; then
+		unpack_blender
+	fi
+}
+
+apply_client_patches()
+{
+	if use opencl ; then
+		sed -i -e "s|os instanceof Windows|true|" \
+			src/com/sheepit/client/hardware/gpu/GPU.java || die
+	fi
+
+	eapply "${FILESDIR}/sheepit-client-6.20304.0-r5-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.21137.0-use-maven-local.patch"
+
+	sed -i -e "s|__MAVEN_PATH__|${HOME}/.m2/repository|g" build.gradle || die
+
+	if use system-blender ; then
+		if use gentoo-blender ; then
+			sed -i -e "s|oiledmachine-overlay|gentoo-overlay|g" \
+				src/com/sheepit/client/Configuration.java || die
+		elif bzcat /var/db/pkg/media-gfx/blender-*/environment.bz2 \
+			| grep -q -F -e "parent-datafiles-dir-change" ; then
+			:;
+		else
+			die \
+"Use either gentoo-blender or the blender ebuilds from the oiledmachine-overlay"
+		fi
+	fi
+
+	if ! use system-blender ; then
+		sed -i -e "s|\
+USE_SYSTEM_RENDERERS = true|\
+USE_SYSTEM_RENDERERS = false|g" \
+			src/com/sheepit/client/Configuration.java || die
+	fi
+
+	if use no-repacks ; then
+		sed -i -e "s|\
+USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = false|\
+USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = true|g" \
+			src/com/sheepit/client/Configuration.java || die
+	fi
+
+	for x in ${IUSE_BLENDER_VERSIONS[@]} ; do
+		[[ "${x}" == "" ]] && continue
+		if ! use ${x} ; then
+			local v=${x//sheepit_client_blender_}
+			v=${v^^}
+			enable_hardblock "HARDBLOCK_BLENDER_${v}"
+		fi
+	done
 }
 
 src_prepare() {
@@ -1090,58 +1150,13 @@ https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&q
 	fi
 
 	default
-	if use opencl ; then
-		sed -i -e "s|os instanceof Windows|true|" \
-			src/com/sheepit/client/hardware/gpu/GPU.java || die
+
+	if ! use vanilla ; then
+		apply_client_patches
 	fi
-
-	eapply "${FILESDIR}/sheepit-client-6.20304.0-r5-renderer-version-picker.patch"
-#	if [[ "${GRADLE_BIN}" == "gradle" ]] ; then
-
-		# Disable if using no caches
-		eapply "${FILESDIR}/sheepit-client-6.21137.0-use-maven-local.patch"
-
-#	fi
-	sed -i -e "s|__MAVEN_PATH__|${HOME}/.m2/repository|g" build.gradle || die
-
-	if use system-blender ; then
-		if use gentoo-blender ; then
-			sed -i -e "s|oiledmachine-overlay|gentoo-overlay|g" \
-				src/com/sheepit/client/Configuration.java || die
-		elif bzcat /var/db/pkg/media-gfx/blender-*/environment.bz2 \
-			| grep -q -F -e "parent-datafiles-dir-change" ; then
-			:;
-		else
-			die \
-"Use either gentoo-blender or the blender ebuilds from the oiledmachine-overlay"
-		fi
-	fi
-
-	if ! use system-blender ; then
-		sed -i -e "s|\
-USE_SYSTEM_RENDERERS = true|\
-USE_SYSTEM_RENDERERS = false|g" \
-			src/com/sheepit/client/Configuration.java || die
-	fi
-
-	if use no-repacks ; then
-		sed -i -e "s|\
-USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = false|\
-USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = true|g" \
-			src/com/sheepit/client/Configuration.java || die
-	fi
-
-	for x in ${IUSE_BLENDER_VERSIONS[@]} ; do
-		[[ "${x}" == "" ]] && continue
-		if ! use ${x} ; then
-			local v=${x//sheepit_client_blender_}
-			v=${v^^}
-			enable_hardblock "HARDBLOCK_BLENDER_${v}"
-		fi
-	done
 }
 
-compile_with_gradlew()
+compile_with_gradlew_prefetched()
 {
 	# Prevents: Could not open terminal for stdout: could not get termcap
 	# entry
@@ -1172,6 +1187,18 @@ compile_with_gradlew()
 	gradle shadowJar || die
 }
 
+compile_with_gradlew()
+{
+	# Prevents: Could not open terminal for stdout: could not get termcap
+	# entry
+	export TERM=linux # pretend to be outside of X
+
+	export GRADLE_USER_HOME="${HOME}/.gradle"
+	cd "${S}" || die
+	chmod +x gradlew || die
+	./gradlew shadowJar || die
+}
+
 # For use in sandboxed build, normal use case.
 compile_with_gradle()
 {
@@ -1190,10 +1217,14 @@ compile_with_gradle()
 }
 
 src_compile() {
-	if [[ "${GRADLE_BIN}" == "gradle" ]] ; then
-		compile_with_gradle
-	else
+	if use vanilla ; then
 		compile_with_gradlew
+	else
+		if [[ "${GRADLE_BIN}" == "gradle" ]] ; then
+			compile_with_gradle
+		else
+			compile_with_gradlew_prefetched
+		fi
 	fi
 }
 
@@ -1265,15 +1296,17 @@ src_install() {
 	insinto /
 
 	# sanitize
-	doins -r "${WORKDIR}/blender/"*
-	fperms 0755 $(find "${WORKDIR}/blender" \
-		-path "*/rend.exe" \
-		-o -path "*/blender" \
-		-o -path "*/bin/python*" \
-		-o -path "*/lib/*.so" \
-		-o -path "*/lib/*.so.*" \
-		-o -path "*-linux-gnu.so" \
-		| sed -e "s|${WORKDIR}/blender||g")
+	if ! use vanilla && ! use system-blender ; then
+		doins -r "${WORKDIR}/blender/"*
+		fperms 0755 $(find "${WORKDIR}/blender" \
+			-path "*/rend.exe" \
+			-o -path "*/blender" \
+			-o -path "*/bin/python*" \
+			-o -path "*/lib/*.so" \
+			-o -path "*/lib/*.so.*" \
+			-o -path "*-linux-gnu.so" \
+			| sed -e "s|${WORKDIR}/blender||g")
+	fi
 
 	exeinto /usr/bin
 	doexe "${T}/sheepit-client"
