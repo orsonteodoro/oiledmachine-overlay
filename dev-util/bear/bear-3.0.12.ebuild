@@ -15,15 +15,15 @@ MY_PN="${PN/b/B}"
 SLOT="0"
 IUSE+=" test"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-RBDEPEND=" >=net-libs/grpc-1.26
+CDEPEND=" >=net-libs/grpc-1.26
 	   <dev-cpp/abseil-cpp-20200923
 	   >=dev-libs/protobuf-3.11"
 DEPEND+=" >=dev-cpp/nlohmann_json-3.7.3
 	  >=dev-libs/libfmt-6.1
 	  >=dev-libs/spdlog-1.5"
-RDEPEND+=" ${RBDEPEND}
+RDEPEND+=" ${CDEPEND}
 	   ${DEPEND}"
-BDEPEND+=" ${RBDEPEND}
+BDEPEND+=" ${CDEPEND}
 	>=dev-util/cmake-3.12
 	test? (
 		${PYTHON_DEPS}
