@@ -190,8 +190,11 @@ IUSE+=" -ios-sim +icloud +game-center +store-kit" # ios
 # See https://developer.apple.com/ios/submit/ for app store requirement
 # Some are repeated because they were shown to be in the ldd list
 #	gdnative? ( !clang )
+# The mutex for lto and godot_web_wasm32 may be removed once the bug for building llvm-13 with lto for godot is fixed.
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
+	lto? ( !godot_web_wasm32 )
+	godot_web_wasm32? ( !lto )
 	abi_x86_32? ( godot_linux_x86 godot_platforms_linux )
 	abi_x86_64? ( godot_linux_x86_64 godot_platforms_linux )
 	docs? ( || ( doxygen rst ) )
