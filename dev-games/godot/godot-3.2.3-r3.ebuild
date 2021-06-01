@@ -12,8 +12,10 @@ VIRTUALX_REQUIRED=manual
 PYTHON_COMPAT=( python3_{6..9} )
 GODOT_PLATFORMS_=(android ios linux mono osx web windows)
 EPLATFORMS="server_dedicated server_headless ${GODOT_PLATFORMS_[@]/#/godot_platforms_}"
-inherit check-reqs desktop eutils flag-o-matic multilib-build platforms python-r1 \
-scons-utils virtualx
+LLVM_MAX_LTO_SLOT=11 # LTO breaks with 13 but 11 is stable
+LLVM_MIN_WASM_SLOT=13
+inherit check-reqs desktop eutils flag-o-matic llvm multilib-build platforms \
+python-r1 scons-utils virtualx
 
 DESCRIPTION="Godot Engine - Multi-platform 2D and 3D game engine"
 HOMEPAGE="http://godotengine.org"
@@ -324,8 +326,21 @@ CDEPEND+="
 		closure-compiler? (
 >=dev-util/emscripten-1.39.0[closure-compiler,closure_compiler_nodejs,wasm(+)] ) )
 	godot_platforms_osx? ( sys-devel/osxcross )
-	godot_platforms_windows? ( sys-devel/crossdev )
-"
+	godot_platforms_windows? ( sys-devel/crossdev )"
+CDEPEND_CLANG="
+	clang? (
+		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
+		lto? (
+			<sys-devel/clang-$((${LLVM_MAX_LTO_SLOT}+1))[${MULTILIB_USEDEP}]
+			<sys-devel/llvm-$((${LLVM_MAX_LTO_SLOT}+1))[${MULTILIB_USEDEP},gold]
+		)
+		godot_web_wasm32? (
+			>=sys-devel/clang-${LLVM_MIN_WASM_SLOT}[${MULTILIB_USEDEP}]
+			>=sys-devel/llvm-${LLVM_MIN_WASM_SLOT}[${MULTILIB_USEDEP}]
+		)
+	)"
+CDEPEND_GCC="
+	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )"
 DEPEND+=" ${PYTHON_DEPS}
 	${CDEPEND}
 	app-arch/bzip2[${MULTILIB_USEDEP}]
@@ -362,8 +377,8 @@ DEPEND+=" ${PYTHON_DEPS}
 	!portable? ( >=app-misc/ca-certificates-20180226 )
         gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
 	gdnative? ( dev-util/scons
-		     || ( sys-devel/clang[${MULTILIB_USEDEP}]
-	                  sys-devel/gcc ) )
+		     || ( ${CDEPEND_CLANG}
+	                  ${CDEPEND_GCC} ) )
 	system-bullet? ( >=sci-physics/bullet-2.89[${MULTILIB_USEDEP}] )
 	system-enet? ( >=net-libs/enet-1.3.15[${MULTILIB_USEDEP}] )
 	system-freetype? ( >=media-libs/freetype-${FREETYPE_V}[${MULTILIB_USEDEP}] )
@@ -388,23 +403,23 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-zstd? ( >=app-arch/zstd-1.4.4[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND_SANTIZIER="
-	sys-devel/clang[${MULTILIB_USEDEP}]
-	sys-devel/gcc[${MULTILIB_USEDEP}]"
+	${CDEPEND_CLANG}
+	${CDEPEND_GCC}"
 BDEPEND+=" ${CDEPEND}
 	dev-util/scons
 	|| (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
 		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
 	)
+	|| (
+		${CDEPEND_CLANG}
+		${CDEPEND_GCC}
+	)
 	asan_client? (
 		${BDEPEND_SANTIZIER}
 	)
 	asan_server? (
 		${BDEPEND_SANTIZIER}
-	)
-	clang? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		lto? ( sys-devel/llvm[${MULTILIB_USEDEP},gold] )
 	)
 	doxygen? ( app-doc/doxygen )
 	gdnative? ( linux? ( ${VIRTUALX_DEPEND} ) )
@@ -824,6 +839,16 @@ pkg_setup() {
 	_set_check_req
 	check-reqs_pkg_setup
 	python_setup
+	if use lto && use clang ; then
+		LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
+		einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
+		llvm_pkg_setup
+	fi
+	if use clang && use godot_web_wasm32 ; then
+		LLVM_MAX_SLOT=${LLVM_MIN_WASM_SLOT}
+		einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for WASM"
+		llvm_pkg_setup
+	fi
 }
 
 pkg_nofetch() {

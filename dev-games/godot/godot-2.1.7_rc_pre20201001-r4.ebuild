@@ -10,8 +10,9 @@ STATUS="rc"
 
 GODOT_PLATFORMS_=(android ios linux osx web windows)
 EPLATFORMS="server_dedicated server_headless ${GODOT_PLATFORMS_[@]/#/godot_platforms_}"
-PYTHON_COMPAT=( python3_{6..9} )
-inherit check-reqs desktop eutils flag-o-matic multilib-build platforms \
+PYTHON_COMPAT=( python3_{7..10} )
+LLVM_MAX_LTO_SLOT=11 # LTO breaks with 13 but 11 is stable
+inherit check-reqs desktop eutils flag-o-matic llvm multilib-build platforms \
 python-single-r1 scons-utils toolchain-funcs
 
 DESCRIPTION="Godot Engine - Multi-platform 2D and 3D game engine"
@@ -191,8 +192,17 @@ CDEPEND="
 	godot_platforms_ios? ( sys-devel/osxcross )
 	godot_platforms_osx? ( sys-devel/osxcross )
 	godot_platforms_web? ( <dev-util/emscripten-2[asmjs] )
-	godot_platforms_windows? ( sys-devel/crossdev )
-"
+	godot_platforms_windows? ( sys-devel/crossdev )"
+CDEPEND_CLANG="
+	clang? (
+		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
+		lto? (
+			<sys-devel/clang-$((${LLVM_MAX_LTO_SLOT}+1))[${MULTILIB_USEDEP}]
+			<sys-devel/llvm-$((${LLVM_MAX_LTO_SLOT}+1))[${MULTILIB_USEDEP},gold]
+		)
+	)"
+CDEPEND_GCC="
+	!clang? ( <sys-devel/gcc-6.0 )"
 DEPEND+=" ${PYTHON_DEPS}
 	${CDEPEND}
 	dev-libs/libbsd[${MULTILIB_USEDEP}]
@@ -244,25 +254,23 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-zlib? ( >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND_SANTIZIER="
-	sys-devel/clang[${MULTILIB_USEDEP}]
-	sys-devel/gcc[${MULTILIB_USEDEP}]"
+	${CDEPEND_CLANG}
+	${CDEPEND_GCC}"
 BDEPEND+=" ${CDEPEND}
 	|| (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
 		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
 	)
-	|| ( sys-devel/clang[${MULTILIB_USEDEP}]
-	    <sys-devel/gcc-6.0 )
+	|| (
+		${CDEPEND_CLANG}
+		${CDEPEND_GCC}
+	)
         dev-util/scons
 	asan_client? (
 		${BDEPEND_SANTIZIER}
 	)
 	asan_server? (
 		${BDEPEND_SANTIZIER}
-	)
-	clang? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		lto? ( sys-devel/llvm[${MULTILIB_USEDEP},gold] )
 	)
 	doxygen? ( app-doc/doxygen )
 	lsan_client? (
@@ -271,7 +279,6 @@ BDEPEND+=" ${CDEPEND}
 	lsan_server? (
 		${BDEPEND_SANTIZIER}
 	)
-	lto? ( clang? ( sys-devel/llvm[gold] ) )
 	web? ( app-arch/zip )"
 S="${WORKDIR}/godot-${EGIT_COMMIT}"
 RESTRICT="fetch mirror"
@@ -499,6 +506,11 @@ pkg_setup() {
 	_set_check_req
 	check-reqs_pkg_setup
 	python_setup
+	if use lto && use clang ; then
+		LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
+		einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
+		llvm_pkg_setup
+	fi
 }
 
 pkg_nofetch() {
