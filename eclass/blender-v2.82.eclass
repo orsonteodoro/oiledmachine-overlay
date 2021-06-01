@@ -240,7 +240,7 @@ _blender_pkg_setup() {
 "$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" 2>/dev/null ; then
 			if use abi7-compat ; then
 				# compatible as long as the function is present?
-				die "OpenVDB delta() is missing try <=7.1.x only"
+				die "OpenVDB delta() is missing try < 8.x only"
 			fi
 		fi
 	fi

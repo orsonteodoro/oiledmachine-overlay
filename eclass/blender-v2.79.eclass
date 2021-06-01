@@ -231,7 +231,7 @@ abi5-compat? ( >=blender-libs/openvdb-3.3.0:5=[${PYTHON_SINGLE_USEDEP},abi5-comp
 abi6-compat? ( >=blender-libs/openvdb-3.3.0:6=[${PYTHON_SINGLE_USEDEP},abi6-compat(+)]
 	        <blender-libs/openvdb-7.1:6=[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
 abi7-compat? ( >=blender-libs/openvdb-3.3.0:7=[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-	        <blender-libs/openvdb-7.1:7=[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
+	        <blender-libs/openvdb-8:7=[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
 		)
 		abi3-compat? (
 			>=blender-libs/openvdb-3.1.0:3=[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
@@ -307,7 +307,7 @@ $(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(
 "$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" 2>/dev/null ; then
 			if use abi7-compat ; then
 				# compatible as long as the function is present?
-				die "OpenVDB delta() is missing try <=7.1.x only"
+				die "OpenVDB delta() is missing try < 8.x only"
 			fi
 		fi
 	fi
