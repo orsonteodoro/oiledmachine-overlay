@@ -7,7 +7,7 @@ LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (testing 21.x: llvm-12, stable 20.x: llvm-11).  U LTS uses 10.
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
-PYTHON_COMPAT=( python3_{7..10} ) # relaxed, U LTS uses python 3.82
+PYTHON_COMPAT=( python3_{8..10} ) # relaxed, U LTS uses python 3.82
 USE_RUBY="ruby26 ruby27 ruby30" # relaxed, U LTS uses ruby 2.7
 inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
@@ -50,11 +50,11 @@ te tr uk vi zh_CN )
 # wayland is enabled upstream but disabled because it is not defacto default
 #   standard for desktop yet
 
-IUSE+=" ${LANGS[@]/#/l10n_} aqua +bmalloc cpu_flags_arm_thumb2 +dfg-jit +egl
-+ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer -gtk-doc
-hardened 64k-pages +introspection +jit +jpeg2k +jumbo-build +libhyphen
-+libnotify thinlto lto -minibrowser +opengl openmp -seccomp -spell -systemd test
-wayland +webassembly +webassembly-b3-jit +webgl +X"
+IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua +bmalloc cpu_flags_arm_thumb2
++dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer
+-gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen
++libnotify lto -minibrowser +opengl openmp -seccomp -spell -systemd
+test wayland +webassembly +webassembly-b3-jit +webgl +X"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -131,6 +131,7 @@ RDEPEND+=" !net-libs/webkit-gtk:4
 	>=media-libs/fontconfig-2.13.1:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.10.1:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-2.6.4:=[icu(+),${MULTILIB_USEDEP}]
+	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.37:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
@@ -184,10 +185,6 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
 	lto? (
-		>=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
-		>=sys-devel/lld-${CLANG_V}
-	)
-	thinlto? (
 		>=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
 		>=sys-devel/lld-${CLANG_V}
 	)
@@ -353,9 +350,6 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 		llvm_pkg_setup
 	fi
 
-	if use thinlto ; then
-		einfo "The thinlto USE flag is in testing."
-	fi
 	if use lto ; then
 		einfo "The lto USE flag is in testing."
 	fi
@@ -371,6 +365,8 @@ src_prepare() {
 multilib_src_configure() {
 	# Respect CC, otherwise fails on prefix #395875
 	tc-export CC
+
+	filter-flags -DENABLE_JIT=* -DENABLE_YARR_JIT=* -DENABLE_ASSEMBLER=*
 
 	# It does not compile on alpha without this in LDFLAGS
 	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648761
@@ -460,6 +456,7 @@ multilib_src_configure() {
 		-DPORT=GTK
 		-DUSE_GTK4=OFF
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
+		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
@@ -543,10 +540,19 @@ multilib_src_configure() {
 		jit_enabled="0"
 	fi
 
-	# Arches without JIT support also need this to really disable it in all places
-	[[ "${jit_enabled}" == "1" ]] || append-cppflags -DENABLE_JIT=0 -DENABLE_YARR_JIT=0 -DENABLE_ASSEMBLER=0
+	# Arches without JIT support also need this to really disable it in all
+	# places
+	if [[ "${jit_enabled}" == "0" ]] ; then
+		einfo "Disabled YARR (regex) JIT"
+		append-cppflags -DENABLE_JIT=0 -DENABLE_YARR_JIT=0 \
+			-DENABLE_ASSEMBLER=0
+		einfo "CPPFLAGS=${CPPFLAGS}"
+	else
+		einfo "Enabled YARR (regex) JIT"
+		einfo "CPPFLAGS=${CPPFLAGS}"
+	fi
 
-	if use thinlto ; then
+	if use lto ; then
 		MESA_LLVM_V=$(bzcat "${ESYSROOT}/var/db/pkg/media-libs/mesa-"*"/environment.bz2" \
 			| grep "LLVM_MAX_SLOT" \
 			| head -n 1 \
@@ -558,23 +564,6 @@ multilib_src_configure() {
 			-DCMAKE_C_COMPILER="${llvmp}/bin/${ctarget}-clang"
 			-DCMAKE_CXX_COMPILER="${llvmp}/bin/${ctarget}-clang++"
 			-DLTO_MODE=thin
-			-DUSE_LD_LLD=ON
-			-DOpenMP_CXX_FLAGS="-fopenmp"
-			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="libomp"
-		)
-	elif use lto ; then
-		MESA_LLVM_V=$(bzcat "${ESYSROOT}/var/db/pkg/media-libs/mesa-"*"/environment.bz2" \
-			| grep "LLVM_MAX_SLOT" \
-			| head -n 1 \
-			| cut -f 2 -d "\"")
-		einfo "MESA LLVM: ${MESA_LLVM_V}"
-		local llvmp=$(get_llvm_prefix ${MESA_LLVM_V})
-		einfo "LLVM path: ${llvmp}"
-		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${llvmp}/bin/${ctarget}-clang"
-			-DCMAKE_CXX_COMPILER="${llvmp}/bin/${ctarget}-clang++"
-			-DLTO_MODE=full
 			-DUSE_LD_LLD=ON
 			-DOpenMP_CXX_FLAGS="-fopenmp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
