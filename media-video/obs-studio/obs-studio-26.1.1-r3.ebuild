@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} ) # 18.04 is only 3.6
+PYTHON_COMPAT=( python3_{8..10} ) # 18.04 is only 3.6
 inherit cmake-utils flag-o-matic python-single-r1 xdg-utils
 
 DESCRIPTION="Software for Recording and Streaming Live Video Content"
@@ -43,7 +43,7 @@ pulseaudio +python +speexdsp +ssl -test freetype sndio v4l2 vaapi \
 video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts \
 video_cards_intel video_cards_iris video_cards_i965 video_cards_r600 \
 video_cards_radeonsi vlc"
-REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+REQUIRED_USE+=" python? ( ${PYTHON_REQUIRED_USE} )"
 REQUIRED_USE+="
 	video_cards_amdgpu? (
 		!video_cards_amdgpu-pro
@@ -86,7 +86,10 @@ BDEPEND+="
 	>=dev-util/cmake-3.10.2
 	>=dev-util/pkgconfig-0.29.1
 	luajit? ( >=dev-lang/swig-3.0.12 )
-	python? ( >=dev-lang/swig-3.0.12 )
+	python? (
+		${PYTHON_DEPS}
+		>=dev-lang/swig-3.0.12
+	)
 	test? ( >=dev-util/cmocka-1.1.1 )
 "
 
@@ -353,14 +356,14 @@ DEPEND_DEPS="
 
 # See CMakeLists.txt
 #	${DEPEND_UNSOURCED} # testing as disabled
-DEPEND="
+DEPEND+="
 	${DEPEND_DEPS}
 	${DEPEND_PLUGINS}
 	${DEPEND_UI}
 	>=dev-qt/qtwidgets-${QT_V}:5=
 	test? ( ${DEPEND_LIBOBS} )
 "
-RDEPEND="${DEPEND}"
+RDEPEND+=" ${DEPEND}"
 MAKEOPTS="-j1"
 
 qt_check() {
