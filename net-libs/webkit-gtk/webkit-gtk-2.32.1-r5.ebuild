@@ -563,6 +563,11 @@ multilib_src_configure() {
 			-DCMAKE_CXX_COMPILER="${llvmp}/bin/${ctarget}-clang++"
 			-DLTO_MODE=thin
 			-DUSE_LD_LLD=ON
+		)
+	fi
+
+	if use openmp ; then
+		mycmakeargs+=(
 			-DOpenMP_CXX_FLAGS="-fopenmp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 			-DOpenMP_libomp_LIBRARY="libomp"
