@@ -2,9 +2,23 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+# llvm 6.0.1 based
+
+PYTHON_COMPAT=( python3_{8..10} )
+inherit cmake-utils python-single-r1
+
 DESCRIPTION="Emscripten LLVM backend - Fastcomp is the default compiler core for Emscripten"
 HOMEPAGE="http://emscripten.org/"
-LICENSE="all-rights-reserved BSD BSD-2 emscripten-fastcomp-md5 GPL-2+ LLVM-Grant MIT rc UoI-NCSA"
+LICENSE="all-rights-reserved
+	BSD
+	BSD-2
+	emscripten-fastcomp-md5
+	GPL-2+
+	LLVM-Grant
+	MIT
+	rc
+	UoI-NCSA"
 # for emscripten-fastcomp:
 #   ARM contributions (lib/Target/ARM) - LLVM-Grant
 #   cmake/config.guess - GPL-2+
@@ -25,16 +39,15 @@ LICENSE="all-rights-reserved BSD BSD-2 emscripten-fastcomp-md5 GPL-2+ LLVM-Grant
 #   all-rights-reserved || ( MIT UoI-NCSA )
 #
 KEYWORDS="~amd64 ~x86"
-PYTHON_COMPAT=( python3_{6,7,8} )
-inherit python-single-r1
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="clang gcc man-scan-build"
-REQUIRED_USE="${PYTHON_REQUIRED_USE} ^^ ( clang gcc )"
+IUSE+=" clang gcc man-scan-build"
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+	^^ ( clang gcc )"
 # For dependencies see https://emscripten.org/docs/building_from_source/building_fastcomp_manually_from_source.html#what-you-ll-need
-CDEPEND="${PYTHON_DEPS}"
-RDEPEND="${CDEPEND}"
-DEPEND="${CDEPEND}"
-BDEPEND="dev-cpp/gtest
+RDEPEND+=" ${PYTHON_DEPS}"
+DEPEND+=" ${RDEPEND}"
+BDEPEND+=" ${PYTHON_DEPS}
+	dev-cpp/gtest
 	>=dev-util/cmake-3.4.3
 	clang? (
 		>=sys-devel/clang-6.0.1
@@ -42,15 +55,14 @@ BDEPEND="dev-cpp/gtest
 		>=sys-devel/llvm-6.0.1
 	)
 	gcc? ( sys-devel/gcc )"
-inherit cmake-utils
-SRC_URI="\
-https://github.com/kripken/${PN}/archive/${PV}.tar.gz \
+SRC_URI="
+https://github.com/kripken/${PN}/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/kripken/${PN}-clang/archive/${PV}.tar.gz \
+https://github.com/kripken/${PN}-clang/archive/${PV}.tar.gz
 	-> ${PN}-clang-${PV}.tar.gz"
 _PATCHES=(
-	"${FILESDIR}/${PN}-1.39.20-cmake.patch"
-	"${FILESDIR}/${PN}-1.39.20-version_cpp.patch"
+	"${FILESDIR}/${PN}-1.39.6-cmake.patch"
+	"${FILESDIR}/${PN}-1.39.6-version_cpp.patch"
 )
 RESTRICT="mirror"
 
