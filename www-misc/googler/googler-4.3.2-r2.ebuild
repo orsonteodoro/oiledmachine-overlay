@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit eutils python-single-r1
 
 DESCRIPTION="Google from the terminal"
@@ -12,11 +12,14 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-RESTRICT="mirror"
-SRC_URI=\
-"https://github.com/jarun/${PN}/archive/v${PV}.tar.gz \
+DEPEND+=" ${PYTHON_DEPS}"
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" ${PYTHON_DEPS}"
+SRC_URI="
+https://github.com/jarun/${PN}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${P}"
+RESTRICT="mirror"
 
 src_prepare() {
 	default
