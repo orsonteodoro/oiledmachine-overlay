@@ -455,7 +455,6 @@ S_MONO="${WORKDIR}/mono-mono-${GMB_MONO_V}"
 RESTRICT="fetch mirror"
 # 20b171c - used for ccache
 PATCHES=(
-	"${FILESDIR}/godot-3.2.3-20b171c.patch"
 	"${FILESDIR}/godot-3.2.3-add-lld-thinlto-to-platform-server.patch"
 )
 
