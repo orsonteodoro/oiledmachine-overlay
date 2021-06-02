@@ -4,7 +4,6 @@
 EAPI=7
 
 MY_PN="UglifyJS"
-PYTHON_COMPAT=( python3_{6..9} )
 inherit npm-secaudit
 
 DESCRIPTION="JavaScript parser / mangler / compressor / beautifier toolkit"
