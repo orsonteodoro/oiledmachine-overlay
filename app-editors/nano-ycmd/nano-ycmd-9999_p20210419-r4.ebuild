@@ -5,14 +5,13 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..10} )
-
+PYTHON_COMPAT=( python3_{8..10} )
 inherit autotools eutils flag-o-matic python-single-r1
 
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
-HOMEPAGE="https://www.nano-editor.org/ \
-https://wiki.gentoo.org/wiki/Nano/Basics_Guide \
-https://github.com/orsonteodoro/nano-ycmd"
+HOMEPAGE="https://www.nano-editor.org/
+	https://wiki.gentoo.org/wiki/Nano/Basics_Guide
+	https://github.com/orsonteodoro/nano-ycmd"
 LICENSE="GPL-3+ LGPL-2+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
@@ -21,11 +20,11 @@ slang +spell static openmp openssl system-clangd system-gnulib system-gocode
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode +ycmd-43 ycmd-44 ycmd-45 ycm-generator"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
-	      ^^ ( libgcrypt nettle openssl )
-	      ^^ ( ycmd-43 ycmd-44 ycmd-45 )
-	      bear? ( ycm-generator )
-	      ninja? ( ycm-generator )
-	      ycm-generator? ( || ( bear ninja ) )"
+	^^ ( libgcrypt nettle openssl )
+	^^ ( ycmd-43 ycmd-44 ycmd-45 )
+	bear? ( ycm-generator )
+	ninja? ( ycm-generator )
+	ycm-generator? ( || ( bear ninja ) )"
 LIB_DEPEND="
 	!ncurses? ( slang? ( sys-libs/slang:=[static-libs(+)] ) )
 	>=sys-libs/ncurses-5.9-r1:0=[unicode?]
@@ -44,10 +43,10 @@ RDEPEND+=" ${PYTHON_DEPS}
 	openmp? ( sys-libs/libomp )
 	openssl? ( dev-libs/openssl
 		   dev-libs/glib )
-	ycm-generator? ( $(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{7,8,9,10}) )
-	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{7,8,9,10}) )
-	ycmd-44? ( $(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]' python3_{7,8,9,10}) )
-	ycmd-45? ( $(python_gen_cond_dep 'dev-util/ycmd:45[${PYTHON_USEDEP}]' python3_{7,8,9,10}) )"
+	ycm-generator? ( $(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]') )
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]') )
+	ycmd-44? ( $(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]') )
+	ycmd-45? ( $(python_gen_cond_dep 'dev-util/ycmd:45[${PYTHON_USEDEP}]') )"
 DEPEND+=" ${RDEPEND}
 	system-gnulib? ( >=dev-libs/gnulib-2018.01.23.08.42.00 )"
 BDEPEND+=" virtual/pkgconfig
@@ -56,10 +55,10 @@ BDEPEND+=" virtual/pkgconfig
 EGIT_COMMIT="7497cc6cee14d4a2d406975d478facb20d19e62a"
 GNULIB_COMMIT="c9b44f214c7c798c7701c7a281584e262b263655" # listed in ./autogen.sh
 GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
-SRC_URI="\
-https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz \
+SRC_URI="
+https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
-http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz \
+http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz
 	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 BD_REL="ycmd/${SLOT}"
