@@ -3,7 +3,8 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+CMAKE_BUILD_TYPE=Release
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-multilib multilib-minimal python-r1
 
 DESCRIPTION="Drivers and libraries for the Xbox Kinect device"
@@ -37,7 +38,6 @@ BDEPEND+="
 SRC_URI="
 https://github.com/OpenKinect/libfreenect/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
-CMAKE_BUILD_TYPE=Release
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/libfreenect-0.6.0-custom-cmake-lib-path.patch" )
