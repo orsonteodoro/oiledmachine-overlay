@@ -3,8 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..10} )
-
+PYTHON_COMPAT=( python3_{8..10} )
 inherit elisp eutils python-single-r1
 
 DESCRIPTION="Emacs client for ycmd, the code completion system"
@@ -25,14 +24,15 @@ system-mono system-omnisharp system-racerd system-rust system-typescript
 REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
 	^^ ( ycmd-43 ycmd-44 ycmd-45 )"
 DEPEND+=" ${PYTHON_DEPS}
-	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]' python3_{7,8,9,10} ) )
-	ycmd-44? ( $(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]' python3_{7,8,9,10} ) )
-	ycmd-45? ( $(python_gen_cond_dep 'dev-util/ycmd:45[${PYTHON_USEDEP}]' python3_{7,8,9,10} ) )"
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]') )
+	ycmd-44? ( $(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]') )
+	ycmd-45? ( $(python_gen_cond_dep 'dev-util/ycmd:45[${PYTHON_USEDEP}]') )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" net-misc/curl"
 EGIT_COMMIT="bc81b992f79100c98f56b7b83caf64cb8ea60477"
-SRC_URI=\
-"https://github.com/abingham/emacs-ycmd/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
+SRC_URI="
+https://github.com/abingham/emacs-ycmd/archive/${EGIT_COMMIT}.tar.gz
+	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 SITEFILE="50emacs-ycmd-gentoo.el"
