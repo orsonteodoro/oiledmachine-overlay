@@ -2,6 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_{8..10} )
+inherit distutils-r1 eutils
+
 DESCRIPTION="Generates config files for YouCompleteMe"
 HOMEPAGE="https://github.com/rdnetto/YCM-Generator"
 
@@ -9,19 +13,21 @@ HOMEPAGE="https://github.com/rdnetto/YCM-Generator"
 
 LICENSE="GPL-3"
 SLOT="0"
-PYTHON_COMPAT=( python3_{6,7,8} )
-inherit distutils-r1
-IUSE="autotools cmake qt5"
-RDEPEND="sys-devel/clang
+IUSE+=" autotools cmake qt5"
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+RDEPEND+=" sys-devel/clang
 	autotools? ( sys-devel/make )
 	cmake? ( dev-util/cmake )
 	qt5? ( dev-qt/qtcore:5 )"
-DEPEND="dev-python/future[${PYTHON_USEDEP}]"
+CDEPEND+=" ${PYTHON_DEPS}
+	dev-python/future[${PYTHON_USEDEP}]"
+RDEPEND+=" ${CDEPEND}"
+DEPEND+=" ${RDEPEND}"
+BDEPEND+=" ${CDEPEND}"
 EGIT_COMMIT="7c0f5701130f4178cb63d10da88578b9b705fbb1"
-SRC_URI="\
-https://github.com/rdnetto/YCM-Generator/archive/${EGIT_COMMIT}.tar.gz \
+SRC_URI="
+https://github.com/rdnetto/YCM-Generator/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
-inherit eutils python-utils-r1
 S="${WORKDIR}/YCM-Generator-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
