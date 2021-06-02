@@ -5,12 +5,17 @@
 # https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
 # For the closure-compiler-npm version see:
-# https://github.com/emscripten-core/emscripten/blob/1.39.20/package.json
+# https://github.com/emscripten-core/emscripten/blob/1.40.0/package.json
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/settings_template.py
+# https://github.com/emscripten-core/emscripten/blob/1.40.0/tools/settings_template.py
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_{8..10} )
+inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 \
+	toolchain-funcs
+
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
 LICENSE="all-rights-reserved UoI-NCSA Apache-2.0 Apache-2.0-with-LLVM-exceptions \
@@ -76,22 +81,28 @@ KEYWORDS="~amd64 ~x86"
 SLOT_MAJOR=$(ver_cut 1-2 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 CLOSURE_COMPILER_SLOT="0"
-PYTHON_COMPAT=( python3_{6..9} )
-inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 \
-	toolchain-funcs
-IUSE="asmjs +closure-compiler closure_compiler_java closure_compiler_native \
-closure_compiler_nodejs +native-optimizer \
-system-closure-compiler test +wasm"
+IUSE+=" asmjs +closure-compiler closure_compiler_java closure_compiler_native
+closure_compiler_nodejs +native-optimizer system-closure-compiler test +wasm"
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+	|| ( asmjs wasm )
+	closure_compiler_java? ( closure-compiler )
+	closure_compiler_native? ( closure-compiler )
+	closure_compiler_nodejs? ( closure-compiler )
+	system-closure-compiler? (
+		closure-compiler
+		^^ ( closure_compiler_java closure_compiler_native \
+			closure_compiler_nodejs )
+	)"
 # See also .circleci/config.yml
 # See also tools/shared.py EXPECTED_BINARYEN_VERSION
 JAVA_V="1.8"
 # See https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/shared.py#L431
-# For the required nodejs, see https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/shared.py#L43
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.40.0/tools/shared.py#L432
+# For the required nodejs, see https://github.com/emscripten-core/emscripten/blob/1.40.0/tools/shared.py#L43
 LLVM_V="12.0.0"
-BINARYEN_V="93"
-RDEPEND="${PYTHON_DEPS}
+BINARYEN_V="94"
+RDEPEND+=" ${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	asmjs? ( ~dev-util/emscripten-fastcomp-${PV}:= )
 	closure-compiler? (
@@ -121,7 +132,7 @@ ${CLOSURE_COMPILER_SLOT}\
 # a virtual/jdk.  This package doesn't really need jdk to use closure-compiler
 # because packages are prebuilt.  If we have closure_compiler_native, we don't
 # need Java.
-DEPEND="${RDEPEND}
+DEPEND+=" ${RDEPEND}
 	closure-compiler? (
 		closure_compiler_java? (
 			>=virtual/jre-${JAVA_V}
@@ -134,16 +145,6 @@ DEPEND="${RDEPEND}
 		)
 	)
 	>=virtual/jdk-${JAVA_V}"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	|| ( asmjs wasm )
-	closure_compiler_java? ( closure-compiler )
-	closure_compiler_native? ( closure-compiler )
-	closure_compiler_nodejs? ( closure-compiler )
-	system-closure-compiler? (
-		closure-compiler
-		^^ ( closure_compiler_java closure_compiler_native \
-			closure_compiler_nodejs )
-	)"
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
 RESTRICT="fetch mirror"
