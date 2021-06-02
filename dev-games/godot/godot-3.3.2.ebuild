@@ -9,7 +9,7 @@ EAPI=7
 STATUS="stable"
 
 VIRTUALX_REQUIRED=manual
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 GODOT_PLATFORMS_=(android ios linux mono osx web windows)
 EPLATFORMS="server_dedicated server_headless ${GODOT_PLATFORMS_[@]/#/godot_platforms_}"
 LLVM_MAX_LTO_SLOT=11 # LTO breaks with 13 but 11 is stable
@@ -410,7 +410,7 @@ BDEPEND_SANTIZIER="
 	${CDEPEND_CLANG}
 	${CDEPEND_GCC}"
 BDEPEND+=" ${CDEPEND}
-	dev-util/scons
+	${PYTHON_DEPS}
 	|| (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
 		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
@@ -419,6 +419,7 @@ BDEPEND+=" ${CDEPEND}
 		${CDEPEND_CLANG}
 		${CDEPEND_GCC}
 	)
+	dev-util/scons
 	asan_client? (
 		${BDEPEND_SANTIZIER}
 	)

@@ -10,7 +10,7 @@ STATUS="rc"
 
 GODOT_PLATFORMS_=(android ios linux osx web windows)
 EPLATFORMS="server_dedicated server_headless ${GODOT_PLATFORMS_[@]/#/godot_platforms_}"
-PYTHON_COMPAT=( python3_{7..10} )
+PYTHON_COMPAT=( python3_{8..10} )
 LLVM_MAX_LTO_SLOT=11 # LTO breaks with 13 but 11 is stable
 inherit check-reqs desktop eutils flag-o-matic llvm multilib-build platforms \
 python-single-r1 scons-utils toolchain-funcs
@@ -258,6 +258,7 @@ BDEPEND_SANTIZIER="
 	${CDEPEND_CLANG}
 	${CDEPEND_GCC}"
 BDEPEND+=" ${CDEPEND}
+	${PYTHON_DEPS}
 	|| (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
 		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
