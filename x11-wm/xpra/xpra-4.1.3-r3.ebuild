@@ -4,7 +4,7 @@
 EAPI=7
 
 DISTUTILS_USE_SETUPTOOLS=no
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles user xdg
 
 DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based \
@@ -144,7 +144,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	xdg? ( x11-misc/xdg-utils )
 	zeroconf? ( dev-python/zeroconf[${PYTHON_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
-BDEPEND+="
+BDEPEND+=" ${PYTHON_DEPS}
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
 	test? ( dev-python/numpy[${PYTHON_USEDEP}] )
 	virtual/pkgconfig"
