@@ -6,7 +6,7 @@ EAPI=7
 # llvm 6.0.1 based
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils python-single-r1
+inherit cmake-utils python-any-r1
 
 DESCRIPTION="Emscripten LLVM backend - Fastcomp is the default compiler core for Emscripten"
 HOMEPAGE="http://emscripten.org/"
@@ -41,7 +41,7 @@ LICENSE="all-rights-reserved
 KEYWORDS="~amd64 ~x86"
 SLOT="$(ver_cut 1-2)/${PV}"
 IUSE+=" clang gcc man-scan-build"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+REQUIRED_USE+="
 	^^ ( clang gcc )"
 # For dependencies see https://emscripten.org/docs/building_from_source/building_fastcomp_manually_from_source.html#what-you-ll-need
 RDEPEND+=" ${PYTHON_DEPS}"
@@ -61,8 +61,8 @@ https://github.com/kripken/${PN}/archive/${PV}.tar.gz
 https://github.com/kripken/${PN}-clang/archive/${PV}.tar.gz
 	-> ${PN}-clang-${PV}.tar.gz"
 _PATCHES=(
-	"${FILESDIR}/${PN}-1.39.20-cmake.patch"
-	"${FILESDIR}/${PN}-1.39.20-version_cpp.patch"
+	"${FILESDIR}/${PN}-1.40.0-cmake.patch"
+	"${FILESDIR}/${PN}-1.40.0-version_cpp.patch"
 )
 RESTRICT="mirror"
 
