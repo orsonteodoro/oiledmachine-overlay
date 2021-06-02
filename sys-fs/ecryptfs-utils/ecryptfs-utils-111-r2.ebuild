@@ -1,24 +1,26 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# This ebuild uses the exact revision in 111_p20170609.
-
 EAPI="6"
+
+PYTHON_COMPAT=( python3_{8..10} ) # fork ebuild and add for python2_7 support
+inherit autotools flag-o-matic linux-info pam python-single-r1
+
 DESCRIPTION="eCryptfs userspace utilities"
 HOMEPAGE="https://launchpad.net/ecryptfs"
 LICENSE="GPL-2 GPL-2+ CC-BY-SA-3.0
 GPL-2-with-linking-exception
 python? ( GPL-3+ )"
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86"
-PYTHON_COMPAT=( python3_{6,7,8} ) # fork ebuild and add for python2_7 support
-inherit autotools flag-o-matic linux-info pam python-single-r1
 SLOT="0"
 LANGS=( ca )
-IUSE="${LANGS[@]/#/l10n_} doc gpg gtk nls openssl pam pkcs11 python suid test tpm"
-RDEPEND="
+IUSE+=" ${LANGS[@]/#/l10n_} doc gpg gtk nls openssl pam pkcs11 python suid test tpm"
+REQUIRED_USE+=" python? ( ${PYTHON_REQUIRED_USE} )"
+RDEPEND+="
 	>=sys-apps/keyutils-1.5.11-r1:=
 	>=dev-libs/libgcrypt-1.2.0:0
 	dev-libs/nss
+	sys-devel/gettext
 	gpg? ( app-crypt/gpgme )
 	gtk? ( x11-libs/gtk+:2 )
 	openssl? ( >=dev-libs/openssl-0.9.7:= )
@@ -29,20 +31,21 @@ RDEPEND="
 	)
 	python? (
 		${PYTHON_DEPS}
-		$(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]' \
-			python3_{6,7,8})
+		$(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
 	)
 	tpm? ( app-crypt/trousers )"
-DEPEND="${RDEPEND}
+DEPEND+=" ${RDEPEND}"
+BDEPEND+=" >=dev-util/intltool-0.41.0
 	dev-vcs/breezy
-	>=dev-util/intltool-0.41.0
 	sys-devel/gettext
-	python? ( dev-lang/swig )
-	virtual/pkgconfig"
-REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+	virtual/pkgconfig
+	python? (
+		${PYTHON_DEPS}
+		dev-lang/swig
+	)"
 RESTRICT="fetch"
 EBRZ_REPO_URI="lp:~ecryptfs/ecryptfs/trunk"
-EBRZ_REVISION="$(ver_cut 3)"
+EBRZ_REVISION="878"
 PATCHES=(
 	"${FILESDIR}/${PN}-111-python3-ac_python_devel_m4.patch"
 	"${FILESDIR}/${PN}-111-swig-fixes.patch"
