@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..10} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1 xdg
 
 DESCRIPTION="Audio tag editor"
@@ -17,7 +17,9 @@ SLOT="0"
 # version string contained in puddletag/source/puddlestuff/__init__.py
 SRC_URI="https://github.com/keithgg/${PN}/archive/${PV}.tar.gz -> ${PV}.tar.gz"
 IUSE+=" acoustid cover musicbrainz quodlibet"
-RDEPEND+=" acoustid? ( >=media-libs/chromaprint-0.6 )
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+RDEPEND+=" ${PYTHON_DEPS}
+	   acoustid? ( >=media-libs/chromaprint-0.6 )
 	 >=dev-python/PyQt5-5.15[${PYTHON_USEDEP},svg,gui,widgets]
 	 >=dev-python/PyRSS2Gen-1.1[${PYTHON_USEDEP}]
 	 >=dev-python/configobj-5.0[${PYTHON_USEDEP}]
@@ -32,4 +34,5 @@ RDEPEND+=" acoustid? ( >=media-libs/chromaprint-0.6 )
 	 musicbrainz? ( >=dev-python/python-musicbrainz-0.7.4-r1[${PYTHON_USEDEP}] )
 	 quodlibet? ( >=media-sound/quodlibet-2.5[${PYTHON_USEDEP}] )"
 DEPEND+=" ${RDEPEND}"
+BDEPEND+=" ${PYTHON_DEPS}"
 S="${WORKDIR}/${PN}-${PV}/source"
