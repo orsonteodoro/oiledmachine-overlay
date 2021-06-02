@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..10} )
+PYTHON_COMPAT=( python3_{8..10} )
 USE_RUBY="ruby26 ruby27 ruby30"
 inherit autotools eutils flag-o-matic mono-env java-pkg-opt-2 \
 multilib-minimal python-single-r1 ruby-ng
@@ -18,11 +18,11 @@ IUSE="cxx doc imlib java mono ncurses network opengl python ruby slang
  static-libs test truetype X"
 IUSE+=" 256-colors-ncurses"
 SLOT="0/${PV}"
-REQUIRED_USE="256-colors-ncurses? ( ncurses )
+REQUIRED_USE+=" 256-colors-ncurses? ( ncurses )
 	      python? ( ${PYTHON_REQUIRED_USE} )
 	      ruby? ( ^^ ( $(ruby_get_use_targets) ) )
 	      truetype? ( opengl )"
-RDEPEND="imlib? ( >=media-libs/imlib2-1.4.6-r2[${MULTILIB_USEDEP}] )
+RDEPEND+=" imlib? ( >=media-libs/imlib2-1.4.6-r2[${MULTILIB_USEDEP}] )
 	java? ( >=virtual/jre-1.5 )
 	mono? ( dev-lang/mono )
 	ncurses? ( >=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}] )
@@ -43,11 +43,12 @@ BDEPEND+="
 		  virtual/latex-base )
 	java? ( >=virtual/jdk-1.5 )
 	test? ( dev-util/cppunit
-		app-forensics/zzuf )
+		app-forensics/zzuf
+		python? ( ${PYTHON_DEPS} ) )
 	virtual/pkgconfig"
 RUBY_OPTIONAL=yes
 EGIT_COMMIT="e4968ba6e93e9fd35429eb16895c785c51072015"
-SRC_URI="\
+SRC_URI="
 https://github.com/cacalabs/libcaca/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
