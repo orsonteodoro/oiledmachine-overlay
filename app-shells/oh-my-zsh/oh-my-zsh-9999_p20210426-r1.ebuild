@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 USE_RUBY="ruby24 ruby25 ruby26 ruby27 ruby30"
 
 inherit eutils python-r1 ruby-ng
@@ -287,10 +287,9 @@ PLUGINS_RDEPEND="
 #				   dev-lang/python
 #				   net-libs/nodejs ) )
 THEMES_RDEPEND="
-	 omz_themes_adben? ( games-misc/fortune-mod )
-	 "
-RBDEPEND=">=app-shells/zsh-4.3.9"
-RDEPEND+=" ${RBDEPEND}
+	 omz_themes_adben? ( games-misc/fortune-mod )"
+CDEPEND=" >=app-shells/zsh-4.3.9"
+RDEPEND+=" ${CDEPEND}
 	 ${PLUGINS_RDEPEND}
 	 ${PYTHON_DEPS}
 	 ${THEMES_RDEPEND}
@@ -336,87 +335,89 @@ RDEPEND+=" ${RBDEPEND}
 	 zip? ( app-arch/unzip
 		app-arch/zip )
 	 zstd? ( app-arch/zstd )"
-BDEPEND+=" ${RBDEPEND}
+DEPEND+=" ${RDEPEND}"
+BDEPEND+=" ${CDEPEND}
 	net-misc/wget
 	omz_plugins_emoji? ( dev-lang/perl dev-perl/Path-Class )
 	update-emoji-data? ( dev-perl/XML-LibXML
 			     dev-perl/Text-Unaccent )"
 S="${WORKDIR}/${PN//-/}-${EGIT_COMMIT}"
 REQUIRED_USE+=" branding? ( omz_themes_gentoo )
-	      deb? ( gzip bzip2 lzma tar xz )
-	      gpg? ( || (
+	deb? ( gzip bzip2 lzma tar xz )
+	python? ( ${PYTHON_REQUIRED_USE} )
+	gpg? ( || (
 		omz_plugins_archlinux
 		omz_plugins_gpg-agent
 		omz_plugins_otp
 		omz_plugins_pass ) )
-	      omz_themes_agnoster? ( powerline )
-	      omz_themes_emotty? ( powerline )
-	      omz_themes_amuse? ( powerline )
-	      omz_plugins_coffee? ( clipboard )
-	      omz_plugins_copybuffer? ( clipboard )
-	      omz_plugins_copydir? ( clipboard )
-	      omz_plugins_copyfile? ( clipboard )
-	      omz_plugins_emoji-clock? ( emojis )
-	      omz_plugins_emoji? ( emojis )
-	      omz_plugins_emotty? ( emojis omz_plugins_emoji !update-emoji-data )
-	      omz_plugins_git? ( git )
-	      omz_plugins_github? ( git )
-	      omz_plugins_git-auto-fetch? ( git )
-	      omz_plugins_git-extras? ( git )
-	      omz_plugins_gitfast? ( git )
-	      omz_plugins_git-hubflow? ( git )
-	      omz_plugins_git-prompt? ( git )
-	      omz_plugins_git-remote-branch? ( git )
-	      omz_plugins_git-flow? ( git )
-	      omz_plugins_magic-enter? ( git )
-	      omz_plugins_jenv? ( java )
-	      omz_plugins_mercurial? ( mercurial )
-	      omz_plugins_node? ( nodejs )
-	      omz_plugins_svn? ( subversion )
-	      omz_plugins_svn-fast-info? ( subversion )
-	      omz_plugins_apache2-macports? ( sudo )
-	      omz_plugins_debian? ( sudo )
-	      omz_plugins_dnf? ( sudo )
-	      omz_plugins_drush? ( sudo )
-	      omz_plugins_firewalld? ( sudo )
-	      omz_plugins_archlinux? ( sudo )
-	      omz_plugins_macports? ( sudo )
-	      omz_plugins_mysql-macports? ( sudo )
-	      omz_plugins_nmap? ( sudo )
-	      omz_plugins_rake? ( sudo )
-	      omz_plugins_singlechar? ( sudo )
-	      omz_plugins_sudo? ( sudo )
-	      omz_plugins_suse? ( sudo )
-	      omz_plugins_systemd? ( sudo )
-	      omz_plugins_systemadmin? ( sudo )
-	      omz_plugins_ubuntu? ( sudo )
-	      omz_plugins_universalarchive? ( 7zip bzip2 gzip lzma lzo lzw
+	omz_themes_agnoster? ( powerline )
+	omz_themes_emotty? ( powerline )
+	omz_themes_amuse? ( powerline )
+	omz_plugins_coffee? ( clipboard )
+	omz_plugins_copybuffer? ( clipboard )
+	omz_plugins_copydir? ( clipboard )
+	omz_plugins_copyfile? ( clipboard )
+	omz_plugins_emoji-clock? ( emojis )
+	omz_plugins_emoji? ( emojis )
+	omz_plugins_emotty? ( emojis omz_plugins_emoji !update-emoji-data )
+	omz_plugins_git? ( git )
+	omz_plugins_github? ( git )
+	omz_plugins_git-auto-fetch? ( git )
+	omz_plugins_git-extras? ( git )
+	omz_plugins_gitfast? ( git )
+	omz_plugins_git-hubflow? ( git )
+	omz_plugins_git-prompt? ( git )
+	omz_plugins_git-remote-branch? ( git )
+	omz_plugins_git-flow? ( git )
+	omz_plugins_magic-enter? ( git )
+	omz_plugins_jenv? ( java )
+	omz_plugins_mercurial? ( mercurial )
+	omz_plugins_node? ( nodejs )
+	omz_plugins_svn? ( subversion )
+	omz_plugins_svn-fast-info? ( subversion )
+	omz_plugins_apache2-macports? ( sudo )
+	omz_plugins_debian? ( sudo )
+	omz_plugins_dnf? ( sudo )
+	omz_plugins_drush? ( sudo )
+	omz_plugins_firewalld? ( sudo )
+	omz_plugins_archlinux? ( sudo )
+	omz_plugins_macports? ( sudo )
+	omz_plugins_mysql-macports? ( sudo )
+	omz_plugins_nmap? ( sudo )
+	omz_plugins_rake? ( sudo )
+	omz_plugins_singlechar? ( sudo )
+	omz_plugins_sudo? ( sudo )
+	omz_plugins_suse? ( sudo )
+	omz_plugins_systemd? ( sudo )
+	omz_plugins_systemadmin? ( sudo )
+	omz_plugins_ubuntu? ( sudo )
+	omz_plugins_universalarchive? ( 7zip bzip2 gzip lzma lzo lzw
 						rar xz zip zstd )
-	      omz_plugins_xcode? ( sudo )
-	      omz_plugins_yum? ( sudo )
-	      omz_plugins_archlinux? ( gpg )
-	      omz_plugins_gpg-agent? ( gpg )
-	      omz_plugins_otp? ( gpg )
-	      omz_plugins_pass? ( gpg )
-	      omz_plugins_common-aliases? ( ace rar zip )
-	      omz_plugins_extract? ( || ( 7zip bzip2 deb gzip lrzip lz4 lzip
+	omz_plugins_xcode? ( sudo )
+	omz_plugins_yum? ( sudo )
+	omz_plugins_archlinux? ( gpg )
+	omz_plugins_gpg-agent? ( gpg )
+	omz_plugins_otp? ( gpg )
+	omz_plugins_pass? ( gpg )
+	omz_plugins_common-aliases? ( ace rar zip )
+	omz_plugins_extract? ( || ( 7zip bzip2 deb gzip lrzip lz4 lzip
 					lzma lzw unzip rar rpm xz zstd ) )
-	      omz_plugins_archlinux? ( curl )
-	      omz_plugins_composer? ( curl )
-	      omz_plugins_gitfast? ( curl )
-	      omz_plugins_github? ( curl )
-	      omz_plugins_gitignore? ( curl )
-	      omz_plugins_hitokoto? ( curl )
-	      omz_plugins_lol? ( curl )
-	      omz_plugins_osx? ( curl )
-	      omz_plugins_perl? ( curl )
-	      omz_plugins_pip? ( curl )
-	      omz_plugins_rand-quote? ( curl )
-	      omz_plugins_singlechar? ( curl )
-	      omz_plugins_sprunge? ( curl )
-	      omz_plugins_systemadmin? ( curl )
-	      omz_plugins_transfer? ( curl )
-	      curl? ( || (
+	omz_plugins_archlinux? ( curl )
+	omz_plugins_composer? ( curl )
+	omz_plugins_gitfast? ( curl )
+	omz_plugins_github? ( curl )
+	omz_plugins_gitignore? ( curl )
+	omz_plugins_hitokoto? ( curl )
+	omz_plugins_lol? ( curl )
+	omz_plugins_osx? ( curl )
+	omz_plugins_perl? ( curl )
+	omz_plugins_pip? ( curl )
+	omz_plugins_rand-quote? ( curl )
+	omz_plugins_singlechar? ( curl )
+	omz_plugins_sprunge? ( curl )
+	omz_plugins_systemadmin? ( curl )
+	omz_plugins_transfer? ( curl )
+	curl? ( || (
 		omz_plugins_extract
 		omz_plugins_archlinux
 		omz_plugins_composer
@@ -433,16 +434,16 @@ REQUIRED_USE+=" branding? ( omz_themes_gentoo )
 		omz_plugins_sprunge
 		omz_plugins_systemadmin
 		omz_plugins_transfer ) )
-	      omz_plugins_cloudapp? ( ruby )
-	      omz_plugins_rbenv? ( ruby )
-	      omz_plugins_rust? ( rust )
-	      omz_plugins_salt? ( python )
-	      wget? ( || (
+	omz_plugins_cloudapp? ( ruby )
+	omz_plugins_rbenv? ( ruby )
+	omz_plugins_rust? ( rust )
+	omz_plugins_salt? ( python )
+	wget? ( || (
 		omz_plugins_singlechar
 		omz_plugins_n98-magerun
-	      ) )
-	      omz_themes_adben? ( wget )
-	      update-emoji-data? ( omz_plugins_emoji )"
+	) )
+	omz_themes_adben? ( wget )
+	update-emoji-data? ( omz_plugins_emoji )"
 ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
 ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
 ZSH_TEMPLATE="templates/zshrc.zsh-template"
