@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-utils python-single-r1
 
 DESCRIPTION="Bear is a tool that generates a compilation database for clang \
@@ -18,23 +18,22 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 CDEPEND=" >=net-libs/grpc-1.26
 	   <dev-cpp/abseil-cpp-20200923
 	   >=dev-libs/protobuf-3.11"
-DEPEND+=" >=dev-cpp/nlohmann_json-3.7.3
+DEPEND+=" ${CDEPEND}
+	  >=dev-cpp/nlohmann_json-3.7.3
 	  >=dev-libs/libfmt-6.1
 	  >=dev-libs/spdlog-1.5"
-RDEPEND+=" ${CDEPEND}
-	   ${DEPEND}"
+RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
 	>=dev-util/cmake-3.12
 	test? (
 		${PYTHON_DEPS}
 		>=dev-cpp/gtest-1.10
-		$(python_gen_cond_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]' \
-			python3_{6,7,8,9})
+		$(python_gen_cond_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]')
 		dev-util/valgrind
 	)
 	virtual/pkgconfig"
-SRC_URI=\
-"https://github.com/rizsotto/Bear/archive/${PV}.tar.gz \
+SRC_URI="
+https://github.com/rizsotto/Bear/archive/${PV}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
