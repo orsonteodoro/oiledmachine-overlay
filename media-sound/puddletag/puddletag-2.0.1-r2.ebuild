@@ -3,8 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
-
+PYTHON_COMPAT=( python3_{7..10} )
 inherit distutils-r1 xdg
 
 DESCRIPTION="Audio tag editor"
@@ -17,8 +16,8 @@ RESTRICT="mirror"
 SLOT="0"
 # version string contained in puddletag/source/puddlestuff/__init__.py
 SRC_URI="https://github.com/keithgg/${PN}/archive/${PV}.tar.gz -> ${PV}.tar.gz"
-IUSE="acoustid cover musicbrainz quodlibet"
-RDEPEND="acoustid? ( >=media-libs/chromaprint-0.6 )
+IUSE+=" acoustid cover musicbrainz quodlibet"
+RDEPEND+=" acoustid? ( >=media-libs/chromaprint-0.6 )
 	 >=dev-python/PyQt5-5.15[${PYTHON_USEDEP},svg,gui,widgets]
 	 >=dev-python/PyRSS2Gen-1.1[${PYTHON_USEDEP}]
 	 >=dev-python/configobj-5.0[${PYTHON_USEDEP}]
@@ -28,9 +27,9 @@ RDEPEND="acoustid? ( >=media-libs/chromaprint-0.6 )
 	 >=dev-python/sip-4.14.2-r1:0[${PYTHON_USEDEP}]
 	 >=dev-python/sphinx-bootstrap-theme-0.4.13[${PYTHON_USEDEP}]
 	 >=dev-python/sphinx-1.4.8[${PYTHON_USEDEP}]
-	 $(python_gen_cond_dep 'dev-python/wheel[${PYTHON_USEDEP}]' python3_{6,7,8})
+	 $(python_gen_cond_dep 'dev-python/wheel[${PYTHON_USEDEP}]')
 	 >=media-libs/mutagen-1.45[${PYTHON_USEDEP}]
 	 musicbrainz? ( >=dev-python/python-musicbrainz-0.7.4-r1[${PYTHON_USEDEP}] )
 	 quodlibet? ( >=media-sound/quodlibet-2.5[${PYTHON_USEDEP}] )"
-DEPEND="${RDEPEND}"
+DEPEND+=" ${RDEPEND}"
 S="${WORKDIR}/${PN}-${PV}/source"
