@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 
 inherit cmake-utils eutils flag-o-matic multilib-build python-r1
 
@@ -125,7 +125,7 @@ CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
 PV_MAJ=$(ver_cut 1 ${PV})
 # Missing rust-analyzer (aka rust-analyzer-preview) from rust packages because
 # it is only available on nightly.  Forced nightly.
-REQUIRED_USE+="
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	!system-rust
 	c? ( || ( clangd libclang ) cxx )
 	clangd? ( || ( c cxx objc objcxx ) )
