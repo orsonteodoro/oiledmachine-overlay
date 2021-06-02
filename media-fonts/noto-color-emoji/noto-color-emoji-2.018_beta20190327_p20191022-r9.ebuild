@@ -5,7 +5,7 @@
 # <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit eutils font python-single-r1
 
 DESCRIPTION="NotoColorEmoji is colored emojis"
@@ -30,21 +30,21 @@ RDEPEND+=" >=media-libs/fontconfig-2.11.91
 	  !media-fonts/noto-emoji
          >=x11-libs/cairo-1.16"
 NOTOTOOLS_DEPEND="
-        $(python_gen_cond_dep '>=media-gfx/scour-0.37[${PYTHON_USEDEP}]' python3_{7,8,9})
-        $(python_gen_cond_dep '>=dev-python/booleanOperations-0.8.2[${PYTHON_USEDEP}]' python3_{7,8,9})
-        $(python_gen_cond_dep '>=dev-python/defcon-0.6.0[${PYTHON_USEDEP}]' python3_{7,8,9})
-        $(python_gen_cond_dep '>=dev-python/fonttools-4.0.2[${PYTHON_USEDEP}]' python3_{7,8,9})
-        $(python_gen_cond_dep '>=dev-python/pillow-6.2.0[${PYTHON_USEDEP}]' python3_{7,8,9})
-        $(python_gen_cond_dep '>=dev-python/pyclipper-1.1.0_p1[${PYTHON_USEDEP}]' python3_{7,8,9})"
+        $(python_gen_cond_dep '>=media-gfx/scour-0.37[${PYTHON_USEDEP}]')
+        $(python_gen_cond_dep '>=dev-python/booleanOperations-0.8.2[${PYTHON_USEDEP}]')
+        $(python_gen_cond_dep '>=dev-python/defcon-0.6.0[${PYTHON_USEDEP}]')
+        $(python_gen_cond_dep '>=dev-python/fonttools-4.0.2[${PYTHON_USEDEP}]')
+        $(python_gen_cond_dep '>=dev-python/pillow-6.2.0[${PYTHON_USEDEP}]')
+        $(python_gen_cond_dep '>=dev-python/pyclipper-1.1.0_p1[${PYTHON_USEDEP}]')"
 INTERNAL_NOTOTOOLS_PV="0.2.0_p20191019" # see setup.py for versioning ; official release was 20191017
 BDEPEND+=" ${PYTHON_DEPS}
-	$(python_gen_cond_dep 'dev-python/fonttools[${PYTHON_USEDEP}]' python3_{7,8,9})
+	$(python_gen_cond_dep 'dev-python/fonttools[${PYTHON_USEDEP}]')
 	dev-util/pkgconfig
         media-gfx/imagemagick
 	media-gfx/pngquant
 	!system-nototools? ( ${NOTOTOOLS_DEPEND} )
 	system-nototools? (
-		$(python_gen_cond_dep '~dev-python/nototools-'$(ver_cut 1-3 ${INTERNAL_NOTOTOOLS_PV})'[${PYTHON_USEDEP}]' python3_{7,8,9})
+		$(python_gen_cond_dep '~dev-python/nototools-'$(ver_cut 1-3 ${INTERNAL_NOTOTOOLS_PV})'[${PYTHON_USEDEP}]')
 	)
         optipng?   ( media-gfx/optipng )
 	zopflipng? ( app-arch/zopfli )"
