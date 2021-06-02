@@ -3,9 +3,8 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
-
-inherit toolchain-funcs python-single-r1 linux-info
+PYTHON_COMPAT=( python3_{8..10} )
+inherit linux-info python-single-r1 toolchain-funcs
 
 if [[ ${PV} != 9999 ]]; then
 	KEYWORDS="amd64 ~arm ~arm64 ~x86"
@@ -18,26 +17,23 @@ fi
 
 DESCRIPTION="Security sandbox for any type of processes"
 HOMEPAGE="https://firejail.wordpress.com/"
-
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="X apparmor +chroot contrib +dbusproxy +file-transfer +globalcfg +network +private-home +suid test +userns +whitelist"
+IUSE+=" X apparmor +chroot contrib +dbusproxy +file-transfer +globalcfg +network
++private-home +suid test +userns +whitelist"
 IUSE+=" selinux xpra"
-# Needs a lot of work to function within sandbox/portage
-# bug #769731
-RESTRICT="test"
-
 RDEPEND="!sys-apps/firejail-lts
 	apparmor? ( sys-libs/libapparmor )
 	contrib? ( ${PYTHON_DEPS} )
-	dbusproxy? ( sys-apps/xdg-dbus-proxy )"
-RDEPEND+=" xpra? ( x11-wm/xpra[firejail] )"
-
+	dbusproxy? ( sys-apps/xdg-dbus-proxy )
+	xpra? ( x11-wm/xpra[firejail] )"
 DEPEND="${RDEPEND}
-	sys-libs/libseccomp
-	test? ( dev-tcltk/expect )"
-
+	sys-libs/libseccomp"
+BDEPEND+=" test? ( dev-tcltk/expect )"
 REQUIRED_USE="contrib? ( ${PYTHON_REQUIRED_USE} )"
+# Needs a lot of work to function within sandbox/portage
+# bug #769731
+RESTRICT="test"
 
 pkg_setup() {
 	python-single-r1_pkg_setup
