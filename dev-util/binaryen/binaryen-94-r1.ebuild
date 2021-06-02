@@ -2,6 +2,12 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+CMAKE_MIN_VERSION="3.1.3"
+CMAKE_BUILD_TYPE="Release"
+PYTHON_COMPAT=( python3_{8..10} )
+inherit cmake-utils python-any-r1 toolchain-funcs
+
 DESCRIPTION="Compiler infrastructure and toolchain library for WebAssembly"
 HOMEPAGE="https://github.com/WebAssembly/binaryen"
 LICENSE="Apache-2.0 Apache-2.0-with-LLVM-exceptions"
@@ -10,14 +16,11 @@ LICENSE="Apache-2.0 Apache-2.0-with-LLVM-exceptions"
 KEYWORDS="~amd64 ~x86"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE="doc"
-RDEPEND="${PYTHON_DEPS}"
-DEPEND="${RDEPEND}"
-CMAKE_MIN_VERSION="3.1.3"
-CMAKE_BUILD_TYPE="Release"
-PYTHON_COMPAT=( python3_{6..9} )
-inherit cmake-utils python-any-r1 toolchain-funcs
-SRC_URI="\
+IUSE+=" doc"
+RDEPEND+=" ${PYTHON_DEPS}"
+DEPEND+=" ${RDEPEND}"
+BDEPEND+=" ${PYTHON_DEPS}"
+SRC_URI="
 https://github.com/WebAssembly/binaryen/archive/version_${PV}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-version_${PV}"
