@@ -37,14 +37,14 @@ CC-BY-3.0 FTL ISC LGPL-2.1 MIT MPL-2.0 OFL-1.1 openssl Unlicense ZLIB"
 #KEYWORDS="~amd64 ~x86" # disabled because ebuilds are still in development
 PND="${PN}-demo-projects"
 
-# tag 3 deterministic / static snapshot / master / 20210421
-EGIT_COMMIT_3_DEMOS_SNAPSHOT="ee1252eafe8eeb26cafc330357a781c943bed816"
+# tag 3 deterministic / static snapshot / master / 20210529
+EGIT_COMMIT_3_DEMOS_SNAPSHOT="ca17967de1de9c350c82e6e11ec32105529b0732"
 
 # latest release
-EGIT_COMMIT_3_DEMOS_STABLE="5c154dac255113be2aee1a7f456ee8eaca89e62f"
+EGIT_COMMIT_3_DEMOS_STABLE="2ce76ff4e5abfa352a5bca4de9b1214567579b8d"
 
-# Commit dated 20210503 (last 3.2)
-EGIT_COMMIT_GODOT_CPP_SNAPSHOT="1637975a0ba3ac797e4c45d5bcadcd2ec58e66fe"
+# Commit dated 20210601
+EGIT_COMMIT_GODOT_CPP_SNAPSHOT="fda7ddd158b2d2ef6d7af7d509694415ec81d615"
 
 # Commit dated 20210106
 EGIT_COMMIT_GMB_STABLE="bda87f2d2bd8e0cf742fcba395a226883b169069"
@@ -182,9 +182,9 @@ IUSE+=" asan_client lsan_client tsan_client ubsan_client"
 IUSE+=" -ios-sim +icloud +game-center +store-kit" # ios
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
-# See https://github.com/godotengine/godot/tree/3.2.3-stable/thirdparty for versioning
-# See https://docs.godotengine.org/en/3.2/development/compiling/compiling_for_android.html
-# See https://docs.godotengine.org/en/3.2/development/compiling/compiling_for_web.html
+# See https://github.com/godotengine/godot/tree/3.3.2-stable/thirdparty for versioning
+# See https://docs.godotengine.org/en/3.3/development/compiling/compiling_for_android.html
+# See https://docs.godotengine.org/en/3.3/development/compiling/compiling_for_web.html
 # See https://github.com/tpoechtrager/osxcross/blob/master/build.sh#L36      ; for XCODE VERSION <-> EOSXCROSS_SDK
 # See https://developer.apple.com/ios/submit/ for app store requirement
 # Some are repeated because they were shown to be in the ldd list
@@ -253,11 +253,12 @@ REQUIRED_USE+="
 		server_headless ) )
 	server_dedicated? ( server )
 	server_headless? ( server )"
+EMSCRIPTEN_V="2.0.10"
 EXPECTED_XCODE_SDK_MIN_VERSION_IOS="10"
 EXPECTED_IOS_SDK_MIN_VERSION="10"
 EXPECTED_XCODE_SDK_MIN_VERSION_ARM64="10.15"
-EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.9"
-FREETYPE_V="2.10.1"
+EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.12"
+FREETYPE_V="2.10.4"
 LIBOGG_V="1.3.4"
 LIBVORBIS_V="1.3.6"
 ZLIB_V="1.2.11"
@@ -325,9 +326,9 @@ CDEPEND+="
 		 dev-util/msbuild
 		 >=dev-lang/mono-5.2[${MULTILIB_USEDEP}] )
 	godot_platforms_web? (
-		!closure-compiler? ( >=dev-util/emscripten-1.39.0[wasm(+)] )
+		!closure-compiler? ( >=dev-util/emscripten-${EMSCRIPTEN_V}[wasm(+)] )
 		closure-compiler? (
->=dev-util/emscripten-1.39.0[closure-compiler,closure_compiler_nodejs,wasm(+)] ) )
+>=dev-util/emscripten-${EMSCRIPTEN_V}[closure-compiler,closure_compiler_nodejs,wasm(+)] ) )
 	godot_platforms_osx? ( sys-devel/osxcross )
 	godot_platforms_windows? ( sys-devel/crossdev )"
 CDEPEND_CLANG="

@@ -1,0 +1,63 @@
+From 43757fcc85ac8e1c4657b30968b9bf2381aec329 Mon Sep 17 00:00:00 2001
+From: Hein-Pieter van Braam <hp@tmm.cx>
+Date: Sat, 23 Sep 2017 22:55:26 +0200
+Subject: [PATCH] Fix gcc lto
+
+This repairs LTO on X11 and adds it to MingW targets. The difference in
+linktime is substantial, but runtime performance is quite a bit better.
+
+---
+
+Backported to 2.1.7_rc
+Modified by Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Jun 1, 2021
+
+diff -urp godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/windows/detect.py godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/windows/detect.py
+--- godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/windows/detect.py	2020-10-01 10:50:39.000000000 -0700
++++ godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/windows/detect.py	2021-06-01 11:43:20.860104467 -0700
+@@ -166,6 +166,7 @@ def get_opts():
+     return [
+         ('mingw_prefix', 'Mingw Prefix', mingw32),
+         ('mingw_prefix_64', 'Mingw Prefix 64 bits', mingw64),
++        ('use_lto', 'Use link time optimization (when using MingW)', 'no'),
+         # Targeted Windows version: Vista (and later)
+         ('target_win_version', 'Targeted Windows version, >= 0x0600 (Vista)', '0x0600'),
+     ]
+@@ -342,14 +343,18 @@ def configure(env):
+         env["CC"] = mingw_prefix + "gcc"
+         env['AS'] = mingw_prefix + "as"
+         env['CXX'] = mingw_prefix + "g++"
+-        env['AR'] = mingw_prefix + "ar"
+-        env['RANLIB'] = mingw_prefix + "ranlib"
++        env['AR'] = mingw_prefix + "gcc-ar"
++        env['RANLIB'] = mingw_prefix + "gcc-ranlib"
+         env['LD'] = mingw_prefix + "g++"
+         env["x86_libtheora_opt_gcc"] = True
+ 
+         #env['CC'] = "winegcc"
+         #env['CXX'] = "wineg++"
+ 
++        if (env["use_lto"] == "yes"):
++            env.Append(CCFLAGS=['-flto'])
++            env.Append(LINKFLAGS=['-flto'])
++
+         env.Append(CCFLAGS=['-DWINDOWS_ENABLED', '-mwindows'])
+         env.Append(CPPFLAGS=['-DRTAUDIO_ENABLED'])
+         env.Append(CPPFLAGS=['-DWASAPI_ENABLED'])
+Only in godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/windows: detect.py.orig
+Only in godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/windows: detect.py.rej
+diff -urp godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/x11/detect.py godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/x11/detect.py
+--- godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/x11/detect.py	2020-10-01 10:50:39.000000000 -0700
++++ godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/x11/detect.py	2021-06-01 11:41:59.076854110 -0700
+@@ -115,6 +115,9 @@ def configure(env):
+     if (env["use_lto"] == "yes"):
+         env.Append(CCFLAGS=['-flto'])
+         env.Append(LINKFLAGS=['-flto'])
++        if (env["use_llvm"] == "no"):
++            env['RANLIB'] = 'gcc-ranlib'
++            env['AR'] = 'gcc-ar'
+ 
+ 
+     env.Append(CCFLAGS=['-pipe'])
+Only in godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/x11: detect.py.orig
+Only in godot-89e531d223ef189219e266cc61ea79a7dd2d5f54: t.patch

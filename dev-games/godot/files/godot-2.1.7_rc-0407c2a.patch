@@ -1,0 +1,25 @@
+From 0407c2ac46174630f27091a8c529ad9c335c0647 Mon Sep 17 00:00:00 2001
+From: mhilbrunner <mhilbrunner@users.noreply.github.com>
+Date: Fri, 27 Oct 2017 20:28:17 +0200
+Subject: [PATCH] detect.py: Fix KeyError if using MinGW and LTO
+
+---
+ platform/windows/detect.py | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/platform/windows/detect.py b/platform/windows/detect.py
+index cd4230acd44d..bac5df5668d9 100644
+--- a/platform/windows/detect.py
++++ b/platform/windows/detect.py
+@@ -264,10 +264,7 @@ def configure(env):
+ 
+         if env['use_lto']:
+             env.Append(CCFLAGS=['-flto'])
+-            if not env['use_llvm'] and env.GetOption("num_jobs") > 1:
+-                env.Append(LINKFLAGS=['-flto=' + str(env.GetOption("num_jobs"))])
+-            else:
+-                env.Append(LINKFLAGS=['-flto'])
++            env.Append(LINKFLAGS=['-flto=' + str(env.GetOption("num_jobs"))])
+ 
+         ## Compile flags
+ 

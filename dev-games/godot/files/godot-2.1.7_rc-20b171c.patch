@@ -5,6 +5,8 @@ URI:
 https://github.com/godotengine/godot/commit/20b171cc5ae2482896ca6612d1db21e45b21576c
 https://github.com/godotengine/godot/commit/5d217a94414117438d92b094956baead8ec942fb
 
+Modified by Orson Teodoro <orsonteodoro@hotmail.com>
+
 ----
 diff -urp godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/SConstruct godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/SConstruct
 --- godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/SConstruct	2020-10-01 10:50:39.000000000 -0700

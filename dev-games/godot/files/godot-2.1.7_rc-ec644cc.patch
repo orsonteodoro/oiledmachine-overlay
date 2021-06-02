@@ -1,0 +1,45 @@
+From ec644ccb69dae13c173d69cb26b9a59ae20854e3 Mon Sep 17 00:00:00 2001
+From: "Felix M. Cobos" <felix.cobos@gmail.com>
+Date: Tue, 26 Sep 2017 14:22:49 +0200
+Subject: [PATCH] Reduce gcc lto build time by telling the linker to use the
+ number of jobs indicated by -j
+
+---
+
+Backport to 2.1.7_rc
+Modified by Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Jun 1, 2021
+
+diff -urp godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/windows/detect.py godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/windows/detect.py
+--- godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/windows/detect.py	2021-06-01 11:46:14.246995653 -0700
++++ godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/windows/detect.py	2021-06-01 11:46:52.748525828 -0700
+@@ -353,7 +353,10 @@ def configure(env):
+ 
+         if (env["use_lto"] == "yes"):
+             env.Append(CCFLAGS=['-flto'])
+-            env.Append(LINKFLAGS=['-flto'])
++            if not env['use_llvm'] and env.GetOption("num_jobs") > 1:
++                env.Append(LINKFLAGS=['-flto=' + str(env.GetOption("num_jobs"))])
++            else:
++                env.Append(LINKFLAGS=['-flto'])
+ 
+         env.Append(CCFLAGS=['-DWINDOWS_ENABLED', '-mwindows'])
+         env.Append(CPPFLAGS=['-DRTAUDIO_ENABLED'])
+Only in godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/windows: detect.py.orig
+diff -urp godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/x11/detect.py godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/x11/detect.py
+--- godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/x11/detect.py	2021-06-01 11:46:14.246995653 -0700
++++ godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/x11/detect.py	2021-06-01 11:53:08.243449369 -0700
+@@ -114,7 +114,10 @@ def configure(env):
+ 
+     if (env["use_lto"] == "yes"):
+         env.Append(CCFLAGS=['-flto'])
+-        env.Append(LINKFLAGS=['-flto'])
++        if (env['use_llvm'] == "no" and env.GetOption("num_jobs") > 1):
++            env.Append(LINKFLAGS=['-flto=' + str(env.GetOption("num_jobs"))])
++        else:
++            env.Append(LINKFLAGS=['-flto'])
+         if (env["use_llvm"] == "no"):
+             env['RANLIB'] = 'gcc-ranlib'
+             env['AR'] = 'gcc-ar'
+Only in godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/x11: detect.py.orig
+Only in godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/x11: detect.py.rej

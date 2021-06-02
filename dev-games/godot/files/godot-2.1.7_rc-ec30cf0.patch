@@ -1,0 +1,71 @@
+From ec30cf0d2066d2edcbfdff097147fd836a0feb29 Mon Sep 17 00:00:00 2001
+From: bruvzg <7645683+bruvzg@users.noreply.github.com>
+Date: Tue, 22 Oct 2019 12:47:12 +0300
+Subject: [PATCH] Add "llvm/thinlto" options to MinGW build.
+
+---
+
+Backported to 2.1.7_rc
+Modified by Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Jun 1, 2021
+
+diff -urp godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/windows/detect.py godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/windows/detect.py
+--- godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/windows/detect.py	2021-06-01 12:30:57.422462005 -0700
++++ godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/windows/detect.py	2021-06-01 12:35:12.532442556 -0700
+@@ -169,6 +169,8 @@ def get_opts():
+         ('use_lto', 'Use link time optimization (when using MingW)', 'no'),
+         # Targeted Windows version: Vista (and later)
+         ('target_win_version', 'Targeted Windows version, >= 0x0600 (Vista)', '0x0600'),
++        ('use_llvm', 'Use the LLVM compiler', 'no'),
++        ('use_thinlto', 'Use ThinLTO', 'no'),
+     ]
+ 
+ 
+@@ -340,20 +342,36 @@ def configure(env):
+ 
+             env.Append(CCFLAGS=['-g', '-DDEBUG_ENABLED', '-DDEBUG_MEMORY_ENABLED'])
+ 
+-        env["CC"] = mingw_prefix + "gcc"
+-        env['AS'] = mingw_prefix + "as"
+-        env['CXX'] = mingw_prefix + "g++"
+-        env['AR'] = mingw_prefix + "gcc-ar"
+-        env['RANLIB'] = mingw_prefix + "gcc-ranlib"
+-        env['LD'] = mingw_prefix + "g++"
+-        env["x86_libtheora_opt_gcc"] = True
++        if env['use_llvm']:
++            env["CC"] = mingw_prefix + "clang"
++            env['AS'] = mingw_prefix + "as"
++            env["CXX"] = mingw_prefix + "clang++"
++            env['AR'] = mingw_prefix + "ar"
++            env['RANLIB'] = mingw_prefix + "ranlib"
++            env["LINK"] = mingw_prefix + "clang++"
++        else:
++            env["CC"] = mingw_prefix + "gcc"
++            env['AS'] = mingw_prefix + "as"
++            env['CXX'] = mingw_prefix + "g++"
++            env['AR'] = mingw_prefix + "gcc-ar"
++            env['RANLIB'] = mingw_prefix + "gcc-ranlib"
++            env['LINK'] = mingw_prefix + "g++"
++            env["x86_libtheora_opt_gcc"] = True
+ 
+         #env['CC'] = "winegcc"
+         #env['CXX'] = "wineg++"
+ 
+         if (env["use_lto"] == "yes"):
+-            env.Append(CCFLAGS=['-flto'])
+-            env.Append(LINKFLAGS=['-flto=' + str(env.GetOption("num_jobs"))])
++            if (env['use_llvm'] == "no" and env.GetOption("num_jobs") > 1):
++                env.Append(CCFLAGS=['-flto'])
++                env.Append(LINKFLAGS=['-flto=' + str(env.GetOption("num_jobs"))])
++            else:
++                if (env['use_thinlto'] == "yes"):
++                    env.Append(CCFLAGS=['-flto=thin'])
++                    env.Append(LINKFLAGS=['-flto=thin'])
++                else:
++                    env.Append(CCFLAGS=['-flto'])
++                    env.Append(LINKFLAGS=['-flto'])
+ 
+         env.Append(CCFLAGS=['-DWINDOWS_ENABLED', '-mwindows'])
+         env.Append(CPPFLAGS=['-DRTAUDIO_ENABLED'])
+Only in godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/windows: detect.py.orig
+Only in godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/windows: detect.py.rej

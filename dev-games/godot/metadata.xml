@@ -223,11 +223,15 @@ https://docs.godotengine.org/en/2.1/development/cpp/custom_modules_in_cpp.html
       threads.</flag>
     <flag name="jsonrpc">Enables support JSON-RPC for GDScript LSP.</flag>
     <flag name="jpeg">Enables JPEG support.</flag>
+    <flag name="lld">Uses the LLD linker for faster linking.  Disable to
+      fall back to the gold linker when using LTO.</flag>
     <flag name="lsan_client">Enables LSAN for Linux client and editor for
       reporting but not necessarily preventing memory leaks.</flag>
     <flag name="lsan_server">Enables LSAN for Linux server builds for reporting
        but not necessarily preventing memory leaks.</flag>
-    <flag name="lto">Enables link time optimization.</flag>
+    <flag name="lto">Enables link time optimization with ThinLTO that</flag>
+       enables faster multicore linking and reduction in generated binary.
+       </flag>
     <flag name="mbedtls">Enables the use of mbed TLS for X509 digital
       certificates, secured TLS networking.</flag>
     <flag name="minizip">Enables support for compressed ZIP files.</flag>
@@ -313,7 +317,6 @@ https://docs.godotengine.org/en/2.1/development/cpp/custom_modules_in_cpp.html
       internal version.</flag>
     <flag name="system-zstd">Uses the system's external library instead of the
       internal version.</flag>
-    <flag name="thinlto">Enables faster multicore link time optimization.</flag>
     <flag name="tga">Enables support for the TGA image format.</flag>
     <flag name="theora">Enables support for the Theora video codec.</flag>
     <flag name="touch">Enables mobile touchscreen events support.</flag>

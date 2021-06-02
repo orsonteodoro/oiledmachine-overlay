@@ -104,7 +104,7 @@ REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_WEB}" godot_platforms_web)
 REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_WINDOWS}" godot_platforms_windows)
 
 IUSE+=" +3d +advanced-gui +clang debug docs examples-snapshot examples-stable \
-+linux lto portable server server_dedicated server_headless"
++linux lld lto portable server server_dedicated server_headless"
 IUSE+=" +bmp +dds +exr +etc1 +minizip +musepack +pbm +jpeg +mod +ogg +pvrtc \
 +svg +s3tc +speex +theora +vorbis +webm +webp +xml" # encoding/container formats
 IUSE+=" +gdscript +visual-script web" # for scripting languages
@@ -139,6 +139,7 @@ REQUIRED_USE+="
 	godot_platforms_osx? ( || ( ${GODOT_OSX} ) )
 	godot_platforms_web? ( || ( ${GODOT_WEB} ) )
 	godot_platforms_windows? ( || ( ${GODOT_WINDOWS} ) )
+	lld? ( clang )
 	lsan_client? ( asan_client )
 	lsan_server? ( asan_server )
 	portable? (
@@ -273,6 +274,7 @@ BDEPEND+=" ${CDEPEND}
 		${BDEPEND_SANTIZIER}
 	)
 	doxygen? ( app-doc/doxygen )
+	lld? ( sys-devel/lld )
 	lsan_client? (
 		${BDEPEND_SANTIZIER}
 	)
@@ -282,8 +284,32 @@ BDEPEND+=" ${CDEPEND}
 	web? ( app-arch/zip )"
 S="${WORKDIR}/godot-${EGIT_COMMIT}"
 RESTRICT="fetch mirror"
-# 20b171c - used for ccache
-PATCHES=( "${FILESDIR}/godot-2.1.7_rc-20b171c.patch" )
+
+# 43757fc - 20170924 - gcc lto fix
+# ec644cc - 20170926 - flto number of jobs and adds llvm+thinlto options
+# a1c890a (same as above)
+# 0407c2a - 20171027 - fix mingw keyerror with lto
+# cefdb34 - 20171102 - lto for platform/iphone
+# 9e912a4 - 20190305 - lto, ubsan/asan,lsan; debugging symbols scons options
+# 919bbf8 - 20200311 - skipped but contains lto for wasm
+# fd7f253 - 20190318 - lld for x11
+# a76d59c (same as above)
+# 51f9042 - 20190425 - thinlto for x11
+# 7e65a11 (same as above)
+# ec30cf0 - 20191022 - thinlto for mingw
+# 20b171c - 20210309 - used for ccache
+
+PATCHES=(
+	"${FILESDIR}/godot-2.1.7_rc-43757fc.patch"
+	"${FILESDIR}/godot-2.1.7_rc-ec644cc.patch"
+	"${FILESDIR}/godot-2.1.7_rc-0407c2a.patch"
+	"${FILESDIR}/godot-2.1.7_rc-cefdb34.patch"
+	"${FILESDIR}/godot-2.1.7_rc-9e912a4-lto-only.patch"
+	"${FILESDIR}/godot-2.1.7_rc-fd7f253.patch"
+	"${FILESDIR}/godot-2.1.7_rc-51f9042.patch"
+	"${FILESDIR}/godot-2.1.7_rc-ec30cf0.patch"
+	"${FILESDIR}/godot-2.1.7_rc-20b171c.patch"
+)
 
 _set_check_req() {
 	if use linux && use server ; then
@@ -857,6 +883,7 @@ src_compile() {
 	)
 	local options_javascript=(
 		platform=javascript
+		# lto skipped
 	)
 	local options_osx=(
 		platform=osx
@@ -864,21 +891,29 @@ src_compile() {
 	)
 	local options_server=(
 		platform=server
+		use_lld=$(usex lld)
 		use_llvm=$(usex clang)
 		use_leak_sanitizer=$(usex lsan_server)
+		use_lto=$(usex lto)
 		use_sanitizer=$(usex asan_server)
+		use_thinlto=$(usex lto)
 	)
 	local options_windows=(
 		platform=windows
+		use_llvm=$(usex clang)
+		use_lto=$(usex lto)
+		use_thinlto=$(usex lto)
 	)
 	local options_x11=(
 		platform=x11
 		pulseaudio=$(usex pulseaudio)
 		touch=$(usex touch)
 		use_leak_sanitizer=$(usex lsan_client)
+		use_lld=$(usex lld)
 		use_llvm=$(usex clang)
 		use_lto=$(usex lto)
 		use_sanitizer=$(usex asan_client)
+		use_thinlto=$(usex lto)
 		udev=$(usex gamepad)
 	)
 	local options_modules_shared=(
@@ -1140,7 +1175,11 @@ src_install() {
 					e["dname"]="godot_editor_server"
 				fi
 				e["platform"]=".x11"
-				e["configuation"]=".opt"
+				if [[ "${EPLATFORM}" == "godot_platforms_linux" ]] ; then
+					e["configuation"]=""
+				else
+					e["configuation"]=".opt"
+				fi
 				if [[ "${EPLATFORM}" == "godot_platforms_linux" \
 				  || "${EPLATFORM}" == "server_headless" ]] ; then
 					e["tools"]=".tools"
