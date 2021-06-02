@@ -3,19 +3,22 @@
 
 # See configure.ac for versioning
 EAPI=7
+
+PYTHON_COMPAT=( python3_{8..10} )
+inherit eutils meson python-r1 xdg-utils
+
 DESCRIPTION="This program is designed to allow you to change the frequency \
 limits of your cpu and its governor. The application is similar in \
 functionality to cpupower."
 HOMEPAGE="https://github.com/vagnum08/cpupower-gui"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
-PYTHON_COMPAT=( python3_{6,7,8,9} )
 SLOT="0"
-inherit meson python-r1
 LANGS=(el_GR en en_GB hu it nl zh_CN)
-IUSE="${LANGS[@]/#/l10n_} +l10n_en -libexec -pkla"
+IUSE+=" ${LANGS[@]/#/l10n_} +l10n_en -libexec -pkla"
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 # See README.md for dependencies
-RDEPEND="${PYTHON_DEPS}
+RDEPEND+=" ${PYTHON_DEPS}
 	 dev-libs/glib:2
 	 dev-libs/libappindicator:3
 	 dev-python/dbus-python[${PYTHON_USEDEP}]
@@ -25,16 +28,15 @@ RDEPEND="${PYTHON_DEPS}
 	 sys-auth/polkit
 	 x11-libs/gtk+:3
 	 x11-themes/hicolor-icon-theme"
-DEPEND="${RDEPEND}
+DEPEND+=" ${RDEPEND}
 	dev-libs/glib:2"
-BDEPEND="${BDEPEND}
+BDEPEND+=" ${PYTHON_DEPS}
 	>=dev-util/meson-0.50
 	dev-util/ninja
 	dev-util/pkgconfig"
 RESTRICT="mirror"
-inherit eutils xdg-utils
-SRC_URI=\
-"https://github.com/vagnum08/cpupower-gui/archive/v${PV}.tar.gz \
+SRC_URI="
+https://github.com/vagnum08/cpupower-gui/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR=${CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR:="/usr/lib/systemd"}
