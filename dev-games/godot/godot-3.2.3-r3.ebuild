@@ -161,8 +161,8 @@ REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_MONO_OSX}" godot_platforms
 REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_MONO_WEB}" godot_platforms_mono)
 REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_MONO_WINDOWS}" godot_platforms_mono)
 
-
-IUSE+=" -closure-compiler +gdnative +gdscript gdscript_lsp \
+# gdnative is default on upstream.  temporarily disabled.
+IUSE+=" -closure-compiler gdnative -gdscript gdscript_lsp \
 +javascript_eval -javascript_threads -mono
 -mono_pregen_assemblies +visual-script web" # for scripting languages
 IUSE+=" +bullet +csg +gridmap +mobile-vr +recast +vhacd +xatlas" # for 3d
@@ -771,6 +771,7 @@ check_store_apl()
 
 pkg_setup() {
 	ewarn "This ebuild is still a Work In Progress (WIP) as of 2021"
+	ewarn "Building with gdnative currently does not work and currently gets stuck when generating API.  Disable the USE flag until this notice is removed."
 	if use gdnative ; then
 		ewarn \
 "The gdnative USE flag is untested."
@@ -1283,7 +1284,12 @@ src_compile_gdnative()
 		# pure virtual method called
 		local api_path="${BUILD_DIR}/godot-cpp/godot-headers/api.json"
 
+		if [[ ! -f bin/${fs} ]] ; then
+			die "Missing bin/${fs}"
+		fi
+
 		# virtx is always success
+		# FIXME: stuck here
 		virtx \
 		bin/${fs} --audio-driver Dummy \
 			--gdnative-generate-json-api \
