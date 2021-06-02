@@ -16,7 +16,7 @@ EGIT_COMMIT="3abe1419d22ad19acbd96f66864ec00a0a256689"
 SLOT="0"
 IUSE+=" debug system-clangd system-gocode system-godef system-libclang
 system-racerd ycmd-43"
-YCMD_SLOT_43_LLVM_V=11.0
+YCMD_SLOT_43_LLVM_V=10.0
 YCMD_SLOT_43_LLVM_V_MAJ=$(ver_cut 1 ${YCMD_SLOT_43_LLVM_V})
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	^^ ( ycmd-43 )"
@@ -27,8 +27,8 @@ DEPEND+=" ${PYTHON_DEPS}
         net-libs/libssh
         net-libs/neon
 	system-libclang? (
-		sys-devel/clang:$(ver_cut 1 ${YCMD_SLOT_43_LLVM_V})
-		sys-devel/llvm:$(ver_cut 1 ${YCMD_SLOT_43_LLVM_V})
+		sys-devel/clang:${YCMD_SLOT_43_LLVM_V_MAJ}
+		sys-devel/llvm:${YCMD_SLOT_43_LLVM_V_MAJ}
 	)
 	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_MULTI_USEDEP}]') )"
 RDEPEND+=" ${DEPEND}"
