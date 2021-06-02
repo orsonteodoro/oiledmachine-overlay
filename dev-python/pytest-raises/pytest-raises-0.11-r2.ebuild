@@ -15,7 +15,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 DEPEND+=" ${PYTHON_DEPS}
 	>=dev-python/pytest-3.2.2[${PYTHON_USEDEP}]"
 RDEPEND+=" ${DEPEND}"
-BDEPEND+="
+BDEPEND+=" ${PYTHON_DEPS}
 	dev-python/pylint[${PYTHON_USEDEP}]
 	dev-python/pytest-cov[${PYTHON_USEDEP}]"
 SRC_URI="
