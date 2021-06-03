@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only for this ebuild fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- ebuild originators -->
+  <maintainer type="project">
+    <email>python@gentoo.org</email>
+    <name>Gentoo Python Project</name>
+  </maintainer>
+  <maintainer type="person">
+    <email>monsieurp@gentoo.org</email>
+    <name>Patrice Clement</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">pwaller/pyfiglet</remote-id>
+    <bugs-to>https://github.com/pwaller/pyfiglet/issues</bugs-to>
+  </upstream>
+</pkgmetadata>
