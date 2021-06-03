@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit desktop python-r1 webapp xdg
 
 DESCRIPTION="HTML5 client for Xpra"
@@ -31,7 +31,9 @@ IUSE+=" +brotli +gzip httpd menu-only local minify"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	^^ ( httpd local menu-only )"
 #RDEPEND+=" x11-wm/xpra" # avoid circular
-RDEPEND+=" httpd? ( virtual/httpd-basic )"
+RDEPEND+=" ${PYTHON_DEPS}
+	httpd? ( virtual/httpd-basic )"
+DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	gzip? ( app-arch/gzip )
 	brotli? ( app-arch/brotli  )
