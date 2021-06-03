@@ -3,8 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_7 )
-
+PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1 eutils
 
 DESCRIPTION="A smart and nice Twitter client on terminal written in Python."
@@ -14,7 +13,8 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
 IUSE+=" jpeg"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-DEPEND+=" dev-python/arrow[${PYTHON_USEDEP}]
+DEPEND+=" ${PYTHON_DEPS}
+	dev-python/arrow[${PYTHON_USEDEP}]
 	dev-python/pillow[jpeg?,${PYTHON_USEDEP}]
 	dev-python/pocket[${PYTHON_USEDEP}]
 	dev-python/pyfiglet[${PYTHON_USEDEP}]
@@ -23,9 +23,10 @@ DEPEND+=" dev-python/arrow[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/twitter[${PYTHON_USEDEP}]"
 RDEPEND+=" ${DEPEND}"
+BDEPEND+=" ${PYTHON_DPES}"
 EGIT_COMMIT="be1eaa59e1549ac8fec72193ff19faa419900b84"
-SRC_URI="\
-https://github.com/orakaro/rainbowstream/archive/${EGIT_COMMIT}.tar.gz \
+SRC_URI="
+https://github.com/orakaro/rainbowstream/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
@@ -34,7 +35,7 @@ PATCHES=( "${FILESDIR}"/${PN}-1.3.7-no-user-env.patch )
 python_compile() {
 	distutils-r1_python_compile
 	cat "${HOME}/.rainbow_config.json" \
-		> "${T}/.rainbow_config.json"
+		> "${T}/.rainbow_config.json" || die
 }
 
 python_install_all() {
