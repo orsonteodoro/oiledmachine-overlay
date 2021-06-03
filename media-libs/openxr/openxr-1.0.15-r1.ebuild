@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-utils eutils python-single-r1 toolchain-funcs
 
 DESCRIPTION="Generated headers and sources for OpenXR loader."
