@@ -3,15 +3,11 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7} )
-
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake flag-o-matic python-single-r1
 
 DESCRIPTION="A color management framework for visual effects and animation"
 HOMEPAGE="https://opencolorio.org/"
-
-SRC_URI="https://github.com/imageworks/OpenColorIO/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="amd64 x86"
@@ -19,8 +15,9 @@ IUSE="cpu_flags_x86_sse2 doc opengl python static-libs test"
 REQUIRED_USE="
 	doc? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )"
-
 RDEPEND="
+	>=dev-cpp/yaml-cpp-0.5
+	>=dev-libs/tinyxml-2.6.1
 	opengl? (
 		media-libs/lcms:2
 		media-libs/openimageio
@@ -28,11 +25,7 @@ RDEPEND="
 		media-libs/freeglut
 		virtual/opengl
 	)
-	python? ( ${PYTHON_DEPS} )
-	>=dev-cpp/yaml-cpp-0.5
-	>=dev-libs/tinyxml-2.6.1
-"
-
+	python? ( ${PYTHON_DEPS} )"
 DEPEND="${RDEPEND}"
 BDEPEND="
 	virtual/pkgconfig
@@ -41,18 +34,26 @@ BDEPEND="
 			dev-python/sphinx[${PYTHON_MULTI_USEDEP}]
 		')
 	)
-"
-
+	test? (
+		python? (
+			${PYTHON_DEPS}
+			$(python_gen_cond_dep '
+				dev-python/numpy[${PYTHON_MULTI_USEDEP}]
+			')
+		)
+	)"
+SRC_URI="
+https://github.com/imageworks/OpenColorIO/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz"
 # Restricting tests, bugs #439790 and #447908
 RESTRICT="test"
-
 PATCHES=(
-	"${FILESDIR}/${PN}-1.1.0-use-GNUInstallDirs-and-fix-cmake-install-location.patch"
-	"${FILESDIR}/${PN}-1.1.0-remove-building-of-bundled-programs.patch"
-	"${FILESDIR}/${PN}-1.1.0-yaml-cpp-0.6.patch"
-	"${FILESDIR}/${PN}-1.1.0-remove-Werror.patch"
+	"${FILESDIR}/${P}-fix-compile-error-with-Lut1DOp.cpp.patch"
+	"${FILESDIR}/${P}-use-GNUInstallDirs-and-fix-cmake-install-location.patch"
+	"${FILESDIR}/${P}-remove-building-of-bundled-programs.patch"
+	"${FILESDIR}/${P}-yaml-cpp-0.6.patch"
+	"${FILESDIR}/${P}-remove-Werror.patch"
 )
-
 S="${WORKDIR}/OpenColorIO-${PV}"
 
 pkg_setup() {
