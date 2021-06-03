@@ -43,6 +43,7 @@ pkg_setup() {
 	else
 		die "Compiler is not supported"
 	fi
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {

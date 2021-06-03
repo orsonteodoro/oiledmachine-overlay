@@ -26,6 +26,7 @@ https://github.com/WebAssembly/binaryen/archive/version_${PV}.tar.gz
 S="${WORKDIR}/${PN}-version_${PV}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md )
+PATCHES=( "${FILESDIR}/${PN}-90-change-bin-paths.patch" )
 
 pkg_setup() {
 	CC=$(tc-getCC)
@@ -42,6 +43,7 @@ pkg_setup() {
 	else
 		die "Compiler is not supported"
 	fi
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {
