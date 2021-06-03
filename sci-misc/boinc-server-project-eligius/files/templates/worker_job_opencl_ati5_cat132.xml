@@ -1,7 +1,0 @@
-<job_desc>
-    <task>
-        <application>bfgminer-gpu</application>
-        <command_line>-S opencl:auto -o stratum+tcp://stratum.mining.eligius.st:3334 -O 1MQ1VJ5NdjLdst8vq4yU9C8UmgYL5zSrvu --shares 1 --shaders 800 --gpu-threads 1</command_line>
-	<append_cmdline_args/>
-    </task>
-</job_desc>
