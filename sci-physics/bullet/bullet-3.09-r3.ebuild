@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-multilib python-r1
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
@@ -117,29 +117,33 @@ LICENSE+=" examples? ( Apache-2.0 BSD ) demos? ( Apache-2.0 BSD ) python? ( Apac
 LICENSE+=" test? ( all-rights-reserved ZLIB )"
 
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
-SRC_URI=\
-"https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="
+https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz
+	-> ${P}.tar.gz"
 SLOT="0/${PV}"
 IUSE+=" +bullet3 +demos doc -double-precision examples +extras +networking -numpy -openvr -python test"
 REQUIRED_USE+="
 	demos? ( extras )
 	numpy? ( python )
 	openvr? ( examples )
-	python? ( demos )"
+	python? (
+		${PYTHON_REQUIRED_USE}
+		demos
+	)"
 CDEPEND="python? (
 		${PYTHON_DEPS}
 		numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
-	  )"
+	 )"
 DEPEND+=" ${CDEPEND}
+	media-libs/freeglut[${MULTILIB_USEDEP}]
+	virtual/opengl[${MULTILIB_USEDEP}]
 	demos? (
 		media-libs/mesa[${MULTILIB_USEDEP},egl]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
-	)
-	media-libs/freeglut[${MULTILIB_USEDEP}]
-	virtual/opengl[${MULTILIB_USEDEP}]"
+	)"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
-	 doc? ( app-doc/doxygen[dot] )"
+	doc? ( app-doc/doxygen[dot] )"
 PATCHES=( "${FILESDIR}"/${PN}-2.85-soversion.patch )
 DOCS=( AUTHORS.txt LICENSE.txt README.md )
 # Building / linking of third Party library BussIK does not work out of the box
