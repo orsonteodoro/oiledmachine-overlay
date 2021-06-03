@@ -3,7 +3,8 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{6..9} )
+CMAKE_BUILD_TYPE=Release
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-utils eutils python-single-r1 toolchain-funcs
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
@@ -11,26 +12,13 @@ HOMEPAGE="http://www.openimagedenoise.org/"
 KEYWORDS="~amd64"
 LICENSE="Apache-2.0"
 # MKL_DNN is oneDNN 1.6.2 with additional custom commits.
-MKL_DNN_COMMIT="eb3e9670053192258d5a66f61486e3cfe25618b3"
-OIDN_WEIGHTS_COMMIT="59bad6bb6344f8fb8205772df3f795c2dc72e23b"
+MKL_DNN_COMMIT="603620ba45185e7d91fe112b69287e7d86c64353"
+OIDN_WEIGHTS_COMMIT="08092e46a1961b13b70e48ad80fa19b452bd4c01"
 ORG_GH="https://github.com/OpenImageDenoise"
 SLOT="0/${PV}"
-if [[ ${PV} = *9999 ]]; then
-	inherit git-r3
-	EGIT_REPO_URI="${ORG_GH}/oidn.git"
-	EGIT_BRANCH="master"
-else
-	SRC_URI="\
-${ORG_GH}/${PN}/releases/download/v${PV}/${P}.src.tar.gz \
-	-> ${P}.tar.gz
-${ORG_GH}/mkl-dnn/archive/${MKL_DNN_COMMIT}.tar.gz \
-	-> ${PN}-mkl-dnn-${MKL_DNN_COMMIT:0:7}.tar.gz
-built-in-weights? ( \
-${ORG_GH}/oidn-weights/archive/${OIDN_WEIGHTS_COMMIT}.tar.gz \
-	-> ${PN}-weights-${OIDN_WEIGHTS_COMMIT:0:7}.tar.gz )"
-fi
 IUSE+=" +apps +built-in-weights +clang doc disable-sse41-check gcc icc openimageio"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE} ^^ ( clang gcc icc )"
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+	^^ ( clang gcc icc )"
 # Clang is more smoother multitask-wise
 # c++11 minimal
 MIN_CLANG_V="3.3"
@@ -52,7 +40,20 @@ BDEPEND+=" ${CDEPEND}
 	)
 	>=dev-lang/ispc-1.14.1
 	>=dev-util/cmake-3.1"
-CMAKE_BUILD_TYPE=Release
+if [[ ${PV} = *9999 ]]; then
+	inherit git-r3
+	EGIT_REPO_URI="${ORG_GH}/oidn.git"
+	EGIT_BRANCH="master"
+else
+	SRC_URI="
+${ORG_GH}/${PN}/releases/download/v${PV}/${P}.src.tar.gz
+	-> ${P}.tar.gz
+${ORG_GH}/mkl-dnn/archive/${MKL_DNN_COMMIT}.tar.gz
+	-> ${PN}-mkl-dnn-${MKL_DNN_COMMIT:0:7}.tar.gz
+built-in-weights? (
+${ORG_GH}/oidn-weights/archive/${OIDN_WEIGHTS_COMMIT}.tar.gz
+	-> ${PN}-weights-${OIDN_WEIGHTS_COMMIT:0:7}.tar.gz )"
+fi
 RESTRICT="mirror"
 
 pkg_setup() {
