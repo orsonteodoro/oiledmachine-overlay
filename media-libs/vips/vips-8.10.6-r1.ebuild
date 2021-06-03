@@ -3,67 +3,70 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
-
+PYTHON_COMPAT=( python3_{8..10} )
 inherit autotools eutils multilib-minimal python-single-r1 toolchain-funcs
 
 DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
 LICENSE="LGPL-2.1+"
 KEYWORDS="~amd64 ~x86"
-IUSE="+analyze cairo cxx debug +doc exif fftw fits giflib graphicsmagick gsf \
-+hdr heif imagemagick imagequant jpeg lcms matio -minimal openexr openslide orc \
+SLOT="1/${PV}"
+IUSE+=" +analyze cairo cxx debug +doc exif fftw fits giflib graphicsmagick gsf
++hdr heif imagemagick imagequant jpeg lcms matio -minimal openexr openslide orc
 pangoft2 png poppler +ppm python spng static-libs svg tiff webp zlib"
-SRC_URI="https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+REQUIRED_USE="
+	doc
+	imagequant? ( png )
+	poppler? ( cairo )
+	python? ( ${PYTHON_REQUIRED_USE} )
+	svg? ( cairo )"
 # See also https://github.com/libvips/libvips/blob/v8.10.2/.travis.yml
 # libnifti missing
-RDEPEND="cairo? ( >=x11-libs/cairo-1.2[${MULTILIB_USEDEP}] )
-	 debug? ( >=dev-libs/dmalloc-5.5.2 )
-	 >=dev-libs/glib-2.6.2:2[${MULTILIB_USEDEP}]
-	 >=dev-libs/expat-2.2.5[${MULTILIB_USEDEP}]
-	 >=dev-libs/gobject-introspection-1.56.1[${PYTHON_SINGLE_USEDEP}]
-	 >=dev-libs/libffi-3.2.1[${MULTILIB_USEDEP}]
-	 >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}]
-	 exif? ( >=media-libs/libexif-0.6.21[${MULTILIB_USEDEP}] )
-	 fftw? ( >=sci-libs/fftw-3.3.7:3.0=[${MULTILIB_USEDEP}] )
-	 fits? ( >=sci-libs/cfitsio-3.430[${MULTILIB_USEDEP}] )
-	 giflib? ( >=media-libs/giflib-5.1.4[${MULTILIB_USEDEP}] )
-	 gsf? ( >=gnome-extra/libgsf-1.14.41 )
-	 heif? ( >=media-libs/libde265-1.0.2[${MULTILIB_USEDEP}]
-		 >=media-libs/libheif-1.1.0[${MULTILIB_USEDEP}] )
-	 imagemagick? (
+RDEPEND+="
+	>=dev-libs/glib-2.6.2:2[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-2.2.5[${MULTILIB_USEDEP}]
+	>=dev-libs/gobject-introspection-1.56.1[${PYTHON_SINGLE_USEDEP}]
+	>=dev-libs/libffi-3.2.1[${MULTILIB_USEDEP}]
+	>=sci-libs/gsl-2.4
+	>=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}]
+	cairo? ( >=x11-libs/cairo-1.2[${MULTILIB_USEDEP}] )
+	debug? ( >=dev-libs/dmalloc-5.5.2 )
+	exif? ( >=media-libs/libexif-0.6.21[${MULTILIB_USEDEP}] )
+	fftw? ( >=sci-libs/fftw-3.3.7:3.0=[${MULTILIB_USEDEP}] )
+	fits? ( >=sci-libs/cfitsio-3.430[${MULTILIB_USEDEP}] )
+	giflib? ( >=media-libs/giflib-5.1.4[${MULTILIB_USEDEP}] )
+	gsf? ( >=gnome-extra/libgsf-1.14.41 )
+	heif? ( >=media-libs/libde265-1.0.2[${MULTILIB_USEDEP}]
+		>=media-libs/libheif-1.1.0[${MULTILIB_USEDEP}] )
+	imagemagick? (
 		graphicsmagick? ( >=media-gfx/graphicsmagick-1.3.28 )
 		!graphicsmagick? ( >=media-gfx/imagemagick-6.9.7.4 )
-	 )
-	 imagequant? ( media-gfx/libimagequant )
-	 jpeg? ( || (   virtual/jpeg:0=[${MULTILIB_USEDEP}]
+	)
+	imagequant? ( media-gfx/libimagequant )
+	jpeg? ( || (   virtual/jpeg:0=[${MULTILIB_USEDEP}]
 			>=media-libs/libjpeg-turbo-1.5.2[${MULTILIB_USEDEP}] ) )
-	 lcms? ( >=media-libs/lcms-2.9[${MULTILIB_USEDEP}] )
-	 matio? ( >=sci-libs/matio-1.5.11[${MULTILIB_USEDEP}] )
-	 openexr? ( >=media-libs/openexr-2.2.0[${MULTILIB_USEDEP}] )
-	 openslide? ( >=media-libs/openslide-3.4.1[${MULTILIB_USEDEP}] )
-	 orc? ( >=dev-lang/orc-0.4[${MULTILIB_USEDEP}] )
-	 png? ( >=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}] )
-	 spng? ( >=media-libs/libspng-0.6.1[${MULTILIB_USEDEP}] )
-	 poppler? ( >=app-text/poppler-0.62.0[cairo,introspection] )
-	 python? ( ${PYTHON_DEPS} )
-	 >=sci-libs/gsl-2.4
-	 svg? ( >=gnome-base/librsvg-2.40.20[${MULTILIB_USEDEP}] )
-	 tiff? ( >=media-libs/tiff-4.0.9:0=[${MULTILIB_USEDEP}] )
-	 webp? ( >=media-libs/libwebp-0.6.1[${MULTILIB_USEDEP}] )
-	 pangoft2? ( >=x11-libs/pango-1.40.14[${MULTILIB_USEDEP}] )
-	 zlib? ( >=sys-libs/zlib-0.4[${MULTILIB_USEDEP}] )"
-BDEPEND="dev-util/gtk-doc-am
-	doc? ( >=dev-util/gtk-doc-1.27 )
+	lcms? ( >=media-libs/lcms-2.9[${MULTILIB_USEDEP}] )
+	matio? ( >=sci-libs/matio-1.5.11[${MULTILIB_USEDEP}] )
+	openexr? ( >=media-libs/openexr-2.2.0[${MULTILIB_USEDEP}] )
+	openslide? ( >=media-libs/openslide-3.4.1[${MULTILIB_USEDEP}] )
+	orc? ( >=dev-lang/orc-0.4[${MULTILIB_USEDEP}] )
+	png? ( >=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}] )
+	spng? ( >=media-libs/libspng-0.6.1[${MULTILIB_USEDEP}] )
+	pangoft2? ( >=x11-libs/pango-1.40.14[${MULTILIB_USEDEP}] )
+	poppler? ( >=app-text/poppler-0.62.0[cairo,introspection] )
+	python? ( ${PYTHON_DEPS} )
+	svg? ( >=gnome-base/librsvg-2.40.20[${MULTILIB_USEDEP}] )
+	tiff? ( >=media-libs/tiff-4.0.9:0=[${MULTILIB_USEDEP}] )
+	webp? ( >=media-libs/libwebp-0.6.1[${MULTILIB_USEDEP}] )
+	zlib? ( >=sys-libs/zlib-0.4[${MULTILIB_USEDEP}] )"
+BDEPEND+="
 	|| (	>=sys-devel/gcc-10
-		>=sys-devel/clang-10 )"
-REQUIRED_USE="doc
-	      imagequant? ( png )
-	      poppler? ( cairo )
-	      python? ( ${PYTHON_REQUIRED_USE} )
-	      svg? ( cairo )"
+		>=sys-devel/clang-10 )
+	dev-util/gtk-doc-am
+	doc? ( >=dev-util/gtk-doc-1.27 )
+	python? ( ${PYTHON_DEPS} )"
 RESTRICT="mirror"
-SLOT="1/${PV}"
+SRC_URI="https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 S="${WORKDIR}/libvips-${PV}"
 DOCS=( AUTHORS ChangeLog NEWS README.md THANKS )
 
@@ -71,7 +74,7 @@ pkg_setup() {
 	use python && python-single-r1_pkg_setup
 
 	CC=$(tc-getCC)
-	CXX=$(tc-getCC)
+	CXX=$(tc-getCXX)
 
 	if [[ "${CXX}" =~ 'g++' ]] ; then
 		if ver_test $(gcc-version) -lt 9 ; then
@@ -102,7 +105,6 @@ multilib_src_configure() {
 	local magick="--without-magick";
 	use graphicsmagick && magick="--with-magickpackage=GraphicsMagick"
 	use imagemagick && magick="--with-magickpackage=MagickCore"
-
 	econf ${magick} \
 		--without-nifti \
 		--without-pdfium \
