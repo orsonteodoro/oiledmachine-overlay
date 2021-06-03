@@ -3,23 +3,22 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
-
+PYTHON_COMPAT=( python3_{8..10} )
 inherit eutils flag-o-matic meson multilib-minimal python-single-r1
 
 MY_PN="gst-omx"
 DESCRIPTION="GStreamer OpenMAX IL wrapper plugin"
 HOMEPAGE="http://gstreamer.freedesktop.org/modules/gst-omx.html"
-SRC_URI="http://gstreamer.freedesktop.org/src/${MY_PN}/${MY_PN}-${PV}.tar.xz"
-
 LICENSE="LGPL-2.1"
-SLOT="1.0"
 KEYWORDS="~arm ~amd64"
-IUSE="rpi omx-bellagio omx-tizonia examples test"
-
+SLOT="1.0/${PV}"
+IUSE+=" rpi omx-bellagio omx-tizonia examples test"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+	^^ ( rpi omx-bellagio omx-tizonia )"
 # FIXME: What >=media-libs/gst-plugins-bad-1.4.0:1.0[gl] stuff for non-rpi?
-RDEPEND="
-	>=dev-libs/glib-2.44.0:2[${MULTILIB_USEDEP}]
+RDEPEND+="
+	>=dev-libs/glib-2.40.0:2[${MULTILIB_USEDEP}]
 	>=media-libs/gstreamer-${PV}:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/gst-plugins-good-${PV}:1.0[${MULTILIB_USEDEP}]
@@ -28,18 +27,15 @@ RDEPEND="
 		>=media-libs/gst-plugins-bad-1.4.0:1.0[egl,gles2,rpi,${MULTILIB_USEDEP}]
 	)
 	omx-bellagio? ( >=media-libs/libomxil-bellagio-0.9.3:=[${MULTILIB_USEDEP}] )
-	omx-tizonia? ( >=media-sound/tizonia-0.19.0:=[${MULTILIB_USEDEP}] )"
-DEPEND="${RDEPEND}
+	omx-tizonia? ( >=media-sound/tizonia-0.1.0:=[${MULTILIB_USEDEP}] )"
+DEPEND+=" ${RDEPEND}
 	>=dev-util/gtk-doc-am-1.3"
-BDEPEND="${BDEPEND}
+BDEPEND+=" ${BDEPEND}
 	${PYTHON_DEPS}
 	>=dev-util/meson-0.47
 	virtual/pkgconfig"
-REQUIRED_USE="
-	${PYTHON_REQUIRED_USE}
-	^^ ( rpi omx-bellagio omx-tizonia )"
+SRC_URI="http://gstreamer.freedesktop.org/src/${MY_PN}/${MY_PN}-${PV}.tar.xz"
 RESTRICT="mirror"
-
 S="${WORKDIR}/${MY_PN}-${PV}"
 
 multilib_src_configure() {
