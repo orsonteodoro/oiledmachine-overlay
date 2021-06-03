@@ -3,28 +3,28 @@
 
 EAPI=7
 VALA_USE_DEPEND="vapigen"
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{8..10} )
 
 inherit gnome.org gnome2-utils meson python-any-r1 vala xdg
 inherit multilib-minimal
 
 DESCRIPTION="Libraries for cryptographic UIs and accessing PKCS#11 modules"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"
-
 LICENSE="GPL-2+ LGPL-2+"
 SLOT="0/1" # subslot = suffix of libgcr-base-3 and co
-
 IUSE+=" gtk gtk-doc +introspection +vala"
 REQUIRED_USE+=" vala? ( introspection )"
-
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris"
-
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 \
+~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris"
+# For dependencies see: gcr-3.40.0/meson.build
+# Upstream says GPG is optional to avoid circular dependency
 DEPEND+="
+	>=app-crypt/p11-kit-0.19.0[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.44.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.2.2:0=[${MULTILIB_USEDEP}]
-	>=app-crypt/p11-kit-0.19.0[${MULTILIB_USEDEP}]
-	gtk? ( >=x11-libs/gtk+-3.12:3[X,introspection?,${MULTILIB_USEDEP}] )
 	>=sys-apps/dbus-1[${MULTILIB_USEDEP}]
+	app-crypt/gnupg
+	gtk? ( >=x11-libs/gtk+-3.22:3[X,introspection?,${MULTILIB_USEDEP}] )
 	introspection? ( >=dev-libs/gobject-introspection-1.58:= )"
 RDEPEND+=" ${DEPEND}
 	app-crypt/gnupg"
@@ -43,13 +43,9 @@ BDEPEND+="
 	vala? ( $(vala_depend) )"
 
 PATCHES=(
-	"${FILESDIR}"/${PV}-fix-gck-slot-test.patch
-	"${FILESDIR}"/${PV}-meson-vapi-deps.patch
-	"${FILESDIR}"/${PV}-meson-enum-race.patch
-	"${FILESDIR}"/${PV}-avoid-gnupg-circular-dep.patch
-	"${FILESDIR}"/${PV}-optional-vapi.patch
-	"${FILESDIR}"/${PV}-meson-fix-gtk-doc-without-ui.patch
-	"${FILESDIR}"/${PV}-add-multiabi-suffix.patch
+	"${FILESDIR}"/3.36.0-optional-vapi.patch
+	"${FILESDIR}"/3.36.0-meson-fix-gtk-doc-without-ui.patch
+	"${FILESDIR}"/3.36.0-add-multiabi-suffix.patch
 )
 
 pkg_setup() {
@@ -69,7 +65,7 @@ src_configure() {
 			$(multilib_native_usex introspection -Dintrospection=true -Dintrospection=false)
 			$(meson_use gtk)
 			$(meson_use gtk-doc gtk_doc)
-			-Dgpg_path="${EPREFIX}"/usr/bin/gpg
+			-Dgpg_path=/usr/bin/gpg
 			$(multilib_native_usex vala -Dvapi=true -Dvapi=false)
 			-Dabi="${ABI}"
 		)
