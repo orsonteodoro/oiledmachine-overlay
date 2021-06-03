@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-USE_RUBY="ruby24 ruby25 ruby26 ruby27 ruby30"
+USE_RUBY="ruby26 ruby27 ruby30"
 
 inherit eutils python-r1 ruby-ng
 
