@@ -90,12 +90,15 @@ llvm_check_deps() {
 pkg_setup() {
 	# See https://github.com/imageworks/OpenShadingLanguage/blob/master/INSTALL.md
 	# Supports LLVM-{7,8,9,10} but should be the same throughout the system.
-	if use llvm-9 ; then
-		einfo "Linking with LLVM-9"
-		export LLVM_MAX_SLOT=9
-	elif use llvm-10 ; then
+	if use llvm-10 ; then
 		einfo "Linking with LLVM-10"
 		export LLVM_MAX_SLOT=10
+	elif use llvm-11 ; then
+		einfo "Linking with LLVM-11"
+		export LLVM_MAX_SLOT=11
+	elif use llvm-12 ; then
+		einfo "Linking with LLVM-11"
+		export LLVM_MAX_SLOT=12
 	fi
 
 	if use qt5 ; then
