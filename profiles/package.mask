@@ -55,16 +55,10 @@ dev-lua/luasqlite3
 dev-lua/luaxml
 media-gfx/nvidia-texture-tools
 media-plugins/bitlbee-facebook
-net-misc/boinc-bfgminer-cpu
-net-misc/boinc-bfgminer-gpu
-sci-misc/boinc
-sci-misc/boinc-server
-sci-misc/boinc-server-project-eligius
 sys-process/psdoom-ng
 
 # Old versions; EOL (End Of Life)?; no longer receiving security updates
 media-libs/alure
-=net-libs/nodejs-10*
 
 # Contains End Of Life (EOL) Electron versions with old Chromium parts
 # while project is active within ~2 years (2020).  May contain critical
