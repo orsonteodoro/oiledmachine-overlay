@@ -5,8 +5,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
-
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake flag-o-matic python-single-r1
 
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
@@ -14,9 +13,9 @@ HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 SLOT="0"
-IUSE+=" -abi6-compat +abi7-compat +blosc cpu_flags_x86_avx \
-cpu_flags_x86_sse4_2 doc egl +jemalloc -log4cplus -numpy -openexr -python \
-+static-libs tbb test -vdb_lod +vdb_print -vdb_render -vdb_view"
+IUSE+=" -abi6-compat +abi7-compat +blosc cpu_flags_x86_avx cpu_flags_x86_sse4_2
+doc egl +jemalloc -log4cplus -numpy -openexr -python +static-libs tbb test
+-vdb_lod +vdb_print -vdb_render -vdb_view"
 VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
 REQUIRED_USE+="
 	^^ ( abi6-compat abi7-compat )
@@ -78,8 +77,8 @@ BDEPEND+="
 		dev-texlive/texlive-latexextra
 	)
 	test? ( >=dev-util/cppunit-1.10 )"
-SRC_URI="\
- https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz \
+SRC_URI="
+https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 PATCHES=(
 	"${FILESDIR}/${P}-0001-Fix-multilib-header-source.patch"
