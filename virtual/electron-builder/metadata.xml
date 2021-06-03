@@ -12,6 +12,7 @@
     that wish to update should add one of the following
     corresponding to a LTS branch:
 
+    virtual/electron-builder:13=
     virtual/electron-builder:12=
     virtual/electron-builder:11=
     virtual/electron-builder:10=
