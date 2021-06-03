@@ -1,9 +1,0 @@
-<version>
-  <file>
-    <physical_name>bfgminer_3.10.5_x86_64-pc-linux-gnu__sse2</physical_name>
-    <logical_name>bfgminer_3.10.5_x86_64-pc-linux-gnu__sse2</logical_name>
-    <copy_file/>
-    <main_program/>
-  </file>
-  <api_version>7.4.42</api_version>
-</version>
