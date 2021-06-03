@@ -97,7 +97,7 @@ pkg_setup() {
 		einfo "Linking with LLVM-11"
 		export LLVM_MAX_SLOT=11
 	elif use llvm-12 ; then
-		einfo "Linking with LLVM-11"
+		einfo "Linking with LLVM-12"
 		export LLVM_MAX_SLOT=12
 	fi
 
