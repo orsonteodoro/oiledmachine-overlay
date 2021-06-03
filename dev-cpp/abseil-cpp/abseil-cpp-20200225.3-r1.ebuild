@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-multilib python-any-r1
 
 DESCRIPTION="Abseil Common Libraries (C++), LTS Branch"
