@@ -51,6 +51,7 @@ pkg_setup() {
 the audio firmware."
 		fi
 	fi
+	use python && pkg_setup
 }
 
 src_configure() {
