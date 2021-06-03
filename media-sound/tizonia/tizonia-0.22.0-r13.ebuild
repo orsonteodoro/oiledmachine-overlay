@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..10} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit eutils meson multilib-minimal python-single-r1 xdg
 
 DESCRIPTION="Command-line cloud music player for Linux with support for \
@@ -14,29 +14,33 @@ LICENSE="LGPL-3.0+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE+=" +aac +alsa +bash-completion -blocking-etb-ftb -blocking-sendcommand
- +boost +curl +dbus +file-io +flac +fuzzywuzzy +inproc-io
+ +boost +curl doc +dbus +file-io +flac +fuzzywuzzy +inproc-io
  +mp4 +ogg +opus +lame +libsndfile +mad +mp3-metadata-eraser +mp2 +mpg123
  +player +pulseaudio +python +sdl +icecast-client +icecast-server
  +iheart -test +vorbis +vpx +webm +zsh-completion
  +chromecast +google-music +plex +soundcloud +spotify +tunein +youtube"
-REQUIRED_USE+=" chromecast? ( player python boost curl dbus google-music )
-	      google-music? ( player python boost fuzzywuzzy curl )
-	      icecast-client? ( player curl )
-	      icecast-server? ( player )
-	      iheart? ( boost player python )
-	      mp2? ( mpg123 )
-	      mp3-metadata-eraser? ( mpg123 )
-	      ogg? ( curl )
-	      player? ( boost python )
-	      plex? ( player python boost fuzzywuzzy curl )
-	      python? ( || ( chromecast google-music iheart plex player
+# Upstream reported in meson.build docs support is not functional
+#   and requires manual execution
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+	!doc
+	chromecast? ( player python boost curl dbus google-music )
+	google-music? ( player python boost fuzzywuzzy curl )
+	icecast-client? ( player curl )
+	icecast-server? ( player )
+	iheart? ( boost player python )
+	mp2? ( mpg123 )
+	mp3-metadata-eraser? ( mpg123 )
+	ogg? ( curl )
+	player? ( boost python )
+	plex? ( player python boost fuzzywuzzy curl )
+	python? ( || ( chromecast google-music iheart plex player
 			soundcloud spotify tunein youtube ) )
-	      !python? ( !chromecast !google-music !iheart !plex !player
-			!soundcloud !spotify !tunein !youtube )
-	      soundcloud? ( player python boost fuzzywuzzy curl )
-	      spotify? ( player python boost fuzzywuzzy )
-	      tunein? ( player python boost fuzzywuzzy curl )
-	      youtube? ( player python boost fuzzywuzzy curl )"
+	!python? ( !chromecast !google-music !iheart !plex !player
+		!soundcloud !spotify !tunein !youtube )
+	soundcloud? ( player python boost fuzzywuzzy curl )
+	spotify? ( player python boost fuzzywuzzy )
+	tunein? ( player python boost fuzzywuzzy curl )
+	youtube? ( player python boost fuzzywuzzy curl )"
 
 # 3rd party repos may be required and be added to package.unmask.  Use
 # `layman -a <repo-name>` to add some of these overlays that hold these
@@ -81,55 +85,64 @@ REQUIRED_USE+=" chromecast? ( player python boost curl dbus google-music )
 #
 # >=dev-python/dnspython-1.16.0 added to avoid merge conflict between pycrypto
 # and pycryptodome.  It should not be here but resolved in dnspython.
-RDEPEND+=" aac? (  media-libs/faad2[${MULTILIB_USEDEP}] )
-	 alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
-	 bash-completion? ( app-shells/bash )
-	 boost? (
+RDEPEND+="
+	$(python_gen_cond_dep '>=sys-apps/util-linux-2.19.0[${PYTHON_MULTI_USEDEP}]')
+	aac? (  media-libs/faad2[${MULTILIB_USEDEP}] )
+	alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
+	bash-completion? ( app-shells/bash )
+	boost? (
 		>=dev-libs/boost-1.54[${MULTILIB_USEDEP}]
 		$(python_gen_cond_dep '>=dev-libs/boost-1.54[python,${PYTHON_MULTI_USEDEP}]')
-	 )
-	 chromecast? ( || ( $(python_gen_cond_dep 'dev-python/PyChromecast[${PYTHON_MULTI_USEDEP}]')
+	)
+	chromecast? ( || ( $(python_gen_cond_dep 'dev-python/PyChromecast[${PYTHON_MULTI_USEDEP}]')
 			    $(python_gen_cond_dep 'dev-python/pychromecast[${PYTHON_MULTI_USEDEP}]') ) )
-	 curl? ( >=net-misc/curl-7.18.0[${MULTILIB_USEDEP}] )
-	 flac? ( >=media-libs/flac-1.3.0[${MULTILIB_USEDEP}] )
-	 fuzzywuzzy? ( $(python_gen_cond_dep 'dev-python/fuzzywuzzy[${PYTHON_MULTI_USEDEP}]') )
-	 google-music? ( $(python_gen_cond_dep 'dev-python/gmusicapi[${PYTHON_MULTI_USEDEP}]') )
-	 inproc-io? ( >=net-libs/zeromq-4.0.4[${MULTILIB_USEDEP}] )
-	 lame? ( media-sound/lame[${MULTILIB_USEDEP}] )
-	 ogg? ( >=media-libs/liboggz-1.1.1[${MULTILIB_USEDEP}] )
-	 opus? ( >=media-libs/opusfile-0.5[${MULTILIB_USEDEP}] )
-	 dbus? ( sys-apps/dbus[${MULTILIB_USEDEP}] )
-	 libsndfile? ( >=media-libs/libsndfile-1.0.25[${MULTILIB_USEDEP}] )
-	 mp4? ( media-libs/libmp4v2[${MULTILIB_USEDEP}] )
-	 mad? ( media-libs/libmad[${MULTILIB_USEDEP}] )
-	 mpg123? ( >=media-sound/mpg123-1.16.0[${MULTILIB_USEDEP}] )
-	 opus? ( >=media-libs/opus-1.1[${MULTILIB_USEDEP}] )
-	 player? ( >=media-libs/libmediainfo-0.7.65[${MULTILIB_USEDEP}]
-		   >=media-libs/taglib-1.7.0:0[${MULTILIB_USEDEP}] )
-	 plex? ( $(python_gen_cond_dep 'dev-python/python-plexapi[${PYTHON_MULTI_USEDEP}]') )
-	 pulseaudio? ( >=media-sound/pulseaudio-1.1[${MULTILIB_USEDEP}] )
-	 python? ( ${PYTHON_DEPS} )
-	 sdl? ( media-libs/libsdl[${MULTILIB_USEDEP}] )
-	 soundcloud? ( $(python_gen_cond_dep 'dev-python/soundcloud-python[${PYTHON_MULTI_USEDEP}]') )
-	 spotify? ( >=dev-libs/libspotify-12.1.51[${MULTILIB_USEDEP}] )
-	 $(python_gen_cond_dep '>=sys-apps/util-linux-2.19.0[${PYTHON_MULTI_USEDEP}]')
-	 test? ( dev-db/sqlite:3[${MULTILIB_USEDEP}] )
-	 vorbis? ( media-libs/libfishsound[${MULTILIB_USEDEP}] )
-	 vpx? ( media-libs/libvpx[${MULTILIB_USEDEP}] )
-	 youtube? ( $(python_gen_cond_dep 'dev-python/pafy[${PYTHON_MULTI_USEDEP}]')
+	curl? ( >=net-misc/curl-7.18.0[${MULTILIB_USEDEP}] )
+	flac? ( >=media-libs/flac-1.3.0[${MULTILIB_USEDEP}] )
+	fuzzywuzzy? ( $(python_gen_cond_dep 'dev-python/fuzzywuzzy[${PYTHON_MULTI_USEDEP}]') )
+	google-music? ( $(python_gen_cond_dep 'dev-python/gmusicapi[${PYTHON_MULTI_USEDEP}]') )
+	inproc-io? ( >=net-libs/zeromq-4.0.4[${MULTILIB_USEDEP}] )
+	lame? ( media-sound/lame[${MULTILIB_USEDEP}] )
+	ogg? ( >=media-libs/liboggz-1.1.1[${MULTILIB_USEDEP}] )
+	opus? ( >=media-libs/opusfile-0.5[${MULTILIB_USEDEP}] )
+	dbus? ( sys-apps/dbus[${MULTILIB_USEDEP}] )
+	libsndfile? ( >=media-libs/libsndfile-1.0.25[${MULTILIB_USEDEP}] )
+	mp4? ( media-libs/libmp4v2[${MULTILIB_USEDEP}] )
+	mad? ( media-libs/libmad[${MULTILIB_USEDEP}] )
+	mpg123? ( >=media-sound/mpg123-1.16.0[${MULTILIB_USEDEP}] )
+	opus? ( >=media-libs/opus-1.1[${MULTILIB_USEDEP}] )
+	player? ( >=media-libs/libmediainfo-0.7.65[${MULTILIB_USEDEP}]
+			>=media-libs/taglib-1.7.0:0[${MULTILIB_USEDEP}] )
+	plex? ( $(python_gen_cond_dep 'dev-python/python-plexapi[${PYTHON_MULTI_USEDEP}]') )
+	pulseaudio? ( >=media-sound/pulseaudio-1.1[${MULTILIB_USEDEP}] )
+	python? ( ${PYTHON_DEPS} )
+	sdl? ( media-libs/libsdl[${MULTILIB_USEDEP}] )
+	soundcloud? ( $(python_gen_cond_dep 'dev-python/soundcloud-python[${PYTHON_MULTI_USEDEP}]') )
+	spotify? ( >=dev-libs/libspotify-12.1.51[${MULTILIB_USEDEP}] )
+	test? ( dev-db/sqlite:3[${MULTILIB_USEDEP}] )
+	vorbis? ( media-libs/libfishsound[${MULTILIB_USEDEP}] )
+	vpx? ( media-libs/libvpx[${MULTILIB_USEDEP}] )
+	youtube? ( $(python_gen_cond_dep 'dev-python/pafy[${PYTHON_MULTI_USEDEP}]')
 		    $(python_gen_cond_dep 'net-misc/youtube-dl[${PYTHON_MULTI_USEDEP}]') )
-	 webm? ( media-libs/nestegg[${MULTILIB_USEDEP}] )
-	 zsh-completion? ( app-shells/zsh )"
-
+	webm? ( media-libs/nestegg[${MULTILIB_USEDEP}] )
+	zsh-completion? ( app-shells/zsh )"
 DEPEND+=" ${RDEPEND}
 	>=dev-libs/check-0.9.4[${MULTILIB_USEDEP}]
 	>=dev-libs/log4c-1.2.1[${MULTILIB_USEDEP}]"
-SRC_URI=\
-"https://github.com/tizonia/tizonia-openmax-il/archive/v${PV}.tar.gz
+BDEPEND+="
+	>=dev-util/meson-0.53
+	doc? (
+		${PYTHON_DEPS}
+		app-doc/doxygen
+		dev-python/alabaster
+		dev-python/breathe
+		dev-python/sphinx
+		dev-python/recommonmark
+	)"
+SRC_URI="
+https://github.com/tizonia/tizonia-openmax-il/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz
 https://github.com/tizonia/tizonia-openmax-il/commit/a1e8f8bddeae144ae634a031b547bc2a573db558.patch
-	-> ${PN}-${PV}-a1e8f8b-add-missing-placeholders-prefix.patch
-"
+	-> ${PN}-${PV}-a1e8f8b-add-missing-placeholders-prefix.patch"
 MY_PN="tizonia-openmax-il"
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
@@ -231,6 +244,7 @@ src_configure() {
 			$(meson_use aac)
 			$(meson_use alsa)
 			$(meson_use curl)
+			$(meson_use doc docs)
 			$(meson_use dbus)
 			$(meson_use icecast-client)
 			$(meson_use icecast-server)
