@@ -4,7 +4,7 @@
 EAPI=7
 
 LUA_COMPAT=( lua5-{1..2} )
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 
 inherit fcaps flag-o-matic lua-single python-any-r1 qmake-utils xdg-utils cmake
 
@@ -75,6 +75,7 @@ DEPEND="
 	${PYTHON_DEPS}
 "
 BDEPEND="
+	${PYTHON_DEPS}
 	dev-lang/perl
 	sys-devel/bison
 	sys-devel/flex
