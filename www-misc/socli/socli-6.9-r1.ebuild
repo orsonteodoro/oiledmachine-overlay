@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..10} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1 eutils
 
 DESCRIPTION="Stack overflow command line client. Search and browse stack \
@@ -11,12 +11,15 @@ overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
 LICENSE="BSD"
 EGIT_COMMIT="427ad9cbc4e3ebe17334e2e61484da715d33f3bf"
-SRC_URI="https://github.com/gautamkrishnar/socli/archive/${EGIT_COMMIT}.tar.gz \
+SRC_URI="
+https://github.com/gautamkrishnar/socli/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
 IUSE+=" man"
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 SLOT="0"
-DEPEND+=" dev-python/argcomplete
+DEPEND+=" ${PYTHON_DEPS}
+	  dev-python/argcomplete
 	>=dev-python/beautifulsoup-4.9.1:4[${PYTHON_USEDEP}]
 	>=dev-python/colorama-0.4.3[${PYTHON_USEDEP}]
 	>=dev-python/py-stackexchange-2.2.007[${PYTHON_USEDEP}]
@@ -24,6 +27,7 @@ DEPEND+=" dev-python/argcomplete
 	>=dev-python/urwid-2.1.1[${PYTHON_USEDEP}]
 	>=dev-python/sentry-sdk-0.18.0[${PYTHON_USEDEP}]"
 RDEPEND+=" ${DEPEND}"
+BDEPEND+=" ${PYTHON_DEPS}"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
