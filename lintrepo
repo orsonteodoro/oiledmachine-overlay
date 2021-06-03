@@ -328,3 +328,28 @@ done
 #	fi
 #done
 
+einfo "Checking for missing pkg_setup for python eclasses"
+for f in $(grep -l -r --exclude-dir=.git "python-any-r1" ./) ; do
+	if grep -q -e "pkg_setup" "${f}" ; then
+		if ! grep -q -e "python-any-r1_pkg_setup" "${f}" ; then
+			echo "Missing python-any-r1_pkg_setup in ${f} for pkg_setup"
+		fi
+	fi
+done
+
+for f in $(grep -l -r --exclude-dir=.git "python-single-r1" ./) ; do
+	if grep -q -e "pkg_setup" "${f}" ; then
+		if ! grep -q -e "python-single-r1_pkg_setup" "${f}" ; then
+			echo "Missing python-single-r1_pkg_setup in ${f} for pkg_setup"
+		fi
+	fi
+done
+
+for f in $(grep -l -r --exclude-dir=.git "python-r1" ./) ; do
+	if grep -q -e "pkg_setup" "${f}" ; then
+		if ! grep -q -e  "python_setup" "${f}" ; then
+			echo "Missing python_setup in ${f} for pkg_setup"
+		fi
+	fi
+done
+
