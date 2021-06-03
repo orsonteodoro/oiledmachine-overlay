@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..10} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-utils eutils flag-o-matic multilib-build python-r1 \
 static-libs toolchain-funcs
 
@@ -44,8 +44,8 @@ BDEPEND+="
 	singlehtml? ( ${DEPEND_SPHINX} )
 	texinfo? ( ${DEPEND_SPHINX} )"
 EGIT_COMMIT="1a303f1028baf973d92bec037f92a2516d7060a9"
-SRC_URI=\
-"https://github.com/nanodbc/${PN}/archive/${EGIT_COMMIT}.tar.gz \
+SRC_URI="
+https://github.com/nanodbc/${PN}/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/nanodbc-${EGIT_COMMIT}"
 RESTRICT="mirror"
