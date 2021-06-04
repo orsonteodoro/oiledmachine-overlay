@@ -52,9 +52,9 @@ te tr uk vi zh_CN )
 
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua +bmalloc cpu_flags_arm_thumb2
 +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer
--gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +libhyphen
-+libnotify lto -minibrowser +opengl openmp -seccomp -spell -systemd test
-wayland +webassembly +webassembly-b3-jit +webgl +X"
+-gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen
++libnotify lto -minibrowser +opengl openmp -seccomp -spell -systemd
+test wayland +webassembly +webassembly-b3-jit +webgl +X"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -131,6 +131,7 @@ RDEPEND+=" !net-libs/webkit-gtk:4
 	>=media-libs/fontconfig-2.13.1:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.10.1:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-2.6.4:=[icu(+),${MULTILIB_USEDEP}]
+	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.37:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
@@ -196,7 +197,10 @@ BDEPEND+="
 	>=dev-lang/perl-5.30.0
 	>=sys-devel/bison-3.5.1
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
-	>=virtual/pkgconfig-0.29.1[${MULTILIB_USEDEP}]
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)
 	virtual/perl-Carp
 	virtual/perl-Data-Dumper
 	virtual/perl-JSON-PP
@@ -355,8 +359,7 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 }
 
 src_prepare() {
-	eapply "${FILESDIR}"/2.28.2-opengl-without-X-fixes.patch
-	eapply "${FILESDIR}"/2.32.1-Properly-use-CompletionHandler-when-USE_OPENGL_OR_ES.patch
+	eapply "${FILESDIR}"/2.33.1-opengl-without-X-fixes.patch
 	cmake_src_prepare
 	gnome2_src_prepare
 	multilib_copy_sources
@@ -456,10 +459,12 @@ multilib_src_configure() {
 		-DPORT=GTK
 		-DUSE_GTK4=OFF
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
+		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
+		-DUSE_SOUP2=ON
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
