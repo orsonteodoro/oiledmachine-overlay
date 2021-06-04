@@ -13,7 +13,7 @@ EPLATFORMS="server_dedicated server_headless ${GODOT_PLATFORMS_[@]/#/godot_platf
 PYTHON_COMPAT=( python3_{8..10} )
 LLVM_MAX_LTO_SLOT=11 # LTO breaks with 13 but 11 is stable
 inherit check-reqs desktop eutils flag-o-matic llvm multilib-build platforms \
-python-single-r1 scons-utils toolchain-funcs
+python-any-r1 scons-utils toolchain-funcs
 
 DESCRIPTION="Godot Engine - Multi-platform 2D and 3D game engine"
 HOMEPAGE="http://godotengine.org"
@@ -122,7 +122,6 @@ IUSE+=" asan_server lsan_server"
 IUSE+=" asan_client lsan_client"
 IUSE+=" -ios-sim +icloud +game-center +store-kit" # ios
 REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
 	abi_x86_32? ( godot_linux_x86 godot_platforms_linux )
 	abi_x86_64? ( godot_linux_x86_64 godot_platforms_linux )
 	clang
@@ -532,7 +531,7 @@ pkg_setup() {
 
 	_set_check_req
 	check-reqs_pkg_setup
-	python_setup
+	python-any-r1_pkg_setup
 	if use lto && use clang ; then
 		LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
 		einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"

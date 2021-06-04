@@ -15,7 +15,7 @@ EPLATFORMS="server_dedicated server_headless ${GODOT_PLATFORMS_[@]/#/godot_platf
 LLVM_MAX_LTO_SLOT=11 # LTO breaks with 13 but 11 is stable
 LLVM_MIN_WASM_SLOT=13
 inherit check-reqs desktop eutils flag-o-matic llvm multilib-build platforms \
-python-r1 scons-utils virtualx
+python-any-r1 scons-utils virtualx
 
 DESCRIPTION="Godot Engine - Multi-platform 2D and 3D game engine"
 HOMEPAGE="http://godotengine.org"
@@ -191,7 +191,6 @@ IUSE+=" -ios-sim +icloud +game-center +store-kit" # ios
 #	gdnative? ( !clang )
 # The mutex for lto and godot_web_wasm32 may be removed once the bug for building llvm-13 with lto for godot is fixed.
 REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
 	lto? ( !godot_web_wasm32 )
 	godot_web_wasm32? ( !lto )
 	abi_x86_32? ( godot_linux_x86 godot_platforms_linux )
@@ -248,7 +247,6 @@ REQUIRED_USE+="
 		!tsan_client
 		!tsan_server
 	)
-	rst? ( || ( $(python_gen_useflags 'python3*') ) )
 	server? ( || ( server_dedicated
 		server_headless ) )
 	server_dedicated? ( server )
@@ -847,7 +845,7 @@ pkg_setup() {
 
 	_set_check_req
 	check-reqs_pkg_setup
-	python_setup
+	python-any-r1_pkg_setup
 	if use lto && use clang ; then
 		LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
 		einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
