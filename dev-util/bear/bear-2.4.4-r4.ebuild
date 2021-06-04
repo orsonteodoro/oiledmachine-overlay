@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils python-single-r1
+inherit cmake-utils python-any-r1
 
 DESCRIPTION="Bear is a tool that generates a compilation database for clang \
 tooling."
@@ -14,14 +14,13 @@ KEYWORDS="~amd64 ~x86"
 MY_PN="${PN/b/B}"
 SLOT="0"
 IUSE+=" bash-completion test"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 DEPEND+=" ${PYTHON_DEPS}"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	>=dev-util/cmake-2.8
 	virtual/pkgconfig
 	test? (
-		$(python_gen_cond_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]')
 	)"
 SRC_URI="
 https://github.com/rizsotto/Bear/archive/${PV}.tar.gz

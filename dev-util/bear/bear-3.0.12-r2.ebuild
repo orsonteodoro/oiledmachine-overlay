@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils python-single-r1
+inherit cmake-utils python-any-r1
 
 DESCRIPTION="Bear is a tool that generates a compilation database for clang \
 tooling."
@@ -14,7 +14,6 @@ KEYWORDS="~amd64 ~x86"
 MY_PN="${PN/b/B}"
 SLOT="0"
 IUSE+=" test"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 CDEPEND=" >=net-libs/grpc-1.26
 	   <dev-cpp/abseil-cpp-20200923
 	   >=dev-libs/protobuf-3.11"
@@ -28,7 +27,7 @@ BDEPEND+=" ${CDEPEND}
 	test? (
 		${PYTHON_DEPS}
 		>=dev-cpp/gtest-1.10
-		$(python_gen_cond_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]')
 		dev-util/valgrind
 	)
 	virtual/pkgconfig"
@@ -40,7 +39,7 @@ RESTRICT="mirror"
 
 pkg_setup()
 {
-	python-single-r1_pkg_setup
+	python-any-r1_pkg_setup
 	if pkg-config --libs grpc | grep -q -e "absl_dynamic_annotations" ; then
 		if has_version '>=dev-cpp/abseil-cpp-20200923' ; then
 			# grpc requirement
