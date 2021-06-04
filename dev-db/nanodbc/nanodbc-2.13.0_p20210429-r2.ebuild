@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils eutils flag-o-matic multilib-build python-r1 \
+inherit cmake-utils eutils flag-o-matic multilib-build python-any-r1 \
 static-libs toolchain-funcs
 
 DESCRIPTION="A small C++ wrapper for the native C ODBC API"
@@ -16,12 +16,7 @@ LICENSE="MIT"
 SLOT="0/${PV}"
 IUSE+=" -boost_convert doxygen +debug html +examples -handle_nodata_bug
 +libcxx man pdf -unicode -static-libs singlehtml texinfo"
-REQUIRED_USE+=" !libcxx
-	html? ( ${PYTHON_REQUIRED_USE} )
-	man? ( ${PYTHON_REQUIRED_USE} )
-	pdf? ( ${PYTHON_REQUIRED_USE} )
-	singlehtml? ( ${PYTHON_REQUIRED_USE} )
-	texinfo? ( ${PYTHON_REQUIRED_USE} )"
+REQUIRED_USE+=" !libcxx"
 #building with USE libcxx is broken?
 DEPEND+=" dev-libs/boost:=[${MULTILIB_USEDEP},nls,static-libs?]
 	 dev-db/unixODBC[${MULTILIB_USEDEP}]
@@ -29,17 +24,17 @@ DEPEND+=" dev-libs/boost:=[${MULTILIB_USEDEP},nls,static-libs?]
 RDEPEND+=" ${DEPEND}"
 DEPEND_SPHINX="
 	${PYTHON_DEPS}
-	dev-python/rstcheck[${PYTHON_USEDEP}]
-	dev-python/sphinx[${PYTHON_USEDEP}]
-	dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
-	<dev-python/breathe-4.29.1[${PYTHON_USEDEP}]"
+	$(python_gen_any_dep 'dev-python/rstcheck[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep 'dev-python/sphinx[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep 'dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '<dev-python/breathe-4.29.1[${PYTHON_USEDEP}]')"
 BDEPEND+="
 	>=dev-util/cmake-2.6
 	doxygen? ( app-doc/doxygen )
 	html? ( ${DEPEND_SPHINX} )
 	man? ( ${DEPEND_SPHINX} )
 	pdf? ( ${DEPEND_SPHINX}
-		dev-python/sphinx[${PYTHON_USEDEP},latex]
+		$(python_gen_any_dep 'dev-python/sphinx[${PYTHON_USEDEP},latex]')
 		dev-tex/latexmk )
 	singlehtml? ( ${DEPEND_SPHINX} )
 	texinfo? ( ${DEPEND_SPHINX} )"
@@ -67,7 +62,7 @@ environmental setting for doc generation completeness."
 environmental setting for doc generation completeness."
 	fi
 	if use html || use man || use pdf || use singlehtml || use texinfo ; then
-		python_setup
+		python-any-r1_pkg_setup
 	fi
 }
 
