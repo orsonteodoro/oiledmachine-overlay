@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-multilib python-r1
+inherit cmake-multilib python-single-r1
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
 HOMEPAGE="http://www.bulletphysics.com/"
@@ -132,7 +132,7 @@ REQUIRED_USE+="
 	)"
 CDEPEND="python? (
 		${PYTHON_DEPS}
-		numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
+		numpy? ( $(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]') )
 	 )"
 DEPEND+=" ${CDEPEND}
 	media-libs/freeglut[${MULTILIB_USEDEP}]
@@ -251,6 +251,6 @@ pkg_postinst() {
 		einfo "To properly render the pybullet models do:"
 		einfo "  cd /usr/share/bullet/demos/data"
 		einfo \
-"  python3 /usr/share/bullet/demos/examples/pybullet/examples/inverse_kinematics_pole.py"
+"  ${EPYTHON} /usr/share/bullet/demos/examples/pybullet/examples/inverse_kinematics_pole.py"
 	fi
 }
