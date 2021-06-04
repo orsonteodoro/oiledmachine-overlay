@@ -5,7 +5,7 @@ EAPI=7
 
 CMAKE_BUILD_TYPE=Release
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-multilib multilib-minimal python-r1
+inherit cmake-multilib multilib-minimal python-single-r1
 
 DESCRIPTION="Drivers and libraries for the Xbox Kinect device"
 HOMEPAGE="https://github.com/OpenKinect/${PN}"
@@ -23,7 +23,7 @@ DEPEND+="
 	opencv? ( media-libs/opencv[${MULTILIB_USEDEP}] )
 	python? (
 		${PYTHON_DEPS}
-		dev-python/numpy[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
 	)
 	virtual/libusb:1[${MULTILIB_USEDEP}]"
 RDEPEND+=" ${DEPEND}"
@@ -51,7 +51,7 @@ pkg_setup() {
 the audio firmware."
 		fi
 	fi
-	use python && pkg_setup
+	use python && python-single-r1_pkg_setup
 }
 
 src_configure() {
