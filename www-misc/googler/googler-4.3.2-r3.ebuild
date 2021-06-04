@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit eutils python-single-r1
+inherit eutils python-r1
 
 DESCRIPTION="Google from the terminal"
 HOMEPAGE="https://github.com/jarun/googler"
