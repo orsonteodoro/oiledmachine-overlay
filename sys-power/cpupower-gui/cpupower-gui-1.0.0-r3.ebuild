@@ -74,7 +74,7 @@ src_install() {
 	L=$(grep -r -l -e "#!${T}/${EPYTHON}/bin/python3" "${D}")
 	for f in ${L} ; do
 		einfo "Fixing shebang for ${f}"
-		sed -i -e "s|#!${T}/${EPYTHON}/bin/python3|#!/usr/bin/${EPYTHON}|g" \
+		sed -i -e "s|#!${T}/${EPYTHON}/bin/python3|#!/usr/bin/python3|g" \
 			"${f}" || die
 	done
 }

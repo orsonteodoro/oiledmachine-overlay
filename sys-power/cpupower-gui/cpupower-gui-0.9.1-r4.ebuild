@@ -5,7 +5,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit eutils  meson python-r1 xdg-utils
+inherit eutils meson python-r1 xdg-utils
 
 DESCRIPTION="This program is designed to allow you to change the frequency \
 limits of your cpu and its governor. The application is similar in \
@@ -71,7 +71,7 @@ src_install() {
 	L=$(grep -r -l -e "#!${T}/${EPYTHON}/bin/python3" "${D}")
 	for f in ${L} ; do
 		einfo "Fixing shebang for ${f}"
-		sed -i -e "s|#!${T}/${EPYTHON}/bin/python3|#!/usr/bin/${EPYTHON}|g" \
+		sed -i -e "s|#!${T}/${EPYTHON}/bin/python3|#!/usr/bin/python3|g" \
 			"${f}" || die
 	done
 }
