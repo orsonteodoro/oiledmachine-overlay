@@ -6,7 +6,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit eutils font python-single-r1
+inherit eutils font python-any-r1
 
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
@@ -22,29 +22,28 @@ KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 \
 ~s390 ~sh ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris"
 SLOT="0/${PV}"
 IUSE+=" doc +optipng system-nototools zopflipng"
-REQUIRED_USE+=" ^^ ( optipng zopflipng )
-	      ^^ ( $(python_gen_useflags 'python*') )"
+REQUIRED_USE+=" ^^ ( optipng zopflipng )"
 RDEPEND+=" >=media-libs/fontconfig-2.11.91
 	   media-libs/freetype[png]
           !media-fonts/noto-color-emoji-bin
 	  !media-fonts/noto-emoji
          >=x11-libs/cairo-1.16"
 NOTOTOOLS_DEPEND="
-        $(python_gen_cond_dep '>=media-gfx/scour-0.37[${PYTHON_USEDEP}]')
-        $(python_gen_cond_dep '>=dev-python/booleanOperations-0.8.2[${PYTHON_USEDEP}]')
-        $(python_gen_cond_dep '>=dev-python/defcon-0.6.0[${PYTHON_USEDEP}]')
-        $(python_gen_cond_dep '>=dev-python/fonttools-4.0.2[${PYTHON_USEDEP}]')
-        $(python_gen_cond_dep '>=dev-python/pillow-6.2.0[${PYTHON_USEDEP}]')
-        $(python_gen_cond_dep '>=dev-python/pyclipper-1.1.0_p1[${PYTHON_USEDEP}]')"
+        $(python_gen_any_dep '>=media-gfx/scour-0.37[${PYTHON_USEDEP}]')
+        $(python_gen_any_dep '>=dev-python/booleanOperations-0.8.2[${PYTHON_USEDEP}]')
+        $(python_gen_any_dep '>=dev-python/defcon-0.6.0[${PYTHON_USEDEP}]')
+        $(python_gen_any_dep '>=dev-python/fonttools-4.0.2[${PYTHON_USEDEP}]')
+        $(python_gen_any_dep '>=dev-python/pillow-6.2.0[${PYTHON_USEDEP}]')
+        $(python_gen_any_dep '>=dev-python/pyclipper-1.1.0_p1[${PYTHON_USEDEP}]')"
 INTERNAL_NOTOTOOLS_PV="0.2.0_p20191019" # see setup.py for versioning ; official release was 20191017
 BDEPEND+=" ${PYTHON_DEPS}
-	$(python_gen_cond_dep 'dev-python/fonttools[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep 'dev-python/fonttools[${PYTHON_USEDEP}]')
 	dev-util/pkgconfig
         media-gfx/imagemagick
 	media-gfx/pngquant
 	!system-nototools? ( ${NOTOTOOLS_DEPEND} )
 	system-nototools? (
-		$(python_gen_cond_dep '~dev-python/nototools-'$(ver_cut 1-3 ${INTERNAL_NOTOTOOLS_PV})'[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '~dev-python/nototools-'$(ver_cut 1-3 ${INTERNAL_NOTOTOOLS_PV})'[${PYTHON_USEDEP}]')
 	)
         optipng?   ( media-gfx/optipng )
 	zopflipng? ( app-arch/zopfli )"
@@ -60,8 +59,7 @@ RESTRICT="mirror"
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
 
 pkg_setup() {
-	python_setup
-	einfo "PYTHON=${PYTHON}"
+	python-any-r1_pkg_setup
 	if [[ ! ( "${LANG}" =~ \.utf8$ ) ]] ; then
 		die "Change your locale to suffix .utf8.  Use \`eselect locale\` to set it."
 	fi
