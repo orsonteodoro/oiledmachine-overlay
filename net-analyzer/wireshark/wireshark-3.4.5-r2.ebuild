@@ -143,7 +143,7 @@ src_configure() {
 		append-cxxflags -fPIC -DPIC
 	fi
 
-	python_setup
+	python-any-r1_pkg_setup
 
 	mycmakeargs+=(
 		$(use androiddump && use pcap && echo -DEXTCAP_ANDROIDDUMP_LIBPCAP=yes)
