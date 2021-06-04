@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit multilib-minimal python-any-r1
+inherit multilib-minimal python-r1
 
 DESCRIPTION="a simple web browser based on WebKit/GTK+"
 HOMEPAGE="https://surf.suckless.org/"
@@ -34,7 +34,7 @@ DEPEND+="
 	!sci-chemistry/surf
 	x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
-	mod_adblock? ( $(python_gen_any_dep 'dev-python/future[${PYTHON_USEDEP}]')
+	mod_adblock? ( $(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
 			x11-apps/xprop )
 	!savedconfig? ( net-misc/curl[${MULTILIB_USEDEP}]
 			x11-apps/xprop
@@ -103,7 +103,7 @@ pkg_setup() {
 			"https://surf.suckless.org/patches/searchengines/"
 	fi
 	if use mod_adblock ; then
-		python-any-r1_pkg_setup
+		python_setup
 	fi
 }
 
