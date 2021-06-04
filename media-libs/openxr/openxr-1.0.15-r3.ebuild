@@ -17,8 +17,8 @@ SRC_URI="
 ${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
 	-> ${P}.tar.gz"
 NV_DRIVER_VERSION_VULKAN="390.132"
-IUSE+=" egl gles2 +system-jsoncpp video_cards_amdgpu video_cards_amdgpu-pro \
-video_cards_amdgpu-pro-lts video_cards_i965 video_cards_iris \
+IUSE+=" egl gles2 +system-jsoncpp video_cards_amdgpu video_cards_amdgpu-pro
+video_cards_amdgpu-pro-lts video_cards_i965 video_cards_iris
 video_cards_nvidia video_cards_radeonsi wayland xcb +xlib"
 REQUIRED_USE+=" ^^ ( xlib xcb wayland )"
 DEPEND+=" ${PYTHON_DEPS}
@@ -72,6 +72,7 @@ DEPEND+=" ${PYTHON_DEPS}
 #	x11-libs/libXxf86vm
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
+	$(python_gen_any_dep '>=dev-python/jinja-2[${PYTHON_USEDEP}]')
 	>=dev-util/cmake-3.0"
 CMAKE_BUILD_TYPE=Release
 RESTRICT="mirror"
