@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit desktop python-r1 webapp xdg
+inherit desktop python-any-r1 webapp xdg
 
 DESCRIPTION="HTML5 client for Xpra"
 HOMEPAGE="https://github.com/Xpra-org/xpra-html5"
@@ -28,8 +28,7 @@ LICENSE="MPL-2.0
 # ^^ (MIT GPL-3)  html5/js/lib/jszip.js
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 IUSE+=" +brotli +gzip httpd menu-only local minify"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
-	^^ ( httpd local menu-only )"
+REQUIRED_USE+="	^^ ( httpd local menu-only )"
 #RDEPEND+=" x11-wm/xpra" # avoid circular
 RDEPEND+=" ${PYTHON_DEPS}
 	httpd? ( virtual/httpd-basic )"
@@ -46,7 +45,7 @@ LOCAL_INSTALL_URI="file:///usr/share/xpra/html5/index.html"
 pkg_setup()
 {
 	webapp_pkg_setup
-	python_setup
+	python-any-r1_pkg_setup
 
 	if ( use menu-only || use httpd ) \
 	&& [[ -z "${XPRA_HTML5_BROWSER}" && -z "${XPRA_HTML5_PROTO}" \
