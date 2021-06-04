@@ -321,7 +321,7 @@ sheepit_client_blender_2_92_0? (
 <x11-drivers/amdgpu-pro-20.45\
 [opencl,opencl_orca?,opencl_pal?]
 >=x11-drivers/amdgpu-pro-20.45\
-[opencl,opencl_orca?,opencl_pal?,opencl_rocr?]
+[opencl,opencl_orca?,opencl_rocr?]
 							)
 						)
 						lts? (
@@ -329,7 +329,7 @@ sheepit_client_blender_2_92_0? (
 <x11-drivers/amdgpu-pro-lts-20.45\
 [opencl,opencl_orca?,opencl_pal?]
 >=x11-drivers/amdgpu-pro-lts-20.45\
-[opencl,opencl_orca?,opencl_pal?,opencl_rocr?]
+[opencl,opencl_orca?,opencl_rocr?]
 							)
 						)
 					)
