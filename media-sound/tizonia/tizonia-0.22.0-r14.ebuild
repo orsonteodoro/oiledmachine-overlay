@@ -10,7 +10,7 @@ DESCRIPTION="Command-line cloud music player for Linux with support for \
 Spotify, Google Play Music, YouTube, SoundCloud, TuneIn, IHeartRadio, Plex \
 servers and Chromecast devices."
 HOMEPAGE="http://tizonia.org"
-LICENSE="LGPL-3.0+"
+LICENSE="LGPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE+=" +aac +alsa +bash-completion -blocking-etb-ftb -blocking-sendcommand
