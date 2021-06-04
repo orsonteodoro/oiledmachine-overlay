@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit multilib-minimal python-single-r1
+inherit multilib-minimal python-any-r1
 
 DESCRIPTION="a simple web browser based on WebKit/GTK+"
 HOMEPAGE="https://surf.suckless.org/"
@@ -21,7 +21,7 @@ KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 SLOT="0"
 IUSE+=" doc mod_adblock mod_adblock_spam404 mod_adblock_easylist mod_autoopen
 mod_link_hints mod_searchengines mod_simple_bookmarking_redux update_adblock"
-REQUIRED_USE+=" update_adblock? ( ${PYTHON_REQUIRED_USE} )
+REQUIRED_USE+="
 	mod_adblock_easylist? ( mod_adblock )
 	mod_adblock_spam404? ( mod_adblock )
 	mod_searchengines? ( savedconfig )
@@ -34,7 +34,7 @@ DEPEND+="
 	!sci-chemistry/surf
 	x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
-	mod_adblock? ( $(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
+	mod_adblock? ( $(python_gen_any_dep 'dev-python/future[${PYTHON_USEDEP}]')
 			x11-apps/xprop )
 	!savedconfig? ( net-misc/curl[${MULTILIB_USEDEP}]
 			x11-apps/xprop
@@ -101,6 +101,9 @@ pkg_setup() {
 	if use mod_searchengines ; then
 		_boilerplate_dl "${SEARCHENGINES_FN}" "${SEARCHENGINES_FN}" \
 			"https://surf.suckless.org/patches/searchengines/"
+	fi
+	if use mod_adblock ; then
+		python-any-r1_pkg_setup
 	fi
 }
 
