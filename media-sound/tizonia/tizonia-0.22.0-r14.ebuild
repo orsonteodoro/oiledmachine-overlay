@@ -166,7 +166,7 @@ _PATCHES=(
 )
 
 pkg_setup() {
-	python_setup
+	python-single-r1_pkg_setup
 	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" \
 			| sed -r -e "s#(-j|--jobs=)\s*##g")
 	local cores=$(nproc)
