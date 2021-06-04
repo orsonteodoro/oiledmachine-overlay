@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils eutils python-single-r1 toolchain-funcs
+inherit cmake-utils eutils python-any-r1 toolchain-funcs
 
 DESCRIPTION="Generated headers and sources for OpenXR loader."
 HOMEPAGE="https://khronos.org/openxr"
@@ -20,8 +20,7 @@ NV_DRIVER_VERSION_VULKAN="390.132"
 IUSE+=" egl gles2 +system-jsoncpp video_cards_amdgpu video_cards_amdgpu-pro \
 video_cards_amdgpu-pro-lts video_cards_i965 video_cards_iris \
 video_cards_nvidia video_cards_radeonsi wayland xcb +xlib"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
-		^^ ( xlib xcb wayland )"
+REQUIRED_USE+=" ^^ ( xlib xcb wayland )"
 DEPEND+=" ${PYTHON_DEPS}
 	|| (
 		video_cards_amdgpu? (
