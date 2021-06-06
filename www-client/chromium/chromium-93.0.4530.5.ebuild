@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_8 )
 PYTHON_REQ_USE="xml"
 
 CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
@@ -14,19 +14,18 @@ inherit multilib-minimal
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
-PATCHSET="7"
+PATCHSET="1"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
-# ppc64le patchet origin: https://github.com/void-linux/void-packages/tree/master/srcpkgs/chromium/patches
-PPC64LE_COMMIT="3f575325dcc3bdfc419824518bac6d4c38241859"
 SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-44.1.0.zip
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
-	ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-ppc64le-${PPC64LE_COMMIT}.tar.xz )"
+	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )"
+RESTRICT="mirror"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 arm64 ~x86"
-IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu -tcmalloc vaapi wayland widevine"
+KEYWORDS="~amd64 ~arm64 ~x86"
+IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 REQUIRED_USE="
@@ -46,8 +45,8 @@ COMMON_X_DEPEND="
 	x11-libs/libXrandr:=[${MULTILIB_USEDEP}]
 	x11-libs/libXrender:=[${MULTILIB_USEDEP}]
 	x11-libs/libXtst:=[${MULTILIB_USEDEP}]
-	x11-libs/libXScrnSaver:=[${MULTILIB_USEDEP}]
 	x11-libs/libxcb:=[${MULTILIB_USEDEP}]
+	x11-libs/libxshmfence:=[${MULTILIB_USEDEP}]
 	vaapi? ( >=x11-libs/libva-2.7:=[X,drm,${MULTILIB_USEDEP}] )
 "
 
@@ -74,6 +73,7 @@ COMMON_DEPEND="
 		)
 		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
 	)
+	net-misc/curl[ssl]
 	sys-apps/dbus:=[${MULTILIB_USEDEP}]
 	sys-apps/pciutils:=[${MULTILIB_USEDEP}]
 	virtual/udev
@@ -99,13 +99,11 @@ COMMON_DEPEND="
 		)
 	)
 "
-# For nvidia-drivers blocker, see bug #413637 .
 RDEPEND="${COMMON_DEPEND}
 	x11-misc/xdg-utils
 	virtual/opengl[${MULTILIB_USEDEP}]
 	virtual/ttf-fonts
 	selinux? ( sec-policy/selinux-chromium )
-	tcmalloc? ( !<x11-drivers/nvidia-drivers-331.20 )
 "
 DEPEND="${COMMON_DEPEND}
 "
@@ -115,6 +113,7 @@ BDEPEND="
 	>=app-arch/gzip-1.7
 	app-arch/unzip
 	dev-lang/perl
+	dev-lang/python:2.7[xml]
 	>=dev-util/gn-0.1807
 	dev-vcs/git
 	>=dev-util/gperf-3.0.3
@@ -147,7 +146,7 @@ else
 		dev-libs/libxslt:=[${MULTILIB_USEDEP}]
 		>=dev-libs/re2-0.2019.08.01:=[${MULTILIB_USEDEP}]
 		>=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}]
-		system-icu? ( >=dev-libs/icu-68.1:=[${MULTILIB_USEDEP}] )
+		system-icu? ( >=dev-libs/icu-69.1:=[${MULTILIB_USEDEP}] )
 	"
 	RDEPEND+="${COMMON_DEPEND}"
 	DEPEND+="${COMMON_DEPEND}"
@@ -191,10 +190,6 @@ pre_build_checks() {
 		local -x CPP="$(tc-getCXX) -E"
 		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge 9.2; then
 			die "At least gcc 9.2 is required"
-		fi
-		# component build hangs with tcmalloc enabled due to sandbox issue, bug #695976.
-		if has usersandbox ${FEATURES} && use tcmalloc && use component-build; then
-			die "Component build with tcmalloc requires FEATURES=-usersandbox."
 		fi
 		if [[ ${CHROMIUM_FORCE_CLANG} == yes ]] || tc-is-clang; then
 			CPP="${CHOST}-clang++ -E"
@@ -240,7 +235,7 @@ src_prepare() {
 
 	local PATCHES=(
 		"${WORKDIR}/patches"
-		"${FILESDIR}/chromium-89-EnumTable-crash.patch"
+		"${FILESDIR}/chromium-92-EnumTable-crash.patch"
 		"${FILESDIR}/chromium-shim_headers.patch"
 	)
 
@@ -255,12 +250,20 @@ src_prepare() {
 		)
 	fi
 
-	use ppc64 && eapply -p0 "${WORKDIR}/${PN}-ppc64le-${PPC64LE_COMMIT}"
-
 	default
 
 	mkdir -p third_party/node/linux/node-linux-x64/bin || die
 	ln -s "${EPREFIX}"/usr/bin/node third_party/node/linux/node-linux-x64/bin/node || die
+
+	# adjust python interpreter versions
+	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" .gn || die
+	sed -i -e "s|python2|python2\.7|g" buildtools/linux64/clang-format || die
+
+	# bundled highway library does not support arm64 with GCC
+	if use arm64; then
+		rm -r third_party/highway/src || die
+		ln -s "${WORKDIR}/highway-0.12.1" third_party/highway/src || die
+	fi
 
 	local keeplibs=(
 		base/third_party/cityhash
@@ -301,8 +304,8 @@ src_prepare() {
 		third_party/catapult
 		third_party/catapult/common/py_vulcanize/third_party/rcssmin
 		third_party/catapult/common/py_vulcanize/third_party/rjsmin
-		third_party/catapult/third_party/beautifulsoup4
-		third_party/catapult/third_party/html5lib-python
+		third_party/catapult/third_party/beautifulsoup4-4.9.3
+		third_party/catapult/third_party/html5lib-1.1
 		third_party/catapult/third_party/polymer
 		third_party/catapult/third_party/six
 		third_party/catapult/tracing/third_party/d3
@@ -323,6 +326,7 @@ src_prepare() {
 		third_party/dav1d
 		third_party/dawn
 		third_party/dawn/third_party/khronos
+		third_party/dawn/third_party/tint
 		third_party/depot_tools
 		third_party/devscripts
 		third_party/devtools-frontend
@@ -330,7 +334,7 @@ src_prepare() {
 		third_party/devtools-frontend/src/front_end/third_party/axe-core
 		third_party/devtools-frontend/src/front_end/third_party/chromium
 		third_party/devtools-frontend/src/front_end/third_party/codemirror
-		third_party/devtools-frontend/src/front_end/third_party/fabricjs
+		third_party/devtools-frontend/src/front_end/third_party/diff
 		third_party/devtools-frontend/src/front_end/third_party/i18n
 		third_party/devtools-frontend/src/front_end/third_party/intl-messageformat
 		third_party/devtools-frontend/src/front_end/third_party/lighthouse
@@ -349,6 +353,7 @@ src_prepare() {
 		third_party/flatbuffers
 		third_party/freetype
 		third_party/fusejs
+		third_party/highway
 		third_party/libgifcodec
 		third_party/liburlpattern
 		third_party/libzip
@@ -375,6 +380,7 @@ src_prepare() {
 		third_party/libavif
 		third_party/libgav1
 		third_party/libjingle
+		third_party/libjxl
 		third_party/libphonenumber
 		third_party/libsecret
 		third_party/libsrtp
@@ -432,7 +438,6 @@ src_prepare() {
 		third_party/qcms
 		third_party/rnnoise
 		third_party/s2cellid
-		third_party/schema_org
 		third_party/securemessage
 		third_party/shell-encryption
 		third_party/simplejson
@@ -449,12 +454,12 @@ src_prepare() {
 		third_party/swiftshader/third_party/marl
 		third_party/swiftshader/third_party/subzero
 		third_party/swiftshader/third_party/SPIRV-Headers/include/spirv/unified1
+		third_party/tcmalloc
 		third_party/tensorflow-text
 		third_party/tflite
 		third_party/tflite/src/third_party/eigen3
 		third_party/tflite/src/third_party/fft2d
 		third_party/tflite-support
-		third_party/tint
 		third_party/ruy
 		third_party/ukey2
 		third_party/unrar
@@ -463,6 +468,7 @@ src_prepare() {
 		third_party/vulkan
 		third_party/web-animations-js
 		third_party/webdriver
+		third_party/webgpu-cts
 		third_party/webrtc
 		third_party/webrtc/common_audio/third_party/ooura
 		third_party/webrtc/common_audio/third_party/spl_sqrt_floor
@@ -498,9 +504,6 @@ src_prepare() {
 	if ! use system-icu; then
 		keeplibs+=( third_party/icu )
 	fi
-	if use tcmalloc; then
-		keeplibs+=( third_party/tcmalloc )
-	fi
 	if use wayland && ! use headless ; then
 		keeplibs+=( third_party/wayland )
 	fi
@@ -528,6 +531,14 @@ src_prepare() {
 
 	# Remove most bundled libraries. Some are still needed.
 	build/linux/unbundle/remove_bundled_libraries.py "${keeplibs[@]}" --do-remove || die
+
+	if use js-type-check; then
+		ln -s "${EPREFIX}"/usr/bin/java third_party/jdk/current/bin/java || die
+	fi
+
+	# bundled eu-strip is for amd64 only and we don't want to pre-stripped binaries
+	mkdir -p buildtools/third_party/eu-strip/bin || die
+	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 	multilib_copy_sources
 }
 
@@ -574,8 +585,6 @@ multilib_src_configure() {
 	# Component build isn't generally intended for use by end users. It's mostly useful
 	# for development and debugging.
 	myconf_gn+=" is_component_build=$(usex component-build true false)"
-
-	myconf_gn+=" use_allocator=$(usex tcmalloc \"tcmalloc\" \"none\")"
 
 	# Disable nacl, we can't build without pnacl (http://crbug.com/269560).
 	myconf_gn+=" enable_nacl=false"
@@ -644,6 +653,9 @@ multilib_src_configure() {
 
 	# Disable forced lld, bug 641556
 	myconf_gn+=" use_lld=false"
+
+	# Disable pseudolocales, only used for testing
+	myconf_gn+=" enable_pseudolocales=false"
 
 	ffmpeg_branding="$(usex proprietary-codecs Chrome Chromium)"
 	myconf_gn+=" proprietary_codecs=$(usex proprietary-codecs true false)"
@@ -766,6 +778,11 @@ multilib_src_configure() {
 	# Chromium relies on this, but was disabled in >=clang-10, crbug.com/1042470
 	append-cxxflags $(test-flags-CXX -flax-vector-conversions=all)
 
+	# highway/libjxl relies on this with arm64
+	if use arm64 && tc-is-gcc; then
+		append-cxxflags -flax-vector-conversions
+	fi
+
 	# Disable unknown warning message from clang.
 	tc-is-clang && append-flags -Wno-unknown-warning-option
 
@@ -775,9 +792,9 @@ multilib_src_configure() {
 	fi
 
 	# Enable ozone wayland and/or headless support
+	myconf_gn+=" use_ozone=true ozone_auto_platforms=false"
+	myconf_gn+=" ozone_platform_headless=true"
 	if use wayland || use headless; then
-		myconf_gn+=" use_ozone=true ozone_auto_platforms=false"
-		myconf_gn+=" ozone_platform_headless=true"
 		if use headless; then
 			myconf_gn+=" ozone_platform=\"headless\""
 			myconf_gn+=" use_x11=false"
@@ -788,12 +805,11 @@ multilib_src_configure() {
 			myconf_gn+=" use_xkbcommon=true"
 			myconf_gn+=" ozone_platform=\"wayland\""
 		fi
-	else
-		myconf_gn+=" use_ozone=false"
 	fi
 
 	# Enable official builds
 	myconf_gn+=" is_official_build=$(usex official true false)"
+	myconf_gn+=" use_thin_lto=false"
 	if use official; then
 		# Allow building against system libraries in official builds
 		sed -i 's/OFFICIAL_BUILD/GOOGLE_CHROME_BUILD/' \
@@ -842,6 +858,8 @@ multilib_src_compile() {
 
 	pax-mark m out/Release/chrome
 
+	mv out/Release/chromedriver{.unstripped,} || die
+
 	# Build manpage; bug #684550
 	sed -e 's|@@PACKAGE@@|chromium-browser|g;
 		s|@@MENUNAME@@|Chromium|g;' \
@@ -869,6 +887,7 @@ multilib_src_install() {
 	fi
 
 	newexe out/Release/chromedriver chromedriver-${ABI}
+	doexe out/Release/crashpad_handler
 
 	local sedargs=( -e
 			"s:/usr/lib/:/usr/$(get_libdir)/:g;
@@ -955,10 +974,9 @@ pkg_postinst() {
 	readme.gentoo_print_elog
 
 	if use vaapi; then
-		elog "VA-API is disabled by default at runtime. Either enable it"
-		elog "by navigating to chrome://flags/#enable-accelerated-video-decode"
-		elog "inside Chromium or add --enable-accelerated-video-decode"
-		elog "to CHROMIUM_FLAGS in /etc/chromium/default."
+		elog "VA-API is disabled by default at runtime. You have to enable it"
+		elog "by adding --enable-features=VaapiVideoDecoder to CHROMIUM_FLAGS"
+		elog "in /etc/chromium/default."
 	fi
 	if use screencast; then
 		elog "Screencast is disabled by default at runtime. Either enable it"
