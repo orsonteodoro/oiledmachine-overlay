@@ -12,9 +12,9 @@ KEYWORDS="~amd64"
 SLOT="0"
 IUSE+=" images-to-icons"
 DEPEND+=" images-to-icons? ( media-gfx/imagemagick )"
-BDEPEND+=" >=net-libs/nodejs-12[npm]"
-ELECTRON_APP_AT_TYPES_NODE_V="10"
-ELECTRON_APP_ELECTRON_V="12.0.7" # See https://github.com/nativefier/nativefier/blob/v43.1.3/src/constants.ts
+BDEPEND+=" >=net-libs/nodejs-12.9[npm]"
+ELECTRON_APP_AT_TYPES_NODE_V="12"
+ELECTRON_APP_ELECTRON_V="12.0.10" # See https://github.com/nativefier/nativefier/blob/v44.0.0/src/constants.ts
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 SRC_URI=\
 "https://github.com/nativefier/nativefier/archive/v${PV}.tar.gz \
