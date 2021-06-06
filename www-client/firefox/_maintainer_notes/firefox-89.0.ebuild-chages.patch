@@ -1,15 +1,23 @@
---- firefox-88.0.1.ebuild.orig	2021-05-08 13:09:41.000000000 -0700
-+++ firefox-88.0.1.ebuild	2021-05-10 23:01:25.801355762 -0700
-@@ -1,6 +1,9 @@
+--- firefox-89.0.ebuild.orig	2021-06-01 12:09:48.000000000 -0700
++++ firefox-89.0.ebuild	2021-06-06 08:56:57.317447899 -0700
+@@ -1,13 +1,16 @@
  # Copyright 1999-2021 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
  
-+# Originally based on the firefox-88.0.1.ebuild from the gentoo-overlay.
++# Originally based on the firefox-89.0.ebuild from the gentoo-overlay.
 +# Revisions may change in the oiledmachine-overlay.
 +
  EAPI="7"
  
- FIREFOX_PATCHSET="firefox-88-patches-03.tar.xz"
+ FIREFOX_PATCHSET="firefox-89-patches-02.tar.xz"
+ 
+ LLVM_MAX_SLOT=12
+ 
+-PYTHON_COMPAT=( python3_{7..9} )
++PYTHON_COMPAT=( python3_{8..10} )
+ PYTHON_REQ_USE="ncurses,sqlite,ssl"
+ 
+ WANT_AUTOCONF="2.1"
 @@ -40,6 +43,7 @@ MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DIST
  inherit autotools check-reqs desktop flag-o-matic gnome2-utils llvm \
  	multiprocessing pax-utils python-any-r1 toolchain-funcs \
@@ -89,7 +97,7 @@
  	screencast? ( wayland )"
 @@ -74,28 +136,32 @@ BDEPEND="${PYTHON_DEPS}
  	app-arch/zip
- 	>=dev-util/cbindgen-0.16.0
+ 	>=dev-util/cbindgen-0.19.0
  	>=net-libs/nodejs-10.23.1
 -	virtual/pkgconfig
 -	>=virtual/rust-1.47.0
@@ -132,7 +140,7 @@
  	x86? ( >=dev-lang/nasm-2.13 )"
  
  CDEPEND="
--	>=dev-libs/nss-3.63
+-	>=dev-libs/nss-3.64
 -	>=dev-libs/nspr-4.29
 -	dev-libs/atk
 -	dev-libs/expat
@@ -146,7 +154,7 @@
 -	media-libs/fontconfig
 -	>=media-libs/freetype-2.4.10
 -	kernel_linux? ( !pulseaudio? ( media-libs/alsa-lib ) )
-+	>=dev-libs/nss-3.63[${MULTILIB_USEDEP}]
++	>=dev-libs/nss-3.64[${MULTILIB_USEDEP}]
 +	>=dev-libs/nspr-4.29[${MULTILIB_USEDEP}]
 +	dev-libs/atk[${MULTILIB_USEDEP}]
 +	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -275,11 +283,11 @@
  }
  
  pkg_setup() {
-+	ewarn "This ebuild is a Work In Progress (WIP) / Testing.  Investigating freeze / lock up for 32-bit build."
++	ewarn "This ebuild is a Work In Progress (WIP) / Testing.  It may freeze or lock up for both 32 and 64-bit builds."
  	if [[ ${MERGE_TYPE} != binary ]] ; then
  		if use pgo ; then
  			if ! has userpriv ${FEATURES} ; then
-@@ -468,6 +541,24 @@ pkg_setup() {
+@@ -475,6 +548,24 @@ pkg_setup() {
  		# Ensure we use C locale when building, bug #746215
  		export LC_ALL=C
  	fi
@@ -304,7 +312,7 @@
  }
  
  src_unpack() {
-@@ -489,7 +580,18 @@ src_unpack() {
+@@ -496,7 +587,18 @@ src_unpack() {
  
  src_prepare() {
  	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
@@ -323,7 +331,7 @@
  
  	# Allow user to apply any additional patches without modifing ebuild
  	eapply_user
-@@ -506,11 +608,7 @@ src_prepare() {
+@@ -513,11 +615,7 @@ src_prepare() {
  		"${S}"/intl/icu_sources_data.py \
  		|| die "sed failed to set num_cores"
  
@@ -336,7 +344,7 @@
  
  	sed -i \
  		-e 's/ccache_stats = None/return None/' \
-@@ -523,9 +621,7 @@ src_prepare() {
+@@ -530,9 +628,7 @@ src_prepare() {
  	# Clearing checksums where we have applied patches
  	moz_clear_vendor_checksums target-lexicon-0.9.0
  
@@ -347,7 +355,7 @@
  
  	# Write API keys to disk
  	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
-@@ -533,9 +629,70 @@ src_prepare() {
+@@ -540,9 +636,70 @@ src_prepare() {
  	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
  
  	xdg_src_prepare
@@ -419,7 +427,7 @@
  	# Show flags set at the beginning
  	einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
  	einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
-@@ -543,14 +700,15 @@ src_configure() {
+@@ -550,14 +707,15 @@ src_configure() {
  	einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
  	einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
  
@@ -437,7 +445,7 @@
  		NM=llvm-nm
  		RANLIB=llvm-ranlib
  	elif ! use clang && ! tc-is-gcc ; then
-@@ -558,8 +716,8 @@ src_configure() {
+@@ -565,8 +723,8 @@ src_configure() {
  		have_switched_compiler=yes
  		einfo "Enforcing the use of gcc due to USE=-clang ..."
  		AR=gcc-ar
@@ -448,7 +456,7 @@
  		NM=gcc-nm
  		RANLIB=gcc-ranlib
  	fi
-@@ -575,20 +733,18 @@ src_configure() {
+@@ -582,20 +740,18 @@ src_configure() {
  	export HOST_CXX="$(tc-getBUILD_CXX)"
  	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
  
@@ -473,7 +481,7 @@
  	# Initialize MOZCONFIG
  	mozconfig_add_options_ac '' --enable-application=browser
  
-@@ -606,63 +762,68 @@ src_configure() {
+@@ -613,63 +769,68 @@ src_configure() {
  		--enable-release \
  		--enable-system-ffi \
  		--enable-system-pixman \
@@ -556,7 +564,7 @@
  	else
  		einfo "Building without Mozilla API key ..."
  	fi
-@@ -784,13 +945,13 @@ src_configure() {
+@@ -791,13 +952,13 @@ src_configure() {
  		fi
  	fi
  
@@ -572,7 +580,7 @@
  				|| die
  		fi
  	fi
-@@ -858,7 +1019,18 @@ src_configure() {
+@@ -865,7 +1026,18 @@ src_configure() {
  	mozconfig_add_options_ac 'Gentoo default' "XARGS=${EPREFIX}/usr/bin/xargs"
  
  	# Set build dir
@@ -592,7 +600,7 @@
  
  	# Show flags we will use
  	einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
-@@ -892,7 +1064,11 @@ src_configure() {
+@@ -899,7 +1071,11 @@ src_configure() {
  	./mach configure || die
  }
  
@@ -605,7 +613,7 @@
  	local virtx_cmd=
  
  	if use pgo ; then
-@@ -910,12 +1086,172 @@ src_compile() {
+@@ -917,12 +1093,172 @@ src_compile() {
  		|| die
  }
  
@@ -782,7 +790,7 @@
  
  	DESTDIR="${D}" ./mach install || die
  
-@@ -978,15 +1314,15 @@ src_install() {
+@@ -985,15 +1321,15 @@ src_install() {
  	# Install geckodriver
  	if use geckodriver ; then
  		einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
@@ -801,7 +809,7 @@
  	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
  
  	insinto /usr/share/icons/hicolor/symbolic/apps
-@@ -1005,12 +1341,12 @@ src_install() {
+@@ -1012,12 +1348,12 @@ src_install() {
  	done
  
  	# Install menus
@@ -817,7 +825,7 @@
  	local use_wayland="false"
  
  	if use wayland ; then
-@@ -1021,12 +1357,12 @@ src_install() {
+@@ -1028,12 +1364,12 @@ src_install() {
  	local app_name desktop_filename display_protocol exec_command
  	for display_protocol in ${display_protocols} ; do
  		app_name="${name} on ${display_protocol}"
@@ -833,7 +841,7 @@
  				;;
  			X11)
  				if ! use wayland ; then
-@@ -1035,13 +1371,15 @@ src_install() {
+@@ -1042,13 +1378,15 @@ src_install() {
  					continue
  				fi
  
@@ -853,7 +861,7 @@
  				;;
  		esac
  
-@@ -1061,25 +1399,28 @@ src_install() {
+@@ -1068,25 +1406,28 @@ src_install() {
  
  	# Install generic wrapper script
  	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
@@ -886,7 +894,7 @@
  }
  
  pkg_preinst() {
-@@ -1169,4 +1510,17 @@ pkg_postinst() {
+@@ -1176,4 +1517,17 @@ pkg_postinst() {
  		elog
  		elog "in about:config."
  	fi
