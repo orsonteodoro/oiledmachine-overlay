@@ -26,10 +26,13 @@ LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
+IUSE+=" +partitionalloc tcmalloc libcmalloc"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 REQUIRED_USE="
+	^^ ( partitionalloc tcmalloc libcmalloc )
 	component-build? ( !suid )
+	partitionalloc? ( !component-build )
 	screencast? ( wayland )
 "
 
@@ -585,6 +588,14 @@ multilib_src_configure() {
 	# Component build isn't generally intended for use by end users. It's mostly useful
 	# for development and debugging.
 	myconf_gn+=" is_component_build=$(usex component-build true false)"
+
+	if use partitionalloc ; then
+		myconf_gn+=" use_allocator=\"partition\""
+	elif use tcmalloc ; then
+		myconf_gn+=" use_allocator=\"tcmalloc\""
+	else
+		myconf_gn+=" use_allocator=\"none\""
+	fi
 
 	# Disable nacl, we can't build without pnacl (http://crbug.com/269560).
 	myconf_gn+=" enable_nacl=false"
