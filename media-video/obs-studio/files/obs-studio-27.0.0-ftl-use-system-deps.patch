@@ -1,0 +1,29 @@
+--- ftl-sdk-d0c8469f66806b5ea738d607f7d2b000af8b1129/CMakeLists.txt.orig	2020-02-18 09:21:01.000000000 -0800
++++ ftl-sdk-d0c8469f66806b5ea738d607f7d2b000af8b1129/CMakeLists.txt	2021-06-07 02:22:04.206934647 -0700
+@@ -32,8 +32,7 @@ if (NOT CURL_FOUND AND NOT DISABLE_AUTO_
+   SET(BUILD_CURL_EXE OFF CACHE BOOL "Building libcurl")
+   SET(HTTP_ONLY ON CACHE BOOL "using compiling HTTP")
+   SET(BUILD_TESTING OFF CACHE BOOL "Not building Tests")
+-  add_subdirectory(libcurl)
+-  SET(CURL_INCLUDE_DIRS libcurl/include ${CMAKE_CURRENT_BINARY_DIR}/libcurl/include/curl)
++  SET(CURL_INCLUDE_DIRS /usr/include/curl)
+   SET(CURL_LIBRARIES libcurl)
+   include_directories(${CURL_INCLUDE_DIRS})
+ endif()
+@@ -45,8 +44,7 @@ if (NOT DISABLE_AUTO_INGEST)
+   SET(JANSSON_WITHOUT_TESTS ON CACHE BOOL "Jansson build without tests")
+   SET(JANSSON_EXAMPLES OFF CACHE BOOL "Jansson disable examples")
+   SET(USE_WINDOWS_CRYPTOAPI off)
+-  add_subdirectory(libjansson)
+-  include_directories(${CMAKE_CURRENT_BINARY_DIR}/libjansson/include)
++  include_directories(/usr/include)
+   SET(JANSSON_LIBRARIES jansson)
+ endif()
+ 
+@@ -130,4 +128,4 @@ if (NOT DISABLE_FTL_APP)
+ endif()
+ 
+ # Install rules
+-install(TARGETS ftl DESTINATION lib)
+\ No newline at end of file
++install(TARGETS ftl DESTINATION lib)

@@ -30,6 +30,8 @@
     <flag name="browser">Enable adding web pages as a source.</flag>
     <flag name="decklink">Enable support for DeckLink devices.</flag>
     <flag name="fdk">Enable libfdk support for AAC encoding.</flag>
+    <flag name="ftl">Enable support for streaming with the FTL protocol
+      for a low latency streaming.  (Deprecated)</flag>
     <flag name="imagemagick">Use ImageMagick for image loading instead of
       FFmpeg.</flag>
     <flag name="jack">Enable jack support.</flag>

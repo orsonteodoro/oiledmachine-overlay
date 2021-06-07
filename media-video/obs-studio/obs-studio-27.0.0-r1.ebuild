@@ -14,7 +14,7 @@ LICENSE="GPL-2
 	 browser? ( BSD )"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0"
-IUSE+=" +alsa +browser -decklink fdk imagemagick jack +lua nvenc oss \
+IUSE+=" +alsa +browser -decklink fdk ftl imagemagick jack +lua nvenc oss \
 +pipewire pulseaudio +python +speexdsp +ssl -test freetype sndio v4l2 vaapi \
 video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts \
 video_cards_intel video_cards_iris video_cards_i965 video_cards_r600 \
@@ -91,6 +91,10 @@ DEPEND_QT11EXTRAS="
 
 DEPEND_LIBX11="
         >=x11-libs/libX11-${LIBX11_V}
+"
+
+DEPEND_LIBX264="
+	>=media-libs/x264-0.0.20171224
 "
 
 DEPEND_LIBXCB="
@@ -188,13 +192,20 @@ DEPEND_CURL="
 "
 
 DEPEND_PLUGINS_OBS_OUTPUTS="
-	ssl? (
-		>=net-libs/mbedtls-2.8:=
-	)
 	${DEPEND_CURL}
 	${DEPEND_JANSSON}
 	${DEPEND_LIBOBS}
 	${DEPEND_ZLIB}
+	ftl? (
+		>=dev-libs/jansson-2.8
+		>=net-misc/curl-7.52.1
+		media-video/ffmpeg[opus]
+		!vaapi? ( ${DEPEND_LIBX264} )
+		 vaapi? ( media-video/ffmpeg[x264] )
+	)
+	ssl? (
+		>=net-libs/mbedtls-2.8:=
+	)
 "
 
 DEPEND_PLUGINS_OBS_VST="
@@ -237,7 +248,7 @@ DEPEND_PLUGINS="
 	${DEPEND_PLUGINS_SNDIO}
 	${DEPEND_CURL}
 	${DEPEND_LIBOBS}
-	>=media-libs/x264-0.0.20171224
+	${DEPEND_LIBX264}
 	>=media-video/ffmpeg-${FFMPEG_V}:=[x264]
 	alsa? ( >=media-libs/alsa-lib-1.1.3 )
 	fdk? ( >=media-libs/fdk-aac-1.5:= )
@@ -320,8 +331,8 @@ DEPEND_LIBOBS_OPENGL="
 # See deps/obs-scripting/CMakeLists.txt
 DEPEND_DEPS_OBS_SCRIPTING="
 	${DEPEND_LIBOBS}
-	python? ( ${PYTHON_DEPS} )
 	lua? ( >=dev-lang/luajit-2.1:2 )
+	python? ( ${PYTHON_DEPS} )
 "
 
 # See deps/media-playback/CMakeLists.txt
@@ -357,9 +368,9 @@ RDEPEND+=" ${DEPEND}"
 # The obs-amd-encoder submodule currently doesn't support Linux
 #https://github.com/obsproject/obs-amd-encoder/archive/${OBS_AMD_ENCODER_COMMIT}.tar.gz \
 #	-> obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}.tar.gz
-# Service is gone, module is licensed as MIT
-#https://github.com/mixer/ftl-sdk/archive/${OBS_FTL_SDK_COMMIT}.tar.gz \
-#	-> ftl-sdk-${OBS_FTL_SDK_COMMIT}.tar.gz
+# For some details on FTL support and possible deprecation see:
+#  https://github.com/obsproject/obs-studio/discussions/4021
+#  The module is licensed as MIT.
 
 SRC_URI="
 https://github.com/obsproject/${PN}/archive/${PV}.tar.gz \
@@ -368,6 +379,10 @@ https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz \
 	-> obs-browser-${OBS_BROWSER_COMMIT}.tar.gz
 https://github.com/obsproject/obs-vst/archive/${OBS_VST_COMMIT}.tar.gz \
 	-> obs-vst-${OBS_VST_COMMIT}.tar.gz
+ftl? (
+https://github.com/mixer/ftl-sdk/archive/${OBS_FTL_SDK_COMMIT}.tar.gz \
+	-> ftl-sdk-${OBS_FTL_SDK_COMMIT}.tar.gz
+)
 "
 
 MAKEOPTS="-j1"
@@ -450,8 +465,10 @@ src_unpack() {
 #		"${S}/plugins/enc-amf" || die
 	ln -s "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" \
 		"${S}/plugins/obs-browser" || die
-#	ln -s "${WORKDIR}/ftl-sdk-${OBS_FTL_SDK_COMMIT}" \
-#		"${S}/plugins/obs-outputs/ftl-sdk" || die
+	if use ftl ; then
+		ln -s "${WORKDIR}/ftl-sdk-${OBS_FTL_SDK_COMMIT}" \
+			"${S}/plugins/obs-outputs/ftl-sdk" || die
+	fi
 	ln -s "${WORKDIR}/obs-vst-${OBS_VST_COMMIT}" \
 		"${S}/plugins/obs-vst" || die
 }
@@ -463,6 +480,11 @@ src_prepare() {
 		eapply -p1 "${FILESDIR}/obs-studio-27.0.0-obs-browser-web-security-limit-to-le-4389.patch"
 		eapply -p1 "${FILESDIR}/obs-studio-27.0.0-product_version-ge-4430.patch"
 	popd
+	if use ftl ; then
+	pushd "${WORKDIR}/ftl-sdk-${OBS_FTL_SDK_COMMIT}" || die
+		eapply -p1 "${FILESDIR}/obs-studio-27.0.0-ftl-use-system-deps.patch"
+	popd
+	fi
 	# typos
 	sed -i -e "s|LIBVA_LBRARIES|LIBVA_LIBRARIES|g" \
 		plugins/obs-ffmpeg/CMakeLists.txt || die
@@ -579,12 +601,9 @@ pkg_postinst() {
 		ewarn "to avoid critical vulerabilities."
 		ewarn
 	fi
-}
-
-pkg_postrm() {
-	xdg_icon_cache_update
 
 	if use vaapi ; then
+		einfo "VAAPI support is found at File > Settings > Output > Output Mode: Advanced > Streaming > Encoder > FFMPEG VAAPI"
 		if use video_cards_intel || use video_cards_i965 ; then
 			einfo "Intel Quick Sync Video, or Sandy Bridge (Gen2+) is required for hardware accelerated H.264 VA-API encode."
 			einfo "For details see https://github.com/intel/intel-vaapi-driver/blob/master/NEWS"
@@ -598,5 +617,14 @@ pkg_postrm() {
 			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for hardware accelerated H.264 VA-API encode."
 			einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
 		fi
-       fi
+	fi
+
+	if use ftl ; then
+		einfo "FTL is currently being planned for removal (or deprecated).  It requires x264 video, opus audio, and for lowest latency bframes=0."
+		einfo "Edit plugins/rtmp-services/data/services.json and add a per-package patch for adding custom FTL servers."
+	fi
+}
+
+pkg_postrm() {
+	xdg_icon_cache_update
 }
