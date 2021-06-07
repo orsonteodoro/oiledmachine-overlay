@@ -33,9 +33,10 @@
     <flag name="imagemagick">Use ImageMagick for image loading instead of
       FFmpeg.</flag>
     <flag name="jack">Enable jack support.</flag>
-    <flag name="luajit">Build support for scripting via Luajit.</flag>
+    <flag name="lua">Build support for scripting via Luajit.</flag>
     <flag name="nvenc">Enable NVENC encoding for nVidia video cards.</flag>
     <flag name="oss">Enable OSS support in FreeBSD.</flag>
+    <flag name="pipewire">Enable PipeWire based capture support.</flag>
     <flag name="pulse">Enable PulseAudio support.</flag>
     <flag name="python">Build support for scripting via Python 3.</flag>
     <flag name="speexdsp">Enable noise suppression filter support via
@@ -63,6 +64,8 @@
     <flag name="video_cards_r600">Prefer the Gallium Mesa VA-API driver</flag>
     <flag name="video_cards_radeonsi">Prefer the Gallium Mesa VA-API
       driver</flag>
+    <flag name="vst">Adds support for VST plugins as audio filters.</flag>
+    <flag name="wayland">Adds support for Wayland.</flag>
   </use>
   <upstream>
     <remote-id type="github">obsproject/obs-studio</remote-id>

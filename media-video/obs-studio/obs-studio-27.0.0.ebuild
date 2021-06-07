@@ -3,48 +3,25 @@
 
 EAPI=7
 
+CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
+LUA_COMPAT=( luajit )
 PYTHON_COMPAT=( python3_{8..10} ) # 18.04 is only 3.6
-inherit cmake-utils flag-o-matic python-single-r1 xdg-utils
+inherit cmake flag-o-matic lua-single python-single-r1 xdg-utils
 
 DESCRIPTION="Software for Recording and Streaming Live Video Content"
 HOMEPAGE="https://obsproject.com"
-LICENSE="
-	GPL-2
-	browser? ( BSD )
-"
-
-CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
-
-#OBS_AMD_ENCODER_COMMIT="aa502039e3ab9a1ec6d13b42c491aaebf06b57ad"
-OBS_BROWSER_COMMIT="6162c93f370f0dfb71ed5ff0b6efac1648ec0da4"
-OBS_VST_COMMIT="cca219fa3613dbc65de676ab7ba29e76865fa6f8"
-OBS_FTL_SDK_COMMIT="d0c8469f66806b5ea738d607f7d2b000af8b1129"
-CEF_V="87.1.11"
-
-# The obs-amd-encoder submodule currently doesn't support Linux
-#https://github.com/obsproject/obs-amd-encoder/archive/${OBS_AMD_ENCODER_COMMIT}.tar.gz \
-#	-> obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}.tar.gz
-# Service is gone, module is licensed as MIT
-#https://github.com/mixer/ftl-sdk/archive/${OBS_FTL_SDK_COMMIT}.tar.gz \
-#	-> ftl-sdk-${OBS_FTL_SDK_COMMIT}.tar.gz
-SRC_URI="
-https://github.com/obsproject/${PN}/archive/${PV}.tar.gz \
-	-> ${P}.tar.gz
-https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz \
-	-> obs-browser-${OBS_BROWSER_COMMIT}.tar.gz
-https://github.com/obsproject/obs-vst/archive/${OBS_VST_COMMIT}.tar.gz \
-	-> obs-vst-${OBS_VST_COMMIT}.tar.gz
-"
+LICENSE="GPL-2
+	 browser? ( BSD )"
 KEYWORDS="~amd64 ~ppc64 ~x86"
-
 SLOT="0"
-IUSE+=" +alsa -browser -decklink fdk imagemagick jack +luajit nvenc oss \
-pulseaudio +python +speexdsp +ssl -test freetype v4l2 vaapi \
+IUSE+=" +alsa +browser -decklink fdk imagemagick jack +lua nvenc oss \
++pipewire pulseaudio +python +speexdsp +ssl -test freetype sndio v4l2 vaapi \
 video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts \
 video_cards_intel video_cards_iris video_cards_i965 video_cards_r600 \
-video_cards_radeonsi vlc"
-REQUIRED_USE+=" python? ( ${PYTHON_REQUIRED_USE} )"
+video_cards_radeonsi vlc +vst +wayland"
 REQUIRED_USE+="
+	lua? ( ${LUA_REQUIRED_USE} )
+	python? ( ${PYTHON_REQUIRED_USE} )
 	video_cards_amdgpu? (
 		!video_cards_amdgpu-pro
 		!video_cards_amdgpu-pro-lts
@@ -76,7 +53,6 @@ REQUIRED_USE+="
 		!video_cards_r600
 	)
 "
-
 # Based on 18.04 See
 # azure-pipelines.yml
 # .github/workflows/main.yml
@@ -85,7 +61,7 @@ REQUIRED_USE+="
 BDEPEND+="
 	>=dev-util/cmake-3.10.2
 	>=dev-util/pkgconfig-0.29.1
-	luajit? ( >=dev-lang/swig-3.0.12 )
+	lua? ( >=dev-lang/swig-3.0.12 )
 	python? (
 		${PYTHON_DEPS}
 		>=dev-lang/swig-3.0.12
@@ -93,11 +69,17 @@ BDEPEND+="
 	test? ( >=dev-util/cmocka-1.1.1 )
 "
 
+CEF_V="87" # See https://github.com/obsproject/obs-studio/blob/27.0.0/.github/workflows/main.yml#L20
 FFMPEG_V="3.4.2"
 LIBVA_V="2.1.0"
 LIBX11_V="1.6.4"
 MESA_V="18"
-QT_V="5.9.5"
+QT_V="5.15.2"
+
+#OBS_AMD_ENCODER_COMMIT="9ceb1254c379bce6124912671afee67c9a07d1a4"
+OBS_BROWSER_COMMIT="f1a61c5a2579e5673765c31a47c2053d4b502d4b"
+OBS_VST_COMMIT="aaa7b7fa32c40b37f59e7d3d194672115451f198"
+OBS_FTL_SDK_COMMIT="d0c8469f66806b5ea738d607f7d2b000af8b1129"
 
 DEPEND_FFMPEG="
 	>=media-video/ffmpeg-${FFMPEG_V}:=
@@ -120,19 +102,39 @@ DEPEND_JANSSON="
 	>=dev-libs/jansson-2.11
 "
 
+DEPEND_WAYLAND="
+	dev-libs/wayland
+"
+
 DEPEND_ZLIB="
 	>=sys-libs/zlib-1.2.11
 "
 
+# See plugins/sndio/CMakeLists.txt
+DEPEND_PLUGINS_SNDIO="
+	${DEPEND_LIBOBS}
+	media-sound/sndio
+"
+
+# See UI/frontend-plugins/decklink-captions/CMakeLists.txt
+DEPEND_PLUGINS_DECKLINK_CAPTIONS="
+	${DEPEND_LIBX11}
+	>=dev-qt/qtwidgets-${QT_V}:5=
+"
+
 # See UI/frontend-plugins/decklink-output-ui/CMakeLists.txt
 DEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
-	${DEPEND_QT11EXTRAS}
 	${DEPEND_LIBX11}
+"
+
+# See plugins/decklink/linux/CMakeLists.txt
+DEPEND_PLUGINS_DECKLINK="
+	${DEPEND_LIBOBS}
+	${DEPEND_PLUGINS_DECKLINK_CAPTIONS}
 "
 
 # See UI/frontend-plugins/frontend-tools/CMakeLists.txt
 DEPEND_PLUGINS_FRONTEND_TOOLS="
-	${DEPEND_QT11EXTRAS}
 	${DEPEND_LIBX11}
 "
 
@@ -146,6 +148,10 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
         >=x11-libs/libXfixes-5.0.3
         >=x11-libs/libXinerama-1.1.3
         >=x11-libs/libXrandr-1.5.1
+	pipewire? (
+		dev-libs/glib:2
+		>=media-video/pipewire-0.3
+	)
 "
 
 # For vaapi support, see source code at
@@ -221,12 +227,14 @@ DEPEND_PLUGINS_OBS_BROWSER="
 DEPEND_PLUGINS="
 	${DEPEND_DEPS_FILE_UPDATER}
 	${DEPEND_DEPS_MEDIA_PLAYBACK}
+	${DEPEND_PLUGINS_DECKLINK}
 	${DEPEND_PLUGINS_DECKLINK_OUTPUT_UI}
 	${DEPEND_PLUGINS_FRONTEND_TOOLS}
 	${DEPEND_PLUGINS_LINUX_CAPTURE}
 	${DEPEND_PLUGINS_OBS_BROWSER}
 	${DEPEND_PLUGINS_OBS_FFMPEG}
 	${DEPEND_PLUGINS_OBS_OUTPUTS}
+	${DEPEND_PLUGINS_SNDIO}
 	${DEPEND_CURL}
 	${DEPEND_LIBOBS}
 	>=media-libs/x264-0.0.20171224
@@ -275,7 +283,6 @@ DEPEND_UI="
 	${DEPEND_CURL}
 	${DEPEND_FFMPEG}
 	${DEPEND_LIBOBS}
-	${DEPEND_QT11EXTRAS}
 	>=dev-qt/qtcore-5.9.5:5=
 	>=dev-qt/qtsvg-${QT_V}:5=
 	>=dev-qt/qtgui-${QT_V}:5=
@@ -290,11 +297,12 @@ DEPEND_DEPS_LIBFF="
 
 # Found in multiple CMakeLists.txt
 DEPEND_MESA="
-	>=media-libs/mesa-18
+	>=media-libs/mesa-${MESA_V}
 "
 
 # See deps/glad/CMakeLists.txt
 DEPEND_GLAD="
+	>=media-libs/mesa-${MESA_V}[egl]
 	${DEPEND_MESA}
 	${DEPEND_LIBX11}
 "
@@ -306,13 +314,14 @@ DEPEND_LIBOBS_OPENGL="
 	${DEPEND_LIBX11}
 	${DEPEND_LIBXCB}
 	${DEPEND_MESA}
+	${DEPEND_WAYLAND}
 "
 
 # See deps/obs-scripting/CMakeLists.txt
 DEPEND_DEPS_OBS_SCRIPTING="
 	${DEPEND_LIBOBS}
 	python? ( ${PYTHON_DEPS} )
-	luajit? ( >=dev-lang/luajit-2.1:2 )
+	lua? ( >=dev-lang/luajit-2.1:2 )
 "
 
 # See deps/media-playback/CMakeLists.txt
@@ -344,7 +353,27 @@ DEPEND+="
 	test? ( ${DEPEND_LIBOBS} )
 "
 RDEPEND+=" ${DEPEND}"
+
+# The obs-amd-encoder submodule currently doesn't support Linux
+#https://github.com/obsproject/obs-amd-encoder/archive/${OBS_AMD_ENCODER_COMMIT}.tar.gz \
+#	-> obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}.tar.gz
+# Service is gone, module is licensed as MIT
+#https://github.com/mixer/ftl-sdk/archive/${OBS_FTL_SDK_COMMIT}.tar.gz \
+#	-> ftl-sdk-${OBS_FTL_SDK_COMMIT}.tar.gz
+
+SRC_URI="
+https://github.com/obsproject/${PN}/archive/${PV}.tar.gz \
+	-> ${P}.tar.gz
+https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz \
+	-> obs-browser-${OBS_BROWSER_COMMIT}.tar.gz
+https://github.com/obsproject/obs-vst/archive/${OBS_VST_COMMIT}.tar.gz \
+	-> obs-vst-${OBS_VST_COMMIT}.tar.gz
+"
+
 MAKEOPTS="-j1"
+PATCHES=(
+	"${FILESDIR}/${PN}-26.1.2-python-3.8.patch" # https://github.com/obsproject/obs-studio/pull/3335
+)
 
 qt_check() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
@@ -392,6 +421,7 @@ qt_check() {
 
 pkg_setup() {
 	qt_check
+	use lua && lua-single_pkg_setup
 	use python && python-single-r1_pkg_setup
 
 	if use browser ; then
@@ -402,6 +432,10 @@ pkg_setup() {
 browser USE flag."
 			fi
 		fi
+	fi
+
+	if ! use v4l2 ; then
+		ewarn "WebCam capture is possibly disabled.  Enable with the v4l2 USE flag."
 	fi
 }
 
@@ -423,10 +457,11 @@ src_unpack() {
 }
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	pushd "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" || die
-		eapply -p1 "${FILESDIR}/obs-browser-9999_p20201126-cef-4103-audio-compat.patch" || true
 		eapply -p1 "${FILESDIR}/obs-studio-25.0.8-install-libcef_dll_wrapper.patch"
+		eapply -p1 "${FILESDIR}/obs-studio-27.0.0-obs-browser-web-security-limit-to-le-4389.patch"
+		eapply -p1 "${FILESDIR}/obs-studio-27.0.0-product_version-ge-4430.patch"
 	popd
 	# typos
 	sed -i -e "s|LIBVA_LBRARIES|LIBVA_LIBRARIES|g" \
@@ -445,6 +480,8 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_BROWSER=$(usex browser)
 		-DBUILD_TESTS=$(usex test)
+		-DBUILD_VIRTUALCAM=OFF
+		-DBUILD_VST=$(usex vst)
 		-DDISABLE_ALSA=$(usex !alsa)
 		-DDISABLE_DECKLINK=$(usex !decklink)
 		-DDISABLE_FREETYPE=$(usex !freetype)
@@ -453,9 +490,13 @@ src_configure() {
 		-DDISABLE_OSS=$(usex kernel_FreeBSD $(usex !oss) ON)
 		-DDISABLE_PLUGINS=OFF
 		-DDISABLE_PULSEAUDIO=$(usex !pulseaudio)
+		-DDISABLE_SNDIO=$(usex !sndio)
 		-DDISABLE_SPEEXDSP=$(usex !speexdsp)
 		-DDISABLE_V4L2=$(usex !v4l2)
 		-DDISABLE_VLC=$(usex !vlc)
+		-DENABLE_PIPEWIRE=$(usex pipewire)
+		-DENABLE_V4L2=$(usex v4l2)
+		-DENABLE_WAYLAND=$(usex wayland)
 		-DLIBOBS_PREFER_IMAGEMAGICK=$(usex imagemagick)
 		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
 		-DUNIX_STRUCTURE=1
@@ -478,9 +519,9 @@ src_configure() {
 		)
 	fi
 
-	if use luajit || use python; then
+	if use lua || use python; then
 		mycmakeargs+=(
-			-DDISABLE_LUA=$(usex !luajit)
+			-DDISABLE_LUA=$(usex !lua)
 			-DDISABLE_PYTHON=$(usex !python)
 			-DENABLE_SCRIPTING=yes
 		)
@@ -495,15 +536,15 @@ src_configure() {
 		)
 	fi
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_compile() {
-	cmake-utils_src_compile
+	cmake_src_compile
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	# external plugins may need some things not installed by default, install them here
 	insinto /usr/include/obs/UI/obs-frontend-api
 	doins UI/obs-frontend-api/obs-frontend-api.h
