@@ -4,4 +4,4 @@
 # See eclass for implementation
 
 EAPI=6
-inherit blender-v2.90
+inherit blender-v2.93

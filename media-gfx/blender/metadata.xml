@@ -233,6 +233,9 @@
     <flag name="osl">
       Add support for OpenShadingLanguage scripting.
     </flag>
+    <flag name="pdf">
+      Adds support to export to PDF directly.
+    </flag>
     <flag name="release">
       Builds Blender with the release configuration (AKA precompiled Blender),
       a subset of release configuration but allows for flexibility.  Otherwise,

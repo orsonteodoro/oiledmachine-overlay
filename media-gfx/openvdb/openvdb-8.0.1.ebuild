@@ -13,22 +13,23 @@ HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 SLOT="0"
-IUSE+=" -abi6-compat +abi7-compat +blosc cpu_flags_x86_avx cpu_flags_x86_sse4_2
-doc egl +jemalloc -log4cplus -numpy -openexr -python +static-libs tbb test
--vdb_lod +vdb_print -vdb_render -vdb_view"
+IUSE+=" -abi6-compat -abi7-compat +abi8-compat +blosc cpu_flags_x86_avx
+cpu_flags_x86_sse4_2 doc egl +jemalloc -log4cplus -numpy -openexr -python
++static-libs tbb test -vdb_lod +vdb_print -vdb_render -vdb_view"
 VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
+# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/CMakeLists.txt#L205
 REQUIRED_USE+="
-	^^ ( abi6-compat abi7-compat )
+	^^ ( abi6-compat abi7-compat abi8-compat )
 	jemalloc? ( || ( test ${VDB_UTILS} ) )
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	vdb_render? ( openexr )"
 # See
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.1.0/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.1.0/ci/install.sh
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/ci/install.sh
 DEPEND+="
-	>=dev-cpp/tbb-2017.6
-	>=dev-libs/boost-1.61:=
+	>=dev-cpp/tbb-2018.0
+	>=dev-libs/boost-1.66:=
 	>=media-libs/ilmbase-2.2:=
 	>=sys-libs/zlib-1.2.7:=
 	blosc? ( >=dev-libs/c-blosc-1.5:= )
@@ -38,7 +39,7 @@ DEPEND+="
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			>=dev-libs/boost-1.68:=[numpy?,python?,${PYTHON_USEDEP}]
-			numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
+			numpy? ( >=dev-python/numpy-1.14[${PYTHON_USEDEP}] )
 		')
 	)
 	openexr? (
@@ -67,6 +68,8 @@ BDEPEND+="
 		>=dev-lang/icc-17
 	)
 	>=dev-util/cmake-3.16.2-r1
+	>=sys-devel/bison-3
+	>=sys-devel/flex-2.6
 	virtual/pkgconfig
 	doc? (
 		>=app-doc/doxygen-1.8.8
@@ -76,13 +79,15 @@ BDEPEND+="
 		dev-texlive/texlive-latex
 		dev-texlive/texlive-latexextra
 	)
-	test? ( >=dev-util/cppunit-1.10 )"
+	test? (
+		>=dev-util/cppunit-1.10
+		>=dev-cpp/gtest-1.8
+	)"
 SRC_URI="
 https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 PATCHES=(
-	"${FILESDIR}/${P}-0001-Fix-multilib-header-source.patch"
-	"${FILESDIR}/${P}-0002-Fix-doc-install-dir.patch"
+	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
 )
 RESTRICT="!test? ( test )"
 
@@ -103,6 +108,8 @@ src_configure() {
 	if use abi6-compat; then
 		version=6
 	elif use abi7-compat; then
+		version=7
+	elif use abi8-compat; then
 		version=7
 	else
 		die "Openvdb abi version is not compatible"
@@ -155,5 +162,5 @@ src_install()
 	cmake_src_install
 	dodoc README.md
 	docinto licenses
-	dodoc LICENSE openvdb/COPYRIGHT
+	dodoc LICENSE openvdb/openvdb/COPYRIGHT
 }

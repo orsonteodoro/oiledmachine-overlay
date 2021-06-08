@@ -1,26 +1,31 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: blender-v2.91.eclass
+# @ECLASS: blender-v2.93.eclass
 # @MAINTAINER: orsonteodoro@hotmail.com
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender-v2.91.eclass helps reduce code duplication across ebuilds
+# The blender-v2.93.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
+# Upstream uses LLVM 9 for Linux.  For prebuilt binary only addons, this may be
+# problematic so avoid them.
+
+# The ebuild uses the same matching LLVM version used with Mesa to prevent
+# the multiple LLVM bug.
+
 CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
-LLVM_V=11 # originally 10, do not exceed LLVM_MAX_SLOT in mesa stable or make different from mesa stable
-LLVM_MAX_SLOT=${LLVM_V}
-PYTHON_COMPAT=( python3_{7,8} )
+PYTHON_COMPAT=( python3_9 )
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 IUSE+=" X +abi7-compat +alembic -asan +boost +bullet +collada \
 +color-management -cpudetection +cuda +cycles -cycles-network +dds -debug doc \
 +elbeem +embree +ffmpeg +fftw flac -gmp +jack +jemalloc +jpeg2k -llvm -man \
--nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise \
-+openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl -potrace release \
-+sdl +sndfile +tbb test +tiff -valgrind"
++nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise \
++openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf -potrace \
+release +sdl +sndfile +tbb test +tiff +usd -valgrind"
+IUSE+=" +llvm-11 llvm-12" # same as Mesa and LLVM latest stable keyword
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
@@ -30,6 +35,7 @@ inherit blender
 
 # The release USE flag depends on platform defaults.
 REQUIRED_USE+="
+	^^ ( llvm-11 llvm-12 )
 	!boost? ( !alembic !cycles !cycles-network !nls !openvdb
 		!color-management )
 	!tbb? ( !cycles !elbeem !openimagedenoise !openvdb )
@@ -68,6 +74,7 @@ REQUIRED_USE+="
 		jemalloc
 		jpeg2k
 		man
+		nanovdb
 		ndof
 		nls
 		openal
@@ -79,6 +86,7 @@ REQUIRED_USE+="
 		openvdb
 		openxr
 		osl
+		pdf
 		potrace
 		sdl
 		sndfile
@@ -94,7 +102,16 @@ REQUIRED_USE+="
 	x264? ( ffmpeg )
 	xvid? ( ffmpeg )"
 
-# versions.cmake last date inspected: Jul 7, 2020
+# Keep dates and links updated to speed up releases and decrease maintenance time cost.
+# no need to look past those dates.
+
+# Last change was May 26, 2021 for:
+# https://github.com/blender/blender/commits/v2.93.0/build_files/cmake/config/blender_release.cmake
+# used for REQUIRED_USE section.
+
+# Last change was Mar 16, 2021 for:
+# https://github.com/blender/blender/commits/v2.93.0/build_files/build_environment/cmake/versions.cmake
+# used for *DEPENDs.
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -116,10 +133,12 @@ REQUIRED_USE+="
 #		 <sys-devel/llvm-10 )
 # It should match mesa's linked llvm version to avoid multiple version problem.
 # if using system's mesa.
-BOOST_DEPEND=">=dev-libs/boost-1.70:=[nls?,threads(+)]"
-TBB_DEPEND=">=dev-cpp/tbb-2019.9"
+BOOST_DEPEND=">=dev-libs/boost-1.73:=[nls?,threads(+)]"
+OSL_V="1.11.10.0"
+TBB_DEPEND=">=dev-cpp/tbb-2020.2"
+PUGIXML_DEPEND=">=dev-libs/pugixml-1.10"
 RDEPEND+="  ${PYTHON_DEPS}
-	>=dev-lang/python-3.7.7
+	>=dev-lang/python-3.9.2
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2020.4.5.2[${PYTHON_MULTI_USEDEP}]
@@ -143,20 +162,32 @@ RDEPEND+="  ${PYTHON_DEPS}
 		>=media-libs/libjpeg-turbo-2.0.4
 	)
 	virtual/libintl
-	virtual/opengl
+	llvm-11? (
+		>=media-libs/mesa-20.3.5
+		>=sys-libs/libomp-11
+	)
+	llvm-12? (
+		>=media-libs/mesa-20.1.1
+		>=sys-libs/libomp-12
+	)
 	media-libs/libglvnd
-	alembic? ( >=media-gfx/alembic-1.7.12[boost(+),hdf(+)] )
+	alembic? ( >=media-gfx/alembic-1.7.16[boost(+),hdf(+)] )
 	boost? ( ${BOOST_DEPEND} )
 	collada? (
 		dev-libs/libpcre:=[static-libs]
 		>=media-libs/opencollada-1.6.68:=
 	)
-	color-management? ( >=media-libs/opencolorio-1.1.1 )
+	color-management? (
+		>=media-libs/opencolorio-2
+		>=dev-libs/expat-2.2.8
+	)
 	cuda? (
 		>=x11-drivers/nvidia-drivers-418.39
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
-	cycles? ( >=dev-libs/pugixml-1.10 )
+	cycles? (
+		osl? ( ${PUGIXML_DEPEND} )
+	)
 	embree? ( >=media-libs/embree-3.10.0:=\
 [cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,raymask,static-libs] )
 	ffmpeg? ( >=media-video/ffmpeg-4.2.3:=\
@@ -167,7 +198,10 @@ RDEPEND+="  ${PYTHON_DEPS}
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.2.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.1:2 )
-	llvm? ( sys-devel/llvm:${LLVM_V}= )
+	llvm? (
+		llvm-11? ( >=sys-devel/llvm-11:11= )
+		llvm-12? ( >=sys-devel/llvm-12:12= )
+	)
 	ndof? (
 		app-misc/spacenavd
 		>=dev-libs/libspnav-0.2.3
@@ -180,26 +214,36 @@ RDEPEND+="  ${PYTHON_DEPS}
 	)
 	openal? ( >=media-libs/openal-1.20.1 )
 	opencl? ( virtual/opencl )
-	openimagedenoise? ( >=media-libs/oidn-1.2.3 )
-	openimageio? ( >=media-libs/openimageio-2.1.15.0[color-management?,jpeg2k?] )
+	openimagedenoise? (
+		>=media-libs/oidn-1.3.0
+	)
+	openimageio? (
+		${PUGIXML_DEPEND}
+		>=media-libs/openimageio-2.1.15.0[color-management?,jpeg2k?]
+	)
 	openexr? (
-		>=media-libs/ilmbase-2.4.0:=
-		>=media-libs/openexr-2.4.0:=
+		>=media-libs/ilmbase-2.5.5:=
+		>=media-libs/openexr-2.5.5:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=] )
 	openvdb? (
-		>=media-gfx/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+		>=media-gfx/openvdb-8.0.1[${PYTHON_SINGLE_USEDEP},abi8-compat(+)]
 		>=dev-libs/c-blosc-1.5.0
 		nanovdb? ( >=media-gfx/nanovdb-25.0.0_pre20200924:= )
 	)
-	openxr? ( >=media-libs/openxr-1.0.8 )
+	openxr? ( >=media-libs/openxr-1.0.14 )
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=media-libs/osl-1.10.10:=[llvm-${LLVM_V},static-libs] )
+	osl? (
+		llvm-11? ( >=media-libs/osl-${OSL_V}:=[llvm-11,static-libs] )
+		llvm-12? ( >=media-libs/osl-${OSL_V}:=[llvm-12,static-libs] )
+	)
+	pdf? ( >=media-libs/libharu-2.3.0 )
 	potrace? ( >=media-gfx/potrace-1.16 )
 	sdl? ( >=media-libs/libsdl2-2.0.12[sound] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tbb? ( ${TBB_DEPEND} )
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
+	usd? ( >=media-libs/openusd-21.02 )
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
@@ -245,12 +289,21 @@ _PATCHES=(
 check_multiple_llvm_versions_in_native_libs() {
 	# Checks to avoid loading multiple versions of LLVM.
 
+	local llvm_slot
+	if use llvm-11 ; then
+		llvm_slot=11
+	fi
+
+	if use llvm-12 ; then
+		llvm_slot=12
+	fi
+
 	if ls ldd "${EROOT}"/usr/$(get_libdir)/dri/*.so 2>/dev/null 1>/dev/null ; then
 		local llvm_ret=$(ldd "${EROOT}"/usr/$(get_libdir)/dri/*.so \
-			| grep -q -e "LLVM-${LLVM_V}")
+			| grep -q -e "LLVM-${llvm_slot}")
 		if [[ "${llvm_ret}" != "0" ]] ; then
 			die \
-"You need link media-libs/mesa with LLVM ${LLVM_V}.  See media-libs/mesa \
+"You need link media-libs/mesa with LLVM ${llvm_slot}.  See media-libs/mesa \
 ebuilds for compatibility details."
 		fi
 	fi
@@ -269,8 +322,8 @@ ebuilds for compatibility details."
 				| head -n 1 | grep -o -E -e "[0-9]+")
 		fi
 		if [[ -n "${osl_llvm}" ]] \
-			&& ver_test "${osl_llvm}" -ne "${LLVM_V}" ; then
-			die "media-libs/osl must be linked to LLVM ${LLVM_V}"
+			&& ver_test "${osl_llvm}" -ne "${llvm_slot}" ; then
+			die "media-libs/osl must be linked to LLVM ${llvm_slot}"
 		fi
 	fi
 }
@@ -356,6 +409,7 @@ ebuild/upstream developers only."
 		-DWITH_IMAGE_OPENJPEG=$(usex jpeg2k)
 		-DWITH_IMAGE_TIFF=$(usex tiff)
 		-DWITH_INTERNATIONAL=$(usex nls)
+		-DWITH_HARU=$(usex pdf)
 		-DWITH_LLVM=$(usex llvm)
 		-DWITH_MEM_JEMALLOC=$(usex jemalloc)
 		-DWITH_MEM_VALGRIND=$(usex valgrind)
@@ -370,10 +424,12 @@ ebuild/upstream developers only."
 		-DWITH_OPENVDB=$(usex openvdb)
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
 		-DWITH_POTRACE=$(usex potrace)
+		-DWITH_PUGIXML=$(usex openimageio ON $(usex osl ON OFF))
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
-		-DWITH_XR_OPENXR=$(usex openxr)
+		-DWITH_USD=$(usex usd)
 		-DWITH_TBB=$(usex tbb)
+		-DWITH_XR_OPENXR=$(usex openxr)
 	)
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
@@ -397,7 +453,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.91.0/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.93.0/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(

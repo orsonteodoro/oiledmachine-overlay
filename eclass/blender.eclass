@@ -340,6 +340,8 @@ check_cpu() {
 	local has_sse2="$?"
 	grep -q -i -E -e 'sse3( |$)' /proc/cpuinfo # 2004
 	local has_sse3="$?"
+	grep -q -i -E -e 'pni( |$)' /proc/cpuinfo # 2004, equivalent to sse3
+	local has_pni="$?"
 	grep -q -i -E -e 'ssse3( |$)' /proc/cpuinfo # 2006
 	local has_ssse3="$?"
 	grep -q -i -E -e 'abm( |$)' /proc/cpuinfo # 2007
@@ -390,7 +392,7 @@ check_cpu() {
 	fi
 
 	if use cpu_flags_x86_sse3 ; then
-		if [[ "${has_sse3}" != "0" ]] ; then
+		if [[ "${has_sse3}" != "0" && "${has_pni}" != "0" ]] ; then
 			die \
 "sse3 may not be supported on your CPU and was enabled via cpu_flags_x86_sse3"
 		fi
