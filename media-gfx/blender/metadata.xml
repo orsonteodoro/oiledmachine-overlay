@@ -216,14 +216,14 @@
       blending.</flag>
     <flag name="openimageio">Enable OpenImageIO Support</flag>
     <flag name="opensubdiv">
-      Add rendering support form OpenSubdiv from Dreamworks Animation
-      through <pkg>media-libs/opensubdiv</pkg>.
+      Accelerates the subdivision rendering to produce smoother surfaces
+      with the use of GPU and CPU.
     </flag>
     <flag name="openvdb">
       Add GPU preview rendering. Only works with nVidia cards.
     </flag>
     <flag name="openxr">
-      Add VR features .
+      Add VR features.
     </flag>
     <flag name="optix">
       Build cycles renderer with nVidia OptiX support on
@@ -250,6 +250,9 @@
     </flag>
     <flag name="theora">
       Adds theora as an audio output format.
+    </flag>
+    <flag name="usd">
+      Allows to export certain types of selected visible meshes to USD format.
     </flag>
     <flag name="webm">
       Adds support for WebM preset with dependency checks.
