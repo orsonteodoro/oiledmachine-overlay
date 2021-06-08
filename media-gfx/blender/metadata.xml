@@ -105,22 +105,23 @@
     <flag name="abi7-compat">
       Use ABI 7.x compatible OpenVDB.
     </flag>
+    <flag name="abi8-compat">
+      Use ABI 8.x compatible OpenVDB.
+    </flag>
     <flag name="alembic">
-      Add support for Alembic through <pkg>media-gfx/alembic</pkg>
-      used as an animation interchange format.
+      Add support for Alembic through <pkg>media-gfx/alembic</pkg> used as an
+      animation interchange format.
     </flag>
     <flag name="asan">
-      Enable address sanitiation.  This is only for bug and
-      vulnerability discovery only.  It does not necessarily prevent
-      when activated.
+      Enable address sanitiation.  This is only for bug and vulnerability
+      discovery only.  It does not necessarily prevent when activated.
     </flag>
     <flag name="boost">
-      Enables using componenents that may depend on Boost such as
-      Blender player (2.7 only), Cycles GPU rendering,
-      Cycles network rendering, game engine (2.7 only),
-      JACK (2.7 only), nls (multilanguage support), OpenAL,
-      OpenVDB, color-management.  Disabling implies reducing bloat
-      and heavy Boost dependency and faster build times.
+      Enables using componenents that may depend on Boost such as Blender player
+      (2.7 only), Cycles GPU rendering, Cycles network rendering, game engine
+      (2.7 only), JACK (2.7 only), nls (multilanguage support), OpenAL, OpenVDB,
+      color-management.  Disabling implies reducing bloat and heavy Boost
+      dependency and faster build times.
     </flag>
     <flag name="build_creator">
       Builds the IDE.  The default.
@@ -209,15 +210,15 @@
       and general use.
     </flag>
     <flag name="opencl">
-      Allow OpenCL Graphics Acceleration. This may
-      require extra graphics card drivers.</flag>
+      Allow OpenCL Graphics Acceleration. This may require extra graphics card
+      drivers.</flag>
     <flag name="openimagedenoise">
       Enable Open Image Denoise support for CPU based AI denoising for improved
       blending.</flag>
     <flag name="openimageio">Enable OpenImageIO Support</flag>
     <flag name="opensubdiv">
-      Accelerates the subdivision rendering to produce smoother surfaces
-      with the use of GPU and CPU.
+      Accelerates the subdivision rendering to produce smoother curved 3D
+      surfaces with the use of GPU and CPU.
     </flag>
     <flag name="openvdb">
       Add GPU preview rendering. Only works with nVidia cards.
@@ -226,9 +227,8 @@
       Add VR features.
     </flag>
     <flag name="optix">
-      Build cycles renderer with nVidia OptiX support on
-      GeForce/Quadro RTX GPUs for hardware accelerated
-      rendering and denoising.
+      Build cycles renderer with nVidia OptiX support on GeForce/Quadro RTX GPUs
+      for hardware accelerated rendering and denoising.
     </flag>
     <flag name="osl">
       Add support for OpenShadingLanguage scripting.
@@ -249,7 +249,7 @@
       Build the provided unit tests.
     </flag>
     <flag name="theora">
-      Adds theora as an audio output format.
+      Adds theora for video output.
     </flag>
     <flag name="usd">
       Allows to export certain types of selected visible meshes to USD format.
