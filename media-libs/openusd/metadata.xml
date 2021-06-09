@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- only for this ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- this ebuild-package was obtained originally from the cg overlay -->
+  <maintainer>
+    <email>brothermechanic@gmail.com</email>
+  </maintainer>
+  <longdescription>
+    This ebuild fork purpose is to improve deterministic reliable builds,
+    versioning, and improve package quality.
+  </longdescription>
+  <use>
+    <flag name="alembic">
+      Enables a plugin to write to files in alembic interchange format.
+    </flag>
+    <flag name="doc">
+      Generates html documentation.
+    </flag>
+    <flag name="draco">
+      Enables a plugin for compressing and decompressing meshes and point
+      clouds.
+    </flag>
+    <flag name="embree">
+      Enables an example rendering backend for usdview.
+    </flag>
+    <flag name="hdf5">
+      Enables the hdf5 backend in the alembic plugin.
+    </flag>
+    <flag name="imaging">
+      Builds imaging components
+    </flag>
+    <flag name="jemalloc">
+      Enables use of jemalloc to measure memory use, to load images faster,
+      efficient memory usage with many threads operating on many similaneous
+      files for a scene than glibc allocator.
+    </flag>
+    <flag name="monolithic">
+      Enable to build as a single library, or disable as multiple libraries.
+    </flag>
+    <flag name="opencolorio">
+      Provides color management for hydra viewports
+    </flag>
+    <flag name="openexr">
+      Support for reading EXR files.
+    </flag>
+    <flag name="openimageio">
+      Support for reading additional formats and writing images as textures.
+    </flag>
+    <flag name="opensubdiv">
+      Support the use of CPU + GPU to complete the rendering of final detailed
+      smooth shape of a 3D asset in the fastest way possible.
+    </flag>
+    <flag name="openvdb">
+      Enables support OpenVDB for manipulation of volumetric data to and from
+      meshes.
+    </flag>
+    <flag name="opengl">
+      Enables support for OpenGL to build viewers and libraries.
+    </flag>
+    <flag name="osl">
+      Support for the OSL shading language
+    </flag>
+    <flag name="ptex">
+      Support the Ptex texture mapping system.
+    </flag>
+    <flag name="python">
+      Generate python bindings
+    </flag>
+    <flag name="usdview">
+      A tool that combines GL preview, scenegraph navigation and introspection,
+      debug, diagnostics.
+    </flag>
+    <flag name="test">
+      Build tests
+    </flag>
+    <flag name="tools">
+      Build commandline tools
+    </flag>
+  </use>
+</pkgmetadata>

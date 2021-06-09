@@ -1,0 +1,86 @@
+--- a/cmake/macros/Public.cmake	2020-04-20 08:15:12.647935655 +0300
++++ b/cmake/macros/Public.cmake	2020-04-20 08:20:55.517936523 +0300
+@@ -458,7 +458,7 @@ function(pxr_build_test_shared_lib LIBRARY_NAME)
+     # Find libraries under the install prefix, which has the core USD
+     # libraries.
+     _pxr_init_rpath(rpath "tests/lib")
+-    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib")
++    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib64")
+     _pxr_install_rpath(rpath ${LIBRARY_NAME})
+ 
+     if (NOT bt_SOURCE_DIR)
+@@ -546,7 +546,7 @@ function(pxr_build_test TEST_NAME)
+     # Find libraries under the install prefix, which has the core USD
+     # libraries.
+     _pxr_init_rpath(rpath "tests")
+-    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib")
++    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib64")
+     _pxr_install_rpath(rpath ${TEST_NAME})
+ 
+     # XXX -- We shouldn't have to install to run tests.
+@@ -752,13 +752,13 @@ function(pxr_register_test TEST_NAME)
+     # we set the PXR_PLUGINPATH_NAME env var to point to the "lib/usd"
+     # directory where these files are installed.
+     if (NOT TARGET shared_libs)
+-        set(testWrapperCmd ${testWrapperCmd} --env-var=${PXR_PLUGINPATH_NAME}=${CMAKE_INSTALL_PREFIX}/lib/usd)
++        set(testWrapperCmd ${testWrapperCmd} --env-var=${PXR_PLUGINPATH_NAME}=${CMAKE_INSTALL_PREFIX}/lib64/usd)
+     endif()
+ 
+     # Ensure that Python imports the Python files built by this build.
+     # On Windows convert backslash to slash and don't change semicolons
+     # to colons.
+-    set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/lib/python;$ENV{PYTHONPATH}")
++    set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/lib64/python;$ENV{PYTHONPATH}")
+     if(WIN32)
+         string(REGEX REPLACE "\\\\" "/" _testPythonPath "${_testPythonPath}")
+     else()        
+@@ -746,7 +746,7 @@
+     foreach(dirName ${PXR_EXTRA_PLUGINS})
+         file(RELATIVE_PATH
+             relDirName
+-            "${CMAKE_INSTALL_PREFIX}/lib/usd"
++            "${CMAKE_INSTALL_PREFIX}/lib64/usd"
+             "${CMAKE_INSTALL_PREFIX}/${dirName}"
+         )
+         set(extraIncludes "${extraIncludes},\n        \"${relDirName}/\"")
+@@ -757,7 +757,7 @@
+          "${plugInfoContents}")
+     install(
+         FILES "${CMAKE_CURRENT_BINARY_DIR}/plugins_plugInfo.json"
+-        DESTINATION lib/usd
++        DESTINATION lib64/usd
+         RENAME "plugInfo.json"
+     )
+ 
+@@ -766,7 +766,7 @@
+          "${plugInfoContents}")
+     install(
+         FILES "${CMAKE_CURRENT_BINARY_DIR}/usd_plugInfo.json"
+-        DESTINATION plugin/usd
++        DESTINATION share/usd/plugin/usd
+         RENAME "plugInfo.json"
+     )
+ endfunction() # pxr_setup_plugins
+@@ -977,8 +977,8 @@
+         )
+ 
+         _pxr_init_rpath(rpath "${libInstallPrefix}")
+-        _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/${PXR_INSTALL_SUBDIR}/lib")
+-        _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib")
++        _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/${PXR_INSTALL_SUBDIR}/lib64")
++        _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib64")
+         _pxr_install_rpath(rpath usd_ms)
+     endif()
+
+--- a/pxr/CMakeLists.txt        2020-04-19 19:52:44.560882678 +0300
++++ b/pxr/CMakeLists.txt	2020-04-19 20:06:38.077552324 +0300
+@@ -18,7 +18,7 @@
+   "${PROJECT_BINARY_DIR}/pxrConfig.cmake" @ONLY)
+ install(FILES
+   "${PROJECT_BINARY_DIR}/pxrConfig.cmake"
+-  DESTINATION "${CMAKE_INSTALL_PREFIX}"
++  DESTINATION "${CMAKE_INSTALL_PREFIX}/share/usd/"
+ )
+ 
+ if (NOT PXR_BUILD_MONOLITHIC)
+ 

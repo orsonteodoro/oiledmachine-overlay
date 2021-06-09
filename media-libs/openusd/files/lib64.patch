@@ -1,0 +1,114 @@
+--- a/cmake/macros/Public.cmake	2020-11-14 00:30:42.241274460 +0300
++++ b/cmake/macros/Public.cmake	2020-11-14 00:33:28.117941719 +0300
+@@ -409,7 +409,7 @@
+             RENAME 
+                 __init__.py
+             DESTINATION 
+-                tests/${tm_INSTALL_PREFIX}/lib/python/${MODULE_NAME}
++                tests/${tm_INSTALL_PREFIX}/lib64/python/${MODULE_NAME}
+         )
+     endif()
+     if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${plugInfoFile}")
+@@ -419,7 +419,7 @@
+             RENAME 
+                 plugInfo.json
+             DESTINATION 
+-                tests/${tm_INSTALL_PREFIX}/lib/python/${MODULE_NAME}
++                tests/${tm_INSTALL_PREFIX}/lib64/python/${MODULE_NAME}
+         )
+     endif()
+ endfunction() # pxr_create_test_module
+@@ -458,7 +458,7 @@
+     # Find libraries under the install prefix, which has the core USD
+     # libraries.
+     _pxr_init_rpath(rpath "tests/lib")
+-    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib")
++    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib64")
+     _pxr_install_rpath(rpath ${LIBRARY_NAME})
+ 
+     if (NOT bt_SOURCE_DIR)
+@@ -471,7 +471,7 @@
+         set(TEST_PLUG_INFO_ROOT "..")
+         set(LIBRARY_FILE "${CMAKE_SHARED_LIBRARY_PREFIX}${LIBRARY_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+ 
+-        set(testPlugInfoLibDir "tests/${bt_INSTALL_PREFIX}/lib/${LIBRARY_NAME}")
++        set(testPlugInfoLibDir "tests/${bt_INSTALL_PREFIX}/lib64/${LIBRARY_NAME}")
+         set(testPlugInfoResourceDir "${testPlugInfoLibDir}/${TEST_PLUG_INFO_RESOURCE_PATH}")
+         set(testPlugInfoPath "${CMAKE_BINARY_DIR}/${testPlugInfoResourceDir}/plugInfo.json")
+ 
+@@ -546,7 +546,7 @@
+     # Find libraries under the install prefix, which has the core USD
+     # libraries.
+     _pxr_init_rpath(rpath "tests")
+-    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib")
++    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib64")
+     _pxr_install_rpath(rpath ${TEST_NAME})
+ 
+     # XXX -- We shouldn't have to install to run tests.
+@@ -752,13 +752,13 @@
+     # we set the PXR_PLUGINPATH_NAME env var to point to the "lib/usd"
+     # directory where these files are installed.
+     if (NOT TARGET shared_libs)
+-        set(testWrapperCmd ${testWrapperCmd} --env-var=${PXR_PLUGINPATH_NAME}=${CMAKE_INSTALL_PREFIX}/lib/usd)
++        set(testWrapperCmd ${testWrapperCmd} --env-var=${PXR_PLUGINPATH_NAME}=${CMAKE_INSTALL_PREFIX}/lib64/usd)
+     endif()
+ 
+     # Ensure that Python imports the Python files built by this build.
+     # On Windows convert backslash to slash and don't change semicolons
+     # to colons.
+-    set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/lib/python;$ENV{PYTHONPATH}")
++    set(_testPythonPath "${CMAKE_INSTALL_PREFIX}/lib64/python;$ENV{PYTHONPATH}")
+     if(WIN32)
+         string(REGEX REPLACE "\\\\" "/" _testPythonPath "${_testPythonPath}")
+     else()
+@@ -800,7 +800,7 @@
+     foreach(dirName ${PXR_EXTRA_PLUGINS})
+         file(RELATIVE_PATH
+             relDirName
+-            "${CMAKE_INSTALL_PREFIX}/lib/usd"
++            "${CMAKE_INSTALL_PREFIX}/lib64/usd"
+             "${CMAKE_INSTALL_PREFIX}/${dirName}"
+         )
+         set(extraIncludes "${extraIncludes},\n        \"${relDirName}/\"")
+@@ -1012,7 +1012,7 @@
+ 
+         _pxr_init_rpath(rpath "${libInstallPrefix}")
+         _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/${PXR_INSTALL_SUBDIR}/lib")
+-        _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib")
++        _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib64")
+         _pxr_install_rpath(rpath usd_ms)
+     endif()
+ 
+--- a/cmake/macros/Private.cmake	2020-11-14 00:40:50.921276632 +0300
++++ b/cmake/macros/Private.cmake	2020-11-14 00:42:09.227943579 +0300
+@@ -947,7 +947,7 @@
+     _pxr_init_rpath(rpath "${libInstallPrefix}")
+     _pxr_add_rpath(rpath
+         "${CMAKE_INSTALL_PREFIX}/${args_WRAPPED_LIB_INSTALL_PREFIX}")
+-    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib")
++    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib64")
+     _pxr_install_rpath(rpath ${LIBRARY_NAME})
+ 
+     _get_folder("_python" folder)
+@@ -1286,7 +1286,7 @@
+     # the latter for core USD libraries.
+     _pxr_init_rpath(rpath "${libInstallPrefix}")
+     _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/${PXR_INSTALL_SUBDIR}/lib")
+-    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib")
++    _pxr_add_rpath(rpath "${CMAKE_INSTALL_PREFIX}/lib64")
+     _pxr_install_rpath(rpath ${NAME})
+ 
+     #
+--- a/cmake/defaults/ProjectDefaults.cmake	2020-11-14 00:42:41.134610359 +0300
++++ b/cmake/defaults/ProjectDefaults.cmake	2020-11-14 00:43:42.834610577 +0300
+@@ -26,8 +26,8 @@
+     set(CMAKE_MACOSX_RPATH ON)
+     set(CMAKE_SKIP_BUILD_RPATH FALSE)
+     set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+-    set(CMAKE_DYLIB_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE STRING "install_name path for dylib.")
+-    list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
++    set(CMAKE_DYLIB_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib64" CACHE STRING "install_name path for dylib.")
++    list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib64" isSystemDir)
+     message(WARNING "Building USD on Mac OSX is currently experimental.")
+ elseif(WIN32)
+     # Windows specific set up

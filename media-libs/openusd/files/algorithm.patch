@@ -1,0 +1,12 @@
+diff --git a/pxr/imaging/hgi/types.h b/pxr/imaging/hgi/types.h
+index 3fe6b9d..dfc8ecc 100644
+--- a/pxr/imaging/hgi/types.h
++++ b/pxr/imaging/hgi/types.h
+@@ -30,6 +30,7 @@
+ #include <vector>
+ #include <limits>
+ #include <stdlib.h>
++#include <algorithm>
+ 
+ 
+ PXR_NAMESPACE_OPEN_SCOPE
