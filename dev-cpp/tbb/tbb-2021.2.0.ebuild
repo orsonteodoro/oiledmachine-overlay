@@ -11,10 +11,10 @@ HOMEPAGE="https://www.threadingbuildingblocks.org"
 # Clear distinction is made to prevent wrong hashing
 VER_SCH="semver" # valid values (left column):
 # marketing ~ YYYY_Un
-# semver ~ YYYY.M.p
-# live-snapshot ~ YYYY.M.m_pYYYYMMDD
+# semver ~ YYYY.m.p
+# live-snapshot ~ YYYY.m.p_pYYYYMMDD
 #
-# YYYY_Un == YYYY.M in later releases
+# YYYY_Un == YYYY.m in later releases
 #
 # Details on versioning can be found in:
 # https://github.com/oneapi-src/oneTBB/issues/143
