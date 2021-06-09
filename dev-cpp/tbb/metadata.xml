@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- ebuild fork only on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- this ebuild-package was obtained from the gentoo-overlay -->
+  <!-- ebuild originator -->
+  <maintainer type="project">
+    <email>sci@gentoo.org</email>
+    <name>Gentoo Science Project</name>
+  </maintainer>
+  <longdescription lang="en">
+  The Intel Threading Building Blocks is a library that helps you
+  leverage multi-core processor performance without having to be a
+  threading expert. It represents a higher-level, task-based
+  parallelism that abstracts platform details and threading mechanism
+  for performance and scalability.
+
+  The purpose of this fork was originally to meet minimum requirements of either
+  Blender or its dependencies.
+  </longdescription>
+  <upstream>
+    <remote-id type="github">intel/tbb</remote-id>
+  </upstream>
+  <use>
+    <flag name="debug">Builds with debug symbols.</flag>
+    <flag name="doc">Generates and installs documentation.</flag>
+    <flag name="examples">Builds and installs examples.</flag>
+    <flag name="python">Builds python bindings.</flag>
+    <flag name="test">Builds and runs test suite.</flag>
+    <flag name="X">Builds examples with X support.  Otherwise, builds them for
+      command line console.</flag>
+  </use>
+</pkgmetadata>
