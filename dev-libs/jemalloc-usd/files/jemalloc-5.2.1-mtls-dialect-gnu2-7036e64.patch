@@ -1,0 +1,45 @@
+From 7036e64d36b54e75c6428a3c2aa62db0471f1047 Mon Sep 17 00:00:00 2001
+From: Kenny MacDermid <kenny.macdermid@gmail.com>
+Date: Tue, 11 Jul 2017 22:45:22 -0300
+Subject: [PATCH] Add the -mtls-dialect=gnu2 to compile flags.
+
+When this option exists there is no need to add the tls_model attribute.
+
+----
+
+Originally from:
+https://github.com/KenMacD/jemalloc/commit/7036e64d36b54e75c6428a3c2aa62db0471f1047
+
+From discussion:
+https://github.com/jemalloc/jemalloc/issues/955
+
+Ported to 5.2.1
+
+diff -urp jemalloc-5.2.1.orig2/configure.ac jemalloc-5.2.1/configure.ac
+--- jemalloc-5.2.1.orig2/configure.ac	2021-06-08 17:56:37.319831122 -0700
++++ jemalloc-5.2.1/configure.ac	2021-06-08 17:58:36.354693819 -0700
+@@ -807,6 +807,14 @@ if test "x${je_cv_attribute}" = "xyes" ;
+     JE_CXXFLAGS_ADD([-fvisibility=hidden])
+   fi
+ fi
++dnl Check for tls-dialect support.
++JE_CFLAGS_ADD([-mtls-dialect=gnu2])
++if test "x$je_cv_cflags_added" = "x-mtls-dialect=gnu2" ; then
++  je_cv_tls_dialect_gnu2=yes
++else
++  je_cv_tls_dialect_gnu2=no
++fi
++JE_CXXFLAGS_ADD([-mtls-dialect=gnu2])
+ dnl Check for tls_model attribute support (clang 3.0 still lacks support).
+ JE_CFLAGS_SAVE()
+ JE_CFLAGS_ADD([-Werror])
+@@ -2126,7 +2134,8 @@ fi
+ )
+ AC_SUBST([enable_initial_exec_tls])
+ 
+-if test "x${je_cv_tls_model}" = "xyes" -a \
++if test "x${je_cv_tls_dialect_gnu2}" = "xno" -a \
++       "x${je_cv_tls_model}" = "xyes" -a \
+        "x${enable_initial_exec_tls}" = "x1" ; then
+   AC_DEFINE([JEMALLOC_TLS_MODEL],
+             [__attribute__((tls_model("initial-exec")))])
