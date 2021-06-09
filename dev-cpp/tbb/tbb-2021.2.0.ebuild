@@ -37,7 +37,8 @@ https://github.com/intel/${PN}/archive/refs/heads/${EGIT_COMMIT}.tar.gz
 fi
 LICENSE="Apache-2.0"
 SLOT="0/${PV}"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86
+~amd64-linux ~x86-linux"
 IUSE+=" -X debug doc -examples python +test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -69,9 +70,11 @@ pkg_setup()
 {
 	if use test ; then
 		if [[ ${FEATURES} =~ test ]] ; then
-			einfo "Testing enabled."
+			einfo \
+"Testing enabled."
 		else
-			ewarn "Testing disabled.  Add FEATURES=test before ebuild."
+			ewarn \
+"Testing disabled.  Add FEATURES=test before ebuild."
 		fi
 	fi
 
@@ -91,14 +94,17 @@ multilib_src_configure() {
 	pushd "${S}/doc" || die
 		doxygen -g Doxyfile-dev.in || die
 		sed -i -e "s|My Project|${PN}|g" \
-			-e "s|GENERATE_XML           = NO|GENERATE_XML           = YES|g" \
-			-e "s|GENERATE_LATEX         = YES|GENERATE_LATEX         = NO|g" \
-			-e "s|INPUT                  =|INPUT                  = ${S}/src/tbb ${S}/src/tbbbind ${S}/src/tbbmalloc ${S}/src/tbbmalloc_proxy|g" \
-			-e "s|JAVADOC_AUTOBRIEF      = NO|JAVADOC_AUTOBRIEF      = YES|g" \
-			-e "s|AUTOLINK_SUPPORT       = YES|AUTOLINK_SUPPORT       = NO|g" \
-			-e "s|XML_OUTPUT             = xml|XML_OUTPUT             = doxyxml|g" \
-			-e "s|MACRO_EXPANSION        = NO|MACRO_EXPANSION        = YES|g" \
-			-e "s|PREDEFINED             =|PREDEFINED             = DOXYGEN=1|g" \
+	-e "s|GENERATE_XML           = NO|GENERATE_XML           = YES|g" \
+	-e "s|GENERATE_LATEX         = YES|GENERATE_LATEX         = NO|g" \
+	-e "s|\
+INPUT                  =|\
+INPUT                  = ${S}/src/tbb ${S}/src/tbbbind ${S}/src/tbbmalloc \
+${S}/src/tbbmalloc_proxy|g" \
+	-e "s|JAVADOC_AUTOBRIEF      = NO|JAVADOC_AUTOBRIEF      = YES|g" \
+	-e "s|AUTOLINK_SUPPORT       = YES|AUTOLINK_SUPPORT       = NO|g" \
+	-e "s|XML_OUTPUT             = xml|XML_OUTPUT             = doxyxml|g" \
+	-e "s|MACRO_EXPANSION        = NO|MACRO_EXPANSION        = YES|g" \
+	-e "s|PREDEFINED             =|PREDEFINED             = DOXYGEN=1|g" \
 			Doxyfile-dev.in || die
 	popd
 
@@ -263,7 +269,8 @@ multilib_src_install() {
 				tachyon
 			)
 			exeinto /usr/share/${PF}/examples/build
-			built_demo_dir=$(find "${BUILD_DIR}" -name "*gentoo" -type d)
+			built_demo_dir=$(find "${BUILD_DIR}" -name "*gentoo" \
+				-type d)
 			pushd "${built_demo_dir}" || die
 				doexe ${examples_exe[@]}
 				if [[ -f cholesky ]] ; then
