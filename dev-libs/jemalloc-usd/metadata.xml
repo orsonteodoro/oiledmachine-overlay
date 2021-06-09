@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="project">
+	<maintainer type="person">
 		<email>orsonteodoro@hotmail.com</email>
 		<name>Orson Teodoro</name>
 	</maintainer>
@@ -24,7 +24,7 @@
 
 		It was decided to keep this one with -mtls-dialect=gnu2
 		separate from the original to avoid possible
-		complications or avoid introducing new bugs.
+		complications or avoid introducing new bugs systemwide.
 	</longdescription>
 	<upstream>
 		<remote-id type="github">jemalloc/jemalloc</remote-id>
