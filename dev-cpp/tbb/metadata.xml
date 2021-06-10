@@ -19,8 +19,8 @@
   parallelism that abstracts platform details and threading mechanism
   for performance and scalability.
 
-  The purpose of this fork was originally to meet minimum requirements of either
-  Blender or its dependencies.
+  The purpose of this ebuild fork was originally to meet minimum requirements of
+  either Blender or its dependencies.
   </longdescription>
   <upstream>
     <remote-id type="github">intel/tbb</remote-id>
