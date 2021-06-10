@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- ebuild fork only on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- this ebuild-package was obtained from the cg overlay -->
+  <longdescription lang="en">
+  The purpose of this ebuild fork was to fix a inconsistency between libtool and
+  GCC updates.
+  </longdescription>
+</pkgmetadata>
