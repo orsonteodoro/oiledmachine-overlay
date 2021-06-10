@@ -25,12 +25,8 @@
     ----- CUT BELOW HERE -----
 www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
     ----- CUT ABOVE HERE -----
-
-    The ebuild offers fine grain control over the allocator.
-    
   </longdescription>
   <upstream>
-    <!-- send ebuild related bugs to oiledmachine-overlay first -->
     <bugs-to>https://www.chromium.org/for-testers/bug-reporting-guidelines</bugs-to>
   </upstream>
   <use>
@@ -42,9 +38,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
    <flag name="headless">Build Ozone only with headless backend, NOT RECOMMENDED
      for general use.</flag>
    <flag name="libcmalloc">Use the allocator provided by the libc implementation.
-     With glibc malloc (ptmalloc2 based) memory reuse is duplicated between
-     threaded arena especially for large data.  However, the glibc malloc is
-     widely used and tested.</flag>
+     With glibc malloc (ptmalloc2 based) memory reuse is wastefully duplicated
+     between threaded arenas especially for large data.  However, the glibc
+     allocator is widely used and tested.</flag>
    <flag name="js-type-check">Enable JavaScript type-checking for Chrome's web
      technology-based UI. Requires Java.</flag>
    <flag name="official">Enable Official build instead of Developer build.</flag>

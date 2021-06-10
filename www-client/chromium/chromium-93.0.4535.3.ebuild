@@ -1,6 +1,8 @@
 # Copyright 2009-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# Monitor https://chromereleases.googleblog.com/search/label/Dev%20updates for security updates.  They are announced faster than NVD.
+
 EAPI=7
 PYTHON_COMPAT=( python3_8 )
 PYTHON_REQ_USE="xml"
@@ -14,7 +16,7 @@ inherit multilib-minimal
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
-PATCHSET="1"
+PATCHSET="2"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
 SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-44.1.0.zip
@@ -221,6 +223,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	ewarn "The $(ver_cut 1 ${PV}) series is the Dev branch."
 	pre_build_checks
 
 	chromium_suid_sandbox_check_kernel_config
@@ -292,7 +295,6 @@ src_prepare() {
 		third_party/angle/src/common/third_party/base
 		third_party/angle/src/common/third_party/smhasher
 		third_party/angle/src/common/third_party/xxhash
-		third_party/angle/src/third_party/compiler
 		third_party/angle/src/third_party/libXNVCtrl
 		third_party/angle/src/third_party/trace_event
 		third_party/angle/src/third_party/volk
@@ -464,6 +466,7 @@ src_prepare() {
 		third_party/tflite/src/third_party/fft2d
 		third_party/tflite-support
 		third_party/ruy
+		third_party/six
 		third_party/ukey2
 		third_party/unrar
 		third_party/usrsctp

@@ -1,6 +1,15 @@
---- chromium-91.0.4472.77.ebuild.orig	2021-06-01 04:09:48.000000000 -0700
-+++ chromium-91.0.4472.77.ebuild	2021-06-05 13:20:03.132543788 -0700
-@@ -10,6 +10,7 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de
+--- chromium-93.0.4535.3.ebuild.orig	2021-06-09 14:39:47.000000000 -0700
++++ chromium-93.0.4535.3.ebuild	2021-06-10 02:53:37.649966225 -0700
+@@ -1,6 +1,8 @@
+ # Copyright 2009-2021 Gentoo Authors
+ # Distributed under the terms of the GNU General Public License v2
+ 
++# Monitor https://chromereleases.googleblog.com/search/label/Dev%20updates for security updates.  They are announced faster than NVD.
++
+ EAPI=7
+ PYTHON_COMPAT=( python3_8 )
+ PYTHON_REQ_USE="xml"
+@@ -10,6 +12,7 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de
  	sv sw ta te th tr uk vi zh-CN zh-TW"
  
  inherit check-reqs chromium-2 desktop flag-o-matic multilib ninja-utils pax-utils portability python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
@@ -8,14 +17,23 @@
  
  DESCRIPTION="Open-source version of Google Chrome web browser"
  HOMEPAGE="https://chromium.org/"
-@@ -26,79 +27,81 @@ LICENSE="BSD"
+@@ -19,85 +22,91 @@ SRC_URI="https://commondatastorage.googl
+ 	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-44.1.0.zip
+ 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
+ 	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )"
++RESTRICT="mirror"
+ 
+ LICENSE="BSD"
  SLOT="0"
- KEYWORDS="amd64 arm64 ~ppc64 ~x86"
+ KEYWORDS="~amd64 ~arm64 ~x86"
  IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
++IUSE+=" +partitionalloc tcmalloc libcmalloc"
 +_ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 +IUSE+=" ${_ABIS}"
  REQUIRED_USE="
++	^^ ( partitionalloc tcmalloc libcmalloc )
  	component-build? ( !suid )
++	partitionalloc? ( !component-build )
  	screencast? ( wayland )
  "
  
@@ -91,6 +109,7 @@
 -		>=media-libs/opus-1.3.1:=
 +		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
  	)
+ 	net-misc/curl[ssl]
 -	sys-apps/dbus:=
 -	sys-apps/pciutils:=
 +	sys-apps/dbus:=[${MULTILIB_USEDEP}]
@@ -140,7 +159,7 @@
  	virtual/ttf-fonts
  	selinux? ( sec-policy/selinux-chromium )
  "
-@@ -117,8 +120,11 @@ BDEPEND="
+@@ -117,8 +126,11 @@ BDEPEND="
  	>=net-libs/nodejs-7.6.0[inspector]
  	sys-apps/hwids[usb(+)]
  	>=sys-devel/bison-2.4.3
@@ -154,7 +173,7 @@
  	js-type-check? ( virtual/jre )
  "
  
-@@ -127,19 +133,19 @@ BDEPEND="
+@@ -127,19 +139,19 @@ BDEPEND="
  : ${CHROMIUM_FORCE_LIBCXX=no}
  
  if [[ ${CHROMIUM_FORCE_CLANG} == yes ]]; then
@@ -182,10 +201,18 @@
  	"
  	RDEPEND+="${COMMON_DEPEND}"
  	DEPEND+="${COMMON_DEPEND}"
-@@ -528,9 +534,11 @@ src_prepare() {
- 	if use js-type-check; then
- 		ln -s "${EPREFIX}"/usr/bin/java third_party/jdk/current/bin/java || die
- 	fi
+@@ -211,6 +223,7 @@ pkg_pretend() {
+ }
+ 
+ pkg_setup() {
++	ewarn "The $(ver_cut 1 ${PV}) series is the Dev branch."
+ 	pre_build_checks
+ 
+ 	chromium_suid_sandbox_check_kernel_config
+@@ -532,9 +545,11 @@ src_prepare() {
+ 	# bundled eu-strip is for amd64 only and we don't want to pre-stripped binaries
+ 	mkdir -p buildtools/third_party/eu-strip/bin || die
+ 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 +	multilib_copy_sources
  }
  
@@ -195,7 +222,7 @@
  	# Calling this here supports resumption via FEATURES=keepwork
  	python_setup
  
-@@ -541,8 +549,8 @@ src_configure() {
+@@ -545,8 +560,8 @@ src_configure() {
  
  	if [[ ${CHROMIUM_FORCE_CLANG} == yes ]] && ! tc-is-clang; then
  		# Force clang since gcc is pretty broken at the moment.
@@ -206,7 +233,22 @@
  		strip-unsupported-flags
  	fi
  
-@@ -705,6 +713,31 @@ src_configure() {
+@@ -577,6 +592,14 @@ src_configure() {
+ 	# for development and debugging.
+ 	myconf_gn+=" is_component_build=$(usex component-build true false)"
+ 
++	if use partitionalloc ; then
++		myconf_gn+=" use_allocator=\"partition\""
++	elif use tcmalloc ; then
++		myconf_gn+=" use_allocator=\"tcmalloc\""
++	else
++		myconf_gn+=" use_allocator=\"none\""
++	fi
++
+ 	# Disable nacl, we can't build without pnacl (http://crbug.com/269560).
+ 	myconf_gn+=" enable_nacl=false"
+ 
+@@ -709,6 +732,31 @@ src_configure() {
  		die "Failed to determine target arch, got '$myarch'."
  	fi
  
@@ -238,7 +280,7 @@
  	# Make sure that -Werror doesn't get added to CFLAGS by the build system.
  	# Depending on GCC version the warnings are different and we don't want
  	# the build to fail because of that.
-@@ -791,7 +824,7 @@ src_configure() {
+@@ -792,7 +840,7 @@ src_configure() {
  	"$@" || die
  }
  
@@ -247,7 +289,7 @@
  	# Final link uses lots of file descriptors.
  	ulimit -n 2048
  
-@@ -830,15 +863,16 @@ src_compile() {
+@@ -833,15 +881,16 @@ src_compile() {
  		out/Release/chromium-browser.1 || die
  
  	# Build desktop file; bug #706786
@@ -268,12 +310,13 @@
  	local CHROMIUM_HOME="/usr/$(get_libdir)/chromium-browser"
  	exeinto "${CHROMIUM_HOME}"
  	doexe out/Release/chrome
-@@ -848,23 +882,27 @@ src_install() {
+@@ -851,24 +900,28 @@ src_install() {
  		fperms 4755 "${CHROMIUM_HOME}/chrome-sandbox"
  	fi
  
 -	doexe out/Release/chromedriver
 +	newexe out/Release/chromedriver chromedriver-${ABI}
+ 	doexe out/Release/crashpad_handler
  
  	local sedargs=( -e
  			"s:/usr/lib/:/usr/$(get_libdir)/:g;
@@ -301,7 +344,7 @@
  
  	# Allow users to override command-line options, bug #357629.
  	insinto /etc/chromium
-@@ -907,7 +945,7 @@ src_install() {
+@@ -911,7 +964,7 @@ src_install() {
  	done
  
  	# Install desktop entry
@@ -310,7 +353,7 @@
  
  	# Install GNOME default application entry (bug #303100).
  	insinto /usr/share/gnome-control-center/default-apps
-@@ -941,4 +979,16 @@ pkg_postinst() {
+@@ -945,4 +998,16 @@ pkg_postinst() {
  		elog "inside Chromium or add --enable-webrtc-pipewire-capturer"
  		elog "to CHROMIUM_FLAGS in /etc/chromium/default."
  	fi

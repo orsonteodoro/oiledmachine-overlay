@@ -1,6 +1,8 @@
 # Copyright 2009-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# Monitor https://chromereleases.googleblog.com/search/label/Beta%20updates for security updates.  They are announced faster than NVD.
+
 EAPI=7
 PYTHON_COMPAT=( python3_8 )
 PYTHON_REQ_USE="xml"
@@ -221,6 +223,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	ewarn "The $(ver_cut 1 ${PV}) series is the Beta channel."
 	pre_build_checks
 
 	chromium_suid_sandbox_check_kernel_config
