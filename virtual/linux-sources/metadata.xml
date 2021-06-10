@@ -2,6 +2,12 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 	<maintainer type="person">
+		<!-- only on the oiledmachine-overlay -->
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
+	</maintainer>
+	<!-- originators, obtained from the gentoo-overlay -->
+	<maintainer type="person">
 		<email>blueness@gentoo.org</email>
 		<name>Anthony G. Basile</name>
 	</maintainer>
@@ -11,5 +17,13 @@
 	</maintainer>
 	<use>
 		<flag name="firmware">Install linux kernel firmware</flag>
+	</use>
+	<longdescription>
+	This ebuild fork is allows for space savings if one decides to
+	build their own custom kernel compilation package.
+	</longdescription>
+	<use>
+		<flag name="custom-kernel">Enable to stop emerge from pulling
+		a kernel package from curated list of kernels.</flag>
 	</use>
 </pkgmetadata>
