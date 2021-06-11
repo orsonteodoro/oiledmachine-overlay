@@ -46,8 +46,12 @@
       on alternative ARCHs and ABIs</flag>
     <flag name="jumbo-build">Combine source files to speed up build
       process</flag>
+    <flag name="mediastream">Enables support for MediaStream API (IN DEVELOPMENT
+      / DRAFT).</flag>
     <flag name="nsplugin">Enable full nsplugin support (GTK2 plugins)</flag>
     <flag name="openmp">Use OpenMP to accelerate SVG filters</flag>
+    <flag name="variation-fonts">Check dependencies for variation font
+      support</flag>
     <flag name="webgl">Build support for the WebGL HTML API using
       <pkg>virtual/opengl</pkg></flag>
     <flag name="webassembly">Enables support for WebAssembly used for example

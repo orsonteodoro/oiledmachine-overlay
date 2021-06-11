@@ -3,6 +3,9 @@
 
 EAPI=7
 
+# Corresponds to
+# WebKit 612.1.18 (20210608, main) ; See Source/WebKit/Configurations/Version.xcconfig
+
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
 
@@ -10,16 +13,26 @@ CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{8..10} )
 USE_RUBY="ruby26 ruby27 ruby30"
 inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
-multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
+multilib-minimal pax-utils python-any-r1 ruby-single subversion \
+toolchain-funcs virtualx
 
 DESCRIPTION="Open source web browser engine"
 HOMEPAGE="https://www.webkitgtk.org"
-LICENSE="LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode"
+LICENSE="
+LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
+webrtc? (
+  Apache-2.0 BSD BSD-2 base64 ISC MIT openssl sigslot g711 g722
+)"
 # Some licenses are third party
 # Apache-2.0 Source/ThirdParty/ANGLE/src/tests/test_utils/third_party/LICENSE
+# Apache-2.0 Source/ThirdParty/libwebrtc/Source/webrtc/examples/objc/AppRTCMobile/third_party/SocketRocket/LICENSE
 # BSD Source/ThirdParty/gtest/LICENSE
 # BSD Source/WTF/wtf/dtoa/LICENSE
+# BSD Source/ThirdParty/libwebrtc/Source/third_party/pffft/LICENSE
+# BSD-2 Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/LICENSE
 # BSD-2 Source/ThirdParty/ANGLE/src/third_party/compiler/LICENSE
+# custom Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/third_party/base64/LICENSE
+# custom Source/ThirdParty/libwebrtc/Source/webrtc/common_audio/third_party/ooura/LICENSE
 # GPL-2+ Source/JavaScriptCore
 # GPL-3+ Source/ThirdParty/ANGLE/tools/flex-bison/third_party/m4sugar
 # GPL-3+ Source/ThirdParty/ANGLE/tools/flex-bison/third_party/skeletons
@@ -27,7 +40,16 @@ LICENSE="LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
 # LGPL-2.1+ for some files in Source/WebCore
 # MIT Source/ThirdParty/ANGLE/src/third_party/libXNVCtrl/LICENSE
 # MIT Source/WTF/LICENSE-libc++.txt
+# MIT Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/fft/LICENSE
+# MIT Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/portaudio/LICENSE
+# openssl, ISC, MIT - Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/LICENSE
+# public-domain Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/third_party/sigslot/LICENSE
+# public-domain Source/ThirdParty/libwebrtc/Source/webrtc/common_audio/third_party/spl_sqrt_floor/LICENSE
+# public-domain Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/g722/LICENSE
+# public-domain Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/g711/LICENSE
 # unicode Source/WTF/icu/LICENSE
+# * The public-domain is not presented in LICENSE variable to not give
+#   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
 API_VERSION="4.0"
@@ -61,8 +83,8 @@ vi zh_CN )
 
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
 +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer
--gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
-+libhyphen +libnotify lto -minibrowser +opengl openmp -seccomp -spell -systemd
+-gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen
++libnotify lto -mediastream -minibrowser +opengl openmp -seccomp -spell -systemd
 test variation-fonts wayland +webassembly +webassembly-b3-jit +webcrypto +webgl
 -webrtc -webxr +X +yarr-jit"
 
@@ -71,8 +93,8 @@ test variation-fonts wayland +webassembly +webassembly-b3-jit +webcrypto +webgl
 # gstreamer with opengl/gles2 needs egl
 REQUIRED_USE+="
 	|| ( aqua wayland X )
-	cpu_flags_arm_thumb2? ( bmalloc !ftl-jit )
 	64k-pages? ( !bmalloc !dfg-jit !ftl-jit !jit !webassembly !webassembly-b3-jit )
+	cpu_flags_arm_thumb2? ( bmalloc !ftl-jit )
 	jit? ( bmalloc )
 	dfg-jit? ( jit )
 	ftl-jit? ( jit )
@@ -85,6 +107,7 @@ REQUIRED_USE+="
 	webassembly-b3-jit? ( ftl-jit webassembly )
 	webgl? ( gstreamer
 		|| ( gles2-only opengl ) )
+	webrtc? ( mediastream )
 	webxr? ( webgl )
 	yarr-jit? ( jit )"
 
@@ -117,15 +140,6 @@ REQUIRED_USE+="
 # Aqua support in gtk3 is untested.
 # Dependencies are found at Source/cmake/OptionsGTK.cmake.
 # Various compile-time optionals for gtk+.
-#
-# gentoo-repo message:
-# Missing WebRTC support, but ENABLE_MEDIA_STREAM/ENABLE_WEB_RTC is experimental
-#   upstream (PRIVATE OFF) and shouldn't be used yet in 2.26
-#
-# oiledmachine-overlay message:
-# WebRTC support has been inclusion since 2018
-# Details: https://www.igalia.com/2018/08/07/WebRTC-support-in-WebKit!.html
-# but the cmake scripts mark it experimental.
 #
 # >=gst-plugins-opus-1.14.4-r1 for opusparse (required by MSE
 #  [Media Source Extensions])
@@ -184,7 +198,7 @@ RDEPEND+=" !net-libs/webkit-gtk:4
 	)
 	introspection? ( >=dev-libs/gobject-introspection-1.56.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
-	libhyphen? ( >=dev-libs/hyphen-6.0.3[${MULTILIB_USEDEP}] )
+	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
 	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
@@ -251,7 +265,8 @@ BDEPEND+="
 	virtual/perl-Data-Dumper
 	virtual/perl-JSON-PP
 	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_V} )
-	gtk-doc? ( >=dev-util/gtk-doc-1.27 )"
+	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
+	webrtc? ( dev-vcs/subversion )"
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
 #		>=x11-themes/hicolor-icon-theme-0.17
@@ -261,16 +276,8 @@ BDEPEND+="
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Don't use the tarball from webkitgtk.org because it doesn't include libwebrtc.
 # The whole commit date should be used
-EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-SRC_URI_V2="
-webrtc? (
-https://github.com/WebKit/WebKit/archive/${EGIT_COMMIT}.tar.gz
-	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz
-)
-!webrtc? (
-https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
-)
-"
+# See also https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
+ESVN_REVISION="278597"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -284,7 +291,7 @@ https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 # distributes these browsers with unicode licensed data without
 # restrictions.
 RESTRICT="test"
-S="${WORKDIR}/${MY_P}"
+S="${WORKDIR}/webkitgtk-${PV}"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 
 pkg_pretend() {
@@ -313,7 +320,6 @@ ewarn
 }
 
 pkg_setup() {
-	ewarn "This ebuild is a WIP (Work In Progress)."
 	ewarn "This is the unstable branch."
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
@@ -407,10 +413,23 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 	if use lto ; then
 		einfo "The lto USE flag is in testing."
 	fi
+
+	if use webrtc ; then
+		if has network-sandbox $FEATURES ; then
+			die \
+"${PN} requires network-sandbox to be disabled in FEATURES to be able to use\n\
+webrtc."
+		fi
+	fi
 }
 
 src_unpack() {
 	unpack ${A}
+	if use webrtc ; then
+		subversion_fetch \
+https://svn.webkit.org/repository/webkit/trunk/Source/ThirdParty/libwebrtc/ \
+Source/ThirdParty/libwebrtc
+	fi
 }
 
 src_prepare() {
@@ -500,6 +519,7 @@ multilib_src_configure() {
 		-DENABLE_GTKDOC=$(usex gtk-doc)
 		-DENABLE_GAMEPAD=$(usex gamepad)
 		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection)
+		-DENABLE_MEDIA_STREAM=$(usex mediastream)
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
 		-DENABLE_OPENGL=${opengl_enabled}
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
@@ -509,6 +529,7 @@ multilib_src_configure() {
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
 		-DENABLE_WEB_CRYPTO=$(usex webcrypto)
+		-DENABLE_WEB_RTC=$(usex webrtc)
 		-DENABLE_WEBASSEMBLY=$(usex webassembly)
 		-DENABLE_WEBGL=$(usex webgl)
 		-DENABLE_X11_TARGET=$(usex X)
@@ -633,12 +654,22 @@ multilib_src_configure() {
 		)
 	fi
 
+	if use mediastream ; then
+		sed -i -e "s|ENABLE_MEDIA_STREAM PRIVATE|ENABLE_MEDIA_STREAM PUBLIC|g" \
+			"${S}/Source/cmake/OptionsGTK.cmake" || die
+	fi
+
 	if use openmp ; then
 		mycmakeargs+=(
 			-DOpenMP_CXX_FLAGS="-fopenmp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 			-DOpenMP_libomp_LIBRARY="libomp"
 		)
+	fi
+
+	if use webrtc ; then
+		sed -i -e "s|ENABLE_WEB_RTC PRIVATE|ENABLE_WEB_RTC PUBLIC|g" \
+			"${S}/Source/cmake/OptionsGTK.cmake" || die
 	fi
 
 	# Use GOLD when possible as it has all the magic to
