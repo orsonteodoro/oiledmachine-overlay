@@ -11,9 +11,17 @@
     <email>gnome@gentoo.org</email>
     <name>Gentoo GNOME Desktop</name>
   </maintainer>
+  <longdescription>
+    The purpose of this ebuild fork was originally to provide multilib support
+    for the ebuild fork for the surf web browser on the oiledmachine-overlay.
+    Currently the motivations are to provide latest stable as quickly as
+    possible for security reasons and expose more options related to
+    performance or next generation of web standards.
+  </longdescription>
   <use>
     <flag name="64k-pages">Uses 64k pages but reduces security and performance.
       It also disables JIT and WebAssembly.</flag>
+    <flag name="avif">Enables AVIF support for testing.</flag>
     <flag name="bmalloc">Uses a mmap based page allocator to improve
       overall performance.  Disable to use the system allocator.</flag>
     <flag name="coverage">Enable code coverage support</flag>
@@ -21,10 +29,6 @@
     <flag name="examples">Install the MiniBrowser example application</flag>
     <flag name="dfg-jit">Builds with the teir that does the bulk
       of the optimizing.</flag>
-    <flag name="features-experimental">Enables experimental features at the
-      expense of stability and development cost</flag>
-    <flag name="features-in-development">Access in development web technologies.
-      Disable for increased code quality.</flag>
     <flag name="ftl-jit">Builds an additional tier for JIT used for
       optimizing run-time performance marginally at the expense of 
       faster load times or delayed execution time.</flag>
@@ -50,6 +54,13 @@
       in web games.  Disable to decrease the attack surface.</flag>
     <flag name="webassembly-b3-jit">Enables the B3 JIT support that does
       additional optimizations beyond ftl-jit.</flag>
-    <flag name="webxr">Builds WebXR support.  (EXPERIMENTAL / IN DEVELOPMENT)</flag>
+    <flag name="webcrypto">Enables WebCrypto SubtleCrypto API support for
+      low level cryptographic fuctions</flag>
+    <flag name="webxr">Builds WebXR support.  (EXPERIMENTAL / IN
+      DEVELOPMENT)</flag>
+    <flag name="webrtc">Enables WebRTC support.  (WebKitGTK EXPERIMENTAL,
+      WebKit supported)</flag>
+    <flag name="yarr-jit">Enables JIT regex support.  Otherwise, it falls back
+      to interpretive</flag>
   </use>
 </pkgmetadata>

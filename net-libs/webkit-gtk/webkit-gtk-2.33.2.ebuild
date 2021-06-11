@@ -4,11 +4,11 @@
 EAPI=7
 
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
-# dependency (testing 21.x: llvm-12, stable 20.x: llvm-11).  U LTS uses 10.
+# dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
-PYTHON_COMPAT=( python3_{8..10} ) # relaxed, U LTS uses python 3.82
-USE_RUBY="ruby26 ruby27 ruby30" # relaxed, U LTS uses ruby 2.7
+PYTHON_COMPAT=( python3_{8..10} )
+USE_RUBY="ruby26 ruby27 ruby30"
 inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
 
@@ -36,25 +36,35 @@ SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
 # WEBKITGTK_API_VERSION is 4.0
-CURRENT="90"
-AGE="53"
+CURRENT="91"
+AGE="54"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}"
 
-LANGS=( ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hu
-id it ja kn ko lt lv ml mr nb nl or pa pl pt_BR pt ro ru sl sr@latin sr sv ta
-te tr uk vi zh_CN )
+# LANGS=(
+# find ${S}/Source/WebCore/platform/gtk/po/ -name "*.po" \
+# | cut -f 14 -d "/" \
+# | sort \
+# | sed -e "s|.po||g" \
+# | tr "\n" " " \
+# | fold -w 80 -s )
+
+LANGS=(
+ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hu id it ja
+kn ko lt lv ml mr nb nl or pa pl pt_BR pt ro ru sl sr@latin sr sv ta te tr uk
+vi zh_CN )
 
 # aqua (quartz) is enabled upstream but disabled
 # systemd is enabled upstream but gentoo uses openrc by default
 # wayland is enabled upstream but disabled because it is not defacto default
 #   standard for desktop yet
 
-IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua +bmalloc cpu_flags_arm_thumb2
+IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
 +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer
--gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen
-+libnotify lto -minibrowser +opengl openmp -seccomp -spell -systemd
-test wayland +webassembly +webassembly-b3-jit +webgl +X"
+-gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
++libhyphen +libnotify lto -minibrowser +opengl openmp -seccomp -spell -systemd
+test variation-fonts wayland +webassembly +webassembly-b3-jit +webcrypto +webgl
+-webrtc -webxr +X +yarr-jit"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -74,7 +84,9 @@ REQUIRED_USE+="
 	webassembly? ( jit )
 	webassembly-b3-jit? ( ftl-jit webassembly )
 	webgl? ( gstreamer
-		|| ( gles2-only opengl ) )"
+		|| ( gles2-only opengl ) )
+	webxr? ( webgl )
+	yarr-jit? ( jit )"
 
 # cannot use introspection for 32 webkit on 64 bit because it requires 32 bit
 # libs/build for python from gobject-introspection.  It produces this error:
@@ -95,56 +107,72 @@ REQUIRED_USE+="
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
 
-# Target U 20.04.2
+# Upstream tests with U 18.04 LTS and U 20.04
+# Ebuild target is 18.04 based on the lowest LTS builder-bot
+
+# *DEPENDs versions based on placing find_package as a higher priority
+# than U toolchain image unless general major is only provided
+# which is converted to full versioning.
 
 # Aqua support in gtk3 is untested.
 # Dependencies are found at Source/cmake/OptionsGTK.cmake.
 # Various compile-time optionals for gtk+.
+#
+# gentoo-repo message:
 # Missing WebRTC support, but ENABLE_MEDIA_STREAM/ENABLE_WEB_RTC is experimental
 #   upstream (PRIVATE OFF) and shouldn't be used yet in 2.26
+#
+# oiledmachine-overlay message:
+# WebRTC support has been inclusion since 2018
+# Details: https://www.igalia.com/2018/08/07/WebRTC-support-in-WebKit!.html
+# but the cmake scripts mark it experimental.
+#
 # >=gst-plugins-opus-1.14.4-r1 for opusparse (required by MSE
 #  [Media Source Extensions])
+# gstreamer requires >=libwpe-1.9.0 but gtk wpe renderer requires >=1.3.0
 WPE_DEPEND="
-	>=gui-libs/libwpe-1.6.0:1.0[${MULTILIB_USEDEP}]
+	>=gui-libs/libwpe-1.9.0:1.0[${MULTILIB_USEDEP}]
 	>=gui-libs/wpebackend-fdo-1.6.0:1.0[${MULTILIB_USEDEP}]"
 # TODO: gst-plugins-base[X] is only needed when build configuration ends up with
 #   GLX set, but that's a bit automagic too to fix
 # Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].
 #   It is removed to only allow native ABI to use it.
 # Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
-CAIRO_V="1.16.0"
-CLANG_V="10.0"
-GLIB_V="2.64.6"
-GSTREAMER_V="1.16.2"
-MESA_V="20.0.4"
+CAIRO_V="1.14.0"
+CLANG_V="6.0"
+GLIB_V="2.44.0"
+GSTREAMER_V="1.14.0"
+MESA_V="18.0.0_rc5"
 # The openmp? ( sys-libs/libomp ) depends is relevant to only clang.
+# xdg-dbus-proxy is using U 20.04 version
 RDEPEND+=" !net-libs/webkit-gtk:4
-	>=dev-db/sqlite-3.31.1:3=[${MULTILIB_USEDEP}]
-	>=dev-libs/atk-2.35.1[${MULTILIB_USEDEP}]
-	>=dev-libs/icu-66.1:=[${MULTILIB_USEDEP}]
+	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
+	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
+	>=dev-libs/icu-60.2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
-	>=dev-libs/gmp-6.2.0[-pgo(-),${MULTILIB_USEDEP}]
-	>=dev-libs/libgcrypt-1.8.5:0=[${MULTILIB_USEDEP}]
-	>=dev-libs/libtasn1-4.16.0:=[${MULTILIB_USEDEP}]
-	>=dev-libs/libxml2-2.9.10:2[${MULTILIB_USEDEP}]
-	>=dev-libs/libxslt-1.1.34[${MULTILIB_USEDEP}]
-	>=media-libs/fontconfig-2.13.1:1.0[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.10.1:2[${MULTILIB_USEDEP}]
-	>=media-libs/harfbuzz-2.6.4:=[icu(+),${MULTILIB_USEDEP}]
+	>=dev-libs/gmp-6.1.2[-pgo(-),${MULTILIB_USEDEP}]
+	>=dev-libs/libgcrypt-1.6.0:0=[${MULTILIB_USEDEP}]
+	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
+	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
+	>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.6.37:0=[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.70.0:2.4[introspection?,${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
-	>=x11-libs/gtk+-3.24.18:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
+	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
+	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	egl? ( >=media-libs/mesa-${MESA_V}[egl,${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
-	geolocation? ( >=app-misc/geoclue-2.5.6:2.0 )
+	geolocation? ( >=app-misc/geoclue-0.12.99:2.0 )
 	gles2-only? ( >=media-libs/mesa-${MESA_V}[gles2,${MULTILIB_USEDEP}] )
-	gnome-keyring? ( >=app-crypt/libsecret-0.20.2[${MULTILIB_USEDEP}] )
+	gnome-keyring? ( >=app-crypt/libsecret-0.18.6[${MULTILIB_USEDEP}] )
 	gstreamer? (
 		>=media-libs/gstreamer-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-bad-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
@@ -154,27 +182,43 @@ RDEPEND+=" !net-libs/webkit-gtk:4
 >=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2,${MULTILIB_USEDEP}]
 		)
 	)
-	introspection? ( >=dev-libs/gobject-introspection-1.64.0:= )
-	jpeg2k? ( >=media-libs/openjpeg-2.4.0:2=[${MULTILIB_USEDEP}] )
-	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
-	libnotify? ( >=x11-libs/libnotify-0.7.9[${MULTILIB_USEDEP}] )
+	introspection? ( >=dev-libs/gobject-introspection-1.56.1:= )
+	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
+	libhyphen? ( >=dev-libs/hyphen-6.0.3[${MULTILIB_USEDEP}] )
+	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
-	openmp? ( sys-libs/libomp[${MULTILIB_USEDEP}] )
+	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
 	seccomp? (
-		>=sys-apps/bubblewrap-0.4.0
+		>=sys-apps/bubblewrap-0.3.1
 		>=sys-apps/xdg-dbus-proxy-0.1.2
-		>=sys-libs/libseccomp-2.4.3[${MULTILIB_USEDEP}]
+		>=sys-libs/libseccomp-0.9.0[${MULTILIB_USEDEP}]
 	)
 	spell? ( >=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}] )
+	variation-fonts? (
+		>=x11-libs/cairo-1.16:=[X?,${MULTILIB_USEDEP}]
+		>=media-libs/fontconfig-2.13.0:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-2.9.0[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
+	)
 	wayland? (
-		>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
-		>=dev-libs/wayland-protocols-1.20[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-1.14.0[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-protocols-1.12[${MULTILIB_USEDEP}]
 		opengl? ( ${WPE_DEPEND} )
 		gles2-only? ( ${WPE_DEPEND} )
 	)
-	X? (	>=x11-libs/libX11-1.6.9[${MULTILIB_USEDEP}]
-		>=x11-libs/libXcomposite-0.4.5[${MULTILIB_USEDEP}]
-		>=x11-libs/libXdamage-1.1.5[${MULTILIB_USEDEP}]
+	webcrypto? (
+		>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
+	)
+	webxr? ( media-libs/openxr )
+	webrtc? (
+		>=dev-libs/libevent-2.1.8[${MULTILIB_USEDEP}]
+		>=media-libs/alsa-lib-1.1.3[${MULTILIB_USEDEP}]
+		>=media-libs/libvpx-1.7.0[${MULTILIB_USEDEP}]
+		>=media-libs/opus-1.1[${MULTILIB_USEDEP}]
+	)
+	X? (	>=x11-libs/libX11-1.6.4[${MULTILIB_USEDEP}]
+		>=x11-libs/libXcomposite-0.4.4[${MULTILIB_USEDEP}]
+		>=x11-libs/libXdamage-1.1.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXrender-0.9.10[${MULTILIB_USEDEP}]
 		>=x11-libs/libXt-1.1.5[${MULTILIB_USEDEP}] )"
 unset WPE_DEPEND
@@ -189,13 +233,15 @@ BDEPEND+="
 		>=sys-devel/lld-${CLANG_V}
 	)
 	|| ( >=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
-	     >=sys-devel/gcc-9.3.0 )
-	>=app-accessibility/at-spi2-core-2.36.0[${MULTILIB_USEDEP}]
-	>=dev-util/cmake-3.16.3
+	     >=sys-devel/gcc-7.3.0 )
+	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
+	>=dev-util/cmake-3.10.2
 	>=dev-util/glib-utils-${GLIB_V}
-	>=dev-util/gperf-3.1
-	>=dev-lang/perl-5.30.0
-	>=sys-devel/bison-3.5.1
+	>=dev-util/gperf-3.0.1
+	>=dev-lang/perl-5.10.0
+	>=dev-lang/python-2.7
+	>=dev-lang/ruby-1.9
+	>=sys-devel/bison-3.0.4
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
 	|| (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
@@ -205,38 +251,41 @@ BDEPEND+="
 	virtual/perl-Data-Dumper
 	virtual/perl-JSON-PP
 	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_V} )
-	gtk-doc? ( >=dev-util/gtk-doc-1.32 )"
+	gtk-doc? ( >=dev-util/gtk-doc-1.27 )"
 #	test? (
-#		>=dev-python/pygobject-3.36.0:3[python_targets_python2_7]
+#		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
 #		>=x11-themes/hicolor-icon-theme-0.17
 #		jit? ( >=sys-apps/paxctl-0.9 ) )
-MY_P="webkitgtk-${PV}"
-FN="${MY_P}.tar.xz"
-SRC_URI="https://www.webkitgtk.org/releases/${FN}"
+#
+# Monitor history since no tags specifically for webkit-gtk at:
+# https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
+# Don't use the tarball from webkitgtk.org because it doesn't include libwebrtc.
+# The whole commit date should be used
+EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
+SRC_URI_V2="
+webrtc? (
+https://github.com/WebKit/WebKit/archive/${EGIT_COMMIT}.tar.gz
+	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz
+)
+!webrtc? (
+https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
+)
+"
+SRC_URI="
+https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
+"
+#
 # Tests fail to link for inexplicable reasons
 # https://bugs.webkit.org/show_bug.cgi?id=148210
-# Fetch is due to Unicode data files contained in Source/JavaScriptCore/ucd/
-RESTRICT="fetch test"
+#
+# Fetch restrict was due to Unicode data files contained in
+# Source/JavaScriptCore/ucd/ but it is relaxed because Gentoo distributes
+# firefox and webkit's tarball with unicode data.  Most distros
+# distributes these browsers with unicode licensed data without
+# restrictions.
+RESTRICT="test"
 S="${WORKDIR}/${MY_P}"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
-
-pkg_nofetch() {
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	einfo
-	einfo "You must also read and agree to the licenses:"
-	einfo "  https://www.unicode.org/license.html"
-	einfo "  http://www.unicode.org/copyright.html"
-	einfo
-	einfo "Before downloading ${P}"
-	einfo
-	einfo "If you agree, you may download"
-	einfo "  - ${FN}"
-	einfo "from ${SRC_URI} and place them in ${distdir}"
-	einfo
-	einfo "The quick one liner to do all that:"
-	einfo "wget -O ${distdir}/${FN} ${SRC_URI}"
-	einfo
-}
 
 pkg_pretend() {
 	if [[ ${MERGE_TYPE} != "binary" ]] ; then
@@ -264,6 +313,8 @@ ewarn
 }
 
 pkg_setup() {
+	ewarn "This ebuild is a WIP (Work In Progress)."
+	ewarn "This is the unstable branch."
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
@@ -356,6 +407,10 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 	if use lto ; then
 		einfo "The lto USE flag is in testing."
 	fi
+}
+
+src_unpack() {
+	unpack ${A}
 }
 
 src_prepare() {
@@ -453,10 +508,12 @@ multilib_src_configure() {
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
+		-DENABLE_WEB_CRYPTO=$(usex webcrypto)
 		-DENABLE_WEBASSEMBLY=$(usex webassembly)
 		-DENABLE_WEBGL=$(usex webgl)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
+		-DUSE_AVIF=$(usex avif)
 		-DUSE_GTK4=OFF
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
@@ -549,11 +606,16 @@ multilib_src_configure() {
 		einfo "Disabled YARR (regex) JIT"
 		append-cppflags -DENABLE_JIT=0 -DENABLE_YARR_JIT=0 \
 			-DENABLE_ASSEMBLER=0
-		einfo "CPPFLAGS=${CPPFLAGS}"
 	else
-		einfo "Enabled YARR (regex) JIT"
-		einfo "CPPFLAGS=${CPPFLAGS}"
+		if use yarr-jit ; then
+			einfo "Enabled YARR (regex) JIT"
+			append-cppflags -DENABLE_YARR_JIT=1
+		else
+			einfo "Disabled YARR (regex) JIT"
+			append-cppflags -DENABLE_YARR_JIT=2
+		fi
 	fi
+	einfo "CPPFLAGS=${CPPFLAGS}"
 
 	if use lto ; then
 		MESA_LLVM_V=$(bzcat "${ESYSROOT}/var/db/pkg/media-libs/mesa-"*"/environment.bz2" \
