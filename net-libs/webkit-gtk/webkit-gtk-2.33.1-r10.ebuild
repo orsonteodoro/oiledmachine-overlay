@@ -278,6 +278,7 @@ BDEPEND+="
 # Don't use the tarball from webkitgtk.org because it doesn't include libwebrtc.
 # The whole commit date should be used
 # See also https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
+EGIT_COMMIT="d5e91638838f10c735a266c40d22c16eb0056b60"
 ESVN_REVISION="277486"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
