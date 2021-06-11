@@ -273,11 +273,12 @@ BDEPEND+="
 #		>=x11-themes/hicolor-icon-theme-0.17
 #		jit? ( >=sys-apps/paxctl-0.9 ) )
 #
-# Monitor history since no tags specifically for webkit-gtk at:
+# Revisions and commit hashes provided since no tags specifically for the
+# webkit-gtk project.
+# Revisions can be found at:
+# https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
+# Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
-# Don't use the tarball from webkitgtk.org because it doesn't include libwebrtc.
-# The whole commit date should be used
-# See also https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
 EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
 ESVN_REVISION="278597"
 SRC_URI="
