@@ -10,7 +10,7 @@ DESCRIPTION="Stack overflow command line client. Search and browse stack \
 overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
 LICENSE="BSD"
-EGIT_COMMIT="427ad9cbc4e3ebe17334e2e61484da715d33f3bf"
+EGIT_COMMIT="57c60e01981111d2559cb6339640ab377e752485"
 SRC_URI="
 https://github.com/gautamkrishnar/socli/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
