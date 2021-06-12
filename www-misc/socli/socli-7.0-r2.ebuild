@@ -56,10 +56,12 @@ src_install() {
 
 pkg_postinst() {
 	einfo \
-"You may need to enter your StackOverflow API key with \`socli --api\` for\n\
-this program to work.  See\n\
-  ${HOMEPAGE}\n\n
+"\n\
+You may need to enter your StackOverflow API key with \`socli --api\` for\n\
+this program to work.  See\n\n\
+  ${HOMEPAGE}\n
 for details on additional information in configuring ${PN}.  API keys can\n\
-be obtained from\n\
-  http://stackapps.com/apps/oauth/register"
+be obtained from\n\n\
+  http://stackapps.com/apps/oauth/register\n\
+\n"
 }
