@@ -16,7 +16,7 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine (GTK+3 with libsoup3)"
+DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE="
 LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
@@ -52,16 +52,16 @@ webrtc? (
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
-API_VERSION="4.1"
+API_VERSION="4.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-CURRENT="0"
-AGE="0"
+# WEBKITGTK_API_VERSION is 4.0
+CURRENT="91"
+AGE="54"
 SOVERSION=$((${CURRENT} - ${AGE}))
-SLOT="${SLOT_MAJOR}/${SOVERSION}"
+SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4.0/37 GTK3 SOUP2
@@ -165,8 +165,7 @@ GSTREAMER_V="1.14.0"
 MESA_V="18.0.0_rc5"
 # The openmp? ( sys-libs/libomp ) depends is relevant to only clang.
 # xdg-dbus-proxy is using U 20.04 version
-RDEPEND+=" !net-libs/webkit-gtk:4
-	!net-libs/webkit-gtk:5.0
+RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-60.2:=[${MULTILIB_USEDEP}]
@@ -183,7 +182,7 @@ RDEPEND+=" !net-libs/webkit-gtk:4
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.99.8:3[introspection?,${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
@@ -552,7 +551,7 @@ multilib_src_configure() {
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=OFF
+		-DUSE_SOUP2=ON
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \

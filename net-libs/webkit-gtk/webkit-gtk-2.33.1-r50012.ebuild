@@ -16,7 +16,7 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine (GTK+3 with libsoup3)"
+DESCRIPTION="Open source web browser engine (GTK+4)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE="
 LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
@@ -52,16 +52,16 @@ webrtc? (
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
-API_VERSION="4.1"
+API_VERSION="5.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
+# WEBKITGTK_API_VERSION is 5.0
 CURRENT="0"
 AGE="0"
 SOVERSION=$((${CURRENT} - ${AGE}))
-SLOT="${SLOT_MAJOR}/${SOVERSION}"
+SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4.0/37 GTK3 SOUP2
@@ -90,9 +90,9 @@ vi zh_CN )
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
 +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer
 -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen
-+libnotify lto -mediastream -minibrowser +opengl openmp -seccomp -spell -systemd
-test variation-fonts wayland +webassembly +webassembly-b3-jit +webcrypto +webgl
--webrtc -webxr +X +yarr-jit"
++libnotify lto -mediastream -minibrowser +opengl openmp -seccomp -libsoup3
+-spell -systemd test variation-fonts wayland +webassembly +webassembly-b3-jit
++webcrypto +webgl -webrtc -webxr +X +yarr-jit"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -165,8 +165,8 @@ GSTREAMER_V="1.14.0"
 MESA_V="18.0.0_rc5"
 # The openmp? ( sys-libs/libomp ) depends is relevant to only clang.
 # xdg-dbus-proxy is using U 20.04 version
-RDEPEND+=" !net-libs/webkit-gtk:4
-	!net-libs/webkit-gtk:5.0
+RDEPEND+="
+	!net-libs/webkit-gtk:4/0-4.1
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-60.2:=[${MULTILIB_USEDEP}]
@@ -176,6 +176,7 @@ RDEPEND+=" !net-libs/webkit-gtk:4
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
+	>=gui-libs/gtk+-3.98.5:4[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
@@ -183,11 +184,9 @@ RDEPEND+=" !net-libs/webkit-gtk:4
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.99.5:3[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
-	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	egl? ( >=media-libs/mesa-${MESA_V}[egl,${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
@@ -207,6 +206,12 @@ RDEPEND+=" !net-libs/webkit-gtk:4
 	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
 	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
+	!libsoup3? (
+		>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
+	)
+	libsoup3? (
+		>=net-libs/libsoup-2.99.5:3[introspection?,${MULTILIB_USEDEP}]
+	)
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
 	seccomp? (
@@ -545,14 +550,14 @@ multilib_src_configure() {
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
 		-DUSE_AVIF=$(usex avif)
-		-DUSE_GTK4=OFF
+		-DUSE_GTK4=ON
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=OFF
+		-DUSE_SOUP2=$(usex libsoup3 OFF ON)
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
