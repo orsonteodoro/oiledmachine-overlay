@@ -10,10 +10,6 @@ DESCRIPTION="Stack overflow command line client. Search and browse stack \
 overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
 LICENSE="BSD"
-EGIT_COMMIT="57c60e01981111d2559cb6339640ab377e752485"
-SRC_URI="
-https://github.com/gautamkrishnar/socli/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
 IUSE+=" man"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
@@ -28,6 +24,10 @@ DEPEND+=" ${PYTHON_DEPS}
 	>=dev-python/sentry-sdk-0.18.0[${PYTHON_USEDEP}]"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}"
+EGIT_COMMIT="57c60e01981111d2559cb6339640ab377e752485"
+SRC_URI="
+https://github.com/gautamkrishnar/socli/archive/${EGIT_COMMIT}.tar.gz
+	-> ${P}.tar.gz"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
