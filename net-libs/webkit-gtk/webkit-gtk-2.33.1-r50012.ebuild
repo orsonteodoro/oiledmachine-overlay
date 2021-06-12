@@ -166,7 +166,6 @@ MESA_V="18.0.0_rc5"
 # The openmp? ( sys-libs/libomp ) depends is relevant to only clang.
 # xdg-dbus-proxy is using U 20.04 version
 RDEPEND+="
-	!net-libs/webkit-gtk:4/0-4.1
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-60.2:=[${MULTILIB_USEDEP}]
