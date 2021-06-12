@@ -72,42 +72,42 @@ pkg_setup() {
 	einfo "This ebuild is End Of Life (EOL) as of 2023-04-30."
 
 	# For man page reasons
-	if has 'net-libs/nodejs[npm]:10' ; then
+	if has_version 'net-libs/nodejs[npm]:10' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[npm]:10.  Only enable\n\
 npm on the highest slot."
 	fi
-	if has 'net-libs/nodejs[npm]:12' ; then
+	if has_version 'net-libs/nodejs[npm]:12' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[npm]:12.  Only enable\n\
 npm on the highest slot."
 	fi
-	if has 'net-libs/nodejs[npm]:15' ; then
+	if has_version 'net-libs/nodejs[npm]:15' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[npm]:15.  Only enable\n\
 npm on the highest slot."
 	fi
-	if has 'net-libs/nodejs[npm]:16' ; then
+	if has_version 'net-libs/nodejs[npm]:16' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[npm]:16.  Only enable\n\
 npm on the highest slot."
 	fi
-	if has 'net-libs/nodejs[man]:10' ; then
+	if has_version 'net-libs/nodejs[man]:10' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[man]:10.  Only enable\n\
 man on the highest slot."
 	fi
-	if has 'net-libs/nodejs[man]:12' ; then
+	if has_version 'net-libs/nodejs[man]:12' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[man]:12.  Only enable\n\
 man on the highest slot."
 	fi
-	if has 'net-libs/nodejs[man]:15' ; then
+	if has_version 'net-libs/nodejs[man]:15' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[man]:15.  Only enable\n\
 man on the highest slot."
 	fi
-	if has 'net-libs/nodejs[man]:16' ; then
+	if has_version 'net-libs/nodejs[man]:16' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[man]:16.  Only enable\n\
 man on the highest slot."
