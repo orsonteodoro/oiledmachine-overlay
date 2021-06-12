@@ -39,7 +39,7 @@ src_prepare() {
 
 python_install_all() {
 	distutils-r1_python_install_all
-	rm -rf "${ED}/usr/socli"
+	rm -rf "${ED}/usr/socli" || die
 }
 
 src_install() {
