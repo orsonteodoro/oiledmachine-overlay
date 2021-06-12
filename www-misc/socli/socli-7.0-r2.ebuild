@@ -15,7 +15,7 @@ IUSE+=" man"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 SLOT="0"
 DEPEND+=" ${PYTHON_DEPS}
-	  dev-python/argcomplete
+	  dev-python/argcomplete[${PYTHON_USEDEP}]
 	>=dev-python/beautifulsoup-4.9.1:4[${PYTHON_USEDEP}]
 	>=dev-python/colorama-0.4.3[${PYTHON_USEDEP}]
 	>=dev-python/py-stackexchange-2.2.007[${PYTHON_USEDEP}]
