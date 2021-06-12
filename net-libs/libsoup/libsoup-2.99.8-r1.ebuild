@@ -18,7 +18,10 @@ SLOT="3/${PV}"
 IUSE+=" brotli gssapi -doc +introspection samba ssl sysprof test
 -test-fuzzing test-http2 test-pkcs11 test-regression test-websockets +vala
 winbind"
+# autobahn-testsuite is python2 only, so test-websockets is disabled.
+# https://github.com/crossbario/autobahn-testsuite/issues/107
 REQUIRED_USE+="
+	!test-websockets
 	test? ( || ( test-fuzzing test-http2 test-pkcs11 test-regression test-websockets ) )
 	test-fuzzing? ( test )
 	test-http2? ( test )
