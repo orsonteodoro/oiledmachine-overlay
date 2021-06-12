@@ -15,7 +15,7 @@ SLOT="3/${PV}"
 # servers yet - https://gitlab.gnome.org/GNOME/libsoup/issues/146
 # tests are enabled by default upstream
 # The value of introspection depends on super project but set to auto by default.
-IUSE+=" brotli gssapi -doc +introspection samba ssl sysprof test
+IUSE+=" brotli gssapi -gtk-doc +introspection samba ssl sysprof test
 -test-fuzzing test-http2 test-pkcs11 test-regression test-websockets +vala
 winbind"
 # autobahn-testsuite is python2 only, so test-websockets is disabled.
@@ -72,7 +72,7 @@ BDEPEND+="
 	>=dev-util/glib-utils-${GLIB_V}
 	>=dev-util/meson-0.53
 	>=sys-devel/gettext-0.21[${MULTILIB_USEDEP}]
-	doc? ( >=dev-util/gtk-doc-1.33.2
+	gtk-doc? ( >=dev-util/gtk-doc-1.33.2
 		app-text/docbook-xml-dtd:4.3 )
 	test? (
 		test-fuzzing? (
@@ -248,7 +248,7 @@ sys-devel/clang:\${SLOT}, \
 		$(meson_feature test-pkcs11 pkcs11_tests)
 		$(meson_feature test-regression regression_tests)
 		$(meson_feature test-websockets autobahn)
-		$(meson_native_use_bool doc gtk_doc)
+		$(meson_native_use_bool gtk-doc gtk_doc)
 		$(meson_native_use_feature introspection)
 		$(meson_native_use_feature vala vapi)
 		$(meson_use test tests)
