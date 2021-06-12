@@ -37,6 +37,7 @@
     <flag name="geolocation">Enable geolocation support through
       <pkg>app-misc/geoclue</pkg></flag>
     <flag name="gles2">Enable GLESv2 support</flag>
+    <flag name="http2">Enable HTTP/2 support</flag>
     <flag name="lto">Use ThinLTO LTO [link time optimization] when
       when linking.  ThinLTO is used instead of full for efficient
       multicore and memory usage.</flag>

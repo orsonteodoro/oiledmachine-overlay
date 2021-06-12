@@ -4,7 +4,7 @@
 EAPI=7
 
 # Corresponds to
-# WebKit 612.1.18 (20210608, main) ; See Source/WebKit/Configurations/Version.xcconfig
+# WebKit 612.1.15 (20210514, main) ; See Source/WebKit/Configurations/Version.xcconfig
 
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
@@ -58,8 +58,8 @@ SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
 # WEBKITGTK_API_VERSION is 4.0
-CURRENT="91"
-AGE="54"
+CURRENT="90"
+AGE="53"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}"
 
@@ -83,10 +83,10 @@ vi zh_CN )
 
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
 +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer
--gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen
-+libnotify lto -mediastream -minibrowser +opengl openmp -seccomp -spell -systemd
-test variation-fonts wayland +webassembly +webassembly-b3-jit +webcrypto +webgl
--webrtc -webxr +X +yarr-jit"
+-gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
++libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp -seccomp
+-spell -systemd test variation-fonts wayland +webassembly +webassembly-b3-jit
++webcrypto +webgl -webrtc -webxr +X +yarr-jit"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -160,6 +160,10 @@ MESA_V="18.0.0_rc5"
 # The openmp? ( sys-libs/libomp ) depends is relevant to only clang.
 # xdg-dbus-proxy is using U 20.04 version
 RDEPEND+=" !net-libs/webkit-gtk:4
+	|| (
+		>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
+		>=net-libs/libsoup-2.99.5:3[introspection?,${MULTILIB_USEDEP}]
+	)
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-60.2:=[${MULTILIB_USEDEP}]
@@ -176,7 +180,6 @@ RDEPEND+=" !net-libs/webkit-gtk:4
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
@@ -279,8 +282,8 @@ BDEPEND+="
 # https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
 # Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
-EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="278597"
+EGIT_COMMIT="d5e91638838f10c735a266c40d22c16eb0056b60"
+ESVN_REVISION="277486"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -323,7 +326,7 @@ ewarn
 }
 
 pkg_setup() {
-	ewarn "This is the unstable branch."
+	einfo "This is the stable branch."
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
@@ -545,7 +548,6 @@ multilib_src_configure() {
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=ON
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
@@ -554,6 +556,16 @@ multilib_src_configure() {
 		$(cmake_use_find_package egl EGL)
 		$(cmake_use_find_package opengl OpenGL)
 	)
+
+	if has_version "net-libs/libsoup:3" ; then
+		mycmakeargs+=(
+			-DUSE_SOUP2=OFF
+		)
+	else
+		mycmakeargs+=(
+			-DUSE_SOUP2=ON
+		)
+	fi
 
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
@@ -704,6 +716,36 @@ multilib_src_test() {
 	# Programs/unittests/.libs/test*
 	pax-mark m $(list-paxables Programs/*[Tt]ests/*)
 	cmake_src_test
+}
+
+_install_header_license() {
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local length="${3}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	head -n ${length} "${S}/${d}/${file_name}" > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
+_install_header_license_mid() {
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local start="${3}"
+	local length="${4}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	tail -n +${start} "${S}/${d}/${file_name}" \
+		| head -n ${length} > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
 }
 
 # @FUNCTION: _install_licenses
