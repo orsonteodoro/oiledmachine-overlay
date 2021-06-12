@@ -10,7 +10,7 @@ EAPI=7
 # de = ebuild revision
 
 # Corresponds to
-# WebKit 612.1.15 (20210514, main) ; See Source/WebKit/Configurations/Version.xcconfig
+# WebKit 612.1.18 (20210608, main) ; See Source/WebKit/Configurations/Version.xcconfig
 
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
@@ -22,7 +22,7 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine (GTK+4)"
+DESCRIPTION="Open source web browser engine (GTK 4)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE="
 LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
@@ -72,7 +72,7 @@ SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4.0/37 GTK3 SOUP2
 # For the multi slot calculation and problem, see
-# https://github.com/WebKit/WebKit/blob/d5e91638838f10c735a266c40d22c16eb0056b60/Source/cmake/OptionsGTK.cmake#L229
+# https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/cmake/OptionsGTK.cmake#L229
 # Possible merge conflict between GTK3+SOUP3 vs GTK4.
 
 # LANGS=(
@@ -96,7 +96,7 @@ vi zh_CN )
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
 +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer
 -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen
-+libnotify lto -mediastream -minibrowser +opengl openmp -seccomp -libsoup3
++libnotify lto -mediastream -minibrowser +opengl openmp -seccomp +libsoup3
 -spell -systemd test variation-fonts wayland +webassembly +webassembly-b3-jit
 +webcrypto +webgl -webrtc -webxr +X +yarr-jit"
 
@@ -181,7 +181,7 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
-	>=gui-libs/gtk+-3.98.5:4[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
+	>=gui-libs/gtk-3.98.5:4[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
@@ -215,7 +215,7 @@ RDEPEND+="
 		>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	)
 	libsoup3? (
-		>=net-libs/libsoup-2.99.5:3[introspection?,${MULTILIB_USEDEP}]
+		>=net-libs/libsoup-2.99.8:3[introspection?,${MULTILIB_USEDEP}]
 	)
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
@@ -296,8 +296,8 @@ BDEPEND+="
 # https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
 # Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
-EGIT_COMMIT="d5e91638838f10c735a266c40d22c16eb0056b60"
-ESVN_REVISION="277486"
+EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
+ESVN_REVISION="278597"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -340,7 +340,8 @@ ewarn
 }
 
 pkg_setup() {
-	einfo "This is the stable branch."
+	ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
+	ewarn "This is the unstable branch."
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
@@ -721,36 +722,6 @@ multilib_src_test() {
 	# Programs/unittests/.libs/test*
 	pax-mark m $(list-paxables Programs/*[Tt]ests/*)
 	cmake_src_test
-}
-
-_install_header_license() {
-	local dir_path=$(dirname "${1}")
-	local file_name=$(basename "${1}")
-	local license_name="${2}"
-	local length="${3}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	head -n ${length} "${S}/${d}/${file_name}" > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
-}
-
-_install_header_license_mid() {
-	local dir_path=$(dirname "${1}")
-	local file_name=$(basename "${1}")
-	local license_name="${2}"
-	local start="${3}"
-	local length="${4}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	tail -n +${start} "${S}/${d}/${file_name}" \
-		| head -n ${length} > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
 }
 
 # @FUNCTION: _install_licenses
