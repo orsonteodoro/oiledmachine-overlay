@@ -22,7 +22,8 @@ winbind"
 # https://github.com/crossbario/autobahn-testsuite/issues/107
 REQUIRED_USE+="
 	!test-websockets
-	test? ( || ( test-fuzzing test-http2 test-pkcs11 test-regression test-websockets ) )
+	test? ( || ( test-fuzzing test-http2 test-pkcs11 test-regression
+			test-websockets ) )
 	test-fuzzing? ( test )
 	test-http2? ( test )
 	test-pkcs11? ( test )
@@ -78,25 +79,25 @@ BDEPEND+="
 			sys-devel/gcc[sanitize]
 			|| (
 				(
-					sys-devel/clang:11[${MULTILIB_USEDEP}]
-					=sys-devel/clang-runtime-11*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-					=sys-libs/compiler-rt-sanitizers-11*[libfuzzer,asan,ubsan]
+	sys-devel/clang:11[${MULTILIB_USEDEP}]
+	=sys-devel/clang-runtime-11*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+	=sys-libs/compiler-rt-sanitizers-11*[libfuzzer,asan,ubsan]
 				)
 				(
-					sys-devel/clang:12[${MULTILIB_USEDEP}]
-					=sys-devel/clang-runtime-12*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-					=sys-libs/compiler-rt-sanitizers-12*[libfuzzer,asan,ubsan]
+	sys-devel/clang:12[${MULTILIB_USEDEP}]
+	=sys-devel/clang-runtime-12*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+	=sys-libs/compiler-rt-sanitizers-12*[libfuzzer,asan,ubsan]
 				)
 				(
-					sys-devel/clang:13[${MULTILIB_USEDEP}]
-					=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-					=sys-libs/compiler-rt-sanitizers-13*[libfuzzer,asan,ubsan]
+	sys-devel/clang:13[${MULTILIB_USEDEP}]
+	=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+	=sys-libs/compiler-rt-sanitizers-13*[libfuzzer,asan,ubsan]
 				)
 			)
 		)
 		test-http2? (
 			${PYTHON_DEPS}
-			$(python_gen_any_dep 'dev-python/quart[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep 'dev-python/quart[${PYTHON_USEDEP}]')
 		)
 		test-pkcs11? (
 			>=net-libs/gnutls-3.7.1[${MULTILIB_USEDEP},pkcs11]
@@ -120,7 +121,7 @@ ssl]
 		)
 		test-websockets? (
 			${PYTHON_DEPS}
-			$(python_gen_any_dep 'dev-python/autobahn-testsuite[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep 'dev-python/autobahn-testsuite[${PYTHON_USEDEP}]')
 		)
 	)
 	>=net-misc/curl-7.76.0
@@ -161,7 +162,8 @@ pkg_setup() {
 					continue
 				fi
 				einfo "Checking sys-devel/clang[${u}]"
-				# `emerge -1 libsoup` is not good enough to make fuzzer test happy.
+				# `emerge -1 libsoup` is not good enough to make
+				# the fuzzer test happy.
 				if has_version "sys-devel/clang[${u}]" ; then
 					einfo "sys-devel/clang[${u}] found"
 				else
@@ -173,7 +175,8 @@ pkg_setup() {
 	done
 
 	if ver_test $(ver_cut 1-3 ${PV}) -eq 2.99.8 ; then
-		ewarn "Expecting test failure(s).  Disable the test USE flag to emerge successfully."
+		ewarn \
+"Expecting test failure(s).  Disable the test USE flag to emerge successfully."
 	fi
 }
 
@@ -193,20 +196,33 @@ multilib_src_configure() {
 	#addpredict /usr/share/snmp/mibs/.index
 
 	if use test-fuzzing ; then
-		if has_version "sys-devel/clang:13" && has_version "=sys-devel/clang-runtime-13*" && has_version "=sys-libs/compiler-rt-sanitizers-13*" ; then
+		if has_version "sys-devel/clang:13" \
+			&& has_version "=sys-devel/clang-runtime-13*" \
+			&& has_version "=sys-libs/compiler-rt-sanitizers-13*" \
+			; then
 			einfo "Using clang:13"
 			LLVM_MAX_SLOT=13
 			llvm_pkg_setup
-		elif has_version "sys-devel/clang:12" && has_version "=sys-devel/clang-runtime-12*" && has_version "=sys-libs/compiler-rt-sanitizers-12*" ; then
+		elif has_version "sys-devel/clang:12" \
+			&& has_version "=sys-devel/clang-runtime-12*" \
+			&& has_version "=sys-libs/compiler-rt-sanitizers-12*" \
+			; then
 			einfo "Using clang:12"
 			LLVM_MAX_SLOT=12
 			llvm_pkg_setup
-		elif has_version "sys-devel/clang:11" && has_version "=sys-devel/clang-runtime-11*" && has_version "=sys-libs/compiler-rt-sanitizers-11*" ; then
+		elif has_version "sys-devel/clang:11" \
+			&& has_version "=sys-devel/clang-runtime-11*" \
+			&& has_version "=sys-libs/compiler-rt-sanitizers-11*" \
+			; then
 			einfo "Using clang:11"
 			LLVM_MAX_SLOT=11
 			llvm_pkg_setup
 		else
-			die "Fix the clang toolchain.  It requires sys-devel/clang:\${SLOT}, =sys-devel/clang-runtime-\${SLOT}*, =sys-libs/compiler-rt-sanitizers-\${SLOT}"
+			die \
+"Fix the clang toolchain.  It requires \
+sys-devel/clang:\${SLOT}, \
+=sys-devel/clang-runtime-\${SLOT}*, \
+=sys-libs/compiler-rt-sanitizers-\${SLOT}"
 		fi
 	fi
 
@@ -245,18 +261,19 @@ multilib_src_test() {
 	# Test enabled: test-fuzzing test-http2 test-pkcs11
 	# Result of 2.99.8
 	# Dated Jun 12, 2021
+
 #Summary of Failures:
 
 # 2/35 libsoup / cache-test                   ERROR            1.49s   exit status 1
 #33/35 libsoup / ssl-test                     TIMEOUT         60.02s   killed by signal 15 SIGTERM
 
 
-#Ok:                 32  
-#Expected Fail:      0   
-#Fail:               1   
-#Unexpected Pass:    0   
-#Skipped:            1   
-#Timeout:            1   
+#Ok:                 32
+#Expected Fail:      0
+#Fail:               1
+#Unexpected Pass:    0
+#Skipped:            1
+#Timeout:            1
 
 	meson test || die
 }
