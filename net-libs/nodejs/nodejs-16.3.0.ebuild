@@ -13,8 +13,8 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm pax_kernel +snapshot \
-+ssl system-icu +system-ssl systemtap test"
+IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm pax_kernel
++snapshot +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man"
 REQUIRED_USE+=" inspector? ( icu ssl )
 		npm? ( ssl )
@@ -46,7 +46,7 @@ PATCHES=( "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-16.1.0-ppc64-segfault.patch #785751, drop after it stops applying
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="7.13.0" # See https://github.com/nodejs/node/blob/v16.2.0/deps/npm/package.json
+NPM_V="7.15.1" # See https://github.com/nodejs/node/blob/v16.2.0/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
