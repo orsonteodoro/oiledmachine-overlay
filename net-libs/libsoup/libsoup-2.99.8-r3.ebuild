@@ -5,7 +5,7 @@ EAPI=7
 
 VALA_USE_DEPEND="vapigen"
 PYTHON_COMPAT=( python3_{8..10} )
-inherit gnome.org meson-multilib python-any-r1 vala xdg
+inherit gnome.org flag-o-matic llvm meson-multilib python-any-r1 vala xdg
 
 DESCRIPTION="HTTP client/server library for GNOME"
 HOMEPAGE="https://wiki.gnome.org/Projects/libsoup"
@@ -76,8 +76,23 @@ BDEPEND+="
 	test? (
 		test-fuzzing? (
 			sys-devel/gcc[sanitize]
-			sys-devel/clang[${MULTILIB_USEDEP}]
-			sys-libs/compiler-rt-sanitizers[libfuzzer,asan,ubsan]
+			|| (
+				(
+					sys-devel/clang:11[${MULTILIB_USEDEP}]
+					=sys-devel/clang-runtime-11*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+					=sys-libs/compiler-rt-sanitizers-11*[libfuzzer,asan,ubsan]
+				)
+				(
+					sys-devel/clang:12[${MULTILIB_USEDEP}]
+					=sys-devel/clang-runtime-12*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+					=sys-libs/compiler-rt-sanitizers-12*[libfuzzer,asan,ubsan]
+				)
+				(
+					sys-devel/clang:13[${MULTILIB_USEDEP}]
+					=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+					=sys-libs/compiler-rt-sanitizers-13*[libfuzzer,asan,ubsan]
+				)
+			)
 		)
 		test-http2? (
 			${PYTHON_DEPS}
@@ -156,6 +171,10 @@ pkg_setup() {
 			fi
 		done
 	done
+
+	if ver_test $(ver_cut 1-3 ${PV}) -eq 2.99.8 ; then
+		ewarn "Expecting test failure(s).  Disable the test USE flag to emerge successfully."
+	fi
 }
 
 src_prepare() {
@@ -167,22 +186,39 @@ src_prepare() {
 	sed -e '/hsts/d' -i tests/meson.build || die
 }
 
-src_configure() {
-	if use test-fuzzing ; then
-		local chost=$(get_abi_CHOST ${ABI})
-		CC=${chost}-clang
-	fi
+multilib_src_configure() {
 	# FIXME: we need addpredict to workaround bug #324779 until
 	# root cause (bug #249496) is solved
 	# But necessary while apache tests are disabled
 	#addpredict /usr/share/snmp/mibs/.index
-	multilib-minimal_src_configure
-}
 
-multilib_src_configure() {
+	if use test-fuzzing ; then
+		if has_version "sys-devel/clang:13" && has_version "=sys-devel/clang-runtime-13*" && has_version "=sys-libs/compiler-rt-sanitizers-13*" ; then
+			einfo "Using clang:13"
+			LLVM_MAX_SLOT=13
+			llvm_pkg_setup
+		elif has_version "sys-devel/clang:12" && has_version "=sys-devel/clang-runtime-12*" && has_version "=sys-libs/compiler-rt-sanitizers-12*" ; then
+			einfo "Using clang:12"
+			LLVM_MAX_SLOT=12
+			llvm_pkg_setup
+		elif has_version "sys-devel/clang:11" && has_version "=sys-devel/clang-runtime-11*" && has_version "=sys-libs/compiler-rt-sanitizers-11*" ; then
+			einfo "Using clang:11"
+			LLVM_MAX_SLOT=11
+			llvm_pkg_setup
+		else
+			die "Fix the clang toolchain.  It requires sys-devel/clang:\${SLOT}, =sys-devel/clang-runtime-\${SLOT}*, =sys-libs/compiler-rt-sanitizers-\${SLOT}"
+		fi
+	fi
+
+	local chost=$(get_abi_CHOST ${ABI})
+	if use test-fuzzing ; then
+		filter-flags -frename-registers
+		CC=${chost}-clang
+	fi
+
 	local emesonargs=(
 		-Dgnome=false
-		-Dkrb5_config="${CHOST}-krb5-config"
+		-Dkrb5_config="${chost}-krb5-config"
 		-Dntlm_auth="${EPREFIX}/usr/bin/ntlm_auth"
 		-Dinstalled_tests=false
 		-Dtls_check=false # disables check, we still rdep on
@@ -204,6 +240,23 @@ multilib_src_configure() {
 	meson_src_configure
 }
 
-src_test() {
+multilib_src_test() {
+	# Test disabled: test-regression test-websockets
+	# Test enabled: test-fuzzing test-http2 test-pkcs11
+	# Result of 2.99.8
+	# Dated Jun 12, 2021
+#Summary of Failures:
+
+# 2/35 libsoup / cache-test                   ERROR            1.49s   exit status 1
+#33/35 libsoup / ssl-test                     TIMEOUT         60.02s   killed by signal 15 SIGTERM
+
+
+#Ok:                 32  
+#Expected Fail:      0   
+#Fail:               1   
+#Unexpected Pass:    0   
+#Skipped:            1   
+#Timeout:            1   
+
 	meson test || die
 }
