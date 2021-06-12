@@ -3,6 +3,12 @@
 
 EAPI=7
 
+# -r revision notes
+# -rabcde
+# ab = WEBKITGTK_API_VERSION version (5.0)
+# c = reserved
+# de = ebuild revision
+
 # Corresponds to
 # WebKit 612.1.15 (20210514, main) ; See Source/WebKit/Configurations/Version.xcconfig
 
