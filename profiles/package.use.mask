@@ -29,3 +29,6 @@ net-libs/grpc test
 
 # 64-bit only package
 x11-drivers/amdgpu-pro abi_x86_32
+
+# python2 only
+net-libs/libsoup test-websockets
