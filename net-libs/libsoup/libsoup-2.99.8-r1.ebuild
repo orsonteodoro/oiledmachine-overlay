@@ -119,7 +119,7 @@ PATCHES=(
 
 pkg_setup() {
 	if use gssapi ; then
-		if has '<app-crypt/mit-krb5-1.19.1' ; then
+		if has_version '<app-crypt/mit-krb5-1.19.1' ; then
 			# virtual/krb5 probs or virtuals in general
 			die ">=app-crypt/mit-krb5-1.19.1 is required"
 		fi
@@ -134,14 +134,25 @@ pkg_setup() {
 		python-any-r1_pkg_setup
 	fi
 	local abis=( $(multilib_get_enabled_abis) )
-	if (( ${#abis[@]} > 1 )) ; then
-		einfo "Checking multi ABIS for clang"
-		# `emerge -1 libsoup` is not good enough to make fuzzer test happy.
-		if ! has 'sys-devel/clang[${MULTILIB_USEDEP}]' ; then
-			die \
-"Inconsistency with MULTLIB_USEDEP.  Run emerge with --deep or -D."
-		fi
-	fi
+	for a in ${abis[@]} ; do
+		for p in ${_MULTILIB_FLAGS[@]} ; do
+			if [[ "${p}" =~ "${a}" ]] ; then
+				local u=$(echo "${p}" | cut -f 1 -d ":")
+				if ! use ${u} ; then
+					einfo "Skipped sys-devel/clang[${u}]"
+					continue
+				fi
+				einfo "Checking sys-devel/clang[${u}]"
+				# `emerge -1 libsoup` is not good enough to make fuzzer test happy.
+				if has_version "sys-devel/clang[${u}]" ; then
+					einfo "sys-devel/clang[${u}] found"
+				else
+					die \
+"Inconsistency with sys-devel/clang[${u}].  Run emerge with --deep or -D."
+				fi
+			fi
+		done
+	done
 }
 
 src_prepare() {
