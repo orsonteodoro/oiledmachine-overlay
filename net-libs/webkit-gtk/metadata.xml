@@ -37,7 +37,6 @@
     <flag name="geolocation">Enable geolocation support through
       <pkg>app-misc/geoclue</pkg></flag>
     <flag name="gles2">Enable GLESv2 support</flag>
-    <flag name="http2">Enable HTTP/2 support</flag>
     <flag name="lto">Use ThinLTO LTO [link time optimization] when
       when linking.  ThinLTO is used instead of full for efficient
       multicore and memory usage.</flag>
@@ -47,6 +46,8 @@
       on alternative ARCHs and ABIs</flag>
     <flag name="jumbo-build">Combine source files to speed up build
       process</flag>
+    <flag name="libsoup3">Link to libsoup3.  It consequently enables HTTP/2
+      by default when libsoup3 is 2.99.8 or newer.</flag>
     <flag name="mediastream">Enables support for MediaStream API (IN DEVELOPMENT
       / DRAFT).</flag>
     <flag name="nsplugin">Enable full nsplugin support (GTK2 plugins)</flag>

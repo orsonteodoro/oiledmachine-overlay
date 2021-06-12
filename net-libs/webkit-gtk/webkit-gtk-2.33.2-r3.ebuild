@@ -16,7 +16,7 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine"
+DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE="
 LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
@@ -62,6 +62,12 @@ CURRENT="91"
 AGE="54"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}"
+# SLOT=5.0/0  GTK4 SOUP*
+# SLOT=4.1/0  GTK3 SOUP3
+# SLOT=4.0/37 GTK3 SOUP2
+# For the multi slot calculation and problem, see
+# https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/cmake/OptionsGTK.cmake#L229
+# Possible merge conflict between GTK3+SOUP3 vs GTK4.
 
 # LANGS=(
 # find ${S}/Source/WebCore/platform/gtk/po/ -name "*.po" \
@@ -83,10 +89,10 @@ vi zh_CN )
 
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
 +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer
--gtk-doc hardened +http2 +introspection +jit +jpeg2k +jumbo-build +lcms
-+libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp -seccomp
--spell -systemd test variation-fonts wayland +webassembly +webassembly-b3-jit
-+webcrypto +webgl -webrtc -webxr +X +yarr-jit"
+-gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen
++libnotify lto -mediastream -minibrowser +opengl openmp -seccomp -spell -systemd
+test variation-fonts wayland +webassembly +webassembly-b3-jit +webcrypto +webgl
+-webrtc -webxr +X +yarr-jit"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -176,6 +182,7 @@ RDEPEND+=" !net-libs/webkit-gtk:4
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
@@ -194,15 +201,6 @@ RDEPEND+=" !net-libs/webkit-gtk:4
 		gles2-only? (
 >=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2,${MULTILIB_USEDEP}]
 		)
-	)
-	!http2? (
-		|| (
-			>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
-			>=net-libs/libsoup-2.99.8:3[introspection?,${MULTILIB_USEDEP}]
-		)
-	)
-	http2? (
-		>=net-libs/libsoup-2.99.8:3[introspection?,${MULTILIB_USEDEP}]
 	)
 	introspection? ( >=dev-libs/gobject-introspection-1.56.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
@@ -553,6 +551,7 @@ multilib_src_configure() {
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
+		-DUSE_SOUP2=ON
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
@@ -561,16 +560,6 @@ multilib_src_configure() {
 		$(cmake_use_find_package egl EGL)
 		$(cmake_use_find_package opengl OpenGL)
 	)
-
-	if has_version "net-libs/libsoup:3" ; then
-		mycmakeargs+=(
-			-DUSE_SOUP2=OFF
-		)
-	else
-		mycmakeargs+=(
-			-DUSE_SOUP2=ON
-		)
-	fi
 
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
