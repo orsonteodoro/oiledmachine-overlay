@@ -1,3 +1,0 @@
-#!/bin/bash
-export OCIO=/usr/share/blender/${SLOT}/datafiles/colormanagement_filmic_sheepit/config.ocio
-___BLENDER_CREATOR_PATH___ "$@"

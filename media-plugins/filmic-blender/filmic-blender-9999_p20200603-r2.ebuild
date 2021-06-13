@@ -9,11 +9,11 @@ KEYWORDS="amd64 ~x86"
 # For commentary from the author about licensing numbers, see:
 # https://github.com/sobotka/filmic-blender/pull/29#issuecomment-502137400
 LICENSE="all-rights-reserved"
-SLOT="sheepit/${PV}" # 0/${PV} for latest, sheepit/${PV} for sheep it only
+SLOT="0/${PV}" # 0/${PV} for latest, sheepit/${PV} for sheep it only
 RESTRICT="fetch mirror"
 RDEPEND="media-gfx/blender:=[color-management]" # reinstall if new blender
 inherit desktop xdg
-FILMIC_COMMIT="f94ebab8ad3ad917d3201230ebca1bc3a93b7c86"
+FILMIC_COMMIT="183784a03c37b3ff51f20c435e0711ceffe3ddd3"
 DEST_FN="filmic-${FILMIC_COMMIT}.zip"
 SRC_URI="\
 https://github.com/sobotka/filmic-blender/archive/${FILMIC_COMMIT}.zip \
@@ -41,7 +41,6 @@ src_install() {
 		local icon_name=
 
 		pv=$(cat "${p}/PF" | cut -f 2 -d "-")
-		[[ "${pv}" =~ 2.79b ]] || continue
 
 		slot=$(cat "${p}/SLOT")
 		slot_maj=${slot%/*}
@@ -65,18 +64,25 @@ src_install() {
 		fi
 
 		insinto \
-/usr/share/blender/${share_slot}/datafiles/colormanagement_filmic_sheepit
+/usr/share/blender/${share_slot}/datafiles/colormanagement_filmic
 		doins -r *
 
+		make_desktop_entry \
+"env OCIO=/usr/share/blender/${share_slot}/datafiles/colormanagement_filmic/config.ocio ${exe_path} %f" \
+			"${entry_name} (Filmic)" \
+			"${icon_name}" \
+			"Graphics;3DGraphics;"
+
 		# avoid file conflict
-		cp "${ED}/usr/share/applications/env-filmic-blender-sheepit"{,-${pv}}".desktop" || die
+		cp "${ED}/usr/share/applications/env-filmic-blender"{,-${pv}}".desktop" || die
 
 		exeinto /usr/bin
-		newexe "${FILESDIR}/blender-filmic-sheepit" \
-			"blender-${blender_slot}-filmic-sheepit"
+		newexe "${FILESDIR}/blender-filmic" \
+			"blender-${blender_slot}-filmic"
 		sed -i -e "s|___BLENDER_CREATOR_PATH___|${exe_path}|g" \
-			"${ED}/usr/bin/blender-${blender_slot}-filmic-sheepit" || die
+			"${ED}/usr/bin/blender-${blender_slot}-filmic" || die
 		sed -i -e "s|\${SLOT}|${blender_slot}|g" \
-			"${ED}/usr/bin/blender-${blender_slot}-filmic-sheepit" || die
+			"${ED}/usr/bin/blender-${blender_slot}-filmic" || die
 	done
+	rm "${ED}/usr/share/applications/env-filmic-blender.desktop" || die
 }
