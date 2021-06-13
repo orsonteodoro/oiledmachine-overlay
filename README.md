@@ -198,7 +198,6 @@ contains a known infamous critical vulnerability.
 | dev-lang/gambas | Gambas is based on the BASIC programming language dialect.  It is basically a Visual Basic clone.  Version 3.8.4 is in this overlay.  Use the `ide` USE flag to build the IDE.  You can make games with it and has support for OpenGL. |
 | dev-lang/lua | This is a lua library with Urho3D changes necessary for coroutines |
 | dev-lang/luajit | This is a luajit library with Urho3D changes necessary for coroutines |
-| dev-lang/qb64 | This is a freeware QBasic clone.  It has similar look and feel as QBasic. |
 | dev-lang/typescript | TBA |
 | dev-libs/asmlib | TBA |
 | dev-libs/hyphen | TBA |
