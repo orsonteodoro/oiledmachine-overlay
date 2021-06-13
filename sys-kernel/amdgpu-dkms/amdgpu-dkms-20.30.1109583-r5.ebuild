@@ -7,7 +7,7 @@ inherit linux-info unpacker
 
 DESCRIPTION="AMDGPU DKMS kernel module"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-20"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-30"
 LICENSE="GPL-2 MIT
 	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
@@ -19,7 +19,7 @@ PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
-PKG_VER_DKMS="5.6.0.13-1089974"
+PKG_VER_DKMS="5.6.5.24-1109583"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 SLOT="0/${PV}"
@@ -66,17 +66,17 @@ S="${WORKDIR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
-DC_VER="3.2.81"
-AMDGPU_VERSION="5.6.0.20.20"
-ROCK_VER="3.5.0_pre20200424" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/tree/rocm-3.5.0/drivers/gpu/drm/amd/amdkfd
+DC_VER="3.2.87"
+AMDGPU_VERSION="5.6.5.20.30"
+ROCK_VER="3.5.1" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/tree/rocm-3.5.0/drivers/gpu/drm/amd/amdkfd
 
-PATCHES=( "${FILESDIR}/rock-dkms-3.5_p30-makefile-recognize-gentoo.patch"
+PATCHES=( "${FILESDIR}/amdgpu-dkms-20.30.1109583-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/rock-dkms-3.5_p30-enable-mmu_notifier.patch"
-	  "${FILESDIR}/amdgpu-dkms-20.20.1089974-no-firmware-install.patch"
+	  "${FILESDIR}/amdgpu-dkms-20.30.1109583-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
 	  "${FILESDIR}/amdgpu-dkms-19.50.967956-add-header-to-kcl_mn_c.patch" )
 RT_FN_="dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
-RT_FN="rt-5.4.123-rt59-0087-${RT_FN}"
+RT_FN="rt-5.4.123-rt59-0087-${RT_FN_}"
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -385,7 +385,7 @@ apply_rt() {
 		"${FILESDIR}/${RT_FN}" > "${T}/${RT_FN}" || die
 	sed -i -e 's|drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c|amd/amdgpu/amdgpu_amdkfd_gpuvm.c|g' \
 		"${T}/${RT_FN}" || die
-	sed -i -e 's|drivers/dma-buf/dma-resv.c|amd/amdkcl/dma-resv.c|g' \
+	sed -i -e 's|drivers/dma-buf/dma-resv.c|amd/amdkcl/dma-buf/dma-resv.c|g' \
 		"${T}/${RT_FN}" || die
 	eapply "${T}/${RT_FN}"
 }

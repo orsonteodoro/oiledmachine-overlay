@@ -3,11 +3,13 @@
 
 EAPI=7
 
-inherit linux-info unpacker
+inherit linux-info unpacker rpm
 
 DESCRIPTION="AMDGPU DKMS kernel module"
+# The HOMEPAGE link (1164792) doesn't have this exact release (1188099).  See DL_PAGE instead.
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-10"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-45"
+DL_PAGE="https://www.amd.com/en/support/graphics/amd-radeon-6000-series/amd-radeon-6900-series/amd-radeon-rx-6900-xt"
 LICENSE="GPL-2 MIT
 	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
@@ -15,23 +17,34 @@ MY_RPR="${PV//_p/-}" # Remote PR
 PKG_VER=$(ver_cut 1-2 ${PV})
 PKG_VER_MAJ=$(ver_cut 1 ${PV})
 PKG_REV=$(ver_cut 3)
-PKG_ARCH="ubuntu"
-PKG_ARCH_VER="18.04"
+PKG_ARCH_RPM="rhel"
+PKG_ARCH_VER_RPM="8.2"
+PKG_ARCH_DEB="ubuntu"
+PKG_ARCH_VER_DEB="18.04"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
-PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
-PKG_VER_DKMS="5.4.7.53-1048554"
-FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
-SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
+PKG_VER_STRING_DIR_RPM=${PKG_VER}-${PKG_REV}-${PKG_ARCH_RPM}-${PKG_ARCH_VER_RPM}
+PKG_VER_STRING_DIR_DEB=${PKG_VER}-${PKG_REV}-${PKG_ARCH_DEB}-${PKG_ARCH_VER_DEB}
+PKG_VER_DKMS="5.6.20.906316-1188099"
+FN_RPM="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH_RPM}-${PKG_ARCH_VER_RPM}.tar.xz"
+FN_DEB="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH_RPM}-${PKG_ARCH_VER_DEB}.tar.xz"
+SRC_URI="
+	rpm? ( https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN_RPM} )
+"
+# maybe if hwe was released
+#	deb? ( https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN_DEB} )
 SLOT="0/${PV}"
 IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu custom-kernel directgma firmware hybrid-graphics numa rock rt +sign-modules ssg"
+IUSE+=" -deb +rpm"
 REQUIRED_USE="rock? ( check-pcie check-gpu )
-	      hybrid-graphics? ( acpi )"
+	      hybrid-graphics? ( acpi )
+	      !deb
+	      rpm"
 if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
-# See https://cgit.freedesktop.org/~agd5f/linux/tree/Makefile?h=amd-20.10
-KV_NOT_SUPPORTED_MAX="5.5"
+# Based on the AMDGPU_VERSION
+KV_NOT_SUPPORTED_MAX="5.7"
 KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
@@ -66,27 +79,35 @@ S="${WORKDIR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
-DC_VER="3.2.72"
-AMDGPU_VERSION="5.4.7.20.10"
-ROCK_VER="3.3.0_pre20200204" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/tree/roc-3.1.0/drivers/gpu/drm/amd/amdkfd
+DC_VER="3.2.99"
+AMDGPU_VERSION="5.6.20.20.45"
+ROCK_VER="3.9.0_pre20201021" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/tree/rocm-3.9.0/drivers/gpu/drm/amd/amdkfd
 
-PATCHES=( "${FILESDIR}/amdgpu-dkms-20.10.1048554-makefile-recognize-gentoo.patch"
-	  "${FILESDIR}/amdgpu-dkms-19.50.967956-enable-mmu_notifier.patch"
-	  "${FILESDIR}/amdgpu-dkms-20.10.1048554-no-firmware-install.patch"
+PATCHES=( "${FILESDIR}/amdgpu-dkms-20.40.1147287-makefile-recognize-gentoo.patch"
+	  "${FILESDIR}/amdgpu-dkms-20.40.1147287-enable-mmu_notifier.patch"
+	  "${FILESDIR}/amdgpu-dkms-20.45.1188099-no-firmware-install-and-no-dracut-changes.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
-	  "${FILESDIR}/amdgpu-dkms-19.50.967956-add-header-to-kcl_mn_c.patch" )
+	  "${FILESDIR}/amdgpu-dkms-20.45.1188099-add-header-to-kcl_mn_c.patch" )
 RT_FN_="dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
-RT_FN="rt-5.4.123-rt59-0087-${RT_FN}"
+RT_FN="rt-5.4.123-rt59-0087-${RT_FN_}"
+
+get_fn() {
+	if use rpm ; then
+		echo "${FN_RPM}"
+	elif use deb ; then
+		echo "${FN_DEB}"
+	fi
+}
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo "Please download"
-	einfo "  - ${FN}"
-	einfo "from ${HOMEPAGE} and place them in ${distdir}"
+	einfo "  - $(get_fn)"
+	einfo "from ${DL_PAGE} and place them in ${distdir}"
 }
 
 pkg_pretend() {
-	ewarn "Kernels 5.0.x <= x <= 5.4.x are only supported."
+	ewarn "Kernels 5.0.x <= x <= 5.6.x are only supported."
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
 			die "${PN} require sandbox to be disabled in FEATURES when testing hardware with check-pcie USE flag."
@@ -372,8 +393,14 @@ unpack_deb() {
 
 src_unpack() {
 	default
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms_${PKG_VER_DKMS}_all.deb"
-	export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER_DKMS}"
+	if use rpm ; then
+		rpm_unpack \
+"${WORKDIR}/amdgpu-pro-${PKG_VER_STRING_DIR_RPM}/RPMS/noarch/amdgpu-dkms-${PKG_VER_DKMS}.el8.noarch.rpm"
+		export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER_DKMS}.el8"
+	elif use deb ; then
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms_${PKG_VER_DKMS}_all.deb"
+		export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER_DKMS}"
+	fi
 	rm -rf "${S}/firmware" || die
 }
 
@@ -385,7 +412,7 @@ apply_rt() {
 		"${FILESDIR}/${RT_FN}" > "${T}/${RT_FN}" || die
 	sed -i -e 's|drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c|amd/amdgpu/amdgpu_amdkfd_gpuvm.c|g' \
 		"${T}/${RT_FN}" || die
-	sed -i -e 's|drivers/dma-buf/dma-resv.c|amd/amdkcl/dma-resv.c|g' \
+	sed -i -e 's|drivers/dma-buf/dma-resv.c|amd/amdkcl/dma-buf/dma-resv.c|g' \
 		"${T}/${RT_FN}" || die
 	eapply "${T}/${RT_FN}"
 }
@@ -415,7 +442,7 @@ src_install() {
 	dodir usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	insinto usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	doins -r "${S}"/*
-	fperms 0750 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-remove.sh,pre-build.sh,amd/dkms/pre-build.sh,configure}
+	fperms 0750 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{amd/dkms/post-remove.sh,amd/dkms/pre-build.sh,amd/dkms/configure}
 	insinto /etc/modprobe.d
 	doins "${WORKDIR}/etc/modprobe.d/blacklist-radeon.conf"
 	insinto /lib/udev/rules.d

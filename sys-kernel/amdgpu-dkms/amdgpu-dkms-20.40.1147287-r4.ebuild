@@ -7,7 +7,7 @@ inherit linux-info unpacker
 
 DESCRIPTION="AMDGPU DKMS kernel module"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-30"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-40"
 LICENSE="GPL-2 MIT
 	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
@@ -19,7 +19,7 @@ PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
-PKG_VER_DKMS="5.6.5.24-1109583"
+PKG_VER_DKMS="5.6.14.224-1147287"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 SLOT="0/${PV}"
@@ -56,27 +56,25 @@ RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	      >=sys-kernel/vanilla-sources-${KV_SUPPORTED_MIN}
 	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} ) )
 "
-DEPEND="${RDEPEND}"
-BDEPEND="${BDEPEND}
+DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )
-	rt? ( dev-util/patchutils )
 	sys-apps/grep[pcre]"
 S="${WORKDIR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
-DC_VER="3.2.87"
-AMDGPU_VERSION="5.6.5.20.30"
-ROCK_VER="3.5.1" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/tree/rocm-3.5.0/drivers/gpu/drm/amd/amdkfd
+DC_VER="3.2.97"
+AMDGPU_VERSION="5.6.16.20.40"
+ROCK_VER="3.8.0" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/tree/rocm-3.8.0/drivers/gpu/drm/amd/amdkfd
 
-PATCHES=( "${FILESDIR}/amdgpu-dkms-20.30.1109583-makefile-recognize-gentoo.patch"
-	  "${FILESDIR}/rock-dkms-3.5_p30-enable-mmu_notifier.patch"
-	  "${FILESDIR}/amdgpu-dkms-20.30.1109583-no-firmware-install.patch"
+PATCHES=( "${FILESDIR}/amdgpu-dkms-20.40.1147287-makefile-recognize-gentoo.patch"
+	  "${FILESDIR}/amdgpu-dkms-20.40.1147287-enable-mmu_notifier.patch"
+	  "${FILESDIR}/amdgpu-dkms-20.40.1147287-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
 	  "${FILESDIR}/amdgpu-dkms-19.50.967956-add-header-to-kcl_mn_c.patch" )
 RT_FN_="dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
-RT_FN="rt-5.4.123-rt59-0087-${RT_FN}"
+RT_FN="rt-5.4.123-rt59-0087-${RT_FN_}"
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
