@@ -9,7 +9,7 @@ KEYWORDS="amd64 ~x86"
 # For commentary from the author about licensing numbers, see:
 # https://github.com/sobotka/filmic-blender/pull/29#issuecomment-502137400
 LICENSE="all-rights-reserved"
-SLOT="0/${PV}" # 0/${PV} for latest, sheepit/${PV} for sheep it only
+SLOT="0/${PV}" # 0/${PV} for latest
 RESTRICT="fetch mirror"
 RDEPEND="media-gfx/blender:=[color-management]" # reinstall if new blender
 inherit desktop xdg
