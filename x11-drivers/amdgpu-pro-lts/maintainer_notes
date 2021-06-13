@@ -25,6 +25,6 @@ PKG_NAME="${1}"
 S="${2}" # path goes here
 for x in $(find "${S}" -name "*.deb") ; do
 	echo "Inspecting ${x}"
-	dpkg -I "${x}" | grep "${PKG_NAME}"
+	dpkg -I "${x}" | grep -i -e "${PKG_NAME}"
 done
 --------------------------------------------------------------------------------
