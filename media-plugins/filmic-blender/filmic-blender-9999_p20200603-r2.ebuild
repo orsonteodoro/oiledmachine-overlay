@@ -2,24 +2,26 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit desktop xdg
+
 DESCRIPTION="Film Emulsion-Like Camera Rendering Transforms for Blender"
 HOMEPAGE="https://sobotka.github.io/filmic-blender/"
-KEYWORDS="amd64 ~x86"
 # No license on new files discovered or old files if any and no default licenses.
 # For commentary from the author about licensing numbers, see:
 # https://github.com/sobotka/filmic-blender/pull/29#issuecomment-502137400
 LICENSE="all-rights-reserved"
+KEYWORDS="amd64 ~x86"
 SLOT="0/${PV}" # 0/${PV} for latest
-RESTRICT="fetch mirror"
-RDEPEND="media-gfx/blender:=[color-management]" # reinstall if new blender
-inherit desktop xdg
+RDEPEND+=" media-gfx/blender:=[color-management]" # reinstall if new blender
 FILMIC_COMMIT="183784a03c37b3ff51f20c435e0711ceffe3ddd3"
 DEST_FN="filmic-${FILMIC_COMMIT}.zip"
-SRC_URI="\
-https://github.com/sobotka/filmic-blender/archive/${FILMIC_COMMIT}.zip \
+SRC_URI="
+https://github.com/sobotka/filmic-blender/archive/${FILMIC_COMMIT}.zip
 	-> ${DEST_FN}"
 DL_URL="https://github.com/sobotka/filmic-blender/tree/${FILMIC_COMMIT}"
 S="${WORKDIR}/filmic-blender-${FILMIC_COMMIT}"
+RESTRICT="fetch mirror"
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
