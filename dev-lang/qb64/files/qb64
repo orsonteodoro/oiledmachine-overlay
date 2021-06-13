@@ -1,3 +1,0 @@
-#!/bin/bash
-cd /opt/qb64/${USER}
-./qb64 $@ &
