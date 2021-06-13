@@ -1,7 +1,10 @@
-From bd7a378e09ed2750f18e201a7f40115a07440d44 Mon Sep 17 00:00:00 2001
+From 25e67561ee038ed215278e02f50d908b3d5daeba Mon Sep 17 00:00:00 2001
+Message-Id: <25e67561ee038ed215278e02f50d908b3d5daeba.1622827626.git.zanussi@kernel.org>
+In-Reply-To: <c14b74533619106939435325487891934c66f094.1622827625.git.zanussi@kernel.org>
+References: <c14b74533619106939435325487891934c66f094.1622827625.git.zanussi@kernel.org>
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Date: Wed, 14 Aug 2019 16:38:43 +0200
-Subject: [PATCH 087/305] dma-buf: Use seqlock_t instread disabling preemption
+Subject: [PATCH 087/307] dma-buf: Use seqlock_t instread disabling preemption
 
 "dma reservation" disables preemption while acquiring the write access
 for "seqcount".
@@ -20,10 +23,10 @@ Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
  5 files changed, 27 insertions(+), 42 deletions(-)
 
 diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index f6df6ef1b0fb..6ac054a13d0b 100644
+index 758de0e9b2dd..21ea9460f5e4 100644
 --- a/drivers/dma-buf/dma-buf.c
 +++ b/drivers/dma-buf/dma-buf.c
-@@ -214,7 +214,7 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
+@@ -226,7 +226,7 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
  		return 0;
  
  retry:
@@ -32,7 +35,7 @@ index f6df6ef1b0fb..6ac054a13d0b 100644
  	rcu_read_lock();
  
  	fobj = rcu_dereference(resv->fence);
-@@ -223,7 +223,7 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
+@@ -235,7 +235,7 @@ static __poll_t dma_buf_poll(struct file *file, poll_table *poll)
  	else
  		shared_count = 0;
  	fence_excl = rcu_dereference(resv->fence_excl);
@@ -41,7 +44,7 @@ index f6df6ef1b0fb..6ac054a13d0b 100644
  		rcu_read_unlock();
  		goto retry;
  	}
-@@ -1192,12 +1192,12 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
+@@ -1205,12 +1205,12 @@ static int dma_buf_debug_show(struct seq_file *s, void *unused)
  
  		robj = buf_obj->resv;
  		while (true) {
@@ -57,7 +60,7 @@ index f6df6ef1b0fb..6ac054a13d0b 100644
  			rcu_read_unlock();
  		}
 diff --git a/drivers/dma-buf/dma-resv.c b/drivers/dma-buf/dma-resv.c
-index 709002515550..b0c0d4fe0b33 100644
+index 242a9ec295cf..09c57db1241b 100644
 --- a/drivers/dma-buf/dma-resv.c
 +++ b/drivers/dma-buf/dma-resv.c
 @@ -49,12 +49,6 @@
@@ -271,5 +274,5 @@ index ee50d10f052b..81272ca122ee 100644
  	struct dma_fence __rcu *fence_excl;
  	struct dma_resv_list __rcu *fence;
 -- 
-2.29.2
+2.17.1
 

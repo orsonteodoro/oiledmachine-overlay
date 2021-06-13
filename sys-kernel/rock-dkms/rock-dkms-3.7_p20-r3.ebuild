@@ -25,7 +25,7 @@ if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
-KV_NOT_SUPPORTED_MAX="5.7"
+KV_NOT_SUPPORTED_MAX="5.6.69"
 KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/rock-firmware:${SLOT} )
@@ -61,14 +61,15 @@ S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${SUFFIX}"
-DC_VER="3.2.99"
-AMDGPU_VERSION="5.6.19"
+DC_VER="3.2.94"
+AMDGPU_VERSION="5.6.12"
 
-PATCHES=( "${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
-	  "${FILESDIR}/rock-dkms-3.8_p30-enable-mmu_notifier.patch"
-	  "${FILESDIR}/rock-dkms-4.0_p23-no-firmware-install.patch"
+PATCHES=( "${FILESDIR}/rock-dkms-3.7_p20-makefile-recognize-gentoo.patch"
+	  "${FILESDIR}/rock-dkms-3.7_p20-enable-mmu_notifier.patch"
+	  "${FILESDIR}/rock-dkms-3.7_p20-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
-RT_FN="0087-dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
+RT_FN_="dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
+RT_FN="5.4.123-rt59-0087-${RT_FN_}"
 
 pkg_nofetch() {
         local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -316,7 +317,7 @@ check_kernel() {
 		if grep -q -F -e "read_seqbegin" "${KERNEL_DIR}/drivers/dma-buf/dma-buf.c" ; then
 			einfo "Passed rt kernel check on ${k}."
 		else
-			die "Failed kernel check on ${k}.  Missing read_seqbegin changes in \${KERNEL_DIR}/drivers/dma-buf/dma-buf.c from ${RT_FN}"
+			die "Failed kernel check on ${k}.  Missing read_seqbegin changes in \${KERNEL_DIR}/drivers/dma-buf/dma-buf.c from ${RT_FN_} for <= 5.6.x kernel series."
 		fi
 	else
 		if grep -q -F -e "ARCH_SUPPORTS_RT" "${KERNEL_DIR}/arch/x86/Kconfig" ; then

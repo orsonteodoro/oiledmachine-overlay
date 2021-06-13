@@ -10,16 +10,16 @@ HOMEPAGE="https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide
 LICENSE="GPL-2 MIT
 	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
-REV=$(ver_cut 5 ${PV})
+REV=$(ver_cut 4 ${PV})
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-ROCK_VER=$(ver_cut 1-3 ${PV})
+ROCK_VER="${PV_MAJOR_MINOR}"
 SUFFIX="${PV_MAJOR_MINOR}-${REV}"
 FN="rock-dkms_${SUFFIX}_all.deb"
 BASE_URL="http://repo.radeon.com/rocm/apt/${ROCK_VER}/"
 FOLDER="pool/main/r/rock-dkms/"
 SRC_URI="${BASE_URL}${FOLDER}/${FN}"
 SLOT="0/${PV}"
-IUSE="acpi +build +check-mmu-notifier +check-pcie +check-gpu custom-kernel directgma firmware hybrid-graphics numa rt +sign-modules ssg"
+IUSE="acpi +build +check-mmu-notifier +check-pcie +check-gpu custom-kernel directgma firmware hybrid-graphics numa +sign-modules ssg"
 REQUIRED_USE="hybrid-graphics? ( acpi )"
 if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED_MAX="99999"
@@ -55,20 +55,18 @@ DEPEND="${RDEPEND}"
 BDEPEND="${BDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )
-	rt? ( dev-util/patchutils )
 	sys-apps/grep[pcre]"
 S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${SUFFIX}"
-DC_VER="3.2.116"
-AMDGPU_VERSION="5.9.15"
+DC_VER="3.2.126"
+AMDGPU_VERSION="5.9.25"
 
 PATCHES=( "${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/rock-dkms-3.8_p30-enable-mmu_notifier.patch"
-	  "${FILESDIR}/rock-dkms-4.1.1_p34-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-4.2_p21-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
-RT_FN="0087-dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
 
 pkg_nofetch() {
         local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -312,17 +310,6 @@ check_kernel() {
 	else
 		pkg_setup_warn
 	fi
-	if use rt ; then
-		if grep -q -F -e "read_seqbegin" "${KERNEL_DIR}/drivers/dma-buf/dma-buf.c" ; then
-			einfo "Passed rt kernel check on ${k}."
-		else
-			die "Failed kernel check on ${k}.  Missing read_seqbegin changes in \${KERNEL_DIR}/drivers/dma-buf/dma-buf.c from ${RT_FN}"
-		fi
-	else
-		if grep -q -F -e "ARCH_SUPPORTS_RT" "${KERNEL_DIR}/arch/x86/Kconfig" ; then
-			ewarn "The rt USE flag is recommended to avoid hang on ${k}."
-		fi
-	fi
 }
 
 pkg_setup() {
@@ -360,24 +347,8 @@ src_unpack() {
 	rm -rf "${S}/firmware" || die
 }
 
-apply_rt() {
-	einfo "Applying PREEMPT_RT driver patch"
-	filterdiff \
-		-x '*/dma-buf.c' \
-		-x '*/i915_gem_busy.c' \
-		"${FILESDIR}/${RT_FN}" > "${T}/${RT_FN}" || die
-	sed -i -e 's|drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c|amd/amdgpu/amdgpu_amdkfd_gpuvm.c|g' \
-		"${T}/${RT_FN}" || die
-	sed -i -e 's|drivers/dma-buf/dma-resv.c|amd/amdkcl/dma-buf/dma-resv.c|g' \
-		"${T}/${RT_FN}" || die
-	eapply "${T}/${RT_FN}"
-}
-
 src_prepare() {
 	default
-	if use rt ; then
-		apply_rt
-	fi
 	einfo "DC_VER=${DC_VER}"
 	einfo "AMDGPU_VERSION=${AMDGPU_VERSION}"
 	einfo "ROCK_VER=${ROCK_VER}"
