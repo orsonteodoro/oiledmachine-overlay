@@ -28,6 +28,6 @@ PKG_NAME="${1}"
 S="${2}" # path goes here
 for x in $(find "${S}" -name "*.rpm") ; do
 	echo "Inspecting ${x}"
-	rpm -qR "${x}" | grep "${PKG_NAME}"
+	rpm -qR "${x}" | grep -i -e "${PKG_NAME}"
 done
 --------------------------------------------------------------------------------
