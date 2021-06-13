@@ -6,7 +6,7 @@ DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module
 KEYWORDS="amd64 x86"
 IUSE="amdgpu-dkms dkms +firmware kernel rock-dkms strict-pairing"
 AMDGPU_DKMS_PV="21.10" # DC_VER = 3.2.121
-ROCK_DKMS_PV="4.2_p21" # DC_VER = 3.2.126
+ROCK_DKMS_PV="4.2" # DC_VER = 3.2.126
 VANILLA_KERNEL_PV="5.12"  # DC_VER = 3.2.122
 LINUX_FIRMWARE_PV_MIN="20210421" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
 LINUX_FIRMWARE_PV_MAX="20210421"
