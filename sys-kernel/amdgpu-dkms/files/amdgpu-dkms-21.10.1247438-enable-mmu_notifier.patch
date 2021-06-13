@@ -1,0 +1,19 @@
+diff -urp amdgpu-5.9.20.104-1247438.el8.orig/amd/dkms/Makefile amdgpu-5.9.20.104-1247438.el8/amd/dkms/Makefile
+--- amdgpu-5.9.20.104-1247438.el8.orig/amd/dkms/Makefile	2021-06-12 16:43:17.815011803 -0700
++++ amdgpu-5.9.20.104-1247438.el8/amd/dkms/Makefile	2021-06-12 16:45:26.000002259 -0700
+@@ -154,6 +154,7 @@ export CONFIG_DRM_AMD_DC=y
+ export CONFIG_DRM_AMD_DC_DCN1_0=y
+ export CONFIG_DRM_AMD_DC_DCN1_01=y
+ export CONFIG_HP_HOOK_WORKAROUND=y
++export CONFIG_MMU_NOTIFIER=y
+ 
+ subdir-ccflags-y += -DCONFIG_HSA_AMD
+ subdir-ccflags-y += -DCONFIG_DRM_TTM_DMA_PAGE_POOL
+@@ -164,6 +165,7 @@ subdir-ccflags-y += -DCONFIG_DRM_AMD_DC
+ subdir-ccflags-y += -DCONFIG_DRM_AMD_DC_DCN1_0
+ subdir-ccflags-y += -DCONFIG_DRM_AMD_DC_DCN1_01
+ subdir-ccflags-y += -DCONFIG_HP_HOOK_WORKAROUND
++subdir-ccflags-y += -DCONFIG_MMU_NOTIFIER
+ 
+ ifeq ($(call _is_kcl_macro_defined,HAVE_DRM_DRM_HDCP_H),y)
+ export CONFIG_DRM_AMD_DC_HDCP=y

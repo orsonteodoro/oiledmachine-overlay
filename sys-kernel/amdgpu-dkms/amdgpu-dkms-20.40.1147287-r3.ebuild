@@ -3,11 +3,11 @@
 
 EAPI=7
 
-inherit linux-info unpacker rpm
+inherit linux-info unpacker
 
 DESCRIPTION="AMDGPU DKMS kernel module"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-50"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-40"
 LICENSE="GPL-2 MIT
 	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
@@ -15,34 +15,23 @@ MY_RPR="${PV//_p/-}" # Remote PR
 PKG_VER=$(ver_cut 1-2 ${PV})
 PKG_VER_MAJ=$(ver_cut 1 ${PV})
 PKG_REV=$(ver_cut 3)
-PKG_ARCH_RPM="rhel"
-PKG_ARCH_VER_RPM="8.3"
-PKG_ARCH_DEB="ubuntu"
-PKG_ARCH_VER_DEB="18.04"
+PKG_ARCH="ubuntu"
+PKG_ARCH_VER="18.04"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
-PKG_VER_STRING_DIR_RPM=${PKG_VER}-${PKG_REV}-${PKG_ARCH_RPM}-${PKG_ARCH_VER_RPM}
-PKG_VER_STRING_DIR_DEB=${PKG_VER}-${PKG_REV}-${PKG_ARCH_DEB}-${PKG_ARCH_VER_DEB}
-PKG_VER_DKMS="5.9.10.69-1234664"
-FN_RPM="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH_RPM}-${PKG_ARCH_VER_RPM}.tar.xz"
-FN_DEB="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH_RPM}-${PKG_ARCH_VER_DEB}.tar.xz"
-SRC_URI="
-	rpm? ( https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN_RPM} )
-"
-# maybe if hwe was released
-#	deb? ( https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN_DEB} )
+PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
+PKG_VER_DKMS="5.6.14.224-1147287"
+FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
+SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 SLOT="0/${PV}"
 IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu custom-kernel directgma firmware hybrid-graphics numa rock rt +sign-modules ssg"
-IUSE+=" -deb +rpm"
 REQUIRED_USE="rock? ( check-pcie check-gpu )
-	      hybrid-graphics? ( acpi )
-	      !deb
-	      rpm"
+	      hybrid-graphics? ( acpi )"
 if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
 # Based on the AMDGPU_VERSION
-KV_NOT_SUPPORTED_MAX="5.10"
+KV_NOT_SUPPORTED_MAX="5.6.69"
 KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
@@ -67,44 +56,35 @@ RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	      >=sys-kernel/vanilla-sources-${KV_SUPPORTED_MIN}
 	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} ) )
 "
-DEPEND="${RDEPEND}"
-BDEPEND="${BDEPEND}
+DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )
-	rt? ( dev-util/patchutils )
 	sys-apps/grep[pcre]"
 S="${WORKDIR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
-DC_VER="3.2.114"
-AMDGPU_VERSION="5.9.10.20.50"
-ROCK_VER="4.0.0" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/tree/rocm-4.0.0/drivers/gpu/drm/amd/amdkfd
+DC_VER="3.2.97"
+AMDGPU_VERSION="5.6.16.20.40"
+ROCK_VER="3.8.0" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/tree/rocm-3.8.0/drivers/gpu/drm/amd/amdkfd
 
 PATCHES=( "${FILESDIR}/amdgpu-dkms-20.40.1147287-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/amdgpu-dkms-20.40.1147287-enable-mmu_notifier.patch"
-	  "${FILESDIR}/amdgpu-dkms-20.50.1234664-no-firmware-install-and-no-dracut-changes.patch"
+	  "${FILESDIR}/amdgpu-dkms-20.40.1147287-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
-	  "${FILESDIR}/amdgpu-dkms-20.45.1188099-add-header-to-kcl_mn_c.patch" )
-RT_FN="0087-dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
-
-get_fn() {
-	if use rpm ; then
-		echo "${FN_RPM}"
-	elif use deb ; then
-		echo "${FN_DEB}"
-	fi
-}
+	  "${FILESDIR}/amdgpu-dkms-19.50.967956-add-header-to-kcl_mn_c.patch" )
+RT_FN_="dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
+RT_FN="rt-5.4.123-rt59-0087-${RT_FN}"
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo "Please download"
-	einfo "  - $(get_fn)"
+	einfo "  - ${FN}"
 	einfo "from ${HOMEPAGE} and place them in ${distdir}"
 }
 
 pkg_pretend() {
-	ewarn "Kernels 5.0.x <= x <= 5.9.x are only supported."
+	ewarn "Kernels 5.0.x <= x <= 5.6.x are only supported."
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
 			die "${PN} require sandbox to be disabled in FEATURES when testing hardware with check-pcie USE flag."
@@ -342,7 +322,7 @@ check_kernel() {
 		if grep -q -F -e "read_seqbegin" "${KERNEL_DIR}/drivers/dma-buf/dma-buf.c" ; then
 			einfo "Passed rt kernel check on ${k}."
 		else
-			die "Failed kernel check on ${k}.  Missing read_seqbegin changes in \${KERNEL_DIR}/drivers/dma-buf/dma-buf.c from ${RT_FN}"
+			die "Failed kernel check on ${k}.  Missing read_seqbegin changes in \${KERNEL_DIR}/drivers/dma-buf/dma-buf.c from ${RT_FN_} for <= 5.6.x kernel"
 		fi
 	else
 		if grep -q -F -e "ARCH_SUPPORTS_RT" "${KERNEL_DIR}/arch/x86/Kconfig" ; then
@@ -390,14 +370,8 @@ unpack_deb() {
 
 src_unpack() {
 	default
-	if use rpm ; then
-		rpm_unpack \
-"${WORKDIR}/amdgpu-pro-${PKG_VER_STRING_DIR_RPM}/RPMS/noarch/amdgpu-dkms-${PKG_VER_DKMS}.el8.noarch.rpm"
-		export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER_DKMS}.el8"
-	elif use deb ; then
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms_${PKG_VER_DKMS}_all.deb"
-		export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER_DKMS}"
-	fi
+	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms_${PKG_VER_DKMS}_all.deb"
+	export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER_DKMS}"
 	rm -rf "${S}/firmware" || die
 }
 
@@ -497,16 +471,11 @@ signing_modules() {
 		else
 			local key_path="${module_sig_key}"
 		fi
-
-		# If you get No such file or directory: crypto/bio/bss_file.c,
-		# This means that the kernel module location changed.  Set below
-		# paths in amd/dkms/dkms.conf.
-
 		local cert_path="${kd}/certs/signing_key.x509"
-		sign_module "${md}/kernel/drivers/gpu/drm/scheduler/amd-sched.ko" || die
-		sign_module "${md}/kernel/drivers/gpu/drm/ttm/amdttm.ko" || die
-		sign_module "${md}/kernel/drivers/gpu/drm/amd/amdkcl/amdkcl.ko" || die
-		sign_module "${md}/kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko" || die
+		sign_module "${md}/updates/amd-sched.ko" || die
+		sign_module "${md}/updates/amdttm.ko" || die
+		sign_module "${md}/updates/amdkcl.ko" || die
+		sign_module "${md}/updates/amdgpu.ko" || die
 	fi
 }
 
