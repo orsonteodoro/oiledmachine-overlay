@@ -417,14 +417,6 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 		llvm_pkg_setup
 	fi
 
-	if use lto ; then
-		einfo "The lto USE flag is in testing."
-	fi
-
-	if use avif ; then
-		einfo "The avif USE flag is in testing."
-	fi
-
 	if use webrtc ; then
 		einfo "The webrtc USE flag is in testing."
 		if has network-sandbox $FEATURES ; then
