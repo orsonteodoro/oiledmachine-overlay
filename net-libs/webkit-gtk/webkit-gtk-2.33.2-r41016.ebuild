@@ -763,15 +763,9 @@ multilib_src_install() {
 	pax-mark m "${d}/jsc"
 
 	if use minibrowser ; then
-		exeinto /usr/bin
-		cp -a "${FILESDIR}/minibrowser" \
-			"${T}/minibrowser" || die
-		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-${API_VERSION}|g" \
-			-e "s|\$(get_libdir)|$(get_libdir)|g" \
-			"${T}/minibrowser" || die
-		newexe "${T}/minibrowser" minibrowser-${ABI}
-		dosym /usr/bin/minibrowser-${ABI} /usr/bin/minibrowser
-		make_desktop_entry minibrowser-${ABI} "MiniBrowser (${ABI})" \
+		make_desktop_entry \
+			/usr/$(get_libdir)/misc/webkit2gtk-4.0/MiniBrowser
+			"MiniBrowser (${ABI}, API: ${API_VERSION})" \
 			"" "Network;WebBrowser"
 	fi
 	mkdir -p "${T}/langs" || die
@@ -785,3 +779,13 @@ multilib_src_install() {
 	_install_licenses
 }
 
+pkg_postinst() {
+	if use minibrowser ; then
+		create_minibrowser_symlink_abi() {
+			ln -sf \
+/usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser \
+				/usr/bin/minibrowser
+		}
+		multilib_foreach_abi create_minibrowser_symlink_abi
+	fi
+}

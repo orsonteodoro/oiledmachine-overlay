@@ -5,7 +5,7 @@ EAPI=7
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (5.0)
+# ab = WEBKITGTK_API_VERSION version (4.1)
 # c = reserved
 # de = ebuild revision
 
@@ -22,7 +22,7 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine (GTK 4)"
+DESCRIPTION="Open source web browser engine (GTK+3 with libsoup3)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE="
 LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
@@ -59,12 +59,12 @@ webrtc? (
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
-API_VERSION="5.0"
+API_VERSION="4.1"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 5.0
+# WEBKITGTK_API_VERSION is 4.1
 CURRENT="0"
 AGE="0"
 SOVERSION=$((${CURRENT} - ${AGE}))
@@ -94,9 +94,9 @@ vi zh_CN )
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
 +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer
 -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen
-+libnotify lto -mediastream -minibrowser +opengl openmp -seccomp -libsoup3
--spell -systemd test variation-fonts wayland +webassembly +webassembly-b3-jit
-+webcrypto +webgl -webrtc -webxr +X +yarr-jit"
++libnotify lto -mediastream -minibrowser +opengl openmp -seccomp -spell -systemd
+test variation-fonts wayland +webassembly +webassembly-b3-jit +webcrypto +webgl
+-webrtc -webxr +X +yarr-jit"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -179,7 +179,6 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
-	>=gui-libs/gtk-3.98.5:4[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
@@ -187,9 +186,11 @@ RDEPEND+="
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.99.5:3[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
+	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	egl? ( >=media-libs/mesa-${MESA_V}[egl,${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
@@ -209,12 +210,6 @@ RDEPEND+="
 	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
 	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
-	!libsoup3? (
-		>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
-	)
-	libsoup3? (
-		>=net-libs/libsoup-2.99.5:3[introspection?,${MULTILIB_USEDEP}]
-	)
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
 	seccomp? (
@@ -338,8 +333,6 @@ ewarn
 }
 
 pkg_setup() {
-	ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
-	ewarn "It is currently not recommended due to rendering bug(s)."
 	einfo "This is the stable branch."
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
@@ -557,14 +550,14 @@ multilib_src_configure() {
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
 		-DUSE_AVIF=$(usex avif)
-		-DUSE_GTK4=ON
+		-DUSE_GTK4=OFF
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=$(usex libsoup3 OFF ON)
+		-DUSE_SOUP2=OFF
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
@@ -800,15 +793,9 @@ multilib_src_install() {
 	pax-mark m "${d}/jsc"
 
 	if use minibrowser ; then
-		exeinto /usr/bin
-		cp -a "${FILESDIR}/minibrowser" \
-			"${T}/minibrowser" || die
-		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-${API_VERSION}|g" \
-			-e "s|\$(get_libdir)|$(get_libdir)|g" \
-			"${T}/minibrowser" || die
-		newexe "${T}/minibrowser" minibrowser-${ABI}
-		dosym /usr/bin/minibrowser-${ABI} /usr/bin/minibrowser
-		make_desktop_entry minibrowser-${ABI} "MiniBrowser (${ABI})" \
+		make_desktop_entry \
+			/usr/$(get_libdir)/misc/webkit2gtk-4.0/MiniBrowser
+			"MiniBrowser (${ABI}, API: ${API_VERSION})" \
 			"" "Network;WebBrowser"
 	fi
 	mkdir -p "${T}/langs" || die
@@ -820,4 +807,15 @@ multilib_src_install() {
 	done
 
 	_install_licenses
+}
+
+pkg_postinst() {
+	if use minibrowser ; then
+		create_minibrowser_symlink_abi() {
+			ln -sf \
+/usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser \
+				/usr/bin/minibrowser
+		}
+		multilib_foreach_abi create_minibrowser_symlink_abi
+	fi
 }
