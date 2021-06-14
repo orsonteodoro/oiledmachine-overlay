@@ -3,7 +3,8 @@ Subject: Fix build time failure for RTCRtpReceiver for WebKitGTK on Linux with
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Date: Jun 13, 2021 (unix time: 1623645048)
 
-Original source: https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/WebCore/Modules/mediastream/RTCRtpReceiver.idl
+Original source:
+https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/WebCore/Modules/mediastream/RTCRtpReceiver.idl
 
 Header license & copyright notice of original file:
 
