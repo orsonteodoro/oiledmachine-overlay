@@ -46,6 +46,8 @@ EGIT_COMMIT_JE_LIBMAKER="5844d7f047eac15408f7ccf8a9183d2015b962e0"
   # dated 20120417, this is required because of namespace changes, KeywordSet
   # changes, fails to build
 LGMPLUGIN_V="1.8.227r2"
+# lgmplugin updates can be found at:
+# https://github.com/enigma-dev/lgmplugin/tags
 
 MY_PN_LATERALGM="LateralGM"
 MY_PN_LIBMAKER="LibMaker"
@@ -59,24 +61,23 @@ BASE_URI_IA="https://github.com/IsmAvatar"
 BASE_URI_JD="https://github.com/JoshDreamland"
 BASE_URI_ED="https://github.com/enigma-dev"
 
-SRC_URI_LATERALGM=\
-" ${BASE_URI_IA}/${MY_PN_LATERALGM}/archive/v${PV}.tar.gz \
+SRC_URI_LATERALGM="
+${BASE_URI_IA}/${MY_PN_LATERALGM}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
-  ${BASE_URI_JD}/JoshEdit/archive/${EGIT_COMMIT_JE_LATERALGM}.tar.gz \
+${BASE_URI_JD}/JoshEdit/archive/${EGIT_COMMIT_JE_LATERALGM}.tar.gz
 	-> ${JE_LATERALGM_FN}"
-SRC_URI_LIBMAKER=\
-" ${BASE_URI_IA}/${MY_PN_LIBMAKER}/archive/${EGIT_COMMIT_LIBMAKER}.tar.gz \
+SRC_URI_LIBMAKER="
+${BASE_URI_IA}/${MY_PN_LIBMAKER}/archive/${EGIT_COMMIT_LIBMAKER}.tar.gz
 	-> ${LIBMAKER_FN}
-  ${BASE_URI_JD}/${JE_PN}/archive/${EGIT_COMMIT_JE_LIBMAKER}.tar.gz \
+${BASE_URI_JD}/${JE_PN}/archive/${EGIT_COMMIT_JE_LIBMAKER}.tar.gz
 	-> ${JE_LIBMAKER_FN}"
 
-SRC_URI_LGMPLUGIN=\
-" ${BASE_URI_ED}/lgmplugin/archive/refs/tags/v${LGMPLUGIN_V}.tar.gz \
+SRC_URI_LGMPLUGIN="
+${BASE_URI_ED}/lgmplugin/archive/refs/tags/v${LGMPLUGIN_V}.tar.gz
 	-> ${LGMPLUGIN_FN}"
 
-
-SRC_URI=\
-"	${SRC_URI_LATERALGM}
+SRC_URI="
+	${SRC_URI_LATERALGM}
 	${SRC_URI_LGMPLUGIN}
 	libmaker? ( ${SRC_URI_LIBMAKER} )"
 RESTRICT="mirror"
