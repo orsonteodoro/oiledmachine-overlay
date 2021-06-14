@@ -10,6 +10,7 @@
 # cef-bin
 # e2fsprogs
 # luaxml
+# nanovdb
 
 # farseer-physics-engine needs to be pruned?
 # gwen-dotnet needs to be pruned?
