@@ -3,14 +3,8 @@
 
 EAPI=7
 
-# -r revision notes
-# -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.1)
-# c = reserved
-# de = ebuild revision
-
 # Corresponds to
-# WebKit 612.1.18 (20210608, main) ; See Source/WebKit/Configurations/Version.xcconfig
+# WebKit 612.1.15 (20210514, main) ; See Source/WebKit/Configurations/Version.xcconfig
 
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
@@ -22,12 +16,13 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine (GTK+3 with libsoup3)"
+DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE="
 LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
 webrtc? (
-  Apache-2.0 BSD BSD-2 base64 ISC MIT openssl sigslot g711 g722
+  Apache-2.0 BSD BSD-2 base64 g711 g722 ISC libvpx-PATENTS libwebm-PATENTS
+  libwebrtc-PATENTS libyuv-PATENTS MIT openssl sigslot
 )"
 # Some licenses are third party
 # Apache-2.0 Source/ThirdParty/ANGLE/src/tests/test_utils/third_party/LICENSE
@@ -58,21 +53,21 @@ webrtc? (
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
-API_VERSION="4.1"
+API_VERSION="4.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-CURRENT="0"
-AGE="0"
+# WEBKITGTK_API_VERSION is 4.0
+CURRENT="90"
+AGE="53"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4.0/37 GTK3 SOUP2
 # For the multi slot calculation and problem, see
-# https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/cmake/OptionsGTK.cmake#L229
+# https://github.com/WebKit/WebKit/blob/d5e91638838f10c735a266c40d22c16eb0056b60/Source/cmake/OptionsGTK.cmake#L229
 # Possible merge conflict between GTK3+SOUP3 vs GTK4.
 
 # LANGS=(
@@ -188,7 +183,7 @@ RDEPEND+="
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.99.8:3[introspection?,${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
@@ -291,8 +286,8 @@ BDEPEND+="
 # https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
 # Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
-EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="278597"
+EGIT_COMMIT="d5e91638838f10c735a266c40d22c16eb0056b60"
+ESVN_REVISION="277486"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -335,7 +330,7 @@ ewarn
 }
 
 pkg_setup() {
-	ewarn "This is the unstable branch."
+	einfo "This is the stable branch."
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
@@ -429,7 +424,12 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 		einfo "The lto USE flag is in testing."
 	fi
 
+	if use avif ; then
+		einfo "The avif USE flag is in testing."
+	fi
+
 	if use webrtc ; then
+		einfo "The webrtc USE flag is in testing."
 		if has network-sandbox $FEATURES ; then
 			die \
 "${PN} requires network-sandbox to be disabled in FEATURES to be able to use\n\
@@ -448,7 +448,12 @@ Source/ThirdParty/libwebrtc
 }
 
 src_prepare() {
-	eapply "${FILESDIR}"/2.33.1-opengl-without-X-fixes.patch
+	eapply "${FILESDIR}/2.33.1-opengl-without-X-fixes.patch"
+	if use webrtc ; then
+		eapply "${FILESDIR}/2.33.2-add-ImplementationLacksVTable-to-RTCRtpReceiver.patch"
+		eapply "${FILESDIR}/2.33.2-add-ImplementationLacksVTable-to-RTCRtpSender.patch"
+		eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
+	fi
 	cmake_src_prepare
 	gnome2_src_prepare
 	multilib_copy_sources
@@ -557,7 +562,7 @@ multilib_src_configure() {
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=OFF
+		-DUSE_SOUP2=ON
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
@@ -644,11 +649,10 @@ multilib_src_configure() {
 			-DENABLE_ASSEMBLER=0
 	else
 		if use yarr-jit ; then
-			einfo "Enabled YARR (regex) JIT"
-			append-cppflags -DENABLE_YARR_JIT=1
+			einfo "Enabled YARR (regex) JIT" # default
 		else
 			einfo "Disabled YARR (regex) JIT"
-			append-cppflags -DENABLE_YARR_JIT=2
+			append-cppflags -DENABLE_YARR_JIT=0
 		fi
 	fi
 	einfo "CPPFLAGS=${CPPFLAGS}"
@@ -685,7 +689,6 @@ multilib_src_configure() {
 	if use webrtc ; then
 		sed -i -e "s|ENABLE_WEB_RTC PRIVATE|ENABLE_WEB_RTC PUBLIC|g" \
 			"${S}/Source/cmake/OptionsGTK.cmake" || die
-		append-cppflags -I/usr/include/openh264
 	fi
 
 	# Use GOLD when possible as it has all the magic to
@@ -716,6 +719,36 @@ multilib_src_test() {
 	# Programs/unittests/.libs/test*
 	pax-mark m $(list-paxables Programs/*[Tt]ests/*)
 	cmake_src_test
+}
+
+_install_header_license() {
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local length="${3}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	head -n ${length} "${S}/${d}/${file_name}" > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
+_install_header_license_mid() {
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local start="${3}"
+	local length="${4}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	tail -n +${start} "${S}/${d}/${file_name}" \
+		| head -n ${length} > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
 }
 
 # @FUNCTION: _install_licenses

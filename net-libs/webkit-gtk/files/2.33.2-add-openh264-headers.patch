@@ -1,0 +1,56 @@
+Subject: Add missing Openh264_INCLUDE_DIRS to webrtc target to use system's openh264.
+Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Jun 13, 2021 (unix time: 1623645048)
+
+Original source:
+https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/ThirdParty/libwebrtc/CMakeLists.txt
+
+Project License:
+https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/ThirdParty/libwebrtc/Source/webrtc/LICENSE
+
+Copyright (c) 2011, The WebRTC project authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the
+    distribution.
+
+  * Neither the name of Google nor the names of its contributors may
+    be used to endorse or promote products derived from this software
+    without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+--- a/Source/ThirdParty/libwebrtc/CMakeLists.txt.orig	2021-06-13 19:56:29.810467636 -0700
++++ b/Source/ThirdParty/libwebrtc/CMakeLists.txt	2021-06-13 20:06:51.514951721 -0700
+@@ -1,3 +1,4 @@
++# oteodoro - Applied modifications to build against system openh264 headers on Linux for WebKitGTK.
+ 
+ set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+ set(libwebrtc_DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/libwebrtc/DerivedSources")
+@@ -1733,7 +1734,7 @@ else ()
+     endif ()
+ endif ()
+ 
+-target_include_directories(webrtc ${webrtc_INCLUDE_DIRECTORIES})
++target_include_directories(webrtc ${webrtc_INCLUDE_DIRECTORIES} ${Openh264_INCLUDE_DIRS}) # oteodoro - added openh264 includes to this line
+ 
+ # libsrtp package compilation
+ set(libsrtp_SOURCES

@@ -21,7 +21,8 @@ HOMEPAGE="https://www.webkitgtk.org"
 LICENSE="
 LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
 webrtc? (
-  Apache-2.0 BSD BSD-2 base64 ISC MIT openssl sigslot g711 g722
+  Apache-2.0 BSD BSD-2 base64 g711 g722 ISC libvpx-PATENTS libwebm-PATENTS
+  libwebrtc-PATENTS libyuv-PATENTS MIT openssl sigslot
 )"
 # Some licenses are third party
 # Apache-2.0 Source/ThirdParty/ANGLE/src/tests/test_utils/third_party/LICENSE
@@ -423,7 +424,12 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 		einfo "The lto USE flag is in testing."
 	fi
 
+	if use avif ; then
+		einfo "The avif USE flag is in testing."
+	fi
+
 	if use webrtc ; then
+		einfo "The webrtc USE flag is in testing."
 		if has network-sandbox $FEATURES ; then
 			die \
 "${PN} requires network-sandbox to be disabled in FEATURES to be able to use\n\
@@ -442,7 +448,12 @@ Source/ThirdParty/libwebrtc
 }
 
 src_prepare() {
-	eapply "${FILESDIR}"/2.33.1-opengl-without-X-fixes.patch
+	eapply "${FILESDIR}/2.33.1-opengl-without-X-fixes.patch"
+	if use webrtc ; then
+		eapply "${FILESDIR}/2.33.2-add-ImplementationLacksVTable-to-RTCRtpReceiver.patch"
+		eapply "${FILESDIR}/2.33.2-add-ImplementationLacksVTable-to-RTCRtpSender.patch"
+		eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
+	fi
 	cmake_src_prepare
 	gnome2_src_prepare
 	multilib_copy_sources
@@ -638,11 +649,10 @@ multilib_src_configure() {
 			-DENABLE_ASSEMBLER=0
 	else
 		if use yarr-jit ; then
-			einfo "Enabled YARR (regex) JIT"
-			append-cppflags -DENABLE_YARR_JIT=1
+			einfo "Enabled YARR (regex) JIT" # default
 		else
 			einfo "Disabled YARR (regex) JIT"
-			append-cppflags -DENABLE_YARR_JIT=2
+			append-cppflags -DENABLE_YARR_JIT=0
 		fi
 	fi
 	einfo "CPPFLAGS=${CPPFLAGS}"
@@ -679,7 +689,6 @@ multilib_src_configure() {
 	if use webrtc ; then
 		sed -i -e "s|ENABLE_WEB_RTC PRIVATE|ENABLE_WEB_RTC PUBLIC|g" \
 			"${S}/Source/cmake/OptionsGTK.cmake" || die
-		append-cppflags -I/usr/include/openh264
 	fi
 
 	# Use GOLD when possible as it has all the magic to
