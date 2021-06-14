@@ -66,9 +66,6 @@ SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4.0/37 GTK3 SOUP2
-# For the multi slot calculation and problem, see
-# https://github.com/WebKit/WebKit/blob/d5e91638838f10c735a266c40d22c16eb0056b60/Source/cmake/OptionsGTK.cmake#L229
-# Possible merge conflict between GTK3+SOUP3 vs GTK4.
 
 # LANGS=(
 # find ${S}/Source/WebCore/platform/gtk/po/ -name "*.po" \
@@ -799,9 +796,12 @@ multilib_src_install() {
 
 	if use minibrowser ; then
 		exeinto /usr/bin
-		newexe "${FILESDIR}/minibrowser" minibrowser-${ABI}
-		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
-			"${ED}/usr/bin/minibrowser-${ABI}" || die
+		cp -a "${FILESDIR}/minibrowser" \
+			"${T}/minibrowser" || die
+		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-${API_VERSION}|g" \
+			-e "s|\$(get_libdir)|$(get_libdir)|g" \
+			"${T}/minibrowser" || die
+		newexe "${T}/minibrowser" minibrowser-${ABI}
 		dosym /usr/bin/minibrowser-${ABI} /usr/bin/minibrowser
 		make_desktop_entry minibrowser-${ABI} "MiniBrowser (${ABI})" \
 			"" "Network;WebBrowser"
