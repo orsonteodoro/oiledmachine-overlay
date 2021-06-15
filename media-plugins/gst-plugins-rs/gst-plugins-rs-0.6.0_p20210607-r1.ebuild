@@ -45,10 +45,8 @@ IUSE+="	audiofx
 #RUST_V="1.52" upstrem requirement
 RUST_DEPEND="
 	|| (
-		(
-			~dev-lang/rust-1.52.1[${MULTILIB_USEDEP}]
-			~dev-lang/rust-bin-1.52.1[${MULTILIB_USEDEP}]
-		)
+		~dev-lang/rust-1.52.1[${MULTILIB_USEDEP}]
+		~dev-lang/rust-bin-1.52.1[${MULTILIB_USEDEP}]
 	)"
 RDEPEND+=" ${RUST_DEPEND}
 	>=media-libs/gstreamer-1.0:1.0[${MULTILIB_USEDEP}]
@@ -94,6 +92,18 @@ pkg_setup() {
 			die \
 "FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
 download the internal dependencies."
+	fi
+
+	local abis=( $(multilib_get_enabled_abi_pairs) )
+	if (( "${#abis[@]}" > 1 )) ; then
+		if has_version "dev-lang/rust" ; then
+			einfo \
+"Found dev-lang/rust for multilib build."
+		else
+			die \
+"You must use dev-lang/rust instead.  The dev-lang/rust-bin is only\n\
+recommended for unilib builds."
+		fi
 	fi
 }
 
