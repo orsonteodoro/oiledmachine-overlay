@@ -1,0 +1,188 @@
+diff -urp gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6.orig/meson.build gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson.build
+--- gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6.orig/meson.build	2021-06-07 22:52:31.000000000 -0700
++++ gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson.build	2021-06-14 16:59:52.670802444 -0700
+@@ -32,33 +32,133 @@ else
+ endif
+ 
+ plugins_rep = {
+-  'audio/audiofx': 'libgstrsaudiofx',
+-  'video/cdg': 'libgstcdg',
+-  'audio/claxon': 'libgstclaxon',
+-  'video/closedcaption': 'libgstrsclosedcaption',
+-  'utils/fallbackswitch': 'libgstfallbackswitch',
+-  'generic/file': 'libgstrsfile',
+-  'video/flavors': 'libgstrsflv',
+-  'video/gif': 'libgstgif',
+-  'audio/lewton': 'libgstlewton',
+-  'video/rav1e': 'libgstrav1e',
+-  'net/reqwest': 'libgstreqwest',
+-  'video/rspng': 'libgstrspng',
+-  'net/rusoto': 'libgstrusoto',
+-  'text/wrap': 'libgstrstextwrap',
+-  'generic/threadshare': 'libgstthreadshare',
+-  'utils/togglerecord': 'libgsttogglerecord',
+-  'video/hsv': 'libgsthsv',
+-  'text/json': 'libgstrsjson',
+-  'text/regex': 'libgstrsregex',
+   # FIXME: libwebp-sys2 will build its bundled version on msvc and apple platforms
+   # https://github.com/qnighy/libwebp-sys2-rs/issues/4
+-  'video/webp': 'libgstrswebp',
+ }
+ 
+ exclude = []
+ extra_env = {}
+ 
++if get_option('audiofx').enabled()
++  plugins_rep += {'audio/audiofx' : 'libgstrsaudiofx'}
++else
++  exclude += ['audio/audiofx']
++endif
++
++if get_option('cdg').enabled()
++  plugins_rep += {'video/cdg' : 'libgstcdg'}
++else
++  exclude += ['video/cdg']
++endif
++
++if get_option('claxon').enabled()
++  plugins_rep += {'audio/claxon' : 'libgstclaxon'}
++else
++  exclude += ['audio/claxon']
++endif
++
++if get_option('closedcaption').enabled()
++  plugins_rep += {'video/closedcaption' : 'libgstrsclosedcaption'}
++else
++  exclude += ['video/closedcaption']
++endif
++
++if get_option('fallbackswitch').enabled()
++  plugins_rep += {'utils/fallbackswitch' : 'libgstfallbackswitch'}
++else
++  exclude += ['utils/fallbackswitch']
++endif
++
++if get_option('file').enabled()
++  plugins_rep += {'generic/file' : 'libgstrsfile'}
++else
++  exclude += ['generic/file']
++endif
++
++if get_option('flavors').enabled()
++  plugins_rep += {'video/flavors' : 'libgstrsflv'}
++else
++  exclude += ['video/flavors']
++endif
++
++if get_option('gif').enabled()
++  plugins_rep += {'video/gif' : 'libgstgif'}
++else
++  exclude += ['video/gif']
++endif
++
++if get_option('lewton').enabled()
++  plugins_rep += {'audio/lewton' : 'libgstlewton'}
++else
++  exclude += ['audio/lewton']
++endif
++
++if get_option('rav1e').enabled()
++  plugins_rep += {'video/rav1e' : 'libgstrav1e'}
++else
++  exclude += ['video/rav1e']
++endif
++
++if get_option('reqwest').enabled()
++  plugins_rep += {'net/reqwest' : 'libgstreqwest'}
++else
++  exclude += ['net/reqwest']
++endif
++
++if get_option('rspng').enabled()
++  plugins_rep += {'video/rspng' : 'libgstrspng'}
++else
++  exclude += ['video/rspng']
++endif
++
++if get_option('rusoto').enabled()
++  plugins_rep += {'net/rusoto' : 'libgstrusoto'}
++else
++  exclude += ['net/rusoto']
++endif
++
++if get_option('textwrap').enabled()
++  plugins_rep += {'text/wrap' : 'libgstrstextwrap'}
++else
++  exclude += ['text/wrap']
++endif
++
++if get_option('threadshare').enabled()
++  plugins_rep += {'generic/threadshare' : 'libgstthreadshare'}
++else
++  exclude += ['generic/threadshare']
++endif
++
++if get_option('togglerecord').enabled()
++  plugins_rep += {'utils/togglerecord' : 'libgsttogglerecord'}
++else
++  exclude += ['utils/togglerecord']
++endif
++
++if get_option('hsv').enabled()
++  plugins_rep += {'video/hsv' : 'libgsthsv'}
++else
++  exclude += ['video/hsv']
++endif
++
++if get_option('json').enabled()
++  plugins_rep += {'text/json' : 'libgstrsjson'}
++else
++  exclude += ['text/json']
++endif
++
++if get_option('regex').enabled()
++  plugins_rep += {'text/regex' : 'libgstrsregex'}
++else
++  exclude += ['text/regex']
++endif
++
++if get_option('webp').enabled()
++  plugins_rep += {'video/webp' : 'libgstrswebp'}
++else
++  exclude += ['video/webp']
++endif
++
+ if dependency('dav1d', required : get_option('dav1d')).found()
+   plugins_rep += {'video/dav1d' : 'libgstrsdav1d'}
+ else
+Only in gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6: meson.build.orig
+Only in gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6: meson.build.rej
+diff -urp gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6.orig/meson_options.txt gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson_options.txt
+--- gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6.orig/meson_options.txt	2021-06-07 22:52:31.000000000 -0700
++++ gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson_options.txt	2021-06-14 17:04:06.291044338 -0700
+@@ -3,3 +3,25 @@ option('sodium', type : 'combo',
+     choices : ['system', 'built-in', 'disabled'], value : 'built-in',
+     description : 'Weither to use libsodium from the system or the built-in version from the sodiumoxide crate')
+ option('csound', type : 'feature', value : 'auto', description : 'Build csound plugin')
++
++option('audiofx', type: 'feature', value : 'auto', description : 'Build the audiofx plugin')
++option('cdg', type: 'feature', value : 'auto', description : 'Build the cdg plugin')
++option('claxon', type: 'feature', value : 'auto', description : 'Build the claxon plugin')
++option('closedcaption', type: 'feature', value : 'auto', description : 'Build the closedcaption plugin')
++option('fallbackswitch', type: 'feature', value : 'auto', description : 'Build the fallbackswitch plugin')
++option('file', type: 'feature', value : 'auto', description : 'Build the file plugin')
++option('flavors', type: 'feature', value : 'auto', description : 'Build the flavors plugin')
++option('gif', type: 'feature', value : 'auto', description : 'Build the gif plugin')
++option('lewton', type: 'feature', value : 'auto', description : 'Build the lewton plugin')
++option('rav1e', type: 'feature', value : 'auto', description : 'Build the rav1e plugin')
++option('reqwest', type: 'feature', value : 'auto', description : 'Build the reqwest plugin')
++option('rspng', type: 'feature', value : 'auto', description : 'Build the rspng plugin')
++option('rusoto', type: 'feature', value : 'auto', description : 'Build the rusoto plugin')
++option('textwrap', type: 'feature', value : 'auto', description : 'Build the textwrap plugin')
++option('threadshare', type: 'feature', value : 'auto', description : 'Build the threadshare plugin')
++option('togglerecord', type: 'feature', value : 'auto', description : 'Build the togglerecord plugin')
++option('hsv', type: 'feature', value : 'auto', description : 'Build the hsv plugin')
++option('json', type: 'feature', value : 'auto', description : 'Build the json plugin')
++option('regex', type: 'feature', value : 'auto', description : 'Build the regex plugin')
++option('webp', type: 'feature', value : 'auto', description : 'Build the webp plugin')
++

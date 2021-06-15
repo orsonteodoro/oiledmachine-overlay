@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    This monolithic package provides Rust based gst-plugin support.
+  </longdescription>
+  <upstream>
+    <bugs-to>
+      https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/issues
+    </bugs-to>
+  </upstream>
+  <use>
+    <flag name="audiofx">Build the Rust AudioFx Plugin</flag>
+    <flag name="cdg">Build the CDG Plugin</flag>
+    <flag name="claxon">Build the Claxon FLAC Decoder Plugin</flag>
+    <flag name="closedcaption">Build the Rust Closed Caption Plugin</flag>
+    <flag name="csound">Build the Audio filter plugin based on Csound</flag>
+    <flag name="dav1d">Build the Dav1d Plugin</flag>
+    <flag name="fallbackswitch">Build the Fallback Switcher Plugin</flag>
+    <flag name="file">Build the Rust File Plugin</flag>
+    <flag name="flavors">Build the Rust FLV Plugin</flag>
+    <flag name="gif">Build the GStreamer GIF plugin</flag>
+    <flag name="hsv">Build the HSV manipulation elements, written in Rust</flag>
+    <flag name="json">Build the Rust JSON Plugin</flag>
+    <flag name="lewton">Build the lewton Vorbis Decoder Plugin</flag>
+    <flag name="rav1e">Build the rav1e AV1 Encoder Plugin</flag>
+    <flag name="regex">Build the Rust Regular Expression Plugin</flag>
+    <flag name="reqwest">Build the Rust HTTP Plugin</flag>
+    <flag name="rspng">Build the PNG encoder/decoder written in pure Rust</flag>
+    <flag name="rusoto">Build the Amazon Web Services plugin</flag>
+    <flag name="sodium">Build the libsodium-based file encryption and
+      decryption</flag>
+    <flag name="test">Build and run tests</flag>
+    <flag name="textwrap">Build the Rust Text Wrap Plugin</flag>
+    <flag name="threadshare">Build the Threadshare Plugin</flag>
+    <flag name="togglerecord">Build the Toggle Record Plugin</flag>
+    <flag name="tutorial">Build the Rust Tutorial Plugin</flag>
+    <flag name="version-helper">Build the build.rs helper function for GStreamer
+      plugin metadata</flag>
+    <flag name="webp">Build the WebP Plugin</flag>
+  </use>
+  <upstream>
+    <remote-id type="gitlab">gstreamer/gst-plugins-rs</remote-id>
+  </upstream>
+</pkgmetadata>
