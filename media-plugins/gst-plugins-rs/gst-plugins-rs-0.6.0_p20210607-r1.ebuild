@@ -49,7 +49,7 @@ RUST_DEPEND="
 		~dev-lang/rust-bin-1.52.1[${MULTILIB_USEDEP}]
 	)"
 CARGO_V="1.40"
-RDEPEND+=" ${RUST_DEPEND}
+RDEPEND+="
 	>=media-libs/gstreamer-1.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/gst-plugins-base-1.0:1.0[${MULTILIB_USEDEP}]
 	csound? ( media-sound/csound[${MULTILIB_USEDEP}] )
