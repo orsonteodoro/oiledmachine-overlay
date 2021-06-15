@@ -3,14 +3,8 @@
 
 EAPI=7
 
-# -r revision notes
-# -rabcde
-# ab = WEBKITGTK_API_VERSION version (5.0)
-# c = reserved
-# de = ebuild revision
-
 # Corresponds to
-# WebKit 612.1.15 (20210514, main) ; See Source/WebKit/Configurations/Version.xcconfig
+# WebKit 612.1.18 (20210608, main) ; See Source/WebKit/Configurations/Version.xcconfig
 
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
@@ -22,17 +16,51 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine (GTK 4)"
+DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE="
-LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
-webrtc? (
-  Apache-2.0 BSD BSD-2 base64 g711 g722 ISC libvpx-PATENTS libwebm-PATENTS
-  libwebrtc-PATENTS libyuv-PATENTS MIT openssl sigslot
-)"
+	all-rights-reserved
+	Apache-2.0
+	BitstreamVera
+	Boost-1.0
+	BSD
+	BSD-2
+	GPL-2+
+	GPL-3+
+	ISC
+	LGPL-2
+	LGPL-2+
+	LGPL-2.1+
+	MIT
+	MPL-2.0
+	unicode
+	|| ( AFL-2.0 LGPL-2+ )
+	|| ( MPL-1.1 GPL-2 LGPL-2 )
+	|| ( MPL-1.1 GPL-2 LGPL-2.1 ) GIF
+	webrtc? (
+		Apache-2.0
+		BSD
+		BSD-2
+		base64
+		g711
+		g722
+		ISC
+		libvpx-PATENTS
+		libwebm-PATENTS
+		libwebrtc-PATENTS
+		libyuv-PATENTS
+		MIT
+		openssl
+		sigslot
+	)"
 # Some licenses are third party
+# all-rights-reserved Source/WebInspectorUI/UserInterface/Images/CanvasOverview.svg
+# all-rights-reserved Source/ThirdParty/gtest/scripts/run_with_path.py
+# all-rights-reserved GPL-2+ Source/WTF/wtf/HashCountedSet.h ; * the GPL-2+ license does not contain all rights reserved
 # Apache-2.0 Source/ThirdParty/ANGLE/src/tests/test_utils/third_party/LICENSE
 # Apache-2.0 Source/ThirdParty/libwebrtc/Source/webrtc/examples/objc/AppRTCMobile/third_party/SocketRocket/LICENSE
+# BitstreamVera Source/ThirdParty/ANGLE/src/libANGLE/overlay/DejaVuSansMono-Bold.ttf
+# Boost-1.0 Source/WTF/wtf/Optional.h
 # BSD Source/ThirdParty/gtest/LICENSE
 # BSD Source/WTF/wtf/dtoa/LICENSE
 # BSD Source/ThirdParty/libwebrtc/Source/third_party/pffft/LICENSE
@@ -43,12 +71,18 @@ webrtc? (
 # GPL-2+ Source/JavaScriptCore
 # GPL-3+ Source/ThirdParty/ANGLE/tools/flex-bison/third_party/m4sugar
 # GPL-3+ Source/ThirdParty/ANGLE/tools/flex-bison/third_party/skeletons
+# ISC Source/bmalloc/bmalloc/CryptoRandom.cpp
+# ISC Source/WTF/wtf/CryptographicallyRandomNumber.cpp
 # LGPL-2 (only) Source/WebCore/rendering/AutoTableLayout.cpp
+# || ( LGPL-2+ AFL-2.0 ) Source/ThirdParty/xdgmime/README
 # LGPL-2.1+ for some files in Source/WebCore
 # MIT Source/ThirdParty/ANGLE/src/third_party/libXNVCtrl/LICENSE
 # MIT Source/WTF/LICENSE-libc++.txt
 # MIT Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/fft/LICENSE
 # MIT Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/portaudio/LICENSE
+# || ( MPL-1.1 GPL-2 LGPL-2 ) Source/WTF/wtf/DateMath.h
+# || ( MPL-1.1 GPL-2 LGPL-2.1 ) GIF Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp
+# MPL-2.0 Source/WTF/wtf/text/StringBuilderJSON.cpp
 # openssl, ISC, MIT - Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/LICENSE
 # public-domain Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/third_party/sigslot/LICENSE
 # public-domain Source/ThirdParty/libwebrtc/Source/webrtc/common_audio/third_party/spl_sqrt_floor/LICENSE
@@ -59,14 +93,14 @@ webrtc? (
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
-API_VERSION="5.0"
+API_VERSION="4.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 5.0
-CURRENT="0"
-AGE="0"
+# WEBKITGTK_API_VERSION is 4.0
+CURRENT="91"
+AGE="54"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
@@ -92,11 +126,11 @@ vi zh_CN )
 #   standard for desktop yet
 
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
-+dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer
--gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen
-+libnotify lto -mediastream -minibrowser +opengl openmp -seccomp -libsoup3
+dav1d +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring
++gstreamer -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
++libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp -seccomp
 -spell -systemd test variation-fonts wayland +webassembly +webassembly-b3-jit
-+webcrypto +webgl -webrtc -webxr +X +yarr-jit"
++webcrypto +webgl -webrtc webvtt -webxr +X +yarr-jit"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -105,6 +139,7 @@ REQUIRED_USE+="
 	|| ( aqua wayland X )
 	64k-pages? ( !bmalloc !dfg-jit !ftl-jit !jit !webassembly !webassembly-b3-jit )
 	cpu_flags_arm_thumb2? ( bmalloc !ftl-jit )
+	dav1d? ( gstreamer )
 	jit? ( bmalloc )
 	dfg-jit? ( jit )
 	ftl-jit? ( jit )
@@ -118,6 +153,7 @@ REQUIRED_USE+="
 	webgl? ( gstreamer
 		|| ( gles2-only opengl ) )
 	webrtc? ( mediastream )
+	webvtt? ( gstreamer )
 	webxr? ( webgl )
 	yarr-jit? ( jit )"
 
@@ -179,7 +215,6 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
-	>=gui-libs/gtk-3.98.5:4[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
@@ -187,9 +222,11 @@ RDEPEND+="
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
+	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	egl? ( >=media-libs/mesa-${MESA_V}[egl,${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
@@ -201,6 +238,12 @@ RDEPEND+="
 		>=media-libs/gst-plugins-bad-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 >=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[egl?,opengl?,X?,${MULTILIB_USEDEP}]
 		>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+		dav1d? (
+			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},dav1d]
+		)
+		webvtt? (
+			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
+		)
 		gles2-only? (
 >=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2,${MULTILIB_USEDEP}]
 		)
@@ -209,12 +252,6 @@ RDEPEND+="
 	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
 	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
-	!libsoup3? (
-		>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
-	)
-	libsoup3? (
-		>=net-libs/libsoup-2.99.5:3[introspection?,${MULTILIB_USEDEP}]
-	)
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
 	seccomp? (
@@ -294,8 +331,8 @@ BDEPEND+="
 # https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
 # Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
-EGIT_COMMIT="d5e91638838f10c735a266c40d22c16eb0056b60"
-ESVN_REVISION="277486"
+EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
+ESVN_REVISION="278597"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -338,9 +375,7 @@ ewarn
 }
 
 pkg_setup() {
-	ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
-	ewarn "It is currently not recommended due to rendering bug(s)."
-	einfo "This is the stable branch."
+	ewarn "This is the unstable branch."
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
@@ -529,7 +564,7 @@ multilib_src_configure() {
 # If bubblewrap[suid] then portage makes it go-r and cmake find_program fails \
 # with that
 		-DCMAKE_CXX_LIBRARY_ARCHITECTURE=$(get_abi_CHOST ${ABI})
-		-DCMAKE_INSTALL_BINDIR=$(get_libdir)/webkit-gtk
+		-DCMAKE_INSTALL_BINDIR=$(get_libdir)/webkit-gtk-${API_VERSION}
 		-DCMAKE_INSTALL_LIBEXECDIR=$(get_libdir)/misc
 		-DCMAKE_LIBRARY_PATH=/usr/$(get_libdir)
 		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}"/usr/bin/xdg-dbus-proxy
@@ -557,14 +592,14 @@ multilib_src_configure() {
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
 		-DUSE_AVIF=$(usex avif)
-		-DUSE_GTK4=ON
+		-DUSE_GTK4=OFF
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=$(usex libsoup3 OFF ON)
+		-DUSE_SOUP2=ON
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
@@ -723,36 +758,6 @@ multilib_src_test() {
 	cmake_src_test
 }
 
-_install_header_license() {
-	local dir_path=$(dirname "${1}")
-	local file_name=$(basename "${1}")
-	local license_name="${2}"
-	local length="${3}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	head -n ${length} "${S}/${d}/${file_name}" > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
-}
-
-_install_header_license_mid() {
-	local dir_path=$(dirname "${1}")
-	local file_name=$(basename "${1}")
-	local license_name="${2}"
-	local start="${3}"
-	local length="${4}"
-	d="${dir_path}"
-	dl="licenses/${d}"
-	docinto "${dl}"
-	mkdir -p "${T}/${dl}" || die
-	tail -n +${start} "${S}/${d}/${file_name}" \
-		| head -n ${length} > \
-		"${T}/${dl}/${license_name}" || die
-	dodoc "${T}/${dl}/${license_name}"
-}
-
 # @FUNCTION: _install_licenses
 # @DESCRIPTION:
 # Installs licenses and copyright notices from third party rust cargo
@@ -801,7 +806,7 @@ multilib_src_install() {
 
 	if use minibrowser ; then
 		make_desktop_entry \
-			/usr/$(get_libdir)/misc/webkit2gtk-4.0/MiniBrowser
+			/usr/$(get_libdir)/misc/webkit2gtk-4.0/MiniBrowser \
 			"MiniBrowser (${ABI}, API: ${API_VERSION})" \
 			"" "Network;WebBrowser"
 	fi
@@ -819,10 +824,19 @@ multilib_src_install() {
 pkg_postinst() {
 	if use minibrowser ; then
 		create_minibrowser_symlink_abi() {
-			ln -sf \
-/usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser \
-				/usr/bin/minibrowser
+			pushd "${ESYSROOT}/usr/bin" || die
+				ln -sf \
+../../usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser \
+					minibrowser || die
+			popd
 		}
 		multilib_foreach_abi create_minibrowser_symlink_abi
+		einfo \
+"The symlink for the minibrowser may need to change manually to select the\n\
+preferred ABI and/or API version which can be 4.0, 4.1, 5.0.  Examples,\n\
+\n\
+\`ln -sf /usr/lib64/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`
+\`ln -sf /usr/lib/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`
+\n"
 	fi
 }

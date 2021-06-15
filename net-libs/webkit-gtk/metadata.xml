@@ -21,10 +21,12 @@
   <use>
     <flag name="64k-pages">Uses 64k pages but reduces security and performance.
       It also disables JIT and WebAssembly.</flag>
-    <flag name="avif">Enables AVIF support.</flag>
+    <flag name="avif">Enables AVIF image support.</flag>
     <flag name="bmalloc">Uses a mmap based page allocator to improve
       overall performance.  Disable to use the system allocator.</flag>
     <flag name="coverage">Enable code coverage support</flag>
+    <flag name="dav1d">Check and pull in dependencies for AV1 video decoding
+      support.</flag>
     <flag name="egl">Enable EGL support</flag>
     <flag name="examples">Install the MiniBrowser example application</flag>
     <flag name="dfg-jit">Builds with the teir that does the bulk
@@ -64,6 +66,8 @@
       low level cryptographic fuctions</flag>
     <flag name="webxr">Builds WebXR support.  (EXPERIMENTAL / IN
       DEVELOPMENT)</flag>
+    <flag name="webvtt">Checks and pulls in dependencies required for
+      full WebVTT support.</flag>
     <flag name="webrtc">Enables WebRTC support.  (WebKitGTK EXPERIMENTAL,
       WebKit supported)</flag>
     <flag name="yarr-jit">Enables JIT regex support.  Otherwise, it falls back

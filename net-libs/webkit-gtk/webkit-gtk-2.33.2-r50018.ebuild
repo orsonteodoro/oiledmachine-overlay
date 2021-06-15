@@ -25,14 +25,48 @@ toolchain-funcs virtualx
 DESCRIPTION="Open source web browser engine (GTK 4)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE="
-LGPL-2+ Apache-2.0 BSD BSD-2 GPL-2+ GPL-3+ LGPL-2 LGPL-2.1+ MIT unicode
-webrtc? (
-  Apache-2.0 BSD BSD-2 base64 g711 g722 ISC libvpx-PATENTS libwebm-PATENTS
-  libwebrtc-PATENTS libyuv-PATENTS MIT openssl sigslot
-)"
+	all-rights-reserved
+	Apache-2.0
+	BitstreamVera
+	Boost-1.0
+	BSD
+	BSD-2
+	GPL-2+
+	GPL-3+
+	ISC
+	LGPL-2
+	LGPL-2+
+	LGPL-2.1+
+	MIT
+	MPL-2.0
+	unicode
+	|| ( AFL-2.0 LGPL-2+ )
+	|| ( MPL-1.1 GPL-2 LGPL-2 )
+	|| ( MPL-1.1 GPL-2 LGPL-2.1 ) GIF
+	webrtc? (
+		Apache-2.0
+		BSD
+		BSD-2
+		base64
+		g711
+		g722
+		ISC
+		libvpx-PATENTS
+		libwebm-PATENTS
+		libwebrtc-PATENTS
+		libyuv-PATENTS
+		MIT
+		openssl
+		sigslot
+	)"
 # Some licenses are third party
+# all-rights-reserved Source/WebInspectorUI/UserInterface/Images/CanvasOverview.svg
+# all-rights-reserved Source/ThirdParty/gtest/scripts/run_with_path.py
+# all-rights-reserved GPL-2+ Source/WTF/wtf/HashCountedSet.h ; * the GPL-2+ license does not contain all rights reserved
 # Apache-2.0 Source/ThirdParty/ANGLE/src/tests/test_utils/third_party/LICENSE
 # Apache-2.0 Source/ThirdParty/libwebrtc/Source/webrtc/examples/objc/AppRTCMobile/third_party/SocketRocket/LICENSE
+# BitstreamVera Source/ThirdParty/ANGLE/src/libANGLE/overlay/DejaVuSansMono-Bold.ttf
+# Boost-1.0 Source/WTF/wtf/Optional.h
 # BSD Source/ThirdParty/gtest/LICENSE
 # BSD Source/WTF/wtf/dtoa/LICENSE
 # BSD Source/ThirdParty/libwebrtc/Source/third_party/pffft/LICENSE
@@ -43,12 +77,18 @@ webrtc? (
 # GPL-2+ Source/JavaScriptCore
 # GPL-3+ Source/ThirdParty/ANGLE/tools/flex-bison/third_party/m4sugar
 # GPL-3+ Source/ThirdParty/ANGLE/tools/flex-bison/third_party/skeletons
+# ISC Source/bmalloc/bmalloc/CryptoRandom.cpp
+# ISC Source/WTF/wtf/CryptographicallyRandomNumber.cpp
 # LGPL-2 (only) Source/WebCore/rendering/AutoTableLayout.cpp
+# || ( LGPL-2+ AFL-2.0 ) Source/ThirdParty/xdgmime/README
 # LGPL-2.1+ for some files in Source/WebCore
 # MIT Source/ThirdParty/ANGLE/src/third_party/libXNVCtrl/LICENSE
 # MIT Source/WTF/LICENSE-libc++.txt
 # MIT Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/fft/LICENSE
 # MIT Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/portaudio/LICENSE
+# || ( MPL-1.1 GPL-2 LGPL-2 ) Source/WTF/wtf/DateMath.h
+# || ( MPL-1.1 GPL-2 LGPL-2.1 ) GIF Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp
+# MPL-2.0 Source/WTF/wtf/text/StringBuilderJSON.cpp
 # openssl, ISC, MIT - Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/LICENSE
 # public-domain Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/third_party/sigslot/LICENSE
 # public-domain Source/ThirdParty/libwebrtc/Source/webrtc/common_audio/third_party/spl_sqrt_floor/LICENSE
@@ -92,11 +132,11 @@ vi zh_CN )
 #   standard for desktop yet
 
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
-+dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring +gstreamer
--gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen
-+libnotify lto -mediastream -minibrowser +opengl openmp -seccomp +libsoup3
--spell -systemd test variation-fonts wayland +webassembly +webassembly-b3-jit
-+webcrypto +webgl -webrtc -webxr +X +yarr-jit"
+dav1d +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring
++gstreamer -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
++libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp -seccomp
++libsoup3 -spell -systemd test variation-fonts wayland +webassembly
++webassembly-b3-jit +webcrypto +webgl -webrtc webvtt -webxr +X +yarr-jit"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -105,6 +145,7 @@ REQUIRED_USE+="
 	|| ( aqua wayland X )
 	64k-pages? ( !bmalloc !dfg-jit !ftl-jit !jit !webassembly !webassembly-b3-jit )
 	cpu_flags_arm_thumb2? ( bmalloc !ftl-jit )
+	dav1d? ( gstreamer )
 	jit? ( bmalloc )
 	dfg-jit? ( jit )
 	ftl-jit? ( jit )
@@ -118,6 +159,7 @@ REQUIRED_USE+="
 	webgl? ( gstreamer
 		|| ( gles2-only opengl ) )
 	webrtc? ( mediastream )
+	webvtt? ( gstreamer )
 	webxr? ( webgl )
 	yarr-jit? ( jit )"
 
@@ -201,6 +243,12 @@ RDEPEND+="
 		>=media-libs/gst-plugins-bad-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 >=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[egl?,opengl?,X?,${MULTILIB_USEDEP}]
 		>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+		dav1d? (
+			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},dav1d]
+		)
+		webvtt? (
+			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
+		)
 		gles2-only? (
 >=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2,${MULTILIB_USEDEP}]
 		)
@@ -529,7 +577,7 @@ multilib_src_configure() {
 # If bubblewrap[suid] then portage makes it go-r and cmake find_program fails \
 # with that
 		-DCMAKE_CXX_LIBRARY_ARCHITECTURE=$(get_abi_CHOST ${ABI})
-		-DCMAKE_INSTALL_BINDIR=$(get_libdir)/webkit-gtk
+		-DCMAKE_INSTALL_BINDIR=$(get_libdir)/webkit-gtk-${API_VERSION}
 		-DCMAKE_INSTALL_LIBEXECDIR=$(get_libdir)/misc
 		-DCMAKE_LIBRARY_PATH=/usr/$(get_libdir)
 		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}"/usr/bin/xdg-dbus-proxy
@@ -771,7 +819,7 @@ multilib_src_install() {
 
 	if use minibrowser ; then
 		make_desktop_entry \
-			/usr/$(get_libdir)/misc/webkit2gtk-4.0/MiniBrowser
+			/usr/$(get_libdir)/misc/webkit2gtk-4.0/MiniBrowser \
 			"MiniBrowser (${ABI}, API: ${API_VERSION})" \
 			"" "Network;WebBrowser"
 	fi
@@ -789,10 +837,19 @@ multilib_src_install() {
 pkg_postinst() {
 	if use minibrowser ; then
 		create_minibrowser_symlink_abi() {
-			ln -sf \
-/usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser \
-				/usr/bin/minibrowser
+			pushd "${ESYSROOT}/usr/bin" || die
+				ln -sf \
+../../usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser \
+					minibrowser || die
+			popd
 		}
 		multilib_foreach_abi create_minibrowser_symlink_abi
+		einfo \
+"The symlink for the minibrowser may need to change manually to select the\n\
+preferred ABI and/or API version which can be 4.0, 4.1, 5.0.  Examples,\n\
+\n\
+\`ln -sf /usr/lib64/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`
+\`ln -sf /usr/lib/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`
+\n"
 	fi
 }
