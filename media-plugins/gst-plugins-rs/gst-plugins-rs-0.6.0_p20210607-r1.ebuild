@@ -48,9 +48,11 @@ RUST_DEPEND="
 		~dev-lang/rust-1.52.1[${MULTILIB_USEDEP}]
 		~dev-lang/rust-bin-1.52.1[${MULTILIB_USEDEP}]
 	)"
+CARGO_V="1.40"
 RDEPEND+=" ${RUST_DEPEND}
 	>=media-libs/gstreamer-1.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/gst-plugins-base-1.0:1.0[${MULTILIB_USEDEP}]
+	csound? ( media-sound/csound[${MULTILIB_USEDEP}] )
 	dav1d? ( >=media-libs/dav1d-0.8.2[${MULTILIB_USEDEP}] )
 	sodium? ( dev-libs/libsodium[${MULTILIB_USEDEP}] )"
 DEPEND+=" ${RDEPEND}"
@@ -85,7 +87,10 @@ https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${EGIT_COMMIT}
 "
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
-PATCHES=( "${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-modular-build.patch" )
+PATCHES=(
+	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-modular-build.patch"
+	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-rename-csound-ref.patch"
+)
 
 pkg_setup() {
 	if has network-sandbox $FEATURES ; then
@@ -104,6 +109,14 @@ download the internal dependencies."
 "You must use dev-lang/rust instead.  The dev-lang/rust-bin is only\n\
 recommended for unilib builds."
 		fi
+	fi
+
+	# The file name version does not match the --version.
+	local x_cargo_v=$(cargo --version | cut -f 2 -d " ")
+	if ver_test ${x_cargo_v} -le ${CARGO_V} ; then
+		die "cargo must be >=${CARGO_V}"
+	else
+		einfo "cargo version: ${x_cargo_v}"
 	fi
 }
 
@@ -132,6 +145,7 @@ ebuild."
 	fi
 	einfo "LLVM=${LLVM_MAX_SLOT}"
 
+	export CSOUND_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)"
 	emesonargs+=(
 		$(meson_feature audiofx)
 		$(meson_feature cdg)
