@@ -516,12 +516,14 @@ install_licenses() {
 	local source_dir="${1}"
 	export IFS=$'\n'
 	for f in $(find "${source_dir}" \
-	  -iname "*licen*" -type f \
+	     -iname "*licen*" -type f \
 	  -o -iname "*copyright*" \
 	  -o -iname "*copying*" \
 	  -o -iname "*patent*" \
 	  -o -iname "ofl.txt" \
 	  -o -iname "*notice*" \
+	  -o -iname "*author*" \
+	  -o -iname "*CONTRIBUTORS*" \
 	  ) $(grep -i -G -l \
 		-e "copyright" \
 		-e "licen" \
