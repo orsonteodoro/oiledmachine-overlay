@@ -1061,12 +1061,23 @@ _src_install_doc() {
 }
 
 install_licenses() {
-	for f in $(find "${BUILD_DIR}" -iname "*license*" -type f \
-	  -o -iname "*copyright*" \
-	  -o -iname "*copying*" \
-	  -o -path "*/license/*" \
-	  -o -path "*/macholib/README.ctypes" \
-	  -o -path "*/materials_library_vx/README.txt" ) ; \
+	for f in $(find "${BUILD_DIR}" \
+		   -iname "*licen*" -type f \
+		-o -iname "*copyright*" \
+		-o -iname "*copying*" \
+		-o -iname "*patent*" \
+		-o -iname "*notice*" \
+		-o -iname "*author*" \
+		-o -iname "*CONTRIBUTORS*" \
+		-o -path "*/license/*" \
+		-o -path "*/macholib/README.ctypes" \
+		-o -path "*/materials_library_vx/README.txt" ) \
+		$(grep -i -G -l \
+			-e "copyright" \
+			-e "licens" \
+			-e "licenc" \
+			-e "warrant" \
+			$(find "${BUILD_DIR}" -iname "*readme*")) ; \
 	do
 		if [[ -f "${f}" ]] ; then
 			d=$(dirname "${f}" | sed -e "s|^${BUILD_DIR}||")
