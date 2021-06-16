@@ -10,8 +10,29 @@ inherit eutils flag-o-matic llvm meson multilib-minimal
 
 DESCRIPTION="Various GStreamer plugins written in Rust"
 HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
-LICENSE="Apache-2.0 MIT LGPL-2.1+"
-KEYWORDS="~amd64"
+CARGO_THIRD_PARTY_PACKAGES="
+0BSD
+Apache-2.0
+BSD
+ISC
+MIT
+Unlicense
+ZLIB"
+LICENSE="Apache-2.0 MIT LGPL-2.1+
+	${CARGO_THIRD_PARTY_PACKAGES}"
+# 0BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/adler-0.2.2/LICENSE-0BSD
+# BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/bindgen-0.54.1/LICENSE
+# BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/subtle-1.0.0/LICENSE
+# BSD-2 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/crossbeam-queue-0.2.3/LICENSE-THIRD-PARTY
+# BSD-2 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/rav1e-0.3.3/LICENSE
+# ISC ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/libloading-0.5.2/LICENSE
+# Unlicense ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/termcolor-1.1.0/UNLICENSE
+# Unlicense ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/aho-corasick-0.7.13/UNLICENSE
+# ZLIB ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/adler32-1.1.0/LICENSE
+# ZLIB ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/bytemuck-1.2.0/LICENSE-ZLIB.md
+
+# Live ebuilds or live snapshot don't get KEYWORDs
+
 SLOT="1.0/${PV}"
 IUSE+="	audiofx
 	cdg
@@ -23,8 +44,11 @@ IUSE+="	audiofx
 	file
 	flavors
 	gif
+	hsv
+	json
 	lewton
 	rav1e
+	regex
 	reqwest
 	rspng
 	rusoto
@@ -32,9 +56,10 @@ IUSE+="	audiofx
 	test
 	textwrap
 	threadshare
-	togglerecord"
+	togglerecord
+	webp"
 # TODO add/package gst-plugins-csound
-#RUST_V="1.40" upstrem requirement
+#RUST_V="1.52" upstrem requirement
 RUST_DEPEND="
 	|| (
 		~dev-lang/rust-1.52.1[${MULTILIB_USEDEP}]
@@ -74,20 +99,27 @@ BDEPEND+=" ${BDEPEND}
 	>=dev-util/meson-0.56"
 EGIT_COMMIT="ada328df010e31487afd8c6b56756e40f099b6d6"
 SRC_URI="
-https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${PV}/gst-plugins-rs-${PV}.tar.bz2
-	-> ${P}.tar.bz2
-https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/commit/7a2c8768ad2933334dce739c19a0a312a7bf8ab7.patch
-	-> ${PN}-7a2c876.patch"
-# 7a2c876 - Add license files to all new plugins
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${EGIT_COMMIT}/gst-plugins-rs-${EGIT_COMMIT}.tar.bz2
+	-> gst-plugins-rs-${EGIT_COMMIT:0:7}.tar.bz2
+"
 RESTRICT="mirror"
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 PATCHES=(
-	"${FILESDIR}/gst-plugins-rs-0.6.0-modular-build.patch"
-	"${FILESDIR}/gst-plugins-rs-0.6.0-rename-csound-ref.patch"
-	"${DISTDIR}/${PN}-7a2c876.patch"
+	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-modular-build.patch"
+	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-rename-csound-ref.patch"
 )
 
 pkg_setup() {
+# Error message:
+#
+# thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: \
+# CargoToml("${S}/Cargo.toml", Toml(Error { inner: ErrorInner { kind: Custom, \
+# line: Some(12), col: 0, at: Some(121), message: "missing field `package`", \
+# key: [] } }))', src/build.rs:47:10
+#
+
+	ewarn "This package may fail to build.  Use the non _p suffix releases instead."
+
 	if has network-sandbox $FEATURES ; then
 			die \
 "FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
@@ -152,14 +184,18 @@ ebuild."
 		$(meson_feature file)
 		$(meson_feature flavors)
 		$(meson_feature gif)
+		$(meson_feature hsv)
+		$(meson_feature json)
 		$(meson_feature lewton)
 		$(meson_feature rav1e)
+		$(meson_feature regex)
 		$(meson_feature reqwest)
 		$(meson_feature rspng)
 		$(meson_feature rusoto)
-		$(meson_feature textwrap)
 		$(meson_feature threadshare)
 		$(meson_feature togglerecord)
+		$(meson_feature webp)
+		$(meson_feature textwrap)
 		$(usex sodium -Dsodium=system -Dsodium=disabled)
 	)
 
@@ -220,6 +256,16 @@ ebuild."
 			Cargo.toml || die
 	fi
 
+	if ! use hsv ; then
+		sed -i -e "/hsv/d" \
+			Cargo.toml || die
+	fi
+
+	if ! use json ; then
+		sed -i -e "/json/d" \
+			Cargo.toml || die
+	fi
+
 	if ! use lewton ; then
 		sed -i -e "/lewton/d" \
 			Cargo.toml || die
@@ -227,6 +273,11 @@ ebuild."
 
 	if ! use rav1e ; then
 		sed -i -e "/rav1e/d" \
+			Cargo.toml || die
+	fi
+
+	if ! use regex ; then
+		sed -i -e "/regex/d" \
 			Cargo.toml || die
 	fi
 
@@ -277,6 +328,8 @@ ebuild."
 		|| use file \
 		|| use flavors \
 		|| use gif \
+		|| use hsv \
+		|| use json \
 		|| use lewton \
 		|| use rav1e \
 		|| use reqwest \
@@ -286,6 +339,8 @@ ebuild."
 		|| use textwrap \
 		|| use threadshare \
 		|| use togglerecord \
+		|| use webp \
+		|| use  \
 		; then
 		# also tutorial plugin in || conditional
 		einfo "Using version-helper"
@@ -295,13 +350,91 @@ ebuild."
 			Cargo.toml || die
 	fi
 
+	if ! use webp ; then
+		sed -i -e "/webp/d" \
+			Cargo.toml || die
+	fi
+
 	popd
 
 	meson_src_configure
 }
 
+_install_header_license() {
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local length="${3}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	head -n ${length} "${S}/${d}/${file_name}" > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
+_install_header_license_mid() {
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local start="${3}"
+	local length="${4}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	tail -n +${start} "${S}/${d}/${file_name}" \
+		| head -n ${length} > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
+# @FUNCTION: _install_licenses
+# @DESCRIPTION:
+# Installs licenses and copyright notices from third party rust cargo
+# packages and other internal packages.
+_install_licenses() {
+	local tag="${1}"
+	local license_path_prefix="${2}"
+	[[ -f "${T}/.copied_licenses_${tag}" ]] && return
+
+	einfo "Copying third party licenses and copyright notices for ${tag}"
+	export IFS=$'\n'
+	for f in $(find "${license_path_prefix}" \
+	  -iname "*licens*" -type f \
+	  -o -iname "*licenc*" \
+	  -o -iname "*copyright*" \
+	  -o -iname "*copying*" \
+	  -o -iname "*patent*" \
+	  -o -iname "ofl.txt" \
+	  -o -iname "*notice*" \
+	  -o -iname "*author*" \
+	  -o -iname "*CONTRIBUTORS*" \
+	  ) $(grep -i -G -l \
+		-e "copyright" \
+		-e "licens" \
+		-e "licenc" \
+		-e "warrant" \
+		$(find "${license_path_prefix}" -iname "*readme*")) ; \
+	do
+		if [[ -f "${f}" ]] ; then
+			d=$(dirname "${f}" | sed -e "s|^${license_path_prefix}||")
+		else
+			d=$(echo "${f}" | sed -e "s|^${license_path_prefix}||")
+		fi
+		docinto "licenses/${tag}/${d}"
+		dodoc -r "${f}"
+	done
+	export IFS=$' \t\n'
+
+	touch "${T}/.copied_licenses_${tag}"
+}
+
 multilib_src_install() {
 	meson_src_install
+	_install_licenses "third_party_cargo" "${HOME}/.cargo"
+	_install_licenses "sources" "${S}"
 }
 
 multilib_src_test() {
