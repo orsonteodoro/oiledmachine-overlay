@@ -110,7 +110,7 @@ LICENSE="GPL-3+ BSD
 
 # Dependencies assume U 20.04
 # For dependencies, see also
-# https://github.com/ycm-core/ycmd/blob/fe4b75dc4d629db5db05b11d27b66cd4a621cc5c/azure/linux/install_dependencies.sh
+# https://github.com/ycm-core/ycmd/blob/6f2f818364bb5c52f60e720741ff583bf77b4cd5/azure/linux/install_dependencies.sh
 
 SLOT_MAJ=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJ}/${PVR}"
@@ -120,7 +120,7 @@ system-boost system-clangd system-go-tools system-jdtls system-jedi system-libcl
 system-mono system-mrab-regex system-requests system-rust
 system-rust system-tern system-typescript system-watchdog test
 typescript vim"
-CLANG_V="12.0"
+CLANG_V="11.0"
 CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
 PV_MAJ=$(ver_cut 1 ${PV})
 # Missing rust-analyzer (aka rust-analyzer-preview) from rust packages because
@@ -155,15 +155,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # .netcore version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.4/.pipelines/init.yml
 # .netfx version https://github.com/OmniSharp/omnisharp-roslyn/blob/v1.35.4/azure-pipelines.yml
 
-# Last update for
-# https://github.com/ycm-core/ycmd/commits/master/third_party
-# May 4, 2021
-
-# Last update for
-# https://github.com/ycm-core/ycmd/blob/master/build.py
-# May 4, 2021
-
-EGIT_COMMIT="df3d7eb67e533f5d82cf4084fe4defc3a5c3f159" # The lastest commit snapshot
+EGIT_COMMIT="6f2f818364bb5c52f60e720741ff583bf77b4cd5" # The last pull request (batch of related commits) before the CORE_VERSION is 45.
 #EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
 EGIT_COMMIT_MRAB_REGEX="fa9def53cf920ed9343a0afab54d5075d4c75394"
 EGIT_COMMIT_NUMPYDOC="c8513c5db6088a305711851519f944b33f7e1b25"
@@ -179,7 +171,7 @@ OMNISHARP_V="1.35.4"
 LIBCLANG_V="${CLANG_V_MAJ}.0.0"
 MRAB_REGEX_V="2020.10.15" # fa9def5
 PARSO_V="0.8.1"
-RUST_V="nightly-2021-04-14"
+RUST_V="nightly-2021-02-11"
 WATCHDOG_V="2.0.1"
 
 RDEPEND_NODEJS="net-libs/nodejs"
@@ -220,8 +212,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 		>=sys-devel/clang-7
 	)
 	javascript? ( ${BDEPEND_NODEJS} )
-	test? ( >=dev-cpp/gtest-1.10
-		>=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
+	test? ( >=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
 		>=dev-python/coverage-4.2[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.0[${PYTHON_USEDEP}]
 		dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
@@ -233,8 +224,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 		dev-python/pytest-rerunfailures[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}]
-	)
+		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )
 	typescript? ( ${BDEPEND_NODEJS} )"
 # Speed up downloads for rebuilds.  Precache outside of sandbox so we don't keep
 #   redownloading.
@@ -242,7 +232,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 # For rust installers see,
 #   https://forge.rust-lang.org/infra/other-installation-methods.html
 # For rust precompiled binaries see,
-#   https://static.rust-lang.org/dist/2021-04-14/channel-rust-nightly.toml
+#   https://static.rust-lang.org/dist/2021-02-11/channel-rust-nightly.toml
 # For more info on Rust Release Channels see,
 #   https://forge.rust-lang.org/infra/channel-layout.html
 
@@ -257,10 +247,6 @@ SCIPY_SPHINX_THEME_FN="scipy-sphinx-theme-${EGIT_COMMIT_SCIPY_SPHINX_THEME:0:7}.
 TYPESHED_FN="typeshed-${EGIT_COMMIT_TYPESHED:0:7}.tar.gz"
 WATCHDOG_FN="watchdog-${WATCHDOG_V}.tar.gz"
 
-# For the gtest version see:
-# https://github.com/ycm-core/ycmd/blob/df3d7eb67e533f5d82cf4084fe4defc3a5c3f159/cpp/ycm/tests/CMakeLists.txt
-
-# https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANG_V_MAJ}.0.0/clang-${CLANG_V_MAJ}.0.0.src.tar.xz
 SRC_URI="
 https://github.com/ycm-core/ycmd/archive/${EGIT_COMMIT}.tar.gz
 	-> ${YCMD_FN}
@@ -286,17 +272,17 @@ https://github.com/gorakhargosh/watchdog/archive/refs/tags/v${WATCHDOG_V}.tar.gz
 	clangd? (
 		amd64? (
 			elibc_glibc? (
-https://github.com/ycm-core/llvm/releases/download/${CLANGD_V}/clangd-${CLANGD_V}-x86_64-unknown-linux-gnu.tar.bz2
+https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-x86_64-unknown-linux-gnu.tar.bz2
 			)
 		)
 		arm64? (
 			elibc_glibc? (
-https://github.com/ycm-core/llvm/releases/download/${CLANGD_V}/clangd-${CLANGD_V}-aarch64-linux-gnu.tar.bz2
+https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-aarch64-linux-gnu.tar.bz2
 			)
 		)
 		arm? (
 			elibc_glibc? (
-https://github.com/ycm-core/llvm/releases/download/${CLANGD_V}/clangd-${CLANGD_V}-armv7a-linux-gnueabihf.tar.bz2
+https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-armv7a-linux-gnueabihf.tar.bz2
 			)
 		)
 	)
@@ -305,17 +291,17 @@ https://github.com/ycm-core/llvm/releases/download/${CLANGD_V}/clangd-${CLANGD_V
 	libclang? (
 		amd64? (
 			elibc_glibc? (
-https://github.com/ycm-core/llvm/releases/download/${LIBCLANG_V}/libclang-${LIBCLANG_V}-x86_64-unknown-linux-gnu.tar.bz2
+https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-x86_64-unknown-linux-gnu.tar.bz2
 			)
 		)
 		arm? (
 			elibc_glibc? (
-https://github.com/ycm-core/llvm/releases/download/${LIBCLANG_V}/libclang-${LIBCLANG_V}-armv7a-linux-gnueabihf.tar.bz2
+https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-armv7a-linux-gnueabihf.tar.bz2
 			)
 		)
 		arm64? (
 			elibc_glibc? (
-https://github.com/ycm-core/llvm/releases/download/${LIBCLANG_V}/libclang-${LIBCLANG_V}-aarch64-linux-gnu.tar.bz2
+https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-aarch64-linux-gnu.tar.bz2
 			)
 		)
 	)
@@ -488,6 +474,10 @@ download the internal dependencies."
 		if ! node --version 2> /dev/null 1>/dev/null ; then
 			die "Either install Node.js, fix node installation, or disable the typescript USE flag."
 		fi
+	fi
+
+	if use rust ; then
+		ewarn "Rust support for this core version may be broken use 45 instead."
 	fi
 }
 
@@ -795,7 +785,7 @@ src_prepare() {
 	_check_abi_supported
 	eapply "${FILESDIR}/${PN}-44_p20210408-skip-thirdparty-check.patch"
 	eapply "${FILESDIR}/${PN}-44_p20210408-system-third-party.patch"
-	eapply "${FILESDIR}/${PN}-45_p20210504-system-global-config.patch"
+	eapply "${FILESDIR}/${PN}-44_p20210408-system-global-config.patch"
 
 	cat "${FILESDIR}/default_settings.json.44_p20200907" \
 		> ycmd/default_settings.json || die
@@ -1090,13 +1080,6 @@ ___PYTHON_LIB_PATH___|\
 			-DUSE_SYSTEM_LIBCLANG=$(usex system-libclang)
 			-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 		)
-
-		if use test ; then
-			mycmakeargs+=(
-				-DUSE_SYSTEM_GMOCK=ON
-			)
-		fi
-
 		if [ -f /usr/$(get_libdir)/lib${EPYTHON}m.so ] ; then
 			mycmakeargs+=(
 			-DPYTHON_INCLUDE_DIR=/usr/include/${EPYTHON}m
@@ -1219,11 +1202,11 @@ _shrink_install() {
 	local arg_developer=( -false )
 	if use developer ; then
 		arg_developer=( -iname "*CODE_OF_CONDUCT*"
-		-o -iname "*CONTRIBUT*"
 		-o -iname "*TODO*" )
 	fi
 	local arg_legal=( -iname "*AUTHORS*"
 		-o -iname "*CHANGELOG*"
+		-o -iname "*CONTRIBUT*"
 		-o -iname "*COPYING*"
 		-o -iname "*COPYRIGHT*"
 		-o -iname "*HISTORY*"
