@@ -609,6 +609,8 @@ npm-utils_install_licenses() {
 	  -o -iname "*patent*" \
 	  -o -iname "ofl.txt" \
 	  -o -iname "*notice*" \
+	  -o -iname "*authors*" \
+	  -o -iname "*CONTRIBUTORS*" \
 	  ) $(grep -i -G -l \
 		-e "copyright" \
 		-e "licen" \
@@ -635,7 +637,6 @@ npm-utils_install_readmes() {
 	export IFS=$'\n'
 	for f in $(find "${S}" \
 	  -iname "*.pdf" \
-	  -o -iname "*authors*" \
 	  -o -iname "*bug*report*.md" \
 	  -o -iname "*changelog*" \
 	  -o -iname "*changes*" \
