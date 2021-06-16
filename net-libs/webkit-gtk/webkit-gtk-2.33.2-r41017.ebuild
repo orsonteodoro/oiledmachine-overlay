@@ -764,6 +764,36 @@ multilib_src_test() {
 	cmake_src_test
 }
 
+_install_header_license() {
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local length="${3}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	head -n ${length} "${S}/${d}/${file_name}" > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
+_install_header_license_mid() {
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local start="${3}"
+	local length="${4}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	tail -n +${start} "${S}/${d}/${file_name}" \
+		| head -n ${length} > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
 # @FUNCTION: _install_licenses
 # @DESCRIPTION:
 # Installs licenses and copyright notices from third party rust cargo
@@ -780,6 +810,9 @@ _install_licenses() {
 	  -o -iname "*copying*" \
 	  -o -iname "*patent*" \
 	  -o -iname "ofl.txt" \
+	  -o -iname "*notice*" \
+	  -o -iname "*author*" \
+	  -o -iname "*CONTRIBUTORS*" \
 	  ) $(grep -i -G -l \
 		-e "copyright" \
 		-e "licens" \

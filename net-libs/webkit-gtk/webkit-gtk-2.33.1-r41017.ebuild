@@ -810,6 +810,9 @@ _install_licenses() {
 	  -o -iname "*copying*" \
 	  -o -iname "*patent*" \
 	  -o -iname "ofl.txt" \
+	  -o -iname "*notice*" \
+	  -o -iname "*author*" \
+	  -o -iname "*CONTRIBUTORS*" \
 	  ) $(grep -i -G -l \
 		-e "copyright" \
 		-e "licens" \
