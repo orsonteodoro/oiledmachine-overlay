@@ -1,0 +1,146 @@
+diff -urp gst-plugins-rs-0.6.0.orig/meson.build gst-plugins-rs-0.6.0/meson.build
+--- gst-plugins-rs-0.6.0.orig/meson.build	2020-07-10 03:02:50.000000000 -0700
++++ gst-plugins-rs-0.6.0/meson.build	2021-06-15 17:33:00.586352651 -0700
+@@ -22,25 +22,101 @@ else
+   ext = 'so'
+ endif
+ 
+-plugins_rep = {
+-  'gst-plugin-audiofx': 'libgstrsaudiofx',
+-  'gst-plugin-cdg': 'libgstcdg',
+-  'gst-plugin-claxon': 'libgstclaxon',
+-  'gst-plugin-closedcaption': 'libgstrsclosedcaption',
+-  'gst-plugin-fallbackswitch': 'libgstfallbackswitch',
+-  'gst-plugin-file': 'libgstrsfile',
+-  'gst-plugin-flv': 'libgstrsflv',
+-  'gst-plugin-lewton': 'libgstlewton',
+-  'gst-plugin-rav1e': 'libgstrav1e',
+-  'gst-plugin-reqwest': 'libgstreqwest',
+-  'gst-plugin-rusoto': 'libgstrusoto',
+-  'gst-plugin-threadshare': 'libgstthreadshare',
+-  'gst-plugin-togglerecord': 'libgsttogglerecord',
+-}
++plugins_rep = {}
+ 
+ exclude = []
+ extra_env = {}
+ 
++if get_option('audiofx').enabled()
++  plugins_rep += {'gst-plugin-audiofx' : 'libgstrsaudiofx'}
++else
++  exclude += ['gst-plugin-audiofx']
++endif
++
++if get_option('cdg').enabled()
++  plugins_rep += {'gst-plugin-cdg' : 'libgstcdg'}
++else
++  exclude += ['gst-plugin-cdg']
++endif
++
++if get_option('claxon').enabled()
++  plugins_rep += {'gst-plugin-claxon' : 'libgstclaxon'}
++else
++  exclude += ['gst-plugin-claxon']
++endif
++
++if get_option('closedcaption').enabled()
++  plugins_rep += {'gst-plugin-closedcaption' : 'libgstrsclosedcaption'}
++else
++  exclude += ['gst-plugin-closedcaption']
++endif
++
++if get_option('fallbackswitch').enabled()
++  plugins_rep += {'gst-plugin-fallbackswitch' : 'libgstfallbackswitch'}
++else
++  exclude += ['gst-plugin-fallbackswitch']
++endif
++
++if get_option('file').enabled()
++  plugins_rep += {'gst-plugin-file' : 'libgstrsfile'}
++else
++  exclude += ['gst-plugin-file']
++endif
++
++if get_option('flavors').enabled()
++  plugins_rep += {'gst-plugin-flv' : 'libgstrsflv'}
++else
++  exclude += ['gst-plugin-flv']
++endif
++
++if get_option('lewton').enabled()
++  plugins_rep += {'gst-plugin-lewton' : 'libgstlewton'}
++else
++  exclude += ['gst-plugin-lewton']
++endif
++
++if get_option('rav1e').enabled()
++  plugins_rep += {'gst-plugin-rav1e' : 'libgstrav1e'}
++else
++  exclude += ['gst-plugin-rav1e']
++endif
++
++if get_option('reqwest').enabled()
++  plugins_rep += {'gst-plugin-reqwest' : 'libgstreqwest'}
++else
++  exclude += ['gst-plugin-reqwest']
++endif
++
++#if get_option('rspng').enabled()
++#  plugins_rep += {'video/rspng' : 'libgstrspng'}
++#else
++#  exclude += ['video/rspng']
++#endif
++
++if get_option('rusoto').enabled()
++  plugins_rep += {'gst-plugin-rusoto' : 'libgstrusoto'}
++else
++  exclude += ['gst-plugin-rusoto']
++endif
++
++#if get_option('textwrap').enabled()
++#  plugins_rep += {'text/wrap' : 'libgstrstextwrap'}
++#else
++#  exclude += ['text/wrap']
++#endif
++
++if get_option('threadshare').enabled()
++  plugins_rep += {'gst-plugin-threadshare' : 'libgstthreadshare'}
++else
++  exclude += ['gst-plugin-threadshare']
++endif
++
++if get_option('togglerecord').enabled()
++  plugins_rep += {'gst-plugin-togglerecord' : 'libgsttogglerecord'}
++else
++  exclude += ['gst-plugin-togglerecord']
++endif
++
+ if dependency('dav1d', required : get_option('dav1d')).found()
+   plugins_rep += {'gst-plugin-dav1d' : 'libgstrsdav1d'}
+ else
+Only in gst-plugins-rs-0.6.0: meson.build.orig
+Only in gst-plugins-rs-0.6.0: meson.build.rej
+diff -urp gst-plugins-rs-0.6.0.orig/meson_options.txt gst-plugins-rs-0.6.0/meson_options.txt
+--- gst-plugins-rs-0.6.0.orig/meson_options.txt	2020-07-10 03:02:50.000000000 -0700
++++ gst-plugins-rs-0.6.0/meson_options.txt	2021-06-15 17:29:08.697081600 -0700
+@@ -3,3 +3,20 @@ option('sodium', type : 'combo',
+     choices : ['system', 'built-in', 'disabled'], value : 'built-in',
+     description : 'Weither to use libsodium from the system or the built-in version from the sodiumoxide crate')
+ option('csound', type : 'feature', value : 'auto', description : 'Build csound plugin')
++
++option('audiofx', type: 'feature', value : 'auto', description : 'Build the audiofx plugin')
++option('cdg', type: 'feature', value : 'auto', description : 'Build the cdg plugin')
++option('claxon', type: 'feature', value : 'auto', description : 'Build the claxon plugin')
++option('closedcaption', type: 'feature', value : 'auto', description : 'Build the closedcaption plugin')
++option('fallbackswitch', type: 'feature', value : 'auto', description : 'Build the fallbackswitch plugin')
++option('file', type: 'feature', value : 'auto', description : 'Build the file plugin')
++option('flavors', type: 'feature', value : 'auto', description : 'Build the flavors plugin')
++option('lewton', type: 'feature', value : 'auto', description : 'Build the lewton plugin')
++option('rav1e', type: 'feature', value : 'auto', description : 'Build the rav1e plugin')
++option('reqwest', type: 'feature', value : 'auto', description : 'Build the reqwest plugin')
++option('rusoto', type: 'feature', value : 'auto', description : 'Build the rusoto plugin')
++#option('rspng', type: 'feature', value : 'auto', description : 'Build the rspng plugin')
++#option('textwrap', type: 'feature', value : 'auto', description : 'Build the textwrap plugin')
++option('threadshare', type: 'feature', value : 'auto', description : 'Build the threadshare plugin')
++option('togglerecord', type: 'feature', value : 'auto', description : 'Build the togglerecord plugin')
++

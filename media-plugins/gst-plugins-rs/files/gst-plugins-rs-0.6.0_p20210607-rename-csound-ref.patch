@@ -1,5 +1,6 @@
---- a/meson.build.orig	2021-06-15 12:54:09.621129432 -0700
-+++ b/meson.build	2021-06-15 13:00:19.935135555 -0700
+diff -urp gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6.orig/meson.build gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson.build
+--- gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6.orig/meson.build	2021-06-15 18:17:39.103846930 -0700
++++ gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson.build	2021-06-15 18:18:38.196213998 -0700
 @@ -186,7 +186,7 @@ if not csound_dep.found() and not csound
    res = run_command(python3, '-c', 'import os; print(os.environ["CSOUND_LIB_DIR"])')
    if res.returncode() == 0
@@ -9,3 +10,12 @@
      if csound_dep.found()
        extra_env += {'CSOUND_LIB_DIR': csound_libdir}
      endif
+@@ -196,7 +196,7 @@ endif
+ if csound_dep.found()
+   plugins_rep += {'audio/csound' : 'libgstcsound'}
+ elif csound_option.enabled()
+-  error('csound option is enabled, but csound64 library could not be found and CSOUND_LIB_DIR was not set')
++  error('csound option is enabled, but csound library could not be found and CSOUND_LIB_DIR was not set')
+ else
+   message('csound not found, disabling its plugin')
+   exclude += ['audio/csound']

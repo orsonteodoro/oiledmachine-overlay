@@ -1,0 +1,23 @@
+diff -urp gst-plugins-rs-0.6.0.orig/meson.build gst-plugins-rs-0.6.0/meson.build
+--- gst-plugins-rs-0.6.0.orig/meson.build	2021-06-15 18:15:21.178320199 -0700
++++ gst-plugins-rs-0.6.0/meson.build	2021-06-15 18:16:12.450374953 -0700
+@@ -138,14 +138,14 @@ cc = meson.get_compiler('c')
+ csound_option = get_option('csound')
+ csound_dep = dependency('', required: false) # not-found dependency
+ if not csound_option.disabled()
+-  csound_dep = cc.find_library('csound64', required: false)
++  csound_dep = cc.find_library('csound', required: false)
+   if not csound_dep.found()
+     python3 = import('python').find_installation('python3')
+     res = run_command(python3, '-c', 'import os; print(os.environ["CSOUND_LIB_DIR"])')
+     if res.returncode() == 0
+-      csound_dep = cc.find_library('csound64', dirs: res.stdout(), required: csound_option)
++      csound_dep = cc.find_library('csound', dirs: res.stdout(), required: csound_option)
+     elif csound_option.enabled()
+-      error('csound option is enabled, but csound64 library could not be found and CSOUND_LIB_DIR was not set')
++      error('csound option is enabled, but csound library could not be found and CSOUND_LIB_DIR was not set')
+     endif
+   endif
+ endif
+Only in gst-plugins-rs-0.6.0: meson.build.orig
+Only in gst-plugins-rs-0.6.0: meson.build.rej

@@ -11,9 +11,7 @@ inherit eutils flag-o-matic llvm meson multilib-minimal
 DESCRIPTION="Various GStreamer plugins written in Rust"
 HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
 LICENSE="Apache-2.0 MIT LGPL-2.1+"
-
-# Live ebuilds or live snapshot don't get KEYWORDs
-
+KEYWORDS="~amd64"
 SLOT="1.0/${PV}"
 IUSE+="	audiofx
 	cdg
@@ -25,11 +23,8 @@ IUSE+="	audiofx
 	file
 	flavors
 	gif
-	hsv
-	json
 	lewton
 	rav1e
-	regex
 	reqwest
 	rspng
 	rusoto
@@ -37,12 +32,9 @@ IUSE+="	audiofx
 	test
 	textwrap
 	threadshare
-	togglerecord
-	tutorial
-	webp
-	version-helper"
+	togglerecord"
 # TODO add/package gst-plugins-csound
-#RUST_V="1.52" upstrem requirement
+#RUST_V="1.40" upstrem requirement
 RUST_DEPEND="
 	|| (
 		~dev-lang/rust-1.52.1[${MULTILIB_USEDEP}]
@@ -82,14 +74,17 @@ BDEPEND+=" ${BDEPEND}
 	>=dev-util/meson-0.56"
 EGIT_COMMIT="ada328df010e31487afd8c6b56756e40f099b6d6"
 SRC_URI="
-https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${EGIT_COMMIT}/gst-plugins-rs-${EGIT_COMMIT}.tar.bz2
-	-> gst-plugins-rs-${EGIT_COMMIT:0:7}.tar.bz2
-"
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${PV}/gst-plugins-rs-${PV}.tar.bz2
+	-> ${P}.tar.bz2
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/commit/7a2c8768ad2933334dce739c19a0a312a7bf8ab7.patch
+	-> ${PN}-7a2c876.patch"
+# 7a2c876 - Add license files to all new plugins
 RESTRICT="mirror"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-${PV}"
 PATCHES=(
-	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-modular-build.patch"
-	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-rename-csound-ref.patch"
+	"${FILESDIR}/gst-plugins-rs-0.6.0-modular-build.patch"
+	"${FILESDIR}/gst-plugins-rs-0.6.0-rename-csound-ref.patch"
+	"${DISTDIR}/${PN}-7a2c876.patch"
 )
 
 pkg_setup() {
@@ -157,26 +152,23 @@ ebuild."
 		$(meson_feature file)
 		$(meson_feature flavors)
 		$(meson_feature gif)
-		$(meson_feature hsv)
-		$(meson_feature json)
 		$(meson_feature lewton)
 		$(meson_feature rav1e)
-		$(meson_feature regex)
 		$(meson_feature reqwest)
 		$(meson_feature rspng)
 		$(meson_feature rusoto)
+		$(meson_feature textwrap)
 		$(meson_feature threadshare)
 		$(meson_feature togglerecord)
-		$(meson_feature webp)
-		$(meson_feature textwrap)
 		$(usex sodium -Dsodium=system -Dsodium=disabled)
 	)
 
 	pushd "${S}" || die
-	if ! use tutorial ; then
+#	if ! use tutorial ; then
+		# Pruned because it's not built in meson.build.
 		sed -i -e "/tutorial/d" \
 			Cargo.toml || die
-	fi
+#	fi
 
 	if ! use audiofx ; then
 		sed -i -e "/audiofx/d" \
@@ -228,16 +220,6 @@ ebuild."
 			Cargo.toml || die
 	fi
 
-	if ! use hsv ; then
-		sed -i -e "/hsv/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use json ; then
-		sed -i -e "/json/d" \
-			Cargo.toml || die
-	fi
-
 	if ! use lewton ; then
 		sed -i -e "/lewton/d" \
 			Cargo.toml || die
@@ -245,11 +227,6 @@ ebuild."
 
 	if ! use rav1e ; then
 		sed -i -e "/rav1e/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use regex ; then
-		sed -i -e "/regex/d" \
 			Cargo.toml || die
 	fi
 
@@ -288,13 +265,33 @@ ebuild."
 			Cargo.toml || die
 	fi
 
-	if ! use version-helper ; then
+	# A dependency for those listed below
+	if \
+		   use audiofx \
+		|| use cdg \
+		|| use claxon \
+		|| use closedcaption \
+		|| use csound \
+		|| use dav1d \
+		|| use fallbackswitch \
+		|| use file \
+		|| use flavors \
+		|| use gif \
+		|| use lewton \
+		|| use rav1e \
+		|| use reqwest \
+		|| use rspng \
+		|| use rusoto \
+		|| use sodium \
+		|| use textwrap \
+		|| use threadshare \
+		|| use togglerecord \
+		; then
+		# also tutorial plugin in || conditional
+		einfo "Using version-helper"
+	else
+		einfo "Pruning version-helper"
 		sed -i -e "/version-helper/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use webp ; then
-		sed -i -e "/webp/d" \
 			Cargo.toml || die
 	fi
 

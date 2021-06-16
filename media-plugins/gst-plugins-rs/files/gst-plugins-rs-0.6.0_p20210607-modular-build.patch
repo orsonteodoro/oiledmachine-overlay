@@ -1,6 +1,6 @@
 diff -urp gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6.orig/meson.build gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson.build
 --- gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6.orig/meson.build	2021-06-07 22:52:31.000000000 -0700
-+++ gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson.build	2021-06-14 16:59:52.670802444 -0700
++++ gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson.build	2021-06-15 17:35:38.372670943 -0700
 @@ -32,33 +32,133 @@ else
  endif
  
@@ -155,11 +155,9 @@ diff -urp gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6.orig/meson.bui
  if dependency('dav1d', required : get_option('dav1d')).found()
    plugins_rep += {'video/dav1d' : 'libgstrsdav1d'}
  else
-Only in gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6: meson.build.orig
-Only in gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6: meson.build.rej
 diff -urp gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6.orig/meson_options.txt gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson_options.txt
 --- gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6.orig/meson_options.txt	2021-06-07 22:52:31.000000000 -0700
-+++ gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson_options.txt	2021-06-14 17:04:06.291044338 -0700
++++ gst-plugins-rs-ada328df010e31487afd8c6b56756e40f099b6d6/meson_options.txt	2021-06-15 17:35:38.372670943 -0700
 @@ -3,3 +3,25 @@ option('sodium', type : 'combo',
      choices : ['system', 'built-in', 'disabled'], value : 'built-in',
      description : 'Weither to use libsodium from the system or the built-in version from the sodiumoxide crate')
