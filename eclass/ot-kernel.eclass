@@ -30,7 +30,7 @@
 #   https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
 #   https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #   https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
-#   https://github.com/torvalds/linux/compare/v5.11...ckolivas:5.11-ck
+#   https://github.com/torvalds/linux/compare/v5.12...ckolivas:5.12-ck
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
 #   5.10 https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c
@@ -1458,6 +1458,10 @@ Futher mitigation recommendations can be found at\n\
 "Don't forget to set CONFIG_PREEMPT_RT found at \"General setup\" in newer\n\
 kernels or in \"Processor type and features\" in older kernels\n\
 > Preemption Model >  Fully Preemptible Kernel (Real-Time)."
+			ewarn
+			ewarn \
+"The rt patchset for this package may drop anytime if lack of update activity\n\
+after several months due to project funding problems.  Begin: Jun 16, 2021"
 		fi
 	fi
 

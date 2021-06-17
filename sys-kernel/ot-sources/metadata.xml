@@ -6,8 +6,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    ot-sources is a customizable kernel package that applies patches for
-    performance, encryption, and security.
+    ot-sources is a customizable patchset compilation package that applies
+    patches for performance, encryption, and security.
 
     The package prefers to unbundle patchsets, in preference for the
     version of the feature that was released directly from original author,
@@ -77,6 +77,9 @@
     It's recommended to use the ot-sources-lts if you have binary only kernel
     modules.  For those without binary only modules, use ot-sources-stable
     package.
+
+    The rt patchset may be dropped after several months if updates
+    are inactive.
 
     Please read the metadata.xml comments for more info.
   </longdescription>
@@ -236,7 +239,9 @@
     <flag name="prjc">Applies the Project C CPU scheduler.</flag>
     <flag name="rt">Patches the kernel with the PREEMPT_RT patch which tries
       to minimize non-preemptible parts of the kernel.  It's experimental when
-      combined with other USE flags and patchsets.</flag>
+      combined with other USE flags and patchsets.</flag>  Realtime
+      is not recommended for desktop use but for dedicated and isolated
+      setups.  Never give untrusted apps realtime access.
     <flag name="symlink">Updates the the /usr/src/linux symlink for every
       newer release.</flag>
     <flag name="tresor">Controls application of TRESOR, a cold boot resistant
