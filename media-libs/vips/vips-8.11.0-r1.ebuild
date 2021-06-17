@@ -11,57 +11,61 @@ DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
 LICENSE="LGPL-2.1+"
 KEYWORDS="~amd64 ~x86"
-SO_C=54
+SO_C=55
 SO_R=7
-SO_A=12
+SO_A=13
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 SLOT="1/${PV}-${SO_MAJOR}"
-IUSE+=" +analyze aom cairo cxx debug exif fftw fits gif graphicsmagick gsf
--gtk-doc +hdr heif imagemagick imagequant jpeg lcms libde265 matio -minimal
-openexr openslide orc pangoft2 png poppler +ppm python rav1e spng static-libs
-svg test tiff webp x265 zlib"
+IUSE+=" +analyze aom cairo cxx debug doxygen exif fftw fits gif graphicsmagick
+gsf -gtk-doc fontconfig +hdr heif imagemagick imagequant jpeg jpeg2k jxl lcms
+libde265 matio -minimal openexr openslide orc pangocairo png poppler python
+rav1e +ppm spng static-libs svg test tiff webp x265 zlib"
 REQUIRED_USE="
 	imagequant? ( png )
 	poppler? ( cairo )
 	svg? ( cairo )"
-# Assumed U 18.04
-# See also https://github.com/libvips/libvips/blob/v8.10.6/.travis.yml
+# Assumed U 20.04
+# See also https://github.com/libvips/libvips/blob/v8.11.0/.github/workflows/ci.yml
 # libnifti missing
-LIBJPEG_TURBO_V="1.5.2"
+LIBJPEG_TURBO_V="2.0.3"
 RDEPEND+="
-	$(python_gen_any_dep '>=dev-libs/gobject-introspection-1.56.1[${PYTHON_SINGLE_USEDEP}]')
-	>=dev-libs/glib-2.56.1:2[${MULTILIB_USEDEP}]
-	>=dev-libs/expat-2.2.5[${MULTILIB_USEDEP}]
-	>=dev-libs/libffi-3.2.1[${MULTILIB_USEDEP}]
-	>=sci-libs/gsl-2.4
+	$(python_gen_any_dep '>=dev-libs/gobject-introspection-1.64.0[${PYTHON_SINGLE_USEDEP}]')
+	>=dev-libs/glib-2.64.2:2[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-2.2.9[${MULTILIB_USEDEP}]
+	>=dev-libs/libffi-0.9.9.9[${MULTILIB_USEDEP}]
+	>=sci-libs/gsl-2.5
 	>=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}]
-	cairo? ( >=x11-libs/cairo-1.15.10[${MULTILIB_USEDEP}] )
-	debug? ( >=dev-libs/dmalloc-5.5.2 )
+	cairo? ( >=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}] )
 	exif? ( >=media-libs/libexif-0.6.21[${MULTILIB_USEDEP}] )
-	fftw? ( >=sci-libs/fftw-3.3.7:3.0=[${MULTILIB_USEDEP}] )
-	fits? ( >=sci-libs/cfitsio-3.430[${MULTILIB_USEDEP}] )
-	gif? ( >=media-libs/giflib-5.1.4[${MULTILIB_USEDEP}] )
-	gsf? ( >=gnome-extra/libgsf-1.14.41 )
-	heif? ( libde265? ( >=media-libs/libde265-1.0.2[${MULTILIB_USEDEP}] )
-		>=media-libs/libheif-1.1.0[aom?,libde265?,rav1e?,x265?,${MULTILIB_USEDEP}] )
+	fftw? ( >=sci-libs/fftw-3.3.8:3.0=[${MULTILIB_USEDEP}] )
+	fits? ( >=sci-libs/cfitsio-3.470[${MULTILIB_USEDEP}] )
+	fontconfig? ( >=media-libs/fontconfig-2.13.1[${MULTILIB_USEDEP}] )
+	gif? ( media-libs/libnsgif[${MULTILIB_USEDEP}] )
+	gsf? ( >=gnome-extra/libgsf-1.14.46 )
+	heif? ( libde265? ( >=media-libs/libde265-1.0.4[${MULTILIB_USEDEP}] )
+		>=media-libs/libheif-1.6.1[aom?,libde265?,rav1e?,x265?,${MULTILIB_USEDEP}] )
 	imagemagick? (
-		graphicsmagick? ( >=media-gfx/graphicsmagick-1.3.28 )
-		!graphicsmagick? ( >=media-gfx/imagemagick-6.9.7.4 )
+		graphicsmagick? ( >=media-gfx/graphicsmagick-1.3.35 )
+		!graphicsmagick? ( >=media-gfx/imagemagick-6.9.10.23 )
 	)
-	imagequant? ( >=media-gfx/libimagequant-2.12.2 )
+	imagequant? ( media-gfx/libimagequant )
 	jpeg? ( || (   virtual/jpeg:0=[${MULTILIB_USEDEP}]
 			>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}[${MULTILIB_USEDEP}] ) )
+	jpeg2k? (
+		>=media-libs/openjpeg-2.3.1[${MULTILIB_USEDEP}]
+	)
+	jxl? ( >=media-libs/libjxl-0.3.7 )
 	lcms? ( >=media-libs/lcms-2.9[${MULTILIB_USEDEP}] )
-	matio? ( >=sci-libs/matio-1.5.11[${MULTILIB_USEDEP}] )
-	openexr? ( >=media-libs/openexr-2.2.0[${MULTILIB_USEDEP}] )
+	matio? ( >=sci-libs/matio-1.5.17[${MULTILIB_USEDEP}] )
+	openexr? ( >=media-libs/openexr-2.3.0[${MULTILIB_USEDEP}] )
 	openslide? ( >=media-libs/openslide-3.4.1[${MULTILIB_USEDEP}] )
-	orc? ( >=dev-lang/orc-0.4[${MULTILIB_USEDEP}] )
-	png? ( >=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}] )
+	orc? ( >=dev-lang/orc-0.4.31[${MULTILIB_USEDEP}] )
+	png? ( >=media-libs/libpng-1.6.37:0=[${MULTILIB_USEDEP}] )
 	spng? ( >=media-libs/libspng-0.6.1[${MULTILIB_USEDEP}] )
-	pangoft2? ( >=x11-libs/pango-1.40.14[${MULTILIB_USEDEP}] )
-	poppler? ( >=app-text/poppler-0.62.0[cairo,introspection] )
-	svg? ( >=gnome-base/librsvg-2.40.20[${MULTILIB_USEDEP}] )
-	tiff? ( >=media-libs/tiff-4.0.9:0=[${MULTILIB_USEDEP}] )
+	pangocairo? ( >=x11-libs/pango-1.44.7[${MULTILIB_USEDEP}] )
+	poppler? ( >=app-text/poppler-0.86.1[cairo,introspection] )
+	svg? ( >=gnome-base/librsvg-2.48.2[${MULTILIB_USEDEP}] )
+	tiff? ( >=media-libs/tiff-4.1.0:0=[${MULTILIB_USEDEP}] )
 	webp? ( >=media-libs/libwebp-0.6.1[${MULTILIB_USEDEP}] )
 	zlib? ( >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}] )"
 BDEPEND+="
@@ -93,19 +97,22 @@ BDEPEND+="
 			)
 		)
 	)
-	>=dev-util/gtk-doc-am-1.27
+	>=dev-util/gtk-doc-am-1.32
+	doxygen? (
+		>=app-doc/doxygen-1.8.17
+	)
 	gtk-doc? (
 		>=app-text/docbook-xml-dtd-4.5:4.5
-		>=app-text/pandoc-1.19.2.4
-		>=dev-util/gtk-doc-1.27
+		>=app-text/pandoc-2.5
+		>=dev-util/gtk-doc-1.32
 	)
 	test? (
 		${PYTHON_DEPS}
-		$(python_gen_any_dep '>=dev-python/pip-20.0.2[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep '>=dev-python/pytest-4.6.9[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '>=dev-python/pip-9.0.1[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '>=dev-python/pytest-3.3.2[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'dev-python/pyvips[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep '>=dev-python/setuptools-39.0.1[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep '>=dev-python/wheel-0.30.0[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '>=dev-python/setuptools-45.2.0[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '>=dev-python/wheel-0.34.2[${PYTHON_USEDEP}]')
 		|| (
 			(
 	sys-devel/clang:13[${MULTILIB_USEDEP}]
@@ -163,7 +170,7 @@ Remove the test USE flag in order to emerge successfully."
 	if [[ "${CXX}" =~ 'g++' ]] ; then
 		if ver_test $(gcc-version) -lt 9 ; then
 			ewarn \
-"Upstream tests with GCC >= 9 only.  Switch to version >= 9 if it breaks."
+"Upstream tests with GCC >= 10 only.  Switch to version >= 10 if it breaks."
 		fi
 	elif [[ "${CXX}" =~ 'clang++' ]] ; then
 		if ver_test $(clang-version) -lt 10 ; then
@@ -213,7 +220,7 @@ src_prepare() {
 		libvips/include/vips/version.h.in || die
 
 	if use gtk-doc ; then
-		gtkdocize --copy --docdir doc --flavour no-tmpl || die
+		gtkdocize --copy --docdir doc --flavour no-tmpl
 	else
 #		sed -i -e "\/doc\/Makefile/d" \
 #			-e "\/doc\/libvips-docs.xml/d" \
@@ -310,7 +317,6 @@ sys-devel/clang:\${SLOT}, \
 		export LD_LIBRARY_PATH=\
 "$(get_llvm_prefix)/lib:$(dirname ${ASAN_DSO}):${LD_LIBRARY_PATH}"
 		einfo "ASAN_DSO=${ASAN_DSO}"
-		einfo "ASAN_SYMBOLIZER_PATH=${ASAN_SYMBOLIZER_PATH}"
 		einfo "LDSHARED=${LDSHARED}"
 		einfo "ASAN_OPTIONS=${ASAN_OPTIONS}"
 		einfo "LSAN_OPTIONS=${LSAN_OPTIONS}"
@@ -325,19 +331,20 @@ sys-devel/clang:\${SLOT}, \
 	use graphicsmagick && magick="--with-magickpackage=GraphicsMagick"
 	use imagemagick && magick="--with-magickpackage=MagickCore"
 	econf ${magick} \
+		--host=${chost} \
+		--build=${ctarget} \
 		--without-nifti \
 		--without-pdfium \
 		$(multilib_native_use_enable gtk-doc) \
-		$(use cxx || echo "--disable-cxx") \
 		$(use_enable debug) \
 		$(use_enable static-libs static) \
 		$(use_with analyze) \
-		$(use_with debug dmalloc) \
+		$(use_with doxygen) \
 		$(use_with exif libexif) \
 		$(use_with jpeg) \
 		$(use_with fits cfitsio) \
 		$(use_with fftw) \
-		$(use_with gif giflib) \
+		$(use_with gif nsgif) \
 		$(use_with gsf) \
 		$(use_with hdr radiance) \
 		$(use_with heif) \
@@ -347,7 +354,7 @@ sys-devel/clang:\${SLOT}, \
 		$(use_with openexr OpenEXR) \
 		$(use_with openslide) \
 		$(use_with orc) \
-		$(use_with pangoft2) \
+		$(use_with pangocairo) \
 		$(use_with png) \
 		$(use_with poppler) \
 		$(use_with ppm) \
@@ -356,7 +363,6 @@ sys-devel/clang:\${SLOT}, \
 		$(use_with tiff) \
 		$(use_with webp libwebp) \
 		$(use_with zlib) \
-		$(usex minimal "--without-deprecated" "--with-deprecated")
 		--with-html-dir="/usr/share/gtk-doc/html"
 }
 
@@ -378,8 +384,8 @@ preload_libsan() {
 		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-${ABI}.so))
 				;;
 		esac
-		export LD_PRELOAD="${ASAN_DSO} ${DLCLOSE_PRELOAD}"
 		export DLCLOSE_PRELOAD="${BUILD_DIR}/dlclose.so"
+		export LD_PRELOAD="${ASAN_DSO} ${DLCLOSE_PRELOAD}"
 		export SANDBOX_ON=0 # \
 		# Restated from the toolchain.eclass:
 		# libsandbox.so wants to be loaded first in LD_PRELOAD but so
