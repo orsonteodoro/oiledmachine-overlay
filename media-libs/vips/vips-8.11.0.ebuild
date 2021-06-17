@@ -18,9 +18,8 @@ SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 SLOT="1/${PV}-${SO_MAJOR}"
 IUSE+=" +analyze aom cairo cxx debug doxygen exif fftw fits gif graphicsmagick
 gsf -gtk-doc fontconfig +hdr heif imagemagick imagequant jpeg jpeg2k jxl lcms
-libde265 matio -minimal openexr openslide orc pangocairo png poppler rav1e +ppm
-spng static-libs svg test tiff webp x265 zlib"
-#	gtk-doc
+libde265 matio -minimal openexr openslide orc pangocairo png poppler python
+rav1e +ppm spng static-libs svg test tiff webp x265 zlib"
 REQUIRED_USE="
 	imagequant? ( png )
 	poppler? ( cairo )
@@ -111,6 +110,7 @@ BDEPEND+="
 		${PYTHON_DEPS}
 		$(python_gen_any_dep '>=dev-python/pip-9.0.1[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep '>=dev-python/pytest-3.3.2[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep 'dev-python/pyvips[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep '>=dev-python/setuptools-45.2.0[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep '>=dev-python/wheel-0.34.2[${PYTHON_USEDEP}]')
 		|| (
@@ -147,8 +147,8 @@ BDEPEND+="
 	>=sys-libs/libomp-10[${MULTILIB_USEDEP}]
 			)
 		)
-	)
-"
+	)"
+PDEPEND+=" python? ( dev-python/pyvips )"
 RESTRICT="mirror"
 SRC_URI="https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 S="${WORKDIR}/libvips-${PV}"
@@ -156,10 +156,9 @@ DOCS=( AUTHORS ChangeLog NEWS README.md THANKS )
 
 pkg_setup() {
 	use test && python-any-r1_pkg_setup
-	use test && ewarn "The test USE flag is undergoing development and fixes.  Do not use at this time."
 
-	CC=$(tc-getCC)
-	CXX=$(tc-getCXX)
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
 
 	if [[ "${CXX}" =~ 'g++' ]] ; then
 		if ver_test $(gcc-version) -lt 9 ; then
@@ -286,36 +285,30 @@ sys-devel/clang:\${SLOT}, \
 			-fno-omit-frame-pointer \
 			-fopenmp \
 			-fopenmp=* \
+			-shared-libsan \
 			-shared-libasan \
 			-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 		append-cppflags -g \
-				-fno-omit-frame-pointer \
 				-fsanitize=address,undefined \
+				-fno-omit-frame-pointer \
 				-fopenmp \
 				-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 		append-ldflags -g \
-				-fopenmp=libomp \
 				-fsanitize=address,undefined \
-				-shared-libasan
-		case ${ABI} in
-			amd64)
-	export ASAN_DSO=$(${CC} -print-file-name=libclang_rt.asan-x86_64.so)
-				;;
-			*)
-	export ASAN_DSO=$(${CC} -print-file-name=libclang_rt.asan-${ABI}.so)
-				;;
-		esac
+				-shared-libsan \
+				-fopenmp=libomp
+		export ASAN_SYMBOLIZER_PATH="$(get_llvm_prefix)/bin/llvm-symbolizer"
 		export LDSHARED="${CC} -shared"
-		export ASAN_OPTIONS="suppressions=${BUILD_DIR}/asan.supp"
-		export LSAN_OPTIONS="suppressions=${BUILD_DIR}/lsan.supp"
-		export TSAN_OPTIONS="suppressions=${BUILD_DIR}/tsan.supp"
+		export ASAN_OPTIONS="suppressions=${S}/suppressions/asan.supp:detect_leaks=0"
+		export LSAN_OPTIONS="suppressions=${S}/suppressions/lsan.supp"
+		export TSAN_OPTIONS="suppressions=${S}/suppressions/tsan.supp"
 		export UBSAN_OPTIONS=\
-"suppressions=${BUILD_DIR}/ubsan.supp:print_stacktrace=1"
-		export DLCLOSE_PRELOAD="${BUILD_DIR}/dlclose.so"
+"suppressions=${S}/suppressions/ubsan.supp:print_stacktrace=1"
+		echo -e '#include <stdio.h>\nint dlclose(void*handle){return 0;}' \
+			| ${CC} -shared -xc -o "${BUILD_DIR}/dlclose.so" - || die
+		preload_libsan
 		export LD_LIBRARY_PATH=\
 "$(get_llvm_prefix)/lib:$(dirname ${ASAN_DSO}):${LD_LIBRARY_PATH}"
-		echo -e '#include <stdio.h>\nint dlclose(void*handle){return 0;}' \
-			| ${CC} -shared -xc -o "${BUILD_DIR}/dlclose.so" -
 		einfo "ASAN_DSO=${ASAN_DSO}"
 		einfo "LDSHARED=${LDSHARED}"
 		einfo "ASAN_OPTIONS=${ASAN_OPTIONS}"
@@ -324,6 +317,7 @@ sys-devel/clang:\${SLOT}, \
 		einfo "UBSAN_OPTIONS=${UBSAN_OPTIONS}"
 		einfo "DLCLOSE_PRELOAD=${DLCLOSE_PRELOAD}"
 		einfo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
+		einfo "LD_PRELOAD=${LD_PRELOAD}"
 	fi
 
 	local magick="--without-magick";
@@ -365,25 +359,48 @@ sys-devel/clang:\${SLOT}, \
 		--with-html-dir="/usr/share/gtk-doc/html"
 }
 
+multilib_src_compile() {
+	preload_libsan
+	emake
+}
+
+preload_libsan() {
+	if use test ; then
+		case ${ABI} in
+			amd64)
+		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-x86_64.so))
+				;;
+			x86)
+		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-i386.so))
+				;;
+			*)
+		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-${ABI}.so))
+				;;
+		esac
+		export LD_PRELOAD="${ASAN_DSO} ${DLCLOSE_PRELOAD}"
+		export DLCLOSE_PRELOAD="${BUILD_DIR}/dlclose.so"
+		export SANDBOX_ON=0 # \
+		# Restated from the toolchain.eclass:
+		# libsandbox.so wants to be loaded first in LD_PRELOAD but so
+		# does libasan.  We must disable the sandbox in order to
+		# preform asan tests.
+	fi
+}
+
 multilib_src_test() {
 	local ctarget=$(get_abi_CTARGET ${ABI})
 	[[ -z "${ctarget}" ]] && ctarget=$(get_abi_CHOST ${ABI})
-	CC=${ctarget}-clang
-	CXX=${ctarget}-clang++
-	case ${ABI} in
-		amd64)
-	export ASAN_DSO=$(${CC} -print-file-name=libclang_rt.asan-x86_64.so)
-			;;
-		*)
-	export ASAN_DSO=$(${CC} -print-file-name=libclang_rt.asan-${ABI}.so)
-			;;
-	esac
-	export DLCLOSE_PRELOAD="${BUILD_DIR}/dlclose.so"
-	export LD_PRELOAD="${ASAN_DSO} ${DLCLOSE_PRELOAD}"
+	export CC=${ctarget}-clang
+	export CXX=${ctarget}-clang++
+	preload_libsan
+	export ASAN_OPTIONS="suppressions=${S}/suppressions/asan.supp:detect_leaks=1"
 	python3 -m pytest -sv --log-cli-level=WARNING test/test-suite || die
 }
 
 multilib_src_install() {
+	use test && \
+die "You need to rebuild vips without the test USE flag to install a working \
+vips."
 	emake DESTDIR="${D}" install
 }
 
