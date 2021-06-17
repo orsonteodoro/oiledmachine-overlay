@@ -156,6 +156,13 @@ DOCS=( AUTHORS ChangeLog NEWS README.md THANKS )
 
 pkg_setup() {
 	use test && python-any-r1_pkg_setup
+	if use test ; then
+		ewarn \
+"The test USE flag may find \"LeakSanitizer: detected memory leaks\" for\n\
+dependencies but not directly to prevent tests from passing successfully.\n\
+\n\
+Remove the test USE flag in order to emerge successfully."
+	fi
 
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
