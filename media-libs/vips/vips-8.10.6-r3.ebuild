@@ -374,10 +374,22 @@ preload_libsan() {
 			x86)
 		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-i386.so))
 				;;
+			arm64)
+		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-aarch64.so))
+				;;
+			arm)
+		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-arm.so))
+				;;
 			*)
+			ewarn "Guessing ABI for libclang_rt.asan-${ABI}.so, may likely fail."
 		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-${ABI}.so))
 				;;
 		esac
+		if [[ ! -f "${ASAN_DSO}" ]] ; then
+			# This may be OS dependent
+			die \
+"Report to ebuild maintainer about the correct libclang_rt.asan-\${ABI}.so to use."
+		fi
 		export DLCLOSE_PRELOAD="${BUILD_DIR}/dlclose.so"
 		export LD_PRELOAD="${ASAN_DSO} ${DLCLOSE_PRELOAD}"
 		export SANDBOX_ON=0 # \
