@@ -3,7 +3,7 @@
 
 EAPI=7
 
-NPM_SECAUDIT_AT_TYPES_NODE_V="14.0.23"
+NPM_SECAUDIT_AT_TYPES_NODE_V="14.0.27"
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
 
@@ -68,6 +68,7 @@ npm-secaudit_src_postprepare() {
 npm-secaudit_src_postcompile() {
 	npm uninstall gulp -D
 
+	# todo update
 	# playwright is 0.12.1 and only used for testing
 	# Firefox 74.0b10
 	# Chromium 83.0.4090.0
@@ -76,7 +77,7 @@ npm-secaudit_src_postcompile() {
 }
 
 src_install() {
-	export NPM_SECAUDIT_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	export NPM_SECAUDIT_INSTALL_PATH="/opt/${PN}/${SLOT}"
 	npm-secaudit_install "*"
 	fperms 755 "${NPM_SECAUDIT_INSTALL_PATH}/bin/tsc" \
 		"${NPM_SECAUDIT_INSTALL_PATH}/bin/tsserver"

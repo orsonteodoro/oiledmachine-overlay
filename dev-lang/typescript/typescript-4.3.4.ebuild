@@ -3,7 +3,7 @@
 
 EAPI=7
 
-NPM_SECAUDIT_AT_TYPES_NODE_V="14.14.25"
+NPM_SECAUDIT_AT_TYPES_NODE_V="15.0.2"
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
 
@@ -70,7 +70,7 @@ npm-secaudit_src_postcompile() {
 }
 
 src_install() {
-	export NPM_SECAUDIT_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	export NPM_SECAUDIT_INSTALL_PATH="/opt/${PN}/${SLOT}"
 	npm-secaudit_install "*"
 	fperms 755 "${NPM_SECAUDIT_INSTALL_PATH}/bin/tsc" \
 		"${NPM_SECAUDIT_INSTALL_PATH}/bin/tsserver"
