@@ -95,7 +95,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	lzo? ( >=dev-python/python-lzo-0.7.0[${PYTHON_USEDEP}] )
 	mysql? ( dev-python/mysql-connector-python[${PYTHON_USEDEP}] )
 	nvenc? ( dev-python/numpy[${PYTHON_USEDEP}]
-	       >=dev-python/nvidia-ml-py-10.418[${PYTHON_USEDEP}]
+	       >=dev-python/pynvml-10.418[${PYTHON_USEDEP}]
 		 dev-python/pycuda[${PYTHON_USEDEP}]
 	       >=dev-util/nvidia-cuda-toolkit-7.5:=
 		 media-video/nvidia-video-codec
