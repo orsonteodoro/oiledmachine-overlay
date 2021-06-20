@@ -6,6 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!-- ebuilds originally obtained from the gentoo-overlay -->
   <!-- ebuild originator -->
   <maintainer type="project">
     <email>gnome@gentoo.org</email>
