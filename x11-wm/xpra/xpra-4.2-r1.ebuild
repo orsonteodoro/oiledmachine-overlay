@@ -106,7 +106,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	       >=dev-util/nvidia-cuda-toolkit-10.0:=
 	       >=x11-drivers/nvidia-drivers-${NVFBC_MIN_DRV_V} )
 	nvjpeg? ( dev-python/pycuda[${PYTHON_USEDEP}]
-	        >=dev-util/nvidia-cuda-toolkit-11:=
+	        >=dev-util/nvidia-cuda-toolkit-11.1.1:=
 	        >=x11-drivers/nvidia-drivers-${NVJPEG_MIN_DRV_V} )
 	opengl? ( client? ( dev-python/pyopengl_accelerate[${PYTHON_USEDEP}] )
 		  x11-base/xorg-drivers[video_cards_dummy] )
