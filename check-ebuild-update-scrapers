@@ -44,13 +44,13 @@ repo_latest_version_get_aforgedotnet_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/andrewkirillov/AForge.NET/master/Sources/Core/Properties/AssemblyInfo.cs \
 | grep -e "AssemblyVersion" | grep -v -F -e "//" | grep -E -o -e "[0-9\.]+" | cut -f 1-3 -d ".")
-	local suffix=$(get_head_suffix "andrewkirillov/AForge.NET" "master")
+	local suffix=$(get_head_suffix "github.com" "andrewkirillov/AForge.NET" "master")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_appimaged_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "AppImage/appimaged" "master")
+	local suffix=$(get_head_suffix "github.com" "AppImage/appimaged" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -62,7 +62,7 @@ https://raw.githubusercontent.com/AppImage/AppImageKit/master/src/appimagetoolno
 https://github.com/AppImage/AppImageKit.git \
 		| grep -G -e "^[0-9]" \
 		| esort | tr " " "\n" | uniq | tail -n 1)
-	local suffix=$(get_head_suffix "AppImage/AppImageKit" "master")
+	local suffix=$(get_head_suffix "github.com" "AppImage/AppImageKit" "master")
 	echo "${pv1}_p${pv2}_p${suffix}"
 }
 
@@ -70,8 +70,24 @@ repo_latest_version_get_appimageupdate_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/AppImage/AppImageUpdate/main/CMakeLists.txt \
 | grep -F -e "set(VERSION" | sed -e "s|set(VERSION ||g" -e "s|)||" -e "s|-|_|")
-	local suffix=$(get_head_suffix "AppImage/AppImageUpdate" "rewrite")
+	local suffix=$(get_head_suffix "github.com" "AppImage/AppImageUpdate" "rewrite")
 	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_aspell_pv() {
+	# the tags are dated in the wrong order
+#	echo $(get_tags \
+#https://git.savannah.gnu.org/git/aspell.git \
+#		| sed -e "s|rel-||g" -e "s|-|_|g" \
+#		| grep -G -e "^[0-9]" \
+#		| tail -n 1)
+	echo $(wget -q -O - \
+http://git.savannah.gnu.org/cgit/aspell.git/refs/ \
+		| html2text -nobs -width 120 \
+		| grep "tar.gz" \
+		| head -n 1 \
+		| cut -f 1 -d " " \
+		| sed -e "s|rel-||" -e "s|-|_|")
 }
 
 repo_latest_version_get_assimp-net_pv() {
@@ -88,7 +104,7 @@ repo_latest_version_get_atitextureconverter_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/infinitespace-studios/ATI.TextureConverter/master/ATI.TextureConverter/Properties/AssemblyInfo.cs \
 | grep -F -e "AssemblyVersion" | grep -E -o -e "[0-9\.]+" | cut -f 1-2 -d ".")
-	local suffix=$(get_head_suffix "infinitespace-studios/ATI.TextureConverter" "master")
+	local suffix=$(get_head_suffix "github.com" "infinitespace-studios/ATI.TextureConverter" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -112,7 +128,7 @@ https://github.com/rizsotto/Bear.git)
 
 repo_latest_version_get_beatdetectorforgames_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "Terracorrupt/BeatDetectorForGames" "master")
+	local suffix=$(get_head_suffix "github.com" "Terracorrupt/BeatDetectorForGames" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -188,7 +204,7 @@ repo_latest_version_get_BulletSharpPInvoke_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/AndresTraks/BulletSharpPInvoke/master/BulletSharp/Properties/AssemblyInfo.cs \
 | grep -F -e "AssemblyVersion" | grep -v -F -e "//" | grep -E -o -e "[0-9\.]+" | cut -f 1-2 -d ".")
-	local suffix=$(get_head_suffix "AndresTraks/BulletSharpPInvoke" "master")
+	local suffix=$(get_head_suffix "github.com" "AndresTraks/BulletSharpPInvoke" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -233,7 +249,7 @@ https://raw.githubusercontent.com/dotnet/corert/master/Packaging.props \
 		| grep -F -e "PreReleaseLabel" | grep -q -F -e "alpha" ; then
 		is_alpha="_alpha"
 	fi
-	local suffix=$(get_head_suffix "dotnet/corert" "master")
+	local suffix=$(get_head_suffix "github.com" "dotnet/corert" "master")
 	echo "${pv}${is_alpha}_p${suffix}"
 }
 
@@ -283,7 +299,7 @@ repo_latest_version_get_emoji-cli_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/b4b4r07/emoji-cli/master/CHANGELOG.md \
 | grep -E -o -e "v[0-9\.]+" | head -n 1 | sed -e "s|v||g")
-	local suffix=$(get_head_suffix "b4b4r07/emoji-cli" "master")
+	local suffix=$(get_head_suffix "github.com" "b4b4r07/emoji-cli" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -307,7 +323,7 @@ https://github.com/FNA-XNA/FNA.git)
 
 repo_latest_version_get_go-appimage_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "probonopd/go-appimage" "master")
+	local suffix=$(get_head_suffix "github.com" "probonopd/go-appimage" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -423,7 +439,7 @@ repo_latest_version_get_gycm_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/jakeanq/gycm/master/gycm.cpp  \
 | grep -F -e "PLUGIN_SET_INFO" | cut -f 3 -d "," | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "jakeanq/gycm" "master")
+	local suffix=$(get_head_suffix "github.com" "jakeanq/gycm" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -468,7 +484,7 @@ https://github.com/AbiWord/enchant.git \
 
 repo_latest_version_get_enigma_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "enigma-dev/enigma-dev" "master")
+	local suffix=$(get_head_suffix "github.com" "enigma-dev/enigma-dev" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -549,6 +565,15 @@ https://gitlab.freedesktop.org/gstreamer/gst-omx.git \
 	| esort | tr " " "\n" | tail -n 1)
 }
 
+repo_latest_version_get_gst-plugins-rs_pv() {
+	local suffix=$(get_head_suffix "gitlab.freedesktop.org" "gstreamer/gst-plugins-rs" "master")
+	local pv=$(get_tags \
+https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs.git \
+	| grep -G -e "^[0-9]" \
+	| esort | tr " " "\n" | tail -n 1)
+	echo "${pv}_p${suffix}"
+}
+
 
 repo_latest_version_get_hunspell_pv() {
 	echo $(get_tags \
@@ -599,7 +624,7 @@ https://github.com/jemalloc/jemalloc.git)
 
 repo_latest_version_get_joshedit_pv() {
 	local pv=1 # versioned by slot. 0 is for mainline.  1 is for lateralgm use.
-	local suffix=$(get_head_suffix "JoshDreamland/JoshEdit" "master")
+	local suffix=$(get_head_suffix "github.com" "JoshDreamland/JoshEdit" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -661,13 +686,13 @@ repo_latest_version_get_lidgren-network-gen3_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lidgren/lidgren-network-gen3/master/Lidgren.Network/Properties/AssemblyInfo.cs \
 | grep -F -e "AssemblyVersion" | grep -v -F -e "//" | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lidgren/lidgren-network-gen3" "master")
+	local suffix=$(get_head_suffix "github.com" "lidgren/lidgren-network-gen3" "master")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_libdesktopenvironments_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "TheAssassin/libdesktopenvironments" "master")
+	local suffix=$(get_head_suffix "github.com" "TheAssassin/libdesktopenvironments" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -690,7 +715,7 @@ https://github.com/libgit2/libgit2sharp.git \
 
 repo_latest_version_get_libmaker_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "IsmAvatar/LibMaker" "master")
+	local suffix=$(get_head_suffix "github.com" "IsmAvatar/LibMaker" "master")
 	echo "${pv}_pre${suffix}"
 }
 
@@ -758,14 +783,14 @@ https://chromium.googlesource.com/libyuv/libyuv/+/refs/heads/master/README.chrom
 repo_latest_version_get_liri-base-appcenter_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/appcenter.git)
-	local suffix=$(get_head_suffix "lirios/appcenter" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/appcenter" "develop")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_liri-base-cmake-shared_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/cmake-shared.git)
-	local suffix=$(get_head_suffix "lirios/cmake-shared" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/cmake-shared" "develop")
 	echo "${pv}_p${suffix}"
 }
 
@@ -773,21 +798,21 @@ repo_latest_version_get_liri-base-eglfs_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/eglfs/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/eglfs" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/eglfs" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
 repo_latest_version_get_liri-base-files_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/files.git)
-	local suffix=$(get_head_suffix "lirios/files" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/files" "develop")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_liri-base-fluid_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/fluid.git)
-	local suffix=$(get_head_suffix "lirios/fluid" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/fluid" "develop")
 	echo "${pv}_p${suffix}"
 }
 
@@ -795,7 +820,7 @@ repo_latest_version_get_liri-base-libliri_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/libliri/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/libliri" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/libliri" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
@@ -803,14 +828,14 @@ repo_latest_version_get_liri-base-materialdecoration_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/materialdecoration/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/materialdecoration" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/materialdecoration" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
 repo_latest_version_get_liri-base-platformtheme_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/platformtheme.git)
-	local suffix=$(get_head_suffix "lirios/platformtheme" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/platformtheme" "develop")
 	echo "${pv}_p${suffix}"
 }
 
@@ -818,21 +843,21 @@ repo_latest_version_get_liri-base-pulseaudio_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/pulseaudio/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/pulseaudio" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/pulseaudio" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
 repo_latest_version_get_liri-base-qbs-shared_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/qbs-shared.git)
-	local suffix=$(get_head_suffix "lirios/qbs-shared" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/qbs-shared" "develop")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_liri-base-qml-xwayland_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/qml-xwayland.git)
-	local suffix=$(get_head_suffix "lirios/qml-xwayland" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/qml-xwayland" "develop")
 	echo "${pv}_p${suffix}"
 }
 
@@ -845,14 +870,14 @@ https://github.com/lirios/qtaccountsservice.git)
 repo_latest_version_get_liri-base-qtgsettings_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/qtudev.git)
-	local suffix=$(get_head_suffix "lirios/qtgsettings" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/qtgsettings" "develop")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_liri-base-qtudev_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/qtudev.git)
-	local suffix=$(get_head_suffix "lirios/qtudev" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/qtudev" "develop")
 	echo "${pv}_p${suffix}"
 }
 
@@ -860,42 +885,42 @@ repo_latest_version_get_liri-base-session_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/session/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/session" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/session" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
 repo_latest_version_get_liri-base-settings_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/settings.git)
-	local suffix=$(get_head_suffix "lirios/settings" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/settings" "develop")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_liri-base-shell_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/shell.git)
-	local suffix=$(get_head_suffix "lirios/shell" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/shell" "develop")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_liri-base-terminal_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/terminal.git)
-	local suffix=$(get_head_suffix "lirios/terminal" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/terminal" "develop")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_liri-base-themes_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/themes.git)
-	local suffix=$(get_head_suffix "lirios/themes" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/themes" "develop")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_liri-base-wallpapers_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/wallpapers.git)
-	local suffix=$(get_head_suffix "lirios/wallpapers" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/wallpapers" "develop")
 	echo "${pv}_p${suffix}"
 }
 
@@ -903,7 +928,7 @@ repo_latest_version_get_liri-base-wayland_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/wayland/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/wayland" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/wayland" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
@@ -911,7 +936,7 @@ repo_latest_version_get_liri-base-xdg-desktop-portal-liri_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/xdg-desktop-portal-liri/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/xdg-desktop-portal-liri" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/xdg-desktop-portal-liri" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
@@ -919,14 +944,14 @@ repo_latest_version_get_liri-extra-browser_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/browser/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/browser" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/browser" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
 repo_latest_version_get_liri-extra-calculator_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/calculator.git)
-	local suffix=$(get_head_suffix "lirios/calculator" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/calculator" "develop")
 	echo "${pv}_p${suffix}"
 }
 
@@ -934,7 +959,7 @@ repo_latest_version_get_liri-extra-music_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/music/master/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/music" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/music" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
@@ -942,7 +967,7 @@ repo_latest_version_get_liri-extra-networkmanager_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/networkmanager/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/networkmanager" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/networkmanager" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
@@ -950,7 +975,7 @@ repo_latest_version_get_liri-extra-player_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/player/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/player" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/player" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
@@ -958,7 +983,7 @@ repo_latest_version_get_liri-extra-power-manager_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/power-manager/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/power-manager" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/power-manager" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
@@ -966,7 +991,7 @@ repo_latest_version_get_liri-extra-samtal_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/samtal/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/samtal" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/samtal" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
@@ -974,7 +999,7 @@ repo_latest_version_get_liri-extra-screencast_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/screencast/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/screencast" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/screencast" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
@@ -982,14 +1007,14 @@ repo_latest_version_get_liri-extra-screenshot_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/screenshot/develop/CMakeLists.txt \
 | grep -F -e " VERSION \"" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/screenshot" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/screenshot" "develop")
 	echo "${pv}_pre${suffix}"
 }
 
 repo_latest_version_get_liri-extra-text_pv() {
 	local pv=$(get_newest_pv \
 https://github.com/lirios/text.git)
-	local suffix=$(get_head_suffix "lirios/text" "develop")
+	local suffix=$(get_head_suffix "github.com" "lirios/text" "develop")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1079,7 +1104,7 @@ repo_latest_version_get_msbuild_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/mono/msbuild/xplat-master/eng/Versions.props \
 | grep -F -e "VersionPrefix" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "mono/msbuild" "xplat-master")
+	local suffix=$(get_head_suffix "github.com" "mono/msbuild" "xplat-master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1095,14 +1120,14 @@ repo_latest_version_get_nant_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/nant/nant/master/src/CommonAssemblyInfo.cs \
 | grep -F -e "AssemblyVersionAttribute" | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "nant/nant" "master")
+	local suffix=$(get_head_suffix "github.com" "nant/nant" "master")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_nanodbc_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/nanodbc/nanodbc/master/VERSION.txt)
-	local suffix=$(get_head_suffix "nanodbc/nanodbc" "master")
+	local suffix=$(get_head_suffix "github.com" "nanodbc/nanodbc" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1121,7 +1146,7 @@ http://www.ndesk.org/Options | html2text -nobs | grep -F -e "ZIP" \
 
 repo_latest_version_get_nestegg_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "kinetiknz/nestegg" "master")
+	local suffix=$(get_head_suffix "github.com" "kinetiknz/nestegg" "master")
 	echo "${pv}_pre${suffix}"
 }
 
@@ -1189,7 +1214,7 @@ https://github.com/NVorbis/NVorbis.git)
 
 repo_latest_version_get_nxjson_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "yarosla/nxjson" "master")
+	local suffix=$(get_head_suffix "github.com" "yarosla/nxjson" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1240,7 +1265,7 @@ https://github.com/KhronosGroup/OpenXR-SDK-Source.git \
 
 repo_latest_version_get_oh-my-zsh_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "ohmyzsh/ohmyzsh" "master")
+	local suffix=$(get_head_suffix "github.com" "ohmyzsh/ohmyzsh" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1324,7 +1349,7 @@ repo_latest_version_get_puddletag_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/puddletag/puddletag/master/source/puddlestuff/__init__.py \
 | grep -F -e "version_string =" | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "puddletag/puddletag" "master")
+	local suffix=$(get_head_suffix "github.com" "puddletag/puddletag" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1351,7 +1376,7 @@ repo_latest_version_get_py-stackexchange_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lucjon/Py-StackExchange/master/setup.py \
 | grep -F -e "version =" | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lucjon/Py-StackExchange" "master")
+	local suffix=$(get_head_suffix "github.com" "lucjon/Py-StackExchange" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1369,8 +1394,17 @@ repo_latest_version_get_pyfiglet_pv() {
 https://github.com/pwaller/pyfiglet.git \
 		| sed -r -e "s|\.?post|_p|g" \
 		| esort | tr " " "\n" | tail -n 1)
-	local suffix=$(get_head_suffix "pwaller/pyfiglet" "master")
+	local suffix=$(get_head_suffix "github.com" "pwaller/pyfiglet" "master")
 	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_pynvml_pv() {
+	echo $(wget -q -O - \
+https://pypi.org/rss/project/nvidia-ml-py/releases.xml \
+		| grep -F -e "title" \
+		| sed -e "/recent updates/d" \
+		| head -n 1 \
+		| grep -o -E -e "[0-9.]+")
 }
 
 repo_latest_version_get_pytest-raises_pv() {
@@ -1402,7 +1436,7 @@ https://github.com/Tencent/rapidjson.git)
 
 repo_latest_version_get_recastnavigation_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "recastnavigation/recastnavigation" "master")
+	local suffix=$(get_head_suffix "github.com" "recastnavigation/recastnavigation" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1436,7 +1470,7 @@ https://github.com/michael-lazar/rtv.git)
 
 repo_latest_version_get_sanitizers-cmake_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "arsenm/sanitizers-cmake" "master")
+	local suffix=$(get_head_suffix "github.com" "arsenm/sanitizers-cmake" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1471,7 +1505,7 @@ repo_latest_version_get_slntools_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/ArsenShnurkov/slntools/master/Main/SLNTools.msi/Product.wxs \
 | grep -F -e "ProductVersion=" | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "ArsenShnurkov/slntools" "master")
+	local suffix=$(get_head_suffix "github.com" "ArsenShnurkov/slntools" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1490,7 +1524,7 @@ repo_latest_version_get_souncloud-python_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/soundcloud/soundcloud-python/master/soundcloud/__init__.py \
 | grep -F -e "__version__ =" | head -n 1 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "soundcloud/soundcloud-python" "master")
+	local suffix=$(get_head_suffix "github.com" "soundcloud/soundcloud-python" "master")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1525,10 +1559,9 @@ git://git.suckless.org/surf)
 
 repo_latest_version_get_taglib_pv() {
 	local pv=2.0 # made up but refers to taglib2 branch ; unofficial
-	local suffix=$(get_head_suffix "taglib/taglib" "taglib2")
+	local suffix=$(get_head_suffix "github.com" "taglib/taglib" "taglib2")
 	echo "${pv}_pre${suffix}"
 }
-
 
 repo_latest_version_get_tesseract_pv() {
 	echo $(get_newest_pv \
@@ -1581,7 +1614,7 @@ https://github.com/oneapi-src/oneTBB.git \
 # untagged.  change from _p to _pre?
 repo_latest_version_get_theorafile_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "FNA-XNA/Theorafile" "master")
+	local suffix=$(get_head_suffix "github.com" "FNA-XNA/Theorafile" "master")
 	echo "9999_p${suffix}"
 }
 
@@ -1643,7 +1676,7 @@ https://github.com/libvips/libvips.git)
 }
 
 repo_latest_version_get_w3crapcli-lastfm_pv() {
-	local suffix=$(get_head_suffix "l29ah/w3crapcli" "master")
+	local suffix=$(get_head_suffix "github.com" "l29ah/w3crapcli" "master")
 	echo "${suffix}"
 }
 
@@ -1693,20 +1726,20 @@ repo_latest_version_get_xwt_pv() {
 https://raw.githubusercontent.com/mono/xwt/master/Xwt/AssemblyInfo.cs \
 | grep -F -e "AssemblyInformationalVersion" | sed -e "s|-prerelease|_pre|" \
 | grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "mono/xwt" "master")
+	local suffix=$(get_head_suffix "github.com" "mono/xwt" "master")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_ycmd_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/ycm-core/ycmd/master/CORE_VERSION)
-	local suffix=$(get_head_suffix "ycm-core/ycmd" "master")
+	local suffix=$(get_head_suffix "github.com" "ycm-core/ycmd" "master")
 	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_ycm-generator_pv() {
 	local pv="9999"
-	local suffix=$(get_head_suffix "rdnetto/YCM-Generator" "stable")
+	local suffix=$(get_head_suffix "github.com" "rdnetto/YCM-Generator" "stable")
 	echo "${pv}_p${suffix}"
 }
 
@@ -1720,6 +1753,6 @@ repo_latest_version_get_zsync2_pv() {
 https://raw.githubusercontent.com/AppImage/zsync2/master/CMakeLists.txt \
 | grep -F -e "set(VERSION" | sed -e "s|set(VERSION \"||g" -e "s|\")||g" \
 | sed -e "s|-||g")
-	local suffix=$(get_head_suffix "AppImage/zsync2" "master")
+	local suffix=$(get_head_suffix "github.com" "AppImage/zsync2" "master")
 	echo "${pv}_p${suffix}"
 }
