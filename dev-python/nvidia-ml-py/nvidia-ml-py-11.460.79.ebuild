@@ -9,7 +9,7 @@ inherit distutils-r1
 DESCRIPTION="Python Bindings for the NVIDIA Management Library"
 HOMEPAGE="http://www.nvidia.com/"
 LICENSE="BSD"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 DEPEND+=" ${PYTHON_DEPS}"
