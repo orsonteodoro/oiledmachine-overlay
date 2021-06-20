@@ -75,7 +75,6 @@ DEPEND="
 	${PYTHON_DEPS}
 "
 BDEPEND="
-	${PYTHON_DEPS}
 	dev-lang/perl
 	sys-devel/bison
 	sys-devel/flex
@@ -143,7 +142,7 @@ src_configure() {
 		append-cxxflags -fPIC -DPIC
 	fi
 
-	python-any-r1_pkg_setup
+	python_setup
 
 	mycmakeargs+=(
 		$(use androiddump && use pcap && echo -DEXTCAP_ANDROIDDUMP_LIBPCAP=yes)
