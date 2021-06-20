@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- only for this ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- obtained from the gentoo-overlay -->
+  <!-- ebuild originator -->
+  <maintainer type="person">
+    <email>conikost@gentoo.org</email>
+    <name>Conrad Kostecki</name>
+  </maintainer>
+  <longdescription>
+    This ebuild fork is to provide multiabi support for enchant.
+  </longdescription>
+</pkgmetadata>
