@@ -1,0 +1,20 @@
+--- xpra-4.2/setup.py.orig	2021-06-20 01:37:06.767496022 -0700
++++ xpra-4.2/setup.py	2021-06-20 01:39:21.992793930 -0700
+@@ -1662,6 +1662,8 @@ else:
+             if data_ENABLED:
+                 for d in ("http-headers", "content-type", "content-categories"):
+                     dirtodir("fs/etc/xpra/%s" % d, "/etc/xpra/%s" % d)
++                if uinput_ENABLED:
++                    copytodir("fs/lib/udev/rules.d/71-xpra-virtual-pointer.rules", os.environ.get("UDEVDIR", "/usr/lib/udev") + "/rules.d/")
+ 
+     # add build_conf to build step
+     cmdclass.update({
+@@ -1689,8 +1691,6 @@ else:
+             if not FREEBSD:
+                 for x in ("tmpfiles.d", "sysusers.d"):
+                     add_data_files("lib/%s" % x, ["fs/lib/%s/xpra.conf" % x])
+-            if uinput_ENABLED:
+-                add_data_files("lib/udev/rules.d/", ["fs/lib/udev/rules.d/71-xpra-virtual-pointer.rules"])
+ 
+     #gentoo does weird things, calls --no-compile with build *and* install
+     #then expects to find the cython modules!? ie:

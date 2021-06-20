@@ -5,7 +5,8 @@ EAPI=7
 
 DISTUTILS_USE_SETUPTOOLS=no
 PYTHON_COMPAT=( python3_{8..10} )
-inherit distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles user xdg
+inherit distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev user \
+xdg
 
 DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based \
 on wimpiggy"
@@ -20,11 +21,11 @@ LICENSE="GPL-2+ BSD-2 CC-BY-SA-3.0 MIT LGPL-3+"
 # MIT - xpra/platform/win32/lsa_logon_lib.py
 #	- xpra/client/gl/gl_colorspace_conversions.py
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
-IUSE+="  avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups dbus
+IUSE+=" avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups dbus
 	dec_avcodec2 doc enc_ffmpeg enc_x264 enc_x265 firejail gtk3 gss
 	html5-client html5_gzip html5_brotli jpeg kerberos ldap ldap3 +lz4 lzo
-	opengl openrc mdns mysql +notifications nvenc nvfbc pam pillow png
-	sd_listen selinux +server sound sqlite ssh sshpass +ssl systemd test
+	opengl openrc mdns mysql +notifications nvenc nvfbc nvjpeg pam pillow
+	png sd_listen selinux +server sound sqlite ssh sshpass +ssl systemd test
 	u2f vpx vsock v4l2 webcam webp websockets X xdg zeroconf zlib"
 GSTREAMER_IUSE+="aac alsa flac jack lame matroska ogg opus oss pulseaudio
 speex twolame vorbis wavpack"
@@ -54,12 +55,14 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	zeroconf? ( mdns )"
 SLOT="0/${PV}"
 MY_PV="$(ver_cut 1-4)"
-NVFBC_MIN_DRV_V="410.66"
 CUDA_7_5_DRV_V="352.31"
+NVFBC_MIN_DRV_V="410.66"
+NVJPEG_MIN_DRV_V="450.36.06"
 # From my experience, firejail doesn't need pillow with webp or with jpeg.
 # The encoding when set to auto may require jpeg and webp.
-# See https://github.com/Xpra-org/xpra/blob/v4.1.3/docs/Build/Dependencies.md for the full list.
+# See https://github.com/Xpra-org/xpra/blob/v4.2/docs/Build/Dependencies.md for the full list.
 DEPEND+=" ${PYTHON_DEPS}
+	acct-group/xpra
 	app-admin/sudo
 	avahi? ( net-dns/avahi[${PYTHON_USEDEP},python] )
 	dbus? ( dev-python/dbus-python[${PYTHON_USEDEP}] )
@@ -68,9 +71,11 @@ DEPEND+=" ${PYTHON_DEPS}
 	dev-python/cryptography[${PYTHON_USEDEP}]
 	dev-python/netifaces[${PYTHON_USEDEP}]
 	dev-python/rencode[${PYTHON_USEDEP}]
-	gtk3? (	dev-python/pygobject:3[${PYTHON_USEDEP}]
+	gtk3? (	dev-python/pycairo[${PYTHON_USEDEP}]
+		dev-python/pygobject:3[${PYTHON_USEDEP},cairo]
 		dev-libs/gobject-introspection
-		x11-libs/gtk+:3 )
+		x11-libs/gtk+:3[introspection]
+		x11-libs/pango[introspection] )
 	csc_libyuv? ( media-libs/libyuv )
 	csc_swscale? ( >=media-video/ffmpeg-1.2.2:0= )
 	cups? ( dev-python/pycups[${PYTHON_USEDEP}] )
@@ -81,7 +86,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	enc_x265? ( >=media-video/ffmpeg-2:0=[x265]
 		      media-libs/x265 )
 	gss? ( dev-python/gssapi[${PYTHON_USEDEP}] )
-	html5-client? ( www-apps/xpra-html5 )
+	html5-client? ( >=www-apps/xpra-html5-4.2 )
 	jpeg? ( >=media-libs/libjpeg-turbo-1.4 )
 	kerberos? ( dev-python/pykerberos[${PYTHON_USEDEP}] )
 	ldap? ( dev-python/python-ldap[${PYTHON_USEDEP}] )
@@ -90,7 +95,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	lzo? ( >=dev-python/python-lzo-0.7.0[${PYTHON_USEDEP}] )
 	mysql? ( dev-python/mysql-connector-python[${PYTHON_USEDEP}] )
 	nvenc? ( dev-python/numpy[${PYTHON_USEDEP}]
-		 dev-python/py3nvml[${PYTHON_USEDEP}]
+	       >=dev-python/nvidia-ml-py-10.418[${PYTHON_USEDEP}]
 		 dev-python/pycuda[${PYTHON_USEDEP}]
 	       >=dev-util/nvidia-cuda-toolkit-7.5:=
 		 media-video/nvidia-video-codec
@@ -100,6 +105,9 @@ DEPEND+=" ${PYTHON_DEPS}
 		 dev-python/pycuda[${PYTHON_USEDEP}]
 	       >=dev-util/nvidia-cuda-toolkit-10.0:=
 	       >=x11-drivers/nvidia-drivers-${NVFBC_MIN_DRV_V} )
+	nvjpeg? ( dev-python/pycuda[${PYTHON_USEDEP}]
+	        >=dev-util/nvidia-cuda-toolkit-11:=
+	        >=x11-drivers/nvidia-drivers-${NVJPEG_MIN_DRV_V} )
 	opengl? ( client? ( dev-python/pyopengl_accelerate[${PYTHON_USEDEP}] )
 		  x11-base/xorg-drivers[video_cards_dummy] )
 	openrc? ( sys-apps/net-tools )
@@ -146,13 +154,14 @@ DEPEND+=" ${PYTHON_DEPS}
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
+	doc? ( app-text/pandoc )
 	test? ( dev-python/numpy[${PYTHON_USEDEP}] )
 	virtual/pkgconfig"
 PATCHES=( "${FILESDIR}/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch"
-	  "${FILESDIR}/${PN}-4.1.3-openrc-init-fix-v2.patch"
 	  "${FILESDIR}/${PN}-3.0_rc1-ldconfig-skip.patch"
+	  "${FILESDIR}/${PN}-4.1.3-openrc-init-fix-v2.patch"
 	  "${FILESDIR}/${PN}-4.1.3-change-init-config-path.patch"
-	  "${FILESDIR}/${PN}-4.0.3-use-py3nvml-for-python3-compat.patch" )
+	  "${FILESDIR}/${PN}-4.2-udev-path.patch" )
 SRC_URI="https://github.com/Xpra-org/xpra/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${P}"
@@ -174,7 +183,6 @@ GPU to work on."
 	fi
 
 	# server only
-	enewgroup ${PN}
 	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
 
 	python_setup
@@ -223,8 +231,11 @@ src_prepare() {
 
 python_prepare_all() {
 	hprefixify -w '/os.path/' setup.py
-	hprefixify tmpfiles.d/xpra.conf xpra/server/{server,socket}_util.py \
+	hprefixify tmpfiles.d/xpra.conf xpra/server/server_util.py \
 		xpra/platform{/xposix,}/paths.py xpra/scripts/server.py
+
+	sed -r -e "/\bdoc_dir =/s:/${PN}\":/${PF}/html\":" \
+		-i setup.py || die
 
 	sed -i -e "s|^opengl =|#opengl =|g" \
 		fs/etc/xpra/conf.d/40_client.conf.in || die
@@ -242,15 +253,16 @@ python_prepare_all() {
 }
 
 python_configure_all() {
-	sed -e \
-	  "/'pulseaudio'/s:DEFAULT_PULSEAUDIO:$(usex pulseaudio True False):" \
-		-i setup.py || die
+	sed -i \
+	-e "/'pulseaudio'/s:DEFAULT_PULSEAUDIO:$(usex pulseaudio True False):" \
+		setup.py || die
 
 	mydistutilsargs=(
 		$(use_with client)
 		$(use_with clipboard)
 		$(use_with doc docs)
 		$(use_with nvenc cuda_kernels)
+		$(use_with nvjpeg)
 		$(use_with cuda_rebuild)
 		$(use_with csc_swscale)
 		$(use_with csc_libyuv)
@@ -297,6 +309,7 @@ python_configure_all() {
 	append-cflags -fno-strict-aliasing
 
 	export XPRA_SOCKET_DIRS="${EPREFIX}/run/xpra"
+	export UDEVDIR=$(get_udevdir)
 }
 
 python_install_all() {

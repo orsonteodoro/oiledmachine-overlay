@@ -61,8 +61,10 @@
   <flag name="mysql">Adds support for MySQL authentication.</flag>
   <flag name="notifications">Enables support for system notifications.</flag>
   <flag name="mp3">Adds support for LAME MP3 encoding.</flag>
-  <flag name="nvenc">Enables support for the nvenc hardware encoder.</flag>
-  <flag name="nvfbc">Enables support for nvfbc screen capture.</flag>
+  <flag name="nvenc">Enables support for the NVENC hardware encoder.</flag>
+  <flag name="nvfbc">Enables support for NvFBC screen capture.</flag>
+  <flag name="nvjpeg">Enables support for nvJPEG for GPU accelerated JPEG
+    compression, decompression.</flag>
   <flag name="ogg">Adds support for the OGG container format.</flag>
   <flag name="opengl">Enables support for OpenGL accelerated rendering on
     client.</flag>
