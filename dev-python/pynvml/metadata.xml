@@ -6,4 +6,10 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <use>
+    <flag name="sdk">Ensures that the required build time libraries are
+      installed.</flag>
+    <flag name="runtime">Ensures in the required driver version is
+      installed.</flag>
+  </use>
 </pkgmetadata>
