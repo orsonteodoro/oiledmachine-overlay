@@ -173,7 +173,8 @@ get_stable_versions() {
 	arch="${1}"
 	for ebuild in $(find "${PORTAGE_DIR}/${category}/${pn}" \
 			-name "*.ebuild" 2>/dev/null \
-			| esort | tr " " "\n" ) ; do
+			| esort \
+			| tr " " "\n" ) ; do
 		if grep -q -P -e "KEYWORDS=\".*(?<!\~)${arch}" "${ebuild}"
 		then
 			echo "${ebuild}"
@@ -184,11 +185,14 @@ get_stable_versions() {
 # only applies if repo has v prefix for the version
 get_newest_prefixed_v_pv() {
 	local uri="${1}"
-	local r=$(git ls-remote --tags "${uri}" | cut -f 2 -d "v" \
+	local r=$(git ls-remote --tags "${uri}" \
+		| cut -f 2 -d "v" \
 		| grep -v -G -e "[\^]" \
 		| sed -r -e "s#-(alpha|beta|rc|pre)\.?#_\1#g" \
 		| sed -e "s|_preview|_pre|" \
-		| esort | tr " " "\n" | tail -n 1)
+		| esort \
+		| tr " " "\n" \
+		| tail -n 1)
 	if echo "${r}" | grep -G -e "^[^0-9]" ; then
 		echo "${category}/${pn} has tag that is not a version r=${r}"
 		exit 1
@@ -203,8 +207,10 @@ get_newest_prefixed_v_pv() {
 # gets all tags without prefixed v
 get_tags() {
 	local uri="${1}"
-	local r=$(git ls-remote --tags "${uri}" | cut -f 3 -d "/" \
-		| grep -v -G -e "[\^]" | sed -r -e "s|^v||g" \
+	local r=$(git ls-remote --tags "${uri}" \
+		| cut -f 3 -d "/" \
+		| grep -v -G -e "[\^]" \
+		| sed -r -e "s|^v||g" \
 		| sed -r -e "s#-(alpha|beta|rc|pre)\.?#_\1#g" \
 		| sed -e "s|_preview|_pre|")
 	if [[ -z "${r}" ]] ; then
@@ -230,7 +236,11 @@ strip_hinter() {
 # You need to call `| tr " " "\n"` immediately afterwards.
 esort() {
       	ARG=$(</dev/stdin)
-	echo -e $(echo -e "${ARG}" | demote_prereleases | tr " " "\n" | sort -V | strip_hinter)
+	echo -e $(echo -e "${ARG}" \
+		| demote_prereleases \
+		| tr " " "\n" \
+		| sort -V \
+		| strip_hinter)
 }
 
 # same as get_newest_prefixed_v_pv but with non prefixed v
@@ -238,7 +248,8 @@ get_newest_pv() {
 	local uri="${1}"
 	# adjust sorting so that _alpha,_beta has lower priority than 0__
 	local r=$(get_tags ${uri} \
-		| esort | tr " " "\n" \
+		| esort \
+		| tr " " "\n" \
 		| tail -n 1)
 	if echo "${r}" | grep -G -e "^[^0-9]" ; then
 		echo "${category}/${pn} has tag that is not a version r=${r}"
@@ -257,17 +268,22 @@ get_head_suffix() {
 	local branch="${3}"
 	# github reports local timestamp on www (Firefox) but on wget it is UTC/zulu
 	echo $(TZ="America/Los_Angeles" date -d "$(wget -q -O - \
-https://${domain}/${org_project}/commit/\
-$(git ls-remote --heads https://${domain}/${org_project}.git \
-| grep -F -e "${branch}" | cut -f 1 -d $'\t') | grep -F -e "relative-time" \
-| grep -G -o -e "datetime=\".*\" " \
-| sed -e "s|datetime=\"||g" -e "s|\" ||g")" +"%Y%m%d")
+https://${domain}/${org_project}/commit/$(git ls-remote --heads \
+https://${domain}/${org_project}.git \
+			| grep -F -e "${branch}" \
+			| cut -f 1 -d $'\t') \
+		| grep -F -e "relative-time" \
+		| grep -G -o -e "datetime=\".*\" " \
+		| sed -e "s|datetime=\"||g" -e "s|\" ||g")" +"%Y%m%d")
 }
 
 get_head_suffix_rss() {
 	local url="${1}"
-	wget -q -O - "${1}" | grep -F -e "pubDate" | sed -r -e "s|[</]+pubDate[>]||g" \
-	| head -n 1 | sed -r -e "s|^[ ]+||g"
+	wget -q -O - "${1}" \
+		| grep -F -e "pubDate" \
+		| sed -r -e "s|[</]+pubDate[>]||g" \
+		| head -n 1 \
+		| sed -r -e "s|^[ ]+||g"
 }
 
 source "${SCRAPERS_FILE}"
@@ -282,7 +298,8 @@ edebug() {
 gen_save_pv() {
 	mkdir -p "${CACHE_DIR}/${type}/${category}/${pn}"
 	rm -rf "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}"
-	"${fn}" > "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}"
+		"${fn}" \
+		> "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}"
 	cat "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}"
 }
 
@@ -291,7 +308,8 @@ get_pv() {
 	local type="${2}" # can be gentoo or repos
 	# can't use SLOT because it uses ver_cut and variables
 	if [[ -f "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}" ]] ; then
-		local datec=$(stat -c "%W" "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}")
+		local datec=$(stat -c "%W" \
+			"${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}")
 		local now=$(date +"%s")
 		if (( ${now} < ${datec} + ${CACHE_EXPIRE} )) ; then
 			cat "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}"
@@ -313,9 +331,11 @@ scan_repos() {
 			| sed -r -e "s|${pn}-||g" -e "s|\.ebuild$||")
 		local repo_pv
 		edebug "Inspecting ${category}/${pn}"
-		for p in $(grep -E -e "^repo_latest_version_get_(${category}-)?" "${SCRAPERS_FILE}" \
-			| sed -r -e "s|\(\) \{||g" -e "s|repo_latest_version_get_(${category}-)?||" \
-			-e "s|_pv||g") ; do
+		for p in $(grep -E -e "^repo_latest_version_get_(${category}-)?" \
+					"${SCRAPERS_FILE}" \
+				| sed -r -e "s|\(\) \{||g" \
+					-e "s|repo_latest_version_get_(${category}-)?||" \
+					-e "s|_pv||g") ; do
 			[[ "${p}" != "${pn}" ]] && continue
 
 			if grep -q -F -e \
@@ -371,13 +391,21 @@ scan_repos() {
 filter_by_slot() {
 	local stable_versions=$(get_stable_versions "${STABLE_ARCH}")
 	if [[ "${category}/${pn}" == "dev-lang/lua" ]] ; then
-		echo "${stable_versions}" | grep -F -e "^"$(echo "${oiledmachine_pv}" | cut -f 1-2 -d ".")
+		echo "${stable_versions}" \
+			| grep -F -e "^"$(echo "${oiledmachine_pv}" \
+						| cut -f 1-2 -d ".")
 	elif [[ "${category}/${pn}" == "dev-util/premake" ]] ; then
-		echo "${stable_versions}" | grep -F -e "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d ".")
+		echo "${stable_versions}" \
+			| grep -F -e "^"$(echo "${oiledmachine_pv}" \
+						| cut -f 1 -d ".")
 	elif [[ "${category}/${pn}" == "media-gfx/blender" ]] ; then
-		echo "${stable_versions}" | grep -F -e "^"$(echo "${oiledmachine_pv}" | cut -f 1-2 -d ".")
+		echo "${stable_versions}" \
+			| grep -F -e "^"$(echo "${oiledmachine_pv}" \
+						| cut -f 1-2 -d ".")
 	elif [[ "${category}/${pn}" == "net-libs/nodejs" ]] ; then
-		echo "${stable_versions}" | grep -F -e "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d ".")
+		echo "${stable_versions}" \
+			| grep -F -e "^"$(echo "${oiledmachine_pv}" \
+						| cut -f 1 -d ".")
 	else
 		echo -e "${stable_versions}"
 	fi
@@ -395,7 +423,8 @@ scan_gentoo_overlay() {
 		local pn=$(echo "${ebuild}" | cut -f 3 -d "/")
 		local oiledmachine_pv=$(echo "${ebuild_filename}" \
 			| sed -r -e "s|${pn}-||g" -e "s|\.ebuild$||")
-		local versions=$(filter_by_slot $(get_stable_versions "${STABLE_ARCH}"))
+		local versions=$(filter_by_slot $(get_stable_versions \
+							"${STABLE_ARCH}"))
 		local newest=$(echo -e "${versions}" | tail -n 1)
 		if (( ${#newest} > 0 )) ; then
 			edebug "Inspecting ${category}/${pn}"
