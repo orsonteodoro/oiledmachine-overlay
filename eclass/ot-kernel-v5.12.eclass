@@ -190,6 +190,15 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
+	if use tresor ; then
+		if [[ -n "${OT_KERNEL_DEVELOPER}" && "${OT_KERNEL_DEVELOPER}" == "1" ]] ; then
+			:;
+		else
+			die \
+"Building for TRESOR is currently broken for ${PV}.  Use the older LTS\n\
+branches instead.  Disable the tresor USE flag for this series to continue."
+		fi
+	fi
 	if use kernel-gcc-patch ; then
 		CC=$(tc-getCC)
 		if ! tc-is-gcc ; then
@@ -320,7 +329,11 @@ function ot-kernel_pkg_postinst_cb() {
 # Filtered patch function
 function ot-kernel_filter_patch_cb() {
 	local path="${1}"
-	if [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
+	if [[ "${path}" =~ "ck-0.210-for-5.12-d66b728-47a8b81.patch" ]] ; then
+		_dpatch "${PATCH_OPS}" "${path}"
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/ck-patchset-5.12-ck1-fix-cpufreq-gov-performance.patch"
+	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
 		einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
