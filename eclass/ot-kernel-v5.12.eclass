@@ -196,7 +196,7 @@ function ot-kernel_pkg_setup_cb() {
 			CC=$(get_abi_CHOST ${ABI})-gcc
 		fi
 		if has_version ">=sys-devel/gcc-11" ; then
-			if $(gcc-fullversion) -ge 11 ; then
+			if ver_test $(gcc-fullversion) -ge 11 ; then
 				:;
 			else
 				ewarn \

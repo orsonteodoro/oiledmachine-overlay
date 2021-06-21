@@ -833,6 +833,9 @@ function _filter_genpatches() {
 	P_GENPATCHES_BLACKLIST+=" 5000 5001 5002 5003 5004 5005 5006 5007"
 	# Already applied bmq.
 	P_GENPATCHES_BLACKLIST+=" 5020 5021"
+	# All related CPU scheduler fixes and patches are disabled to confirm.
+	# 5022 fails to apply anyway
+	P_GENPATCHES_BLACKLIST+=" 5022"
 	if declare -f ot-kernel_filter_genpatches_blacklist_cb > /dev/null ; then
 		# Disable failing patches
 		P_GENPATCHES_BLACKLIST+=$(ot-kernel_filter_genpatches_blacklist_cb)
