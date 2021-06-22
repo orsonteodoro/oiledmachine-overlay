@@ -302,8 +302,23 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
 	lto? (
-		>=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
-		>=sys-devel/lld-${CLANG_V}
+		|| (
+			(
+				sys-devel/clang:11[${MULTILIB_USEDEP}]
+				sys-devel/llvm:11[${MULTILIB_USEDEP}]
+				>=sys-devel/lld-11
+			)
+			(
+				sys-devel/clang:12[${MULTILIB_USEDEP}]
+				sys-devel/llvm:12[${MULTILIB_USEDEP}]
+				>=sys-devel/lld-12
+			)
+			(
+				sys-devel/clang:13[${MULTILIB_USEDEP}]
+				sys-devel/llvm:13[${MULTILIB_USEDEP}]
+				>=sys-devel/lld-13
+			)
+		)
 	)
 	|| ( >=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
 	     >=sys-devel/gcc-7.3.0 )
