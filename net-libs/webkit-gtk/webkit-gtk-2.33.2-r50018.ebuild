@@ -318,11 +318,6 @@ BDEPEND+="
 				sys-devel/llvm:12[${MULTILIB_USEDEP}]
 				>=sys-devel/lld-12
 			)
-			(
-				sys-devel/clang:13[${MULTILIB_USEDEP}]
-				sys-devel/llvm:13[${MULTILIB_USEDEP}]
-				>=sys-devel/lld-13
-			)
 		)
 	)
 	|| ( >=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
