@@ -95,9 +95,9 @@ PATCH_ZENTUNE_MUQSS_COMMITS=\
 2b541bf1e5e27c51f96326f6c9d6c8abcf682d93 \
 a09dda608cbadc92964cb29cf2fef061200e08c2"
 
-IUSE+=" bbrv2 +cfs disable_debug futex-wait-multiple futex2 \
-+genpatches +kernel-gcc-patch muqss +O3 prjc rt tresor tresor_aesni \
-tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support \
+IUSE+=" bbrv2 +cfs disable_debug futex-wait-multiple futex2 +genpatches
++kernel-gcc-patch lto muqss +O3 prjc rt tresor tresor_aesni tresor_i686
+tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support
 uksm zen-sauce -zen-tune zen-tune-muqss"
 REQUIRED_USE+="
 	^^ ( cfs muqss prjc )
@@ -146,6 +146,28 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
 LICENSE+=" zen-tune-muqss? ( GPL-2 )"
+
+CLANG_RDEPEND="
+	(
+		sys-devel/clang:11
+		sys-devel/llvm:11
+		>=sys-devel/lld-11
+	)
+	(
+		sys-devel/clang:12
+		sys-devel/llvm:12
+		>=sys-devel/lld-12
+	)
+	(
+		sys-devel/clang:13
+		sys-devel/llvm:13
+		>=sys-devel/lld-13
+	)"
+
+RDEPEND+="
+	lto? (
+		|| ( ${CLANG_RDEPEND} )
+	)"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
