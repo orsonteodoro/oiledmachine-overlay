@@ -35,8 +35,10 @@ REQUIRED_USE+="
 		closure_compiler_native
 		closure_compiler_nodejs	)"
 # For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/master/packages/google-closure-compiler/package.json
-NODE_V="12" # Upstream uses 10
+# https://github.com/google/closure-compiler-npm/blob/v20210601.0.0/packages/google-closure-compiler/package.json
+# For dependencies, see
+# https://github.com/google/closure-compiler-npm/blob/v20210601.0.0/.github/workflows/build.yml
+NODE_V="12" # Upstream uses 14 on linux but others 10, 12
 CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_V} )"
 JDK_DEPEND=" >=dev-java/openjdk-bin-${JAVA_V}:${JAVA_V}"
 JRE_DEPEND=" >=dev-java/openjdk-jre-bin-${JAVA_V}:${JAVA_V}"
@@ -56,7 +58,7 @@ DEPEND+=" ${RDEPEND}
 BDEPEND+=" ${CDEPEND}
 	${JDK_DEPEND}
 	dev-java/maven-bin
-	dev-util/bazel
+	>=dev-util/bazel-3.4.1
 	dev-vcs/git
 	sys-apps/yarn"
 FN_DEST="${PN}-${PV}.tar.gz"
