@@ -12,8 +12,8 @@ HOMEPAGE="http://www.openimagedenoise.org/"
 KEYWORDS="~amd64"
 LICENSE="Apache-2.0"
 # MKL_DNN is oneDNN 1.6.2 with additional custom commits.
-MKL_DNN_COMMIT="603620ba45185e7d91fe112b69287e7d86c64353"
-OIDN_WEIGHTS_COMMIT="08092e46a1961b13b70e48ad80fa19b452bd4c01"
+MKL_DNN_COMMIT="eb3e9670053192258d5a66f61486e3cfe25618b3"
+OIDN_WEIGHTS_COMMIT="a34b7641349c5a79e46a617d61709c35df5d6c28"
 ORG_GH="https://github.com/OpenImageDenoise"
 SLOT="0/${PV}"
 IUSE+=" +apps +built-in-weights +clang doc disable-sse41-check gcc icc openimageio"
@@ -28,17 +28,46 @@ MIN_ICC_V="17.0" # 15.0 has c++11 support, but project only supports 17
 # See scripts/build.py for release versioning
 CDEPEND=" ${PYTHON_DEPS}"
 DEPEND+=" ${CDEPEND}
-	>=dev-cpp/tbb-2017
-	openimageio? ( media-libs/openimageio )
-	virtual/libc"
+	>=dev-cpp/tbb-2021.2.0
+	virtual/libc
+	openimageio? ( media-libs/openimageio )"
 RDEPEND+=" ${DEPEND}"
+CLANG_DEPENDS="
+	(
+		sys-devel/clang:10
+		sys-devel/llvm:10
+		=sys-devel/clang-runtime-10*
+		>=sys-devel/lld-10
+	)
+	(
+		sys-devel/clang:11
+		sys-devel/llvm:11
+		=sys-devel/clang-runtime-11*
+		>=sys-devel/lld-11
+	)
+	(
+		sys-devel/clang:12
+		sys-devel/llvm:12
+		=sys-devel/clang-runtime-12*
+		>=sys-devel/lld-12
+	)
+	(
+		sys-devel/clang:13
+		sys-devel/llvm:13
+		=sys-devel/clang-runtime-13*
+		>=sys-devel/lld-13
+	)"
 BDEPEND+=" ${CDEPEND}
 	|| (
-		clang? ( >=sys-devel/clang-${MIN_CLANG_V} )
+		clang? (
+			|| (
+				${CLANG_DEPENDS}
+			)
+		)
 		gcc? ( >=sys-devel/gcc-${MIN_GCC_V} )
 		icc? ( >=dev-lang/icc-${MIN_ICC_V} )
 	)
-	>=dev-lang/ispc-1.14.1
+	>=dev-lang/ispc-1.15.0
 	>=dev-util/cmake-3.1"
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
@@ -55,6 +84,7 @@ ${ORG_GH}/oidn-weights/archive/${OIDN_WEIGHTS_COMMIT}.tar.gz
 	-> ${PN}-weights-${OIDN_WEIGHTS_COMMIT:0:7}.tar.gz )"
 fi
 RESTRICT="mirror"
+DOCS=( CHANGELOG.md README.md readme.pdf )
 
 pkg_setup() {
 	if [[ ! -f /proc/cpuinfo ]] ; then
@@ -101,7 +131,7 @@ src_configure() {
 	local target_v=""
 
 	if use gcc && \
-	ls "${EROOT}"/usr/${CHOST}/gcc-bin/*/g++ 2>/dev/null 1>/dev/null ; then
+	ls /usr/${CHOST}/gcc-bin/*/g++ 2>/dev/null 1>/dev/null ; then
 		# GCC 9.3.0 will freeze indefinitely if -jN,
 		# where N is number of cores
 
@@ -110,12 +140,12 @@ src_configure() {
 		# g++: fatal error: Killed signal terminated program cc1plus
 
 		# g++ 7.5.0 works
-		V=$(ls "${EROOT}"/usr/${CHOST}/gcc-bin/ | sort -rV \
+		V=$(ls /usr/${CHOST}/gcc-bin/ | sort -rV \
 			| tr "\n"  " " | tr " " "\n")
 		for v in ${V} ; do
 			einfo "Checking ${v}"
-			export CC="${EROOT}/usr/${CHOST}/gcc-bin/${v}/gcc"
-			export CXX="${EROOT}/usr/${CHOST}/gcc-bin/${v}/g++"
+			export CC="/usr/${CHOST}/gcc-bin/${v}/gcc"
+			export CXX="/usr/${CHOST}/gcc-bin/${v}/g++"
 			cc_v=$(gcc-version)
 			if ver_test $(ver_cut 1-3 ${v}) -eq 9.3.0 ; then
 				continue
@@ -150,18 +180,18 @@ to continue.\n
 		cc_v=$(gcc-version)
 		einfo "Falling back to gcc ${target_v}"
 		mycmakeargs+=(
-		-DCMAKE_CXX_COMPILER="${EROOT}/usr/${CHOST}/gcc-bin/${target_v}/g++"
-		-DCMAKE_C_COMPILER="${EROOT}/usr/${CHOST}/gcc-bin/${target_v}/gcc"
+		-DCMAKE_CXX_COMPILER="/usr/${CHOST}/gcc-bin/${target_v}/g++"
+		-DCMAKE_C_COMPILER="/usr/${CHOST}/gcc-bin/${target_v}/gcc"
 		)
 	elif use clang \
-	&& ls "${EROOT}"/usr/lib/llvm/*/bin/clang 2>/dev/null 1>/dev/null ; then
+	&& ls /usr/lib/llvm/*/bin/clang 2>/dev/null 1>/dev/null ; then
 		for v in $(ls /usr/lib/llvm/ | tr "\n" " " \
 				| tr " " "\n" | sort -rV) ; do
 			einfo "Checking ${v}"
 			[[ "${v}" == "roc" ]] && continue
-			if [[ -f "${EROOT}/usr/lib/llvm/${v}/bin/clang" ]] ; then
-				export CC="${EROOT}/usr/lib/llvm/${v}/bin/clang"
-				export CXX="${EROOT}/usr/lib/llvm/${v}/bin/clang++"
+			if [[ -f "/usr/lib/llvm/${v}/bin/clang" ]] ; then
+				export CC="/usr/lib/llvm/${v}/bin/clang"
+				export CXX="/usr/lib/llvm/${v}/bin/clang++"
 				cc_v=$(clang-version)
 				if ver_test ${cc_v} -lt ${MIN_CLANG_V} ; then
 					continue
@@ -177,8 +207,8 @@ to continue.\n
 		cc_v=$(gcc-version)
 		einfo "Falling back to clang ${target_v}"
 		mycmakeargs+=(
-		-DCMAKE_CXX_COMPILER="${EROOT}/usr/lib/llvm/${target_v}/bin/clang++"
-		-DCMAKE_C_COMPILER="${EROOT}/usr/lib/llvm/${target_v}/bin/clang"
+		-DCMAKE_CXX_COMPILER="/usr/lib/llvm/${target_v}/bin/clang++"
+		-DCMAKE_C_COMPILER="/usr/lib/llvm/${target_v}/bin/clang"
 		)
 	elif use icc \
 	&& has_version '>=sys-devel/icc-${MIN_ICC_V}' ; then
@@ -190,30 +220,30 @@ to continue.\n
 			die \
 "You must set OIDN_ICC_C_PATH to the absolute path to icc without EROOT."
 		fi
-		if [[ ! -f "${EROOT}/${OIDN_ICPC_CXX_PATH}" ]] ; then
+		if [[ ! -f "/${OIDN_ICPC_CXX_PATH}" ]] ; then
 			die \
-"Cannot find ${EROOT}/${OIDN_ICPC_CXX_PATH}."
+"Cannot find${OIDN_ICPC_CXX_PATH}."
 		fi
-		if [[ ! -f "${EROOT}/${OIDN_ICC_C_PATH}" ]] ; then
+		if [[ ! -f "/${OIDN_ICC_C_PATH}" ]] ; then
 			die \
-"Cannot find ${EROOT}/${OIDN_ICC_CXX_PATH}."
+"Cannot find${OIDN_ICC_CXX_PATH}."
 		fi
-		local cxx_v=$("${EROOT}/${OIDN_ICPC_CXX_PATH}" --version \
+		local cxx_v=$("/${OIDN_ICPC_CXX_PATH}" --version \
 				| head -n 1 | cut -f 3 -d " ")
 		einfo "Falling back to icpc ${cc_v}"
 		if ver_test ${cxx_v} -lt ${MIN_ICC_V} ; then
 			die \
 "icpc version ${cxx_v} not supported"
 		fi
-		local cc_v=$("${EROOT}/${OIDN_ICC_C_PATH}" --version \
+		local cc_v=$("/${OIDN_ICC_C_PATH}" --version \
 				| head -n 1 | cut -f 3 -d " ")
 		if ver_test ${cc_v} -lt ${MIN_ICC_V} ; then
 			die \
 "icc version ${cc_v} not supported"
 		fi
 		mycmakeargs+=(
-			-DCMAKE_CXX_COMPILER="${EROOT}/${OIDN_ICPC_CXX_PATH}"
-			-DCMAKE_C_COMPILER="${EROOT}/${OIDN_ICC_C_PATH}"
+			-DCMAKE_CXX_COMPILER="/${OIDN_ICPC_CXX_PATH}"
+			-DCMAKE_C_COMPILER="/${OIDN_ICC_C_PATH}"
 		)
 	else
 		die "The compiler is not supported."
@@ -236,4 +266,10 @@ src_install() {
 	if ! use doc ; then
 		rm -vrf "${ED}/usr/share/doc/oidn-${PV}/readme.pdf" || die
 	fi
+	use doc && einstalldocs
+	docinto licenses
+	dodoc LICENSE.txt \
+		third-party-programs.txt \
+		third-party-programs-oneDNN.txt \
+		third-party-programs-oneTBB.txt
 }
