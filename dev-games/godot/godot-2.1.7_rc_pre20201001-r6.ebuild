@@ -11,7 +11,6 @@ STATUS="rc"
 GODOT_PLATFORMS_=(android ios linux osx web windows)
 EPLATFORMS="server_dedicated server_headless ${GODOT_PLATFORMS_[@]/#/godot_platforms_}"
 PYTHON_COMPAT=( python3_{8..10} )
-LLVM_MAX_LTO_SLOT=11 # LTO breaks with 13 but 11 is stable
 inherit check-reqs desktop eutils flag-o-matic llvm multilib-build platforms \
 python-any-r1 scons-utils toolchain-funcs
 
@@ -197,8 +196,18 @@ CDEPEND_CLANG="
 	clang? (
 		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
 		lto? (
-			<sys-devel/clang-$((${LLVM_MAX_LTO_SLOT}+1))[${MULTILIB_USEDEP}]
-			<sys-devel/llvm-$((${LLVM_MAX_LTO_SLOT}+1))[${MULTILIB_USEDEP},gold]
+			|| (
+				(
+					sys-devel/clang:11[${MULTILIB_USEDEP}]
+					sys-devel/llvm:11[${MULTILIB_USEDEP}]
+					>=sys-devel/lld-11
+				)
+				(
+					sys-devel/clang:12[${MULTILIB_USEDEP}]
+					sys-devel/llvm:12[${MULTILIB_USEDEP}]
+					>=sys-devel/lld-12
+				)
+			)
 		)
 	)"
 CDEPEND_GCC="
@@ -533,7 +542,17 @@ pkg_setup() {
 	check-reqs_pkg_setup
 	python-any-r1_pkg_setup
 	if use lto && use clang ; then
-		LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
+		if has_version "sys-devel/clang:12" \
+			&& has_version "sys-devel/llvm:12" ; then
+			LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
+		elif has_version "sys-devel/clang:11" \
+			&& has_version "sys-devel/llvm:11" ; then
+			LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
+		else
+			die \
+"Both sys-devel/clang:\${SLOT} and sys-devel/llvm:\${SLOT} must have the same\n\
+slot."
+		fi
 		einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
 		llvm_pkg_setup
 	fi

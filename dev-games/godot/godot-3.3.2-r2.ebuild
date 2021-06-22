@@ -12,8 +12,6 @@ VIRTUALX_REQUIRED=manual
 PYTHON_COMPAT=( python3_{8..10} )
 GODOT_PLATFORMS_=(android ios linux mono osx web windows)
 EPLATFORMS="server_dedicated server_headless ${GODOT_PLATFORMS_[@]/#/godot_platforms_}"
-LLVM_MAX_LTO_SLOT=11 # LTO breaks with 13 but 11 is stable
-LLVM_MIN_WASM_SLOT=13
 inherit check-reqs desktop eutils flag-o-matic llvm multilib-build platforms \
 python-any-r1 scons-utils virtualx
 
@@ -333,12 +331,22 @@ CDEPEND_CLANG="
 	clang? (
 		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
 		lto? (
-			<sys-devel/clang-$((${LLVM_MAX_LTO_SLOT}+1))[${MULTILIB_USEDEP}]
-			<sys-devel/llvm-$((${LLVM_MAX_LTO_SLOT}+1))[${MULTILIB_USEDEP},gold]
+			|| (
+				(
+					sys-devel/clang:11[${MULTILIB_USEDEP}]
+					sys-devel/llvm:11[${MULTILIB_USEDEP}]
+					>=sys-devel/lld-11
+				)
+				(
+					sys-devel/clang:12[${MULTILIB_USEDEP}]
+					sys-devel/llvm:12[${MULTILIB_USEDEP}]
+					>=sys-devel/lld-12
+				)
+			)
 		)
 		godot_web_wasm32? (
-			>=sys-devel/clang-${LLVM_MIN_WASM_SLOT}[${MULTILIB_USEDEP}]
-			>=sys-devel/llvm-${LLVM_MIN_WASM_SLOT}[${MULTILIB_USEDEP}]
+			sys-devel/clang:13[${MULTILIB_USEDEP}]
+			sys-devel/llvm:13[${MULTILIB_USEDEP}]
 		)
 	)"
 CDEPEND_GCC="
@@ -847,12 +855,22 @@ pkg_setup() {
 	check-reqs_pkg_setup
 	python-any-r1_pkg_setup
 	if use lto && use clang ; then
-		LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
+		if has_version "sys-devel/clang:12" \
+			&& has_version "sys-devel/llvm:12" ; then
+			LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
+		elif has_version "sys-devel/clang:11" \
+			&& has_version "sys-devel/llvm:11" ; then
+			LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
+		else
+			die \
+"Both sys-devel/clang:\${SLOT} and sys-devel/llvm:\${SLOT} must have the same\n\
+slot."
+		fi
 		einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
 		llvm_pkg_setup
 	fi
 	if use clang && use godot_web_wasm32 ; then
-		LLVM_MAX_SLOT=${LLVM_MIN_WASM_SLOT}
+		LLVM_MAX_SLOT=13
 		einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for WASM"
 		llvm_pkg_setup
 	fi
