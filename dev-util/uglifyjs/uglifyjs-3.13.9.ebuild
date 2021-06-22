@@ -14,7 +14,7 @@ SLOT="0"
 NODEJS_V="0.8"
 RDEPEND+=" >=net-libs/nodejs-${NODEJS_V}"
 BDEPEND+=" >=net-libs/nodejs-${NODEJS_V}"
-SRC_URI="https://github.com/mishoo/UglifyJS/archive/refs/tags/v3.13.5.tar.gz
+SRC_URI="https://github.com/mishoo/UglifyJS/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-${PV}"
