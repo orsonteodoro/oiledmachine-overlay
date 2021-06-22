@@ -228,10 +228,10 @@ like npm.  These use flags are not recommended."
 		fi
 	fi
 
-	if use tresor ; then
-		ewarn \
-"TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
-	fi
+#	if use tresor ; then
+#		ewarn \
+#"TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
+#	fi
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes
@@ -329,7 +329,17 @@ function ot-kernel_pkg_postinst_cb() {
 # Filtered patch function
 function ot-kernel_filter_patch_cb() {
 	local path="${1}"
-	if [[ "${path}" =~ "ck-0.210-for-5.12-d66b728-47a8b81.patch" ]] ; then
+	if [[ "${path}" =~ "prjc_v5.12-r1.patch" ]] ; then
+		_dpatch "${PATCH_OPS}" "${path}"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
+	elif [[ "${path}" =~ prjc_v5.12 ]] ; then
+		_dpatch "${PATCH_OPS}" "${path}"
+		ewarn \
+"Applying genpatches 5022 kernel/sched/pelt.h fix for newer Project C.  It\n\
+still needs testing.  Remove this notice or codeblock if it is a success or\n\
+fixed upstream."
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
+	elif [[ "${path}" =~ "ck-0.210-for-5.12-d66b728-47a8b81.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
 		_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/ck-patchset-5.12-ck1-fix-cpufreq-gov-performance.patch"

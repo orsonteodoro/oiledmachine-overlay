@@ -827,14 +827,13 @@ function apply_bbrv2() {
 # For example,
 # GENPATCHES_BLACKLIST="2500 2600"
 function _filter_genpatches() {
-	# Already applied 5010-5013 GraySky2's kernel_gcc_patche
+	# Already applied 5010-5013 GraySky2's kernel_gcc_patches
 	P_GENPATCHES_BLACKLIST=" 5010 5011 5012 5013"
 	# Already applied 5000-5007 ZSTD patches
 	P_GENPATCHES_BLACKLIST+=" 5000 5001 5002 5003 5004 5005 5006 5007"
 	# Already applied bmq.
 	P_GENPATCHES_BLACKLIST+=" 5020 5021"
-	# All related CPU scheduler fixes and patches are disabled to confirm.
-	# 5022 fails to apply anyway
+	# Already applied the pelt.h patch conditionally.
 	P_GENPATCHES_BLACKLIST+=" 5022"
 	if declare -f ot-kernel_filter_genpatches_blacklist_cb > /dev/null ; then
 		# Disable failing patches
