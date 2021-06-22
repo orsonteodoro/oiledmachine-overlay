@@ -25,7 +25,7 @@ IUSE+=" X +abi7-compat +alembic -asan +boost +bullet +collada \
 +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise \
 +openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf -potrace \
 release +sdl +sndfile +tbb test +tiff +usd -valgrind"
-IUSE+=" +llvm-11 llvm-12" # same as Mesa and LLVM latest stable keyword
+IUSE+=" llvm-11 +llvm-12" # same as Mesa and LLVM latest stable keyword
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
