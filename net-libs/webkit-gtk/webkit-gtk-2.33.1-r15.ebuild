@@ -472,6 +472,9 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 
 	if use openmp ; then
 		tc-check-openmp
+	fi
+
+	if use openmp || use lto ; then
 		llvm_pkg_setup
 	fi
 
