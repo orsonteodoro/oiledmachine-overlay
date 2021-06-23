@@ -15,7 +15,7 @@ LICENSE="GPL-3+"
 # Live ebuilds don't get KEYWORDS
 
 SLOT="0/${PV}"
-IUSE+=" android box2d bullet clang curl doc gles gles2 gles3 gme gnome gtk2 kde \
+IUSE+=" android box2d bullet clang curl doc gles gles2 gles3 gme gnome gtk2 kde
 linux minimal +openal +opengl opengl1 +opengl3 radialgm sdl2 test +vanilla +X"
 REQUIRED_USE+="
 	gles? ( sdl2 )
@@ -79,19 +79,41 @@ DEPEND+=" ${CDEPEND}
 	     sys-libs/zlib[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)
 	>=dev-util/cmake-3.14
-	dev-util/pkgconfig[${MULTILIB_USEDEP}]
 	clang? (
-		>=sys-devel/clang-10[${MULTILIB_USEDEP}]
+		|| (
+			(
+		sys-devel/clang:10[${MULTILIB_USEDEP}]
+		sys-devel/llvm:10[${MULTILIB_USEDEP}]
 		>=sys-devel/lld-10
-		>=sys-devel/llvm-10[${MULTILIB_USEDEP}]
+			)
+			(
+		sys-devel/clang:11[${MULTILIB_USEDEP}]
+		sys-devel/llvm:11[${MULTILIB_USEDEP}]
+		>=sys-devel/lld-11
+			)
+			(
+		sys-devel/clang:12[${MULTILIB_USEDEP}]
+		sys-devel/llvm:12[${MULTILIB_USEDEP}]
+		>=sys-devel/lld-12
+			)
+			(
+		sys-devel/clang:13[${MULTILIB_USEDEP}]
+		sys-devel/llvm:13[${MULTILIB_USEDEP}]
+		>=sys-devel/lld-13
+			)
+		)
 	)
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
-EGIT_COMMIT="2595b7b6cdae44e2395f9cad83215d95a9adc4fb"
-SRC_URI=\
-"https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz \
+EGIT_COMMIT="9161a29128a1de4e8c0bce4055cb95b1c6a4e993"
+SRC_URI="
+https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/enigma-dev-${EGIT_COMMIT}"
 RESTRICT="mirror"
