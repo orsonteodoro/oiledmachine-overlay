@@ -16,8 +16,8 @@ BDEPEND+=" net-libs/nodejs[npm]"
 SRC_URI="\
 https://github.com/hackjutsu/Lepton/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz"
-ELECTRON_APP_ELECTRON_V="8.4.0"
-ELECTRON_APP_REACT_V="16.6.3"
+ELECTRON_APP_ELECTRON_V="13.0.0"
+ELECTRON_APP_REACT_V="17.0.0"
 S="${WORKDIR}/${PN^}-${PV}"
 RESTRICT="mirror"
 LIBSASS_EXT="auto"
