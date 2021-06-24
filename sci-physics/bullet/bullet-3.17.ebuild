@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-multilib python-single-r1
+inherit cmake-multilib python-single-r1 toolchain-funcs
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
 HOMEPAGE="http://www.bulletphysics.com/"
@@ -59,6 +59,7 @@ LICENSE+=" examples? ( all-rights-reserved LGPL-2.1+ )"
 # examples/ThirdPartyLibs/openvr/bin/osx64/OpenVR.framework/Headers/openvr_capi.h
 #  just contains all-rights-reserved but no mention of other license
 LICENSE+=" examples? ( all-rights-reserved )"
+
 # In the root folder (examples/ThirdPartyLibs/openvr) it is BSD
 LICENSE+=" examples? ( BSD )"
 
@@ -81,6 +82,7 @@ LICENSE+=" examples? ( imgui-public-domain )" # examples/ThirdPartyLibs/imgui/st
 LICENSE+=" examples? ( RtAudio )" # examples/TinyAudio ; modified MIT
 LICENSE+=" examples? ( RtMidi )" # examples/ThirdPartyLibs/midi ; modified MIT
 
+# examples/ThirdPartyLibs/optionalX11/LICENSE.txt
 # examples/ThirdPartyLibs/optionalX11/X11/X.h
 LICENSE+=" examples? ( optionalX11-KP optionalX11-OG optionalX11-OG-DEC optionalX11-SGCSI )"
 
@@ -121,15 +123,46 @@ SRC_URI="
 https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz
 	-> ${P}.tar.gz"
 SLOT="0/${PV}"
-IUSE+=" +bullet3 +demos doc -double-precision examples +extras +networking -numpy -openvr -python test"
+IUSE+=" +bullet3
+	+bullet-robotics
+	+bullet-robotics-gui
+	+convex-decomposition
+	+demos
+	doc
+	-double-precision
+	examples
+	+extras
+	+gimpactutils
+	+hacd
+	+inverse-dynamic
+	+networking
+	-numpy
+	+obj2sdf
+	-openmp
+	-openvr
+	-python
+	+serialize
+	-tbb
+	test
+	-threads"
 REQUIRED_USE+="
+	bullet-robotics? ( extras )
+	bullet-robotics-gui? ( extras )
+	convex-decomposition? ( extras )
 	demos? ( extras )
+	gimpactutils? ( extras )
+	hacd? ( extras )
+	inverse-dynamic? ( extras )
 	numpy? ( python )
+	obj2sdf? ( extras )
+	openmp? ( threads )
 	openvr? ( examples )
 	python? (
 		${PYTHON_REQUIRED_USE}
 		demos
-	)"
+	)
+	serialize? ( extras )
+	tbb? ( threads )"
 CDEPEND="python? (
 		${PYTHON_DEPS}
 		numpy? ( $(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]') )
@@ -140,7 +173,8 @@ DEPEND+=" ${CDEPEND}
 	demos? (
 		media-libs/mesa[${MULTILIB_USEDEP},egl]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
-	)"
+	)
+	tbb? ( dev-cpp/tbb )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
 	doc? ( app-doc/doxygen[dot] )"
@@ -149,6 +183,14 @@ DOCS=( AUTHORS.txt LICENSE.txt README.md )
 # Building / linking of third Party library BussIK does not work out of the box
 RESTRICT="mirror test"
 S="${WORKDIR}/${PN}3-${PV}"
+
+pkg_pretend() {
+	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+}
+
+pkg_setup() {
+	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+}
 
 src_prepare() {
 	cmake-utils_src_prepare
@@ -162,13 +204,24 @@ src_configure() {
 		local mycmakeargs=(
 			-DBUILD_BULLET2_DEMOS=$(usex demos)
 			-DBUILD_BULLET3=$(usex bullet3)
+			-DBUILD_BULLET_ROBOTICS_GUI_EXTRA=$(usex bullet-robotics-gui)
+			-DBUILD_BULLET_ROBOTICS_EXTRA=$(usex bullet-robotics)
 			-DBUILD_CLSOCKET=$(usex networking)
+			-DBUILD_CONVEX_DECOMPOSITION_EXTRA=$(usex convex-decomposition)
 			-DBUILD_ENET=$(usex networking)
 			-DBUILD_EXTRAS=$(usex extras)
+			-DBUILD_GIMPACTUTILS_EXTRA=$(usex gimpactutils)
+			-DBUILD_HACD_EXTRA=$(usex hacd)
+			-DBUILD_INVERSE_DYNAMIC_EXTRA=$(usex inverse-dynamic)
+			-DBUILD_OBJ2SDF_EXTRA=$(usex obj2sdf)
 			-DBUILD_PYBULLET=$(multilib_native_usex python $(usex python) OFF)
 			-DBUILD_PYBULLET_NUMPY=$(multilib_native_usex python $(usex numpy) OFF)
+			-DBUILD_SERIALIZE_EXTRA=$(usex serialize)
 			-DBUILD_SHARED_LIBS=ON
 			-DBUILD_UNIT_TESTS=$(usex test)
+			-DBULLET2_MULTITHREADING=$(usex threads)
+			-DBULLET2_USE_OPEN_MP_MULTITHREADING=$(usex openmp)
+			-DBULLET2_USE_TBB_MULTITHREADING=$(usex tbb)
 			-DINSTALL_EXTRA_LIBS=ON
 			-DINSTALL_LIBS=ON
 			-DUSE_DOUBLE_PRECISION=$(usex double-precision)
