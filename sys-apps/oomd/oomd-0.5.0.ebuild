@@ -15,11 +15,13 @@ PLUGINS_CORE=(
 	BaseKillPlugin
 	ContinuePlugin
 	CorePluginsTest
+	DummyPrekillHook
 	DumpCgroupOverview
 	DumpKillInfoNoOp
 	Exists
 	KillIOCost
 	KillMemoryGrowth
+	KillPgScan
 	KillPressure
 	KillSwapUsage
 	MemoryAbove
@@ -70,6 +72,7 @@ REQUIRED_USE+="
 		plugin_BaseKillPlugin
 		plugin_KillIOCost
 		plugin_KillMemoryGrowth
+		plugin_KillPgScan
 		plugin_KillPressure
 		plugin_KillSwapUsage
 
@@ -120,7 +123,7 @@ DEPEND+=" test? ( dev-cpp/gtest )"
 GCC_V_MIN="8" # for c++17
 CLANG_V_MIN="6" # for c++17
 BDEPEND+="
-	|| ( >=sys-devel/gcc-${GCC_V_MIN}
+	|| ( >=sys-devel/gcc-${GCC_V_MIN}[cxx]
 	     >=sys-devel/clang-${CLANG_V_MIN} )
 	>=dev-util/meson-0.45
 	virtual/pkgconfig"
@@ -132,7 +135,7 @@ S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( "${S}/CODE_OF_CONDUCT.md" "${S}/CONTRIBUTING.md" "${S}/README.md"
 	"${S}/docs" )
-PATCHES=( "${FILESDIR}/oomd-0.4.0-savedconfig.patch" )
+PATCHES=( "${FILESDIR}/oomd-0.5.0-savedconfig.patch" )
 CGROUP_V2_MOUNT_POINT="${CGROUP_V2_MOUNT_POINT:=/sys/fs/cgroup}"
 
 # Conditional die
