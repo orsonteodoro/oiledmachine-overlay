@@ -218,7 +218,6 @@ src_compile() {
 }
 
 _install_licenses() {
-	OIFS="${IFS}"
 	export IFS=$'\n'
 	for f in $(find "${S}" \
 	  -iname "*licen*" -type f \
