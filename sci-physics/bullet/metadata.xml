@@ -35,7 +35,7 @@
     <flag name="gimpactutils">Build the GIMPACTUtils module</flag>
     <flag name="hacd">Build the HACD module</flag>
     <flag name="inverse-dynamic">Build the InverseDynamic module</flag>
-    <flag name="networking">Build UDP/TCP networking support in demos and in
+    <flag name="network">Build UDP/TCP networking support in demos and in
       robotics library</flag>
     <flag name="obj2sdf">Build the obj2sdf module</flag>
     <flag name="openmp">Build Bullet 2 with mult-threading with OpenMP</flag>

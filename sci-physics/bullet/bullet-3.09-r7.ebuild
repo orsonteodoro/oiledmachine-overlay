@@ -129,7 +129,7 @@ IUSE+=" +bullet3
 	-double-precision
 	examples
 	+extras
-	+networking
+	+network
 	-numpy
 	-openmp
 	-openvr
@@ -188,8 +188,8 @@ src_configure() {
 		local mycmakeargs=(
 			-DBUILD_BULLET2_DEMOS=$(usex demos)
 			-DBUILD_BULLET3=$(usex bullet3)
-			-DBUILD_CLSOCKET=$(usex networking)
-			-DBUILD_ENET=$(usex networking)
+			-DBUILD_CLSOCKET=$(usex network)
+			-DBUILD_ENET=$(usex network)
 			-DBUILD_EXTRAS=$(usex extras)
 			-DBUILD_PYBULLET=$(multilib_native_usex python $(usex python) OFF)
 			-DBUILD_PYBULLET_NUMPY=$(multilib_native_usex python $(usex numpy) OFF)

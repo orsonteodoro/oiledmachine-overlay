@@ -135,7 +135,7 @@ IUSE+=" +bullet3
 	+gimpactutils
 	+hacd
 	+inverse-dynamic
-	+networking
+	+network
 	-numpy
 	+obj2sdf
 	-openmp
@@ -206,9 +206,9 @@ src_configure() {
 			-DBUILD_BULLET3=$(usex bullet3)
 			-DBUILD_BULLET_ROBOTICS_GUI_EXTRA=$(usex bullet-robotics-gui)
 			-DBUILD_BULLET_ROBOTICS_EXTRA=$(usex bullet-robotics)
-			-DBUILD_CLSOCKET=$(usex networking)
+			-DBUILD_CLSOCKET=$(usex network)
 			-DBUILD_CONVEX_DECOMPOSITION_EXTRA=$(usex convex-decomposition)
-			-DBUILD_ENET=$(usex networking)
+			-DBUILD_ENET=$(usex network)
 			-DBUILD_EXTRAS=$(usex extras)
 			-DBUILD_GIMPACTUTILS_EXTRA=$(usex gimpactutils)
 			-DBUILD_HACD_EXTRA=$(usex hacd)
