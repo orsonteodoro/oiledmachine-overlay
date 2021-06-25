@@ -18,7 +18,7 @@ CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 LLVM_SUPPORT=(10 11 12) # can support llvm-9 but only >=10 available on gentoo
 LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
 # The highest stable llvm was used as the default.  Revisions may update this in the future.
-IUSE+=" ${CPU_FEATURES[@]%:*} doc ${LLVM_SUPPORT_[@]} +llvm-11 optix partio python qt5 test"
+IUSE+=" ${CPU_FEATURES[@]%:*} doc ${LLVM_SUPPORT_[@]} +llvm-12 optix partio python qt5 test"
 REQUIRED_USE+=" ^^ ( ${LLVM_SUPPORT_[@]} )"
 # See https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.11.14.1/INSTALL.md
 # For optix requirements, see
