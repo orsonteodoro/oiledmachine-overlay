@@ -7,7 +7,7 @@ EAPI=7
 DESCRIPTION="Virtual for Blender stable"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
-RDEPEND="~sys-kernel/ot-sources-${PV}"
+RDEPEND="~media-gfx/blender-${PV}"
 REQUIRED_USE=""
 SLOT="0/${PV}"
 
