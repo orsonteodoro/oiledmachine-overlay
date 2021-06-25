@@ -48,6 +48,9 @@
     <flag name="openexr">
       Adds OpenEXR support
     </flag>
+    <flag name="imath-half">
+      Switch back to OpenEXR's Half implementation
+    </flag>
     <flag name="jemalloc">
       Uses jemalloc as the concurrent memory allocator for binaries (that use the
       utils USE flag) or unit tests.
