@@ -15,7 +15,10 @@
 # the multiple LLVM bug.
 
 CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
-PYTHON_COMPAT=( python3_9 )
+PYTHON_COMPAT=( python3_{9,10} ) # For the max exclusive Python supported (and
+# others), see \
+# https://github.com/blender/blender/blob/v2.93.0/build_files/build_environment/install_deps.sh#L382
+
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
@@ -25,7 +28,9 @@ IUSE+=" X +abi7-compat +alembic -asan +boost +bullet +collada \
 +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise \
 +openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf -potrace \
 release +sdl +sndfile +tbb test +tiff +usd -valgrind"
-IUSE+=" llvm-11 +llvm-12" # same as Mesa and LLVM latest stable keyword
+IUSE+=" llvm-11 +llvm-12" # same as Mesa and LLVM latest stable keyword \
+# See max exclusive llvm at \
+# https://github.com/blender/blender/blob/v2.93.1/build_files/build_environment/install_deps.sh#L488
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
@@ -346,6 +351,13 @@ _blender_pkg_setup() {
 	ewarn "This version is not a Long Term Support (LTS) version."
 	ewarn "Use 2.83.x series instead."
 	ewarn
+
+	if use llvm-12 ; then
+		ewarn \
+"Upstream supports max < LLVM-12 only. LLVM-12 is compatibility is still in\n\
+testing in this overlay and made available to resolve a possible multiple\n\
+LLVM libraries loaded bug."
+	fi
 }
 
 _src_prepare_patches() {
@@ -517,4 +529,3 @@ ebuild/upstream developers only."
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake-utils_src_configure
 }
-
