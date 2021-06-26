@@ -22,7 +22,7 @@ PYTHON_COMPAT=( python3_{9,10} ) # For the max exclusive Python supported (and
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X +abi7-compat +alembic -asan +boost +bullet +collada \
+IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada \
 +color-management -cpudetection +cuda +cycles -cycles-network +dds -debug doc \
 +elbeem +embree +ffmpeg +fftw flac -gmp +jack +jemalloc +jpeg2k -llvm -man \
 +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise \
@@ -54,7 +54,7 @@ REQUIRED_USE+="
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
 	openimagedenoise? ( tbb )
-	openvdb? ( abi7-compat openexr tbb )
+	openvdb? ( abi8-compat openexr tbb )
 	optix? ( cuda cycles nvcc )
 	opus? ( ffmpeg )
 	osl? ( cycles llvm )
@@ -335,17 +335,6 @@ ebuilds for compatibility details."
 
 _blender_pkg_setup() {
 	# Needs OpenCL 1.2 (GCN 2)
-	export OPENVDB_V=$(usex openvdb 7 "")
-	export OPENVDB_V_DIR=$(usex openvdb 7-14 "")
-	if use openvdb ; then
-		if ! grep -q -F -e "delta()" \
-"${EROOT}/usr/include/openvdb/util/CpuTimer.h" 2>/dev/null ; then
-			if use abi7-compat ; then
-				# compatible as long as the function is present?
-				die "OpenVDB delta() is missing try < 8.x only"
-			fi
-		fi
-	fi
 	check_multiple_llvm_versions_in_native_libs
 	ewarn
 	ewarn "This version is not a Long Term Support (LTS) version."
