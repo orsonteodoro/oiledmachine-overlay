@@ -63,7 +63,7 @@ BDEPEND+=" >=dev-util/cmake-3.1.0
 # See .gitlab-ci.yml (track: release-linux-x64-Release)
 DEPEND+=" media-libs/glfw
 	 virtual/opengl
-	 tbb? ( >=dev-cpp/tbb-2021.2.0 )
+	 tbb? ( >=dev-cpp/tbb-2021.2.0[static-libs(+)] )
 	 tutorials? ( media-libs/libpng:0=
 		     media-libs/openimageio
 		     virtual/jpeg:0 )"
@@ -141,6 +141,12 @@ MathJax for math rendering."
 		ewarn \
 "Building package may exhibit random failures with doc-html USE flag.  Emerge\n\
 and try again."
+	fi
+
+	if use tbb && use static-libs ; then
+		if [[ ! -f "${ESYSROOT}/usr/$(get_libdir)/libtbb.a" ]] ; then
+			die "Missing static-libs for tbb"
+		fi
 	fi
 }
 
