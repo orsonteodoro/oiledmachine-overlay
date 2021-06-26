@@ -42,6 +42,7 @@ gen_llvm_rdepend()
 RDEPEND+=" "$(gen_llvm_rdepend)
 RDEPEND+="
 	>=dev-libs/boost-1.55:=
+	dev-libs/libfmt
 	dev-libs/pugixml
 	>=media-libs/openexr-2:=
 	>=media-libs/ilmbase-2:=
