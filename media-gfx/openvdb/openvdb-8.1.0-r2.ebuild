@@ -83,9 +83,13 @@ BDEPEND+="
 		>=dev-util/cppunit-1.10
 		>=dev-cpp/gtest-1.8
 	)"
+TBB_2021_PATCH="${PN}-5b0ec82.patch"
 SRC_URI="
 https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+https://github.com/AcademySoftwareFoundation/openvdb/commit/5b0ec82307c603adb147cee4bc1a925d407141f5.patch
+	-> ${TBB_2021_PATCH}"
+# 5b0ec82 - Changes to support TBB 2021
 PATCHES=(
 	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
 )
@@ -99,6 +103,9 @@ src_prepare() {
 	cmake_src_prepare
 	sed -i -e "s|lib/cmake|$(get_libdir)/cmake|g" \
 		cmake/OpenVDBGLFW3Setup.cmake || die
+	if has_version ">=dev-cpp/tbb-2021" ; then
+		eapply "${DISTDIR}/${TBB_2021_PATCH}"
+	fi
 }
 
 src_configure() {
@@ -110,7 +117,7 @@ src_configure() {
 	elif use abi7-compat; then
 		version=7
 	elif use abi8-compat; then
-		version=7
+		version=8
 	else
 		die "Openvdb abi version is not compatible"
 	fi
