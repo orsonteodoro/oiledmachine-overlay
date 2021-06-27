@@ -1,7 +1,7 @@
 # Copyright 2009-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Monitor https://chromereleases.googleblog.com/search/label/Dev%20updates for security updates.  They are announced faster than NVD.
+# Monitor https://chromereleases.googleblog.com/search/label/Beta%20updates for security updates.  They are announced faster than NVD.
 
 EAPI=7
 PYTHON_COMPAT=( python3_8 )
@@ -16,12 +16,14 @@ inherit multilib-minimal
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
-PATCHSET="2"
+PATCHSET="7"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
+PPC64LE_PATCHSET="91-ppc64le-6"
 SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-44.1.0.zip
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
-	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )"
+	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )
+	ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-${PPC64LE_PATCHSET}.tar.xz )"
 RESTRICT="mirror"
 
 LICENSE="BSD"
@@ -223,7 +225,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	ewarn "The $(ver_cut 1 ${PV}) series is the Dev branch."
+	ewarn "The $(ver_cut 1 ${PV}) series is the Beta channel."
 	pre_build_checks
 
 	chromium_suid_sandbox_check_kernel_config
@@ -255,6 +257,8 @@ src_prepare() {
 			"${FILESDIR}/chromium-glibc-2.33.patch"
 		)
 	fi
+
+	use ppc64 && eapply -p0 "${WORKDIR}/${PN}"-ppc64le
 
 	default
 
@@ -295,6 +299,7 @@ src_prepare() {
 		third_party/angle/src/common/third_party/base
 		third_party/angle/src/common/third_party/smhasher
 		third_party/angle/src/common/third_party/xxhash
+		third_party/angle/src/third_party/compiler
 		third_party/angle/src/third_party/libXNVCtrl
 		third_party/angle/src/third_party/trace_event
 		third_party/angle/src/third_party/volk
@@ -309,8 +314,8 @@ src_prepare() {
 		third_party/catapult
 		third_party/catapult/common/py_vulcanize/third_party/rcssmin
 		third_party/catapult/common/py_vulcanize/third_party/rjsmin
-		third_party/catapult/third_party/beautifulsoup4-4.9.3
-		third_party/catapult/third_party/html5lib-1.1
+		third_party/catapult/third_party/beautifulsoup4
+		third_party/catapult/third_party/html5lib-python
 		third_party/catapult/third_party/polymer
 		third_party/catapult/third_party/six
 		third_party/catapult/tracing/third_party/d3
@@ -466,7 +471,6 @@ src_prepare() {
 		third_party/tflite/src/third_party/fft2d
 		third_party/tflite-support
 		third_party/ruy
-		third_party/six
 		third_party/ukey2
 		third_party/unrar
 		third_party/usrsctp
@@ -796,6 +800,9 @@ multilib_src_configure() {
 	if use arm64 && tc-is-gcc; then
 		append-cxxflags -flax-vector-conversions
 	fi
+
+	# highway/libjxl fail on ppc64 without extra patches, disable for now.
+	use ppc64 && myconf_gn+=" enable_jxl_decoder=false"
 
 	# Disable unknown warning message from clang.
 	tc-is-clang && append-flags -Wno-unknown-warning-option
