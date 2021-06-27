@@ -92,7 +92,9 @@ pkg_setup() {
 	fi
 	if ! use disable-sse41-check ; then
 		if ! grep -F -e "sse4_1" /proc/cpuinfo ; then
-			die "You need SSE4.1 to use this product."
+			die \
+"You need SSE4.1 to use this product.  Add disable-sse41-check to the USE\n\
+flag to build and emerge anyways."
 		fi
 	fi
 	python-single-r1_pkg_setup
