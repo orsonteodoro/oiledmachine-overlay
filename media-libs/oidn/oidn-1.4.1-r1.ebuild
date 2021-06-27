@@ -5,7 +5,7 @@ EAPI=7
 
 CMAKE_BUILD_TYPE=Release
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils eutils python-single-r1 toolchain-funcs
+inherit cmake-utils eutils flag-o-matic python-single-r1 toolchain-funcs
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
@@ -131,6 +131,8 @@ src_configure() {
 	fi
 	local gcc_v
 	local target_v=""
+
+	strip-flags
 
 	if use gcc && \
 	ls /usr/${CHOST}/gcc-bin/*/g++ 2>/dev/null 1>/dev/null ; then
