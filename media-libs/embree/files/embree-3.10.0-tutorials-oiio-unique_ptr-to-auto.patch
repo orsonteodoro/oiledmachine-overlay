@@ -1,3 +1,8 @@
+Copyright notice for 3.10.0 version of tutorials/common/image/oiio.cpp:
+
+// Copyright 2009-2020 Intel Corporation
+// SPDX-License-Identifier: Apache-2.0
+
 --- a/tutorials/common/image/oiio.cpp.orig	2020-05-13 22:08:53.000000000 -0700
 +++ b/tutorials/common/image/oiio.cpp	2020-06-22 05:31:00.957576813 -0700
 @@ -15,7 +15,7 @@ namespace embree
@@ -5,7 +10,7 @@
    Ref<Image> loadOIIO(const FileName& fileName)
    {
 -    std::unique_ptr<ImageInput> in = ImageInput::open(fileName.str().c_str());
-+    auto in = ImageInput::open(fileName.str().c_str());
++    auto in = ImageInput::open(fileName.str().c_str());					oteodoro - std::unique_ptr<ImageInput> -> auto
      if (!in)
        THROW_RUNTIME_ERROR("error opening file " + fileName.str());
  
@@ -14,7 +19,7 @@
    void storeOIIO(const Ref<Image>& img, const FileName& fileName)
    {
 -    std::unique_ptr<ImageOutput> out = ImageOutput::create(fileName.c_str());
-+    auto out = ImageOutput::create(fileName.c_str());
++    auto out = ImageOutput::create(fileName.c_str());						oteodoro - std::unique_ptr<ImageInput> -> auto
      if (!out) THROW_RUNTIME_ERROR("unsupported output file format " + fileName.str());
  
      std::vector<unsigned char> pixels(img->width*img->height*3);

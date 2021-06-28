@@ -63,14 +63,17 @@ BDEPEND+=" >=dev-util/cmake-3.1.0
 # See .gitlab-ci.yml (track: release-linux-x64-Release)
 DEPEND+=" media-libs/glfw
 	 virtual/opengl
-	 tbb? ( >=dev-cpp/tbb-2021.2.0[static-libs(+)] )
+	 tbb? ( >=dev-cpp/tbb-2021.2.0 )
 	 tutorials? ( media-libs/libpng:0=
 		     media-libs/openimageio
 		     virtual/jpeg:0 )"
 RDEPEND+=" ${DEPEND}"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
-PATCHES=( "${FILESDIR}/${PN}-3.10.0-tutorials-oiio-unique_ptr-to-auto.patch" )
+PATCHES=(
+	"${FILESDIR}/${PN}-3.10.0-tutorials-oiio-unique_ptr-to-auto.patch"
+	"${FILESDIR}/${PN}-3.13.0-fix-tbb-install.patch"
+)
 
 chcxx() {
 	die \
@@ -143,10 +146,12 @@ MathJax for math rendering."
 and try again."
 	fi
 
-	if use tbb && use static-libs ; then
-		if [[ ! -f "${ESYSROOT}/usr/$(get_libdir)/libtbb.a" ]] ; then
-			die "Missing static-libs for tbb"
-		fi
+	ewarn "This ebuild is a Work In Progress (WIP)"
+	if use tbb ; then
+		ewarn \
+"TBB 2021 configure step is under investigation in this repo.  Do not use the\n\
+tbb USE flag at this time.  This notice will be removed when the issue is\n\
+resolved."
 	fi
 }
 
