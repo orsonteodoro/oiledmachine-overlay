@@ -5,7 +5,7 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
 
-inherit llvm meson multilib-minimal python-any-r1 linux-info
+inherit llvm meson-multilib python-any-r1 linux-info
 
 OPENGL_DIR="xorg-x11"
 
@@ -533,21 +533,13 @@ multilib_src_configure() {
 	meson_src_configure
 }
 
-multilib_src_compile() {
-	meson_src_compile
-}
-
-multilib_src_install() {
-	meson_src_install
+multilib_src_install_all() {
+	einstalldocs
 	if use openmax; then
 		echo "XDG_DATA_DIRS=\"/usr/share/mesa/xdg\"" > "${T}/99mesaxdgomx"
 		doenvd "${T}"/99mesaxdgomx
 		keepdir /usr/share/mesa/xdg
 	fi
-}
-
-multilib_src_install_all() {
-	einstalldocs
 }
 
 multilib_src_test() {
