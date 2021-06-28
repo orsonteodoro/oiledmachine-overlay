@@ -72,7 +72,6 @@ DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
 PATCHES=(
 	"${FILESDIR}/${PN}-3.10.0-tutorials-oiio-unique_ptr-to-auto.patch"
-	"${FILESDIR}/${PN}-3.13.0-fix-tbb-install.patch"
 )
 
 chcxx() {
