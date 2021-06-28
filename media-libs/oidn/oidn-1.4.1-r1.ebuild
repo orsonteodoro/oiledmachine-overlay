@@ -132,7 +132,10 @@ src_configure() {
 	local gcc_v
 	local target_v=""
 
-	strip-flags
+	# gcc flags that clang++ dislikes:
+	filter-flags \
+		-fopt-info* \
+		-frename-registers
 
 	if use gcc && \
 	ls /usr/${CHOST}/gcc-bin/*/g++ 2>/dev/null 1>/dev/null ; then
