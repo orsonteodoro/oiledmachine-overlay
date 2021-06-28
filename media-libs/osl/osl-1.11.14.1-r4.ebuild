@@ -127,6 +127,10 @@ per-package environmental variable."
 }
 
 src_prepare() {
+	if ! use test ; then
+		einfo "Removing osl_add_all_tests from CMakeLists.txt"
+		sed -i -e "\|osl_add_all_tests|d" "CMakeLists.txt" || die
+	fi
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
 		static-libs_prepare() {
@@ -166,7 +170,6 @@ src_configure() {
 				-DCMAKE_CXX_STANDARD=14
 				-DCMAKE_INSTALL_BINDIR="/usr/$(get_libdir)/osl/bin"
 				-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
-				-DENABLERTTI=OFF
 				-DINSTALL_DOCS=$(usex doc)
 				-DLLVM_STATIC=OFF
 				-DOSL_BUILD_TESTS=$(usex test)
