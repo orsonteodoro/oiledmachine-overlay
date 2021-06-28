@@ -72,6 +72,7 @@ DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
 PATCHES=(
 	"${FILESDIR}/${PN}-3.10.0-tutorials-oiio-unique_ptr-to-auto.patch"
+	"${FILESDIR}/${PN}-3.13.0-fix-cmake-configure-for-tbb-2021.2.0.patch"
 )
 
 chcxx() {
@@ -143,14 +144,6 @@ MathJax for math rendering."
 		ewarn \
 "Building package may exhibit random failures with doc-html USE flag.  Emerge\n\
 and try again."
-	fi
-
-	ewarn "This ebuild is a Work In Progress (WIP)"
-	if use tbb ; then
-		ewarn \
-"TBB 2021 configure step is under investigation in this repo.  Do not use the\n\
-tbb USE flag at this time.  This notice will be removed when the issue is\n\
-resolved."
 	fi
 }
 
