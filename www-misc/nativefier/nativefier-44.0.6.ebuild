@@ -14,7 +14,7 @@ IUSE+=" images-to-icons"
 DEPEND+=" images-to-icons? ( media-gfx/imagemagick )"
 BDEPEND+=" >=net-libs/nodejs-12.9[npm]"
 ELECTRON_APP_AT_TYPES_NODE_V="12"
-ELECTRON_APP_ELECTRON_V="12.0.11" # See https://github.com/nativefier/nativefier/blob/v44.0.4/src/constants.ts
+ELECTRON_APP_ELECTRON_V="12.0.12" # See https://github.com/nativefier/nativefier/blob/v44.0.6/src/constants.ts
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 SRC_URI=\
 "https://github.com/nativefier/nativefier/archive/v${PV}.tar.gz \
