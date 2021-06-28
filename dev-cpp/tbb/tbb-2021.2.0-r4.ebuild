@@ -198,17 +198,17 @@ gen_pkg_config() {
 		Cflags: -I\${includedir}
 	EOF
 	cp ${PN}.pc.template ${PN}${c}.pc || die
-	cat <<-EOF >> ${PN}.pc
+	cat <<-EOF >> ${PN}${c}.pc
 		Libs: -L\${libdir} -ltbb${c}
 		Libs.private: -lm -lrt
 	EOF
 	cp ${PN}.pc.template ${PN}malloc${c}.pc || die
-	cat <<-EOF >> ${PN}malloc.pc
+	cat <<-EOF >> ${PN}malloc${c}.pc
 		Libs: -L\${libdir} -ltbbmalloc${c}
 		Libs.private: -lm -lrt
 	EOF
 	cp ${PN}.pc.template ${PN}malloc_proxy${c}.pc || die
-	cat <<-EOF >> ${PN}malloc_proxy.pc
+	cat <<-EOF >> ${PN}malloc_proxy${c}.pc
 		Libs: -L\${libdir} -ltbbmalloc_proxy${c}
 		Libs.private: -lrt
 		Requires: tbbmalloc${c}
@@ -217,10 +217,12 @@ gen_pkg_config() {
 
 src_compile_pkg_config()
 {
+	[[ -f "${T}/pkg_config_generated_${ABI}" ]] && return
 	gen_pkg_config ""
 	if use static-libs ; then
 		gen_pkg_config "_static"
 	fi
+	touch "${T}/pkg_config_generated_${ABI}"
 }
 
 _src_compile() {
@@ -329,7 +331,7 @@ src_install_pkgconfig()
 {
 	cd "${BUILD_DIR}" || die
 	insinto /usr/$(get_libdir)/pkgconfig
-	doins *.pc
+	[[ -f tbb.pc ]] && doins *.pc
 }
 
 _src_install() {
