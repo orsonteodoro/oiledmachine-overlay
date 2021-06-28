@@ -29,8 +29,13 @@ REQUIRED_USE+="
 	test? ( python )
 	usdview? ( python opengl )"
 # See https://github.com/PixarAnimationStudios/USD/blob/v21.05/VERSIONS.md
+# Not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
+#		>=dev-cpp/onetbb-2021:=
+#		>=dev-cpp/tbb-2021:=
 RDEPEND+="
-	>=dev-cpp/tbb-2017.6
+	|| (
+		<dev-cpp/tbb-2021:=
+	)
 	draco? ( media-libs/draco )
 	alembic? ( >=media-gfx/alembic-1.7.10 )
 	embree? ( >=media-libs/embree-3.2.2 )
@@ -74,7 +79,9 @@ BDEPEND+="
 SRC_URI="
 https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
-PATCHES=( "${FILESDIR}/algorithm.patch" )
+PATCHES=(
+	"${FILESDIR}/algorithm.patch"
+)
 S="${WORKDIR}/USD-${PV}"
 DOCS=( CHANGELOG.md README.md )
 
@@ -83,6 +90,12 @@ pkg_setup() {
 }
 
 src_prepare() {
+	if has_version ">=dev-cpp/tbb-2021" || has_version ">=dev-cpp/onetbb-2021" ; then
+		ewarn ">= TBB 2021 support is experimental and in testing."
+		eapply "${FILESDIR}/tbb.patch"
+		eapply "${FILESDIR}/atomic-tbb.patch"
+		die "Unsupported at this time.  Please downgrade to <= tbb 2020.x."
+	fi
 	cmake_src_prepare
 	# make dummy pyside-uid
 	if use usdview ; then
@@ -95,6 +108,10 @@ EOF
 }
 
 src_configure() {
+	if has_version ">=dev-cpp/tbb-2021" || has_version ">=dev-cpp/onetbb-2021" ; then
+		append-cppflags -DTBB_ALLOCATOR_TRAITS_BROKEN
+	fi
+
 	export USD_PATH="/usr/$(get_libdir)/${PN}"
 	if use draco; then
 		append-cppflags -DDRACO_ATTRIBUTE_VALUES_DEDUPLICATION_SUPPORTED=ON \
