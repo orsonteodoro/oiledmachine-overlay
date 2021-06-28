@@ -45,6 +45,7 @@ REQUIRED_USE+="
 	X? ( examples )"
 RDEPEND+="
 	examples? (
+		sci-libs/mkl[${MULTILIB_USEDEP}]
 		X? (
 			x11-libs/libX11[${MULTILIB_USEDEP}]
 			x11-libs/libXext[${MULTILIB_USEDEP}]
@@ -90,6 +91,7 @@ src_prepare()
 	cd "${S}" || die
 	eapply "${FILESDIR}/tbb-2021.2.0-move-assert-definitions.patch"
 	eapply "${FILESDIR}/tbb-2021.2.0-static-libs-support.patch"
+	eapply "${FILESDIR}/tbb-2021.2.0-fix-missing-header-cholesky.patch"
 	cmake-utils_src_prepare
 
 	src_prepare_abi() {
@@ -353,6 +355,7 @@ _src_install() {
 		if use examples ; then
 			local examples_exe=(
 				binpack
+				cholesky
 				convex_hull_bench
 				convex_hull_sample
 				count_strings
