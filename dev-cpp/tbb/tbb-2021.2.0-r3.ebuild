@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils flag-o-matic multilib-minimal python-r1 static-libs toolchain-funcs
+inherit cmake-utils flag-o-matic multilib-minimal python-r1 toolchain-funcs
 
 DESCRIPTION="High level abstract threading library"
 HOMEPAGE="https://www.threadingbuildingblocks.org"
@@ -39,7 +39,7 @@ LICENSE="Apache-2.0"
 SLOT="0/${PV}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86
 ~amd64-linux ~x86-linux"
-IUSE+=" -X debug doc -examples python +test"
+IUSE+=" -X debug doc -examples python static-libs +test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	X? ( examples )"
@@ -88,49 +88,15 @@ pkg_setup()
 src_prepare()
 {
 	cd "${S}" || die
+	eapply "${FILESDIR}/tbb-2021.2.0-move-assert-definitions.patch"
+	eapply "${FILESDIR}/tbb-2021.2.0-static-libs-support.patch"
+	cmake-utils_src_prepare
+
 	src_prepare_abi() {
 		cd "${BUILD_DIR}" || die
-		src_compile_stsh() {
-			cd "${BUILD_DIR}" || die
-			if use python ; then
-				src_prepare_py() {
-					cd "${BUILD_DIR}" || die
-					if [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
-						SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}_${EPYTHON/./_}"
-						CMAKE_USE_DIR="${BUILD_DIR}" \
-						BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-						cmake-utils_src_prepare
-						eapply "${FILESDIR}/tbb-2021.2.0-move-assert-definitions.patch"
-						sed -i -e "s|MALLOC_UNIXLIKE_OVERLOAD_ENABLED __linux__|MALLOC_UNIXLIKE_OVERLOAD_ENABLED 0|g" \
-							src/tbbmalloc_proxy/proxy.h || die
-					else
-						SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-						CMAKE_USE_DIR="${BUILD_DIR}" \
-						BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-						cmake-utils_src_prepare
-					fi
-				}
-				python_copy_sources
-				python_foreach_impl src_prepare_py
-			else
-				if [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
-					SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-					CMAKE_USE_DIR="${BUILD_DIR}" \
-					BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-					cmake-utils_src_prepare
-					eapply "${FILESDIR}/tbb-2021.2.0-move-assert-definitions.patch"
-					sed -i -e "s|MALLOC_UNIXLIKE_OVERLOAD_ENABLED __linux__|MALLOC_UNIXLIKE_OVERLOAD_ENABLED 0|g" \
-						src/tbbmalloc_proxy/proxy.h || die
-				else
-					SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-					CMAKE_USE_DIR="${BUILD_DIR}" \
-					BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-					cmake-utils_src_prepare
-				fi
-			fi
-		}
-		static-libs_copy_sources
-		static-libs_foreach_impl src_compile_stsh
+		if use python ; then
+			python_copy_sources
+		fi
 	}
 	multilib_copy_sources
 	multilib_foreach_abi src_prepare_abi
@@ -177,32 +143,17 @@ INCLUDE_PATH           = ${S}/include/oneapi ${S}/include/tbb|g" \
 		*) die "compiler $(tc-getCXX) not supported by build system" ;;
 	esac
 
-
-	filter-flags -fPIC -D__TBB_DYNAMIC_LOAD_ENABLED=*
-
 	mycmakeargs=(
+		-DBUILD_SHARED_LIBS=ON
+		-DBUILD_STATIC_LIBS=$(usex static-libs ON OFF)
 		-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 		-DCMAKE_C_COMPILER=${comp}
 		-DCMAKE_CXX_COMPILER=${comp}
 		-DTBB_EXAMPLES=$(usex examples)
 		-DTBB_STRICT=OFF
+		-DTBB_TEST=$(usex static-libs OFF $(usex test))
 		-DTBB4PY_BUILD=$(usex python)
 	)
-	if [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
-		if use static-libs ; then
-			append-cxxflags -fPIC
-			append-cppflags -D__TBB_DYNAMIC_LOAD_ENABLED=0
-		fi
-		mycmakeargs+=(
-			-DBUILD_SHARED_LIBS=$(usex static-libs OFF ON)
-			-DTBB_TEST=OFF
-		)
-	else
-		mycmakeargs+=(
-			-DBUILD_SHARED_LIBS=ON
-			-DTBB_TEST=$(usex test)
-		)
-	fi
 	if use examples ; then
 		mycmakeargs+=(
 			-DEXAMPLES_UI_MODE=$(usex X "x" "con")
@@ -217,27 +168,23 @@ src_configure()
 {
 	src_configure_abi() {
 		cd "${BUILD_DIR}" || die
-		src_configure_stsh() {
-			cd "${BUILD_DIR}" || die
-			if use python ; then
-				src_configure_py() {
-					cd "${BUILD_DIR}" || die
-					SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}_${EPYTHON/./_}"
-					_src_configure
-				}
-				python_foreach_impl src_configure_py
-			else
-				SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
+		if use python ; then
+			src_configure_py() {
+				cd "${BUILD_DIR}" || die
+				SUFFIX="_${ABI}_${EPYTHON/./_}"
 				_src_configure
-			fi
-		}
-		static-libs_foreach_impl src_configure_stsh
+			}
+			python_foreach_impl src_configure_py
+		else
+			SUFFIX="_${ABI}"
+			_src_configure
+		fi
 	}
 	multilib_foreach_abi src_configure_abi
 }
 
-src_compile_pkg_config()
-{
+gen_pkg_config() {
+	local c="${1}"
 	# pc files are for debian and fedora compatibility
 	# some deps use them
 	cat <<-EOF > ${PN}.pc.template
@@ -250,22 +197,30 @@ src_compile_pkg_config()
 		URL: ${HOMEPAGE}
 		Cflags: -I\${includedir}
 	EOF
-	cp ${PN}.pc.template ${PN}.pc || die
+	cp ${PN}.pc.template ${PN}${c}.pc || die
 	cat <<-EOF >> ${PN}.pc
-		Libs: -L\${libdir} -ltbb
+		Libs: -L\${libdir} -ltbb${c}
 		Libs.private: -lm -lrt
 	EOF
-	cp ${PN}.pc.template ${PN}malloc.pc || die
+	cp ${PN}.pc.template ${PN}malloc${c}.pc || die
 	cat <<-EOF >> ${PN}malloc.pc
-		Libs: -L\${libdir} -ltbbmalloc
+		Libs: -L\${libdir} -ltbbmalloc${c}
 		Libs.private: -lm -lrt
 	EOF
-	cp ${PN}.pc.template ${PN}malloc_proxy.pc || die
+	cp ${PN}.pc.template ${PN}malloc_proxy${c}.pc || die
 	cat <<-EOF >> ${PN}malloc_proxy.pc
-		Libs: -L\${libdir} -ltbbmalloc_proxy
+		Libs: -L\${libdir} -ltbbmalloc_proxy${c}
 		Libs.private: -lrt
-		Requires: tbbmalloc
+		Requires: tbbmalloc${c}
 	EOF
+}
+
+src_compile_pkg_config()
+{
+	gen_pkg_config ""
+	if use static-libs ; then
+		gen_pkg_config "_static"
+	fi
 }
 
 _src_compile() {
@@ -294,21 +249,17 @@ src_compile()
 {
 	src_compile_abi() {
 		cd "${BUILD_DIR}" || die
-		src_compile_stsh() {
-			cd "${BUILD_DIR}" || die
-			if use python ; then
-				src_compile_py() {
-					cd "${BUILD_DIR}" || die
-					SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}_${EPYTHON/./_}"
-					_src_compile
-				}
-				python_foreach_impl src_compile_py
-			else
-				SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
+		if use python ; then
+			src_compile_py() {
+				cd "${BUILD_DIR}" || die
+				SUFFIX="_${ABI}_${EPYTHON/./_}"
 				_src_compile
-			fi
-		}
-		static-libs_foreach_impl src_compile_stsh
+			}
+			python_foreach_impl src_compile_py
+		else
+			SUFFIX="_${ABI}"
+			_src_compile
+		fi
 	}
 	multilib_foreach_abi src_compile_abi
 }
@@ -351,29 +302,25 @@ src_test()
 {
 	src_test_abi() {
 		cd "${BUILD_DIR}" || die
-		src_test_stsh() {
-			cd "${BUILD_DIR}" || die
-			if use python ; then
-				src_test_py() {
-					cd "${BUILD_DIR}" || die
-					if [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
-						ewarn "Skipping test for the static-libs USE flag."
-					else
-						SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}_${EPYTHON/./_}"
-						_src_test
-					fi
-				}
-			else
-				if [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+		if use python ; then
+			src_test_py() {
+				cd "${BUILD_DIR}" || die
+				if use static-libs ; then
 					ewarn "Skipping test for the static-libs USE flag."
 				else
-					SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
+					SUFFIX="_${ABI}_${EPYTHON/./_}"
 					_src_test
 				fi
+			}
+		else
+			if use static-libs ; then
+				ewarn "Skipping test for the static-libs USE flag."
+			else
+				SUFFIX="_${ABI}"
+				_src_test
 			fi
-			python_foreach_impl src_test_py
-		}
-		static-libs_foreach_impl src_test_stsh
+		fi
+		python_foreach_impl src_test_py
 	}
 	multilib_foreach_abi src_test_abi
 }
@@ -454,21 +401,17 @@ src_install()
 {
 	src_install_abi() {
 		cd "${BUILD_DIR}" || die
-		src_install_stsh() {
-			cd "${BUILD_DIR}" || die
-			if use python ; then
-				src_install_py() {
-					cd "${BUILD_DIR}" || die
-					SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}_${EPYTHON/./_}"
-					_src_install
-				}
-				python_foreach_impl src_install_py
-			else
-				SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
+		if use python ; then
+			src_install_py() {
+				cd "${BUILD_DIR}" || die
+				SUFFIX="_${ABI}_${EPYTHON/./_}"
 				_src_install
-			fi
-		}
-		static-libs_foreach_impl src_install_stsh
+			}
+			python_foreach_impl src_install_py
+		else
+			SUFFIX="_${ABI}"
+			_src_install
+		fi
 	}
 	multilib_foreach_abi src_install_abi
 }

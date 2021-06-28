@@ -1,6 +1,6 @@
-Subject fix static-libs build failure
-Author: Orson Teodoro <orsonteodoro@hotmail.com>
-Date: Sat Jun 26 06:32:24 PM PDT 2021 (unix time 1624757544)
+Subject:  Fix static-libs build failure
+Author:   Orson Teodoro <orsonteodoro@hotmail.com>
+Date:     Sat Jun 26 06:32:24 PM PDT 2021 (Unix timestamp: 1624757544)
 
 Fixes:
 
