@@ -28,7 +28,7 @@ REQUIRED_USE+="
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/doc/dependencies.txt
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/ci/install.sh
 DEPEND+="
-	>=dev-cpp/tbb-2018.0
+	>=dev-cpp/tbb-2018.0:=
 	>=dev-libs/boost-1.66:=
 	>=media-libs/ilmbase-2.2:=
 	>=sys-libs/zlib-1.2.7:=
