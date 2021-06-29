@@ -85,6 +85,10 @@ ${ORG_GH}/oidn-weights/archive/${OIDN_WEIGHTS_COMMIT}.tar.gz
 fi
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md readme.pdf )
+PATCHES_=(
+	"${FILESDIR}/${PN}-1.4.1-findtbb-print-paths.patch"
+)
+ONETBB_SLOT="12"
 
 pkg_setup() {
 	if [[ ! -f /proc/cpuinfo ]] ; then
@@ -110,6 +114,14 @@ src_unpack() {
 	else
 		rm -rf "${WORKDIR}/oidn-weights-${OIDN_WEIGHTS_COMMIT}" || die
 	fi
+}
+
+src_prepare() {
+	eapply ${PATCHES_[@]}
+	if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		eapply "${FILESDIR}/${PN}-1.4.1-findtbb-alt-lib-path.patch"
+	fi
+	cmake-utils_src_prepare
 }
 
 src_configure() {
@@ -265,6 +277,15 @@ to continue.\n
 			-DOIDN_APPS=$(usex apps)
 		)
 	fi
+
+	if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		mycmakeargs+=(
+			-DTBB_INCLUDE_DIR=/usr/include/oneTBB/${ONETBB_SLOT}
+			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}
+			-DTBB_SOVER="${ONETBB_SLOT}"
+		)
+	fi
+
 	cmake-utils_src_configure
 }
 
@@ -279,4 +300,16 @@ src_install() {
 		third-party-programs.txt \
 		third-party-programs-oneDNN.txt \
 		third-party-programs-oneTBB.txt
+	if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		for f in $(find "${ED}") ; do
+			test -L "${f}" && continue
+			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
+				einfo "Old rpath for ${f}:"
+				patchelf --print-rpath "${f}" || die
+				einfo "Setting rpath for ${f}"
+				patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
+					"${f}" || die
+			fi
+		done
+	fi
 }
