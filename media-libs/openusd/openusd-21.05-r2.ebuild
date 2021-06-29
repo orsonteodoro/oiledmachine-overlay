@@ -28,13 +28,12 @@ REQUIRED_USE+="
 	ptex? ( imaging )
 	test? ( python )
 	usdview? ( python opengl )"
-# See https://github.com/PixarAnimationStudios/USD/blob/v21.05/VERSIONS.md
-# Not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
-#		>=dev-cpp/onetbb-2021:=
-#		>=dev-cpp/tbb-2021:=
+# For dependencies, see https://github.com/PixarAnimationStudios/USD/blob/v21.05/VERSIONS.md
+# TBB 2021 not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
+#		>=dev-cpp/tbb-2021:12=
 RDEPEND+="
 	|| (
-		<dev-cpp/tbb-2021:=
+		<dev-cpp/tbb-2021:0=
 	)
 	draco? ( media-libs/draco )
 	alembic? ( >=media-gfx/alembic-1.7.10 )
@@ -84,17 +83,23 @@ PATCHES=(
 )
 S="${WORKDIR}/USD-${PV}"
 DOCS=( CHANGELOG.md README.md )
+ONETBB_SLOT="12"
+FORCE_LEGACY_TBB=0
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
 }
 
 src_prepare() {
-	if has_version ">=dev-cpp/tbb-2021" || has_version ">=dev-cpp/onetbb-2021" ; then
-		ewarn ">= TBB 2021 support is experimental and in testing."
-		eapply "${FILESDIR}/tbb.patch"
-		eapply "${FILESDIR}/atomic-tbb.patch"
-		die "Unsupported at this time.  Please downgrade to <= tbb 2020.x."
+	if [[ -n "${OILEDMACHINE_OVERLAY_DEVELOPER}" && "${OILEDMACHINE_OVERLAY_DEVELOPER}" == "1" \
+		&& "${FORCE_LEGACY_TBB}" == "0" ]] ; then
+		if has_version "dev-cpp/tbb:12" ; then
+				ewarn "Using oneTBB.  Support is experimental, incomplete, and in-development."
+				eapply "${FILESDIR}/tbb.patch"
+				eapply "${FILESDIR}/atomic-tbb.patch"
+		fi
+	else
+		einfo "Using legacy TBB"
 	fi
 	cmake_src_prepare
 	# make dummy pyside-uid
@@ -108,8 +113,11 @@ EOF
 }
 
 src_configure() {
-	if has_version ">=dev-cpp/tbb-2021" || has_version ">=dev-cpp/onetbb-2021" ; then
-		append-cppflags -DTBB_ALLOCATOR_TRAITS_BROKEN
+	if [[ -n "${OILEDMACHINE_OVERLAY_DEVELOPER}" && "${OILEDMACHINE_OVERLAY_DEVELOPER}" == "1" \
+		&& "${FORCE_LEGACY_TBB}" == "0" ]] ; then
+		if has_version "dev-cpp/tbb:12" ; then
+			append-cppflags -DTBB_ALLOCATOR_TRAITS_BROKEN
+		fi
 	fi
 
 	export USD_PATH="/usr/$(get_libdir)/${PN}"
@@ -229,4 +237,21 @@ EOF
 	fi
 	use doc && einstalldocs
 	dodoc LICENSE.txt NOTICE.txt
+	if [[ -n "${OILEDMACHINE_OVERLAY_DEVELOPER}" && "${OILEDMACHINE_OVERLAY_DEVELOPER}" == "1" \
+		&& "${FORCE_LEGACY_TBB}" == "0" ]] ; then
+		if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+			for f in $(find "${ED}") ; do
+				if readelf -h "${f}" 2>/dev/null 1>/dev/null \
+					&& test -x "${f}" \
+					&& ldd "${f}" 2>/dev/null | grep -q -F libtbb ; then
+					einfo "Old rpath for ${f}:"
+					patchelf --print-rpath \
+						"${f}" || die
+					einfo "Setting rpath for ${f}"
+					patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
+						"${f}" || die
+				fi
+			done
+		fi
+	fi
 }
