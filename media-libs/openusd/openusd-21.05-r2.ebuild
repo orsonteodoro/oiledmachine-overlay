@@ -241,9 +241,8 @@ EOF
 		&& "${FORCE_LEGACY_TBB}" == "0" ]] ; then
 		if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
 			for f in $(find "${ED}") ; do
-				if readelf -h "${f}" 2>/dev/null 1>/dev/null \
-					&& test -x "${f}" \
-					&& ldd "${f}" 2>/dev/null | grep -q -F libtbb ; then
+				test -L "${f}" || continue
+				if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
 					einfo "Old rpath for ${f}:"
 					patchelf --print-rpath \
 						"${f}" || die
