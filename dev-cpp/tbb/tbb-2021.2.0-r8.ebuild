@@ -410,7 +410,7 @@ src_install()
 	# Change RPATHS for python .so files and examples matching ABI
 	for f in $(find "${ED}") ; do
 		test -L "${f}" && continue
-		if ldd "${f}" 2>/dev/null | grep -q -F libtbb ; then
+		if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
 			local old_rpath
 			einfo "Old unsanitized rpath for ${f}:"
 			local old_rpath=$(patchelf --print-rpath "${f}")
