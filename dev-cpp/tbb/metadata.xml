@@ -1,26 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- ebuild fork only on the oiledmachine-overlay -->
   <maintainer type="person">
+    <!-- ebuild fork only on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!-- this ebuild-package was obtained from the gentoo-overlay -->
-  <!-- ebuild originator -->
   <maintainer type="project">
+    <!-- this ebuild-package was obtained from the gentoo-overlay -->
+    <!-- ebuild originator -->
     <email>sci@gentoo.org</email>
     <name>Gentoo Science Project</name>
   </maintainer>
   <longdescription lang="en">
-  The Intel Threading Building Blocks is a library that helps you
-  leverage multi-core processor performance without having to be a
-  threading expert. It represents a higher-level, task-based
-  parallelism that abstracts platform details and threading mechanism
-  for performance and scalability.
+    The oneAPI Threading Building Blocks (oneTBB) is a library that helps you
+    leverage multi-core processor performance without having to be a threading
+    expert.  It represents a higher-level, task-based parallelism that abstracts
+    platform details and threading mechanism for performance and scalability.
 
-  The purpose of this ebuild fork was originally to meet minimum requirements of
-  either Blender or its dependencies.
+    oneTBB library can be safely mixed with the TBB but with a oversubscription
+    [more threads than cores] penalty.[1]
+
+    The document "TBB Revamp: Background, Changes, and Modernization" describes
+    the migration differences between TBB and oneTBB.[2]
+
+    References:
+
+      [1] https://software.intel.com/content/www/us/en/develop/documentation/onetbb-documentation/top/onetbb-developer-guide/migrating-from-threading-building-blocks-tbb/mixing-two-runtimes.html
+      [2] https://software.intel.com/content/www/us/en/develop/articles/tbb-revamp.html
+
+    The purpose of this ebuild fork was originally to meet minimum requirements of
+    either Blender or its dependencies.
   </longdescription>
   <upstream>
     <remote-id type="github">intel/tbb</remote-id>
@@ -35,4 +45,18 @@
     <flag name="X">Builds examples with X support.  Otherwise, builds them for
       command line console.</flag>
   </use>
+  <slots>
+    <slot name="0">
+      <!-- Same as original ebuild, currently TBB_COMPATIBLE_INTERFACE_VERSION -->
+      (Legacy) TBB version.  C++03/98 compatible.
+    </slot>
+    <slot name="2">
+      <!-- Same as TBB_COMPATIBLE_INTERFACE_VERSION in include/tbb/tbb_stddef.h -->
+      (Legacy) TBB version.  C++03/98 compatible.
+    </slot>
+    <slot name="12">
+      <!-- Same as __TBB_BINARY_VERSION in include/oneapi/tbb/version.h -->
+      oneTBB version.  C++11 mandatory.
+    </slot>
+  </slots>
 </pkgmetadata>

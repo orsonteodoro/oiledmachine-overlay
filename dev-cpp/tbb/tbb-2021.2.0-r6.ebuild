@@ -6,7 +6,7 @@ EAPI=7
 PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-utils flag-o-matic multilib-minimal python-r1 toolchain-funcs
 
-DESCRIPTION="High level abstract threading library"
+DESCRIPTION="oneAPI Threading Building Blocks (oneTBB)"
 HOMEPAGE="https://www.threadingbuildingblocks.org"
 # Clear distinction is made to prevent wrong hashing
 VER_SCH="semver" # valid values (left column):
@@ -18,28 +18,30 @@ VER_SCH="semver" # valid values (left column):
 #
 # Details on versioning can be found in:
 # https://github.com/oneapi-src/oneTBB/issues/143
+MY_PN="oneTBB"
 if [[ "${VER_SCH}" == "marketing" ]] ; then
 PV1="$(ver_cut 1)"
 PV2="$(ver_cut 2)"
 MY_PV="${PV1}_U${PV2}"
 SRC_URI="
-https://github.com/intel/${PN}/archive/refs/tags/${MY_PV}.tar.gz
+https://github.com/oneapi-src/${MY_PN}/archive/refs/tags/${MY_PV}.tar.gz
 	-> ${PN}-$(ver_cut 1-2 ${PV}).tar.gz"
 elif [[ "${VER_SCH}" == "semver" ]] ; then
 # always 3 periods in ${PV}
 SRC_URI="
-https://github.com/intel/${PN}/archive/refs/tags/v${PV}.tar.gz
+https://github.com/oneapi-src/${MY_PN}/archive/refs/tags/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
 elif [[ "${VER_SCH}" == "live-snapshot" ]] ; then
 SRC_URI="
-https://github.com/intel/${PN}/archive/refs/heads/${EGIT_COMMIT}.tar.gz
+https://github.com/oneapi-src/${MY_PN}/archive/refs/heads/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 fi
 LICENSE="Apache-2.0"
-SLOT="0/${PV}"
+SLOT_MAJOR="12" # Same as __TBB_BINARY_VERSION in include/oneapi/tbb/version.h or the M in libtbb.so.M.m
+SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86
 ~amd64-linux ~x86-linux"
-IUSE+=" -X debug doc -examples python static-libs +test"
+IUSE+=" -X debug doc -examples python +test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	X? ( examples )"
@@ -66,6 +68,7 @@ elif [[ "${VER_SCH}" == "live-snapshot" ]] ; then
 S="${WORKDIR}/oneTBB-${EGIT_COMMIT}"
 fi
 DOCS=( README.md )
+RESTRICT="mirror"
 
 pkg_setup()
 {
@@ -89,8 +92,6 @@ pkg_setup()
 src_prepare()
 {
 	cd "${S}" || die
-	eapply "${FILESDIR}/tbb-2021.2.0-move-assert-definitions.patch"
-	eapply "${FILESDIR}/tbb-2021.2.0-static-libs-support.patch"
 	eapply "${FILESDIR}/tbb-2021.2.0-fix-missing-header-cholesky.patch"
 	cmake-utils_src_prepare
 
@@ -112,7 +113,7 @@ _src_configure() {
 
 	pushd "${S}/doc" || die
 		doxygen -g Doxyfile-dev.in || die
-		sed -i -e "s|My Project|${PN}|g" \
+		sed -i -e "s|My Project|${MY_PN}|g" \
 	-e "s|GENERATE_XML           = NO|GENERATE_XML           = YES|g" \
 	-e "s|GENERATE_LATEX         = YES|GENERATE_LATEX         = NO|g" \
 	-e "s|\
@@ -146,14 +147,15 @@ INCLUDE_PATH           = ${S}/include/oneapi ${S}/include/tbb|g" \
 	esac
 
 	mycmakeargs=(
+		-DCMAKE_INSTALL_INCLUDEDIR="include/${MY_PN}/${SLOT_MAJOR}"
+		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)/${MY_PN}/${SLOT_MAJOR}"
 		-DBUILD_SHARED_LIBS=ON
-		-DBUILD_STATIC_LIBS=$(usex static-libs ON OFF)
 		-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 		-DCMAKE_C_COMPILER=${comp}
 		-DCMAKE_CXX_COMPILER=${comp}
 		-DTBB_EXAMPLES=$(usex examples)
 		-DTBB_STRICT=OFF
-		-DTBB_TEST=$(usex static-libs OFF $(usex test))
+		-DTBB_TEST=$(usex test)
 		-DTBB4PY_BUILD=$(usex python)
 	)
 	if use examples ; then
@@ -187,30 +189,31 @@ src_configure()
 
 gen_pkg_config() {
 	local c="${1}"
+	local v="${SLOT_MAJOR}"
 	# pc files are for debian and fedora compatibility
 	# some deps use them
 	cat <<-EOF > ${PN}.pc.template
 		prefix=${EPREFIX}/usr
-		libdir=\${prefix}/$(get_libdir)
-		includedir=\${prefix}/include
-		Name: ${PN}
+		libdir=\${prefix}/$(get_libdir)/${MY_PN}
+		includedir=\${prefix}/include/${MY_PN}
+		Name: ${MY_PN}
 		Description: ${DESCRIPTION}
 		Version: ${PV}
 		URL: ${HOMEPAGE}
 		Cflags: -I\${includedir}
 	EOF
-	cp ${PN}.pc.template ${PN}${c}.pc || die
-	cat <<-EOF >> ${PN}${c}.pc
+	cp ${PN}.pc.template ${PN}${c}-${v}.pc || die
+	cat <<-EOF >> ${PN}${c}-${v}.pc
 		Libs: -L\${libdir} -ltbb${c}
 		Libs.private: -lm -lrt
 	EOF
-	cp ${PN}.pc.template ${PN}malloc${c}.pc || die
-	cat <<-EOF >> ${PN}malloc${c}.pc
+	cp ${PN}.pc.template ${PN}malloc${c}-${v}.pc || die
+	cat <<-EOF >> ${PN}malloc${c}-${v}.pc
 		Libs: -L\${libdir} -ltbbmalloc${c}
 		Libs.private: -lm -lrt
 	EOF
-	cp ${PN}.pc.template ${PN}malloc_proxy${c}.pc || die
-	cat <<-EOF >> ${PN}malloc_proxy${c}.pc
+	cp ${PN}.pc.template ${PN}malloc_proxy${c}-${v}.pc || die
+	cat <<-EOF >> ${PN}malloc_proxy${c}-${v}.pc
 		Libs: -L\${libdir} -ltbbmalloc_proxy${c}
 		Libs.private: -lrt
 		Requires: tbbmalloc${c}
@@ -221,9 +224,6 @@ src_compile_pkg_config()
 {
 	[[ -f "${T}/pkg_config_generated_${ABI}" ]] && return
 	gen_pkg_config ""
-	if use static-libs ; then
-		gen_pkg_config "_static"
-	fi
 	touch "${T}/pkg_config_generated_${ABI}"
 }
 
@@ -309,20 +309,12 @@ src_test()
 		if use python ; then
 			src_test_py() {
 				cd "${BUILD_DIR}" || die
-				if use static-libs ; then
-					ewarn "Skipping test for the static-libs USE flag."
-				else
-					SUFFIX="_${ABI}_${EPYTHON/./_}"
-					_src_test
-				fi
+				SUFFIX="_${ABI}_${EPYTHON/./_}"
+				_src_test
 			}
 		else
-			if use static-libs ; then
-				ewarn "Skipping test for the static-libs USE flag."
-			else
-				SUFFIX="_${ABI}"
-				_src_test
-			fi
+			SUFFIX="_${ABI}"
+			_src_test
 		fi
 		python_foreach_impl src_test_py
 	}
