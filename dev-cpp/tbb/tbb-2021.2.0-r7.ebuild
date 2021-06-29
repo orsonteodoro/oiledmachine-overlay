@@ -194,8 +194,8 @@ gen_pkg_config() {
 	# some deps use them
 	cat <<-EOF > ${PN}.pc.template
 		prefix=${EPREFIX}/usr
-		libdir=\${prefix}/$(get_libdir)/${MY_PN}
-		includedir=\${prefix}/include/${MY_PN}
+		libdir=\${prefix}/$(get_libdir)/${MY_PN}/${SLOT_MAJOR}
+		includedir=\${prefix}/include/${MY_PN}/${SLOT_MAJOR}
 		Name: ${MY_PN}
 		Description: ${DESCRIPTION}
 		Version: ${PV}
@@ -325,7 +325,7 @@ src_install_pkgconfig()
 {
 	cd "${BUILD_DIR}" || die
 	insinto /usr/$(get_libdir)/pkgconfig
-	[[ -f tbb.pc ]] && doins *.pc
+	[[ -f tbb-${SLOT_MAJOR}.pc ]] && doins *.pc
 }
 
 _src_install() {
@@ -388,10 +388,14 @@ _src_install() {
 					# Removed /var/tmp/portage/dev-cpp/...
 					einfo "Removing rpath from ${f}"
 					patchelf --remove-rpath "${f}" || die
+					einfo "Change rpath to /usr/$(get_libdir)/oneTBB/12 in ${f}"
+					patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/12" "${f}" || die
 				done
 			popd
 		fi
 	fi
+	sed -i -e "s|/include|/include/${MY_PN}/${SLOT_MAJOR}|g" \
+		"${ED}/usr/$(get_libdir)/oneTBB/${SLOT_MAJOR}/cmake/TBB/TBBTargets.cmake" || die
 }
 
 src_install()
@@ -411,4 +415,12 @@ src_install()
 		fi
 	}
 	multilib_foreach_abi src_install_abi
+}
+
+pkg_postinst()
+{
+	einfo \
+"Packages that depend on ${CATEGORY}/${PN}:${SLOT_MAJOR} must either set the\n\
+RPATH or add a LD_LIBRARY_PATH wrapper to use ${MY_PN} instead of legacy TBB.\n\
+You must verify that the linking is proper via ldd."
 }
