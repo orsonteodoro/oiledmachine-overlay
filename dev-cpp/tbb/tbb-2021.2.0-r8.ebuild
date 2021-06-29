@@ -156,7 +156,7 @@ INCLUDE_PATH           = ${S}/include/oneapi ${S}/include/tbb|g" \
 		-DTBB_EXAMPLES=$(usex examples)
 		-DTBB_STRICT=OFF
 		-DTBB_TEST=$(usex test)
-		-DTBB4PY_BUILD=$(usex python)
+		-DTBB4PY_BUILD=$(multilib_native_usex python)
 	)
 	if use examples ; then
 		mycmakeargs+=(
