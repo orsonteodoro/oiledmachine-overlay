@@ -61,11 +61,11 @@ BDEPEND+="
 	doc? ( app-doc/doxygen[dot] )
 	python? ( ${PYTHON_DEPS} )"
 if [[ "${VER_SCH}" == "marketing" ]] ; then
-S="${WORKDIR}/oneTBB-${MY_PV}"
+S="${WORKDIR}/${MY_PN}-${MY_PV}"
 elif [[ "${VER_SCH}" == "semver" ]] ; then
-S="${WORKDIR}/oneTBB-${PV}"
+S="${WORKDIR}/${MY_PN}-${PV}"
 elif [[ "${VER_SCH}" == "live-snapshot" ]] ; then
-S="${WORKDIR}/oneTBB-${EGIT_COMMIT}"
+S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 fi
 DOCS=( README.md )
 RESTRICT="mirror"
@@ -388,14 +388,14 @@ _src_install() {
 					# Removed /var/tmp/portage/dev-cpp/...
 					einfo "Removing rpath from ${f}"
 					patchelf --remove-rpath "${f}" || die
-					einfo "Change rpath to /usr/$(get_libdir)/oneTBB/12 in ${f}"
-					patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/12" "${f}" || die
+					einfo "Change rpath to /usr/$(get_libdir)/${MY_PN}/${SLOT_MAJOR} in ${f}"
+					patchelf --set-rpath "/usr/$(get_libdir)/${MY_PN}/${SLOT_MAJOR}" "${f}" || die
 				done
 			popd
 		fi
 	fi
 	sed -i -e "s|/include|/include/${MY_PN}/${SLOT_MAJOR}|g" \
-		"${ED}/usr/$(get_libdir)/oneTBB/${SLOT_MAJOR}/cmake/TBB/TBBTargets.cmake" || die
+		"${ED}/usr/$(get_libdir)/${MY_PN}/${SLOT_MAJOR}/cmake/TBB/TBBTargets.cmake" || die
 }
 
 src_install()
