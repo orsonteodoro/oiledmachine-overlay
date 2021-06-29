@@ -383,15 +383,6 @@ _src_install() {
 			doins -r examples
 			find "${ED}/usr/share/doc/${PF}/examples/" -name "*.o" -delete || die
 			docompress -x "/usr/share/doc/${PF}/examples"
-			pushd "${ED}/usr/share/${PF}/examples/build" || die
-				for f in $(ls) ; do
-					# Removed /var/tmp/portage/dev-cpp/...
-					einfo "Removing rpath from ${f}"
-					patchelf --remove-rpath "${f}" || die
-					einfo "Change rpath to /usr/$(get_libdir)/${MY_PN}/${SLOT_MAJOR} in ${f}"
-					patchelf --set-rpath "/usr/$(get_libdir)/${MY_PN}/${SLOT_MAJOR}" "${f}" || die
-				done
-			popd
 		fi
 	fi
 	sed -i -e "s|/include|/include/${MY_PN}/${SLOT_MAJOR}|g" \
@@ -415,6 +406,44 @@ src_install()
 		fi
 	}
 	multilib_foreach_abi src_install_abi
+
+	# Change RPATHS for python .so files and examples matching ABI
+	for f in $(find "${ED}") ; do
+		if ldd "${f}" 2>/dev/null | grep -q -F libtbb ; then
+			test -L "${f}" && continue
+			local old_rpath
+			einfo "Old unsanitized rpath for ${f}:"
+			local old_rpath=$(patchelf --print-rpath "${f}")
+			echo -e "${old_rpath}"
+			einfo "Old sanitized rpath for ${f}:"
+			local old_rpath=$(echo "${old_rpath}" \
+				| sed -E -e "s|/var/tmp[^:]+||g" -e "s|^:||g" -e "s|:$||g")
+			echo -e "${old_rpath}"
+			einfo "Setting rpath for ${f}:"
+			local a_dl=$(ldd "${f}" 2>/dev/null | grep "libdl.so" | cut -f 2 -d "/")
+			local a_libc=$(ldd "${f}" 2>/dev/null | grep "libc.so" | cut -f 2 -d "/")
+			if (( ${#a_dl} > 0 )) ; then
+				if (( ${#old_rpath} == 0 )) ; then
+					patchelf --set-rpath "/usr/${a_dl}/oneTBB/${SLOT_MAJOR}" \
+						"${f}" || die
+				else
+					patchelf --set-rpath "${old_rpath}:/usr/${a_dl}/oneTBB/${SLOT_MAJOR}" \
+						"${f}" || die
+				fi
+			elif (( ${#a_libc} > 0 )) ; then
+				if (( ${#old_rpath} == 0 )) ; then
+					patchelf --set-rpath "/usr/${a_libc}/oneTBB/${SLOT_MAJOR}" \
+						"${f}" || die
+				else
+					patchelf --set-rpath "${old_rpath}:/usr/${a_libc}/oneTBB/${SLOT_MAJOR}" \
+						"${f}" || die
+				fi
+			fi
+			einfo "New rpath:"
+			patchelf --print-rpath "${f}"
+			echo
+		fi
+	done
 }
 
 pkg_postinst()
