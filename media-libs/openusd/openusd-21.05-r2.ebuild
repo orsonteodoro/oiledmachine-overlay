@@ -241,11 +241,10 @@ EOF
 		&& "${FORCE_LEGACY_TBB}" == "0" ]] ; then
 		if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
 			for f in $(find "${ED}") ; do
-				test -L "${f}" || continue
+				test -L "${f}" && continue
 				if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
 					einfo "Old rpath for ${f}:"
-					patchelf --print-rpath \
-						"${f}" || die
+					patchelf --print-rpath "${f}" || die
 					einfo "Setting rpath for ${f}"
 					patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
 						"${f}" || die
