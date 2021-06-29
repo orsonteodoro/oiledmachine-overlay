@@ -26,6 +26,7 @@ MIN_GCC_V="4.8.1" # for c++11
 MIN_GCC_V_AVX512SKX="5.1.0" # for -mavx512vl
 MIN_ICC_V="15.0" # for c++11
 MIN_ICC_V_AVX512SKX="15.0.1" # for -xCORE-AVX512
+ONETBB_SLOT="12"
 # 15.0.1 -xCOMMON-AVX512
 BDEPEND+=" >=dev-util/cmake-3.1.0
 	 ispc? ( >=dev-lang/ispc-1.15.0 )
@@ -63,16 +64,16 @@ BDEPEND+=" >=dev-util/cmake-3.1.0
 # See .gitlab-ci.yml (track: release-linux-x64-Release)
 DEPEND+=" media-libs/glfw
 	 virtual/opengl
-	 tbb? ( >=dev-cpp/tbb-2021.2.0 )
+	 tbb? ( >=dev-cpp/tbb-2021.2.0:= )
 	 tutorials? ( media-libs/libpng:0=
 		     media-libs/openimageio
 		     virtual/jpeg:0 )"
 RDEPEND+=" ${DEPEND}"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
-PATCHES=(
+PATCHES_=(
 	"${FILESDIR}/${PN}-3.10.0-tutorials-oiio-unique_ptr-to-auto.patch"
-	"${FILESDIR}/${PN}-3.13.0-fix-cmake-configure-for-tbb-2021.2.0.patch"
+	"${FILESDIR}/${PN}-3.13.0-findtbb-more-debug-messages.patch"
 )
 
 chcxx() {
@@ -148,6 +149,10 @@ and try again."
 }
 
 src_prepare() {
+	eapply ${PATCHES_[@]}
+	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		eapply "${FILESDIR}/${PN}-3.13.0-findtbb-alt-lib-path.patch"
+	fi
 	cmake-utils_src_prepare
 
 	# disable RPM package building
@@ -226,6 +231,14 @@ src_configure() {
 		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="NONE" )
 	fi
 
+	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		mycmakeargs+=(
+			-DTBB_INCLUDE_DIR=/usr/include/oneTBB/${ONETBB_SLOT}
+			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}
+			-DTBB_SOVER="${ONETBB_SLOT}"
+		)
+	fi
+
 	cmake-utils_src_configure
 }
 
@@ -282,6 +295,20 @@ src_install() {
 	docinto licenses
 	dodoc LICENSE.txt third-party-programs-TBB.txt \
 		third-party-programs.txt
+	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		for f in $(find "${ED}") ; do
+			if readelf -h "${f}" 2>/dev/null 1>/dev/null \
+				&& test -x "${f}" \
+				&& ldd "${f}" 2>/dev/null | grep -q -F libtbb ; then
+				einfo "Old rpath for ${f}:"
+				patchelf --print-rpath \
+					"${f}" || die
+				einfo "Setting rpath for ${f}"
+				patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
+					"${f}" || die
+			fi
+		done
+	fi
 }
 
 pkg_postinst() {
