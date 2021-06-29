@@ -28,7 +28,7 @@ MIN_ICC_V="17.0" # 15.0 has c++11 support, but project only supports 17
 # See scripts/build.py for release versioning
 CDEPEND=" ${PYTHON_DEPS}"
 DEPEND+=" ${CDEPEND}
-	>=dev-cpp/tbb-2021.2.0
+	>=dev-cpp/tbb-2021.2.0:=
 	virtual/libc
 	openimageio? ( media-libs/openimageio )"
 RDEPEND+=" ${DEPEND}"
