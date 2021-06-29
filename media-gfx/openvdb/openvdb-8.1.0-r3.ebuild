@@ -70,6 +70,7 @@ BDEPEND+="
 	>=dev-util/cmake-3.16.2-r1
 	>=sys-devel/bison-3
 	>=sys-devel/flex-2.6
+	dev-util/patchelf
 	virtual/pkgconfig
 	doc? (
 		>=app-doc/doxygen-1.8.8
@@ -94,6 +95,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
 )
 RESTRICT="!test? ( test )"
+ONETBB_SLOT="12"
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
@@ -105,6 +107,8 @@ src_prepare() {
 		cmake/OpenVDBGLFW3Setup.cmake || die
 	if has_version ">=dev-cpp/tbb-2021" ; then
 		eapply "${DISTDIR}/${TBB_2021_PATCH}"
+		eapply "${FILESDIR}/openvdb-8.1.0-findtbb-more-debug-messages.patch"
+		eapply "${FILESDIR}/openvdb-8.1.0-prioritize-onetbb.patch"
 	fi
 }
 
@@ -161,6 +165,14 @@ src_configure() {
 		mycmakeargs+=( -DOPENVDB_SIMD=SSE42 )
 	fi
 
+	if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		einfo "Using oneTBB"
+		mycmakeargs+=(
+			-DUSE_PKGCONFIG=ON
+			-DTBB_FORCE_ONETBB=ON
+		)
+	fi
+
 	cmake_src_configure
 }
 
@@ -170,4 +182,13 @@ src_install()
 	dodoc README.md
 	docinto licenses
 	dodoc LICENSE openvdb/openvdb/COPYRIGHT
+	if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		for f in $(find "${ED}") ; do
+			if readelf -h "${f}" 2>/dev/null 1>/dev/null && test -x "${f}" ; then
+				einfo "Setting rpath for ${f}"
+				patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
+					"${f}" || die
+			fi
+		done
+	fi
 }
