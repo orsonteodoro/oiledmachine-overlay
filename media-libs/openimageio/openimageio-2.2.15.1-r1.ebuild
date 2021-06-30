@@ -23,11 +23,12 @@ OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 # building test enabled upstream
 IUSE+=" ${CPU_FEATURES[@]%:*} ${OPENVDB_APIS_[@]}
 color-management dds dicom +doc ffmpeg field3d gif heif jpeg2k libressl opencv
-opengl openvdb ptex +python +qt5 raw ssl tbb +truetype"
+opengl openvdb ptex +python +qt5 raw ssl +truetype"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )
 	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )"
 # See https://github.com/OpenImageIO/oiio/blob/Release-2.2.15.1/INSTALL.md for requirements
 QT_V="5.6"
+ONETBB_SLOT="12"
 RDEPEND+="
 	>=dev-cpp/robin-map-0.6.2
 	>=dev-libs/boost-1.53:=
@@ -54,7 +55,15 @@ RDEPEND+="
 		virtual/opengl
 	)
 	openvdb? (
-		>=dev-cpp/tbb-2018
+		|| (
+			(
+				>=dev-cpp/tbb-2018:0=
+				<dev-cpp/tbb-2021:0=
+			)
+			(
+				>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+			)
+		)
 		>=media-libs/openvdb-5[abi5-compat?,abi6-compat?,abi7-compat?,abi8-compat?]
 	)
 	ptex? ( media-libs/ptex:= )
@@ -98,6 +107,7 @@ BDEPEND+="
 SRC_URI="
 https://github.com/OpenImageIO/oiio/archive/Release-${PV}.tar.gz
 	-> ${P}.tar.gz"
+
 DOCS=( CHANGES.md CREDITS.md README.md )
 RESTRICT="test" # bug 431412
 S="${WORKDIR}/oiio-Release-${PV}"
@@ -151,6 +161,15 @@ src_configure() {
 		ewarn "One of ${OPENVDB_APIS_[@]} was not set."
 	fi
 
+	if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		mycmakeargs+=(
+			-DTBB_INCLUDE_DIR=/usr/include/oneTBB/${ONETBB_SLOT}
+			-DTBB_LIBRARY=/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}
+		)
+		sed -i -e "s|tbb/tbb_stddef.h|oneapi/tbb/version.h|g" \
+			"src/cmake/modules/FindTBB.cmake" || die
+	fi
+
 	cmake_src_configure
 }
 
@@ -167,4 +186,16 @@ src_install() {
 	for dir in "${FONT_S[@]}"; do
 		doins "${dir}"/*.ttf
 	done
+	if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		for f in $(find "${ED}") ; do
+			test -L "${f}" && continue
+			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
+				einfo "Old rpath for ${f}:"
+				patchelf --print-rpath "${f}" || die
+				einfo "Setting rpath for ${f}"
+				patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
+					"${f}" || die
+			fi
+		done
+	fi
 }
