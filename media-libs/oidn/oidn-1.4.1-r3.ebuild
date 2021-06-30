@@ -27,8 +27,12 @@ MIN_ICC_V="17.0" # 15.0 has c++11 support, but project only supports 17
 # SSE4.1 hardware release in 2008
 # See scripts/build.py for release versioning
 CDEPEND=" ${PYTHON_DEPS}"
+ONETBB_SLOT="12"
 DEPEND+=" ${CDEPEND}
-	>=dev-cpp/tbb-2021.2.0:=
+	|| (
+		<dev-cpp/tbb-2021:0=
+		>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+	)
 	virtual/libc
 	openimageio? ( media-libs/openimageio )"
 RDEPEND+=" ${DEPEND}"
@@ -88,7 +92,6 @@ DOCS=( CHANGELOG.md README.md readme.pdf )
 PATCHES_=(
 	"${FILESDIR}/${PN}-1.4.1-findtbb-print-paths.patch"
 )
-ONETBB_SLOT="12"
 
 pkg_setup() {
 	if [[ ! -f /proc/cpuinfo ]] ; then

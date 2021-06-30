@@ -8,8 +8,8 @@ Copyright notice for cmake/FindTBB.cmake:
 ## SPDX-License-Identifier: Apache-2.0
 
 diff -urp oidn-1.4.1.orig/cmake/FindTBB.cmake oidn-1.4.1/cmake/FindTBB.cmake
---- oidn-1.4.1.orig/cmake/FindTBB.cmake	2021-06-29 11:17:36.323707940 -0700
-+++ oidn-1.4.1/cmake/FindTBB.cmake	2021-06-29 11:22:51.475866894 -0700
+--- oidn-1.4.1.orig/cmake/FindTBB.cmake	2021-06-30 03:39:07.558205607 -0700
++++ oidn-1.4.1/cmake/FindTBB.cmake	2021-06-30 03:43:15.923842683 -0700
 @@ -22,6 +22,8 @@
  # The user may specify the following variables to help the search process:
  # - TBB_ROOT
@@ -28,7 +28,7 @@ diff -urp oidn-1.4.1.orig/cmake/FindTBB.cmake oidn-1.4.1/cmake/FindTBB.cmake
  # We use INTERFACE libraries, which are only supported in 3.x
  cmake_minimum_required(VERSION 3.1)
  
-+if (TBB_LIBRARY_DIR)									# oteodoro added line
++if (TBB_INCLUDE_DIR)									# oteodoro added line
 +  set(FIND_PATH_OPTS_ NO_DEFAULT_PATH)							# oteodoro added line
 +endif()											# oteodoro added line
  
@@ -67,3 +67,22 @@ diff -urp oidn-1.4.1.orig/cmake/FindTBB.cmake oidn-1.4.1/cmake/FindTBB.cmake
    endif()
  
    find_library(${LIB_VAR}
+@@ -465,11 +474,13 @@ endfunction()
+ rk_tbb_list_components()
+ rk_tbb_reuse_existing_target_components()
+ 
+-rk_tbb_find_root()
+-if (NOT EXISTS "${TBB_ROOT}")
+-  rk_tbb_error("Unable to find root directory ${TBB_ROOT}")
+-endif()
+-mark_as_advanced(TBB_ROOT) # Hide, we found something.
++if (NOT TBB_LIBRARY_DIR)									# oteodoro - added line
++  rk_tbb_find_root()									# oteodoro - indent
++  if (NOT EXISTS "${TBB_ROOT}")								# oteodoro - indent
++    rk_tbb_error("Unable to find root directory ${TBB_ROOT}")				# oteodoro - indent
++  endif()										# oteodoro - indent
++  mark_as_advanced(TBB_ROOT) # Hide, we found something.				# oteodoro - indent
++endif()											# oteodoro - added line
+ 
+ rk_tbb_find_include_directory()
+ if (NOT EXISTS "${TBB_INCLUDE_DIR}")
