@@ -11,10 +11,10 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+=" net-libs/nodejs[npm]"
-ELECTRON_APP_ELECTRON_V="8.5.5"
+ELECTRON_APP_ELECTRON_V="13.1.2"
 ELECTRON_APP_MODE="npm"
-SRC_URI=\
-"https://github.com/JannisX11/blockbench/archive/v${PV}.tar.gz
+SRC_URI="
+https://github.com/JannisX11/blockbench/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
