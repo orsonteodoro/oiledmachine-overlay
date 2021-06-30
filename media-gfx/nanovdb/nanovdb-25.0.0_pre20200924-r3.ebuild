@@ -27,7 +27,15 @@ REQUIRED_USE+="
 # For dependencies, see
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/doc/dependencies.txt
 # openvdb should be 7.1.1 but downgraded to minor.  No 7.1.1 release either.
+ONETBB_SLOT="12"
 DEPEND_GTEST=" system-gtest? ( >=dev-cpp/gtest-1.10 )"
+
+# Not ready yet:
+#			(
+#				>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+#			)
+
+
 DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 	blosc? ( >=dev-libs/c-blosc-1.5 )
 	cuda? (
@@ -48,7 +56,14 @@ DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 	optix? (
 		>=dev-libs/optix-7
 	)
-	tbb? ( >=dev-cpp/tbb-2017.6 )
+	tbb? (
+		|| (
+			(
+				>=dev-cpp/tbb-2017.6:0=
+				<dev-cpp/tbb-2021:0=
+			)
+		)
+	)
 	tools? (
 		egl? (
 			media-libs/mesa[egl?]
@@ -100,11 +115,11 @@ S_NFD="${WORKDIR}/nativefiledialog-${EGIT_COMMIT_NFD}"
 S_GTEST="${WORKDIR}/googletest-${GTEST_V}"
 RESTRICT="mirror"
 CMAKE_BUILD_TYPE=Release
-PATCHES=(
-	"${FILESDIR}/nanovdb-25.0.0-cmake-use-tarballs.patch"
-	"${FILESDIR}/nanovdb-25.0.0-opencl-version-120.patch"
-	"${FILESDIR}/nanovdb-25.0.0-change-examples-destdir.patch"
-	"${FILESDIR}/nanovdb-25.0.0-change-header-destdir.patch"
+PATCHES_=(
+	"${FILESDIR}/${PN}-25.0.0_pre20200924-cmake-use-tarballs.patch"
+	"${FILESDIR}/${PN}-25.0.0_pre20200924-opencl-version-120.patch"
+	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-examples-destdir.patch"
+	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-header-destdir.patch"
 )
 
 pkg_setup()
@@ -141,6 +156,15 @@ pkg_setup()
 			fi
 		fi
 	fi
+}
+
+src_prepare()
+{
+	eapply ${PATCHES_[@]}
+	if false && use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-findtbb-onetbb-changes.patch"
+	fi
+	cmake_src_prepare
 }
 
 src_configure()
@@ -189,6 +213,13 @@ src_configure()
 		)
 	fi
 
+	if false && use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		mycmakeargs+=(
+			-DTBB_INCLUDEDIR=/usr/include/oneTBB/${ONETBB_SLOT}
+			-DTBB_LIBRARYDIR=/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}
+		)
+	fi
+
 	cmake_src_configure
 }
 
@@ -200,4 +231,16 @@ src_install()
 	cd "${S}/.." || die
 	docinto licenses
 	dodoc LICENSE
+	if false && use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		for f in $(find "${ED}") ; do
+			test -L "${f}" && continue
+			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
+				einfo "Old rpath for ${f}:"
+				patchelf --print-rpath "${f}" || die
+				einfo "Setting rpath for ${f}"
+				patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
+					"${f}" || die
+			fi
+		done
+	fi
 }
