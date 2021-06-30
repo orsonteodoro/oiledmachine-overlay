@@ -27,8 +27,17 @@ REQUIRED_USE+="
 # See
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/doc/dependencies.txt
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/ci/install.sh
+ONETBB_SLOT="12"
 DEPEND+="
-	>=dev-cpp/tbb-2018.0:=
+	|| (
+		(
+			>=dev-cpp/tbb-2018.0:=
+			<dev-cpp/tbb-2021:0=
+		)
+		(
+			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+		)
+	)
 	>=dev-libs/boost-1.66:=
 	>=media-libs/ilmbase-2.2:=
 	>=sys-libs/zlib-1.2.7:=
@@ -95,7 +104,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
 )
 RESTRICT="!test? ( test )"
-ONETBB_SLOT="12"
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
