@@ -93,7 +93,7 @@ pkg_setup() {
 src_prepare() {
 	if [[ -n "${OILEDMACHINE_OVERLAY_DEVELOPER}" && "${OILEDMACHINE_OVERLAY_DEVELOPER}" == "1" \
 		&& "${FORCE_LEGACY_TBB}" == "0" ]] ; then
-		if has_version "dev-cpp/tbb:12" ; then
+		if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
 				ewarn "Using oneTBB.  Support is experimental, incomplete, and in-development."
 				eapply "${FILESDIR}/tbb.patch"
 				eapply "${FILESDIR}/atomic-tbb.patch"
@@ -115,7 +115,7 @@ EOF
 src_configure() {
 	if [[ -n "${OILEDMACHINE_OVERLAY_DEVELOPER}" && "${OILEDMACHINE_OVERLAY_DEVELOPER}" == "1" \
 		&& "${FORCE_LEGACY_TBB}" == "0" ]] ; then
-		if has_version "dev-cpp/tbb:12" ; then
+		if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
 			append-cppflags -DTBB_ALLOCATOR_TRAITS_BROKEN
 		fi
 	fi
