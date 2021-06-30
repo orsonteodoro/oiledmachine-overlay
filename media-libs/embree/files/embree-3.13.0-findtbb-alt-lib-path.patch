@@ -8,8 +8,8 @@ Copyright notice for common/cmake/FindTBB.cmake:
 ## SPDX-License-Identifier: Apache-2.0
 
 diff -urp embree-3.13.0.orig/common/cmake/FindTBB.cmake embree-3.13.0/common/cmake/FindTBB.cmake
---- embree-3.13.0.orig/common/cmake/FindTBB.cmake	2021-06-29 01:39:13.154242218 -0700
-+++ embree-3.13.0/common/cmake/FindTBB.cmake	2021-06-29 01:41:44.724110776 -0700
+--- embree-3.13.0.orig/common/cmake/FindTBB.cmake	2021-06-30 02:12:52.917895375 -0700
++++ embree-3.13.0/common/cmake/FindTBB.cmake	2021-06-30 02:14:04.696681878 -0700
 @@ -22,6 +22,8 @@
  # The user may specify the following variables to help the search process:
  # - TBB_ROOT
@@ -28,7 +28,7 @@ diff -urp embree-3.13.0.orig/common/cmake/FindTBB.cmake embree-3.13.0/common/cma
  # We use INTERFACE libraries, which are only supported in 3.x
  cmake_minimum_required(VERSION 3.1)
  
-+if (TBB_LIBRARY_DIR)									# oteodoro added line
++if (TBB_INCLUDE_DIR)									# oteodoro added line
 +  set(FIND_PATH_OPTS_ NO_DEFAULT_PATH)							# oteodoro added line
 +endif()											# oteodoro added line
 +
@@ -68,5 +68,22 @@ diff -urp embree-3.13.0.orig/common/cmake/FindTBB.cmake embree-3.13.0/common/cma
    endif()
  
    find_library(${LIB_VAR}
-Only in embree-3.13.0/common/cmake: FindTBB.cmake.orig
-Only in embree-3.13.0/common/cmake: FindTBB.cmake.rej
+@@ -455,11 +465,13 @@ endfunction()
+ rk_tbb_list_components()
+ rk_tbb_reuse_existing_target_components()
+ 
+-rk_tbb_find_root()
+-if (NOT EXISTS "${TBB_ROOT}")
+-  rk_tbb_error("Unable to find root directory ${TBB_ROOT}")
+-endif()
+-mark_as_advanced(TBB_ROOT) # Hide, we found something.
++if(NOT TBB_LIBRARY_DIR)								# oteodoro - added line
++  rk_tbb_find_root()								# oteodoro - indent
++  if (NOT EXISTS "${TBB_ROOT}")							# oteodoro - indent
++    rk_tbb_error("Unable to find root directory ${TBB_ROOT}")			# oteodoro - indent
++  endif()									# oteodoro - indent
++  mark_as_advanced(TBB_ROOT) # Hide, we found something.			# oteodoro - indent
++endif()										# oteodoro - added line
+ 
+ rk_tbb_find_include_directory()
+ if (NOT EXISTS "${TBB_INCLUDE_DIR}")

@@ -64,7 +64,10 @@ BDEPEND+=" >=dev-util/cmake-3.1.0
 # See .gitlab-ci.yml (track: release-linux-x64-Release)
 DEPEND+=" media-libs/glfw
 	 virtual/opengl
-	 tbb? ( >=dev-cpp/tbb-2021.2.0:= )
+	 tbb? (
+		>=dev-cpp/tbb-2021.2.0:12=
+		 <dev-cpp/tbb-2021:0=
+	 )
 	 tutorials? ( media-libs/libpng:0=
 		     media-libs/openimageio
 		     virtual/jpeg:0 )"
