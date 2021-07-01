@@ -4,7 +4,6 @@
 # possible oversubscription [more threads than cores available] performance
 # penalty when both TBB and oneTBB are used.
 # openusd - not oneTBB ready
-# opensubdiv - not oneTBB ready
 # nanovdb - not oneTBB ready
 >=dev-cpp/tbb-2021
 
