@@ -5,6 +5,7 @@
 # penalty when both TBB and oneTBB are used.
 # openusd - not oneTBB ready
 # opensubdiv - not oneTBB ready
+# nanovdb - not oneTBB ready
 >=dev-cpp/tbb-2021
 
 # Ebuilds currently in develpment
