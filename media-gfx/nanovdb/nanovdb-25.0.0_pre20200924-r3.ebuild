@@ -18,19 +18,20 @@ SLOT="$(ver_cut 1 ${PV})/${PV}"
 # are disabled
 IUSE+=" +benchmark +blosc cuda -doc -egl +examples
 -imgui +interactive-renderer -native-file-dialog +opencl optix
-+opengl +openvdb system-glfw +tbb +test +tools +zlib"
++opengl +openvdb system-glfw +tbb +test test-renderer +tools +zlib"
 REQUIRED_USE+="
 	interactive-renderer? ( tools )
 	native-file-dialog? ( imgui tools )
 	benchmark? ( openvdb )
 	openvdb? ( tbb zlib )
-	test? ( openvdb tbb )"
+	test? ( openvdb tbb )
+	test-renderer? ( test )"
 # For dependencies, see
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/doc/dependencies.txt
 # openvdb should be 7.1.1 but downgraded to minor.  No 7.1.1 release either.
 ONETBB_SLOT="12"
 DEPEND_GTEST=" >=dev-cpp/gtest-1.10"
-# media-gfx/openvdb-7.1[abi7-compat]
+# media-gfx/openvdb-7.1[abi7-compat] # Placed here because the constraint has be relaxed.
 DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 	blosc? ( >=dev-libs/c-blosc-1.5 )
 	cuda? (
@@ -86,7 +87,9 @@ BDEPEND+="
 	doc? ( >=app-doc/doxygen-1.8.8 )
 	test? (
 		${DEPEND_GTEST}
-		media-gfx/imagemagick[png]
+		test-renderer? (
+			media-gfx/imagemagick[png]
+		)
 	)"
 GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
 EGIT_COMMIT="e62f7a0bf1e27397223c61ddeaaf57edf111b77f"
@@ -154,6 +157,16 @@ pkg_setup()
 			if [[ ! -d "${OptiX_INSTALL_DIR}/include" ]] ; then
 				die \
 "${OptiX_INSTALL_DIR}/include is unreachable.  Fix OptiX_INSTALL_DIR"
+			fi
+		fi
+	fi
+
+	if use test ; then
+		if use opencl ; then
+			if [[ "${FEATURES}" =~ "usersandbox" ]] ; then
+				die 'You must add FEATURES="-usersandbox" to run pass the opencl test'
+			else
+				einfo 'Passed: FEATURES="-usersandbox"'
 			fi
 		fi
 	fi
@@ -271,6 +284,7 @@ render_tests()
 	cmd/nanovdb_viewer -b -o ${OUT_PATH}/gold -p host-mt --count 1 --turntable || die
 	mogrify -format png ${OUT_PATH}/gold.0000.pfm || die
 
+	video_card_sandbox_predict
 	if use cuda ; then
 		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-cuda -p cuda -n 1 --turntable"
 		einfo "Running ${cmd}"
@@ -279,18 +293,17 @@ render_tests()
 	cmd="cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-c99 -p host-c99 -n 1 --turntable"
 	einfo "Running ${cmd}"
 	${cmd} || die
-	if use opengl ; then
+	if false && use opengl ; then
+		# opengl is not accessible
 		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-glsl -p glsl -n 1 --turntable"
 		einfo "Running ${cmd}"
 		${cmd} || die
 	fi
 	# No platform TBB for viewer
 	if use opencl ; then
-		# FIXME
-		video_card_sandbox_predict
 		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-opencl -p opencl -n 1 --turntable"
 		einfo "Running ${cmd}"
-		#${cmd} || die
+		${cmd} || die
 	fi
 	if use optix ; then
 		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-optix -p optix -n 1 --turntable"
@@ -302,14 +315,14 @@ render_tests()
 src_test()
 {
 	core_tests
-	render_tests
+	use test-renderer && render_tests
 }
 
 src_install()
 {
 	cmake_src_install
 	cd "${S}" || die
-	docinto Readme.md
+	dodoc Readme.md
 	cd "${S}/.." || die
 	docinto licenses
 	dodoc LICENSE

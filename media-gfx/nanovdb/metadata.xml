@@ -91,6 +91,9 @@
     <flag name="test">
       Runs unit tests
     </flag>
+    <flag name="test-renderer">
+      Runs renderer tests with nano_viewer
+    </flag>
     <flag name="tbb">
       Uses TBB as the concurrent memory allocator for binaries (that use the
       utils USE flag) or unit tests.
