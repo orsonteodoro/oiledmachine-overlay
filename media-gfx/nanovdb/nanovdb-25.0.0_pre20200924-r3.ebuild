@@ -16,26 +16,21 @@ SLOT="$(ver_cut 1 ${PV})/${PV}"
 # Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
 # are disabled
-IUSE+=" +benchmark +blosc cuda -doc -egl +examples \
--imgui +interactive-renderer -native-file-dialog +opencl optix \
-+opengl +openvdb system-glfw system-gtest +tbb +test +tools +zlib"
+IUSE+=" +benchmark +blosc cuda -doc -egl +examples
+-imgui +interactive-renderer -native-file-dialog +opencl optix
++opengl +openvdb system-glfw +tbb +test +tools +zlib"
 REQUIRED_USE+="
 	interactive-renderer? ( tools )
 	native-file-dialog? ( imgui tools )
 	benchmark? ( openvdb )
-	openvdb? ( tbb zlib )"
+	openvdb? ( tbb zlib )
+	test? ( openvdb tbb )"
 # For dependencies, see
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/doc/dependencies.txt
 # openvdb should be 7.1.1 but downgraded to minor.  No 7.1.1 release either.
 ONETBB_SLOT="12"
-DEPEND_GTEST=" system-gtest? ( >=dev-cpp/gtest-1.10 )"
-
-# Not ready yet:
-#			(
-#				>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
-#			)
-
-
+DEPEND_GTEST=" >=dev-cpp/gtest-1.10"
+# media-gfx/openvdb-7.1[abi7-compat]
 DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 	blosc? ( >=dev-libs/c-blosc-1.5 )
 	cuda? (
@@ -51,7 +46,7 @@ DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 	openvdb? (
 		>=dev-libs/boost-1.61
 		>=media-libs/ilmbase-2.2
-		>=media-gfx/openvdb-7.1[abi7-compat]
+		>=media-gfx/openvdb-7.1
 	)
 	optix? (
 		>=dev-libs/optix-7
@@ -61,6 +56,9 @@ DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 			(
 				>=dev-cpp/tbb-2017.6:0=
 				<dev-cpp/tbb-2021:0=
+			)
+			(
+				>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
 			)
 		)
 	)
@@ -86,7 +84,10 @@ BDEPEND+="
 	)
 	>=dev-util/cmake-3.11.4
 	doc? ( >=app-doc/doxygen-1.8.8 )
-	test? ( ${DEPEND_GTEST} )"
+	test? (
+		${DEPEND_GTEST}
+		media-gfx/imagemagick[png]
+	)"
 GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
 EGIT_COMMIT="e62f7a0bf1e27397223c61ddeaaf57edf111b77f"
 EGIT_COMMIT_IMGUI="124c2608f1bf708b3abf039c93d16d704f76a815" # 20201012
@@ -97,16 +98,16 @@ GLFW_DFN="glfw-${GLFW_V}.tar.gz"
 NFD_DFN="nativefiledialog-${EGIT_COMMIT_NFD:0:7}.tar.gz"
 IMGUI_DFN="imgui-${EGIT_COMMIT_IMGUI:0:7}.tar.gz"
 GTEST_DFN="release-${GTEST_V}.tar.gz"
-SRC_URI=\
-"${GH_ORG_URI}/openvdb/archive/${EGIT_COMMIT}.tar.gz
+SRC_URI="
+${GH_ORG_URI}/openvdb/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz
-https://github.com/glfw/glfw/archive/refs/tags/${GLFW_V}.tar.gz \
+https://github.com/glfw/glfw/archive/refs/tags/${GLFW_V}.tar.gz
 	-> ${GLFW_DFN}
-https://github.com/ocornut/imgui/archive/${EGIT_COMMIT_IMGUI}.tar.gz \
+https://github.com/ocornut/imgui/archive/${EGIT_COMMIT_IMGUI}.tar.gz
 	-> ${IMGUI_DFN}
-https://github.com/mlabbe/nativefiledialog/archive/${EGIT_COMMIT_NFD}.tar.gz \
+https://github.com/mlabbe/nativefiledialog/archive/${EGIT_COMMIT_NFD}.tar.gz
 	-> ${NFD_DFN}
-https://github.com/google/googletest/archive/refs/tags/release-${GTEST_V}.tar.gz \
+https://github.com/google/googletest/archive/refs/tags/release-${GTEST_V}.tar.gz
 	-> ${GTEST_DFN}"
 S="${WORKDIR}/openvdb-${EGIT_COMMIT}/${PN}"
 S_IMGUI="${WORKDIR}/imgui-${EGIT_COMMIT_IMGUI}"
@@ -161,8 +162,10 @@ pkg_setup()
 src_prepare()
 {
 	eapply ${PATCHES_[@]}
-	if false && use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
 		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-findtbb-onetbb-changes.patch"
+		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-onetbb-split-header-location.patch"
+		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-replace-ttb-atomic-with-std-atomic.patch"
 	fi
 	cmake_src_prepare
 }
@@ -180,6 +183,7 @@ src_configure()
 		-DNANOVDB_BUILD_UNITTESTS=$(usex test)
 		-DNANOVDB_BUILD_DOCS=$(usex doc)
 		-DNANOVDB_BUILD_TOOLS=$(usex tools)
+		-DNANOVDB_GTEST=$(usex test)
 		-DNANOVDB_USE_BLOSC=$(usex blosc)
 		-DNANOVDB_USE_CUDA=$(usex cuda)
 		-DNANOVDB_USE_OPENCL=$(usex opencl)
@@ -209,18 +213,96 @@ src_configure()
 		mycmakeargs+=(
 	-DEGOOGLETEST_SOURCE_DIR="${S_GTEST}"
 	-DEGOOGLETEST_BINARY_DIR="${WORKDIR}/googletest-${GTEST_V}-${ABI}_build"
-	-DNANOVDB_USE_INTERNAL_GTEST=$(use !system-gtest)
+	-DNANOVDB_USE_INTERNAL_GTEST=NO
 		)
 	fi
 
-	if false && use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
 			-DTBB_INCLUDEDIR=/usr/include/oneTBB/${ONETBB_SLOT}
 			-DTBB_LIBRARYDIR=/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}
 		)
+		append-cppflags -DNANOVDB_USE_ONETBB
 	fi
 
 	cmake_src_configure
+}
+
+core_tests()
+{
+	# keep in sync with ci/test_core.sh
+# Tests for nanovdb-25.0.0_pre20200924
+# Date: Wed Jun 30 10:40:56 PM PDT 2021 (Unix time: 1625118056)
+
+#testOpenVDB result:
+#[==========] 17 tests from 1 test suite ran. (5545 ms total)
+#[  PASSED  ] 17 tests.
+
+#testNanoVDB results:
+#[==========] 39 tests from 1 test suite ran. (1888 ms total)
+#[  PASSED  ] 39 tests.
+
+	cd "${BUILD_DIR}" || die
+	einfo "Running core tests"
+	cmake_src_test
+	einfo "Running testOpenVDB"
+	unittest/testOpenVDB || die
+	echo
+	einfo "Running testNanoVDB"
+	unittest/testNanoVDB || die
+	echo
+}
+
+video_card_sandbox_predict()
+{
+        local d
+        for d in /dev/dri/card*; do
+                [[ -s ${d} ]] && addpredict "${d}"
+        done
+}
+
+render_tests()
+{
+	einfo "Running render tests"
+	# keep in sync with nanovdb/ci/test_render.sh
+	# make gold image.
+	local OUT_PATH=$(pwd)/out
+	mkdir -p "${OUT_PATH}" || die
+	cmd/nanovdb_viewer -b -o ${OUT_PATH}/gold -p host-mt --count 1 --turntable || die
+	mogrify -format png ${OUT_PATH}/gold.0000.pfm || die
+
+	if use cuda ; then
+		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-cuda -p cuda -n 1 --turntable"
+		einfo "Running ${cmd}"
+		${cmd} || die
+	fi
+	cmd="cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-c99 -p host-c99 -n 1 --turntable"
+	einfo "Running ${cmd}"
+	${cmd} || die
+	if use opengl ; then
+		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-glsl -p glsl -n 1 --turntable"
+		einfo "Running ${cmd}"
+		${cmd} || die
+	fi
+	# No platform TBB for viewer
+	if use opencl ; then
+		# FIXME
+		video_card_sandbox_predict
+		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-opencl -p opencl -n 1 --turntable"
+		einfo "Running ${cmd}"
+		#${cmd} || die
+	fi
+	if use optix ; then
+		cmd="$(pwd)/cmd/nanovdb_viewer -b --gold ${OUT_PATH}/gold -o ${OUT_PATH}/test-optix -p optix -n 1 --turntable"
+		einfo "Running ${cmd}"
+		${cmd} || die
+	fi
+}
+
+src_test()
+{
+	core_tests
+	render_tests
 }
 
 src_install()
@@ -231,7 +313,7 @@ src_install()
 	cd "${S}/.." || die
 	docinto licenses
 	dodoc LICENSE
-	if false && use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
