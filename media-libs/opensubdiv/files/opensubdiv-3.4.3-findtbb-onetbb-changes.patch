@@ -1,0 +1,106 @@
+Subject:       FindTBB.cmake changes for oneTBB and debug output
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:          Wed Jun 30 01:05:49 AM PDT 2021 (Unix timestamp: 1625040349)
+
+
+Copyright notice for cmake/FindTBB.cmake:
+
+#
+#   Copyright 2013 Pixar
+#
+#   Licensed under the Apache License, Version 2.0 (the "Apache License")
+#   with the following modification; you may not use this file except in
+#   compliance with the Apache License and the following modification to it:
+#   Section 6. Trademarks. is deleted and replaced with:
+#
+#   6. Trademarks. This License does not grant permission to use the trade
+#      names, trademarks, service marks, or product names of the Licensor
+#      and its affiliates, except as required to comply with Section 4(c) of
+#      the License and to reproduce the content of the NOTICE file.
+#
+#   You may obtain a copy of the Apache License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the Apache License with the above modification is
+#   distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#   KIND, either express or implied. See the Apache License for the specific
+#   language governing permissions and limitations under the Apache License.
+#
+
+diff -urp OpenSubdiv-3_4_3.orig/cmake/FindTBB.cmake OpenSubdiv-3_4_3/cmake/FindTBB.cmake
+--- OpenSubdiv-3_4_3.orig/cmake/FindTBB.cmake	2020-04-01 23:04:53.000000000 -0700
++++ OpenSubdiv-3_4_3/cmake/FindTBB.cmake	2021-06-30 01:42:22.083022105 -0700
+@@ -22,6 +22,12 @@
+ #   language governing permissions and limitations under the Apache License.
+ #
+ 
++# oteodoro - added changes to see favored libraries and include paths and changes for oneTTB
++
++# The following can used to configure					# oteodoro - added line
++#									# oteodoro - added line
++#  TBB_LIBRARY_PATH	- custon lib search path			# oteodoro - added line
++
+ # - Try to find Intel's Threading Building Blocks
+ # Once done this will define
+ #
+@@ -29,9 +35,14 @@
+ #  TBB_INCLUDE_DIR - The TBB include directory
+ #  TBB_LIBRARIES - The libraries needed to use TBB
+ 
++if (TBB_INCLUDE_DIR)							# oteodoro - added line
++  set(FIND_PATH_OPTS_ NO_DEFAULT_PATH NO_SYSTEM_ENVIRONMENT_PATH)	# oteodoro - added line
++endif()									# oteodoro - added line
++
+ # Obtain include directory
+ if (WIN32)
+     find_path(TBB_INCLUDE_DIR
++	${FIND_PATH_OPTS_}						# oteodoro - added line
+         NAMES
+             tbb/tbb.h
+         HINTS
+@@ -43,6 +54,7 @@ if (WIN32)
+             DOC "The directory where TBB headers reside")
+ elseif (APPLE)
+     find_path(TBB_INCLUDE_DIR
++	${FIND_PATH_OPTS_}						# oteodoro - added line
+         NAMES
+             tbb/tbb.h
+         HINTS
+@@ -52,6 +64,7 @@ elseif (APPLE)
+             DOC "The directory where TBB headers reside")
+ else ()
+     find_path(TBB_INCLUDE_DIR
++	${FIND_PATH_OPTS_}						# oteodoro - added line
+         NAMES
+             tbb/tbb.h
+         HINTS
+@@ -112,6 +125,7 @@ foreach(TBB_LIB tbb             tbb_debu
+         NAMES
+             ${TBB_LIB}
+         HINTS
++            "${TBB_LIBRARY_PATH}"					# oteodoro - added line
+             "${TBB_LOCATION}/lib"
+             "${TBB_LOCATION}/bin"
+             "$ENV{TBB_LOCATION}/lib"
+@@ -150,7 +164,10 @@ if(TBB_INCLUDE_DIR)
+ 
+     endfunction()
+ 
+-    if(EXISTS "${TBB_INCLUDE_DIR}/tbb/tbb_stddef.h")
++    if(EXISTS "${TBB_INCLUDE_DIR}/oneapi/tbb/version.h")			# oteodoro - added line
++        parseVersion(oneapi/tbb/version.h TBB_VERSION_MAJOR)			# oteodoro - added line
++        parseVersion(oneapi/tbb/version.h TBB_VERSION_MINOR)			# oteodoro - added line
++    elseif(EXISTS "${TBB_INCLUDE_DIR}/tbb/tbb_stddef.h")			# oteodoro - changed line
+         parseVersion(tbb/tbb_stddef.h TBB_VERSION_MAJOR)
+         parseVersion(tbb/tbb_stddef.h TBB_VERSION_MINOR)
+     endif()
+@@ -180,4 +197,6 @@ mark_as_advanced(
+   TBB_INCLUDE_DIR
+   TBB_LIBRARIES
+ )
+-
++message(STATUS "TBB version: ${TBB_VERSION}")					# oteodoro - added line
++message(STATUS "TBB libs: ${TBB_LIBRARIES}")					# oteodoro - added line
++message(STATUS "TBB include dir: ${TBB_INCLUDE_DIR}")				# oteodoro - added line
