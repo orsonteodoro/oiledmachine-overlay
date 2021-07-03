@@ -41,61 +41,40 @@ G_USE_ELECTRON=${G_USE_ELECTRON:="1"}
 # include in the @${G_INSECURE_SET_FN} set.  Use at your own risk.
 G_BLACKLIST="/etc/portage/npm-secaudit-blacklist"
 
-# See https://nvd.nist.gov/vuln/search/results?form_type=Advanced&results_type=overview&search_type=all&cpe_vendor=cpe%3A%2F%3Aelectronjs&cpe_product=cpe%3A%2F%3Aelectronjs%3Aelectron
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9="9.0.0_beta21" # replace - with _
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND="-lt"
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8="8.2.4"
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND="-lt"
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7="7.2.4"
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND="-lt"
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+# Updates to Chromium 91.0.4472.106 (Outdated already, see below in the G_CVE_PATCHED_CHROMIUM_V_91 Chromium section)
+# Track "Security:" in https://www.electronjs.org/releases/stable?version=13
+G_CVE_PATCHED_ELECTRON_13="13.1.3"
 
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_11="11.0.0_beta1"
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_11_COND="-lt"
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_11_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_10="10.0.1"
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_10_COND="-lt"
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_10_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_9="9.3.0"
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_9_COND="-lt"
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_9_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_8="8.5.1"
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_8_COND="-lt"
-G_INSECURE_NVD_ELECTRON_LAST_HIGH_8_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
+# Track "Security:" in https://www.electronjs.org/releases/stable?version=12
+G_CVE_PATCHED_ELECTRON_12="12.0.13"
 
-# GLSA doesn't use high, medium, low.  This is a NVD addition.
-# See https://security.gentoo.org/glsa
-# GLSA placement in G_TOLERANCE based on worst case NVD/CVE reference
-G_INSECURE_GLSA_CHROME_LATEST="88.0.4324.96"
-G_INSECURE_GLSA_CHROME_LATEST_COND="-lt"
-G_INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY=\
-"https://security.gentoo.org/glsa/202101-13"
+# Track "Security:" in https://www.electronjs.org/releases/stable?version=11
+G_CVE_PATCHED_ELECTRON_11="11.4.9"
 
-# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
-G_INSECURE_NVD_CHROME_LAST_CRITICAL="87.0.4280.141"
-G_INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
-G_INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-21108"
+# Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
+G_CVE_PATCHED_NODE_16="16.4.1"
 
-G_INSECURE_NVD_CHROME_LAST_HIGH="88.0.4324.96"
-G_INSECURE_NVD_CHROME_LAST_HIGH_COND="-lt"
-G_INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-21128"
+# Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V14.md
+G_CVE_PATCHED_NODE_14="14.17.2"
 
-# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome%20v8&search_type=all
-G_INSECURE_NVD_V8_LAST_HIGH="88.0.4324.182"
-G_INSECURE_NVD_V8_LAST_HIGH_COND="-lt"
-G_INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-21156"
+# Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V12.md
+G_CVE_PATCHED_NODE_12="12.22.2"
+
+# These Chromium desktop versions listed are non vulnerable versions:
+# Reason why is to minimize vulnerability checks in this eclass.
+
+# They mix up 92 and 93 which is difficult to filter.
+# Dev channel
+# Track "security updates" in https://chromereleases.googleblog.com/search/label/Dev%20updates
+G_CVE_PATCHED_CHROMIUM_V_93="93.0.4530.5"
+
+# Beta channel
+# Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
+G_CVE_PATCHED_CHROMIUM_V_92="92.0.4515.81"
+
+# Stable channel
+# Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
+G_CVE_PATCHED_CHROMIUM_V_91="91.0.4472.123"
 
 H_INFO="\
 $(basename $BASH_SOURCE) ${G_VERSION}
@@ -313,8 +292,9 @@ _query_lite_json() {
 		| jq ${1} | sed -r -e "s|[\"]*||g")
 }
 
-function version_audit() {
-	[[ "${G_VERBOSE}" == "1" ]] && einfo "Inspecting the ${p} package internal versions for vulnerabilities"
+function electron_version_audit() {
+	[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Inspecting the ${p} package internal versions for vulnerabilities"
 
 	if npm ls electron | grep -q -F -e " electron@" ; then
 		[[ "${G_VERBOSE}" == "1" ]] && einfo "Detected Electron"
@@ -328,113 +308,125 @@ function version_audit() {
 	V8_V=$(_query_lite_json '.deps.v8')
 
 	local is_vulnerable=0
-if [[ "${G_TOLERANCE}" == "critical" || "${G_TOLERANCE}" == "high" \
-	|| "${G_TOLERANCE}" == "moderate" || "${G_TOLERANCE}" == "low" ]] ; then
-	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 9 \
-		&& is_x_op_y ${ELECTRON_V} ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND} \
-			$(echo "${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9}" | cut -f 1 -d "_") ; then
+	# Check Electron
+	if is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 13 ; then
+		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_13} ; then
+		# Patched
+		:; # Passed
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 13 ; then
+		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_13} ; then
+		# Unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
-${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY}"
+"Electron ${ELECTRON_V} is not receiving proper security updates."
+		is_vulnerable=1
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 12 ; then
+		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_12} ; then
+		# Patched
+		:; # Passed
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 12 ; then
+		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_12} ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} is not receiving proper security updates."
+		is_vulnerable=1
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 11 ; then
+		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_11} ; then
+		# Patched
+		:; # Passed
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 11 ; then
+		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_11} ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} is not receiving proper security updates."
+		is_vulnerable=1
+	else
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} has already reached End Of Life (EOL)."
 		is_vulnerable=1
 	fi
 
-	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 8 \
-		&& is_x_op_y ${ELECTRON_V} ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND} \
-			$(echo "${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8}" | cut -f 1 -d "_") ; then
+	# Check Node.js EOL
+	if is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16} ; then
+		# Patched
+		:; # Passed
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_16} ; then
+		# Unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
-${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY}"
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+		is_vulnerable=1
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 14 \
+		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_14} ; then
+		# Patched
+		:; # Passed
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 14 \
+		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_14} ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+		is_vulnerable=1
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 12 \
+		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_12} ; then
+		# Patched
+		:; # Passed
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 12 \
+		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_12} ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+		is_vulnerable=1
+	else
+		# Check Node.js EOL
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is End Of Life (EOL)."
 		is_vulnerable=1
 	fi
 
-	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 7 \
-		&& is_x_op_y ${ELECTRON_V} ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND} \
-			$(echo "${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7}" | cut -f 1 -d "_") ; then
+	# Check Chromium
+	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
+	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 93 \
+		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_CVE_PATCHED_CHROMIUM_93_VERSION} ; then
+		# Dev patched
+		:; # Passed
+	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 93 \
+		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_CVE_PATCHED_CHROMIUM_93_VERSION} ; then
+		# Dev unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
-${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY}"
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
+proper security updates."
+		is_vulnerable=1
+	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 92 \
+		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_CVE_PATCHED_CHROMIUM_92_VERSION} ; then
+		# Beta patched beta
+		:; # Passed
+	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 92 \
+		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_CVE_PATCHED_CHROMIUM_92_VERSION} ; then
+		# Beta unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
+proper security updates."
+		is_vulnerable=1
+	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 91 \
+		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_CVE_PATCHED_CHROMIUM_91_VERSION} ; then
+		# Stable patched
+		:; # Passed
+	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 91 \
+		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_CVE_PATCHED_CHROMIUM_91_VERSION} ; then
+		# Stable unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
+proper security updates."
+		is_vulnerable=1
+	else
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} is End Of Life (EOL)."
 		is_vulnerable=1
 	fi
 
-	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-le" 6 ; then
-		# Let it fail in ${CHROMIUM_V} vulernability tests
-		[[ "${G_VERBOSE}" == "1" ]] && einfo "Electron ${ELECTRON_V} has already reached End Of Life (EOL)."
-		is_vulnerable=1
-	fi
-
-	if is_x_op_y "${CHROMIUM_V}" ${G_INSECURE_NVD_CHROME_LAST_CRITICAL_COND} \
-		"${G_INSECURE_NVD_CHROME_LAST_CRITICAL}" ; then
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} has a critical vulnerability in internal Chromium\n\
-which is version ${CHROMIUM_V}.  For details see\n\
-${G_INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY}"
-		is_vulnerable=1
-	fi
-	if is_x_op_y "${CHROMIUM_V}" ${G_INSECURE_GLSA_CHROME_LATEST_COND} \
-		"${G_INSECURE_GLSA_CHROME_LATEST}" ; then
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} has a GLSA advisory for internal Chromium\n\
-${CHROMIUM_V}.  See\n\
-${G_INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY}"
-		is_vulnerable=1
-	fi
-fi
-
-if [[ "${G_TOLERANCE}" == "high" || "${G_TOLERANCE}" == "moderate" \
-	|| "${G_TOLERANCE}" == "low" ]] ; then
-	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 11 \
-		&& is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_ELECTRON_LAST_HIGH_11_COND} \
-		"${G_INSECURE_NVD_ELECTRON_LAST_HIGH_11}" ; then
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} has a high advisory.  See\n\
-${G_INSECURE_NVD_ELECTRON_LAST_HIGH_11_LINK_ADVISORY}"
-		is_vulnerable=1
-	fi
-	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 10 \
-		&& is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_ELECTRON_LAST_HIGH_10_COND} \
-		"${G_INSECURE_NVD_ELECTRON_LAST_HIGH_10}" ; then
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} has a high advisory.  See\n\
-${G_INSECURE_NVD_ELECTRON_LAST_HIGH_10_LINK_ADVISORY}"
-		is_vulnerable=1
-	fi
-	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 9 \
-		&& is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_ELECTRON_LAST_HIGH_9_COND} \
-		"${G_INSECURE_NVD_ELECTRON_LAST_HIGH_9}" ; then
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} has a high advisory.  See\n\
-${G_INSECURE_NVD_ELECTRON_LAST_HIGH_9_LINK_ADVISORY}"
-		is_vulnerable=1
-	fi
-	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 11 \
-		&& is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_ELECTRON_LAST_HIGH_8_COND} \
-		"${G_INSECURE_NVD_ELECTRON_LAST_HIGH_8}" ; then
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} has a high advisory.  See\n\
-${G_INSECURE_NVD_ELECTRON_LAST_HIGH_8_LINK_ADVISORY}"
-		is_vulnerable=1
-	fi
-
-	if is_x_op_y $(echo "${CHROMIUM_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_CHROME_LAST_HIGH_COND} \
-		"${G_INSECURE_NVD_CHROME_LAST_HIGH}" ; then
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} has a high advisory for internal Chromium\n\
-${V8_V}.  See\n\
-${G_INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY}"
-		is_vulnerable=1
-	fi
-
-
-	if is_x_op_y $(echo "${V8_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_V8_LAST_HIGH_COND} \
-		"${G_INSECURE_NVD_V8_LAST_HIGH}" ; then
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} has a high advisory for internal V8\n\
-${V8_V}.  See\n\
-${G_INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY}"
-		is_vulnerable=1
-	fi
-fi
 	if [[ "${G_VERBOSE}" == "1" ]]; then
 	LIBUV_V=$(_query_lite_json '.deps.uv')
 	BORINGSSL_V=$(_query_lite_json '.deps.openssl')
@@ -560,7 +552,7 @@ installed."
 				local r1="$?"
 				local r2="0"
 				if [[ "${G_USE_ELECTRON}" == "1" ]] ; then
-					version_audit
+					electron_version_audit
 					r2="$?"
 				fi
 				dinfo "r1=${r1} r2=${r2}"
