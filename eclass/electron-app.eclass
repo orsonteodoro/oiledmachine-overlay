@@ -916,20 +916,20 @@ critical vulnerabilities in the internal Chromium."
 		adie \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
 	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 12 ; then
-		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_13} ; then
+		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_12} ; then
 		# Patched
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 12 ; then
-		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_13} ; then
+		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_12} ; then
 		# Unpatched
 		adie \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
 	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 11 ; then
-		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_13} ; then
+		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_11} ; then
 		# Patched
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 11 ; then
-		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_13} ; then
+		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_11} ; then
 		# Unpatched
 		adie \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
@@ -977,13 +977,13 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
-		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_91_VERSION} ; then
-		# Stable patched
+	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
+		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_93_VERSION} ; then
+		# Dev patched
 		:; # Passed
-	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
-		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_91_VERSION} ; then
-		# Stable unpatched
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
+		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_93_VERSION} ; then
+		# Dev unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
@@ -997,13 +997,13 @@ proper security updates."
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
-	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
-		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_93_VERSION} ; then
-		# Dev patched
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
+		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_91_VERSION} ; then
+		# Stable patched
 		:; # Passed
-	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
-		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_93_VERSION} ; then
-		# Dev unpatched
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
+		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_91_VERSION} ; then
+		# Stable unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
