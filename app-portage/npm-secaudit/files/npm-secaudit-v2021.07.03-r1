@@ -309,31 +309,31 @@ function electron_version_audit() {
 
 	local is_vulnerable=0
 	# Check Electron
-	if is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 13 ; then
+	if is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 13 \
 		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_13} ; then
 		# Patched
 		:; # Passed
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 13 ; then
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 13 \
 		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_13} ; then
 		# Unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
 		is_vulnerable=1
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 12 ; then
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 12 \
 		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_12} ; then
 		# Patched
 		:; # Passed
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 12 ; then
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 12 \
 		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_12} ; then
 		# Unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
 		is_vulnerable=1
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 11 ; then
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 11 \
 		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_11} ; then
 		# Patched
 		:; # Passed
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 11 ; then
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 11 \
 		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_11} ; then
 		# Unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
