@@ -121,7 +121,7 @@ Send an [issue request](https://github.com/orsonteodoro/oiledmachine-overlay/iss
 if you find one.
 
 Web engines and browsers such as firefox, chromium, webkit-gtk, cef-bin,
-nativefier, CEF/Electron web based apps, are updated everytime a critical
+CEF/Electron web based apps, are updated everytime a critical
 vulnerability is announced or after several strings of high vulnerabilties.
 
 ot-kernel is updated every release to minimize unpatched 0-day exploits.  Old
@@ -288,7 +288,6 @@ contains a known infamous critical vulnerability.
 | www-misc/ddgr | This is a command line DuckDuckGo similiar to googler. |
 | www-misc/googler | Kept around for latest updates. |
 | www-misc/instatron | This is a Instagram uploader in Electron. |
-| www-misc/nativefier | This Electron app makes it possible to turn a website into an executable.  Apps produced from it should be updated every time this package is updated via a pkg_postinst [ebuild phase hook](https://wiki.gentoo.org/wiki/Handbook:X86/Portage/Advanced#Hooking_in_the_emerge_process) in `/etc/portage/bashrc` to close vulnerabilities related to Chromium and its internal dependencies.  |
 | www-misc/rtv | This is a command line Reddit client which has been updated. |
 | www-misc/socli | This is a Stack Overflow command line client. |
 | www-servers/civetweb | Kept around for Urho3D. |
