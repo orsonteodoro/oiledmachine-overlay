@@ -92,8 +92,9 @@ COMMON_DEPEND+="
 "
 fi
 
-# See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/node/v8/index.d.ts
-# For @types/node
+# See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/node/vX/index.d.ts , \
+#   where X is a number connected to the Node.js version
+# The following conditional chain is for @types/node:
 if [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 0 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-0"
@@ -127,6 +128,9 @@ COMMON_DEPEND+=" =net-libs/nodejs-13*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 14 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-14*"
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 15 ; then
+COMMON_DEPEND+=" =net-libs/nodejs-15*"
 fi
 
 DEPEND+=" ${COMMON_DEPEND}"

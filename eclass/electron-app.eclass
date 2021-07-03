@@ -111,133 +111,68 @@ NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
 ELECTRON_APP_DATA_DIR="${EROOT}/var/cache/npm-secaudit"
 ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
-# These are carefully picked to avoid false positive or
-# chrome only feature advisories.
-# Basic stuff associated with rendering, networking, javascript
-# are weighed heavier than added value exclusive features.
+# ##################  START End of Life or patched versions ####################
 
-# See also https://github.com/electron/electron/security/advisories
+# Also bump if for unpublished vulnerabilities published as bugs, weakened security, or Chromium security updates.
 
-# (A) Chromium components are found in
-# https://github.com/chromium/chromium/tree/master/chrome/browser
-# https://github.com/chromium/chromium/tree/master/third_party
+# Updates to Chromium 91.0.4472.106 (Outdated already, see below in the CVE_PATCHED_CHROMIUM_V_91 Chromium section)
+# Track "Security:" in https://www.electronjs.org/releases/stable?version=13
+CVE_PATCHED_ELECTRON_13="13.1.3"
 
-# (B) Chromium components used by Electron are found in
-# https://github.com/electron/electron/blob/master/chromium_src/BUILD.gn
-# https://github.com/electron/electron/blob/master/BUILD.gn
+# Track "Security:" in https://www.electronjs.org/releases/stable?version=12
+CVE_PATCHED_ELECTRON_12="12.0.13"
 
-# If (B) is found in (A) and the CVE mentions it,
-# then the CVE is possibly relevant to Electron.
+# Track "Security:" in https://www.electronjs.org/releases/stable?version=11
+CVE_PATCHED_ELECTRON_11="11.4.9"
 
-# Critical means based on CVSS v3 standards
-# See https://nvd.nist.gov/vuln/search/results?form_type=Advanced&results_type=overview&search_type=all&cpe_vendor=cpe%3A%2F%3Aelectronjs&cpe_product=cpe%3A%2F%3Aelectronjs%3Aelectron
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_9="9.0.0_beta21" # replace - with _
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND="-lt"
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_8="8.2.4"
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND="-lt"
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_7="7.2.4"
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND="-lt"
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+# Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
+CVE_PATCHED_NODE_16="16.4.1"
 
-INSECURE_NVD_ELECTRON_LAST_HIGH_11="11.0.0_beta1"
-INSECURE_NVD_ELECTRON_LAST_HIGH_11_COND="-lt"
-INSECURE_NVD_ELECTRON_LAST_HIGH_11_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
-INSECURE_NVD_ELECTRON_LAST_HIGH_10="10.0.1"
-INSECURE_NVD_ELECTRON_LAST_HIGH_10_COND="-lt"
-INSECURE_NVD_ELECTRON_LAST_HIGH_10_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
-INSECURE_NVD_ELECTRON_LAST_HIGH_9="9.3.0"
-INSECURE_NVD_ELECTRON_LAST_HIGH_9_COND="-lt"
-INSECURE_NVD_ELECTRON_LAST_HIGH_9_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
-INSECURE_NVD_ELECTRON_LAST_HIGH_8="8.5.1"
-INSECURE_NVD_ELECTRON_LAST_HIGH_8_COND="-lt"
-INSECURE_NVD_ELECTRON_LAST_HIGH_8_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
+# Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V14.md
+CVE_PATCHED_NODE_14="14.17.2"
 
-# GLSA doesn't use high, medium, low.  This is a NVD addition.
-# See https://security.gentoo.org/glsa
-# Placed in worst case NVD/CVE reference
-INSECURE_GLSA_CHROME_LATEST="88.0.4324.96"
-INSECURE_GLSA_CHROME_LATEST_COND="-lt"
-INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY=\
-"https://security.gentoo.org/glsa/202101-13"
+# Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V12.md
+CVE_PATCHED_NODE_12="12.22.2"
 
-# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
-INSECURE_NVD_CHROME_LAST_CRITICAL="87.0.4280.141"
-INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
-INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-21108"
+# These Chromium desktop versions listed are non vulnerable versions:
+# Reason why is to minimize vulnerability checks in this eclass.
 
-INSECURE_NVD_CHROME_LAST_HIGH="88.0.4324.96"
-INSECURE_NVD_CHROME_LAST_HIGH_COND="-lt"
-INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-21128"
+# They mix up 92 and 93 which is difficult to filter.
+# Dev channel
+# Track "security updates" in https://chromereleases.googleblog.com/search/label/Dev%20updates
+CVE_PATCHED_CHROMIUM_V_93="93.0.4530.5"
 
-# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=v8%20chrome&search_type=all
-INSECURE_NVD_V8_LAST_HIGH="88.0.4324.182"
-INSECURE_NVD_V8_LAST_HIGH_COND="-lt"
-INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-21156"
+# Beta channel
+# Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
+CVE_PATCHED_CHROMIUM_V_92="92.0.4515.81"
 
-NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
-
-# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=nodejs&search_type=all
-INSECURE_NVD_NODEJS_LAST_CRITICAL_13="13.8.0"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_13_COND="-lt"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_13_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2019-15606"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_12="12.15.0"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_12_COND="-lt"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_12_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2019-15606"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_10="10.19.0"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_10_COND="-lt"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_10_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2019-15606"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_9="9.11.2"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_9_COND="-le"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_9_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2017-15896"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_8="8.17.0"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_8_COND="-le"
-INSECURE_NVD_NODEJS_LAST_CRITICAL_8_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2017-15896"
-
-INSECURE_NVD_NODEJS_LAST_HIGH_15="15.10.0"
-INSECURE_NVD_NODEJS_LAST_HIGH_15_COND="-lt"
-INSECURE_NVD_NODEJS_LAST_HIGH_15_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-22883"
-INSECURE_NVD_NODEJS_LAST_HIGH_14="14.16.0"
-INSECURE_NVD_NODEJS_LAST_HIGH_14_COND="-lt"
-INSECURE_NVD_NODEJS_LAST_HIGH_14_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-22883"
-INSECURE_NVD_NODEJS_LAST_HIGH_12="12.21.0"
-INSECURE_NVD_NODEJS_LAST_HIGH_12_COND="-lt"
-INSECURE_NVD_NODEJS_LAST_HIGH_12_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-22883"
-INSECURE_NVD_NODEJS_LAST_HIGH_10="10.24.0"
-INSECURE_NVD_NODEJS_LAST_HIGH_10_COND="-lt"
-INSECURE_NVD_NODEJS_LAST_HIGH_10_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-22883"
+# Stable channel
+# Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
+CVE_PATCHED_CHROMIUM_V_91="91.0.4472.123"
 
 # Check the runtime dependencies for electron
 # Most electron apps will have electron bundled already.  No need for seperate
 # ebuild.
 
+# The chromium version can be found in the table:
+# https://github.com/electron/electron/blob/12-x-y/DEPS#L17 ,  replacing 12 with one of the stable versions
+
 # See https://www.electronjs.org/docs/development/build-instructions-linux
-# See https://github.com/electron/electron/blob/8-x-y/build/install-build-deps.sh
+# For Electron main, see https://github.com/chromium/chromium/blob/93.0.4558.0/build/install-build-deps.sh#L242
+# For Electron 14, see https://github.com/chromium/chromium/blob/93.0.4557.4/build/install-build-deps.sh#L242
+# For Electron 13, see https://github.com/chromium/chromium/blob/91.0.4472.124/build/install-build-deps.sh#L237
+# For Electron 12, see https://github.com/chromium/chromium/blob/89.0.4389.128/build/install-build-deps.sh#L238 # vulnerabilities?
+# For Electron 11, see https://github.com/chromium/chromium/blob/87.0.4280.141/build/install-build-deps.sh#L242 # vulnerabilities?
+
+# ##################  END End of Life or patched versions ######################
+
 #   under "List of required run-time libraries"
 # Obtained from ldd
 IUSE+=" app-indicator global-menu-bar gnome-keyring libsecret unity pulseaudio"
 
 # See https://www.electronjs.org/docs/tutorial/support#linux for OS min requirements.
+
+# The dependencies for
 
 # Found in Chromium only
 # For optional fonts, see
@@ -248,89 +183,90 @@ IUSE+=" app-indicator global-menu-bar gnome-keyring libsecret unity pulseaudio"
 #      chromium 66.0.3359.181 (electron version v3.0.0 to latest)
 #    chrome/installer/linux/debian/expected_deps_x64 for chromium 49.0.2623.75
 #      to <76.0.3809.88 (electron 1.0.0 to <v3.0.0)
+# Chromium supports at least U 14.04, this is why there is no version
+# restrictions below in all *DEPENDs section.
 CHROMIUM_DEPEND="
-	  app-accessibility/speech-dispatcher
-	  dev-db/sqlite:3
-	  libsecret? ( app-crypt/libsecret )
-	  gnome-keyring? (
+	app-accessibility/speech-dispatcher
+	dev-db/sqlite:3
+	libsecret? ( app-crypt/libsecret )
+	gnome-keyring? (
 		gnome-base/gnome-keyring[pam]
 		gnome-base/libgnome-keyring
-	  )
-	  pulseaudio? ( media-sound/pulseaudio )
-"
+	)
+	pulseaudio? ( media-sound/pulseaudio )"
 # Electron only
+# Assumes U 18.04 builder but allows for older U LTS if libs present.
 COMMON_DEPEND="
-	  ${CHROMIUM_DEPEND}
-	  app-accessibility/at-spi2-atk:2
-	  app-arch/bzip2
-	  app-indicator? ( dev-libs/libappindicator:3 )
-	  dev-libs/atk
-	  dev-libs/expat
-	  dev-libs/fribidi
-	  dev-libs/glib:2
-	  dev-libs/gmp
-	  dev-libs/libffi
-	  dev-libs/libtasn1
-	  dev-libs/libbsd
-	  dev-libs/libpcre:3
-	  dev-libs/libunistring
-	  dev-libs/nss
-	  dev-libs/nettle
-	  dev-libs/nspr
-	  global-menu-bar? ( dev-libs/libdbusmenu )
-	  media-gfx/graphite2
-	  media-libs/alsa-lib
-	  media-libs/fontconfig
-	  media-libs/freetype
-	  media-libs/harfbuzz[icu(-)]
-	  media-libs/libepoxy
-	  media-libs/libpng
-	  media-libs/mesa[egl,gbm]
-	  media-video/ffmpeg
-	  net-dns/libidn2
-	  net-libs/gnutls
-	  net-print/cups
-	  sys-apps/dbus
-	  sys-apps/pciutils
-	  sys-apps/util-linux
-	  sys-devel/gcc[cxx(+)]
-	  sys-libs/zlib[minizip]
-	  unity? ( dev-libs/libunity )
-	  virtual/ttf-fonts
-	  x11-libs/cairo
-	  x11-libs/gdk-pixbuf:2
-	  x11-libs/gtk+:3[X]
-	  x11-libs/libX11
-	  x11-libs/libXScrnSaver
-	  x11-libs/libXau
-	  x11-libs/libXcomposite
-	  x11-libs/libXcursor
-	  x11-libs/libXdamage
-	  x11-libs/libXdmcp
-	  x11-libs/libXext
-	  x11-libs/libXfixes
-	  x11-libs/libXi
-	  x11-libs/libXrandr
-	  x11-libs/libXrender
-	  x11-libs/libXtst
-	  x11-libs/libXxf86vm
-	  x11-libs/libdrm
-	  x11-libs/libxcb
-	  x11-libs/libxshmfence
-	  x11-libs/pango
-	  x11-libs/pixman
-"
+	${CHROMIUM_DEPEND}
+	app-accessibility/at-spi2-atk:2
+	app-arch/bzip2
+	app-indicator? ( dev-libs/libappindicator:3 )
+	dev-libs/atk
+	dev-libs/expat-2.2.5
+	dev-libs/fribidi-0.19.7
+	dev-libs/glib:2
+	dev-libs/gmp
+	dev-libs/libffi
+	dev-libs/libtasn1
+	dev-libs/libbsd
+	dev-libs/libpcre:3
+	dev-libs/libunistring
+	dev-libs/nss
+	dev-libs/nettle
+	dev-libs/nspr
+	global-menu-bar? ( dev-libs/libdbusmenu )
+	media-gfx/graphite2
+	media-libs/alsa-lib
+	media-libs/fontconfig
+	media-libs/freetype
+	media-libs/harfbuzz[icu(-)]
+	media-libs/libepoxy
+	media-libs/libpng
+	media-libs/mesa[egl,gbm]
+	media-video/ffmpeg
+	net-dns/libidn2
+	net-libs/gnutls
+	net-print/cups
+	sys-apps/dbus
+	sys-apps/pciutils
+	sys-apps/util-linux
+	sys-devel/gcc[cxx(+)]
+	sys-libs/zlib[minizip]
+	unity? ( dev-libs/libunity )
+	virtual/ttf-fonts
+	x11-libs/cairo
+	x11-libs/gdk-pixbuf:2
+	x11-libs/gtk+:3[X]
+	x11-libs/libX11
+	x11-libs/libXScrnSaver
+	x11-libs/libXau
+	x11-libs/libXcomposite
+	x11-libs/libXcursor
+	x11-libs/libXdamage
+	x11-libs/libXdmcp
+	x11-libs/libXext
+	x11-libs/libXfixes
+	x11-libs/libXi
+	x11-libs/libXrandr
+	x11-libs/libXrender
+	x11-libs/libXtst
+	x11-libs/libXxf86vm
+	x11-libs/libdrm
+	x11-libs/libxcb
+	x11-libs/libxshmfence
+	x11-libs/pango
+	x11-libs/pixman"
 
-# Supported versions (LTS) listed in
-# https://www.electronjs.org/docs/tutorial/support
+# Supported versions (LTS) are listed in
+# https://www.electronjs.org/docs/tutorial/support#currently-supported-versions
 if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 13.0 ; then
+:; # series supported upstream
+if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 12.0 ; then
+:; # series supported upstream
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
 && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 11.0 ; then
-:; # series supported upstream
-elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
-&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 10.0 ; then
-:; # series supported upstream
-elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
-&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 9.0 ; then
 :; # series supported upstream
 else
 if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
@@ -631,7 +567,7 @@ IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/unpacked/+unpacked}"
 REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
 
 
-# ##################  END ebuild and eclass global variables #################
+# ##################  END ebuild and eclass global variables ###################
 
 # @FUNCTION: _electron-app-flakey-check
 # @DESCRIPTION:
@@ -967,208 +903,126 @@ critical vulnerabilities in the internal Chromium."
 	V8_V=$(_query_lite_json '.deps.v8')
 	ZLIB_V=$(_query_lite_json '.deps.zlib')
 
-	# ##### Vulnerability tests ############################################
+	# ##### Vulnerability and End Of Life (EOL) Tests ######################
 
-if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
-	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
-	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
-	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" ]] ; then
-	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 9 \
-		&& ver_test ${ELECTRON_V_} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND} \
-			"${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9}" ; then
+	# Check Electron
+	if ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 ; then
+		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_13} ; then
+		# Patched
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 ; then
+		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_13} ; then
+		# Unpatched
 		adie \
-"Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
-${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY}"
-	fi
-
-	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 8 \
-		&& ver_test ${ELECTRON_V_} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND} \
-			"${INSECURE_NVD_ELECTRON_LAST_CRITICAL_8}" ; then
+"Electron ${ELECTRON_V} is not receiving proper security updates."
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 12 ; then
+		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_13} ; then
+		# Patched
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 12 ; then
+		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_13} ; then
+		# Unpatched
 		adie \
-"Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
-${INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY}"
-	fi
-
-	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 7 \
-		&& ver_test ${ELECTRON_V_} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND} \
-			"${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7}" ; then
+"Electron ${ELECTRON_V} is not receiving proper security updates."
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 11 ; then
+		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_13} ; then
+		# Patched
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 11 ; then
+		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_13} ; then
+		# Unpatched
 		adie \
-"Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
-${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY}"
-	fi
-	if ver_test "${CHROMIUM_V}" ${INSECURE_NVD_CHROME_LAST_CRITICAL_COND} \
-		"${INSECURE_NVD_CHROME_LAST_CRITICAL}" ; then
+"Electron ${ELECTRON_V} is not receiving proper security updates."
+	else
 		adie \
-"Electron ${ELECTRON_V} has a critical vulnerability in internal Chromium\n\
-which is version ${CHROMIUM_V}.  For details see\n\
-${INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY}"
+"Electron ${ELECTRON_V} has already reached End Of Life (EOL)."
 	fi
-	if ver_test "${CHROMIUM_V}" ${INSECURE_GLSA_CHROME_LATEST_COND} \
-		"${INSECURE_GLSA_CHROME_LATEST}" ; then
+
+	# Check Node.js EOL
+	if ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_16} ; then
+		# Patched
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_16} ; then
+		# Unpatched
 		adie \
-"Electron ${ELECTRON_V} has a GLSA advisory for internal Chromium\n\
-${CHROMIUM_V}.  See\n\
-${INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY}"
-	fi
-
-
-	if ver_test $(ver_cut 1 "${NODE_V}") -eq 13 \
-		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_CRITICAL_13_COND} \
-			"${INSECURE_NVD_NODEJS_LAST_CRITICAL_13}" ; then
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 14 \
+		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_14} ; then
+		# Patched
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 14 \
+		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_14} ; then
+		# Unpatched
 		adie \
-"Electron ${ELECTRON_V} has a critical NVD advisory for internal Node.js\n\
-${NODE_V}.  See\n\
-${INSECURE_NVD_NODEJS_LAST_CRITICAL_13_LINK_ADVISORY}"
-	fi
-
-	if ver_test $(ver_cut 1 "${NODE_V}") -eq 12 \
-		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_CRITICAL_12_COND} \
-			"${INSECURE_NVD_NODEJS_LAST_CRITICAL_12}" ; then
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 12 \
+		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_12} ; then
+		# Patched
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 12 \
+		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_12} ; then
+		# Unpatched
 		adie \
-"Electron ${ELECTRON_V} has a critical NVD advisory for internal Node.js\n\
-${NODE_V}.  See\n\
-${INSECURE_NVD_NODEJS_LAST_CRITICAL_12_LINK_ADVISORY}"
-	fi
-
-	if ver_test $(ver_cut 1 "${NODE_V}") -eq 10 \
-		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_CRITICAL_10_COND} \
-			"${INSECURE_NVD_NODEJS_LAST_CRITICAL_10}" ; then
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+	else
+		# Check Node.js EOL
 		adie \
-"Electron ${ELECTRON_V} has a critical NVD advisory for internal Node.js\n\
-${NODE_V}.  See\n\
-${INSECURE_NVD_NODEJS_LAST_CRITICAL_10_LINK_ADVISORY}"
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is End Of Life (EOL)."
 	fi
 
-	if ver_test $(ver_cut 1 "${NODE_V}") -eq 9 \
-		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_CRITICAL_9_COND} \
-			"${INSECURE_NVD_NODEJS_LAST_CRITICAL_9}" ; then
+	# Check Chromium
+	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
+	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
+		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_91_VERSION} ; then
+		# Stable patched
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
+		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_91_VERSION} ; then
+		# Stable unpatched
 		adie \
-"Electron ${ELECTRON_V} has a critical NVD advisory for internal Node.js\n\
-${NODE_V}.  See\n\
-${INSECURE_NVD_NODEJS_LAST_CRITICAL_9_LINK_ADVISORY}"
-	fi
-
-	if ver_test $(ver_cut 1 "${NODE_V}") -eq 8 \
-		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_CRITICAL_8_COND} \
-			"${INSECURE_NVD_NODEJS_LAST_CRITICAL_8}" ; then
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
+proper security updates."
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 92 \
+		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_92_VERSION} ; then
+		# Beta patched beta
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 92 \
+		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_92_VERSION} ; then
+		# Beta unpatched
 		adie \
-"Electron ${ELECTRON_V} has a critical NVD advisory for internal Node.js\n\
-${NODE_V}.  See\n\
-${INSECURE_NVD_NODEJS_LAST_CRITICAL_8_LINK_ADVISORY}"
-	fi
-
-
-fi
-if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
-	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
-	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" ]] ; then
-	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 11 \
-		&& ver_test "${ELECTRON_V}" ${INSECURE_NVD_ELECTRON_LAST_HIGH_11_COND} \
-		"${INSECURE_NVD_ELECTRON_LAST_HIGH_11}" ; then
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
+proper security updates."
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
+		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_93_VERSION} ; then
+		# Dev patched
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
+		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_93_VERSION} ; then
+		# Dev unpatched
 		adie \
-"Electron ${ELECTRON_V} has a high vulnerability.  For details see\n\
-${INSECURE_NVD_ELECTRON_LAST_HIGH_11_LINK_ADVISORY}"
-	fi
-	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 10 \
-		&& ver_test "${ELECTRON_V}" ${INSECURE_NVD_ELECTRON_LAST_HIGH_10_COND} \
-		"${INSECURE_NVD_ELECTRON_LAST_HIGH_10}" ; then
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
+proper security updates."
+	else
 		adie \
-"Electron ${ELECTRON_V} has a high vulnerability.  For details see\n\
-${INSECURE_NVD_ELECTRON_LAST_HIGH_10_LINK_ADVISORY}"
-	fi
-	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 9 \
-		&& ver_test "${ELECTRON_V}" ${INSECURE_NVD_ELECTRON_LAST_HIGH_9_COND} \
-		"${INSECURE_NVD_ELECTRON_LAST_HIGH_9}" ; then
-		adie \
-"Electron ${ELECTRON_V} has a high vulnerability.  For details see\n\
-${INSECURE_NVD_ELECTRON_LAST_HIGH_9_LINK_ADVISORY}"
-	fi
-	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 8 \
-		&& ver_test "${ELECTRON_V}" ${INSECURE_NVD_ELECTRON_LAST_HIGH_8_COND} \
-		"${INSECURE_NVD_ELECTRON_LAST_HIGH_8}" ; then
-		adie \
-"Electron ${ELECTRON_V} has a high vulnerability.  For details see\n\
-${INSECURE_NVD_ELECTRON_LAST_HIGH_8_LINK_ADVISORY}"
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} is End Of Life (EOL)."
 	fi
 
-	if ver_test "${CHROMIUM_V}" ${INSECURE_NVD_CHROME_LAST_HIGH_COND} \
-		"${INSECURE_NVD_CHROME_LAST_HIGH}" ; then
-		adie \
-"Electron ${ELECTRON_V} has a high vulnerability in internal Chromium\n\
-which is version ${CHROMIUM_V}.  For details see\n\
-${INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY}"
-	fi
-	if ver_test $(echo "${V8_V}" | cut -f 1 -d "-") ${INSECURE_NVD_V8_LAST_HIGH_COND} \
-		"${INSECURE_NVD_V8_LAST_HIGH}" ; then
-		adie \
-"Electron ${ELECTRON_V} has a high vulnerability for internal V8\n\
-${V8_V}.  See\n\
-${INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY}"
-	fi
-
-
-	if ver_test $(ver_cut 1 "${NODE_V}") -eq 15 \
-		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_HIGH_15_COND} \
-			"${INSECURE_NVD_NODEJS_LAST_HIGH_15}" ; then
-		adie \
-"Electron ${ELECTRON_V} has a high NVD advisory for internal Node.js\n\
-${NODE_V}.  See\n\
-${INSECURE_NVD_NODEJS_LAST_HIGH_15_LINK_ADVISORY}"
-	fi
-
-	if ver_test $(ver_cut 1 "${NODE_V}") -eq 14 \
-		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_HIGH_14_COND} \
-			"${INSECURE_NVD_NODEJS_LAST_HIGH_14}" ; then
-		adie \
-"Electron ${ELECTRON_V} has a high NVD advisory for internal Node.js\n\
-${NODE_V}.  See\n\
-${INSECURE_NVD_NODEJS_LAST_HIGH_14_LINK_ADVISORY}"
-	fi
-
-	if ver_test $(ver_cut 1 "${NODE_V}") -eq 12 \
-		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_HIGH_12_COND} \
-			"${INSECURE_NVD_NODEJS_LAST_HIGH_12}" ; then
-		adie \
-"Electron ${ELECTRON_V} has a high NVD advisory for internal Node.js\n\
-${NODE_V}.  See\n\
-${INSECURE_NVD_NODEJS_LAST_HIGH_12_LINK_ADVISORY}"
-	fi
-
-	if ver_test $(ver_cut 1 "${NODE_V}") -eq 10 \
-		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_HIGH_10_COND} \
-			"${INSECURE_NVD_NODEJS_LAST_HIGH_10}" ; then
-		adie \
-"Electron ${ELECTRON_V} has a high NVD advisory for internal Node.js\n\
-${NODE_V}.  See\n\
-${INSECURE_NVD_NODEJS_LAST_HIGH_10_LINK_ADVISORY}"
-	fi
-
-fi
-
-	if ver_test $(ver_cut 1 "${ELECTRON_V}") -le 6 ; then
-		# Let it fail in ${CHROMIUM_V} vulernability tests
-		ewarn "Electron ${ELECTRON_V} has already reached End Of Life (EOL)."
-	fi
-
-	if ver_test "${NODE_V}" -lt ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} ; then
-		adie "Electron ${ELECTRON_V} uses ${NODE_V} which is End Of Life (EOL)."
-	fi
-
-	if has_version "<net-libs/nodejs-${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}" ; then
-		ewarn \
-"You have a nodejs installed with less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} which \
-is End Of Life (EOL) and has vulnerabilities."
-	fi
-
-	# ##### Compatibity tests ##################################################
+	# ##### Compatibity Tests ##############################################
 
 	if ! has_version ">=dev-libs/libuv-${LIBUV_V}" ; then
-		adie "Electron ${ELECTRON_V} requires at least >=dev-libs/libuv-${LIBUV_V} libuv"
+		adie \
+"Electron ${ELECTRON_V} requires at least >=dev-libs/libuv-${LIBUV_V} libuv"
 	fi
 	# It's actually BoringSSL not OpenSSL in Chromium.
 	# Commented out because Chromium checks
 	if ! has_version ">=net-libs/nodejs-${NODE_V}" ; then
-		ewarn "Electron ${ELECTRON_V} requires at least >=net-libs/nodejs-${NODE_V}"
+		ewarn \
+"Electron ${ELECTRON_V} requires at least >=net-libs/nodejs-${NODE_V}"
 	fi
 	if ! has_version ">=sys-libs/zlib-${ZLIB_V}" ; then
 		adie \
