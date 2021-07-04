@@ -906,29 +906,29 @@ critical vulnerabilities in the internal Chromium."
 	# ##### Vulnerability and End Of Life (EOL) Tests ######################
 
 	# Check Electron
-	if ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 ; then
+	if ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 \
 		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_13} ; then
 		# Patched
 		:; # Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 ; then
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 \
 		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_13} ; then
 		# Unpatched
 		adie \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 12 ; then
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 12 \
 		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_12} ; then
 		# Patched
 		:; # Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 12 ; then
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 12 \
 		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_12} ; then
 		# Unpatched
 		adie \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 11 ; then
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 11 \
 		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_11} ; then
 		# Patched
 		:; # Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 11 ; then
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 11 \
 		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_11} ; then
 		# Unpatched
 		adie \
