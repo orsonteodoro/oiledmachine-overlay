@@ -140,15 +140,15 @@ CVE_PATCHED_NODE_12="12.22.2"
 # They mix up 92 and 93 which is difficult to filter.
 # Dev channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Dev%20updates
-CVE_PATCHED_CHROMIUM_V_93="93.0.4530.5"
+CVE_PATCHED_CHROMIUM_93="93.0.4530.5"
 
 # Beta channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
-CVE_PATCHED_CHROMIUM_V_92="92.0.4515.81"
+CVE_PATCHED_CHROMIUM_92="92.0.4515.81"
 
 # Stable channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-CVE_PATCHED_CHROMIUM_V_91="91.0.4472.123"
+CVE_PATCHED_CHROMIUM_91="91.0.4472.123"
 
 # Check the runtime dependencies for electron
 # Most electron apps will have electron bundled already.  No need for seperate
@@ -978,31 +978,31 @@ security updates."
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
 	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
-		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_93_VERSION} ; then
+		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_93} ; then
 		# Dev patched
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
-		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_93_VERSION} ; then
+		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_93} ; then
 		# Dev unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 92 \
-		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_92_VERSION} ; then
+		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_92} ; then
 		# Beta patched beta
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 92 \
-		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_92_VERSION} ; then
+		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_92} ; then
 		# Beta unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
-		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_91_VERSION} ; then
+		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_91} ; then
 		# Stable patched
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
-		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_91_VERSION} ; then
+		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_91} ; then
 		# Stable unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
