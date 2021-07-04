@@ -202,8 +202,8 @@ COMMON_DEPEND="
 	app-arch/bzip2
 	app-indicator? ( dev-libs/libappindicator:3 )
 	dev-libs/atk
-	dev-libs/expat-2.2.5
-	dev-libs/fribidi-0.19.7
+	dev-libs/expat
+	dev-libs/fribidi
 	dev-libs/glib:2
 	dev-libs/gmp
 	dev-libs/libffi
@@ -262,7 +262,7 @@ COMMON_DEPEND="
 if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
 && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 13.0 ; then
 :; # series supported upstream
-if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
 && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 12.0 ; then
 :; # series supported upstream
 elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
