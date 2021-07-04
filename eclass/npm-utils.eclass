@@ -58,6 +58,7 @@ NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:="1"}
 NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
 
 # Keep up to date from
+# https://omahaproxy.appspot.com/
 # https://www.chromestatus.com/features
 # https://en.wikipedia.org/wiki/Google_Chrome_version_history
 CHROMIUM_STABLE_V="91"

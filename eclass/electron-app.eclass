@@ -137,18 +137,23 @@ CVE_PATCHED_NODE_12="12.22.2"
 # These Chromium desktop versions listed are non vulnerable versions:
 # Reason why is to minimize vulnerability checks in this eclass.
 
+# It's difficult to determine between OS and Desktop which are not the
+# vulnerable versions so it is assumed that the latest on the Linux platform is
+# clean.  For the latest, Linux version see:
+# https://omahaproxy.appspot.com/
+
 # They mix up 92 and 93 which is difficult to filter.
 # Dev channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Dev%20updates
-CVE_PATCHED_CHROMIUM_93="93.0.4530.5"
+LATEST_CHROMIUM_93="93.0.4557.4"
 
 # Beta channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
-CVE_PATCHED_CHROMIUM_92="92.0.4515.81"
+LATEST_CHROMIUM_92="92.0.4515.80"
 
 # Stable channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-CVE_PATCHED_CHROMIUM_91="91.0.4472.123"
+LATEST_CHROMIUM_91="91.0.4472.114"
 
 # Check the runtime dependencies for electron
 # Most electron apps will have electron bundled already.  No need for seperate
@@ -978,31 +983,31 @@ security updates."
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
 	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
-		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_93} ; then
+		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_93} ; then
 		# Dev patched
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
-		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_93} ; then
+		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_93} ; then
 		# Dev unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 92 \
-		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_92} ; then
+		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_92} ; then
 		# Beta patched beta
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 92 \
-		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_92} ; then
+		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_92} ; then
 		# Beta unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
-		&& ver_test ${CHROMIUM_V} -ge ${CVE_PATCHED_CHROMIUM_91} ; then
+		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_91} ; then
 		# Stable patched
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
-		&& ver_test ${CHROMIUM_V} -lt ${CVE_PATCHED_CHROMIUM_91} ; then
+		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_91} ; then
 		# Stable unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
