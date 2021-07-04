@@ -3,6 +3,8 @@
 
 EAPI=7
 
+ELECTRON_APP_ELECTRON_V="13.1.2"
+ELECTRON_APP_MODE="npm"
 inherit eutils desktop electron-app npm-utils
 
 DESCRIPTION="Blockbench - A boxy 3D model editor"
@@ -11,8 +13,6 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+=" net-libs/nodejs[npm]"
-ELECTRON_APP_ELECTRON_V="13.1.2"
-ELECTRON_APP_MODE="npm"
 SRC_URI="
 https://github.com/JannisX11/blockbench/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
