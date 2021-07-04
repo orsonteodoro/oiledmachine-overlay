@@ -60,7 +60,7 @@ NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
 # Keep up to date from
 # https://www.chromestatus.com/features
 # https://en.wikipedia.org/wiki/Google_Chrome_version_history
-CHROMIUM_STABLE_V="89"
+CHROMIUM_STABLE_V="91"
 
 # ##################  END Per-package environmental variables ##################
 
