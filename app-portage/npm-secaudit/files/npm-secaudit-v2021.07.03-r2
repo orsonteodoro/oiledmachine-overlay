@@ -66,15 +66,15 @@ G_CVE_PATCHED_NODE_12="12.22.2"
 # They mix up 92 and 93 which is difficult to filter.
 # Dev channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Dev%20updates
-G_CVE_PATCHED_CHROMIUM_V_93="93.0.4530.5"
+G_CVE_PATCHED_CHROMIUM_93="93.0.4530.5"
 
 # Beta channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
-G_CVE_PATCHED_CHROMIUM_V_92="92.0.4515.81"
+G_CVE_PATCHED_CHROMIUM_92="92.0.4515.81"
 
 # Stable channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-G_CVE_PATCHED_CHROMIUM_V_91="91.0.4472.123"
+G_CVE_PATCHED_CHROMIUM_91="91.0.4472.123"
 
 H_INFO="\
 $(basename $BASH_SOURCE) ${G_VERSION}
@@ -389,33 +389,33 @@ security updates."
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
 	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 93 \
-		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_CVE_PATCHED_CHROMIUM_93_VERSION} ; then
+		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_CVE_PATCHED_CHROMIUM_93} ; then
 		# Dev patched
 		:; # Passed
 	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 93 \
-		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_CVE_PATCHED_CHROMIUM_93_VERSION} ; then
+		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_CVE_PATCHED_CHROMIUM_93} ; then
 		# Dev unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
 		is_vulnerable=1
 	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 92 \
-		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_CVE_PATCHED_CHROMIUM_92_VERSION} ; then
+		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_CVE_PATCHED_CHROMIUM_92} ; then
 		# Beta patched beta
 		:; # Passed
 	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 92 \
-		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_CVE_PATCHED_CHROMIUM_92_VERSION} ; then
+		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_CVE_PATCHED_CHROMIUM_92} ; then
 		# Beta unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
 		is_vulnerable=1
 	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 91 \
-		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_CVE_PATCHED_CHROMIUM_91_VERSION} ; then
+		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_CVE_PATCHED_CHROMIUM_91} ; then
 		# Stable patched
 		:; # Passed
 	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 91 \
-		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_CVE_PATCHED_CHROMIUM_91_VERSION} ; then
+		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_CVE_PATCHED_CHROMIUM_91} ; then
 		# Stable unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
