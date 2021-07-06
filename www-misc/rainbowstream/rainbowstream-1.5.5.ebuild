@@ -24,10 +24,10 @@ DEPEND+=" ${PYTHON_DEPS}
 	dev-python/twitter[${PYTHON_USEDEP}]"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DPES}"
-EGIT_COMMIT="be1eaa59e1549ac8fec72193ff19faa419900b84"
+EGIT_COMMIT="96141fac10675e0775d703f65a59c4477a48c57e"
 SRC_URI="
 https://github.com/orakaro/rainbowstream/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}"/${PN}-1.3.7-no-user-env.patch )
