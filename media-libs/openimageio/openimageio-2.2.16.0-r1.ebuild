@@ -105,17 +105,17 @@ BDEPEND+="
 		(
 			sys-devel/clang:12
 			sys-devel/llvm:12
-			=sys-devel/lld-12*
+			>=sys-devel/lld-12
 		)
 		(
 			sys-devel/clang:11
 			sys-devel/llvm:11
-			=sys-devel/lld-11*
+			>=sys-devel/lld-11
 		)
 		(
 			sys-devel/clang:10
 			sys-devel/llvm:10
-			=sys-devel/lld-10*
+			>=sys-devel/lld-10
 		)
 		>=sys-devel/icc-13
 	)
