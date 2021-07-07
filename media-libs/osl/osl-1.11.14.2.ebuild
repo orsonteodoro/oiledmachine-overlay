@@ -26,7 +26,7 @@ REQUIRED_USE+=" ^^ ( ${LLVM_SUPPORT_[@]} )"
 #   https://github.com/imageworks/OpenShadingLanguage/releases/tag/Release-1.11.14.1
 QT_MIN=5.6
 
-gen_llvm_rdepend()
+gen_llvm_depend()
 {
 	for v in ${LLVM_SUPPORT[@]} ; do
 		echo "
@@ -39,7 +39,7 @@ gen_llvm_rdepend()
 	done
 }
 
-RDEPEND+=" "$(gen_llvm_rdepend)
+RDEPEND+=" "$(gen_llvm_depend)
 RDEPEND+="
 	>=dev-libs/boost-1.55:=
 	dev-libs/libfmt
@@ -52,8 +52,23 @@ RDEPEND+="
 		>=dev-libs/optix-5.1
 		>=dev-util/nvidia-cuda-toolkit-8
 		>=media-libs/openimageio-1.8:=
-		>=sys-devel/llvm-6[llvm_targets_NVPTX]
-		>=sys-devel/clang-6[llvm_targets_NVPTX]
+		|| (
+			(
+				sys-devel/llvm:12[llvm_targets_NVPTX]
+				sys-devel/clang:12[llvm_targets_NVPTX]
+				>=sys-devel/lld-12
+			)
+			(
+				sys-devel/llvm:11[llvm_targets_NVPTX]
+				sys-devel/clang:11[llvm_targets_NVPTX]
+				>=sys-devel/lld-11
+			)
+			(
+				sys-devel/llvm:10[llvm_targets_NVPTX]
+				sys-devel/clang:10[llvm_targets_NVPTX]
+				>=sys-devel/lld-10
+			)
+		)
 	)
 	partio? ( media-libs/partio )
 	qt5? (
@@ -67,10 +82,32 @@ RDEPEND+="
 		$(python_gen_any_dep '>=dev-python/pybind11-2.4.2[${PYTHON_USEDEP}]')
 	)"
 DEPEND+=" ${RDEPEND}"
+BDEPEND+=" "$(gen_llvm_depend)
 BDEPEND+="
 	|| (
-		>=sys-devel/gcc-4.8.5
-		>=sys-devel/clang-3.4
+		sys-devel/gcc:11
+		sys-devel/gcc:10
+		sys-devel/gcc:9.4.0
+		sys-devel/gcc:9.3.0
+		sys-devel/gcc:8.5.0
+		sys-devel/gcc:8.4.0
+		sys-devel/gcc:7.5.0
+		sys-devel/gcc:6.5.0
+		(
+			sys-devel/clang:12
+			sys-devel/llvm:12
+			>=sys-devel/lld-12
+		)
+		(
+			sys-devel/clang:11
+			sys-devel/llvm:11
+			>=sys-devel/lld-11
+		)
+		(
+			sys-devel/clang:10
+			sys-devel/llvm:10
+			>=sys-devel/lld-10
+		)
 		>=dev-lang/icc-13
 	)
 	>=dev-util/cmake-3.12
@@ -128,8 +165,8 @@ per-package environmental variable."
 
 src_prepare() {
 	if ! use test ; then
-		einfo "Removing osl_add_all_tests from CMakeLists.txt"
-		sed -i -e "\|osl_add_all_tests|d" "CMakeLists.txt" || die
+		sed -i -e "s|osl_add_all_tests|#osl_add_all_tests|g" \
+			"CMakeLists.txt" || die
 	fi
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
@@ -175,7 +212,6 @@ src_configure() {
 				-DOSL_BUILD_TESTS=$(usex test)
 				-DOSL_SHADER_INSTALL_DIR="include/OSL/shaders"
 				-DSTOP_ON_WARNING=OFF
-				-DUSE_CPP=14
 				-DUSE_OPTIX=$(usex optix)
 				-DUSE_PARTIO=$(usex partio)
 				-DUSE_PYTHON=$(usex python)
