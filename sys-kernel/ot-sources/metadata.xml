@@ -155,14 +155,10 @@
   </upstream>
   <use>
     <flag name="bbrv2">Patches the kernel with BBRv2 TCP congestion control for
-      around less than 1% retranssmisson (comparable to CUBIC) versus
-      BBRv2 5% retransmission, at the cost of around 10 mbps relative to
-      BBRv1.  BBRv1 is about double the throughput than CUBIC on average.
-      BBRv2 is above CUBIC in throughput.
-
-      This benefits the most with people with bad connections and 
-      those under pay per mb/gb plan.  Gamers/streamers benefit marginally
-      from having fewer random skips or losses.
+      improved goodput, which is the actual useful data over time alone, than
+      its predecessor with around less than 5 percent retransmission comparable
+      to Cubic but trading off ~5-10 MBps raw throughput, which includes data
+      retransmissions and overhead.
     <flag name="bmq">Patches the kernel to use BMQ CPU scheduler, a more
       simple scheduler.</flag>
     <flag name="bmq-quick-fix">Patches the kernel with fixes to BMQ.</flag>
@@ -228,8 +224,28 @@
       CPU usage by less than 5%.</flag>
     <flag name="futex2">Patches the kernel with futex2 syscalls.
       This may reduce the CPU usage by less than 5%.</flag>
-    <flag name="kernel-gcc-patch">Patches the kernel for more CPU
+    <flag name="kernel_gcc_patch">Patches the kernel for more CPU
       microarchitectures</flag>
+    <flag name="kernel_gcc_patch_cortex-a72">Patches the kernel for the
+      Cortex A72 used in the Raspberry Pi 4.</flag>
+    <flag name="kernel_gcc_patch_zen3">Patches the kernel for the Zen 3
+      microarchitecture and ensures the toolchain requirements are in
+      place.</flag>
+    <flag name="kernel_gcc_patch_cooper_lake">Patches the kernel for the
+      Cooper Lake microarchitecture and ensures the toolchain requirements are
+      in place.</flag>
+    <flag name="kernel_gcc_patch_tiger_lake">Patches the kernel for the
+      Tiger Lake microarchitecture and ensures the toolchain requirements are
+      in place.</flag>
+    <flag name="kernel_gcc_patch_sapphire_rapids">Patches the kernel for the
+      Sapphire Rapids microarchitecture and ensures the toolchain requirements
+      are in place.</flag>
+    <flag name="kernel_gcc_patch_rocket_lake">Patches the kernel for the
+      Rocket Lake microarchitecture and ensures the toolchain requirements
+      are in place.</flag>
+    <flag name="kernel_gcc_patch_alder_lake">Patches the kernel for the
+      Alder Lake microarchitecture and ensures the toolchain requirements
+      are in place.</flag>
     <flag name="lto">Fulfills the ThinLTO requirements.</flag>
     <flag name="muqss">Patches the kernel with Con Kolivas patchset and
       includes his skiplist based MuQSS CPU scheduler.</flag>
@@ -242,7 +258,8 @@
       to minimize non-preemptible parts of the kernel.  It's experimental when
       combined with other USE flags and patchsets.</flag>  Realtime
       is not recommended for desktop use but for dedicated and isolated
-      setups.  Never give untrusted apps realtime access.
+      setups.  Never give untrusted apps realtime access.  The rt patchset
+      is used by music producers that require low latency audio.
     <flag name="symlink">Updates the the /usr/src/linux symlink for every
       newer release.</flag>
     <flag name="tresor">Controls application of TRESOR, a cold boot resistant
@@ -282,8 +299,11 @@
       for 5.10 see:
       https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 
-      for 5.11 see:
-      https://github.com/torvalds/linux/compare/v5.11...zen-kernel:5.11/zen-sauce
+      for 5.12 see:
+      https://github.com/torvalds/linux/compare/v5.12...zen-kernel:5.12/zen-sauce
+
+      for 5.13 see:
+      https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/zen-sauce
 
       Use the O3, zen-sauce, kernel_gcc_patch USE flags instead of passing their
       commit IDs.

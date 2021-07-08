@@ -26,7 +26,7 @@ PATCH_CK_COMMIT_B="5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213" # bottom / newest
 PATCH_CK_COMMIT_T="7acac2e4000e75f3349106a8847cf1021651446b" # top / oldest
 PATCH_FUTEX_COMMIT_B="1ade6c3ea42b794a49296a486ac8ad780d1faf46" # bottom / newest
 PATCH_FUTEX_COMMIT_T="dee34186c97c4b224d97f16bf1bbd75c2ea2492e" # top / oldest
-PATCH_KGCCP_COMMIT="cbf238bae1a5132b8b35392f3f3769267b2acaf5"
+PATCH_KCP_COMMIT="cbf238bae1a5132b8b35392f3f3769267b2acaf5"
 PATCH_TRESOR_V="3.18.5"
 PATCH_ZENSAUCE_COMMITS=\
 "1baa02fbd7a419fdd0e484ba31ba82c90c7036cf \
@@ -67,14 +67,14 @@ d1bebeb959a56324fe436443ea2f21a8391632d9"
 
 PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
-	${PATCH_KGCCP_COMMIT}
+	${PATCH_KCP_COMMIT}
 	${PATCH_ZENTUNE_COMMITS}
 "
 
-IUSE+=" bmq +cfs disable_debug +genpatches +kernel-gcc-patch muqss +O3 \
-futex-wait-multiple tresor rt tresor_aesni tresor_i686 tresor_sysfs \
-tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce \
--zen-tune zen-tune-muqss"
+IUSE+=" bmq +cfs disable_debug +genpatches +kernel_compiler_patch
+muqss +O3 futex-wait-multiple tresor rt tresor_aesni tresor_i686 tresor_sysfs
+tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce -zen-tune
+zen-tune-muqss"
 REQUIRED_USE+="
 	^^ ( bmq cfs muqss )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
@@ -96,7 +96,7 @@ fi
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package UKSM, zen-kernel patchset, \
-GraySky2's Kernel GCC Patch, MUQSS CPU Scheduler, BMQ CPU Scheduler, \
+GraySky2's kernel_compiler_patch, MUQSS CPU Scheduler, BMQ CPU Scheduler, \
 genpatches, CVE fixes, TRESOR"
 
 inherit ot-kernel
@@ -104,11 +104,11 @@ inherit ot-kernel
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" bmq? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
-  # do not come with an explicit license but defaults to
+  # does not come with an explicit license but defaults to
   # GPL-2 with Linux-syscall-note.
 LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
-LICENSE+=" kernel-gcc-patch? ( GPL-2 )"
+LICENSE+=" kernel_compiler_patch? ( GPL-2 )"
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
@@ -120,6 +120,31 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
 LICENSE+=" zen-tune-muqss? ( GPL-2 )"
+
+KCP_RDEPEND="
+	sys-devel/gcc:12
+	sys-devel/gcc:11
+	sys-devel/gcc:10
+	sys-devel/gcc:9.4.0
+	sys-devel/gcc:9.3.0
+	sys-devel/gcc:8.5.0
+	sys-devel/gcc:8.4.0
+	sys-devel/gcc:7.5.0
+	sys-devel/gcc:6.5.0
+	(
+		sys-devel/clang:12
+		sys-devel/llvm:12
+	)
+	(
+		sys-devel/clang:11
+		sys-devel/llvm:11
+	)
+	(
+		sys-devel/clang:10
+		sys-devel/llvm:10
+	)"
+
+RDEPEND+=" kernel_compiler_patch? ( || ( ${KCP_RDEPEND} ) )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
@@ -138,10 +163,10 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-	   kernel-gcc-patch? (
-		${KGCCP_SRC_4_9_URI}
-		${KGCCP_SRC_8_1_URI}
-		${KGCCP_SRC_9_0_URI}
+	   kernel_compiler_patch? (
+		${KCP_SRC_4_9_URI}
+		${KCP_SRC_8_1_URI}
+		${KCP_SRC_9_0_URI}
 	   )
 	   muqss? ( ${CK_SRC_URI} )
 	   O3? ( ${O3_ALLOW_SRC_URI} )
@@ -162,7 +187,7 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
-	if use kernel-gcc-patch ; then
+	if use kernel_compiler_patch ; then
 		CC=$(tc-getCC)
 		if ! tc-is-gcc ; then
 			CC=$(get_abi_CHOST ${ABI})-gcc
@@ -172,13 +197,13 @@ function ot-kernel_pkg_setup_cb() {
 				:;
 			else
 				ewarn \
-"You need to switch your compiler to gcc-10.1+ for kernel_gcc_patch to work on\n\
+"You need to switch your compiler to gcc-10.1+ for kernel_compiler_patch to work on\n\
 new architectures.  For increased compatibility switch and re-emerge with\n\
 >=gcc-10.1."
 			fi
 		else
 			ewarn \
-"The kernel_gcc_patch was designed for older kernels and may fail to patch.\n\
+"The kernel_compiler_patch was designed for older kernels and may fail to patch.\n\
 Patching anyway.  For increased compatibility switch and re-emerge with\n\
 >=gcc-10.1."
 		fi

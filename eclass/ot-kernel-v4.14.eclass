@@ -22,7 +22,7 @@ K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.162"
 PATCH_CK_COMMIT_B="78f861790848e83e6c98cd8f3408dbad7c9f4c3d" # bottom / oldest
 PATCH_CK_COMMIT_T="fbc0b4595aeccc2cc03e292ac8743565b3d3037b" # top / newest
-PATCH_KGCCP_COMMIT="c53ae690ee282d129fae7e6e10a4c00e5030d588" # GraySky2's kernel_gcc_patch
+PATCH_KCP_COMMIT="c53ae690ee282d129fae7e6e10a4c00e5030d588" # GraySky2's kernel_compiler_patch
 PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
 PATCH_PDS_V="${PATCH_PDS_V:=098i}"
@@ -31,8 +31,9 @@ PATCH_TRESOR_V="3.18.5"
 # Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
 LINUX_TIMESTAMP=1510512373
 
-IUSE="+cfs disable_debug +genpatches +kernel-gcc-patch muqss pds \
-+O3 rt tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm"
+IUSE="+cfs disable_debug +genpatches +kernel_compiler_patch
+muqss pds +O3 rt tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
+uksm"
 REQUIRED_USE+="
 	^^ ( cfs muqss pds )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
@@ -58,13 +59,13 @@ inherit ot-kernel
 
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
-LICENSE+=" kernel-gcc-patch? ( GPL-2 )"
+LICENSE+=" kernel_compiler_patch? ( GPL-2 )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" pds? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
-  # do not come with an explicit license but defaults to
+  # does not come with an explicit license but defaults to
   # GPL-2 with Linux-syscall-note.
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
@@ -72,6 +73,19 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # all-rights-reserved applies to new files introduced and no default license
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
+
+KCP_RDEPEND="
+	sys-devel/gcc:12
+	sys-devel/gcc:11
+	sys-devel/gcc:10
+	sys-devel/gcc:9.4.0
+	sys-devel/gcc:9.3.0
+	sys-devel/gcc:8.5.0
+	sys-devel/gcc:8.4.0
+	sys-devel/gcc:7.5.0
+	sys-devel/gcc:6.5.0"
+
+RDEPEND+=" kernel_compiler_patch? ( || ( ${KCP_RDEPEND} ) )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
@@ -87,9 +101,9 @@ SRC_URI+=" genpatches? (
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-	   kernel-gcc-patch? (
-		${KGCCP_SRC_4_9_URI}
-		${KGCCP_SRC_8_1_URI}
+	   kernel_compiler_patch? (
+		${KCP_SRC_4_9_URI}
+		${KCP_SRC_8_1_URI}
 	   )
 	   muqss? ( ${CK_SRC_URI} )
 	   O3? (
@@ -111,9 +125,9 @@ SRC_URI+=" genpatches? (
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
-	if use kernel-gcc-patch ; then
+	if use kernel_compiler_patch ; then
 		ewarn \
-"The kernel_gcc_patch was designed for older kernels and may fail to patch.\n\
+"The kernel_compiler_patch was designed for older kernels and may fail to patch.\n\
 Patching anyway."
 	fi
 	# TRESOR for x86_64 generic was known to pass crypto testmgr on this

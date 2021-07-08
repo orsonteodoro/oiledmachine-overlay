@@ -3,15 +3,15 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v5.12.eclass
+# @ECLASS: ot-kernel-v5.13.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7
-# @BLURB: Eclass for patching the 5.12.x kernel
+# @BLURB: Eclass for patching the 5.13.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.12 eclass defines specific applicable patching for the 5.12.x
+# The ot-kernel-v5.13 eclass defines specific applicable patching for the 5.13.x
 # linux kernel.
 
 DISABLE_DEBUG_V="1.1"
@@ -20,62 +20,60 @@ K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.210"
-PATCH_ALLOW_O3_COMMIT="ed1e3e23c0fa1a43f23c7f7f02f96915f6391b40"
-PATCH_CK_COMMIT_B="47a8b8135d37e0fc97d9fa875ef88855844ab417" # bottom / newest
-PATCH_CK_COMMIT_T="d66b728fed660035a3830f45905d894424ba2d7f" # top / oldest
-PATCH_FUTEX_COMMIT_B="75d8034728411113df4c4ced42819f2ddd4392a5" # bottom / newest
-PATCH_FUTEX_COMMIT_T="679731128173894efe3d301870dce34651eda786" # top / oldest
-PATCH_FUTEX2_COMMIT_B="81255c11c48cc2302883425c87318f9cad37e7e6" # bottom / newest
-PATCH_FUTEX2_COMMIT_T="64cdae0a6364c651f13a9ba90f6a8fadd7e1b9f7" # top / oldest
-PATCH_BBRV2_COMMIT_B="8c1770e2a31b54cb392e933dc0c91887a9176915" # bottom / newest
-PATCH_BBRV2_COMMIT_T="73d1ca58968168a812f24cf0704e8af5f93510e8" # top / oldest
-PATCH_KCP_COMMIT="e7b0b23b5d5485eac1cd46c7f642cf3e7d21013a"
+PATCH_ALLOW_O3_COMMIT="56350f1ad743dbb258229fe93a896fb441c8c396"
+PATCH_CK_COMMIT_B="" # bottom / newest (not ready yet)
+PATCH_CK_COMMIT_T="" # top / oldest
+PATCH_FUTEX_COMMIT_B="74d0568c6f3aa4a5f2682f6d6b5a4d59044a762e" # bottom / newest
+PATCH_FUTEX_COMMIT_T="93ea4d3978ab84892db3d44445bc12c51fa627e3" # top / oldest
+PATCH_FUTEX2_COMMIT_B="2568c65603cd0168a29fdf4564d80e447117916a" # bottom / newest
+PATCH_FUTEX2_COMMIT_T="c193c6dd67f30469a90c1bb22a7b0a86f77d6717" # top / oldest
+PATCH_BBRV2_COMMIT_B="50a9bcbda886c487541cbe02e2ff6bf54107028c" # bottom / newest
+PATCH_BBRV2_COMMIT_T="03eeb3dfa421116c48e86376a2079fa7dd25e783" # top / oldest
+PATCH_KCP_COMMIT="aa17c1c6e894e75943950b0818af8695ae4a23b2"
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/Y^..X.patch \
 #   | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 # where Y is top and X is bottom
 PATCH_ZENSAUCE_COMMITS=\
-"1dcc3ec6d794e1e45659a0c6d7f54be2fa05dad9 \
-19c6683e94816fbaef422c446a8ff3d54c973cf3 \
-96ec49966377694494a8aee6e8fd3f2d11509761 \
-e7b0b23b5d5485eac1cd46c7f642cf3e7d21013a \
-ed1e3e23c0fa1a43f23c7f7f02f96915f6391b40 \
-759bb25de38a637fb6e09fd7f9d8943b4185d4a1 \
-5e1e97170390182fd4a3ad9ccb9d857bd2e7cb9e \
-d5aa0adb115a345817e6817db470476336c3e7ae \
-9d1de069064175427c8ee5366ca2bef3d6d3d6d5 \
-93d22865c895696a789f7e70bb9f62e4bd8b8a4d \
-0beed1391c7610203fc3dc27c19e23977b75edd7 \
-3559da1257c8cf11ea8ece27fd4cfe5ca56c2495 \
-d7fbf1677baa401313b46215d018e2da4741bb83 \
-c44bcbc63316db1f54d383d9b05742638cc9a739 \
-b1e5576879680eb5d45061cca544379dfe3e3e6c \
-21e1703ae2528c14987ff48ce77500021c57a837 \
-909f6d7cbac4d61583b0af5be6c270716a04afb2 \
-710f82dfbbef8ed83f2093070d91baef56968785 \
-7d443dabec118b2c869461d8740e010bca976931 \
-e9f42c7dd91570d86bcd05fb688e096a4e80ebc5 \
-0ba43f5ad2f0fc5f77ebe992f2bf381de0af66b3 \
-d6602ad8aa6d79371e8859e4a6ead02eb2d74a6d \
-491f1ea03e6f3077cc8e1097f09cfd889e1880a9 \
-ced7f3f7b47c3c7fd3afbb0dde3ba48a7f4e81d0 \
-a2800f35cbb08c7f1fd5b595bcf2ef5b6e59f87b"
+"c4ab3a5b4ba139dc102566f66fc5dba96e728ddb \
+617425f6f45fdc270a58344726ed4353a0bf027d \
+74e3df8f6e24c8c473b326a1d750de7d8b77b177 \
+aa17c1c6e894e75943950b0818af8695ae4a23b2 \
+56350f1ad743dbb258229fe93a896fb441c8c396 \
+41ce5e63eefb481bd4542505422858989bb2ef95 \
+0380e4196b867209d9608b4aca063ac8c7b3308c \
+3a68480245b4d09c65e62aced58868eb3d896e4a \
+d30d478300a8b426cb6a787c38f0eccc0bff6475 \
+6fbfd6ca165a7cf601bacb2bce656b280b0ff920 \
+104e1e00288490f7e24802e9098a342efa9e530b \
+830b77e138f36de9498887b931ec629d68b8d71f \
+aa69255290392c2c4f1d5aabc0f8b0dee02fd908 \
+0d1bf74b6ba31c78febdc5523f5c2cf8a56c1962 \
+1153e0cc8136663b5273b3d5c35197dce4d3c680 \
+bfbbf9734a3f01fb0677bd7ab7f6b1e96e2cb293 \
+ad88458494fbecc930dab11ff54430c083260c06 \
+b9e0aa2f3f28601a2ba794c927ffe4c7b3e59b60 \
+519eab42710cd0b9abab9dc4d5a313f80b66ecec \
+1eb5e3fe1b2094e9d50c442ff4d7feb59cfe9f60 \
+552079568fdb272fdcae5767cdb2877e9fdf269a \
+33da506ff25488b142d25efd3362f361cde9984b \
+732e5405c0311f1e32e6e4b0cd30fc104209e6bd"
 
 # top / oldest, bottom / newest
 # Diced to let user can choose between UKSM, KSWAPD, OOMD
 PATCH_DEFER_MADVISE_COMMIT=\
-"0ba43f5ad2f0fc5f77ebe992f2bf381de0af66b3"
+"519eab42710cd0b9abab9dc4d5a313f80b66ecec"
 PATCH_ZENTUNE_COMMITS=\
-"710f82dfbbef8ed83f2093070d91baef56968785 \
-7d443dabec118b2c869461d8740e010bca976931 \
-e9f42c7dd91570d86bcd05fb688e096a4e80ebc5 \
-0ba43f5ad2f0fc5f77ebe992f2bf381de0af66b3 \
-d6602ad8aa6d79371e8859e4a6ead02eb2d74a6d \
-491f1ea03e6f3077cc8e1097f09cfd889e1880a9 \
-ced7f3f7b47c3c7fd3afbb0dde3ba48a7f4e81d0 \
-a2800f35cbb08c7f1fd5b595bcf2ef5b6e59f87b"
-PATCH_BFQ_DEFAULT="7d443dabec118b2c869461d8740e010bca976931"
+"bfbbf9734a3f01fb0677bd7ab7f6b1e96e2cb293 \
+ad88458494fbecc930dab11ff54430c083260c06 \
+b9e0aa2f3f28601a2ba794c927ffe4c7b3e59b60 \
+519eab42710cd0b9abab9dc4d5a313f80b66ecec \
+1eb5e3fe1b2094e9d50c442ff4d7feb59cfe9f60 \
+552079568fdb272fdcae5767cdb2877e9fdf269a \
+33da506ff25488b142d25efd3362f361cde9984b \
+732e5405c0311f1e32e6e4b0cd30fc104209e6bd"
+PATCH_BFQ_DEFAULT="ad88458494fbecc930dab11ff54430c083260c06"
 PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
 	${PATCH_BFQ_DEFAULT}
@@ -90,9 +88,10 @@ PATCH_ZENSAUCE_BL="
 
 # top is oldest, bottom is newest
 PATCH_ZENTUNE_MUQSS_COMMITS=\
-"dbb46ef0a23c004fb767e33293b3f220ae00671e \
-e0002c7a941a1919924a608358e69f294bf9b69f \
-a80522ac87ce290e80c283fa17988a4a0e57fd04"
+"e544d7be951a96fbb5c6ee839726c3d7754b7509 \
+097d88ec2dd7623b2791cf1d94f6905701669469 \
+2b541bf1e5e27c51f96326f6c9d6c8abcf682d93 \
+a09dda608cbadc92964cb29cf2fef061200e08c2"
 
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel_compiler_patch_}"
@@ -102,6 +101,8 @@ IUSE+=" ${KCP_IUSE} bbrv2 +cfs disable_debug futex-wait-multiple futex2
 tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
 zen-sauce -zen-tune zen-tune-muqss"
 REQUIRED_USE+="
+	!muqss
+	!rt
 	^^ ( cfs muqss prjc )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
@@ -240,10 +241,10 @@ KCP_MA_RDEPEND="
 	kernel_compiler_patch_rocket_lake? ( ${KCP_TC2} )
 	kernel_compiler_patch_alder_lake? ( ${KCP_TC2} )"
 
-RDEPEND+=" ${KCP_MA_RDEPEND}
-	   lto? ( || ( ${LTO_CLANG_RDEPEND} ) )
+RDEPEND+=" lto? ( || ( ${LTO_CLANG_RDEPEND} ) )
 	   kernel_compiler_patch? (
 		|| ( ${KCP_RDEPEND} )
+		${KCP_RDEPEND2}
 	   )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
@@ -254,6 +255,11 @@ SRC_URI+=" \
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}"
 fi
+
+# Not ready or not planned
+#	   muqss? ( ${CK_SRC_URI} )
+#	   rt? ( ${RT_SRC_URI} )
+#	   prjc? ( ${PRJC_SRC_URI} )
 
 SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
@@ -272,10 +278,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   kernel_compiler_patch_cortex-a72? (
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
-	   muqss? ( ${CK_SRC_URI} )
 	   O3? ( ${O3_ALLOW_SRC_URI} )
-	   prjc? ( ${PRJC_SRC_URI} )
-	   rt? ( ${RT_SRC_URI} )
 	   tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}

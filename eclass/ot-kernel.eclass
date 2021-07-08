@@ -21,10 +21,12 @@
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.4.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.10.html
-#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.11.html
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.12.html
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.13.html
 #   The person below who updates the release links above lag. See instead:
 #     https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-kernel/gentoo-sources
-# kernel_gcc_patch:
+# kernel_compiler_patch:
+#   https://github.com/graysky2/kernel_compiler_patch
 #   https://github.com/graysky2/kernel_gcc_patch
 # MUQSS CPU Scheduler:
 #   https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
@@ -46,7 +48,7 @@
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.11/
+#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.12/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
 # TRESOR:
@@ -55,11 +57,11 @@
 #   https://github.com/dolohow/uksm
 # zen-kernel 5.4/futex-backports:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
-# zen-kernel 5.{10..11}/futex-multiple-wait-v3:
+# zen-kernel 5.{10..13}/futex-multiple-wait-v3:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex-multiple-wait-v3
-# zen-kernel 5.{10..11}/futex2:
+# zen-kernel 5.{10..13}/futex2:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex2
-# zen-kernel 5.{10..11}/bbr2:
+# zen-kernel 5.{10..13}/bbr2:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/bbr2
 # zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
@@ -114,7 +116,7 @@ HOMEPAGE+="
 	  https://ck-hack.blogspot.com/
           https://dev.gentoo.org/~mpagano/genpatches/
           https://github.com/dolohow/uksm
-          https://github.com/graysky2/kernel_gcc_patch
+          https://github.com/graysky2/kernel_compiler_patch
           https://liquorix.net/
 	  https://wiki.linuxfoundation.org/realtime/start
 	  https://www1.informatik.uni-erlangen.de/tresor
@@ -257,7 +259,7 @@ GENPATCHES_BASE_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_BASE_FN}"
 GENPATCHES_EXPERIMENTAL_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_EXPERIMENTAL_FN}"
 GENPATCHES_EXTRAS_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_EXTRAS_FN}"
 
-KGCCP_COMMIT_SNAPSHOT="199cd0cfc568f17dabcc0b29e8bda4974ab3653e" # 20210412
+KCP_COMMIT_SNAPSHOT="b358ec69471e635e582bac8a612c0f9ec16e260a" # 20210622
 
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:="cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${K_MAJOR_MINOR}.tar.xz"
@@ -266,37 +268,40 @@ KERNEL_INC_BASE_URI=\
 KERNEL_PATCH_0_TO_1_URI=\
 "https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/patch-${K_MAJOR_MINOR}.1.xz"
 
-if ver_test ${K_MAJOR_MINOR} -ge 5.9 ; then
-KGCCP_9_0_BN=\
+KCP_CORTEX_A72_BN=\
+"build-with-mcpu-for-cortex-a72"
+if ver_test ${K_MAJOR_MINOR} -ge 5.8 ; then
+KCP_9_0_BN=\
 "more-uarches-for-kernel-5.8%2B"
-KGCCP_8_1_BN=\
+KCP_8_1_BN=\
 "enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
-KGCCP_4_9_BN=\
+KCP_4_9_BN=\
 "enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.4 ; then
-KGCCP_9_0_BN=\
+KCP_9_0_BN=\
 "more-uarches-for-kernel-4.19-5.4"
-KGCCP_8_1_BN=\
+KCP_8_1_BN=\
 "enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
-KGCCP_4_9_BN=\
+KCP_4_9_BN=\
 "enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 elif ver_test ${K_MAJOR_MINOR} -ge 4.13 ; then
-KGCCP_8_1_BN=\
+KCP_8_1_BN=\
 "enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
-KGCCP_4_9_BN=\
+KCP_4_9_BN=\
 "enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 fi
-KGCCP_URI_BASE=\
-"https://raw.githubusercontent.com/graysky2/kernel_gcc_patch/${KGCCP_COMMIT_SNAPSHOT}/"
-if [[ -n "${KGCCP_4_9_BN}" ]] ; then
-KGCCP_SRC_4_9_URI="${KGCCP_URI_BASE}/outdated_versions/${KGCCP_4_9_BN}.patch -> ${KGCCP_4_9_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch"
+KCP_URI_BASE=\
+"https://raw.githubusercontent.com/graysky2/kernel_compiler_patch/${KCP_COMMIT_SNAPSHOT}/"
+if [[ -n "${KCP_4_9_BN}" ]] ; then
+KCP_SRC_4_9_URI="${KCP_URI_BASE}/outdated_versions/${KCP_4_9_BN}.patch -> ${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
 fi
-if [[ -n "${KGCCP_8_1_BN}" ]] ; then
-KGCCP_SRC_8_1_URI="${KGCCP_URI_BASE}/outdated_versions/${KGCCP_8_1_BN}.patch -> ${KGCCP_8_1_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch"
+if [[ -n "${KCP_8_1_BN}" ]] ; then
+KCP_SRC_8_1_URI="${KCP_URI_BASE}/outdated_versions/${KCP_8_1_BN}.patch -> ${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
 fi
-if [[ -n "${KGCCP_9_0_BN}" ]] ; then
-KGCCP_SRC_9_0_URI="${KGCCP_URI_BASE}${KGCCP_9_0_BN}.patch -> ${KGCCP_9_0_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch"
+if [[ -n "${KCP_9_0_BN}" ]] ; then
+KCP_SRC_9_0_URI="${KCP_URI_BASE}${KCP_9_0_BN}.patch -> ${KCP_9_0_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
 fi
+KCP_SRC_CORTEX_A72_URI="${KCP_URI_BASE}${KCP_CORTEX_A72_BN}.patch -> ${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
 
 LINUX_REPO_URI=\
 "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
@@ -827,7 +832,7 @@ function apply_bbrv2() {
 # For example,
 # GENPATCHES_BLACKLIST="2500 2600"
 function _filter_genpatches() {
-	# Already applied 5010-5013 GraySky2's kernel_gcc_patches
+	# Already applied 5010-5013 GraySky2's kernel_compiler_patches
 	P_GENPATCHES_BLACKLIST=" 5010 5011 5012 5013"
 	# Already applied 5000-5007 ZSTD patches
 	P_GENPATCHES_BLACKLIST+=" 5000 5001 5002 5003 5004 5005 5006 5007"
@@ -1091,28 +1096,46 @@ function apply_zentune_muqss() {
 # Applies patch sets in order.
 function ot-kernel_src_unpack() {
 	_PATCHES=()
-	if use kernel-gcc-patch ; then
-		CC=$(tc-getCC)
-		if ! tc-is-gcc ; then
-			CC=$(get_abi_CHOST ${ABI})-gcc
-		fi
-		if $(ver_test $(gcc-version) -ge 9.0) \
-			&& test -f "${DISTDIR}/${KGCCP_9_0_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
+	if use kernel_compiler_patch ; then
+		local gcc_v=$(best_version "sys-devel/gcc" | sed -e "s|sys-devel/gcc-||")
+		local clang_v=$(best_version "sys-devel/clang" | sed -e "s|sys-devel/clang-||")
+		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
+		#local cpu_family=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
+		#local cpu_model=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "model" | head -n 1 | grep -E -o "[0-9]+"))
+		einfo "Best GCC version:  ${gcc_v}"
+		einfo "Best Clang version:  ${clang_v}"
+
+		if (  (				 $(ver_test ${gcc_v}   -ge 9.0) ) \
+		   || ( [[ -n "${clang_v}" ]] && $(ver_test ${clang_v} -ge 9.0) ) \
+		   ) \
+			&& test -f "${DISTDIR}/${KCP_9_0_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
-			einfo "GCC patch is for >=9.0"
-			_PATCHES+=( "${DISTDIR}/${KGCCP_9_0_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch")
-		elif $(ver_test $(gcc-version) -ge 8.1) \
-			&& test -f "${DISTDIR}/${KGCCP_8_1_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
+			einfo \
+"Queuing the kernel_compiler_patch for use under gcc >= 9.0 or clang >= 9.0."
+			_PATCHES+=( "${DISTDIR}/${KCP_9_0_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
+		elif ( tc-is-gcc && $(ver_test ${gcc_v} -ge 8.1) ) \
+			&& test -f "${DISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
-			einfo "GCC patch is for >=8.1"
-			_PATCHES+=( "${DISTDIR}/${KGCCP_8_1_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch" )
-		elif test -f "${DISTDIR}/${KGCCP_4_9_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch" ; then
-			einfo "GCC patch is for >=4.9"
-			_PATCHES+=( "${DISTDIR}/${KGCCP_4_9_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch" )
+			einfo \
+"Queuing the kernel_compiler_patch for use under gcc >= 8.1"
+			_PATCHES+=( "${DISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
+		elif ( tc-is-gcc && $(ver_test ${gcc_v} -ge 4.9) ) \
+			&& test -f "${DISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
+		then
+			einfo \
+"Queuing the kernel_compiler_patch for use under gcc >= 4.9"
+			_PATCHES+=( "${DISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		else
 			die \
-"Cannot find a compatible kernel_gcc_patch for "$(gcc-version)" and\n\
-kernel ${K_MAJOR_MINOR}.  Skipping kernel_gcc_patch."
+"Cannot find a compatible kernel_compiler_patch for gcc_v = "${gcc_v}" and\n\
+kernel ${K_MAJOR_MINOR}.  Skipping the kernel_compiler_patch."
+		fi
+	fi
+
+	if has kernel_compiler_patch_cortex-a72 ${IUSE_EFFECTIVE} ; then
+		if use kernel_compiler_patch_cortex-a72 ; then
+			einfo "Queuing the kernel_compiler_patch for the Cortex A72"
+			_PATCHES+=( "${DISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		fi
 	fi
 

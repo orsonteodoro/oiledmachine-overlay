@@ -29,7 +29,7 @@ PATCH_FUTEX2_COMMIT_B="65d8ec592b14a8c75ce2a04bfef5a188cd279d00" # bottom / newe
 PATCH_FUTEX2_COMMIT_T="4f6d01d9753e7ff0e6ca0ab6082f8b75256cdb57" # top / oldest
 PATCH_BBRV2_COMMIT_B="00ac5e0aceb8f6d56065072ddc71b7324bbb48ce" # bottom / newest
 PATCH_BBRV2_COMMIT_T="c13e23b9782c9a7f4bcc409bfde157e44a080e82" # top / oldest
-PATCH_KGCCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8"
+PATCH_KCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8"
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/Y^..X.patch \
@@ -82,7 +82,7 @@ PATCH_BFQ_DEFAULT="0cbcc41992693254e5e4c7952853c6aa7404f28e"
 PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
 	${PATCH_BFQ_DEFAULT}
-	${PATCH_KGCCP_COMMIT}
+	${PATCH_KCP_COMMIT}
 	${PATCH_ZENTUNE_COMMITS}
 "
 
@@ -93,10 +93,13 @@ aa17b2d1d0c2814b2cdd33e2b1cf171b5ac30b86 \
 9089e95bb3d0e64dc64ae90eb509da5075f49248 \
 16b6c9f2c576d43096a216a802c61573286ae5a7"
 
-IUSE+=" bbrv2 +cfs disable_debug futex-wait-multiple futex2 +genpatches \
-+kernel-gcc-patch muqss +O3 prjc rt tresor tresor_aesni tresor_i686 \
-tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce \
--zen-tune zen-tune-muqss"
+KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
+KCP_IUSE=" ${KCP_MA[@]/#/kernel_compiler_patch_}"
+
+IUSE+=" ${KCP_IUSE} bbrv2 +cfs disable_debug futex-wait-multiple futex2
++genpatches +kernel_compiler_patch muqss +O3 prjc rt tresor tresor_aesni
+tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
+zen-sauce -zen-tune zen-tune-muqss"
 REQUIRED_USE+="
 	^^ ( cfs muqss prjc )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
@@ -118,7 +121,7 @@ fi
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel \
-patchset, GraySky2's Kernel GCC Patch, MUQSS CPU Scheduler, \
+patchset, GraySky2's kernel_compiler_patch, MUQSS CPU Scheduler, \
 Project C CPU Scheduler, genpatches, CVE fixes, TRESOR"
 
 inherit ot-kernel
@@ -127,12 +130,20 @@ LICENSE+=" bbrv2? ( GPL-2 )" # tcp_bbr2.c is Dual BSD/GPL but other parts are ba
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" prjc? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
-  # do not come with an explicit license but defaults to
+  # does not come with an explicit license but defaults to
   # GPL-2 with Linux-syscall-note.
 LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" futex2? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
-LICENSE+=" kernel-gcc-patch? ( GPL-2 )"
+LICENSE+=" kernel_compiler_patch? ( GPL-2 )"
+gen_kcp_license() {
+	local out=""
+	for a in ${KCP_MA[@]} ; do
+		out+=" kernel_compiler_patch_${a}? ( GPL-2 )"
+	done
+	echo "${out}"
+}
+LICENSE+=" "$(gen_kcp_license)
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
@@ -144,6 +155,77 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
 LICENSE+=" zen-tune-muqss? ( GPL-2 )"
+
+KCP_RDEPEND="
+	sys-devel/gcc:12
+	sys-devel/gcc:11
+	sys-devel/gcc:10
+	sys-devel/gcc:9.4.0
+	sys-devel/gcc:9.3.0
+	sys-devel/gcc:8.5.0
+	sys-devel/gcc:8.4.0
+	sys-devel/gcc:7.5.0
+	sys-devel/gcc:6.5.0
+	(
+		sys-devel/clang:12
+		sys-devel/llvm:12
+	)
+	(
+		sys-devel/clang:11
+		sys-devel/llvm:11
+	)
+	(
+		sys-devel/clang:10
+		sys-devel/llvm:10
+	)"
+
+KCP_TC0="
+	|| (
+		>=sys-devel/gcc-10
+		(
+			sys-devel/clang:12
+			sys-devel/llvm:12
+		)
+		(
+			sys-devel/clang:11
+			sys-devel/llvm:11
+		)
+		(
+			sys-devel/clang:10
+			sys-devel/llvm:10
+		)
+	)"
+
+KCP_TC1="
+	|| (
+		>=sys-devel/gcc-10.3
+		(
+			sys-devel/clang:10
+			sys-devel/llvm:10
+		)
+	)"
+
+KCP_TC2="
+	|| (
+		>=sys-devel/gcc-11.1
+		(
+			sys-devel/clang:12
+			sys-devel/llvm:12
+		)
+	)"
+
+KCP_MA_RDEPEND="
+	kernel_compiler_patch_zen3? ( ${KCP_TC1} )
+	kernel_compiler_patch_cooper_lake? ( ${KCP_TC0} )
+	kernel_compiler_patch_tiger_lake? ( ${KCP_TC0} )
+	kernel_compiler_patch_sapphire_rapids? ( ${KCP_TC2} )
+	kernel_compiler_patch_rocket_lake? ( ${KCP_TC2} )
+	kernel_compiler_patch_alder_lake? ( ${KCP_TC2} )"
+
+RDEPEND+=" ${KCP_MA_RDEPEND}
+	   kernel_compiler_patch? (
+		|| ( ${KCP_RDEPEND} )
+	   )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
@@ -163,10 +245,13 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-	   kernel-gcc-patch? (
-		${KGCCP_SRC_4_9_URI}
-		${KGCCP_SRC_8_1_URI}
-		${KGCCP_SRC_9_0_URI}
+	   kernel_compiler_patch? (
+		${KCP_SRC_4_9_URI}
+		${KCP_SRC_8_1_URI}
+		${KCP_SRC_9_0_URI}
+	   )
+	   kernel_compiler_patch_cortex-a72? (
+		${KCP_SRC_CORTEX_A72_URI}
 	   )
 	   muqss? ( ${CK_SRC_URI} )
 	   O3? ( ${O3_ALLOW_SRC_URI} )
@@ -188,7 +273,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
-	if use kernel-gcc-patch ; then
+	if use kernel_compiler_patch ; then
 		CC=$(tc-getCC)
 		if ! tc-is-gcc ; then
 			CC=$(get_abi_CHOST ${ABI})-gcc
@@ -198,13 +283,13 @@ function ot-kernel_pkg_setup_cb() {
 				:;
 			else
 				ewarn \
-"You need to switch your compiler to gcc-11+ for kernel_gcc_patch to work on\n\
+"You need to switch your compiler to gcc-11+ for kernel_compiler_patch to work on\n\
 new architectures.  For increased compatibility switch and re-emerge with\n\
 >=gcc-11."
 			fi
 		else
 			ewarn \
-"The kernel_gcc_patch was designed for older kernels and may fail to patch.\n\
+"The kernel_compiler_patch was designed for older kernels and may fail to patch.\n\
 Patching anyway.  For increased compatibility switch and re-emerge with\n\
 >=gcc-11."
 		fi
