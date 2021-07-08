@@ -49,7 +49,7 @@
     https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware
     for a list of hardware supporting IOMMU.
 
-    Compiler based optimizations are provided by GraySky2's kernel_gcc_patch 
+    Compiler based optimizations are provided by GraySky2's kernel_compiler_patch 
     and the O3 patch.
 
     Older point releases are removed to eliminate some of the previously
@@ -109,7 +109,7 @@
     </maintainer>
 
     <maintainer status="active" type="person">
-      <!-- for kernel_gcc_patches -->
+      <!-- for kernel_compiler_patches -->
       <email>graysky AT archlinux DOT us</email>
       <name>graysky</name>
     </maintainer>
@@ -224,26 +224,26 @@
       CPU usage by less than 5%.</flag>
     <flag name="futex2">Patches the kernel with futex2 syscalls.
       This may reduce the CPU usage by less than 5%.</flag>
-    <flag name="kernel_gcc_patch">Patches the kernel for more CPU
-      microarchitectures</flag>
-    <flag name="kernel_gcc_patch_cortex-a72">Patches the kernel for the
+    <flag name="kernel-compiler-patch">Patches the kernel for more CPU
+      microarchitectures that are released before 2020</flag>
+    <flag name="kernel-compiler-patch-cortex-a72">Patches the kernel for the
       Cortex A72 used in the Raspberry Pi 4.</flag>
-    <flag name="kernel_gcc_patch_zen3">Patches the kernel for the Zen 3
+    <flag name="kernel-compiler-patch-zen3">Patches the kernel for the Zen 3
       microarchitecture and ensures the toolchain requirements are in
       place.</flag>
-    <flag name="kernel_gcc_patch_cooper_lake">Patches the kernel for the
+    <flag name="kernel-compiler-patch-cooper_lake">Patches the kernel for the
       Cooper Lake microarchitecture and ensures the toolchain requirements are
       in place.</flag>
-    <flag name="kernel_gcc_patch_tiger_lake">Patches the kernel for the
+    <flag name="kernel-compiler-patch-tiger_lake">Patches the kernel for the
       Tiger Lake microarchitecture and ensures the toolchain requirements are
       in place.</flag>
-    <flag name="kernel_gcc_patch_sapphire_rapids">Patches the kernel for the
+    <flag name="kernel-compiler-patch-sapphire_rapids">Patches the kernel for the
       Sapphire Rapids microarchitecture and ensures the toolchain requirements
       are in place.</flag>
-    <flag name="kernel_gcc_patch_rocket_lake">Patches the kernel for the
+    <flag name="kernel-compiler-patch-rocket_lake">Patches the kernel for the
       Rocket Lake microarchitecture and ensures the toolchain requirements
       are in place.</flag>
-    <flag name="kernel_gcc_patch_alder_lake">Patches the kernel for the
+    <flag name="kernel-compiler-patch-alder_lake">Patches the kernel for the
       Alder Lake microarchitecture and ensures the toolchain requirements
       are in place.</flag>
     <flag name="lto">Fulfills the ThinLTO requirements.</flag>
@@ -305,7 +305,7 @@
       for 5.13 see:
       https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/zen-sauce
 
-      Use the O3, zen-sauce, kernel_gcc_patch USE flags instead of passing their
+      Use the O3, zen-sauce, kernel-compiler-patch USE flags instead of passing their
       commit IDs.
 
       The zen-sauce set contains patches that add drivers or functionality

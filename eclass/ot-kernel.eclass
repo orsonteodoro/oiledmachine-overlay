@@ -1096,7 +1096,7 @@ function apply_zentune_muqss() {
 # Applies patch sets in order.
 function ot-kernel_src_unpack() {
 	_PATCHES=()
-	if use kernel_compiler_patch ; then
+	if [[ "${IUSE}" =~ kernel-compiler-patch ]] ; then
 		local gcc_v=$(best_version "sys-devel/gcc" | sed -e "s|sys-devel/gcc-||")
 		local clang_v=$(best_version "sys-devel/clang" | sed -e "s|sys-devel/clang-||")
 		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
@@ -1126,14 +1126,14 @@ function ot-kernel_src_unpack() {
 "Queuing the kernel_compiler_patch for use under gcc >= 4.9"
 			_PATCHES+=( "${DISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		else
-			die \
+			ewarn \
 "Cannot find a compatible kernel_compiler_patch for gcc_v = "${gcc_v}" and\n\
 kernel ${K_MAJOR_MINOR}.  Skipping the kernel_compiler_patch."
 		fi
 	fi
 
-	if has kernel_compiler_patch_cortex-a72 ${IUSE_EFFECTIVE} ; then
-		if use kernel_compiler_patch_cortex-a72 ; then
+	if has kernel-compiler-patch-cortex-a72 ${IUSE_EFFECTIVE} ; then
+		if use kernel-compiler-patch-cortex-a72 ; then
 			einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 			_PATCHES+=( "${DISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		fi

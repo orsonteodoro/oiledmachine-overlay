@@ -31,7 +31,7 @@ PATCH_TRESOR_V="3.18.5"
 # Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
 LINUX_TIMESTAMP=1510512373
 
-IUSE="+cfs disable_debug +genpatches +kernel_compiler_patch
+IUSE="+cfs disable_debug +genpatches +kernel-compiler-patch
 muqss pds +O3 rt tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
 uksm"
 REQUIRED_USE+="
@@ -59,7 +59,7 @@ inherit ot-kernel
 
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
-LICENSE+=" kernel_compiler_patch? ( GPL-2 )"
+LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
@@ -85,12 +85,12 @@ KCP_RDEPEND="
 	sys-devel/gcc:7.5.0
 	sys-devel/gcc:6.5.0"
 
-RDEPEND+=" kernel_compiler_patch? ( || ( ${KCP_RDEPEND} ) )"
+RDEPEND+=" kernel-compiler-patch? ( || ( ${KCP_RDEPEND} ) )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
 else
-SRC_URI+=" \
+SRC_URI+="
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}"
 fi
@@ -101,7 +101,7 @@ SRC_URI+=" genpatches? (
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-	   kernel_compiler_patch? (
+	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
 	   )
@@ -125,11 +125,6 @@ SRC_URI+=" genpatches? (
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
-	if use kernel_compiler_patch ; then
-		ewarn \
-"The kernel_compiler_patch was designed for older kernels and may fail to patch.\n\
-Patching anyway."
-	fi
 	# TRESOR for x86_64 generic was known to pass crypto testmgr on this
 	# version.
 	ewarn \

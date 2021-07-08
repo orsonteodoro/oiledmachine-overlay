@@ -95,10 +95,10 @@ e0002c7a941a1919924a608358e69f294bf9b69f \
 a80522ac87ce290e80c283fa17988a4a0e57fd04"
 
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
-KCP_IUSE=" ${KCP_MA[@]/#/kernel_compiler_patch_}"
+KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" ${KCP_IUSE} bbrv2 +cfs disable_debug futex-wait-multiple futex2
-+genpatches +kernel_compiler_patch lto muqss +O3 prjc rt tresor tresor_aesni
++genpatches +kernel-compiler-patch lto muqss +O3 prjc rt tresor tresor_aesni
 tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
 zen-sauce -zen-tune zen-tune-muqss"
 REQUIRED_USE+="
@@ -136,11 +136,11 @@ LICENSE+=" prjc? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
 LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" futex2? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
-LICENSE+=" kernel_compiler_patch? ( GPL-2 )"
+LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 gen_kcp_license() {
 	local out=""
 	for a in ${KCP_MA[@]} ; do
-		out+=" kernel_compiler_patch_${a}? ( GPL-2 )"
+		out+=" kernel-compiler-patch-${a}? ( GPL-2 )"
 	done
 	echo "${out}"
 }
@@ -233,16 +233,16 @@ KCP_TC2="
 	)"
 
 KCP_MA_RDEPEND="
-	kernel_compiler_patch_zen3? ( ${KCP_TC1} )
-	kernel_compiler_patch_cooper_lake? ( ${KCP_TC0} )
-	kernel_compiler_patch_tiger_lake? ( ${KCP_TC0} )
-	kernel_compiler_patch_sapphire_rapids? ( ${KCP_TC2} )
-	kernel_compiler_patch_rocket_lake? ( ${KCP_TC2} )
-	kernel_compiler_patch_alder_lake? ( ${KCP_TC2} )"
+	kernel-compiler-patch-zen3? ( ${KCP_TC1} )
+	kernel-compiler-patch-cooper_lake? ( ${KCP_TC0} )
+	kernel-compiler-patch-tiger_lake? ( ${KCP_TC0} )
+	kernel-compiler-patch-sapphire_rapids? ( ${KCP_TC2} )
+	kernel-compiler-patch-rocket_lake? ( ${KCP_TC2} )
+	kernel-compiler-patch-alder_lake? ( ${KCP_TC2} )"
 
 RDEPEND+=" ${KCP_MA_RDEPEND}
 	   lto? ( || ( ${LTO_CLANG_RDEPEND} ) )
-	   kernel_compiler_patch? (
+	   kernel-compiler-patch? (
 		|| ( ${KCP_RDEPEND} )
 	   )"
 
@@ -250,11 +250,26 @@ if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
 else
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:="cdn.kernel.org"}
-SRC_URI+=" \
+SRC_URI+="
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}"
 fi
 
+# For CPU microarchitectures >= year 2020, assumes mutually exclusive
+# kernel-compiler-patch* USE flag usage
+gen_kcp_ma_uri() {
+	local out=""
+	for a in ${KCP_MA[@]} ; do
+		[[ "${a}" =~ cortex-a72 ]] && continue
+		out+="
+	   kernel-compiler-patch-${a}? (
+		${KCP_SRC_9_0_URI}
+	   )"
+	done
+	echo "${out}"
+}
+
+SRC_URI+=" "$(gen_kcp_ma_uri)
 SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
 	   futex2? ( ${FUTEX2_SRC_URI} )
@@ -264,12 +279,12 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-	   kernel_compiler_patch? (
+	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
 		${KCP_SRC_9_0_URI}
 	   )
-	   kernel_compiler_patch_cortex-a72? (
+	   kernel-compiler-patch-cortex-a72? (
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
 	   muqss? ( ${CK_SRC_URI} )
@@ -299,27 +314,6 @@ function ot-kernel_pkg_setup_cb() {
 			die \
 "Building for TRESOR is currently broken for ${PV}.  Use the older LTS\n\
 branches instead.  Disable the tresor USE flag for this series to continue."
-		fi
-	fi
-	if use kernel_compiler_patch ; then
-		CC=$(tc-getCC)
-		if ! tc-is-gcc ; then
-			CC=$(get_abi_CHOST ${ABI})-gcc
-		fi
-		if has_version ">=sys-devel/gcc-11" ; then
-			if ver_test $(gcc-fullversion) -ge 11 ; then
-				:;
-			else
-				ewarn \
-"You need to switch your compiler to gcc-11+ for kernel_compiler_patch to work on\n\
-new architectures.  For increased compatibility switch and re-emerge with\n\
->=gcc-11."
-			fi
-		else
-			ewarn \
-"The kernel_compiler_patch was designed for older kernels and may fail to patch.\n\
-Patching anyway.  For increased compatibility switch and re-emerge with\n\
->=gcc-11."
 		fi
 	fi
 	if has zen-tune ${IUSE_EFFECTIVE} ; then

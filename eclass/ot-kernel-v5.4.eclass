@@ -71,7 +71,7 @@ PATCH_ZENSAUCE_BL="
 	${PATCH_ZENTUNE_COMMITS}
 "
 
-IUSE+=" bmq +cfs disable_debug +genpatches +kernel_compiler_patch
+IUSE+=" bmq +cfs disable_debug +genpatches +kernel-compiler-patch
 muqss +O3 futex-wait-multiple tresor rt tresor_aesni tresor_i686 tresor_sysfs
 tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce -zen-tune
 zen-tune-muqss"
@@ -108,7 +108,7 @@ LICENSE+=" bmq? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
   # GPL-2 with Linux-syscall-note.
 LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
-LICENSE+=" kernel_compiler_patch? ( GPL-2 )"
+LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
@@ -144,13 +144,13 @@ KCP_RDEPEND="
 		sys-devel/llvm:10
 	)"
 
-RDEPEND+=" kernel_compiler_patch? ( || ( ${KCP_RDEPEND} ) )"
+RDEPEND+=" kernel-compiler-patch? ( || ( ${KCP_RDEPEND} ) )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
 else
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:="cdn.kernel.org"}
-SRC_URI+=" \
+SRC_URI+="
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}"
 fi
@@ -163,7 +163,7 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-	   kernel_compiler_patch? (
+	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
 		${KCP_SRC_9_0_URI}
@@ -187,27 +187,6 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
-	if use kernel_compiler_patch ; then
-		CC=$(tc-getCC)
-		if ! tc-is-gcc ; then
-			CC=$(get_abi_CHOST ${ABI})-gcc
-		fi
-		if has_version ">=sys-devel/gcc-10.1" ; then
-			if ver_test $(gcc-fullversion) -ge 10.1 ; then
-				:;
-			else
-				ewarn \
-"You need to switch your compiler to gcc-10.1+ for kernel_compiler_patch to work on\n\
-new architectures.  For increased compatibility switch and re-emerge with\n\
->=gcc-10.1."
-			fi
-		else
-			ewarn \
-"The kernel_compiler_patch was designed for older kernels and may fail to patch.\n\
-Patching anyway.  For increased compatibility switch and re-emerge with\n\
->=gcc-10.1."
-		fi
-	fi
 	if has zen-tune ${IUSE_EFFECTIVE} ; then
 		if use zen-tune ; then
 			ewarn \
