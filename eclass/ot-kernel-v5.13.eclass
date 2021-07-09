@@ -96,7 +96,7 @@ a09dda608cbadc92964cb29cf2fef061200e08c2"
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
-IUSE+=" ${KCP_IUSE} bbrv2 +cfs disable_debug futex-wait-multiple futex2
+IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs disable_debug futex-wait-multiple futex2
 +genpatches +kernel-compiler-patch lto muqss +O3 prjc rt tresor tresor_aesni
 tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
 zen-sauce -zen-tune zen-tune-muqss"
@@ -157,6 +157,18 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
 LICENSE+=" zen-tune-muqss? ( GPL-2 )"
+
+CFI_RDEPEND="
+	(
+		sys-devel/clang:12
+		sys-devel/llvm:12
+		>=sys-devel/lld-12
+	)
+	(
+		sys-devel/clang:13
+		sys-devel/llvm:13
+		>=sys-devel/lld-13
+	)"
 
 LTO_CLANG_RDEPEND="
 	(
@@ -242,10 +254,11 @@ KCP_MA_RDEPEND="
 	kernel-compiler-patch-alder_lake? ( ${KCP_TC2} )"
 
 RDEPEND+=" ${KCP_MA_RDEPEND}
-	   lto? ( || ( ${LTO_CLANG_RDEPEND} ) )
+	   cfi? ( || ( ${CFI_RDEPEND} ) )
 	   kernel-compiler-patch? (
 		|| ( ${KCP_RDEPEND} )
-	   )"
+	   )
+	   lto? ( || ( ${LTO_CLANG_RDEPEND} ) )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
@@ -331,6 +344,11 @@ like npm.  These use flags are not recommended."
 #		ewarn \
 #"TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
 #	fi
+
+	if ! use arm64 ; then
+		ewarn \
+"CFI is only offered on the arm64 platform."
+	fi
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes

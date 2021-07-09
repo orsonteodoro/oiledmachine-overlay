@@ -162,6 +162,12 @@
     <flag name="bmq">Patches the kernel to use BMQ CPU scheduler, a more
       simple scheduler.</flag>
     <flag name="bmq-quick-fix">Patches the kernel with fixes to BMQ.</flag>
+    <flag name="cfi">Ensures that the toolchain is ready for CFI support
+      (arm64 ready, x86_64 soon).  Control Flow Integrity (CFI) is mitigation
+      against forward edge attacks and backward edge attacks to mitigate
+      against malicious code execution.</flag>
+    <flag name="cfs">Uses the CFS (Completely Fair Scheduling) CPU scheduler
+      and not apply any third-party CPU scheduler.</flag>
     <flag name="cve_hotfix">Applies patches to resolve CVEs (Common 
       Vulnerabilities and Exposures).  Not enabled by default.
 
@@ -213,8 +219,6 @@
       CVE_DELAY=0
       CVE_ALLOW_RISKY_BACKPORTS=1
       </flag>
-    <flag name="cfs">Uses the CFS (Completely Fair Scheduling) CPU scheduler
-      and not apply any third-party CPU scheduler.</flag>
     <flag name="disable_debug">Installs scripts to disable debugging, tracing,
       verbose output or related code paths.</flag>
     <flag name="genpatches">Applies the genkernel patch set.</flag>
@@ -253,6 +257,8 @@
       compiler optimizations.</flag>
     <flag name="pds">Patches the kernel with an alternative skiplist
       based scheduler.</flag>
+    <flag name="pgo">Checks Clang prerequisites for PGO.
+      (Coming soon...)</flag>
     <flag name="prjc">Applies the Project C CPU scheduler.</flag>
     <flag name="rt">Patches the kernel with the PREEMPT_RT patch which tries
       to minimize non-preemptible parts of the kernel.  It's experimental when

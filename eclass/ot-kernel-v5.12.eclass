@@ -241,10 +241,10 @@ KCP_MA_RDEPEND="
 	kernel-compiler-patch-alder_lake? ( ${KCP_TC2} )"
 
 RDEPEND+=" ${KCP_MA_RDEPEND}
-	   lto? ( || ( ${LTO_CLANG_RDEPEND} ) )
 	   kernel-compiler-patch? (
 		|| ( ${KCP_RDEPEND} )
-	   )"
+	   )
+	   lto? ( || ( ${LTO_CLANG_RDEPEND} ) )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
