@@ -24,6 +24,14 @@
     ----- CUT BELOW HERE -----
 www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
     ----- CUT ABOVE HERE -----
+
+    References:
+      CFI - https://www.chromium.org/developers/testing/control-flow-integrity
+      CFI ldflags - https://clang.llvm.org/docs/ControlFlowIntegrity.html
+      PartitionAlloc - https://chromium.googlesource.com/chromium/src/+/refs/heads/main/base/allocator/partition_allocator/PartitionAlloc.md
+      PGO - https://blog.chromium.org/2020/08/chrome-just-got-faster-with-profile.html
+      TCMalloc (circa 2007) - https://gperftools.github.io/gperftools/tcmalloc.html
+      https://github.com/chromium/chromium/blob/master/build/config/sanitizers/BUILD.gn#L204
   </longdescription>
   <upstream>
     <bugs-to>https://www.chromium.org/for-testers/bug-reporting-guidelines</bugs-to>
@@ -33,7 +41,19 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       USE flags.  Turning on clang implies ThinLTO on.</flag>
     <flag name="cfi">Compile the build with Control Flow Integrity (CFI)
       security protections to mitigate against arbitrary code execution caused
-      by from memory corruption attempts.</flag>
+      by from memory corruption attempts from forward edge attacks from virtual
+      functions.  The estimated impact is around 1% CPU overhead, around 15% or
+      less code size increase.  When a violation is encountered, the program
+      aborts.</flag>
+    <flag name="cfi-full">
+      Compile the build with mitigation against possible bad casting
+      vulnerabilities in addition to forward edge attack mitigation.
+      When a violation is encountered, the program aborts.
+      </flag>
+    <flag name="cfi-icall">
+      Compile the build with bad function cast checks and non static function
+      pointers checks.  When a violation is encountered, the program aborts.
+      </flag>
     <flag name="component-build">Split build into more shared libraries to speed
       up linking. Mostly intended for debugging and development, NOT RECOMMENDED
       for general use.</flag>
@@ -47,7 +67,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       However, the glibc allocator is widely used and tested.</flag>
     <flag name="js-type-check">Enable JavaScript type-checking for Chrome's web
       technology-based UI. Requires Java.</flag>
-    <flag name="official">Enable Official build instead of Developer
+    <flag name="official">Enable the official build instead of developer
       build.</flag>
     <flag name="partitionalloc">Use PartitionAlloc as the default allocator and
       replacement to TCMalloc.  It's designed for security and lower latency,

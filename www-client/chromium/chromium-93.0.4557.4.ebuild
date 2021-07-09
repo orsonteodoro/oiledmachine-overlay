@@ -28,15 +28,21 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
-IUSE+=" +cfi +clang libcxx pgo"
+# For cfi, cfi-icall defaults status, see https://github.com/chromium/chromium/blob/93.0.4557.4/build/config/sanitizers/sanitizers.gni
+# For cfi-full default status see, https://github.com/chromium/chromium/blob/93.0.4557.4/build/config/sanitizers/sanitizers.gni#L123
+# For pgo default status see, https://github.com/chromium/chromium/blob/93.0.4557.4/build/config/compiler/pgo/pgo.gni#L15
+IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx pgo"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 REQUIRED_USE="
 	^^ ( partitionalloc tcmalloc libcmalloc )
 	!clang? ( !cfi )
 	cfi? ( clang )
+	cfi-full? ( cfi )
+	cfi-icall? ( cfi )
 	component-build? ( !suid )
 	libcxx? ( clang )
+	official? ( amd64? ( cfi cfi-icall ) pgo )
 	partitionalloc? ( !component-build )
 	pgo? ( clang )
 	screencast? ( wayland )
@@ -259,6 +265,12 @@ pkg_setup() {
 
 	if use pgo ; then
 		ewarn "The pgo USE flag is experimental.  Disable if it fails."
+	fi
+
+	if ! use amd64 && [[ "${IUSE}" =~ cfi ]]; then
+		ewarn \
+"All variations of the cfi USE flags are not defaults for this platform.\n\
+Disable them if problematic."
 	fi
 }
 
@@ -883,10 +895,24 @@ multilib_src_configure() {
 			tools/generate_shim_headers/generate_shim_headers.py || die
 	fi
 
+	# See https://github.com/chromium/chromium/blob/93.0.4557.4/build/config/sanitizers/BUILD.gn#L196
 	if use cfi ; then
 		myconf_gn+=" is_cfi=true"
 	else
 		myconf_gn+=" is_cfi=false"
+	fi
+
+	# See https://github.com/chromium/chromium/blob/93.0.4557.4/tools/mb/mb_config.pyl#L2950
+	if use cfi-full ; then
+		myconf_gn+=" use_cfi_cast=true"
+	else
+		myconf_gn+=" use_cfi_cast=false"
+	fi
+
+	if use cfi-icall ; then
+		myconf_gn+=" use_cfi_icall=true"
+	else
+		myconf_gn+=" use_cfi_icall=false"
 	fi
 
 	if use pgo && tc-is-clang && ver_test $(clang-version) -ge 11 ; then
