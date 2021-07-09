@@ -28,12 +28,17 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
+IUSE+=" +cfi +clang libcxx pgo"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 REQUIRED_USE="
 	^^ ( partitionalloc tcmalloc libcmalloc )
+	!clang? ( !cfi )
+	cfi? ( clang )
 	component-build? ( !suid )
+	libcxx? ( clang )
 	partitionalloc? ( !component-build )
+	pgo? ( clang )
 	screencast? ( wayland )
 "
 
@@ -134,28 +139,42 @@ BDEPEND="
 	js-type-check? ( virtual/jre )
 "
 
-# These are intended for ebuild maintainer use to force clang if GCC is broken.
-: ${CHROMIUM_FORCE_CLANG=no}
-: ${CHROMIUM_FORCE_LIBCXX=no}
+# >=mesa-21.1 is bumped to compatibile llvm-12
+# <=mesa-21.0.x is only llvm-11 compatible
+BDEPEND+="
+	clang? (
+		|| (
+			(
+				sys-devel/clang:12[${MULTILIB_USEDEP}]
+				sys-devel/llvm:12[${MULTILIB_USEDEP}]
+				=sys-devel/clang-runtime-12*[${MULTILIB_USEDEP}]
+				>=sys-devel/lld-12
+				>=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
+			)
+			(
+				sys-devel/clang:11[${MULTILIB_USEDEP}]
+				sys-devel/llvm:11[${MULTILIB_USEDEP}]
+				=sys-devel/clang-runtime-11*[${MULTILIB_USEDEP}]
+				>=sys-devel/lld-11
+				<media-libs/mesa-21.1[gbm,${MULTILIB_USEDEP}]
+			)
+		)
+	)"
+RDEPEND+=" libcxx? ( >=sys-libs/libcxx-12[${MULTILIB_USEDEP}] )"
+DEPEND+=" libcxx? ( >=sys-libs/libcxx-12[${MULTILIB_USEDEP}] )"
 
-if [[ ${CHROMIUM_FORCE_CLANG} == yes ]]; then
-	BDEPEND+=" >=sys-devel/clang-12[${MULTILIB_USEDEP}]"
-fi
-
-if [[ ${CHROMIUM_FORCE_LIBCXX} == yes ]]; then
-	RDEPEND+=" >=sys-libs/libcxx-12[${MULTILIB_USEDEP}]"
-	DEPEND+=" >=sys-libs/libcxx-12[${MULTILIB_USEDEP}]"
-else
-	COMMON_DEPEND="
+COMMON_DEPEND="
+	!libcxx? (
 		app-arch/snappy:=[${MULTILIB_USEDEP}]
 		dev-libs/libxslt:=[${MULTILIB_USEDEP}]
 		>=dev-libs/re2-0.2019.08.01:=[${MULTILIB_USEDEP}]
 		>=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}]
 		system-icu? ( >=dev-libs/icu-69.1:=[${MULTILIB_USEDEP}] )
-	"
-	RDEPEND+="${COMMON_DEPEND}"
-	DEPEND+="${COMMON_DEPEND}"
-fi
+	)
+"
+
+RDEPEND+="${COMMON_DEPEND}"
+DEPEND+="${COMMON_DEPEND}"
 
 if ! has chromium_pkg_die ${EBUILD_DEATH_HOOKS}; then
 	EBUILD_DEATH_HOOKS+=" chromium_pkg_die";
@@ -200,7 +219,7 @@ pre_build_checks() {
 		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge 9.2; then
 			die "At least gcc 9.2 is required"
 		fi
-		if [[ ${CHROMIUM_FORCE_CLANG} == yes ]] || tc-is-clang; then
+		if use clang || tc-is-clang ; then
 			CPP="${CHOST}-clang++ -E"
 			if ! ver_test "$(clang-major-version)" -ge 12; then
 				die "At least clang 12 is required"
@@ -236,6 +255,10 @@ pkg_setup() {
 	if use wayland && ! use headless && has_version "x11-drivers/nvidia-drivers"; then
 		ewarn "Proprietary nVidia driver does not work with Wayland. You can disable"
 		ewarn "Wayland by setting DISABLE_OZONE_PLATFORM=true in /etc/chromium/default."
+	fi
+
+	if use pgo ; then
+		ewarn "The pgo USE flag is experimental.  Disable if it fails."
 	fi
 }
 
@@ -516,7 +539,7 @@ src_prepare() {
 	if use wayland && ! use headless ; then
 		keeplibs+=( third_party/wayland )
 	fi
-	if [[ ${CHROMIUM_FORCE_LIBCXX} == yes ]]; then
+	if use libcxx ; then
 		keeplibs+=( third_party/libxml )
 		keeplibs+=( third_party/libxslt )
 		keeplibs+=( third_party/openh264 )
@@ -561,17 +584,31 @@ multilib_src_configure() {
 	# Make sure the build system will use the right tools, bug #340795.
 	tc-export AR CC CXX NM
 
-	if [[ ${CHROMIUM_FORCE_CLANG} == yes ]] && ! tc-is-clang; then
+	if use clang ; then
 		# Force clang since gcc is pretty broken at the moment.
 		CC=${chost}-clang
 		CXX=${chost}-clang++
+		AR=llvm-ar # required for LTO
 		strip-unsupported-flags
+		if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
+			die "llvm-ar is unreachable"
+		fi
+	fi
+
+	if ! use clang && tc-is-clang ; then
+		if [[ "${AR}" =~ "llvm-ar" ]] ; then
+			einfo "Forcing llvm-ar for LTO"
+			AR=llvm-ar # required for LTO
+			if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
+				die "llvm-ar is unreachable"
+			fi
+		fi
 	fi
 
 	if tc-is-clang; then
 		myconf_gn+=" is_clang=true clang_use_chrome_plugins=false"
 	else
-		if [[ ${CHROMIUM_FORCE_LIBCXX} == yes ]]; then
+		if use libcxx ; then
 			die "Compiling with sys-libs/libcxx requires clang."
 		fi
 		myconf_gn+=" is_clang=false"
@@ -633,7 +670,7 @@ multilib_src_configure() {
 	if use system-icu; then
 		gn_system_libraries+=( icu )
 	fi
-	if [[ ${CHROMIUM_FORCE_LIBCXX} != yes ]]; then
+	if ! use libcxx ; then
 		# unbundle only without libc++, because libc++ is not fully ABI compatible with libstdc++
 		gn_system_libraries+=( libxml )
 		gn_system_libraries+=( libxslt )
@@ -668,8 +705,12 @@ multilib_src_configure() {
 	# Trying to use gold results in linker crash.
 	myconf_gn+=" use_gold=false use_sysroot=false use_custom_libcxx=false"
 
-	# Disable forced lld, bug 641556
-	myconf_gn+=" use_lld=false"
+	if use clang || tc-is-clang ; then
+		filter-flags -fuse-ld=*
+		myconf_gn+=" use_lld=true"
+	else
+		myconf_gn+=" use_lld=false"
+	fi
 
 	# Disable pseudolocales, only used for testing
 	myconf_gn+=" enable_pseudolocales=false"
@@ -710,7 +751,7 @@ multilib_src_configure() {
 		fi
 	fi
 
-	if [[ ${CHROMIUM_FORCE_LIBCXX} == yes ]]; then
+	if use libcxx ; then
 		append-flags -stdlib=libc++
 		append-ldflags -stdlib=libc++
 	fi
@@ -829,14 +870,30 @@ multilib_src_configure() {
 
 	# Enable official builds
 	myconf_gn+=" is_official_build=$(usex official true false)"
-	myconf_gn+=" use_thin_lto=false"
+	if use clang || tc-is-clang ; then
+		ewarn "Using ThinLTO"
+		myconf_gn+=" use_thin_lto=true "
+	else
+		# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
+		myconf_gn+=" use_thin_lto=false "
+	fi
 	if use official; then
 		# Allow building against system libraries in official builds
 		sed -i 's/OFFICIAL_BUILD/GOOGLE_CHROME_BUILD/' \
 			tools/generate_shim_headers/generate_shim_headers.py || die
-		# Disable CFI: unsupported for GCC, requires clang+lto+lld
+	fi
+
+	if use cfi ; then
+		myconf_gn+=" is_cfi=true"
+	else
 		myconf_gn+=" is_cfi=false"
-		# Disable PGO, because profile data is only compatible with >=clang-11
+	fi
+
+	if use pgo && tc-is-clang && ver_test $(clang-version) -ge 11 ; then
+		# The profile data is already shipped so use it.
+		myconf_gn+=" chrome_pgo_phase=2"
+	else
+		# The pregenerated profiles are not GCC compatible.
 		myconf_gn+=" chrome_pgo_phase=0"
 	fi
 
