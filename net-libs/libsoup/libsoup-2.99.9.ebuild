@@ -37,7 +37,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390
 # For CI OS and dependency list, See
 # https://gitlab.gnome.org/GNOME/libsoup/-/blob/2.99.8/.gitlab-ci/Dockerfile#L1
 # Uses F34
-GLIB_V="2.67.4" # glib on F34 is 2.68.2, glib-utils on F34 is 2.68.1
+GLIB_V="2.69.0" # glib on F34 is 2.68.2, glib-utils on F34 is 2.68.1
 GLIB_NETWORKING_V="2.68.1"
 # The GCC version is relaxed for now.  F34 uses GCC 11.0.1 but CI uses 11.1.1.
 # The Clang version is relaxed for now.  F34 uses 12 for clang-analyzer
