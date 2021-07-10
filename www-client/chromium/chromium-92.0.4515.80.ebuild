@@ -19,7 +19,8 @@ HOMEPAGE="https://chromium.org/"
 PATCHSET="7"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
 PPC64LE_PATCHSET="91-ppc64le-6"
-SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
+SRC_URI="
+	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-44.1.0.zip
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
 	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )
@@ -34,6 +35,7 @@ IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi, cfi-icall defaults status, see https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/sanitizers/sanitizers.gni
 # For cfi-full default status see, https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status see, https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/compiler/pgo/pgo.gni#L15
+# For libcxx default see, https://github.com/chromium/chromium/blob/91.0.4462.1/build/config/c++/c++.gni#L14
 IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx pgo"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
@@ -261,14 +263,28 @@ pkg_setup() {
 		ewarn "Wayland by setting DISABLE_OZONE_PLATFORM=true in /etc/chromium/default."
 	fi
 
-	if use pgo ; then
-		ewarn "The pgo USE flag is experimental.  Disable if it fails."
-	fi
-
 	if ! use amd64 && [[ "${IUSE}" =~ cfi ]]; then
 		ewarn \
 "All variations of the cfi USE flags are not defaults for this platform.\n\
 Disable them if problematic."
+	fi
+
+	if use pgo ; then
+		ewarn "The pgo USE flag is experimental.  Disable if it fails."
+
+		# See also https://clang.llvm.org/docs/UsersManual.html#profile-remapping
+		#   to address the profile mismatch problem.
+
+		# It's better to rebuild the system with libcxx than to build the
+		# program twice all the time or skip PGO.  The other problem is updating
+		# and check the mangled remapping every update.  The other problem is
+		# that non-upstream patches modify the function/method signatures which
+		# could interfear with PGO.
+		ewarn \
+"The PGO profile may require sys-devel/clang[default-libcxx] and\n\
+www-client/chromium[libcxx] and rebuilding dependencies for proper\n\
+optimization or to match the upstream PGO profile properly.\n\
+Upstream may likely assume libc++ instead of libstdc++."
 	fi
 }
 
@@ -276,11 +292,21 @@ src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
 
-	local PATCHES=(
-		"${WORKDIR}/patches"
+	local PATCHES=()
+	if ( ! use clang ) || ( ! use libcxx ) || use arm64 ; then
+		# TODO: split GCC only and libstdc++ only.  Patches purpose not documented well.
+		einfo "Applying gcc & libstdc++ compatibility patches"
+		PATCHES+=( "${WORKDIR}/patches" )
+	fi
+	PATCHES+=(
 		"${FILESDIR}/chromium-92-EnumTable-crash.patch"
 		"${FILESDIR}/chromium-shim_headers.patch"
 	)
+
+	if ! use arm64 ; then
+		rm "${WORKDIR}/patches/chromium-91-libyuv-aarch64.patch" || die
+		rm "${WORKDIR}/patches/chromium-92-v8-constexpr.patch" || die
+	fi
 
 	# seccomp sandbox is broken if compiled against >=sys-libs/glibc-2.33, bug #769989
 	if has_version -d ">=sys-libs/glibc-2.33"; then
@@ -918,6 +944,7 @@ multilib_src_configure() {
 
 	if use pgo && tc-is-clang && ver_test $(clang-version) -ge 11 ; then
 		# The profile data is already shipped so use it.
+		# PGO profile location: chrome/build/pgo_profiles/chrome-linux-*.profdata
 		myconf_gn+=" chrome_pgo_phase=2"
 	else
 		# The pregenerated profiles are not GCC compatible.
