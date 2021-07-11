@@ -111,7 +111,7 @@ BDEPEND+=" ${CDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
-EGIT_COMMIT="9161a29128a1de4e8c0bce4055cb95b1c6a4e993"
+EGIT_COMMIT="3daf5a92ef6b3e9e83a015cbba903006b5731f6f"
 SRC_URI="
 https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
