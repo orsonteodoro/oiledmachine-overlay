@@ -1,0 +1,20 @@
+Subject:       Error out if TESTING ERROR present
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:          Sat Jul 10 07:53:52 PM PDT 2021 (Unix timestamp 1625972032)
+
+The CI tests will not show "TESTING ERROR" but instead "all done".
+
+When "TESTING ERROR" appears in src_test in ebuild, the grep value is 0 which should not be.
+
+diff -urp firejail-0.9.66.orig/test/Makefile.in firejail-0.9.66/test/Makefile.in
+--- firejail-0.9.66.orig/test/Makefile.in	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/Makefile.in	2021-07-10 19:51:42.034668112 -0700
+@@ -3,7 +3,7 @@ TESTS=$(patsubst %/,%,$(wildcard */))
+ .PHONY: $(TESTS)
+ $(TESTS):
+ 	cd $@ && ./$@.sh 2>&1 | tee $@.log
+-	cd $@ && grep -a TESTING $@.log && grep -a -L "TESTING ERROR" $@.log
++	cd $@ && grep -a TESTING $@.log && ! grep -a -L "TESTING ERROR" $@.log
+ 
+ .PHONY: clean
+ clean:

@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit linux-info python-single-r1 toolchain-funcs virtualx
+inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
 
 if [[ ${PV} != 9999 ]]; then
 	KEYWORDS="amd64 ~arm ~arm64 ~x86"
@@ -49,24 +49,37 @@ BDEPEND+="
 		>=dev-tcltk/expect-5.45.4
 		>=app-arch/xz-utils-5.2.4
 	)"
-REQUIRED_USE="contrib? ( ${PYTHON_REQUIRED_USE} )"
+REQUIRED_USE="
+	contrib? ( ${PYTHON_REQUIRED_USE} )
+	test-x11? ( test )
+	test-profiles? ( test )"
 # Needs a lot of work to function within sandbox/portage
 # bug #769731
-#RESTRICT="test"
+# oteodoro - testing still broken outside of emerge
+RESTRICT="test"
+PATCHES=( "${FILESDIR}/${PN}-0.9.66-test-return-non-zero-on-testing-error.patch" )
+EFIREJAIL_MAX_ENVS=${EFIREJAIL_MAX_ENVS:=512}
 
 pkg_setup() {
 	python-single-r1_pkg_setup
 	CONFIG_CHECK="~SQUASHFS"
 	local WARNING_SQUASHFS="CONFIG_SQUASHFS: required for firejail --appimage mode"
 	check_extra_config
+	if use test ; then
+		if has userpriv $FEATURES ; then
+			die \
+"You need to add FEATURES=-userpriv to complete testing in your per-package\n\
+envvars"
+		fi
+	fi
 }
 
 src_prepare() {
 	default
 
-#	if use xpra ; then
-#		eapply "${FILESDIR}/${PN}-0.9.64-xpra-speaker-override.patch"
-#	fi
+	if use xpra ; then
+		eapply "${FILESDIR}/${PN}-0.9.64-xpra-speaker-override.patch"
+	fi
 
 	find -type f -name Makefile.in \
 		-exec sed -i -r -e \
@@ -86,17 +99,23 @@ src_prepare() {
 	if use contrib; then
 		python_fix_shebang -f contrib/*.py
 	fi
-
-	# some tests were missing from this release's tarball
-	if use test; then
-		sed -i -r -e \
-'s/^(test:.*) test-private-lib (.*)/\1 \2/; '\
-'s/^(test:.*) test-fnetfilter (.*)/\1 \2/' \
-			Makefile.in || die
-	fi
 }
 
 src_configure() {
+	local test_opts=()
+	if use test ; then
+		sed -i -e "s|MAX_ENVS 256|MAX_ENVS ${EFIREJAIL_MAX_ENVS}|g" \
+			"src/firejail/firejail.h" || die
+		grep -q -r -e "MAX_ENVS ${EFIREJAIL_MAX_ENVS}" "src/firejail/firejail.h" \
+			|| die
+		ewarn "Max envvars lifted to ${EFIREJAIL_MAX_ENVS}.  Disable test for the production build."
+		ewarn "Setting changable by setting per-package envvar EFIREJAIL_MAX_ENVS"
+		einfo "Current envvar count: "$(env | wc -l)
+
+		# firejail deprecated --profile-dir= so must be hardwired this way
+		sed -i -e "s|\$(sysconfdir)|${D}/etc|g" ./src/common.mk.in || die
+	fi
+
 	econf \
 		--disable-firetunnel \
 		$(use_enable apparmor) \
@@ -115,21 +134,79 @@ src_configure() {
 
 src_compile() {
 	emake CC="$(tc-getCC)"
+	if use test ; then
+		# install now into D so we can use this image for testing
+		emake install DESTDIR="${D}"
+	fi
 }
 
 src_test()
 {
+	# Setting these to test against the to be installed version not the one to be replaced.
+	export PATH="${D}/usr/bin:${PATH}"
+	export LD_LIBRARY_PATH="${D}/usr/$(get_libdir)/firejail:${LD_LIBRARY_PATH}"
+
+	export SANDBOX_ON=0
+
 	# Upstream uses `make test-github` for CI
 	local x11_tests=()
 	local profile_tests=()
 	local misc_tests=()
-	use test-x11 && x11_tests+=(test-apps test-apps-x11 test-apps-x11-xorg test-filters)
 	use test-profiles && profile_tests+=(test-profiles)
-	#misc_tests=(test-fs) # FIXME: does not work inside ebuild when a lot of FEATURES=*sandbox options are disabled.
-	# Mixes test-github and test-noprofiles with exclusions.  Will update later.
-	for x in ${profile_tests[@]} test-private-lib test-fnetfilter test-fs test-utils test-sysutils test-environment ${x11_tests[@]} ${misc_tests[@]} ; do
-		emake ${x} 2>"${T}/test-err.log" 1>"${T}/test.log" || die
+#	misc_tests=(test-fs) # FIXME: does not work inside ebuild when a lot of
+	#  FEATURES=*sandbox options are disabled.
+	# Mixes test-github and test-noprofiles with exclusions.
+	local basic_tests=(
+		test-private-lib
+		test-fnetfilter
+		test-fs test-utils
+		test-sysutils
+		test-environment
+	)
+
+	# Temporary (broken even outside of portage)
+	sed -i -e "s|eog||" test/private-lib/private-lib.sh || die
+
+	for x in ${profile_tests[@]} ${basic_tests[@]} ${misc_tests[@]} ; do
+#	for x in ${misc_tests[@]} ; do
+		einfo "Testing ${x}"
+		make ${x} 2>&1 >"${T}/test.log"
+		if (( $? == 0 )) ; then
+			einfo "${x} passed"
+		else
+			die "Test failed for ${x}.  Return code: $?.  For details see ${T}/test.log"
+		fi
+		grep -q -E -e "Error [0-9]+" "${T}/test.log" && die "Test failed for ${x}.  For details see ${T}/test.log"
 	done
+	if use test-x11 ; then
+		x11_tests+=(
+			test-apps
+			test-apps-x11
+			test-apps-x11-xorg
+			test-filters
+		)
+		for x in ${x11_tests[@]} ; do
+			einfo "Testing ${x}"
+			cat <<EOF > "${S}/run.sh"
+#!/bin/bash
+cat /dev/null > "${T}/test-retcode.log"
+make ${x} 2&>1 >"${T}/test.log"
+echo -n "$?" > "${T}/test-retcode.log"
+exit \$(cat "${T}/test-retcode.log")
+EOF
+			chmod +x "${S}/run.sh"
+			virtx "${S}/run.sh"
+			grep -q -E -e "Error [0-9]+" "${T}/test.log" && die "Test failed for ${x}.  For details see ${T}/test.log"
+			[[ -f "${T}/test-retcode.log" ]] || die "Missing retcode for ${x}"
+			local test_retcode=$(cat "${T}/test-retcode.log")
+			if [[ "${test_retcode}" != "0" ]] ; then
+				die "Test failed for ${x}.  Return code: ${test_retcode}.  For details see ${T}/test.log"
+			fi
+		done
+	fi
+	export SANDBOX_ON=1
+
+	die "Tests passed.  Remove the test USE flag."
 }
 
 src_install() {
