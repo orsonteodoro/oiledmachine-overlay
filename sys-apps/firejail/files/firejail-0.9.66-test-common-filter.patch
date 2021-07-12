@@ -1,0 +1,2014 @@
+Subject:        Common filters for test suite
+Patch author:   Orson Teodoro <orsonteodoro@hotmail.com>
+Date:		Sat Jul 10 07:41:08 PM PDT 2021 (Unix timestamp: 1625971268)
+
+Problem:  The "make test" family of commands return always 0 when it should be fail.
+
+This version of the patch makes it easier to filter .exp file errors.
+
+Copyright notice for all modified files:
+
+#!/bin/bash
+# This file is part of Firejail project
+# Copyright (C) 2014-2021 Firejail Authors
+# License GPL v2
+
+diff -urpN firejail-0.9.66.orig/test/apps/apps.sh firejail-0.9.66/test/apps/apps.sh
+--- firejail-0.9.66.orig/test/apps/apps.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps/apps.sh	2021-07-11 03:49:10.952859445 -0700
+@@ -3,6 +3,9 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="apps"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+@@ -14,8 +17,7 @@ for app in $LIST; do
+ 	which $app 2>/dev/null
+ 	if [ "$?" -eq 0 ];
+ 	then
+-		echo "TESTING: $app"
+-		./$app.exp
++		check "TESTING: $app" ./$app.exp
+ 	else
+ 		echo "TESTING SKIP: $app not found"
+ 	fi
+diff -urpN firejail-0.9.66.orig/test/apps/chromium.exp firejail-0.9.66/test/apps/chromium.exp
+--- firejail-0.9.66.orig/test/apps/chromium.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps/chromium.exp	2021-07-11 03:49:10.952859445 -0700
+@@ -80,4 +80,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/apps/deluge.exp firejail-0.9.66/test/apps/deluge.exp
+--- firejail-0.9.66.orig/test/apps/deluge.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps/deluge.exp	2021-07-11 03:49:10.952859445 -0700
+@@ -80,4 +80,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/apps/filezilla.exp firejail-0.9.66/test/apps/filezilla.exp
+--- firejail-0.9.66.orig/test/apps/filezilla.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps/filezilla.exp	2021-07-11 03:49:10.952859445 -0700
+@@ -81,3 +81,4 @@ expect {
+ after 100
+ 
+ puts "\nall done\n"
++
+diff -urpN firejail-0.9.66.orig/test/apps/firefox.exp firejail-0.9.66/test/apps/firefox.exp
+--- firejail-0.9.66.orig/test/apps/firefox.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps/firefox.exp	2021-07-11 03:49:10.952859445 -0700
+@@ -96,4 +96,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/apps/gthumb.exp firejail-0.9.66/test/apps/gthumb.exp
+--- firejail-0.9.66.orig/test/apps/gthumb.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps/gthumb.exp	2021-07-11 03:49:10.952859445 -0700
+@@ -81,3 +81,4 @@ expect {
+ after 100
+ 
+ puts "\nall done\n"
++
+diff -urpN firejail-0.9.66.orig/test/apps/midori.exp firejail-0.9.66/test/apps/midori.exp
+--- firejail-0.9.66.orig/test/apps/midori.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps/midori.exp	2021-07-11 03:49:10.952859445 -0700
+@@ -81,4 +81,4 @@ expect {
+ after 100
+ 
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/apps/opera.exp firejail-0.9.66/test/apps/opera.exp
+--- firejail-0.9.66.orig/test/apps/opera.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps/opera.exp	2021-07-11 03:49:10.952859445 -0700
+@@ -80,4 +80,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/apps/qbittorrent.exp firejail-0.9.66/test/apps/qbittorrent.exp
+--- firejail-0.9.66.orig/test/apps/qbittorrent.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps/qbittorrent.exp	2021-07-11 03:49:10.952859445 -0700
+@@ -80,4 +80,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/apps/xchat.exp firejail-0.9.66/test/apps/xchat.exp
+--- firejail-0.9.66.orig/test/apps/xchat.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps/xchat.exp	2021-07-11 03:49:10.952859445 -0700
+@@ -80,4 +80,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/apps-x11/apps-x11.sh firejail-0.9.66/test/apps-x11/apps-x11.sh
+--- firejail-0.9.66.orig/test/apps-x11/apps-x11.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps-x11/apps-x11.sh	2021-07-11 04:01:12.284866018 -0700
+@@ -3,12 +3,14 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="apps-x11"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+ 
+-echo "TESTING: no x11 (test/apps-x11/x11-none.exp)"
+-./x11-none.exp
++check "TESTING: no x11 (test/apps-x11/x11-none.exp)" ./x11-none.exp
+ 
+ 
+ which xterm 2>/dev/null
+@@ -20,15 +22,13 @@ then
+ 	which xpra 2>/dev/null
+ 	if [ "$?" -eq 0 ];
+ 	then
+-	echo "TESTING: xterm x11 xpra"
+-	./xterm-xpra.exp
++	check "TESTING: xterm x11 xpra"	./xterm-xpra.exp
+ 	fi
+ 
+ 	which Xephyr 2>/dev/null
+ 	if [ "$?" -eq 0 ];
+ 	then
+-	echo "TESTING: xterm x11 xephyr"
+-	./xterm-xephyr.exp
++	check "TESTING: xterm x11 xephyr" ./xterm-xephyr.exp
+ 	fi
+ else
+ 	echo "TESTING SKIP: xterm not found"
+@@ -54,8 +54,7 @@ fi
+ which firefox 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: firefox x11"
+-	./firefox.exp
++	check "TESTING: firefox x11" ./firefox.exp
+ else
+ 	echo "TESTING SKIP: firefox not found"
+ fi
+@@ -63,8 +62,7 @@ fi
+ which chromium 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: chromium x11"
+-	./chromium.exp
++	check "TESTING: chromium x11" ./chromium.exp
+ else
+ 	echo "TESTING SKIP: chromium not found"
+ fi
+@@ -72,8 +70,7 @@ fi
+ which transmission-gtk 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: transmission-gtk x11"
+-	./transmission-gtk.exp
++	check "TESTING: transmission-gtk x11" ./transmission-gtk.exp
+ else
+ 	echo "TESTING SKIP: transmission-gtk not found"
+ fi
+@@ -81,8 +78,9 @@ fi
+ which thunderbird 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: thunderbird x11"
+-	./thunderbird.exp
++	check "TESTING: thunderbird x11" ./thunderbird.exp
+ else
+ 	echo "TESTING SKIP: thunderbird not found"
+ fi
++
++exit 0
+diff -urpN firejail-0.9.66.orig/test/apps-x11-xorg/apps-x11-xorg.sh firejail-0.9.66/test/apps-x11-xorg/apps-x11-xorg.sh
+--- firejail-0.9.66.orig/test/apps-x11-xorg/apps-x11-xorg.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/apps-x11-xorg/apps-x11-xorg.sh	2021-07-11 03:49:10.952859445 -0700
+@@ -3,6 +3,9 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="apps-x11-xorg"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+@@ -10,8 +13,7 @@ export LC_ALL=C
+ which firefox 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: firefox x11 xorg"
+-	./firefox.exp
++	check "TESTING: firefox x11 xorg" ./firefox.exp
+ else
+ 	echo "TESTING SKIP: firefox not found"
+ fi
+@@ -19,8 +21,7 @@ fi
+ which transmission-gtk 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: transmission-gtk x11 xorg"
+-	./transmission-gtk.exp
++	check "TESTING: transmission-gtk x11 xorg" ./transmission-gtk.exp
+ else
+ 	echo "TESTING SKIP: transmission-gtk not found"
+ fi
+@@ -28,8 +29,7 @@ fi
+ which transmission-qt 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: transmission-qt x11 xorg"
+-	./transmission-qt.exp
++	check "TESTING: transmission-qt x11 xorg" ./transmission-qt.exp
+ else
+ 	echo "TESTING SKIP: transmission-qt not found"
+ fi
+@@ -37,8 +37,9 @@ fi
+ which thunderbird 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: thunderbird x11 xorg"
+-	./thunderbird.exp
++	check "TESTING: thunderbird x11 xorg" ./thunderbird.exp
+ else
+ 	echo "TESTING SKIP: thunderbird not found"
+ fi
++
++exit 0
+diff -urpN firejail-0.9.66.orig/test/chroot/chroot.sh firejail-0.9.66/test/chroot/chroot.sh
+--- firejail-0.9.66.orig/test/chroot/chroot.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/chroot/chroot.sh	2021-07-11 04:01:13.612917593 -0700
+@@ -3,20 +3,23 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="chroot"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+ 
+ rm -f unchroot
+-gcc -o unchroot unchroot.c
+-sudo ./configure
++gcc -o unchroot unchroot.c || exit $?
++sudo ./configure || exit $?
+ 
+-echo "TESTING: chroot (test/chroot/fs_chroot.exp)"
+-./fs_chroot.exp
++check "TESTING: chroot (test/chroot/fs_chroot.exp)" ./fs_chroot.exp
+ 
+-echo "TESTING: unchroot as root (test/chroot/unchroot-as-root.exp)"
+-sudo ./unchroot-as-root.exp
++check "TESTING: unchroot as root (test/chroot/unchroot-as-root.exp)" "sudo ./unchroot-as-root.exp" "./unchroot-as-root.exp"
+ 
+ 
+ 
+ rm -f unchroot
++
++exit 0
+diff -urpN firejail-0.9.66.orig/test/common.sh firejail-0.9.66/test/common.sh
+--- firejail-0.9.66.orig/test/common.sh	1969-12-31 16:00:00.000000000 -0800
++++ firejail-0.9.66/test/common.sh	2021-07-11 04:04:19.688149202 -0700
+@@ -0,0 +1,72 @@
++#!/bin/bash
++# This file is part of Firejail project
++# Copyright (C) 2014-2021 Firejail Authors
++# License GPL v2
++
++check() {
++	local desc="${1}"
++	local cmd="${2}"
++	local file="${3}"
++	if [[ -z "${file}" ]] ; then
++		file="${cmd}"
++	fi
++	echo "${desc}"
++	local result=$("${cmd}" 2>&1)
++	if [[ "${result}" =~ "error while loading shared libraries" ]] ; then
++		echo "Error:  Please add the library following the message..."
++		echo "error while loading shared libraries:"
++		echo "This indicates that the path after "Reading profile" is missing an additonal private-lib entry:"
++		echo  \
++"-----------------------------------START LOG------------------------------------"
++		echo -e "${result}"
++		echo  \
++"------------------------------------END LOG-------------------------------------"
++		exit 1
++	elif [[ "${result}" =~ '*** [Makefile:' \
++		&& "${result}" =~ '] Error ' ]] ; then
++		echo "Error:  A build problem was encountered:"
++		echo  \
++"-----------------------------------START LOG------------------------------------"
++		echo -e "${result}"
++		echo  \
++"------------------------------------END LOG-------------------------------------"
++		exit 1
++	elif [[ "${result}" =~ "TESTING ERROR - grsecurity detection" \
++		&& -n "${USE_GRSECURITY}" && "${USE_GRSECURITY}" == "1" ]] ; then
++		echo "Error:  A grsecurity related problem was encountered:"
++		echo  \
++"-----------------------------------START LOG------------------------------------"
++		echo -e "${result}"
++		echo  \
++"------------------------------------END LOG-------------------------------------"
++		[[ -n "${DIE_ON_GRSECURITY_ERROR}" && "${DIE_ON_GRSECURITY_ERROR}" == "1" ]] && exit 1
++	elif [[ "${result}" =~ "TESTING ERROR 6" \
++		&& -n "${USE_CAPS}" && "${USE_CAPS}" == "1" ]] \
++		&& grep -q -F -e "caps" "${file}" ; then
++		echo "Error:  A caps related problem was encountered:"
++		echo  \
++"-----------------------------------START LOG------------------------------------"
++		echo -e "${result}"
++		echo  \
++"------------------------------------END LOG-------------------------------------"
++		[[ -n "${DIE_ON_CAPS_ERROR}" && "${DIE_ON_CAPS_ERROR}" == "1" ]] && exit 1
++	elif [[ "${result}" =~ "TESTING ERROR 5" \
++		&& -n "${USE_SECCOMP}" && "${USE_SECCOMP}" == "1" ]] \
++		&& grep -q -F -e "seccomp" "${file}" ; then
++		echo "Error:  A seccomp related problem was encountered:"
++		echo  \
++"-----------------------------------START LOG------------------------------------"
++		echo -e "${result}"
++		echo  \
++"------------------------------------END LOG-------------------------------------"
++		[[ -n "${DIE_ON_SECCOMP_ERROR}" && "${DIE_ON_SECCOMP_ERROR}" == "1" ]] && exit 1
++	else
++		echo "Passed test.  Results:"
++		echo  \
++"-----------------------------------START LOG------------------------------------"
++		echo -e "${result}"
++		echo  \
++"------------------------------------END LOG-------------------------------------"
++	fi
++	return 0
++}
+diff -urpN firejail-0.9.66.orig/test/compile/compile.sh firejail-0.9.66/test/compile/compile.sh
+--- firejail-0.9.66.orig/test/compile/compile.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/compile/compile.sh	2021-07-11 04:01:14.636957386 -0700
+@@ -79,8 +79,8 @@ tar -xJvf ../../$DIST.tar.xz
+ mv $DIST firejail
+ 
+ cd firejail
+-./configure --prefix=/usr --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test1
+ grep Error output-configure output-make >> ./report-test1
+@@ -97,8 +97,8 @@ rm output-configure output-make
+ print_title "${arr[2]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-dbusproxy  --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-dbusproxy  --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test2
+ grep Error output-configure output-make >> ./report-test2
+@@ -114,8 +114,8 @@ rm output-configure output-make
+ print_title "${arr[3]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-chroot  --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-chroot  --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test3
+ grep Error output-configure output-make >> ./report-test3
+@@ -131,8 +131,8 @@ rm output-configure output-make
+ print_title "${arr[4]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-firetunnel  --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-firetunnel  --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test4
+ grep Error output-configure output-make >> ./report-test4
+@@ -148,8 +148,8 @@ rm output-configure output-make
+ print_title "${arr[5]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-userns  --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-userns  --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test5
+ grep Error output-configure output-make >> ./report-test5
+@@ -166,8 +166,8 @@ rm output-configure output-make
+ print_title "${arr[6]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-network  --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-network  --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test6
+ grep Error output-configure output-make >> ./report-test6
+@@ -183,8 +183,8 @@ rm output-configure output-make
+ print_title "${arr[7]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-x11  --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-x11  --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test7
+ grep Error output-configure output-make >> ./report-test7
+@@ -200,8 +200,8 @@ rm output-configure output-make
+ print_title "${arr[8]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --enable-selinux --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --enable-selinux --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test8
+ grep Error output-configure output-make >> ./report-test8
+@@ -217,8 +217,8 @@ rm output-configure output-make
+ print_title "${arr[9]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-file-transfer  --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-file-transfer  --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test9
+ grep Error output-configure output-make >> ./report-test9
+@@ -234,8 +234,8 @@ rm output-configure output-make
+ print_title "${arr[10]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-whitelist  --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-whitelist  --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test10
+ grep Error output-configure output-make >> ./report-test10
+@@ -251,8 +251,8 @@ rm output-configure output-make
+ print_title "${arr[11]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-globalcfg  --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-globalcfg  --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test11
+ grep Error output-configure output-make >> ./report-test11
+@@ -268,8 +268,8 @@ rm output-configure output-make
+ print_title "${arr[12]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --enable-apparmor  --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --enable-apparmor  --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test12
+ grep Error output-configure output-make >> ./report-test12
+@@ -285,8 +285,8 @@ rm output-configure output-make
+ print_title "${arr[13]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --enable-busybox-workaround --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --enable-busybox-workaround --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test13
+ grep Error output-configure output-make >> ./report-test13
+@@ -302,8 +302,8 @@ rm output-configure output-make
+ print_title "${arr[14]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-overlayfs --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-overlayfs --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test14
+ grep Error output-configure output-make >> ./report-test14
+@@ -319,8 +319,8 @@ rm output-configure output-make
+ print_title "${arr[15]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-private-home --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-private-home --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test15
+ grep Error output-configure output-make >> ./report-test15
+@@ -336,8 +336,8 @@ rm output-configure output-make
+ print_title "${arr[16]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-man --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-man --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test16
+ grep Error output-configure output-make >> ./report-test16
+@@ -353,8 +353,8 @@ rm output-configure output-make
+ print_title "${arr[17]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr  --disable-usertmpfs --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr  --disable-usertmpfs --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test17
+ grep Error output-configure output-make >> ./report-test17
+@@ -370,8 +370,8 @@ rm output-configure output-make
+ print_title "${arr[18]}"
+ cd firejail
+ make distclean
+-./configure --prefix=/usr --disable-private-home --enable-fatal-warnings 2>&1 | tee ../output-configure
+-make -j4 2>&1 | tee ../output-make
++./configure --prefix=/usr --disable-private-home --enable-fatal-warnings 2>&1 | tee ../output-configure || exit 1
++make -j4 2>&1 | tee ../output-make || exit 1
+ cd ..
+ grep Warning output-configure output-make > ./report-test18
+ grep Error output-configure output-make >> ./report-test18
+diff -urpN firejail-0.9.66.orig/test/environment/dash.exp firejail-0.9.66/test/environment/dash.exp
+--- firejail-0.9.66.orig/test/environment/dash.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/environment/dash.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -41,4 +41,4 @@ expect {
+ send -- "exit\r"
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/environment/environment.sh firejail-0.9.66/test/environment/environment.sh
+--- firejail-0.9.66.orig/test/environment/environment.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/environment/environment.sh	2021-07-11 04:01:15.596994706 -0700
+@@ -3,47 +3,39 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="environment"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+ 
++check "TESTING: timeout (test/environment/timeout.exp)" ./timeout.exp
+ 
+-echo "TESTING: timeout (test/environment/timeout.exp)"
+-./timeout.exp
+-
+-echo "TESTING: DNS (test/environment/dns.exp)"
+-./dns.exp
++check "TESTING: DNS (test/environment/dns.exp)" ./dns.exp
+ 
+-echo "TESTING: machine-id (test/environment/machineid.exp)"
+-./machineid.exp
++check "TESTING: machine-id (test/environment/machineid.exp)" ./machineid.exp
+ 
+-echo "TESTING: hosts file (test/environment/hostfile.exp)"
+-./hostfile.exp
++check "TESTING: hosts file (test/environment/hostfile.exp)" ./hostfile.exp
+ 
+-echo "TESTING: doubledash (test/environment/doubledash.exp"
+ mkdir -- -testdir
+ touch -- -testdir/ttt
+ cp -- /bin/bash -testdir/.
+-./doubledash.exp
++check "TESTING: doubledash (test/environment/doubledash.exp" ./doubledash.exp
+ rm -fr -- -testdir
+ 
+-echo "TESTING: output (test/environment/output.exp)"
+-./output.exp
++check "TESTING: output (test/environment/output.exp)" ./output.exp
+ 
+-echo "TESTING: extract command (extract_command.exp)"
+-./extract_command.exp
++check "TESTING: extract command (extract_command.exp)" ./extract_command.exp
+ 
+-echo "TESTING: environment variables (test/environment/env.exp)"
+-./env.exp
++check "TESTING: environment variables (test/environment/env.exp)" ./env.exp
+ 
+-echo "TESTING: shell none(test/environment/shell-none.exp)"
+-./shell-none.exp
++check "TESTING: shell none(test/environment/shell-none.exp)" ./shell-none.exp
+ 
+ which dash 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-        echo "TESTING: dash (test/environment/dash.exp)"
+-        ./dash.exp
++        check "TESTING: dash (test/environment/dash.exp)" ./dash.exp
+ else
+         echo "TESTING SKIP: dash not found"
+ fi
+@@ -51,8 +43,7 @@ fi
+ which csh 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-        echo "TESTING: csh (test/environment/csh.exp)"
+-        ./csh.exp
++        check "TESTING: csh (test/environment/csh.exp)" ./csh.exp
+ else
+         echo "TESTING SKIP: csh not found"
+ fi
+@@ -60,35 +51,29 @@ fi
+ which zsh 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-        echo "TESTING: zsh (test/environment/zsh.exp)"
+-        ./zsh.exp
++        check "TESTING: zsh (test/environment/zsh.exp)" ./zsh.exp
+ else
+         echo "TESTING SKIP: zsh not found"
+ fi
+ 
+-echo "TESTING: firejail in firejail - single sandbox (test/environment/firejail-in-firejail.exp)"
+-./firejail-in-firejail.exp
++check "TESTING: firejail in firejail - single sandbox (test/environment/firejail-in-firejail.exp)" ./firejail-in-firejail.exp
+ 
+ which aplay 2>/dev/null
+ if [ "$?" -eq 0 ] && [ "$(aplay -l | grep -c "List of PLAYBACK")" -gt 0 ];
+ then
+-        echo "TESTING: sound (test/environment/sound.exp)"
+-        ./sound.exp
++        check "TESTING: sound (test/environment/sound.exp)" ./sound.exp
+ else
+         echo "TESTING SKIP: no aplay or sound card found"
+ fi
+ 
+-echo "TESTING: nice (test/environment/nice.exp)"
+-./nice.exp
++check "TESTING: nice (test/environment/nice.exp)" ./nice.exp
+ 
+-echo "TESTING: quiet (test/environment/quiet.exp)"
+-./quiet.exp
++check "TESTING: quiet (test/environment/quiet.exp)" ./quiet.exp
+ 
+ which strace 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-        echo "TESTING: --allow-debuggers (test/environment/allow-debuggers.exp)"
+-        ./allow-debuggers.exp
++        check "TESTING: --allow-debuggers (test/environment/allow-debuggers.exp)" ./allow-debuggers.exp
+ else
+         echo "TESTING SKIP: strace not found"
+ fi
+@@ -100,26 +85,21 @@ fi
+ find ~/.config/ibus/bus | grep unix-0
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: ibus (test/environment/ibus.exp)"
+-	./ibus.exp
++	check "TESTING: ibus (test/environment/ibus.exp)" ./ibus.exp
+ else
+         echo "TESTING SKIP: ibus not configured"
+ fi
+ 
+-echo "TESTING: rlimit (test/environment/rlimit.exp)"
+-./rlimit.exp
++check "TESTING: rlimit (test/environment/rlimit.exp)" ./rlimit.exp
++
++check "TESTING: rlimit profile (test/environment/rlimit-profile.exp)" ./rlimit-profile.exp
+ 
+-echo "TESTING: rlimit profile (test/environment/rlimit-profile.exp)"
+-./rlimit-profile.exp
++check "TESTING: rlimit errors (test/environment/rlimit-bad.exp)" ./rlimit-bad.exp
+ 
+-echo "TESTING: rlimit errors (test/environment/rlimit-bad.exp)"
+-./rlimit-bad.exp
++check "TESTING: rlimit errors profile (test/environment/rlimit-bad-profile.exp)" ./rlimit-bad-profile.exp
+ 
+-echo "TESTING: rlimit errors profile (test/environment/rlimit-bad-profile.exp)"
+-./rlimit-bad-profile.exp
++check "TESTING: deterministic exit code (test/environment/deterministic-exit-code.exp" ./deterministic-exit-code.exp
+ 
+-echo "TESTING: deterministic exit code (test/environment/deterministic-exit-code.exp"
+-./deterministic-exit-code.exp
++check "TESTING: retain umask (test/environment/umask.exp" "(umask 123 && ./umask.exp)" "./umask.exp"
+ 
+-echo "TESTING: retain umask (test/environment/umask.exp"
+-(umask 123 && ./umask.exp)
++exit 0
+diff -urpN firejail-0.9.66.orig/test/fcopy/fcopy.sh firejail-0.9.66/test/fcopy/fcopy.sh
+--- firejail-0.9.66.orig/test/fcopy/fcopy.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/fcopy/fcopy.sh	2021-07-11 03:49:10.956859601 -0700
+@@ -3,6 +3,9 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="fcopy"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+@@ -16,16 +19,14 @@ export PATH="$PATH:/usr/lib/firejail:/us
+ 
+ mkdir dest
+ 
+-echo "TESTING: fcopy cmdline (test/fcopy/cmdline.exp)"
+-./cmdline.exp
++check "TESTING: fcopy cmdline (test/fcopy/cmdline.exp)" ./cmdline.exp
+ 
+-echo "TESTING: fcopy directory (test/fcopy/dircopy.exp)"
+-./dircopy.exp
++check "TESTING: fcopy directory (test/fcopy/dircopy.exp)" ./dircopy.exp
+ 
+-echo "TESTING: fcopy file (test/fcopy/filecopy.exp)"
+-./filecopy.exp
++check "TESTING: fcopy file (test/fcopy/filecopy.exp)" ./filecopy.exp
+ 
+-echo "TESTING: fcopy link (test/fcopy/linkcopy.exp)"
+-./linkcopy.exp
++check "TESTING: fcopy link (test/fcopy/linkcopy.exp)" ./linkcopy.exp
+ 
+ rm -fr dest/*
++
++exit 0
+diff -urpN firejail-0.9.66.orig/test/filters/filters.sh firejail-0.9.66/test/filters/filters.sh
+--- firejail-0.9.66.orig/test/filters/filters.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/filters/filters.sh	2021-07-11 03:49:10.956859601 -0700
+@@ -3,6 +3,9 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="filters"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+@@ -14,52 +17,41 @@ fi
+ export PATH="$PATH:/usr/lib/firejail:/usr/lib64/firejail"
+ 
+ if [ -f /sys/kernel/security/apparmor/profiles ]; then
+-	echo "TESTING: apparmor (test/filters/apparmor.exp)"
+-	./apparmor.exp
++	check "TESTING: apparmor (test/filters/apparmor.exp)" ./apparmor.exp
+ else
+ 	echo "TESTING SKIP: no apparmor support in Linux kernel (test/filters/apparmor.exp)"
+ fi
+ 
+ if [ "$(uname -m)" = "x86_64" ]; then
+-    echo "TESTING: memory-deny-write-execute (test/filters/memwrexe.exp)"
+-    ./memwrexe.exp
++    check "TESTING: memory-deny-write-execute (test/filters/memwrexe.exp)" ./memwrexe.exp
+ elif [ "$(uname -m)" = "i686" ]; then
+-    echo "TESTING: memory-deny-write-execute (test/filters/memwrexe-32.exp)"
+-    ./memwrexe-32.exp
++    check "TESTING: memory-deny-write-execute (test/filters/memwrexe-32.exp)" ./memwrexe-32.exp
+ else
+     echo "TESTING SKIP: memwrexe binary only running on x86_64 and i686."
+ fi
+ 
+-echo "TESTING: debug options (test/filters/debug.exp)"
+-./debug.exp
++check "TESTING: debug options (test/filters/debug.exp)" ./debug.exp
+ 
+-echo "TESTING: seccomp run files (test/filters/seccomp-run-files.exp)"
+-./seccomp-run-files.exp
++check "TESTING: seccomp run files (test/filters/seccomp-run-files.exp)" ./seccomp-run-files.exp
+ 
+-echo "TESTING: seccomp postexec (test/filters/seccomp-postexec.exp)"
+-./seccomp-postexec.exp
++check "TESTING: seccomp postexec (test/filters/seccomp-postexec.exp)" ./seccomp-postexec.exp
+ 
+-echo "TESTING: noroot (test/filters/noroot.exp)"
+-./noroot.exp
++check "TESTING: noroot (test/filters/noroot.exp)" ./noroot.exp
+ 
+ 
+ if grep -q "^CapBnd:\\s0000003fffffffff" /proc/self/status; then
+-	echo "TESTING: capabilities (test/filters/caps.exp)"
+-	./caps.exp
++	check "TESTING: capabilities (test/filters/caps.exp)" ./caps.exp
+ else
+ 	echo "TESTING SKIP: other capabilities than expected (test/filters/caps.exp)"
+ fi
+ 
+-echo "TESTING: capabilities print (test/filters/caps-print.exp)"
+-./caps-print.exp
++check "TESTING: capabilities print (test/filters/caps-print.exp)" ./caps-print.exp
+ 
+-echo "TESTING: capabilities join (test/filters/caps-join.exp)"
+-./caps-join.exp
++check "TESTING: capabilities join (test/filters/caps-join.exp)" ./caps-join.exp
+ 
+ rm -f seccomp-test-file
+ if [ "$(uname -m)" = "x86_64" ]; then
+-       echo "TESTING: fseccomp (test/filters/fseccomp.exp)"
+-        ./fseccomp.exp
++       check "TESTING: fseccomp (test/filters/fseccomp.exp)" ./fseccomp.exp
+ else
+         echo "TESTING SKIP: fseccomp test implemented only for x86_64"
+ fi
+@@ -67,63 +59,52 @@ rm -f seccomp-test-file
+ 
+ 
+ if [ "$(uname -m)" = "x86_64" ]; then
+-        echo "TESTING: protocol (test/filters/protocol.exp)"
+-        ./protocol.exp
++        check "TESTING: protocol (test/filters/protocol.exp)" ./protocol.exp
+ else
+         echo "TESTING SKIP: protocol, running only on x86_64"
+ fi
+ 
+-echo "TESTING: seccomp bad empty (test/filters/seccomp-bad-empty.exp)"
+-./seccomp-bad-empty.exp
++check "TESTING: seccomp bad empty (test/filters/seccomp-bad-empty.exp)" ./seccomp-bad-empty.exp
+ 
+ if [ "$(uname -m)" = "x86_64" ]; then
+-	echo "TESTING: seccomp debug  (test/filters/seccomp-debug.exp)"
+-	./seccomp-debug.exp
++	check "TESTING: seccomp debug  (test/filters/seccomp-debug.exp)" ./seccomp-debug.exp
+ elif [ "$(uname -m)" = "i686" ]; then
+-	echo "TESTING: seccomp debug  (test/filters/seccomp-debug-32.exp)"
+-	./seccomp-debug-32.exp
++	check "TESTING: seccomp debug  (test/filters/seccomp-debug-32.exp)" ./seccomp-debug-32.exp
+ else
+         echo "TESTING SKIP: protocol, running only on x86_64 and i686"
+ fi
+ 
+-echo "TESTING: seccomp errno (test/filters/seccomp-errno.exp)"
+-./seccomp-errno.exp
++check "TESTING: seccomp errno (test/filters/seccomp-errno.exp)" ./seccomp-errno.exp
+ 
+-echo "TESTING: seccomp su (test/filters/seccomp-su.exp)"
+-./seccomp-su.exp
++check "TESTING: seccomp su (test/filters/seccomp-su.exp)" ./seccomp-su.exp
+ 
+ which strace 2>/dev/null
+ if [ $? -eq 0 ]; then
+-        echo "TESTING: seccomp ptrace (test/filters/seccomp-ptrace.exp)"
+-        ./seccomp-ptrace.exp
++        check "TESTING: seccomp ptrace (test/filters/seccomp-ptrace.exp)" ./seccomp-ptrace.exp
+ else
+         echo "TESTING SKIP: ptrace, strace not found"
+ fi
+ 
+-echo "TESTING: seccomp chmod - seccomp lists (test/filters/seccomp-chmod.exp)"
+-./seccomp-chmod.exp
++check "TESTING: seccomp chmod - seccomp lists (test/filters/seccomp-chmod.exp)" ./seccomp-chmod.exp
+ 
+-echo "TESTING: seccomp chmod profile - seccomp lists (test/filters/seccomp-chmod-profile.exp)"
+-./seccomp-chmod-profile.exp
++check "TESTING: seccomp chmod profile - seccomp lists (test/filters/seccomp-chmod-profile.exp)" ./seccomp-chmod-profile.exp
+ 
+ # todo:  fix pwd and add seccomp-chown.exp
+ 
+-echo "TESTING: seccomp empty (test/filters/seccomp-empty.exp)"
+-./seccomp-empty.exp
++check "TESTING: seccomp empty (test/filters/seccomp-empty.exp)" ./seccomp-empty.exp
+ 
+-echo "TESTING: seccomp numeric (test/filters/seccomp-numeric.exp)"
+-./seccomp-numeric.exp
++check "TESTING: seccomp numeric (test/filters/seccomp-numeric.exp)" ./seccomp-numeric.exp
+ 
+ if [ "$(uname -m)" = "x86_64" ]; then
+-        echo "TESTING: seccomp dual filter (test/filters/seccomp-dualfilter.exp)"
+-        ./seccomp-dualfilter.exp
++        check "TESTING: seccomp dual filter (test/filters/seccomp-dualfilter.exp)" ./seccomp-dualfilter.exp
+ else
+         echo "TESTING SKIP: seccomp dual, not running on x86_64"
+ fi
+ 
+ if [ "$(uname -m)" = "x86_64" ]; then
+-       echo "TESTING: seccomp join (test/filters/seccomp-join.exp)"
+-        ./seccomp-join.exp
++       check "TESTING: seccomp join (test/filters/seccomp-join.exp)" ./seccomp-join.exp
+ else
+         echo "TESTING SKIP: seccomp join test implemented only for x86_64"
+ fi
++
++exit 0
+diff -urpN firejail-0.9.66.orig/test/fnetfilter/fnetfilter.sh firejail-0.9.66/test/fnetfilter/fnetfilter.sh
+--- firejail-0.9.66.orig/test/fnetfilter/fnetfilter.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/fnetfilter/fnetfilter.sh	2021-07-11 03:49:10.956859601 -0700
+@@ -3,6 +3,9 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="fnetfilter"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+@@ -16,16 +19,14 @@ export PATH="$PATH:/usr/lib/firejail:/us
+ 
+ chmod 400 outlocked
+ 
+-echo "TESTING: fnetfilter cmdline (test/fnetfilter/cmdline.exp)"
+-./cmdline.exp
++check "TESTING: fnetfilter cmdline (test/fnetfilter/cmdline.exp)" ./cmdline.exp
+ 
+-echo "TESTING: fnetfilter default (test/fnetfilter/default.exp)"
+-./default.exp
++check "TESTING: fnetfilter default (test/fnetfilter/default.exp)" ./default.exp
+ 
+-echo "TESTING: fnetfilter copy (test/fnetfilter/copy.exp)"
+-./copy.exp
++check "TESTING: fnetfilter copy (test/fnetfilter/copy.exp)" ./copy.exp
+ 
+-echo "TESTING: fnetfilter template (test/fnetfilter/template.exp)"
+-./template.exp
++check "TESTING: fnetfilter template (test/fnetfilter/template.exp)" ./template.exp
+ 
+ rm -f outfile
++
++exit 0
+diff -urpN firejail-0.9.66.orig/test/fs/fs.sh firejail-0.9.66/test/fs/fs.sh
+--- firejail-0.9.66.orig/test/fs/fs.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/fs/fs.sh	2021-07-11 03:49:10.956859601 -0700
+@@ -3,6 +3,9 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="fs"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+@@ -11,132 +14,94 @@ export LC_ALL=C
+ mkdir -p ~/Desktop ~/Documents ~/Downloads ~/Music ~/Pictures ~/Videos
+ 
+ rm -fr ~/_firejail_test_*
+-echo "TESTING: mkdir/mkfile (test/fs/mkdir_mkfile.exp)"
+-./mkdir_mkfile.exp
++check "TESTING: mkdir/mkfile (test/fs/mkdir_mkfile.exp)" ./mkdir_mkfile.exp
+ rm -fr ~/_firejail_test_*
+ 
+ mkdir ~/_firejail_test_dir
+ touch ~/_firejail_test_dir/a
+ mkdir ~/_firejail_test_dir/test1
+ touch ~/_firejail_test_dir/test1/b
+-echo "TESTING: read/write (test/fs/read-write.exp)"
+-./read-write.exp
+-echo "TESTING: whitelist readonly (test/fs/whitelist-readonly.exp)"
+-./whitelist-readonly.exp
++check "TESTING: read/write (test/fs/read-write.exp)" ./read-write.exp
++check "TESTING: whitelist readonly (test/fs/whitelist-readonly.exp)" ./whitelist-readonly.exp
+ rm -fr ~/_firejail_test_*
+ 
+-echo "TESTING: /sys/fs access (test/fs/sys_fs.exp)"
+-./sys_fs.exp
++check "TESTING: /sys/fs access (test/fs/sys_fs.exp)" ./sys_fs.exp
+ 
+ if [ -c /dev/kmsg ]; then
+-	echo "TESTING: kmsg access (test/fs/kmsg.exp)"
+-	./kmsg.exp
++	check "TESTING: kmsg access (test/fs/kmsg.exp)" ./kmsg.exp
+ else
+ 	echo "TESTING SKIP: /dev/kmsg not available"
+ fi
+ 
+-echo "TESTING: read/write /var/tmp (test/fs/fs_var_tmp.exp)"
+-./fs_var_tmp.exp
++check "TESTING: read/write /var/tmp (test/fs/fs_var_tmp.exp)" ./fs_var_tmp.exp
+ 
+-echo "TESTING: private-lib (test/fs/private-lib.exp)"
+-./private-lib.exp
++check "TESTING: private-lib (test/fs/private-lib.exp)" ./private-lib.exp
+ 
+-echo "TESTING: read/write /var/lock (test/fs/fs_var_lock.exp)"
+-./fs_var_lock.exp
++check "TESTING: read/write /var/lock (test/fs/fs_var_lock.exp)" ./fs_var_lock.exp
+ 
+ if [ -w /dev/shm ]; then
+-    echo "TESTING: read/write /dev/shm (test/fs/fs_dev_shm.exp)"
+-    ./fs_dev_shm.exp
++    check "TESTING: read/write /dev/shm (test/fs/fs_dev_shm.exp)" ./fs_dev_shm.exp
+ else
+     echo "TESTING SKIP: /dev/shm not writable"
+ fi
+ 
+-echo "TESTING: private (test/fs/private.exp)"
+-./private.exp
++check "TESTING: private (test/fs/private.exp)" ./private.exp
+ 
+-echo "TESTING: private home (test/fs/private-home.exp)"
+-./private-home.exp
++check "TESTING: private home (test/fs/private-home.exp)" ./private-home.exp
+ 
+-echo "TESTING: private home dir (test/fs/private-home-dir.exp)"
+-./private-home-dir.exp
++check "TESTING: private home dir (test/fs/private-home-dir.exp)" ./private-home-dir.exp
+ 
+-echo "TESTING: private home dir same as user home (test/fs/private-homedir.exp)"
+-./private-homedir.exp
++check "TESTING: private home dir same as user home (test/fs/private-homedir.exp)" ./private-homedir.exp
+ 
+-echo "TESTING: private-etc (test/fs/private-etc.exp)"
+-./private-etc.exp
++check "TESTING: private-etc (test/fs/private-etc.exp)" ./private-etc.exp
+ 
+-echo "TESTING: empty private-etc (test/fs/private-etc-empty.exp)"
+-./private-etc-empty.exp
++check "TESTING: empty private-etc (test/fs/private-etc-empty.exp)" ./private-etc-empty.exp
+ 
+-echo "TESTING: private-bin (test/fs/private-bin.exp)"
+-./private-bin.exp
++check "TESTING: private-bin (test/fs/private-bin.exp)" ./private-bin.exp
+ 
+-echo "TESTING: private-cache (test/fs/private-cache.exp)"
+-./private-cache.exp
++check "TESTING: private-cache (test/fs/private-cache.exp)" ./private-cache.exp
+ 
+-echo "TESTING: private-cwd (test/fs/private-cwd.exp)"
+-./private-cwd.exp
++check "TESTING: private-cwd (test/fs/private-cwd.exp)" ./private-cwd.exp
+ 
+-echo "TESTING: macros (test/fs/macro.exp)"
+-./macro.exp
++check "TESTING: macros (test/fs/macro.exp)" ./macro.exp
+ 
+-echo "TESTING: whitelist empty (test/fs/whitelist-empty.exp)"
+-./whitelist-empty.exp
++check "TESTING: whitelist empty (test/fs/whitelist-empty.exp)" ./whitelist-empty.exp
+ 
+-echo "TESTING: private whitelist (test/fs/private-whitelist.exp)"
+-./private-whitelist.exp
++check "TESTING: private whitelist (test/fs/private-whitelist.exp)" ./private-whitelist.exp
+ 
+-echo "TESTING: invalid filename (test/fs/invalid_filename.exp)"
+-./invalid_filename.exp
++check "TESTING: invalid filename (test/fs/invalid_filename.exp)" ./invalid_filename.exp
+ 
+-echo "TESTING: blacklist directory (test/fs/option_blacklist.exp)"
+-./option_blacklist.exp
++check "TESTING: blacklist directory (test/fs/option_blacklist.exp)" ./option_blacklist.exp
+ 
+-echo "TESTING: blacklist file (test/fs/option_blacklist_file.exp)"
+-./option_blacklist_file.exp
++check "TESTING: blacklist file (test/fs/option_blacklist_file.exp)" ./option_blacklist_file.exp
+ 
+-echo "TESTING: blacklist glob (test/fs/option_blacklist_glob.exp)"
+-./option_blacklist_glob.exp
++check "TESTING: blacklist glob (test/fs/option_blacklist_glob.exp)" ./option_blacklist_glob.exp
+ 
+-echo "TESTING: noblacklist blacklist noexec (test/fs/noblacklist-blacklist-noexec.exp)"
+-./noblacklist-blacklist-noexec.exp
++check "TESTING: noblacklist blacklist noexec (test/fs/noblacklist-blacklist-noexec.exp)" ./noblacklist-blacklist-noexec.exp
+ 
+-echo "TESTING: noblacklist blacklist readonly (test/fs/noblacklist-blacklist-readonly.exp)"
+-./noblacklist-blacklist-readonly.exp
++check "TESTING: noblacklist blacklist readonly (test/fs/noblacklist-blacklist-readonly.exp)" ./noblacklist-blacklist-readonly.exp
+ 
+-echo "TESTING: bind as user (test/fs/option_bind_user.exp)"
+-./option_bind_user.exp
++check "TESTING: bind as user (test/fs/option_bind_user.exp)" ./option_bind_user.exp
+ 
+-echo "TESTING: recursive mkdir (test/fs/mkdir.exp)"
+-./mkdir.exp
++check "TESTING: recursive mkdir (test/fs/mkdir.exp)" ./mkdir.exp
+ 
+-echo "TESTING: double whitelist (test/fs/whitelist-double.exp)"
+-./whitelist-double.exp
++check "TESTING: double whitelist (test/fs/whitelist-double.exp)" ./whitelist-double.exp
+ 
+-echo "TESTING: whitelist (test/fs/whitelist.exp)"
+-./whitelist.exp
++check "TESTING: whitelist (test/fs/whitelist.exp)" ./whitelist.exp
+ 
+-echo "TESTING: whitelist dev, var(test/fs/whitelist-dev.exp)"
+-./whitelist-dev.exp
++check "TESTING: whitelist dev, var(test/fs/whitelist-dev.exp)" ./whitelist-dev.exp
+ 
+-echo "TESTING: whitelist noexec (test/fs/whitelist-noexec.exp)"
+-./whitelist-noexec.exp
++check "TESTING: whitelist noexec (test/fs/whitelist-noexec.exp)" ./whitelist-noexec.exp
+ 
+-echo "TESTING: whitelist with whitespaces (test/fs/whitelist-whitespace.exp)"
+-./whitelist-whitespace.exp
++check "TESTING: whitelist with whitespaces (test/fs/whitelist-whitespace.exp)" ./whitelist-whitespace.exp
+ 
+-echo "TESTING: fscheck --bind non root (test/fs/fscheck-bindnoroot.exp)"
+-./fscheck-bindnoroot.exp
++check "TESTING: fscheck --bind non root (test/fs/fscheck-bindnoroot.exp)" ./fscheck-bindnoroot.exp
+ 
+-echo "TESTING: fscheck --tmpfs non root (test/fs/fscheck-tmpfs.exp)"
+-./fscheck-tmpfs.exp
++check "TESTING: fscheck --tmpfs non root (test/fs/fscheck-tmpfs.exp)" ./fscheck-tmpfs.exp
+ 
+-echo "TESTING: fscheck --private= (test/fs/fscheck-private.exp)"
+-./fscheck-private.exp
++check "TESTING: fscheck --private= (test/fs/fscheck-private.exp)" ./fscheck-private.exp
+ 
+-echo "TESTING: fscheck --read-only= (test/fs/fscheck-readonly.exp)"
+-./fscheck-readonly.exp
++check "TESTING: fscheck --read-only= (test/fs/fscheck-readonly.exp)" ./fscheck-readonly.exp
+ 
+ #cleanup
+ rm -fr ~/fjtest-dir
+@@ -146,3 +111,5 @@ rm -f ~/fjtest-file-lnk
+ rm -f /tmp/fjtest-file
+ rm -fr /tmp/fjtest-dir
+ rm -fr ~/_firejail_test_*
++
++exit 0
+diff -urpN firejail-0.9.66.orig/test/fs/option_bind_user.exp firejail-0.9.66/test/fs/option_bind_user.exp
+--- firejail-0.9.66.orig/test/fs/option_bind_user.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/fs/option_bind_user.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -14,4 +14,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/fs/option_blacklist.exp firejail-0.9.66/test/fs/option_blacklist.exp
+--- firejail-0.9.66.orig/test/fs/option_blacklist.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/fs/option_blacklist.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -35,4 +35,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/fs/option_blacklist_file.exp firejail-0.9.66/test/fs/option_blacklist_file.exp
+--- firejail-0.9.66.orig/test/fs/option_blacklist_file.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/fs/option_blacklist_file.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -25,4 +25,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/fs/option_blacklist_glob.exp firejail-0.9.66/test/fs/option_blacklist_glob.exp
+--- firejail-0.9.66.orig/test/fs/option_blacklist_glob.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/fs/option_blacklist_glob.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -29,4 +29,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/Makefile.in firejail-0.9.66/test/Makefile.in
+--- firejail-0.9.66.orig/test/Makefile.in	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/Makefile.in	2021-07-11 03:49:10.956859601 -0700
+@@ -2,8 +2,7 @@ TESTS=$(patsubst %/,%,$(wildcard */))
+ 
+ .PHONY: $(TESTS)
+ $(TESTS):
+-	cd $@ && ./$@.sh 2>&1 | tee $@.log
+-	cd $@ && grep -a TESTING $@.log && grep -a -L "TESTING ERROR" $@.log
++	cd $@ && ./$@.sh
+ 
+ .PHONY: clean
+ clean:
+diff -urpN firejail-0.9.66.orig/test/network/firemon-interfaces.exp firejail-0.9.66/test/network/firemon-interfaces.exp
+--- firejail-0.9.66.orig/test/network/firemon-interfaces.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/network/firemon-interfaces.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -63,4 +63,4 @@ expect {
+ 
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/network/net_arp.exp firejail-0.9.66/test/network/net_arp.exp
+--- firejail-0.9.66.orig/test/network/net_arp.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/network/net_arp.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -71,4 +71,4 @@ expect {
+ 
+ # wait for sandboxes to be shutdown
+ sleep 30
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/network/net_badip.exp firejail-0.9.66/test/network/net_badip.exp
+--- firejail-0.9.66.orig/test/network/net_badip.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/network/net_badip.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -15,4 +15,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/network/net_defaultgw3.exp firejail-0.9.66/test/network/net_defaultgw3.exp
+--- firejail-0.9.66.orig/test/network/net_defaultgw3.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/network/net_defaultgw3.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -17,4 +17,4 @@ expect {
+ after 100
+ 
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/network/net_ip.exp firejail-0.9.66/test/network/net_ip.exp
+--- firejail-0.9.66.orig/test/network/net_ip.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/network/net_ip.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -73,4 +73,4 @@ expect {
+ send -- "exit\r"
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/network/netstats.exp firejail-0.9.66/test/network/netstats.exp
+--- firejail-0.9.66.orig/test/network/netstats.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/network/netstats.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -35,4 +35,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/network/net_veth.exp firejail-0.9.66/test/network/net_veth.exp
+--- firejail-0.9.66.orig/test/network/net_veth.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/network/net_veth.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -138,4 +138,4 @@ expect {
+ 
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/network/network.sh firejail-0.9.66/test/network/network.sh
+--- firejail-0.9.66.orig/test/network/network.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/network/network.sh	2021-07-11 04:01:17.693076189 -0700
+@@ -3,108 +3,81 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="network"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+ 
+-sudo ./configure
++sudo ./configure || exit $?
+ 
+-echo "TESTING: unconfigured network (net_unconfigured.exp)"
+-./net_unconfigured.exp
++check "TESTING: unconfigured network (net_unconfigured.exp)" ./net_unconfigured.exp
+ 
+-echo "TESTING: netfilter template (netfilter-template.exp)"
+ rm -f ./tcpserver
+-gcc -o tcpserver tcpserver.c
+-./netfilter-template.exp
++gcc -o tcpserver tcpserver.c || exit $?
++check "TESTING: netfilter template (netfilter-template.exp)" ./netfilter-template.exp
+ rm ./tcpserver
+ 
+-echo "TESTING: firemon interface (firemon-interfaces.exp)"
+-sudo ./firemon-interfaces.exp
++check "TESTING: firemon interface (firemon-interfaces.exp)" "sudo ./firemon-interfaces.exp" "./firemon-interfaces.exp"
+ 
+-echo "TESTING: netns (netns.exp)"
+-./netns.exp
++check "TESTING: netns (netns.exp)" ./netns.exp
+ 
+-echo "TESTING: print dns (dns-print.exp)"
+-./dns-print.exp
++check "TESTING: print dns (dns-print.exp)" ./dns-print.exp
+ 
+-echo "TESTING: firemon arp (firemon-arp.exp)"
+-./firemon-arp.exp
++check "TESTING: firemon arp (firemon-arp.exp)" ./firemon-arp.exp
+ 
+-echo "TESTING: firemon netstats (netstats.exp)"
+-./netstats.exp
++check "TESTING: firemon netstats (netstats.exp)" ./netstats.exp
+ 
+-echo "TESTING: firemon route (firemon-route.exp)"
+-./firemon-route.exp
++check "TESTING: firemon route (firemon-route.exp)" ./firemon-route.exp
+ 
+-echo "TESTING: network profile (net_profile.exp)"
+-./net_profile.exp
++check "TESTING: network profile (net_profile.exp)" ./net_profile.exp
+ 
+-echo "TESTING: bandwidth (bandwidth.exp)"
+-./bandwidth.exp
++check "TESTING: bandwidth (bandwidth.exp)" ./bandwidth.exp
+ 
+-echo "TESTING: IPv6 support (ip6.exp)"
+-./ip6.exp
++check "TESTING: IPv6 support (ip6.exp)" ./ip6.exp
+ 
+-echo "TESTING: local network (net_local.exp)"
+-./net_local.exp
++check "TESTING: local network (net_local.exp)" ./net_local.exp
+ 
+-echo "TESTING: no network (net_none.exp)"
+-./net_none.exp
++check "TESTING: no network (net_none.exp)" ./net_none.exp
+ 
+-echo "TESTING: network IP (net_ip.exp)"
+-./net_ip.exp
++check "TESTING: network IP (net_ip.exp)" ./net_ip.exp
+ 
+-echo "TESTING: network MAC (net_mac.exp)"
+ sleep 2
+-./net_mac.exp
++check "TESTING: network MAC (net_mac.exp)" ./net_mac.exp
++
++check "TESTING: network MTU (net_mtu.exp)" ./net_mtu.exp
+ 
+-echo "TESTING: network MTU (net_mtu.exp)"
+-./net_mtu.exp
++check "TESTING: network hostname (hostname.exp)" ./hostname.exp
+ 
+-echo "TESTING: network hostname (hostname.exp)"
+-./hostname.exp
++check "TESTING: network bad IP (net_badip.exp)" ./net_badip.exp
+ 
+-echo "TESTING: network bad IP (net_badip.exp)"
+-./net_badip.exp
++check "TESTING: network no IP test 1 (net_noip.exp)" ./net_noip.exp
+ 
+-echo "TESTING: network no IP test 1 (net_noip.exp)"
+-./net_noip.exp
++check "TESTING: network no IP test 2 (net_noip2.exp)" ./net_noip2.exp
+ 
+-echo "TESTING: network no IP test 2 (net_noip2.exp)"
+-./net_noip2.exp
++check "TESTING: network default gateway test 1 (net_defaultgw.exp)" ./net_defaultgw.exp
+ 
+-echo "TESTING: network default gateway test 1 (net_defaultgw.exp)"
+-./net_defaultgw.exp
++check "TESTING: network default gateway test 2 (net_defaultgw2.exp)" ./net_defaultgw2.exp
+ 
+-echo "TESTING: network default gateway test 2 (net_defaultgw2.exp)"
+-./net_defaultgw2.exp
++check "TESTING: network default gateway test 3 (net_defaultgw3.exp)" ./net_defaultgw3.exp
+ 
+-echo "TESTING: network default gateway test 3 (net_defaultgw3.exp)"
+-./net_defaultgw3.exp
++check "TESTING: scan (net_scan.exp)" ./net_scan.exp
+ 
+-echo "TESTING: scan (net_scan.exp)"
+-./net_scan.exp
++check "TESTING: interface (interface.exp)" ./interface.exp
+ 
+-echo "TESTING: interface (interface.exp)"
+-./interface.exp
++check "TESTING: veth (net_veth.exp)" ./net_veth.exp
+ 
+-echo "TESTING: veth (net_veth.exp)"
+-./net_veth.exp
++check "TESTING: netfilter (net_netfilter.exp)" ./net_netfilter.exp
+ 
+-echo "TESTING: netfilter (net_netfilter.exp)"
+-./net_netfilter.exp
++check "TESTING: iprange (iprange.exp)" ./iprange.exp
+ 
+-echo "TESTING: iprange (iprange.exp)"
+-./iprange.exp
++check "TESTING: veth-name (veth-name.exp)" ./veth-name.exp
+ 
+-echo "TESTING: veth-name (veth-name.exp)"
+-./veth-name.exp
++check "TESTING: macvlan2 (net_macvlan2.exp)" ./net_macvlan2.exp
+ 
+-echo "TESTING: macvlan2 (net_macvlan2.exp)"
+-./net_macvlan2.exp
++check "TESTING: 4 bridges ARP (4bridges_arp.exp)" ./4bridges_arp.exp
+ 
+-echo "TESTING: 4 bridges ARP (4bridges_arp.exp)"
+-./4bridges_arp.exp
++check "TESTING: 4 bridges IP (4bridges_ip.exp)" ./4bridges_ip.exp
+ 
+-echo "TESTING: 4 bridges IP (4bridges_ip.exp)"
+-./4bridges_ip.exp
++exit 0
+diff -urpN firejail-0.9.66.orig/test/private-lib/private-lib.sh firejail-0.9.66/test/private-lib/private-lib.sh
+--- firejail-0.9.66.orig/test/private-lib/private-lib.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/private-lib/private-lib.sh	2021-07-11 03:49:10.956859601 -0700
+@@ -3,6 +3,9 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="private-lib"
++. ../common.sh
++
+ export MALLOC_CHECK_=3g
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+@@ -14,9 +17,10 @@ for app in $LIST; do
+ 	which $app 2>/dev/null
+ 	if [ "$?" -eq 0 ];
+ 	then
+-		echo "TESTING: private-lib $app"
+-		./$app.exp
++		check "TESTING: private-lib $app" ./$app.exp
+ 	else
+ 		echo "TESTING SKIP: $app not found"
+ 	fi
+ done
++
++exit 0
+diff -urpN firejail-0.9.66.orig/test/profiles/profiles.sh firejail-0.9.66/test/profiles/profiles.sh
+--- firejail-0.9.66.orig/test/profiles/profiles.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/profiles/profiles.sh	2021-07-11 04:01:21.341218007 -0700
+@@ -3,39 +3,32 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="profiles"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+ 
+-echo "TESTING: profile comments (test/profiles/profilecomment.exp)"
+-./profile_comment.exp
++check "TESTING: profile comments (test/profiles/profilecomment.exp)" ./profile_comment.exp
+ 
+-echo "TESTING: profile conditional (test/profiles/conditional.exp)"
+-./conditional.exp
++check "TESTING: profile conditional (test/profiles/conditional.exp)" ./conditional.exp
+ 
+-echo "TESTING: profile recursivity (test/profiles/profile_recursivity.exp)"
+-./profile_recursivity.exp
++check "TESTING: profile recursivity (test/profiles/profile_recursivity.exp)" ./profile_recursivity.exp
+ 
+-echo "TESTING: profile application name (test/profiles/profile_appname.exp)"
+-./profile_appname.exp
++check "TESTING: profile application name (test/profiles/profile_appname.exp)" ./profile_appname.exp
+ 
+-echo "TESTING: profile syntax (test/profiles/profile_syntax.exp)"
+-./profile_syntax.exp
++check "TESTING: profile syntax (test/profiles/profile_syntax.exp)" ./profile_syntax.exp
+ 
+-echo "TESTING: profile syntax 2 (test/profiles/profile_syntax2.exp)"
+-./profile_syntax2.exp
++check "TESTING: profile syntax 2 (test/profiles/profile_syntax2.exp)" ./profile_syntax2.exp
+ 
+-echo "TESTING: ignore command (test/profiles/ignore.exp)"
+-./ignore.exp
++check "TESTING: ignore command (test/profiles/ignore.exp)" ./ignore.exp
+ 
+-echo "TESTING: profile read-only (test/profiles/profile_readonly.exp)"
+-./profile_readonly.exp
++check "TESTING: profile read-only (test/profiles/profile_readonly.exp)" ./profile_readonly.exp
+ 
+-echo "TESTING: profile read-only links (test/profiles/profile_readonly.exp)"
+-./profile_followlnk.exp
++check "TESTING: profile read-only links (test/profiles/profile_readonly.exp)" ./profile_followlnk.exp
+ 
+-echo "TESTING: profile no permissions (test/profiles/profile_noperm.exp)"
+-./profile_noperm.exp
++check "TESTING: profile no permissions (test/profiles/profile_noperm.exp)" ./profile_noperm.exp
+ 
+ # GitHub CI doesn't have a /run/user/$UID directory. Using it to test a small number of profiles.
+ UID=`id -u`
+@@ -49,6 +42,7 @@ fi
+ 
+ for PROFILE in $PROFILES
+ do
+-	echo "TESTING: $PROFILE"
+-	./test-profile.exp $PROFILE
++	echo "TESTING: $PROFILE" "./test-profile.exp $PROFILE" "./test-profile.exp"
+ done
++
++exit 0
+diff -urpN firejail-0.9.66.orig/test/profiles/test-profile.exp firejail-0.9.66/test/profiles/test-profile.exp
+--- firejail-0.9.66.orig/test/profiles/test-profile.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/profiles/test-profile.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -22,4 +22,4 @@ expect {
+ 	"no suitable echo executable found" {puts "echo not found"}
+ }
+ #after 100
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/root/option_bind_directory.exp firejail-0.9.66/test/root/option_bind_directory.exp
+--- firejail-0.9.66.orig/test/root/option_bind_directory.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/root/option_bind_directory.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -21,4 +21,4 @@ expect {
+ }
+ sleep 1
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/root/option_bind_file.exp firejail-0.9.66/test/root/option_bind_file.exp
+--- firejail-0.9.66.orig/test/root/option_bind_file.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/root/option_bind_file.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -21,4 +21,4 @@ expect {
+ }
+ sleep 1
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/root/root.sh firejail-0.9.66/test/root/root.sh
+--- firejail-0.9.66.orig/test/root/root.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/root/root.sh	2021-07-11 03:49:10.956859601 -0700
+@@ -3,6 +3,9 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="root"
++. ../common.sh
++
+ # set a new firejail config file
+ #cp firejail.config /etc/firejail/firejail.config
+ 
+@@ -14,9 +17,8 @@ export LC_ALL=C
+ which less 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: firecfg (test/root/firecfg.exp)"
+ 	mv /home/netblue/.local/share/applications /home/netblue/.local/share/applications-store
+-	./firecfg.exp
++	echo "TESTING: firecfg (test/root/firecfg.exp)" ./firecfg.exp
+ 	mv /home/netblue/.local/share/applications-store /home/netblue/.local/share/applications
+ else
+ 	echo "TESTING SKIP: firecfg, less not found"
+@@ -27,8 +29,7 @@ fi
+ #********************************
+ if [ -f /etc/init.d/snmpd ]
+ then
+-	echo "TESTING: snmpd (test/root/snmpd.exp)"
+-	./snmpd.exp
++	check "TESTING: snmpd (test/root/snmpd.exp)" ./snmpd.exp
+ else
+ 	echo "TESTING SKIP: snmpd  not found"
+ fi
+@@ -36,32 +37,28 @@ fi
+ 
+ if [ -f /etc/init.d/apache2 ]
+ then
+-	echo "TESTING: apache2 (test/root/apache2.exp)"
+-	./apache2.exp
++	check "TESTING: apache2 (test/root/apache2.exp)" ./apache2.exp
+ else
+ 	echo "TESTING SKIP: apache2  not found"
+ fi
+ 
+ if [ -f /etc/init.d/isc-dhcp-server ]
+ then
+-	echo "TESTING: isc dhcp server (test/root/isc-dhscp.exp)"
+-	./isc-dhcp.exp
++	check "TESTING: isc dhcp server (test/root/isc-dhscp.exp)" ./isc-dhcp.exp
+ else
+ 	echo "TESTING SKIP: isc dhcp server not found"
+ fi
+ 
+ if [ -f /etc/init.d/unbound ]
+ then
+-	echo "TESTING: unbound (test/root/unbound.exp)"
+-	./unbound.exp
++	check "TESTING: unbound (test/root/unbound.exp)" ./unbound.exp
+ else
+ 	echo "TESTING SKIP: unbound  not found"
+ fi
+ 
+ if [ -f /etc/init.d/nginx ]
+ then
+-	echo "TESTING: nginx (test/root/nginx.exp)"
+-	./nginx.exp
++	check "TESTING: nginx (test/root/nginx.exp)" ./nginx.exp
+ else
+ 	echo "TESTING SKIP: nginx  not found"
+ fi
+@@ -69,63 +66,52 @@ fi
+ #********************************
+ # filesystem
+ #********************************
+-echo "TESTING: fs private (test/root/private.exp)"
+-./private.exp
++check "TESTING: fs private (test/root/private.exp)" ./private.exp
+ 
+-echo "TESTING: fs whitelist mnt, opt, media (test/root/whitelist-mnt.exp)"
+-./whitelist.exp
++check "TESTING: fs whitelist mnt, opt, media (test/root/whitelist-mnt.exp)" ./whitelist.exp
+ 
+ #********************************
+ # utils
+ #********************************
+-echo "TESTING: join (test/root/join.exp)"
+-./join.exp
++check "TESTING: join (test/root/join.exp)" ./join.exp
+ 
+-echo "TESTING: login-nobody (test/root/login_nobody.exp)"
+-./login_nobody.exp
++check "TESTING: login-nobody (test/root/login_nobody.exp)" ./login_nobody.exp
+ 
+ #********************************
+ # seccomp
+ #********************************
+-echo "TESTING: seccomp umount (test/root/seccomp-umount.exp)"
+-./seccomp-umount.exp
++check "TESTING: seccomp umount (test/root/seccomp-umount.exp)" ./seccomp-umount.exp
+ 
+-echo "TESTING: seccomp chmod (test/root/seccomp-chmod.exp)"
+-./seccomp-chmod.exp
++check "TESTING: seccomp chmod (test/root/seccomp-chmod.exp)" ./seccomp-chmod.exp
+ 
+-echo "TESTING: seccomp chown (test/root/seccomp-chown.exp)"
+-./seccomp-chown.exp
++check "TESTING: seccomp chown (test/root/seccomp-chown.exp)" ./seccomp-chown.exp
+ 
+ #********************************
+ # command line options
+ #********************************
+-echo "TESTING: firejail configuration (test/root/checkcfg.exp)"
+-./checkcfg.exp
++check "TESTING: firejail configuration (test/root/checkcfg.exp)" ./checkcfg.exp
+ cp ../../etc/firejail.config /etc/firejail/.
+ 
+-echo "TESTING: cgroup (test/root/cgroup.exp)"
+-./cgroup.exp
++check "TESTING: cgroup (test/root/cgroup.exp)" ./cgroup.exp
+ 
+-echo "TESTING: tmpfs (test/root/option_tmpfs.exp)"
+-./option_tmpfs.exp
++check "TESTING: tmpfs (test/root/option_tmpfs.exp)" ./option_tmpfs.exp
+ 
+-echo "TESTING: profile tmpfs (test/root/profile_tmpfs)"
+-./profile_tmpfs.exp
++check "TESTING: profile tmpfs (test/root/profile_tmpfs)" ./profile_tmpfs.exp
+ 
+-echo "TESTING: bind directory (test/root/option_bind_directory.exp)"
++check "TESTING: bind directory (test/root/option_bind_directory.exp)"
+ ./option_bind_directory.exp
+ 
+-echo "TESTING: bind file (test/root/option_bind_file.exp)"
+ echo hello > tmpfile
+-./option_bind_file.exp
++check "TESTING: bind file (test/root/option_bind_file.exp)" ./option_bind_file.exp
+ rm -f tmpfile
+ 
+ #********************************
+ # firemon
+ #********************************
+-echo "TESTING: firemon events (test/root/firemon-events.exp)"
+-./firemon-events.exp
++check "TESTING: firemon events (test/root/firemon-events.exp)" ./firemon-events.exp
+ 
+ 
+ # restore the default config file
+ #cp ../../etc/firejail.config /etc/firejail/firejail.config
++
++exit 0
+diff -urpN firejail-0.9.66.orig/test/root/seccomp-umount.exp firejail-0.9.66/test/root/seccomp-umount.exp
+--- firejail-0.9.66.orig/test/root/seccomp-umount.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/root/seccomp-umount.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -22,4 +22,4 @@ expect {
+ 
+ send -- "exit\r"
+ after 100
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/sysutils/sysutils.sh firejail-0.9.66/test/sysutils/sysutils.sh
+--- firejail-0.9.66.orig/test/sysutils/sysutils.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/sysutils/sysutils.sh	2021-07-11 03:49:10.956859601 -0700
+@@ -3,6 +3,9 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="sysutils"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+@@ -10,8 +13,7 @@ export LC_ALL=C
+ which cpio 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: cpio"
+-	./cpio.exp
++	check "TESTING: cpio" ./cpio.exp
+ else
+ 	echo "TESTING SKIP: cpio not found"
+ fi
+@@ -19,8 +21,7 @@ fi
+ #which strings
+ #if [ "$?" -eq 0 ];
+ #then
+-#	echo "TESTING: strings"
+-#	./strings.exp
++#	check "TESTING: strings" ./strings.exp
+ #else
+ #	echo "TESTING SKIP: strings not found"
+ #fi
+@@ -28,8 +29,7 @@ fi
+ which gzip 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: gzip"
+-	./gzip.exp
++	check "TESTING: gzip" ./gzip.exp
+ else
+ 	echo "TESTING SKIP: gzip not found"
+ fi
+@@ -37,8 +37,7 @@ fi
+ which xzdec 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: xzdec"
+-	./xzdec.exp
++	check "TESTING: xzdec" ./xzdec.exp
+ else
+ 	echo "TESTING SKIP: xzdec not found"
+ fi
+@@ -46,8 +45,7 @@ fi
+ which xz 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: xz"
+-	./xz.exp
++	check "TESTING: xz" ./xz.exp
+ else
+ 	echo "TESTING SKIP: xz not found"
+ fi
+@@ -55,8 +53,7 @@ fi
+ which less 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: less"
+-	./less.exp
++	check "TESTING: less" ./less.exp
+ else
+ 	echo "TESTING SKIP: less not found"
+ fi
+@@ -64,8 +61,7 @@ fi
+ which file 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: file"
+-	./file.exp
++	check "TESTING: file" ./file.exp
+ else
+ 	echo "TESTING SKIP: file not found"
+ fi
+@@ -73,8 +69,7 @@ fi
+ which tar 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: tar"
+-	./tar.exp
++	check "TESTING: tar" ./tar.exp
+ else
+ 	echo "TESTING SKIP: tar not found"
+ fi
+@@ -82,8 +77,9 @@ fi
+ which ping 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-	echo "TESTING: ping"
+-	./ping.exp
++	check "TESTING: ping" ./ping.exp
+ else
+ 	echo "TESTING SKIP: ping not found"
+ fi
++
++exit 0
+diff -urpN firejail-0.9.66.orig/test/utils/help.exp firejail-0.9.66/test/utils/help.exp
+--- firejail-0.9.66.orig/test/utils/help.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/utils/help.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -21,4 +21,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/utils/list.exp firejail-0.9.66/test/utils/list.exp
+--- firejail-0.9.66.orig/test/utils/list.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/utils/list.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -47,4 +47,4 @@ expect {
+ after 100
+ 
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/utils/man.exp firejail-0.9.66/test/utils/man.exp
+--- firejail-0.9.66.orig/test/utils/man.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/utils/man.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -17,4 +17,4 @@ after 100
+ 
+ send -- "q\r"
+ after 100
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/utils/tree.exp firejail-0.9.66/test/utils/tree.exp
+--- firejail-0.9.66.orig/test/utils/tree.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/utils/tree.exp	2021-07-11 03:49:10.956859601 -0700
+@@ -59,4 +59,4 @@ expect {
+ after 100
+ 
+ 
+-puts "\n"
++puts "\nall done\n"
+diff -urpN firejail-0.9.66.orig/test/utils/utils.sh firejail-0.9.66/test/utils/utils.sh
+--- firejail-0.9.66.orig/test/utils/utils.sh	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/utils/utils.sh	2021-07-11 03:49:10.960859756 -0700
+@@ -3,6 +3,9 @@
+ # Copyright (C) 2014-2021 Firejail Authors
+ # License GPL v2
+ 
++export TEST_DOMAIN="utils"
++. ../common.sh
++
+ export MALLOC_CHECK_=3
+ export MALLOC_PERTURB_=$(($RANDOM % 255 + 1))
+ export LC_ALL=C
+@@ -13,130 +16,97 @@ if [ -f /etc/debian_version ]; then
+ fi
+ export PATH="$PATH:/usr/lib/firejail:/usr/lib64/firejail"
+ 
+-echo "TESTING: build (test/utils/build.exp)"
+-./build.exp
++check "TESTING: build (test/utils/build.exp)" ./build.exp
+ rm -f ~/firejail-test-file-7699
+ rm -f firejail-test-file-4388
+ 
+-echo "TESTING: name (test/utils/name.exp)"
+-./name.exp
++check "TESTING: name (test/utils/name.exp)" ./name.exp
+ 
+-echo "TESTING: command (test/utils/command.exp)"
+-./command.exp
++check "TESTING: command (test/utils/command.exp)" ./command.exp
+ 
+-echo "TESTING: profile.print (test/utils/profile_print.exp)"
+-./profile_print.exp
++check "TESTING: profile.print (test/utils/profile_print.exp)" ./profile_print.exp
+ 
+-echo "TESTING: version (test/utils/version.exp)"
+-./version.exp
++check "TESTING: version (test/utils/version.exp)" ./version.exp
+ 
+-echo "TESTING: help (test/utils/help.exp)"
+-./help.exp
++check "TESTING: help (test/utils/help.exp)" ./help.exp
+ 
+ which man 2>/dev/null
+ if [ "$?" -eq 0 ];
+ then
+-        echo "TESTING: man (test/utils/man.exp)"
+-        ./man.exp
++        check "TESTING: man (test/utils/man.exp)" ./man.exp
+ else
+         echo "TESTING SKIP: man not found"
+ fi
+ 
+-echo "TESTING: list (test/utils/list.exp)"
+-./list.exp
++check "TESTING: list (test/utils/list.exp)" ./list.exp
+ 
+-echo "TESTING: tree (test/utils/tree.exp)"
+-./tree.exp
++check "TESTING: tree (test/utils/tree.exp)" ./tree.exp
+ 
+ if [ $(grep -c ^processor /proc/cpuinfo) -gt 1 ];
+ then
+-        echo "TESTING: cpu.print (test/utils/cpu-print.exp)"
+-        ./cpu-print.exp
++        check "TESTING: cpu.print (test/utils/cpu-print.exp)" ./cpu-print.exp
+ else
+         echo "TESTING SKIP: cpu.print, not enough CPUs"
+ fi
+ 
+-echo "TESTING: fs.print (test/utils/fs-print.exp)"
+-./fs-print.exp
++check "TESTING: fs.print (test/utils/fs-print.exp)" ./fs-print.exp
+ 
+-echo "TESTING: dns.print (test/utils/dns-print.exp)"
+-./dns-print.exp
++check "TESTING: dns.print (test/utils/dns-print.exp)" ./dns-print.exp
+ 
+-echo "TESTING: caps.print (test/utils/caps-print.exp)"
+-./caps-print.exp
++check "TESTING: caps.print (test/utils/caps-print.exp)" ./caps-print.exp
+ 
+-echo "TESTING: seccomp.print (test/utils/seccomp-print.exp)"
+-./seccomp-print.exp
++check "TESTING: seccomp.print (test/utils/seccomp-print.exp)" ./seccomp-print.exp
+ 
+-echo "TESTING: protocol.print (test/utils/protocol-print.exp)"
+-./protocol-print.exp
++check "TESTING: protocol.print (test/utils/protocol-print.exp)" ./protocol-print.exp
+ 
+-echo "TESTING: shutdown (test/utils/shutdown.exp)"
+-./shutdown.exp
++check "TESTING: shutdown (test/utils/shutdown.exp)" ./shutdown.exp
+ 
+-echo "TESTING: shutdown2 (test/utils/shutdown2.exp)"
+-./shutdown2.exp
++check "TESTING: shutdown2 (test/utils/shutdown2.exp)" ./shutdown2.exp
+ 
+-echo "TESTING: shutdown3 (test/utils/shutdown3.exp)"
+-./shutdown3.exp
++check "TESTING: shutdown3 (test/utils/shutdown3.exp)" ./shutdown3.exp
+ 
+-echo "TESTING: shutdown4 (test/utils/shutdown4.exp)"
+-./shutdown4.exp
++check "TESTING: shutdown4 (test/utils/shutdown4.exp)" ./shutdown4.exp
+ 
+-echo "TESTING: join (test/utils/join.exp)"
+-./join.exp
++check "TESTING: join (test/utils/join.exp)" ./join.exp
+ 
+-echo "TESTING: join2 (test/utils/join2.exp)"
+-./join2.exp
++check "TESTING: join2 (test/utils/join2.exp)" ./join2.exp
+ 
+-echo "TESTING: join3 (test/utils/join3.exp)"
+-./join3.exp
++check "TESTING: join3 (test/utils/join3.exp)" ./join3.exp
+ 
+-echo "TESTING: join4 (test/utils/join4.exp)"
+-./join4.exp
++check "TESTING: join4 (test/utils/join4.exp)" ./join4.exp
+ 
+-echo "TESTING: join5 (test/utils/join5.exp)"
+-./join5.exp
++check "TESTING: join5 (test/utils/join5.exp)" ./join5.exp
+ 
+-echo "TESTING: join profile (test/utils/join-profile.exp)"
+-./join-profile.exp
++check "TESTING: join profile (test/utils/join-profile.exp)" ./join-profile.exp
+ 
+-echo "TESTING: trace (test/utils/trace.exp)"
+ rm -f index.html*
+-./trace.exp
++check "TESTING: trace (test/utils/trace.exp)" ./trace.exp
+ rm -f index.html*
+ 
+-echo "TESTING: top (test/utils/top.exp)"
+-./top.exp
++check "TESTING: top (test/utils/top.exp)" ./top.exp
+ 
+-echo "TESTING: file transfer (test/utils/ls.exp)"
+-./ls.exp
++check "TESTING: file transfer (test/utils/ls.exp)" ./ls.exp
+ 
+ if grep -q "^Seccomp.*0" /proc/self/status; then
+-	echo "TESTING: firemon seccomp (test/utils/firemon-seccomp.exp)"
+-	./firemon-seccomp.exp
++	check "TESTING: firemon seccomp (test/utils/firemon-seccomp.exp)" ./firemon-seccomp.exp
+ else
+ 	echo "TESTING SKIP: seccomp already active (test/utils/firemon-seccomp.exp)"
+ fi
+ 
+ if grep -q "^CapBnd:\\s0000003fffffffff" /proc/self/status; then
+-	echo "TESTING: firemon caps (test/utils/firemon-caps.exp)"
+-	./firemon-caps.exp
++	check "TESTING: firemon caps (test/utils/firemon-caps.exp)" ./firemon-caps.exp
+ else
+ 	echo "TESTING SKIP: other capabilities than expected (test/utils/firemon-caps.exp)"
+ fi
+ 
+-echo "TESTING: firemon cpu (test/utils/firemon-cpu.exp)"
+-./firemon-cpu.exp
++check "TESTING: firemon cpu (test/utils/firemon-cpu.exp)" ./firemon-cpu.exp
++
++check "TESTING: firemon cgroup (test/utils/firemon-cgroup.exp)" ./firemon-cgroup.exp
+ 
+-echo "TESTING: firemon cgroup (test/utils/firemon-cgroup.exp)"
+-./firemon-cgroup.exp
++check "TESTING: firemon version (test/utils/firemon-version.exp)" ./firemon-version.exp
+ 
+-echo "TESTING: firemon version (test/utils/firemon-version.exp)"
+-./firemon-version.exp
++check "TESTING: firemon interface (test/utils/firemon-interface.exp)" ./firemon-interface.exp
+ 
+-echo "TESTING: firemon interface (test/utils/firemon-interface.exp)"
+-./firemon-interface.exp
++check "TESTING: firemon name (test/utils/firemon-name.exp)" ./firemon-name.exp
+ 
+-echo "TESTING: firemon name (test/utils/firemon-name.exp)"
+-./firemon-name.exp
++exit 0
+diff -urpN firejail-0.9.66.orig/test/utils/version.exp firejail-0.9.66/test/utils/version.exp
+--- firejail-0.9.66.orig/test/utils/version.exp	2021-06-22 08:51:28.000000000 -0700
++++ firejail-0.9.66/test/utils/version.exp	2021-07-11 03:49:10.960859756 -0700
+@@ -14,4 +14,4 @@ expect {
+ }
+ after 100
+ 
+-puts "\n"
++puts "\nall done\n"
