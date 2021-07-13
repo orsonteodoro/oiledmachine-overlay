@@ -207,7 +207,7 @@ FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
 IUSE+=" ${FIREJAIL_PROFILES_IUSE[@]} X apparmor +chroot contrib +dbusproxy
 +file-transfer +globalcfg +network +private-home selinux +suid test-profiles
 test-x11 +userns +whitelist xpra"
-IUSE+=" +firejail_profiles_default"
+IUSE+=" +firejail_profiles_default +firejail_profiles_server"
 RDEPEND+=" !sys-apps/firejail-lts
 	apparmor? ( >=sys-libs/libapparmor-2.13.3 )
 	contrib? ( ${PYTHON_DEPS} )
@@ -866,6 +866,11 @@ src_prepare() {
 			sed -i -e "s|/usr/share/doc/firejail|${ED}/usr/share/doc/firejail-${PVR}|g" \
 				"${f}" || die
 		done
+#		for f in $(grep -l -r -e "PREFIX=/usr" "${S}") ; do
+#			einfo "Editing ${f}:  PREFIX=/usr -> PREFIX=${ED}/usr"
+#			sed -i -e "s|PREFIX=/usr|PREFIX=${ED}/usr|g" \
+#				"${f}" || die
+#		done
 	fi
 
 	mutex-test-release_copy_sources
@@ -874,16 +879,23 @@ src_prepare() {
 _src_configure() {
 	local test_opts=()
 	if [[ "${EMTR}" == "test" ]] ; then
-		sed -i -e "s|MAX_ENVS 256|MAX_ENVS ${EFIREJAIL_MAX_ENVS}|g" \
-			"src/firejail/firejail.h" || die
-		grep -q -r -e "MAX_ENVS ${EFIREJAIL_MAX_ENVS}" "src/firejail/firejail.h" \
-			|| die
-		ewarn "Max envvars lifted to ${EFIREJAIL_MAX_ENVS} for test build."
-		ewarn "Setting changable by setting per-package envvar EFIREJAIL_MAX_ENVS"
-		einfo "Current envvar count: "$(env | wc -l)
+#		sed -i -e "s|MAX_ENVS 256|MAX_ENVS ${EFIREJAIL_MAX_ENVS}|g" \
+#			"src/firejail/firejail.h" || die
+#		grep -q -r -e "MAX_ENVS ${EFIREJAIL_MAX_ENVS}" "src/firejail/firejail.h" \
+#			|| die
+#		ewarn "Max envvars lifted to ${EFIREJAIL_MAX_ENVS} for test build."
+#		ewarn "Setting changable by setting per-package envvar EFIREJAIL_MAX_ENVS"
+#		einfo "Current envvar count: "$(env | wc -l)
 
 		# firejail deprecated --profile-dir= so must be hardwired this way
 		sed -i -e "s|\$(sysconfdir)|${ED}/etc|g" "src/common.mk.in" || die
+#		test_opts+=(--prefix="${ED}/usr")
+		einfo "Editing ${BUILD_DIR}/test/filters/memwrexe.exp:  ./memwrexe -> ${S}/test/filters/memwrexe"
+		sed -i -e "s|\./memwrexe|${S}/test/filters/memwrexe|g" \
+			"${BUILD_DIR}/test/filters/memwrexe.exp" || die
+#		:;
+	else
+		test_opts=()
 	fi
 
 	econf \
@@ -899,7 +911,8 @@ _src_configure() {
 		$(use_enable userns) \
 		$(use_enable whitelist) \
 		$(use_enable X x11) \
-		$(use_enable selinux)
+		$(use_enable selinux) \
+		${test_opts}
 }
 
 src_configure()
@@ -918,6 +931,130 @@ _src_compile() {
 src_compile()
 {
 	mutex-test-release_foreach_impl _src_compile
+}
+
+WHITELIST_READONLY=(
+	BROOT
+	D
+	DEFINED_PHASES
+	EAPI
+	EBUILD
+	EBUILD_PHASE
+	EBUILD_PHASE_FUNC
+	ED
+	EMERGE_FROM
+	EPREFIX
+	EROOT
+	FILESDIR
+	INHERITED
+	KEYWORDS
+	LICENSE
+	MERGE_TYPE
+	PM_EBUILD_HOOK_DIR
+	PORTAGE_ACTUAL_DISTDIR
+	PORTAGE_ARCHLIST
+	PORTAGE_BASHRC
+	PORTAGE_BIN_PATH
+	PORTAGE_BUILDDIR
+	PORTAGE_BUILD_GROUP
+	PORTAGE_BUILD_USER
+	PORTAGE_BZIP2_COMMAND
+	PORTAGE_COLORMAP
+	PORTAGE_CONFIGROOT
+	PORTAGE_DEPCACHEDIR
+	PORTAGE_GID
+	PORTAGE_INST_GID
+	PORTAGE_INST_UID
+	PORTAGE_INTERNAL_CALLER
+	PORTAGE_IPC_DAEMON
+	PORTAGE_LOG_FILE
+	PORTAGE_OVERRIDE_EPREFIX
+	PORTAGE_PROPERTIES
+	PORTAGE_PYM_PATH
+	PORTAGE_PYTHON
+	PORTAGE_PYTHONPATH
+	PORTAGE_REPO_NAME
+	PORTAGE_REPOSITORIES
+	PORTAGE_RESTRICT
+	PORTAGE_SIGPIPE_STATUS
+	PORTAGE_TMPDIR
+	PORTAGE_VERBOSE
+	PORTAGE_WORKDIR_MODE
+	PORTAGE_XATTR_EXCLUDE
+	SLOT
+	T
+	USE
+	WORKDIR
+)
+
+save_env()
+{
+	env -0 > "${T}/env.txt"
+}
+
+restore_env()
+{
+	while IFS= read -r -d $'\0' l
+	do
+		local allow=1
+		k=$(echo "${l}" | cut -f 1 -d "=" | cut -f 1 -d "=")
+		[[ "${k}" =~ "PORTAGE_REPOSITORIES" ]] && k="PORTAGE_REPOSITORIES"
+		[[ "${k}" =~ "PORTAGE_COLORMAP" ]] && k="PORTAGE_COLORMAP"
+		for w in ${WHITELIST_READONLY[@]} ; do
+			[[ "${k}" == "${w}" ]] && allow=0
+		done
+		v=$(echo "${l}" | cut -f 2- -d "=")
+		(( ${allow} == 1 )) && export ${k}="${v}"
+	done < "${T}/env.txt"
+	export IFS=$' \t\n'
+}
+
+wipe_env()
+{
+	local whitelist=(
+		CFLAGS
+		CHOST
+		CXXFLAGS
+		DIE_ON_CAPS_ERROR
+		DIE_ON_GRSECURITY_ERROR
+		DIE_ON_PROGRAM_LOAD_FAILURE
+		DIE_ON_SECCOMP_ERROR
+		DISPLAY
+		IFS
+		HOME
+		LDFLAGS
+		LD_LIBRARY_PATH
+		PATH
+		PWD
+		S
+		SANDBOX_ON
+		SHELL
+		TERM
+		USE_CAPS
+		USE_GRSECURITY
+		USE_SECCOMP
+		USER
+	)
+
+	env -0 > "${T}/env-dump.txt"
+
+	local envs=()
+	while IFS= read -r -d $'\0' l
+	do
+		n=$(echo "${l}" | cut -f 1 -d "=")
+		[[ "${n}" =~ "PORTAGE_REPOSITORIES" ]] && n="PORTAGE_REPOSITORIES"
+		[[ "${n}" =~ "PORTAGE_COLORMAP" ]] && n="PORTAGE_COLORMAP"
+		local allow=1
+		for w in ${whitelist[@]} ${WHITELIST_READONLY[@]} ; do
+			[[ "${n}" == "${w}" ]] && allow=0
+		done
+		(( ${allow} == 1 )) && envs+=(${n})
+	done < "${T}/env-dump.txt"
+	export IFS=$' \t\n'
+
+	for n in ${envs[@]} ; do
+		unset ${n}
+	done
 }
 
 _src_test()
@@ -947,6 +1084,7 @@ _src_test()
 	fi
 	export USE_CAPS="1"
 	export DIE_ON_CAPS_ERROR="0"
+	export DIE_ON_PROGRAM_LOAD_FAILURE="1"
 
 	# Upstream uses `make test-github` for CI
 	local x11_tests=()
@@ -964,7 +1102,14 @@ _src_test()
 		test-environment
 	)
 
+	mkdir -p "${ED}/etc/firejail" || die
 	touch "${ED}/etc/firejail/globals.local" || die
+
+	# Sandboxed $HOME for HOME tests
+#	echo "whitelist $(realpath ~/)" \
+#		>> "${ED}/etc/firejail/globals.local" || die
+#	echo "whitelist $(realpath ~/)/_firejail_test_file1" \
+#		>> "${ED}/etc/firejail/globals.local" || die
 
 	# Add globals for ricers
 	echo "private-lib gcc/*/*/libgomp.so.*" \
@@ -981,22 +1126,35 @@ _src_test()
 
 	touch "${T}/test-all.log" || die
 
+	save_env
+
+if true ; then
 	for x in ${profile_tests[@]} ${basic_tests[@]} ${misc_tests[@]} ; do
 		einfo "Testing ${x}"
+		wipe_env
 		make ${x} 2>&1 >"${T}/test.log"
-		if (( $? == 0 )) ; then
+		local retcode=$?
+		restore_env
+		if (( ${retcode} == 0 )) ; then
 			einfo "${x} passed"
 		else
 			die \
-"Test failed for ${x}.  Return code: $?.  For details see ${T}/test.log"
+"Test failed for ${x}.  Return code: ${retcode}.  For details see ${T}/test.log"
 		fi
 		grep -q -E -e "Error [0-9]+" "${T}/test.log" \
 			&& die \
 "Test failed for ${x}.  For details see ${T}/test.log"
 		cat "${T}/test.log" >> "${T}/test-all.log" || die
 	done
+fi
 
 	if use test-x11 ; then
+		# For memwrexe.exp tests
+#		echo "keep-var-tmp" \
+#			>> "${ED}/etc/firejail/globals.local" || die
+#		echo "whitelist ${WORKDIR}/${PN}-${PV}*/test/filters/memwrexe*" \
+#			>> "${ED}/etc/firejail/globals.local" || die
+
 		x11_tests+=(
 			test-apps
 			test-apps-x11
@@ -1004,16 +1162,19 @@ _src_test()
 			test-filters
 		)
 		for x in ${x11_tests[@]} ; do
+			cd "${BUILD_DIR}" || die
 			einfo "Testing ${x}"
 			cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 cat /dev/null > "${T}/test-retcode.log"
-make ${x} 2&>1 >"${T}/test.log"
-echo -n "$?" > "${T}/test-retcode.log"
+make ${x} 2>&1 >"${T}/test.log"
+echo -n "\$?" > "${T}/test-retcode.log"
 exit \$(cat "${T}/test-retcode.log")
 EOF
 			chmod +x "${BUILD_DIR}/run.sh"
+			wipe_env
 			virtx "${BUILD_DIR}/run.sh"
+			restore_env
 			grep -q -E -e "Error [0-9]+" "${T}/test.log" \
 				&& die \
 "Test failed for ${x}.  For details see ${T}/test.log"
@@ -1027,6 +1188,10 @@ EOF
 			fi
 			cat "${T}/test.log" >> "${T}/test-all.log" || die
 		done
+
+#		sed -i -e "\|#REMOVE_ME|d" \
+#			"${ED}/etc/firejail/globals.local" || die
+
 	fi
 	export SANDBOX_ON=1
 
@@ -1131,4 +1296,8 @@ pkg_postinst() {
 	einfo "  firejail_profiles_feh? ( firejail_profiles_feh-network.inc )"
 	einfo "  firejail_profiles_firefox-common? ( firejail_profiles_firefox-common-addons )"
 	einfo "  firejail_profiles_rtv? ( firejail_profiles_rtv-addons )"
+
+	if ! use firejail_profiles_server ; then
+		ewarn "Disabling firejail_profiles_server disables default sandboxing for the root user"
+	fi
 }
