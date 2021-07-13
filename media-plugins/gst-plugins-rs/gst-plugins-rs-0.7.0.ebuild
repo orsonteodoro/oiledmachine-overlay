@@ -31,7 +31,8 @@ LICENSE="Apache-2.0 MIT LGPL-2.1+
 # ZLIB ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/adler32-1.1.0/LICENSE
 # ZLIB ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/bytemuck-1.2.0/LICENSE-ZLIB.md
 
-KEYWORDS="~amd64"
+# Live ebuilds or live snapshot don't get KEYWORDs
+
 SLOT="1.0/${PV}"
 IUSE+="	audiofx
 	cdg
@@ -43,8 +44,11 @@ IUSE+="	audiofx
 	file
 	flavors
 	gif
+	hsv
+	json
 	lewton
 	rav1e
+	regex
 	reqwest
 	rspng
 	rusoto
@@ -52,9 +56,10 @@ IUSE+="	audiofx
 	test
 	textwrap
 	threadshare
-	togglerecord"
+	togglerecord
+	webp"
 # TODO add/package gst-plugins-csound
-#RUST_V="1.40" upstrem requirement
+#RUST_V="1.52" upstrem requirement
 RUST_DEPEND="
 	|| (
 		~dev-lang/rust-1.52.1[${MULTILIB_USEDEP}]
@@ -94,19 +99,25 @@ BDEPEND+=" ${BDEPEND}
 	>=dev-util/meson-0.56"
 SRC_URI="
 https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${PV}/gst-plugins-rs-${PV}.tar.bz2
-	-> ${P}.tar.bz2
-https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/commit/7a2c8768ad2933334dce739c19a0a312a7bf8ab7.patch
-	-> ${PN}-7a2c876.patch"
-# 7a2c876 - Add license files to all new plugins
+	-> ${P}.tar.bz2"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 PATCHES=(
-	"${FILESDIR}/gst-plugins-rs-0.6.0-modular-build.patch"
-	"${FILESDIR}/gst-plugins-rs-0.6.0-rename-csound-ref.patch"
-	"${DISTDIR}/${PN}-7a2c876.patch"
+	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-modular-build.patch"
+	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-rename-csound-ref.patch"
 )
 
 pkg_setup() {
+# Error message:
+#
+# thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: \
+# CargoToml("${S}/Cargo.toml", Toml(Error { inner: ErrorInner { kind: Custom, \
+# line: Some(12), col: 0, at: Some(121), message: "missing field `package`", \
+# key: [] } }))', src/build.rs:47:10
+#
+
+	ewarn "This package may fail to build.  Use the non _p suffix releases instead."
+
 	if has network-sandbox $FEATURES ; then
 			die \
 "FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
@@ -171,14 +182,18 @@ ebuild."
 		$(meson_feature file)
 		$(meson_feature flavors)
 		$(meson_feature gif)
+		$(meson_feature hsv)
+		$(meson_feature json)
 		$(meson_feature lewton)
 		$(meson_feature rav1e)
+		$(meson_feature regex)
 		$(meson_feature reqwest)
 		$(meson_feature rspng)
 		$(meson_feature rusoto)
-		$(meson_feature textwrap)
 		$(meson_feature threadshare)
 		$(meson_feature togglerecord)
+		$(meson_feature webp)
+		$(meson_feature textwrap)
 		$(usex sodium -Dsodium=system -Dsodium=disabled)
 	)
 
@@ -239,6 +254,16 @@ ebuild."
 			Cargo.toml || die
 	fi
 
+	if ! use hsv ; then
+		sed -i -e "/hsv/d" \
+			Cargo.toml || die
+	fi
+
+	if ! use json ; then
+		sed -i -e "/json/d" \
+			Cargo.toml || die
+	fi
+
 	if ! use lewton ; then
 		sed -i -e "/lewton/d" \
 			Cargo.toml || die
@@ -246,6 +271,11 @@ ebuild."
 
 	if ! use rav1e ; then
 		sed -i -e "/rav1e/d" \
+			Cargo.toml || die
+	fi
+
+	if ! use regex ; then
+		sed -i -e "/regex/d" \
 			Cargo.toml || die
 	fi
 
@@ -296,6 +326,8 @@ ebuild."
 		|| use file \
 		|| use flavors \
 		|| use gif \
+		|| use hsv \
+		|| use json \
 		|| use lewton \
 		|| use rav1e \
 		|| use reqwest \
@@ -305,12 +337,19 @@ ebuild."
 		|| use textwrap \
 		|| use threadshare \
 		|| use togglerecord \
+		|| use webp \
+		|| use  \
 		; then
 		# also tutorial plugin in || conditional
 		einfo "Using version-helper"
 	else
 		einfo "Pruning version-helper"
 		sed -i -e "/version-helper/d" \
+			Cargo.toml || die
+	fi
+
+	if ! use webp ; then
+		sed -i -e "/webp/d" \
 			Cargo.toml || die
 	fi
 
