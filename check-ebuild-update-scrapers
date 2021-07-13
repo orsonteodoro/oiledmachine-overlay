@@ -1711,6 +1711,11 @@ repo_latest_version_get_pytest-raises_pv() {
 https://github.com/Lemmons/pytest-raises.git)
 }
 
+repo_latest_version_get_pyvips_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/libvips/pyvips.git)
+}
+
 repo_latest_version_get_qb64_pv() {
 	echo $(get_newest_prefixed_v_pv \
 https://github.com/Galleondragon/qb64.git)
