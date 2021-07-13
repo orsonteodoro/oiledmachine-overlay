@@ -3,9 +3,10 @@
 
 EAPI=7
 
+EMTRS="release test"
 PYTHON_COMPAT=( python3_{8..10} )
 inherit autotools eutils flag-o-matic llvm multilib multilib-minimal \
-python-any-r1 toolchain-funcs
+mutex-test-release python-any-r1 toolchain-funcs
 
 DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
@@ -159,9 +160,7 @@ pkg_setup() {
 	if use test ; then
 		ewarn \
 "The test USE flag may find \"LeakSanitizer: detected memory leaks\" for\n\
-dependencies but not directly to prevent tests from passing successfully.\n\
-\n\
-Remove the test USE flag in order to emerge successfully."
+dependencies but not directly to prevent tests from passing successfully."
 	fi
 
 	export CC=$(tc-getCC)
@@ -182,11 +181,6 @@ Remove the test USE flag in order to emerge successfully."
 	if use jpeg \
 	&& has_version "<media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}" ; then
 		die "Update to >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}"
-	fi
-
-	if use test ; then
-		ewarn \
-"Please disable tests after testing to remove unsafe flags."
 	fi
 
 	local abis=( $(multilib_get_enabled_abis) )
@@ -214,7 +208,7 @@ Remove the test USE flag in order to emerge successfully."
 
 src_prepare() {
 	default
-#	cd "${S}" || die
+	cd "${S}" || die
 	sed -i -r \
 -e '/define VIPS_VERSION_STRING/s#@VIPS_VERSION_STRING@#@VIPS_VERSION@#' \
 		libvips/include/vips/version.h.in || die
@@ -229,14 +223,102 @@ src_prepare() {
 			-e "s|EXTRA_DIST +=|EXTRA_DIST =|g" \
 			doc/Makefile.am || die
 	fi
-
 	eautoreconf
 
-	multilib_copy_sources
+	src_prepare_mtr() {
+		cd "${BUILD_DIR}" || die
+		multilib_copy_sources
+	}
+	mutex-test-release_copy_sources
+	mutex-test-release_foreach_impl src_prepare_mtr
 }
 
-multilib_src_configure() {
-	if use test ; then
+_clear_env()
+{
+	unset ASAN_DSO
+	unset ASAN_OPTIONS
+	unset ASAN_SYMBOLIZER_PATH
+	unset DLCLOSE_PRELOAD
+	unset LD_LIBRARY_PATH
+	unset LD_PRELOAD
+	unset LDSHARED
+	unset LSAN_OPTIONS
+	unset TSAN_OPTIONS
+	unset UBSAN_OPTIONS
+}
+
+_apply_env()
+{
+	local detect_leaks="${1}"
+	if [[ "${EMTR}" == "release" ]] ; then
+		:;
+	elif [[ "${EMTR}" == "test" ]] ; then
+		export ASAN_OPTIONS="suppressions=${S}/suppressions/asan.supp:detect_leaks=${detect_leaks}"
+		export ASAN_SYMBOLIZER_PATH="$(get_llvm_prefix)/bin/llvm-symbolizer"
+		export LDSHARED="${CC} -shared"
+		export LSAN_OPTIONS="suppressions=${S}/suppressions/lsan.supp"
+		export TSAN_OPTIONS="suppressions=${S}/suppressions/tsan.supp"
+		export UBSAN_OPTIONS=\
+"suppressions=${S}/suppressions/ubsan.supp:print_stacktrace=1"
+		export LD_LIBRARY_PATH=\
+"$(get_llvm_prefix)/lib:$(dirname ${ASAN_DSO}):${LD_LIBRARY_PATH}"
+		preload_libsan
+	fi
+	einfo "ASAN_DSO=${ASAN_DSO}"
+	einfo "LDSHARED=${LDSHARED}"
+	einfo "ASAN_OPTIONS=${ASAN_OPTIONS}"
+	einfo "LSAN_OPTIONS=${LSAN_OPTIONS}"
+	einfo "TSAN_OPTIONS=${TSAN_OPTIONS}"
+	einfo "UBSAN_OPTIONS=${UBSAN_OPTIONS}"
+	einfo "DLCLOSE_PRELOAD=${DLCLOSE_PRELOAD}"
+	einfo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
+	einfo "LD_PRELOAD=${LD_PRELOAD}"
+}
+
+_strip_flags() {
+	if tc-is-clang ; then
+		filter-flags -frename-registers
+	fi
+	# sync below
+	filter-flags -g \
+		-fsanitize=* \
+		-fomit-frame-pointer \
+		-fopt-* \
+		-fno-omit-frame-pointer \
+		-fopenmp \
+		-fopenmp=* \
+		-shared-libsan \
+		-shared-libasan \
+		-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+}
+
+_apply_flags() {
+	if [[ "${EMTR}" == "release" ]] ; then
+		:;
+	elif [[ "${EMTR}" == "test" ]] ; then
+		append-cppflags -g \
+				-fsanitize=address,undefined \
+				-fno-omit-frame-pointer \
+				-fopenmp \
+				-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+		append-ldflags -g \
+				-fsanitize=address,undefined \
+				-shared-libsan \
+				-fopenmp=libomp
+	fi
+	einfo "CPPFLAGS=${CPPFLAGS}"
+	einfo "LDFLAGS=${LDFLAGS}"
+}
+
+src_configure_abi() {
+	cd "${BUILD_DIR}" || die
+	if [[ "${EMTR}" == "release" ]] ; then
+		_clear_env
+		_strip_flags
+		_apply_flags
+		_apply_env
+	elif [[ "${EMTR}" == "test" ]] ; then
+		_clear_env
 		if has_version "sys-devel/clang:13" \
 			&& has_version "=sys-devel/clang-runtime-13*" \
 			&& has_version "=sys-libs/compiler-rt-sanitizers-13*" \
@@ -283,48 +365,11 @@ sys-devel/clang:\${SLOT}, \
 		einfo "ctarget=${ctarget}"
 		export CC=${ctarget}-clang
 		export CXX=${ctarget}-clang++
-		filter-flags -frename-registers
-		strip-flags
-		filter-flags -g \
-			-fsanitize=* \
-			-fomit-frame-pointer \
-			-fopt-* \
-			-fno-omit-frame-pointer \
-			-fopenmp \
-			-fopenmp=* \
-			-shared-libsan \
-			-shared-libasan \
-			-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
-		append-cppflags -g \
-				-fsanitize=address,undefined \
-				-fno-omit-frame-pointer \
-				-fopenmp \
-				-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
-		append-ldflags -g \
-				-fsanitize=address,undefined \
-				-shared-libsan \
-				-fopenmp=libomp
-		export ASAN_SYMBOLIZER_PATH="$(get_llvm_prefix)/bin/llvm-symbolizer"
-		export LDSHARED="${CC} -shared"
-		export ASAN_OPTIONS="suppressions=${S}/suppressions/asan.supp:detect_leaks=0"
-		export LSAN_OPTIONS="suppressions=${S}/suppressions/lsan.supp"
-		export TSAN_OPTIONS="suppressions=${S}/suppressions/tsan.supp"
-		export UBSAN_OPTIONS=\
-"suppressions=${S}/suppressions/ubsan.supp:print_stacktrace=1"
+		_strip_flags
+		_apply_flags
 		echo -e '#include <stdio.h>\nint dlclose(void*handle){return 0;}' \
 			| ${CC} -shared -xc -o "${BUILD_DIR}/dlclose.so" - || die
-		preload_libsan
-		export LD_LIBRARY_PATH=\
-"$(get_llvm_prefix)/lib:$(dirname ${ASAN_DSO}):${LD_LIBRARY_PATH}"
-		einfo "ASAN_DSO=${ASAN_DSO}"
-		einfo "LDSHARED=${LDSHARED}"
-		einfo "ASAN_OPTIONS=${ASAN_OPTIONS}"
-		einfo "LSAN_OPTIONS=${LSAN_OPTIONS}"
-		einfo "TSAN_OPTIONS=${TSAN_OPTIONS}"
-		einfo "UBSAN_OPTIONS=${UBSAN_OPTIONS}"
-		einfo "DLCLOSE_PRELOAD=${DLCLOSE_PRELOAD}"
-		einfo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
-		einfo "LD_PRELOAD=${LD_PRELOAD}"
+		_apply_env 0
 	fi
 
 	local magick="--without-magick";
@@ -366,9 +411,29 @@ sys-devel/clang:\${SLOT}, \
 		--with-html-dir="/usr/share/gtk-doc/html"
 }
 
-multilib_src_compile() {
-	preload_libsan
+src_configure() {
+	src_configure_mtr() {
+		cd "${BUILD_DIR}" || die
+		multilib_foreach_abi src_configure_abi
+	}
+	mutex-test-release_foreach_impl src_configure_mtr
+}
+
+src_compile_abi() {
+	cd "${BUILD_DIR}" || die
+	_clear_env
+	_apply_env 0
+	_strip_flags
+	_apply_flags
 	emake
+}
+
+src_compile() {
+	src_compile_mtr() {
+		cd "${BUILD_DIR}" || die
+		multilib_foreach_abi src_compile_abi
+	}
+	mutex-test-release_foreach_impl src_compile_mtr
 }
 
 preload_libsan() {
@@ -406,21 +471,41 @@ preload_libsan() {
 	fi
 }
 
-multilib_src_test() {
+src_test_abi() {
+	cd "${BUILD_DIR}" || die
 	local ctarget=$(get_abi_CTARGET ${ABI})
 	[[ -z "${ctarget}" ]] && ctarget=$(get_abi_CHOST ${ABI})
 	export CC=${ctarget}-clang
 	export CXX=${ctarget}-clang++
-	preload_libsan
-	export ASAN_OPTIONS="suppressions=${S}/suppressions/asan.supp:detect_leaks=1"
+	_clear_env
+	_apply_env 1
 	python3 -m pytest -sv --log-cli-level=WARNING test/test-suite || die
 }
 
-multilib_src_install() {
-	use test && \
-die "You need to rebuild vips without the test USE flag to install a working \
-vips."
+src_test() {
+	src_test_mtr() {
+		cd "${BUILD_DIR}" || die
+		multilib_foreach_abi src_test_abi
+	}
+	mutex-test-release_foreach_impl src_test_mtr
+	SANDBOX_ON=1
+}
+
+src_install_abi() {
+	cd "${BUILD_DIR}" || die
 	emake DESTDIR="${D}" install
+}
+
+src_install() {
+	src_install_mtr() {
+		cd "${BUILD_DIR}" || die
+		multilib_foreach_abi src_install_abi
+	}
+	mutex-test-release_foreach_impl src_install_mtr
+
+	# Verify that release is only installed
+	grep -r -e "png_set_crc_action" $(find "${ED}" -name "*.so*") \
+		&& die "Detected fuzzed libs."
 }
 
 multilib_src_install_all() {
