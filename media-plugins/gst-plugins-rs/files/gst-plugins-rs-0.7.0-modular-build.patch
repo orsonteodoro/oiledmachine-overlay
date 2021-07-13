@@ -1,11 +1,10 @@
-diff -urp gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad.orig/meson.build gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad/meson.build
---- gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad.orig/meson.build	2021-01-04 03:26:45.000000000 -0800
-+++ gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad/meson.build	2021-06-15 19:31:51.590357341 -0700
-@@ -25,29 +25,113 @@ else
-   ext_static = 'a'
+diff -urp gst-plugins-rs-0.7.0.orig/meson.build gst-plugins-rs-0.7.0/meson.build
+--- gst-plugins-rs-0.7.0.orig/meson.build	2021-07-09 04:14:14.000000000 -0700
++++ gst-plugins-rs-0.7.0/meson.build	2021-07-13 02:38:22.352314283 -0700
+@@ -32,46 +32,148 @@ else
  endif
  
--plugins_rep = {
+ plugins_rep = {
 -  'audio/audiofx': 'libgstrsaudiofx',
 -  'video/cdg': 'libgstcdg',
 -  'audio/claxon': 'libgstclaxon',
@@ -23,8 +22,12 @@ diff -urp gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad.orig/meson.bui
 -  'generic/threadshare': 'libgstthreadshare',
 -  'utils/togglerecord': 'libgsttogglerecord',
 -  'video/hsv': 'libgsthsv',
--}
-+plugins_rep = {}
+-  'text/json': 'libgstrsjson',
+-  'text/regex': 'libgstrsregex',
+   # FIXME: libwebp-sys2 will build its bundled version on msvc and apple platforms
+   # https://github.com/qnighy/libwebp-sys2-rs/issues/4
+-  'video/webp': 'libgstrswebp',
+ }
  
  exclude = []
  extra_env = {}
@@ -131,17 +134,59 @@ diff -urp gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad.orig/meson.bui
 +  exclude += ['video/hsv']
 +endif
 +
++if get_option('json').enabled()
++  plugins_rep += {'text/json' : 'libgstrsjson'}
++else
++  exclude += ['text/json']
++endif
++
++if get_option('regex').enabled()
++  plugins_rep += {'text/regex' : 'libgstrsregex'}
++else
++  exclude += ['text/regex']
++endif
++
++if get_option('webp').enabled()
++  plugins_rep += {'video/webp' : 'libgstrswebp'}
++else
++  exclude += ['video/webp']
++endif
++
  if dependency('dav1d', required : get_option('dav1d')).found()
    plugins_rep += {'video/dav1d' : 'libgstrsdav1d'}
  else
-Only in gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad: meson.build.orig
-Only in gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad: meson.build.rej
-diff -urp gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad.orig/meson_options.txt gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad/meson_options.txt
---- gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad.orig/meson_options.txt	2021-01-04 03:26:45.000000000 -0800
-+++ gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad/meson_options.txt	2021-06-15 19:31:53.080415308 -0700
-@@ -3,3 +3,22 @@ option('sodium', type : 'combo',
-     choices : ['system', 'built-in', 'disabled'], value : 'built-in',
-     description : 'Weither to use libsodium from the system or the built-in version from the sodiumoxide crate')
+   exclude += ['video/dav1d']
+ endif
+ 
+-sodium = get_option ('sodium')
+-if sodium == 'system'
+-  dependency('libsodium')
+-  plugins_rep += {'generic/sodium': 'libgstsodium'}
+-  extra_env += {'SODIUM_USE_PKG_CONFIG': '1'}
+-elif sodium == 'built-in'
+-  plugins_rep += {'generic/sodium': 'libgstsodium'}
++sodium = get_option ('sodium').enabled()
++if get_option ('sodium').enabled()
++  if get_option ('sodium-built-in').enabled()
++    plugins_rep += {'generic/sodium': 'libgstsodium'}
++  else
++    dependency('libsodium')
++    plugins_rep += {'generic/sodium': 'libgstsodium'}
++    extra_env += {'SODIUM_USE_PKG_CONFIG': '1'}
++  endif
+ else
+   exclude += ['generic/sodium']
+ endif
+diff -urp gst-plugins-rs-0.7.0.orig/meson_options.txt gst-plugins-rs-0.7.0/meson_options.txt
+--- gst-plugins-rs-0.7.0.orig/meson_options.txt	2021-07-09 04:14:14.000000000 -0700
++++ gst-plugins-rs-0.7.0/meson_options.txt	2021-07-13 02:38:16.768096645 -0700
+@@ -1,5 +1,26 @@
+ option('dav1d', type : 'feature', value : 'auto', description : 'Build dav1d plugin')
+-option('sodium', type : 'combo',
+-    choices : ['system', 'built-in', 'disabled'], value : 'built-in',
+-    description : 'Weither to use libsodium from the system or the built-in version from the sodiumoxide crate')
++option('sodium', type : 'feature', value : 'auto', description : 'Build sodium plugin')
++option('sodium-built-in', type : 'feature', value : 'disabled', description : 'Weither to use libsodium from the system or the built-in version from the sodiumoxide crate')
  option('csound', type : 'feature', value : 'auto', description : 'Build csound plugin')
 +
 +option('audiofx', type: 'feature', value : 'auto', description : 'Build the audiofx plugin')
@@ -161,4 +206,7 @@ diff -urp gst-plugins-rs-fdc3ea68e8276ca9eaac077997d5d2e975af58ad.orig/meson_opt
 +option('threadshare', type: 'feature', value : 'auto', description : 'Build the threadshare plugin')
 +option('togglerecord', type: 'feature', value : 'auto', description : 'Build the togglerecord plugin')
 +option('hsv', type: 'feature', value : 'auto', description : 'Build the hsv plugin')
++option('json', type: 'feature', value : 'auto', description : 'Build the json plugin')
++option('regex', type: 'feature', value : 'auto', description : 'Build the regex plugin')
++option('webp', type: 'feature', value : 'auto', description : 'Build the webp plugin')
 +

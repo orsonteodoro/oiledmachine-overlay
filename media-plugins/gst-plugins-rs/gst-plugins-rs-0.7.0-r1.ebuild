@@ -17,24 +17,30 @@ BSD
 ISC
 MIT
 Unlicense
+unicode
 ZLIB"
 LICENSE="Apache-2.0 MIT LGPL-2.1+
 	${CARGO_THIRD_PARTY_PACKAGES}"
+# Apache-2.0 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-channel-0.3.15/LICENSE-APACHE
 # 0BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/adler-0.2.2/LICENSE-0BSD
 # BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/bindgen-0.54.1/LICENSE
 # BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/subtle-1.0.0/LICENSE
 # BSD-2 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/crossbeam-queue-0.2.3/LICENSE-THIRD-PARTY
 # BSD-2 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/rav1e-0.3.3/LICENSE
+# BSD-2 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-channel-0.3.15/src/mpsc/queue.rs
 # ISC ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/libloading-0.5.2/LICENSE
+# MIT ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-channel-0.3.15/LICENSE-MIT
 # Unlicense ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/termcolor-1.1.0/UNLICENSE
 # Unlicense ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/aho-corasick-0.7.13/UNLICENSE
+# unicode ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.25/src/unicode_tables/LICENSE-UNICODE
 # ZLIB ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/adler32-1.1.0/LICENSE
 # ZLIB ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/bytemuck-1.2.0/LICENSE-ZLIB.md
 
 # Live ebuilds or live snapshot don't get KEYWORDs
 
 SLOT="1.0/${PV}"
-IUSE+="	audiofx
+MODULES=(
+	audiofx
 	cdg
 	claxon
 	closedcaption
@@ -57,8 +63,10 @@ IUSE+="	audiofx
 	textwrap
 	threadshare
 	togglerecord
-	webp"
-# TODO add/package gst-plugins-csound
+	webp
+)
+IUSE+=" ${MODULES[@]}"
+REQUIRED_USE+=" || ( ${MODULES[@]} )"
 #RUST_V="1.52" upstrem requirement
 RUST_DEPEND="
 	|| (
@@ -95,7 +103,7 @@ BDEPEND+=" ${BDEPEND}
 			sys-devel/clang:13[${MULTILIB_USEDEP}]
 		)
 	)
-	dev-util/cargo-c
+	>=dev-util/cargo-c-0.7
 	>=dev-util/meson-0.56"
 SRC_URI="
 https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${PV}/gst-plugins-rs-${PV}.tar.bz2
@@ -103,21 +111,11 @@ https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${PV}/gst-plug
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 PATCHES=(
-	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-modular-build.patch"
+	"${FILESDIR}/gst-plugins-rs-0.7.0-modular-build.patch"
 	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-rename-csound-ref.patch"
 )
 
 pkg_setup() {
-# Error message:
-#
-# thread 'main' panicked at 'called `Result::unwrap()` on an `Err` value: \
-# CargoToml("${S}/Cargo.toml", Toml(Error { inner: ErrorInner { kind: Custom, \
-# line: Some(12), col: 0, at: Some(121), message: "missing field `package`", \
-# key: [] } }))', src/build.rs:47:10
-#
-
-	ewarn "This package may fail to build.  Use the non _p suffix releases instead."
-
 	if has network-sandbox $FEATURES ; then
 			die \
 "FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
@@ -166,7 +164,7 @@ multilib_src_configure() {
 	else
 		die \
 "The LLVM/clang version is not supported.  Send a issue request to update the \
-ebuild."
+ebuild maintainer."
 	fi
 	einfo "LLVM=${LLVM_MAX_SLOT}"
 
@@ -190,11 +188,11 @@ ebuild."
 		$(meson_feature reqwest)
 		$(meson_feature rspng)
 		$(meson_feature rusoto)
+		$(meson_feature sodium)
 		$(meson_feature threadshare)
 		$(meson_feature togglerecord)
 		$(meson_feature webp)
 		$(meson_feature textwrap)
-		$(usex sodium -Dsodium=system -Dsodium=disabled)
 	)
 
 	pushd "${S}" || die
@@ -338,7 +336,6 @@ ebuild."
 		|| use threadshare \
 		|| use togglerecord \
 		|| use webp \
-		|| use  \
 		; then
 		# also tutorial plugin in || conditional
 		einfo "Using version-helper"
