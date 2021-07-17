@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -19,8 +19,9 @@ LICENSE="MIT SURF
 KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 ~sparc x86 ~x86-linux ~x86-macos"
 SLOT="0"
-IUSE+=" doc mod_adblock mod_adblock_spam404 mod_adblock_easylist mod_autoopen
-mod_link_hints mod_searchengines mod_simple_bookmarking_redux update_adblock"
+IUSE+=" doc microphone mod_adblock mod_adblock_spam404 mod_adblock_easylist
+mod_autoopen mod_link_hints mod_searchengines mod_simple_bookmarking_redux
+tabbed update_adblock -v4l"
 REQUIRED_USE+="
 	mod_adblock_easylist? ( mod_adblock )
 	mod_adblock_spam404? ( mod_adblock )
@@ -28,18 +29,24 @@ REQUIRED_USE+="
 	mod_simple_bookmarking_redux? ( savedconfig )
 	update_adblock? ( mod_adblock )"
 DEPEND+="
+	!sci-chemistry/surf
 	app-crypt/gcr[gtk,${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
-	net-libs/webkit-gtk:4[${MULTILIB_USEDEP}]
-	!sci-chemistry/surf
 	x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
-	mod_adblock? ( $(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
+	!microphone? (
+		net-libs/webkit-gtk:4[${MULTILIB_USEDEP},v4l?]
+	)
+	 microphone? (
+		net-libs/webkit-gtk:4[${MULTILIB_USEDEP},gstreamer,v4l?]
+	)
+	 mod_adblock? ( $(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
 			x11-apps/xprop )
 	!savedconfig? ( net-misc/curl[${MULTILIB_USEDEP}]
 			x11-apps/xprop
 			>=x11-misc/dmenu-4.7
-			x11-terms/st )"
+			x11-terms/st )
+	tabbed? ( x11-misc/tabbed )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	|| (
@@ -48,7 +55,7 @@ BDEPEND+="
 	)
 	update_adblock? ( ${PYTHON_DEPS} )"
 EGIT_BRANCH="surf-webkit2"
-EGIT_COMMIT="d068a3878b6b9f2841a49cd7948cdf9d62b55585"
+EGIT_COMMIT="761ea9e4c6c4d8aba4a4d39da9c9b4db8ac471b1"
 EGIT_REPO_URI="https://git.suckless.org/surf"
 AUTOOPEN_FN="surf-0.3-autoopen.diff"
 LINK_HINTS_FN="surf-9999-link-hints.diff"
@@ -57,7 +64,7 @@ SRC_URI="mod_autoopen? ( ${AUTOOPEN_FN} )
 	 mod_link_hints? ( ${LINK_HINTS_FN} )
 	 mod_searchengines? ( ${SEARCHENGINES_FN} )"
 inherit git-r3 savedconfig toolchain-funcs
-PATCHES=( "${FILESDIR}"/${PN}-9999-gentoo.patch )
+PATCHES=( "${FILESDIR}/${PN}-2.1-gentoo.patch" )
 DOCS=( README )
 SAVEDCONFIG_PATH="${PORTAGE_CONFIGROOT%/}/etc/portage/savedconfig/${CATEGORY}/${PF}"
 
@@ -88,6 +95,10 @@ If copied correctly, the sha1sum should be ${hash} .\n\
 }
 
 pkg_setup() {
+	if use v4l && use microphone ; then
+		ewarn "Both v4l and microphone support is in development."
+	fi
+
 	if use mod_autoopen ; then
 		_boilerplate_dl "${AUTOOPEN_FN}" "${AUTOOPEN_FN}" \
 			"https://surf.suckless.org/patches/autoopen/"
@@ -236,7 +247,14 @@ do \`cp ${S}/config.def.h ${SAVEDCONFIG_PATH}\` and change to:\n\
 		fi
 	fi
 
-	tc-export CC
+	if use v4l || use microphone ; then
+		#eapply "${FILESDIR}/surf-2.1-permission-requests-rework.patch"
+		#grep -q -e "AccessMicrophone" config.h && die "AccessMicrophone was replaced by AccessMediaStream"
+		#grep -q -e "AccessWebcam" config.h && die "AccessMicrophone was replaced by AccessMediaStream"
+		:;
+	fi
+
+	tc-export CC PKG_CONFIG
 
 	touch NEWS AUTHORS ChangeLog
 
@@ -254,7 +272,7 @@ LIBPREFIX = \$(PREFIX)/$(get_libdir)|g" \
 
 	local num_abis=$(multilib_get_enabled_abi_pairs | wc -l)
 	if [[ "${num_abis}" != "1" ]] ; then
-		die "You can only install for one abi"
+		die "You can only install for one ABI"
 	fi
 }
 
@@ -331,6 +349,13 @@ _update_adblock() {
 	cd /etc/surf/scripts/adblock || die
 	./update.sh
 	einfo "Done updating adblock rules"
+}
+
+src_install_all() {
+	einfo "Ran src_install_all,"
+	if use tabbed; then
+		dobin surf-open.sh
+	fi
 }
 
 pkg_postinst() {

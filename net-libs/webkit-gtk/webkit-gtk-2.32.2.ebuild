@@ -4,7 +4,7 @@
 EAPI=7
 
 # Corresponds to
-# WebKit 612.1.15 (20210514, main) ; See Source/WebKit/Configurations/Version.xcconfig
+# WebKit 612.1.18 (20210608, main) ; See Source/WebKit/Configurations/Version.xcconfig
 
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
@@ -126,11 +126,11 @@ vi zh_CN )
 #   standard for desktop yet
 
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
-dav1d +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2-only gnome-keyring
+dav1d +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2 gnome-keyring
 +gstreamer -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
 +libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp -seccomp
--spell -systemd test variation-fonts wayland +webassembly +webassembly-b3-jit
-+webcrypto +webgl -webrtc webvtt -webxr +X +yarr-jit"
+-spell -systemd test variation-fonts v4l wayland +webassembly
++webassembly-b3-jit +webcrypto +webgl -webrtc webvtt -webxr +X +yarr-jit"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -144,14 +144,16 @@ REQUIRED_USE+="
 	dfg-jit? ( jit )
 	ftl-jit? ( jit )
 	geolocation? ( introspection )
-	gles2-only? ( egl !opengl )
-	gstreamer? ( opengl? ( egl ) )
+	gles2? ( egl !opengl )
+	gstreamer? ( || ( opengl gles2 ) )
 	hardened? ( !jit )
+	opengl? ( egl !gles2 )
+	v4l? ( gstreamer mediastream )
 	wayland? ( egl )
 	webassembly? ( jit )
 	webassembly-b3-jit? ( ftl-jit webassembly )
 	webgl? ( gstreamer
-		|| ( gles2-only opengl ) )
+		|| ( gles2 opengl ) )
 	webrtc? ( mediastream )
 	webvtt? ( gstreamer )
 	webxr? ( webgl )
@@ -203,7 +205,6 @@ CLANG_V="6.0"
 GLIB_V="2.44.0"
 GSTREAMER_V="1.14.0"
 MESA_V="18.0.0_rc5"
-# The openmp? ( sys-libs/libomp ) depends is relevant to only clang.
 # xdg-dbus-proxy is using U 20.04 version
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
@@ -231,21 +232,21 @@ RDEPEND+="
 	egl? ( >=media-libs/mesa-${MESA_V}[egl,${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
 	geolocation? ( >=app-misc/geoclue-0.12.99:2.0 )
-	gles2-only? ( >=media-libs/mesa-${MESA_V}[gles2,${MULTILIB_USEDEP}] )
+	gles2? ( >=media-libs/mesa-${MESA_V}[gles2,${MULTILIB_USEDEP}] )
 	gnome-keyring? ( >=app-crypt/libsecret-0.18.6[${MULTILIB_USEDEP}] )
 	gstreamer? (
 		>=media-libs/gstreamer-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-bad-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
->=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[egl?,opengl?,X?,${MULTILIB_USEDEP}]
+>=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2?,egl?,opengl?,X?,${MULTILIB_USEDEP}]
 		>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 		dav1d? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},dav1d]
 		)
+		v4l? (
+			media-plugins/gst-plugins-meta:1.0[${MULTILIB_USEDEP},v4l]
+		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
-		)
-		gles2-only? (
->=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2,${MULTILIB_USEDEP}]
 		)
 	)
 	introspection? ( >=dev-libs/gobject-introspection-1.56.1:= )
@@ -270,7 +271,7 @@ RDEPEND+="
 		>=dev-libs/wayland-1.14.0[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.12[${MULTILIB_USEDEP}]
 		opengl? ( ${WPE_DEPEND} )
-		gles2-only? ( ${WPE_DEPEND} )
+		gles2? ( ${WPE_DEPEND} )
 	)
 	webcrypto? (
 		>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
@@ -341,8 +342,8 @@ BDEPEND+="
 # https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
 # Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
-EGIT_COMMIT="d5e91638838f10c735a266c40d22c16eb0056b60"
-ESVN_REVISION="277486"
+EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
+ESVN_REVISION="278597"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -373,9 +374,9 @@ pkg_pretend() {
 		fi
 	fi
 
-	if ! use opengl && ! use gles2-only; then
+	if ! use opengl && ! use gles2; then
 ewarn
-ewarn "You are disabling OpenGL usage (USE=opengl or USE=gles2-only) completely."
+ewarn "You are disabling OpenGL usage (USE=opengl or USE=gles2) completely."
 ewarn "This is an unsupported configuration meant for very specific embedded"
 ewarn "use cases, where there truly is no GL possible (and even that use case"
 ewarn "is very unlikely to come by). If you have GL (even software-only), you"
@@ -474,7 +475,7 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 		tc-check-openmp
 	fi
 
-	if use openmp || use lto ; then
+	if use lto ; then
 		llvm_pkg_setup
 	fi
 
@@ -500,8 +501,6 @@ Source/ThirdParty/libwebrtc
 src_prepare() {
 	eapply "${FILESDIR}/2.33.1-opengl-without-X-fixes.patch"
 	if use webrtc ; then
-		eapply "${FILESDIR}/2.33.2-add-ImplementationLacksVTable-to-RTCRtpReceiver.patch"
-		eapply "${FILESDIR}/2.33.2-add-ImplementationLacksVTable-to-RTCRtpSender.patch"
 		eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
 	fi
 	cmake_src_prepare
@@ -560,7 +559,7 @@ multilib_src_configure() {
 
 	local use_wpe_renderer=OFF
 	local opengl_enabled=OFF
-	if use opengl || use gles2-only; then
+	if use opengl || use gles2; then
 		opengl_enabled=ON
 		use wayland && use_wpe_renderer=ON
 	fi
@@ -585,7 +584,7 @@ multilib_src_configure() {
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
 		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation) # \
 # Runtime optional (talks over dbus service)
-		-DENABLE_GLES2=$(usex gles2-only)
+		-DENABLE_GLES2=$(usex gles2)
 		-DENABLE_GTKDOC=$(usex gtk-doc)
 		-DENABLE_GAMEPAD=$(usex gamepad)
 		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection)
@@ -617,7 +616,7 @@ multilib_src_configure() {
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
 # WPE renderer is used to implement accelerated compositing under wayland
-		$(cmake_use_find_package gles2-only OpenGLES2)
+		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package egl EGL)
 		$(cmake_use_find_package opengl OpenGL)
 	)
