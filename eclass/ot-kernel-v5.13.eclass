@@ -102,7 +102,7 @@ tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
 zen-sauce -zen-tune zen-tune-muqss"
 REQUIRED_USE+="
 	!muqss
-	!rt
+	!prjc
 	^^ ( cfs muqss prjc )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
@@ -271,7 +271,6 @@ fi
 
 # Not ready or not planned
 #	   muqss? ( ${CK_SRC_URI} )
-#	   rt? ( ${RT_SRC_URI} )
 #	   prjc? ( ${PRJC_SRC_URI} )
 
 # For CPU microarchitectures >= year 2020, assumes mutually exclusive
@@ -307,6 +306,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
 	   O3? ( ${O3_ALLOW_SRC_URI} )
+	   rt? ( ${RT_SRC_URI} )
 	   tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
