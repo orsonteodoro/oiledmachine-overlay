@@ -25,8 +25,8 @@ PATCH_CK_COMMIT_B="" # bottom / newest (not ready yet)
 PATCH_CK_COMMIT_T="" # top / oldest
 PATCH_FUTEX_COMMIT_B="74d0568c6f3aa4a5f2682f6d6b5a4d59044a762e" # bottom / newest
 PATCH_FUTEX_COMMIT_T="93ea4d3978ab84892db3d44445bc12c51fa627e3" # top / oldest
-PATCH_FUTEX2_COMMIT_B="2568c65603cd0168a29fdf4564d80e447117916a" # bottom / newest
-PATCH_FUTEX2_COMMIT_T="c193c6dd67f30469a90c1bb22a7b0a86f77d6717" # top / oldest
+PATCH_FUTEX2_COMMIT_B="db649ce1f5de12432be5bfedd8388eacc2f85efc" # bottom / newest
+PATCH_FUTEX2_COMMIT_T="f12c1f14276bce0f66e514b419e68506fb5bad55" # top / oldest
 PATCH_BBRV2_COMMIT_B="50a9bcbda886c487541cbe02e2ff6bf54107028c" # bottom / newest
 PATCH_BBRV2_COMMIT_T="03eeb3dfa421116c48e86376a2079fa7dd25e783" # top / oldest
 PATCH_KCP_COMMIT="aa17c1c6e894e75943950b0818af8695ae4a23b2"
@@ -58,7 +58,10 @@ b9e0aa2f3f28601a2ba794c927ffe4c7b3e59b60 \
 1eb5e3fe1b2094e9d50c442ff4d7feb59cfe9f60 \
 552079568fdb272fdcae5767cdb2877e9fdf269a \
 33da506ff25488b142d25efd3362f361cde9984b \
-732e5405c0311f1e32e6e4b0cd30fc104209e6bd"
+732e5405c0311f1e32e6e4b0cd30fc104209e6bd \
+aec8f00a3066a2589dd6ea97d5f86d81c8d40c4a \
+2e4c5f603d9942213fe76b88323d832048f5ad8c \
+67850ef3720d3e2b363db6b347ab59544b433bd7"
 
 # top / oldest, bottom / newest
 # Diced to let user can choose between UKSM, KSWAPD, OOMD
