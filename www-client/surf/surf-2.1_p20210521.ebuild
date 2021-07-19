@@ -19,9 +19,9 @@ LICENSE="MIT SURF
 KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 ~sparc x86 ~x86-linux ~x86-macos"
 SLOT="0"
-IUSE+=" doc microphone mod_adblock mod_adblock_spam404 mod_adblock_easylist
+IUSE+=" doc mod_adblock mod_adblock_spam404 mod_adblock_easylist
 mod_autoopen mod_link_hints mod_searchengines mod_simple_bookmarking_redux
-tabbed update_adblock +v4l"
+tabbed update_adblock +pulseaudio +v4l"
 REQUIRED_USE+="
 	mod_adblock_easylist? ( mod_adblock )
 	mod_adblock_spam404? ( mod_adblock )
@@ -34,12 +34,7 @@ DEPEND+="
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
-	!microphone? (
-		net-libs/webkit-gtk:4[${MULTILIB_USEDEP},v4l?]
-	)
-	 microphone? (
-		net-libs/webkit-gtk:4[${MULTILIB_USEDEP},gstreamer,v4l?]
-	)
+	net-libs/webkit-gtk:4[${MULTILIB_USEDEP},pulseaudio?,v4l?]
 	 mod_adblock? ( $(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
 			x11-apps/xprop )
 	!savedconfig? ( net-misc/curl[${MULTILIB_USEDEP}]
@@ -95,8 +90,8 @@ If copied correctly, the sha1sum should be ${hash} .\n\
 }
 
 pkg_setup() {
-	if use v4l && use microphone ; then
-		ewarn "Both v4l and microphone support is in development."
+	if use v4l ; then
+		ewarn "v4l support is in development."
 	fi
 
 	if use mod_autoopen ; then
@@ -247,9 +242,21 @@ do \`cp ${S}/config.def.h ${SAVEDCONFIG_PATH}\` and change to:\n\
 		fi
 	fi
 
-	#if use v4l || use microphone ; then
-	#	eapply "${FILESDIR}/surf-2.1-permission-requests-rework.patch"
-	#fi
+	local want_request_rework=0
+
+	if use pulseaudio ; then
+		want_request_rework=1
+	else
+		ewarn "Microphone support is disabled when the the pulseaudio USE flag is disabled too."
+	fi
+
+	if use v4l ; then
+		ewarn "v4l support is broken"
+	fi
+
+	if (( ${want_request_rework} == 1 )) ; then
+		eapply "${FILESDIR}/surf-2.1-permission-requests-rework.patch"
+	fi
 
 	tc-export CC PKG_CONFIG
 

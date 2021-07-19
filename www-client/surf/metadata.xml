@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- only on the forked version found on oiledmachine-overlay -->
   <maintainer type="person">
+    <!-- only on the forked version found on oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!-- only on gentoo's repo -->
   <maintainer type="person">
+    <!-- only on Gentoo's repo -->
     <email>jer@gentoo.org</email>
   </maintainer>
   <longdescription>
@@ -36,8 +36,10 @@
     <flag name="mod_searchengines">Adds custom search engine keyword searching
       support.</flag>
     <flag name="mod_simple_bookmarking_redux">Adds bookmarking support.</flag>
+    <flag name="pulseaudio">Adds PulseAudio and microphone support.</flag>
     <flag name="savedconfig">Without a saved config.h, this package depends on
       <pkg>net-misc/curl</pkg> and <pkg>x11-terms/st</pkg> for a default
       download mechanism</flag>
+    <flag name="v4l">Adds camera support.</flag>
   </use>
 </pkgmetadata>
