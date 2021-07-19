@@ -171,8 +171,8 @@ RDEPEND="${PYTHON_DEPS}
 	firmware? ( sys-kernel/linux-firmware )
 	llvm? (
 		|| ( $(gen_llvm_rdepends) )
-		cfi? ( $(gen_cfi_rdepends) )
-		lto? ( $(gen_lto_rdepends) )
+		cfi? ( || ( $(gen_cfi_rdepends) ) )
+		lto? ( || ( $(gen_lto_rdepends) ) )
 	)
 "
 

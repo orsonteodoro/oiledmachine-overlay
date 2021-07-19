@@ -57,10 +57,6 @@ IUSE+=" crypt_root_plain"	# Added by oteodoro.
 IUSE+=" subdir_mount"		# Added by the muslx32 overlay.
 REQUIRED_USE+=" crypt_root_plain? ( cryptsetup )"
 
-LLVM_SLOTS=(11 12 13)
-LLVM_LTO_SLOTS=(11 12 13)
-LLVM_CFI_SLOTS=(12 13)
-
 DEPEND+=" sys-fs/e2fsprogs
 	selinux? ( sys-libs/libselinux )"
 RDEPEND+=" ${DEPEND}
