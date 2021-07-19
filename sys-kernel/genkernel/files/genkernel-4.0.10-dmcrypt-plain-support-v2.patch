@@ -1,3 +1,8 @@
+Subject:       Changes to boot from plain dm-crypt device
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch Status:  Complete on 4.0.x
+Date:          2020-08-05 11:44:05.481351640 -0700
+
 diff -urp genkernel-4.0.10.orig/defaults/initrd.scripts genkernel-4.0.10/defaults/initrd.scripts
 --- genkernel-4.0.10.orig/defaults/initrd.scripts	2020-07-20 09:05:15.000000000 -0700
 +++ genkernel-4.0.10/defaults/initrd.scripts	2020-08-05 11:44:05.481351640 -0700

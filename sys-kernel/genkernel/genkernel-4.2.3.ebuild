@@ -1,62 +1,77 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # genkernel-9999        -> latest Git branch "master"
 # genkernel-VERSION     -> normal genkernel release
 
+# The original version of this ebuild is 4.2.3 from the gentoo overlay
+# modified with subdir_mount and crypt_root_plain changes.  Revision
+# bumps may change on the oiledmachine-overlay.
+
 EAPI="7"
 
-inherit bash-completion-r1
+PYTHON_COMPAT=( python3_{7..10} )
+
+inherit bash-completion-r1 python-single-r1
 
 # Whenever you bump a GKPKG, check if you have to move
 # or add new patches!
-VERSION_BOOST="1.73.0"
-VERSION_BTRFS_PROGS="5.6.1"
-VERSION_BUSYBOX="1.31.1"
+VERSION_BCACHE_TOOLS="1.0.8_p20141204"
+VERSION_BOOST="1.76.0"
+VERSION_BTRFS_PROGS="5.12.1"
+VERSION_BUSYBOX="1.33.1"
 VERSION_COREUTILS="8.32"
-VERSION_CRYPTSETUP="2.3.3"
+VERSION_CRYPTSETUP="2.3.6"
 VERSION_DMRAID="1.0.0.rc16-3"
-VERSION_DROPBEAR="2020.80"
-VERSION_EXPAT="2.2.9"
-VERSION_E2FSPROGS="1.45.6"
+VERSION_DROPBEAR="2020.81"
+VERSION_EUDEV="3.2.10"
+VERSION_EXPAT="2.4.1"
+VERSION_E2FSPROGS="1.46.2"
 VERSION_FUSE="2.9.9"
 VERSION_GPG="1.4.23"
+VERSION_HWIDS="20210613"
 VERSION_ISCSI="2.0.878"
 VERSION_JSON_C="0.13.1"
-VERSION_KMOD="27"
+VERSION_KMOD="29"
 VERSION_LIBAIO="0.3.112"
-VERSION_LIBGCRYPT="1.8.6"
-VERSION_LIBGPGERROR="1.38"
-VERSION_LVM="2.02.187"
+VERSION_LIBGCRYPT="1.9.3"
+VERSION_LIBGPGERROR="1.42"
+VERSION_LIBXCRYPT="4.4.23"
+VERSION_LVM="2.02.188"
 VERSION_LZO="2.10"
 VERSION_MDADM="4.1"
 VERSION_POPT="1.18"
-VERSION_STRACE="5.7"
-VERSION_THIN_PROVISIONING_TOOLS="0.8.5"
+VERSION_STRACE="5.12"
+VERSION_THIN_PROVISIONING_TOOLS="0.9.0"
 VERSION_UNIONFS_FUSE="2.0"
-VERSION_UTIL_LINUX="2.35.2"
-VERSION_XFSPROGS="5.6.0"
+VERSION_UTIL_LINUX="2.37"
+VERSION_XFSPROGS="5.12.0"
+VERSION_XZ="5.2.5"
 VERSION_ZLIB="1.2.11"
-VERSION_ZSTD="1.4.5"
+VERSION_ZSTD="1.5.0"
 
 COMMON_URI="
+	https://github.com/g2p/bcache-tools/archive/399021549984ad27bf4a13ae85e458833fe003d7.tar.gz -> bcache-tools-${VERSION_BCACHE_TOOLS}.tar.gz
 	https://dl.bintray.com/boostorg/release/${VERSION_BOOST}/source/boost_${VERSION_BOOST//./_}.tar.bz2
 	https://www.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${VERSION_BTRFS_PROGS}.tar.xz
 	https://www.busybox.net/downloads/busybox-${VERSION_BUSYBOX}.tar.bz2
 	mirror://gnu/coreutils/coreutils-${VERSION_COREUTILS}.tar.xz
 	https://www.kernel.org/pub/linux/utils/cryptsetup/v$(ver_cut 1-2 ${VERSION_CRYPTSETUP})/cryptsetup-${VERSION_CRYPTSETUP}.tar.xz
 	https://people.redhat.com/~heinzm/sw/dmraid/src/dmraid-${VERSION_DMRAID}.tar.bz2
-	https://dev.gentoo.org/~whissi/dist/dropbear/dropbear-${VERSION_DROPBEAR}.tar.bz2
+	https://matt.ucc.asn.au/dropbear/releases/dropbear-${VERSION_DROPBEAR}.tar.bz2
+	https://dev.gentoo.org/~blueness/eudev/eudev-${VERSION_EUDEV}.tar.gz
 	https://github.com/libexpat/libexpat/releases/download/R_${VERSION_EXPAT//\./_}/expat-${VERSION_EXPAT}.tar.xz
 	https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${VERSION_E2FSPROGS}/e2fsprogs-${VERSION_E2FSPROGS}.tar.xz
 	https://github.com/libfuse/libfuse/releases/download/fuse-${VERSION_FUSE}/fuse-${VERSION_FUSE}.tar.gz
 	mirror://gnupg/gnupg/gnupg-${VERSION_GPG}.tar.bz2
+	https://github.com/gentoo/hwids/archive/hwids-${VERSION_HWIDS}.tar.gz
 	https://github.com/open-iscsi/open-iscsi/archive/${VERSION_ISCSI}.tar.gz -> open-iscsi-${VERSION_ISCSI}.tar.gz
 	https://s3.amazonaws.com/json-c_releases/releases/json-c-${VERSION_JSON_C}.tar.gz
 	https://www.kernel.org/pub/linux/utils/kernel/kmod/kmod-${VERSION_KMOD}.tar.xz
 	https://releases.pagure.org/libaio/libaio-${VERSION_LIBAIO}.tar.gz
 	mirror://gnupg/libgcrypt/libgcrypt-${VERSION_LIBGCRYPT}.tar.bz2
 	mirror://gnupg/libgpg-error/libgpg-error-${VERSION_LIBGPGERROR}.tar.bz2
+	https://github.com/besser82/libxcrypt/archive/v${VERSION_LIBXCRYPT}.tar.gz -> libxcrypt-${VERSION_LIBXCRYPT}.tar.gz
 	https://mirrors.kernel.org/sourceware/lvm2/LVM2.${VERSION_LVM}.tgz
 	https://www.oberhumer.com/opensource/lzo/download/lzo-${VERSION_LZO}.tar.gz
 	https://www.kernel.org/pub/linux/utils/raid/mdadm/mdadm-${VERSION_MDADM}.tar.xz
@@ -66,6 +81,7 @@ COMMON_URI="
 	https://github.com/rpodgorny/unionfs-fuse/archive/v${VERSION_UNIONFS_FUSE}.tar.gz -> unionfs-fuse-${VERSION_UNIONFS_FUSE}.tar.gz
 	https://www.kernel.org/pub/linux/utils/util-linux/v${VERSION_UTIL_LINUX:0:4}/util-linux-${VERSION_UTIL_LINUX}.tar.xz
 	https://www.kernel.org/pub/linux/utils/fs/xfs/xfsprogs/xfsprogs-${VERSION_XFSPROGS}.tar.xz
+	https://tukaani.org/xz/xz-${VERSION_XZ}.tar.gz
 	https://zlib.net/zlib-${VERSION_ZLIB}.tar.gz
 	https://github.com/facebook/zstd/archive/v${VERSION_ZSTD}.tar.gz -> zstd-${VERSION_ZSTD}.tar.gz
 "
@@ -78,7 +94,7 @@ if [[ ${PV} == 9999* ]] ; then
 else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 s390 sparc x86"
+	#KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86"	# patches are unfinished or untested.
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
@@ -88,8 +104,10 @@ LICENSE="GPL-2"
 SLOT="0"
 RESTRICT=""
 IUSE="ibm +firmware"
-IUSE+=" subdir_mount" # added by muslx32 overlay
-IUSE+=" crypt_root_plain"
+IUSE+=" crypt_root_plain"	# Added by oteodoro.
+IUSE+=" subdir_mount"		# Added by the muslx32 overlay.
+IUSE+=" +llvm"			# Added by the oiledmachine-overlay.
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 # Note:
 # We need sys-devel/* deps like autoconf or automake at _runtime_
@@ -97,10 +115,11 @@ IUSE+=" crypt_root_plain"
 # mdadm... during initramfs generation which will require these
 # things.
 DEPEND=""
-RDEPEND="${DEPEND}
+RDEPEND="${PYTHON_DEPS}
 	app-arch/cpio
 	>=app-misc/pax-utils-1.2.2
 	app-portage/elt-patches
+	dev-util/gperf
 	sys-apps/sandbox
 	sys-devel/autoconf
 	sys-devel/autoconf-archive
@@ -141,6 +160,7 @@ src_prepare() {
 
 	# Update software.sh
 	sed -i \
+		-e "s:VERSION_BCACHE_TOOLS:${VERSION_BCACHE_TOOLS}:"\
 		-e "s:VERSION_BOOST:${VERSION_BOOST}:"\
 		-e "s:VERSION_BTRFS_PROGS:${VERSION_BTRFS_PROGS}:"\
 		-e "s:VERSION_BUSYBOX:${VERSION_BUSYBOX}:"\
@@ -153,12 +173,14 @@ src_prepare() {
 		-e "s:VERSION_E2FSPROGS:${VERSION_E2FSPROGS}:"\
 		-e "s:VERSION_FUSE:${VERSION_FUSE}:"\
 		-e "s:VERSION_GPG:${VERSION_GPG}:"\
+		-e "s:VERSION_HWIDS:${VERSION_HWIDS}:"\
 		-e "s:VERSION_ISCSI:${VERSION_ISCSI}:"\
 		-e "s:VERSION_JSON_C:${VERSION_JSON_C}:"\
 		-e "s:VERSION_KMOD:${VERSION_KMOD}:"\
 		-e "s:VERSION_LIBAIO:${VERSION_LIBAIO}:"\
 		-e "s:VERSION_LIBGCRYPT:${VERSION_LIBGCRYPT}:"\
 		-e "s:VERSION_LIBGPGERROR:${VERSION_LIBGPGERROR}:"\
+		-e "s:VERSION_LIBXCRYPT:${VERSION_LIBXCRYPT}:"\
 		-e "s:VERSION_LVM:${VERSION_LVM}:"\
 		-e "s:VERSION_LZO:${VERSION_LZO}:"\
 		-e "s:VERSION_MDADM:${VERSION_MDADM}:"\
@@ -170,18 +192,25 @@ src_prepare() {
 		-e "s:VERSION_USERSPACE_RCU:${VERSION_USERSPACE_RCU}:"\
 		-e "s:VERSION_UTIL_LINUX:${VERSION_UTIL_LINUX}:"\
 		-e "s:VERSION_XFSPROGS:${VERSION_XFSPROGS}:"\
+		-e "s:VERSION_XZ:${VERSION_XZ}:"\
 		-e "s:VERSION_ZLIB:${VERSION_ZLIB}:"\
 		-e "s:VERSION_ZSTD:${VERSION_ZSTD}:"\
 		"${S}"/defaults/software.sh \
 		|| die "Could not adjust versions"
 
-
 	if use subdir_mount ; then # conditional and codeblock and use flag added by muslx32 overlay
-		eapply "${FILESDIR}"/${PN}-4.0.10-subdir-mount.patch
+		ewarn "The subdir_mount USE flag is untested for ${PV}.  Do not use at this time.  Use the 3.5.x.x ebuild instead."
+		eapply "${FILESDIR}/${PN}-4.1.2-subdir-mount.patch"
 	fi
 
 	if use crypt_root_plain ; then
-		eapply "${FILESDIR}"/${PN}-4.0.10-dmcrypt-plain-support-v2.patch
+		ewarn "The crypt_root_plain USE flag is untested for ${PV}.  Do not use at this time.  Use the 4.0.x ebuild instead."
+		eapply "${FILESDIR}/${PN}-4.2.3-dmcrypt-plain-support-v2.patch"
+	fi
+
+	if use llvm ; then
+		ewarn "The llvm USE flag is untested for ${PV}.  If it fails, try the 4.0.x ebuild instead."
+		eapply "${FILESDIR}/${PN}-4.2.3-llvm-support.patch"
 	fi
 }
 
@@ -210,6 +239,9 @@ src_install() {
 	doins -r "${S}"/*
 
 	fperms +x /usr/share/genkernel/gen_worker.sh
+	fperms +x /usr/share/genkernel/path_expander.py
+
+	python_fix_shebang "${ED}"/usr/share/genkernel/path_expander.py
 
 	newbashcomp "${FILESDIR}"/genkernel-4.bash "${PN}"
 	insinto /etc
@@ -275,6 +307,31 @@ pkg_postinst() {
 			elog "instead."
 		fi
 	fi
+
+	local n_root_args=$(grep -o -- '\<root=' /proc/cmdline 2>/dev/null | wc -l)
+	if [[ ${n_root_args} > 1 ]] ; then
+		ewarn "WARNING: Multiple root arguments (root=) on kernel command-line detected!"
+		ewarn "If you are appending non-persistent device names to kernel command-line,"
+		ewarn "next reboot could fail in case running system and initramfs do not agree"
+		ewarn "on detected root device name!"
+	fi
+
+	if [[ -d /run ]] ; then
+		local permission_run_expected="drwxr-xr-x"
+		local permission_run=$(stat -c "%A" /run)
+		if [[ "${permission_run}" != "${permission_run_expected}" ]] ; then
+			ewarn "Found the following problematic permissions:"
+			ewarn ""
+			ewarn "    ${permission_run} /run"
+			ewarn ""
+			ewarn "Expected:"
+			ewarn ""
+			ewarn "    ${permission_run_expected} /run"
+			ewarn ""
+			ewarn "This is known to be causing problems for any UDEV-enabled service."
+		fi
+	fi
+
 	elog
 	elog "The 4.x Genkernel patches for subdir_mount are"
 	elog "experimental and untested."

@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Orson Teodoro
+# Copyright 2019-2021 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -44,7 +44,7 @@ CVE_ALLOW_MODULE_MAINTAINER_REVIEWED=0x00000008
 
 CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH=0x00010000 # immediate links only
 
-# Same patch fix author but newer version v2->v3 where v3 is chosen
+# Same patch fix author but newer version v2 -> v3 where v3 is chosen
 CVE_ALLOW_NVD_INDIRECT_LINKED_PATCH=0x00020000
 
 CVE_ALLOW_CORPORATE_REVIEWED=0x00040000
@@ -118,7 +118,7 @@ TUXPARONI_SRC_URI="
 https://github.com/orsonteodoro/tuxparoni/archive/master.tar.gz"
 
 fetch_tuxparoni() {
-	einfo "Fetching tuxparoni from a live source..."
+einfo "Fetching tuxparoni from a live source..."
 	wget -O "${T}/${TUXPARONI_A_FN}" "${TUXPARONI_SRC_URI}" || die
 }
 
@@ -143,10 +143,10 @@ fetch_cve_hotfixes() {
 	local min_year=""
 	[[ "${CVE_MIN_YEAR}" ]] \
 		&& min_year="-mn ${CVE_MIN_YEAR}"
-
-	ewarn \
-"The cve_hotfix USE flag is still experimental and unstable and may not work \
-at random times."
+ewarn
+ewarn "The cve_hotfix USE flag is still experimental and unstable and may not"
+ewarn "work at random times."
+ewarn
 	pushd "${WORKDIR}/tuxparoni-master" || die
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		local b="${distdir}/ot-sources-src"
@@ -156,19 +156,19 @@ at random times."
 		chmod +x tuxparoni
 		sed -i -e "s|root:root|portage:portage|" tuxparoni || die
 
-		einfo "If the CVE fixer fails, do:  rm -rf ${d}"
-		einfo "Fetching NVD JSONs"
+einfo "If the CVE fixer fails, do:  rm -rf ${d}"
+einfo "Fetching NVD JSONs"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons \
 			-t "${T}" -mbc ${CVE_MAX_BULK_CONNECTIONS} \
-			${min_year} || die \
-		"You may need to manually remove ${d}/{feeds,jsons} folders"
-		einfo "Fetching patches"
+			${min_year} || \
+die "You may need to manually remove ${d}/{feeds,jsons} folders"
+einfo "Fetching patches"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-patches \
 			-t "${T}" -au -mpc ${CVE_MAX_PATCH_CONNECTIONS} \
 			${allow_crash_prevention} \
 			${allow_crash_untagged_patches} \
-			${min_year} || die \
-		"You may need to manually remove ${d}/{feeds,jsons} folders"
+			${min_year} || \
+die "You may need to manually remove ${d}/{feeds,jsons} folders"
 
 		# copy custom backport patches
 		cp "${FILESDIR}"/CVE* "${d}/custom_patches"
@@ -183,7 +183,7 @@ test_cve_hotfixes() {
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
-		einfo "Dry testing"
+einfo "Dry testing"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-dry-test -t "${T}" \
 			${min_year} || true
 	popd
@@ -197,7 +197,7 @@ get_cve_report() {
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
-		einfo "Generating Report"
+einfo "Generating Report"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-report -t "${T}" \
 			${min_year} || true
 	popd
@@ -211,7 +211,7 @@ apply_cve_hotfixes() {
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
-		einfo "Applying cve hotfixes"
+einfo "Applying cve hotfixes"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-apply -t "${T}" \
 			${min_year} || die
 	popd

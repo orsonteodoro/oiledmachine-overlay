@@ -1,7 +1,12 @@
-diff -urp genkernel-4.1.0.orig/defaults/initrd.scripts genkernel-4.1.0/defaults/initrd.scripts
---- genkernel-4.1.0.orig/defaults/initrd.scripts	2020-08-10 02:19:15.000000000 -0700
-+++ genkernel-4.1.0/defaults/initrd.scripts	2020-08-23 23:24:40.222516098 -0700
-@@ -1640,7 +1640,7 @@ start_volumes() {
+Subject:       Changes to boot from plain dm-crypt device
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch Status:  Incomplete on 4.2.x, Work In Progress (WIP)
+Date:          2021-07-18 21:59:42.058896161 -0700
+
+diff -urp genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults/initrd.scripts
+--- genkernel-4.2.3.orig/defaults/initrd.scripts	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/defaults/initrd.scripts	2021-07-18 21:59:42.058896161 -0700
+@@ -1682,7 +1682,7 @@ start_volumes() {
  			then
  				good_msg "ZFS pool ${ZFS_POOL} already imported."
  
@@ -10,14 +15,14 @@ diff -urp genkernel-4.1.0.orig/defaults/initrd.scripts genkernel-4.1.0/defaults/
  				then
  					good_msg "LUKS detected. Reimporting ${ZFS_POOL} ..."
  
-@@ -1808,14 +1808,27 @@ openLUKS() {
+@@ -1870,14 +1870,27 @@ openLUKS() {
  			KEYDEV_ERROR=0
  		else
  			LUKS_DEVICE=$(find_real_device "${LUKS_DEVICE}")
 -			if [ -z "${LUKS_DEVICE}" ]
 +			if [ -z "${LUKS_DEVICE}" -a -z "${CRYPT_ROOT_PLAIN}" ]
  			then
- 				bad_msg "Looks like CRYPT_${TYPE} kernel cmdline argument is not set." ${CRYPT_SILENT}
+ 				bad_msg "Failed to find LUKS device. If crypt_${1} kernel command-line argument is correct you are probably missing kernel support for your storage!" ${CRYPT_SILENT}
  				DEV_ERROR=1
  				continue
  			fi
@@ -40,7 +45,7 @@ diff -urp genkernel-4.1.0.orig/defaults/initrd.scripts genkernel-4.1.0/defaults/
  			then
  				bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
  				DEV_ERROR=1
-@@ -1911,7 +1924,12 @@ openLUKS() {
+@@ -1975,7 +1988,12 @@ openLUKS() {
  					fi
  				fi
  				# At this point, keyfile or not, we're ready!
@@ -54,7 +59,7 @@ diff -urp genkernel-4.1.0.orig/defaults/initrd.scripts genkernel-4.1.0/defaults/
  				crypt_filter_ret=$?
  
  				[ -e /dev/tty.org ] \
-@@ -2277,7 +2295,7 @@ start_LUKS() {
+@@ -2344,7 +2362,7 @@ start_LUKS() {
  	[ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
  		&& sleep 6 && bootstrapKey "ROOT"
  
@@ -63,12 +68,14 @@ diff -urp genkernel-4.1.0.orig/defaults/initrd.scripts genkernel-4.1.0/defaults/
  	then
  		openLUKS "root"
  		if [ -n "${REAL_ROOT}" ]
-diff -urp genkernel-4.1.0.orig/defaults/linuxrc genkernel-4.1.0/defaults/linuxrc
---- genkernel-4.1.0.orig/defaults/linuxrc	2020-08-10 02:19:15.000000000 -0700
-+++ genkernel-4.1.0/defaults/linuxrc	2020-08-23 23:22:48.158193037 -0700
-@@ -246,6 +246,9 @@ do
- 			CRYPT_ROOT=${x#*=}
- 			USE_CRYPTSETUP=1
+Only in genkernel-4.2.3/defaults: initrd.scripts.orig
+Only in genkernel-4.2.3/defaults: initrd.scripts.rej
+diff -urp genkernel-4.2.3.orig/defaults/linuxrc genkernel-4.2.3/defaults/linuxrc
+--- genkernel-4.2.3.orig/defaults/linuxrc	2021-07-18 21:58:11.599254494 -0700
++++ genkernel-4.2.3/defaults/linuxrc	2021-07-18 21:58:35.276207666 -0700
+@@ -224,6 +224,9 @@ do
+ 		crypt_root_options=*)
+ 			CRYPT_ROOT_OPTIONS=$(echo ${CRYPT_ROOT_OPTIONS} ${x#*=} | sed -e 's/,/ /g')
  		;;
 +		crypt_root_plain=*)
 +			CRYPT_ROOT_PLAIN=${x#*=}
@@ -76,3 +83,4 @@ diff -urp genkernel-4.1.0.orig/defaults/linuxrc genkernel-4.1.0/defaults/linuxrc
  		crypt_swap=*)
  			CRYPT_SWAP=${x#*=}
  			USE_CRYPTSETUP=1
+Only in genkernel-4.2.3/defaults: linuxrc.orig

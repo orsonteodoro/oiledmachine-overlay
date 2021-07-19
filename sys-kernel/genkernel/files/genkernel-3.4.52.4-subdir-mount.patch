@@ -1,3 +1,8 @@
+Subject:       Changes to boot from a subdirectory (e.g. /usr/${CHOST})
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch Status:  Complete on 3.4.x
+Date:          2017-05-24 02:46:49.013298357 +0000
+
 diff -urp genkernel-3.4.52.4.orig/defaults/linuxrc genkernel-3.4.52.4/defaults/linuxrc
 --- genkernel-3.4.52.4.orig/defaults/linuxrc	2016-01-05 23:55:05.000000000 +0000
 +++ genkernel-3.4.52.4/defaults/linuxrc	2017-05-24 02:46:49.013298357 +0000

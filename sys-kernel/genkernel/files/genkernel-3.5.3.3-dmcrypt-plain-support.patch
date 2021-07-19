@@ -1,3 +1,8 @@
+Subject:       Changes to boot from plain dm-crypt device
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch Status:  Complete on 3.5.x.x
+Date:          2019-01-28 05:01:05.478991171 -0800
+
 diff -urp genkernel.bak/defaults/initrd.scripts genkernel/defaults/initrd.scripts
 --- genkernel.bak/defaults/initrd.scripts	2019-01-27 15:56:56.459872616 -0800
 +++ genkernel/defaults/initrd.scripts	2019-01-28 05:01:05.478991171 -0800

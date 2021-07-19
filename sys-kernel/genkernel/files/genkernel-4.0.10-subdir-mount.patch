@@ -1,3 +1,8 @@
+Subject:       Changes to boot from a subdirectory (e.g. /usr/${CHOST})
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch Status:  Untested on 4.0.x / Unknown / Work In Progress (WIP)
+Date:          2020-08-03 20:42:04.662872556 -0700
+
 --- a/defaults/linuxrc.orig	2020-07-20 09:05:15.000000000 -0700
 +++ b/defaults/linuxrc	2020-08-03 20:42:04.662872556 -0700
 @@ -79,6 +79,9 @@ do

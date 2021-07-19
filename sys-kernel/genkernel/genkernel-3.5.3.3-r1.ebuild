@@ -53,20 +53,21 @@ LICENSE="GPL-2"
 SLOT="0"
 RESTRICT=""
 IUSE="cryptsetup ibm +firmware selinux"
-IUSE+=" subdir_mount" #added by muslx32 overlay
-IUSE+=" crypt_root_plain"
+IUSE+=" crypt_root_plain"	# Added by oteodoro.
+IUSE+=" subdir_mount"		# Added by the muslx32 overlay.
 
 REQUIRED_USE="crypt_root_plain? ( cryptsetup )"
 
-DEPEND="sys-fs/e2fsprogs
+DEPEND+=" sys-fs/e2fsprogs
 	selinux? ( sys-libs/libselinux )"
-RDEPEND="${DEPEND}
+RDEPEND+=" ${DEPEND}
 	cryptsetup? ( sys-fs/cryptsetup )
 	app-arch/cpio
 	>=app-misc/pax-utils-1.2.2
 	sys-apps/util-linux:=[static-libs(+)]
 	firmware? ( sys-kernel/linux-firmware )
-	!<sys-apps/openrc-0.9.9"
+	!<sys-apps/openrc-0.9.9
+"
 # pax-utils is used for lddtree
 
 if [[ ${PV} == 9999* ]]; then
@@ -111,11 +112,11 @@ src_prepare() {
 		|| die "Could not adjust versions"
 
 	if use subdir_mount ; then #conditional and codeblock and use flag added by muslx32 overlay
-		epatch "${FILESDIR}"/${PN}-3.4.52.4-subdir-mount.patch
+		epatch "${FILESDIR}/${PN}-3.4.52.4-subdir-mount.patch"
 	fi
 
 	if use crypt_root_plain ; then
-		epatch "${FILESDIR}"/${PN}-3.5.3.3-dmcrypt-plain-support.patch
+		epatch "${FILESDIR}/${PN}-3.5.3.3-dmcrypt-plain-support.patch"
 	fi
 
 	epatch_user

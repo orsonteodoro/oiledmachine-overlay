@@ -1,3 +1,8 @@
+Subject:       Changes to boot from a subdirectory (e.g. /usr/${CHOST})
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch Status:  Untested on 4.1.x / Unknown / Work In Progress (WIP)
+Date:          2020-10-04 10:31:45.318018948 -0700
+
 diff -urp genkernel-4.1.2.orig/defaults/linuxrc genkernel-4.1.2/defaults/linuxrc
 --- genkernel-4.1.2.orig/defaults/linuxrc	2020-10-04 10:27:22.607644315 -0700
 +++ genkernel-4.1.2/defaults/linuxrc	2020-10-04 10:31:45.318018948 -0700

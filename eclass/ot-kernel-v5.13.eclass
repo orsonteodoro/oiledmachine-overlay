@@ -1,5 +1,4 @@
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-# Copyright 2020-2021 Orson Teodoro
+# Copyright 2020-2021 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -191,42 +190,42 @@ LTO_CLANG_RDEPEND="
 	)"
 
 KCP_RDEPEND="
-	sys-devel/gcc:12
-	sys-devel/gcc:11
-	sys-devel/gcc:10
-	sys-devel/gcc:9.4.0
-	sys-devel/gcc:9.3.0
-	sys-devel/gcc:8.5.0
-	sys-devel/gcc:8.4.0
-	sys-devel/gcc:7.5.0
-	sys-devel/gcc:6.5.0
+	>=sys-devel/gcc-6.5.0
 	(
-		sys-devel/clang:12
-		sys-devel/llvm:12
+		sys-devel/clang:10
+		sys-devel/llvm:10
 	)
 	(
 		sys-devel/clang:11
 		sys-devel/llvm:11
 	)
 	(
-		sys-devel/clang:10
-		sys-devel/llvm:10
+		sys-devel/clang:12
+		sys-devel/llvm:12
+	)
+	(
+		sys-devel/clang:13
+		sys-devel/llvm:13
 	)"
 
 KCP_TC0="
 	|| (
 		>=sys-devel/gcc-10
 		(
-			sys-devel/clang:12
-			sys-devel/llvm:12
+			sys-devel/clang:10
+			sys-devel/llvm:10
 		)
 		(
 			sys-devel/clang:11
 			sys-devel/llvm:11
 		)
 		(
-			sys-devel/clang:10
-			sys-devel/llvm:10
+			sys-devel/clang:12
+			sys-devel/llvm:12
+		)
+		(
+			sys-devel/clang:13
+			sys-devel/llvm:13
 		)
 	)"
 
@@ -237,6 +236,18 @@ KCP_TC1="
 			sys-devel/clang:10
 			sys-devel/llvm:10
 		)
+		(
+			sys-devel/clang:11
+			sys-devel/llvm:11
+		)
+		(
+			sys-devel/clang:12
+			sys-devel/llvm:12
+		)
+		(
+			sys-devel/clang:13
+			sys-devel/llvm:13
+		)
 	)"
 
 KCP_TC2="
@@ -245,6 +256,10 @@ KCP_TC2="
 		(
 			sys-devel/clang:12
 			sys-devel/llvm:12
+		)
+		(
+			sys-devel/clang:13
+			sys-devel/llvm:13
 		)
 	)"
 
@@ -330,27 +345,33 @@ function ot-kernel_pkg_setup_cb() {
 		if [[ -n "${OT_KERNEL_DEVELOPER}" && "${OT_KERNEL_DEVELOPER}" == "1" ]] ; then
 			:;
 		else
-			die \
-"Building for TRESOR is currently broken for ${PV}.  Use the older LTS\n\
-branches instead.  Disable the tresor USE flag for this series to continue."
+eerror
+eerror "Building for TRESOR is currently broken for ${PV}.  Use the older LTS"
+eerror "branches instead.  Disable the tresor USE flag for this series to"
+eerror "continue."
+eerror
+			die
 		fi
 	fi
 	if has zen-tune ${IUSE_EFFECTIVE} ; then
 		if use zen-tune ; then
-			ewarn \
-"The zen-tune patch might cause lock up or slow io under heavy load\n\
-like npm.  These use flags are not recommended."
+ewarn
+ewarn "The zen-tune patch might cause lock up or slow io under heavy load"
+ewarn "like npm.  These use flags are not recommended."
+ewarn
 		fi
 	fi
 
 #	if use tresor ; then
-#		ewarn \
-#"TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
+#ewarn
+#ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
+#ewarn
 #	fi
 
 	if ! use arm64 ; then
-		ewarn \
-"CFI is only offered on the arm64 platform."
+ewarn
+ewarn "CFI is only offered on the arm64 platform."
+ewarn
 	fi
 }
 
@@ -430,11 +451,10 @@ function ot-kernel_apply_tresor_fixes() {
 # @DESCRIPTION:
 # Show messages and avoid collision triggering
 function ot-kernel_pkg_postinst_cb() {
-	einfo
-	einfo \
-"You may require the genkernel 4.x series to build the ${K_MAJOR_MINOR}.x\n\
-kernel series."
-	einfo
+einfo
+einfo "You may require the genkernel 4.x series to build the ${K_MAJOR_MINOR}.x"
+einfo "kernel series."
+einfo
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
@@ -454,10 +474,11 @@ function ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
 	elif [[ "${path}" =~ prjc_v5.12 ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
-		ewarn \
-"Applying genpatches 5022 kernel/sched/pelt.h fix for newer Project C.  It\n\
-still needs testing.  Remove this notice or codeblock if it is a success or\n\
-fixed upstream."
+ewarn
+ewarn "Applying genpatches 5022 kernel/sched/pelt.h fix for newer Project C."
+ewarn "It still needs testing.  Remove this notice or codeblock if it is a"
+ewarn "success or fixed upstream."
+ewarn
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
 	elif [[ "${path}" =~ "ck-0.210-for-5.12-d66b728-47a8b81.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
@@ -465,10 +486,10 @@ fixed upstream."
 "${FILESDIR}/ck-patchset-5.12-ck1-fix-cpufreq-gov-performance.patch"
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
-		einfo "Already applied ${path} upstream"
+einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
-		einfo "Already applied ${path} upstream"
+einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${CK_FN}" ]] ; then

@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<!-- ebuild fork only on this oiledmachine-overlay -->
 	<maintainer type="person">
+		<!-- Only for this ebuild on the oiledmachine-overlay -->
 		<email>orsonteodoro@hotmail.com</email>
 	</maintainer>
-	<!-- originator -->
 	<maintainer type="project">
+		<!-- Originator -->
 		<email>genkernel@gentoo.org</email>
 	</maintainer>
 	<longdescription>
@@ -29,6 +29,7 @@
 		<flag name="firmware">Prefer system firmware
 			<pkg>sys-kernel/linux-firmware</pkg> over local copy.
 			</flag>
+		<flag name="llvm">Enable support for the Clang/LLVM toolchain</flag>
 	</use>
 	<!--
 	<upstream>

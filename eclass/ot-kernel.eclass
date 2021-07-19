@@ -1,5 +1,4 @@
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-# Copyright 2019-2020 Orson Teodoro
+# Copyright 2019-2021 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -414,7 +413,7 @@ function _dpatch() {
 	local opts="${1}"
 	local path="${2}"
 	local msg_extra="${3}"
-	einfo "Applying ${path}${msg_extra}"
+einfo "Applying ${path}${msg_extra}"
 	patch ${opts} -i "${path}" || die
 }
 
@@ -430,12 +429,14 @@ function _tpatch() {
 	local failed_hunks_acceptable="${3}"
 	local reversed_acceptable="${4}"
 	local msg_extra="${5}"
-	einfo \
-"Applying ${path}${msg_extra}\n\
-with ${failed_hunks_acceptable} hunk(s) failed and\n\
-with ${reversed_acceptable} already patched warnings\n\
-which will be resolved or patched immediately.  These estimates may be far\n\
-less than the actual."
+einfo
+einfo "Applying ${path}${msg_extra}"
+einfo "  with ${failed_hunks_acceptable} hunk(s) failed and"
+einfo "  with ${reversed_acceptable} already patched warnings"
+einfo "which will be resolved or patched immediately."
+einfo
+einfo "These estimates may be far less than the actual."
+einfo
 
 	local n_failures=0
 	for x_i in $(patch ${opts} --dry-run -i "${path}" \
@@ -443,18 +444,22 @@ less than the actual."
 		n_failures=$((${n_failures}+${x_i}))
 	done
 	if (( ${n_failures} != ${failed_hunks_acceptable} )) ; then
-		die \
-"${path} needs a rebase. n_failures=${n_failures}\n\
+eerror
+eerror "${path} needs a rebase. n_failures=${n_failures} \
 failed_hunks_acceptable=${failed_hunks_acceptable}"
+eerror
+		die
 	fi
 
 	local n_reversed=$(patch ${opts} --dry-run -i "${path}" \
 			| grep -F -e "Reversed (or previously applied) patch detected!" \
 			| wc -l)
 	if (( ${n_reversed} != ${reversed_acceptable} )) ; then
-		die \
-"${path} needs a rebase. n_reversed=${n_reversed}\n\
+eerror
+eerror "${path} needs a rebase. n_reversed=${n_reversed} \
 reversed_acceptable=${reversed_acceptable}"
+eerror
+		die
 	fi
 
 	if (( ${reversed_acceptable} > 0 )) ; then
@@ -479,51 +484,47 @@ function ot-kernel_pkg_pretend() {
 # https://www.kernel.org/category/releases.html
 function _report_eol() {
 	if [[ "${K_MAJOR_MINOR}" == "5.10" ]] ; then
-		einfo \
-"\n\
-The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
-Dec 2022.\n\
-\n\
-Use the virtual/ot-sources-lts meta package to ensure proper updates in the\n\
-same major.minor branch.\n\
-"
+einfo
+einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
+einfo "Dec 2022."
+einfo
+einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
+einfo "the same major.minor branch."
+einfo
 	elif [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
-		einfo \
-"\n\
-The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
-Dec 2025.\n\
-\n\
-Use the virtual/ot-sources-lts meta package to ensure proper updates in the\n\
-same major.minor branch.\n\
-"
+einfo
+einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
+einfo "Dec 2025."
+einfo
+einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
+einfo "the same major.minor branch."
+einfo
 	elif [[ "${K_MAJOR_MINOR}" == "4.19" ]] ; then
-		einfo \
-"\n\
-The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
-Dec 2024.\n\
-\n\
-Use the virtual/ot-sources-lts meta package to ensure proper updates in the\n\
-same major.minor branch.\n\
-"
+einfo
+einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
+einfo "Dec 2024."
+einfo
+einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
+einfo "the same major.minor branch."
+einfo
 	elif [[ "${K_MAJOR_MINOR}" == "4.14" ]] ; then
-		einfo \
-"\n\
-The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
-Jan 2024.\n\
-\n\
-Use the virtual/ot-sources-lts meta package to ensure proper updates in the\n\
-same major.minor branch.\n\
-"
+einfo
+einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
+einfo "Jan 2024."
+einfo
+einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
+einfo "the same major.minor branch."
+einfo
 	else
-		ewarn \
-"\n\
-The ${K_MAJOR_MINOR} kernel series is not a Long Term Support (LTS)\n\
-kernel.  It may suddenly stop receiving security updates completely between a\n\
-week to several months.\n\
-\n\
-Use the virtual/ot-sources-stable meta package to ensure a smooth update\n\
-between stable releases differing between major.minor branches\n\
-"
+ewarn
+ewarn "The ${K_MAJOR_MINOR} kernel series is not a Long Term Support (LTS)"
+ewarn "kernel.  It may suddenly stop receiving security updates completely"
+ewarn "between a week to several months."
+ewarn
+einfo
+einfo "Use the virtual/ot-sources-stable meta package to ensure a smooth"
+einfo "updates between stable releases differing between major.minor branches"
+einfo
 	fi
 }
 
@@ -533,12 +534,14 @@ between stable releases differing between major.minor branches\n\
 function zensauce_setup() {
 	if use zen-sauce ; then
 		if [[ -n "ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}" ]] ; then
-			die \
-"ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_} has been been renamed to\n\
-ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}.  Rename or remove this envvar\n\
-to continue"
+eerror
+eerror "ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_} has been been renamed to"
+eerror "ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}.  Rename or remove this envvar"
+eerror "to continue"
+eerror
+			die
 		fi
-		einfo "Applying the Zen secret sauce"
+einfo "Applying the Zen secret sauce"
 		local ZM="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
 		if [[ -z "${!ZM}" ]] ; then
 			local zensauce_uri
@@ -554,19 +557,21 @@ to continue"
 "${zensauce_cmpbase_uri}/misc"
 			fi
 
-			eerror \
-"You must define ZENSAUCE_WHITELIST_${K_MAJOR_MINOR} in /etc/make.conf\n\
-or as a per-package env containing commits to accepted from\n\
-${zensauce_uri}\n\
-\n\
-For example:\n\
-\n\
-  ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}=\"214d031dbeef940efe1dbba274caf5ccc4ff2774 \
-83d7f482c60b6dfda030325394ec07baac7f5a30\"\n\
-  ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}=\"214d031 83d7f48\"\n\
-\n\
-This must be in chronological and topological order (if the timestamp is the\n\
-same) from oldest-left to newest-right.  Only 40 or 7 digit IDs are accepted."
+eerror
+eerror "You must define ZENSAUCE_WHITELIST_${K_MAJOR_MINOR} in /etc/make.conf"
+eerror "or as a per-package env containing commits to accepted from"
+eerror "${zensauce_uri}"
+eerror
+eerror "For example:"
+eerror
+eerror "  ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}=\"\
+214d031dbeef940efe1dbba274caf5ccc4ff2774 \
+83d7f482c60b6dfda030325394ec07baac7f5a30\""
+eerror "  ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}=\"214d031 83d7f48\""
+eerror "This must be in chronological and topological order (if the timestamp"
+eerror "is the same) from oldest-left to newest-right.  Only 40 or 7 digit IDs"
+eerror "are accepted."
+eerror
 			die
 		fi
 	fi
@@ -579,9 +584,11 @@ function _check_network_sandbox() {
 	# justifications
 	# cve-hotfix - requires to download patch URI linked from NVD website
 	if has network-sandbox $FEATURES ; then
-		die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to use\n\
-live patches."
+eerror
+eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
+eerror "to use live patches."
+eerror
+		die
 	fi
 }
 
@@ -632,7 +639,9 @@ function ot-kernel_pkg_setup() {
 	fi
 
 	if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
-		einfo "Live patchable branches is experimental and is a Work In Progress (WIP)"
+ewarn
+ewarn "Live patchable branches is experimental and is a Work In Progress (WIP)"
+ewarn
 	fi
 }
 
@@ -662,7 +671,7 @@ function get_current_commit_for_k_major_minor_branch() {
 # @DESCRIPTION:
 # Fetches a local copy of the linux kernel repo.
 function ot-kernel_fetch_linux_sources() {
-	einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
+einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}" || die
 	d="${distdir}/ot-sources-src/linux"
@@ -675,7 +684,7 @@ function ot-kernel_fetch_linux_sources() {
 		if ! ( git remote -v | grep -F -e "${LINUX_REPO_URI}" ) \
 			> /dev/null ; \
 		then
-			einfo "Removing ${d}"
+einfo "Removing ${d}"
 			rm -rf "${d}" || die
 		fi
 		popd
@@ -685,7 +694,7 @@ function ot-kernel_fetch_linux_sources() {
 
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}" || die
-		einfo "Cloning the vanilla Linux kernel project"
+einfo "Cloning the vanilla Linux kernel project"
 		git clone "${LINUX_REPO_URI}" "${d}"
 		cd "${d}" || die
 		git checkout master
@@ -700,10 +709,9 @@ function ot-kernel_fetch_linux_sources() {
 	else
 		local G=$(find "${d}" -group "root")
 		if (( ${#G} > 0 )) ; then
-			die \
-"You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
+die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
 		fi
-		einfo "Updating the vanilla Linux kernel project"
+einfo "Updating the vanilla Linux kernel project"
 		cd "${d}" || die
 		git clean -fdx
 		git reset --hard master
@@ -750,7 +758,7 @@ ot-kernel_unpack_point_releases() {
 # @DESCRIPTION:
 # Apply the PREEMPT_RT patches.
 function apply_rt() {
-	einfo "Applying PREEMPT_RT patches"
+einfo "Applying PREEMPT_RT patches"
 	mkdir -p "${T}/rt" || die
 	pushd "${T}/rt" || die
 		unpack "${DISTDIR}/${RT_FN}"
@@ -776,8 +784,9 @@ function apply_zensauce() {
 					|| ( "${#c_wl}" == "40" \
 					&& "${c_wl}" == "${c_bl}" ) ]] ; \
 				then
-					ewarn \
-"${c} is already applied via USE flag.  Activate via USE flag instead."
+ewarn
+ewarn "${c} is already applied via USE flag.  Activate via USE flag instead."
+ewarn
 					blacklisted=1
 					continue
 				fi
@@ -799,24 +808,24 @@ function apply_zensauce() {
 # @FUNCTION: apply_futex_wait_multiple
 # @DESCRIPTION:
 # Adds a new syscall operation FUTEX_WAIT_MULTIPLE to the futex
-# syscall.  It may shave of <5% CPU usage.
+# syscall.  It may shave of < 5% CPU usage.
 function apply_futex_wait_multiple() {
 	_fpatch "${DISTDIR}/${FUTEX_WAIT_MULTIPLE_FN}"
 }
 
 # @FUNCTION: apply_futex2
 # @DESCRIPTION:
-# Adds a new futex2 syscalls.  It may shave of <5% CPU usage.
+# Adds a new futex2 syscalls.  It may shave of < 5% CPU usage.
 function apply_futex2() {
 	_fpatch "${DISTDIR}/${FUTEX2_FN}"
 }
 
 # @FUNCTION: apply_bbrv2
 # @DESCRIPTION:
-# Adds BBRv2 to have ~1% retransmits in comparison to BBRv1 at ~5%
-# the expense of some bandwidth (~10 mbps) relative to BBR but significantlly
-# better than CUBIC.  BBRv1 will will still maintain ~38% throughput after
-# some packet loss 3% but CUBIC will have <1% thoughput when there is a
+# Adds BBRv2 to have ~ 1% retransmits in comparison to BBRv1 at ~ 5%
+# the expense of some bandwidth (~ 10 mbps) relative to BBR but significantlly
+# better than CUBIC.  BBRv1 will will still maintain ~ 38% throughput after
+# some packet loss 3% but CUBIC will have < 1% thoughput when there is a
 # few percent of packet loss.
 function apply_bbrv2() {
 	_fpatch "${DISTDIR}/${BBRV2_FN}"
@@ -847,7 +856,7 @@ function _filter_genpatches() {
 
 	pushd "${d}" || die
 		for f in $(ls -1) ; do
-			#einfo "Processing ${f}"
+#einfo "Processing ${f}"
 			if [[ "${f}" =~ \.patch$ ]] ; then
 				local l=$(echo "${f}" | cut -f 1 -d"_")
 				if (( ${l} < 1500 )) ; then
@@ -873,7 +882,7 @@ function _filter_genpatches() {
 					fi
 				done
 				if [[ "${is_blacklist}" == "1" ]] ; then
-					einfo "Skipping genpatches ${l}"
+einfo "Skipping genpatches ${l}"
 					continue
 				fi
 
@@ -890,7 +899,7 @@ function _filter_genpatches() {
 # Apply the BMQ CPU scheduler patchset.
 function apply_bmq() {
 	cd "${S}" || die
-	einfo "Applying bmq"
+einfo "Applying bmq"
 	_fpatch "${DISTDIR}/${BMQ_FN}"
 }
 
@@ -905,7 +914,7 @@ function apply_ck() {
 # @DESCRIPTION:
 # Apply the base genpatches patchset.
 function apply_genpatches_base() {
-	einfo "Applying the genpatches base"
+einfo "Applying the genpatches base"
 	local d
 	d="${T}/${GENPATCHES_BASE_FN%.tar.xz}"
 	mkdir "$d"
@@ -931,7 +940,7 @@ function apply_genpatches_base() {
 # @DESCRIPTION:
 # Apply the experimental genpatches patchset.
 function apply_genpatches_experimental() {
-	einfo "Applying genpatches experimental"
+einfo "Applying genpatches experimental"
 
 	local d
 	d="${T}/${GENPATCHES_EXPERIMENTAL_FN%.tar.xz}"
@@ -948,7 +957,7 @@ function apply_genpatches_experimental() {
 # @DESCRIPTION:
 # Apply the extra genpatches patchset.
 function apply_genpatches_extras() {
-	einfo "Applying genpatches extras"
+einfo "Applying genpatches extras"
 
 	local d
 	d="${T}/${GENPATCHES_EXTRAS_FN%.tar.xz}"
@@ -970,7 +979,7 @@ function apply_o3() {
 	cd "${S}" || die
 
 	if ver_test "${K_MAJOR_MINOR}" -ge 5.4 ; then
-		einfo "Allow O3 unrestricted"
+einfo "Allow O3 unrestricted"
 		_fpatch "${DISTDIR}/${O3_ALLOW_FN}"
 	elif ver_test "${K_MAJOR_MINOR}" -lt 5.4 ; then
 		# fix patch
@@ -978,11 +987,11 @@ function apply_o3() {
 			"${DISTDIR}"/${O3_CO_FN} \
 			> "${T}"/${O3_CO_FN} || die
 
-		einfo "Applying O3"
-		einfo "Applying ${O3_CO_FN}"
+einfo "Applying O3"
+einfo "Applying ${O3_CO_FN}"
 		_fpatch "${T}/${O3_CO_FN}"
 
-		einfo "Applying ${O3_RO_FN}"
+einfo "Applying ${O3_RO_FN}"
 		mkdir -p drivers/gpu/drm/amd/display/dc/basics/
 		# trick patch for unattended patching
 		touch drivers/gpu/drm/amd/display/dc/basics/logger.c
@@ -995,7 +1004,7 @@ function apply_o3() {
 # Apply the PDS CPU scheduler patchset.
 function apply_pds() {
 	cd "${S}" || die
-	einfo "Applying PDS"
+einfo "Applying PDS"
 	_fpatch "${DISTDIR}/${PDS_FN}"
 }
 
@@ -1004,7 +1013,7 @@ function apply_pds() {
 # Apply the Project C CPU scheduler patchset.
 function apply_prjc() {
 	cd "${S}" || die
-	einfo "Applying Project C"
+einfo "Applying Project C"
 	_fpatch "${DISTDIR}/${PRJC_FN}"
 }
 
@@ -1016,7 +1025,7 @@ function apply_prjc() {
 #
 function apply_tresor() {
 	cd "${S}" || die
-	einfo "Applying TRESOR"
+einfo "Applying TRESOR"
 	local platform
 	if use tresor_aesni ; then
 		platform="aesni"
@@ -1061,7 +1070,7 @@ function apply_vanilla_point_releases() {
 				# already patched or good
 				_fpatch "${f}"
 			else
-				eerror "Failed ${a}"
+eerror "Failed ${a}"
 				die
 			fi
 		done
@@ -1072,7 +1081,7 @@ function apply_vanilla_point_releases() {
 # @DESCRIPTION:
 # Apply some of the ZenTune patches.
 function apply_zentune() {
-	einfo "Applying some of the zen-tune patches"
+einfo "Applying some of the zen-tune patches"
 	for x in ${ZENTUNE_COMMITS} ; do
 		local id="${x}"
 		_fpatch "${DISTDIR}/zen-tune-${K_MAJOR_MINOR}-${id}.patch"
@@ -1083,7 +1092,7 @@ function apply_zentune() {
 # @DESCRIPTION:
 # Apply the Zen timing MuQSS patches.
 function apply_zentune_muqss() {
-	einfo "Applying the zen-tune interactive MuQSS patches"
+einfo "Applying the zen-tune interactive MuQSS patches"
 	for x in ${PATCH_ZENTUNE_MUQSS_COMMITS} ; do
 		local id="${x}"
 		_fpatch "${DISTDIR}/zen-tune-muqss-${K_MAJOR_MINOR}-${id}.patch"
@@ -1102,39 +1111,35 @@ function ot-kernel_src_unpack() {
 		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
 		#local cpu_family=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
 		#local cpu_model=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "model" | head -n 1 | grep -E -o "[0-9]+"))
-		einfo "Best GCC version:  ${gcc_v}"
-		einfo "Best Clang version:  ${clang_v}"
+einfo "Best GCC version:  ${gcc_v}"
+einfo "Best Clang version:  ${clang_v}"
 
 		if (  (				 $(ver_test ${gcc_v}   -ge 9.0) ) \
 		   || ( [[ -n "${clang_v}" ]] && $(ver_test ${clang_v} -ge 9.0) ) \
 		   ) \
 			&& test -f "${DISTDIR}/${KCP_9_0_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
-			einfo \
-"Queuing the kernel_compiler_patch for use under gcc >= 9.0 or clang >= 9.0."
+einfo "Queuing the kernel_compiler_patch for use under gcc >= 9.0 or clang >= 9.0."
 			_PATCHES+=( "${DISTDIR}/${KCP_9_0_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
 		elif ( tc-is-gcc && $(ver_test ${gcc_v} -ge 8.1) ) \
 			&& test -f "${DISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
-			einfo \
-"Queuing the kernel_compiler_patch for use under gcc >= 8.1"
+einfo "Queuing the kernel_compiler_patch for use under gcc >= 8.1"
 			_PATCHES+=( "${DISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		elif ( tc-is-gcc && $(ver_test ${gcc_v} -ge 4.9) ) \
 			&& test -f "${DISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
-			einfo \
-"Queuing the kernel_compiler_patch for use under gcc >= 4.9"
+einfo "Queuing the kernel_compiler_patch for use under gcc >= 4.9"
 			_PATCHES+=( "${DISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		else
-			ewarn \
-"Cannot find a compatible kernel_compiler_patch for gcc_v = "${gcc_v}" and\n\
-kernel ${K_MAJOR_MINOR}.  Skipping the kernel_compiler_patch."
+ewarn "Cannot find a compatible kernel_compiler_patch for gcc_v = ${gcc_v}"
+ewarn "and kernel ${K_MAJOR_MINOR}.  Skipping the kernel_compiler_patch."
 		fi
 	fi
 
 	if has kernel-compiler-patch-cortex-a72 ${IUSE_EFFECTIVE} ; then
 		if use kernel-compiler-patch-cortex-a72 ; then
-			einfo "Queuing the kernel_compiler_patch for the Cortex A72"
+einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 			_PATCHES+=( "${DISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		fi
 	fi
@@ -1171,9 +1176,10 @@ kernel ${K_MAJOR_MINOR}.  Skipping the kernel_compiler_patch."
 			get_cve_report
 			test_cve_hotfixes
 			apply_cve_hotfixes
-			ewarn \
-"Applying custom patchsets on top of cve_hotfix USE flag may fail to patch or\n\
-fail to compile."
+ewarn
+ewarn "Applying custom patchsets on top of cve_hotfix USE flag may fail to"
+ewarn "patch or fail to compile."
+ewarn
 		fi
 	fi
 
@@ -1281,8 +1287,8 @@ function ot-kernel_src_compile() {
 		if use tresor_sysfs ; then
 			cp -a "${DISTDIR}/tresor_sysfs.c" "${T}"
 			cd "${T}" || die
-			einfo \
-"Running:  $(tc-getCC) ${CFLAGS} -Wno-unused-result tresor_sysfs.c -o tresor_sysfs"
+einfo "Running:  $(tc-getCC) ${CFLAGS} -Wno-unused-result tresor_sysfs.c -o \
+tresor_sysfs"
 			$(tc-getCC) ${CFLAGS} -Wno-unused-result \
 				tresor_sysfs.c -o tresor_sysfs || die
 		fi
@@ -1313,10 +1319,11 @@ function ot-kernel_src_install() {
 #
 function ot-kernel_pkg_postinst() {
 	if use disable_debug ; then
-		einfo \
-"The disable debug scripts have been placed in your /usr/src folder.\n"\
-"They disable debug paths, logging, output for a performance gain.\n"\
-"You should run it like \`/usr/src/disable_debug x86_64 /usr/src/.config\`\n"
+einfo
+einfo "The disable debug scripts have been placed in your /usr/src folder."
+einfo "They disable debug paths, logging, output for a performance gain."
+einfo "You should run it like \`/usr/src/disable_debug x86_64 /usr/src/.config\`"
+einfo
 		cp "${FILESDIR}/_disable_debug_v${DISABLE_DEBUG_V}" \
 			"${EROOT}/usr/src/_disable_debug" || die
 		cp "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" \
@@ -1332,32 +1339,30 @@ function ot-kernel_pkg_postinst() {
 			mv tresor_sysfs "${EROOT}/usr/bin" || die
 			chmod 700 "${EROOT}"/usr/bin/tresor_sysfs || die
 			# same hash for 5.1 and 5.0.13 for tresor_sysfs
-			einfo \
-"\n\
-/usr/bin/tresor_sysfs CLI command which uses /sys/kernel/tresor/key too\n\
-are provided to set your TRESOR key directly.  Your key should be a\n\
-case-insensitive hex string without spaces and without any prefixes at least\n\
-{128,192,256}-bits corresponding to AES-128, AES-192, AES-256.  Because\n\
-it is custom, you may supply your own key deriviation function (KDF) and/or\n\
-hashing algorithm, the result from gpg, or hardware key.\n\
-\n\
-If using /sys/kernel/tresor/password for plaintext passwords, they can only\n\
-be 53 characters maxiumum without the null character.  They will be sent to\n\
-a key derivation function that is 2000 iterations of SHA256.\n\
-\n\
-It's recommend that new users use /sys/kernel/tresor/password or set the\n\
-password at boot.\n\
-\n\
-Advanced users may use /sys/kernel/tresor/key instead.\n\
-\n"
+einfo
+einfo "The /usr/bin/tresor_sysfs CLI command which uses /sys/kernel/tresor/key too"
+einfo "is provided to set your TRESOR key directly.  Your key should be a"
+einfo "case-insensitive hex string without spaces and without any prefixes at least"
+einfo "{128,192,256}-bits corresponding to AES-128, AES-192, AES-256.  Because"
+einfo "it is custom, you may supply your own key deriviation function (KDF) and/or"
+einfo "hashing algorithm, the result from gpg, or hardware key."
+einfo
+einfo "If using /sys/kernel/tresor/password for plaintext passwords, they can only"
+einfo "be 53 characters maxiumum without the null character.  They will be sent to"
+einfo "a key derivation function that is 2000 iterations of SHA256."
+einfo
+einfo "It's recommend that new users use /sys/kernel/tresor/password or set the"
+einfo "password at boot."
+einfo
+einfo "Advanced users may use /sys/kernel/tresor/key instead."
+einfo
 		else
 			if has tresor ${IUSE_EFFECTIVE} ; then
 				if use tresor ; then
-					einfo \
-"\n\
-You can only enter a password that is 53 characters long without the null\n\
-character though the boot time TRESOR prompt.\n\
-\n"
+ewarn
+ewarn "You can only enter a password that is 53 characters long without the null"
+ewarn "character though the boot time TRESOR prompt."
+ewarn
 				fi
 			fi
 		fi
@@ -1365,75 +1370,82 @@ character though the boot time TRESOR prompt.\n\
 
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
-			einfo \
-"\n\
-To prevent the prompt on boot from scrolling off the screen, you can do one\n\
-of the following:\n\
-\n
-  Set CONSOLE_LOGLEVEL_QUIET <= 5 AND add \`quiet\` as a kernel\n\
-  parameter to the bootloader config.\n\
-\n\
-or\n\
-\n\
-  Set CONFIG_CONSOLE_LOGLEVEL_DEFAULT <= 5 (if you didn't set the\n\
-  \`quiet\` kernel parameter.)\n\
-\n\
-Setting CONFIG_CONSOLE_LOGLEVEL_DEFAULT and CONSOLE_LOGLEVEL_QUIET to <= 2\n\
-will wipe out all the boot time verbosity leaking into the TRESOR prompt\n\
-from drivers.\n\
-\n\
-TRESOR was not designed for parallel usage.  Only one TRESOR device at a\n\
-time can be used.\n\
-\n\
-TRESOR AES-192 and AES-256 is only available for the tresor_aesni USE flag.\n\
-\n\
-For 4.14, TRESOR with ECB and CBC are only available.\n\
-CBC is recommended for production in the 4.14 series.\n\
-\n\
-For LTS and stable, TRESOR with ECB, CBC, CTR, XTS are only available.\n\
-CBC is currently recommended for production.  CTR and XTS are still in\n\
-development and strongly not recommended.  The XTS and CTR implementations\n\
-will be reworked if possible in assembly code and registers.  Currently,\n\
-both CTS and CTR implementation allows copies of these infos into RAM memory\n\
-and not philosophically in alignment TRESOR which keeps keys out of memory.\n\
-Further XTS support may require modding at the kernel source code level.\n\
-\n\
-ECB is NOT recommended and should only be used for testing.\n\
-\n\
-The kernel may require modding the setkey portions to support different\n\
-crypto systems whenever crypto_cipher_setkey or crypto_skcipher_setkey\n\
-gets called.  The module tries to avoid copies the key to memory and\n\
-needs the key dump to registers at the time the user enters the key.\n\
-See CONFIG_CRYPTO_TRESOR code blocks in crypto/testmgr.c for details.\n\
-\n\
-Because it uses hardware breakpoint debug address registers, these debugging\n\
-features are mutually exclusive when TRESOR is being used.\n\
-\n
-TRESOR-XTS is limited to 64-bit arches and 256-bit keys, but 128-bit key for\n\
-the crypto key."
-			ewarn \
-"Using TRESOR with fscrypt is currently not supported.  The ebuild developer\n\
-is currently working towards that goal.  Changing the key in the middle\n\
-of writing may result in data loss, meaning half the data may be encrypted\n\
-with two different keys.  The fscrypt with TRESOR support will address this\n\
-problem."
+einfo
+einfo "To prevent the prompt on boot from scrolling off the screen, you can do"
+einfo "one of the following:"
+einfo
+einfo "  Set CONSOLE_LOGLEVEL_QUIET <= 5 AND add \`quiet\` as a kernel"
+einfo "  parameter to the bootloader config."
+einfo
+einfo "or"
+einfo
+einfo "  Set CONFIG_CONSOLE_LOGLEVEL_DEFAULT <= 5 (if you didn't set the"
+einfo "  \`quiet\` kernel parameter.)"
+einfo
+einfo "Setting CONFIG_CONSOLE_LOGLEVEL_DEFAULT and CONSOLE_LOGLEVEL_QUIET to"
+einfo "<= 2 will wipe out all the boot time verbosity leaking into the TRESOR"
+einfo "prompt from drivers."
+einfo
+einfo
+ewarn "TRESOR was not designed for parallel usage.  Only one TRESOR device at a"
+ewarn "time can be used."
+ewarn
+ewarn "TRESOR AES-192 and AES-256 is only available for the tresor_aesni"
+ewarn "USE flag."
+ewarn
+ewarn "For 4.14, TRESOR with ECB and CBC are only available."
+ewarn "CBC is recommended for production in the 4.14 series."
+ewarn
+ewarn "For LTS and stable, TRESOR with ECB, CBC, CTR, XTS are only available."
+ewarn "CBC is currently recommended for production.  CTR and XTS are still in"
+ewarn "development and strongly not recommended.  The XTS and CTR"
+ewarn "implementations will be reworked if possible in assembly code and"
+ewarn "registers.  Currently, both CTS and CTR implementation allows copies of"
+ewarn "these infos into RAM memory and not philosophically in alignment TRESOR"
+ewarn "which keeps keys out of memory.  Further XTS support may require modding"
+ewarn "at the kernel source code level."
+ewarn
+ewarn "ECB is NOT recommended and should only be used for testing."
+ewarn
+ewarn "The kernel may require modding the setkey portions to support different"
+ewarn "crypto systems whenever crypto_cipher_setkey or crypto_skcipher_setkey"
+ewarn "gets called.  The module tries to avoid copies the key to memory and"
+ewarn "needs the key dump to registers at the time the user enters the key."
+ewarn "See CONFIG_CRYPTO_TRESOR code blocks in crypto/testmgr.c for details."
+ewarn
+ewarn "Because it uses hardware breakpoint debug address registers, these"
+ewarn "debugging features are mutually exclusive when TRESOR is being used."
+ewarn
+ewarn "TRESOR-XTS is limited to 64-bit arches and 256-bit keys, but 128-bit key"
+ewarn "for the crypto key."
+ewarn
+ewarn "Using TRESOR with fscrypt is currently not supported.  The ebuild"
+ewarn "developer is currently working towards that goal.  Changing the key in"
+ewarn "the middle of writing may result in data loss, meaning half the data may"
+ewarn "be encrypted with two different keys.  The fscrypt with TRESOR support"
+ewarn "will address this problem."
+ewarn
 		fi
 		if use tresor_aesni ; then
-			einfo \
-"\n\
-TRESOR for AES-NI has not been tested.  It's left for users to test and fix."
+ewarn
+ewarn "TRESOR for AES-NI has not been tested.  It's left for users to test and"
+ewarn "fix."
+ewarn
 		fi
 	fi
 
-	einfo \
-"\n\
-For Genkernel users.  It's recommended to add either\n\
-  --compress-initramfs-type=zstd\n\
-or\n\
-  --compress-initramfs-type=lz4\n\
-to genkernel invocation if the compression type is present in the kernel\n\
-series.\n\
-\n"
+einfo
+einfo "For Genkernel users.  It's recommended to add either"
+einfo
+einfo "  --compress-initramfs-type=zstd"
+einfo
+einfo "or"
+einfo
+einfo "  --compress-initramfs-type=lz4"
+einfo
+einfo "to genkernel invocation if the compression type is present in the"
+einfo "kernel series."
+einfo
 
 	if declare -f ot-kernel_pkg_postinst_cb > /dev/null ; then
 		ot-kernel_pkg_postinst_cb
@@ -1444,57 +1456,161 @@ series.\n\
 			"${EROOT}"/usr/src/linux-${K_MAJOR_MINOR}.9999-ot/Makefile \
 			| head -n 1 | cut -f 3 -d " ")
 		local machine=$(uname -m)
-		ewarn \
-"If you use dkms, you must manually set the symlink to the kernel modules\n\
-from /lib/modules/${K_MAJOR_MINOR}.${sublevel}-ot-${machine} to\n\
-/lib/modules/${K_MAJOR_MINOR}.9999-ot-${machine}"
+ewarn
+ewarn "If you use dkms, you must manually set the symlink to the kernel"
+ewarn "modules from /lib/modules/${K_MAJOR_MINOR}.${sublevel}-ot-${machine} to"
+ewarn "/lib/modules/${K_MAJOR_MINOR}.9999-ot-${machine}"
+ewarn
 	fi
 
 	# For possible impractical passthough (pt) DMA attack, see
 	# https://link.springer.com/article/10.1186/s13173-017-0066-7#Fn1
-	einfo \
-"Please upgrade both the motherboard and CPU with support with either VT-d\n\
-or AMD-Vi to mitigate from cold-boot attack if using full disk encryption.\n\
-Ensure that that IOMMU is being used.  Do not disable IOMMU or use\n\
-passthrough (pt).  See\n\
-\n\
-  https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware\n\
-\n\
-for IOMMU supported hardware.  For details about the DMA side-channel attack, see\n\
-\n\
-  https://en.wikipedia.org/wiki/DMA_attack\n\
-\n\
-If you cannot afford the hardware, you may consider removing DMA based\n\
-ports, soldering connections, hardware based encrypted RAM, and\n\
-disabling DMA to mitigate against a DMA attack.\n\
-\n\
-Any crypto algorithm or password store that stores keys in memory or\n\
-registers are vulnerable.  This includes TRESOR as well.\n\
-\n\
-To properly use full disk encryption, do not use suspend to RAM and\n\
-shutdown the computer immediately on idle.\n\
-\n\
-Futher mitigation recommendations can be found at\n\
-\n\
-  https://en.wikipedia.org/wiki/Cold_boot_attack#Mitigation"
+ewarn
+ewarn "Please upgrade both the motherboard and CPU with support with either"
+ewarn "VT-d or AMD-Vi to mitigate from cold-boot attack if using full disk"
+ewarn "encryption.  Ensure that that IOMMU is being used.  Do not disable IOMMU"
+ewarn "or use passthrough (pt).  See"
+ewarn
+ewarn "  https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware"
+ewarn
+ewarn "for IOMMU supported hardware.  For details about the DMA side-channel"
+ewarn "attack, see"
+ewarn
+ewarn "  https://en.wikipedia.org/wiki/DMA_attack"
+ewarn
+ewarn "If you cannot afford the hardware, you may consider removing DMA based"
+ewarn "ports, soldering connections, hardware based encrypted RAM, and"
+ewarn "disabling DMA to mitigate against a DMA attack."
+ewarn
+ewarn "Any crypto algorithm or password store that stores keys in memory or"
+ewarn "registers are vulnerable.  This includes TRESOR as well."
+ewarn
+ewarn "To properly use full disk encryption, do not use suspend to RAM and"
+ewarn "shutdown the computer immediately on idle."
+ewarn
+ewarn "Futher mitigation recommendations can be found at"
+ewarn
+ewarn "  https://en.wikipedia.org/wiki/Cold_boot_attack#Mitigation"
+ewarn
 	if has rt $FEATURES ; then
 		if use rt ; then
-			einfo \
-"Don't forget to set CONFIG_PREEMPT_RT found at \"General setup\" in newer\n\
-kernels or in \"Processor type and features\" in older kernels\n\
-> Preemption Model >  Fully Preemptible Kernel (Real-Time)."
-			ewarn
-			ewarn \
-"The rt patchset for this package may drop anytime if lack of update activity\n\
-after several months due to project funding problems.  Begin: Jun 16, 2021"
+einfo
+einfo "Don't forget to set CONFIG_PREEMPT_RT found at \"General setup\" in"
+einfo "newer kernels or in \"Processor type and features\" in older kernels"
+einfo "> Preemption Model >  Fully Preemptible Kernel (Real-Time)."
+einfo
+ewarn
+ewarn "The rt patchset for this package may drop anytime if lack of update"
+ewarn "activity after several months due to project funding problems."
+ewarn "Dated: Jun 16, 2021"
+ewarn
 		fi
 	fi
 
 	# Remove genkernel problem with GK_FILENAME_CONFIG having spaces in EXTRAVERSION in file
 	local path="${EROOT}/usr/src/linux-${PV}-ot/include/config/kernel.release"
 	if [[ -f "${EROOT}/usr/src/linux-${PV}-ot/include/config/kernel.release" ]] ; then
-		einfo
-		einfo "Removed ${path} for genkernel"
+einfo
+einfo "Removed ${path} for genkernel"
 		rm -rf "${path}" || die
+	fi
+
+	local has_cfi
+
+	local has_llvm=0
+	local llvm_v_maj=12 # set to highest kcp arch requirement
+	local wants_cfi=0
+	local wants_lto=0
+	local gcc_v=$(best_version "sys-devel/gcc" \
+		| sed -r -e "s|sys-devel/gcc-||g" \
+		-e "s|-r[0-9]+||"| cut -f 1-3 -d ".")
+	if has_version "sys-devel/clang" ; then
+		has_llvm=1
+		llvm_v_maj=$(best_version "sys-devel/clang" \
+		| sed -r -e "s|sys-devel/clang-||g" \
+		-e "s|-r[0-9]+||" | cut -f 1 -d ".")
+	fi
+
+	if has cfi ${IUSE_EFFECTIVE} ; then
+		if use cfi ; then
+			wants_cfi=1
+		fi
+	fi
+	if has lto ${IUSE_EFFECTIVE} ; then
+		if use lto ; then
+			wants_lto=1
+		fi
+	fi
+
+	local kcp_arches=(
+		kernel-compiler-patch-zen3
+		kernel-compiler-patch-cooper_lake
+		kernel-compiler-patch-tiger_lake
+		kernel-compiler-patch-sapphire_rapids
+		kernel-compiler-patch-rocket_lake
+		kernel-compiler-patch-alder_lake
+	)
+
+	has_newer_kcp_arch=0
+	for a in ${kcp_arches[@]} ; do
+		if has ${a} ${IUSE_EFFECTIVE} ; then
+			if use ${a} ; then
+				has_newer_kcp_arch=1
+			fi
+		fi
+	done
+
+	if (( ${wants_lto} == 1 || ${wants_cfi} == 1 )) ; then
+einfo
+einfo "It's recommend to use sys-devel/genpatches[llvm]::oiledmachine-overlay"
+einfo "when building with LTO and/or CFI with the --llvm passed to genkernel."
+einfo
+einfo "To present the CFI/LTO options, you must:"
+einfo
+einfo "  \`make menuconfig \
+AR=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-ar \
+AS=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-as \
+CC=/usr/lib/llvm/${llvm_v_maj}/bin/clang \
+LD=/usr/bin/ld.lld \
+NM=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-nm \
+CLANG_FLAGS=\"-integrated-as\"\`"
+einfo
+einfo "CFI or LTO requires that the menuconfig settings are changed to:"
+einfo
+einfo "  General architecture-dependent options > Link Time Optimization (LTO) > Clang ThinLTO (EXPERIMENTAL)"
+einfo
+einfo "For CFI, the menuconfig item is found at:"
+einfo
+einfo "  General architecture-dependent options > Use Clang's Control Flow Integrity (CFI)"
+einfo
+	elif (( ${has_newer_kcp_arch} == 1 )) ; then
+einfo
+einfo "The kernel_compiler patch requires that you either add"
+einfo
+einfo "  --kernel-cc=/usr/bin/${CHOST}-gcc-${gcc_v}"
+		if [[ -n "${has_llvm}" ]] ; then
+einfo
+einfo "    or"
+einfo
+einfo "  use the sys-devel/genpatches[llvm]::oiledmachine-overlay package"
+einfo "  with the --llvm argument passed to genkernel"
+		fi
+einfo
+einfo "optimize for newer microarchitectures."
+einfo
+	fi
+
+	if has bbrv2 ${IUSE_EFFECTIVE} ; then
+		if use bbrv2 ; then
+einfo
+einfo "To enable BBRv2 go to"
+einfo
+einfo "  Networking support > Networking options >  TCP: advanced congestion control > BBR2 TCP"
+einfo
+einfo "To make BBRv2 the default go to"
+einfo
+einfo "  Networking support > Networking options >  TCP: advanced congestion control > Default TCP congestion control > BBR2"
+einfo
+		fi
 	fi
 }

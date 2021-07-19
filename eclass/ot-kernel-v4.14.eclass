@@ -1,5 +1,4 @@
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-# Copyright 2019-2020 Orson Teodoro
+# Copyright 2019-2021 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -74,16 +73,7 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
 
-KCP_RDEPEND="
-	sys-devel/gcc:12
-	sys-devel/gcc:11
-	sys-devel/gcc:10
-	sys-devel/gcc:9.4.0
-	sys-devel/gcc:9.3.0
-	sys-devel/gcc:8.5.0
-	sys-devel/gcc:8.4.0
-	sys-devel/gcc:7.5.0
-	sys-devel/gcc:6.5.0"
+KCP_RDEPEND=" >=sys-devel/gcc-6.5.0"
 
 RDEPEND+=" kernel-compiler-patch? ( || ( ${KCP_RDEPEND} ) )"
 
@@ -127,15 +117,17 @@ SRC_URI+=" genpatches? (
 function ot-kernel_pkg_setup_cb() {
 	# TRESOR for x86_64 generic was known to pass crypto testmgr on this
 	# version.
-	ewarn \
-"This ot-sources ${PV} release is only for research purposes or to access\n\
-TRESOR devices.  This ${K_MAJOR_MINOR}.x series is EOL for this repo but not for\n\
-upstream.  It will be removed immediately once TRESOR has been fixed for\n\
-mainline / stable for >=5.x ."
+ewarn
+ewarn "This ot-sources ${PV} release is only for research purposes or to access"
+ewarn "TRESOR devices.  This ${K_MAJOR_MINOR}.x series is EOL for this repo but"
+ewarn "not for upstream.  It will be removed immediately once TRESOR has been"
+ewarn "fixed for mainline / stable for >= 5.x."
+ewarn
 
 	if use tresor ; then
-		ewarn \
-"TRESOR for ${PV} is stable.  See dmesg for details on correctness."
+ewarn
+ewarn "TRESOR for ${PV} is stable.  See dmesg for details on correctness."
+ewarn
 	fi
 }
 
@@ -193,14 +185,15 @@ function ot-kernel_apply_tresor_fixes() {
 # Show messages and avoid collision triggering
 function ot-kernel_pkg_postinst_cb() {
 	if use muqss ; then
-		ewarn \
-"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will\n\
-cause a kernel panic on boot."
-		ewarn \
-"Using CONFIG_FORCE_IRQ_THREADING may halt the boot process when showing\n\
-loading initial ramdisk."
-		ewarn \
-"Expect several seconds of pause at loading initial ramdisk when booting."
+ewarn
+ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will"
+ewarn "cause a kernel panic on boot."
+ewarn
+ewarn "Using CONFIG_FORCE_IRQ_THREADING may halt the boot process when showing"
+ewarn "loading initial ramdisk."
+ewarn
+ewarn "Expect several seconds of pause at loading initial ramdisk when booting."
+ewarn
 	fi
 }
 

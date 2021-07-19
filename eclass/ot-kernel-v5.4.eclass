@@ -1,5 +1,4 @@
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-# Copyright 2019-2020 Orson Teodoro
+# Copyright 2019-2021 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -122,26 +121,22 @@ LICENSE+=" zen-tune? ( GPL-2 )"
 LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 
 KCP_RDEPEND="
-	sys-devel/gcc:12
-	sys-devel/gcc:11
-	sys-devel/gcc:10
-	sys-devel/gcc:9.4.0
-	sys-devel/gcc:9.3.0
-	sys-devel/gcc:8.5.0
-	sys-devel/gcc:8.4.0
-	sys-devel/gcc:7.5.0
-	sys-devel/gcc:6.5.0
+	>=sys-devel/gcc-6.5.0
 	(
-		sys-devel/clang:12
-		sys-devel/llvm:12
+		sys-devel/clang:10
+		sys-devel/llvm:10
 	)
 	(
 		sys-devel/clang:11
 		sys-devel/llvm:11
 	)
 	(
-		sys-devel/clang:10
-		sys-devel/llvm:10
+		sys-devel/clang:12
+		sys-devel/llvm:12
+	)
+	(
+		sys-devel/clang:13
+		sys-devel/llvm:13
 	)"
 
 RDEPEND+=" kernel-compiler-patch? ( || ( ${KCP_RDEPEND} ) )"
@@ -189,15 +184,17 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 function ot-kernel_pkg_setup_cb() {
 	if has zen-tune ${IUSE_EFFECTIVE} ; then
 		if use zen-tune ; then
-			ewarn \
-"The zen-tune patch might cause lock up or slow io under heavy load\n\
-like npm.  These use flags are not recommended."
+ewarn
+ewarn "The zen-tune patch might cause lock up or slow io under heavy load like"
+ewarn "npm.  These use flags are not recommended."
+ewarn
 		fi
 	fi
 
 	if use tresor ; then
-		ewarn \
-"TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
+ewarn
+ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
+ewarn
 	fi
 }
 
@@ -254,7 +251,7 @@ function ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c-for-5.4.patch"
 	if use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
-			einfo "See ${FILESDIR}/tresor-256-bit-aes-support-i686-v3.2-for-5.4.patch"
+einfo "See ${FILESDIR}/tresor-256-bit-aes-support-i686-v3.2-for-5.4.patch"
 			_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/tresor-256-bit-aes-support-i686-v3.2-for-5.4.patch"
 		fi
@@ -279,12 +276,14 @@ function ot-kernel_apply_tresor_fixes() {
 # Show messages and avoid collision triggering
 function ot-kernel_pkg_postinst_cb() {
 	if use muqss ; then
-		ewarn \
-"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and\n\
-Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the system\n\
-  to lock up.\n\
-You must choose Periodic timer ticks (constant rate, no dynticks)\n\
-  CONFIG_HZ_PERIODIC for it not to lock up."
+ewarn
+ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and"
+ewarn "Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the"
+ewarn "system to lock up."
+ewarn
+ewarn "You must choose Periodic timer ticks (constant rate, no dynticks)"
+ewarn "  CONFIG_HZ_PERIODIC for it not to lock up."
+ewarn
 	fi
 }
 
