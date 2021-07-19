@@ -128,8 +128,8 @@ vi zh_CN )
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
 dav1d +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2 gnome-keyring
 +gstreamer -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
-+libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp -seccomp
--spell -systemd test variation-fonts v4l wayland +webassembly
++libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp +pulseaudio
+-seccomp -spell -systemd test variation-fonts v4l wayland +webassembly
 +webassembly-b3-jit +webcrypto +webgl -webrtc webvtt -webxr +X +yarr-jit"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
@@ -148,6 +148,7 @@ REQUIRED_USE+="
 	gstreamer? ( || ( opengl gles2 ) )
 	hardened? ( !jit )
 	opengl? ( egl !gles2 )
+	pulseaudio? ( gstreamer )
 	v4l? ( gstreamer mediastream )
 	wayland? ( egl )
 	webassembly? ( jit )
@@ -238,12 +239,10 @@ RDEPEND+="
 		>=media-libs/gstreamer-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-bad-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 >=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2?,egl?,opengl?,X?,${MULTILIB_USEDEP}]
+		media-plugins/gst-plugins-meta:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
 		>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 		dav1d? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},dav1d]
-		)
-		v4l? (
-			media-plugins/gst-plugins-meta:1.0[${MULTILIB_USEDEP},v4l]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
@@ -477,6 +476,10 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 
 	if use lto ; then
 		llvm_pkg_setup
+	fi
+
+	if ! use pulseaudio ; then
+		ewarn "Microphone support requires pulseaudio USE flag enabled."
 	fi
 
 	if use webrtc ; then
