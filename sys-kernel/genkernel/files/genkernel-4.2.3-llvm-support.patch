@@ -134,7 +134,7 @@ diff -urp genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determin
  determine_real_args() {
  	# Unset known variables which will interfere with _tc-getPROG().
  	local tc_var tc_varname_build tc_vars=$(get_tc_vars)
-@@ -353,19 +363,19 @@ determine_real_args() {
+@@ -353,19 +363,20 @@ determine_real_args() {
  	set_config_with_override STRING CHOST                                 CMD_CHOST                                 "${DEFAULT_CHOST}"
  	set_config_with_override STRING MAKEOPTS                              CMD_MAKEOPTS                              "${DEFAULT_MAKEOPTS}"
  	set_config_with_override STRING NICE                                  CMD_NICE                                  "10"
@@ -144,6 +144,7 @@ diff -urp genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determin
 +	set_config_with_override STRING KERNEL_AS                             CMD_KERNEL_AS                             $(kernel_default "${DEFAULT_KERNEL_AS}" "${DEFAULT_KERNEL_LLVM_AS}")
 +	set_config_with_override STRING KERNEL_AR                             CMD_KERNEL_AR                             $(kernel_default "${DEFAULT_KERNEL_AR}" "${DEFAULT_KERNEL_LLVM_AR}")
 +	set_config_with_override STRING KERNEL_CC                             CMD_KERNEL_CC                             $(kernel_default "${DEFAULT_KERNEL_CC}" "${DEFAULT_KERNEL_LLVM_CC}")
++	set_config_with_override STRING KERNEL_CLANG_FLAGS                    CMD_KERNEL_CLANG_FLAGS                    "${DEFAULT_KERNEL_LLVM_CLANG_FLAGS}"
  	set_config_with_override STRING KERNEL_CFLAGS                         CMD_KERNEL_CFLAGS                         "${DEFAULT_KERNEL_CFLAGS}"
  	set_config_with_override STRING KERNEL_CXX                            CMD_KERNEL_CXX                            "${DEFAULT_KERNEL_CXX}"
 -	set_config_with_override STRING KERNEL_LD                             CMD_KERNEL_LD                             "${DEFAULT_KERNEL_LD}"
