@@ -14,18 +14,19 @@ LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto npm pax_kernel +snapshot
-+ssl system-icu +system-ssl systemtap test"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
+IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm pax_kernel
++snapshot +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man"
 REQUIRED_USE+=" inspector? ( icu ssl )
 		npm? ( ssl )
 		system-icu? ( icu )
 		system-ssl? ( ssl )"
+# FIXME: test-fs-mkdir fails with "no such file or directory". Investigate.
 RESTRICT="test"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Jun 28, 2021
+# Last deps commit date:  Jul 12, 2021
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
@@ -38,15 +39,14 @@ RDEPEND+=" !net-libs/nodejs:0
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	sys-apps/coreutils
+	virtual/pkgconfig
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
 	pax_kernel? ( sys-apps/elfix )"
-PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
-	  "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
-	  "${FILESDIR}"/${PN}-12.22.1-uvwasi_shared_libuv.patch
-	  "${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch )
+PATCHES=( "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
+	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.13" # See https://github.com/nodejs/node/blob/v14.17.2/deps/npm/package.json
+NPM_V="7.19.1" # See https://github.com/nodejs/node/blob/v16.5.0/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
@@ -70,7 +70,7 @@ pkg_pretend() {
 pkg_setup() {
 	python-any-r1_pkg_setup
 
-	einfo "This ebuild is End Of Life (EOL) as of 2023-04-30."
+	einfo "This ebuild is End Of Life (EOL) as of 2024-04-30."
 
 	# For man page reasons
 	if has_version 'net-libs/nodejs[npm]:10' ; then
@@ -83,14 +83,14 @@ npm on the highest slot."
 "You need to disable npm on net-libs/nodejs[npm]:12.  Only enable\n\
 npm on the highest slot."
 	fi
+	if has_version 'net-libs/nodejs[npm]:14' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[npm]:14.  Only enable\n\
+npm on the highest slot."
+	fi
 	if has_version 'net-libs/nodejs[npm]:15' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[npm]:15.  Only enable\n\
-npm on the highest slot."
-	fi
-	if has_version 'net-libs/nodejs[npm]:16' ; then
-		die \
-"You need to disable npm on net-libs/nodejs[npm]:16.  Only enable\n\
 npm on the highest slot."
 	fi
 	if has_version 'net-libs/nodejs[man]:10' ; then
@@ -103,14 +103,14 @@ man on the highest slot."
 "You need to disable npm on net-libs/nodejs[man]:12.  Only enable\n\
 man on the highest slot."
 	fi
+	if has_version 'net-libs/nodejs[man]:14' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[man]:14.  Only enable\n\
+man on the highest slot."
+	fi
 	if has_version 'net-libs/nodejs[man]:15' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[man]:15.  Only enable\n\
-man on the highest slot."
-	fi
-	if has_version 'net-libs/nodejs[man]:16' ; then
-		die \
-"You need to disable npm on net-libs/nodejs[man]:16.  Only enable\n\
 man on the highest slot."
 	fi
 }
@@ -243,17 +243,12 @@ src_install() {
 	fi
 
 	if use npm; then
-		dodir /etc/npm
+		keepdir /etc/npm
 
 		# Install bash completion for `npm`
-		# We need to temporarily replace default config path since
-		# npm otherwise tries to write outside of the sandbox
-		local npm_config="${REL_D_BASE}/node_modules/npm/lib/config/core.js"
-		sed -i -e "s|'/etc'|'${ED}/etc'|g" "${ED}/${npm_config}" || die
 		local tmp_npm_completion_file="$(TMPDIR="${T}" mktemp -t npm.XXXXXXXXXX)"
 		"${ED}/usr/bin/npm" completion > "${tmp_npm_completion_file}"
 		newbashcomp "${tmp_npm_completion_file}" npm
-		sed -i -e "s|'${ED}/etc'|'/etc'|g" "${ED}/${npm_config}" || die
 
 		if use man ; then
 			# Move man pages
