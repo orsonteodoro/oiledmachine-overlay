@@ -103,11 +103,53 @@ HOMEPAGE="https://wiki.gentoo.org/wiki/Genkernel https://gitweb.gentoo.org/proj/
 LICENSE="GPL-2"
 SLOT="0"
 RESTRICT=""
-IUSE="ibm +firmware"
+IUSE+=" ibm +firmware"
 IUSE+=" crypt_root_plain"	# Added by oteodoro.
 IUSE+=" subdir_mount"		# Added by the muslx32 overlay.
-IUSE+=" +llvm"			# Added by the oiledmachine-overlay.
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+IUSE+=" +llvm +lto cfi"		# Added by the oiledmachine-overlay.
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+REQUIRED_USE+=" cfi? ( llvm lto )
+		lto? ( llvm )"
+
+LLVM_SLOTS=(11 12 13)
+LLVM_LTO_SLOTS=(11 12 13)
+LLVM_CFI_SLOTS=(12 13)
+
+gen_llvm_rdepends() {
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+				>=sys-devel/lld-${s}
+			)
+		"
+	done
+}
+
+gen_lto_rdepends() {
+	for s in ${LLVM_LTO_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+				>=sys-devel/lld-${s}
+			)
+		"
+	done
+}
+
+gen_cfi_rdepends() {
+	for s in ${LLVM_CFI_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+				>=sys-devel/lld-${s}
+			)
+		"
+	done
+}
 
 # Note:
 # We need sys-devel/* deps like autoconf or automake at _runtime_
@@ -126,7 +168,13 @@ RDEPEND="${PYTHON_DEPS}
 	sys-devel/automake
 	sys-devel/libtool
 	virtual/pkgconfig
-	firmware? ( sys-kernel/linux-firmware )"
+	firmware? ( sys-kernel/linux-firmware )
+	llvm? (
+		|| ( $(gen_llvm_rdepends) )
+		cfi? ( $(gen_cfi_rdepends) )
+		lto? ( $(gen_lto_rdepends) )
+	)
+"
 
 if [[ ${PV} == 9999* ]]; then
 	DEPEND="${DEPEND} app-text/asciidoc"
