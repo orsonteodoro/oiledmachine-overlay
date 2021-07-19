@@ -1596,7 +1596,7 @@ einfo "  use the sys-devel/genpatches[llvm]::oiledmachine-overlay package"
 einfo "  with the --llvm argument passed to genkernel"
 		fi
 einfo
-einfo "optimize for newer microarchitectures."
+einfo "to optimize for newer microarchitectures."
 einfo
 	fi
 
