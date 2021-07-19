@@ -1,6 +1,6 @@
 Subject:       Support Clang/LLVM for LTO and CFI for the kernel only
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
-Patch Status:  Testing
+Patch Status:  Complete
 Date:          Sun Jul 18 05:29:51 PM PDT 2021 (Unix time: 1626654591)
 
 diff -urp genkernel-4.2.3.orig/arch/ppc64le/config.sh genkernel-4.2.3/arch/ppc64le/config.sh

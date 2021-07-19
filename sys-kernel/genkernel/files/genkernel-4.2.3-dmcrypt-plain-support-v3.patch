@@ -1,11 +1,15 @@
-Subject:       Changes to boot from plain dm-crypt device
+Subject:       Changes to boot from plain dm-crypt device (v3)
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
-Patch Status:  Incomplete on 4.2.x, Work In Progress (WIP)
-Date:          2021-07-18 21:59:42.058896161 -0700
+Patch Status:  Complete on 4.2.3
+Date:          Mon Jul 19 12:57:35 PM PDT 2021 (Unix time: 1626724655)
+
+v3 - reduce conditional, added USE_CRYPTSETUP=1, genkernel 4.2.3 compatibility
+v2 - genkernel 4.0.10 compatibility
+v1 - initial release
 
 diff -urp genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults/initrd.scripts
 --- genkernel-4.2.3.orig/defaults/initrd.scripts	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/defaults/initrd.scripts	2021-07-18 21:59:42.058896161 -0700
++++ genkernel-4.2.3/defaults/initrd.scripts	2021-07-19 12:55:47.993053293 -0700
 @@ -1682,7 +1682,7 @@ start_volumes() {
  			then
  				good_msg "ZFS pool ${ZFS_POOL} already imported."
@@ -15,7 +19,16 @@ diff -urp genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults/
  				then
  					good_msg "LUKS detected. Reimporting ${ZFS_POOL} ..."
  
-@@ -1870,14 +1870,27 @@ openLUKS() {
+@@ -1835,7 +1835,7 @@ openLUKS() {
+ 	local DEV_ERROR=0 KEY_ERROR=0 KEYDEV_ERROR=0
+ 	local mntkey="/mnt/key/" crypt_filter_ret=
+ 
+-	if [ -z "${LUKS_DEVICE}" ]
++	if [ -z "${LUKS_DEVICE}" -a -z "${CRYPT_ROOT_PLAIN}" ]
+ 	then
+ 		bad_msg "'crypt_${1}' kernel command-line argument is not set!"
+ 		exit 1
+@@ -1870,14 +1870,14 @@ openLUKS() {
  			KEYDEV_ERROR=0
  		else
  			LUKS_DEVICE=$(find_real_device "${LUKS_DEVICE}")
@@ -28,24 +41,11 @@ diff -urp genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults/
  			fi
  
 -			if ! run cryptsetup isLuks ${LUKS_DEVICE}
-+			local isLuks
-+			if [ -n "${CRYPT_ROOT}" ]
-+			then
-+				# for luks
-+				isLuks=$(run cryptsetup isLuks ${LUKS_DEVICE} ; echo "$?")
-+			else
-+				# for plain
-+				if [ -n "${CRYPT_ROOT_PLAIN}" ] ; then
-+					isLuks=0
-+				else
-+					isLuks=1
-+				fi
-+			fi
-+			if [ ${isLuks} -ne 0 ]
++			if [ ! run cryptsetup isLuks ${LUKS_DEVICE} -a -z "${CRYPT_ROOT_PLAIN}" ]
  			then
  				bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
  				DEV_ERROR=1
-@@ -1975,7 +1988,12 @@ openLUKS() {
+@@ -1975,7 +1975,12 @@ openLUKS() {
  					fi
  				fi
  				# At this point, keyfile or not, we're ready!
@@ -59,7 +59,7 @@ diff -urp genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults/
  				crypt_filter_ret=$?
  
  				[ -e /dev/tty.org ] \
-@@ -2344,7 +2362,7 @@ start_LUKS() {
+@@ -2344,7 +2349,7 @@ start_LUKS() {
  	[ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
  		&& sleep 6 && bootstrapKey "ROOT"
  
@@ -68,19 +68,29 @@ diff -urp genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults/
  	then
  		openLUKS "root"
  		if [ -n "${REAL_ROOT}" ]
-Only in genkernel-4.2.3/defaults: initrd.scripts.orig
-Only in genkernel-4.2.3/defaults: initrd.scripts.rej
 diff -urp genkernel-4.2.3.orig/defaults/linuxrc genkernel-4.2.3/defaults/linuxrc
---- genkernel-4.2.3.orig/defaults/linuxrc	2021-07-18 21:58:11.599254494 -0700
-+++ genkernel-4.2.3/defaults/linuxrc	2021-07-18 21:58:35.276207666 -0700
-@@ -224,6 +224,9 @@ do
+--- genkernel-4.2.3.orig/defaults/linuxrc	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/defaults/linuxrc	2021-07-19 12:54:18.508779359 -0700
+@@ -221,6 +221,10 @@ do
  		crypt_root_options=*)
  			CRYPT_ROOT_OPTIONS=$(echo ${CRYPT_ROOT_OPTIONS} ${x#*=} | sed -e 's/,/ /g')
  		;;
 +		crypt_root_plain=*)
 +			CRYPT_ROOT_PLAIN=${x#*=}
++			USE_CRYPTSETUP=1
 +		;;
  		crypt_swap=*)
  			CRYPT_SWAP=${x#*=}
  			USE_CRYPTSETUP=1
-Only in genkernel-4.2.3/defaults: linuxrc.orig
+diff -urp genkernel-4.2.3.orig/defaults/unlock-luks.sh genkernel-4.2.3/defaults/unlock-luks.sh
+--- genkernel-4.2.3.orig/defaults/unlock-luks.sh	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/defaults/unlock-luks.sh	2021-07-19 12:54:18.508779359 -0700
+@@ -50,7 +50,7 @@ main() {
+ 	cryptsetup_options="$(trim "${cryptsetup_options}")"
+ 	eval local OPENED_LOCKFILE='"${CRYPT_'${TYPE}'_OPENED_LOCKFILE}"'
+ 
+-	if [ -z "${LUKS_DEVICE}" ]
++	if [ -z "${LUKS_DEVICE}" -a -z "${CRYPT_ROOT_PLAIN}" ]
+ 	then
+ 		bad_msg "'crypt_${NAME}' kernel command-line argument is not set!"
+ 		exit 1

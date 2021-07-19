@@ -1,11 +1,14 @@
-Subject:       Changes to boot from plain dm-crypt device
+Subject:       Changes to boot from plain dm-crypt device (v2)
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Patch Status:  Complete on 3.5.x.x
 Date:          2019-01-28 05:01:05.478991171 -0800
 
-diff -urp genkernel.bak/defaults/initrd.scripts genkernel/defaults/initrd.scripts
---- genkernel.bak/defaults/initrd.scripts	2019-01-27 15:56:56.459872616 -0800
-+++ genkernel/defaults/initrd.scripts	2019-01-28 05:01:05.478991171 -0800
+v2 - simplify conditional
+v1 - initial release
+
+diff -urp genkernel-3.5.3.3.orig/defaults/initrd.scripts genkernel-3.5.3.3/defaults/initrd.scripts
+--- genkernel-3.5.3.3.orig/defaults/initrd.scripts	2018-05-07 17:22:32.000000000 -0700
++++ genkernel-3.5.3.3/defaults/initrd.scripts	2021-07-19 13:10:34.189571893 -0700
 @@ -1195,7 +1195,7 @@ startVolumes() {
  			then
  				good_msg "ZFS pool ${ZFS_POOL} already imported."
@@ -15,23 +18,17 @@ diff -urp genkernel.bak/defaults/initrd.scripts genkernel/defaults/initrd.script
  				then
  					good_msg "LUKS detected. Reimporting ${ZFS_POOL}"
  					/sbin/zpool export -f "${ZFS_POOL}"
-@@ -1319,8 +1319,13 @@ openLUKS() {
+@@ -1319,8 +1319,7 @@ openLUKS() {
  			LUKS_DEVICE=$(find_real_device "${LUKS_DEVICE}")
  
  			setup_md_device ${LUKS_DEVICE}
 -			cryptsetup isLuks ${LUKS_DEVICE}
 -			if [ $? -ne 0 ]
-+			if [ -n "${CRYPT_ROOT}" ]
-+			then
-+				cryptsetup isLuks ${LUKS_DEVICE}
-+			else
-+				true
-+			fi
-+			if [ -z "${CRYPT_ROOT_PLAIN}" -a $? -ne 0 ]
++			if [ ! cryptsetup isLuks ${LUKS_DEVICE} -a -z "${CRYPT_ROOT_PLAIN}" ]
  			then
  				bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
  				DEV_ERROR=1
-@@ -1405,7 +1410,12 @@ openLUKS() {
+@@ -1405,7 +1404,12 @@ openLUKS() {
  					fi
  				fi
  				# At this point, keyfile or not, we're ready!
@@ -45,7 +42,7 @@ diff -urp genkernel.bak/defaults/initrd.scripts genkernel/defaults/initrd.script
  				crypt_filter_ret=$?
  
  				touch ${flag_opened}
-@@ -1443,7 +1453,7 @@ startLUKS() {
+@@ -1443,7 +1447,7 @@ startLUKS() {
  	[ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
  		&& sleep 6 && bootstrapKey "ROOT"
  
@@ -54,9 +51,9 @@ diff -urp genkernel.bak/defaults/initrd.scripts genkernel/defaults/initrd.script
  		openLUKS "root"
  		if [ -n "${REAL_ROOT}" ]
  		then
-diff -urp genkernel.bak/defaults/linuxrc genkernel/defaults/linuxrc
---- genkernel.bak/defaults/linuxrc	2019-01-27 15:56:56.458872616 -0800
-+++ genkernel/defaults/linuxrc	2019-01-28 03:16:46.612018638 -0800
+diff -urp genkernel-3.5.3.3.orig/defaults/linuxrc genkernel-3.5.3.3/defaults/linuxrc
+--- genkernel-3.5.3.3.orig/defaults/linuxrc	2018-05-07 17:22:32.000000000 -0700
++++ genkernel-3.5.3.3/defaults/linuxrc	2021-07-19 13:07:40.668491886 -0700
 @@ -216,6 +216,9 @@ do
  		crypt_root=*)
  			CRYPT_ROOT=${x#*=}

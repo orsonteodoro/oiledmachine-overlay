@@ -10,9 +10,9 @@ diff -urp genkernel-3.4.52.4.orig/defaults/linuxrc genkernel-3.4.52.4/defaults/l
  		subdir=*)
  			SUBDIR=${x#*=}
  		;;
-+                subdir_mount=*)
-+                        SUBDIR_MOUNT=${x#*=}
-+                ;;
++		subdir_mount=*)
++		SUBDIR_MOUNT=${x#*=}
++		;;
  		real_init=*)
  			REAL_INIT=${x#*=}
  		;;

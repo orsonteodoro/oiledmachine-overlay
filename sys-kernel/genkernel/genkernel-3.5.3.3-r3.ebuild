@@ -1,8 +1,12 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # genkernel-9999        -> latest Git branch "master"
 # genkernel-VERSION     -> normal genkernel release
+
+# The original version of this ebuild is 3.5.3.3 from the gentoo overlay
+# modified with subdir_mount, crypt_root_plain, llvm changes.  Revision
+# bumps may change on the oiledmachine-overlay.
 
 EAPI=5 # approved 2012.09.11, required by all profiles since 2014.03.12
 
@@ -23,7 +27,7 @@ BB_HOME="https://busybox.net/downloads"
 
 COMMON_URI="${DM_HOME}/dmraid-${VERSION_DMRAID}.tar.bz2
 		${DM_HOME}/old/dmraid-${VERSION_DMRAID}.tar.bz2
-		mirror://kernel/linux/utils/raid/mdadm/mdadm-${VERSION_MDADM}.tar.xz
+		https://www.kernel.org/pub/linux/utils/raid/mdadm/mdadm-${VERSION_MDADM}.tar.xz
 		${RH_HOME}/lvm2/LVM2.${VERSION_LVM}.tgz
 		${RH_HOME}/lvm2/old/LVM2.${VERSION_LVM}.tgz
 		${BB_HOME}/busybox-${VERSION_BUSYBOX}.tar.bz2
@@ -43,11 +47,11 @@ then
 else
 	SRC_URI="mirror://gentoo/${P}.tar.xz
 		${COMMON_URI}"
-	KEYWORDS="alpha amd64 arm ~hppa ia64 ~mips ppc ppc64 s390 sh sparc x86"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86"
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
-HOMEPAGE="https://www.gentoo.org"
+HOMEPAGE="https://wiki.gentoo.org/wiki/No_homepage"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -115,7 +119,7 @@ src_prepare() {
 	fi
 
 	if use crypt_root_plain ; then
-		epatch "${FILESDIR}/${PN}-3.5.3.3-dmcrypt-plain-support.patch"
+		epatch "${FILESDIR}/${PN}-3.5.3.3-dmcrypt-plain-support-v2.patch"
 	fi
 
 	epatch_user
@@ -168,4 +172,16 @@ pkg_postinst() {
 	ewarn "The LUKS support has changed from versions prior to 3.4.4.  Now,"
 	ewarn "you use crypt_root=/dev/blah instead of real_root=luks:/dev/blah."
 	echo
+
+	ewarn
+	ewarn "You must load all modules by removing \"nodetect\" from the kernel parameter"
+	ewarn "list for grub or have the drivers built in to use the kernel with the"
+	ewarn "crypt_root_plain USE flag."
+	ewarn
+
+	ewarn
+	ewarn "The identifiers in /dev/disk/by-id/ have changed between genkernel 4.2.x and"
+	ewarn "this version.  Please update the kernel parameters provided to for grub when"
+	ewarn "switching between the two versions."
+	ewarn
 }

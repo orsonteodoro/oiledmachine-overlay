@@ -1,8 +1,12 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # genkernel-9999        -> latest Git branch "master"
 # genkernel-VERSION     -> normal genkernel release
+
+# The original version of this ebuild is 4.0.10 from the gentoo overlay
+# modified with subdir_mount, crypt_root_plain, llvm changes.  Revision
+# bumps may change on the oiledmachine-overlay.
 
 EAPI="7"
 
@@ -78,7 +82,7 @@ if [[ ${PV} == 9999* ]] ; then
 else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 s390 sparc x86"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86"
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
@@ -230,7 +234,7 @@ src_prepare() {
 	fi
 
 	if use crypt_root_plain ; then
-		eapply "${FILESDIR}/${PN}-4.0.10-dmcrypt-plain-support-v2.patch"
+		eapply "${FILESDIR}/${PN}-4.0.10-dmcrypt-plain-support-v3.patch"
 	fi
 
 	if use llvm ; then
@@ -341,4 +345,16 @@ pkg_postinst() {
 	elog
 	elog "Genkernel 4.x users should keep a backup of your old initramfs produced"
 	elog "by Genkernel 3.x just in case things go wrong."
+
+	ewarn
+	ewarn "You must load all modules by removing \"nodetect\" from the kernel parameter"
+	ewarn "list for grub or have the drivers built in to use the kernel with the"
+	ewarn "crypt_root_plain USE flag."
+	ewarn
+
+	ewarn
+	ewarn "The identifiers in /dev/disk/by-id/ have changed between genkernel 4.2.x and"
+	ewarn "this version.  Please update the kernel parameters provided to for grub when"
+	ewarn "switching between the two versions."
+	ewarn
 }

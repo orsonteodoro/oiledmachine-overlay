@@ -1,42 +1,47 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person">
-		<!-- Only for this ebuild on the oiledmachine-overlay -->
-		<email>orsonteodoro@hotmail.com</email>
-	</maintainer>
-	<maintainer type="project">
-		<!-- Originator -->
-		<email>genkernel@gentoo.org</email>
-	</maintainer>
-	<longdescription>
-		This is an ebuild fork that applies subdir_mount and
-		crypt_root_plain patches.
+  <maintainer type="person">
+    <!-- Only for this ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+  </maintainer>
+  <maintainer type="project">
+    <!-- Originator -->
+    <email>genkernel@gentoo.org</email>
+  </maintainer>
+  <longdescription>
+    This is an ebuild fork that applies subdir_mount, crypt_root_plain, llvm
+    patches.
 
-		3.x is stable.
-		4.x is experimental.
-	</longdescription>
-	<use>
-		<flag name="subdir_mount">Adds mounting subdirectory support.
-			Used for mounting muslx32 or stage2 or stage3 images
-			in place produced from crossdev and mounting them
-			directly at /usr/$CTARGET without risk of damage caused
-			by human error replacing / with /usr/$CTARGET.
-			</flag>
-		<flag name="crypt_root_plain">Adds dmcrypt plain support</flag>
-		<flag name="cryptsetup">Enable support for Luks disk encryption
-			using <pkg>sys-fs/cryptsetup</pkg></flag>
-		<flag name="firmware">Prefer system firmware
-			<pkg>sys-kernel/linux-firmware</pkg> over local copy.
-			</flag>
-		<flag name="llvm">Enable support for the Clang/LLVM toolchain</flag>
-	</use>
-	<!--
-	<upstream>
-		<remote-id type="gentoo">git://git.gentoo.org/proj/genkernel</remote-id>
-	</upstream>
-	-->
-	<upstream>
-		<remote-id type="sourceforge">fuse</remote-id>
-	</upstream>
+    Patch status:
+    3.5.x.x - subdir_mount (works), crypt_root_plain (works)
+    4.0.x - subdir_mount (untested), crypt_root_plain (works), llvm (works)
+    4.2.x - subdir_mount (untested), crypt_root_plain (works), llvm (works)
+
+    When switching between 4.2.x and older versions, The /dev/disk/by-id/
+    entries may change.  This means that you need to adjust the kernel
+    parameters to the correct identifiers.
+  </longdescription>
+  <use>
+    <flag name="subdir_mount">Adds mounting subdirectory support.  Used for
+      mounting muslx32 or stage2 or stage3 images in place produced from
+      crossdev and mounting them directly at /usr/$CTARGET without risk of
+      damage caused by human error replacing / with /usr/$CTARGET.
+    </flag>
+    <flag name="crypt_root_plain">Adds dmcrypt plain support</flag>
+    <flag name="cryptsetup">Enable support for Luks disk encryption using
+      <pkg>sys-fs/cryptsetup</pkg></flag>
+    <flag name="firmware">Prefer system firmware
+      <pkg>sys-kernel/linux-firmware</pkg> over local copy.</flag>
+    <flag name="llvm">Enable support for the Clang/LLVM toolchain
+      These changes only apply to building the kernel only.</flag>
+  </use>
+  <!--
+    <upstream>
+    <remote-id type="gentoo">git://git.gentoo.org/proj/genkernel</remote-id>
+  </upstream>
+  -->
+  <upstream>
+    <remote-id type="sourceforge">fuse</remote-id>
+  </upstream>
 </pkgmetadata>

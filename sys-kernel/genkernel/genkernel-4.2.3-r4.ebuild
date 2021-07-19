@@ -5,7 +5,7 @@
 # genkernel-VERSION     -> normal genkernel release
 
 # The original version of this ebuild is 4.2.3 from the gentoo overlay
-# modified with subdir_mount and crypt_root_plain changes.  Revision
+# modified with subdir_mount, crypt_root_plain, llvm changes.  Revision
 # bumps may change on the oiledmachine-overlay.
 
 EAPI="7"
@@ -252,12 +252,10 @@ src_prepare() {
 	fi
 
 	if use crypt_root_plain ; then
-		ewarn "The crypt_root_plain USE flag is untested for ${PV}.  Do not use at this time.  Use the 4.0.x ebuild instead."
-		eapply "${FILESDIR}/${PN}-4.2.3-dmcrypt-plain-support-v2.patch"
+		eapply "${FILESDIR}/${PN}-4.2.3-dmcrypt-plain-support-v3.patch"
 	fi
 
 	if use llvm ; then
-		ewarn "The llvm USE flag is untested for ${PV}.  If it fails, try the 4.0.x ebuild instead."
 		eapply "${FILESDIR}/${PN}-4.2.3-llvm-support.patch"
 	fi
 }
@@ -392,4 +390,16 @@ pkg_postinst() {
 	elog
 	elog "Genkernel 4.x users should keep a backup of your old initramfs produced"
 	elog "by Genkernel 3.x just in case things go wrong."
+
+	ewarn
+	ewarn "You must load all modules by adding \"gk.hw.use-modules_load=1\" from the kernel"
+	ewarn "parameter list for grub or have the drivers built in to use the kernel with the"
+	ewarn "crypt_root_plain USE flag."
+	ewarn
+
+	ewarn
+	ewarn "The identifiers in /dev/disk/by-id/ have changed between older versions of"
+	ewarn "genkernel and this version.  Please update the kernel parameters provided to for"
+	ewarn "grub when switching between the two versions."
+	ewarn
 }
