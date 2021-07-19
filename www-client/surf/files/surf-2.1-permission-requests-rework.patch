@@ -1,5 +1,5 @@
 Subject:       [WIP] Rework permissions per domain, with changes for MediaStream
-Patch author:  Orson Teodoro
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Patch status:  Unfinished patch / Work in Progress (WIP)
 Date:          Fri Jul 16 07:28:15 PM PDT 2021 (Unix time: 1626488895)
 
@@ -9,8 +9,8 @@ consent per domain.  This patch will address this problem.
 Changes for more extensive use of dmenu for accept or rejection of permissions.
 
 diff -urp surf-2.1_p20210521.orig/config.def.h surf-2.1_p20210521/config.def.h
---- surf-2.1_p20210521.orig/config.def.h	2021-07-16 23:13:13.272007596 -0700
-+++ surf-2.1_p20210521/config.def.h	2021-07-16 23:13:40.729112946 -0700
+--- surf-2.1_p20210521.orig/config.def.h	2021-07-17 15:11:40.563099498 -0700
++++ surf-2.1_p20210521/config.def.h	2021-07-17 15:12:00.707910474 -0700
 @@ -15,8 +15,7 @@ static char *cookiefile     = "~/.surf/c
   */
  static Parameter defconfig[ParameterLast] = {
@@ -22,8 +22,8 @@ diff -urp surf-2.1_p20210521.orig/config.def.h surf-2.1_p20210521/config.def.h
  	[CaretBrowsing]       =       { { .i = 0 },     },
  	[CookiePolicies]      =       { { .v = "@Aa" }, },
 diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
---- surf-2.1_p20210521.orig/surf.c	2021-07-16 23:13:13.312009205 -0700
-+++ surf-2.1_p20210521/surf.c	2021-07-16 23:20:41.058034282 -0700
+--- surf-2.1_p20210521.orig/surf.c	2021-07-17 15:11:40.639102557 -0700
++++ surf-2.1_p20210521/surf.c	2021-07-17 15:20:53.517359978 -0700
 @@ -37,7 +37,7 @@
  #define LENGTH(x)               (sizeof(x) / sizeof(x[0]))
  #define CLEANMASK(mask)         (mask & (MODKEY|GDK_SHIFT_MASK))
@@ -47,9 +47,9 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  static int modparams[ParameterLast];
  static int spair[2];
  char *argv0;
-+static GHashTable *acceptedGeolocationDomains;
-+static GHashTable *acceptedInputQueryDomains;
-+static GHashTable *acceptedMediaStreamDomains;
++static GHashTable *acceptedGeolocationOrigins;
++static GHashTable *acceptedInputQueryOrigins;
++static GHashTable *acceptedMediaStreamOrigins;
 +static GHashTable *permissionRequests;
  
  static ParamName loadtransient[] = {
@@ -64,20 +64,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  	CaretBrowsing,
  	DefaultCharset,
  	FontSize,
-@@ -321,6 +323,12 @@ usage(void)
- }
- 
- void
-+cancelpermissionrequest(WebKitPermissionRequest *r)
-+{
-+	webkit_permission_request_deny(r);
-+}
-+
-+void
- setup(void)
- {
- 	GIOChannel *gchanin;
-@@ -339,6 +347,9 @@ setup(void)
+@@ -339,6 +341,9 @@ setup(void)
  	atoms[AtomFind] = XInternAtom(dpy, "_SURF_FIND", False);
  	atoms[AtomGo] = XInternAtom(dpy, "_SURF_GO", False);
  	atoms[AtomUri] = XInternAtom(dpy, "_SURF_URI", False);
@@ -87,19 +74,19 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  
  	gtk_init(NULL, NULL);
  
-@@ -414,6 +425,11 @@ setup(void)
+@@ -414,6 +419,11 @@ setup(void)
  				uriparams[i].config[j] = defconfig[j];
  		}
  	}
 +
-+	acceptedGeolocationDomains = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-+	acceptedInputQueryDomains = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-+	acceptedMediaStreamDomains = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
-+	permissionRequests = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, cancelpermissionrequest);
++	acceptedGeolocationOrigins = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
++	acceptedInputQueryOrigins = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
++	acceptedMediaStreamOrigins = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
++	permissionRequests = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
  }
  
  void
-@@ -672,6 +688,7 @@ gettogglestats(Client *c)
+@@ -672,6 +682,7 @@ gettogglestats(Client *c)
  	togglestats[7] = curconfig[FrameFlattening].val.i ? 'F' : 'f';
  	togglestats[8] = curconfig[Certificate].val.i ?     'X' : 'x';
  	togglestats[9] = curconfig[StrictTLS].val.i ?       'T' : 't';
@@ -107,7 +94,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  }
  
  void
-@@ -751,10 +768,9 @@ setparameter(Client *c, int refresh, Par
+@@ -751,10 +762,9 @@ setparameter(Client *c, int refresh, Par
  	modparams[p] = curconfig[p].prio;
  
  	switch (p) {
@@ -121,7 +108,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  	case CaretBrowsing:
  		webkit_settings_set_enable_caret_browsing(s, a->i);
  		refresh = 0;
-@@ -1030,6 +1046,7 @@ newwindow(Client *c, const Arg *a, int n
+@@ -1030,6 +1040,7 @@ newwindow(Client *c, const Arg *a, int n
  	}
  	if (showxid)
  		cmd[i++] = "-w";
@@ -129,19 +116,19 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  	cmd[i++] = curconfig[Certificate].val.i ? "-X" : "-x" ;
  	/* do not keep zoom level */
  	cmd[i++] = "--";
-@@ -1081,6 +1098,11 @@ cleanup(void)
+@@ -1081,6 +1092,11 @@ cleanup(void)
  	while (clients)
  		destroyclient(clients);
  
-+	g_hash_table_destroy(acceptedGeolocationDomains);
-+	g_hash_table_destroy(acceptedInputQueryDomains);
-+	g_hash_table_destroy(acceptedMediaStreamDomains);
++	g_hash_table_destroy(acceptedGeolocationOrigins);
++	g_hash_table_destroy(acceptedInputQueryOrigins);
++	g_hash_table_destroy(acceptedMediaStreamOrigins);
 +	g_hash_table_destroy(permissionRequests);
 +
  	close(spair[0]);
  	close(spair[1]);
  	g_free(cookiefile);
-@@ -1117,6 +1139,7 @@ newview(Client *c, WebKitWebView *rv)
+@@ -1117,6 +1133,7 @@ newview(Client *c, WebKitWebView *rv)
  		   "enable-html5-local-storage", curconfig[DiskCache].val.i,
  		   "enable-java", curconfig[Java].val.i,
  		   "enable-javascript", curconfig[JavaScript].val.i,
@@ -149,7 +136,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  		   "enable-site-specific-quirks", curconfig[SiteQuirks].val.i,
  		   "enable-smooth-scrolling", curconfig[SmoothScrolling].val.i,
  		   "enable-webgl", curconfig[WebGL].val.i,
-@@ -1305,6 +1328,123 @@ buttonreleased(GtkWidget *w, GdkEvent *e
+@@ -1305,6 +1322,144 @@ buttonreleased(GtkWidget *w, GdkEvent *e
  	return FALSE;
  }
  
@@ -163,26 +150,32 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +	gchar *origin = ar[0];
 +	gchar *uchoice = ar[1];
 +
-+	fprintf(stdout, "surf:  called addgeolocationdomain() callback");
++	fprintf(stdout, "surf:  called addgeolocationdomain() callback\n");
 +	WebKitPermissionRequest *r;
 +
 +	gchar *key;
 +	key = g_strdup_printf("%s|%s", origin, nprop);
++	fprintf(stdout, "surf:  key=%s\n", key); fflush(stdout);
 +	r = g_hash_table_lookup(permissionRequests, key);
 +
 +	if (!r) {
-+		fprintf(stdout, "surf:  r is null in addgeolocationdomain");
++		fprintf(stdout, "surf:  r is null in addgeolocationdomain\n");
 +		exit(1);
 +	}
 +
 +	if (!g_strcmp0(uchoice, "ACCEPT")) {
 +		gchar *d = g_strdup(origin);
-+		g_hash_table_add(acceptedGeolocationDomains, d);
++		g_hash_table_add(acceptedGeolocationOrigins, d);
 +		webkit_permission_request_allow(r);
 +	} else {
 +		webkit_permission_request_deny(r);
 +	}
++
++	fprintf(stdout, "surf:  done setting permissions\n");fflush(stdout);
++
 +	g_strfreev(ar);
++
++	fprintf(stdout, "surf:  ar free\n");fflush(stdout);
 +
 +	gpointer oldkey;
 +	gpointer oldvalue;
@@ -190,6 +183,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +	g_hash_table_steal(permissionRequests, key);
 +	g_free(key);
 +	g_free(oldkey);
++	g_object_unref(oldvalue);
 +}
 +
 +void
@@ -202,27 +196,32 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +	gchar *origin = ar[0];
 +	gchar *uchoice = ar[1];
 +
-+	fprintf(stdout, "surf:  called addmediastreamdomain() callback");
++	fprintf(stdout, "surf:  called addmediastreamdomain() callback\n");
 +	WebKitPermissionRequest *r;
 +
 +	gchar *key;
 +	key = g_strdup_printf("%s|%s", origin, nprop);
++	fprintf(stdout, "surf:  key=%s\n", key); fflush(stdout);
 +	r = g_hash_table_lookup(permissionRequests, key);
 +
 +	if (!r) {
-+		fprintf(stdout, "surf:  r is null in addmediastreamdomain");
++		fprintf(stdout, "surf:  r is null in addmediastreamdomain\n");
 +		exit(1);
 +	}
 +
 +	if (!g_strcmp0(uchoice, "ACCEPT")) {
 +		gchar *d = g_strdup(origin);
-+		g_hash_table_add(acceptedMediaStreamDomains, d);
++		g_hash_table_add(acceptedMediaStreamOrigins, d);
 +		webkit_permission_request_allow(r);
 +	} else {
 +		webkit_permission_request_deny(r);
 +	}
 +
++	fprintf(stdout, "surf:  done setting permissions\n");fflush(stdout);
++
 +	g_strfreev(ar);
++
++	fprintf(stdout, "surf:  ar free\n");fflush(stdout);
 +
 +	gpointer oldkey;
 +	gpointer oldvalue;
@@ -230,37 +229,45 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +	g_hash_table_steal(permissionRequests, key);
 +	g_free(key);
 +	g_free(oldkey);
++	g_object_unref(oldvalue);
 +}
 +
 +void
 +addinputquerydomain(Client *c, const Arg *a)
 +{
-+	char *nprop = "_SURF_INQU";
++	gchar *nprop = "_SURF_INQU";
 +	const char *raw = a->v;
 +	gchar **ar;
 +	ar = g_strsplit(raw, "|", 2);
 +	gchar *origin = ar[0];
 +	gchar *uchoice = ar[1];
 +
++	fprintf(stdout, "surf:  called addinputquerydomain() callback\n");
 +	WebKitPermissionRequest *r;
 +
 +	gchar *key;
 +	key = g_strdup_printf("%s|%s", origin, nprop);
++	fprintf(stdout, "surf:  key=%s\n", key); fflush(stdout);
 +	r = g_hash_table_lookup(permissionRequests, key);
 +
 +	if (!r) {
-+		fprintf(stdout, "surf:  r is null in addinputquerydomain");
++		fprintf(stdout, "surf:  r is null in addinputquerydomain\n");
 +		exit(1);
 +	}
 +
 +	if (!g_strcmp0(uchoice, "ACCEPT")) {
 +		gchar *d = g_strdup(origin);
-+		g_hash_table_add(acceptedInputQueryDomains, d);
++		g_hash_table_add(acceptedInputQueryOrigins, d);
 +		webkit_permission_request_allow(r);
 +	} else {
 +		webkit_permission_request_deny(r);
 +	}
++
++	fprintf(stdout, "surf:  done setting permissions\n");fflush(stdout);
++
 +	g_strfreev(ar);
++
++	fprintf(stdout, "surf:  ar free\n");fflush(stdout);
 +
 +	gpointer oldkey;
 +	gpointer oldvalue;
@@ -268,12 +275,13 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +	g_hash_table_steal(permissionRequests, key);
 +	g_free(key);
 +	g_free(oldkey);
++	g_object_unref(oldvalue);
 +}
 +
  GdkFilterReturn
  processx(GdkXEvent *e, GdkEvent *event, gpointer d)
  {
-@@ -1324,6 +1464,21 @@ processx(GdkXEvent *e, GdkEvent *event,
+@@ -1324,6 +1479,21 @@ processx(GdkXEvent *e, GdkEvent *event,
  				loaduri(c, &a);
  
  				return GDK_FILTER_REMOVE;
@@ -295,7 +303,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  			}
  		}
  	}
-@@ -1577,28 +1732,125 @@ mousetargetchanged(WebKitWebView *v, Web
+@@ -1577,28 +1747,134 @@ mousetargetchanged(WebKitWebView *v, Web
  	updatetitle(c);
  }
  
@@ -313,20 +321,23 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  	ParamName param = ParameterLast;
 +	gchar *message;
 +	gchar *nprop;
-+
-+	gchar *domain = getorigin(v);
  
-+	fprintf(stdout, "surf: permissionrequested() called");
++	gchar *origin = getorigin(v);
++
++	fprintf(stdout, "surf: permissionrequested() called\n");
  	if (WEBKIT_IS_GEOLOCATION_PERMISSION_REQUEST(r)) {
-+		fprintf(stdout, "surf: geolocation request");
++		fprintf(stdout, "surf: geolocation request\n");
++
++		if (g_hash_table_lookup(acceptedGeolocationOrigins, origin)) {
++			fprintf(stdout, "surf: geolocation request already accepted\n");
++			g_free(origin);
++			return TRUE;
++		}
++
  		param = Geolocation;
 +		message = "Allow geolocation";
 +		nprop = "_SURF_GEOL";
 +
-+		if (g_hash_table_lookup(acceptedGeolocationDomains, domain)) {
-+			g_free(domain);
-+			return TRUE;
-+		}
  	} else if (WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(r)) {
 -		if (webkit_user_media_permission_is_for_audio_device(
 -		    WEBKIT_USER_MEDIA_PERMISSION_REQUEST(r)))
@@ -334,46 +345,51 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 -		else if (webkit_user_media_permission_is_for_video_device(
 -		         WEBKIT_USER_MEDIA_PERMISSION_REQUEST(r)))
 -			param = AccessWebcam;
-+		fprintf(stdout, "surf: media permission request");
-+		gboolean microphone = webkit_user_media_permission_is_for_audio_device(
-+		    WEBKIT_USER_MEDIA_PERMISSION_REQUEST(r));
-+		gboolean camera = webkit_user_media_permission_is_for_video_device(
-+		         WEBKIT_USER_MEDIA_PERMISSION_REQUEST(r));
++		fprintf(stdout, "surf: media permission request\n");
 +
-+		if (g_hash_table_lookup(acceptedMediaStreamDomains, domain)) {
-+			g_free(domain);
++		if (g_hash_table_lookup(acceptedMediaStreamOrigins, origin)) {
++			fprintf(stdout, "surf: media permission request already accepted\n");
++			g_free(origin);
 +			return TRUE;
 +		}
 +
++		gboolean microphone = webkit_user_media_permission_is_for_audio_device(
++			WEBKIT_USER_MEDIA_PERMISSION_REQUEST(r));
++		gboolean camera = webkit_user_media_permission_is_for_video_device(
++			WEBKIT_USER_MEDIA_PERMISSION_REQUEST(r));
++
 +		if (microphone && camera) {
-+			fprintf(stdout, "surf: microphone and webcam permissions requested");
++			fprintf(stdout, "surf: microphone and webcam permissions requested\n");
 +			param = AccessMediaStream;
 +			message = "Allow microphone and camera";
 +		} else if (microphone) {
-+			fprintf(stdout, "surf: microphone permissions requested");
++			fprintf(stdout, "surf: microphone permissions requested\n");
 +			param = AccessMediaStream;
 +			message = "Allow microphone";
 +		} else if (camera) {
-+			fprintf(stdout, "surf: webcam permissions requested");
++			fprintf(stdout, "surf: webcam permissions requested\n");
 +			param = AccessMediaStream;
 +			message = "Allow webcam";
 +		} else {
-+			fprintf(stdout, "surf: unknown media permissions requested");
++			fprintf(stdout, "surf: unknown media permissions requested\n");
 +			message = "Allow input device";
 +		}
 +		nprop = "_SURF_MEST";
 +	} else if (WEBKIT_IS_DEVICE_INFO_PERMISSION_REQUEST(r)) {
-+		fprintf(stdout, "surf: device enumeration request");
++		fprintf(stdout, "surf: device enumeration request\n");
++
++		if (g_hash_table_lookup(acceptedInputQueryOrigins, origin)) {
++			fprintf(stdout, "surf: device enumeration request already accepted\n");
++			g_free(origin);
++			return TRUE;
++		}
++
 +		message = "Allow input device inspection";
 +		nprop = "_SURF_INQU";
 +
-+		if (g_hash_table_lookup(acceptedInputQueryDomains, domain)) {
-+			g_free(domain);
-+			return TRUE;
-+		}
  	} else {
-+		fprintf(stdout, "surf: permission request unknown");
-+		g_free(domain);
++		fprintf(stdout, "surf: permission request unknown\n");
++		g_free(origin);
  		return FALSE;
  	}
  
@@ -382,8 +398,8 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 -	else
 -		webkit_permission_request_deny(r);
 +	gchar *tvprop, *fvprop;
-+	tvprop = g_strdup_printf("%s|ACCEPT", domain);
-+	fvprop = g_strdup_printf("%s|REJECT", domain);
++	tvprop = g_strdup_printf("%s|ACCEPT", origin);
++	fvprop = g_strdup_printf("%s|REJECT", origin);
 +
 +	/* Does not work, dmenu complains about not grabbing keyboard
 +	Arg a = (Arg){
@@ -395,7 +411,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +					"&& xprop -id $3 -f $4 8s -set $5 \"$6\" ) "
 +					"|| xprop -id $7 -f $8 8s -set $9 \"$10\" ",
 +			"surf-permission-requested",
-+			message, domain,
++			message, origin,
 +			winid, nprop, nprop, tvprop,
 +			winid, nprop, nprop, fvprop, NULL
 +		}
@@ -404,9 +420,10 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +	*/
 +
 +	gchar *key;
-+	key = g_strdup_printf("%s|%s", domain, nprop);
++	key = g_strdup_printf("%s|%s", origin, nprop);
++	fprintf(stdout, "surf:  key=%s\n", key); fflush(stdout);
 +	if (!g_hash_table_contains(permissionRequests, key)) {
-+		g_hash_table_insert(permissionRequests, key, r);
++		g_hash_table_insert(permissionRequests, key, g_object_ref(r));
 +	} else {
 +		g_free(key);
 +	}
@@ -419,19 +436,19 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +				"| ( grep -q \"yes\" "
 +					"&& xprop -id %s -f %s 8s -set %s \"%s\" ) "
 +					"|| xprop -id %s -f %s 8s -set %s \"%s\" ",
-+			message, domain,
++			message, origin,
 +			winid, nprop, nprop, tvprop,
 +			winid, nprop, nprop, fvprop);
 +	system(command);
 +	g_free(command);
 +
-+	g_free(domain);
++	g_free(origin);
 +	g_free(tvprop);
 +	g_free(fvprop);
  
  	return TRUE;
  }
-@@ -2071,6 +2323,14 @@ main(int argc, char *argv[])
+@@ -2071,6 +2347,14 @@ main(int argc, char *argv[])
  		defconfig[Inspector].val.i = 1;
  		defconfig[Inspector].prio = 2;
  		break;
