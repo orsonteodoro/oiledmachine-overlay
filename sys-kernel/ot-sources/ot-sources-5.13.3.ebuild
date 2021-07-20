@@ -3,8 +3,8 @@
 
 EAPI="7"
 
-K_GENPATCHES_VER="19"
+K_GENPATCHES_VER="5"
 PATCH_PROJC_VER="5.12-r1"
-PATCH_RT_VER="5.12-rc3-rt3"
+PATCH_RT_VER="5.13-rt1"
 
-inherit ot-kernel-v5.12
+inherit ot-kernel-v5.13
