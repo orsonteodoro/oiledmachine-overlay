@@ -135,7 +135,7 @@ IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
 dav1d +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2 gnome-keyring
 +gstreamer -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
 +libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp +pulseaudio
--seccomp -spell -systemd test variation-fonts v4l wayland +webassembly
+-seccomp -spell -systemd test variation-fonts +v4l wayland +webassembly
 +webassembly-b3-jit +webcrypto +webgl -webrtc webvtt -webxr +X +yarr-jit"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
@@ -374,8 +374,7 @@ pkg_pretend() {
 		fi
 
 		if ! test-flag-CXX -std=c++17 ; then
-			die \
-"You need at least GCC 7.3.x or Clang >= 6 for C++17-specific compiler flags"
+die "You need at least GCC 7.3.x or Clang >= 6 for C++17-specific compiler flags"
 		fi
 	fi
 
@@ -410,48 +409,58 @@ pkg_setup() {
 			]] ; then
 			local pagesize=$(getconf PAGESIZE)
 			if [[ "${pagesize}" != "16384" ]] ; then
-				ewarn \
-"Page size is not 16k but currently ${pagesize}.  Disable 64k-pages USE flag."
+ewarn
+ewarn "Page size is not 16k but currently ${pagesize}.  Disable 64k-pages USE"
+ewarn "flag."
+ewarn
 			fi
 		else
-			die \
-"64k pages is not supported.  Remove the 64k-pages USE flag."
+die "64k pages is not supported.  Remove the 64k-pages USE flag."
 		fi
 
 		if ! linux_config_exists ; then
-			die \
-"Missing .config for kernel."
+die "Missing .config for kernel."
 		fi
 
 		if [[ "${ABI}" == "arm64" ]] ; then
 			if ! linux_chkconfig_present "ARM64_64K_PAGES" ; then
-				die \
-"CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the 64k-pages \
-USE flag or change the kernel config."
+eerror
+eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
+eerror "64k-pages USE flag or change the kernel config."
+eerror
+				die
 			fi
 		elif [[ "${ABI}" == "n32" ]] ; then
 			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
-				die \
-"CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the 64k-pages \
-USE flag or change the kernel config."
+eerror
+eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
+eerror "64k-pages USE flag or change the kernel config."
+eerror
+				die
 			fi
 		elif [[ "${ABI}" == "n64" ]] ; then
 			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
-				die \
-"CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the 64k-pages \
-USE flag or change the kernel config."
+eerror
+eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
+eerror "64k-pages USE flag or change the kernel config."
+eerror
+				die
 			fi
 		elif [[ "${ABI}" == "n64" ]] ; then
 			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
-				die \
-"CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the 64k-pages \
-USE flag or change the kernel config."
+eerror
+eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
+eerror "64k-pages USE flag or change the kernel config."
+eerror
+				die
 			fi
 		elif [[ "${ABI}" == "ppc64" ]] ; then
 			if ! linux_chkconfig_present "PPC_64K_PAGES" ; then
-				die \
-"CONFIG_PPC_64K_PAGES is unset in the kernel config.  Remove the 64k-pages \
-USE flag or change the kernel config."
+eerror
+eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
+eerror "64k-pages USE flag or change the kernel config."
+eerror
+				die
 			fi
 		elif [[ "${ABI}" == "sparc32" ]] ; then
 			if linux_chkconfig_present "HUGETLB_PAGE" ; then
@@ -459,9 +468,11 @@ USE flag or change the kernel config."
 			elif linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 				:;
 			else
-				die \
-"CONFIG_HUGETLB_PAGE or CONFIG_TRANSPARENT_HUGEPAGE is unset in the kernel \
-config.  Remove the 64k-pages USE flag or change the kernel config."
+eerror
+eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
+eerror "64k-pages USE flag or change the kernel config."
+eerror
+				die
 			fi
 		elif [[ "${ABI}" == "sparc64" ]] ; then
 			if linux_chkconfig_present "HUGETLB_PAGE" ; then
@@ -469,9 +480,11 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 			elif linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 				:;
 			else
-				die \
-"CONFIG_HUGETLB_PAGE or CONFIG_TRANSPARENT_HUGEPAGE is unset in the kernel \
-config.  Remove the 64k-pages USE flag or change the kernel config."
+eerror
+eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
+eerror "64k-pages USE flag or change the kernel config."
+eerror
+				die
 			fi
 		fi
 	fi
@@ -485,15 +498,34 @@ config.  Remove the 64k-pages USE flag or change the kernel config."
 	fi
 
 	if ! use pulseaudio ; then
-		ewarn "Microphone support requires pulseaudio USE flag enabled."
+ewarn
+ewarn "Microphone support requires pulseaudio USE flag enabled."
+ewarn
+	fi
+
+	if use v4l ; then
+		local gst_plugins_v4l2_repo=\
+$(cat "${ESYSROOT}/var/db/pkg/media-plugins/gst-plugins-v4l2-"*"/repository")
+		einfo "gst-plugins-v4l2 repo:  ${gst_plugins_v4l2_repo}"
+		if [[ "${gst_plugins_v4l2_repo}" != "oiledmachine-overlay" ]] ; then
+ewarn
+ewarn "Please only use the media-plugins/gst-plugins-v4l2::oiledmachine-overlay"
+ewarn
+ewarn "  or"
+ewarn
+ewarn "Add \"export GST_V4L2_USE_LIBV4L2=1\" to your .bashrc and relog."
+ewarn
+		fi
 	fi
 
 	if use webrtc ; then
-		einfo "The webrtc USE flag is in testing."
+einfo "The webrtc USE flag is in testing."
 		if has network-sandbox $FEATURES ; then
-			die \
-"${PN} requires network-sandbox to be disabled in FEATURES to be able to use\n\
-webrtc."
+eerror
+eerror "${PN} requires network-sandbox to be disabled in FEATURES to be able to"
+eerror "use webrtc."
+eerror
+			die
 		fi
 	fi
 }
@@ -885,12 +917,13 @@ pkg_postinst() {
 			popd
 		}
 		multilib_foreach_abi create_minibrowser_symlink_abi
-		einfo \
-"The symlink for the minibrowser may need to change manually to select the\n\
-preferred ABI and/or API version which can be 4.0, 4.1, 5.0.  Examples,\n\
-\n\
-\`ln -sf /usr/lib64/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`
-\`ln -sf /usr/lib/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`
-\n"
+einfo
+einfo "The symlink for the minibrowser may need to change manually to select"
+einfo "the preferred ABI and/or API version which can be 4.0, 4.1, 5.0."
+einfo "Examples,"
+einfo
+einfo "\`ln -sf /usr/lib64/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
+einfo "\`ln -sf /usr/lib/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
+einfo
 	fi
 }

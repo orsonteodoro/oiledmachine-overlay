@@ -55,6 +55,7 @@
     <flag name="nsplugin">Enable full nsplugin support (GTK2 plugins)</flag>
     <flag name="openmp">Use OpenMP to accelerate SVG filters</flag>
     <flag name="pulseaudio">Adds PulseAudio and microphone support.</flag>
+    <flag name="v4l">Adds and checks for proper v4l camera support.</flag>
     <flag name="variation-fonts">Check dependencies for variation font
       support</flag>
     <flag name="webgl">Build support for the WebGL HTML API using
