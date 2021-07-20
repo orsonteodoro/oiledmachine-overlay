@@ -36,6 +36,7 @@
     <flag name="mod_searchengines">Adds custom search engine keyword searching
       support.</flag>
     <flag name="mod_simple_bookmarking_redux">Adds bookmarking support.</flag>
+    <flag name="geolocation">Adds geolocation support.</flag>
     <flag name="pulseaudio">Adds PulseAudio and microphone support.</flag>
     <flag name="savedconfig">Without a saved config.h, this package depends on
       <pkg>net-misc/curl</pkg> and <pkg>x11-terms/st</pkg> for a default

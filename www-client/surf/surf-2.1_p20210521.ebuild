@@ -35,7 +35,7 @@ DEPEND+="
 	x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
 	net-libs/webkit-gtk:4[${MULTILIB_USEDEP},pulseaudio?,v4l?]
-	 mod_adblock? ( $(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
+	mod_adblock? ( $(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
 			x11-apps/xprop )
 	!savedconfig? ( net-misc/curl[${MULTILIB_USEDEP}]
 			x11-apps/xprop
@@ -68,12 +68,12 @@ _boilerplate_dl() {
 	local fn_d="${2}"
 	local dl_location="${3}"
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	einfo
-	einfo "Please download"
-	einfo "  - ${fn_s}"
-	einfo "from ${dl_location} and rename it to ${fn_d} place them in"
-	einfo "${distdir}"
-	einfo
+einfo
+einfo "Please download"
+einfo "  - ${fn_s}"
+einfo "from ${dl_location} and rename it to ${fn_d} place them in"
+einfo "${distdir}"
+einfo
 }
 
 _boilerplate_dl_link_hints() {
@@ -82,11 +82,11 @@ _boilerplate_dl_link_hints() {
 	local msg="${3}"
 	local hash="${4}"
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	einfo "\n\
-${msg}\n\
-from ${dl_location} and rename it to ${fn_d} place them in ${distdir} .\n\
-If copied correctly, the sha1sum should be ${hash} .\n\
-\n"
+einfo
+einfo "${msg}"
+einfo "from ${dl_location} and rename it to ${fn_d} place them in ${distdir} ."
+einfo "If copied correctly, the sha1sum should be ${hash}."
+einfo
 }
 
 pkg_setup() {
@@ -118,51 +118,58 @@ src_prepare() {
 
 	cd "${S}" || die
 
-	einfo "Disabling accelerated canvas in config.def.h"
+einfo "Disabling accelerated canvas in config.def.h"
 	sed -i -e "s#\
 \[AcceleratedCanvas\]   =       { { .i = 1 },#\
 \[AcceleratedCanvas\]   =       { { .i = 0 },#" "config.def.h" || die
 
 	if use savedconfig ; then
 		if [ ! -e "${SAVEDCONFIG_PATH}" ] ; then
-			eerror \
-"Please run\n\
-\n\
-mkdir -p \"/etc/portage/savedconfig/www-client\" ; cp \"${S}/config.def.h\" \"${SAVEDCONFIG_PATH}\"
-\n\
-or provide your edited config.h saved as\n\
-\n\
-${SAVEDCONFIG_PATH}"
+eerror
+eerror "Please run"
+eerror
+eerror "  mkdir -p \"/etc/portage/savedconfig/www-client\" ; \ "
+eerror "    cp \"${S}/config.def.h\" \"${SAVEDCONFIG_PATH}\""
+eerror
+eerror "or provide your edited config.h saved as"
+eerror
+eerror "  ${SAVEDCONFIG_PATH}"
+eerror
 			die
 		fi
 	else
-		einfo \
-"The default config.h assumes you have\n\
-  net-misc/curl\n\
-  x11-terms/st\n\
-installed to support the download function.  Without those, downloads will\n\
-fail (gracefully).  You can fix this by:\n\
-1) Installing these packages, or\n\
-2) Setting USE=savedconfig and running\n\
-\`cp ${S}/config.def.h ${SAVEDCONFIG_PATH}\` and changing it accordingly."
+einfo
+einfo "The default config.h assumes you have"
+einfo "  net-misc/curl"
+einfo "  x11-terms/st"
+einfo "installed to support the download function.  Without those, downloads"
+einfo "will fail (gracefully).  You can fix this by:"
+einfo "1) Installing these packages, or"
+einfo "2) Setting USE=savedconfig and running"
+einfo "\`cp ${S}/config.def.h ${SAVEDCONFIG_PATH}\` and changing it accordingly."
+einfo
 	fi
 
 	if use mod_simple_bookmarking_redux ; then
 		if ! grep -F -q -e "define BM_PICK" \
 			"${SAVEDCONFIG_PATH}" ; \
 		then
-			die \
-"Missing define BM_PICK and/or keybindings.  Copy the define/keybindings into \
-your savedconfig file (${SAVEDCONFIG_PATH}) .  See \
-https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
+eerror
+eerror "Missing define BM_PICK and/or keybindings.  Copy the define/keybindings"
+eerror "into your savedconfig file (${SAVEDCONFIG_PATH}) .  See"
+eerror "https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
+eerror
+			die
 		fi
 		if ! grep -q -F -e "define BM_ADD" \
 			"${SAVEDCONFIG_PATH}" ; \
 		then
-			die \
-"Missing define BM_ADD and/or keybindings.  Copy the define/keybindings into \
-your savedconfig file (${SAVEDCONFIG_PATH}).  See \
-https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
+eerror
+eerror "Missing define BM_ADD and/or keybindings.  Copy the define/keybindings"
+eerror "into your savedconfig file (${SAVEDCONFIG_PATH}).  See"
+eerror "https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
+eerror
+			die
 		fi
 	fi
 
@@ -170,51 +177,56 @@ https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
 		eapply "${FILESDIR}"/${PN}-9999-adblock.patch
 		if ! grep -q -F -e "PAGE_LOAD_COMMITTED" \
 			"${SAVEDCONFIG_PATH}" ; then
-			eerror \
-"Please copy the following mod_adblock code fragment to your savedconfig\n\
-(${SAVEDCONFIG_PATH}):"
-			eerror "---------- cut below ----------"
-			cat "${FILESDIR}/surf-9999-adblock-header-notes.txt" || die
-			eerror "---------- cut above ----------"
+eerror
+eerror "Please copy the following mod_adblock code fragment to your"
+eerror "savedconfig (${SAVEDCONFIG_PATH}):"
+eerror "---------- cut below ----------"
+cat "${FILESDIR}/surf-9999-adblock-header-notes.txt" || die
+eerror "---------- cut above ----------"
+eerror
 			die
 		fi
 	fi
 
 	if use mod_searchengines ; then
-		einfo \
-		"${SEARCHENGINES_FN} patch may break.  Will triage immediately."
+einfo "${SEARCHENGINES_FN} patch may break.  Will triage immediately."
 		patch -p1 -i "${DISTDIR}/${SEARCHENGINES_FN}"
 		eapply "${FILESDIR}/surf-9999-webkit2-searchengines-compat.patch"
 
 		if ! grep -q -F -e "static SearchEngine searchengines[]" \
 			"${SAVEDCONFIG_PATH}" ; then
-			eerror \
-"You are missing a searchengines array in your savedconfig\n\
-(${SAVEDCONFIG_PATH}).  For details see\n\
-https://surf.suckless.org/patches/searchengines/"
+eerror
+eerror "You are missing a searchengines array in your savedconfig"
+eerror "(${SAVEDCONFIG_PATH}).  For details see"
+eerror "https://surf.suckless.org/patches/searchengines/"
+eerror
 			die
 		else
-			ewarn \
-"If you commented out \"static SearchEngine searchengines[]\", uncommented it out\n\
-in your savedconfig to fix build."
+ewarn
+ewarn "If you commented out \"static SearchEngine searchengines[]\","
+ewarn "uncommented it out in your savedconfig to fix build."
+ewarn
 		fi
 		if ! grep -q -F -e "BM_PICK }," \
 			"${SAVEDCONFIG_PATH}" ; then
-			eerror \
-"Please copy the following mod_searchengine code fragment to your savedconfig hotkeys array\n\
-(static Key keys[] in ${SAVEDCONFIG_PATH}):"
-			eerror "---------- cut below ----------"
-			cat "${FILESDIR}/surf-9999-search-engine-notes.txt" || die
-			eerror "---------- cut above ----------"
+eerror
+eerror "Please copy the following mod_searchengine code fragment to your"
+eerror "savedconfig hotkeys array (static Key keys[] in ${SAVEDCONFIG_PATH}):"
+eerror "---------- cut below ----------"
+cat "${FILESDIR}/surf-9999-search-engine-notes.txt" || die
+eerror "---------- cut above ----------"
+eerror
 			die
 		fi
 	else
 		if test -f "${SAVEDCONFIG_PATH}" \
 			&& grep -q -F -e "static SearchEngine searchengines[]" \
 			"${SAVEDCONFIG_PATH}" ; then
-			ewarn \
-"Detected static SearchEngine searchengines[].  Comment or remove the array out from your
-savedconfig (${SAVEDCONFIG_PATH}) or it will not build."
+ewarn
+ewarn "Detected static SearchEngine searchengines[].  Comment or remove the"
+ewarn "array out from your savedconfig (${SAVEDCONFIG_PATH}) or it will not"
+ewarn "build."
+ewarn
 		fi
 	fi
 
@@ -225,19 +237,23 @@ savedconfig (${SAVEDCONFIG_PATH}) or it will not build."
 		config_file="config.h"
 	fi
 
-	if grep -q -F -e '[AcceleratedCanvas]   =       { { .i = 1 },' "${config_file}" ; then
-		ewarn \
-"Using AcceleratedCanvas = 1 may likely crash WebKitGtk / surf when using\n\
-adblocker.  Disable it in your savedconfig\n\
-(${SAVEDCONFIG_PATH})"
+	if grep -q -F \
+-e '[AcceleratedCanvas]   =       { { .i = 1 },' "${config_file}"
+	then
+ewarn
+ewarn "Using AcceleratedCanvas = 1 may likely crash WebKitGtk / surf when"
+ewarn "using adblocker.  Disable it in your savedconfig (${SAVEDCONFIG_PATH})"
+ewarn
 	else
 		if [[ ! -f "config.h" ]] ; then
 			if use mod_adblock ; then
-				ewarn \
-"If you compiled webkit-gtk with accelerated-2d-canvas on by default, it will likely\n\
-crash surf.  Either recompile webkit-gtk without accelerated-2d-canvas USE flag or\n\
-do \`cp ${S}/config.def.h ${SAVEDCONFIG_PATH}\` and change to:\n\
-[AcceleratedCanvas]   =       { { .i = 0 },     },"
+ewarn
+ewarn "If you compiled webkit-gtk with accelerated-2d-canvas on by default, it"
+ewarn "will likely crash surf.  Either recompile webkit-gtk without"
+ewarn "accelerated-2d-canvas USE flag or do"
+ewarn "\`cp ${S}/config.def.h ${SAVEDCONFIG_PATH}\` and change to:"
+ewarn "[AcceleratedCanvas]   =       { { .i = 0 },     },"
+ewarn
 			fi
 		fi
 	fi
@@ -247,11 +263,14 @@ do \`cp ${S}/config.def.h ${SAVEDCONFIG_PATH}\` and change to:\n\
 	if use pulseaudio ; then
 		want_request_rework=1
 	else
-		ewarn "Microphone support is disabled when the the pulseaudio USE flag is disabled too."
+ewarn
+ewarn "Microphone support is disabled when the the pulseaudio USE flag is"
+ewarn "disabled too."
+ewarn
 	fi
 
 	if use v4l ; then
-		ewarn "v4l support is broken"
+ewarn "v4l support is broken"
 	fi
 
 	if (( ${want_request_rework} == 1 )) ; then
@@ -292,8 +311,10 @@ multilib_src_install() {
 	save_config config.h
 
 	if use v4l || use microphone ; then
-		grep -q -e "AccessMicrophone" config.h && die "AccessMicrophone was replaced by AccessMediaStream"
-		grep -q -e "AccessWebcam" config.h && die "AccessMicrophone was replaced by AccessMediaStream"
+		grep -q -e "AccessMicrophone" config.h \
+		  && die "AccessMicrophone was replaced by AccessMediaStream"
+		grep -q -e "AccessWebcam" config.h \
+		  && die "AccessMicrophone was replaced by AccessMediaStream"
 	fi
 
 	dodoc LICENSE
@@ -369,22 +390,27 @@ src_install_all() {
 
 pkg_postinst() {
 	if use mod_link_hints ; then
-		einfo \
-"If you want link hinting support copy /usr/share/${PN}/{script.js,style.css}\n\
-to your /home/<USER>/.surf directory."
+einfo
+einfo "If you want link hinting support copy /usr/share/${PN}/{script.js,style.css}"
+einfo "to your /home/<USER>/.surf directory."
+einfo
 	fi
 
 	if use mod_adblock ; then
-		einfo \
-"You must update the adblock filters manually at /etc/surf/scripts/adblock/update.sh.\n\
-Make sure the current working directory is /etc/surf/scripts/adblock/ before running\n\
-it."
-		einfo \
-"You may run \`emerge --config ${CATEGORY}/${PN}\` to update the adblock."
+einfo
+einfo "You must update the adblock filters manually at"
+einfo "/etc/surf/scripts/adblock/update.sh."
+einfo "Make sure the current working directory is /etc/surf/scripts/adblock/"
+einfo "before running it."
+einfo
+einfo "You may run \`emerge --config ${CATEGORY}/${PN}\` to update the adblock."
+einfo
 		if use update_adblock ; then
 			_update_adblock
 		else
-			einfo "No adblock rules will be installed."
+einfo
+einfo "No adblock rules will be installed."
+einfo
 		fi
 	fi
 }
