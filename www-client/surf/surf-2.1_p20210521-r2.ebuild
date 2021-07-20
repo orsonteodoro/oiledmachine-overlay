@@ -296,6 +296,7 @@ LIBPREFIX = \$(PREFIX)/$(get_libdir)|g" \
 	if [[ "${num_abis}" != "1" ]] ; then
 		die "You can only install for one ABI"
 	fi
+
 }
 
 multilib_src_compile() {

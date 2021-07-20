@@ -519,11 +519,11 @@ ewarn
 	fi
 
 	if use webrtc ; then
-einfo "The webrtc USE flag is in testing."
+ewarn "WebRTC support is currently in development and feature incomplete."
 		if has network-sandbox $FEATURES ; then
 eerror
 eerror "${PN} requires network-sandbox to be disabled in FEATURES to be able to"
-eerror "use webrtc."
+eerror "use WebRTC."
 eerror
 			die
 		fi
