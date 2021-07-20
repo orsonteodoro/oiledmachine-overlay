@@ -90,10 +90,6 @@ einfo
 }
 
 pkg_setup() {
-	if use v4l ; then
-		ewarn "v4l support is in development."
-	fi
-
 	if use mod_autoopen ; then
 		_boilerplate_dl "${AUTOOPEN_FN}" "${AUTOOPEN_FN}" \
 			"https://surf.suckless.org/patches/autoopen/"
@@ -270,7 +266,7 @@ ewarn
 	fi
 
 	if use v4l ; then
-ewarn "v4l support is broken"
+		want_request_rework=1
 	fi
 
 	if (( ${want_request_rework} == 1 )) ; then
