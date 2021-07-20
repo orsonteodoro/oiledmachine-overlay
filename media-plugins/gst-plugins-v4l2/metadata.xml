@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- only for this ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- originator -->
+    <email>gstreamer@gentoo.org</email>
+    <name>GStreamer package maintainers</name>
+  </maintainer>
+  <longdescription>
+    This ebuild fork adds the GST_V4L2_USE_LIBV4L2=1 environment variable
+    systemwide no matter what dependency uses this plugin in order
+    for the camera to work.
+  </longdescription>
+</pkgmetadata>
