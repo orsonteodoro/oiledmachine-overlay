@@ -8,7 +8,10 @@ consent per domain.  This patch will address this problem.
 
 Changes for more extensive use of dmenu for accept or rejection of permissions.
 
-This version of the patch is for a unpatched surf.
+Split for compatibility with mod_adblock USE flag
+
+surf-2.1-permission-requests-rework-01.patch - core
+surf-2.1-permission-requests-rework-02.patch - compatibility patch with mod_adblock
 
 diff -urp surf-2.1_p20210521.orig/config.def.h surf-2.1_p20210521/config.def.h
 --- surf-2.1_p20210521.orig/config.def.h	2021-07-19 21:31:51.986795886 -0700
@@ -26,15 +29,6 @@ diff -urp surf-2.1_p20210521.orig/config.def.h surf-2.1_p20210521/config.def.h
 diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 --- surf-2.1_p20210521.orig/surf.c	2021-07-19 21:31:51.432774267 -0700
 +++ surf-2.1_p20210521/surf.c	2021-07-19 21:37:11.644269506 -0700
-@@ -37,7 +37,7 @@
- #define LENGTH(x)               (sizeof(x) / sizeof(x[0]))
- #define CLEANMASK(mask)         (mask & (MODKEY|GDK_SHIFT_MASK))
- 
--enum { AtomFind, AtomGo, AtomUri, AtomLast };
-+enum { AtomFind, AtomGo, AtomUri, AtomGeolocation, AtomMediaStream, AtomInputQuery, AtomLast };
- 
- enum {
- 	OnDoc   = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT,
 @@ -51,8 +51,7 @@ enum {
  };
  
@@ -66,16 +60,6 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  	CaretBrowsing,
  	DefaultCharset,
  	FontSize,
-@@ -339,6 +341,9 @@ setup(void)
- 	atoms[AtomFind] = XInternAtom(dpy, "_SURF_FIND", False);
- 	atoms[AtomGo] = XInternAtom(dpy, "_SURF_GO", False);
- 	atoms[AtomUri] = XInternAtom(dpy, "_SURF_URI", False);
-+	atoms[AtomGeolocation] = XInternAtom(dpy, "_SURF_GEOL", False);
-+	atoms[AtomMediaStream] = XInternAtom(dpy, "_SURF_MEST", False);
-+	atoms[AtomInputQuery] = XInternAtom(dpy, "_SURF_INQU", False);
- 
- 	gtk_init(NULL, NULL);
- 
 @@ -414,6 +419,11 @@ setup(void)
  				uriparams[i].config[j] = defconfig[j];
  		}

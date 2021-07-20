@@ -170,7 +170,7 @@ eerror
 	fi
 
 	if use mod_adblock ; then
-		eapply "${FILESDIR}"/${PN}-9999-adblock.patch
+		eapply "${FILESDIR}/${PN}-9999-adblock.patch"
 		if ! grep -q -F -e "PAGE_LOAD_COMMITTED" \
 			"${SAVEDCONFIG_PATH}" ; then
 eerror
@@ -269,8 +269,11 @@ ewarn
 		want_request_rework=1
 	fi
 
-	if (( ${want_request_rework} == 1 )) ; then
+	if (( ${want_request_rework} == 1 )) && ! use mod_adblock ; then
 		eapply "${FILESDIR}/surf-2.1-permission-requests-rework.patch"
+	elif (( ${want_request_rework} == 1 )) && use mod_adblock ; then
+		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-01.patch"
+		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-02.patch"
 	fi
 
 	tc-export CC PKG_CONFIG
@@ -363,6 +366,8 @@ multilib_src_install() {
 
 	if use mod_simple_bookmarking_redux ; then
 		dodoc "${FILESDIR}/licenses/LICENSE.mod_simple_bookmarking_redux"
+		grep -q -r -e "GDK_b" \
+&& die "GDK_b must be renamed to GDK_KEY_b in your config.h"
 	fi
 
 	if use mod_searchengines ; then
