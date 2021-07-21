@@ -28,6 +28,9 @@
     </maintainer>
   </upstream>
   <use>
+    <flag name="drm">Enables use of DRM (protected web content).</flag>
+    <flag name="geolocation">Adds geolocation support.</flag>
+    <flag name="libnotify">Enables use of notifications.</flag>
     <flag name="mod_adblock">Adds adblocking support.</flag>
     <flag name="mod_adblock_spam404">Adds adblocking with Spam404 lists.</flag>
     <flag name="mod_adblock_easylist">Adds adblocking with EasyList lists.</flag>
@@ -36,7 +39,8 @@
     <flag name="mod_searchengines">Adds custom search engine keyword searching
       support.</flag>
     <flag name="mod_simple_bookmarking_redux">Adds bookmarking support.</flag>
-    <flag name="geolocation">Adds geolocation support.</flag>
+    <flag name="pointer-lock">Enables pointer lock for webapps used for
+      games or first person simulators.  Recommend off due to bugs.</flag>
     <flag name="pulseaudio">Adds PulseAudio and microphone support.</flag>
     <flag name="savedconfig">Without a saved config.h, this package depends on
       <pkg>net-misc/curl</pkg> and <pkg>x11-terms/st</pkg> for a default

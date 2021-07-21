@@ -4,7 +4,8 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit multilib-minimal python-r1
+inherit flag-o-matic git-r3 multilib-minimal python-r1 savedconfig \
+toolchain-funcs
 
 DESCRIPTION="a simple web browser based on WebKit/GTK+"
 HOMEPAGE="https://surf.suckless.org/"
@@ -19,9 +20,10 @@ LICENSE="MIT SURF
 KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 ~sparc x86 ~x86-linux ~x86-macos"
 SLOT="0"
-IUSE+=" doc mod_adblock mod_adblock_spam404 mod_adblock_easylist
-mod_autoopen mod_link_hints mod_searchengines mod_simple_bookmarking_redux
-tabbed update_adblock +pulseaudio +v4l"
+IUSE+=" doc drm geolocation libnotify mod_adblock mod_adblock_spam404
+mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
+mod_simple_bookmarking_redux tabbed update_adblock -pointer-lock +pulseaudio
++v4l"
 REQUIRED_USE+="
 	mod_adblock_easylist? ( mod_adblock )
 	mod_adblock_spam404? ( mod_adblock )
@@ -34,7 +36,7 @@ DEPEND+="
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
-	net-libs/webkit-gtk:4[${MULTILIB_USEDEP},pulseaudio?,v4l?]
+	net-libs/webkit-gtk:4[${MULTILIB_USEDEP},geolocation?,libnotify?,pulseaudio?,v4l?]
 	mod_adblock? ( $(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
 			x11-apps/xprop )
 	!savedconfig? ( net-misc/curl[${MULTILIB_USEDEP}]
@@ -58,7 +60,6 @@ SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
 SRC_URI="mod_autoopen? ( ${AUTOOPEN_FN} )
 	 mod_link_hints? ( ${LINK_HINTS_FN} )
 	 mod_searchengines? ( ${SEARCHENGINES_FN} )"
-inherit git-r3 savedconfig toolchain-funcs
 PATCHES=( "${FILESDIR}/${PN}-2.1-gentoo.patch" )
 DOCS=( README )
 SAVEDCONFIG_PATH="${PORTAGE_CONFIGROOT%/}/etc/portage/savedconfig/${CATEGORY}/${PF}"
@@ -113,11 +114,6 @@ src_prepare() {
 	default
 
 	cd "${S}" || die
-
-einfo "Disabling accelerated canvas in config.def.h"
-	sed -i -e "s#\
-\[AcceleratedCanvas\]   =       { { .i = 1 },#\
-\[AcceleratedCanvas\]   =       { { .i = 0 },#" "config.def.h" || die
 
 	if use savedconfig ; then
 		if [ ! -e "${SAVEDCONFIG_PATH}" ] ; then
@@ -218,11 +214,11 @@ eerror
 		if test -f "${SAVEDCONFIG_PATH}" \
 			&& grep -q -F -e "static SearchEngine searchengines[]" \
 			"${SAVEDCONFIG_PATH}" ; then
-ewarn
-ewarn "Detected static SearchEngine searchengines[].  Comment or remove the"
-ewarn "array out from your savedconfig (${SAVEDCONFIG_PATH}) or it will not"
-ewarn "build."
-ewarn
+eerror
+eerror "Detected static SearchEngine searchengines[].  Comment or remove the"
+eerror "array out from your savedconfig (${SAVEDCONFIG_PATH}) or it will not"
+eerror "build."
+eerror
 		fi
 	fi
 
@@ -233,48 +229,61 @@ ewarn
 		config_file="config.h"
 	fi
 
-	if grep -q -F \
--e '[AcceleratedCanvas]   =       { { .i = 1 },' "${config_file}"
-	then
-ewarn
-ewarn "Using AcceleratedCanvas = 1 may likely crash WebKitGtk / surf when"
-ewarn "using adblocker.  Disable it in your savedconfig (${SAVEDCONFIG_PATH})"
-ewarn
-	else
-		if [[ ! -f "config.h" ]] ; then
-			if use mod_adblock ; then
-ewarn
-ewarn "If you compiled webkit-gtk with accelerated-2d-canvas on by default, it"
-ewarn "will likely crash surf.  Either recompile webkit-gtk without"
-ewarn "accelerated-2d-canvas USE flag or do"
-ewarn "\`cp ${S}/config.def.h ${SAVEDCONFIG_PATH}\` and change to:"
-ewarn "[AcceleratedCanvas]   =       { { .i = 0 },     },"
-ewarn
-			fi
-		fi
-	fi
-
-	local want_request_rework=0
-
-	if use pulseaudio ; then
-		want_request_rework=1
-	else
+	if ! use pulseaudio ; then
 ewarn
 ewarn "Microphone support is disabled when the the pulseaudio USE flag is"
 ewarn "disabled too."
 ewarn
 	fi
 
-	if use v4l ; then
-		want_request_rework=1
+	if use mod_adblock ; then
+		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v2-01.patch"
+		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v2-02.patch"
+	else
+		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v2.patch"
 	fi
 
-	if (( ${want_request_rework} == 1 )) && ! use mod_adblock ; then
-		eapply "${FILESDIR}/surf-2.1-permission-requests-rework.patch"
-	elif (( ${want_request_rework} == 1 )) && use mod_adblock ; then
-		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-01.patch"
-		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-02.patch"
+	if use savedconfig ; then
+		grep -q -e "AccessMicrophone" "${SAVEDCONFIG_PATH}" \
+		  && die "AccessMicrophone was replaced by one row of AccessMediaStream in ${SAVEDCONFIG_PATH}"
+		grep -q -e "AccessWebcam" "${SAVEDCONFIG_PATH}" \
+		  && die "AccessWebcam was replaced by one row of AccessMediaStream in ${SAVEDCONFIG_PATH}"
+	else
+		einfo "Modding ${config_file}"
+		grep -q -e "AccessMicrophone" "${config_file}" \
+		  && die "AccessMicrophone was replaced by one row of AccessMediaStream in ${config_file}"
+		grep -q -e "AccessWebcam" "${config_file}" \
+		  && die "AccessWebcam was replaced by one row of AccessMediaStream in ${config_file}"
 	fi
+
+	grep -q -e "AcceleratedCanvas" "${config_file}" \
+	  && die "The [AcceleratedCanvas] row was removed and is no longer supported in ${SAVEDCONFIG_PATH}"
+
+	grep -q -e "Plugins" "${config_file}" \
+	  && die "The [Plugins] and \".i = Plugins\" rows have been removed and are no longer supported in ${SAVEDCONFIG_PATH}"
+
+	local my_cppflags=""
+	if use drm ; then
+		my_cppflags+=" -DUSE_DRM"
+	fi
+	if use geolocation ; then
+		my_cppflags+=" -DUSE_GEOLOCATION"
+	fi
+	if use pointer-lock ; then
+		my_cppflags+=" -DUSE_POINTER_LOCK"
+	fi
+	if use pulseaudio ; then
+		my_cppflags+=" -DUSE_MICROPHONE"
+	fi
+	if use libnotify ; then
+		my_cppflags+=" -DUSE_NOTIFICATIONS"
+	fi
+	if use v4l ; then
+		my_cppflags+=" -DUSE_CAMERA"
+	fi
+
+	sed -i -e "s|CPPFLAGS =|CPPFLAGS = ${my_cppflags}|g" \
+		config.mk || die
 
 	tc-export CC PKG_CONFIG
 
@@ -296,7 +305,6 @@ LIBPREFIX = \$(PREFIX)/$(get_libdir)|g" \
 	if [[ "${num_abis}" != "1" ]] ; then
 		die "You can only install for one ABI"
 	fi
-
 }
 
 multilib_src_compile() {
@@ -309,13 +317,6 @@ multilib_src_install() {
 	default
 
 	save_config config.h
-
-	if use v4l || use microphone ; then
-		grep -q -e "AccessMicrophone" config.h \
-		  && die "AccessMicrophone was replaced by AccessMediaStream"
-		grep -q -e "AccessWebcam" config.h \
-		  && die "AccessMicrophone was replaced by AccessMediaStream"
-	fi
 
 	dodoc LICENSE
 
@@ -414,6 +415,26 @@ einfo
 einfo "No adblock rules will be installed."
 einfo
 		fi
+	fi
+
+	if use libnotify ; then
+ewarn "Notifications through libnotify currently does not work."
+	fi
+
+	if use pointer-lock ; then
+ewarn
+ewarn "The pointer-lock feature is currently is bugged when using the ESC."
+ewarn "button.  It's recommended to disabled it.  You may still use it but must"
+ewarn "restart the window or tab."
+ewarn
+	fi
+
+	if use geolocation ; then
+ewarn
+ewarn "Geolocation though GeoClue is currently broken.  The GeoClue package is"
+ewarn "bugged and does not work.  It requires systemd (or missing openrc scripts)"
+ewarn "to fix."
+ewarn
 	fi
 }
 

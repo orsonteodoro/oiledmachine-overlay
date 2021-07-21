@@ -1,24 +1,36 @@
 diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
---- surf-2.1_p20210521.orig/surf.c	2021-07-19 21:57:20.587274925 -0700
-+++ surf-2.1_p20210521/surf.c	2021-07-19 21:58:43.703504829 -0700
-@@ -37,7 +37,7 @@
+--- surf-2.1_p20210521.orig/surf.c	2021-07-20 11:54:00.682865516 -0700
++++ surf-2.1_p20210521/surf.c	2021-07-20 11:56:26.762597597 -0700
+@@ -37,7 +37,19 @@
  #define LENGTH(x)               (sizeof(x) / sizeof(x[0]))
  #define CLEANMASK(mask)         (mask & (MODKEY|GDK_SHIFT_MASK))
  
 -enum { AtomFind, AtomGo, AtomUri, AtomScriptFile, AtomLast };
-+enum { AtomFind, AtomGo, AtomUri, AtomScriptFile, AtomGeolocation, AtomMediaStream, AtomInputQuery, AtomLast };
++enum {
++	AtomFind,
++	AtomGo,
++	AtomUri,
++	AtomScriptFile,
++	AtomGeolocation,
++	AtomMediaStream,
++	AtomInputQuery,
++	AtomPointerLock,
++	AtomNotification,
++	AtomDrm,
++	AtomLast
++};
  
  enum {
  	OnDoc   = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT,
-@@ -342,6 +342,9 @@ setup(void)
+@@ -351,6 +363,11 @@ setup(void)
  	atoms[AtomGo] = XInternAtom(dpy, "_SURF_GO", False);
  	atoms[AtomUri] = XInternAtom(dpy, "_SURF_URI", False);
  	atoms[AtomScriptFile] = XInternAtom(dpy, "_SURF_SCRIPT", False);
 +	atoms[AtomGeolocation] = XInternAtom(dpy, "_SURF_GEOL", False);
 +	atoms[AtomMediaStream] = XInternAtom(dpy, "_SURF_MEST", False);
 +	atoms[AtomInputQuery] = XInternAtom(dpy, "_SURF_INQU", False);
++	atoms[AtomPointerLock] = XInternAtom(dpy, "_SURF_POLK", False);
++	atoms[AtomDrm] = XInternAtom(dpy, "_SURF_DRM", False);
  
  	gtk_init(NULL, NULL);
  
-Only in surf-2.1_p20210521: surf.c.orig
-Only in surf-2.1_p20210521: surf.c.rej
