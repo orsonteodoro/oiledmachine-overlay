@@ -418,7 +418,9 @@ einfo
 	fi
 
 	if use libnotify ; then
+ewarn
 ewarn "Notifications through libnotify currently does not work."
+ewarn
 	fi
 
 	if use pointer-lock ; then
@@ -438,7 +440,9 @@ ewarn
 	fi
 
 	if use drm ; then
+ewarn
 ewarn "The drm USE flag is currently going under testing and may not work."
+ewarn
 	fi
 }
 
