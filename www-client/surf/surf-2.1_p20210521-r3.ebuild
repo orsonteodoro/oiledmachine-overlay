@@ -423,7 +423,7 @@ ewarn "Notifications through libnotify currently does not work."
 
 	if use pointer-lock ; then
 ewarn
-ewarn "The pointer-lock feature is currently is bugged when using the ESC."
+ewarn "The pointer-lock feature is currently is bugged when using the ESC"
 ewarn "button.  It's recommended to disabled it.  You may still use it but must"
 ewarn "restart the window or tab."
 ewarn
