@@ -256,11 +256,34 @@ ewarn
 		  && die "AccessWebcam was replaced by one row of AccessMediaStream in ${config_file}"
 	fi
 
-	grep -q -e "AcceleratedCanvas" "${config_file}" \
-	  && die "The [AcceleratedCanvas] row was removed and is no longer supported in ${SAVEDCONFIG_PATH}"
+	if grep -q -e "AcceleratedCanvas" "${config_file}" ; then
+eerror
+eerror "The [AcceleratedCanvas] row was removed and is no longer supported in"
+eerror "${SAVEDCONFIG_PATH}"
+eerror
+		die
+	fi
 
-	grep -q -e "Plugins" "${config_file}" \
-	  && die "The [Plugins] and \".i = Plugins\" rows have been removed and are no longer supported in ${SAVEDCONFIG_PATH}"
+	if grep -q -e "Plugins" "${config_file}" ; then
+eerror
+eerror "The [Plugins] and \".i = Plugins\" rows have been removed and are no"
+eerror "longer supported in ${SAVEDCONFIG_PATH}"
+eerror
+		die
+	fi
+
+	if use savedconfig && use pointer-lock ; then
+		if grep -q -e "GDK_KEY_Escape" "${config_file}" ; then
+eerror
+eerror "You must change GDK_KEY_Escape to another key (GDK_KEY_Pause) in order"
+eerror "to release the pointer-lock properly in ${SAVEDCONFIG_PATH}"
+eerror
+			die
+		fi
+	elif ! use savedconfig && use pointer-lock ; then
+		sed -i -e "s|GDK_KEY_Escape|GDK_KEY_Pause|g" \
+			"${config_file}" || die
+	fi
 
 	local my_cppflags=""
 	if use drm ; then
@@ -425,10 +448,15 @@ ewarn
 
 	if use pointer-lock ; then
 ewarn
-ewarn "The pointer-lock feature is currently is bugged when using the ESC"
-ewarn "button.  It's recommended to disabled it.  You may still use it but must"
-ewarn "close the window or tab with a hotkey combo (shift alt c in dwm)."
+ewarn "The pointer-lock feature may be currently bugged when in motion."
 ewarn
+		if ! use savedconfig ; then
+ewarn
+ewarn "The stop loading pages Esc key has been changed to the Pause key in"
+ewarn "order for the pointer-lock to release properly."
+ewarn
+
+		fi
 	fi
 
 	if use geolocation ; then
