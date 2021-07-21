@@ -436,6 +436,10 @@ ewarn "bugged and does not work.  It requires systemd (or missing openrc scripts
 ewarn "to fix."
 ewarn
 	fi
+
+	if use drm ; then
+ewarn "The drm USE flag is currently going under testing and may not work."
+	fi
 }
 
 pkg_config() {
