@@ -20,7 +20,7 @@ LICENSE="MIT SURF
 KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 ~sparc x86 ~x86-linux ~x86-macos"
 SLOT="0"
-IUSE+=" doc drm geolocation libnotify mod_adblock mod_adblock_spam404
+IUSE+=" doc -drm -geolocation -libnotify mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux tabbed update_adblock -pointer-lock +pulseaudio
 +v4l"
