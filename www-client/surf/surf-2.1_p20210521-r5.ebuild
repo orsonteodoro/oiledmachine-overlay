@@ -20,7 +20,7 @@ LICENSE="MIT SURF
 KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 ~sparc x86 ~x86-linux ~x86-macos"
 SLOT="0"
-IUSE+=" doc -drm +geolocation -libnotify mod_adblock mod_adblock_spam404
+IUSE+=" doc -drm +geolocation +libnotify mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux tabbed update_adblock -pointer-lock +pulseaudio
 +v4l"
@@ -254,10 +254,10 @@ ewarn
 	fi
 
 	if use mod_adblock ; then
-		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v2-01.patch"
-		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v2-02.patch"
+		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v3-01.patch"
+		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v3-02.patch"
 	else
-		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v2.patch"
+		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v3.patch"
 	fi
 
 	if use savedconfig ; then
@@ -455,12 +455,6 @@ einfo
 einfo "No adblock rules will be installed."
 einfo
 		fi
-	fi
-
-	if use libnotify ; then
-ewarn
-ewarn "Notifications through libnotify currently does not work."
-ewarn
 	fi
 
 	if use pointer-lock ; then

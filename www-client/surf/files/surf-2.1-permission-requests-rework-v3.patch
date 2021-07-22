@@ -10,6 +10,10 @@ Changes for more extensive use of dmenu for accept or rejection of permissions.
 
 This version of the patch is for a unpatched surf.
 
+v3 - Fix memory leak when pointer lock disabled
+     Fix notifications
+     Fix pointer lock in processx
+     Fix DRM in processx
 v2 - Support for pointer lock permissions
      Support for notification permissions
      Dedupe functions
@@ -93,13 +97,14 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  	CaretBrowsing,
  	DefaultCharset,
  	FontSize,
-@@ -339,6 +355,11 @@ setup(void)
+@@ -339,6 +355,12 @@ setup(void)
  	atoms[AtomFind] = XInternAtom(dpy, "_SURF_FIND", False);
  	atoms[AtomGo] = XInternAtom(dpy, "_SURF_GO", False);
  	atoms[AtomUri] = XInternAtom(dpy, "_SURF_URI", False);
 +	atoms[AtomGeolocation] = XInternAtom(dpy, "_SURF_GEOL", False);
 +	atoms[AtomMediaStream] = XInternAtom(dpy, "_SURF_MEST", False);
 +	atoms[AtomInputQuery] = XInternAtom(dpy, "_SURF_INQU", False);
++	atoms[AtomNotification] = XInternAtom(dpy, "_SURF_NOTI", False);
 +	atoms[AtomPointerLock] = XInternAtom(dpy, "_SURF_POLK", False);
 +	atoms[AtomDrm] = XInternAtom(dpy, "_SURF_DRM", False);
  
@@ -173,7 +178,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  		   "enable-site-specific-quirks", curconfig[SiteQuirks].val.i,
  		   "enable-smooth-scrolling", curconfig[SmoothScrolling].val.i,
  		   "enable-webgl", curconfig[WebGL].val.i,
-@@ -1305,6 +1344,45 @@ buttonreleased(GtkWidget *w, GdkEvent *e
+@@ -1305,6 +1344,44 @@ buttonreleased(GtkWidget *w, GdkEvent *e
  	return FALSE;
  }
  
@@ -185,14 +190,13 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +	gchar *origin = ar[0];
 +	gchar *uchoice = ar[1];
 +
-+	WebKitPermissionRequest *r;
-+
 +	gchar *key;
 +	key = g_strdup_printf("%s|%s", origin, nprop);
-+	r = g_hash_table_lookup(permissionRequests, key);
++	WebKitPermissionRequest *r = g_hash_table_lookup(permissionRequests, key);
 +
 +	if (!r) {
-+		fprintf(stdout, "surf: addpermissiondomain(): r is null");
++		fprintf(stdout, "surf: addpermissiondomain(): key is %s\n", key);
++		fprintf(stdout, "surf: addpermissiondomain(): r is null\n");
 +		g_free(key);
 +		return;
 +	}
@@ -224,7 +228,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  
  				return GDK_FILTER_REMOVE;
 +			} else if (ev->atom == atoms[AtomDrm]) {
-+				a.v = getatom(c, AtomInputQuery);
++				a.v = getatom(c, AtomDrm);
 +				addpermissiondomain((const char *)a.v, "_SURF_DRM", acceptedDrmOrigins);
 +
 +				return GDK_FILTER_REMOVE;
@@ -244,19 +248,19 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +
 +				return GDK_FILTER_REMOVE;
 +			} else if (ev->atom == atoms[AtomNotification]) {
-+				a.v = getatom(c, AtomInputQuery);
++				a.v = getatom(c, AtomNotification);
 +				addpermissiondomain((const char *)a.v, "_SURF_NOTI", acceptedNotificationOrigins);
 +
 +				return GDK_FILTER_REMOVE;
 +			} else if (ev->atom == atoms[AtomPointerLock]) {
-+				a.v = getatom(c, AtomInputQuery);
++				a.v = getatom(c, AtomPointerLock);
 +				addpermissiondomain((const char *)a.v, "_SURF_POLK", acceptedPointerLockOrigins);
 +
 +				return GDK_FILTER_REMOVE;
  			}
  		}
  	}
-@@ -1577,28 +1684,182 @@ mousetargetchanged(WebKitWebView *v, Web
+@@ -1577,28 +1684,184 @@ mousetargetchanged(WebKitWebView *v, Web
  	updatetitle(c);
  }
  
@@ -313,6 +317,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +		WebKitMediaKeySystemPermissionRequest *mkspr = \
 +			WEBKIT_MEDIA_KEY_SYSTEM_PERMISSION_REQUEST(r);
 +		const gchar *ksn = webkit_media_key_system_permission_get_name(mkspr);
++		fprintf(stdout, "surf: CDM requested: %s\n", ksn);
 +		message = g_strdup_printf("Allow %s based DRM (i.e. protected content)", ksn);
 +		dyn_message = TRUE;
 +		nprop = "_SURF_DRM";
@@ -344,6 +349,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +		// this mod.  Currently, it is difficult to disable it on surf
 +		// without resorting to closing the browser.
 +		webkit_permission_request_deny(r);
++		g_free(origin);
 +		return FALSE;
 +#endif
 +#if defined(USE_CAMERA) || defined(USE_MICROPHONE)
@@ -408,7 +414,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +			"/bin/bash", "-c",
 +			"echo -e \"yes\nno\" "
 +				"| dmenu -p \"$1 for $2?\" "
-+				"| ( grep -q \"yes\" "
++				"| ( grep -F -q -e \"yes\" "
 +					"&& xprop -id $3 -f $4 8s -set $5 \"$6\" ) "
 +					"|| xprop -id $7 -f $8 8s -set $9 \"$10\" ",
 +			"surf-permission-requested",
@@ -433,7 +439,7 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
 +	command = g_strdup_printf(
 +			"echo -e \"yes\nno\" "
 +				"| dmenu -p \"%s for %s?\" "
-+				"| ( grep -q \"yes\" "
++				"| ( grep -F -q -e \"yes\" "
 +					"&& xprop -id %s -f %s 8s -set %s \"%s\" ) "
 +					"|| xprop -id %s -f %s 8s -set %s \"%s\" ",
 +			message, origin,

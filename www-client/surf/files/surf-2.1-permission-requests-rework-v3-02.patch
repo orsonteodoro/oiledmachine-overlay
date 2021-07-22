@@ -22,13 +22,14 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  
  enum {
  	OnDoc   = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT,
-@@ -351,6 +363,11 @@ setup(void)
+@@ -351,6 +363,12 @@ setup(void)
  	atoms[AtomGo] = XInternAtom(dpy, "_SURF_GO", False);
  	atoms[AtomUri] = XInternAtom(dpy, "_SURF_URI", False);
  	atoms[AtomScriptFile] = XInternAtom(dpy, "_SURF_SCRIPT", False);
 +	atoms[AtomGeolocation] = XInternAtom(dpy, "_SURF_GEOL", False);
 +	atoms[AtomMediaStream] = XInternAtom(dpy, "_SURF_MEST", False);
 +	atoms[AtomInputQuery] = XInternAtom(dpy, "_SURF_INQU", False);
++	atoms[AtomNotification] = XInternAtom(dpy, "_SURF_NOTI", False);
 +	atoms[AtomPointerLock] = XInternAtom(dpy, "_SURF_POLK", False);
 +	atoms[AtomDrm] = XInternAtom(dpy, "_SURF_DRM", False);
  
