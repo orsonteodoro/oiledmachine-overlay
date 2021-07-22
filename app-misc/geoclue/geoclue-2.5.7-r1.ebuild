@@ -82,6 +82,7 @@ show_geolocation_opt_out
 			die "D-BUS must be enabled in order to do testing."
 		fi
 	fi
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {
