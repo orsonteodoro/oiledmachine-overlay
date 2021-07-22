@@ -124,12 +124,20 @@ src_test() {
 die_failed_test() {
 	einfo "Restoring backup geoclue.conf"
 	cat "${backup_conf}" > /etc/geoclue/geoclue.conf
+	rm "${backup_conf}"
 	eerror "Test failed"
+	[[ -d /var/db/pkg/app-misc/geoclue-${PVR} ]] \
+		&& rm -rf /var/db/pkg/app-misc/geoclue-${PVR}
+	[[ -f "${D_LOG}" ]] \
+		&& rm "${D_LOG}"
 	die "${1}"
 }
 
+D_LOG=
 pkg_postinst()
 {
+	# Testing has to be done here because of the difficulty of
+	# changing dbus search patch for service files.
 	if use test ; then
 		local vanilla_conf="${FILESDIR}/geoclue.conf_2.5.7"
 		local backup_conf=$(mktemp)
@@ -157,18 +165,18 @@ pkg_postinst()
 				ewarn "${PN} agent died"
 				break
 			fi
-			local d_log=$(mktemp)
+			D_LOG=$(mktemp)
 			# This may fail several times.
 			einfo "Running where-am-i instance for ${n} seconds, ${try} try"
-			timeout ${n} /usr/libexec/geoclue-2.0/demos/where-am-i 2>&1 1>"${d_log}" &
+			timeout ${n} /usr/libexec/geoclue-2.0/demos/where-am-i 2>&1 1>"${D_LOG}" &
 			sleep ${n} # Wait for data
-			local result=$(cat "${d_log}")
+			local result=$(cat "${D_LOG}")
 			einfo "Result:"
 			einfo -e "${result}"
 			[[ "${result}" =~ "Latitude:" ]] && pass=1
 			(( ${pass} == 1 )) && break
 		done
-		rm -rf "${home_dir}" || die_failed_test
+		[[ -f "${D_LOG}" ]] && rm "${D_LOG}"
 		if (( ${pass} == 1 )) ; then
 			einfo "Test passed"
 		else
@@ -177,7 +185,6 @@ einfo
 einfo "Wiping /var/db/pkg/app-misc/geoclue-${PVR} to remove the installed bit"
 einfo "[R] from emerge to force re-emerge of working copy."
 einfo
-			rm -rf /var/db/pkg/app-misc/geoclue-${PVR} || die_failed_test
 			die_failed_test "Test failed"
 		fi
 		cat "${backup_conf}" > /etc/geoclue/geoclue.conf
