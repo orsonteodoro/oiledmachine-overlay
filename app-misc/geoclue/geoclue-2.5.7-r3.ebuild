@@ -65,7 +65,9 @@ ewarn
 
 pkg_setup() {
 	if use test ; then
-		if [[ -z "${I_CONSENT_TO_GEOCLUE_TESTING_AND_MLS}" ]] ; then
+		if [[ -z "${I_CONSENT_TO_GEOCLUE_TESTING_AND_MLS}" \
+		|| ( -n "${I_CONSENT_TO_GEOCLUE_TESTING_AND_MLS}" \
+			&& "${I_CONSENT_TO_GEOCLUE_TESTING_AND_MLS}" != "1" ) ]] ; then
 eerror
 eerror "You must consent to sending data to the Mozilla Location Service."
 eerror "To remove this message by setting the"
@@ -74,7 +76,7 @@ eerror
 eerror "Testing may not work if the wifi's router's BSSID is not mapped to a"
 eerror "physical location."
 eerror
-show_geolocation_opt_out
+			show_geolocation_opt_out
 			die
 		fi
 
@@ -202,5 +204,5 @@ ewarn "the WPS (Wi-Fi positioning system) service that converts the 48-bit"
 ewarn "BSSID from to a physical location can be changed by editing"
 ewarn "/etc/geoclue/geoclue.conf file."
 ewarn
-show_geolocation_opt_out
+	show_geolocation_opt_out
 }
