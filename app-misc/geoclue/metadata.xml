@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- temporary ebuild fork -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- originator -->
+    <email>gnome@gentoo.org</email>
+    <name>Gentoo GNOME Desktop</name>
+  </maintainer>
+  <use>
+    <flag name="fix-regression-142">Applies reverts for 194529c7 and 715cfbf5
+      to fix the Failed to create query: No WiFi devices available problem.
+      </flag>
+    <flag name="modemmanager">Enable geolocation through 3G or GPS enabled
+      hardware through <pkg>net-misc/modemmanager</pkg>.</flag>
+    <flag name="zeroconf">Enable retrieval of GPS location from Android devices
+      with https://wiki.gnome.org/Apps/GeoclueShare</flag>
+  </use>
+  <longdescription>
+    This temporary fork exist to get geolocation working on webkit-gtk.  It
+    may be removed once the following regression is resolved for 2.5.7
+    resolved upstream:
+
+    Failed to create query: No WiFi devices available is fixed 
+  </longdescription>
+</pkgmetadata>
