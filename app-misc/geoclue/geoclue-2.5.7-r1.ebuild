@@ -56,8 +56,8 @@ PATCHES=(
 
 show_geolocation_opt_out() {
 ewarn
-ewarn "You may opt out of geolocation by adding a _nomap to your WiFI router's or"
-ewarn "access point's SSID string.  See also:"
+ewarn "You may opt out of geolocation by adding a _nomap to the end to your"
+ewarn "WiFI router's or access point's SSID string.  See also:"
 ewarn
 ewarn "https://en.wikipedia.org/wiki/Wi-Fi_positioning_system#Public_Wi-Fi_location_databases"
 ewarn
