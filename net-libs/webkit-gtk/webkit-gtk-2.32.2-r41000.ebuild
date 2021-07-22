@@ -389,6 +389,22 @@ ewarn
 	fi
 }
 
+check_geolocation() {
+	if use geolocation ; then
+		if has_version "~app-misc/geoclue-2.5.7" ; then
+			local geoclue_repo=$(cat /var/db/pkg/app-misc/geoclue-2.5.7*/repository)
+			if [[ "${geoclue_repo}" == "gentoo" ]] ; then
+ewarn
+ewarn "The gentoo repo version of geoclue may be broken if you have no GPS"
+ewarn "device but rely on Wi-Fi positioning system (WPS) method of converting"
+ewarn "the BSSID/SSID to Lat/Long.  Use the app-misc/geoclue from the"
+ewarn "oiledmachine-overlay version instead."
+ewarn
+			fi
+		fi
+	fi
+}
+
 pkg_setup() {
 	einfo "This is the stable branch."
 	if [[ ${MERGE_TYPE} != "binary" ]] \
@@ -489,6 +505,8 @@ eerror
 		fi
 	fi
 
+	check_geolocation
+
 	if use openmp ; then
 		tc-check-openmp
 	fi
@@ -520,13 +538,6 @@ ewarn
 
 	if use webrtc ; then
 ewarn "WebRTC support is currently in development and feature incomplete."
-		if has network-sandbox $FEATURES ; then
-eerror
-eerror "${PN} requires network-sandbox to be disabled in FEATURES to be able to"
-eerror "use WebRTC."
-eerror
-			die
-		fi
 	fi
 }
 
@@ -926,4 +937,5 @@ einfo "\`ln -sf /usr/lib64/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/m
 einfo "\`ln -sf /usr/lib/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
 einfo
 	fi
+	check_geolocation
 }
