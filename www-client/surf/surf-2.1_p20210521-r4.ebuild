@@ -20,7 +20,7 @@ LICENSE="MIT SURF
 KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 ~sparc x86 ~x86-linux ~x86-macos"
 SLOT="0"
-IUSE+=" doc -drm -geolocation -libnotify mod_adblock mod_adblock_spam404
+IUSE+=" doc -drm +geolocation -libnotify mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux tabbed update_adblock -pointer-lock +pulseaudio
 +v4l"
@@ -90,6 +90,22 @@ einfo "If copied correctly, the sha1sum should be ${hash}."
 einfo
 }
 
+check_geolocation() {
+	if use geolocation ; then
+		if has_version "~app-misc/geoclue-2.5.7" ; then
+			local geoclue_repo=$(cat /var/db/pkg/app-misc/geoclue-2.5.7*/repository)
+			if [[ "${geoclue_repo}" == "gentoo" ]] ; then
+ewarn
+ewarn "The gentoo repo version of geoclue may be broken if you have no GPS"
+ewarn "device but rely on Wi-Fi positioning system (WPS) method of converting"
+ewarn "the BSSID/SSID to Lat/Long.  Use the app-misc/geoclue from the"
+ewarn "oiledmachine-overlay version instead."
+ewarn
+			fi
+		fi
+	fi
+}
+
 pkg_setup() {
 	if use mod_autoopen ; then
 		_boilerplate_dl "${AUTOOPEN_FN}" "${AUTOOPEN_FN}" \
@@ -108,6 +124,7 @@ pkg_setup() {
 	if use mod_adblock ; then
 		python_setup
 	fi
+	check_geolocation
 }
 
 src_prepare() {
@@ -459,19 +476,14 @@ ewarn
 		fi
 	fi
 
-	if use geolocation ; then
-ewarn
-ewarn "Geolocation though GeoClue is currently broken.  The GeoClue package is"
-ewarn "bugged and does not work.  It requires systemd (or missing openrc scripts)"
-ewarn "to fix."
-ewarn
-	fi
+	check_geolocation
 
 	if use drm ; then
 ewarn
 ewarn "The drm USE flag is currently going under testing and may not work."
 ewarn
 	fi
+
 }
 
 pkg_config() {
