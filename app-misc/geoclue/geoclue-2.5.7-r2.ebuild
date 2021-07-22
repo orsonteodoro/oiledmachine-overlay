@@ -65,11 +65,11 @@ ewarn
 
 pkg_setup() {
 	if use test ; then
-		if [[ -z "${I_CONSENT_TO_GEOCLUE_TESTING}" ]] ; then
+		if [[ -z "${I_CONSENT_TO_GEOCLUE_TESTING_AND_MLS}" ]] ; then
 eerror
 eerror "You must consent to sending data to the Mozilla Location Service."
-eerror "To remove this message by setting the I_CONSENT_TO_GEOCLUE_TESTING=1"
-eerror "environment variable."
+eerror "To remove this message by setting the"
+eerror "I_CONSENT_TO_GEOCLUE_TESTING_AND_MLS=1 environment variable."
 eerror
 eerror "Testing may not work if the wifi's router's BSSID is not mapped to a"
 eerror "physical location."
