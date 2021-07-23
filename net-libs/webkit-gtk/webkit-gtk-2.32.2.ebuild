@@ -443,7 +443,7 @@ eerror
 		elif [[ "${ABI}" == "n32" ]] ; then
 			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
 eerror
-eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
+eerror "CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the"
 eerror "64k-pages USE flag or change the kernel config."
 eerror
 				die
@@ -451,7 +451,7 @@ eerror
 		elif [[ "${ABI}" == "n64" ]] ; then
 			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
 eerror
-eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
+eerror "CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the"
 eerror "64k-pages USE flag or change the kernel config."
 eerror
 				die
@@ -459,7 +459,7 @@ eerror
 		elif [[ "${ABI}" == "n64" ]] ; then
 			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
 eerror
-eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
+eerror "CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the"
 eerror "64k-pages USE flag or change the kernel config."
 eerror
 				die
@@ -467,7 +467,7 @@ eerror
 		elif [[ "${ABI}" == "ppc64" ]] ; then
 			if ! linux_chkconfig_present "PPC_64K_PAGES" ; then
 eerror
-eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
+eerror "CONFIG_PPC_64K_PAGES is unset in the kernel config.  Remove the"
 eerror "64k-pages USE flag or change the kernel config."
 eerror
 				die
@@ -479,8 +479,9 @@ eerror
 				:;
 			else
 eerror
-eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
+eerror "CONFIG_TRANSPARENT_HUGEPAGE or CONFIG_HUGETLB_PAGE is unset in the"
+eerror "kernel config.  Remove the 64k-pages USE flag or change the kernel"
+eerror "config."
 eerror
 				die
 			fi
@@ -491,8 +492,9 @@ eerror
 				:;
 			else
 eerror
-eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
+eerror "CONFIG_TRANSPARENT_HUGEPAGE or CONFIG_HUGETLB_PAGE is unset in the"
+eerror "kernel config.  Remove the 64k-pages USE flag or change the kernel"
+eerror "config."
 eerror
 				die
 			fi
