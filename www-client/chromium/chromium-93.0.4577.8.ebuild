@@ -1,10 +1,11 @@
 # Copyright 2009-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Monitor https://chromereleases.googleblog.com/search/label/Beta%20updates for security updates.  They are announced faster than NVD.
+# Monitor https://chromereleases.googleblog.com/search/label/Dev%20updates for security updates.  They are announced faster than NVD.
+# See https://omahaproxy.appspot.com/ for the latest linux version
 
 EAPI=7
-PYTHON_COMPAT=( python3_8 )
+PYTHON_COMPAT=( python3_{8,9} )
 PYTHON_REQ_USE="xml"
 
 CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
@@ -16,26 +17,22 @@ inherit multilib-minimal
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
-PATCHSET="7"
+PATCHSET="5"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
-PPC64LE_PATCHSET="91-ppc64le-6"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
-	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-44.1.0.zip
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
-	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )
-	ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-${PPC64LE_PATCHSET}.tar.xz )"
+	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )"
 RESTRICT="mirror"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86"
+#KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
-# For cfi, cfi-icall defaults status, see https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/sanitizers/sanitizers.gni
-# For cfi-full default status see, https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/sanitizers/sanitizers.gni#L123
-# For pgo default status see, https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/compiler/pgo/pgo.gni#L15
-# For libcxx default see, https://github.com/chromium/chromium/blob/91.0.4462.1/build/config/c++/c++.gni#L14
+# For cfi, cfi-icall defaults status, see https://github.com/chromium/chromium/blob/93.0.4557.4/build/config/sanitizers/sanitizers.gni
+# For cfi-full default status see, https://github.com/chromium/chromium/blob/93.0.4557.4/build/config/sanitizers/sanitizers.gni#L123
+# For pgo default status see, https://github.com/chromium/chromium/blob/93.0.4557.4/build/config/compiler/pgo/pgo.gni#L15
 IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx pgo"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
@@ -130,10 +127,11 @@ DEPEND="${COMMON_DEPEND}
 # dev-vcs/git - https://bugs.gentoo.org/593476
 BDEPEND="
 	${PYTHON_DEPS}
+	$(python_gen_any_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
 	>=app-arch/gzip-1.7
-	app-arch/unzip
 	dev-lang/perl
-	dev-lang/python:2.7[xml]
 	>=dev-util/gn-0.1807
 	dev-vcs/git
 	>=dev-util/gperf-3.0.3
@@ -219,6 +217,10 @@ them in Chromium, then add --password-store=basic to CHROMIUM_FLAGS
 in /etc/chromium/default.
 "
 
+python_check_deps() {
+	has_version -b "dev-python/setuptools[${PYTHON_USEDEP}]"
+}
+
 pre_build_checks() {
 	if [[ ${MERGE_TYPE} != binary ]]; then
 		local -x CPP="$(tc-getCXX) -E"
@@ -252,7 +254,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	ewarn "The $(ver_cut 1 ${PV}) series is the Beta channel."
+	ewarn "The $(ver_cut 1 ${PV}) series is the Dev branch."
 	pre_build_checks
 
 	chromium_suid_sandbox_check_kernel_config
@@ -300,12 +302,12 @@ src_prepare() {
 	fi
 	PATCHES+=(
 		"${FILESDIR}/chromium-92-EnumTable-crash.patch"
+		"${FILESDIR}/chromium-93-InkDropHost-crash.patch"
 		"${FILESDIR}/chromium-shim_headers.patch"
 	)
 
 	if ! use arm64 ; then
 		rm "${WORKDIR}/patches/chromium-91-libyuv-aarch64.patch" || die
-		rm "${WORKDIR}/patches/chromium-92-v8-constexpr.patch" || die
 	fi
 
 	# seccomp sandbox is broken if compiled against >=sys-libs/glibc-2.33, bug #769989
@@ -319,16 +321,13 @@ src_prepare() {
 		)
 	fi
 
-	use ppc64 && eapply -p0 "${WORKDIR}/${PN}"-ppc64le
-
 	default
 
 	mkdir -p third_party/node/linux/node-linux-x64/bin || die
 	ln -s "${EPREFIX}"/usr/bin/node third_party/node/linux/node-linux-x64/bin/node || die
 
-	# adjust python interpreter versions
+	# adjust python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" .gn || die
-	sed -i -e "s|python2|python2\.7|g" buildtools/linux64/clang-format || die
 
 	# bundled highway library does not support arm64 with GCC
 	if use arm64; then
@@ -360,7 +359,6 @@ src_prepare() {
 		third_party/angle/src/common/third_party/base
 		third_party/angle/src/common/third_party/smhasher
 		third_party/angle/src/common/third_party/xxhash
-		third_party/angle/src/third_party/compiler
 		third_party/angle/src/third_party/libXNVCtrl
 		third_party/angle/src/third_party/trace_event
 		third_party/angle/src/third_party/volk
@@ -375,8 +373,8 @@ src_prepare() {
 		third_party/catapult
 		third_party/catapult/common/py_vulcanize/third_party/rcssmin
 		third_party/catapult/common/py_vulcanize/third_party/rjsmin
-		third_party/catapult/third_party/beautifulsoup4
-		third_party/catapult/third_party/html5lib-python
+		third_party/catapult/third_party/beautifulsoup4-4.9.3
+		third_party/catapult/third_party/html5lib-1.1
 		third_party/catapult/third_party/polymer
 		third_party/catapult/third_party/six
 		third_party/catapult/tracing/third_party/d3
@@ -532,6 +530,7 @@ src_prepare() {
 		third_party/tflite/src/third_party/fft2d
 		third_party/tflite-support
 		third_party/ruy
+		third_party/six
 		third_party/ukey2
 		third_party/unrar
 		third_party/usrsctp
@@ -555,7 +554,6 @@ src_prepare() {
 		third_party/xcbproto
 		third_party/zxcvbn-cpp
 		third_party/zlib/google
-		tools/grit/third_party/six
 		url/third_party/mozilla
 		v8/src/third_party/siphash
 		v8/src/third_party/valgrind
@@ -754,6 +752,9 @@ multilib_src_configure() {
 	# Disable pseudolocales, only used for testing
 	myconf_gn+=" enable_pseudolocales=false"
 
+	# Disable code formating of generated files
+	myconf_gn+=" blink_enable_generated_code_formatting=false"
+
 	ffmpeg_branding="$(usex proprietary-codecs Chrome Chromium)"
 	myconf_gn+=" proprietary_codecs=$(usex proprietary-codecs true false)"
 	myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
@@ -880,9 +881,6 @@ multilib_src_configure() {
 		append-cxxflags -flax-vector-conversions
 	fi
 
-	# highway/libjxl fail on ppc64 without extra patches, disable for now.
-	use ppc64 && myconf_gn+=" enable_jxl_decoder=false"
-
 	# Disable unknown warning message from clang.
 	tc-is-clang && append-flags -Wno-unknown-warning-option
 
@@ -922,14 +920,14 @@ multilib_src_configure() {
 			tools/generate_shim_headers/generate_shim_headers.py || die
 	fi
 
-	# See https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/sanitizers/BUILD.gn#L196
+	# See https://github.com/chromium/chromium/blob/93.0.4557.4/build/config/sanitizers/BUILD.gn#L196
 	if use cfi ; then
 		myconf_gn+=" is_cfi=true"
 	else
 		myconf_gn+=" is_cfi=false"
 	fi
 
-	# See https://github.com/chromium/chromium/blob/92.0.4515.80/tools/mb/mb_config.pyl#L2950
+	# See https://github.com/chromium/chromium/blob/93.0.4557.4/tools/mb/mb_config.pyl#L2950
 	if use cfi-full ; then
 		myconf_gn+=" use_cfi_cast=true"
 	else
@@ -963,10 +961,6 @@ multilib_src_compile() {
 
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
-
-	# https://bugs.gentoo.org/717456
-	# don't inherit PYTHONPATH from environment, bug #789021
-	local -x PYTHONPATH="${WORKDIR}/setuptools-44.1.0"
 
 	#"${EPYTHON}" tools/clang/scripts/update.py --force-local-build --gcc-toolchain /usr --skip-checkout --use-system-cmake --without-android || die
 
