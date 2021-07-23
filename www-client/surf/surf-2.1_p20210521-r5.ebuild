@@ -20,7 +20,7 @@ LICENSE="MIT SURF
 KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 ~sparc x86 ~x86-linux ~x86-macos"
 SLOT="0"
-IUSE+=" doc -drm +geolocation +libnotify mod_adblock mod_adblock_spam404
+IUSE+=" doc +geolocation +libnotify mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux tabbed update_adblock -pointer-lock +pulseaudio
 +v4l"
@@ -303,9 +303,6 @@ eerror
 	fi
 
 	local my_cppflags=""
-	if use drm ; then
-		my_cppflags+=" -DUSE_DRM"
-	fi
 	if use geolocation ; then
 		my_cppflags+=" -DUSE_GEOLOCATION"
 	fi
@@ -471,13 +468,6 @@ ewarn
 	fi
 
 	check_geolocation
-
-	if use drm ; then
-ewarn
-ewarn "The drm USE flag is currently going under testing and may not work."
-ewarn
-	fi
-
 }
 
 pkg_config() {
