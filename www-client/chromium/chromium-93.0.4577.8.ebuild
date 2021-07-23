@@ -27,7 +27,7 @@ RESTRICT="mirror"
 
 LICENSE="BSD"
 SLOT="0"
-#KEYWORDS="~amd64 ~arm64 ~x86" testing patch
+KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi, cfi-icall defaults status, see https://github.com/chromium/chromium/blob/93.0.4557.4/build/config/sanitizers/sanitizers.gni
@@ -300,6 +300,11 @@ src_prepare() {
 		einfo "Applying gcc & libstdc++ compatibility patches"
 		PATCHES+=( "${WORKDIR}/patches" )
 	fi
+
+	# already applied upstream.
+	rm -rf "${WORKDIR}/patches/chromium-93-dawn-raw-string-literal.patch" || die
+	rm -rf "${WORKDIR}/patches/chromium-swiftshader-export.patch" || die
+
 	PATCHES+=(
 		"${FILESDIR}/chromium-92-EnumTable-crash.patch"
 		"${FILESDIR}/chromium-93-InkDropHost-crash.patch"
