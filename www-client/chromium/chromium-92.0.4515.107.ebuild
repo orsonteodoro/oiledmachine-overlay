@@ -30,7 +30,7 @@ RESTRICT="mirror"
 
 LICENSE="BSD"
 SLOT="0"
-#KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi, cfi-icall defaults status, see https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/sanitizers/sanitizers.gni
