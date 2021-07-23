@@ -20,9 +20,9 @@ KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 # 90.0.4430.212 version used in CEF stable, NVD lists vulnerabilities
 # for that codebase even in v8.
 
-# 07/01/2021 - 92.0.14+gadd734a+chromium-92.0.4515.81 / Chromium 92.0.4515.81
-CHROMIUM_V="92.0.4515.81" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
-CEF_COMMIT="gadd734a" # same as https://bitbucket.org/chromiumembedded/cef/commits/
+# 07/20/2021 - 92.0.16+g3492b1b+chromium-92.0.4515.107 / Chromium 92.0.4515.107
+CHROMIUM_V="92.0.4515.107" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
+CEF_COMMIT="g3492b1b" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 TARBALL_SUFFIX="_beta" # can be _beta or ""
 SRC_URI="
 	x86? (
@@ -51,8 +51,8 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/92.0.4515.81/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/92.0.4515.81/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/92.0.4515.107/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/92.0.4515.107/build/install-build-deps.sh#L151
 # TODO: app-accessibility/speech-dispatcher needs multilib
 GLIB_V="2.48"
 XI_V="1.7.6"
