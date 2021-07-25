@@ -184,6 +184,10 @@ REQUIRED_USE+="
 #   Tools/gtk/install-dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
+#   [1] https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Tools/gstreamer/jhbuild.modules#L16
+
+# [1] Packaging this CDM is not feasible because of licensing and closed source
+# SDK.
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
