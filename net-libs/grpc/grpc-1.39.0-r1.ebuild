@@ -10,7 +10,8 @@ HOMEPAGE="https://www.grpc.io"
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 IUSE+=" doc examples test"
-SLOT="0/${PV}"
+# format is 0/${CORE_SOVERSION//./}.${CPP_SOVERSION//./} , check top level CMakeLists.txt
+SLOT="0/18.139"
 RDEPEND+="
 	 =dev-cpp/abseil-cpp-20210324*:=[${MULTILIB_USEDEP}]
 	>=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}]
