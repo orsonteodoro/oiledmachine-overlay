@@ -32,7 +32,7 @@ G_LONG_SCAN=${G_LONG_SCAN:="0"}
 G_NPM_APPS="/var/lib/portage/npm-packages" # location of registered npm packages
 G_PACKAGE_LOCK_DIR="/dev/shm"
 G_VERBOSE=${G_VERBOSE:="0"} # can only be 0 for silent, or 1 for more output
-G_VERSION="2020.08.23"
+G_VERSION="2021.07.27"
 G_DATA_CACHE_DIR="/var/cache/npm-secaudit"
 G_DATA_VERSION_DATA_PATH="${G_DATA_CACHE_DIR}/lite.json"
 G_USE_ELECTRON=${G_USE_ELECTRON:="1"}
@@ -41,15 +41,16 @@ G_USE_ELECTRON=${G_USE_ELECTRON:="1"}
 # include in the @${G_INSECURE_SET_FN} set.  Use at your own risk.
 G_BLACKLIST="/etc/portage/npm-secaudit-blacklist"
 
-# Updates to Chromium 91.0.4472.106 (Outdated already, see below in the G_LATEST_CHROMIUM_V_91 Chromium section)
+# Chromium 91.x is EOL, Electron v13 contains EOL Chromium
+
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=13
-G_CVE_PATCHED_ELECTRON_13="13.1.3"
+G_CVE_PATCHED_ELECTRON_13="13.1.7"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=12
-G_CVE_PATCHED_ELECTRON_12="12.0.13"
+G_CVE_PATCHED_ELECTRON_12="12.0.15"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=11
-G_CVE_PATCHED_ELECTRON_11="11.4.9"
+G_CVE_PATCHED_ELECTRON_11="11.4.10"
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
 G_CVE_PATCHED_NODE_16="16.4.1"
@@ -71,15 +72,11 @@ G_CVE_PATCHED_NODE_12="12.22.2"
 # They mix up 92 and 93 which is difficult to filter.
 # Dev channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Dev%20updates
-G_LATEST_CHROMIUM_93="93.0.4557.4"
+G_LATEST_CHROMIUM_93="93.0.4577.15"
 
-# Beta channel
+# Beta & stable channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
-G_LATEST_CHROMIUM_92="92.0.4515.80"
-
-# Stable channel
-# Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-G_LATEST_CHROMIUM_91="91.0.4472.114"
+G_LATEST_CHROMIUM_92="92.0.4515.107"
 
 H_INFO="\
 $(basename $BASH_SOURCE) ${G_VERSION}
@@ -314,7 +311,10 @@ function electron_version_audit() {
 
 	local is_vulnerable=0
 	# Check Electron
-	if is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 13 \
+	if is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 15 ; then
+		# Temporary alpha
+		:; # Passed
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 13 \
 		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_13} ; then
 		# Patched
 		:; # Passed
@@ -393,7 +393,10 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 93 \
+	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 94 ; then
+		# Not EOL
+		:; # Passed
+	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 93 \
 		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_LATEST_CHROMIUM_93} ; then
 		# Dev patched
 		:; # Passed
@@ -415,20 +418,9 @@ proper security updates."
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
 		is_vulnerable=1
-	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 91 \
-		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_LATEST_CHROMIUM_91} ; then
-		# Stable patched
-		:; # Passed
-	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 91 \
-		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_LATEST_CHROMIUM_91} ; then
-		# Stable unpatched
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
-proper security updates."
-		is_vulnerable=1
 	else
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} is End Of Life (EOL)."
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is End Of Life (EOL)."
 		is_vulnerable=1
 	fi
 
