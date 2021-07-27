@@ -7,7 +7,18 @@ inherit cmake-utils multilib-minimal
 
 DESCRIPTION="Modern open source high performance RPC framework"
 HOMEPAGE="https://www.grpc.io"
-LICENSE="Apache-2.0"
+LICENSE="Apache-2.0
+	BSD
+	BSD-2 GPL-2+
+	GPL-2
+	MIT
+	Unlicense"
+# BSD third_party/address_sorting/LICENSE
+# BSD third_party/upb/LICENSE
+# GPL-2 third_party/xxhash/tests/bench/LICENSE
+# BSD-2 GPL-2 third_party/xxhash/LICENSE
+# MIT third_party/upb/third_party/lunit/LICENSE
+# Unlicense third_party/upb/third_party/wyhash/LICENSE
 KEYWORDS="~amd64 ~ppc64 ~x86"
 IUSE+=" doc examples test"
 SLOT_MAJ="0"
