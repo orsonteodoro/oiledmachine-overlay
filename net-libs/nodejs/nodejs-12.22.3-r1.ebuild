@@ -310,7 +310,7 @@ pkg_postinst() {
 	else
 		eselect nodejs set node${SLOT_MAJOR}
 	fi
-	cp "${FILESDIR}/node-multiplexer-v2" "${EROOT}/usr/bin/node" || die
+	cp "${FILESDIR}/node-multiplexer-v3" "${EROOT}/usr/bin/node" || die
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die
 	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."
