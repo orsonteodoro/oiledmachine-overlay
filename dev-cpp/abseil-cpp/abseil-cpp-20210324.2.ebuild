@@ -1,4 +1,4 @@
-# Copyright 2020 Gentoo Authors
+# Copyright 2020-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -17,9 +17,9 @@ BDEPEND+=" ${PYTHON_DEPS}
 	   test? ( sys-libs/timezone-data )"
 # yes, it needs SOURCE, not just installed one
 # Uses master, see
-# https://github.com/abseil/abseil-cpp/blob/20200923.3/CMake/Googletest/CMakeLists.txt.in
-GTEST_COMMIT="f31c82efe6598aef4c3a82fb4b35f1f84a3b81a1" # Up to tag date version
-GTEST_FILE="gtest-1.10.0_p20210116.tar.gz"
+# https://github.com/abseil/abseil-cpp/blob/20210324.2/CMake/Googletest/CMakeLists.txt.in
+GTEST_COMMIT="e2239ee6043f73722e7aa812a459f54a28552929" # Up to tag date version
+GTEST_FILE="gtest-1.11.0.tar.gz"
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -45,6 +45,14 @@ src_prepare() {
 }
 
 src_configure() {
+	if use arm || use arm64 ; then
+		# bug #778926
+		if [[ $($(tc-getCXX) ${CXXFLAGS} -E -P - \
+			<<<$'#if defined(__ARM_FEATURE_CRYPTO)\nHAVE_ARM_FEATURE_CRYPTO\n#endif') \
+			!= *HAVE_ARM_FEATURE_CRYPTO* ]]; then
+			append-cxxflags -DABSL_ARCH_ARM_NO_CRYPTO
+		fi
+	fi
 	local mycmakeargs=(
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_LOCAL_GOOGLETEST_DIR="${WORKDIR}/googletest-${GTEST_COMMIT}"
