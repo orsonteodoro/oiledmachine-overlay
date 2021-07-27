@@ -911,7 +911,13 @@ critical vulnerabilities in the internal Chromium."
 	# ##### Vulnerability and End Of Life (EOL) Tests ######################
 
 	# Check Electron
-	if ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 \
+	if ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 ; then
+		# Stable in Nov 16
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 14 ; then
+		# Stable in Aug 31
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 \
 		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_13} ; then
 		# Patched
 		:; # Passed
@@ -982,7 +988,10 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
+	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 94 ; then
+		# Not EOL
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
 		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_93} ; then
 		# Dev patched
 		:; # Passed
