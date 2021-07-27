@@ -366,6 +366,7 @@ npm-secaudit-register() {
 	die "NPM_SECAUDIT_REG_PATH has been removed and replaced with\n\
 	NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
 	fi
+	[[ -z "${NPM_SECAUDIT_INSTALL_PATH}" ]] && die "NPM_SECAUDIT_INSTALL_PATH must be defined"
 	while true ; do
 		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
@@ -376,8 +377,11 @@ npm-secaudit-register() {
 				check_path="${path}"
 			else
 				# relative path
-				check_path=$(realpath "/usr/$(get_libdir)/node/${PN}/${SLOT}/${path}")
+				check_path=$(realpath "${NPM_SECAUDIT_INSTALL_PATH}/${path}")
 			fi
+
+			[[ -z "${check_path}" ]] && "check_path is empty.  Audits won't work"
+
 			# format:
 			# ${CATEGORY}/${P}	path_to_package
 			addwrite "${NPM_PACKAGE_DB}"

@@ -1540,6 +1540,7 @@ electron-app-register-x() {
 	die "ELECTRON_APP_REG_PATH has been removed and replaced with\n\
 	ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
 	fi
+	[[ -z "${ELECTRON_APP_INSTALL_PATH}" ]] && die "ELECTRON_APP_INSTALL_PATH must be defined"
 	while true ; do
 		if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 			trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
@@ -1551,8 +1552,10 @@ electron-app-register-x() {
 				check_path="${path}"
 			else
 				# relative path
-				check_path=$(realpath "/usr/$(get_libdir)/node/${PN}/${SLOT}/${path}")
+				check_path=$(realpath "${ELECTRON_APP_INSTALL_PATH}/${path}")
 			fi
+
+			[[ -z "${check_path}" ]] && "check_path is empty.  Audits won't work"
 
 			# format:
 			# ${CATEGORY}/${P}	path_to_package
