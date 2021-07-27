@@ -10,8 +10,8 @@ HOMEPAGE="https://www.grpc.io"
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 IUSE+=" doc examples test"
-# format is 0/${CORE_SOVERSION//./}.${CPP_SOVERSION//./} , check top level CMakeLists.txt
-SLOT="0/18.139"
+SLOT_MAJ="0"
+SLOT="${SLOT_MAJ}/18.139"
 RDEPEND+="
 	 =dev-cpp/abseil-cpp-20210324*:=[${MULTILIB_USEDEP}]
 	>=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}]
@@ -34,18 +34,17 @@ S="${WORKDIR}/${PN}-${MY_PV}"
 DOCS=( AUTHORS CONCEPTS.md README.md TROUBLESHOOTING.md doc/. )
 
 soversion_check() {
-	local core_sover cpp_sover
-	# extract quoted number. line we check looks like this: 'set(gRPC_CPP_SOVERSION    "1.37")'
-	core_sover="$(grep 'set(gRPC_CORE_SOVERSION ' CMakeLists.txt  | sed '/.*\"\(.*\)\".*/ s//\1/')"
-	cpp_sover="$(grep 'set(gRPC_CPP_SOVERSION ' CMakeLists.txt  | sed '/.*\"\(.*\)\".*/ s//\1/')"
-	# remove dots, e.g. 1.37 -> 137
-	core_sover="${core_sover//./}"
-	cpp_sover="${cpp_sover//./}"
-	[[ ${core_sover} -eq $(ver_cut 2 ${SLOT}) ]] || die "fix core sublot! should be ${core_sover}"
-	[[ ${cpp_sover} -eq $(ver_cut 3 ${SLOT}) ]] || die "fix cpp sublot! should be ${cpp_sover}"
+	local f1=$(grep  "gRPC_CORE_VERSION" "${S}/CMakeLists.txt" | head -n 1 \
+		| cut -f 2 -d "\"" | cut -f 1 -d ".")
+	local f2=$(grep  "gRPC_CPP_SOVERSION" "${S}/CMakeLists.txt" \
+		| head -n 1 | cut -f 2 -d "\"" | sed -e "s|\.||")
+	local new_slot="${SLOT_MAJ}/${f1}.${f2}"
+	[[ "${SLOT}" != "${new_slot}" ]] \
+		&& die "Ebuild Q/A: Update SLOT=\"\${SLOT_MAJ}/${f1}.${f2}\""
 }
 
 src_prepare() {
+	soversion_check
 	cmake-utils_src_prepare
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
@@ -54,7 +53,6 @@ src_prepare() {
 			CMakeLists.txt || die
 		sed -i "s@/lib@/$(get_libdir)@" \
 			cmake/pkg-config-template.pc.in || die
-		soversion_check
 	}
 	multilib_copy_sources
 	multilib_foreach_abi prepare_abi
