@@ -115,15 +115,18 @@ ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
 # Also bump if for unpublished vulnerabilities published as bugs, weakened security, or Chromium security updates.
 
+# Track supported versions
+# https://www.electronjs.org/docs/tutorial/support#currently-supported-versions
+
 # Updates to Chromium 91.0.4472.106 (Outdated already, see below in the CVE_PATCHED_CHROMIUM_V_91 Chromium section)
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=13
-CVE_PATCHED_ELECTRON_13="13.1.3"
+CVE_PATCHED_ELECTRON_13="13.1.7"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=12
-CVE_PATCHED_ELECTRON_12="12.0.13"
+CVE_PATCHED_ELECTRON_12="12.0.15"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=11
-CVE_PATCHED_ELECTRON_11="11.4.9"
+CVE_PATCHED_ELECTRON_11="11.4.10"
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
 CVE_PATCHED_NODE_16="16.4.1"
@@ -145,15 +148,11 @@ CVE_PATCHED_NODE_12="12.22.2"
 # They mix up 92 and 93 which is difficult to filter.
 # Dev channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Dev%20updates
-LATEST_CHROMIUM_93="93.0.4557.4"
+LATEST_CHROMIUM_93="93.0.4577.15"
 
-# Beta channel
+# Beta & stable channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
-LATEST_CHROMIUM_92="92.0.4515.80"
-
-# Stable channel
-# Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-LATEST_CHROMIUM_91="91.0.4472.114"
+LATEST_CHROMIUM_92="92.0.4515.107"
 
 # Check the runtime dependencies for electron
 # Most electron apps will have electron bundled already.  No need for seperate
@@ -163,11 +162,12 @@ LATEST_CHROMIUM_91="91.0.4472.114"
 # https://github.com/electron/electron/blob/12-x-y/DEPS#L17 ,  replacing 12 with one of the stable versions
 
 # See https://www.electronjs.org/docs/development/build-instructions-linux
-# For Electron main, see https://github.com/chromium/chromium/blob/93.0.4558.0/build/install-build-deps.sh#L242
-# For Electron 14, see https://github.com/chromium/chromium/blob/93.0.4557.4/build/install-build-deps.sh#L242
-# For Electron 13, see https://github.com/chromium/chromium/blob/91.0.4472.124/build/install-build-deps.sh#L237
-# For Electron 12, see https://github.com/chromium/chromium/blob/89.0.4389.128/build/install-build-deps.sh#L238 # vulnerabilities?
-# For Electron 11, see https://github.com/chromium/chromium/blob/87.0.4280.141/build/install-build-deps.sh#L242 # vulnerabilities?
+# For Electron main, see https://github.com/chromium/chromium/blob/94.0.4584.0/build/install-build-deps.sh#L242
+# For Electron 15, see https://github.com/chromium/chromium/blob/94.0.4584.0/build/install-build-deps.sh#L242
+# For Electron 14, see https://github.com/chromium/chromium/blob/93.0.4566.0/build/install-build-deps.sh#L242
+# For Electron 13, see https://github.com/chromium/chromium/blob/91.0.4472.164/build/install-build-deps.sh#L237 # Chromium 91.x is EOL.  Vulnerabilities?
+# For Electron 12, see https://github.com/chromium/chromium/blob/89.0.4389.128/build/install-build-deps.sh#L238 # Chromium 89.x is EOL.  Vulnerabilities?
+# For Electron 11, see https://github.com/chromium/chromium/blob/87.0.4280.141/build/install-build-deps.sh#L242 # Chromium 87.x is EOL.  Vulnerabilities?
 
 # ##################  END End of Life or patched versions ######################
 
@@ -999,16 +999,6 @@ proper security updates."
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 92 \
 		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_92} ; then
 		# Beta unpatched
-		adie \
-"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
-proper security updates."
-	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
-		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_91} ; then
-		# Stable patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 91 \
-		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_91} ; then
-		# Stable unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
