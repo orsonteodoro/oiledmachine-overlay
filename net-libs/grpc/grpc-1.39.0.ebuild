@@ -1,58 +1,61 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 inherit cmake-utils multilib-minimal
 
-MY_PV="${PV//_pre/-pre}"
-
 DESCRIPTION="Modern open source high performance RPC framework"
 HOMEPAGE="https://www.grpc.io"
-SRC_URI="https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="Apache-2.0"
-SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc64 ~x86"
-IUSE="doc examples libressl test"
-
-RDEPEND="
-	=dev-cpp/abseil-cpp-20200225*:=[${MULTILIB_USEDEP}]
-	dev-libs/re2:=[${MULTILIB_USEDEP}]
-	>=dev-libs/protobuf-3.13.0:=[${MULTILIB_USEDEP}]
+IUSE+=" doc examples test"
+SLOT="0/${PV}"
+RDEPEND+="
+	 =dev-cpp/abseil-cpp-20210324*:=[${MULTILIB_USEDEP}]
+	>=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}]
+	>=dev-libs/protobuf-3.15.8:=[${MULTILIB_USEDEP}]
+	>=dev-libs/re2-0.2020.06.01:=[${MULTILIB_USEDEP}]
+	>=dev-libs/xxhash-0.8.0
 	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
-	sys-libs/zlib:=[${MULTILIB_USEDEP}]
-	!libressl? ( >=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}] )
-	libressl? ( dev-libs/libressl:0=[${MULTILIB_USEDEP}] )
-"
-
-DEPEND="${RDEPEND}
+	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]"
+DEPEND+=" ${RDEPEND}
 	test? (
 		dev-cpp/benchmark
 		dev-cpp/gflags[${MULTILIB_USEDEP}]
-	)
-"
-
-BDEPEND="virtual/pkgconfig"
-
+	)"
+BDEPEND+=" virtual/pkgconfig"
 # requires sources of many google tools
 RESTRICT="test"
-
+MY_PV="${PV//_pre/-pre}"
+SRC_URI="https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${MY_PV}"
+DOCS=( AUTHORS CONCEPTS.md README.md TROUBLESHOOTING.md doc/. )
 
-PATCHES=( "${FILESDIR}/use-pkg-config-to-find-re2.patch" )
+soversion_check() {
+	local core_sover cpp_sover
+	# extract quoted number. line we check looks like this: 'set(gRPC_CPP_SOVERSION    "1.37")'
+	core_sover="$(grep 'set(gRPC_CORE_SOVERSION ' CMakeLists.txt  | sed '/.*\"\(.*\)\".*/ s//\1/')"
+	cpp_sover="$(grep 'set(gRPC_CPP_SOVERSION ' CMakeLists.txt  | sed '/.*\"\(.*\)\".*/ s//\1/')"
+	# remove dots, e.g. 1.37 -> 137
+	core_sover="${core_sover//./}"
+	cpp_sover="${cpp_sover//./}"
+	[[ ${core_sover} -eq $(ver_cut 2 ${SLOT}) ]] || die "fix core sublot! should be ${core_sover}"
+	[[ ${cpp_sover} -eq $(ver_cut 3 ${SLOT}) ]] || die "fix cpp sublot! should be ${cpp_sover}"
+}
 
 src_prepare() {
 	cmake-utils_src_prepare
-
-	multilib_copy_sources
-
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
 		# un-hardcode libdir
-		sed -i "s@lib/pkgconfig@$(get_libdir)/pkgconfig@" CMakeLists.txt || die
-		sed -i "s@/lib@/$(get_libdir)@" cmake/pkg-config-template.pc.in || die
+		sed -i "s@lib/pkgconfig@$(get_libdir)/pkgconfig@" \
+			CMakeLists.txt || die
+		sed -i "s@/lib@/$(get_libdir)@" \
+			cmake/pkg-config-template.pc.in || die
+		soversion_check
 	}
+	multilib_copy_sources
 	multilib_foreach_abi prepare_abi
 }
 
@@ -74,7 +77,8 @@ src_configure() {
 			$(usex test '-DgRPC_GFLAGS_PROVIDER=package' '')
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
-		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+		CMAKE_USE_DIR="${BUILD_DIR}" \
+		BUILD_DIR="${P}_${ABI}_build" \
 		cmake-utils_src_configure
 	}
 	multilib_foreach_abi configure_abi
@@ -82,7 +86,9 @@ src_configure() {
 
 src_compile() {
 	configure_abi() {
-		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+		cd "${BUILD_DIR}" || die
+		CMAKE_USE_DIR="${BUILD_DIR}" \
+		BUILD_DIR="${P}_${ABI}_build" \
 		cmake-utils_src_compile
 	}
 	multilib_foreach_abi configure_abi
@@ -91,21 +97,23 @@ src_compile() {
 src_install() {
 	configure_abi() {
 		cd "${BUILD_DIR}" || die
+		CMAKE_USE_DIR="${BUILD_DIR}" \
+		BUILD_DIR="${P}_${ABI}_build" \
 		cmake-utils_src_install
-
 		if multilib_is_native_abi ; then
 			if use examples; then
 				find examples -name '.gitignore' -delete || die
 				dodoc -r examples
 				docompress -x /usr/share/doc/${PF}/examples
 			fi
-
 			if use doc; then
 				find doc -name '.gitignore' -delete || die
-				local DOCS=( AUTHORS CONCEPTS.md README.md TROUBLESHOOTING.md doc/. )
 			fi
 			einstalldocs
 		fi
 	}
 	multilib_foreach_abi configure_abi
+	cd "${S}" || die
+	docinto licenses
+	dodoc LICENSE NOTICE.txt
 }
