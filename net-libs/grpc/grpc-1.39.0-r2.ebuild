@@ -77,7 +77,7 @@ src_configure() {
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
 		CMAKE_USE_DIR="${BUILD_DIR}" \
-		BUILD_DIR="${P}_${ABI}_build" \
+		BUILD_DIR="${WORKDIR}/${P}_${ABI}_build" \
 		cmake-utils_src_configure
 	}
 	multilib_foreach_abi configure_abi
@@ -87,7 +87,7 @@ src_compile() {
 	configure_abi() {
 		cd "${BUILD_DIR}" || die
 		CMAKE_USE_DIR="${BUILD_DIR}" \
-		BUILD_DIR="${P}_${ABI}_build" \
+		BUILD_DIR="${WORKDIR}/${P}_${ABI}_build" \
 		cmake-utils_src_compile
 	}
 	multilib_foreach_abi configure_abi
@@ -97,7 +97,7 @@ src_install() {
 	configure_abi() {
 		cd "${BUILD_DIR}" || die
 		CMAKE_USE_DIR="${BUILD_DIR}" \
-		BUILD_DIR="${P}_${ABI}_build" \
+		BUILD_DIR="${WORKDIR}/${P}_${ABI}_build" \
 		cmake-utils_src_install
 		if multilib_is_native_abi ; then
 			if use examples; then
