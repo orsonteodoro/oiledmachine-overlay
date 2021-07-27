@@ -15,7 +15,6 @@ MY_PN="${PN/b/B}"
 SLOT="0"
 IUSE+=" test"
 CDEPEND=" >=net-libs/grpc-1.26
-	   <dev-cpp/abseil-cpp-20200923
 	   >=dev-libs/protobuf-3.11"
 DEPEND+=" ${CDEPEND}
 	  >=dev-cpp/nlohmann_json-3.7.3
@@ -43,7 +42,7 @@ pkg_setup()
 	if pkg-config --libs grpc | grep -q -e "absl_dynamic_annotations" ; then
 		if [[ ! -f /usr/$(get_libdir)/libabsl_dynamic_annotations.so ]] ; then
 			# grpc requirement
-			die "Downgrade dev-cpp/abseil-cpp to <20200923 (2)"
+			die "Missing libabsl_dynamic_annotations.so"
 		fi
 	fi
 }
