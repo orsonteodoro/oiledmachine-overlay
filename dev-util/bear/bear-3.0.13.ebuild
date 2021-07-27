@@ -41,11 +41,6 @@ pkg_setup()
 {
 	python-any-r1_pkg_setup
 	if pkg-config --libs grpc | grep -q -e "absl_dynamic_annotations" ; then
-		if has_version '>=dev-cpp/abseil-cpp-20200923' ; then
-			# grpc requirement
-			die "Downgrade dev-cpp/abseil-cpp to <20200923 (1)"
-		fi
-
 		if [[ ! -f /usr/$(get_libdir)/libabsl_dynamic_annotations.so ]] ; then
 			# grpc requirement
 			die "Downgrade dev-cpp/abseil-cpp to <20200923 (2)"
