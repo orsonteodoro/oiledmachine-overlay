@@ -1,7 +1,10 @@
 # Copyright 2009-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Monitor https://chromereleases.googleblog.com/search/label/Beta%20updates for security updates.  They are announced faster than NVD.
+# Monitor
+#   https://chromereleases.googleblog.com/search/label/Beta%20updates
+#   https://chromereleases.googleblog.com/search/label/Stable%20updates
+# for security updates.  They are announced faster than NVD.
 # See https://omahaproxy.appspot.com/ for the latest linux version
 
 EAPI=7
@@ -12,32 +15,40 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
 	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
 	sv sw ta te th tr uk vi zh-CN zh-TW"
 
+VIRTUALX_REQUIRED=manual
 inherit check-reqs chromium-2 desktop flag-o-matic multilib ninja-utils pax-utils portability python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
-inherit multilib-minimal
+inherit multilib-minimal virtualx
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
 PATCHSET="7"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
-PPC64LE_PATCHSET="91-ppc64le-6"
+PPC64LE_PATCHSET="92-ppc64le-1"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-44.1.0.zip
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
+	https://dev.gentoo.org/~sultan/distfiles/www-client/${PN}/${PN}-92-glibc-2.33-patch.tar.xz
 	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )
 	ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-${PPC64LE_PATCHSET}.tar.xz )"
 RESTRICT="mirror"
 
-LICENSE="BSD"
+PGO_NATIVE_TEST_SITES_LICENSES=(
+	CC-BY-4.0
+	CC0-1.0
+	CC-BY-SA-3.0
+)
+LICENSE="BSD
+	pgo-native? ( ${PGO_NATIVE_TEST_SITES_LICENSES} )"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64 arm64 ~ppc64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
-# For cfi, cfi-icall defaults status, see https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/sanitizers/sanitizers.gni
-# For cfi-full default status see, https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/sanitizers/sanitizers.gni#L123
-# For pgo default status see, https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/compiler/pgo/pgo.gni#L15
-# For libcxx default see, https://github.com/chromium/chromium/blob/91.0.4462.1/build/config/c++/c++.gni#L14
-IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx pgo"
+# For cfi, cfi-icall defaults status, see https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/sanitizers.gni
+# For cfi-full default status see, https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/sanitizers.gni#L123
+# For pgo default status see, https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/compiler/pgo/pgo.gni#L15
+# For libcxx default see, https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/c++/c++.gni#L14
+IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx pgo pgo-native pgo-web"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 REQUIRED_USE="
@@ -48,9 +59,11 @@ REQUIRED_USE="
 	cfi-icall? ( cfi )
 	component-build? ( !suid )
 	libcxx? ( clang )
-	official? ( amd64? ( cfi cfi-icall ) pgo )
+	official? ( amd64? ( cfi cfi-icall ) libcxx pgo )
 	partitionalloc? ( !component-build )
-	pgo? ( clang )
+	pgo? ( clang libcxx !pgo-native )
+	pgo-native? ( clang !pgo )
+	pgo-web? ( pgo-native )
 	screencast? ( wayland )
 "
 
@@ -148,6 +161,10 @@ BDEPEND="
 		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
 	)
 	js-type-check? ( virtual/jre )
+	pgo-native? (
+		${VIRTUALX_DEPEND}
+		x11-misc/xdotool
+	)
 "
 
 # >=mesa-21.1 is bumped to compatibile llvm-12
@@ -253,7 +270,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	ewarn "The $(ver_cut 1 ${PV}) series is the Beta channel."
+	einfo "The $(ver_cut 1 ${PV}) series is the Stable channel."
 	pre_build_checks
 
 	chromium_suid_sandbox_check_kernel_config
@@ -265,28 +282,53 @@ pkg_setup() {
 	fi
 
 	if ! use amd64 && [[ "${IUSE}" =~ cfi ]]; then
-		ewarn \
-"All variations of the cfi USE flags are not defaults for this platform.\n\
-Disable them if problematic."
+ewarn
+ewarn "All variations of the cfi USE flags are not defaults for this platform."
+ewarn "Disable them if problematic."
+ewarn
 	fi
 
 	if use pgo ; then
-		ewarn "The pgo USE flag is experimental.  Disable if it fails."
+ewarn "The pgo USE flag is experimental.  Disable if it fails."
 
-		# See also https://clang.llvm.org/docs/UsersManual.html#profile-remapping
-		#   to address the profile mismatch problem.
+# See also https://clang.llvm.org/docs/UsersManual.html#profile-remapping
+#   to address the profile mismatch problem.
 
-		# It's better to rebuild the system with libcxx than to build the
-		# program twice all the time or skip PGO.  The other problem is updating
-		# and check the mangled remapping every update.  The other problem is
-		# that non-upstream patches modify the function/method signatures which
-		# could interfear with PGO.
-		ewarn \
-"The PGO profile may require sys-devel/clang[default-libcxx] and\n\
-www-client/chromium[libcxx] and rebuilding dependencies for proper\n\
-optimization or to match the upstream PGO profile properly.\n\
-Upstream may likely assume libc++ instead of libstdc++."
+# It's better to rebuild the system with libcxx than to build the
+# program twice all the time or skip PGO.  The other problem is updating
+# and check the mangled remapping every update.  The other problem is
+# that non-upstream patches modify the function/method signatures which
+# could interfere with PGO.
+
+ewarn
+ewarn "The PGO profile may require sys-devel/clang[default-libcxx] and"
+ewarn "www-client/chromium[libcxx] and rebuilding dependencies for proper"
+ewarn "optimization or to match the upstream PGO profile properly."
+ewarn "Upstream may likely assume libc++ instead of libstdc++."
+ewarn
 	fi
+
+	if use pgo-native ; then
+ewarn
+ewarn "The pgo-native option is a Work In Progress (WIP)."
+ewarn
+	fi
+
+	if use pgo-web ; then
+		if has network-sandbox $FEATURES ; then
+eerror
+eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
+eerror "access remote websites."
+eerror
+			die
+		fi
+	fi
+}
+
+USED_EAPPLY=0
+ceapply() {
+	USED_EAPPLY=1
+	eapply "${@}"
 }
 
 src_prepare() {
@@ -295,34 +337,53 @@ src_prepare() {
 
 	local PATCHES=()
 	if ( ! use clang ) || ( ! use libcxx ) || use arm64 ; then
-		# TODO: split GCC only and libstdc++ only.  Patches purpose not documented well.
+		# TODO: split GCC only and libstdc++ only.
+		# The patches purpose are not documented well.
 		einfo "Applying gcc & libstdc++ compatibility patches"
 		PATCHES+=( "${WORKDIR}/patches" )
 	fi
+
 	PATCHES+=(
+		"${WORKDIR}/sandbox-patches/chromium-syscall_broker.patch"
+		"${WORKDIR}/sandbox-patches/chromium-fstatat-crash.patch"
 		"${FILESDIR}/chromium-92-EnumTable-crash.patch"
+		"${FILESDIR}/chromium-92-GetUsableSize-nullptr.patch"
+		"${FILESDIR}/chromium-freetype-2.11.patch"
 		"${FILESDIR}/chromium-shim_headers.patch"
 	)
 
 	if ! use arm64 ; then
+		einfo "Removing aarch64 only patches"
 		rm "${WORKDIR}/patches/chromium-91-libyuv-aarch64.patch" || die
 		rm "${WORKDIR}/patches/chromium-92-v8-constexpr.patch" || die
 	fi
 
-	# seccomp sandbox is broken if compiled against >=sys-libs/glibc-2.33, bug #769989
-	if has_version -d ">=sys-libs/glibc-2.33"; then
-		ewarn "Adding experimental glibc-2.33 sandbox patch. Seccomp sandbox might"
-		ewarn "still not work correctly. In case of issues, try to disable seccomp"
-		ewarn "sandbox by adding --disable-seccomp-filter-sandbox to CHROMIUM_FLAGS"
-		ewarn "in /etc/chromium/default."
-		PATCHES+=(
-			"${FILESDIR}/chromium-glibc-2.33.patch"
-		)
+	if use ppc64; then
+		ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-libvpx.patch"
+		ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-support.patch"
+		ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-swiftshader.patch"
 	fi
 
-	use ppc64 && eapply -p0 "${WORKDIR}/${PN}"-ppc64le
+	ceapply "${WORKDIR}/${PN}-92-clang-toolchain.patch"
+
+	if ( (( ${#PATCHES[@]} > 0 || ${USED_EAPPLY} == 1 )) || [[ -f "${T}/epatch_user.log" ]] ) ; then
+		if use official ; then
+			ewarn
+			ewarn "The use of unofficial patches is not endorsed upstream."
+			ewarn
+		fi
+
+		if use pgo ; then
+			ewarn
+			ewarn "The use of patching can interfere with the pregenerated PGO profile."
+			ewarn
+		fi
+	fi
 
 	default
+
+	# this patch needs to be applied after gentoo sandbox patchset
+	use ppc64 && eapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-sandbox_kernel_stat.patch"
 
 	mkdir -p third_party/node/linux/node-linux-x64/bin || die
 	ln -s "${EPREFIX}"/usr/bin/node third_party/node/linux/node-linux-x64/bin/node || die
@@ -614,7 +675,7 @@ src_prepare() {
 	multilib_copy_sources
 }
 
-multilib_src_configure() {
+_configure_pgx() {
 	local chost=$(get_abi_CHOST ${ABI})
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
@@ -622,13 +683,17 @@ multilib_src_configure() {
 	local myconf_gn=""
 
 	# Make sure the build system will use the right tools, bug #340795.
-	tc-export AR CC CXX NM
+	tc-export AR CC CXX NM READELF STRIP
 
 	if use clang ; then
-		# Force clang since gcc is pretty broken at the moment.
+		# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
+		# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
 		CC=${chost}-clang
 		CXX=${chost}-clang++
 		AR=llvm-ar # required for LTO
+		NM=llvm-nm
+		READELF=llvm-readelf
+		STRIP=llvm-strip
 		strip-unsupported-flags
 		if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
 			die "llvm-ar is unreachable"
@@ -636,9 +701,12 @@ multilib_src_configure() {
 	fi
 
 	if ! use clang && tc-is-clang ; then
-		if [[ "${AR}" =~ "llvm-ar" ]] ; then
+		if [[ ! ( "${AR}" =~ "llvm-ar" ) ]] ; then
 			einfo "Forcing llvm-ar for LTO"
 			AR=llvm-ar # required for LTO
+			NM=llvm-nm
+			READELF=llvm-readelf
+			STRIP=llvm-strip
 			if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
 				die "llvm-ar is unreachable"
 			fi
@@ -923,14 +991,14 @@ multilib_src_configure() {
 			tools/generate_shim_headers/generate_shim_headers.py || die
 	fi
 
-	# See https://github.com/chromium/chromium/blob/92.0.4515.80/build/config/sanitizers/BUILD.gn#L196
+	# See https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/BUILD.gn#L196
 	if use cfi ; then
 		myconf_gn+=" is_cfi=true"
 	else
 		myconf_gn+=" is_cfi=false"
 	fi
 
-	# See https://github.com/chromium/chromium/blob/92.0.4515.80/tools/mb/mb_config.pyl#L2950
+	# See https://github.com/chromium/chromium/blob/92.0.4515.107/tools/mb/mb_config.pyl#L2950
 	if use cfi-full ; then
 		myconf_gn+=" use_cfi_cast=true"
 	else
@@ -943,7 +1011,13 @@ multilib_src_configure() {
 		myconf_gn+=" use_cfi_icall=false"
 	fi
 
-	if use pgo && tc-is-clang && ver_test $(clang-version) -ge 11 ; then
+	# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
+	# profile-instr-use is clang which that file assumes but gcc doesn't have.
+	if use pgo-native ; then
+		myconf_gn+=" chrome_pgo_phase=${PGO_PHASE}"
+		mkdir -p "${BUILD_DIR}/chrome/build/pgo_profiles" || die
+		myconf_gn+=" pgo_data_path=\"${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata\""
+	elif use pgo && tc-is-clang && ver_test $(clang-version) -ge 11 ; then
 		# The profile data is already shipped so use it.
 		# PGO profile location: chrome/build/pgo_profiles/chrome-linux-*.profdata
 		myconf_gn+=" chrome_pgo_phase=2"
@@ -956,6 +1030,241 @@ multilib_src_configure() {
 	set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" out/Release
 	echo "$@"
 	"$@" || die
+}
+
+_build_pgx() {
+	einfo "Cleaning out build"
+	eninja -t clean
+	# Build mksnapshot and pax-mark it.
+	local x
+	for x in mksnapshot v8_context_snapshot_generator; do
+		einfo "Building ${x}"
+		if tc-is-cross-compiler; then
+			eninja -C out/Release "host/${x}"
+			pax-mark m "out/Release/host/${x}"
+		else
+			eninja -C out/Release "${x}"
+			pax-mark m "out/Release/${x}"
+		fi
+	done
+}
+
+# Handles a window with 2 checkboxes and an OK
+_handle_new_install_window() {
+	local id=$(xdotool getwindowfocus)
+	sleep 0.2 # let the window load
+	xdotool windowsize ${id} 1918 1059
+	xdotool windowmove ${id} -3840 19
+
+	# no making default browser
+	xdotool mousemove 26 22
+	xdotool click
+
+	# no sending statistics to G
+	xdotool mousemove 26 56
+	xdotool click
+
+	# OK - close window
+	xdotool mousemove 1870 1052
+	xdotool click
+}
+
+_javascript_benchmark() {
+	einfo "Running simulation:  metering javascript engine performance... timeboxed 2 minutes"
+	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
+	cat <<EOF > "${BUILD_DIR}/run.sh"
+#!/bin/bash
+cat /dev/null > "${T}/test-retcode.log"
+cd "${BUILD_DIR}"
+timeout 120 ( out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+sleep 0.2 # let the app load
+local id=$(xdotool getwindowfocus)
+sleep 0.2 # let the window load
+xdotool windowsize ${id} 1918 1059
+xdotool windowmove ${id} -3840 19
+
+	# benchmark #1
+	xdotool key --window ${id} ctrl+l
+	xdotool type --window ${id} "https://chromium.github.io/octane/"
+	xdotool key Return
+	sleep 3 # let the page load
+
+	# click start
+	xdotool mousemove 909 267
+	xdotool click
+
+	sleep 120
+
+echo -n "\$?" > "${T}/test-retcode.log"
+exit \$(cat "${T}/test-retcode.log")
+EOF
+	chmod +x "${BUILD_DIR}/run.sh" || die
+	virtx "${BUILD_DIR}/run.sh"
+
+	sleep 120
+
+	if [[ -f "${T}/test-retcode.log" ]] ; then
+		die "Missing retcode for ${x}"
+	fi
+	local test_retcode=$(cat "${T}/test-retcode.log")
+	if [[ "${test_retcode}" != "0" ]] ; then
+eerror "Test failed for ${x}.  Return code: ${test_retcode}."
+		die
+	fi
+}
+
+_load_simulation() {
+	einfo "Running simulation:  metering load-time performance... timeboxed 3 minutes"
+	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
+	cat <<EOF > "${BUILD_DIR}/run.sh"
+#!/bin/bash
+cat /dev/null > "${T}/test-retcode.log"
+cd "${BUILD_DIR}"
+timeout 180 ( out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+echo -n "\$?" > "${T}/test-retcode.log"
+exit \$(cat "${T}/test-retcode.log")
+EOF
+	chmod +x "${BUILD_DIR}/run.sh" || die
+	virtx "${BUILD_DIR}/run.sh"
+
+	sleep 180
+
+	if [[ -f "${T}/test-retcode.log" ]] ; then
+		die "Missing retcode for ${x}"
+	fi
+	local test_retcode=$(cat "${T}/test-retcode.log")
+	if [[ "${test_retcode}" != "0" ]] ; then
+eerror "Test failed for ${x}.  Return code: ${test_retcode}."
+		die
+	fi
+}
+
+_tabs_simulation() {
+	einfo "Running simulation:  metering load-time performance... timeboxed 6 minutes"
+	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
+	cat <<EOF > "${BUILD_DIR}/run.sh"
+#!/bin/bash
+cat /dev/null > "${T}/test-retcode.log"
+cd "${BUILD_DIR}"
+timeout 360 ( out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+sleep 0.2 # let the app load
+local id=$(xdotool getwindowfocus)
+sleep 0.2 # let the window load
+xdotool windowsize ${id} 1918 1059
+xdotool windowmove ${id} -3840 19
+
+local uris=()
+if [[ -z "${ECHROMIUM_PGO_URIS}" ]] ; then
+	# This goes through open source or open content websites mostly to make
+	# sure that image code paths are loaded in the hot section and not
+	# demoted from optimization.  Hot parts get pushed up the memory
+	# hierarchy.
+	# Assume 20 seconds per URI load time.
+	uris=(
+'https://search.creativecommons.org/search?q=nature&license=cc0'
+'https://search.creativecommons.org/search?q=bugs&license=cc0'
+'https://search.creativecommons.org/search?q=waterfalls&license=cc0'
+'https://search.creativecommons.org/search?q=clipart&license=cc0&extension=svg'
+'https://search.creativecommons.org/search?q=skyline&license=cc0&extension=jpg'
+'https://search.creativecommons.org/search?q=fish&license=cc0&extension=png'
+'https://search.creativecommons.org/search?q=animated&license=cc0&extension=gif'
+'https://wiki.gentoo.org/wiki/Main_Page'
+	) # 160s
+else
+	uris=( ${ECHROMIUM_PGO_URIS} )
+fi
+
+# Measure image management, and tab creation
+local tab_limit=20
+local tab_count=1
+local n_closed=0
+for u in ${uris[@]} ; do
+	xdotool key --window ${id} ctrl+t
+	tab_count=$((${tab_count}+1))
+	xdotool key --window ${id} ctrl+l
+	xdotool type --window ${id} "${u}"
+	xdotool key Return
+	sleep 3 # let the page load
+	if (( ${tab_count} > ${tab_limit} )) ; then
+		xdotool key --window ${id} ctrl+1
+		xdotool key --window ${id} ctrl+w
+		xdotool key --window ${id} ctrl+9
+		n_closed=$((${n_closed}+1))
+	fi
+done
+
+# Simulate tab switching in 2.5 min
+for x in $(seq 1 300) ; do
+	xdotool key --window ${id} ctrl+$(($((${RANDOM}  % 9)) + 1))
+	sleep 0.5
+done # 150s
+
+for u in $(seq 1 $((${#uris[@]}-${n_closed}))) ; do
+	xdotool key --window ${id} ctrl+w
+done
+
+echo -n "\$?" > "${T}/test-retcode.log"
+exit \$(cat "${T}/test-retcode.log")
+EOF
+	chmod +x "${BUILD_DIR}/run.sh" || die
+	virtx "${BUILD_DIR}/run.sh"
+
+	sleep 360
+
+	if [[ -f "${T}/test-retcode.log" ]] ; then
+		die "Missing retcode for ${x}"
+	fi
+	local test_retcode=$(cat "${T}/test-retcode.log")
+	if [[ "${test_retcode}" != "0" ]] ; then
+eerror "Test failed for ${x}.  Return code: ${test_retcode}."
+		die
+	fi
+}
+
+_responsiveness_simulation() {
+	# It runs actually in around a minute.
+	einfo "Running simulation:  metering load-time performance... timeboxed 120 seconds"
+	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
+	cat <<EOF > "${BUILD_DIR}/run.sh"
+#!/bin/bash
+cat /dev/null > "${T}/test-retcode.log"
+cd "${BUILD_DIR}"
+timeout 120 ( out/Release/chrome "https://browserbench.org/Speedometer2.0/" ; echo "$?" > "${T}/test-retcode.log" ) &
+sleep 0.2 # let the app load
+
+local id=$(xdotool getwindowfocus)
+
+sleep 0.2 # let the window load
+xdotool windowsize ${id} 1918 1059
+xdotool windowmove ${id} -3840 19
+xdotool mousemove 991 627
+sleep 15 # let the page load
+xdotool click
+echo -n "\$?" > "${T}/test-retcode.log"
+exit \$(cat "${T}/test-retcode.log")
+EOF
+	chmod +x "${BUILD_DIR}/run.sh" || die
+	virtx "${BUILD_DIR}/run.sh"
+
+	sleep 120
+
+	if [[ -f "${T}/test-retcode.log" ]] ; then
+		die "Missing retcode for ${x}"
+	fi
+	local test_retcode=$(cat "${T}/test-retcode.log")
+	if [[ "${test_retcode}" != "0" ]] ; then
+eerror "Test failed for ${x}.  Return code: ${test_retcode}."
+		die
+	fi
+}
+
+_run_simulations() {
+	ewarn "_run_simulations(): 🐧 <penguin emoji> please finish me!"
+	einfo "Running training exercise simulations"
+	_load_simulation
+	use pgo-web && _tabs_simulation
+	use pgo-web && _javascript_benchmark
+	use pgo-web && _responsiveness_simulation
 }
 
 multilib_src_compile() {
@@ -971,17 +1280,23 @@ multilib_src_compile() {
 
 	#"${EPYTHON}" tools/clang/scripts/update.py --force-local-build --gcc-toolchain /usr --skip-checkout --use-system-cmake --without-android || die
 
-	# Build mksnapshot and pax-mark it.
-	local x
-	for x in mksnapshot v8_context_snapshot_generator; do
-		if tc-is-cross-compiler; then
-			eninja -C out/Release "host/${x}"
-			pax-mark m "out/Release/host/${x}"
-		else
-			eninja -C out/Release "${x}"
-			pax-mark m "out/Release/${x}"
-		fi
-	done
+	if use pgo-native ; then
+		PGO_PHASE=1
+		_configure_pgx # pgi
+		_build_pgx
+		_run_simulations
+		PGO_PHASE=2
+		_configure_pgx # pgo
+		_build_pgx
+	elif use pgo ; then
+		PGO_PHASE=2
+		_configure_pgx # pgo
+		_build_pgx
+	else
+		PGO_PHASE=0
+		_configure_pgx # pg0
+		_build_pgx
+	fi
 
 	# Even though ninja autodetects number of CPUs, we respect
 	# user's options, for debugging with -j 1 or any other reason.
@@ -1117,15 +1432,16 @@ pkg_postinst() {
 		elog "to CHROMIUM_FLAGS in /etc/chromium/default."
 	fi
 
-	elog
-	elog "By default, the /usr/bin/chromium and /usr/bin/chromedriver symlinks are"
-	elog "set to the last ABI installed."
-	elog "You must change it manually if you want to run on a different default ABI."
-	elog
-	elog "Examples"
-	elog "ln -sf /usr/lib64/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-	elog "ln -sf /usr/lib/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-	elog "ln -sf /usr/lib32/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-	elog "ln -sf /usr/lib32/chromium-browser/chromedriver-${ABI} /usr/bin/chromedriver"
-	elog
+einfo
+einfo "By default, the /usr/bin/chromium and /usr/bin/chromedriver symlinks are"
+einfo "set to the last ABI installed.  You must change it manually if you want"
+einfo "to run on a different default ABI."
+einfo
+einfo "Examples:"
+einfo
+einfo "  ln -sf /usr/lib64/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+einfo "  ln -sf /usr/lib/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+einfo "  ln -sf /usr/lib32/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+einfo "  ln -sf /usr/lib32/chromium-browser/chromedriver-${ABI} /usr/bin/chromedriver"
+einfo
 }

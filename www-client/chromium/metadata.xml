@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- only in this ebuild fork on the oiledmachine-overlay -->
   <maintainer type="person">
+    <!-- only for this ebuild fork on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!-- originator -->
   <maintainer type="project">
+    <!-- originator -->
     <email>chromium@gentoo.org</email>
     <name>Chromium in Gentoo Project</name>
   </maintainer>
@@ -24,6 +24,14 @@
     ----- CUT BELOW HERE -----
 www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
     ----- CUT ABOVE HERE -----
+
+    Per build environment variables:
+
+    ECHROMIUM_PGO_URIS - A space delimited URIs to use per tab for the PGO tab
+      creation simulation.  If you do not supply, it will use open source
+      websites used websites some open source or open content.  Setting this
+      will override the defaults.  Sites selected should be widely used
+      and not contain untrusted content.
 
     References:
       CFI - https://www.chromium.org/developers/testing/control-flow-integrity
@@ -78,7 +86,13 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       friendly</flag>
     <flag name="pgo">Builds with Profile Guided Optimizations to improve
       -- page loads, input reponsiveness, web reponsiveness -- by ~10% or
-       less</flag>
+       less.  Builds only once with a pregenerated PGO profile.</flag>
+    <flag name="pgo-native">Builds with 2-step Profile Guided
+      Optimizations.  Builds PGO for the native customized environment.</flag>
+    <flag name="pgo-web">Allows PGO simulation step visit websites and image
+      infrastructure for purposes of attempting to increase function
+      signature hits related to tab usage so they do not get demoted to
+      cold sections.</flag>
     <flag name="proprietary-codecs">Enable codecs for patent-encumbered audio
        and video formats.</flag>
     <flag name="screencast">Enable support for remote desktop and screen cast
@@ -90,7 +104,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="system-icu">Use system icu instead of the bundled one</flag>
     <flag name="tcmalloc">Use TCMalloc designed for optimizing memory use and
       reuse.  Default in 91.</flag>
-    <flag name="widevine">Unsupported closed-source DRM capability (required by
-      Netflix VOD)</flag>
+    <flag name="widevine">Unsupported closed-source DRM capability (required for
+      premium web content)</flag>
   </use>
 </pkgmetadata>
