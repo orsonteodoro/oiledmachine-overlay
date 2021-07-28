@@ -32,6 +32,9 @@ PGO_NATIVE_TEST_SITES_LICENSES=(
 	CC0-1.0
 	CC-BY-SA-3.0
 )
+# search.creativecommons.org CC-BY-4.0 (Content attributed to Creative Commons)
+# search.creativecommons.org image search results CC0-1.0
+# wiki.gentoo.org CC-BY-SA-3.0 (Content attributed to Gentoo Foundation, Inc)
 LICENSE="BSD
 	pgo-native? ( ${PGO_NATIVE_TEST_SITES_LICENSES} )"
 SLOT="0"
