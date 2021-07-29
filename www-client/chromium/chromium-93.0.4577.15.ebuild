@@ -310,9 +310,10 @@ pkg_setup() {
 	fi
 
 	if ! use amd64 && [[ "${IUSE}" =~ cfi ]]; then
-		ewarn \
-"All variations of the cfi USE flags are not defaults for this platform.\n\
-Disable them if problematic."
+ewarn
+ewarn "All variations of the cfi USE flags are not defaults for this platform."
+ewarn "Disable them if problematic."
+ewarn
 	fi
 
 	if use pgo ; then
@@ -344,8 +345,8 @@ ewarn
 	if use pgo-web ; then
 		if has network-sandbox $FEATURES ; then
 eerror
-eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
-eerror "access remote websites."
+eerror "${PN} requires network-sandbox to be disabled in per-package FEATURES"
+eerror "in order to access remote websites."
 eerror
 			die
 		fi
@@ -382,6 +383,20 @@ ewarn
 		if ! ( groups ${USER} | grep -q "audio" ) ; then
 			die "You must add ${USER} to the audio group."
 		fi
+	fi
+
+	if use pgo-upstream-profile-generator ; then
+ewarn
+ewarn "The pgo-upstream-profile-generator USE flag is a Work In Progress (WIP)."
+ewarn
+	fi
+
+	if use pgo-ebuild-profile-generator ; then
+ewarn
+ewarn "The pgo-ebuild-profile-generator USE flag is a Work In Progress (WIP)"
+ewarn "and untested and not recommended at this time.  Try the"
+ewarn "pgo-upstream-profile-generator USE flag or just the pgo USE flag instead."
+ewarn
 	fi
 }
 
