@@ -346,7 +346,6 @@ ewarn
 	if use pgo-web ; then
 		if has network-sandbox $FEATURES ; then
 eerror
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
 eerror "${PN} requires network-sandbox to be disabled in per-package FEATURES"
 eerror "in order to access remote websites."
 eerror
