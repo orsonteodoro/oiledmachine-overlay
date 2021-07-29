@@ -12,6 +12,7 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
 	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
 	sv sw ta te th tr uk vi zh-CN zh-TW"
 
+ECHROMIUM_CUSTOM_TIMEBOX_TIME=${ECHROMIUM_CUSTOM_TIMEBOX_TIME:=2}
 VIRTUALX_REQUIRED=manual
 inherit check-reqs chromium-2 desktop flag-o-matic multilib ninja-utils pax-utils portability python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
 inherit multilib-minimal virtualx
@@ -27,16 +28,39 @@ SRC_URI="
 	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )"
 RESTRICT="mirror"
 
-PGO_NATIVE_TEST_SITES_LICENSES=(
+PGO_EBUILD_PROFILE_GENERATOR_SITE_LICENSES=(
 	CC-BY-4.0
 	CC0-1.0
 	CC-BY-SA-3.0
+	MIT
+	all-rights-reserved MIT
+	BSD-2
+	BSD
+	GPL-2
+	GPL-2+
+	LGPL-2.1
+	ZLIB
+	Apache-2.0
+)
+PGO_EBUILD_UPSTREAM_GENERATOR_SITE_LICENSES=(
+	MIT
+	Apache-2.0
 )
 # search.creativecommons.org CC-BY-4.0 (Content attributed to Creative Commons)
 # search.creativecommons.org image search results CC0-1.0
 # wiki.gentoo.org CC-BY-SA-3.0 (Content attributed to Gentoo Foundation, Inc)
+# www.kevs3d.co.uk MIT with link back clause
+# Under the hood of the JetStream 2 benchmark:
+#   https://github.com/WebKit/WebKit/tree/main/Websites/browserbench.org/JetStream2.0 and internal third party dependencies BSD-2, BSD, GPL-2, GPL-2+, LGPL-2.1, MIT
+# Under the hood of the the Octane benchmark:
+#   https://github.com/chromium/octane and internal third party dependencies BSD, GPL-2+, MIT, (all rights reserved MIT), ZLIB, Apache-2.0
+#   https://github.com/chromium/octane/blob/master/crypto.js all-rights-reserved MIT (the plain MIT license doesn't contain all rights reserved)
+#   https://github.com/chromium/octane/blob/master/js/bootstrap-collapse.js
+# Under the hood of the the Speedometer 2.0 benchmark:
+#   https://github.com/WebKit/WebKit/tree/main/PerformanceTests/Speedometer or internal third party dependencies MIT, Apache-2.0
 LICENSE="BSD
-	pgo-native? ( ${PGO_NATIVE_TEST_SITES_LICENSES} )"
+	pgo-ebuild-profile-generator? ( ${PGO_EBUILD_PROFILE_GENERATOR_SITE_LICENSES} )
+	pgo-upstream-profile-generator? ( ${PGO_EBUILD_UPSTREAM_GENERATOR_SITE_LICENSES} )"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
@@ -45,7 +69,7 @@ IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi-full default status see, https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status see, https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default see, https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/c++/c++.gni#L14
-IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx pgo pgo-native pgo-web"
+IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx pgo pgo-native pgo-web pgo-upstream-profile-generator pgo-ebuild-profile-generator pgo-custom-script pgo-gpu pgo-audio"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 REQUIRED_USE="
@@ -61,6 +85,8 @@ REQUIRED_USE="
 	pgo? ( clang libcxx !pgo-native )
 	pgo-native? ( clang !pgo )
 	pgo-web? ( pgo-native )
+	pgo-upstream-profile-generator? ( pgo-ebuild-profile-generator )
+	pgo-ebuild-profile-generator? ( !pgo-upstream-profile-generator )
 	screencast? ( wayland )
 "
 
@@ -163,7 +189,7 @@ BDEPEND="
 		${VIRTUALX_DEPEND}
 		x11-misc/xdotool
 	)
-"
+" # TODO change to !pgo-gpu? ( ${VIRTUALX_DEPEND} )
 
 # >=mesa-21.1 is bumped to compatibile llvm-12
 # <=mesa-21.0.x is only llvm-11 compatible
@@ -311,7 +337,7 @@ ewarn
 
 	if use pgo-native ; then
 ewarn
-ewarn "The pgo-native option is a Work In Progress (WIP)."
+ewarn "The pgo-native USE flag is a Work In Progress (WIP)."
 ewarn
 	fi
 
@@ -322,6 +348,39 @@ eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
 eerror "access remote websites."
 eerror
 			die
+		fi
+	fi
+
+	einfo "USER=${USER}"
+	if use pgo-gpu ; then
+# We do not want the xvfb but rather the acclerated X instead.
+ewarn
+ewarn "The pgo-gpu USE flag is a Work In Progress (WIP)."
+ewarn
+		if ! ( groups ${USER} | grep -q "video" ) ; then
+			die "You must add ${USER} to the video group."
+		fi
+
+		# From sci-geosciences/grass ebuild
+		shopt -s nullglob
+		local mesa_cards=$(echo -n /dev/dri/card* /dev/dri/render* | sed 's/ /:/g')
+		if test -n "${mesa_cards}"; then
+			addpredict "${mesa_cards}"
+		fi
+		local ati_cards=$(echo -n /dev/ati/card* | sed 's/ /:/g')
+		if test -n "${ati_cards}"; then
+			addpredict "${ati_cards}"
+		fi
+		shopt -u nullglob
+		addpredict /dev/nvidiactl
+	fi
+
+	if use pgo-audio ; then
+ewarn
+ewarn "The pgo-gpu USE flag is a Work In Progress (WIP)."
+ewarn
+		if ! ( groups ${USER} | grep -q "audio" ) ; then
+			die "You must add ${USER} to the audio group."
 		fi
 	fi
 }
@@ -351,7 +410,6 @@ src_prepare() {
 	PATCHES+=(
 		"${WORKDIR}/sandbox-patches/chromium-syscall_broker.patch"
 		"${WORKDIR}/sandbox-patches/chromium-fstatat-crash.patch"
-		"${FILESDIR}/chromium-92-GetUsableSize-nullptr.patch"
 		"${FILESDIR}/chromium-93-EnumTable-crash.patch"
 		"${FILESDIR}/chromium-93-InkDropHost-crash.patch"
 		"${FILESDIR}/chromium-shim_headers.patch"
@@ -361,7 +419,7 @@ src_prepare() {
 		rm "${WORKDIR}/patches/chromium-91-libyuv-aarch64.patch" || die
 	fi
 
-	ceapply "${WORKDIR}/${PN}-92-clang-toolchain.patch"
+	ceapply "${FILESDIR}/${PN}-92-clang-toolchain.patch"
 
 	if ( (( ${#PATCHES[@]} > 0 || ${USED_EAPPLY} == 1 )) || [[ -f "${T}/epatch_user.log" ]] ) ; then
 		if use official ; then
@@ -384,6 +442,8 @@ src_prepare() {
 
 	# adjust python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" .gn || die
+	sed -i -e "s|/usr/bin/env vpython|/usr/bin/env ${EPYTHON}|g" \
+		tools/perf/run_benchmark || die
 
 	# bundled highway library does not support arm64 with GCC
 	if use arm64; then
@@ -1008,6 +1068,7 @@ _configure_pgx() {
 	if use pgo-native ; then
 		myconf_gn+=" chrome_pgo_phase=${PGO_PHASE}"
 		mkdir -p "${BUILD_DIR}/chrome/build/pgo_profiles" || die
+		[[ "${PGO_PHASE}" == "2" ]] && \
 		myconf_gn+=" pgo_data_path=\"${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata\""
 	elif use pgo && tc-is-clang && ver_test $(clang-version) -ge 11 ; then
 		# The profile data is already shipped so use it.
@@ -1025,8 +1086,10 @@ _configure_pgx() {
 }
 
 _build_pgx() {
-	einfo "Cleaning out build"
-	eninja -t clean
+	if [[ -f build.ninja ]] ; then
+		einfo "Cleaning out build"
+		eninja -t clean
+	fi
 	# Build mksnapshot and pax-mark it.
 	local x
 	for x in mksnapshot v8_context_snapshot_generator; do
@@ -1041,9 +1104,114 @@ _build_pgx() {
 	done
 }
 
+# The most intensive computational parts should be pushed in hot section that
+# need boosting that way if you encounter in them again they penalize less.
+_javascript_benchmark() {
+	einfo "Running simulation:  metering javascript engine performance... timeboxed to 25 minutes"
+	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
+
+	local have_gpu="false"
+	if use pgo-gpu ; then
+		have_gpu="true"
+	fi
+
+	cat <<EOF > "${BUILD_DIR}/run.sh"
+#!/bin/bash
+main() {
+	cat /dev/null > "${T}/test-retcode.log"
+	cd "${BUILD_DIR}"
+	( timeout 1465 out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+	sleep 0.2 # let the app load
+	local id=\$(xdotool getwindowfocus)
+	sleep 0.2 # let the window load
+	xdotool windowsize ${id} 1918 1059
+	xdotool windowmove ${id} -3840 19
+
+	_handle_new_install_window
+
+	# benchmark #1
+	# Runs in about 50 seconds
+	xdotool key --window ${id} ctrl+l
+	xdotool type --window ${id} "https://chromium.github.io/octane/"
+	xdotool key Return
+	sleep 24 # let the page load.  It takes about 12s.
+
+	# click start
+	xdotool mousemove 909 267
+	xdotool click
+
+	sleep 120 # 1 min run + 1 min slack
+
+	# benchmark #2 for WebAssembly also
+	# Runs in about 12 minutes
+	xdotool key --window ${id} ctrl+l
+	xdotool type --window ${id} "https://browserbench.org/JetStream/"
+	xdotool key Return
+	sleep 40 # let the page load.  it takes some time about 20s.
+
+	# click start
+	xdotool mousemove 948 335
+	xdotool click
+
+	sleep 840 # 12 min run + 2 min slack
+
+	# benchmark #3 for HTML5 Canvas benchmark
+	# Runs in about 2 minutes
+	# Disabled because xvfb is software rendering
+	if ${have_gpu} ; then
+		xdotool key --window ${id} ctrl+l
+		xdotool type --window ${id} "https://www.kevs3d.co.uk/dev/canvasmark/"
+		xdotool key Return
+		sleep 140 # let the page load.  it takes some time about 70s.
+
+		# click start
+		xdotool mousemove 693 493
+		xdotool click
+
+		sleep 180 # 2 min run + 1 min slack
+	fi
+
+	# benchmark #4 webgl
+	if ${have_gpu} ; then
+		xdotool key --window ${id} ctrl+l
+		xdotool type --window ${id} "https://webglsamples.org/aquarium/aquarium.html"
+		xdotool key Return
+		sleep 120 # 1 min run + 1 min slack
+	fi
+
+	echo -n "\$?" > "${T}/test-retcode.log"
+	exit \$(cat "${T}/test-retcode.log")
+}
+main
+EOF
+	chmod +x "${BUILD_DIR}/run.sh" || die
+	if use pgo-gpu ; then
+		ewarn "FIXME:  replace with accelerated X wrapper.  still using xvfb."
+		virtx "${BUILD_DIR}/run.sh"
+	else
+		virtx "${BUILD_DIR}/run.sh"
+	fi
+
+	sleep 1465
+
+	if [[ -f "${T}/test-retcode.log" ]] ; then
+		die "Missing retcode for ${x}"
+	fi
+	local test_retcode=$(cat "${T}/test-retcode.log")
+	if [[ "${test_retcode}" != "0" ]] ; then
+eerror "Test failed for ${x}.  Return code: ${test_retcode}."
+		die
+	fi
+}
+
+_load_simulation() {
+	einfo "Running simulation:  metering load-time performance... timeboxed to 3 minutes"
+	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
+	cat <<EOF > "${BUILD_DIR}/run.sh"
+#!/bin/bash
 # Handles a window with 2 checkboxes and an OK
 _handle_new_install_window() {
-	local id=$(xdotool getwindowfocus)
+	local id=\$(xdotool getwindowfocus)
 	sleep 0.2 # let the window load
 	xdotool windowsize ${id} 1918 1059
 	xdotool windowmove ${id} -3840 19
@@ -1061,65 +1229,26 @@ _handle_new_install_window() {
 	xdotool click
 }
 
-_javascript_benchmark() {
-	einfo "Running simulation:  metering javascript engine performance... timeboxed 2 minutes"
-	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
-	cat <<EOF > "${BUILD_DIR}/run.sh"
-#!/bin/bash
-cat /dev/null > "${T}/test-retcode.log"
-cd "${BUILD_DIR}"
-timeout 120 ( out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
-sleep 0.2 # let the app load
-local id=$(xdotool getwindowfocus)
-sleep 0.2 # let the window load
-xdotool windowsize ${id} 1918 1059
-xdotool windowmove ${id} -3840 19
-
-	# benchmark #1
-	xdotool key --window ${id} ctrl+l
-	xdotool type --window ${id} "https://chromium.github.io/octane/"
-	xdotool key Return
-	sleep 2 # let the page load
-
-	# click start
-	xdotool mousemove 909 267
-	xdotool click
-
-	sleep 120
-
-echo -n "\$?" > "${T}/test-retcode.log"
-exit \$(cat "${T}/test-retcode.log")
-EOF
-	chmod +x "${BUILD_DIR}/run.sh" || die
-	virtx "${BUILD_DIR}/run.sh"
-
-	sleep 120
-
-	if [[ -f "${T}/test-retcode.log" ]] ; then
-		die "Missing retcode for ${x}"
-	fi
-	local test_retcode=$(cat "${T}/test-retcode.log")
-	if [[ "${test_retcode}" != "0" ]] ; then
-eerror "Test failed for ${x}.  Return code: ${test_retcode}."
-		die
-	fi
-}
-
-_load_simulation() {
-	einfo "Running simulation:  metering load-time performance... timeboxed 3 minutes"
-	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
-	cat <<EOF > "${BUILD_DIR}/run.sh"
-#!/bin/bash
-cat /dev/null > "${T}/test-retcode.log"
-cd "${BUILD_DIR}"
-timeout 180 ( out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
-echo -n "\$?" > "${T}/test-retcode.log"
-exit \$(cat "${T}/test-retcode.log")
-EOF
-	chmod +x "${BUILD_DIR}/run.sh" || die
-	virtx "${BUILD_DIR}/run.sh"
-
+main() {
+	cat /dev/null > "${T}/test-retcode.log"
+	cd "${BUILD_DIR}"
+	( timeout 180 out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+	_handle_new_install_window
 	sleep 180
+	echo -n "\$?" > "${T}/test-retcode.log"
+	exit \$(cat "${T}/test-retcode.log")
+}
+main
+EOF
+	chmod +x "${BUILD_DIR}/run.sh" || die
+	if use pgo-gpu ; then
+		ewarn "FIXME:  replace with accelerated X wrapper.  still using xvfb."
+		virtx "${BUILD_DIR}/run.sh"
+	else
+		virtx "${BUILD_DIR}/run.sh"
+	fi
+
+	sleep 181
 
 	if [[ -f "${T}/test-retcode.log" ]] ; then
 		die "Missing retcode for ${x}"
@@ -1132,27 +1261,18 @@ eerror "Test failed for ${x}.  Return code: ${test_retcode}."
 }
 
 _tabs_simulation() {
-	einfo "Running simulation:  metering load-time performance... timeboxed 6 minutes"
+	einfo "Running simulation:  metering load-time performance... timeboxed to 6+ minutes"
 	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
-	cat <<EOF > "${BUILD_DIR}/run.sh"
-#!/bin/bash
-cat /dev/null > "${T}/test-retcode.log"
-cd "${BUILD_DIR}"
-timeout 360 ( out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
-sleep 0.2 # let the app load
-local id=$(xdotool getwindowfocus)
-sleep 0.2 # let the window load
-xdotool windowsize ${id} 1918 1059
-xdotool windowmove ${id} -3840 19
 
-local uris=()
-if [[ -z "${ECHROMIUM_PGO_URIS}" ]] ; then
-	# This goes through open source or open content websites mostly to make
-	# sure that image code paths are loaded in the hot section and not
-	# demoted from optimization.  Hot parts get pushed up the memory
-	# hierarchy.
-	# Assume 20 seconds per URI load time.
-	uris=(
+	local urilen
+	local uris_=()
+	if [[ -z "${ECHROMIUM_PGO_URIS}" ]] ; then
+# This goes through open source or open content websites mostly to make
+# sure that image code paths are loaded in the hot section and not
+# demoted from optimization.  Hot parts get pushed up the memory
+# hierarchy.
+# Assume 20 seconds per URI load time.
+		uris_=(
 'https://search.creativecommons.org/search?q=nature&license=cc0'
 'https://search.creativecommons.org/search?q=bugs&license=cc0'
 'https://search.creativecommons.org/search?q=waterfalls&license=cc0'
@@ -1161,47 +1281,70 @@ if [[ -z "${ECHROMIUM_PGO_URIS}" ]] ; then
 'https://search.creativecommons.org/search?q=fish&license=cc0&extension=png'
 'https://search.creativecommons.org/search?q=animated&license=cc0&extension=gif'
 'https://wiki.gentoo.org/wiki/Main_Page'
-	) # 160s
-else
-	uris=( ${ECHROMIUM_PGO_URIS} )
-fi
-
-# Measure image management, and tab creation
-local tab_limit=20
-local tab_count=1
-local n_closed=0
-for u in ${uris[@]} ; do
-	xdotool key --window ${id} ctrl+t
-	tab_count=$((${tab_count}+1))
-	xdotool key --window ${id} ctrl+l
-	xdotool type --window ${id} "${u}"
-	xdotool key Return
-	sleep 3 # let the page load
-	if (( ${tab_count} > ${tab_limit} )) ; then
-		xdotool key --window ${id} ctrl+1
-		xdotool key --window ${id} ctrl+w
-		xdotool key --window ${id} ctrl+9
-		n_closed=$((${n_closed}+1))
+		) # 160s
+	else
+		uris_=( ${ECHROMIUM_PGO_URIS} )
 	fi
-done
+	urilen=${#uris_[@]}
 
-# Simulate tab switching in 2.5 min
-for x in $(seq 1 300) ; do
-	xdotool key --window ${id} ctrl+$(($((${RANDOM}  % 9)) + 1))
-	sleep 0.5
-done # 150s
+	local experiment_duration=$(( ${urilen} * 20 + 150 + ${urilen} ))
+	cat <<EOF > "${BUILD_DIR}/run.sh"
+#!/bin/bash
+main() {
+	cat /dev/null > "${T}/test-retcode.log"
+	cd "${BUILD_DIR}"
+	( timeout ${experiment_duration} out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+	sleep 0.2 # let the app load
+	local id=\$(xdotool getwindowfocus)
+	sleep 0.2 # let the window load
+	xdotool windowsize ${id} 1918 1059
+	xdotool windowmove ${id} -3840 19
 
-for u in $(seq 1 $((${#uris[@]}-${n_closed}))) ; do
-	xdotool key --window ${id} ctrl+w
-done
+	local uris=( ${uris_[@]} )
 
-echo -n "\$?" > "${T}/test-retcode.log"
-exit \$(cat "${T}/test-retcode.log")
+	# Measure image management, and tab creation
+	local tab_limit=20
+	local tab_count=1
+	local n_closed=0
+	for u in ${uris[@]} ; do
+		xdotool key --window ${id} ctrl+t
+		tab_count=$((${tab_count}+1))
+		xdotool key --window ${id} ctrl+l
+		xdotool type --window ${id} "${u}"
+		xdotool key Return
+		sleep 20 # let the page load...
+		if (( ${tab_count} > ${tab_limit} )) ; then
+			xdotool key --window ${id} ctrl+1
+			xdotool key --window ${id} ctrl+w
+			xdotool key --window ${id} ctrl+9
+			n_closed=$((${n_closed}+1))
+		fi
+	done
+
+	# Simulate tab switching in 2.5 min
+	for x in $(seq 1 300) ; do
+		xdotool key --window ${id} ctrl+$(($((${RANDOM}  % 9)) + 1))
+		sleep 0.5
+	done # 150s
+
+	for u in $(seq 1 $((${#uris[@]}-${n_closed}))) ; do
+		xdotool key --window ${id} ctrl+w
+	done
+
+	echo -n "\$?" > "${T}/test-retcode.log"
+	exit \$(cat "${T}/test-retcode.log")
+}
+main
 EOF
 	chmod +x "${BUILD_DIR}/run.sh" || die
-	virtx "${BUILD_DIR}/run.sh"
+	if use pgo-gpu ; then
+		ewarn "FIXME:  replace with accelerated X wrapper.  still using xvfb."
+		virtx "${BUILD_DIR}/run.sh"
+	else
+		virtx "${BUILD_DIR}/run.sh"
+	fi
 
-	sleep 360
+	sleep ${experiment_duration}
 
 	if [[ -f "${T}/test-retcode.log" ]] ; then
 		die "Missing retcode for ${x}"
@@ -1215,30 +1358,40 @@ eerror "Test failed for ${x}.  Return code: ${test_retcode}."
 
 _responsiveness_simulation() {
 	# It runs actually in around a minute.
-	einfo "Running simulation:  metering load-time performance... timeboxed 120 seconds"
+	einfo "Running simulation:  metering load-time performance... timeboxed to 136 seconds"
 	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
 	cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
-cat /dev/null > "${T}/test-retcode.log"
-cd "${BUILD_DIR}"
-timeout 120 ( out/Release/chrome "https://browserbench.org/Speedometer2.0/" ; echo "$?" > "${T}/test-retcode.log" ) &
-sleep 0.2 # let the app load
+main() {
+	cat /dev/null > "${T}/test-retcode.log"
+	cd "${BUILD_DIR}"
+	( timeout 136 out/Release/chrome "https://browserbench.org/Speedometer2.0/" ; echo "$?" > "${T}/test-retcode.log" ) &
+	sleep 0.2 # let the app load
 
-local id=$(xdotool getwindowfocus)
+	local id=\$(xdotool getwindowfocus)
 
-sleep 0.2 # let the window load
-xdotool windowsize ${id} 1918 1059
-xdotool windowmove ${id} -3840 19
-xdotool mousemove 991 627
-sleep 15 # let the page load
-xdotool click
-echo -n "\$?" > "${T}/test-retcode.log"
-exit \$(cat "${T}/test-retcode.log")
+	sleep 0.2 # let the window load
+	xdotool windowsize ${id} 1918 1059
+	xdotool windowmove ${id} -3840 19
+
+	xdotool mousemove 991 627
+	sleep 15 # let the page load
+	xdotool click
+	sleep 120 # 1 min run + 1 min slack
+	echo -n "\$?" > "${T}/test-retcode.log"
+	exit \$(cat "${T}/test-retcode.log")
+}
+main
 EOF
 	chmod +x "${BUILD_DIR}/run.sh" || die
-	virtx "${BUILD_DIR}/run.sh"
+	if use pgo-gpu ; then
+		ewarn "FIXME:  replace with accelerated X wrapper.  still using xvfb."
+		virtx "${BUILD_DIR}/run.sh"
+	else
+		virtx "${BUILD_DIR}/run.sh"
+	fi
 
-	sleep 120
+	sleep 136
 
 	if [[ -f "${T}/test-retcode.log" ]] ; then
 		die "Missing retcode for ${x}"
@@ -1250,13 +1403,68 @@ eerror "Test failed for ${x}.  Return code: ${test_retcode}."
 	fi
 }
 
+_custom_simulation() {
+	# It runs actually in around a minute.
+	einfo "Running simulation:  metering custom script performance... timeboxed to ${ECHROMIUM_CUSTOM_TIMEBOX_TIME} seconds"
+	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
+	sleep 0.2 # let the app load
+	( timeout ${ECHROMIUM_CUSTOM_TIMEBOX_TIME} out/Release/chrome "https://localhost" ; echo "$?" > "${T}/test-retcode.log" ) &
+	cp -a "/etc/portage/pgo-scripts/www-client/chromium/${PV}.sh" \
+		"${T}/run.sh"
+	chmod +x "${BUILD_DIR}/run.sh" || die
+	if use pgo-gpu ; then
+		ewarn "FIXME:  replace with accelerated X wrapper.  still using xvfb."
+		virtx "${BUILD_DIR}/run.sh"
+	else
+		virtx "${BUILD_DIR}/run.sh"
+	fi
+
+	sleep ${ECHROMIUM_CUSTOM_TIMEBOX_TIME}
+
+	if [[ -f "${T}/test-retcode.log" ]] ; then
+		die "Missing retcode for ${x}"
+	fi
+	local test_retcode=$(cat "${T}/test-retcode.log")
+	if [[ "${test_retcode}" != "0" ]] ; then
+eerror "Test failed for ${x}.  Return code: ${test_retcode}."
+		die
+	fi
+}
+
+_run_simulation_suite() {
+	if use pgo-upstream-profile-generator ; then
+		# See also https://github.com/chromium/chromium/blob/93.0.4577.15/docs/pgo.md
+		${EPYTHON} tools/perf/run_benchmark \
+			system_health.common_desktop \
+			--assert-gpu-compositing \
+			--run-abridged-story-set \
+			--browser=exact \
+			--browser-executable=out/Release/chrome || die
+		${EPYTHON} tools/perf/run_benchmark \
+			speedometer2 \
+			--assert-gpu-compositing \
+			--browser=exact \
+			--browser-executable=out/Release/chrome || die
+	elif use pgo-ebuild-profile-generator ; then
+		ewarn "_run_simulations(): 🐧 <penguin emoji> please finish me!"
+		einfo "Running training exercise simulations"
+		_load_simulation
+		use pgo-web && _tabs_simulation
+		use pgo-web && _javascript_benchmark
+		use pgo-web && _responsiveness_simulation
+		if use pgo-custom-script ; then
+			if [[ ! -f "/etc/portage/pgo-scripts/www-client/chromium/${PV}.sh" ]] ; then
+				eerror "Missing /etc/portage/pgo-scripts/www-client/chromium/${PV}.sh"
+				die
+			fi
+			_custom_simulation
+		fi
+	fi
+}
+
 _run_simulations() {
-	ewarn "_run_simulations(): 🐧 <penguin emoji> please finish me!"
-	einfo "Running training exercise simulations"
-	_load_simulation
-	use pgo-web && _tabs_simulation
-	use pgo-web && _javascript_benchmark
-	use pgo-web && _responsiveness_simulation
+	_run_simulation_suite
+	llvm-profdata merge *.profraw -o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" || die
 }
 
 multilib_src_compile() {
@@ -1269,6 +1477,9 @@ multilib_src_compile() {
 	#"${EPYTHON}" tools/clang/scripts/update.py --force-local-build --gcc-toolchain /usr --skip-checkout --use-system-cmake --without-android || die
 
 	if use pgo-native ; then
+		if ls *.profraw 2>/dev/null 1>/dev/null ; then
+			rm -rf *.profraw || die
+		fi
 		PGO_PHASE=1
 		_configure_pgx # pgi
 		_build_pgx
@@ -1276,13 +1487,8 @@ multilib_src_compile() {
 		PGO_PHASE=2
 		_configure_pgx # pgo
 		_build_pgx
-	elif use pgo ; then
-		PGO_PHASE=2
-		_configure_pgx # pgo
-		_build_pgx
 	else
-		PGO_PHASE=0
-		_configure_pgx # pg0
+		_configure_pgx # pgo / no-pgo
 		_build_pgx
 	fi
 

@@ -33,6 +33,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       will override the defaults.  Sites selected should be widely used
       and not contain untrusted content.
 
+    ECHROMIUM_CUSTOM_TIMEBOX_TIME - Duration in seconds this simulation(s) will
+      last before moving on.
+
     References:
       CFI - https://www.chromium.org/developers/testing/control-flow-integrity
       CFI ldflags - https://clang.llvm.org/docs/ControlFlowIntegrity.html
@@ -86,13 +89,39 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       friendly</flag>
     <flag name="pgo">Builds with Profile Guided Optimizations to improve
       -- page loads, input reponsiveness, web reponsiveness -- by ~10% or
-       less.  Builds only once with a pregenerated PGO profile.</flag>
+       less.  Builds only once with a pregenerated PGO profile.  If
+      you prefer libstdc++ use pgo-native instead.</flag>
     <flag name="pgo-native">Builds with 2-step Profile Guided
-      Optimizations.  Builds PGO for the native customized environment.</flag>
+      Optimizations.  Builds PGO using the native customized environment.</flag>
     <flag name="pgo-web">Allows PGO simulation step visit websites and image
       infrastructure for purposes of attempting to increase function
       signature hits related to tab usage so they do not get demoted to
       cold sections.</flag>
+    <flag name="pgo-upstream-profile-generator">
+      Use the upstream recommended procedure and scripts to generate the
+      measured data.  This relies on speedometer2 benchmarks for improving
+      responsiveness and system health benchmarks for improving load times.
+      </flag>
+    <flag name="pgo-ebuild-profile-generator">
+      Use the ebuild provided scripts to generate the measured data.  This
+      uses realistic simulation which users can extend with additional space
+      separated URIs in ECHROMIUM_PGO_URIS and ECHROMIUM_CUSTOM_TIMEBOX_TIME
+      envvars.</flag>
+    <flag name="pgo-custom-script">
+      One can supply a /etc/portage/pgo-scripts/www-client/chromium/${PV}.sh,
+      where ${PV} is the version, to extend profile-generation.  This could
+      be used to run custom scenarios as hints to the compiler.  See
+      ebuild for details.</flag>
+    <flag name="pgo-gpu">
+      This one checks if user is relaxed for use for GPU benchmarks
+      or readiness for measured PGO profile collection.  Ensure that these code
+      paths & function signatures are properly accessible and being
+      measured.</flag>
+    <flag name="pgo-audio">
+      This one checks if user is relaxed for use for audio streaming tests
+      or readiness for measured pgo profile collection.  Ensure that these code
+      paths & function signatures are properly accessible and being
+      measured.</flag>
     <flag name="proprietary-codecs">Enable codecs for patent-encumbered audio
        and video formats.</flag>
     <flag name="screencast">Enable support for remote desktop and screen cast
