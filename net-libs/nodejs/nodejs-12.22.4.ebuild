@@ -15,38 +15,42 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm pax_kernel
-+snapshot +ssl system-icu +system-ssl systemtap test"
+IUSE+=" cpu_flags_x86_sse2 debug doc icu inspector lto npm +snapshot +ssl
++system-ssl systemtap test"
 IUSE+=" man"
 REQUIRED_USE+=" inspector? ( icu ssl )
 		npm? ( ssl )
-		system-icu? ( icu )
 		system-ssl? ( ssl )"
-# FIXME: test-fs-mkdir fails with "no such file or directory". Investigate.
 RESTRICT="test"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Jul 12, 2021
+# Last deps commit date: Jul 28, 2021
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
-	>=dev-libs/libuv-1.41.0:=
+	>=dev-libs/libuv-1.42.0:=
 	>=net-dns/c-ares-1.17.1
-	>=net-libs/nghttp2-1.42.0
+	>=net-libs/http-parser-2.9.4:=
+	>=net-libs/nghttp2-1.41.0
 	>=sys-libs/zlib-1.2.11
-	system-icu? ( >=dev-libs/icu-69.1:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1k:0= )"
+	icu? ( >=dev-libs/icu-67.1:= )
+	system-ssl? (
+		>=dev-libs/openssl-1.1.1k:0=
+		<dev-libs/openssl-3.0.0_beta1:0=
+	)"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	sys-apps/coreutils
-	virtual/pkgconfig
 	systemtap? ( dev-util/systemtap )
-	test? ( net-misc/curl )
-	pax_kernel? ( sys-apps/elfix )"
-PATCHES=( "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
-	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
+	test? ( net-misc/curl )"
+PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
+	  "${FILESDIR}"/${PN}-12.20.1-fix_ppc64_crashes.patch
+	  "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
+	  "${FILESDIR}"/${PN}-12.22.1-uvwasi_shared_libuv.patch
+	  "${FILESDIR}"/${PN}-12.22.1-v8_icu69.patch
+	  "${FILESDIR}"/${PN}-99999999-llhttp.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="7.19.1" # See https://github.com/nodejs/node/blob/v16.5.0/deps/npm/package.json
+NPM_V="6.14.14" # See https://github.com/nodejs/node/blob/v12.22.4/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
@@ -70,17 +74,12 @@ pkg_pretend() {
 pkg_setup() {
 	python-any-r1_pkg_setup
 
-	einfo "This ebuild is End Of Life (EOL) as of 2024-04-30."
+	einfo "This ebuild is End Of Life (EOL) as of 2022-04-30."
 
 	# For man page reasons
 	if has_version 'net-libs/nodejs[npm]:10' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[npm]:10.  Only enable\n\
-npm on the highest slot."
-	fi
-	if has_version 'net-libs/nodejs[npm]:12' ; then
-		die \
-"You need to disable npm on net-libs/nodejs[npm]:12.  Only enable\n\
 npm on the highest slot."
 	fi
 	if has_version 'net-libs/nodejs[npm]:14' ; then
@@ -93,14 +92,14 @@ npm on the highest slot."
 "You need to disable npm on net-libs/nodejs[npm]:15.  Only enable\n\
 npm on the highest slot."
 	fi
+	if has_version 'net-libs/nodejs[npm]:16' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[npm]:16.  Only enable\n\
+npm on the highest slot."
+	fi
 	if has_version 'net-libs/nodejs[man]:10' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[man]:10.  Only enable\n\
-man on the highest slot."
-	fi
-	if has_version 'net-libs/nodejs[man]:12' ; then
-		die \
-"You need to disable npm on net-libs/nodejs[man]:12.  Only enable\n\
 man on the highest slot."
 	fi
 	if has_version 'net-libs/nodejs[man]:14' ; then
@@ -113,10 +112,15 @@ man on the highest slot."
 "You need to disable npm on net-libs/nodejs[man]:15.  Only enable\n\
 man on the highest slot."
 	fi
+	if has_version 'net-libs/nodejs[man]:16' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[man]:16.  Only enable\n\
+man on the highest slot."
+	fi
 }
 
 src_prepare() {
-	tc-export AR CC CXX PKG_CONFIG
+	tc-export CC CXX PKG_CONFIG
 	export V=1
 	export BUILDTYPE=Release
 
@@ -137,21 +141,14 @@ src_prepare() {
 
 	sed -i -e "/'-O3'/d" common.gypi node.gypi || die
 
+	# Known-to-fail test of a deprecated, legacy HTTP parser. Just don't bother.
+	rm -f test/parallel/test-http-transfer-encoding-smuggling-legacy.js
+
 	# debug builds. change install path, remove optimisations and override buildtype
 	if use debug; then
 		sed -i -e "s|out/Release/|out/Debug/|g" tools/install.py || die
 		BUILDTYPE=Debug
 	fi
-
-	# We need to disable mprotect on two files when it builds Bug 694100.
-	use pax_kernel && PATCHES+=( "${FILESDIR}"/${PN}-13.8.0-paxmarking.patch )
-
-	# All this test does is check if the npm CLI produces warnings of any sort,
-	# failing if it does. Overkill, much? Especially given one possible warning
-	# is that there is a newer version of npm available upstream (yes, it does
-	# use the network if available), thus making it a real possibility for this
-	# test to begin failing one day even though it was fine before.
-	rm -f test/parallel/test-release-npm.js
 
 	default
 }
@@ -165,19 +162,14 @@ src_configure() {
 	local myconf=(
 		--shared-brotli
 		--shared-cares
+		--shared-http-parser
 		--shared-libuv
 		--shared-nghttp2
 		--shared-zlib
 	)
 	use debug && myconf+=( --debug )
 	use lto && myconf+=( --enable-lto )
-	if use system-icu; then
-		myconf+=( --with-intl=system-icu )
-	elif use icu; then
-		myconf+=( --with-intl=full-icu )
-	else
-		myconf+=( --with-intl=none )
-	fi
+	use icu && myconf+=( --with-intl=system-icu ) || myconf+=( --with-intl=none )
 	use inspector || myconf+=( --without-inspector )
 	use npm || myconf+=( --without-npm )
 	use snapshot || myconf+=( --without-node-snapshot )
@@ -209,6 +201,8 @@ src_configure() {
 }
 
 src_compile() {
+	emake -C out mksnapshot
+	pax-mark m "out/${BUILDTYPE}/mksnapshot"
 	emake -C out
 }
 
@@ -243,12 +237,17 @@ src_install() {
 	fi
 
 	if use npm; then
-		keepdir /etc/npm
+		dodir /etc/npm
 
 		# Install bash completion for `npm`
+		# We need to temporarily replace default config path since
+		# npm otherwise tries to write outside of the sandbox
+		local npm_config="${REL_D_BASE}/node_modules/npm/lib/config/core.js"
+		sed -i -e "s|'/etc'|'${ED}/etc'|g" "${ED}/${npm_config}" || die
 		local tmp_npm_completion_file="$(TMPDIR="${T}" mktemp -t npm.XXXXXXXXXX)"
 		"${ED}/usr/bin/npm" completion > "${tmp_npm_completion_file}"
 		newbashcomp "${tmp_npm_completion_file}" npm
+		sed -i -e "s|'${ED}/etc'|'/etc'|g" "${ED}/${npm_config}" || die
 
 		if use man ; then
 			# Move man pages
@@ -294,10 +293,17 @@ src_test() {
 	fi
 
 	out/${BUILDTYPE}/cctest || die
-	"${EPYTHON}" tools/test.py --mode=${BUILDTYPE,,} --flaky-tests=dontcare -J message parallel sequential || die
+	"${PYTHON}" tools/test.py --mode=${BUILDTYPE,,} --flaky-tests=dontcare -J message parallel sequential || die
 }
 
 pkg_postinst() {
+	elog "The global npm config lives in /etc/npm. This deviates slightly"
+	elog "from upstream which otherwise would have it live in /usr/etc/."
+	elog ""
+	elog "Protip: When using node-gyp to install native modules, you can"
+	elog "avoid having to download extras by doing the following:"
+	elog "$ node-gyp --nodedir /usr/include/node <command>"
+
 	if has '>=net-libs/nodejs-${PV}' ; then
 		einfo \
 "Found higher slots, manually change the headers with \`eselect nodejs\`."
