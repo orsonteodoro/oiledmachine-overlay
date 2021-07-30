@@ -1,7 +1,9 @@
 # Copyright 2009-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Monitor https://chromereleases.googleblog.com/search/label/Dev%20updates for security updates.  They are announced faster than NVD.
+# Monitor
+#   https://chromereleases.googleblog.com/search/label/Dev%20updates
+# for security updates.  They are announced faster than NVD.
 # See https://omahaproxy.appspot.com/ for the latest linux version
 
 EAPI=7
@@ -12,7 +14,32 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
 	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
 	sv sw ta te th tr uk vi zh-CN zh-TW"
 
-ECHROMIUM_CUSTOM_TIMEBOX_TIME=${ECHROMIUM_CUSTOM_TIMEBOX_TIME:=2}
+EPGO_CUSTOM_SIMULATION_TIMEBOX_TIME=${EPGO_CUSTOM_SIMULATION_TIMEBOX_TIME:=120}
+EPGO_TEST_SLACK_TIME=${EPGO_TEST_SLACK_TIME:=0} # \
+# test duration adjustment for different kinds of hardware.  Increase for slower
+# or older hardware
+EPGO_WAIT_SLACK_TIME=${EPGO_WAIT_SLACK_TIME:=0} # \
+# pause duration adjustment for different kinds of hardware.  Increase for slower
+# or older hardware
+EPGO_BROWSER_COLD_LAUNCH_TIME=${EPGO_BROWSER_COLD_LAUNCH_TIME:=45} # \
+# Length of time it takes to cold launch chromium.  It takes around 22s.
+EPGO_BROWSER_CACHED_LAUNCH_TIME=${EPGO_BROWSER_CACHED_LAUNCH_TIME:=2} # \
+# Dumped and then immediately launched. It takes around 1s.
+EPGO_DESKTOP_COLD_LAUNCH_TIME=${EPGO_DESKTOP_COLD_LAUNCH_TIME:=20} # \
+# Length of time it takes to cold launch xserver+dwm.  It takes around 10s.
+EPGO_DESKTOP_CACHED_LAUNCH_TIME=${EPGO_DESKTOP_CACHED_LAUNCH_TIME:=4} # \
+# Length of time it takes to cold launch xserver+dwm.  It takes around 2s.
+EPGO_DESKTOP_CLOSE_TIME=3 # \
+# Length of time it takes to close the xserver normally.
+EPGO_FCP=${EPGO_FCP:=14} # \
+# FCP = First contentful paint (time from pressing enter on URI bar to first
+# image that appears).  It takes around 2 seconds.
+EPGO_LCP=${EPGO_LCP:=20} # \
+# LCP = Last contentful paint (time it takes to complete rendering or loading a
+# page) assuming average case.  Worst cases are around 70s.
+
+# Cold times are pre run with `sync; echo 3 > /proc/sys/vm/drop_caches`
+
 VIRTUALX_REQUIRED=manual
 inherit check-reqs chromium-2 desktop flag-o-matic multilib ninja-utils pax-utils portability python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
 inherit multilib-minimal virtualx
@@ -52,7 +79,7 @@ PGO_EBUILD_UPSTREAM_GENERATOR_SITE_LICENSES=(
 # www.kevs3d.co.uk MIT with link back clause
 # Under the hood of the JetStream 2 benchmark:
 #   https://github.com/WebKit/WebKit/tree/main/Websites/browserbench.org/JetStream2.0 and internal third party dependencies BSD-2, BSD, GPL-2, GPL-2+, LGPL-2.1, MIT
-# Under the hood of the the Octane benchmark:
+# Under the hood of the Octane benchmark:
 #   https://github.com/chromium/octane and internal third party dependencies BSD, GPL-2+, MIT, (all rights reserved MIT), ZLIB, Apache-2.0
 #   https://github.com/chromium/octane/blob/master/crypto.js all-rights-reserved MIT (the plain MIT license doesn't contain all rights reserved)
 #   https://github.com/chromium/octane/blob/master/js/bootstrap-collapse.js
@@ -69,7 +96,8 @@ IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi-full default status see, https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status see, https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default see, https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/c++/c++.gni#L14
-IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx pgo pgo-native pgo-web pgo-upstream-profile-generator pgo-ebuild-profile-generator pgo-custom-script pgo-gpu pgo-audio"
+# For cdm availability see third_party/widevine/cdm/widevine.gni#L28
+IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx pgo -pgo-native -pgo-web pgo-upstream-profile-generator -pgo-ebuild-profile-generator pgo-custom-script pgo-gpu pgo-audio"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 REQUIRED_USE="
@@ -83,11 +111,12 @@ REQUIRED_USE="
 	official? ( amd64? ( cfi cfi-icall ) libcxx pgo )
 	partitionalloc? ( !component-build )
 	pgo? ( clang libcxx !pgo-native )
-	pgo-native? ( clang !pgo )
+	pgo-native? ( ^^ ( pgo-upstream-profile-generator pgo-ebuild-profile-generator ) clang !pgo )
 	pgo-web? ( pgo-native )
 	pgo-upstream-profile-generator? ( pgo-ebuild-profile-generator )
 	pgo-ebuild-profile-generator? ( !pgo-upstream-profile-generator )
 	screencast? ( wayland )
+	widevine? ( !arm64 !ppc64 )
 "
 
 COMMON_X_DEPEND="
@@ -398,6 +427,26 @@ ewarn "and untested and not recommended at this time.  Try the"
 ewarn "pgo-upstream-profile-generator USE flag or just the pgo USE flag instead."
 ewarn
 	fi
+
+	if use pgo-custom-script ; then
+		local f="/etc/portage/pgo-scripts/www-client/chromium/${PV}.sh"
+		if [[ ! -f "${f}" ]] ; then
+			eerror "Missing ${f}"
+			die
+		fi
+		local group_owner=$(stat -c "%G" "${f}")
+		if [[ "${group_owner}" != "portage" ]] ; then
+eerror "Inspect ${f} contents for tampering in and change group ownership to"
+eerror "portage."
+			die
+		fi
+		local perms=$(stat -c "%a" "${f}" | cut -c 3)
+		if [[ "${perms}" != "0" ]] ; then
+eerror "Inspect ${f} contents for tampering in and change file permissions to"
+eerror "640."
+			die
+		fi
+	fi
 }
 
 USED_EAPPLY=0
@@ -413,7 +462,7 @@ src_prepare() {
 	local PATCHES=()
 	if ( ! use clang ) || ( ! use libcxx ) || use arm64 ; then
 		# TODO: split GCC only and libstdc++ only.
-		# The patches purpose is not documented well.
+		# The patches purpose are not documented well.
 		einfo "Applying gcc & libstdc++ compatibility patches"
 		PATCHES+=( "${WORKDIR}/patches" )
 	fi
@@ -431,10 +480,11 @@ src_prepare() {
 	)
 
 	if ! use arm64 ; then
+		einfo "Removing aarch64 only patches"
 		rm "${WORKDIR}/patches/chromium-91-libyuv-aarch64.patch" || die
 	fi
 
-	ceapply "${FILESDIR}/${PN}-92-clang-toolchain.patch"
+#	ceapply "${FILESDIR}/${PN}-92-clang-toolchain.patch"
 
 	if ( (( ${#PATCHES[@]} > 0 || ${USED_EAPPLY} == 1 )) || [[ -f "${T}/epatch_user.log" ]] ) ; then
 		if use official ; then
@@ -1079,6 +1129,7 @@ _configure_pgx() {
 	fi
 
 	# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
+	# See also https://github.com/chromium/chromium/blob/92.0.4515.107/docs/pgo.md
 	# profile-instr-use is clang which that file assumes but gcc doesn't have.
 	if use pgo-native ; then
 		myconf_gn+=" chrome_pgo_phase=${PGO_PHASE}"
@@ -1130,60 +1181,73 @@ _javascript_benchmark() {
 		have_gpu="true"
 	fi
 
+	local benchmark1_duration=$(( 60 + ${EPGO_TEST_SLACK_TIME} ))
+	local benchmark1_total_time=$(( 20 + ${EPGO_WAIT_SLACK_TIME} + ${benchmark1_duration} ))
+	local benchmark2_duration=$(( 12*60 + ${EPGO_TEST_SLACK_TIME} ))
+	local benchmark2_total_time=$(( 90 + ${EPGO_WAIT_SLACK_TIME} + ${benchmark2_duration} ))
+	local benchmark3_duration=$(( 2*60 + ${EPGO_TEST_SLACK_TIME} ))
+	local benchmark3_total_time=$(( 60 + ${EPGO_WAIT_SLACK_TIME} + ${benchmark3_duration} ))
+	local benchmark4_duration=$(( 60 + ${EPGO_TEST_SLACK_TIME} ))
+	local benchmark4_total_time=$(( 90 + ${EPGO_WAIT_SLACK_TIME} + ${benchmark4_duration} ))
+	local test_duration=$((
+		0
+		+ 2 + ${EPGO_WAIT_SLACK_TIME}
+		+ ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
+		+ ${benchmark1_total_time}
+		+ ${benchmark2_total_time}
+		+ ${benchmark3_total_time}
+		+ ${benchmark4_total_time}
+	))
+
 	cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 main() {
 	cat /dev/null > "${T}/test-retcode.log"
 	cd "${BUILD_DIR}"
-	( timeout 1465 out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
-	sleep 0.2 # let the app load
+	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
+	( timeout ${test_duration} out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+	sleep $((2 + ${EPGO_WAIT_SLACK_TIME})) # let the window load
 	local id=\$(xdotool getwindowfocus)
-	sleep 0.2 # let the window load
-	xdotool windowsize ${id} 1918 1059
-	xdotool windowmove ${id} -3840 19
-
-	_handle_new_install_window
+	xdotool windowmove --sync ${id} 0 0
+	xdotool windowsize --sync ${id} 1918 1078
+	sleep ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
 
 	# benchmark #1
 	# Runs in about 50 seconds
 	xdotool key --window ${id} ctrl+l
 	xdotool type --window ${id} "https://chromium.github.io/octane/"
 	xdotool key Return
-	sleep 24 # let the page load.  It takes about 12s.
+	sleep $((20 + ${EPGO_WAIT_SLACK_TIME})) # let the page load.  It takes about 10s.
 
-	# click start
-	xdotool mousemove 909 267
-	xdotool click
+	xdotool mousemove --sync 912 234
+	xdotool click # start
 
-	sleep 120 # 1 min run + 1 min slack
+	sleep ${benchmark1_duration}
 
 	# benchmark #2 for WebAssembly also
 	# Runs in about 12 minutes
 	xdotool key --window ${id} ctrl+l
 	xdotool type --window ${id} "https://browserbench.org/JetStream/"
 	xdotool key Return
-	sleep 40 # let the page load.  it takes some time about 20s.
+	sleep $((90 + ${EPGO_WAIT_SLACK_TIME})) # let the page load.  it takes some time about 1min and 8s.
 
-	# click start
-	xdotool mousemove 948 335
-	xdotool click
+	xdotool mousemove --sync 957 339
+	xdotool click # start
 
-	sleep 840 # 12 min run + 2 min slack
+	sleep ${benchmark2_duration}
 
 	# benchmark #3 for HTML5 Canvas benchmark
 	# Runs in about 2 minutes
-	# Disabled because xvfb is software rendering
 	if ${have_gpu} ; then
 		xdotool key --window ${id} ctrl+l
 		xdotool type --window ${id} "https://www.kevs3d.co.uk/dev/canvasmark/"
 		xdotool key Return
-		sleep 140 # let the page load.  it takes some time about 70s.
+		sleep $((60 + ${EPGO_WAIT_SLACK_TIME})) # 32s + slack.
 
-		# click start
-		xdotool mousemove 693 493
-		xdotool click
+		xdotool mousemove --sync 697 462
+		xdotool click # start
 
-		sleep 180 # 2 min run + 1 min slack
+		sleep ${benchmark3_duration}
 	fi
 
 	# benchmark #4 webgl
@@ -1191,7 +1255,8 @@ main() {
 		xdotool key --window ${id} ctrl+l
 		xdotool type --window ${id} "https://webglsamples.org/aquarium/aquarium.html"
 		xdotool key Return
-		sleep 120 # 1 min run + 1 min slack
+		sleep $((90 + ${EPGO_WAIT_SLACK_TIME})) # 1 min for LCP (all textures loaded in the scene) + slack
+		sleep ${benchmark4_duration}
 	fi
 
 	echo -n "\$?" > "${T}/test-retcode.log"
@@ -1207,7 +1272,7 @@ EOF
 		virtx "${BUILD_DIR}/run.sh"
 	fi
 
-	sleep 1465
+	sleep ${test_duration}
 
 	if [[ -f "${T}/test-retcode.log" ]] ; then
 		die "Missing retcode for ${x}"
@@ -1217,39 +1282,47 @@ EOF
 eerror "Test failed for ${x}.  Return code: ${test_retcode}."
 		die
 	fi
+	sleep ${EPGO_DESKTOP_CLOSE_TIME}
 }
 
 _load_simulation() {
-	einfo "Running simulation:  metering load-time performance... timeboxed to 3 minutes"
 	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
+	local load_duration=$((${EPGO_BROWSER_COLD_LAUNCH_TIME} + ${EPGO_WAIT_SLACK_TIME}))
+	local test_duration=$((
+		0
+		+ 2 + ${EPGO_WAIT_SLACK_TIME}
+		+ ${load_duration}
+	))
+	einfo "Running simulation:  metering load-time performance... timeboxed to ${test_duration} seconds"
 	cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 # Handles a window with 2 checkboxes and an OK
 _handle_new_install_window() {
 	local id=\$(xdotool getwindowfocus)
-	sleep 0.2 # let the window load
-	xdotool windowsize ${id} 1918 1059
-	xdotool windowmove ${id} -3840 19
+	sleep $((2 + ${EPGO_WAIT_SLACK_TIME})) # let the window load
+	xdotool windowmove --sync ${id} 0 0
+	xdotool windowsize --sync ${id} 1918 1078
 
 	# no making default browser
-	xdotool mousemove 26 22
+	xdotool mousemove --sync 25 20
 	xdotool click
 
 	# no sending statistics to G
-	xdotool mousemove 26 56
+	xdotool mousemove --sync 23 57
 	xdotool click
 
 	# OK - close window
-	xdotool mousemove 1870 1052
+	xdotool mousemove --sync 1878 1053
 	xdotool click
 }
 
 main() {
 	cat /dev/null > "${T}/test-retcode.log"
 	cd "${BUILD_DIR}"
-	( timeout 180 out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+	sleep ${EPGO_DESKTOP_COLD_LAUNCH_TIME}
+	( timeout ${load_duration} out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
 	_handle_new_install_window
-	sleep 180
+	sleep ${load_duration}
 	echo -n "\$?" > "${T}/test-retcode.log"
 	exit \$(cat "${T}/test-retcode.log")
 }
@@ -1263,7 +1336,7 @@ EOF
 		virtx "${BUILD_DIR}/run.sh"
 	fi
 
-	sleep 181
+	sleep ${test_duration}
 
 	if [[ -f "${T}/test-retcode.log" ]] ; then
 		die "Missing retcode for ${x}"
@@ -1273,13 +1346,12 @@ EOF
 eerror "Test failed for ${x}.  Return code: ${test_retcode}."
 		die
 	fi
+	sleep ${EPGO_DESKTOP_CLOSE_TIME}
 }
 
 _tabs_simulation() {
-	einfo "Running simulation:  metering load-time performance... timeboxed to 6+ minutes"
 	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
 
-	local urilen
 	local uris_=()
 	if [[ -z "${ECHROMIUM_PGO_URIS}" ]] ; then
 # This goes through open source or open content websites mostly to make
@@ -1296,24 +1368,38 @@ _tabs_simulation() {
 'https://search.creativecommons.org/search?q=fish&license=cc0&extension=png'
 'https://search.creativecommons.org/search?q=animated&license=cc0&extension=gif'
 'https://wiki.gentoo.org/wiki/Main_Page'
-		) # 160s
+		)
 	else
 		uris_=( ${ECHROMIUM_PGO_URIS} )
 	fi
-	urilen=${#uris_[@]}
 
-	local experiment_duration=$(( ${urilen} * 20 + 150 + ${urilen} ))
+	local tab_switch_delay_time="0.3"
+	local fcp_time=$((20 + ${EPGO_WAIT_SLACK_TIME}))
+	local tabs_load_duration=$(( ${fcp_time} * ${#uris_[@]} ))
+	local tabs_switch_duration=180 # 3 min
+	local tabs_switch_N=$(( echo "${tabs_switch_duration}/${tab_switch_delay_time}" | bc | cut -f 1 -d "." ))
+	local tabs_close_duration=$(( echo "${#uris_[@]} * ${tab_switch_delay_time}" | bc | cut -f 1 -d "." ))
+	local test_duration=$((
+		0
+		+ 2 + ${EPGO_WAIT_SLACK_TIME}
+		+ ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
+		+ ${tabs_load_duration}
+		+ ${tabs_switch_duration}
+		+ ${tabs_close_duration}
+	))
+	einfo "Running simulation:  metering load-time performance... timeboxed to $((${experiment_duration}/60)) minutes and $((${experiment_duration}%60))"
 	cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 main() {
 	cat /dev/null > "${T}/test-retcode.log"
 	cd "${BUILD_DIR}"
-	( timeout ${experiment_duration} out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
-	sleep 0.2 # let the app load
+	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
+	( timeout ${test_duration} out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+	sleep $((2 + ${EPGO_WAIT_SLACK_TIME})) # let the window load
 	local id=\$(xdotool getwindowfocus)
-	sleep 0.2 # let the window load
-	xdotool windowsize ${id} 1918 1059
-	xdotool windowmove ${id} -3840 19
+	xdotool windowmove --sync ${id} 0 0
+	xdotool windowsize --sync ${id} 1918 1078
+	sleep ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
 
 	local uris=( ${uris_[@]} )
 
@@ -1327,7 +1413,7 @@ main() {
 		xdotool key --window ${id} ctrl+l
 		xdotool type --window ${id} "${u}"
 		xdotool key Return
-		sleep 20 # let the page load...
+		sleep ${fcp_time}
 		if (( ${tab_count} > ${tab_limit} )) ; then
 			xdotool key --window ${id} ctrl+1
 			xdotool key --window ${id} ctrl+w
@@ -1336,14 +1422,15 @@ main() {
 		fi
 	done
 
-	# Simulate tab switching in 2.5 min
-	for x in $(seq 1 300) ; do
+	# Simulate tab switching in 3 minutes
+	for x in $(seq 1 ${tabs_switch_N}) ; do
 		xdotool key --window ${id} ctrl+$(($((${RANDOM}  % 9)) + 1))
-		sleep 0.5
-	done # 150s
+		sleep ${tab_switch_delay_time}
+	done
 
 	for u in $(seq 1 $((${#uris[@]}-${n_closed}))) ; do
 		xdotool key --window ${id} ctrl+w
+		sleep ${tab_switch_delay_time}
 	done
 
 	echo -n "\$?" > "${T}/test-retcode.log"
@@ -1359,7 +1446,7 @@ EOF
 		virtx "${BUILD_DIR}/run.sh"
 	fi
 
-	sleep ${experiment_duration}
+	sleep ${test_duration}
 
 	if [[ -f "${T}/test-retcode.log" ]] ; then
 		die "Missing retcode for ${x}"
@@ -1369,30 +1456,36 @@ EOF
 eerror "Test failed for ${x}.  Return code: ${test_retcode}."
 		die
 	fi
+	sleep ${EPGO_DESKTOP_CLOSE_TIME}
 }
 
 _responsiveness_simulation() {
-	# It runs actually in around a minute.
-	einfo "Running simulation:  metering load-time performance... timeboxed to 136 seconds"
+	# Benchmark runs actually in around a minute.
 	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
+	local benchmark_duration=60
+	local test_duration=$((
+		0
+		+ ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
+		+ ${EPGO_FCP}
+		+ ${benchmark_duration}
+	))
+	einfo "Running simulation:  metering load-time performance... timeboxed to ${test_duration} seconds"
 	cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 main() {
 	cat /dev/null > "${T}/test-retcode.log"
 	cd "${BUILD_DIR}"
-	( timeout 136 out/Release/chrome "https://browserbench.org/Speedometer2.0/" ; echo "$?" > "${T}/test-retcode.log" ) &
-	sleep 0.2 # let the app load
-
+	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
+	( timeout ${test_duration} out/Release/chrome "https://browserbench.org/Speedometer2.0/" ; echo "$?" > "${T}/test-retcode.log" ) &
 	local id=\$(xdotool getwindowfocus)
+	sleep ${EPGO_FCP} # 2s load + slack
+	xdotool windowmove --sync ${id} 0 0
+	xdotool windowsize --sync ${id} 1918 1078
+	sleep ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
 
-	sleep 0.2 # let the window load
-	xdotool windowsize ${id} 1918 1059
-	xdotool windowmove ${id} -3840 19
-
-	xdotool mousemove 991 627
-	sleep 15 # let the page load
+	xdotool mousemove --sync 962 620
 	xdotool click
-	sleep 120 # 1 min run + 1 min slack
+	sleep ${benchmark_duration}
 	echo -n "\$?" > "${T}/test-retcode.log"
 	exit \$(cat "${T}/test-retcode.log")
 }
@@ -1406,7 +1499,7 @@ EOF
 		virtx "${BUILD_DIR}/run.sh"
 	fi
 
-	sleep 136
+	sleep ${test_duration}
 
 	if [[ -f "${T}/test-retcode.log" ]] ; then
 		die "Missing retcode for ${x}"
@@ -1416,16 +1509,28 @@ EOF
 eerror "Test failed for ${x}.  Return code: ${test_retcode}."
 		die
 	fi
+	sleep ${EPGO_DESKTOP_CLOSE_TIME}
 }
 
 _custom_simulation() {
 	# It runs actually in around a minute.
-	einfo "Running simulation:  metering custom script performance... timeboxed to ${ECHROMIUM_CUSTOM_TIMEBOX_TIME} seconds"
 	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
-	sleep 0.2 # let the app load
-	( timeout ${ECHROMIUM_CUSTOM_TIMEBOX_TIME} out/Release/chrome "https://localhost" ; echo "$?" > "${T}/test-retcode.log" ) &
-	cp -a "/etc/portage/pgo-scripts/www-client/chromium/${PV}.sh" \
-		"${T}/run.sh"
+	local test_duration=$((
+		0
+		+ 2 + ${EPGO_WAIT_SLACK_TIME}
+		+ ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
+		+ ${EPGO_CUSTOM_SIMULATION_TIMEBOX_TIME}
+	))
+	einfo "Running simulation:  metering custom script performance... timeboxed to ${test_duration} seconds"
+	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
+	( timeout ${EPGO_CUSTOM_SIMULATION_TIMEBOX_TIME} out/Release/chrome "https://localhost" ; echo "$?" > "${T}/test-retcode.log" ) &
+	sleep $((2 + ${EPGO_WAIT_SLACK_TIME})) # let the window load
+	local id=$(xdotool getwindowfocus)
+	xdotool windowmove --sync ${id} 0 0
+	xdotool windowsize --sync ${id} 1918 1078
+	sleep ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
+	cat "/etc/portage/pgo-scripts/www-client/chromium/${PV}.sh" \
+		> "${T}/run.sh"
 	chmod +x "${BUILD_DIR}/run.sh" || die
 	if use pgo-gpu ; then
 		ewarn "FIXME:  replace with accelerated X wrapper.  still using xvfb."
@@ -1434,7 +1539,7 @@ _custom_simulation() {
 		virtx "${BUILD_DIR}/run.sh"
 	fi
 
-	sleep ${ECHROMIUM_CUSTOM_TIMEBOX_TIME}
+	sleep ${test_duration}
 
 	if [[ -f "${T}/test-retcode.log" ]] ; then
 		die "Missing retcode for ${x}"
@@ -1444,6 +1549,7 @@ _custom_simulation() {
 eerror "Test failed for ${x}.  Return code: ${test_retcode}."
 		die
 	fi
+	sleep ${EPGO_DESKTOP_CLOSE_TIME}
 }
 
 _run_simulation_suite() {
@@ -1467,18 +1573,15 @@ _run_simulation_suite() {
 		use pgo-web && _tabs_simulation
 		use pgo-web && _javascript_benchmark
 		use pgo-web && _responsiveness_simulation
-		if use pgo-custom-script ; then
-			if [[ ! -f "/etc/portage/pgo-scripts/www-client/chromium/${PV}.sh" ]] ; then
-				eerror "Missing /etc/portage/pgo-scripts/www-client/chromium/${PV}.sh"
-				die
-			fi
-			_custom_simulation
-		fi
+		use pgo-custom-script && _custom_simulation
 	fi
 }
 
 _run_simulations() {
 	_run_simulation_suite
+	if ! ls *.profraw 2>/dev/null 1>/dev/null ; then
+		die "Missing *.profraw files"
+	fi
 	llvm-profdata merge *.profraw -o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" || die
 }
 
@@ -1643,13 +1746,14 @@ pkg_postinst() {
 
 einfo
 einfo "By default, the /usr/bin/chromium and /usr/bin/chromedriver symlinks are"
-einfo "set to the last ABI installed."
-einfo "You must change it manually if you want to run on a different default ABI."
+einfo "set to the last ABI installed.  You must change it manually if you want"
+einfo "to run on a different default ABI."
 einfo
-einfo "Examples"
-einfo "ln -sf /usr/lib64/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-einfo "ln -sf /usr/lib/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-einfo "ln -sf /usr/lib32/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-einfo "ln -sf /usr/lib32/chromium-browser/chromedriver-${ABI} /usr/bin/chromedriver"
+einfo "Examples:"
+einfo
+einfo "  ln -sf /usr/lib64/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+einfo "  ln -sf /usr/lib/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+einfo "  ln -sf /usr/lib32/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+einfo "  ln -sf /usr/lib32/chromium-browser/chromedriver-${ABI} /usr/bin/chromedriver"
 einfo
 }
