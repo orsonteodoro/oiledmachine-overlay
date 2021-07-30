@@ -15,12 +15,12 @@
   </longdescription>
   <changelog>https://support.google.com/earth/answer/40901</changelog>
   <use>
-    <flag name="system-expat">Use the system's Expat library provided by the
-      system instead of the internal bundled version.</flag>
+    <flag name="system-expat">Use the system's Expat library instead of the
+      internal bundled version.</flag>
     <flag name="system-ffmpeg">Use the system's FFmpeg instead of the internal
       bundled version.</flag>
-    <flag name="system-gpsbabel">Use the system's gpsbabel provided by the
-      system instead of the internal bundled version.</flag>
+    <flag name="system-gpsbabel">Use the system's GPSBabel instead of the
+      internal bundled version.</flag>
     <flag name="system-icu">Use the system's ICU library instead of the internal
       bundled version.</flag>
     <flag name="system-gdal">Use the system's GDAL library instead of the
@@ -29,7 +29,7 @@
       bundled version.</flag>
     <flag name="system-qt5">Use the system's Qt5 libraries instead of the
       internal bundled version.</flag>
-    <flag name="system-spnav">Use the system's spnave libraries instead of the
+    <flag name="system-spnav">Use the system's spnav libraries instead of the
       internal bundled version.</flag>
   </use>
 </pkgmetadata>

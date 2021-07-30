@@ -425,7 +425,7 @@ src_prepare() {
 	rm -rf xdg-mime xdg-settings || die
 	mv ${PN}.desktop "${WORKDIR}/usr/share/applications" || die
 	if use system-gpsbabel ; then
-		einfo "Switching to the system's gpsbabel"
+		einfo "Switching to the system's GPSBabel"
 		sed -i -e "s|# if |if |" googleearth || die
 		rm gpsbabel || die
 	fi
