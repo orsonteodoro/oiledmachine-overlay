@@ -68,7 +68,7 @@ diff -urp xpra-4.1.3.orig/fs/etc/init.d/xpra xpra-4.1.3/fs/etc/init.d/xpra
 +
 +get_uid() {
 +  local user="$1"
-+  echo $(cat /etc/passwd | grep -F -e "${user}" | cut -f 3 -d ':')
++  echo $(cat /etc/passwd | grep -F -e "${user}:" | cut -f 3 -d ':')
 +}
  
  start() {
