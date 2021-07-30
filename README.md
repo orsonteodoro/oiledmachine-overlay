@@ -270,7 +270,7 @@ contains a known infamous critical vulnerability.
 | net-libs/webkit-gtk | This ebuild has multi-ABI support meaning it can build 32-bit webkit-gtk on a 64-bit machine and both 64-bit and 32-bit builds be present.  You may also choose to build just one ABI.  This ebuild mod also allows you to build the MiniBrowser frontend. |
 | net-misc/googler | This is a Google command line client. |
 | net-misc/rainbowstream | This is a Twitter command line client. |
-| sci-geosciences/googleearthpro | This is a working ebuild of Google Earth Pro.  The Gentoo overlay had abandoned the old Google Earth ebuild. |
+| sci-geosciences/google-earth-pro | This is a working ebuild of Google Earth Pro.  The Gentoo overlay had abandoned the old Google Earth ebuild. |
 | sci-physics/bullet | This library is a dependency for BulletSharpPInvoke.  It combines all modules, which were originally seperate dlls, into one shared object/dll. |
 | sys-apps/oomd | This is an intelligent userspace daemon to prevent halting by terminating memory leaks or heavy IO based on a decision tree before they happen.  It can be extended with custom coded modules. |
 | sys-firmware/amdgpu-firmware | Same firmware in the amdgpu-pro package.  Same firmware in the latest hardware in the compatibility list.  |
