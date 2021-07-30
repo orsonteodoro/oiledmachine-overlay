@@ -327,7 +327,7 @@ pkg_nofetch() {
 	local dest_fn
 	if use amd64 ; then
 		src_fn="${SRC_FN_AMD64}"
-		local hash_cmd="\$(sha512sum ${SRC_FN_AMD64} | cut -f 1 -d ' ')"
+		local hash_cmd="\$(sha512sum ${SRC_FN_AMD64} | cut -f 1 -d ' ' | cut -c 1-7)"
 		dest_fn="${PN}-stable_$(ver_cut 1-3 ${PV})_${hash_cmd}_amd64.deb"
 	else
 		die "${ARCH} is not supported"
