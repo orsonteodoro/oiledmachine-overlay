@@ -129,13 +129,13 @@ CVE_PATCHED_ELECTRON_12="12.0.15"
 CVE_PATCHED_ELECTRON_11="11.4.10"
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
-CVE_PATCHED_NODE_16="16.4.1"
+CVE_PATCHED_NODE_16="16.6.0"
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V14.md
-CVE_PATCHED_NODE_14="14.17.2"
+CVE_PATCHED_NODE_14="14.17.4"
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V12.md
-CVE_PATCHED_NODE_12="12.22.2"
+CVE_PATCHED_NODE_12="12.22.4"
 
 # These Chromium desktop versions listed are non vulnerable versions:
 # Reason why is to minimize vulnerability checks in this eclass.
