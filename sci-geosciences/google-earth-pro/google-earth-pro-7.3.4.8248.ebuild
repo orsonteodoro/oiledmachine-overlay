@@ -346,8 +346,6 @@ src_unpack() {
 	local arch
 	if use amd64 ; then
 		arch="amd64"
-	elif use x86 ; then
-		arch="i386"
 	else
 		die "${ARCH} not supported"
 	fi
