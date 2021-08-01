@@ -13,13 +13,13 @@ SLOT="0"
 BDEPEND+="
 	|| (
 		net-libs/nodejs:12[npm]
-		net-libs/nodejs:10[npm]
-		<net-libs/nodejs-14[npm]
+		net-libs/nodejs:14[npm]
+		net-libs/nodejs:16[npm]
 	)"
-ELECTRON_APP_ELECTRON_V="5.0.13"
+ELECTRON_APP_ELECTRON_V="13.1.4"
 ELECTRON_APP_VUE_V="2.6.11"
 ELECTRON_APP_MODE="yarn"
-ASSETS_COMMIT="ac7af415702801b06a5b7b4c3edf0e659f47df78"
+ASSETS_COMMIT="db62cecd809465235f5bbc3cf2c69ef1b5c495ae"
 SRC_URI=\
 "https://github.com/njbrown/texturelab/archive/v${PV}.tar.gz \
 	-> ${PN}-${PV}.tar.gz
