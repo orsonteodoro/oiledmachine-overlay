@@ -34,7 +34,8 @@ EPGO_DESKTOP_CLOSE_TIME=3 # \
 # Length of time it takes to close the xserver normally.
 EPGO_FCP=${EPGO_FCP:=14} # \
 # FCP = First contentful paint (time from pressing enter on URI bar to first
-# image that appears).  It takes around 2 seconds.
+# image that appears).  It takes around 2 seconds.  This has been adjusted
+# to double the time for the most essential element or button.
 EPGO_LCP=${EPGO_LCP:=20} # \
 # LCP = Last contentful paint (time it takes to complete rendering or loading a
 # page) assuming average case.  Worst cases are around 70s.
@@ -59,7 +60,7 @@ SRC_URI="
 	ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-${PPC64LE_PATCHSET}.tar.xz )"
 RESTRICT="mirror"
 
-PGO_EBUILD_PROFILE_GENERATOR_SITE_LICENSES=(
+PGO_EBUILD_GENERATOR_SITE_LICENSES=(
 	CC-BY-4.0
 	CC0-1.0
 	CC-BY-SA-3.0
@@ -73,7 +74,7 @@ PGO_EBUILD_PROFILE_GENERATOR_SITE_LICENSES=(
 	ZLIB
 	Apache-2.0
 )
-PGO_EBUILD_UPSTREAM_GENERATOR_SITE_LICENSES=(
+PGO_UPSTREAM_GENERATOR_SITE_LICENSES=(
 	MIT
 	Apache-2.0
 )
@@ -82,28 +83,51 @@ PGO_EBUILD_UPSTREAM_GENERATOR_SITE_LICENSES=(
 # wiki.gentoo.org CC-BY-SA-3.0 (Content attributed to Gentoo Foundation, Inc)
 # www.kevs3d.co.uk MIT with link back clause
 # Under the hood of the JetStream 2 benchmark:
-#   https://github.com/WebKit/WebKit/tree/main/Websites/browserbench.org/JetStream2.0 and internal third party dependencies BSD-2, BSD, GPL-2, GPL-2+, LGPL-2.1, MIT
+#   https://github.com/WebKit/WebKit/tree/main/Websites/browserbench.org/JetStream2.0 \
+#     and internal third party dependencies BSD-2, BSD, GPL-2, GPL-2+, \
+#     LGPL-2.1, MIT
 # Under the hood of the Octane benchmark:
-#   https://github.com/chromium/octane and internal third party dependencies BSD, GPL-2+, MIT, (all rights reserved MIT), ZLIB, Apache-2.0
-#   https://github.com/chromium/octane/blob/master/crypto.js all-rights-reserved MIT (the plain MIT license doesn't contain all rights reserved)
+#   https://github.com/chromium/octane and internal third party dependencies \
+#     BSD, GPL-2+, MIT, (all rights reserved MIT), ZLIB, Apache-2.0
+#   https://github.com/chromium/octane/blob/master/crypto.js \
+#     all-rights-reserved MIT (the plain MIT license doesn't contain \
+#     all rights reserved)
 #   https://github.com/chromium/octane/blob/master/js/bootstrap-collapse.js
 # Under the hood of the the Speedometer 2.0 benchmark:
-#   https://github.com/WebKit/WebKit/tree/main/PerformanceTests/Speedometer or internal third party dependencies MIT, Apache-2.0
+#   https://github.com/WebKit/WebKit/tree/main/PerformanceTests/Speedometer \
+#     or internal third party dependencies MIT, Apache-2.0
 LICENSE="BSD
-	pgo-ebuild-profile-generator? ( ${PGO_EBUILD_PROFILE_GENERATOR_SITE_LICENSES} )
-	pgo-upstream-profile-generator? ( ${PGO_EBUILD_UPSTREAM_GENERATOR_SITE_LICENSES} )"
+	pgo-ebuild-profile-generator? ( ${PGO_EBUILD_GENERATOR_SITE_LICENSES} )
+	pgo-upstream-profile-generator? ( ${PGO_UPSTREAM_GENERATOR_SITE_LICENSES} )"
 SLOT="0"
 KEYWORDS="amd64 arm64 ~ppc64 ~x86"
-IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
+IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
-# For cfi, cfi-icall defaults status, see https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/sanitizers.gni
-# For cfi-full default status see, https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/sanitizers.gni#L123
-# For pgo default status see, https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/compiler/pgo/pgo.gni#L15
-# For libcxx default see, https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/c++/c++.gni#L14
+# For cfi, cfi-icall defaults status, see \
+#   https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/sanitizers.gni
+# For cfi-full default status, see \
+#   https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/sanitizers.gni#L123
+# For pgo default status, see \
+#   https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/compiler/pgo/pgo.gni#L15
+# For libcxx default, see \
+#   https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
-IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx pgo -pgo-native -pgo-web pgo-upstream-profile-generator -pgo-ebuild-profile-generator pgo-custom-script pgo-gpu pgo-audio"
-_ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
-IUSE+=" ${_ABIS}"
+# Modding location to remove lto-O0 when lld is being used which is the default,
+#   see https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/compiler/BUILD.gn#L502
+IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx lto-opt +pgo pgo-audio pgo-gpu
+pgo-custom-script -pgo-ebuild-profile-generator -pgo-native
+pgo-upstream-profile-generator -pgo-web"
+_ABIS=( abi_x86_32
+	abi_x86_64
+	abi_x86_x32
+	abi_mips_n32
+	abi_mips_n64
+	abi_mips_o32
+	abi_ppc_32
+	abi_ppc_64
+	abi_s390_32
+	abi_s390_64 )
+IUSE+=" ${_ABIS[@]}"
 REQUIRED_USE="
 	^^ ( partitionalloc tcmalloc libcmalloc )
 	!clang? ( !cfi )
@@ -112,13 +136,20 @@ REQUIRED_USE="
 	cfi-icall? ( cfi )
 	component-build? ( !suid )
 	libcxx? ( clang )
-	official? ( amd64? ( cfi cfi-icall ) libcxx pgo )
+	lto-opt? ( clang )
+	official? ( amd64? ( cfi cfi-icall ) partitionalloc pgo )
 	partitionalloc? ( !component-build )
-	pgo? ( clang libcxx !pgo-native )
-	pgo-native? ( ^^ ( pgo-upstream-profile-generator pgo-ebuild-profile-generator ) clang !pgo )
-	pgo-web? ( pgo-native )
-	pgo-upstream-profile-generator? ( pgo-ebuild-profile-generator )
+	pgo? ( clang !pgo-native )
+	pgo-audio? ( pgo-native )
+	pgo-custom-script? ( pgo-ebuild-profile-generator )
 	pgo-ebuild-profile-generator? ( !pgo-upstream-profile-generator )
+	pgo-gpu? ( pgo-native )
+	pgo-native? ( ^^ ( pgo-ebuild-profile-generator
+			   pgo-upstream-profile-generator )
+			   clang
+			   !pgo )
+	pgo-upstream-profile-generator? ( pgo-ebuild-profile-generator )
+	pgo-web? ( pgo-native )
 	screencast? ( wayland )
 	widevine? ( !arm64 !ppc64 )
 "
@@ -198,8 +229,15 @@ RDEPEND="${COMMON_DEPEND}
 DEPEND="${COMMON_DEPEND}
 "
 # dev-vcs/git - https://bugs.gentoo.org/593476
+# TODO change to !pgo-gpu? ( ${VIRTUALX_DEPEND} )
+# >=mesa-21.1 is bumped to compatibile llvm-12
+# <=mesa-21.0.x is only llvm-11 compatible
 BDEPEND="
 	${PYTHON_DEPS}
+	|| (
+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+	)
 	>=app-arch/gzip-1.7
 	app-arch/unzip
 	dev-lang/perl
@@ -212,22 +250,15 @@ BDEPEND="
 	sys-apps/hwids[usb(+)]
 	>=sys-devel/bison-2.4.3
 	sys-devel/flex[${MULTILIB_USEDEP}]
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)
-	js-type-check? ( virtual/jre )
-	pgo-native? (
-		${VIRTUALX_DEPEND}
-		x11-misc/xdotool
-	)
-" # TODO change to !pgo-gpu? ( ${VIRTUALX_DEPEND} )
-
-# >=mesa-21.1 is bumped to compatibile llvm-12
-# <=mesa-21.0.x is only llvm-11 compatible
-BDEPEND+="
 	clang? (
 		|| (
+			(
+				sys-devel/clang:13[${MULTILIB_USEDEP}]
+				sys-devel/llvm:13[${MULTILIB_USEDEP}]
+				=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
+				>=sys-devel/lld-13
+				>=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
+			)
 			(
 				sys-devel/clang:12[${MULTILIB_USEDEP}]
 				sys-devel/llvm:12[${MULTILIB_USEDEP}]
@@ -243,7 +274,49 @@ BDEPEND+="
 				<media-libs/mesa-21.1[gbm,${MULTILIB_USEDEP}]
 			)
 		)
-	)"
+		arm64? (
+			|| (
+				(
+					sys-devel/clang:13[${MULTILIB_USEDEP}]
+					sys-devel/llvm:13[${MULTILIB_USEDEP}]
+					=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
+					>=sys-devel/lld-13
+					>=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
+				)
+				(
+					sys-devel/clang:12[${MULTILIB_USEDEP}]
+					sys-devel/llvm:12[${MULTILIB_USEDEP}]
+					=sys-devel/clang-runtime-12*[${MULTILIB_USEDEP}]
+					>=sys-devel/lld-12
+					>=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
+				)
+			)
+		)
+		official? (
+			sys-devel/clang:13[${MULTILIB_USEDEP}]
+			sys-devel/llvm:13[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
+			>=sys-devel/lld-13
+			>=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
+		)
+	)
+	js-type-check? ( virtual/jre )
+	pgo-ebuild-profile-generator? (
+		${VIRTUALX_DEPEND}
+		x11-misc/xdotool
+	)
+"
+# Upstream uses llvm:13
+# For the current llvm for this project, see
+#   https://github.com/chromium/chromium/blob/92.0.4515.107/tools/clang/scripts/update.py#L42
+# Use the same clang for official USE flag because of older llvm bugs which
+#   could result in security weaknesses (explained in the llvm:12 note below).
+# Used llvm >= 12 for arm64 for the same reason in the Linux kernel CFI comment.
+#   Links below from https://github.com/torvalds/linux/commit/cf68fffb66d60d96209446bfc4a15291dc5a5d41
+#     https://bugs.llvm.org/show_bug.cgi?id=46258
+#     https://bugs.llvm.org/show_bug.cgi?id=47479
+# To confirm the hash version match for the reported by CR_CLANG_REVISION, see
+#   https://github.com/llvm/llvm-project/blob/d3676d4b/llvm/CMakeLists.txt
 RDEPEND+=" libcxx? ( >=sys-libs/libcxx-12[${MULTILIB_USEDEP}] )"
 DEPEND+=" libcxx? ( >=sys-libs/libcxx-12[${MULTILIB_USEDEP}] )"
 
@@ -260,7 +333,7 @@ COMMON_DEPEND="
 RDEPEND+="${COMMON_DEPEND}"
 DEPEND+="${COMMON_DEPEND}"
 
-if ! has chromium_pkg_die ${EBUILD_DEATH_HOOKS}; then
+if ! has chromium_pkg_die ${EBUILD_DEATH_HOOKS} ; then
 	EBUILD_DEATH_HOOKS+=" chromium_pkg_die";
 fi
 
@@ -294,14 +367,14 @@ in /etc/chromium/default.
 "
 
 pre_build_checks() {
-	if [[ ${MERGE_TYPE} != binary ]]; then
+	if [[ ${MERGE_TYPE} != binary ]] ; then
 		local -x CPP="$(tc-getCXX) -E"
-		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge 9.2; then
+		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge 9.2 ; then
 			die "At least gcc 9.2 is required"
 		fi
 		if use clang || tc-is-clang ; then
 			CPP="${CHOST}-clang++ -E"
-			if ! ver_test "$(clang-major-version)" -ge 12; then
+			if ! ver_test "$(clang-major-version)" -ge 12 ; then
 				die "At least clang 12 is required"
 			fi
 		fi
@@ -310,11 +383,11 @@ pre_build_checks() {
 	# Check build requirements, bug #541816 and bug #471810 .
 	CHECKREQS_MEMORY="3G"
 	CHECKREQS_DISK_BUILD="8G"
-	if ( shopt -s extglob; is-flagq '-g?(gdb)?([1-9])' ); then
-		if use custom-cflags || use component-build; then
+	if ( shopt -s extglob; is-flagq '-g?(gdb)?([1-9])' ) ; then
+		if use custom-cflags || use component-build ; then
 			CHECKREQS_DISK_BUILD="25G"
 		fi
-		if ! use component-build; then
+		if ! use component-build ; then
 			CHECKREQS_MEMORY="16G"
 		fi
 	fi
@@ -332,35 +405,15 @@ pkg_setup() {
 	chromium_suid_sandbox_check_kernel_config
 
 	# nvidia-drivers does not work correctly with Wayland due to unsupported EGLStreams
-	if use wayland && ! use headless && has_version "x11-drivers/nvidia-drivers"; then
+	if use wayland && ! use headless && has_version "x11-drivers/nvidia-drivers" ; then
 		ewarn "Proprietary nVidia driver does not work with Wayland. You can disable"
 		ewarn "Wayland by setting DISABLE_OZONE_PLATFORM=true in /etc/chromium/default."
 	fi
 
-	if ! use amd64 && [[ "${IUSE}" =~ cfi ]]; then
+	if ! use amd64 && [[ "${IUSE}" =~ cfi ]] ; then
 ewarn
 ewarn "All variations of the cfi USE flags are not defaults for this platform."
 ewarn "Disable them if problematic."
-ewarn
-	fi
-
-	if use pgo ; then
-ewarn "The pgo USE flag is experimental.  Disable if it fails."
-
-# See also https://clang.llvm.org/docs/UsersManual.html#profile-remapping
-#   to address the profile mismatch problem.
-
-# It's better to rebuild the system with libcxx than to build the
-# program twice all the time or skip PGO.  The other problem is updating
-# and check the mangled remapping every update.  The other problem is
-# that non-upstream patches modify the function/method signatures which
-# could interfere with PGO.
-
-ewarn
-ewarn "The PGO profile may require sys-devel/clang[default-libcxx] and"
-ewarn "www-client/chromium[libcxx] and rebuilding dependencies for proper"
-ewarn "optimization or to match the upstream PGO profile properly."
-ewarn "Upstream may likely assume libc++ instead of libstdc++."
 ewarn
 	fi
 
@@ -393,11 +446,11 @@ ewarn
 		# From sci-geosciences/grass ebuild
 		shopt -s nullglob
 		local mesa_cards=$(echo -n /dev/dri/card* /dev/dri/render* | sed 's/ /:/g')
-		if test -n "${mesa_cards}"; then
+		if test -n "${mesa_cards}" ; then
 			addpredict "${mesa_cards}"
 		fi
 		local ati_cards=$(echo -n /dev/ati/card* | sed 's/ /:/g')
-		if test -n "${ati_cards}"; then
+		if test -n "${ati_cards}" ; then
 			addpredict "${ati_cards}"
 		fi
 		shopt -u nullglob
@@ -446,6 +499,12 @@ eerror "640."
 			die
 		fi
 	fi
+
+	if use official || ( use clang && use cfi && use pgo ) ; then
+ewarn
+ewarn "Linking times may take longer than usual.  Maybe 4+ hour(s)."
+ewarn
+	fi
 }
 
 USED_EAPPLY=0
@@ -481,13 +540,16 @@ src_prepare() {
 		rm "${WORKDIR}/patches/chromium-92-v8-constexpr.patch" || die
 	fi
 
-	if use ppc64; then
+	if use ppc64 ; then
 		ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-libvpx.patch"
 		ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-support.patch"
 		ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-swiftshader.patch"
 	fi
 
-#	ceapply "${FILESDIR}/${PN}-92-clang-toolchain.patch"
+	if use clang ; then
+		ceapply "${FILESDIR}/${PN}-92-clang-toolchain-1.patch"
+		ceapply "${FILESDIR}/${PN}-92-clang-toolchain-2.patch"
+	fi
 
 	if ( (( ${#PATCHES[@]} > 0 || ${USED_EAPPLY} == 1 )) || [[ -f "${T}/epatch_user.log" ]] ) ; then
 		if use official ; then
@@ -518,7 +580,7 @@ src_prepare() {
 		tools/perf/run_benchmark || die
 
 	# bundled highway library does not support arm64 with GCC
-	if use arm64; then
+	if use arm64 ; then
 		rm -r third_party/highway/src || die
 		ln -s "${WORKDIR}/highway-0.12.1" third_party/highway/src || die
 	fi
@@ -756,10 +818,10 @@ src_prepare() {
 		third_party/usb_ids
 		third_party/xdg-utils
 	)
-	if ! use system-ffmpeg; then
+	if ! use system-ffmpeg ; then
 		keeplibs+=( third_party/ffmpeg third_party/opus )
 	fi
-	if ! use system-icu; then
+	if ! use system-icu ; then
 		keeplibs+=( third_party/icu )
 	fi
 	if use wayland && ! use headless ; then
@@ -771,7 +833,7 @@ src_prepare() {
 		keeplibs+=( third_party/openh264 )
 		keeplibs+=( third_party/re2 )
 		keeplibs+=( third_party/snappy )
-		if use system-icu; then
+		if use system-icu ; then
 			keeplibs+=( third_party/icu )
 		fi
 	fi
@@ -780,7 +842,7 @@ src_prepare() {
 	fi
 	# we need to generate ppc64 stuff because upstream does not ship it yet
 	# it has to be done before unbundling.
-	if use ppc64; then
+	if use ppc64 ; then
 		pushd third_party/libvpx >/dev/null || die
 		mkdir -p source/config/linux/ppc64 || die
 		./generate_gni.sh || die
@@ -790,7 +852,7 @@ src_prepare() {
 	# Remove most bundled libraries. Some are still needed.
 	build/linux/unbundle/remove_bundled_libraries.py "${keeplibs[@]}" --do-remove || die
 
-	if use js-type-check; then
+	if use js-type-check ; then
 		ln -s "${EPREFIX}"/usr/bin/java third_party/jdk/current/bin/java || die
 	fi
 
@@ -838,7 +900,7 @@ _configure_pgx() {
 		fi
 	fi
 
-	if tc-is-clang; then
+	if tc-is-clang ; then
 		myconf_gn+=" is_clang=true clang_use_chrome_plugins=false"
 	else
 		if use libcxx ; then
@@ -850,7 +912,7 @@ _configure_pgx() {
 	# Define a custom toolchain for GN
 	myconf_gn+=" custom_toolchain=\"//build/toolchain/linux/unbundle:default\""
 
-	if tc-is-cross-compiler; then
+	if tc-is-cross-compiler ; then
 		tc-export BUILD_{AR,CC,CXX,NM}
 		myconf_gn+=" host_toolchain=\"//build/toolchain/linux/unbundle:host\""
 		myconf_gn+=" v8_snapshot_toolchain=\"//build/toolchain/linux/unbundle:host\""
@@ -858,6 +920,8 @@ _configure_pgx() {
 		myconf_gn+=" host_toolchain=\"//build/toolchain/linux/unbundle:default\""
 	fi
 
+# Debug symbols level 2 is still on when official is on even though is_debug=false:
+# See https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/compiler/compiler.gni#L276
 	# GN needs explicit config for Debug/Release as opposed to inferring it from build directory.
 	myconf_gn+=" is_debug=false"
 
@@ -897,10 +961,10 @@ _configure_pgx() {
 		libwebp
 		zlib
 	)
-	if use system-ffmpeg; then
+	if use system-ffmpeg ; then
 		gn_system_libraries+=( ffmpeg opus )
 	fi
-	if use system-icu; then
+	if use system-icu ; then
 		gn_system_libraries+=( icu )
 	fi
 	if ! use libcxx ; then
@@ -965,18 +1029,18 @@ _configure_pgx() {
 	local myarch="$(tc-arch)"
 
 	# Avoid CFLAGS problems, bug #352457, bug #390147.
-	if ! use custom-cflags; then
+	if ! use custom-cflags ; then
 		replace-flags "-Os" "-O2"
 		strip-flags
 
 		# Debug info section overflows without component build
 		# Prevent linker from running out of address space, bug #471810 .
-		if ! use component-build || use x86; then
+		if ! use component-build || use x86 ; then
 			filter-flags "-g*"
 		fi
 
 		# Prevent libvpx build failures. Bug 530248, 544702, 546984.
-		if [[ ${myarch} == amd64 || ${myarch} == x86 ]]; then
+		if [[ ${myarch} == amd64 || ${myarch} == x86 ]] ; then
 			filter-flags -mno-mmx -mno-sse2 -mno-ssse3 -mno-sse4.1 -mno-avx -mno-avx2 -mno-fma -mno-fma4
 		fi
 	fi
@@ -1031,7 +1095,10 @@ _configure_pgx() {
 			;;
 	esac
 
-	myconf_gn+=" target_cpu=\"${target_cpu}\" v8_current_cpu=\"${target_cpu}\" current_cpu=\"${target_cpu}\" host_cpu=\"${target_cpu}\" "
+	myconf_gn+=" target_cpu=\"${target_cpu}\""
+	myconf_gn+=" v8_current_cpu=\"${target_cpu}\""
+	myconf_gn+=" current_cpu=\"${target_cpu}\""
+	myconf_gn+=" host_cpu=\"${target_cpu}\""
 	myconf_gyp+=" -Dtarget_arch=${target_arch}"
 
 	# Make sure that -Werror doesn't get added to CFLAGS by the build system.
@@ -1049,10 +1116,10 @@ _configure_pgx() {
 	# https://bugs.gentoo.org/654216
 	addpredict /dev/dri/ #nowarn
 
-	#if ! use system-ffmpeg; then
-	if false; then
+	#if ! use system-ffmpeg ; then
+	if false ; then
 		local build_ffmpeg_args=""
-		if use pic && [[ "${ffmpeg_target_arch}" == "ia32" ]]; then
+		if use pic && [[ "${ffmpeg_target_arch}" == "ia32" ]] ; then
 			build_ffmpeg_args+=" --disable-asm"
 		fi
 
@@ -1070,7 +1137,7 @@ _configure_pgx() {
 	append-cxxflags $(test-flags-CXX -flax-vector-conversions=all)
 
 	# highway/libjxl relies on this with arm64
-	if use arm64 && tc-is-gcc; then
+	if use arm64 && tc-is-gcc ; then
 		append-cxxflags -flax-vector-conversions
 	fi
 
@@ -1081,15 +1148,15 @@ _configure_pgx() {
 	tc-is-clang && append-flags -Wno-unknown-warning-option
 
 	# Explicitly disable ICU data file support for system-icu builds.
-	if use system-icu; then
+	if use system-icu ; then
 		myconf_gn+=" icu_use_data_file=false"
 	fi
 
 	# Enable ozone wayland and/or headless support
 	myconf_gn+=" use_ozone=true ozone_auto_platforms=false"
 	myconf_gn+=" ozone_platform_headless=true"
-	if use wayland || use headless; then
-		if use headless; then
+	if use wayland || use headless ; then
+		if use headless ; then
 			myconf_gn+=" ozone_platform=\"headless\""
 			myconf_gn+=" use_x11=false"
 		else
@@ -1106,24 +1173,25 @@ _configure_pgx() {
 	if use clang || tc-is-clang ; then
 		ewarn "Using ThinLTO"
 		myconf_gn+=" use_thin_lto=true "
+		use lto-opt && myconf_gn+=" thin_lto_enable_optimizations=true"
 	else
 		# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
 		myconf_gn+=" use_thin_lto=false "
 	fi
-	if use official; then
+	if use official ; then
 		# Allow building against system libraries in official builds
 		sed -i 's/OFFICIAL_BUILD/GOOGLE_CHROME_BUILD/' \
 			tools/generate_shim_headers/generate_shim_headers.py || die
 	fi
 
-	# See https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/BUILD.gn#L196
+# See https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/BUILD.gn#L196
 	if use cfi ; then
 		myconf_gn+=" is_cfi=true"
 	else
 		myconf_gn+=" is_cfi=false"
 	fi
 
-	# See https://github.com/chromium/chromium/blob/92.0.4515.107/tools/mb/mb_config.pyl#L2950
+# See https://github.com/chromium/chromium/blob/92.0.4515.107/tools/mb/mb_config.pyl#L2950
 	if use cfi-full ; then
 		myconf_gn+=" use_cfi_cast=true"
 	else
@@ -1136,9 +1204,9 @@ _configure_pgx() {
 		myconf_gn+=" use_cfi_icall=false"
 	fi
 
-	# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-	# See also https://github.com/chromium/chromium/blob/92.0.4515.107/docs/pgo.md
-	# profile-instr-use is clang which that file assumes but gcc doesn't have.
+# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
+# See also https://github.com/chromium/chromium/blob/92.0.4515.107/docs/pgo.md
+# profile-instr-use is clang which that file assumes but gcc doesn't have.
 	if use pgo-native ; then
 		myconf_gn+=" chrome_pgo_phase=${PGO_PHASE}"
 		mkdir -p "${BUILD_DIR}/chrome/build/pgo_profiles" || die
@@ -1168,7 +1236,7 @@ _build_pgx() {
 	local x
 	for x in mksnapshot v8_context_snapshot_generator; do
 		einfo "Building ${x}"
-		if tc-is-cross-compiler; then
+		if tc-is-cross-compiler ; then
 			eninja -C out/Release "host/${x}"
 			pax-mark m "out/Release/host/${x}"
 		else
@@ -1181,7 +1249,6 @@ _build_pgx() {
 # The most intensive computational parts should be pushed in hot section that
 # need boosting that way if you encounter in them again they penalize less.
 _javascript_benchmark() {
-	einfo "Running simulation:  metering javascript engine performance... timeboxed to 25 minutes"
 	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
 
 	local have_gpu="false"
@@ -1206,14 +1273,19 @@ _javascript_benchmark() {
 		+ ${benchmark3_total_time}
 		+ ${benchmark4_total_time}
 	))
-
+einfo
+einfo "Running simulation:  metering javascript engine performance... timeboxed"
+einfo "to $((${test_duration} / 60)) minutes and $((${test_duration} % 60)) seconds"
+einfo
 	cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 main() {
 	cat /dev/null > "${T}/test-retcode.log"
 	cd "${BUILD_DIR}"
 	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
-	( timeout ${test_duration} out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+	( timeout ${test_duration} \
+		out/Release/chrome ; \
+		echo "$?" > "${T}/test-retcode.log" ) &
 	sleep $((2 + ${EPGO_WAIT_SLACK_TIME})) # let the window load
 	local id=\$(xdotool getwindowfocus)
 	xdotool windowmove --sync ${id} 0 0
@@ -1301,7 +1373,10 @@ _load_simulation() {
 		+ 2 + ${EPGO_WAIT_SLACK_TIME}
 		+ ${load_duration}
 	))
-	einfo "Running simulation:  metering load-time performance... timeboxed to ${test_duration} seconds"
+einfo
+einfo "Running simulation:  metering load-time performance... timeboxed to"
+einfo "${test_duration} seconds"
+einfo
 	cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 # Handles a window with 2 checkboxes and an OK
@@ -1328,7 +1403,9 @@ main() {
 	cat /dev/null > "${T}/test-retcode.log"
 	cd "${BUILD_DIR}"
 	sleep ${EPGO_DESKTOP_COLD_LAUNCH_TIME}
-	( timeout ${load_duration} out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+	( timeout ${load_duration} \
+		out/Release/chrome ; \
+		echo "$?" > "${T}/test-retcode.log" ) &
 	_handle_new_install_window
 	sleep ${load_duration}
 	echo -n "\$?" > "${T}/test-retcode.log"
@@ -1395,14 +1472,19 @@ _tabs_simulation() {
 		+ ${tabs_switch_duration}
 		+ ${tabs_close_duration}
 	))
-	einfo "Running simulation:  metering load-time performance... timeboxed to $((${experiment_duration}/60)) minutes and $((${experiment_duration}%60))"
+einfo
+einfo "Running simulation:  metering load-time performance... timeboxed to"
+einfo "$((${experiment_duration} / 60)) minutes and $((${experiment_duration} % 60))"
+einfo
 	cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 main() {
 	cat /dev/null > "${T}/test-retcode.log"
 	cd "${BUILD_DIR}"
 	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
-	( timeout ${test_duration} out/Release/chrome ; echo "$?" > "${T}/test-retcode.log" ) &
+	( timeout ${test_duration} \
+		out/Release/chrome ; \
+		echo "$?" > "${T}/test-retcode.log" ) &
 	sleep $((2 + ${EPGO_WAIT_SLACK_TIME})) # let the window load
 	local id=\$(xdotool getwindowfocus)
 	xdotool windowmove --sync ${id} 0 0
@@ -1477,14 +1559,20 @@ _responsiveness_simulation() {
 		+ ${EPGO_FCP}
 		+ ${benchmark_duration}
 	))
-	einfo "Running simulation:  metering load-time performance... timeboxed to ${test_duration} seconds"
+einfo
+einfo "Running simulation:  metering load-time performance... timeboxed to"
+einfo "${test_duration} seconds"
+einfo
 	cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 main() {
 	cat /dev/null > "${T}/test-retcode.log"
 	cd "${BUILD_DIR}"
 	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
-	( timeout ${test_duration} out/Release/chrome "https://browserbench.org/Speedometer2.0/" ; echo "$?" > "${T}/test-retcode.log" ) &
+	( timeout ${test_duration} \
+		out/Release/chrome \
+			"https://browserbench.org/Speedometer2.0/" ; \
+		echo "$?" > "${T}/test-retcode.log" ) &
 	local id=\$(xdotool getwindowfocus)
 	sleep ${EPGO_FCP} # 2s load + slack
 	xdotool windowmove --sync ${id} 0 0
@@ -1529,9 +1617,15 @@ _custom_simulation() {
 		+ ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
 		+ ${EPGO_CUSTOM_SIMULATION_TIMEBOX_TIME}
 	))
-	einfo "Running simulation:  metering custom script performance... timeboxed to ${test_duration} seconds"
+einfo
+einfo "Running simulation:  metering custom script performance... timeboxed to"
+einfo "${test_duration} seconds"
+einfo
 	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
-	( timeout ${EPGO_CUSTOM_SIMULATION_TIMEBOX_TIME} out/Release/chrome "https://localhost" ; echo "$?" > "${T}/test-retcode.log" ) &
+	( timeout ${EPGO_CUSTOM_SIMULATION_TIMEBOX_TIME} \
+		out/Release/chrome \
+			"https://localhost" ; \
+		echo "$?" > "${T}/test-retcode.log" ) &
 	sleep $((2 + ${EPGO_WAIT_SLACK_TIME})) # let the window load
 	local id=$(xdotool getwindowfocus)
 	xdotool windowmove --sync ${id} 0 0
@@ -1562,7 +1656,7 @@ eerror "Test failed for ${x}.  Return code: ${test_retcode}."
 
 _run_simulation_suite() {
 	if use pgo-upstream-profile-generator ; then
-		# See also https://github.com/chromium/chromium/blob/93.0.4577.15/docs/pgo.md
+# See also https://github.com/chromium/chromium/blob/93.0.4577.15/docs/pgo.md
 		${EPYTHON} tools/perf/run_benchmark \
 			system_health.common_desktop \
 			--assert-gpu-compositing \
@@ -1590,7 +1684,9 @@ _run_simulations() {
 	if ! ls *.profraw 2>/dev/null 1>/dev/null ; then
 		die "Missing *.profraw files"
 	fi
-	llvm-profdata merge *.profraw -o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" || die
+	llvm-profdata merge *.profraw \
+		-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
+		|| die
 }
 
 multilib_src_compile() {
@@ -1652,7 +1748,7 @@ multilib_src_install() {
 	exeinto "${CHROMIUM_HOME}"
 	doexe out/Release/chrome
 
-	if use suid; then
+	if use suid ; then
 		newexe out/Release/chrome_sandbox chrome-sandbox
 		fperms 4755 "${CHROMIUM_HOME}/chrome-sandbox"
 	fi
@@ -1697,14 +1793,14 @@ multilib_src_install() {
 		[[ ${#files[@]} -gt 0 ]] && doins "${files[@]}"
 	)
 
-	if ! use system-icu; then
+	if ! use system-icu ; then
 		doins out/Release/icudtl.dat
 	fi
 
 	doins -r out/Release/locales
 	doins -r out/Release/resources
 
-	if [[ -d out/Release/swiftshader ]]; then
+	if [[ -d out/Release/swiftshader ]] ; then
 		insinto "${CHROMIUM_HOME}/swiftshader"
 		doins out/Release/swiftshader/*.so
 	fi
@@ -1744,12 +1840,12 @@ pkg_postinst() {
 	xdg_desktop_database_update
 	readme.gentoo_print_elog
 
-	if use vaapi; then
+	if use vaapi ; then
 		elog "VA-API is disabled by default at runtime. You have to enable it"
 		elog "by adding --enable-features=VaapiVideoDecoder to CHROMIUM_FLAGS"
 		elog "in /etc/chromium/default."
 	fi
-	if use screencast; then
+	if use screencast ; then
 		elog "Screencast is disabled by default at runtime. Either enable it"
 		elog "by navigating to chrome://flags/#enable-webrtc-pipewire-capturer"
 		elog "inside Chromium or add --enable-webrtc-pipewire-capturer"

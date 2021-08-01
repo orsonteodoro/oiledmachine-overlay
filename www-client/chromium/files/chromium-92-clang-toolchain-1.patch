@@ -1,0 +1,11 @@
+--- chromium-92.0.4515.107/build/toolchain/linux/unbundle/BUILD.gn.orig	2021-07-19 11:45:05.000000000 -0700
++++ chromium-92.0.4515.107/build/toolchain/linux/unbundle/BUILD.gn	2021-07-27 15:33:53.202463312 -0700
+@@ -10,6 +10,8 @@ gcc_toolchain("default") {
+   ar = getenv("AR")
+   nm = getenv("NM")
+   ld = cxx
++  readelf = getenv("READELF")
++  strip = getenv("STRIP")
+ 
+   extra_cflags = getenv("CFLAGS")
+   extra_cppflags = getenv("CPPFLAGS")
