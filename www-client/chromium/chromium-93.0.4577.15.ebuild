@@ -548,6 +548,8 @@ src_prepare() {
 		ceapply "${FILESDIR}/${PN}-92-clang-toolchain-2.patch"
 	fi
 
+	default
+
 	if ( (( ${#PATCHES[@]} > 0 || ${USED_EAPPLY} == 1 )) || [[ -f "${T}/epatch_user.log" ]] ) ; then
 		if use official ; then
 			ewarn
@@ -561,8 +563,6 @@ src_prepare() {
 			ewarn
 		fi
 	fi
-
-	default
 
 	mkdir -p third_party/node/linux/node-linux-x64/bin || die
 	ln -s "${EPREFIX}"/usr/bin/node third_party/node/linux/node-linux-x64/bin/node || die

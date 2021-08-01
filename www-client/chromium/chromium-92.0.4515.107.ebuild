@@ -551,6 +551,11 @@ src_prepare() {
 		ceapply "${FILESDIR}/${PN}-92-clang-toolchain-2.patch"
 	fi
 
+	default
+
+	# this patch needs to be applied after gentoo sandbox patchset
+	use ppc64 && ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-sandbox_kernel_stat.patch"
+
 	if ( (( ${#PATCHES[@]} > 0 || ${USED_EAPPLY} == 1 )) || [[ -f "${T}/epatch_user.log" ]] ) ; then
 		if use official ; then
 			ewarn
@@ -564,11 +569,6 @@ src_prepare() {
 			ewarn
 		fi
 	fi
-
-	default
-
-	# this patch needs to be applied after gentoo sandbox patchset
-	use ppc64 && eapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-sandbox_kernel_stat.patch"
 
 	mkdir -p third_party/node/linux/node-linux-x64/bin || die
 	ln -s "${EPREFIX}"/usr/bin/node third_party/node/linux/node-linux-x64/bin/node || die
