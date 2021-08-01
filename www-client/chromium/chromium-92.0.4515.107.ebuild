@@ -43,7 +43,8 @@ EPGO_LCP=${EPGO_LCP:=20} # \
 # Cold times are pre run with `sync; echo 3 > /proc/sys/vm/drop_caches`
 
 VIRTUALX_REQUIRED=manual
-inherit check-reqs chromium-2 desktop flag-o-matic multilib ninja-utils pax-utils portability python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
+LLVM_MAX_SLOT=13
+inherit check-reqs chromium-2 desktop flag-o-matic llvm multilib ninja-utils pax-utils portability python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
 inherit multilib-minimal virtualx
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
@@ -101,7 +102,7 @@ LICENSE="BSD
 	pgo-upstream-profile-generator? ( ${PGO_UPSTREAM_GENERATOR_SITE_LICENSES} )"
 SLOT="0"
 KEYWORDS="amd64 arm64 ~ppc64 ~x86"
-IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
+IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi, cfi-icall defaults status, see \
 #   https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/sanitizers.gni
@@ -114,7 +115,9 @@ IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 # Modding location to remove lto-O0 when lld is being used which is the default,
 #   see https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/compiler/BUILD.gn#L502
-IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx lto-opt +pgo pgo-audio pgo-gpu
+# Currently clang disabled until clang/ThinLTO bug is resolved.  See bug_notes file for details
+# +cfi +cfi-icall +clang should be upstream defaults
+IUSE+=" -cfi cfi-full -cfi-icall -clang libcxx lto-opt +pgo pgo-audio pgo-gpu
 pgo-custom-script -pgo-ebuild-profile-generator -pgo-native
 pgo-upstream-profile-generator -pgo-web"
 _ABIS=( abi_x86_32
@@ -257,7 +260,7 @@ BDEPEND="
 				sys-devel/llvm:13[${MULTILIB_USEDEP}]
 				=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
 				>=sys-devel/lld-13
-				>=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
+				>=media-libs/mesa-9999[gbm,${MULTILIB_USEDEP}]
 			)
 			(
 				sys-devel/clang:12[${MULTILIB_USEDEP}]
@@ -281,7 +284,7 @@ BDEPEND="
 					sys-devel/llvm:13[${MULTILIB_USEDEP}]
 					=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
 					>=sys-devel/lld-13
-					>=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
+					>=media-libs/mesa-9999[gbm,${MULTILIB_USEDEP}]
 				)
 				(
 					sys-devel/clang:12[${MULTILIB_USEDEP}]
@@ -297,7 +300,7 @@ BDEPEND="
 			sys-devel/llvm:13[${MULTILIB_USEDEP}]
 			=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
 			>=sys-devel/lld-13
-			>=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
+			>=media-libs/mesa-9999[gbm,${MULTILIB_USEDEP}]
 		)
 	)
 	js-type-check? ( virtual/jre )
@@ -317,9 +320,16 @@ BDEPEND="
 #     https://bugs.llvm.org/show_bug.cgi?id=47479
 # To confirm the hash version match for the reported by CR_CLANG_REVISION, see
 #   https://github.com/llvm/llvm-project/blob/d3676d4b/llvm/CMakeLists.txt
-RDEPEND+=" libcxx? ( >=sys-libs/libcxx-12[${MULTILIB_USEDEP}] )"
-DEPEND+=" libcxx? ( >=sys-libs/libcxx-12[${MULTILIB_USEDEP}] )"
-
+RDEPEND+="
+	libcxx? (
+		>=sys-libs/libcxx-12[${MULTILIB_USEDEP}]
+		official? ( >=sys-libs/libcxx-13[${MULTILIB_USEDEP}] )
+	)"
+DEPEND+="
+	libcxx? (
+		>=sys-libs/libcxx-12[${MULTILIB_USEDEP}]
+		official? ( >=sys-libs/libcxx-13[${MULTILIB_USEDEP}] )
+	)"
 COMMON_DEPEND="
 	!libcxx? (
 		app-arch/snappy:=[${MULTILIB_USEDEP}]
@@ -504,6 +514,46 @@ eerror "640."
 ewarn
 ewarn "Linking times may take longer than usual.  Maybe 4+ hour(s)."
 ewarn
+	fi
+
+	# These checks are a maybe required.
+	if use clang ; then
+		CC=${CHOST}-clang
+		CXX=${CHOST}-clang++
+		local MESA_LLVM_MAX_SLOT=$(bzless \
+			"${ESYSROOT}/var/db/pkg/media-libs/mesa"*"/environment.bz2" \
+			| grep LLVM_MAX_SLOT \
+			| head -n 1 \
+			| cut -f 2 -d '"')
+		local CLANG_SLOT=$(clang-major-version)
+		einfo "CLANG_SLOT: ${CLANG_SLOT}"
+		einfo "MESA_LLVM_MAX_SLOT: ${MESA_LLVM_MAX_SLOT}"
+		if (( $(clang-major-version) -gt "${MESA_LLVM_MAX_SLOT}" )) ; then
+			# Warn about loading multiple LLVM versions which may trigger bug
+ewarn
+ewarn "Mesa's MAX_LLVM_SLOT is not compatible.  clang slot needs to be"
+ewarn "<= ${MESA_MAX_LLVM_SLOT}."
+ewarn
+		fi
+		if use official ; then
+			if (( ${MESA_LLVM_MAX_SLOT} >= 13 )) ; then
+ewarn
+ewarn "LLVM/clang may need a Mesa ebuild with LLVM_MAX_SLOT >= 13."
+ewarn
+			fi
+		fi
+		for f in /usr/$(get_libdir)/dri/* ; do
+			local driver_llvm=$(ldd "${f}" \
+				| grep "libLLVM" \
+				| sed -r -e "s|[ \t]+| |g" \
+				| cut -f 2 -d " " \
+				| grep -o -E "[0-9]+")
+			if (( ${driver_llvm} != 13 )) ; then
+ewarn
+ewarn "LLVM/clang may need Mesa DRI drivers built against 13."
+ewarn
+			fi
+		done
 	fi
 }
 

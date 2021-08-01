@@ -1,0 +1,47 @@
+Building with clang-12, LLVM-12, LLD-12 (with ThinLTO), cfi, cfi-icall, pgo, system's libcxx 12 produces the following:
+
+1.	<eof> parser at end of file
+2.	Per-module optimization passes
+3.	Running pass 'ThinLTO Bitcode Writer' on module '../../chrome/browser/ui/views/frame/tab_strip_region_view.cc'.
+ #0 0x00007f827b7a2b4d llvm::sys::PrintStackTrace(llvm::raw_ostream&, int) (/usr/lib/llvm/12/bin/../lib64/libLLVM-12.so+0xa99b4d)
+ #1 0x00007f827b7a0954 llvm::sys::RunSignalHandlers() (/usr/lib/llvm/12/bin/../lib64/libLLVM-12.so+0xa97954)
+ #2 0x00007f827b6d9070 (/usr/lib/llvm/12/bin/../lib64/libLLVM-12.so+0x9d0070)
+ #3 0x00007f827a953050 (/lib64/libc.so.6+0x3d050)
+ #4 0x00007f827c1a6421 (/usr/lib/llvm/12/bin/../lib64/libLLVM-12.so+0x149d421)
+ #5 0x00007f827c1aff0d llvm::BitcodeWriter::writeModule(llvm::Module const&, bool, llvm::ModuleSummaryIndex const*, bool, std::array<unsigned int, 5ul>*) (/usr/lib/llvm/12/bin/../lib64/libLLVM-12.so+0x14a6f0d)
+ #6 0x00007f827c8b988a (/usr/lib/llvm/12/bin/../lib64/libLLVM-12.so+0x1bb088a)
+ #7 0x00007f827c8ba25b (/usr/lib/llvm/12/bin/../lib64/libLLVM-12.so+0x1bb125b)
+ #8 0x00007f827b8d70fa llvm::legacy::PassManagerImpl::run(llvm::Module&) (/usr/lib/llvm/12/bin/../lib64/libLLVM-12.so+0xbce0fa)
+ #9 0x00007f82809cbe13 (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0x19cce13)
+#10 0x00007f82809ccac0 clang::EmitBackendOutput(clang::DiagnosticsEngine&, clang::HeaderSearchOptions const&, clang::CodeGenOptions const&, clang::TargetOptions const&, clang::LangOptions const&, llvm::DataLayout const&, llvm::Module*, clang::BackendAction, std::unique_ptr<llvm::raw_pwrite_stream, std::default_delete<llvm::raw_pwrite_stream> >) (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0x19cdac0)
+#11 0x00007f8280ce86ab (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0x1ce96ab)
+#12 0x00007f827fb02e4a clang::ParseAST(clang::Sema&, bool, bool) (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0xb03e4a)
+#13 0x00007f82813ec159 clang::FrontendAction::Execute() (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0x23ed159)
+#14 0x00007f828138f3e5 clang::CompilerInstance::ExecuteAction(clang::FrontendAction&) (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0x23903e5)
+#15 0x00007f8281463746 clang::ExecuteCompilerInvocation(clang::CompilerInstance*) (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0x2464746)
+#16 0x000055eff368cab8 cc1_main(llvm::ArrayRef<char const*>, char const*, void*) (/usr/lib/llvm/12/bin/x86_64-pc-linux-gnu-clang+++0x14ab8)
+#17 0x000055eff368b06b (/usr/lib/llvm/12/bin/x86_64-pc-linux-gnu-clang+++0x1306b)
+#18 0x00007f8281090d55 (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0x2091d55)
+#19 0x00007f827b6d9164 llvm::CrashRecoveryContext::RunSafely(llvm::function_ref<void ()>) (/usr/lib/llvm/12/bin/../lib64/libLLVM-12.so+0x9d0164)
+#20 0x00007f8281092de5 clang::driver::CC1Command::Execute(llvm::ArrayRef<llvm::Optional<llvm::StringRef> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, bool*) const (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0x2093de5)
+#21 0x00007f828106423a clang::driver::Compilation::ExecuteCommand(clang::driver::Command const&, clang::driver::Command const*&) const (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0x206523a)
+#22 0x00007f8281064a15 clang::driver::Compilation::ExecuteJobs(clang::driver::JobList const&, llvm::SmallVectorImpl<std::pair<int, clang::driver::Command const*> >&) const (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0x2065a15)
+#23 0x00007f82810728f1 clang::driver::Driver::ExecuteCompilation(clang::driver::Compilation&, llvm::SmallVectorImpl<std::pair<int, clang::driver::Command const*> >&) (/usr/lib/llvm/12/bin/../lib64/libclang-cpp.so.12+0x20738f1)
+#24 0x000055eff3686f04 main (/usr/lib/llvm/12/bin/x86_64-pc-linux-gnu-clang+++0xef04)
+#25 0x00007f827a93a2ae __libc_start_main (/lib64/libc.so.6+0x242ae)
+#26 0x000055eff36880fa _start (/usr/lib/llvm/12/bin/x86_64-pc-linux-gnu-clang+++0x100fa)
+x86_64-pc-linux-gnu-clang++: error: clang frontend command failed with exit code 139 (use -v to see invocation)
+clang version 12.0.0
+Target: x86_64-pc-linux-gnu
+Thread model: posix
+InstalledDir: /usr/lib/llvm/12/bin
+x86_64-pc-linux-gnu-clang++: note: diagnostic msg: 
+********************
+
+PLEASE ATTACH THE FOLLOWING FILES TO THE BUG REPORT:
+Preprocessed source(s) and associated run script(s) are located at:
+x86_64-pc-linux-gnu-clang++: note: diagnostic msg: ../../tools/clang/crashreports/tab_strip_region_view-5a5022.cpp
+x86_64-pc-linux-gnu-clang++: note: diagnostic msg: ../../tools/clang/crashreports/tab_strip_region_view-5a5022.sh
+x86_64-pc-linux-gnu-clang++: note: diagnostic msg: 
+
+********************
