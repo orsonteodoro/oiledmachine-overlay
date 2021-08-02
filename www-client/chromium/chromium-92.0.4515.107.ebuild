@@ -696,6 +696,16 @@ ewarn
 			fi
 		done
 	fi
+	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" ]] ; then
+		if [[ -z "${MY_OVERLAY_DIR}" ]] ; then
+eerror
+eerror "You need to set MY_OVERLAY_DIR as a per-package envvar to the base path"
+eerror "of your overlay or local repo.  The base path should contain all the"
+eerror "repo's categories."
+eerror
+			die
+		fi
+	fi
 }
 
 USED_EAPPLY=0
@@ -1896,7 +1906,7 @@ update_licenses() {
                                         | cut -f 1 -d " ")
 		# Check the license fingerprint between point releases.
 		if [[ ! ( "${LICENSE}" =~ "${license_file_name}" ) \
-			|| ! -f "${OILEDMACHINE_OVERLAY_DIR}/licenses/${license_file_name}" \
+			|| ! -f "${MY_OVERLAY_DIR}/licenses/${license_file_name}" \
 			|| "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}"
 		]] ; then
 einfo
@@ -1904,7 +1914,7 @@ einfo "Please update the LICENSE variable and add the license file to the"
 einfo "licenses folder.  Copy license file as follows:"
 einfo
 einfo "  \`cp -a ${BUILD_DIR}/out/Release/gen/components/resources/about_credits.html \
-${OILEDMACHINE_OVERLAY_DIR}/licenses/${license_file_name}\`"
+${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
 einfo
 einfo "Update the LICENSE_FINGERPRINT to ${x_license_fingerprint}"
 einfo
