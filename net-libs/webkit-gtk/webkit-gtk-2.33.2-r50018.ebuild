@@ -41,8 +41,8 @@ LICENSE="
 	MPL-2.0
 	unicode
 	|| ( AFL-2.0 LGPL-2+ )
-	|| ( MPL-1.1 GPL-2 LGPL-2 )
-	|| ( MPL-1.1 GPL-2 LGPL-2.1 ) GIF
+	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
+	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ ) GIF
 	webrtc? (
 		Apache-2.0
 		BSD
@@ -56,10 +56,17 @@ LICENSE="
 		libwebrtc-PATENTS
 		libyuv-PATENTS
 		MIT
+		ooura
 		openssl
+		QU-fft
 		sigslot
-	)"
+	)" # \
+# emerge does not understand ^^ when applied to licenses, but you should only \
+#   pick one when || is presented
 # Some licenses are third party
+# ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) Source/WTF/wtf/DateMath.h
+# ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) GIF Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp
+# || ( LGPL-2+ AFL-2.0 ) Source/ThirdParty/xdgmime/README
 # all-rights-reserved Source/WebInspectorUI/UserInterface/Images/CanvasOverview.svg
 # all-rights-reserved Source/ThirdParty/gtest/scripts/run_with_path.py
 # all-rights-reserved GPL-2+ Source/WTF/wtf/HashCountedSet.h ; * the GPL-2+ license does not contain all rights reserved
@@ -72,23 +79,20 @@ LICENSE="
 # BSD Source/ThirdParty/libwebrtc/Source/third_party/pffft/LICENSE
 # BSD-2 Source/ThirdParty/libwebrtc/Source/third_party/usrsctp/LICENSE
 # BSD-2 Source/ThirdParty/ANGLE/src/third_party/compiler/LICENSE
-# custom Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/third_party/base64/LICENSE
-# custom Source/ThirdParty/libwebrtc/Source/webrtc/common_audio/third_party/ooura/LICENSE
+# base64 Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/third_party/base64/LICENSE
 # GPL-2+ Source/JavaScriptCore
 # GPL-3+ Source/ThirdParty/ANGLE/tools/flex-bison/third_party/m4sugar
 # GPL-3+ Source/ThirdParty/ANGLE/tools/flex-bison/third_party/skeletons
 # ISC Source/bmalloc/bmalloc/CryptoRandom.cpp
 # ISC Source/WTF/wtf/CryptographicallyRandomNumber.cpp
 # LGPL-2 (only) Source/WebCore/rendering/AutoTableLayout.cpp
-# || ( LGPL-2+ AFL-2.0 ) Source/ThirdParty/xdgmime/README
 # LGPL-2.1+ for some files in Source/WebCore
 # MIT Source/ThirdParty/ANGLE/src/third_party/libXNVCtrl/LICENSE
 # MIT Source/WTF/LICENSE-libc++.txt
 # MIT Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/fft/LICENSE
 # MIT Source/ThirdParty/libwebrtc/Source/webrtc/modules/third_party/portaudio/LICENSE
-# || ( MPL-1.1 GPL-2 LGPL-2 ) Source/WTF/wtf/DateMath.h
-# || ( MPL-1.1 GPL-2 LGPL-2.1 ) GIF Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp
 # MPL-2.0 Source/WTF/wtf/text/StringBuilderJSON.cpp
+# ooura Source/ThirdParty/libwebrtc/Source/webrtc/common_audio/third_party/ooura/LICENSE
 # openssl, ISC, MIT - Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/LICENSE
 # public-domain Source/ThirdParty/libwebrtc/Source/webrtc/rtc_base/third_party/sigslot/LICENSE
 # public-domain Source/ThirdParty/libwebrtc/Source/webrtc/common_audio/third_party/spl_sqrt_floor/LICENSE
