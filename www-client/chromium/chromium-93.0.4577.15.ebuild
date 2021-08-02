@@ -2148,8 +2148,8 @@ multilib_src_install() {
 	readme.gentoo_create_doc
 
 	# This next pass will copy PATENTS files, *ThirdParty*, and NOTICE files
-	# and npm micropackages which may not have been present in the listed
-	# the the .html (about:credits) file
+	# and npm micropackages copyright notices and licenses which may not
+	# have been present in the listed the the .html (about:credits) file
 	_install_licenses
 }
 
