@@ -701,7 +701,7 @@ ewarn
 eerror
 eerror "You need to set MY_OVERLAY_DIR as a per-package envvar to the base path"
 eerror "of your overlay or local repo.  The base path should contain all the"
-eerror "repo's categories."
+eerror "overlay's categories."
 eerror
 			die
 		fi
