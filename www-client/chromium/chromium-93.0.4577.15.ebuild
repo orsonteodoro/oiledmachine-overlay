@@ -121,7 +121,7 @@ LICENSE="BSD
 	MIT
 	( MIT CC0-1.0 )
 	MPL-1.1
-	MPL-2
+	MPL-2.0
 	neon_2_sse
 	OFL-1.1
 	ooura
@@ -135,7 +135,7 @@ LICENSE="BSD
 	SGI-B-2.0
 	SunPro
 	svgo
-	WTFPL
+	WTFPL-2
 	x11proto
 	ZLIB
 	pgo-ebuild-profile-generator? ( ${PGO_EBUILD_GENERATOR_SITE_LICENSES} )
@@ -153,7 +153,7 @@ LICENSE_FINGERPRINT="\
 # ^^ ( FTL GPL-2 ) ZLIB public-domain - third_party/freetype/src/LICENSE.TXT
 # ^^ ( GPL-2+ LGPL-2+ MPL-1.1 ) - chrome/utility/importer/nss_decryptor.cc
 # ^^ ( GPL-2+ LGPL-2.1+ MPL-1.1 ) BSD BSD-2 - third_party/libgifcodec/LICENSE.md
-# || ( WTFPL Apache-2.0 ) - \
+# || ( WTFPL-2 Apache-2.0 ) - \
 #   third_party/catapult/third_party/polymer2/bower_components/sinon-chai/LICENSE.txt ; \
 #   the WTFPL is the better choice because Apache-2.0 has more restrictions
 # || ( MIT GPL-3 ) third_party/catapult/tracing/third_party/jszip/LICENSE.markdown ; \
@@ -167,7 +167,7 @@ LICENSE_FINGERPRINT="\
 # all-rights-reserved MIT - third_party/xcbproto/LICENSE ; the plain MIT \
 #   license doesn't come with all rights reserved in the license template
 # BSD - third_party/vulkan-deps/glslang/src/LICENSE.txt
-# BSD ^^ ( MPL-2.1 GPL-2+ LGPL-2+ ) - \
+# BSD ^^ ( MPL-1.1 GPL-2+ LGPL-2+ ) - \
 #   third_party/openscreen/src/third_party/mozilla/LICENSE.txt
 # BSD ISC MIT openssl - third_party/boringssl/src/LICENSE
 # BSD MPL-1.1 - url/third_party/mozilla/LICENSE.txt
@@ -183,8 +183,8 @@ LICENSE_FINGERPRINT="\
 # custom BSD - third_party/opencv/src/LICENSE
 # custom BSD APSL-2 MIT BSD-4 - third_party/breakpad/breakpad/LICENSE
 # custom IJG - third_party/iccjpeg/LICENSE
-# custom MPL-2 BSD GPL-3 LGPL-3 Apache-1.1 - \
-#   third_party/tflite/src/third_party/eigen3/LICENSE ; Only MPL-2 files are \
+# custom MPL-2.0 BSD GPL-3 LGPL-3 Apache-1.1 - \
+#   third_party/tflite/src/third_party/eigen3/LICENSE ; Only MPL-2.0 files are \
 #   found
 # custom UoI-NCSA - third_party/llvm/llvm/include/llvm/Support/LICENSE.TXT
 # custom public-domain - third_party/sqlite/LICENSE
