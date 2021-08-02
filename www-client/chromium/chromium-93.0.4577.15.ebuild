@@ -94,8 +94,149 @@ PGO_UPSTREAM_GENERATOR_SITE_LICENSES=(
 #   https://github.com/WebKit/WebKit/tree/main/PerformanceTests/Speedometer \
 #     or internal third party dependencies MIT, Apache-2.0
 LICENSE="BSD
+	chromium-93.0.4577.x
+	APSL-2
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	( all-rights-reserved MIT )
+	BSD-2
+	BSD-4
+	base64
+	CC-BY-4.0
+	CC-BY-ND-2.5
+	FTL
+	fft2d
+	GPL-2+
+	g711
+	g722
+	IJG
+	ISC
+	( ISC CC-BY-SA-4.0 )
+	Khronos-CLHPP
+	LGPL-2
+	LGPL-2+
+	LGPL-2.1+
+	libpng2
+	libwebrtc-PATENTS
+	MIT
+	( MIT CC0-1.0 )
+	MPL-1.1
+	MPL-2
+	neon_2_sse
+	OFL-1.1
+	ooura
+	openssl
+	PSF-2
+	QU-fft
+	Unlicense
+	UoI-NCSA
+	unRAR
+	unicode
+	SGI-B-2.0
+	SunPro
+	svgo
+	WTFPL
+	x11proto
+	ZLIB
 	pgo-ebuild-profile-generator? ( ${PGO_EBUILD_GENERATOR_SITE_LICENSES} )
-	pgo-upstream-profile-generator? ( ${PGO_UPSTREAM_GENERATOR_SITE_LICENSES} )"
+	pgo-upstream-profile-generator? ( ${PGO_UPSTREAM_GENERATOR_SITE_LICENSES} )
+	widevine? ( widevine )"
+LICENSE_FINGERPRINT="\
+147e32b00489a9b0023d720066a1db648d4104fe81d8e764902a44a2eb650308
+9a6781dfb64901f5460758d17227e5f0e8f1dfb8fe6c14e6afc7374b6f0e028e" # SHA512
+# Third Party Licenses:
+#
+# TODO:  The rows marked custom need to have or be placed a license file or
+#        reevaluated.
+# TODO:  scan all font files for embedded licenses
+#
+# ^^ ( FTL GPL-2 ) ZLIB public-domain - third_party/freetype/src/LICENSE.TXT
+# ^^ ( GPL-2+ LGPL-2+ MPL-1.1 ) - chrome/utility/importer/nss_decryptor.cc
+# ^^ ( GPL-2+ LGPL-2.1+ MPL-1.1 ) BSD BSD-2 - third_party/libgifcodec/LICENSE.md
+# || ( WTFPL Apache-2.0 ) - \
+#   third_party/catapult/third_party/polymer2/bower_components/sinon-chai/LICENSE.txt ; \
+#   the WTFPL is the better choice because Apache-2.0 has more restrictions
+# || ( MIT GPL-3 ) third_party/catapult/tracing/third_party/jszip/LICENSE.markdown ; \
+#   upstream has more MIT than GPL3 copyright notices, so MIT is assumed
+# APSL-2 - third_party/apple_apsl/LICENSE
+# APSL-2 Apache-2.0 BSD MIT - third_party/breakpad/LICENSE
+# Apache 2.0 - third_party/node/node_modules/typescript/LICENSE.txt
+# Apache-2.0-with-LLVM-exceptions UoI-NCSA - \
+#   third_party/llvm/debuginfo-tests/dexter/LICENSE.txt
+# Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT - third_party/llvm/libclc/LICENSE.TXT
+# all-rights-reserved MIT - third_party/xcbproto/LICENSE ; the plain MIT \
+#   license doesn't come with all rights reserved in the license template
+# BSD - third_party/vulkan-deps/glslang/src/LICENSE.txt
+# BSD ^^ ( MPL-2.1 GPL-2+ LGPL-2+ ) - \
+#   third_party/openscreen/src/third_party/mozilla/LICENSE.txt
+# BSD ISC MIT openssl - third_party/boringssl/src/LICENSE
+# BSD MPL-1.1 - url/third_party/mozilla/LICENSE.txt
+# BSD-2 - third_party/node/node_modules/eslint-scope/LICENSE
+# BSD-2 IJG MIT - third_party/libavif/src/LICENSE
+# base64 - third_party/webrtc/rtc_base/third_party/base64/LICENSE
+# custom - third_party/llvm/clang-tools-extra/clang-tidy/cert/LICENSE.TXT
+# custom - third_party/llvm/clang-tools-extra/clang-tidy/hicpp/LICENSE.TXT
+# custom ^^ ( BSD-2 BSD ) - third_party/blink/LICENSE_FOR_ABOUT_CREDITS
+# custom Apache-2.0-with-LLVM-exceptions UoI-NCSA third_party/llvm/openmp/LICENSE.TXT
+# custom CC-BY-ND-2.5 LGPL-2.1+ GPL-2+ public-domain - \
+#   third_party/blink/perf_tests/svg/resources/LICENSES
+# custom BSD - third_party/opencv/src/LICENSE
+# custom BSD APSL-2 MIT BSD-4 - third_party/breakpad/breakpad/LICENSE
+# custom IJG - third_party/iccjpeg/LICENSE
+# custom MPL-2 BSD GPL-3 LGPL-3 Apache-1.1 - \
+#   third_party/tflite/src/third_party/eigen3/LICENSE ; Only MPL-2 files are \
+#   found
+# custom UoI-NCSA - third_party/llvm/llvm/include/llvm/Support/LICENSE.TXT
+# custom public-domain - third_party/sqlite/LICENSE
+# CC-BY-4.0 - third_party/devtools-frontend/src/node_modules/caniuse-lite/LICENSE
+# fft2d - third_party/tflite/src/third_party/fft2d/LICENSE
+# GPL-2 - third_party/freetype-testing/LICENSE
+# GPL-2+ - third_party/devscripts/licensecheck.pl.vanilla
+# ISC - third_party/node/node_modules/rimraf/LICENSE
+# ISC - third_party/libaom/source/libaom/third_party/x86inc/LICENSE
+# ISC CC-BY-SA-4.0 - third_party/node/node_modules/glob/LICENSE ; no logo \
+#   image file found
+# ISC MIT - third_party/devtools-frontend/src/node_modules/rollup/LICENSE.md
+# Khronos-CLHPP - third_party/vulkan-deps/spirv-headers/src/LICENSE
+# LGPL-2 - third_party/blink/renderer/core/LICENSE-LGPL-2
+#   third_party/blink/renderer/core/layout/table_layout_algorithm.h
+# LGPL-2+ - third_party/blink/renderer/core/svg/svg_set_element.h
+# LGPL-2.1 - third_party/blink/renderer/core/LICENSE-LGPL-2.1 ; cannot find a \
+#   file that is 2.1 only
+# LGPL-2.1+ - third_party/blink/renderer/core/paint/paint_layer.h
+# LGPL-2.1+ - third_party/libsecret/LICENSE
+# LGPL-2.1+ - third_party/ffmpeg/libavcodec/x86/xvididct.asm
+# libpng2 - third_party/pdfium/third_party/libpng16/LICENSE
+# MIT - third_party/node/node_modules/svgo/LICENSE ; with a translated version
+# MIT CC0-1.0 - third_party/node/node_modules/eslint/node_modules/lodash/LICENSE
+# MIT SGI-B-2.0 - third_party/khronos/LICENSE
+# MIT unicode - third_party/node/node_modules/typescript/ThirdPartyNoticeText.txt
+# MPL-2.0 - third_party/node/node_modules/mdn-data/LICENSE
+# neon_2_sse - third_party/neon_2_sse/LICENSE
+# OFL-1.1 - third_party/freetype-testing/src/fuzzing/corpora/cff-render-ftengine/bungeman/HangingS.otf
+# ooura - third_party/webrtc/common_audio/third_party/ooura/LICENSE
+# public-domain - third_party/lzma_sdk/LICENSE
+# public-domain - third_party/pdfium/third_party/bigint/LICENSE
+# public-domain - \
+#   third_party/webrtc/common_audio/third_party/spl_sqrt_floor/LICENSE
+# public-domain - third_party/webrtc/modules/third_party/g711/LICENSE
+# public-domain - third_party/webrtc/modules/third_party/g722/LICENSE
+# public-domain - third_party/webrtc/rtc_base/third_party/sigslot/LICENSE
+# PSF-2 - third_party/devtools-frontend/src/node_modules/mocha/node_modules/argparse/LICENSE
+# QU-fft - third_party/webrtc/modules/third_party/fft/LICENSE
+# SunPro - third_party/fdlibm/LICENSE
+# svgo (with russian MIT license translation) - \
+#   third_party/node/node_modules/svgo/LICENSE
+# Unlicense Apache-2.0 - \
+#   third_party/devtools-frontend/src/node_modules/@sinonjs/text-encoding/LICENSE.md
+# UoI-NCSA - third_party/swiftshader/third_party/llvm-subzero/LICENSE.TXT
+# unRAR - third_party/unrar/LICENSE
+# widevine - third_party/widevine/LICENSE
+# WTFPL BSD-2 - third_party/catapult/third_party/polymer2/bower_components/sinon-chai/LICENSE.txt
+# x11proto - third_party/x11proto/LICENSE
+# * The public-domain entry was not added to the LICENSE ebuild variable to not
+#   give the wrong impression that the entire software was released in public
+#   domain.
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
@@ -1272,9 +1413,11 @@ _configure_pgx() {
 }
 
 _build_pgx() {
-	if [[ -f build.ninja ]] ; then
-		einfo "Cleaning out build"
-		eninja -t clean
+	if [[ -f out/Release/build.ninja ]] ; then
+		pushd out/Release || popd
+			einfo "Cleaning out build"
+			eninja -t clean
+		popd
 	fi
 	# Build mksnapshot and pax-mark it.
 	local x
@@ -1733,6 +1876,57 @@ _run_simulations() {
 		|| die
 }
 
+update_licenses() {
+	# Upstream doesn't package PATENTS files
+	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" ]] ; then
+		einfo "Generating license and copyright notice file"
+		eninja -C out/Release about_credits
+		# It should be updated when the major.minor.build.x changes
+		# because of new features.
+		local license_file_name=$(echo "${PN}-${PV}" \
+			| sed -r -e "s|(${PN}-[0-9]+\.[0-9]+\.[0-9]+\.)[0-9]+|\1x|g")
+		local x_license_fingerprint=$(sha512sum \
+			"${BUILD_DIR}/out/Release/gen/components/resources/about_credits.html" \
+                                        | cut -f 1 -d " ")
+		# Check the license fingerprint between point releases.
+		if [[ ! ( "${LICENSE}" =~ "${license_file_name}" ) \
+			|| ! -f "${OILEDMACHINE_OVERLAY_DIR}/licenses/${license_file_name}" \
+			|| "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}"
+		]] ; then
+einfo
+einfo "Please update the LICENSE variable and add the license file to the"
+einfo "licenses folder.  Copy license file as follows:"
+einfo
+einfo "  \`cp -a ${BUILD_DIR}/out/Release/gen/components/resources/about_credits.html \
+${OILEDMACHINE_OVERLAY_DIR}/licenses/${license_file_name}\`"
+einfo
+einfo "Update the LICENSE_FINGERPRINT to ${x_license_fingerprint}"
+einfo
+			die
+		fi
+	else
+		einfo "Generating license and copyright notice file"
+		eninja -C out/Release about_credits
+		# It should be updated when the major.minor.build.x changes
+		# because of new features.
+		local license_file_name=$(echo "${PN}-${PV}" \
+			| sed -r -e "s|(${PN}-[0-9]+\.[0-9]+\.[0-9]+\.)[0-9]+|\1x|g")
+		local x_license_fingerprint=$(sha512sum \
+			"${BUILD_DIR}/out/Release/gen/components/resources/about_credits.html" \
+			| cut -f 1 -d " ")
+		# Check the license fingerprint between point releases.
+		# The 93 fingerprints differ from the 92
+		einfo "Verifying about:credits fingerprints"
+		if [[ ! "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}" ]] ; then
+einfo
+einfo "The about:credits fingerprints do not match.  Send an issue report to the"
+einfo "ebuild maintainer."
+einfo
+			die
+		fi
+	fi
+}
+
 multilib_src_compile() {
 	# Final link uses lots of file descriptors.
 	ulimit -n 2048
@@ -1748,6 +1942,7 @@ multilib_src_compile() {
 		fi
 		PGO_PHASE=1
 		_configure_pgx # pgi
+		update_licenses
 		_build_pgx
 		_run_simulations
 		PGO_PHASE=2
@@ -1755,6 +1950,7 @@ multilib_src_compile() {
 		_build_pgx
 	else
 		_configure_pgx # pgo / no-pgo
+		update_licenses
 		_build_pgx
 	fi
 
@@ -1781,6 +1977,78 @@ multilib_src_compile() {
 	sed -i -e "s|@@MENUNAME@@|Chromium (${ABI})|g" \
 		-e "s|@@USR_BIN_SYMLINK_NAME@@|chromium-browser-${ABI}|g" \
 		out/Release/chromium-browser-chromium.desktop || die
+}
+
+_install_header_license() {
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local length="${3}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	head -n ${length} "${S}/${d}/${file_name}" > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
+_install_header_license_mid() {
+	local dir_path=$(dirname "${1}")
+	local file_name=$(basename "${1}")
+	local license_name="${2}"
+	local start="${3}"
+	local length="${4}"
+	d="${dir_path}"
+	dl="licenses/${d}"
+	docinto "${dl}"
+	mkdir -p "${T}/${dl}" || die
+	tail -n +${start} "${S}/${d}/${file_name}" \
+		| head -n ${length} > \
+		"${T}/${dl}/${license_name}" || die
+	dodoc "${T}/${dl}/${license_name}"
+}
+
+# @FUNCTION: _install_licenses
+# @DESCRIPTION:
+# Installs licenses and copyright notices from third party rust cargo
+# packages and other internal packages.
+_install_licenses() {
+	[[ -f "${T}/.copied_licenses" ]] && return
+
+	einfo "Copying third party licenses and copyright notices"
+	export IFS=$'\n'
+	for f in $(find "${S}" \
+	  -iname "*licens*" -type f \
+	  -o -iname "*licenc*" \
+	  -o -iname "*copyright*" \
+	  -o -iname "*copying*" \
+	  -o -iname "*patent*" \
+	  -o -iname "ofl.txt" \
+	  -o -iname "*notice*" \
+	  -o -iname "*author*" \
+	  -o -iname "*CONTRIBUTORS*" \
+	  ) $(grep -i -G -l \
+		-e "copyright" \
+		-e "licens" \
+		-e "licenc" \
+		-e "warrant" \
+		$(find "${S}" -iname "*readme*")) ; \
+	do
+		if [[ -f "${f}" ]] ; then
+			d=$(dirname "${f}" | sed -e "s|^${S}||")
+		else
+			d=$(echo "${f}" | sed -e "s|^${S}||")
+		fi
+		docinto "licenses/${d}"
+		dodoc -r "${f}"
+	done
+	export IFS=$' \t\n'
+
+	# Place _install_header_license or _install_header_license_mid
+	# calls here.
+
+	touch "${T}/.copied_licenses"
 }
 
 multilib_src_install() {
@@ -1868,6 +2136,11 @@ multilib_src_install() {
 	dosym chromium-browser.1 /usr/share/man/man1/chromium.1
 
 	readme.gentoo_create_doc
+
+	# This next pass will copy PATENTS files, *ThirdParty*, and NOTICE files
+	# and npm micropackages which may not have been present in the listed
+	# the the .html (about:credits) file
+	_install_licenses
 }
 
 pkg_postrm() {
