@@ -2021,8 +2021,8 @@ _install_header_license_mid() {
 
 # @FUNCTION: _install_licenses
 # @DESCRIPTION:
-# Installs licenses and copyright notices from third party rust cargo
-# packages and other internal packages.
+# Installs licenses and copyright notices from packages and other internal
+# packages.
 _install_licenses() {
 	[[ -f "${T}/.copied_licenses" ]] && return
 
