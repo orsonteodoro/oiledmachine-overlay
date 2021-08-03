@@ -60,6 +60,10 @@ SRC_URI="
 	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )
 	ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-${PPC64LE_PATCHSET}.tar.xz )"
 RESTRICT="mirror"
+PROPERTIES="interactive" # for sudo
+# The PGO plan: is user will start X in another vt and run X.  This ebuild will
+# load the browser and run macros pushed to that vt and DISPLAY.
+# This is why this ebuild is interactive.
 
 PGO_EBUILD_GENERATOR_SITE_LICENSES=(
 	CC-BY-4.0
@@ -180,7 +184,6 @@ e84cbb0696d3ddb4d70c167866943c959823fb1a5eab8194ea558e16ce3f1e34" # SHA512
 # base64 - third_party/webrtc/rtc_base/third_party/base64/LICENSE
 # custom - third_party/llvm/clang-tools-extra/clang-tidy/cert/LICENSE.TXT
 # custom - third_party/llvm/clang-tools-extra/clang-tidy/hicpp/LICENSE.TXT
-# custom - third_party/tflite/src/third_party/fft2d/LICENSE
 # custom ^^ ( BSD-2 BSD ) - third_party/blink/LICENSE_FOR_ABOUT_CREDITS
 # custom Apache-2.0-with-LLVM-exceptions UoI-NCSA third_party/llvm/openmp/LICENSE.TXT
 # custom CC-BY-ND-2.5 LGPL-2.1+ GPL-2+ public-domain - \
@@ -401,21 +404,18 @@ BDEPEND="
 				sys-devel/llvm:13[${MULTILIB_USEDEP}]
 				=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
 				>=sys-devel/lld-13
-				>=media-libs/mesa-9999[gbm,${MULTILIB_USEDEP}]
 			)
 			(
 				sys-devel/clang:12[${MULTILIB_USEDEP}]
 				sys-devel/llvm:12[${MULTILIB_USEDEP}]
 				=sys-devel/clang-runtime-12*[${MULTILIB_USEDEP}]
 				>=sys-devel/lld-12
-				>=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
 			)
 			(
 				sys-devel/clang:11[${MULTILIB_USEDEP}]
 				sys-devel/llvm:11[${MULTILIB_USEDEP}]
 				=sys-devel/clang-runtime-11*[${MULTILIB_USEDEP}]
 				>=sys-devel/lld-11
-				<media-libs/mesa-21.1[gbm,${MULTILIB_USEDEP}]
 			)
 		)
 		arm64? (
@@ -425,14 +425,12 @@ BDEPEND="
 					sys-devel/llvm:13[${MULTILIB_USEDEP}]
 					=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
 					>=sys-devel/lld-13
-					>=media-libs/mesa-9999[gbm,${MULTILIB_USEDEP}]
 				)
 				(
 					sys-devel/clang:12[${MULTILIB_USEDEP}]
 					sys-devel/llvm:12[${MULTILIB_USEDEP}]
 					=sys-devel/clang-runtime-12*[${MULTILIB_USEDEP}]
 					>=sys-devel/lld-12
-					>=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
 				)
 			)
 		)
@@ -441,15 +439,19 @@ BDEPEND="
 			sys-devel/llvm:13[${MULTILIB_USEDEP}]
 			=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
 			>=sys-devel/lld-13
-			>=media-libs/mesa-9999[gbm,${MULTILIB_USEDEP}]
 		)
 	)
 	js-type-check? ( virtual/jre )
 	pgo-ebuild-profile-generator? (
 		${VIRTUALX_DEPEND}
+		app-admin/sudo
 		x11-misc/xdotool
 	)
 "
+# llvm 13 >=media-libs/mesa-9999[gbm,${MULTILIB_USEDEP}] ; only <= 12 is on CI
+# llvm 12 >=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
+# llvm 11 <media-libs/mesa-21.1[gbm,${MULTILIB_USEDEP}]
+
 # Upstream uses llvm:13
 # For the current llvm for this project, see
 #   https://github.com/chromium/chromium/blob/92.0.4515.107/tools/clang/scripts/update.py#L42
@@ -549,6 +551,81 @@ pkg_pretend() {
 	pre_build_checks
 }
 
+CR_CLANG_USED="d3676d4b666ead794fc58bbc7e07aa406dcf487a" # Obtained from \
+# https://github.com/chromium/chromium/blob/92.0.4515.107/tools/clang/scripts/update.py#L42
+CR_CLANG_USED_UNIX_TIMESTAMP="1621237229" # Cached.  Use below to obtain this. \
+# TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
+#	| grep -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
+CR_CLANG_SLOT="13"
+
+verify_llvm_toolchain() {
+	[[ "${CLANG_SLOT}" != "${CR_CLANG_SLOT}" ]] && return
+
+	if has_version "sys-devel/llvm:${CR_CLANG_SLOT}" ; then
+		# The llvm library or llvm-ar doesn't embed the hash info.
+		local emerged_llvm_commit=$(bzless \
+			"${ESYSROOT}/var/db/pkg/sys-devel/llvm-${CR_CLANG_SLOT}"*"/environment.bz2" \
+			| grep EGIT_VERSION | head -n 1 | cut -f 2 -d '"')
+
+		local emerged_llvm_time_desc=$(wget -q -O - \
+			https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch \
+			| grep -e "Date:" | sed -e "s|Date: ||")
+		emerged_llvm_timestamp=$(date -u -d "${emerged_llvm_time_desc}" +%s)
+
+		einfo "System's LLVM timestamp:  "$(date -d "@${emerged_llvm_timestamp}")
+		einfo "${PN} LLVM timestamp:  "$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
+		if (( ${emerged_llvm_timestamp} < ${CR_CLANG_USED_UNIX_TIMESTAMP} )) ; then
+			local clang_rt=$(best_version "=sys-devel/clang-runtime-13*")
+eerror
+eerror "Detected a old clang/llvm version.  Please re-emerge the clang/LLVM"
+eerror "toolchain by doing the following:"
+eerror
+eerror "emerge -1v ="$(best_version sys-devel/llvm:${CR_CLANG_SLOT})\
+" ="$(best_version sys-libs/libomp)\
+" ="$(best_version sys-devel/lld)\
+" ="$(best_version sys-devel/clang:${CR_CLANG_SLOT})\
+" ="$(best_version "=sys-libs/compiler-rt-${CR_CLANG_SLOT}*")\
+" ="$(best_version "=sys-libs/compiler-rt-sanitizers-${CR_CLANG_SLOT}*")\
+" ="$(best_version "=sys-devel/clang-runtime-${CR_CLANG_SLOT}*")
+eerror
+			die
+		fi
+	else
+die "${PN} requires llvm:${CR_CLANG_SLOT}"
+	fi
+}
+
+check_same_llvm() {
+	# Warn about loading multiple LLVM versions which may trigger bug.
+	if (( $(clang-major-version) > ${MESA_LLVM_MAX_SLOT} )) ; then
+ewarn
+ewarn "Mesa's LLVM_MAX_SLOT may not be compatible.  The currently selected"
+ewarn "clang has a slot that needs to be <= ${MESA_LLVM_MAX_SLOT}."
+ewarn
+	fi
+	if (( ${MESA_LLVM_MAX_SLOT} == ${CLANG_SLOT} )) ; then
+ewarn
+ewarn "LLVM/clang may need a Mesa ebuild with LLVM_MAX_SLOT == ${CLANG_SLOT}."
+ewarn
+	fi
+	for f in /usr/$(get_libdir)/dri/* ; do
+		if ! ( ldd "${f}" | grep -q -e "libLLVM" ) ; then
+			continue
+		fi
+		local driver_llvm=$(ldd "${f}" \
+			| grep -e "libLLVM" \
+			| sed -r -e "s|[ \t]+| |g" \
+			| cut -f 2 -d " " \
+			| grep -o -E "[0-9]+")
+		if (( ${driver_llvm} != ${CLANG_SLOT} )) ; then
+ewarn
+ewarn "LLVM/clang may need Mesa DRI drivers built against ${CLANG_SLOT} for"
+ewarn "${f}."
+ewarn
+		fi
+	done
+}
+
 pkg_setup() {
 	einfo "The $(ver_cut 1 ${PV}) series is the Stable channel."
 	pre_build_checks
@@ -584,14 +661,67 @@ eerror
 		fi
 	fi
 
-	einfo "USER=${USER}"
+	# The pgo account that will run the simulations for pgo profile
+	# creation.  The normal portage account will remain without video and
+	# audio permissions maintain the restrictive defaults for the sandbox
+	# environment.  The pgo account will allow for accelerated testing.
+	#
+	# It is possible to run X but it's too dangerous for untrusted uris.
+	# This is why it is done though the pgo account.
+	#
+	if use pgo-ebuild-profile-generator ; then
+ewarn
+ewarn "The pgo-ebuild-profile-generator USE flag is a Work In Progress (WIP)"
+ewarn "and untested.  Do not use at this time.  Try the pgo USE flag first"
+ewarn "followed by the pgo-upstream-profile-generator USE flag instead."
+ewarn
+		if ! id pgo 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "You must have a pgo system account to run simulations to generate a"
+eerror "pgo profile.  You can run the following below to setup the pgo"
+eerror "account as follows:"
+eerror
+eerror "  useradd pgo ; \\"
+eerror "    gpasswd -a pgo audio ; \\"
+eerror "    gpasswd -a pgo input ; \\"
+eerror "    gpasswd -a pgo portage ; \\"
+eerror "    gpasswd -a pgo tty ; \\"
+eerror "    gpasswd -a pgo video ; \\"
+eerror "    usermod -U pgo ; \\"
+eerror "    usermod -d /var/lib/portage/pgo/home pgo ; \\"
+eerror "    mkdir -p /var/lib/portage/pgo/home ; \\"
+eerror "    chown -R pgo:portage /var/lib/portage/pgo/home \\"
+eerror "    passwd pgo"
+eerror
+eerror "You may consider adding targetpw to the sudoers file via visudo to"
+eerror "enter passwords for the pgo account as well and extending the"
+eerror "timestamp_timeout period."
+eerror
+			die
+		fi
+		if ! ( groups pgo | grep -q -e "portage" ) ; then
+die "You must add pgo to the portage group."
+		fi
+		local pw_status=$(passwd --status pgo | cut -f 2 -d " ")
+		if [[ "${pw_status}" != "P" ]] ; then
+die "The pgo account must have a password."
+		fi
+		if [[ $(realpath ~pgo) != "/var/lib/portage/pgo/home" ]] ; then
+die "The pgo account's home directory must be changed to /var/lib/portage/pgo/home."
+		fi
+	fi
+	# Plans may require special pgo system account.
 	if use pgo-gpu ; then
 # We do not want the xvfb but rather the acclerated X instead.
 ewarn
 ewarn "The pgo-gpu USE flag is a Work In Progress (WIP)."
+ewarn "Do not use at this time."
 ewarn
-		if ! ( groups ${USER} | grep -q "video" ) ; then
-			die "You must add ${USER} to the video group."
+ewarn "Remove USER=${USER} from the video group.  Group permssions should only"
+ewarn "apply to the pgo account."
+ewarn
+		if ! ( groups pgo | grep -q -e "video" ) ; then
+			die "You must add pgo to the video group."
 		fi
 
 		# From sci-geosciences/grass ebuild
@@ -611,23 +741,19 @@ ewarn
 	if use pgo-audio ; then
 ewarn
 ewarn "The pgo-gpu USE flag is a Work In Progress (WIP)."
+ewarn "Do not use at this time."
 ewarn
-		if ! ( groups ${USER} | grep -q "audio" ) ; then
-			die "You must add ${USER} to the audio group."
+ewarn "Remove USER=${USER} from the audio group.  Group permissions should only"
+ewarn "apply to the pgo account."
+ewarn
+		if ! ( groups pgo | grep -q -e "audio" ) ; then
+			die "You must add pgo to the audio group."
 		fi
 	fi
 
 	if use pgo-upstream-profile-generator ; then
 ewarn
 ewarn "The pgo-upstream-profile-generator USE flag is a Work In Progress (WIP)."
-ewarn
-	fi
-
-	if use pgo-ebuild-profile-generator ; then
-ewarn
-ewarn "The pgo-ebuild-profile-generator USE flag is a Work In Progress (WIP)"
-ewarn "and untested and not recommended at this time.  Try the"
-ewarn "pgo-upstream-profile-generator USE flag or just the pgo USE flag instead."
 ewarn
 	fi
 
@@ -659,6 +785,7 @@ ewarn
 
 	# These checks are a maybe required.
 	if use clang ; then
+		llvm_pkg_setup
 		CC=${CHOST}-clang
 		CXX=${CHOST}-clang++
 		local MESA_LLVM_MAX_SLOT=$(bzless \
@@ -669,32 +796,8 @@ ewarn
 		local CLANG_SLOT=$(clang-major-version)
 		einfo "CLANG_SLOT: ${CLANG_SLOT}"
 		einfo "MESA_LLVM_MAX_SLOT: ${MESA_LLVM_MAX_SLOT}"
-		if (( $(clang-major-version) -gt "${MESA_LLVM_MAX_SLOT}" )) ; then
-			# Warn about loading multiple LLVM versions which may trigger bug
-ewarn
-ewarn "Mesa's MAX_LLVM_SLOT is not compatible.  clang slot needs to be"
-ewarn "<= ${MESA_MAX_LLVM_SLOT}."
-ewarn
-		fi
-		if use official ; then
-			if (( ${MESA_LLVM_MAX_SLOT} >= 13 )) ; then
-ewarn
-ewarn "LLVM/clang may need a Mesa ebuild with LLVM_MAX_SLOT >= 13."
-ewarn
-			fi
-		fi
-		for f in /usr/$(get_libdir)/dri/* ; do
-			local driver_llvm=$(ldd "${f}" \
-				| grep "libLLVM" \
-				| sed -r -e "s|[ \t]+| |g" \
-				| cut -f 2 -d " " \
-				| grep -o -E "[0-9]+")
-			if (( ${driver_llvm} != 13 )) ; then
-ewarn
-ewarn "LLVM/clang may need Mesa DRI drivers built against 13."
-ewarn
-			fi
-		done
+		check_same_llvm
+		verify_llvm_toolchain
 	fi
 	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" ]] ; then
 		if [[ -z "${MY_OVERLAY_DIR}" ]] ; then
@@ -706,6 +809,7 @@ eerror
 			die
 		fi
 	fi
+	use pgo-ebuild-profile-generator && die "USE flag not ready"
 }
 
 USED_EAPPLY=0
@@ -1449,6 +1553,44 @@ _build_pgx() {
 	done
 }
 
+get_vertxl_display() {
+	export VIRTXL_DISPLAY=$(ps -aux \
+		| grep -F -e "/usr/bin/X" \
+		| grep -F -e "pgo" \
+		| grep -o -e ":[0-9] " \
+		| sed -e "s|[ ]||g")
+}
+
+virtxl_init() {
+einfo
+einfo "Please choose a vt from ctrl+alt+f1 ... ctrl+alt+f12 and login into the"
+einfo "pgo account starting X"
+einfo
+einfo "Press enter to continue"
+einfo
+	read dummy
+	while [[ -z "${VIRTXL_DISPLAY}" ]] ; do
+		einfo "Didn't find the Xserver loaded for the pgo account"
+		einfo "Press enter to retry"
+		read dummy
+		get_vertxl_display
+	done
+	einfo "Found DISPLAY=${VIRTXL_DISPLAY}"
+	DISPLAY=${VIRTXL_DISPLAY}
+
+	einfo "Allowing portage account access to pgo account X session which"
+	einfo "a sudo prompt may be presented."
+	sudo -u pgo -g portage xhost +local:
+
+	einfo "Will push automated macros into DISPLAY=${DISPLAY}"
+	einfo "Multiple logins may be required if sudo times out."
+}
+
+virtxl() {
+	einfo "Running the PGO runner script.  A sudo prompt may be shown."
+	sudo -b -u pgo -g portage "${@}"
+}
+
 # The most intensive computational parts should be pushed in hot section that
 # need boosting that way if you encounter in them again they penalize less.
 _javascript_benchmark() {
@@ -1548,9 +1690,9 @@ main() {
 main
 EOF
 	chmod +x "${BUILD_DIR}/run.sh" || die
+	chown pgo:portage "${BUILD_DIR}/run.sh" || die
 	if use pgo-gpu ; then
-		ewarn "FIXME:  replace with accelerated X wrapper.  still using xvfb."
-		virtx "${BUILD_DIR}/run.sh"
+		virtxl "${BUILD_DIR}/run.sh"
 	else
 		virtx "${BUILD_DIR}/run.sh"
 	fi
@@ -1617,9 +1759,9 @@ main() {
 main
 EOF
 	chmod +x "${BUILD_DIR}/run.sh" || die
+	chown pgo:portage "${BUILD_DIR}/run.sh" || die
 	if use pgo-gpu ; then
-		ewarn "FIXME:  replace with accelerated X wrapper.  still using xvfb."
-		virtx "${BUILD_DIR}/run.sh"
+		virtxl "${BUILD_DIR}/run.sh"
 	else
 		virtx "${BUILD_DIR}/run.sh"
 	fi
@@ -1732,9 +1874,9 @@ main() {
 main
 EOF
 	chmod +x "${BUILD_DIR}/run.sh" || die
+	chown pgo:portage "${BUILD_DIR}/run.sh" || die
 	if use pgo-gpu ; then
-		ewarn "FIXME:  replace with accelerated X wrapper.  still using xvfb."
-		virtx "${BUILD_DIR}/run.sh"
+		virtxl "${BUILD_DIR}/run.sh"
 	else
 		virtx "${BUILD_DIR}/run.sh"
 	fi
@@ -1791,9 +1933,9 @@ main() {
 main
 EOF
 	chmod +x "${BUILD_DIR}/run.sh" || die
+	chown pgo:portage "${BUILD_DIR}/run.sh" || die
 	if use pgo-gpu ; then
-		ewarn "FIXME:  replace with accelerated X wrapper.  still using xvfb."
-		virtx "${BUILD_DIR}/run.sh"
+		virtxl "${BUILD_DIR}/run.sh"
 	else
 		virtx "${BUILD_DIR}/run.sh"
 	fi
@@ -1837,9 +1979,9 @@ einfo
 	cat "/etc/portage/pgo-scripts/www-client/chromium/${PV}.sh" \
 		> "${T}/run.sh"
 	chmod +x "${BUILD_DIR}/run.sh" || die
+	chown pgo:portage "${BUILD_DIR}/run.sh" || die
 	if use pgo-gpu ; then
-		ewarn "FIXME:  replace with accelerated X wrapper.  still using xvfb."
-		virtx "${BUILD_DIR}/run.sh"
+		virtxl "${BUILD_DIR}/run.sh"
 	else
 		virtx "${BUILD_DIR}/run.sh"
 	fi
@@ -1873,6 +2015,7 @@ _run_simulation_suite() {
 			--browser-executable=out/Release/chrome || die
 	elif use pgo-ebuild-profile-generator ; then
 		ewarn "_run_simulations(): 🐧 <penguin emoji> please finish me!"
+		use pgo-gpu && virtxl_init
 		einfo "Running training exercise simulations"
 		_load_simulation
 		use pgo-web && _tabs_simulation
@@ -1887,9 +2030,17 @@ _run_simulations() {
 	if ! ls *.profraw 2>/dev/null 1>/dev/null ; then
 		die "Missing *.profraw files"
 	fi
-	llvm-profdata merge *.profraw \
-		-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
-		|| die
+	if use pgo-ebuild-profile-generator ; then
+		einfo "Merging PGO profile data.  A sudo prompt may shown."
+		sudo -u pgo -g portage \
+		llvm-profdata merge *.profraw \
+			-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
+			|| die
+	else
+		llvm-profdata merge *.profraw \
+			-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
+			|| die
+	fi
 }
 
 update_licenses() {
