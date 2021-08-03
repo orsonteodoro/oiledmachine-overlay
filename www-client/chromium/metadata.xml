@@ -131,7 +131,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Use the ebuild provided scripts to generate the measured data.  This
       uses realistic simulation which users can extend with additional space
       separated URIs in ECHROMIUM_PGO_URIS and ECHROMIUM_CUSTOM_TIMEBOX_TIME
-      envvars.</flag>
+      envvars.  1080p is currently only supported.</flag>
     <flag name="pgo-gpu">
       This one checks if user is relaxed for use for GPU benchmarks or readiness
       for measured PGO profile collection.  Ensure that these code paths &

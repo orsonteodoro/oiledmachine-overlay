@@ -61,9 +61,9 @@ SRC_URI="
 	ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-${PPC64LE_PATCHSET}.tar.xz )"
 RESTRICT="mirror"
 PROPERTIES="interactive" # for sudo
-# The PGO plan: is user will start X in another vt and run X.  This ebuild will
-# load the browser and run macros pushed to that vt and DISPLAY.
-# This is why this ebuild is interactive.
+# The PGO plan: pgo is a non-root account that will start X in another vt and
+# run X.  This ebuild will load the browser and run macros pushed to that vt
+# and DISPLAY.  This is why this ebuild is interactive.
 
 PGO_EBUILD_GENERATOR_SITE_LICENSES=(
 	CC-BY-4.0
