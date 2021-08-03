@@ -59,7 +59,11 @@ RESTRICT="mirror"
 PROPERTIES="interactive" # for sudo
 # The PGO plan: pgo is a non-root account that will start X in another vt and
 # run X.  This ebuild will load the browser and run macros pushed to that vt
-# and DISPLAY.  This is why this ebuild is interactive.
+# and DISPLAY.  This is why this ebuild is interactive.  The other cause
+# may be due to elogind explained in
+# https://forums.gentoo.org/viewtopic-p-8488777.html#8488777
+# which needs to create a session and the X server needs to be the same user
+# that started the session.
 
 PGO_EBUILD_GENERATOR_SITE_LICENSES=(
 	CC-BY-4.0
@@ -443,6 +447,7 @@ BDEPEND="
 	pgo-ebuild-profile-generator? (
 		${VIRTUALX_DEPEND}
 		app-admin/sudo
+		x11-apps/xrandr
 		x11-misc/xdotool
 	)
 "
@@ -710,6 +715,13 @@ die "The pgo account must have a password."
 		fi
 		if [[ $(realpath ~pgo) != "/var/lib/portage/pgo/home" ]] ; then
 die "The pgo account's home directory must be changed to /var/lib/portage/pgo/home."
+		fi
+
+		if ! ( xrandr -q | grep -q -e "1920x1080" ) ; then
+eerror
+eerror "Currently 1080p is only supported for profile generation through the"
+eerror "pgo-ebuild-profile-generator USE flag."
+eerror
 		fi
 	fi
 	# Plans may require special pgo system account.
@@ -2077,7 +2089,7 @@ einfo
 		# Check the license fingerprint between point releases.
 		# The 93 fingerprints differ from the 92
 		einfo "Verifying about:credits fingerprints"
-		if [[ ! "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}" ]] ; then
+		if [[ "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}" ]] ; then
 einfo
 einfo "The about:credits fingerprints do not match.  Send an issue report to the"
 einfo "ebuild maintainer."
