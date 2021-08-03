@@ -580,6 +580,10 @@ verify_llvm_toolchain() {
 		einfo "System's LLVM timestamp:  "$(date -d "@${emerged_llvm_timestamp}")
 		einfo "${PN} LLVM timestamp:  "$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
 		if (( ${emerged_llvm_timestamp} < ${CR_CLANG_USED_UNIX_TIMESTAMP} )) ; then
+			local libcxx_=""
+			if use libcxx ; then
+				libcxx_=" ="$(best_version sys-libs/libcxx)
+			fi
 			local clang_rt=$(best_version "=sys-devel/clang-runtime-13*")
 eerror
 eerror "Detected a old clang/llvm version.  Please re-emerge the clang/LLVM"
@@ -587,6 +591,7 @@ eerror "toolchain by doing the following:"
 eerror
 eerror "emerge -1v ="$(best_version sys-devel/llvm:${CR_CLANG_SLOT})\
 " ="$(best_version sys-libs/libomp)\
+${libcxx_}\
 " ="$(best_version sys-devel/lld)\
 " ="$(best_version sys-devel/clang:${CR_CLANG_SLOT})\
 " ="$(best_version "=sys-libs/compiler-rt-${CR_CLANG_SLOT}*")\
