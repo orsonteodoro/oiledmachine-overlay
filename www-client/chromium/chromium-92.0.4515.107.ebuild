@@ -614,16 +614,14 @@ _print_timestamps() {
 
 _get_release_timestamp() {
 	local v="${1}"
-	if [[ -n "${cached_release_hashes[${v}]}" ]] ; then
-		echo "${cached_release_hashes[${v}]}"
-	else
+	if [[ -z "${cached_release_hashes[${v}]}" ]] ; then
 		local hash=$(git --no-pager ls-remote \
 			https://github.com/llvm/llvm-project.git \
 			llvmorg-${v} \
 			| cut -f 1 -d $'\t')
 		cached_release_hashes[${v}]="${hash}"
-		echo "${cached_release_hashes[${v}]}"
 	fi
+	echo "${cached_release_hashes[${v}]}"
 }
 
 _get_live_llvm_timestamp() {
