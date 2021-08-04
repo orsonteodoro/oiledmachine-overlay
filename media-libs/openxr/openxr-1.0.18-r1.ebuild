@@ -111,10 +111,10 @@ src_install() {
 		"${ED}/usr/share/doc/${P}/licenses" || die
 	rm -rf "${ED}/usr/share/doc/${PN}" || die
 	if use doc ; then
-		mv "${ED}/usr/share/doc/${P}/README.md" \
-			"${ED}/usr/share/doc/${P}/readmes" || die
 		docinto readmes
 		dodoc CHANGELOG.SDK.md
+		mv "${ED}/usr/share/doc/${P}/README.md" \
+			"${ED}/usr/share/doc/${P}/readmes" || die
 	else
 		rm -rf "${ED}/usr/share/doc/${P}/README.md"
 	fi
