@@ -978,7 +978,7 @@ ewarn
 
 	if use pgo-audio ; then
 ewarn
-ewarn "The pgo-gpu USE flag is a Work In Progress (WIP)."
+ewarn "The pgo-audio USE flag is a Work In Progress (WIP)."
 ewarn "Do not use at this time."
 ewarn
 ewarn "Remove USER=${USER} from the audio group.  Group permissions should only"
