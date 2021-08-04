@@ -614,7 +614,7 @@ _print_timestamps() {
 
 _get_release_timestamp() {
 	local v="${1}"
-	if cached_release_hashes[${v}] ; then
+	if [[ -n "${cached_release_hashes[${v}]}" ]] ; then
 		echo "${cached_release_hashes[${v}]}"
 	else
 		local hash=$(git --no-pager ls-remote \
