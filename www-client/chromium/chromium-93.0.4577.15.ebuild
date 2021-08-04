@@ -608,8 +608,12 @@ contains_slotted_zero() {
 
 _print_timestamps() {
 	if [[ -n "${emerged_llvm_timestamp}" ]] ; then
-		einfo "System's LLVM timestamp:  "$(date -d "@${emerged_llvm_timestamp}")
-		einfo "${PN} LLVM timestamp:  "$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
+		einfo "System's ${p} timestamp:  "$(date -d "@${emerged_llvm_timestamp}")
+		if [[ "${p}" == "sys-devel/llvm" ]] ; then
+			einfo "${PN^}'s LLVM timestamp:  "$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
+		else
+			einfo "System's sys-devel/llvm timestamp:  "$(date -d "@${LLVM_TIMESTAMP}")
+		fi
 	fi
 }
 
@@ -650,7 +654,18 @@ _get_live_llvm_timestamp() {
 }
 
 _check_live_llvm_updated() {
-	if (( ${emerged_llvm_timestamp} < ${CR_CLANG_USED_UNIX_TIMESTAMP} )) ; then
+	local root_pkg_timestamp=""
+
+	if [[ "${p}" == "sys-devel/llvm" ]] ; then
+		root_pkg_timestamp="${CR_CLANG_USED_UNIX_TIMESTAMP}"
+	else
+		root_pkg_timestamp="${LLVM_TIMESTAMP}"
+	fi
+
+	[[ -z "${emerged_llvm_timestamp}" ]] && die
+	[[ -z "${root_pkg_timestamp}" ]] && die
+
+	if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
 		needs_emerge=1
 		live_packages_status[${p_}]="1" # needs emerge
 	else
@@ -659,7 +674,10 @@ _check_live_llvm_updated() {
 }
 
 _check_live_llvm_updated_triple() {
-	if (( ${emerged_llvm_timestamp} < ${CR_CLANG_USED_UNIX_TIMESTAMP} )) ; then
+	[[ -z "${emerged_llvm_timestamp}" ]] && die
+	[[ -z "${LLVM_TIMESTAMP}" ]] && die
+
+	if (( ${emerged_llvm_timestamp} < ${LLVM_TIMESTAMP} )) ; then
 		needs_emerge=1
 		live_packages_status[${p_}]="1" # needs emerge
 		old_triple_slot_packages+=( "${category}/${pn}:"$(cat "${mp}/SLOT") )
@@ -706,11 +724,7 @@ einfo "The live LLVM ${CR_CLANG_SLOT} toolchain is up-to-date."
 	fi
 }
 
-# Currently, the verify_llvm_toolchain does one pass check comparing the
-# system's llvm and the llvm used by the chromium project. The function below
-# may require a second pass verification or an adjustment to ensure that all
-# live ebuilds timestamps that inherit llvm.org are >= than the timestamp of
-# the llvm library.
+LLVM_TIMESTAMP=
 verify_llvm_toolchain() {
 	[[ "${CLANG_SLOT}" != "${CR_CLANG_SLOT}" ]] && return
 
@@ -769,6 +783,8 @@ verify_llvm_toolchain() {
 					| grep EGIT_VERSION | head -n 1 | cut -f 2 -d '"')
 				pv=$(cat "${ESYSROOT}/var/db/pkg/${p}-${CR_CLANG_SLOT}"*"/PF" | sed "s|${p}-||")
 				_get_live_llvm_timestamp
+				[[ "${p}" == "sys-devel/llvm" ]] \
+					&& LLVM_TIMESTAMP=${emerged_llvm_timestamp}
 				_check_live_llvm_updated
 			elif contains_slotted_zero "${p}" ; then
 				einfo
@@ -1000,8 +1016,10 @@ eerror "640."
 	fi
 
 	if use official || ( use clang && use cfi && use pgo ) ; then
+		# sys-devel/lld-13 was ~20 mins for v8_context_snapshot_generator
+		# sys-devel/lld-12 was ~4 hrs for v8_context_snapshot_generator
 ewarn
-ewarn "Linking times may take longer than usual.  Maybe 4+ hour(s)."
+ewarn "Linking times may take longer than usual.  Maybe 1-4+ hour(s)."
 ewarn
 	fi
 
