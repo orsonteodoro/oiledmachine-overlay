@@ -8,7 +8,11 @@ inherit cmake-utils eutils python-any-r1 toolchain-funcs
 
 DESCRIPTION="Generated headers and sources for OpenXR loader."
 HOMEPAGE="https://khronos.org/openxr"
-LICENSE="Apache-2.0 MIT"
+LICENSE="Apache-2.0
+	BSD
+	CC-BY-4.0
+	MIT"
+# See also https://github.com/KhronosGroup/OpenXR-SDK-Source/blob/release-1.0.18/.reuse/dep5
 KEYWORDS="~amd64"
 ORG_GH="https://github.com/KhronosGroup"
 SLOT="0/${PV}"
@@ -17,7 +21,7 @@ SRC_URI="
 ${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
 	-> ${P}.tar.gz"
 NV_DRIVER_VERSION_VULKAN="390.132"
-IUSE+=" egl gles2 +system-jsoncpp video_cards_amdgpu video_cards_amdgpu-pro
+IUSE+=" doc egl gles2 +system-jsoncpp video_cards_amdgpu video_cards_amdgpu-pro
 video_cards_amdgpu-pro-lts video_cards_i965 video_cards_iris
 video_cards_nvidia video_cards_radeonsi wayland xcb +xlib"
 REQUIRED_USE+=" ^^ ( xlib xcb wayland )"
@@ -95,4 +99,23 @@ src_configure() {
 		die "Must choose a PRESENTATION_BACKEND"
 	fi
 	cmake-utils_src_configure
+}
+
+src_install() {
+	cmake-utils_src_install
+	docinto licenses
+	dodoc .reuse/dep5
+	dodoc LICENSES/*
+	dodoc COPYING.adoc
+	mv "${ED}/usr/share/doc/${PN}/LICENSE" \
+		"${ED}/usr/share/doc/${P}/licenses" || die
+	rm -rf "${ED}/usr/share/doc/${PN}" || die
+	if use doc ; then
+		mv "${ED}/usr/share/doc/${P}/README.md" \
+			"${ED}/usr/share/doc/${P}/readmes" || die
+		docinto readmes
+		dodoc CHANGELOG.SDK.md
+	else
+		rm -rf "${ED}/usr/share/doc/${P}/README.md"
+	fi
 }
