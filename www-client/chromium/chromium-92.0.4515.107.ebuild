@@ -688,8 +688,8 @@ _check_live_llvm_updated_triple() {
 print_old_live_llvm_multislot_pkgs() {
 	local arg="${1}"
 	for x in ${old_triple_slot_packages[@]} ; do
-		local pvr=${x/:*}
-		if [[ "${arg}" == "${pvr}" ]] ; then
+		local slot=${x/:*}
+		if [[ "${arg}" == "${slot}" ]] ; then
 			eerror "emerge -1v ${x}"
 		fi
 	done
