@@ -108,7 +108,7 @@ src_install() {
 	dodoc LICENSES/*
 	dodoc COPYING.adoc
 	mv "${ED}/usr/share/doc/${PN}/LICENSE" \
-		"${ED}/usr/share/doc/${P}/licenses" || die
+		"${ED}/usr/share/doc/${PN}-${PVR}/licenses" || die
 	rm -rf "${ED}/usr/share/doc/${PN}" || die
 	if use doc ; then
 		docinto readmes
