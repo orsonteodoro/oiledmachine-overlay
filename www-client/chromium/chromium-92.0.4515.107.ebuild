@@ -40,7 +40,7 @@ EPGO_LCP=${EPGO_LCP:=20} # \
 # LCP = Last contentful paint (time it takes to complete rendering or loading a
 # page) assuming average case.  Worst cases are around 70s.
 
-# Cold times are pre run with `sync; echo 3 > /proc/sys/vm/drop_caches`
+# Cold times are pre run with `sync ; echo 3 > /proc/sys/vm/drop_caches`
 
 VIRTUALX_REQUIRED=manual
 LLVM_MAX_SLOT=13
@@ -892,11 +892,12 @@ eerror
 
 	# The pgo account that will run the simulations for pgo profile
 	# creation.  The normal portage account will remain without video and
-	# audio permissions maintain the restrictive defaults for the sandbox
+	# audio permissions to maintain the restrictive defaults for the sandbox
 	# environment.  The pgo account will allow for accelerated testing.
 	#
-	# It is possible to run X but it's too dangerous for untrusted uris.
-	# This is why it is done though the pgo account.
+	# It is possible to run X and run untrusted assets as root but it's too
+	# dangerous for untrusted URIs.  This is why it is done though the pgo
+	# account.
 	#
 	if use pgo-ebuild-profile-generator ; then
 ewarn
@@ -2238,6 +2239,19 @@ eerror "Test failed for ${x}.  Return code: ${test_retcode}."
 	sleep ${EPGO_DESKTOP_CLOSE_TIME}
 }
 
+clear_disk_cache() {
+	# Clear caches for load time determinism.
+	if [[ -f /proc/sys/vm/drop_caches ]] ; then
+		# Try to achieve a lagless start.
+		addwrite /proc/sys/vm/drop_caches
+		sync
+		echo 3 > /proc/sys/vm/drop_caches
+	else
+		ewarn "/proc/sys/vm/drop_caches is not flushable"
+		ewarn "The simulation may not be run correctly."
+	fi
+}
+
 _run_simulation_suite() {
 	if use pgo-upstream-profile-generator ; then
 # See also https://github.com/chromium/chromium/blob/93.0.4577.15/docs/pgo.md
@@ -2256,6 +2270,7 @@ _run_simulation_suite() {
 		ewarn "_run_simulations(): 🐧 <penguin emoji> please finish me!"
 		use pgo-gpu && virtxl_init
 		einfo "Running training exercise simulations"
+		clear_disk_cache
 		_load_simulation
 		use pgo-web && _tabs_simulation
 		use pgo-web && _javascript_benchmark
@@ -2270,7 +2285,7 @@ _run_simulations() {
 		die "Missing *.profraw files"
 	fi
 	if use pgo-ebuild-profile-generator ; then
-		einfo "Merging PGO profile data.  A sudo prompt may shown."
+		einfo "Merging PGO profile data.  A sudo prompt may be shown."
 		sudo -u pgo -g portage \
 		llvm-profdata merge *.profraw \
 			-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
