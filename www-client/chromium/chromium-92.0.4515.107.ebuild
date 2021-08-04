@@ -563,43 +563,248 @@ CR_CLANG_USED_UNIX_TIMESTAMP="1621237229" # Cached.  Use below to obtain this. \
 #	| grep -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
 CR_CLANG_SLOT="13"
 
-verify_llvm_toolchain() {
-	[[ "${CLANG_SLOT}" != "${CR_CLANG_SLOT}" ]] && return
+contains_slotted_major_version() {
+	# For sys-devel/llvm:x slot style
+	local live_pkgs_=(
+		sys-devel/llvm
+		sys-devel/clang
+	)
+	local x="${1}"
+	local p
+	for p in ${live_pkgs_[@]} ; do
+		[[ "${x}" == "${p}" ]] && return 0
+	done
+	return 1
+}
 
-	if has_version "sys-devel/llvm:${CR_CLANG_SLOT}" ; then
-		# The llvm library or llvm-ar doesn't embed the hash info.
-		local emerged_llvm_commit=$(bzless \
-			"${ESYSROOT}/var/db/pkg/sys-devel/llvm-${CR_CLANG_SLOT}"*"/environment.bz2" \
-			| grep EGIT_VERSION | head -n 1 | cut -f 2 -d '"')
+contains_slotted_triple_version() {
+	# For sys-devel/llvm:x.y.z slot style
+	local live_pkgs_=(
+		sys-libs/compiler-rt
+		sys-libs/compiler-rt-sanitizers
+	)
+	local x="${1}"
+	local p
+	for p in ${live_pkgs_[@]} ; do
+		[[ "${x}" == "${p}" ]] && return 0
+	done
+	return 1
+}
 
+contains_slotted_zero() {
+	# For sys-devel/llvm:0 slot style
+	local live_pkgs_=(
+		sys-libs/libomp
+		sys-devel/lld
+	)
+	local x="${1}"
+	local p
+	for p in ${live_pkgs_[@]} ; do
+		[[ "${x}" == "${p}" ]] && return 0
+	done
+	return 1
+}
+
+_print_timestamps() {
+	if [[ -n "${emerged_llvm_timestamp}" ]] ; then
+		einfo "System's LLVM timestamp:  "$(date -d "@${emerged_llvm_timestamp}")
+		einfo "${PN} LLVM timestamp:  "$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
+	fi
+}
+
+_get_release_timestamp() {
+	local v="${1}"
+	if cached_release_hashes[${v}] ; then
+		echo "${cached_release_hashes[${v}]}"
+	else
+		local hash=$(git --no-pager ls-remote \
+			https://github.com/llvm/llvm-project.git \
+			llvmorg-${v} \
+			| cut -f 1 -d $'\t')
+		cached_release_hashes[${v}]="${hash}"
+		echo "${cached_release_hashes[${v}]}"
+	fi
+}
+
+_get_live_llvm_timestamp() {
+	if [[ -z "${emerged_llvm_commit}" ]] ; then
+		# Should check against the llvm milestone if not live
+		emerged_llvm_timestamp=$(_get_release_timestamp $(ver_cut 1-3 "${pv}"))
+	fi
+	if [[ -z "${emerged_llvm_timestamps[${emerged_llvm_commit}]}" ]] ; then
+		einfo "Fetching timestamp for ${emerged_llvm_commit}"
+		# Uncached
 		local emerged_llvm_time_desc=$(wget -q -O - \
 			https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch \
 			| grep -e "Date:" | sed -e "s|Date: ||")
 		emerged_llvm_timestamp=$(date -u -d "${emerged_llvm_time_desc}" +%s)
+		emerged_llvm_timestamps[${emerged_llvm_commit}]=${emerged_llvm_timestamp}
+		einfo "Timestamp comparison for ${p}"
+		_print_timestamps
+	else
+		einfo "Using cached timestamp for ${emerged_llvm_commit}"
+		# Cached
+		emerged_llvm_timestamp=${emerged_llvm_timestamps[${emerged_llvm_commit}]}
+		einfo "Timestamp comparison for ${p}"
+		_print_timestamps
+	fi
+}
 
-		einfo "System's LLVM timestamp:  "$(date -d "@${emerged_llvm_timestamp}")
-		einfo "${PN} LLVM timestamp:  "$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
-		if (( ${emerged_llvm_timestamp} < ${CR_CLANG_USED_UNIX_TIMESTAMP} )) ; then
-			local libcxx_=""
-			if use libcxx ; then
-				libcxx_=" ="$(best_version sys-libs/libcxx)
-			fi
-			local clang_rt=$(best_version "=sys-devel/clang-runtime-13*")
+_check_live_llvm_updated() {
+	if (( ${emerged_llvm_timestamp} < ${CR_CLANG_USED_UNIX_TIMESTAMP} )) ; then
+		needs_emerge=1
+		live_packages_status[${p_}]="1" # needs emerge
+	else
+		live_packages_status[${p_}]="0" # package is okay
+	fi
+}
+
+_check_live_llvm_updated_triple() {
+	if (( ${emerged_llvm_timestamp} < ${CR_CLANG_USED_UNIX_TIMESTAMP} )) ; then
+		needs_emerge=1
+		live_packages_status[${p_}]="1" # needs emerge
+		old_triple_slot_packages+=( "${category}/${pn}:"$(cat "${mp}/SLOT") )
+	else
+		live_packages_status[${p_}]="0" # package is okay
+	fi
+}
+
+print_old_live_llvm_multislot_pkgs() {
+	local arg="${1}"
+	for x in ${old_triple_slot_packages[@]} ; do
+		local pvr=${x/:*}
+		if [[ "${arg}" == "${pvr}" ]] ; then
+			eerror "emerge -1v ${x}"
+		fi
+	done
+}
+
+verify_llvm_report_card() {
+	if (( ${needs_emerge} == 1 )) ; then
 eerror
 eerror "Detected a old clang/llvm version.  Please re-emerge the clang/LLVM"
 eerror "toolchain by doing the following:"
 eerror
-eerror "emerge -1v ="$(best_version sys-devel/llvm:${CR_CLANG_SLOT})\
-" ="$(best_version sys-libs/libomp)\
-${libcxx_}\
-" ="$(best_version sys-devel/lld)\
-" ="$(best_version sys-devel/clang:${CR_CLANG_SLOT})\
-" ="$(best_version "=sys-libs/compiler-rt-${CR_CLANG_SLOT}*")\
-" ="$(best_version "=sys-libs/compiler-rt-sanitizers-${CR_CLANG_SLOT}*")\
-" ="$(best_version "=sys-devel/clang-runtime-${CR_CLANG_SLOT}*")
-eerror
-			die
-		fi
+		for p in ${live_pkgs[@]} ; do
+			if [[ "${p}" == "sys-libs/libcxx" ]] && ! use libcxx ; then
+				continue
+			fi
+			local p_=${p//-/_}
+			p_=${p_//\//_}
+			if (( ${live_packages_status[${p_}]} == 1 )) ; then
+				if contains_slotted_major_version "${p}" ; then
+					eerror "emerge -1v ${p}:${CR_CLANG_SLOT}"
+				elif contains_slotted_triple_version "${p}" ; then
+					print_old_live_llvm_multislot_pkgs "${p}"
+				elif contains_slotted_zero "${p}" ; then
+					eerror "emerge -1v ${p}:0"
+				fi
+			fi
+		done
+		die
+	else
+einfo "The live LLVM ${CR_CLANG_SLOT} toolchain is up-to-date."
+	fi
+}
+
+# Currently, the verify_llvm_toolchain does one pass check comparing the
+# system's llvm and the llvm used by the chromium project. The function below
+# may require a second pass verification or an adjustment to ensure that all
+# live ebuilds timestamps that inherit llvm.org are >= than the timestamp of
+# the llvm library.
+verify_llvm_toolchain() {
+	[[ "${CLANG_SLOT}" != "${CR_CLANG_SLOT}" ]] && return
+
+	# Everything that inherits the llvm.org must be checked.
+	# sys-devel/clang-runtime doesn't need check
+	# 3 slot types
+	# sys-devel/llvm:x
+	# sys-devel/clang:x
+	# sys-libs/compiler-rt:x.y.z
+	# sys-libs/compiler-rt-sanitizers:x.y.z
+	# sys-libs/libomp:0
+	# sys-devel/lld:0
+	# sys-libs/libcxx:0
+	local live_pkgs=(
+		# Do not change the order!
+		sys-devel/llvm
+		sys-libs/libomp
+		sys-libs/libcxx
+		sys-devel/lld
+		sys-devel/clang
+		sys-libs/compiler-rt
+		sys-libs/compiler-rt-sanitizers
+	)
+
+	unset emerged_llvm_timestamps
+	declare -A emerged_llvm_timestamps
+
+	unset live_packages_status
+	declare -A live_packages_status
+
+	unset cached_release_hashes
+	declare -A cached_release_hashes
+
+	local old_triple_slot_packages=()
+
+	local needs_emerge=0
+	# The llvm library or llvm-ar doesn't embed the hash info, so scan the /var/db/pkg.
+	if has_version "sys-devel/llvm:${CR_CLANG_SLOT}" ; then
+		for p in ${live_pkgs[@]} ; do
+			if [[ "${p}" == "sys-libs/libcxx" ]] && ! use libcxx ; then
+				continue
+			fi
+
+			# Check each of the live packages that use llvm.org
+			# eclass.  Especially for forgetful types.
+
+			local emerged_llvm_commit
+
+			local p_=${p//-/_}
+			p_=${p_//\//_}
+			if contains_slotted_major_version "${p}" ; then
+				einfo
+				einfo "Checking ${p}:${CR_CLANG_SLOT}"
+				emerged_llvm_commit=$(bzless \
+					"${ESYSROOT}/var/db/pkg/${p}-${CR_CLANG_SLOT}"*"/environment.bz2" \
+					| grep EGIT_VERSION | head -n 1 | cut -f 2 -d '"')
+				pv=$(cat "${ESYSROOT}/var/db/pkg/${p}-${CR_CLANG_SLOT}"*"/PF" | sed "s|${p}-||")
+				_get_live_llvm_timestamp
+				_check_live_llvm_updated
+			elif contains_slotted_zero "${p}" ; then
+				einfo
+				einfo "Checking ${p}:0"
+				emerged_llvm_commit=$(bzless \
+					"${ESYSROOT}/var/db/pkg/${p}"*"/environment.bz2" \
+					| grep EGIT_VERSION | head -n 1 | cut -f 2 -d '"')
+				pv=$(cat "${ESYSROOT}/var/db/pkg/${p}"*"/PF" | sed "s|${p}-||")
+				_get_live_llvm_timestamp
+				_check_live_llvm_updated
+			else
+				local category=${p/\/*}
+				local pn=${p/*\/}
+				# Handle multiple slots
+				# We shouldn't have to deal with multislot patch versions, but
+				# we have to.
+				for mp in $(find "${ESYSROOT}/var/db/pkg/${category}" \
+					-maxdepth 1 \
+					-type d \
+					-regextype "posix-extended" \
+					-regex ".*${pn}-${CR_CLANG_SLOT}.[0-9.]+") ; do
+					einfo
+					einfo "Checking ="$(basename ${mp})
+					emerged_llvm_commit=$(bzless \
+						"${mp}/environment.bz2" \
+						| grep EGIT_VERSION \
+						| head -n 1 \
+						| cut -f 2 -d '"')
+					pv=$(cat "${mp}/PF" | sed "s|${p}-||")
+					_get_live_llvm_timestamp
+					_check_live_llvm_updated_triple
+				done
+			fi
+		done
+		verify_llvm_report_card
 	else
 die "${PN} requires llvm:${CR_CLANG_SLOT}"
 	fi
