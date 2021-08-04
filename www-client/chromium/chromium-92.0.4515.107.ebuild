@@ -122,6 +122,7 @@ LICENSE="BSD
 	g711
 	g722
 	IJG
+	ILA-OpenCV
 	ISC
 	( ISC CC-BY-SA-4.0 )
 	Khronos-CLHPP
@@ -145,6 +146,7 @@ LICENSE="BSD
 	unRAR
 	unicode
 	SGI-B-2.0
+	sigslot
 	SunPro
 	svgo
 	WTFPL-2
@@ -192,7 +194,6 @@ e84cbb0696d3ddb4d70c167866943c959823fb1a5eab8194ea558e16ce3f1e34" # SHA512
 # custom Apache-2.0-with-LLVM-exceptions UoI-NCSA third_party/llvm/openmp/LICENSE.TXT
 # custom CC-BY-ND-2.5 LGPL-2.1+ GPL-2+ public-domain - \
 #   third_party/blink/perf_tests/svg/resources/LICENSES
-# custom BSD - third_party/opencv/src/LICENSE
 # custom BSD APSL-2 MIT BSD-4 - third_party/breakpad/breakpad/LICENSE
 # custom IJG - third_party/iccjpeg/LICENSE
 # custom MPL-2.0 BSD GPL-3 LGPL-3 Apache-1.1 - \
@@ -202,8 +203,11 @@ e84cbb0696d3ddb4d70c167866943c959823fb1a5eab8194ea558e16ce3f1e34" # SHA512
 # custom public-domain - third_party/sqlite/LICENSE
 # CC-BY-4.0 - third_party/devtools-frontend/src/node_modules/caniuse-lite/LICENSE
 # fft2d - third_party/tflite/src/third_party/fft2d/LICENSE
+# g711 - third_party/webrtc/modules/third_party/g711/LICENSE
+# g722 - third_party/webrtc/modules/third_party/g722/LICENSE
 # GPL-2 - third_party/freetype-testing/LICENSE
 # GPL-2+ - third_party/devscripts/licensecheck.pl.vanilla
+# ILA-OpenCV (BSD with additional clauses) - third_party/opencv/src/LICENSE
 # ISC - third_party/node/node_modules/rimraf/LICENSE
 # ISC - third_party/libaom/source/libaom/third_party/x86inc/LICENSE
 # ISC CC-BY-SA-4.0 - third_party/node/node_modules/glob/LICENSE ; no logo \
@@ -227,14 +231,12 @@ e84cbb0696d3ddb4d70c167866943c959823fb1a5eab8194ea558e16ce3f1e34" # SHA512
 # OFL-1.1 - third_party/freetype-testing/src/fuzzing/corpora/cff-render-ftengine/bungeman/HangingS.otf
 # ooura - third_party/webrtc/common_audio/third_party/ooura/LICENSE
 # public-domain - third_party/lzma_sdk/LICENSE
-# public-domain - third_party/pdfium/third_party/bigint/LICENSE
+# public-domain with no warranty - third_party/pdfium/third_party/bigint/LICENSE
 # public-domain - \
 #   third_party/webrtc/common_audio/third_party/spl_sqrt_floor/LICENSE
-# public-domain - third_party/webrtc/modules/third_party/g711/LICENSE
-# public-domain - third_party/webrtc/modules/third_party/g722/LICENSE
-# public-domain - third_party/webrtc/rtc_base/third_party/sigslot/LICENSE
 # PSF-2 - third_party/devtools-frontend/src/node_modules/mocha/node_modules/argparse/LICENSE
 # QU-fft - third_party/webrtc/modules/third_party/fft/LICENSE
+# sigslot - third_party/webrtc/rtc_base/third_party/sigslot/LICENSE
 # SunPro - third_party/fdlibm/LICENSE
 # svgo (with russian MIT license translation) - \
 #   third_party/node/node_modules/svgo/LICENSE
