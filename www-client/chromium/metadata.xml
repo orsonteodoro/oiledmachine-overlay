@@ -99,9 +99,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       implementation.  With glibc malloc (ptmalloc2 based) memory reuse is
       wastefully duplicated between threaded arenas especially for large data.
       However, the glibc allocator is widely used and tested.</flag>
-    <flag name="lto-opt">Force enables ThinLTO -O2 optimizations.  This
-      optimization is not enabled by default upstream due to increased binary
-      size concerns.</flag>
+    <flag name="lto-opt">Enables selective ThinLTO -O2 optimizations for the
+      browser binary and other targets while others use the default --lto-O0.
+      This optimization is not enabled by default upstream due to increased
+      binary size concerns.</flag>
     <flag name="js-type-check">Enable JavaScript type-checking for Chrome's web
       technology-based UI. Requires Java.</flag>
     <flag name="official">Enable the official build instead of the developer

@@ -165,7 +165,7 @@ e84cbb0696d3ddb4d70c167866943c959823fb1a5eab8194ea558e16ce3f1e34" # SHA512
 # TODO:  scan all font files for embedded licenses
 #
 # ^^ ( FTL GPL-2 ) ZLIB public-domain - third_party/freetype/src/LICENSE.TXT
-# ^^ ( GPL-2+ LGPL-2+ MPL-1.1 ) - chrome/utility/importer/nss_decryptor.cc
+# ^^ ( GPL-2+ LGPL-2.1+ MPL-1.1 ) - chrome/utility/importer/nss_decryptor.cc
 # ^^ ( GPL-2+ LGPL-2.1+ MPL-1.1 ) BSD BSD-2 - third_party/libgifcodec/LICENSE.md
 # || ( WTFPL-2 Apache-2.0 ) - \
 #   third_party/catapult/third_party/polymer2/bower_components/sinon-chai/LICENSE.txt ; \
