@@ -7,7 +7,7 @@ diff -urp xpra-4.1.3.orig/fs/etc/init.d/xpra xpra-4.1.3/fs/etc/init.d/xpra
  ### BEGIN INIT INFO
  # Provides:          xpra
  # Required-Start:    $local_fs $network $named $time $syslog
-@@ -8,57 +8,183 @@
+@@ -8,57 +8,194 @@
  # Description:       Xpra proxy server
  ### END INIT INFO
  
@@ -70,6 +70,11 @@ diff -urp xpra-4.1.3.orig/fs/etc/init.d/xpra xpra-4.1.3/fs/etc/init.d/xpra
 +  local user="$1"
 +  echo $(cat /etc/passwd | grep -F -e "${user}:" | cut -f 3 -d ':')
 +}
++
++get_gid() {
++  local group_name="$1"
++  echo $(grep "${group_name}:" /etc/group | cut -f 3 -d ":")
++}
  
  start() {
 -  echo 'Starting service…' >&2
@@ -124,7 +129,9 @@ diff -urp xpra-4.1.3.orig/fs/etc/init.d/xpra xpra-4.1.3/fs/etc/init.d/xpra
 +    _binddir="${_piddir}/system"
 +    _logdir="${LOGDIR}/xpra/${user}"
 +    mkdir -p "${_logdir}"
-+    chown $user:$user "${_logdir}"
++    chown -R $user:$user "${_logdir}"
++    mkdir -p "${_piddir}"
++    chown -R $user:$user "${_piddir}"
 +    if [[ "$user" == "root" ]] ; then
 +      _port=$PORT
 +      _display=${VIRTUAL_DISPLAY/:/}
@@ -182,8 +189,9 @@ diff -urp xpra-4.1.3.orig/fs/etc/init.d/xpra xpra-4.1.3/fs/etc/init.d/xpra
 +    start-stop-daemon \
 +      --start \
 +      --name $user \
++      --user $user \
 +      --group $user \
-+      --pidfile "${_bind}/xpra.pid" \
++      --pidfile "${_piddir}/xpra.pid" \
 +      --background \
 +      --stdout "${_logdir}/xpra.log" \
 +      --stderr "${_logdir}/xpra.log" \
@@ -193,6 +201,7 @@ diff -urp xpra-4.1.3.orig/fs/etc/init.d/xpra xpra-4.1.3/fs/etc/init.d/xpra
 +        --ssl-cert=/etc/xpra/ssl-cert.pem \
 +        --socket-permissions=$SOCKET_PERMISSION --debug=$DEBUG \
 +        --daemon=yes --log-file="xpra.log" --log-dir="${_logdir}" \
++        --uid=$(get_uid $user) --gid=$(get_gid $user) \
 +        --pidfile="${_piddir}/xpra.pid"
 +    echo "${_display}" > "${_piddir}/display"
 +  done
@@ -231,13 +240,13 @@ diff -urp xpra-4.1.3.orig/fs/etc/init.d/xpra xpra-4.1.3/fs/etc/init.d/xpra
 +    local _piddir
 +    _piddir="/run/user/$uid/xpra"
 +    # graceful shutdown first
-+    sudo -u "${user}" xpra stop :$(cat "${_piddir}/display")
-+    start-stop-daemon \
-+      --stop \
-+      --pidfile "${_piddir}/xpra.pid"
++    #sudo -u "${user}" xpra stop :$(cat "${_piddir}/display")
++    #start-stop-daemon \
++    #  --stop \
++    #  --pidfile "${_piddir}/xpra.pid"
++    kill -9 $(cat "${_piddir}/xpra.pid")
 +    rm "${_piddir}/display"
++    rm "${_piddir}/xpra.pid"
 +  done
 +  eend 0
 +}
-Only in xpra-4.1.3/fs/etc/init.d: xpra.orig
-Only in xpra-4.1.3/fs/etc/init.d: xpra.rej
