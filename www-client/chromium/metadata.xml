@@ -71,7 +71,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <bugs-to>https://www.chromium.org/for-testers/bug-reporting-guidelines</bugs-to>
   </upstream>
   <use>
-    <flag name="clang">Uses clang and allows access to clang/llvm related
+    <flag name="clang">Uses clang and allows access to clang or LLVM related
       USE flags.  Turning on clang implies ThinLTO on.</flag>
     <flag name="cfi">Compile the build with Control Flow Integrity (CFI)
       security protections to mitigate against arbitrary code execution caused
@@ -142,7 +142,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       This one checks if user is relaxed for use for GPU benchmarks or readiness
       for measured PGO profile collection.  Ensure that these code paths &
       function signatures are properly accessible and being measured.</flag>
-    <flag name="pgo-native">Builds with 2-step Profile Guided Optimizations.
+    <flag name="pgo-native">Builds with 3-step Profile Guided Optimizations.
       Builds PGO using the native customized environment.  This will double
       the build times.</flag>
     <flag name="pgo-upstream-profile-generator">
@@ -155,6 +155,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       related to tab usage so they do not get demoted to cold sections.</flag>
     <flag name="proprietary-codecs">Enable codecs for patent-encumbered audio
        and video formats.</flag>
+    <flag name="shadowcallstack">Allow for backward edge protections or
+      return address overwrites that could lead to arbitrary code
+      execution.  (Experimental, arm64 only)</flag>
     <flag name="screencast">Enable support for remote desktop and screen cast
       using <pkg>media-video/pipewire</pkg></flag>
     <flag name="suid">Build the SUID sandbox, which is only needed on

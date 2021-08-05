@@ -257,17 +257,17 @@ be21e8628daa9fc06823a99fb9e88ac8d2d1137312986aa38ad2ad4864a4ca7d\
 #   give the wrong impression that the entire software was released in public
 #   domain.
 SLOT="0"
-# KEYWORDS="amd64 arm64 ~ppc64 ~x86"
+KEYWORDS="amd64 arm64 ~ppc64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi, cfi-icall defaults status, see \
-#   https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/sanitizers.gni
+#   https://github.com/chromium/chromium/blob/92.0.4515.131/build/config/sanitizers/sanitizers.gni
 # For cfi-full default status, see \
-#   https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/sanitizers.gni#L123
+#   https://github.com/chromium/chromium/blob/92.0.4515.131/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status, see \
-#   https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/compiler/pgo/pgo.gni#L15
+#   https://github.com/chromium/chromium/blob/92.0.4515.131/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default, see \
-#   https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/c++/c++.gni#L14
+#   https://github.com/chromium/chromium/blob/92.0.4515.131/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx lto-opt +pgo pgo-audio pgo-gpu
 pgo-custom-script -pgo-ebuild-profile-generator -pgo-native
@@ -437,7 +437,7 @@ BDEPEND="
 
 # Upstream uses llvm:13
 # For the current llvm for this project, see
-#   https://github.com/chromium/chromium/blob/92.0.4515.107/tools/clang/scripts/update.py#L42
+#   https://github.com/chromium/chromium/blob/92.0.4515.131/tools/clang/scripts/update.py#L42
 # Use the same clang for official USE flag because of older llvm bugs which
 #   could result in security weaknesses (explained in the llvm:12 note below).
 # Used llvm >= 12 for arm64 for the same reason in the Linux kernel CFI comment.
@@ -535,7 +535,7 @@ pkg_pretend() {
 }
 
 CR_CLANG_USED="d3676d4b666ead794fc58bbc7e07aa406dcf487a" # Obtained from \
-# https://github.com/chromium/chromium/blob/92.0.4515.107/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/blob/92.0.4515.131/tools/clang/scripts/update.py#L42
 CR_CLANG_USED_UNIX_TIMESTAMP="1621237229" # Cached.  Use below to obtain this. \
 # TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
 #	| grep -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
@@ -804,9 +804,6 @@ die "${PN} requires llvm:${CR_CLANG_SLOT}"
 
 NABIS=0
 pkg_setup() {
-	ewarn "This ebuild is for ebuild develpment only.  Please use 92.0.4515.131 instead"
-	ewarn "for fixes for vulnerabilities."
-	ewarn
 	einfo "The $(ver_cut 1 ${PV}) series is the Stable channel."
 	pre_build_checks
 
@@ -1029,7 +1026,7 @@ src_prepare() {
 		"${WORKDIR}/sandbox-patches/chromium-syscall_broker.patch"
 		"${WORKDIR}/sandbox-patches/chromium-fstatat-crash.patch"
 		"${FILESDIR}/chromium-92-EnumTable-crash.patch"
-		"${FILESDIR}/chromium-92-GetUsableSize-nullptr.patch"
+		"${FILESDIR}/chromium-92-crashpad-consent.patch"
 		"${FILESDIR}/chromium-freetype-2.11.patch"
 		"${FILESDIR}/chromium-shim_headers.patch"
 	)
@@ -1426,7 +1423,7 @@ _configure_pgx() {
 	fi
 
 # Debug symbols level 2 is still on when official is on even though is_debug=false:
-# See https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/compiler/compiler.gni#L276
+# See https://github.com/chromium/chromium/blob/92.0.4515.131/build/config/compiler/compiler.gni#L276
 	# GN needs explicit config for Debug/Release as opposed to inferring it from build directory.
 	myconf_gn+=" is_debug=false"
 
@@ -1689,14 +1686,14 @@ _configure_pgx() {
 			tools/generate_shim_headers/generate_shim_headers.py || die
 	fi
 
-# See https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/BUILD.gn#L196
+# See https://github.com/chromium/chromium/blob/92.0.4515.131/build/config/sanitizers/BUILD.gn#L196
 	if use cfi ; then
 		myconf_gn+=" is_cfi=true"
 	else
 		myconf_gn+=" is_cfi=false"
 	fi
 
-# See https://github.com/chromium/chromium/blob/92.0.4515.107/tools/mb/mb_config.pyl#L2950
+# See https://github.com/chromium/chromium/blob/92.0.4515.131/tools/mb/mb_config.pyl#L2950
 	if use cfi-full ; then
 		myconf_gn+=" use_cfi_cast=true"
 	else
@@ -1714,7 +1711,7 @@ _configure_pgx() {
 	fi
 
 # See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-# See also https://github.com/chromium/chromium/blob/92.0.4515.107/docs/pgo.md
+# See also https://github.com/chromium/chromium/blob/92.0.4515.131/docs/pgo.md
 # profile-instr-use is clang which that file assumes but gcc doesn't have.
 	if use pgo-native ; then
 		myconf_gn+=" chrome_pgo_phase=${PGO_PHASE}"
@@ -2218,7 +2215,7 @@ clear_disk_cache() {
 
 _run_simulation_suite() {
 	if use pgo-upstream-profile-generator ; then
-# See also https://github.com/chromium/chromium/blob/92.0.4515.107/docs/pgo.md
+# See also https://github.com/chromium/chromium/blob/92.0.4515.131/docs/pgo.md
 		${EPYTHON} tools/perf/run_benchmark \
 			system_health.common_desktop \
 			--assert-gpu-compositing \

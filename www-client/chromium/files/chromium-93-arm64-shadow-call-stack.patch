@@ -1,0 +1,28 @@
+Upstream has it default in their toolchain for one of their OS.
+
+It still needs heap unit-tests[1], but this patch provided for testing and
+experimental option for completeness.
+
+[1] See https://github.com/chromium/chromium/commit/deb5d21d381ee9835c37795765732c49092db6c8
+
+Allowing for shadow-call-stack will allow for backward-edge protection for
+aarch64 like in the Linux kernel.  shadow-call-stack is considered production
+ready for clang.
+
+--- chromium-93.0.4577.25/build/config/linux/BUILD.gn.orig	2021-08-04 15:06:51.000000000 -0700
++++ chromium-93.0.4577.25/build/config/linux/BUILD.gn	2021-08-05 20:14:54.339448011 -0700
+@@ -15,6 +15,14 @@ group("linux") {
+ # is applied to all targets. It is here to separate out the logic that is
+ # Linux-only. This is not applied to Android, but is applied to ChromeOS.
+ config("compiler") {
++  if (current_cpu == "arm64") {
++    if (use_shadow_call_stack) {
++      cflags += [
++        "-fno-sanitize=safe-stack",
++        "-fsanitize=shadow-call-stack",
++      ]
++    }
++  }
+ }
+ 
+ # This is included by reference in the //build/config/compiler:runtime_library

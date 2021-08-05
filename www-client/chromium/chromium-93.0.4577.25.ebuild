@@ -102,7 +102,8 @@ PGO_UPSTREAM_GENERATOR_SITE_LICENSES=(
 #   https://github.com/WebKit/WebKit/tree/main/PerformanceTests/Speedometer \
 #     or internal third party dependencies MIT, Apache-2.0
 LICENSE="BSD
-	chromium-93.0.4577.x
+	 libcxx? ( chromium-93.0.4577.x-libcxx )
+	!libcxx? ( chromium-93.0.4577.x-libstdcxx )
 	APSL-2
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -110,6 +111,7 @@ LICENSE="BSD
 	BSD-2
 	BSD-4
 	base64
+	CC-BY-3.0
 	CC-BY-4.0
 	CC-BY-ND-2.5
 	FTL
@@ -151,9 +153,12 @@ LICENSE="BSD
 	pgo-ebuild-profile-generator? ( ${PGO_EBUILD_GENERATOR_SITE_LICENSES} )
 	pgo-upstream-profile-generator? ( ${PGO_UPSTREAM_GENERATOR_SITE_LICENSES} )
 	widevine? ( widevine )"
-LICENSE_FINGERPRINT="\
+LICENSE_FINGERPRINT_LIBSTDCXX="\
 147e32b00489a9b0023d720066a1db648d4104fe81d8e764902a44a2eb650308\
 9a6781dfb64901f5460758d17227e5f0e8f1dfb8fe6c14e6afc7374b6f0e028e" # SHA512
+LICENSE_FINGERPRINT_LIBCXX="\
+dd9fc7b4cae307621cd0a830686b50c5bc3fb7e9541c1f22399a495f07313a21\
+5e995e3b70ce0d0ba7a6a60080ce14821f27b485da90d9440ba06d040d1f0a89" # SHA512
 # Third Party Licenses:
 #
 # TODO:  The rows marked custom need to have or be placed a license file or
@@ -179,6 +184,7 @@ LICENSE_FINGERPRINT="\
 # BSD - third_party/vulkan-deps/glslang/src/LICENSE.txt
 # BSD ^^ ( MPL-1.1 GPL-2+ LGPL-2+ ) - \
 #   third_party/openscreen/src/third_party/mozilla/LICENSE.txt
+# BSD CC-BY-3.0 CC-BY-4.0 MIT public-domain - third_party/snappy/src/COPYING
 # BSD ISC MIT openssl - third_party/boringssl/src/LICENSE
 # BSD MPL-1.1 - url/third_party/mozilla/LICENSE.txt
 # BSD-2 - third_party/node/node_modules/eslint-scope/LICENSE
@@ -251,19 +257,17 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi, cfi-icall defaults status, see \
-#   https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/sanitizers/sanitizers.gni
+#   https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/sanitizers/sanitizers.gni
 # For cfi-full default status, see \
-#   https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/sanitizers/sanitizers.gni#L123
+#   https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status, see \
-#   https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/compiler/pgo/pgo.gni#L15
+#   https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default, see \
-#   https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/c++/c++.gni#L14
+#   https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
-# Modding location to remove lto-O0 when lld is being used which is the default,
-#   see https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/compiler/BUILD.gn#L502
 IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx lto-opt +pgo pgo-audio pgo-gpu
 pgo-custom-script -pgo-ebuild-profile-generator -pgo-native
-pgo-upstream-profile-generator -pgo-web"
+pgo-upstream-profile-generator -pgo-web shadowcallstack"
 _ABIS=( abi_x86_32
 	abi_x86_64
 	abi_x86_x32
@@ -277,6 +281,7 @@ _ABIS=( abi_x86_32
 IUSE+=" ${_ABIS[@]}"
 REQUIRED_USE="
 	^^ ( partitionalloc tcmalloc libcmalloc )
+	amd64? ( !shadowcallstack )
 	!clang? ( !cfi )
 	cfi? ( clang )
 	cfi-full? ( cfi )
@@ -297,8 +302,10 @@ REQUIRED_USE="
 			   !pgo )
 	pgo-upstream-profile-generator? ( pgo-ebuild-profile-generator )
 	pgo-web? ( pgo-native )
+	ppc64? ( !shadowcallstack )
 	screencast? ( wayland )
 	widevine? ( !arm64 !ppc64 )
+	x86? ( !shadowcallstack )
 "
 
 COMMON_X_DEPEND="
@@ -403,15 +410,17 @@ BDEPEND="
 			(
 				sys-devel/clang:13[${MULTILIB_USEDEP}]
 				sys-devel/llvm:13[${MULTILIB_USEDEP}]
-				=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
+				=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 				>=sys-devel/lld-13
+				=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
 			)
 		)
 		official? (
 			sys-devel/clang:13[${MULTILIB_USEDEP}]
 			sys-devel/llvm:13[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-13
+			=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
 		)
 	)
 	js-type-check? ( virtual/jre )
@@ -422,13 +431,10 @@ BDEPEND="
 		x11-misc/xdotool
 	)
 "
-# llvm 13 >=media-libs/mesa-9999[gbm,${MULTILIB_USEDEP}] ; only <= 12 is on CI
-# llvm 12 >=media-libs/mesa-21.1.4[gbm,${MULTILIB_USEDEP}]
-# llvm 11 <media-libs/mesa-21.1[gbm,${MULTILIB_USEDEP}]
 
 # Upstream uses llvm:13
 # For the current llvm for this project, see
-#   https://github.com/chromium/chromium/blob/93.0.4577.15/tools/clang/scripts/update.py#L42
+#   https://github.com/chromium/chromium/blob/93.0.4577.25/tools/clang/scripts/update.py#L42
 # Use the same clang for official USE flag because of older llvm bugs which
 #   could result in security weaknesses (explained in the llvm:12 note below).
 # Used llvm >= 12 for arm64 for the same reason in the Linux kernel CFI comment.
@@ -530,7 +536,7 @@ pkg_pretend() {
 }
 
 CR_CLANG_USED="98033fdc50e61273b1d5c77ba5f0f75afe3965c1" # Obtained from \
-# https://github.com/chromium/chromium/blob/93.0.4577.15/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/blob/93.0.4577.25/tools/clang/scripts/update.py#L42
 CR_CLANG_USED_UNIX_TIMESTAMP="1626129557" # Cached.  Use below to obtain this. \
 # TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
 #	| grep -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
@@ -797,6 +803,7 @@ die "${PN} requires llvm:${CR_CLANG_SLOT}"
 	fi
 }
 
+NABIS=0
 pkg_setup() {
 	ewarn "The $(ver_cut 1 ${PV}) series is the Dev branch."
 	pre_build_checks
@@ -992,6 +999,10 @@ eerror
 	fi
 	use pgo-ebuild-profile-generator && die "USE flag not ready"
 	use libcxx && ewarn "Using the libcxx USE flag is in testing"
+
+	for a in $(multilib_get_enabled_abis) ; do
+		NABIS=$((${NABIS} + 1))
+	done
 }
 
 USED_EAPPLY=0
@@ -1032,6 +1043,10 @@ src_prepare() {
 	if use clang ; then
 		ceapply "${FILESDIR}/${PN}-92-clang-toolchain-1.patch"
 		ceapply "${FILESDIR}/${PN}-92-clang-toolchain-2.patch"
+	fi
+
+	if use arm64 && use shadowcallstack ; then
+		ceapply "${FILESDIR}/chromium-93-arm64-shadow-call-stack.patch"
 	fi
 
 	default
@@ -1337,7 +1352,8 @@ src_prepare() {
 	# bundled eu-strip is for amd64 only and we don't want to pre-stripped binaries
 	mkdir -p buildtools/third_party/eu-strip/bin || die
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
-	multilib_copy_sources
+	(( ${NABIS} > 1 )) \
+		&& multilib_copy_sources
 }
 
 _configure_pgx() {
@@ -1399,7 +1415,7 @@ _configure_pgx() {
 	fi
 
 # Debug symbols level 2 is still on when official is on even though is_debug=false:
-# See https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/compiler/compiler.gni#L276
+# See https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/compiler/compiler.gni#L276
 	# GN needs explicit config for Debug/Release as opposed to inferring it from build directory.
 	myconf_gn+=" is_debug=false"
 
@@ -1662,14 +1678,14 @@ _configure_pgx() {
 			tools/generate_shim_headers/generate_shim_headers.py || die
 	fi
 
-# See https://github.com/chromium/chromium/blob/93.0.4577.15/build/config/sanitizers/BUILD.gn#L196
+# See https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/sanitizers/BUILD.gn#L196
 	if use cfi ; then
 		myconf_gn+=" is_cfi=true"
 	else
 		myconf_gn+=" is_cfi=false"
 	fi
 
-# See https://github.com/chromium/chromium/blob/93.0.4577.15/tools/mb/mb_config.pyl#L2950
+# See https://github.com/chromium/chromium/blob/93.0.4577.25/tools/mb/mb_config.pyl#L2950
 	if use cfi-full ; then
 		myconf_gn+=" use_cfi_cast=true"
 	else
@@ -1682,8 +1698,12 @@ _configure_pgx() {
 		myconf_gn+=" use_cfi_icall=false"
 	fi
 
+	if use arm64 && use shadowcallstack ; then
+		myconf_gn+=" use_shadow_call_stack=true"
+	fi
+
 # See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-# See also https://github.com/chromium/chromium/blob/93.0.4577.15/docs/pgo.md
+# See also https://github.com/chromium/chromium/blob/93.0.4577.25/docs/pgo.md
 # profile-instr-use is clang which that file assumes but gcc doesn't have.
 	if use pgo-native ; then
 		myconf_gn+=" chrome_pgo_phase=${PGO_PHASE}"
@@ -2187,7 +2207,7 @@ clear_disk_cache() {
 
 _run_simulation_suite() {
 	if use pgo-upstream-profile-generator ; then
-# See also https://github.com/chromium/chromium/blob/93.0.4577.15/docs/pgo.md
+# See also https://github.com/chromium/chromium/blob/93.0.4577.25/docs/pgo.md
 		${EPYTHON} tools/perf/run_benchmark \
 			system_health.common_desktop \
 			--assert-gpu-compositing \
@@ -2240,9 +2260,20 @@ update_licenses() {
 			"${BUILD_DIR}/out/Release/gen/components/resources/about_credits.html" \
                                         | cut -f 1 -d " ")
 		# Check the license fingerprint between point releases.
+		local fp
+		local suffix
+		if use libcxx ; then
+			fp="${LICENSE_FINGERPRINT_LIBCXX}"
+			license_file_name+="-libcxx"
+			suffix="LIBCXX"
+		else
+			fp="${LICENSE_FINGERPRINT_LIBSTDCXX}"
+			license_file_name+="-libstdcxx"
+			suffix="LIBSTDCXX"
+		fi
 		if [[ ! ( "${LICENSE}" =~ "${license_file_name}" ) \
 			|| ! -f "${MY_OVERLAY_DIR}/licenses/${license_file_name}" \
-			|| "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}"
+			|| "${x_license_fingerprint}" != "${fp}" \
 		]] ; then
 einfo
 einfo "Please update the LICENSE variable and add the license file to the"
@@ -2251,7 +2282,7 @@ einfo
 einfo "  \`cp -a ${BUILD_DIR}/out/Release/gen/components/resources/about_credits.html \
 ${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
 einfo
-einfo "Update the LICENSE_FINGERPRINT to ${x_license_fingerprint}"
+einfo "Update the LICENSE_FINGERPRINT_${suffix} to ${x_license_fingerprint}"
 einfo
 			die
 		fi
@@ -2260,18 +2291,23 @@ einfo
 		eninja -C out/Release about_credits
 		# It should be updated when the major.minor.build.x changes
 		# because of new features.
-		local license_file_name=$(echo "${PN}-${PV}" \
-			| sed -r -e "s|(${PN}-[0-9]+\.[0-9]+\.[0-9]+\.)[0-9]+|\1x|g")
 		local x_license_fingerprint=$(sha512sum \
 			"${BUILD_DIR}/out/Release/gen/components/resources/about_credits.html" \
 			| cut -f 1 -d " ")
 		# Check the license fingerprint between point releases.
 		# The 93 fingerprints differ from the 92
 		einfo "Verifying about:credits fingerprints"
-		if [[ "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}" ]] ; then
+		local fp
+		if use libcxx ; then
+			fp="${LICENSE_FINGERPRINT_LIBCXX}"
+		else
+			fp="${LICENSE_FINGERPRINT_LIBSTDCXX}"
+		fi
+		if [[ "${x_license_fingerprint}" != "${fp}" ]] ; then
 einfo
-einfo "The about:credits fingerprints do not match.  Send an issue report to the"
-einfo "ebuild maintainer."
+einfo "The about:credits fingerprints do not match and may dynamically be"
+einfo "generated based on features or dependencies used.  Send an issue report"
+einfo "to the ebuild maintainer.  Report back the USE flags used and the arch."
 einfo
 			die
 		fi
@@ -2279,6 +2315,11 @@ einfo
 }
 
 multilib_src_compile() {
+	if (( ${NABIS} == 1 )) ; then
+		export BUILD_DIR="${S}"
+		cd "${BUILD_DIR}" || die
+	fi
+
 	# Final link uses lots of file descriptors.
 	ulimit -n 2048
 
@@ -2403,6 +2444,11 @@ _install_licenses() {
 }
 
 multilib_src_install() {
+	if (( ${NABIS} == 1 )) ; then
+		export BUILD_DIR="${S}"
+		cd "${BUILD_DIR}" || die
+	fi
+
 	local CHROMIUM_HOME="/usr/$(get_libdir)/chromium-browser"
 	exeinto "${CHROMIUM_HOME}"
 	doexe out/Release/chrome
