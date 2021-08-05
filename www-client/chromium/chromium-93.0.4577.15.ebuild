@@ -2273,22 +2273,19 @@ _run_simulation_suite() {
 	fi
 }
 
-_run_simulations() {
-	_run_simulation_suite
+_gen_pgo_profile() {
 	if ! ls *.profraw 2>/dev/null 1>/dev/null ; then
 		die "Missing *.profraw files"
 	fi
-	if use pgo-ebuild-profile-generator ; then
-		einfo "Merging PGO profile data.  A sudo prompt may be shown."
-		sudo -u pgo -g portage \
-		llvm-profdata merge *.profraw \
-			-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
-			|| die
-	else
-		llvm-profdata merge *.profraw \
-			-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
-			|| die
-	fi
+	einfo "Merging PGO profile data to build PGO profile"
+	llvm-profdata merge *.profraw \
+		-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
+		|| die
+}
+
+_run_simulations() {
+	_run_simulation_suite
+	_gen_pgo_profile
 }
 
 update_licenses() {
