@@ -252,7 +252,7 @@ e84cbb0696d3ddb4d70c167866943c959823fb1a5eab8194ea558e16ce3f1e34" # SHA512
 #   domain.
 SLOT="0"
 KEYWORDS="amd64 arm64 ~ppc64 ~x86"
-IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
+IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi, cfi-icall defaults status, see \
 #   https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/sanitizers/sanitizers.gni
@@ -265,9 +265,7 @@ IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 # Modding location to remove lto-O0 when lld is being used which is the default,
 #   see https://github.com/chromium/chromium/blob/92.0.4515.107/build/config/compiler/BUILD.gn#L502
-# Currently clang disabled until clang/ThinLTO bug is resolved.  See bug_notes file for details
-# +cfi +cfi-icall +clang should be upstream defaults
-IUSE+=" -cfi cfi-full -cfi-icall -clang libcxx lto-opt +pgo pgo-audio pgo-gpu
+IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx lto-opt +pgo pgo-audio pgo-gpu
 pgo-custom-script -pgo-ebuild-profile-generator -pgo-native
 pgo-upstream-profile-generator -pgo-web"
 _ABIS=( abi_x86_32
@@ -410,34 +408,6 @@ BDEPEND="
 				sys-devel/llvm:13[${MULTILIB_USEDEP}]
 				=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
 				>=sys-devel/lld-13
-			)
-			(
-				sys-devel/clang:12[${MULTILIB_USEDEP}]
-				sys-devel/llvm:12[${MULTILIB_USEDEP}]
-				=sys-devel/clang-runtime-12*[${MULTILIB_USEDEP}]
-				>=sys-devel/lld-12
-			)
-			(
-				sys-devel/clang:11[${MULTILIB_USEDEP}]
-				sys-devel/llvm:11[${MULTILIB_USEDEP}]
-				=sys-devel/clang-runtime-11*[${MULTILIB_USEDEP}]
-				>=sys-devel/lld-11
-			)
-		)
-		arm64? (
-			|| (
-				(
-					sys-devel/clang:13[${MULTILIB_USEDEP}]
-					sys-devel/llvm:13[${MULTILIB_USEDEP}]
-					=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP}]
-					>=sys-devel/lld-13
-				)
-				(
-					sys-devel/clang:12[${MULTILIB_USEDEP}]
-					sys-devel/llvm:12[${MULTILIB_USEDEP}]
-					=sys-devel/clang-runtime-12*[${MULTILIB_USEDEP}]
-					>=sys-devel/lld-12
-				)
 			)
 		)
 		official? (
@@ -826,37 +796,6 @@ die "${PN} requires llvm:${CR_CLANG_SLOT}"
 	fi
 }
 
-check_same_llvm() {
-	# Warn about loading multiple LLVM versions which may trigger bug.
-	if (( $(clang-major-version) > ${MESA_LLVM_MAX_SLOT} )) ; then
-ewarn
-ewarn "Mesa's LLVM_MAX_SLOT may not be compatible.  The currently selected"
-ewarn "clang has a slot that needs to be <= ${MESA_LLVM_MAX_SLOT}."
-ewarn
-	fi
-	if (( ${MESA_LLVM_MAX_SLOT} == ${CLANG_SLOT} )) ; then
-ewarn
-ewarn "LLVM/clang may need a Mesa ebuild with LLVM_MAX_SLOT == ${CLANG_SLOT}."
-ewarn
-	fi
-	for f in /usr/$(get_libdir)/dri/* ; do
-		if ! ( ldd "${f}" | grep -q -e "libLLVM" ) ; then
-			continue
-		fi
-		local driver_llvm=$(ldd "${f}" \
-			| grep -e "libLLVM" \
-			| sed -r -e "s|[ \t]+| |g" \
-			| cut -f 2 -d " " \
-			| grep -o -E "[0-9]+")
-		if (( ${driver_llvm} != ${CLANG_SLOT} )) ; then
-ewarn
-ewarn "LLVM/clang may need Mesa DRI drivers built against ${CLANG_SLOT} for"
-ewarn "${f}."
-ewarn
-		fi
-	done
-}
-
 pkg_setup() {
 	einfo "The $(ver_cut 1 ${PV}) series is the Stable channel."
 	pre_build_checks
@@ -1038,7 +977,6 @@ ewarn
 		local CLANG_SLOT=$(clang-major-version)
 		einfo "CLANG_SLOT: ${CLANG_SLOT}"
 		einfo "MESA_LLVM_MAX_SLOT: ${MESA_LLVM_MAX_SLOT}"
-		check_same_llvm
 		verify_llvm_toolchain
 	fi
 	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" ]] ; then
@@ -1052,6 +990,7 @@ eerror
 		fi
 	fi
 	use pgo-ebuild-profile-generator && die "USE flag not ready"
+	use libcxx && ewarn "Using the libcxx USE flag is in testing"
 }
 
 USED_EAPPLY=0
