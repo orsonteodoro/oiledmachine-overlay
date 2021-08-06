@@ -23,11 +23,8 @@
     parameters to the correct identifiers.
   </longdescription>
   <use>
-    <flag name="subdir_mount">Adds mounting subdirectory support.  Used for
-      mounting muslx32 or stage2 or stage3 images in place produced from
-      crossdev and mounting them directly at /usr/$CTARGET without risk of
-      damage caused by human error replacing / with /usr/$CTARGET.
-    </flag>
+    <flag name="cfi">Ensure that the Code Flow Integrity toolchain requirements
+      are met.</flag>
     <flag name="crypt_root_plain">Adds dmcrypt plain support</flag>
     <flag name="cryptsetup">Enable support for Luks disk encryption using
       <pkg>sys-fs/cryptsetup</pkg></flag>
@@ -35,6 +32,15 @@
       <pkg>sys-kernel/linux-firmware</pkg> over local copy.</flag>
     <flag name="llvm">Enable support for the Clang/LLVM toolchain
       These changes only apply to building the kernel only.</flag>
+    <flag name="lto">Ensure that the Link Time Optimization toolchain
+      requirements are met.</flag>
+    <flag name="shadow-call-stack">Ensure that the shadow-call-stack toolchain
+      requirements are met.</flag>
+    <flag name="subdir_mount">Adds mounting subdirectory support.  Used for
+      mounting muslx32 or stage2 or stage3 images in place produced from
+      crossdev and mounting them directly at /usr/$CTARGET without risk of
+      damage caused by human error replacing / with /usr/$CTARGET.
+    </flag>
   </use>
   <!--
     <upstream>

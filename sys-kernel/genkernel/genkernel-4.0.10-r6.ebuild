@@ -92,11 +92,20 @@ LICENSE="GPL-2"
 SLOT="0"
 RESTRICT=""
 IUSE+=" ibm +firmware"
-IUSE+=" crypt_root_plain"	# Added by oteodoro.
-IUSE+=" subdir_mount"		# Added by the muslx32 overlay.
-IUSE+=" +llvm +lto cfi"		# Added by the oiledmachine-overlay.
+IUSE+=" crypt_root_plain"			# Added by oteodoro.
+IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
+IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
+EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sparc x86 )
 REQUIRED_USE+=" cfi? ( llvm lto )
-		lto? ( llvm )"
+		lto? ( llvm )
+		shadowcallstack? ( cfi )"
+gen_scs_exclusion() {
+	for a in ${EXCLUDE_SCS[@]} ; do
+		echo " ${a}? ( !shadowcallstack )"
+	done
+}
+REQUIRED_USE+=" "$(gen_scs_exclusion)
+
 
 LLVM_SLOTS=(11 12 13)
 LLVM_LTO_SLOTS=(11 12 13)
@@ -131,8 +140,11 @@ gen_cfi_rdepends() {
 		echo "
 			(
 				sys-devel/clang:${s}
+				=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
 				sys-devel/llvm:${s}
 				>=sys-devel/lld-${s}
+				=sys-libs/compiler-rt-${s}*
+				=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
 			)
 		"
 	done
