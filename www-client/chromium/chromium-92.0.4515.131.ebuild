@@ -304,7 +304,7 @@ REQUIRED_USE="
 			   pgo-upstream-profile-generator )
 			   clang
 			   !pgo )
-	pgo-upstream-profile-generator? ( pgo-ebuild-profile-generator )
+	pgo-upstream-profile-generator? ( !pgo-ebuild-profile-generator )
 	pgo-web? ( pgo-native )
 	ppc64? ( !shadowcallstack )
 	screencast? ( wayland )
