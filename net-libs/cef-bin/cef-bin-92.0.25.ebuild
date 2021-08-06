@@ -15,15 +15,12 @@ HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
 KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 # The download page can be found at https://cef-builds.spotifycdn.com/index.html
 
-# In Jun 6, 2021 for the oiledmachine-overlay,
-# it was decided to switch to beta because of security fixes.  For the
-# 90.0.4430.212 version used in CEF stable, NVD lists vulnerabilities
-# for that codebase even in v8.
+# In Aug 7, we switching back to stable which is sufficient for security standards
 
-# 07/20/2021 - 92.0.16+g3492b1b+chromium-92.0.4515.107 / Chromium 92.0.4515.107
-CHROMIUM_V="92.0.4515.107" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
-CEF_COMMIT="g3492b1b" # same as https://bitbucket.org/chromiumembedded/cef/commits/
-TARBALL_SUFFIX="_beta" # can be _beta or ""
+# 08/04/2021 - 92.0.25+gd15cfa8+chromium-92.0.4515.131 / Chromium 92.0.4515.131
+CHROMIUM_V="92.0.4515.131" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
+CEF_COMMIT="gd15cfa8" # same as https://bitbucket.org/chromiumembedded/cef/commits/
+TARBALL_SUFFIX="" # can be _beta or "" (stable)
 SRC_URI="
 	x86? (
 		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32${TARBALL_SUFFIX}_minimal.tar.bz2 )
@@ -51,8 +48,8 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/92.0.4515.107/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/92.0.4515.107/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/92.0.4515.131/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/92.0.4515.131/build/install-build-deps.sh#L151
 # TODO: app-accessibility/speech-dispatcher needs multilib
 GLIB_V="2.48"
 XI_V="1.7.6"
@@ -248,8 +245,4 @@ pkg_postinst() {
 	ewarn "This package needs to be updated at the same time as your Chromium web browser"
 	ewarn "to avoid the same critical vulnerabilities."
 	ewarn
-	einfo
-	einfo "Packager notes:"
-	einfo "Use a LD_LIBRARY_PATH wrapper to use this package."
-	einfo
 }
