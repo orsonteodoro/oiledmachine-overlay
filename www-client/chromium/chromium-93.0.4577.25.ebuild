@@ -304,6 +304,7 @@ REQUIRED_USE="
 	pgo-web? ( pgo-native )
 	ppc64? ( !shadowcallstack )
 	screencast? ( wayland )
+	shadowcallstack? ( clang )
 	widevine? ( !arm64 !ppc64 )
 	x86? ( !shadowcallstack )
 "
