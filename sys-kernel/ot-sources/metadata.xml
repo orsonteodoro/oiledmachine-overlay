@@ -164,8 +164,9 @@
     <flag name="bmq-quick-fix">Patches the kernel with fixes to BMQ.</flag>
     <flag name="cfi">Ensures that the toolchain is ready for CFI support
       (arm64 ready, x86_64 soon).  Control Flow Integrity (CFI) is mitigation
-      against forward edge attacks and backward edge attacks to mitigate
-      against malicious code execution.</flag>
+      against forward edge attacks and backward edge attacks (through the
+      shadowcallstack USE flag) to mitigate against malicious code
+      execution.</flag>
     <flag name="cfs">Uses the CFS (Completely Fair Scheduling) CPU scheduler
       and not apply any third-party CPU scheduler.</flag>
     <flag name="cve_hotfix">Applies patches to resolve CVEs (Common 
@@ -257,8 +258,7 @@
       compiler optimizations.</flag>
     <flag name="pds">Patches the kernel with an alternative skiplist
       based scheduler.</flag>
-    <flag name="pgo">Checks Clang prerequisites for PGO.
-      (Coming soon...)</flag>
+    <flag name="pgo">Checks future support for PGO through Clang</flag>
     <flag name="prjc">Applies the Project C CPU scheduler.</flag>
     <flag name="rt">Patches the kernel with the PREEMPT_RT patch which tries
       to minimize non-preemptible parts of the kernel.  It's experimental when
@@ -266,6 +266,9 @@
       is not recommended for desktop use but for dedicated and isolated
       setups.  Never give untrusted apps realtime access.  The rt patchset
       is used by music producers that require low latency audio.
+    <flag name="shadowcallstack">Ensures that shadow call stack dependencies
+      are installed.  Protects from back edge attacks from arbitary
+      code execution.</flag>
     <flag name="symlink">Updates the the /usr/src/linux symlink for every
       newer release.</flag>
     <flag name="tresor">Controls application of TRESOR, a cold boot resistant
@@ -304,9 +307,6 @@
 
       for 5.10 see:
       https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
-
-      for 5.12 see:
-      https://github.com/torvalds/linux/compare/v5.12...zen-kernel:5.12/zen-sauce
 
       for 5.13 see:
       https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/zen-sauce

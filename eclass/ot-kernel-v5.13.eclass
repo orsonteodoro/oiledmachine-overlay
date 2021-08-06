@@ -102,13 +102,14 @@ KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs disable_debug futex-wait-multiple futex2
-+genpatches +kernel-compiler-patch lto muqss +O3 prjc rt tresor tresor_aesni
-tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
-zen-sauce -zen-tune zen-tune-muqss"
++genpatches +kernel-compiler-patch lto muqss +O3 prjc rt shadowcallstack tresor
+tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
+tresor_x86_64-256-bit-key-support uksm zen-sauce -zen-tune zen-tune-muqss"
 REQUIRED_USE+="
 	!muqss
-	!prjc
 	^^ ( cfs muqss prjc )
+	prjc? ( !rt )
+	shadowcallstack? ( cfi )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
 	tresor_i686? ( tresor )
@@ -117,10 +118,17 @@ REQUIRED_USE+="
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
 	zen-tune-muqss? ( muqss zen-tune )"
 
+EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
+gen_scs_exclusion() {
+        for a in ${EXCLUDE_SCS[@]} ; do
+                echo " ${a}? ( !shadowcallstack )"
+	done
+}
+REQUIRED_USE+=" "$(gen_scs_exclusion)
+
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
 	muqss? ( !rt )
-	prjc? ( !rt )
 	rt? ( cfs !muqss !prjc )
 "
 fi
@@ -166,13 +174,19 @@ LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 CFI_RDEPEND="
 	(
 		sys-devel/clang:12
+		=sys-devel/clang-runtime-12*[compiler-rt,sanitize]
 		sys-devel/llvm:12
 		>=sys-devel/lld-12
+		=sys-libs/compiler-rt-12*
+		=sys-libs/compiler-rt-sanitizers-12*[cfi?,shadowcallstack?]
 	)
 	(
 		sys-devel/clang:13
+		=sys-devel/clang-runtime-13*[compiler-rt,sanitize]
 		sys-devel/llvm:13
 		>=sys-devel/lld-13
+		=sys-libs/compiler-rt-13*
+		=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
 	)"
 
 LTO_CLANG_RDEPEND="
@@ -292,7 +306,6 @@ fi
 
 # Not ready or not planned
 #	   muqss? ( ${CK_SRC_URI} )
-#	   prjc? ( ${PRJC_SRC_URI} )
 
 # For CPU microarchitectures >= year 2020, assumes mutually exclusive
 # kernel-compiler-patch* USE flag usage
@@ -327,6 +340,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
 	   O3? ( ${O3_ALLOW_SRC_URI} )
+	   prjc? ( ${PRJC_SRC_URI} )
 	   rt? ( ${RT_SRC_URI} )
 	   tresor? (
 		${TRESOR_AESNI_SRC_URI}
@@ -371,9 +385,14 @@ ewarn
 #ewarn
 #	fi
 
-	if ! use arm64 ; then
+	if ! use arm64 && use cfi ; then
 ewarn
 ewarn "CFI is only offered on the arm64 platform."
+ewarn
+	fi
+	if ! use arm64 && use shadowcallstack ; then
+ewarn
+ewarn "ShadowCallStack is only offered on the arm64 platform."
 ewarn
 	fi
 }

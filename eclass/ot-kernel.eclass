@@ -31,11 +31,9 @@
 #   https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
 #   https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #   https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
-#   https://github.com/torvalds/linux/compare/v5.12...ckolivas:5.12-ck
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
 #   5.10 https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c
-#   5.11 https://github.com/torvalds/linux/commit/a09abe2fc9c447bcf7c7f9888d63fb448da29ed6
 # O3 (Optimize Harder):
 #   4.9 (O3) https://github.com/torvalds/linux/commit/7d0295dc49233d9ddff5d63d5bdc24f1e80da722
 #   circa 2018 (infiniband O3 read overflow fix) \
@@ -47,7 +45,7 @@
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.12/
+#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.13/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
 # TRESOR:
@@ -67,11 +65,11 @@
 #     in particular 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #     in particular in between \
-#     [dda238180bacda4c39f71dd16d754a48da38e676,e1b127aa22601f9cb2afa3daad4c69e6a42a89f5] \
+#     [890ac85,b7b24b4] \
 #     [exclusive-old^,inclusive-new] [top,bottom]
-#   https://github.com/torvalds/linux/compare/v5.11...zen-kernel:5.11/zen-sauce
+#   https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/zen-sauce
 #     in particular in between \
-#     [cc1e8edfe1969c80fc006b8c82f682ca744a7c44,791993e1c1fd68c5c05295efabebb8b4b3579f3a] \
+#     [bfbbf97,732e540] \
 #     [exclusive-old^,inclusive-new] [top,bottom]
 
 case ${EAPI:-0} in
@@ -123,7 +121,7 @@ HOMEPAGE+="
 
 OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:="MAJOR_MINOR"}
 KEYWORDS=${KEYWORDS:=\
-"~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"}
+"~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"}
 SLOT=${SLOT:=${PV}}
 K_TAG="-ot"
 S="${WORKDIR}/linux-${PV}${K_TAG}"
@@ -1582,6 +1580,10 @@ einfo
 einfo "For CFI, the menuconfig item is found at:"
 einfo
 einfo "  General architecture-dependent options > Use Clang's Control Flow Integrity (CFI)"
+einfo
+einfo "For ShadowCallStack, the menuconfig item is found at:"
+einfo
+einfo "  General architecture-dependent options > Clang Shadow Call Stack"
 einfo
 	elif (( ${has_newer_kcp_arch} == 1 )) ; then
 einfo
