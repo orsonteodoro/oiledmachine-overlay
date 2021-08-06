@@ -415,6 +415,7 @@ BDEPEND="
 				sys-devel/llvm:13[${MULTILIB_USEDEP}]
 				=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 				>=sys-devel/lld-13
+				=sys-libs/compiler-rt-13*
 				=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
 			)
 		)
@@ -423,6 +424,7 @@ BDEPEND="
 			sys-devel/llvm:13[${MULTILIB_USEDEP}]
 			=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-13
+			=sys-libs/compiler-rt-13*
 			=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
 		)
 	)
