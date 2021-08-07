@@ -1169,14 +1169,14 @@ src_prepare() {
 		)
 
 		# Skip use of vpython because of download times for cipd and found no way to cache downloads.
-		for f in $(grep -l -e "/usr/bin/env vpython3" $(find ${futurize_lst[@]} -name "*.py")) ; do
-			einfo "Converting shebang:  vpython3 -> ${EPYTHON}"
-			sed -i -e "s|/usr/bin/env vpython3|/usr/bin/env ${EPYTHON}|" \
+		for f in $(grep -l -e "/usr/bin/env vpython3$" $(find ${futurize_lst[@]} -name "*.py")) ; do
+			einfo "Converting shebang:  vpython3 -> ${EPYTHON} for ${f}"
+			sed -i -e "s|/usr/bin/env vpython3$|/usr/bin/env ${EPYTHON}|" \
 				"${f}" || die
 		done
-		for f in $(grep -l -e "/usr/bin/env vpython" $(find ${futurize_lst[@]} -name "*.py")) ; do
-			einfo "Converting shebang:  vpython -> ${EPYTHON}"
-			sed -i -e "s|/usr/bin/env vpython3|/usr/bin/env ${EPYTHON}|" \
+		for f in $(grep -l -e "/usr/bin/env vpython$" $(find ${futurize_lst[@]} -name "*.py")) ; do
+			einfo "Converting shebang:  vpython -> ${EPYTHON} for ${f}"
+			sed -i -e "s|/usr/bin/env vpython$|/usr/bin/env ${EPYTHON}|" \
 				"${f}" || die
 		done
 		for f in $(find ${futurize_lst[@]} -name "*.py") ; do
