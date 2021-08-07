@@ -25,39 +25,6 @@
 www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
     ----- CUT ABOVE HERE -----
 
-    Per build environment variables:
-
-    ECHROMIUM_PGO_URIS - A space delimited URIs to use per tab for the PGO tab
-      creation simulation.  If you do not supply, it will use open source
-      websites that use some open source or open content.  Setting this will
-      override the defaults.  Sites selected should be widely used and not
-      contain untrusted content.
-
-    ECHROMIUM_CUSTOM_TIMEBOX_TIME - Duration in seconds this simulation(s) will
-      last before moving on.
-
-    Since the pgo-ebuild-profile-generator USE flag is not event and
-    event-hander based but time based, these should be set due to variation on
-    hardware.  Older machines may need to adjust some of these.
-
-    EPGO_CUSTOM_TIMEBOX_TIME = time in seconds to run the custom simulation.
-    EPGO_TEST_SLACK_TIME = time in seconds to add to continue to run per 
-      benchmark tests
-    EPGO_WAIT_SLACK_TIME = time in seconds to add to pauses for certain
-      transition events
-    EPGO_BROWSER_COLD_LAUNCH_TIME = time in seconds to first run chromium
-      uncached
-    EPGO_BROWSER_CACHED_LAUNCH_TIME = time in seconds to re-run chromium cached
-    EPGO_DESKTOP_COLD_LAUNCH_TIME = time in seconds to first run the xserver
-      uncached
-    EPGO_DESKTOP_CACHED_LAUNCH_TIME = time in seconds to re-run the xserver
-      cached
-    EPGO_FCP = time in seconds for an estimate when all images are presented
-      on the webpage with the most significant element presented (e.g. start
-      test button).
-    EPGO_LCP = time in seconds for an estimate when all images appear on
-      a web page.
-
     References:
       --lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
       CFI - https://www.chromium.org/developers/testing/control-flow-integrity
@@ -123,36 +90,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="pgo">Builds with Profile Guided Optimizations to improve
       -- page loads, input reponsiveness, web reponsiveness -- by ~10% or less.
       Builds only once with a pregenerated PGO profile.</flag>
-    <flag name="pgo-audio">
-      This one checks if user restrictions is relaxed for use for audio
-      streaming tests or readiness for measured pgo profile collection.  Ensure
-      that these code paths & function signatures are properly accessible and
-      being measured.</flag>
-    <flag name="pgo-custom-script">
-      One can supply a /etc/portage/pgo-scripts/www-client/chromium/${PV}.sh,
-      where ${PV} is the version, to extend profile-generation.  This could
-      be used to run custom scenarios as hints to the compiler.  See
-      ebuild for details.</flag>
-    <flag name="pgo-ebuild-profile-generator">
-      Use the ebuild provided scripts to generate the measured data.  This
-      uses realistic simulation which users can extend with additional space
-      separated URIs in ECHROMIUM_PGO_URIS and ECHROMIUM_CUSTOM_TIMEBOX_TIME
-      envvars.  1080p is currently only supported.</flag>
-    <flag name="pgo-gpu">
-      This one checks if user is relaxed for use for GPU benchmarks or readiness
-      for measured PGO profile collection.  Ensure that these code paths &
-      function signatures are properly accessible and being measured.</flag>
-    <flag name="pgo-native">Builds with 3-step Profile Guided Optimizations.
-      Builds PGO using the native customized environment.  This will double
-      the build times.</flag>
-    <flag name="pgo-upstream-profile-generator">
-      Use the upstream recommended procedure and scripts to generate the
-      measured data.  This relies on speedometer2 benchmarks for improving
-      responsiveness and system health benchmarks for improving load times.
-      </flag>
-    <flag name="pgo-web">Allows PGO simulation step to visit websites and image
-      galleries for purposes of attempting to increase function signature hits
-      related to tab usage so they do not get demoted to cold sections.</flag>
+    <flag name="pgo-full">Builds with the 3-step Profile Guided Optimization,
+      natively.  This will double the build times.  Uses the performance test
+      suite to generate the PGO profile.</flag>
     <flag name="proprietary-codecs">Enable codecs for patent-encumbered audio
        and video formats.</flag>
     <flag name="shadowcallstack">Allow for backward edge protections or

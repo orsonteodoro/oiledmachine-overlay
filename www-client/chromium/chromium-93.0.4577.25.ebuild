@@ -14,37 +14,9 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
 	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
 	sv sw ta te th tr uk vi zh-CN zh-TW"
 
-EPGO_CUSTOM_SIMULATION_TIMEBOX_TIME=${EPGO_CUSTOM_SIMULATION_TIMEBOX_TIME:=120}
-EPGO_TEST_SLACK_TIME=${EPGO_TEST_SLACK_TIME:=0} # \
-# test duration adjustment for different kinds of hardware.  Increase for slower
-# or older hardware
-EPGO_WAIT_SLACK_TIME=${EPGO_WAIT_SLACK_TIME:=0} # \
-# pause duration adjustment for different kinds of hardware.  Increase for slower
-# or older hardware
-EPGO_BROWSER_COLD_LAUNCH_TIME=${EPGO_BROWSER_COLD_LAUNCH_TIME:=45} # \
-# Length of time it takes to cold launch chromium.  It takes around 22s.
-EPGO_BROWSER_CACHED_LAUNCH_TIME=${EPGO_BROWSER_CACHED_LAUNCH_TIME:=2} # \
-# Dumped and then immediately launched. It takes around 1s.
-EPGO_DESKTOP_COLD_LAUNCH_TIME=${EPGO_DESKTOP_COLD_LAUNCH_TIME:=20} # \
-# Length of time it takes to cold launch xserver+dwm.  It takes around 10s.
-EPGO_DESKTOP_CACHED_LAUNCH_TIME=${EPGO_DESKTOP_CACHED_LAUNCH_TIME:=4} # \
-# Length of time it takes to cold launch xserver+dwm.  It takes around 2s.
-EPGO_DESKTOP_CLOSE_TIME=3 # \
-# Length of time it takes to close the xserver normally.
-EPGO_FCP=${EPGO_FCP:=14} # \
-# FCP = First contentful paint (time from pressing enter on URI bar to first
-# image that appears).  It takes around 2 seconds.  This has been adjusted
-# to double the time for the most essential element or button.
-EPGO_LCP=${EPGO_LCP:=20} # \
-# LCP = Last contentful paint (time it takes to complete rendering or loading a
-# page) assuming average case.  Worst cases are around 70s.
-
-# Cold times are pre run with `sync ; echo 3 > /proc/sys/vm/drop_caches`
-
-VIRTUALX_REQUIRED=manual
 LLVM_MAX_SLOT=13
 inherit check-reqs chromium-2 desktop flag-o-matic llvm multilib ninja-utils pax-utils portability python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
-inherit multilib-minimal virtualx
+inherit multilib-minimal
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
@@ -56,51 +28,7 @@ SRC_URI="
 	https://dev.gentoo.org/~sultan/distfiles/www-client/${PN}/${PN}-92-glibc-2.33-patch.tar.xz
 	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )"
 RESTRICT="mirror"
-PROPERTIES="interactive" # for sudo
-# The PGO plan: pgo is a non-root account that will start X in another vt and
-# run X.  This ebuild will load the browser and run macros pushed to that vt
-# and DISPLAY.  This is why this ebuild is interactive.  The other cause
-# may be due to elogind explained in
-# https://forums.gentoo.org/viewtopic-p-8488777.html#8488777
-# which needs to create a session and the X server needs to be the same user
-# that started the session.
 
-PGO_EBUILD_GENERATOR_SITE_LICENSES=(
-	CC-BY-4.0
-	CC0-1.0
-	CC-BY-SA-3.0
-	MIT
-	all-rights-reserved MIT
-	BSD-2
-	BSD
-	GPL-2
-	GPL-2+
-	LGPL-2.1
-	ZLIB
-	Apache-2.0
-)
-PGO_UPSTREAM_GENERATOR_SITE_LICENSES=(
-	MIT
-	Apache-2.0
-)
-# search.creativecommons.org CC-BY-4.0 (Content attributed to Creative Commons)
-# search.creativecommons.org image search results CC0-1.0
-# wiki.gentoo.org CC-BY-SA-3.0 (Content attributed to Gentoo Foundation, Inc)
-# www.kevs3d.co.uk MIT with link back clause
-# Under the hood of the JetStream 2 benchmark:
-#   https://github.com/WebKit/WebKit/tree/main/Websites/browserbench.org/JetStream2.0 \
-#     and internal third party dependencies BSD-2, BSD, GPL-2, GPL-2+, \
-#     LGPL-2.1, MIT
-# Under the hood of the Octane benchmark:
-#   https://github.com/chromium/octane and internal third party dependencies \
-#     BSD, GPL-2+, MIT, (all rights reserved MIT), ZLIB, Apache-2.0
-#   https://github.com/chromium/octane/blob/master/crypto.js \
-#     all-rights-reserved MIT (the plain MIT license doesn't contain \
-#     all rights reserved)
-#   https://github.com/chromium/octane/blob/master/js/bootstrap-collapse.js
-# Under the hood of the the Speedometer 2.0 benchmark:
-#   https://github.com/WebKit/WebKit/tree/main/PerformanceTests/Speedometer \
-#     or internal third party dependencies MIT, Apache-2.0
 LICENSE="BSD
 	 libcxx? ( chromium-93.0.4577.x-libcxx )
 	!libcxx? ( chromium-93.0.4577.x-libstdcxx )
@@ -150,8 +78,6 @@ LICENSE="BSD
 	WTFPL-2
 	x11proto
 	ZLIB
-	pgo-ebuild-profile-generator? ( ${PGO_EBUILD_GENERATOR_SITE_LICENSES} )
-	pgo-upstream-profile-generator? ( ${PGO_UPSTREAM_GENERATOR_SITE_LICENSES} )
 	widevine? ( widevine )"
 LICENSE_FINGERPRINT_LIBSTDCXX="\
 147e32b00489a9b0023d720066a1db648d4104fe81d8e764902a44a2eb650308\
@@ -265,9 +191,8 @@ IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For libcxx default, see \
 #   https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
-IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx lto-opt +pgo pgo-audio pgo-gpu
-pgo-custom-script -pgo-ebuild-profile-generator -pgo-native
-pgo-upstream-profile-generator -pgo-web shadowcallstack"
+IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx lto-opt +pgo -pgo-full
+shadowcallstack"
 _ABIS=( abi_x86_32
 	abi_x86_64
 	abi_x86_x32
@@ -289,19 +214,10 @@ REQUIRED_USE="
 	component-build? ( !suid )
 	libcxx? ( clang )
 	lto-opt? ( clang )
-	official? ( amd64? ( cfi cfi-icall ) partitionalloc pgo )
+	official? ( amd64? ( cfi cfi-icall ) partitionalloc ^^ ( pgo pgo-full ) )
 	partitionalloc? ( !component-build )
-	pgo? ( clang !pgo-native )
-	pgo-audio? ( pgo-native )
-	pgo-custom-script? ( pgo-ebuild-profile-generator )
-	pgo-ebuild-profile-generator? ( !pgo-upstream-profile-generator )
-	pgo-gpu? ( pgo-native )
-	pgo-native? ( ^^ ( pgo-ebuild-profile-generator
-			   pgo-upstream-profile-generator )
-			   clang
-			   !pgo )
-	pgo-upstream-profile-generator? ( !pgo-ebuild-profile-generator )
-	pgo-web? ( pgo-native )
+	pgo? ( clang !pgo-full )
+	pgo-full? ( clang !pgo )
 	ppc64? ( !shadowcallstack )
 	screencast? ( wayland )
 	shadowcallstack? ( clang )
@@ -384,9 +300,6 @@ RDEPEND="${COMMON_DEPEND}
 DEPEND="${COMMON_DEPEND}
 "
 # dev-vcs/git - https://bugs.gentoo.org/593476
-# TODO change to !pgo-gpu? ( ${VIRTUALX_DEPEND} )
-# >=mesa-21.1 is bumped to compatibile llvm-12
-# <=mesa-21.0.x is only llvm-11 compatible
 BDEPEND="
 	${PYTHON_DEPS}
 	$(python_gen_any_dep '
@@ -427,13 +340,15 @@ BDEPEND="
 		)
 	)
 	js-type-check? ( virtual/jre )
-	pgo-ebuild-profile-generator? (
-		${VIRTUALX_DEPEND}
-		app-admin/sudo
-		x11-apps/xrandr
-		x11-misc/xdotool
+	pgo-full? (
+		$(python_gen_any_dep 'dev-python/future[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep 'dev-python/psutil[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep 'dev-python/requests[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep 'dev-python/six[${PYTHON_USEDEP}]')
 	)
 "
+
+# pgo related:  dev-python/requests is python3 but testing/scripts/run_performance_tests.py is python2
 
 # Upstream uses llvm:13
 # For the current llvm for this project, see
@@ -826,145 +741,10 @@ ewarn "Disable them if problematic."
 ewarn
 	fi
 
-	if use pgo-native ; then
+	if use pgo-full ; then
 ewarn
-ewarn "The pgo-native USE flag is a Work In Progress (WIP)."
+ewarn "The pgo-full USE flag is a Work In Progress (WIP)."
 ewarn
-	fi
-
-	if use pgo-web ; then
-		if has network-sandbox $FEATURES ; then
-eerror
-eerror "${PN} requires network-sandbox to be disabled in per-package FEATURES"
-eerror "in order to access remote websites."
-eerror
-			die
-		fi
-	fi
-
-	# The pgo account that will run the simulations for pgo profile
-	# creation.  The normal portage account will remain without video and
-	# audio permissions to maintain the restrictive defaults for the sandbox
-	# environment.  The pgo account will allow for accelerated testing.
-	#
-	# It is possible to run X and run untrusted assets as root but it's too
-	# dangerous for untrusted URIs.  This is why it is done though the pgo
-	# account.
-	#
-	if use pgo-ebuild-profile-generator ; then
-ewarn
-ewarn "The pgo-ebuild-profile-generator USE flag is a Work In Progress (WIP)"
-ewarn "and untested.  Do not use at this time.  Try the pgo USE flag first"
-ewarn "followed by the pgo-upstream-profile-generator USE flag instead."
-ewarn
-		if ! id pgo 2>/dev/null 1>/dev/null ; then
-eerror
-eerror "You must have a pgo system account to run simulations to generate a"
-eerror "pgo profile.  You can run the following below to setup the pgo"
-eerror "account as follows:"
-eerror
-eerror "  useradd pgo ; \\"
-eerror "    gpasswd -a pgo audio ; \\"
-eerror "    gpasswd -a pgo input ; \\"
-eerror "    gpasswd -a pgo portage ; \\"
-eerror "    gpasswd -a pgo tty ; \\"
-eerror "    gpasswd -a pgo video ; \\"
-eerror "    usermod -U pgo ; \\"
-eerror "    usermod -d /var/lib/portage/pgo/home pgo ; \\"
-eerror "    mkdir -p /var/lib/portage/pgo/home ; \\"
-eerror "    chown -R pgo:portage /var/lib/portage/pgo/home \\"
-eerror "    passwd pgo"
-eerror
-eerror "You may consider adding targetpw to the sudoers file via visudo to"
-eerror "enter passwords for the pgo account as well and extending the"
-eerror "timestamp_timeout period."
-eerror
-			die
-		fi
-		if ! ( groups pgo | grep -q -e "portage" ) ; then
-die "You must add pgo to the portage group."
-		fi
-		local pw_status=$(passwd --status pgo | cut -f 2 -d " ")
-		if [[ "${pw_status}" != "P" ]] ; then
-die "The pgo account must have a password."
-		fi
-		if [[ $(realpath ~pgo) != "/var/lib/portage/pgo/home" ]] ; then
-die "The pgo account's home directory must be changed to /var/lib/portage/pgo/home."
-		fi
-
-		if ! ( xrandr -q | grep -q -e "1920x1080" ) ; then
-eerror
-eerror "Currently 1080p is only supported for profile generation through the"
-eerror "pgo-ebuild-profile-generator USE flag."
-eerror
-			die
-		fi
-	fi
-	# Plans may require special pgo system account.
-	if use pgo-gpu ; then
-# We do not want the xvfb but rather the acclerated X instead.
-ewarn
-ewarn "The pgo-gpu USE flag is a Work In Progress (WIP)."
-ewarn "Do not use at this time."
-ewarn
-ewarn "Remove USER=${USER} from the video group.  Group permssions should only"
-ewarn "apply to the pgo account."
-ewarn
-		if ! ( groups pgo | grep -q -e "video" ) ; then
-			die "You must add pgo to the video group."
-		fi
-
-		# From sci-geosciences/grass ebuild
-		shopt -s nullglob
-		local mesa_cards=$(echo -n /dev/dri/card* /dev/dri/render* | sed 's/ /:/g')
-		if test -n "${mesa_cards}" ; then
-			addpredict "${mesa_cards}"
-		fi
-		local ati_cards=$(echo -n /dev/ati/card* | sed 's/ /:/g')
-		if test -n "${ati_cards}" ; then
-			addpredict "${ati_cards}"
-		fi
-		shopt -u nullglob
-		addpredict /dev/nvidiactl
-	fi
-
-	if use pgo-audio ; then
-ewarn
-ewarn "The pgo-audio USE flag is a Work In Progress (WIP)."
-ewarn "Do not use at this time."
-ewarn
-ewarn "Remove USER=${USER} from the audio group.  Group permissions should only"
-ewarn "apply to the pgo account."
-ewarn
-		if ! ( groups pgo | grep -q -e "audio" ) ; then
-			die "You must add pgo to the audio group."
-		fi
-	fi
-
-	if use pgo-upstream-profile-generator ; then
-ewarn
-ewarn "The pgo-upstream-profile-generator USE flag is a Work In Progress (WIP)."
-ewarn
-	fi
-
-	if use pgo-custom-script ; then
-		local f="/etc/portage/pgo-scripts/www-client/chromium/${PV}.sh"
-		if [[ ! -f "${f}" ]] ; then
-			eerror "Missing ${f}"
-			die
-		fi
-		local group_owner=$(stat -c "%G" "${f}")
-		if [[ "${group_owner}" != "portage" ]] ; then
-eerror "Inspect ${f} contents for tampering in and change group ownership to"
-eerror "portage."
-			die
-		fi
-		local perms=$(stat -c "%a" "${f}" | cut -c 3)
-		if [[ "${perms}" != "0" ]] ; then
-eerror "Inspect ${f} contents for tampering in and change file permissions to"
-eerror "640."
-			die
-		fi
 	fi
 
 	if use official || ( use clang && use cfi && use pgo ) ; then
@@ -1000,7 +780,6 @@ eerror
 			die
 		fi
 	fi
-	use pgo-ebuild-profile-generator && die "USE flag not ready"
 	use libcxx && ewarn "Using the libcxx USE flag is in testing"
 
 	for a in $(multilib_get_enabled_abis) ; do
@@ -1012,6 +791,18 @@ USED_EAPPLY=0
 ceapply() {
 	USED_EAPPLY=1
 	eapply "${@}"
+}
+
+update_cipd() {
+	if use pgo-full ; then
+		einfo "Bootstraping cipd.  Please wait"
+		export PATH="${BUILD_DIR}/third_party/depot_tools/:${PATH}"
+		vpython --version
+	fi
+}
+
+src_unpack() {
+	unpack ${A}
 }
 
 src_prepare() {
@@ -1073,8 +864,6 @@ src_prepare() {
 
 	# adjust python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" .gn || die
-	sed -i -e "s|/usr/bin/env vpython|/usr/bin/env ${EPYTHON}|g" \
-		tools/perf/run_benchmark || die
 
 	# bundled highway library does not support arm64 with GCC
 	if use arm64 ; then
@@ -1355,6 +1144,45 @@ src_prepare() {
 	# bundled eu-strip is for amd64 only and we don't want to pre-stripped binaries
 	mkdir -p buildtools/third_party/eu-strip/bin || die
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
+
+	# Trys to do the minimal edits in order to run the benchmarks without resorting
+	# to pulling possibly EOL micropackages.
+	if use pgo-full ; then
+		local futurize_lst=(
+			# Put the entire import tree
+			tools/perf/benchmarks
+			tools/perf/core
+			tools/perf/page_sets
+			tools/perf/run_benchmark
+			testing/scripts/common.py
+			testing/scripts/run_performance_tests.py
+			testing/test_env.py
+			testing/xvfb.py
+		)
+
+		# Skip use of vpython because of download times for cipd and found no way to cache downloads.
+		for f in $(grep -l -e "/usr/bin/env vpython3" $(find ${futurize_lst[@]} -name "*.py")) ; do
+			einfo "Converting shebang:  vpython3 -> ${EPYTHON}"
+			sed -i -e "s|/usr/bin/env vpython3|/usr/bin/env ${EPYTHON}|" \
+				"${f}" || die
+		done
+		for f in $(grep -l -e "/usr/bin/env vpython" $(find ${futurize_lst[@]} -name "*.py")) ; do
+			einfo "Converting shebang:  vpython -> ${EPYTHON}"
+			sed -i -e "s|/usr/bin/env vpython3|/usr/bin/env ${EPYTHON}|" \
+				"${f}" || die
+		done
+		for f in $(find ${futurize_lst[@]} -name "*.py") ; do
+			local result=$(futurize -0 "${f}" 2>&1)
+			if [[ "${result}" =~ "RefactoringTool: No changes to" \
+				|| "${result}" =~ "RefactoringTool: No files need to be modified." ]] ; then
+				einfo "Skipping futurization of ${f}"
+			else
+				einfo "Futurizing ${f}"
+				futurize -w -0 "${f}" || die
+			fi
+		done
+	fi
+
 	(( ${NABIS} > 1 )) \
 		&& multilib_copy_sources
 }
@@ -1708,7 +1536,7 @@ _configure_pgx() {
 # See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
 # See also https://github.com/chromium/chromium/blob/93.0.4577.25/docs/pgo.md
 # profile-instr-use is clang which that file assumes but gcc doesn't have.
-	if use pgo-native ; then
+	if use pgo-full ; then
 		myconf_gn+=" chrome_pgo_phase=${PGO_PHASE}"
 		mkdir -p "${BUILD_DIR}/chrome/build/pgo_profiles" || die
 		[[ "${PGO_PHASE}" == "2" ]] && \
@@ -1749,493 +1577,24 @@ _build_pgx() {
 	done
 }
 
-get_vertxl_display() {
-	export VIRTXL_DISPLAY=$(ps -aux \
-		| grep -F -e "/usr/bin/X" \
-		| grep -F -e "pgo" \
-		| grep -o -e ":[0-9] " \
-		| sed -e "s|[ ]||g")
-}
-
-virtxl_init() {
-einfo
-einfo "Please choose a vt from ctrl+alt+f1 ... ctrl+alt+f12 and login into the"
-einfo "pgo account starting X"
-einfo
-einfo "Press enter to continue"
-einfo
-	read dummy
-	while [[ -z "${VIRTXL_DISPLAY}" ]] ; do
-		einfo "Didn't find the Xserver loaded for the pgo account"
-		einfo "Press enter to retry"
-		read dummy
-		get_vertxl_display
-	done
-	einfo "Found DISPLAY=${VIRTXL_DISPLAY}"
-	DISPLAY=${VIRTXL_DISPLAY}
-
-	einfo "Allowing portage account access to pgo account X session which"
-	einfo "a sudo prompt may be presented."
-	sudo -u pgo -g portage xhost +local:
-
-	einfo "Will push automated macros into DISPLAY=${DISPLAY}"
-	einfo "Multiple logins may be required if sudo times out."
-}
-
-virtxl() {
-	einfo "Running the PGO runner script.  A sudo prompt may be shown."
-	sudo -b -u pgo -g portage "${@}"
-}
-
-# The most intensive computational parts should be pushed in hot section that
-# need boosting that way if you encounter in them again they penalize less.
-_javascript_benchmark() {
-	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
-
-	local have_gpu="false"
-	if use pgo-gpu ; then
-		have_gpu="true"
-	fi
-
-	local benchmark1_duration=$(( 60 + ${EPGO_TEST_SLACK_TIME} ))
-	local benchmark1_total_time=$(( 20 + ${EPGO_WAIT_SLACK_TIME} + ${benchmark1_duration} ))
-	local benchmark2_duration=$(( 12*60 + ${EPGO_TEST_SLACK_TIME} ))
-	local benchmark2_total_time=$(( 90 + ${EPGO_WAIT_SLACK_TIME} + ${benchmark2_duration} ))
-	local benchmark3_duration=$(( 2*60 + ${EPGO_TEST_SLACK_TIME} ))
-	local benchmark3_total_time=$(( 60 + ${EPGO_WAIT_SLACK_TIME} + ${benchmark3_duration} ))
-	local benchmark4_duration=$(( 60 + ${EPGO_TEST_SLACK_TIME} ))
-	local benchmark4_total_time=$(( 90 + ${EPGO_WAIT_SLACK_TIME} + ${benchmark4_duration} ))
-	local test_duration=$((
-		0
-		+ 2 + ${EPGO_WAIT_SLACK_TIME}
-		+ ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
-		+ ${benchmark1_total_time}
-		+ ${benchmark2_total_time}
-		+ ${benchmark3_total_time}
-		+ ${benchmark4_total_time}
-	))
-einfo
-einfo "Running simulation:  metering javascript engine performance... timeboxed"
-einfo "to $((${test_duration} / 60)) minutes and $((${test_duration} % 60)) seconds"
-einfo
-	cat <<EOF > "${BUILD_DIR}/run.sh"
-#!/bin/bash
-main() {
-	cat /dev/null > "${T}/test-retcode.log"
-	cd "${BUILD_DIR}"
-	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
-	( timeout ${test_duration} \
-		out/Release/chrome ; \
-		echo "$?" > "${T}/test-retcode.log" ) &
-	sleep $((2 + ${EPGO_WAIT_SLACK_TIME})) # let the window load
-	local id=\$(xdotool getwindowfocus)
-	xdotool windowmove --sync ${id} 0 0
-	xdotool windowsize --sync ${id} 1918 1078
-	sleep ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
-
-	# benchmark #1
-	# Runs in about 50 seconds
-	xdotool key --window ${id} ctrl+l
-	xdotool type --window ${id} "https://chromium.github.io/octane/"
-	xdotool key Return
-	sleep $((20 + ${EPGO_WAIT_SLACK_TIME})) # let the page load.  It takes about 10s.
-
-	xdotool mousemove --sync 912 234
-	xdotool click # start
-
-	sleep ${benchmark1_duration}
-
-	# benchmark #2 for WebAssembly also
-	# Runs in about 12 minutes
-	xdotool key --window ${id} ctrl+l
-	xdotool type --window ${id} "https://browserbench.org/JetStream/"
-	xdotool key Return
-	sleep $((90 + ${EPGO_WAIT_SLACK_TIME})) # let the page load.  it takes some time about 1min and 8s.
-
-	xdotool mousemove --sync 957 339
-	xdotool click # start
-
-	sleep ${benchmark2_duration}
-
-	# benchmark #3 for HTML5 Canvas benchmark
-	# Runs in about 2 minutes
-	if ${have_gpu} ; then
-		xdotool key --window ${id} ctrl+l
-		xdotool type --window ${id} "https://www.kevs3d.co.uk/dev/canvasmark/"
-		xdotool key Return
-		sleep $((60 + ${EPGO_WAIT_SLACK_TIME})) # 32s + slack.
-
-		xdotool mousemove --sync 697 462
-		xdotool click # start
-
-		sleep ${benchmark3_duration}
-	fi
-
-	# benchmark #4 webgl
-	if ${have_gpu} ; then
-		xdotool key --window ${id} ctrl+l
-		xdotool type --window ${id} "https://webglsamples.org/aquarium/aquarium.html"
-		xdotool key Return
-		sleep $((90 + ${EPGO_WAIT_SLACK_TIME})) # 1 min for LCP (all textures loaded in the scene) + slack
-		sleep ${benchmark4_duration}
-	fi
-
-	echo -n "\$?" > "${T}/test-retcode.log"
-	exit \$(cat "${T}/test-retcode.log")
-}
-main
-EOF
-	chmod +x "${BUILD_DIR}/run.sh" || die
-	chown pgo:portage "${BUILD_DIR}/run.sh" || die
-	if use pgo-gpu ; then
-		virtxl "${BUILD_DIR}/run.sh"
-	else
-		virtx "${BUILD_DIR}/run.sh"
-	fi
-
-	sleep ${test_duration}
-
-	if [[ -f "${T}/test-retcode.log" ]] ; then
-		die "Missing retcode for ${x}"
-	fi
-	local test_retcode=$(cat "${T}/test-retcode.log")
-	if [[ "${test_retcode}" != "0" ]] ; then
-eerror "Test failed for ${x}.  Return code: ${test_retcode}."
-		die
-	fi
-	sleep ${EPGO_DESKTOP_CLOSE_TIME}
-}
-
-_load_simulation() {
-	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
-	local load_duration=$((${EPGO_BROWSER_COLD_LAUNCH_TIME} + ${EPGO_WAIT_SLACK_TIME}))
-	local test_duration=$((
-		0
-		+ 2 + ${EPGO_WAIT_SLACK_TIME}
-		+ ${load_duration}
-	))
-einfo
-einfo "Running simulation:  metering load-time performance... timeboxed to"
-einfo "${test_duration} seconds"
-einfo
-	cat <<EOF > "${BUILD_DIR}/run.sh"
-#!/bin/bash
-# Handles a window with 2 checkboxes and an OK
-_handle_new_install_window() {
-	local id=\$(xdotool getwindowfocus)
-	sleep $((2 + ${EPGO_WAIT_SLACK_TIME})) # let the window load
-	xdotool windowmove --sync ${id} 0 0
-	xdotool windowsize --sync ${id} 1918 1078
-
-	# no making default browser
-	xdotool mousemove --sync 25 20
-	xdotool click
-
-	# no sending statistics to G
-	xdotool mousemove --sync 23 57
-	xdotool click
-
-	# OK - close window
-	xdotool mousemove --sync 1878 1053
-	xdotool click
-}
-
-main() {
-	cat /dev/null > "${T}/test-retcode.log"
-	cd "${BUILD_DIR}"
-	sleep ${EPGO_DESKTOP_COLD_LAUNCH_TIME}
-	( timeout ${load_duration} \
-		out/Release/chrome ; \
-		echo "$?" > "${T}/test-retcode.log" ) &
-	_handle_new_install_window
-	sleep ${load_duration}
-	echo -n "\$?" > "${T}/test-retcode.log"
-	exit \$(cat "${T}/test-retcode.log")
-}
-main
-EOF
-	chmod +x "${BUILD_DIR}/run.sh" || die
-	chown pgo:portage "${BUILD_DIR}/run.sh" || die
-	if use pgo-gpu ; then
-		virtxl "${BUILD_DIR}/run.sh"
-	else
-		virtx "${BUILD_DIR}/run.sh"
-	fi
-
-	sleep ${test_duration}
-
-	if [[ -f "${T}/test-retcode.log" ]] ; then
-		die "Missing retcode for ${x}"
-	fi
-	local test_retcode=$(cat "${T}/test-retcode.log")
-	if [[ "${test_retcode}" != "0" ]] ; then
-eerror "Test failed for ${x}.  Return code: ${test_retcode}."
-		die
-	fi
-	sleep ${EPGO_DESKTOP_CLOSE_TIME}
-}
-
-_tabs_simulation() {
-	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
-
-	local uris_=()
-	if [[ -z "${ECHROMIUM_PGO_URIS}" ]] ; then
-# This goes through open source or open content websites mostly to make
-# sure that image code paths are loaded in the hot section and not
-# demoted from optimization.  Hot parts get pushed up the memory
-# hierarchy.
-# Assume 20 seconds per URI load time.
-		uris_=(
-'https://search.creativecommons.org/search?q=nature&license=cc0'
-'https://search.creativecommons.org/search?q=bugs&license=cc0'
-'https://search.creativecommons.org/search?q=waterfalls&license=cc0'
-'https://search.creativecommons.org/search?q=clipart&license=cc0&extension=svg'
-'https://search.creativecommons.org/search?q=skyline&license=cc0&extension=jpg'
-'https://search.creativecommons.org/search?q=fish&license=cc0&extension=png'
-'https://search.creativecommons.org/search?q=animated&license=cc0&extension=gif'
-'https://wiki.gentoo.org/wiki/Main_Page'
-		)
-	else
-		uris_=( ${ECHROMIUM_PGO_URIS} )
-	fi
-
-	local tab_switch_delay_time="0.3"
-	local fcp_time=$((20 + ${EPGO_WAIT_SLACK_TIME}))
-	local tabs_load_duration=$(( ${fcp_time} * ${#uris_[@]} ))
-	local tabs_switch_duration=180 # 3 min
-	local tabs_switch_N=$(( echo "${tabs_switch_duration}/${tab_switch_delay_time}" | bc | cut -f 1 -d "." ))
-	local tabs_close_duration=$(( echo "${#uris_[@]} * ${tab_switch_delay_time}" | bc | cut -f 1 -d "." ))
-	local test_duration=$((
-		0
-		+ 2 + ${EPGO_WAIT_SLACK_TIME}
-		+ ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
-		+ ${tabs_load_duration}
-		+ ${tabs_switch_duration}
-		+ ${tabs_close_duration}
-	))
-einfo
-einfo "Running simulation:  metering load-time performance... timeboxed to"
-einfo "$((${experiment_duration} / 60)) minutes and $((${experiment_duration} % 60))"
-einfo
-	cat <<EOF > "${BUILD_DIR}/run.sh"
-#!/bin/bash
-main() {
-	cat /dev/null > "${T}/test-retcode.log"
-	cd "${BUILD_DIR}"
-	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
-	( timeout ${test_duration} \
-		out/Release/chrome ; \
-		echo "$?" > "${T}/test-retcode.log" ) &
-	sleep $((2 + ${EPGO_WAIT_SLACK_TIME})) # let the window load
-	local id=\$(xdotool getwindowfocus)
-	xdotool windowmove --sync ${id} 0 0
-	xdotool windowsize --sync ${id} 1918 1078
-	sleep ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
-
-	local uris=( ${uris_[@]} )
-
-	# Measure image management, and tab creation
-	local tab_limit=20
-	local tab_count=1
-	local n_closed=0
-	for u in ${uris[@]} ; do
-		xdotool key --window ${id} ctrl+t
-		tab_count=$((${tab_count}+1))
-		xdotool key --window ${id} ctrl+l
-		xdotool type --window ${id} "${u}"
-		xdotool key Return
-		sleep ${fcp_time}
-		if (( ${tab_count} > ${tab_limit} )) ; then
-			xdotool key --window ${id} ctrl+1
-			xdotool key --window ${id} ctrl+w
-			xdotool key --window ${id} ctrl+9
-			n_closed=$((${n_closed}+1))
-		fi
-	done
-
-	# Simulate tab switching in 3 minutes
-	for x in $(seq 1 ${tabs_switch_N}) ; do
-		xdotool key --window ${id} ctrl+$(($((${RANDOM}  % 9)) + 1))
-		sleep ${tab_switch_delay_time}
-	done
-
-	for u in $(seq 1 $((${#uris[@]}-${n_closed}))) ; do
-		xdotool key --window ${id} ctrl+w
-		sleep ${tab_switch_delay_time}
-	done
-
-	echo -n "\$?" > "${T}/test-retcode.log"
-	exit \$(cat "${T}/test-retcode.log")
-}
-main
-EOF
-	chmod +x "${BUILD_DIR}/run.sh" || die
-	chown pgo:portage "${BUILD_DIR}/run.sh" || die
-	if use pgo-gpu ; then
-		virtxl "${BUILD_DIR}/run.sh"
-	else
-		virtx "${BUILD_DIR}/run.sh"
-	fi
-
-	sleep ${test_duration}
-
-	if [[ -f "${T}/test-retcode.log" ]] ; then
-		die "Missing retcode for ${x}"
-	fi
-	local test_retcode=$(cat "${T}/test-retcode.log")
-	if [[ "${test_retcode}" != "0" ]] ; then
-eerror "Test failed for ${x}.  Return code: ${test_retcode}."
-		die
-	fi
-	sleep ${EPGO_DESKTOP_CLOSE_TIME}
-}
-
-_responsiveness_simulation() {
-	# Benchmark runs actually in around a minute.
-	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
-	local benchmark_duration=60
-	local test_duration=$((
-		0
-		+ ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
-		+ ${EPGO_FCP}
-		+ ${benchmark_duration}
-	))
-einfo
-einfo "Running simulation:  metering load-time performance... timeboxed to"
-einfo "${test_duration} seconds"
-einfo
-	cat <<EOF > "${BUILD_DIR}/run.sh"
-#!/bin/bash
-main() {
-	cat /dev/null > "${T}/test-retcode.log"
-	cd "${BUILD_DIR}"
-	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
-	( timeout ${test_duration} \
-		out/Release/chrome \
-			"https://browserbench.org/Speedometer2.0/" ; \
-		echo "$?" > "${T}/test-retcode.log" ) &
-	local id=\$(xdotool getwindowfocus)
-	sleep ${EPGO_FCP} # 2s load + slack
-	xdotool windowmove --sync ${id} 0 0
-	xdotool windowsize --sync ${id} 1918 1078
-	sleep ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
-
-	xdotool mousemove --sync 962 620
-	xdotool click
-	sleep ${benchmark_duration}
-	echo -n "\$?" > "${T}/test-retcode.log"
-	exit \$(cat "${T}/test-retcode.log")
-}
-main
-EOF
-	chmod +x "${BUILD_DIR}/run.sh" || die
-	chown pgo:portage "${BUILD_DIR}/run.sh" || die
-	if use pgo-gpu ; then
-		virtxl "${BUILD_DIR}/run.sh"
-	else
-		virtx "${BUILD_DIR}/run.sh"
-	fi
-
-	sleep ${test_duration}
-
-	if [[ -f "${T}/test-retcode.log" ]] ; then
-		die "Missing retcode for ${x}"
-	fi
-	local test_retcode=$(cat "${T}/test-retcode.log")
-	if [[ "${test_retcode}" != "0" ]] ; then
-eerror "Test failed for ${x}.  Return code: ${test_retcode}."
-		die
-	fi
-	sleep ${EPGO_DESKTOP_CLOSE_TIME}
-}
-
-_custom_simulation() {
-	# It runs actually in around a minute.
-	[[ ! -f out/Release/chrome ]] && die "Missing out/Release/chrome"
-	local test_duration=$((
-		0
-		+ 2 + ${EPGO_WAIT_SLACK_TIME}
-		+ ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
-		+ ${EPGO_CUSTOM_SIMULATION_TIMEBOX_TIME}
-	))
-einfo
-einfo "Running simulation:  metering custom script performance... timeboxed to"
-einfo "${test_duration} seconds"
-einfo
-	sleep ${EPGO_DESKTOP_CACHED_LAUNCH_TIME}
-	( timeout ${EPGO_CUSTOM_SIMULATION_TIMEBOX_TIME} \
-		out/Release/chrome \
-			"https://localhost" ; \
-		echo "$?" > "${T}/test-retcode.log" ) &
-	sleep $((2 + ${EPGO_WAIT_SLACK_TIME})) # let the window load
-	local id=$(xdotool getwindowfocus)
-	xdotool windowmove --sync ${id} 0 0
-	xdotool windowsize --sync ${id} 1918 1078
-	sleep ${EPGO_BROWSER_CACHED_LAUNCH_TIME}
-	cat "/etc/portage/pgo-scripts/www-client/chromium/${PV}.sh" \
-		> "${T}/run.sh"
-	chmod +x "${BUILD_DIR}/run.sh" || die
-	chown pgo:portage "${BUILD_DIR}/run.sh" || die
-	if use pgo-gpu ; then
-		virtxl "${BUILD_DIR}/run.sh"
-	else
-		virtx "${BUILD_DIR}/run.sh"
-	fi
-
-	sleep ${test_duration}
-
-	if [[ -f "${T}/test-retcode.log" ]] ; then
-		die "Missing retcode for ${x}"
-	fi
-	local test_retcode=$(cat "${T}/test-retcode.log")
-	if [[ "${test_retcode}" != "0" ]] ; then
-eerror "Test failed for ${x}.  Return code: ${test_retcode}."
-		die
-	fi
-	sleep ${EPGO_DESKTOP_CLOSE_TIME}
-}
-
-clear_disk_cache() {
-	# Clear caches for load time determinism.
-	if [[ -f /proc/sys/vm/drop_caches ]] ; then
-		# Try to achieve a lagless start.
-		addwrite /proc/sys/vm/drop_caches
-		sync
-		echo 3 > /proc/sys/vm/drop_caches
-	else
-		ewarn "/proc/sys/vm/drop_caches is not flushable"
-		ewarn "The simulation may not be run correctly."
-	fi
-}
-
 _run_simulation_suite() {
-	if use pgo-upstream-profile-generator ; then
 # See also https://github.com/chromium/chromium/blob/93.0.4577.25/docs/pgo.md
-		${EPYTHON} tools/perf/run_benchmark \
-			system_health.common_desktop \
-			--assert-gpu-compositing \
-			--run-abridged-story-set \
-			--browser=exact \
-			--browser-executable=out/Release/chrome || die
-		${EPYTHON} tools/perf/run_benchmark \
-			speedometer2 \
-			--assert-gpu-compositing \
-			--browser=exact \
-			--browser-executable=out/Release/chrome || die
-	elif use pgo-ebuild-profile-generator ; then
-		ewarn "_run_simulations(): 🐧 <penguin emoji> please finish me!"
-		use pgo-gpu && virtxl_init
-		einfo "Running training exercise simulations"
-		clear_disk_cache
-		_load_simulation
-		use pgo-web && _tabs_simulation
-		use pgo-web && _javascript_benchmark
-		use pgo-web && _responsiveness_simulation
-		use pgo-custom-script && _custom_simulation
-	fi
+# https://github.com/chromium/chromium/blob/93.0.4577.25/testing/buildbot/generate_buildbot_json.py
+# https://github.com/chromium/chromium/commit/8acfdce99c84fbc35ad259692ac083a9ea18392c
+	local pp=(
+		"${BUILD_DIR}/third_party/catapult/common/py_utils"
+		"${BUILD_DIR}/third_party/catapult/telemetry/telemetry"
+		"${BUILD_DIR}/tools/perf"
+	)
+	export PYTHONPATH=$(echo "${pp}" | tr " " ":")
+	einfo "PYTHONPATH=${PYTHONPATH}"
+	eninja -C out/Release bin/run_performance_test_suite
+	# futurize is not necessary for run_performance_test_suite
+	${EPYTHON} out/Release/bin/run_performance_test_suite || die
 }
 
-_gen_pgo_profile() {
+_std_gen_pgo_profile() {
+	pushd "${BUILD_DIR}/out/Release" || die
 	if ! ls *.profraw 2>/dev/null 1>/dev/null ; then
 		die "Missing *.profraw files"
 	fi
@@ -2243,6 +1602,11 @@ _gen_pgo_profile() {
 	llvm-profdata merge *.profraw \
 		-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
 		|| die
+	popd
+}
+
+_gen_pgo_profile() {
+	_std_gen_pgo_profile
 }
 
 _run_simulations() {
@@ -2331,7 +1695,7 @@ multilib_src_compile() {
 
 	#"${EPYTHON}" tools/clang/scripts/update.py --force-local-build --gcc-toolchain /usr --skip-checkout --use-system-cmake --without-android || die
 
-	if use pgo-native ; then
+	if use pgo-full ; then
 		if ls *.profraw 2>/dev/null 1>/dev/null ; then
 			rm -rf *.profraw || die
 		fi
