@@ -1,0 +1,12 @@
+--- a/third_party/catapult/common/py_utils/py_utils/cloud_storage.py.orig	2021-08-02 19:53:35.000000000 -0700
++++ b/third_party/catapult/common/py_utils/py_utils/cloud_storage.py	2021-08-08 11:18:08.414919430 -0700
+@@ -45,8 +45,7 @@ BUCKET_ALIASES = collections.OrderedDict
+ BUCKET_ALIAS_NAMES = list(BUCKET_ALIASES.keys())
+ 
+ 
+-_GSUTIL_PATH = os.path.join(py_utils.GetCatapultDir(), 'third_party', 'gsutil',
+-                            'gsutil')
++_GSUTIL_PATH = "/usr/bin/gsutil"
+ 
+ # TODO(tbarzic): A workaround for http://crbug.com/386416 and
+ #     http://crbug.com/359293. See |_RunCommand|.

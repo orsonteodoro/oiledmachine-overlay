@@ -470,8 +470,11 @@ BDEPEND="
 	pgo-full? (
 		$(python_gen_any_dep 'dev-python/future[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'dev-python/psutil[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep 'dev-python/pypng[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'dev-python/requests[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'dev-python/six[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep 'dev-python/websocket-client[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep 'net-misc/gsutil[${PYTHON_USEDEP}]')
 		sys-apps/dbus:=[${MULTILIB_USEDEP}]
 		!wayland? ( x11-base/xorg-server[xvfb] )
 		wayland? ( dev-libs/weston )
@@ -881,7 +884,7 @@ ewarn
 
 	if use pgo-full ; then
 ewarn
-ewarn "The pgo-full USE flag is a Work In Progress (WIP)."
+ewarn "The pgo-full USE flag is a Work In Progress (WIP) and not production ready."
 ewarn
 	fi
 
@@ -931,14 +934,6 @@ ceapply() {
 	eapply "${@}"
 }
 
-update_cipd() {
-	if use pgo-full ; then
-		einfo "Bootstraping cipd.  Please wait"
-		export PATH="${BUILD_DIR}/third_party/depot_tools/:${PATH}"
-		vpython --version
-	fi
-}
-
 src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
@@ -951,7 +946,7 @@ src_prepare() {
 		PATCHES+=( "${WORKDIR}/patches" )
 	fi
 
-	# already applied upstream.
+	# It's already applied upstream.
 	rm -rf "${WORKDIR}/patches/chromium-93-dawn-raw-string-literal.patch" || die
 	rm -rf "${WORKDIR}/patches/chromium-swiftshader-export.patch" || die
 
@@ -975,6 +970,10 @@ src_prepare() {
 
 	if use arm64 && use shadowcallstack ; then
 		ceapply "${FILESDIR}/chromium-93-arm64-shadow-call-stack.patch"
+	fi
+
+	if use pgo-full ; then
+		ceapply "${FILESDIR}/chromium-92-use-system-gsutil.patch"
 	fi
 
 	default
@@ -1238,7 +1237,6 @@ src_prepare() {
 		third_party/xdg-utils
 	)
 	if use pgo-full ; then
-		# TODO: add additional dirs
 		keeplibs+=( third_party/catapult/third_party/typ )
 	fi
 	if ! use system-ffmpeg ; then
@@ -1732,14 +1730,13 @@ _build_pgx() {
 	done
 }
 
-_run_simulation_suite() {
+_run_training_suite() {
 # See also https://github.com/chromium/chromium/blob/93.0.4577.25/docs/pgo.md
 # https://github.com/chromium/chromium/blob/93.0.4577.25/testing/buildbot/generate_buildbot_json.py
 # https://github.com/chromium/chromium/commit/8acfdce99c84fbc35ad259692ac083a9ea18392c
 	local pp=(
 		"${BUILD_DIR}/third_party/catapult/common/py_utils"
 		"${BUILD_DIR}/third_party/catapult/telemetry/telemetry"
-		"${BUILD_DIR}/third_party/catapult/telemetry/third_party/modulegraph"
 		"${BUILD_DIR}/third_party/catapult/third_party/typ"
 		"${BUILD_DIR}/third_party/catapult/tracing"
 		"${BUILD_DIR}/tools/perf"
@@ -1751,6 +1748,10 @@ _run_simulation_suite() {
 		t="${t//./_}"
 		t="${t,,}"
 		if use "cr_pgo_trainer_${t}" ; then
+			if [[ -d "${T}/${t}" ]] ; then
+				# Clear for different ABI builds
+				rm -vrf "${T}/${t}" || die
+			fi
 			benchmarks_allowed+=( ${x} )
 		fi
 	done
@@ -1759,18 +1760,18 @@ _run_simulation_suite() {
 	local benchmarks=$(echo "${benchmarks_allowed[@]}" | tr " " ",")
 	eninja -C out/Release bin/run_performance_test_suite
 	export CHROME_SANDBOX_ENV="${BUILD_DIR}/out/Release/chrome_sandbox" # For testing/test_env.py
-	# futurize is not necessary for run_performance_test_suite
-	local dt
+	# Futurize is not necessary for run_performance_test_suite.
+	local display_type
 	if use wayland ; then
-		dt=(--no-xvfb --use-weston)
+		display_type=(--no-xvfb --use-weston)
 	else
-		dt=() # assumed xvfb
+		display_type=() # It's assumed xvfb.
 	fi
 	local run_benchmark_args=(
 		--assert-gpu-compositing
 		--browser=exact
 		--browser-executable="${BUILD_DIR}/out/Release/chrome")
-	local xvfb_py_args=(${dt[@]})
+	local xvfb_py_args=(${display_type[@]})
 	local cmd=(${EPYTHON} bin/run_performance_test_suite
 		--benchmarks=${benchmarks}
 		--isolated-script-test-output="${T}/pgo-test-output.json"
@@ -1779,11 +1780,11 @@ _run_simulation_suite() {
 		${run_benchmark_args[@]})
 	pushd out/Release || die
 		einfo "${cmd[@]}"
-		#"${cmd[@]}" || die
+		"${cmd[@]}" || die
 	popd
 }
 
-_std_gen_pgo_profile() {
+_gen_pgo_profile() {
 	pushd "${BUILD_DIR}/out/Release" || die
 		if ! ls *.profraw 2>/dev/null 1>/dev/null ; then
 			die "Missing *.profraw files"
@@ -1795,12 +1796,8 @@ _std_gen_pgo_profile() {
 	popd
 }
 
-_gen_pgo_profile() {
-	_std_gen_pgo_profile
-}
-
-_run_simulations() {
-	_run_simulation_suite
+_start_pgo_training() {
+	_run_training_suite
 	_gen_pgo_profile
 }
 
@@ -1897,7 +1894,7 @@ multilib_src_compile() {
 		_configure_pgx # pgi
 		_update_licenses
 		_build_pgx
-		_run_simulations
+		_start_pgo_training
 		PGO_PHASE=2
 		_configure_pgx # pgo
 		_build_pgx
