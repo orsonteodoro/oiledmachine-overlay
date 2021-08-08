@@ -26,7 +26,7 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 RESTRICT="test"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Jul 29, 2021
+# Last deps commit date:  Aug 2, 2021
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
@@ -46,7 +46,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 PATCHES=( "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="7.19.1" # See https://github.com/nodejs/node/blob/v16.6.0/deps/npm/package.json
+NPM_V="7.20.3" # See https://github.com/nodejs/node/blob/v16.6.1/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
