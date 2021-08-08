@@ -1796,7 +1796,7 @@ _run_training_suite() {
 	elif use wayland ; then
 		display_args=(--xvfb --no-xvfb --use-weston)
 	else
-		display_args=(--xvfb) # It's assumed xvfb.
+		display_args=(--xvfb)
 	fi
 	local run_benchmark_args=(
 		--assert-gpu-compositing
