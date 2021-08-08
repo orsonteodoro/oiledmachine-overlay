@@ -29,7 +29,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     mobile or desktop.  For more details see the component and documentation
     fields in the files contained in [1].  Certain benchmarks will focus on
     parts of the web browser.  Adding more tests will increase testing time.
-    Some tests may take 1-20 minute(s) or more to complete.
+    Some tests may take 1-20 minute(s) or more to complete.  Customizers
+    may supply a local custom patch using Telemetry [2] named custom with the
+    cr_pgo_trainer_custom USE flag to extend the PGO training step.
 
     References:
       --lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6
@@ -40,6 +42,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       TCMalloc (circa 2007) - https://gperftools.github.io/gperftools/tcmalloc.html
       https://github.com/chromium/chromium/blob/master/build/config/sanitizers/BUILD.gn#L204
       [1] https://github.com/chromium/chromium/tree/master/tools/perf/benchmarks
+      [2] https://chromium.googlesource.com/catapult/+/HEAD/telemetry/README.md
   </longdescription>
   <upstream>
     <bugs-to>https://www.chromium.org/for-testers/bug-reporting-guidelines</bugs-to>
@@ -65,6 +68,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="component-build">Split build into more shared libraries to speed
       up linking. Mostly intended for debugging and development, NOT RECOMMENDED
       for general use.</flag>
+    <flag name="cr_pgo_trainer_custom">Allow for customized PGO training.
+      You must supply your local implementation using the Telemetry testing
+      framework as a per-package patch and the test must be named custom.</flag>
     <flag name="hangouts">Enable support for Hangouts and features such as
       screen sharing</flag>
     <flag name="headless">Build Ozone only with headless backend, NOT

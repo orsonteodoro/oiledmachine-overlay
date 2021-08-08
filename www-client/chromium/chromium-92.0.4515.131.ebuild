@@ -259,6 +259,7 @@ BENCHMARKS_ALL=(
 	blink_perf.webgl_fast_call
 	blink_perf.webgpu
 	blink_perf.webgpu_fast_call
+	custom
 	desktop_ui
 	dromaeo
 	dummy_benchmark.noisy_benchmark_1
@@ -989,6 +990,14 @@ src_prepare() {
 
 	# this patch needs to be applied after gentoo sandbox patchset
 	use ppc64 && ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-sandbox_kernel_stat.patch"
+
+	if use cr_pgo_trainer_custom && [[ ! -f "${T}/epatch_user.log" ]] ; then
+eerror
+eerror "You must supply a per-package patch to use the cr_pgo_trainer_custom"
+eerror "USE flag."
+eerror
+		die
+	fi
 
 	if ( (( ${#PATCHES[@]} > 0 || ${USED_EAPPLY} == 1 )) || [[ -f "${T}/epatch_user.log" ]] ) ; then
 		if use official ; then
