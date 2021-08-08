@@ -1762,9 +1762,9 @@ _run_training_suite() {
 		t="${t//./_}"
 		t="${t,,}"
 		if use "cr_pgo_trainer_${t}" ; then
-			if [[ -d "${T}/${t}" ]] ; then
+			if [[ -d "${T}/${x}" ]] ; then
 				# Clear for different ABI builds
-				rm -vrf "${T}/${t}" || die
+				rm -vrf "${T}/${x}" || die
 			fi
 			benchmarks_allowed+=( ${x} )
 		fi
