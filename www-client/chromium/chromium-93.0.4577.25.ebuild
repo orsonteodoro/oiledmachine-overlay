@@ -886,6 +886,11 @@ ewarn
 ewarn
 ewarn "The pgo-full USE flag is a Work In Progress (WIP) and not production ready."
 ewarn
+		if has network-sandbox $FEATURES ; then
+eerror "FEATURES=\"-network-sandbox\" must be added as a per-package env to"
+eerror "be able to use PGO trainers with external benchmarking websites."
+			die
+		fi
 	fi
 
 	if use official || ( use clang && use cfi && use pgo ) ; then
