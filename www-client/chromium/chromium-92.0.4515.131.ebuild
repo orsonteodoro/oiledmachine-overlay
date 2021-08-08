@@ -481,7 +481,13 @@ BDEPEND="
 		$(python_gen_any_dep 'dev-python/websocket-client[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'net-misc/gsutil[${PYTHON_USEDEP}]')
 		sys-apps/dbus:=[${MULTILIB_USEDEP}]
-		!wayland? ( x11-base/xorg-server[xvfb] )
+		x11-misc/xcompmgr
+		x11-wm/openbox
+		!wayland? (
+			x11-base/xorg-server[xvfb]
+			x11-misc/xcompmgr
+			x11-wm/openbox
+		)
 		wayland? ( dev-libs/weston )
 	)
 "
