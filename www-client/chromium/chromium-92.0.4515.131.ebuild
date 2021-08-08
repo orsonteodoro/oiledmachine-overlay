@@ -481,14 +481,14 @@ BDEPEND="
 		$(python_gen_any_dep 'dev-python/websocket-client[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'net-misc/gsutil[${PYTHON_USEDEP}]')
 		sys-apps/dbus:=[${MULTILIB_USEDEP}]
-		x11-misc/xcompmgr
-		x11-wm/openbox
-		!wayland? (
-			x11-base/xorg-server[xvfb]
-			x11-misc/xcompmgr
-			x11-wm/openbox
+		!headless? (
+			!wayland? (
+				x11-base/xorg-server[xvfb]
+				x11-misc/xcompmgr
+				x11-wm/openbox
+			)
+			wayland? ( dev-libs/weston )
 		)
-		wayland? ( dev-libs/weston )
 	)
 "
 #	For inherits in tools/perf:
@@ -1790,22 +1790,22 @@ _run_training_suite() {
 	eninja -C out/Release bin/run_performance_test_suite
 	export CHROME_SANDBOX_ENV="${BUILD_DIR}/out/Release/chrome_sandbox" # For testing/test_env.py
 	# Futurize is not necessary for run_performance_test_suite.
-	local display_type
-	if use wayland ; then
-		display_type=(--no-xvfb --use-weston)
+	local display_args
+	if use headless ; then
+		display_args=()
+	elif use wayland ; then
+		display_args=(--xvfb --no-xvfb --use-weston)
 	else
-		display_type=() # It's assumed xvfb.
+		display_args=(--xvfb) # It's assumed xvfb.
 	fi
 	local run_benchmark_args=(
 		--assert-gpu-compositing
 		--browser=exact
 		--browser-executable="${BUILD_DIR}/out/Release/chrome")
-	local xvfb_py_args=(${display_type[@]})
 	local cmd=(${EPYTHON} bin/run_performance_test_suite
 		--benchmarks=${benchmarks}
 		--isolated-script-test-output="${T}/pgo-test-output.json"
-		--xvfb
-		${xvfb_py_args[@]}
+		${display_args[@]}
 		${run_benchmark_args[@]})
 	pushd out/Release || die
 		einfo "${cmd[@]}"
