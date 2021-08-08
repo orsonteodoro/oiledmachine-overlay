@@ -22,11 +22,15 @@ DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
 PATCHSET="6"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
+HIGHWAY_V="0.12.1"
+GLIBC_PATCH_V="92-glibc-2.33"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
-	https://dev.gentoo.org/~sultan/distfiles/www-client/${PN}/${PN}-92-glibc-2.33-patch.tar.xz
-	arm64? ( https://github.com/google/highway/archive/refs/tags/0.12.1.tar.gz -> highway-0.12.1.tar.gz )"
+	https://dev.gentoo.org/~sultan/distfiles/www-client/${PN}/${PN}-${GLIBC_PATCH_V}-patch.tar.xz
+	arm64? ( https://github.com/google/highway/archive/refs/tags/${HIGHWAY_V}.tar.gz -> highway-${HIGHWAY_V}.tar.gz )
+"
+# Missing py files in typ in ${P}.tar.xz so download catapult snapshot.
 RESTRICT="mirror"
 
 LICENSE="BSD
@@ -193,6 +197,7 @@ IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx lto-opt +pgo -pgo-full
 shadowcallstack"
+# perf-opt
 _ABIS=( abi_x86_32
 	abi_x86_64
 	abi_x86_x32
@@ -204,7 +209,129 @@ _ABIS=( abi_x86_32
 	abi_s390_32
 	abi_s390_64 )
 IUSE+=" ${_ABIS[@]}"
-REQUIRED_USE="
+BENCHMARKS_DESKTOP=(
+	desktop_ui
+	loading.desktop
+	media.desktop
+	memory.desktop
+	power.desktop
+	rendering.desktop
+	system_health.common_desktop
+	system_health.memory_desktop
+	UNSCHEDULED_v8.loading_desktop
+	v8.browsing_desktop
+	v8.browsing_desktop-future
+)
+BENCHMARKS_MOBILE=(
+	loading.mobile
+	media.mobile
+	power.mobile
+	rendering.mobile
+	startup.mobile
+	system_health.common_mobile
+	system_health.memory_mobile
+	UNSCHEDULED_v8.loading_mobile
+	v8.browsing_mobile
+	v8.browsing_mobile-future
+)
+BENCHMARKS_ALL=(
+	blink_perf.accessibility
+	blink_perf.bindings
+	blink_perf.css
+	blink_perf.display_locking
+	blink_perf.dom
+	blink_perf.events
+	blink_perf.image_decoder
+	blink_perf.layout
+	blink_perf.owp_storage
+	blink_perf.paint
+	blink_perf.parser
+	blink_perf.sanitizer-api
+	blink_perf.shadow_dom
+	blink_perf.svg
+	blink_perf.webaudio
+	blink_perf.webgl
+	blink_perf.webgl_fast_call
+	blink_perf.webgpu
+	blink_perf.webgpu_fast_call
+	desktop_ui
+	dromaeo
+	dummy_benchmark.noisy_benchmark_1
+	dummy_benchmark.stable_benchmark_1
+	jetstream
+	jetstream2
+	kraken
+	loading.desktop
+	loading.mobile
+	media.desktop
+	media.mobile
+	memory.desktop
+	octane
+	power.desktop
+	power.mobile
+	rasterize_and_record_micro
+	rasterize_and_record_micro.top_25
+	rendering.desktop
+	rendering.mobile
+	speedometer
+	speedometer2
+	speedometer2-future
+	speedometer2-pcscan
+	speedometer-future
+	startup.mobile
+	system_health.common_desktop
+	system_health.common_mobile
+	system_health.memory_desktop
+	system_health.memory_mobile
+	system_health.pcscan
+	system_health.weblayer_startup
+	system_health.webview_startup
+	tab_switching.typical_25
+	tracing.tracing_with_background_memory_infra
+	UNSCHEDULED_blink_perf.performance_apis
+	UNSCHEDULED_blink_perf.service_worker
+	UNSCHEDULED_loading.mbi
+	UNSCHEDULED_v8.loading_desktop
+	UNSCHEDULED_v8.loading_mobile
+	v8.browsing_desktop
+	v8.browsing_desktop-future
+	v8.browsing_mobile
+	v8.browsing_mobile-future
+	v8.runtime_stats.top_25
+	wasmpspdfkit
+	webrtc
+)
+gen_pgo_profile_use() {
+	for x in ${BENCHMARKS_ALL[@]} ; do
+		t="${x}"
+		t="${t//-/_}"
+		t="${t//./_}"
+		t="${t,,}"
+		echo " cr_pgo_trainer_${t}"
+	done
+}
+gen_pgo_profile_required_use() {
+	for d in ${BENCHMARK_DESKTOP[@]} ; do
+		a="${d}"
+		a="${a//-/_}"
+		a="${a//./_}"
+		a="${a,,}"
+		for m in ${BENCHMARK_MOBILE[@]} ; do
+			b="${m}"
+			b="${b//-/_}"
+			b="${b//./_}"
+			b="${b,,}"
+			echo "
+				cr_pgo_trainer_${a}? ( pgo-full !cr_pgo_trainer_${b} )
+				cr_pgo_trainer_${b}? ( pgo-full !cr_pgo_trainer_${a} )
+			"
+		done
+	done
+}
+IUSE+=" "$(gen_pgo_profile_use)
+REQUIRED_USE+=" $(gen_pgo_profile_required_use)"
+REQUIRED_USE+=" pgo-full? ( || ( $(gen_pgo_profile_use) ) )"
+REQUIRED_USE+="
 	^^ ( partitionalloc tcmalloc libcmalloc )
 	amd64? ( !shadowcallstack )
 	!clang? ( !cfi )
@@ -345,8 +472,19 @@ BDEPEND="
 		$(python_gen_any_dep 'dev-python/psutil[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'dev-python/requests[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'dev-python/six[${PYTHON_USEDEP}]')
+		sys-apps/dbus:=[${MULTILIB_USEDEP}]
+		!wayland? ( x11-base/xorg-server[xvfb] )
+		wayland? ( dev-libs/weston )
 	)
 "
+#	For inherits in tools/perf:
+#		perf-opt? (
+#			dev-lang/python[sqlite3,xml]
+#			$(python_gen_any_dep 'dev-python/httplib2[${PYTHON_USEDEP}]')
+#			$(python_gen_any_dep 'dev-python/mock[${PYTHON_USEDEP}]')
+#			$(python_gen_any_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
+#			$(python_gen_any_dep 'dev-python/pandas[${PYTHON_USEDEP}]')
+#		)
 
 # pgo related:  dev-python/requests is python3 but testing/scripts/run_performance_tests.py is python2
 
@@ -457,7 +595,7 @@ CR_CLANG_USED="98033fdc50e61273b1d5c77ba5f0f75afe3965c1" # Obtained from \
 # https://github.com/chromium/chromium/blob/93.0.4577.25/tools/clang/scripts/update.py#L42
 CR_CLANG_USED_UNIX_TIMESTAMP="1626129557" # Cached.  Use below to obtain this. \
 # TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
-#	| grep -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
+#	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
 CR_CLANG_SLOT="13"
 
 contains_slotted_major_version() {
@@ -535,7 +673,7 @@ _get_live_llvm_timestamp() {
 		# Uncached
 		local emerged_llvm_time_desc=$(wget -q -O - \
 			https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch \
-			| grep -e "Date:" | sed -e "s|Date: ||")
+			| grep -F -e "Date:" | sed -e "s|Date: ||")
 		emerged_llvm_timestamp=$(date -u -d "${emerged_llvm_time_desc}" +%s)
 		emerged_llvm_timestamps[${emerged_llvm_commit}]=${emerged_llvm_timestamp}
 		einfo "Timestamp comparison for ${p}"
@@ -676,7 +814,7 @@ verify_llvm_toolchain() {
 				einfo "Checking ${p}:${CR_CLANG_SLOT}"
 				emerged_llvm_commit=$(bzless \
 					"${ESYSROOT}/var/db/pkg/${p}-${CR_CLANG_SLOT}"*"/environment.bz2" \
-					| grep EGIT_VERSION | head -n 1 | cut -f 2 -d '"')
+					| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
 				pv=$(cat "${ESYSROOT}/var/db/pkg/${p}-${CR_CLANG_SLOT}"*"/PF" | sed "s|${p}-||")
 				_get_live_llvm_timestamp
 				[[ "${p}" == "sys-devel/llvm" ]] \
@@ -687,7 +825,7 @@ verify_llvm_toolchain() {
 				einfo "Checking ${p}:0"
 				emerged_llvm_commit=$(bzless \
 					"${ESYSROOT}/var/db/pkg/${p}"*"/environment.bz2" \
-					| grep EGIT_VERSION | head -n 1 | cut -f 2 -d '"')
+					| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
 				pv=$(cat "${ESYSROOT}/var/db/pkg/${p}"*"/PF" | sed "s|${p}-||")
 				_get_live_llvm_timestamp
 				_check_live_llvm_updated
@@ -706,7 +844,7 @@ verify_llvm_toolchain() {
 					einfo "Checking ="$(basename ${mp})
 					emerged_llvm_commit=$(bzless \
 						"${mp}/environment.bz2" \
-						| grep EGIT_VERSION \
+						| grep -F -e "EGIT_VERSION" \
 						| head -n 1 \
 						| cut -f 2 -d '"')
 					pv=$(cat "${mp}/PF" | sed "s|${p}-||")
@@ -762,7 +900,7 @@ ewarn
 		CXX=${CHOST}-clang++
 		local MESA_LLVM_MAX_SLOT=$(bzless \
 			"${ESYSROOT}/var/db/pkg/media-libs/mesa"*"/environment.bz2" \
-			| grep LLVM_MAX_SLOT \
+			| grep -F -e "LLVM_MAX_SLOT" \
 			| head -n 1 \
 			| cut -f 2 -d '"')
 		local CLANG_SLOT=$(clang-major-version)
@@ -799,10 +937,6 @@ update_cipd() {
 		export PATH="${BUILD_DIR}/third_party/depot_tools/:${PATH}"
 		vpython --version
 	fi
-}
-
-src_unpack() {
-	unpack ${A}
 }
 
 src_prepare() {
@@ -1103,6 +1237,10 @@ src_prepare() {
 		third_party/usb_ids
 		third_party/xdg-utils
 	)
+	if use pgo-full ; then
+		# TODO: add additional dirs
+		keeplibs+=( third_party/catapult/third_party/typ )
+	fi
 	if ! use system-ffmpeg ; then
 		keeplibs+=( third_party/ffmpeg third_party/opus )
 	fi
@@ -1146,8 +1284,12 @@ src_prepare() {
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 
 	# Trys to do the minimal edits in order to run the benchmarks without resorting
-	# to pulling possibly EOL micropackages.
+	# to pulling possibly EOL versions.
 	if use pgo-full ; then
+		sed -i -e "s|/usr/bin/env vpython|/usr/bin/env ${EPYTHON}|" \
+			-e "s|/usr/bin/env {vpython}|/usr/bin/env ${EPYTHON}|" \
+			"build/util/generate_wrapper.py" || die
+
 		local futurize_lst=(
 			# Put the entire import tree
 			tools/perf/benchmarks
@@ -1161,12 +1303,12 @@ src_prepare() {
 		)
 
 		# Skip use of vpython because of download times for cipd and found no way to cache downloads.
-		for f in $(grep -l -e "/usr/bin/env vpython3$" $(find ${futurize_lst[@]} -name "*.py")) ; do
+		for f in $(grep -l -G -e "/usr/bin/env vpython3$" $(find ${futurize_lst[@]} -name "*.py")) ; do
 			einfo "Converting shebang:  vpython3 -> ${EPYTHON} for ${f}"
 			sed -i -e "s|/usr/bin/env vpython3$|/usr/bin/env ${EPYTHON}|" \
 				"${f}" || die
 		done
-		for f in $(grep -l -e "/usr/bin/env vpython$" $(find ${futurize_lst[@]} -name "*.py")) ; do
+		for f in $(grep -l -G -e "/usr/bin/env vpython$" $(find ${futurize_lst[@]} -name "*.py")) ; do
 			einfo "Converting shebang:  vpython -> ${EPYTHON} for ${f}"
 			sed -i -e "s|/usr/bin/env vpython$|/usr/bin/env ${EPYTHON}|" \
 				"${f}" || die
@@ -1175,12 +1317,17 @@ src_prepare() {
 			local result=$(futurize -0 "${f}" 2>&1)
 			if [[ "${result}" =~ "RefactoringTool: No changes to" \
 				|| "${result}" =~ "RefactoringTool: No files need to be modified." ]] ; then
-				einfo "Skipping futurization of ${f}"
+				einfo "Skipping py2 -> py3 futurization of ${f}"
 			else
-				einfo "Futurizing ${f}"
-				futurize -w -0 "${f}" || die
+				einfo "Applied py2 -> py3 futurization of ${f}"
+				futurize -n -w -0 "${f}" || die
 			fi
 		done
+		einfo "EPYTHON=${EPYTHON}"
+		sed -i -e "s|'python'|'${EPYTHON}'|" \
+			testing/test_env.py || die
+		sed -i -e "s|reader.read()|reader.read().decode()|g" \
+			testing/test_env.py || die
 	fi
 
 	(( ${NABIS} > 1 )) \
@@ -1191,6 +1338,14 @@ _configure_pgx() {
 	local chost=$(get_abi_CHOST ${ABI})
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
+
+	if use pgo-full ; then
+		for f in $(grep -l -F -r -e "/opt/chromium/chrome_sandbox" testing) ; do
+			einfo "Changing hardcoded /opt/chromium/chrome_sandbox -> ${BUILD_DIR}/out/Release/chrome_sandbox for ${f}"
+			sed -i -e "s|/opt/chromium/chrome_sandbox|${BUILD_DIR}/out/Release/chrome_sandbox|" \
+				"${f}" || die
+		done
+	fi
 
 	local myconf_gn=""
 
@@ -1584,24 +1739,59 @@ _run_simulation_suite() {
 	local pp=(
 		"${BUILD_DIR}/third_party/catapult/common/py_utils"
 		"${BUILD_DIR}/third_party/catapult/telemetry/telemetry"
+		"${BUILD_DIR}/third_party/catapult/telemetry/third_party/modulegraph"
+		"${BUILD_DIR}/third_party/catapult/third_party/typ"
+		"${BUILD_DIR}/third_party/catapult/tracing"
 		"${BUILD_DIR}/tools/perf"
 	)
+	local benchmarks_allowed=()
+	for x in ${BENCHMARKS_ALL[@]} ; do
+		t="${x}"
+		t="${t//-/_}"
+		t="${t//./_}"
+		t="${t,,}"
+		if use "cr_pgo_trainer_${t}" ; then
+			benchmarks_allowed+=( ${x} )
+		fi
+	done
 	export PYTHONPATH=$(echo "${pp}" | tr " " ":")
 	einfo "PYTHONPATH=${PYTHONPATH}"
+	local benchmarks=$(echo "${benchmarks_allowed[@]}" | tr " " ",")
 	eninja -C out/Release bin/run_performance_test_suite
+	export CHROME_SANDBOX_ENV="${BUILD_DIR}/out/Release/chrome_sandbox" # For testing/test_env.py
 	# futurize is not necessary for run_performance_test_suite
-	${EPYTHON} out/Release/bin/run_performance_test_suite || die
+	local dt
+	if use wayland ; then
+		dt=(--no-xvfb --use-weston)
+	else
+		dt=() # assumed xvfb
+	fi
+	local run_benchmark_args=(
+		--assert-gpu-compositing
+		--browser=exact
+		--browser-executable="${BUILD_DIR}/out/Release/chrome")
+	local xvfb_py_args=(${dt[@]})
+	local cmd=(${EPYTHON} bin/run_performance_test_suite
+		--benchmarks=${benchmarks}
+		--isolated-script-test-output="${T}/pgo-test-output.json"
+		--xvfb
+		${xvfb_py_args[@]}
+		${run_benchmark_args[@]})
+	pushd out/Release || die
+		einfo "${cmd[@]}"
+		#"${cmd[@]}" || die
+	popd
 }
 
 _std_gen_pgo_profile() {
 	pushd "${BUILD_DIR}/out/Release" || die
-	if ! ls *.profraw 2>/dev/null 1>/dev/null ; then
-		die "Missing *.profraw files"
-	fi
-	einfo "Merging PGO profile data to build PGO profile"
-	llvm-profdata merge *.profraw \
-		-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
-		|| die
+		if ! ls *.profraw 2>/dev/null 1>/dev/null ; then
+			die "Missing *.profraw files"
+		fi
+		einfo "Merging PGO profile data to build PGO profile"
+		llvm-profdata merge *.profraw \
+			-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
+			|| die
 	popd
 }
 
@@ -1614,7 +1804,7 @@ _run_simulations() {
 	_gen_pgo_profile
 }
 
-update_licenses() {
+_update_licenses() {
 	# Upstream doesn't package PATENTS files
 	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" ]] ; then
 		einfo "Generating license and copyright notice file"
@@ -1681,6 +1871,12 @@ einfo
 	fi
 }
 
+_clean_profraw() {
+	if [[ -d "${BUILD_DIR}/out/Release" ]] ; then
+		find "${BUILD_DIR}/out/Release" -name "*.profraw" -delete || die
+	fi
+}
+
 multilib_src_compile() {
 	if (( ${NABIS} == 1 )) ; then
 		export BUILD_DIR="${S}"
@@ -1696,12 +1892,10 @@ multilib_src_compile() {
 	#"${EPYTHON}" tools/clang/scripts/update.py --force-local-build --gcc-toolchain /usr --skip-checkout --use-system-cmake --without-android || die
 
 	if use pgo-full ; then
-		if ls *.profraw 2>/dev/null 1>/dev/null ; then
-			rm -rf *.profraw || die
-		fi
+		_clean_profraw
 		PGO_PHASE=1
 		_configure_pgx # pgi
-		update_licenses
+		_update_licenses
 		_build_pgx
 		_run_simulations
 		PGO_PHASE=2
@@ -1709,7 +1903,7 @@ multilib_src_compile() {
 		_build_pgx
 	else
 		_configure_pgx # pgo / no-pgo
-		update_licenses
+		_update_licenses
 		_build_pgx
 	fi
 
