@@ -68,7 +68,11 @@ SLOT="0/$(ver_cut 1)"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-LICENSE+=" FF-87.0-THIRD-PARTY-LICENSES" # Converted toolkit/content/license.html by html2text -nobs
+LICENSE_FINGERPRINT="\
+90e56bab2c66de3d95ea3cc98c1d1f3a11b3f0add7e974afde7aeba5f4731709\
+6804cf01d915fd28a0fbe6d1c210a7a27afa353ae56ff51cbddbd93374e8dddf" # SHA512
+# FF-90.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
+LICENSE+=" FF-90.0-THIRD-PARTY-LICENSES" # Converted toolkit/content/license.html by html2text -nobs
 LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions all-rights-reserved
 Boost-1.0 BSD BSD-2 CC0-1.0 CC-BY-4.0 curl GPL-2+ GPL-3+ icu ISC Ispell libpng
 MIT NAIST-IPADIC OFL-1.1 Old-MIT OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode
@@ -572,6 +576,17 @@ is greater than \$(nproc)/2"
 		ewarn "Microphone support may be disabled when pulseaudio is disabled."
 	fi
 
+	if [[ -n "${FF_EBUILD_MAINTAINER}" ]] ; then
+		if [[ -z "${MY_OVERLAY_DIR}" ]] ; then
+eerror
+eerror "You need to set MY_OVERLAY_DIR as a per-package envvar to the base path"
+eerror "of your overlay or local repo.  The base path should contain all the"
+eerror "overlay's categories."
+eerror
+			die
+		fi
+	fi
+
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
@@ -592,6 +607,37 @@ src_unpack() {
 			unpack ${_src_file}
 		fi
 	done
+}
+
+verify_license_fingerprint() {
+einfo "Verifying about:license fingerprint"
+	x_license_fingerprint=$(sha512sum "${S}/toolkit/content/license.html" \
+		| cut -f 1 -d " ")
+	# Check even between patched versions and/or new features.
+	if [[ -n "${FF_EBUILD_MAINTAINER}" ]] ; then
+		local license_file_name="FF-$(ver_cut 1-2)-THIRD-PARTY-LICENSES"
+		if [[ ! ( "${LICENSE}" =~ "${license_file_name}" ) \
+			|| ! -f "${MY_OVERLAY_DIR}/licenses/${license_file_name}" \
+			|| "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}" \
+		]] ; then
+eerror
+eerror "A change in the license was detected.  Please change"
+eerror "LICENSE_FINGERPRINT=${LICENSE_FINGERPRINT} and copy the license file as"
+eerror "follows:"
+eerror "  \`cp -a ${S}/toolkit/content/license.html \
+${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
+eerror
+			die
+		fi
+	else
+		if [[ "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}" ]] ; then
+eerror
+eerror "A change in the license was detected.  Please notify the ebuild"
+eerror "maintainer."
+eerror
+			die
+		fi
+	fi
 }
 
 src_prepare() {
@@ -651,6 +697,8 @@ src_prepare() {
 		eapply "${FILESDIR}/multiabi/firefox-78.0.2-opus-fast-math.patch"
 		popd || die
 	fi
+
+	verify_license_fingerprint
 
 	(( ${NABIS} > 1 )) \
 		&& multilib_copy_sources
