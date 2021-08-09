@@ -678,7 +678,14 @@ _get_release_timestamp() {
 _get_live_llvm_timestamp() {
 	if [[ -z "${emerged_llvm_commit}" ]] ; then
 		# Should check against the llvm milestone if not live
-		emerged_llvm_timestamp=$(_get_release_timestamp $(ver_cut 1-3 "${pv}"))
+		v=$(ver_cut 1-3 "${pv}")
+		local suffix=""
+		if [[ "${pv}" =~ "_rc" ]] ; then
+			suffix=$(echo "${pv}" | grep -E -o -e "_rc[0-9]+")
+			suffix=${suffix//_/-}
+		fi
+		v="${v}${suffix}"
+		emerged_llvm_timestamp=$(_get_release_timestamp ${v})
 	fi
 	if [[ -z "${emerged_llvm_timestamps[${emerged_llvm_commit}]}" ]] ; then
 		einfo "Fetching timestamp for ${emerged_llvm_commit}"
