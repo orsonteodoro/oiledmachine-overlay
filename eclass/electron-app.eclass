@@ -148,11 +148,15 @@ CVE_PATCHED_NODE_12="12.22.4"
 # They mix up 92 and 93 which is difficult to filter.
 # Dev channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Dev%20updates
-LATEST_CHROMIUM_93="93.0.4577.15"
+LATEST_CHROMIUM_94="94.0.4595.0"
 
-# Beta & stable channel
+# Beta channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
-LATEST_CHROMIUM_92="92.0.4515.107"
+LATEST_CHROMIUM_93="93.0.4577.25"
+
+# Stable channel
+# Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
+LATEST_CHROMIUM_92="92.0.4515.131"
 
 # Check the runtime dependencies for electron
 # Most electron apps will have electron bundled already.  No need for seperate
@@ -988,26 +992,33 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 94 ; then
-		# Not EOL
+	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 94 \
+		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_94} ; then
+		# Dev patched
 		:; # Passed
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 94 \
+		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_94} ; then
+		# Dev unpatched
+		adie \
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
+proper security updates."
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
 		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_93} ; then
-		# Dev patched
+		# Beta patched
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
 		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_93} ; then
-		# Dev unpatched
+		# Beta unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 92 \
 		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_92} ; then
-		# Beta patched beta
+		# Stable patched beta
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 92 \
 		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_92} ; then
-		# Beta unpatched
+		# Stable unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
