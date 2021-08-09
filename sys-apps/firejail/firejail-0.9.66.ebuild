@@ -840,8 +840,9 @@ src_prepare() {
 	if use test ; then
 		# The problem with the tests is that they are not root agnostic,
 		# which makes it difficult to test (our customizations) before
-		# installing.  The tests unchanged reference the already
-		# installed version which is what we do not want.
+		# installing.  The tests reference the already installed version
+		# which is what we do not want.  We prefer the test the one that
+		# will be installed.
 		einfo "Redirecting paths to isolated image (from \${ROOT} to \${ED})"
 		for f in $(grep -l -r -e "/etc/firejail" "${S}/test") ; do
 			einfo "Editing ${f}:  /etc/firejail -> ${ED}/etc/firejail"
