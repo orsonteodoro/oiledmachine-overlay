@@ -889,7 +889,7 @@ die "${PN} requires llvm:${CR_CLANG_SLOT}"
 
 NABIS=0
 pkg_setup() {
-	ewarn "The $(ver_cut 1 ${PV}) series is the Dev branch."
+	ewarn "The $(ver_cut 1 ${PV}) series is the Beta channel."
 	pre_build_checks
 
 	chromium_suid_sandbox_check_kernel_config
