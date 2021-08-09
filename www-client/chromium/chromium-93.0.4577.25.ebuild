@@ -752,6 +752,13 @@ eerror
 			if [[ "${p}" == "sys-libs/libcxx" ]] && ! use libcxx ; then
 				continue
 			fi
+			if [[ "${p}" == "sys-libs/libcxxabi" ]] && ! use libcxx ; then
+				continue
+			fi
+			if [[ "${p}" == "sys-libs/libcxxabi" ]] && use libcxx \
+				&& ! has_version "sys-libs/libcxxabi" ; then
+				continue
+			fi
 			local p_=${p//-/_}
 			p_=${p_//\//_}
 			if (( ${live_packages_status[${p_}]} == 1 )) ; then

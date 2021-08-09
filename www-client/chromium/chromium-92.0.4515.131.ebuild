@@ -752,7 +752,11 @@ eerror
 			if [[ "${p}" == "sys-libs/libcxx" ]] && ! use libcxx ; then
 				continue
 			fi
-			if [[ "${p}" == "sys-libs/libcxx" ]] && ! use libcxx ; then
+			if [[ "${p}" == "sys-libs/libcxxabi" ]] && ! use libcxx ; then
+				continue
+			fi
+			if [[ "${p}" == "sys-libs/libcxxabi" ]] && use libcxx \
+				&& ! has_version "sys-libs/libcxxabi" ; then
 				continue
 			fi
 			local p_=${p//-/_}
