@@ -639,6 +639,8 @@ contains_slotted_triple_version() {
 contains_slotted_zero() {
 	# For sys-devel/llvm:0 slot style
 	local live_pkgs_=(
+		sys-libs/libcxx
+		sys-libs/libcxxabi
 		sys-libs/libomp
 		sys-devel/lld
 	)
@@ -750,6 +752,9 @@ eerror
 			if [[ "${p}" == "sys-libs/libcxx" ]] && ! use libcxx ; then
 				continue
 			fi
+			if [[ "${p}" == "sys-libs/libcxx" ]] && ! use libcxx ; then
+				continue
+			fi
 			local p_=${p//-/_}
 			p_=${p_//\//_}
 			if (( ${live_packages_status[${p_}]} == 1 )) ; then
@@ -782,10 +787,12 @@ verify_llvm_toolchain() {
 	# sys-libs/libomp:0
 	# sys-devel/lld:0
 	# sys-libs/libcxx:0
+	# sys-libs/libcxxabi:0
 	local live_pkgs=(
 		# Do not change the order!
 		sys-devel/llvm
 		sys-libs/libomp
+		sys-libs/libcxxabi
 		sys-libs/libcxx
 		sys-devel/lld
 		sys-devel/clang
@@ -809,6 +816,13 @@ verify_llvm_toolchain() {
 	if has_version "sys-devel/llvm:${CR_CLANG_SLOT}" ; then
 		for p in ${live_pkgs[@]} ; do
 			if [[ "${p}" == "sys-libs/libcxx" ]] && ! use libcxx ; then
+				continue
+			fi
+			if [[ "${p}" == "sys-libs/libcxxabi" ]] && ! use libcxx ; then
+				continue
+			fi
+			if [[ "${p}" == "sys-libs/libcxxabi" ]] && use libcxx \
+				&& ! has_version "sys-libs/libcxxabi" ; then
 				continue
 			fi
 
