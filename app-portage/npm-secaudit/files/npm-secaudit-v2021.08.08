@@ -413,22 +413,22 @@ proper security updates."
 		is_vulnerable=1
 	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 93 \
 		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_LATEST_CHROMIUM_93} ; then
-		# Dev patched
+		# Beta patched
 		:; # Passed
 	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 93 \
 		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_LATEST_CHROMIUM_93} ; then
-		# Dev unpatched
+		# Beta unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
 		is_vulnerable=1
 	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 92 \
 		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_LATEST_CHROMIUM_92} ; then
-		# Beta patched beta
+		# Stable patched
 		:; # Passed
 	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 92 \
 		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_LATEST_CHROMIUM_92} ; then
-		# Beta unpatched
+		# Stable unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
