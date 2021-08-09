@@ -32,7 +32,7 @@ G_LONG_SCAN=${G_LONG_SCAN:="0"}
 G_NPM_APPS="/var/lib/portage/npm-packages" # location of registered npm packages
 G_PACKAGE_LOCK_DIR="/dev/shm"
 G_VERBOSE=${G_VERBOSE:="0"} # can only be 0 for silent, or 1 for more output
-G_VERSION="2021.07.30"
+G_VERSION="2021.08.08"
 G_DATA_CACHE_DIR="/var/cache/npm-secaudit"
 G_DATA_VERSION_DATA_PATH="${G_DATA_CACHE_DIR}/lite.json"
 G_USE_ELECTRON=${G_USE_ELECTRON:="1"}
@@ -72,11 +72,15 @@ G_CVE_PATCHED_NODE_12="12.22.4"
 # They mix up 92 and 93 which is difficult to filter.
 # Dev channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Dev%20updates
-G_LATEST_CHROMIUM_93="93.0.4577.15"
+G_LATEST_CHROMIUM_94="94.0.4595.0"
 
-# Beta & stable channel
+# Beta channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
-G_LATEST_CHROMIUM_92="92.0.4515.107"
+G_LATEST_CHROMIUM_93="93.0.4577.25"
+
+# Stable channel
+# Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
+G_LATEST_CHROMIUM_92="92.0.4515.131"
 
 H_INFO="\
 $(basename $BASH_SOURCE) ${G_VERSION}
@@ -396,9 +400,17 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 94 ; then
-		# Not EOL
+	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 94 \
+		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_LATEST_CHROMIUM_94} ; then
+		# Dev patched
 		:; # Passed
+	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 94 \
+		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_LATEST_CHROMIUM_94} ; then
+		# Dev unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
+proper security updates."
+		is_vulnerable=1
 	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 93 \
 		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_LATEST_CHROMIUM_93} ; then
 		# Dev patched
