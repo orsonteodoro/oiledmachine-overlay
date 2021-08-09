@@ -148,7 +148,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:12[${MULTILIB_USEDEP}]
 			sys-devel/llvm:12[${MULTILIB_USEDEP}]
 			clang? (
-				=sys-devel/lld-12*
+				>=sys-devel/lld-12
 				pgo? ( =sys-libs/compiler-rt-sanitizers-12*[profile] )
 			)
 		)
@@ -156,7 +156,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:11[${MULTILIB_USEDEP}]
 			sys-devel/llvm:11[${MULTILIB_USEDEP}]
 			clang? (
-				=sys-devel/lld-11*
+				>=sys-devel/lld-11
 				pgo? ( =sys-libs/compiler-rt-sanitizers-11*[profile] )
 			)
 		)
@@ -164,7 +164,7 @@ BDEPEND="${PYTHON_DEPS}
 			sys-devel/clang:10[${MULTILIB_USEDEP}]
 			sys-devel/llvm:10[${MULTILIB_USEDEP}]
 			clang? (
-				=sys-devel/lld-10*
+				>=sys-devel/lld-10
 				pgo? ( =sys-libs/compiler-rt-sanitizers-10*[profile] )
 			)
 		)
@@ -271,8 +271,8 @@ llvm_check_deps() {
 	fi
 
 	if use clang ; then
-		if ! has_version -b "=sys-devel/lld-${LLVM_SLOT}*" ; then
-			einfo "=sys-devel/lld-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+		if ! has_version -b ">=sys-devel/lld-${LLVM_SLOT}" ; then
+			einfo ">=sys-devel/lld-${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
@@ -449,6 +449,7 @@ pkg_pretend() {
 	fi
 }
 
+NABIS=0
 pkg_setup() {
 	ewarn "This ebuild is a Work In Progress (WIP) / Testing.  It may freeze or lock up for both 32 and 64-bit builds."
 	if [[ ${MERGE_TYPE} != binary ]] ; then
@@ -488,7 +489,7 @@ pkg_setup() {
 				[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
 			fi
 
-			if ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
+			if ver_test "${version_lld}" -lt "${version_llvm_rust}" ; then
 				eerror "Rust is using LLVM version ${version_llvm_rust} but ld.lld version belongs to LLVM version ${version_lld}."
 				eerror "You will be unable to link ${CATEGORY}/${PN}. To proceed you have the following options:"
 				eerror "  - Manually switch rust version using 'eselect rust' to match used LLVM version"
@@ -570,6 +571,10 @@ is greater than \$(nproc)/2"
 	if ! use pulseaudio ; then
 		ewarn "Microphone support may be disabled when pulseaudio is disabled."
 	fi
+
+	for a in $(multilib_get_enabled_abis) ; do
+		NABIS=$((${NABIS} + 1))
+	done
 }
 
 src_unpack() {
@@ -647,9 +652,14 @@ src_prepare() {
 		popd || die
 	fi
 
-	multilib_copy_sources
+	(( ${NABIS} > 1 )) \
+		&& multilib_copy_sources
 
 	_src_prepare() {
+		if (( ${NABIS} == 1 )) ; then
+			export BUILD_DIR="${S}"
+		fi
+
 		cd "${BUILD_DIR}" || die
 		local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 		local ctarget=$(get_abi_CHOST ${ABI})
@@ -702,6 +712,11 @@ _fix_paths() {
 }
 
 multilib_src_configure() {
+	if (( ${NABIS} == 1 )) ; then
+		export BUILD_DIR="${S}"
+		cd "${BUILD_DIR}" || die
+	fi
+
 	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 	local ctarget=$(get_abi_CHOST ${ABI})
 	# Show flags set at the beginning
@@ -1076,6 +1091,11 @@ multilib_src_configure() {
 }
 
 multilib_src_compile() {
+	if (( ${NABIS} == 1 )) ; then
+		export BUILD_DIR="${S}"
+		cd "${BUILD_DIR}" || die
+	fi
+
 	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 	local ctarget=$(get_abi_CHOST ${ABI})
 	_fix_paths
@@ -1257,6 +1277,10 @@ _install_licenses() {
 }
 
 multilib_src_install() {
+	if (( ${NABIS} == 1 )) ; then
+		export BUILD_DIR="${S}"
+	fi
+
 	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 	local ctarget=$(get_abi_CHOST ${ABI})
 	_fix_paths
