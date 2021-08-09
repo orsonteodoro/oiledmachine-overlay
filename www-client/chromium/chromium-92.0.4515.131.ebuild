@@ -515,12 +515,12 @@ BDEPEND="
 #   https://github.com/llvm/llvm-project/blob/d3676d4b/llvm/CMakeLists.txt
 RDEPEND+="
 	libcxx? (
-		>=sys-libs/libcxx-12[${MULTILIB_USEDEP}]
+		>=sys-libs/libcxx-13[${MULTILIB_USEDEP}]
 		official? ( >=sys-libs/libcxx-13[${MULTILIB_USEDEP}] )
 	)"
 DEPEND+="
 	libcxx? (
-		>=sys-libs/libcxx-12[${MULTILIB_USEDEP}]
+		>=sys-libs/libcxx-13[${MULTILIB_USEDEP}]
 		official? ( >=sys-libs/libcxx-13[${MULTILIB_USEDEP}] )
 	)"
 COMMON_DEPEND="
@@ -577,8 +577,8 @@ pre_build_checks() {
 		fi
 		if use clang || tc-is-clang ; then
 			CPP="${CHOST}-clang++ -E"
-			if ! ver_test "$(clang-major-version)" -ge 12 ; then
-				die "At least clang 12 is required"
+			if ! ver_test "$(clang-major-version)" -ge 13 ; then
+				die "At least clang 13 is required"
 			fi
 		fi
 	fi
