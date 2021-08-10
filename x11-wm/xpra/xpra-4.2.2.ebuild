@@ -26,7 +26,13 @@ IUSE+=" avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups dbus
 	html5-client html5_gzip html5_brotli jpeg kerberos ldap ldap3 +lz4 lzo
 	opengl openrc mdns mysql +notifications nvenc nvfbc nvjpeg pam pillow
 	png sd_listen selinux +server sound sqlite ssh sshpass +ssl systemd test
-	u2f vpx vsock v4l2 webcam webp websockets X xdg zeroconf zlib"
+	u2f vaapi vpx vsock v4l2 webcam webp websockets X xdg zeroconf zlib"
+IUSE+=" video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts
+video_cards_intel video_cards_iris video_cards_i965 video_cards_r600
+video_cards_radeonsi"
+
+#LIMD # ATM, GEN 5-12
+#LID # C2M, GEN 5-9
 GSTREAMER_IUSE+="aac alsa flac jack lame matroska ogg opus oss pulseaudio
 speex twolame vorbis wavpack"
 IUSE+=" ${GSTREAMER_IUSE}"
@@ -50,6 +56,36 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	sd_listen? ( systemd )
 	sound? ( pulseaudio )
 	sshpass? ( ssh )
+	video_cards_amdgpu? (
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
+		!video_cards_radeonsi
+	)
+	video_cards_amdgpu-pro? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
+		!video_cards_radeonsi
+	)
+	video_cards_amdgpu-pro-lts? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		!video_cards_r600
+		!video_cards_radeonsi
+	)
+	video_cards_r600? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+		!video_cards_radeonsi
+	)
+	video_cards_radeonsi? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
+	)
 	webp? ( pillow )
 	X? ( gtk3 )
 	zeroconf? ( mdns )"
@@ -61,6 +97,39 @@ NVJPEG_MIN_DRV_V="450.36.06"
 # From my experience, firejail doesn't need pillow with webp or with jpeg.
 # The encoding when set to auto may require jpeg and webp.
 # See https://github.com/Xpra-org/xpra/blob/v4.2/docs/Build/Dependencies.md for the full list.
+TD="
+	vaapi? ( >=media-video/ffmpeg-4.4[vaapi,x264]:0=
+		 >=x11-libs/libva-2.1.0
+		  || (
+		       video_cards_amdgpu? (
+				>=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_radeonsi]
+		       )
+		       video_cards_amdgpu-pro? (
+				x11-drivers/amdgpu-pro[open-stack,vaapi]
+		       )
+		       video_cards_amdgpu-pro-lts? (
+				x11-drivers/amdgpu-pro-lts[open-stack,vaapi]
+		       )
+		       video_cards_i965? (
+				|| (
+					x11-libs/libva-intel-media-driver
+					x11-libs/libva-intel-driver
+				)
+		       )
+		       video_cards_intel? (
+				|| (
+					x11-libs/libva-intel-media-driver
+					x11-libs/libva-intel-driver
+				)
+		       )
+		       video_cards_iris? (
+				x11-libs/libva-intel-media-driver
+                       )
+		       video_cards_r600? ( >=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_r600] )
+		       video_cards_radeonsi? ( >=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_radeonsi] )
+		  )
+	)
+"
 DEPEND+=" ${PYTHON_DEPS}
 	acct-group/xpra
 	app-admin/sudo
@@ -207,6 +276,10 @@ pyopengl_accelerate-${PYOPENGL_ACCELERATE_V} be the same version."
 			die \
 		"You are missing pam_selinux.so.  Reinstall pam[selinux]."
 		fi
+	fi
+
+	if has_version "x11-libs/libva-intel-driver" ; then
+		ewarn "x11-libs/libva-intel-driver is intended for "
 	fi
 }
 
@@ -386,6 +459,55 @@ pkg_postinst() {
 	einfo
 	einfo "Make sure you change the mode in the GUI to SSL."
 	einfo
+
+	if has_version "video_cards_amdgpu-pro" || has_version "video_cards_amdgpu-pro-lts" ; then
+		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following:"
+		einfo
+		einfo "(See https://en.wikipedia.org/wiki/Video_Core_Next)"
+		einfo "(https://en.wikipedia.org/wiki/Unified_Video_Decoder#Format_support)"
+		einfo "(https://en.wikipedia.org/wiki/Video_Coding_Engine)"
+		einfo
+		einfo "UVD 3.2+:  h264"
+		einfo "UVD 6.3+:  h264,vc1"
+		einfo "VCN 1.0+:  h264,hvec,vc1"
+		einfo
+		einfo "XPRA_VAAPI=true in your ~/.bashrc file but currently disabled upstream."
+		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc file"
+	fi
+
+	if has_version "x11-libs/libva-intel-driver" ; then
+		einfo
+		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following for G45/HD:"
+		einfo
+		einfo "(See https://github.com/intel/intel-vaapi-driver/blob/master/README for abbreviations.)"
+		einfo "Sandybridge:  h264"
+		einfo "CHV+/BSW+:  vc1,vp8"
+		einfo "SKL+:  hevc"
+		einfo "KBL+:  hevc,vp9"
+		einfo
+		einfo "XPRA_VAAPI=true in your ~/.bashrc file but currently disabled upstream."
+		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc file"
+		einfo
+	fi
+	if has_version "x11-libs/libva-intel-media-driver" ; then
+		einfo
+		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following for GEN:"
+		einfo
+		einfo "(See https://github.com/intel/media-driver for abbreviations)"
+		einfo
+		einfo "BDW:  h264,mpeg2"
+		einfo "SKL:  h264,hvec,mpeg2"
+		einfo "BXT/APL:  h264,hvec"
+		einfo "KBLx:  h264,hvec,mpeg2,vp8"
+		einfo "ICL:  h264,hvec,mpeg,vp8,vp9"
+		einfo "EHL/JSL:  h264,hvec,vp9"
+		einfo "TGL/RKL/ADL-S/ADL-P:  h264,hvec,mpeg2,vp9"
+		einfo "DG1/SG1:  h264,hvec,vp9"
+		einfo
+		einfo "XPRA_VAAPI=true in your ~/.bashrc file but currently disabled upstream."
+		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc file"
+		einfo
+	fi
 }
 
 pkg_postrm() {

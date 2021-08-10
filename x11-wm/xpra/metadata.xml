@@ -18,6 +18,16 @@
     <name>Antoine Martin</name>
   </maintainer>
 </upstream>
+<longdescription>
+  XPRA_VAAPI environment variable is set to default off due to problems, but it
+  could be used for accelerated encoding if supported by the hardware.
+
+  XPRA_VAAPI_ENCODINGS environment variable could be used to disable buggy
+  encoders or permit others.  For details, see
+
+    https://github.com/Xpra-org/xpra/blob/v4.2.2/xpra/codecs/enc_ffmpeg/encoder.pyx
+
+</longdescription>
 <use>
   <flag name="aac">Adds support for AAC.</flag>
   <flag name="alsa">Adds support for ALSA sound cards.</flag>
@@ -96,6 +106,8 @@
   <flag name="test">Enables self tests.</flag>
   <flag name="twolame">Adds MPEG Audio Layer 2 (MP2) encoding support.</flag>
   <flag name="u2f">Adds Universal 2nd Factor (U2F) authentication support.</flag>
+  <flag name="vaapy">Checks dependencies for proper VAAPI video acceleration
+    support.</flag>
   <flag name="vorbis">Adds lossy patent free audio encoding support.</flag>
   <flag name="v4l2">Enables support for v4l2loopback devices for additional
     post-processing.</flag>
