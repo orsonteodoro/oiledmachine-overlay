@@ -183,14 +183,12 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 				|| (
 					x11-libs/libva-intel-media-driver
 					x11-libs/libva-intel-driver
-					x11-drivers/xf86-video-intel
 				)
 			)
 			video_cards_intel? (
 				|| (
 					x11-libs/libva-intel-media-driver
 					x11-libs/libva-intel-driver
-					x11-drivers/xf86-video-intel
 				)
 			)
 			video_cards_iris? (
@@ -634,8 +632,7 @@ pkg_postinst() {
 		einfo
 		einfo "VAAPI support is found at File > Settings > Output > Output Mode:"
 		einfo "Advanced > Streaming > Encoder > FFMPEG VAAPI"
-		if use video_cards_intel || use video_cards_i965 || use video_cards_iris \
-			|| has_version "x11-drivers/xf86-video-intel" ; then
+		if use video_cards_intel || use video_cards_i965 || use video_cards_iris ; then
 			einfo
 			einfo "Intel Quick Sync Video is required for hardware accelerated H.264 VA-API"
 			einfo "encode."
@@ -650,14 +647,6 @@ pkg_postinst() {
 			einfo
 			einfo "x11-libs/libva-intel-media-driver:"
 			einfo "https://github.com/intel/media-driver#decodingencoding-features"
-			einfo
-			einfo "x11-drivers/xf86-video-intel:"
-			einfo "https://www.x.org/wiki/IntelGraphicsDriver/"
-			einfo
-			einfo "The x11-drivers/xf86-video-intel vaapi status:"
-			einfo
-			ewarn "H.264 support is DONE for Gen6 but marked MOSTLY for both G4x"
-			ewarn "and Gen5.  Take precautions using them."
 			einfo
 		fi
 		if use video_cards_amdgpu || use video_cards_amdgpu-pro \
