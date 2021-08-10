@@ -158,7 +158,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	u2f? ( dev-python/pyu2f[${PYTHON_USEDEP}] )
 	v4l2? ( media-video/v4l2loopback
 		sys-kernel/linux-headers )
-	vaapi? ( >=media-video/ffmpeg-4.4:0=[X?,vaapi]
+	vaapi? ( >=media-video/ffmpeg-4.4:0=[vaapi]
 		 >=x11-libs/libva-2.1.0
 		 || (
 		       video_cards_amdgpu? (
@@ -449,11 +449,11 @@ pkg_postinst() {
 	einfo
 	einfo "Make sure you change the mode in the GUI to SSL."
 	einfo
-
 	if use video_cards_amdgpu \
 		|| use video_cards_amdgpu-pro \
 		|| use video_cards_amdgpu-pro-lts \
 		|| use video_cards_radeonsi ; then \
+		einfo
 		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following:"
 		einfo
 		einfo "(See https://en.wikipedia.org/wiki/Video_Core_Next)"
@@ -466,8 +466,9 @@ pkg_postinst() {
 		einfo
 		einfo "XPRA_VAAPI=true in your ~/.bashrc file but currently disabled upstream."
 		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc file"
+		einfo "then relog."
+		einfo
 	fi
-
 	if has_version "x11-libs/libva-intel-driver" ; then
 		einfo
 		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following for G45/HD:"
@@ -480,6 +481,7 @@ pkg_postinst() {
 		einfo
 		einfo "XPRA_VAAPI=true in your ~/.bashrc file but currently disabled upstream."
 		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc file"
+		einfo "then relog."
 		einfo
 	fi
 	if has_version "x11-libs/libva-intel-media-driver" ; then
@@ -499,7 +501,11 @@ pkg_postinst() {
 		einfo
 		einfo "XPRA_VAAPI=true in your ~/.bashrc file but currently disabled upstream."
 		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc file"
+		einfo "then relog."
 		einfo
+	fi
+	if use vaapi ; then
+		einfo "You must be part of the video group to use vaapi support."
 	fi
 }
 
