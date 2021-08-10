@@ -476,7 +476,7 @@ pkg_postinst() {
 		einfo
 		einfo "(See https://github.com/intel/intel-vaapi-driver/blob/master/README for abbreviations.)"
 		einfo
-		einfo "Sandybridge:  h264"
+		einfo "SNB+:  h264"
 		einfo "CHV+/BSW+:  vp8"
 		einfo "SKL+:  hevc"
 		einfo "KBL+:  hevc,vp9"
