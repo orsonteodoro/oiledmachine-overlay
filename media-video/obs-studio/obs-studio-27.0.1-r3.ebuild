@@ -14,33 +14,43 @@ LICENSE="GPL-2
 	 browser? ( BSD )"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0"
-IUSE+=" +alsa +browser -decklink fdk ftl imagemagick jack +lua nvenc oss \
-+pipewire pulseaudio +python +speexdsp +ssl -test freetype sndio v4l2 vaapi \
-video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts \
-video_cards_intel video_cards_iris video_cards_i965 video_cards_radeonsi \
-vlc +vst +wayland"
+IUSE+=" +alsa +browser -decklink fdk ftl imagemagick jack +lua nvenc oss
++pipewire pulseaudio +python +speexdsp +ssl -test freetype sndio v4l2 vaapi
+video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts
+video_cards_intel video_cards_iris video_cards_i965 video_cards_r600
+video_cards_radeonsi vlc +vst +wayland"
 REQUIRED_USE+="
 	lua? ( ${LUA_REQUIRED_USE} )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	video_cards_amdgpu? (
 		!video_cards_amdgpu-pro
 		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
 		!video_cards_radeonsi
 	)
 	video_cards_amdgpu-pro? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
 		!video_cards_radeonsi
 	)
 	video_cards_amdgpu-pro-lts? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro
+		!video_cards_r600
+		!video_cards_radeonsi
+	)
+	video_cards_r600? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
 		!video_cards_radeonsi
 	)
 	video_cards_radeonsi? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro
 		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
 	)
 "
 # Based on 18.04 See
@@ -183,6 +193,9 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 			)
 			video_cards_iris? (
 				x11-libs/libva-intel-media-driver
+			)
+			video_cards_r600? (
+				>=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_r600]
 			)
 			video_cards_radeonsi? (
 				>=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_radeonsi]
@@ -616,21 +629,46 @@ pkg_postinst() {
 	fi
 
 	if use vaapi ; then
-		einfo "VAAPI support is found at File > Settings > Output > Output Mode: Advanced > Streaming > Encoder > FFMPEG VAAPI"
+		einfo
+		einfo "VAAPI support is found at File > Settings > Output > Output Mode:"
+		einfo "Advanced > Streaming > Encoder > FFMPEG VAAPI"
 		if use video_cards_intel || use video_cards_i965 ; then
-			einfo "Intel Quick Sync Video, or Sandy Bridge (Gen2+) is required for hardware accelerated H.264 VA-API encode."
+			einfo
+			einfo "Intel Quick Sync Video, or Sandy Bridge (Gen2+) is required for"
+			einfo "hardware accelerated H.264 VA-API encode."
+			einfo
 			einfo "For details see https://github.com/intel/intel-vaapi-driver/blob/master/NEWS"
 			einfo "See the AVC row at https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
+			einfo
 		fi
 		if use video_cards_iris ; then
-			einfo "Intel Broadwell or newer is required for hardware accelerated H.264 VA-API encode."
+			einfo
+			einfo "Intel Broadwell or newer is required for hardware accelerated"
+			einfo "H.264 VA-API encode."
+			einfo
 			einfo "See https://github.com/intel/media-driver for details"
+			einfo
 		fi
-		if use video_cards_amdgpu || use video_cards_amdgpu-pro || use video_cards_amdgpu-pro-lts || use video_cards_radeonsi  ; then
-			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for hardware accelerated H.264 VA-API encode."
+		if use video_cards_amdgpu || use video_cards_amdgpu-pro \
+			|| use video_cards_amdgpu-pro-lts || use video_cards_r600 \
+			|| use video_cards_radeonsi  ; then
+			einfo
+			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for"
+			einfo "hardware accelerated H.264 VA-API encode."
 			einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
+			einfo "or https://www.x.org/wiki/RadeonFeature/"
+			einfo
 		fi
+		if use video_cards_r600 ; then
+			einfo
+			einfo "ARUBA is only supported in the free r600 driver."
+			einfo "For newer hardware, try a newer free driver like"
+			einfo "the radeonsi driver or closed drivers."
+			einfo
+		fi
+		einfo
 		einfo "The user must be part of the video group to use VAAPI support."
+		einfo
 	fi
 
 	if use ftl ; then
