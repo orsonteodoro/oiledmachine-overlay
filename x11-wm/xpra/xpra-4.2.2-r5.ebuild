@@ -490,7 +490,7 @@ vaapi_message() {
 		&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
 		&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for newer"
 	einfo
-	einfo "to your .bashrc or .xinitrc and relogging."
+	einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
 	einfo
 }
 
