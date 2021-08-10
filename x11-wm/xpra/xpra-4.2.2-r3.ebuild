@@ -475,7 +475,8 @@ pkg_postinst() {
 		einfo "(https://www.x.org/wiki/RadeonFeature/)"
 		einfo
 		einfo "* VCE 1.0+:  h264"
-		einfo "VCE 3.4+:  h264,hvec"
+		einfo "UVD 1.0+:  h264"
+		einfo "UVD 6.3+:  h264,hevc"
 		einfo
 		einfo "* The free driver only supports the ARUBA in the r600 free driver."
 		einfo "Use the free radeonsi driver or closed drivers for newer hardware."
