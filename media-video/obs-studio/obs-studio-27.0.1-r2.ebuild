@@ -189,8 +189,7 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 			)
 		)
 		>=x11-libs/libva-${LIBVA_V}
-		!wayland? ( >=media-video/ffmpeg-${FFMPEG_V}[X,vaapi] )
-		 wayland? ( >=media-video/ffmpeg-${FFMPEG_V}[wayland,vaapi] )
+		>=media-video/ffmpeg-${FFMPEG_V}[vaapi]
 	)"
 
 DEPEND_CURL="
@@ -631,6 +630,7 @@ pkg_postinst() {
 			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for hardware accelerated H.264 VA-API encode."
 			einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
 		fi
+		einfo "The user must be part of the video group to use VAAPI support."
 	fi
 
 	if use ftl ; then
