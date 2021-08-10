@@ -497,7 +497,7 @@ pkg_postinst() {
 		einfo "ICL:  h264,hevc,mpeg,vp8,vp9"
 		einfo "EHL/JSL:  h264,hevc,vp9"
 		einfo "TGL/RKL/ADL-S/ADL-P:  h264,hevc,mpeg2,vp9"
-		einfo "DG1/SG1:  h264,hevc,vp9"
+		einfo "DG1/SG1:  h264,hevc,mpeg2,vp9"
 		einfo
 		einfo "XPRA_VAAPI=true in your ~/.bashrc file but currently disabled upstream."
 		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc file"
