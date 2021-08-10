@@ -183,12 +183,14 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 				|| (
 					x11-libs/libva-intel-media-driver
 					x11-libs/libva-intel-driver
+					x11-drivers/xf86-video-intel
 				)
 			)
 			video_cards_intel? (
 				|| (
 					x11-libs/libva-intel-media-driver
 					x11-libs/libva-intel-driver
+					x11-drivers/xf86-video-intel
 				)
 			)
 			video_cards_iris? (
@@ -639,6 +641,16 @@ pkg_postinst() {
 			einfo
 			einfo "For details see https://github.com/intel/intel-vaapi-driver/blob/master/NEWS"
 			einfo "See the AVC row at https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
+			einfo
+		fi
+		if has_version "x11-drivers/xf86-video-intel" ; then
+			einfo
+			einfo "The x11-drivers/xf86-video-intel vaapi status:"
+			einfo
+			ewarn "H.264 support is done for Gen6 but marked mostly for both G4x"
+			ewarn "and Gen5.  Take precautions using them."
+			einfo
+			einfo "For details see https://www.x.org/wiki/IntelGraphicsDriver/"
 			einfo
 		fi
 		if use video_cards_iris ; then
