@@ -185,12 +185,14 @@ DEPEND+=" ${PYTHON_DEPS}
 				|| (
 					x11-libs/libva-intel-media-driver
 					x11-libs/libva-intel-driver
+					x11-drivers/xf86-video-intel
 				)
 		       )
 		       video_cards_intel? (
 				|| (
 					x11-libs/libva-intel-media-driver
 					x11-libs/libva-intel-driver
+					x11-drivers/xf86-video-intel
 				)
 		       )
 		       video_cards_iris? (
@@ -523,6 +525,23 @@ pkg_postinst() {
 		einfo "~/.bashrc file but currently disabled by default upstream."
 		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc"
 		einfo "file then relog."
+		einfo
+	fi
+	if has_version "x11-drivers/xf86-video-intel" ; then
+		einfo
+		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following:"
+		einfo
+		einfo "(See https://www.x.org/wiki/IntelGraphicsDriver/)"
+		einfo
+		einfo "G4x:  mpeg2"
+		einfo "* Gen5:  h264,mpeg2"
+		einfo "* Gen6:  h264,mpeg2"
+		einfo
+		ewarn "* The h264 support is listed mostly working but not done."
+		ewarn "mpeg2 support is done.  Take precautions when using the h264 driver."
+		einfo
+		einfo "The information provided is incompete by the free driver maker."
+		einfo "It doesn't say if encoding applies."
 		einfo
 	fi
 	if use vaapi ; then
