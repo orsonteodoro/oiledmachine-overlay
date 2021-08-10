@@ -464,9 +464,10 @@ pkg_postinst() {
 		einfo "UVD 6.3+:  h264"
 		einfo "VCN 1.0+:  h264,hevc"
 		einfo
-		einfo "XPRA_VAAPI=true in your ~/.bashrc file but currently disabled upstream."
-		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc file"
-		einfo "then relog."
+		einfo "XPRA_VAAPI_ENCODINGS and XPRA_VAAPI=true both can be placed in your"
+		einfo "~/.bashrc file but currently disabled by default upstream."
+		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc"
+		einfo "file then relog."
 		einfo
 	fi
 	if has_version "x11-libs/libva-intel-driver" ; then
@@ -474,14 +475,16 @@ pkg_postinst() {
 		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following for G45/HD:"
 		einfo
 		einfo "(See https://github.com/intel/intel-vaapi-driver/blob/master/README for abbreviations.)"
+		einfo
 		einfo "Sandybridge:  h264"
 		einfo "CHV+/BSW+:  vp8"
 		einfo "SKL+:  hevc"
 		einfo "KBL+:  hevc,vp9"
 		einfo
-		einfo "XPRA_VAAPI=true in your ~/.bashrc file but currently disabled upstream."
-		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc file"
-		einfo "then relog."
+		einfo "XPRA_VAAPI_ENCODINGS and XPRA_VAAPI=true both can be placed in your"
+		einfo "~/.bashrc file but currently disabled by default upstream."
+		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc"
+		einfo "file then relog."
 		einfo
 	fi
 	if has_version "x11-libs/libva-intel-media-driver" ; then
@@ -499,9 +502,10 @@ pkg_postinst() {
 		einfo "TGL/RKL/ADL-S/ADL-P:  h264,hevc,mpeg2,vp9"
 		einfo "DG1/SG1:  h264,hevc,mpeg2,vp9"
 		einfo
-		einfo "XPRA_VAAPI=true in your ~/.bashrc file but currently disabled upstream."
-		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc file"
-		einfo "then relog."
+		einfo "XPRA_VAAPI_ENCODINGS and XPRA_VAAPI=true both can be placed in your"
+		einfo "~/.bashrc file but currently disabled by default upstream."
+		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc"
+		einfo "file then relog."
 		einfo
 	fi
 	if use vaapi ; then
