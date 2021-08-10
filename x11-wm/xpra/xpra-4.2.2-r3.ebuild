@@ -28,7 +28,8 @@ IUSE+=" avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups dbus
 	png sd_listen selinux +server sound sqlite ssh sshpass +ssl systemd test
 	u2f vaapi vpx vsock v4l2 webcam webp websockets X xdg zeroconf zlib"
 IUSE+=" video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts
-video_cards_intel video_cards_iris video_cards_i965 video_cards_radeonsi"
+video_cards_intel video_cards_iris video_cards_i965 video_cards_r600
+video_cards_radeonsi"
 
 #LIMD # ATM, GEN 5-12
 #LID # C2M, GEN 5-9
@@ -58,22 +59,32 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	video_cards_amdgpu? (
 		!video_cards_amdgpu-pro
 		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
 		!video_cards_radeonsi
 	)
 	video_cards_amdgpu-pro? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
 		!video_cards_radeonsi
 	)
 	video_cards_amdgpu-pro-lts? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro
+		!video_cards_r600
+		!video_cards_radeonsi
+	)
+	video_cards_r600? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
 		!video_cards_radeonsi
 	)
 	video_cards_radeonsi? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro
 		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
 	)
 	webp? ( pillow )
 	X? ( gtk3 )
@@ -185,6 +196,7 @@ DEPEND+=" ${PYTHON_DEPS}
 		       video_cards_iris? (
 				x11-libs/libva-intel-media-driver
                        )
+		       video_cards_r600? ( media-libs/mesa[gallium,vaapi,video_cards_r600] )
 		       video_cards_radeonsi? ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi] )
 		  )
 	)
@@ -452,6 +464,7 @@ pkg_postinst() {
 	if use video_cards_amdgpu \
 		|| use video_cards_amdgpu-pro \
 		|| use video_cards_amdgpu-pro-lts \
+		|| use video_cards_r600 \
 		|| use video_cards_radeonsi ; then \
 		einfo
 		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following:"
@@ -459,10 +472,13 @@ pkg_postinst() {
 		einfo "(See https://en.wikipedia.org/wiki/Video_Core_Next)"
 		einfo "(https://en.wikipedia.org/wiki/Unified_Video_Decoder#Format_support)"
 		einfo "(https://en.wikipedia.org/wiki/Video_Coding_Engine)"
+		einfo "(https://www.x.org/wiki/RadeonFeature/)"
 		einfo
-		einfo "UVD 3.2+:  h264"
+		einfo "*UVD 3.2+:  h264"
 		einfo "UVD 6.3+:  h264"
 		einfo "VCN 1.0+:  h264,hevc"
+		einfo
+		einfo "* The free driver only supports the ARUBA for UVD 3.1."
 		einfo
 		einfo "XPRA_VAAPI_ENCODINGS and XPRA_VAAPI=true both can be placed in your"
 		einfo "~/.bashrc file but currently disabled by default upstream."
