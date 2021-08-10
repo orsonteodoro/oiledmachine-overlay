@@ -226,7 +226,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 	virtual/pkgconfig"
 PATCHES=( "${FILESDIR}/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch"
 	  "${FILESDIR}/${PN}-3.0_rc1-ldconfig-skip.patch"
-	  "${FILESDIR}/${PN}-4.1.3-openrc-init-fix-v3.patch"
+	  "${FILESDIR}/${PN}-4.2.2-openrc-init-fix-v3.patch"
 	  "${FILESDIR}/${PN}-4.1.3-change-init-config-path.patch"
 	  "${FILESDIR}/${PN}-4.2-udev-path.patch" )
 SRC_URI="https://github.com/Xpra-org/xpra/archive/refs/tags/v${PV}.tar.gz
@@ -404,6 +404,96 @@ python_install_all() {
 	fi
 }
 
+vaapi_message() {
+	if use video_cards_amdgpu \
+		|| use video_cards_amdgpu-pro \
+		|| use video_cards_amdgpu-pro-lts \
+		|| use video_cards_r600 \
+		|| use video_cards_radeonsi ; then \
+		einfo
+		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following:"
+		einfo
+		einfo "  VCE 1.0+:  h264"
+		einfo "  UVD 1.0+:  h264"
+		einfo "  UVD 6.3+:  h264,hevc"
+		einfo
+		einfo "(See https://en.wikipedia.org/wiki/Video_Core_Next)"
+		einfo "(https://en.wikipedia.org/wiki/Unified_Video_Decoder#Format_support)"
+		einfo "(https://en.wikipedia.org/wiki/Video_Coding_Engine)"
+		einfo "(https://www.x.org/wiki/RadeonFeature/)"
+		einfo
+		einfo "* The free driver only supports ARUBA in the r600 free driver."
+		einfo "Use the free radeonsi driver or closed drivers for newer hardware."
+		einfo
+		einfo "The XPRA_VAAPI_ENCODINGS with multiple codecs separated with comma and"
+		einfo "no space like above and XPRA_VAAPI=true can both can be placed in your"
+		einfo "~/.bashrc file but currently disabled by default upstream.  You may set"
+		einfo "XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc or"
+		einfo "~/.xinitrc file then relog."
+		einfo
+	fi
+	if has_version "x11-libs/libva-intel-driver" ; then
+		einfo
+		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following for G45/HD:"
+		einfo
+		einfo "  SNB+:  h264"
+		einfo "  CHV+/BSW+:  vp8"
+		einfo "  SKL+:  hevc"
+		einfo "  KBL+:  hevc,vp9"
+		einfo
+		einfo "(See https://github.com/intel/intel-vaapi-driver/blob/master/README for abbreviations.)"
+		einfo
+		einfo "The XPRA_VAAPI_ENCODINGS with multiple codecs separated with comma and"
+		einfo "no space like above and XPRA_VAAPI=true can both can be placed in your"
+		einfo "~/.bashrc file but currently disabled by default upstream.  You may set"
+		einfo "XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc or"
+		einfo "~/.xinitrc file then relog."
+		einfo
+	fi
+	if has_version "x11-libs/libva-intel-media-driver" ; then
+		einfo
+		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following for GEN:"
+		einfo
+		einfo "  BDW:  h264,mpeg2"
+		einfo "  SKL:  h264,hevc,mpeg2"
+		einfo "  BXT/APL:  h264,hevc"
+		einfo "  KBLx:  h264,hevc,mpeg2,vp8"
+		einfo "  ICL:  h264,hevc,mpeg,vp8,vp9"
+		einfo "  EHL/JSL:  h264,hevc,vp9"
+		einfo "  TGL/RKL/ADL-S/ADL-P:  h264,hevc,mpeg2,vp9"
+		einfo "  DG1/SG1:  h264,hevc,mpeg2,vp9"
+		einfo
+		einfo "(See https://github.com/intel/media-driver for abbreviations)"
+		einfo
+		einfo "The XPRA_VAAPI_ENCODINGS with multiple codecs separated with comma and"
+		einfo "no space like above and XPRA_VAAPI=true can both can be placed in your"
+		einfo "~/.bashrc file but currently disabled by default upstream.  You may set"
+		einfo "XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc or"
+		einfo "~/.xinitrc file then relog."
+		einfo
+	fi
+	einfo
+	einfo "You must be part of the video group to use vaapi support."
+	einfo
+	einfo "The LIBVA_DRIVER_NAME envvar may need to be changed if both open"
+	einfo "and closed drivers are installed to one of the following"
+	einfo
+	has_version "x11-libs/libva-intel-driver" \
+		&& einfo "  LIBVA_DRIVER_NAME=\"i965\""
+	has_version "x11-libs/libva-intel-media-driver" \
+		&& einfo "  LIBVA_DRIVER_NAME=\"iHD\""
+	use video_cards_r600 \
+		&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
+	( use video_cards_radeonsi || use video_cards_amdgpu ) \
+		&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
+	( use video_cards_amdgpu-pro || use video_cards_amdgpu-pro-lts ) \
+		&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
+		&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for newer"
+	einfo
+	einfo "to your .bashrc or .xinitrc and relogging."
+	einfo
+}
+
 pkg_postinst() {
 	tmpfiles_process /usr/lib/tmpfiles.d/xpra.conf
 	xdg_pkg_postinst
@@ -461,72 +551,8 @@ pkg_postinst() {
 	einfo
 	einfo "Make sure you change the mode in the GUI to SSL."
 	einfo
-	if use video_cards_amdgpu \
-		|| use video_cards_amdgpu-pro \
-		|| use video_cards_amdgpu-pro-lts \
-		|| use video_cards_r600 \
-		|| use video_cards_radeonsi ; then \
-		einfo
-		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following:"
-		einfo
-		einfo "(See https://en.wikipedia.org/wiki/Video_Core_Next)"
-		einfo "(https://en.wikipedia.org/wiki/Unified_Video_Decoder#Format_support)"
-		einfo "(https://en.wikipedia.org/wiki/Video_Coding_Engine)"
-		einfo "(https://www.x.org/wiki/RadeonFeature/)"
-		einfo
-		einfo "* VCE 1.0+:  h264"
-		einfo "UVD 1.0+:  h264"
-		einfo "UVD 6.3+:  h264,hevc"
-		einfo
-		einfo "* The free driver only supports ARUBA in the r600 free driver."
-		einfo "Use the free radeonsi driver or closed drivers for newer hardware."
-		einfo
-		einfo "XPRA_VAAPI_ENCODINGS and XPRA_VAAPI=true both can be placed in your"
-		einfo "~/.bashrc file but currently disabled by default upstream."
-		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc"
-		einfo "file then relog."
-		einfo
-	fi
-	if has_version "x11-libs/libva-intel-driver" ; then
-		einfo
-		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following for G45/HD:"
-		einfo
-		einfo "(See https://github.com/intel/intel-vaapi-driver/blob/master/README for abbreviations.)"
-		einfo
-		einfo "SNB+:  h264"
-		einfo "CHV+/BSW+:  vp8"
-		einfo "SKL+:  hevc"
-		einfo "KBL+:  hevc,vp9"
-		einfo
-		einfo "XPRA_VAAPI_ENCODINGS and XPRA_VAAPI=true both can be placed in your"
-		einfo "~/.bashrc file but currently disabled by default upstream."
-		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc"
-		einfo "file then relog."
-		einfo
-	fi
-	if has_version "x11-libs/libva-intel-media-driver" ; then
-		einfo
-		einfo "XPRA_VAAPI_ENCODINGS can only be set to the following for GEN:"
-		einfo
-		einfo "(See https://github.com/intel/media-driver for abbreviations)"
-		einfo
-		einfo "BDW:  h264,mpeg2"
-		einfo "SKL:  h264,hevc,mpeg2"
-		einfo "BXT/APL:  h264,hevc"
-		einfo "KBLx:  h264,hevc,mpeg2,vp8"
-		einfo "ICL:  h264,hevc,mpeg,vp8,vp9"
-		einfo "EHL/JSL:  h264,hevc,vp9"
-		einfo "TGL/RKL/ADL-S/ADL-P:  h264,hevc,mpeg2,vp9"
-		einfo "DG1/SG1:  h264,hevc,mpeg2,vp9"
-		einfo
-		einfo "XPRA_VAAPI_ENCODINGS and XPRA_VAAPI=true both can be placed in your"
-		einfo "~/.bashrc file but currently disabled by default upstream."
-		einfo "You may set XPRA_VAAPI_ENCODINGS to one of these rows in your ~/.bashrc"
-		einfo "file then relog."
-		einfo
-	fi
 	if use vaapi ; then
-		einfo "You must be part of the video group to use vaapi support."
+		vaapi_message
 	fi
 }
 
