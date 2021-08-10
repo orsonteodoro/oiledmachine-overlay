@@ -634,31 +634,30 @@ pkg_postinst() {
 		einfo
 		einfo "VAAPI support is found at File > Settings > Output > Output Mode:"
 		einfo "Advanced > Streaming > Encoder > FFMPEG VAAPI"
-		if use video_cards_intel || use video_cards_i965 ; then
+		if use video_cards_intel || use video_cards_i965 || use video_cards_iris \
+			|| has_version "x11-drivers/xf86-video-intel" ; then
 			einfo
-			einfo "Intel Quick Sync Video, or Sandy Bridge (Gen2+) is required for"
-			einfo "hardware accelerated H.264 VA-API encode."
+			einfo "Intel Quick Sync Video is required for hardware accelerated H.264 VA-API"
+			einfo "encode."
 			einfo
-			einfo "For details see https://github.com/intel/intel-vaapi-driver/blob/master/NEWS"
-			einfo "See the AVC row at https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
+			einfo "For hardware support, see the AVC row at"
+			einfo "https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
 			einfo
-		fi
-		if has_version "x11-drivers/xf86-video-intel" ; then
+			einfo "Driver ebuild packages for their corresponding hardware can be found at:"
+			einfo
+			einfo "x11-libs/libva-intel-driver:"
+			einfo "https://github.com/intel/intel-vaapi-driver/blob/master/NEWS"
+			einfo
+			einfo "x11-libs/libva-intel-media-driver:"
+			einfo "https://github.com/intel/media-driver#decodingencoding-features"
+			einfo
+			einfo "x11-drivers/xf86-video-intel:"
+			einfo "https://www.x.org/wiki/IntelGraphicsDriver/"
 			einfo
 			einfo "The x11-drivers/xf86-video-intel vaapi status:"
 			einfo
-			ewarn "H.264 support is done for Gen6 but marked mostly for both G4x"
+			ewarn "H.264 support is DONE for Gen6 but marked MOSTLY for both G4x"
 			ewarn "and Gen5.  Take precautions using them."
-			einfo
-			einfo "For details see https://www.x.org/wiki/IntelGraphicsDriver/"
-			einfo
-		fi
-		if use video_cards_iris ; then
-			einfo
-			einfo "Intel Broadwell or newer is required for hardware accelerated"
-			einfo "H.264 VA-API encode."
-			einfo
-			einfo "See https://github.com/intel/media-driver for details"
 			einfo
 		fi
 		if use video_cards_amdgpu || use video_cards_amdgpu-pro \

@@ -57,12 +57,9 @@
       driver</flag>
     <flag name="video_cards_amdgpu-pro-lts">Prefer the multilib AMDGPU-PRO
       VA-API driver</flag>
-    <flag name="video_cards_i965">Prefer the Intel VA-API driver for Sandy
-      Bridge to pre-Broadwell</flag>
-    <flag name="video_cards_intel">Prefer the Intel VA-API driver for Sandy
-      Bridge to pre-Broadwell</flag>
-    <flag name="video_cards_iris">Prefer the Intel VA-API driver for Broadwell
-      and newer</flag>
+    <flag name="video_cards_i965">Pulls or checks for a VA-API driver</flag>
+    <flag name="video_cards_intel">Pulls or checks for a VA-API driver</flag>
+    <flag name="video_cards_iris">Pulls or checks for a VA-API driver</flag>
     <flag name="video_cards_r600">Prefer the Gallium Mesa VA-API driver</flag>
     <flag name="video_cards_radeonsi">Prefer the Gallium Mesa VA-API
       driver</flag>
