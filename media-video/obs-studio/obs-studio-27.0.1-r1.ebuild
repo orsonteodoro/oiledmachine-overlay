@@ -17,40 +17,30 @@ SLOT="0"
 IUSE+=" +alsa +browser -decklink fdk ftl imagemagick jack +lua nvenc oss \
 +pipewire pulseaudio +python +speexdsp +ssl -test freetype sndio v4l2 vaapi \
 video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts \
-video_cards_intel video_cards_iris video_cards_i965 video_cards_r600 \
-video_cards_radeonsi vlc +vst +wayland"
+video_cards_intel video_cards_iris video_cards_i965 video_cards_radeonsi \
+vlc +vst +wayland"
 REQUIRED_USE+="
 	lua? ( ${LUA_REQUIRED_USE} )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	video_cards_amdgpu? (
 		!video_cards_amdgpu-pro
 		!video_cards_amdgpu-pro-lts
-		!video_cards_r600
 		!video_cards_radeonsi
 	)
 	video_cards_amdgpu-pro? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro-lts
-		!video_cards_r600
 		!video_cards_radeonsi
 	)
 	video_cards_amdgpu-pro-lts? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro
-		!video_cards_r600
-		!video_cards_radeonsi
-	)
-	video_cards_r600? (
-		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
 		!video_cards_radeonsi
 	)
 	video_cards_radeonsi? (
 		!video_cards_amdgpu
 		!video_cards_amdgpu-pro
 		!video_cards_amdgpu-pro-lts
-		!video_cards_r600
 	)
 "
 # Based on 18.04 See
@@ -168,23 +158,39 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 			>=media-video/ffmpeg-4[video_cards_nvidia]
 		)
 	)
-	vaapi? ( >=media-video/ffmpeg-${FFMPEG_V}[vaapi,x264]
-		  >=x11-libs/libva-${LIBVA_V}
-		  || ( video_cards_amdgpu? (
+	vaapi? (
+		|| (
+			video_cards_amdgpu? (
 				>=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_radeonsi]
-		       )
-		       video_cards_amdgpu-pro? (
+			)
+			video_cards_amdgpu-pro? (
 				x11-drivers/amdgpu-pro[open-stack,vaapi]
-		       )
-		       video_cards_amdgpu-pro-lts? (
+			)
+			video_cards_amdgpu-pro-lts? (
 				x11-drivers/amdgpu-pro-lts[open-stack,vaapi]
-		       )
-		       video_cards_i965? ( >=x11-libs/libva-${LIBVA_V}[video_cards_i965] )
-		       video_cards_intel? ( >=x11-libs/libva-${LIBVA_V}[video_cards_intel] )
-		       video_cards_iris? ( x11-libs/libva-intel-media-driver )
-		       video_cards_r600? ( >=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_r600] )
-		       video_cards_radeonsi? ( >=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_radeonsi] )
-		  )
+			)
+			video_cards_i965? (
+				|| (
+					x11-libs/libva-intel-media-driver
+					x11-libs/libva-intel-driver
+				)
+			)
+			video_cards_intel? (
+				|| (
+					x11-libs/libva-intel-media-driver
+					x11-libs/libva-intel-driver
+				)
+			)
+			video_cards_iris? (
+				x11-libs/libva-intel-media-driver
+			)
+			video_cards_radeonsi? (
+				>=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_radeonsi]
+			)
+		)
+		>=x11-libs/libva-${LIBVA_V}
+		!wayland? ( >=media-video/ffmpeg-${FFMPEG_V}[X,vaapi] )
+		 wayland? ( >=media-video/ffmpeg-${FFMPEG_V}[wayland,vaapi] )
 	)"
 
 DEPEND_CURL="
@@ -452,6 +458,14 @@ browser USE flag."
 	if ! use v4l2 ; then
 		ewarn "WebCam capture is possibly disabled.  Enable with the v4l2 USE flag."
 	fi
+
+	if has_version "x11-libs/libva-intel-driver" ; then
+ewarn
+ewarn "x11-libs/libva-intel-driver is the older vaapi driver but intended for"
+ewarn "select hardware.  See also x11-libs/libva-intel-media-driver package"
+ewarn "to access more vaapi accelerated encoders if driver support overlaps."
+ewarn
+	fi
 }
 
 src_unpack() {
@@ -613,7 +627,7 @@ pkg_postinst() {
 			einfo "Intel Broadwell or newer is required for hardware accelerated H.264 VA-API encode."
 			einfo "See https://github.com/intel/media-driver for details"
 		fi
-		if use video_cards_amdgpu || use video_cards_amdgpu-pro || use video_cards_amdgpu-pro-lts || use video_cards_r600 || use video_cards_radeonsi  ; then
+		if use video_cards_amdgpu || use video_cards_amdgpu-pro || use video_cards_amdgpu-pro-lts || use video_cards_radeonsi  ; then
 			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for hardware accelerated H.264 VA-API encode."
 			einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
 		fi
