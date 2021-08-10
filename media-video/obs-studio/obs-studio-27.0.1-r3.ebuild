@@ -667,6 +667,23 @@ pkg_postinst() {
 		einfo
 		einfo "The user must be part of the video group to use VAAPI support."
 		einfo
+		einfo "The LIBVA_DRIVER_NAME envvar may need to be changed if both open"
+		einfo "and closed drivers are installed to one of the following"
+		einfo
+		has_version "x11-libs/libva-intel-driver" \
+			&& einfo "  LIBVA_DRIVER_NAME=\"i965\""
+		has_version "x11-libs/libva-intel-media-driver" \
+			&& einfo "  LIBVA_DRIVER_NAME=\"iHD\""
+		use video_cards_r600 \
+			&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
+		( use video_cards_radeonsi || use video_cards_amdgpu ) \
+			&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
+		( use video_cards_amdgpu-pro || use video_cards_amdgpu-pro-lts ) \
+			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
+			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for newer"
+		einfo
+		einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
+		einfo
 	fi
 
 	if use ftl ; then
