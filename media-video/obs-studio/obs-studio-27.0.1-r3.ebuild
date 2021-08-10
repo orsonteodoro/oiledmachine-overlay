@@ -666,13 +666,11 @@ pkg_postinst() {
 			einfo
 			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for"
 			einfo "hardware accelerated H.264 VA-API encode."
+			einfo
 			einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
 			einfo "or https://www.x.org/wiki/RadeonFeature/"
 			einfo
-		fi
-		if use video_cards_r600 ; then
-			einfo
-			einfo "ARUBA is only supported in the free r600 driver."
+			einfo "The r600 driver only supports ARUBA for VCE encode."
 			einfo "For newer hardware, try a newer free driver like"
 			einfo "the radeonsi driver or closed drivers."
 			einfo
