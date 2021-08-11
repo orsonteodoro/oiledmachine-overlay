@@ -89,7 +89,7 @@ PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_WAYLAND_PROTO="1.17"
 PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.1.0" # about the same as the mesa version
 VULKAN_SDK_VER="1.2.174"
-ROCK_V="4.0.0" # an approximate
+ROCK_V="4.2.0" # an approximate
 IUSE="+amf bindist clinfo developer dkms doc +egl +gles2 freesync glamor
 hip-clang +hwe +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_rocr
 +opengl +opengl_pro opengl_mesa openmax +pro-stack rocm strict-pairing
