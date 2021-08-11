@@ -1764,6 +1764,10 @@ _configure_pgx() {
 }
 
 _build_pgx() {
+	[[ -f out/Release/chromedriver ]] \
+		&& rm out/Release/chromedriver
+	[[ -f out/Release/chromedriver.unstripped ]] \
+		&& rm out/Release/chromedriver.unstripped
 	if [[ -f out/Release/build.ninja ]] ; then
 		pushd out/Release || popd
 			einfo "Cleaning out build"
@@ -1782,6 +1786,21 @@ _build_pgx() {
 			pax-mark m "out/Release/${x}"
 		fi
 	done
+
+	# Even though ninja autodetects number of CPUs, we respect
+	# user's options, for debugging with -j 1 or any other reason.
+	einfo "Building chrome"
+	eninja -C out/Release chrome
+	einfo "Building chromedriver"
+	eninja -C out/Release chromedriver
+	if use suid ; then
+		einfo "Building chrome_sandbox"
+		eninja -C out/Release chrome_sandbox
+	fi
+
+	pax-mark m out/Release/chrome
+
+	mv out/Release/chromedriver{.unstripped,} || die
 }
 
 _run_training_suite() {
@@ -1815,6 +1834,7 @@ _run_training_suite() {
 	eninja -C out/Release bin/run_performance_test_suite
 	export CHROME_SANDBOX_ENV="${BUILD_DIR}/out/Release/chrome_sandbox" # For testing/test_env.py
 	# Futurize is not necessary for run_performance_test_suite.
+	addwrite /var/lib/portage/home/.cache/mesa_shader_cache/index
 	local display_args
 	if use headless ; then
 		display_args=()
@@ -1962,15 +1982,6 @@ multilib_src_compile() {
 		_update_licenses
 		_build_pgx
 	fi
-
-	# Even though ninja autodetects number of CPUs, we respect
-	# user's options, for debugging with -j 1 or any other reason.
-	eninja -C out/Release chrome chromedriver
-	use suid && eninja -C out/Release chrome_sandbox
-
-	pax-mark m out/Release/chrome
-
-	mv out/Release/chromedriver{.unstripped,} || die
 
 	# Build manpage; bug #684550
 	sed -e 's|@@PACKAGE@@|chromium-browser|g;
