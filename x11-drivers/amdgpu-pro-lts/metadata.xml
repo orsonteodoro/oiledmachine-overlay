@@ -74,11 +74,21 @@
     <flag name="strict-pairing">Pairs the amdgpu-pro-lts package to the
       same firmware and same DRM kernel driver.</flag>
     <flag name="vaapi">Install VAAPI (Video Acceleration API)
-      acceleration driver for accelerated video playback (H.264) and video
-      post-processing.</flag>
+      acceleration driver for hardware accelerated video playback or if
+      available hardware accelerated encoding.</flag>
+    <flag name="vaapi_r600">Set the VA-API driver from r600 to Northern Islands
+      as the default</flag>
+    <flag name="vaapi_radeonsi">Set the VA-API driver for Southern Islands
+      to newer as the default</flag>
     <flag name="vdpau">Install VDPAU (Video Decode and Presentation API for
       Unix) acceleration driver for accelerated video playback (H.264)
       and video post-processing.</flag>
+    <flag name="vdpau_r300">Set the VDPAU driver from r300 to r500 as the
+      default</flag>
+    <flag name="vdpau_r600">Set the VDPAU driver from r600 to Northern Islands
+      as the default</flag>
+    <flag name="vdpau_radeonsi">Set the VDPAU driver for Southern Islands to
+      newer cards as the default</flag>
     <flag name="vulkan">Install the Vulkan driver.</flag>
     <flag name="wayland">Install Wayland support.</flag>
     <flag name="X">Installs X11 support.</flag>
