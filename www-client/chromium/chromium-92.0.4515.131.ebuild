@@ -1764,10 +1764,12 @@ _configure_pgx() {
 }
 
 _build_pgx() {
-	[[ -f out/Release/chromedriver ]] \
-		&& rm out/Release/chromedriver
-	[[ -f out/Release/chromedriver.unstripped ]] \
-		&& rm out/Release/chromedriver.unstripped
+	if [[ -f out/Release/chromedriver ]] ; then
+		rm out/Release/chromedriver || die
+	fi
+	if [[ -f out/Release/chromedriver.unstripped ]] ; then
+		rm out/Release/chromedriver.unstripped || die
+	fi
 	if [[ -f out/Release/build.ninja ]] ; then
 		pushd out/Release || popd
 			einfo "Cleaning out build"
