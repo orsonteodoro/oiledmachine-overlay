@@ -106,7 +106,7 @@
   <flag name="test">Enables self tests.</flag>
   <flag name="twolame">Adds MPEG Audio Layer 2 (MP2) encoding support.</flag>
   <flag name="u2f">Adds Universal 2nd Factor (U2F) authentication support.</flag>
-  <flag name="vaapy">Checks dependencies for proper VAAPI video acceleration
+  <flag name="vaapi">Checks dependencies for proper VAAPI video acceleration
     support.</flag>
   <flag name="vorbis">Adds lossy patent free audio encoding support.</flag>
   <flag name="v4l2">Enables support for v4l2loopback devices for additional
