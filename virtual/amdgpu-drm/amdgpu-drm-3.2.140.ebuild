@@ -8,8 +8,8 @@ IUSE="amdgpu-dkms dkms +firmware kernel rock-dkms strict-pairing"
 AMDGPU_DKMS_PV="21.20" # DC_VER = 3.2.140
 ROCK_DKMS_PV="4.4" # DC_VER =  ; no equivalent
 VANILLA_KERNEL_PV="5.13"  # DC_VER = 3.2.141
-LINUX_FIRMWARE_PV_MIN="20210629" # ; no exact tag # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
-LINUX_FIRMWARE_PV_MAX="20210629"
+LINUX_FIRMWARE_PV_MIN="9999" # ; no exact tag # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
+LINUX_FIRMWARE_PV_MAX="9999"
 # Find the timestamp at https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/log/amdgpu
 RDEPEND="strict-pairing? (
 		 amdgpu-dkms? ( =sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV}* )
