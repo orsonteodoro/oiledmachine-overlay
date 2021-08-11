@@ -678,9 +678,12 @@ pkg_postinst() {
 			&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
 		( use video_cards_radeonsi || use video_cards_amdgpu ) \
 			&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
-		( use video_cards_amdgpu-pro || use video_cards_amdgpu-pro-lts ) \
+		use video_cards_amdgpu-pro \
 			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
-			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for newer"
+			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for Southern Islands or newer"
+		use video_cards_amdgpu-pro-lts \
+			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib/x86_64-linux-gnu/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
+			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib/x86_64-linux-gnu/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for Southern Islands or newer"
 		einfo
 		einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
 		einfo
