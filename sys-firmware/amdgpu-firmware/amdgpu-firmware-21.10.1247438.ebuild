@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="AMDGPU firmware"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-50"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-21-10"
 LICENSE="AMDGPU-FIRMWARE"
 # See the rock-firmware package for details.
 KEYWORDS="~amd64"
