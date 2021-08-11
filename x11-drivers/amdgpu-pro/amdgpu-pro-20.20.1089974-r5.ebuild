@@ -74,10 +74,11 @@ PKG_VER_VA="1.8.3"
 PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.1.0" # about the same as the mesa version
 VULKAN_SDK_VER="1.2.135.0"
 ROCK_V="3.5.0_pre20200424" # an approximate
-IUSE="bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang \
-+open-stack +opencl opencl-icd-loader +opencl_orca +opencl_pal +opengl \
-opengl_mesa +opengl_pro osmesa +pro-stack rocm strict-pairing \
-+vaapi +vdpau +vulkan vulkan_open vulkan_pro +X xa"
+IUSE="bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang
++open-stack +opencl opencl-icd-loader +opencl_orca +opencl_pal +opengl
+opengl_mesa +opengl_pro osmesa +pro-stack rocm strict-pairing +vaapi
+vaapi_r600 +vaapi_radeonsi +vdpau vdpau_r300 vdpau_r600 +vdpau_radeonsi +vulkan
+vulkan_open vulkan_pro +X xa"
 REQUIRED_USE="
 	!abi_x86_32
 	bindist? ( !doc !pro-stack )
@@ -94,8 +95,13 @@ REQUIRED_USE="
 	opengl_pro? ( egl pro-stack opengl X )
 	osmesa? ( developer? ( X ) open-stack )
 	rocm? ( dkms open-stack pro-stack )
-	vaapi? ( open-stack X )
-	vdpau? ( open-stack )
+	vaapi? ( open-stack X ^^ ( vaapi_r600 vaapi_radeonsi ) )
+	vaapi_r600? ( vaapi )
+	vaapi_radeonsi? ( vaapi )
+	vdpau? ( open-stack ^^ ( vdpau_r300 vdpau_r600 vdpau_radeonsi ) )
+	vdpau_r300? ( vdpau )
+	vdpau_r600? ( vdpau )
+	vdpau_radeonsi? ( vdpau )
 	vulkan? ( || ( vulkan_open vulkan_pro ) )
 	vulkan_open? ( open-stack vulkan )
 	vulkan_pro? ( pro-stack vulkan )
@@ -588,10 +594,30 @@ src_install() {
 	[[ -d usr/share/licenses ]] && \
 	dodoc -r usr/share/licenses/*
 
+	local vaapi_drv_name="radeonsi"
+	local vdpau_drv_name="radeonsi"
+	if use vaapi_r600 ; then
+		vaapi_drv_name="r600"
+	fi
+	if use vdpau_r300 ; then
+		vdpau_drv_name="r300"
+	fi
+	if use vdpau_r600 ; then
+		vdpau_drv_name="r600"
+	fi
+
+	if use vaapi ; then
+		cat <<-EOF > "${T}"/50${P}-vaapi
+			LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri"
+			LIBVA_DRIVER_NAME="${vaapi_drv_name}"
+		EOF
+		doenvd "${T}"/50${P}-vaapi
+	fi
+
 	if use vdpau ; then
 		cat <<-EOF > "${T}"/50${P}-vdpau
-			LDPATH=\
-"/opt/amdgpu-pro/lib64/vdpau"
+			VDPAU_DRIVER_PATH="/opt/amdgpu/lib64/vdpau"
+			VDPAU_DRIVER="${vdpau_drv_name}"
 		EOF
 		doenvd "${T}"/50${P}-vdpau
 	fi
