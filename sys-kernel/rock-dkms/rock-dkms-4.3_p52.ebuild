@@ -25,7 +25,7 @@ if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
-KV_NOT_SUPPORTED_MAX="5.7"
+KV_NOT_SUPPORTED_MAX="5.12"
 KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/rock-firmware:${SLOT} )
@@ -60,12 +60,12 @@ S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${SUFFIX}"
-DC_VER="3.2.126"
-AMDGPU_VERSION="5.9.25"
+DC_VER="3.2.135.1"
+AMDGPU_VERSION="5.11.14"
 
 PATCHES=( "${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
-	  "${FILESDIR}/rock-dkms-3.8_p30-enable-mmu_notifier.patch"
-	  "${FILESDIR}/rock-dkms-4.2_p21-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-4.3_p52-enable-mmu_notifier.patch"
+	  "${FILESDIR}/rock-dkms-4.3_p52-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
 
 pkg_nofetch() {

@@ -1,0 +1,26 @@
+diff -urp amdgpu-4.3-52.orig/amd/dkms/post-install.sh amdgpu-4.3-52/amd/dkms/post-install.sh
+--- amdgpu-4.3-52.orig/amd/dkms/post-install.sh	2021-07-25 09:50:11.000000000 -0700
++++ amdgpu-4.3-52/amd/dkms/post-install.sh	2021-08-10 23:16:28.921131605 -0700
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+ 
+-FW_DIR="/lib/firmware/updates"
+-mkdir -p $FW_DIR
+-cp -ar /usr/src/amdgpu-4.3-52/firmware/amdgpu $FW_DIR
++#FW_DIR="/lib/firmware/updates"
++#mkdir -p $FW_DIR
++#cp -ar /usr/src/amdgpu-4.3-52/firmware/amdgpu $FW_DIR
+Only in amdgpu-4.3-52/amd/dkms: post-install.sh.orig
+Only in amdgpu-4.3-52/amd/dkms: post-install.sh.rej
+diff -urp amdgpu-4.3-52.orig/amd/dkms/post-remove.sh amdgpu-4.3-52/amd/dkms/post-remove.sh
+--- amdgpu-4.3-52.orig/amd/dkms/post-remove.sh	2021-07-25 09:50:11.000000000 -0700
++++ amdgpu-4.3-52/amd/dkms/post-remove.sh	2021-08-10 23:16:10.161578242 -0700
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+ 
+-FW_DIR="/lib/firmware/updates"
+-rm -rf $FW_DIR/amdgpu
+-[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
++#FW_DIR="/lib/firmware/updates"
++#rm -rf $FW_DIR/amdgpu
++#[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
