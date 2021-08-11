@@ -7,7 +7,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-90-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-91-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=12
 
@@ -69,10 +69,10 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 LICENSE_FINGERPRINT="\
-90e56bab2c66de3d95ea3cc98c1d1f3a11b3f0add7e974afde7aeba5f4731709\
-6804cf01d915fd28a0fbe6d1c210a7a27afa353ae56ff51cbddbd93374e8dddf" # SHA512
-# FF-90.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
-LICENSE+=" FF-90.0-THIRD-PARTY-LICENSES" # Converted toolkit/content/license.html by html2text -nobs
+20eb3b10bf7c7cba8e42edbc8d8ad58a3a753e214b8751fb60eddb827ebff067\
+456f77f36e7abe6d06861b1be52011303fa08db8a981937e38733f961c4a39d9" # SHA512
+# FF-91.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
+LICENSE+=" FF-91.0-THIRD-PARTY-LICENSES"
 LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions all-rights-reserved
 Boost-1.0 BSD BSD-2 CC0-1.0 CC-BY-4.0 curl GPL-2+ GPL-3+ icu ISC Ispell libpng
 MIT NAIST-IPADIC OFL-1.1 Old-MIT OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode
@@ -145,7 +145,7 @@ BDEPEND="${PYTHON_DEPS}
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
 		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
 	)
-	>=dev-lang/rust-1.47.0[${MULTILIB_USEDEP}]
+	>=dev-lang/rust-1.52.1[${MULTILIB_USEDEP}]
 	!dev-lang/rust-bin
 	|| (
 		(
@@ -177,8 +177,8 @@ BDEPEND="${PYTHON_DEPS}
 	x86? ( >=dev-lang/nasm-2.13 )"
 
 CDEPEND="
-	>=dev-libs/nss-3.66[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.29[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.68[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.32[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-1.10[X,${MULTILIB_USEDEP}]
@@ -213,7 +213,7 @@ CDEPEND="
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-2.7.4:0=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-2.8.1:0=[${MULTILIB_USEDEP}]
 		>=media-gfx/graphite2-1.3.13[${MULTILIB_USEDEP}]
 	)
 	system-icu? ( >=dev-libs/icu-67.1:=[${MULTILIB_USEDEP}] )
@@ -558,18 +558,19 @@ pkg_setup() {
 	WARNING_SECCOMP="CONFIG_SECCOMP not set! This system will be unable to play DRM-protected content."
 	linux-info_pkg_setup
 
-	einfo
-	einfo \
-"To set up cross-compile for other ABIs see \`epkginfo -d firefox\` or the \
-metadata.xml"
+einfo
+einfo "To set up cross-compile for other ABIs see \`epkginfo -d firefox\` or"
+einfo "the metadata.xml"
+einfo
 
 	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" \
 			| sed -r -e "s#(-j|--jobs=)\s*##g")
 	local cores=$(nproc)
 	if (( ${jobs} > $((${cores}/2)) )) ; then
-		ewarn \
-"Firefox may lock up or freeze the computer if the N value in MAKEOPTS=\"-jN\" \
-is greater than \$(nproc)/2"
+ewarn
+ewarn "Firefox may lock up or freeze the computer if the N value in"
+ewarn "MAKEOPTS=\"-jN\" is greater than \$(nproc)/2"
+ewarn
 	fi
 
 	if ! use pulseaudio ; then
@@ -622,7 +623,7 @@ einfo "Verifying about:license fingerprint"
 		]] ; then
 eerror
 eerror "A change in the license was detected.  Please change"
-eerror "LICENSE_FINGERPRINT=${LICENSE_FINGERPRINT} and copy the license file as"
+eerror "LICENSE_FINGERPRINT=${x_license_fingerprint} and copy the license file as"
 eerror "follows:"
 eerror "  \`cp -a ${S}/toolkit/content/license.html \
 ${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
@@ -1426,86 +1427,44 @@ multilib_src_install() {
 		newicon -s ${size} "${icon}" ${PN}.png
 	done
 
-	# Install menus
-	local wrapper_wayland="${PN}-${ABI}-wayland.sh"
-	local wrapper_x11="${PN}-${ABI}-x11.sh"
+	# Install menu
+	local app_name="Mozilla ${MOZ_PN^} (${ABI})"
 	local desktop_file="${FILESDIR}/icon/${PN}-r2.desktop"
-	local display_protocols="auto X11"
-	local icon="${PN}"
-	local name="Mozilla ${MOZ_PN^} (${ABI})"
+	local desktop_filename="${PN}-${ABI}.desktop"
+	local exec_command="${PN}-${ABI}"
 	local use_wayland="false"
 
 	if use wayland ; then
-		display_protocols+=" Wayland"
 		use_wayland="true"
 	fi
 
-	local app_name desktop_filename display_protocol exec_command
-	for display_protocol in ${display_protocols} ; do
-		app_name="${name} on ${display_protocol}"
-		desktop_filename="${PN}-${ABI}-${display_protocol,,}.desktop"
+	cp "${desktop_file}" "${WORKDIR}/${PN}.desktop-template" || die
 
-		case ${display_protocol} in
-			Wayland)
-				exec_command="${PN}-${ABI}-wayland --name ${PN}-${ABI}-wayland"
-				newbin "${FILESDIR}/multiabi/${wrapper_wayland}" ${PN}-${ABI}-wayland
-				;;
-			X11)
-				if ! use wayland ; then
-					# Exit loop here because there's no choice so
-					# we don't need wrapper/.desktop file for X11.
-					continue
-				fi
+	sed -i \
+		-e "s:@NAME@:${app_name}:" \
+		-e "s:@EXEC@:${exec_command}:" \
+		-e "s:@ICON@:${icon}:" \
+		"${WORKDIR}/${PN}.desktop-template" \
+		|| die
 
-				exec_command="${PN}-${ABI}-x11 --name ${PN}-${ABI}-x11"
-				newbin "${FILESDIR}/multiabi/${wrapper_x11}" ${PN}-${ABI}-x11
-				[ -e "/usr/bin/${PN}-x11" ] && rm /usr/bin/${PN}-x11
-				dosym /usr/bin/${PN}-${ABI}-x11 /usr/bin/${PN}-x11
-				;;
-			*)
-				app_name="${name}"
-				desktop_filename="${PN}-${ABI}.desktop"
-				exec_command="${PN}-${ABI}"
-				;;
-		esac
+	newmenu "${WORKDIR}/${PN}.desktop-template" "${desktop_filename}"
 
-		cp "${desktop_file}" "${WORKDIR}/${PN}.desktop-template" || die
+	rm "${WORKDIR}/${PN}.desktop-template" || die
 
-		sed -i \
-			-e "s:@NAME@:${app_name}:" \
-			-e "s:@EXEC@:${exec_command}:" \
-			-e "s:@ICON@:${icon}:" \
-			"${WORKDIR}/${PN}.desktop-template" \
-			|| die
-
-		newmenu "${WORKDIR}/${PN}.desktop-template" "${desktop_filename}"
-
-		rm "${WORKDIR}/${PN}.desktop-template" || die
-	done
-
-	# Install generic wrapper script
+	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
-	newbin "${FILESDIR}/multiabi/${PN}.sh" ${PN}-${ABI}
+	newbin "${FILESDIR}/multiabi/${PN}-r1.sh" ${PN}-${ABI}
 	dosym /usr/bin/${PN}-${ABI} /usr/bin/${PN}
 
 	# Update wrapper
-	local wrapper
-	for wrapper in \
+	sed -i \
+		-e "s:@PREFIX@:${EPREFIX}/usr:" \
+		-e "s:@LIBDIR@:$(get_libdir):" \
+		-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
+		-e "s:@APULSELIB_DIR@:${apulselib}:" \
+		-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
 		"${ED}/usr/bin/${PN}-${ABI}" \
-		"${ED}/usr/bin/${PN}-${ABI}-x11" \
-		"${ED}/usr/bin/${PN}-${ABI}-wayland" \
-	; do
-		[[ ! -f "${wrapper}" ]] && continue
-
-		sed -i \
-			-e "s:@PREFIX@:${EPREFIX}/usr:" \
-			-e "s:@LIBDIR@:$(get_libdir):" \
-			-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
-			-e "s:@APULSELIB_DIR@:${apulselib}:" \
-			-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
-			"${wrapper}" \
-			|| die
-	done
+		|| die
 	_install_licenses
 }
 
@@ -1549,18 +1508,20 @@ pkg_postinst() {
 		elog
 	fi
 
-	local show_doh_information show_normandy_information
+	local show_doh_information show_normandy_information show_shortcut_information
 
 	if [[ -z "${REPLACING_VERSIONS}" ]] ; then
 		# New install; Tell user that DoH is disabled by default
 		show_doh_information=yes
 		show_normandy_information=yes
+		show_shortcut_information=no
 	else
 		local replacing_version
 		for replacing_version in ${REPLACING_VERSIONS} ; do
-			if ver_test "${replacing_version}" -lt 70 ; then
-				# Tell user only once about our DoH default
-				show_doh_information=yes
+			if ver_test "${replacing_version}" -lt 91.0 ; then
+				# Tell user that we no longer install a shortcut
+				# per supported display protocol
+				show_shortcut_information=yes
 			fi
 
 			if ver_test "${replacing_version}" -lt 74.0-r2 ; then
@@ -1597,16 +1558,27 @@ pkg_postinst() {
 		elog "in about:config."
 	fi
 
-	elog
-	elog "By default, the /usr/bin/firefox symlink is set to the last ABI installed."
-	elog "You must change it manually if you want to run on a different default ABI."
-	elog
-	elog "Examples"
-	elog "ln -sf /usr/lib64/${PN} /usr/bin/firefox"
-	elog "ln -sf /usr/lib/${PN} /usr/bin/firefox"
-	elog "ln -sf /usr/lib32/${PN} /usr/bin/firefox"
-	elog
-	# Reported in bugid 1010527, 1646007, 1449901
-	elog "WebGL performance is suboptimal and runs at ~40 FPS.  There is currently no fix for this."
-	elog
+	if [[ -n "${show_shortcut_information}" ]] ; then
+		elog
+		elog "Since firefox-91.0 we no longer install multiple shortcuts for"
+		elog "each supported display protocol.  Instead we will only install"
+		elog "one generic Mozilla Firefox shortcut."
+		elog "If you still want to be able to select between running Mozilla Firefox"
+		elog "on X11 or Wayland, you have to re-create these shortcuts on your own."
+	fi
+
+einfo
+einfo "By default, the /usr/bin/firefox symlink is set to the last ABI"
+einfo "installed.  You must change it manually if you want to run on a"
+einfo "different default ABI."
+einfo
+einfo "Examples"
+einfo "ln -sf /usr/lib64/${PN} /usr/bin/firefox"
+einfo "ln -sf /usr/lib/${PN} /usr/bin/firefox"
+einfo "ln -sf /usr/lib32/${PN} /usr/bin/firefox"
+einfo
+# Reported in bugid 1010527, 1646007, 1449901
+einfo "WebGL performance is suboptimal and runs at ~40 FPS.  There is currently"
+einfo "no fix for this."
+einfo
 }
