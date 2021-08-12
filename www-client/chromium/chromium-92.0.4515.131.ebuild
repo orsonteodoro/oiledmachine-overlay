@@ -1835,8 +1835,8 @@ _run_training_suite() {
 	local benchmarks=$(echo "${benchmarks_allowed[@]}" | tr " " ",")
 	eninja -C out/Release bin/run_performance_test_suite
 	export CHROME_SANDBOX_ENV="${BUILD_DIR}/out/Release/chrome_sandbox" # For testing/test_env.py
-	# Futurize is not necessary for run_performance_test_suite.
-	addwrite /var/lib/portage/home/.cache/mesa_shader_cache/index
+	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # \
+	  # Prevent a sandbox violation and isolate between parallel running emerges.
 	local display_args
 	if use headless ; then
 		display_args=()
