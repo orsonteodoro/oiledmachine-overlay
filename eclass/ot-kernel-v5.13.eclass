@@ -29,6 +29,8 @@ PATCH_FUTEX2_COMMIT_T="f12c1f14276bce0f66e514b419e68506fb5bad55" # top / oldest
 PATCH_BBRV2_COMMIT_B="50a9bcbda886c487541cbe02e2ff6bf54107028c" # bottom / newest
 PATCH_BBRV2_COMMIT_T="03eeb3dfa421116c48e86376a2079fa7dd25e783" # top / oldest
 PATCH_KCP_COMMIT="aa17c1c6e894e75943950b0818af8695ae4a23b2"
+PATCH_LRU_GEN_COMMIT_B="2ae9740bc978f0c2b9b66014a172b903ef165deb" # bottom / newest
+PATCH_LRU_GEN_COMMIT_T="29426437a3440a1be20c387d29f43308dc3c0c73" # top / oldest
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/Y^..X.patch \
@@ -63,7 +65,9 @@ aec8f00a3066a2589dd6ea97d5f86d81c8d40c4a \
 67850ef3720d3e2b363db6b347ab59544b433bd7 \
 efe513d7401c0d8ee779944de9997da960e257ce \
 28defae036a002630b50952e29ed454586ed4212 \
-6dd7ee7fb8d404b250b4b34f799110891ba0a7b9"
+6dd7ee7fb8d404b250b4b34f799110891ba0a7b9 \
+a4b5ddc398fa0a872d767992698e7a8d02443fee \
+df089c73ce7c2ecc19aaa81af627c8682f3e7aa9"
 
 # top / oldest, bottom / newest
 # Diced to let user can choose between UKSM, KSWAPD, OOMD
@@ -102,8 +106,8 @@ KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs disable_debug futex-wait-multiple futex2
-+genpatches +kernel-compiler-patch lto muqss +O3 prjc rt shadowcallstack tresor
-tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
++genpatches +kernel-compiler-patch lru_gen lto muqss +O3 prjc rt shadowcallstack
+tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-sauce -zen-tune zen-tune-muqss"
 REQUIRED_USE+="
 	!muqss
@@ -144,9 +148,8 @@ inherit ot-kernel
 LICENSE+=" bbrv2? ( GPL-2 )" # tcp_bbr2.c is Dual BSD/GPL but other parts are based on licensing of original file
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
-LICENSE+=" prjc? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
-  # does not come with an explicit license but defaults to
-  # GPL-2 with Linux-syscall-note.
+LICENSE+=" prjc? ( GPL-3 )" # see \
+  # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" futex2? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
@@ -159,6 +162,7 @@ gen_kcp_license() {
 	echo "${out}"
 }
 LICENSE+=" "$(gen_kcp_license)
+LICENSE+=" lru_gen? ( GPL-2 )"
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
@@ -339,6 +343,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   kernel-compiler-patch-cortex-a72? (
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
+	   lru_gen? ( ${LRU_GEN_SRC_URI} )
 	   O3? ( ${O3_ALLOW_SRC_URI} )
 	   prjc? ( ${PRJC_SRC_URI} )
 	   rt? ( ${RT_SRC_URI} )

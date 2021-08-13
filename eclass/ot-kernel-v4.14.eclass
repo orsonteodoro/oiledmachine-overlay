@@ -63,9 +63,8 @@ LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
-LICENSE+=" pds? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
-  # does not come with an explicit license but defaults to
-  # GPL-2 with Linux-syscall-note.
+LICENSE+=" pds? ( GPL-3 )" # \
+  # See https://gitlab.com/alfredchen/PDS-mq/-/blob/master/LICENSE
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # GPL-2 applies to the files being patched \

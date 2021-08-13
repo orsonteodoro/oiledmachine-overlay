@@ -42,6 +42,13 @@
     In layman terms, O(1) is faster than O(log n).  O(log n) is faster than
     O(n).
 
+    Multigenerational LRU is a redesign of the current LRU design with
+    more complex and accurate separation into multiple lists (aka generations)
+    instead of the current LRU design of 2 which may be too coarse and result in
+    inefficient reclamation.  The recommended tunings address mobile, cloud,
+    desktop usage and should be customized or considered if not desktop which
+    may differ from the defaults.
+
     The TRESOR patch provides increased mitigation from cold boot resistant
     attacks.  TRESOR is vulnerable to a DMA attack side-channel attack.  All
     older hardware that does not have IOMMU VT-d / AMD-Vi and not using it is
@@ -251,6 +258,8 @@
     <flag name="kernel-compiler-patch-alder_lake">Patches the kernel for the
       Alder Lake microarchitecture and ensures the toolchain requirements
       are in place.</flag>
+    <flag name="lru_gen">Applies the Multigenerational LRU patch for improved
+      page reclamation.  This patch also includes zen-kernel changes.</flag>
     <flag name="lto">Fulfills the ThinLTO requirements.</flag>
     <flag name="muqss">Patches the kernel with Con Kolivas patchset and
       includes his skiplist based MuQSS CPU scheduler.</flag>

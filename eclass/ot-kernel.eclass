@@ -15,6 +15,7 @@
 
 # BMQ CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/BMQ
+#   https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 # genpatches:
 #   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
@@ -31,6 +32,8 @@
 #   https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
 #   https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #   https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
+# Multigenerational LRU:
+#   https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/lru
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
 #   5.10 https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c
@@ -40,6 +43,7 @@
 #     https://github.com/torvalds/linux/commit/562a14babcd56efc2f51c772cb2327973d8f90ad
 # PDS CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/PDS
+#   https://gitlab.com/alfredchen/PDS-mq/-/tree/master
 # PREEMPT_RT:
 #  https://wiki.linuxfoundation.org/realtime/start
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
@@ -48,6 +52,7 @@
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.13/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
+#   https://gitlab.com/alfredchen/projectc/-/tree/master
 # TRESOR:
 #   https://www1.informatik.uni-erlangen.de/tresor
 # UKSM:
@@ -299,6 +304,16 @@ if [[ -n "${KCP_9_0_BN}" ]] ; then
 KCP_SRC_9_0_URI="${KCP_URI_BASE}${KCP_9_0_BN}.patch -> ${KCP_9_0_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
 fi
 KCP_SRC_CORTEX_A72_URI="${KCP_URI_BASE}${KCP_CORTEX_A72_BN}.patch -> ${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
+
+LRU_GEN_COMMITS="${PATCH_LRU_GEN_COMMIT_T}^..${PATCH_LRU_GEN_COMMIT_B}" # [oldest,newest] [top,bottom]
+LRU_GEN_COMMITS_SHORT=\
+"${PATCH_LRU_GEN_COMMIT_T:0:7}-${PATCH_LRU_GEN_COMMIT_B:0:7}" # [oldest,newest] [top,bottom]
+LRU_GEN_BASE_URI=\
+"https://github.com/torvalds/linux/compare/${LRU_GEN_COMMITS}"
+LRU_GEN_FN=\
+"lru_gen-${K_MAJOR_MINOR}-${LRU_GEN_COMMITS_SHORT}.patch"
+LRU_GEN_SRC_URI=\
+"${LRU_GEN_BASE_URI}.patch -> ${LRU_GEN_FN}"
 
 LINUX_REPO_URI=\
 "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
@@ -829,6 +844,13 @@ function apply_bbrv2() {
 	_fpatch "${DISTDIR}/${BBRV2_FN}"
 }
 
+# @FUNCTION: apply_lru_gen
+# @DESCRIPTION:
+# Uses multigenerational LRU to improve page reclamation.
+function apply_lru_gen() {
+	_fpatch "${DISTDIR}/${LRU_GEN_FN}"
+}
+
 # @FUNCTION: _filter_genpatches
 # @DESCRIPTION:
 # Applies a genpatch if not blacklisted.
@@ -1201,6 +1223,12 @@ ewarn
 
 	if use uksm ; then
 		apply_uksm
+	fi
+
+	if has lru_gen ${IUSE_EFFECTIVE} ; then
+		if use lru_gen ; then
+			apply_lru_gen
+		fi
 	fi
 
 	if has bmq ${IUSE_EFFECTIVE} ; then
