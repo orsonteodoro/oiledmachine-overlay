@@ -476,6 +476,7 @@ BDEPEND="
 		$(python_gen_any_dep 'dev-python/future[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'dev-python/psutil[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'dev-python/pypng[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep 'dev-python/pyfakefs[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'dev-python/requests[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'dev-python/six[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'dev-python/websocket-client[${PYTHON_USEDEP}]')
@@ -958,7 +959,6 @@ eerror
 			die
 		fi
 	fi
-	use libcxx && ewarn "Using the libcxx USE flag is in testing"
 
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
@@ -1291,7 +1291,10 @@ eerror
 		third_party/xdg-utils
 	)
 	if use pgo-full ; then
-		keeplibs+=( third_party/catapult/third_party/typ )
+		keeplibs+=(
+			third_party/catapult/third_party/tsproxy
+			third_party/catapult/third_party/typ
+		)
 	fi
 	if ! use system-ffmpeg ; then
 		keeplibs+=( third_party/ffmpeg third_party/opus )
@@ -1809,6 +1812,7 @@ _run_training_suite() {
 # See also https://github.com/chromium/chromium/blob/92.0.4515.131/docs/pgo.md
 # https://github.com/chromium/chromium/blob/92.0.4515.131/testing/buildbot/generate_buildbot_json.py
 # https://github.com/chromium/chromium/commit/8acfdce99c84fbc35ad259692ac083a9ea18392c
+# tools/perf/contrib/vr_benchmarks
 	local pp=(
 		"${BUILD_DIR}/third_party/catapult/common/py_utils"
 		"${BUILD_DIR}/third_party/catapult/telemetry/telemetry"
