@@ -73,18 +73,47 @@ LICENSE_FINGERPRINT="\
 456f77f36e7abe6d06861b1be52011303fa08db8a981937e38733f961c4a39d9" # SHA512
 # FF-91.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
 LICENSE+=" FF-91.0-THIRD-PARTY-LICENSES"
-LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions all-rights-reserved
-Boost-1.0 BSD BSD-2 CC0-1.0 CC-BY-4.0 curl GPL-2+ GPL-3+ icu ISC Ispell libpng
-MIT NAIST-IPADIC OFL-1.1 Old-MIT OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode
-W3C-document ZLIB
-pgo? (
-	( BSD-2 all-rights-reserved || ( MIT AFL-2.1 ) ( MIT GPL-2 ) BSD MIT )
+LICENSE+="
+	( BSD-2 BSD LGPL-2.1 ( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) ( all-rights-reserved || ( MIT AFL-2.1 ) ) ( MIT GPL-2 ) ( all-rights-reserved || ( AFL-2.1 BSD ) ) )
+	( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	all-rights-reserved
+	Boost-1.0
 	BSD
 	BSD-2
-	LGPL-2.1
-	LGPL-2.1+
-	MPL-2.0
-)"
+	CC0-1.0
+	CC-BY-4.0
+	curl
+	GPL-2+
+	GPL-3+
+	icu
+	ISC
+	Ispell
+	libpng
+	MIT
+	NAIST-IPADIC
+	OFL-1.1
+	Old-MIT
+	OPENLDAP
+	PSF-2
+	PSF-2.4
+	SunPro
+	UoI-NCSA
+	unicode
+	W3C-document
+	ZLIB
+	pgo? (
+		( BSD-2 all-rights-reserved || ( MIT AFL-2.1 ) ( MIT GPL-2 ) BSD MIT )
+		BSD
+		BSD-2
+		LGPL-2.1
+		LGPL-2.1+
+		MPL-2.0
+	)" # \
+# emerge does not recognize ^^ for the LICENSE variable.  You must choose
+# at most one for some packages when || is present.
+
 # Third party licenses:
 #
 # build/pgo/** folder:
@@ -97,6 +126,10 @@ pgo? (
 #   LGPL-2.1+
 #   MPL-2.0
 #
+# ( BSD-2 BSD LGPL-2.1 (all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) ( all-rights-reserved || (MIT AFL-2.1) ) (MIT GPL-2) ( all-rights-reserved || ( AFL-2.1 BSD) ) ) \
+#   third_party/webkit/PerformanceTests/SunSpider/sunspider-1.0.1/sunspider-1.0.1/sunspider-test-contents.js
+# ( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) \
+#   testing/talos/talos/pageloader/chrome/pageloader.xhtml
 # ^^ ( GPL-3? ( FTL ) GPL-2 ) modules/freetype2/LICENSE.TXT - GPL-2 assumed # \
 #   since original ebuild cites it
 # all-rights-reserved MIT mfbt/Span.h \
@@ -627,6 +660,9 @@ src_unpack() {
 		if [[ ${_src_file} == *.xpi ]]; then
 			cp "${DISTDIR}/${_src_file}" "${_lp_dir}" || die "Failed to copy '${_src_file}' to '${_lp_dir}'!"
 		else
+			# TODO:  Add files with all-rights-reserved or crazy
+			# licensing to the exclusion list if possible to
+			# simpify LICENSE variable.
 			unpack ${_src_file}
 		fi
 	done
