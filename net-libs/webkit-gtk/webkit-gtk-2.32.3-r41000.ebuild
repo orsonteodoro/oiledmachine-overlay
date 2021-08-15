@@ -24,6 +24,17 @@ toolchain-funcs virtualx
 
 DESCRIPTION="Open source web browser engine (GTK+3 with libsoup3)"
 HOMEPAGE="https://www.webkitgtk.org"
+LICENSE_DROMAEO="
+	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
+	( all-rights-reserved MIT )
+	( ( all-rights-reserved || ( MIT AFL-2.1 ) ) ( MIT GPL-2 ) || ( AFL-2.1 BSD ) MIT )
+	( all-rights-reserved GPL-2+ )
+	( MIT GPL-2 )
+	( MIT BSD GPL )
+	BSD
+	BSD-2
+	LGPL-2.1"
+# The default webkit license is LGPL-2 BSD-2.
 LICENSE="
 	all-rights-reserved
 	Apache-2.0
@@ -40,9 +51,184 @@ LICENSE="
 	MIT
 	MPL-2.0
 	unicode
+	( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+	( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) GIF )
 	|| ( AFL-2.0 LGPL-2+ )
-	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ )
-	|| ( MPL-1.1 GPL-2+ LGPL-2.1+ ) GIF
+	pgo? (
+		all-rights-reserved
+		BSD
+		BSD-2
+		GPL-2+
+		LGPL-2+
+		LGPL-2.1+
+		wk_pgo_trainers_bigintbench? (
+			LGPL-2 BSD-2
+		)
+		wk_pgo_trainers_bindings? (
+			LGPL-2 BSD-2
+		)
+		wk_pgo_trainers_css? (
+			LGPL-2 BSD-2
+		)
+		wk_pgo_trainers_indexeddb? (
+			LGPL-2 BSD-2
+		)
+		wk_pgo_trainers_interactive? (
+			LGPL-2 BSD-2
+		)
+		wk_pgo_trainers_intl? (
+			LGPL-2 BSD-2
+		)
+		wk_pgo_trainers_media? (
+			LGPL-2 BSD-2
+		)
+		wk_pgo_trainers_mutation? (
+			LGPL-2 BSD-2
+		)
+		wk_pgo_trainers_stylebench? (
+			LGPL-2 BSD-2
+		)
+		wk_pgo_trainers_tailbench9000? (
+			LGPL-2 BSD-2
+		)
+		wk_pgo_trainers_apibench? (
+			BSD
+			BSD-2
+		)
+		wk_pgo_trainers_ares6? (
+			BSD
+			BSD-2
+			MIT
+		)
+		wk_pgo_trainers_canvas? (
+			BSD
+		)
+		wk_pgo_trainers_decodertest? (
+			BSD-2
+		)
+		wk_pgo_trainers_dom? (
+			BSD
+		)
+		wk_pgo_trainers_dromaeo-cssquery? (
+			${LICENSE_DROMAEO}
+		)
+		wk_pgo_trainers_dromaeo-dom? (
+			${LICENSE_DROMAEO}
+		)
+		wk_pgo_trainers_dromaeo-jslib? (
+			${LICENSE_DROMAEO}
+		)
+		wk_pgo_trainers_jetstream? (
+			( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+			( all-rights-reserved Apache-2.0 )
+			( all-rights-reserved GPL-2+ )
+			( all-rights-reserved MIT )
+			Apache-2.0
+			BSD-2
+			BSD
+			GPL-2
+			GPL-2+
+			LGPL-2.1
+			MIT
+			UoI-NCSA
+			ZLIB
+		)
+		wk_pgo_trainers_jetstream2? (
+			|| ( BSD GPL-2+ )
+			( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2+ ) )
+			( all-rights-reserved Apache-2.0 )
+			( all-rights-reserved GPL-2+ )
+			( all-rights-reserved MIT )
+			all-rights-reserved
+			Apache-2.0
+			BSD-2
+			BSD
+			FPL
+			GPL-2
+			LGPL-2+
+			LGPL-2.1
+			MIT
+			ZLIB
+		)
+		wk_pgo_trainers_jsbench? (
+			BSD-2
+			MIT
+		)
+		wk_pgo_trainers_layout? (
+			PGL
+		)
+		wk_pgo_trainers_launchtime? (
+			BSD-2
+		)
+		wk_pgo_trainers_longspider? (
+			( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+			( all-rights-reserved Apache-2.0 )
+			BSD
+			BSD-2
+			LGPL-2.1
+		)
+		wk_pgo_trainers_mallocbench? (
+			BSD-2
+		)
+		wk_pgo_trainers_mediatime? (
+			BSD-2
+		)
+		wk_pgo_trainers_motionmark? (
+			all-rights-reserved
+			BSD-2
+		)
+		wk_pgo_trainers_octane? (
+			BSD
+		)
+		wk_pgo_trainers_parser? (
+			BSD
+		)
+		wk_pgo_trainers_resources? (
+			BSD-2
+			MIT
+		)
+		wk_pgo_trainers_rexbench? (
+			BSD
+			BSD-2
+		)
+		wk_pgo_trainers_sixspeed? (
+			MIT
+		)
+		wk_pgo_trainers_speedometer? (
+			|| ( MIT BSD )
+			( all-rights-reserved GPL-2 )
+			( all-rights-reserved MIT )
+			( MIT CC0-1.0 )
+			Apache-2.0
+			BSD
+			CC-BY-4.0
+			MIT
+		)
+		wk_pgo_trainers_sunspider? (
+			|| ( MIT AFL-2.1 )
+			( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
+			( all-rights-reserved MIT )
+			( MIT GPL-2 )
+			BSD
+			BSD-2
+			GPL-2+
+			LGPL-2.1
+		)
+		wk_pgo_trainers_testmem? (
+			( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2+ ) )
+			( all-rights-reserved Apache-2.0 )
+			BSD
+			BSD-2
+			ZLIB
+		)
+		wk_pgo_trainers_svg? (
+			CC-BY-ND-2.5
+			custom-public-domain-non-commercial
+			Free-Art-1.3
+			GPL-2
+			LGPL-2.1
+		)
+	)
 	webrtc? (
 		Apache-2.0
 		BSD
@@ -63,9 +249,128 @@ LICENSE="
 	)" # \
 # emerge does not understand ^^ when applied to licenses, but you should only \
 #   pick one when || is presented
+
+# BSD BSD-2 LGPL-2+ LGPL-2.1+ Tools/Scripts
+#   (all-rights-reserved LGPL-2.1+) Tools/Scripts/webkitperl/VCSUtils_unittest/parseDiffWithMockFiles.pl
+#   all-rights-reserved Tools/Scripts/libraries/webkitcorepy/webkitcorepy/tests/string_utils_unittest.py
+#   GPL-2+ Tools/Scripts/prepare-ChangeLog
+#   LGPL-2.1+ Tools/Scripts/run-minibrowser
+#   LGPL-2.1+ Tools/Scripts/webkitpy/minibrowser/run_webkit_app.py
+
+# BSD PerformanceTests/Animation
+# BSD BSD-2 PerformanceTests/APIBench
+# BSD-2 BSD MIT PerformanceTests/ARES-6 plus group below
+#   BSD PerformanceTests/ARES-6/Basic/random.js
+#   MIT PerformanceTests/ARES-6/ml/index.js
+# BSD-2 PerformanceTests/Canvas
+# PGL PerformanceTests/Layout/chapter-reflow.html ; For license, see
+#  https://www.gutenberg.org/policy/license.html
+# BSD-2 PerformanceTests/DecoderTest
+# BSD BSD-2 || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) PerformanceTests/Dromaeo
+#   (all-rights-reserved || (MIT AFL-2.1)) (MIT GPL-2) BSD \
+#     PerformanceTests/Dromaeo/resources/dromaeo/web/tests/sunspider-string-unpack-code.html
+#   (all-rights-reserved GPL-2+) PerformanceTests/Dromaeo/resources/dromaeo/web/tests/v8-deltablue.html ; \
+#     the GPL-2+ does not say all rights reserved in the license template
+#   (all-rights-reserved MIT) PerformanceTests/Dromaeo/Octane2/navier-stokes.js
+#   (all-rights-reserved MIT) PerformanceTests/Dromaeo/resources/dromaeo/web/tests/v8-crypto.html ; \
+#     the MIT license template doesn't contain all rights reserved
+#   LGPL-2.1 PerformanceTests/Dromaeo/resources/dromaeo/web/tests/sunspider-date-format-xparb.html
+#   (MIT GPL-2) for jquery (MIT BSD GPL-2) for Sizzle.js \
+#     PerformanceTests/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js
+# BSD PerformanceTests/DOM
+# BSD-2 BSD MIT GPL-2 GPL-2+ ZLIB Apache-2.0 || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) UoI-NCSA \
+#     PerformanceTests/JetStream
+#   ( (all-rights-reserved Apache-2.0) (all-rights-reserved MIT) ) \
+#     PerformanceTests/JetStream/simple/gcc-loops.cpp.js
+#   (all-rights-reserved Apache-2.0) PerformanceTests/JetStream/Octane2/typescript-input.js ; \
+#     the Apache-2.0 template does not contain all-rights-reserved
+#   (all-rights-reserved GPL-2+) PerformanceTests/JetStream/Octane2/pdfjs.js ; \
+#     the GPL-2+ does not contain all rights reserved in the template
+#   (all-rights-reserved MIT) PerformanceTests/JetStream/Octane2/crypto.js ; \
+#     the MIT license template does not contain all rights reserved
+#   || ( BSD-2 GPL-2+ ) PerformanceTests/JetStream2/SeaMonster/sjlc.js
+#   custom (all-rights-reserved Apache-2.0) PerformanceTests/JetStream/simple/hash-map.js
+#   LGPL-2.1 PerformanceTests/JetStream/sunspider/date-format-xparb.js
+# BSD-2 BSD || ( BSD GPL-2+ ) MIT LGPL-2.1 Apache-2.0 ZLIB PerformanceTests/JetStream2
+#   (all-rights-reserved GPL-2+) PerformanceTests/JetStream2/Octane/pdfjs.js
+#   (all-rights-reserved MIT) PerformanceTests/JetStream2/Octane/crypto.js
+#   (all-rights-reserved Apache-2.0) PerformanceTests/JetStream2/simple/hash-map.js
+#   ( MIT BSD || ( MIT GPL-2 ) ^^ ( MIT GPL-2 ) LGPL BSD-2 ) \
+#     PerformanceTests/JetStream2/web-tooling-benchmark/cli.js
+#   ^^ ( MPL-1.1 GPL-2+ LGPL-2+ ) PerformanceTests/JetStream2/SunSpider/base64.js
+#   all-rights-reserved PerformanceTests/JetStream2/wasm/TSF/tsf_sha1.h
+#   all-rights-reserved FPL PerformanceTests/JetStream2/wasm/TSF/tsf_sha1.c
+#   custom MIT PerformanceTests/JetStream2/WSL/spirv.core.grammar.json
+#   GPL-2 PerformanceTests/JetStream2/Octane/gbemu-part2.js
+#   LGPL-2+ PerformanceTests/JetStream2/wasm/HashSet.cpp
+#   LGPL-2.1 PerformanceTests/JetStream/sunspider/date-format-xparb.js
+#   public-domain PerformanceTests/JetStream2/wasm/TSF/tsf_st.c
+# BSD-2 MIT PerformanceTests/JSBench
+# BSD-2 PerformanceTests/LaunchTime
+# BSD BSD-2 Apache-2.0 LGPL-2.1 || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
+#   PerformanceTests/LongSpider
+# BSD-2 PerformanceTests/MallocBench
+# BSD-2 PerformanceTests/MediaTime
+# BSD-2 PerformanceTests/MotionMark
+#   all-rights-reserved PerformanceTests/MotionMark/tests/master/resources/compass.svg
+#   all-rights-reserved PerformanceTests/MotionMark/tests/master/resources/inspector.svg
+#   all-rights-reserved PerformanceTests/MotionMark/tests/master/resources/script.svg
+#   all-rights-reserved PerformanceTests/MotionMark/resources/runner/crystal.svg
+#   all-rights-reserved PerformanceTests/MotionMark/resources/runner/lines.svg
+#   all-rights-reserved PerformanceTests/MotionMark/resources/runner/logo.svg
+# BSD PerformanceTests/Octane
+# BSD PerformanceTests/Parser
+# BSD-2 BSD PerformanceTests/RexBench
+# BSD-2 PerformanceTests/resources
+#   MIT PerformanceTests/resources/jquery.flot.min.js
+# MIT PerformanceTests/SixSpeed
+# MIT BSD PerformanceTests/Speedometer/
+#   (all-rights-reserved MIT) \
+#     PerformanceTests/Speedometer/resources/todomvc/architecture-examples/angular/dist/vendor.9a296bbc1909830a9106.bundle.js
+#   (MIT CC0-1.0) \
+#     PerformanceTests/Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/requirejs-text/LICENSE
+#   || (MIT BSD) \
+#     PerformanceTests/Speedometer/resources/flightjs-example-app/components/requirejs/require.js
+#   Apache-2.0 PerformanceTests/Speedometer/resources/flightjs-example-app/components/bootstrap/css/bootstrap-responsive.css
+#   CC-BY-4.0 PerformanceTests/Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-app-css/readme.md
+#   public-domain PerformanceTests/Speedometer/resources/flightjs-example-app/components/es5-shim/tests/lib/json2.js
+# BSD BSD-2 (MIT GPL-2) MIT || (MIT AFL-2.1) PerformanceTests/SunSpider
+#   (all-rights-reserved GPL-2) PerformanceTests/SunSpider/tests/v8-v6/v8-deltablue.js
+#   (all-rights-reserved MIT) PerformanceTests/SunSpider/tests/v8-v5/v8-crypto.js ; \
+#     no all rights reserved in the plain MIT license template
+#   ^^ (MPL-1.1 GPL-2.0+ LGPL-2.1+) \
+#     PerformanceTests/SunSpider/tests/sunspider-0.9.1/string-base64.js
+#   GPL-2+ PerformanceTests/SunSpider/tests/v8-v5/v8-deltablue.js
+#   LGPL-2.1 PerformanceTests/SunSpider/tests/sunspider-0.9.1/date-format-xparb.js
+#   public-domain PerformanceTests/SunSpider/hosted/json2.js
+# BSD-2 BSD ( all-rights-reserved Apache-2.0 ) ZLIB PerformanceTests/testmem
+#   (all-rights-reserved || (MPL-1.1 GPL-2+ LGPL-2+)) PerformanceTests/testmem/base64.js
+# PerformanceTests/SVG
+#   public-domain PerformanceTests/SVG/resources/AzLizardBenjiPark.svg
+#   custom PerformanceTests/SVG/resources/WorldIso.svg
+#   custom non commerical PerformanceTests/SVG/resources/France.svg
+#   Free-Art-1.3 PerformanceTests/SVG/resources/Samurai.svg
+#   GPL-2 PerformanceTests/SVG/resources/DropsOnABlade.svg
+#   GPL-2 PerformanceTests/SVG/resources/UnderTheSee.svg
+#   GPL-2 PerformanceTests/SVG/resources/FlowerFromMyGarden.svg
+#   LGPL-2.1 PerformanceTests/SVG/resources/GearFlowers.svg
+#   LGPL GPL-2 public-domain CC-BY-ND-2.5 PerformanceTests/SVG/resources/LICENSES
+# No explicit licenses in module but defaults to LGPL-2 BSD-2.  Top level dir has no license.
+#   See also https://webkit.org/licensing-webkit/
+#   PerformanceTests/CSS
+#   PerformanceTests/BigIntBench
+#   PerformanceTests/Bindings
+#   PerformanceTests/IndexedDB
+#   PerformanceTests/Interactive
+#   PerformanceTests/Intl
+#   PerformanceTests/Media
+#   PerformanceTests/Mutation
+#   PerformanceTests/StyleBench
+#   PerformanceTests/TailBench9000
+
 # Some licenses are third party
-# ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) Source/WTF/wtf/DateMath.h
-# ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) GIF Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp
+# ( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) Source/WTF/wtf/DateMath.h
+# ( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) GIF ) Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp
 # || ( LGPL-2+ AFL-2.0 ) Source/ThirdParty/xdgmime/README
 # all-rights-reserved Source/WebInspectorUI/UserInterface/Images/CanvasOverview.svg
 # all-rights-reserved Source/ThirdParty/gtest/scripts/run_with_path.py
@@ -138,9 +443,104 @@ vi zh_CN )
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
 dav1d +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2 gnome-keyring
 +gstreamer -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
-+libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp +pulseaudio
--seccomp -spell -systemd test variation-fonts +v4l wayland +webassembly
-+webassembly-b3-jit +webcrypto +webgl -webrtc webvtt -webxr +X +yarr-jit"
++libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp pgo
++pulseaudio -seccomp -spell -systemd test variation-fonts +v4l wayland
++webassembly +webassembly-b3-jit +webcrypto +webgl -webrtc webvtt -webxr +X
++yarr-jit"
+
+PGO_PLANS=(
+	ares6
+	content-animation
+	dromaeo-cssquery
+	dromaeo-dom
+	dromaeo-jslib
+	jetstream2
+	jetstream
+	jsbench
+	kraken
+	motionmark1.1
+	motionmark
+	octane
+	speedometer2
+	speedometer
+	stylebench
+	sunspider
+)
+
+#	Animation
+#	ARES-6
+#	Dromaeo
+PGO_LOCAL_COPY=(
+	APIBench
+	BigIntBench
+	Bindings
+	Canvas
+	CSS
+	DecoderTest
+	DOM
+	IndexedDB
+	Interactive
+	Intl
+	JetStream
+	JetStream2
+	JSBench
+	LaunchTime
+	Layout
+	LongSpider
+	MallocBench
+	Media
+	MediaTime
+	MotionMark
+	Mutation
+	Octane
+	Parser
+	resources
+	RexBench
+	ShadowDOM
+	SixSpeed
+	Speedometer
+	StyleBench
+	SunSpider
+	SVG
+	TailBench9000
+	testmem
+	XSSAuditor
+)
+
+PGO_USE_NORMALIZED=()
+gen_pgo_iuse() {
+	local out
+	for p in ${PGO_PLANS[@]} ${PGO_LOCAL_COPY[@]} ; do
+		local t="${p,,}"
+		t="${t/./_}"
+		found=0
+		for u in ${PGO_USE_NORMALIZED[@]} ; do
+			if [[ "${u}" == "wk_pgo_trainers_${t}" ]] ; then
+				found=1
+			fi
+		done
+		if (( ${found} == 0 )) ; then
+			PGO_USE_NORMALIZED+=( wk_pgo_trainers_${t} )
+		fi
+	done
+	for p in ${PGO_USE_NORMALIZED[@]} ; do
+		out+=" ${p}"
+	done
+	echo "${out}"
+}
+
+IUSE+=" "$(gen_pgo_iuse)
+
+gen_pgo_required_use() {
+	local out
+	for p in ${PGO_IUSE_NORMALIZED[@]} ; do
+		out+=" ${p}? ( pgo )"
+	done
+	echo "${out}"
+}
+
+REQUIRED_USE+=" "$(gen_pgo_required_use)
+REQUIRED_USE+=" pgo? ( || ( $(gen_pgo_iuse) ) )"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -158,6 +558,7 @@ REQUIRED_USE+="
 	gstreamer? ( || ( opengl gles2 ) )
 	hardened? ( !jit )
 	opengl? ( egl !gles2 )
+	pgo? ( minibrowser )
 	pulseaudio? ( gstreamer )
 	v4l? ( gstreamer mediastream )
 	wayland? ( egl )
@@ -343,6 +744,7 @@ BDEPEND+="
 	virtual/perl-JSON-PP
 	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_V} )
 	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
+	pgo? ( dev-vcs/subversion )
 	webrtc? ( dev-vcs/subversion )"
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
@@ -551,8 +953,81 @@ ewarn "WebRTC support is currently in development and feature incomplete."
 	fi
 }
 
+unpack_pgo_trainers() {
+	declare -Ax USE_TO_LOCAL_COPY=(
+		[wk_pgo_trainers_ares6]="ARES-6"
+		[wk_pgo_trainers_content-animation]="Animation"
+		[wk_pgo_trainers_apibench]="APIBench"
+		[wk_pgo_trainers_bigintbench]="BigIntBench"
+		[wk_pgo_trainers_bindings]="Bindings"
+		[wk_pgo_trainers_canvas]="Canvas"
+		[wk_pgo_trainers_css]="CSS"
+		[wk_pgo_trainers_decodertest]="DecoderTest"
+		[wk_pgo_trainers_dom]="DOM"
+		[wk_pgo_trainers_dromaeo-cssquery]="Dromaeo"
+		[wk_pgo_trainers_dromaeo-dom]="Dromaeo"
+		[wk_pgo_trainers_dromaeo-jslib]="Dromaeo"
+		[wk_pgo_trainers_indexeddb]="IndexedDB"
+		[wk_pgo_trainers_interactive]="Interactive"
+		[wk_pgo_trainers_intl]="Intl"
+		[wk_pgo_trainers_jetstream]="JetStream"
+		[wk_pgo_trainers_jetstream2]="JetStream2"
+		[wk_pgo_trainers_jsbench]="JSBench"
+		[wk_pgo_trainers_kraken]="FIXME"
+		[wk_pgo_trainers_launchtime]="LaunchTime"
+		[wk_pgo_trainers_layout]="Layout"
+		[wk_pgo_trainers_longspider]="LongSpider"
+		[wk_pgo_trainers_mallocbench]="MallocBench"
+		[wk_pgo_trainers_media]="Media"
+		[wk_pgo_trainers_mediatime]="MediaTime"
+		[wk_pgo_trainers_motionmark1_1]="FIXME"
+		[wk_pgo_trainers_motionmark]="MotionMark"
+		[wk_pgo_trainers_mutation]="Mutation"
+		[wk_pgo_trainers_octane]="Octane"
+		[wk_pgo_trainers_parser]="Parser"
+		[wk_pgo_trainers_resources]="resources"
+		[wk_pgo_trainers_rexbench]="RexBench"
+		[wk_pgo_trainers_sixspeed]="SixSpeed"
+		[wk_pgo_trainers_shadowdom]="ShadowDOM"
+		[wk_pgo_trainers_speedometer2]="Speedometer"
+		[wk_pgo_trainers_speedometer]="FIXME"
+		[wk_pgo_trainers_stylebench]="StyleBench"
+		[wk_pgo_trainers_sunspider]="SunSpider"
+		[wk_pgo_trainers_svg]="SVG"
+		[wk_pgo_trainers_tailbench9000]="TailBench9000"
+		[wk_pgo_trainers_testmem]="testmem"
+		[wk_pgo_trainers_xssauditor]="XSSAuditor"
+	)
+
+	# Unpacked individually to resolve the all-rights-reserved issues
+	for u in ${!USE_TO_LOCAL_COPY[@]} ; do
+		local f="${USE_TO_LOCAL_COPY[${u}]}"
+		if use "${u}" ; then
+			if [[ "${f}" == "FIXME" ]] ; then
+eerror
+eerror "FIXME: Add algorithm for local copy of ${u} to ebuild.  Do not use the"
+eerror "${u} USE flag at this time."
+eerror
+				die
+			fi
+			subversion_fetch \
+https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/${f} \
+PerformanceTests/${f}
+		fi
+	done
+}
+
 src_unpack() {
 	unpack ${A}
+	if use pgo ; then
+		ewarn "The PGO use flag is a Work In Progress (WIP) and is not production ready."
+		unpack_pgo_trainers
+		# TODO: Add all-rights-reserved to exclusion for Tools/Scripts
+		# if possible
+		subversion_fetch \
+https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/ \
+Tools/Scripts
+	fi
 	if use webrtc ; then
 		subversion_fetch \
 https://svn.webkit.org/repository/webkit/trunk/Source/ThirdParty/libwebrtc/ \
@@ -570,11 +1045,12 @@ src_prepare() {
 	multilib_copy_sources
 }
 
-multilib_src_configure() {
+_config_pgx() {
 	# Respect CC, otherwise fails on prefix #395875
 	tc-export CC
 
 	filter-flags -DENABLE_JIT=* -DENABLE_YARR_JIT=* -DENABLE_ASSEMBLER=*
+	filter-flags -fprofile-generate* -fprofile-use* -fprofile-dir=*
 
 	# It does not compile on alpha without this in LDFLAGS
 	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648761
@@ -818,11 +1294,133 @@ multilib_src_configure() {
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
 
+	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] ; then
+		if tc-is-clang ; then
+			append-cflags -fprofile-generate="${BUILD_DIR}"
+			append-cxxflags -fprofile-generate="${BUILD_DIR}"
+		elif tc-is-gcc ; then
+			append-cflags -fprofile-generate -fprofile-dir="${BUILD_DIR}"
+			append-cxxflags -fprofile-generate -fprofile-dir="${BUILD_DIR}"
+		else
+			die "Only GCC and Clang are supported for PGO."
+		fi
+	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] ; then
+		if tc-is-clang ; then
+			append-cflags -fprofile-use="${BUILD_DIR}/custom-pgo.profdata"
+			append-cxxflags -fprofile-use="${BUILD_DIR}/custom-pgo.profdata"
+		elif tc-is-gcc ; then
+			append-cflags -fprofile-use -fprofile-dir="${T}/${BUILD_DIR}"
+			append-cxxflags -fprofile-use -fprofile-dir="${T}/${BUILD_DIR}"
+		fi
+	fi
+
 	WK_USE_CCACHE=NO cmake_src_configure
 }
 
-multilib_src_compile() {
+_build_pgx() {
+	if [[ ! -f build.ninja ]] ; then
+		die "Missing build.ninja"
+	fi
+	eninja clean
 	cmake_src_compile
+}
+
+_get_local_perf_path() {
+	local u="${1}"
+	case ${u} in
+		wk_pgo_trainers_ares6)
+			echo "${S}/PerformanceTests/ARES-6"
+			;;
+		wk_pgo_trainers_content-animation)
+			echo "${S}/PerformanceTests/Animation"
+			;;
+		wk_pgo_trainers_dromaeo-cssquery)
+			echo "${S}/PerformanceTests/Dromaeo"
+			;;
+		wk_pgo_trainers_dromaeo-dom)
+			echo "${S}/PerformanceTests/Dromaeo"
+			;;
+		wk_pgo_trainers_dromaeo-jslib)
+			echo "${S}/PerformanceTests/Dromaeo"
+			;;
+		wk_pgo_trainers_speedometer2)
+			echo "${S}/PerformanceTests/Speedometer"
+			;;
+		wk_pgo_trainers_speedometer)
+			die "Missing local copy speedometer"
+			;;
+		*)
+			local found=0
+			for t in ${PGO_LOCAL_COPY[@]} ; do
+				[[ "${t}" != "${u}" ]] && continue
+				if [[ "${t/wk_pgo_trainers_/}" == "${t,,}" ]] ; then
+					echo "${S}/PerformanceTests/${t}"
+					found=1
+					break
+				fi
+			done
+			if (( ${found} == 0 )) ; then
+				die "Missing local copy for ${u/wk_pgo_trainers_/}"
+			fi
+			;;
+	esac
+}
+
+_get_benchmark_plan() {
+	local u="${1}"
+	for p in ${PGO_PLANS[@]} ; do
+		local t="${p,,}"
+		t="${t/./_}"
+		if [[ "${u}" == "wk_pgo_trainers_${t}" ]] ; then
+			echo "--plan ${p}"
+		fi
+	done
+}
+
+_run_trainer() {
+	if [[ ! -f "${BUILD_DIR}/minibrowser-gtk" ]] ; then
+		die "Missing ${BUILD_DIR}/minibrowser-gtk"
+	fi
+	local train_with=()
+	for p in ${PGO_USE_NORMALIZED[@]} ; do
+		if use ${p} ; then
+			train_with+=( ${p} )
+		fi
+	done
+	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # \
+	  # Prevent a sandbox violation and isolate between parallel running emerges.
+	for t in ${train_with[@]} ; do
+		einfo "Training with ${t/wk_pgo_trainers_/}"
+		# See https://github.com/WebKit/WebKit/tree/9467df8e0134156fa95c4e654e956d8166a54a13/Tools/Scripts/webkitpy/benchmark_runner
+		virtx ${EPYTHON} Tools/Scripts/webkitpy/benchmark_runner/run_benchmark.py \
+			--build-directory "${BUILD_DIR}" \
+			$(_get_benchmark_plan ${t}) \
+			--local-copy $(_get_local_perf_path ${t}) \
+			|| die
+	done
+	if use tc-is-clang ; then
+		einfo "Merging PGO data to generate a PGO profile"
+		if ! ls "${BUILD_DIR}/"*.profraw 2>/dev/null 1>/dev/null ; then
+			die "Missing *.profraw files"
+		fi
+		llvm-profdata merge -output="${BUILD_DIR}/custom-pgo.profdata" \
+			"${BUILD_DIR}" || die
+	fi
+}
+
+multilib_src_compile() {
+	if use pgo ; then
+		PGO_PHASE="pgi"
+		_config_pgx
+		_build_pgx
+		_run_trainer
+		PGO_PHASE="pgo"
+		_config_pgx
+		_build_pgx
+	else
+		_config_pgx
+		_build_pgx
+	fi
 }
 
 multilib_src_test() {

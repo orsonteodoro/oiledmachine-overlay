@@ -17,6 +17,14 @@
     Currently the motivations are to provide latest stable as quickly as
     possible for security reasons and expose more options related to
     performance or next generation of web standards.
+
+    For PGO trainers, see contents of
+    https://github.com/WebKit/WebKit/tree/main/PerformanceTests
+    for description for what they do.
+
+    For details on w32 PGO see:
+    https://github.com/WebKit/WebKit/commit/790a01a3ec741d8752990a809d1ab489d9637e3d
+
   </longdescription>
   <use>
     <flag name="64k-pages">Uses 64k pages but reduces security and performance.
@@ -54,6 +62,10 @@
       / DRAFT).</flag>
     <flag name="nsplugin">Enable full nsplugin support (GTK2 plugins)</flag>
     <flag name="openmp">Use OpenMP to accelerate SVG filters</flag>
+    <flag name="pgo">Performs 3 phase Profile Guided Optimization (PGO).
+      One more more wk_pgo_trainers_* may be specified.  Historically,
+      upstream has ran SunSpider 3 times on the w32 builds for PGO profile
+      generation for JSC optimization. Expect double the time to build.</flag>
     <flag name="pulseaudio">Adds PulseAudio and microphone support.</flag>
     <flag name="v4l">Adds and checks for proper v4l camera support.</flag>
     <flag name="variation-fonts">Check dependencies for variation font
