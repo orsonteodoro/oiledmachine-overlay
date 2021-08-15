@@ -154,6 +154,16 @@ LICENSE="
 			BSD-2
 			MIT
 		)
+		wk_pgo_trainers_kraken? (
+			( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
+			( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+			( all-rights-reserved GPL-3+ )
+			|| ( BSD GPL-2 )
+			BSD
+			BSD-2
+			LGPL-2.1
+			MPL-1.1
+		)
 		wk_pgo_trainers_layout? (
 			PGL
 		)
@@ -306,6 +316,13 @@ LICENSE="
 #   LGPL-2.1 PerformanceTests/JetStream/sunspider/date-format-xparb.js
 #   public-domain PerformanceTests/JetStream2/wasm/TSF/tsf_st.c
 # BSD-2 MIT PerformanceTests/JSBench
+# BSD-2 BSD LGPL-2.1 - Kraken benchmark
+#   ( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
+#   ( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+#   ( all-rights-reserved GPL-3+ ) tests/kraken-1.0/audio-beat-detection-data.js
+#   || ( BSD GPL-2 ) ; for SJCL
+#   MPL-1.1 tests/kraken-1.0/imaging-desaturate.js
+#   public-domain hosted/json2.js
 # BSD-2 PerformanceTests/LaunchTime
 # BSD BSD-2 Apache-2.0 LGPL-2.1 || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
 #   PerformanceTests/LongSpider
