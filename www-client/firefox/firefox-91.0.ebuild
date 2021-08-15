@@ -74,7 +74,13 @@ LICENSE_FINGERPRINT="\
 # FF-91.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
 LICENSE+=" FF-91.0-THIRD-PARTY-LICENSES"
 LICENSE+="
-	( BSD-2 BSD LGPL-2.1 ( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) ( all-rights-reserved || ( MIT AFL-2.1 ) ) ( MIT GPL-2 ) ( all-rights-reserved || ( AFL-2.1 BSD ) ) )
+	( BSD-2
+		BSD
+		LGPL-2.1
+		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+		( all-rights-reserved || ( MIT AFL-2.1 ) )
+		( MIT GPL-2 )
+		( all-rights-reserved || ( AFL-2.1 BSD ) ) )
 	( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -126,8 +132,12 @@ LICENSE+="
 #   LGPL-2.1+
 #   MPL-2.0
 #
-# ( BSD-2 BSD LGPL-2.1 (all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) ( all-rights-reserved || (MIT AFL-2.1) ) (MIT GPL-2) ( all-rights-reserved || ( AFL-2.1 BSD) ) ) \
-#   third_party/webkit/PerformanceTests/SunSpider/sunspider-1.0.1/sunspider-1.0.1/sunspider-test-contents.js
+# ( BSD-2 BSD LGPL-2.1
+#   ( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+#   ( all-rights-reserved || ( MIT AFL-2.1 ) )
+#   ( MIT GPL-2 )
+#   ( all-rights-reserved || ( AFL-2.1 BSD) ) ) \
+#     third_party/webkit/PerformanceTests/SunSpider/sunspider-1.0.1/sunspider-1.0.1/sunspider-test-contents.js
 # ( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) \
 #   testing/talos/talos/pageloader/chrome/pageloader.xhtml
 # ^^ ( GPL-3? ( FTL ) GPL-2 ) modules/freetype2/LICENSE.TXT - GPL-2 assumed # \
