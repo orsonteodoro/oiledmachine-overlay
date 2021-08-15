@@ -150,7 +150,7 @@ LICENSE="
 		)
 		wk_pgo_trainers_kraken? (
 			( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
-			( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+			( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
 			( all-rights-reserved GPL-3+ )
 			|| ( BSD GPL-2 )
 			BSD
