@@ -98,7 +98,7 @@ LICENSE_BENCHMARK_WEBSITES="
 	)
 	cr_pgo_trainer_kraken? (
 		( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
-		( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
 		( all-rights-reserved GPL-3+ )
 		|| ( BSD GPL-2 )
 		BSD
@@ -119,7 +119,8 @@ LICENSE_BENCHMARK_WEBSITES="
 		CC-BY-4.0
 		MIT
 	)
-"
+" # emerge does not understand ^^ in the LICENSE variable and have been replaced
+# with ||.  You should choose at most one.
 LICENSE="BSD
 	 libcxx? ( chromium-93.0.4577.x-libcxx )
 	!libcxx? ( chromium-93.0.4577.x-libstdcxx )
