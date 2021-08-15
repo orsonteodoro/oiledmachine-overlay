@@ -38,7 +38,26 @@ SRC_URI="
 # Missing py files in typ in ${P}.tar.xz so download catapult snapshot.
 RESTRICT="mirror"
 
+# all-rights-reserved is for unfree websites or content from them.
 LICENSE_BENCHMARK_WEBSITES="
+	cr_pgo_trainer_desktop_ui? (
+		all-rights-reserved
+	)
+	cr_pgo_trainer_tab_switching_typical_25? (
+		all-rights-reserved
+	)
+	cr_pgo_trainer_rasterize_and_record_micro_top_25? (
+		all-rights-reserved
+	)
+	cr_pgo_trainer_rendering_mobile? (
+		all-rights-reserved
+	)
+	cr_pgo_trainer_unscheduled_v8_loading_desktop? (
+		all-rights-reserved
+	)
+	cr_pgo_trainer_v8_runtime_stats_top_25? (
+		all-rights-reserved
+	)
 	cr_pgo_trainer_dromaeo? (
 		( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
 		( all-rights-reserved MIT )
@@ -116,6 +135,7 @@ LICENSE="BSD
 	BSD-2
 	BSD-4
 	base64
+	CC0-1.0
 	CC-BY-3.0
 	CC-BY-4.0
 	CC-BY-ND-2.5
@@ -219,6 +239,7 @@ be21e8628daa9fc06823a99fb9e88ac8d2d1137312986aa38ad2ad4864a4ca7d\
 # custom UoI-NCSA - third_party/llvm/llvm/include/llvm/Support/LICENSE.TXT
 # custom public-domain - third_party/sqlite/LICENSE
 # CC-BY-4.0 - third_party/devtools-frontend/src/node_modules/caniuse-lite/LICENSE
+# CC0-1.0 - tools/perf/page_sets/trivial_sites/trivial_fullscreen_video.html
 # fft2d - third_party/tflite/src/third_party/fft2d/LICENSE
 # g711 - third_party/webrtc/modules/third_party/g711/LICENSE
 # g722 - third_party/webrtc/modules/third_party/g722/LICENSE
@@ -1004,12 +1025,16 @@ eerror "FEATURES=\"-network-sandbox\" must be added as a per-package env to"
 eerror "be able to use PGO trainers with external benchmarking websites."
 			die
 		fi
+		# TODO: check if all relevant USE flags added:
 		local remote_access_use=(
 			cr_pgo_trainer_desktop_ui
 			cr_pgo_trainer_tab_switching_typical_25
-			rasterize_and_record_micro.top_25
-			v8.runtime_stats_top_25
+			cr_pgo_trainer_rasterize_and_record_micro_top_25
+			cr_pgo_trainer_rendering_mobile
+			cr_pgo_trainer_unscheduled_v8_loading_desktop
+			cr_pgo_trainer_v8_runtime_stats_top_25
 		)
+		# Backtrack tools/perf/benchmark.csv to find the USE flag
 		local warned=0
 		for u in ${remote_access_use[@]} ; do
 			if use "${u}" ; then
@@ -1018,7 +1043,7 @@ ewarn "The ${u} USE flag may access external sites with user contributed data"
 ewarn "when using PGO profile generation and may need site terms of use to be"
 ewarn "reviewed for acceptable use.  They also may access news, governmental,"
 ewarn "political, or corporate sites.  They may access or reference unfree"
-ewarn "trademarks and content"
+ewarn "trademarks and content."
 ewarn
 ewarn "You have 120 seconds to remove this USE flag if you disagree with such"
 ewarn "access."
