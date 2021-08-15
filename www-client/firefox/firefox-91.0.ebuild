@@ -109,7 +109,8 @@ LICENSE+="
 	unicode
 	W3C-document
 	ZLIB
-	pgo? ( ( BSD-2 all-rights-reserved || ( MIT AFL-2.1 )
+	pgo? ( ( BSD-2
+		  all-rights-reserved || ( MIT AFL-2.1 )
 		  ( MIT GPL-2 )
 		  BSD
 		  MIT )
@@ -124,7 +125,11 @@ LICENSE+="
 # Third party licenses:
 #
 # build/pgo/** folder:
-#   ( BSD-2 all-rights-reserved || ( MIT AFL-2.1 ) (MIT GPL-2) BSD MIT ) \
+#   ( BSD-2
+#     all-rights-reserved || ( MIT AFL-2.1 )
+#     (MIT GPL-2)
+#     BSD
+#     MIT ) \
 #     build/pgo/js-input/sunspider/string-unpack-code.html
 #   || ( MIT GPL-2 ) build/pgo/blueprint/LICENSE
 #   BSD
