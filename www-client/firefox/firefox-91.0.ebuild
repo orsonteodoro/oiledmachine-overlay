@@ -109,14 +109,15 @@ LICENSE+="
 	unicode
 	W3C-document
 	ZLIB
-	pgo? (
-		( BSD-2 all-rights-reserved || ( MIT AFL-2.1 ) ( MIT GPL-2 ) BSD MIT )
+	pgo? ( ( BSD-2 all-rights-reserved || ( MIT AFL-2.1 )
+		  ( MIT GPL-2 )
+		  BSD
+		  MIT )
 		BSD
 		BSD-2
 		LGPL-2.1
 		LGPL-2.1+
-		MPL-2.0
-	)" # \
+		MPL-2.0	)" # \
 # emerge does not recognize ^^ for the LICENSE variable.  You must choose
 # at most one for some packages when || is present.
 
