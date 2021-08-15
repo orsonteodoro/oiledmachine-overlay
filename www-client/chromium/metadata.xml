@@ -108,7 +108,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       suite to generate the PGO profile.</flag>
     <flag name="proprietary-codecs">Enable codecs for patent-encumbered audio
       and video formats.</flag>
-    <flag name="shadowcallstack">Allow for backward edge protections or
+    <flag name="shadowcallstack">Allow for backward edge protections against
       return address overwrites that could lead to arbitrary code
       execution.  (Experimental, arm64 only)</flag>
     <flag name="screencast">Enable support for remote desktop and screen cast
