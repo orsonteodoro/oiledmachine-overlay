@@ -76,14 +76,33 @@ LICENSE+=" FF-91.0-THIRD-PARTY-LICENSES"
 LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions all-rights-reserved
 Boost-1.0 BSD BSD-2 CC0-1.0 CC-BY-4.0 curl GPL-2+ GPL-3+ icu ISC Ispell libpng
 MIT NAIST-IPADIC OFL-1.1 Old-MIT OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode
-W3C-document ZLIB"
-# Other licenses are from third party (few are mentioned for a random license
-# audit out of ~31M lines)
+W3C-document ZLIB
+pgo? (
+	( BSD-2 all-rights-reserved || ( MIT AFL-2.1 ) ( MIT GPL-2 ) BSD MIT )
+	BSD
+	BSD-2
+	LGPL-2.1
+	LGPL-2.1+
+	MPL-2.0
+)"
+# Third party licenses:
+#
+# build/pgo/** folder:
+#   ( BSD-2 all-rights-reserved || ( MIT AFL-2.1 ) (MIT GPL-2) BSD MIT ) \
+#     build/pgo/js-input/sunspider/string-unpack-code.html
+#   || ( MIT GPL-2 ) build/pgo/blueprint/LICENSE
+#   BSD
+#   BSD-2
+#   LGPL-2.1
+#   LGPL-2.1+
+#   MPL-2.0
 #
 # ^^ ( GPL-3? ( FTL ) GPL-2 ) modules/freetype2/LICENSE.TXT - GPL-2 assumed # \
 #   since original ebuild cites it
-# all-rights-reserved MIT mfbt/Span.h -- the standard MIT license does not contain all rights reserved
-# all-rights-reserved MIT devtools/client/shared/widgets/CubicBezierWidget.js -- the standard MIT license does not contain all rights reserved
+# all-rights-reserved MIT mfbt/Span.h \
+#   The standard MIT license template does not contain all rights reserved.
+# all-rights-reserved MIT devtools/client/shared/widgets/CubicBezierWidget.js \
+#   The standard MIT license template does not contain all rights reserved.
 # Apache-2.0 for files listed in dom/encoding/test/stringencoding-license.txt
 # Apache-2.0-with-LLVM-exceptions tools/fuzzing/libfuzzer/FuzzerUtilLinux.cpp
 # Boost-1.0 - third_party/msgpack/include/msgpack/predef/compiler/ibm.h
@@ -91,7 +110,8 @@ W3C-document ZLIB"
 # BSD dom/media/webrtc/transport/third_party/nrappkit/src/util/util.c
 # BSD-2 ISC third_party/dav1d/tools/compat/getopt.c
 # BSD, MIT, ISC nsprpub/pr/src/misc/praton.c
-# CC-BY-4.0 browser/fonts/TwemojiMozilla.ttf (See https://github.com/mozilla/twemoji-colr/blob/master/LICENSE.md)
+# CC-BY-4.0 browser/fonts/TwemojiMozilla.ttf \
+#   (See https://github.com/mozilla/twemoji-colr/blob/master/LICENSE.md)
 # curl - toolkit/crashreporter/google-breakpad/src/third_party/curl/COPYING
 # custom testing/web-platform/tests/css/tools/w3ctestlib/catalog/xhtml11.dtd *
 # custom testing/web-platform/tests/css/CSS2/LICENSE-W3CTS *
@@ -108,7 +128,8 @@ W3C-document ZLIB"
 # PSF-2.4 (is a variation of) third_party/python/virtualenv/__virtualenv__/typing-3.7.4.3-py2-none-any/typing-3.7.4.3.dist-info/LICENSE
 # PSF-2 third_party/python/virtualenv/__virtualenv__/contextlib2-0.6.0.post1-py2.py3-none-any/contextlib2-0.6.0.post1.dist-info/LICENSE.txt
 # M+ FONTS LICENSE_E - layout/reftests/fonts/mplus/mplus-license.txt *
-# MIT CC0-1.0 devtools/client/shared/vendor/lodash.js (more details can be found at https://github.com/lodash/lodash/blob/master/LICENSE)
+# MIT CC0-1.0 devtools/client/shared/vendor/lodash.js (more details can be \
+#   found at https://github.com/lodash/lodash/blob/master/LICENSE)
 # MIT UoI-NCSA js/src/jit/arm/llvm-compiler-rt/assembly.h
 # UoI-NCSA tools/fuzzing/libfuzzer/LICENSE.TXT
 # unicode BSD NAIST-IPADIC intl/icu/source/data/brkitr/dictionaries/cjdict.txt
@@ -122,7 +143,8 @@ W3C-document ZLIB"
 # ZLIB media/ffvpx/libavutil/adler32.c
 # ZLIB third_party/rust/libz-sys/src/zlib/zlib.h
 # ZLIB MIT devtools/client/shared/vendor/jszip.js
-# ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- the vanilla ZLIB lib license doesn't contain all rights reserved
+# ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- \#
+#   the vanilla ZLIB lib license doesn't contain all rights reserved
 
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
 	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast sndio selinux
