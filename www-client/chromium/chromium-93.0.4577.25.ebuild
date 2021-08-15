@@ -33,6 +33,74 @@ SRC_URI="
 # Missing py files in typ in ${P}.tar.xz so download catapult snapshot.
 RESTRICT="mirror"
 
+LICENSE_BENCHMARK_WEBSITES="
+	cr_pgo_trainer_dromaeo? (
+		( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
+		( all-rights-reserved MIT )
+		( ( all-rights-reserved || ( MIT AFL-2.1 ) ) ( MIT GPL-2 ) || ( AFL-2.1 BSD ) MIT )
+		( all-rights-reserved GPL-2+ )
+		( MIT GPL-2 )
+		( MIT BSD GPL )
+		BSD
+		BSD-2
+		LGPL-2.1
+	)
+	cr_pgo_trainer_jetstream? (
+		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+		( all-rights-reserved Apache-2.0 )
+		( all-rights-reserved GPL-2+ )
+		( all-rights-reserved MIT )
+		Apache-2.0
+		BSD-2
+		BSD
+		GPL-2
+		GPL-2+
+		LGPL-2.1
+		MIT
+		UoI-NCSA
+		ZLIB
+	)
+	cr_pgo_trainer_jetstream2? (
+		|| ( BSD GPL-2+ )
+		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2+ ) )
+		( all-rights-reserved Apache-2.0 )
+		( all-rights-reserved GPL-2+ )
+		( all-rights-reserved MIT )
+		all-rights-reserved
+		Apache-2.0
+		BSD-2
+		BSD
+		FPL
+		GPL-2
+		LGPL-2+
+		LGPL-2.1
+		MIT
+		ZLIB
+	)
+	cr_pgo_trainer_kraken? (
+		( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
+		( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+		( all-rights-reserved GPL-3+ )
+		|| ( BSD GPL-2 )
+		BSD
+		BSD-2
+		LGPL-2.1
+		MPL-1.1
+	)
+	cr_pgo_trainer_octane? (
+		BSD
+	)
+	cr_pgo_trainer_speedometer2? (
+		|| ( MIT BSD )
+		( all-rights-reserved GPL-2 )
+		( all-rights-reserved MIT )
+		( MIT CC0-1.0 )
+		Apache-2.0
+		BSD
+		CC-BY-4.0
+		MIT
+	)
+"
 LICENSE="BSD
 	 libcxx? ( chromium-93.0.4577.x-libcxx )
 	!libcxx? ( chromium-93.0.4577.x-libstdcxx )
@@ -82,13 +150,25 @@ LICENSE="BSD
 	WTFPL-2
 	x11proto
 	ZLIB
-	widevine? ( widevine )"
+	widevine? ( widevine )
+	${LICENSE_BENCHMARK_WEBSITES}"
 LICENSE_FINGERPRINT_LIBSTDCXX="\
 147e32b00489a9b0023d720066a1db648d4104fe81d8e764902a44a2eb650308\
 9a6781dfb64901f5460758d17227e5f0e8f1dfb8fe6c14e6afc7374b6f0e028e" # SHA512
 LICENSE_FINGERPRINT_LIBCXX="\
 dd9fc7b4cae307621cd0a830686b50c5bc3fb7e9541c1f22399a495f07313a21\
 5e995e3b70ce0d0ba7a6a60080ce14821f27b485da90d9440ba06d040d1f0a89" # SHA512
+# Benchmark website licenses:
+# See the webkit-gtk ebuild
+#
+# BSD-2 BSD LGPL-2.1 - Kraken benchmark
+#   ( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
+#   ( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
+#   ( all-rights-reserved GPL-3+ ) tests/kraken-1.0/audio-beat-detection-data.js
+#   || ( BSD GPL-2 ) ; for SJCL
+#   MPL-1.1 tests/kraken-1.0/imaging-desaturate.js
+#   public-domain hosted/json2.js
+
 # Third Party Licenses:
 #
 # TODO:  The rows marked custom need to have or be placed a license file or
@@ -924,6 +1004,29 @@ eerror "FEATURES=\"-network-sandbox\" must be added as a per-package env to"
 eerror "be able to use PGO trainers with external benchmarking websites."
 			die
 		fi
+		local remote_access_use=(
+			cr_pgo_trainer_desktop_ui
+			cr_pgo_trainer_tab_switching_typical_25
+			rasterize_and_record_micro.top_25
+			v8.runtime_stats_top_25
+		)
+		local warned=0
+		for u in ${remote_access_use[@]} ; do
+			if use "${u}" ; then
+ewarn
+ewarn "The ${u} USE flag may access external sites with user contributed data"
+ewarn "when using PGO profile generation and may need site terms of use to be"
+ewarn "reviewed for acceptable use.  They also may access news, governmental,"
+ewarn "political, or corporate sites.  They may access or reference unfree"
+ewarn "trademarks and content"
+ewarn
+ewarn "You have 120 seconds to remove this USE flag if you disagree with such"
+ewarn "access."
+ewarn
+				warned=1
+			fi
+		done
+		(( ${warned} == 1 )) && sleep 120
 	fi
 
 	if use official || ( use clang && use cfi && use pgo ) ; then
