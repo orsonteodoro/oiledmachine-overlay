@@ -1376,7 +1376,7 @@ _get_local_perf_path() {
 		*)
 			local found=0
 			for t in ${PGO_LOCAL_COPY[@]} ; do
-				[[ "${t}" != "${u}" ]] && continue
+				[[ "${t,,}" != "${u/wk_pgo_trainers_/}" ]] && continue
 				if [[ "${t/wk_pgo_trainers_/}" == "${t,,}" ]] ; then
 					echo "${S}/PerformanceTests/${t}"
 					found=1
