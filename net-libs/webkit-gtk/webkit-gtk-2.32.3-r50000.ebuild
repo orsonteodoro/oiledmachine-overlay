@@ -800,8 +800,9 @@ CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 pkg_pretend() {
 	if [[ ${MERGE_TYPE} != "binary" ]] ; then
 		if is-flagq "-g*" && ! is-flagq "-g*0" ; then
-			einfo \
-"Checking for sufficient disk space to build ${PN} with debugging CFLAGS"
+einfo
+einfo "Checking for sufficient disk space to build ${PN} with debugging CFLAGS"
+einfo
 			check-reqs_pkg_pretend
 		fi
 
@@ -837,6 +838,7 @@ ewarn
 	fi
 }
 
+NABIS=0
 pkg_setup() {
 	ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
 	ewarn "It is currently not recommended due to rendering bug(s)."
@@ -975,6 +977,10 @@ ewarn
 	if use webrtc ; then
 ewarn "WebRTC support is currently in development and feature incomplete."
 	fi
+
+	for a in $(multilib_get_enabled_abis) ; do
+		NABIS=$((${NABIS} + 1))
+	done
 }
 
 unpack_pgo_trainers() {
@@ -1066,7 +1072,8 @@ src_prepare() {
 	fi
 	cmake_src_prepare
 	gnome2_src_prepare
-	multilib_copy_sources
+	(( ${NABIS} > 1 )) \
+		&& multilib_copy_sources
 }
 
 _config_pgx() {
@@ -1282,7 +1289,6 @@ _config_pgx() {
 			-DLTO_MODE=thin
 			-DUSE_LD_LLD=ON
 		)
-
 	fi
 
 	if use mediastream ; then
@@ -1434,6 +1440,10 @@ _run_trainer() {
 }
 
 multilib_src_compile() {
+	if (( ${NABIS} == 1 )) ; then
+		export BUILD_DIR="${S}"
+		cd "${BUILD_DIR}" || die
+	fi
 	if use pgo ; then
 		PGO_PHASE="pgi"
 		_config_pgx
@@ -1449,6 +1459,10 @@ multilib_src_compile() {
 }
 
 multilib_src_test() {
+	if (( ${NABIS} == 1 )) ; then
+		export BUILD_DIR="${S}"
+		cd "${BUILD_DIR}" || die
+	fi
 	# Prevent test failures on PaX systems
 	# Programs/unittests/.libs/test*
 	pax-mark m $(list-paxables Programs/*[Tt]ests/*)
@@ -1525,6 +1539,10 @@ _install_licenses() {
 }
 
 multilib_src_install() {
+	if (( ${NABIS} == 1 )) ; then
+		export BUILD_DIR="${S}"
+		cd "${BUILD_DIR}" || die
+	fi
 	cmake_src_install
 
 	# Prevent crashes on PaX systems, bug #522808
