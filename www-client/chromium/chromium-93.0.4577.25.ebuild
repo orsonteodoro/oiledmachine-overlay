@@ -501,6 +501,10 @@ gen_pgo_profile_required_use() {
 IUSE+=" "$(gen_pgo_profile_use)
 REQUIRED_USE+=" $(gen_pgo_profile_required_use)"
 REQUIRED_USE+=" pgo-full? ( || ( $(gen_pgo_profile_use) ) )"
+# TODO:  Update pgo-full with complete (or near complete) PGO set
+# when official USE selected.
+# The cr_pgo_trainers_custom is disallowed for security reasons
+# when the official USE is set.
 REQUIRED_USE+="
 	^^ ( partitionalloc tcmalloc libcmalloc )
 	amd64? ( !shadowcallstack )
@@ -860,9 +864,10 @@ pre_build_checks() {
 		total_virtual_mem=$((${total_virtual_mem} + ${virt_mem_source}))
 	done
 	if (( ${virt_mem_source} < 12 )) ; then
-# It randomly fails and observed success with 8 GiB of virtual memory when
-# multitasking. Works with 16 GiB of virtual memory when multitasking, but peak
-# virtual memory (used + reserved) is ~10.2 GiB for ld.lld.
+# It randomly fails and a success observed with 8 GiB of total memory
+# (ram + swap) when multitasking.  It works with 16 GiB of virtual memory when
+# multitasking, but peak virtual memory (used + reserved) is ~10.2 GiB for
+# ld.lld.
 # [43742.787803] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/,task=ld.lld,pid=27154,uid=250
 # [43742.787817] Out of memory: Killed process 27154 (ld.lld) total-vm:10471016kB, anon-rss:2440396kB, file-rss:3180kB, shmem-rss:0kB, UID:250 pgtables:20168kB oom_score_adj:0
 # [43744.101600] oom_reaper: reaped process 27154 (ld.lld), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
