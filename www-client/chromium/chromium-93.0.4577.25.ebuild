@@ -35,25 +35,40 @@ RESTRICT="mirror"
 
 # all-rights-reserved is for unfree websites or content from them.
 LICENSE_BENCHMARK_WEBSITES="
-	cr_pgo_trainer_desktop_ui? (
+	cr_pgo_trainers_desktop_ui? (
 		all-rights-reserved
 	)
-	cr_pgo_trainer_tab_switching_typical_25? (
+	cr_pgo_trainers_loading_desktop? (
 		all-rights-reserved
 	)
-	cr_pgo_trainer_rasterize_and_record_micro_top_25? (
+	cr_pgo_trainers_loading_mobile? (
 		all-rights-reserved
 	)
-	cr_pgo_trainer_rendering_mobile? (
+	cr_pgo_trainers_power_mobile? (
 		all-rights-reserved
 	)
-	cr_pgo_trainer_unscheduled_v8_loading_desktop? (
+	cr_pgo_trainers_rasterize_and_record_micro_top_25? (
 		all-rights-reserved
 	)
-	cr_pgo_trainer_v8_runtime_stats_top_25? (
+	cr_pgo_trainers_rendering_desktop? (
 		all-rights-reserved
 	)
-	cr_pgo_trainer_dromaeo? (
+	cr_pgo_trainers_rendering_mobile? (
+		all-rights-reserved
+	)
+	cr_pgo_trainers_tab_switching_typical_25? (
+		all-rights-reserved
+	)
+	cr_pgo_trainers_unscheduled_loading_mbi? (
+		all-rights-reserved
+	)
+	cr_pgo_trainers_unscheduled_v8_loading_desktop? (
+		all-rights-reserved
+	)
+	cr_pgo_trainers_v8_runtime_stats_top_25? (
+		all-rights-reserved
+	)
+	cr_pgo_trainers_dromaeo? (
 		( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
 		( all-rights-reserved MIT )
 		( ( all-rights-reserved || ( MIT AFL-2.1 ) ) ( MIT GPL-2 ) || ( AFL-2.1 BSD ) MIT )
@@ -64,7 +79,7 @@ LICENSE_BENCHMARK_WEBSITES="
 		BSD-2
 		LGPL-2.1
 	)
-	cr_pgo_trainer_jetstream? (
+	cr_pgo_trainers_jetstream? (
 		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
 		( all-rights-reserved Apache-2.0 )
 		( all-rights-reserved GPL-2+ )
@@ -79,7 +94,7 @@ LICENSE_BENCHMARK_WEBSITES="
 		UoI-NCSA
 		ZLIB
 	)
-	cr_pgo_trainer_jetstream2? (
+	cr_pgo_trainers_jetstream2? (
 		|| ( BSD GPL-2+ )
 		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2+ ) )
 		( all-rights-reserved Apache-2.0 )
@@ -96,7 +111,7 @@ LICENSE_BENCHMARK_WEBSITES="
 		MIT
 		ZLIB
 	)
-	cr_pgo_trainer_kraken? (
+	cr_pgo_trainers_kraken? (
 		( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
 		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
 		( all-rights-reserved GPL-3+ )
@@ -106,10 +121,10 @@ LICENSE_BENCHMARK_WEBSITES="
 		LGPL-2.1
 		MPL-1.1
 	)
-	cr_pgo_trainer_octane? (
+	cr_pgo_trainers_octane? (
 		BSD
 	)
-	cr_pgo_trainer_speedometer2? (
+	cr_pgo_trainers_speedometer2? (
 		|| ( MIT BSD )
 		( all-rights-reserved GPL-2 )
 		( all-rights-reserved MIT )
@@ -287,15 +302,18 @@ dd9fc7b4cae307621cd0a830686b50c5bc3fb7e9541c1f22399a495f07313a21\
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
+IUSE+=" video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts
+video_cards_intel video_cards_iris video_cards_i965 video_cards_nouveau
+video_cards_nvidia video_cards_r600 video_cards_radeonsi" # For VA-API
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi, cfi-icall defaults status, see \
-#   https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/sanitizers/sanitizers.gni
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/sanitizers/sanitizers.gni
 # For cfi-full default status, see \
-#   https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/sanitizers/sanitizers.gni#L123
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status, see \
-#   https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/compiler/pgo/pgo.gni#L15
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default, see \
-#   https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/c++/c++.gni#L14
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx lto-opt +pgo -pgo-full
 shadowcallstack"
@@ -336,6 +354,8 @@ BENCHMARKS_MOBILE=(
 	v8.browsing_mobile
 	v8.browsing_mobile-future
 )
+
+# Official except for UNSCHEDULED_*
 BENCHMARKS_ALL=(
 	blink_perf.accessibility
 	blink_perf.bindings
@@ -377,10 +397,10 @@ BENCHMARKS_ALL=(
 	rendering.desktop
 	rendering.mobile
 	speedometer
+	speedometer-future
 	speedometer2
 	speedometer2-future
 	speedometer2-pcscan
-	speedometer-future
 	startup.mobile
 	system_health.common_desktop
 	system_health.common_mobile
@@ -404,17 +424,64 @@ BENCHMARKS_ALL=(
 	wasmpspdfkit
 	webrtc
 )
+
+CONTRIB_BENCHMARKS_DISABLED=(
+	ad_tagging.cluster_telemetry
+	blink_perf
+	blink_perf.layout_ng
+	blink_perf.paint_layout_ng
+	blink_perf.parser_layout_ng
+	blink_perf.privacy_budget
+	download.mobile
+	generic_trace_ct
+	generic_trace.top25
+	layout_shift.cluster_telemetry
+	leak_detection.cluster_telemetry
+	loading.cluster_telemetry
+	loading.desktop_layout_ng
+	loading.mobile_layout_ng
+	media_router.cpu_memory
+	media_router.cpu_memory.no_media_router
+	memory.cluster_telemetry
+	memory.leak_detection
+	memory.long_running_desktop_sites
+	multipage_skpicture_printer
+	multipage_skpicture_printer_ct
+	orderfile_generation.debugging
+	orderfile_generation.testing
+	orderfile_generation.training
+	orderfile_generation.variation.testing0
+	orderfile_generation.variation.testing1
+	orderfile_generation.variation.testing2
+	orderfile_generation.variation.training
+	orderfile.memory_mobile
+	rasterize_and_record_micro_ct
+	rendering.cluster_telemetry
+	repaint_ct
+	screenshot_ct
+	skpicture_printer
+	skpicture_printer_ct
+	system_health.scroll_jank_mobile
+	tracing.tracing_with_debug_overhead
+	v8.loading.cluster_telemetry
+	v8.loading_runtime_stats.cluster_telemetry
+)
+
+CONTRIB_BENCHMARKS=(
+	xr.webxr.static
+)
+
 gen_pgo_profile_use() {
-	for x in ${BENCHMARKS_ALL[@]} ; do
+	for x in ${BENCHMARKS_ALL[@]} ${CONTRIB_BENCHMARKS[@]} ; do
 		t="${x}"
 		t="${t//-/_}"
 		t="${t//./_}"
 		t="${t,,}"
-		echo " cr_pgo_trainer_${t}"
+		echo " cr_pgo_trainers_${t}"
 	done
 }
 gen_pgo_profile_required_use() {
-	for d in ${BENCHMARK_DESKTOP[@]} ; do
+	for d in ${BENCHMARK_DESKTOP[@]} ${CONTRIB_BENCHMARKS[@]} ; do
 		a="${d}"
 		a="${a//-/_}"
 		a="${a//./_}"
@@ -425,8 +492,8 @@ gen_pgo_profile_required_use() {
 			b="${b//./_}"
 			b="${b,,}"
 			echo "
-				cr_pgo_trainer_${a}? ( pgo-full !cr_pgo_trainer_${b} )
-				cr_pgo_trainer_${b}? ( pgo-full !cr_pgo_trainer_${a} )
+				cr_pgo_trainers_${a}? ( pgo-full !cr_pgo_trainers_${b} )
+				cr_pgo_trainers_${b}? ( pgo-full !cr_pgo_trainers_${a} )
 			"
 		done
 	done
@@ -444,17 +511,57 @@ REQUIRED_USE+="
 	component-build? ( !suid )
 	libcxx? ( clang )
 	lto-opt? ( clang )
-	official? ( amd64? ( cfi cfi-icall ) partitionalloc ^^ ( pgo pgo-full ) )
+	official? ( amd64? ( cfi cfi-icall ) partitionalloc ^^ ( pgo pgo-full )
+		pgo-full? (
+			!cr_pgo_trainers_custom
+			!cr_pgo_trainers_unscheduled_blink_perf_performance_apis
+			!cr_pgo_trainers_unscheduled_blink_perf_service_worker
+			!cr_pgo_trainers_unscheduled_loading_mbi
+			!cr_pgo_trainers_unscheduled_v8_loading_desktop
+			!cr_pgo_trainers_unscheduled_v8_loading_mobile
+		)
+	)
 	partitionalloc? ( !component-build )
 	pgo? ( clang !pgo-full )
 	pgo-full? ( clang !pgo )
 	ppc64? ( !shadowcallstack )
 	screencast? ( wayland )
 	shadowcallstack? ( clang )
+	video_cards_amdgpu? (
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
+		!video_cards_radeonsi
+	)
+	video_cards_amdgpu-pro? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
+		!video_cards_radeonsi
+	)
+	video_cards_amdgpu-pro-lts? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		!video_cards_r600
+		!video_cards_radeonsi
+	)
+	video_cards_r600? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+		!video_cards_radeonsi
+	)
+	video_cards_radeonsi? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+		!video_cards_r600
+	)
 	widevine? ( !arm64 !ppc64 )
 	x86? ( !shadowcallstack )
 "
 
+LIBVA_V="2.7"
 COMMON_X_DEPEND="
 	media-libs/mesa:=[gbm,${MULTILIB_USEDEP}]
 	x11-libs/libX11:=[${MULTILIB_USEDEP}]
@@ -472,6 +579,7 @@ COMMON_X_DEPEND="
 	vaapi? ( >=x11-libs/libva-2.7:=[X,drm,${MULTILIB_USEDEP}] )
 "
 
+FFMPEG_V="4.3"
 COMMON_DEPEND="
 	app-arch/bzip2:=[${MULTILIB_USEDEP}]
 	cups? ( >=net-print/cups-1.3.11:=[${MULTILIB_USEDEP}] )
@@ -488,9 +596,9 @@ COMMON_DEPEND="
 	media-libs/libpng:=[${MULTILIB_USEDEP}]
 	pulseaudio? ( media-sound/pulseaudio:=[${MULTILIB_USEDEP}] )
 	system-ffmpeg? (
-		>=media-video/ffmpeg-4.3:=[${MULTILIB_USEDEP}]
+		>=media-video/ffmpeg-${FFMPEG_V}:=[${MULTILIB_USEDEP}]
 		|| (
-			media-video/ffmpeg[-samba,${MULTILIB_USEDEP}]
+			>=media-video/ffmpeg-${FFMPEG_V}:=[-samba,${MULTILIB_USEDEP}]
 			>=net-fs/samba-4.5.10-r1[-debug(-),${MULTILIB_USEDEP}]
 		)
 		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
@@ -526,6 +634,53 @@ RDEPEND="${COMMON_DEPEND}
 	virtual/opengl[${MULTILIB_USEDEP}]
 	virtual/ttf-fonts
 	selinux? ( sec-policy/selinux-chromium )
+	vaapi? (
+		|| (
+			video_cards_amdgpu? (
+				media-libs/mesa:=[gallium,vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
+			)
+			video_cards_amdgpu-pro? (
+				x11-drivers/amdgpu-pro[open-stack,vaapi]
+			)
+			video_cards_amdgpu-pro-lts? (
+				x11-drivers/amdgpu-pro-lts[open-stack,vaapi]
+			)
+			video_cards_i965? (
+				|| (
+					x11-libs/libva-intel-media-driver
+					x11-libs/libva-intel-driver
+				)
+			)
+			video_cards_intel? (
+				|| (
+					x11-libs/libva-intel-media-driver
+					x11-libs/libva-intel-driver
+				)
+			)
+			video_cards_iris? (
+				x11-libs/libva-intel-media-driver
+			)
+			video_cards_nouveau? (
+				media-libs/mesa:=[gallium,video_cards_nouveau,${MULTILIB_USEDEP}]
+				|| (
+					media-libs/mesa:=[gallium,vaapi,video_cards_nouveau,${MULTILIB_USEDEP}]
+					>=x11-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
+				)
+			)
+			video_cards_nvidia? (
+				>=x11-libs/libva-vdpau-driver-0.7.4-r1[${MULTILIB_USEDEP}]
+				x11-drivers/nvidia-drivers
+			)
+			video_cards_r600? (
+				media-libs/mesa:=[gallium,vaapi,video_cards_r600,${MULTILIB_USEDEP}]
+			)
+			video_cards_radeonsi? (
+				media-libs/mesa:=[gallium,vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
+			)
+		)
+		>=x11-libs/libva-${LIBVA_V}:=[${MULTILIB_USEDEP}]
+		system-ffmpeg? ( >=media-video/ffmpeg-${FFMPEG_V}[vaapi,${MULTILIB_USEDEP}] )
+	)
 "
 DEPEND="${COMMON_DEPEND}
 "
@@ -603,7 +758,7 @@ BDEPEND="
 
 # Upstream uses llvm:13
 # For the current llvm for this project, see
-#   https://github.com/chromium/chromium/blob/93.0.4577.25/tools/clang/scripts/update.py#L42
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/tools/clang/scripts/update.py#L42
 # Use the same clang for official USE flag because of older llvm bugs which
 #   could result in security weaknesses (explained in the llvm:12 note below).
 # Used llvm >= 12 for arm64 for the same reason in the Linux kernel CFI comment.
@@ -697,6 +852,34 @@ pre_build_checks() {
 			CHECKREQS_MEMORY="16G"
 		fi
 	fi
+
+	local virt_mem_sources=$(free --giga | tail -n +2 \
+		| sed -r -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	local total_virtual_mem=0
+	for virt_mem_source in ${virt_mem_sources[@]} ; do
+		total_virtual_mem=$((${total_virtual_mem} + ${virt_mem_source}))
+	done
+	if (( ${virt_mem_source} < 12 )) ; then
+# It randomly fails and observed success with 8 GiB of virtual memory when
+# multitasking. Works with 16 GiB of virtual memory when multitasking, but peak
+# virtual memory (used + reserved) is ~10.2 GiB for ld.lld.
+# [43742.787803] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/,task=ld.lld,pid=27154,uid=250
+# [43742.787817] Out of memory: Killed process 27154 (ld.lld) total-vm:10471016kB, anon-rss:2440396kB, file-rss:3180kB, shmem-rss:0kB, UID:250 pgtables:20168kB oom_score_adj:0
+# [43744.101600] oom_reaper: reaped process 27154 (ld.lld), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+ewarn
+ewarn "You may need >= 12 GiB of memory to link ${PN}.  Please add more swap"
+ewarn "space.  You currently have ${total_virtual_mem} GiB of virtual memory."
+ewarn
+	fi
+
+	if has_version "x11-libs/libva-intel-driver" ; then
+ewarn
+ewarn "x11-libs/libva-intel-driver is the older vaapi driver but intended for"
+ewarn "select hardware.  See also x11-libs/libva-intel-media-driver package"
+ewarn "to access more vaapi accelerated encoders if driver support overlaps."
+ewarn
+	fi
+
 	check-reqs_pkg_setup
 }
 
@@ -705,7 +888,7 @@ pkg_pretend() {
 }
 
 CR_CLANG_USED="98033fdc50e61273b1d5c77ba5f0f75afe3965c1" # Obtained from \
-# https://github.com/chromium/chromium/blob/93.0.4577.25/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/blob/93.0.4577.42/tools/clang/scripts/update.py#L42
 CR_CLANG_USED_UNIX_TIMESTAMP="1626129557" # Cached.  Use below to obtain this. \
 # TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
 #	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
@@ -1021,45 +1204,131 @@ ewarn
 ewarn
 ewarn "The pgo-full USE flag is a Work In Progress (WIP) and not production ready."
 ewarn
-		if has network-sandbox $FEATURES ; then
-eerror "FEATURES=\"-network-sandbox\" must be added as a per-package env to"
-eerror "be able to use PGO trainers with external benchmarking websites."
-			die
-		fi
+		local missing_assets=(
+			cr_pgo_trainers_media_desktop
+			cr_pgo_trainers_media_mobile
+			cr_pgo_trainers_memory_desktop
+			cr_pgo_trainers_rasterize_and_record_micro_top_25
+		)
+		# For cr_pgo_trainers_rasterize_and_record_micro_top_25:
+		# See also tools/perf/page_sets/static_top_25/README.md # \
+		# It's better to snapshot free websites instead of personal data or nonfree ones.
+		# The data retrieved can be classified as local copy or \
+		# or needing realtime remote retrieval depending on treatment.
+		for u in ${missing_assets[@]} ; do
+			if use "${u}" ; then
+eerror
+eerror "The ${u} USE flag is not ready yet.  Missing video or still image"
+eerror "assets."
+eerror
+				die
+			fi
+		done
+
+		for u in ${remote_access_use[@]} ; do
+			if [[ "${u}" =~ "blink_perf" \
+				|| "${u}" =~ "dummy_benchmark" \
+				|| "${u}" =~ "memory_desktop" \
+				|| "${u}" =~ "speedometer2" \
+				|| "${u}" =~ "webrtc" \
+				]] ; then
+				:; # Skip if local copy
+			elif has network-sandbox $FEATURES ; then
+				# -network-sandbox requirement applies to:
+				# dromaeo
+				# jetstream
+				# jetstream2
+				# kraken
+				# octane
+				# power.mobile
+				# speedometer
+				# speedometer-future
+				# system_health_pcscan
+				# tab_switching_typical_25
+				# wasmpspdfkit
+eerror
+eerror "The ${u} USE flag requires FEATURES=\"-network-sandbox\" to be added as"
+eerror "a per-package envvar to allowed Internet access to a website in order to"
+eerror "perform benchmarks in the src_compile() phase."
+eerror
+				die
+			fi
+		done
+		# Backtrack tools/perf/benchmark.csv to find the USE flag
+		# All sites in remote_access_use assume real time retrieval.
 		# TODO: check if all relevant USE flags added:
 		local remote_access_use=(
-			cr_pgo_trainer_desktop_ui
-			cr_pgo_trainer_tab_switching_typical_25
-			cr_pgo_trainer_rasterize_and_record_micro_top_25
-			cr_pgo_trainer_rendering_mobile
-			cr_pgo_trainer_unscheduled_v8_loading_desktop
-			cr_pgo_trainer_v8_runtime_stats_top_25
+			cr_pgo_trainers_desktop_ui
+			cr_pgo_trainers_loading_desktop
+			cr_pgo_trainers_loading_mobile
+			cr_pgo_trainers_power_mobile
+			cr_pgo_trainers_rasterize_and_record_micro_top_25
+			cr_pgo_trainers_rendering_mobile
+			cr_pgo_trainers_system_health_pcscan
+			cr_pgo_trainers_tab_switching_typical_25
+			cr_pgo_trainers_unscheduled_loading_mbi
+			cr_pgo_trainers_unscheduled_v8_loading_desktop
+			cr_pgo_trainers_v8_runtime_stats_top_25
 		)
-		# Backtrack tools/perf/benchmark.csv to find the USE flag
 		local warned=0
+ewarn
+ewarn "Discovered external access URIs for PGO trainers:"
+ewarn
+		echo "http://dromaeo.com?"{'dom-attr','dom-modify','dom-query','dom-traverse'} \
+			> "${T}/found_uris" || die
+		grep -Pzo -r -e "URL_LIST = \[[^\]]+\]" \
+			"${S}/tools/perf/page_sets" \
+			| tr "\0" "\n" \
+			| sed -e "s|.*URL_LIST =|URL_LIST =|g" \
+				-e "\|URL_LIST = \[DOWNLOAD_URL\]|d" \
+			>> "${T}/found_uris" || die
+		grep -Pzo -r -e "URL = ['(].*[)']" \
+			"${S}/tools/perf/page_sets" \
+			| tr "\0" "\n" \
+			| sed -e "s|.*URL =|URL =|g" \
+			| sort \
+			| uniq >> "${T}/found_uris" || die
+		cat "${T}/found_uris" || die
+ewarn
+ewarn "The full list of External URIs to be accessed can be read by doing the"
+ewarn "by PGO trainers can be read in another terminal or by scrolling up"
+ewarn "with (ctrl + page up):"
+ewarn
+ewarn "  \`cat ${T}/found_uris\`"
+ewarn
+ewarn "Some may or may not be relevant depending on the USE flags used."
+ewarn
+		local use_list=""
 		for u in ${remote_access_use[@]} ; do
 			if use "${u}" ; then
+				use_list+="  ${u}"
+				warned=1
+			fi
+		done
+		if (( ${warned} == 1 )) ; then
 ewarn
-ewarn "The ${u} USE flag may access external sites with user contributed data"
-ewarn "when using PGO profile generation and may need site terms of use to be"
-ewarn "reviewed for acceptable use.  They also may access news, governmental,"
-ewarn "political, or corporate sites.  They may access or reference unfree"
-ewarn "trademarks and content."
+ewarn "Affected USE flags:"
+ewarn
+ewarn "  ${use_list}"
+ewarn
+ewarn "The affected USE flag(s) may access external sites with possibly untrusted"
+ewarn "user contributed data when using PGO profile generation and may need"
+ewarn "site terms of use to be reviewed for acceptable use.  They also may"
+ewarn "access news, governmental, political, or corporate sites.  They may"
+ewarn "access or reference unfree trademarks and content."
 ewarn
 ewarn "You have 120 seconds to remove this USE flag if you disagree with such"
 ewarn "access."
 ewarn
-				warned=1
-			fi
-		done
-		(( ${warned} == 1 )) && sleep 120
+			sleep 120
+		fi
 	fi
 
 	if use official || ( use clang && use cfi && use pgo ) ; then
 		# sys-devel/lld-13 was ~20 mins for v8_context_snapshot_generator
 		# sys-devel/lld-12 was ~4 hrs for v8_context_snapshot_generator
 ewarn
-ewarn "Linking times may take longer than usual.  Maybe 1-4+ hour(s)."
+ewarn "Linking times may take longer than usual.  Maybe 1-12+ hour(s)."
 ewarn
 	fi
 
@@ -1144,9 +1413,9 @@ src_prepare() {
 
 	default
 
-	if use cr_pgo_trainer_custom && [[ ! -f "${T}/epatch_user.log" ]] ; then
+	if use cr_pgo_trainers_custom && [[ ! -f "${T}/epatch_user.log" ]] ; then
 eerror
-eerror "You must supply a per-package patch to use the cr_pgo_trainer_custom"
+eerror "You must supply a per-package patch to use the cr_pgo_trainers_custom"
 eerror "USE flag."
 eerror
 		die
@@ -1465,11 +1734,14 @@ eerror
 			-e "s|/usr/bin/env {vpython}|/usr/bin/env ${EPYTHON}|" \
 			"build/util/generate_wrapper.py" || die
 
+		# TODO:  Revert back to vpython
+		# See https://github.com/chromium/chromium/blob/92.0.4577.42/DEPS#L4489
 		local futurize_lst=(
 			# Put the entire import tree
 			tools/perf/benchmarks
 			tools/perf/core
 			tools/perf/page_sets
+			tools/perf/record_wpr
 			tools/perf/run_benchmark
 			testing/scripts/common.py
 			testing/scripts/run_performance_tests.py
@@ -1576,7 +1848,7 @@ _configure_pgx() {
 	fi
 
 # Debug symbols level 2 is still on when official is on even though is_debug=false:
-# See https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/compiler/compiler.gni#L276
+# See https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/compiler/compiler.gni#L276
 	# GN needs explicit config for Debug/Release as opposed to inferring it from build directory.
 	myconf_gn+=" is_debug=false"
 
@@ -1839,14 +2111,14 @@ _configure_pgx() {
 			tools/generate_shim_headers/generate_shim_headers.py || die
 	fi
 
-# See https://github.com/chromium/chromium/blob/93.0.4577.25/build/config/sanitizers/BUILD.gn#L196
+# See https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/sanitizers/BUILD.gn#L196
 	if use cfi ; then
 		myconf_gn+=" is_cfi=true"
 	else
 		myconf_gn+=" is_cfi=false"
 	fi
 
-# See https://github.com/chromium/chromium/blob/93.0.4577.25/tools/mb/mb_config.pyl#L2950
+# See https://github.com/chromium/chromium/blob/93.0.4577.42/tools/mb/mb_config.pyl#L2950
 	if use cfi-full ; then
 		myconf_gn+=" use_cfi_cast=true"
 	else
@@ -1864,7 +2136,7 @@ _configure_pgx() {
 	fi
 
 # See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-# See also https://github.com/chromium/chromium/blob/93.0.4577.25/docs/pgo.md
+# See also https://github.com/chromium/chromium/blob/93.0.4577.42/docs/pgo.md
 # profile-instr-use is clang which that file assumes but gcc doesn't have.
 	if use pgo-full ; then
 		myconf_gn+=" chrome_pgo_phase=${PGO_PHASE}"
@@ -1929,8 +2201,8 @@ _build_pgx() {
 }
 
 _run_training_suite() {
-# See also https://github.com/chromium/chromium/blob/93.0.4577.25/docs/pgo.md
-# https://github.com/chromium/chromium/blob/93.0.4577.25/testing/buildbot/generate_buildbot_json.py
+# See also https://github.com/chromium/chromium/blob/93.0.4577.42/docs/pgo.md
+# https://github.com/chromium/chromium/blob/93.0.4577.42/testing/buildbot/generate_buildbot_json.py
 # https://github.com/chromium/chromium/commit/8acfdce99c84fbc35ad259692ac083a9ea18392c
 # tools/perf/contrib/vr_benchmarks
 	local pp=(
@@ -1946,7 +2218,7 @@ _run_training_suite() {
 		t="${t//-/_}"
 		t="${t//./_}"
 		t="${t,,}"
-		if use "cr_pgo_trainer_${t}" ; then
+		if use "cr_pgo_trainers_${t}" ; then
 			if [[ -d "${T}/${x}" ]] ; then
 				# Clear for different ABI builds
 				rm -vrf "${T}/${x}" || die
@@ -2300,9 +2572,85 @@ pkg_postinst() {
 	readme.gentoo_print_elog
 
 	if use vaapi ; then
-		elog "VA-API is disabled by default at runtime. You have to enable it"
-		elog "by adding --enable-features=VaapiVideoDecoder to CHROMIUM_FLAGS"
-		elog "in /etc/chromium/default."
+		# It says 3 args:  https://github.com/chromium/chromium/blob/93.0.4577.42/docs/gpu/vaapi.md#vaapi-on-linux
+		elog "VA-API is disabled by default at runtime.  You have to enable it"
+		elog "by adding --enable-features=VaapiVideoDecoder --ignore-gpu-blocklist"
+		elog "--use-gl=desktop or --use-gl=egl to the CHROMIUM_FLAGS in"
+		elog "/etc/chromium/default."
+
+		if has_version "x11-libs/libva-intel-driver" ; then
+			ewarn
+			ewarn "x11-libs/libva-intel-driver is the older vaapi driver but intended for"
+			ewarn "select hardware.  See also x11-libs/libva-intel-media-driver package"
+			ewarn "to access more VA-API accelerated encoders if driver support overlaps."
+			ewarn
+		fi
+
+		if use video_cards_intel || use video_cards_i965 || use video_cards_iris ; then
+			einfo
+			einfo "Intel Quick Sync Video is required for hardware accelerated H.264 VA-API"
+			einfo "encode."
+			einfo
+			einfo "For hardware support, see the AVC row at"
+			einfo "https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
+			einfo
+			einfo "Driver ebuild packages for their corresponding hardware can be found at:"
+			einfo
+			einfo "x11-libs/libva-intel-driver:"
+			einfo "https://github.com/intel/intel-vaapi-driver/blob/master/README"
+			einfo
+			einfo "x11-libs/libva-intel-media-driver:"
+			einfo "https://github.com/intel/media-driver#decodingencoding-features"
+			einfo
+		fi
+		if use video_cards_amdgpu || use video_cards_amdgpu-pro \
+			|| use video_cards_amdgpu-pro-lts || use video_cards_r600 \
+			|| use video_cards_radeonsi  ; then
+			einfo
+			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for"
+			einfo "hardware accelerated H.264 VA-API encode."
+			einfo
+			einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
+			einfo "or https://www.x.org/wiki/RadeonFeature/"
+			einfo
+			einfo "The r600 driver only supports ARUBA for VCE encode."
+			einfo "For newer hardware, try a newer free driver like"
+			einfo "the radeonsi driver or closed drivers."
+			einfo
+		fi
+		if use video_cards_nouveau ; then
+			einfo
+			einfo "Nouveau requires FW for VA-API to work properly."
+			einfo "For details see, https://nouveau.freedesktop.org/VideoAcceleration.html"
+			einfo "Reconsider using the official driver instead."
+			einfo
+		fi
+		einfo
+		einfo "Some drivers may require up-to-date firmware for proper VA-API support."
+		einfo
+		einfo "The user must be part of the video group to use VA-API support."
+		# Because it touches /dev/dri/renderD128
+		einfo
+		einfo "The LIBVA_DRIVER_NAME envvar may need to be changed if both open"
+		einfo "and closed drivers are installed to one of the following"
+		einfo
+		has_version "x11-libs/libva-intel-driver" \
+			&& einfo "  LIBVA_DRIVER_NAME=\"i965\""
+		has_version "x11-libs/libva-intel-media-driver" \
+			&& einfo "  LIBVA_DRIVER_NAME=\"iHD\""
+		use video_cards_r600 \
+			&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
+		( use video_cards_radeonsi || use video_cards_amdgpu ) \
+			&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
+		use video_cards_amdgpu-pro \
+			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
+			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for Southern Islands or newer"
+		use video_cards_amdgpu-pro-lts \
+			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib/x86_64-linux-gnu/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
+			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib/x86_64-linux-gnu/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for Southern Islands or newer"
+		einfo
+		einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
+		einfo
 	fi
 	if use screencast ; then
 		elog "Screencast is disabled by default at runtime. Either enable it"
