@@ -1295,9 +1295,10 @@ ewarn
 			| uniq >> "${T}/found_uris" || die
 		cat "${T}/found_uris" || die
 ewarn
-ewarn "The full list of External URIs to be accessed can be read by doing the"
-ewarn "by PGO trainers can be read in another terminal or by scrolling up"
-ewarn "with (ctrl + page up):"
+ewarn "A more comprehensive list of External URIs to be accessed can be read"
+ewarn "that are possibly accessed by all PGO trainers.  You can be read this"
+ewarn "info by scrolling up with ctrl + page up or by doing the following in"
+ewarn "another terminal:"
 ewarn
 ewarn "  \`cat ${T}/found_uris\`"
 ewarn
@@ -1316,16 +1317,16 @@ ewarn "Affected USE flags:"
 ewarn
 ewarn "  ${use_list}"
 ewarn
-ewarn "The affected USE flag(s) may access external sites with possibly untrusted"
-ewarn "user contributed data when using PGO profile generation and may need"
-ewarn "site terms of use to be reviewed for acceptable use.  They also may"
-ewarn "access news, governmental, political, or corporate sites.  They may"
+ewarn "The affected USE flag(s) may access external sites with possibly"
+ewarn "untrusted user contributed data when using PGO profile generation and"
+ewarn "may need site terms of use to be reviewed for acceptable use.  They also"
+ewarn "may access news, governmental, political, or corporate sites.  They may"
 ewarn "access or reference unfree trademarks and content."
 ewarn
-ewarn "You have 120 seconds to remove this USE flag if you disagree with such"
-ewarn "access."
+ewarn "You have 180 seconds to remove this USE flag if you disagree with such"
+ewarn "access.  You may cancel and make changes by pressing ctrl + c."
 ewarn
-			sleep 120
+			sleep 180
 		fi
 	fi
 
