@@ -163,8 +163,8 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 	 opencl? ( !opencl-icd-loader? ( >=virtual/opencl-3 ) )
 	 rocm? ( >=sys-apps/pciutils-3.5.6
 		 >=sys-process/numactl-2.0.11
-		  !strict-pairing? ( >=virtual/amdgpu-drm-3.2.08[dkms,firmware] )
-		   strict-pairing? ( ~virtual/amdgpu-drm-3.2.08[dkms,firmware] )
+		  !strict-pairing? ( >=virtual/amdgpu-drm-3.2.56[dkms,firmware] )
+		   strict-pairing? ( ~virtual/amdgpu-drm-3.2.56[dkms,firmware] )
 		  !system-roct? ( !dev-libs/roct-thunk-interface )
 		   system-roct? ( >=dev-libs/roct-thunk-interface-${ROCK_V} ) )
 	 !strict-pairing? (
@@ -175,6 +175,7 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 		~virtual/amdgpu-drm-3.2.56[dkms?,strict-pairing]
 	 )
 	 system-libva? ( >=x11-libs/libva-2.1.0 )
+	 vaapi? ( >=virtual/amdgpu-drm-3.2.56[dkms?,firmware] )
 	 vdpau? ( >=x11-libs/libvdpau-1.1.1 )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:= )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:=[-vulkan]

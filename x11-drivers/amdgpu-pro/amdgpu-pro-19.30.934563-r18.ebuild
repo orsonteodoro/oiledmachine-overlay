@@ -175,6 +175,7 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 		~virtual/amdgpu-drm-3.2.42[dkms?,strict-pairing]
 	 )
 	 system-libva? ( >=x11-libs/libva-2.1.0 )
+	 vaapi? ( >=virtual/amdgpu-drm-3.2.42[dkms?,firmware] )
 	 vdpau? ( >=x11-libs/libvdpau-1.1.1 )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:= )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:=[-vulkan]
