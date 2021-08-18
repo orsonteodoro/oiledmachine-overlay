@@ -665,6 +665,8 @@ pkg_postinst() {
 			einfo
 		fi
 		einfo
+		einfo "Some drivers may require firmware for proper VA-API support."
+		einfo
 		einfo "The user must be part of the video group to use VAAPI support."
 		einfo
 		einfo "The LIBVA_DRIVER_NAME envvar may need to be changed if both open"
