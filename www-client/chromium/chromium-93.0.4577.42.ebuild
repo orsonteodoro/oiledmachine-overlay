@@ -2,13 +2,12 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # Monitor
-#   https://chromereleases.googleblog.com/search/label/Beta%20updates
-#   https://chromereleases.googleblog.com/search/label/Stable%20updates
+#   https://chromereleases.googleblog.com/search/label/Dev%20updates
 # for security updates.  They are announced faster than NVD.
 # See https://omahaproxy.appspot.com/ for the latest linux version
 
 EAPI=7
-PYTHON_COMPAT=( python3_8 )
+PYTHON_COMPAT=( python3_{8,9} )
 PYTHON_REQ_USE="xml"
 
 CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
@@ -21,21 +20,16 @@ inherit multilib-minimal
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
-PATCHSET="7"
+PATCHSET="6"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
-PPC64LE_PATCHSET="92-ppc64le-1"
 HIGHWAY_V="0.12.1"
-SETUPTOOLS_V="44.1.0"
 GLIBC_PATCH_V="92-glibc-2.33"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
-	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-${SETUPTOOLS_V}.zip
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
 	https://dev.gentoo.org/~sultan/distfiles/www-client/${PN}/${PN}-${GLIBC_PATCH_V}-patch.tar.xz
 	arm64? ( https://github.com/google/highway/archive/refs/tags/${HIGHWAY_V}.tar.gz -> highway-${HIGHWAY_V}.tar.gz )
-	ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-${PPC64LE_PATCHSET}.tar.xz )
 "
-# Missing py files in typ in ${P}.tar.xz so download catapult snapshot.
 RESTRICT="mirror"
 
 # all-rights-reserved is for unfree websites or content from them.
@@ -142,8 +136,8 @@ LICENSE_BENCHMARK_WEBSITES="
 " # emerge does not understand ^^ in the LICENSE variable and have been replaced
 # with ||.  You should choose at most one.
 LICENSE="BSD
-	 libcxx? ( chromium-92.0.4515.x-libcxx )
-	!libcxx? ( chromium-92.0.4515.x-libstdcxx )
+	 libcxx? ( chromium-93.0.4577.x-libcxx )
+	!libcxx? ( chromium-93.0.4577.x-libstdcxx )
 	APSL-2
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -194,11 +188,11 @@ LICENSE="BSD
 	widevine? ( widevine )
 	${LICENSE_BENCHMARK_WEBSITES}"
 LICENSE_FINGERPRINT_LIBSTDCXX="\
-65346078d0f6bc0b3659b2774d7943803742f0c0a2152ecf4a4f4babd03bb00f\
-e84cbb0696d3ddb4d70c167866943c959823fb1a5eab8194ea558e16ce3f1e34" # SHA512
+147e32b00489a9b0023d720066a1db648d4104fe81d8e764902a44a2eb650308\
+9a6781dfb64901f5460758d17227e5f0e8f1dfb8fe6c14e6afc7374b6f0e028e" # SHA512
 LICENSE_FINGERPRINT_LIBCXX="\
-be21e8628daa9fc06823a99fb9e88ac8d2d1137312986aa38ad2ad4864a4ca7d\
-0e922fdd8f465b844bd29df2df246b6c282f1aab762d84226ac726bae274bc73" # SHA512
+dd9fc7b4cae307621cd0a830686b50c5bc3fb7e9541c1f22399a495f07313a21\
+5e995e3b70ce0d0ba7a6a60080ce14821f27b485da90d9440ba06d040d1f0a89" # SHA512
 # Benchmark website licenses:
 # See the webkit-gtk ebuild
 #
@@ -305,20 +299,22 @@ be21e8628daa9fc06823a99fb9e88ac8d2d1137312986aa38ad2ad4864a4ca7d\
 #   give the wrong impression that the entire software was released in public
 #   domain.
 SLOT="0"
-KEYWORDS="amd64 arm64 ~ppc64 ~x86"
-IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu vaapi wayland widevine"
+KEYWORDS="~amd64 ~arm64 ~x86"
+# vaapi is enabled by default upstream for some arches \
+# See https://github.com/chromium/chromium/blob/93.0.4577.42/media/gpu/args.gni#L24
+IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu +vaapi wayland widevine"
 IUSE+=" video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts
 video_cards_intel video_cards_iris video_cards_i965 video_cards_nouveau
 video_cards_nvidia video_cards_r600 video_cards_radeonsi" # For VA-API
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi, cfi-icall defaults status, see \
-#   https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/sanitizers/sanitizers.gni
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/sanitizers/sanitizers.gni
 # For cfi-full default status, see \
-#   https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/sanitizers/sanitizers.gni#L123
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status, see \
-#   https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/compiler/pgo/pgo.gni#L15
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default, see \
-#   https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/c++/c++.gni#L14
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 IUSE+=" +cfi cfi-full +cfi-icall +clang libcxx lto-opt +pgo -pgo-full
 shadowcallstack"
@@ -572,7 +568,7 @@ REQUIRED_USE+="
 
 LIBVA_V="2.7"
 COMMON_X_DEPEND="
-	media-libs/mesa:=[gbm,${MULTILIB_USEDEP}]
+	media-libs/mesa:=[gbm(+),${MULTILIB_USEDEP}]
 	x11-libs/libX11:=[${MULTILIB_USEDEP}]
 	x11-libs/libXcomposite:=[${MULTILIB_USEDEP}]
 	x11-libs/libXcursor:=[${MULTILIB_USEDEP}]
@@ -599,7 +595,7 @@ COMMON_DEPEND="
 	>=dev-libs/nss-3.26:=[${MULTILIB_USEDEP}]
 	>=media-libs/alsa-lib-1.0.19:=[${MULTILIB_USEDEP}]
 	media-libs/fontconfig:=[${MULTILIB_USEDEP}]
-	media-libs/freetype:=[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.11.0:=[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-2.4.0:0=[icu(-),${MULTILIB_USEDEP}]
 	media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
 	media-libs/libpng:=[${MULTILIB_USEDEP}]
@@ -657,13 +653,13 @@ RDEPEND="${COMMON_DEPEND}
 			video_cards_i965? (
 				|| (
 					x11-libs/libva-intel-media-driver
-					x11-libs/libva-intel-driver
+					x11-libs/libva-intel-driver[${MULTILIB_USEDEP}]
 				)
 			)
 			video_cards_intel? (
 				|| (
 					x11-libs/libva-intel-media-driver
-					x11-libs/libva-intel-driver
+					x11-libs/libva-intel-driver[${MULTILIB_USEDEP}]
 				)
 			)
 			video_cards_iris? (
@@ -696,14 +692,15 @@ DEPEND="${COMMON_DEPEND}
 # dev-vcs/git - https://bugs.gentoo.org/593476
 BDEPEND="
 	${PYTHON_DEPS}
+	$(python_gen_any_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
 	|| (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
 		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
 	)
 	>=app-arch/gzip-1.7
-	app-arch/unzip
 	dev-lang/perl
-	dev-lang/python:2.7[xml]
 	>=dev-util/gn-0.1807
 	dev-vcs/git
 	>=dev-util/gperf-3.0.3
@@ -743,6 +740,7 @@ BDEPEND="
 		$(python_gen_any_dep 'dev-python/websocket-client[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep 'net-misc/gsutil[${PYTHON_USEDEP}]')
 		sys-apps/dbus:=[${MULTILIB_USEDEP}]
+		sys-apps/grep[pcre]
 		!headless? (
 			!wayland? (
 				x11-base/xorg-server[xvfb]
@@ -766,7 +764,7 @@ BDEPEND="
 
 # Upstream uses llvm:13
 # For the current llvm for this project, see
-#   https://github.com/chromium/chromium/blob/92.0.4515.159/tools/clang/scripts/update.py#L42
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/tools/clang/scripts/update.py#L42
 # Use the same clang for official USE flag because of older llvm bugs which
 #   could result in security weaknesses (explained in the llvm:12 note below).
 # Used llvm >= 12 for arm64 for the same reason in the Linux kernel CFI comment.
@@ -774,7 +772,7 @@ BDEPEND="
 #     https://bugs.llvm.org/show_bug.cgi?id=46258
 #     https://bugs.llvm.org/show_bug.cgi?id=47479
 # To confirm the hash version match for the reported by CR_CLANG_REVISION, see
-#   https://github.com/llvm/llvm-project/blob/d3676d4b/llvm/CMakeLists.txt
+#   https://github.com/llvm/llvm-project/blob/98033fdc/llvm/CMakeLists.txt
 RDEPEND+="
 	libcxx? (
 		>=sys-libs/libcxx-13[${MULTILIB_USEDEP}]
@@ -831,6 +829,10 @@ them in Chromium, then add --password-store=basic to CHROMIUM_FLAGS
 in /etc/chromium/default.
 "
 
+python_check_deps() {
+	has_version -b "dev-python/setuptools[${PYTHON_USEDEP}]"
+}
+
 pre_build_checks() {
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		local -x CPP="$(tc-getCXX) -E"
@@ -863,7 +865,7 @@ pre_build_checks() {
 	for virt_mem_source in ${virt_mem_sources[@]} ; do
 		total_virtual_mem=$((${total_virtual_mem} + ${virt_mem_source}))
 	done
-	if (( ${virt_mem_source} < 12 )) ; then
+	if (( ${total_virtual_mem} < 12 )) ; then
 # It randomly fails and a success observed with 8 GiB of total memory
 # (ram + swap) when multitasking.  It works with 16 GiB of virtual memory when
 # multitasking, but peak virtual memory (used + reserved) is ~10.2 GiB for
@@ -875,6 +877,12 @@ ewarn
 ewarn "You may need >= 12 GiB of memory to link ${PN}.  Please add more swap"
 ewarn "space.  You currently have ${total_virtual_mem} GiB of virtual memory."
 ewarn
+	else
+einfo "Total memory (RAM + swap) is sufficient (>= 12 GiB)."
+	fi
+
+	if use lto-opt && (( ${total_virtual_mem} <= 8 )) ; then
+		die "Add more swap space."
 	fi
 
 	if has_version "x11-libs/libva-intel-driver" ; then
@@ -892,9 +900,9 @@ pkg_pretend() {
 	pre_build_checks
 }
 
-CR_CLANG_USED="d3676d4b666ead794fc58bbc7e07aa406dcf487a" # Obtained from \
-# https://github.com/chromium/chromium/blob/92.0.4515.159/tools/clang/scripts/update.py#L42
-CR_CLANG_USED_UNIX_TIMESTAMP="1621237229" # Cached.  Use below to obtain this. \
+CR_CLANG_USED="98033fdc50e61273b1d5c77ba5f0f75afe3965c1" # Obtained from \
+# https://github.com/chromium/chromium/blob/93.0.4577.42/tools/clang/scripts/update.py#L42
+CR_CLANG_USED_UNIX_TIMESTAMP="1626129557" # Cached.  Use below to obtain this. \
 # TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
 #	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
 CR_CLANG_SLOT="13"
@@ -1187,7 +1195,7 @@ die "${PN} requires llvm:${CR_CLANG_SLOT}"
 
 NABIS=0
 pkg_setup() {
-	einfo "The $(ver_cut 1 ${PV}) series is the Stable channel."
+	ewarn "The $(ver_cut 1 ${PV}) series is the Beta channel."
 	pre_build_checks
 
 	chromium_suid_sandbox_check_kernel_config
@@ -1209,125 +1217,6 @@ ewarn
 ewarn
 ewarn "The pgo-full USE flag is a Work In Progress (WIP) and not production ready."
 ewarn
-		local missing_assets=(
-			cr_pgo_trainers_media_desktop
-			cr_pgo_trainers_media_mobile
-			cr_pgo_trainers_memory_desktop
-			cr_pgo_trainers_rasterize_and_record_micro_top_25
-		)
-		# For cr_pgo_trainers_rasterize_and_record_micro_top_25:
-		# See also tools/perf/page_sets/static_top_25/README.md # \
-		# It's better to snapshot free websites instead of personal data or nonfree ones.
-		# The data retrieved can be classified as local copy or \
-		# or needing realtime remote retrieval depending on treatment.
-		for u in ${missing_assets[@]} ; do
-			if use "${u}" ; then
-eerror
-eerror "The ${u} USE flag is not ready yet.  Missing video or still image"
-eerror "assets."
-eerror
-				die
-			fi
-		done
-
-		for u in ${remote_access_use[@]} ; do
-			if [[ "${u}" =~ "blink_perf" \
-				|| "${u}" =~ "dummy_benchmark" \
-				|| "${u}" =~ "memory_desktop" \
-				|| "${u}" =~ "speedometer2" \
-				|| "${u}" =~ "webrtc" \
-				]] ; then
-				:; # Skip if local copy
-			elif has network-sandbox $FEATURES ; then
-				# -network-sandbox requirement applies to:
-				# dromaeo
-				# jetstream
-				# jetstream2
-				# kraken
-				# octane
-				# power.mobile
-				# speedometer
-				# speedometer-future
-				# system_health_pcscan
-				# tab_switching_typical_25
-				# wasmpspdfkit
-eerror
-eerror "The ${u} USE flag requires FEATURES=\"-network-sandbox\" to be added as"
-eerror "a per-package envvar to allowed Internet access to a website in order to"
-eerror "perform benchmarks in the src_compile() phase."
-eerror
-				die
-			fi
-		done
-		# Backtrack tools/perf/benchmark.csv to find the USE flag
-		# All sites in remote_access_use assume real time retrieval.
-		# TODO: check if all relevant USE flags added:
-		local remote_access_use=(
-			cr_pgo_trainers_desktop_ui
-			cr_pgo_trainers_loading_desktop
-			cr_pgo_trainers_loading_mobile
-			cr_pgo_trainers_power_mobile
-			cr_pgo_trainers_rasterize_and_record_micro_top_25
-			cr_pgo_trainers_rendering_mobile
-			cr_pgo_trainers_system_health_pcscan
-			cr_pgo_trainers_tab_switching_typical_25
-			cr_pgo_trainers_unscheduled_loading_mbi
-			cr_pgo_trainers_unscheduled_v8_loading_desktop
-			cr_pgo_trainers_v8_runtime_stats_top_25
-		)
-		local warned=0
-ewarn
-ewarn "Discovered external access URIs for PGO trainers:"
-ewarn
-		echo "http://dromaeo.com?"{'dom-attr','dom-modify','dom-query','dom-traverse'} \
-			> "${T}/found_uris" || die
-		grep -Pzo -r -e "URL_LIST = \[[^\]]+\]" \
-			"${S}/tools/perf/page_sets" \
-			| tr "\0" "\n" \
-			| sed -e "s|.*URL_LIST =|URL_LIST =|g" \
-				-e "\|URL_LIST = \[DOWNLOAD_URL\]|d" \
-			>> "${T}/found_uris" || die
-		grep -Pzo -r -e "URL = ['(].*[)']" \
-			"${S}/tools/perf/page_sets" \
-			| tr "\0" "\n" \
-			| sed -e "s|.*URL =|URL =|g" \
-			| sort \
-			| uniq >> "${T}/found_uris" || die
-		cat "${T}/found_uris" || die
-ewarn
-ewarn "A more comprehensive list of External URIs to be accessed can be read"
-ewarn "that are possibly accessed by all PGO trainers.  You can be read this"
-ewarn "info by scrolling up with ctrl + page up or by doing the following in"
-ewarn "another terminal:"
-ewarn
-ewarn "  \`cat ${T}/found_uris\`"
-ewarn
-ewarn "Some may or may not be relevant depending on the USE flags used."
-ewarn
-		local use_list=""
-		for u in ${remote_access_use[@]} ; do
-			if use "${u}" ; then
-				use_list+="  ${u}"
-				warned=1
-			fi
-		done
-		if (( ${warned} == 1 )) ; then
-ewarn
-ewarn "Affected USE flags:"
-ewarn
-ewarn "  ${use_list}"
-ewarn
-ewarn "The affected USE flag(s) may access external sites with possibly"
-ewarn "untrusted user contributed data when using PGO profile generation and"
-ewarn "may need site terms of use to be reviewed for acceptable use.  They also"
-ewarn "may access news, governmental, political, or corporate sites.  They may"
-ewarn "access or reference unfree trademarks and content."
-ewarn
-ewarn "You have 180 seconds to remove this USE flag if you disagree with such"
-ewarn "access.  You may cancel and make changes by pressing ctrl + c."
-ewarn
-			sleep 180
-		fi
 	fi
 
 	if use official || ( use clang && use cfi && use pgo ) ; then
@@ -1364,6 +1253,15 @@ eerror
 		fi
 	fi
 
+	if use vaapi && ( use x86 || use amd64 ) ; then
+		:;
+	elif use vaapi ; then
+ewarn
+ewarn "VA-API is not enabled by default for this arch.  Please disable it if"
+ewarn "problems are encountered."
+ewarn
+	fi
+
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
@@ -1387,25 +1285,22 @@ src_prepare() {
 		PATCHES+=( "${WORKDIR}/patches" )
 	fi
 
+	# It's already applied upstream.
+	rm -rf "${WORKDIR}/patches/chromium-93-dawn-raw-string-literal.patch" || die
+	rm -rf "${WORKDIR}/patches/chromium-swiftshader-export.patch" || die
+
 	PATCHES+=(
 		"${WORKDIR}/sandbox-patches/chromium-syscall_broker.patch"
 		"${WORKDIR}/sandbox-patches/chromium-fstatat-crash.patch"
-		"${FILESDIR}/chromium-92-EnumTable-crash.patch"
-		"${FILESDIR}/chromium-92-crashpad-consent.patch"
-		"${FILESDIR}/chromium-freetype-2.11.patch"
+		"${FILESDIR}/chromium-93-EnumTable-crash.patch"
+		"${FILESDIR}/chromium-93-InkDropHost-crash.patch"
+		"${FILESDIR}/chromium-use-oauth2-client-switches-as-default.patch"
 		"${FILESDIR}/chromium-shim_headers.patch"
 	)
 
 	if ! use arm64 ; then
 		einfo "Removing aarch64 only patches"
 		rm "${WORKDIR}/patches/chromium-91-libyuv-aarch64.patch" || die
-		rm "${WORKDIR}/patches/chromium-92-v8-constexpr.patch" || die
-	fi
-
-	if use ppc64 ; then
-		ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-libvpx.patch"
-		ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-support.patch"
-		ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-swiftshader.patch"
 	fi
 
 	if use clang ; then
@@ -1422,9 +1317,6 @@ src_prepare() {
 	fi
 
 	default
-
-	# this patch needs to be applied after gentoo sandbox patchset
-	use ppc64 && ceapply "${WORKDIR}/${PN}-ppc64le/xxx-ppc64le-sandbox_kernel_stat.patch"
 
 	if use cr_pgo_trainers_custom && [[ ! -f "${T}/epatch_user.log" ]] ; then
 eerror
@@ -1451,9 +1343,8 @@ eerror
 	mkdir -p third_party/node/linux/node-linux-x64/bin || die
 	ln -s "${EPREFIX}"/usr/bin/node third_party/node/linux/node-linux-x64/bin/node || die
 
-	# adjust python interpreter versions
+	# adjust python interpreter version
 	sed -i -e "s|\(^script_executable = \).*|\1\"${EPYTHON}\"|g" .gn || die
-	sed -i -e "s|python2|python2\.7|g" buildtools/linux64/clang-format || die
 
 	# bundled highway library does not support arm64 with GCC
 	if use arm64 ; then
@@ -1485,7 +1376,6 @@ eerror
 		third_party/angle/src/common/third_party/base
 		third_party/angle/src/common/third_party/smhasher
 		third_party/angle/src/common/third_party/xxhash
-		third_party/angle/src/third_party/compiler
 		third_party/angle/src/third_party/libXNVCtrl
 		third_party/angle/src/third_party/trace_event
 		third_party/angle/src/third_party/volk
@@ -1500,8 +1390,8 @@ eerror
 		third_party/catapult
 		third_party/catapult/common/py_vulcanize/third_party/rcssmin
 		third_party/catapult/common/py_vulcanize/third_party/rjsmin
-		third_party/catapult/third_party/beautifulsoup4
-		third_party/catapult/third_party/html5lib-python
+		third_party/catapult/third_party/beautifulsoup4-4.9.3
+		third_party/catapult/third_party/html5lib-1.1
 		third_party/catapult/third_party/polymer
 		third_party/catapult/third_party/six
 		third_party/catapult/tracing/third_party/d3
@@ -1657,6 +1547,7 @@ eerror
 		third_party/tflite/src/third_party/fft2d
 		third_party/tflite-support
 		third_party/ruy
+		third_party/six
 		third_party/ukey2
 		third_party/unrar
 		third_party/usrsctp
@@ -1680,7 +1571,6 @@ eerror
 		third_party/xcbproto
 		third_party/zxcvbn-cpp
 		third_party/zlib/google
-		tools/grit/third_party/six
 		url/third_party/mozilla
 		v8/src/third_party/siphash
 		v8/src/third_party/valgrind
@@ -1731,6 +1621,7 @@ eerror
 		popd >/dev/null || die
 	fi
 
+	einfo "Unbundling third party internal libraries and packages"
 	# Remove most bundled libraries. Some are still needed.
 	build/linux/unbundle/remove_bundled_libraries.py "${keeplibs[@]}" --do-remove || die
 
@@ -1742,15 +1633,147 @@ eerror
 	mkdir -p buildtools/third_party/eu-strip/bin || die
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 
-	# Trys to do the minimal edits in order to run the benchmarks without resorting
-	# to pulling possibly EOL versions.
 	if use pgo-full ; then
+		local missing_assets=(
+			cr_pgo_trainers_media_desktop
+			cr_pgo_trainers_media_mobile
+			cr_pgo_trainers_memory_desktop
+			cr_pgo_trainers_rasterize_and_record_micro_top_25
+		)
+		# For cr_pgo_trainers_rasterize_and_record_micro_top_25:
+		# See also tools/perf/page_sets/static_top_25/README.md # \
+		# It's better to snapshot free websites instead of personal data or nonfree ones.
+		# The data retrieved can be classified as local copy or \
+		# or needing realtime remote retrieval depending on treatment.
+		for u in ${missing_assets[@]} ; do
+			if use "${u}" ; then
+eerror
+eerror "The ${u} USE flag is not ready yet.  Missing video or still image"
+eerror "assets."
+eerror
+				die
+			fi
+		done
+
+		for u in ${remote_access_use[@]} ; do
+			# This section is still unfinished
+			# TODO: Still categorizing benchmarks if local copy
+			# or network access access is required
+			if [[ "${u}" =~ "blink_perf" \
+				|| "${u}" =~ "dummy_benchmark" \
+				|| "${u}" =~ "memory_desktop" \
+				|| "${u}" =~ "speedometer2" \
+				|| "${u}" =~ "webrtc" \
+				]] ; then
+				:; # Skip if local copy
+			elif has network-sandbox $FEATURES ; then
+				# -network-sandbox requirement applies to:
+				# dromaeo
+				# jetstream
+				# jetstream2
+				# kraken
+				# octane
+				# power.mobile
+				# speedometer
+				# speedometer-future
+				# system_health_pcscan
+				# tab_switching_typical_25
+				# wasmpspdfkit
+eerror
+eerror "The ${u} USE flag requires FEATURES=\"-network-sandbox\" to be added as"
+eerror "a per-package envvar to allowed Internet access to a website in order to"
+eerror "perform benchmarks in the src_compile() phase."
+eerror
+				die
+			fi
+		done
+		# Backtrack tools/perf/benchmark.csv to find the USE flag
+		# All sites in remote_access_use assume real time retrieval.
+		# TODO: check if all relevant USE flags added:
+		local remote_access_use=(
+			cr_pgo_trainers_desktop_ui
+			cr_pgo_trainers_loading_desktop
+			cr_pgo_trainers_loading_mobile
+			cr_pgo_trainers_power_mobile
+			cr_pgo_trainers_rasterize_and_record_micro_top_25
+			cr_pgo_trainers_rendering_mobile
+			cr_pgo_trainers_system_health_pcscan
+			cr_pgo_trainers_tab_switching_typical_25
+			cr_pgo_trainers_unscheduled_loading_mbi
+			cr_pgo_trainers_unscheduled_v8_loading_desktop
+			cr_pgo_trainers_v8_runtime_stats_top_25
+		)
+		local warned=0
+ewarn
+ewarn "Discovered URIs for external access for PGO trainers:"
+ewarn
+		echo "http://dromaeo.com?"{'dom-attr','dom-modify','dom-query','dom-traverse'} \
+			> "${T}/found_uris" || die
+		( grep -Pzo -r -e "URL_LIST = \[[^\]]+\]" \
+			"${S}/tools/perf/page_sets" || die ) \
+			| tr "\0" "\n" \
+			| sed -e "s|.*URL_LIST =|URL_LIST =|g" \
+				-e "\|URL_LIST = \[DOWNLOAD_URL\]|d" \
+			>> "${T}/found_uris" || die
+		( grep -Pzo -r -e "URL = ([(][^)]+|'[^']+)" \
+			"${S}/tools/perf/page_sets" || die ) \
+			| tr "\0" "\n" \
+			| sed -e "s|.*URL =|URL =|g" \
+			>> "${T}/found_uris" || die
+		( grep -Pzo -r -e "AddStor(ies|y)\((((.*)(\[|,)\n)+|(.*#.*\n)|([^']*\n.*http.*\n)|(.*http.*)) " \
+			"${S}/tools/perf/" || die ) \
+			| tr "\0" "\n" \
+			| sed -e "s|.*AddStories||g" \
+			| sed -e "s|.*.py:AddStory||"
+			>> "${T}/found_uris" || die
+		cat "${T}/found_uris" || die
+ewarn
+ewarn "A more comprehensive list of external URIs to be accessed that are"
+ewarn "possibly used by some PGO trainers can be read.  You can be read this"
+ewarn "info by scrolling up with ctrl + page up or by doing the following in"
+ewarn "another terminal:"
+ewarn
+ewarn "  \`cat ${T}/found_uris\`"
+ewarn
+ewarn "Some may or may not be relevant depending on the USE flags used."
+ewarn
+		local accepted_use_list=()
+		for u in ${remote_access_use[@]} ; do
+			if use "${u}" ; then
+				accepted_use_list+=( ${u} )
+				warned=1
+			fi
+		done
+		if (( ${warned} == 1 )) ; then
+ewarn
+ewarn "The following affected USE flags were consented for access and use of"
+ewarn "the web for PGO trainers:"
+ewarn
+for u in ${accepted_use_list[@]} ; do
+ewarn "  ${u}"
+done
+ewarn
+ewarn "The affected USE flag(s) may access external sites with possibly"
+ewarn "untrusted user contributed data when using PGO profile generation and"
+ewarn "may need site terms of use to be reviewed for acceptable use.  They also"
+ewarn "may access news, governmental, political, or corporate sites.  They may"
+ewarn "access or reference unfree trademarks and content."
+ewarn
+ewarn "You have 180 seconds to remove this USE flag if you disagree with such"
+ewarn "access.  You may cancel and make changes by pressing ctrl + c."
+ewarn
+			sleep 180
+		fi
+
+		# Try to do the minimal edits in order to run the benchmarks without resorting
+		# to pulling possibly EOL versions.
+
 		sed -i -e "s|/usr/bin/env vpython|/usr/bin/env ${EPYTHON}|" \
 			-e "s|/usr/bin/env {vpython}|/usr/bin/env ${EPYTHON}|" \
 			"build/util/generate_wrapper.py" || die
 
 		# TODO:  Revert back to vpython
-		# See https://github.com/chromium/chromium/blob/92.0.4515.159/DEPS#L4489
+		# See https://github.com/chromium/chromium/blob/92.0.4577.42/DEPS#L4489
 		local futurize_lst=(
 			# Put the entire import tree
 			tools/perf/benchmarks
@@ -1863,7 +1886,7 @@ _configure_pgx() {
 	fi
 
 # Debug symbols level 2 is still on when official is on even though is_debug=false:
-# See https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/compiler/compiler.gni#L276
+# See https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/compiler/compiler.gni#L276
 	# GN needs explicit config for Debug/Release as opposed to inferring it from build directory.
 	myconf_gn+=" is_debug=false"
 
@@ -1954,6 +1977,9 @@ _configure_pgx() {
 	# Disable pseudolocales, only used for testing
 	myconf_gn+=" enable_pseudolocales=false"
 
+	# Disable code formating of generated files
+	myconf_gn+=" blink_enable_generated_code_formatting=false"
+
 	ffmpeg_branding="$(usex proprietary-codecs Chrome Chromium)"
 	myconf_gn+=" proprietary_codecs=$(usex proprietary-codecs true false)"
 	myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
@@ -1961,13 +1987,14 @@ _configure_pgx() {
 	# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
 	# Note: these are for Gentoo use ONLY. For your own distribution,
 	# please get your own set of keys. Feel free to contact chromium@gentoo.org
-	# for more info.
+	# for more info. The OAuth2 credentials, however, have been left out.
+	# Those OAuth2 credentials have been broken for quite some time anyway.
+	# Instead we apply a patch to use the --oauth2-client-id= and
+	# --oauth2-client-secret= switches for setting GOOGLE_DEFAULT_CLIENT_ID and
+	# GOOGLE_DEFAULT_CLIENT_SECRET at runtime. This allows signing into
+	# Chromium without baked-in values.
 	local google_api_key="AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc"
-	local google_default_client_id="329227923882.apps.googleusercontent.com"
-	local google_default_client_secret="vgKG0NNv7GoDpbtoFNLxCUXu"
 	myconf_gn+=" google_api_key=\"${google_api_key}\""
-	myconf_gn+=" google_default_client_id=\"${google_default_client_id}\""
-	myconf_gn+=" google_default_client_secret=\"${google_default_client_secret}\""
 	local myarch="$(tc-arch)"
 
 	# Avoid CFLAGS problems, bug #352457, bug #390147.
@@ -2083,9 +2110,6 @@ _configure_pgx() {
 		append-cxxflags -flax-vector-conversions
 	fi
 
-	# highway/libjxl fail on ppc64 without extra patches, disable for now.
-	use ppc64 && myconf_gn+=" enable_jxl_decoder=false"
-
 	# Disable unknown warning message from clang.
 	tc-is-clang && append-flags -Wno-unknown-warning-option
 
@@ -2126,14 +2150,14 @@ _configure_pgx() {
 			tools/generate_shim_headers/generate_shim_headers.py || die
 	fi
 
-# See https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/sanitizers/BUILD.gn#L196
+# See https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/sanitizers/BUILD.gn#L196
 	if use cfi ; then
 		myconf_gn+=" is_cfi=true"
 	else
 		myconf_gn+=" is_cfi=false"
 	fi
 
-# See https://github.com/chromium/chromium/blob/92.0.4515.159/tools/mb/mb_config.pyl#L2950
+# See https://github.com/chromium/chromium/blob/93.0.4577.42/tools/mb/mb_config.pyl#L2950
 	if use cfi-full ; then
 		myconf_gn+=" use_cfi_cast=true"
 	else
@@ -2151,7 +2175,7 @@ _configure_pgx() {
 	fi
 
 # See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-# See also https://github.com/chromium/chromium/blob/92.0.4515.159/docs/pgo.md
+# See also https://github.com/chromium/chromium/blob/93.0.4577.42/docs/pgo.md
 # profile-instr-use is clang which that file assumes but gcc doesn't have.
 	if use pgo-full ; then
 		myconf_gn+=" chrome_pgo_phase=${PGO_PHASE}"
@@ -2173,6 +2197,20 @@ _configure_pgx() {
 	"$@" || die
 }
 
+_build() {
+	local ninja_into="${1}"
+	local target_id="${2}"
+	local pax_path="${3}"
+	local file_name=$(basename "${2}")
+
+	einfo "Building ${file_name}"
+	eninja -C "${ninja_into}" "${target_id}"
+
+	if [[ -n "${pax_path}" ]] ; then
+		pax-mark m "${pax_path}"
+	fi
+}
+
 _build_pgx() {
 	if [[ -f out/Release/chromedriver ]] ; then
 		rm out/Release/chromedriver || die
@@ -2189,35 +2227,27 @@ _build_pgx() {
 	# Build mksnapshot and pax-mark it.
 	local x
 	for x in mksnapshot v8_context_snapshot_generator; do
-		einfo "Building ${x}"
 		if tc-is-cross-compiler ; then
-			eninja -C out/Release "host/${x}"
-			pax-mark m "out/Release/host/${x}"
+			_build "out/Release" "host/${x}" "out/Release/host/${x}"
 		else
-			eninja -C out/Release "${x}"
-			pax-mark m "out/Release/${x}"
+			_build "out/Release" "${x}" "out/Release/${x}"
 		fi
 	done
 
 	# Even though ninja autodetects number of CPUs, we respect
 	# user's options, for debugging with -j 1 or any other reason.
-	einfo "Building chrome"
-	eninja -C out/Release chrome
-	einfo "Building chromedriver"
-	eninja -C out/Release chromedriver
+	_build "out/Release" "chrome" "out/Release/chrome"
+	_build "out/Release" "chromedriver" ""
 	if use suid ; then
-		einfo "Building chrome_sandbox"
-		eninja -C out/Release chrome_sandbox
+		_build "out/Release" "chrome_sandbox" ""
 	fi
-
-	pax-mark m out/Release/chrome
 
 	mv out/Release/chromedriver{.unstripped,} || die
 }
 
 _run_training_suite() {
-# See also https://github.com/chromium/chromium/blob/92.0.4515.159/docs/pgo.md
-# https://github.com/chromium/chromium/blob/92.0.4515.159/testing/buildbot/generate_buildbot_json.py
+# See also https://github.com/chromium/chromium/blob/93.0.4577.42/docs/pgo.md
+# https://github.com/chromium/chromium/blob/93.0.4577.42/testing/buildbot/generate_buildbot_json.py
 # https://github.com/chromium/chromium/commit/8acfdce99c84fbc35ad259692ac083a9ea18392c
 # tools/perf/contrib/vr_benchmarks
 	local pp=(
@@ -2373,10 +2403,6 @@ multilib_src_compile() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
 
-	# https://bugs.gentoo.org/717456
-	# don't inherit PYTHONPATH from environment, bug #789021
-	local -x PYTHONPATH="${WORKDIR}/setuptools-44.1.0"
-
 	#"${EPYTHON}" tools/clang/scripts/update.py --force-local-build --gcc-toolchain /usr --skip-checkout --use-system-cmake --without-android || die
 
 	if use pgo-full ; then
@@ -2386,7 +2412,6 @@ multilib_src_compile() {
 		_update_licenses
 		_build_pgx
 		_start_pgo_training
-		export PYTHONPATH="${WORKDIR}/setuptools-44.1.0"
 		PGO_PHASE=2
 		_configure_pgx # pgo
 		_build_pgx
@@ -2407,7 +2432,11 @@ multilib_src_compile() {
 		s|\(^Exec=\)/usr/bin/|\1|g;' \
 		chrome/installer/linux/common/desktop.template > \
 		out/Release/chromium-browser-chromium.desktop || die
-	sed -i -e "s|@@MENUNAME@@|Chromium (${ABI})|g" \
+	local suffix
+	if (( ${NABIS} > 1 )) ; then
+		suffix=" (${ABI})"
+	fi
+	sed -i -e "s|@@MENUNAME@@|Chromium${suffix}|g" \
 		-e "s|@@USR_BIN_SYMLINK_NAME@@|chromium-browser-${ABI}|g" \
 		out/Release/chromium-browser-chromium.desktop || die
 }
@@ -2592,7 +2621,7 @@ pkg_postinst() {
 	readme.gentoo_print_elog
 
 	if use vaapi ; then
-		# It says 3 args:  https://github.com/chromium/chromium/blob/92.0.4515.159/docs/gpu/vaapi.md#vaapi-on-linux
+		# It says 3 args:  https://github.com/chromium/chromium/blob/93.0.4577.42/docs/gpu/vaapi.md#vaapi-on-linux
 		elog "VA-API is disabled by default at runtime.  You have to enable it"
 		elog "by adding --enable-features=VaapiVideoDecoder --ignore-gpu-blocklist"
 		elog "--use-gl=desktop or --use-gl=egl to the CHROMIUM_FLAGS in"
