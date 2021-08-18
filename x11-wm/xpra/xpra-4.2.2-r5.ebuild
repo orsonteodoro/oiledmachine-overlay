@@ -473,7 +473,9 @@ vaapi_message() {
 		einfo
 	fi
 	einfo
-	einfo "You must be part of the video group to use vaapi support."
+	einfo "Some drivers may require firmware for proper VA-API support."
+	einfo
+	einfo "You must be part of the video group to use VA-API support."
 	einfo
 	einfo "The LIBVA_DRIVER_NAME envvar may need to be changed if both open"
 	einfo "and closed drivers are installed to one of the following"
