@@ -2679,13 +2679,12 @@ pkg_postinst() {
 		fi
 		if use video_cards_nouveau ; then
 			einfo
-			einfo "Nouveau requires FW for VA-API to work properly."
 			einfo "For details see, https://nouveau.freedesktop.org/VideoAcceleration.html"
 			einfo "Reconsider using the official driver instead."
 			einfo
 		fi
 		einfo
-		einfo "Some drivers may require up-to-date firmware for proper VA-API support."
+		einfo "Some drivers may require firmware for proper VA-API support."
 		einfo
 		einfo "The user must be part of the video group to use VA-API support."
 		# Because it touches /dev/dri/renderD128
