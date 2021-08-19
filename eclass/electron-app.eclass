@@ -148,15 +148,15 @@ CVE_PATCHED_NODE_12="12.22.5"
 # They mix up 92 and 93 which is difficult to filter.
 # Dev channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Dev%20updates
-LATEST_CHROMIUM_94="94.0.4595.0"
+LATEST_CHROMIUM_94="94.0.4603.0"
 
 # Beta channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
-LATEST_CHROMIUM_93="93.0.4577.25"
+LATEST_CHROMIUM_93="93.0.4577.51"
 
 # Stable channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-LATEST_CHROMIUM_92="92.0.4515.131"
+LATEST_CHROMIUM_92="92.0.4515.159"
 
 # Check the runtime dependencies for electron
 # Most electron apps will have electron bundled already.  No need for seperate
