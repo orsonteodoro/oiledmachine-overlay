@@ -18,5 +18,8 @@
 
     These versions are listed in:
     https://www.electronjs.org/docs/tutorial/support#currently-supported-versions
+
+    Use best_version against the slotted version to force
+    a version bump of the matching Electron if possible.
   </longdescription>
 </pkgmetadata>
