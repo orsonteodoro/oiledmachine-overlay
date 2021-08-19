@@ -27,14 +27,36 @@ PPC64LE_PATCHSET="92-ppc64le-1"
 HIGHWAY_V="0.12.1"
 SETUPTOOLS_V="44.1.0"
 GLIBC_PATCH_V="92-glibc-2.33"
+AVPERF_REV="213518"
+CIPD_V="6484b93c6b0dfc5f2c425e8abc1e3737850851e7" # in \
+# third_party/depot_tools/cipd_client_version
+MTD_V="92.0.4515.159" # Frozen for now to reduce downloads.  Send issue request if bump needed.
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-${SETUPTOOLS_V}.zip
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
 	https://dev.gentoo.org/~sultan/distfiles/www-client/${PN}/${PN}-${GLIBC_PATCH_V}-patch.tar.xz
 	arm64? ( https://github.com/google/highway/archive/refs/tags/${HIGHWAY_V}.tar.gz -> highway-${HIGHWAY_V}.tar.gz )
+	pgo-full? (
+		amd64? ( https://chrome-infra-packages.appspot.com/client?platform=linux-amd64&version=git_revision:${CIPD_V} -> .cipd_client-amd64-${CIPD_V} )
+		arm64? ( https://chrome-infra-packages.appspot.com/client?platform=linux-arm64&version=git_revision:${CIPD_V} -> .cipd_client-arm64-${CIPD_V} )
+		ppc64? ( https://chrome-infra-packages.appspot.com/client?platform=linux-ppc64&version=git_revision:${CIPD_V} -> .cipd_client-ppc64-${CIPD_V} )
+		x86? ( https://chrome-infra-packages.appspot.com/client?platform=linux-386&version=git_revision:${CIPD_V} -> .cipd_client-x86-${CIPD_V} )
+		cr_pgo_trainers_memory_desktop? (
+			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${MTD_V}/media/test/data.tar.gz -> ${PN}-${MTD_V}-media-test-data.tar.gz
+		)
+		cr_pgo_trainers_media_desktop? (
+			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${MTD_V}/media/test/data.tar.gz -> ${PN}-${MTD_V}-media-test-data.tar.gz
+		)
+		cr_pgo_trainers_media_mobile? (
+			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${MTD_V}/media/test/data.tar.gz -> ${PN}-${MTD_V}-media-test-data.tar.gz
+		)
+	)
 	ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-${PPC64LE_PATCHSET}.tar.xz )
 "
+
+# CC-BY-3.0 https://peach.blender.org/download/ # avi is mp4 and h264 is mov
+# (c) copyright 2008, Blender Foundation / www.bigbuckbunny.org
 RESTRICT="mirror"
 
 # all-rights-reserved is for unfree websites or content from them.
@@ -124,6 +146,9 @@ LICENSE_BENCHMARK_WEBSITES="
 		BSD-2
 		LGPL-2.1
 		MPL-1.1
+	)
+	cr_pgo_trainers_memory_desktop? (
+		CC-BY-3.0
 	)
 	cr_pgo_trainers_octane? (
 		BSD
@@ -735,14 +760,6 @@ BDEPEND="
 	)
 	js-type-check? ( virtual/jre )
 	pgo-full? (
-		$(python_gen_any_dep 'dev-python/future[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep 'dev-python/psutil[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep 'dev-python/pypng[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep 'dev-python/pyfakefs[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep 'dev-python/requests[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep 'dev-python/six[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep 'dev-python/websocket-client[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep 'net-misc/gsutil[${PYTHON_USEDEP}]')
 		sys-apps/dbus:=[${MULTILIB_USEDEP}]
 		sys-apps/grep[pcre]
 		!headless? (
@@ -753,17 +770,29 @@ BDEPEND="
 			)
 			wayland? ( dev-libs/weston )
 		)
+		cr_pgo_trainers_memory_desktop? (
+			media-video/ffmpeg[encode]
+		)
+		cr_pgo_trainers_media_desktop? (
+			|| (
+				media-video/ffmpeg[encode,openh264]
+				media-video/ffmpeg[encode,x264]
+			)
+			|| (
+				media-video/ffmpeg[encode,rav1e]
+				media-video/ffmpeg[encode,libaom]
+			)
+			media-video/ffmpeg[encode,opus,theora,vorbis,vpx]
+		)
+		cr_pgo_trainers_media_mobile? (
+			|| (
+				media-video/ffmpeg[encode,openh264]
+				media-video/ffmpeg[encode,x264]
+			)
+			media-video/ffmpeg[encode,opus,theora,vorbis,vpx]
+		)
 	)
 "
-#	For inherits in tools/perf:
-#		perf-opt? (
-#			dev-lang/python[sqlite3,xml]
-#			$(python_gen_any_dep 'dev-python/httplib2[${PYTHON_USEDEP}]')
-#			$(python_gen_any_dep 'dev-python/mock[${PYTHON_USEDEP}]')
-#			$(python_gen_any_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
-#			$(python_gen_any_dep 'dev-python/pandas[${PYTHON_USEDEP}]')
-#		)
-
 # pgo related:  dev-python/requests is python3 but testing/scripts/run_performance_tests.py is python2
 
 # Upstream uses llvm:13
@@ -1217,6 +1246,13 @@ ewarn
 ewarn
 ewarn "The pgo-full USE flag is a Work In Progress (WIP) and not production ready."
 ewarn
+		if has network-sandbox $FEATURES ; then
+eerror
+eerror "The pgo-full USE flag requires FEATURES=\"-network-sandbox\" to be able to"
+eerror "use vpython and other dependencies in order to generate PGO profiles."
+eerror
+			die
+		fi
 	fi
 
 	if use official || ( use clang && use cfi && use pgo ) ; then
@@ -1273,6 +1309,48 @@ ceapply() {
 	eapply "${@}"
 }
 
+CIPD_CACHE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/cipd-cache"
+init_vpython() {
+	export CIPD_CACHE_DIR
+	export PATH="${S}/third_party/depot_tools:${PATH}"
+	# See https://github.com/chromium/chromium/blob/92.0.4515.159/DEPS#L4489
+	addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	mkdir -p "${CIPD_CACHE_DIR}" || die
+	addwrite "${CIPD_CACHE_DIR}"
+	einfo "Downloading VirtualEnvs ( ~287 MiB, ~1 hr wait )"
+	einfo "If build problems, remove the ${CIPD_CACHE_DIR} folder and try again."
+	local scripts_to_run=(
+		out/Release/bin/run_performance_test_suite
+		tools/perf/fetch_benchmark_deps.py
+	)
+	cd "${S}" || die
+	for s in ${scripts_to_run[@]} ; do
+		einfo "Downloading a VirtualEnv for $(basename ${s})"
+		"${s}" -cache-dir "${CIPD_CACHE_DIR}" --help || die
+	done
+}
+
+fetching_pgo_deps() {
+	einfo "Downloading all benchmark deps used by PGO trainers"
+	cd "${S}" || die
+	vpython -cache-dir "${CIPD_CACHE_DIR}" tools/perf/fetch_benchmark_deps.py || die
+}
+
+src_unpack() {
+	for a in ${A} ; do
+		[[ "${a}" == "${PN}-${MTD_V}-media-test-data.tar.gz" ]] && continue
+		unpack ${a}
+	done
+	if use pgo-full ; then
+		cp -a $(realpath "${DISTDIR}/.cipd_client-${ABI}-${CIPD_V}") \
+			"${S}/third_party/depot_tools/.cipd_client" || die
+		chmod +x "${S}/third_party/depot_tools/.cipd_client" || die
+		pushd "${S}/media/test/data" || die
+			unpack ${PN}-${MTD_V}-media-test-data.tar.gz
+		popd
+	fi
+}
+
 src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
@@ -1316,9 +1394,9 @@ src_prepare() {
 		ceapply "${FILESDIR}/chromium-93-arm64-shadow-call-stack.patch"
 	fi
 
-	if use pgo-full ; then
-		ceapply "${FILESDIR}/chromium-92-use-system-gsutil.patch"
-	fi
+#	if use pgo-full ; then
+#		ceapply "${FILESDIR}/chromium-92-use-system-gsutil.patch"
+#	fi
 
 	default
 
@@ -1595,6 +1673,8 @@ eerror
 	)
 	if use pgo-full ; then
 		keeplibs+=(
+			media/test/data
+			third_party/catapult/third_party/gsutil
 			third_party/catapult/third_party/tsproxy
 			third_party/catapult/third_party/typ
 		)
@@ -1643,15 +1723,163 @@ eerror
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 
 	if use pgo-full ; then
+		if use cr_pgo_trainers_memory_desktop ; then
+			# Replaced missing assets
+			# The bbb 480p is actually 854 x 640 res.
+			sed -i -e "s|road_trip_640_480.mp4|big_buck_bunny_480p_stereo.avi|g" \
+				"${S}/tools/perf/page_sets/trivial_sites/trivial_fullscreen_video.html" \
+				|| die
+			einfo "Generating bunny.gif (animated gif) for memory.desktop benchmark"
+			# The bunny.gif doesn't actually exist on the website but is converted from the
+			# movie explained in https://codereview.chromium.org/2243403006
+			ffmpeg -i "${S}/tools/perf/page_sets/trivial_sites/big_buck_bunny_480p_stereo.avi" \
+				-ss 165.0 \
+				-t 60.0 \
+				-f gif \
+				"${S}/tools/perf/page_sets/trivial_sites/bunny.gif" || die
+			# For animated gif alternatives:
+			#sed -i -e "s|bunny.gif|bunny.gif|g" \
+			#	"${S}/tools/perf/page_sets/trivial_sites/trivial_gif.html"
+		fi
+
+		# TODO convert
+		# tulip2.ogg,tulip2.mp3,tulip2.m4a,tulip2.mp4
+		# crowd1080.webm,crowd1080.mp4
+		# "${S}/tools/perf/page_sets/media_cases" || die
+
+		# See also https://chromium.googlesource.com/chromium/src.git/+/refs/tags/92.0.4515.159/media/test/data/#media-test-data
+		if use cr_pgo_trainers_media_desktop \
+			|| use cr_pgo_trainers_media_mobile ; then
+			einfo "Generating missing assets for media.desktop or media.mobile benchmarks"
+			local aac_encoding=( -codec:a aac )
+			local h264_encoding=()
+			local opus_encoding=( -c:a libopus )
+			local vp9_encoding=( -c:v libvpx-vp9 )
+			if has_version "media-video/ffmpeg[openh264]" ;then
+				h264_encoding+=( -c:v libopenh264 )
+			elif has_version "media-video/ffmpeg[x264]" ; then
+				h264_encoding+=( -c:v libx264 )
+			fi
+
+			# tulip2.ogv -> tulip2.vp9.webm
+			ffmpeg -i \
+				"${S}/tools/perf/page_sets/media_cases/tulip2.ogv" \
+				${vp9_encoding[@]} \
+				${opus_encoding[@]} \
+				"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" \
+				|| die
+
+			# crowd1080.mp4 -> crowd1080_vp9.webm
+			ffmpeg -i \
+				"${S}/tools/perf/page_sets/media_cases/tulip2.ogv" \
+				${vp9_encoding[@]} \
+				"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" \
+				|| die
+
+			# TODO: replace missing assets with cc0 licensed audio or video
+			# Missing asset -> aac_audio.mp4
+			#ffmpeg -i \
+			#	"${S}/tools/perf/page_sets/media_cases/" \
+			#	${aac_encoding[@]} \
+			#	"${S}/tools/perf/page_sets/media_cases/aac_audio.mp4" \
+			#	|| die
+
+			# Missing asset -> boat_1080p60fps_vp9.webm
+			# 1920 x 1080 res
+			#ffmpeg -i \
+			#	"${S}/tools/perf/page_sets/media_cases/" \
+			#	${vp9_encoding[@]} \
+			#	${opus_encoding[@]} \
+			#	-vf scale=-1:1080
+			#	-r 60 \
+			#	-s 120.0 \
+			#	"${S}/tools/perf/page_sets/media_cases/boat_1080p60fps_vp9.webm" \
+			#	|| die
+
+			# Missing asset -> h264_video.mp4
+			#ffmpeg -i \
+			#	"${S}/tools/perf/page_sets/media_cases/" \
+			#	${h264_encoding[@]} \
+			#	${aac_encoding[@]} \
+			#	"${S}/tools/perf/page_sets/media_cases/h264_video.mp4" \
+			#	|| die
+
+			# Missing asset -> foodmarket_720p30fps.mp4
+			# 1280 x 720 res
+			#ffmpeg -i \
+			#	"${S}/tools/perf/page_sets/media_cases/" \
+			#	${h264_encoding[@]} \
+			#	${aac_encoding[@]} \
+			#	-vf scale=-1:720
+			#	-r 30 \
+			#	-s 120.0 \
+			#	"${S}/tools/perf/page_sets/media_cases/foodmarket_720p30fps.mp4" \
+			#	|| die
+		fi
+
+		if use cr_pgo_trainers_media_desktop ; then
+			einfo "Generating missing assets for media.desktop benchmark"
+			local aac_encoding=( -codec:a aac )
+			local av1_encoding=()
+			local h264_encoding=()
+			local vp8_encoding=( -c:v libvpx )
+			local vorbis_encoding=( -c:a libvorbis )
+			if has_version "media-video/ffmpeg[rav1e]" ;then
+				av1_encoding+=( -c:v librav1e )
+			elif has_version "media-video/ffmpeg[libaom]" ; then
+				av1_encoding+=( -c:v libaom-av1 )
+			fi
+			if has_version "media-video/ffmpeg[openh264]" ;then
+				h264_encoding+=( -c:v libopenh264 )
+			elif has_version "media-video/ffmpeg[x264]" ; then
+				h264_encoding+=( -c:v libx264 )
+			fi
+
+			# TODO: replace missing assets with cc0 licensed audio or video
+			# Missing asset -> garden2_10s.mp4
+			# 3840 x 2160 resolution
+			#ffmpeg -i \
+			#	"${S}/tools/perf/page_sets/media_cases/" \
+			#	${h264_encoding[@]} \
+			#	${aac_encoding[@]} \
+			#	"${S}/tools/perf/page_sets/media_cases/garden2_10s.mp4" \
+			#	-vf scale=-1:2160 \
+			#	|| die
+
+			# Missing asset -> garden2_10s.webm
+			# 3840 x 2160 resolution
+			#ffmpeg -i \
+			#	"${S}/tools/perf/page_sets/media_cases/" \
+			#	${vp8_encoding[@]} \
+			#	${vorbis_encoding[@]} \
+			#	"${S}/tools/perf/page_sets/media_cases/garden2_10s.webm" \
+			#	-vf scale=-1:2160 \
+			#	|| die
+
+			# Missing asset -> smpte_3840x2160_60fps_vp9.webm
+			# 3840 x 2160 resolution
+			#ffmpeg -i \
+			#	"${S}/tools/perf/page_sets/media_cases/" \
+			#	${vp9_encoding[@]} \
+			#	-vf scale=-1:2160
+			#	-r 60 \
+			#	"${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
+			#	|| die
+
+			# tulip0.ogv -> tulip0.av1.mp4
+			ffmpeg -i \
+				"${S}/tools/perf/page_sets/media_cases/tulip0.ogv" \
+				${av1_encoding[@]} \
+				"${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" \
+				|| die
+
+		fi
+
 		local missing_assets=(
 			cr_pgo_trainers_media_desktop
 			cr_pgo_trainers_media_mobile
-			cr_pgo_trainers_memory_desktop
-			cr_pgo_trainers_rasterize_and_record_micro_top_25
 		)
-		# For cr_pgo_trainers_rasterize_and_record_micro_top_25:
-		# See also tools/perf/page_sets/static_top_25/README.md # \
-		# It's better to snapshot free websites instead of personal data or nonfree ones.
+		# See tools/perf/page_sets/media_cases.py for the remaining missing assets.
 		# The data retrieved can be classified as local copy or \
 		# or needing realtime remote retrieval depending on treatment.
 		for u in ${missing_assets[@]} ; do
@@ -1724,12 +1952,16 @@ ewarn
 			| sed -e "s|.*URL_LIST =|URL_LIST =|g" \
 				-e "\|URL_LIST = \[DOWNLOAD_URL\]|d" \
 			>> "${T}/found_uris" || die
+		( grep  -Pzo -r -e "(urls_list|ads_urls_list) = \[\n([^\]]*\n)+" || die )
+			"${S}/tools/perf" \
+			| sed -e "s|/.*.py:||g" \
+			>> "${T}/found_uris" || die
 		( grep -Pzo -r -e "URL = ([(][^)]+|'[^']+)" \
 			"${S}/tools/perf/page_sets" || die ) \
 			| tr "\0" "\n" \
 			| sed -e "s|.*URL =|URL =|g" \
 			>> "${T}/found_uris" || die
-		( grep -Pzo -r -e "AddStor(ies|y)\((((.*)(\[|,)\n)+|(.*#.*\n)|([^']*\n.*http.*\n)|(.*http.*)) " \
+		( grep -Pzo -r -e "AddStor(ies|y)\((((.*)(\[|,)\n(.*#.*\n)*)+|(.*#.*\n)|([^']*\n.*http.*\n)|(.*http.*)) " \
 			"${S}/tools/perf/" || die ) \
 			| tr "\0" "\n" \
 			| sed -e "s|.*AddStories||g" \
@@ -1773,55 +2005,6 @@ ewarn "access.  You may cancel and make changes by pressing ctrl + c."
 ewarn
 			sleep 180
 		fi
-
-		# Try to do the minimal edits in order to run the benchmarks without resorting
-		# to pulling possibly EOL versions.
-
-		sed -i -e "s|/usr/bin/env vpython|/usr/bin/env ${EPYTHON}|" \
-			-e "s|/usr/bin/env {vpython}|/usr/bin/env ${EPYTHON}|" \
-			"build/util/generate_wrapper.py" || die
-
-		# TODO:  Revert back to vpython
-		# See https://github.com/chromium/chromium/blob/92.0.4515.159/DEPS#L4489
-		local futurize_lst=(
-			# Put the entire import tree
-			tools/perf/benchmarks
-			tools/perf/core
-			tools/perf/page_sets
-			tools/perf/record_wpr
-			tools/perf/run_benchmark
-			testing/scripts/common.py
-			testing/scripts/run_performance_tests.py
-			testing/test_env.py
-			testing/xvfb.py
-		)
-
-		# Skip use of vpython because of download times for cipd and found no way to cache downloads.
-		for f in $(grep -l -G -e "/usr/bin/env vpython3$" $(find ${futurize_lst[@]} -name "*.py")) ; do
-			einfo "Converting shebang:  vpython3 -> ${EPYTHON} for ${f}"
-			sed -i -e "s|/usr/bin/env vpython3$|/usr/bin/env ${EPYTHON}|" \
-				"${f}" || die
-		done
-		for f in $(grep -l -G -e "/usr/bin/env vpython$" $(find ${futurize_lst[@]} -name "*.py")) ; do
-			einfo "Converting shebang:  vpython -> ${EPYTHON} for ${f}"
-			sed -i -e "s|/usr/bin/env vpython$|/usr/bin/env ${EPYTHON}|" \
-				"${f}" || die
-		done
-		for f in $(find ${futurize_lst[@]} -name "*.py") ; do
-			local result=$(futurize -0 "${f}" 2>&1)
-			if [[ "${result}" =~ "RefactoringTool: No changes to" \
-				|| "${result}" =~ "RefactoringTool: No files need to be modified." ]] ; then
-				einfo "Skipping py2 -> py3 futurization of ${f}"
-			else
-				einfo "Applied py2 -> py3 futurization of ${f}"
-				futurize -n -w -0 "${f}" || die
-			fi
-		done
-		einfo "EPYTHON=${EPYTHON}"
-		sed -i -e "s|'python'|'${EPYTHON}'|" \
-			testing/test_env.py || die
-		sed -i -e "s|reader.read()|reader.read().decode()|g" \
-			testing/test_env.py || die
 	fi
 
 	(( ${NABIS} > 1 )) \
@@ -2259,13 +2442,8 @@ _run_training_suite() {
 # https://github.com/chromium/chromium/blob/92.0.4515.159/testing/buildbot/generate_buildbot_json.py
 # https://github.com/chromium/chromium/commit/8acfdce99c84fbc35ad259692ac083a9ea18392c
 # tools/perf/contrib/vr_benchmarks
-	local pp=(
-		"${BUILD_DIR}/third_party/catapult/common/py_utils"
-		"${BUILD_DIR}/third_party/catapult/telemetry/telemetry"
-		"${BUILD_DIR}/third_party/catapult/third_party/typ"
-		"${BUILD_DIR}/third_party/catapult/tracing"
-		"${BUILD_DIR}/tools/perf"
-	)
+	export PYTHONPATH=$(_get_pythonpath)
+	einfo "PYTHONPATH=${PYTHONPATH}"
 	local benchmarks_allowed=()
 	for x in ${BENCHMARKS_ALL[@]} ; do
 		t="${x}"
@@ -2280,10 +2458,7 @@ _run_training_suite() {
 			benchmarks_allowed+=( ${x} )
 		fi
 	done
-	export PYTHONPATH=$(echo "${pp}" | tr " " ":")
-	einfo "PYTHONPATH=${PYTHONPATH}"
 	local benchmarks=$(echo "${benchmarks_allowed[@]}" | tr " " ",")
-	eninja -C out/Release bin/run_performance_test_suite
 	export CHROME_SANDBOX_ENV="${BUILD_DIR}/out/Release/chrome_sandbox" # For testing/test_env.py
 	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # \
 	  # Prevent a sandbox violation and isolate between parallel running emerges.
@@ -2299,7 +2474,7 @@ _run_training_suite() {
 		--assert-gpu-compositing
 		--browser=exact
 		--browser-executable="${BUILD_DIR}/out/Release/chrome")
-	local cmd=(${EPYTHON} bin/run_performance_test_suite
+	local cmd=(vpython -cache-dir "${CIPD_CACHE_DIR}" bin/run_performance_test_suite
 		--benchmarks=${benchmarks}
 		--isolated-script-test-output="${T}/pgo-test-output.json"
 		${display_args[@]}
@@ -2400,6 +2575,90 @@ _clean_profraw() {
 	fi
 }
 
+_get_pythonpath() {
+	local pp=(
+		"${BUILD_DIR}/third_party/catapult/common/py_utils"
+		"${BUILD_DIR}/third_party/catapult/telemetry/telemetry"
+		"${BUILD_DIR}/third_party/catapult/telemetry/third_party/png"
+		"${BUILD_DIR}/third_party/catapult/telemetry/third_party/pyfakefs"
+		"${BUILD_DIR}/third_party/catapult/third_party/typ"
+		"${BUILD_DIR}/third_party/catapult/tracing"
+		"${BUILD_DIR}/tools/perf"
+	)
+	echo $(echo "${pp}" | tr " " ":")
+}
+
+_init_cr_pgo_trainers_rasterize_and_record_micro_top_25() {
+	# No automated script for this found.
+	# It's better to snapshot free websites instead of personal data or nonfree ones.
+	local static_pages_interactive=(
+		"https://mail.google.com/mail/ gmail.html"
+		"https://www.google.com/calendar/ googlecalendar.html"
+		"https://www.google.com/search?q=cats&tbm=isch googleimagesearch.html"
+		"https://docs.google.com/document/d/1X-IKNjtEnx-WW5JIKRLsyhz5sbsat3mfTpAPUSX3_s4/view googledocs.html"
+		"https://plus.google.com/110031535020051778989/posts googleplus.html"
+		"http://www.youtube.com youtube.html"
+	)
+	local static_pages_non_interactive=(
+		"http://www.amazon.com amazon.html"
+		"http://googlewebmastercentral.blogspot.com/ blogger.html"
+		"http://booking.com booking.html"
+		"http://www.cnn.com cnn.html"
+		"http://www.ebay.com ebay.html"
+		"http://espn.go.com espn.html"
+		"https://www.facebook.com/barackobama facebook.html"
+		"https://www.google.com/search?q=barack+obama google.html"
+		"http://www.linkedin.com/in/linustorvalds linkedin.html"
+		"http://pinterest.com pinterest.html"
+		"http://techcrunch.com techcrunch.html"
+		"https://twitter.com/katyperry twitter.html"
+		"http://www.weather.com/weather/right-now/Mountain+View+CA+94043 weather.html"
+		"http://en.wikipedia.org/wiki/Wikipedia wikipedia.html"
+		"http://en.blog.wordpress.com/2012/09/04/freshly-pressed-editors-picks-for-august-2012/ wordpress.html"
+		"http://answers.yahoo.com yahooanswers.html"
+		"http://games.yahoo.com yahoogames.html"
+		"http://news.yahoo.com yahoonews.html"
+		"http://sports.yahoo.com/ yahoosports.html"
+	)
+	# Update sync both columns from
+	#   tools/perf/page_sets/static_top_25/README.md
+	#   tools/perf/page_sets/static_top_25_pages.py
+#	for entry in ${static_pages_interactive[@]} ; do
+		# Temporary disabled
+#		local url=$(cut -f 1 -d " ")
+#		local file=$(cut -f 2 -d " ")
+#		einfo "Fetching interactive static page for ${url}"
+#		${EPYTHON} "${BUILD_DIR}/third_party/catapult/telemetry/bin/snap_page" \
+#			--browser=system \
+#			--url="${url}" \
+#			--snapshot-path=${file} \
+#			--interactive || die
+#	done
+	for entry in ${static_pages_non_interactive[@]} ; do
+		local url=$(cut -f 1 -d " ")
+		local file=$(cut -f 2 -d " ")
+		einfo "Fetching static page for ${url}"
+		${EPYTHON} "${BUILD_DIR}/third_party/catapult/telemetry/bin/snap_page" \
+			--browser=system \
+			--url="${url}" \
+			--snapshot-path=${file} || die
+	done
+}
+
+_init_pgo_training() {
+	if use pgo-full ; then
+		export PYTHONPATH=$(_get_pythonpath)
+		einfo "PYTHONPATH=${PYTHONPATH}"
+		eninja -C out/Release bin/run_performance_test_suite
+		init_vpython
+		fetching_pgo_deps
+		if use cr_pgo_trainers_rasterize_and_record_micro_top_25 ; then
+			# This also applies to generic_trace.top25
+			_init_cr_pgo_trainers_rasterize_and_record_micro_top_25
+		fi
+	fi
+}
+
 multilib_src_compile() {
 	if (( ${NABIS} == 1 )) ; then
 		export BUILD_DIR="${S}"
@@ -2423,6 +2682,7 @@ multilib_src_compile() {
 		PGO_PHASE=1
 		_configure_pgx # pgi
 		_update_licenses
+		_init_pgo_training
 		_build_pgx
 		_start_pgo_training
 		export PYTHONPATH="${WORKDIR}/setuptools-44.1.0"
