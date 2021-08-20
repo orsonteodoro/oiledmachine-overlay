@@ -1892,7 +1892,7 @@ eerror
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_1080p60fps_vp9.webm
 			# 1920 x 1080 res ; must be 2 min
-			if [[ "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" ]] ; then
+			if [[ -f "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" ]] ; then
 				einfo "Using pregenerated and cached wild_animal_1080p60fps_vp9.webm"
 				cp -a "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
@@ -1937,7 +1937,7 @@ eerror
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_720p30fps.mp4
 			# 1280 x 720 res ; must be 2 min
-			if [[ "${ASSET_CACHE}/wild_animal_720p30fps.mp4" ]] ; then
+			if [[ -f "${ASSET_CACHE}/wild_animal_720p30fps.mp4" ]] ; then
 				einfo "Using pregenerated and cached wild_animal_720p30fps.mp4"
 				cp -a "${ASSET_CACHE}/wild_animal_720p30fps.mp4" \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
@@ -1981,7 +1981,7 @@ eerror
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> garden2_10s.mp4
 			# 3840 x 2160 resolution
-			if [[ "${ASSET_CACHE}/wild_animal_10s.mp4" ]] ; then
+			if [[ -f "${ASSET_CACHE}/wild_animal_10s.mp4" ]] ; then
 				einfo "Using pregenerated and cached wild_animal_10s.mp4"
 				cp -a "${ASSET_CACHE}/wild_animal_10s.mp4" \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
@@ -2004,7 +2004,7 @@ eerror
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> garden2_10s.webm
 			# 3840 x 2160 resolution
-			if [[ "${ASSET_CACHE}/wild_animal_10s.webm" ]] ; then
+			if [[ -f "${ASSET_CACHE}/wild_animal_10s.webm" ]] ; then
 				einfo "Using pregenerated and cached wild_animal_10s.webm"
 				cp -a "${ASSET_CACHE}/wild_animal_10s.webm" \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
@@ -2027,7 +2027,7 @@ eerror
 
 			# ffmpeg -> smpte_3840x2160_60fps_vp9.webm
 			# 3840 x 2160 resolution ; 120s required
-			if [[ "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" ]] ; then
+			if [[ -f "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" ]] ; then
 				einfo "Using pregenerated and cached smpte_3840x2160_60fps_vp9.webm"
 				cp -a "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" \
 					"${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
