@@ -35,6 +35,8 @@
     <flag name="coverage">Enable code coverage support</flag>
     <flag name="dav1d">Check and pull in dependencies for AV1 video decoding
       support.</flag>
+    <flag name="eme">Enable Encrypted Media Extensions support (ClearKey CDM
+      only)</flag>
     <flag name="egl">Enable EGL support</flag>
     <flag name="examples">Install the MiniBrowser example application</flag>
     <flag name="dfg-jit">Builds with the teir that does the bulk
@@ -67,6 +69,8 @@
       upstream has ran SunSpider 3 times on the w32 builds for PGO profile
       generation for JSC optimization. Expect double the time to build.</flag>
     <flag name="pulseaudio">Adds PulseAudio and microphone support.</flag>
+    <flag name="thunder">Links to a framework with pluginable CDM
+      (content decryption module) support</flag>
     <flag name="v4l">Adds and checks for proper v4l camera support.</flag>
     <flag name="variation-fonts">Check dependencies for variation font
       support</flag>
@@ -78,6 +82,9 @@
       additional optimizations beyond ftl-jit.</flag>
     <flag name="webcrypto">Enables WebCrypto SubtleCrypto API support for
       low level cryptographic fuctions</flag>
+    <flag name="webm-eme">Enable support for decrypting protected WebM files.
+      (It may require a license, the proprietary SDK, and a corresponding
+      proprietary OCDM plugin)</flag>
     <flag name="webxr">Builds WebXR support.  (EXPERIMENTAL / IN
       DEVELOPMENT)</flag>
     <flag name="webvtt">Checks and pulls in dependencies required for

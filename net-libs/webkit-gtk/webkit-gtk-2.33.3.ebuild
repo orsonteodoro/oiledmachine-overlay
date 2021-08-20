@@ -5,7 +5,7 @@ EAPI=7
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.1)
+# ab = WEBKITGTK_API_VERSION version (4.0)
 # c = reserved
 # de = ebuild revision
 
@@ -22,7 +22,7 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine (GTK+3 with libsoup3)"
+DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
@@ -423,16 +423,16 @@ LICENSE="
 # unicode Source/WTF/icu/LICENSE
 # * The public-domain is not presented in LICENSE variable to not give
 #   the wrong impression that the entire package is released in the public domain.
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~sparc ~x86"
 
-API_VERSION="4.1"
+API_VERSION="4.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-CURRENT="0"
-AGE="0"
+# WEBKITGTK_API_VERSION is 4.0
+CURRENT="92"
+AGE="55"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
@@ -457,13 +457,13 @@ vi zh_CN )
 # wayland is enabled upstream but disabled because it is not defacto default
 #   standard for desktop yet
 
-IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
-dav1d +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2 gnome-keyring
+IUSE+=" ${LANGS[@]/#/l10n_} aqua avif +bmalloc cpu_flags_arm_thumb2
+dav1d +dfg-jit +egl -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring
 +gstreamer -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
 +libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp pgo
-+pulseaudio -seccomp -spell -systemd test variation-fonts +v4l wayland
-+webassembly +webassembly-b3-jit +webcrypto +webgl -webrtc webvtt -webxr +X
-+yarr-jit"
++pulseaudio -seccomp -spell -systemd test thunder variation-fonts +v4l wayland
++webassembly +webassembly-b3-jit +webcrypto +webgl webm-eme -webrtc webvtt
+-webxr +X +yarr-jit"
 
 PGO_PLANS=(
 	ares6
@@ -564,7 +564,6 @@ REQUIRED_USE+=" pgo? ( || ( $(gen_pgo_iuse) ) )"
 # gstreamer with opengl/gles2 needs egl
 REQUIRED_USE+="
 	|| ( aqua wayland X )
-	64k-pages? ( !bmalloc !dfg-jit !ftl-jit !jit !webassembly !webassembly-b3-jit )
 	cpu_flags_arm_thumb2? ( bmalloc !ftl-jit )
 	dav1d? ( gstreamer )
 	jit? ( bmalloc )
@@ -577,12 +576,14 @@ REQUIRED_USE+="
 	opengl? ( egl !gles2 )
 	pgo? ( minibrowser )
 	pulseaudio? ( gstreamer )
+	thunder? ( eme )
 	v4l? ( gstreamer mediastream )
 	wayland? ( egl )
 	webassembly? ( jit )
 	webassembly-b3-jit? ( ftl-jit webassembly )
 	webgl? ( gstreamer
 		|| ( gles2 opengl ) )
+	webm-eme? ( eme gstreamer thunder )
 	webrtc? ( mediastream )
 	webvtt? ( gstreamer )
 	webxr? ( webgl )
@@ -606,10 +607,8 @@ REQUIRED_USE+="
 #   Tools/gtk/install-dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
-#   [1] https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Tools/gstreamer/jhbuild.modules#L16
-
-# [1] Packaging this CDM is not feasible because of licensing and closed source
-# SDK.
+#   https://github.com/WebKit/WebKit/blob/c919a2db8637b2a99d3e470fc22af52287a4840b/Tools/gstreamer/jhbuild.modules#L16
+#   Tools/gtk/dependencies/apt
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
@@ -639,6 +638,7 @@ GLIB_V="2.44.0"
 GSTREAMER_V="1.14.0"
 MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
+OCDM_WV="virtual/libc" # Placeholder
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
@@ -656,7 +656,7 @@ RDEPEND+="
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.99.8:3[introspection?,${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
@@ -692,6 +692,7 @@ RDEPEND+="
 		>=sys-libs/libseccomp-0.9.0[${MULTILIB_USEDEP}]
 	)
 	spell? ( >=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}] )
+	thunder? ( net-libs/thunder )
 	variation-fonts? (
 		>=x11-libs/cairo-1.16:=[X?,${MULTILIB_USEDEP}]
 		>=media-libs/fontconfig-2.13.0:1.0[${MULTILIB_USEDEP}]
@@ -707,6 +708,7 @@ RDEPEND+="
 	webcrypto? (
 		>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
 	)
+	webm-eme? ( ${OCDM_WV} )
 	webxr? ( media-libs/openxr )
 	webrtc? (
 		>=dev-libs/libevent-2.1.8[${MULTILIB_USEDEP}]
@@ -720,6 +722,9 @@ RDEPEND+="
 		>=x11-libs/libXdamage-1.1.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXrender-0.9.10[${MULTILIB_USEDEP}]
 		>=x11-libs/libXt-1.1.5[${MULTILIB_USEDEP}] )"
+# For ${OCDM_WV}, \
+#   You need a license, the proprietary SDK, and OCDM plugin.
+# see https://github.com/WebKit/WebKit/blob/c919a2db8637b2a99d3e470fc22af52287a4840b/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L97
 unset WPE_DEPEND
 DEPEND+=" ${RDEPEND}"
 # paxctl is needed for bug #407085
@@ -762,6 +767,7 @@ BDEPEND+="
 	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_V} )
 	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
 	pgo? ( dev-vcs/subversion )
+	thunder? ( net-libs/thunder )
 	webrtc? ( dev-vcs/subversion )"
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
@@ -774,8 +780,8 @@ BDEPEND+="
 # https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
 # Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
-EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="278597"
+EGIT_COMMIT="c919a2db8637b2a99d3e470fc22af52287a4840b"
+ESVN_REVISION="281074"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -843,100 +849,11 @@ pkg_setup() {
 	fi
 	python-any-r1_pkg_setup
 
-	if use 64k-pages ; then
-		if [[ "${ABI}" == "arm64" \
-			|| "${ABI}" == "n32" \
-			|| "${ABI}" == "n64" \
-			|| "${ABI}" == "n64" \
-			|| "${ABI}" == "ppc64" \
-			|| "${ABI}" == "sparc32" \
-			|| "${ABI}" == "sparc64" \
-			]] ; then
-			local pagesize=$(getconf PAGESIZE)
-			if [[ "${pagesize}" != "16384" ]] ; then
-ewarn
-ewarn "Page size is not 16k but currently ${pagesize}.  Disable 64k-pages USE"
-ewarn "flag."
-ewarn
-			fi
-		else
-die "64k pages is not supported.  Remove the 64k-pages USE flag."
-		fi
-
-		if ! linux_config_exists ; then
-die "Missing .config for kernel."
-		fi
-
-		if [[ "${ABI}" == "arm64" ]] ; then
-			if ! linux_chkconfig_present "ARM64_64K_PAGES" ; then
-eerror
-eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "n32" ]] ; then
-			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
-eerror
-eerror "CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "n64" ]] ; then
-			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
-eerror
-eerror "CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "n64" ]] ; then
-			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
-eerror
-eerror "CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "ppc64" ]] ; then
-			if ! linux_chkconfig_present "PPC_64K_PAGES" ; then
-eerror
-eerror "CONFIG_PPC_64K_PAGES is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "sparc32" ]] ; then
-			if linux_chkconfig_present "HUGETLB_PAGE" ; then
-				:;
-			elif linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
-				:;
-			else
-eerror
-eerror "CONFIG_TRANSPARENT_HUGEPAGE or CONFIG_HUGETLB_PAGE is unset in the"
-eerror "kernel config.  Remove the 64k-pages USE flag or change the kernel"
-eerror "config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "sparc64" ]] ; then
-			if linux_chkconfig_present "HUGETLB_PAGE" ; then
-				:;
-			elif linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
-				:;
-			else
-eerror
-eerror "CONFIG_TRANSPARENT_HUGEPAGE or CONFIG_HUGETLB_PAGE is unset in the"
-eerror "kernel config.  Remove the 64k-pages USE flag or change the kernel"
-eerror "config."
-eerror
-				die
-			fi
-		fi
-	fi
-
 	check_geolocation
+
+	if ( use arm || use arm64 ) && ! use gles2 ; then
+		ewarn "gles2 is the default on upstream."
+	fi
 
 	if use openmp ; then
 		tc-check-openmp
@@ -1146,6 +1063,7 @@ _config_pgx() {
 		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}"/usr/bin/xdg-dbus-proxy
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
+		-DENABLE_ENCRYPTED_MEDIA=$(usex eme)
 		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation) # \
 # Runtime optional (talks over dbus service)
 		-DENABLE_GLES2=$(usex gles2)
@@ -1158,6 +1076,7 @@ _config_pgx() {
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
 		-DENABLE_UNIFIED_BUILDS=$(usex jumbo-build)
 		-DENABLE_SPELLCHECK=$(usex spell)
+		-DENABLE_THUNDER=$(usex thunder)
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
@@ -1175,7 +1094,7 @@ _config_pgx() {
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=OFF
+		-DUSE_SOUP2=ON
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
@@ -1187,29 +1106,7 @@ _config_pgx() {
 
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
-	if use 64k-pages ; then
-		einfo "Disabling JIT for ${ABI} with 64kb pages"
-		mycmakeargs+=(
-			-DENABLE_JIT=OFF
-			-DENABLE_DFG_JIT=OFF
-			-DENABLE_FTL_JIT=OFF
-			-DENABLE_WEBASSEMBLY_B3JIT=OFF
-			-DUSE_64KB_PAGE_BLOCK=ON
-			-DUSE_SYSTEM_MALLOC=ON
-		)
-		if [[ "${ABI}" == "arm64" ]] ; then
-			mycmakeargs+=(
-				-DENABLE_C_LOOP=OFF
-				-DENABLE_SAMPLING_PROFILER=ON
-			)
-		else
-			mycmakeargs+=(
-				-DENABLE_C_LOOP=ON
-				-DENABLE_SAMPLING_PROFILER=OFF
-			)
-		fi
-		jit_enabled="0"
-	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && use jit ; then
+	if [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && use jit ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -1239,6 +1136,17 @@ _config_pgx() {
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex jit OFF $(usex !bmalloc))
+		)
+	elif [[ "${ABI}" == "lp64d" || "${ABI}" == "lp64" ]] ; then
+		# riscv64
+		mycmakeargs+=(
+			-DENABLE_C_LOOP=ON
+			-DENABLE_JIT=OFF
+			-DENABLE_DFG_JIT=OFF
+			-DENABLE_FTL_JIT=OFF
+			-DENABLE_SAMPLING_PROFILER=OFF
+			-DENABLE_WEBASSEMBLY_B3JIT=OFF
+			-DUSE_SYSTEM_MALLOC=OFF
 		)
 	else
 		einfo "Disabling JIT for ${ABI}"
@@ -1270,6 +1178,11 @@ _config_pgx() {
 	fi
 	einfo "CPPFLAGS=${CPPFLAGS}"
 
+	if use eme ; then
+		sed -i -e "s|ENABLE_ENCRYPTED_MEDIA PRIVATE|ENABLE_ENCRYPTED_MEDIA PUBLIC|g" \
+			"${S}/Source/cmake/OptionsGTK.cmake" || die
+	fi
+
 	if use lto ; then
 		MESA_LLVM_V=$(bzcat "${ESYSROOT}/var/db/pkg/media-libs/mesa-"*"/environment.bz2" \
 			| grep "LLVM_MAX_SLOT" \
@@ -1297,6 +1210,11 @@ _config_pgx() {
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 			-DOpenMP_libomp_LIBRARY="libomp"
 		)
+	fi
+
+	if use thunder ; then
+		sed -i -e "s|ENABLE_THUNDER PRIVATE|ENABLE_THUNDER PUBLIC|g" \
+			"${S}/Source/cmake/OptionsGTK.cmake" || die
 	fi
 
 	if use webrtc ; then
@@ -1417,7 +1335,7 @@ _run_trainer() {
 	  # Prevent a sandbox violation and isolate between parallel running emerges.
 	for t in ${train_with[@]} ; do
 		einfo "Training with ${t/wk_pgo_trainers_/}"
-		# See https://github.com/WebKit/WebKit/tree/9467df8e0134156fa95c4e654e956d8166a54a13/Tools/Scripts/webkitpy/benchmark_runner
+		# See https://github.com/WebKit/WebKit/tree/c919a2db8637b2a99d3e470fc22af52287a4840b/Tools/Scripts/webkitpy/benchmark_runner
 		virtx ${EPYTHON} Tools/Scripts/webkitpy/benchmark_runner/run_benchmark.py \
 			--build-directory "${BUILD_DIR}" \
 			$(_get_benchmark_plan ${t}) \

@@ -458,12 +458,12 @@ vi zh_CN )
 #   standard for desktop yet
 
 IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
-dav1d +dfg-jit +egl +ftl-jit -gamepad +geolocation gles2 gnome-keyring
+dav1d +dfg-jit +egl -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring
 +gstreamer -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
 +libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp pgo
-+pulseaudio -seccomp -libsoup3 -spell -systemd test variation-fonts +v4l wayland
-+webassembly +webassembly-b3-jit +webcrypto +webgl -webrtc webvtt -webxr +X
-+yarr-jit"
++pulseaudio -seccomp -libsoup3 -spell -systemd test thunder variation-fonts
++v4l wayland +webassembly +webassembly-b3-jit +webcrypto +webgl webm-eme -webrtc
+webvtt -webxr +X +yarr-jit"
 
 PGO_PLANS=(
 	ares6
@@ -577,12 +577,14 @@ REQUIRED_USE+="
 	opengl? ( egl !gles2 )
 	pgo? ( minibrowser )
 	pulseaudio? ( gstreamer )
+	thunder? ( eme )
 	v4l? ( gstreamer mediastream )
 	wayland? ( egl )
 	webassembly? ( jit )
 	webassembly-b3-jit? ( ftl-jit webassembly )
 	webgl? ( gstreamer
 		|| ( gles2 opengl ) )
+	webm-eme? ( eme gstreamer thunder )
 	webrtc? ( mediastream )
 	webvtt? ( gstreamer )
 	webxr? ( webgl )
@@ -606,10 +608,7 @@ REQUIRED_USE+="
 #   Tools/gtk/install-dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
-#   [1] https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Tools/gstreamer/jhbuild.modules#L16
-
-# [1] Packaging this CDM is not feasible because of licensing and closed source
-# SDK.
+#   https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Tools/gstreamer/jhbuild.modules#L16
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
@@ -639,6 +638,7 @@ GLIB_V="2.44.0"
 GSTREAMER_V="1.14.0"
 MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
+OCDM_WV="virtual/libc" # Placeholder
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
@@ -697,6 +697,7 @@ RDEPEND+="
 		>=sys-libs/libseccomp-0.9.0[${MULTILIB_USEDEP}]
 	)
 	spell? ( >=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}] )
+	thunder? ( net-libs/thunder )
 	variation-fonts? (
 		>=x11-libs/cairo-1.16:=[X?,${MULTILIB_USEDEP}]
 		>=media-libs/fontconfig-2.13.0:1.0[${MULTILIB_USEDEP}]
@@ -712,6 +713,7 @@ RDEPEND+="
 	webcrypto? (
 		>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
 	)
+	webm-eme? ( ${OCDM_WV} )
 	webxr? ( media-libs/openxr )
 	webrtc? (
 		>=dev-libs/libevent-2.1.8[${MULTILIB_USEDEP}]
@@ -725,6 +727,9 @@ RDEPEND+="
 		>=x11-libs/libXdamage-1.1.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXrender-0.9.10[${MULTILIB_USEDEP}]
 		>=x11-libs/libXt-1.1.5[${MULTILIB_USEDEP}] )"
+# For ${OCDM_WV}, \
+#   You need a license, the proprietary SDK, and OCDM plugin.
+# see https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L97
 unset WPE_DEPEND
 DEPEND+=" ${RDEPEND}"
 # paxctl is needed for bug #407085
@@ -767,6 +772,7 @@ BDEPEND+="
 	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_V} )
 	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
 	pgo? ( dev-vcs/subversion )
+	thunder? ( net-libs/thunder )
 	webrtc? ( dev-vcs/subversion )"
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
@@ -944,6 +950,10 @@ eerror
 	fi
 
 	check_geolocation
+
+	if ( use arm || use arm64 ) && ! use gles2 ; then
+		ewarn "gles2 is the default on upstream."
+	fi
 
 	if use openmp ; then
 		tc-check-openmp
@@ -1151,6 +1161,7 @@ _config_pgx() {
 		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}"/usr/bin/xdg-dbus-proxy
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
+		-DENABLE_ENCRYPTED_MEDIA=$(usex eme)
 		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation) # \
 # Runtime optional (talks over dbus service)
 		-DENABLE_GLES2=$(usex gles2)
@@ -1163,6 +1174,7 @@ _config_pgx() {
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
 		-DENABLE_UNIFIED_BUILDS=$(usex jumbo-build)
 		-DENABLE_SPELLCHECK=$(usex spell)
+		-DENABLE_THUNDER=$(usex thunder)
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
@@ -1275,6 +1287,11 @@ _config_pgx() {
 	fi
 	einfo "CPPFLAGS=${CPPFLAGS}"
 
+	if use eme ; then
+		sed -i -e "s|ENABLE_ENCRYPTED_MEDIA PRIVATE|ENABLE_ENCRYPTED_MEDIA PUBLIC|g" \
+			"${S}/Source/cmake/OptionsGTK.cmake" || die
+	fi
+
 	if use lto ; then
 		MESA_LLVM_V=$(bzcat "${ESYSROOT}/var/db/pkg/media-libs/mesa-"*"/environment.bz2" \
 			| grep "LLVM_MAX_SLOT" \
@@ -1302,6 +1319,11 @@ _config_pgx() {
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 			-DOpenMP_libomp_LIBRARY="libomp"
 		)
+	fi
+
+	if use thunder ; then
+		sed -i -e "s|ENABLE_THUNDER PRIVATE|ENABLE_THUNDER PUBLIC|g" \
+			"${S}/Source/cmake/OptionsGTK.cmake" || die
 	fi
 
 	if use webrtc ; then
