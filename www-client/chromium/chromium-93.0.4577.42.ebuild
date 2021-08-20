@@ -28,6 +28,7 @@ AVPERF_REV="213518"
 CIPD_V="6484b93c6b0dfc5f2c425e8abc1e3737850851e7" # in \
 # third_party/depot_tools/cipd_client_version
 MTD_V="93.0.4577.42" # Frozen for now to reduce downloads.  Send issue request if bump needed.
+CTDM_V="93.0.4577.42" # Frozen for now to reduce downloads.  Send issue request if bump needed.
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
@@ -39,19 +40,23 @@ SRC_URI="
 		ppc64? ( https://chrome-infra-packages.appspot.com/client?platform=linux-ppc64&version=git_revision:${CIPD_V} -> .cipd_client-ppc64-${CIPD_V} )
 		x86? ( https://chrome-infra-packages.appspot.com/client?platform=linux-386&version=git_revision:${CIPD_V} -> .cipd_client-x86-${CIPD_V} )
 		cr_pgo_trainers_memory_desktop? (
+			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${CTDM_V}/chrome/test/data/media.tar.gz -> ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
 			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${MTD_V}/media/test/data.tar.gz -> ${PN}-${MTD_V}-media-test-data.tar.gz
 		)
 		cr_pgo_trainers_media_desktop? (
+			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${CTDM_V}/chrome/test/data/media.tar.gz -> ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
 			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${MTD_V}/media/test/data.tar.gz -> ${PN}-${MTD_V}-media-test-data.tar.gz
+			https://upload.wikimedia.org/wikipedia/commons/5/59/%284k%29_Wild_Animal_-_Ultra_HD_Video_TV_60fps_%282160p%29.webm -> (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm
 		)
 		cr_pgo_trainers_media_mobile? (
+			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${CTDM_V}/chrome/test/data/media.tar.gz -> ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
 			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${MTD_V}/media/test/data.tar.gz -> ${PN}-${MTD_V}-media-test-data.tar.gz
+			https://upload.wikimedia.org/wikipedia/commons/5/59/%284k%29_Wild_Animal_-_Ultra_HD_Video_TV_60fps_%282160p%29.webm -> (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm
 		)
 	)
 "
+# TODO: find/add mirrors for (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm
 
-# CC-BY-3.0 https://peach.blender.org/download/ # avi is mp4 and h264 is mov
-# (c) copyright 2008, Blender Foundation / www.bigbuckbunny.org
 RESTRICT="mirror"
 
 # all-rights-reserved is for unfree websites or content from them.
@@ -141,6 +146,14 @@ LICENSE_BENCHMARK_WEBSITES="
 		BSD-2
 		LGPL-2.1
 		MPL-1.1
+	)
+	cr_pgo_trainers_media_desktop? (
+		CC-BY-3.0
+		CC-BY-4.0
+	)
+	cr_pgo_trainers_media_mobile? (
+		CC-BY-3.0
+		CC-BY-4.0
 	)
 	cr_pgo_trainers_memory_desktop? (
 		CC-BY-3.0
@@ -245,7 +258,8 @@ dd9fc7b4cae307621cd0a830686b50c5bc3fb7e9541c1f22399a495f07313a21\
 #   upstream has more MIT than GPL3 copyright notices, so MIT is assumed
 # APSL-2 - third_party/apple_apsl/LICENSE
 # APSL-2 Apache-2.0 BSD MIT - third_party/breakpad/LICENSE
-# Apache 2.0 - third_party/node/node_modules/typescript/LICENSE.txt
+# Apache-2.0 - CIPD - https://chromium.googlesource.com/infra/luci/luci-go/+/refs/heads/main/cipd
+# Apache-2.0 - third_party/node/node_modules/typescript/LICENSE.txt
 # Apache-2.0-with-LLVM-exceptions UoI-NCSA - \
 #   third_party/llvm/debuginfo-tests/dexter/LICENSE.txt
 # Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT - third_party/llvm/libclc/LICENSE.TXT
@@ -273,6 +287,13 @@ dd9fc7b4cae307621cd0a830686b50c5bc3fb7e9541c1f22399a495f07313a21\
 #   found
 # custom UoI-NCSA - third_party/llvm/llvm/include/llvm/Support/LICENSE.TXT
 # custom public-domain - third_party/sqlite/LICENSE
+# CC-BY-3.0 CC-BY-4.0 \
+#   https://commons.wikimedia.org/wiki/File:(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm
+#   https://www.youtube.com/watch?v=s-jYDs3FfyY
+#   Attributions: 4.000 PIXELS
+#   Music: Arid Foothills - The Dark Contenent by Kevin MacLeod (incompetech.com)
+# CC-BY-3.0 https://peach.blender.org/download/ # avi is mp4 and h264 is mov
+#   (c) copyright 2008, Blender Foundation / www.bigbuckbunny.org
 # CC-BY-4.0 - third_party/devtools-frontend/src/node_modules/caniuse-lite/LICENSE
 # CC0-1.0 - tools/perf/page_sets/trivial_sites/trivial_fullscreen_video.html
 # fft2d - third_party/tflite/src/third_party/fft2d/LICENSE
@@ -778,14 +799,14 @@ BDEPEND="
 				media-video/ffmpeg[encode,rav1e]
 				media-video/ffmpeg[encode,libaom]
 			)
-			media-video/ffmpeg[encode,opus,theora,vorbis,vpx]
+			media-video/ffmpeg[encode,mp3,opus,vorbis,vpx]
 		)
 		cr_pgo_trainers_media_mobile? (
 			|| (
 				media-video/ffmpeg[encode,openh264]
 				media-video/ffmpeg[encode,x264]
 			)
-			media-video/ffmpeg[encode,opus,theora,vorbis,vpx]
+			media-video/ffmpeg[encode,mp3,opus,vorbis,vpx]
 		)
 	)
 "
@@ -1339,6 +1360,7 @@ fetching_pgo_deps() {
 src_unpack() {
 	for a in ${A} ; do
 		[[ "${a}" == "${PN}-${MTD_V}-media-test-data.tar.gz" ]] && continue
+		[[ "${a}" == "${PN}-${CTDM_V}-chrome-test-data-media.tar.gz" ]] && continue
 		unpack ${a}
 	done
 	if use pgo-full ; then
@@ -1347,6 +1369,9 @@ src_unpack() {
 		chmod +x "${S}/third_party/depot_tools/.cipd_client" || die
 		pushd "${S}/media/test/data" || die
 			unpack ${PN}-${MTD_V}-media-test-data.tar.gz
+		popd
+		pushd "${S}/chrome/test/data/media" || die
+			unpack ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
 		popd
 	fi
 }
@@ -1664,7 +1689,6 @@ eerror
 	)
 	if use pgo-full ; then
 		keeplibs+=(
-			media/test/data
 			third_party/catapult/third_party/gsutil
 			third_party/catapult/third_party/tsproxy
 			third_party/catapult/third_party/typ
@@ -1714,17 +1738,39 @@ eerror
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 
 	if use pgo-full ; then
+		ASSET_CACHE="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/asset-cache"
+		addwrite "${ASSET_CACHE}"
 		if use cr_pgo_trainers_memory_desktop ; then
+			einfo "Generating missing assets for the memory.desktop"
 			# Replaced missing assets
-			# The bbb 480p is actually 854 x 640 res.
-			sed -i -e "s|road_trip_640_480.mp4|big_buck_bunny_480p_stereo.avi|g" \
+			sed -i -e "s|road_trip_640_480.mp4|buck-480p.mp4|g" \
 				"${S}/tools/perf/page_sets/trivial_sites/trivial_fullscreen_video.html" \
 				|| die
-			einfo "Generating bunny.gif (animated gif) for memory.desktop benchmark"
+
+			local aac_encoding=( -codec:a aac )
+			local h264_encoding=()
+			if has_version "media-video/ffmpeg[openh264]" ;then
+				h264_encoding+=( -c:v libopenh264 )
+			elif has_version "media-video/ffmpeg[x264]" ; then
+				h264_encoding+=( -c:v libx264 )
+			fi
+
+			# bigbuck.webm -> buck-480p.mp4
+			einfo "Generating buck-480p.mp4 for the memory.desktop benchmark"
 			# The bunny.gif doesn't actually exist on the website but is converted from the
 			# movie explained in https://codereview.chromium.org/2243403006
-			ffmpeg -i "${S}/tools/perf/page_sets/trivial_sites/big_buck_bunny_480p_stereo.avi" \
-				-ss 165.0 \
+			ffmpeg -i "${S}/chrome/test/data/media/bigbuck.webm" \
+				${h264_encoding[@]} \
+				${aac_encoding[@]} \
+				-vf "scale=852:-1,crop=852:480:0:0" \
+				"${S}/tools/perf/page_sets/trivial_sites/buck-480p.mp4" || die
+
+			# bigbuck.webm -> bunny.gif
+			einfo "Generating bunny.gif (animated gif) for the memory.desktop benchmark"
+			# The bunny.gif doesn't actually exist on the website but is converted from the
+			# movie explained in https://codereview.chromium.org/2243403006
+			ffmpeg -i "${S}/chrome/test/data/media/bigbuck.webm" \
+				-vf "scale=852:-1,crop=852:480:0:0" \
 				-t 60.0 \
 				-f gif \
 				"${S}/tools/perf/page_sets/trivial_sites/bunny.gif" || die
@@ -1733,18 +1779,17 @@ eerror
 			#	"${S}/tools/perf/page_sets/trivial_sites/trivial_gif.html"
 		fi
 
-		# TODO convert
-		# tulip2.ogg,tulip2.mp3,tulip2.m4a,tulip2.mp4
-		# crowd1080.webm,crowd1080.mp4
-		# "${S}/tools/perf/page_sets/media_cases" || die
-
 		# See also https://chromium.googlesource.com/chromium/src.git/+/refs/tags/93.0.4577.42/media/test/data/#media-test-data
+		# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/93.0.4577.42/tools/perf/page_sets/media_cases.py
 		if use cr_pgo_trainers_media_desktop \
 			|| use cr_pgo_trainers_media_mobile ; then
 			einfo "Generating missing assets for media.desktop or media.mobile benchmarks"
 			local aac_encoding=( -codec:a aac )
 			local h264_encoding=()
+			local mp3_encoding=( -c:a libmp3lame )
 			local opus_encoding=( -c:a libopus )
+			local vorbis_encoding=( -c:a libvorbis )
+			local vp8_encoding=( -c:v libvpx )
 			local vp9_encoding=( -c:v libvpx-vp9 )
 			if has_version "media-video/ffmpeg[openh264]" ;then
 				h264_encoding+=( -c:v libopenh264 )
@@ -1752,42 +1797,137 @@ eerror
 				h264_encoding+=( -c:v libx264 )
 			fi
 
-			# tulip2.ogv -> tulip2.vp9.webm
+			# tulip2.webm -> tulip2.m4a
 			ffmpeg -i \
-				"${S}/tools/perf/page_sets/media_cases/tulip2.ogv" \
+				"${S}/media/test/data/tulip2.webm" \
+				-vn \
+				${aac_encoding[@]} \
+				"${S}/tools/perf/page_sets/media_cases/tulip2.m4a" \
+				|| die
+
+			# tulip2.webm -> tulip2.mp3
+			ffmpeg -i \
+				"${S}/media/test/data/tulip2.webm" \
+				-vn \
+				${mp3_encoding[@]} \
+				"${S}/tools/perf/page_sets/media_cases/tulip2.mp3" \
+				|| die
+
+			# tulip2.webm -> tulip2.mp4
+			ffmpeg -i \
+				"${S}/media/test/data/tulip2.webm" \
+				${h264_encoding[@]} \
+				${aac_encoding[@]} \
+				"${S}/tools/perf/page_sets/media_cases/tulip2.h264" \
+				|| die
+
+			# tulip2.webm -> tulip2.ogg
+			ffmpeg -i \
+				"${S}/media/test/data/tulip2.webm" \
+				-vn \
+				${vorbis_encoding[@]} \
+				"${S}/tools/perf/page_sets/media_cases/tulip2.ogg" \
+				|| die
+
+			# tulip2.webm -> tulip2.vp9.webm ; For MSE (DRM) and non MSE
+			( ffmpeg -i \
+				"${S}/media/test/data/tulip2.webm" \
 				${vp9_encoding[@]} \
+				-b:v 0 -crf 31 \
+				-pass 1 \
+				-an -f null /dev/null || die ) \
+			&& \
+			ffmpeg -i \
+				"${S}/media/test/data/tulip2.webm" \
+				${vp9_encoding[@]} \
+				-b:v 0 -crf 31 \
+				-pass 2 \
 				${opus_encoding[@]} \
 				"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" \
 				|| die
 
-			# crowd1080.mp4 -> crowd1080_vp9.webm
+			# tulip2.webm -> crowd1080.mp4
 			ffmpeg -i \
-				"${S}/tools/perf/page_sets/media_cases/tulip2.ogv" \
+				"${S}/media/test/data/tulip2.webm" \
+				${h264_encoding[@]} \
+				${aac_encoding[@]} \
+				-r 50 \
+				"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" \
+				|| die
+
+			# tulip2.webm -> crowd1080.webm
+			ffmpeg -i \
+				"${S}/media/test/data/tulip2.webm" \
+				${vp8_encoding[@]} \
+				${vorbis_encoding[@]} \
+				-r 50 \
+				"${S}/tools/perf/page_sets/media_cases/crowd1080.webm" \
+				|| die
+
+			# tulip2.webm -> crowd1080_vp9.webm
+			ffmpeg -i \
+				"${S}/media/test/data/tulip2.webm" \
 				${vp9_encoding[@]} \
+				-b:v 0 -crf 31 \
+				-r 50 \
+				-pass 1 \
+				-an -f null /dev/null \
+			&& \
+			ffmpeg -i \
+				"${S}/media/test/data/tulip2.webm" \
+				${vp9_encoding[@]} \
+				-b:v 0 -crf 31 \
+				-r 50 \
+				-pass 2 \
 				"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" \
 				|| die
 
 			# TODO: replace missing assets with cc0 licensed audio or video
-			# Missing asset -> aac_audio.mp4
+			# Missing asset -> aac_audio.mp4 ; For MSE (DRM)
 			#ffmpeg -i \
 			#	"${S}/tools/perf/page_sets/media_cases/" \
 			#	${aac_encoding[@]} \
 			#	"${S}/tools/perf/page_sets/media_cases/aac_audio.mp4" \
 			#	|| die
 
-			# Missing asset -> boat_1080p60fps_vp9.webm
-			# 1920 x 1080 res
-			#ffmpeg -i \
-			#	"${S}/tools/perf/page_sets/media_cases/" \
-			#	${vp9_encoding[@]} \
-			#	${opus_encoding[@]} \
-			#	-vf scale=-1:1080
-			#	-r 60 \
-			#	-s 120.0 \
-			#	"${S}/tools/perf/page_sets/media_cases/boat_1080p60fps_vp9.webm" \
-			#	|| die
+			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_1080p60fps_vp9.webm
+			# 1920 x 1080 res ; must be 2 min
+			if [[ "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" ]] ; then
+				einfo "Using pregenerated and cached wild_animal_1080p60fps_vp9.webm"
+				cp -a "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" \
+					"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
+					|| die
+			else
+				( ffmpeg -i \
+					$(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+					${vp9_encoding[@]} \
+					-b:v 0 -crf 31 \
+					-vf scale=-1:1080 \
+					-r 60 \
+					-t 120.0 \
+					-pass 1 \
+					-an -f null /dev/null || die ) \
+				&& \
+				ffmpeg -i \
+					$(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+					${vp9_encoding[@]} \
+					-b:v 0 -crf 31 \
+					-vf scale=-1:1080 \
+					-r 60 \
+					-t 120.0 \
+					-pass 2 \
+					${opus_encoding[@]} \
+					"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
+					|| die
+				einfo "Saving work to ${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm"
+				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
+					"${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" || die
+			fi
+			sed -i -e "s|boat_1080p60fps_vp9.webm|animal_1080p60fps_vp9.webm|g" \
+				"${S}/tools/perf/page_sets/media_cases.py" || die
 
-			# Missing asset -> h264_video.mp4
+			# See tools/perf/page_sets/media_cases/mse.js
+			# Missing asset -> h264_video.mp4 ; For MSE (DRM)
 			#ffmpeg -i \
 			#	"${S}/tools/perf/page_sets/media_cases/" \
 			#	${h264_encoding[@]} \
@@ -1795,17 +1935,29 @@ eerror
 			#	"${S}/tools/perf/page_sets/media_cases/h264_video.mp4" \
 			#	|| die
 
-			# Missing asset -> foodmarket_720p30fps.mp4
-			# 1280 x 720 res
-			#ffmpeg -i \
-			#	"${S}/tools/perf/page_sets/media_cases/" \
-			#	${h264_encoding[@]} \
-			#	${aac_encoding[@]} \
-			#	-vf scale=-1:720
-			#	-r 30 \
-			#	-s 120.0 \
-			#	"${S}/tools/perf/page_sets/media_cases/foodmarket_720p30fps.mp4" \
-			#	|| die
+			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_720p30fps.mp4
+			# 1280 x 720 res ; must be 2 min
+			if [[ "${ASSET_CACHE}/wild_animal_720p30fps.mp4" ]] ; then
+				einfo "Using pregenerated and cached wild_animal_720p30fps.mp4"
+				cp -a "${ASSET_CACHE}/wild_animal_720p30fps.mp4" \
+					"${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
+					|| die
+			else
+				ffmpeg -i \
+					$(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+					${h264_encoding[@]} \
+					-vf scale=-1:720
+					-r 30 \
+					${aac_encoding[@]} \
+					-t 120.0 \
+					"${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
+					|| die
+				einfo "Saving work to ${ASSET_CACHE}/wild_animal_720p30fps.mp4"
+				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
+					"${ASSET_CACHE}/wild_animal_720p30fps.mp4" || die
+			fi
+			sed -i -e "s|foodmarket_720p30fps.mp4|wild_animal_720p30fps.mp4|g" \
+				"${S}/tools/perf/page_sets/media_cases.py" || die
 		fi
 
 		if use cr_pgo_trainers_media_desktop ; then
@@ -1814,6 +1966,7 @@ eerror
 			local av1_encoding=()
 			local h264_encoding=()
 			local vp8_encoding=( -c:v libvpx )
+			local vp9_encoding=( -c:v libvpx-vp9 )
 			local vorbis_encoding=( -c:a libvorbis )
 			if has_version "media-video/ffmpeg[rav1e]" ;then
 				av1_encoding+=( -c:v librav1e )
@@ -1826,41 +1979,76 @@ eerror
 				h264_encoding+=( -c:v libx264 )
 			fi
 
-			# TODO: replace missing assets with cc0 licensed audio or video
-			# Missing asset -> garden2_10s.mp4
+			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> garden2_10s.mp4
 			# 3840 x 2160 resolution
-			#ffmpeg -i \
-			#	"${S}/tools/perf/page_sets/media_cases/" \
-			#	${h264_encoding[@]} \
-			#	${aac_encoding[@]} \
-			#	"${S}/tools/perf/page_sets/media_cases/garden2_10s.mp4" \
-			#	-vf scale=-1:2160 \
-			#	|| die
+			if [[ "${ASSET_CACHE}/wild_animal_10s.mp4" ]] ; then
+				einfo "Using pregenerated and cached wild_animal_10s.mp4"
+				cp -a "${ASSET_CACHE}/wild_animal_10s.mp4" \
+					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
+					|| die
+			else
+				ffmpeg -i \
+					$(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+					${h264_encoding[@]} \
+					-vf scale=-1:2160 \
+					${aac_encoding[@]} \
+					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
+					-t 10 \
+					|| die
+				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.mp4"
+				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
+					"${ASSET_CACHE}/wild_animal_10s.mp4" || die
+			fi
+			sed -i -e "s|garden2_10s.mp4|wild_animal_10s.mp4|g" \
+				"${S}/tools/perf/page_sets/media_cases.py" || die
 
-			# Missing asset -> garden2_10s.webm
+			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> garden2_10s.webm
 			# 3840 x 2160 resolution
-			#ffmpeg -i \
-			#	"${S}/tools/perf/page_sets/media_cases/" \
-			#	${vp8_encoding[@]} \
-			#	${vorbis_encoding[@]} \
-			#	"${S}/tools/perf/page_sets/media_cases/garden2_10s.webm" \
-			#	-vf scale=-1:2160 \
-			#	|| die
+			if [[ "${ASSET_CACHE}/wild_animal_10s.webm" ]] ; then
+				einfo "Using pregenerated and cached wild_animal_10s.webm"
+				cp -a "${ASSET_CACHE}/wild_animal_10s.webm" \
+					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
+					|| die
+			else
+				ffmpeg -i \
+					$(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+					${vp8_encoding[@]} \
+					-vf scale=-1:2160 \
+					${vorbis_encoding[@]} \
+					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
+					-t 10 \
+					|| die
+				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.webm"
+				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
+					"${ASSET_CACHE}/wild_animal_10s.webm" || die
+			fi
+			sed -i -e "s|garden2_10s.webm|wild_animal_10s.webm|g" \
+				"${S}/tools/perf/page_sets/media_cases.py" || die
 
-			# Missing asset -> smpte_3840x2160_60fps_vp9.webm
-			# 3840 x 2160 resolution
-			#ffmpeg -i \
-			#	"${S}/tools/perf/page_sets/media_cases/" \
-			#	${vp9_encoding[@]} \
-			#	-vf scale=-1:2160
-			#	-r 60 \
-			#	"${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
-			#	|| die
+			# ffmpeg -> smpte_3840x2160_60fps_vp9.webm
+			# 3840 x 2160 resolution ; 120s required
+			if [[ "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" ]] ; then
+				einfo "Using pregenerated and cached smpte_3840x2160_60fps_vp9.webm"
+				cp -a "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" \
+					"${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
+					|| die
+			else
+				einfo "Generating test video.  Estimated completion time: several min to hour(s)."
+				ffmpeg -f lavfi -i testsrc=duration=120:size=3840x2160:rate=60 \
+					${vp9_encoding} \
+					-an \
+					"${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
+					|| die
+				einfo "Saving work to ${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm"
+				cp -a "${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
+					"${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" || die
+			fi
 
-			# tulip0.ogv -> tulip0.av1.mp4
+			# tulip2.webm -> tulip0.av1.mp4 ; For MSE (DRM)
 			ffmpeg -i \
-				"${S}/tools/perf/page_sets/media_cases/tulip0.ogv" \
+				"${S}/media/test/data/tulip2.webm" \
 				${av1_encoding[@]} \
+				-an \
 				"${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" \
 				|| die
 
