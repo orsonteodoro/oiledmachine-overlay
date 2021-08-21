@@ -10,14 +10,16 @@ HOMEPAGE="https://github.com/embree/embree"
 LICENSE="Apache-2.0
 	 tutorials? ( Apache-2.0 MIT )
 	 static-libs? ( BSD BZIP2 MIT ZLIB )"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~x86"
 SRC_URI="https://github.com/embree/embree/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
-X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2 \
+X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2
 avx512skx:avx512skx )
-CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
-IUSE+=" clang debug doc doc-docfiles doc-html doc-images doc-man gcc icc ispc \
+ARM_CPU_FLAGS=( neon:neon )
+CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
+	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_} )
+IUSE+=" clang debug doc doc-docfiles doc-html doc-images doc-man gcc icc ispc
 raymask -ssp static-libs +tbb tutorials ${CPU_FLAGS[@]%:*}"
 REQUIRED_USE+=" ^^ ( clang gcc icc )"
 MIN_CLANG_V="3.3" # for c++11
@@ -29,7 +31,7 @@ MIN_ICC_V_AVX512SKX="15.0.1" # for -xCORE-AVX512
 ONETBB_SLOT="12"
 # 15.0.1 -xCOMMON-AVX512
 BDEPEND+=" >=dev-util/cmake-3.1.0
-	 ispc? ( >=dev-lang/ispc-1.15.0 )
+	 ispc? ( >=dev-lang/ispc-1.16.1 )
 	 virtual/pkgconfig
 	 clang? (
 		>=sys-devel/clang-${MIN_CLANG_V}
@@ -65,7 +67,7 @@ BDEPEND+=" >=dev-util/cmake-3.1.0
 DEPEND+=" media-libs/glfw
 	 virtual/opengl
 	 tbb? (
-		>=dev-cpp/tbb-2021.2.0:12=
+		>=dev-cpp/tbb-2021.3.0:12=
 		 <dev-cpp/tbb-2021:0=
 	 )
 	 tutorials? ( media-libs/libpng:0=
@@ -220,7 +222,9 @@ src_configure() {
 			-DEMBREE_TUTORIALS_OPENIMAGEIO=ON )
 	fi
 
-	if use cpu_flags_x86_avx512skx ; then
+	if use cpu_flags_arm_neon ; then
+		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="NEON" )
+	elif use cpu_flags_x86_avx512skx ; then
 		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX512SKX" )
 	elif use cpu_flags_x86_avx2 ; then
 		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX2" )
