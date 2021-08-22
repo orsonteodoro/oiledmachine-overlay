@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<!-- only on the oiledmachine overlay -->
 	<maintainer type="person">
+		<!-- Only for this ebuild fork on the oiledmachine overlay -->
 		<email>orsonteodoro@hotmail.com</email>
 		<name>Orson Teodoro</name>
 	</maintainer>
-	<!-- originator -->
 	<maintainer type="person">
+		<!-- ebuild originator -->
 		<email>jer@gentoo.org</email>
 	</maintainer>
 	<longdescription>
@@ -74,6 +74,14 @@
 
 		Running NODE_VERSION=10 /usr/bin/node --version
 		will show you node10's version.
+
+		The PGO trainer can be extended with your own customized
+		benchmark.  You must create a folder named custom and
+		it must have at least a  createBenchmark() function with
+		all of this created as a per-package user patch.
+		For additonal details, see
+https://github.com/nodejs/node/blob/master/doc/guides/writing-and-running-benchmarks.md
+https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
 	</longdescription>
 	<use>
 		<flag name="doc">It installs docs.  It should only
@@ -83,8 +91,10 @@
 			be enabled for the highest request slot.</flag>
 		<flag name="npm">Enable NPM package manager.  It should only
 			be enabled for the highest request slot.</flag>
-		<flag name="pax_kernel">Enable building under a PaX enabled
+		<flag name="pax-kernel">Enable building under a PaX enabled
 			kernel</flag>
+		<flag name="pgo">Enable profile guided optimization.  It will
+			double build times.</flag>
 		<flag name="snapshot">Enable snapshot creation for faster
 			startup</flag>
 		<flag name="system-ssl">Use system OpenSSL instead of the

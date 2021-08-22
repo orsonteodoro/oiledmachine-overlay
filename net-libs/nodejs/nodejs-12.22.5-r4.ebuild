@@ -17,7 +17,62 @@ SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
 IUSE+=" cpu_flags_x86_sse2 debug doc icu inspector lto npm +snapshot +ssl
 +system-ssl systemtap test"
-IUSE+=" man"
+IUSE+=" man pgo"
+
+BENCHMARK_TYPES=(
+	assert
+	async_hooks
+	buffers
+	child_process
+	cluster
+	custom
+	crypto
+	dgram
+	dns
+	domain
+	es
+	esm
+	es
+	events
+	fs
+	http
+	http2
+	misc
+	module
+	net
+	os
+	path
+	perf_hooks
+	policy
+	process
+	querystring
+	streams
+	string_decoder
+	timers
+	tls
+	url
+	util
+	v8
+	vm
+	worker
+	zlib
+)
+
+gen_iuse_pgo() {
+	for t in ${BENCHMARK_TYPES[@]} ; do
+		echo " ${PN}_pgo_trainers_${t}"
+	done
+}
+IUSE+=" "$(gen_iuse_pgo)
+
+gen_required_use_pgo() {
+	for t in ${BENCHMARK_TYPES[@]} ; do
+		echo " ${PN}_pgo_trainers_${t}? ( pgo )"
+	done
+}
+REQUIRED_USE+=" "$(gen_required_use_pgo)
+REQUIRED_USE+=" || ( $(gen_iuse_pgo) )"
+
 REQUIRED_USE+=" inspector? ( icu ssl )
 		npm? ( ssl )
 		system-ssl? ( ssl )"
@@ -25,13 +80,14 @@ RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 # Last deps commit date: Aug 10, 2021
+NGHTTP2_V="1.41.0"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
 	>=dev-libs/libuv-1.42.0:=
 	>=net-dns/c-ares-1.17.2
 	>=net-libs/http-parser-2.9.4:=
-	>=net-libs/nghttp2-1.41.0
+	>=net-libs/nghttp2-${NGHTTP2_V}
 	>=sys-libs/zlib-1.2.11
 	icu? ( >=dev-libs/icu-67.1:= )
 	system-ssl? (
@@ -41,6 +97,7 @@ RDEPEND+=" !net-libs/nodejs:0
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	sys-apps/coreutils
+	pgo? ( ${PN}_pgo_trainers_http2? ( >=net-libs/nghttp2-${NGHTTP2_V}[utils] ) )
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )"
 PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
@@ -78,17 +135,29 @@ pkg_setup() {
 
 	# For man page reasons
 	for v in 14 16 ; do
-		if has_version "net-libs/nodejs:${v}[npm]" ; then
+		if use npm && has_version "net-libs/nodejs:${v}[npm]" ; then
 			die \
 "You need to disable npm on net-libs/nodejs:${v}[npm].  Only enable\n\
 npm on the highest slot."
 		fi
-		if has_version "net-libs/nodejs:${v}[man]" ; then
+		if use man && has_version "net-libs/nodejs:${v}[man]" ; then
 			die \
 "You need to disable npm on net-libs/nodejs:${v}[man].  Only enable\n\
 man on the highest slot."
 		fi
 	done
+
+	for u in ${PN}_pgo_trainers_http ; do
+                if use "${u}" && has network-sandbox $FEATURES ; then
+eerror
+eerror "The ${u} USE flag requires FEATURES=\"-network-sandbox\" to be able to"
+eerror "download wrk to generate PGO profiles for that USE flag."
+eerror
+                        die
+                fi
+	done
+
+	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)."
 }
 
 src_prepare() {
@@ -125,7 +194,10 @@ src_prepare() {
 	default
 }
 
-src_configure() {
+src_configure() { :; }
+
+configure_pgx() {
+	emake clean
 	xdg_environment_reset
 
 	# LTO compiler flags are handled by configure.py itself
@@ -144,6 +216,17 @@ src_configure() {
 	use icu && myconf+=( --with-intl=system-icu ) || myconf+=( --with-intl=none )
 	use inspector || myconf+=( --without-inspector )
 	use npm || myconf+=( --without-npm )
+	if use pgo ; then
+		einfo "Forcing GCC for PGO"
+		CC=${CHOST}-gcc
+		CXX=${CHOST}-g++
+		LD=ld.bfd
+		if [[ "${PGO_PHASE}" == "pgi" ]] ; then
+			myconf+=( --enable-pgo-generate )
+		elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
+			myconf+=( --enable-pgo-use )
+		fi
+	fi
 	use snapshot || myconf+=( --without-node-snapshot )
 	if use ssl; then
 		use system-ssl && myconf+=( --shared-openssl --openssl-use-def-ca-store )
@@ -162,6 +245,13 @@ src_configure() {
 		*) myarch="${ABI}";;
 	esac
 
+	if use pgo ; then
+		# Force a deterministic location.
+		sed -i -e "s|fprofile-generate|fprofile-generate=${S}|g" \
+			-e "s|fprofile-use|fprofile-use=${S}|g" \
+			common.gypi || die
+	fi
+
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
 		linux_use_bundled_gold=0" \
@@ -172,10 +262,76 @@ src_configure() {
 		"${myconf[@]}" || die
 }
 
-src_compile() {
+build_pgx() {
 	emake -C out mksnapshot
 	pax-mark m "out/${BUILDTYPE}/mksnapshot"
 	emake -C out
+}
+
+run_trainers() {
+	local benchmark=( $(grep -l -r -e "createBenchmark" "benchmark" | sort) )
+	unset accepted
+	declare -A accepted
+	for t in ${BENCHMARK_TYPES[@]} ; do
+		for b in ${benchmark[@]} ; do
+			if use "${PN}_pgo_trainers_${t}" \
+				&& [[ "${b}" =~ ^benchmark/${t}/ ]] ; then
+				accepted["${b//\//_}"]="${b}"
+			fi
+		done
+	done
+
+	[[ ! -e "${S}/out/Release/node" ]] && die "Missing node"
+
+	init_pgo
+	init_local_npm
+	for b in ${accepted[@]} ; do
+		einfo "Running benchmark ${b}"
+		if [[ "${b}" =~ ^benchmark/http/ \
+			|| "${b}" =~ ^benchmark/https/ ]] ; then
+			if which autocannon ; then
+				node "${b}" benchmarker=h2load || die
+			else
+				node "${b}" benchmarker=wrk || die
+			fi
+		elif [[ "${b}" =~ ^benchmark/http2/ ]] ; then
+			node "${b}" benchmarker=h2load || die
+		else
+			node "${b}" || die
+		fi
+	done
+}
+
+init_pgo() {
+	export NODE_PATH="${S}/opt/Release"
+	export PATH="${S}/out/Release:${S}/deps/npm/bin:${HOME}/.npm-global/bin:${PATH}"
+}
+
+init_local_npm() {
+	mkdir -p "${HOME}/.npm-global" || die
+	npm config set prefix "${HOME}/.npm-global" || die
+	source "${HOME}/.profile" || die
+	ln -fs "${S}/deps" "${S}/out/Release" || die
+	if use ${PN}_pgo_trainers_http ; then
+		mkdir -p "${S}/out/Release/wrk" || die
+		cd "${S}/out/Release/wrk" || die
+		npm install wrk || die
+	fi
+}
+
+src_compile() {
+	if use pgo ; then
+		PGO_PHASE="pgi"
+		configure_pgx
+		build_pgx
+		run_trainers
+		PGO_PHASE="pgo"
+		configure_pgx
+		build_pgx
+	else
+		configure_pgx
+		build_pgx
+	fi
 }
 
 src_install() {
