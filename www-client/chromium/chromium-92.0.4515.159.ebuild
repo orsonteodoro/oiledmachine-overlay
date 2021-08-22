@@ -63,6 +63,9 @@ SRC_URI="
 # TODO: find/add mirrors for (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm
 
 RESTRICT="mirror"
+#PROPERTIES="interactive" # For interactive login in social networks for PGO profile generation. \
+# See _init_cr_pgo_trainers_rasterize_and_record_micro_top_25() function below \
+# Disabled until the inner workings is understood.
 
 # all-rights-reserved is for unfree websites or content from them.
 LICENSE_BENCHMARK_WEBSITES="
@@ -813,6 +816,7 @@ BDEPEND="
 			media-video/ffmpeg[encode,mp3,opus,vorbis,vpx]
 		)
 	)
+	vaapi? ( media-video/libva-utils )
 "
 # pgo related:  dev-python/requests is python3 but testing/scripts/run_performance_tests.py is python2
 
@@ -1319,6 +1323,10 @@ ewarn "problems are encountered."
 ewarn
 	fi
 
+	if use vaapi ; then
+		find_vaapi
+	fi
+
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
@@ -1373,6 +1381,189 @@ src_unpack() {
 		pushd "${S}/chrome/test/data/media" || die
 			unpack ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
 		popd
+	fi
+}
+
+# Full list of hw accelerated image processing
+# ffmpeg -filters | grep vaapi
+_gen_scaling() {
+	local encoding_format="${1}"
+	local w="${2}"
+	local h="${3}"
+	if use vaapi && ffmpeg -filters 2>/dev/null \
+		| grep -q -F -e "scale_vaapi" \
+		&& vainfo 2>/dev/null \
+		| grep -q -F -e "VAEntrypointVideoProc" \
+		&& vainfo 2>/dev/null \
+                | grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
+                && ffmpeg -hide_banner -encoders 2>/dev/null \
+                        | grep -q -F -e "${encoding_format,,}_vaapi" ; then
+		echo "scale_vaapi=w=${w}:h=${h}"
+	else
+		echo "scale=w=${w}:h=${h}"
+	fi
+}
+
+_gen_vaapi_filter() {
+	local encoding_format="${1}"
+	if use vaapi \
+		&& vainfo 2>/dev/null \
+		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
+		&& ffmpeg -hide_banner -encoders 2>/dev/null \
+			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
+		echo "format=nv12,hwupload,"
+	fi
+}
+
+_is_vaapi_allowed() {
+	local encoding_format="${1}"
+	if use vaapi && vainfo 2>/dev/null \
+		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
+		&& ffmpeg -hide_banner -encoders 2>/dev/null \
+			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
+		return 0
+	fi
+	return 1
+}
+
+DRM_RENDER_NODE=
+find_vaapi() {
+	if use vaapi && [[ -n "${CR_DRM_RENDER_NODE}" ]] ; then
+		einfo "User VA-API override"
+		# Per-package envvar overridable
+		DRM_RENDER_NODE=${CR_DRM_RENDER_NODE}
+	elif use vaapi ; then
+		einfo "Autodetecting VA-API device"
+		unset LIBVA_DRIVERS_PATH
+		unset LIBVA_DRIVER_NAME
+		unset DRM_RENDER_NODE
+		for d in $(find /dev/dri -name "render*") ; do
+			# Permute
+			for v in $(seq 2 -1 0) ; do # 2 GPU and 1 APU scenario
+				export DRI_PRIME=${v} # \
+				# See xrandr --listproviders for mapping, could be 1=dGPU, 0=APU/IGP
+				if vainfo 2>/dev/null 1>/dev/null ; then
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
+					LIBVA_DRIVER_NAME="iHD" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
+					export LIBVA_DRIVER_NAME="iHD"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
+					LIBVA_DRIVER_NAME="i965" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
+					export LIBVA_DRIVER_NAME="i965"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
+					LIBVA_DRIVER_NAME="radeonsi" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
+					export LIBVA_DRIVER_NAME="radeonsi"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
+					LIBVA_DRIVER_NAME="r600" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
+					export LIBVA_DRIVER_NAME="r600"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
+					LIBVA_DRIVER_NAME="r300" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
+					export LIBVA_DRIVER_NAME="r300"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri" \
+					LIBVA_DRIVER_NAME="radeonsi" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri"
+					export LIBVA_DRIVER_NAME="radeonsi"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri" \
+					LIBVA_DRIVER_NAME="r600" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri"
+					export LIBVA_DRIVER_NAME="r600"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri" \
+					LIBVA_DRIVER_NAME="r300" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri"
+					export LIBVA_DRIVER_NAME="r300"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri" \
+					LIBVA_DRIVER_NAME="radeonsi" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri"
+					export LIBVA_DRIVER_NAME="radeonsi"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri" \
+					LIBVA_DRIVER_NAME="r600" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri"
+					export LIBVA_DRIVER_NAME="r600"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri" \
+					LIBVA_DRIVER_NAME="r300" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri"
+					export LIBVA_DRIVER_NAME="r300"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/usr/lib64/dri/" \
+					LIBVA_DRIVER_NAME="nvidia" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/usr/lib64/dri/"
+					export LIBVA_DRIVER_NAME="nvidia"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
+					LIBVA_DRIVER_NAME="nvidia" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
+					export LIBVA_DRIVER_NAME="nvidia"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
+					LIBVA_DRIVER_NAME="vdpau" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
+					export LIBVA_DRIVER_NAME="vdpau"
+					export DRM_RENDER_NODE="${d}"
+				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
+					LIBVA_DRIVER_NAME="nouveau" \
+					vainfo 2>/dev/null 1>/dev/null ; then
+					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
+					export LIBVA_DRIVER_NAME="nouveau"
+					export DRM_RENDER_NODE="${d}"
+				fi
+			done
+		done
+	fi
+	vaapi_autodetect_failed_msg() {
+eerror
+eerror "VA-API autodetect failed.  Manual setup required."
+eerror
+eerror "Set the CR_DRM_RENDER_NODE per-package envvar to the DRM render node."
+eerror "See \`ls /dev/dri\` for a list of possibilities.  LIBVA_DRIVERS_PATH,"
+eerror "LIBVA_DRIVER_NAME, DRI_PRIME may also need to be set."
+eerror
+eerror "You may also disable the vaapi USE flag if there is difficulty"
+eerror "installing or configuring the driver."
+eerror
+	}
+	if use vaapi && [[ -n "${CR_DRM_RENDER_NODE}" ]] \
+		&& ! vainfo --display drm --device "${DRM_RENDER_NODE}" ; then
+		eerror "VA-API test failure"
+		vaapi_autodetect_failed_msg
+		die
+	elif use vaapi && [[ -z "${DRM_RENDER_NODE}" ]] ; then
+		vaapi_autodetect_failed_msg
+		die
+	elif use vaapi ; then
+		einfo "Using VA-API device with DRM render node ${DRM_RENDER_NODE}"
+		[[ -n "${LIBVA_DRIVER_NAME}" ]] \
+			&& einfo " LIBVA_DRIVER_NAME=${LIBVA_DRIVER_NAME}"
+		[[ -n "${LIBVA_DRIVERS_PATH}" ]] \
+			&& einfo " LIBVA_DRIVERS_PATH=${LIBVA_DRIVERS_PATH}"
 	fi
 }
 
@@ -1749,6 +1940,27 @@ eerror
 	if use pgo-full ; then
 		ASSET_CACHE="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/asset-cache"
 		addwrite "${ASSET_CACHE}"
+		mkdir -p "${ASSET_CACHE}" || die
+# TODO:  add fingerprint to verify completeness or metadata for changes.
+einfo
+einfo "The asset cache is located at ${ASSET_CACHE} and reserved for faster"
+einfo "rebuilds.  Remove it if problematic or incomplete copy."
+einfo
+		local drm_render_node=()
+		local init_ffmpeg_filter=()
+		if use vaapi ; then
+			if [[ -e ${DRM_RENDER_NODE} ]] ; then
+				export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # \
+				  # Prevent a sandbox violation and isolate between parallel running emerges.
+				drm_render_node=( -init_hw_device vaapi=drm_render_node:${DRM_RENDER_NODE} )
+			else
+				die "Missing VA-API device"
+			fi
+			if use vaapi && ffmpeg -filters 2>/dev/null \
+				| grep -q -F -e "scale_vaapi" ; then
+				init_ffmpeg_filter=( -filter_hw_device drm_render_node )
+			fi
+		fi
 		if use cr_pgo_trainers_memory_desktop ; then
 			einfo "Generating missing assets for the memory.desktop"
 			# Replaced missing assets
@@ -1758,31 +1970,64 @@ eerror
 
 			local aac_encoding=( -codec:a aac )
 			local h264_encoding=()
-			if has_version "media-video/ffmpeg[openh264]" ;then
-				h264_encoding+=( -c:v libopenh264 )
+			local vp8_decoding=()
+
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "VP8.*VAEntrypointVLD" \
+				&& [[ -e /dev/dri/renderD128 ]] ; then
+				vp8_decoding=( -hwaccel vaapi
+					-hwaccel_output_format vaapi
+					-hwaccel_device drm_render_node
+					-filter_hw_device drm_render_node )
+			fi
+
+			h264_baseline_profile=()
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "H264.*VAEntrypointEncSlice" \
+				&& ffmpeg -hide_banner -encoders 2>/dev/null \
+					| grep -q -F -e "h264_vaapi" ; then
+				h264_encoding=( -c:v h264_vaapi )
+				h264_baseline_profile=( -profile:v 578 )
+				# For quality see, ffmpeg -h full
+			elif has_version "media-video/ffmpeg[openh264]" ;then
+				h264_encoding=( -c:v libopenh264 )
+				h264_baseline_profile=( -profile:v 578 )
 			elif has_version "media-video/ffmpeg[x264]" ; then
-				h264_encoding+=( -c:v libx264 )
+				h264_encoding=( -c:v libx264 )
+				h264_baseline_profile=( -profile:v baseline )
 			fi
 
 			# bigbuck.webm -> buck-480p.mp4
 			einfo "Generating buck-480p.mp4 for the memory.desktop benchmark"
 			# The bunny.gif doesn't actually exist on the website but is converted from the
 			# movie explained in https://codereview.chromium.org/2243403006
-			ffmpeg -i "${S}/chrome/test/data/media/bigbuck.webm" \
+			cmd=( ffmpeg \
+				${drm_render_node[@]} \
+				${vp8_decoding[@]} \
+				-i "${S}/chrome/test/data/media/bigbuck.webm" \
 				${h264_encoding[@]} \
+				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+				-vf $(_gen_vaapi_filter "H264")$(_gen_scaling "H264" 852 -1)",crop=852:480:0:0" \
 				${aac_encoding[@]} \
-				-vf "scale=852:-1,crop=852:480:0:0" \
-				"${S}/tools/perf/page_sets/trivial_sites/buck-480p.mp4" || die
+				"${S}/tools/perf/page_sets/trivial_sites/buck-480p.mp4" )
+			einfo "${cmd[@]}"
+			"${cmd[@]}" || die "${cmd[@]}"
 
 			# bigbuck.webm -> bunny.gif
 			einfo "Generating bunny.gif (animated gif) for the memory.desktop benchmark"
 			# The bunny.gif doesn't actually exist on the website but is converted from the
 			# movie explained in https://codereview.chromium.org/2243403006
-			ffmpeg -i "${S}/chrome/test/data/media/bigbuck.webm" \
-				-vf "scale=852:-1,crop=852:480:0:0" \
+			cmd=( ffmpeg \
+				${drm_render_node[@]} \
+				${vp8_decoding[@]} \
+				-i "${S}/chrome/test/data/media/bigbuck.webm" \
+				$(_is_vaapi_allowed "GIF" && echo "${init_ffmpeg_filter[@]}") \
+				-vf $(_gen_scaling "GIF" 852 -1)",crop=852:480:0:0" \
 				-t 60.0 \
 				-f gif \
-				"${S}/tools/perf/page_sets/trivial_sites/bunny.gif" || die
+				"${S}/tools/perf/page_sets/trivial_sites/bunny.gif" )
+			einfo "${cmd[@]}"
+			"${cmd[@]}" || die "${cmd[@]}"
 			# For animated gif alternatives:
 			#sed -i -e "s|bunny.gif|bunny.gif|g" \
 			#	"${S}/tools/perf/page_sets/trivial_sites/trivial_gif.html"
@@ -1798,106 +2043,250 @@ eerror
 			local mp3_encoding=( -c:a libmp3lame )
 			local opus_encoding=( -c:a libopus )
 			local vorbis_encoding=( -c:a libvorbis )
-			local vp8_encoding=( -c:v libvpx )
-			local vp9_encoding=( -c:v libvpx-vp9 )
-			if has_version "media-video/ffmpeg[openh264]" ;then
-				h264_encoding+=( -c:v libopenh264 )
+			local vp8_decoding=()
+			local vp8_encoding=()
+			local vp9_decoding=()
+			local vp9_encoding=()
+
+			# vp8 : bigbuck.webm, tulip2.webm
+			# vp9 : (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm
+
+			# tulip2.webm is 1280x720 res, 2104 kb/s bitrate, 29.97 fps.  Audio bitrate is unknown.
+			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm is 3840x2160 res, 24124k bitrate, 59.94 fps.  Audio bitrate is unknown.
+
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "VP8.*VAEntrypointVLD" \
+				&& [[ -e /dev/dri/renderD128 ]] ; then
+				vp8_decoding=( -hwaccel vaapi
+					-hwaccel_output_format vaapi
+					-hwaccel_device drm_render_node
+					-filter_hw_device drm_render_node )
+			fi
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "VP9.*VAEntrypointVLD" \
+				&& [[ -e /dev/dri/renderD128 ]] ; then
+				vp9_decoding=( -hwaccel vaapi
+					-hwaccel_output_format vaapi
+					-hwaccel_device drm_render_node
+					-filter_hw_device drm_render_node )
+			fi
+
+			h264_baseline_profile=()
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "H264.*VAEntrypointEncSlice" \
+				&& ffmpeg -hide_banner -encoders 2>/dev/null \
+					| grep -q -F -e "h264_vaapi" ; then
+				h264_encoding=( -c:v h264_vaapi )
+				h264_baseline_profile=( -profile:v 578 )
+			elif has_version "media-video/ffmpeg[openh264]" ;then
+				h264_encoding=( -c:v libopenh264 )
+				h264_baseline_profile=( -profile:v 578 )
 			elif has_version "media-video/ffmpeg[x264]" ; then
-				h264_encoding+=( -c:v libx264 )
+				h264_encoding=( -c:v libx264 )
+				h264_baseline_profile=( -profile:v baseline )
+			fi
+
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "VP8.*VAEntrypointEncSlice" \
+				&& ffmpeg -hide_banner -encoders 2>/dev/null \
+					| grep -q -F -e "vp8_vaapi" ; then
+				vp8_encoding=( -c:v vp8_vaapi )
+			else
+				vp8_encoding=( -c:v libvpx )
+			fi
+
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "VP9.*VAEntrypointEncSlice" \
+				&& ffmpeg -hide_banner -encoders 2>/dev/null \
+					| grep -q -F -e "vp9_vaapi" ; then
+				vp9_encoding=( -c:v vp9_vaapi )
+			else
+				vp9_encoding=( -c:v libvpx-vp9 )
 			fi
 
 			# tulip2.webm -> tulip2.m4a
-			ffmpeg -i \
-				"${S}/media/test/data/tulip2.webm" \
+			cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
 				-vn \
 				${aac_encoding[@]} \
-				"${S}/tools/perf/page_sets/media_cases/tulip2.m4a" \
-				|| die
+				"${S}/tools/perf/page_sets/media_cases/tulip2.m4a" )
+			einfo "${cmd[@]}"
+			"${cmd[@]}" || die "${cmd[@]}"
 
 			# tulip2.webm -> tulip2.mp3
-			ffmpeg -i \
-				"${S}/media/test/data/tulip2.webm" \
+			cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
 				-vn \
 				${mp3_encoding[@]} \
-				"${S}/tools/perf/page_sets/media_cases/tulip2.mp3" \
-				|| die
+				"${S}/tools/perf/page_sets/media_cases/tulip2.mp3" )
+			einfo "${cmd[@]}"
+			"${cmd[@]}" || die "${cmd[@]}"
 
 			# tulip2.webm -> tulip2.mp4
-			ffmpeg -i \
-				"${S}/media/test/data/tulip2.webm" \
+			h264_filter_args=( -vf "format=nv12,hwupload" )
+			cmd=( ffmpeg \
+				${drm_render_node[@]} \
+				${vp8_decoding[@]} \
+				-i "${S}/media/test/data/tulip2.webm" \
 				${h264_encoding[@]} \
+				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+				$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
+				${h264_baseline_profile[@]} \
 				${aac_encoding[@]} \
-				"${S}/tools/perf/page_sets/media_cases/tulip2.h264" \
-				|| die
+				"${S}/tools/perf/page_sets/media_cases/tulip2.mp4" )
+			einfo "${cmd[@]}"
+			"${cmd[@]}" || die "${cmd[@]}"
 
 			# tulip2.webm -> tulip2.ogg
-			ffmpeg -i \
-				"${S}/media/test/data/tulip2.webm" \
+			cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
 				-vn \
 				${vorbis_encoding[@]} \
-				"${S}/tools/perf/page_sets/media_cases/tulip2.ogg" \
-				|| die
+				"${S}/tools/perf/page_sets/media_cases/tulip2.ogg" )
+			einfo "${cmd[@]}"
+			"${cmd[@]}" || die "${cmd[@]}"
 
-			# tulip2.webm -> tulip2.vp9.webm ; For MSE (DRM) and non MSE
-			( ffmpeg -i \
-				"${S}/media/test/data/tulip2.webm" \
-				${vp9_encoding[@]} \
-				-b:v 0 -crf 31 \
-				-pass 1 \
-				-an -f null /dev/null || die ) \
-			&& \
-			ffmpeg -i \
-				"${S}/media/test/data/tulip2.webm" \
-				${vp9_encoding[@]} \
-				-b:v 0 -crf 31 \
-				-pass 2 \
-				${opus_encoding[@]} \
-				"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" \
-				|| die
+			# tulip2.webm -> tulip2.vp9.webm ; For MSE (DRM) and non MSE tests
+			# Must be <= wifi bitrate.  U = 2.8Mbps upload, so A kbps for audio and V = ( U - A ) video max.
+			# For no audio, then V = U for max bitrate.
+			if [[ -f "${ASSET_CACHE}/tulip2.vp9.webm" ]] ; then
+				einfo "Using pregenerated and cached tulip2.vp9.webm"
+				cp -a "${ASSET_CACHE}/tulip2.vp9.webm" \
+					"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" \
+					|| die
+			else
+				if _is_vaapi_allowed "VP9" ; then
+					# Likely only single pass supported
+					# Quality is auto but based on other args.
+					# https://trac.ffmpeg.org/wiki/Hardware/VAAPI mentions how vp9 quality is handled indirectly.
+					vp9_filter_args=( -vf "format=nv12,hwupload" )
+					cmd=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp8_decoding[@]} \
+						-i "${S}/media/test/data/tulip2.webm" \
+						${vp9_encoding[@]} \
+						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
+						$(_is_vaapi_allowed "VP9" && echo "${vp9_filter_args[@]}") \
+						-maxrate 1485k -minrate 512k -b:v 1024k \
+						${opus_encoding[@]} \
+						"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" )
+					einfo "${cmd[@]}"
+					"${cmd[@]}" || die "${cmd[@]}"
+				else
+					# See https://developers.google.com/media/vp9/settings/vod
+					cmd1=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp8_decoding[@]} \
+						-i "${S}/media/test/data/tulip2.webm" \
+						${vp9_encoding[@]} \
+						-maxrate 1485k -minrate 512k -b:v 1024k -crf 31 \
+						-pass 1 \
+						-an -f null /dev/null )
+					cmd2=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp8_decoding[@]} \
+						-i "${S}/media/test/data/tulip2.webm" \
+						${vp9_encoding[@]} \
+						-maxrate 1485k -minrate 512k -b:v 1024k -crf 31 \
+						-pass 2 \
+						${opus_encoding[@]} \
+						"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" )
+					einfo "${cmd1[@]} && ${cmd2[@]}"
+					( "${cmd1[@]}" || die "${cmd1[@]}" ) \
+					&& \
+					( "${cmd2[@]}" || die "${cmd2[@]}" )
+				fi
+				einfo "Saving work to ${ASSET_CACHE}/tulip2.vp9.webm"
+				cp -a "${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" \
+					"${ASSET_CACHE}/tulip2.vp9.webm" || die
+			fi
 
 			# tulip2.webm -> crowd1080.mp4
-			ffmpeg -i \
-				"${S}/media/test/data/tulip2.webm" \
+			h264_filter_args=( -vf "format=nv12,hwupload" )
+			cmd=( ffmpeg \
+				${drm_render_node[@]} \
+				${vp8_decoding[@]} \
+				-i "${S}/media/test/data/tulip2.webm" \
 				${h264_encoding[@]} \
+				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+				$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
 				${aac_encoding[@]} \
 				-r 50 \
-				"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" \
-				|| die
+				"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" )
+			einfo "${cmd[@]}"
+			"${cmd[@]}" || die "${cmd[@]}"
 
 			# tulip2.webm -> crowd1080.webm
-			ffmpeg -i \
-				"${S}/media/test/data/tulip2.webm" \
+			vp8_filter_args=( -vf "format=nv12,hwupload" )
+			cmd=( ffmpeg \
+				${drm_render_node[@]} \
+				${vp8_decoding[@]} \
+				-i "${S}/media/test/data/tulip2.webm" \
 				${vp8_encoding[@]} \
+				$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
+				$(_is_vaapi_allowed "VP8" && echo "${vp8_filter_args[@]}") \
 				${vorbis_encoding[@]} \
 				-r 50 \
-				"${S}/tools/perf/page_sets/media_cases/crowd1080.webm" \
-				|| die
+				"${S}/tools/perf/page_sets/media_cases/crowd1080.webm" )
+			einfo "${cmd[@]}"
+			"${cmd[@]}" || die "${cmd[@]}"
 
 			# tulip2.webm -> crowd1080_vp9.webm
-			ffmpeg -i \
-				"${S}/media/test/data/tulip2.webm" \
-				${vp9_encoding[@]} \
-				-b:v 0 -crf 31 \
-				-r 50 \
-				-pass 1 \
-				-an -f null /dev/null \
-			&& \
-			ffmpeg -i \
-				"${S}/media/test/data/tulip2.webm" \
-				${vp9_encoding[@]} \
-				-b:v 0 -crf 31 \
-				-r 50 \
-				-pass 2 \
-				"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" \
-				|| die
+			if [[ -f "${ASSET_CACHE}/crowd1080_vp9.webm" ]] ; then
+				einfo "Using pregenerated and cached crowd1080_vp9.webm"
+				cp -a "${ASSET_CACHE}/crowd1080_vp9.webm" \
+					"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" \
+					|| die
+			else
+				if _is_vaapi_allowed "VP9" ; then
+					# Likely only single pass supported
+					vp9_filter_args=( -vf "format=nv12,hwupload" )
+					cmd=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp8_decoding[@]} \
+						-i "${S}/media/test/data/tulip2.webm" \
+						${vp9_encoding[@]} \
+						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
+						$(_is_vaapi_allowed "VP9" && echo "${vp9_filter_args[@]}") \
+						-maxrate 2610k -minrate 900k -b:v 1800k \
+						-r 50 \
+						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
+					einfo "${cmd[@]}"
+					"${cmd[@]}" || die "${cmd[@]}"
+				else
+					# See https://developers.google.com/media/vp9/settings/vod
+					cmd1=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp8_decoding[@]} \
+						-i "${S}/media/test/data/tulip2.webm" \
+						${vp9_encoding[@]} \
+						-maxrate 2610k -minrate 900k -b:v 1800k -crf 31 \
+						-r 50 \
+						-pass 1 \
+						-an -f null /dev/null )
+					cmd2=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp8_decoding[@]} \
+						-i "${S}/media/test/data/tulip2.webm" \
+						${vp9_encoding[@]} \
+						-maxrate 2610k -minrate 900k -b:v 1800k -crf 31 \
+						-r 50 \
+						-pass 2 \
+						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
+					einfo "${cmd1[@]} && ${cmd2[@]}"
+					( "${cmd1[@]}" || die "${cmd1[@]}" ) \
+					&& \
+					( "${cmd2[@]}" || die "${cmd2[@]}" )
+				fi
+				einfo "Saving work to ${ASSET_CACHE}/crowd1080_vp9.webm"
+				cp -a "${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" \
+					"${ASSET_CACHE}/crowd1080_vp9.webm" || die
+			fi
 
 			# TODO: replace missing assets with cc0 licensed audio or video
-			# Missing asset -> aac_audio.mp4 ; For MSE (DRM)
-			#ffmpeg -i \
-			#	"${S}/tools/perf/page_sets/media_cases/" \
+			# Missing asset -> aac_audio.mp4 ; For MSE (DRM) tests
+			#cmd=( ffmpeg -i "${S}/tools/perf/page_sets/media_cases/" \
 			#	${aac_encoding[@]} \
-			#	"${S}/tools/perf/page_sets/media_cases/aac_audio.mp4" \
-			#	|| die
+			#	"${S}/tools/perf/page_sets/media_cases/aac_audio.mp4" )
+			#einfo "${cmd[@]}"
+			#"${cmd[@]}" || die "${cmd[@]}"
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_1080p60fps_vp9.webm
 			# 1920 x 1080 res ; must be 2 min
@@ -1907,27 +2296,52 @@ eerror
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
 					|| die
 			else
-				( ffmpeg -i \
-					$(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
-					${vp9_encoding[@]} \
-					-b:v 0 -crf 31 \
-					-vf scale=-1:1080 \
-					-r 60 \
-					-t 120.0 \
-					-pass 1 \
-					-an -f null /dev/null || die ) \
-				&& \
-				ffmpeg -i \
-					$(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
-					${vp9_encoding[@]} \
-					-b:v 0 -crf 31 \
-					-vf scale=-1:1080 \
-					-r 60 \
-					-t 120.0 \
-					-pass 2 \
-					${opus_encoding[@]} \
-					"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
-					|| die
+				if _is_vaapi_allowed "VP9" ; then
+					# Likely only single pass supported
+					cmd=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp9_decoding[@]} \
+						-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+						${vp9_encoding[@]} \
+						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
+						-vf $(_gen_vaapi_filter "VP9")$(_gen_scaling "VP9" -1 1080) \
+						-maxrate 26100k -minrate 9000k -b:v 18000k \
+						-r 60 \
+						-t 120.0 \
+						${opus_encoding[@]} \
+						"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" )
+					einfo "${cmd[@]}"
+					"${cmd[@]}" || die "${cmd[@]}"
+				else
+					# See https://developers.google.com/media/vp9/settings/vod
+					cmd1=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp9_decoding[@]} \
+						-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+						${vp9_encoding[@]} \
+						-vf scale=w=-1:h=1080 \
+						-maxrate 26100k -minrate 9000k -b:v 18000k -crf 31 \
+						-r 60 \
+						-t 120.0 \
+						-pass 1 \
+						-an -f null /dev/null )
+					cmd2=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp9_decoding[@]} \
+						-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+						${vp9_encoding[@]} \
+						-vf scale=w=-1:h=1080 \
+						-maxrate 26100k -minrate 9000k -b:v 18000k -crf 31 \
+						-r 60 \
+						-t 120.0 \
+						-pass 2 \
+						${opus_encoding[@]} \
+						"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" )
+					einfo "${cmd1[@]} && ${cmd2[@]}"
+					( "${cmd1[@]}" || die "${cmd1[@]}" ) \
+					&& \
+					( "${cmd2[@]}" || die "${cmd2[@]}" )
+				fi
 				einfo "Saving work to ${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm"
 				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
 					"${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" || die
@@ -1936,13 +2350,18 @@ eerror
 				"${S}/tools/perf/page_sets/media_cases.py" || die
 
 			# See tools/perf/page_sets/media_cases/mse.js
-			# Missing asset -> h264_video.mp4 ; For MSE (DRM)
-			#ffmpeg -i \
-			#	"${S}/tools/perf/page_sets/media_cases/" \
+			# Missing asset -> h264_video.mp4 ; For MSE (DRM) tests
+			#h264_filter_args=( -vf "format=nv12,hwupload" )
+			#cmd=( ffmpeg \
+			#	${drm_render_node[@]} \
+			#	-i "${S}/tools/perf/page_sets/media_cases/" \
 			#	${h264_encoding[@]} \
+			#	$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+			#	$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
 			#	${aac_encoding[@]} \
-			#	"${S}/tools/perf/page_sets/media_cases/h264_video.mp4" \
-			#	|| die
+			#	"${S}/tools/perf/page_sets/media_cases/h264_video.mp4" )
+			#einfo "${cmd[@]}"
+			#"${cmd[@]}" || die "${cmd[@]}"
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_720p30fps.mp4
 			# 1280 x 720 res ; must be 2 min
@@ -1952,15 +2371,19 @@ eerror
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
 					|| die
 			else
-				ffmpeg -i \
-					$(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+				cmd=( ffmpeg \
+					${drm_render_node[@]} \
+					${vp9_decoding[@]} \
+					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 					${h264_encoding[@]} \
-					-vf scale=-1:720
+					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+					-vf $(_gen_vaapi_filter "H264")$(_gen_scaling "H264" -1 720) \
 					-r 30 \
 					${aac_encoding[@]} \
 					-t 120.0 \
-					"${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
-					|| die
+					"${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
 				einfo "Saving work to ${ASSET_CACHE}/wild_animal_720p30fps.mp4"
 				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
 					"${ASSET_CACHE}/wild_animal_720p30fps.mp4" || die
@@ -1974,18 +2397,71 @@ eerror
 			local aac_encoding=( -codec:a aac )
 			local av1_encoding=()
 			local h264_encoding=()
-			local vp8_encoding=( -c:v libvpx )
-			local vp9_encoding=( -c:v libvpx-vp9 )
+			local vp8_decoding=()
+			local vp8_encoding=()
+			local vp9_decoding=()
+			local vp9_encoding=()
 			local vorbis_encoding=( -c:a libvorbis )
-			if has_version "media-video/ffmpeg[rav1e]" ;then
-				av1_encoding+=( -c:v librav1e )
-			elif has_version "media-video/ffmpeg[libaom]" ; then
-				av1_encoding+=( -c:v libaom-av1 )
+
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "VP8.*VAEntrypointVLD" \
+				&& [[ -e /dev/dri/renderD128 ]] ; then
+				vp8_decoding=( -hwaccel vaapi
+					-hwaccel_output_format vaapi
+					-hwaccel_device drm_render_node
+					-filter_hw_device drm_render_node )
 			fi
-			if has_version "media-video/ffmpeg[openh264]" ;then
-				h264_encoding+=( -c:v libopenh264 )
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "VP9.*VAEntrypointVLD" \
+				&& [[ -e /dev/dri/renderD128 ]] ; then
+				vp9_decoding=( -hwaccel vaapi
+					-hwaccel_output_format vaapi
+					-hwaccel_device drm_render_node
+					-filter_hw_device drm_render_node )
+			fi
+
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "AV1.*VAEntrypointEncSlice" \
+				&& ffmpeg -hide_banner -encoders 2>/dev/null \
+					| grep -q -F -e "av1_vaapi" ; then
+				av1_encoding=( -c:v av1_vaapi )
+			elif has_version "media-video/ffmpeg[rav1e]" ;then
+				av1_encoding=( -c:v librav1e )
+			elif has_version "media-video/ffmpeg[libaom]" ; then
+				av1_encoding=( -c:v libaom-av1 )
+			fi
+
+			h264_baseline_profile=()
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "H264.*VAEntrypointEncSlice" \
+				&& ffmpeg -hide_banner -encoders 2>/dev/null \
+					| grep -q -F -e "h264_vaapi" ; then
+				h264_encoding=( -c:v h264_vaapi )
+				h264_baseline_profile=( -profile:v 578 )
+			elif has_version "media-video/ffmpeg[openh264]" ;then
+				h264_encoding=( -c:v libopenh264 )
+				h264_baseline_profile=( -profile:v 578 )
 			elif has_version "media-video/ffmpeg[x264]" ; then
-				h264_encoding+=( -c:v libx264 )
+				h264_encoding=( -c:v libx264 )
+				h264_baseline_profile=( -profile:v baseline )
+			fi
+
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "VP8.*VAEntrypointEncSlice" \
+				&& ffmpeg -hide_banner -encoders 2>/dev/null \
+					| grep -q -F -e "vp8_vaapi" ; then
+				vp8_encoding=( -c:v vp8_vaapi )
+			else
+				vp8_encoding=( -c:v libvpx )
+			fi
+
+			if use vaapi && vainfo 2>/dev/null \
+				| grep -q -G -e "VP9.*VAEntrypointEncSlice" \
+				&& ffmpeg -hide_banner -encoders 2>/dev/null \
+					| grep -q -F -e "vp9_vaapi" ; then
+				vp9_encoding=( -c:v vp9_vaapi )
+			else
+				vp9_encoding=( -c:v libvpx-vp9 )
 			fi
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> garden2_10s.mp4
@@ -1996,14 +2472,18 @@ eerror
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
 					|| die
 			else
-				ffmpeg -i \
-					$(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+				cmd=( ffmpeg \
+					${drm_render_node[@]} \
+					${vp9_decoding[@]} \
+					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 					${h264_encoding[@]} \
-					-vf scale=-1:2160 \
+					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+					-vf $(_gen_vaapi_filter "H264")$(_gen_scaling "H264" -1 2160) \
 					${aac_encoding[@]} \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
-					-t 10 \
-					|| die
+					-t 10 )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
 				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.mp4"
 				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
 					"${ASSET_CACHE}/wild_animal_10s.mp4" || die
@@ -2019,14 +2499,18 @@ eerror
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
 					|| die
 			else
-				ffmpeg -i \
-					$(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+				cmd=( ffmpeg \
+					${drm_render_node[@]} \
+					${vp9_decoding[@]} \
+					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 					${vp8_encoding[@]} \
-					-vf scale=-1:2160 \
+					$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
+					-vf $(_gen_vaapi_filter "VP8")$(_gen_scaling "VP8" -1 2160) \
 					${vorbis_encoding[@]} \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
-					-t 10 \
-					|| die
+					-t 10 )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
 				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.webm"
 				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
 					"${ASSET_CACHE}/wild_animal_10s.webm" || die
@@ -2043,24 +2527,38 @@ eerror
 					|| die
 			else
 				einfo "Generating test video.  Estimated completion time: several min to hour(s)."
-				ffmpeg -f lavfi -i testsrc=duration=120:size=3840x2160:rate=60 \
+				vp9_filter_args=( -vf "format=nv12,hwupload" )
+				libvpx_vp9_args=( -crf 31 )
+				cmd=( ffmpeg \
+					${drm_render_node[@]} \
+					-f lavfi -i testsrc=duration=120:size=3840x2160:rate=60 \
 					${vp9_encoding} \
+					$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
+					$(_is_vaapi_allowed "VP9" && echo "${vp9_filter_args[@]}") \
+					-maxrate 26100k -minrate 9000k -b:v 18000k \
+					$(_is_vaapi_allowed "VP9" || echo "${libvpx_vp9_args[@]}") \
 					-an \
-					"${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
-					|| die
+					"${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
 				einfo "Saving work to ${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm"
 				cp -a "${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
 					"${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" || die
 			fi
 
-			# tulip2.webm -> tulip0.av1.mp4 ; For MSE (DRM)
-			ffmpeg -i \
-				"${S}/media/test/data/tulip2.webm" \
+			# tulip2.webm -> tulip0.av1.mp4 ; For MSE (DRM) tests
+			av1_filter_args=( -vf "format=nv12,hwupload" )
+			cmd=( ffmpeg \
+				${drm_render_node[@]} \
+				${vp8_decoding[@]} \
+				-i "${S}/media/test/data/tulip2.webm" \
 				${av1_encoding[@]} \
+				$(_is_vaapi_allowed "AV1" && echo "${init_ffmpeg_filter[@]}") \
+				$(_is_vaapi_allowed "AV1" && echo "${av1_filter_args[@]}") \
 				-an \
-				"${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" \
-				|| die
-
+				"${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
 		fi
 
 		local missing_assets=(
