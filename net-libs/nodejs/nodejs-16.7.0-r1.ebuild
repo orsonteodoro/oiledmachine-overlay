@@ -71,7 +71,7 @@ pkg_pretend() {
 pkg_setup() {
 	python-any-r1_pkg_setup
 
-	einfo "The ${SLOT_MAJOR}.x series is End Of Life (EOL) as of 2024-04-30."
+	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2024-04-30."
 
 	# For man page reasons
 	for v in 12 14 ; do
