@@ -2190,14 +2190,13 @@ einfo
 			fi
 
 			# tulip2.webm -> crowd1080.mp4
-			h264_filter_args=( -vf "format=nv12,hwupload" )
 			cmd=( ffmpeg \
 				${drm_render_node[@]} \
 				${vp8_decoding[@]} \
 				-i "${S}/media/test/data/tulip2.webm" \
 				${h264_encoding[@]} \
 				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-				$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
+				-vf $(_gen_vaapi_filter "H264")"minterpolate=fps=50" \
 				${aac_encoding[@]} \
 				-r 50 \
 				"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" )
@@ -2212,7 +2211,7 @@ einfo
 				-i "${S}/media/test/data/tulip2.webm" \
 				${vp8_encoding[@]} \
 				$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
-				$(_is_vaapi_allowed "VP8" && echo "${vp8_filter_args[@]}") \
+				-vf $(_gen_vaapi_filter "VP8")"minterpolate=fps=50" \
 				${vorbis_encoding[@]} \
 				-r 50 \
 				"${S}/tools/perf/page_sets/media_cases/crowd1080.webm" )
@@ -2236,6 +2235,7 @@ einfo
 						${vp9_encoding[@]} \
 						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
 						$(_is_vaapi_allowed "VP9" && echo "${vp9_filter_args[@]}") \
+						-vf $(_gen_vaapi_filter "VP9")"minterpolate=fps=50" \
 						-maxrate 2610k -minrate 900k -b:v 1800k \
 						-r 50 \
 						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
@@ -2248,6 +2248,7 @@ einfo
 						${vp8_decoding[@]} \
 						-i "${S}/media/test/data/tulip2.webm" \
 						${vp9_encoding[@]} \
+						-vf "minterpolate=fps=50" \
 						-maxrate 2610k -minrate 900k -b:v 1800k -crf 31 \
 						-r 50 \
 						-pass 1 \
@@ -2257,6 +2258,7 @@ einfo
 						${vp8_decoding[@]} \
 						-i "${S}/media/test/data/tulip2.webm" \
 						${vp9_encoding[@]} \
+						-vf "minterpolate=fps=50" \
 						-maxrate 2610k -minrate 900k -b:v 1800k -crf 31 \
 						-r 50 \
 						-pass 2 \
