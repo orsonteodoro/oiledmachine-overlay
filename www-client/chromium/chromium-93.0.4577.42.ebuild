@@ -1929,14 +1929,26 @@ eerror
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 
 	if use pgo-full ; then
+		export ASSET_CACHE_REVISION=1 # Bump on every change of output.
 		ASSET_CACHE="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/asset-cache"
 		addwrite "${ASSET_CACHE}"
+
+		if [[ ! -f "${ASSET_CACHE}/.cache-control" ]] ; then
+			einfo "Restarting asset cache"
+			rm -rf "${ASSET_CACHE}"
+		else
+			local x_asset_cache_revision=$(grep -r \
+				-e "REVISION=" "${ASSET_CACHE}/.cache-control" \
+				| cut -f 2 -d "=")
+			if (( ${x_asset_cache_revision} < ${ASSET_CACHE_REVISION} )) ; then
+				einfo "Restarting asset cache"
+				rm -rf "${ASSET_CACHE}"
+			fi
+			echo "REVISION=${ASSET_CACHE_REVISION}" \
+				> "${ASSET_CACHE}/.cache-control"
+		fi
+
 		mkdir -p "${ASSET_CACHE}" || die
-# TODO:  add fingerprint to verify completeness or metadata for changes.
-einfo
-einfo "The asset cache is located at ${ASSET_CACHE} and reserved for faster"
-einfo "rebuilds.  Remove it if problematic or incomplete copy."
-einfo
 		local drm_render_node=()
 		local init_ffmpeg_filter=()
 		if use vaapi ; then
@@ -2137,7 +2149,11 @@ einfo
 			# tulip2.webm -> tulip2.vp9.webm ; For MSE (DRM) and non MSE tests
 			# Must be <= wifi bitrate.  U = 2.8Mbps upload, so A kbps for audio and V = ( U - A ) video max.
 			# For no audio, then V = U for max bitrate.
-			if [[ -f "${ASSET_CACHE}/tulip2.vp9.webm" ]] ; then
+			if [[ -f "${ASSET_CACHE}/tulip2.vp9.webm" \
+				&& -f "${ASSET_CACHE}/tulip2.vp9.webm.sha512" \
+				&& $(cat "${ASSET_CACHE}/tulip2.vp9.webm.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/tulip2.vp9.webm" \
+						| cut -f 1 -d " ") ]] ; then
 				einfo "Using pregenerated and cached tulip2.vp9.webm"
 				cp -a "${ASSET_CACHE}/tulip2.vp9.webm" \
 					"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" \
@@ -2184,9 +2200,11 @@ einfo
 					&& \
 					( "${cmd2[@]}" || die "${cmd2[@]}" )
 				fi
-				einfo "Saving work to ${ASSET_CACHE}/tulip2.vp9.webm"
+				einfo "Saving work to ${ASSET_CACHE}/tulip2.vp9.webm for faster rebuilds."
 				cp -a "${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" \
 					"${ASSET_CACHE}/tulip2.vp9.webm" || die
+				sha512sum "${ASSET_CACHE}/tulip2.vp9.webm" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/tulip2.vp9.webm.sha512" || die
 			fi
 
 			# tulip2.webm -> crowd1080.mp4
@@ -2219,7 +2237,11 @@ einfo
 			"${cmd[@]}" || die "${cmd[@]}"
 
 			# tulip2.webm -> crowd1080_vp9.webm
-			if [[ -f "${ASSET_CACHE}/crowd1080_vp9.webm" ]] ; then
+			if [[ -f "${ASSET_CACHE}/crowd1080_vp9.webm" \
+				&& -f "${ASSET_CACHE}/crowd1080_vp9.webm.sha512" \
+				&& $(cat "${ASSET_CACHE}/crowd1080_vp9.webm.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/crowd1080_vp9.webm" \
+						| cut -f 1 -d " ") ]] ; then
 				einfo "Using pregenerated and cached crowd1080_vp9.webm"
 				cp -a "${ASSET_CACHE}/crowd1080_vp9.webm" \
 					"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" \
@@ -2268,9 +2290,11 @@ einfo
 					&& \
 					( "${cmd2[@]}" || die "${cmd2[@]}" )
 				fi
-				einfo "Saving work to ${ASSET_CACHE}/crowd1080_vp9.webm"
+				einfo "Saving work to ${ASSET_CACHE}/crowd1080_vp9.webm for faster rebuilds."
 				cp -a "${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" \
 					"${ASSET_CACHE}/crowd1080_vp9.webm" || die
+				sha512sum "${ASSET_CACHE}/crowd1080_vp9.webm" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/crowd1080_vp9.webm.sha512" || die
 			fi
 
 			# TODO: replace missing assets with cc0 licensed audio or video
@@ -2283,7 +2307,11 @@ einfo
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_1080p60fps_vp9.webm
 			# 1920 x 1080 res ; must be 2 min
-			if [[ -f "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" ]] ; then
+			if [[ -f "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" \
+				&& -f "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm.sha512" \
+				&& $(cat "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" \
+						| cut -f 1 -d " ") ]] ; then
 				einfo "Using pregenerated and cached wild_animal_1080p60fps_vp9.webm"
 				cp -a "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
@@ -2335,9 +2363,11 @@ einfo
 					&& \
 					( "${cmd2[@]}" || die "${cmd2[@]}" )
 				fi
-				einfo "Saving work to ${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm"
+				einfo "Saving work to ${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm for faster rebuilds."
 				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
 					"${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" || die
+				sha512sum "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm.sha512" || die
 			fi
 			sed -i -e "s|boat_1080p60fps_vp9.webm|animal_1080p60fps_vp9.webm|g" \
 				"${S}/tools/perf/page_sets/media_cases.py" || die
@@ -2358,7 +2388,11 @@ einfo
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_720p30fps.mp4
 			# 1280 x 720 res ; must be 2 min
-			if [[ -f "${ASSET_CACHE}/wild_animal_720p30fps.mp4" ]] ; then
+			if [[ -f "${ASSET_CACHE}/wild_animal_720p30fps.mp4" \
+				&& -f "${ASSET_CACHE}/wild_animal_720p30fps.mp4.sha512" \
+				&& $(cat "${ASSET_CACHE}/wild_animal_720p30fps.mp4.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/wild_animal_720p30fps.mp4" \
+						| cut -f 1 -d " ") ]] ; then
 				einfo "Using pregenerated and cached wild_animal_720p30fps.mp4"
 				cp -a "${ASSET_CACHE}/wild_animal_720p30fps.mp4" \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
@@ -2377,9 +2411,11 @@ einfo
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" )
 				einfo "${cmd[@]}"
 				"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/wild_animal_720p30fps.mp4"
+				einfo "Saving work to ${ASSET_CACHE}/wild_animal_720p30fps.mp4 for faster rebuilds."
 				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
 					"${ASSET_CACHE}/wild_animal_720p30fps.mp4" || die
+				sha512sum "${ASSET_CACHE}/wild_animal_720p30fps.mp4" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/wild_animal_720p30fps.mp4.sha512" || die
 			fi
 			sed -i -e "s|foodmarket_720p30fps.mp4|wild_animal_720p30fps.mp4|g" \
 				"${S}/tools/perf/page_sets/media_cases.py" || die
@@ -2459,7 +2495,11 @@ einfo
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> garden2_10s.mp4
 			# 3840 x 2160 resolution
-			if [[ -f "${ASSET_CACHE}/wild_animal_10s.mp4" ]] ; then
+			if [[ -f "${ASSET_CACHE}/wild_animal_10s.mp4" \
+				&& -f "${ASSET_CACHE}/wild_animal_10s.mp4.sha512" \
+				&& $(cat "${ASSET_CACHE}/wild_animal_10s.mp4.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/wild_animal_10s.mp4" \
+						| cut -f 1 -d " ") ]] ; then
 				einfo "Using pregenerated and cached wild_animal_10s.mp4"
 				cp -a "${ASSET_CACHE}/wild_animal_10s.mp4" \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
@@ -2477,16 +2517,22 @@ einfo
 					-t 10 )
 				einfo "${cmd[@]}"
 				"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.mp4"
+				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.mp4 for faster rebuilds."
 				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
 					"${ASSET_CACHE}/wild_animal_10s.mp4" || die
+				sha512sum "${ASSET_CACHE}/wild_animal_10s.mp4" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/wild_animal_10s.mp4.sha512" || die
 			fi
 			sed -i -e "s|garden2_10s.mp4|wild_animal_10s.mp4|g" \
 				"${S}/tools/perf/page_sets/media_cases.py" || die
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> garden2_10s.webm
 			# 3840 x 2160 resolution
-			if [[ -f "${ASSET_CACHE}/wild_animal_10s.webm" ]] ; then
+			if [[ -f "${ASSET_CACHE}/wild_animal_10s.webm" \
+				&& -f "${ASSET_CACHE}/wild_animal_10s.webm.sha512" \
+				&& $(cat "${ASSET_CACHE}/wild_animal_10s.webm.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/wild_animal_10s.webm" \
+						| cut -f 1 -d " ") ]] ; then
 				einfo "Using pregenerated and cached wild_animal_10s.webm"
 				cp -a "${ASSET_CACHE}/wild_animal_10s.webm" \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
@@ -2504,16 +2550,22 @@ einfo
 					-t 10 )
 				einfo "${cmd[@]}"
 				"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.webm"
+				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.webm for faster rebuilds."
 				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
 					"${ASSET_CACHE}/wild_animal_10s.webm" || die
+				sha512sum "${ASSET_CACHE}/wild_animal_10s.webm" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/wild_animal_10s.webm.sha512" || die
 			fi
 			sed -i -e "s|garden2_10s.webm|wild_animal_10s.webm|g" \
 				"${S}/tools/perf/page_sets/media_cases.py" || die
 
 			# ffmpeg -> smpte_3840x2160_60fps_vp9.webm
 			# 3840 x 2160 resolution ; 120s required
-			if [[ -f "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" ]] ; then
+			if [[ -f "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" \
+				&& -f "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm.sha512" \
+				&& $(cat "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" \
+						| cut -f 1 -d " ") ]] ; then
 				einfo "Using pregenerated and cached smpte_3840x2160_60fps_vp9.webm"
 				cp -a "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" \
 					"${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
@@ -2534,9 +2586,11 @@ einfo
 					"${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" )
 				einfo "${cmd[@]}"
 				"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm"
+				einfo "Saving work to ${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm for faster rebuilds."
 				cp -a "${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
 					"${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" || die
+				sha512sum "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm.sha512" || die
 			fi
 
 			# tulip2.webm -> tulip0.av1.mp4 ; For MSE (DRM) tests
