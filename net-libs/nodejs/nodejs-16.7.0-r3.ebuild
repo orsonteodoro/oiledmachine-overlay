@@ -15,15 +15,14 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm pax_kernel
+IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm pax-kernel
 +snapshot +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man"
 REQUIRED_USE+=" inspector? ( icu ssl )
 		npm? ( ssl )
 		system-icu? ( icu )
 		system-ssl? ( ssl )"
-# FIXME: test-fs-mkdir fails with "no such file or directory". Investigate.
-RESTRICT="test"
+RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 # Last deps commit date:  Aug 16, 2021
@@ -42,7 +41,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 	virtual/pkgconfig
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
-	pax_kernel? ( sys-apps/elfix )"
+	pax-kernel? ( sys-apps/elfix )"
 PATCHES=( "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
 	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
@@ -60,9 +59,6 @@ pkg_pretend() {
 					# Bug #787158
 					die "LTO builds of ${PN} using gcc-11+ currently fail tests and produce runtime errors. Either switch to gcc-10 or unset USE=lto for this ebuild"
 				fi
-			else
-				# configure.py will abort on this later if we do not
-				die "${PN} only supports LTO for gcc"
 			fi
 		fi
 	fi
@@ -117,7 +113,7 @@ src_prepare() {
 	fi
 
 	# We need to disable mprotect on two files when it builds Bug 694100.
-	use pax_kernel && PATCHES+=( "${FILESDIR}"/${PN}-13.8.0-paxmarking.patch )
+	use pax-kernel && PATCHES+=( "${FILESDIR}"/${PN}-13.8.0-paxmarking.patch )
 
 	# All this test does is check if the npm CLI produces warnings of any sort,
 	# failing if it does. Overkill, much? Especially given one possible warning
@@ -229,8 +225,13 @@ src_install() {
 		fi
 
 		# Clean up
-		rm "${ED_BASE}"/node_modules/npm/{.mailmap,.npmignore,Makefile} || die
-		rm -rf "${ED_BASE}"/node_modules/npm/{doc,html,man} || die
+		for f in \
+			"${ED_BASE}"/node_modules/npm/{.mailmap,.npmignore,Makefile} \
+			"${ED_BASE}"/node_modules/npm/{doc,html,man} ; do
+			if [[ -e "${f}" ]] ; then
+				rm -vrf "${f}" || die
+			fi
+		done
 
 		local find_exp="-or -name"
 		local find_name=()
@@ -260,10 +261,10 @@ src_install() {
 }
 
 src_test() {
-	# parallel/test-fs-mkdir is known to fail with FEATURES=usersandbox
 	if has usersandbox ${FEATURES}; then
-		ewarn "You are emerging ${P} with 'usersandbox' enabled." \
-			"Expect some test failures or emerge with 'FEATURES=-usersandbox'!"
+		rm -f "${S}"/test/parallel/test-fs-mkdir.js
+		ewarn "You are emerging ${PN} with 'usersandbox' enabled. Excluding tests known to fail in this mode." \
+			"For full test coverage, emerge =${CATEGORY}/${PF} with 'FEATURES=-usersandbox'."
 	fi
 
 	out/${BUILDTYPE}/cctest || die
