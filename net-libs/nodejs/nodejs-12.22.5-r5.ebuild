@@ -15,8 +15,8 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm pax-kernel
-+snapshot +ssl system-icu +system-ssl systemtap test"
+IUSE+=" cpu_flags_x86_sse2 debug doc icu inspector lto npm +snapshot +ssl
++system-ssl systemtap test"
 IUSE+=" man pgo"
 
 BENCHMARK_TYPES=(
@@ -28,7 +28,6 @@ BENCHMARK_TYPES=(
 	custom
 	crypto
 	dgram
-	diagnostics_channel
 	dns
 	domain
 	es
@@ -38,7 +37,6 @@ BENCHMARK_TYPES=(
 	fs
 	http
 	http2
-	https
 	misc
 	module
 	net
@@ -77,35 +75,43 @@ REQUIRED_USE+=" || ( $(gen_iuse_pgo) )"
 
 REQUIRED_USE+=" inspector? ( icu ssl )
 		npm? ( ssl )
-		system-icu? ( icu )
 		system-ssl? ( ssl )"
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Aug 16, 2021
-NGHTTP2_V="1.42.0"
+# Last deps commit date: Aug 10, 2021
+NGHTTP2_V="1.41.0"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
 	>=dev-libs/libuv-1.42.0:=
 	>=net-dns/c-ares-1.17.2
+	>=net-libs/http-parser-2.9.4:=
 	>=net-libs/nghttp2-${NGHTTP2_V}
 	>=sys-libs/zlib-1.2.11
-	system-icu? ( >=dev-libs/icu-69.1:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1k:0= )"
+	icu? ( >=dev-libs/icu-67.1:= )
+	system-ssl? (
+		>=dev-libs/openssl-1.1.1k:0=
+		<dev-libs/openssl-3.0.0_beta1:0=
+	)"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	sys-apps/coreutils
-	virtual/pkgconfig
 	pgo? ( ${PN}_pgo_trainers_http2? ( >=net-libs/nghttp2-${NGHTTP2_V}[utils] ) )
 	systemtap? ( dev-util/systemtap )
-	test? ( net-misc/curl )
-	pax-kernel? ( sys-apps/elfix )"
-PATCHES=( "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
+	test? ( net-misc/curl )"
+PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
+	  "${FILESDIR}"/${PN}-12.20.1-fix_ppc64_crashes.patch
+	  "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
+	  "${FILESDIR}"/${PN}-12.22.1-uvwasi_shared_libuv.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
+	  "${FILESDIR}"/${PN}-99999999-llhttp.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="7.20.3" # See https://github.com/nodejs/node/blob/v16.7.0/deps/npm/package.json
+NPM_V="6.14.14" # See https://github.com/nodejs/node/blob/v12.22.5/deps/npm/package.json
+
+# The following are locked for deterministic builds.  Bump if vulnerability encountered.
+AUTOCANNON_V="7.4.0"
+WRK_V="1.2.1"
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
@@ -118,6 +124,9 @@ pkg_pretend() {
 					# Bug #787158
 					die "LTO builds of ${PN} using gcc-11+ currently fail tests and produce runtime errors. Either switch to gcc-10 or unset USE=lto for this ebuild"
 				fi
+			else
+				# configure.py will abort on this later if we do not
+				die "${PN} only supports LTO for gcc"
 			fi
 		fi
 	fi
@@ -126,10 +135,10 @@ pkg_pretend() {
 pkg_setup() {
 	python-any-r1_pkg_setup
 
-	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2024-04-30."
+	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2022-04-30."
 
 	# For man page reasons
-	for v in 12 14 ; do
+	for v in 14 16 ; do
 		if use npm && has_version "net-libs/nodejs:${v}[npm]" ; then
 			die \
 "You need to disable npm on net-libs/nodejs:${v}[npm].  Only enable\n\
@@ -142,7 +151,7 @@ man on the highest slot."
 		fi
 	done
 
-	for u in ${PN}_pgo_trainers_http ${PN}_pgo_trainers_https ; do
+	for u in ${PN}_pgo_trainers_http ; do
                 if use "${u}" && has network-sandbox $FEATURES ; then
 eerror
 eerror "The ${u} USE flag requires FEATURES=\"-network-sandbox\" to be able to"
@@ -151,12 +160,10 @@ eerror
                         die
                 fi
 	done
-
-	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)."
 }
 
 src_prepare() {
-	tc-export AR CC CXX PKG_CONFIG
+	tc-export CC CXX PKG_CONFIG
 	export V=1
 	export BUILDTYPE=Release
 
@@ -177,21 +184,14 @@ src_prepare() {
 
 	sed -i -e "/'-O3'/d" common.gypi node.gypi || die
 
+	# Known-to-fail test of a deprecated, legacy HTTP parser. Just don't bother.
+	rm -f test/parallel/test-http-transfer-encoding-smuggling-legacy.js
+
 	# debug builds. change install path, remove optimisations and override buildtype
 	if use debug; then
 		sed -i -e "s|out/Release/|out/Debug/|g" tools/install.py || die
 		BUILDTYPE=Debug
 	fi
-
-	# We need to disable mprotect on two files when it builds Bug 694100.
-	use pax-kernel && PATCHES+=( "${FILESDIR}"/${PN}-13.8.0-paxmarking.patch )
-
-	# All this test does is check if the npm CLI produces warnings of any sort,
-	# failing if it does. Overkill, much? Especially given one possible warning
-	# is that there is a newer version of npm available upstream (yes, it does
-	# use the network if available), thus making it a real possibility for this
-	# test to begin failing one day even though it was fine before.
-	rm -f test/parallel/test-release-npm.js
 
 	default
 }
@@ -208,19 +208,14 @@ configure_pgx() {
 	local myconf=(
 		--shared-brotli
 		--shared-cares
+		--shared-http-parser
 		--shared-libuv
 		--shared-nghttp2
 		--shared-zlib
 	)
 	use debug && myconf+=( --debug )
 	use lto && myconf+=( --enable-lto )
-	if use system-icu; then
-		myconf+=( --with-intl=system-icu )
-	elif use icu; then
-		myconf+=( --with-intl=full-icu )
-	else
-		myconf+=( --with-intl=none )
-	fi
+	use icu && myconf+=( --with-intl=system-icu ) || myconf+=( --with-intl=none )
 	use inspector || myconf+=( --without-inspector )
 	use npm || myconf+=( --without-npm )
 	if use pgo ; then
@@ -252,13 +247,6 @@ configure_pgx() {
 		*) myarch="${ABI}";;
 	esac
 
-	if use pgo ; then
-		# Force a deterministic location.
-		sed -i -e "s|fprofile-generate|fprofile-generate=${S}|g" \
-			-e "s|fprofile-use|fprofile-use=${S}|g" \
-			common.gypi || die
-	fi
-
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
 		linux_use_bundled_gold=0" \
@@ -267,10 +255,39 @@ configure_pgx() {
 		--dest-cpu=${myarch} \
 		$(use_with systemtap dtrace) \
 		"${myconf[@]}" || die
+
+	# Prevent double build on install.
+	sed -i -e "s|^install: all|install: |g" \
+		Makefile || die
 }
 
 build_pgx() {
+	emake -C out mksnapshot
+	pax-mark m "out/${BUILDTYPE}/mksnapshot"
 	emake -C out
+}
+
+init_local_npm() {
+	if use ${PN}_pgo_trainers_http ; then
+		DEFAULT_BENCHMARKER="autocannon" # \
+		# Upstream uses wrk by default but autocannon does typical npm downloads.
+		if [[ "${DEFAULT_BENCHMARKER}" == "wrk" ]] ; then
+			# FIXME:  Problems with benchmark script when using wrk.
+			mkdir -p "${S}/node_modules/wrk" || die
+			cd "${S}/node_modules/wrk" || die
+			npm install wrk@${WRK_V} || die
+			mkdir -p "${S}/node_modules/.bin" || die
+			cat > "${S}/node_modules/.bin/wrk" <<EOF
+#!/bin/bash
+node "${S}/node_modules/wrk/index.js" "\${@}"
+EOF
+			chmod +x "${S}/node_modules/.bin/wrk" || die
+		elif [[ "${DEFAULT_BENCHMARKER}" == "autocannon" ]] ; then
+			mkdir -p "${S}/node_modules/autocannon" || die
+			cd "${S}/node_modules/autocannon" || die
+			npm install autocannon@${AUTOCANNON_V} || die
+		fi
+	fi
 }
 
 run_trainers() {
@@ -288,40 +305,62 @@ run_trainers() {
 
 	[[ ! -e "${S}/out/Release/node" ]] && die "Missing node"
 
-	init_pgo
+	export NODE_PATH="${S}/node_modules/wrk:${ED}/usr/$(get_libdir)/node_modules"
+	export PATH="${ED}/usr/bin:${ED}/usr/$(get_libdir)/node_modules/npm/bin:${S}/node_modules/.bin:${PATH}"
+	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/http/_chunky_http_client.js" # This needs additional args.
+	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/http2/write.js" # Unhandled exception error node:events:371
+	einfo "NODEJS_EXCLUDED_BENCHMARKS=${NODEJS_EXCLUDED_BENCHMARKS}"
 	init_local_npm
-	for b in ${accepted[@]} ; do
+	cd "${S}" || die # Ensure PGO profiles are from this dir.
+	for b in $(echo ${accepted[@]} | tr " " "\n" | sort) ; do
+		if [[ "${NODEJS_EXCLUDED_BENCHMARKS}" =~ "${b}" ]] ; then
+			einfo "Skipping ${b}"
+			continue
+		fi
 		einfo "Running benchmark ${b}"
+		benchmark_failed_message() {
+eerror
+eerror "A possibly broken or incomplete support for the ${b} script was"
+eerror "encountered.  Add NODEJS_EXCLUDED_BENCHMARKS=\"${b}\" as a space"
+eerror "separated list.  See metadata.xml for details."
+eerror
+			die
+		}
 		if [[ "${b}" =~ ^benchmark/http/ \
 			|| "${b}" =~ ^benchmark/https/ ]] ; then
-			if which autocannon ; then
-				node "${b}" benchmarker=h2load || die
+			if which autocannon 2>/dev/null 1>/dev/null ; then
+				node "${b}" benchmarker=autocannon \
+					|| benchmark_failed_message
 			else
-				node "${b}" benchmarker=wrk || die
+				node "${b}" benchmarker=wrk \
+					|| benchmark_failed_message
 			fi
 		elif [[ "${b}" =~ ^benchmark/http2/ ]] ; then
-			node "${b}" benchmarker=h2load || die
+			node "${b}" benchmarker=h2load \
+				|| benchmark_failed_message
 		else
-			node "${b}" || die
+			node "${b}" \
+				|| benchmark_failed_message
 		fi
 	done
-}
-
-init_pgo() {
-	export NODE_PATH="${S}/opt/Release"
-	export PATH="${S}/out/Release:${S}/deps/npm/bin:${HOME}/.npm-global/bin:${PATH}"
-}
-
-init_local_npm() {
-	mkdir -p "${HOME}/.npm-global" || die
-	npm config set prefix "${HOME}/.npm-global" || die
-	source "${HOME}/.profile" || die
-	ln -fs "${S}/deps" "${S}/out/Release" || die
-	if use ${PN}_pgo_trainers_http || use ${PN}_pgo_trainers_https ; then
-		mkdir -p "${S}/out/Release/wrk" || die
-		cd "${S}/out/Release/wrk" || die
-		npm install wrk || die
+	if [[ -e "pgo-custom-trainer.sh" ]] ; then
+		chown portage:portage pgo-custom-trainer.sh || die
+		chmod +x pgo-custom-trainer.sh || die
+		./pgo-custom-trainer.sh || die
 	fi
+
+	if (( $(find "${S}/out" -name "*.gcda" | wc -l) == 0 )) ; then
+		die "No PGO data produced."
+	fi
+}
+
+pgi_wipe() {
+	rm -rf "${ED}" || die
+}
+
+pgi_install() {
+	einfo "Installing sandboxed PGI image"
+	src_install
 }
 
 src_compile() {
@@ -329,7 +368,9 @@ src_compile() {
 		PGO_PHASE="pgi"
 		configure_pgx
 		build_pgx
+		pgi_install
 		run_trainers
+		pgi_wipe
 		PGO_PHASE="pgo"
 		configure_pgx
 		build_pgx
@@ -343,9 +384,15 @@ src_install() {
 	local REL_D_BASE="usr/$(get_libdir)"
 	local D_BASE="/${REL_D_BASE}"
 	local ED_BASE="${ED}/${REL_D_BASE}"
-	default
+	if [[ "${PGO_PHASE}" == "pgi" ]] ; then
+		emake DESTDIR="${D}" install
+	else
+		default
+	fi
 
 	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
+	[[ "${PGO_PHASE}" == "pgi" ]] \
+		&& dosym /usr/bin/node${SLOT_MAJOR} /usr/bin/node
 	pax-mark -m "${ED}"/usr/bin/node${SLOT_MAJOR}
 
 	# set up a symlink structure that node-gyp expects..
@@ -370,12 +417,17 @@ src_install() {
 	fi
 
 	if use npm; then
-		keepdir /etc/npm
+		dodir /etc/npm
 
 		# Install bash completion for `npm`
+		# We need to temporarily replace default config path since
+		# npm otherwise tries to write outside of the sandbox
+		local npm_config="${REL_D_BASE}/node_modules/npm/lib/config/core.js"
+		sed -i -e "s|'/etc'|'${ED}/etc'|g" "${ED}/${npm_config}" || die
 		local tmp_npm_completion_file="$(TMPDIR="${T}" mktemp -t npm.XXXXXXXXXX)"
 		"${ED}/usr/bin/npm" completion > "${tmp_npm_completion_file}"
 		newbashcomp "${tmp_npm_completion_file}" npm
+		sed -i -e "s|'${ED}/etc'|'/etc'|g" "${ED}/${npm_config}" || die
 
 		if use man ; then
 			# Move man pages
@@ -419,17 +471,24 @@ src_install() {
 }
 
 src_test() {
+	# parallel/test-fs-mkdir is known to fail with FEATURES=usersandbox
 	if has usersandbox ${FEATURES}; then
-		rm -f "${S}"/test/parallel/test-fs-mkdir.js
-		ewarn "You are emerging ${PN} with 'usersandbox' enabled. Excluding tests known to fail in this mode." \
-			"For full test coverage, emerge =${CATEGORY}/${PF} with 'FEATURES=-usersandbox'."
+		ewarn "You are emerging ${P} with 'usersandbox' enabled." \
+			"Expect some test failures or emerge with 'FEATURES=-usersandbox'!"
 	fi
 
 	out/${BUILDTYPE}/cctest || die
-	"${EPYTHON}" tools/test.py --mode=${BUILDTYPE,,} --flaky-tests=dontcare -J message parallel sequential || die
+	"${PYTHON}" tools/test.py --mode=${BUILDTYPE,,} --flaky-tests=dontcare -J message parallel sequential || die
 }
 
 pkg_postinst() {
+	elog "The global npm config lives in /etc/npm. This deviates slightly"
+	elog "from upstream which otherwise would have it live in /usr/etc/."
+	elog ""
+	elog "Protip: When using node-gyp to install native modules, you can"
+	elog "avoid having to download extras by doing the following:"
+	elog "$ node-gyp --nodedir /usr/include/node <command>"
+
 	if has '>=net-libs/nodejs-${PV}' ; then
 		einfo \
 "Found higher slots, manually change the headers with \`eselect nodejs\`."

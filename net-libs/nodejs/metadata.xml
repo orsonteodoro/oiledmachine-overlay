@@ -76,12 +76,26 @@
 		will show you node10's version.
 
 		The PGO trainer can be extended with your own customized
-		benchmark.  You must create a folder named custom and
-		it must have at least a  createBenchmark() function with
-		all of this created as a per-package user patch.
-		For additonal details, see
+		benchmark to optimize for typical use cases.  You must create
+		a folder named custom and it must have at least a
+		createBenchmark() function having all of this created as a
+		per-package user patch.  For additonal details, see
 https://github.com/nodejs/node/blob/master/doc/guides/writing-and-running-benchmarks.md
 https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
+
+		NODEJS_EXCLUDED_BENCHMARKS is a per-package envvar that can
+		contain a space separated string of paths to exclude from
+		testing whenever a broken benchmark is encountered or
+		support for that particular benchmark is unfinished at the
+		ebuild level.
+
+		An additional user supplied script script called
+		${S}/pgo-custom-trainer.sh can be provided to install locally
+		a per package(s) to run	benchmark for that package if it
+		contains one.  All new npm packages to be trained must
+		installed in ${S}/node_modules.  If the package doesn't
+		contain a benchmark, then it is not suitable for PGO
+		training.
 	</longdescription>
 	<use>
 		<flag name="doc">It installs docs.  It should only
