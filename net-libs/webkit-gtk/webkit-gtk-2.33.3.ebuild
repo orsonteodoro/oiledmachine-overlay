@@ -1253,8 +1253,8 @@ _config_pgx() {
 			append-cflags -fprofile-use="${BUILD_DIR}/custom-pgo.profdata"
 			append-cxxflags -fprofile-use="${BUILD_DIR}/custom-pgo.profdata"
 		elif tc-is-gcc ; then
-			append-cflags -fprofile-use -fprofile-dir="${T}/${BUILD_DIR}"
-			append-cxxflags -fprofile-use -fprofile-dir="${T}/${BUILD_DIR}"
+			append-cflags -fprofile-use -fprofile-dir="${BUILD_DIR}"
+			append-cxxflags -fprofile-use -fprofile-dir="${BUILD_DIR}"
 		fi
 	fi
 
