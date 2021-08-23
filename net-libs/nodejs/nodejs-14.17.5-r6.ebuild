@@ -14,9 +14,9 @@ LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm pax-kernel
-+snapshot +ssl system-icu +system-ssl systemtap test"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
+IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto npm pax-kernel +snapshot
++ssl system-icu +system-ssl systemtap test"
 IUSE+=" man pgo"
 
 BENCHMARK_TYPES=(
@@ -73,7 +73,7 @@ gen_required_use_pgo() {
 	done
 }
 REQUIRED_USE+=" "$(gen_required_use_pgo)
-REQUIRED_USE+=" || ( $(gen_iuse_pgo) )"
+REQUIRED_USE+=" pgo? ( || ( $(gen_iuse_pgo) ) )"
 
 REQUIRED_USE+=" inspector? ( icu ssl )
 		npm? ( ssl )
@@ -82,7 +82,7 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Aug 16, 2021
+# Last deps commit date:  Aug 10, 2021
 NGHTTP2_V="1.42.0"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
@@ -92,20 +92,24 @@ RDEPEND+=" !net-libs/nodejs:0
 	>=net-libs/nghttp2-${NGHTTP2_V}
 	>=sys-libs/zlib-1.2.11
 	system-icu? ( >=dev-libs/icu-69.1:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1k:0= )"
+	system-ssl? (
+		>=dev-libs/openssl-1.1.1k:0=
+		<dev-libs/openssl-3.0.0_beta1:0=
+	)"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	sys-apps/coreutils
-	virtual/pkgconfig
 	pgo? ( ${PN}_pgo_trainers_http2? ( >=net-libs/nghttp2-${NGHTTP2_V}[utils] ) )
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
 	pax-kernel? ( sys-apps/elfix )"
-PATCHES=( "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
+PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
+	  "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
+	  "${FILESDIR}"/${PN}-12.22.1-uvwasi_shared_libuv.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
+	  "${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="7.20.3" # See https://github.com/nodejs/node/blob/v16.7.0/deps/npm/package.json
+NPM_V="6.14.14" # See https://github.com/nodejs/node/blob/v14.17.5/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -122,6 +126,9 @@ pkg_pretend() {
 					# Bug #787158
 					die "LTO builds of ${PN} using gcc-11+ currently fail tests and produce runtime errors. Either switch to gcc-10 or unset USE=lto for this ebuild"
 				fi
+			else
+				# configure.py will abort on this later if we do not
+				die "${PN} only supports LTO for gcc"
 			fi
 		fi
 	fi
@@ -130,10 +137,10 @@ pkg_pretend() {
 pkg_setup() {
 	python-any-r1_pkg_setup
 
-	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2024-04-30."
+	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-04-30."
 
 	# For man page reasons
-	for v in 12 14 ; do
+	for v in 12 16 ; do
 		if use npm && has_version "net-libs/nodejs:${v}[npm]" ; then
 			die \
 "You need to disable npm on net-libs/nodejs:${v}[npm].  Only enable\n\
@@ -207,6 +214,12 @@ configure_pgx() {
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*'
 
+	if tc-is-clang ; then
+		filter-flags \
+			'-fopt-info*' \
+			-frename-registers
+	fi
+
 	local myconf=(
 		--shared-brotli
 		--shared-cares
@@ -227,9 +240,11 @@ configure_pgx() {
 	use npm || myconf+=( --without-npm )
 	if use pgo ; then
 		einfo "Forcing GCC for PGO"
-		CC=${CHOST}-gcc
-		CXX=${CHOST}-g++
-		LD=ld.bfd
+		export CC=${CHOST}-gcc
+		export CXX=${CHOST}-g++
+		export LD=ld.bfd
+		export AR=ar
+		export NM=nm
 		if [[ "${PGO_PHASE}" == "pgi" ]] ; then
 			myconf+=( --enable-pgo-generate )
 		elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
@@ -422,12 +437,17 @@ src_install() {
 	fi
 
 	if use npm; then
-		keepdir /etc/npm
+		dodir /etc/npm
 
 		# Install bash completion for `npm`
+		# We need to temporarily replace default config path since
+		# npm otherwise tries to write outside of the sandbox
+		local npm_config="${REL_D_BASE}/node_modules/npm/lib/config/core.js"
+		sed -i -e "s|'/etc'|'${ED}/etc'|g" "${ED}/${npm_config}" || die
 		local tmp_npm_completion_file="$(TMPDIR="${T}" mktemp -t npm.XXXXXXXXXX)"
 		"${ED}/usr/bin/npm" completion > "${tmp_npm_completion_file}"
 		newbashcomp "${tmp_npm_completion_file}" npm
+		sed -i -e "s|'${ED}/etc'|'/etc'|g" "${ED}/${npm_config}" || die
 
 		if use man ; then
 			# Move man pages

@@ -73,7 +73,7 @@ gen_required_use_pgo() {
 	done
 }
 REQUIRED_USE+=" "$(gen_required_use_pgo)
-REQUIRED_USE+=" || ( $(gen_iuse_pgo) )"
+REQUIRED_USE+=" pgo? ( || ( $(gen_iuse_pgo) ) )"
 
 REQUIRED_USE+=" inspector? ( icu ssl )
 		npm? ( ssl )
@@ -207,6 +207,12 @@ configure_pgx() {
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*'
 
+	if tc-is-clang ; then
+		filter-flags \
+			'-fopt-info*' \
+			-frename-registers
+	fi
+
 	local myconf=(
 		--shared-brotli
 		--shared-cares
@@ -227,9 +233,11 @@ configure_pgx() {
 	use npm || myconf+=( --without-npm )
 	if use pgo ; then
 		einfo "Forcing GCC for PGO"
-		CC=${CHOST}-gcc
-		CXX=${CHOST}-g++
-		LD=ld.bfd
+		export CC=${CHOST}-gcc
+		export CXX=${CHOST}-g++
+		export LD=ld.bfd
+		export AR=ar
+		export NM=nm
 		if [[ "${PGO_PHASE}" == "pgi" ]] ; then
 			myconf+=( --enable-pgo-generate )
 		elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
