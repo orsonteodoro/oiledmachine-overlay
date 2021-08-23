@@ -77,7 +77,7 @@
 
 		The PGO trainer can be extended with your own customized
 		benchmark to optimize for typical use cases.  You must create
-		a folder named custom and it must have at least a
+		a folder named benchmark/custom and it must have at least a
 		createBenchmark() function having all of this created as a
 		per-package user patch.  For additonal details, see
 https://github.com/nodejs/node/blob/master/doc/guides/writing-and-running-benchmarks.md
