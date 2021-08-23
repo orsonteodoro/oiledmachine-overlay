@@ -205,12 +205,6 @@ configure_pgx() {
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*'
 
-	if tc-is-clang ; then
-		filter-flags \
-			'-fopt-info*' \
-			-frename-registers
-	fi
-
 	local myconf=(
 		--shared-brotli
 		--shared-cares
@@ -236,6 +230,11 @@ configure_pgx() {
 		elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 			myconf+=( --enable-pgo-use )
 		fi
+	fi
+	if tc-is-clang ; then
+		filter-flags \
+			'-fopt-info*' \
+			-frename-registers
 	fi
 	use snapshot || myconf+=( --without-node-snapshot )
 	if use ssl; then
