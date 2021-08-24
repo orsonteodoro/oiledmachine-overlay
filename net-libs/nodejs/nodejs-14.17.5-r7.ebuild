@@ -164,7 +164,7 @@ eerror
 	done
 
 	if use ${PN}_pgo_trainers_http \
-		|| use ${PN}_pgo_trainers_https \
+		|| use ${PN}_pgo_trainers_http2 \
 		|| use ${PN}_pgo_trainers_https ; then
 ewarn
 ewarn "The ${PN}_pgo_trainers_http, ${PN}_pgo_trainers_http2, or"
