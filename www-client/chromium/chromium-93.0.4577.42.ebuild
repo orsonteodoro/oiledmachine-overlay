@@ -2061,7 +2061,7 @@ eerror
 		# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/92.0.4515.159/tools/perf/page_sets/media_cases.py
 		if use cr_pgo_trainers_media_desktop \
 			|| use cr_pgo_trainers_media_mobile ; then
-			einfo "Generating missing assets for media.desktop or media.mobile benchmarks"
+			einfo "Generating missing assets for the media.desktop or media.mobile benchmarks"
 			local aac_encoding=( -codec:a aac )
 			local h264_encoding=()
 			local mp3_encoding=( -c:a libmp3lame )
@@ -2233,20 +2233,36 @@ eerror
 			"${cmd[@]}" || die "${cmd[@]}"
 
 			# tulip2.webm -> crowd1080.webm
-			vp8_filter_args=( -vf "format=nv12,hwupload" )
-			cmd=( ffmpeg \
-				${drm_render_node[@]} \
-				${vp8_decoding[@]} \
-				-i "${S}/media/test/data/tulip2.webm" \
-				${vp8_encoding[@]} \
-				$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
-				-vf "minterpolate=vsbmc=1"$(_gen_vaapi_filter "VP8" "post") \
-				-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
-				${vorbis_encoding[@]} \
-				-r 50 \
-				"${S}/tools/perf/page_sets/media_cases/crowd1080.webm" )
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die "${cmd[@]}"
+			if [[ -f "${ASSET_CACHE}/crowd1080.webm" \
+				&& -f "${ASSET_CACHE}/crowd1080.webm.sha512" \
+				&& $(cat "${ASSET_CACHE}/crowd1080.webm.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/crowd1080.webm" \
+						| cut -f 1 -d " ") ]] ; then
+				einfo "Using pregenerated and cached crowd1080.webm"
+				cp -a "${ASSET_CACHE}/crowd1080.webm" \
+					"${S}/tools/perf/page_sets/media_cases/crowd1080.webm" \
+					|| die
+			else
+				vp8_filter_args=( -vf "format=nv12,hwupload" )
+				cmd=( ffmpeg \
+					${drm_render_node[@]} \
+					${vp8_decoding[@]} \
+					-i "${S}/media/test/data/tulip2.webm" \
+					${vp8_encoding[@]} \
+					$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
+					-vf "minterpolate=vsbmc=1"$(_gen_vaapi_filter "VP8" "post") \
+					-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
+					${vorbis_encoding[@]} \
+					-r 50 \
+					"${S}/tools/perf/page_sets/media_cases/crowd1080.webm" )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
+				einfo "Saving work to ${ASSET_CACHE}/crowd1080.webm for faster rebuilds."
+				cp -a "${S}/tools/perf/page_sets/media_cases/crowd1080.webm" \
+					"${ASSET_CACHE}/crowd1080.webm" || die
+				sha512sum "${ASSET_CACHE}/crowd1080.webm" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/crowd1080.webm.sha512" || die
+			fi
 
 			# tulip2.webm -> crowd1080_vp9.webm
 			if [[ -f "${ASSET_CACHE}/crowd1080_vp9.webm" \
@@ -2407,7 +2423,7 @@ eerror
 		fi
 
 		if use cr_pgo_trainers_media_desktop ; then
-			einfo "Generating missing assets for media.desktop benchmark"
+			einfo "Generating missing assets for the media.desktop benchmark"
 			local aac_encoding=( -codec:a aac )
 			local av1_encoding=()
 			local h264_encoding=()
