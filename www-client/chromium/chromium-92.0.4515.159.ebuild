@@ -1959,6 +1959,7 @@ eerror
 		restart_asset_cache() {
 			einfo "Restarting the asset cache"
 			rm -rf "${ASSET_CACHE}"
+			mkdir -p "${ASSET_CACHE}" || die
 			echo "REVISION=${ASSET_CACHE_REVISION}" \
 				> "${ASSET_CACHE}/.cache-control" || die
 		}
