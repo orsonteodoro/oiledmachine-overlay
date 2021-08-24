@@ -398,8 +398,9 @@ src_install() {
 	fi
 
 	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
-	[[ "${PGO_PHASE}" == "pgi" ]] \
-		&& dosym /usr/bin/node${SLOT_MAJOR} /usr/bin/node
+	if [[ "${PGO_PHASE}" == "pgi" ]] ; then
+		dosym node${SLOT_MAJOR} /usr/bin/node
+	fi
 	pax-mark -m "${ED}"/usr/bin/node${SLOT_MAJOR}
 
 	# set up a symlink structure that node-gyp expects..
