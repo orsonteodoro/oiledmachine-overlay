@@ -1929,7 +1929,7 @@ eerror
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 
 	if use pgo-full ; then
-		export ASSET_CACHE_REVISION=1 # Bump on every change of output.
+		export ASSET_CACHE_REVISION=2 # Bump on every change of output.
 		ASSET_CACHE="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/asset-cache"
 		addwrite "${ASSET_CACHE}"
 
@@ -2178,27 +2178,15 @@ eerror
 					"${cmd[@]}" || die "${cmd[@]}"
 				else
 					# See https://developers.google.com/media/vp9/settings/vod
-					cmd1=( ffmpeg \
+					cmd=( ffmpeg \
 						${drm_render_node[@]} \
 						${vp8_decoding[@]} \
 						-i "${S}/media/test/data/tulip2.webm" \
 						${vp9_encoding[@]} \
 						-maxrate 1485k -minrate 512k -b:v 1024k -crf 31 \
-						-pass 1 \
-						-an -f null /dev/null )
-					cmd2=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp8_decoding[@]} \
-						-i "${S}/media/test/data/tulip2.webm" \
-						${vp9_encoding[@]} \
-						-maxrate 1485k -minrate 512k -b:v 1024k -crf 31 \
-						-pass 2 \
 						${opus_encoding[@]} \
 						"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" )
-					einfo "${cmd1[@]} && ${cmd2[@]}"
-					( "${cmd1[@]}" || die "${cmd1[@]}" ) \
-					&& \
-					( "${cmd2[@]}" || die "${cmd2[@]}" )
+					einfo "${cmd[@]}"
 				fi
 				einfo "Saving work to ${ASSET_CACHE}/tulip2.vp9.webm for faster rebuilds."
 				cp -a "${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" \
@@ -2214,7 +2202,8 @@ eerror
 				-i "${S}/media/test/data/tulip2.webm" \
 				${h264_encoding[@]} \
 				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-				-vf $(_gen_vaapi_filter "H264")"minterpolate=fps=50" \
+				-vf $(_gen_vaapi_filter "H264")"minterpolate=vsbmc=1" \
+				-maxrate 4350k -minrate 1500k -b:v 3000k \
 				${aac_encoding[@]} \
 				-r 50 \
 				"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" )
@@ -2229,7 +2218,8 @@ eerror
 				-i "${S}/media/test/data/tulip2.webm" \
 				${vp8_encoding[@]} \
 				$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
-				-vf $(_gen_vaapi_filter "VP8")"minterpolate=fps=50" \
+				-vf $(_gen_vaapi_filter "VP8")"minterpolate=vsbmc=1" \
+				-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
 				${vorbis_encoding[@]} \
 				-r 50 \
 				"${S}/tools/perf/page_sets/media_cases/crowd1080.webm" )
@@ -2257,7 +2247,7 @@ eerror
 						${vp9_encoding[@]} \
 						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
 						$(_is_vaapi_allowed "VP9" && echo "${vp9_filter_args[@]}") \
-						-vf $(_gen_vaapi_filter "VP9")"minterpolate=fps=50" \
+						-vf $(_gen_vaapi_filter "VP9")"minterpolate=vsbmc=1" \
 						-maxrate 2610k -minrate 900k -b:v 1800k \
 						-r 50 \
 						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
@@ -2265,30 +2255,17 @@ eerror
 					"${cmd[@]}" || die "${cmd[@]}"
 				else
 					# See https://developers.google.com/media/vp9/settings/vod
-					cmd1=( ffmpeg \
+					cmd=( ffmpeg \
 						${drm_render_node[@]} \
 						${vp8_decoding[@]} \
 						-i "${S}/media/test/data/tulip2.webm" \
 						${vp9_encoding[@]} \
-						-vf "minterpolate=fps=50" \
+						-vf "minterpolate=vsbmc=1" \
 						-maxrate 2610k -minrate 900k -b:v 1800k -crf 31 \
 						-r 50 \
-						-pass 1 \
-						-an -f null /dev/null )
-					cmd2=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp8_decoding[@]} \
-						-i "${S}/media/test/data/tulip2.webm" \
-						${vp9_encoding[@]} \
-						-vf "minterpolate=fps=50" \
-						-maxrate 2610k -minrate 900k -b:v 1800k -crf 31 \
-						-r 50 \
-						-pass 2 \
 						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
-					einfo "${cmd1[@]} && ${cmd2[@]}"
-					( "${cmd1[@]}" || die "${cmd1[@]}" ) \
-					&& \
-					( "${cmd2[@]}" || die "${cmd2[@]}" )
+					einfo "${cmd[@]}"
+					"${cmd[@]}" || die "${cmd[@]}"
 				fi
 				einfo "Saving work to ${ASSET_CACHE}/crowd1080_vp9.webm for faster rebuilds."
 				cp -a "${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" \
@@ -2335,7 +2312,7 @@ eerror
 					"${cmd[@]}" || die "${cmd[@]}"
 				else
 					# See https://developers.google.com/media/vp9/settings/vod
-					cmd1=( ffmpeg \
+					cmd=( ffmpeg \
 						${drm_render_node[@]} \
 						${vp9_decoding[@]} \
 						-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
@@ -2344,24 +2321,10 @@ eerror
 						-maxrate 26100k -minrate 9000k -b:v 18000k -crf 31 \
 						-r 60 \
 						-t 120.0 \
-						-pass 1 \
-						-an -f null /dev/null )
-					cmd2=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp9_decoding[@]} \
-						-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
-						${vp9_encoding[@]} \
-						-vf scale=w=-1:h=1080 \
-						-maxrate 26100k -minrate 9000k -b:v 18000k -crf 31 \
-						-r 60 \
-						-t 120.0 \
-						-pass 2 \
 						${opus_encoding[@]} \
 						"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" )
-					einfo "${cmd1[@]} && ${cmd2[@]}"
-					( "${cmd1[@]}" || die "${cmd1[@]}" ) \
-					&& \
-					( "${cmd2[@]}" || die "${cmd2[@]}" )
+					einfo "${cmd[@]}"
+					"${cmd[@]}" || die "${cmd[@]}"
 				fi
 				einfo "Saving work to ${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm for faster rebuilds."
 				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
