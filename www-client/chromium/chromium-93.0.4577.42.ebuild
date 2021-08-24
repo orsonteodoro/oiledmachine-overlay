@@ -2218,19 +2218,35 @@ eerror
 			fi
 
 			# tulip2.webm -> crowd1080.mp4
-			cmd=( ffmpeg \
-				${drm_render_node[@]} \
-				${vp8_decoding[@]} \
-				-i "${S}/media/test/data/tulip2.webm" \
-				${h264_encoding[@]} \
-				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-				-vf "minterpolate=vsbmc=1"$(_gen_vaapi_filter "H264" "post") \
-				-maxrate 4350k -minrate 1500k -b:v 3000k \
-				${aac_encoding[@]} \
-				-r 50 \
-				"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" )
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die "${cmd[@]}"
+			if [[ -f "${ASSET_CACHE}/crowd1080.mp4" \
+				&& -f "${ASSET_CACHE}/crowd1080.mp4.sha512" \
+				&& $(cat "${ASSET_CACHE}/crowd1080.mp4.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/crowd1080.mp4" \
+						| cut -f 1 -d " ") ]] ; then
+				einfo "Using pregenerated and cached crowd1080.mp4"
+				cp -a "${ASSET_CACHE}/crowd1080.mp4" \
+					"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" \
+					|| die
+			else
+				cmd=( ffmpeg \
+					${drm_render_node[@]} \
+					${vp8_decoding[@]} \
+					-i "${S}/media/test/data/tulip2.webm" \
+					${h264_encoding[@]} \
+					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+					-vf "minterpolate=vsbmc=1"$(_gen_vaapi_filter "H264" "post") \
+					-maxrate 4350k -minrate 1500k -b:v 3000k \
+					${aac_encoding[@]} \
+					-r 50 \
+					"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
+				einfo "Saving work to ${ASSET_CACHE}/crowd1080.mp4 for faster rebuilds."
+				cp -a "${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" \
+					"${ASSET_CACHE}/crowd1080.mp4" || die
+				sha512sum "${ASSET_CACHE}/crowd1080.mp4" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/crowd1080.mp4.sha512" || die
+			fi
 
 			# tulip2.webm -> crowd1080.webm
 			if [[ -f "${ASSET_CACHE}/crowd1080.webm" \
