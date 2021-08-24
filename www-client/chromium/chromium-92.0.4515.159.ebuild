@@ -1406,12 +1406,25 @@ _gen_scaling() {
 
 _gen_vaapi_filter() {
 	local encoding_format="${1}"
-	if use vaapi \
+	local position="${2}"
+	if [[ "${position}" == "pre" ]] && use vaapi \
 		&& vainfo 2>/dev/null \
 		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
 		&& ffmpeg -hide_banner -encoders 2>/dev/null \
 			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
 		echo "format=nv12,hwupload,"
+	elif [[ "${position}" == "post" ]] && use vaapi \
+		&& vainfo 2>/dev/null \
+		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
+		&& ffmpeg -hide_banner -encoders 2>/dev/null \
+			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
+		echo ",format=nv12,hwupload"
+	elif [[ "${position}" == "alone" ]] && use vaapi \
+		&& vainfo 2>/dev/null \
+		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
+		&& ffmpeg -hide_banner -encoders 2>/dev/null \
+			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
+		echo "format=nv12,hwupload"
 	fi
 }
 
@@ -1943,19 +1956,25 @@ eerror
 		ASSET_CACHE="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/asset-cache"
 		addwrite "${ASSET_CACHE}"
 
-		if [[ ! -f "${ASSET_CACHE}/.cache-control" ]] ; then
-			einfo "Restarting asset cache"
+		restart_asset_cache() {
+			einfo "Restarting the asset cache"
 			rm -rf "${ASSET_CACHE}"
+			echo "REVISION=${ASSET_CACHE_REVISION}" \
+				> "${ASSET_CACHE}/.cache-control" || die
+		}
+		if [[ ! -f "${ASSET_CACHE}/.cache-control" ]] ; then
+			restart_asset_cache
 		else
 			local x_asset_cache_revision=$(grep -r \
 				-e "REVISION=" "${ASSET_CACHE}/.cache-control" \
 				| cut -f 2 -d "=")
+			einfo "x_asset_cache_revision=${x_asset_cache_revision}"
+			einfo "ASSET_CACHE_REVISION=${ASSET_CACHE_REVISION}"
 			if (( ${x_asset_cache_revision} < ${ASSET_CACHE_REVISION} )) ; then
-				einfo "Restarting asset cache"
-				rm -rf "${ASSET_CACHE}"
+				restart_asset_cache
+			else
+				einfo "Reusing the asset-cache"
 			fi
-			echo "REVISION=${ASSET_CACHE_REVISION}" \
-				> "${ASSET_CACHE}/.cache-control"
 		fi
 
 		mkdir -p "${ASSET_CACHE}" || die
@@ -2020,7 +2039,7 @@ eerror
 				-i "${S}/chrome/test/data/media/bigbuck.webm" \
 				${h264_encoding[@]} \
 				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-				-vf $(_gen_vaapi_filter "H264")$(_gen_scaling "H264" 852 -1)",crop=852:480:0:0" \
+				-vf $(_gen_vaapi_filter "H264" "pre")$(_gen_scaling "H264" 852 -1)",crop=852:480:0:0" \
 				${aac_encoding[@]} \
 				"${S}/tools/perf/page_sets/trivial_sites/buck-480p.mp4" )
 			einfo "${cmd[@]}"
@@ -2213,7 +2232,7 @@ eerror
 				-i "${S}/media/test/data/tulip2.webm" \
 				${h264_encoding[@]} \
 				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-				-vf $(_gen_vaapi_filter "H264")"minterpolate=vsbmc=1" \
+				-vf "minterpolate=vsbmc=1"$(_gen_vaapi_filter "H264" "post") \
 				-maxrate 4350k -minrate 1500k -b:v 3000k \
 				${aac_encoding[@]} \
 				-r 50 \
@@ -2229,7 +2248,7 @@ eerror
 				-i "${S}/media/test/data/tulip2.webm" \
 				${vp8_encoding[@]} \
 				$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
-				-vf $(_gen_vaapi_filter "VP8")"minterpolate=vsbmc=1" \
+				-vf "minterpolate=vsbmc=1"$(_gen_vaapi_filter "VP8" "post") \
 				-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
 				${vorbis_encoding[@]} \
 				-r 50 \
@@ -2258,7 +2277,7 @@ eerror
 						${vp9_encoding[@]} \
 						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
 						$(_is_vaapi_allowed "VP9" && echo "${vp9_filter_args[@]}") \
-						-vf $(_gen_vaapi_filter "VP9")"minterpolate=vsbmc=1" \
+						-vf "minterpolate=vsbmc=1"$(_gen_vaapi_filter "VP9" "post") \
 						-maxrate 2610k -minrate 900k -b:v 1800k \
 						-r 50 \
 						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
@@ -2313,7 +2332,7 @@ eerror
 						-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 						${vp9_encoding[@]} \
 						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(_gen_vaapi_filter "VP9")$(_gen_scaling "VP9" -1 1080) \
+						-vf $(_gen_vaapi_filter "VP9" "pre")$(_gen_scaling "VP9" -1 1080) \
 						-maxrate 26100k -minrate 9000k -b:v 18000k \
 						-r 60 \
 						-t 120.0 \
@@ -2378,7 +2397,7 @@ eerror
 					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 					${h264_encoding[@]} \
 					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(_gen_vaapi_filter "H264")$(_gen_scaling "H264" -1 720) \
+					-vf $(_gen_vaapi_filter "H264" "pre")$(_gen_scaling "H264" -1 720) \
 					-r 30 \
 					${aac_encoding[@]} \
 					-t 120.0 \
@@ -2485,7 +2504,7 @@ eerror
 					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 					${h264_encoding[@]} \
 					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(_gen_vaapi_filter "H264")$(_gen_scaling "H264" -1 2160) \
+					-vf $(_gen_vaapi_filter "H264" "pre")$(_gen_scaling "H264" -1 2160) \
 					${aac_encoding[@]} \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
 					-t 10 )
@@ -2518,7 +2537,7 @@ eerror
 					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 					${vp8_encoding[@]} \
 					$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(_gen_vaapi_filter "VP8")$(_gen_scaling "VP8" -1 2160) \
+					-vf $(_gen_vaapi_filter "VP8" "pre")$(_gen_scaling "VP8" -1 2160) \
 					${vorbis_encoding[@]} \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
 					-t 10 )
