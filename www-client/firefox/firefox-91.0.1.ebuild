@@ -7,7 +7,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-91-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-91-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=12
 
@@ -287,7 +287,7 @@ CDEPEND="
 		>=media-libs/harfbuzz-2.8.1:0=[${MULTILIB_USEDEP}]
 		>=media-gfx/graphite2-1.3.13[${MULTILIB_USEDEP}]
 	)
-	system-icu? ( >=dev-libs/icu-67.1:=[${MULTILIB_USEDEP}] )
+	system-icu? ( >=dev-libs/icu-69.1:=[${MULTILIB_USEDEP}] )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}] )
 	system-libevent? ( >=dev-libs/libevent-2.0:0=[threads,${MULTILIB_USEDEP}] )
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc,${MULTILIB_USEDEP}] )
@@ -1596,11 +1596,6 @@ pkg_postinst() {
 				# Tell user that we no longer install a shortcut
 				# per supported display protocol
 				show_shortcut_information=yes
-			fi
-
-			if ver_test "${replacing_version}" -lt 74.0-r2 ; then
-				# Tell user only once about our Normandy default
-				show_normandy_information=yes
 			fi
 		done
 	fi
