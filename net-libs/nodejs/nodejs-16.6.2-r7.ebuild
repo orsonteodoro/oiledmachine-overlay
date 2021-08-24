@@ -155,6 +155,15 @@ eerror
                         die
                 fi
 	done
+
+	if use ${PN}_pgo_trainers_http \
+		|| use ${PN}_pgo_trainers_https \
+		|| use ${PN}_pgo_trainers_https ; then
+ewarn
+ewarn "The ${PN}_pgo_trainers_http, ${PN}_pgo_trainers_http2, or"
+ewarn "${PN}_pgo_trainers_https may randomly fail.  Re-emerge and try again."
+ewarn
+	fi
 }
 
 src_prepare() {
