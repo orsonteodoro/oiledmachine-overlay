@@ -2188,6 +2188,7 @@ eerror
 						${opus_encoding[@]} \
 						"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" )
 					einfo "${cmd[@]}"
+					"${cmd[@]}" || die "${cmd[@]}"
 				fi
 				einfo "Saving work to ${ASSET_CACHE}/tulip2.vp9.webm for faster rebuilds."
 				cp -a "${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" \
@@ -3178,7 +3179,7 @@ _run_training_suite() {
 		${run_benchmark_args[@]})
 	pushd out/Release || die
 		einfo "${cmd[@]}"
-		"${cmd[@]}" || die
+		"${cmd[@]}" || die "${cmd[@]}"
 	popd
 }
 
