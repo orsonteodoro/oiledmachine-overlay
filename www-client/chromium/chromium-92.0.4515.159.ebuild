@@ -1952,7 +1952,7 @@ eerror
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 
 	if use pgo-full ; then
-		export ASSET_CACHE_REVISION=2 # Bump on every change of output.
+		export ASSET_CACHE_REVISION=3 # Bump on every change of output.
 		ASSET_CACHE="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/asset-cache"
 		addwrite "${ASSET_CACHE}"
 
@@ -2311,7 +2311,7 @@ eerror
 						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
 						$(_is_vaapi_allowed "VP9" && echo "${vp9_filter_args[@]}") \
 						-vf "minterpolate=vsbmc=1"$(_gen_vaapi_filter "VP9" "post") \
-						-maxrate 2610k -minrate 900k -b:v 1800k \
+						-maxrate 4350k -minrate 1500k -b:v 3000k \
 						-r 50 \
 						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
 					einfo "${cmd[@]}"
@@ -2324,7 +2324,7 @@ eerror
 						-i "${S}/media/test/data/tulip2.webm" \
 						${vp9_encoding[@]} \
 						-vf "minterpolate=vsbmc=1" \
-						-maxrate 2610k -minrate 900k -b:v 1800k -crf 31 \
+						-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
 						-r 50 \
 						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
 					einfo "${cmd[@]}"
@@ -2366,7 +2366,7 @@ eerror
 						${vp9_encoding[@]} \
 						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
 						-vf $(_gen_vaapi_filter "VP9" "pre")$(_gen_scaling "VP9" -1 1080) \
-						-maxrate 26100k -minrate 9000k -b:v 18000k \
+						-maxrate 4350k -minrate 1500k -b:v 3000k \
 						-r 60 \
 						-t 120.0 \
 						${opus_encoding[@]} \
@@ -2381,7 +2381,7 @@ eerror
 						-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 						${vp9_encoding[@]} \
 						-vf scale=w=-1:h=1080 \
-						-maxrate 26100k -minrate 9000k -b:v 18000k -crf 31 \
+						-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
 						-r 60 \
 						-t 120.0 \
 						${opus_encoding[@]} \
@@ -2431,6 +2431,7 @@ eerror
 					${h264_encoding[@]} \
 					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
 					-vf $(_gen_vaapi_filter "H264" "pre")$(_gen_scaling "H264" -1 720) \
+					-maxrate 1485k -minrate 512k -b:v 1024k \
 					-r 30 \
 					${aac_encoding[@]} \
 					-t 120.0 \
