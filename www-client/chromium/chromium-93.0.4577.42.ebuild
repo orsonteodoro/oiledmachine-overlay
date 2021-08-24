@@ -1542,9 +1542,10 @@ find_vaapi() {
 eerror
 eerror "VA-API autodetect failed.  Manual setup required."
 eerror
-eerror "Set the CR_DRM_RENDER_NODE per-package envvar to the DRM render node."
-eerror "See \`ls /dev/dri\` for a list of possibilities.  LIBVA_DRIVERS_PATH,"
-eerror "LIBVA_DRIVER_NAME, DRI_PRIME may also need to be set."
+eerror "Set the CR_DRM_RENDER_NODE per-package envvar to the abspath DRM render"
+eerror "node.  See \`ls /dev/dri\` for a list of possibilities."
+eerror "LIBVA_DRIVERS_PATH, LIBVA_DRIVER_NAME, DRI_PRIME may also need to be"
+eerror "set."
 eerror
 eerror "You may also disable the vaapi USE flag if there is difficulty"
 eerror "installing or configuring the driver."
