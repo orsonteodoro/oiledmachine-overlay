@@ -2102,18 +2102,22 @@ eerror
 			fi
 
 			h264_baseline_profile=()
+			h264_high_profile_4_0=()
 			if use vaapi && vainfo 2>/dev/null \
 				| grep -q -G -e "H264.*VAEntrypointEncSlice" \
 				&& ffmpeg -hide_banner -encoders 2>/dev/null \
 					| grep -q -F -e "h264_vaapi" ; then
 				h264_encoding=( -c:v h264_vaapi )
 				h264_baseline_profile=( -profile:v 578 )
+				h264_high_profile_4_0=( -profile:v 100 -level:v 40 )
 			elif has_version "media-video/ffmpeg[openh264]" ;then
 				h264_encoding=( -c:v libopenh264 )
 				h264_baseline_profile=( -profile:v 578 )
+				h264_high_profile_4_0=( -profile:v 100 ) # no level
 			elif has_version "media-video/ffmpeg[x264]" ; then
 				h264_encoding=( -c:v libx264 )
 				h264_baseline_profile=( -profile:v baseline )
+				h264_high_profile_4_0=( -profile:v high -level:v 4.0 )
 			fi
 
 			if use vaapi && vainfo 2>/dev/null \
@@ -2173,7 +2177,7 @@ eerror
 			einfo "${cmd[@]}"
 			"${cmd[@]}" || die "${cmd[@]}"
 
-			# tulip2.webm -> tulip2.vp9.webm ; For MSE (DRM) and non MSE tests
+			# tulip2.webm -> tulip2.vp9.webm
 			# Must be <= wifi bitrate.  U = 2.8Mbps upload, so A kbps for audio and V = ( U - A ) video max.
 			# For no audio, then V = U for max bitrate.
 			if [[ -f "${ASSET_CACHE}/tulip2.vp9.webm" \
@@ -2223,13 +2227,16 @@ eerror
 					| cut -f 1 -d " " > "${ASSET_CACHE}/tulip2.vp9.webm.sha512" || die
 			fi
 
-			# TODO: replace missing assets with cc0 licensed audio or video
-			# Missing asset -> aac_audio.mp4 ; For MSE (DRM) tests
-			#cmd=( ffmpeg -i "${S}/tools/perf/page_sets/media_cases/" \
-			#	${aac_encoding[@]} \
-			#	"${S}/tools/perf/page_sets/media_cases/aac_audio.mp4" )
-			#einfo "${cmd[@]}"
-			#"${cmd[@]}" || die "${cmd[@]}"
+			# tulip2.webm -> aac_audio.mp4
+			# Asset must be AAC-LC.
+			aac_lc=( -profile:a aac_low )
+			cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
+				-vn \
+				${aac_encoding[@]} \
+				${aac_lc[@]} \
+				"${S}/tools/perf/page_sets/media_cases/aac_audio.mp4" )
+			einfo "${cmd[@]}"
+			"${cmd[@]}" || die "${cmd[@]}"
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_1080p60fps_vp9.webm
 			# 1920 x 1080 res ; must be 2 min
@@ -2291,19 +2298,21 @@ eerror
 			sed -i -e "s|boat_1080p60fps_vp9.webm|animal_1080p60fps_vp9.webm|g" \
 				"${S}/tools/perf/page_sets/media_cases.py" || die
 
+			# tulip2.webm -> h264_video.mp4
+			# Asset must be h264, level 4, high profile
 			# See tools/perf/page_sets/media_cases/mse.js
-			# Missing asset -> h264_video.mp4 ; For MSE (DRM) tests
-			#h264_filter_args=( -vf "format=nv12,hwupload" )
-			#cmd=( ffmpeg \
-			#	${drm_render_node[@]} \
-			#	-i "${S}/tools/perf/page_sets/media_cases/" \
-			#	${h264_encoding[@]} \
-			#	$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-			#	$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
-			#	${aac_encoding[@]} \
-			#	"${S}/tools/perf/page_sets/media_cases/h264_video.mp4" )
-			#einfo "${cmd[@]}"
-			#"${cmd[@]}" || die "${cmd[@]}"
+			h264_filter_args=( -vf "format=nv12,hwupload" )
+			cmd=( ffmpeg \
+				${drm_render_node[@]} \
+				-i "${S}/media/test/data/tulip2.webm" \
+				${h264_encoding[@]} \
+				${h264_high_profile_4_0[@]} \
+				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+				$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
+				-an \
+				"${S}/tools/perf/page_sets/media_cases/h264_video.mp4" )
+			einfo "${cmd[@]}"
+			"${cmd[@]}" || die "${cmd[@]}"
 
 			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_720p30fps.mp4
 			# 1280 x 720 res ; must be 2 min
@@ -2663,7 +2672,7 @@ eerror
 					| cut -f 1 -d " " > "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm.sha512" || die
 			fi
 
-			# tulip2.webm -> tulip0.av1.mp4 ; For MSE (DRM) tests
+			# tulip2.webm -> tulip0.av1.mp4
 			av1_filter_args=( -vf "format=nv12,hwupload" )
 			cmd=( ffmpeg \
 				${drm_render_node[@]} \
