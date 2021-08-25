@@ -1386,10 +1386,8 @@ src_unpack() {
 
 # Full list of hw accelerated image processing
 # ffmpeg -filters | grep vaapi
-_gen_scaling() {
+_is_hw_scaling_supported() {
 	local encoding_format="${1}"
-	local w="${2}"
-	local h="${3}"
 	if use vaapi && ffmpeg -filters 2>/dev/null \
 		| grep -q -F -e "scale_vaapi" \
 		&& vainfo 2>/dev/null \
@@ -1398,33 +1396,22 @@ _gen_scaling() {
                 | grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
                 && ffmpeg -hide_banner -encoders 2>/dev/null \
                         | grep -q -F -e "${encoding_format,,}_vaapi" ; then
-		echo "scale_vaapi=w=${w}:h=${h}"
+		return 0
 	else
-		echo "scale=w=${w}:h=${h}"
+		return 1
 	fi
 }
 
 _gen_vaapi_filter() {
 	local encoding_format="${1}"
-	local position="${2}"
 	if [[ "${position}" == "pre" ]] && use vaapi \
 		&& vainfo 2>/dev/null \
 		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
 		&& ffmpeg -hide_banner -encoders 2>/dev/null \
 			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
-		echo "format=nv12,hwupload,"
-	elif [[ "${position}" == "post" ]] && use vaapi \
-		&& vainfo 2>/dev/null \
-		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
-		&& ffmpeg -hide_banner -encoders 2>/dev/null \
-			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
-		echo ",format=nv12,hwupload"
-	elif [[ "${position}" == "alone" ]] && use vaapi \
-		&& vainfo 2>/dev/null \
-		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
-		&& ffmpeg -hide_banner -encoders 2>/dev/null \
-			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
 		echo "format=nv12,hwupload"
+	else
+		echo ""
 	fi
 }
 
@@ -1952,7 +1939,7 @@ eerror
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 
 	if use pgo-full ; then
-		export ASSET_CACHE_REVISION=3 # Bump on every change of output.
+		export ASSET_CACHE_REVISION=4 # Bump on every change of output.
 		ASSET_CACHE="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/asset-cache"
 		addwrite "${ASSET_CACHE}"
 
@@ -2034,13 +2021,21 @@ eerror
 			einfo "Generating buck-480p.mp4 for the memory.desktop benchmark"
 			# The bunny.gif doesn't actually exist on the website but is converted from the
 			# movie explained in https://codereview.chromium.org/2243403006
+			filter_sw=()
+			filter_hw+=( $(_gen_vaapi_filter "H264") )
+			if _is_hw_scaling_supported "H264" ; then
+				filter_hw+=( "scale_vaapi=w=852:h=-1" )
+			else
+				filter_sw+=( "scale=w=852:h=-1" )
+				filter_sw+=( "crop=852:480:0:0" )
+			fi
 			cmd=( ffmpeg \
 				${drm_render_node[@]} \
 				${vp8_decoding[@]} \
 				-i "${S}/chrome/test/data/media/bigbuck.webm" \
 				${h264_encoding[@]} \
 				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-				-vf $(_gen_vaapi_filter "H264" "pre")$(_gen_scaling "H264" 852 -1)",crop=852:480:0:0" \
+				-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 				${aac_encoding[@]} \
 				"${S}/tools/perf/page_sets/trivial_sites/buck-480p.mp4" )
 			einfo "${cmd[@]}"
@@ -2050,12 +2045,14 @@ eerror
 			einfo "Generating bunny.gif (animated gif) for the memory.desktop benchmark"
 			# The bunny.gif doesn't actually exist on the website but is converted from the
 			# movie explained in https://codereview.chromium.org/2243403006
+			filter_sw=( "scale=w=852:h=-1" )
+			filter_sw+=( "crop=852:480:0:0" )
 			cmd=( ffmpeg \
 				${drm_render_node[@]} \
 				${vp8_decoding[@]} \
 				-i "${S}/chrome/test/data/media/bigbuck.webm" \
 				$(_is_vaapi_allowed "GIF" && echo "${init_ffmpeg_filter[@]}") \
-				-vf $(_gen_scaling "GIF" 852 -1)",crop=852:480:0:0" \
+				-vf $(echo "${filter_sw[@]}" | tr " " ",") \
 				-t 60.0 \
 				-f gif \
 				"${S}/tools/perf/page_sets/trivial_sites/bunny.gif" )
@@ -2248,13 +2245,20 @@ eerror
 			else
 				if _is_vaapi_allowed "VP9" ; then
 					# Likely only single pass supported
+					filter_sw=()
+					filter_hw=( $(_gen_vaapi_filter "VP9") )
+					if _is_hw_scaling_supported "VP9" ; then
+						filter_hw+=( "scale_vaapi=w=-1:h=1080" )
+					else
+						filter_sw+=( "scale=w=-1:h=1080" )
+					fi
 					cmd=( ffmpeg \
 						${drm_render_node[@]} \
 						${vp9_decoding[@]} \
 						-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 						${vp9_encoding[@]} \
 						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(_gen_vaapi_filter "VP9" "pre")$(_gen_scaling "VP9" -1 1080) \
+						-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 						-maxrate 4350k -minrate 1500k -b:v 3000k \
 						-r 60 \
 						-t 120.0 \
@@ -2313,13 +2317,20 @@ eerror
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
 					|| die
 			else
+				filter_sw=()
+				filter_hw=( $(_gen_vaapi_filter "H264") )
+				if _is_hw_scaling_supported "H264" ; then
+					filter_hw+=( "scale_vaapi=w=-1:h=720" )
+				else
+					filter_sw+=( "scale=w=-1:h=720" )
+				fi
 				cmd=( ffmpeg \
 					${drm_render_node[@]} \
 					${vp9_decoding[@]} \
 					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 					${h264_encoding[@]} \
 					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(_gen_vaapi_filter "H264" "pre")$(_gen_scaling "H264" -1 720) \
+					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 					-maxrate 1485k -minrate 512k -b:v 1024k \
 					-r 30 \
 					${aac_encoding[@]} \
@@ -2420,13 +2431,20 @@ eerror
 					"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" \
 					|| die
 			else
+				filter_sw=( "minterpolate=vsbmc=1" )
+				filter_hw=( $(_gen_vaapi_filter "H264") )
+				if _is_hw_scaling_supported "H264" ; then
+					filter_hw+=( "scale_vaapi=w=-1:h=1080" )
+				else
+					filter_sw+=( "scale=w=-1:h=1080" )
+				fi
 				cmd=( ffmpeg \
 					${drm_render_node[@]} \
 					${vp8_decoding[@]} \
 					-i "${S}/media/test/data/tulip2.webm" \
 					${h264_encoding[@]} \
 					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					-vf "minterpolate=vsbmc=1"$(_gen_vaapi_filter "H264" "post") \
+					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 					-maxrate 4350k -minrate 1500k -b:v 3000k \
 					${aac_encoding[@]} \
 					-r 50 \
@@ -2451,14 +2469,20 @@ eerror
 					"${S}/tools/perf/page_sets/media_cases/crowd1080.webm" \
 					|| die
 			else
-				vp8_filter_args=( -vf "format=nv12,hwupload" )
+				filter_sw=( "minterpolate=vsbmc=1" )
+				filter_hw=( $(_gen_vaapi_filter "VP8") )
+				if _is_hw_scaling_supported "VP8" ; then
+					filter_hw+=( "scale_vaapi=w=-1:h=1080" )
+				else
+					filter_sw+=( "scale=w=-1:h=1080" )
+				fi
 				cmd=( ffmpeg \
 					${drm_render_node[@]} \
 					${vp8_decoding[@]} \
 					-i "${S}/media/test/data/tulip2.webm" \
 					${vp8_encoding[@]} \
 					$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
-					-vf "minterpolate=vsbmc=1"$(_gen_vaapi_filter "VP8" "post") \
+					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 					-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
 					${vorbis_encoding[@]} \
 					-r 50 \
@@ -2484,16 +2508,21 @@ eerror
 					|| die
 			else
 				if _is_vaapi_allowed "VP9" ; then
+					filter_sw=( "minterpolate=vsbmc=1" )
+					filter_hw=( $(_gen_vaapi_filter "VP9") )
+					if _is_hw_scaling_supported "VP9" ; then
+						filter_hw+=( "scale_vaapi=w=-1:h=1080" )
+					else
+						filter_sw+=( "scale=w=-1:h=1080" )
+					fi
 					# Likely only single pass supported
-					vp9_filter_args=( -vf "format=nv12,hwupload" )
 					cmd=( ffmpeg \
 						${drm_render_node[@]} \
 						${vp8_decoding[@]} \
 						-i "${S}/media/test/data/tulip2.webm" \
 						${vp9_encoding[@]} \
 						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
-						$(_is_vaapi_allowed "VP9" && echo "${vp9_filter_args[@]}") \
-						-vf "minterpolate=vsbmc=1"$(_gen_vaapi_filter "VP9" "post") \
+						-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 						-maxrate 4350k -minrate 1500k -b:v 3000k \
 						-r 50 \
 						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
@@ -2532,13 +2561,20 @@ eerror
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
 					|| die
 			else
+				filter_sw=()
+				filter_hw=( $(_gen_vaapi_filter "H264") )
+				if _is_hw_scaling_supported "H264" ; then
+					filter_hw+=( "scale_vaapi=w=-1:h=2160" )
+				else
+					filter_sw+=( "scale=w=-1:h=2160" )
+				fi
 				cmd=( ffmpeg \
 					${drm_render_node[@]} \
 					${vp9_decoding[@]} \
 					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 					${h264_encoding[@]} \
 					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(_gen_vaapi_filter "H264" "pre")$(_gen_scaling "H264" -1 2160) \
+					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 					${aac_encoding[@]} \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
 					-t 10 )
@@ -2565,13 +2601,20 @@ eerror
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
 					|| die
 			else
+				filter_sw=()
+				filter_hw=( $(_gen_vaapi_filter "VP8") )
+				if _is_hw_scaling_supported "VP8" ; then
+					filter_hw+=( "scale_vaapi=w=-1:h=2160" )
+				else
+					filter_sw+=( "scale=w=-1:h=2160" )
+				fi
 				cmd=( ffmpeg \
 					${drm_render_node[@]} \
 					${vp9_decoding[@]} \
 					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
 					${vp8_encoding[@]} \
 					$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(_gen_vaapi_filter "VP8" "pre")$(_gen_scaling "VP8" -1 2160) \
+					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 					${vorbis_encoding[@]} \
 					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
 					-t 10 )
