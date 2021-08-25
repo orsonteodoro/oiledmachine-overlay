@@ -1930,7 +1930,7 @@ eerror
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 
 	if use pgo-full ; then
-		export ASSET_CACHE_REVISION=4 # Bump on every change of output.
+		export ASSET_CACHE_REVISION=5 # Bump on every change of output.
 		ASSET_CACHE="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/asset-cache"
 		addwrite "${ASSET_CACHE}"
 
@@ -2576,8 +2576,8 @@ eerror
 					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
 					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 					${aac_encoding[@]} \
-					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
-					-t 10 )
+					-t 10 \
+					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" )
 				einfo "${cmd[@]}"
 				"${cmd[@]}" || die "${cmd[@]}"
 				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.mp4 for faster rebuilds."
@@ -2616,8 +2616,8 @@ eerror
 					$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
 					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 					${vorbis_encoding[@]} \
-					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
-					-t 10 )
+					-t 10 \
+					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" )
 				einfo "${cmd[@]}"
 				"${cmd[@]}" || die "${cmd[@]}"
 				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.webm for faster rebuilds."
