@@ -1404,7 +1404,7 @@ _is_hw_scaling_supported() {
 
 _gen_vaapi_filter() {
 	local encoding_format="${1}"
-	if [[ "${position}" == "pre" ]] && use vaapi \
+	if use vaapi \
 		&& vainfo 2>/dev/null \
 		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
 		&& ffmpeg -hide_banner -encoders 2>/dev/null \
