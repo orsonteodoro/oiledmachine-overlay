@@ -2647,7 +2647,7 @@ eerror
 				cmd=( ffmpeg \
 					${drm_render_node[@]} \
 					-f lavfi -i testsrc=duration=120:size=3840x2160:rate=60 \
-					${vp9_encoding} \
+					${vp9_encoding[@]} \
 					$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
 					$(_is_vaapi_allowed "VP9" && echo "${vp9_filter_args[@]}") \
 					-maxrate 26100k -minrate 9000k -b:v 18000k \
