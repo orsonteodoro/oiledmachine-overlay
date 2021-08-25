@@ -1439,7 +1439,7 @@ find_vaapi() {
 		unset DRM_RENDER_NODE
 		for d in $(find /dev/dri -name "render*") ; do
 			# Permute
-			for v in $(seq 2 -1 0) ; do # 2 GPU and 1 APU scenario
+			for v in $(seq 0 2) ; do # 2 GPU and 1 APU scenario
 				export DRI_PRIME=${v} # \
 				# See xrandr --listproviders for mapping, could be 1=dGPU, 0=APU/IGP
 				if vainfo 2>/dev/null 1>/dev/null ; then
