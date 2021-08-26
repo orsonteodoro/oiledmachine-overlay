@@ -556,7 +556,7 @@ gen_pgo_profile_required_use() {
 
 # There is 2 official (perflab) platforms for linux:  linux and linux_rel.
 # ~50 benchmarks used.
-gen_required_use_pgo_profile_official_linux() { # For CI
+gen_required_use_pgo_profile_linux() { # For CI
 	# See
 # https://github.com/chromium/chromium/blob/92.0.4515.159/tools/perf/core/bot_platforms.py#L311
 # https://github.com/chromium/chromium/blob/92.0.4515.159/tools/perf/core/bot_platforms.py#L226
@@ -600,7 +600,7 @@ gen_required_use_pgo_profile_official_linux() { # For CI
 }
 
 # Only 1 benchmark used.
-gen_required_use_pgo_profile_official_linux_rel() { # For CI release
+gen_required_use_pgo_profile_linux_rel() { # For CI release
 	# See
 # https://github.com/chromium/chromium/blob/92.0.4515.159/tools/perf/core/bot_platforms.py#L307
 # https://github.com/chromium/chromium/blob/92.0.4515.159/tools/perf/core/shard_maps/linux-perf-rel_map.json
@@ -634,8 +634,8 @@ gen_required_use_pgo_profile_official_linux_rel() { # For CI release
 	done
 }
 
-PGO_PROFILE_SET_OFFICIAL_LINUX=$(gen_required_use_pgo_profile_official_linux)
-PGO_PROFILE_SET_OFFICIAL_LINUX_REL=$(gen_required_use_pgo_profile_official_linux_rel)
+PGO_PROFILE_LINUX_SET=$(gen_required_use_pgo_profile_linux)
+PGO_PROFILE_LINUX_SET_REL=$(gen_required_use_pgo_profile_linux_rel)
 IUSE+=" "$(gen_pgo_profile_use)
 REQUIRED_USE+=" $(gen_pgo_profile_required_use)"
 REQUIRED_USE+=" pgo-full? ( || ( $(gen_pgo_profile_use) ) )"
@@ -655,7 +655,7 @@ REQUIRED_USE+="
 	lto-opt? ( clang )
 	official? ( amd64? ( cfi cfi-icall ) partitionalloc ^^ ( pgo pgo-full )
 		pgo-full? (
-			${PGO_PROFILE_SET_OFFICIAL_LINUX_REL}
+			${PGO_PROFILE_LINUX_SET_REL}
 		)
 	)
 	partitionalloc? ( !component-build )
