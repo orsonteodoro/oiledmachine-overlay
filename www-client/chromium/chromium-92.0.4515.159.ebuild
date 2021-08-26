@@ -1348,6 +1348,8 @@ ewarn
 	if use pgo-full ; then
 ewarn
 ewarn "The pgo-full USE flag is a Work In Progress (WIP) and not production ready."
+ewarn "Please only use the pgo USE flag instead.  This notice will be removed when"
+ewarn "it is ready."
 ewarn
 		if has network-sandbox $FEATURES ; then
 eerror
