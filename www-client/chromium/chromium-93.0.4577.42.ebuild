@@ -2466,31 +2466,31 @@ eerror
 				nthreads_per_core=$(lscpu | grep -E -e "^Thread\(s\) per core:.*" | grep -E -o -e "[0-9]+")
 				# The defaults are slow.  Test?
 				if (( ${ncpus} == 1 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 0 -tile-rows 0 -threads 1 )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 0 -tile-rows 0 -threads 1 )
 				elif (( ${ncpus} == 2 && ${nthreads_per_core} > 1 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 0 -tile-rows 1 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 0 -tile-rows 1 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
 				elif (( ${ncpus} == 2 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 0 -tile-rows 1 -threads ${ncpus} )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 0 -tile-rows 1 -threads ${ncpus} )
 				elif (( ${ncpus} == 3 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 0 -tile-rows 1 -threads ${ncpus} -row-mt 1 )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 0 -tile-rows 1 -threads ${ncpus} -row-mt 1 )
 				elif (( ${ncpus} == 4 && ${nthreads_per_core} > 1 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 1 -tile-rows 1 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 1 -tile-rows 1 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
 				elif (( ${ncpus} == 4 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 1 -tile-rows 1 -threads ${ncpus} )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 1 -tile-rows 1 -threads ${ncpus} )
 				elif (( ${ncpus} == 6 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 1 -tile-rows 1 -threads ${ncpus} -row-mt 1 )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 1 -tile-rows 1 -threads ${ncpus} -row-mt 1 )
 				elif (( ${ncpus} == 8 && ${nthreads_per_core} > 1 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 1 -tile-rows 2 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 1 -tile-rows 2 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
 				elif (( ${ncpus} == 8 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 1 -tile-rows 2 -threads ${ncpus} )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 1 -tile-rows 2 -threads ${ncpus} )
 				elif (( ${ncpus} == 16 && ${nthreads_per_core} > 1 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 2 -tile-rows 2 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 2 -tile-rows 2 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
 				elif (( ${ncpus} == 16 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 2 -tile-rows 2 -threads ${ncpus} )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 2 -tile-rows 2 -threads ${ncpus} )
 				elif (( ${nthreads_per_core} > 1 )) ; then
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 2 -tile-rows 2 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 2 -tile-rows 2 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
 				else
-					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 2 -tile-rows 2 -threads ${ncpus} -row-mt 1 )
+					av1_encoding=( -c:v libaom-av1 -tile-columns 2 -tile-rows 2 -threads ${ncpus} -row-mt 1 )
 				fi
 			elif has_version "media-video/ffmpeg[rav1e]" ;then
 				av1_encoding=( -c:v librav1e )
