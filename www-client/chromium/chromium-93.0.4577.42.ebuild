@@ -548,6 +548,89 @@ gen_pgo_profile_required_use() {
 		done
 	done
 }
+
+# There is 2 official (perflab) platforms for linux:  linux and linux_rel.
+# ~55 benchmarks used.
+gen_required_use_pgo_profile_official_linux() {
+	# See
+# https://github.com/chromium/chromium/blob/93.0.4577.42/tools/perf/core/bot_platforms.py#L311
+# https://github.com/chromium/chromium/blob/93.0.4577.42/tools/perf/core/bot_platforms.py#L226
+# https://github.com/chromium/chromium/blob/93.0.4577.42/tools/perf/core/shard_maps/linux-perf_map.json
+	local exclude=(
+		blink_perf.display_locking
+		power.mobile
+		v8.runtime_stats.top_25
+	)
+	for x in ${BENCHMARKS_ALL[@]} ; do
+		t="${x}"
+		t_raw="${x}"
+		t="${t//-/_}"
+		t="${t//./_}"
+		t="${t,,}"
+		local excluded=0
+		for ex in ${exclude[@]} ; do
+			if [[ "${t_raw}" == "${ex}" ]] ; then
+				excluded=1
+			fi
+		done
+		if [[ "${t_raw}" =~ ^"UNSCHEDULED" \
+			|| "${t_raw}" == "custom" \
+			|| "${t_raw}" == ".mobile"$ \
+			]] ; then
+			excluded=1
+		fi
+		if (( excluded == 1 )) ; then
+			echo " !cr_pgo_trainers_${t}"
+		else
+			echo " cr_pgo_trainers_${t}"
+		fi
+	done
+	for x in ${CONTRIB_BENCHMARKS[@]} ; do
+		t="${x}"
+		t="${t//-/_}"
+		t="${t//./_}"
+		t="${t,,}"
+		echo " !cr_pgo_trainers_${t}"
+	done
+}
+
+# Only 1 benchmark used.
+gen_required_use_pgo_profile_official_linux_rel() {
+	# See
+# https://github.com/chromium/chromium/blob/93.0.4577.42/tools/perf/core/bot_platforms.py#L307
+# https://github.com/chromium/chromium/blob/93.0.4577.42/tools/perf/core/shard_maps/linux-perf-rel_map.json
+	local whitelist=(
+		system_health.common_desktop
+	)
+	for x in ${BENCHMARKS_ALL[@]} ; do
+		t="${x}"
+		t_raw="${x}"
+		t="${t//-/_}"
+		t="${t//./_}"
+		t="${t,,}"
+		local included=0
+		for wl in ${whitelist[@]} ; do
+			if [[ "${t_raw}" == "${wl}" ]] ; then
+				included=1
+			fi
+		done
+		if (( included == 1 )) ; then
+			echo " cr_pgo_trainers_${t}"
+		else
+			echo " !cr_pgo_trainers_${t}"
+		fi
+	done
+	for x in ${CONTRIB_BENCHMARKS[@]} ; do
+		t="${x}"
+		t="${t//-/_}"
+		t="${t//./_}"
+		t="${t,,}"
+		echo " !cr_pgo_trainers_${t}"
+	done
+}
+
+PGO_PROFILE_SET_OFFICIAL_LINUX=$(gen_required_use_pgo_profile_official_linux)
+PGO_PROFILE_SET_OFFICIAL_LINUX_REL=$(gen_required_use_pgo_profile_official_linux_rel)
 IUSE+=" "$(gen_pgo_profile_use)
 REQUIRED_USE+=" $(gen_pgo_profile_required_use)"
 REQUIRED_USE+=" pgo-full? ( || ( $(gen_pgo_profile_use) ) )"
@@ -567,12 +650,7 @@ REQUIRED_USE+="
 	lto-opt? ( clang )
 	official? ( amd64? ( cfi cfi-icall ) partitionalloc ^^ ( pgo pgo-full )
 		pgo-full? (
-			!cr_pgo_trainers_custom
-			!cr_pgo_trainers_unscheduled_blink_perf_performance_apis
-			!cr_pgo_trainers_unscheduled_blink_perf_service_worker
-			!cr_pgo_trainers_unscheduled_loading_mbi
-			!cr_pgo_trainers_unscheduled_v8_loading_desktop
-			!cr_pgo_trainers_unscheduled_v8_loading_mobile
+			${PGO_PROFILE_SET_OFFICIAL_LINUX_REL}
 		)
 	)
 	partitionalloc? ( !component-build )
@@ -799,8 +877,8 @@ BDEPEND="
 				media-video/ffmpeg[encode,x264]
 			)
 			|| (
-				media-video/ffmpeg[encode,rav1e]
 				media-video/ffmpeg[encode,libaom]
+				media-video/ffmpeg[encode,rav1e]
 			)
 			media-video/ffmpeg[encode,mp3,opus,vorbis,vpx]
 		)
@@ -2381,10 +2459,39 @@ eerror
 				&& ffmpeg -hide_banner -encoders 2>/dev/null \
 					| grep -q -F -e "av1_vaapi" ; then
 				av1_encoding=( -c:v av1_vaapi )
+			elif has_version "media-video/ffmpeg[libaom]" ; then
+				ncpus=$(lscpu | grep -E -e "^CPU\(s\):.*" | grep -E -o -e "[0-9]+")
+				nthreads_per_core=$(lscpu | grep -E -e "^Thread\(s\) per core:.*" | grep -E -o -e "[0-9]+")
+				# The defaults are slow.  Test?
+				if (( ${ncpus} == 1 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 0 -tile-rows 0 -threads 1 )
+				elif (( ${ncpus} == 2 && ${nthreads_per_core} > 1 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 0 -tile-rows 1 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
+				elif (( ${ncpus} == 2 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 0 -tile-rows 1 -threads ${ncpus} )
+				elif (( ${ncpus} == 3 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 0 -tile-rows 1 -threads ${ncpus} -row-mt 1 )
+				elif (( ${ncpus} == 4 && ${nthreads_per_core} > 1 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 1 -tile-rows 1 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
+				elif (( ${ncpus} == 4 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 1 -tile-rows 1 -threads ${ncpus} )
+				elif (( ${ncpus} == 6 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 1 -tile-rows 1 -threads ${ncpus} -row-mt 1 )
+				elif (( ${ncpus} == 8 && ${nthreads_per_core} > 1 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 1 -tile-rows 2 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
+				elif (( ${ncpus} == 8 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 1 -tile-rows 2 -threads ${ncpus} )
+				elif (( ${ncpus} == 16 && ${nthreads_per_core} > 1 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 2 -tile-rows 2 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
+				elif (( ${ncpus} == 16 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 2 -tile-rows 2 -threads ${ncpus} )
+				elif (( ${nthreads_per_core} > 1 )) ; then
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 2 -tile-rows 2 -threads $(( ${ncpus} * ${nthreads_per_core} )) -row-mt 1 )
+				else
+					av1_encoding=( -c:v libaom-av1 -cpu-used ${ncpus} -tile-columns 2 -tile-rows 2 -threads ${ncpus} -row-mt 1 )
+				fi
 			elif has_version "media-video/ffmpeg[rav1e]" ;then
 				av1_encoding=( -c:v librav1e )
-			elif has_version "media-video/ffmpeg[libaom]" ; then
-				av1_encoding=( -c:v libaom-av1 )
 			fi
 
 			h264_baseline_profile=()
@@ -2664,14 +2771,18 @@ eerror
 			fi
 
 			# tulip2.webm -> tulip0.av1.mp4
-			av1_filter_args=( -vf "format=nv12,hwupload" )
+			# Must be 8 bit AV1
+			# An alternative exist (bear in the media/test/data) folder,
+			# but it was decided to stick to the tulip to match upstream testing.
+			filter_sw=( format=yuv420p )
+			filter_hw=( $(_gen_vaapi_filter "AV1") )
 			cmd=( ffmpeg \
 				${drm_render_node[@]} \
 				${vp8_decoding[@]} \
 				-i "${S}/media/test/data/tulip2.webm" \
 				${av1_encoding[@]} \
 				$(_is_vaapi_allowed "AV1" && echo "${init_ffmpeg_filter[@]}") \
-				$(_is_vaapi_allowed "AV1" && echo "${av1_filter_args[@]}") \
+				-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 				-an \
 				"${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" )
 				einfo "${cmd[@]}"
@@ -2737,6 +2848,10 @@ eerror
 			cr_pgo_trainers_power_mobile
 			cr_pgo_trainers_rasterize_and_record_micro_top_25
 			cr_pgo_trainers_rendering_mobile
+			cr_pgo_trainers_system_health_common_desktop
+			cr_pgo_trainers_system_health_common_mobile
+			cr_pgo_trainers_system_health_memory_desktop
+			cr_pgo_trainers_system_health_memory_mobile
 			cr_pgo_trainers_system_health_pcscan
 			cr_pgo_trainers_tab_switching_typical_25
 			cr_pgo_trainers_unscheduled_loading_mbi
