@@ -4,7 +4,6 @@
 EAPI=7
 
 CMAKE_ECLASS=cmake
-VIRTUALX_REQUIRED=manual
 inherit cmake-multilib flag-o-matic toolchain-funcs
 
 if [[ ${PV} == *9999* ]]; then
