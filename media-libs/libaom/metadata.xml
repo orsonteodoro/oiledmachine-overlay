@@ -60,6 +60,8 @@
     discoloration or rendering distortions when 8 is used in a 2 second clip.
     Using 0 or 1 may result in hours of rendering for a few seconds of video
     and not recommended by ebuild fork maintainer.
+
+    For a full list see `ffmpeg -h full | less`
   </longdescription>
   <use>
     <flag name="clang">Ensures the prerequistes for ThinLTO if combined with
