@@ -2871,8 +2871,8 @@ ewarn
 			| sed -e "s|.*URL_LIST =|URL_LIST =|g" \
 				-e "\|URL_LIST = \[DOWNLOAD_URL\]|d" \
 			>> "${T}/found_uris" || die
-		( grep  -Pzo -r -e "(urls_list|ads_urls_list) = \[\n([^\]]*\n)+" || die )
-			"${S}/tools/perf" \
+		( grep  -Pzo -r -e "(urls_list|ads_urls_list) = \[\n([^\]]*\n)+" \
+			"${S}/tools/perf" || die ) \
 			| sed -e "s|/.*.py:||g" \
 			>> "${T}/found_uris" || die
 		( grep -Pzo -r -e "URL = ([(][^)]+|'[^']+)" \
