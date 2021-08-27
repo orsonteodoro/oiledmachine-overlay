@@ -30,7 +30,7 @@ SLOT="0/0"
 IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3 cpu_flags_x86_sse4_1 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
-IUSE+=" lto pgo pgo-custom"
+IUSE+=" clang lto pgo pgo-custom"
 
 REQUIRED_USE="
 	cpu_flags_x86_sse2? ( cpu_flags_x86_mmx )
@@ -59,6 +59,7 @@ BDEPEND="abi_x86_32? ( dev-lang/yasm )
 	abi_x86_x32? ( dev-lang/yasm )
 	x86-fbsd? ( dev-lang/yasm )
 	amd64-fbsd? ( dev-lang/yasm )
+	clang? ( lto? ( ${LTO_CLANG_BDEPEND} ) )
 	doc? ( app-doc/doxygen )
 	lto? (
 		|| (

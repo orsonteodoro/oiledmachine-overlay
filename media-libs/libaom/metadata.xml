@@ -62,6 +62,8 @@
     and not recommended by ebuild fork maintainer.
   </longdescription>
   <use>
+    <flag name="clang">Ensures the prerequistes for ThinLTO if combined with
+      the lto USE flag.</flag>
     <flag name="lto">Use link time optimization.</flag>
     <flag name="pgo">Use profile guided optimization.</flag>
     <flag name="pgo-custom">Use a custom profile guided optimization script to
