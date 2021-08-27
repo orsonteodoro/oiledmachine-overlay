@@ -1428,9 +1428,9 @@ init_vpython() {
 	addwrite "${CIPD_CACHE_DIR}"
 	einfo "Downloading VirtualEnvs ( ~287 MiB, ~1 hr wait )"
 	einfo "If build problems, remove the ${CIPD_CACHE_DIR} folder and try again."
+#		tools/perf/fetch_benchmark_deps.py
 	local scripts_to_run=(
 		out/Release/bin/run_performance_test_suite
-		tools/perf/fetch_benchmark_deps.py
 	)
 	cd "${S}" || die
 	for s in ${scripts_to_run[@]} ; do
