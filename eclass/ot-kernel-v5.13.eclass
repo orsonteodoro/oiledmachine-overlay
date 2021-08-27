@@ -67,7 +67,8 @@ efe513d7401c0d8ee779944de9997da960e257ce \
 28defae036a002630b50952e29ed454586ed4212 \
 6dd7ee7fb8d404b250b4b34f799110891ba0a7b9 \
 a4b5ddc398fa0a872d767992698e7a8d02443fee \
-df089c73ce7c2ecc19aaa81af627c8682f3e7aa9"
+df089c73ce7c2ecc19aaa81af627c8682f3e7aa9 \
+d74d8228e183455100493db818bced8b885768ed"
 
 # top / oldest, bottom / newest
 # Diced to let user can choose between UKSM, KSWAPD, OOMD
