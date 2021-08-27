@@ -1087,6 +1087,9 @@ src_prepare() {
 }
 
 _config_pgx() {
+	[[ -f build.ninja ]] && eninja clean
+	find "${BUILD_DIR}" -name "CMakeCache.txt" -delete
+
 	# Respect CC, otherwise fails on prefix #395875
 	tc-export CC
 
@@ -1374,7 +1377,6 @@ _build_pgx() {
 	if [[ ! -f build.ninja ]] ; then
 		die "Missing build.ninja"
 	fi
-	eninja clean
 	cmake_src_compile
 }
 
