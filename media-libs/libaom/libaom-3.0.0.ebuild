@@ -86,7 +86,7 @@ pkg_setup() {
 		if ! ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
 			die "Missing WebM support from ffmpeg"
 		fi
-		if ffprobe "${LIBAOM_PGO_VIDEO}" ; then
+		if ffprobe "${LIBAOM_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
 			if [[ -z "${LIBAOM_PGO_VIDEO}" ]] ; then
 eerror
 eerror "LIBAOM_PGO_VIDEO is missing the abspath to your av1 video as a"
@@ -97,14 +97,14 @@ eerror
 			fi
 			einfo "Verifying asset requirements"
 			if ! ( ffprobe "${LIBAOM_PGO_VIDEO}" 2>&1 \
-				| grep -e "3840x2160" ) ; then
+				| grep -q -e "3840x2160" ) ; then
 eerror
 eerror "The PGO video sample must be 3840x2160."
 eerror
 				die
 			fi
 			if ! ( ffprobe "${LIBAOM_PGO_VIDEO}" 2>&1 \
-				| grep -E -e ", (59|60)[.0-9]* fps" ) ; then
+				| grep -q -E -e ", (59|60)[.0-9]* fps" ) ; then
 eerror
 eerror "The PGO video sample must be >=59 fps."
 eerror
@@ -234,6 +234,7 @@ configure_pgx() {
 		append-cxxflags -flto=${ncpus}
 		append-ldflags -flto=${ncpus} -O2
 	fi
+	tc-export CC CXX LD
 	export FFMPEG=$(get_multiabi_ffmpeg)
 	export MPV=$(get_multiabi_mpv)
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
