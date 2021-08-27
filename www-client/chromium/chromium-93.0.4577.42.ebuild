@@ -2776,19 +2776,35 @@ eerror
 			# Must be 8 bit AV1
 			# An alternative exist (bear in the media/test/data) folder,
 			# but it was decided to stick to the tulip to match upstream testing.
-			filter_sw=( format=yuv420p )
-			filter_hw=( $(_gen_vaapi_filter "AV1") )
-			cmd=( ffmpeg \
-				${drm_render_node[@]} \
-				${vp8_decoding[@]} \
-				-i "${S}/media/test/data/tulip2.webm" \
-				${av1_encoding[@]} \
-				$(_is_vaapi_allowed "AV1" && echo "${init_ffmpeg_filter[@]}") \
-				-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
-				-an \
-				"${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
+			if [[ -f "${ASSET_CACHE}/tulip0.av1.mp4" \
+				&& -f "${ASSET_CACHE}/tulip0.av1.mp4.sha512" \
+				&& $(cat "${ASSET_CACHE}/tulip0.av1.mp4.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/tulip0.av1.mp4" \
+						| cut -f 1 -d " ") ]] ; then
+				einfo "Using pregenerated and cached tulip0.av1.mp4"
+				cp -a "${ASSET_CACHE}/tulip0.av1.mp4" \
+					"${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" \
+					|| die
+			else
+				filter_sw=( format=yuv420p )
+				filter_hw=( $(_gen_vaapi_filter "AV1") )
+				cmd=( ffmpeg \
+					${drm_render_node[@]} \
+					${vp8_decoding[@]} \
+					-i "${S}/media/test/data/tulip2.webm" \
+					${av1_encoding[@]} \
+					$(_is_vaapi_allowed "AV1" && echo "${init_ffmpeg_filter[@]}") \
+					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+					-an \
+					"${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" )
+					einfo "${cmd[@]}"
+					"${cmd[@]}" || die "${cmd[@]}"
+				einfo "Saving work to ${ASSET_CACHE}/tulip0.av1.mp4 for faster rebuilds."
+				cp -a "${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" \
+					"${ASSET_CACHE}/tulip0.av1.mp4" || die
+				sha512sum "${ASSET_CACHE}/tulip0.av1.mp4" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/tulip0.av1.mp4.sha512" || die
+			fi
 		fi
 
 		local missing_assets=(
