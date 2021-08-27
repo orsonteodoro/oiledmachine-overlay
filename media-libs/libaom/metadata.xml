@@ -30,8 +30,8 @@
     (1) Build this library first.
     (2) Build the trainer toolchain depending on this library corresponding
         to the package and USE flags above.
-    (3) Acquire a video that is either CC0-1.0, public domain, or CC-BY asset
-        that is 4k, 60 fps, 5 seconds long.
+    (3) Acquire a video that is either CC0-1.0, public domain, or your own
+        personal video asset that is 4k, 60 fps, 5 seconds long.
     (4a) Set LIBAOM_PGO_VIDEO as a per-package envvar with the abspath to
         the asset.
     (4b) Set LIBAOM_PGO_TRAINING_ARGS, see below for details.
