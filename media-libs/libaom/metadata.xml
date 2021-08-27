@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- ebuild fork only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- ebuild originator -->
+    <email>media-video@gentoo.org</email>
+  </maintainer>
+  <longdescription>
+    This ebuild fork will allow use of LTO and PGO for this library.
+    Currently it only optimizes the default settings, but may be PGO
+    optimized for multithreaded through pgo-custom USE flag or changing
+    the LIBAOM_PGO_TRAINING_ARGS explained at the end of this description.
+    Currently only native ABI is supported due to lack of 32 bit encoder
+    frontend package.  The trainer will generate PGO data for both
+    encoding and decoding that will be fed back into the optimized
+    version.
+
+    PGOing this package requires the following packages before running
+    the trainer:
+
+      media-video/mpv[cli]
+      media-video/ffmpeg[encode,libaom]
+
+    So the following steps must be taken.
+    (1) Build this library first.
+    (2) Build the trainer toolchain depending on this library corresponding
+        to the package and USE flags above.
+    (3) Acquire a video that is either CC0-1.0, public domain, or CC-BY asset
+        that is 4k, 60 fps, 5 seconds long.
+    (4a) Set LIBAOM_PGO_VIDEO as a per-package envvar with the abspath to
+        the asset.
+    (4b) Set LIBAOM_PGO_TRAINING_ARGS, see below for details.
+    (5) Re-emerge this package with the pgo USE flag enabled.
+
+    For 32-bit PGO, both mpv and ffmpeg should have 32-bit binaries.  The
+    paths to those binaries are described in the ebuild.
+
+    A user may supply a custom.sh via a per-package patch to set up multiple
+    encoding settings which may include threading or tiling configurations
+    or favorite quality setting.  See the ebuild for the FFmpeg template
+    in the ebuild which could be extended with different args and placed
+    in your custom.sh file.  Consider adding more generation rules that
+    include the desired the pixel format like 10 bit yuv420p10le if that
+    follows your typical use pattern.
+
+    You may supply a LIBAOM_PGO_TRAINING_ARGS as a per package envvar to
+    tell ffmpeg which multicore, multithreading, tiling settings to use as
+    the default.  It must be a string.  Example
+
+      LIBAOM_PGO_TRAINING_ARGS=" -cpu-used 8 -tile-columns 2 -tile-rows 2 -threads 8"
+
+    Adding -cpu-used N, with N in the range of 0-8 with 0 being the slowest
+    and 8 being the fastest should be set.  The quality difference is around
+    ~3% but my personal test notice no recognizable differences resulting in
+    discoloration or rendering distortions when 8 is used in a 2 second clip.
+    Using 0 or 1 may result in hours of rendering for a few seconds of video
+    and not recommended by ebuild fork maintainer.
+  </longdescription>
+  <use>
+    <flag name="lto">Use link time optimization.</flag>
+    <flag name="pgo">Use profile guided optimization.</flag>
+    <flag name="pgo-custom">Use a custom profile guided optimization script to
+      train with.</flag>
+  </use>
+</pkgmetadata>
