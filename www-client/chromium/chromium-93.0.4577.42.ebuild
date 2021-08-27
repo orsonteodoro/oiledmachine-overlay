@@ -2807,23 +2807,6 @@ eerror
 			fi
 		fi
 
-		local missing_assets=(
-			cr_pgo_trainers_media_desktop
-			cr_pgo_trainers_media_mobile
-		)
-		# See tools/perf/page_sets/media_cases.py for the remaining missing assets.
-		# The data retrieved can be classified as local copy or \
-		# or needing realtime remote retrieval depending on treatment.
-		for u in ${missing_assets[@]} ; do
-			if use "${u}" ; then
-eerror
-eerror "The ${u} USE flag is not ready yet.  Missing video or still image"
-eerror "assets."
-eerror
-				die
-			fi
-		done
-
 		for u in ${remote_access_use[@]} ; do
 			# This section is still unfinished
 			# TODO: Still categorizing benchmarks if local copy
