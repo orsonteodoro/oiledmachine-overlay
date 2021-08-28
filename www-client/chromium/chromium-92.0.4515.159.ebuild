@@ -1339,16 +1339,15 @@ requires_cfi_icall_generalize_pointers() {
 	return 1
 }
 
-# The first problem with unbundling is the CFI bypass problem.
-# The second problem with unbundling is the lack of PGO support in
-# the ebuilds themselves, causing unmatched performance.
-check_dependencies_built_with_cfi() {
+# These replace the internal dependency.
+THIRD_PARTY_PACKAGES=()
+init_third_party_packages() {
 	# List of packages that touch untrusted data
-	# TODO: repackage some of the internally_cfied packages with PGO.
+	# TODO: repackage some of the THIRD_PARTY_PACKAGES packages with PGO.
 	# List based on the intersection between the third_party packages
 	# and the *DEPENDs list.
 	# TODO: recheck for completeness
-	local internally_cfied=(
+	THIRD_PARTY_PACKAGES=(
 		dev-libs/expat
 		dev-libs/libxml2
 		media-libs/flac
@@ -1364,7 +1363,7 @@ check_dependencies_built_with_cfi() {
 	)
 
 	if use wayland ; then
-		internally_cfied+=(
+		THIRD_PARTY_PACKAGES+=(
 			dev-libs/wayland
 			dev-libs/weston
 		)
@@ -1372,7 +1371,7 @@ check_dependencies_built_with_cfi() {
 	fi
 
 	if ! use libcxx ; then
-		internally_cfied+=(
+		THIRD_PARTY_PACKAGES+=(
 			dev-libs/libxslt
 			dev-libs/re2
 			app-arch/snappy
@@ -1380,15 +1379,22 @@ check_dependencies_built_with_cfi() {
 		)
 	fi
 	if ! use system-icu ; then
-		internally_cfied+=(
+		THIRD_PARTY_PACKAGES+=(
 			dev-libs/icu
 		)
 	fi
+}
 
+# The first problem with unbundling is the CFI bypass problem.
+# The second problem with unbundling is the lack of PGO support in
+# the ebuilds themselves, causing unmatched performance.
+#
+# These cfi/ssp checks are to ensure that it meets or exceeds upstream security
+# standards or expectations.
+check_dependencies_built_with_cfi() {
 	local cfi_icall_generalize_pointers=(
 		media-libs/freetype
 	)
-
 	local reported=0
 	# For recommended flags, see
 	# https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/sanitizers/BUILD.gn#L196
@@ -1397,7 +1403,7 @@ check_dependencies_built_with_cfi() {
 	# This is not an issue if built and linked internally, but since it is split
 	# the untrusted packages do not get the same protection.
 	local p
-	for p in ${internally_cfied[@]} ; do
+	for p in ${THIRD_PARTY_PACKAGES[@]} ; do
 		if use cfi \
 			&& ls /var/db/pkg/${p}-*/LDFLAGS 2>/dev/null 1>/dev/null ; then
 			for t in "LDFLAGS" "CFLAGS" "CXXFLAGS" ; do
@@ -1495,6 +1501,75 @@ eerror
 	# TODO re-evaluate shadow-call-stack
 }
 
+# Ensure that the unbunded packages meets or exceeds the security expectation.
+# These packages would receive SSP treatment if they remained internal.
+check_dependencies_built_with_ssp() {
+	# Check fstack-protector
+	# See https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/compiler/BUILD.gn#L335
+	# https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/compiler/BUILD.gn#L1677
+	local ssp_reported=0
+	for p in ${THIRD_PARTY_PACKAGES[@]} ; do
+		for t in "CFLAGS" "CXXFLAGS" ; do
+			if ! ( cat /var/db/pkg/${p}*/${t} \
+				| grep -q -e "--param=ssp-buffer-size=4" ) ; then
+ewarn
+ewarn "Missing --param=ssp-buffer-size=4 for ${p}.  Add it to the per-package"
+ewarn "${t} envvar."
+ewarn
+				ssp_reported=1
+			fi
+			if ( cat /var/db/pkg/${p}*/${t} \
+				| grep -q -e "-fstack-protector-strong" ) ; then
+				# Meets or exceeds expectations
+				:;
+			elif ( cat /var/db/pkg/${p}*/${t} \
+				| grep -q -e "-fstack-protector-all" ) ; then
+				# Meets or exceeds expectations
+				:;
+			elif ! ( cat /var/db/pkg/${p}*/${t} \
+				| grep -q -e "-fstack-protector" ) ; then
+ewarn
+ewarn "Missing -fstack-protector for ${p}.  Add it to the per-package ${t}"
+ewarn "envvar."
+ewarn
+				ssp_reported=1
+			fi
+		done
+	done
+
+	if (( ${ssp_reported} == 1 )) ; then
+eerror
+eerror "Fix the above SSP issues.  Add the above flags to the corresponding"
+eerror "package and rebuild."
+eerror
+		die
+	fi
+}
+
+# Checks for runtime buffer overflow protection.  The check terminates the
+# program before the buffer overflow happens.
+check_dependencies_built_with_fortify_source() {
+	# See https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/compiler/BUILD.gn#L1677
+	# We just assume that all THIRD_PARTY_PACKAGES packages do not have it.
+	local reported=0
+	for p in ${THIRD_PARTY_PACKAGES[@]} ; do
+		if ! ( bzcat /var/db/pkg/${p}*/environment.bz2 \
+			| grep -E -e "declare -x CPPFLAGS.*-D_FORTIFY_SOURCE=2" ) ; then
+ewarn
+ewarn "Missing -D_FORTIFY_SOURCE=2 for ${p}.  Add it to the per-package"
+ewarn "CPPFLAGS envvar and rebuild the affected package."
+ewarn
+			reported=1
+		fi
+	done
+	if (( ${reported} == 1 )) ; then
+eerror
+eerror "Fix the above unprotected buffer overflow issues first."
+eerror
+		die
+	fi
+}
+
 NABIS=0
 pkg_setup() {
 	einfo "The $(ver_cut 1 ${PV}) series is the Stable channel."
@@ -1577,8 +1652,14 @@ ewarn
 		find_vaapi
 	fi
 
+	init_third_party_packages
 	if use cfi ; then
 		check_dependencies_built_with_cfi
+	fi
+	check_dependencies_built_with_ssp
+	if ! use ppc64 && ! use s390 && ! use s390x && ! use n32 && ! use n64 \
+		&& ! use o32 ; then
+		check_dependencies_built_with_fortify_source
 	fi
 
 	for a in $(multilib_get_enabled_abis) ; do
