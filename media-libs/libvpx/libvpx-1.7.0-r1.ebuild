@@ -412,7 +412,7 @@ _trainer_plan_constrained_quality() {
 
 	if use pgo \
 		&& has_pgo_requirement ; then
-		einfo "Running PGO trainer for ${encoding_codec}"
+		einfo "Running PGO trainer for ${encoding_codec} for 1 pass constrained quality"
 		local cmd
 		einfo "Encoding as 720p for 3 sec, 30 fps"
 		cmd=( "${FFMPEG}" \
@@ -518,7 +518,7 @@ _trainer_plan_constrained_quality() {
 	fi
 }
 
-_trainer_plan_2_pass() {
+_trainer_plan_2_pass_constrained_quality() {
 	local encoding_codec="${1}"
 	local decoding_codec
 	local training_args
@@ -534,7 +534,7 @@ _trainer_plan_2_pass() {
 
 	if use pgo \
 		&& has_pgo_requirement ; then
-		einfo "Running PGO trainer for ${encoding_codec}"
+		einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
 		local cmd
 		einfo "Encoding as 720p for 3 sec, 30 fps (2-pass ABR)"
 		cmd1=( "${FFMPEG}" \
@@ -752,7 +752,7 @@ _trainer_plan_lossless() {
 
 	if use pgo \
 		&& has_pgo_requirement ; then
-		einfo "Running PGO trainer for ${encoding_codec}"
+		einfo "Running PGO trainer for ${encoding_codec} for lossless"
 		local cmd
 		einfo "Encoding as lossless"
 		cmd=( "${FFMPEG}" \
