@@ -1463,7 +1463,7 @@ einfo
 eerror
 eerror "Fix the above CFI issues first, or you may disable the cfi and official"
 eerror "USE flags.  All missing LDFLAGSs must be included for that specific"
-eerror "package."
+eerror "package.  All affected packages must be rebuilt with clang."
 eerror
 		die
 	fi
