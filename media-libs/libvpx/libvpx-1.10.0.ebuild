@@ -23,7 +23,7 @@ LICENSE="BSD"
 SLOT="0/6"
 KEYWORDS="amd64 ~arm arm64 ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux"
 IUSE="doc +highbitdepth postproc static-libs svc test +threads"
-IUSE+=" clang lto pgo pgo-custom
+IUSE+=" clang lto pgo
 	pgo-custom
 	pgo-trainer-2-pass-constrained-quality
 	pgo-trainer-constrained-quality
