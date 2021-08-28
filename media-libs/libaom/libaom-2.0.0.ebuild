@@ -41,6 +41,10 @@ REQUIRED_USE="
 			pgo-trainer-lossless
 		)
 	)
+	pgo-custom? ( pgo )
+	pgo-trainer-2-pass-constrained-quality? ( pgo )
+	pgo-trainer-constrained-quality? ( pgo )
+	pgo-trainer-lossless? ( pgo )
 "
 
 LTO_CLANG_BDEPEND="
