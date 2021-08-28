@@ -239,7 +239,6 @@ configure_pgx() {
 		append-cflags -flto=thin
 		append-cxxflags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin -O2
-		export LD=lld
 	elif use lto && tc-is-gcc ; then
 		ncpus=$(lscpu | grep -E "^CPU\(s\):.*[0-9]+" \
 			| grep -E -o "[0-9]+")
@@ -247,7 +246,7 @@ configure_pgx() {
 		append-cxxflags -flto=${ncpus}
 		append-ldflags -flto=${ncpus} -O2
 	fi
-	tc-export CC CXX LD
+	tc-export CC CXX
 	export FFMPEG=$(get_multiabi_ffmpeg)
 	export MPV=$(get_multiabi_mpv)
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
