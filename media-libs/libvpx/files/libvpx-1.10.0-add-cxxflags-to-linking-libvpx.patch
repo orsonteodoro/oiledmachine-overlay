@@ -1,0 +1,12 @@
+Required for PGO with clang/llvm
+--- libvpx-1.10.0/build/make/Makefile.orig	2021-03-18 12:59:46.000000000 -0700
++++ libvpx-1.10.0/build/make/Makefile	2021-08-27 14:45:14.869132448 -0700
+@@ -306,7 +306,7 @@ define so_template
+ # This needs further abstraction for dealing with non-GNU linkers.
+ $(1):
+ 	$(if $(quiet),@echo "    [LD] $$@")
+-	$(qexec)$$(LD) -shared $$(LDFLAGS) \
++	$(qexec)$$(LD) -shared $$(LDFLAGS) $$(CXXFLAGS) \
+             -Wl,--no-undefined -Wl,-soname,$$(SONAME) \
+             -Wl,--version-script,$$(EXPORTS_FILE) -o $$@ \
+             $$(filter %.o,$$^) $$(extralibs)

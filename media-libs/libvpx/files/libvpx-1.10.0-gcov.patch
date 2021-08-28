@@ -1,0 +1,16 @@
+--- libvpx-1.7.0/build/make/configure.sh.orig	2018-01-24 14:25:44.000000000 -0800
++++ libvpx-1.7.0/build/make/configure.sh	2021-08-27 02:47:33.023575959 -0700
+@@ -1422,9 +1422,10 @@ EOF
+   fi
+ 
+   enabled gprof && check_add_cflags -pg && check_add_ldflags -pg
+-  enabled gcov &&
+-    check_add_cflags -fprofile-arcs -ftest-coverage &&
+-    check_add_ldflags -fprofile-arcs -ftest-coverage
++  enabled gcov && \
++    check_add_cflags -fprofile-arcs -ftest-coverage && \
++    check_add_ldflags -fprofile-arcs -ftest-coverage && \
++    add_extralibs -lgcov
+ 
+   if enabled optimizations; then
+     if enabled rvct; then

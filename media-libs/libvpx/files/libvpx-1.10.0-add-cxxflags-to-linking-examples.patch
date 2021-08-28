@@ -1,0 +1,19 @@
+Required for PGO with clang/llvm
+--- libvpx-1.10.0/build/make/Makefile.orig	2021-08-27 14:47:04.065485108 -0700
++++ libvpx-1.10.0/build/make/Makefile	2021-08-27 14:52:23.103199953 -0700
+@@ -266,13 +266,13 @@ define linker_template
+ $(1): $(filter-out -%,$(2))
+ $(1):
+ 	$(if $(quiet),@echo    "    [LD] $$@")
+-	$(qexec)$$(LD) $$(strip $$(INTERNAL_LDFLAGS) $$(LDFLAGS) -o $$@ $(2) $(3) $$(extralibs))
++	$(qexec)$$(LD) $$(strip $$(INTERNAL_LDFLAGS) $$(LDFLAGS) $$(CFLAGS) -o $$@ $(2) $(3) $$(extralibs))
+ endef
+ define linkerxx_template
+ $(1): $(filter-out -%,$(2))
+ $(1):
+ 	$(if $(quiet),@echo    "    [LD] $$@")
+-	$(qexec)$$(CXX) $$(strip $$(INTERNAL_LDFLAGS) $$(LDFLAGS) -o $$@ $(2) $(3) $$(extralibs))
++	$(qexec)$$(CXX) $$(strip $$(INTERNAL_LDFLAGS) $$(LDFLAGS) $$(CXXFLAGS) -o $$@ $(2) $(3) $$(extralibs))
+ endef
+ # make-3.80 has a bug with expanding large input strings to the eval function,
+ # which was triggered in some cases by the following component of
