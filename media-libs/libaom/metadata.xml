@@ -34,7 +34,8 @@
         personal video asset that is 4k, 60 fps, 5 seconds long.
     (4a) Set LIBAOM_PGO_VIDEO as a per-package envvar with the abspath to
         the asset.
-    (4b) Set LIBAOM_PGO_TRAINING_ARGS, see below for details.
+    (4b) Set LIBAOM_PGO_TRAINING_ARGS and/or
+	LIBAOM_PGO_TRAINING_ARGS_LOSSLESS, see below for details.
     (5) Re-emerge this package with the pgo USE flag enabled.
 
     For 32-bit PGO, both mpv and ffmpeg should have 32-bit binaries.  The
@@ -62,6 +63,13 @@
     and not recommended by ebuild fork maintainer.
 
     For a full list see `ffmpeg -h full | less`
+
+    LIBAOM_PGO_TRAINING_ARGS_LOSSLESS can only be adjusted for performance
+    and not quality.  You may not change the quality, dimensions, or drop
+    frames.
+
+    You should only pick PGO trainers that reflect typical use or it may
+    result in performance degration.
   </longdescription>
   <use>
     <flag name="clang">Ensures the prerequistes for ThinLTO if combined with
@@ -70,5 +78,11 @@
     <flag name="pgo">Use profile guided optimization.</flag>
     <flag name="pgo-custom">Use a custom profile guided optimization script to
       train with.</flag>
+    <flag name="pgo-trainer-2-pass-constrained-quality">Performs an addtional
+      2 pass training.  Two pass improves quality and rate control.  This step
+      can be skipped for live streamers.</flag>
+    <flag name="pgo-trainer-constrained-quality">Use the 1 pass constrained
+      quality trainer PGO trainer.  (ebuild maintainer recommended)</flag>
+    <flag name="pgo-trainer-lossless">Use the lossless PGO trainer.</flag>
   </use>
 </pkgmetadata>
