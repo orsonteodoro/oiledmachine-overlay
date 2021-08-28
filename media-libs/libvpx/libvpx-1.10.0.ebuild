@@ -331,7 +331,7 @@ configure_pgx() {
 
 	# Build with correct toolchain.
 	tc-export CC CXX AR NM
-	# Link with gcc by default, the build system should override this if needed.
+	# Link with compiler by default, the build system should override this if needed.
 	export LD="${CC}"
 
 	if multilib_is_native_abi; then
