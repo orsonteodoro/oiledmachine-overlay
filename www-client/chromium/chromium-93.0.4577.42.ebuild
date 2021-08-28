@@ -1325,6 +1325,152 @@ die "${PN} requires llvm:${CR_CLANG_SLOT}"
 	fi
 }
 
+requires_cfi_icall_generalize_pointers() {
+	local x_pkg="${1}"
+	local cfi_icall_generalize_pointers=(
+		media-libs/freetype
+		# dev-db/sqlite also if unbundled
+	)
+
+	local pkg
+	for pkg in ${cfi_icall_generalize_pointers[@]} ; do
+		[[ "${x_pkg}" == "${pkg}" ]] && return 0
+	done
+	return 1
+}
+
+# The first problem with unbundling is the CFI bypass problem.
+# The second problem with unbundling is the lack of PGO support in
+# the ebuilds themselves, causing unmatched performance.
+check_dependencies_built_with_cfi() {
+	# List of packages that touch untrusted data
+	# TODO: repackage some of the internally_cfied packages with PGO.
+	# List based on the intersection between the third_party packages
+	# and the *DEPENDs list.
+	# TODO: recheck for completeness
+	local internally_cfied=(
+		dev-libs/expat
+		dev-libs/libxml2
+		media-libs/flac
+		media-libs/fontconfig
+		media-libs/freetype
+		media-libs/harfbuzz
+		media-libs/libjpeg-turbo
+		media-libs/libpng
+		media-libs/libwebp
+		media-libs/opus
+		media-video/ffmpeg
+		sys-libs/zlib
+	)
+
+	if use wayland ; then
+		internally_cfied+=(
+			dev-libs/wayland
+			dev-libs/weston
+		)
+		# dev-libs/weston may need it but only used in build time
+	fi
+
+	if ! use libcxx ; then
+		internally_cfied+=(
+			dev-libs/libxslt
+			dev-libs/re2
+			app-arch/snappy
+			media-libs/openh264
+		)
+	fi
+	if ! use system-icu ; then
+		internally_cfied+=(
+			dev-libs/icu
+		)
+	fi
+
+	local cfi_icall_generalize_pointers=(
+		media-libs/freetype
+	)
+
+	local reported=0
+	# For recommended flags, see
+	# https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/sanitizers/BUILD.gn#L196
+	einfo "Checking dependencies for proper CFI protection."
+	# This is not an issue if built and linked internally, but since it is split
+	# the untrusted packages do not get the same protection.
+	local p
+	for p in ${internally_cfied[@]} ; do
+		if use cfi \
+			&& ls /var/db/pkg/${p}-*/LDFLAGS 2>/dev/null 1>/dev/null ; then
+			if ! ( cat /var/db/pkg/${p}*/LDFLAGS \
+				| grep -q -e "-fsanitize=cfi-vcall" ) ; then
+ewarn
+ewarn "${p} is not compiled with CFI which may be used as a possible attack"
+ewarn "surface. Recompile ${p} with -fsanitize=cfi-vcall with a per-package"
+ewarn "LDFLAGS."
+ewarn
+				reported=1
+			fi
+			if use cfi-icall && ! ( cat /var/db/pkg/${p}*/LDFLAGS \
+				| grep -q -e "-fsanitize=cfi-icall" ) ; then
+ewarn
+ewarn "${p} is not compiled with CFI which may be used as a possible attack"
+ewarn "surface. Recompile ${p} with -fsanitize=cfi-icall with a per-package"
+ewarn "LDFLAGS."
+ewarn
+				reported=1
+			fi
+			if use cfi-icall \
+				&& requires_cfi_icall_generalize_pointers "${p}" \
+				&& ! ( cat /var/db/pkg/${p}*/LDFLAGS \
+				| grep -q -e "-fsanitize-cfi-icall-generalize-pointers" ) ; then
+ewarn
+ewarn "${p} is not compiled with CFI which may be used as a possible attack"
+ewarn "surface.  Recompile ${p} with -fsanitize-cfi-icall-generalize-pointers"
+ewarn "with a per-package LDFLAGS."
+ewarn
+				reported=1
+			fi
+			if use cfi-full && ! ( cat /var/db/pkg/${p}*/LDFLAGS \
+				| grep -q -e "-fsanitize=cfi-derived-cast" ) ; then
+ewarn
+ewarn "${p} is not compiled with CFI which may be used as a possible attack"
+ewarn "surface.  Recompile ${p} with -fsanitize=cfi-derived-cast with a"
+ewarn "per-package LDFLAGS."
+ewarn
+				reported=1
+			fi
+			if use cfi-full && ! ( cat /var/db/pkg/${p}*/LDFLAGS \
+				| grep -q -e "-fsanitize=cfi-unrelated-cast" ) ; then
+ewarn
+ewarn "${p} is not compiled with CFI which may be used as a possible attack"
+ewarn "surface.  Recompile ${p} with -fsanitize=cfi-unrelated-cast with a"
+ewarn "per-package LDFLAGS."
+ewarn
+				reported=1
+			fi
+		fi
+	done
+
+	if use cfi && has_version "dev-libs/icu" ; then
+einfo
+einfo "When CFIng icu, you may need to add -fsanitize-blacklist=<abspath>.  For"
+einfo "the rule to disable CFI for a set of files see:"
+einfo "https://github.com/chromium/chromium/blob/93.0.4577.42/tools/cfi/ignores.txt#L131"
+einfo "https://github.com/chromium/chromium/blob/93.0.4577.42/tools/cfi/ignores.txt#L229"
+einfo "https://releases.llvm.org/10.0.0/tools/clang/docs/SanitizerSpecialCaseList.html"
+einfo
+	fi
+
+	if ( use cfi || use official ) && (( ${reported} == 1 )) ; then
+eerror
+eerror "Fix the above CFI issues first, or you may disable the cfi and official"
+eerror "USE flags.  All missing LDFLAGSs must be included for that specific"
+eerror "package."
+eerror
+		die
+	fi
+
+	# TODO re-evaluate shadow-call-stack
+}
+
 NABIS=0
 pkg_setup() {
 	ewarn "The $(ver_cut 1 ${PV}) series is the Beta channel."
@@ -1405,6 +1551,10 @@ ewarn
 
 	if use vaapi ; then
 		find_vaapi
+	fi
+
+	if use cfi ; then
+		check_dependencies_built_with_cfi
 	fi
 
 	for a in $(multilib_get_enabled_abis) ; do
