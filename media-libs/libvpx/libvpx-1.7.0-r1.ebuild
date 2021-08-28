@@ -40,6 +40,10 @@ REQUIRED_USE="
 			pgo-trainer-lossless
 		)
 	)
+	pgo-custom? ( pgo )
+	pgo-trainer-2-pass-constrained-quality? ( pgo )
+	pgo-trainer-constrained-quality? ( pgo )
+	pgo-trainer-lossless? ( pgo )
 	test? ( threads )
 "
 
@@ -754,7 +758,6 @@ _trainer_plan_lossless() {
 		&& has_pgo_requirement ; then
 		einfo "Running PGO trainer for ${encoding_codec} for lossless"
 		local cmd
-		einfo "Encoding as lossless"
 		cmd=( "${FFMPEG}" \
 			-y \
 			-i "${LIBVPX_PGO_VIDEO}" \
