@@ -70,7 +70,7 @@
     The LIBVPX_VP8_PGO_TRAINING_ARGS_LOSSLESS and
     LIBVPX_VP9_PGO_TRAINING_ARGS_LOSSLESS are only allowed to adjust
     performance options but not any changes in quality.  Also, these
-    settings are not allowed to modify the dimensions.
+    settings are not allowed to modify the dimensions or drop frames.
 
     It is only recommended to use trainers that reflect your own personal
     typical use.  Using trainers with non-typical use patterns may degrade

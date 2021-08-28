@@ -753,7 +753,6 @@ _trainer_plan_lossless() {
 			-lossless 1 \
 			${training_args} \
 			-an \
-			-r 30 \
 			-t 3 \
 			"${T}/test.webm" )
 		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
