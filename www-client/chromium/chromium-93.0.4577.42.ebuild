@@ -1454,21 +1454,40 @@ ewarn
 		fi
 	done
 
-	if use cfi && has_version "dev-libs/icu" ; then
-einfo
-einfo "When CFIng icu, you may need to add -fsanitize-blacklist=<abspath>.  For"
-einfo "the rule to disable CFI for a set of files see:"
-einfo "https://github.com/chromium/chromium/blob/93.0.4577.42/tools/cfi/ignores.txt#L131"
-einfo "https://github.com/chromium/chromium/blob/93.0.4577.42/tools/cfi/ignores.txt#L229"
-einfo "https://releases.llvm.org/10.0.0/tools/clang/docs/SanitizerSpecialCaseList.html"
-einfo
+	if use cfi \
+		&& use system-icu \
+		&& has_version "dev-libs/icu" \
+		&& ! ( cat /var/db/pkg/dev-libs/icu*/CFLAGS \
+			| grep -q -e "-fsanitize-blacklist=" ) ; then
+ewarn
+ewarn "You need to add"
+ewarn
+ewarn "-fsanitize-blacklist=/etc/portage/cfi/${PN}/${PN}-$(ver_cut 1 ${PV}).txt"
+ewarn
+ewarn "to the CFLAGS of dev-libs/icu.  For the rule to disable cfi-icall for a set of"
+ewarn "files see:"
+ewarn
+ewarn "https://github.com/chromium/chromium/blob/92.0.4515.159/tools/cfi/ignores.txt#L131"
+ewarn "https://github.com/chromium/chromium/blob/92.0.4515.159/tools/cfi/ignores.txt#L229"
+ewarn "https://releases.llvm.org/10.0.0/tools/clang/docs/SanitizerSpecialCaseList.html"
+ewarn
+ewarn "The new rule should be:"
+ewarn
+ewarn "  src:*/common/*"
+ewarn
+ewarn "and placed in that file under the [cfi-icall] section."
+ewarn
+		reported=1
 	fi
 
 	if ( use cfi || use official ) && (( ${reported} == 1 )) ; then
 eerror
 eerror "Fix the above CFI issues first, or you may disable the cfi and official"
-eerror "USE flags.  All missing {C,CXX,LD}FLAGSs must be included for that specific"
-eerror "package.  All affected packages must be rebuilt with clang."
+eerror "USE flags.  All affected packages must be rebuilt with clang.  All"
+eerror "missing {C,CXX,LD}FLAGSs must be included for that specific package"
+eerror "per-package envvar.  To set up the per-package package.env, see"
+eerror
+eerror "  https://wiki.gentoo.org/wiki//etc/portage/package.env"
 eerror
 		die
 	fi
