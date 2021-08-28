@@ -1392,6 +1392,7 @@ check_dependencies_built_with_cfi() {
 	local reported=0
 	# For recommended flags, see
 	# https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/sanitizers/BUILD.gn#L196
+	# https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/sanitizers/BUILD.gn#L313
 	einfo "Checking dependencies for proper CFI protection."
 	# This is not an issue if built and linked internally, but since it is split
 	# the untrusted packages do not get the same protection.
@@ -1399,53 +1400,57 @@ check_dependencies_built_with_cfi() {
 	for p in ${internally_cfied[@]} ; do
 		if use cfi \
 			&& ls /var/db/pkg/${p}-*/LDFLAGS 2>/dev/null 1>/dev/null ; then
-			if ! ( cat /var/db/pkg/${p}*/LDFLAGS \
-				| grep -q -e "-fsanitize=cfi-vcall" ) ; then
+			for t in "LDFLAGS" "CFLAGS" "CXXFLAGS" ; do
+				if ! ( cat /var/db/pkg/${p}*/${t} \
+					| grep -q -e "-fsanitize=cfi-vcall" ) ; then
 ewarn
 ewarn "${p} is not compiled with CFI which may be used as a possible attack"
 ewarn "surface. Recompile ${p} with -fsanitize=cfi-vcall with a per-package"
-ewarn "LDFLAGS."
+ewarn "${t}."
 ewarn
-				reported=1
-			fi
-			if use cfi-icall && ! ( cat /var/db/pkg/${p}*/LDFLAGS \
-				| grep -q -e "-fsanitize=cfi-icall" ) ; then
+					reported=1
+				fi
+
+				if use cfi-icall && ! ( cat /var/db/pkg/${p}*/${t} \
+					| grep -q -e "-fsanitize=cfi-icall" ) ; then
 ewarn
 ewarn "${p} is not compiled with CFI which may be used as a possible attack"
 ewarn "surface. Recompile ${p} with -fsanitize=cfi-icall with a per-package"
-ewarn "LDFLAGS."
+ewarn "${t}."
 ewarn
-				reported=1
-			fi
-			if use cfi-icall \
-				&& requires_cfi_icall_generalize_pointers "${p}" \
-				&& ! ( cat /var/db/pkg/${p}*/LDFLAGS \
-				| grep -q -e "-fsanitize-cfi-icall-generalize-pointers" ) ; then
+					reported=1
+				fi
+				if use cfi-icall \
+					&& requires_cfi_icall_generalize_pointers "${p}" \
+					&& ! ( cat /var/db/pkg/${p}*/${t} \
+					| grep -q -e "-fsanitize-cfi-icall-generalize-pointers" ) ; then
 ewarn
 ewarn "${p} is not compiled with CFI which may be used as a possible attack"
 ewarn "surface.  Recompile ${p} with -fsanitize-cfi-icall-generalize-pointers"
-ewarn "with a per-package LDFLAGS."
+ewarn "with a per-package ${t}."
 ewarn
-				reported=1
-			fi
-			if use cfi-full && ! ( cat /var/db/pkg/${p}*/LDFLAGS \
-				| grep -q -e "-fsanitize=cfi-derived-cast" ) ; then
+					reported=1
+				fi
+
+				if use cfi-full && ! ( cat /var/db/pkg/${p}*/${t} \
+					| grep -q -e "-fsanitize=cfi-derived-cast" ) ; then
 ewarn
 ewarn "${p} is not compiled with CFI which may be used as a possible attack"
 ewarn "surface.  Recompile ${p} with -fsanitize=cfi-derived-cast with a"
-ewarn "per-package LDFLAGS."
+ewarn "per-package ${t}."
 ewarn
-				reported=1
-			fi
-			if use cfi-full && ! ( cat /var/db/pkg/${p}*/LDFLAGS \
-				| grep -q -e "-fsanitize=cfi-unrelated-cast" ) ; then
+					reported=1
+				fi
+				if use cfi-full && ! ( cat /var/db/pkg/${p}*/${t} \
+					| grep -q -e "-fsanitize=cfi-unrelated-cast" ) ; then
 ewarn
 ewarn "${p} is not compiled with CFI which may be used as a possible attack"
 ewarn "surface.  Recompile ${p} with -fsanitize=cfi-unrelated-cast with a"
-ewarn "per-package LDFLAGS."
+ewarn "per-package ${t}."
 ewarn
-				reported=1
-			fi
+					reported=1
+				fi
+			done
 		fi
 	done
 
@@ -1462,7 +1467,7 @@ einfo
 	if ( use cfi || use official ) && (( ${reported} == 1 )) ; then
 eerror
 eerror "Fix the above CFI issues first, or you may disable the cfi and official"
-eerror "USE flags.  All missing LDFLAGSs must be included for that specific"
+eerror "USE flags.  All missing {C,CXX,LD}FLAGSs must be included for that specific"
 eerror "package.  All affected packages must be rebuilt with clang."
 eerror
 		die
