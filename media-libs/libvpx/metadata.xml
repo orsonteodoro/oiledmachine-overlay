@@ -55,7 +55,7 @@
     in the ebuild which could be extended with different args and placed
     in your custom.sh file.  Consider adding more generation rules that
     include the desired the pixel format that follows your typical use
-    pattern.  Consider also lossless training.
+    pattern.  Consider also extending it with your live streaming settings.
 
     You may supply a LIBVPX_VP8_PGO_TRAINING_ARGS and/or
     LIBVPX_VP9_PGO_TRAINING_ARGS as a per package envvar to tell ffmpeg
