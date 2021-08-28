@@ -748,6 +748,7 @@ _trainer_plan_lossless() {
 	if use pgo \
 		&& has_pgo_requirement ; then
 		einfo "Running PGO trainer for ${encoding_codec} for lossless"
+		einfo "Encoding for lossless"
 		local cmd
 		cmd=( "${FFMPEG}" \
 			-y \
