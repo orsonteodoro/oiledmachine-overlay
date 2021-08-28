@@ -527,7 +527,7 @@ _trainer_plan_2_pass_constrained_quality() {
 		&& has_pgo_requirement ; then
 		einfo "Running PGO trainer for ${encoding_codec} for 2 pass constrained quality"
 		local cmd
-		einfo "Encoding as 720p for 3 sec, 30 fps (2-pass ABR)"
+		einfo "Encoding as 720p for 3 sec, 30 fps"
 		cmd1=( "${FFMPEG}" \
 			-y \
 			-i "${LIBVPX_PGO_VIDEO}" \
@@ -560,7 +560,7 @@ _trainer_plan_2_pass_constrained_quality() {
 		"${cmd2[@]}" || die
 		_vdecode "720p, 30 fps"
 
-		einfo "Encoding as 720p for 3 sec, 60 fps (2-pass ABR)"
+		einfo "Encoding as 720p for 3 sec, 60 fps"
 		cmd1=( "${FFMPEG}" \
 			-y \
 			-i "${LIBVPX_PGO_VIDEO}" \
@@ -593,7 +593,7 @@ _trainer_plan_2_pass_constrained_quality() {
 		"${cmd2[@]}" || die
 		_vdecode "720p, 60 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 30 fps (2-pass ABR)"
+		einfo "Encoding as 1080p for 3 sec, 30 fps"
 		cmd1=( "${FFMPEG}" \
 			-y \
 			-i "${LIBVPX_PGO_VIDEO}" \
@@ -626,7 +626,7 @@ _trainer_plan_2_pass_constrained_quality() {
 		"${cmd2[@]}" || die
 		_vdecode "1080p, 30 fps"
 
-		einfo "Encoding as 1080p for 3 sec, 60 fps (2-pass ABR)"
+		einfo "Encoding as 1080p for 3 sec, 60 fps"
 		cmd1=( "${FFMPEG}" \
 			-y \
 			-i "${LIBVPX_PGO_VIDEO}" \
@@ -659,7 +659,7 @@ _trainer_plan_2_pass_constrained_quality() {
 		"${cmd2[@]}" || die
 		_vdecode "1080p, 60 fps"
 
-		einfo "Encoding as 4k for 3 sec, 30 fps (2-pass ABR)"
+		einfo "Encoding as 4k for 3 sec, 30 fps"
 		cmd1=( "${FFMPEG}" \
 			-y \
 			-i "${LIBVPX_PGO_VIDEO}" \
@@ -692,7 +692,7 @@ _trainer_plan_2_pass_constrained_quality() {
 		"${cmd2[@]}" || die
 		_vdecode "4k, 30 fps"
 
-		einfo "Encoding as 4k for 3 sec, 60 fps (2-pass ABR)"
+		einfo "Encoding as 4k for 3 sec, 60 fps"
 		cmd1=( "${FFMPEG}" \
 			-y \
 			-i "${LIBVPX_PGO_VIDEO}" \
