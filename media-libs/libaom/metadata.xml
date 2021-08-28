@@ -82,7 +82,7 @@
       2 pass training.  Two pass improves quality and rate control.  This step
       can be skipped for live streamers.</flag>
     <flag name="pgo-trainer-constrained-quality">Use the 1 pass constrained
-      quality trainer PGO trainer.  (ebuild maintainer recommended)</flag>
+      quality PGO trainer.  (ebuild maintainer recommended)</flag>
     <flag name="pgo-trainer-lossless">Use the lossless PGO trainer.</flag>
   </use>
 </pkgmetadata>
