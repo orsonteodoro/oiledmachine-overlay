@@ -77,6 +77,7 @@ BDEPEND="abi_x86_32? ( dev-lang/yasm )
 		dev-lang/php
 	)
 	lto? (
+		clang? ( ${LTO_CLANG_BDEPEND} )
 		|| (
 			${LTO_CLANG_BDEPEND}
 			sys-devel/gcc
