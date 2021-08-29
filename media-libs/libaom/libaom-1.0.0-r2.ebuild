@@ -116,15 +116,15 @@ pkg_setup() {
 		if ! ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
 			die "Missing WebM support from ffmpeg"
 		fi
-		if ffprobe "${LIBAOM_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
-			if [[ -z "${LIBAOM_PGO_VIDEO}" ]] ; then
+		if [[ -z "${LIBAOM_PGO_VIDEO}" ]] ; then
 eerror
 eerror "LIBAOM_PGO_VIDEO is missing the abspath to your av1 video as a"
 eerror "per-package envvar.  The video must be 3840x2160 resolution,"
 eerror "60fps, >= 3 seconds."
 eerror
-				die
-			fi
+			die
+		fi
+		if ffprobe "${LIBAOM_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
 			einfo "Verifying asset requirements"
 			if ! ( ffprobe "${LIBAOM_PGO_VIDEO}" 2>&1 \
 				| grep -q -e "3840x2160" ) ; then
