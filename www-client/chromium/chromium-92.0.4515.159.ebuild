@@ -50,21 +50,23 @@ SRC_URI="
 		cr_pgo_trainers_media_desktop? (
 			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${CTDM_V}/chrome/test/data/media.tar.gz -> ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
 			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${MTD_V}/media/test/data.tar.gz -> ${PN}-${MTD_V}-media-test-data.tar.gz
-			https://upload.wikimedia.org/wikipedia/commons/5/59/%284k%29_Wild_Animal_-_Ultra_HD_Video_TV_60fps_%282160p%29.webm -> (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm
 		)
 		cr_pgo_trainers_media_mobile? (
 			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${CTDM_V}/chrome/test/data/media.tar.gz -> ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
 			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${MTD_V}/media/test/data.tar.gz -> ${PN}-${MTD_V}-media-test-data.tar.gz
-			https://upload.wikimedia.org/wikipedia/commons/5/59/%284k%29_Wild_Animal_-_Ultra_HD_Video_TV_60fps_%282160p%29.webm -> (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm
 		)
 	)
 	ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-${PPC64LE_PATCHSET}.tar.xz )
 "
-# TODO: find/add mirrors for (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm
+
+# Some assets encoded by proprietary-codecs (mp3, aac, h264) are found in both
+#   ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
+#   ${PN}-${MTD_V}-media-test-data.tar.gz
+# but shouldn't be necessary to use the USE flag.
 
 RESTRICT="mirror"
 #PROPERTIES="interactive" # For interactive login in social networks for PGO profile generation. \
-# See _init_cr_pgo_trainers_rasterize_and_record_micro_top_25() function below \
+# See _init_cr_pgo_trainers_rasterize_and_record_micro_top_25() function below. \
 # Disabled until the inner workings is understood.
 
 # all-rights-reserved is for unfree websites or content from them.
@@ -295,11 +297,6 @@ be21e8628daa9fc06823a99fb9e88ac8d2d1137312986aa38ad2ad4864a4ca7d\
 #   found
 # custom UoI-NCSA - third_party/llvm/llvm/include/llvm/Support/LICENSE.TXT
 # custom public-domain - third_party/sqlite/LICENSE
-# CC-BY-3.0 CC-BY-4.0 \
-#   https://commons.wikimedia.org/wiki/File:(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm
-#   https://www.youtube.com/watch?v=s-jYDs3FfyY
-#   Attributions: 4.000 PIXELS
-#   Music: Arid Foothills - The Dark Contenent by Kevin MacLeod (incompetech.com)
 # CC-BY-3.0 https://peach.blender.org/download/ # avi is mp4 and h264 is mov
 #   (c) copyright 2008, Blender Foundation / www.bigbuckbunny.org
 # CC-BY-4.0 - third_party/devtools-frontend/src/node_modules/caniuse-lite/LICENSE
@@ -357,6 +354,10 @@ KEYWORDS="amd64 arm64 ~ppc64 ~x86"
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/93.0.4577.42/media/gpu/args.gni#L24
 IUSE="component-build cups cpu_flags_arm_neon +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid +system-ffmpeg +system-icu +vaapi wayland widevine"
+# What is considered a proprietary codec can be found at:
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/media/filters/BUILD.gn#L160
+#   https://github.com/chromium/chromium/blob/93.0.4577.42/media/media_options.gni#L38
+# Codec upstream default: https://github.com/chromium/chromium/blob/93.0.4577.42/tools/mb/mb_config_expectations/chromium.linux.json#L89
 IUSE+=" video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts
 video_cards_intel video_cards_iris video_cards_i965 video_cards_nouveau
 video_cards_nvidia video_cards_r600 video_cards_radeonsi" # For VA-API
@@ -643,6 +644,11 @@ REQUIRED_USE+=" pgo-full? ( || ( $(gen_pgo_profile_use) ) )"
 # when official USE selected.
 # The cr_pgo_trainers_custom is disallowed for security reasons
 # when the official USE is set.
+# vaapi is not conditioned on proprietary-codecs upstream, but should
+# be or by case-by-case (i.e. h264_vaapi, vp9_vaapi, av1_vaapi)
+# with additional USE flags.
+# The system-ffmpeg comes with aac which is unavoidable.  This is why
+# there is a block with !proprietary-codecs.
 REQUIRED_USE+="
 	^^ ( partitionalloc tcmalloc libcmalloc )
 	amd64? ( !shadowcallstack )
@@ -662,8 +668,10 @@ REQUIRED_USE+="
 	pgo? ( clang !pgo-full )
 	pgo-full? ( clang !pgo )
 	ppc64? ( !shadowcallstack )
+	!proprietary-codecs? ( !system-ffmpeg !vaapi )
 	screencast? ( wayland )
 	shadowcallstack? ( clang )
+	vaapi? ( proprietary-codecs )
 	video_cards_amdgpu? (
 		!video_cards_amdgpu-pro
 		!video_cards_amdgpu-pro-lts
@@ -876,22 +884,28 @@ BDEPEND="
 			media-video/ffmpeg[encode]
 		)
 		cr_pgo_trainers_media_desktop? (
-			|| (
-				media-video/ffmpeg[encode,openh264]
-				media-video/ffmpeg[encode,x264]
+			proprietary-codecs? (
+				|| (
+					media-video/ffmpeg[encode,openh264]
+					media-video/ffmpeg[encode,x264]
+				)
+				media-video/ffmpeg[encode,mp3]
 			)
 			|| (
 				media-video/ffmpeg[encode,libaom]
 				media-video/ffmpeg[encode,rav1e]
 			)
-			media-video/ffmpeg[encode,mp3,opus,vorbis,vpx]
+			media-video/ffmpeg[opus,vorbis,vpx]
 		)
 		cr_pgo_trainers_media_mobile? (
-			|| (
-				media-video/ffmpeg[encode,openh264]
-				media-video/ffmpeg[encode,x264]
+			proprietary-codecs? (
+				|| (
+					media-video/ffmpeg[encode,openh264]
+					media-video/ffmpeg[encode,x264]
+				)
+				media-video/ffmpeg[encode,mp3]
 			)
-			media-video/ffmpeg[encode,mp3,opus,vorbis,vpx]
+			media-video/ffmpeg[opus,vorbis,vpx]
 		)
 	)
 	vaapi? ( media-video/libva-utils )
@@ -924,7 +938,7 @@ COMMON_DEPEND="
 		app-arch/snappy:=[${MULTILIB_USEDEP}]
 		dev-libs/libxslt:=[${MULTILIB_USEDEP}]
 		>=dev-libs/re2-0.2019.08.01:=[${MULTILIB_USEDEP}]
-		>=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}]
+		proprietary-codecs? ( >=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}] )
 		system-icu? ( >=dev-libs/icu-69.1:=[${MULTILIB_USEDEP}] )
 	)
 "
@@ -1347,6 +1361,8 @@ init_third_party_packages() {
 	# List based on the intersection between the third_party packages
 	# and the *DEPENDs list.
 	# TODO: recheck for completeness
+	# TODO: check the dependency of the dependency (nested third_party folders)
+	# See also https://github.com/chromium/chromium/tree/92.0.4515.159/build/linux/unbundle
 	THIRD_PARTY_PACKAGES=(
 		dev-libs/expat
 		dev-libs/libxml2
@@ -1377,6 +1393,8 @@ init_third_party_packages() {
 			app-arch/snappy
 			media-libs/openh264
 		)
+		use proprietary-codecs \
+			&& THIRD_PARTY_PACKAGES+=( media-libs/openh264 )
 	fi
 	if ! use system-icu ; then
 		THIRD_PARTY_PACKAGES+=(
@@ -1491,7 +1509,9 @@ eerror
 eerror "Fix the above CFI issues first, or you may disable the cfi and official"
 eerror "USE flags.  All affected packages must be rebuilt with clang.  All"
 eerror "missing {C,CXX,LD}FLAGSs must be included for that specific package"
-eerror "per-package envvar.  To set up the per-package package.env, see"
+eerror "per-package envvar."
+eerror
+eerror "To set up the per-package package.env, see"
 eerror
 eerror "  https://wiki.gentoo.org/wiki//etc/portage/package.env"
 eerror
@@ -1501,6 +1521,17 @@ eerror
 	# TODO re-evaluate shadow-call-stack
 }
 
+check_ssp_buffer_size() {
+	if ! ( cat /var/db/pkg/${p}*/${t} \
+		| grep -q -e "--param=ssp-buffer-size=4" ) ; then
+ewarn
+ewarn "Missing --param=ssp-buffer-size=4 for ${p}.  Add it to the per-package"
+ewarn "${t} envvar."
+ewarn
+		ssp_reported=1
+	fi
+}
+
 # Ensure that the unbunded packages meets or exceeds the security expectation.
 # These packages would receive SSP treatment if they remained internal.
 check_dependencies_built_with_ssp() {
@@ -1508,26 +1539,31 @@ check_dependencies_built_with_ssp() {
 	# See https://github.com/chromium/chromium/blob/93.0.4577.42/build/config/compiler/BUILD.gn#L335
 	# https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/compiler/BUILD.gn#L1677
 	local ssp_reported=0
+
+	local already_applied_upstream=(
+		media-libs/openh264
+		media-libs/opus
+	)
+
 	for p in ${THIRD_PARTY_PACKAGES[@]} ; do
 		for t in "CFLAGS" "CXXFLAGS" ; do
-			if ! ( cat /var/db/pkg/${p}*/${t} \
-				| grep -q -e "--param=ssp-buffer-size=4" ) ; then
-ewarn
-ewarn "Missing --param=ssp-buffer-size=4 for ${p}.  Add it to the per-package"
-ewarn "${t} envvar."
-ewarn
-				ssp_reported=1
-			fi
+			local skip=0
+			for up in ${already_applied_upstream[@]} ; do
+				[[ "${up}" == "${p}" ]] && skip=1
+			done
+			(( ${skip} == 1 )) && continue
+
 			if ( cat /var/db/pkg/${p}*/${t} \
 				| grep -q -e "-fstack-protector-strong" ) ; then
 				# Meets or exceeds expectations
-				:;
+				check_ssp_buffer_size
 			elif ( cat /var/db/pkg/${p}*/${t} \
 				| grep -q -e "-fstack-protector-all" ) ; then
 				# Meets or exceeds expectations
 				:;
 			elif ! ( cat /var/db/pkg/${p}*/${t} \
 				| grep -q -e "-fstack-protector" ) ; then
+				check_ssp_buffer_size
 ewarn
 ewarn "Missing -fstack-protector for ${p}.  Add it to the per-package ${t}"
 ewarn "envvar."
@@ -1542,6 +1578,10 @@ eerror
 eerror "Fix the above SSP issues.  Add the above flags to the corresponding"
 eerror "package and rebuild."
 eerror
+eerror "To set up the per-package package.env, see"
+eerror
+eerror "  https://wiki.gentoo.org/wiki//etc/portage/package.env"
+eerror
 		die
 	fi
 }
@@ -1551,8 +1591,19 @@ eerror
 check_dependencies_built_with_fortify_source() {
 	# See https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/compiler/BUILD.gn#L1677
 	# We just assume that all THIRD_PARTY_PACKAGES packages do not have it.
+
+	local already_applied_upstream=(
+		dev-libs/libxml2
+	)
+
 	local reported=0
 	for p in ${THIRD_PARTY_PACKAGES[@]} ; do
+		local skip=0
+		for up in ${already_applied_upstream[@]} ; do
+			[[ "${up}" == "${p}" ]] && skip=1
+		done
+		(( ${skip} == 1 )) && continue
+
 		if ! ( bzcat /var/db/pkg/${p}*/environment.bz2 \
 			| grep -E -e "declare -x CPPFLAGS.*-D_FORTIFY_SOURCE=2" ) ; then
 ewarn
@@ -1565,6 +1616,146 @@ ewarn
 	if (( ${reported} == 1 )) ; then
 eerror
 eerror "Fix the above unprotected buffer overflow issues first."
+eerror
+eerror "To set up the per-package package.env, see"
+eerror
+eerror "  https://wiki.gentoo.org/wiki//etc/portage/package.env"
+eerror
+		die
+	fi
+}
+
+check_dependencies_built_with_noexecstack() {
+	# See https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/compiler/BUILD.gn#L434
+
+	local already_applied_upstream=(
+		media-video/ffmpeg
+	)
+
+	local reported=0
+	for p in ${THIRD_PARTY_PACKAGES[@]} ; do
+		local skip=0
+		for up in ${already_applied_upstream[@]} ; do
+			[[ "${up}" == "${p}" ]] && skip=1
+		done
+		(( ${skip} == 1 )) && continue
+
+		if ! ( bzcat /var/db/pkg/${p}*/LDFLAGS \
+			| grep -F -e "-Wl,-z,noexecstack" ) ; then
+ewarn
+ewarn "Missing -Wl,-z,noexecstack for ${p}.  Add it to the per-package"
+ewarn "LDFLAGS envvar and rebuild the affected package."
+ewarn
+			reported=1
+		fi
+	done
+	if (( ${reported} == 1 )) ; then
+eerror
+eerror "Fix the above missing explicit noexecstack issues first."
+eerror
+eerror "To set up the per-package package.env, see"
+eerror
+eerror "  https://wiki.gentoo.org/wiki//etc/portage/package.env"
+eerror
+		die
+	fi
+}
+
+check_dependencies_built_with_full_relro() {
+	# See https://github.com/chromium/chromium/blob/92.0.4515.159/build/config/compiler/BUILD.gn#L436
+
+	local already_applied_upstream=(
+		media-video/ffmpeg
+	)
+
+	local reported=0
+	for p in ${THIRD_PARTY_PACKAGES[@]} ; do
+		local skip=0
+		for up in ${already_applied_upstream[@]} ; do
+			[[ "${up}" == "${p}" ]] && skip=1
+		done
+		(( ${skip} == 1 )) && continue
+
+		if ! ( bzcat /var/db/pkg/${p}*/LDFLAGS \
+			| grep -F -e "-Wl,-z,relro" ) \
+		; then
+ewarn
+ewarn "Missing -Wl,-z,relro for ${p}.  Add it to the per-package LDFLAGS envvar"
+ewarn "and rebuild the affected package."
+ewarn
+			reported=1
+		fi
+		if ! ( bzcat /var/db/pkg/${p}*/LDFLAGS \
+			| grep -F -e "-Wl,-z,now" ) \
+		; then
+ewarn
+ewarn "Missing -Wl,-z,now for ${p}.  Add it to the per-package LDFLAGS envvar"
+ewarn "and rebuild the affected package."
+ewarn
+			reported=1
+		fi
+	done
+	if (( ${reported} == 1 )) ; then
+eerror
+eerror "Fix the above missing explicit full Relocation Read Only (RELRO) issues"
+eerror "first."
+eerror
+eerror "To set up the per-package package.env, see"
+eerror
+eerror "  https://wiki.gentoo.org/wiki//etc/portage/package.env"
+eerror
+		die
+	fi
+}
+
+find_video0() {
+	if [[ -z "${CR_PGO_VIDEO0}" ]] ; then
+eerror
+eerror "CR_PGO_VIDEO0 is missing the abspath to your vp8/vp9 video as a"
+eerror "per-package envvar.  The video must be 3840x2160 resolution,"
+eerror "60fps, >= 2 minutes."
+eerror
+		die
+	fi
+	if ffprobe "${CR_PGO_VIDEO0}" 2>/dev/null 1>/dev/null ; then
+		einfo "Verifying asset requirements"
+		if ! ( ffprobe "${CR_PGO_VIDEO0}" 2>&1 \
+			| grep -q -e "3840x2160" ) ; then
+eerror
+eerror "The PGO video sample must be 3840x2160."
+eerror
+			die
+		fi
+		if ! ( ffprobe "${CR_PGO_VIDEO0}" 2>&1 \
+			| grep -q -E -e ", (59|60)[.0-9]* fps" ) ; then
+eerror
+eerror "The PGO video sample must be >=59 fps."
+eerror
+			die
+		fi
+
+		local d=$(ffprobe "${CR_PGO_VIDEO0}" 2>&1 \
+			| grep -E -e "Duration" \
+			| cut -f 4 -d " " \
+			| sed -e "s|,||g" \
+			| cut -f 1 -d ".")
+		local h=$(($(echo "${d}" \
+			| cut -f 1 -d ":") * 60 * 60))
+		local m=$(($(echo "${d}" \
+			| cut -f 2 -d ":") * 60))
+		local s=$(($(echo "${d}" \
+			| cut -f 3 -d ":") * 1))
+		local t=$((${h} + ${m} + ${s}))
+		if (( ${t} < 120 )) ; then
+eerror
+eerror "The PGO video sample must be >= 2 minutes."
+eerror
+			die
+		fi
+	else
+eerror
+eerror "${CR_PGO_VIDEO0} is possibly not a valid video file.  Ensure that"
+eerror "the proper codec is supported for that file"
 eerror
 		die
 	fi
@@ -1657,9 +1848,19 @@ ewarn
 		check_dependencies_built_with_cfi
 	fi
 	check_dependencies_built_with_ssp
-	if ! use ppc64 && ! use s390 && ! use s390x && ! use n32 && ! use n64 \
-		&& ! use o32 ; then
-		check_dependencies_built_with_fortify_source
+	case "${ABI}" in
+		ppc64|s390|s390x|n32|n64|o32)
+			;;
+		*)
+			check_dependencies_built_with_fortify_source
+			;;
+	esac
+	check_dependencies_built_with_noexecstack
+	check_dependencies_built_with_full_relro
+
+	if use cr_pgo_trainers_media_desktop \
+		|| use cr_pgo_trainers_media_mobile ; then
+		find_video0
 	fi
 
 	for a in $(multilib_get_enabled_abis) ; do
@@ -2242,9 +2443,11 @@ eerror
 	if use libcxx ; then
 		keeplibs+=( third_party/libxml )
 		keeplibs+=( third_party/libxslt )
-		keeplibs+=( third_party/openh264 )
 		keeplibs+=( third_party/re2 )
 		keeplibs+=( third_party/snappy )
+		if use proprietary-codecs ; then
+			keeplibs+=( third_party/openh264 )
+		fi
 		if use system-icu ; then
 			keeplibs+=( third_party/icu )
 		fi
@@ -2274,7 +2477,7 @@ eerror
 	ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 
 	if use pgo-full ; then
-		export ASSET_CACHE_REVISION=5 # Bump on every change of output.
+		export ASSET_CACHE_REVISION=6 # Bump on every change of output.
 		ASSET_CACHE="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/asset-cache"
 		addwrite "${ASSET_CACHE}"
 
@@ -2318,13 +2521,7 @@ eerror
 		fi
 		if use cr_pgo_trainers_memory_desktop ; then
 			einfo "Generating missing assets for the memory.desktop"
-			# Replaced missing assets
-			sed -i -e "s|road_trip_640_480.mp4|buck-480p.mp4|g" \
-				"${S}/tools/perf/page_sets/trivial_sites/trivial_fullscreen_video.html" \
-				|| die
 
-			local aac_encoding=( -codec:a aac )
-			local h264_encoding=()
 			local vp8_decoding=()
 
 			if use vaapi && vainfo 2>/dev/null \
@@ -2336,45 +2533,53 @@ eerror
 					-filter_hw_device drm_render_node )
 			fi
 
-			h264_baseline_profile=()
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "H264.*VAEntrypointEncSlice" \
-				&& ffmpeg -hide_banner -encoders 2>/dev/null \
-					| grep -q -F -e "h264_vaapi" ; then
-				h264_encoding=( -c:v h264_vaapi )
-				h264_baseline_profile=( -profile:v 578 )
-				# For quality see, ffmpeg -h full
-			elif has_version "media-video/ffmpeg[openh264]" ;then
-				h264_encoding=( -c:v libopenh264 )
-				h264_baseline_profile=( -profile:v 578 )
-			elif has_version "media-video/ffmpeg[x264]" ; then
-				h264_encoding=( -c:v libx264 )
-				h264_baseline_profile=( -profile:v baseline )
-			fi
+			if use proprietary-codecs ; then
+				local aac_encoding=( -codec:a aac )
+				local h264_encoding=()
 
-			# bigbuck.webm -> buck-480p.mp4
-			einfo "Generating buck-480p.mp4 for the memory.desktop benchmark"
-			# The bunny.gif doesn't actually exist on the website but is converted from the
-			# movie explained in https://codereview.chromium.org/2243403006
-			filter_sw=()
-			filter_hw+=( $(_gen_vaapi_filter "H264") )
-			if _is_hw_scaling_supported "H264" ; then
-				filter_hw+=( "scale_vaapi=w=852:h=-1" )
-			else
-				filter_sw+=( "scale=w=852:h=-1" )
-				filter_sw+=( "crop=852:480:0:0" )
+				h264_baseline_profile=()
+				if use vaapi && vainfo 2>/dev/null \
+					| grep -q -G -e "H264.*VAEntrypointEncSlice" \
+					&& ffmpeg -hide_banner -encoders 2>/dev/null \
+						| grep -q -F -e "h264_vaapi" ; then
+					h264_encoding=( -c:v h264_vaapi )
+					h264_baseline_profile=( -profile:v 578 )
+					# For quality see, ffmpeg -h full
+				elif has_version "media-video/ffmpeg[openh264]" ;then
+					h264_encoding=( -c:v libopenh264 )
+					h264_baseline_profile=( -profile:v 578 )
+				elif has_version "media-video/ffmpeg[x264]" ; then
+					h264_encoding=( -c:v libx264 )
+					h264_baseline_profile=( -profile:v baseline )
+				fi
+
+				# bigbuck.webm -> buck-480p.mp4
+				einfo "Generating buck-480p.mp4 for the memory.desktop benchmark"
+				# The bunny.gif doesn't actually exist on the website but is converted from the
+				# movie explained in https://codereview.chromium.org/2243403006
+				filter_sw=()
+				filter_hw+=( $(_gen_vaapi_filter "H264") )
+				if _is_hw_scaling_supported "H264" ; then
+					filter_hw+=( "scale_vaapi=w=852:h=-1" )
+				else
+					filter_sw+=( "scale=w=852:h=-1" )
+					filter_sw+=( "crop=852:480:0:0" )
+				fi
+				cmd=( ffmpeg \
+					${drm_render_node[@]} \
+					${vp8_decoding[@]} \
+					-i "${S}/chrome/test/data/media/bigbuck.webm" \
+					${h264_encoding[@]} \
+					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+					${aac_encoding[@]} \
+					"${S}/tools/perf/page_sets/trivial_sites/buck-480p.mp4" )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
+				sed -i -e "s|road_trip_640_480.mp4|buck-480p.mp4|g" \
+					"${S}/tools/perf/page_sets/trivial_sites/trivial_fullscreen_video.html" \
+					|| die
 			fi
-			cmd=( ffmpeg \
-				${drm_render_node[@]} \
-				${vp8_decoding[@]} \
-				-i "${S}/chrome/test/data/media/bigbuck.webm" \
-				${h264_encoding[@]} \
-				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-				-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
-				${aac_encoding[@]} \
-				"${S}/tools/perf/page_sets/trivial_sites/buck-480p.mp4" )
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die "${cmd[@]}"
 
 			# bigbuck.webm -> bunny.gif
 			einfo "Generating bunny.gif (animated gif) for the memory.desktop benchmark"
@@ -2403,9 +2608,6 @@ eerror
 		if use cr_pgo_trainers_media_desktop \
 			|| use cr_pgo_trainers_media_mobile ; then
 			einfo "Generating missing assets for the media.desktop or media.mobile benchmarks"
-			local aac_encoding=( -codec:a aac )
-			local h264_encoding=()
-			local mp3_encoding=( -c:a libmp3lame )
 			local opus_encoding=( -c:a libopus )
 			local vorbis_encoding=( -c:a libvorbis )
 			local vp8_decoding=()
@@ -2413,11 +2615,11 @@ eerror
 			local vp9_decoding=()
 			local vp9_encoding=()
 
-			# vp8 : bigbuck.webm, tulip2.webm
-			# vp9 : (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm
+			# vp8, vorbis : bigbuck.webm, tulip2.webm
+			# vp9, opus : ${CR_PGO_VIDEO0}
 
 			# tulip2.webm is 1280x720 res, 2104 kb/s bitrate, 29.97 fps.  Audio bitrate is unknown.
-			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm is 3840x2160 res, 24124k bitrate, 59.94 fps.  Audio bitrate is unknown.
+			# ${CR_PGO_VIDEO0} is 3840x2160 res, 24124k bitrate, 59.94 fps.  Audio bitrate is unknown.
 
 			if use vaapi && vainfo 2>/dev/null \
 				| grep -q -G -e "VP8.*VAEntrypointVLD" \
@@ -2434,25 +2636,6 @@ eerror
 					-hwaccel_output_format vaapi
 					-hwaccel_device drm_render_node
 					-filter_hw_device drm_render_node )
-			fi
-
-			h264_baseline_profile=()
-			h264_high_profile_4_0=()
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "H264.*VAEntrypointEncSlice" \
-				&& ffmpeg -hide_banner -encoders 2>/dev/null \
-					| grep -q -F -e "h264_vaapi" ; then
-				h264_encoding=( -c:v h264_vaapi )
-				h264_baseline_profile=( -profile:v 578 )
-				h264_high_profile_4_0=( -profile:v 100 -level:v 40 )
-			elif has_version "media-video/ffmpeg[openh264]" ;then
-				h264_encoding=( -c:v libopenh264 )
-				h264_baseline_profile=( -profile:v 578 )
-				h264_high_profile_4_0=( -profile:v 100 ) # no level
-			elif has_version "media-video/ffmpeg[x264]" ; then
-				h264_encoding=( -c:v libx264 )
-				h264_baseline_profile=( -profile:v baseline )
-				h264_high_profile_4_0=( -profile:v high -level:v 4.0 )
 			fi
 
 			if use vaapi && vainfo 2>/dev/null \
@@ -2473,36 +2656,130 @@ eerror
 				vp9_encoding=( -c:v libvpx-vp9 )
 			fi
 
-			# tulip2.webm -> tulip2.m4a
-			cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
-				-vn \
-				${aac_encoding[@]} \
-				"${S}/tools/perf/page_sets/media_cases/tulip2.m4a" )
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die "${cmd[@]}"
+			if use proprietary-codecs ; then
+				local aac_encoding=( -codec:a aac )
+				local h264_encoding=()
+				local mp3_encoding=( -c:a libmp3lame )
 
-			# tulip2.webm -> tulip2.mp3
-			cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
-				-vn \
-				${mp3_encoding[@]} \
-				"${S}/tools/perf/page_sets/media_cases/tulip2.mp3" )
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die "${cmd[@]}"
+				h264_baseline_profile=()
+				h264_high_profile_4_0=()
+				if use vaapi && vainfo 2>/dev/null \
+					| grep -q -G -e "H264.*VAEntrypointEncSlice" \
+					&& ffmpeg -hide_banner -encoders 2>/dev/null \
+						| grep -q -F -e "h264_vaapi" ; then
+					h264_encoding=( -c:v h264_vaapi )
+					h264_baseline_profile=( -profile:v 578 )
+					h264_high_profile_4_0=( -profile:v 100 -level:v 40 )
+				elif has_version "media-video/ffmpeg[openh264]" ;then
+					h264_encoding=( -c:v libopenh264 )
+					h264_baseline_profile=( -profile:v 578 )
+					h264_high_profile_4_0=( -profile:v 100 ) # no level
+				elif has_version "media-video/ffmpeg[x264]" ; then
+					h264_encoding=( -c:v libx264 )
+					h264_baseline_profile=( -profile:v baseline )
+					h264_high_profile_4_0=( -profile:v high -level:v 4.0 )
+				fi
 
-			# tulip2.webm -> tulip2.mp4
-			h264_filter_args=( -vf "format=nv12,hwupload" )
-			cmd=( ffmpeg \
-				${drm_render_node[@]} \
-				${vp8_decoding[@]} \
-				-i "${S}/media/test/data/tulip2.webm" \
-				${h264_encoding[@]} \
-				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-				$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
-				${h264_baseline_profile[@]} \
-				${aac_encoding[@]} \
-				"${S}/tools/perf/page_sets/media_cases/tulip2.mp4" )
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die "${cmd[@]}"
+				# tulip2.webm -> tulip2.m4a
+				cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
+					-vn \
+					${aac_encoding[@]} \
+					"${S}/tools/perf/page_sets/media_cases/tulip2.m4a" )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
+
+				# tulip2.webm -> tulip2.mp3
+				cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
+					-vn \
+					${mp3_encoding[@]} \
+					"${S}/tools/perf/page_sets/media_cases/tulip2.mp3" )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
+
+				# tulip2.webm -> tulip2.mp4
+				h264_filter_args=( -vf "format=nv12,hwupload" )
+				cmd=( ffmpeg \
+					${drm_render_node[@]} \
+					${vp8_decoding[@]} \
+					-i "${S}/media/test/data/tulip2.webm" \
+					${h264_encoding[@]} \
+					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+					$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
+					${h264_baseline_profile[@]} \
+					${aac_encoding[@]} \
+					"${S}/tools/perf/page_sets/media_cases/tulip2.mp4" )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
+
+				# tulip2.webm -> aac_audio.mp4
+				# Asset must be AAC-LC.
+				aac_lc=( -profile:a aac_low )
+				cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
+					-vn \
+					${aac_encoding[@]} \
+					${aac_lc[@]} \
+					"${S}/tools/perf/page_sets/media_cases/aac_audio.mp4" )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
+
+				# tulip2.webm -> h264_video.mp4
+				# Asset must be h264, level 4, high profile
+				# See tools/perf/page_sets/media_cases/mse.js
+				h264_filter_args=( -vf "format=nv12,hwupload" )
+				cmd=( ffmpeg \
+					${drm_render_node[@]} \
+					-i "${S}/media/test/data/tulip2.webm" \
+					${h264_encoding[@]} \
+					${h264_high_profile_4_0[@]} \
+					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+					$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
+					-an \
+					"${S}/tools/perf/page_sets/media_cases/h264_video.mp4" )
+				einfo "${cmd[@]}"
+				"${cmd[@]}" || die "${cmd[@]}"
+
+				# ${CR_PGO_VIDEO0} -> video0_720p30fps.mp4
+				# 1280 x 720 res ; must be 2 min
+				if [[ -f "${ASSET_CACHE}/video0_720p30fps.mp4" \
+					&& -f "${ASSET_CACHE}/video0_720p30fps.mp4.sha512" \
+					&& $(cat "${ASSET_CACHE}/video0_720p30fps.mp4.sha512") \
+						== $(sha512sum "${ASSET_CACHE}/video0_720p30fps.mp4" \
+							| cut -f 1 -d " ") ]] ; then
+					einfo "Using pregenerated and cached video0_720p30fps.mp4"
+					cp -a "${ASSET_CACHE}/video0_720p30fps.mp4" \
+						"${S}/tools/perf/page_sets/media_cases/video0_720p30fps.mp4" \
+						|| die
+				else
+					filter_sw=()
+					filter_hw=( $(_gen_vaapi_filter "H264") )
+					if _is_hw_scaling_supported "H264" ; then
+						filter_hw+=( "scale_vaapi=w=-1:h=720" )
+					else
+						filter_sw+=( "scale=w=-1:h=720" )
+					fi
+					cmd=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp9_decoding[@]} \
+						-i $(realpath "${CR_PGO_VIDEO0}") \
+						${h264_encoding[@]} \
+						$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+						-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+						-maxrate 1485k -minrate 512k -b:v 1024k \
+						-r 30 \
+						${aac_encoding[@]} \
+						-t 120.0 \
+						"${S}/tools/perf/page_sets/media_cases/video0_720p30fps.mp4" )
+					einfo "${cmd[@]}"
+					"${cmd[@]}" || die "${cmd[@]}"
+					einfo "Saving work to ${ASSET_CACHE}/video0_720p30fps.mp4 for faster rebuilds."
+					cp -a "${S}/tools/perf/page_sets/media_cases/video0_720p30fps.mp4" \
+						"${ASSET_CACHE}/video0_720p30fps.mp4" || die
+					sha512sum "${ASSET_CACHE}/video0_720p30fps.mp4" \
+						| cut -f 1 -d " " > "${ASSET_CACHE}/video0_720p30fps.mp4.sha512" || die
+				fi
+				sed -i -e "s|foodmarket_720p30fps.mp4|video0_720p30fps.mp4|g" \
+					"${S}/tools/perf/page_sets/media_cases.py" || die
+			fi
 
 			# tulip2.webm -> tulip2.ogg
 			cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
@@ -2562,27 +2839,16 @@ eerror
 					| cut -f 1 -d " " > "${ASSET_CACHE}/tulip2.vp9.webm.sha512" || die
 			fi
 
-			# tulip2.webm -> aac_audio.mp4
-			# Asset must be AAC-LC.
-			aac_lc=( -profile:a aac_low )
-			cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
-				-vn \
-				${aac_encoding[@]} \
-				${aac_lc[@]} \
-				"${S}/tools/perf/page_sets/media_cases/aac_audio.mp4" )
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die "${cmd[@]}"
-
-			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_1080p60fps_vp9.webm
+			# ${CR_PGO_VIDEO0} -> video0_1080p60fps_vp9.webm
 			# 1920 x 1080 res ; must be 2 min
-			if [[ -f "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" \
-				&& -f "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm.sha512" \
-				&& $(cat "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" \
+			if [[ -f "${ASSET_CACHE}/video0_1080p60fps_vp9.webm" \
+				&& -f "${ASSET_CACHE}/video0_1080p60fps_vp9.webm.sha512" \
+				&& $(cat "${ASSET_CACHE}/video0_1080p60fps_vp9.webm.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/video0_1080p60fps_vp9.webm" \
 						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached wild_animal_1080p60fps_vp9.webm"
-				cp -a "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" \
-					"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
+				einfo "Using pregenerated and cached video0_1080p60fps_vp9.webm"
+				cp -a "${ASSET_CACHE}/video0_1080p60fps_vp9.webm" \
+					"${S}/tools/perf/page_sets/media_cases/video0_1080p60fps_vp9.webm" \
 					|| die
 			else
 				if _is_vaapi_allowed "VP9" ; then
@@ -2597,7 +2863,7 @@ eerror
 					cmd=( ffmpeg \
 						${drm_render_node[@]} \
 						${vp9_decoding[@]} \
-						-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+						-i $(realpath "${CR_PGO_VIDEO0}") \
 						${vp9_encoding[@]} \
 						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
 						-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
@@ -2605,7 +2871,7 @@ eerror
 						-r 60 \
 						-t 120.0 \
 						${opus_encoding[@]} \
-						"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" )
+						"${S}/tools/perf/page_sets/media_cases/video0_1080p60fps_vp9.webm" )
 					einfo "${cmd[@]}"
 					"${cmd[@]}" || die "${cmd[@]}"
 				else
@@ -2613,90 +2879,30 @@ eerror
 					cmd=( ffmpeg \
 						${drm_render_node[@]} \
 						${vp9_decoding[@]} \
-						-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+						-i $(realpath "${CR_PGO_VIDEO0}") \
 						${vp9_encoding[@]} \
 						-vf scale=w=-1:h=1080 \
 						-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
 						-r 60 \
 						-t 120.0 \
 						${opus_encoding[@]} \
-						"${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" )
+						"${S}/tools/perf/page_sets/media_cases/video0_1080p60fps_vp9.webm" )
 					einfo "${cmd[@]}"
 					"${cmd[@]}" || die "${cmd[@]}"
 				fi
-				einfo "Saving work to ${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_1080p60fps_vp9.webm" \
-					"${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" || die
-				sha512sum "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/wild_animal_1080p60fps_vp9.webm.sha512" || die
+				einfo "Saving work to ${ASSET_CACHE}/video0_1080p60fps_vp9.webm for faster rebuilds."
+				cp -a "${S}/tools/perf/page_sets/media_cases/video0_1080p60fps_vp9.webm" \
+					"${ASSET_CACHE}/video0_1080p60fps_vp9.webm" || die
+				sha512sum "${ASSET_CACHE}/video0_1080p60fps_vp9.webm" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/video0_1080p60fps_vp9.webm.sha512" || die
 			fi
 			sed -i -e "s|boat_1080p60fps_vp9.webm|animal_1080p60fps_vp9.webm|g" \
-				"${S}/tools/perf/page_sets/media_cases.py" || die
-
-			# tulip2.webm -> h264_video.mp4
-			# Asset must be h264, level 4, high profile
-			# See tools/perf/page_sets/media_cases/mse.js
-			h264_filter_args=( -vf "format=nv12,hwupload" )
-			cmd=( ffmpeg \
-				${drm_render_node[@]} \
-				-i "${S}/media/test/data/tulip2.webm" \
-				${h264_encoding[@]} \
-				${h264_high_profile_4_0[@]} \
-				$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-				$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
-				-an \
-				"${S}/tools/perf/page_sets/media_cases/h264_video.mp4" )
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die "${cmd[@]}"
-
-			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> wild_animal_720p30fps.mp4
-			# 1280 x 720 res ; must be 2 min
-			if [[ -f "${ASSET_CACHE}/wild_animal_720p30fps.mp4" \
-				&& -f "${ASSET_CACHE}/wild_animal_720p30fps.mp4.sha512" \
-				&& $(cat "${ASSET_CACHE}/wild_animal_720p30fps.mp4.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/wild_animal_720p30fps.mp4" \
-						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached wild_animal_720p30fps.mp4"
-				cp -a "${ASSET_CACHE}/wild_animal_720p30fps.mp4" \
-					"${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
-					|| die
-			else
-				filter_sw=()
-				filter_hw=( $(_gen_vaapi_filter "H264") )
-				if _is_hw_scaling_supported "H264" ; then
-					filter_hw+=( "scale_vaapi=w=-1:h=720" )
-				else
-					filter_sw+=( "scale=w=-1:h=720" )
-				fi
-				cmd=( ffmpeg \
-					${drm_render_node[@]} \
-					${vp9_decoding[@]} \
-					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
-					${h264_encoding[@]} \
-					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
-					-maxrate 1485k -minrate 512k -b:v 1024k \
-					-r 30 \
-					${aac_encoding[@]} \
-					-t 120.0 \
-					"${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/wild_animal_720p30fps.mp4 for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_720p30fps.mp4" \
-					"${ASSET_CACHE}/wild_animal_720p30fps.mp4" || die
-				sha512sum "${ASSET_CACHE}/wild_animal_720p30fps.mp4" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/wild_animal_720p30fps.mp4.sha512" || die
-			fi
-			sed -i -e "s|foodmarket_720p30fps.mp4|wild_animal_720p30fps.mp4|g" \
 				"${S}/tools/perf/page_sets/media_cases.py" || die
 		fi
 
 		if use cr_pgo_trainers_media_desktop ; then
 			einfo "Generating missing assets for the media.desktop benchmark"
-			local aac_encoding=( -codec:a aac )
 			local av1_encoding=()
-			local h264_encoding=()
 			local vp8_decoding=()
 			local vp8_encoding=()
 			local vp9_decoding=()
@@ -2760,21 +2966,6 @@ eerror
 				av1_encoding=( -c:v librav1e )
 			fi
 
-			h264_baseline_profile=()
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "H264.*VAEntrypointEncSlice" \
-				&& ffmpeg -hide_banner -encoders 2>/dev/null \
-					| grep -q -F -e "h264_vaapi" ; then
-				h264_encoding=( -c:v h264_vaapi )
-				h264_baseline_profile=( -profile:v 578 )
-			elif has_version "media-video/ffmpeg[openh264]" ;then
-				h264_encoding=( -c:v libopenh264 )
-				h264_baseline_profile=( -profile:v 578 )
-			elif has_version "media-video/ffmpeg[x264]" ; then
-				h264_encoding=( -c:v libx264 )
-				h264_baseline_profile=( -profile:v baseline )
-			fi
-
 			if use vaapi && vainfo 2>/dev/null \
 				| grep -q -G -e "VP8.*VAEntrypointEncSlice" \
 				&& ffmpeg -hide_banner -encoders 2>/dev/null \
@@ -2793,42 +2984,102 @@ eerror
 				vp9_encoding=( -c:v libvpx-vp9 )
 			fi
 
-			# tulip2.webm -> crowd1080.mp4
-			if [[ -f "${ASSET_CACHE}/crowd1080.mp4" \
-				&& -f "${ASSET_CACHE}/crowd1080.mp4.sha512" \
-				&& $(cat "${ASSET_CACHE}/crowd1080.mp4.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/crowd1080.mp4" \
-						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached crowd1080.mp4"
-				cp -a "${ASSET_CACHE}/crowd1080.mp4" \
-					"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" \
-					|| die
-			else
-				filter_sw=( "minterpolate=vsbmc=1" )
-				filter_hw=( $(_gen_vaapi_filter "H264") )
-				if _is_hw_scaling_supported "H264" ; then
-					filter_hw+=( "scale_vaapi=w=-1:h=1080" )
-				else
-					filter_sw+=( "scale=w=-1:h=1080" )
+			if use proprietary-codecs ; then
+				local aac_encoding=( -codec:a aac )
+				local h264_encoding=()
+
+				h264_baseline_profile=()
+				if use vaapi && vainfo 2>/dev/null \
+					| grep -q -G -e "H264.*VAEntrypointEncSlice" \
+					&& ffmpeg -hide_banner -encoders 2>/dev/null \
+						| grep -q -F -e "h264_vaapi" ; then
+					h264_encoding=( -c:v h264_vaapi )
+					h264_baseline_profile=( -profile:v 578 )
+				elif has_version "media-video/ffmpeg[openh264]" ;then
+					h264_encoding=( -c:v libopenh264 )
+					h264_baseline_profile=( -profile:v 578 )
+				elif has_version "media-video/ffmpeg[x264]" ; then
+					h264_encoding=( -c:v libx264 )
+					h264_baseline_profile=( -profile:v baseline )
 				fi
-				cmd=( ffmpeg \
-					${drm_render_node[@]} \
-					${vp8_decoding[@]} \
-					-i "${S}/media/test/data/tulip2.webm" \
-					${h264_encoding[@]} \
-					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
-					-maxrate 4350k -minrate 1500k -b:v 3000k \
-					${aac_encoding[@]} \
-					-r 50 \
-					"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/crowd1080.mp4 for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" \
-					"${ASSET_CACHE}/crowd1080.mp4" || die
-				sha512sum "${ASSET_CACHE}/crowd1080.mp4" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/crowd1080.mp4.sha512" || die
+
+				# tulip2.webm -> crowd1080.mp4
+				if [[ -f "${ASSET_CACHE}/crowd1080.mp4" \
+					&& -f "${ASSET_CACHE}/crowd1080.mp4.sha512" \
+					&& $(cat "${ASSET_CACHE}/crowd1080.mp4.sha512") \
+						== $(sha512sum "${ASSET_CACHE}/crowd1080.mp4" \
+							| cut -f 1 -d " ") ]] ; then
+					einfo "Using pregenerated and cached crowd1080.mp4"
+					cp -a "${ASSET_CACHE}/crowd1080.mp4" \
+						"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" \
+						|| die
+				else
+					filter_sw=( "minterpolate=vsbmc=1" )
+					filter_hw=( $(_gen_vaapi_filter "H264") )
+					if _is_hw_scaling_supported "H264" ; then
+						filter_hw+=( "scale_vaapi=w=-1:h=1080" )
+					else
+						filter_sw+=( "scale=w=-1:h=1080" )
+					fi
+					cmd=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp8_decoding[@]} \
+						-i "${S}/media/test/data/tulip2.webm" \
+						${h264_encoding[@]} \
+						$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+						-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+						-maxrate 4350k -minrate 1500k -b:v 3000k \
+						${aac_encoding[@]} \
+						-r 50 \
+						"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" )
+					einfo "${cmd[@]}"
+					"${cmd[@]}" || die "${cmd[@]}"
+					einfo "Saving work to ${ASSET_CACHE}/crowd1080.mp4 for faster rebuilds."
+					cp -a "${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" \
+						"${ASSET_CACHE}/crowd1080.mp4" || die
+					sha512sum "${ASSET_CACHE}/crowd1080.mp4" \
+						| cut -f 1 -d " " > "${ASSET_CACHE}/crowd1080.mp4.sha512" || die
+				fi
+
+				# ${CR_PGO_VIDEO0} -> garden2_10s.mp4
+				# 3840 x 2160 resolution
+				if [[ -f "${ASSET_CACHE}/video0_10s.mp4" \
+					&& -f "${ASSET_CACHE}/video0_10s.mp4.sha512" \
+					&& $(cat "${ASSET_CACHE}/video0_10s.mp4.sha512") \
+						== $(sha512sum "${ASSET_CACHE}/video0_10s.mp4" \
+							| cut -f 1 -d " ") ]] ; then
+					einfo "Using pregenerated and cached video0_10s.mp4"
+					cp -a "${ASSET_CACHE}/video0_10s.mp4" \
+						"${S}/tools/perf/page_sets/media_cases/video0_10s.mp4" \
+						|| die
+				else
+					filter_sw=()
+					filter_hw=( $(_gen_vaapi_filter "H264") )
+					if _is_hw_scaling_supported "H264" ; then
+						filter_hw+=( "scale_vaapi=w=-1:h=2160" )
+					else
+						filter_sw+=( "scale=w=-1:h=2160" )
+					fi
+					cmd=( ffmpeg \
+						${drm_render_node[@]} \
+						${vp9_decoding[@]} \
+						-i $(realpath "${CR_PGO_VIDEO0}") \
+						${h264_encoding[@]} \
+						$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
+						-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+						${aac_encoding[@]} \
+						-t 10 \
+						"${S}/tools/perf/page_sets/media_cases/video0_10s.mp4" )
+					einfo "${cmd[@]}"
+					"${cmd[@]}" || die "${cmd[@]}"
+					einfo "Saving work to ${ASSET_CACHE}/video0_10s.mp4 for faster rebuilds."
+					cp -a "${S}/tools/perf/page_sets/media_cases/video0_10s.mp4" \
+						"${ASSET_CACHE}/video0_10s.mp4" || die
+					sha512sum "${ASSET_CACHE}/video0_10s.mp4" \
+						| cut -f 1 -d " " > "${ASSET_CACHE}/video0_10s.mp4.sha512" || die
+				fi
+				sed -i -e "s|garden2_10s.mp4|video0_10s.mp4|g" \
+					"${S}/tools/perf/page_sets/media_cases.py" || die
 			fi
 
 			# tulip2.webm -> crowd1080.webm
@@ -2922,56 +3173,16 @@ eerror
 					| cut -f 1 -d " " > "${ASSET_CACHE}/crowd1080_vp9.webm.sha512" || die
 			fi
 
-			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> garden2_10s.mp4
+			# ${CR_PGO_VIDEO0} -> garden2_10s.webm
 			# 3840 x 2160 resolution
-			if [[ -f "${ASSET_CACHE}/wild_animal_10s.mp4" \
-				&& -f "${ASSET_CACHE}/wild_animal_10s.mp4.sha512" \
-				&& $(cat "${ASSET_CACHE}/wild_animal_10s.mp4.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/wild_animal_10s.mp4" \
+			if [[ -f "${ASSET_CACHE}/video0_10s.webm" \
+				&& -f "${ASSET_CACHE}/video0_10s.webm.sha512" \
+				&& $(cat "${ASSET_CACHE}/video0_10s.webm.sha512") \
+					== $(sha512sum "${ASSET_CACHE}/video0_10s.webm" \
 						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached wild_animal_10s.mp4"
-				cp -a "${ASSET_CACHE}/wild_animal_10s.mp4" \
-					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
-					|| die
-			else
-				filter_sw=()
-				filter_hw=( $(_gen_vaapi_filter "H264") )
-				if _is_hw_scaling_supported "H264" ; then
-					filter_hw+=( "scale_vaapi=w=-1:h=2160" )
-				else
-					filter_sw+=( "scale=w=-1:h=2160" )
-				fi
-				cmd=( ffmpeg \
-					${drm_render_node[@]} \
-					${vp9_decoding[@]} \
-					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
-					${h264_encoding[@]} \
-					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
-					${aac_encoding[@]} \
-					-t 10 \
-					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.mp4 for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_10s.mp4" \
-					"${ASSET_CACHE}/wild_animal_10s.mp4" || die
-				sha512sum "${ASSET_CACHE}/wild_animal_10s.mp4" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/wild_animal_10s.mp4.sha512" || die
-			fi
-			sed -i -e "s|garden2_10s.mp4|wild_animal_10s.mp4|g" \
-				"${S}/tools/perf/page_sets/media_cases.py" || die
-
-			# (4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm -> garden2_10s.webm
-			# 3840 x 2160 resolution
-			if [[ -f "${ASSET_CACHE}/wild_animal_10s.webm" \
-				&& -f "${ASSET_CACHE}/wild_animal_10s.webm.sha512" \
-				&& $(cat "${ASSET_CACHE}/wild_animal_10s.webm.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/wild_animal_10s.webm" \
-						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached wild_animal_10s.webm"
-				cp -a "${ASSET_CACHE}/wild_animal_10s.webm" \
-					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
+				einfo "Using pregenerated and cached video0_10s.webm"
+				cp -a "${ASSET_CACHE}/video0_10s.webm" \
+					"${S}/tools/perf/page_sets/media_cases/video0_10s.webm" \
 					|| die
 			else
 				filter_sw=()
@@ -2984,22 +3195,22 @@ eerror
 				cmd=( ffmpeg \
 					${drm_render_node[@]} \
 					${vp9_decoding[@]} \
-					-i $(realpath "${DISTDIR}/(4k)_Wild_Animal_-_Ultra_HD_Video_TV_60fps_(2160p).webm") \
+					-i $(realpath "${CR_PGO_VIDEO0}") \
 					${vp8_encoding[@]} \
 					$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
 					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
 					${vorbis_encoding[@]} \
 					-t 10 \
-					"${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" )
+					"${S}/tools/perf/page_sets/media_cases/video0_10s.webm" )
 				einfo "${cmd[@]}"
 				"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/wild_animal_10s.webm for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/wild_animal_10s.webm" \
-					"${ASSET_CACHE}/wild_animal_10s.webm" || die
-				sha512sum "${ASSET_CACHE}/wild_animal_10s.webm" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/wild_animal_10s.webm.sha512" || die
+				einfo "Saving work to ${ASSET_CACHE}/video0_10s.webm for faster rebuilds."
+				cp -a "${S}/tools/perf/page_sets/media_cases/video0_10s.webm" \
+					"${ASSET_CACHE}/video0_10s.webm" || die
+				sha512sum "${ASSET_CACHE}/video0_10s.webm" \
+					| cut -f 1 -d " " > "${ASSET_CACHE}/video0_10s.webm.sha512" || die
 			fi
-			sed -i -e "s|garden2_10s.webm|wild_animal_10s.webm|g" \
+			sed -i -e "s|garden2_10s.webm|video0_10s.webm|g" \
 				"${S}/tools/perf/page_sets/media_cases.py" || die
 
 			# ffmpeg -> smpte_3840x2160_60fps_vp9.webm
@@ -3311,9 +3522,11 @@ _configure_pgx() {
 		# unbundle only without libc++, because libc++ is not fully ABI compatible with libstdc++
 		gn_system_libraries+=( libxml )
 		gn_system_libraries+=( libxslt )
-		gn_system_libraries+=( openh264 )
 		gn_system_libraries+=( re2 )
 		gn_system_libraries+=( snappy )
+		if use proprietary-codecs ; then
+			gn_system_libraries+=( openh264 )
+		fi
 	fi
 	build/linux/unbundle/replace_gn_files.py --system-libraries "${gn_system_libraries[@]}" || die
 

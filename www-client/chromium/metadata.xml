@@ -43,6 +43,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     may supply a local custom patch using Telemetry [2] named custom with the
     cr_pgo_trainers_custom USE flag to extend the PGO training step.
 
+    The abspath to CR_PGO_VIDEO0 to a 60 fps, 4k, 2 min video should be filled
+    out as a per-package envvar if you are using the
+    cr_pgo_trainers_media_desktop or cr_pgo_trainers_media_mobile USE flag(s).
+
     The mobile benchmarks (which could be candidate as PGO trainers) are
     used mostly for benchmarking smartphones.
 
@@ -123,8 +127,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="pgo-full">Builds with the 3-step Profile Guided Optimization,
       natively.  This will double the build times.  Uses the performance test
       suite to generate the PGO profile.</flag>
-    <flag name="proprietary-codecs">Enable codecs for patent-encumbered audio
-      and video formats.</flag>
+    <flag name="proprietary-codecs">Enables use of patent-encumbered audio and
+      video formats.  Build flags associate AAC, H264, and others as
+      proprietary</flag>
     <flag name="shadowcallstack">Allow for backward edge protections against
       return address overwrites that could lead to arbitrary code
       execution.  (Experimental, arm64 only)</flag>
