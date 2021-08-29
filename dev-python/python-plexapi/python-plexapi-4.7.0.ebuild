@@ -18,22 +18,22 @@ DEPEND+=" ${PYTHON_DEPS}
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	doc? (
-		>=dev-python/sphinx-4.0.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.1.2[${PYTHON_USEDEP}]
 		>=dev-python/sphinx_rtd_theme-0.5.2[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/coveralls-3.1.0[${PYTHON_USEDEP}]
+		>=dev-python/coveralls-3.2.0[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.9.2[${PYTHON_USEDEP}]
-		>=dev-python/pillow-8.2.0[${PYTHON_USEDEP}]
+		>=dev-python/pillow-8.3.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-6.2.4[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cache-1.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-2.12.1[${PYTHON_USEDEP}]
 		<dev-python/pytest-mock-3.6.2[${PYTHON_USEDEP}]
 		>=dev-python/recommonmark-0.7.1[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.25.1[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-mock-1.9.3[${PYTHON_USEDEP}]
-		>=dev-python/tqdm-4.61.0[${PYTHON_USEDEP}]
-		>=dev-python/websocket-client-1.0.1[${PYTHON_USEDEP}]
+		>=dev-python/tqdm-4.61.2[${PYTHON_USEDEP}]
+		>=dev-python/websocket-client-1.1.0[${PYTHON_USEDEP}]
 	)"
 SRC_URI="
 https://github.com/pkkid/python-plexapi/archive/${PV}.tar.gz
