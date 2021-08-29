@@ -75,7 +75,9 @@ REQUIRED_USE+=" pgo? ( || ( $(gen_iuse_pgo) ) )"
 
 REQUIRED_USE+=" inspector? ( icu ssl )
 		npm? ( ssl )
-		system-ssl? ( ssl )"
+		system-ssl? ( ssl )
+		${PN}_pgo_trainers_module? ( inspector )
+"
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
@@ -324,6 +326,9 @@ run_trainers() {
 	export PATH="${ED}/usr/bin:${ED}/usr/$(get_libdir)/node_modules/npm/bin:${S}/node_modules/.bin:${PATH}"
 	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/http/_chunky_http_client.js" # This needs additional args.
 	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/http2/write.js" # Unhandled exception error node:events:371
+	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/net/net-pipe.js" # benchmark/common.js:238 throw new Error('called end() with operation count <= 0');
+	use ${PN}_pgo_trainers_module \
+		|| NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/module/module-loader.js"
 	einfo "NODEJS_EXCLUDED_BENCHMARKS=${NODEJS_EXCLUDED_BENCHMARKS}"
 	init_local_npm
 	cd "${S}" || die # Ensure PGO profiles are from this dir.
