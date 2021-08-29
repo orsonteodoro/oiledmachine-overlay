@@ -158,15 +158,6 @@ eerror
                 fi
 	done
 
-	if use ${PN}_pgo_trainers_http \
-		|| use ${PN}_pgo_trainers_http2 \
-		|| use ${PN}_pgo_trainers_https ; then
-ewarn
-ewarn "The ${PN}_pgo_trainers_http, ${PN}_pgo_trainers_http2, or"
-ewarn "${PN}_pgo_trainers_https may randomly fail.  Re-emerge and try again."
-ewarn
-	fi
-
 	if use ${PN}_pgo_trainers_string_decoder \
 		&& [[ ! ( "${NODEJS_EXCLUDED_BENCHMARKS}" =~ "benchmark/string_decoder/string-decoder.js" ) ]] ; then
 ewarn
@@ -361,21 +352,34 @@ eerror "separated list.  See metadata.xml for details."
 eerror
 			die
 		}
-		if [[ "${b}" =~ ^benchmark/http/ \
-			|| "${b}" =~ ^benchmark/https/ ]] ; then
-			if which autocannon 2>/dev/null 1>/dev/null ; then
-				node "${b}" benchmarker=autocannon \
-					|| benchmark_failed_message
+		# autocannon likes to fail randomly
+		local tries=1
+		local fail=0
+		while (( ${tries} <= 3 && ${fail} == 1 )) ; do
+			fail=0
+			if [[ "${b}" =~ ^benchmark/http/ \
+				|| "${b}" =~ ^benchmark/https/ ]] ; then
+				if which autocannon 2>/dev/null 1>/dev/null ; then
+					node "${b}" benchmarker=autocannon \
+						|| fail=1
+				else
+					node "${b}" benchmarker=wrk \
+						|| fail=1
+				fi
+			elif [[ "${b}" =~ ^benchmark/http2/ ]] ; then
+				node "${b}" benchmarker=h2load \
+					|| fail=1
 			else
-				node "${b}" benchmarker=wrk \
-					|| benchmark_failed_message
+				node "${b}" \
+					|| fail=1
 			fi
-		elif [[ "${b}" =~ ^benchmark/http2/ ]] ; then
-			node "${b}" benchmarker=h2load \
-				|| benchmark_failed_message
-		else
-			node "${b}" \
-				|| benchmark_failed_message
+			if (( ${fail} == 1 && ${tries} < 3 )) ; then
+				einfo "Benchmark failed.  Trying again."
+			fi
+			tries=$(( ${tries} + 1 ))
+		done
+		if (( ${fail} == 1 )) ; then
+			benchmark_failed_message
 		fi
 	done
 	if [[ -e "pgo-custom-trainer.sh" ]] ; then
