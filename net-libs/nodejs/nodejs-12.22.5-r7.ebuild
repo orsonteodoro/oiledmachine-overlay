@@ -170,6 +170,15 @@ ewarn "The ${PN}_pgo_trainers_http, ${PN}_pgo_trainers_http2, or"
 ewarn "may randomly fail.  Re-emerge and try again."
 ewarn
 	fi
+
+	if use ${PN}_pgo_trainers_string_decoder \
+		&& [[ ! ( "${NODEJS_EXCLUDED_BENCHMARKS}" =~ "benchmark/string_decoder/string-decoder.js" ) ]] ; then
+ewarn
+ewarn "The benchmark/string_decoder/string-decoder.js may take hours to"
+ewarn "complete.  Consider adding it to the NODEJS_EXCLUDED_BENCHMARKS"
+ewarn "per-package envvar set."
+ewarn
+	fi
 }
 
 src_prepare() {
