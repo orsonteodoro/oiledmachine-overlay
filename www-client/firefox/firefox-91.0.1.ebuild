@@ -216,8 +216,7 @@ BDEPEND="${PYTHON_DEPS}
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
 		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
 	)
-	>=dev-lang/rust-1.52.1[${MULTILIB_USEDEP}]
-	!dev-lang/rust-bin
+	>=virtual/rust-1.51.0[${MULTILIB_USEDEP}]
 	|| (
 		(
 			sys-devel/clang:12[${MULTILIB_USEDEP}]
@@ -324,8 +323,6 @@ DEPEND="${CDEPEND}
 	wayland? ( >=x11-libs/gtk+-3.11:3[wayland,${MULTILIB_USEDEP}] )
 	amd64? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	x86? ( virtual/opengl[${MULTILIB_USEDEP}] )"
-# Gentoo's rust-bin package doesn't install the i686 libs.  Use only the
-# compiled source version.
 
 S="${WORKDIR}/${PN}-${PV%_*}"
 S_BAK="${WORKDIR}/${PN}-${PV%_*}"
