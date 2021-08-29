@@ -110,15 +110,15 @@ pkg_setup() {
 		if ! ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
 			die "Missing WebM support from ffmpeg"
 		fi
-		if ffprobe "${LIBVPX_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
-			if [[ -z "${LIBVPX_PGO_VIDEO}" ]] ; then
+		if [[ -z "${LIBVPX_PGO_VIDEO}" ]] ; then
 eerror
 eerror "LIBVPX_PGO_VIDEO is missing the abspath to your vp8/vp9 video as a"
 eerror "per-package envvar.  The video must be 3840x2160 resolution,"
 eerror "60fps, >= 3 seconds."
 eerror
-				die
-			fi
+			die
+		fi
+		if ffprobe "${LIBVPX_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
 			einfo "Verifying asset requirements"
 			if ! ( ffprobe "${LIBVPX_PGO_VIDEO}" 2>&1 \
 				| grep -q -e "3840x2160" ) ; then
