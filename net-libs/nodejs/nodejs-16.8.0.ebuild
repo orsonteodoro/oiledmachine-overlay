@@ -355,7 +355,7 @@ eerror
 		# autocannon likes to fail randomly
 		local tries=1
 		local fail=0
-		while (( ${tries} <= 3 && ${fail} == 1 )) ; do
+		while (( ${tries} <= 3 && ( ${fail} == 1 || ${tries} == 1 ) )) ; do
 			fail=0
 			if [[ "${b}" =~ ^benchmark/http/ \
 				|| "${b}" =~ ^benchmark/https/ ]] ; then
