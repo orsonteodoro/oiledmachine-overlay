@@ -97,6 +97,11 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
 		installed in ${S}/node_modules.  If the package doesn't
 		contain a benchmark, then it is not suitable for PGO
 		training.
+
+		When selecting a nodejs_pgo_trainers_*, only select those
+		that reflect typical use.  Choosing trainers that do
+		not reflect typical use may increase unwanted binary size
+		or may cause degraded performance.
 	</longdescription>
 	<use>
 		<flag name="doc">It installs docs.  It should only

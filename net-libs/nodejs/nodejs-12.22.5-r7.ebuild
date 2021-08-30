@@ -171,6 +171,13 @@ ewarn "complete.  Consider adding it to the NODEJS_EXCLUDED_BENCHMARKS"
 ewarn "per-package envvar set."
 ewarn
 	fi
+
+	if use ${PN}_pgo_trainers_path ; then
+ewarn
+ewarn "The benchmark/path/resolve-win32.js may not reflect typical usage."
+ewarn "Consider adding it to the NODEJS_EXCLUDED_BENCHMARKS."
+ewarn
+	fi
 }
 
 src_prepare() {
