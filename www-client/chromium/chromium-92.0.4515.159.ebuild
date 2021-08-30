@@ -1844,19 +1844,19 @@ ewarn
 	fi
 
 	init_third_party_packages
-	if use cfi ; then
-		check_dependencies_built_with_cfi
-	fi
-	check_dependencies_built_with_ssp
-	case "${ABI}" in
-		ppc64|s390|s390x|n32|n64|o32)
-			;;
-		*)
-			check_dependencies_built_with_fortify_source
-			;;
-	esac
-	check_dependencies_built_with_noexecstack
-	check_dependencies_built_with_full_relro
+#	if use cfi ; then
+#		check_dependencies_built_with_cfi
+#	fi
+#	check_dependencies_built_with_ssp
+#	case "${ABI}" in
+#		ppc64|s390|s390x|n32|n64|o32)
+#			;;
+#		*)
+#			check_dependencies_built_with_fortify_source
+#			;;
+#	esac
+#	check_dependencies_built_with_noexecstack
+#	check_dependencies_built_with_full_relro
 
 	if use cr_pgo_trainers_media_desktop \
 		|| use cr_pgo_trainers_media_mobile ; then
