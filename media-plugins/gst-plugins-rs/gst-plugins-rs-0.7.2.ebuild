@@ -67,16 +67,12 @@ MODULES=(
 )
 IUSE+=" ${MODULES[@]}"
 REQUIRED_USE+=" || ( ${MODULES[@]} )"
-#RUST_V="1.52" upstrem requirement
-RUST_DEPEND="
-	|| (
-		~dev-lang/rust-1.52.1[${MULTILIB_USEDEP}]
-		~dev-lang/rust-bin-1.52.1[${MULTILIB_USEDEP}]
-	)"
+RUST_V="1.52.1"
 CARGO_V="1.40"
 RDEPEND+="
 	>=media-libs/gstreamer-1.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/gst-plugins-base-1.0:1.0[${MULTILIB_USEDEP}]
+	closedcaption? ( x11-libs/pango[${MULTILIB_USEDEP}] )
 	csound? ( media-sound/csound[${MULTILIB_USEDEP}] )
 	dav1d? ( >=media-libs/dav1d-0.8.2[${MULTILIB_USEDEP}] )
 	sodium? ( dev-libs/libsodium[${MULTILIB_USEDEP}] )"
@@ -85,6 +81,7 @@ DEPEND+=" ${RDEPEND}"
 # Expanded here because the virtual system is broken for multilib.
 BDEPEND+=" ${BDEPEND}
 	${RUST_DEPEND}
+	>=virtual/rust-${RUST_V}
 	|| (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
                 >=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
@@ -111,7 +108,7 @@ https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${PV}/gst-plug
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 PATCHES=(
-	"${FILESDIR}/gst-plugins-rs-0.7.0-modular-build.patch"
+	"${FILESDIR}/gst-plugins-rs-0.7.2-modular-build.patch"
 	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-rename-csound-ref.patch"
 )
 
@@ -120,18 +117,6 @@ pkg_setup() {
 			die \
 "FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
 download the internal dependencies."
-	fi
-
-	local abis=( $(multilib_get_enabled_abi_pairs) )
-	if (( "${#abis[@]}" > 1 )) ; then
-		if has_version "dev-lang/rust" ; then
-			einfo \
-"Found dev-lang/rust for multilib build."
-		else
-			die \
-"You must use dev-lang/rust instead.  The dev-lang/rust-bin is only\n\
-recommended for unilib builds."
-		fi
 	fi
 
 	# The file name version does not match the --version.
