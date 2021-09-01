@@ -817,9 +817,16 @@ get_arch_enabled_use_flags() {
 
 pkg_postinst() {
 	if use pgo && [[ -z "${PGO_RAN}" ]] ; then
-		elog "No PGO optimization performed.  Please re-emerge this package."
-		elog "The following package must be installed before PGOing this package:"
-		elog "  media-video/mpv[cli]"
-		elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
+elog "No PGO optimization performed.  Please re-emerge this package."
+elog "The following package must be installed before PGOing this package:"
+elog "  media-video/mpv[cli]"
+elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
+	fi
+	if use cfi ; then
+ewarn
+ewarn "The cfi USE flag is experimental.  If missing symbols encountered when"
+ewarn "building against this package, send the package names an issue request"
+ewarn "to oiledmachine-overlay."
+ewarn
 	fi
 }
