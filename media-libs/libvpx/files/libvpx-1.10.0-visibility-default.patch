@@ -1,0 +1,194 @@
+diff -urp libvpx-1.10.0.orig/vpx/vp8cx.h libvpx-1.10.0/vpx/vp8cx.h
+--- libvpx-1.10.0.orig/vpx/vp8cx.h	2021-03-18 12:59:46.000000000 -0700
++++ libvpx-1.10.0/vpx/vp8cx.h	2021-09-01 13:06:37.878719234 -0700
+@@ -34,6 +34,7 @@ extern "C" {
+  * @{
+  */
+ extern vpx_codec_iface_t vpx_codec_vp8_cx_algo;
++__attribute__ ((visibility ("default")))
+ extern vpx_codec_iface_t *vpx_codec_vp8_cx(void);
+ /*!@} - end algorithm interface member group*/
+ 
+@@ -43,6 +44,7 @@ extern vpx_codec_iface_t *vpx_codec_vp8_
+  * @{
+  */
+ extern vpx_codec_iface_t vpx_codec_vp9_cx_algo;
++__attribute__ ((visibility ("default")))
+ extern vpx_codec_iface_t *vpx_codec_vp9_cx(void);
+ /*!@} - end algorithm interface member group*/
+ 
+diff -urp libvpx-1.10.0.orig/vpx/vp8dx.h libvpx-1.10.0/vpx/vp8dx.h
+--- libvpx-1.10.0.orig/vpx/vp8dx.h	2021-03-18 12:59:46.000000000 -0700
++++ libvpx-1.10.0/vpx/vp8dx.h	2021-09-01 13:06:37.878719234 -0700
+@@ -33,6 +33,7 @@ extern "C" {
+  * @{
+  */
+ extern vpx_codec_iface_t vpx_codec_vp8_dx_algo;
++__attribute__ ((visibility ("default")))
+ extern vpx_codec_iface_t *vpx_codec_vp8_dx(void);
+ /*!@} - end algorithm interface member group*/
+ 
+@@ -42,6 +43,7 @@ extern vpx_codec_iface_t *vpx_codec_vp8_
+  * @{
+  */
+ extern vpx_codec_iface_t vpx_codec_vp9_dx_algo;
++__attribute__ ((visibility ("default")))
+ extern vpx_codec_iface_t *vpx_codec_vp9_dx(void);
+ /*!@} - end algorithm interface member group*/
+ 
+diff -urp libvpx-1.10.0.orig/vpx/vpx_codec.h libvpx-1.10.0/vpx/vpx_codec.h
+--- libvpx-1.10.0.orig/vpx/vpx_codec.h	2021-03-18 12:59:46.000000000 -0700
++++ libvpx-1.10.0/vpx/vpx_codec.h	2021-09-01 13:06:37.878719234 -0700
+@@ -268,6 +268,7 @@ int vpx_codec_version(void);
+  * release candidates, prerelease versions, etc.
+  *
+  */
++__attribute__ ((visibility ("default")))
+ const char *vpx_codec_version_str(void);
+ 
+ /*!\brief Return the version information (as a string)
+@@ -294,6 +295,7 @@ const char *vpx_codec_build_config(void)
+  * \param[in]    iface     Interface pointer
+  *
+  */
++__attribute__ ((visibility ("default")))
+ const char *vpx_codec_iface_name(vpx_codec_iface_t *iface);
+ 
+ /*!\brief Convert error number to printable string
+@@ -306,6 +308,7 @@ const char *vpx_codec_iface_name(vpx_cod
+  * \param[in]    err     Error number.
+  *
+  */
++__attribute__ ((visibility ("default")))
+ const char *vpx_codec_err_to_string(vpx_codec_err_t err);
+ 
+ /*!\brief Retrieve error synopsis for codec context
+@@ -318,6 +321,7 @@ const char *vpx_codec_err_to_string(vpx_
+  * \param[in]    ctx     Pointer to this instance's context.
+  *
+  */
++__attribute__ ((visibility ("default")))
+ const char *vpx_codec_error(vpx_codec_ctx_t *ctx);
+ 
+ /*!\brief Retrieve detailed error information for codec context
+@@ -330,6 +334,7 @@ const char *vpx_codec_error(vpx_codec_ct
+  * \retval NULL
+  *     No detailed information is available.
+  */
++__attribute__ ((visibility ("default")))
+ const char *vpx_codec_error_detail(vpx_codec_ctx_t *ctx);
+ 
+ /* REQUIRED FUNCTIONS
+@@ -349,6 +354,7 @@ const char *vpx_codec_error_detail(vpx_c
+  * \retval #VPX_CODEC_MEM_ERROR
+  *     Memory allocation failed.
+  */
++__attribute__ ((visibility ("default")))
+ vpx_codec_err_t vpx_codec_destroy(vpx_codec_ctx_t *ctx);
+ 
+ /*!\brief Get the capabilities of an algorithm.
+@@ -384,6 +390,7 @@ vpx_codec_caps_t vpx_codec_get_caps(vpx_
+  * \retval #VPX_CODEC_INVALID_PARAM
+  *     The data was not valid.
+  */
++__attribute__ ((visibility ("default")))
+ vpx_codec_err_t vpx_codec_control_(vpx_codec_ctx_t *ctx, int ctrl_id, ...);
+ #if defined(VPX_DISABLE_CTRL_TYPECHECKS) && VPX_DISABLE_CTRL_TYPECHECKS
+ #define vpx_codec_control(ctx, id, data) vpx_codec_control_(ctx, id, data)
+diff -urp libvpx-1.10.0.orig/vpx/vpx_decoder.h libvpx-1.10.0/vpx/vpx_decoder.h
+--- libvpx-1.10.0.orig/vpx/vpx_decoder.h	2021-03-18 12:59:46.000000000 -0700
++++ libvpx-1.10.0/vpx/vpx_decoder.h	2021-09-01 13:07:09.268926554 -0700
+@@ -131,6 +131,7 @@ typedef struct vpx_codec_dec_cfg {
+  * \retval #VPX_CODEC_MEM_ERROR
+  *     Memory allocation failed.
+  */
++__attribute__ ((visibility ("default")))
+ vpx_codec_err_t vpx_codec_dec_init_ver(vpx_codec_ctx_t *ctx,
+                                        vpx_codec_iface_t *iface,
+                                        const vpx_codec_dec_cfg_t *cfg,
+@@ -160,6 +161,7 @@ vpx_codec_err_t vpx_codec_dec_init_ver(v
+  * \retval #VPX_CODEC_OK
+  *     Bitstream is parsable and stream information updated
+  */
++__attribute__ ((visibility ("default")))
+ vpx_codec_err_t vpx_codec_peek_stream_info(vpx_codec_iface_t *iface,
+                                            const uint8_t *data,
+                                            unsigned int data_sz,
+@@ -211,6 +213,7 @@ vpx_codec_err_t vpx_codec_get_stream_inf
+  *         see the descriptions of the other error codes in ::vpx_codec_err_t
+  *         for recoverability capabilities.
+  */
++__attribute__ ((visibility ("default")))
+ vpx_codec_err_t vpx_codec_decode(vpx_codec_ctx_t *ctx, const uint8_t *data,
+                                  unsigned int data_sz, void *user_priv,
+                                  long deadline);
+@@ -231,6 +234,7 @@ vpx_codec_err_t vpx_codec_decode(vpx_cod
+  * \return Returns a pointer to an image, if one is ready for display. Frames
+  *         produced will always be in PTS (presentation time stamp) order.
+  */
++__attribute__ ((visibility ("default")))
+ vpx_image_t *vpx_codec_get_frame(vpx_codec_ctx_t *ctx, vpx_codec_iter_t *iter);
+ 
+ /*!\defgroup cap_put_frame Frame-Based Decoding Functions
+@@ -352,6 +356,7 @@ vpx_codec_err_t vpx_codec_register_put_s
+  * #VP9_MAXIMUM_REF_BUFFERS + #VPX_MAXIMUM_WORK_BUFFERS external frame
+  * buffers.
+  */
++__attribute__ ((visibility ("default")))
+ vpx_codec_err_t vpx_codec_set_frame_buffer_functions(
+     vpx_codec_ctx_t *ctx, vpx_get_frame_buffer_cb_fn_t cb_get,
+     vpx_release_frame_buffer_cb_fn_t cb_release, void *cb_priv);
+diff -urp libvpx-1.10.0.orig/vpx/vpx_encoder.h libvpx-1.10.0/vpx/vpx_encoder.h
+--- libvpx-1.10.0.orig/vpx/vpx_encoder.h	2021-03-18 12:59:46.000000000 -0700
++++ libvpx-1.10.0/vpx/vpx_encoder.h	2021-09-01 13:06:37.879719273 -0700
+@@ -732,6 +732,7 @@ typedef struct vpx_svc_parameters {
+  * \retval #VPX_CODEC_MEM_ERROR
+  *     Memory allocation failed.
+  */
++__attribute__ ((visibility ("default")))
+ vpx_codec_err_t vpx_codec_enc_init_ver(vpx_codec_ctx_t *ctx,
+                                        vpx_codec_iface_t *iface,
+                                        const vpx_codec_enc_cfg_t *cfg,
+@@ -795,6 +796,7 @@ vpx_codec_err_t vpx_codec_enc_init_multi
+  * \retval #VPX_CODEC_INVALID_PARAM
+  *     A parameter was NULL, or the usage value was not recognized.
+  */
++__attribute__ ((visibility ("default")))
+ vpx_codec_err_t vpx_codec_enc_config_default(vpx_codec_iface_t *iface,
+                                              vpx_codec_enc_cfg_t *cfg,
+                                              unsigned int usage);
+@@ -871,6 +873,7 @@ vpx_fixed_buf_t *vpx_codec_get_global_he
+  * \retval #VPX_CODEC_INVALID_PARAM
+  *     A parameter was NULL, the image format is unsupported, etc.
+  */
++__attribute__ ((visibility ("default")))
+ vpx_codec_err_t vpx_codec_encode(vpx_codec_ctx_t *ctx, const vpx_image_t *img,
+                                  vpx_codec_pts_t pts, unsigned long duration,
+                                  vpx_enc_frame_flags_t flags,
+@@ -947,6 +950,7 @@ vpx_codec_err_t vpx_codec_set_cx_data_bu
+  *         two-pass statistics, etc.) or NULL to signal end-of-list.
+  *
+  */
++__attribute__ ((visibility ("default")))
+ const vpx_codec_cx_pkt_t *vpx_codec_get_cx_data(vpx_codec_ctx_t *ctx,
+                                                 vpx_codec_iter_t *iter);
+ 
+diff -urp libvpx-1.10.0.orig/vpx/vpx_image.h libvpx-1.10.0/vpx/vpx_image.h
+--- libvpx-1.10.0.orig/vpx/vpx_image.h	2021-03-18 12:59:46.000000000 -0700
++++ libvpx-1.10.0/vpx/vpx_image.h	2021-09-01 13:06:37.879719273 -0700
+@@ -141,6 +141,7 @@ typedef struct vpx_image_rect {
+  *         parameter is non-null, the value of the img parameter will be
+  *         returned.
+  */
++__attribute__ ((visibility ("default")))
+ vpx_image_t *vpx_img_alloc(vpx_image_t *img, vpx_img_fmt_t fmt,
+                            unsigned int d_w, unsigned int d_h,
+                            unsigned int align);
+@@ -199,6 +200,7 @@ void vpx_img_flip(vpx_image_t *img);
+  *
+  * \param[in]    img       Image descriptor
+  */
++__attribute__ ((visibility ("default")))
+ void vpx_img_free(vpx_image_t *img);
+ 
+ #ifdef __cplusplus

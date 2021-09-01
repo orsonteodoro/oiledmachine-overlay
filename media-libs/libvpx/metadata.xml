@@ -77,10 +77,14 @@
     performance.
   </longdescription>
   <use>
-    <flag name="clang">Ensures the prerequistes for ThinLTO if combined with
-      the lto USE flag.</flag>
+    <flag name="cfi">Build with full CFI with all schemes</flag>
+    <flag name="cfi-icall">Build with cfi-icall</flag>
+    <flag name="cfi-icall">Build with cfi-vcall</flag>
+    <flag name="cfi-cast">Build with cfi-cast</flag>
+    <flag name="full-relro">Build with Full RELRO</flag>
     <flag name="highbitdepth">Enable 10 and 12 bit support for VP9.</flag>
     <flag name="lto">Use link time optimization.</flag>
+    <flag name="noexecstack">Build with noexecstack</flag>
     <flag name="pgo">Use profile guided optimization.</flag>
     <flag name="pgo-custom">Use a custom profile guided optimization script to
       train with.</flag>
@@ -91,10 +95,10 @@
       quality PGO trainer.  (ebuild maintainer recommended)</flag>
     <flag name="pgo-trainer-lossless">Use the lossless PGO trainer.</flag>
     <flag name="postproc">Enable additional post processing filters</flag>
+    <flag name="ssp">Build with stack smashing protection</flag>
     <flag name="svc">Enable spatial-svc support (experimental)</flag>
   </use>
   <upstream>
     <remote-id type="cpe">cpe:/a:john_koleszar:libvpx</remote-id>
   </upstream>
 </pkgmetadata>
-
