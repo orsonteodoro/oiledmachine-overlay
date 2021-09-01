@@ -82,7 +82,10 @@ gen_cfi_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[cfi?]
+			cfi? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
+			cfi-icall? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
+			cfi-cast? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
+			cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
 		)
 		     "
 	done

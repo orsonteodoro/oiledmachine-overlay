@@ -79,7 +79,7 @@
   <use>
     <flag name="cfi">Build with full CFI with all schemes</flag>
     <flag name="cfi-icall">Build with cfi-icall</flag>
-    <flag name="cfi-icall">Build with cfi-vcall</flag>
+    <flag name="cfi-vcall">Build with cfi-vcall</flag>
     <flag name="cfi-cast">Build with cfi-cast</flag>
     <flag name="full-relro">Build with Full RELRO</flag>
     <flag name="highbitdepth">Enable 10 and 12 bit support for VP9.</flag>
