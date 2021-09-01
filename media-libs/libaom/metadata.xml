@@ -72,9 +72,11 @@
     result in performance degration.
   </longdescription>
   <use>
-    <flag name="clang">Ensures the prerequistes for ThinLTO if combined with
-      the lto USE flag.</flag>
+    <flag name="cfi">Build with full CFI with all schemes</flag>
+    <flag name="full-relro">Build with Full RELRO</flag>
+    <flag name="libcxx">Link against the more secured libcxx package.</flag>
     <flag name="lto">Use link time optimization.</flag>
+    <flag name="noexecstack">Build with noexecstack</flag>
     <flag name="pgo">Use profile guided optimization.</flag>
     <flag name="pgo-custom">Use a custom profile guided optimization script to
       train with.</flag>
@@ -84,5 +86,6 @@
     <flag name="pgo-trainer-constrained-quality">Use the 1 pass constrained
       quality PGO trainer.  (ebuild maintainer recommended)</flag>
     <flag name="pgo-trainer-lossless">Use the lossless PGO trainer.</flag>
+    <flag name="ssp">Build with stack smashing protection</flag>
   </use>
 </pkgmetadata>
