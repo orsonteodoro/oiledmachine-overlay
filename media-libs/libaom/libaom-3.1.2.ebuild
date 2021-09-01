@@ -35,6 +35,7 @@ IUSE+=" pgo pgo-custom
 REQUIRED_USE="
 	cpu_flags_x86_sse2? ( cpu_flags_x86_mmx )
 	cpu_flags_x86_ssse3? ( cpu_flags_x86_sse2 )
+	cfi? ( lto )
 	pgo? (
 		|| (
 			pgo-custom
@@ -121,7 +122,7 @@ gen_libcxx_depend() {
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
 			libcxx? (
 				!cfi? ( >=sys-libs/libcxx-${v}[full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
-				cfi? ( >=sys-libs/libcxx-${v}[cfi,cfi-icall,cfi-full,full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
+				cfi? ( >=sys-libs/libcxx-${v}[cfi-vcall,cfi-icall,cfi-full,full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
 			)
 		)
 		"
@@ -392,11 +393,7 @@ configure_pgx() {
 		-DENABLE_AVX=$(usex cpu_flags_x86_avx ON OFF)
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
 	)
-	if use cfi ; then
-		mycmakeargs+=(
-			-DSANITIZE=cfi
-		)
-	fi
+	use cfi && mycmakeargs+=( -DSANITIZE=cfi )
 	cmake_src_configure
 }
 
