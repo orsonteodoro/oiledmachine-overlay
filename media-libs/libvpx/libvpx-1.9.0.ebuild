@@ -37,10 +37,11 @@ REQUIRED_USE="
 		!cfi-cast
 		!cfi-icall
 		!cfi-vcall
+		lto
 	)
-	cfi-cast? ( !cfi )
-	cfi-icall? ( !cfi )
-	cfi-vcall? ( !cfi )
+	cfi-cast? ( !cfi lto )
+	cfi-icall? ( !cfi lto )
+	cfi-vcall? ( !cfi lto )
 	pgo? (
 		|| (
 			pgo-custom
@@ -143,10 +144,10 @@ DEPEND+=" ${RDEPEND}"
 
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
-BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) lto )"
-BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) lto )"
-BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) lto )"
-BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) lto )"
+BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
 
 BDEPEND="abi_x86_32? ( dev-lang/yasm )
