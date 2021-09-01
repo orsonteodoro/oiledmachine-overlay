@@ -83,6 +83,7 @@
     <flag name="cfi-cast">Build with cfi-cast</flag>
     <flag name="full-relro">Build with Full RELRO</flag>
     <flag name="highbitdepth">Enable 10 and 12 bit support for VP9.</flag>
+    <flag name="libcxx">Link against the more secured libcxx package.</flag>
     <flag name="lto">Use link time optimization.</flag>
     <flag name="noexecstack">Build with noexecstack</flag>
     <flag name="pgo">Use profile guided optimization.</flag>
