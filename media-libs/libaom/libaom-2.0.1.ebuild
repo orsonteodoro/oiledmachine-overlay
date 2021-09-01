@@ -24,10 +24,12 @@ IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
-IUSE+=" clang lto pgo pgo-custom
+IUSE+=" cfi full-relro libcxx lto noexecstack shadowcallstack ssp"
+IUSE+=" pgo pgo-custom
 	pgo-trainer-2-pass-constrained-quality
 	pgo-trainer-constrained-quality
 	pgo-trainer-lossless
+	chromium
 "
 
 REQUIRED_USE="
@@ -47,36 +49,100 @@ REQUIRED_USE="
 	pgo-trainer-lossless? ( pgo )
 "
 
-LTO_CLANG_BDEPEND="
-        (
-                sys-devel/clang:11
-                sys-devel/llvm:11
-                >=sys-devel/lld-11
-        )
-        (
-                sys-devel/clang:12
-                sys-devel/llvm:12
-                >=sys-devel/lld-12
-        )
-        (
-                sys-devel/clang:13
-                sys-devel/llvm:13
-                >=sys-devel/lld-13
-        )"
+_seq() {
+	local min=${1}
+	local max=${2}
+	local i=${min}
+	while (( ${i} <= ${max} )) ; do
+		echo "${i}"
+		i=$(( ${i} + 1 ))
+	done
+}
 
-BDEPEND="abi_x86_32? ( dev-lang/yasm )
+gen_cfi_bdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			>=sys-devel/lld-${v}
+			=sys-libs/compiler-rt-${v}*
+			=sys-libs/compiler-rt-sanitizers-${v}*[cfi?]
+		)
+		     "
+	done
+}
+
+gen_shadowcallstack_bdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			>=sys-devel/lld-${v}
+			=sys-libs/compiler-rt-${v}*
+			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+		)
+		     "
+	done
+}
+
+gen_lto_bdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
+			>=sys-devel/lld-${v}
+		)
+		"
+	done
+}
+
+gen_libcxx_depend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			libcxx? (
+				!cfi? ( >=sys-libs/libcxx-${v}[full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
+				cfi? ( >=sys-libs/libcxx-${v}[cfi,cfi-icall,cfi-full,full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
+			)
+		)
+		"
+	done
+}
+
+RDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
+DEPEND+=" ${RDEPEND}"
+
+BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
+BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
+BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
+
+BDEPEND+=" abi_x86_32? ( dev-lang/yasm )
 	abi_x86_64? ( dev-lang/yasm )
 	abi_x86_x32? ( dev-lang/yasm )
 	x86-fbsd? ( dev-lang/yasm )
 	amd64-fbsd? ( dev-lang/yasm )
-	clang? ( lto? ( ${LTO_CLANG_BDEPEND} ) )
+	chromium? ( >=dev-lang/nasm-2.14 )
 	doc? ( app-doc/doxygen )
-	lto? (
-		|| (
-			${LTO_CLANG_BDEPEND}
-			sys-devel/gcc
-		)
-	)
 "
 
 PDEPEND="
@@ -85,6 +151,7 @@ PDEPEND="
 		media-video/ffmpeg[encode,libaom,${MULTILIB_USEDEP}]
 	)
 "
+PATCHES=( "${FILESDIR}/libaom-2.0.0-visibility-default.patch" )
 
 # the PATENTS file is required to be distributed with this package bug #682214
 DOCS=( PATENTS )
@@ -158,6 +225,10 @@ eerror
 
 src_prepare() {
 	cmake_src_prepare
+	if use cfi ; then
+		sed -i -e "s|-fuse-ld=gold|-fuse-ld=lld|g" \
+			build/cmake/sanitizers.cmake || die
+	fi
 	multilib_copy_sources
 }
 
@@ -221,6 +292,17 @@ has_pgo_requirement() {
 
 src_configure() { :; }
 
+append_all() {
+	append-flags ${@}
+	append-ldflags ${@}
+}
+
+append_lto() {
+	filter-flags '-flto*'
+	append-flags -flto=thin
+	append-ldflags -fuse-ld=lld -flto=thin
+}
+
 configure_pgx() {
 	[[ -f build.ninja ]] && eninja clean
 	find "${BUILD_DIR}" -name "CMakeCache.txt" -delete
@@ -229,27 +311,40 @@ configure_pgx() {
 		'-fprofile-dir*' \
 		'-fprofile-generate*' \
 		'-fprofile-use*'
+
+	if use lto || use shadowcallstack ; then
+		export CC="clang $(get_abi_CFLAGS ${ABI})"
+		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
+		export NM=llvm-nm
+		export AR=llvm-ar
+		export READELF=llvm-readelf
+		export AS=llvm-as
+		unset LD
+	fi
+
+	if tc-is-clang && use libcxx ; then
+                append-cxxflags -stdlib=libc++
+                append-ldflags -stdlib=libc++
+	elif ! tc-is-clang && use libcxx ; then
+		die "libcxx requires clang++"
+	fi
+
 	if tc-is-clang ; then
-		filter-flags \
-			-fprefetch-loop-arrays \
+		filter-flags -fprefetch-loop-arrays \
 			'-fopt-info*' \
 			-frename-registers
+		append-cppflags -DFLAC__USE_VISIBILITY_ATTR
 	fi
-	filter-flags \
-		'-flto*'
-	filter-ldflags \
-		'-O*'
-	if use lto && tc-is-clang ; then
-		append-cflags -flto=thin
-		append-cxxflags -flto=thin
-		append-ldflags -fuse-ld=lld -flto=thin -O2
-	elif use lto && tc-is-gcc ; then
-		ncpus=$(lscpu | grep -E "^CPU\(s\):.*[0-9]+" \
-			| grep -E -o "[0-9]+")
-		append-cflags -flto=${ncpus}
-		append-cxxflags -flto=${ncpus}
-		append-ldflags -flto=${ncpus} -O2
-	fi
+
+	use chromium && append-cppflags -DCHROMIUM
+	use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
+	use lto && append_lto
+	use noexecstack && append-ldflags -Wl,-z,noexecstack
+	use shadowcallstack && append-flags -fno-sanitize=safe-stack \
+					-fsanitize=shadow-call-stack
+	use ssp && append-ldflags --param=ssp-buffer-size=4 \
+				-fstack-protector
+
 	tc-export CC CXX
 	export FFMPEG=$(get_multiabi_ffmpeg)
 	export MPV=$(get_multiabi_mpv)
@@ -297,6 +392,11 @@ configure_pgx() {
 		-DENABLE_AVX=$(usex cpu_flags_x86_avx ON OFF)
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
 	)
+	if use cfi ; then
+		mycmakeargs+=(
+			-DSANITIZE=cfi
+		)
+	fi
 	cmake_src_configure
 }
 
