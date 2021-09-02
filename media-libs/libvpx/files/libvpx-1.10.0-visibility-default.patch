@@ -1,6 +1,6 @@
 diff -urp libvpx-1.10.0.orig/vpx/vp8cx.h libvpx-1.10.0/vpx/vp8cx.h
 --- libvpx-1.10.0.orig/vpx/vp8cx.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vp8cx.h	2021-09-01 13:06:37.878719234 -0700
++++ libvpx-1.10.0/vpx/vp8cx.h	2021-09-01 23:06:16.801109668 -0700
 @@ -34,6 +34,7 @@ extern "C" {
   * @{
   */
@@ -19,7 +19,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vp8cx.h libvpx-1.10.0/vpx/vp8cx.h
  
 diff -urp libvpx-1.10.0.orig/vpx/vp8dx.h libvpx-1.10.0/vpx/vp8dx.h
 --- libvpx-1.10.0.orig/vpx/vp8dx.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vp8dx.h	2021-09-01 13:06:37.878719234 -0700
++++ libvpx-1.10.0/vpx/vp8dx.h	2021-09-01 23:06:16.802109708 -0700
 @@ -33,6 +33,7 @@ extern "C" {
   * @{
   */
@@ -38,7 +38,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vp8dx.h libvpx-1.10.0/vpx/vp8dx.h
  
 diff -urp libvpx-1.10.0.orig/vpx/vpx_codec.h libvpx-1.10.0/vpx/vpx_codec.h
 --- libvpx-1.10.0.orig/vpx/vpx_codec.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vpx_codec.h	2021-09-01 13:06:37.878719234 -0700
++++ libvpx-1.10.0/vpx/vpx_codec.h	2021-09-01 23:10:30.087960298 -0700
 @@ -268,6 +268,7 @@ int vpx_codec_version(void);
   * release candidates, prerelease versions, etc.
   *
@@ -47,7 +47,15 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_codec.h libvpx-1.10.0/vpx/vpx_codec.h
  const char *vpx_codec_version_str(void);
  
  /*!\brief Return the version information (as a string)
-@@ -294,6 +295,7 @@ const char *vpx_codec_build_config(void)
+@@ -285,6 +286,7 @@ const char *vpx_codec_version_extra_str(
+  * configuration. This may be useful to vpx support.
+  *
+  */
++__attribute__ ((visibility ("default")))
+ const char *vpx_codec_build_config(void);
+ 
+ /*!\brief Return the name for a given interface
+@@ -294,6 +296,7 @@ const char *vpx_codec_build_config(void)
   * \param[in]    iface     Interface pointer
   *
   */
@@ -55,7 +63,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_codec.h libvpx-1.10.0/vpx/vpx_codec.h
  const char *vpx_codec_iface_name(vpx_codec_iface_t *iface);
  
  /*!\brief Convert error number to printable string
-@@ -306,6 +308,7 @@ const char *vpx_codec_iface_name(vpx_cod
+@@ -306,6 +309,7 @@ const char *vpx_codec_iface_name(vpx_cod
   * \param[in]    err     Error number.
   *
   */
@@ -63,7 +71,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_codec.h libvpx-1.10.0/vpx/vpx_codec.h
  const char *vpx_codec_err_to_string(vpx_codec_err_t err);
  
  /*!\brief Retrieve error synopsis for codec context
-@@ -318,6 +321,7 @@ const char *vpx_codec_err_to_string(vpx_
+@@ -318,6 +322,7 @@ const char *vpx_codec_err_to_string(vpx_
   * \param[in]    ctx     Pointer to this instance's context.
   *
   */
@@ -71,7 +79,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_codec.h libvpx-1.10.0/vpx/vpx_codec.h
  const char *vpx_codec_error(vpx_codec_ctx_t *ctx);
  
  /*!\brief Retrieve detailed error information for codec context
-@@ -330,6 +334,7 @@ const char *vpx_codec_error(vpx_codec_ct
+@@ -330,6 +335,7 @@ const char *vpx_codec_error(vpx_codec_ct
   * \retval NULL
   *     No detailed information is available.
   */
@@ -79,7 +87,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_codec.h libvpx-1.10.0/vpx/vpx_codec.h
  const char *vpx_codec_error_detail(vpx_codec_ctx_t *ctx);
  
  /* REQUIRED FUNCTIONS
-@@ -349,6 +354,7 @@ const char *vpx_codec_error_detail(vpx_c
+@@ -349,6 +355,7 @@ const char *vpx_codec_error_detail(vpx_c
   * \retval #VPX_CODEC_MEM_ERROR
   *     Memory allocation failed.
   */
@@ -87,7 +95,15 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_codec.h libvpx-1.10.0/vpx/vpx_codec.h
  vpx_codec_err_t vpx_codec_destroy(vpx_codec_ctx_t *ctx);
  
  /*!\brief Get the capabilities of an algorithm.
-@@ -384,6 +390,7 @@ vpx_codec_caps_t vpx_codec_get_caps(vpx_
+@@ -358,6 +365,7 @@ vpx_codec_err_t vpx_codec_destroy(vpx_co
+  * \param[in] iface   Pointer to the algorithm interface
+  *
+  */
++__attribute__ ((visibility ("default")))
+ vpx_codec_caps_t vpx_codec_get_caps(vpx_codec_iface_t *iface);
+ 
+ /*!\brief Control algorithm
+@@ -384,6 +392,7 @@ vpx_codec_caps_t vpx_codec_get_caps(vpx_
   * \retval #VPX_CODEC_INVALID_PARAM
   *     The data was not valid.
   */
@@ -97,7 +113,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_codec.h libvpx-1.10.0/vpx/vpx_codec.h
  #define vpx_codec_control(ctx, id, data) vpx_codec_control_(ctx, id, data)
 diff -urp libvpx-1.10.0.orig/vpx/vpx_decoder.h libvpx-1.10.0/vpx/vpx_decoder.h
 --- libvpx-1.10.0.orig/vpx/vpx_decoder.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vpx_decoder.h	2021-09-01 13:07:09.268926554 -0700
++++ libvpx-1.10.0/vpx/vpx_decoder.h	2021-09-01 23:06:16.803109746 -0700
 @@ -131,6 +131,7 @@ typedef struct vpx_codec_dec_cfg {
   * \retval #VPX_CODEC_MEM_ERROR
   *     Memory allocation failed.
@@ -140,7 +156,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_decoder.h libvpx-1.10.0/vpx/vpx_decoder.h
      vpx_release_frame_buffer_cb_fn_t cb_release, void *cb_priv);
 diff -urp libvpx-1.10.0.orig/vpx/vpx_encoder.h libvpx-1.10.0/vpx/vpx_encoder.h
 --- libvpx-1.10.0.orig/vpx/vpx_encoder.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vpx_encoder.h	2021-09-01 13:06:37.879719273 -0700
++++ libvpx-1.10.0/vpx/vpx_encoder.h	2021-09-01 23:06:16.803109746 -0700
 @@ -732,6 +732,7 @@ typedef struct vpx_svc_parameters {
   * \retval #VPX_CODEC_MEM_ERROR
   *     Memory allocation failed.
@@ -175,7 +191,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_encoder.h libvpx-1.10.0/vpx/vpx_encoder.h
  
 diff -urp libvpx-1.10.0.orig/vpx/vpx_image.h libvpx-1.10.0/vpx/vpx_image.h
 --- libvpx-1.10.0.orig/vpx/vpx_image.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vpx_image.h	2021-09-01 13:06:37.879719273 -0700
++++ libvpx-1.10.0/vpx/vpx_image.h	2021-09-01 23:10:16.408428271 -0700
 @@ -141,6 +141,7 @@ typedef struct vpx_image_rect {
   *         parameter is non-null, the value of the img parameter will be
   *         returned.
@@ -184,7 +200,15 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_image.h libvpx-1.10.0/vpx/vpx_image.h
  vpx_image_t *vpx_img_alloc(vpx_image_t *img, vpx_img_fmt_t fmt,
                             unsigned int d_w, unsigned int d_h,
                             unsigned int align);
-@@ -199,6 +200,7 @@ void vpx_img_flip(vpx_image_t *img);
+@@ -164,6 +165,7 @@ vpx_image_t *vpx_img_alloc(vpx_image_t *
+  *         parameter is non-null, the value of the img parameter will be
+  *         returned.
+  */
++__attribute__ ((visibility ("default")))
+ vpx_image_t *vpx_img_wrap(vpx_image_t *img, vpx_img_fmt_t fmt, unsigned int d_w,
+                           unsigned int d_h, unsigned int stride_align,
+                           unsigned char *img_data);
+@@ -199,6 +201,7 @@ void vpx_img_flip(vpx_image_t *img);
   *
   * \param[in]    img       Image descriptor
   */
