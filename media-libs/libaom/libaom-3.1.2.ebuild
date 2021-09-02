@@ -122,7 +122,7 @@ gen_libcxx_depend() {
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
 			libcxx? (
 				!cfi? ( >=sys-libs/libcxx-${v}[full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
-				cfi? ( >=sys-libs/libcxx-${v}[cfi-vcall,cfi-icall,cfi-full,full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
+				cfi? ( >=sys-libs/libcxx-${v}[cfi-icall,cfi-cast,cfi-vcall,full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
 			)
 		)
 		"
@@ -152,12 +152,16 @@ PDEPEND="
 		media-video/ffmpeg[encode,libaom,${MULTILIB_USEDEP}]
 	)
 "
-PATCHES=( "${FILESDIR}/libaom-2.0.0-visibility-default.patch" )
+PATCHES=( "${FILESDIR}/libaom-3.1.2-visibility-default.patch" )
 
 # the PATENTS file is required to be distributed with this package bug #682214
 DOCS=( PATENTS )
 
 pkg_setup() {
+	if use chromium ; then
+		einfo "The chromium USE flag is in testing."
+	fi
+
 	if use pgo ; then
 		if ! has_version "media-video/ffmpeg[libaom]" ; then
 			ewarn "You need to emerge ffmpeg with libaom for pgo training."
@@ -323,6 +327,10 @@ configure_pgx() {
 		unset LD
 	fi
 
+	if [[ "${IUSE}" =~ "cfi" ]] ; then
+		append-ldflags -Wl,--allow-shlib-undefined
+	fi
+
 	if tc-is-clang && use libcxx ; then
                 append-cxxflags -stdlib=libc++
                 append-ldflags -stdlib=libc++
@@ -334,7 +342,6 @@ configure_pgx() {
 		filter-flags -fprefetch-loop-arrays \
 			'-fopt-info*' \
 			-frename-registers
-		append-cppflags -DFLAC__USE_VISIBILITY_ATTR
 	fi
 
 	use chromium && append-cppflags -DCHROMIUM
@@ -825,8 +832,8 @@ elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
 	if use cfi ; then
 ewarn
 ewarn "The cfi USE flag is experimental.  If missing symbols encountered when"
-ewarn "building against this package, send the package names an issue request"
-ewarn "to oiledmachine-overlay."
+ewarn "building against this package or even running with the library, send"
+ewarn "the package names in an issue request to the oiledmachine-overlay."
 ewarn
 	fi
 }

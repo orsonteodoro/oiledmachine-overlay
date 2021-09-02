@@ -1,0 +1,197 @@
+diff -urp work.orig/aom/aom_codec.h work/aom/aom_codec.h
+--- work.orig/aom/aom_codec.h	2021-07-22 15:41:33.000000000 -0700
++++ work/aom/aom_codec.h	2021-09-01 23:22:45.326271204 -0700
+@@ -350,6 +350,7 @@ typedef enum aom_superblock_size {
+  * may change in the future.
+  *
+  */
++__attribute__ ((visibility ("default")))
+ int aom_codec_version(void);
+ 
+ /*!\brief Return the major version number */
+@@ -368,6 +369,7 @@ int aom_codec_version(void);
+  * indicate release candidates, prerelease versions, etc.
+  *
+  */
++__attribute__ ((visibility ("default")))
+ const char *aom_codec_version_str(void);
+ 
+ /*!\brief Return the version information (as a string)
+@@ -384,6 +386,7 @@ const char *aom_codec_version_extra_str(
+  * configuration. This may be useful to aom support.
+  *
+  */
++__attribute__ ((visibility ("default")))
+ const char *aom_codec_build_config(void);
+ 
+ /*!\brief Return the name for a given interface
+@@ -405,6 +408,7 @@ const char *aom_codec_iface_name(aom_cod
+  * \param[in]    err     Error number.
+  *
+  */
++__attribute__ ((visibility ("default")))
+ const char *aom_codec_err_to_string(aom_codec_err_t err);
+ 
+ /*!\brief Retrieve error synopsis for codec context
+@@ -417,6 +421,7 @@ const char *aom_codec_err_to_string(aom_
+  * \param[in]    ctx     Pointer to this instance's context.
+  *
+  */
++__attribute__ ((visibility ("default")))
+ const char *aom_codec_error(aom_codec_ctx_t *ctx);
+ 
+ /*!\brief Retrieve detailed error information for codec context
+@@ -429,6 +434,7 @@ const char *aom_codec_error(aom_codec_ct
+  * \retval NULL
+  *     No detailed information is available.
+  */
++__attribute__ ((visibility ("default")))
+ const char *aom_codec_error_detail(aom_codec_ctx_t *ctx);
+ 
+ /* REQUIRED FUNCTIONS
+@@ -448,6 +454,7 @@ const char *aom_codec_error_detail(aom_c
+  * \retval #AOM_CODEC_MEM_ERROR
+  *     Memory allocation failed.
+  */
++__attribute__ ((visibility ("default")))
+ aom_codec_err_t aom_codec_destroy(aom_codec_ctx_t *ctx);
+ 
+ /*!\brief Get the capabilities of an algorithm.
+@@ -457,6 +464,7 @@ aom_codec_err_t aom_codec_destroy(aom_co
+  * \param[in] iface   Pointer to the algorithm interface
+  *
+  */
++__attribute__ ((visibility ("default")))
+ aom_codec_caps_t aom_codec_get_caps(aom_codec_iface_t *iface);
+ 
+ /*!\name Codec Control
+@@ -488,6 +496,7 @@ aom_codec_caps_t aom_codec_get_caps(aom_
+  * \retval #AOM_CODEC_INVALID_PARAM
+  *     The data was not valid.
+  */
++__attribute__ ((visibility ("default")))
+ aom_codec_err_t aom_codec_control(aom_codec_ctx_t *ctx, int ctrl_id, ...);
+ 
+ /*!\brief Key & Value API
+@@ -563,6 +572,7 @@ typedef enum {
+  *
+  * \param[in]     type            The OBU_TYPE to convert to string.
+  */
++__attribute__ ((visibility ("default")))
+ const char *aom_obu_type_to_string(OBU_TYPE type);
+ 
+ /*!@} - end defgroup codec*/
+Only in work/aom: aom_codec.h.orig
+diff -urp work.orig/aom/aomcx.h work/aom/aomcx.h
+--- work.orig/aom/aomcx.h	2021-07-22 15:41:33.000000000 -0700
++++ work/aom/aomcx.h	2021-09-01 23:23:06.861091669 -0700
+@@ -54,6 +54,7 @@ extern aom_codec_iface_t aom_codec_av1_c
+ 
+ /*!\brief The interface to the AV1 encoder.
+  */
++__attribute__ ((visibility ("default")))
+ extern aom_codec_iface_t *aom_codec_av1_cx(void);
+ /*!@} - end algorithm interface member group */
+ 
+Only in work/aom: aomcx.h.orig
+Only in work/aom: aomcx.h.rej
+diff -urp work.orig/aom/aom_decoder.h work/aom/aom_decoder.h
+--- work.orig/aom/aom_decoder.h	2021-07-22 15:41:33.000000000 -0700
++++ work/aom/aom_decoder.h	2021-09-01 23:22:45.327271242 -0700
+@@ -117,6 +117,7 @@ typedef struct aom_codec_dec_cfg {
+  * \retval #AOM_CODEC_MEM_ERROR
+  *     Memory allocation failed.
+  */
++__attribute__ ((visibility ("default")))
+ aom_codec_err_t aom_codec_dec_init_ver(aom_codec_ctx_t *ctx,
+                                        aom_codec_iface_t *iface,
+                                        const aom_codec_dec_cfg_t *cfg,
+@@ -188,6 +189,7 @@ aom_codec_err_t aom_codec_get_stream_inf
+  *         see the descriptions of the other error codes in ::aom_codec_err_t
+  *         for recoverability capabilities.
+  */
++__attribute__ ((visibility ("default")))
+ aom_codec_err_t aom_codec_decode(aom_codec_ctx_t *ctx, const uint8_t *data,
+                                  size_t data_sz, void *user_priv);
+ 
+@@ -207,6 +209,7 @@ aom_codec_err_t aom_codec_decode(aom_cod
+  * \return Returns a pointer to an image, if one is ready for display. Frames
+  *         produced will always be in PTS (presentation time stamp) order.
+  */
++__attribute__ ((visibility ("default")))
+ aom_image_t *aom_codec_get_frame(aom_codec_ctx_t *ctx, aom_codec_iter_t *iter);
+ 
+ /*!\defgroup cap_external_frame_buffer External Frame Buffer Functions
+Only in work/aom: aomdx.h.orig
+Only in work/aom: aomdx.h.rej
+diff -urp work.orig/aom/aom_encoder.h work/aom/aom_encoder.h
+--- work.orig/aom/aom_encoder.h	2021-07-22 15:41:33.000000000 -0700
++++ work/aom/aom_encoder.h	2021-09-01 23:22:45.328271280 -0700
+@@ -919,6 +919,7 @@ typedef struct aom_codec_enc_cfg {
+  * \retval #AOM_CODEC_MEM_ERROR
+  *     Memory allocation failed.
+  */
++__attribute__ ((visibility ("default")))
+ aom_codec_err_t aom_codec_enc_init_ver(aom_codec_ctx_t *ctx,
+                                        aom_codec_iface_t *iface,
+                                        const aom_codec_enc_cfg_t *cfg,
+@@ -952,6 +953,7 @@ aom_codec_err_t aom_codec_enc_init_ver(a
+  * \retval #AOM_CODEC_INVALID_PARAM
+  *     A parameter was NULL, or the usage value was not recognized.
+  */
++__attribute__ ((visibility ("default")))
+ aom_codec_err_t aom_codec_enc_config_default(aom_codec_iface_t *iface,
+                                              aom_codec_enc_cfg_t *cfg,
+                                              unsigned int usage);
+@@ -1032,6 +1034,7 @@ aom_fixed_buf_t *aom_codec_get_global_he
+  * \retval #AOM_CODEC_INVALID_PARAM
+  *     A parameter was NULL, the image format is unsupported, etc.
+  */
++__attribute__ ((visibility ("default")))
+ aom_codec_err_t aom_codec_encode(aom_codec_ctx_t *ctx, const aom_image_t *img,
+                                  aom_codec_pts_t pts, unsigned long duration,
+                                  aom_enc_frame_flags_t flags);
+@@ -1107,6 +1110,7 @@ aom_codec_err_t aom_codec_set_cx_data_bu
+  *         two-pass statistics, etc.) or NULL to signal end-of-list.
+  *
+  */
++__attribute__ ((visibility ("default")))
+ const aom_codec_cx_pkt_t *aom_codec_get_cx_data(aom_codec_ctx_t *ctx,
+                                                 aom_codec_iter_t *iter);
+ 
+Only in work/aom: aom_encoder.h.orig
+diff -urp work.orig/aom/aom_image.h work/aom/aom_image.h
+--- work.orig/aom/aom_image.h	2021-07-22 15:41:33.000000000 -0700
++++ work/aom/aom_image.h	2021-09-01 23:22:45.328271280 -0700
+@@ -266,6 +266,7 @@ aom_image_t *aom_img_alloc(aom_image_t *
+  *         parameter is non-null, the value of the img parameter will be
+  *         returned.
+  */
++__attribute__ ((visibility ("default")))
+ aom_image_t *aom_img_wrap(aom_image_t *img, aom_img_fmt_t fmt, unsigned int d_w,
+                           unsigned int d_h, unsigned int align,
+                           unsigned char *img_data);
+diff -urp work.orig/aom/aom_integer.h work/aom/aom_integer.h
+--- work.orig/aom/aom_integer.h	2021-07-22 15:41:33.000000000 -0700
++++ work/aom/aom_integer.h	2021-09-01 23:22:45.328271280 -0700
+@@ -46,6 +46,7 @@ size_t aom_uleb_size_in_bytes(uint64_t v
+ // Returns 0 on success, -1 on decode failure.
+ // On success, 'value' stores the decoded LEB128 value and 'length' stores
+ // the number of bytes decoded.
++__attribute__ ((visibility ("default")))
+ int aom_uleb_decode(const uint8_t *buffer, size_t available, uint64_t *value,
+                     size_t *length);
+ 
+Only in work/aom: aom_integer.h.orig
+diff -urp work.orig/av1/common/obu_util.h work/av1/common/obu_util.h
+--- work.orig/av1/common/obu_util.h	2021-07-22 15:41:34.000000000 -0700
++++ work/av1/common/obu_util.h	2021-09-01 23:22:45.328271280 -0700
+@@ -29,6 +29,7 @@ typedef struct {
+   int spatial_layer_id;
+ } ObuHeader;
+ 
++__attribute__ ((visibility ("default")))
+ aom_codec_err_t aom_read_obu_header(uint8_t *buffer, size_t buffer_length,
+                                     size_t *consumed, ObuHeader *header,
+                                     int is_annexb);
+Only in work.orig: work

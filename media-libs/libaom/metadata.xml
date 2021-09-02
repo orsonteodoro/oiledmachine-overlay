@@ -73,6 +73,8 @@
   </longdescription>
   <use>
     <flag name="cfi">Build with full CFI with all schemes</flag>
+    <flag name="chromium">Prevent symbol conflicts in the browser
+      (testing)</name>
     <flag name="full-relro">Build with Full RELRO</flag>
     <flag name="libcxx">Link against the more secured libcxx package.</flag>
     <flag name="lto">Use link time optimization.</flag>
