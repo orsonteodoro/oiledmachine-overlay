@@ -1,6 +1,6 @@
 diff -urp work.orig/aom/aom_codec.h work/aom/aom_codec.h
 --- work.orig/aom/aom_codec.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aom_codec.h	2021-09-01 23:16:21.678634948 -0700
++++ work/aom/aom_codec.h	2021-09-02 00:40:36.838002184 -0700
 @@ -273,6 +273,7 @@ typedef enum aom_superblock_size {
   * in the future.
   *
@@ -83,10 +83,12 @@ diff -urp work.orig/aom/aom_codec.h work/aom/aom_codec.h
  /*!@} - end defgroup codec*/
 diff -urp work.orig/aom/aomcx.h work/aom/aomcx.h
 --- work.orig/aom/aomcx.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aomcx.h	2021-09-01 23:16:21.678634948 -0700
-@@ -34,6 +34,7 @@ extern "C" {
++++ work/aom/aomcx.h	2021-09-02 00:40:36.838002184 -0700
+@@ -33,7 +33,9 @@ extern "C" {
+  * This interface provides the capability to encode raw AV1 streams.
   * @{
   */
++__attribute__ ((visibility ("default")))
  extern aom_codec_iface_t aom_codec_av1_cx_algo;
 +__attribute__ ((visibility ("default")))
  extern aom_codec_iface_t *aom_codec_av1_cx(void);
@@ -94,7 +96,7 @@ diff -urp work.orig/aom/aomcx.h work/aom/aomcx.h
  
 diff -urp work.orig/aom/aom_decoder.h work/aom/aom_decoder.h
 --- work.orig/aom/aom_decoder.h	2021-01-19 02:33:33.000000000 -0800
-+++ work/aom/aom_decoder.h	2021-09-01 23:16:54.929927191 -0700
++++ work/aom/aom_decoder.h	2021-09-02 00:40:36.839002223 -0700
 @@ -117,6 +117,7 @@ typedef struct aom_codec_dec_cfg {
   * \retval #AOM_CODEC_MEM_ERROR
   *     Memory allocation failed.
@@ -121,10 +123,12 @@ diff -urp work.orig/aom/aom_decoder.h work/aom/aom_decoder.h
  /*!\defgroup cap_external_frame_buffer External Frame Buffer Functions
 diff -urp work.orig/aom/aomdx.h work/aom/aomdx.h
 --- work.orig/aom/aomdx.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aomdx.h	2021-09-01 23:16:21.679634986 -0700
-@@ -34,6 +34,7 @@ extern "C" {
++++ work/aom/aomdx.h	2021-09-02 00:41:07.092177532 -0700
+@@ -33,7 +33,9 @@ extern "C" {
+  * This interface provides the capability to decode AV1 streams.
   * @{
   */
++__attribute__ ((visibility ("default")))
  extern aom_codec_iface_t aom_codec_av1_dx_algo;
 +__attribute__ ((visibility ("default")))
  extern aom_codec_iface_t *aom_codec_av1_dx(void);
@@ -132,7 +136,7 @@ diff -urp work.orig/aom/aomdx.h work/aom/aomdx.h
  
 diff -urp work.orig/aom/aom_encoder.h work/aom/aom_encoder.h
 --- work.orig/aom/aom_encoder.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aom_encoder.h	2021-09-01 23:17:51.106070594 -0700
++++ work/aom/aom_encoder.h	2021-09-02 00:40:36.839002223 -0700
 @@ -929,6 +929,7 @@ typedef struct aom_codec_enc_cfg {
   * \retval #AOM_CODEC_MEM_ERROR
   *     Memory allocation failed.
@@ -167,7 +171,7 @@ diff -urp work.orig/aom/aom_encoder.h work/aom/aom_encoder.h
  
 diff -urp work.orig/aom/aom_image.h work/aom/aom_image.h
 --- work.orig/aom/aom_image.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aom_image.h	2021-09-01 23:16:21.679634986 -0700
++++ work/aom/aom_image.h	2021-09-02 00:40:36.839002223 -0700
 @@ -266,6 +266,7 @@ aom_image_t *aom_img_alloc(aom_image_t *
   *         parameter is non-null, the value of the img parameter will be
   *         returned.
@@ -178,7 +182,7 @@ diff -urp work.orig/aom/aom_image.h work/aom/aom_image.h
                            unsigned char *img_data);
 diff -urp work.orig/aom/aom_integer.h work/aom/aom_integer.h
 --- work.orig/aom/aom_integer.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aom_integer.h	2021-09-01 23:16:21.680635025 -0700
++++ work/aom/aom_integer.h	2021-09-02 00:40:36.839002223 -0700
 @@ -81,6 +81,7 @@ size_t aom_uleb_size_in_bytes(uint64_t v
  // Returns 0 on success, -1 on decode failure.
  // On success, 'value' stores the decoded LEB128 value and 'length' stores
@@ -189,7 +193,7 @@ diff -urp work.orig/aom/aom_integer.h work/aom/aom_integer.h
  
 diff -urp work.orig/av1/common/obu_util.h work/av1/common/obu_util.h
 --- work.orig/av1/common/obu_util.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/av1/common/obu_util.h	2021-09-01 23:16:21.680635025 -0700
++++ work/av1/common/obu_util.h	2021-09-02 00:40:36.840002262 -0700
 @@ -29,6 +29,7 @@ typedef struct {
    int spatial_layer_id;
  } ObuHeader;

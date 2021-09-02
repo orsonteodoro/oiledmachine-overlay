@@ -233,6 +233,8 @@ src_prepare() {
 	if use cfi ; then
 		sed -i -e "s|-fuse-ld=gold|-fuse-ld=lld|g" \
 			build/cmake/sanitizers.cmake || die
+		sed -i -e "s|-fno-sanitize-trap=cfi||g" \
+			build/cmake/sanitizers.cmake || die
 	fi
 	multilib_copy_sources
 }
