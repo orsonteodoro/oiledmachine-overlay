@@ -939,8 +939,8 @@ elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
 	if use cfi ; then
 ewarn
 ewarn "The cfi USE flag is experimental.  If missing symbols encountered when"
-ewarn "building against this package, send the package names an issue request"
-ewarn "to oiledmachine-overlay."
+ewarn "building against this package, send the package names in an issue"
+ewarn "request to the oiledmachine-overlay."
 ewarn
 	fi
 }
