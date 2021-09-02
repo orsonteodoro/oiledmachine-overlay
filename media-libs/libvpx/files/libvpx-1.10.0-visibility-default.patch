@@ -1,17 +1,21 @@
 diff -urp libvpx-1.10.0.orig/vpx/vp8cx.h libvpx-1.10.0/vpx/vp8cx.h
 --- libvpx-1.10.0.orig/vpx/vp8cx.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vp8cx.h	2021-09-01 23:06:16.801109668 -0700
-@@ -34,6 +34,7 @@ extern "C" {
++++ libvpx-1.10.0/vpx/vp8cx.h	2021-09-02 09:43:20.789959755 -0700
+@@ -33,7 +33,9 @@ extern "C" {
+  * This interface provides the capability to encode raw VP8 streams.
   * @{
   */
++__attribute__ ((visibility ("default")))
  extern vpx_codec_iface_t vpx_codec_vp8_cx_algo;
 +__attribute__ ((visibility ("default")))
  extern vpx_codec_iface_t *vpx_codec_vp8_cx(void);
  /*!@} - end algorithm interface member group*/
  
-@@ -43,6 +44,7 @@ extern vpx_codec_iface_t *vpx_codec_vp8_
+@@ -42,7 +44,9 @@ extern vpx_codec_iface_t *vpx_codec_vp8_
+  * This interface provides the capability to encode raw VP9 streams.
   * @{
   */
++__attribute__ ((visibility ("default")))
  extern vpx_codec_iface_t vpx_codec_vp9_cx_algo;
 +__attribute__ ((visibility ("default")))
  extern vpx_codec_iface_t *vpx_codec_vp9_cx(void);
@@ -19,18 +23,22 @@ diff -urp libvpx-1.10.0.orig/vpx/vp8cx.h libvpx-1.10.0/vpx/vp8cx.h
  
 diff -urp libvpx-1.10.0.orig/vpx/vp8dx.h libvpx-1.10.0/vpx/vp8dx.h
 --- libvpx-1.10.0.orig/vpx/vp8dx.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vp8dx.h	2021-09-01 23:06:16.802109708 -0700
-@@ -33,6 +33,7 @@ extern "C" {
++++ libvpx-1.10.0/vpx/vp8dx.h	2021-09-02 09:41:26.072443849 -0700
+@@ -32,7 +32,9 @@ extern "C" {
+  * This interface provides the capability to decode VP8 streams.
   * @{
   */
++__attribute__ ((visibility ("default")))
  extern vpx_codec_iface_t vpx_codec_vp8_dx_algo;
 +__attribute__ ((visibility ("default")))
  extern vpx_codec_iface_t *vpx_codec_vp8_dx(void);
  /*!@} - end algorithm interface member group*/
  
-@@ -42,6 +43,7 @@ extern vpx_codec_iface_t *vpx_codec_vp8_
+@@ -41,7 +43,9 @@ extern vpx_codec_iface_t *vpx_codec_vp8_
+  * This interface provides the capability to decode VP9 streams.
   * @{
   */
++__attribute__ ((visibility ("default")))
  extern vpx_codec_iface_t vpx_codec_vp9_dx_algo;
 +__attribute__ ((visibility ("default")))
  extern vpx_codec_iface_t *vpx_codec_vp9_dx(void);
@@ -38,7 +46,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vp8dx.h libvpx-1.10.0/vpx/vp8dx.h
  
 diff -urp libvpx-1.10.0.orig/vpx/vpx_codec.h libvpx-1.10.0/vpx/vpx_codec.h
 --- libvpx-1.10.0.orig/vpx/vpx_codec.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vpx_codec.h	2021-09-01 23:10:30.087960298 -0700
++++ libvpx-1.10.0/vpx/vpx_codec.h	2021-09-02 09:40:27.913153953 -0700
 @@ -268,6 +268,7 @@ int vpx_codec_version(void);
   * release candidates, prerelease versions, etc.
   *
@@ -113,7 +121,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_codec.h libvpx-1.10.0/vpx/vpx_codec.h
  #define vpx_codec_control(ctx, id, data) vpx_codec_control_(ctx, id, data)
 diff -urp libvpx-1.10.0.orig/vpx/vpx_decoder.h libvpx-1.10.0/vpx/vpx_decoder.h
 --- libvpx-1.10.0.orig/vpx/vpx_decoder.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vpx_decoder.h	2021-09-01 23:06:16.803109746 -0700
++++ libvpx-1.10.0/vpx/vpx_decoder.h	2021-09-02 09:40:27.913153953 -0700
 @@ -131,6 +131,7 @@ typedef struct vpx_codec_dec_cfg {
   * \retval #VPX_CODEC_MEM_ERROR
   *     Memory allocation failed.
@@ -156,7 +164,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_decoder.h libvpx-1.10.0/vpx/vpx_decoder.h
      vpx_release_frame_buffer_cb_fn_t cb_release, void *cb_priv);
 diff -urp libvpx-1.10.0.orig/vpx/vpx_encoder.h libvpx-1.10.0/vpx/vpx_encoder.h
 --- libvpx-1.10.0.orig/vpx/vpx_encoder.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vpx_encoder.h	2021-09-01 23:06:16.803109746 -0700
++++ libvpx-1.10.0/vpx/vpx_encoder.h	2021-09-02 09:40:27.914153992 -0700
 @@ -732,6 +732,7 @@ typedef struct vpx_svc_parameters {
   * \retval #VPX_CODEC_MEM_ERROR
   *     Memory allocation failed.
@@ -191,7 +199,7 @@ diff -urp libvpx-1.10.0.orig/vpx/vpx_encoder.h libvpx-1.10.0/vpx/vpx_encoder.h
  
 diff -urp libvpx-1.10.0.orig/vpx/vpx_image.h libvpx-1.10.0/vpx/vpx_image.h
 --- libvpx-1.10.0.orig/vpx/vpx_image.h	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/vpx/vpx_image.h	2021-09-01 23:10:16.408428271 -0700
++++ libvpx-1.10.0/vpx/vpx_image.h	2021-09-02 09:40:27.914153992 -0700
 @@ -141,6 +141,7 @@ typedef struct vpx_image_rect {
   *         parameter is non-null, the value of the img parameter will be
   *         returned.
