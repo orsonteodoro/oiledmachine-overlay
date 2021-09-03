@@ -1015,6 +1015,7 @@ DEPEND+="${COMMON_DEPEND}"
 # FFmpeg will autoselect the algorithm with an ambiguious codec ID
 # This means all relevant codecs for that codec ID should be scanned.
 #
+# [D]
 BZIP2_DEPENDS=" app-arch/bzip2[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]"
 OPENH264_DEPENDS=" media-libs/openh264[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}] "
 OPUS_DEPENDS=" media-libs/opus[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,${MULTILIB_USEDEP}] "
@@ -1674,6 +1675,7 @@ ewarn "    to CFI, forward and backward edge protected); Partial RELRO,"
 ewarn "    NO noexecstack, NO SSP, NO shadow-call-stack with ~18"
 ewarn "    unbundled third party ebuild-packages without CET, without SSP,"
 ewarn "    without Full RELRO by default on the desktop distro profile."
+# The 18 packages in question can be found in [D] of this ebuild.
 ewarn
 ewarn "  libstdc++ (hardened):  Partial RELRO, CET (if supported by hardware,"
 ewarn "    equivalent to some CFI, forward and backward edge protected),"
