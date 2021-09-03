@@ -2423,7 +2423,9 @@ eerror
 					-i "${S}/chrome/test/data/media/bigbuck.webm" \
 					${h264_encoding[@]} \
 					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+					-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
+						&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
+						&& echo " ${filter_hw[@]}") | tr " " ",") \
 					${aac_encoding[@]} \
 					"${S}/tools/perf/page_sets/trivial_sites/buck-480p.mp4" )
 				einfo "${cmd[@]}"
@@ -2615,7 +2617,9 @@ eerror
 						-i $(realpath "${CR_PGO_VIDEO0}") \
 						${h264_encoding[@]} \
 						$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+						-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
+							&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
+							&& echo " ${filter_hw[@]}") | tr " " ",") \
 						-maxrate 1485k -minrate 512k -b:v 1024k \
 						-r 30 \
 						${aac_encoding[@]} \
@@ -2718,7 +2722,9 @@ eerror
 						-i $(realpath "${CR_PGO_VIDEO0}") \
 						${vp9_encoding[@]} \
 						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+						-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
+							&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
+							&& echo " ${filter_hw[@]}") | tr " " ",") \
 						-maxrate 4350k -minrate 1500k -b:v 3000k \
 						-r 60 \
 						-t 120.0 \
@@ -2879,7 +2885,9 @@ eerror
 						-i "${S}/media/test/data/tulip2.webm" \
 						${h264_encoding[@]} \
 						$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+						-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
+							&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
+							&& echo " ${filter_hw[@]}") | tr " " ",") \
 						-maxrate 4350k -minrate 1500k -b:v 3000k \
 						${aac_encoding[@]} \
 						-r 50 \
@@ -2918,7 +2926,9 @@ eerror
 						-i $(realpath "${CR_PGO_VIDEO0}") \
 						${h264_encoding[@]} \
 						$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+						-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
+							&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
+							&& echo " ${filter_hw[@]}") | tr " " ",") \
 						${aac_encoding[@]} \
 						-t 10 \
 						"${S}/tools/perf/page_sets/media_cases/video0_10s.mp4" )
@@ -2958,7 +2968,9 @@ eerror
 					-i "${S}/media/test/data/tulip2.webm" \
 					${vp8_encoding[@]} \
 					$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+					-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
+						&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
+						&& echo " ${filter_hw[@]}") | tr " " ",") \
 					-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
 					${vorbis_encoding[@]} \
 					-r 50 \
@@ -2998,7 +3010,9 @@ eerror
 						-i "${S}/media/test/data/tulip2.webm" \
 						${vp9_encoding[@]} \
 						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+						-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
+							&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
+							&& echo " ${filter_hw[@]}") | tr " " ",") \
 						-maxrate 4350k -minrate 1500k -b:v 3000k \
 						-r 50 \
 						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
@@ -3050,7 +3064,9 @@ eerror
 					-i $(realpath "${CR_PGO_VIDEO0}") \
 					${vp8_encoding[@]} \
 					$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+					-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
+						&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
+						&& echo " ${filter_hw[@]}") | tr " " ",") \
 					${vorbis_encoding[@]} \
 					-t 10 \
 					"${S}/tools/perf/page_sets/media_cases/video0_10s.webm" )
@@ -3121,7 +3137,9 @@ eerror
 					-i "${S}/media/test/data/tulip2.webm" \
 					${av1_encoding[@]} \
 					$(_is_vaapi_allowed "AV1" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(echo $((( ${#filter_sw[@]} > 0 )) && echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) && echo " ${filter_hw[@]}") | tr " " ",") \
+					-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
+						&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
+						&& echo " ${filter_hw[@]}") | tr " " ",") \
 					-an \
 					"${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" )
 					einfo "${cmd[@]}"
