@@ -1685,11 +1685,13 @@ ewarn "    only; backward edge), either ~18 third party packages"
 ewarn "    with same protections on official build or unprotected on developer"
 ewarn "    build."
 ewarn
+# Currently system-libcxx is protected but can decide to switch to unprotected
+# if user wants to unbundle as shared libs.  See [C] in ebuild for reason.
 ewarn "  libc++ (vanilla external):  NO CFI, NO RELRO, NO noexecstack, NO SSP"
-ewarn "    NO shadow-call-stack, third party unprotected."
+ewarn "    NO shadow-call-stack, third party protected."
 ewarn
 ewarn "  libc++ (vanilla external hardened):  NO CFI, NO RELRO, NO noexecstack,"
-ewarn "    SSP, NO shadow-call-stack, third party unprotected."
+ewarn "    SSP, NO shadow-call-stack, third party protected."
 ewarn
 	fi
 
@@ -1970,19 +1972,19 @@ ewarn
 		"${FILESDIR}/chromium-shim_headers.patch"
 	)
 
-#	if ! use arm64 ; then
+	if ! use arm64 ; then
 		einfo "Removing aarch64 only patches"
 		rm "${WORKDIR}/patches/chromium-91-libyuv-aarch64.patch" || die
-#	fi
+	fi
 
 	if use clang ; then
 		ceapply "${FILESDIR}/${PN}-92-clang-toolchain-1.patch"
 		ceapply "${FILESDIR}/${PN}-92-clang-toolchain-2.patch"
 	fi
 
-#	if use arm64 && use shadowcallstack ; then
+	if use arm64 && use shadowcallstack ; then
 		ceapply "${FILESDIR}/chromium-93-arm64-shadow-call-stack.patch"
-#	fi
+	fi
 
 #	if use pgo-full ; then
 #		ceapply "${FILESDIR}/chromium-92-use-system-gsutil.patch"
@@ -3376,6 +3378,7 @@ ewarn
 			gn_system_libraries+=( openh264 )
 		fi
 	fi
+	# [C]
 	if ! use system-libstdcxx \
 		|| use cfi-cast \
 		|| use cfi-icall \
