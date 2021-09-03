@@ -1679,7 +1679,9 @@ ewarn "    without Full RELRO by default on the desktop distro profile."
 ewarn
 ewarn "  libstdc++ (hardened):  Partial RELRO, CET (if supported by hardware,"
 ewarn "    equivalent to some CFI, forward and backward edge protected),"
-ewarn "    NO noexecstack, SSP, ~18 unprotected third party packages."
+ewarn "    NO noexecstack, SSP, ~18 CFI/CET unprotected third party packages,"
+ewarn "    ~18 protected SSP, ~18 unprotected Full RELRO and unprotected"
+ewarn "    noexecstack."
 ewarn
 ewarn "  libc++ (bundled internal):  CFI (vcall, icall; forward edge"
 ewarn "    protected), Full RELRO, noexecstack, SSP, shadow-call-stack (arm64"
@@ -3456,7 +3458,7 @@ einfo
 	else
 		if ! is_generating_credits ; then
 ewarn
-ewarn "Unbundling libs and droping CFI, SSP, noexecstack, Full RELRO."
+ewarn "Unbundling libs and dropping CFI, SSP, noexecstack, Full RELRO."
 ewarn
 			build/linux/unbundle/replace_gn_files.py --system-libraries "${gn_system_libraries[@]}" || die
 		fi
