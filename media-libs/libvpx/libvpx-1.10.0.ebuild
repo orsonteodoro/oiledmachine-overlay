@@ -38,9 +38,10 @@ REQUIRED_USE="
 		!cfi-icall
 		!cfi-vcall
 		lto
+		static-libs
 	)
-	cfi-cast? ( !cfi lto )
-	cfi-icall? ( !cfi lto )
+	cfi-cast? ( !cfi lto static-libs )
+	cfi-icall? ( !cfi lto static-libs )
 	cfi-vcall? ( !cfi lto )
 	pgo? (
 		|| (
@@ -936,7 +937,14 @@ elog "The following package must be installed before PGOing this package:"
 elog "  media-video/mpv[cli]"
 elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
 	fi
-	if use cfi ; then
+	if [[ "${USE}" =~ "cfi" ]] ; then
+ewarn
+ewarn "cfi, cfi-icall, cfi-cast require static linking of this library."
+ewarn
+ewarn "If you do ldd and you still see libvpx.so, then it breaks the CFI"
+ewarn "runtime protection spec as if that scheme of CFI was never used."
+ewarn "For details, see https://clang.llvm.org/docs/ControlFlowIntegrity.html"
+ewarn "with \"statically linked\" keyword search."
 ewarn
 ewarn "The cfi USE flag is experimental.  If missing symbols encountered when"
 ewarn "building against this package, send the package names in an issue"
