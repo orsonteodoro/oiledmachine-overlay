@@ -1687,8 +1687,12 @@ ewarn "    only; backward edge), either ~18 third party packages"
 ewarn "    with same protections on official build or unprotected on developer"
 ewarn "    build."
 ewarn
-# Currently system-libcxx is protected but can decide to switch to unprotected
-# if user wants to unbundle as shared libs.  See [C] in ebuild for reason.
+# Currently the dependencies related to system-libcxx is protected but a ebuild
+# maintainer can decide to switch to unprotected if user wants to unbundle as
+# shared libs.  See [C] in ebuild for the reason.  Some packages have too
+# much control over flags that they ignore the per-package c{,xx}flags.  Keeping
+# them internal/bundled ensures that the 5-6 security protections are present
+# almost all the time.
 ewarn "  libc++ (vanilla external):  NO CFI, NO RELRO, NO noexecstack, NO SSP"
 ewarn "    NO shadow-call-stack, third party protected."
 ewarn
