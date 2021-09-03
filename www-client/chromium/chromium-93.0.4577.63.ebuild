@@ -1583,7 +1583,7 @@ pkg_setup() {
 		ewarn "Wayland by setting DISABLE_OZONE_PLATFORM=true in /etc/chromium/default."
 	fi
 
-	if ! use amd64 && [[ "${IUSE}" =~ cfi ]] ; then
+	if ! use amd64 && [[ "${USE}" =~ cfi ]] ; then
 ewarn
 ewarn "All variations of the cfi USE flags are not defaults for this platform."
 ewarn "Disable them if problematic."
