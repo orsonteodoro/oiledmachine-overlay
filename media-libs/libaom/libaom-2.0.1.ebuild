@@ -861,7 +861,7 @@ elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
 ewarn
 ewarn "cfi, cfi-icall, cfi-cast require static linking of this library."
 ewarn
-ewarn "If you do ldd and you still see libvpx.so, then it breaks the CFI"
+ewarn "If you do ldd and you still see libaom.so, then it breaks the CFI"
 ewarn "runtime protection spec as if that scheme of CFI was never used."
 ewarn "For details, see https://clang.llvm.org/docs/ControlFlowIntegrity.html"
 ewarn "with \"statically linked\" keyword search."
