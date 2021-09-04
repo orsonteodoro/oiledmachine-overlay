@@ -73,21 +73,23 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       USE flags.  Turning on clang implies ThinLTO on.  (See the lto-opt
       USE flag description for memory requirements if out-of-memory (OOM)
       problems.)</flag>
-    <flag name="cfi">Compile the build with Control Flow Integrity (CFI)
-      security protections to mitigate against arbitrary code execution caused
-      by from memory corruption attempts from forward edge attacks from virtual
-      functions.  The estimated impact is around 1% CPU overhead, around 15% or
-      less code size increase.  When a violation is encountered, the program
-      aborts.</flag>
-    <flag name="cfi-full">
+    <flag name="cfi-cast">
       Compile the build with mitigation against possible bad casting
       vulnerabilities in addition to forward edge attack mitigation.
-      When a violation is encountered, the program aborts.
+      When a violation is encountered, the program aborts.  Static linkage
+      required for cfi third party packages.
       </flag>
     <flag name="cfi-icall">
       Compile the build with bad function cast checks and non static function
       pointers checks.  When a violation is encountered, the program aborts.
+      Static linkage required for cfi third party packages.
       </flag>
+    <flag name="cfi-vcall">Compile the build with Control Flow Integrity (CFI)
+      security protections to mitigate against arbitrary code execution caused
+      by from memory corruption attempts from forward edge attacks from virtual
+      functions.  The estimated impact is around 1% CPU overhead, around 15% or
+      less code size increase.  When a violation is encountered, the program
+      aborts.  Static linkage required for cfi third party packages.</flag>
     <flag name="component-build">Split build into more shared libraries to speed
       up linking. Mostly intended for debugging and development, NOT RECOMMENDED
       for general use.</flag>

@@ -666,9 +666,9 @@ REQUIRED_USE+="
 	!proprietary-codecs? ( !system-ffmpeg !vaapi )
 	amd64? ( !shadowcallstack )
 	bundled-libcxx? ( clang )
-	cfi-vcall? ( clang )
-	cfi-cast? ( cfi-vcall !system-icu !system-ffmpeg )
-	cfi-icall? ( cfi-vcall !system-icu !system-ffmpeg )
+	cfi-vcall? ( clang !system-ffmpeg !system-icu )
+	cfi-cast? ( cfi-vcall !system-ffmpeg !system-icu )
+	cfi-icall? ( cfi-vcall !system-ffmpeg !system-icu )
 	component-build? ( !suid )
 	lto-opt? ( clang )
 	official? (
@@ -2264,7 +2264,7 @@ eerror
 		third_party/usb_ids
 		third_party/xdg-utils
 	)
-	if use official || use cfi-icall || use cfi-cast ; then
+	if use cfi-cast || use cfi-icall || use cfi-vcall || use official ; then
 		keeplibs+=(
 			third_party/zlib
 		)
@@ -2288,6 +2288,7 @@ eerror
 	if ! use system-libstdcxx \
 		|| use cfi-cast \
 		|| use cfi-icall \
+		|| use cfi-vcall \
 		|| use official ; then
 		keeplibs+=( third_party/libxml )
 		keeplibs+=( third_party/libxslt )
@@ -3445,6 +3446,7 @@ ewarn
 	if ! use system-libstdcxx \
 		|| use cfi-cast \
 		|| use cfi-icall \
+		|| use cfi-vcall \
 		|| use official ; then
 		# Unbundling breaks cfi-icall and cfi-cast.
 		# Unbundling weakens the security because it removes
@@ -3486,8 +3488,8 @@ ewarn
 	myconf_gn+=" use_gold=false use_sysroot=false"
 	# Do not use bundled clang.
 	# Trying to use gold results in linker crash.
-	if use official && ( use cfi-cast || use cfi-icall ) || use bundled-libcxx ; then
-		# Must be built as static for cfi-icall, cfi-cast to work properly.
+	if use official && ( use cfi-cast || use cfi-icall || use cfi-vcall ) || use bundled-libcxx ; then
+		# Must be built as static for cfi* to work properly.
 		myconf_gn+=" use_custom_libcxx=true"
 	else
 		myconf_gn+=" use_custom_libcxx=false"
