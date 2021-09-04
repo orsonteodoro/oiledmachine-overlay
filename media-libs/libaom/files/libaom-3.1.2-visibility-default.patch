@@ -1,6 +1,6 @@
 diff -urp work.orig/aom/aom_codec.h work/aom/aom_codec.h
 --- work.orig/aom/aom_codec.h	2021-07-22 15:41:33.000000000 -0700
-+++ work/aom/aom_codec.h	2021-09-02 00:17:57.971221674 -0700
++++ work/aom/aom_codec.h	2021-09-03 10:39:54.124231923 -0700
 @@ -350,6 +350,7 @@ typedef enum aom_superblock_size {
   * may change in the future.
   *
@@ -81,9 +81,10 @@ diff -urp work.orig/aom/aom_codec.h work/aom/aom_codec.h
  const char *aom_obu_type_to_string(OBU_TYPE type);
  
  /*!@} - end defgroup codec*/
+Only in work/aom: aom_codec.h.orig
 diff -urp work.orig/aom/aomcx.h work/aom/aomcx.h
 --- work.orig/aom/aomcx.h	2021-07-22 15:41:33.000000000 -0700
-+++ work/aom/aomcx.h	2021-09-02 00:18:11.402745921 -0700
++++ work/aom/aomcx.h	2021-09-03 10:40:21.002310809 -0700
 @@ -50,10 +50,12 @@ extern "C" {
   *\deprecated This access mechanism is provided for backwards compatibility;
   * prefer aom_codec_av1_cx().
@@ -97,9 +98,11 @@ diff -urp work.orig/aom/aomcx.h work/aom/aomcx.h
  extern aom_codec_iface_t *aom_codec_av1_cx(void);
  /*!@} - end algorithm interface member group */
  
+Only in work/aom: aomcx.h.orig
+Only in work/aom: aomcx.h.rej
 diff -urp work.orig/aom/aom_decoder.h work/aom/aom_decoder.h
 --- work.orig/aom/aom_decoder.h	2021-07-22 15:41:33.000000000 -0700
-+++ work/aom/aom_decoder.h	2021-09-02 00:17:57.972221713 -0700
++++ work/aom/aom_decoder.h	2021-09-03 10:39:54.125231963 -0700
 @@ -117,6 +117,7 @@ typedef struct aom_codec_dec_cfg {
   * \retval #AOM_CODEC_MEM_ERROR
   *     Memory allocation failed.
@@ -124,9 +127,11 @@ diff -urp work.orig/aom/aom_decoder.h work/aom/aom_decoder.h
  aom_image_t *aom_codec_get_frame(aom_codec_ctx_t *ctx, aom_codec_iter_t *iter);
  
  /*!\defgroup cap_external_frame_buffer External Frame Buffer Functions
+Only in work/aom: aomdx.h.orig
+Only in work/aom: aomdx.h.rej
 diff -urp work.orig/aom/aom_encoder.h work/aom/aom_encoder.h
 --- work.orig/aom/aom_encoder.h	2021-07-22 15:41:33.000000000 -0700
-+++ work/aom/aom_encoder.h	2021-09-02 00:17:57.972221713 -0700
++++ work/aom/aom_encoder.h	2021-09-03 10:39:54.126232004 -0700
 @@ -919,6 +919,7 @@ typedef struct aom_codec_enc_cfg {
   * \retval #AOM_CODEC_MEM_ERROR
   *     Memory allocation failed.
@@ -159,10 +164,19 @@ diff -urp work.orig/aom/aom_encoder.h work/aom/aom_encoder.h
  const aom_codec_cx_pkt_t *aom_codec_get_cx_data(aom_codec_ctx_t *ctx,
                                                  aom_codec_iter_t *iter);
  
+Only in work/aom: aom_encoder.h.orig
 diff -urp work.orig/aom/aom_image.h work/aom/aom_image.h
 --- work.orig/aom/aom_image.h	2021-07-22 15:41:33.000000000 -0700
-+++ work/aom/aom_image.h	2021-09-02 00:17:57.973221752 -0700
-@@ -266,6 +266,7 @@ aom_image_t *aom_img_alloc(aom_image_t *
++++ work/aom/aom_image.h	2021-09-03 10:39:54.126232004 -0700
+@@ -242,6 +242,7 @@ typedef struct aom_image {
+  *         parameter is non-null, the value of the img parameter will be
+  *         returned.
+  */
++__attribute__ ((visibility ("default")))
+ aom_image_t *aom_img_alloc(aom_image_t *img, aom_img_fmt_t fmt,
+                            unsigned int d_w, unsigned int d_h,
+                            unsigned int align);
+@@ -266,6 +267,7 @@ aom_image_t *aom_img_alloc(aom_image_t *
   *         parameter is non-null, the value of the img parameter will be
   *         returned.
   */
@@ -170,9 +184,33 @@ diff -urp work.orig/aom/aom_image.h work/aom/aom_image.h
  aom_image_t *aom_img_wrap(aom_image_t *img, aom_img_fmt_t fmt, unsigned int d_w,
                            unsigned int d_h, unsigned int align,
                            unsigned char *img_data);
+@@ -329,6 +331,7 @@ void aom_img_flip(aom_image_t *img);
+  *
+  * \param[in]    img       Image descriptor
+  */
++__attribute__ ((visibility ("default")))
+ void aom_img_free(aom_image_t *img);
+ 
+ /*!\brief Get the width of a plane
+@@ -338,6 +341,7 @@ void aom_img_free(aom_image_t *img);
+  * \param[in]    img       Image descriptor
+  * \param[in]    plane     Plane index
+  */
++__attribute__ ((visibility ("default")))
+ int aom_img_plane_width(const aom_image_t *img, int plane);
+ 
+ /*!\brief Get the height of a plane
+@@ -347,6 +351,7 @@ int aom_img_plane_width(const aom_image_
+  * \param[in]    img       Image descriptor
+  * \param[in]    plane     Plane index
+  */
++__attribute__ ((visibility ("default")))
+ int aom_img_plane_height(const aom_image_t *img, int plane);
+ 
+ /*!\brief Add metadata to image.
 diff -urp work.orig/aom/aom_integer.h work/aom/aom_integer.h
 --- work.orig/aom/aom_integer.h	2021-07-22 15:41:33.000000000 -0700
-+++ work/aom/aom_integer.h	2021-09-02 00:17:57.973221752 -0700
++++ work/aom/aom_integer.h	2021-09-03 10:39:54.126232004 -0700
 @@ -46,6 +46,7 @@ size_t aom_uleb_size_in_bytes(uint64_t v
  // Returns 0 on success, -1 on decode failure.
  // On success, 'value' stores the decoded LEB128 value and 'length' stores
@@ -181,9 +219,10 @@ diff -urp work.orig/aom/aom_integer.h work/aom/aom_integer.h
  int aom_uleb_decode(const uint8_t *buffer, size_t available, uint64_t *value,
                      size_t *length);
  
+Only in work/aom: aom_integer.h.orig
 diff -urp work.orig/av1/common/obu_util.h work/av1/common/obu_util.h
 --- work.orig/av1/common/obu_util.h	2021-07-22 15:41:34.000000000 -0700
-+++ work/av1/common/obu_util.h	2021-09-02 00:17:57.973221752 -0700
++++ work/av1/common/obu_util.h	2021-09-03 10:39:54.126232004 -0700
 @@ -29,6 +29,7 @@ typedef struct {
    int spatial_layer_id;
  } ObuHeader;
@@ -192,4 +231,3 @@ diff -urp work.orig/av1/common/obu_util.h work/av1/common/obu_util.h
  aom_codec_err_t aom_read_obu_header(uint8_t *buffer, size_t buffer_length,
                                      size_t *consumed, ObuHeader *header,
                                      int is_annexb);
-Only in work.orig: work

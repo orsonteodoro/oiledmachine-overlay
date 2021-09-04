@@ -1,0 +1,36 @@
+Subject:  aom_sadXXXxh family of functions should be allowed only by HAS_SSSE3 not HAS_SSE2 in config/aom_dsp_rtcd.h
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Fri Sep  3 05:53:54 PM PDT 2021:  (Unix time: 1630716834)
+
+# Fixes:
+ld.lld: error: libaom.so.2.0.0: undefined reference to aom_sad128xh_sse2 [--no-allow-shlib-undefined]
+ld.lld: error: libaom.so.2.0.0: undefined reference to aom_sad16xh_sse2 [--no-allow-shlib-undefined]
+ld.lld: error: libaom.so.2.0.0: undefined reference to aom_sad32xh_sse2 [--no-allow-shlib-undefined]
+ld.lld: error: libaom.so.2.0.0: undefined reference to aom_sad4xh_sse2 [--no-allow-shlib-undefined]
+ld.lld: error: libaom.so.2.0.0: undefined reference to aom_sad64xh_sse2 [--no-allow-shlib-undefined]
+ld.lld: error: libaom.so.2.0.0: undefined reference to aom_sad8xh_sse2 [--no-allow-shlib-undefined]
+
+Triggered when SANITIZERS=cfi.  Without it, no problems.
+
+diff -urp work.orig/aom_dsp/aom_dsp_rtcd_defs.pl work/aom_dsp/aom_dsp_rtcd_defs.pl
+--- work.orig/aom_dsp/aom_dsp_rtcd_defs.pl	2021-01-19 02:51:27.000000000 -0800
++++ work/aom_dsp/aom_dsp_rtcd_defs.pl	2021-09-03 17:51:36.059848558 -0700
+@@ -717,12 +717,12 @@ if (aom_config("CONFIG_AV1_ENCODER") eq
+   add_proto qw/unsigned int/, "aom_sad64xh", "const uint8_t *a, int a_stride, const uint8_t *b, int b_stride, int width, int height";
+   add_proto qw/unsigned int/, "aom_sad128xh", "const uint8_t *a, int a_stride, const uint8_t *b, int b_stride, int width, int height";
+ 
+-  specialize qw/aom_sad4xh   sse2/;
+-  specialize qw/aom_sad8xh   sse2/;
+-  specialize qw/aom_sad16xh  sse2/;
+-  specialize qw/aom_sad32xh  sse2/;
+-  specialize qw/aom_sad64xh  sse2/;
+-  specialize qw/aom_sad128xh sse2/;
++  specialize qw/aom_sad4xh   ssse3/;
++  specialize qw/aom_sad8xh   ssse3/;
++  specialize qw/aom_sad16xh  ssse3/;
++  specialize qw/aom_sad32xh  ssse3/;
++  specialize qw/aom_sad64xh  ssse3/;
++  specialize qw/aom_sad128xh ssse3/;
+ 
+   if (aom_config("CONFIG_AV1_HIGHBITDEPTH") eq "yes") {
+     foreach (@block_sizes) {

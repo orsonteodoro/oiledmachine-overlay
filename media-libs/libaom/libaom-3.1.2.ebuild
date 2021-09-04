@@ -24,7 +24,8 @@ IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
-IUSE+=" cfi full-relro libcxx lto noexecstack shadowcallstack ssp"
+IUSE+=" cfi full-relro libcxx lto noexecstack shadowcallstack ssp static-libs"
+IUSE+=" +asm"
 IUSE+=" pgo pgo-custom
 	pgo-trainer-2-pass-constrained-quality
 	pgo-trainer-constrained-quality
@@ -35,7 +36,7 @@ IUSE+=" pgo pgo-custom
 REQUIRED_USE="
 	cpu_flags_x86_sse2? ( cpu_flags_x86_mmx )
 	cpu_flags_x86_ssse3? ( cpu_flags_x86_sse2 )
-	cfi? ( lto )
+	cfi? ( lto static-libs )
 	pgo? (
 		|| (
 			pgo-custom
@@ -152,7 +153,8 @@ PDEPEND="
 		media-video/ffmpeg[encode,libaom,${MULTILIB_USEDEP}]
 	)
 "
-PATCHES=( "${FILESDIR}/libaom-3.1.2-visibility-default.patch" )
+PATCHES=( "${FILESDIR}/libaom-3.1.2-visibility-default.patch"
+	"${FILESDIR}/libaom-2.0.1-aom_sadXXXxh-are-ssse3.patch" )
 
 # the PATENTS file is required to be distributed with this package bug #682214
 DOCS=( PATENTS )
@@ -329,10 +331,6 @@ configure_pgx() {
 		unset LD
 	fi
 
-	if [[ "${IUSE}" =~ "cfi" ]] ; then
-		append-ldflags -Wl,--allow-shlib-undefined
-	fi
-
 	if tc-is-clang && use libcxx ; then
                 append-cxxflags -stdlib=libc++
                 append-ldflags -stdlib=libc++
@@ -403,6 +401,33 @@ configure_pgx() {
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
 	)
 	use cfi && mycmakeargs+=( -DSANITIZE=cfi )
+	# Bug when building for various ABIs.
+	if ! use asm ; then
+		mycmakeargs+=( -DAOM_TARGET_CPU=generic )
+	elif [[ "${ABI}" == "x86" ]] ; then
+		mycmakeargs+=( -DAOM_TARGET_CPU=x86 )
+	elif [[ "${ABI}" == "amd64" ]] ; then
+		mycmakeargs+=( -DAOM_TARGET_CPU=x86_64 )
+	elif [[ "${ABI}" == "mips" && $(get_libdir) == "lib" ]] ; then
+		# o32
+		mycmakeargs+=( -DAOM_TARGET_CPU=mips32 )
+	elif [[ "${ABI}" == "mips" && $(get_libdir) == "lib32" ]] ; then
+		# n32
+		mycmakeargs+=( -DAOM_TARGET_CPU=mips32 )
+	elif [[ "${ABI}" == "mips" && $(get_libdir) == "lib64" ]] ; then
+		mycmakeargs+=( -DAOM_TARGET_CPU=mips64 )
+	elif [[ "${ABI}" == "arm" ]] ; then
+		mycmakeargs+=( -DAOM_TARGET_CPU=arm )
+	elif [[ "${ABI}" == "arm64" ]] ; then
+		mycmakeargs+=( -DAOM_TARGET_CPU=arm64 )
+	elif [[ "${ABI}" == "ppc" ]] ; then
+		mycmakeargs+=( -DAOM_TARGET_CPU=ppc )
+	elif [[ "${ABI}" == "ppc64" ]] ; then
+		ewarn "No reference to ppc64 in source"
+		mycmakeargs+=( -DAOM_TARGET_CPU=ppc )
+	else
+		mycmakeargs+=( -DAOM_TARGET_CPU=generic )
+	fi
 	cmake_src_configure
 }
 
@@ -809,6 +834,7 @@ multilib_src_install() {
 		local HTML_DOCS=( "${BUILD_DIR}"/docs/html/. )
 	fi
 	cmake_src_install
+	use static-libs && doins ${PN}.a
 }
 
 multilib_src_install_all() {
@@ -831,7 +857,14 @@ elog "The following package must be installed before PGOing this package:"
 elog "  media-video/mpv[cli]"
 elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
 	fi
-	if use cfi ; then
+	if [[ "${USE}" =~ "cfi" ]] ; then
+ewarn
+ewarn "cfi, cfi-icall, cfi-cast require static linking of this library."
+ewarn
+ewarn "If you do ldd and you still see libvpx.so, then it breaks the CFI"
+ewarn "runtime protection spec as if that scheme of CFI was never used."
+ewarn "For details, see https://clang.llvm.org/docs/ControlFlowIntegrity.html"
+ewarn "with \"statically linked\" keyword search."
 ewarn
 ewarn "The cfi USE flag is experimental.  If missing symbols encountered when"
 ewarn "building against this package or even running with the library, send"
