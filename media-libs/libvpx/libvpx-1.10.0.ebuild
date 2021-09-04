@@ -42,7 +42,7 @@ REQUIRED_USE="
 	)
 	cfi-cast? ( !cfi lto static-libs )
 	cfi-icall? ( !cfi lto static-libs )
-	cfi-vcall? ( !cfi lto )
+	cfi-vcall? ( !cfi lto static-libs )
 	pgo? (
 		|| (
 			pgo-custom
@@ -939,7 +939,8 @@ elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
 	fi
 	if [[ "${USE}" =~ "cfi" ]] ; then
 ewarn
-ewarn "cfi, cfi-icall, cfi-cast require static linking of this library."
+ewarn "cfi, cfi-cast, cfi-icall, cfi-vcall require static linking of this"
+ewarn "library."
 ewarn
 ewarn "If you do ldd and you still see libvpx.so, then it breaks the CFI"
 ewarn "runtime protection spec as if that scheme of CFI was never used."
