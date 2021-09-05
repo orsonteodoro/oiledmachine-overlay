@@ -1,5 +1,5 @@
---- cmake/cef_variables.cmake.orig	2021-09-01 21:55:56.000000000 -0700
-+++ cmake/cef_variables.cmake	2021-09-04 23:39:22.309532284 -0700
+--- a/cmake/cef_variables.cmake.orig	2021-09-01 21:55:56.000000000 -0700
++++ b/cmake/cef_variables.cmake	2021-09-04 23:39:22.309532284 -0700
 @@ -85,7 +85,6 @@ if(OS_LINUX)
      -fPIC                           # Generate position-independent code for shared libraries
      -fstack-protector               # Protect some vulnerable functions from stack-smashing (security feature)
