@@ -1,6 +1,6 @@
 diff -urp work.orig/aom/aom_codec.h work/aom/aom_codec.h
 --- work.orig/aom/aom_codec.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aom_codec.h	2021-09-03 10:36:00.863862834 -0700
++++ work/aom/aom_codec.h	2021-09-04 19:15:42.824881309 -0700
 @@ -273,6 +273,7 @@ typedef enum aom_superblock_size {
   * in the future.
   *
@@ -83,7 +83,7 @@ diff -urp work.orig/aom/aom_codec.h work/aom/aom_codec.h
  /*!@} - end defgroup codec*/
 diff -urp work.orig/aom/aomcx.h work/aom/aomcx.h
 --- work.orig/aom/aomcx.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aomcx.h	2021-09-03 10:36:00.863862834 -0700
++++ work/aom/aomcx.h	2021-09-04 19:15:42.837881802 -0700
 @@ -33,7 +33,9 @@ extern "C" {
   * This interface provides the capability to encode raw AV1 streams.
   * @{
@@ -96,7 +96,7 @@ diff -urp work.orig/aom/aomcx.h work/aom/aomcx.h
  
 diff -urp work.orig/aom/aom_decoder.h work/aom/aom_decoder.h
 --- work.orig/aom/aom_decoder.h	2021-01-19 02:33:33.000000000 -0800
-+++ work/aom/aom_decoder.h	2021-09-03 10:36:00.863862834 -0700
++++ work/aom/aom_decoder.h	2021-09-04 19:19:22.380209404 -0700
 @@ -117,6 +117,7 @@ typedef struct aom_codec_dec_cfg {
   * \retval #AOM_CODEC_MEM_ERROR
   *     Memory allocation failed.
@@ -105,7 +105,15 @@ diff -urp work.orig/aom/aom_decoder.h work/aom/aom_decoder.h
  aom_codec_err_t aom_codec_dec_init_ver(aom_codec_ctx_t *ctx,
                                         aom_codec_iface_t *iface,
                                         const aom_codec_dec_cfg_t *cfg,
-@@ -188,6 +189,7 @@ aom_codec_err_t aom_codec_get_stream_inf
+@@ -150,6 +151,7 @@ aom_codec_err_t aom_codec_dec_init_ver(a
+  *     The decoder didn't recognize the coded data, or the
+  *     buffer was too short.
+  */
++__attribute__ ((visibility ("default")))
+ aom_codec_err_t aom_codec_peek_stream_info(aom_codec_iface_t *iface,
+                                            const uint8_t *data, size_t data_sz,
+                                            aom_codec_stream_info_t *si);
+@@ -188,6 +190,7 @@ aom_codec_err_t aom_codec_get_stream_inf
   *         see the descriptions of the other error codes in ::aom_codec_err_t
   *         for recoverability capabilities.
   */
@@ -113,7 +121,7 @@ diff -urp work.orig/aom/aom_decoder.h work/aom/aom_decoder.h
  aom_codec_err_t aom_codec_decode(aom_codec_ctx_t *ctx, const uint8_t *data,
                                   size_t data_sz, void *user_priv);
  
-@@ -207,6 +209,7 @@ aom_codec_err_t aom_codec_decode(aom_cod
+@@ -207,6 +210,7 @@ aom_codec_err_t aom_codec_decode(aom_cod
   * \return Returns a pointer to an image, if one is ready for display. Frames
   *         produced will always be in PTS (presentation time stamp) order.
   */
@@ -123,7 +131,7 @@ diff -urp work.orig/aom/aom_decoder.h work/aom/aom_decoder.h
  /*!\defgroup cap_external_frame_buffer External Frame Buffer Functions
 diff -urp work.orig/aom/aomdx.h work/aom/aomdx.h
 --- work.orig/aom/aomdx.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aomdx.h	2021-09-03 10:36:00.864862874 -0700
++++ work/aom/aomdx.h	2021-09-04 19:15:42.838881840 -0700
 @@ -33,7 +33,9 @@ extern "C" {
   * This interface provides the capability to decode AV1 streams.
   * @{
@@ -136,7 +144,7 @@ diff -urp work.orig/aom/aomdx.h work/aom/aomdx.h
  
 diff -urp work.orig/aom/aom_encoder.h work/aom/aom_encoder.h
 --- work.orig/aom/aom_encoder.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aom_encoder.h	2021-09-03 10:36:00.864862874 -0700
++++ work/aom/aom_encoder.h	2021-09-04 19:18:01.725150030 -0700
 @@ -929,6 +929,7 @@ typedef struct aom_codec_enc_cfg {
   * \retval #AOM_CODEC_MEM_ERROR
   *     Memory allocation failed.
@@ -153,7 +161,15 @@ diff -urp work.orig/aom/aom_encoder.h work/aom/aom_encoder.h
  aom_codec_err_t aom_codec_enc_config_default(aom_codec_iface_t *iface,
                                               aom_codec_enc_cfg_t *cfg,
                                               unsigned int usage);
-@@ -1037,6 +1039,7 @@ aom_fixed_buf_t *aom_codec_get_global_he
+@@ -980,6 +982,7 @@ aom_codec_err_t aom_codec_enc_config_def
+  * \retval #AOM_CODEC_INVALID_PARAM
+  *     A parameter was NULL, or the usage value was not recognized.
+  */
++__attribute__ ((visibility ("default")))
+ aom_codec_err_t aom_codec_enc_config_set(aom_codec_ctx_t *ctx,
+                                          const aom_codec_enc_cfg_t *cfg);
+ 
+@@ -1037,6 +1040,7 @@ aom_fixed_buf_t *aom_codec_get_global_he
   * \retval #AOM_CODEC_INVALID_PARAM
   *     A parameter was NULL, the image format is unsupported, etc.
   */
@@ -161,7 +177,7 @@ diff -urp work.orig/aom/aom_encoder.h work/aom/aom_encoder.h
  aom_codec_err_t aom_codec_encode(aom_codec_ctx_t *ctx, const aom_image_t *img,
                                   aom_codec_pts_t pts, unsigned long duration,
                                   aom_enc_frame_flags_t flags);
-@@ -1112,6 +1115,7 @@ aom_codec_err_t aom_codec_set_cx_data_bu
+@@ -1112,6 +1116,7 @@ aom_codec_err_t aom_codec_set_cx_data_bu
   *         two-pass statistics, etc.) or NULL to signal end-of-list.
   *
   */
@@ -171,7 +187,7 @@ diff -urp work.orig/aom/aom_encoder.h work/aom/aom_encoder.h
  
 diff -urp work.orig/aom/aom_image.h work/aom/aom_image.h
 --- work.orig/aom/aom_image.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aom_image.h	2021-09-03 10:37:24.476222451 -0700
++++ work/aom/aom_image.h	2021-09-04 19:15:42.838881840 -0700
 @@ -242,6 +242,7 @@ typedef struct aom_image {
   *         parameter is non-null, the value of the img parameter will be
   *         returned.
@@ -214,7 +230,7 @@ diff -urp work.orig/aom/aom_image.h work/aom/aom_image.h
  /*!\brief Add metadata to image.
 diff -urp work.orig/aom/aom_integer.h work/aom/aom_integer.h
 --- work.orig/aom/aom_integer.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/aom/aom_integer.h	2021-09-03 10:36:00.865862914 -0700
++++ work/aom/aom_integer.h	2021-09-04 19:15:42.838881840 -0700
 @@ -81,6 +81,7 @@ size_t aom_uleb_size_in_bytes(uint64_t v
  // Returns 0 on success, -1 on decode failure.
  // On success, 'value' stores the decoded LEB128 value and 'length' stores
@@ -225,7 +241,7 @@ diff -urp work.orig/aom/aom_integer.h work/aom/aom_integer.h
  
 diff -urp work.orig/av1/common/obu_util.h work/av1/common/obu_util.h
 --- work.orig/av1/common/obu_util.h	2021-01-19 02:51:27.000000000 -0800
-+++ work/av1/common/obu_util.h	2021-09-03 10:36:00.865862914 -0700
++++ work/av1/common/obu_util.h	2021-09-04 19:15:42.839881878 -0700
 @@ -29,6 +29,7 @@ typedef struct {
    int spatial_layer_id;
  } ObuHeader;
