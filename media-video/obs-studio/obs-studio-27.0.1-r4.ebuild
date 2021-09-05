@@ -53,6 +53,7 @@ REQUIRED_USE+="
 		!video_cards_r600
 	)
 "
+
 # Based on 18.04 See
 # azure-pipelines.yml
 # .github/workflows/main.yml
@@ -381,6 +382,7 @@ DEPEND+="
 	>=dev-qt/qtwidgets-${QT_V}:5=
 	test? ( ${DEPEND_LIBOBS} )
 "
+
 RDEPEND+=" ${DEPEND}"
 
 # The obs-amd-encoder submodule currently doesn't support Linux
@@ -505,6 +507,7 @@ src_prepare() {
 		eapply -p1 "${FILESDIR}/obs-studio-25.0.8-install-libcef_dll_wrapper.patch"
 		eapply -p1 "${FILESDIR}/obs-studio-27.0.0-obs-browser-web-security-limit-to-le-4389.patch"
 		eapply -p1 "${FILESDIR}/obs-studio-27.0.0-product_version-ge-4430.patch"
+		eapply -p1 "${FILESDIR}/obs-studio-27.0.1-obs-browser-4577-null-to-nullptr.patch"
 	popd
 	if use ftl ; then
 	pushd "${WORKDIR}/ftl-sdk-${OBS_FTL_SDK_COMMIT}" || die
@@ -519,10 +522,10 @@ src_prepare() {
 }
 
 src_configure() {
-	if use browser ; then
-		strip-flags
-		filter-flags -march=* -O*
-	fi
+#	if use browser ; then
+#		strip-flags
+#		filter-flags -march=* -O*
+#	fi
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
@@ -625,6 +628,10 @@ pkg_postinst() {
 		ewarn "Since the browser feature uses the Chromium source code as a base,"
 		ewarn "you need to update obs-studio the same time Chromium updates"
 		ewarn "to avoid critical vulerabilities."
+		ewarn
+		ewarn "Currently the net-libs/cef-bin is not CFI protected."
+		ewarn "Consider using a CFI protected bin browser package instead for full"
+		ewarn "protection using Window Capture as a source."
 		ewarn
 	fi
 
