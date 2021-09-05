@@ -17,9 +17,9 @@ KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 
 # In Aug 7, we switching back to stable which is sufficient for security standards
 
-# 08/18/2021 - 92.0.27+g274abcf+chromium-92.0.4515.159 / Chromium 92.0.4515.159
-CHROMIUM_V="92.0.4515.159" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
-CEF_COMMIT="g274abcf" # same as https://bitbucket.org/chromiumembedded/cef/commits/
+# 09/01/2021 - 93.1.11+g9e254fa+chromium-93.0.4577.63 / Chromium 93.0.4577.63
+CHROMIUM_V="93.0.4577.63" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
+CEF_COMMIT="g9e254fa" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 TARBALL_SUFFIX="" # can be _beta or "" (stable)
 SRC_URI="
 	x86? (
@@ -48,11 +48,13 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/92.0.4515.159/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/92.0.4515.159/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/93.0.4577.63/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/93.0.4577.63/build/install-build-deps.sh#L151
 # TODO: app-accessibility/speech-dispatcher needs multilib
 GLIB_V="2.48"
 XI_V="1.7.6"
+# TODO: certain static-lib dependencies are require static-libs USE flags for CFI
+# These static dependencies should also be CFI built.
 CHROMIUM_CDEPEND="
 	>=app-accessibility/at-spi2-atk-2.18.3[${MULTILIB_USEDEP}]
 	>=app-accessibility/speech-dispatcher-0.8.3
@@ -164,7 +166,8 @@ src_prepare() {
 	prepare_abi() {
 		S=$(S_abi)
 		cd "${S}" || die
-		eapply "${FILESDIR}/cef-bin-87.1.11-disable-visibility-hidden.patch"
+		# Remove the disable visibility hidden patch if using CFI
+		eapply "${FILESDIR}/cef-bin-93.1.11-disable-visibility-hidden.patch"
 		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
 		cmake-utils_src_prepare
 	}
@@ -179,6 +182,13 @@ src_configure() {
 	configure_abi() {
 		S=$(S_abi)
 		cd "${S}" || die
+		# TODO static build for CFI
+		# It should have been build entirely as static from the beginning
+#		local mycmakeargs=(
+#			-DBUILD_SHARED_LIBS=OFF
+#			-DCMAKE_EXE_LINKER_FLAGS="-static"
+#			-DCMAKE_FIND_LIBRARY_SUFFIXES=".a"
+#		)
 		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
 		cmake-utils_src_configure
 	}
@@ -244,5 +254,14 @@ pkg_postinst() {
 	ewarn "Security notice:"
 	ewarn "This package needs to be updated at the same time as your Chromium web browser"
 	ewarn "to avoid the same critical vulnerabilities."
+	ewarn
+	ewarn "The cefclient, cefsimple, and programs linked to it are not CFI protected."
+	ewarn "This issue will be looked into at later may be resolved."
+	ewarn
+	ewarn "Even though it may be resolved it will still not get full protection."
+	ewarn "cfi-icall would be disabled for some parts.  shadow-call-stack"
+	ewarn "(backward edge protection) is unknown."
+	ewarn
+	ewarn "For full protection, use the regular browser bin package instead."
 	ewarn
 }
