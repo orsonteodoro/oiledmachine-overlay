@@ -149,7 +149,6 @@ BDEPEND+=" abi_x86_32? ( dev-lang/yasm )
 
 PDEPEND="
 	pgo? (
-		media-video/mpv[cli]
 		media-video/ffmpeg[encode,libaom,${MULTILIB_USEDEP}]
 	)
 "
@@ -169,10 +168,6 @@ pkg_setup() {
 			ewarn "You need to emerge ffmpeg with libaom for pgo training."
 			ewarn "The regular emerge path with be taken instead."
 			ewarn "After you install ffmpeg, re-emerge this package again."
-		fi
-		if ! has_version "media-video/mpv" ; then
-			ewarn "You need mpv to perform PGO decode training."
-			ewarn "After you install mpv, re-emerge this package again."
 		fi
 		if ! ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
 			die "Missing WebM support from ffmpeg"
@@ -263,16 +258,6 @@ get_multiabi_ffmpeg() {
 	fi
 }
 
-get_multiabi_mpv() {
-	if multilib_is_native_abi && has_version "media-video/mpv" ; then
-		echo "/usr/bin/mpv"
-	elif ! multilib_is_native_abi && has_version "media-video/mpv" ; then
-		echo "/usr/bin/mpv-${ABI}"
-	else
-		echo ""
-	fi
-}
-
 has_ffmpeg() {
 	local x=$(get_multiabi_ffmpeg)
 	if [[ -n "${x}" && -e "${x}" ]] ; then
@@ -282,17 +267,8 @@ has_ffmpeg() {
 	fi
 }
 
-has_mpv() {
-	local x=$(get_multiabi_mpv)
-	if [[ -n "${x}" && -e "${x}" ]] ; then
-		return 0
-	else
-		return 1
-	fi
-}
-
 has_pgo_requirement() {
-	if has_ffmpeg && has_mpv ; then
+	if has_ffmpeg ; then
 		return 0
 	else
 		return 1
@@ -355,7 +331,6 @@ configure_pgx() {
 
 	tc-export CC CXX
 	export FFMPEG=$(get_multiabi_ffmpeg)
-	export MPV=$(get_multiabi_mpv)
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGI"
@@ -433,12 +408,7 @@ configure_pgx() {
 
 _vdecode() {
 	einfo "Decoding ${1}"
-	cmd=( "${MPV}" \
-		--msg-level=all=debug \
-		--hwdec=no \
-		--vd=libaom-av1 \
-		--vo=null \
-		"${T}/test.webm" )
+	cmd=( "${FFMPEG}" -i "${T}/test.webm" -f null - )
 	LD_LIBRARY_PATH="${BUILD_DIR}" \
 	"${cmd[@]}" || die
 }
@@ -854,7 +824,6 @@ pkg_postinst() {
 	if use pgo && [[ -z "${PGO_RAN}" ]] ; then
 elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
-elog "  media-video/mpv[cli]"
 elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
 	fi
 	if [[ "${USE}" =~ "cfi" ]] ; then

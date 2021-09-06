@@ -15,15 +15,17 @@
     Currently it only optimizes the default settings, but may be PGO
     optimized for multithreaded through pgo-custom USE flag or changing
     the LIBAOM_PGO_TRAINING_ARGS explained at the end of this description.
-    Currently only native ABI is supported due to lack of 32 bit encoder
-    frontend package.  The trainer will generate PGO data for both
+    For 32-bit PGO training, you may install the ffmpeg fork from the
+    oiledmachine-overlay or fork your own ffmpeg ebuild with modifications
+    to installation so that the 32-bit binary does not get clobbered
+    by the native install.  The expected paths are ffmpeg-x86 or in
+    general ffmpeg-${ABI}.  The trainer will generate PGO data for both
     encoding and decoding that will be fed back into the optimized
     version.
 
     PGOing this package requires the following packages before running
     the trainer:
 
-      media-video/mpv[cli]
       media-video/ffmpeg[encode,libaom]
 
     So the following steps must be taken.
@@ -37,9 +39,6 @@
     (4b) Set LIBAOM_PGO_TRAINING_ARGS and/or
 	LIBAOM_PGO_TRAINING_ARGS_LOSSLESS, see below for details.
     (5) Re-emerge this package with the pgo USE flag enabled.
-
-    For 32-bit PGO, both mpv and ffmpeg should have 32-bit binaries.  The
-    paths to those binaries are described in the ebuild.
 
     A user may supply a custom.sh via a per-package patch to set up multiple
     encoding settings which may include threading or tiling configurations
