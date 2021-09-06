@@ -20,15 +20,17 @@
     Currently it only optimizes the default settings, but may be PGO
     optimized for multithreaded through pgo-custom USE flag or changing
     the LIBVPX_VP8_PGO_TRAINING_ARGS or LIBVPX_VP9_PGO_TRAINING_ARGS
-    explained at the end of this description.  Currently only native ABI
-    is supported due to lack of 32 bit encoder frontend package.  The
-    trainer will generate PGO data for both encoding and decoding that
-    will be fed back into the optimized version.
+    explained at the end of this description.  To do 32-bit PGO training,
+    you need the modified FFmpeg ebuild from the oiledmachine overlay or
+    your own forked ebuild that will not clobber the 32-bit installation
+    with just the native.  The expected names of the binary should be
+    ffmpeg-x86 or ffmpeg-${ABI}.  The trainer will generate PGO data for
+    both encoding and decoding that will be fed back into the optimized
+    version.
 
     PGOing this package requires the following packages before running
     the trainer:
 
-      media-video/mpv[cli]
       media-video/ffmpeg[encode,vpx]
 
     So the following steps must be taken.
@@ -45,9 +47,6 @@
 	LIBVPX_VP9_PGO_TRAINING_ARGS_LOSSLESS,
          see below for details.
     (5) Re-emerge this package with the pgo USE flag enabled.
-
-    For 32-bit PGO, both mpv and ffmpeg should have 32-bit binaries.  The
-    paths to those binaries are described in the ebuild.
 
     A user may supply a custom.sh via a per-package patch to set up multiple
     encoding settings which may include threading or tiling configurations
