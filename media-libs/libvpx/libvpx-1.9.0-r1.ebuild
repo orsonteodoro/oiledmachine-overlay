@@ -935,7 +935,7 @@ pkg_postinst() {
 elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  media-video/mpv[cli]"
-elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
+elog "  media-video/ffmpeg[encode,vpx,$(get_arch_enabled_use_flags)]"
 	fi
 	if [[ "${USE}" =~ "cfi" ]] ; then
 ewarn
