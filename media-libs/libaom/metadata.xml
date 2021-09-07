@@ -69,6 +69,9 @@
 
     You should only pick PGO trainers that reflect typical use or it may
     result in performance degration.
+
+    The CFI USE flag only does forward edge.  For backward edge protection
+    use the shadowcallstack USE flag (only available for arm64).
   </longdescription>
   <use>
     <flag name="asm">Use the optimized assembly based code paths</flag>
@@ -88,6 +91,8 @@
     <flag name="pgo-trainer-constrained-quality">Use the 1 pass constrained
       quality PGO trainer.  (ebuild maintainer recommended)</flag>
     <flag name="pgo-trainer-lossless">Use the lossless PGO trainer.</flag>
+    <flag name="shadowcallstack">Enable backward edge protection (arm64
+      only)</flag>
     <flag name="ssp">Build with stack smashing protection</flag>
   </use>
 </pkgmetadata>
