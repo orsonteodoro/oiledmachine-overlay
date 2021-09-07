@@ -10,17 +10,17 @@ if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 else
-	SRC_URI="https://storage.googleapis.com/aom-releases/${P}.tar.gz"
+	SRC_URI="https://dev.gentoo.org/~polynomial-c/dist/${P}.tar.xz"
 	S="${WORKDIR}/${P}"
 	S_orig="${WORKDIR}/${P}"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~riscv ~sparc ~x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 fi
 
 DESCRIPTION="Alliance for Open Media AV1 Codec SDK"
 HOMEPAGE="https://aomedia.org"
 
 LICENSE="BSD-2"
-SLOT="0/3"
+SLOT="0/2"
 IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
@@ -241,12 +241,11 @@ src_prepare() {
 	fi
 	prepare_abi() {
 		for build_type in shared-libs static-libs ; do
-			einfo "Build type is ${build_type}"
-			if [[ "${build_type}" == "static-libs" ]] && ! use static-libs ; then
+			if [[ "${build_type}" == "static-libs" ]] \
+				&& ! use static-libs ; then
 				continue
-			else
-				:;
 			fi
+			einfo "Build type is ${build_type}"
 			export S="${S_orig}.${ABI}_${build_type/-*}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
@@ -826,12 +825,11 @@ compile_pgx() {
 src_compile() {
 	compile_abi() {
 		for build_type in shared-libs static-libs ; do
-			einfo "Build type is ${build_type}"
-			if [[ "${build_type}" == "static-libs" ]] && ! use static-libs ; then
+			if [[ "${build_type}" == "static-libs" ]] \
+				&& ! use static-libs ; then
 				continue
-			else
-				:;
 			fi
+			einfo "Build type is ${build_type}"
 			export S="${S_orig}.${ABI}_${build_type/-*}"
 			export BUILD_DIR="${S}_build"
 			if use pgo \
@@ -857,6 +855,10 @@ src_compile() {
 src_install() {
 	install_abi() {
 		for build_type in shared-libs static-libs ; do
+			if [[ "${build_type}" == "static-libs" ]] \
+				&& ! use static-libs ; then
+				continue
+			fi
 			export S="${S_orig}.${ABI}_${build_type/-*}"
 			export BUILD_DIR="${S}_build"
 			cd "${BUILD_DIR}" || die
