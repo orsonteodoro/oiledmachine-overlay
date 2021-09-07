@@ -123,8 +123,7 @@ gen_libcxx_depend() {
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
 			libcxx? (
-				!cfi? ( >=sys-libs/libcxx-${v}[full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
-				cfi? ( >=sys-libs/libcxx-${v}[cfi-icall,cfi-cast,cfi-vcall,full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
+				>=sys-libs/libcxx-${v}[cfi?,full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}]
 			)
 		)
 		"
@@ -134,10 +133,10 @@ gen_libcxx_depend() {
 RDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
 DEPEND+=" ${RDEPEND}"
 
-BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
-BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
 BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
+BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
+BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND+=" abi_x86_32? ( dev-lang/yasm )
 	abi_x86_64? ( dev-lang/yasm )
