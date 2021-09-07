@@ -231,6 +231,11 @@ src_unpack() {
 	unpack "${A}"
 }
 
+get_build_types() {
+	echo "shared-libs"
+	use static-libs && echo "static-libs"
+}
+
 src_prepare() {
 	cmake_src_prepare
 	if use cfi ; then
@@ -240,11 +245,7 @@ src_prepare() {
 			build/cmake/sanitizers.cmake || die
 	fi
 	prepare_abi() {
-		for build_type in shared-libs static-libs ; do
-			if [[ "${build_type}" == "static-libs" ]] \
-				&& ! use static-libs ; then
-				continue
-			fi
+		for build_type in $(get_build_types) ; do
 			einfo "Build type is ${build_type}"
 			export S="${S_orig}.${ABI}_${build_type/-*}"
 			einfo "Copying to ${S}"
@@ -824,11 +825,7 @@ compile_pgx() {
 
 src_compile() {
 	compile_abi() {
-		for build_type in shared-libs static-libs ; do
-			if [[ "${build_type}" == "static-libs" ]] \
-				&& ! use static-libs ; then
-				continue
-			fi
+		for build_type in $(get_build_types) ; do
 			einfo "Build type is ${build_type}"
 			export S="${S_orig}.${ABI}_${build_type/-*}"
 			export BUILD_DIR="${S}_build"
@@ -854,11 +851,7 @@ src_compile() {
 
 src_install() {
 	install_abi() {
-		for build_type in shared-libs static-libs ; do
-			if [[ "${build_type}" == "static-libs" ]] \
-				&& ! use static-libs ; then
-				continue
-			fi
+		for build_type in $(get_build_types) ; do
 			export S="${S_orig}.${ABI}_${build_type/-*}"
 			export BUILD_DIR="${S}_build"
 			cd "${BUILD_DIR}" || die
