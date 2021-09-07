@@ -123,7 +123,7 @@ gen_libcxx_depend() {
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
 			libcxx? (
-				>=sys-libs/libcxx-${v}[cfi?,full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}]
+				>=sys-libs/libcxx-${v}[cfi?,full-relro?,noexecstack?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}]
 			)
 		)
 		"
