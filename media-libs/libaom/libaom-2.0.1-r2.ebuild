@@ -11,7 +11,8 @@ if [[ ${PV} == *9999* ]]; then
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 else
 	SRC_URI="https://dev.gentoo.org/~polynomial-c/dist/${P}.tar.xz"
-	S="${WORKDIR}"
+	S="${WORKDIR}/${P}"
+	S_orig="${WORKDIR}/${P}"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 fi
 
@@ -152,8 +153,7 @@ PDEPEND="
 		media-video/ffmpeg[encode,libaom,${MULTILIB_USEDEP}]
 	)
 "
-PATCHES=( "${FILESDIR}/libaom-2.0.1-visibility-default.patch"
-	"${FILESDIR}/libaom-2.0.1-aom_sadXXXxh-are-ssse3.patch" )
+PATCHES=( "${FILESDIR}/libaom-2.0.1-aom_sadXXXxh-are-ssse3.patch" )
 
 # the PATENTS file is required to be distributed with this package bug #682214
 DOCS=( PATENTS )
@@ -225,6 +225,12 @@ eerror
 	fi
 }
 
+src_unpack() {
+	mkdir -p "${WORKDIR}/${P}" || die
+	cd "${WORKDIR}/${P}" || die
+	unpack "${A}"
+}
+
 src_prepare() {
 	cmake_src_prepare
 	if use cfi ; then
@@ -233,7 +239,20 @@ src_prepare() {
 		sed -i -e "s|-fno-sanitize-trap=cfi||g" \
 			build/cmake/sanitizers.cmake || die
 	fi
-	multilib_copy_sources
+	prepare_abi() {
+		for build_type in shared-libs static-libs ; do
+			einfo "Build type is ${build_type}"
+			if [[ "${build_type}" == "static-libs" ]] && ! use static-libs ; then
+				continue
+			else
+				:;
+			fi
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			einfo "Copying to ${S}"
+			cp -a "${S_orig}" "${S}" || die
+		done
+	}
+	multilib_foreach_abi prepare_abi
 }
 
 get_abi_use() {
@@ -283,14 +302,14 @@ append_all() {
 }
 
 append_lto() {
-	filter-flags '-flto*'
+	filter-flags '-flto*' '-fuse-ld=*'
 	append-flags -flto=thin
 	append-ldflags -fuse-ld=lld -flto=thin
 }
 
 configure_pgx() {
 	[[ -f build.ninja ]] && eninja clean
-	find "${BUILD_DIR}" -name "CMakeCache.txt" -delete
+	find "${BUILD_DIR}" -name "CMakeCache.txt" -delete 2>/dev/null
 	filter-flags \
 		'-fprofile-correction' \
 		'-fprofile-dir*' \
@@ -300,12 +319,24 @@ configure_pgx() {
 	if use lto || use shadowcallstack ; then
 		export CC="clang $(get_abi_CFLAGS ${ABI})"
 		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		export NM=llvm-nm
 		export AR=llvm-ar
-		export READELF=llvm-readelf
 		export AS=llvm-as
+		export NM=llvm-nm
+		export RANLIB=llvm-ranlib
+		export READELF=llvm-readelf
 		unset LD
 	fi
+
+	filter-flags \
+		--param=ssp-buffer-size=4 \
+		-DCHROMIUM \
+		-fno-sanitize=safe-stack \
+		-fsanitize=shadow-call-stack \
+		-fstack-protector \
+		-Wl,-z,noexecstack \
+		-Wl,-z,now \
+		-Wl,-z,relro \
+		-stdlib=libc++
 
 	if tc-is-clang && use libcxx ; then
                 append-cxxflags -stdlib=libc++
@@ -375,7 +406,18 @@ configure_pgx() {
 		-DENABLE_AVX=$(usex cpu_flags_x86_avx ON OFF)
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
 	)
-	use cfi && mycmakeargs+=( -DSANITIZE=cfi )
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		mycmakeargs+=(
+			-DBUILD_SHARED_LIBS=ON
+		)
+	fi
+
+	if use cfi && [[ "${build_type}" == "static-libs" ]] ; then
+		mycmakeargs+=(
+			-DSANITIZE=cfi
+			-DBUILD_SHARED_LIBS=OFF
+		)
+	fi
 	# Bug when building for various ABIs.
 	if ! use asm ; then
 		mycmakeargs+=( -DAOM_TARGET_CPU=generic )
@@ -781,34 +823,56 @@ compile_pgx() {
 	cmake_src_compile
 }
 
-multilib_src_compile() {
-	if use pgo \
-		&& has_pgo_requirement ; then
-		PGO_PHASE="pgi"
-		configure_pgx
-		compile_pgx
-		run_trainer
-		PGO_PHASE="pgo"
-		configure_pgx
-		compile_pgx
-		export PGO_RAN=1
-	else
-		ewarn "Not using PGO for ${ABI}"
-		configure_pgx
-		compile_pgx
-	fi
+src_compile() {
+	compile_abi() {
+		for build_type in shared-libs static-libs ; do
+			einfo "Build type is ${build_type}"
+			if [[ "${build_type}" == "static-libs" ]] && ! use static-libs ; then
+				continue
+			else
+				:;
+			fi
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			export BUILD_DIR="${S}_build"
+			if use pgo \
+				&& has_pgo_requirement ; then
+				PGO_PHASE="pgi"
+				configure_pgx
+				compile_pgx
+				run_trainer
+				PGO_PHASE="pgo"
+				configure_pgx
+				compile_pgx
+				export PGO_RAN=1
+			else
+				ewarn "Not using PGO for ${ABI}"
+				configure_pgx
+				compile_pgx
+			fi
+		done
+	}
+	multilib_foreach_abi compile_abi
 }
 
-multilib_src_install() {
-	if multilib_is_native_abi && use doc ; then
-		local HTML_DOCS=( "${BUILD_DIR}"/docs/html/. )
-	fi
-	cmake_src_install
-	use static-libs && doins ${PN}.a
-}
+src_install() {
+	install_abi() {
+		for build_type in shared-libs static-libs ; do
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			export BUILD_DIR="${S}_build"
+			cd "${BUILD_DIR}" || die
+			if multilib_is_native_abi && use doc ; then
+				local HTML_DOCS=( "${BUILD_DIR}"/docs/html/. )
+			fi
+			if [[ "${build_type}" == "shared-libs" ]] ; then
+				cmake_src_install
+			else
+				use static-libs && doins ${PN}.a
+			fi
+		done
+	}
+	multilib_foreach_abi install_abi
 
-multilib_src_install_all() {
-	find "${ED}" -type f \( -name "*.a" -o -name "*.la" \) -delete || die
+	find "${ED}" -type f \( -name "*.la" \) -delete || die
 }
 
 get_arch_enabled_use_flags() {
