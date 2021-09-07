@@ -33,16 +33,10 @@ IUSE+=" pgo
 "
 
 REQUIRED_USE="
-	cfi? (
-		!cfi-cast
-		!cfi-icall
-		!cfi-vcall
-		lto
-		static-libs
-	)
-	cfi-cast? ( !cfi lto static-libs )
-	cfi-icall? ( !cfi lto static-libs )
-	cfi-vcall? ( !cfi lto static-libs )
+	cfi? ( lto static-libs )
+	cfi-cast? ( lto cfi-vcall static-libs )
+	cfi-icall? ( lto cfi-vcall static-libs )
+	cfi-vcall? ( lto static-libs )
 	pgo? (
 		|| (
 			pgo-custom
@@ -370,14 +364,17 @@ configure_pgx() {
 	# The cfi enables all cfi schemes, but the selective tries to balance
 	# performance and security while maintaining a performance limit.
 	if [[ "${build_type}" == "static-libs" ]] ;then
-		use cfi && append_all -fvisibility=hidden -fsanitize=cfi
-		use cfi-vcall && append_all -fvisibility=hidden \
-					-fsanitize=cfi-vcall
-		use cfi-cast && append_all -fvisibility=hidden \
-					-fsanitize=cfi-derived-cast \
-					-fsanitize=cfi-derived-cast
-		use cfi-icall && append_all -fvisibility=hidden \
-					-fsanitize=cfi-icall
+		if use cfi ; then
+			append_all -fvisibility=hidden -fsanitize=cfi
+		else
+			use cfi-cast && append_all -fvisibility=hidden \
+						-fsanitize=cfi-derived-cast \
+						-fsanitize=cfi-unrelated-cast
+			use cfi-icall && append_all -fvisibility=hidden \
+						-fsanitize=cfi-icall
+			use cfi-vcall && append_all -fvisibility=hidden \
+						-fsanitize=cfi-vcall
+		fi
 	fi
 	use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
 	use lto && append_lto
