@@ -84,8 +84,8 @@ gen_cfi_bdepend() {
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			cfi? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
-			cfi-icall? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
 			cfi-cast? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
+			cfi-icall? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
 			cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
 		)
 		     "
@@ -373,7 +373,7 @@ configure_pgx() {
 
 	# The cfi enables all cfi schemes, but the selective tries to balance
 	# performance and security while maintaining a performance limit.
-	if use cfi && [[ "${build_type}" == "static-libs" ]] ;then
+	if [[ "${build_type}" == "static-libs" ]] ;then
 		use cfi && append_all -fvisibility=hidden -fsanitize=cfi
 		use cfi-vcall && append_all -fvisibility=hidden \
 					-fsanitize=cfi-vcall
