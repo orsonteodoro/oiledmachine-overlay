@@ -74,12 +74,16 @@
     It is only recommended to use trainers that reflect your own personal
     typical use.  Using trainers with non-typical use patterns may degrade
     performance.
+
+    For CFI support, you need at least cfi or cfi-vcall for forward
+    edge protection.  For backward edge use shadowcallstack (available for
+    arm64 only).
   </longdescription>
   <use>
     <flag name="cfi">Build with full CFI with all schemes</flag>
     <flag name="cfi-cast">Build with cfi-cast</flag>
     <flag name="cfi-icall">Build with cfi-icall</flag>
-    <flag name="cfi-vcall">Build with cfi-vcall</flag>
+    <flag name="cfi-vcall">Build with cfi-vcall protecting the forward edge</flag>
     <flag name="full-relro">Build with Full RELRO</flag>
     <flag name="highbitdepth">Enable 10 and 12 bit support for VP9.</flag>
     <flag name="libcxx">Link against the more secured libcxx package.</flag>
@@ -95,6 +99,8 @@
       quality PGO trainer.  (ebuild maintainer recommended)</flag>
     <flag name="pgo-trainer-lossless">Use the lossless PGO trainer.</flag>
     <flag name="postproc">Enable additional post processing filters</flag>
+    <flag name="shadowcallstack">Enable backward edge protection (arm64
+      only)</flag>
     <flag name="ssp">Build with stack smashing protection</flag>
     <flag name="svc">Enable spatial-svc support (experimental)</flag>
   </use>

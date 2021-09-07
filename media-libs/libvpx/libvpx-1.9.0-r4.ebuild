@@ -981,9 +981,5 @@ ewarn "runtime protection spec as if that scheme of CFI was never used."
 ewarn "For details, see https://clang.llvm.org/docs/ControlFlowIntegrity.html"
 ewarn "with \"statically linked\" keyword search."
 ewarn
-ewarn "The cfi USE flag is experimental.  If missing symbols encountered when"
-ewarn "building against this package, send the package names in an issue"
-ewarn "request to the oiledmachine-overlay."
-ewarn
 	fi
 }
