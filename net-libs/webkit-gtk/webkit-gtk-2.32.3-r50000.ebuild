@@ -10,7 +10,8 @@ EAPI=7
 # de = ebuild revision
 
 # Corresponds to
-# WebKit 612.1.18 (20210608, main) ; See Source/WebKit/Configurations/Version.xcconfig
+# WebKit 612.1.25 (20210615, main) ; See Source/WebKit/Configurations/Version.xcconfig
+# or https://trac.webkit.org/browser/webkit/trunk/Source/WebKit/Configurations/Version.xcconfig?rev=280241
 
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
@@ -639,6 +640,7 @@ GSTREAMER_V="1.14.0"
 MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
+# Dependencies last updated at revision 280241, Jul 23, 2021
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
@@ -687,7 +689,7 @@ RDEPEND+="
 		>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	)
 	libsoup3? (
-		>=net-libs/libsoup-2.99.5:3[introspection?,${MULTILIB_USEDEP}]
+		>=net-libs/libsoup-2.99.9:3[introspection?,${MULTILIB_USEDEP}]
 	)
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
@@ -754,7 +756,7 @@ BDEPEND+="
 	|| ( >=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
 	     >=sys-devel/gcc-7.3.0 )
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
-	>=dev-util/cmake-3.10.2
+	>=dev-util/cmake-3.12
 	>=dev-util/glib-utils-${GLIB_V}
 	>=dev-util/gperf-3.0.1
 	>=dev-lang/perl-5.10.0
@@ -785,8 +787,9 @@ BDEPEND+="
 # https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
 # Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
+# Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
 EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="278597"
+ESVN_REVISION="280241"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
