@@ -12,7 +12,7 @@ inherit flag-o-matic llvm toolchain-funcs multilib-minimal
 # 5. make testdata
 # 6. tar -caf libvpx-testdata-${MY_PV}.tar.xz libvpx-testdata
 
-LIBVPX_TESTDATA_VER=1.9.0
+LIBVPX_TESTDATA_VER=1.10.0
 
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
@@ -21,7 +21,7 @@ SRC_URI="https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.
 
 LICENSE="BSD"
 SLOT="0/6"
-KEYWORDS="amd64 arm arm64 ~ia64 ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux"
+KEYWORDS="amd64 ~arm arm64 ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux"
 IUSE="doc +highbitdepth postproc static-libs svc test +threads"
 IUSE+=" +examples"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall full-relro libcxx lto noexecstack shadowcallstack ssp"
@@ -173,8 +173,9 @@ PDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/libvpx-1.3.0-sparc-configure.patch" # 501010
-	"${FILESDIR}/libvpx-1.10.0-visibility-default.patch"
 )
+S="${WORKDIR}/${P}"
+S_orig="${WORKDIR}/${P}"
 
 pkg_setup() {
 	if use pgo && has_version "media-video/ffmpeg" ; then
@@ -287,6 +288,20 @@ src_prepare() {
 	else
 		eapply "${FILESDIR}/libvpx-1.10.0-gcov.patch"
 	fi
+	prepare_abi() {
+		for build_type in shared-libs static-libs ; do
+			einfo "Build type is ${build_type}"
+			if [[ "${build_type}" == "static-libs" ]] && ! use static-libs ; then
+				continue
+			else
+				:;
+			fi
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			einfo "Copying to ${S}"
+			cp -a "${S_orig}" "${S}" || die
+		done
+	}
+	multilib_foreach_abi prepare_abi
 }
 
 src_configure() {
@@ -324,12 +339,24 @@ configure_pgx() {
 	if use lto || use shadowcallstack ; then
 		export CC="clang $(get_abi_CFLAGS ${ABI})"
 		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		export NM=llvm-nm
 		export AR=llvm-ar
-		export READELF=llvm-readelf
 		export AS=llvm-as
+		export NM=llvm-nm
+		export RANLIB=llvm-ranlib
+		export READELF=llvm-readelf
 		unset LD
 	fi
+
+	filter-flags \
+		'-fsanitize=*' \
+		'-fvisibility=hidden' \
+		--param=ssp-buffer-size=4 \
+		-fno-sanitize=safe-stack \
+		-fstack-protector \
+		-Wl,-z,noexecstack \
+		-Wl,-z,now \
+		-Wl,-z,relro \
+		-stdlib=libc++
 
 	if tc-is-clang && use libcxx ; then
                 append-cxxflags -stdlib=libc++
@@ -342,19 +369,20 @@ configure_pgx() {
 		filter-flags -fprefetch-loop-arrays \
 			'-fopt-info*' \
 			-frename-registers
-		append-cppflags -DFLAC__USE_VISIBILITY_ATTR
 	fi
 
 	# The cfi enables all cfi schemes, but the selective tries to balance
 	# performance and security while maintaining a performance limit.
-	use cfi && append_all -fvisibility=hidden -fsanitize=cfi
-	use cfi-vcall && append_all -fvisibility=hidden \
-				-fsanitize=cfi-vcall
-	use cfi-cast && append_all -fvisibility=hidden \
-				-fsanitize=cfi-derived-cast \
-				-fsanitize=cfi-derived-cast
-	use cfi-icall && append_all -fvisibility=hidden \
-				-fsanitize=cfi-icall
+	if use cfi && [[ "${build_type}" == "static-libs" ]] ;then
+		use cfi && append_all -fvisibility=hidden -fsanitize=cfi
+		use cfi-vcall && append_all -fvisibility=hidden \
+					-fsanitize=cfi-vcall
+		use cfi-cast && append_all -fvisibility=hidden \
+					-fsanitize=cfi-derived-cast \
+					-fsanitize=cfi-derived-cast
+		use cfi-icall && append_all -fvisibility=hidden \
+					-fsanitize=cfi-icall
+	fi
 	use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
 	use lto && append_lto
 	use noexecstack && append-ldflags -Wl,-z,noexecstack
@@ -405,6 +433,18 @@ configure_pgx() {
 		$(use_enable threads multithread)
 		$(use_enable highbitdepth vp9-highbitdepth)
 	)
+
+	if [[ "${build_type}" == "shared-libs" ]] ; then
+		myconfargs+=(
+			--enable-shared
+			--disable-static
+		)
+	else
+		myconfargs+=(
+			--disable-shared
+			--enable-static
+		)
+	fi
 
 	# let the build system decide which AS to use (it honours $AS but
 	# then feeds it with yasm flags without checking...) #345161
@@ -871,33 +911,57 @@ compile_pgx() {
 	emake verbose=yes GEN_EXAMPLES= HAVE_GNU_STRIP=no
 }
 
-multilib_src_compile() {
-	if use pgo \
-		&& has_pgo_requirement ; then
-		PGO_PHASE="pgi"
-		configure_pgx
-		compile_pgx
-		run_trainer
-		PGO_PHASE="pgo"
-		configure_pgx
-		compile_pgx
-		export PGO_RAN=1
-	else
-		ewarn "Not using PGO for ${ABI}"
-		configure_pgx
-		compile_pgx
-	fi
+src_compile() {
+	compile_abi() {
+		for build_type in shared-libs static-libs ; do
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			export BUILD_DIR="${S}"
+			cd "${BUILD_DIR}" || die
+			if use pgo \
+				&& has_pgo_requirement ; then
+				PGO_PHASE="pgi"
+				configure_pgx
+				compile_pgx
+				run_trainer
+				PGO_PHASE="pgo"
+				configure_pgx
+				compile_pgx
+				export PGO_RAN=1
+			else
+				ewarn "Not using PGO for ${ABI}"
+				configure_pgx
+				compile_pgx
+			fi
+		done
+	}
+	multilib_foreach_abi compile_abi
 }
 
-multilib_src_test() {
-	local -x LD_LIBRARY_PATH="${BUILD_DIR}"
-	local -x LIBVPX_TEST_DATA_PATH="${WORKDIR}/${PN}-testdata"
-	emake verbose=yes GEN_EXAMPLES= test
+src_test() {
+	test_abi() {
+		for build_type in shared-libs static-libs ; do
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			export BUILD_DIR="${S}"
+			cd "${BUILD_DIR}" || die
+			local -x LD_LIBRARY_PATH="${BUILD_DIR}"
+			local -x LIBVPX_TEST_DATA_PATH="${WORKDIR}/${PN}-testdata"
+			emake verbose=yes GEN_EXAMPLES= test
+		done
+	}
+	multilib_foreach_abi test_abi
 }
 
-multilib_src_install() {
-	emake verbose=yes GEN_EXAMPLES= DESTDIR="${D}" install
-	multilib_is_native_abi && use doc && dodoc -r docs/html
+src_install() {
+	install_abi() {
+		for build_type in shared-libs static-libs ; do
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			export BUILD_DIR="${S}"
+			cd "${BUILD_DIR}" || die
+			emake verbose=yes GEN_EXAMPLES= DESTDIR="${D}" install
+			multilib_is_native_abi && use doc && dodoc -r docs/html
+		done
+	}
+	multilib_foreach_abi install_abi
 }
 
 pkg_postinst() {
