@@ -163,7 +163,7 @@ pkg_setup() {
 		einfo "The chromium USE flag is in testing."
 	fi
 
-	if use pgo ; then
+	if use pgo && has_version "media-video/ffmpeg" ; then
 		if ! has_version "media-video/ffmpeg[libaom]" ; then
 			ewarn "You need to emerge ffmpeg with libaom for pgo training."
 			ewarn "The regular emerge path with be taken instead."
