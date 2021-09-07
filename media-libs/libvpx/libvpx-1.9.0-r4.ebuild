@@ -280,6 +280,11 @@ has_pgo_requirement() {
 	fi
 }
 
+get_build_types() {
+	echo "shared-libs"
+	use static-libs && echo "static-libs"
+}
+
 src_prepare() {
 	default
 	if tc-is-clang ; then
@@ -289,13 +294,8 @@ src_prepare() {
 		eapply "${FILESDIR}/libvpx-1.10.0-gcov.patch"
 	fi
 	prepare_abi() {
-		for build_type in shared-libs static-libs ; do
+		for build_type in $(get_build_types) ; do
 			einfo "Build type is ${build_type}"
-			if [[ "${build_type}" == "static-libs" ]] && ! use static-libs ; then
-				continue
-			else
-				:;
-			fi
 			export S="${S_orig}.${ABI}_${build_type/-*}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
@@ -913,7 +913,8 @@ compile_pgx() {
 
 src_compile() {
 	compile_abi() {
-		for build_type in shared-libs static-libs ; do
+		for build_type in $(get_build_types) ; do
+			einfo "Build type is ${build_type}"
 			export S="${S_orig}.${ABI}_${build_type/-*}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
@@ -939,7 +940,7 @@ src_compile() {
 
 src_test() {
 	test_abi() {
-		for build_type in shared-libs static-libs ; do
+		for build_type in $(get_build_types) ; do
 			export S="${S_orig}.${ABI}_${build_type/-*}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
@@ -953,7 +954,7 @@ src_test() {
 
 src_install() {
 	install_abi() {
-		for build_type in shared-libs static-libs ; do
+		for build_type in $(get_build_types) ; do
 			export S="${S_orig}.${ABI}_${build_type/-*}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
