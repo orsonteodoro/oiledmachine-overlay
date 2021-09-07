@@ -909,24 +909,15 @@ BDEPEND="
 		)
 		cr_pgo_trainers_media_desktop? (
 			proprietary-codecs? (
-				|| (
-					media-video/ffmpeg[encode,openh264]
-					media-video/ffmpeg[encode,x264]
-				)
+				media-video/ffmpeg[encode,openh264]
 				media-video/ffmpeg[encode,mp3]
 			)
-			|| (
-				media-video/ffmpeg[encode,libaom]
-				media-video/ffmpeg[encode,rav1e]
-			)
+			media-video/ffmpeg[encode,libaom]
 			media-video/ffmpeg[opus,vorbis,vpx]
 		)
 		cr_pgo_trainers_media_mobile? (
 			proprietary-codecs? (
-				|| (
-					media-video/ffmpeg[encode,openh264]
-					media-video/ffmpeg[encode,x264]
-				)
+				media-video/ffmpeg[encode,openh264]
 				media-video/ffmpeg[encode,mp3]
 			)
 			media-video/ffmpeg[opus,vorbis,vpx]
@@ -1027,15 +1018,12 @@ FFMPEG_DEPENDS="
 		${ZLIB_DEPENDS}
 		media-video/ffmpeg[cfi-cast?,cfi-icall?,cfi-vcall?,libcxx,ssp,${MULTILIB_USEDEP}]
 		media-libs/dav1d[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
-		media-libs/fdk-aac[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
 		media-libs/flac[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
 		media-libs/libaom[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
 		media-libs/libogg[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
 		media-libs/libtheora[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
 		media-libs/libvorbis[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
 		media-libs/libvpx[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
-		media-libs/vo-amrwbenc[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
-		media-libs/opencore-amr[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
 		media-sound/gsm[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
 		x11-libs/libva[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
 		x11-libs/libvdpau[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]
@@ -2401,9 +2389,6 @@ eerror
 				elif has_version "media-video/ffmpeg[openh264]" ;then
 					h264_encoding=( -c:v libopenh264 )
 					h264_baseline_profile=( -profile:v 578 )
-				elif has_version "media-video/ffmpeg[x264]" ; then
-					h264_encoding=( -c:v libx264 )
-					h264_baseline_profile=( -profile:v baseline )
 				fi
 
 				# bigbuck.webm -> buck-480p.mp4
@@ -2529,10 +2514,6 @@ eerror
 					h264_encoding=( -c:v libopenh264 )
 					h264_baseline_profile=( -profile:v 578 )
 					h264_high_profile_4_0=( -profile:v 100 ) # no level
-				elif has_version "media-video/ffmpeg[x264]" ; then
-					h264_encoding=( -c:v libx264 )
-					h264_baseline_profile=( -profile:v baseline )
-					h264_high_profile_4_0=( -profile:v high -level:v 4.0 )
 				fi
 
 				# tulip2.webm -> tulip2.m4a
@@ -2860,8 +2841,6 @@ eerror
 						-tile-rows 2 -threads ${ncpus}
 						-row-mt 1 )
 				fi
-			elif has_version "media-video/ffmpeg[rav1e]" ;then
-				av1_encoding=( -c:v librav1e )
 			fi
 
 			if use vaapi && vainfo 2>/dev/null \
@@ -2896,9 +2875,6 @@ eerror
 				elif has_version "media-video/ffmpeg[openh264]" ;then
 					h264_encoding=( -c:v libopenh264 )
 					h264_baseline_profile=( -profile:v 578 )
-				elif has_version "media-video/ffmpeg[x264]" ; then
-					h264_encoding=( -c:v libx264 )
-					h264_baseline_profile=( -profile:v baseline )
 				fi
 
 				# tulip2.webm -> crowd1080.mp4
