@@ -83,10 +83,7 @@ gen_cfi_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			cfi? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
-			cfi-cast? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
-			cfi-icall? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
-			cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
+			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
 		)
 		     "
 	done
@@ -135,8 +132,7 @@ gen_libcxx_depend() {
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
 			libcxx? (
-				!cfi? ( >=sys-libs/libcxx-${v}[cfi-vcall?,cfi-icall?,cfi-cast?,full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
-				cfi? ( >=sys-libs/libcxx-${v}[cfi-vcall,cfi-icall,cfi-cast,full-relro,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
+				>=sys-libs/libcxx-${v}[cfi?,cfi-vcall?,cfi-icall?,cfi-cast?,full-relro?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}]
 			)
 		)
 		"
@@ -146,13 +142,13 @@ gen_libcxx_depend() {
 RDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
 DEPEND+=" ${RDEPEND}"
 
-BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
-BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
 BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
+BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
+BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND="abi_x86_32? ( dev-lang/yasm )
 	abi_x86_64? ( dev-lang/yasm )
