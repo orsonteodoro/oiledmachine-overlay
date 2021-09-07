@@ -177,7 +177,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	if use pgo ; then
+	if use pgo && has_version "media-video/ffmpeg" ; then
 		if ! has_version "media-video/ffmpeg[vpx]" ; then
 			ewarn "You need to emerge ffmpeg with vpx for pgo training."
 			ewarn "The regular emerge path with be taken instead."
