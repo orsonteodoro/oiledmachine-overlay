@@ -293,3 +293,18 @@ src_install() {
 	insinto /usr/include/libcxxabi
 	doins -r include/.
 }
+
+pkg_postinst() {
+	if [[ "${USE}" =~ "cfi" ]] ; then
+ewarn
+ewarn "cfi, cfi-cast, cfi-icall, cfi-vcall require static linking of this"
+ewarn "library."
+ewarn
+ewarn "If you do \`ldd <path to exe>\` and you still see libc++abi.so"
+ewarn "then it breaks the CFI runtime protection spec as if that scheme of CFI"
+ewarn "was never used.  For details, see"
+ewarn "https://clang.llvm.org/docs/ControlFlowIntegrity.html with"
+ewarn "\"statically linked\" keyword search."
+ewarn
+	fi
+}
