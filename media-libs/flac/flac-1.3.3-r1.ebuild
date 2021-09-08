@@ -1,0 +1,320 @@
+# Copyright 1999-2021 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=7
+
+inherit flag-o-matic multilib-minimal toolchain-funcs
+
+DESCRIPTION="free lossless audio encoder and decoder"
+HOMEPAGE="https://xiph.org/flac/"
+SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.xz"
+
+LICENSE="BSD FDL-1.2 GPL-2 LGPL-2.1"
+SLOT="0"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
+IUSE="+cxx debug ogg cpu_flags_ppc_altivec cpu_flags_ppc_vsx cpu_flags_x86_sse static-libs"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall full-relro libcxx lto noexecstack shadowcallstack ssp"
+RDEPEND="ogg? ( >=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}] )"
+REQUIRED_USE="
+	cfi? ( lto static-libs )
+	cfi-cast? ( lto cfi-vcall static-libs )
+	cfi-icall? ( lto cfi-vcall static-libs )
+	cfi-vcall? ( lto static-libs )
+"
+
+_seq() {
+	local min=${1}
+	local max=${2}
+	local i=${min}
+	while (( ${i} <= ${max} )) ; do
+		echo "${i}"
+		i=$(( ${i} + 1 ))
+	done
+}
+
+gen_cfi_bdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			>=sys-devel/lld-${v}
+			=sys-libs/compiler-rt-${v}*
+			cfi? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
+			cfi-cast? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
+			cfi-icall? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
+			cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-${v}*[cfi] )
+		)
+		     "
+	done
+}
+
+gen_shadowcallstack_bdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			>=sys-devel/lld-${v}
+			=sys-libs/compiler-rt-${v}*
+			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+		)
+		     "
+	done
+}
+
+gen_lto_bdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
+			>=sys-devel/lld-${v}
+		)
+		"
+	done
+}
+
+gen_libcxx_depend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			libcxx? ( >=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,full-relro?,noexecstack?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
+		)
+		"
+	done
+}
+
+RDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
+DEPEND+=" ${RDEPEND}"
+
+BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
+BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
+BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
+
+BDEPEND+="
+	app-arch/xz-utils
+	virtual/pkgconfig
+	abi_x86_32? ( dev-lang/nasm )
+	!elibc_uclibc? ( sys-devel/gettext )
+"
+
+PATCHES=( "${FILESDIR}/${P}-fix-zero-first-byte-md5sum-check.patch" )
+S="${WORKDIR}/${P}"
+S_orig="${WORKDIR}/${P}"
+
+get_build_types() {
+	echo "shared-libs"
+	use static-libs && echo "static-libs"
+}
+
+src_prepare() {
+	default
+	prepare_abi() {
+		for build_type in $(get_build_types) ; do
+			einfo "Build type is ${build_type}"
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			einfo "Copying to ${S}"
+			cp -a "${S_orig}" "${S}" || die
+		done
+	}
+	multilib_foreach_abi prepare_abi
+}
+
+append_all() {
+	append-flags ${@}
+	append-ldflags ${@}
+}
+
+append_lto() {
+	filter-flags '-flto*'
+	append-flags -flto=thin
+	append-ldflags -fuse-ld=lld -flto=thin
+}
+
+_src_configure() {
+	if use lto || use shadowcallstack ; then
+		export CC="clang $(get_abi_CFLAGS ${ABI})"
+		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
+		export AR=llvm-ar
+		export AS=llvm-as
+		export NM=llvm-nm
+		export RANLIB=llvm-ranlib
+		export READELF=llvm-readelf
+		unset LD
+	fi
+
+	filter-flags \
+		'-fsanitize=*' \
+		'-fvisibility=hidden' \
+		--param=ssp-buffer-size=4 \
+		-DFLAC__USE_VISIBILITY_ATTR \
+		-fno-sanitize=safe-stack \
+		-fstack-protector \
+		-Wl,-z,noexecstack \
+		-Wl,-z,now \
+		-Wl,-z,relro \
+		-stdlib=libc++
+
+	if tc-is-clang && use libcxx ; then
+		append-cxxflags -stdlib=libc++
+		append-ldflags -stdlib=libc++
+	elif ! tc-is-clang && use libcxx ; then
+		die "libcxx requires clang++"
+	fi
+
+	if tc-is-clang ; then
+		filter-flags -fprefetch-loop-arrays \
+			'-fopt-info*' \
+			-frename-registers
+		append-cppflags -DFLAC__USE_VISIBILITY_ATTR
+	fi
+
+	if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+		if use cfi ; then
+			append_all -fvisibility=hidden \
+					-fsanitize=cfi
+		else
+			use cfi-cast && append_all -fvisibility=hidden \
+						-fsanitize=cfi-derived-cast \
+						-fsanitize=cfi-unrelated-cast
+			use cfi-icall && append_all -fvisibility=hidden \
+						-fsanitize=cfi-icall
+			use cfi-vcall && append_all -fvisibility=hidden \
+						-fsanitize=cfi-vcall
+		fi
+	fi
+	use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
+	use lto && append_lto
+	use noexecstack && append-ldflags -Wl,-z,noexecstack
+	use shadowcallstack && append-flags -fno-sanitize=safe-stack \
+					-fsanitize=shadow-call-stack
+	use ssp && append-ldflags --param=ssp-buffer-size=4 \
+				-fstack-protector
+
+	local myeconfargs=(
+		--disable-doxygen-docs
+		--disable-examples
+		--disable-xmms-plugin
+		$([[ ${CHOST} == *-darwin* ]] && echo "--disable-asm-optimizations")
+		$(use_enable cpu_flags_ppc_altivec altivec)
+		$(use_enable cpu_flags_ppc_vsx vsx)
+		$(use_enable cpu_flags_x86_sse sse)
+		$(use_enable cxx cpplibs)
+		$(use_enable debug)
+		$(use_enable ogg)
+
+		# cross-compile fix (bug #521446)
+		# no effect if ogg support is disabled
+		--with-ogg
+	)
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		myeconfargs+=(
+			--enable-static
+			--disable-shared
+		)
+	else
+		myeconfargs+=(
+			--disable-static
+			--enable-shared
+		)
+	fi
+
+	ECONF_SOURCE="${S}" econf "${myeconfargs[@]}"
+}
+
+src_configure() {
+	configure_abi() {
+		for build_type in $(get_build_types) ; do
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			export BUILD_DIR="${S}"
+			cd "${BUILD_DIR}" || die
+			_src_configure
+		done
+	}
+	multilib_foreach_abi configure_abi
+}
+
+src_compile() {
+	compile_abi() {
+		for build_type in $(get_build_types) ; do
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			export BUILD_DIR="${S}"
+			cd "${BUILD_DIR}" || die
+			emake
+		done
+	}
+	multilib_foreach_abi compile_abi
+}
+
+src_test() {
+	test_abi() {
+		for build_type in $(get_build_types) ; do
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			export BUILD_DIR="${S}"
+			cd "${BUILD_DIR}" || die
+			if [[ ${UID} != 0 ]]; then
+				emake -j1 check
+			else
+				ewarn "Tests will fail if ran as root, skipping."
+			fi
+		done
+	}
+	multilib_foreach_abi test_abi
+}
+
+src_install() {
+	install_abi() {
+		for build_type in $(get_build_types) ; do
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			export BUILD_DIR="${S}"
+			cd "${BUILD_DIR}" || die
+			emake DESTDIR="${D}" install
+		done
+	}
+	multilib_foreach_abi install_abi
+	einstalldocs
+	find "${ED}" -type f -name '*.la' -delete || die
+}
+
+pkg_postinst() {
+	if [[ "${USE}" =~ "cfi" ]] ; then
+ewarn
+ewarn "cfi, cfi-cast, cfi-icall, cfi-vcall require static linking of this"
+ewarn "library."
+ewarn
+ewarn "If you do \`ldd <path to exe>\` and you still see libFLAC.so or"
+ewarn "libFLAC++.so, then it breaks the CFI runtime protection"
+ewarn "spec as if that scheme of CFI was never used.  For details, see"
+ewarn "https://clang.llvm.org/docs/ControlFlowIntegrity.html with"
+ewarn "\"statically linked\" keyword search."
+ewarn
+	fi
+einfo
+einfo "PGO support is on demand.  If you would like PGO training for this"
+einfo "ebuild and you are a user of FLAC, send an issue request with your"
+einfo "description of a typical USE pattern (or benchmark).  There's a"
+einfo "consideration for adding a PGO training profile for voice.  If you"
+einfo "would like that added to the ebuild, send an issue request."
+einfo
+}
