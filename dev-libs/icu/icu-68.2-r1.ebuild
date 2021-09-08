@@ -14,7 +14,7 @@ LICENSE="BSD"
 
 SLOT="0/${PV}"
 
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
+KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="debug doc examples static-libs"
 IUSE+=" cfi cfi-vcall cfi-cast cfi-icall full-relro libcxx lto noexecstack shadowcallstack ssp"
 REQUIRED_USE="
@@ -89,7 +89,7 @@ gen_libcxx_depend() {
 		echo "
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			libcxx? ( >=sys-libs/libcxx-${v}[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,full-relro?,noexecstack?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
+			libcxx? ( >=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,full-relro?,noexecstack?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}] )
 		)
 		"
 	done
