@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- ebuild fork only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- ebuild originator -->
+    <email>base-system@gentoo.org</email>
+    <name>Gentoo Base System</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">madler/zlib</remote-id>
+    <remote-id type="cpe">cpe:/a:gnu:zlib</remote-id>
+  </upstream>
+  <longdescription>
+    Only use the cfi* and pgo USE flags after the stage 3 or stage 4
+    bootstrapping process.
+
+    The pgo-custom USE flag can be extended for your particular
+    typical use pattern.  For example, you may add a custom script
+    to optimize for web use.  You will need to supply your own
+    custom per-package user patch and it must be placed in ${S}.
+  </longdescription>
+  <use>
+    <flag name="cfi">Build with full CFI with all schemes</flag>
+    <flag name="cfi-cast">Build with cfi-cast</flag>
+    <flag name="cfi-icall">Build with cfi-icall</flag>
+    <flag name="cfi-vcall">Build with cfi-vcall</flag>
+    <flag name="full-relro">Build with Full RELRO</flag>
+    <flag name="lto">Use link time optimization.</flag>
+    <flag name="noexecstack">Build with noexecstack</flag>
+    <flag name="minizip">include the minizip library for quick and dirty zip
+      extraction</flag>
+    <flag name="pgo">Build with Profiled Guided Optimizations</flag>
+    <flag name="pgo-custom">Run a custom PGO optimization script</flag>
+    <flag name="pgo-trainer-binary">Run the PGO trainer against text
+      files</flag>
+    <flag name="pgo-trainer-text">Run the PGO trainer against binary
+      files</flag>
+    <flag name="shadowcallstack">Enable backward edge protection (arm64
+      only)</flag>
+    <flag name="ssp">Build with stack smashing protection</flag>
+  </use>
+</pkgmetadata>
