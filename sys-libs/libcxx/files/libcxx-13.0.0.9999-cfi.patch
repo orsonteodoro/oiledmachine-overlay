@@ -6,8 +6,8 @@ diff -urp work1/libcxx/CMakeLists.txt work/libcxx/CMakeLists.txt
  
  # Basic options ---------------------------------------------------------------
 +option(CFI "Enable full CFI." OFF)
-+option(CFI_CAST "Enable cfi-derived-cast, cfi-unrelated-cast for select files." OFF)
-+option(CFI_ICALL "Enable cfi-icall for select files." OFF)
++option(CFI_CAST "Enable cfi-derived-cast, cfi-unrelated-cast." OFF)
++option(CFI_ICALL "Enable cfi-icall." OFF)
 +option(CFI_VCALL "Enable cfi-vcall." OFF)
 +option(THINLTO "Enable ThinLTO." OFF)
 +option(SSP "Enable Stack Smashing Protection (SSP)." OFF)
