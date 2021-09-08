@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- ebuild fork only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- ebuild originator -->
+    <email>office@gentoo.org</email>
+    <name>Gentoo Office project</name>
+  </maintainer>
+  <use>
+    <flag name="cfi">Build with full CFI with all schemes</flag>
+    <flag name="cfi-cast">Build with cfi-cast</flag>
+    <flag name="cfi-icall">Build with cfi-icall</flag>
+    <flag name="cfi-vcall">Build with cfi-vcall</flag>
+    <flag name="full-relro">Build with Full RELRO</flag>
+    <flag name="lto">Use link time optimization.</flag>
+    <flag name="noexecstack">Build with noexecstack</flag>
+    <flag name="shadowcallstack">Enable backward edge protection (arm64
+      only)</flag>
+    <flag name="ssp">Build with stack smashing protection</flag>
+  </use>
+</pkgmetadata>
