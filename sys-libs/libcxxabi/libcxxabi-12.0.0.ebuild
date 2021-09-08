@@ -156,7 +156,7 @@ _configure_abi() {
 			'-fopt-info*' \
 			-frename-registers
 	fi
-	filter-flags '-flto*'
+	filter-flags '-flto*' '-fuse-ld=*'
 
 	# link against compiler-rt instead of libgcc if we are using clang with libunwind
 	local want_compiler_rt=OFF
