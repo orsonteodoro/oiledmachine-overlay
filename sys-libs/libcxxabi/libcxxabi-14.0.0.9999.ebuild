@@ -155,7 +155,7 @@ _configure_abi() {
 			'-fopt-info*' \
 			-frename-registers
 	fi
-	filter-flags '-flto*'
+	filter-flags '-flto*' '-fuse-ld=*'
 
 	# we need a configured libc++ for __config_site
 	wrap_libcxx cmake_src_configure
