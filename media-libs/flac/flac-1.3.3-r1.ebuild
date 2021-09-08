@@ -144,7 +144,7 @@ append_all() {
 }
 
 append_lto() {
-	filter-flags '-flto*'
+	filter-flags '-flto*' '-fuse-ld=*'
 	append-flags -flto=thin
 	append-ldflags -fuse-ld=lld -flto=thin
 }
