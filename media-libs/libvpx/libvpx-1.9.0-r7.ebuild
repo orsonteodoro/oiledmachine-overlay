@@ -922,7 +922,7 @@ src_compile() {
 				if (( $(find "${T}/pgo-${ABI}" 2>/dev/null | wc -l) > 0 )) ; then
 					PGO_PHASE="pgo"
 					[[ "${build_type}" == "static-libs" ]] \
-						&& ewarn "Reusing PGO data from static-libs"
+						&& ewarn "Reusing PGO data from shared-libs"
 				else
 					ewarn "No PGO data found.  Skipping PGO build and building normally."
 					unset PGO_PHASE
