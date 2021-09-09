@@ -28,6 +28,19 @@
     typical use pattern.  For example, you may add a custom script
     to optimize for web use.  You will need to supply your own
     custom per-package user patch and it must be placed in ${S}.
+
+    You may set the following per-package envvars:
+
+    MINIZIP_PGO_SHORT_N_ITERATIONS=X, where X >= 1 will only affect the
+    pgo-trainer-...-short, pgo-trainer-...-store,
+    pgo-trainer-...-max-compression USE flags.  The default is 30.
+
+    MINIZIP_PGO_LONG_N_ITERATIONS=X, where X >= 1 will only affect the
+    pgo-trainer-...-long USE flags.  The default is 300.
+
+    MINIZIP_PGO_MAX_FILES=N, where N >= 1 will limit the number of
+    files to add to archived binary zip files.  The default is
+    500.
   </longdescription>
   <use>
     <flag name="cfi">Build with full CFI with all schemes</flag>
@@ -41,10 +54,34 @@
       extraction</flag>
     <flag name="pgo">Build with Profiled Guided Optimizations</flag>
     <flag name="pgo-custom">Run a custom PGO optimization script</flag>
-    <flag name="pgo-trainer-binary">Run the PGO trainer against text
-      files</flag>
-    <flag name="pgo-trainer-text">Run the PGO trainer against binary
-      files</flag>
+    <flag name="pgo-trainer-minizip-binary-long">Run the PGO trainer against
+      text files for minizip only with N=300 so that each compression level
+      is PGO trained fairly</flag>
+    <flag name="pgo-trainer-minizip-binary-max-compression">Run the PGO trainer
+      against text files for minizip only abridged training with N=30 with
+      maximum compression level</flag>
+    <flag name="pgo-trainer-minizip-binary-short">Run the PGO trainer against
+      text files for minizip only abridged training with N=30 so that essential
+      code paths do not get deoptimized</flag>
+    <flag name="pgo-trainer-minizip-binary-store">Run the PGO trainer against
+      text files for minizip only abridged training with N=30 with store
+      only archival</flag>
+    <flag name="pgo-trainer-minizip-text-long">Run the PGO trainer against
+      binary files for minizip only with N=300 so that each compression level
+      is PGO trained fairly</flag>
+    <flag name="pgo-trainer-minizip-text-max-compression">Run the PGO trainer
+      against binary files for minizip only abridged training with with N=30
+      with maximum compression level</flag>
+    <flag name="pgo-trainer-minizip-text-short">Run the PGO trainer against
+      binary files for minizip only abridged training version with with N=30 so
+      that code paths do not get deoptimized</flag>
+    <flag name="pgo-trainer-minizip-text-store">Run the PGO trainer against
+      binary files for minizip only abridged training with with N=30 with
+      store only archival</flag>
+    <flag name="pgo-trainer-zlib-binary">Run the PGO trainer against text
+      files for zlib only</flag>
+    <flag name="pgo-trainer-zlib-text">Run the PGO trainer against binary
+      files for zlib only</flag>
     <flag name="shadowcallstack">Enable backward edge protection (arm64
       only)</flag>
     <flag name="ssp">Build with stack smashing protection</flag>

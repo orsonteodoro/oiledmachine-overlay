@@ -28,18 +28,46 @@ IUSE+=" cfi cfi-vcall cfi-cast cfi-icall full-relro lto noexecstack shadowcallst
 IUSE+="
 	pgo
 	pgo-custom
-	pgo-trainer-binary
-	pgo-trainer-text
+	pgo-trainer-minizip-binary-long
+	pgo-trainer-minizip-binary-max-compression
+	pgo-trainer-minizip-binary-short
+	pgo-trainer-minizip-binary-store
+	pgo-trainer-minizip-text-long
+	pgo-trainer-minizip-text-max-compression
+	pgo-trainer-minizip-text-short
+	pgo-trainer-minizip-text-store
+	pgo-trainer-zlib-binary
+	pgo-trainer-zlib-text
 "
 REQUIRED_USE="
 	cfi? ( lto static-libs )
 	cfi-cast? ( lto cfi-vcall static-libs )
 	cfi-icall? ( lto cfi-vcall static-libs )
 	cfi-vcall? ( lto static-libs )
-	pgo? ( || ( pgo-custom pgo-trainer-binary pgo-trainer-text ) )
+	pgo? ( || (
+		pgo-custom
+		pgo-trainer-minizip-binary-long
+		pgo-trainer-minizip-binary-max-compression
+		pgo-trainer-minizip-binary-short
+		pgo-trainer-minizip-binary-store
+		pgo-trainer-minizip-text-long
+		pgo-trainer-minizip-text-max-compression
+		pgo-trainer-minizip-text-short
+		pgo-trainer-minizip-text-store
+		pgo-trainer-zlib-binary
+		pgo-trainer-zlib-text
+	) )
 	pgo-custom? ( pgo )
-	pgo-trainer-binary? ( pgo )
-	pgo-trainer-text? ( pgo )
+	pgo-trainer-zlib-binary? ( pgo )
+	pgo-trainer-zlib-text? ( pgo )
+	pgo-trainer-minizip-binary-long? ( pgo minizip )
+	pgo-trainer-minizip-binary-max-compression? ( pgo minizip )
+	pgo-trainer-minizip-binary-short? ( pgo minizip )
+	pgo-trainer-minizip-binary-store? ( pgo minizip )
+	pgo-trainer-minizip-text-long? ( pgo minizip )
+	pgo-trainer-minizip-text-max-compression? ( pgo minizip )
+	pgo-trainer-minizip-text-short? ( pgo minizip )
+	pgo-trainer-minizip-text-store? ( pgo minizip )
 "
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -340,138 +368,246 @@ _build_pgx() {
 	if use minizip ; then
 		einfo "Building minizip ${build_type} for ${ABI}"
 		emake -C contrib/minizip
-		emake -C contrib/minizip libminizip.la
+		if use pgo ; then
+			emake -C contrib/minizip minizip miniunzip
+		fi
 	fi
 }
 
-run_trainer_text() {
-	einfo "Running test compression PGO training for ${ABI}"
-	if has_pgo_requirement ; then
-		if multilib_is_native_abi ; then
-			export PIGZEXE="pigz"
-		else
-			export PIGZEXE="pigz-${ABI}"
-		fi
-
-		einfo "Preparing training sandbox"
-		mkdir -p "${T}/sandbox" || die
-		if [[ -d /usr/include/linux ]] ; then
-			local c=0
-			for f in $(find /usr/include/linux -type f) ; do
-				if [[ -f "${f}" && ! -L "${f}" ]] ; then
-					einfo "Adding ${f} to the compression sandbox"
-					cp -a "${f}" "${T}/sandbox" || die
-					c=$(( ${c} + 1 ))
-				else
-					einfo "Skipping ${f} which may not be a text file but a symlink"
-				fi
-				(( ${c} >= 270 )) && break # 30 * 9 compression levels
-			done
-			rm -rf "${T}/sandbox-headers" || die
-		elif [[ -d /usr/lib/gcc/${CHOST}/$(gcc-version).0/include ]] ; then
-			local c=0
-			for f in $(find /usr/lib/gcc/${CHOST}/$(gcc-version).0/include -type f | head -n 1000) ; do
-				if [[ -f "${f}" && ! -L "${f}" ]] ; then
-					einfo "Adding ${f} to the compression sandbox"
-					cp -a "${f}" "${T}/sandbox" || die
-					c=$(( ${c} + 1 ))
-				else
-					einfo "Skipping ${f} which may not be a text file but a symlink"
-				fi
-				(( ${c} >= 270 )) && break # 30 * 9 compression levels
-			done
-		else
-			die "Missing /usr/include/linux or /usr/lib/gcc/${CHOST}/$(gcc-version).0/include for PGO training"
-		fi
-		einfo "Compression training"
-		for f in $(find "${T}/sandbox" -type f) ; do
-			local cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
-			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
-			"${cmd[@]}" || die
-		done
-		einfo "Decompression training"
-		for f in $(find "${T}/sandbox" -type f) ; do
-			local cmd=( "${PIGZEXE}" -d "${f}" )
-			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
-			"${cmd[@]}" || die
-		done
-		einfo "Clearing sandbox"
-		rm -rf "${T}/sandbox" || die
+_run_trainer_text_zlib() {
+	( ! has_pgo_requirement ) && return
+	einfo "Running test compression PGO training for ${ABI} for zlib"
+	if multilib_is_native_abi ; then
+		export PIGZEXE="pigz"
+	else
+		export PIGZEXE="pigz-${ABI}"
 	fi
-}
 
-run_trainer_binary() {
-	einfo "Running binary compression PGO training for ${ABI}"
-	if has_pgo_requirement ; then
-		if multilib_is_native_abi ; then
-			export PIGZEXE="pigz"
-		else
-			export PIGZEXE="pigz-${ABI}"
-		fi
-
-		einfo "Preparing training sandbox"
-		mkdir -p "${T}/sandbox" || die
-		[[ ! -d /usr/bin/ ]] && die "missing /usr/bin/ for PGO training"
-		# ~391 = 9 compression levels * stats rule of 30 samples [per each level of compression] * 1.45
-		# (additional files from weeding out 45% junk files 3/10 to 6/10 is ~45%)
-		# Cut short because some files may be gigabytes
-		local c=0
-		for f in $(find /usr/bin/ -maxdepth 1 -type f | sort | head -n 391 ) ; do
-			if readelf -h "${f}" 2>/dev/null 1>/dev/null && [[ ! -L "${f}" ]] ; then
-				local filesize=$(stat -c "%s" "${f}")
-				if (( ${filesize} < 26214400 )) ; then
-					# Limit to 25 MiB to prevent compression of gigs of data.
-					einfo "Adding ${f} to the compression sandbox"
-					cp -a "${f}" "${T}/sandbox" || echo "Skipping ${f}"
-					c=$(( ${c} + 1 ))
-				else
-					einfo "Skipping large data"
-				fi
-			else
-				einfo "Skipping possible text file or symlink ${f}"
-			fi
-			(( ${c} >= 270 )) && break # 30 * 9 compression levels
-		done
-		einfo "Compression training"
-		for f in $(find "${T}/sandbox" -type f) ; do
-			local cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
-			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
-			"${cmd[@]}" || die
-		done
-		einfo "Decompression training"
-		for f in $(find "${T}/sandbox" -type f) ; do
-			local cmd=( "${PIGZEXE}" -d "${f}" )
-			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
-			"${cmd[@]}" || die
-		done
-		einfo "Clearing sandbox"
-		rm -rf "${T}/sandbox" || die
-	fi
-}
-
-run_trainer_web_wiki() {
-	# Closer to typical use
+	#einfo "Preparing training sandbox"
 	mkdir -p "${T}/sandbox" || die
-	einfo "Downloading Gentoo Wiki Handbook AMD64 (Credits CC-BY-SA-3.0 © 2001–2021 Gentoo Foundation, Inc.)"
 	cd "${T}/sandbox" || die
-	wget -r -l2 "https://wiki.gentoo.org/wiki/Handbook:AMD64"
-	einfo "Compression training"
+	local N=270 # 30 * 9 compression levels
+	if [[ -d /usr/include/linux ]] ; then
+		local c=0
+		for f in $(find /usr/include/linux -type f | shuf) ; do
+			if [[ -f "${f}" && ! -L "${f}" ]] ; then
+				#einfo "Adding ${f} to the compression sandbox"
+				cp -a "${f}" "${T}/sandbox" || die
+				c=$(( ${c} + 1 ))
+			else
+				:; #einfo "Skipping ${f} which may not be a text file but a symlink"
+			fi
+			(( ${c} >= ${N} )) && break
+		done
+		rm -rf "${T}/sandbox-headers" || die
+	elif [[ -d /usr/lib/gcc/${CHOST}/$(gcc-version).0/include ]] ; then
+		local c=0
+		for f in $(find /usr/lib/gcc/${CHOST}/$(gcc-version).0/include -type f | shuf) ; do
+			if [[ -f "${f}" && ! -L "${f}" ]] ; then
+				#einfo "Adding ${f} to the compression sandbox"
+				cp -a "${f}" "${T}/sandbox" || die
+				c=$(( ${c} + 1 ))
+			else
+				:; # einfo "Skipping ${f} which may not be a text file but a symlink"
+			fi
+			(( ${c} >= ${N} )) && break
+		done
+	else
+		die "Missing /usr/include/linux or /usr/lib/gcc/${CHOST}/$(gcc-version).0/include for PGO training"
+	fi
+	einfo "zlib text compression training"
 	for f in $(find "${T}/sandbox" -type f) ; do
 		local cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
 		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
 		"${cmd[@]}" || die
 	done
-	einfo "Decompression training"
+	einfo "zlib text decompression training"
 	for f in $(find "${T}/sandbox" -type f) ; do
 		local cmd=( "${PIGZEXE}" -d "${f}" )
 		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
 		"${cmd[@]}" || die
 	done
-	einfo "Clearing sandbox"
-	rm -rf "${T}/sandbox"
+	#einfo "Clearing sandbox"
+	rm -rf "${T}/sandbox" || die
+
 }
 
-run_trainer_custom() {
+_run_trainer_text_minizip() {
+	( ! has_pgo_requirement ) && return
+	einfo "Running test compression PGO training for ${ABI} for minizip"
+	export MINIZIP="minizip"
+	export MINIUNZIP="miniunzip"
+
+	# Typical use.
+	# Most people compress everything at the same time.
+	# This test will simulate compressing an entire folder of files, then
+	# it will decompress this single file.
+	# It does it 300 times for various directory sizes for about 30
+	# times per compression level.
+	local MAX_FILES_IN_ARCHIVE=${MINIZIP_PGO_MAX_FILES:=500} # arbitrary
+	for i in $(seq 1 ${N}) ; do
+		#einfo "Preparing training sandbox"
+		mkdir -p "${T}/sandbox" || die
+		cd "${T}/sandbox" || die
+		local max_files_in_archive=$(( $((${RANDOM} % ${MAX_FILES_IN_ARCHIVE})) + 1 ))
+		local compression_level
+		if [[ -n "${max_compression}" ]] ; then
+			compression_level=9
+		elif [[ -n "${store_only}" ]] ; then
+			compression_level=0
+		else
+			compression_level=$((${RANDOM} % 10))
+		fi
+		einfo "Progress ${i}/${N}, max_files_in_archive = ${max_files_in_archive}, compression_level = ${compression_level}"
+		if [[ -d /usr/include/linux ]] ; then
+			local c=0
+			for f in $(find /usr/include/linux -type f | shuf) ; do
+				if [[ -f "${f}" && ! -L "${f}" ]] ; then
+					#einfo "Adding ${f} to the compression sandbox"
+					cp -a "${f}" "${T}/sandbox" || die
+					c=$(( ${c} + 1 ))
+				else
+					:; #einfo "Skipping ${f} which may not be a text file but a symlink"
+				fi
+				(( ${c} >= ${max_files_in_archive} )) && break # arbitrary
+			done
+			rm -rf "${T}/sandbox-headers" || die
+		elif [[ -d /usr/lib/gcc/${CHOST}/$(gcc-version).0/include ]] ; then
+			local c=0
+			for f in $(find /usr/lib/gcc/${CHOST}/$(gcc-version).0/include -type f | shuf) ; do
+				if [[ -f "${f}" && ! -L "${f}" ]] ; then
+					#einfo "Adding ${f} to the compression sandbox"
+					cp -a "${f}" "${T}/sandbox" || die
+					c=$(( ${c} + 1 ))
+				else
+					:; #einfo "Skipping ${f} which may not be a text file but a symlink"
+				fi
+				(( ${c} >= ${max_files_in_archive} )) && break # arbitrary
+			done
+		else
+			die "Missing /usr/include/linux or /usr/lib/gcc/${CHOST}/$(gcc-version).0/include for PGO training"
+		fi
+		#einfo "minizip text compression training"
+		local cmd=( "${MINIZIP}" -o -${compression_level} example.zip $(find "${T}/sandbox" -type f) )
+		#einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+		"${cmd[@]}" 2>/dev/null 1>/dev/null || die
+		cd "${T}/sandbox" || die
+		#einfo "minizip text decompression training"
+		local cmd=( "${MINIUNZIP}" example.zip )
+		#einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" yes \"A\" | ${cmd[@]}"
+		yes "A" | "${cmd[@]}" 2>/dev/null 1>/dev/null || die
+		#einfo "Clearing sandbox"
+		rm -rf "${T}/sandbox" || die
+	done
+
+}
+
+_run_trainer_binary_zlib() {
+	( ! has_pgo_requirement ) && return
+	einfo "Running binary compression PGO training for ${ABI} for zlib"
+	if multilib_is_native_abi ; then
+		export PIGZEXE="pigz"
+	else
+		export PIGZEXE="pigz-${ABI}"
+	fi
+
+	#einfo "Preparing training sandbox"
+	mkdir -p "${T}/sandbox" || die
+	cd "${T}/sandbox" || die
+	[[ ! -d /usr/bin/ ]] && die "missing /usr/bin/ for PGO training"
+	# ~391 = 9 compression levels * stats rule of 30 samples [per each level of compression] * 1.45
+	# (additional files from weeding out 45% junk files 3/10 to 6/10 is ~45%)
+	# Cut short because some files may be gigabytes
+	local c=0
+	for f in $(find /usr/bin/ -maxdepth 1 -type f | shuf) ; do
+		if readelf -h "${f}" 2>/dev/null 1>/dev/null && [[ ! -L "${f}" ]] ; then
+			local filesize=$(stat -c "%s" "${f}")
+			if (( ${filesize} < 26214400 )) ; then
+				# Limit to 25 MiB to prevent compression of gigs of data.
+				#einfo "Adding ${f} to the compression sandbox"
+				cp -a "${f}" "${T}/sandbox" || echo "Skipping ${f}"
+				c=$(( ${c} + 1 ))
+			else
+				:; #einfo "Skipping large data"
+			fi
+		else
+			:; #einfo "Skipping possible text file or symlink ${f}"
+		fi
+		(( ${c} >= 270 )) && break # 30 * 9 compression levels
+	done
+	einfo "zlib binary compression training"
+	for f in $(find "${T}/sandbox" -type f) ; do
+		local cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
+		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+		"${cmd[@]}" || die
+	done
+	einfo "zlib binary decompression training"
+	for f in $(find "${T}/sandbox" -type f) ; do
+		local cmd=( "${PIGZEXE}" -d "${f}" )
+		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+		"${cmd[@]}" || die
+	done
+	#einfo "Clearing sandbox"
+	rm -rf "${T}/sandbox" || die
+}
+
+_run_trainer_binary_minizip() {
+	( ! has_pgo_requirement ) && return
+	einfo "Running binary compression PGO training for ${ABI} for minizip"
+	export MINIZIP="minizip"
+	export MINIUNZIP="miniunzip"
+
+	[[ ! -d /usr/bin/ ]] && die "missing /usr/bin/ for PGO training"
+
+	# Binary version:  This test will simulate compressing an entire folder
+	# of files, then it will decompress this single file.
+	local MAX_FILES_IN_ARCHIVE=${MINIZIP_PGO_MAX_FILES:=500} # arbitrary
+	for i in $(seq 1 ${N}) ; do
+		#einfo "Preparing training sandbox"
+		mkdir -p "${T}/sandbox" || die
+		cd "${T}/sandbox" || die
+		local max_files_in_archive=$(( $((${RANDOM} % ${MAX_FILES_IN_ARCHIVE})) + 1 ))
+		local compression_level
+		if [[ -n "${max_compression}" ]] ; then
+			compression_level=9
+		elif [[ -n "${store_only}" ]] ; then
+			compression_level=0
+		else
+			compression_level=$((${RANDOM} % 10))
+		fi
+		einfo "Progress ${i}/${N}, max_files_in_archive = ${max_files_in_archive}, compression_level = ${compression_level}"
+		local c=0
+		for f in $(find /usr/bin/ -maxdepth 1 -type f | shuf ) ; do
+			if readelf -h "${f}" 2>/dev/null 1>/dev/null && [[ ! -L "${f}" ]] ; then
+				local filesize=$(stat -c "%s" "${f}")
+				if (( ${filesize} < 26214400 )) ; then
+					# Limit to 25 MiB to prevent compression of gigs of data.
+					#einfo "Adding ${f} to the compression sandbox"
+					cp -a "${f}" "${T}/sandbox" || echo "Skipping ${f}"
+					c=$(( ${c} + 1 ))
+				else
+					:; #einfo "Skipping large data"
+				fi
+			else
+				:; #einfo "Skipping possible text file or symlink ${f}"
+			fi
+			(( ${c} >= ${max_files_in_archive} )) && break # arbitrary
+		done
+		#einfo "minizip binary compression training"
+		local cmd=( "${MINIZIP}" -o -${compression_level} example.zip $(find "${T}/sandbox" -type f) )
+		#einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+		"${cmd[@]}" 2>/dev/null 1>/dev/null || die
+		cd "${T}/sandbox" || die
+		#einfo "minizip binary decompression training"
+		local cmd=( "${MINIUNZIP}" example.zip )
+		#einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" yes \"A\" | ${cmd[@]}"
+		yes "A" | "${cmd[@]}" 2>/dev/null 1>/dev/null || die
+		#einfo "Clearing sandbox"
+		rm -rf "${T}/sandbox" || die
+	done
+}
+
+_run_trainer_custom() {
 	if [[ ! -e "pgo-custom.sh" ]] ; then
 		die "Missing pgo-custom.sh"
 	else
@@ -483,16 +619,56 @@ run_trainer_custom() {
 }
 
 _run_trainers() {
-	export PATH="${ED}/usr/bin:${PATH}"
+	export PATH="${S}/contrib/minizip:${PATH_orig}"
 	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
-	if use pgo-trainer-text ; then
-		run_trainer_text
+	if use pgo-trainer-zlib-binary ; then
+		_run_trainer_binary_zlib
 	fi
-	if use pgo-trainer-binary ; then
-		run_trainer_binary
+	if use pgo-trainer-zlib-text ; then
+		_run_trainer_text_zlib
+	fi
+	if use pgo-trainer-minizip-binary-long ; then
+		local N=${MINIZIP_PGO_LONG_N_ITERATIONS:=300}
+		_run_trainer_binary_minizip
+	fi
+	if use pgo-trainer-minizip-binary-max-compression ; then
+		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		local max_compression=1
+		_run_trainer_binary_minizip
+		unset max_compression
+	fi
+	if use pgo-trainer-minizip-binary-short ; then
+		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		_run_trainer_binary_minizip
+	fi
+	if use pgo-trainer-minizip-binary-store ; then
+		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		local store_only=1
+		_run_trainer_binary_minizip
+		unset store_only
+	fi
+	if use pgo-trainer-minizip-text-long ; then
+		local N=${MINIZIP_PGO_LONG_N_ITERATIONS:=300}
+		_run_trainer_text_minizip
+	fi
+	if use pgo-trainer-minizip-text-max-compression ; then
+		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		local max_compression=1
+		_run_trainer_text_minizip
+		unset max_compression
+	fi
+	if use pgo-trainer-minizip-text-short ; then
+		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		_run_trainer_text_minizip
+	fi
+	if use pgo-trainer-minizip-text-store ; then
+		local N=${MINIZIP_PGO_SHORT_N_ITERATIONS:=30}
+		local store_only=1
+		_run_trainer_text_minizip
+		unset store_only
 	fi
 	if use pgo-custom ; then
-		run_trainer_custom
+		_run_trainer_custom
 	fi
 }
 
@@ -507,6 +683,7 @@ has_pgo_requirement() {
 }
 
 src_compile() {
+	export PATH_orig="${ED}/usr/bin:${PATH}"
 	compile_abi() {
 		for build_type in $(get_build_types) ; do
 			export S="${S_orig}.${ABI}_${build_type/-*}"
@@ -523,7 +700,7 @@ src_compile() {
 					_run_trainers
 					_clean_pgx
 				fi
-				if (( $(find "${T}/pgo-${ABI}" 2>/dev/null | wc -l) > 0 )) ; then
+				if (( $(find "${T}/pgo-${ABI}" -type f 2>/dev/null | wc -l) > 0 )) ; then
 					PGO_PHASE="pgo"
 					[[ "${build_type}" == "static-libs" ]] \
 						&& ewarn "Reusing PGO data from shared-libs"
@@ -558,6 +735,7 @@ _install_pgx() {
 _clean_pgx() {
 	einfo "Wiping sandbox image"
 	rm -rf "${ED}" || die
+	cd "${S}" || die
 }
 
 _install() {
