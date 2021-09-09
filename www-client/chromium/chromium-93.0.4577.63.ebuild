@@ -1010,7 +1010,7 @@ DEPEND+="${COMMON_DEPEND}"
 BZIP2_DEPENDS=" app-arch/bzip2[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]"
 OPENH264_DEPENDS=" media-libs/openh264[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}] "
 OPUS_DEPENDS=" media-libs/opus[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,${MULTILIB_USEDEP}] "
-ZLIB_DEPENDS=" sys-libs/zlib[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,libcxx,noexecstack,ssp,${MULTILIB_USEDEP}]"
+ZLIB_DEPENDS=" sys-libs/zlib[cfi-cast?,cfi-icall?,cfi-vcall?,full-relro,noexecstack,ssp,${MULTILIB_USEDEP}]"
 FFMPEG_DEPENDS="
 	system-ffmpeg? (
 		${BZIP2_DEPENDS}
