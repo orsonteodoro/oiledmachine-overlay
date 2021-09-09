@@ -497,7 +497,9 @@ _run_trainers() {
 }
 
 has_pgo_requirement() {
-	if which pigz-${ABI} 2>/dev/null 1>/dev/null ; then
+	if multilib_is_native_abi && which pigz 2>/dev/null 1>/dev/null ; then
+		return 0
+	elif multilib_is_native_abi && which pigz-${ABI} 2>/dev/null 1>/dev/null ; then
 		return 0
 	return
 		return 1
