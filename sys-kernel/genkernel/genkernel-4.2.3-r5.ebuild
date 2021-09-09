@@ -94,7 +94,7 @@ if [[ ${PV} == 9999* ]] ; then
 else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
-	#KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86"	# patches are unfinished or untested.
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86"	# patches are unfinished or untested.
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
