@@ -19,6 +19,11 @@
     Only use the cfi* and pgo USE flags after the stage 3 or stage 4
     bootstrapping process.
 
+    PGO instructions
+    (1) emerge the zlib ebuild without pgo USE flag
+    (2) emerge pigz
+    (3) emerge with pgo USE flag and at least one trainer USE flag.
+
     The pgo-custom USE flag can be extended for your particular
     typical use pattern.  For example, you may add a custom script
     to optimize for web use.  You will need to supply your own

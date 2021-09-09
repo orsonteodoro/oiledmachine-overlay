@@ -36,6 +36,7 @@ REQUIRED_USE="
 	cfi-cast? ( lto cfi-vcall static-libs )
 	cfi-icall? ( lto cfi-vcall static-libs )
 	cfi-vcall? ( lto static-libs )
+	pgo? ( || ( pgo-custom pgo-trainer-binary pgo-trainer-text ) )
 	pgo-custom? ( pgo )
 	pgo-trainer-binary? ( pgo )
 	pgo-trainer-text? ( pgo )
