@@ -2,15 +2,15 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v5.10.eclass
+# @ECLASS: ot-kernel-v5.14.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7
-# @BLURB: Eclass for patching the 5.10.x kernel
+# @BLURB: Eclass for patching the 5.14.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.10 eclass defines specific applicable patching for the 5.10.x
+# The ot-kernel-v5.14 eclass defines specific applicable patching for the 5.14.x
 # linux kernel.
 
 DISABLE_DEBUG_V="1.1"
@@ -18,66 +18,66 @@ EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-MUQSS_VER="0.205"
-PATCH_ALLOW_O3_COMMIT="228e792a116fd4cce8856ea73f2958ec8a241c0c"
-PATCH_CK_COMMIT_B="13f5f8abb25489af1cc019a4a3bc83cced6da67c" # bottom / newest
-PATCH_CK_COMMIT_T="35f6640868573a07b1291c153021f5d75749c15e" # top / oldest
-PATCH_FUTEX_COMMIT_B="f678870308608b485d1c771509208c93eab8538a" # bottom / newest
-PATCH_FUTEX_COMMIT_T="9fd101849c8a3324c6038ef31fe08a528f7a6fe4" # top / oldest
-PATCH_FUTEX2_COMMIT_B="65d8ec592b14a8c75ce2a04bfef5a188cd279d00" # bottom / newest
-PATCH_FUTEX2_COMMIT_T="4f6d01d9753e7ff0e6ca0ab6082f8b75256cdb57" # top / oldest
-PATCH_BBRV2_COMMIT_B="00ac5e0aceb8f6d56065072ddc71b7324bbb48ce" # bottom / newest
-PATCH_BBRV2_COMMIT_T="c13e23b9782c9a7f4bcc409bfde157e44a080e82" # top / oldest
-PATCH_KCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8"
+MUQSS_VER="0.210"
+PATCH_ALLOW_O3_COMMIT="40fecdec8599c28fc9d1003c301d2202e39db8a6"
+PATCH_CK_COMMIT_B="" # bottom / newest (EOL 5.12-ck is the last patchset)
+PATCH_CK_COMMIT_T="" # top / oldest
+PATCH_FUTEX_COMMIT_B="bff1c1603cc294ddcbbd7612b1806d7c8f55e7bd" # bottom / newest
+PATCH_FUTEX_COMMIT_T="cba204184fc7af716d29bb3659ccfe9d6c84ecd0" # top / oldest
+PATCH_FUTEX2_COMMIT_B="fa99bbb4cf0a5c6ed18cf58ecca678e82e008cb9" # bottom / newest
+PATCH_FUTEX2_COMMIT_T="cc20b5f100d4f345e0b090a7a76daea256e6097d" # top / oldest
+PATCH_BBRV2_COMMIT_B="fc632709b757850d62d2b295f749e80c19093da3" # bottom / newest
+PATCH_BBRV2_COMMIT_T="5da5aaa858dd7fac0afd439de4ff7565a00d4f32" # top / oldest
+PATCH_KCP_COMMIT="b9369c4a4f43b8cf182c9726dc5c7e6eb4115722"
+PATCH_LRU_GEN_COMMIT_B="58423b0ba935bb76ff3f6754703e8fb8533ecae3" # bottom / newest
+PATCH_LRU_GEN_COMMIT_T="1d1d59e750744b3c6b7cb51006cb59392e2fef65" # top / oldest
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/Y^..X.patch \
 #   | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 # where Y is top and X is bottom
 PATCH_ZENSAUCE_COMMITS=\
-"dda238180bacda4c39f71dd16d754a48da38e676 \
-9a2e0d950bfd77fb51a42a5fc7e81a9187606c38 \
-5b3d9f2372600c3b908b1bd0e8c9b8c6ed351fa2 \
-986ea2483af3ba52c0e6c9e647c05c753a548fb8 \
-228e792a116fd4cce8856ea73f2958ec8a241c0c \
-b81ab9b618d694217a54b5d2de70c7f37d3f3e07 \
-4ace3c6c50dbd58ee5f200a5461289d0491873a6 \
-0bf1b8c445de4481942ca8ace8dc209ece865bd3 \
-513af58e2e4aa8267b1eebc1cd156e3e2a2a33e3 \
-28eaff69b01d9248cac394cce37361d0d6a52714 \
-973d42f99af15b2e610204fbe8252251ed7cc8c1 \
-890ac858741436a40c274efb3514c5f6a96c7c80 \
-0cbcc41992693254e5e4c7952853c6aa7404f28e \
-9b6c7af596e209356850e0991969df68f396aea6 \
-b5e9497d44347c16e732f6ea8838a79a64694b36 \
-7e5629d0fc7ed407babc036c1bc7910d9c73dbef \
-0e9fea26940d7e6e784dcf57909428138b8109e8 \
-fade4cc2bf56ce6c563c04764224b6b84a45587f \
-b7b24b494b62e02c21a9a349da2d036849f9dd8b \
-b7b984993f303b89dd738c26f8742cfcf0ac98ea \
-8cd3f16931b2a05a693bbfc093d44fd504c67700 \
-843f85a8fb80f3b8e4de4ca3c0cab34730cc1b33 \
-5dc3c67b4c2497187c2e4331a4822cb52db9aa65 \
-3f2c3d43bb1330953e090c01f8dfb6a4701bbac4 \
-223b7e095efa96045c164f3bf3576e1d1f599946 \
-2b52b792670d6c1a93d086a10c6872575e849c17 \
-e1b127aa22601f9cb2afa3daad4c69e6a42a89f5"
-
-#--
-
-# Disabled 0cbcc41992693254e5e4c7952853c6aa7404f28e : ZEN: INTERACTIVE: Use BFQ as our elevator
-# Reason: It's better to change via sysfs.  Benchmarks show throughput performance degration with SSD with BFQ.
+"6c19e74f92407b935262366c90fcd1259d939fcf \
+40cbbf2a2215c36d24676746ae98b20c77806355 \
+7ab2a592090c1cf843bb10d267bb585317d0e289 \
+b9369c4a4f43b8cf182c9726dc5c7e6eb4115722 \
+40fecdec8599c28fc9d1003c301d2202e39db8a6 \
+04fcedd90e574042883f5ba655903fcfc7f2cfae \
+67f2b942ab4f2eab6dfafee23ad4c27575ec95f3 \
+fed9cf973d6c74ed9736d2b95c42075894d53ed2 \
+39376e2c9e2d20de215dc154cc27c3a1c44e0288 \
+5ce4b72d373ab3fad2b1cc45450f59370e6ffb5a \
+1a931f871e849e85123de286919641e6c4d502e4 \
+76933ae58372a45bfad754d242ff2124758b07de \
+0902f17304380ccf89112984a099b08505f3535c \
+a655ad71e371e811943afdb533d52946155a2a6b \
+149d85a8e32e7802340e8288829a126d711d8e58 \
+a04d09fad3419e0db39db29f9fd35b3eed5948a6 \
+c6d1cd7ca0e23d3d17abab2350eb49f2aa00ac73 \
+2a92000db1307319f691020858a443495e40f7e5 \
+c7ab6359906def4fbdbfd2510f8038826f27060f \
+4c7ea2cb54eaa2d1d76722b4f7b2e28a837ef138 \
+f69969a3ab15a2b66a535791dc5c23242099fce3 \
+2aeeaeba306699007a9a9295a2f43f639b2415d0 \
+1c8509527a7a90511fdefba4df904fc5c2fa543d \
+f05a76bbac2ea8737c5b6a64a1e842da8c52a146 \
+146ae111c1c1a112b0f267a0bd72794cc3c70013 \
+0d419b3e995b3dfbd5f9261d1604a3c6656c825d"
 
 # top / oldest, bottom / newest
+# Diced to let user can choose between UKSM, KSWAPD, OOMD
+PATCH_DEFER_MADVISE_COMMIT=\
+"519eab42710cd0b9abab9dc4d5a313f80b66ecec"
 PATCH_ZENTUNE_COMMITS=\
-"890ac858741436a40c274efb3514c5f6a96c7c80 \
-9b6c7af596e209356850e0991969df68f396aea6 \
-b5e9497d44347c16e732f6ea8838a79a64694b36 \
-7e5629d0fc7ed407babc036c1bc7910d9c73dbef \
-0e9fea26940d7e6e784dcf57909428138b8109e8 \
-fade4cc2bf56ce6c563c04764224b6b84a45587f \
-b7b24b494b62e02c21a9a349da2d036849f9dd8b"
-PATCH_BFQ_DEFAULT="0cbcc41992693254e5e4c7952853c6aa7404f28e"
+"a04d09fad3419e0db39db29f9fd35b3eed5948a6 \
+c6d1cd7ca0e23d3d17abab2350eb49f2aa00ac73 \
+2a92000db1307319f691020858a443495e40f7e5 \
+c7ab6359906def4fbdbfd2510f8038826f27060f \
+4c7ea2cb54eaa2d1d76722b4f7b2e28a837ef138 \
+f69969a3ab15a2b66a535791dc5c23242099fce3 \
+2aeeaeba306699007a9a9295a2f43f639b2415d0 \
+1c8509527a7a90511fdefba4df904fc5c2fa543d"
+PATCH_BFQ_DEFAULT="c6d1cd7ca0e23d3d17abab2350eb49f2aa00ac73"
 PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
 	${PATCH_BFQ_DEFAULT}
@@ -85,23 +85,30 @@ PATCH_ZENSAUCE_BL="
 	${PATCH_ZENTUNE_COMMITS}
 "
 
+# --
+
+# Disabled 7d443dabec118b2c869461d8740e010bca976931 : ZEN: INTERACTIVE: Use BFQ as our elevator
+# Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
+
 # ZEN interactive MuQSS patches
 # top is oldest, bottom is newest
 PATCH_ZENTUNE_MUQSS_COMMITS=\
-"4d8602abd84dbc4219e337331f7d8bd7a91ce8c6 \
-aa17b2d1d0c2814b2cdd33e2b1cf171b5ac30b86 \
-9089e95bb3d0e64dc64ae90eb509da5075f49248 \
-16b6c9f2c576d43096a216a802c61573286ae5a7"
+"a1b3431fbd525c30c52a138a72dfba17e4c31a63 \
+6e4aab0c82cbf44dae51a91fd7633b49b1f4114d \
+339325b9f946004ed40b0fc03c393197391a70b6"
 
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
-IUSE+=" ${KCP_IUSE} bbrv2 +cfs clang disable_debug futex-wait-multiple futex2
-+genpatches +kernel-compiler-patch muqss +O3 prjc rt tresor tresor_aesni
-tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
-zen-sauce -zen-tune zen-tune-muqss"
+IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex-wait-multiple
+futex2 +genpatches +kernel-compiler-patch lru_gen lto muqss +O3 prjc rt
+shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
+tresor_x86_64-256-bit-key-support uksm zen-sauce -zen-tune zen-tune-muqss"
 REQUIRED_USE+="
+	!muqss
 	^^ ( cfs muqss prjc )
+	prjc? ( !rt )
+	shadowcallstack? ( cfi )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
 	tresor_i686? ( tresor )
@@ -110,10 +117,17 @@ REQUIRED_USE+="
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
 	zen-tune-muqss? ( muqss zen-tune )"
 
+EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
+gen_scs_exclusion() {
+        for a in ${EXCLUDE_SCS[@]} ; do
+                echo " ${a}? ( !shadowcallstack )"
+	done
+}
+REQUIRED_USE+=" "$(gen_scs_exclusion)
+
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
 	muqss? ( !rt )
-	prjc? ( !rt )
 	rt? ( cfs !muqss !prjc )
 "
 fi
@@ -143,6 +157,7 @@ gen_kcp_license() {
 	echo "${out}"
 }
 LICENSE+=" "$(gen_kcp_license)
+LICENSE+=" lru_gen? ( GPL-2 )"
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
@@ -164,6 +179,62 @@ _seq() {
 		i=$(( ${i} + 1 ))
 	done
 }
+
+gen_cfi_rdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			>=sys-devel/lld-${v}
+			=sys-libs/compiler-rt-${v}*
+			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
+		)
+		     "
+	done
+}
+
+gen_shadowcallstack_rdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			>=sys-devel/lld-${v}
+			=sys-libs/compiler-rt-${v}*
+			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+		)
+		     "
+	done
+}
+
+gen_lto_rdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
+			>=sys-devel/lld-${v}
+		)
+		"
+	done
+}
+
+RDEPEND+=" cfi? ( || ( $(gen_cfi_rdepend 12 14) ) )"
+RDEPEND+=" lto? ( || ( $(gen_lto_rdepend 11 14) ) )"
+RDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_rdepend 10 14) ) ) )"
 
 gen_clang_gcc_pair() {
 	local min=${1}
@@ -208,12 +279,12 @@ KCP_TC1="
 	)"
 
 KCP_TC2="
-	clang? ( $(gen_clang_gcc_pair 12 13) )
+	clang? ( $(gen_clang_gcc_pair 12 14) )
 	|| (
 		(
 			>=sys-devel/gcc-11.1
 		)
-		$(gen_clang_gcc_pair 12 13)
+		$(gen_clang_gcc_pair 12 14)
 	)"
 
 KCP_MA_RDEPEND="
@@ -235,6 +306,9 @@ SRC_URI+="
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
 	   ${KERNEL_PATCH_URIS[@]}"
 fi
+
+# Not ready or not planned
+#	   muqss? ( ${CK_SRC_URI} )
 
 # For CPU microarchitectures >= year 2020, assumes mutually exclusive
 # kernel-compiler-patch* USE flag usage
@@ -268,7 +342,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   kernel-compiler-patch-cortex-a72? (
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
-	   muqss? ( ${CK_SRC_URI} )
+	   lru_gen? ( ${LRU_GEN_SRC_URI} )
 	   O3? ( ${O3_ALLOW_SRC_URI} )
 	   prjc? ( ${PRJC_SRC_URI} )
 	   rt? ( ${RT_SRC_URI} )
@@ -288,18 +362,41 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
+	if use tresor ; then
+		if [[ -n "${OT_KERNEL_DEVELOPER}" && "${OT_KERNEL_DEVELOPER}" == "1" ]] ; then
+			:;
+		else
+eerror
+eerror "Building for TRESOR is currently broken for ${PV}.  Use the older LTS"
+eerror "branches instead.  Disable the tresor USE flag for this series to"
+eerror "continue."
+eerror
+			die
+		fi
+	fi
 	if has zen-tune ${IUSE_EFFECTIVE} ; then
 		if use zen-tune ; then
 ewarn
-ewarn "The zen-tune patch might cause lock up or slow io under heavy load like"
-ewarn "npm.  These use flags are not recommended."
+ewarn "The zen-tune patch might cause lock up or slow io under heavy load"
+ewarn "like npm.  These use flags are not recommended."
 ewarn
 		fi
 	fi
 
-	if use tresor ; then
+#	if use tresor ; then
+#ewarn
+#ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
+#ewarn
+#	fi
+
+	if ! use arm64 && use cfi ; then
 ewarn
-ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
+ewarn "CFI is only offered on the arm64 platform."
+ewarn
+	fi
+	if ! use arm64 && use shadowcallstack ; then
+ewarn
+ewarn "ShadowCallStack is only offered on the arm64 platform."
 ewarn
 	fi
 }
@@ -393,22 +490,26 @@ function ot-kernel_pkg_postinst_cb() {
 	:;
 }
 
-# @FUNCTION: ot-kernel_filter_genpatches_blacklist_cb
-# @DESCRIPTION:
-# Show messages and avoid collision triggering
-ot-kernel_filter_genpatches_blacklist_cb() {
-	# remove patches that have been already applied upstream
-	echo " 2400"
-}
-
 # @FUNCTION: ot-kernel_filter_patch_cb
 # @DESCRIPTION:
 # Filtered patch function
 function ot-kernel_filter_patch_cb() {
 	local path="${1}"
-	if [[ "${path}" =~ "prjc_v5.10-r2.patch" ]] ; then
+	if [[ "${path}" =~ "prjc_v5.12-r1.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
+	elif [[ "${path}" =~ prjc_v5.12 ]] ; then
+		_dpatch "${PATCH_OPS}" "${path}"
+ewarn
+ewarn "Applying genpatches 5022 kernel/sched/pelt.h fix for newer Project C."
+ewarn "It still needs testing.  Remove this notice or codeblock if it is a"
+ewarn "success or fixed upstream."
+ewarn
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
+	elif [[ "${path}" =~ "ck-0.210-for-5.12-d66b728-47a8b81.patch" ]] ; then
+		_dpatch "${PATCH_OPS}" "${path}"
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/ck-patchset-5.12-ck1-fix-cpufreq-gov-performance.patch"
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
 einfo "Already applied ${path} upstream"

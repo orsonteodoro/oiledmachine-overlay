@@ -73,7 +73,7 @@ d74d8228e183455100493db818bced8b885768ed"
 # top / oldest, bottom / newest
 # Diced to let user can choose between UKSM, KSWAPD, OOMD
 PATCH_DEFER_MADVISE_COMMIT=\
-"519eab42710cd0b9abab9dc4d5a313f80b66ecec"
+"2a92000db1307319f691020858a443495e40f7e5"
 PATCH_ZENTUNE_COMMITS=\
 "bfbbf9734a3f01fb0677bd7ab7f6b1e96e2cb293 \
 ad88458494fbecc930dab11ff54430c083260c06 \
@@ -96,19 +96,19 @@ PATCH_ZENSAUCE_BL="
 # Disabled 7d443dabec118b2c869461d8740e010bca976931 : ZEN: INTERACTIVE: Use BFQ as our elevator
 # Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
 
+# ZEN interactive MuQSS patches
 # top is oldest, bottom is newest
 PATCH_ZENTUNE_MUQSS_COMMITS=\
-"e544d7be951a96fbb5c6ee839726c3d7754b7509 \
-097d88ec2dd7623b2791cf1d94f6905701669469 \
-2b541bf1e5e27c51f96326f6c9d6c8abcf682d93 \
-a09dda608cbadc92964cb29cf2fef061200e08c2"
+"762d57860d36910142c69ab488a7a1bf323d708e \
+c60d85512e10f3fe7a503974d30988d631408324 \
+56f24ae800a796c1b04b2a9e5d6c3aa717a5ef61"
 
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
-IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs disable_debug futex-wait-multiple futex2
-+genpatches +kernel-compiler-patch lru_gen lto muqss +O3 prjc rt shadowcallstack
-tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
+IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex-wait-multiple
+futex2 +genpatches +kernel-compiler-patch lru_gen lto muqss +O3 prjc rt
+shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-sauce -zen-tune zen-tune-muqss"
 REQUIRED_USE+="
 	!muqss
@@ -176,113 +176,121 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
 LICENSE+=" zen-tune? ( GPL-2 )"
 LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 
-CFI_RDEPEND="
-	(
-		sys-devel/clang:12
-		=sys-devel/clang-runtime-12*[compiler-rt,sanitize]
-		sys-devel/llvm:12
-		>=sys-devel/lld-12
-		=sys-libs/compiler-rt-12*
-		=sys-libs/compiler-rt-sanitizers-12*[cfi?,shadowcallstack?]
-	)
-	(
-		sys-devel/clang:13
-		=sys-devel/clang-runtime-13*[compiler-rt,sanitize]
-		sys-devel/llvm:13
-		>=sys-devel/lld-13
-		=sys-libs/compiler-rt-13*
-		=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
-	)"
+_seq() {
+	local min=${1}
+	local max=${2}
+	local i=${min}
+	while (( ${i} <= ${max} )) ; do
+		echo "${i}"
+		i=$(( ${i} + 1 ))
+	done
+}
 
-LTO_CLANG_RDEPEND="
-	(
-		sys-devel/clang:11
-		sys-devel/llvm:11
-		>=sys-devel/lld-11
-	)
-	(
-		sys-devel/clang:12
-		sys-devel/llvm:12
-		>=sys-devel/lld-12
-	)
-	(
-		sys-devel/clang:13
-		sys-devel/llvm:13
-		>=sys-devel/lld-13
-	)"
+gen_cfi_rdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			>=sys-devel/lld-${v}
+			=sys-libs/compiler-rt-${v}*
+			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
+		)
+		     "
+	done
+}
+
+gen_shadowcallstack_rdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			>=sys-devel/lld-${v}
+			=sys-libs/compiler-rt-${v}*
+			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+		)
+		     "
+	done
+}
+
+gen_lto_rdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
+			>=sys-devel/lld-${v}
+		)
+		"
+	done
+}
+
+RDEPEND+=" cfi? ( || ( $(gen_cfi_rdepend 12 14) ) )"
+RDEPEND+=" lto? ( || ( $(gen_lto_rdepend 11 14) ) )"
+RDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_rdepend 10 14) ) ) )"
+
+gen_clang_gcc_pair() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+		)
+		     "
+	done
+}
 
 KCP_RDEPEND="
-	>=sys-devel/gcc-6.5.0
-	(
-		sys-devel/clang:10
-		sys-devel/llvm:10
+	clang? ( $(gen_clang_gcc_pair 10 14) )
+	|| (
+		(
+			>=sys-devel/gcc-6.5.0
+		)
+		$(gen_clang_gcc_pair 10 14)
 	)
-	(
-		sys-devel/clang:11
-		sys-devel/llvm:11
-	)
-	(
-		sys-devel/clang:12
-		sys-devel/llvm:12
-	)
-	(
-		sys-devel/clang:13
-		sys-devel/llvm:13
-	)"
+"
 
 KCP_TC0="
+	clang? ( $(gen_clang_gcc_pair 10 14) )
 	|| (
-		>=sys-devel/gcc-10
 		(
-			sys-devel/clang:10
-			sys-devel/llvm:10
+			>=sys-devel/gcc-10
 		)
-		(
-			sys-devel/clang:11
-			sys-devel/llvm:11
-		)
-		(
-			sys-devel/clang:12
-			sys-devel/llvm:12
-		)
-		(
-			sys-devel/clang:13
-			sys-devel/llvm:13
-		)
+		$(gen_clang_gcc_pair 10 14)
 	)"
 
 KCP_TC1="
+	clang? ( $(gen_clang_gcc_pair 10 14) )
 	|| (
-		>=sys-devel/gcc-10.3
 		(
-			sys-devel/clang:10
-			sys-devel/llvm:10
+			>=sys-devel/gcc-10.3
 		)
-		(
-			sys-devel/clang:11
-			sys-devel/llvm:11
-		)
-		(
-			sys-devel/clang:12
-			sys-devel/llvm:12
-		)
-		(
-			sys-devel/clang:13
-			sys-devel/llvm:13
-		)
+		$(gen_clang_gcc_pair 10 14)
 	)"
 
 KCP_TC2="
+	clang? ( $(gen_clang_gcc_pair 12 13) )
 	|| (
-		>=sys-devel/gcc-11.1
 		(
-			sys-devel/clang:12
-			sys-devel/llvm:12
+			>=sys-devel/gcc-11.1
 		)
-		(
-			sys-devel/clang:13
-			sys-devel/llvm:13
-		)
+		$(gen_clang_gcc_pair 12 13)
 	)"
 
 KCP_MA_RDEPEND="
@@ -294,11 +302,7 @@ KCP_MA_RDEPEND="
 	kernel-compiler-patch-alder_lake? ( ${KCP_TC2} )"
 
 RDEPEND+=" ${KCP_MA_RDEPEND}
-	   cfi? ( || ( ${CFI_RDEPEND} ) )
-	   kernel-compiler-patch? (
-		|| ( ${KCP_RDEPEND} )
-	   )
-	   lto? ( || ( ${LTO_CLANG_RDEPEND} ) )"
+	   kernel-compiler-patch? ( ${KCP_RDEPEND} )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;

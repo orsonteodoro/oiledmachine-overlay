@@ -70,7 +70,7 @@ PATCH_ZENSAUCE_BL="
 	${PATCH_ZENTUNE_COMMITS}
 "
 
-IUSE+=" bmq +cfs disable_debug +genpatches +kernel-compiler-patch
+IUSE+=" bmq +cfs clang disable_debug +genpatches +kernel-compiler-patch
 muqss +O3 futex-wait-multiple tresor rt tresor_aesni tresor_i686 tresor_sysfs
 tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce -zen-tune
 zen-tune-muqss"
@@ -119,26 +119,39 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
 LICENSE+=" zen-tune? ( GPL-2 )"
 LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 
-KCP_RDEPEND="
-	>=sys-devel/gcc-6.5.0
-	(
-		sys-devel/clang:10
-		sys-devel/llvm:10
-	)
-	(
-		sys-devel/clang:11
-		sys-devel/llvm:11
-	)
-	(
-		sys-devel/clang:12
-		sys-devel/llvm:12
-	)
-	(
-		sys-devel/clang:13
-		sys-devel/llvm:13
-	)"
+_seq() {
+	local min=${1}
+	local max=${2}
+	local i=${min}
+	while (( ${i} <= ${max} )) ; do
+		echo "${i}"
+		i=$(( ${i} + 1 ))
+	done
+}
 
-RDEPEND+=" kernel-compiler-patch? ( || ( ${KCP_RDEPEND} ) )"
+gen_clang_gcc_pair() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+		)
+		     "
+	done
+}
+
+KCP_RDEPEND="
+	clang? ( $(gen_clang_gcc_pair 10 14) )
+	|| (
+		>=sys-devel/gcc-6.5.0
+		$(gen_clang_gcc_pair 10 14)
+	)
+"
+
+RDEPEND+=" kernel-compiler-patch? ( ${KCP_RDEPEND} )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;

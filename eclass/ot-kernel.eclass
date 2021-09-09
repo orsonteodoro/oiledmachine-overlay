@@ -23,6 +23,7 @@
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.10.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.12.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.13.html
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.14.html
 #   The person below who updates the release links above lag. See instead:
 #     https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-kernel/gentoo-sources
 # kernel_compiler_patch:
@@ -34,6 +35,7 @@
 #   https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
 # Multigenerational LRU:
 #   https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/lru
+#   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/lru-v3
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
 #   5.10 https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c
@@ -50,6 +52,7 @@
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.13/
+#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.14/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
 #   https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -57,14 +60,16 @@
 #   https://www1.informatik.uni-erlangen.de/tresor
 # UKSM:
 #   https://github.com/dolohow/uksm
-# zen-kernel 5.4/futex-backports:
-#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
 # zen-kernel 5.{10..13}/futex-multiple-wait-v3:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex-multiple-wait-v3
-# zen-kernel 5.{10..13}/futex2:
+# zen-kernel 5.{10..14}/futex2:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex2
-# zen-kernel 5.{10..13}/bbr2:
+# zen-kernel 5.{10..14}/bbr2:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/bbr2
+# zen-kernel 5.14/futex:
+#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex-multiple-wait-v3
+# zen-kernel 5.4/futex-backports:
+#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
 # zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #     in particular 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0

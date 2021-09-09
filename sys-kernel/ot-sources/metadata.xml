@@ -176,6 +176,8 @@
       execution.</flag>
     <flag name="cfs">Uses the CFS (Completely Fair Scheduling) CPU scheduler
       and not apply any third-party CPU scheduler.</flag>
+    <flag name="clang">This is a stronger check for those prefer Clang over
+      GCC and to make sure the prerequisites are met. 
     <flag name="cve_hotfix">Applies patches to resolve CVEs (Common 
       Vulnerabilities and Exposures).  Not enabled by default.
 
