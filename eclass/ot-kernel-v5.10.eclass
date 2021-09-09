@@ -172,8 +172,8 @@ gen_clang_gcc_pair() {
 	for v in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
 		)
 		     "
 	done

@@ -187,9 +187,9 @@ gen_cfi_rdepend() {
 	for v in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
+			=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
@@ -205,9 +205,9 @@ gen_shadowcallstack_rdepend() {
 	for v in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
+			=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
@@ -223,9 +223,9 @@ gen_lto_rdepend() {
 	for v in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
+			=sys-devel/clang-runtime-${v}*
 			>=sys-devel/lld-${v}
 		)
 		"
@@ -243,8 +243,8 @@ gen_clang_gcc_pair() {
 	for v in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
 		)
 		     "
 	done
@@ -324,16 +324,20 @@ gen_kcp_ma_uri() {
 	echo "${out}"
 }
 
-SRC_URI+=" "$(gen_kcp_ma_uri)
-SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
-	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
-	   futex2? ( ${FUTEX2_SRC_URI} )
+# Not on the servers yet
+NOT_READY_YET="
 	   genpatches? (
 		${GENPATCHES_URI}
 		${GENPATCHES_BASE_SRC_URI}
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
+"
+
+SRC_URI+=" "$(gen_kcp_ma_uri)
+SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
+	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
+	   futex2? ( ${FUTEX2_SRC_URI} )
 	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}

@@ -136,8 +136,8 @@ gen_clang_gcc_pair() {
 	for v in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
 		)
 		     "
 	done
@@ -162,14 +162,18 @@ https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARB
 	   ${KERNEL_PATCH_URIS[@]}"
 fi
 
-SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
-	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
+# Not on the servers yet
+NOT_READY_YET="
 	   genpatches? (
 		${GENPATCHES_URI}
 		${GENPATCHES_BASE_SRC_URI}
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
+"
+
+SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
+	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
 	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}

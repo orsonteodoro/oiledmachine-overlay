@@ -193,9 +193,9 @@ gen_cfi_rdepend() {
 	for v in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
+			=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
@@ -211,9 +211,9 @@ gen_shadowcallstack_rdepend() {
 	for v in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
+			=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
@@ -229,9 +229,9 @@ gen_lto_rdepend() {
 	for v in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP}]
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
+			=sys-devel/clang-runtime-${v}*
 			>=sys-devel/lld-${v}
 		)
 		"
@@ -249,8 +249,8 @@ gen_clang_gcc_pair() {
 	for v in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
 		)
 		     "
 	done
