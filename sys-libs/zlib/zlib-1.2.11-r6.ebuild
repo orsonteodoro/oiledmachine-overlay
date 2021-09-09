@@ -376,7 +376,7 @@ _build_pgx() {
 
 _run_trainer_text_zlib() {
 	( ! has_pgo_requirement ) && return
-	einfo "Running test compression PGO training for ${ABI} for zlib"
+	einfo "Running text compression PGO training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
 		export PIGZEXE="pigz"
 	else
@@ -434,7 +434,7 @@ _run_trainer_text_zlib() {
 
 _run_trainer_text_minizip() {
 	( ! has_pgo_requirement ) && return
-	einfo "Running test compression PGO training for ${ABI} for minizip"
+	einfo "Running text compression PGO training for ${ABI} for minizip"
 	export MINIZIP="minizip"
 	export MINIUNZIP="miniunzip"
 
