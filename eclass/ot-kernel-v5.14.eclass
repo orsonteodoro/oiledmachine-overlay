@@ -104,8 +104,10 @@ IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex-wait-multiple
 futex2 +genpatches +kernel-compiler-patch lru_gen lto muqss +O3 prjc rt
 shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-sauce -zen-tune zen-tune-muqss"
+# genpatches tarball is not downloadable yet
 REQUIRED_USE+="
 	!muqss
+	!genpatches
 	^^ ( cfs muqss prjc )
 	prjc? ( !rt )
 	shadowcallstack? ( cfi )
