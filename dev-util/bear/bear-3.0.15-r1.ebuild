@@ -17,7 +17,7 @@ IUSE+=" test"
 CDEPEND=" >=net-libs/grpc-1.26[${MULTILIB_USEDEP}]
 	   >=dev-libs/protobuf-3.11[${MULTILIB_USEDEP}]"
 DEPEND+=" ${CDEPEND}
-	  >=dev-cpp/nlohmann_json-3.7.3
+	  >=dev-cpp/nlohmann_json-3.7.3[${MULTILIB_USEDEP}]
 	  >=dev-libs/libfmt-6.1[${MULTILIB_USEDEP}]
 	  >=dev-libs/spdlog-1.5[${MULTILIB_USEDEP}]"
 RDEPEND+=" ${DEPEND}"
