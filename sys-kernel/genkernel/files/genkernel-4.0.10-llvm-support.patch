@@ -18,7 +18,7 @@ v1   Added llvm support
 
 diff -urp genkernel-4.0.10.orig/arch/ppc64le/config.sh genkernel-4.0.10/arch/ppc64le/config.sh
 --- genkernel-4.0.10.orig/arch/ppc64le/config.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/arch/ppc64le/config.sh	2021-09-09 22:43:55.041885439 -0700
++++ genkernel-4.0.10/arch/ppc64le/config.sh	2021-09-10 01:49:49.439423278 -0700
 @@ -18,9 +18,34 @@ DEFAULT_KERNEL_MAKE=make
  DEFAULT_UTILS_MAKE=make
  
@@ -57,7 +57,7 @@ diff -urp genkernel-4.0.10.orig/arch/ppc64le/config.sh genkernel-4.0.10/arch/ppc
 +DEFAULT_UTILS_LLVM_LD=ld.lld
 diff -urp genkernel-4.0.10.orig/defaults/config.sh genkernel-4.0.10/defaults/config.sh
 --- genkernel-4.0.10.orig/defaults/config.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/defaults/config.sh	2021-09-09 22:43:55.041885439 -0700
++++ genkernel-4.0.10/defaults/config.sh	2021-09-10 01:49:49.440423317 -0700
 @@ -41,8 +41,27 @@ DEFAULT_KERNEL_MAKE=make
  DEFAULT_UTILS_MAKE=make
  
@@ -100,7 +100,7 @@ diff -urp genkernel-4.0.10.orig/defaults/config.sh genkernel-4.0.10/defaults/con
  DEFAULT_CHOST="${PORTAGE_CHOST:-$(${DEFAULT_UTILS_CC} -dumpmachine 2>/dev/null)}"
 diff -urp genkernel-4.0.10.orig/gen_cmdline.sh genkernel-4.0.10/gen_cmdline.sh
 --- genkernel-4.0.10.orig/gen_cmdline.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gen_cmdline.sh	2021-09-09 22:49:56.174767786 -0700
++++ genkernel-4.0.10/gen_cmdline.sh	2021-09-10 01:49:49.440423317 -0700
 @@ -85,6 +85,9 @@ longusage() {
    echo "	--module-prefix=<dir>	Prefix to kernel module destination, modules"
    echo "				will be installed in <prefix>/lib/modules"
@@ -138,7 +138,7 @@ diff -urp genkernel-4.0.10.orig/gen_cmdline.sh genkernel-4.0.10/gen_cmdline.sh
  			print_info 3 "CMD_NICE: ${CMD_NICE}"
 diff -urp genkernel-4.0.10.orig/gen_compile.sh genkernel-4.0.10/gen_compile.sh
 --- genkernel-4.0.10.orig/gen_compile.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gen_compile.sh	2021-09-09 22:43:55.041885439 -0700
++++ genkernel-4.0.10/gen_compile.sh	2021-09-10 01:49:49.440423317 -0700
 @@ -107,11 +107,17 @@ compile_generic() {
  			compile_cmd+=( "ARCH='${KERNEL_ARCH}'" )
  
@@ -149,7 +149,7 @@ diff -urp genkernel-4.0.10.orig/gen_compile.sh genkernel-4.0.10/gen_compile.sh
  				compile_cmd+=( "${tc_var}='$(TC_PROG_TYPE=KERNEL tc-get${tc_var})'" )
  			done
  
-+			if [[ -n "${CMD_LLVM}" && "${CMD_LLVM}" == "1" ]] ; then
++			if [[ -n "${CMD_LLVM_KERNEL}" && "${CMD_LLVM_KERNEL}" == "1" ]] ; then
 +				local max_llvm=$(ls "${BROOT}/usr/lib/llvm" | sort -rV | head -n 1)
 +				export PATH="${BROOT}/usr/lib/llvm/${max_llvm}/bin:${PATH}"
 +				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
@@ -160,7 +160,7 @@ diff -urp genkernel-4.0.10.orig/gen_compile.sh genkernel-4.0.10/gen_compile.sh
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
 diff -urp genkernel-4.0.10.orig/gen_determineargs.sh genkernel-4.0.10/gen_determineargs.sh
 --- genkernel-4.0.10.orig/gen_determineargs.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gen_determineargs.sh	2021-09-09 22:46:31.200413277 -0700
++++ genkernel-4.0.10/gen_determineargs.sh	2021-09-10 01:49:49.441423356 -0700
 @@ -258,6 +258,26 @@ determine_output_filenames() {
  	done
  }
@@ -217,9 +217,24 @@ diff -urp genkernel-4.0.10.orig/gen_determineargs.sh genkernel-4.0.10/gen_determ
  
  	set_config_with_override STRING CROSS_COMPILE                         CMD_CROSS_COMPILE
  	set_config_with_override STRING BOOTDIR                               CMD_BOOTDIR                               "/boot"
+diff -urp genkernel-4.0.10.orig/genkernel genkernel-4.0.10/genkernel
+--- genkernel-4.0.10.orig/genkernel	2020-07-20 09:05:15.000000000 -0700
++++ genkernel-4.0.10/genkernel	2021-09-10 01:50:58.701117662 -0700
+@@ -364,6 +364,11 @@ if isTrue "${BUILD_RAMDISK}"
+ then
+ 	print_info 1 '' 1 0
+ 
++	if [[ -n "${CMD_LLVM_UTILS}" && "${CMD_LLVM_UTILS}" == "1" ]] ; then
++		local max_llvm=$(ls "${BROOT}/usr/lib/llvm" | sort -rV | head -n 1)
++		export PATH="${BROOT}/usr/lib/llvm/${max_llvm}/bin:${PATH}"
++	fi
++
+ 	# Compile initramfs
+ 	create_initramfs
+ else
 diff -urp genkernel-4.0.10.orig/gkbuilds/busybox.gkbuild genkernel-4.0.10/gkbuilds/busybox.gkbuild
 --- genkernel-4.0.10.orig/gkbuilds/busybox.gkbuild	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gkbuilds/busybox.gkbuild	2021-09-09 22:48:14.894761444 -0700
++++ genkernel-4.0.10/gkbuilds/busybox.gkbuild	2021-09-10 01:49:49.441423356 -0700
 @@ -1,6 +1,26 @@
  # Copyright 1999-2020 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -257,7 +272,7 @@ diff -urp genkernel-4.0.10.orig/gkbuilds/busybox.gkbuild genkernel-4.0.10/gkbuil
  
 diff -urp genkernel-4.0.10.orig/gkbuilds/lvm.gkbuild genkernel-4.0.10/gkbuilds/lvm.gkbuild
 --- genkernel-4.0.10.orig/gkbuilds/lvm.gkbuild	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gkbuilds/lvm.gkbuild	2021-09-09 22:48:25.730310304 -0700
++++ genkernel-4.0.10/gkbuilds/lvm.gkbuild	2021-09-10 01:49:49.441423356 -0700
 @@ -1,7 +1,28 @@
  # Copyright 1999-2019 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2

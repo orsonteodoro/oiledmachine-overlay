@@ -15,11 +15,10 @@ v2 - Added utils support (experimental)
      Use llvm-ranlib
 v1.1 Utilize more of the llvm toolchain
 v1   Added llvm support
-    
 
 diff -urp genkernel-4.2.3.orig/arch/ppc64le/config.sh genkernel-4.2.3/arch/ppc64le/config.sh
 --- genkernel-4.2.3.orig/arch/ppc64le/config.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/arch/ppc64le/config.sh	2021-09-09 22:24:37.511879643 -0700
++++ genkernel-4.2.3/arch/ppc64le/config.sh	2021-09-10 01:06:44.709174452 -0700
 @@ -14,13 +14,53 @@ DEFAULT_COMPRESS_INITRD_TYPE=best
  
  DEFAULT_MAKEOPTS="-j2"
@@ -81,7 +80,7 @@ diff -urp genkernel-4.2.3.orig/arch/ppc64le/config.sh genkernel-4.2.3/arch/ppc64
 +DEFAULT_UTILS_LLVM_STRIP=llvm-strip
 diff -urp genkernel-4.2.3.orig/defaults/config.sh genkernel-4.2.3/defaults/config.sh
 --- genkernel-4.2.3.orig/defaults/config.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/defaults/config.sh	2021-09-09 22:24:37.511879643 -0700
++++ genkernel-4.2.3/defaults/config.sh	2021-09-10 01:06:44.709174452 -0700
 @@ -41,28 +41,52 @@ DEFAULT_KERNEL_AS=as
  DEFAULT_KERNEL_AR=ar
  DEFAULT_KERNEL_CC=gcc
@@ -140,7 +139,7 @@ diff -urp genkernel-4.2.3.orig/defaults/config.sh genkernel-4.2.3/defaults/confi
  DEFAULT_CHOST="${PORTAGE_CHOST:-$(${DEFAULT_UTILS_CC} -dumpmachine 2>/dev/null)}"
 diff -urp genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
 --- genkernel-4.2.3.orig/gen_cmdline.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-09 22:35:16.291328188 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-10 01:06:44.710174489 -0700
 @@ -84,6 +84,9 @@ longusage() {
    echo "				Prefix to kernel module destination, modules"
    echo "				will be installed in <prefix>/lib/modules"
@@ -178,7 +177,7 @@ diff -urp genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
  			print_info 3 "CMD_NICE: ${CMD_NICE}"
 diff -urp genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
 --- genkernel-4.2.3.orig/gen_compile.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-09 22:24:37.512879682 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-10 01:06:44.710174489 -0700
 @@ -107,11 +107,17 @@ compile_generic() {
  			compile_cmd+=( "ARCH='${KERNEL_ARCH}'" )
  
@@ -189,7 +188,7 @@ diff -urp genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
  				compile_cmd+=( "${tc_var}='$(TC_PROG_TYPE=KERNEL tc-get${tc_var})'" )
  			done
  
-+			if [[ -n "${CMD_LLVM}" && "${CMD_LLVM}" == "1" ]] ; then
++			if [[ -n "${CMD_LLVM_KERNEL}" && "${CMD_LLVM_KERNEL}" == "1" ]] ; then
 +				local max_llvm=$(ls "${BROOT}/usr/lib/llvm" | sort -rV | head -n 1)
 +				export PATH="${BROOT}/usr/lib/llvm/${max_llvm}/bin:${PATH}"
 +				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
@@ -200,7 +199,7 @@ diff -urp genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
 diff -urp genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determineargs.sh
 --- genkernel-4.2.3.orig/gen_determineargs.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_determineargs.sh	2021-09-09 22:36:09.489790831 -0700
++++ genkernel-4.2.3/gen_determineargs.sh	2021-09-10 01:06:44.711174527 -0700
 @@ -293,6 +293,26 @@ determine_output_filenames() {
  	done
  }
@@ -283,9 +282,24 @@ diff -urp genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determin
  
  	set_config_with_override STRING CROSS_COMPILE                         CMD_CROSS_COMPILE
  	set_config_with_override STRING BOOTDIR                               CMD_BOOTDIR                               "/boot"
+diff -urp genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
+--- genkernel-4.2.3.orig/genkernel	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/genkernel	2021-09-10 01:47:41.504440277 -0700
+@@ -352,6 +352,11 @@ if isTrue "${BUILD_RAMDISK}"
+ then
+ 	print_info 1 '' 1 0
+ 
++	if [[ -n "${CMD_LLVM_UTILS}" && "${CMD_LLVM_UTILS}" == "1" ]] ; then
++		local max_llvm=$(ls "${BROOT}/usr/lib/llvm" | sort -rV | head -n 1)
++		export PATH="${BROOT}/usr/lib/llvm/${max_llvm}/bin:${PATH}"
++	fi
++
+ 	# Compile initramfs
+ 	create_initramfs
+ else
 diff -urp genkernel-4.2.3.orig/gkbuilds/busybox.gkbuild genkernel-4.2.3/gkbuilds/busybox.gkbuild
 --- genkernel-4.2.3.orig/gkbuilds/busybox.gkbuild	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gkbuilds/busybox.gkbuild	2021-09-09 22:26:16.358527498 -0700
++++ genkernel-4.2.3/gkbuilds/busybox.gkbuild	2021-09-10 01:06:44.711174527 -0700
 @@ -1,7 +1,28 @@
  # Copyright 1999-2020 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -317,7 +331,7 @@ diff -urp genkernel-4.2.3.orig/gkbuilds/busybox.gkbuild genkernel-4.2.3/gkbuilds
  	# flag cleanup
 diff -urp genkernel-4.2.3.orig/gkbuilds/lvm.gkbuild genkernel-4.2.3/gkbuilds/lvm.gkbuild
 --- genkernel-4.2.3.orig/gkbuilds/lvm.gkbuild	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gkbuilds/lvm.gkbuild	2021-09-09 22:26:11.495770664 -0700
++++ genkernel-4.2.3/gkbuilds/lvm.gkbuild	2021-09-10 01:06:44.711174527 -0700
 @@ -1,7 +1,28 @@
  # Copyright 1999-2020 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
