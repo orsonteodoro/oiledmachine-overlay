@@ -1,8 +1,9 @@
 Subject:       Support Clang/LLVM for LTO and CFI for the kernel only for genkernel
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Patch Status:  Complete
-Date:          Thu Sep  9 12:03:03 PM PDT 2021 (Unix time: 1631214183)
+Date:          Fri Sep 10 02:09:29 PM PDT 2021 (Unix time: 1631308169)
 
+v3 - Updated man page
 v2 - Added utils support (experimental)
      Changed --clang to --clang-kernel
      Changed --llvm to --llvm-kernel
@@ -18,7 +19,7 @@ v1   Added llvm support
 
 diff -urp genkernel-4.0.10.orig/arch/ppc64le/config.sh genkernel-4.0.10/arch/ppc64le/config.sh
 --- genkernel-4.0.10.orig/arch/ppc64le/config.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/arch/ppc64le/config.sh	2021-09-10 03:12:12.140748688 -0700
++++ genkernel-4.0.10/arch/ppc64le/config.sh	2021-09-10 13:52:39.486093237 -0700
 @@ -18,9 +18,34 @@ DEFAULT_KERNEL_MAKE=make
  DEFAULT_UTILS_MAKE=make
  
@@ -57,7 +58,7 @@ diff -urp genkernel-4.0.10.orig/arch/ppc64le/config.sh genkernel-4.0.10/arch/ppc
 +DEFAULT_UTILS_LLVM_LD=ld.lld
 diff -urp genkernel-4.0.10.orig/defaults/config.sh genkernel-4.0.10/defaults/config.sh
 --- genkernel-4.0.10.orig/defaults/config.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/defaults/config.sh	2021-09-10 03:12:12.140748688 -0700
++++ genkernel-4.0.10/defaults/config.sh	2021-09-10 13:52:39.486093237 -0700
 @@ -41,8 +41,27 @@ DEFAULT_KERNEL_MAKE=make
  DEFAULT_UTILS_MAKE=make
  
@@ -100,27 +101,20 @@ diff -urp genkernel-4.0.10.orig/defaults/config.sh genkernel-4.0.10/defaults/con
  DEFAULT_CHOST="${PORTAGE_CHOST:-$(${DEFAULT_UTILS_CC} -dumpmachine 2>/dev/null)}"
 diff -urp genkernel-4.0.10.orig/gen_cmdline.sh genkernel-4.0.10/gen_cmdline.sh
 --- genkernel-4.0.10.orig/gen_cmdline.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gen_cmdline.sh	2021-09-10 03:12:12.140748688 -0700
-@@ -85,6 +85,9 @@ longusage() {
++++ genkernel-4.0.10/gen_cmdline.sh	2021-09-10 14:08:15.422763844 -0700
+@@ -85,6 +85,12 @@ longusage() {
    echo "	--module-prefix=<dir>	Prefix to kernel module destination, modules"
    echo "				will be installed in <prefix>/lib/modules"
    echo "  Low-Level Compile settings"
-+  echo "	--cfi			Use LLVM to build a CFI protected kernel"
-+  echo "	--clang-kernel		Use LLVM to build the kernel"
-+  echo "	--clang-utils		Use LLVM to build utils (experimental)"
++  echo "	--cfi			Use Clang/LLVM to build a CFI protected kernel"
++  echo "	--clang-kernel		Use Clang/LLVM to build the kernel"
++  echo "	--clang-utils		Use Clang/LLVM to build utils (experimental)"
++  echo "	--llvm-kernel		Use Clang/LLVM to build the kernel"
++  echo "	--llvm-utils		Use Clang/LLVM to build utils (experimental)"
++  echo "	--lto			Use Clang/LLVM to build a LTO optimized kernel"
    echo "	--cross-compile=<target-triplet>"
    echo "				Target triple (i.e. aarch64-linux-gnu) to build for"
    echo "	--kernel-as=<assembler>	Assembler to use for kernel"
-@@ -109,6 +112,9 @@ longusage() {
-   echo "	--nice			Run the kernel make at the default nice level (10)"
-   echo "	--nice=<0-19>		Run the kernel make at the selected nice level"
-   echo "	--no-nice		Don't be nice while running the kernel make"
-+  echo "	--llvm-kernel		Use LLVM instead of GCC to compile the kernel"
-+  echo "	--llvm-utils		Use LLVM instead of GCC to compile utils (experimental)"
-+  echo "	--lto			Use LLVM to build a LTO optimized kernel"
-   echo "  Initialization"
-   echo "	--splash=<theme>	Enable framebuffer splash using <theme>"
-   echo "	--splash-res=<res>	Select splash theme resolutions to install"
 @@ -815,6 +821,14 @@ parse_cmdline() {
  		--config=*)
  			print_info 3 "CMD_GK_CONFIG: "${*#*=}""
@@ -138,7 +132,7 @@ diff -urp genkernel-4.0.10.orig/gen_cmdline.sh genkernel-4.0.10/gen_cmdline.sh
  			print_info 3 "CMD_NICE: ${CMD_NICE}"
 diff -urp genkernel-4.0.10.orig/gen_compile.sh genkernel-4.0.10/gen_compile.sh
 --- genkernel-4.0.10.orig/gen_compile.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gen_compile.sh	2021-09-10 03:12:12.141748727 -0700
++++ genkernel-4.0.10/gen_compile.sh	2021-09-10 13:52:39.487093276 -0700
 @@ -107,11 +107,17 @@ compile_generic() {
  			compile_cmd+=( "ARCH='${KERNEL_ARCH}'" )
  
@@ -160,7 +154,7 @@ diff -urp genkernel-4.0.10.orig/gen_compile.sh genkernel-4.0.10/gen_compile.sh
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
 diff -urp genkernel-4.0.10.orig/gen_determineargs.sh genkernel-4.0.10/gen_determineargs.sh
 --- genkernel-4.0.10.orig/gen_determineargs.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gen_determineargs.sh	2021-09-10 03:12:12.141748727 -0700
++++ genkernel-4.0.10/gen_determineargs.sh	2021-09-10 13:52:39.487093276 -0700
 @@ -258,6 +258,26 @@ determine_output_filenames() {
  	done
  }
@@ -219,7 +213,7 @@ diff -urp genkernel-4.0.10.orig/gen_determineargs.sh genkernel-4.0.10/gen_determ
  	set_config_with_override STRING BOOTDIR                               CMD_BOOTDIR                               "/boot"
 diff -urp genkernel-4.0.10.orig/genkernel genkernel-4.0.10/genkernel
 --- genkernel-4.0.10.orig/genkernel	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/genkernel	2021-09-10 03:12:12.141748727 -0700
++++ genkernel-4.0.10/genkernel	2021-09-10 13:52:39.487093276 -0700
 @@ -364,6 +364,11 @@ if isTrue "${BUILD_RAMDISK}"
  then
  	print_info 1 '' 1 0
@@ -232,9 +226,49 @@ diff -urp genkernel-4.0.10.orig/genkernel genkernel-4.0.10/genkernel
  	# Compile initramfs
  	create_initramfs
  else
+diff -urp genkernel-4.0.10.orig/genkernel.8 genkernel-4.0.10/genkernel.8
+--- genkernel-4.0.10.orig/genkernel.8	2020-07-20 09:05:15.000000000 -0700
++++ genkernel-4.0.10/genkernel.8	2021-09-10 14:04:20.626573758 -0700
+@@ -358,6 +358,36 @@ Prefix to kernel module destination, mod
+ .RE
+ .SS "LOW\-LEVEL COMPILATION OPTIONS"
+ .PP
++\fB\-\-cfi\fR
++.RS 4
++Use Clang/LLVM to build a CFI protected kernel\&.
++.RE
++.PP
++\fB\-\-clang\-kernel\fR
++.RS 4
++Use Clang/LLVM to build the kernel\&.
++.RE
++.PP
++\fB\-\-clang\-utils\fR
++.RS 4
++Use Clang/LLVM to build utils (experimental)\&.
++.RE
++.PP
++\fB\-\-llvm\-kernel\fR
++.RS 4
++Use Clang/LLVM to build the kernel\&.
++.RE
++.PP
++\fB\-\-llvm\-utils\fR
++.RS 4
++Use Clang/LLVM to build utils (experimental)\&.
++.RE
++.PP
++\fB\-\-lto\fR
++.RS 4
++Use Clang/LLVM to build a LTO optimized kernel\&.
++.RE
++.PP
+ \fB\-\-cross\-compile\fR=<target triplet>
+ .RS 4
+ Target triple (i\&.e\&. aarch64\-linux\-gnu) to build for\&. Only needed when the system running genkernel has a different architecture like the system which should boot the created kernel/initramfs\&.
 diff -urp genkernel-4.0.10.orig/gkbuilds/busybox.gkbuild genkernel-4.0.10/gkbuilds/busybox.gkbuild
 --- genkernel-4.0.10.orig/gkbuilds/busybox.gkbuild	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gkbuilds/busybox.gkbuild	2021-09-10 03:12:38.722783129 -0700
++++ genkernel-4.0.10/gkbuilds/busybox.gkbuild	2021-09-10 13:52:39.487093276 -0700
 @@ -1,7 +1,28 @@
  # Copyright 1999-2020 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -266,7 +300,7 @@ diff -urp genkernel-4.0.10.orig/gkbuilds/busybox.gkbuild genkernel-4.0.10/gkbuil
  	# flag cleanup
 diff -urp genkernel-4.0.10.orig/gkbuilds/lvm.gkbuild genkernel-4.0.10/gkbuilds/lvm.gkbuild
 --- genkernel-4.0.10.orig/gkbuilds/lvm.gkbuild	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gkbuilds/lvm.gkbuild	2021-09-10 03:12:12.142748766 -0700
++++ genkernel-4.0.10/gkbuilds/lvm.gkbuild	2021-09-10 13:52:39.488093315 -0700
 @@ -1,7 +1,28 @@
  # Copyright 1999-2019 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2

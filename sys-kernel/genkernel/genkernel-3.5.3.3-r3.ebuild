@@ -190,7 +190,7 @@ pkg_postinst() {
 	# LVM2 has commits in newer to avoid free after use
 	ewarn
 	ewarn "The dependencies may have vulnerabilities or have vulnerability"
-	ewarn "avoidance upstream.  Use the 4.2.x series instead."
+	ewarn "avoidance upstream."
 	ewarn
 
 	ewarn
