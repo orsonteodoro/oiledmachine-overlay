@@ -5,7 +5,7 @@
 # genkernel-VERSION     -> normal genkernel release
 
 # The original version of this ebuild is 3.5.3.3 from the gentoo overlay
-# modified with subdir_mount, crypt_root_plain, llvm changes.  Revision
+# modified with subdir_mount, crypt_root_plain.  Revision
 # bumps may change on the oiledmachine-overlay.
 
 EAPI=5 # approved 2012.09.11, required by all profiles since 2014.03.12

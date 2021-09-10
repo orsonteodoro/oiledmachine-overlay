@@ -1,107 +1,191 @@
 Subject:       Support Clang/LLVM for LTO and CFI for the kernel only
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
-Patch Status:  Complete
-Date:          Sun Jul 18 05:29:51 PM PDT 2021 (Unix time: 1626654591)
+Patch Status:  Testing / Experimental
+Date:          Thu Sep  9 12:08:55 PM PDT 2021 (Unix time: 1631214535)
+
+v2 - Added utils support (experimental)
+     Changed --clang to --clang-kernel
+     Changed --llvm to --llvm-kernel
+     Added --llvm-utils
+     Added --clang-utils
+     Dropped --pgo
+     See genkernel-4.2.x/json-c/0.13.1/json-c-0.13.1-clang.patch folder for json-c patch
+     Force busybox to be built with gcc
+     Force lvm2 to be built with gcc
+     Use llvm-ranlib
+v1.1 Utilize more of the llvm toolchain
+v1   Added llvm support
+    
 
 diff -urp genkernel-4.2.3.orig/arch/ppc64le/config.sh genkernel-4.2.3/arch/ppc64le/config.sh
 --- genkernel-4.2.3.orig/arch/ppc64le/config.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/arch/ppc64le/config.sh	2021-07-18 21:49:29.686243652 -0700
-@@ -18,8 +18,25 @@ DEFAULT_KERNEL_MAKE=make
- DEFAULT_UTILS_MAKE=make
++++ genkernel-4.2.3/arch/ppc64le/config.sh	2021-09-09 22:24:37.511879643 -0700
+@@ -14,13 +14,53 @@ DEFAULT_COMPRESS_INITRD_TYPE=best
  
- DEFAULT_KERNEL_CC=gcc
+ DEFAULT_MAKEOPTS="-j2"
+ 
 +DEFAULT_KERNEL_AR=ar
- DEFAULT_KERNEL_AS=as
--DEFAULT_KERNEL_LD=ld
++DEFAULT_KERNEL_AS=as
++DEFAULT_KERNEL_CC=gcc
++DEFAULT_KERNEL_CXX=g++
 +DEFAULT_KERNEL_LD=ld.bfd
+ DEFAULT_KERNEL_MAKE=make
+-DEFAULT_UTILS_MAKE=make
 +DEFAULT_KERNEL_NM=nm
 +DEFAULT_KERNEL_OBJCOPY=objcopy
 +DEFAULT_KERNEL_OBJDUMP=objdump
++DEFAULT_KERNEL_RANLIB=ranlib
 +DEFAULT_KERNEL_READELF=readelf
 +DEFAULT_KERNEL_STRIP=strip
-+
-+DEFAULT_KERNEL_LLVM_CC=clang
+ 
+-DEFAULT_KERNEL_CC=gcc
+-DEFAULT_KERNEL_AS=as
+-DEFAULT_KERNEL_LD=ld
 +DEFAULT_KERNEL_LLVM_AR=llvm-ar
 +DEFAULT_KERNEL_LLVM_AS=llvm-as
++DEFAULT_KERNEL_LLVM_CC=clang
++DEFAULT_KERNEL_LLVM_CXX=clang++
 +DEFAULT_KERNEL_LLVM_CLANG_FLAGS="-integrated-as"
 +DEFAULT_KERNEL_LLVM_LD=ld.lld
 +DEFAULT_KERNEL_LLVM_NM=llvm-nm
 +DEFAULT_KERNEL_LLVM_OBJCOPY=llvm-objcopy
 +DEFAULT_KERNEL_LLVM_OBJDUMP=llvm-objdump
++DEFAULT_KERNEL_LLVM_RANLIB=llvm-ranlib
 +DEFAULT_KERNEL_LLVM_READELF=llvm-readelf
 +DEFAULT_KERNEL_LLVM_STRIP=llvm-strip
  
- DEFAULT_UTILS_CC=gcc
+-DEFAULT_UTILS_CC=gcc
  DEFAULT_UTILS_AS=as
++DEFAULT_UTILS_AR=ar
++DEFAULT_UTILS_CC=gcc
++DEFAULT_UTILS_CXX=g++
+ DEFAULT_UTILS_LD=ld
++DEFAULT_UTILS_MAKE=make
++DEFAULT_UTILS_NM=nm
++DEFAULT_UTILS_OBJCOPY=objcopy
++DEFAULT_UTILS_OBJDUMP=objdump
++DEFAULT_UTILS_RANLIB=ranlib
++DEFAULT_UTILS_READELF=readelf
++DEFAULT_UTILS_STRIP=strip
++
++DEFAULT_UTILS_LLVM_AS=llvm-as
++DEFAULT_UTILS_LLVM_AR=llvm-ar
++DEFAULT_UTILS_LLVM_CC=clang
++DEFAULT_UTILS_LLVM_CXX=clang++
++DEFAULT_UTILS_LLVM_LD=ld.lld
++DEFAULT_UTILS_LLVM_NM=llvm-nm
++DEFAULT_UTILS_LLVM_OBJCOPY=llvm-objcopy
++DEFAULT_UTILS_LLVM_OBJDUMP=llvm-objdump
++DEFAULT_UTILS_LLVM_RANLIB=llvm-ranlib
++DEFAULT_UTILS_LLVM_READELF=llvm-readelf
++DEFAULT_UTILS_LLVM_STRIP=llvm-strip
 diff -urp genkernel-4.2.3.orig/defaults/config.sh genkernel-4.2.3/defaults/config.sh
 --- genkernel-4.2.3.orig/defaults/config.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/defaults/config.sh	2021-07-18 21:50:29.088635035 -0700
-@@ -41,7 +41,7 @@ DEFAULT_KERNEL_AS=as
++++ genkernel-4.2.3/defaults/config.sh	2021-09-09 22:24:37.511879643 -0700
+@@ -41,28 +41,52 @@ DEFAULT_KERNEL_AS=as
  DEFAULT_KERNEL_AR=ar
  DEFAULT_KERNEL_CC=gcc
  DEFAULT_KERNEL_CXX=g++
 -DEFAULT_KERNEL_LD=ld
+-DEFAULT_KERNEL_NM=nm
 +DEFAULT_KERNEL_LD=ld.bfd
- DEFAULT_KERNEL_NM=nm
  DEFAULT_KERNEL_MAKE=make
++DEFAULT_KERNEL_NM=nm
  DEFAULT_KERNEL_OBJCOPY=objcopy
-@@ -50,6 +50,17 @@ DEFAULT_KERNEL_RANLIB=ranlib
+ DEFAULT_KERNEL_OBJDUMP=objdump
+ DEFAULT_KERNEL_RANLIB=ranlib
  DEFAULT_KERNEL_READELF=readelf
  DEFAULT_KERNEL_STRIP=strip
  
-+DEFAULT_KERNEL_LLVM_CC=clang
 +DEFAULT_KERNEL_LLVM_AR=llvm-ar
 +DEFAULT_KERNEL_LLVM_AS=llvm-as
++DEFAULT_KERNEL_LLVM_CC=clang
 +DEFAULT_KERNEL_LLVM_CLANG_FLAGS="-integrated-as"
 +DEFAULT_KERNEL_LLVM_LD=ld.lld
 +DEFAULT_KERNEL_LLVM_NM=llvm-nm
 +DEFAULT_KERNEL_LLVM_OBJCOPY=llvm-objcopy
 +DEFAULT_KERNEL_LLVM_OBJDUMP=llvm-objdump
++DEFAULT_KERNEL_LLVM_RANLIB=llvm-ranlib
 +DEFAULT_KERNEL_LLVM_READELF=llvm-readelf
 +DEFAULT_KERNEL_LLVM_STRIP=llvm-strip
 +
  DEFAULT_UTILS_AS=as
  DEFAULT_UTILS_AR=ar
  DEFAULT_UTILS_CC=gcc
-Only in genkernel-4.2.3/defaults: config.sh.orig
-Only in genkernel-4.2.3/defaults: config.sh.rej
+ DEFAULT_UTILS_CFLAGS="-Os -pipe -fomit-frame-pointer"
+ DEFAULT_UTILS_CXX=g++
+ DEFAULT_UTILS_LD=ld
+-DEFAULT_UTILS_NM=nm
+ DEFAULT_UTILS_MAKE=make
++DEFAULT_UTILS_NM=nm
+ DEFAULT_UTILS_OBJCOPY=objcopy
+ DEFAULT_UTILS_OBJDUMP=objdump
+ DEFAULT_UTILS_RANLIB=ranlib
+ DEFAULT_UTILS_READELF=readelf
+ DEFAULT_UTILS_STRIP=strip
+ 
++DEFAULT_UTILS_LLVM_AS=llvm-as
++DEFAULT_UTILS_LLVM_AR=llvm-ar
++DEFAULT_UTILS_LLVM_CC=clang
++DEFAULT_UTILS_LLVM_CXX=clang++
++DEFAULT_UTILS_LLVM_LD=ld.lld
++DEFAULT_UTILS_LLVM_NM=llvm-nm
++DEFAULT_UTILS_LLVM_OBJCOPY=llvm-objcopy
++DEFAULT_UTILS_LLVM_OBJDUMP=llvm-objdump
++DEFAULT_UTILS_LLVM_RANLIB=llvm-ranlib
++DEFAULT_UTILS_LLVM_READELF=llvm-readelf
++DEFAULT_UTILS_LLVM_STRIP=llvm-strip
++
+ PORTAGE_CHOST="$(portageq envvar CHOST)"
+ DEFAULT_CHOST="${PORTAGE_CHOST:-$(${DEFAULT_UTILS_CC} -dumpmachine 2>/dev/null)}"
 diff -urp genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
 --- genkernel-4.2.3.orig/gen_cmdline.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-07-18 21:49:29.686243652 -0700
-@@ -84,6 +84,7 @@ longusage() {
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-09 22:35:16.291328188 -0700
+@@ -84,6 +84,9 @@ longusage() {
    echo "				Prefix to kernel module destination, modules"
    echo "				will be installed in <prefix>/lib/modules"
    echo "  Low-Level Compile settings"
 +  echo "	--cfi			Use LLVM to build a CFI protected kernel"
++  echo "	--clang-kernel		Use Clang to build the kernel"
++  echo "	--clang-utils		Use Clang to build utils (Experimental / WIP / Debugging)"
    echo "	--cross-compile=<target-triplet>"
    echo "				Target triple (i.e. aarch64-linux-gnu) to build for"
    echo "	--kernel-as=<assembler>	Assembler to use for kernel"
-@@ -112,6 +113,9 @@ longusage() {
+@@ -112,6 +115,9 @@ longusage() {
    echo "	--nice			Run the kernel make at the default nice level (10)"
    echo "	--nice=<0-19>		Run the kernel make at the selected nice level"
    echo "	--no-nice		Don't be nice while running the kernel make"
-+  echo "	--llvm			Use LLVM instead of GCC to compile the kernel"
++  echo "	--llvm-kernel		Use LLVM instead of GCC to compile the kernel"
++  echo "	--llvm-utils		Use LLVM instead of GCC to compile utils (Experimental / WIP / Debugging)"
 +  echo "	--lto			Use LLVM to build a LTO optimized kernel"
-+  echo "	--pgo			Use LLVM to build a PGO optimized kernel"
    echo "  Initialization"
    echo "	--splash=<theme>	Enable framebuffer splash using <theme>"
    echo "	--splash-res=<res>	Select splash theme resolutions to install"
-@@ -870,6 +874,10 @@ parse_cmdline() {
+@@ -870,6 +876,14 @@ parse_cmdline() {
  		--config=*)
  			print_info 3 "CMD_GK_CONFIG: "${*#*=}""
  			;;
-+		--cfi|--llvm|--lto|--pgo)
-+			CMD_LLVM=1
-+			print_info 3 "CMD_LLVM: ${CMD_LLVM}"
++		--cfi|--clang|--clang-kernel|--llvm|--llvm-utils|--lto)
++			CMD_LLVM_KERNEL=1
++			print_info 3 "CMD_LLVM_KERNEL: ${CMD_LLVM_KERNEL}"
++			;;
++		--clang-utils|--llvm-utils)
++			CMD_LLVM_UTILS=1
++			print_info 3 "CMD_LLVM_UTILS: ${CMD_LLVM_UTILS}"
 +			;;
  		--nice)
  			CMD_NICE=10
  			print_info 3 "CMD_NICE: ${CMD_NICE}"
-Only in genkernel-4.2.3: gen_cmdline.sh.orig
 diff -urp genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
 --- genkernel-4.2.3.orig/gen_compile.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-07-18 21:49:29.686243652 -0700
-@@ -112,6 +112,12 @@ compile_generic() {
++++ genkernel-4.2.3/gen_compile.sh	2021-09-09 22:24:37.512879682 -0700
+@@ -107,11 +107,17 @@ compile_generic() {
+ 			compile_cmd+=( "ARCH='${KERNEL_ARCH}'" )
+ 
+ 			local tc_var
+-			for tc_var in AS AR CC LD NM OBJCOPY OBJDUMP READELF STRIP
++			for tc_var in AS AR CC LD NM OBJCOPY OBJDUMP RANLIB READELF STRIP
+ 			do
  				compile_cmd+=( "${tc_var}='$(TC_PROG_TYPE=KERNEL tc-get${tc_var})'" )
  			done
  
@@ -116,15 +200,25 @@ diff -urp genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
 diff -urp genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determineargs.sh
 --- genkernel-4.2.3.orig/gen_determineargs.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_determineargs.sh	2021-07-18 21:52:37.841818299 -0700
-@@ -293,6 +293,16 @@ determine_output_filenames() {
++++ genkernel-4.2.3/gen_determineargs.sh	2021-09-09 22:36:09.489790831 -0700
+@@ -293,6 +293,26 @@ determine_output_filenames() {
  	done
  }
  
 +kernel_default() {
 +	local gcc_default="${1}"
 +	local llvm_default="${2}"
-+	if [[ -n "${CMD_LLVM}" && "${CMD_LLVM}" == "1" ]] ; then
++	if [[ -n "${CMD_LLVM_KERNEL}" && "${CMD_LLVM_KERNEL}" == "1" ]] ; then
++		echo "${llvm_default}"
++	else
++		echo "${gcc_default}"
++	fi
++}
++
++utils_default() {
++	local gcc_default="${1}"
++	local llvm_default="${2}"
++	if [[ -n "${CMD_LLVM_UTILS}" && "${CMD_LLVM_UTILS}" == "1" ]] ; then
 +		echo "${llvm_default}"
 +	else
 +		echo "${gcc_default}"
@@ -134,7 +228,7 @@ diff -urp genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determin
  determine_real_args() {
  	# Unset known variables which will interfere with _tc-getPROG().
  	local tc_var tc_varname_build tc_vars=$(get_tc_vars)
-@@ -353,19 +363,20 @@ determine_real_args() {
+@@ -353,32 +373,33 @@ determine_real_args() {
  	set_config_with_override STRING CHOST                                 CMD_CHOST                                 "${DEFAULT_CHOST}"
  	set_config_with_override STRING MAKEOPTS                              CMD_MAKEOPTS                              "${DEFAULT_MAKEOPTS}"
  	set_config_with_override STRING NICE                                  CMD_NICE                                  "10"
@@ -154,15 +248,102 @@ diff -urp genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determin
  	set_config_with_override STRING KERNEL_MAKE                           CMD_KERNEL_MAKE                           "${DEFAULT_KERNEL_MAKE}"
 -	set_config_with_override STRING KERNEL_OBJCOPY                        CMD_KERNEL_OBJCOPY                        "${DEFAULT_KERNEL_OBJCOPY}"
 -	set_config_with_override STRING KERNEL_OBJDUMP                        CMD_KERNEL_OBJDUMP                        "${DEFAULT_KERNEL_OBJDUMP}"
-+	set_config_with_override STRING KERNEL_OBJCOPY                        CMD_KERNEL_OBJCOPY                        $(kernel_default "${DEFAULT_KERNEL_OBJCOPY}" "${DEFAULT_KERNEL_LLVM_OBJCOPY}")
-+	set_config_with_override STRING KERNEL_OBJDUMP                        CMD_KERNEL_OBJDUMP                        $(kernel_default "${DEFAULT_KERNEL_OBJDUMP}" "${DEFAULT_KERNEL_LLVM_OBJDUMP}")
- 	set_config_with_override STRING KERNEL_RANLIB                         CMD_KERNEL_RANLIB                         "${DEFAULT_KERNEL_RANLIB}"
+-	set_config_with_override STRING KERNEL_RANLIB                         CMD_KERNEL_RANLIB                         "${DEFAULT_KERNEL_RANLIB}"
 -	set_config_with_override STRING KERNEL_READELF                        CMD_KERNEL_READELF                        "${DEFAULT_KERNEL_READELF}"
 -	set_config_with_override STRING KERNEL_STRIP                          CMD_KERNEL_STRIP                          "${DEFAULT_KERNEL_STRIP}"
+-	set_config_with_override STRING UTILS_AS                              CMD_UTILS_AS                              "${DEFAULT_UTILS_AS}"
+-	set_config_with_override STRING UTILS_AR                              CMD_UTILS_AR                              "${DEFAULT_UTILS_AR}"
+-	set_config_with_override STRING UTILS_CC                              CMD_UTILS_CC                              "${DEFAULT_UTILS_CC}"
++	set_config_with_override STRING KERNEL_OBJCOPY                        CMD_KERNEL_OBJCOPY                        $(kernel_default "${DEFAULT_KERNEL_OBJCOPY}" "${DEFAULT_KERNEL_LLVM_OBJCOPY}")
++	set_config_with_override STRING KERNEL_OBJDUMP                        CMD_KERNEL_OBJDUMP                        $(kernel_default "${DEFAULT_KERNEL_OBJDUMP}" "${DEFAULT_KERNEL_LLVM_OBJDUMP}")
++	set_config_with_override STRING KERNEL_RANLIB                         CMD_KERNEL_RANLIB                         $(kernel_default "${DEFAULT_KERNEL_RANLIB}" "${DEFAULT_KERNEL_LLVM_RANLIB}")
 +	set_config_with_override STRING KERNEL_READELF                        CMD_KERNEL_READELF                        $(kernel_default "${DEFAULT_KERNEL_READELF}" "${DEFAULT_KERNEL_LLVM_READELF}")
 +	set_config_with_override STRING KERNEL_STRIP                          CMD_KERNEL_STRIP                          $(kernel_default "${DEFAULT_KERNEL_STRIP}" "${DEFAULT_KERNEL_LLVM_STRIP}")
- 	set_config_with_override STRING UTILS_AS                              CMD_UTILS_AS                              "${DEFAULT_UTILS_AS}"
- 	set_config_with_override STRING UTILS_AR                              CMD_UTILS_AR                              "${DEFAULT_UTILS_AR}"
- 	set_config_with_override STRING UTILS_CC                              CMD_UTILS_CC                              "${DEFAULT_UTILS_CC}"
-Only in genkernel-4.2.3: gen_determineargs.sh.orig
-Only in genkernel-4.2.3: gen_determineargs.sh.rej
++	set_config_with_override STRING UTILS_AS                              CMD_UTILS_AS                              $(utils_default "${DEFAULT_UTILS_AS}" "${DEFAULT_UTILS_LLVM_AS}")
++	set_config_with_override STRING UTILS_AR                              CMD_UTILS_AR                              $(utils_default "${DEFAULT_UTILS_AR}" "${DEFAULT_UTILS_LLVM_AR}")
++	set_config_with_override STRING UTILS_CC                              CMD_UTILS_CC                              $(utils_default "${DEFAULT_UTILS_CC}" "${DEFAULT_UTILS_LLVM_CC}")
+ 	set_config_with_override STRING UTILS_CFLAGS                          CMD_UTILS_CFLAGS                          "${DEFAULT_UTILS_CFLAGS}"
+-	set_config_with_override STRING UTILS_CXX                             CMD_UTILS_CXX                             "${DEFAULT_UTILS_CXX}"
+-	set_config_with_override STRING UTILS_LD                              CMD_UTILS_LD                              "${DEFAULT_UTILS_LD}"
+-	set_config_with_override STRING UTILS_NM                              CMD_UTILS_NM                              "${DEFAULT_UTILS_NM}"
++	set_config_with_override STRING UTILS_CXX                             CMD_UTILS_CXX                             $(utils_default "${DEFAULT_UTILS_CXX}" "${DEFAULT_UTILS_LLVM_CXX}")
++	set_config_with_override STRING UTILS_LD                              CMD_UTILS_LD                              $(utils_default "${DEFAULT_UTILS_LD}" "${DEFAULT_UTILS_LLVM_LD}")
++	set_config_with_override STRING UTILS_NM                              CMD_UTILS_NM                              $(utils_default "${DEFAULT_UTILS_NM}" "${DEFAULT_UTILS_LLVM_NM}")
+ 	set_config_with_override STRING UTILS_MAKE                            CMD_UTILS_MAKE                            "${DEFAULT_UTILS_MAKE}"
+-	set_config_with_override STRING UTILS_OBJCOPY                         CMD_UTILS_OBJCOPY                         "${DEFAULT_UTILS_OBJCOPY}"
+-	set_config_with_override STRING UTILS_OBJDUMP                         CMD_UTILS_OBJDUMP                         "${DEFAULT_UTILS_OBJDUMP}"
+-	set_config_with_override STRING UTILS_RANLIB                          CMD_UTILS_RANLIB                          "${DEFAULT_UTILS_RANLIB}"
+-	set_config_with_override STRING UTILS_READELF                         CMD_UTILS_READELF                         "${DEFAULT_UTILS_READELF}"
+-	set_config_with_override STRING UTILS_STRIP                           CMD_UTILS_STRIP                           "${DEFAULT_UTILS_STRIP}"
++	set_config_with_override STRING UTILS_OBJCOPY                         CMD_UTILS_OBJCOPY                         $(utils_default "${DEFAULT_UTILS_OBJCOPY}" "${DEFAULT_UTILS_LLVM_OBJCOPY}")
++	set_config_with_override STRING UTILS_OBJDUMP                         CMD_UTILS_OBJDUMP                         $(utils_default "${DEFAULT_UTILS_OBJDUMP}" "${DEFAULT_UTILS_LLVM_OBJDUMP}")
++	set_config_with_override STRING UTILS_RANLIB                          CMD_UTILS_RANLIB                          $(utils_default "${DEFAULT_UTILS_RANLIB}" "${DEFAULT_UTILS_LLVM_RANLIB}")
++	set_config_with_override STRING UTILS_READELF                         CMD_UTILS_READELF                         $(utils_default "${DEFAULT_UTILS_READELF}" "${DEFAULT_UTILS_LLVM_READELF}")
++	set_config_with_override STRING UTILS_STRIP                           CMD_UTILS_STRIP                           $(utils_default "${DEFAULT_UTILS_STRIP}" "${DEFAULT_UTILS_LLVM_STRIP}")
+ 
+ 	set_config_with_override STRING CROSS_COMPILE                         CMD_CROSS_COMPILE
+ 	set_config_with_override STRING BOOTDIR                               CMD_BOOTDIR                               "/boot"
+diff -urp genkernel-4.2.3.orig/gkbuilds/busybox.gkbuild genkernel-4.2.3/gkbuilds/busybox.gkbuild
+--- genkernel-4.2.3.orig/gkbuilds/busybox.gkbuild	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/gkbuilds/busybox.gkbuild	2021-09-09 22:26:16.358527498 -0700
+@@ -1,7 +1,28 @@
+ # Copyright 1999-2020 Gentoo Authors
+ # Distributed under the terms of the GNU General Public License v2
+ 
++use_gcc_toolchain() {
++	# This package does not work with clang/llvm toolchain.
++	# Reason:  Builds fine but segfaults or panics.
++	export CC=gcc
++	export CXX=g++
++	export AS=as
++	export AR=ar
++	export LD=ld.bfd
++	export NM=nm
++	export OBJCOPY=objcopy
++	export OBJDUMP=objdump
++	export RANLIB=ranlib
++	export READELF=readelf
++	export STRIP=strip
++	export HOSTAR=${CHOST}-ar
++	export HOSTCC=${CHOST}-gcc
++	export HOSTCXX=${CHOST}-g++
++	export HOSTLD=${CHOST}-ld.bfd
++}
++
+ src_prepare() {
++	use_gcc_toolchain
+ 	default
+ 
+ 	# flag cleanup
+diff -urp genkernel-4.2.3.orig/gkbuilds/lvm.gkbuild genkernel-4.2.3/gkbuilds/lvm.gkbuild
+--- genkernel-4.2.3.orig/gkbuilds/lvm.gkbuild	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/gkbuilds/lvm.gkbuild	2021-09-09 22:26:11.495770664 -0700
+@@ -1,7 +1,28 @@
+ # Copyright 1999-2020 Gentoo Authors
+ # Distributed under the terms of the GNU General Public License v2
+ 
++use_gcc_toolchain() {
++	# This package does not work with clang/llvm toolchain.
++	# Reason:  Build time failure
++	export CC=gcc
++	export CXX=g++
++	export AS=as
++	export AR=ar
++	export LD=ld.bfd
++	export NM=nm
++	export OBJCOPY=objcopy
++	export OBJDUMP=objdump
++	export RANLIB=ranlib
++	export READELF=readelf
++	export STRIP=strip
++	export HOSTAR=${CHOST}-ar
++	export HOSTCC=${CHOST}-gcc
++	export HOSTCXX=${CHOST}-g++
++	export HOSTLD=${CHOST}-ld.bfd
++}
++
+ src_configure() {
++	use_gcc_toolchain
+ 	# devicemapper needs to find udev
+ 	append-ldflags -Wl,-rpath-link,${BROOT}/usr/lib
+ 

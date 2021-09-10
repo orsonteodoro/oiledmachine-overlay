@@ -1,0 +1,17 @@
+Fix from https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=244233
+---
+diff -urp json-c-0.13.1.orig/json_object.c json-c-0.13.1/json_object.c
+--- json-c-0.13.1.orig/json_object.c	2017-12-25 12:17:52.000000000 -0800
++++ json-c-0.13.1/json_object.c	2021-09-09 14:01:48.861277659 -0700
+@@ -698,9 +698,9 @@ int64_t json_object_get_int64(const stru
+ 	case json_type_int:
+ 		return jso->o.c_int64;
+ 	case json_type_double:
+-		if (jso->o.c_double >= INT64_MAX)
++		if (jso->o.c_double >= (double)INT64_MAX)
+ 			return INT64_MAX;
+-		if (jso->o.c_double <= INT64_MIN)
++		if (jso->o.c_double <= (double)INT64_MIN)
+ 			return INT64_MIN;
+ 		return (int64_t)jso->o.c_double;
+ 	case json_type_boolean:

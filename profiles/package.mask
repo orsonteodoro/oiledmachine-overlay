@@ -50,10 +50,6 @@ dev-dotnet/xwt
 # Fixing major problems related to testing and restoring files.
 sys-kernel/kpatch
 
-# The crypt_root_plain patch and USE flag does not work with 4.1.x but works
-# with 4.0.x
->=sys-kernel/genkernel-4.1
-
 # Masked for security reasons
 #-------------------------------------------------------------------------------
 

@@ -94,7 +94,7 @@ if [[ ${PV} == 9999* ]] ; then
 else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86"	# patches are unfinished or untested.
+	#KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86"	# testing, debugging
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
@@ -119,9 +119,9 @@ gen_scs_exclusion() {
 }
 REQUIRED_USE+=" "$(gen_scs_exclusion)
 
-LLVM_SLOTS=(11 12 13)
-LLVM_LTO_SLOTS=(11 12 13)
-LLVM_CFI_SLOTS=(12 13)
+LLVM_SLOTS=(11 12 13 14)
+LLVM_LTO_SLOTS=(11 12 13 14)
+LLVM_CFI_SLOTS=(12 13 14)
 
 gen_llvm_rdepends() {
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -267,8 +267,10 @@ src_prepare() {
 	fi
 
 	if use llvm ; then
-		eapply "${FILESDIR}/${PN}-4.2.3-llvm-support.patch"
+		eapply "A${FILESDIR}/${PN}-4.2.3-llvm-support.patch"
 	fi
+
+	cp -aT "${FILESDIR}/genkernel-4.2.x" "${S}/patches" || die
 }
 
 src_compile() {
