@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+	<maintainer type="person">
+		<!-- ebuild fork only on the oiledmachine overlay -->
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
+	</maintainer>
 	<maintainer type="person" proxied="yes">
+		<!-- ebuild originator -->
 		<email>davidroman96@gmail.com</email>
 		<name>David Roman</name>
 	</maintainer>
 	<maintainer type="project" proxied="proxy">
+		<!-- ebuild originator -->
 		<email>proxy-maint@gentoo.org</email>
 		<name>Proxy Maintainers</name>
 	</maintainer>
+	<longdescription>
+		This ebuild fork adds multilib support.
+	</longdescription>
 	<upstream>
 		<remote-id type="github">gabime/spdlog</remote-id>
 	</upstream>
