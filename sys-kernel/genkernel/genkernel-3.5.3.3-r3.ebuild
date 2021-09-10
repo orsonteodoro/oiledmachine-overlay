@@ -47,7 +47,7 @@ then
 else
 	SRC_URI="mirror://gentoo/${P}.tar.xz
 		${COMMON_URI}"
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86"
+	# KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86" # ebuild removed upstream, old dependencies
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
@@ -183,5 +183,11 @@ pkg_postinst() {
 	ewarn "The identifiers in /dev/disk/by-id/ have changed between genkernel 4.2.x and"
 	ewarn "this version.  Please update the kernel parameters provided to for grub when"
 	ewarn "switching between the two versions."
+	ewarn
+
+	# LVM2 has commits in newer to avoid free after use
+	ewarn
+	ewarn "The dependencies may have vulnerabilities or have vulnerability avoidance upstream."
+	ewarn "Use the 4.2.x series instead."
 	ewarn
 }

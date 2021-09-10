@@ -370,4 +370,10 @@ pkg_postinst() {
 	ewarn "this version.  Please update the kernel parameters provided to for grub when"
 	ewarn "switching between the two versions."
 	ewarn
+
+	# LVM2 has commits in newer to avoid free after use
+	ewarn
+	ewarn "The dependencies may have vulnerabilities or have vulnerability avoidance upstream."
+	ewarn "Use the 4.2.x series instead."
+	ewarn
 }
