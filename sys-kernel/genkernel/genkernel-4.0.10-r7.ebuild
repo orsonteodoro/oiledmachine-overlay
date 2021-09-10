@@ -250,7 +250,7 @@ src_prepare() {
 	fi
 
 	if use llvm ; then
-		eapply "A${FILESDIR}/${PN}-4.0.10-llvm-support.patch"
+		eapply "${FILESDIR}/${PN}-4.0.10-llvm-support.patch"
 	fi
 
 	cp -aT "${FILESDIR}/genkernel-4.0.x" "${S}/patches" || die
