@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<!-- ebuild fork only on the oiledmachine-overlay -->
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
+	</maintainer>
+	<maintainer type="project">
+		<!-- ebuild originator -->
+		<email>media-video@gentoo.org</email>
+		<name>Gentoo Video project</name>
+	</maintainer>
+	<upstream>
+		<remote-id type="github">nlohmann/json</remote-id>
+	</upstream>
+	<longdescription>
+		The oiledmachine-overlay changes this ebuild
+		with multilib changes.
+
+		It may appear unnecesary, but certain packages
+		resolve dependencies though cmake which makes it
+		appear missing on 32-bit ABI.  The original ebuild
+		only provided the 64-bit cmake files.
+	</longdescription>
+</pkgmetadata>
