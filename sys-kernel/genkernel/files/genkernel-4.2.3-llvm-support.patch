@@ -1,4 +1,4 @@
-Subject:       Support Clang/LLVM for LTO and CFI for the kernel only
+Subject:       Support Clang/LLVM for LTO and CFI for the kernel only for genkernel
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Patch Status:  Testing / Experimental
 Date:          Thu Sep  9 12:08:55 PM PDT 2021 (Unix time: 1631214535)
