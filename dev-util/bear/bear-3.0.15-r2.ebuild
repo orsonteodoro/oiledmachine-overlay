@@ -49,14 +49,12 @@ pkg_setup()
 
 src_prepare() {
 	cmake-utils_src_prepare
-	multilib_copy_sources
 }
 
 src_configure() {
 	local mycmakeargs=(
 		-DENABLE_UNIT_TESTS=$(usex test)
 		-DENABLE_FUNC_TESTS=$(usex test)
-		-DCMAKE_INSTALL_LIBDIR=$(get_libdir)
 	)
 	cmake-multilib_src_configure
 }
