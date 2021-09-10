@@ -1,6 +1,6 @@
 Subject:       Support Clang/LLVM for LTO and CFI for the kernel only for genkernel
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
-Patch Status:  Testing / Experimental
+Patch Status:  Complete
 Date:          Thu Sep  9 12:08:55 PM PDT 2021 (Unix time: 1631214535)
 
 v2 - Added utils support (experimental)
@@ -146,7 +146,7 @@ diff -urp genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
    echo "  Low-Level Compile settings"
 +  echo "	--cfi			Use LLVM to build a CFI protected kernel"
 +  echo "	--clang-kernel		Use Clang to build the kernel"
-+  echo "	--clang-utils		Use Clang to build utils (Experimental / WIP / Debugging)"
++  echo "	--clang-utils		Use Clang to build utils (experimental)"
    echo "	--cross-compile=<target-triplet>"
    echo "				Target triple (i.e. aarch64-linux-gnu) to build for"
    echo "	--kernel-as=<assembler>	Assembler to use for kernel"
@@ -155,7 +155,7 @@ diff -urp genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
    echo "	--nice=<0-19>		Run the kernel make at the selected nice level"
    echo "	--no-nice		Don't be nice while running the kernel make"
 +  echo "	--llvm-kernel		Use LLVM instead of GCC to compile the kernel"
-+  echo "	--llvm-utils		Use LLVM instead of GCC to compile utils (Experimental / WIP / Debugging)"
++  echo "	--llvm-utils		Use LLVM instead of GCC to compile utils (experimental)"
 +  echo "	--lto			Use LLVM to build a LTO optimized kernel"
    echo "  Initialization"
    echo "	--splash=<theme>	Enable framebuffer splash using <theme>"
