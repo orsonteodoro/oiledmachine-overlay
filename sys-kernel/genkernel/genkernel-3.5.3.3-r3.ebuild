@@ -191,4 +191,9 @@ pkg_postinst() {
 	ewarn "The dependencies may have vulnerabilities or have vulnerability avoidance upstream."
 	ewarn "Use the 4.2.x series instead."
 	ewarn
+
+	ewarn
+	ewarn "The ebuild for the 3.5.x series has been removed from the original repo."
+	ewarn "Please switch to later versions.  This ebuild may be removed anytime."
+	ewarn
 }
