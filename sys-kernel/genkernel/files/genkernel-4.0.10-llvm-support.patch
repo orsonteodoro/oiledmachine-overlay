@@ -168,7 +168,7 @@ diff -urp genkernel-4.0.10.orig/gen_determineargs.sh genkernel-4.0.10/gen_determ
 +kernel_default() {
 +	local gcc_default="${1}"
 +	local llvm_default="${2}"
-+	if [[ -n "${CMD_LLVM_LLVM}" && "${CMD_LLVM_KERNEL}" == "1" ]] ; then
++	if [[ -n "${CMD_LLVM_KERNEL}" && "${CMD_LLVM_KERNEL}" == "1" ]] ; then
 +		echo "${llvm_default}"
 +	else
 +		echo "${gcc_default}"

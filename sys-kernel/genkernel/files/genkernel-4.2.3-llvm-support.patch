@@ -164,7 +164,7 @@ diff -urp genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
  		--config=*)
  			print_info 3 "CMD_GK_CONFIG: "${*#*=}""
  			;;
-+		--cfi|--clang|--clang-kernel|--llvm|--llvm-utils|--lto)
++		--cfi|--clang|--clang-kernel|--llvm|--llvm-kernel|--lto)
 +			CMD_LLVM_KERNEL=1
 +			print_info 3 "CMD_LLVM_KERNEL: ${CMD_LLVM_KERNEL}"
 +			;;
