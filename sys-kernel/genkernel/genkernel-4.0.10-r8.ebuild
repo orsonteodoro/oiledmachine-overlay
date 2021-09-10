@@ -388,7 +388,7 @@ pkg_postinst() {
 	ewarn "The --clang-utils or --llvm-utils options are experimental.  Only basic"
 	ewarn "initramfs modules were tested.  If runtime or buildtime failure occurs"
 	ewarn "with clang, you may need to switch to gcc for that package.  Details"
-	ewarn "can be found in genkernel-4.0.10-llvm-support.patch.  Either fork the"
+	ewarn "can be found in genkernel-4.0.10-llvm-support-v2.patch.  Either fork the"
 	ewarn "ebuild, supply a user patch, or send the option as an issue request for"
 	ewarn "review."
 	ewarn
