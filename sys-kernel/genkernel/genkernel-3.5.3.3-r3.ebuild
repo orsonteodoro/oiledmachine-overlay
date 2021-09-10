@@ -182,7 +182,8 @@ pkg_postinst() {
 	ewarn
 	ewarn "The identifiers in /dev/disk/by-id/ have changed between genkernel 4.2.x and"
 	ewarn "this version.  Please update the kernel parameters provided to for grub when"
-	ewarn "switching between the two versions."
+	ewarn "switching between the two versions.  Go to shell mode and ls /dev/disk/by-id."
+	ewarn "Then take a photo of the changes and manually edit grub."
 	ewarn
 
 	# LVM2 has commits in newer to avoid free after use

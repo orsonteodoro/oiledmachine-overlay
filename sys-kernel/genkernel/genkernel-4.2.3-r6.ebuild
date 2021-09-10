@@ -415,4 +415,9 @@ pkg_postinst() {
 	ewarn "genkernel and this version.  Please update the kernel parameters provided to for"
 	ewarn "grub when switching between the two versions."
 	ewarn
+
+	ewarn
+	ewarn "The --clang and --llvm have been replaced with --clang-kernel and --llvm-kernel."
+	ewarn "The former command line options may be removed."
+	ewarn
 }
