@@ -174,22 +174,23 @@ pkg_postinst() {
 	echo
 
 	ewarn
-	ewarn "You must load all modules by removing \"nodetect\" from the kernel parameter"
-	ewarn "list for grub or have the drivers built in to use the kernel with the"
-	ewarn "crypt_root_plain USE flag."
+	ewarn "You must load all modules by removing \"nodetect\" from the kernel"
+	ewarn "parameter list for grub or have the drivers built in to use the kernel"
+	ewarn "with the crypt_root_plain USE flag."
 	ewarn
 
 	ewarn
-	ewarn "The identifiers in /dev/disk/by-id/ have changed between genkernel 4.2.x and"
-	ewarn "this version.  Please update the kernel parameters provided to for grub when"
-	ewarn "switching between the two versions.  Go to shell mode and ls /dev/disk/by-id."
-	ewarn "Then take a photo of the changes and manually edit grub."
+	ewarn "The identifiers in /dev/disk/by-id/ have changed between genkernel 4.2.x"
+	ewarn "and this version.  Please update the kernel parameters provided to for"
+	ewarn "grub when switching between the two versions.  Go to shell mode and"
+	ewarn "\`ls /dev/disk/by-id\`.  Then, take a photo of the changes and manually"
+	ewarn "edit grub."
 	ewarn
 
 	# LVM2 has commits in newer to avoid free after use
 	ewarn
-	ewarn "The dependencies may have vulnerabilities or have vulnerability avoidance upstream."
-	ewarn "Use the 4.2.x series instead."
+	ewarn "The dependencies may have vulnerabilities or have vulnerability"
+	ewarn "avoidance upstream.  Use the 4.2.x series instead."
 	ewarn
 
 	ewarn

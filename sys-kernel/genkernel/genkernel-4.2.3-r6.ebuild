@@ -405,19 +405,28 @@ pkg_postinst() {
 	elog "by Genkernel 3.x just in case things go wrong."
 
 	ewarn
-	ewarn "You must load all modules by adding \"gk.hw.use-modules_load=1\" from the kernel"
-	ewarn "parameter list for grub or have the drivers built in to use the kernel with the"
-	ewarn "crypt_root_plain USE flag."
+	ewarn "You must load all modules by adding \"gk.hw.use-modules_load=1\" from"
+	ewarn "the kernel parameter list for grub or have the drivers built in to use"
+	ewarn " the kernel with the crypt_root_plain USE flag."
 	ewarn
 
 	ewarn
-	ewarn "The identifiers in /dev/disk/by-id/ have changed between older versions of"
-	ewarn "genkernel and this version.  Please update the kernel parameters provided to for"
-	ewarn "grub when switching between the two versions."
+	ewarn "The identifiers in /dev/disk/by-id/ have changed between older versions"
+	ewarn "of genkernel and this version.  Please update the kernel parameters"
+	ewarn "provided to for grub when switching between the two versions."
 	ewarn
 
 	ewarn
-	ewarn "The --clang and --llvm have been replaced with --clang-kernel and --llvm-kernel."
-	ewarn "The former command line options may be removed."
+	ewarn "The --clang and --llvm have been replaced with --clang-kernel and"
+	ewarn "--llvm-kernel.  The former command line options may be removed."
+	ewarn
+
+	ewarn
+	ewarn "The --clang-utils or --llvm-utils options are experimental.  Only basic"
+	ewarn "initramfs modules were tested.  If runtime or buildtime failure occurs"
+	ewarn "with clang, you may need to switch to gcc for that package.  Details"
+	ewarn "can be found in genkernel-4.0.10-llvm-support.patch.  Either fork the"
+	ewarn "ebuild, supply a user patch, or send the option as an issue request for"
+	ewarn "review."
 	ewarn
 }
