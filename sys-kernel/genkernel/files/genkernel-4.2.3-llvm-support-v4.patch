@@ -1,6 +1,6 @@
 Subject:       Support Clang/LLVM for LTO and CFI for the kernel only for genkernel
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
-Patch Status:  Testing
+Patch Status:  Complete
 Date:          Sat Sep 11 09:28:10 PM PDT 2021 (Unix time: 1631420890)
 
 v4 - Added --scs option
@@ -174,8 +174,8 @@ diff -urp genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
 +			CMD_LLVM_KERNEL=1
 +			print_info 3 "CMD_LLVM_KERNEL: ${CMD_LLVM_KERNEL}"
 +			;;
-+		--clang-slot|--llvm-slot)
-+			CMD_LLVM_SLOT=$(parse_optbool "$*")
++		--clang-slot=*|--llvm-slot=*)
++			CMD_LLVM_SLOT="${*#*=}"
 +			print_info 3 "CMD_LLVM_SLOT: ${CMD_LLVM_SLOT}"
 +			;;
 +		--cfi)
@@ -229,7 +229,7 @@ diff -urp genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
 diff -urp genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
 --- genkernel-4.2.3.orig/gen_configkernel.sh	2021-07-08 14:09:46.000000000 -0700
 +++ genkernel-4.2.3/gen_configkernel.sh	2021-09-11 21:00:54.860112028 -0700
-@@ -1031,6 +1031,60 @@ config_kernel() {
+@@ -1031,6 +1031,62 @@ config_kernel() {
  		fi
  	fi
  
@@ -260,11 +260,13 @@ diff -urp genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configker
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LLD_VERSION" "${llvm_slot}0000"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG" "y"
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_FULL" ""
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_THIN" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_NONE" ""
 +	else
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO" ""
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_FULL" ""
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_THIN" ""
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_NONE" "y"
 +	fi
