@@ -190,7 +190,7 @@ diff -urp genkernel-4.0.10.orig/gen_compile.sh genkernel-4.0.10/gen_compile.sh
 diff -urp genkernel-4.0.10.orig/gen_configkernel.sh genkernel-4.0.10/gen_configkernel.sh
 --- genkernel-4.0.10.orig/gen_configkernel.sh	2020-07-20 09:05:15.000000000 -0700
 +++ genkernel-4.0.10/gen_configkernel.sh	2021-09-11 21:20:39.082736327 -0700
-@@ -995,6 +995,62 @@ config_kernel() {
+@@ -995,6 +995,68 @@ config_kernel() {
  		fi
  	fi
  
@@ -202,6 +202,7 @@ diff -urp genkernel-4.0.10.orig/gen_configkernel.sh genkernel-4.0.10/gen_configk
 +		else
 +			llvm_slot=$(ls "${BROOT}/usr/lib/llvm" | sort -rV | head -n 1)
 +		fi
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for LTO support are set ..."
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_ARCH_SUPPORTS_LTO_CLANG" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_ARCH_SUPPORTS_LTO_CLANG_THIN" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_AS_IS_LLVM" "y"
@@ -225,6 +226,7 @@ diff -urp genkernel-4.0.10.orig/gen_configkernel.sh genkernel-4.0.10/gen_configk
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_THIN" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_NONE" ""
 +	else
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for LTO support are unset ..."
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO" ""
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG" ""
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_FULL" ""
@@ -234,19 +236,23 @@ diff -urp genkernel-4.0.10.orig/gen_configkernel.sh genkernel-4.0.10/gen_configk
 +
 +	if isTrue "${CMD_CFI}" && [ "${ARCH}" = "arm64" ]
 +	then
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for CFI support are set ..."
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_ARCH_SUPPORTS_CFI_CLANG" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_CFI_CLANG" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_KALLSYMS" "y"
 +	else
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for CFI support are unset ..."
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_CFI_CLANG" ""
 +	fi
 +
 +	if isTrue "${CMD_SCS}" && [ "${ARCH}" = "arm64" ]
 +	then
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for SCS support are set ..."
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_CFI_CLANG_SHADOW" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_MODULES" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_MODULES" "y"
 +	else
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for SCS support are unset ..."
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_CFI_CLANG_SHADOW" ""
 +	fi
 +
