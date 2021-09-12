@@ -1,0 +1,881 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch status:  Work In Progress (WIP)
+Date: Sat Sep 11 09:50:54 PM PDT 2021 (Unix time: 1631422254)
+
+Do not run in production yet!
+
+Added PGO trainers for use in genkernel.  The PGO trainer script can be used
+outside of genkernel and should be designed for other distros.
+
+The pgo_trainer_yt is broken and may require creation of another
+PGO testing account and maybe sudo changes.  The _launch_video0_cr
+has been tested working under normal user only.
+
+The pgo_trainer_p2p may need changes to run under sandbox like firejail
+with a new profile and maybe sudo changes.
+
+diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-11 04:30:55.060766437 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-11 10:49:32.025349329 -0700
+@@ -13,6 +13,7 @@ longusage() {
+   echo "  initramfs			Build only the ramdisk/initramfs"
+   echo "  kernel			Build only the kernel and modules"
+   echo "  ramdisk			Build only the ramdisk/initramfs"
++  echo "  train				Train the kernel to generate a PGO profile"
+   echo
+   echo "Available Options: "
+   echo "  Configuration settings"
+@@ -83,6 +84,20 @@ longusage() {
+   echo "	--kernel-modules-prefix=<dir>"
+   echo "				Prefix to kernel module destination, modules"
+   echo "				will be installed in <prefix>/lib/modules"
++  echo "  Kernel PGO settings"
++  echo "	--pgi			Build with phase 1 PGI instrumenting"
++  echo "	--pgt-2d-draw		Run phase 2 PGT trainer for video card benchmarks with 2D drawing xscreensavers"
++  echo "	--pgt-3d-ogl1.3		Run phase 2 PGT trainer for video card benchmarks with OpenGL 1.3 xscreensavers"
++  echo "	--pgt-all		Run phase 2 PGT trainer for with all benchmarks"
++  echo "	--pgt-custom		Run phase 2 PGT trainer for with a custom benchmark script"
++  echo "	--pgt-filesystem	Run phase 2 PGT trainer for the filesystem"
++  echo "	--pgt-emerge1		Run phase 2 PGT trainer for CPU, disk, and memory subsystem through emerging xorg-server"
++  echo "	--pgt-memory		Run phase 2 PGT trainer for the memory subsystem"
++  echo "	--pgt-network		Run phase 2 PGT trainer for network subsystem by downloading the linux tarball"
++  echo "	--pgt-encryption	Run phase 2 PGT trainer for kernel encryption"
++  echo "	--pgt-gpu		Run phase 2 PGT trainer for the video card"
++  echo "	--pgt-webcam		Run phase 2 PGO trainer for the webcam"
++  echo "	--pgo			Build with phase 3 PGO optimized"
+   echo "  Low-Level Compile settings"
+   echo "	--cfi			Use Clang/LLVM to build a CFI protected kernel"
+   echo "	--clang-kernel		Use Clang/LLVM to build the kernel"
+@@ -909,20 +924,75 @@ parse_cmdline() {
+ 			CMD_STRIP_TYPE=none
+ 			print_info 3 "CMD_STRIP_TYPE: ${CMD_STRIP_TYPE}"
+ 			;;
++		--pgi)
++			CMD_PGI="yes"
++			print_info 3 "CMD_PGI: ${CMD_PGI}"
++			;;
++		--pgt-2d-draw)
++			CMD_PGT_2D_DRAW="yes"
++			print_info 3 "CMD_GPT_2D_DRAW: ${CMD_GPT_2D_DRAW}"
++			;;
++		--pgt-3d-ogl1_3)
++			CMD_PGT_3D_OGL1_3="yes"
++			print_info 3 "CMD_GPT_3D_OGL1_3: ${CMD_GPT_3D_OGL1_3}"
++			;;
++		--pgt-all)
++			CMD_PGT_ALL="yes"
++			print_info 3 "CMD_GPT_ALL: ${CMD_GPT_ALL}"
++			;;
++		--pgt-custom)
++			CMD_PGT_CUSTOM="yes"
++			print_info 3 "CMD_GPT_CUSTOM: ${CMD_GPT_CUSTOM}"
++			;;
++		--pgt-filesystem)
++			CMD_PGT_FILESYSTEM="yes"
++			print_info 3 "CMD_GPT_FILESYSTEM: ${CMD_GPT_FILESYSTEM}"
++			;;
++		--pgt-emerge1)
++			CMD_PGT_EMERGE1="yes"
++			print_info 3 "CMD_GPT_EMERGE1: ${CMD_GPT_EMERGE1}"
++			;;
++		--pgt-memory)
++			CMD_PGT_MEMORY="yes"
++			print_info 3 "CMD_GPT_MEMORY: ${CMD_GPT_MEMORY}"
++			;;
++		--pgt-network)
++			CMD_PGT_NETWORK="yes"
++			print_info 3 "CMD_GPT_NETWORK: ${CMD_GPT_NETWORK}"
++			;;
++		--pgt-encryption)
++			CMD_PGT_ENCRYPTION="yes"
++			print_info 3 "CMD_GPT_ENCRYPTION: ${CMD_GPT_ENCRYPTION}"
++			;;
++		--pgt-gpu)
++			CMD_PGT_GPU="yes"
++			print_info 3 "CMD_GPT_GPU: ${CMD_GPT_GPU}"
++			;;
++		--pgt-webcam)
++			CMD_PGT_WEBCAM="yes"
++			print_info 3 "CMD_GPT_WEBCAM: ${CMD_GPT_WEBCAM}"
++			;;
++		--pgo)
++			CMD_PGO="yes"
++			print_info 3 "CMD_PGO: ${CMD_PGO}"
++			;;
+ 		all)
+ 			BUILD_KERNEL="yes"
+ 			BUILD_MODULES="yes"
+ 			BUILD_RAMDISK="yes"
++			TRAIN="no"
+ 			;;
+ 		ramdisk|initramfs)
+ 			BUILD_KERNEL="no"
+ 			BUILD_MODULES="no"
+ 			BUILD_RAMDISK="yes"
++			TRAIN="no"
+ 			;;
+ 		kernel)
+ 			BUILD_KERNEL="yes"
+ 			BUILD_MODULES="yes"
+ 			BUILD_RAMDISK="no"
++			TRAIN="no"
+ 			;;
+ 		bzImage)
+ 			BUILD_KERNEL="yes"
+@@ -930,6 +1000,13 @@ parse_cmdline() {
+ 			BUILD_RAMDISK="no"
+ 			CMD_RAMDISKMODULES="no"
+ 			print_info 3 "CMD_RAMDISKMODULES: ${CMD_RAMDISKMODULES}"
++			TRAIN="no"
++			;;
++		train)
++			BUILD_KERNEL="no"
++			BUILD_MODULES="no"
++			BUILD_RAMDISK="no"
++			TRAIN="yes"
+ 			;;
+ 		--help)
+ 			longusage
+diff -urpN -x '*.orig' genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
+--- genkernel-4.2.3.orig/genkernel	2021-09-11 04:30:55.061766477 -0700
++++ genkernel-4.2.3/genkernel	2021-09-11 18:38:30.856183125 -0700
+@@ -81,6 +81,7 @@ source "${GK_SHARE}"/defaults/compressio
+ source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
+ source "${GK_SHARE}"/defaults/config.sh || small_die "Could not read '${GK_SHARE}/defaults/config.sh'"
+ source "${GK_SHARE}"/gen_funcs.sh || small_die "Could not read '${GK_SHARE}/gen_funcs.sh'"
++source "${GK_SHARE}"/gen_pgo.sh || small_die "Could not read '${GK_SHARE}/gen_pgo.sh'"
+ source "${GK_SHARE}"/gen_cmdline.sh || small_die "Could not read '${GK_SHARE}/gen_cmdline.sh'"
+ source "${GK_SHARE}"/gen_arch.sh || small_die "Could not read '${GK_SHARE}/gen_arch.sh'"
+ source "${GK_SHARE}"/gen_determineargs.sh || small_die "Could not read '${GK_SHARE}/gen_determineargs.sh'"
+@@ -555,6 +556,19 @@ fi
+ 
+ isTrue "${CMD_INSTALL}" && restore_boot_mount_state
+ 
++if isTrue "${CMD_PGT_ALL}"
++	pgo_trainer_all
++then
++	if isTrue "${CMD_GPT_2D_DRAW}" && pgo_trainer_2d_draw
++	if isTrue "${CMD_GPT_3D_OGL1_3}" && pgo_trainer_3d_ogl1_3
++	if isTrue "${CMD_PGT_CUSTOM}" && pgo_trainer_custom
++	if isTrue "${CMD_PGT_FILESYSTEM}" && pgo_trainer_filesystem
++	if isTrue "${CMD_PGT_EMERGE1}" && pgo_trainer_emerge1
++	if isTrue "${CMD_PGT_EMERGE2}" && pgo_trainer_emerge2
++	if isTrue "${CMD_PGT_MEMORY}" && pgo_trainer_memory
++	if isTrue "${CMD_PGT_NETWORK}" && pgo_trainer_network
++fi
++
+ print_info 1 '' 1 0
+ print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
+ print_info 1 'is about the default genkernel configuration...'
+diff -urpN -x '*.orig' genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-11 04:30:55.062766518 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-11 04:31:18.694724048 -0700
+@@ -52,6 +52,8 @@ All that is needed to run genkernel is j
+ .\}
+ .sp
+ This would produce a kernel, asking you what how to configure it to your desire, leaving alone any existing compiled object files, but not installing anything\&.
++.sp
++PGO training requires you to pass --pgi on the first phase with either ALL, bzImage, kernel ACTIONs; one or several --pgt phases with the train ACTION; --pgo on the last phase with either ALL, bzImage, kernel ACTIONs.
+ .SH "ACTIONS"
+ .sp
+ An action tells genkernel what you want it to do \- the following actions are supported:
+@@ -80,6 +82,11 @@ Build only the kernel and the modules\&.
+ .RS 4
+ Build only the ramdisk/initramfs\&.
+ .RE
++.PP
++\fBtrain\fR
++.RS 4
++Train the kernel to generate a PGO profile\&.
++.RE
+ .SH "OPTIONS"
+ .sp
+ Genkernel supports the following options which alter its behaviour\&. Certain options have \fB\-\-no\-\fR variants which do the opposite thing\&. You can specify your options in any order\&.
+diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
+--- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-11 18:38:27.556055542 -0700
+@@ -0,0 +1,684 @@
++#!/bin/bash
++# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
++# License GPL-2+ or MIT, your choice
++
++PGO_SAMPLE_SIZE=1 # statistics rule of 30
++
++PGO_DISTRO="linux"
++
++if [[ "${PGO_DISTRO}" == "linux" ]] ; then
++print_info() {
++	local error_code="${1}"
++	local msg="${2}"
++	echo "${msg}"
++}
++get_indent() {
++	local ntabs="${1}"
++	local i
++	for i in $(seq ${ntabs}) ; do
++		echo -en "\t"
++	done
++}
++fi
++
++pgo_trainer_memory() {
++	print_info 1 "$(get_indent 1)>> Running the custom PGO memory"
++
++	if ! which vmtouch 2>/dev/null 1>/dev/null ; then
++		print_info 1 "$(get_indent 1)>> Missing vmtouch.  Emerge dev-util/vmtouch"
++		return
++	fi
++
++	local tarball=${PGO_LINUX_TARBALL:="/usr/portage/distfiles/linux-5.14.tar.xz"}
++	if [[ ! -f "${PGO_LINUX_TARBALL}" ]] ; then
++		# The tarball is used as a pseudorandom source of data.
++		print_info 1 "Could not find the linux tarball.  You need to download $(basename ${tarball}) and place it in $(dirname ${tarball})"
++		print_info 1 "You may also change the envvar PGO_LINUX_TARBALL install to the abspath to a linux tarball."
++		return
++	fi
++
++	if (( $(ps -aux \
++                | grep "vmtouch -d -l" \
++                | grep -E -v "grep.*vmtouch" \
++                | sed -E -e "s|[ ]+| |g" \
++                | cut -f 2 -d " " \
++		| wc -l) > 0 )) ; then
++		print_info 1 "$(get_indent 1)>> Another program may be using vmtouch, skipping tests."
++		return
++	fi
++
++	free_vmlocked_memory() {
++		print_info 1 "$(get_indent 1)>> Freeing memory"
++		kill -9 $(ps -aux | grep "vmtouch -d -l" | grep -E -v "grep.*vmtouch" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
++		exit 1
++	}
++
++	trap free_vmlocked_memory INT
++
++	local sandbox_dir=$(mktemp -d)
++	[[ "$?" != "0" ]] \
++		&& print_info 1 "$(get_indent 1)>> Failed to create sandbox dir.  Skipping test." \
++		&& return
++	pushd "${sandbox_dir}"
++		local kernel_size=8388608 # Based on orders of magnitude base 2^23 ; 7130192 actual
++		local total_ram=$(( $(free --bytes | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ") - ${kernel_size} ))
++		local allocation_size=$((${total_ram}+1073741824))
++		local bytes_read=0
++		print_info 1 "$(get_indent 1)>> Finding files to read into memory, please wait"
++		local percent_50_pause=0
++		local percent_60_pause=0
++		local percent_70_pause=0
++		local percent_80_pause=0
++		local percent_90_pause=0
++		local percent_95_pause=0
++		local percent_98_pause=0
++		local percent_99_pause=0
++		local mb8_pause=0
++		for f in $(find /usr/portage/distfiles /usr/bin /usr/lib* -type f) ; do
++			local file_size=$(stat -c "%s" "${f}")
++			if (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_50_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 50))/100)) )) ; then
++				vmtouch -d -l "${f}"
++				bytes_read=$(( ${file_size} + ${bytes_read} ))
++				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
++			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_60_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 60))/100)) )) ; then
++				vmtouch -d -l "${f}"
++				bytes_read=$(( ${file_size} + ${bytes_read} ))
++				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
++			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_70_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 70))/100)) )) ; then
++				vmtouch -d -l "${f}"
++				bytes_read=$(( ${file_size} + ${bytes_read} ))
++				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
++			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_80_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 80))/100)) )) ; then
++				vmtouch -d -l "${f}"
++				bytes_read=$(( ${file_size} + ${bytes_read} ))
++				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
++			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_90_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 90))/100)) )) ; then
++				vmtouch -d -l "${f}"
++				bytes_read=$(( ${file_size} + ${bytes_read} ))
++				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
++			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_95_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 95))/100)) )) ; then
++				vmtouch -d -l "${f}"
++				bytes_read=$(( ${file_size} + ${bytes_read} ))
++				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
++			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_98_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 98))/100)) )) ; then
++				vmtouch -d -l "${f}"
++				bytes_read=$(( ${file_size} + ${bytes_read} ))
++				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
++			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_99_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 99))/100)) )) ; then
++				vmtouch -d -l "${f}"
++				bytes_read=$(( ${file_size} + ${bytes_read} ))
++				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
++			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${mb8_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= ${total_ram} )) ; then
++				vmtouch -d -l "${f}"
++				bytes_read=$(( ${file_size} + ${bytes_read} ))
++				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
++			else
++				vmtouch -t "${f}" # touch anyway
++				print_info 1 "$(get_indent 1)>> skipping ${f} either too large or doesn't fit into percent size"
++				continue
++			fi
++			local duration=300
++			if (( "${bytes_read}" > $(( $((${total_ram} * 50)) / 100 )) && ${percent_50_pause} == 0 )) ; then
++				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
++				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
++				bash_pid=$!
++				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 50%."
++				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
++				sleep ${duration}
++				kill -9 ${bash_pid}
++				percent_50_pause=1
++			elif (( "${bytes_read}" > $(( $((${total_ram} * 60)) / 100 )) && ${percent_60_pause} == 0 )) ; then
++				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
++				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
++				bash_pid=$!
++				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 60%."
++				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
++				sleep ${duration}
++				kill -9 ${bash_pid}
++				percent_60_pause=1
++			elif (( "${bytes_read}" > $(( $((${total_ram} * 70)) / 100 )) && ${percent_70_pause} == 0 )) ; then
++				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
++				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
++				bash_pid=$!
++				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 70%."
++				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
++				sleep ${duration}
++				kill -9 ${bash_pid}
++				percent_70_pause=1
++			elif (( "${bytes_read}" > $(( $((${total_ram} * 80)) / 100 )) && ${percent_80_pause} == 0 )) ; then
++				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
++				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
++				bash_pid=$!
++				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 80%."
++				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
++				sleep ${duration}
++				kill -9 ${bash_pid}
++				percent_80_pause=1
++			elif (( "${bytes_read}" > $(( $((${total_ram} * 90)) / 100 )) && ${percent_90_pause} == 0 )) ; then
++				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
++				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
++				bash_pid=$!
++				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 90%."
++				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
++				sleep ${duration}
++				kill -9 ${bash_pid}
++				percent_90_pause=1
++			elif (( "${bytes_read}" > $(( $((${total_ram} * 95)) / 100 )) && ${percent_95_pause} == 0 )) ; then
++				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
++				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
++				bash_pid=$!
++				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 95%."
++				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
++				sleep ${duration}
++				kill -9 ${bash_pid}
++				percent_95_pause=1
++			elif (( "${bytes_read}" > $(( $((${total_ram} * 98)) / 100 )) && ${percent_98_pause} == 0 )) ; then
++				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
++				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
++				bash_pid=$!
++				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 98%."
++				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
++				sleep ${duration}
++				kill -9 ${bash_pid}
++				percent_98_pause=1
++			elif (( "${bytes_read}" > $(( $((${total_ram} * 99)) / 100 )) && ${percent_99_pause} == 0 )) ; then
++				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
++				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
++				bash_pid=$!
++				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 99%."
++				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
++				sleep ${duration}
++				kill -9 ${bash_pid}
++				percent_99_pause=1
++			elif (( "${bytes_read}" > ${total_ram} && ${mb8_pause} == 0 )) ; then
++				# Shouldn't exceed ${total_ram} - ${kernel_size}
++				# kernel size is 7mb
++				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
++				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
++				bash_pid=$!
++				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 100%."
++				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
++				sleep ${duration}
++				kill -9 ${bash_pid}
++				mb8_pause=1
++			fi
++			(( ${bytes_read} > ${allocation_size} )) && break
++		done
++		print_info 1 "$(get_indent 1)>> 120 seconds pause,  please wait."
++		sleep 120
++		kill -9 $(ps -aux \
++	                | grep "vmtouch -d -l" \
++        	        | grep -E -v "grep.*vmtouch" \
++	                | sed -E -e "s|[ ]+| |g" \
++	                | cut -f 2 -d " ")
++	popd
++	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
++		&& rm -rf "${sandbox_dir}"
++}
++
++pgo_trainer_emerge1() {
++	if [ -d /usr/portage/x11-base/xorg-server ] ; then
++		pushd /usr/portage/x11-base/xorg-server
++			local f=$(basename $(find /usr/portage/x11-base/xorg-server -name "*.ebuild" \
++				| sort -V | head -n 1))
++			print_info 1 "$(get_indent 1)>> Running the PGO trainer with \`ebuild ${f} unpack prepare compile\`"
++			ebuild ${f} clean unpack prepare compile
++			ebuild ${f} clean
++		popd
++	else
++		if [ -d "${PGO_TRAINER_PORTAGE_DIR}/x11-base/xorg-server" ]
++			pushd "${PGO_TRAINER_PORTAGE_DIR}/x11-base/xorg-server"
++				local f=$(basename $(find "${PGO_TRAINER_PORTAGE_DIR}/x11-base/xorg-server" -name "*.ebuild" \
++					| sort -V | head -n 1))
++				print_info 1 "$(get_indent 1)>> Running the PGO trainer with \`ebuild ${f} unpack prepare compile\`"
++				ebuild ${f} clean unpack prepare compile
++				ebuild ${f} clean
++			popd
++		then
++			print_info 1 "$(get_indent 1)>> Set PGO_TRAINER_PORTAGE_DIR in /etc/genkernel.conf to base abspath to the portage tree."
++		fi
++	fi
++}
++
++pgo_trainer_emerge2() {
++	print_info 1 "$(get_indent 1)>> Running the PGO trainer with \`building\`"
++}
++
++pgo_trainer_custom() {
++	print_info 1 "$(get_indent 1)>> Running the custom PGO trainers"
++}
++
++_use_crypto_with_mode() {
++	local mode_of_operation="${1}"
++	local cipher="${2}"
++	local min_key_size="${3}"
++	local max_key_size="${4}"
++	local inc="${5}"
++	if grep -q ": ${mode_of_operation}(${cipher})" /proc/crypto ; then
++		for x in $(seq ${min_key_size} ${inc} ${max_key_size}) ; do
++			for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
++				cryptsetup benchmark -c ${cipher}-${mode_of_operation} -s ${x}
++			done
++		done
++	fi
++}
++
++_use_hash() {
++	local name="${1}"
++	local len="${2}"
++	if (( ${len} == 160 )) && [[ "${name}" =~ sha ]] ; then
++		name="sha1"
++	fi
++	if grep -q -e ": ${name}" /proc/crypto ; then
++		for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
++			# cryptsetup only supports block ciphers
++			cryptsetup benchmark -h ${name} -s ${len}
++		done
++	fi
++}
++
++_cipher_not_recommended() {
++	local name="${1}"
++	if grep -q -e ": ${name}" /proc/crypto ; then
++		print_info 1 "$(get_indent 1)>> ${1} is not recommended for hashing or as a cipher for securing data."
++	fi
++}
++
++pgo_trainer_crypto_std_now() {
++	if ! which cryptsetup 2>/dev/null 1>/dev/null ; then
++		print_info 1 "$(get_indent 1)>> Missing cryptsetup.  Emerge sys-fs/cryptsetup."
++		return
++	fi
++	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for industry standard hashes"
++	_cipher_not_recommended "sha1"
++	for ks in 160 224 256 512 ; do
++		_use_hash "sha${ks}" ${ks}
++	done
++	for ks in 224 256 384 512 ; do
++		_use_hash "sha3-${ks}" ${ks}
++	done
++	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for industry standard ciphers"
++	_use_crypto_with_mode "cbc" "aes" 128 256 64
++	_use_crypto_with_mode "ctr" "aes" 128 256 64
++	_use_crypto_with_mode "xts" "aes" 256 512 128
++}
++
++pgo_trainer_crypto_common() {
++	if ! which cryptsetup 2>/dev/null 1>/dev/null ; then
++		print_info 1 "$(get_indent 1)>> Missing cryptsetup.  Emerge sys-fs/cryptsetup."
++		return
++	fi
++	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for common hashes"
++	_use_hash "rmd160" 160
++	for ks in 160 256 384 512 ; do
++		_use_hash "wp${ks}" ${ks}
++	done
++	for ks in 160 256 384 512 ; do
++		_use_hash "blake2b-${ks}" ${ks}
++	done
++	for ks in 128 160 224 256 ; do
++		_use_hash "blake2s-${ks}" ${ks}
++	done
++	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for common ciphers"
++	_use_crypto_with_mode "cbc" "cast5" 40 128 32
++	_cipher_not_recommended "cast5" # 64 bit block size
++	_use_crypto_with_mode "cbc" "cast6" 128 256 32
++	_use_crypto_with_mode "xts" "cast6" 256 512 64
++	_use_crypto_with_mode "cbc" "des3_ede" 192 192 192
++	_use_crypto_with_mode "ctr" "des3_ede" 192 192 192
++	_cipher_not_recommended "des3_ede" # 64 bit block size
++	_use_crypto_with_mode "cbc" "blowfish" 32 448 32
++	_use_crypto_with_mode "ctr" "blowfish" 32 448 32
++	_cipher_not_recommended "blowfish" # 64 bit block size
++	_use_crypto_with_mode "cbc" "twofish" 128 256 64
++	_use_crypto_with_mode "xts" "twofish" 256 512 128
++	_use_crypto_with_mode "cbc" "serpent" 128 256 64
++	_use_crypto_with_mode "xts" "serpent" 256 512 128
++}
++
++pgo_trainer_crypto_less_common() {
++	if ! which cryptsetup 2>/dev/null 1>/dev/null ; then
++		print_info 1 "$(get_indent 1)>> Missing cryptsetup.  Emerge sys-fs/cryptsetup."
++		return
++	fi
++	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for less common ciphers"
++	_use_crypto_with_mode "cbc" "anubis" 128 320 32
++	_use_crypto_with_mode "cbc" "camellia" 128 256 32
++	_use_crypto_with_mode "xts" "camellia" 256 512 64
++}
++
++_pgo_trainer_filesystem_sequential_reads() {
++	print_info 1 "$(get_indent 1)>> Running sequential reads"
++	local sample_set=()
++	local c=0
++	for f in $(find /usr/bin | shuf) ; do
++		sample_set+=( "${f}" )
++		c=$((${c} + 1))
++		(( ${c} > 500 )) && break
++	done
++	READ_LIMIT=1048576 # Don't read gigabytes / terabytes
++	for f in ${sample_set} ; do
++		head -n ${READ_LIMIT} "${f}" > /dev/null
++	done
++}
++
++_pgo_trainer_filesystem_random_reads() {
++	print_info 1 "$(get_indent 1)>> Running sequential reads"
++	local sample_set=()
++	local c=0
++	for f in $(find /usr/bin | shuf) ; do
++		sample_set+=( "${f}" )
++		c=$((${c} + 1))
++		(( ${c} > 500 )) && break
++	done
++	READ_LIMIT=1048576 # Don't read gigabites / terabytes
++	for f in ${sample_set} ; do
++		local file_size=$(stat -c "%s" "${f}")
++
++		dd if="${f}" ibs=1 skip=200 count=100
++
++		cat "${f}" > /dev/null
++	done
++}
++
++pgo_trainer_filesystem() {
++	print_info 1 "$(get_indent 1)>> Running the filesystem PGO trainer"
++
++	print_info 1 "$(get_indent 1)>> Running random reads"
++}
++
++pgo_trainer_network() {
++	print_info 1 "$(get_indent 1)>> Running the network PGO trainer"
++	# See /proc/sys/net/ipv4/tcp_congestion_control
++	# See /proc/sys/net/ipv4/tcp_available_congestion_control
++	if [[ -e /proc/sys/net/ipv4/tcp_congestion_control ]] ; then
++		print_info 1 "$(get_indent 1)>> TCP congestion control is $(cat /proc/sys/net/ipv4/tcp_congestion_control)."
++		print_info 1 "$(get_indent 1)>> To train multiple particular TCP congestion control set PGO_TRAINER_NETWORK_TCP_CONGESTIONS as a string in /etc/genkernel.conf."
++		local tcp_congestion=$(cat /proc/sys/net/ipv4/tcp_congestion_control)
++		PGO_TRAINER_NETWORK_TCP_CONGESTIONS=${PGO_TRAINER_NETWORK_TCP_CONGESTIONS:=${tcp_congestion}}
++	fi
++
++	PGO_TRAINER_NETWORK_TCP_CONGESTIONS=${PGO_TRAINER_NETWORK_TCP_CONGESTIONS:=unknown}
++
++	# Test both IPv4/IPv6
++	local domains=(
++		gentoo.org
++		kernel.org
++		wikipedia.org
++		github.com
++		gitlab.com
++		sourceforge.com
++	)
++
++	for domain in $(echo ${domains[@]} | shuf) ; do
++		# Test ICMP
++		if which ping 2>/dev/null 1>/dev/null ; then
++			ping -c 1 ${domain}
++		else
++			print_info 1 "$(get_indent 1)>> Missing ping.  Emerge net-misc/iputils."
++		fi
++		# Test UDP
++		if which traceroute 2>/dev/null 1>/dev/null ; then
++			traceroute ${domain}
++		else
++			print_info 1 "$(get_indent 1)>> Missing traceroute.  Emerge net-analyzer/traceroute."
++		fi
++	done
++	for tcp_congestion in ${PGO_TRAINER_NETWORK_TCP_CONGESTIONS} ; do
++		print_info 1 "$(get_indent 1)>> TCP congestion control: ${tcp_congestion}"
++		# Test TCP
++		if \
++			which curl 2>/dev/null 1>/dev/null ; then
++			# Total size for linux-5.14.tar.xz is 120669872
++			curl --output /dev/null -r 0-1048576 https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.tar.xz \
++			|| print_info 1 "$(get_indent 1)>> Failed to download the kernel"
++		else
++			print_info 1 "$(get_indent 1)>> Missing curl.  emerge net-misc/curl"
++		fi
++	done
++}
++
++pgo_trainer_p2p() {
++	local url=${PGO_P2P_URI:="https://download.documentfoundation.org/libreoffice/stable/7.1.6/win/x86_64/LibreOffice_7.1.6_Win_x64.msi.torrent"}
++	local sandbox_dir=$(mktemp -d)
++	[[ "$?" != "0" ]] \
++		&& print_info 1 "$(get_indent 1)>> Failed to create sandbox dir.  Skipping test." \
++		&& return
++	pushd "${sandbox_dir}"
++		local bn=$(basename "${url}")
++		wget -O "${bn}" "${url}"
++		ctorrent -dd "${bn}" 2>&1 >"${sandbox_dir}/ctorrent.log"
++		export pid_ctorrent=$(ps -aux \
++			| sed -E -e "s|[ ]+| |g" \
++			| grep -e "sleep 30"  \
++			| grep -v -e "grep.*sleep 30" \
++			| cut -f 2 -d " " \
++			| head -n 1)
++		stop_ctorrent() {
++			print_info 1 "$(get_indent 1)>> Stopping ctorrent"
++			kill -9 ${pid_ctorrent}
++			exit 1
++		}
++		trap stop_ctorrent INT
++		print_info 1 "$(get_indent 1)>> Running the PGO trainer for p2p.  Do \`tail -f ${sandbox_dir}/ctorrent.log\` for progress."
++		local time_now=$(date +%s)
++		local time_expire=$(( ${time_now} + 60 ))
++		while true ; do
++			sleep 0.2s
++			time_now=$(date +%s)
++			(( ${time_now} > ${time_expire} )) && break
++		done
++		kill -9 ${pid_ctorrent}
++	popd
++	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
++		&& rm -rf "${sandbox_dir}"
++}
++
++pgo_trainer_webcam() {
++	print_info 1 "$(get_indent 1)>> Running the webcam PGO trainer for still photos"
++	if ! which ffmpeg 2>/dev/null 1>/dev/null ; then
++		print_info 1 "$(get_indent 1)>> Missing ffmpeg.  Install the media-video/ffmpeg[encode,libv4l] package"
++		return
++	fi
++	if ! which v4l2-ctl 2>/dev/null 1>/dev/null ; then
++		print_info 1 "$(get_indent 1)>> Missing ffmpeg.  Install the media-tv/v4l-utils package"
++		return
++	fi
++
++	local sandbox_dir=$(mktemp -d)
++	[[ "$?" != "0" ]] \
++		&& print_info 1 "$(get_indent 1)>> Failed to create sandbox dir.  Skipping test." \
++		&& return
++	pushd "${sandbox_dir}"
++		for i in $(seq 0 10) ; do
++			local d="/dev/video${i}"
++			if test -e "${d}" ; then
++				local resolutions=$(v4l2-ctl -d ${d} \
++					--list-formats-ext \
++					| grep "Size:" \
++					| grep -E -o -e "[0-9]+x[0-9]+")
++				for res in ${resolutions} ; do
++					for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
++						ffmpeg -y -f video4linux2 -s ${res} -i ${d} -frames 1 test.jpg
++					done
++				done
++			fi
++		done
++		for i in $(seq 0 10) ; do
++			local d="/dev/video${i}"
++			if test -e "${d}" ; then
++				local resolutions=$(v4l2-ctl -d ${d} \
++					--list-formats-ext \
++					| grep "Size:" \
++					| grep -E -o -e "[0-9]+x[0-9]+")
++				for res in ${resolutions} ; do
++					for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
++						ffmpeg -y -f video4linux2 -s ${res} -i ${d} -t 5 test.webm
++					done
++				done
++			fi
++		done
++	popd
++	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
++		&& rm -rf "${sandbox_dir}"
++}
++
++pgo_trainer_2d_draw() {
++	if [[ -n "${DISPLAY}" || (-n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "x11") ]] ; then
++		local cpus=$(lscpu | grep -E -e "CPU\(s\):" | head -n 1 | grep -E -o -e "[0-9]+")
++		local tpc=$(lscpu | grep -E -e "Thread\(s\) per core:" | head -n 1 | grep -E -o -e "[0-9]+")
++		local threads=$((${cpus} * ${tpc}))
++		print_info 1 "$(get_indent 1)>> Running the PGO trainer for 2D drawing with ${threads} threads"
++		for f in $(find /usr/lib*/misc/xscreensaver -type f | shuf) ; do
++			if ldd "${f}" 2>/dev/null | grep -q -e "libGL" ; then
++				:;
++			else
++				for i in $(seq $((${threads}))) ; do
++					timeout 5 "${f}" 2>/dev/null &
++				done
++				sleep 5
++			fi
++		done
++		ran_test=1
++	fi
++	if [[ -n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "wayland" ]] ; then
++		ran_test=1
++	fi
++	if (( ${ran_test} == 0 )) ; then
++		print_info 1 "$(get_indent 1)>> You must run genkernel in x11 or wayland"
++	fi
++}
++
++pgo_trainer_3d_ogl1_3() {
++	if [[ -n "${DISPLAY}" || (-n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "x11") ]] ; then
++		local cpus=$(lscpu | grep -E -e "CPU\(s\):" | head -n 1 | grep -E -o -e "[0-9]+")
++		local tpc=$(lscpu | grep -E -e "Thread\(s\) per core:" | head -n 1 | grep -E -o -e "[0-9]+")
++		local threads=$((${cpus} * ${tpc}))
++		print_info 1 "$(get_indent 1)>> Running the PGO trainer for 3D drawing using Opengl ~1.3 ${threads} threads"
++		for f in $(find /usr/lib*/misc/xscreensaver -type f | shuf) ; do
++			if ldd "${f}" 2>/dev/null | grep -q -e "libGL" ; then
++				for i in $(seq $((${threads}))) ; do
++					timeout 5 "${f}" 2>/dev/null &
++				done
++				sleep 5
++			fi
++		done
++	fi
++	if [[ -n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "wayland" ]] ; then
++		ran_test=1
++	fi
++	if (( ${ran_test} == 0 )) ; then
++		print_info 1 "$(get_indent 1)>> You must run genkernel in x11 or wayland"
++	fi
++}
++
++_launch_video0_cr() {
++	local sandbox_dir=$(mktemp -d)
++	[[ "$?" != "0" ]] \
++		&& print_info 1 "$(get_indent 1)>> Failed to create sandbox dir.  Skipping test." \
++		&& return
++	pushd "${sandbox_dir}"
++		cat <<EOF >"watch_video.py"
++#!/usr/bin/env python3
++from selenium import webdriver
++from selenium.webdriver.common.keys import Keys
++from selenium.webdriver.common.by import By
++from selenium.common.exceptions import NoSuchElementException
++import time
++driver = webdriver.Chrome()
++driver.get("https://www.youtube.com/watch?v=UlbyOeMCL0g")
++time.sleep(20) # wait for browser to load
++time.sleep(1)
++try:
++        driver.find_element(By.XPATH, "//*[text() = 'Dismiss']").click()
++except NoSuchElementException:
++        pass
++try:
++        driver.find_element(By.XPATH, "//*[text() = 'Not now']").click()
++except NoSuchElementException:
++        pass
++time.sleep(1)
++try:
++        driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-play-button')]").click()
++except NoSuchElementException:
++        pass
++time.sleep(2*60)
++driver.close()
++EOF
++		${EPYTHON} watch_video.py
++	popd
++	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
++		&& rm -rf "${sandbox_dir}"
++}
++
++_launch_video0_ff() {
++	local sandbox_dir=$(mktemp -d)
++	[[ "$?" != "0" ]] \
++		&& print_info 1 "$(get_indent 1)>> Failed to create sandbox dir.  Skipping test." \
++		&& return
++	pushd "${sandbox_dir}"
++		cat <<EOF >"watch_video.py"
++#!/usr/bin/env python3
++from selenium import webdriver
++from selenium.webdriver.common.keys import Keys
++from selenium.webdriver.common.by import By
++from selenium.common.exceptions import NoSuchElementException
++import time
++driver = webdriver.Firefox()
++driver.get("https://www.youtube.com/watch?v=UlbyOeMCL0g")
++time.sleep(20) # wait for browser to load
++time.sleep(1)
++try:
++        driver.find_element(By.XPATH, "//*[text() = 'Dismiss']").click()
++except NoSuchElementException:
++        pass
++try:
++        driver.find_element(By.XPATH, "//*[text() = 'Not now']").click()
++except NoSuchElementException:
++        pass
++time.sleep(1)
++try:
++        driver.find_element(By.XPATH, "//button[contains(@class, 'ytp-play-button')]").click()
++except NoSuchElementException:
++        pass
++time.sleep(2*60)
++driver.close()
++EOF
++		${EPYTHON} watch_video.py
++	popd
++	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
++		&& rm -rf "${sandbox_dir}"
++}
++
++pgo_trainer_yt() {
++	if [[ -n "${DISPLAY}" || (-n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "x11") ]] ; then
++		if which chromedriver 2>/dev/null 1>/dev/null ; then
++			_launch_video0_cr
++			ran_test=1
++		elif which geckodriver 2>/dev/null 1>/dev/null ; then
++			_launch_video0_ff
++			ran_test=1
++		fi
++	fi
++	if (( ${ran_test} == 0 )) ; then
++		print_info 1 "$(get_indent 1)>> You must run genkernel in x11 or wayland"
++	fi
++}
++
++pgo_trainer_all() {
++	print_info 1 "$(get_indent 1)>> Running the all PGO trainers"
++#	pgo_trainer_2d_draw
++#	pgo_trainer_3d_ogl1_3
++#	pgo_trainer_crypto_std_now
++#	pgo_trainer_crypto_common
++#	pgo_trainer_crypto_less_common
++#	pgo_trainer_emerge1
++#	pgo_trainer_emerge2
++	pgo_trainer_memory
++#	pgo_trainer_network
++#	pgo_trainer_p2p
++#	pgo_trainer_webcam
++#	pgo_trainer_yt
++}
++
++pgo_trainer_all
