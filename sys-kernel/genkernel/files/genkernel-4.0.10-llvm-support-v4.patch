@@ -109,7 +109,7 @@ diff -urp genkernel-4.0.10.orig/defaults/config.sh genkernel-4.0.10/defaults/con
 diff -urp genkernel-4.0.10.orig/gen_cmdline.sh genkernel-4.0.10/gen_cmdline.sh
 --- genkernel-4.0.10.orig/gen_cmdline.sh	2020-07-20 09:05:15.000000000 -0700
 +++ genkernel-4.0.10/gen_cmdline.sh	2021-09-11 21:25:07.876230862 -0700
-@@ -85,6 +85,16 @@ longusage() {
+@@ -85,6 +85,17 @@ longusage() {
    echo "	--module-prefix=<dir>	Prefix to kernel module destination, modules"
    echo "				will be installed in <prefix>/lib/modules"
    echo "  Low-Level Compile settings"
@@ -123,6 +123,7 @@ diff -urp genkernel-4.0.10.orig/gen_cmdline.sh genkernel-4.0.10/gen_cmdline.sh
 +  echo "				Use a specific Clang/LLVM slot instead of maximum"
 +  echo "	--llvm-utils		Use Clang/LLVM to build utils (experimental)"
 +  echo "	--lto			Use Clang/LLVM to build a LTO optimized kernel"
++  echo "	--scs			Use Clang/LLVM to build a SCS protected kernel"
    echo "	--cross-compile=<target-triplet>"
    echo "				Target triple (i.e. aarch64-linux-gnu) to build for"
    echo "	--kernel-as=<assembler>	Assembler to use for kernel"
@@ -335,7 +336,7 @@ diff -urp genkernel-4.0.10.orig/genkernel genkernel-4.0.10/genkernel
 diff -urp genkernel-4.0.10.orig/genkernel.8 genkernel-4.0.10/genkernel.8
 --- genkernel-4.0.10.orig/genkernel.8	2020-07-20 09:05:15.000000000 -0700
 +++ genkernel-4.0.10/genkernel.8	2021-09-11 21:26:24.964264508 -0700
-@@ -358,6 +358,46 @@ Prefix to kernel module destination, mod
+@@ -358,6 +358,51 @@ Prefix to kernel module destination, mod
  .RE
  .SS "LOW\-LEVEL COMPILATION OPTIONS"
  .PP
@@ -377,6 +378,11 @@ diff -urp genkernel-4.0.10.orig/genkernel.8 genkernel-4.0.10/genkernel.8
 +\fB\-\-lto\fR
 +.RS 4
 +Use Clang/LLVM to build a LTO optimized kernel\&.
++.RE
++.PP
++\fB\-\-scs\fR
++.RS 4
++Use Clang/LLVM to build a SCS protected kernel\&.
 +.RE
 +.PP
  \fB\-\-cross\-compile\fR=<target triplet>

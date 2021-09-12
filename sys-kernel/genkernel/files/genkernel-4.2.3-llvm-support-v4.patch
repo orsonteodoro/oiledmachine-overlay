@@ -400,7 +400,7 @@ diff -urp genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
 diff -urp genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
 --- genkernel-4.2.3.orig/genkernel.8	2021-07-08 14:09:46.000000000 -0700
 +++ genkernel-4.2.3/genkernel.8	2021-09-11 20:53:56.802967557 -0700
-@@ -358,6 +358,46 @@ Prefix to kernel module destination, mod
+@@ -358,6 +358,51 @@ Prefix to kernel module destination, mod
  .RE
  .SS "LOW\-LEVEL COMPILATION OPTIONS"
  .PP
@@ -442,6 +442,11 @@ diff -urp genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
 +\fB\-\-lto\fR
 +.RS 4
 +Use Clang/LLVM to build a LTO optimized kernel\&.
++.RE
++.PP
++\fB\-\-scs\fR
++.RS 4
++Use Clang/LLVM to build a SCS protected kernel\&.
 +.RE
 +.PP
  \fB\-\-cross\-compile\fR=<target triplet>
