@@ -29,10 +29,13 @@
 # kernel_compiler_patch:
 #   https://github.com/graysky2/kernel_compiler_patch
 #   https://github.com/graysky2/kernel_gcc_patch
-# MUQSS CPU Scheduler:
+# MUQSS CPU Scheduler (official, EOL 5.12):
 #   https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
 #   https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #   https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
+# MUQSS CPU Scheduler (zen):
+#   https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/muqss
+#   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/muqss
 # Multigenerational LRU:
 #   https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/lru
 #   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/lru-v3
@@ -46,6 +49,8 @@
 # PDS CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/PDS
 #   https://gitlab.com/alfredchen/PDS-mq/-/tree/master
+# PGO:
+#   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=for-next/clang/pgo
 # PREEMPT_RT:
 #  https://wiki.linuxfoundation.org/realtime/start
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
@@ -257,6 +262,12 @@ BBRV2_FN=\
 BBRV2_SRC_URI=\
 "${BBRV2_BASE_URI}.patch -> ${BBRV2_FN}"
 
+CLANG_PGO_FN="clang-pgo-${PATCH_CLANG_PGO_COMMIT_B:0:7}-${PATCH_CLANG_PGO_COMMIT_T:0:7}.patch"
+CLANG_PGO_BASE_URI="https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/patch/?h=for-next/clang/pgo"
+CLANG_PGO_URI="
+${CLANG_PGO_BASE_URI}&id=${PATCH_CLANG_PGO_COMMIT_T}&id2=${PATCH_CLANG_PGO_COMMIT_B}
+		-> ${CLANG_PGO_FN}" # [oldest,newest]
+
 GENPATCHES_URI_BASE_URI="https://dev.gentoo.org/~mpagano/genpatches/tarballs/"
 GENPATCHES_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 GENPATCHES_BASE_FN="genpatches-${GENPATCHES_MAJOR_MINOR_REVISION}.base.tar.xz"
@@ -319,6 +330,26 @@ LRU_GEN_FN=\
 "lru_gen-${K_MAJOR_MINOR}-${LRU_GEN_COMMITS_SHORT}.patch"
 LRU_GEN_SRC_URI=\
 "${LRU_GEN_BASE_URI}.patch -> ${LRU_GEN_FN}"
+
+ZEN_MUQSS_BASE_URI=\
+"https://github.com/torvalds/linux/commit/"
+
+is_zen_muquss_excluded() {
+	local wanted_commit="${1}"
+	for bad_commit in ${ZEN_MUQSS_EXCLUDED_COMMITS[@]} ; do
+		[[ "${bad_commit}" == "${wanted_commit}" ]] && return 0
+	done
+	return 1
+}
+
+gen_zen_muqss_uris() {
+	local s=""
+	for c in ${ZEN_MUQSS_COMMITS[@]} ; do
+		s+=" ${ZEN_MUQSS_BASE_URI}${c}.patch -> zen-muqss-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
+	echo "${s}"
+}
+ZEN_MUQSS_SRC_URIS=" "$(gen_zen_muqss_uris)
 
 LINUX_REPO_URI=\
 "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
@@ -610,6 +641,34 @@ eerror
 	fi
 }
 
+NO_INSTR_FIX_COMMIT="193e41c987127aad86d0380df83e67a85266f1f1"
+NO_INSTR_FIX_TIMESTAMP="1624048424"
+
+NO_INSTRUMENT_FUNCTION="a63d4f6cbab133b0f1ce9afb562546fcc5bb2680"
+NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463"
+
+verify_clang_compiler_updated() {
+	for p in sys-devel/llvm-13.0.0.9999 sys-devel/clang-13.0.0.9999 sys-devel/clang-runtime-13.0.0.9999 ; do
+		einfo "Verifying prereqs for PGO for ${p}"
+		if has_version "=${p}" ; then
+			local emerged_llvm_commit=$(bzless \
+				"${ESYSROOT}/var/db/pkg/${p}/environment.bz2" \
+				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
+			local emerged_llvm_time_desc=$(wget -q -O - \
+				https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch \
+				| grep -F -e "Date:" | sed -e "s|Date: ||")
+			local emerged_llvm_timestamp=$(date -u -d "${emerged_llvm_time_desc}" +%s)
+			if (( ${emerged_llvm_timestamp} <= ${NO_INSTRUMENT_FUNCTION_TIMESTAMP} )) \
+				&& (( ${emerged_llvm_timestamp} <= ${NO_INSTRUMENT_FUNCTION_TIMESTAMP} )) ; then
+				die "Re-emerge =${p}"
+			else
+				# If on the same day it may be broken
+				einfo "Clang and LLVM is up-to-date"
+			fi
+		fi
+	done
+}
+
 # @FUNCTION: ot-kernel_pkg_setup
 # @DESCRIPTION:
 # Perform checks, warnings, and initialization before emerging
@@ -653,6 +712,12 @@ function ot-kernel_pkg_setup() {
 					die "tresor_aesni requires SSE2 CPU support"
 				fi
 			fi
+		fi
+	fi
+
+	if has clang-pgo ${IUSE_EFFECTIVE} ; then
+		if use clang-pgo ; then
+			verify_clang_compiler_updated
 		fi
 	fi
 
@@ -866,8 +931,10 @@ function apply_lru_gen() {
 # For example,
 # GENPATCHES_BLACKLIST="2500 2600"
 function _filter_genpatches() {
+	# Already applied since 5.13.14
+	P_GENPATCHES_BLACKLIST=" 2700"
 	# Already applied 5010-5013 GraySky2's kernel_compiler_patches
-	P_GENPATCHES_BLACKLIST=" 5010 5011 5012 5013"
+	P_GENPATCHES_BLACKLIST+=" 5010 5011 5012 5013"
 	# Already applied 5000-5007 ZSTD patches
 	P_GENPATCHES_BLACKLIST+=" 5000 5001 5002 5003 5004 5005 5006 5007"
 	# Already applied bmq.
@@ -1102,6 +1169,18 @@ eerror "Failed ${a}"
 	fi
 }
 
+# @FUNCTION: apply_zen_muqss
+# @DESCRIPTION:
+# Apply a fork of MuQSS maintained by the zen-kernel team.
+function apply_zen_muqss() {
+einfo "Applying some of the zen-kernel MuQSS patches"
+	for x in ${ZEN_MUQSS_COMMITS[@]} ; do
+		local id="${x:0:7}"
+		is_zen_muquss_excluded "${x}" && continue
+		_fpatch "${DISTDIR}/zen-muqss-${K_MAJOR_MINOR}-${id}.patch"
+	done
+}
+
 # @FUNCTION: apply_zentune
 # @DESCRIPTION:
 # Apply some of the ZenTune patches.
@@ -1124,6 +1203,13 @@ einfo "Applying the zen-tune interactive MuQSS patches"
 	done
 }
 
+# @FUNCTION: apply_clang_pgo
+# @DESCRIPTION:
+# Apply the PGO patch for use with clang
+apply_clang_pgo() {
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	_fpatch "${distdir}/${CLANG_PGO_FN}"
+}
 
 # @FUNCTION: ot-kernel_src_unpack
 # @DESCRIPTION:
@@ -1260,6 +1346,12 @@ ewarn
 		fi
 	fi
 
+	if has zen-muqss ${IUSE_EFFECTIVE} ; then
+		if use zen-muqss ; then
+			apply_zen_muqss
+		fi
+	fi
+
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 			apply_tresor
@@ -1301,6 +1393,12 @@ ewarn
 	if has bbrv2 ${IUSE_EFFECTIVE} ; then
 		if use bbrv2 ; then
 			apply_bbrv2
+		fi
+	fi
+
+	if has clang-pgo ${IUSE_EFFECTIVE} ; then
+		if use clang-pgo ; then
+			apply_clang_pgo
 		fi
 	fi
 

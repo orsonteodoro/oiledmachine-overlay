@@ -31,6 +31,10 @@ PATCH_BBRV2_COMMIT_T="5da5aaa858dd7fac0afd439de4ff7565a00d4f32" # top / oldest
 PATCH_KCP_COMMIT="b9369c4a4f43b8cf182c9726dc5c7e6eb4115722"
 PATCH_LRU_GEN_COMMIT_B="58423b0ba935bb76ff3f6754703e8fb8533ecae3" # bottom / newest
 PATCH_LRU_GEN_COMMIT_T="1d1d59e750744b3c6b7cb51006cb59392e2fef65" # top / oldest
+PATCH_CLANG_PGO_COMMIT_B="fca41af18e10318e4de090db47d9fa7169e1bf2f" # oldest exclusive
+PATCH_CLANG_PGO_COMMIT_T="a15058eaefffc37c31326b59fa08b267b2def603" # newest
+PATCH_ZEN_MUQSS_COMMIT_B="4710c31d3ccab2c0c5bbd83a76e5fd5bb3e1d5ba" # bottom / newest
+PATCH_ZEN_MUQSS_COMMIT_T="8ded360073512fd443a98a988a1e96fa265fe124" # top / oldest
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/Y^..X.patch \
@@ -90,25 +94,75 @@ PATCH_ZENSAUCE_BL="
 # Disabled 7d443dabec118b2c869461d8740e010bca976931 : ZEN: INTERACTIVE: Use BFQ as our elevator
 # Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
 
-# ZEN interactive MuQSS patches
-# top is oldest, bottom is newest
-PATCH_ZENTUNE_MUQSS_COMMITS=\
-"a1b3431fbd525c30c52a138a72dfba17e4c31a63 \
-6e4aab0c82cbf44dae51a91fd7633b49b1f4114d \
-339325b9f946004ed40b0fc03c393197391a70b6"
+ZEN_MUQSS_COMMITS=(
+8ded360073512fd443a98a988a1e96fa265fe124
+8a76ca15ee7f8e596a2ba69636c224b91000da65
+0675730a57fe0d8e15bf1f473e3140a23f452d3a
+3e15c06a6ec87197145d7b72ca375881648f568e
+ab0fc26bc0c024d22a308ae63a9400df4eea19fb
+0c52e6745e8384802a99e59347b47845108f45e8
+34c0ab34802a189ac7fc20473729f69cde964891
+b44e58da8ed481ac608b3e78f74a85e7d91c1a24
+a842bb58f27a847d5f4069f429e05d1167b75340
+10222c78262730b91a5e150757a99ee516f93dbf
+a2ccbab45f1d3ff4bf5d41b270e6b771490d8fae
+31893dcb7295fd17af9277103d16cf9565f2f105
+1d5feee490a36788d1929a57e02d649b98f10e0d
+73b30acfbe4524667d961cb2e99e4eb50b84bde0
+a1b3431fbd525c30c52a138a72dfba17e4c31a63
+6e4aab0c82cbf44dae51a91fd7633b49b1f4114d
+339325b9f946004ed40b0fc03c393197391a70b6
+eab5dba7687b961da03f552ac2b0db42dd1655b7
+335141fd7c7ef892e928e83c9448f99dd7f663e4
+aed98074a89d6fedbde4c42eb18c9eee5bf7f960
+8ca62f8e77cd3059c4d53dadf52f28709f7d958d
+10b79808773f52ab90e1620ab22d63aa3c2ade2a
+23173edfedbc9611a828360ba3c49d5d3782fb72
+1ecfdc3687207a970d5268e177c3992e05d4583d
+573eae0fd4af4c513a34e761a6bd9d7a6b5bb254
+4406a8b509517e53ddd609bbf9a1806590e9a9d2
+6c0482407412960b79f4d3491f5af02d934a93ae
+2d8e0c2b5305e2a6433706571bf0ff27e11f65c2
+1ca9d4f5a95acbcd642b386767c0d77760e03ffc
+7948b2a127c511898204cce5643fbdbd0b33fa61
+cead0a476acdf95f96656294eb9269daabe34d0f
+5b4a33cf5fd55257b2bf19d085067e79c00dada0
+59526f23b3dd89b45618d5a2b2defd2275b68a2f
+3eb61cbfa1c8d008b732074f2e598895bcae626c
+6010ea0ca9ce264595fa5d2e74832e1974cdc15c
+d272fdf9eb456d6e1b92d95a1d56367ff900a68c
+7f375f4e05fe9ec2b82a21486992f04f49ef0776
+4de1b7547e11004d329b736089b4f82495da2829
+9df1781f9202adc2a32901deb007f63e6bd85878
+8f47fdc6f18bb48d147c2cb0a7dda853a9e8ec96
+cdb7953afd1ad6b262642ec0a27012ba54182e4c
+1333f264d6c0de818eb9778cbe97fddf81ab063b
+3bbe5d74e8f9b2579647b521ea2bb4c95c318c69
+039be2c88c309271eedcd91d6b73d77f1a1cf6b7
+8b91d104d3bae383fce0228088c2612fa53aa088
+faba2cc75d0a7ab8bb5e4a66b2d24323513b7d2f
+1b37f0566b443b6e94458fed7c6e6a5b2984d45b
+c036bcb894c974a8c91cc35eae14142107425545
+654c9ac965150c2243aa6a2181aa9ef220a57543
+3104c885d8a960a39923e5839c546cd472b361be
+7479ef1c9ea56ec6acc1cea9117177eb4f7e409b
+af392798312ef558ded78c5268d3a7eccef2f345
+f86b44da0b2cf869cb2c84a0d8a21a6f855a1aeb
+4710c31d3ccab2c0c5bbd83a76e5fd5bb3e1d5ba
+)
+ZEN_MUQSS_EXCLUDED_COMMITS=(
+)
 
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex-wait-multiple
-futex2 +genpatches +kernel-compiler-patch lru_gen lto muqss +O3 prjc rt
+futex2 +genpatches +kernel-compiler-patch lru_gen lto +O3 prjc rt
 shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
-tresor_x86_64-256-bit-key-support uksm zen-sauce -zen-tune zen-tune-muqss"
-# genpatches tarball is not downloadable yet
+tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce -zen-tune"
+IUSE+=" clang-pgo"
 REQUIRED_USE+="
-	!muqss
-	!genpatches
-	^^ ( cfs muqss prjc )
+	^^ ( cfs prjc zen-muqss )
 	prjc? ( !rt )
 	shadowcallstack? ( cfi )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
@@ -116,8 +170,7 @@ REQUIRED_USE+="
 	tresor_i686? ( tresor )
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
-	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
-	zen-tune-muqss? ( muqss zen-tune )"
+	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )"
 
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
 gen_scs_exclusion() {
@@ -129,8 +182,8 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
-	muqss? ( !rt )
-	rt? ( cfs !muqss !prjc )
+	zen-muqss? ( !rt )
+	rt? ( cfs !zen-muqss !prjc )
 "
 fi
 
@@ -143,6 +196,8 @@ Project C CPU Scheduler, genpatches, CVE fixes, TRESOR"
 inherit ot-kernel
 
 LICENSE+=" bbrv2? ( GPL-2 )" # tcp_bbr2.c is Dual BSD/GPL but other parts are based on licensing of original file
+LICENSE+=" clang-pgo? ( GPL-2 )"
+# A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" prjc? ( GPL-3 )" # see \
@@ -160,7 +215,6 @@ gen_kcp_license() {
 }
 LICENSE+=" "$(gen_kcp_license)
 LICENSE+=" lru_gen? ( GPL-2 )"
-LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
@@ -169,8 +223,8 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # all-rights-reserved applies to new files introduced and no defaults license
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
+LICENSE+=" zen-muqss? ( GPL-2 )"
 LICENSE+=" zen-tune? ( GPL-2 )"
-LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 
 _seq() {
 	local min=${1}
@@ -234,7 +288,26 @@ gen_lto_rdepend() {
 	done
 }
 
+gen_clang_pgo_rdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
+			=sys-devel/clang-runtime-${v}*
+		)
+		"
+	done
+}
+
 RDEPEND+=" cfi? ( || ( $(gen_cfi_rdepend 12 14) ) )"
+RDEPEND+=" clang-pgo? (
+		|| ( $(gen_clang_pgo_rdepend 13 14) )
+		sys-kernel/genkernel[clang-pgo]
+	   )"
 RDEPEND+=" lto? ( || ( $(gen_lto_rdepend 11 14) ) )"
 RDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_rdepend 10 14) ) ) )"
 
@@ -309,9 +382,6 @@ https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARB
 	   ${KERNEL_PATCH_URIS[@]}"
 fi
 
-# Not ready or not planned
-#	   muqss? ( ${CK_SRC_URI} )
-
 # For CPU microarchitectures >= year 2020, assumes mutually exclusive
 # kernel-compiler-patch* USE flag usage
 gen_kcp_ma_uri() {
@@ -328,18 +398,19 @@ gen_kcp_ma_uri() {
 
 # Not on the servers yet
 NOT_READY_YET="
+"
+
+SRC_URI+=" "$(gen_kcp_ma_uri)
+SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
+	   clang-pgo? ( ${CLANG_PGO_URI} )
+	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
+	   futex2? ( ${FUTEX2_SRC_URI} )
 	   genpatches? (
 		${GENPATCHES_URI}
 		${GENPATCHES_BASE_SRC_URI}
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-"
-
-SRC_URI+=" "$(gen_kcp_ma_uri)
-SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
-	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
-	   futex2? ( ${FUTEX2_SRC_URI} )
 	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -360,9 +431,9 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 		${TRESOR_SYSFS_SRC_URI}
 	   )
 	   uksm? ( ${UKSM_SRC_URI} )
+	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
 	   zen-sauce? ( ${ZENSAUCE_URIS} )
-	   zen-tune? ( ${ZENTUNE_URIS} )
-	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_URIS} )"
+	   zen-tune? ( ${ZENTUNE_URIS} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:

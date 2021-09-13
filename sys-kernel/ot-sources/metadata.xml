@@ -35,12 +35,20 @@
     by priority class and virtual deadline.  MuQSS tries to improve upon
     BFS with faster next task lookup from O(log n) to O(k) and choose between
     improved latency (single queue runqueue) or throughput (multiqueue runqueue).
+    MuQSS was End Of Life (EOL) with 5.12 series.
 
-    BMQ has been renamed to Project C.  Project C will merge both PDS and
+    BMQ has been renamed to Project C.  Project C merged both PDS and
     BMQ.  C means cross.
 
     In layman terms, O(1) is faster than O(log n).  O(log n) is faster than
     O(n).
+
+    The zen-kernel's MuQSS is a forward port of MuQSS fork is MuQSS with changes
+    to interactivity.  These changes drops the round robin time for task
+    switches from 6 to 4 and lowers the cpu percentage from 75% to 25%
+    to run as real time in the isochronous process class when using zen
+    interactive tunables.  To keep it like vanilla just disable zen interactive
+    or patch without zen interactive.
 
     Multigenerational LRU is a redesign of the current LRU design with
     more complex and accurate separation into multiple lists (aka generations)
@@ -178,6 +186,8 @@
       and not apply any third-party CPU scheduler.</flag>
     <flag name="clang">This is a stronger check for those prefer Clang over
       GCC and to make sure the prerequisites are met. 
+    <flag name="clang-pgo">Adds experimental Clang PGO support.  Patch was on
+      hold due to compiler code generation problems.</flag>
     <flag name="cve_hotfix">Applies patches to resolve CVEs (Common 
       Vulnerabilities and Exposures).  Not enabled by default.
 
@@ -269,7 +279,6 @@
       compiler optimizations.</flag>
     <flag name="pds">Patches the kernel with an alternative skiplist
       based scheduler.</flag>
-    <flag name="pgo">Checks future support for PGO through Clang</flag>
     <flag name="prjc">Applies the Project C CPU scheduler.</flag>
     <flag name="rt">Patches the kernel with the PREEMPT_RT patch which tries
       to minimize non-preemptible parts of the kernel.  It's experimental when
@@ -300,6 +309,7 @@
 
       Using it may be insecure.  For details, see
       https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks</flag>
+    <flag name="zen-muqss">Apply the zen-kernel's version of MuQSS</flag>
     <flag name="zen-sauce">Patches the kernel with selected Zen kernel
       commits.  You will need to define a ZENSAUCE_WHITELIST_5_10 environmental
       variable (in your make.conf or per-package env), replacing 5_10 with 5

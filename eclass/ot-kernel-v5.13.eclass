@@ -31,6 +31,10 @@ PATCH_BBRV2_COMMIT_T="03eeb3dfa421116c48e86376a2079fa7dd25e783" # top / oldest
 PATCH_KCP_COMMIT="aa17c1c6e894e75943950b0818af8695ae4a23b2"
 PATCH_LRU_GEN_COMMIT_B="2ae9740bc978f0c2b9b66014a172b903ef165deb" # bottom / newest
 PATCH_LRU_GEN_COMMIT_T="29426437a3440a1be20c387d29f43308dc3c0c73" # top / oldest
+PATCH_CLANG_PGO_COMMIT_B="fca41af18e10318e4de090db47d9fa7169e1bf2f" # oldest exclusive
+PATCH_CLANG_PGO_COMMIT_T="a15058eaefffc37c31326b59fa08b267b2def603" # newest
+PATCH_ZEN_MUQSS_COMMIT_B="00a9b574b607dc45c0435687d1f02dd0ab0deb6f" # bottom / newest
+PATCH_ZEN_MUQSS_COMMIT_T="0584e87d65d415614f632783c93daba73f8e13c2" # top / oldest
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/Y^..X.patch \
@@ -96,23 +100,64 @@ PATCH_ZENSAUCE_BL="
 # Disabled 7d443dabec118b2c869461d8740e010bca976931 : ZEN: INTERACTIVE: Use BFQ as our elevator
 # Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
 
-# ZEN interactive MuQSS patches
-# top is oldest, bottom is newest
-PATCH_ZENTUNE_MUQSS_COMMITS=\
-"762d57860d36910142c69ab488a7a1bf323d708e \
-c60d85512e10f3fe7a503974d30988d631408324 \
-56f24ae800a796c1b04b2a9e5d6c3aa717a5ef61"
+ZEN_MUQSS_COMMITS=(
+0584e87d65d415614f632783c93daba73f8e13c2
+356947633390e5b19dd47780cebf0eae49666d27
+512f9bcc181e532b200ee37678a8ab0186e6d821
+96a895d2284936e4a29cc9ec8b639d14cd3dfd56
+f85d43e3d0926a4e92ede6562c9fdbb8dfe84faf
+eaca1708095629258cca59fbd9b2a874214b51a5
+3760ffa8a6046ea24c73717de4e809c319224d68
+442a069df90576d152f82724727e70307a7be62f
+ab42a98e73e18e1393a38ae0920bfb38ada869a8
+034835119f000f95d9c25167d49acc62f8436249
+3eac16a1bd6be4a1ab20e8b6476da844f0c75ae5
+d44bd8c8d2ff598d408c9c3db05269033668fa62
+fc3597a77e7375f83ea7147fd6106c7c228d1eb6
+86f1a40495e4d396c8e63437450dec041f57d0c9
+958ee0ec7df4e443989889933ba4b463000b5ba5
+3aae9e40df5b31eddc7a5a55f1d7a35e27fea1d3
+762d57860d36910142c69ab488a7a1bf323d708e
+c60d85512e10f3fe7a503974d30988d631408324
+56f24ae800a796c1b04b2a9e5d6c3aa717a5ef61
+4870f6578527234b920e5849f107156f6dcd8ef5
+7a04658ede1ed70d61042a3e63f67ed070bc45e5
+f61916903d2db4501537bf3ff5a9e253c8cc70bb
+ec78719fb255d4d4c126fac63976b6abd42d5180
+f98914173f2145289ffe767be44d500cdf07f8e2
+63ae1c65c7625201d641b9a8227c072c671be7b6
+485abe581fd8ca16d1e630f1f7942e946a50524a
+5e7ae5fe5ed27af264c163d8cee0f0f0d4afb546
+3de79719aa90d2a7c2406d70a582f0ca04478b14
+451a8886c2de194bbdcbb674ce27e456c0e1fbff
+a545ec822c718d108c08e29a79c32f03221f743b
+9bb579b580943867b1f24a29d6515ab1af07eb1d
+d99f60c26a53d618a47fc43380392152434a880f
+059ddaf54fa540e4ecd64f53507c7348678759b5
+0364b7e40e5d20b0895e8b0c5ea76c7d40641fb7
+6a2d3d9353938c3ece25a843b713f04e19655dfe
+cac2f053d7f4f70894e8b7a30e5d8b63be503562
+4b382ba49343bebb160d99508552730bba1ea028
+64b68be9fb36e0f438e272bfd91846aaed5fc6cc
+1fb7f0e32caf628f0e70480922ab606f2d859605
+00a9b574b607dc45c0435687d1f02dd0ab0deb6f
+)
+ZEN_MUQSS_EXCLUDED_COMMITS=(
+0584e87d65d415614f632783c93daba73f8e13c2
+356947633390e5b19dd47780cebf0eae49666d27
+)
+
 
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex-wait-multiple
-futex2 +genpatches +kernel-compiler-patch lru_gen lto muqss +O3 prjc rt
+futex2 +genpatches +kernel-compiler-patch lru_gen lto +O3 prjc rt
 shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
-tresor_x86_64-256-bit-key-support uksm zen-sauce -zen-tune zen-tune-muqss"
+tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce -zen-tune"
+IUSE+=" clang-pgo"
 REQUIRED_USE+="
-	!muqss
-	^^ ( cfs muqss prjc )
+	^^ ( cfs prjc zen-muqss )
 	prjc? ( !rt )
 	shadowcallstack? ( cfi )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
@@ -120,8 +165,7 @@ REQUIRED_USE+="
 	tresor_i686? ( tresor )
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
-	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
-	zen-tune-muqss? ( muqss zen-tune )"
+	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )"
 
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
 gen_scs_exclusion() {
@@ -133,8 +177,8 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
-	muqss? ( !rt )
-	rt? ( cfs !muqss !prjc )
+	zen-muqss? ( !rt )
+	rt? ( cfs !zen-muqss !prjc )
 "
 fi
 
@@ -147,6 +191,8 @@ Project C CPU Scheduler, genpatches, CVE fixes, TRESOR"
 inherit ot-kernel
 
 LICENSE+=" bbrv2? ( GPL-2 )" # tcp_bbr2.c is Dual BSD/GPL but other parts are based on licensing of original file
+LICENSE+=" clang-pgo? ( GPL-2 )"
+# A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" prjc? ( GPL-3 )" # see \
@@ -164,7 +210,6 @@ gen_kcp_license() {
 }
 LICENSE+=" "$(gen_kcp_license)
 LICENSE+=" lru_gen? ( GPL-2 )"
-LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
@@ -173,8 +218,8 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # all-rights-reserved applies to new files introduced and no defaults license
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
+LICENSE+=" zen-muqss? ( GPL-2 )"
 LICENSE+=" zen-tune? ( GPL-2 )"
-LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 
 _seq() {
 	local min=${1}
@@ -238,7 +283,26 @@ gen_lto_rdepend() {
 	done
 }
 
+gen_clang_pgo_rdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
+			=sys-devel/clang-runtime-${v}*
+		)
+		"
+	done
+}
+
 RDEPEND+=" cfi? ( || ( $(gen_cfi_rdepend 12 14) ) )"
+RDEPEND+=" clang-pgo? (
+		|| ( $(gen_clang_pgo_rdepend 13 14) )
+		sys-kernel/genkernel[clang-pgo]
+	   )"
 RDEPEND+=" lto? ( || ( $(gen_lto_rdepend 11 14) ) )"
 RDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_rdepend 10 14) ) ) )"
 
@@ -360,9 +424,9 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 		${TRESOR_SYSFS_SRC_URI}
 	   )
 	   uksm? ( ${UKSM_SRC_URI} )
+	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
 	   zen-sauce? ( ${ZENSAUCE_URIS} )
-	   zen-tune? ( ${ZENTUNE_URIS} )
-	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_URIS} )"
+	   zen-tune? ( ${ZENTUNE_URIS} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -535,6 +599,8 @@ einfo "Already applied ${path} upstream"
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
 		_dpatch "${PATCH_OPS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
+	elif [[ "${path}" =~ "${CLANG_PGO_FN}" ]] ; then
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi
