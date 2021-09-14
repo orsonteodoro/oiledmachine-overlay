@@ -10,17 +10,17 @@ if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 else
-	SRC_URI="https://dev.gentoo.org/~polynomial-c/dist/${P}.tar.xz"
+	SRC_URI="https://storage.googleapis.com/aom-releases/${P}.tar.gz"
 	S="${WORKDIR}/${P}"
 	S_orig="${WORKDIR}/${P}"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~riscv ~sparc ~x86"
 fi
 
 DESCRIPTION="Alliance for Open Media AV1 Codec SDK"
 HOMEPAGE="https://aomedia.org"
 
 LICENSE="BSD-2"
-SLOT="0/2"
+SLOT="0/3"
 IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
@@ -869,7 +869,10 @@ src_install() {
 			if [[ "${build_type}" == "shared-libs" ]] ; then
 				cmake_src_install
 			else
-				use static-libs && doins ${PN}.a
+				if use static-libs ; then
+					insinto /usr/$(get_libdir)
+					doins ${PN}.a
+				fi
 			fi
 		done
 	}
