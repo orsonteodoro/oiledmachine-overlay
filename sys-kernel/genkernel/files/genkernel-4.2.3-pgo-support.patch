@@ -15,8 +15,8 @@ The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-14 11:01:56.973509351 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-14 11:02:40.933239449 -0700
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-14 12:14:18.392256679 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-14 12:51:07.757175869 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -33,7 +33,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
    echo "  Kernel Configuration settings"
    echo "	--menuconfig		Run menuconfig after oldconfig"
    echo "	--no-menuconfig		Do not run menuconfig after oldconfig"
-@@ -84,6 +86,27 @@ longusage() {
+@@ -84,6 +86,28 @@ longusage() {
    echo "	--kernel-modules-prefix=<dir>"
    echo "				Prefix to kernel module destination, modules"
    echo "				will be installed in <prefix>/lib/modules"
@@ -55,13 +55,14 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
 +  echo "	--pgt-network		Run phase 2 PGT trainer for network subsystem by downloading the linux tarball with ICMP ping and UDP traceroute tests"
 +  echo "	--pgt-p2p		Run phase 2 PGT trainer for P2P which measures CPU, CPU/IO schedulers, network, memory"
 +  echo "	--pgt-reset		Resets or empties the PGO profile if you quit a test accidently"
++  echo "	--pgt-sudo		Allow use of sudo for tracking progress of non-root PGO trainers"
 +  echo "	--pgt-webcam		Run phase 2 PGO trainer for the webcam"
 +  echo "	--pgt-yt		Run phase 2 PGO trainer for web streaming, measuring network, CPU, audio"
 +  echo "	--pgo			Build with phase 3 PGO optimized"
    echo "  Low-Level Compile settings"
    echo "	--cfi			Use Clang/LLVM to build a CFI protected kernel"
    echo "	--clang-kernel		Use Clang/LLVM to build the kernel"
-@@ -937,20 +960,103 @@ parse_cmdline() {
+@@ -937,20 +961,107 @@ parse_cmdline() {
  			CMD_STRIP_TYPE=none
  			print_info 3 "CMD_STRIP_TYPE: ${CMD_STRIP_TYPE}"
  			;;
@@ -133,6 +134,10 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
 +			CMD_PGT_RESET="yes"
 +			print_info 3 "CMD_PGT_RESET: ${CMD_PGT_RESET}"
 +			;;
++		--pgt-sudo)
++			ALLOW_SUDO=1
++			print_info 3 "ALLOW_SUDO: ${ALLOW_SUDO}"
++			;;
 +		--pgt-webcam)
 +			CMD_PGT_WEBCAM="yes"
 +			print_info 3 "CMD_GPT_WEBCAM: ${CMD_GPT_WEBCAM}"
@@ -165,7 +170,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  			;;
  		bzImage)
  			BUILD_KERNEL="yes"
-@@ -958,6 +1064,13 @@ parse_cmdline() {
+@@ -958,6 +1069,13 @@ parse_cmdline() {
  			BUILD_RAMDISK="no"
  			CMD_RAMDISKMODULES="no"
  			print_info 3 "CMD_RAMDISKMODULES: ${CMD_RAMDISKMODULES}"
@@ -180,8 +185,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  		--help)
  			longusage
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-14 11:01:56.974509390 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-14 11:02:40.934239488 -0700
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-14 12:14:18.394256758 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-14 12:15:08.182213135 -0700
 @@ -128,6 +128,13 @@ compile_generic() {
  				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
  			fi
@@ -197,8 +202,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-14 11:01:56.976509469 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-14 11:02:40.935239527 -0700
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-14 12:14:18.397256876 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-14 12:15:08.183213175 -0700
 @@ -1031,6 +1031,25 @@ config_kernel() {
  		fi
  	fi
@@ -226,8 +231,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
  	then
  		local llvm_slot
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-14 11:01:56.980509626 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-14 11:44:18.390524712 -0700
+--- genkernel-4.2.3.orig/genkernel	2021-09-14 12:14:18.401257033 -0700
++++ genkernel-4.2.3/genkernel	2021-09-14 12:15:08.183213175 -0700
 @@ -81,6 +81,7 @@ source "${GK_SHARE}"/defaults/compressio
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
  source "${GK_SHARE}"/defaults/config.sh || small_die "Could not read '${GK_SHARE}/defaults/config.sh'"
@@ -399,8 +404,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-14 11:01:56.981509665 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-14 11:02:40.937239606 -0700
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-14 12:14:18.406257229 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-14 12:51:30.973076992 -0700
 @@ -52,6 +52,30 @@ All that is needed to run genkernel is j
  .\}
  .sp
@@ -456,7 +461,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SS "KERNEL CONFIGURATION"
  .PP
  \fB\-\-\fR[\fBno\-\fR]\fBmenuconfig\fR
-@@ -356,6 +390,102 @@ to force usage of default kernel config\
+@@ -356,6 +390,107 @@ to force usage of default kernel config\
  Prefix to kernel module destination, modules will be installed in
  \fI<prefix>/lib/modules\fR\&.
  .RE
@@ -542,6 +547,11 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 +Resets or empties the PGO profile if you quit a test accidently\&
 +.RE
 +.PP
++\fB\-\-pgt\-sudo\fR
++.RS 4
++Allow use of sudo for tracking progress in non-root PGO trainers\&
++.RE
++.PP
 +\fB\-\-pgt\-webcam\fR
 +.RS 4
 +Run phase 2 PGO trainer for the webcam\&
@@ -561,8 +571,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  \fB\-\-cfi\fR
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-14 11:44:13.515332862 -0700
-@@ -0,0 +1,902 @@
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-14 12:35:22.940566469 -0700
+@@ -0,0 +1,921 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
@@ -570,6 +580,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +PGO_SAMPLE_SIZE=30 # statistics rule of 30
 +PGO_MAX_FILESIZE_DEFAULT=26214400 # 25 MB
 +#CHECK_REQUIREMENTS=0 # 1 or 0 or unset, for standalone mode only
++SUDOING=${ALLOW_SUDO:=0} # 1 or 0
 +
 +PGO_DISTRO="gentoo" # \
 +# If set to gentoo, script integrates with genkernel otherwise run in standalone mode.
@@ -590,6 +601,28 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	done
 +}
 +fi
++
++is_genkernel() {
++	if (( "${PGO_DISTRO}" == "gentoo" )) ; then
++		return 0
++	else
++		return 1
++	fi
++}
++
++marked_as_trained() {
++	( ! is_genkernel ) && return
++	if (( ${trained} == 1 )) ; then
++		elif [[ "${USER}" == "root" ]] ; then
++			touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++		elif which sudo 2>/dev/null 1>/dev/null \
++			&& ( groups | grep -q -e "wheel" ) \
++			&& (( ${SUDOING} == 1 )) ; then
++			print_info 1 "$(get_indent 1)>> sudo is required to mark PGO progress"
++			sudo touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++		fi
++	fi
++}
 +
 +pgo_trainer_memory() {
 +	local trained=0
@@ -810,7 +843,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +pgo_trainer_emerge1() {
@@ -836,15 +869,11 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +			print_info 1 "$(get_indent 1)>> Set PGO_TRAINER_PORTAGE_DIR in /etc/genkernel.conf to base abspath to the portage tree."
 +		fi
 +	fi
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +pgo_trainer_emerge2() {
 +	print_info 1 "$(get_indent 1)>> Running the PGO trainer with \`building\`"
-+}
-+
-+pgo_trainer_custom() {
-+	print_info 1 "$(get_indent 1)>> Running the custom PGO trainers"
 +}
 +
 +_use_crypto_with_mode() {
@@ -901,7 +930,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	_use_crypto_with_mode "cbc" "aes" 128 256 64
 +	_use_crypto_with_mode "ctr" "aes" 128 256 64
 +	_use_crypto_with_mode "xts" "aes" 256 512 128
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +pgo_trainer_crypto_common() {
@@ -936,7 +965,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	_use_crypto_with_mode "xts" "twofish" 256 512 128
 +	_use_crypto_with_mode "cbc" "serpent" 128 256 64
 +	_use_crypto_with_mode "xts" "serpent" 256 512 128
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +pgo_trainer_crypto_less_common() {
@@ -949,7 +978,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	_use_crypto_with_mode "cbc" "anubis" 128 320 32
 +	_use_crypto_with_mode "cbc" "camellia" 128 256 32
 +	_use_crypto_with_mode "xts" "camellia" 256 512 64
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +_pgo_trainer_filesystem_sequential_reads() {
@@ -972,7 +1001,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +			head -c ${nbytes} "${f}" 2>/dev/null > /dev/null && trained=1
 +		done
 +	done
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +_pgo_trainer_filesystem_random_reads_single_page() {
@@ -1013,7 +1042,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +_pgo_trainer_filesystem_random_writes_single_page() {
@@ -1043,7 +1072,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +_pgo_trainer_filesystem_grep() {
@@ -1066,7 +1095,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		local file_size=$(stat -c "%s" "${f}")
 +		grep -q -i "copyright" "${f}" && echo "Found pattern in ${f}" && trained=1
 +	done
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +pgo_trainer_filesystem() {
@@ -1177,7 +1206,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +pgo_trainer_webcam() {
@@ -1258,7 +1287,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	if (( ${ran_test} == 0 )) ; then
 +		print_info 1 "$(get_indent 1)>> You must run genkernel in x11 or wayland"
 +	fi
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +pgo_trainer_3d_ogl1_3() {
@@ -1284,7 +1313,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	if (( ${ran_test} == 0 )) ; then
 +		print_info 1 "$(get_indent 1)>> You must run genkernel in x11 or wayland"
 +	fi
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +_launch_video0_cr() {
@@ -1384,18 +1413,19 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	if (( ${ran_test} == 0 )) ; then
 +		print_info 1 "$(get_indent 1)>> You must run genkernel in x11 or wayland"
 +	fi
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +pgo_trainer_custom() {
 +	local trained=0
-+	if [[ -x "pgo-custom.sh" ]] ; then
++	DIR=$(dirname "$BASH_SOURCE")
++	if [[ -x "${DIR}/pgo-custom.sh" ]] ; then
 +		print_info 1 "$(get_indent 1)>> Running the PGO custom trainer(s)"
 +		./pgo-custom.sh
 +		touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +		trained=1
 +	fi
-+	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
 +pgo_trainer_all() {
@@ -1450,15 +1480,14 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +}
 +
 +check_pgo_requirements() {
-+	PGO_DISTRO="gentoo"
-+	if [[ ( "${PGO_DISTRO}" == "gentoo" && ( -n "${CMD_PGI}" || -n "${CMD_PGO}" ) ) \
-+		|| ( "${PGO_DISTRO}" != "gentoo" && true ) ]] ; then
++	if ( is_genkernel && [[ -n "${CMD_PGI}" || -n "${CMD_PGO}" ]] ) \
++		|| ( ( ! is_genkernel ) && true ) ; then
 +		check_pgo_profraw_fixes_applied
 +		check_pgo_applied
 +	fi
 +}
 +
-+if [[ "${PGO_DISTRO}" != "gentoo" ]] ; then
++if is_genkernel ; then
 +main() {
 +	[[ -n "${CHECK_REQUIREMENTS}" && "${CHECK_REQUIREMENTS}" == "1" ]] && check_pgo_requirements
 +	pgo_trainer_all

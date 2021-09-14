@@ -119,6 +119,7 @@ IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
 IUSE+=" clang-pgo
+	sudo
 	pgo-custom
 	pgo_trainer_crypto
 	pgo_trainer_memory
@@ -223,7 +224,27 @@ gen_cfi_rdepends() {
 # mdadm... during initramfs generation which will require these
 # things.
 DEPEND=""
-RDEPEND+="
+RDEPEND+=" ${PYTHON_DEPS}
+	app-arch/cpio
+	>=app-misc/pax-utils-1.2.2
+	app-portage/elt-patches
+	dev-util/gperf
+	sys-apps/sandbox
+	sys-devel/autoconf
+	sys-devel/autoconf-archive
+	sys-devel/automake
+	sys-devel/libtool
+	virtual/pkgconfig
+	clang-pgo? (
+		|| ( $(gen_clang_pgo_rdepends) )
+		sudo? ( app-admin/sudo )
+	)
+	firmware? ( sys-kernel/linux-firmware )
+	llvm? (
+		|| ( $(gen_llvm_rdepends) )
+		cfi? ( || ( $(gen_cfi_rdepends) ) )
+		lto? ( || ( $(gen_lto_rdepends) ) )
+	)
 	pgo_trainer_crypto? (
 		sys-fs/cryptsetup
 	)
@@ -257,25 +278,6 @@ RDEPEND+="
 		virtual/opengl
 		sys-process/procps
 		x11-misc/xscreensaver[X,opengl]
-	)
-"
-RDEPEND+=" ${PYTHON_DEPS}
-	app-arch/cpio
-	>=app-misc/pax-utils-1.2.2
-	app-portage/elt-patches
-	dev-util/gperf
-	sys-apps/sandbox
-	sys-devel/autoconf
-	sys-devel/autoconf-archive
-	sys-devel/automake
-	sys-devel/libtool
-	virtual/pkgconfig
-	clang-pgo? ( || ( $(gen_clang_pgo_rdepends) ) )
-	firmware? ( sys-kernel/linux-firmware )
-	llvm? (
-		|| ( $(gen_llvm_rdepends) )
-		cfi? ( || ( $(gen_cfi_rdepends) ) )
-		lto? ( || ( $(gen_lto_rdepends) ) )
 	)
 "
 

@@ -49,7 +49,7 @@
 
     The following steps must be take for a PGO kernel:
 
-    (1) Emerge a source based kernel package
+    (1) Emerge a source based kernel package with PGO and profraw compat patch
     (2) Run genkernel --pgi all
     (3) Reboot
     (4) Run genkernel --pgt-all train
@@ -58,7 +58,8 @@
     (6) Reboot
 
     The trainers that you choose should reflect typical use.  You may also
-    extend PGO with your own custom script.
+    extend PGO with your own custom script.  The script should be placed
+    in /usr/share/genkernel or in the same folder as gen_pgo.sh.
 
     Due to licensing concerns for the 2014 PGO GCC patch and associated scripts
     cannot be integrated both in the kernel sources and this package
@@ -96,21 +97,22 @@
       kernel.</flag>
     <flag name="pgo_trainer_memory">Trains the memory portion of the kernel
       subsystem.</flag>
-    <flag name="pgo_trainer_network">Trains network portions of the
-      kernel downloading a few bytes of the kernel and ICMP/UDP
-      PGO training.</flag>
+    <flag name="pgo_trainer_network">Trains network portions of the kernel
+      downloading a few bytes of the kernel and ICMP/UDP PGO training.</flag>
     <flag name="pgo_trainer_p2p">Trains the network, filesystem, disk portions
       of the kernel subsystems using peer-to-peer (p2p) with open source
       tarball.</flag>
     <flag name="pgo_trainer_webcam">Trains webcam portions of the kernel that
       may contain software based implementations on cheap cameras.</flag>
-    <flag name="pgo_trainer_xscreensaver_2d">Train cpu scheduler, gpu portions
-      of the kernel using 2D drawing primarily with complex graphics or
+    <flag name="pgo_trainer_xscreensaver_2d">Train the CPU scheduler, GPU
+      portions of the kernel using 2D drawing primarily with complex graphics or
       computational geometry algorithms.  It will spawn ncores*thread_per_core
-      processes.</flag>
-    <flag name="pgo_trainer_xscreensaver_3d">Train gpu portions of the
+      processes.  Best used with an auto tile tiling window manager so that
+      tricks are not applied to skip rendering.</flag>
+    <flag name="pgo_trainer_xscreensaver_3d">Train the GPU portions of the
       kernel with OpenGL ~1.3.  It will spawn ncores * thread_per_core
-      processes.</flag>
+      processes.  Best used with a auto tile tiling window manager so that
+      tricks are not applied to skip rendering.</flag>
     <flag name="shadow-call-stack">Ensure that the shadow-call-stack toolchain
       requirements are met.</flag>
     <flag name="subdir_mount">Adds mounting subdirectory support.  Used for
@@ -118,6 +120,8 @@
       crossdev and mounting them directly at /usr/$CTARGET without risk of
       damage caused by human error replacing / with /usr/$CTARGET.
     </flag>
+    <flag name="sudo">Allow use of sudo to mark non-root PGO training
+      complete</flag>
   </use>
   <!--
     <upstream>
