@@ -114,6 +114,8 @@ src_prepare() {
 		"${S}"/defaults/software.sh \
 		|| die "Could not adjust versions"
 
+	epatch "${FILESDIR}/${PN}-3.5.3.3-compiler-noise.patch"
+
 	if use subdir_mount ; then #conditional and codeblock and use flag added by muslx32 overlay
 		epatch "${FILESDIR}/${PN}-3.4.52.4-subdir-mount.patch"
 	fi

@@ -240,6 +240,7 @@ src_prepare() {
 		"${S}"/defaults/software.sh \
 		|| die "Could not adjust versions"
 
+	eapply "${FILESDIR}/${PN}-4.2.3-compiler-noise.patch"
 
 	if use subdir_mount ; then # conditional and codeblock and use flag added by muslx32 overlay
 		eapply "${FILESDIR}/${PN}-4.0.10-subdir-mount.patch"

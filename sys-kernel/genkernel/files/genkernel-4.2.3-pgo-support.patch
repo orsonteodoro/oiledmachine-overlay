@@ -14,9 +14,9 @@ has been tested working under normal user only.
 The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
-diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-11 04:30:55.060766437 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-11 10:49:32.025349329 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-14 01:10:40.246310582 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-14 01:22:09.539139700 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -25,31 +25,50 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_c
    echo
    echo "Available Options: "
    echo "  Configuration settings"
-@@ -83,6 +84,20 @@ longusage() {
+@@ -25,6 +26,7 @@ longusage() {
+   echo "	--cleanup		Clean up temporary directories on exit"
+   echo "	--no-cleanup		Do not remove any temporary directories on exit"
+   echo "	--compiler-noise        See all the compilation flags while building"
++  echo "	--debug-kernel		Don't allow PGO patches interfere with debugging (gcov, debugfs)"
+   echo "  Kernel Configuration settings"
+   echo "	--menuconfig		Run menuconfig after oldconfig"
+   echo "	--no-menuconfig		Do not run menuconfig after oldconfig"
+@@ -84,6 +86,27 @@ longusage() {
    echo "	--kernel-modules-prefix=<dir>"
    echo "				Prefix to kernel module destination, modules"
    echo "				will be installed in <prefix>/lib/modules"
 +  echo "  Kernel PGO settings"
-+  echo "	--pgi			Build with phase 1 PGI instrumenting"
++  echo "	--pgi			Build with phase 1 PGI instrumentaton"
 +  echo "	--pgt-2d-draw		Run phase 2 PGT trainer for video card benchmarks with 2D drawing xscreensavers"
 +  echo "	--pgt-3d-ogl1.3		Run phase 2 PGT trainer for video card benchmarks with OpenGL 1.3 xscreensavers"
 +  echo "	--pgt-all		Run phase 2 PGT trainer for with all benchmarks"
++  echo "	--pgt-all-non-root	Run phase 2 PGT trainer for with all benchmarks that should run as non-root"
++  echo "	--pgt-crypto-std	Run phase 2 PGT trainer for Crypto API industry for standard hashes and ciphers"
++  echo "	--pgt-crypto-common	Run phase 2 PGT trainer for Crypto API common hashes and ciphers"
++  echo "	--pgt-crypto-less-common"
++  echo "				Run phase 2 PGT trainer for Crypto API less common hashes and ciphers"
 +  echo "	--pgt-custom		Run phase 2 PGT trainer for with a custom benchmark script"
 +  echo "	--pgt-filesystem	Run phase 2 PGT trainer for the filesystem"
 +  echo "	--pgt-emerge1		Run phase 2 PGT trainer for CPU, disk, and memory subsystem through emerging xorg-server"
++  echo "	--pgt-emerge2		Run phase 2 PGT trainer for extreme memory and multithreading use"
 +  echo "	--pgt-memory		Run phase 2 PGT trainer for the memory subsystem"
-+  echo "	--pgt-network		Run phase 2 PGT trainer for network subsystem by downloading the linux tarball"
-+  echo "	--pgt-encryption	Run phase 2 PGT trainer for kernel encryption"
-+  echo "	--pgt-gpu		Run phase 2 PGT trainer for the video card"
++  echo "	--pgt-network		Run phase 2 PGT trainer for network subsystem by downloading the linux tarball with ICMP ping and UDP traceroute tests"
++  echo "	--pgt-p2p		Run phase 2 PGT trainer for P2P which measures CPU, CPU/IO schedulers, network, memory"
++  echo "	--pgt-reset		Resets or empties the PGO profile if you quit a test accidently"
 +  echo "	--pgt-webcam		Run phase 2 PGO trainer for the webcam"
++  echo "	--pgt-yt		Run phase 2 PGO trainer for web streaming, measuring network, CPU, audio"
 +  echo "	--pgo			Build with phase 3 PGO optimized"
    echo "  Low-Level Compile settings"
    echo "	--cfi			Use Clang/LLVM to build a CFI protected kernel"
    echo "	--clang-kernel		Use Clang/LLVM to build the kernel"
-@@ -909,20 +924,75 @@ parse_cmdline() {
+@@ -937,20 +960,103 @@ parse_cmdline() {
  			CMD_STRIP_TYPE=none
  			print_info 3 "CMD_STRIP_TYPE: ${CMD_STRIP_TYPE}"
  			;;
++		--debug-kernel)
++			CMD_DEBUG_KERNEL=1
++			print_info 3 "CMD_DEBUG_KERNEL: ${CMD_DEBUG_KERNEL}"
++			;;
 +		--pgi)
 +			CMD_PGI="yes"
 +			print_info 3 "CMD_PGI: ${CMD_PGI}"
@@ -58,13 +77,29 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_c
 +			CMD_PGT_2D_DRAW="yes"
 +			print_info 3 "CMD_GPT_2D_DRAW: ${CMD_GPT_2D_DRAW}"
 +			;;
-+		--pgt-3d-ogl1_3)
++		--pgt-3d-ogl1.3)
 +			CMD_PGT_3D_OGL1_3="yes"
 +			print_info 3 "CMD_GPT_3D_OGL1_3: ${CMD_GPT_3D_OGL1_3}"
 +			;;
 +		--pgt-all)
 +			CMD_PGT_ALL="yes"
 +			print_info 3 "CMD_GPT_ALL: ${CMD_GPT_ALL}"
++			;;
++		--pgt-all-non-root)
++			CMD_PGT_ALL_NON_ROOT="yes"
++			print_info 3 "CMD_GPT_ALL_NON_ROOT: ${CMD_GPT_ALL_NON_ROOT}"
++			;;
++		--pgt-crypto-std)
++			CMD_PGT_CRYPTO_STD="yes"
++			print_info 3 "CMD_CRYPTO_STD: ${CMD_CRYPTO_STD}"
++			;;
++		--pgt-crypto-common)
++			CMD_PGT_CRYPTO_COMMON="yes"
++			print_info 3 "CMD_CRYPTO_COMMON: ${CMD_CRYPTO_COMMON}"
++			;;
++		--pgt-crypto-less-common)
++			CMD_PGT_CRYPTO_LESS_COMMON="yes"
++			print_info 3 "CMD_CRYPTO_LESS_COMMON: ${CMD_CRYPTO_LESS_COMMON}"
 +			;;
 +		--pgt-custom)
 +			CMD_PGT_CUSTOM="yes"
@@ -78,6 +113,10 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_c
 +			CMD_PGT_EMERGE1="yes"
 +			print_info 3 "CMD_GPT_EMERGE1: ${CMD_GPT_EMERGE1}"
 +			;;
++		--pgt-emerge2)
++			CMD_PGT_EMERGE2="yes"
++			print_info 3 "CMD_GPT_EMERGE2: ${CMD_GPT_EMERGE2}"
++			;;
 +		--pgt-memory)
 +			CMD_PGT_MEMORY="yes"
 +			print_info 3 "CMD_GPT_MEMORY: ${CMD_GPT_MEMORY}"
@@ -86,17 +125,21 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_c
 +			CMD_PGT_NETWORK="yes"
 +			print_info 3 "CMD_GPT_NETWORK: ${CMD_GPT_NETWORK}"
 +			;;
-+		--pgt-encryption)
-+			CMD_PGT_ENCRYPTION="yes"
-+			print_info 3 "CMD_GPT_ENCRYPTION: ${CMD_GPT_ENCRYPTION}"
++		--pgt-p2p)
++			CMD_PGT_P2P="yes"
++			print_info 3 "CMD_GPT_P2P: ${CMD_GPT_P2P}"
 +			;;
-+		--pgt-gpu)
-+			CMD_PGT_GPU="yes"
-+			print_info 3 "CMD_GPT_GPU: ${CMD_GPT_GPU}"
++		--pgt-reset)
++			CMD_PGT_RESET="yes"
++			print_info 3 "CMD_PGT_RESET: ${CMD_PGT_RESET}"
 +			;;
 +		--pgt-webcam)
 +			CMD_PGT_WEBCAM="yes"
 +			print_info 3 "CMD_GPT_WEBCAM: ${CMD_GPT_WEBCAM}"
++			;;
++		--pgt-yt)
++			CMD_PGT_YT="yes"
++			print_info 3 "CMD_GPT_YT: ${CMD_GPT_YT}"
 +			;;
 +		--pgo)
 +			CMD_PGO="yes"
@@ -122,7 +165,7 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_c
  			;;
  		bzImage)
  			BUILD_KERNEL="yes"
-@@ -930,6 +1000,13 @@ parse_cmdline() {
+@@ -958,6 +1064,13 @@ parse_cmdline() {
  			BUILD_RAMDISK="no"
  			CMD_RAMDISKMODULES="no"
  			print_info 3 "CMD_RAMDISKMODULES: ${CMD_RAMDISKMODULES}"
@@ -136,9 +179,55 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_c
  			;;
  		--help)
  			longusage
-diff -urpN -x '*.orig' genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-11 04:30:55.061766477 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-11 18:38:30.856183125 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-14 01:10:40.246310582 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-14 01:11:14.409639350 -0700
+@@ -128,6 +128,13 @@ compile_generic() {
+ 				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
+ 			fi
+ 
++			# Already added PGI flags in patch
++
++			if isTrue "${CMD_PGO}" && isTrue "${CMD_LLVM_KERNEL}"
++			then
++				compile_cmd+=( KCFLAGS=-fprofile-use="${KERNEL_OUTPUTDIR}/vmlinux.profdata" )
++			fi
++
+ 			compile_cmd+=( "HOSTAR='$(tc-getBUILD_AR)'" )
+ 			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
+ 			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-14 01:10:40.247310621 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-14 01:11:14.409639350 -0700
+@@ -1031,6 +1031,25 @@ config_kernel() {
+ 		fi
+ 	fi
+ 
++	if isTrue "${CMD_PGI}" && [ -z "${CMD_DEBUG_KERNEL}" ]
++	then
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for PGI support are set ..."
++		if isTrue "${CMD_LLVM_KERNEL}"
++		then
++			kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_CC_HAS_NO_PROFILE_FN_ATTR" "y"
++			kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_CC_IS_CLANG" "y"
++			kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_DEBUG_FS" "y"
++			kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_PGO_CLANG" "y"
++		fi
++	fi
++
++	if isTrue "${CMD_PGO}" && [ -z "${CMD_DEBUG_KERNEL}" ]
++	then
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for PGO support are met ..."
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_DEBUG_FS" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_PGO_CLANG" ""
++	fi
++
+ 	if isTrue "${CMD_LLVM_KERNEL}"
+ 	then
+ 		local llvm_slot
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
+--- genkernel-4.2.3.orig/genkernel	2021-09-14 01:10:40.249310699 -0700
++++ genkernel-4.2.3/genkernel	2021-09-14 01:30:16.156102607 -0700
 @@ -81,6 +81,7 @@ source "${GK_SHARE}"/defaults/compressio
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
  source "${GK_SHARE}"/defaults/config.sh || small_die "Could not read '${GK_SHARE}/defaults/config.sh'"
@@ -147,39 +236,202 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
  source "${GK_SHARE}"/gen_cmdline.sh || small_die "Could not read '${GK_SHARE}/gen_cmdline.sh'"
  source "${GK_SHARE}"/gen_arch.sh || small_die "Could not read '${GK_SHARE}/gen_arch.sh'"
  source "${GK_SHARE}"/gen_determineargs.sh || small_die "Could not read '${GK_SHARE}/gen_determineargs.sh'"
-@@ -555,6 +556,19 @@ fi
+@@ -226,6 +227,76 @@ isTrue "${CMD_INSTALL}" && make_bootdir_
+ 
+ check_disk_space_requirements
+ 
++for pgx in \
++	"${CMD_PGI}" \
++	"${CMD_PGO}" \
++	"${CMD_PGT_ALL}" \
++	"${CMD_PGT_ALL_NON_ROOT}" \
++	"${CMD_PGT_CUSTOM}" \
++	"${CMD_PGT_CRYPTO_STD}" \
++	"${CMD_PGT_CRYPTO_COMMON}" \
++	"${CMD_PGT_CRYPTO_LESS_COMMON}" \
++	"${CMD_PGT_FILESYSTEM}" \
++	"${CMD_PGT_EMERGE1}" \
++	"${CMD_PGT_EMERGE2}" \
++	"${CMD_PGT_MEMORY}" \
++	"${CMD_PGT_NETWORK}" \
++	"${CMD_PGT_P2P}" \
++	"${CMD_PGT_WEBCAM}" ; do
++	if isTrue "${pgx}" ; then
++		if [ -n "${CMD_LLVM_SLOT}" ] ; then
++			llvm_slot=${CMD_LLVM_SLOT}
++			if (( ${llvm_slot} < "13" )) ; then
++				print_info 1 "$(get_indent 1)>> PGO requires both clang and llvm >= 13 with commits after Jun 21, 2021"
++				exit 1
++			fi
++		else
++			llvm_slot=$(ls "${BROOT}/usr/lib/llvm" | sort -rV | head -n 1)
++			if (( ${llvm_slot} < "13" )) ; then
++				print_info 1 "$(get_indent 1)>> PGO requires both clang and llvm >= 13 with commits after Jun 21, 2021"
++				exit 1
++			fi
++		fi
++	fi
++done
++
++if isTrue "${CMD_PGI}" && isTrue "${CMD_PGO}"
++then
++	print_info 1 "$(get_indent 1)>> --pgi with --pgo is not allowed"
++	return 1
++fi
++
++for pgt in "${CMD_PGT_ALL}" \
++	"${CMD_PGT_ALL_NON_ROOT}" \
++	"${CMD_PGT_CUSTOM}" \
++	"${CMD_PGT_CRYPTO_STD}" \
++	"${CMD_PGT_CRYPTO_COMMON}" \
++	"${CMD_PGT_CRYPTO_LESS_COMMON}" \
++	"${CMD_PGT_FILESYSTEM}" \
++	"${CMD_PGT_EMERGE1}" \
++	"${CMD_PGT_EMERGE2}" \
++	"${CMD_PGT_MEMORY}" \
++	"${CMD_PGT_NETWORK}" \
++	"${CMD_PGT_P2P}" \
++	"${CMD_PGT_WEBCAM}" ; do
++	if isTrue "${CMD_PGI}" && isTrue "${pgt}"
++	then
++		print_info 1 "$(get_indent 1)>> --pgi with a --pgt is not allowed"
++		return 1
++	fi
++	if isTrue "${CMD_PGO}" && isTrue "${pgt}"
++	then
++		print_info 1 "$(get_indent 1)>> --pgo with a --pgt is not allowed"
++		return 1
++	fi
++done
++
++if isTrue "${CMD_PGO}" && [ ! -e "${KERNEL_OUTPUTDIR}/.pgt-trained" ]
++then
++	print_info 1 "$(get_indent 1)>> --pgo requires --pgt training first"
++	return 1
++fi
++
+ if isTrue "${BUILD_KERNEL}" && ! isTrue "${KERNCACHE_IS_VALID}"
+ then
+ 	print_info 1 '' 1 0
+@@ -233,6 +304,26 @@ then
+ 	# Configure kernel
+ 	config_kernel
+ 
++	if isTrue "${CMD_PGO}"
++	then
++		print_info 1 "$(get_indent 1)>> Collecting and merging PGO data:"
++		if [ -e "/sys/kernel/debug/pgo/profraw" ] ; then
++			print_info 1 "$(get_indent 1)>> Missing /sys/kernel/debug/pgo/profraw:"
++			exit 1
++		fi
++		cp -a /sys/kernel/debug/pgo/profraw "${KERNEL_OUTPUTDIR}/vmlinux.profraw"
++
++		local llvm_slot
++		if [ -n "${CMD_LLVM_SLOT}" ] ; then
++			llvm_slot=${CMD_LLVM_SLOT}
++		else
++			llvm_slot=$(ls "${BROOT}/usr/lib/llvm" | sort -rV | head -n 1)
++		fi
++		export PATH="${BROOT}/usr/lib/llvm/${llvm_slot}/bin:${PATH}"
++		llvm-profdata merge --output="${KERNEL_OUTPUTDIR}/vmlinux.profdata" \
++			"${KERNEL_OUTPUTDIR}/vmlinux.profraw"
++	fi
++
+ 	# Make prepare
+ 	if ! isTrue "${ARCH_HAVENOPREPARE}"
+ 	then
+@@ -559,6 +650,56 @@ fi
  
  isTrue "${CMD_INSTALL}" && restore_boot_mount_state
  
-+if isTrue "${CMD_PGT_ALL}"
-+	pgo_trainer_all
++if isTrue "${CMD_PGI}" || isTrue "${CMD_PGT_RESET}"
 +then
-+	if isTrue "${CMD_GPT_2D_DRAW}" && pgo_trainer_2d_draw
-+	if isTrue "${CMD_GPT_3D_OGL1_3}" && pgo_trainer_3d_ogl1_3
-+	if isTrue "${CMD_PGT_CUSTOM}" && pgo_trainer_custom
-+	if isTrue "${CMD_PGT_FILESYSTEM}" && pgo_trainer_filesystem
-+	if isTrue "${CMD_PGT_EMERGE1}" && pgo_trainer_emerge1
-+	if isTrue "${CMD_PGT_EMERGE2}" && pgo_trainer_emerge2
-+	if isTrue "${CMD_PGT_MEMORY}" && pgo_trainer_memory
-+	if isTrue "${CMD_PGT_NETWORK}" && pgo_trainer_network
++	rm -f "${KERNEL_OUTPUTDIR}/.pgt-inited"
++	rm -f "${KERNEL_OUTPUTDIR}/.pgt-trained"
++fi
++
++if isTrue "${CMD_PGT_ALL}" \
++	|| isTrue "${CMD_GPT_2D_DRAW}" \
++	|| isTrue "${CMD_GPT_3D_OGL1_3}" \
++	|| isTrue "${CMD_PGT_CUSTOM}" \
++	|| isTrue "${CMD_PGT_CRYPTO_STD}" \
++	|| isTrue "${CMD_PGT_CRYPTO_COMMON}" \
++	|| isTrue "${CMD_PGT_CRYPTO_LESS_COMMON}" \
++	|| isTrue "${CMD_PGT_FILESYSTEM}" \
++	|| isTrue "${CMD_PGT_EMERGE1}" \
++	|| isTrue "${CMD_PGT_EMERGE2}" \
++	|| isTrue "${CMD_PGT_MEMORY}" \
++	|| isTrue "${CMD_PGT_NETWORK}" \
++	|| isTrue "${CMD_PGT_P2P}" \
++	|| isTrue "${CMD_PGT_WEBCAM}"
++then
++	if [ ! -e "${KERNEL_OUTPUTDIR}/.pgt-inited" ] ; then
++		echo 1 > /sys/kernel/debug/pgo/reset
++		touch "${KERNEL_OUTPUTDIR}/.pgt-inited"
++	fi
++fi
++
++if isTrue "${CMD_PGT_ALL}"
++then
++	pgo_trainer_all
++elif isTrue "${CMD_PGT_ALL_NON_ROOT}"
++then
++	pgo_trainer_all_non_root
++else
++	isTrue "${CMD_GPT_2D_DRAW}" && pgo_trainer_2d_draw
++	isTrue "${CMD_GPT_3D_OGL1_3}" && pgo_trainer_3d_ogl1_3
++	isTrue "${CMD_PGT_CUSTOM}" && pgo_trainer_custom
++	isTrue "${CMD_PGT_CRYPTO_STD}" && pgo_trainer_crypto_std
++	isTrue "${CMD_PGT_CRYPTO_COMMON}" && pgo_trainer_crypto_common
++	isTrue "${CMD_PGT_CRYPTO_LESS_COMMON}" && pgo_trainer_crypto_less_common
++	isTrue "${CMD_PGT_FILESYSTEM}" && pgo_trainer_filesystem
++	isTrue "${CMD_PGT_EMERGE1}" && pgo_trainer_emerge1
++	isTrue "${CMD_PGT_EMERGE2}" && pgo_trainer_emerge2
++	isTrue "${CMD_PGT_MEMORY}" && pgo_trainer_memory
++	isTrue "${CMD_PGT_NETWORK}" && pgo_trainer_network
++	isTrue "${CMD_PGT_P2P}" && pgo_trainer_p2p
++	isTrue "${CMD_PGT_WEBCAM}" && pgo_trainer_webcam
++	isTrue "${CMD_PGT_YT}" && pgo_trainer_yt
 +fi
 +
  print_info 1 '' 1 0
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
-diff -urpN -x '*.orig' genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-11 04:30:55.062766518 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-11 04:31:18.694724048 -0700
-@@ -52,6 +52,8 @@ All that is needed to run genkernel is j
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-14 01:10:40.249310699 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-14 01:28:06.078031950 -0700
+@@ -52,6 +52,30 @@ All that is needed to run genkernel is j
  .\}
  .sp
  This would produce a kernel, asking you what how to configure it to your desire, leaving alone any existing compiled object files, but not installing anything\&.
 +.sp
-+PGO training requires you to pass --pgi on the first phase with either ALL, bzImage, kernel ACTIONs; one or several --pgt phases with the train ACTION; --pgo on the last phase with either ALL, bzImage, kernel ACTIONs.
++PGO training requires you to pass --pgi on the first phase with either ALL, bzImage, kernel ACTIONs; one or several --pgt phases with the \fItrain\fR ACTION; --pgo on the last phase with either ALL, bzImage, kernel ACTIONs.
++.sp
++.SS "PGO STEPS"
++.PP
++(1) Emerge a source based kernel package
++.PP
++.sp
++(2) Run \fIgenkernel --pgi all\fR
++.PP
++.sp
++(3) Reboot
++.PP
++.sp
++(4) Run \fIgenkernel --pgt-all train\fR
++.PP
++.sp
++(4 optional) Run \fIgenkernel --pgt-yt train\fR in X as a normal user
++.PP
++.sp
++(5) Run \fIgenkernel --pgo all\fR
++.PP
++.sp
++(6) Reboot
  .SH "ACTIONS"
  .sp
  An action tells genkernel what you want it to do \- the following actions are supported:
-@@ -80,6 +82,11 @@ Build only the kernel and the modules\&.
+@@ -80,6 +104,11 @@ Build only the kernel and the modules\&.
  .RS 4
  Build only the ramdisk/initramfs\&.
  .RE
@@ -191,17 +443,133 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkerne
  .SH "OPTIONS"
  .sp
  Genkernel supports the following options which alter its behaviour\&. Certain options have \fB\-\-no\-\fR variants which do the opposite thing\&. You can specify your options in any order\&.
-diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
+@@ -111,6 +140,11 @@ Turns on, or off, output in color using
+ .RS 4
+ Turns on or off the full post\-run cleanup for debug purposes\&.
+ .RE
++.PP
++\fB\-\-debug\-kernel\fR
++.RS 4
++Don't allow PGO patches interfere with debugging (gcov, debugfs)\&.
++.RE
+ .SS "KERNEL CONFIGURATION"
+ .PP
+ \fB\-\-\fR[\fBno\-\fR]\fBmenuconfig\fR
+@@ -356,6 +390,102 @@ to force usage of default kernel config\
+ Prefix to kernel module destination, modules will be installed in
+ \fI<prefix>/lib/modules\fR\&.
+ .RE
++.SS "KERNEL PGO SETTINGS"
++.PP
++\fB\-\-pgi\fR
++.RS 4
++Build with phase 1 PGI instrumentaton\&.
++.RE
++.PP
++\fB\-\-pgt\-2d\-draw\fR
++.RS 4
++Run phase 2 PGT trainer for video card benchmarks with 2D drawing xscreensavers\&.
++.RE
++.PP
++\fB\-\-pgt\-3d\-ogl1.3\fR
++.RS 4
++Run phase 2 PGT trainer for video card benchmarks with OpenGL 1.3 xscreensavers\&.
++.RE
++.PP
++\fB\-\-pgt\-all\fR
++.RS 4
++Run phase 2 PGT trainer for with all benchmarks\&
++.RE
++.PP
++\fB\-\-pgt\-all-non-root\fR
++.RS 4
++Run phase 2 PGT trainer for with all benchmarks that should run as non-root\&
++.RE
++.PP
++\fB\-\-pgt\-crypto\-std\fR
++.RS 4
++Run phase 2 PGT trainer for Crypto API industry for standard hashes and ciphers\&
++.RE
++.PP
++\fB\-\-pgt\-crypto\-common\fR
++.RS 4
++Run phase 2 PGT trainer for Crypto API common hashes and ciphers\&
++.RE
++.PP
++\fB\-\-pgt\-crypto\-less\-common\fR
++.RS 4
++Run phase 2 PGT trainer for Crypto API less common hashes and ciphers\&
++.RE
++.PP
++\fB\-\-pgt\-custom\fR
++.RS 4
++Run phase 2 PGT trainer for with a custom benchmark script\&
++.RE
++.PP
++\fB\-\-pgt\-filesystem\fR
++.RS 4
++Run phase 2 PGT trainer for the filesystem\&
++.RE
++.PP
++\fB\-\-pgt\-emerge1\fR
++.RS 4
++Run phase 2 PGT trainer for CPU, disk, and memory subsystem through emerging xorg-server\&
++.RE
++.PP
++\fB\-\-pgt\-emerge2\fR
++.RS 4
++Run phase 2 PGT trainer for extreme memory and multithreading use\&
++.RE
++.PP
++\fB\-\-pgt\-memory\fR
++.RS 4
++Run phase 2 PGT trainer for the memory subsystem\&
++.RE
++.PP
++\fB\-\-pgt\-network\fR
++.RS 4
++Run phase 2 PGT trainer for network subsystem by downloading the linux tarball with ICMP ping and UDP traceroute tests\&
++.RE
++.PP
++\fB\-\-pgt\-p2p\fR
++.RS 4
++Run phase 2 PGT trainer for P2P which measures CPU, CPU/IO schedulers, network, memory\&
++.RE
++.PP
++\fB\-\-pgt\-reset\fR
++.RS 4
++Resets or empties the PGO profile if you quit a test accidently\&
++.RE
++.PP
++\fB\-\-pgt\-webcam\fR
++.RS 4
++Run phase 2 PGO trainer for the webcam\&
++.RE
++.PP
++\fB\-\-pgt\-yt\fR
++.RS 4
++Run phase 2 PGO trainer for web streaming, measuring network, CPU, audio\&
++.RE
++.PP
++\fB\-\-pgo\fR
++.RS 4
++Build with phase 3 PGO optimized\&
++.RE
+ .SS "LOW\-LEVEL COMPILATION OPTIONS"
+ .PP
+ \fB\-\-cfi\fR
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-11 18:38:27.556055542 -0700
-@@ -0,0 +1,684 @@
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-14 01:11:14.443640672 -0700
+@@ -0,0 +1,850 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
 +
-+PGO_SAMPLE_SIZE=1 # statistics rule of 30
++PGO_SAMPLE_SIZE=30 # statistics rule of 30
++PGO_MAX_FILESIZE_DEFAULT=26214400 # 25 MB
 +
-+PGO_DISTRO="linux"
++PGO_DISTRO="gentoo"
 +
 +if [[ "${PGO_DISTRO}" == "linux" ]] ; then
 +print_info() {
@@ -219,19 +587,40 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +fi
 +
 +pgo_trainer_memory() {
-+	print_info 1 "$(get_indent 1)>> Running the custom PGO memory"
++	local trained=0
++	print_info 1 "$(get_indent 1)>> Running the PGO memory trainer"
 +
 +	if ! which vmtouch 2>/dev/null 1>/dev/null ; then
 +		print_info 1 "$(get_indent 1)>> Missing vmtouch.  Emerge dev-util/vmtouch"
 +		return
 +	fi
 +
-+	local tarball=${PGO_LINUX_TARBALL:="/usr/portage/distfiles/linux-5.14.tar.xz"}
-+	if [[ ! -f "${PGO_LINUX_TARBALL}" ]] ; then
-+		# The tarball is used as a pseudorandom source of data.
-+		print_info 1 "Could not find the linux tarball.  You need to download $(basename ${tarball}) and place it in $(dirname ${tarball})"
-+		print_info 1 "You may also change the envvar PGO_LINUX_TARBALL install to the abspath to a linux tarball."
-+		return
++	# The tarball is used as a pseudorandom source of data.
++	local tarball
++	if [[ -n "${PGO_LINUX_TARBALL}" ]] ; then
++		tarball="${PGO_LINUX_TARBALL}"
++		if [[ ! -e "${tarball}" ]] ; then
++			print_info 1 "$(get_indent 1)>> The abspath pointed by PGO_LINUX_TARBALL"
++			print_info 1 "$(get_indent 1)>> doesn't exist.  Skipping test."
++			return
++		fi
++	else
++		local distdir="${PGO_DISTDIR:=/usr/portage/distfiles}"
++		if [[ ! -d "${distdir}" ]] ; then
++			print_info 1 "$(get_indent 1)>> Couldn't find the distfiles directory from"
++			print_info 1 "$(get_indent 1)>> PGO_DISTDIR.  Skipping test"
++			return
++		fi
++		tarball=$(find ${distdir} \
++				-regextype posix-extended \
++				-regex ".*/linux-[0-9.]+.tar.gz" \
++				| head -n 1)
++		if [[ ! -e "${tarball}" ]] ; then
++			print_info 1 "$(get_indent 1)>> Couldn't find a linux tarball.  Skipping test."
++			print_info 1 "$(get_indent 1)>> Try setting PGO_LINUX_TARBALL instead to the"
++			print_info 1 "$(get_indent 1)>> abspath to the linux tarball."
++			return
++		fi
 +	fi
 +
 +	if (( $(ps -aux \
@@ -240,13 +629,15 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +                | sed -E -e "s|[ ]+| |g" \
 +                | cut -f 2 -d " " \
 +		| wc -l) > 0 )) ; then
-+		print_info 1 "$(get_indent 1)>> Another program may be using vmtouch, skipping tests."
++		print_info 1 "$(get_indent 1)>> Another program may be using vmtouch,"
++		print_info 1 "$(get_indent 1)>> skipping tests."
 +		return
 +	fi
 +
 +	free_vmlocked_memory() {
 +		print_info 1 "$(get_indent 1)>> Freeing memory"
-+		kill -9 $(ps -aux | grep "vmtouch -d -l" | grep -E -v "grep.*vmtouch" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
++		kill -9 $(ps -aux | grep "vmtouch -d -l" | grep -E -v "grep.*vmtouch" \
++			| sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
 +		exit 1
 +	}
 +
@@ -258,7 +649,8 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +		&& return
 +	pushd "${sandbox_dir}"
 +		local kernel_size=8388608 # Based on orders of magnitude base 2^23 ; 7130192 actual
-+		local total_ram=$(( $(free --bytes | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ") - ${kernel_size} ))
++		local total_ram=$(( $(free --bytes | grep "Mem:" | sed -E -e "s|[ ]+| |g" \
++			| cut -f 2 -d " ") - ${kernel_size} ))
 +		local allocation_size=$((${total_ram}+1073741824))
 +		local bytes_read=0
 +		print_info 1 "$(get_indent 1)>> Finding files to read into memory, please wait"
@@ -398,6 +790,7 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +				sleep ${duration}
 +				kill -9 ${bash_pid}
 +				mb8_pause=1
++				trained=1
 +			fi
 +			(( ${bytes_read} > ${allocation_size} )) && break
 +		done
@@ -408,18 +801,21 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +        	        | grep -E -v "grep.*vmtouch" \
 +	                | sed -E -e "s|[ ]+| |g" \
 +	                | cut -f 2 -d " ")
++		touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +pgo_trainer_emerge1() {
++	local trained=0
 +	if [ -d /usr/portage/x11-base/xorg-server ] ; then
 +		pushd /usr/portage/x11-base/xorg-server
 +			local f=$(basename $(find /usr/portage/x11-base/xorg-server -name "*.ebuild" \
 +				| sort -V | head -n 1))
 +			print_info 1 "$(get_indent 1)>> Running the PGO trainer with \`ebuild ${f} unpack prepare compile\`"
-+			ebuild ${f} clean unpack prepare compile
++			ebuild ${f} clean unpack prepare compile && trained=1
 +			ebuild ${f} clean
 +		popd
 +	else
@@ -428,13 +824,14 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +				local f=$(basename $(find "${PGO_TRAINER_PORTAGE_DIR}/x11-base/xorg-server" -name "*.ebuild" \
 +					| sort -V | head -n 1))
 +				print_info 1 "$(get_indent 1)>> Running the PGO trainer with \`ebuild ${f} unpack prepare compile\`"
-+				ebuild ${f} clean unpack prepare compile
++				ebuild ${f} clean unpack prepare compile && trained=1
 +				ebuild ${f} clean
 +			popd
 +		then
 +			print_info 1 "$(get_indent 1)>> Set PGO_TRAINER_PORTAGE_DIR in /etc/genkernel.conf to base abspath to the portage tree."
 +		fi
 +	fi
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +pgo_trainer_emerge2() {
@@ -454,7 +851,7 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +	if grep -q ": ${mode_of_operation}(${cipher})" /proc/crypto ; then
 +		for x in $(seq ${min_key_size} ${inc} ${max_key_size}) ; do
 +			for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
-+				cryptsetup benchmark -c ${cipher}-${mode_of_operation} -s ${x}
++				cryptsetup benchmark -c ${cipher}-${mode_of_operation} -s ${x} && trained=1
 +			done
 +		done
 +	fi
@@ -469,7 +866,7 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +	if grep -q -e ": ${name}" /proc/crypto ; then
 +		for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
 +			# cryptsetup only supports block ciphers
-+			cryptsetup benchmark -h ${name} -s ${len}
++			cryptsetup benchmark -h ${name} -s ${len} && trained=1
 +		done
 +	fi
 +}
@@ -481,7 +878,8 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +	fi
 +}
 +
-+pgo_trainer_crypto_std_now() {
++pgo_trainer_crypto_std() {
++	local trained=0
 +	if ! which cryptsetup 2>/dev/null 1>/dev/null ; then
 +		print_info 1 "$(get_indent 1)>> Missing cryptsetup.  Emerge sys-fs/cryptsetup."
 +		return
@@ -498,9 +896,11 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +	_use_crypto_with_mode "cbc" "aes" 128 256 64
 +	_use_crypto_with_mode "ctr" "aes" 128 256 64
 +	_use_crypto_with_mode "xts" "aes" 256 512 128
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +pgo_trainer_crypto_common() {
++	local trained=0
 +	if ! which cryptsetup 2>/dev/null 1>/dev/null ; then
 +		print_info 1 "$(get_indent 1)>> Missing cryptsetup.  Emerge sys-fs/cryptsetup."
 +		return
@@ -531,9 +931,11 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +	_use_crypto_with_mode "xts" "twofish" 256 512 128
 +	_use_crypto_with_mode "cbc" "serpent" 128 256 64
 +	_use_crypto_with_mode "xts" "serpent" 256 512 128
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +pgo_trainer_crypto_less_common() {
++	local trained=0
 +	if ! which cryptsetup 2>/dev/null 1>/dev/null ; then
 +		print_info 1 "$(get_indent 1)>> Missing cryptsetup.  Emerge sys-fs/cryptsetup."
 +		return
@@ -542,49 +944,140 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +	_use_crypto_with_mode "cbc" "anubis" 128 320 32
 +	_use_crypto_with_mode "cbc" "camellia" 128 256 32
 +	_use_crypto_with_mode "xts" "camellia" 256 512 64
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +_pgo_trainer_filesystem_sequential_reads() {
++	local trained=0
 +	print_info 1 "$(get_indent 1)>> Running sequential reads"
 +	local sample_set=()
 +	local c=0
-+	for f in $(find /usr/bin | shuf) ; do
++	for f in $(find /usr/bin -type f| shuf) ; do
++		[ -L "${f}" ] && continue
 +		sample_set+=( "${f}" )
 +		c=$((${c} + 1))
 +		(( ${c} > 500 )) && break
 +	done
-+	READ_LIMIT=1048576 # Don't read gigabytes / terabytes
-+	for f in ${sample_set} ; do
-+		head -n ${READ_LIMIT} "${f}" > /dev/null
++	local READ_LIMIT=${PGO_MAX_FILESIZE_DEFAULT} # Don't read gigabytes / terabytes
++	for f in ${sample_set[@]} ; do
++		for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
++			local rand=$(( ${RANDOM}${RANDOM} ))
++			local nbytes=$(( ${rand} % ${READ_LIMIT} ))
++			print_info 1 "$(get_indent 1)>> Reading the first ${nbytes} bytes from ${f}"
++			head -c ${nbytes} "${f}" 2>/dev/null > /dev/null && trained=1
++		done
 +	done
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
-+_pgo_trainer_filesystem_random_reads() {
-+	print_info 1 "$(get_indent 1)>> Running sequential reads"
++_pgo_trainer_filesystem_random_reads_single_page() {
++	local trained=0
++	print_info 1 "$(get_indent 1)>> Running random reads single page at a time"
 +	local sample_set=()
 +	local c=0
-+	for f in $(find /usr/bin | shuf) ; do
-+		sample_set+=( "${f}" )
-+		c=$((${c} + 1))
-+		(( ${c} > 500 )) && break
++	for f in $(find /usr/bin -type f| shuf) ; do
++		[ -L "${f}" ] && continue
++		# File must be >=2 pages
++		local filesize=$(stat -c "%s" "${f}")
++		if (( ${filesize} > 8192 && ${filesize} < ${PGO_MAX_FILESIZE:=26214400} )) ; then # 25 MiB
++			sample_set+=( "${f}" )
++			c=$((${c} + 1))
++			(( ${c} > 500 )) && break
++		fi
 +	done
-+	READ_LIMIT=1048576 # Don't read gigabites / terabytes
-+	for f in ${sample_set} ; do
++	# Read random pagesize parts of a file
++	local sandbox_dir=$(mktemp -d)
++	[[ "$?" != "0" ]] \
++		&& print_info 1 "$(get_indent 1)>> Failed to create sandbox dir.  Skipping test." \
++		&& return
++	pushd "${sandbox_dir}"
++		for f in ${sample_set[@]} ; do
++			for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
++				local file_size=$(stat -c "%s" "${f}")
++				local npages=$((${file_size} / 4096))
++				local page_index=$(( ${RANDOM} % ${npages} ))
++				print_info 1 "$(get_indent 1)>> Reading ${f} at page_index ${page_index}."
++				dd if="${f}" of="dump.dat" ibs=4K skip=${page_index} count=1 && trained=1
++				local size_x=$(stat -c "%s" "dump.dat")
++				if (( ${size_x} != 4096 )) ; then
++					print_info 1 "$(get_indent 1)>> Failed reading a page of a file.  Filesize was ${size_x}."
++				fi
++			done
++		done
++		touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	popd
++	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
++		&& rm -rf "${sandbox_dir}"
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++}
++
++_pgo_trainer_filesystem_random_writes_single_page() {
++	local sandbox_dir=$(mktemp -d)
++	print_info 1 "$(get_indent 1)>> Running random writes single page at a time"
++	# Write data in a single file pagesize writes
++	[[ "$?" != "0" ]] \
++		&& print_info 1 "$(get_indent 1)>> Failed to create sandbox dir.  Skipping test." \
++		&& return
++	local trained=0
++	pushd "${sandbox_dir}"
++		f="test.img"
++		dd if=/dev/zero of=${f} bs=4k iflag=fullblock,count_bytes count=${PGO_MAX_FILESIZE_DEFAULT}
++		for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
++			local file_size=$(stat -c "%s" "${f}")
++			local npages=$((${file_size} / 4096))
++			local page_index=$(( ${RANDOM}${RANDOM} % ${npages} ))
++			print_info 1 "$(get_indent 1)>> Writing ${f} at page_index ${page_index}."
++			dd if=${f} of=${f} ibs=4K seek=${page_index} count=1 conv=notrunc && trained=1
++			file_size=$(stat -c "%s" "${f}")
++			print_info 1 "$(get_indent 1)>> New filesize is ${file_size}."
++			local size_x=$(stat -c "%s" "${f}")
++			if (( ${size_x} != 4096 )) ; then
++				print_info 1 "$(get_indent 1)>> Failed reading a page of a file.  Filesize was ${size_x}."
++			fi
++		done
++	popd
++	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
++		&& rm -rf "${sandbox_dir}"
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++}
++
++_pgo_trainer_filesystem_grep() {
++	local trained=0
++	print_info 1 "$(get_indent 1)>> Running grep finds"
++	local sample_set=()
++	local c=0
++	print_info 1 "$(get_indent 1)>> Finding suitable files.  Please wait."
++	for f in $(find /usr/bin -type f| shuf) ; do
++		[ -L "${f}" ] && continue
++		filesize=$(stat -c "%s" "${f}")
++		if (( ${filesize} < ${PGO_MAX_FILESIZE:=${PGO_MAX_FILESIZE_DEFAULT}} )) ; then
++			# Don't read terabytes
++			sample_set+=( "${f}" )
++			c=$((${c} + 1))
++			(( ${c} > 500 )) && break
++		fi
++	done
++	for f in ${sample_set[@]} ; do
 +		local file_size=$(stat -c "%s" "${f}")
-+
-+		dd if="${f}" ibs=1 skip=200 count=100
-+
-+		cat "${f}" > /dev/null
++		grep -q -i "copyright" "${f}" && echo "Found pattern in ${f}" && trained=1
 +	done
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +pgo_trainer_filesystem() {
 +	print_info 1 "$(get_indent 1)>> Running the filesystem PGO trainer"
 +
-+	print_info 1 "$(get_indent 1)>> Running random reads"
++	_pgo_trainer_filesystem_sequential_reads
++	_pgo_trainer_filesystem_random_reads_single_page
++	_pgo_trainer_filesystem_random_writes_single_page
++	_pgo_trainer_filesystem_grep
++	# TODO multi file reads
 +}
 +
 +pgo_trainer_network() {
++	local m0=0
++	local m1=0
++	local m2=0
 +	print_info 1 "$(get_indent 1)>> Running the network PGO trainer"
 +	# See /proc/sys/net/ipv4/tcp_congestion_control
 +	# See /proc/sys/net/ipv4/tcp_available_congestion_control
@@ -599,24 +1092,25 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +
 +	# Test both IPv4/IPv6
 +	local domains=(
-+		gentoo.org
 +		kernel.org
-+		wikipedia.org
++		freenode.org
++		gentoo.org
 +		github.com
 +		gitlab.com
 +		sourceforge.com
++		wikipedia.org
 +	)
 +
 +	for domain in $(echo ${domains[@]} | shuf) ; do
 +		# Test ICMP
 +		if which ping 2>/dev/null 1>/dev/null ; then
-+			ping -c 1 ${domain}
++			ping -c 1 ${domain} && m0=1
 +		else
 +			print_info 1 "$(get_indent 1)>> Missing ping.  Emerge net-misc/iputils."
 +		fi
 +		# Test UDP
 +		if which traceroute 2>/dev/null 1>/dev/null ; then
-+			traceroute ${domain}
++			traceroute ${domain} && m1=1
 +		else
 +			print_info 1 "$(get_indent 1)>> Missing traceroute.  Emerge net-analyzer/traceroute."
 +		fi
@@ -627,15 +1121,20 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +		if \
 +			which curl 2>/dev/null 1>/dev/null ; then
 +			# Total size for linux-5.14.tar.xz is 120669872
-+			curl --output /dev/null -r 0-1048576 https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.tar.xz \
-+			|| print_info 1 "$(get_indent 1)>> Failed to download the kernel"
++			if curl --output /dev/null -r 0-1048576 https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.14.tar.xz ; then
++				m2=1
++			else
++				print_info 1 "$(get_indent 1)>> Failed to download the kernel"
++			fi
 +		else
 +			print_info 1 "$(get_indent 1)>> Missing curl.  emerge net-misc/curl"
 +		fi
 +	done
++	(( $(( ${m0} + ${m1} + ${m2} )) == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +pgo_trainer_p2p() {
++	local trained=0
 +	local url=${PGO_P2P_URI:="https://download.documentfoundation.org/libreoffice/stable/7.1.6/win/x86_64/LibreOffice_7.1.6_Win_x64.msi.torrent"}
 +	local sandbox_dir=$(mktemp -d)
 +	[[ "$?" != "0" ]] \
@@ -654,6 +1153,10 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +		stop_ctorrent() {
 +			print_info 1 "$(get_indent 1)>> Stopping ctorrent"
 +			kill -9 ${pid_ctorrent}
++			sleep 1
++			# Wipe sandbox
++			[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
++				&& rm -rf "${sandbox_dir}"
 +			exit 1
 +		}
 +		trap stop_ctorrent INT
@@ -663,15 +1166,18 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +		while true ; do
 +			sleep 0.2s
 +			time_now=$(date +%s)
-+			(( ${time_now} > ${time_expire} )) && break
++			(( ${time_now} > ${time_expire} )) && trained=1 && break
 +		done
 +		kill -9 ${pid_ctorrent}
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +pgo_trainer_webcam() {
++	local m0=0
++	local m1=0
 +	print_info 1 "$(get_indent 1)>> Running the webcam PGO trainer for still photos"
 +	if ! which ffmpeg 2>/dev/null 1>/dev/null ; then
 +		print_info 1 "$(get_indent 1)>> Missing ffmpeg.  Install the media-video/ffmpeg[encode,libv4l] package"
@@ -696,7 +1202,7 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +					| grep -E -o -e "[0-9]+x[0-9]+")
 +				for res in ${resolutions} ; do
 +					for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
-+						ffmpeg -y -f video4linux2 -s ${res} -i ${d} -frames 1 test.jpg
++						ffmpeg -y -f video4linux2 -s ${res} -i ${d} -frames 1 test.jpg && m0=1
 +					done
 +				done
 +			fi
@@ -710,7 +1216,7 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +					| grep -E -o -e "[0-9]+x[0-9]+")
 +				for res in ${resolutions} ; do
 +					for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
-+						ffmpeg -y -f video4linux2 -s ${res} -i ${d} -t 5 test.webm
++						ffmpeg -y -f video4linux2 -s ${res} -i ${d} -t 5 test.webm && m1=1
 +					done
 +				done
 +			fi
@@ -718,9 +1224,11 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
++	(( $(( ${m1} + ${m2} )) == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +pgo_trainer_2d_draw() {
++	local trained=0
 +	if [[ -n "${DISPLAY}" || (-n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "x11") ]] ; then
 +		local cpus=$(lscpu | grep -E -e "CPU\(s\):" | head -n 1 | grep -E -o -e "[0-9]+")
 +		local tpc=$(lscpu | grep -E -e "Thread\(s\) per core:" | head -n 1 | grep -E -o -e "[0-9]+")
@@ -732,6 +1240,7 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +			else
 +				for i in $(seq $((${threads}))) ; do
 +					timeout 5 "${f}" 2>/dev/null &
++					trained=1
 +				done
 +				sleep 5
 +			fi
@@ -744,9 +1253,11 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +	if (( ${ran_test} == 0 )) ; then
 +		print_info 1 "$(get_indent 1)>> You must run genkernel in x11 or wayland"
 +	fi
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +pgo_trainer_3d_ogl1_3() {
++	local trained=0
 +	if [[ -n "${DISPLAY}" || (-n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "x11") ]] ; then
 +		local cpus=$(lscpu | grep -E -e "CPU\(s\):" | head -n 1 | grep -E -o -e "[0-9]+")
 +		local tpc=$(lscpu | grep -E -e "Thread\(s\) per core:" | head -n 1 | grep -E -o -e "[0-9]+")
@@ -756,6 +1267,7 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +			if ldd "${f}" 2>/dev/null | grep -q -e "libGL" ; then
 +				for i in $(seq $((${threads}))) ; do
 +					timeout 5 "${f}" 2>/dev/null &
++					trained=1
 +				done
 +				sleep 5
 +			fi
@@ -767,6 +1279,7 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +	if (( ${ran_test} == 0 )) ; then
 +		print_info 1 "$(get_indent 1)>> You must run genkernel in x11 or wayland"
 +	fi
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +_launch_video0_cr() {
@@ -802,7 +1315,7 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +time.sleep(2*60)
 +driver.close()
 +EOF
-+		${EPYTHON} watch_video.py
++		${EPYTHON} watch_video.py && trained=1
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
@@ -841,13 +1354,19 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +time.sleep(2*60)
 +driver.close()
 +EOF
-+		${EPYTHON} watch_video.py
++		${EPYTHON} watch_video.py && trained=1
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
 +}
 +
 +pgo_trainer_yt() {
++	local trained=0
++	local ran_test=0
++	if [[ "${USER}" == "root" ]] ; then
++		print_info 1 "$(get_indent 1)>> You must be a non-root user to run the yt test"
++		return
++	fi
 +	if [[ -n "${DISPLAY}" || (-n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "x11") ]] ; then
 +		if which chromedriver 2>/dev/null 1>/dev/null ; then
 +			_launch_video0_cr
@@ -860,22 +1379,36 @@ diff -urpN -x '*.orig' genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.s
 +	if (( ${ran_test} == 0 )) ; then
 +		print_info 1 "$(get_indent 1)>> You must run genkernel in x11 or wayland"
 +	fi
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++}
++
++pgo_trainer_custom() {
++	local trained=0
++	if [[ -x "pgo-custom.sh" ]] ; then
++		print_info 1 "$(get_indent 1)>> Running the PGO custom trainer(s)"
++		./pgo-custom.sh
++		touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++		trained=1
++	fi
++	(( ${trained} == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +}
 +
 +pgo_trainer_all() {
 +	print_info 1 "$(get_indent 1)>> Running the all PGO trainers"
-+#	pgo_trainer_2d_draw
-+#	pgo_trainer_3d_ogl1_3
-+#	pgo_trainer_crypto_std_now
-+#	pgo_trainer_crypto_common
-+#	pgo_trainer_crypto_less_common
-+#	pgo_trainer_emerge1
++	pgo_trainer_2d_draw
++	pgo_trainer_3d_ogl1_3
++	pgo_trainer_crypto_std
++	pgo_trainer_crypto_common
++	pgo_trainer_crypto_less_common
++	pgo_trainer_custom
++	pgo_trainer_emerge1
 +#	pgo_trainer_emerge2
-+	pgo_trainer_memory
-+#	pgo_trainer_network
-+#	pgo_trainer_p2p
-+#	pgo_trainer_webcam
-+#	pgo_trainer_yt
++	pgo_trainer_filesystem
++#	pgo_trainer_memory
++	pgo_trainer_network
++	pgo_trainer_p2p
++	pgo_trainer_webcam
++	pgo_trainer_yt
 +}
 +
-+pgo_trainer_all
++#pgo_trainer_all

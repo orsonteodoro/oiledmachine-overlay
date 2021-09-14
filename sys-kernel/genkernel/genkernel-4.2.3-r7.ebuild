@@ -118,31 +118,42 @@ IUSE+=" ibm +firmware"
 IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
-IUSE+=" pgo
+IUSE+=" clang-pgo
 	pgo-custom
 	pgo_trainer_crypto
 	pgo_trainer_memory
 	pgo_trainer_network
 	pgo_trainer_p2p
 	pgo_trainer_webcam
-	pgo_trainer_yt
 	pgo_trainer_xscreensaver_2d
 	pgo_trainer_xscreensaver_3d
+	pgo_trainer_yt
 " # Added by the oiledmachine-overlay.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
 REQUIRED_USE+=" cfi? ( llvm lto )
 		lto? ( llvm )
-		pgo? (
+		clang-pgo? (
+			llvm
 			|| (
 				pgo_trainer_crypto
 				pgo_trainer_memory
 				pgo_trainer_network
+				pgo_trainer_p2p
 				pgo_trainer_webcam
 				pgo_trainer_xscreensaver_2d
 				pgo_trainer_xscreensaver_3d
+				pgo_trainer_yt
 			)
 		)
+		pgo_trainer_crypto? ( clang-pgo )
+		pgo_trainer_memory? ( clang-pgo )
+		pgo_trainer_network? ( clang-pgo )
+		pgo_trainer_p2p? ( clang-pgo )
+		pgo_trainer_webcam? ( clang-pgo )
+		pgo_trainer_xscreensaver_2d? ( clang-pgo )
+		pgo_trainer_xscreensaver_3d? ( clang-pgo )
+		pgo_trainer_yt? ( clang-pgo )
 		shadowcallstack? ( cfi )"
 gen_scs_exclusion() {
 	for a in ${EXCLUDE_SCS[@]} ; do
@@ -154,6 +165,18 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 LLVM_SLOTS=(11 12 13 14)
 LLVM_LTO_SLOTS=(11 12 13 14)
 LLVM_CFI_SLOTS=(12 13 14)
+LLVM_PGO_SLOTS=(13 14)
+
+gen_clang_pgo_rdepends() {
+	for s in ${LLVM_PGO_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+			)
+		"
+	done
+}
 
 gen_llvm_rdepends() {
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -213,13 +236,11 @@ RDEPEND+="
 		net-misc/iputils
 	)
 	pgo_trainer_p2p? (
-		net-misc/curl
-		sys-process/procps
 		net-p2p/ctorrent
 	)
 	pgo_trainer_webcam? (
 		media-tv/v4l-utils
-		media-video/ffmpeg[encode,libv4l]
+		media-video/ffmpeg[encode,v4l]
 	)
 	pgo_trainer_yt? (
 		|| (
@@ -233,6 +254,7 @@ RDEPEND+="
 		x11-misc/xscreensaver[X]
 	)
 	pgo_trainer_xscreensaver_3d? (
+		virtual/opengl
 		sys-process/procps
 		x11-misc/xscreensaver[X,opengl]
 	)
@@ -248,6 +270,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 	sys-devel/automake
 	sys-devel/libtool
 	virtual/pkgconfig
+	clang-pgo? ( || ( $(gen_clang_pgo_rdepends) ) )
 	firmware? ( sys-kernel/linux-firmware )
 	llvm? (
 		|| ( $(gen_llvm_rdepends) )
@@ -326,6 +349,8 @@ src_prepare() {
 		"${S}"/defaults/software.sh \
 		|| die "Could not adjust versions"
 
+	eapply "${FILESDIR}/${PN}-4.2.3-compiler-noise.patch"
+
 	if use subdir_mount ; then # conditional and codeblock and use flag added by muslx32 overlay
 		ewarn "The subdir_mount USE flag is untested for ${PV}.  Do not use at this time.  Use the 3.5.x.x ebuild instead."
 		eapply "${FILESDIR}/${PN}-4.1.2-subdir-mount.patch"
@@ -339,9 +364,7 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-4.2.3-llvm-support-v4.patch"
 	fi
 
-	if false && use pgo ; then
-		ewarn "The pgo USE flag is not production ready."
-		ewarn "Do not use at this time"
+	if use clang-pgo ; then
 		eapply "${FILESDIR}/${PN}-4.2.3-pgo-support.patch"
 	fi
 
@@ -512,4 +535,12 @@ pkg_postinst() {
 	ewarn "ebuild, supply a user patch, or send the option as an issue request for"
 	ewarn "review."
 	ewarn
+
+	if use clang-pgo ; then
+	ewarn
+	ewarn "The --pgt-memory PGO trainer is currently bugged.  Do not use at this time."
+	ewarn
+	ewarn "The pgo USE flag is not production ready.  Do not use at this time."
+	ewarn
+	fi
 }

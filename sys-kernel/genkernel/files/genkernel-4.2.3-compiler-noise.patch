@@ -1,0 +1,39 @@
+diff -urp genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-12 22:42:43.240030154 -0700
+@@ -24,6 +24,7 @@ longusage() {
+   echo "	--no-color		Do not output debug in color"
+   echo "	--cleanup		Clean up temporary directories on exit"
+   echo "	--no-cleanup		Do not remove any temporary directories on exit"
++  echo "	--compiler-noise        See all the compilation flags while building"
+   echo "  Kernel Configuration settings"
+   echo "	--menuconfig		Run menuconfig after oldconfig"
+   echo "	--no-menuconfig		Do not run menuconfig after oldconfig"
+@@ -288,6 +289,10 @@ parse_optbool() {
+ 
+ parse_cmdline() {
+ 	case "$*" in
++		--compiler-noise)
++			CMD_COMPILER_NOISE=1
++			print_info 3 "CMD_COMPILER_NOISE: ${CMD_COMPILER_NOISE}"
++			;;
+ 		--cross-compile=*)
+ 			CMD_CROSS_COMPILE="${*#*=}"
+ 			print_info 3 "CMD_CROSS_COMPILE: ${CMD_CROSS_COMPILE}"
+diff -urp genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-12 22:42:40.343916754 -0700
+@@ -94,7 +94,12 @@ compile_generic() {
+ 				gen_die "KERNEL_MAKE undefined - I don't know how to compile a kernel for this arch!"
+ 			else
+ 				local -x MAKE=${KERNEL_MAKE}
+-				compile_cmd+=( "${MAKE}" "${MAKEOPTS}" )
++				compile_cmd+=( "${MAKE}" )
++				if isTrue "${CMD_COMPILER_NOISE}"
++				then
++					compile_cmd+=( "V=1" )
++				fi
++				compile_cmd+=( "${MAKEOPTS}" )
+ 			fi
+ 
+ 			if [[ "${argstype}" == 'kernelruntask' ]]

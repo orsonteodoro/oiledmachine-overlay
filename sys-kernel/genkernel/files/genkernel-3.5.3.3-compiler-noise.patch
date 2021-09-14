@@ -1,0 +1,64 @@
+diff -urp genkernel-3.5.3.3.orig/gen_cmdline.sh genkernel-3.5.3.3/gen_cmdline.sh
+--- genkernel-3.5.3.3.orig/gen_cmdline.sh	2018-05-07 17:22:32.000000000 -0700
++++ genkernel-3.5.3.3/gen_cmdline.sh	2021-09-12 22:49:28.641899793 -0700
+@@ -24,6 +24,7 @@ longusage() {
+   echo "	--no-color		Do not output debug in color"
+   echo "	--debug-cleanup	Clean up temporary build directories on exit"
+   echo "	--no-debug-cleanup	Do not remove any temporary directories on exit"
++  echo "	--compiler-noise        See all the compilation flags while building"
+   echo "  Kernel Configuration settings"
+   echo "	--menuconfig		Run menuconfig after oldconfig"
+   echo "	--no-menuconfig		Do not run menuconfig after oldconfig"
+@@ -220,6 +221,10 @@ parse_optbool() {
+ 
+ parse_cmdline() {
+ 	case "$*" in
++		--compiler-noise)
++			CMD_COMPILER_NOISE=1
++			print_info 3 "CMD_COMPILER_NOISE: ${CMD_COMPILER_NOISE}"
++			;;
+ 		--kernel-cc=*)
+ 			CMD_KERNEL_CC="${*#*=}"
+ 			print_info 2 "CMD_KERNEL_CC: ${CMD_KERNEL_CC}"
+Only in genkernel-3.5.3.3: gen_cmdline.sh.orig
+Only in genkernel-3.5.3.3: gen_cmdline.sh.rej
+diff -urp genkernel-3.5.3.3.orig/gen_compile.sh genkernel-3.5.3.3/gen_compile.sh
+--- genkernel-3.5.3.3.orig/gen_compile.sh	2018-05-07 17:22:32.000000000 -0700
++++ genkernel-3.5.3.3/gen_compile.sh	2021-09-12 22:54:16.764173572 -0700
+@@ -271,24 +271,31 @@ compile_generic() {
+ 		NICEOPTS=""
+ 	fi
+ 
++	if isTrue "${CMD_COMPILER_NOISE}"
++	then
++		COMPILERNOISE="V=1"
++	else
++		COMPILERNOISE=""
++	fi
++
+ 	# the eval usage is needed in the next set of code
+ 	# as ARGS can contain spaces and quotes, eg:
+ 	# ARGS='CC="ccache gcc"'
+ 	if [ "${argstype}" == 'kernelruntask' ]
+ 	then
+ 		# Silent operation, forced -j1
+-		print_info 2 "COMMAND: ${NICEOPTS}${MAKE} ${MAKEOPTS} -j1 ${ARGS} ${target} $*" 1 0 1
++		print_info 2 "COMMAND: ${NICEOPTS}${MAKE} ${COMPILERNOISE} ${MAKEOPTS} -j1 ${ARGS} ${target} $*" 1 0 1
+ 		eval ${NICEOPTS}${MAKE} -s ${MAKEOPTS} -j1 "${ARGS}" ${target} $*
+ 		RET=$?
+ 	elif [ "${LOGLEVEL}" -gt "1" ]
+ 	then
+ 		# Output to stdout and logfile
+-		print_info 2 "COMMAND: ${NICEOPTS}${MAKE} ${MAKEOPTS} ${ARGS} ${target} $*" 1 0 1
++		print_info 2 "COMMAND: ${NICEOPTS}${MAKE} ${COMPILERNOISE} ${MAKEOPTS} ${ARGS} ${target} $*" 1 0 1
+ 		eval ${NICEOPTS}${MAKE} ${MAKEOPTS} ${ARGS} ${target} $* 2>&1 | tee -a ${LOGFILE}
+ 		RET=${PIPESTATUS[0]}
+ 	else
+ 		# Output to logfile only
+-		print_info 2 "COMMAND: ${NICEOPTS}${MAKE} ${MAKEOPTS} ${ARGS} ${target} $*" 1 0 1
++		print_info 2 "COMMAND: ${NICEOPTS}${MAKE} ${COMPILERNOISE} ${MAKEOPTS} ${ARGS} ${target} $*" 1 0 1
+ 		eval ${NICEOPTS}${MAKE} ${MAKEOPTS} ${ARGS} ${target} $* >> ${LOGFILE} 2>&1
+ 		RET=$?
+ 	fi
+Only in genkernel-3.5.3.3: gen_compile.sh.orig
+Only in genkernel-3.5.3.3: gen_compile.sh.rej

@@ -23,17 +23,6 @@
     entries may change.  This means that you need to adjust the kernel
     parameters to the correct identifiers.
 
-    Profile Guided Instrumentation (PGO) support:
-
-    PGO is not trivial for the Linux kernel and has taken more than a decade
-    for widespread use.  The hurdles of PGO kernel:
-    (1) Code review
-    (2) Obtaining profile data
-    (3) No benchmark suite to perform training.
-    (4) Reboots
-    (5) Converting gcov data to one accepted by kernel
-    ... possibly more
-
     Some PGO trainers require you run them in a desktop environment.
 
     If we used automation, we could possibly reduce steps 2-4 within
@@ -46,34 +35,44 @@
     30 min to build the optimized kernel.
 
     PGO support requires a PGO toolchain to run benchmarks.  All benchmarks
-    are done on a live system.  A QEMU VM was considered, but after evaluation
-    it wouldn't be practical for normal to beginner users to set up.
+    are done on a live system to make it more accessible without getting
+    too technical.
+
+    The performance of the instrumented build to the normal build is not
+    dramatically slower and about the same perceptual performance as
+    the normal build, but it does have a slightly have a few bugs
+    present compared to a normal build compared to the instrumented.
+
+    Phase 1 and 2 have been tested and currently trying to close
+    compatibility issues with the profraw to profdata merger and
+    debug phase 3.
 
     The following steps must be take for a PGO kernel:
-    (This list will shrink when more of these TODO gets completed.)
+
     (1) Emerge a source based kernel package
-    (2) Change the compilation flags of the kernel and let genkernel set enable
-        gcov kernel config options
-    (3) Disable portions of the kernel which may break under PGO
-    (4) Build the kernel with coverage collection [PGI, phase 1]
-    (5) Update the bootloader with a PGI kernel entry if required.
-    (6) Reboot and choose the PGI kernel
-    (7) Run the trainer suite [PGT, phase 2] iff using PGI kernel else send user
-        to fix bootloader and reboot computer with PGI selected.
-    (8a) Collect data if using GCC
-    (8b) Collect and merge the data if using LLVM
-    (9) Disable kernel options. (TODO have genkernel automatically do this)
-    (10) Have genkernel set flags.
-    (12) Update the bootloader with a PGO kernel entry if required.
-    (13) Rebuild the kernel using profiling information. [PGO, phase 3]
-    (14) Reboot with new PGO kernel
+    (2) Run genkernel --pgi all
+    (3) Reboot
+    (4) Run genkernel --pgt-all train
+    (4 optional) Run genkernel --pgt-yt train in X as a normal user
+    (5) Run genkernel --pgo all
+    (6) Reboot
 
     The trainers that you choose should reflect typical use.  You may also
     extend PGO with your own custom script.
 
+    Due to licensing concerns for the 2014 PGO GCC patch and associated scripts
+    cannot be integrated both in the kernel sources and this package
+    directly.  Only the emerging 2021 PGO with Clang patchset will be
+    supported.
+
     Environmental variables (store in /etc/genkernel.conf):
-    PGO_P2P_URI - The URI must have a filename to replace the placeholder torrent.
-                  (Only public domain assets or open source project torrents should be used.)
+
+    PGO_P2P_URI - The URI must have a filename to replace the placeholder
+                  torrent.  (Only public domain assets or open source project
+                  torrents should be used.)
+
+    PGO_LINUX_TARBALL - Abspath to a linux tarball use as a source of
+                  pseudo randomness.
   </longdescription>
   <use>
     <flag name="cfi">Ensure that the Code Flow Integrity toolchain requirements
@@ -87,7 +86,7 @@
       These changes only apply to building the kernel only.</flag>
     <flag name="lto">Ensure that the Link Time Optimization toolchain
       requirements are met.</flag>
-    <flag name="pgo">Add PGO support to genkernel.</flag>
+    <flag name="pgo-clang">Add clang PGO support to genkernel.</flag>
     <flag name="pgo-custom">Add a PGO custom script to genkernel
       to PGO train unconventional portions of the kernel or whatever
       you want.</flag>
@@ -106,11 +105,11 @@
     <flag name="pgo_trainer_webcam">Trains webcam portions of the kernel that
       may contain software based implementations on cheap cameras.</flag>
     <flag name="pgo_trainer_xscreensaver_2d">Train cpu scheduler, gpu portions
-      of the kernel using 2D drawing primarily with come complex graphics or
+      of the kernel using 2D drawing primarily with complex graphics or
       computational geometry algorithms.  It will spawn ncores*thread_per_core
       processes.</flag>
     <flag name="pgo_trainer_xscreensaver_3d">Train gpu portions of the
-      kernel with OpenGL ~1.3.  It will spawn ncores*thread_per_core
+      kernel with OpenGL ~1.3.  It will spawn ncores * thread_per_core
       processes.</flag>
     <flag name="shadow-call-stack">Ensure that the shadow-call-stack toolchain
       requirements are met.</flag>

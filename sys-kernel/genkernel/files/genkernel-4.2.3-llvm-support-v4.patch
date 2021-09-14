@@ -386,12 +386,11 @@ diff -urp genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determin
 diff -urp genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
 --- genkernel-4.2.3.orig/genkernel	2021-07-08 14:09:46.000000000 -0700
 +++ genkernel-4.2.3/genkernel	2021-09-11 20:50:39.765358901 -0700
-@@ -352,6 +352,16 @@ if isTrue "${BUILD_RAMDISK}"
+@@ -352,6 +352,15 @@ if isTrue "${BUILD_RAMDISK}"
  then
  	print_info 1 '' 1 0
  
 +	if [[ -n "${CMD_LLVM_UTILS}" && "${CMD_LLVM_UTILS}" == "1" ]] ; then
-+		local llvm_slot
 +		if [ -n "${CMD_LLVM_SLOT}" ] ; then
 +			llvm_slot=${CMD_LLVM_SLOT}
 +		else
