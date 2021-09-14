@@ -367,7 +367,7 @@ src_prepare() {
 	fi
 
 	if use clang-pgo ; then
-		eapply "A${FILESDIR}/${PN}-4.2.3-pgo-support.patch"
+		eapply "${FILESDIR}/${PN}-4.2.3-pgo-support.patch"
 	fi
 
 	cp -aT "${FILESDIR}/genkernel-4.2.x" "${S}/patches" || die
