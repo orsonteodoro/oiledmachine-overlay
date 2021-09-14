@@ -1212,6 +1212,10 @@ pkg_pretend() {
 	pre_build_checks
 }
 
+# For PGO, the commit below corresponds to profraw version 5.  Don't really know
+# if the produced profdata is version agnostic which was derived from the
+# profraw v5, but it seems to work without crashes in the older 92.x.4515.x
+# series with LLVM 13.x that uses profraw version 6.
 CR_CLANG_USED="98033fdc50e61273b1d5c77ba5f0f75afe3965c1" # Obtained from \
 # https://github.com/chromium/chromium/blob/93.0.4577.63/tools/clang/scripts/update.py#L42
 CR_CLANG_USED_UNIX_TIMESTAMP="1626129557" # Cached.  Use below to obtain this. \
