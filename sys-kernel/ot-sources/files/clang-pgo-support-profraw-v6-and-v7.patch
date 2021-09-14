@@ -145,7 +145,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
  struct llvm_prf_header {
  	u64 magic;
  	u64 version;
-+#if defined(LLVM_MAIN) || ( PROFRAW_VERSION_OVERRIDE >= 7 && )
++#if defined(LLVM_MAIN) || ( CONFIG_LLVM_INSTR_PROF_RAW_VERSION >= 7 && CONFIG_CLANG_VERSION == 140000 )
 +	const u64 binary_id_size;
 +#endif
  	u64 data_size;
@@ -161,7 +161,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
 +	|| defined(CONFIG_LLVM13_RC2) \
 +	|| defined(CONFIG_LLVM13_RC1) \
 +	|| defined(CONFIG_LLVM13_IPR6) \
-+	|| PROFRAW_VERSION_OVERRIDE >= 6
++	|| CONFIG_LLVM_INSTR_PROF_RAW_VERSION >= 6
 +	const u64 binary_id_size;
 +#endif
  };
@@ -181,19 +181,18 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/profraw-check.cc linux-5.
 diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/profraw-version.sh linux-5.14.3-ot/profraw-version.sh
 --- linux-5.14.3-ot.orig/profraw-version.sh	1969-12-31 16:00:00.000000000 -0800
 +++ linux-5.14.3-ot/profraw-version.sh	2021-09-13 23:07:02.067288629 -0700
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,14 @@
 +#!/bin/bash
 +# SPDX-License-Identifier: GPL-2.0-or-later OR MIT OR Apache-2.0
 +
 +get_profraw_version() {
 +	which clang++ 2>/dev/null 1>/dev/null || exit 1
 +	S=$(dirname "$BASH_SOURCE")
-+	pushd "${S}" 2>/dev/null 1>/dev/null
-+		rm profraw-check.o profraw-check 2>/dev/null
-+		clang++ -c $(llvm-config --cxxflags) -o profraw-check.o profraw-check.cc || exit 1
-+		clang++ $(llvm-config --ldflags --libs) -o profraw-check profraw-check.o || exit 1
-+		./profraw-check || exit 1
-+	popd 2>/dev/null 1>/dev/null
++	cd "${S}" 2>/dev/null 1>/dev/null
++	rm profraw-check.o profraw-check 2>/dev/null
++	clang++ -c $(llvm-config --cxxflags) -o profraw-check.o profraw-check.cc || exit 1
++	clang++ $(llvm-config --ldflags --libs) -o profraw-check profraw-check.o || exit 1
++	./profraw-check || exit 1
 +}
 +
 +get_profraw_version
