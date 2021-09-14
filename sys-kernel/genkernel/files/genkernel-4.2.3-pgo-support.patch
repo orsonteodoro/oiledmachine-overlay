@@ -15,8 +15,8 @@ The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-14 01:10:40.246310582 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-14 01:22:09.539139700 -0700
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-14 11:01:56.973509351 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-14 11:02:40.933239449 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -180,8 +180,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  		--help)
  			longusage
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-14 01:10:40.246310582 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-14 01:11:14.409639350 -0700
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-14 11:01:56.974509390 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-14 11:02:40.934239488 -0700
 @@ -128,6 +128,13 @@ compile_generic() {
  				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
  			fi
@@ -197,8 +197,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-14 01:10:40.247310621 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-14 01:11:14.409639350 -0700
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-14 11:01:56.976509469 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-14 11:02:40.935239527 -0700
 @@ -1031,6 +1031,25 @@ config_kernel() {
  		fi
  	fi
@@ -226,8 +226,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
  	then
  		local llvm_slot
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-14 01:10:40.249310699 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-14 01:30:16.156102607 -0700
+--- genkernel-4.2.3.orig/genkernel	2021-09-14 11:01:56.980509626 -0700
++++ genkernel-4.2.3/genkernel	2021-09-14 11:44:18.390524712 -0700
 @@ -81,6 +81,7 @@ source "${GK_SHARE}"/defaults/compressio
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
  source "${GK_SHARE}"/defaults/config.sh || small_die "Could not read '${GK_SHARE}/defaults/config.sh'"
@@ -236,10 +236,12 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  source "${GK_SHARE}"/gen_cmdline.sh || small_die "Could not read '${GK_SHARE}/gen_cmdline.sh'"
  source "${GK_SHARE}"/gen_arch.sh || small_die "Could not read '${GK_SHARE}/gen_arch.sh'"
  source "${GK_SHARE}"/gen_determineargs.sh || small_die "Could not read '${GK_SHARE}/gen_determineargs.sh'"
-@@ -226,6 +227,76 @@ isTrue "${CMD_INSTALL}" && make_bootdir_
+@@ -225,6 +226,77 @@ fi
+ isTrue "${CMD_INSTALL}" && make_bootdir_writable
  
  check_disk_space_requirements
- 
++check_pgo_requirements
++
 +for pgx in \
 +	"${CMD_PGI}" \
 +	"${CMD_PGO}" \
@@ -309,11 +311,10 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
 +	print_info 1 "$(get_indent 1)>> --pgo requires --pgt training first"
 +	return 1
 +fi
-+
+ 
  if isTrue "${BUILD_KERNEL}" && ! isTrue "${KERNCACHE_IS_VALID}"
  then
- 	print_info 1 '' 1 0
-@@ -233,6 +304,26 @@ then
+@@ -233,6 +305,26 @@ then
  	# Configure kernel
  	config_kernel
  
@@ -340,7 +341,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  	# Make prepare
  	if ! isTrue "${ARCH_HAVENOPREPARE}"
  	then
-@@ -559,6 +650,56 @@ fi
+@@ -559,6 +651,56 @@ fi
  
  isTrue "${CMD_INSTALL}" && restore_boot_mount_state
  
@@ -398,8 +399,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-14 01:10:40.249310699 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-14 01:28:06.078031950 -0700
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-14 11:01:56.981509665 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-14 11:02:40.937239606 -0700
 @@ -52,6 +52,30 @@ All that is needed to run genkernel is j
  .\}
  .sp
@@ -560,16 +561,20 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  \fB\-\-cfi\fR
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-14 01:11:14.443640672 -0700
-@@ -0,0 +1,850 @@
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-14 11:44:13.515332862 -0700
+@@ -0,0 +1,902 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
 +
 +PGO_SAMPLE_SIZE=30 # statistics rule of 30
 +PGO_MAX_FILESIZE_DEFAULT=26214400 # 25 MB
++#CHECK_REQUIREMENTS=0 # 1 or 0 or unset, for standalone mode only
 +
-+PGO_DISTRO="gentoo"
++PGO_DISTRO="gentoo" # \
++# If set to gentoo, script integrates with genkernel otherwise run in standalone mode.
++# KERNEL_OUTPUTDIR envvar should be set to the kernel sources if not using gentoo
++# KERNEL_DIR envvar should be set to the kernel sources if not using gentoo
 +
 +if [[ "${PGO_DISTRO}" == "linux" ]] ; then
 +print_info() {
@@ -1411,4 +1416,52 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	pgo_trainer_yt
 +}
 +
-+#pgo_trainer_all
++check_pgo_applied() {
++	if [ ! -d "${KERNEL_DIR}/kernel/pgo" ] ; then
++		print_info 1 "$(get_indent 1)>>"
++		print_info 1 "$(get_indent 1)>> Missing pgo directory.  Did you apply the patch"
++		print_info 1 "$(get_indent 1)>> from:"
++		print_info 1 "$(get_indent 1)>> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/patch/?h=for-next/clang/pgo&id=a15058eaefffc37c31326b59fa08b267b2def603&id2=fca41af18e10318e4de090db47d9fa7169e1bf2f"
++		print_info 1 "$(get_indent 1)>>"
++		print_info 1 "$(get_indent 1)>> Commit history:"
++		print_info 1 "$(get_indent 1)>> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=for-next/clang/pgo"
++		print_info 1 "$(get_indent 1)>>"
++		exit 1
++	fi
++}
++
++check_pgo_profraw_fixes_applied() {
++	if [ ! -e "${KERNEL_DIR}/kernel/pgo/kernel/pgo/pgo.h" ] ; then
++		print_info 1 "$(get_indent 1)>>"
++		print_info 1 "$(get_indent 1)>> Missing PGO header"
++		print_info 1 "$(get_indent 1)>>"
++		exit 1
++	fi
++	if ! grep -q -e "binary_id_size" "${KERNEL_DIR}/kernel/pgo/kernel/pgo/pgo.h" ; then
++		print_info 1 "$(get_indent 1)>>"
++		print_info 1 "$(get_indent 1)>> Missing profraw header fix for multislot llvm"
++		print_info 1 "$(get_indent 1)>> or for recent llvm releases"
++		print_info 1 "$(get_indent 1)>>"
++		print_info 1 "$(get_indent 1)>> Apply the following patch to the kernel sources:"
++		print_info 1 "$(get_indent 1)>> https://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/clang-pgo-support-profraw-v6-and-v7.patch"
++		print_info 1 "$(get_indent 1)>>"
++		exit 1
++	fi
++}
++
++check_pgo_requirements() {
++	PGO_DISTRO="gentoo"
++	if [[ ( "${PGO_DISTRO}" == "gentoo" && ( -n "${CMD_PGI}" || -n "${CMD_PGO}" ) ) \
++		|| ( "${PGO_DISTRO}" != "gentoo" && true ) ]] ; then
++		check_pgo_profraw_fixes_applied
++		check_pgo_applied
++	fi
++}
++
++if [[ "${PGO_DISTRO}" != "gentoo" ]] ; then
++main() {
++	[[ -n "${CHECK_REQUIREMENTS}" && "${CHECK_REQUIREMENTS}" == "1" ]] && check_pgo_requirements
++	pgo_trainer_all
++}
++main
++fi
