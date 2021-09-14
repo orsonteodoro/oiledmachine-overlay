@@ -610,6 +610,7 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPS}" "${path}"
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/clang-pgo-support-profraw-v6-and-v7.patch"
+		chmod 0755 "${S}/scripts/profraw-version.sh" || die
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

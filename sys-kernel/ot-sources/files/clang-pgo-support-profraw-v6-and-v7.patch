@@ -11,32 +11,18 @@ error: no profile can be merged
 
 Modded to included LLVM_INSTR_PROF_RAW_VERSION 6 and 7 support.
 
-LLVM 14.x changes need to be reevaluated
-
-diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/init/Kconfig linux-5.14.3-ot/init/Kconfig
---- linux-5.14.3-ot.orig/init/Kconfig	2021-09-13 23:02:33.625589185 -0700
-+++ linux-5.14.3-ot/init/Kconfig	2021-09-13 23:09:42.924694725 -0700
-@@ -60,6 +60,11 @@ config LLD_VERSION
- 	default $(ld-version) if LD_IS_LLD
- 	default 0
- 
-+config PROFRAW_VERSION_OVERRIDE
-+	int
-+	default $(profraw-version) if CC_IS_CLANG
-+	default 0
-+
- config CC_CAN_LINK
- 	bool
- 	default $(success,$(srctree)/scripts/cc-can-link.sh $(CC) $(CLANG_FLAGS) $(m64-flag)) if 64BIT
 diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/fs.c linux-5.14.3-ot/kernel/pgo/fs.c
---- linux-5.14.3-ot.orig/kernel/pgo/fs.c	2021-09-13 23:02:34.119608886 -0700
-+++ linux-5.14.3-ot/kernel/pgo/fs.c	2021-09-13 23:46:47.834626863 -0700
-@@ -66,9 +66,12 @@ static void prf_fill_header(void **buffe
+--- linux-5.14.3-ot.orig/kernel/pgo/fs.c	2021-09-14 04:25:57.020147052 -0700
++++ linux-5.14.3-ot/kernel/pgo/fs.c	2021-09-14 04:50:28.209111683 -0700
+@@ -66,9 +66,16 @@ static void prf_fill_header(void **buffe
  	header->counters_size = prf_cnts_count();
  	header->padding_bytes_after_counters = 0;
  	header->names_size = prf_names_count();
--	header->counters_delta = (u64)__llvm_prf_cnts_start;
-+	header->counters_delta = (u64)__llvm_prf_cnts_start; /* in LLVM 14.x, the semantics of this variable has changed */
++#if CONFIG_CLANG_VERSION >= 140000 && LLVM_INSTR_PROF_RAW_VERSION >= 7
++	header->counters_delta = (u64)__llvm_prf_cnts_start - (u64)__llvm_prf_data_start;
++#else
+ 	header->counters_delta = (u64)__llvm_prf_cnts_start;
++#endif
  	header->names_delta = (u64)__llvm_prf_names_start;
  	header->value_kind_last = LLVM_INSTR_PROF_IPVK_LAST;
 +#if LLVM_INSTR_PROF_RAW_VERSION >= 6
@@ -46,9 +32,20 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/fs.c linux-5.1
  	*buffer += sizeof(*header);
  }
 diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-5.14.3-ot/kernel/pgo/Kconfig
---- linux-5.14.3-ot.orig/kernel/pgo/Kconfig	2021-09-13 23:02:33.847598038 -0700
-+++ linux-5.14.3-ot/kernel/pgo/Kconfig	2021-09-13 23:10:30.411585157 -0700
-@@ -10,6 +10,7 @@ config PGO_CLANG
+--- linux-5.14.3-ot.orig/kernel/pgo/Kconfig	2021-09-14 04:25:57.016146891 -0700
++++ linux-5.14.3-ot/kernel/pgo/Kconfig	2021-09-14 04:33:09.620506255 -0700
+@@ -4,12 +4,18 @@ menu "Profile Guided Optimization (PGO)
+ config ARCH_SUPPORTS_PGO_CLANG
+ 	bool
+ 
++config PROFRAW_VERSION_OVERRIDE
++	int
++	depends on PROFRAW_VERSION_OVERRIDE_TOGGLE
++	default $(profraw-version)
++
+ config PGO_CLANG
+ 	bool "Enable clang's PGO-based kernel profiling"
+ 	depends on DEBUG_FS
  	depends on ARCH_SUPPORTS_PGO_CLANG
  	depends on CC_IS_CLANG
  	depends on !ARCH_WANTS_NO_INSTR || CC_HAS_NO_PROFILE_FN_ATTR
@@ -56,7 +53,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-
  	help
  	  This option enables clang's PGO (Profile Guided Optimization) based
  	  code profiling to better optimize the kernel.
-@@ -34,4 +35,44 @@ config PGO_CLANG
+@@ -34,4 +40,44 @@ config PGO_CLANG
  	  Note that the debugfs filesystem has to be mounted to access
  	  profiling data.
  
@@ -66,7 +63,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-
 +          This matches the profdata data structure to a specific version
 +          of LLVM since not enough metadata is provided.
 +
-+config PROFRAW_VERSION_OVERRIDE
++config PROFRAW_VERSION_OVERRIDE_TOGGLE
 +	bool "Autodetect profraw version"
 +
 +config LLVM_MAIN
@@ -95,21 +92,21 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-
 +config LLVMX_IPR5
 +	bool "LLVM 10 to 13 with profraw version 5 and backported commits"
 +	help
-+	  The required backports of commits 193e41c a63d4f6 applied, you can
-+	  still still do PGO optimization with those versions of LLVM.
++	  The required backports of commits 193e41c a63d4f6 must be applied, you
++	  still can do PGO optimization with those versions of LLVM.
 +
 +endchoice
 +
  endmenu
 diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.14.3-ot/kernel/pgo/pgo.h
---- linux-5.14.3-ot.orig/kernel/pgo/pgo.h	2021-09-13 23:02:34.120608926 -0700
-+++ linux-5.14.3-ot/kernel/pgo/pgo.h	2021-09-13 23:22:47.455887332 -0700
+--- linux-5.14.3-ot.orig/kernel/pgo/pgo.h	2021-09-14 04:25:57.021147092 -0700
++++ linux-5.14.3-ot/kernel/pgo/pgo.h	2021-09-14 05:14:58.064621568 -0700
 @@ -43,7 +43,35 @@
  		 (u64)'R' << 8  |	\
  		 (u64)129)
  
 -#define LLVM_INSTR_PROF_RAW_VERSION		5
-+#if defined(CONFIG_PROFRAW_VERSION_OVERRIDE)
++#if defined(CONFIG_PROFRAW_VERSION_OVERRIDE_TOGGLE)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	CONFIG_PROFRAW_VERSION
 +#  if CONFIG_CLANG_VERSION <= 130000
 +#    warning "LLVM needs backports for both 193e41c a63d4f6 commits or update to"
@@ -141,17 +138,19 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
  #define LLVM_INSTR_PROF_DATA_ALIGNMENT		8
  #define LLVM_INSTR_PROF_IPVK_FIRST		0
  #define LLVM_INSTR_PROF_IPVK_LAST		1
-@@ -72,6 +100,9 @@
+@@ -72,6 +100,11 @@
  struct llvm_prf_header {
  	u64 magic;
  	u64 version;
-+#if defined(LLVM_MAIN) || ( CONFIG_LLVM_INSTR_PROF_RAW_VERSION >= 7 && CONFIG_CLANG_VERSION == 140000 )
++#if defined(LLVM_MAIN) \
++	|| ( CONFIG_LLVM_INSTR_PROF_RAW_VERSION >= 7 \
++		&& CONFIG_CLANG_VERSION == 140000 )
 +	const u64 binary_id_size;
 +#endif
  	u64 data_size;
  	u64 padding_bytes_before_counters;
  	u64 counters_size;
-@@ -80,6 +111,15 @@ struct llvm_prf_header {
+@@ -80,6 +113,16 @@ struct llvm_prf_header {
  	u64 counters_delta;
  	u64 names_delta;
  	u64 value_kind_last;
@@ -161,15 +160,27 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
 +	|| defined(CONFIG_LLVM13_RC2) \
 +	|| defined(CONFIG_LLVM13_RC1) \
 +	|| defined(CONFIG_LLVM13_IPR6) \
-+	|| CONFIG_LLVM_INSTR_PROF_RAW_VERSION >= 6
++	|| ( CONFIG_LLVM_INSTR_PROF_RAW_VERSION >= 6 \
++		&& CONFIG_CLANG_VERSION < 140000)
 +	const u64 binary_id_size;
 +#endif
  };
  
  /**
-diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/profraw-check.cc linux-5.14.3-ot/profraw-check.cc
---- linux-5.14.3-ot.orig/profraw-check.cc	1969-12-31 16:00:00.000000000 -0800
-+++ linux-5.14.3-ot/profraw-check.cc	2021-09-13 23:07:02.068288669 -0700
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/scripts/Kconfig.include linux-5.14.3-ot/scripts/Kconfig.include
+--- linux-5.14.3-ot.orig/scripts/Kconfig.include	2021-08-29 15:04:50.000000000 -0700
++++ linux-5.14.3-ot/scripts/Kconfig.include	2021-09-14 04:35:10.483354430 -0700
+@@ -63,3 +63,7 @@ ld-version := $(shell,set -- $(ld-info)
+ cc-option-bit = $(if-success,$(CC) -Werror $(1) -E -x c /dev/null -o /dev/null,$(1))
+ m32-flag := $(cc-option-bit,-m32)
+ m64-flag := $(cc-option-bit,-m64)
++
++# Get the profraw version
++profraw-version := $(shell,$(srctree)/scripts/profraw-version.sh)
++$(warning-if,$(shell,test $? -ne 1 && echo y),Sorry$(comma) the profraw version could not be automatically retrieved falling back to minimum required.  Did you add the llvm bin path to the PATH variable?)
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/scripts/profraw-check.cc linux-5.14.3-ot/scripts/profraw-check.cc
+--- linux-5.14.3-ot.orig/scripts/profraw-check.cc	1969-12-31 16:00:00.000000000 -0800
++++ linux-5.14.3-ot/scripts/profraw-check.cc	2021-09-14 04:30:03.551038772 -0700
 @@ -0,0 +1,7 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later OR MIT OR Apache-2.0
 +#include <llvm/ProfileData/InstrProf.h>
@@ -178,32 +189,31 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/profraw-check.cc linux-5.
 +int main(int argc, char *argv[]) {
 +	std::cout << llvm::RawInstrProf::Version;
 +}
-diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/profraw-version.sh linux-5.14.3-ot/profraw-version.sh
---- linux-5.14.3-ot.orig/profraw-version.sh	1969-12-31 16:00:00.000000000 -0800
-+++ linux-5.14.3-ot/profraw-version.sh	2021-09-13 23:07:02.067288629 -0700
-@@ -0,0 +1,14 @@
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/scripts/profraw-version.sh linux-5.14.3-ot/scripts/profraw-version.sh
+--- linux-5.14.3-ot.orig/scripts/profraw-version.sh	1969-12-31 16:00:00.000000000 -0800
++++ linux-5.14.3-ot/scripts/profraw-version.sh	2021-09-14 05:08:44.118796134 -0700
+@@ -0,0 +1,24 @@
 +#!/bin/bash
 +# SPDX-License-Identifier: GPL-2.0-or-later OR MIT OR Apache-2.0
 +
++PROFRAW_VERSION_MIN=5
++
++error() {
++	echo "${PROFRAW_VERSION_MIN}"
++	exit 1
++}
++
 +get_profraw_version() {
-+	which clang++ 2>/dev/null 1>/dev/null || exit 1
++	which clang++ 2>/dev/null 1>/dev/null || error
++	which llvm-config 2>/dev/null 1>/dev/null || error
 +	S=$(dirname "$BASH_SOURCE")
-+	cd "${S}" 2>/dev/null 1>/dev/null
++	cd "${S}" 2>/dev/null 1>/dev/null || error
 +	rm profraw-check.o profraw-check 2>/dev/null
-+	clang++ -c $(llvm-config --cxxflags) -o profraw-check.o profraw-check.cc || exit 1
-+	clang++ $(llvm-config --ldflags --libs) -o profraw-check profraw-check.o || exit 1
-+	./profraw-check || exit 1
++	clang++ -c $(llvm-config --cxxflags) -o profraw-check.o profraw-check.cc \
++		2>/dev/null 1>/dev/null || error
++	clang++ $(llvm-config --ldflags --libs) -o profraw-check profraw-check.o \
++		2>/dev/null 1>/dev/null || error
++	./profraw-check || error
 +}
 +
 +get_profraw_version
-diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/scripts/Kconfig.include linux-5.14.3-ot/scripts/Kconfig.include
---- linux-5.14.3-ot.orig/scripts/Kconfig.include	2021-08-29 15:04:50.000000000 -0700
-+++ linux-5.14.3-ot/scripts/Kconfig.include	2021-09-13 23:08:21.276443592 -0700
-@@ -44,6 +44,7 @@ cc-info := $(shell,$(srctree)/scripts/cc
- $(error-if,$(success,test -z "$(cc-info)"),Sorry$(comma) this compiler is not supported.)
- cc-name := $(shell,set -- $(cc-info) && echo $1)
- cc-version := $(shell,set -- $(cc-info) && echo $2)
-+profraw-version := $(shell,$(srctree)/scripts/profraw-version.sh)
- 
- # Get the assembler name, version, and error out if it is not supported.
- as-info := $(shell,$(srctree)/scripts/as-version.sh $(CC) $(CLANG_FLAGS))

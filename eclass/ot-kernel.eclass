@@ -673,8 +673,8 @@ verify_clang_compiler_updated() {
 IPD_RAW_V=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_V_MIN=6
 IPD_RAW_V_MAX=7
-verify_instr_prof_data_compatibility() {
-	einfo "Verifying instrumentation profiling data structures version compatibility"
+verify_profraw_compatibility() {
+	einfo "Verifying profraw version compatibility"
 	# The profiling data format is very version sensitive.
 	# If wrong version, expect something like this:
 	# warning: /usr/src/linux/vmlinux.profraw: unsupported instrumentation profile format version
@@ -722,7 +722,7 @@ eerror "INSTR_PROF_RAW_VERSION >= ${IPD_RAW_V_MIN} and"
 eerror "INSTR_PROF_RAW_VERSION <= ${IPD_RAW_V_MAX} is required"
 eerror
 eerror "No installed LLVM versions are compatible.  Please send an issue"
-eerror "request with your llvm version.  If you are using a live llvm version,"
+eerror "request with your LLVM version.  If you are using a live LLVM version,"
 eerror "send the EGIT_VERSION found in"
 eerror "\${ESYSROOT}/var/db/pkg/sys-devel/llvm-\${v}*/environment.bz2"
 eerror
@@ -779,7 +779,7 @@ function ot-kernel_pkg_setup() {
 	if has clang-pgo ${IUSE_EFFECTIVE} ; then
 		if use clang-pgo ; then
 			verify_clang_compiler_updated
-			verify_instr_prof_data_compatibility
+			verify_profraw_compatibility
 		fi
 	fi
 
