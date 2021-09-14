@@ -58,34 +58,34 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-
  	  profiling data.
  
 +choice PGO_CLANG_LLVM_SELECT
-+        prompt "LLVM version for profdata compatibility"
-+        help
-+          This matches the profdata data structure to a specific version
-+          of LLVM since not enough metadata is provided.
++	prompt "LLVM version for profdata compatibility"
++	help
++	  This matches the profdata data structure to a specific version
++	  of LLVM since not enough metadata is provided.
 +
 +config PROFRAW_VERSION_OVERRIDE_TOGGLE
 +	bool "Autodetect profraw version"
 +
 +config LLVM_MAIN
-+        bool "LLVM main branch with the latest commit"
++	bool "LLVM main branch with the latest commit"
 +
 +config LLVM14_LIVE
-+        bool "LLVM 14.x branch with the latest commit"
++	bool "LLVM 14.x branch with the latest commit"
 +
 +config LLVM14_INIT
-+        bool "LLVM 14 init"
++	bool "LLVM 14 init"
 +
 +config LLVM13_LIVE
-+        bool "LLVM 13.x branch with the latest commit"
++	bool "LLVM 13.x branch with the latest commit"
 +
 +config LLVM13_RC2
-+        bool "LLVM 13 rc2"
++	bool "LLVM 13 rc2"
 +
 +config LLVM13_RC1
-+        bool "LLVM 13 rc1"
++	bool "LLVM 13 rc1"
 +
 +config LLVM13_IPR6
-+	bool "LLVM 13 with profraw version 6"
++	bool "LLVM 13 with profraw version 6 with patched profraw header"
 +	help
 +	  The build must have both e50a388 and f984ac2 commits applied.
 +
@@ -161,7 +161,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
 +	|| defined(CONFIG_LLVM13_RC1) \
 +	|| defined(CONFIG_LLVM13_IPR6) \
 +	|| ( CONFIG_LLVM_INSTR_PROF_RAW_VERSION >= 6 \
-+		&& CONFIG_CLANG_VERSION < 140000)
++		&& CONFIG_CLANG_VERSION < 140000 )
 +	const u64 binary_id_size;
 +#endif
  };
