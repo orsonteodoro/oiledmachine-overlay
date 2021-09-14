@@ -642,13 +642,14 @@ eerror
 }
 
 NO_INSTR_FIX_COMMIT="193e41c987127aad86d0380df83e67a85266f1f1"
-NO_INSTR_FIX_TIMESTAMP="1624048424"
+NO_INSTR_FIX_TIMESTAMP="1624048424" # Fri Jun 18 08:33:44 PM UTC 2021
 
 NO_INSTRUMENT_FUNCTION="a63d4f6cbab133b0f1ce9afb562546fcc5bb2680"
-NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463"
+NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463" # Mon Jun 21 06:34:23 PM UTC 2021
 
 verify_clang_compiler_updated() {
-	for p in sys-devel/llvm-13.0.0.9999 sys-devel/clang-13.0.0.9999 sys-devel/clang-runtime-13.0.0.9999 ; do
+	local p
+	for p in "sys-devel/llvm-13.0.0.9999" "sys-devel/clang-13.0.0.9999" "sys-devel/clang-runtime-13.0.0.9999" ; do
 		einfo "Verifying prereqs for PGO for ${p}"
 		if has_version "=${p}" ; then
 			local emerged_llvm_commit=$(bzless \
@@ -667,6 +668,66 @@ verify_clang_compiler_updated() {
 			fi
 		fi
 	done
+}
+
+IPD_RAW_V=5 # < llvm-13 Dec 28, 2020
+IPD_RAW_V_MIN=6
+IPD_RAW_V_MAX=7
+verify_instr_prof_data_compatibility() {
+	einfo "Verifying instrumentation profiling data structures version compatibility"
+	# The profiling data format is very version sensitive.
+	# If wrong version, expect something like this:
+	# warning: /usr/src/linux/vmlinux.profraw: unsupported instrumentation profile format version
+	# error: no profile can be merged
+
+# This data structure must be kept in sync.
+# https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/kernel/pgo/fs.c?h=for-next/clang/pgo#n63
+# https://github.com/llvm/llvm-project/blob/main/compiler-rt/include/profile/InstrProfData.inc#L130
+
+	local found_upstream_version=0 # corresponds to original patch requirements for < llvm 13 (broken)
+	local found_patched_version=0 # corresponds to oiledmachine patches to use >= llvm 13 (fixed)
+	local v
+	for v in "10.0.1" "11.1.0" "12.0.1" "13.0.0_rc2" "13.0.0.9999" "14.0.0.9999" ; do
+		(! has_version "~sys-devel/llvm-${v}" ) && continue
+		local llvm_version
+		if [[ "${v}" =~ "9999" ]] ; then
+			local llvm_version=$(bzless \
+				"${ESYSROOT}/var/db/pkg/sys-devel/llvm-${v}"*"/environment.bz2" \
+				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
+		else
+			llvm_version="llvmorg-${v/_/-}"
+		fi
+		local instr_prof_raw_v=$(wget -q -O - \
+https://raw.githubusercontent.com/llvm/llvm-project/${llvm_version}/llvm/include/llvm/ProfileData/InstrProfData.inc \
+			| grep "INSTR_PROF_RAW_VERSION" \
+			| head -n 1 \
+			| grep -E -o -e "[0-9]+")
+		if (( ${instr_prof_raw_v} == ${IPD_RAW_V} )) ; then
+			found_upstream_version=1
+		fi
+		if (( ${instr_prof_raw_v} >= ${IPD_RAW_V_MIN} && ${instr_prof_raw_v} <= ${IPD_RAW_V_MAX} )) ; then
+			found_patched_version=1
+		fi
+	done
+	if (( ${found_upstream_version} != 1 )) ; then
+eerror
+eerror "No installed LLVM versions are with compatible."
+eerror "INSTR_PROF_RAW_VERSION == ${IPD_RAW_V} is required"
+eerror
+		ewarn
+	fi
+	if (( ${found_patched_version} != 1 )) ; then
+eerror
+eerror "INSTR_PROF_RAW_VERSION >= ${IPD_RAW_V_MIN} and"
+eerror "INSTR_PROF_RAW_VERSION <= ${IPD_RAW_V_MAX} is required"
+eerror
+eerror "No installed LLVM versions are compatible.  Please send an issue"
+eerror "request with your llvm version.  If you are using a live llvm version,"
+eerror "send the EGIT_VERSION found in"
+eerror "\${ESYSROOT}/var/db/pkg/sys-devel/llvm-\${v}*/environment.bz2"
+eerror
+		die
+	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_setup
@@ -718,6 +779,7 @@ function ot-kernel_pkg_setup() {
 	if has clang-pgo ${IUSE_EFFECTIVE} ; then
 		if use clang-pgo ; then
 			verify_clang_compiler_updated
+			verify_instr_prof_data_compatibility
 		fi
 	fi
 

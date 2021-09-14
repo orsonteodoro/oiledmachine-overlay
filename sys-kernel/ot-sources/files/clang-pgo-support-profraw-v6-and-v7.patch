@@ -1,0 +1,210 @@
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch status:  In Development / Testing
+Date:  Mon Sep 13 04:26:55 PM PDT 2021 (Unix timestamp: 1631575615)
+
+A problem was encountered when using llvm 13.x corresponding to gentoo's sys-devel/llvm-13.0.0.9999 package.
+
+The resulting output in the following when doing the "llvm-profdata merge" step:
+
+warning: /usr/src/linux/vmlinux.profraw: unsupported instrumentation profile format version
+error: no profile can be merged
+
+Modded to included LLVM_INSTR_PROF_RAW_VERSION 6 and 7 support.
+
+LLVM 14.x changes need to be reevaluated
+
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/init/Kconfig linux-5.14.3-ot/init/Kconfig
+--- linux-5.14.3-ot.orig/init/Kconfig	2021-09-13 23:02:33.625589185 -0700
++++ linux-5.14.3-ot/init/Kconfig	2021-09-13 23:09:42.924694725 -0700
+@@ -60,6 +60,11 @@ config LLD_VERSION
+ 	default $(ld-version) if LD_IS_LLD
+ 	default 0
+ 
++config PROFRAW_VERSION_OVERRIDE
++	int
++	default $(profraw-version) if CC_IS_CLANG
++	default 0
++
+ config CC_CAN_LINK
+ 	bool
+ 	default $(success,$(srctree)/scripts/cc-can-link.sh $(CC) $(CLANG_FLAGS) $(m64-flag)) if 64BIT
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/fs.c linux-5.14.3-ot/kernel/pgo/fs.c
+--- linux-5.14.3-ot.orig/kernel/pgo/fs.c	2021-09-13 23:02:34.119608886 -0700
++++ linux-5.14.3-ot/kernel/pgo/fs.c	2021-09-13 23:46:47.834626863 -0700
+@@ -66,9 +66,12 @@ static void prf_fill_header(void **buffe
+ 	header->counters_size = prf_cnts_count();
+ 	header->padding_bytes_after_counters = 0;
+ 	header->names_size = prf_names_count();
+-	header->counters_delta = (u64)__llvm_prf_cnts_start;
++	header->counters_delta = (u64)__llvm_prf_cnts_start; /* in LLVM 14.x, the semantics of this variable has changed */
+ 	header->names_delta = (u64)__llvm_prf_names_start;
+ 	header->value_kind_last = LLVM_INSTR_PROF_IPVK_LAST;
++#if LLVM_INSTR_PROF_RAW_VERSION >= 6
++	header->binary_id_size = 0; /* optional */
++#endif
+ 
+ 	*buffer += sizeof(*header);
+ }
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-5.14.3-ot/kernel/pgo/Kconfig
+--- linux-5.14.3-ot.orig/kernel/pgo/Kconfig	2021-09-13 23:02:33.847598038 -0700
++++ linux-5.14.3-ot/kernel/pgo/Kconfig	2021-09-13 23:10:30.411585157 -0700
+@@ -10,6 +10,7 @@ config PGO_CLANG
+ 	depends on ARCH_SUPPORTS_PGO_CLANG
+ 	depends on CC_IS_CLANG
+ 	depends on !ARCH_WANTS_NO_INSTR || CC_HAS_NO_PROFILE_FN_ATTR
++	depends on PGO_CLANG_LLVM_SELECT
+ 	help
+ 	  This option enables clang's PGO (Profile Guided Optimization) based
+ 	  code profiling to better optimize the kernel.
+@@ -34,4 +35,44 @@ config PGO_CLANG
+ 	  Note that the debugfs filesystem has to be mounted to access
+ 	  profiling data.
+ 
++choice PGO_CLANG_LLVM_SELECT
++        prompt "LLVM version for profdata compatibility"
++        help
++          This matches the profdata data structure to a specific version
++          of LLVM since not enough metadata is provided.
++
++config PROFRAW_VERSION_OVERRIDE
++	bool "Autodetect profraw version"
++
++config LLVM_MAIN
++        bool "LLVM main branch with the latest commit"
++
++config LLVM14_LIVE
++        bool "LLVM 14.x branch with the latest commit"
++
++config LLVM14_INIT
++        bool "LLVM 14 init"
++
++config LLVM13_LIVE
++        bool "LLVM 13.x branch with the latest commit"
++
++config LLVM13_RC2
++        bool "LLVM 13 rc2"
++
++config LLVM13_RC1
++        bool "LLVM 13 rc1"
++
++config LLVM13_IPR6
++	bool "LLVM 13 with profraw version 6"
++	help
++	  The build must have both e50a388 and f984ac2 commits applied.
++
++config LLVMX_IPR5
++	bool "LLVM 10 to 13 with profraw version 5 and backported commits"
++	help
++	  The required backports of commits 193e41c a63d4f6 applied, you can
++	  still still do PGO optimization with those versions of LLVM.
++
++endchoice
++
+ endmenu
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.14.3-ot/kernel/pgo/pgo.h
+--- linux-5.14.3-ot.orig/kernel/pgo/pgo.h	2021-09-13 23:02:34.120608926 -0700
++++ linux-5.14.3-ot/kernel/pgo/pgo.h	2021-09-13 23:22:47.455887332 -0700
+@@ -43,7 +43,35 @@
+ 		 (u64)'R' << 8  |	\
+ 		 (u64)129)
+ 
+-#define LLVM_INSTR_PROF_RAW_VERSION		5
++#if defined(CONFIG_PROFRAW_VERSION_OVERRIDE)
++#  define LLVM_INSTR_PROF_RAW_VERSION	CONFIG_PROFRAW_VERSION
++#  if CONFIG_CLANG_VERSION <= 130000
++#    warning "LLVM needs backports for both 193e41c a63d4f6 commits or update to"
++#    warning "LLVM 13 rc1 or newer"
++#  endif
++#elif defined(CONFIG_LLVM_MAIN) /* corresponds to the main branch */
++#  define LLVM_INSTR_PROF_RAW_VERSION	7
++#elif defined(CONFIG_LLVM14_LIVE)
++#  define LLVM_INSTR_PROF_RAW_VERSION	7
++#elif defined(CONFIG_LLVM14_INIT)
++#  define LLVM_INSTR_PROF_RAW_VERSION	6
++#elif defined(CONFIG_LLVM13_LIVE) /* corresponds to the 13.x branch */
++#  define LLVM_INSTR_PROF_RAW_VERSION	7
++#elif defined(CONFIG_LLVM13_RC2)
++#  define LLVM_INSTR_PROF_RAW_VERSION	7
++#elif defined(CONFIG_LLVM13_RC1)
++#  define LLVM_INSTR_PROF_RAW_VERSION	6
++#elif defined(CONFIG_LLVM13_IPR6)
++#  define LLVM_INSTR_PROF_RAW_VERSION	6
++#elif defined(CONFIG_LLVMX_IPR5)
++#  warning "LLVM needs backports for both 193e41c a63d4f6 commits or update to"
++#  warning "LLVM 13 rc1 or newer"
++#  define LLVM_INSTR_PROF_RAW_VERSION	5
++#else
++#  error "PGO requires >= LLVM 13 rc1 or backports for both 193e41c a63d4f6"
++#  error "commits"
++#endif
++
+ #define LLVM_INSTR_PROF_DATA_ALIGNMENT		8
+ #define LLVM_INSTR_PROF_IPVK_FIRST		0
+ #define LLVM_INSTR_PROF_IPVK_LAST		1
+@@ -72,6 +100,9 @@
+ struct llvm_prf_header {
+ 	u64 magic;
+ 	u64 version;
++#if defined(LLVM_MAIN) || ( PROFRAW_VERSION_OVERRIDE >= 7 && )
++	const u64 binary_id_size;
++#endif
+ 	u64 data_size;
+ 	u64 padding_bytes_before_counters;
+ 	u64 counters_size;
+@@ -80,6 +111,15 @@ struct llvm_prf_header {
+ 	u64 counters_delta;
+ 	u64 names_delta;
+ 	u64 value_kind_last;
++#if defined(CONFIG_LLVM14_LIVE) \
++	|| defined(CONFIG_LLVM14_INIT) \
++	|| defined(CONFIG_LLVM13_LIVE) \
++	|| defined(CONFIG_LLVM13_RC2) \
++	|| defined(CONFIG_LLVM13_RC1) \
++	|| defined(CONFIG_LLVM13_IPR6) \
++	|| PROFRAW_VERSION_OVERRIDE >= 6
++	const u64 binary_id_size;
++#endif
+ };
+ 
+ /**
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/profraw-check.cc linux-5.14.3-ot/profraw-check.cc
+--- linux-5.14.3-ot.orig/profraw-check.cc	1969-12-31 16:00:00.000000000 -0800
++++ linux-5.14.3-ot/profraw-check.cc	2021-09-13 23:07:02.068288669 -0700
+@@ -0,0 +1,7 @@
++// SPDX-License-Identifier: GPL-2.0-or-later OR MIT OR Apache-2.0
++#include <llvm/ProfileData/InstrProf.h>
++#include <iostream>
++
++int main(int argc, char *argv[]) {
++	std::cout << llvm::RawInstrProf::Version;
++}
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/profraw-version.sh linux-5.14.3-ot/profraw-version.sh
+--- linux-5.14.3-ot.orig/profraw-version.sh	1969-12-31 16:00:00.000000000 -0800
++++ linux-5.14.3-ot/profraw-version.sh	2021-09-13 23:07:02.067288629 -0700
+@@ -0,0 +1,15 @@
++#!/bin/bash
++# SPDX-License-Identifier: GPL-2.0-or-later OR MIT OR Apache-2.0
++
++get_profraw_version() {
++	which clang++ 2>/dev/null 1>/dev/null || exit 1
++	S=$(dirname "$BASH_SOURCE")
++	pushd "${S}" 2>/dev/null 1>/dev/null
++		rm profraw-check.o profraw-check 2>/dev/null
++		clang++ -c $(llvm-config --cxxflags) -o profraw-check.o profraw-check.cc || exit 1
++		clang++ $(llvm-config --ldflags --libs) -o profraw-check profraw-check.o || exit 1
++		./profraw-check || exit 1
++	popd 2>/dev/null 1>/dev/null
++}
++
++get_profraw_version
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/scripts/Kconfig.include linux-5.14.3-ot/scripts/Kconfig.include
+--- linux-5.14.3-ot.orig/scripts/Kconfig.include	2021-08-29 15:04:50.000000000 -0700
++++ linux-5.14.3-ot/scripts/Kconfig.include	2021-09-13 23:08:21.276443592 -0700
+@@ -44,6 +44,7 @@ cc-info := $(shell,$(srctree)/scripts/cc
+ $(error-if,$(success,test -z "$(cc-info)"),Sorry$(comma) this compiler is not supported.)
+ cc-name := $(shell,set -- $(cc-info) && echo $1)
+ cc-version := $(shell,set -- $(cc-info) && echo $2)
++profraw-version := $(shell,$(srctree)/scripts/profraw-version.sh)
+ 
+ # Get the assembler name, version, and error out if it is not supported.
+ as-info := $(shell,$(srctree)/scripts/as-version.sh $(CC) $(CLANG_FLAGS))

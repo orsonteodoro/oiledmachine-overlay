@@ -601,6 +601,8 @@ einfo "Already applied ${path} upstream"
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${CLANG_PGO_FN}" ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/clang-pgo-support-profraw-v6-and-v7.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi
