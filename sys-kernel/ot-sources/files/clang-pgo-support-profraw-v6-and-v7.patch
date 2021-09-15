@@ -85,12 +85,12 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-
 +	bool "LLVM 13 rc1"
 +
 +config LLVM13_IPR6
-+	bool "LLVM 13 with profraw version 6 with patched profraw header"
++	bool "LLVM 13 with profraw v6 header from git"
 +	help
 +	  The build must have both e50a388 and f984ac2 commits applied.
 +
 +config LLVMX_IPR5
-+	bool "LLVM 10 to 13 with profraw version 5 and backported commits"
++	bool "LLVM 10 to 13 with profraw v5 and backported commits"
 +	help
 +	  The required backports of commits 193e41c a63d4f6 must be applied, you
 +	  still can do PGO optimization with those versions of LLVM.
