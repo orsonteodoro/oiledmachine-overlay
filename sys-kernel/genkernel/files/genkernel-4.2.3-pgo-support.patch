@@ -1,5 +1,5 @@
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
-Patch status:  Work In Progress (WIP)
+Patch status:  In Development / Work In Progress (WIP)
 Date: Sat Sep 11 09:50:54 PM PDT 2021 (Unix time: 1631422254)
 
 Do not run in production yet!
@@ -14,9 +14,9 @@ has been tested working under normal user only.
 The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-14 13:22:11.194319877 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-14 13:22:35.960747521 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-14 20:02:20.350698245 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-14 20:02:54.231029994 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -184,9 +184,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  			;;
  		--help)
  			longusage
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-14 13:22:11.194319877 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-14 13:22:35.961747624 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-14 20:02:20.351698284 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-14 20:02:54.231029994 -0700
 @@ -128,6 +128,13 @@ compile_generic() {
  				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
  			fi
@@ -201,9 +201,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-
  			compile_cmd+=( "HOSTAR='$(tc-getBUILD_AR)'" )
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-14 13:22:11.195319939 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-14 13:22:35.961747624 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-14 20:02:20.351698284 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-14 20:02:54.232030033 -0700
 @@ -1031,6 +1031,25 @@ config_kernel() {
  		fi
  	fi
@@ -230,9 +230,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
  	if isTrue "${CMD_LLVM_KERNEL}"
  	then
  		local llvm_slot
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-14 13:22:11.196320001 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-14 13:23:23.609160429 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
+--- genkernel-4.2.3.orig/genkernel	2021-09-14 20:02:20.352698324 -0700
++++ genkernel-4.2.3/genkernel	2021-09-14 20:02:54.232030033 -0700
 @@ -81,6 +81,7 @@ source "${GK_SHARE}"/defaults/compressio
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
  source "${GK_SHARE}"/defaults/config.sh || small_die "Could not read '${GK_SHARE}/defaults/config.sh'"
@@ -412,9 +412,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  print_info 1 '' 1 0
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-14 13:22:11.196320001 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-14 13:22:35.962747727 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-14 20:02:20.353698363 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-14 20:02:54.233030073 -0700
 @@ -52,6 +52,30 @@ All that is needed to run genkernel is j
  .\}
  .sp
@@ -578,10 +578,10 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SS "LOW\-LEVEL COMPILATION OPTIONS"
  .PP
  \fB\-\-cfi\fR
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-14 13:22:35.963747830 -0700
-@@ -0,0 +1,921 @@
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-14 20:31:53.638560599 -0700
+@@ -0,0 +1,981 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
@@ -590,6 +590,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +PGO_MAX_FILESIZE_DEFAULT=26214400 # 25 MB
 +#CHECK_REQUIREMENTS=0 # 1 or 0 or unset, for standalone mode only
 +SUDOING=${ALLOW_SUDO:=0} # 1 or 0
++PAGESIZE=${PAGE_SIZE:=$(getconf PAGESIZE)}
++KPAGESIZE=$(( ${PAGE_SIZE} / 1024 ))
 +
 +PGO_DISTRO="gentoo" # \
 +# If set to gentoo, script integrates with genkernel otherwise run in standalone mode.
@@ -622,7 +624,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +marked_as_trained() {
 +	( ! is_genkernel ) && return
 +	if (( ${trained} == 1 )) ; then
-+		elif [[ "${USER}" == "root" ]] ; then
++		if [[ "${USER}" == "root" ]] ; then
 +			touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +		elif which sudo 2>/dev/null 1>/dev/null \
 +			&& ( groups | grep -q -e "wheel" ) \
@@ -670,12 +672,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		fi
 +	fi
 +
-+	if (( $(ps -aux \
-+                | grep "vmtouch -d -l" \
-+                | grep -E -v "grep.*vmtouch" \
-+                | sed -E -e "s|[ ]+| |g" \
-+                | cut -f 2 -d " " \
-+		| wc -l) > 0 )) ; then
++	if (( $(get_cmd_pids "vmtouch -d -l" | wc -l) > 0 )) ; then
 +		print_info 1 "$(get_indent 1)>> Another program may be using vmtouch,"
 +		print_info 1 "$(get_indent 1)>> skipping tests."
 +		return
@@ -683,8 +680,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +
 +	free_vmlocked_memory() {
 +		print_info 1 "$(get_indent 1)>> Freeing memory"
-+		kill -9 $(ps -aux | grep "vmtouch -d -l" | grep -E -v "grep.*vmtouch" \
-+			| sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
++		kill -9 $(get_cmd_pids "vmtouch -d -l")
 +		exit 1
 +	}
 +
@@ -712,6 +708,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		local mb8_pause=0
 +		for f in $(find /usr/portage/distfiles /usr/bin /usr/lib* -type f) ; do
 +			local file_size=$(stat -c "%s" "${f}")
++			local found_fit=1
++			local force_mb8_pause=0
 +			if (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_50_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 50))/100)) )) ; then
 +				vmtouch -d -l "${f}"
 +				bytes_read=$(( ${file_size} + ${bytes_read} ))
@@ -751,7 +749,12 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +			else
 +				vmtouch -t "${f}" # touch anyway
 +				print_info 1 "$(get_indent 1)>> skipping ${f} either too large or doesn't fit into percent size"
-+				continue
++				found_fit=0
++				if (( ${file_size} <= ${KPAGESIZE} && ${mb8_pause} == 0 && ${percent_99_pause} == 1 )) ; then
++					force_mb8_pause=1
++				else
++					continue
++				fi
 +			fi
 +			local duration=300
 +			if (( "${bytes_read}" > $(( $((${total_ram} * 50)) / 100 )) && ${percent_50_pause} == 0 )) ; then
@@ -826,7 +829,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +				sleep ${duration}
 +				kill -9 ${bash_pid}
 +				percent_99_pause=1
-+			elif (( "${bytes_read}" > ${total_ram} && ${mb8_pause} == 0 )) ; then
++			elif (( ( "${bytes_read}" > ${total_ram} && ${mb8_pause} == 0 ) || ${force_mb8_pause} == 1 )) ; then
 +				# Shouldn't exceed ${total_ram} - ${kernel_size}
 +				# kernel size is 7mb
 +				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
@@ -839,16 +842,12 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +				mb8_pause=1
 +				trained=1
 +			fi
++			(( ${force_mb8_pause} == 1 )) && break
 +			(( ${bytes_read} > ${allocation_size} )) && break
 +		done
 +		print_info 1 "$(get_indent 1)>> 120 seconds pause,  please wait."
 +		sleep 120
-+		kill -9 $(ps -aux \
-+	                | grep "vmtouch -d -l" \
-+        	        | grep -E -v "grep.*vmtouch" \
-+	                | sed -E -e "s|[ ]+| |g" \
-+	                | cut -f 2 -d " ")
-+		touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++		kill -9 $(get_cmd_pids "vmtouch -d -l")
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
@@ -882,7 +881,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +}
 +
 +pgo_trainer_emerge2() {
-+	print_info 1 "$(get_indent 1)>> Running the PGO trainer with \`building\`"
++	print_info 1 "$(get_indent 1)>> Running the PGO trainer for very high memory use and/or very high IO "
++	print_info 1 "$(get_indent 1)>> This PGO test has not been implemented yet"
 +}
 +
 +_use_crypto_with_mode() {
@@ -995,7 +995,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	print_info 1 "$(get_indent 1)>> Running sequential reads"
 +	local sample_set=()
 +	local c=0
-+	for f in $(find /usr/bin -type f| shuf) ; do
++	for f in $(find "${mount_point}/usr/bin" -type f| shuf) ; do
 +		[ -L "${f}" ] && continue
 +		sample_set+=( "${f}" )
 +		c=$((${c} + 1))
@@ -1018,7 +1018,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	print_info 1 "$(get_indent 1)>> Running random reads single page at a time"
 +	local sample_set=()
 +	local c=0
-+	for f in $(find /usr/bin -type f| shuf) ; do
++	for f in $(find "${mount_point}/usr/bin" -type f| shuf) ; do
 +		[ -L "${f}" ] && continue
 +		# File must be >=2 pages
 +		local filesize=$(stat -c "%s" "${f}")
@@ -1029,7 +1029,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		fi
 +	done
 +	# Read random pagesize parts of a file
-+	local sandbox_dir=$(mktemp -d)
++	local sandbox_dir=$(mktemp -p "${mount_point_tmp_path}" -d)
 +	[[ "$?" != "0" ]] \
 +		&& print_info 1 "$(get_indent 1)>> Failed to create sandbox dir.  Skipping test." \
 +		&& return
@@ -1037,17 +1037,16 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		for f in ${sample_set[@]} ; do
 +			for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
 +				local file_size=$(stat -c "%s" "${f}")
-+				local npages=$((${file_size} / 4096))
++				local npages=$((${file_size} / ${PAGESIZE}))
 +				local page_index=$(( ${RANDOM} % ${npages} ))
 +				print_info 1 "$(get_indent 1)>> Reading ${f} at page_index ${page_index}."
-+				dd if="${f}" of="dump.dat" ibs=4K skip=${page_index} count=1 && trained=1
++				dd if="${f}" of="dump.dat" ibs=${KPAGESIZE}K skip=${page_index} count=1 && trained=1
 +				local size_x=$(stat -c "%s" "dump.dat")
-+				if (( ${size_x} != 4096 )) ; then
++				if (( ${size_x} != ${PAGESIZE} )) ; then
 +					print_info 1 "$(get_indent 1)>> Failed reading a page of a file.  Filesize was ${size_x}."
 +				fi
 +			done
 +		done
-+		touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
@@ -1055,7 +1054,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +}
 +
 +_pgo_trainer_filesystem_random_writes_single_page() {
-+	local sandbox_dir=$(mktemp -d)
++	local sandbox_dir=$(mktemp -p "${mount_point_tmp_path}" -d)
 +	print_info 1 "$(get_indent 1)>> Running random writes single page at a time"
 +	# Write data in a single file pagesize writes
 +	[[ "$?" != "0" ]] \
@@ -1064,19 +1063,16 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	local trained=0
 +	pushd "${sandbox_dir}"
 +		f="test.img"
-+		dd if=/dev/zero of=${f} bs=4k iflag=fullblock,count_bytes count=${PGO_MAX_FILESIZE_DEFAULT}
++		dd if=/dev/zero of=${f} bs=${KPAGESIZE}K iflag=fullblock,count_bytes count=${PGO_MAX_FILESIZE_DEFAULT}
 +		for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
 +			local file_size=$(stat -c "%s" "${f}")
-+			local npages=$((${file_size} / 4096))
++			local npages=$((${file_size} / ${PAGESIZE}))
 +			local page_index=$(( ${RANDOM}${RANDOM} % ${npages} ))
 +			print_info 1 "$(get_indent 1)>> Writing ${f} at page_index ${page_index}."
-+			dd if=${f} of=${f} ibs=4K seek=${page_index} count=1 conv=notrunc && trained=1
++			dd if=${f} of=${f} ibs=${KPAGESIZE}K seek=${page_index} count=1 conv=notrunc && trained=1
 +			file_size=$(stat -c "%s" "${f}")
 +			print_info 1 "$(get_indent 1)>> New filesize is ${file_size}."
 +			local size_x=$(stat -c "%s" "${f}")
-+			if (( ${size_x} != 4096 )) ; then
-+				print_info 1 "$(get_indent 1)>> Failed reading a page of a file.  Filesize was ${size_x}."
-+			fi
 +		done
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
@@ -1090,7 +1086,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	local sample_set=()
 +	local c=0
 +	print_info 1 "$(get_indent 1)>> Finding suitable files.  Please wait."
-+	for f in $(find /usr/bin -type f| shuf) ; do
++	for f in $(find "${mount_point}/usr/bin" -type f| shuf) ; do
 +		[ -L "${f}" ] && continue
 +		filesize=$(stat -c "%s" "${f}")
 +		if (( ${filesize} < ${PGO_MAX_FILESIZE:=${PGO_MAX_FILESIZE_DEFAULT}} )) ; then
@@ -1109,12 +1105,47 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +
 +pgo_trainer_filesystem() {
 +	print_info 1 "$(get_indent 1)>> Running the filesystem PGO trainer"
-+
-+	_pgo_trainer_filesystem_sequential_reads
-+	_pgo_trainer_filesystem_random_reads_single_page
-+	_pgo_trainer_filesystem_random_writes_single_page
-+	_pgo_trainer_filesystem_grep
-+	# TODO multi file reads
++	pgo_filesystem_list=${PGO_FILESYSTEMS_LIST="unk:unk:unk:/:/usr/bin"}
++	for x in ${pgo_filesystem_list} ; do
++		local io_scheduler_name=$(echo "${x}" | cut -f 1 -d ":")
++		local fs_name=$(echo "${x}" | cut -f 2 -d ":")
++		local dev_name=$(echo "${x}" | cut -f 3 -d ":")
++		local mount_point=$(echo "${x}" | cut -f 4 -d ":")
++		local test_dir=$(echo "${x}" | cut -f 5 -d ":")
++		print_info 1 "$(get_indent 1)>> io_scheduler_name:  ${io_scheduler_name}"
++		print_info 1 "$(get_indent 1)>> fs_name:  ${fs_name}"
++		print_info 1 "$(get_indent 1)>> dev_name:  ${dev_name}"
++		print_info 1 "$(get_indent 1)>> mount_point:  ${mount_point}"
++		print_info 1 "$(get_indent 1)>> test_dir:  ${test_dir}"
++		if [[ "${mount_point}" == "" || "${mount_point}" == "." ]] ; then
++			print_info 1 "$(get_indent 1)>> Mount point is empty or just a period.  Skipping this mount point.  quintuple: ${x}"
++			continue
++		fi
++		if [[ -z "${test_dir}" || ! -e "${mount_point}/${test_dir}" ]] ; then
++			print_info 1 "$(get_indent 1)>> test_dir is invalid.  Skipping this mountpoint.  quintuple: ${x}"
++			continue
++		fi
++		if (( $(find /sys/devices/ -path "*${dev_name}*scheduler" | wc -l) == 1 )) \
++			&& cat $(find /sys/devices/ -path "*${dev_name}*scheduler") | grep -q -e "${io_scheduler_name}" ; then
++			#echo "${io_scheduler_name}" > $(find /sys/devices/ -path "*${dev_name}*scheduler")
++			# IO scheduler switching is bugged.
++			:;
++		fi
++		local mount_point_tmp_path="${mount_point}/tmp.pgo."$(head -c 7 /dev/random \
++			| od -t x2 | cut -c 9- | head -n 1 | sed -e "s| ||g" \
++			| head -c 7)
++		mkdir -p "${mount_point_tmp_path}"
++		[[ "$?" != "0" || ! -d "${mount_point_tmp_path}" ]] \
++			&& print_info 1 "$(get_indent 1)>> Failed to create PGO tmp dir for mountpoint.  Skipping test." \
++			&& return
++		_pgo_trainer_filesystem_sequential_reads
++		_pgo_trainer_filesystem_random_reads_single_page
++		_pgo_trainer_filesystem_random_writes_single_page
++		_pgo_trainer_filesystem_grep
++		# TODO multi file reads
++		[[ -d "${mount_point_tmp_path}" && "${mount_point_tmp_path}" != "." ]] \
++			&& rm -rf "${mount_point_tmp_path}"
++	done
 +}
 +
 +pgo_trainer_network() {
@@ -1124,14 +1155,15 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	print_info 1 "$(get_indent 1)>> Running the network PGO trainer"
 +	# See /proc/sys/net/ipv4/tcp_congestion_control
 +	# See /proc/sys/net/ipv4/tcp_available_congestion_control
++	local tcp_congestions
 +	if [[ -e /proc/sys/net/ipv4/tcp_congestion_control ]] ; then
 +		print_info 1 "$(get_indent 1)>> TCP congestion control is $(cat /proc/sys/net/ipv4/tcp_congestion_control)."
 +		print_info 1 "$(get_indent 1)>> To train multiple particular TCP congestion control set PGO_TRAINER_NETWORK_TCP_CONGESTIONS as a string in /etc/genkernel.conf."
 +		local tcp_congestion=$(cat /proc/sys/net/ipv4/tcp_congestion_control)
-+		PGO_TRAINER_NETWORK_TCP_CONGESTIONS=${PGO_TRAINER_NETWORK_TCP_CONGESTIONS:=${tcp_congestion}}
++		tcp_congestions=${PGO_TRAINER_NETWORK_TCP_CONGESTIONS:=${tcp_congestion}}
++	else
++		tcp_congestions="unknown"
 +	fi
-+
-+	PGO_TRAINER_NETWORK_TCP_CONGESTIONS=${PGO_TRAINER_NETWORK_TCP_CONGESTIONS:=unknown}
 +
 +	# Test both IPv4/IPv6
 +	local domains=(
@@ -1158,8 +1190,12 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +			print_info 1 "$(get_indent 1)>> Missing traceroute.  Emerge net-analyzer/traceroute."
 +		fi
 +	done
-+	for tcp_congestion in ${PGO_TRAINER_NETWORK_TCP_CONGESTIONS} ; do
-+		print_info 1 "$(get_indent 1)>> TCP congestion control: ${tcp_congestion}"
++	for tcp_congestion in ${tcp_congestions} ; do
++		if [[ -e "/proc/sys/net/ipv4/tcp_congestion_control" ]] \
++			&& grep -q -e "${tcp_congestion}" /proc/sys/net/ipv4/tcp_allowed_congestion_control ; then
++			print_info 1 "$(get_indent 1)>> TCP congestion control: ${tcp_congestion} is set"
++			echo "${tcp_congestion}" > /proc/sys/net/ipv4/tcp_congestion_control
++		fi
 +		# Test TCP
 +		if \
 +			which curl 2>/dev/null 1>/dev/null ; then
@@ -1173,7 +1209,16 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +			print_info 1 "$(get_indent 1)>> Missing curl.  emerge net-misc/curl"
 +		fi
 +	done
-+	(( $(( ${m0} + ${m1} + ${m2} )) == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( $(( ${m0} + ${m1} + ${m2} )) == 1 )) && marked_as_trained
++}
++
++get_cmd_pids() {
++	local cmd="${@}"
++	ps -aux | sed -E -e "s|[ ]+| |g" \
++		| grep -e "${cmd}"  \
++		| grep -v -e "grep.*${cmd}" \
++		| cut -f 2 -d " " \
++		| head -n 1
 +}
 +
 +pgo_trainer_p2p() {
@@ -1184,18 +1229,12 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		&& print_info 1 "$(get_indent 1)>> Failed to create sandbox dir.  Skipping test." \
 +		&& return
 +	pushd "${sandbox_dir}"
-+		local bn=$(basename "${url}")
-+		wget -O "${bn}" "${url}"
-+		ctorrent -dd "${bn}" 2>&1 >"${sandbox_dir}/ctorrent.log"
-+		export pid_ctorrent=$(ps -aux \
-+			| sed -E -e "s|[ ]+| |g" \
-+			| grep -e "sleep 30"  \
-+			| grep -v -e "grep.*sleep 30" \
-+			| cut -f 2 -d " " \
-+			| head -n 1)
++		export BN=$(basename "${url}")
++		wget -O "${BN}" "${url}"
++		ctorrent -dd "${BN}" 2>&1 >"${sandbox_dir}/ctorrent.log"
 +		stop_ctorrent() {
 +			print_info 1 "$(get_indent 1)>> Stopping ctorrent"
-+			kill -9 ${pid_ctorrent}
++			kill -9 $(get_cmd_pids "ctorrent -dd ${BN}")
 +			sleep 1
 +			# Wipe sandbox
 +			[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
@@ -1211,7 +1250,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +			time_now=$(date +%s)
 +			(( ${time_now} > ${time_expire} )) && trained=1 && break
 +		done
-+		kill -9 ${pid_ctorrent}
++		kill -9 $(get_cmd_pids "ctorrent -dd ${BN}")
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
@@ -1221,6 +1260,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +pgo_trainer_webcam() {
 +	local m0=0
 +	local m1=0
++	local m2=0
++	local m3=0
 +	print_info 1 "$(get_indent 1)>> Running the webcam PGO trainer for still photos"
 +	if ! which ffmpeg 2>/dev/null 1>/dev/null ; then
 +		print_info 1 "$(get_indent 1)>> Missing ffmpeg.  Install the media-video/ffmpeg[encode,libv4l] package"
@@ -1246,6 +1287,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +				for res in ${resolutions} ; do
 +					for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
 +						ffmpeg -y -f video4linux2 -s ${res} -i ${d} -frames 1 test.jpg && m0=1
++						# Decode also to simulate part of video conferencing.
++						ffmpeg -y -i test.jpg -f null - && m1=1
 +					done
 +				done
 +			fi
@@ -1259,7 +1302,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +					| grep -E -o -e "[0-9]+x[0-9]+")
 +				for res in ${resolutions} ; do
 +					for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
-+						ffmpeg -y -f video4linux2 -s ${res} -i ${d} -t 5 test.webm && m1=1
++						ffmpeg -y -f video4linux2 -s ${res} -i ${d} -t 5 test.webm && m2=1
++						# Decode also to simulate part of video conferencing.
++						ffmpeg -y -i test.webm -f null - && m3=1
 +					done
 +				done
 +			fi
@@ -1267,7 +1312,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
-+	(( $(( ${m1} + ${m2} )) == 1 )) && touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
++	(( $(( ${m0} + ${m1} + ${m2} + ${m3} )) == 4 )) && marked_as_trained
 +}
 +
 +pgo_trainer_2d_draw() {
@@ -1429,10 +1474,22 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	local trained=0
 +	DIR=$(dirname "$BASH_SOURCE")
 +	if [[ -x "${DIR}/pgo-custom.sh" ]] ; then
-+		print_info 1 "$(get_indent 1)>> Running the PGO custom trainer(s)"
-+		./pgo-custom.sh
-+		touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
-+		trained=1
++		local perms=$(stat -c "%a" "${DIR}/pgo-custom.sh")
++		local u=$(stat -c "%G" "${DIR}/pgo-custom.sh")
++		local g=$(stat -c "%U" "${DIR}/pgo-custom.sh")
++		if [[ "${perms}" == "750" \
++			&& ( ( "${u}" == "portage" && "${g}" == "portage" ) \
++				|| ( "${g}" == "wheel" ) \
++				|| ( "${u}" == "root" && "${g}" == "root" ) ) ]] ; then
++			print_info 1 "$(get_indent 1)>> Running the PGO custom trainer(s)"
++			./pgo-custom.sh
++			trained=1
++		else
++			print_info 1 "$(get_indent 1)>> Wrong permissions for pgo-custom.sh"
++			print_info 1 "$(get_indent 1)>> Inspect the file for malicious modifications."
++			print_info 1 "$(get_indent 1)>> Then, reset permissions to 750 and owner to"
++			print_info 1 "$(get_indent 1)>> root/root, ${USER}/wheel, or portage/portage."
++		fi
 +	fi
 +	(( ${trained} == 1 )) && marked_as_trained
 +}
@@ -1446,12 +1503,15 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	pgo_trainer_crypto_less_common
 +	pgo_trainer_custom
 +	pgo_trainer_emerge1
-+#	pgo_trainer_emerge2
++	pgo_trainer_emerge2
 +	pgo_trainer_filesystem
-+#	pgo_trainer_memory
++	#pgo_trainer_memory # Something is majorily bugged.
 +	pgo_trainer_network
-+	pgo_trainer_p2p
 +	pgo_trainer_webcam
++}
++
++pgo_trainer_all_non_root() {
++	pgo_trainer_p2p
 +	pgo_trainer_yt
 +}
 +
@@ -1496,7 +1556,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	fi
 +}
 +
-+if is_genkernel ; then
++if ! is_genkernel ; then
 +main() {
 +	[[ -n "${CHECK_REQUIREMENTS}" && "${CHECK_REQUIREMENTS}" == "1" ]] && check_pgo_requirements
 +	pgo_trainer_all

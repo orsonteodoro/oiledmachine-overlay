@@ -59,11 +59,12 @@
 
     The trainers that you choose should reflect typical use.  You may also
     extend PGO with your own custom script.  The script should be placed
-    in /usr/share/genkernel or in the same folder as gen_pgo.sh.
+    in /usr/share/genkernel as pgo-custom.sh in the same folder as gen_pgo.sh
+    with 0770 permissions with wheel to both user or group ownership.
 
     Due to licensing concerns for the 2014 PGO GCC patch and associated scripts
     cannot be integrated both in the kernel sources and this package
-    directly.  Only the emerging 2021 PGO with Clang patchset will be
+    directly.  Only the emerging 2021 PGO with clang and llvm support will be
     supported.
 
     Environmental variables (store in /etc/genkernel.conf):
@@ -71,9 +72,32 @@
     PGO_P2P_URI - The URI must have a filename to replace the placeholder
                   torrent.  (Only public domain assets or open source project
                   torrents should be used.)
-
     PGO_LINUX_TARBALL - Abspath to a linux tarball use as a source of
                   pseudo randomness.
+    PGO_TRAINER_NETWORK_TCP_CONGESTIONS - string separated list from
+      /proc/sys/net/ipv4/tcp_allowed_congestion_control to select for
+      PGO training.
+    PGO_FILESYSTEMS_LIST - a string separated list of selected of
+      quintuples in this format -- ioscheduler_name&fs_name&dev_name&mount_point&test_dir
+      -- to PGO train.
+      * io_scheduler_name must be one of the names listed in
+        `cat $(find /sys/devices/ -path "*sda*scheduler")`, where sda is replace with the
+        block device of interest.  It will be used to switch to that scheduler.
+      * fs_name must match the driver name.  These are listed in
+        ${KERNEL_DIR}/fs as one the subdirectories
+      * dev_name must the basename to the corresponding path listed in
+        find /sys/ -name "scheduler"
+      * mount_point must be abspath to the mount point.  It must not contain
+        a space in the abspath.
+      * test_dir must be a decent size folder like similar to /usr/bin that
+        is used for grep tests and sequential read tests.  It also is
+        an abspath relative to mount_point.
+
+      If it is not set, it will default to the following:
+      PGO_FILESYSTEMS_LIST="unk:unk:unk:/:/usr/bin"
+
+      Example:
+      PGO_FILESYSTEMS_LIST="bfq&ext4&sda&/&/usr/bin kyber&bfs&sdb&/mnt/rock&/data mq-deadline&ext4&sda&/&/usr/bin"
   </longdescription>
   <use>
     <flag name="cfi">Ensure that the Code Flow Integrity toolchain requirements

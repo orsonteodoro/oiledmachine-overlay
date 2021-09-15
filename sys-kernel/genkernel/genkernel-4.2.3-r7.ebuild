@@ -544,5 +544,8 @@ pkg_postinst() {
 	ewarn
 	ewarn "The pgo USE flag is not production ready.  Do not use at this time."
 	ewarn
+	ewarn "See the metadata.xml next to this ebuild for additional environment"
+	ewarn "variables for PGO training."
+	ewarn
 	fi
 }
