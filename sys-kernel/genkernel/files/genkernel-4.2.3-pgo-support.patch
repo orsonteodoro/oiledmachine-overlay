@@ -1530,13 +1530,13 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +}
 +
 +check_pgo_profraw_fixes_applied() {
-+	if [ ! -e "${KERNEL_DIR}/kernel/pgo/kernel/pgo/pgo.h" ] ; then
++	if [ ! -e "${KERNEL_DIR}/kernel/pgo/pgo.h" ] ; then
 +		print_info 1 "$(get_indent 1)>>"
 +		print_info 1 "$(get_indent 1)>> Missing PGO header"
 +		print_info 1 "$(get_indent 1)>>"
 +		exit 1
 +	fi
-+	if ! grep -q -e "binary_id_size" "${KERNEL_DIR}/kernel/pgo/kernel/pgo/pgo.h" ; then
++	if ! grep -q -e "binary_id_size" "${KERNEL_DIR}/kernel/pgo/pgo.h" ; then
 +		print_info 1 "$(get_indent 1)>>"
 +		print_info 1 "$(get_indent 1)>> Missing profraw header fix for multislot llvm"
 +		print_info 1 "$(get_indent 1)>> or for recent llvm releases"
