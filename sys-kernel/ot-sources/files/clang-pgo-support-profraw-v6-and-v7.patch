@@ -49,7 +49,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-
  	depends on ARCH_SUPPORTS_PGO_CLANG
  	depends on CC_IS_CLANG
  	depends on !ARCH_WANTS_NO_INSTR || CC_HAS_NO_PROFILE_FN_ATTR
-+	depends on PGO_CLANG_LLVM_SELECT
++	depends on PROFRAW_VERSION_OVERRIDE_TOGGLE || LLVM_MAIN || LLVM14_LIVE || LLVM14_INIT || LLVM13_LIVE || LLVM13_RC2 || LLVM13_RC1 || LLVM13_IPR6 || LLVMX_IPR5
  	help
  	  This option enables clang's PGO (Profile Guided Optimization) based
  	  code profiling to better optimize the kernel.
