@@ -145,7 +145,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
 +#if defined(LLVM_MAIN) \
 +	|| ( CONFIG_LLVM_INSTR_PROF_RAW_VERSION >= 7 \
 +		&& CONFIG_CLANG_VERSION == 140000 )
-+	const u64 binary_id_size;
++	u64 binary_id_size;
 +#endif
  	u64 data_size;
  	u64 padding_bytes_before_counters;
@@ -162,7 +162,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
 +	|| defined(CONFIG_LLVM13_IPR6) \
 +	|| ( CONFIG_LLVM_INSTR_PROF_RAW_VERSION >= 6 \
 +		&& CONFIG_CLANG_VERSION < 140000 )
-+	const u64 binary_id_size;
++	u64 binary_id_size;
 +#endif
  };
  
