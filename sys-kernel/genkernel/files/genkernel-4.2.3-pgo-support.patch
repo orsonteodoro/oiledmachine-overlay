@@ -14,9 +14,9 @@ has been tested working under normal user only.
 The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-14 20:02:20.350698245 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-14 20:02:54.231029994 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-15 17:54:50.127988668 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-15 17:55:22.997273458 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -184,9 +184,9 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  			;;
  		--help)
  			longusage
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-14 20:02:20.351698284 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-14 20:02:54.231029994 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-15 17:54:50.129988746 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-15 17:55:22.997273458 -0700
 @@ -128,6 +128,13 @@ compile_generic() {
  				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
  			fi
@@ -201,9 +201,9 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-
  			compile_cmd+=( "HOSTAR='$(tc-getBUILD_AR)'" )
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-14 20:02:20.351698284 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-14 20:02:54.232030033 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-15 17:54:50.130988785 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-15 17:55:22.998273498 -0700
 @@ -1031,6 +1031,25 @@ config_kernel() {
  		fi
  	fi
@@ -230,9 +230,9 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
  	if isTrue "${CMD_LLVM_KERNEL}"
  	then
  		local llvm_slot
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-14 20:02:20.352698324 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-14 20:02:54.232030033 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
+--- genkernel-4.2.3.orig/genkernel	2021-09-15 17:54:50.133988902 -0700
++++ genkernel-4.2.3/genkernel	2021-09-15 17:55:22.999273537 -0700
 @@ -81,6 +81,7 @@ source "${GK_SHARE}"/defaults/compressio
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
  source "${GK_SHARE}"/defaults/config.sh || small_die "Could not read '${GK_SHARE}/defaults/config.sh'"
@@ -412,9 +412,9 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  print_info 1 '' 1 0
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-14 20:02:20.353698363 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-14 20:02:54.233030073 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-15 17:54:50.134988941 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-15 17:55:23.000273576 -0700
 @@ -52,6 +52,30 @@ All that is needed to run genkernel is j
  .\}
  .sp
@@ -578,15 +578,16 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SS "LOW\-LEVEL COMPILATION OPTIONS"
  .PP
  \fB\-\-cfi\fR
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-14 20:31:53.638560599 -0700
-@@ -0,0 +1,981 @@
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-15 22:49:40.372814540 -0700
+@@ -0,0 +1,965 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
 +
 +PGO_SAMPLE_SIZE=30 # statistics rule of 30
++PGO_SAMPLE_SIZE_MEM=1
 +PGO_MAX_FILESIZE_DEFAULT=26214400 # 25 MB
 +#CHECK_REQUIREMENTS=0 # 1 or 0 or unset, for standalone mode only
 +SUDOING=${ALLOW_SUDO:=0} # 1 or 0
@@ -635,8 +636,57 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	fi
 +}
 +
++get_total_memory() {
++	local t=0
++	for x in $(grep -E -e "(MemTotal|SwapTotal)" /proc/meminfo \
++		| sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ") ; do
++		t=$((${t}+ ${x}))
++	done
++	echo $((${t}*1024))
++}
++
++get_total_free_memory() {
++	local t=0
++	for x in $(grep -E -e "(MemFree|SwapFree)" /proc/meminfo \
++		| sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ") ; do
++		t=$((${t}+ ${x}))
++	done
++	echo $((${t}*1024))
++}
++
++get_total_used_memory() {
++	echo $(( $(get_total_memory) - $(get_total_free_memory) ))
++}
++
++get_unswappable_size() {
++	local t=0
++	# For per-config settings, see https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/proc/meminfo.c
++	# It is unknown, if these fields are overapping.
++	for x in $(grep -E -e "(Unevictable|SUnreclaim|KernelStack|Mlocked)" /proc/meminfo \
++		| sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ") ; do
++		t=$((${t}+ ${x}))
++	done
++	echo $((${t}*1024))
++}
++
++pid_exist() {
++	local pid="${1}"
++	ps -p ${pid} 2>/dev/null 1>/dev/null
++}
++
++is_oom() {
++	local pid="${1}"
++	if dmesg | grep -F -e "Out of memory: Killed process ${pid}" ; then
++		return 0
++	fi
++	return 1
++}
++
 +pgo_trainer_memory() {
-+	local trained=0
++	echo "pgo_trainer_memory is under contruction.  come back later."
++	return
++	local m0=0
++	local m1=0
 +	print_info 1 "$(get_indent 1)>> Running the PGO memory trainer"
 +
 +	if ! which vmtouch 2>/dev/null 1>/dev/null ; then
@@ -644,214 +694,144 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		return
 +	fi
 +
-+	# The tarball is used as a pseudorandom source of data.
-+	local tarball
-+	if [[ -n "${PGO_LINUX_TARBALL}" ]] ; then
-+		tarball="${PGO_LINUX_TARBALL}"
-+		if [[ ! -e "${tarball}" ]] ; then
-+			print_info 1 "$(get_indent 1)>> The abspath pointed by PGO_LINUX_TARBALL"
-+			print_info 1 "$(get_indent 1)>> doesn't exist.  Skipping test."
-+			return
-+		fi
-+	else
-+		local distdir="${PGO_DISTDIR:=/usr/portage/distfiles}"
-+		if [[ ! -d "${distdir}" ]] ; then
-+			print_info 1 "$(get_indent 1)>> Couldn't find the distfiles directory from"
-+			print_info 1 "$(get_indent 1)>> PGO_DISTDIR.  Skipping test"
-+			return
-+		fi
-+		tarball=$(find ${distdir} \
-+				-regextype posix-extended \
-+				-regex ".*/linux-[0-9.]+.tar.gz" \
-+				| head -n 1)
-+		if [[ ! -e "${tarball}" ]] ; then
-+			print_info 1 "$(get_indent 1)>> Couldn't find a linux tarball.  Skipping test."
-+			print_info 1 "$(get_indent 1)>> Try setting PGO_LINUX_TARBALL instead to the"
-+			print_info 1 "$(get_indent 1)>> abspath to the linux tarball."
-+			return
-+		fi
-+	fi
-+
-+	if (( $(get_cmd_pids "vmtouch -d -l" | wc -l) > 0 )) ; then
-+		print_info 1 "$(get_indent 1)>> Another program may be using vmtouch,"
-+		print_info 1 "$(get_indent 1)>> skipping tests."
-+		return
-+	fi
-+
-+	free_vmlocked_memory() {
-+		print_info 1 "$(get_indent 1)>> Freeing memory"
-+		kill -9 $(get_cmd_pids "vmtouch -d -l")
-+		exit 1
-+	}
-+
-+	trap free_vmlocked_memory INT
-+
 +	local sandbox_dir=$(mktemp -d)
++	export SANDBOX_DIR="${sandbox_dir}"
 +	[[ "$?" != "0" ]] \
 +		&& print_info 1 "$(get_indent 1)>> Failed to create sandbox dir.  Skipping test." \
 +		&& return
 +	pushd "${sandbox_dir}"
-+		local kernel_size=8388608 # Based on orders of magnitude base 2^23 ; 7130192 actual
-+		local total_ram=$(( $(free --bytes | grep "Mem:" | sed -E -e "s|[ ]+| |g" \
-+			| cut -f 2 -d " ") - ${kernel_size} ))
-+		local allocation_size=$((${total_ram}+1073741824))
 +		local bytes_read=0
-+		print_info 1 "$(get_indent 1)>> Finding files to read into memory, please wait"
-+		local percent_50_pause=0
-+		local percent_60_pause=0
-+		local percent_70_pause=0
-+		local percent_80_pause=0
-+		local percent_90_pause=0
-+		local percent_95_pause=0
-+		local percent_98_pause=0
-+		local percent_99_pause=0
-+		local mb8_pause=0
-+		for f in $(find /usr/portage/distfiles /usr/bin /usr/lib* -type f) ; do
-+			local file_size=$(stat -c "%s" "${f}")
-+			local found_fit=1
-+			local force_mb8_pause=0
-+			if (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_50_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 50))/100)) )) ; then
-+				vmtouch -d -l "${f}"
-+				bytes_read=$(( ${file_size} + ${bytes_read} ))
-+				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
-+			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_60_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 60))/100)) )) ; then
-+				vmtouch -d -l "${f}"
-+				bytes_read=$(( ${file_size} + ${bytes_read} ))
-+				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
-+			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_70_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 70))/100)) )) ; then
-+				vmtouch -d -l "${f}"
-+				bytes_read=$(( ${file_size} + ${bytes_read} ))
-+				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
-+			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_80_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 80))/100)) )) ; then
-+				vmtouch -d -l "${f}"
-+				bytes_read=$(( ${file_size} + ${bytes_read} ))
-+				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
-+			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_90_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 90))/100)) )) ; then
-+				vmtouch -d -l "${f}"
-+				bytes_read=$(( ${file_size} + ${bytes_read} ))
-+				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
-+			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_95_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 95))/100)) )) ; then
-+				vmtouch -d -l "${f}"
-+				bytes_read=$(( ${file_size} + ${bytes_read} ))
-+				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
-+			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_98_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 98))/100)) )) ; then
-+				vmtouch -d -l "${f}"
-+				bytes_read=$(( ${file_size} + ${bytes_read} ))
-+				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
-+			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${percent_99_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= $(($((${total_ram} * 99))/100)) )) ; then
-+				vmtouch -d -l "${f}"
-+				bytes_read=$(( ${file_size} + ${bytes_read} ))
-+				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
-+			elif (( $(( ${file_size} + ${bytes_read})) <= ${total_ram} && "${mb8_pause}" == 0 && $(( ${file_size} + ${bytes_read} )) <= ${total_ram} )) ; then
-+				vmtouch -d -l "${f}"
-+				bytes_read=$(( ${file_size} + ${bytes_read} ))
-+				print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total remaining = $(( ${allocation_size} - ${bytes_read} ))"
-+			else
-+				vmtouch -t "${f}" # touch anyway
-+				print_info 1 "$(get_indent 1)>> skipping ${f} either too large or doesn't fit into percent size"
-+				found_fit=0
-+				if (( ${file_size} <= ${KPAGESIZE} && ${mb8_pause} == 0 && ${percent_99_pause} == 1 )) ; then
-+					force_mb8_pause=1
++
++		free_pgo_mem_resources() {
++			print_info 1 "$(get_indent 1)>> Freeing memory"
++			kill -9 $(get_cmd_pids "vmtouch -d -l")
++			kill -9 $(get_cmd_pids "cat /dev/urandom | od -t x1")
++			if [[ -n "${SANDBOX_DIR}" && -e "${SANDBOX_DIR}" ]] ; then
++				rm -rf "${sandbox_dir}"
++			fi
++			exit 1
++		}
++
++		trap free_pgo_mem_resources INT
++
++		# The tarball is used as a pseudorandom source of data.
++		local tarball
++		if [[ -n "${PGO_LINUX_TARBALL}" ]] ; then
++			tarball="${PGO_LINUX_TARBALL}"
++			if [[ ! -e "${tarball}" ]] ; then
++				print_info 1 "$(get_indent 1)>> The abspath pointed by PGO_LINUX_TARBALL"
++				print_info 1 "$(get_indent 1)>> doesn't exist.  Generating 115 MiB of random data."
++				dd if=/dev/urandom of="data.dat" bs=1 count=120669872 # Same size as the the 5.14 linux tarball.
++				tarball="data.dat"
++			fi
++		else
++			local distdir="${PGO_DISTDIR:=/usr/portage/distfiles}"
++			if [[ ! -d "${distdir}" ]] ; then
++				print_info 1 "$(get_indent 1)>> Couldn't find the distfiles directory from"
++				print_info 1 "$(get_indent 1)>> PGO_DISTDIR.  Generating 115 MiB of random data."
++				dd if=/dev/urandom of="data.dat" bs=1 count=120669872 # Same size as the the 5.14 linux tarball.
++				tarball="data.dat"
++			fi
++			tarball=$(find ${distdir} \
++					-regextype posix-extended \
++					-regex ".*/linux-[0-9.]+.tar.gz" \
++					| head -n 1)
++			if [[ ! -e "${tarball}" ]] ; then
++				print_info 1 "$(get_indent 1)>> Couldn't find a linux tarball.  Skipping test."
++				print_info 1 "$(get_indent 1)>> Try setting PGO_LINUX_TARBALL instead to the"
++				print_info 1 "$(get_indent 1)>> abspath to the linux tarball."
++				return
++			fi
++		fi
++
++		if (( $(get_cmd_pids "vmtouch -d -l" | wc -l) > 0 )) ; then
++			print_info 1 "$(get_indent 1)>> Another program may be using vmtouch,"
++			print_info 1 "$(get_indent 1)>> skipping tests."
++			return
++		fi
++
++		local n_oom=0
++		local search_paths=()
++		[[ -d ${PGO_DISTDIR} ]] && search_paths+=( ${PGO_DISTDIR} )
++		[[ -d /usr/bin ]] && search_paths+=( /usr/bin )
++		[[ -d /usr/lib64 ]] && search_paths+=( /usr/lib64 )
++		[[ -d /usr/libx32 ]] && search_paths+=( /usr/libx32 )
++		[[ -d /usr/lib32 ]] && search_paths+=( /usr/lib32 )
++		for i in $(seq ${PGO_SAMPLE_SIZE_MEM}) ; do
++			print_info 1 "$(get_indent 1)>> Finding files to read into memory, please wait"
++			for f in $(find ${search_paths[@]} -type f) ; do
++				local file_size=$(stat -c "%s" "${f}")
++				local force_oom=0
++				total_free_ram=$(get_total_free_memory)
++				if (( $(( ${file_size} + ${bytes_read} )) < ${total_free_ram} )) ; then
++					vmtouch -d -l "${f}"
++					bytes_read=$(( ${file_size} + ${bytes_read} ))
++					print_info 1 "$(get_indent 1)>> total_bytes_read = ${bytes_read}, total free ram remaining = $(( ${total_free_ram} - ${bytes_read} ))"
++				elif (( ${total_free_ram} <= $(get_unswappable_size) )) ; then
++					force_oom=1
++				elif (( ${file_size} <= ${PAGESIZE} )) ; then
++					force_oom=1
 +				else
++					print_info 1 "$(get_indent 1)>> skipping ${f}"
 +					continue
 +				fi
-+			fi
-+			local duration=300
-+			if (( "${bytes_read}" > $(( $((${total_ram} * 50)) / 100 )) && ${percent_50_pause} == 0 )) ; then
-+				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
-+				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
-+				bash_pid=$!
-+				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 50%."
-+				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
-+				sleep ${duration}
-+				kill -9 ${bash_pid}
-+				percent_50_pause=1
-+			elif (( "${bytes_read}" > $(( $((${total_ram} * 60)) / 100 )) && ${percent_60_pause} == 0 )) ; then
-+				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
-+				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
-+				bash_pid=$!
-+				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 60%."
-+				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
-+				sleep ${duration}
-+				kill -9 ${bash_pid}
-+				percent_60_pause=1
-+			elif (( "${bytes_read}" > $(( $((${total_ram} * 70)) / 100 )) && ${percent_70_pause} == 0 )) ; then
-+				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
-+				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
-+				bash_pid=$!
-+				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 70%."
-+				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
-+				sleep ${duration}
-+				kill -9 ${bash_pid}
-+				percent_70_pause=1
-+			elif (( "${bytes_read}" > $(( $((${total_ram} * 80)) / 100 )) && ${percent_80_pause} == 0 )) ; then
-+				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
-+				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
-+				bash_pid=$!
-+				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 80%."
-+				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
-+				sleep ${duration}
-+				kill -9 ${bash_pid}
-+				percent_80_pause=1
-+			elif (( "${bytes_read}" > $(( $((${total_ram} * 90)) / 100 )) && ${percent_90_pause} == 0 )) ; then
-+				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
-+				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
-+				bash_pid=$!
-+				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 90%."
-+				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
-+				sleep ${duration}
-+				kill -9 ${bash_pid}
-+				percent_90_pause=1
-+			elif (( "${bytes_read}" > $(( $((${total_ram} * 95)) / 100 )) && ${percent_95_pause} == 0 )) ; then
-+				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
-+				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
-+				bash_pid=$!
-+				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 95%."
-+				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
-+				sleep ${duration}
-+				kill -9 ${bash_pid}
-+				percent_95_pause=1
-+			elif (( "${bytes_read}" > $(( $((${total_ram} * 98)) / 100 )) && ${percent_98_pause} == 0 )) ; then
-+				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
-+				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
-+				bash_pid=$!
-+				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 98%."
-+				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
-+				sleep ${duration}
-+				kill -9 ${bash_pid}
-+				percent_98_pause=1
-+			elif (( "${bytes_read}" > $(( $((${total_ram} * 99)) / 100 )) && ${percent_99_pause} == 0 )) ; then
-+				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
-+				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
-+				bash_pid=$!
-+				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 99%."
-+				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
-+				sleep ${duration}
-+				kill -9 ${bash_pid}
-+				percent_99_pause=1
-+			elif (( ( "${bytes_read}" > ${total_ram} && ${mb8_pause} == 0 ) || ${force_mb8_pause} == 1 )) ; then
-+				# Shouldn't exceed ${total_ram} - ${kernel_size}
-+				# kernel size is 7mb
-+				print_info 1 "$(get_indent 1)>> Pushing memory into swap"
-+				bash -c "O=$(od ${tarball}) && sleep ${duration}" &
-+				bash_pid=$!
-+				print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 100%."
-+				print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
-+				sleep ${duration}
-+				kill -9 ${bash_pid}
-+				mb8_pause=1
-+				trained=1
-+			fi
-+			(( ${force_mb8_pause} == 1 )) && break
-+			(( ${bytes_read} > ${allocation_size} )) && break
++				# Test OOM code
++				if (( ${force_oom} == 1 )) ; then
++					local ncpus=$(($(lscpu | grep -E -e "^CPU\(s\):.*" | grep -E -o "[0-9]+") - 1)) # keep 1 available for ctrl+c
++					local duration=7200 # 2 hr
++					local time_start=$(date +%s)
++					local time_expire=$((${time_start} + ${duration}))
++					unset bash_pids
++					for c in $(seq ${ncpus}) ; do # Let the scheduler do 1 RNG per core.
++						print_info 1 "$(get_indent 1)>> Pushing memory into swap (try ${oom_try})"
++						bash -c "O=\$(cat /dev/urandom | od -t x1)" &
++						bash_pids[${c}]=$!
++						print_info 1 "$(get_indent 1)>> Letting memory algorithms do work at 100%."
++						print_info 1 "$(get_indent 1)>> ${duration} seconds pause,  please wait."
++					done
++
++					unset swap_maker_done
++					for c in $(seq ${ncpus}) ; do
++						swap_maker_done[${c}]=0
++					done
++					local n_oom=0
++					# It stalls at 2G on 1 cpu
++					while true ; do
++						sleep 0.2
++						for c in $(seq ${ncpus}) ; do
++							bash_pid=${bash_pids[${c}]}
++							if is_oom ${bash_pid} && (( ${swap_maker_done[${c}]} == 0 )) ; then
++								swap_maker_done[${c}]=1
++								m1=0
++								n_oom=$((${n_oom} + 1))
++								print_info 1 "$(get_indent 1)>> Swap maker OOM detected"
++								break
++							fi
++						done
++						(( ${n_oom} >= 1 )) && break
++						cur_date=$(date +%s)
++						(( ${cur_date} >= ${time_expire} )) && break
++					done
++
++					for c in $(seq ${ncpus}) ; do
++						bash_pid=${bash_pids[${c}]}
++						if pid_exist ${bash_pid} ; then
++							print_info 1 "$(get_indent 1)>> Killing swap maker pid ${bash_pid} because of timeout"
++							kill -9 ${bash_pid}
++						fi
++					done
++					m0=1
++					break
++				fi
++			done
++			kill -9 $(get_cmd_pids "vmtouch -d -l")
 +		done
-+		print_info 1 "$(get_indent 1)>> 120 seconds pause,  please wait."
-+		sleep 120
-+		kill -9 $(get_cmd_pids "vmtouch -d -l")
++		print_info 1 "$(get_indent 1)>> Encountered ${n_oom} controlled Out of Memories (OOMs)"
++		print_info 1 "$(get_indent 1)>> Memory training done."
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
-+	(( ${trained} == 1 )) && marked_as_trained
++	(( ${m0} + ${m1} == 1 )) && marked_as_trained
 +}
 +
 +pgo_trainer_emerge1() {
@@ -1217,8 +1197,12 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	ps -aux | sed -E -e "s|[ ]+| |g" \
 +		| grep -e "${cmd}"  \
 +		| grep -v -e "grep.*${cmd}" \
-+		| cut -f 2 -d " " \
-+		| head -n 1
++		| cut -f 2 -d " "
++}
++
++get_cmd_pid() {
++	local cmd="${@}"
++	get_cmd_pids "${cmd}" | head -n 1
 +}
 +
 +pgo_trainer_p2p() {
@@ -1234,7 +1218,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		ctorrent -dd "${BN}" 2>&1 >"${sandbox_dir}/ctorrent.log"
 +		stop_ctorrent() {
 +			print_info 1 "$(get_indent 1)>> Stopping ctorrent"
-+			kill -9 $(get_cmd_pids "ctorrent -dd ${BN}")
++			kill -9 $(get_cmd_pid "ctorrent -dd ${BN}")
 +			sleep 1
 +			# Wipe sandbox
 +			[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
@@ -1250,7 +1234,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +			time_now=$(date +%s)
 +			(( ${time_now} > ${time_expire} )) && trained=1 && break
 +		done
-+		kill -9 $(get_cmd_pids "ctorrent -dd ${BN}")
++		kill -9 $(get_cmd_pid "ctorrent -dd ${BN}")
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
@@ -1505,7 +1489,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	pgo_trainer_emerge1
 +	pgo_trainer_emerge2
 +	pgo_trainer_filesystem
-+	#pgo_trainer_memory # Something is majorily bugged.
++	#pgo_trainer_memory
 +	pgo_trainer_network
 +	pgo_trainer_webcam
 +}
