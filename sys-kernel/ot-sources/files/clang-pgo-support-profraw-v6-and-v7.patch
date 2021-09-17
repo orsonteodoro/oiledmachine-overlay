@@ -44,7 +44,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.5-ot.orig/kernel/pgo/Kconfig linux-
  	help
  	  This option enables clang's PGO (Profile Guided Optimization) based
  	  code profiling to better optimize the kernel.
-@@ -34,4 +35,42 @@ config PGO_CLANG
+@@ -34,4 +35,43 @@ config PGO_CLANG
  	  Note that the debugfs filesystem has to be mounted to access
  	  profiling data.
  
@@ -62,9 +62,10 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.5-ot.orig/kernel/pgo/Kconfig linux-
 +
 +config PROFRAW_V7_13_X
 +	bool "profraw v7 (13.x)"
++	help
 +	  The following are compatible:
 +	    * LLVM 13.x branch with the latest commit
-+	    * LLVM 13 with profraw v7 only
++	    * LLVM 13 rc3 with profraw v7 only
 +
 +config PROFRAW_V6
 +	bool "profraw v6"
@@ -73,13 +74,13 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.5-ot.orig/kernel/pgo/Kconfig linux-
 +	    * LLVM 14 init
 +	    * LLVM 13 rc2
 +	    * LLVM 13 rc1
-+	    * LLVM 13 with profraw v6 only
++	    * LLVM 13.x branch with profraw v6 only
 +
 +config PROFRAW_V5
 +	bool "profraw v5"
 +	help
 +	  The following are compatible:
-+	    * LLVM 13 with profraw v5 only
++	    * LLVM 13.x branch with profraw v5 only
 +	    * LLVM 12
 +	    * LLVM 11
 +	    * LLVM 10
