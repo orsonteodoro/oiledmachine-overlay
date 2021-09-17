@@ -10,6 +10,7 @@ T=$(mktemp -d)
 mkdir -p ${T}
 pushd "${T}"
 	git clone https://github.com/pemistahl/grex
+	cd grex
 	git checkout v${PV}
 	cargo ebuild
 	cp -a grex-${PV}.ebuild "${DEST}"
