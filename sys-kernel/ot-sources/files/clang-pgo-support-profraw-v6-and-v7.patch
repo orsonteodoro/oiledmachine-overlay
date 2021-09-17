@@ -13,14 +13,14 @@ Modded to included LLVM_INSTR_PROF_RAW_VERSION 6 and 7 support.
 
 The patch status will change once it is confirmed working.
 
-diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/fs.c linux-5.14.3-ot/kernel/pgo/fs.c
---- linux-5.14.3-ot.orig/kernel/pgo/fs.c	2021-09-14 04:25:57.020147052 -0700
-+++ linux-5.14.3-ot/kernel/pgo/fs.c	2021-09-14 04:50:28.209111683 -0700
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.5-ot.orig/kernel/pgo/fs.c linux-5.14.5-ot/kernel/pgo/fs.c
+--- linux-5.14.5-ot.orig/kernel/pgo/fs.c	2021-09-17 11:43:43.907787105 -0700
++++ linux-5.14.5-ot/kernel/pgo/fs.c	2021-09-17 13:06:58.483335160 -0700
 @@ -66,9 +66,16 @@ static void prf_fill_header(void **buffe
  	header->counters_size = prf_cnts_count();
  	header->padding_bytes_after_counters = 0;
  	header->names_size = prf_names_count();
-+#if CONFIG_LLVM_MAIN
++#ifdef CONFIG_PROFRAW_V7_MAIN
 +	header->counters_delta = (u64)__llvm_prf_cnts_start - (u64)__llvm_prf_data_start;
 +#else
  	header->counters_delta = (u64)__llvm_prf_cnts_start;
@@ -33,24 +33,18 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/fs.c linux-5.1
  
  	*buffer += sizeof(*header);
  }
-diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-5.14.3-ot/kernel/pgo/Kconfig
---- linux-5.14.3-ot.orig/kernel/pgo/Kconfig	2021-09-14 04:25:57.016146891 -0700
-+++ linux-5.14.3-ot/kernel/pgo/Kconfig	2021-09-14 04:33:09.620506255 -0700
-@@ -4,12 +4,13 @@ menu "Profile Guided Optimization (PGO)
- config ARCH_SUPPORTS_PGO_CLANG
- 	bool
- 
- config PGO_CLANG
- 	bool "Enable clang's PGO-based kernel profiling"
- 	depends on DEBUG_FS
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.5-ot.orig/kernel/pgo/Kconfig linux-5.14.5-ot/kernel/pgo/Kconfig
+--- linux-5.14.5-ot.orig/kernel/pgo/Kconfig	2021-09-17 11:43:43.889786402 -0700
++++ linux-5.14.5-ot/kernel/pgo/Kconfig	2021-09-17 13:05:40.366313333 -0700
+@@ -10,6 +10,7 @@ config PGO_CLANG
  	depends on ARCH_SUPPORTS_PGO_CLANG
  	depends on CC_IS_CLANG
  	depends on !ARCH_WANTS_NO_INSTR || CC_HAS_NO_PROFILE_FN_ATTR
-+	depends on LLVM_MAIN || LLVM14_INIT || LLVM13_LIVE || LLVM13_RC2 || LLVM13_RC1 || LLVM13_IPR6 || LLVMX_IPR5
++	depends on PROFRAW_V7_MAIN || PROFRAW_V7_13_X || PROFRAW_V6 || PROFRAW_V5
  	help
  	  This option enables clang's PGO (Profile Guided Optimization) based
  	  code profiling to better optimize the kernel.
-@@ -34,4 +40,38 @@ config PGO_CLANG
+@@ -34,4 +35,42 @@ config PGO_CLANG
  	  Note that the debugfs filesystem has to be mounted to access
  	  profiling data.
  
@@ -60,90 +54,83 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-
 +	  This matches the profdata data structure to a specific version
 +	  of LLVM since not enough metadata is provided.
 +
-+config LLVM_MAIN
-+	bool "LLVM main branch with the latest commit"
-+
-+config LLVM14_INIT
-+	bool "LLVM 14 init"
-+
-+config LLVM13_LIVE
-+	bool "LLVM 13.x branch with the latest commit"
-+
-+config LLVM13_RC2
-+	bool "LLVM 13 rc2"
-+
-+config LLVM13_RC1
-+	bool "LLVM 13 rc1"
-+
-+config LLVM13_IPR6
-+	bool "LLVM 13 with profraw v6 header from git"
++config PROFRAW_V7_MAIN
++	bool "profraw v7 (main)"
 +	help
-+	  The build must have both e50a388 and f984ac2 commits applied.
++	  The following are compatible:
++	    * LLVM main branch with the latest commit
 +
-+config LLVMX_IPR5
-+	bool "LLVM 10 to 13 with profraw v5 and backported commits"
++config PROFRAW_V7_13_X
++	bool "profraw v7 (13.x)"
++	  The following are compatible:
++	    * LLVM 13.x branch with the latest commit
++	    * LLVM 13 with profraw v7 only
++
++config PROFRAW_V6
++	bool "profraw v6"
 +	help
-+	  The required backports of commits 193e41c a63d4f6 must be applied, you
-+	  still can do PGO optimization with those versions of LLVM.
++	  The following are compatible:
++	    * LLVM 14 init
++	    * LLVM 13 rc2
++	    * LLVM 13 rc1
++	    * LLVM 13 with profraw v6 only
++
++config PROFRAW_V5
++	bool "profraw v5"
++	help
++	  The following are supported:
++	    * LLVM 13 with profraw v5 only
++	    * LLVM 12
++	    * LLVM 11
++	    * LLVM 10
 +
 +endchoice
 +
  endmenu
-diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.14.3-ot/kernel/pgo/pgo.h
---- linux-5.14.3-ot.orig/kernel/pgo/pgo.h	2021-09-14 04:25:57.021147092 -0700
-+++ linux-5.14.3-ot/kernel/pgo/pgo.h	2021-09-14 05:14:58.064621568 -0700
-@@ -43,7 +43,27 @@
+diff -x '*.orig' -x '*.rej' -urpN linux-5.14.5-ot.orig/kernel/pgo/pgo.h linux-5.14.5-ot/kernel/pgo/pgo.h
+--- linux-5.14.5-ot.orig/kernel/pgo/pgo.h	2021-09-17 11:43:43.907787105 -0700
++++ linux-5.14.5-ot/kernel/pgo/pgo.h	2021-09-17 13:05:52.627787606 -0700
+@@ -43,7 +43,23 @@
  		 (u64)'R' << 8  |	\
  		 (u64)129)
  
 -#define LLVM_INSTR_PROF_RAW_VERSION		5
-+#if defined(CONFIG_LLVM_MAIN) /* corresponds to the main branch */
++#ifndef CONFIG_CC_HAS_NO_PROFILE_FN_ATTR
++#  error "The compiler needs support for no_instr and the
++#  error "no_profile_instrument_function annotations found in both 193e41c
++#  error "a63d4f6 commits.  Update to warning "LLVM 13 rc1 or newer or"
++#  error "backport those commits."
++#endif
++
++#if defined(CONFIG_PROFRAW_V7_MAIN) || defined (CONFIG_PROFRAW_V7_13_X)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	7
-+#elif defined(CONFIG_LLVM14_INIT)
++#elif defined(CONFIG_PROFRAW_V6)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	6
-+#elif defined(CONFIG_LLVM13_LIVE) /* corresponds to the 13.x branch */
-+#  define LLVM_INSTR_PROF_RAW_VERSION	7
-+#elif defined(CONFIG_LLVM13_RC2)
-+#  define LLVM_INSTR_PROF_RAW_VERSION	7
-+#elif defined(CONFIG_LLVM13_RC1)
-+#  define LLVM_INSTR_PROF_RAW_VERSION	6
-+#elif defined(CONFIG_LLVM13_IPR6)
-+#  define LLVM_INSTR_PROF_RAW_VERSION	6
-+#elif defined(CONFIG_LLVMX_IPR5)
-+#  warning "LLVM needs backports for both 193e41c a63d4f6 commits or update to"
-+#  warning "LLVM 13 rc1 or newer"
++#elif defined(CONFIG_PROFRAW_V5)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	5
 +#else
-+#  error "PGO requires >= LLVM 13 rc1 or backports for both 193e41c a63d4f6"
-+#  error "commits"
++#  error "profraw versions < 5 or > 7 are not supported."
 +#endif
 +
  #define LLVM_INSTR_PROF_DATA_ALIGNMENT		8
  #define LLVM_INSTR_PROF_IPVK_FIRST		0
  #define LLVM_INSTR_PROF_IPVK_LAST		1
-@@ -72,6 +100,11 @@
+@@ -72,6 +88,9 @@
  struct llvm_prf_header {
  	u64 magic;
  	u64 version;
-+#if defined(LLVM_MAIN) \
-+	|| ( LLVM_INSTR_PROF_RAW_VERSION >= 7 \
-+		&& CONFIG_CLANG_VERSION == 140000 )
++#if LLVM_INSTR_PROF_RAW_VERSION == 7
 +	u64 binary_id_size;
 +#endif
  	u64 data_size;
  	u64 padding_bytes_before_counters;
  	u64 counters_size;
-@@ -80,6 +113,15 @@ struct llvm_prf_header {
+@@ -80,6 +99,10 @@ struct llvm_prf_header {
  	u64 counters_delta;
  	u64 names_delta;
  	u64 value_kind_last;
-+#if defined(CONFIG_LLVM14_INIT) \
-+	|| defined(CONFIG_LLVM13_LIVE) \
-+	|| defined(CONFIG_LLVM13_RC2) \
-+	|| defined(CONFIG_LLVM13_RC1) \
-+	|| defined(CONFIG_LLVM13_IPR6) \
-+	|| ( LLVM_INSTR_PROF_RAW_VERSION >= 6 \
-+		&& CONFIG_CLANG_VERSION < 140000 )
++#if LLVM_INSTR_PROF_RAW_VERSION == 6 \
++	|| LLVM_INSTR_PROF_RAW_VERSION == 5
 +	u64 binary_id_size;
 +#endif
  };
