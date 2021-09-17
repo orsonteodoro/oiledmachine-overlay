@@ -57,6 +57,14 @@ a7c2e93c81a96375414db26fdd18cb9fae8421b9 \
 PATCH_ZENTUNE_COMMITS=\
 "3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0"
 
+# LEFT_ZENTUNE:RIGHT_ZENSAUCE
+PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
+3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0:c9a8f36311f14311a3202501c88009f758683c0f
+)
+# ZEN: Add CONFIG to rename the mq-deadline scheduler (c9a8f36) needs\
+# ZEN: Implement zen-tune v5.4 (3e05ad8)
+# zen-sauce(c9a8f36) requires zen-tune
+
 # top is oldest, bottom is newest
 PATCH_ZENTUNE_MUQSS_COMMITS=\
 "6c8fd1641dea5418c68dad4bf48d2d128a2a13e5 \
@@ -67,7 +75,6 @@ d1bebeb959a56324fe436443ea2f21a8391632d9"
 PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
 	${PATCH_KCP_COMMIT}
-	${PATCH_ZENTUNE_COMMITS}
 "
 
 IUSE+=" bmq +cfs clang disable_debug +genpatches +kernel-compiler-patch
@@ -82,6 +89,7 @@ REQUIRED_USE+="
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
+	zen-tune? ( zen-sauce )
 	zen-tune-muqss? ( muqss zen-tune )"
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
@@ -162,18 +170,14 @@ https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARB
 	   ${KERNEL_PATCH_URIS[@]}"
 fi
 
-# Not on the servers yet
-NOT_READY_YET="
+SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
+	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
 	   genpatches? (
 		${GENPATCHES_URI}
 		${GENPATCHES_BASE_SRC_URI}
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-"
-
-SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
-	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
 	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -191,7 +195,6 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 	   )
 	   uksm? ( ${UKSM_SRC_URI} )
 	   zen-sauce? ( ${ZENSAUCE_URIS} )
-	   zen-tune? ( ${ZENTUNE_URIS} )
 	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_URIS} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb

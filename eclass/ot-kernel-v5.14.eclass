@@ -77,6 +77,17 @@ f79f04d6d36298431febf69d06dd0ac4e3fbb337"
 # Diced to let user can choose between UKSM, KSWAPD, OOMD
 PATCH_DEFER_MADVISE_COMMIT=\
 "519eab42710cd0b9abab9dc4d5a313f80b66ecec"
+
+# LEFT_ZENTUNE:RIGHT_ZENSAUCE
+PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
+c6d1cd7ca0e23d3d17abab2350eb49f2aa00ac73:39376e2c9e2d20de215dc154cc27c3a1c44e0288
+1cef3393a74deef8acc864392e9e73c3857fbd59:5ad20a83f37c759f74c00397fd144c85e882b9a6
+)
+#ZEN: INTERACTIVE: Use BFQ as our elevator (c6d1cd) needs \
+#ZEN: Add CONFIG to rename the mq-deadline scheduler (39376e2)
+# fixup! ZEN: INTERACTIVE: Increase max number of tasks rebalanced at once (1cef339) needs
+# ZEN: Reduce up threshold for all non-muqss schedulers (5ad20a8)
+
 PATCH_ZENTUNE_COMMITS=\
 "a04d09fad3419e0db39db29f9fd35b3eed5948a6 \
 c6d1cd7ca0e23d3d17abab2350eb49f2aa00ac73 \
@@ -94,7 +105,6 @@ PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
 	${PATCH_BFQ_DEFAULT}
 	${PATCH_KCP_COMMIT}
-	${PATCH_ZENTUNE_COMMITS}
 "
 
 # --
@@ -183,7 +193,8 @@ REQUIRED_USE+="
 	tresor_i686? ( tresor )
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
-	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )"
+	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
+	zen-tune? ( zen-sauce )"
 
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
 gen_scs_exclusion() {
@@ -445,8 +456,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   )
 	   uksm? ( ${UKSM_SRC_URI} )
 	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
-	   zen-sauce? ( ${ZENSAUCE_URIS} )
-	   zen-tune? ( ${ZENTUNE_URIS} )"
+	   zen-sauce? ( ${ZENSAUCE_URIS} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:

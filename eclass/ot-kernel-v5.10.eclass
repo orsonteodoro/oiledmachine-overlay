@@ -68,6 +68,13 @@ e1b127aa22601f9cb2afa3daad4c69e6a42a89f5"
 # Disabled 0cbcc41992693254e5e4c7952853c6aa7404f28e : ZEN: INTERACTIVE: Use BFQ as our elevator
 # Reason: It's better to change via sysfs.  Benchmarks show throughput performance degration with SSD with BFQ.
 
+# LEFT_ZENTUNE:RIGHT_ZENSAUCE
+PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE="
+0cbcc41992693254e5e4c7952853c6aa7404f28e:513af58e2e4aa8267b1eebc1cd156e3e2a2a33e3
+"
+#ZEN: INTERACTIVE: Use BFQ as our elevator(0cbcc41) needs \
+#ZEN: Add CONFIG to rename the mq-deadline scheduler (513af58)
+
 # top / oldest, bottom / newest
 PATCH_ZENTUNE_COMMITS=\
 "890ac858741436a40c274efb3514c5f6a96c7c80 \
@@ -82,7 +89,6 @@ PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
 	${PATCH_BFQ_DEFAULT}
 	${PATCH_KCP_COMMIT}
-	${PATCH_ZENTUNE_COMMITS}
 "
 
 # ZEN interactive MuQSS patches
@@ -108,6 +114,7 @@ REQUIRED_USE+="
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
+	zen-tune? ( zen-sauce )
 	zen-tune-muqss? ( muqss zen-tune )"
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
@@ -281,7 +288,6 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   )
 	   uksm? ( ${UKSM_SRC_URI} )
 	   zen-sauce? ( ${ZENSAUCE_URIS} )
-	   zen-tune? ( ${ZENTUNE_URIS} )
 	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_URIS} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb

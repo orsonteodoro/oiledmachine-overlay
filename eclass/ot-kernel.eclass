@@ -188,22 +188,6 @@ gen_zensauce_uris()
 	echo "$s"
 }
 
-# @FUNCTION: gen_zentune_uris
-# @DESCRIPTION:
-# Generates zen-tune interactive URIs
-ZENTUNE_BASE_URI="https://github.com/torvalds/linux/commit/"
-gen_zentune_uris()
-{
-	local commits=(${@})
-	local len="${#commits[@]}"
-	local s=""
-	for (( c=0 ; c < ${len} ; c+=1 )) ; do
-		local id="${commits[c]}"
-		s=" ${s} ${ZENTUNE_BASE_URI}${id}.patch -> zen-tune-${K_MAJOR_MINOR}-${id}.patch"
-	done
-	echo "$s"
-}
-
 # @FUNCTION: gen_zentune_muqss_uris
 # @DESCRIPTION:
 # Generates zen-tune interactive muqss URIs
@@ -402,7 +386,6 @@ UKSM_FN="uksm-${K_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 ZENSAUCE_URIS=$(gen_zensauce_uris "${PATCH_ZENSAUCE_COMMITS}")
-ZENTUNE_URIS=$(gen_zentune_uris "${PATCH_ZENTUNE_COMMITS}")
 ZENTUNE_MUQSS_URIS=$(gen_zentune_muqss_uris "${PATCH_ZENTUNE_MUQSS_COMMITS}")
 
 if ver_test ${PV} -eq ${K_MAJOR_MINOR} ; then
@@ -577,6 +560,37 @@ einfo
 	fi
 }
 
+# @FUNCTION: apply_zensauce
+# @DESCRIPTION:
+# Checks zen-tune's dependency on zen-sauce
+check_zen_tune_deps() {
+	local zentune_commit="${1}"
+	local v="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
+	if ver_test ${K_MAJOR_MINOR} -ge 5.10 ; then
+		for p in ${PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE[@]} ; do
+			local ztc=$(echo "${p}" | cut -f 1 -d ":")
+			local zsc=$(echo "${p}" | cut -f 2 -d ":")
+			if [[ ${ztc} == ${zentune_commit} ]] ; then
+				if [[ ! ( ${!v} =~ ${zsc} || ${!v} =~ ${zsc:0:7} ) ]] ; then
+eerror "zen-tune requires ${zsc} be added to ${v} and also the zen-sauce USE flag"
+					die
+				fi
+			fi
+		done
+	fi
+}
+
+# @FUNCTION: zentune_setup
+# @DESCRIPTION:
+# Checks zen-tune's dependency on zen-sauce at pkg_setup
+function zentune_setup() {
+	if use zen-sauce ; then
+		for c in ${PATCH_ZENTUNE_COMMITS} ; do
+			check_zen_tune_deps "${c}"
+		done
+	fi
+}
+
 # @FUNCTION: zensauce_setup
 # @DESCRIPTION:
 # Checks the existance for the ZENSAUCE_WHITELIST_5_3 variable
@@ -591,6 +605,7 @@ eerror "to continue"
 eerror
 			die
 		fi
+
 einfo "Applying the Zen secret sauce"
 		local ZM="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
 		if [[ -z "${!ZM}" ]] ; then
@@ -742,6 +757,11 @@ function ot-kernel_pkg_setup() {
 	if has zen-sauce ${IUSE_EFFECTIVE} ; then
 		if use zen-sauce ; then
 			zensauce_setup
+		fi
+	fi
+	if has zen-tune ${IUSE_EFFECTIVE} ; then
+		if use zen-tune ; then
+			zentune_setup
 		fi
 	fi
 	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
@@ -916,37 +936,62 @@ einfo "Applying PREEMPT_RT patches"
 
 # @FUNCTION: apply_zensauce
 # @DESCRIPTION:
-# Applies whitelisted Zen misc patches.
+# Applies whitelisted zen sauce patches.
 function apply_zensauce() {
 	local ZM="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
 	read -a C_WHITELISTED <<< ${!ZM}
-	for c_wl in ${C_WHITELISTED[@]} ; do
-		read -a C_BLACKLISTED <<< ${PATCH_ZENSAUCE_BL}
-		local blacklisted=0
-		if [[ -n "${#C_BLACKLISTED}" ]] ; then
-			for c_bl in ${c_BLACKLISTED[@]} ; do
-				if [[ ( "${#c_wl}" == "7" \
-					&& "${c_wl}" == "${c_bl:0:7}" ) \
-					|| ( "${#c_wl}" == "40" \
-					&& "${c_wl}" == "${c_bl}" ) ]] ; \
+
+	local whitelisted=""
+
+	for c in ${!ZM} ; do
+		whitelisted+=" ${c}"
+	done
+
+	if has zen-tune ${IUSE_EFFECTIVE} ; then
+		if use zen-tune ; then
+			for c in ${PATCH_ZENTUNE_COMMITS} ; do
+				whitelisted+=" ${c}"
+			done
+		fi
+	fi
+
+	whitelisted=$(echo "${whitelisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
+
+	for c in ${PATCH_ZENSAUCE_COMMITS} ; do
+		local is_whitelisted=0
+		for c_wl in ${whitelisted[@]} ; do
+			if [[ "${c}" == "${c_wl}" || "${c:0:7}" == "${c_wl}" ]] ; then
+				is_whitelisted=1
+				break
+			fi
+		done
+		(( ${is_whitelisted} == 0 )) && continue
+
+		local is_blacklisted=0
+		if [[ -n "${#blacklisted}" ]] ; then
+			for c_bl in ${blacklisted} ; do
+				if [[ ( "${#c}" == "7" \
+					&& "${c}" == "${c_bl:0:7}" ) \
+					|| ( "${#c}" == "40" \
+					&& "${c}" == "${c_bl}" ) ]] ; \
 				then
 ewarn
 ewarn "${c} is already applied via USE flag.  Activate via USE flag instead."
 ewarn
-					blacklisted=1
-					continue
+					is_blacklisted=1
+					break
 				fi
 			done
 		fi
-		if (( ${blacklisted} == 0 )) ; then
-			if [[ "${#c_wl}" == "7" ]] ; then
-				local p=$(basename $(head -n 1 \
-	<<< $(ls "${DISTDIR}/zen-sauce-${K_MAJOR_MINOR}-${c_wl}"*".patch")))
-				_fpatch "${DISTDIR}/${p}"
-			else
-				_fpatch \
-			"${DISTDIR}/zen-sauce-${K_MAJOR_MINOR}-${c_wl}.patch"
-			fi
+		(( ${is_blacklisted} == 1 )) && continue
+
+		if [[ "${#c}" == "7" ]] ; then
+			local p=$(basename $(head -n 1 \
+	<<< $(ls "${DISTDIR}/zen-sauce-${K_MAJOR_MINOR}-${c}"*".patch")))
+			_fpatch "${DISTDIR}/${p}"
+		else
+			_fpatch \
+		"${DISTDIR}/zen-sauce-${K_MAJOR_MINOR}-${c}.patch"
 		fi
 	done
 }
@@ -1244,17 +1289,6 @@ einfo "Applying some of the zen-kernel MuQSS patches"
 	done
 }
 
-# @FUNCTION: apply_zentune
-# @DESCRIPTION:
-# Apply some of the ZenTune patches.
-function apply_zentune() {
-einfo "Applying some of the zen-tune patches"
-	for x in ${PATCH_ZENTUNE_COMMITS} ; do
-		local id="${x}"
-		_fpatch "${DISTDIR}/zen-tune-${K_MAJOR_MINOR}-${id}.patch"
-	done
-}
-
 # @FUNCTION: apply_zentune_muqss
 # @DESCRIPTION:
 # Apply the Zen timing MuQSS patches.
@@ -1435,21 +1469,15 @@ ewarn
 		fi
 	fi
 
-	if has zen-tune ${IUSE_EFFECTIVE} ; then
-		if use zen-tune ; then
-			apply_zentune
+	if has zen-sauce ${IUSE_EFFECTIVE} ; then
+		if use zen-sauce ; then
+			apply_zensauce
 		fi
 	fi
 
 	if has zen-tune-muqss ${IUSE_EFFECTIVE} ; then
 		if use zen-tune-muqss ; then
 			apply_zentune_muqss
-		fi
-	fi
-
-	if has zen-sauce ${IUSE_EFFECTIVE} ; then
-		if use zen-sauce ; then
-			apply_zensauce
 		fi
 	fi
 

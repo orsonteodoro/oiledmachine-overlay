@@ -314,12 +314,8 @@
       commits.  You will need to define a ZENSAUCE_WHITELIST_5_10 environmental
       variable (in your make.conf or per-package env), replacing 5_10 with 5
       as the kernel major version and 10 the kernel minor version, containing
-      a string of space separated commit IDs.  Commits will apply one after the
-      other with the oldest commit ID is left to newest commit id to the right.
-      The order corresponds to the GitHub history page with the bottom commit
-      hash as the newest and the top commit hash as the oldest.  Only 40 or 7
-      character commit IDs are supported.  For a full list of commits see the
-      commit history at...
+      a string of space separated commit IDs.  Order doesn't matter.  
+      For a full list of commits see the commit history at...
 
       for 4.19 see:
       https://github.com/torvalds/linux/compare/v4.19...zen-kernel:4.19/misc
@@ -332,6 +328,9 @@
 
       for 5.13 see:
       https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/zen-sauce
+
+      for 5.14 see:
+      https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.14/zen-sauce
 
       Use the O3, zen-sauce, kernel-compiler-patch USE flags instead of passing their
       commit IDs.
@@ -351,9 +350,5 @@
       You may manually add them back by /etc/portage/patches.  This is
       to allow people a choice.
     </flag>
-    <flag name="zen-tune-muqss">Patches the kernel with Zen Interactive
-      Tuning timings for MuQSS that may improve game FPS performance by
-      10% along with emulators.  Only those commits marked INTERACTIVE
-      in the muqss branch will be used.</flag>
   </use>
 </pkgmetadata>

@@ -74,6 +74,13 @@ a4b5ddc398fa0a872d767992698e7a8d02443fee \
 df089c73ce7c2ecc19aaa81af627c8682f3e7aa9 \
 d74d8228e183455100493db818bced8b885768ed"
 
+# LEFT_ZENTUNE:RIGHT_ZENSAUCE
+PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
+ad88458494fbecc930dab11ff54430c083260c06:d30d478300a8b426cb6a787c38f0eccc0bff6475
+)
+#ZEN: INTERACTIVE: Use BFQ as our elevator (ad88458) needs \
+#ZEN: Add CONFIG to rename the mq-deadline scheduler (d30d478)
+
 # top / oldest, bottom / newest
 # Diced to let user can choose between UKSM, KSWAPD, OOMD
 PATCH_DEFER_MADVISE_COMMIT=\
@@ -92,7 +99,6 @@ PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
 	${PATCH_BFQ_DEFAULT}
 	${PATCH_KCP_COMMIT}
-	${PATCH_ZENTUNE_COMMITS}
 "
 
 # --
@@ -165,7 +171,8 @@ REQUIRED_USE+="
 	tresor_i686? ( tresor )
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
-	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )"
+	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
+	zen-tune? ( zen-sauce )"
 
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
 gen_scs_exclusion() {
@@ -425,8 +432,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   )
 	   uksm? ( ${UKSM_SRC_URI} )
 	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
-	   zen-sauce? ( ${ZENSAUCE_URIS} )
-	   zen-tune? ( ${ZENTUNE_URIS} )"
+	   zen-sauce? ( ${ZENSAUCE_URIS} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
