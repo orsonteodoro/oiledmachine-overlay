@@ -334,14 +334,14 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  
 +	if isTrue "${CMD_PGO}"
 +	then
++		profraw_path="/sys/kernel/debug/pgo/vmlinux.profraw"
 +		print_info 1 "$(get_indent 1)>> Collecting and merging PGO data:"
-+		if [ -e "/sys/kernel/debug/pgo/profraw" ] ; then
-+			print_info 1 "$(get_indent 1)>> Missing /sys/kernel/debug/pgo/profraw:"
++		if [ ! -e "${profraw_path}" ] ; then
++			print_info 1 "$(get_indent 1)>> Missing ${profraw_path}"
 +			exit 1
 +		fi
-+		cp -a /sys/kernel/debug/pgo/profraw "${KERNEL_OUTPUTDIR}/vmlinux.profraw"
++		cp -a "${profraw_path}" "${KERNEL_OUTPUTDIR}/vmlinux.profraw" || exit 1
 +
-+		local llvm_slot
 +		if [ -n "${CMD_LLVM_SLOT}" ] ; then
 +			llvm_slot=${CMD_LLVM_SLOT}
 +		else
@@ -349,7 +349,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
 +		fi
 +		export PATH="${BROOT}/usr/lib/llvm/${llvm_slot}/bin:${PATH}"
 +		llvm-profdata merge --output="${KERNEL_OUTPUTDIR}/vmlinux.profdata" \
-+			"${KERNEL_OUTPUTDIR}/vmlinux.profraw"
++			"${KERNEL_OUTPUTDIR}/vmlinux.profraw" || exit 1
 +	fi
 +
  	# Make prepare
