@@ -11,6 +11,8 @@ error: no profile can be merged
 
 Modded to included LLVM_INSTR_PROF_RAW_VERSION 6 and 7 support.
 
+The patch status will change once it is confirmed working.
+
 diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/fs.c linux-5.14.3-ot/kernel/pgo/fs.c
 --- linux-5.14.3-ot.orig/kernel/pgo/fs.c	2021-09-14 04:25:57.020147052 -0700
 +++ linux-5.14.3-ot/kernel/pgo/fs.c	2021-09-14 04:50:28.209111683 -0700
@@ -143,7 +145,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
  	u64 magic;
  	u64 version;
 +#if defined(LLVM_MAIN) \
-+	|| ( CONFIG_LLVM_INSTR_PROF_RAW_VERSION >= 7 \
++	|| ( LLVM_INSTR_PROF_RAW_VERSION >= 7 \
 +		&& CONFIG_CLANG_VERSION == 140000 )
 +	u64 binary_id_size;
 +#endif
@@ -160,7 +162,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
 +	|| defined(CONFIG_LLVM13_RC2) \
 +	|| defined(CONFIG_LLVM13_RC1) \
 +	|| defined(CONFIG_LLVM13_IPR6) \
-+	|| ( CONFIG_LLVM_INSTR_PROF_RAW_VERSION >= 6 \
++	|| ( LLVM_INSTR_PROF_RAW_VERSION >= 6 \
 +		&& CONFIG_CLANG_VERSION < 140000 )
 +	u64 binary_id_size;
 +#endif
