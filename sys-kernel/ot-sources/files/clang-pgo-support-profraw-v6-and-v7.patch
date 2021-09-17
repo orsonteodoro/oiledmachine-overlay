@@ -65,7 +65,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.5-ot.orig/kernel/pgo/Kconfig linux-
 +	help
 +	  The following are compatible:
 +	    * LLVM 13.x branch with the latest commit
-+	    * LLVM 13 rc3 with profraw v7 only
++	    * LLVM 13 rc3
 +
 +config PROFRAW_V6
 +	bool "profraw v6"
