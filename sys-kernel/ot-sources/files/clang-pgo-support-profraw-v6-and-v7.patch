@@ -51,11 +51,11 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-
  	depends on ARCH_SUPPORTS_PGO_CLANG
  	depends on CC_IS_CLANG
  	depends on !ARCH_WANTS_NO_INSTR || CC_HAS_NO_PROFILE_FN_ATTR
-+	depends on PROFRAW_VERSION_OVERRIDE_TOGGLE || LLVM_MAIN || LLVM14_LIVE || LLVM14_INIT || LLVM13_LIVE || LLVM13_RC2 || LLVM13_RC1 || LLVM13_IPR6 || LLVMX_IPR5
++	depends on PROFRAW_VERSION_OVERRIDE_TOGGLE || LLVM_MAIN || LLVM14_INIT || LLVM13_LIVE || LLVM13_RC2 || LLVM13_RC1 || LLVM13_IPR6 || LLVMX_IPR5
  	help
  	  This option enables clang's PGO (Profile Guided Optimization) based
  	  code profiling to better optimize the kernel.
-@@ -34,4 +40,44 @@ config PGO_CLANG
+@@ -34,4 +40,41 @@ config PGO_CLANG
  	  Note that the debugfs filesystem has to be mounted to access
  	  profiling data.
  
@@ -70,9 +70,6 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-
 +
 +config LLVM_MAIN
 +	bool "LLVM main branch with the latest commit"
-+
-+config LLVM14_LIVE
-+	bool "LLVM 14.x branch with the latest commit"
 +
 +config LLVM14_INIT
 +	bool "LLVM 14 init"
@@ -103,7 +100,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/Kconfig linux-
 diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.14.3-ot/kernel/pgo/pgo.h
 --- linux-5.14.3-ot.orig/kernel/pgo/pgo.h	2021-09-14 04:25:57.021147092 -0700
 +++ linux-5.14.3-ot/kernel/pgo/pgo.h	2021-09-14 05:14:58.064621568 -0700
-@@ -43,7 +43,35 @@
+@@ -43,7 +43,33 @@
  		 (u64)'R' << 8  |	\
  		 (u64)129)
  
@@ -115,8 +112,6 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
 +#    warning "LLVM 13 rc1 or newer"
 +#  endif
 +#elif defined(CONFIG_LLVM_MAIN) /* corresponds to the main branch */
-+#  define LLVM_INSTR_PROF_RAW_VERSION	7
-+#elif defined(CONFIG_LLVM14_LIVE)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	7
 +#elif defined(CONFIG_LLVM14_INIT)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	6
@@ -152,12 +147,11 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
  	u64 data_size;
  	u64 padding_bytes_before_counters;
  	u64 counters_size;
-@@ -80,6 +113,16 @@ struct llvm_prf_header {
+@@ -80,6 +113,15 @@ struct llvm_prf_header {
  	u64 counters_delta;
  	u64 names_delta;
  	u64 value_kind_last;
-+#if defined(CONFIG_LLVM14_LIVE) \
-+	|| defined(CONFIG_LLVM14_INIT) \
++#if defined(CONFIG_LLVM14_INIT) \
 +	|| defined(CONFIG_LLVM13_LIVE) \
 +	|| defined(CONFIG_LLVM13_RC2) \
 +	|| defined(CONFIG_LLVM13_RC1) \
