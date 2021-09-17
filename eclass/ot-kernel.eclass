@@ -582,7 +582,8 @@ einfo
 # Checks the existance for the ZENSAUCE_WHITELIST_5_3 variable
 function zensauce_setup() {
 	if use zen-sauce ; then
-		if [[ -n "ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}" ]] ; then
+		local v1="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
+		if [[ -n "${!v1}" ]] ; then
 eerror
 eerror "ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_} has been been renamed to"
 eerror "ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}.  Rename or remove this envvar"
@@ -607,9 +608,9 @@ einfo "Applying the Zen secret sauce"
 			fi
 
 eerror
-eerror "You must define ZENSAUCE_WHITELIST_${K_MAJOR_MINOR} in /etc/make.conf"
-eerror "or as a per-package env containing commits to accepted from"
-eerror "${zensauce_uri}"
+eerror "You must define a ZENSAUCE_WHITELIST_${K_MAJOR_MINOR//./_} in your"
+eerror "/etc/make.conf or as a per-package env containing commits to accepted"
+eerror "from ${zensauce_uri}"
 eerror
 eerror "For example:"
 eerror
