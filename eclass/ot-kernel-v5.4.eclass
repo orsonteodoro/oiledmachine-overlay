@@ -65,38 +65,56 @@ PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
 # ZEN: Implement zen-tune v5.4 (3e05ad8)
 # zen-sauce(c9a8f36) requires zen-tune
 
-# top is oldest, bottom is newest
-PATCH_ZENTUNE_MUQSS_COMMITS=\
-"6c8fd1641dea5418c68dad4bf48d2d128a2a13e5 \
-dce8f01fd3d28121e3bf215255c5eded3855e417 \
-3ca137b68d689fcb1c5cadad1416c7791d84d48e \
-d1bebeb959a56324fe436443ea2f21a8391632d9"
-
 PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
 	${PATCH_KCP_COMMIT}
 "
 
+ZEN_MUQSS_COMMITS=(
+7acac2e4000e75f3349106a8847cf1021651446b
+c73934ea38cffac75c43ea4fd9f67100e82d8ea2
+be525d11c201565e2c8999efc3f78c745f5d6886
+6c26d7bda791335dc0bf7b401c1cecad359b1a15
+86df8beb7c996a985f11b20bf4bb84419f491297
+c9a70eeacf3fc0d62fe3027bf57eff737015b23b
+696ba980602e5c099e7e19b49e18bceeb5eec1e8
+c181de6e33ad80ca524a3379ac2c68d3872b481b
+2896b534ad8eaa904a9887080829c84a82a1a6b5
+1342bc5878c7640cc04117e010f005bac0873b78
+6c8fd1641dea5418c68dad4bf48d2d128a2a13e5
+f4fea36124c5f81e91cdcd9e91fc1758b1e98dfc
+9c0ad2b62cb6ab19b5c610e37a3d38770b0b0207
+59f2b3e40d8cd3569be0e72bfa855a53398f4400
+880a7229b3627f9933d30f847da350e1ff53ba2d
+dce8f01fd3d28121e3bf215255c5eded3855e417
+3ca137b68d689fcb1c5cadad1416c7791d84d48e
+530963db1905c4de80985b947858b391e1d363e7
+d1bebeb959a56324fe436443ea2f21a8391632d9
+45589d24eea4cdfe59e87a65389fd72d91f43bf0
+)
+ZEN_MUQSS_EXCLUDED_COMMITS=(
+)
+
 IUSE+=" bmq +cfs clang disable_debug +genpatches +kernel-compiler-patch
 muqss +O3 futex-wait-multiple tresor rt tresor_aesni tresor_i686 tresor_sysfs
-tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce -zen-tune
-zen-tune-muqss"
+tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
+-zen-tune"
 REQUIRED_USE+="
-	^^ ( bmq cfs muqss )
+	^^ ( bmq cfs muqss zen-muqss )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
 	tresor_i686? ( tresor )
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
-	zen-tune? ( zen-sauce )
-	zen-tune-muqss? ( muqss zen-tune )"
+	zen-tune? ( zen-sauce )"
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
-	muqss? ( !rt )
 	bmq? ( !rt )
-	rt? ( cfs !bmq !muqss )
+	muqss? ( !rt )
+	zen-muqss? ( !rt )
+	rt? ( cfs !bmq !muqss !zen-muqss )
 "
 fi
 
@@ -124,8 +142,8 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # all-rights-reserved applies to new files introduced and no default license
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
+LICENSE+=" zen-muqss? ( GPL-2 )"
 LICENSE+=" zen-tune? ( GPL-2 )"
-LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 
 _seq() {
 	local min=${1}
@@ -194,8 +212,8 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 		${TRESOR_SYSFS_SRC_URI}
 	   )
 	   uksm? ( ${UKSM_SRC_URI} )
-	   zen-sauce? ( ${ZENSAUCE_URIS} )
-	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_URIS} )"
+	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
+	   zen-sauce? ( ${ZENSAUCE_URIS} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -341,6 +359,12 @@ function ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/uksm-5.4-rebase-for-5.4.85.patch"
+	elif [[ "${path}" =~ "zen-muqss-5.4-7acac2e.patch" ]] ; then
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
+	elif [[ "${path}" =~ "zen-muqss-5.4-c181de6.patch" ]] ; then
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
+	elif [[ "${path}" =~ "zen-muqss-5.4-530963d.patch" ]] ; then
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

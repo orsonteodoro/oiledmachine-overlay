@@ -184,8 +184,9 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
+	prjc? ( !rt )
 	zen-muqss? ( !rt )
-	rt? ( cfs !zen-muqss !prjc )
+	rt? ( cfs !prjc !zen-muqss )
 "
 fi
 

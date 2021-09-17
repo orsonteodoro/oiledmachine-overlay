@@ -91,13 +91,36 @@ PATCH_ZENSAUCE_BL="
 	${PATCH_KCP_COMMIT}
 "
 
-# ZEN interactive MuQSS patches
-# top is oldest, bottom is newest
-PATCH_ZENTUNE_MUQSS_COMMITS=\
-"4d8602abd84dbc4219e337331f7d8bd7a91ce8c6 \
-aa17b2d1d0c2814b2cdd33e2b1cf171b5ac30b86 \
-9089e95bb3d0e64dc64ae90eb509da5075f49248 \
-16b6c9f2c576d43096a216a802c61573286ae5a7"
+ZEN_MUQSS_COMMITS=(
+9d6b3eef3a1ec22d4d3c74e0b773ff52d3b3a209
+3b17bfa60ca1e8d94cb7a4c490dd79a14c53a074
+25b07958996a2d2dcff8b54917c01bf01196e68e
+c68e24eb9e7ff9cf585ca395a9a95023404ddea4
+e52e9340936ec51702e13997519a36279f848b47
+f4a3f1a4685f1c2453535dc10c5a4c1cb9d2c37e
+cd185b24202c18832ee493cf1e7f3d38cadefb3f
+31a1b5cfd19718a53b207ee66850516a97964c9a
+cb705098cd4fbc5da1dd898642602d98f265e74c
+81170db5534ada1574b366fd7df75080ce5a50de
+a809bb5c75fc246f155872631258828a6df3485d
+14891c776915dcbabab79d89e9b819114bfa794c
+e610927931872d67a868b14bdb6f48d83dd992ed
+e219172bbe43aed68943e72b19897191b6bd8f8f
+37fa42a7ec254ecbec319f603cd595d6308021ea
+4d8602abd84dbc4219e337331f7d8bd7a91ce8c6
+aa17b2d1d0c2814b2cdd33e2b1cf171b5ac30b86
+9089e95bb3d0e64dc64ae90eb509da5075f49248
+16b6c9f2c576d43096a216a802c61573286ae5a7
+f52ed229284681b01ba3785a581fefb89cb91d87
+5e029bcb673aa73c2a432f5f78f60351821f5b33
+2da693aab6562ed337fd383bdd368d65081cb955
+76154be76bebec4ef22db220f7e98bc2f7ed940c
+abcc55ee0e4b908af47d67d2a594d63862a5e914
+780ad761cfe51dfdd178db93be8443355a7597d7
+1ee7b1ab0da8b81ad41bf83e795ba80cf1288739
+)
+ZEN_MUQSS_EXCLUDED_COMMITS=(
+)
 
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
@@ -105,23 +128,23 @@ KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 IUSE+=" ${KCP_IUSE} bbrv2 +cfs clang disable_debug futex-wait-multiple futex2
 +genpatches +kernel-compiler-patch muqss +O3 prjc rt tresor tresor_aesni
 tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
-zen-sauce -zen-tune zen-tune-muqss"
+zen-muqss zen-sauce -zen-tune"
 REQUIRED_USE+="
-	^^ ( cfs muqss prjc )
+	^^ ( cfs muqss prjc zen-muqss )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
 	tresor_i686? ( tresor )
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
-	zen-tune? ( zen-sauce )
-	zen-tune-muqss? ( muqss zen-tune )"
+	zen-tune? ( zen-sauce )"
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
 	muqss? ( !rt )
 	prjc? ( !rt )
-	rt? ( cfs !muqss !prjc )
+	zen-muqss? ( !rt )
+	rt? ( cfs !muqss !prjc !zen-muqss )
 "
 fi
 
@@ -159,8 +182,8 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # all-rights-reserved applies to new files introduced and no defaults license
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
+LICENSE+=" zen-muqss? ( GPL-2 )"
 LICENSE+=" zen-tune? ( GPL-2 )"
-LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 
 _seq() {
 	local min=${1}
@@ -287,8 +310,8 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 		${TRESOR_SYSFS_SRC_URI}
 	   )
 	   uksm? ( ${UKSM_SRC_URI} )
-	   zen-sauce? ( ${ZENSAUCE_URIS} )
-	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_URIS} )"
+	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
+	   zen-sauce? ( ${ZENSAUCE_URIS} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:

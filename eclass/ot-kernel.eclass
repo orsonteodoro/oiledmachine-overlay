@@ -386,7 +386,6 @@ UKSM_FN="uksm-${K_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 ZENSAUCE_URIS=$(gen_zensauce_uris "${PATCH_ZENSAUCE_COMMITS}")
-ZENTUNE_MUQSS_URIS=$(gen_zentune_muqss_uris "${PATCH_ZENTUNE_MUQSS_COMMITS}")
 
 if ver_test ${PV} -eq ${K_MAJOR_MINOR} ; then
 KERNEL_NO_POINT_RELEASE="1"
@@ -606,7 +605,6 @@ eerror
 			die
 		fi
 
-einfo "Applying the Zen secret sauce"
 		local ZM="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
 		if [[ -z "${!ZM}" ]] ; then
 			local zensauce_uri
@@ -625,7 +623,8 @@ einfo "Applying the Zen secret sauce"
 eerror
 eerror "You must define a ZENSAUCE_WHITELIST_${K_MAJOR_MINOR//./_} in your"
 eerror "/etc/make.conf or as a per-package env containing commits to accepted"
-eerror "from ${zensauce_uri}"
+eerror "from ${zensauce_uri}.  You may supply the envvar with a space as a"
+eerror "placeholder."
 eerror
 eerror "For example:"
 eerror
@@ -633,9 +632,8 @@ eerror "  ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}=\"\
 214d031dbeef940efe1dbba274caf5ccc4ff2774 \
 83d7f482c60b6dfda030325394ec07baac7f5a30\""
 eerror "  ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}=\"214d031 83d7f48\""
-eerror "This must be in chronological and topological order (if the timestamp"
-eerror "is the same) from oldest-left to newest-right.  Only 40 or 7 digit IDs"
-eerror "are accepted."
+eerror "  ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}=\" \""
+eerror "Only 40 or 7 digit commit IDs are accepted."
 eerror
 			die
 		fi
@@ -1289,17 +1287,6 @@ einfo "Applying some of the zen-kernel MuQSS patches"
 	done
 }
 
-# @FUNCTION: apply_zentune_muqss
-# @DESCRIPTION:
-# Apply the Zen timing MuQSS patches.
-function apply_zentune_muqss() {
-einfo "Applying the zen-tune interactive MuQSS patches"
-	for x in ${PATCH_ZENTUNE_MUQSS_COMMITS} ; do
-		local id="${x}"
-		_fpatch "${DISTDIR}/zen-tune-muqss-${K_MAJOR_MINOR}-${id}.patch"
-	done
-}
-
 # @FUNCTION: apply_clang_pgo
 # @DESCRIPTION:
 # Apply the PGO patch for use with clang
@@ -1472,12 +1459,6 @@ ewarn
 	if has zen-sauce ${IUSE_EFFECTIVE} ; then
 		if use zen-sauce ; then
 			apply_zensauce
-		fi
-	fi
-
-	if has zen-tune-muqss ${IUSE_EFFECTIVE} ; then
-		if use zen-tune-muqss ; then
-			apply_zentune_muqss
 		fi
 	fi
 
