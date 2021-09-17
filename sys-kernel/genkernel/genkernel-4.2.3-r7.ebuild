@@ -540,8 +540,6 @@ pkg_postinst() {
 
 	if use clang-pgo ; then
 	ewarn
-	ewarn "The --pgt-memory PGO trainer is currently bugged.  Do not use at this time."
-	ewarn
 	ewarn "The pgo USE flag is not production ready.  Do not use at this time."
 	ewarn
 	ewarn "See the metadata.xml next to this ebuild for additional environment"

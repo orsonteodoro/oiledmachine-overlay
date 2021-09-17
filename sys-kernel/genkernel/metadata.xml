@@ -72,8 +72,6 @@
     PGO_P2P_URI - The URI must have a filename to replace the placeholder
                   torrent.  (Only public domain assets or open source project
                   torrents should be used.)
-    PGO_LINUX_TARBALL - Abspath to a linux tarball use as a source of
-                  pseudo randomness.
     PGO_TRAINER_NETWORK_TCP_CONGESTIONS - string separated list from
       /proc/sys/net/ipv4/tcp_allowed_congestion_control to select for
       PGO training.
