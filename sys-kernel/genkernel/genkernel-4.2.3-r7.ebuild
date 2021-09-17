@@ -249,7 +249,8 @@ RDEPEND+=" ${PYTHON_DEPS}
 		sys-fs/cryptsetup
 	)
 	pgo_trainer_memory? (
-		dev-util/vmtouch
+		sys-apps/util-linux
+		sys-process/procps
 	)
 	pgo_trainer_network? (
 		net-analyzer/traceroute
@@ -258,6 +259,8 @@ RDEPEND+=" ${PYTHON_DEPS}
 	)
 	pgo_trainer_p2p? (
 		net-p2p/ctorrent
+		sys-apps/util-linux
+		sys-process/procps
 	)
 	pgo_trainer_webcam? (
 		media-tv/v4l-utils
