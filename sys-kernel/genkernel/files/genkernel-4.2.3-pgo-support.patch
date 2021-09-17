@@ -43,7 +43,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
 +  echo "	--pgt-3d-ogl1.3		Run phase 2 PGT trainer for video card benchmarks with OpenGL 1.3 xscreensavers"
 +  echo "	--pgt-all		Run phase 2 PGT trainer for with all benchmarks"
 +  echo "	--pgt-all-non-root	Run phase 2 PGT trainer for with all benchmarks that should run as non-root"
-+  echo "	--pgt-crypto-std	Run phase 2 PGT trainer for Crypto API industry for standard hashes and ciphers"
++  echo "	--pgt-crypto-std	Run phase 2 PGT trainer for Crypto API industry standard hashes and ciphers"
 +  echo "	--pgt-crypto-common	Run phase 2 PGT trainer for Crypto API common hashes and ciphers"
 +  echo "	--pgt-crypto-less-common"
 +  echo "				Run phase 2 PGT trainer for Crypto API less common hashes and ciphers"
@@ -504,7 +504,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 +.PP
 +\fB\-\-pgt\-crypto\-std\fR
 +.RS 4
-+Run phase 2 PGT trainer for Crypto API industry for standard hashes and ciphers\&
++Run phase 2 PGT trainer for Crypto API industry standard hashes and ciphers\&
 +.RE
 +.PP
 +\fB\-\-pgt\-crypto\-common\fR
