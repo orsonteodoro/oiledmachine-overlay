@@ -96,9 +96,9 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.5-ot.orig/kernel/pgo/pgo.h linux-5.
  
 -#define LLVM_INSTR_PROF_RAW_VERSION		5
 +#ifndef CONFIG_CC_HAS_NO_PROFILE_FN_ATTR
-+#  error "The compiler needs support for no_instr and the
-+#  error "no_profile_instrument_function annotations found in both 193e41c
-+#  error "a63d4f6 commits.  Update to warning "LLVM 13 rc1 or newer or"
++#  error "The compiler needs support for no_instr and the"
++#  error "no_profile_instrument_function annotations found in both 193e41c"
++#  error "a63d4f6 commits.  Update to LLVM 13 rc1 or newer or"
 +#  error "backport those commits."
 +#endif
 +
