@@ -176,8 +176,8 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/scripts/Kconfig.include l
  m64-flag := $(cc-option-bit,-m64)
 +
 +# Get the profraw version
-+profraw-version := $(shell,$(srctree)/scripts/profraw-version.sh)
-+$(warning-if,$(shell,test $? -ne 1 && echo y),Sorry$(comma) the profraw version could not be automatically retrieved falling back to minimum required.  Did you add the llvm bin path to the PATH variable?)
++$(warning-if,$(failure,which clang++),Did you add the llvm bin path to the PATH variable?)
++profraw-version := $(shell,$(srctree)/scripts/profraw-version.sh || echo "5")
 diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/scripts/profraw-check.cc linux-5.14.3-ot/scripts/profraw-check.cc
 --- linux-5.14.3-ot.orig/scripts/profraw-check.cc	1969-12-31 16:00:00.000000000 -0800
 +++ linux-5.14.3-ot/scripts/profraw-check.cc	2021-09-14 04:30:03.551038772 -0700
@@ -192,14 +192,13 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/scripts/profraw-check.cc 
 diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/scripts/profraw-version.sh linux-5.14.3-ot/scripts/profraw-version.sh
 --- linux-5.14.3-ot.orig/scripts/profraw-version.sh	1969-12-31 16:00:00.000000000 -0800
 +++ linux-5.14.3-ot/scripts/profraw-version.sh	2021-09-14 05:08:44.118796134 -0700
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,23 @@
 +#!/bin/bash
 +# SPDX-License-Identifier: GPL-2.0-or-later OR MIT OR Apache-2.0
 +
 +PROFRAW_VERSION_MIN=5
 +
 +error() {
-+	echo "${PROFRAW_VERSION_MIN}"
 +	exit 1
 +}
 +
