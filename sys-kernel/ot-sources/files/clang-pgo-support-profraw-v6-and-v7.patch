@@ -106,7 +106,7 @@ diff -x '*.orig' -x '*.rej' -urpN linux-5.14.3-ot.orig/kernel/pgo/pgo.h linux-5.
  
 -#define LLVM_INSTR_PROF_RAW_VERSION		5
 +#if defined(CONFIG_PROFRAW_VERSION_OVERRIDE_TOGGLE)
-+#  define LLVM_INSTR_PROF_RAW_VERSION	CONFIG_PROFRAW_VERSION
++#  define LLVM_INSTR_PROF_RAW_VERSION	CONFIG_PROFRAW_VERSION_OVERRIDE
 +#  if CONFIG_CLANG_VERSION <= 130000
 +#    warning "LLVM needs backports for both 193e41c a63d4f6 commits or update to"
 +#    warning "LLVM 13 rc1 or newer"
