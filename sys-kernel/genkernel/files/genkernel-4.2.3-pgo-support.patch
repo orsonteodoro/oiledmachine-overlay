@@ -76,19 +76,19 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
 +			;;
 +		--pgt-2d-draw)
 +			CMD_PGT_2D_DRAW="yes"
-+			print_info 3 "CMD_GPT_2D_DRAW: ${CMD_GPT_2D_DRAW}"
++			print_info 3 "CMD_PGT_2D_DRAW: ${CMD_PGT_2D_DRAW}"
 +			;;
 +		--pgt-3d-ogl1.3)
 +			CMD_PGT_3D_OGL1_3="yes"
-+			print_info 3 "CMD_GPT_3D_OGL1_3: ${CMD_GPT_3D_OGL1_3}"
++			print_info 3 "CMD_PGT_3D_OGL1_3: ${CMD_PGT_3D_OGL1_3}"
 +			;;
 +		--pgt-all)
 +			CMD_PGT_ALL="yes"
-+			print_info 3 "CMD_GPT_ALL: ${CMD_GPT_ALL}"
++			print_info 3 "CMD_PGT_ALL: ${CMD_PGT_ALL}"
 +			;;
 +		--pgt-all-non-root)
 +			CMD_PGT_ALL_NON_ROOT="yes"
-+			print_info 3 "CMD_GPT_ALL_NON_ROOT: ${CMD_GPT_ALL_NON_ROOT}"
++			print_info 3 "CMD_PGT_ALL_NON_ROOT: ${CMD_PGT_ALL_NON_ROOT}"
 +			;;
 +		--pgt-crypto-std)
 +			CMD_PGT_CRYPTO_STD="yes"
@@ -104,31 +104,31 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
 +			;;
 +		--pgt-custom)
 +			CMD_PGT_CUSTOM="yes"
-+			print_info 3 "CMD_GPT_CUSTOM: ${CMD_GPT_CUSTOM}"
++			print_info 3 "CMD_PGT_CUSTOM: ${CMD_PGT_CUSTOM}"
 +			;;
 +		--pgt-filesystem)
 +			CMD_PGT_FILESYSTEM="yes"
-+			print_info 3 "CMD_GPT_FILESYSTEM: ${CMD_GPT_FILESYSTEM}"
++			print_info 3 "CMD_PGT_FILESYSTEM: ${CMD_PGT_FILESYSTEM}"
 +			;;
 +		--pgt-emerge1)
 +			CMD_PGT_EMERGE1="yes"
-+			print_info 3 "CMD_GPT_EMERGE1: ${CMD_GPT_EMERGE1}"
++			print_info 3 "CMD_PGT_EMERGE1: ${CMD_PGT_EMERGE1}"
 +			;;
 +		--pgt-emerge2)
 +			CMD_PGT_EMERGE2="yes"
-+			print_info 3 "CMD_GPT_EMERGE2: ${CMD_GPT_EMERGE2}"
++			print_info 3 "CMD_PGT_EMERGE2: ${CMD_PGT_EMERGE2}"
 +			;;
 +		--pgt-memory)
 +			CMD_PGT_MEMORY="yes"
-+			print_info 3 "CMD_GPT_MEMORY: ${CMD_GPT_MEMORY}"
++			print_info 3 "CMD_PGT_MEMORY: ${CMD_PGT_MEMORY}"
 +			;;
 +		--pgt-network)
 +			CMD_PGT_NETWORK="yes"
-+			print_info 3 "CMD_GPT_NETWORK: ${CMD_GPT_NETWORK}"
++			print_info 3 "CMD_PGT_NETWORK: ${CMD_PGT_NETWORK}"
 +			;;
 +		--pgt-p2p)
 +			CMD_PGT_P2P="yes"
-+			print_info 3 "CMD_GPT_P2P: ${CMD_GPT_P2P}"
++			print_info 3 "CMD_PGT_P2P: ${CMD_PGT_P2P}"
 +			;;
 +		--pgt-reset)
 +			CMD_PGT_RESET="yes"
@@ -140,11 +140,11 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
 +			;;
 +		--pgt-webcam)
 +			CMD_PGT_WEBCAM="yes"
-+			print_info 3 "CMD_GPT_WEBCAM: ${CMD_GPT_WEBCAM}"
++			print_info 3 "CMD_PGT_WEBCAM: ${CMD_PGT_WEBCAM}"
 +			;;
 +		--pgt-yt)
 +			CMD_PGT_YT="yes"
-+			print_info 3 "CMD_GPT_YT: ${CMD_GPT_YT}"
++			print_info 3 "CMD_PGT_YT: ${CMD_PGT_YT}"
 +			;;
 +		--pgo)
 +			CMD_PGO="yes"
@@ -367,8 +367,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
 +fi
 +
 +if isTrue "${CMD_PGT_ALL}" \
-+	|| isTrue "${CMD_GPT_2D_DRAW}" \
-+	|| isTrue "${CMD_GPT_3D_OGL1_3}" \
++	|| isTrue "${CMD_PGT_2D_DRAW}" \
++	|| isTrue "${CMD_PGT_3D_OGL1_3}" \
 +	|| isTrue "${CMD_PGT_CUSTOM}" \
 +	|| isTrue "${CMD_PGT_CRYPTO_STD}" \
 +	|| isTrue "${CMD_PGT_CRYPTO_COMMON}" \
@@ -394,8 +394,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
 +then
 +	pgo_trainer_all_non_root
 +else
-+	isTrue "${CMD_GPT_2D_DRAW}" && pgo_trainer_2d_draw
-+	isTrue "${CMD_GPT_3D_OGL1_3}" && pgo_trainer_3d_ogl1_3
++	isTrue "${CMD_PGT_2D_DRAW}" && pgo_trainer_2d_draw
++	isTrue "${CMD_PGT_3D_OGL1_3}" && pgo_trainer_3d_ogl1_3
 +	isTrue "${CMD_PGT_CUSTOM}" && pgo_trainer_custom
 +	isTrue "${CMD_PGT_CRYPTO_STD}" && pgo_trainer_crypto_std
 +	isTrue "${CMD_PGT_CRYPTO_COMMON}" && pgo_trainer_crypto_common
