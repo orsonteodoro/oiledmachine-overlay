@@ -15,8 +15,8 @@ The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-16 18:26:42.897952180 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-16 18:27:07.699932255 -0700
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-16 20:32:37.793825600 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-16 20:34:20.980812614 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -185,8 +185,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  		--help)
  			longusage
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-16 18:26:42.898952220 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-16 18:27:07.699932255 -0700
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-16 20:32:37.795825677 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-16 20:34:20.981812653 -0700
 @@ -128,6 +128,13 @@ compile_generic() {
  				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
  			fi
@@ -202,8 +202,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-16 18:26:42.899952259 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-16 18:27:07.700932295 -0700
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-16 20:32:37.796825715 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-16 20:34:20.982812692 -0700
 @@ -1031,6 +1031,25 @@ config_kernel() {
  		fi
  	fi
@@ -231,8 +231,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
  	then
  		local llvm_slot
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-16 18:26:42.902952378 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-16 18:27:07.701932334 -0700
+--- genkernel-4.2.3.orig/genkernel	2021-09-16 20:32:37.799825831 -0700
++++ genkernel-4.2.3/genkernel	2021-09-16 20:38:22.270147100 -0700
 @@ -81,6 +81,7 @@ source "${GK_SHARE}"/defaults/compressio
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
  source "${GK_SHARE}"/defaults/config.sh || small_die "Could not read '${GK_SHARE}/defaults/config.sh'"
@@ -250,7 +250,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  then
  	usage
  	exit 1
-@@ -225,6 +226,77 @@ fi
+@@ -225,11 +226,105 @@ fi
  isTrue "${CMD_INSTALL}" && make_bootdir_writable
  
  check_disk_space_requirements
@@ -328,10 +328,18 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  
  if isTrue "${BUILD_KERNEL}" && ! isTrue "${KERNCACHE_IS_VALID}"
  then
-@@ -233,6 +305,26 @@ then
- 	# Configure kernel
- 	config_kernel
+ 	print_info 1 '' 1 0
  
++	if isTrue "${CMD_PGI}" || isTrue "${CMD_PGO}"
++	then
++		if [ -n "${CMD_LLVM_SLOT}" ] ; then
++			llvm_slot=${CMD_LLVM_SLOT}
++		else
++			llvm_slot=$(ls "${BROOT}/usr/lib/llvm" | sort -rV | head -n 1)
++		fi
++		export PATH="${BROOT}/usr/lib/llvm/${llvm_slot}/bin:${PATH}"
++	fi
++
 +	if isTrue "${CMD_PGO}"
 +	then
 +		profraw_path="/sys/kernel/debug/pgo/vmlinux.profraw"
@@ -341,21 +349,14 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
 +			exit 1
 +		fi
 +		cp -a "${profraw_path}" "${KERNEL_OUTPUTDIR}/vmlinux.profraw" || exit 1
-+
-+		if [ -n "${CMD_LLVM_SLOT}" ] ; then
-+			llvm_slot=${CMD_LLVM_SLOT}
-+		else
-+			llvm_slot=$(ls "${BROOT}/usr/lib/llvm" | sort -rV | head -n 1)
-+		fi
-+		export PATH="${BROOT}/usr/lib/llvm/${llvm_slot}/bin:${PATH}"
 +		llvm-profdata merge --output="${KERNEL_OUTPUTDIR}/vmlinux.profdata" \
 +			"${KERNEL_OUTPUTDIR}/vmlinux.profraw" || exit 1
 +	fi
 +
- 	# Make prepare
- 	if ! isTrue "${ARCH_HAVENOPREPARE}"
- 	then
-@@ -559,6 +651,56 @@ fi
+ 	# Configure kernel
+ 	config_kernel
+ 
+@@ -559,6 +654,56 @@ fi
  
  isTrue "${CMD_INSTALL}" && restore_boot_mount_state
  
@@ -413,8 +414,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-16 18:26:42.903952417 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-16 18:27:07.702932374 -0700
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-16 20:32:37.800825870 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-16 20:34:20.983812730 -0700
 @@ -52,6 +52,30 @@ All that is needed to run genkernel is j
  .\}
  .sp
@@ -580,7 +581,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  \fB\-\-cfi\fR
 diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-16 18:36:10.073350241 -0700
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-16 20:34:20.985812808 -0700
 @@ -0,0 +1,928 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
