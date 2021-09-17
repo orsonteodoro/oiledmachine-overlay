@@ -1249,7 +1249,7 @@ einfo "Applying some of the zen-kernel MuQSS patches"
 # Apply some of the ZenTune patches.
 function apply_zentune() {
 einfo "Applying some of the zen-tune patches"
-	for x in ${ZENTUNE_COMMITS} ; do
+	for x in ${PATCH_ZENTUNE_COMMITS} ; do
 		local id="${x}"
 		_fpatch "${DISTDIR}/zen-tune-${K_MAJOR_MINOR}-${id}.patch"
 	done
