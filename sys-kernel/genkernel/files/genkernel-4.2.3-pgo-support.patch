@@ -15,8 +15,8 @@ The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-17 22:29:48.330445637 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-17 22:30:20.309446691 -0700
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-18 10:15:58.297471226 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-18 10:16:20.647470868 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -185,8 +185,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  		--help)
  			longusage
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-17 22:29:48.332445637 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-17 22:30:20.310446691 -0700
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-18 10:15:58.297471226 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-18 10:16:20.648470868 -0700
 @@ -128,6 +128,13 @@ compile_generic() {
  				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
  			fi
@@ -202,8 +202,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-17 22:29:48.334445637 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-17 22:30:20.311446691 -0700
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-18 10:15:58.298471226 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-18 10:16:20.648470868 -0700
 @@ -1031,6 +1031,25 @@ config_kernel() {
  		fi
  	fi
@@ -231,8 +231,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
  	then
  		local llvm_slot
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determineargs.sh
---- genkernel-4.2.3.orig/gen_determineargs.sh	2021-09-17 22:29:48.336445637 -0700
-+++ genkernel-4.2.3/gen_determineargs.sh	2021-09-17 23:26:12.422557151 -0700
+--- genkernel-4.2.3.orig/gen_determineargs.sh	2021-09-18 10:15:58.299471226 -0700
++++ genkernel-4.2.3/gen_determineargs.sh	2021-09-18 10:16:20.649470868 -0700
 @@ -524,12 +524,20 @@ determine_real_args() {
  		can_write_log=yes
  	fi
@@ -258,44 +258,63 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genk
  
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.2.3/gen_funcs.sh
 --- genkernel-4.2.3.orig/gen_funcs.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_funcs.sh	2021-09-17 23:27:00.691558742 -0700
-@@ -161,12 +161,12 @@ print_info() {
++++ genkernel-4.2.3/gen_funcs.sh	2021-09-18 10:19:41.435467654 -0700
+@@ -1,6 +1,14 @@
+ #!/bin/bash
+ # $Id: ab7a7cea08c423b465ffcbdda3909279138f9b97 $
  
- 		if isTrue "${TODEBUGCACHE}"
++HAS_PGT=0
++if declare -f 2>/dev/null 1>/dev/null
++then
++	if is_pgt ; then
++	        HAS_PGT=1
++	fi
++fi
++
+ isTrue() {
+ 	case "$1" in
+ 		[Tt][Rr][Uu][Ee])
+@@ -159,14 +167,17 @@ print_info() {
+ 			STR="${STRR}"
+ 		fi
+ 
+-		if isTrue "${TODEBUGCACHE}"
++		if isTrue "${HAS_PGT}"
++		then
++			:;
++		elif isTrue "${TODEBUGCACHE}"
  		then
--			DEBUGCACHE="${DEBUGCACHE}${STR}"
-+			( ! is_pgt ) && DEBUGCACHE="${DEBUGCACHE}${STR}"
+ 			DEBUGCACHE="${DEBUGCACHE}${STR}"
  		else
--			printf "%b" "${STR}" >> "${LOGFILE}"
-+			( ! is_pgt ) && printf "%b" "${STR}" >> "${LOGFILE}"
+ 			printf "%b" "${STR}" >> "${LOGFILE}"
  		fi
  
 -		if [ ${NEWLINE} -ne 0 ]
-+		if [ ${NEWLINE} -ne 0 ] && ! is_pgt
++		if [ ${NEWLINE} -ne 0 ] && ! isTrue "${HAS_PGT}"
  		then
  			if isTrue "${TODEBUGCACHE}"
  			then
-@@ -602,7 +602,7 @@ cleanup() {
+@@ -602,7 +613,7 @@ cleanup() {
  	GK_TIME_END=$(date +%s)
  	let GK_TIME_RUNTIME_SECONDS=${GK_TIME_END}-${GK_TIME_START}
  	let GK_TIME_RUNTIME_DAYS=${GK_TIME_RUNTIME_SECONDS}/86400
 -	TZ= printf ">>> Ended on: $(date +"%Y-%m-%d %H:%M:%S") (after %d days%(%k hours %M minutes %S seconds)T)\n" ${GK_TIME_RUNTIME_DAYS} ${GK_TIME_RUNTIME_SECONDS} >> "${LOGFILE}" 2>/dev/null
-+	( ! is_pgt ) && TZ= printf ">>> Ended on: $(date +"%Y-%m-%d %H:%M:%S") (after %d days%(%k hours %M minutes %S seconds)T)\n" ${GK_TIME_RUNTIME_DAYS} ${GK_TIME_RUNTIME_SECONDS} >> "${LOGFILE}" 2>/dev/null
++	( ! isTrue "${HAS_PGT}" ) && TZ= printf ">>> Ended on: $(date +"%Y-%m-%d %H:%M:%S") (after %d days%(%k hours %M minutes %S seconds)T)\n" ${GK_TIME_RUNTIME_DAYS} ${GK_TIME_RUNTIME_SECONDS} >> "${LOGFILE}" 2>/dev/null
  }
  
  clear_tmpdir() {
-@@ -2117,7 +2117,7 @@ make_bootdir_writable() {
+@@ -2117,7 +2128,7 @@ make_bootdir_writable() {
  			;;
  	esac
  
 -	if [ ! -w "${BOOTDIR}" ]
-+	if [ ! -w "${BOOTDIR}" ] && ! is_pgt
++	if [ ! -w "${BOOTDIR}" ] && ! isTrue "${HAS_PGT}"
  	then
  		gen_die "Cannot write to bootdir '${BOOTDIR}'!"
  	fi
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-17 22:29:48.337445637 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-17 23:20:34.552546017 -0700
+--- genkernel-4.2.3.orig/genkernel	2021-09-18 10:15:58.300471226 -0700
++++ genkernel-4.2.3/genkernel	2021-09-18 10:16:20.651470868 -0700
 @@ -80,6 +80,7 @@ LOGLEVEL=${LOGLEVEL:-1}
  source "${GK_SHARE}"/defaults/compression_methods.sh || small_die "Could not read '${GK_SHARE}/defaults/compression_methods.sh'"
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
@@ -464,8 +483,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-17 22:29:48.339445637 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-17 22:30:20.313446691 -0700
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-18 10:15:58.301471226 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-18 10:16:20.651470868 -0700
 @@ -52,6 +52,30 @@ All that is needed to run genkernel is j
  .\}
  .sp
@@ -631,7 +650,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  \fB\-\-cfi\fR
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-17 23:34:00.700572582 -0700
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-18 10:16:20.652470868 -0700
 @@ -0,0 +1,962 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
