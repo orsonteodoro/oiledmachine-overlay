@@ -233,6 +233,12 @@ ewarn
 ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
 ewarn
 	fi
+
+	if use zen-muqss ; then
+ewarn
+ewarn "The zen-muqss USE flag is experimental and may randomly freeze the computer."
+ewarn
+	fi
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes
