@@ -49,11 +49,12 @@
 
     The following steps must be take for a PGO kernel:
 
-    (1) Emerge a source based kernel package with PGO and profraw compat patch
+    (1) Emerge a source based kernel package >= 5.13 with applied PGO and profraw compat patches
+        (See references section below for how to obtain and apply patches)
     (2) Run genkernel --pgi all
     (3) Reboot
     (4) Run genkernel --pgt-all train
-    (4 optional) Run genkernel --pgt-yt train in X as a normal user
+    (optional) Run genkernel --pgt-yt train in X as a normal user
     (5) Run genkernel --pgo all
     (6) Reboot
 
@@ -67,36 +68,50 @@
     directly.  Only the emerging 2021 PGO with clang and llvm support will be
     supported.
 
-    Environmental variables (store in /etc/genkernel.conf):
+    Environmental variables (Store them in /etc/genkernel.conf):
 
-    PGO_P2P_URI - The URI must have a filename to replace the placeholder
-                  torrent.  (Only public domain assets or open source project
-                  torrents should be used.)
-    PGO_TRAINER_NETWORK_TCP_CONGESTIONS - string separated list from
-      /proc/sys/net/ipv4/tcp_allowed_congestion_control to select for
-      PGO training.
-    PGO_FILESYSTEMS_LIST - a string separated list of selected of
-      quintuples in this format -- ioscheduler_name&fs_name&dev_name&mount_point&test_dir
-      -- to PGO train.
-      * io_scheduler_name must be one of the names listed in
-        `cat $(find /sys/devices/ -path "*sda*scheduler")`, where sda is replace with the
-        block device of interest.  It will be used to switch to that scheduler.
-      * fs_name must match the driver name.  These are listed in
-        ${KERNEL_DIR}/fs as one the subdirectories
-      * dev_name must the basename to the corresponding path listed in
-        find /sys/ -name "scheduler"
-      * mount_point must be abspath to the mount point.  It must not contain
-        a space in the abspath.
-      * test_dir must be a decent size folder like similar to /usr/bin that
-        is used for grep tests and sequential read tests.  It also is
-        an abspath relative to mount_point.  Read only tests are only
-	performed in this directory.
+      PGO_P2P_URI - The URI must have a filename to replace the placeholder
+                    torrent.  (Only public domain assets or open source project
+                    torrents should be used.)
+      PGO_TRAINER_NETWORK_TCP_CONGESTIONS - string separated list from
+        /proc/sys/net/ipv4/tcp_allowed_congestion_control to select for
+        PGO training.
+      PGO_FILESYSTEMS_LIST - a string separated list of selected of
+        quintuples in this format -- ioscheduler_name&fs_name&dev_name&mount_point&test_dir
+        -- to PGO train.
+        * io_scheduler_name must be one of the names listed in
+          `cat $(find /sys/devices/ -path "*sda*scheduler")`, where sda is replace with the
+          block device of interest.  It will be used to switch to that scheduler.
+        * fs_name must match the driver name.  These are listed in
+          ${KERNEL_DIR}/fs as one the subdirectories
+        * dev_name must the basename to the corresponding path listed in
+          find /sys/ -name "scheduler"
+        * mount_point must be abspath to the mount point.  It must not contain
+          a space in the abspath.
+        * test_dir must be a decent size folder like similar to /usr/bin that
+          is used for grep tests and sequential read tests.  It also is
+          an abspath relative to mount_point.  Read only tests are only
+          performed in this directory.
 
       If it is not set, it will default to the following:
-      PGO_FILESYSTEMS_LIST="unk:unk:unk:/:/usr/bin"
+      PGO_FILESYSTEMS_LIST="unk&unk&unk&/&/usr/bin"
 
       Example:
       PGO_FILESYSTEMS_LIST="bfq&ext4&sda&/&/usr/bin kyber&bfs&sdb&/mnt/rock&/data mq-deadline&ext4&sda&/&/usr/bin"
+
+    References:
+
+      PGO patch:
+      https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/patch/?h=for-next/clang/pgo&id=a15058eaefffc37c31326b59fa08b267b2def603&id2=fca41af18e10318e4de090db47d9fa7169e1bf2f
+
+      PGO patch commit history:
+      https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=for-next/clang/pgo
+
+      profraw v6 and v7 compat patch:
+      https://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/clang-pgo-support-profraw-v6-and-v7.patch
+
+      Instructions for applying per-package user patches:
+      https://wiki.gentoo.org/wiki//etc/portage/patches
   </longdescription>
   <use>
     <flag name="cfi">Ensure that the Code Flow Integrity toolchain requirements

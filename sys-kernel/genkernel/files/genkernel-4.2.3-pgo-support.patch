@@ -14,9 +14,9 @@ has been tested working under normal user only.
 The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-18 10:15:58.297471226 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-18 10:16:20.647470868 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-18 12:20:22.859351733 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-18 12:21:54.020350274 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -184,9 +184,9 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  			;;
  		--help)
  			longusage
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-18 10:15:58.297471226 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-18 10:16:20.648470868 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-18 12:20:22.875351733 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-18 12:21:54.020350274 -0700
 @@ -128,6 +128,13 @@ compile_generic() {
  				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
  			fi
@@ -201,9 +201,9 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-
  			compile_cmd+=( "HOSTAR='$(tc-getBUILD_AR)'" )
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-18 10:15:58.298471226 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-18 10:16:20.648470868 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-18 12:20:22.876351733 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-18 12:21:54.021350274 -0700
 @@ -1031,6 +1031,25 @@ config_kernel() {
  		fi
  	fi
@@ -230,9 +230,9 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
  	if isTrue "${CMD_LLVM_KERNEL}"
  	then
  		local llvm_slot
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determineargs.sh
---- genkernel-4.2.3.orig/gen_determineargs.sh	2021-09-18 10:15:58.299471226 -0700
-+++ genkernel-4.2.3/gen_determineargs.sh	2021-09-18 10:16:20.649470868 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determineargs.sh
+--- genkernel-4.2.3.orig/gen_determineargs.sh	2021-09-18 12:20:22.878351733 -0700
++++ genkernel-4.2.3/gen_determineargs.sh	2021-09-18 12:21:54.022350274 -0700
 @@ -524,12 +524,20 @@ determine_real_args() {
  		can_write_log=yes
  	fi
@@ -256,9 +256,9 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genk
  
  	dump_debugcache
  
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.2.3/gen_funcs.sh
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.2.3/gen_funcs.sh
 --- genkernel-4.2.3.orig/gen_funcs.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_funcs.sh	2021-09-18 10:19:41.435467654 -0700
++++ genkernel-4.2.3/gen_funcs.sh	2021-09-18 12:21:54.023350274 -0700
 @@ -1,6 +1,14 @@
  #!/bin/bash
  # $Id: ab7a7cea08c423b465ffcbdda3909279138f9b97 $
@@ -312,9 +312,9 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.
  	then
  		gen_die "Cannot write to bootdir '${BOOTDIR}'!"
  	fi
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-18 10:15:58.300471226 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-18 10:16:20.651470868 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
+--- genkernel-4.2.3.orig/genkernel	2021-09-18 12:20:22.878351733 -0700
++++ genkernel-4.2.3/genkernel	2021-09-18 12:21:54.023350274 -0700
 @@ -80,6 +80,7 @@ LOGLEVEL=${LOGLEVEL:-1}
  source "${GK_SHARE}"/defaults/compression_methods.sh || small_die "Could not read '${GK_SHARE}/defaults/compression_methods.sh'"
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
@@ -482,19 +482,20 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  print_info 1 '' 1 0
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-18 10:15:58.301471226 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-18 10:16:20.651470868 -0700
-@@ -52,6 +52,30 @@ All that is needed to run genkernel is j
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-18 12:20:22.879351733 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-18 12:35:00.624337682 -0700
+@@ -52,6 +52,31 @@ All that is needed to run genkernel is j
  .\}
  .sp
  This would produce a kernel, asking you what how to configure it to your desire, leaving alone any existing compiled object files, but not installing anything\&.
 +.sp
 +PGO training requires you to pass --pgi on the first phase with either ALL, bzImage, kernel ACTIONs; one or several --pgt phases with the \fItrain\fR ACTION; --pgo on the last phase with either ALL, bzImage, kernel ACTIONs.
 +.sp
-+.SS "PGO STEPS"
++.SH "PGO STEPS"
 +.PP
-+(1) Emerge a source based kernel package
++(1) Emerge a source based kernel package >= 5.13 with applied PGO and profraw compat patches
++(See the \fBSee Also\fR section for how to obtain and apply patches)
 +.PP
 +.sp
 +(2) Run \fIgenkernel --pgi all\fR
@@ -506,7 +507,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 +(4) Run \fIgenkernel --pgt-all train\fR
 +.PP
 +.sp
-+(4 optional) Run \fIgenkernel --pgt-yt train\fR in X as a normal user
++(optional) Run \fIgenkernel --pgt-yt train\fR in X as a normal user
 +.PP
 +.sp
 +(5) Run \fIgenkernel --pgo all\fR
@@ -516,7 +517,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SH "ACTIONS"
  .sp
  An action tells genkernel what you want it to do \- the following actions are supported:
-@@ -80,6 +104,11 @@ Build only the kernel and the modules\&.
+@@ -80,6 +105,11 @@ Build only the kernel and the modules\&.
  .RS 4
  Build only the ramdisk/initramfs\&.
  .RE
@@ -528,7 +529,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SH "OPTIONS"
  .sp
  Genkernel supports the following options which alter its behaviour\&. Certain options have \fB\-\-no\-\fR variants which do the opposite thing\&. You can specify your options in any order\&.
-@@ -111,6 +140,11 @@ Turns on, or off, output in color using
+@@ -111,6 +141,11 @@ Turns on, or off, output in color using
  .RS 4
  Turns on or off the full post\-run cleanup for debug purposes\&.
  .RE
@@ -540,7 +541,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SS "KERNEL CONFIGURATION"
  .PP
  \fB\-\-\fR[\fBno\-\fR]\fBmenuconfig\fR
-@@ -356,6 +390,107 @@ to force usage of default kernel config\
+@@ -356,6 +391,107 @@ to force usage of default kernel config\
  Prefix to kernel module destination, modules will be installed in
  \fI<prefix>/lib/modules\fR\&.
  .RE
@@ -648,9 +649,21 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SS "LOW\-LEVEL COMPILATION OPTIONS"
  .PP
  \fB\-\-cfi\fR
-diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
+@@ -1763,3 +1899,11 @@ AUFS/Overlayfs by Zero_Chaos <zerochaos@
+ \fI/etc/initramfs\&.mounts\fR \- additional required mounts before switching to real root
+ .sp
+ \fI/etc/genkernel\&.conf\fR \- genkernel configuration file
++.sp
++\fIhttps://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/patch/?h=for-next/clang/pgo&id=a15058eaefffc37c31326b59fa08b267b2def603&id2=fca41af18e10318e4de090db47d9fa7169e1bf2f\fR \- PGO patch
++.sp
++\fIhttps://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=for-next/clang/pgo\fR \- PGO patch commit history
++.sp
++\fIhttps://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/clang-pgo-support-profraw-v6-and-v7.patch\fR \- profraw v6 and v7 compat patch
++.sp
++\fIhttps://wiki.gentoo.org/wiki//etc/portage/patches\fR - Instructions for applying per-package user patches
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-18 10:16:20.652470868 -0700
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-18 12:21:54.025350274 -0700
 @@ -0,0 +1,962 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
