@@ -299,7 +299,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.
  	let GK_TIME_RUNTIME_SECONDS=${GK_TIME_END}-${GK_TIME_START}
  	let GK_TIME_RUNTIME_DAYS=${GK_TIME_RUNTIME_SECONDS}/86400
 -	TZ= printf ">>> Ended on: $(date +"%Y-%m-%d %H:%M:%S") (after %d days%(%k hours %M minutes %S seconds)T)\n" ${GK_TIME_RUNTIME_DAYS} ${GK_TIME_RUNTIME_SECONDS} >> "${LOGFILE}" 2>/dev/null
-+	( ! isTrue "${HAS_PGT}" ) && TZ= printf ">>> Ended on: $(date +"%Y-%m-%d %H:%M:%S") (after %d days%(%k hours %M minutes %S seconds)T)\n" ${GK_TIME_RUNTIME_DAYS} ${GK_TIME_RUNTIME_SECONDS} >> "${LOGFILE}" 2>/dev/null
++	! isTrue "${HAS_PGT}" && TZ= printf ">>> Ended on: $(date +"%Y-%m-%d %H:%M:%S") (after %d days%(%k hours %M minutes %S seconds)T)\n" ${GK_TIME_RUNTIME_DAYS} ${GK_TIME_RUNTIME_SECONDS} >> "${LOGFILE}" 2>/dev/null
  }
  
  clear_tmpdir() {
@@ -715,7 +715,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +}
 +
 +marked_as_trained() {
-+	( ! is_genkernel ) && return
++	! is_genkernel && return
 +	if (( ${trained} == 1 )) ; then
 +		if [[ "${USER}" == "root" ]] ; then
 +			touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
@@ -1601,7 +1601,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +
 +check_pgo_requirements() {
 +	if ( is_genkernel && [[ -n "${CMD_PGI}" || -n "${CMD_PGO}" ]] ) \
-+		|| ( ( ! is_genkernel ) && true ) ; then
++		|| ( ! is_genkernel && true ) ; then
 +		check_pgo_profraw_fixes_applied
 +		check_pgo_applied
 +	fi
