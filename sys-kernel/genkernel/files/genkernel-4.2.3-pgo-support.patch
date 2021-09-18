@@ -14,9 +14,9 @@ has been tested working under normal user only.
 The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-16 20:32:37.793825600 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-16 20:34:20.980812614 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-17 22:29:48.330445637 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-17 22:30:20.309446691 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -184,9 +184,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  			;;
  		--help)
  			longusage
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-16 20:32:37.795825677 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-16 20:34:20.981812653 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-17 22:29:48.332445637 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-17 22:30:20.310446691 -0700
 @@ -128,6 +128,13 @@ compile_generic() {
  				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
  			fi
@@ -201,9 +201,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-
  			compile_cmd+=( "HOSTAR='$(tc-getBUILD_AR)'" )
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-16 20:32:37.796825715 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-16 20:34:20.982812692 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-17 22:29:48.334445637 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-17 22:30:20.311446691 -0700
 @@ -1031,6 +1031,25 @@ config_kernel() {
  		fi
  	fi
@@ -230,17 +230,80 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
  	if isTrue "${CMD_LLVM_KERNEL}"
  	then
  		local llvm_slot
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-16 20:32:37.799825831 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-16 20:38:22.270147100 -0700
-@@ -81,6 +81,7 @@ source "${GK_SHARE}"/defaults/compressio
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determineargs.sh
+--- genkernel-4.2.3.orig/gen_determineargs.sh	2021-09-17 22:29:48.336445637 -0700
++++ genkernel-4.2.3/gen_determineargs.sh	2021-09-17 23:26:12.422557151 -0700
+@@ -524,12 +524,20 @@ determine_real_args() {
+ 		can_write_log=yes
+ 	fi
+ 
+-	if ! isTrue "${can_write_log}"
++	if ! isTrue "${can_write_log}" && ! is_pgt
+ 	then
+ 		small_die "Cannot write to '${LOGFILE}'!"
+ 	fi
+ 
+-	echo ">>> Started genkernel v${GK_V} on: $(date +"%Y-%m-%d %H:%M:%S")" > "${LOGFILE}" 2>/dev/null || small_die "Could not write to '${LOGFILE}'!"
++	if ! is_pgt
++	then
++		echo ">>> Started genkernel v${GK_V} on: $(date +"%Y-%m-%d %H:%M:%S")" > "${LOGFILE}" 2>/dev/null || small_die "Could not write to '${LOGFILE}'!"
++	fi
++
++	if is_pgt
++	then
++		export CMD_TMPDIR="${HOME}/.cache"
++	fi
+ 
+ 	dump_debugcache
+ 
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.2.3/gen_funcs.sh
+--- genkernel-4.2.3.orig/gen_funcs.sh	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/gen_funcs.sh	2021-09-17 23:27:00.691558742 -0700
+@@ -161,12 +161,12 @@ print_info() {
+ 
+ 		if isTrue "${TODEBUGCACHE}"
+ 		then
+-			DEBUGCACHE="${DEBUGCACHE}${STR}"
++			( ! is_pgt ) && DEBUGCACHE="${DEBUGCACHE}${STR}"
+ 		else
+-			printf "%b" "${STR}" >> "${LOGFILE}"
++			( ! is_pgt ) && printf "%b" "${STR}" >> "${LOGFILE}"
+ 		fi
+ 
+-		if [ ${NEWLINE} -ne 0 ]
++		if [ ${NEWLINE} -ne 0 ] && ! is_pgt
+ 		then
+ 			if isTrue "${TODEBUGCACHE}"
+ 			then
+@@ -602,7 +602,7 @@ cleanup() {
+ 	GK_TIME_END=$(date +%s)
+ 	let GK_TIME_RUNTIME_SECONDS=${GK_TIME_END}-${GK_TIME_START}
+ 	let GK_TIME_RUNTIME_DAYS=${GK_TIME_RUNTIME_SECONDS}/86400
+-	TZ= printf ">>> Ended on: $(date +"%Y-%m-%d %H:%M:%S") (after %d days%(%k hours %M minutes %S seconds)T)\n" ${GK_TIME_RUNTIME_DAYS} ${GK_TIME_RUNTIME_SECONDS} >> "${LOGFILE}" 2>/dev/null
++	( ! is_pgt ) && TZ= printf ">>> Ended on: $(date +"%Y-%m-%d %H:%M:%S") (after %d days%(%k hours %M minutes %S seconds)T)\n" ${GK_TIME_RUNTIME_DAYS} ${GK_TIME_RUNTIME_SECONDS} >> "${LOGFILE}" 2>/dev/null
+ }
+ 
+ clear_tmpdir() {
+@@ -2117,7 +2117,7 @@ make_bootdir_writable() {
+ 			;;
+ 	esac
+ 
+-	if [ ! -w "${BOOTDIR}" ]
++	if [ ! -w "${BOOTDIR}" ] && ! is_pgt
+ 	then
+ 		gen_die "Cannot write to bootdir '${BOOTDIR}'!"
+ 	fi
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
+--- genkernel-4.2.3.orig/genkernel	2021-09-17 22:29:48.337445637 -0700
++++ genkernel-4.2.3/genkernel	2021-09-17 23:20:34.552546017 -0700
+@@ -80,6 +80,7 @@ LOGLEVEL=${LOGLEVEL:-1}
+ source "${GK_SHARE}"/defaults/compression_methods.sh || small_die "Could not read '${GK_SHARE}/defaults/compression_methods.sh'"
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
  source "${GK_SHARE}"/defaults/config.sh || small_die "Could not read '${GK_SHARE}/defaults/config.sh'"
- source "${GK_SHARE}"/gen_funcs.sh || small_die "Could not read '${GK_SHARE}/gen_funcs.sh'"
 +source "${GK_SHARE}"/gen_pgo.sh || small_die "Could not read '${GK_SHARE}/gen_pgo.sh'"
+ source "${GK_SHARE}"/gen_funcs.sh || small_die "Could not read '${GK_SHARE}/gen_funcs.sh'"
  source "${GK_SHARE}"/gen_cmdline.sh || small_die "Could not read '${GK_SHARE}/gen_cmdline.sh'"
  source "${GK_SHARE}"/gen_arch.sh || small_die "Could not read '${GK_SHARE}/gen_arch.sh'"
- source "${GK_SHARE}"/gen_determineargs.sh || small_die "Could not read '${GK_SHARE}/gen_determineargs.sh'"
 @@ -109,7 +110,7 @@ done
  unset GK_OPTION
  
@@ -356,7 +419,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  	# Configure kernel
  	config_kernel
  
-@@ -559,6 +654,56 @@ fi
+@@ -559,6 +654,43 @@ fi
  
  isTrue "${CMD_INSTALL}" && restore_boot_mount_state
  
@@ -366,20 +429,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
 +	rm -f "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +fi
 +
-+if isTrue "${CMD_PGT_ALL}" \
-+	|| isTrue "${CMD_PGT_2D_DRAW}" \
-+	|| isTrue "${CMD_PGT_3D_OGL1_3}" \
-+	|| isTrue "${CMD_PGT_CUSTOM}" \
-+	|| isTrue "${CMD_PGT_CRYPTO_STD}" \
-+	|| isTrue "${CMD_PGT_CRYPTO_COMMON}" \
-+	|| isTrue "${CMD_PGT_CRYPTO_LESS_COMMON}" \
-+	|| isTrue "${CMD_PGT_FILESYSTEM}" \
-+	|| isTrue "${CMD_PGT_EMERGE1}" \
-+	|| isTrue "${CMD_PGT_EMERGE2}" \
-+	|| isTrue "${CMD_PGT_MEMORY}" \
-+	|| isTrue "${CMD_PGT_NETWORK}" \
-+	|| isTrue "${CMD_PGT_P2P}" \
-+	|| isTrue "${CMD_PGT_WEBCAM}"
++if is_pgt
 +then
 +	if [ ! -e "${KERNEL_OUTPUTDIR}/.pgt-inited" ] ; then
 +		echo 1 > /sys/kernel/debug/pgo/reset
@@ -413,9 +463,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  print_info 1 '' 1 0
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-16 20:32:37.800825870 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-16 20:34:20.983812730 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-17 22:29:48.339445637 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-17 22:30:20.313446691 -0700
 @@ -52,6 +52,30 @@ All that is needed to run genkernel is j
  .\}
  .sp
@@ -579,10 +629,10 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SS "LOW\-LEVEL COMPILATION OPTIONS"
  .PP
  \fB\-\-cfi\fR
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-16 20:34:20.985812808 -0700
-@@ -0,0 +1,928 @@
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-17 23:34:00.700572582 -0700
+@@ -0,0 +1,960 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
@@ -614,6 +664,28 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	done
 +}
 +fi
++
++is_pgt() {
++	if isTrue "${CMD_PGT_ALL}" \
++		|| isTrue "${CMD_PGT_2D_DRAW}" \
++		|| isTrue "${CMD_PGT_3D_OGL1_3}" \
++		|| isTrue "${CMD_PGT_CUSTOM}" \
++		|| isTrue "${CMD_PGT_CRYPTO_STD}" \
++		|| isTrue "${CMD_PGT_CRYPTO_COMMON}" \
++		|| isTrue "${CMD_PGT_CRYPTO_LESS_COMMON}" \
++		|| isTrue "${CMD_PGT_FILESYSTEM}" \
++		|| isTrue "${CMD_PGT_EMERGE1}" \
++		|| isTrue "${CMD_PGT_EMERGE2}" \
++		|| isTrue "${CMD_PGT_MEMORY}" \
++		|| isTrue "${CMD_PGT_NETWORK}" \
++		|| isTrue "${CMD_PGT_P2P}" \
++		|| isTrue "${CMD_PGT_WEBCAM}" \
++		|| isTrue "${CMD_PGT_YT}"
++	then
++		return 0
++	fi
++	return 1
++}
 +
 +is_genkernel() {
 +	if (( "${PGO_DISTRO}" == "gentoo" )) ; then
@@ -918,7 +990,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	local READ_LIMIT=${PGO_MAX_FILESIZE_DEFAULT} # Don't read gigabytes / terabytes
 +	for f in ${sample_set[@]} ; do
 +		for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
-+			local rand=$(( ${RANDOM}${RANDOM} ))
++			local srand=$(echo "${RANDOM}" | sed -E -e "s|^[0]+||g") # 08907: value too great for base (error token is "08907")
++			local rand=$(( ${srand}${srand} ))
 +			local nbytes=$(( ${rand} % ${READ_LIMIT} ))
 +			print_info 1 "$(get_indent 1)>> Reading the first ${nbytes} bytes from ${f}"
 +			head -c ${nbytes} "${f}" 2>/dev/null > /dev/null && trained=1
@@ -951,8 +1024,10 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		for f in ${sample_set[@]} ; do
 +			for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
 +				local file_size=$(stat -c "%s" "${f}")
++				(( ${file_size} == 0 )) && continue # avoid mod by zero
 +				local npages=$((${file_size} / ${PAGESIZE}))
-+				local page_index=$(( ${RANDOM} % ${npages} ))
++				local srand1=$(echo "${RANDOM}" | sed -E -e "s|^[0]+||g") # 08907: value too great for base (error token is "08907")
++				local page_index=$(( ${srand} % ${npages} ))
 +				print_info 1 "$(get_indent 1)>> Reading ${f} at page_index ${page_index}."
 +				dd if="${f}" of="dump.dat" ibs=${KPAGESIZE}K skip=${page_index} count=1 && trained=1
 +				local size_x=$(stat -c "%s" "dump.dat")
@@ -980,6 +1055,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		dd if=/dev/zero of=${f} bs=${KPAGESIZE}K iflag=fullblock,count_bytes count=${PGO_MAX_FILESIZE_DEFAULT}
 +		for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
 +			local file_size=$(stat -c "%s" "${f}")
++			(( ${file_size} == 0 )) && continue # avoid mod by zero
 +			local npages=$((${file_size} / ${PAGESIZE}))
 +			local page_index=$(( ${RANDOM}${RANDOM} % ${npages} ))
 +			print_info 1 "$(get_indent 1)>> Writing ${f} at page_index ${page_index}."
@@ -1034,7 +1110,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		print_info 1 "$(get_indent 1)>> fs_name:  ${fs_name}"
 +		print_info 1 "$(get_indent 1)>> dev_name:  ${dev_name}"
 +		print_info 1 "$(get_indent 1)>> mount_point:  ${mount_point}"
-+		print_info 1 "$(get_indent 1)>> test_dir:  ${test_dir}"
++		print_info 1 "$(get_indent 1)>> test_dir (read-only):  ${test_dir}"
 +		if [[ "${mount_point}" == "" || "${mount_point}" == "." ]] ; then
 +			print_info 1 "$(get_indent 1)>> Mount point is empty or just a period.  Skipping this mount point.  quintuple: ${x}"
 +			continue
@@ -1057,13 +1133,17 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +			&& print_info 1 "$(get_indent 1)>> Failed to create PGO tmp dir for mountpoint.  Skipping test." \
 +			&& return
 +		ngroups=$((${ngroups} + 1))
-+		results[${d_i}]=$(_pgo_trainer_filesystem_sequential_reads ; echo $?)
++		_pgo_trainer_filesystem_sequential_reads
++		results[${d_i}]=$(echo $?)
 +		d_i=$((${d_i} + 1))
-+		results[${d_i}]=$(_pgo_trainer_filesystem_random_reads_single_page ; echo $?)
++		_pgo_trainer_filesystem_random_reads_single_page
++		results[${d_i}]=$(echo $?)
 +		d_i=$((${d_i} + 1))
-+		results[${d_i}]=$(_pgo_trainer_filesystem_random_writes_single_page ; echo $?)
++		_pgo_trainer_filesystem_random_writes_single_page
++		results[${d_i}]=$(echo $?)
 +		d_i=$((${d_i} + 1))
-+		results[${d_i}]=$(_pgo_trainer_filesystem_grep ; echo $?)
++		_pgo_trainer_filesystem_grep
++		results[${d_i}]=$(echo $?)
 +		d_i=$((${d_i} + 1))
 +
 +		# TODO multi file reads
@@ -1351,7 +1431,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +time.sleep(2*60)
 +driver.close()
 +EOF
-+		${EPYTHON} watch_video.py && trained=1
++		:;
++		python3 watch_video.py && trained=1
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"
@@ -1390,7 +1471,8 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +time.sleep(2*60)
 +driver.close()
 +EOF
-+		${EPYTHON} watch_video.py && trained=1
++		:;
++		python3 watch_video.py && trained=1
 +	popd
 +	[[ -d "${sandbox_dir}" && "${sandbox_dir}" != "." ]] \
 +		&& rm -rf "${sandbox_dir}"

@@ -89,7 +89,8 @@
         a space in the abspath.
       * test_dir must be a decent size folder like similar to /usr/bin that
         is used for grep tests and sequential read tests.  It also is
-        an abspath relative to mount_point.
+        an abspath relative to mount_point.  Read only tests are only
+	performed in this directory.
 
       If it is not set, it will default to the following:
       PGO_FILESYSTEMS_LIST="unk:unk:unk:/:/usr/bin"
