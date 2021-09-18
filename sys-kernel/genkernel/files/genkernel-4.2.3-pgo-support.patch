@@ -14,9 +14,9 @@ has been tested working under normal user only.
 The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-18 12:20:22.859351733 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-18 12:21:54.020350274 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-18 13:52:58.622129403 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-18 13:53:24.569130258 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -184,9 +184,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  			;;
  		--help)
  			longusage
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-18 12:20:22.875351733 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-18 12:21:54.020350274 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-18 13:52:58.623129403 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-18 13:53:24.570130258 -0700
 @@ -128,6 +128,13 @@ compile_generic() {
  				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
  			fi
@@ -201,9 +201,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-
  			compile_cmd+=( "HOSTAR='$(tc-getBUILD_AR)'" )
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-18 12:20:22.876351733 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-18 12:21:54.021350274 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-18 13:52:58.624129403 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-18 13:53:24.570130258 -0700
 @@ -1031,6 +1031,25 @@ config_kernel() {
  		fi
  	fi
@@ -230,9 +230,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
  	if isTrue "${CMD_LLVM_KERNEL}"
  	then
  		local llvm_slot
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determineargs.sh
---- genkernel-4.2.3.orig/gen_determineargs.sh	2021-09-18 12:20:22.878351733 -0700
-+++ genkernel-4.2.3/gen_determineargs.sh	2021-09-18 12:21:54.022350274 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determineargs.sh
+--- genkernel-4.2.3.orig/gen_determineargs.sh	2021-09-18 13:52:58.625129403 -0700
++++ genkernel-4.2.3/gen_determineargs.sh	2021-09-18 13:53:24.571130258 -0700
 @@ -524,12 +524,20 @@ determine_real_args() {
  		can_write_log=yes
  	fi
@@ -256,9 +256,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genk
  
  	dump_debugcache
  
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.2.3/gen_funcs.sh
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.2.3/gen_funcs.sh
 --- genkernel-4.2.3.orig/gen_funcs.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_funcs.sh	2021-09-18 12:21:54.023350274 -0700
++++ genkernel-4.2.3/gen_funcs.sh	2021-09-18 13:53:24.572130258 -0700
 @@ -1,6 +1,14 @@
  #!/bin/bash
  # $Id: ab7a7cea08c423b465ffcbdda3909279138f9b97 $
@@ -312,9 +312,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.
  	then
  		gen_die "Cannot write to bootdir '${BOOTDIR}'!"
  	fi
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-18 12:20:22.878351733 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-18 12:21:54.023350274 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
+--- genkernel-4.2.3.orig/genkernel	2021-09-18 13:52:58.626129403 -0700
++++ genkernel-4.2.3/genkernel	2021-09-18 13:53:24.572130258 -0700
 @@ -80,6 +80,7 @@ LOGLEVEL=${LOGLEVEL:-1}
  source "${GK_SHARE}"/defaults/compression_methods.sh || small_die "Could not read '${GK_SHARE}/defaults/compression_methods.sh'"
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
@@ -482,9 +482,9 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  print_info 1 '' 1 0
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-18 12:20:22.879351733 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-18 12:35:00.624337682 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-18 13:52:58.627129403 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-18 13:53:24.573130258 -0700
 @@ -52,6 +52,31 @@ All that is needed to run genkernel is j
  .\}
  .sp
@@ -661,10 +661,10 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 +\fIhttps://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/clang-pgo-support-profraw-v6-and-v7.patch\fR \- profraw v6 and v7 compat patch
 +.sp
 +\fIhttps://wiki.gentoo.org/wiki//etc/portage/patches\fR - Instructions for applying per-package user patches
-diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-18 12:21:54.025350274 -0700
-@@ -0,0 +1,962 @@
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-18 13:55:28.177134331 -0700
+@@ -0,0 +1,974 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
@@ -697,22 +697,34 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +}
 +fi
 +
++is_true() {
++	local arg="${1}"
++	if [[ -n "${arg}" && "${arg}" == "1" ]]
++	then
++		return 0
++	elif [[ -n "${arg}" && "${arg,,}" == "yes" ]]
++	then
++		return 0
++	fi
++	return 1
++}
++
 +is_pgt() {
-+	if isTrue "${CMD_PGT_ALL}" \
-+		|| isTrue "${CMD_PGT_2D_DRAW}" \
-+		|| isTrue "${CMD_PGT_3D_OGL1_3}" \
-+		|| isTrue "${CMD_PGT_CUSTOM}" \
-+		|| isTrue "${CMD_PGT_CRYPTO_STD}" \
-+		|| isTrue "${CMD_PGT_CRYPTO_COMMON}" \
-+		|| isTrue "${CMD_PGT_CRYPTO_LESS_COMMON}" \
-+		|| isTrue "${CMD_PGT_FILESYSTEM}" \
-+		|| isTrue "${CMD_PGT_EMERGE1}" \
-+		|| isTrue "${CMD_PGT_EMERGE2}" \
-+		|| isTrue "${CMD_PGT_MEMORY}" \
-+		|| isTrue "${CMD_PGT_NETWORK}" \
-+		|| isTrue "${CMD_PGT_P2P}" \
-+		|| isTrue "${CMD_PGT_WEBCAM}" \
-+		|| isTrue "${CMD_PGT_YT}"
++	if is_true "${CMD_PGT_ALL}" \
++		|| is_true "${CMD_PGT_2D_DRAW}" \
++		|| is_true "${CMD_PGT_3D_OGL1_3}" \
++		|| is_true "${CMD_PGT_CUSTOM}" \
++		|| is_true "${CMD_PGT_CRYPTO_STD}" \
++		|| is_true "${CMD_PGT_CRYPTO_COMMON}" \
++		|| is_true "${CMD_PGT_CRYPTO_LESS_COMMON}" \
++		|| is_true "${CMD_PGT_FILESYSTEM}" \
++		|| is_true "${CMD_PGT_EMERGE1}" \
++		|| is_true "${CMD_PGT_EMERGE2}" \
++		|| is_true "${CMD_PGT_MEMORY}" \
++		|| is_true "${CMD_PGT_NETWORK}" \
++		|| is_true "${CMD_PGT_P2P}" \
++		|| is_true "${CMD_PGT_WEBCAM}" \
++		|| is_true "${CMD_PGT_YT}"
 +	then
 +		return 0
 +	fi
