@@ -264,7 +264,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.
  # $Id: ab7a7cea08c423b465ffcbdda3909279138f9b97 $
  
 +HAS_PGT=0
-+if declare -f 2>/dev/null 1>/dev/null
++if declare -f is_pgt 2>/dev/null 1>/dev/null
 +then
 +	if is_pgt ; then
 +	        HAS_PGT=1
