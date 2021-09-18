@@ -632,7 +632,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
 +++ genkernel-4.2.3/gen_pgo.sh	2021-09-17 23:34:00.700572582 -0700
-@@ -0,0 +1,960 @@
+@@ -0,0 +1,962 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
@@ -990,8 +990,10 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	local READ_LIMIT=${PGO_MAX_FILESIZE_DEFAULT} # Don't read gigabytes / terabytes
 +	for f in ${sample_set[@]} ; do
 +		for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
-+			local srand=$(echo "${RANDOM}" | sed -E -e "s|^[0]+||g") # 08907: value too great for base (error token is "08907")
-+			local rand=$(( ${srand}${srand} ))
++			# 08907: value too great for base (error token is "08907")
++			local srand1=$(echo "${RANDOM}" | sed -E -e "s|^[0]+||g")
++			local srand2=$(echo "${RANDOM}" | sed -E -e "s|^[0]+||g")
++			local rand=$(( ${srand1}${srand2} ))
 +			local nbytes=$(( ${rand} % ${READ_LIMIT} ))
 +			print_info 1 "$(get_indent 1)>> Reading the first ${nbytes} bytes from ${f}"
 +			head -c ${nbytes} "${f}" 2>/dev/null > /dev/null && trained=1
