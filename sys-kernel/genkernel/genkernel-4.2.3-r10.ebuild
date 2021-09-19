@@ -109,7 +109,7 @@ IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
-REQUIRED_USE+=" cfi? ( llvm lto )
+REQUIRED_USE+=" cfi? ( amd64? ( !llvm? ( !lto ) ) )
 		lto? ( llvm )
 		shadowcallstack? ( cfi )"
 gen_scs_exclusion() {
@@ -121,7 +121,8 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 LLVM_SLOTS=(11 12 13 14)
 LLVM_LTO_SLOTS=(11 12 13 14)
-LLVM_CFI_SLOTS=(12 13 14)
+LLVM_CFI_ARM64_SLOTS=(12 13 14)
+LLVM_CFI_X86_SLOTS=(13 14)
 
 gen_llvm_rdepends() {
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -147,8 +148,23 @@ gen_lto_rdepends() {
 	done
 }
 
-gen_cfi_rdepends() {
-	for s in ${LLVM_CFI_SLOTS[@]} ; do
+gen_cfi_arm64_rdepends() {
+	for s in ${LLVM_CFI_ARM64_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/clang:${s}
+				=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
+				sys-devel/llvm:${s}
+				>=sys-devel/lld-${s}
+				=sys-libs/compiler-rt-${s}*
+				=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
+			)
+		"
+	done
+}
+
+gen_cfi_x86_rdepends() {
+	for s in ${LLVM_CFI_X86_SLOTS[@]} ; do
 		echo "
 			(
 				sys-devel/clang:${s}
@@ -180,9 +196,22 @@ RDEPEND="${PYTHON_DEPS}
 	sys-devel/libtool
 	virtual/pkgconfig
 	firmware? ( sys-kernel/linux-firmware )
+	cfi? (
+		amd64? (
+			llvm? ( || ( $(gen_cfi_x86_rdepends) ) )
+			|| (
+				>=sys-devel/gcc-5.1
+				|| ( $(gen_cfi_x86_rdepends) )
+			)
+		)
+		arm64? (
+			llvm? (
+				|| ( $(gen_cfi_arm64_rdepends) )
+			)
+		)
+	)
 	llvm? (
 		|| ( $(gen_llvm_rdepends) )
-		cfi? ( || ( $(gen_cfi_rdepends) ) )
 		lto? ( || ( $(gen_lto_rdepends) ) )
 	)
 "
@@ -206,6 +235,10 @@ src_unpack() {
 
 src_prepare() {
 	default
+
+	if use cfi && use arm64 && ! use llvm ; then
+		die "CFI requires the llvm USE flag on arm64"
+	fi
 
 	if [[ ${PV} == 9999* ]] ; then
 		einfo "Updating version tag"

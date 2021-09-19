@@ -234,7 +234,7 @@ diff -urp genkernel-4.0.10.orig/gen_configkernel.sh genkernel-4.0.10/gen_configk
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_NONE" "y"
 +	fi
 +
-+	if isTrue "${CMD_CFI}" && [ "${ARCH}" = "arm64" ]
++	if isTrue "${CMD_CFI}"
 +	then
 +		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for CFI support are set ..."
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_ARCH_SUPPORTS_CFI_CLANG" "y"
