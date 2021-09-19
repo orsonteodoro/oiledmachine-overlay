@@ -1,0 +1,19 @@
+Fixes:
+kernel/module.c:4488:8: error: no member named 'exit' in 'struct module'
+                mod->exit = *exit;
+                ~~~  ^
+
+Applies to x86-cfi-v3 (5140d56af9b8ee5584a90014c86ce6b174a7653f)
+--- a/kernel/module.c.orig	2021-09-19 01:36:56.776160111 -0700
++++ b/kernel/module.c	2021-09-19 01:40:05.746166338 -0700
+@@ -4453,8 +4453,10 @@ static void cfi_init(struct module *mod)
+ 	/* Fix init/exit functions to point to the CFI jump table */
+ 	if (init)
+ 		mod->init = *init;
++#ifdef CONFIG_MODULE_UNLOAD
+ 	if (exit)
+ 		mod->exit = *exit;
++#endif
+ 
+ 	cfi_module_add(mod, module_addr_min);
+ #endif

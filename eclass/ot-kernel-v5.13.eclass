@@ -679,6 +679,9 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-backport-df26327-for-5.13.patch"
 	elif [[ "${path}" =~ "cfi-x86-5.13-5140d56.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-5140d56-moved-for-5.13.patch"
+
+		# Add this to the end of the cfi commit list
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi
