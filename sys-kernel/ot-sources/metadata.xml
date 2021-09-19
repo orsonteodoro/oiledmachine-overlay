@@ -38,7 +38,7 @@
     MuQSS was End Of Life (EOL) with 5.12 series.
 
     BMQ has been renamed to Project C.  Project C merged both PDS and
-    BMQ.  C means cross.
+    BMQ allowing to choose either scheduler.  C means cross.
 
     In layman terms, O(1) is faster than O(log n).  O(log n) is faster than
     O(n).
@@ -64,15 +64,18 @@
     https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware
     for a list of hardware supporting IOMMU.
 
-    Compiler based optimizations are provided by GraySky2's kernel_compiler_patch 
-    and the O3 patch.
+    Compiler based optimizations are provided by GraySky2's
+    kernel_compiler_patch.
+
+    The O3 patch allows for O3 compiler optimiation is provided by the
+    zen kernel.
 
     Older point releases are removed to eliminate some of the previously
     announced 0-day exploits.
 
     4.14.x kernel series is kept around for vanilla TRESOR.
-    TRESOR for 5.x is experimental.  XTS with TRESOR is in Testing and
-    may require modding.
+    TRESOR for 5.x is experimental.  Only CBC mode is only recommended
+    and should only be used.
 
     Using TRESOR with fscrypt is currently not supported.  The ebuild
     developer is currently working towards that goal.  Changing the key
@@ -81,7 +84,115 @@
     with TRESOR support will address this problem.
 
     Only Long Term Support (LTS) kernel and those marked stable
-    in kernel.org are kept.
+    in kernel.org are kept.  However, feature patchsets typically do not
+    backport updates, so the latest stable should be used if you want updates
+    or bugfixes for patchsets.  For reliable working builds, use the
+    LTS series.
+
+    Kernel series | Patchset | 			     | LTS [1,2]
+    4.14						Y
+		    -ck / MuQSS				N
+		    -rt (RT_PREEMPT)			Y
+		    genpatches				Y
+		    kernel_compiler_patch 		N
+		    O3 [7]				N
+		    PDS					N
+		    TRESOR (AES-NI) [3,4]		y
+		    TRESOR (x86) [3,4]			y
+		    TRESOR (x86-64) [3]			Y
+		    UKSM [5]				N
+
+    5.4							Y
+		    -ck / MuQSS				N
+		    -rt	(RT_PREEMPT)			Y
+		    BMQ					N
+		    futex-wait-multiple			N
+		    futex2				N
+		    genpatches				Y
+		    kernel_compiler_patch		N
+		    TRESOR (AES-NI)			y
+		    TRESOR (x86)			y
+		    TRESOR (x86-64)			Y
+		    UKSM				N
+		    zen-muqss				N
+		    zen-sauce				N
+
+    5.10						Y
+		    -ck / MuQSS				N
+		    -rt	(RT_PREEMPT)			Y
+		    BMQ					N
+		    futex-wait-multiple			N
+		    futex2				N
+		    genpatches				Y
+		    kernel_compiler_patch		N
+		    Project C				N
+		    TCP BBR v2				N
+		    TRESOR (AES-NI)			y
+		    TRESOR (x86)			y
+		    TRESOR (x86-64)			Y
+		    UKSM				N
+		    zen-muqss				N
+		    zen-sauce				N
+
+    5.13						N
+		    -rt	(RT_PREEMPT)			N
+		    BMQ					N
+		    Clang PGO				S (6/2021)
+		    futex-wait-multiple			N
+		    futex2				N
+		    genpatches				A
+		    kernel_compiler_patch		N
+		    lru_gen				N
+		    Project C				N
+		    TCP BBR v2				A
+		    TRESOR (AES-NI)			I
+		    TRESOR (x86)			I
+		    TRESOR (x86-64)			I
+		    UKSM				N
+		    x86-cfi [6]				A
+		    zen-muqss				N
+		    zen-sauce				N
+
+    5.14						N
+		    -rt	(RT_PREEMPT)			A
+		    Clang PGO				S (6/2021)
+		    futex (futex-wait-multiple)		A
+		    futex2				A
+		    kernel_compiler_patch		A
+		    genpatches				A
+		    lru_gen				N
+		    Project C				A
+		    TCP BBR v2				A
+		    TRESOR (AES-NI)			I
+		    TRESOR (x86)			I
+		    TRESOR (x86-64)			I
+		    UKSM				N
+		    x86-cfi [6]				A
+		    zen-lru_gen				A
+		    zen-muqss				A
+		    zen-sauce				A
+
+    [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
+        third party patchsets
+    [2] Third party patchset LTS has provided updates
+    [3] only from the oiledmachine-overlay repo
+    [4] without correctness verification, due to lack of hardware or
+        configuration.  Correctness and build fixes extends only to common
+        device independent code.
+    [5] updates usually only once, which may indicate bugs or lack of
+        sufficient testing.  No versioning system between patch fixes.
+    [6] backported, but not intended for this series, but build time
+        fixes provided by ebuild maintainer
+
+    A - currently actively updatable
+    N - under the Patchset LTS indicates that the patchset is EOL or likely
+        EOL for that version which means that bug fixes and security updates
+        will not be provided.  This indicates a feature freeze, but
+        build time failures will be fixed by the ebuild maintainer.
+    I - inactive due to changing API, but future support depends on motivation
+    S - upstream indicated support
+    y - only partial LTS for building but without correctness verification
+    ? - unknown status
 
     EOL (End Of Life) stable kernels get dropped next update cycle which is
     typically a week.  The virtual/ot-sources-stable ebuild-package
@@ -93,9 +204,6 @@
     modules.  For those without binary only modules, use ot-sources-stable
     package.
 
-    The rt patchset may be dropped after several months if updates
-    are inactive.
-
     Please read the metadata.xml comments for more info.
   </longdescription>
   <upstream>
@@ -105,11 +213,19 @@
       https://github.com/orsonteodoro/oiledmachine-overlay/issues
     </bugs-to>
 
+    <!-- for bbr2
+https://github.com/google/bbr
+    -->
+
     <maintainer status="active" type="person">
-      <!-- for bmq, pds, Project C -->
+      <!-- for BMQ, PDS, Project C -->
       <email>cchalpha@gmail.com</email>
       <name>Alfred Chen</name>
     </maintainer>
+
+    <!-- for CFI maintainers, see
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/MAINTAINERS?h=for-next/clang/pgo&id=3bc68891829b776b9a5dd9174de05e69138af7b6#n4439
+    -->
 
     <maintainer status="active" type="project">
       <!-- for genpatches -->
@@ -130,17 +246,21 @@
     </maintainer>
 
     <maintainer status="active" type="person">
-      <!-- for the linux kernel -->
+      <!-- for the Linux kernel -->
       <name>Linus Torvalds</name>
     </maintainer>
 
     <maintainer status="active" type="person">
-      <!-- for muqss -->
+      <!-- for MuQSS -->
       <email>kernel at kolivas dot org</email>
       <name>Con Kolivas</name>
     </maintainer>
 
-    <!-- for rt -->
+    <!-- for PGO maintainers, see
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/MAINTAINERS?h=for-next/clang/pgo&id=3bc68891829b776b9a5dd9174de05e69138af7b6#n14390
+    -->
+
+    <!-- for -rt -->
     <bugs-to>
       https://wiki.linuxfoundation.org/realtime/communication/bugreport
     </bugs-to>
@@ -148,25 +268,28 @@
       https://wiki.linuxfoundation.org/realtime/documentation/start
     </doc>
 
+    <!-- for UKSM, see
+https://github.com/dolohow/uksm
+    -->
+
     <maintainer status="active" type="person">
-      <!-- for tresor aes-ni and i386, 2010 -->
+      <!-- for TRESOR AES-NI and i386, 2010 -->
       <email>tilo.mueller@informatik.uni-erlangen.de</email>
       <name>Tilo Mueller</name>
     </maintainer>
 
     <maintainer status="active" type="person">
-      <!-- for tresor (aes-128) i386, 2012 -->
+      <!-- for TRESOR (aes-128) i386, 2012 -->
       <email>johannes@jgoetzfried.de</email>
       <name>Johannes Goetzfried</name>
     </maintainer>
 
     <maintainer status="active" type="person">
-      <!-- for zen-tune patchset -->
+      <!-- for the zen patchset -->
       <email>jan.steffens@gmail.com</email>
       <name>Jan Alexander Steffens</name>
       <!-- aka heftig -->
     </maintainer>
-
   </upstream>
   <use>
     <flag name="bbrv2">Patches the kernel with BBRv2 TCP congestion control for
@@ -179,7 +302,7 @@
     <flag name="bmq-quick-fix">Patches the kernel with fixes to BMQ.</flag>
     <flag name="cfi">Ensures that the toolchain is ready for CFI support
       (for arm64 in production, and for x86_64 in development).  Control
-      Flow Integrity (CFI) is mitigation against ROP forward edge attacks and
+      Flow Integrity (CFI) is mitigation against forward edge attacks and
       backward edge attacks (through the shadowcallstack USE flag) to
       mitigate against arbitrary code execution.</flag>
     <flag name="cfs">Uses the CFS (Completely Fair Scheduling) CPU scheduler

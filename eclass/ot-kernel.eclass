@@ -13,6 +13,11 @@
 # The ot-kernel eclass defines common patching steps for any linux
 # kernel version.
 
+# bbr2:
+#   https://github.com/google/bbr/compare/2c85ebc...v2alpha-2021-07-07
+#   https://github.com/google/bbr/compare/f428e49...v2alpha-2021-08-21
+#   2c85ebc f428e49 - comes from /Makefile commit history in v2alpha branch
+#		      that corresponds to the same version for that tag
 # BMQ CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/BMQ
 #   https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
@@ -67,12 +72,11 @@
 #   https://github.com/dolohow/uksm
 # x86-cfi-v3:
 #   https://github.com/torvalds/linux/compare/d0ee23f9...samitolvanen:x86-cfi-v3
+#   d0ee23f9 - comes from commit of master
 # zen-kernel 5.{10..13}/futex-multiple-wait-v3:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex-multiple-wait-v3
 # zen-kernel 5.{10..14}/futex2:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex2
-# zen-kernel 5.{10..14}/bbr2:
-#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/bbr2
 # zen-kernel 5.14/futex:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex-multiple-wait-v3
 # zen-kernel 5.4/futex-backports:
@@ -226,7 +230,7 @@ BBRV2_COMMITS="${PATCH_BBRV2_COMMIT_A}^..${PATCH_BBRV2_COMMIT_D}" # [oldest,newe
 BBRV2_COMMITS_SHORT=\
 "${PATCH_BBRV2_COMMIT_A:0:7}-${PATCH_BBRV2_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 BBRV2_BASE_URI=\
-"https://github.com/torvalds/linux/compare/${BBRV2_COMMITS}"
+"https://github.com/google/bbr/compare/${BBRV2_COMMITS}"
 BBRV2_FN=\
 "bbrv2-${K_MAJOR_MINOR}-${BBRV2_COMMITS_SHORT}.patch"
 BBRV2_SRC_URI=\
