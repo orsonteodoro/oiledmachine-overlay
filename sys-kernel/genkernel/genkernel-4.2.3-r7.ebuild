@@ -132,7 +132,7 @@ IUSE+=" clang-pgo
 " # Added by the oiledmachine-overlay.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
-REQUIRED_USE+=" cfi? ( amd64? ( !llvm? ( !lto ) ) )
+REQUIRED_USE+=" cfi? ( llvm lto )
 		clang-pgo? (
 			llvm
 			|| (
@@ -254,15 +254,9 @@ RDEPEND+=" ${PYTHON_DEPS}
 	cfi? (
 		amd64? (
 			llvm? ( || ( $(gen_cfi_x86_rdepends) ) )
-			|| (
-				>=sys-devel/gcc-5.1
-				|| ( $(gen_cfi_x86_rdepends) )
-			)
 		)
 		arm64? (
-			llvm? (
-				|| ( $(gen_cfi_arm64_rdepends) )
-			)
+			llvm? ( || ( $(gen_cfi_arm64_rdepends) ) )
 		)
 	)
 	clang-pgo? (
@@ -333,10 +327,6 @@ src_unpack() {
 src_prepare() {
 	default
 
-	if use cfi && use arm64 && ! use llvm ; then
-		die "CFI requires the llvm USE flag on arm64"
-	fi
-
 	if [[ ${PV} == 9999* ]] ; then
 		einfo "Updating version tag"
 		GK_V="$(git describe --tags | sed 's:^v::')-git"
@@ -399,7 +389,7 @@ src_prepare() {
 	fi
 
 	if use llvm ; then
-		eapply "${FILESDIR}/${PN}-4.2.3-llvm-support-v4.patch"
+		eapply "${FILESDIR}/${PN}-4.2.3-llvm-support-v5.patch"
 	fi
 
 	if use clang-pgo ; then
