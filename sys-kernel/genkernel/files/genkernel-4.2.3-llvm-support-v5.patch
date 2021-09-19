@@ -275,7 +275,7 @@ diff -x '*.orig' -x '*.rej' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_NONE" "y"
 +	fi
 +
-+	if isTrue "${CMD_CFI}" && ( [ "${ARCH}" = "arm64" ] || [ "${ARCH}" = "amd64" ] )
++	if isTrue "${CMD_CFI}" && ( [ "${ARCH}" = "arm64" ] || [ "${ARCH}" = "x86_64" ] )
 +	then
 +		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for CFI support are set ..."
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_ARCH_SUPPORTS_CFI_CLANG" "y"
