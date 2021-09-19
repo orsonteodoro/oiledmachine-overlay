@@ -1072,7 +1072,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +				local file_size=$(stat -c "%s" "${f}")
 +				(( ${file_size} == 0 )) && continue # avoid mod by zero
 +				local npages=$((${file_size} / ${PAGESIZE}))
-+				local srand1=$(echo "${RANDOM}" | sed -E -e "s|^[0]+||g") # 08907: value too great for base (error token is "08907")
++				local srand=$(echo "${RANDOM}" | sed -E -e "s|^[0]+||g") # 08907: value too great for base (error token is "08907")
 +				local page_index=$(( ${srand} % ${npages} ))
 +				print_info 1 "$(get_indent 1)>> Reading ${f} at page_index ${page_index}."
 +				dd if="${f}" of="dump.dat" ibs=${KPAGESIZE}K skip=${page_index} count=1 && trained=1
