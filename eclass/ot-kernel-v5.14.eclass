@@ -23,8 +23,8 @@ PATCH_ALLOW_O3_COMMIT="40fecdec8599c28fc9d1003c301d2202e39db8a6"
 PATCH_BBRV2_COMMIT_A_PARENT="7d2a07b769330c34b4deabeed939325c77a7ec2f"
 PATCH_BBRV2_COMMIT_A="5da5aaa858dd7fac0afd439de4ff7565a00d4f32" # ancestor / oldest
 PATCH_BBRV2_COMMIT_D="fc632709b757850d62d2b295f749e80c19093da3" # descendant / newest
-PATCH_CFI_X86_COMMIT_A_PARENT="6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f"
-PATCH_CFI_X86_COMMIT_A="a69ae291e1cc2d08ae77c2029579c59c9bde5061" # ancestor / oldest
+PATCH_CFI_X86_COMMIT_A_PARENT="d0ee23f9d78be5531c4b055ea424ed0b489dfe9b"
+PATCH_CFI_X86_COMMIT_A="e4a7957ae2ae2b22476bdf71199afa5a2bc9142b" # ancestor / oldest
 PATCH_CFI_X86_COMMIT_D="5140d56af9b8ee5584a90014c86ce6b174a7653f" # descendant / newest
 PATCH_CK_COMMIT_A_PARENT=""
 PATCH_CK_COMMIT_A="" # ancestor / oldest
@@ -701,8 +701,6 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPS}" "${path}"
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/clang-pgo-support-profraw-v6-and-v7.patch"
-	elif [[ "${path}" =~ "cfi-x86-5.14-df26327.patch" ]] ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-backport-df26327-for-5.13.patch"
 	elif [[ "${path}" =~ "cfi-x86-5.14-5140d56.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-5140d56-moved-for-5.13.patch"
 

@@ -66,7 +66,7 @@
 # UKSM:
 #   https://github.com/dolohow/uksm
 # x86-cfi-v3:
-#   https://github.com/torvalds/linux/compare/v5.15-rc1...samitolvanen:x86-cfi-v3
+#   https://github.com/torvalds/linux/compare/d0ee23f9...samitolvanen:x86-cfi-v3
 # zen-kernel 5.{10..13}/futex-multiple-wait-v3:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex-multiple-wait-v3
 # zen-kernel 5.{10..14}/futex2:
