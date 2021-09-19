@@ -689,7 +689,7 @@ RDEPEND+="
 		>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	)
 	libsoup3? (
-		>=net-libs/libsoup-2.99.9:3[introspection?,${MULTILIB_USEDEP}]
+		>=net-libs/libsoup-2.99.9:3.0[introspection?,${MULTILIB_USEDEP}]
 	)
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
