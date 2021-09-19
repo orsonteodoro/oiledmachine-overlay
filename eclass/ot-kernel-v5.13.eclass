@@ -20,59 +20,71 @@ K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.210"
 PATCH_ALLOW_O3_COMMIT="56350f1ad743dbb258229fe93a896fb441c8c396"
-PATCH_CK_COMMIT_B="" # bottom / newest (not ready yet)
-PATCH_CK_COMMIT_T="" # top / oldest
-PATCH_FUTEX_COMMIT_B="74d0568c6f3aa4a5f2682f6d6b5a4d59044a762e" # bottom / newest
-PATCH_FUTEX_COMMIT_T="93ea4d3978ab84892db3d44445bc12c51fa627e3" # top / oldest
-PATCH_FUTEX2_COMMIT_B="db649ce1f5de12432be5bfedd8388eacc2f85efc" # bottom / newest
-PATCH_FUTEX2_COMMIT_T="f12c1f14276bce0f66e514b419e68506fb5bad55" # top / oldest
-PATCH_BBRV2_COMMIT_B="50a9bcbda886c487541cbe02e2ff6bf54107028c" # bottom / newest
-PATCH_BBRV2_COMMIT_T="03eeb3dfa421116c48e86376a2079fa7dd25e783" # top / oldest
+PATCH_BBRV2_COMMIT_A_PARENT="62fb9874f5da54fdb243003b386128037319b219"
+PATCH_BBRV2_COMMIT_A="03eeb3dfa421116c48e86376a2079fa7dd25e783" # ancestor / oldest
+PATCH_BBRV2_COMMIT_D="50a9bcbda886c487541cbe02e2ff6bf54107028c" # bottom / newest
+PATCH_CFI_X86_COMMIT_A_PARENT="6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f"
+PATCH_CFI_X86_COMMIT_A="a69ae291e1cc2d08ae77c2029579c59c9bde5061" # ancestor / oldest
+PATCH_CFI_X86_COMMIT_D="5140d56af9b8ee5584a90014c86ce6b174a7653f" # bottom / newest
+PATCH_CK_COMMIT_A_PARENT=""
+PATCH_CK_COMMIT_A="" # ancestor / oldest
+PATCH_CK_COMMIT_D="" # bottom / newest (not ready yet)
+PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
+PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
+PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # newest
+PATCH_FUTEX_COMMIT_A_PARENT="62fb9874f5da54fdb243003b386128037319b219"
+PATCH_FUTEX_COMMIT_A="93ea4d3978ab84892db3d44445bc12c51fa627e3" # ancestor / oldest
+PATCH_FUTEX_COMMIT_D="74d0568c6f3aa4a5f2682f6d6b5a4d59044a762e" # bottom / newest
+PATCH_FUTEX2_COMMIT_A_PARENT="62fb9874f5da54fdb243003b386128037319b219"
+PATCH_FUTEX2_COMMIT_A="f12c1f14276bce0f66e514b419e68506fb5bad55" # ancestor / oldest
+PATCH_FUTEX2_COMMIT_D="db649ce1f5de12432be5bfedd8388eacc2f85efc" # bottom / newest
 PATCH_KCP_COMMIT="aa17c1c6e894e75943950b0818af8695ae4a23b2"
-PATCH_LRU_GEN_COMMIT_B="2ae9740bc978f0c2b9b66014a172b903ef165deb" # bottom / newest
-PATCH_LRU_GEN_COMMIT_T="29426437a3440a1be20c387d29f43308dc3c0c73" # top / oldest
-PATCH_CLANG_PGO_COMMIT_B="fca41af18e10318e4de090db47d9fa7169e1bf2f" # oldest exclusive
-PATCH_CLANG_PGO_COMMIT_T="a15058eaefffc37c31326b59fa08b267b2def603" # newest
-PATCH_ZEN_MUQSS_COMMIT_B="00a9b574b607dc45c0435687d1f02dd0ab0deb6f" # bottom / newest
-PATCH_ZEN_MUQSS_COMMIT_T="0584e87d65d415614f632783c93daba73f8e13c2" # top / oldest
+PATCH_LRU_GEN_COMMIT_A_PARENT="62fb9874f5da54fdb243003b386128037319b219"
+PATCH_LRU_GEN_COMMIT_A="29426437a3440a1be20c387d29f43308dc3c0c73" # ancestor / oldest
+PATCH_LRU_GEN_COMMIT_D="2ae9740bc978f0c2b9b66014a172b903ef165deb" # bottom / newest
+PATCH_ZEN_MUQSS_COMMIT_A_PARENT="62fb9874f5da54fdb243003b386128037319b219"
+PATCH_ZEN_MUQSS_COMMIT_A="0584e87d65d415614f632783c93daba73f8e13c2" # ancestor / oldest
+PATCH_ZEN_MUQSS_COMMIT_D="00a9b574b607dc45c0435687d1f02dd0ab0deb6f" # bottom / newest
+# Corresponding to [5.15-rc1, x86-cfi-v3]
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
-# wget -O - https://github.com/torvalds/linux/compare/Y^..X.patch \
+# wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
 #   | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-# where Y is top and X is bottom
-PATCH_ZENSAUCE_COMMITS=\
-"c4ab3a5b4ba139dc102566f66fc5dba96e728ddb \
-617425f6f45fdc270a58344726ed4353a0bf027d \
-74e3df8f6e24c8c473b326a1d750de7d8b77b177 \
-aa17c1c6e894e75943950b0818af8695ae4a23b2 \
-56350f1ad743dbb258229fe93a896fb441c8c396 \
-41ce5e63eefb481bd4542505422858989bb2ef95 \
-0380e4196b867209d9608b4aca063ac8c7b3308c \
-3a68480245b4d09c65e62aced58868eb3d896e4a \
-d30d478300a8b426cb6a787c38f0eccc0bff6475 \
-6fbfd6ca165a7cf601bacb2bce656b280b0ff920 \
-104e1e00288490f7e24802e9098a342efa9e530b \
-830b77e138f36de9498887b931ec629d68b8d71f \
-aa69255290392c2c4f1d5aabc0f8b0dee02fd908 \
-0d1bf74b6ba31c78febdc5523f5c2cf8a56c1962 \
-1153e0cc8136663b5273b3d5c35197dce4d3c680 \
-bfbbf9734a3f01fb0677bd7ab7f6b1e96e2cb293 \
-ad88458494fbecc930dab11ff54430c083260c06 \
-b9e0aa2f3f28601a2ba794c927ffe4c7b3e59b60 \
-519eab42710cd0b9abab9dc4d5a313f80b66ecec \
-1eb5e3fe1b2094e9d50c442ff4d7feb59cfe9f60 \
-552079568fdb272fdcae5767cdb2877e9fdf269a \
-33da506ff25488b142d25efd3362f361cde9984b \
-732e5405c0311f1e32e6e4b0cd30fc104209e6bd \
-aec8f00a3066a2589dd6ea97d5f86d81c8d40c4a \
-2e4c5f603d9942213fe76b88323d832048f5ad8c \
-67850ef3720d3e2b363db6b347ab59544b433bd7 \
-efe513d7401c0d8ee779944de9997da960e257ce \
-28defae036a002630b50952e29ed454586ed4212 \
-6dd7ee7fb8d404b250b4b34f799110891ba0a7b9 \
-a4b5ddc398fa0a872d767992698e7a8d02443fee \
-df089c73ce7c2ecc19aaa81af627c8682f3e7aa9 \
-d74d8228e183455100493db818bced8b885768ed"
+# from A to D, where a is ancestor and d is descendant
+PATCH_ZENSAUCE_COMMITS=(
+c4ab3a5b4ba139dc102566f66fc5dba96e728ddb
+617425f6f45fdc270a58344726ed4353a0bf027d
+74e3df8f6e24c8c473b326a1d750de7d8b77b177
+aa17c1c6e894e75943950b0818af8695ae4a23b2
+56350f1ad743dbb258229fe93a896fb441c8c396
+41ce5e63eefb481bd4542505422858989bb2ef95
+0380e4196b867209d9608b4aca063ac8c7b3308c
+3a68480245b4d09c65e62aced58868eb3d896e4a
+d30d478300a8b426cb6a787c38f0eccc0bff6475
+6fbfd6ca165a7cf601bacb2bce656b280b0ff920
+104e1e00288490f7e24802e9098a342efa9e530b
+830b77e138f36de9498887b931ec629d68b8d71f
+aa69255290392c2c4f1d5aabc0f8b0dee02fd908
+0d1bf74b6ba31c78febdc5523f5c2cf8a56c1962
+1153e0cc8136663b5273b3d5c35197dce4d3c680
+bfbbf9734a3f01fb0677bd7ab7f6b1e96e2cb293
+ad88458494fbecc930dab11ff54430c083260c06
+b9e0aa2f3f28601a2ba794c927ffe4c7b3e59b60
+519eab42710cd0b9abab9dc4d5a313f80b66ecec
+1eb5e3fe1b2094e9d50c442ff4d7feb59cfe9f60
+552079568fdb272fdcae5767cdb2877e9fdf269a
+33da506ff25488b142d25efd3362f361cde9984b
+732e5405c0311f1e32e6e4b0cd30fc104209e6bd
+aec8f00a3066a2589dd6ea97d5f86d81c8d40c4a
+2e4c5f603d9942213fe76b88323d832048f5ad8c
+67850ef3720d3e2b363db6b347ab59544b433bd7
+efe513d7401c0d8ee779944de9997da960e257ce
+28defae036a002630b50952e29ed454586ed4212
+6dd7ee7fb8d404b250b4b34f799110891ba0a7b9
+a4b5ddc398fa0a872d767992698e7a8d02443fee
+df089c73ce7c2ecc19aaa81af627c8682f3e7aa9
+d74d8228e183455100493db818bced8b885768ed
+)
 
 # LEFT_ZENTUNE:RIGHT_ZENSAUCE
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
@@ -81,25 +93,24 @@ ad88458494fbecc930dab11ff54430c083260c06:d30d478300a8b426cb6a787c38f0eccc0bff647
 #ZEN: INTERACTIVE: Use BFQ as our elevator (ad88458) needs \
 #ZEN: Add CONFIG to rename the mq-deadline scheduler (d30d478)
 
-# top / oldest, bottom / newest
+# ancestor / oldest, bottom / newest
 # Diced to let user can choose between UKSM, KSWAPD, OOMD
 PATCH_DEFER_MADVISE_COMMIT=\
 "2a92000db1307319f691020858a443495e40f7e5"
-PATCH_ZENTUNE_COMMITS=\
-"bfbbf9734a3f01fb0677bd7ab7f6b1e96e2cb293 \
-ad88458494fbecc930dab11ff54430c083260c06 \
-b9e0aa2f3f28601a2ba794c927ffe4c7b3e59b60 \
-519eab42710cd0b9abab9dc4d5a313f80b66ecec \
-1eb5e3fe1b2094e9d50c442ff4d7feb59cfe9f60 \
-552079568fdb272fdcae5767cdb2877e9fdf269a \
-33da506ff25488b142d25efd3362f361cde9984b \
-732e5405c0311f1e32e6e4b0cd30fc104209e6bd"
+PATCH_ZENTUNE_COMMITS=(
+bfbbf9734a3f01fb0677bd7ab7f6b1e96e2cb293
+ad88458494fbecc930dab11ff54430c083260c06
+b9e0aa2f3f28601a2ba794c927ffe4c7b3e59b60
+519eab42710cd0b9abab9dc4d5a313f80b66ecec
+1eb5e3fe1b2094e9d50c442ff4d7feb59cfe9f60
+552079568fdb272fdcae5767cdb2877e9fdf269a
+33da506ff25488b142d25efd3362f361cde9984b
+732e5405c0311f1e32e6e4b0cd30fc104209e6bd
+)
 PATCH_BFQ_DEFAULT="ad88458494fbecc930dab11ff54430c083260c06"
-PATCH_ZENSAUCE_BL="
-	${PATCH_ALLOW_O3_COMMIT}
-	${PATCH_BFQ_DEFAULT}
+PATCH_ZENSAUCE_BL=(
 	${PATCH_KCP_COMMIT}
-"
+)
 
 # --
 
@@ -153,6 +164,43 @@ ZEN_MUQSS_EXCLUDED_COMMITS=(
 356947633390e5b19dd47780cebf0eae49666d27
 )
 
+# Have to pull and apply one-by-one because of already applied commits
+CFI_X86_COMMITS=(
+a69ae291e1cc2d08ae77c2029579c59c9bde5061
+76ae847497bc5207c479de5e2ac487270008b19b
+4eb6bd55cfb22ffc20652732340c4962f3ac9a91
+adac17e3f61f54927b961d97bd303dd5795a307b
+c0a5c81ca9bedaf38356a6290bf895313fd7361c
+d20758951f8f28c0ee1b2a8a6bb8189858083895
+6563139d90ad6178a990d051c7980f0998b5d2e8
+42a7ba1695fcd534216aa3712a6cf42da3340527
+156102fe0bb669f40f2fd27856b21f9fa8157090
+4e59869aa6550657cb148ad49835605660ec9b88
+6f20fa2dfa549401860479328371f0d5cee9b114
+6d2ef226f2f18d530e48ead0cb5704505628b797
+df26327ea097eb78e7967c45df6b23010c43c28d
+d0ee23f9d78be5531c4b055ea424ed0b489dfe9b
+e4a7957ae2ae2b22476bdf71199afa5a2bc9142b
+1f848174ef6d4fbc580105a82a84ab620b914f93
+1bc37159cde1584960e084349c4ca8682d2c73d2
+ed25076c4c69a4713a845ed94c76e66cc392a581
+640709f99a33f9d69e916581faed36e895219454
+a4d746a3e8ae8218e77edef716979ef84a8a632f
+0f99cdb7d089ce4148d0c3fcb7efd69cd9a8471f
+f1f57f9b88b951d2746c0e8cb521f530690b8526
+c3399a0a37a474635ae779d41bd1f55e9ac70cc1
+82e2c6d52b822d601c6f9be7c004c894c5268e5d
+782ee7f04a7780d11b9e64b6e6fc9b963f2b1892
+08ac163623b2cadb66f974df6c5a2af402c36609
+1041fe21a424a065e7c862f63ceb4ee5abb34ebb
+5d5535be3a316f800843d1da3a96257eccbfb315
+d710665e6be5b9b820f85787951288c2885ad964
+5140d56af9b8ee5584a90014c86ce6b174a7653f
+)
+
+CFI_EXCLUDE_COMMITS=(
+)
+
 
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
@@ -160,10 +208,12 @@ KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex-wait-multiple
 futex2 +genpatches +kernel-compiler-patch lru_gen lto +O3 prjc rt
 shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
-tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce -zen-tune"
+tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce zen-sauce-all
+-zen-tune"
 IUSE+=" clang-pgo"
 REQUIRED_USE+="
 	^^ ( cfs prjc zen-muqss )
+	O3? ( zen-sauce )
 	prjc? ( !rt )
 	shadowcallstack? ( cfi )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
@@ -172,6 +222,7 @@ REQUIRED_USE+="
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
+	zen-sauce-all? ( zen-sauce )
 	zen-tune? ( zen-sauce )"
 
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
@@ -306,7 +357,19 @@ gen_clang_pgo_rdepend() {
 	done
 }
 
-RDEPEND+=" cfi? ( || ( $(gen_cfi_rdepend 12 14) ) )"
+RDEPEND+=" cfi? (
+		arm64? (
+			|| ( $(gen_cfi_rdepend 12 14) )
+		)
+		amd64? (
+			clang? ( || ( $(gen_cfi_rdepend 13 14) ) )
+			|| (
+				|| ( $(gen_cfi_rdepend 13 14) )
+				>=sys-devel/gcc-5.1
+			)
+		)
+	)
+"
 RDEPEND+=" clang-pgo? (
 		|| ( $(gen_clang_pgo_rdepend 13 14) )
 		sys-kernel/genkernel[clang-pgo]
@@ -404,6 +467,7 @@ gen_kcp_ma_uri() {
 
 SRC_URI+=" "$(gen_kcp_ma_uri)
 SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
+	   cfi? ( amd64? ( ${CFI_X86_SRC_URIS} ) )
 	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
 	   futex2? ( ${FUTEX2_SRC_URI} )
 	   genpatches? (
@@ -421,7 +485,6 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
 	   lru_gen? ( ${LRU_GEN_SRC_URI} )
-	   O3? ( ${O3_ALLOW_SRC_URI} )
 	   prjc? ( ${PRJC_SRC_URI} )
 	   rt? ( ${RT_SRC_URI} )
 	   tresor? (
@@ -466,16 +529,20 @@ ewarn
 #ewarn
 #	fi
 
-	if ! use arm64 && use cfi ; then
-ewarn
-ewarn "CFI is only offered on the arm64 platform."
-ewarn
-	fi
 	if ! use arm64 && use shadowcallstack ; then
 ewarn
 ewarn "ShadowCallStack is only offered on the arm64 platform."
 ewarn
 	fi
+
+	if use cfi && use amd64 ; then
+ewarn
+ewarn "The CFI patch for x86-64 is in development and originally for the"
+ewarn "5.15 series."
+ewarn
+	fi
+
+	ewarn "This series will be removed in the next update cycle."
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes
@@ -610,6 +677,12 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/clang-pgo-support-profraw-v6-and-v7.patch"
+	elif [[ "${path}" =~ "cfi-x86-5.13-6d2ef22.patch" ]] ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-backport-6d2ef22-for-5.13.patch"
+	elif [[ "${path}" =~ "cfi-x86-5.13-df26327.patch" ]] ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-backport-df26327-for-5.13.patch"
+	elif [[ "${path}" =~ "cfi-x86-5.13-5140d56.patch" ]] ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-5140d56-moved-for-5.13.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

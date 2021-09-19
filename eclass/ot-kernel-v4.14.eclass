@@ -19,8 +19,9 @@ K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.162"
-PATCH_CK_COMMIT_B="78f861790848e83e6c98cd8f3408dbad7c9f4c3d" # bottom / oldest
-PATCH_CK_COMMIT_T="fbc0b4595aeccc2cc03e292ac8743565b3d3037b" # top / newest
+PATCH_CK_COMMIT_A_PARENT="bebc6082da0a9f5d47a1ea2edc099bf671058bd4"
+PATCH_CK_COMMIT_A="fbc0b4595aeccc2cc03e292ac8743565b3d3037b" # ancestor / oldest
+PATCH_CK_COMMIT_D="78f861790848e83e6c98cd8f3408dbad7c9f4c3d" # descendant / newest
 PATCH_KCP_COMMIT="c53ae690ee282d129fae7e6e10a4c00e5030d588" # GraySky2's kernel_compiler_patch
 PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
@@ -255,7 +256,7 @@ function ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "${O3_CO_FN}" ]] ; then
 		_tpatch "${PATCH_OPS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/O3-config-option-7d0295dc49233d9ddff5d63d5bdc24f1e80da722-fix-for-4.14.patch"
+"${FILESDIR}/O3-config-option-7d0295d-fix-for-4.14.patch"
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 		ot-kernel_apply_tresor_fixes

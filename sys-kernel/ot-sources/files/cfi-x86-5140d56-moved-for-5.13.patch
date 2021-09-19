@@ -1,0 +1,12 @@
+Moved patch a little up to avoid merge conflicts with PGO patch
+Corresponds to 5140d56af9b8ee5584a90014c86ce6b174a7653f
+--- a/arch/x86/Kconfig.orig	2021-09-18 21:09:06.519630557 -0700
++++ b/arch/x86/Kconfig	2021-09-18 21:14:18.575640840 -0700
+@@ -102,6 +102,7 @@ config X86
+ 	select ARCH_SUPPORTS_ATOMIC_RMW
+ 	select ARCH_SUPPORTS_DEBUG_PAGEALLOC
+ 	select ARCH_SUPPORTS_NUMA_BALANCING	if X86_64
++	select ARCH_SUPPORTS_CFI_CLANG		if X86_64 && CLANG_VERSION >= 130000
+ 	select ARCH_SUPPORTS_KMAP_LOCAL_FORCE_MAP	if NR_CPUS <= 4096
+ 	select ARCH_SUPPORTS_LTO_CLANG		if X86_64
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN	if X86_64

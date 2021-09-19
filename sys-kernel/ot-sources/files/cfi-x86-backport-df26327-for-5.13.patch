@@ -1,0 +1,33 @@
+Backport of df26327ea097eb78e7967c45df6b23010c43c28d
+--- a/Documentation/admin-guide/README.rst.orig	2021-06-27 15:21:11.000000000 -0700
++++ b/Documentation/admin-guide/README.rst	2021-09-18 21:01:13.608614974 -0700
+@@ -259,7 +259,7 @@ Configuring the kernel
+ Compiling the kernel
+ --------------------
+ 
+- - Make sure you have at least gcc 4.9 available.
++ - Make sure you have at least gcc 5.1 available.
+    For more information, refer to :ref:`Documentation/process/changes.rst <changes>`.
+ 
+    Please note that you can still run a.out user programs with this kernel.
+--- a/Documentation/translations/zh_CN/admin-guide/README.rst.orig	2021-06-27 15:21:11.000000000 -0700
++++ b/Documentation/translations/zh_CN/admin-guide/README.rst	2021-09-18 21:01:38.119615781 -0700
+@@ -223,7 +223,7 @@ 配置内核
+ 编译内核
+ ---------
+ 
+- - 确保您至少有gcc 4.9可用。
++ - 确保您至少有gcc 5.1可用。
+    有关更多信息，请参阅 :ref:`Documentation/process/changes.rst <changes>` 。
+ 
+    请注意，您仍然可以使用此内核运行a.out用户程序。
+--- a/include/linux/compiler_attributes.h.orig	2021-09-18 20:59:43.542612006 -0700
++++ b/include/linux/compiler_attributes.h	2021-09-18 21:02:45.059617987 -0700
+@@ -54,7 +54,6 @@
+  * compiler should see some alignment anyway, when the return value is
+  * massaged by 'flags = ptr & 3; ptr &= ~3;').
+  *
+- * Optional: only supported since gcc >= 4.9
+  * Optional: not supported by icc
+  *
+  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-assume_005faligned-function-attribute

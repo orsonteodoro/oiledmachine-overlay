@@ -20,48 +20,53 @@ K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.205"
 PATCH_ALLOW_O3_COMMIT="228e792a116fd4cce8856ea73f2958ec8a241c0c"
-PATCH_CK_COMMIT_B="13f5f8abb25489af1cc019a4a3bc83cced6da67c" # bottom / newest
-PATCH_CK_COMMIT_T="35f6640868573a07b1291c153021f5d75749c15e" # top / oldest
-PATCH_FUTEX_COMMIT_B="f678870308608b485d1c771509208c93eab8538a" # bottom / newest
-PATCH_FUTEX_COMMIT_T="9fd101849c8a3324c6038ef31fe08a528f7a6fe4" # top / oldest
-PATCH_FUTEX2_COMMIT_B="65d8ec592b14a8c75ce2a04bfef5a188cd279d00" # bottom / newest
-PATCH_FUTEX2_COMMIT_T="4f6d01d9753e7ff0e6ca0ab6082f8b75256cdb57" # top / oldest
-PATCH_BBRV2_COMMIT_B="00ac5e0aceb8f6d56065072ddc71b7324bbb48ce" # bottom / newest
-PATCH_BBRV2_COMMIT_T="c13e23b9782c9a7f4bcc409bfde157e44a080e82" # top / oldest
+PATCH_BBRV2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442"
+PATCH_BBRV2_COMMIT_A="c13e23b9782c9a7f4bcc409bfde157e44a080e82" # ancestor / oldest
+PATCH_BBRV2_COMMIT_D="00ac5e0aceb8f6d56065072ddc71b7324bbb48ce" # bottom / newest
+PATCH_CK_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442"
+PATCH_CK_COMMIT_A="35f6640868573a07b1291c153021f5d75749c15e" # ancestor / oldest
+PATCH_CK_COMMIT_D="13f5f8abb25489af1cc019a4a3bc83cced6da67c" # bottom / newest
+PATCH_FUTEX_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442"
+PATCH_FUTEX_COMMIT_A="9fd101849c8a3324c6038ef31fe08a528f7a6fe4" # ancestor / oldest
+PATCH_FUTEX_COMMIT_D="f678870308608b485d1c771509208c93eab8538a" # bottom / newest
+PATCH_FUTEX2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442"
+PATCH_FUTEX2_COMMIT_A="4f6d01d9753e7ff0e6ca0ab6082f8b75256cdb57" # ancestor / oldest
+PATCH_FUTEX2_COMMIT_D="65d8ec592b14a8c75ce2a04bfef5a188cd279d00" # bottom / newest
 PATCH_KCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8"
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
-# wget -O - https://github.com/torvalds/linux/compare/Y^..X.patch \
+# wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
 #   | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-# where Y is top and X is bottom
-PATCH_ZENSAUCE_COMMITS=\
-"dda238180bacda4c39f71dd16d754a48da38e676 \
-9a2e0d950bfd77fb51a42a5fc7e81a9187606c38 \
-5b3d9f2372600c3b908b1bd0e8c9b8c6ed351fa2 \
-986ea2483af3ba52c0e6c9e647c05c753a548fb8 \
-228e792a116fd4cce8856ea73f2958ec8a241c0c \
-b81ab9b618d694217a54b5d2de70c7f37d3f3e07 \
-4ace3c6c50dbd58ee5f200a5461289d0491873a6 \
-0bf1b8c445de4481942ca8ace8dc209ece865bd3 \
-513af58e2e4aa8267b1eebc1cd156e3e2a2a33e3 \
-28eaff69b01d9248cac394cce37361d0d6a52714 \
-973d42f99af15b2e610204fbe8252251ed7cc8c1 \
-890ac858741436a40c274efb3514c5f6a96c7c80 \
-0cbcc41992693254e5e4c7952853c6aa7404f28e \
-9b6c7af596e209356850e0991969df68f396aea6 \
-b5e9497d44347c16e732f6ea8838a79a64694b36 \
-7e5629d0fc7ed407babc036c1bc7910d9c73dbef \
-0e9fea26940d7e6e784dcf57909428138b8109e8 \
-fade4cc2bf56ce6c563c04764224b6b84a45587f \
-b7b24b494b62e02c21a9a349da2d036849f9dd8b \
-b7b984993f303b89dd738c26f8742cfcf0ac98ea \
-8cd3f16931b2a05a693bbfc093d44fd504c67700 \
-843f85a8fb80f3b8e4de4ca3c0cab34730cc1b33 \
-5dc3c67b4c2497187c2e4331a4822cb52db9aa65 \
-3f2c3d43bb1330953e090c01f8dfb6a4701bbac4 \
-223b7e095efa96045c164f3bf3576e1d1f599946 \
-2b52b792670d6c1a93d086a10c6872575e849c17 \
-e1b127aa22601f9cb2afa3daad4c69e6a42a89f5"
+# where A is top parent and D
+PATCH_ZENSAUCE_COMMITS=(
+dda238180bacda4c39f71dd16d754a48da38e676
+9a2e0d950bfd77fb51a42a5fc7e81a9187606c38
+5b3d9f2372600c3b908b1bd0e8c9b8c6ed351fa2
+986ea2483af3ba52c0e6c9e647c05c753a548fb8
+228e792a116fd4cce8856ea73f2958ec8a241c0c
+b81ab9b618d694217a54b5d2de70c7f37d3f3e07
+4ace3c6c50dbd58ee5f200a5461289d0491873a6
+0bf1b8c445de4481942ca8ace8dc209ece865bd3
+513af58e2e4aa8267b1eebc1cd156e3e2a2a33e3
+28eaff69b01d9248cac394cce37361d0d6a52714
+973d42f99af15b2e610204fbe8252251ed7cc8c1
+890ac858741436a40c274efb3514c5f6a96c7c80
+0cbcc41992693254e5e4c7952853c6aa7404f28e
+9b6c7af596e209356850e0991969df68f396aea6
+b5e9497d44347c16e732f6ea8838a79a64694b36
+7e5629d0fc7ed407babc036c1bc7910d9c73dbef
+0e9fea26940d7e6e784dcf57909428138b8109e8
+fade4cc2bf56ce6c563c04764224b6b84a45587f
+b7b24b494b62e02c21a9a349da2d036849f9dd8b
+b7b984993f303b89dd738c26f8742cfcf0ac98ea
+8cd3f16931b2a05a693bbfc093d44fd504c67700
+843f85a8fb80f3b8e4de4ca3c0cab34730cc1b33
+5dc3c67b4c2497187c2e4331a4822cb52db9aa65
+3f2c3d43bb1330953e090c01f8dfb6a4701bbac4
+223b7e095efa96045c164f3bf3576e1d1f599946
+2b52b792670d6c1a93d086a10c6872575e849c17
+e1b127aa22601f9cb2afa3daad4c69e6a42a89f5
+)
 
 #--
 
@@ -75,21 +80,21 @@ PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE="
 #ZEN: INTERACTIVE: Use BFQ as our elevator(0cbcc41) needs \
 #ZEN: Add CONFIG to rename the mq-deadline scheduler (513af58)
 
-# top / oldest, bottom / newest
-PATCH_ZENTUNE_COMMITS=\
-"890ac858741436a40c274efb3514c5f6a96c7c80 \
-9b6c7af596e209356850e0991969df68f396aea6 \
-b5e9497d44347c16e732f6ea8838a79a64694b36 \
-7e5629d0fc7ed407babc036c1bc7910d9c73dbef \
-0e9fea26940d7e6e784dcf57909428138b8109e8 \
-fade4cc2bf56ce6c563c04764224b6b84a45587f \
-b7b24b494b62e02c21a9a349da2d036849f9dd8b"
+# ancestor / oldest, bottom / newest
+PATCH_ZENTUNE_COMMITS=(
+890ac858741436a40c274efb3514c5f6a96c7c80
+0cbcc41992693254e5e4c7952853c6aa7404f28e
+9b6c7af596e209356850e0991969df68f396aea6
+b5e9497d44347c16e732f6ea8838a79a64694b36
+7e5629d0fc7ed407babc036c1bc7910d9c73dbef
+0e9fea26940d7e6e784dcf57909428138b8109e8
+fade4cc2bf56ce6c563c04764224b6b84a45587f
+b7b24b494b62e02c21a9a349da2d036849f9dd8b
+)
 PATCH_BFQ_DEFAULT="0cbcc41992693254e5e4c7952853c6aa7404f28e"
-PATCH_ZENSAUCE_BL="
-	${PATCH_ALLOW_O3_COMMIT}
-	${PATCH_BFQ_DEFAULT}
+PATCH_ZENSAUCE_BL=(
 	${PATCH_KCP_COMMIT}
-"
+)
 
 ZEN_MUQSS_COMMITS=(
 9d6b3eef3a1ec22d4d3c74e0b773ff52d3b3a209
@@ -128,15 +133,17 @@ KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 IUSE+=" ${KCP_IUSE} bbrv2 +cfs clang disable_debug futex-wait-multiple futex2
 +genpatches +kernel-compiler-patch muqss +O3 prjc rt tresor tresor_aesni
 tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
-zen-muqss zen-sauce -zen-tune"
+zen-muqss zen-sauce zen-sauce-all -zen-tune"
 REQUIRED_USE+="
 	^^ ( cfs muqss prjc zen-muqss )
+	O3? ( zen-sauce )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
 	tresor_i686? ( tresor )
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
+	zen-sauce-all? ( zen-sauce )
 	zen-tune? ( zen-sauce )"
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
@@ -299,7 +306,6 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
 	   muqss? ( ${CK_SRC_URI} )
-	   O3? ( ${O3_ALLOW_SRC_URI} )
 	   prjc? ( ${PRJC_SRC_URI} )
 	   rt? ( ${RT_SRC_URI} )
 	   tresor? (

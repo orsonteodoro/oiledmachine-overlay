@@ -65,6 +65,8 @@
 #   https://www1.informatik.uni-erlangen.de/tresor
 # UKSM:
 #   https://github.com/dolohow/uksm
+# x86-cfi-v3:
+#   https://github.com/torvalds/linux/compare/v5.15-rc1...samitolvanen:x86-cfi-v3
 # zen-kernel 5.{10..13}/futex-multiple-wait-v3:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex-multiple-wait-v3
 # zen-kernel 5.{10..14}/futex2:
@@ -183,23 +185,7 @@ gen_zensauce_uris()
 	local s=""
 	for (( c=0 ; c < ${len} ; c+=1 )) ; do
 		local id="${commits[c]}"
-		s=" ${s} ${ZENSAUCE_BASE_URI}${id}.patch -> zen-sauce-${K_MAJOR_MINOR}-${id}.patch"
-	done
-	echo "$s"
-}
-
-# @FUNCTION: gen_zentune_muqss_uris
-# @DESCRIPTION:
-# Generates zen-tune interactive muqss URIs
-ZENTUNE_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
-gen_zentune_muqss_uris()
-{
-	local commits=(${@})
-	local len="${#commits[@]}"
-	local s=""
-	for (( c=0 ; c < ${len} ; c+=1 )) ; do
-		local id="${commits[c]}"
-		s=" ${s} ${ZENTUNE_MUQSS_BASE_URI}${id}.patch -> zen-tune-muqss-${K_MAJOR_MINOR}-${id}.patch"
+		s=" ${s} ${ZENSAUCE_BASE_URI}${id}.patch -> zen-sauce-${K_MAJOR_MINOR}-${id:0:7}.patch"
 	done
 	echo "$s"
 }
@@ -208,17 +194,17 @@ BMQ_FN="${BMQ_FN:=v${K_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
 BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${K_MAJOR_MINOR}/"
 BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
 
-CK_COMMITS="${PATCH_CK_COMMIT_T}^..${PATCH_CK_COMMIT_B}" # [oldest,newest] [top,bottom]
-CK_COMMITS_SHORT="${PATCH_CK_COMMIT_T:0:7}-${PATCH_CK_COMMIT_B:0:7}" # [oldest,newest] [top,bottom]
+CK_COMMITS="${PATCH_CK_COMMIT_A}^..${PATCH_CK_COMMIT_D}" # [oldest,newest] [top,bottom]
+CK_COMMITS_SHORT="${PATCH_CK_COMMIT_A:0:7}-${PATCH_CK_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 CK_FN=\
 "ck-${MUQSS_VER}-for-${K_MAJOR_MINOR}-${CK_COMMITS_SHORT}.patch"
 CK_SRC_URI=\
 "https://github.com/torvalds/linux/compare/${CK_COMMITS}.patch"
 CK_SRC_URI="${CK_SRC_URI} -> ${CK_FN}"
 
-FUTEX_WAIT_MULTIPLE_COMMITS="${PATCH_FUTEX_COMMIT_T}^..${PATCH_FUTEX_COMMIT_B}" # [oldest,newest] [top,bottom]
+FUTEX_WAIT_MULTIPLE_COMMITS="${PATCH_FUTEX_COMMIT_A}^..${PATCH_FUTEX_COMMIT_D}" # [oldest,newest] [top,bottom]
 FUTEX_WAIT_MULTIPLE_COMMITS_SHORT=\
-"${PATCH_FUTEX_COMMIT_T:0:7}-${PATCH_FUTEX_COMMIT_B:0:7}" # [oldest,newest] [top,bottom]
+"${PATCH_FUTEX_COMMIT_A:0:7}-${PATCH_FUTEX_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 FUTEX_WAIT_MULTIPLE_BASE_URI=\
 "https://github.com/torvalds/linux/compare/${FUTEX_WAIT_MULTIPLE_COMMITS}"
 FUTEX_WAIT_MULTIPLE_FN=\
@@ -226,9 +212,9 @@ FUTEX_WAIT_MULTIPLE_FN=\
 FUTEX_WAIT_MULTIPLE_SRC_URI=\
 "${FUTEX_WAIT_MULTIPLE_BASE_URI}.patch -> ${FUTEX_WAIT_MULTIPLE_FN}"
 
-FUTEX2_COMMITS="${PATCH_FUTEX2_COMMIT_T}^..${PATCH_FUTEX2_COMMIT_B}" # [oldest,newest] [top,bottom]
+FUTEX2_COMMITS="${PATCH_FUTEX2_COMMIT_A}^..${PATCH_FUTEX2_COMMIT_D}" # [oldest,newest] [top,bottom]
 FUTEX2_COMMITS_SHORT=\
-"${PATCH_FUTEX2_COMMIT_T:0:7}-${PATCH_FUTEX2_COMMIT_B:0:7}" # [oldest,newest] [top,bottom]
+"${PATCH_FUTEX2_COMMIT_A:0:7}-${PATCH_FUTEX2_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 FUTEX2_BASE_URI=\
 "https://github.com/torvalds/linux/compare/${FUTEX2_COMMITS}"
 FUTEX2_FN=\
@@ -236,9 +222,9 @@ FUTEX2_FN=\
 FUTEX2_SRC_URI=\
 "${FUTEX2_BASE_URI}.patch -> ${FUTEX2_FN}"
 
-BBRV2_COMMITS="${PATCH_BBRV2_COMMIT_T}^..${PATCH_BBRV2_COMMIT_B}" # [oldest,newest] [top,bottom]
+BBRV2_COMMITS="${PATCH_BBRV2_COMMIT_A}^..${PATCH_BBRV2_COMMIT_D}" # [oldest,newest] [top,bottom]
 BBRV2_COMMITS_SHORT=\
-"${PATCH_BBRV2_COMMIT_T:0:7}-${PATCH_BBRV2_COMMIT_B:0:7}" # [oldest,newest] [top,bottom]
+"${PATCH_BBRV2_COMMIT_A:0:7}-${PATCH_BBRV2_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 BBRV2_BASE_URI=\
 "https://github.com/torvalds/linux/compare/${BBRV2_COMMITS}"
 BBRV2_FN=\
@@ -246,10 +232,10 @@ BBRV2_FN=\
 BBRV2_SRC_URI=\
 "${BBRV2_BASE_URI}.patch -> ${BBRV2_FN}"
 
-CLANG_PGO_FN="clang-pgo-${PATCH_CLANG_PGO_COMMIT_B:0:7}-${PATCH_CLANG_PGO_COMMIT_T:0:7}.patch"
+CLANG_PGO_FN="clang-pgo-${PATCH_CLANG_PGO_COMMIT_A:0:7}-${PATCH_CLANG_PGO_COMMIT_D:0:7}.patch"
 CLANG_PGO_BASE_URI="https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/patch/?h=for-next/clang/pgo"
 CLANG_PGO_URI="
-${CLANG_PGO_BASE_URI}&id=${PATCH_CLANG_PGO_COMMIT_T}&id2=${PATCH_CLANG_PGO_COMMIT_B}
+${CLANG_PGO_BASE_URI}&id=${PATCH_CLANG_PGO_COMMIT_D}&id2=${PATCH_CLANG_PGO_COMMIT_A_PARENT}
 		-> ${CLANG_PGO_FN}" # [oldest,newest]
 
 GENPATCHES_URI_BASE_URI="https://dev.gentoo.org/~mpagano/genpatches/tarballs/"
@@ -305,15 +291,25 @@ KCP_SRC_9_0_URI="${KCP_URI_BASE}${KCP_9_0_BN}.patch -> ${KCP_9_0_BN}-${KCP_COMMI
 fi
 KCP_SRC_CORTEX_A72_URI="${KCP_URI_BASE}${KCP_CORTEX_A72_BN}.patch -> ${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
 
-LRU_GEN_COMMITS="${PATCH_LRU_GEN_COMMIT_T}^..${PATCH_LRU_GEN_COMMIT_B}" # [oldest,newest] [top,bottom]
+LRU_GEN_COMMITS="${PATCH_LRU_GEN_COMMIT_A}^..${PATCH_LRU_GEN_COMMIT_D}" # [oldest,newest] [top,bottom]
 LRU_GEN_COMMITS_SHORT=\
-"${PATCH_LRU_GEN_COMMIT_T:0:7}-${PATCH_LRU_GEN_COMMIT_B:0:7}" # [oldest,newest] [top,bottom]
+"${PATCH_LRU_GEN_COMMIT_A:0:7}-${PATCH_LRU_GEN_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 LRU_GEN_BASE_URI=\
 "https://github.com/torvalds/linux/compare/${LRU_GEN_COMMITS}"
 LRU_GEN_FN=\
 "lru_gen-${K_MAJOR_MINOR}-${LRU_GEN_COMMITS_SHORT}.patch"
 LRU_GEN_SRC_URI=\
 "${LRU_GEN_BASE_URI}.patch -> ${LRU_GEN_FN}"
+
+ZEN_LRU_GEN_COMMITS="${PATCH_ZEN_LRU_GEN_COMMIT_A}^..${PATCH_ZEN_LRU_GEN_COMMIT_D}" # [oldest,newest] [top,bottom]
+ZEN_LRU_GEN_COMMITS_SHORT=\
+"${PATCH_ZEN_LRU_GEN_COMMIT_A:0:7}-${PATCH_ZEN_LRU_GEN_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
+ZEN_LRU_GEN_BASE_URI=\
+"https://github.com/torvalds/linux/compare/${ZEN_LRU_GEN_COMMITS}"
+ZEN_LRU_GEN_FN=\
+"zen-lru_gen-${K_MAJOR_MINOR}-${ZEN_LRU_GEN_COMMITS_SHORT}.patch"
+ZEN_LRU_GEN_SRC_URI=\
+"${ZEN_LRU_GEN_BASE_URI}.patch -> ${ZEN_LRU_GEN_FN}"
 
 ZEN_MUQSS_BASE_URI=\
 "https://github.com/torvalds/linux/commit/"
@@ -335,14 +331,33 @@ gen_zen_muqss_uris() {
 }
 ZEN_MUQSS_SRC_URIS=" "$(gen_zen_muqss_uris)
 
+CFI_X86_BASE_URI=\
+"https://github.com/torvalds/linux/commit/"
+gen_cfi_x86_uris() {
+	local s=""
+	for c in ${CFI_X86_COMMITS[@]} ; do
+		s+=" ${CFI_X86_BASE_URI}${c}.patch -> cfi-x86-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
+	echo "${s}"
+}
+CFI_X86_SRC_URIS=" "$(gen_cfi_x86_uris)
+
 LINUX_REPO_URI=\
 "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
+CFI_X86_COMMITS="${PATCH_CFI_X86_COMMIT_A}^..${PATCH_CFI_X86_COMMIT_D}" # [oldest,newest] [top,bottom]
+CFI_X86_COMMITS_SHORT="${PATCH_CFI_X86_COMMIT_A:0:7}-${PATCH_CFI_X86_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
+CFI_X86_FN=\
+"cfi-x86-${MUQSS_VER}-for-${K_MAJOR_MINOR}-${CFI_X86_COMMITS_SHORT}.patch"
+CFI_X86_SRC_URI=\
+"https://github.com/torvalds/linux/compare/${CFI_X86_COMMITS}.patch"
+CFI_X86_SRC_URI="${CFI_X86_SRC_URI} -> ${CFI_X86_FN}"
+
 O3_SRC_URI="https://github.com/torvalds/linux/commit/"
-O3_ALLOW_FN="O3-allow-unrestricted-${PATCH_ALLOW_O3_COMMIT}.patch"
+O3_ALLOW_FN="O3-allow-unrestricted-${PATCH_ALLOW_O3_COMMIT:0:7}.patch"
 O3_ALLOW_SRC_URI="${O3_SRC_URI}${PATCH_ALLOW_O3_COMMIT}.patch -> ${O3_ALLOW_FN}"
-O3_CO_FN="O3-config-option-${PATCH_O3_CO_COMMIT}.patch"
-O3_RO_FN="O3-fix-readoverflow-${PATCH_O3_RO_COMMIT}.patch"
+O3_CO_FN="O3-config-option-${PATCH_O3_CO_COMMIT:0:7}.patch"
+O3_RO_FN="O3-fix-readoverflow-${PATCH_O3_RO_COMMIT:0:7}.patch"
 O3_CO_SRC_FN="${PATCH_O3_CO_COMMIT}.patch"
 O3_RO_SRC_FN="${PATCH_O3_RO_COMMIT}.patch"
 O3_CO_SRC_URI="${O3_SRC_URI}${O3_CO_SRC_FN} -> ${O3_CO_FN}"
@@ -385,7 +400,7 @@ UKSM_BASE_URI=\
 UKSM_FN="uksm-${K_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-ZENSAUCE_URIS=$(gen_zensauce_uris "${PATCH_ZENSAUCE_COMMITS}")
+ZENSAUCE_URIS=$(gen_zensauce_uris "${PATCH_ZENSAUCE_COMMITS[@]}")
 
 if ver_test ${PV} -eq ${K_MAJOR_MINOR} ; then
 KERNEL_NO_POINT_RELEASE="1"
@@ -559,7 +574,7 @@ einfo
 	fi
 }
 
-# @FUNCTION: apply_zensauce
+# @FUNCTION: check_zen_tune_deps
 # @DESCRIPTION:
 # Checks zen-tune's dependency on zen-sauce
 check_zen_tune_deps() {
@@ -584,7 +599,7 @@ eerror "zen-tune requires ${zsc} be added to ${v} and also the zen-sauce USE fla
 # Checks zen-tune's dependency on zen-sauce at pkg_setup
 function zentune_setup() {
 	if use zen-sauce ; then
-		for c in ${PATCH_ZENTUNE_COMMITS} ; do
+		for c in ${PATCH_ZENTUNE_COMMITS[@]} ; do
 			check_zen_tune_deps "${c}"
 		done
 	fi
@@ -605,8 +620,8 @@ eerror
 			die
 		fi
 
-		local ZM="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
-		if [[ -z "${!ZM}" ]] ; then
+		local ZW="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
+		if [[ -z "${!ZW}" ]] ; then
 			local zensauce_uri
 			local zensauce_cmprange=\
 "v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}"
@@ -936,29 +951,52 @@ einfo "Applying PREEMPT_RT patches"
 # @DESCRIPTION:
 # Applies whitelisted zen sauce patches.
 function apply_zensauce() {
-	local ZM="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
-	read -a C_WHITELISTED <<< ${!ZM}
+	local ZW="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
+	local ZB="ZENSAUCE_BLACKLIST_${K_MAJOR_MINOR/./_}"
 
 	local whitelisted=""
+	local blacklisted=""
 
-	for c in ${!ZM} ; do
-		whitelisted+=" ${c}"
+	for c in ${!ZW} ; do
+		whitelisted+=" ${c:0:7}"
 	done
+
+	for c in ${!ZB} ; do
+		blacklisted+=" ${c:0:7}"
+	done
+
+	if has O3 ${IUSE_EFFECTIVE} ; then
+		if use O3 ; then
+			whitelisted+=" ${PATCH_ALLOW_O3_COMMIT:0:7}"
+		fi
+	fi
 
 	if has zen-tune ${IUSE_EFFECTIVE} ; then
 		if use zen-tune ; then
-			for c in ${PATCH_ZENTUNE_COMMITS} ; do
-				whitelisted+=" ${c}"
+			for c in ${PATCH_ZENTUNE_COMMITS[@]} ; do
+				whitelisted+=" ${c:0:7}"
 			done
 		fi
 	fi
 
-	whitelisted=$(echo "${whitelisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
+	if has zen-sauce-all ${IUSE_EFFECTIVE} ; then
+		if use zen-sauce-all ; then
+			for c in ${PATCH_ZENSAUCE_COMMITS[@]} ; do
+				whitelisted+=" ${c:0:7}"
+			done
+		fi
+	fi
 
-	for c in ${PATCH_ZENSAUCE_COMMITS} ; do
+	use_blacklisted+=" ${PATCH_ZENSAUCE_BL[@]}"
+
+	whitelisted=$(echo "${whitelisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
+	blacklisted=$(echo "${blacklisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
+	use_blacklisted=$(echo "${use_blacklisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
+
+	for c in ${PATCH_ZENSAUCE_COMMITS[@]} ; do
 		local is_whitelisted=0
 		for c_wl in ${whitelisted[@]} ; do
-			if [[ "${c}" == "${c_wl}" || "${c:0:7}" == "${c_wl}" ]] ; then
+			if [[ "${c:0:7}" == "${c_wl:0:7}" ]] ; then
 				is_whitelisted=1
 				break
 			fi
@@ -966,31 +1004,46 @@ function apply_zensauce() {
 		(( ${is_whitelisted} == 0 )) && continue
 
 		local is_blacklisted=0
-		if [[ -n "${#blacklisted}" ]] ; then
-			for c_bl in ${blacklisted} ; do
-				if [[ ( "${#c}" == "7" \
-					&& "${c}" == "${c_bl:0:7}" ) \
-					|| ( "${#c}" == "40" \
-					&& "${c}" == "${c_bl}" ) ]] ; \
+		if [[ -n "${#use_blacklisted}" ]] ; then
+			for c_bl in ${use_blacklisted} ; do
+				if [[ "${c:0:7}" == "${c_bl:0:7}" ]]
 				then
 ewarn
-ewarn "${c} is already applied via USE flag.  Activate via USE flag instead."
+ewarn "If ${c} is already applied via USE flag.  Please remove it from the"
+ewarn "ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_} and use the USE flag instead."
+ewarn "This is to ensure the BDEPENDS/RDEPENDS/DEPENDs are met."
+ewarn "Skipping ${c} for now."
 ewarn
 					is_blacklisted=1
-					break
 				fi
 			done
 		fi
-		(( ${is_blacklisted} == 1 )) && continue
+		(( ${is_blacklisted} == 0 )) && continue
 
-		if [[ "${#c}" == "7" ]] ; then
-			local p=$(basename $(head -n 1 \
-	<<< $(ls "${DISTDIR}/zen-sauce-${K_MAJOR_MINOR}-${c}"*".patch")))
-			_fpatch "${DISTDIR}/${p}"
-		else
-			_fpatch \
-		"${DISTDIR}/zen-sauce-${K_MAJOR_MINOR}-${c}.patch"
+		local is_blacklisted=0
+		if [[ -n "${#blacklisted}" ]] ; then
+			for c_bl in ${blacklisted} ; do
+				if [[ "${c:0:7}" == "${c_bl:0:7}" ]]
+				then
+einfo
+einfo "Skipping ${c}"
+einfo
+					is_blacklisted=1
+				fi
+			done
 		fi
+		(( ${is_blacklisted} == 0 )) && continue
+
+		_fpatch "${DISTDIR}/zen-sauce-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
+}
+
+# @FUNCTION: apply_cfi_x86
+# @DESCRIPTION:
+# Adds cfi protection for the x86-64 platform
+function apply_cfi_x86() {
+	for c in ${CFI_X86_COMMITS[@]} ; do
+		_fpatch "${DISTDIR}/cfi-x86-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 }
 
@@ -1025,6 +1078,13 @@ function apply_bbrv2() {
 # Uses multigenerational LRU to improve page reclamation.
 function apply_lru_gen() {
 	_fpatch "${DISTDIR}/${LRU_GEN_FN}"
+}
+
+# @FUNCTION: apply_zen_lru_gen
+# @DESCRIPTION:
+# Uses zen's modified multigenerational LRU to improve page reclamation.
+function apply_zen_lru_gen() {
+	_fpatch "${DISTDIR}/${ZEN_LRU_GEN_FN}"
 }
 
 # @FUNCTION: _filter_genpatches
@@ -1175,15 +1235,11 @@ einfo "Applying genpatches extras"
 #
 function apply_o3() {
 	cd "${S}" || die
-
-	if ver_test "${K_MAJOR_MINOR}" -ge 5.4 ; then
-einfo "Allow O3 unrestricted"
-		_fpatch "${DISTDIR}/${O3_ALLOW_FN}"
-	elif ver_test "${K_MAJOR_MINOR}" -lt 5.4 ; then
+	if ver_test "${K_MAJOR_MINOR}" -eq 4.14 ; then
 		# fix patch
 		sed -e 's|-1028,6 +1028,13|-1076,6 +1076,13|' \
-			"${DISTDIR}"/${O3_CO_FN} \
-			> "${T}"/${O3_CO_FN} || die
+			"${DISTDIR}/${O3_CO_FN}" \
+			> "${T}/${O3_CO_FN}" || die
 
 einfo "Applying O3"
 einfo "Applying ${O3_CO_FN}"
@@ -1406,6 +1462,12 @@ ewarn
 		fi
 	fi
 
+	if has zen-lru_gen ${IUSE_EFFECTIVE} ; then
+		if use zen-lru_gen ; then
+			apply_zen_lru_gen
+		fi
+	fi
+
 	if has bmq ${IUSE_EFFECTIVE} ; then
 		if use bmq ; then
 			apply_bmq
@@ -1471,6 +1533,12 @@ ewarn
 	if has clang-pgo ${IUSE_EFFECTIVE} ; then
 		if use clang-pgo ; then
 			apply_clang_pgo
+		fi
+	fi
+
+	if has cfi ${IUSE_EFFECTIVE} ; then
+		if use cfi && use amd64 ; then
+			apply_cfi_x86
 		fi
 	fi
 

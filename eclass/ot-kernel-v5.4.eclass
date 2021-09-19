@@ -20,37 +20,41 @@ K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.196"
+
 PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e"
-PATCH_CK_COMMIT_B="5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213" # bottom / newest
-PATCH_CK_COMMIT_T="7acac2e4000e75f3349106a8847cf1021651446b" # top / oldest
-PATCH_FUTEX_COMMIT_B="1ade6c3ea42b794a49296a486ac8ad780d1faf46" # bottom / newest
-PATCH_FUTEX_COMMIT_T="dee34186c97c4b224d97f16bf1bbd75c2ea2492e" # top / oldest
+PATCH_CK_COMMIT_A_PARENT=""
+PATCH_CK_COMMIT_A="7acac2e4000e75f3349106a8847cf1021651446b" # ancestor / oldest
+PATCH_CK_COMMIT_D="5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213" # descendant / newest
+PATCH_FUTEX_COMMIT_A_PARENT=""
+PATCH_FUTEX_COMMIT_A="dee34186c97c4b224d97f16bf1bbd75c2ea2492e" # ancestor / oldest
+PATCH_FUTEX_COMMIT_D="1ade6c3ea42b794a49296a486ac8ad780d1faf46" # descendant / newest
 PATCH_KCP_COMMIT="cbf238bae1a5132b8b35392f3f3769267b2acaf5"
 PATCH_TRESOR_V="3.18.5"
-PATCH_ZENSAUCE_COMMITS=\
-"1baa02fbd7a419fdd0e484ba31ba82c90c7036cf \
-ef12d902c1323bbbeacc3babc91aae15976474ca \
-56f6f4315aedbbcbef8ad61f187347c20a270e49 \
-e4afee68d66b61cfd0bdabe937a0e0eb1cea5844 \
-a1ced5e49a5044e14f4b46e7db2ff4a5afe92118 \
-e92e67143385cf285851e12aa8b7f083dd38dd24 \
-f75e102a6ad92d8acb4354895a799d3a60193990 \
-ee18749616cbf6ff69de3fc9147737bd021aa519 \
-304fc592677954ea3028109e4ebd66408da8f7d6 \
-cbf238bae1a5132b8b35392f3f3769267b2acaf5 \
-4edc8050a41d333e156d2ae1ed3ab91d0db92c7e \
-cba81e70bf716d85151dd20fb4fd001517c98579 \
-3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0 \
-92f669d8f5542fe3981115706a7b9066a0903b4a \
-c9a8f36311f14311a3202501c88009f758683c0f \
-90dd01794267f5713bf98910c691f01e00debc4b \
-e6e7b853433c818466bdb54263fe5333b141c0af \
-7e92cd42bc8f1bdc7b7eaa7d66db53e624c694e8 \
-15ec264afa9883c6bd3032b1a3af63da502a215e \
-d28734240cb56a0efb60b13ecd7f33141da41314 \
-f6b72de6bd17972cee50c4ce97b67954048833de \
-a7c2e93c81a96375414db26fdd18cb9fae8421b9 \
-376d7ed3c04b5576fe753c0dbe588a423c8be9c3"
+PATCH_ZENSAUCE_COMMITS=(
+1baa02fbd7a419fdd0e484ba31ba82c90c7036cf
+ef12d902c1323bbbeacc3babc91aae15976474ca
+56f6f4315aedbbcbef8ad61f187347c20a270e49
+e4afee68d66b61cfd0bdabe937a0e0eb1cea5844
+a1ced5e49a5044e14f4b46e7db2ff4a5afe92118
+e92e67143385cf285851e12aa8b7f083dd38dd24
+f75e102a6ad92d8acb4354895a799d3a60193990
+ee18749616cbf6ff69de3fc9147737bd021aa519
+304fc592677954ea3028109e4ebd66408da8f7d6
+cbf238bae1a5132b8b35392f3f3769267b2acaf5
+4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
+cba81e70bf716d85151dd20fb4fd001517c98579
+3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
+92f669d8f5542fe3981115706a7b9066a0903b4a
+c9a8f36311f14311a3202501c88009f758683c0f
+90dd01794267f5713bf98910c691f01e00debc4b
+e6e7b853433c818466bdb54263fe5333b141c0af
+7e92cd42bc8f1bdc7b7eaa7d66db53e624c694e8
+15ec264afa9883c6bd3032b1a3af63da502a215e
+d28734240cb56a0efb60b13ecd7f33141da41314
+f6b72de6bd17972cee50c4ce97b67954048833de
+a7c2e93c81a96375414db26fdd18cb9fae8421b9
+376d7ed3c04b5576fe753c0dbe588a423c8be9c3
+)
 
 # top is oldest, bottom is newest
 # TODO: Split patch like in newer versions
@@ -65,10 +69,9 @@ PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
 # ZEN: Implement zen-tune v5.4 (3e05ad8)
 # zen-sauce(c9a8f36) requires zen-tune
 
-PATCH_ZENSAUCE_BL="
-	${PATCH_ALLOW_O3_COMMIT}
+PATCH_ZENSAUCE_BL=(
 	${PATCH_KCP_COMMIT}
-"
+)
 
 ZEN_MUQSS_COMMITS=(
 7acac2e4000e75f3349106a8847cf1021651446b
@@ -98,7 +101,7 @@ ZEN_MUQSS_EXCLUDED_COMMITS=(
 IUSE+=" bmq +cfs clang disable_debug +genpatches +kernel-compiler-patch
 muqss +O3 futex-wait-multiple tresor rt tresor_aesni tresor_i686 tresor_sysfs
 tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
--zen-tune"
+zen-sauce-all -zen-tune"
 REQUIRED_USE+="
 	^^ ( bmq cfs muqss zen-muqss )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
@@ -107,6 +110,7 @@ REQUIRED_USE+="
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
+	zen-sauce-all? ( zen-sauce )
 	zen-tune? ( zen-sauce )"
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
