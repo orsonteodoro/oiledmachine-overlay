@@ -362,11 +362,7 @@ RDEPEND+=" cfi? (
 			|| ( $(gen_cfi_rdepend 12 14) )
 		)
 		amd64? (
-			clang? ( || ( $(gen_cfi_rdepend 13 14) ) )
-			|| (
-				|| ( $(gen_cfi_rdepend 13 14) )
-				>=sys-devel/gcc-5.1
-			)
+			|| ( $(gen_cfi_rdepend 13 14) )
 		)
 	)
 "
