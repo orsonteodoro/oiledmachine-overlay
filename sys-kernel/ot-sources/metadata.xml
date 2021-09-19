@@ -213,7 +213,7 @@
       https://github.com/orsonteodoro/oiledmachine-overlay/issues
     </bugs-to>
 
-    <!-- for bbr2
+    <!-- for TCP BBR v2 support and documentation, see
 https://github.com/google/bbr
     -->
 
