@@ -500,16 +500,6 @@ ewarn
 ewarn "ShadowCallStack is only offered on the arm64 platform."
 ewarn
 	fi
-	if use lru_gen ; then
-ewarn
-ewarn "The lru_gen USE flag is experimental and may stall indefinitely during OOM tests or very high memory use."
-ewarn
-	fi
-	if use zen-muqss ; then
-ewarn
-ewarn "The zen-muqss USE flag is experimental and may randomly freeze the computer."
-ewarn
-	fi
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes
