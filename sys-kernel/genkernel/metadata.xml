@@ -10,8 +10,8 @@
     <email>genkernel@gentoo.org</email>
   </maintainer>
   <longdescription>
-    This is an ebuild fork that applies subdir_mount, crypt_root_plain, llvm
-    PGO patches.
+    This is an ebuild fork that applies subdir_mount, crypt_root_plain, cfi,
+    llvm PGO support patches.
 
     Patch status:
     3.5.x.x - subdir_mount (works), crypt_root_plain (works)
@@ -22,6 +22,13 @@
     When switching between 4.2.x and older versions, The /dev/disk/by-id/
     entries may change.  This means that you need to adjust the kernel
     parameters to the correct identifiers.
+
+    CFI support is limited to arm64 and x86_64 at this time.  arm64 is
+    upstreamed completely, but x86_64 CFI support is currently in
+    development/testing and requires manual patching.  The reference
+    section below contains links to the x86_64 patches and how to add them
+    as a per-package user patch, or you can wait until they are merged
+    mainline.
 
     Some PGO trainers require you run them in a desktop environment.
 
@@ -110,6 +117,15 @@
       profraw v6 and v7 compat patch:
       https://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/clang-pgo-support-profraw-v6-and-v7.patch
 
+      cfi-x86-v3 patch
+      https://github.com/torvalds/linux/compare/d0ee23f9...samitolvanen:x86-cfi-v3.patch
+
+      cfi-x86-v3 unload module fix.
+      https://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/cfi-x86-cfi_init-ifdef-module-unload.patch
+
+      cfi-x86-v3 commit history
+      https://github.com/torvalds/linux/compare/d0ee23f9...samitolvanen:x86-cfi-v3
+
       Instructions for applying per-package user patches:
       https://wiki.gentoo.org/wiki//etc/portage/patches
   </longdescription>
@@ -151,8 +167,8 @@
       tricks are not applied to skip rendering.</flag>
     <flag name="pgo_trainer_yt">Trains the kernel code paths that use
       the network, audio, graphics with streaming video.</flag>
-    <flag name="shadow-call-stack">Ensure that the shadow-call-stack toolchain
-      requirements are met.</flag>
+    <flag name="shadowcallstack">Ensure that the shadow-call-stack toolchain
+      requirements are met</flag>
     <flag name="subdir_mount">Adds mounting subdirectory support.  Used for
       mounting muslx32 or stage2 or stage3 images in place produced from
       crossdev and mounting them directly at /usr/$CTARGET without risk of
