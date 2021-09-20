@@ -46,8 +46,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     documentation fields in the files contained in [1].  Certain benchmarks will
     focus on parts of the web browser.  Adding more tests will increase testing
     time.  Some tests may take 1-20 minute(s) or more to complete.  Customizers
-    may supply a local custom patch using Telemetry [2] named custom with the
-    cr_pgo_trainers_custom USE flag to extend the PGO training step.
+    may supply a local custom patch using Telemetry [2] named custom.sh placed
+    in ${S} with the cr_pgo_trainers_custom USE flag to extend the PGO training
+    step.
 
     The abspath to CR_PGO_VIDEO0 to a 60 fps, 4k, 2 min video should be filled
     out as a per-package envvar if you are using the
@@ -102,7 +103,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       for general use.</flag>
     <flag name="cr_pgo_trainer_custom">Allow for customized PGO training.
       You must supply your local implementation using the Telemetry testing
-      framework as a per-package patch and the test must be named custom.</flag>
+      framework as a per-package patch and the test must be named custom.sh
+      placed in ${S}.</flag>
     <flag name="hangouts">Enable support for Hangouts and features such as
       screen sharing</flag>
     <flag name="headless">Build Ozone only with headless backend, NOT
