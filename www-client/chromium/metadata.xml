@@ -29,7 +29,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
       cfi - production ready
       cfi-iuse - production ready
-      lto-opt - works if enough virtual memory
+      lto-opt - works if enough total memory
       official - production ready previously but undergoing retesting
       pgo - production ready
       pgo-full - incomplete
@@ -118,8 +118,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="lto-opt">Enables selective ThinLTO -O2 optimizations for the
       browser binary and other targets while others use the default --lto-O0.
       This optimization is not enabled by default upstream due to increased
-      binary size concerns.  Building may required 12 GiB virtual memory
-      minimal for dedicated builds, 16 GiB virtual memory recommended for
+      binary size concerns.  Building may required 12 GiB total memory
+      minimal for dedicated builds, 16 GiB total memory recommended for
       multitasking, meaning add more swap space.</flag>
     <flag name="official">Enable the official build settings instead of the
       developer build.  Enables security hardending (for both the browser and

@@ -1195,15 +1195,16 @@ pre_build_checks() {
 	done
 	if (( ${total_virtual_mem} < 12 )) ; then
 # It randomly fails and a success observed with 8 GiB of total memory
-# (ram + swap) when multitasking.  It works with 16 GiB of virtual memory when
+# (ram + swap) when multitasking.  It works with 16 GiB of total memory when
 # multitasking, but peak virtual memory (used + reserved) is ~10.2 GiB for
 # ld.lld.
 # [43742.787803] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/,task=ld.lld,pid=27154,uid=250
 # [43742.787817] Out of memory: Killed process 27154 (ld.lld) total-vm:10471016kB, anon-rss:2440396kB, file-rss:3180kB, shmem-rss:0kB, UID:250 pgtables:20168kB oom_score_adj:0
 # [43744.101600] oom_reaper: reaped process 27154 (ld.lld), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
 ewarn
-ewarn "You may need >= 12 GiB of memory to link ${PN}.  Please add more swap"
-ewarn "space.  You currently have ${total_virtual_mem} GiB of virtual memory."
+ewarn "You may need >= 12 GiB of total memory to link ${PN}.  Please add more"
+ewarn "swap space.  You currently have ${total_virtual_mem} GiB of total"
+ewarn "memory."
 ewarn
 	else
 einfo "Total memory (RAM + swap) is sufficient (>= 12 GiB)."
