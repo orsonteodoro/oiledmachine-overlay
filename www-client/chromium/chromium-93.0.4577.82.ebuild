@@ -1641,7 +1641,6 @@ ewarn
 
 	# These checks are a maybe required.
 	if use clang ; then
-		llvm_pkg_setup
 		CC=${CHOST}-clang
 		CXX=${CHOST}-clang++
 		local MESA_LLVM_MAX_SLOT=$(bzcat \
@@ -1680,8 +1679,9 @@ echo -e "${LLVM_REPORT_CARDS[${s}]}"
 			done
 			die
 		else
-			LLVM_MAX_SLOT=${LLVM_SLOT}
-			llvm_pkg_setup
+			export PATH=$(echo "${PATH}" | tr ":" "\n" | sed -e "s|.*llvm/.*||" | uniq \
+				| sed -e "/^$/d" | tr "\n" ":" | sed -e "s|:$||")
+			export PATH+=":/usr/lib/llvm/${LLVM_SLOT}/bin"
 			einfo "Using llvm:${LLVM_SLOT}"
 		fi
 	fi
