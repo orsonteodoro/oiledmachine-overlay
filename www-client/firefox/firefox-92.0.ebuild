@@ -7,7 +7,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-91-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-92-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=12
 
@@ -71,8 +71,8 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 LICENSE_FINGERPRINT="\
 20eb3b10bf7c7cba8e42edbc8d8ad58a3a753e214b8751fb60eddb827ebff067\
 456f77f36e7abe6d06861b1be52011303fa08db8a981937e38733f961c4a39d9" # SHA512
-# FF-91.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
-LICENSE+=" FF-91.0-THIRD-PARTY-LICENSES"
+# FF-92.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
+LICENSE+=" FF-92.0-THIRD-PARTY-LICENSES"
 LICENSE+="
 	( BSD-2
 		BSD
@@ -247,7 +247,7 @@ BDEPEND="${PYTHON_DEPS}
 	x86? ( >=dev-lang/nasm-2.13 )"
 
 CDEPEND="
-	>=dev-libs/nss-3.68[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.69[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.32[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -272,7 +272,6 @@ CDEPEND="
 	x11-libs/libXext[${MULTILIB_USEDEP}]
 	x11-libs/libXfixes[${MULTILIB_USEDEP}]
 	x11-libs/libXrender[${MULTILIB_USEDEP}]
-	x11-libs/libXt[${MULTILIB_USEDEP}]
 	dbus? (
 		sys-apps/dbus[${MULTILIB_USEDEP}]
 		dev-libs/dbus-glib[${MULTILIB_USEDEP}]
@@ -364,7 +363,7 @@ MOZ_LANGS=(
 	da de dsb el en-CA en-GB en-US eo es-AR es-CL es-ES es-MX et eu
 	fa ff fi fr fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb hu hy-AM
 	ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my
-	nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru
+	nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sco
 	si sk sl son sq sr sv-SE szl ta te th tl tr trs uk ur uz vi
 	xh zh-CN zh-TW
 )
@@ -716,10 +715,10 @@ src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
 	# Defer 0028-Make-elfhack-use-toolchain.patch in multilib_foreach_abi
-	mv "${WORKDIR}/firefox-patches"/0029-Make-elfhack-use-toolchain.patch{,.bak}
+	mv "${WORKDIR}/firefox-patches"/0028-Make-elfhack-use-toolchain.patch{,.bak} || die
 
 	eapply "${WORKDIR}/firefox-patches"
-	mv "${WORKDIR}/firefox-patches"/0029-Make-elfhack-use-toolchain.patch{.bak,}
+	mv "${WORKDIR}/firefox-patches"/0028-Make-elfhack-use-toolchain.patch{.bak,} || die
 
 	# Only partial patching was done because Gentoo doesn't support multilib
 	# Python.  Only native ABI is supported.  This means cbindgen cannot
@@ -785,7 +784,7 @@ src_prepare() {
 		local ctarget=$(get_abi_CHOST ${ABI})
 		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-objdump" ) \
 			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${ctarget}-objdump" ) ; then
-			eapply "${WORKDIR}/firefox-patches/0029-Make-elfhack-use-toolchain.patch"
+			eapply "${WORKDIR}/firefox-patches/0028-Make-elfhack-use-toolchain.patch"
 			# sed-in toolchain prefix
 			sed -i \
 				-e "s/objdump/${ctarget}-objdump/" \
