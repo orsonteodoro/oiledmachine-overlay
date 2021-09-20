@@ -17,9 +17,9 @@ KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 
 # In Aug 7, we switching back to stable which is sufficient for security standards
 
-# 09/01/2021 - 93.1.11+g9e254fa+chromium-93.0.4577.63 / Chromium 93.0.4577.63
-CHROMIUM_V="93.0.4577.63" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
-CEF_COMMIT="g9e254fa" # same as https://bitbucket.org/chromiumembedded/cef/commits/
+# 09/16/2021 - 93.1.14+gf38ce34+chromium-93.0.4577.82 / Chromium 93.0.4577.82
+CHROMIUM_V="93.0.4577.82" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
+CEF_COMMIT="gf38ce34" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 TARBALL_SUFFIX="" # can be _beta or "" (stable)
 SRC_URI="
 	x86? (
@@ -48,8 +48,8 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/93.0.4577.63/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/93.0.4577.63/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/93.0.4577.82/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/93.0.4577.82/build/install-build-deps.sh#L151
 # TODO: app-accessibility/speech-dispatcher needs multilib
 GLIB_V="2.48"
 XI_V="1.7.6"
