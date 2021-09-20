@@ -95,7 +95,7 @@
 		    -rt (RT_PREEMPT)			Y
 		    genpatches				Y
 		    kernel_compiler_patch 		N
-		    O3 [7]				N
+		    O3 [6]				N
 		    PDS					N
 		    TRESOR (AES-NI) [3,4]		y
 		    TRESOR (x86) [3,4]			y
