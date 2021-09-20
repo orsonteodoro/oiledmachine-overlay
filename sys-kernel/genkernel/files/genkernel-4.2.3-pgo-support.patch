@@ -11,8 +11,8 @@ The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-19 16:45:28.477477346 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-19 19:48:00.269405504 -0700
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-19 20:27:08.960482899 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-19 20:30:44.515490002 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -29,7 +29,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
    echo "  Kernel Configuration settings"
    echo "	--menuconfig		Run menuconfig after oldconfig"
    echo "	--no-menuconfig		Do not run menuconfig after oldconfig"
-@@ -84,6 +86,31 @@ longusage() {
+@@ -84,6 +86,32 @@ longusage() {
    echo "	--kernel-modules-prefix=<dir>"
    echo "				Prefix to kernel module destination, modules"
    echo "				will be installed in <prefix>/lib/modules"
@@ -44,6 +44,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
 +  echo "	--pgt-crypto-kor	Run phase 2 PGT trainer for Crypto API KOR ciphers"
 +  echo "	--pgt-crypto-less-common"
 +  echo "				Run phase 2 PGT trainer for Crypto API less common hashes and ciphers"
++  echo "	--pgt-crypto-old	Run phase 2 PGT trainer for Crypto API for deprecated hashes and ciphers"
 +  echo "	--pgt-crypto-rus	Run phase 2 PGT trainer for Crypto API RUS hashes"
 +  echo "	--pgt-crypto-std	Run phase 2 PGT trainer for Crypto API industry standard hashes and ciphers"
 +  echo "	--pgt-custom		Run phase 2 PGT trainer for with a custom benchmark script"
@@ -61,7 +62,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
    echo "  Low-Level Compile settings"
    echo "	--cfi			Use Clang/LLVM to build a CFI protected kernel"
    echo "	--clang-kernel		Use Clang/LLVM to build the kernel"
-@@ -937,20 +964,119 @@ parse_cmdline() {
+@@ -937,20 +965,123 @@ parse_cmdline() {
  			CMD_STRIP_TYPE=none
  			print_info 3 "CMD_STRIP_TYPE: ${CMD_STRIP_TYPE}"
  			;;
@@ -105,8 +106,12 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
 +			CMD_PGT_CRYPTO_LESS_COMMON="yes"
 +			print_info 3 "CMD_CRYPTO_LESS_COMMON: ${CMD_CRYPTO_LESS_COMMON}"
 +			;;
++		--pgt-crypto-old)
++			CMD_PGT_CRYPTO_OLD="yes"
++			print_info 3 "CMD_CRYPTO_OLD: ${CMD_CRYPTO_OLD}"
++			;;
 +		--pgt-crypto-rus)
-+			CMD_PGT_CRYPTO_RU="yes"
++			CMD_PGT_CRYPTO_RUS="yes"
 +			print_info 3 "CMD_CRYPTO_RUS: ${CMD_CRYPTO_RUS}"
 +			;;
 +		--pgt-crypto-std)
@@ -181,7 +186,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  			;;
  		bzImage)
  			BUILD_KERNEL="yes"
-@@ -958,6 +1084,13 @@ parse_cmdline() {
+@@ -958,6 +1089,13 @@ parse_cmdline() {
  			BUILD_RAMDISK="no"
  			CMD_RAMDISKMODULES="no"
  			print_info 3 "CMD_RAMDISKMODULES: ${CMD_RAMDISKMODULES}"
@@ -196,8 +201,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  		--help)
  			longusage
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-19 16:45:28.478477347 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-19 16:46:11.459478763 -0700
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-19 20:27:08.960482899 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-19 20:27:34.816483751 -0700
 @@ -128,6 +128,13 @@ compile_generic() {
  				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
  			fi
@@ -213,8 +218,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-19 16:45:28.480477347 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-19 16:46:11.460478763 -0700
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-19 20:27:08.962482899 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-19 20:27:34.817483751 -0700
 @@ -1031,6 +1031,25 @@ config_kernel() {
  		fi
  	fi
@@ -242,8 +247,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
  	then
  		local llvm_slot
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determineargs.sh
---- genkernel-4.2.3.orig/gen_determineargs.sh	2021-09-19 16:45:28.482477347 -0700
-+++ genkernel-4.2.3/gen_determineargs.sh	2021-09-19 16:46:11.461478763 -0700
+--- genkernel-4.2.3.orig/gen_determineargs.sh	2021-09-19 20:27:08.963482899 -0700
++++ genkernel-4.2.3/gen_determineargs.sh	2021-09-19 20:27:34.817483751 -0700
 @@ -524,12 +524,20 @@ determine_real_args() {
  		can_write_log=yes
  	fi
@@ -269,7 +274,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genk
  
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.2.3/gen_funcs.sh
 --- genkernel-4.2.3.orig/gen_funcs.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_funcs.sh	2021-09-19 16:46:11.463478763 -0700
++++ genkernel-4.2.3/gen_funcs.sh	2021-09-19 20:27:34.818483751 -0700
 @@ -1,6 +1,16 @@
  #!/bin/bash
  # $Id: ab7a7cea08c423b465ffcbdda3909279138f9b97 $
@@ -326,8 +331,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.
  		gen_die "Cannot write to bootdir '${BOOTDIR}'!"
  	fi
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-19 16:45:28.483477347 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-19 19:48:33.212406590 -0700
+--- genkernel-4.2.3.orig/genkernel	2021-09-19 20:27:08.964482899 -0700
++++ genkernel-4.2.3/genkernel	2021-09-19 20:31:05.681490700 -0700
 @@ -80,6 +80,7 @@ LOGLEVEL=${LOGLEVEL:-1}
  source "${GK_SHARE}"/defaults/compression_methods.sh || small_die "Could not read '${GK_SHARE}/defaults/compression_methods.sh'"
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
@@ -451,7 +456,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  	# Configure kernel
  	config_kernel
  
-@@ -559,6 +654,46 @@ fi
+@@ -559,6 +654,47 @@ fi
  
  isTrue "${CMD_INSTALL}" && restore_boot_mount_state
  
@@ -483,6 +488,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
 +	isTrue "${CMD_PGT_CRYPTO_COMMON}" && pgo_trainer_crypto_common
 +	isTrue "${CMD_PGT_CRYPTO_KOR}" && pgo_trainer_crypto_kor
 +	isTrue "${CMD_PGT_CRYPTO_LESS_COMMON}" && pgo_trainer_crypto_less_common
++	isTrue "${CMD_PGT_CRYPTO_OLD}" && pgo_trainer_crypto_deprecated
 +	isTrue "${CMD_PGT_CRYPTO_RUS}" && pgo_trainer_crypto_rus
 +	isTrue "${CMD_PGT_CRYPTO_STD}" && pgo_trainer_crypto_std
 +	isTrue "${CMD_PGT_FILESYSTEM}" && pgo_trainer_filesystem
@@ -499,8 +505,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-19 16:45:28.485477347 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-19 19:59:10.185427579 -0700
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-19 20:27:08.965482899 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-19 20:33:27.354495368 -0700
 @@ -52,6 +52,31 @@ All that is needed to run genkernel is j
  .\}
  .sp
@@ -557,7 +563,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SS "KERNEL CONFIGURATION"
  .PP
  \fB\-\-\fR[\fBno\-\fR]\fBmenuconfig\fR
-@@ -356,6 +391,122 @@ to force usage of default kernel config\
+@@ -356,6 +391,127 @@ to force usage of default kernel config\
  Prefix to kernel module destination, modules will be installed in
  \fI<prefix>/lib/modules\fR\&.
  .RE
@@ -606,6 +612,11 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 +\fB\-\-pgt\-crypto\-less\-common\fR
 +.RS 4
 +Run phase 2 PGT trainer for Crypto API less common hashes and ciphers\&
++.RE
++.PP
++\fB\-\-pgt\-crypto\-old\fR
++.RS 4
++Run phase 2 PGT trainer for Crypto API for deprecated hashes and ciphers\&
 +.RE
 +.PP
 +\fB\-\-pgt\-crypto\-rus\fR
@@ -680,7 +691,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SS "LOW\-LEVEL COMPILATION OPTIONS"
  .PP
  \fB\-\-cfi\fR
-@@ -1625,6 +1776,27 @@ This file will not be included in initra
+@@ -1625,6 +1781,27 @@ This file will not be included in initra
  The initrd scripts have limited support for network booting\&. This is activated if the \fBip\fR=<\&...> kernel parameter was given\&. Please refer to the genkernel guide at \fIhttps://wiki\&.gentoo\&.org/wiki/Genkernel\fR for more information\&.
  .sp
  The initrd scripts will extract any *\&.tar\&.gz files found in the \fI/add\fR directory of the livecd into the root filesystem during boot\&. This way it is easy to extend a netbooted LiveCD i\&.e\&. add custom tools, or other kernel modules\&.
@@ -708,7 +719,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SH "REPORTING BUGS"
  .sp
  If you believe you have found a bug in the genkernel scripts, then please file a bug on the Gentoo Linux Bugzilla against product "Gentoo Hosted Projects" component "genkernel", i\&.e\&. at \fIhttps://bugs\&.gentoo\&.org/enter_bug\&.cgi?product=Gentoo%20Hosted%20Projects&component=genkernel\fR\&.
-@@ -1763,3 +1935,11 @@ AUFS/Overlayfs by Zero_Chaos <zerochaos@
+@@ -1763,3 +1940,11 @@ AUFS/Overlayfs by Zero_Chaos <zerochaos@
  \fI/etc/initramfs\&.mounts\fR \- additional required mounts before switching to real root
  .sp
  \fI/etc/genkernel\&.conf\fR \- genkernel configuration file
@@ -722,8 +733,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 +\fIhttps://wiki.gentoo.org/wiki//etc/portage/patches\fR - Instructions for applying per-package user patches
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-19 19:49:32.248408535 -0700
-@@ -0,0 +1,1057 @@
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-19 20:31:57.999492424 -0700
+@@ -0,0 +1,1058 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
@@ -778,6 +789,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		|| is_true "${CMD_PGT_CRYPTO_COMMON}" \
 +		|| is_true "${CMD_PGT_CRYPTO_KOR}" \
 +		|| is_true "${CMD_PGT_CRYPTO_LESS_COMMON}" \
++		|| is_true "${CMD_PGT_CRYPTO_OLD}" \
 +		|| is_true "${CMD_PGT_CRYPTO_RUS}" \
 +		|| is_true "${CMD_PGT_CRYPTO_STD}" \
 +		|| is_true "${CMD_PGT_FILESYSTEM}" \
