@@ -915,9 +915,15 @@ critical vulnerabilities in the internal Chromium."
 	if ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 ; then
 		# Stable in Nov 16
 		:; # Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 14 ; then
-		# Stable in Aug 31
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 14 \
+		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_14} ; then
+		# Patched
 		:; # Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 14 \
+		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_14} ; then
+		# Unpatched
+		adie \
+"Electron ${ELECTRON_V} is not receiving proper security updates."
 	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 \
 		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_13} ; then
 		# Patched
@@ -933,15 +939,6 @@ critical vulnerabilities in the internal Chromium."
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 12 \
 		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_12} ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_V} is not receiving proper security updates."
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 11 \
-		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_11} ; then
-		# Patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 11 \
-		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_11} ; then
 		# Unpatched
 		adie \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
@@ -966,26 +963,6 @@ security updates."
 		# Patched
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 14 \
-		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_14} ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
-security updates."
-	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 13 \
-		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_14} ; then
-		# Patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 13 \
-		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_14} ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
-security updates."
-	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 12 \
-		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_14} ; then
-		# Patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 12 \
 		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_14} ; then
 		# Unpatched
 		adie \
