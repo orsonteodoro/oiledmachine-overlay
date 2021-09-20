@@ -266,7 +266,7 @@ Project C CPU Scheduler, genpatches, CVE fixes, TRESOR"
 
 inherit ot-kernel
 
-LICENSE+=" bbrv2? ( GPL-2 )" # tcp_bbr2.c is Dual BSD/GPL but other parts are based on licensing of original file
+LICENSE+=" bbrv2? ( || ( GPL-2 BSD ) )" # https://github.com/google/bbr/tree/v2alpha#license
 LICENSE+=" clang-pgo? ( GPL-2 )"
 # A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
@@ -696,6 +696,9 @@ einfo "Already applied ${path} upstream"
 
 		# Add this to the end of the cfi commit list
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
+	elif [[ "${path}" =~ "bbrv2-5.14-1ca5498-1a45fd4.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 10 0 "" # actually only 1 failed not 10
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

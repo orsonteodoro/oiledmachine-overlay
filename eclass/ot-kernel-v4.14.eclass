@@ -213,7 +213,7 @@ function ot-kernel_filter_patch_cb() {
 		# Using --dry-run reports more failures than on the actual.
 		# The point is that --dry-run is not reliable in some way.
 		# The reason is that patching is restarted from the original
-		# and does not resume at the not the intermediate images.
+		# and does not resume at the intermediate images.
 		# In the actual patching, 2 hunks actually failed.
 		# The added -N arg is used to skip the duplicate hunks
 		_tpatch "${PATCH_OPS} -N -F 3" "${path}" 9 1 ""

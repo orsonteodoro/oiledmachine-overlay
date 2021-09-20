@@ -476,8 +476,8 @@ einfo "Applying ${path}${msg_extra}"
 function _tpatch() {
 	local opts="${1}"
 	local path="${2}"
-	local failed_hunks_acceptable="${3}"
-	local reversed_acceptable="${4}"
+	local failed_hunks_acceptable="${3}" # corresponds to n_failures below
+	local reversed_acceptable="${4}" # corresponds to failed_hunks_acceptable below
 	local msg_extra="${5}"
 einfo
 einfo "Applying ${path}${msg_extra}"
