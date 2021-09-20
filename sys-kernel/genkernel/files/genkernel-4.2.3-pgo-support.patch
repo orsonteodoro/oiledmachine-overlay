@@ -994,7 +994,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	local name="${1}"
 +	local reason="${2}"
 +	if grep -q -e ": ${name}" /proc/crypto ; then
-+		print_info 1 "$(get_indent 1)>> ${1} is not recommended for hashing or as a cipher for securing data.  Reason ${2}"
++		print_info 1 "$(get_indent 1)>> ${name} is not recommended for hashing or as a cipher for securing data.  Reason:  ${reason}"
 +	fi
 +}
 +
