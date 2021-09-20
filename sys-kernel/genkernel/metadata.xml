@@ -3,6 +3,7 @@
 <pkgmetadata>
   <maintainer type="person">
     <!-- Only for this ebuild on the oiledmachine-overlay -->
+    <!-- Send bug reports or feature request to same overlay -->
     <email>orsonteodoro@hotmail.com</email>
   </maintainer>
   <maintainer type="project">
@@ -10,14 +11,15 @@
     <email>genkernel@gentoo.org</email>
   </maintainer>
   <longdescription>
-    This is an ebuild fork that applies subdir_mount, crypt_root_plain, cfi,
-    llvm PGO support patches.
+    This is an ebuild fork that applies subdir_mount, crypt_root_plain, CFI,
+    Clang PGO support patches.
 
     Patch status:
     3.5.x.x - subdir_mount (works), crypt_root_plain (works)
     4.0.x - subdir_mount (untested), crypt_root_plain (works), llvm (works)
     4.2.x - subdir_mount (untested), crypt_root_plain (works), llvm (works),
-      pgo (In development / WIP)
+      pgo (PGI done, PGT in development and open to feedback or expansion,
+      PGO stage built an ran without bugs)
 
     When switching between 4.2.x and older versions, The /dev/disk/by-id/
     entries may change.  This means that you need to adjust the kernel
@@ -72,27 +74,33 @@
 
     Due to licensing concerns for the 2014 PGO GCC patch and associated scripts
     cannot be integrated both in the kernel sources and this package
-    directly.  Only the emerging 2021 PGO with clang and llvm support will be
-    supported.
+    directly.  Only the 2021 Clang PGO patchset will be supported.
 
-    Environmental variables (Store them in /etc/genkernel.conf):
+    Environment variables:
 
+      Store them in /etc/genkernel.conf or wrapper script.
+      
       PGO_P2P_URI - The URI must have a filename to replace the placeholder
                     torrent.  (Only public domain assets or open source project
                     torrents should be used.)
+
       PGO_TRAINER_NETWORK_TCP_CONGESTIONS - string separated list from
         /proc/sys/net/ipv4/tcp_allowed_congestion_control to select for
         PGO training.
-      PGO_FILESYSTEMS_LIST - a string separated list of selected of
-        quintuples in this format -- ioscheduler_name&fs_name&dev_name&mount_point&test_dir
-        -- to PGO train.
+
+      PGO_FILESYSTEMS_LIST - a string separated list of selected
+        quintuples in this format to PGO train:
+
+          ioscheduler_name&fs_name&dev_name&mount_point&test_dir
+
         * io_scheduler_name must be one of the names listed in
-          `cat $(find /sys/devices/ -path "*sda*scheduler")`, where sda is replace with the
-          block device of interest.  It will be used to switch to that scheduler.
+          `cat $(find /sys/devices/ -path "*sda*scheduler")`, where sda is
+          replaced with the block device of interest.  It will be used to switch
+          to that scheduler.
         * fs_name must match the driver name.  These are listed in
-          ${KERNEL_DIR}/fs as one the subdirectories
+          ${KERNEL_DIR}/fs as one the subdirectories.
         * dev_name must the basename to the corresponding path listed in
-          find /sys/ -name "scheduler"
+          find /sys/ -name "scheduler".
         * mount_point must be abspath to the mount point.  It must not contain
           a space in the abspath.
         * test_dir must be a decent size folder like similar to /usr/bin that
@@ -100,11 +108,14 @@
           an abspath relative to mount_point.  Read only tests are only
           performed in this directory.
 
-      If it is not set, it will default to the following:
-      PGO_FILESYSTEMS_LIST="unk&unk&unk&/&/usr/bin"
+        Example:
+        PGO_FILESYSTEMS_LIST="bfq&ext4&sda&/&/usr/bin kyber&bfs&sdb&/mnt/foo&/data mq-deadline&ext4&sda&/&/usr/bin"
 
-      Example:
-      PGO_FILESYSTEMS_LIST="bfq&ext4&sda&/&/usr/bin kyber&bfs&sdb&/mnt/rock&/data mq-deadline&ext4&sda&/&/usr/bin"
+        If it is not set, it will default to the following:
+        PGO_FILESYSTEMS_LIST="unk&unk&unk&/&/usr/bin"
+
+      PGO_TRAINER_YT_URI - a custom URI to a video.  By default it
+      will show a sample of the 2021 USA inauguration.
 
     References:
 

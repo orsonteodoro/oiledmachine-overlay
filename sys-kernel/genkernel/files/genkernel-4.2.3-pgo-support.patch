@@ -7,16 +7,12 @@ Do not run in production yet!
 Added PGO trainers for use in genkernel.  The PGO trainer script can be used
 outside of genkernel and should be designed for other distros.
 
-The pgo_trainer_yt is broken and may require creation of another
-PGO testing account and maybe sudo changes.  The _launch_video0_cr
-has been tested working under normal user only.
-
 The pgo_trainer_p2p may need changes to run under sandbox like firejail
 with a new profile and maybe sudo changes.
 
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-19 15:24:53.351318017 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-19 15:25:40.408319568 -0700
+--- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-19 16:45:28.477477346 -0700
++++ genkernel-4.2.3/gen_cmdline.sh	2021-09-19 19:48:00.269405504 -0700
 @@ -13,6 +13,7 @@ longusage() {
    echo "  initramfs			Build only the ramdisk/initramfs"
    echo "  kernel			Build only the kernel and modules"
@@ -33,7 +29,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
    echo "  Kernel Configuration settings"
    echo "	--menuconfig		Run menuconfig after oldconfig"
    echo "	--no-menuconfig		Do not run menuconfig after oldconfig"
-@@ -84,6 +86,28 @@ longusage() {
+@@ -84,6 +86,31 @@ longusage() {
    echo "	--kernel-modules-prefix=<dir>"
    echo "				Prefix to kernel module destination, modules"
    echo "				will be installed in <prefix>/lib/modules"
@@ -43,10 +39,13 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
 +  echo "	--pgt-3d-ogl1.3		Run phase 2 PGT trainer for video card benchmarks with OpenGL 1.3 xscreensavers"
 +  echo "	--pgt-all		Run phase 2 PGT trainer for with all benchmarks"
 +  echo "	--pgt-all-non-root	Run phase 2 PGT trainer for with all benchmarks that should run as non-root"
-+  echo "	--pgt-crypto-std	Run phase 2 PGT trainer for Crypto API industry standard hashes and ciphers"
++  echo "	--pgt-crypto-chn	Run phase 2 PGT trainer for Crypto API CHN hashes and ciphers"
 +  echo "	--pgt-crypto-common	Run phase 2 PGT trainer for Crypto API common hashes and ciphers"
++  echo "	--pgt-crypto-kor	Run phase 2 PGT trainer for Crypto API KOR ciphers"
 +  echo "	--pgt-crypto-less-common"
 +  echo "				Run phase 2 PGT trainer for Crypto API less common hashes and ciphers"
++  echo "	--pgt-crypto-rus	Run phase 2 PGT trainer for Crypto API RUS hashes"
++  echo "	--pgt-crypto-std	Run phase 2 PGT trainer for Crypto API industry standard hashes and ciphers"
 +  echo "	--pgt-custom		Run phase 2 PGT trainer for with a custom benchmark script"
 +  echo "	--pgt-filesystem	Run phase 2 PGT trainer for the filesystem"
 +  echo "	--pgt-emerge1		Run phase 2 PGT trainer for CPU, disk, and memory subsystem through emerging xorg-server"
@@ -62,7 +61,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
    echo "  Low-Level Compile settings"
    echo "	--cfi			Use Clang/LLVM to build a CFI protected kernel"
    echo "	--clang-kernel		Use Clang/LLVM to build the kernel"
-@@ -937,20 +961,107 @@ parse_cmdline() {
+@@ -937,20 +964,119 @@ parse_cmdline() {
  			CMD_STRIP_TYPE=none
  			print_info 3 "CMD_STRIP_TYPE: ${CMD_STRIP_TYPE}"
  			;;
@@ -90,17 +89,29 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
 +			CMD_PGT_ALL_NON_ROOT="yes"
 +			print_info 3 "CMD_PGT_ALL_NON_ROOT: ${CMD_PGT_ALL_NON_ROOT}"
 +			;;
-+		--pgt-crypto-std)
-+			CMD_PGT_CRYPTO_STD="yes"
-+			print_info 3 "CMD_CRYPTO_STD: ${CMD_CRYPTO_STD}"
++		--pgt-crypto-chn)
++			CMD_PGT_CRYPTO_CHN="yes"
++			print_info 3 "CMD_CRYPTO_CHN: ${CMD_CRYPTO_CHN}"
 +			;;
 +		--pgt-crypto-common)
 +			CMD_PGT_CRYPTO_COMMON="yes"
 +			print_info 3 "CMD_CRYPTO_COMMON: ${CMD_CRYPTO_COMMON}"
 +			;;
++		--pgt-crypto-kor)
++			CMD_PGT_CRYPTO_KOR="yes"
++			print_info 3 "CMD_CRYPTO_KOR: ${CMD_CRYPTO_KOR}"
++			;;
 +		--pgt-crypto-less-common)
 +			CMD_PGT_CRYPTO_LESS_COMMON="yes"
 +			print_info 3 "CMD_CRYPTO_LESS_COMMON: ${CMD_CRYPTO_LESS_COMMON}"
++			;;
++		--pgt-crypto-rus)
++			CMD_PGT_CRYPTO_RU="yes"
++			print_info 3 "CMD_CRYPTO_RUS: ${CMD_CRYPTO_RUS}"
++			;;
++		--pgt-crypto-std)
++			CMD_PGT_CRYPTO_STD="yes"
++			print_info 3 "CMD_CRYPTO_STD: ${CMD_CRYPTO_STD}"
 +			;;
 +		--pgt-custom)
 +			CMD_PGT_CUSTOM="yes"
@@ -170,7 +181,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  			;;
  		bzImage)
  			BUILD_KERNEL="yes"
-@@ -958,6 +1069,13 @@ parse_cmdline() {
+@@ -958,6 +1084,13 @@ parse_cmdline() {
  			BUILD_RAMDISK="no"
  			CMD_RAMDISKMODULES="no"
  			print_info 3 "CMD_RAMDISKMODULES: ${CMD_RAMDISKMODULES}"
@@ -185,8 +196,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_cmdline.sh genkernel-
  		--help)
  			longusage
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-19 15:24:53.352318017 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-19 15:25:40.409319568 -0700
+--- genkernel-4.2.3.orig/gen_compile.sh	2021-09-19 16:45:28.478477347 -0700
++++ genkernel-4.2.3/gen_compile.sh	2021-09-19 16:46:11.459478763 -0700
 @@ -128,6 +128,13 @@ compile_generic() {
  				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
  			fi
@@ -202,8 +213,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_compile.sh genkernel-
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-19 15:24:53.353318017 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-19 15:25:40.410319568 -0700
+--- genkernel-4.2.3.orig/gen_configkernel.sh	2021-09-19 16:45:28.480477347 -0700
++++ genkernel-4.2.3/gen_configkernel.sh	2021-09-19 16:46:11.460478763 -0700
 @@ -1031,6 +1031,25 @@ config_kernel() {
  		fi
  	fi
@@ -231,8 +242,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_configkernel.sh genke
  	then
  		local llvm_slot
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determineargs.sh
---- genkernel-4.2.3.orig/gen_determineargs.sh	2021-09-19 15:24:53.355318017 -0700
-+++ genkernel-4.2.3/gen_determineargs.sh	2021-09-19 15:25:40.411319568 -0700
+--- genkernel-4.2.3.orig/gen_determineargs.sh	2021-09-19 16:45:28.482477347 -0700
++++ genkernel-4.2.3/gen_determineargs.sh	2021-09-19 16:46:11.461478763 -0700
 @@ -524,12 +524,20 @@ determine_real_args() {
  		can_write_log=yes
  	fi
@@ -258,7 +269,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_determineargs.sh genk
  
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.2.3/gen_funcs.sh
 --- genkernel-4.2.3.orig/gen_funcs.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_funcs.sh	2021-09-19 15:33:49.051335670 -0700
++++ genkernel-4.2.3/gen_funcs.sh	2021-09-19 16:46:11.463478763 -0700
 @@ -1,6 +1,16 @@
  #!/bin/bash
  # $Id: ab7a7cea08c423b465ffcbdda3909279138f9b97 $
@@ -271,7 +282,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.
 +		fi
 +	fi
 +	return 1
-+fi
++}
 +
  isTrue() {
  	case "$1" in
@@ -315,8 +326,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_funcs.sh genkernel-4.
  		gen_die "Cannot write to bootdir '${BOOTDIR}'!"
  	fi
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-09-19 15:24:53.357318018 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-19 15:25:40.413319568 -0700
+--- genkernel-4.2.3.orig/genkernel	2021-09-19 16:45:28.483477347 -0700
++++ genkernel-4.2.3/genkernel	2021-09-19 19:48:33.212406590 -0700
 @@ -80,6 +80,7 @@ LOGLEVEL=${LOGLEVEL:-1}
  source "${GK_SHARE}"/defaults/compression_methods.sh || small_die "Could not read '${GK_SHARE}/defaults/compression_methods.sh'"
  source "${GK_SHARE}"/defaults/software.sh || small_die "Could not read '${GK_SHARE}/defaults/software.sh'"
@@ -440,7 +451,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  	# Configure kernel
  	config_kernel
  
-@@ -559,6 +654,43 @@ fi
+@@ -559,6 +654,46 @@ fi
  
  isTrue "${CMD_INSTALL}" && restore_boot_mount_state
  
@@ -468,9 +479,12 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
 +	isTrue "${CMD_PGT_2D_DRAW}" && pgo_trainer_2d_draw
 +	isTrue "${CMD_PGT_3D_OGL1_3}" && pgo_trainer_3d_ogl1_3
 +	isTrue "${CMD_PGT_CUSTOM}" && pgo_trainer_custom
-+	isTrue "${CMD_PGT_CRYPTO_STD}" && pgo_trainer_crypto_std
++	isTrue "${CMD_PGT_CRYPTO_CHN}" && pgo_trainer_crypto_chn
 +	isTrue "${CMD_PGT_CRYPTO_COMMON}" && pgo_trainer_crypto_common
++	isTrue "${CMD_PGT_CRYPTO_KOR}" && pgo_trainer_crypto_kor
 +	isTrue "${CMD_PGT_CRYPTO_LESS_COMMON}" && pgo_trainer_crypto_less_common
++	isTrue "${CMD_PGT_CRYPTO_RUS}" && pgo_trainer_crypto_rus
++	isTrue "${CMD_PGT_CRYPTO_STD}" && pgo_trainer_crypto_std
 +	isTrue "${CMD_PGT_FILESYSTEM}" && pgo_trainer_filesystem
 +	isTrue "${CMD_PGT_EMERGE1}" && pgo_trainer_emerge1
 +	isTrue "${CMD_PGT_EMERGE2}" && pgo_trainer_emerge2
@@ -485,8 +499,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel genkernel-4.2.3
  print_info 1 'Do NOT report kernel bugs as genkernel bugs unless your bug'
  print_info 1 'is about the default genkernel configuration...'
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-09-19 15:24:53.358318018 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-19 15:25:40.414319568 -0700
+--- genkernel-4.2.3.orig/genkernel.8	2021-09-19 16:45:28.485477347 -0700
++++ genkernel-4.2.3/genkernel.8	2021-09-19 19:59:10.185427579 -0700
 @@ -52,6 +52,31 @@ All that is needed to run genkernel is j
  .\}
  .sp
@@ -543,7 +557,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SS "KERNEL CONFIGURATION"
  .PP
  \fB\-\-\fR[\fBno\-\fR]\fBmenuconfig\fR
-@@ -356,6 +391,107 @@ to force usage of default kernel config\
+@@ -356,6 +391,122 @@ to force usage of default kernel config\
  Prefix to kernel module destination, modules will be installed in
  \fI<prefix>/lib/modules\fR\&.
  .RE
@@ -574,9 +588,9 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 +Run phase 2 PGT trainer for with all benchmarks that should run as non-root\&
 +.RE
 +.PP
-+\fB\-\-pgt\-crypto\-std\fR
++\fB\-\-pgt\-crypto\-chn\fR
 +.RS 4
-+Run phase 2 PGT trainer for Crypto API industry standard hashes and ciphers\&
++Run phase 2 PGT trainer for Crypto API CHN hashes and ciphers\&
 +.RE
 +.PP
 +\fB\-\-pgt\-crypto\-common\fR
@@ -584,9 +598,24 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 +Run phase 2 PGT trainer for Crypto API common hashes and ciphers\&
 +.RE
 +.PP
++\fB\-\-pgt\-crypto\-kor\fR
++.RS 4
++Run phase 2 PGT trainer for Crypto API KOR ciphers\&
++.RE
++.PP
 +\fB\-\-pgt\-crypto\-less\-common\fR
 +.RS 4
 +Run phase 2 PGT trainer for Crypto API less common hashes and ciphers\&
++.RE
++.PP
++\fB\-\-pgt\-crypto\-rus\fR
++.RS 4
++Run phase 2 PGT trainer for Crypto API RUS hashes\&
++.RE
++.PP
++\fB\-\-pgt\-crypto\-std\fR
++.RS 4
++Run phase 2 PGT trainer for Crypto API industry standard hashes and ciphers\&
 +.RE
 +.PP
 +\fB\-\-pgt\-custom\fR
@@ -651,7 +680,35 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
  .SS "LOW\-LEVEL COMPILATION OPTIONS"
  .PP
  \fB\-\-cfi\fR
-@@ -1763,3 +1899,11 @@ AUFS/Overlayfs by Zero_Chaos <zerochaos@
+@@ -1625,6 +1776,27 @@ This file will not be included in initra
+ The initrd scripts have limited support for network booting\&. This is activated if the \fBip\fR=<\&...> kernel parameter was given\&. Please refer to the genkernel guide at \fIhttps://wiki\&.gentoo\&.org/wiki/Genkernel\fR for more information\&.
+ .sp
+ The initrd scripts will extract any *\&.tar\&.gz files found in the \fI/add\fR directory of the livecd into the root filesystem during boot\&. This way it is easy to extend a netbooted LiveCD i\&.e\&. add custom tools, or other kernel modules\&.
++.SH "ENVIRONMENT VARIABLES"
++.sp
++PGO_P2P_URI - The URI must have a filename to replace the placeholder torrent.  (Only public domain assets or open source project torrents should be used.)
++.sp
++PGO_TRAINER_NETWORK_TCP_CONGESTIONS - string separated list from /proc/sys/net/ipv4/tcp_allowed_congestion_control to select for PGO training.
++.sp
++PGO_FILESYSTEMS_LIST - a string separated list of selected quintuples in this format -- ioscheduler_name&fs_name&dev_name&mount_point&test_dir -- to PGO train.
++.PP
++.RS 4
++* io_scheduler_name must be one of the names listed in `cat $(find /sys/devices/ -path "*sda*scheduler")`, where sda is replaced with the block device of interest.  It will be used to switch to that scheduler.
++.PP
++* fs_name must match the driver name.  These are listed in ${KERNEL_DIR}/fs as one the subdirectories.
++.PP
++* dev_name must the basename to the corresponding path listed in find /sys/ -name "scheduler".
++.PP
++* mount_point must be abspath to the mount point.  It must not contain a space in the abspath.
++.PP
++* test_dir must be a decent size folder like similar to /usr/bin that is used for grep tests and sequential read tests.  It also is an abspath relative to mount_point.  Read only tests are only performed in this directory.
++.RE
++.sp
++PGO_TRAINER_YT_URI - a custom URI to a video.  By default it will show a sample of the 2021 USA inauguration.
+ .SH "REPORTING BUGS"
+ .sp
+ If you believe you have found a bug in the genkernel scripts, then please file a bug on the Gentoo Linux Bugzilla against product "Gentoo Hosted Projects" component "genkernel", i\&.e\&. at \fIhttps://bugs\&.gentoo\&.org/enter_bug\&.cgi?product=Gentoo%20Hosted%20Projects&component=genkernel\fR\&.
+@@ -1763,3 +1935,11 @@ AUFS/Overlayfs by Zero_Chaos <zerochaos@
  \fI/etc/initramfs\&.mounts\fR \- additional required mounts before switching to real root
  .sp
  \fI/etc/genkernel\&.conf\fR \- genkernel configuration file
@@ -665,8 +722,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 +\fIhttps://wiki.gentoo.org/wiki//etc/portage/patches\fR - Instructions for applying per-package user patches
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gen_pgo.sh	2021-09-19 15:36:28.338340919 -0700
-@@ -0,0 +1,974 @@
++++ genkernel-4.2.3/gen_pgo.sh	2021-09-19 19:49:32.248408535 -0700
+@@ -0,0 +1,1057 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
@@ -675,9 +732,10 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +PGO_SAMPLE_SIZE_MEMORY=3 # Cut short due to length of time per run
 +PGO_MAX_FILESIZE_DEFAULT=26214400 # 25 MB
 +#CHECK_REQUIREMENTS=0 # 1 or 0 or unset, for standalone mode only
-+SUDOING=${ALLOW_SUDO:=0} # 1 or 0
-+PAGESIZE=${PAGE_SIZE:=$(getconf PAGESIZE)}
-+KPAGESIZE=$(( ${PAGE_SIZE} / 1024 ))
++ALLOW_SUDO_=${ALLOW_SUDO:=0} # 1 or 0
++PAGE_SIZE_=${PAGE_SIZE:=$(getconf PAGESIZE)}
++K_PAGE_SIZE_=$(( ${PAGE_SIZE} / 1024 ))
++PGO_TRAINER_YT_URI_=${PGO_TRAINER_YT_URI:=https://www.youtube.com/watch?v=UlbyOeMCL0g}
 +
 +PGO_DISTRO="gentoo" # \
 +# If set to gentoo, script integrates with genkernel otherwise run in standalone mode.
@@ -716,9 +774,12 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		|| is_true "${CMD_PGT_2D_DRAW}" \
 +		|| is_true "${CMD_PGT_3D_OGL1_3}" \
 +		|| is_true "${CMD_PGT_CUSTOM}" \
-+		|| is_true "${CMD_PGT_CRYPTO_STD}" \
++		|| is_true "${CMD_PGT_CRYPTO_CHN}" \
 +		|| is_true "${CMD_PGT_CRYPTO_COMMON}" \
++		|| is_true "${CMD_PGT_CRYPTO_KOR}" \
 +		|| is_true "${CMD_PGT_CRYPTO_LESS_COMMON}" \
++		|| is_true "${CMD_PGT_CRYPTO_RUS}" \
++		|| is_true "${CMD_PGT_CRYPTO_STD}" \
 +		|| is_true "${CMD_PGT_FILESYSTEM}" \
 +		|| is_true "${CMD_PGT_EMERGE1}" \
 +		|| is_true "${CMD_PGT_EMERGE2}" \
@@ -748,7 +809,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +			touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +		elif which sudo 2>/dev/null 1>/dev/null \
 +			&& ( groups | grep -q -e "wheel" ) \
-+			&& (( ${SUDOING} == 1 )) ; then
++			&& (( ${ALLOW_SUDO_} == 1 )) ; then
 +			print_info 1 "$(get_indent 1)>> sudo is required to mark PGO progress"
 +			sudo touch "${KERNEL_OUTPUTDIR}/.pgt-trained"
 +		fi
@@ -917,12 +978,21 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	print_info 1 "$(get_indent 1)>> This PGO test has not been implemented yet"
 +}
 +
++_cipher_not_recommended() {
++	local name="${1}"
++	local reason="${2}"
++	if grep -q -e ": ${name}" /proc/crypto ; then
++		print_info 1 "$(get_indent 1)>> ${1} is not recommended for hashing or as a cipher for securing data.  Reason ${2}"
++	fi
++}
++
 +_use_crypto_with_mode() {
 +	local mode_of_operation="${1}"
 +	local cipher="${2}"
 +	local min_key_size="${3}"
 +	local max_key_size="${4}"
 +	local inc="${5}"
++	local block_size="${6}"
 +	if grep -q ": ${mode_of_operation}(${cipher})" /proc/crypto ; then
 +		for x in $(seq ${min_key_size} ${inc} ${max_key_size}) ; do
 +			for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
@@ -935,6 +1005,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +_use_hash() {
 +	local name="${1}"
 +	local len="${2}"
++	local blocksize="${3}"
 +	if (( ${len} == 160 )) && [[ "${name}" =~ sha ]] ; then
 +		name="sha1"
 +	fi
@@ -946,13 +1017,6 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	fi
 +}
 +
-+_cipher_not_recommended() {
-+	local name="${1}"
-+	if grep -q -e ": ${name}" /proc/crypto ; then
-+		print_info 1 "$(get_indent 1)>> ${1} is not recommended for hashing or as a cipher for securing data."
-+	fi
-+}
-+
 +pgo_trainer_crypto_std() {
 +	local trained=0
 +	if ! which cryptsetup 2>/dev/null 1>/dev/null ; then
@@ -960,17 +1024,32 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		return
 +	fi
 +	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for industry standard hashes"
-+	_cipher_not_recommended "sha1"
-+	for ks in 160 224 256 512 ; do
-+		_use_hash "sha${ks}" ${ks}
++	_cipher_not_recommended "sha1" "obsolete, insecure"
++	unset BS
++	declare -Ax BS=(
++		[160]="512" # sha1
++		[224]="512"
++		[256]="512"
++		[384]="1024"
++		[512]="1024"
++	)
++	for ks in 160 224 256 384 512 ; do
++		_use_hash "sha${ks}" ${ks} ${BS[${ks}]}
 +	done
++	unset BS
++	declare -Ax BS=(
++		[224]="1152"
++		[256]="1088"
++		[384]="832"
++		[512]="576"
++	)
 +	for ks in 224 256 384 512 ; do
-+		_use_hash "sha3-${ks}" ${ks}
++		_use_hash "sha3-${ks}" ${ks} ${BS[${ks}]}
 +	done
 +	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for industry standard ciphers"
-+	_use_crypto_with_mode "cbc" "aes" 128 256 64
-+	_use_crypto_with_mode "ctr" "aes" 128 256 64
-+	_use_crypto_with_mode "xts" "aes" 256 512 128
++	_use_crypto_with_mode "cbc" "aes" 128 256 64 128
++	_use_crypto_with_mode "ctr" "aes" 128 256 64 128
++	_use_crypto_with_mode "xts" "aes" 256 512 128 128
 +	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
@@ -981,31 +1060,26 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		return
 +	fi
 +	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for common hashes"
-+	_use_hash "rmd160" 160
++	_use_hash "rmd160" 160 512
 +	for ks in 160 256 384 512 ; do
-+		_use_hash "wp${ks}" ${ks}
++		_use_hash "wp${ks}" ${ks} 512
 +	done
 +	for ks in 160 256 384 512 ; do
-+		_use_hash "blake2b-${ks}" ${ks}
++		_use_hash "blake2b-${ks}" ${ks} 1024
 +	done
 +	for ks in 128 160 224 256 ; do
-+		_use_hash "blake2s-${ks}" ${ks}
++		_use_hash "blake2s-${ks}" ${ks} 512
 +	done
 +	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for common ciphers"
-+	_use_crypto_with_mode "cbc" "cast5" 40 128 32
-+	_cipher_not_recommended "cast5" # 64 bit block size
-+	_use_crypto_with_mode "cbc" "cast6" 128 256 32
-+	_use_crypto_with_mode "xts" "cast6" 256 512 64
-+	_use_crypto_with_mode "cbc" "des3_ede" 192 192 192
-+	_use_crypto_with_mode "ctr" "des3_ede" 192 192 192
-+	_cipher_not_recommended "des3_ede" # 64 bit block size
-+	_use_crypto_with_mode "cbc" "blowfish" 32 448 32
-+	_use_crypto_with_mode "ctr" "blowfish" 32 448 32
-+	_cipher_not_recommended "blowfish" # 64 bit block size
-+	_use_crypto_with_mode "cbc" "twofish" 128 256 64
-+	_use_crypto_with_mode "xts" "twofish" 256 512 128
-+	_use_crypto_with_mode "cbc" "serpent" 128 256 64
-+	_use_crypto_with_mode "xts" "serpent" 256 512 128
++	_use_crypto_with_mode "cbc" "cast6" 128 256 32 128
++	_use_crypto_with_mode "ctr" "cast6" 128 256 32 128
++	_use_crypto_with_mode "xts" "cast6" 256 512 64 128
++	_use_crypto_with_mode "cbc" "twofish" 128 256 64 128
++	_use_crypto_with_mode "ctr" "twofish" 128 256 64 128
++	_use_crypto_with_mode "xts" "twofish" 256 512 128 128
++	_use_crypto_with_mode "cbc" "serpent" 128 256 64 128
++	_use_crypto_with_mode "ctr" "serpent" 128 256 64 128
++	_use_crypto_with_mode "xts" "serpent" 256 512 128 128
 +	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
@@ -1016,9 +1090,71 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		return
 +	fi
 +	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for less common ciphers"
-+	_use_crypto_with_mode "cbc" "anubis" 128 320 32
-+	_use_crypto_with_mode "cbc" "camellia" 128 256 32
-+	_use_crypto_with_mode "xts" "camellia" 256 512 64
++	_use_crypto_with_mode "cbc" "anubis" 128 320 32 128
++	_use_crypto_with_mode "xts" "anubis" 256 640 64 128
++	_use_crypto_with_mode "cbc" "camellia" 128 256 32 128
++	_use_crypto_with_mode "xts" "camellia" 256 512 64 128
++	_use_crypto_with_mode "cbc" "cast5" 40 128 32 64
++	_use_crypto_with_mode "cbc" "fcrypt" 64 64 64 64
++	_use_crypto_with_mode "cbc" "khazad" 128 128 128 64
++	_use_crypto_with_mode "ctr" "khazad" 128 128 128 64
++	_use_crypto_with_mode "cbc" "tea" 128 128 128 64
++	_use_crypto_with_mode "ctr" "tea" 128 128 128 64
++	_use_crypto_with_mode "cbc" "xeta" 128 128 128 64
++	_use_crypto_with_mode "ctr" "xeta" 128 128 128 64
++	_use_crypto_with_mode "cbc" "xtea" 128 128 128 64
++	_use_crypto_with_mode "ctr" "xtea" 128 128 128 64
++	(( ${trained} == 1 )) && marked_as_trained
++}
++
++pgo_trainer_crypto_deprecated() {
++	local trained=0
++	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for deprecated / insecure hashes"
++	_use_hash "michael_mic" 64 64 # TKIP
++
++	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for deprecated / insecure ciphers"
++	# Deprecated or outdated if 64 block size.
++	# See https://en.wikipedia.org/wiki/Cipher_security_summary
++	_cipher_not_recommended "arc4" "ARC4 is considered insecure"
++	_use_crypto_with_mode "ecb" "arc4" 2048 2048 2048 1 # WEP
++	_cipher_not_recommended "blowfish" "Blowfish is considered insecure"
++	_use_crypto_with_mode "cbc" "blowfish" 32 448 32 64
++	_use_crypto_with_mode "ctr" "blowfish" 32 448 32 64
++	_cipher_not_recommended "des" "DES is considered insecure"
++	_use_crypto_with_mode "cbc" "des3" 64 64 64 64
++	_use_crypto_with_mode "ctr" "des3" 64 64 64 64
++	_cipher_not_recommended "des3_ede" "DES is considered insecure"
++	_use_crypto_with_mode "cbc" "des3_ede" 192 192 192 64
++	_use_crypto_with_mode "ctr" "des3_ede" 192 192 192 64
++	(( ${trained} == 1 )) && marked_as_trained
++}
++
++pgo_trainer_crypto_chn() {
++	local trained=0
++	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for CHN hashes"
++	_use_hash "sm3" 256 512
++	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for CHN cipher"
++	_use_crypto_with_mode "cbc" "sm4" 128 128 128 128
++	_use_crypto_with_mode "ctr" "sm4" 128 128 128 128
++	_use_crypto_with_mode "xts" "sm4" 256 256 256 128
++	(( ${trained} == 1 )) && marked_as_trained
++}
++
++pgo_trainer_crypto_kor() {
++	local trained=0
++	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for KOR ciphers"
++	_use_crypto_with_mode "cbc" "seed" 128 256 64 128
++	_use_crypto_with_mode "ctr" "seed" 128 256 64 128
++	_use_crypto_with_mode "xts" "seed" 256 512 128 128
++	(( ${trained} == 1 )) && marked_as_trained
++}
++
++pgo_trainer_crypto_rus() {
++	local trained=0
++	print_info 1 "$(get_indent 1)>> Running the cryptsetup PGO trainer for RUS hashes"
++	for ks in 256 512 ; do
++		_use_hash "streebog${ks}" ${ks} 512
++	done
 +	(( ${trained} == 1 )) && marked_as_trained
 +}
 +
@@ -1073,13 +1209,13 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +			for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
 +				local file_size=$(stat -c "%s" "${f}")
 +				(( ${file_size} == 0 )) && continue # avoid mod by zero
-+				local npages=$((${file_size} / ${PAGESIZE}))
++				local npages=$((${file_size} / ${PAGE_SIZE_}))
 +				local srand=$(echo "${RANDOM}" | sed -E -e "s|^[0]+||g") # 08907: value too great for base (error token is "08907")
 +				local page_index=$(( ${srand} % ${npages} ))
 +				print_info 1 "$(get_indent 1)>> Reading ${f} at page_index ${page_index}."
-+				dd if="${f}" of="dump.dat" ibs=${KPAGESIZE}K skip=${page_index} count=1 && trained=1
++				dd if="${f}" of="dump.dat" ibs=${K_PAGE_SIZE_}K skip=${page_index} count=1 && trained=1
 +				local size_x=$(stat -c "%s" "dump.dat")
-+				if (( ${size_x} != ${PAGESIZE} )) ; then
++				if (( ${size_x} != ${PAGE_SIZE_} )) ; then
 +					print_info 1 "$(get_indent 1)>> Failed reading a page of a file.  Filesize was ${size_x}."
 +				fi
 +			done
@@ -1100,14 +1236,14 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	local trained=0
 +	pushd "${sandbox_dir}"
 +		f="test.img"
-+		dd if=/dev/zero of=${f} bs=${KPAGESIZE}K iflag=fullblock,count_bytes count=${PGO_MAX_FILESIZE_DEFAULT}
++		dd if=/dev/zero of=${f} bs=${K_PAGE_SIZE_}K iflag=fullblock,count_bytes count=${PGO_MAX_FILESIZE_DEFAULT}
 +		for try in $(seq ${PGO_SAMPLE_SIZE}) ; do
 +			local file_size=$(stat -c "%s" "${f}")
 +			(( ${file_size} == 0 )) && continue # avoid mod by zero
-+			local npages=$((${file_size} / ${PAGESIZE}))
++			local npages=$((${file_size} / ${PAGE_SIZE_}))
 +			local page_index=$(( ${RANDOM}${RANDOM} % ${npages} ))
 +			print_info 1 "$(get_indent 1)>> Writing ${f} at page_index ${page_index}."
-+			dd if=${f} of=${f} ibs=${KPAGESIZE}K seek=${page_index} count=1 conv=notrunc && trained=1
++			dd if=${f} of=${f} ibs=${K_PAGE_SIZE_}K seek=${page_index} count=1 conv=notrunc && trained=1
 +			file_size=$(stat -c "%s" "${f}")
 +			print_info 1 "$(get_indent 1)>> New filesize is ${file_size}."
 +			local size_x=$(stat -c "%s" "${f}")
@@ -1460,7 +1596,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +from selenium.common.exceptions import NoSuchElementException
 +import time
 +driver = webdriver.Chrome()
-+driver.get("https://www.youtube.com/watch?v=UlbyOeMCL0g")
++driver.get("${PGO_TRAINER_YT_URI_}")
 +time.sleep(20) # wait for browser to load
 +time.sleep(1)
 +try:
@@ -1500,7 +1636,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +from selenium.common.exceptions import NoSuchElementException
 +import time
 +driver = webdriver.Firefox()
-+driver.get("https://www.youtube.com/watch?v=UlbyOeMCL0g")
++driver.get("${PGO_TRAINER_YT_URI_}")
 +time.sleep(20) # wait for browser to load
 +time.sleep(1)
 +try:
@@ -1577,8 +1713,12 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +	pgo_trainer_2d_draw
 +	pgo_trainer_3d_ogl1_3
 +	pgo_trainer_crypto_std
++	pgo_trainer_crypto_kor
++	pgo_trainer_crypto_chn
++	pgo_trainer_crypto_rus
 +	pgo_trainer_crypto_common
 +	pgo_trainer_crypto_less_common
++	pgo_trainer_crypto_deprecated
 +	pgo_trainer_custom
 +	pgo_trainer_emerge1
 +	pgo_trainer_emerge2
