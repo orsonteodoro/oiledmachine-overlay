@@ -928,6 +928,9 @@ BDEPEND="
 # pgo related:  dev-python/requests is python3 but testing/scripts/run_performance_tests.py is python2
 
 # Upstream uses llvm:13
+# When CFI + PGO + official was tested, it didn't work well with LLVM12.  This
+# is why LLVM13 was set as the minimum and did fix the problem.
+
 # For the current llvm for this project, see
 #   https://github.com/chromium/chromium/blob/93.0.4577.82/tools/clang/scripts/update.py#L42
 # Use the same clang for official USE flag because of older llvm bugs which
@@ -1212,10 +1215,21 @@ pkg_pretend() {
 	pre_build_checks
 }
 
-# For PGO, the commit below corresponds to profraw version 5.  Don't really know
-# if the produced profdata is version agnostic which was derived from the
-# profraw v5, but it seems to work without crashes in the older 92.x.4515.x
-# series with LLVM 13.x that uses profraw version 6.
+# The answer to the profdata compatibility is answered in
+# https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#format-compatibility-guarantees
+
+# The profdata (aka indexed profile) version is 7 corresponding to >= llvm 12
+# to main branch (llvm 14) and is after the magic (lprofi - i for index) in the
+# profdata file located in chrome/build/pgo_profiles/*.profdata.
+
+# PGO version compatibility
+
+# Profdata versioning:
+# https://github.com/llvm/llvm-project/blob/98033fdc50e61273b1d5c77ba5f0f75afe3965c1/llvm/include/llvm/ProfileData/InstrProf.h#L991
+# LLVM version:
+# https://github.com/llvm/llvm-project/blob/98033fdc50e61273b1d5c77ba5f0f75afe3965c1/llvm/CMakeLists.txt
+# The 98033fd is from the CR_CLANG_USED below.
+
 CR_CLANG_USED="98033fdc50e61273b1d5c77ba5f0f75afe3965c1" # Obtained from \
 # https://github.com/chromium/chromium/blob/93.0.4577.82/tools/clang/scripts/update.py#L42
 CR_CLANG_USED_UNIX_TIMESTAMP="1626129557" # Cached.  Use below to obtain this. \
