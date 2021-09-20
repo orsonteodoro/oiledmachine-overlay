@@ -177,8 +177,8 @@
     [2] Third party patchset LTS has provided updates
     [3] only from the oiledmachine-overlay repo
     [4] without correctness verification, due to lack of hardware or
-        configuration.  Correctness and build fixes extends only to common
-        device independent code.
+        configuration.  Correctness and build fixes extends only to device
+        agnostic independent code.
     [5] updates usually only once, which may indicate bugs or lack of
         sufficient testing.  No versioning system between patch fixes.
     [6] backported, but not intended for this series, but build time
