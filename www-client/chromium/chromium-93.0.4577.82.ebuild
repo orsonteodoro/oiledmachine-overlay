@@ -667,9 +667,9 @@ REQUIRED_USE+="
 	!proprietary-codecs? ( !system-ffmpeg !vaapi )
 	amd64? ( !shadowcallstack )
 	bundled-libcxx? ( clang )
-	cfi-vcall? ( clang !system-ffmpeg !system-icu )
-	cfi-cast? ( cfi-vcall !system-ffmpeg !system-icu )
-	cfi-icall? ( cfi-vcall !system-ffmpeg !system-icu )
+	cfi-vcall? ( clang !system-ffmpeg !system-icu !system-libcxx !system-libstdcxx )
+	cfi-cast? ( cfi-vcall !system-ffmpeg !system-icu !system-libcxx !system-libstdcxx )
+	cfi-icall? ( cfi-vcall !system-ffmpeg !system-icu !system-libcxx !system-libstdcxx )
 	component-build? ( !suid )
 	lto-opt? ( clang )
 	official? (
