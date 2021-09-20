@@ -14,7 +14,8 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
 	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
 	sv sw ta te th tr uk vi zh-CN zh-TW"
 
-LLVM_MAX_SLOT=13
+LLVM_MAX_SLOT=14
+LLVM_SLOTS=(13 14)
 inherit check-reqs chromium-2 desktop flag-o-matic llvm multilib ninja-utils pax-utils portability python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
 inherit multilib-minimal
 
@@ -879,6 +880,17 @@ BDEPEND="
 				cfi-icall? ( =sys-libs/compiler-rt-sanitizers-13*[cfi] )
 				cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-13*[cfi] )
 			)
+			(
+				sys-devel/clang:14[${MULTILIB_USEDEP}]
+				sys-devel/llvm:14[${MULTILIB_USEDEP}]
+				=sys-devel/clang-runtime-14*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+				>=sys-devel/lld-14
+				=sys-libs/compiler-rt-14*
+				=sys-libs/compiler-rt-sanitizers-14*[shadowcallstack?]
+				cfi-cast? ( =sys-libs/compiler-rt-sanitizers-14*[cfi] )
+				cfi-icall? ( =sys-libs/compiler-rt-sanitizers-14*[cfi] )
+				cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-14*[cfi] )
+			)
 		)
 		official? (
 			sys-devel/clang:13[${MULTILIB_USEDEP}]
@@ -928,8 +940,9 @@ BDEPEND="
 # pgo related:  dev-python/requests is python3 but testing/scripts/run_performance_tests.py is python2
 
 # Upstream uses llvm:13
-# When CFI + PGO + official was tested, it didn't work well with LLVM12.  This
-# is why LLVM13 was set as the minimum and did fix the problem.
+# When CFI + PGO + official was tested, it didn't work well with LLVM12.  Error noted in
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/f0c13049dc89f068370511b4664f7fb111df2d3a/www-client/chromium/bug_notes
+# This is why LLVM13 was set as the minimum and did fix the problem.
 
 # For the current llvm for this project, see
 #   https://github.com/chromium/chromium/blob/93.0.4577.82/tools/clang/scripts/update.py#L42
@@ -1252,7 +1265,7 @@ contains_slotted_major_version() {
 }
 
 contains_slotted_triple_version() {
-	# For sys-devel/llvm:x.y.z slot style
+	# For sys-libs/compiler-rt-sanitizers:x.y.z slot style
 	local live_pkgs_=(
 		sys-libs/compiler-rt
 		sys-libs/compiler-rt-sanitizers
@@ -1292,7 +1305,7 @@ _print_timestamps() {
 	fi
 }
 
-_get_release_timestamp() {
+_get_release_hash() {
 	local v="${1}"
 	if [[ -z "${cached_release_hashes[${v}]}" ]] ; then
 		local hash=$(git --no-pager ls-remote \
@@ -1304,7 +1317,7 @@ _get_release_timestamp() {
 	echo "${cached_release_hashes[${v}]}"
 }
 
-_get_live_llvm_timestamp() {
+_get_llvm_timestamp() {
 	if [[ -z "${emerged_llvm_commit}" ]] ; then
 		# Should check against the llvm milestone if not live
 		v=$(ver_cut 1-3 "${pv}")
@@ -1314,7 +1327,7 @@ _get_live_llvm_timestamp() {
 			suffix=${suffix//_/-}
 		fi
 		v="${v}${suffix}"
-		emerged_llvm_timestamp=$(_get_release_timestamp ${v})
+		emerged_llvm_commit=$(_get_release_hash ${v})
 	fi
 	if [[ -z "${emerged_llvm_timestamps[${emerged_llvm_commit}]}" ]] ; then
 		einfo "Fetching timestamp for ${emerged_llvm_commit}"
@@ -1335,7 +1348,7 @@ _get_live_llvm_timestamp() {
 	fi
 }
 
-_check_live_llvm_updated() {
+_check_llvm_updated() {
 	local root_pkg_timestamp=""
 
 	if [[ "${p}" == "sys-devel/llvm" ]] ; then
@@ -1349,41 +1362,40 @@ _check_live_llvm_updated() {
 
 	if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
 		needs_emerge=1
-		live_packages_status[${p_}]="1" # needs emerge
+		llvm_packages_status[${p_}]="1" # needs emerge
 	else
-		live_packages_status[${p_}]="0" # package is okay
+		llvm_packages_status[${p_}]="0" # package is okay
 	fi
 }
 
-_check_live_llvm_updated_triple() {
+# For multiple sys-libs/compiler-rt-sanitizers:x.y.z
+_check_llvm_updated_triple() {
 	[[ -z "${emerged_llvm_timestamp}" ]] && die
 	[[ -z "${LLVM_TIMESTAMP}" ]] && die
 
 	if (( ${emerged_llvm_timestamp} < ${LLVM_TIMESTAMP} )) ; then
 		needs_emerge=1
-		live_packages_status[${p_}]="1" # needs emerge
+		llvm_packages_status[${p_}]="1" # needs emerge
 		old_triple_slot_packages+=( "${category}/${pn}:"$(cat "${mp}/SLOT") )
 	else
-		live_packages_status[${p_}]="0" # package is okay
+		llvm_packages_status[${p_}]="0" # package is okay
 	fi
 }
 
 print_old_live_llvm_multislot_pkgs() {
 	local arg="${1}"
+	local llvm_slot="${2}"
 	for x in ${old_triple_slot_packages[@]} ; do
 		local slot=${x/:*}
 		if [[ "${arg}" == "${slot}" ]] ; then
-			eerror "emerge -1v ${x}"
+			LLVM_REPORT_CARDS[${llvm_slot}]+="emerge -1v ${x}\n"
 		fi
 	done
 }
 
 verify_llvm_report_card() {
+	local llvm_slot=${1}
 	if (( ${needs_emerge} == 1 )) ; then
-eerror
-eerror "Detected a old clang/llvm version.  Please re-emerge the clang/LLVM"
-eerror "toolchain by doing the following:"
-eerror
 		for p in ${live_pkgs[@]} ; do
 			if [[ "${p}" == "sys-libs/libcxx" ]] && ! use system-libcxx ; then
 				continue
@@ -1397,25 +1409,25 @@ eerror
 			fi
 			local p_=${p//-/_}
 			p_=${p_//\//_}
-			if (( ${live_packages_status[${p_}]} == 1 )) ; then
+			if (( ${llvm_packages_status[${p_}]} == 1 )) ; then
 				if contains_slotted_major_version "${p}" ; then
-					eerror "emerge -1v ${p}:${CR_CLANG_SLOT}"
+					LLVM_REPORT_CARDS[${llvm_slot}]+="emerge -1v ${p}:${llvm_slot}\n"
 				elif contains_slotted_triple_version "${p}" ; then
-					print_old_live_llvm_multislot_pkgs "${p}"
+					print_old_live_llvm_multislot_pkgs "${p}" ${llvm_slot}
 				elif contains_slotted_zero "${p}" ; then
-					eerror "emerge -1v ${p}:0"
+					LLVM_REPORT_CARDS[${llvm_slot}]+="emerge -1v ${p}:0\n"
 				fi
 			fi
 		done
-		die
 	else
-einfo "The live LLVM ${CR_CLANG_SLOT} toolchain is up-to-date."
+		LLVM_REPORT_CARDS[${llvm_slot}]="pass"
 	fi
 }
 
 LLVM_TIMESTAMP=
 verify_llvm_toolchain() {
-	[[ "${CLANG_SLOT}" != "${CR_CLANG_SLOT}" ]] && return
+	local llvm_slot=${1}
+	einfo "Inspecting for llvm:${llvm_slot}"
 
 	# Everything that inherits the llvm.org must be checked.
 	# sys-devel/clang-runtime doesn't need check
@@ -1443,17 +1455,18 @@ verify_llvm_toolchain() {
 	unset emerged_llvm_timestamps
 	declare -A emerged_llvm_timestamps
 
-	unset live_packages_status
-	declare -A live_packages_status
+	unset llvm_packages_status
+	declare -A llvm_packages_status
 
 	unset cached_release_hashes
 	declare -A cached_release_hashes
 
 	local old_triple_slot_packages=()
 
+	local pass=0
 	local needs_emerge=0
 	# The llvm library or llvm-ar doesn't embed the hash info, so scan the /var/db/pkg.
-	if has_version "sys-devel/llvm:${CR_CLANG_SLOT}" ; then
+	if has_version "sys-devel/llvm:${llvm_slot}" ; then
 		for p in ${live_pkgs[@]} ; do
 			if [[ "${p}" == "sys-libs/libcxx" ]] && ! use system-libcxx ; then
 				continue
@@ -1475,51 +1488,52 @@ verify_llvm_toolchain() {
 			p_=${p_//\//_}
 			if contains_slotted_major_version "${p}" ; then
 				einfo
-				einfo "Checking ${p}:${CR_CLANG_SLOT}"
-				emerged_llvm_commit=$(bzless \
-					"${ESYSROOT}/var/db/pkg/${p}-${CR_CLANG_SLOT}"*"/environment.bz2" \
+				einfo "Checking ${p}:${llvm_slot}"
+				emerged_llvm_commit=$(bzcat \
+					"${ESYSROOT}/var/db/pkg/${p}-${llvm_slot}"*"/environment.bz2" \
 					| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
-				pv=$(cat "${ESYSROOT}/var/db/pkg/${p}-${CR_CLANG_SLOT}"*"/PF" | sed "s|${p}-||")
-				_get_live_llvm_timestamp
+				pv=$(cat "${ESYSROOT}/var/db/pkg/${p}-${llvm_slot}"*"/PF" | sed "s|${p}-||")
+				_get_llvm_timestamp
 				[[ "${p}" == "sys-devel/llvm" ]] \
 					&& LLVM_TIMESTAMP=${emerged_llvm_timestamp}
-				_check_live_llvm_updated
+				_check_llvm_updated
 			elif contains_slotted_zero "${p}" ; then
 				einfo
 				einfo "Checking ${p}:0"
-				emerged_llvm_commit=$(bzless \
+				emerged_llvm_commit=$(bzcat \
 					"${ESYSROOT}/var/db/pkg/${p}"*"/environment.bz2" \
 					| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
 				pv=$(cat "${ESYSROOT}/var/db/pkg/${p}"*"/PF" | sed "s|${p}-||")
-				_get_live_llvm_timestamp
-				_check_live_llvm_updated
+				_get_llvm_timestamp
+				_check_llvm_updated
 			else
 				local category=${p/\/*}
 				local pn=${p/*\/}
-				# Handle multiple slots
-				# We shouldn't have to deal with multislot patch versions, but
-				# we have to.
+				# Handle multiple slots (i.e multiple sys-libs/compiler-rt-sanitizers:x.y.z)
+				# We shouldn't have to deal with multiple sys-libs/compiler-rt-sanitizers
+				# 13.0.0.9999 13.0.0_rc3 13.0.0_rc2 versions installed at the same time
+				# for just 1 sys-libs/llvm but we have to.
 				for mp in $(find "${ESYSROOT}/var/db/pkg/${category}" \
 					-maxdepth 1 \
 					-type d \
 					-regextype "posix-extended" \
-					-regex ".*${pn}-${CR_CLANG_SLOT}.[0-9.]+") ; do
+					-regex ".*${pn}-${llvm_slot}.[0-9.]+") ; do
 					einfo
 					einfo "Checking ="$(basename ${mp})
-					emerged_llvm_commit=$(bzless \
+					emerged_llvm_commit=$(bzcat \
 						"${mp}/environment.bz2" \
 						| grep -F -e "EGIT_VERSION" \
 						| head -n 1 \
 						| cut -f 2 -d '"')
 					pv=$(cat "${mp}/PF" | sed "s|${p}-||")
-					_get_live_llvm_timestamp
-					_check_live_llvm_updated_triple
+					_get_llvm_timestamp
+					_check_llvm_updated_triple
 				done
 			fi
 		done
-		verify_llvm_report_card
+		verify_llvm_report_card ${llvm_slot}
 	else
-die "${PN} requires llvm:${CR_CLANG_SLOT}"
+		LLVM_REPORT_CARDS[${llvm_slot}]="not installed"
 	fi
 }
 
@@ -1630,15 +1644,46 @@ ewarn
 		llvm_pkg_setup
 		CC=${CHOST}-clang
 		CXX=${CHOST}-clang++
-		local MESA_LLVM_MAX_SLOT=$(bzless \
+		local MESA_LLVM_MAX_SLOT=$(bzcat \
 			"${ESYSROOT}/var/db/pkg/media-libs/mesa"*"/environment.bz2" \
 			| grep -F -e "LLVM_MAX_SLOT" \
 			| head -n 1 \
 			| cut -f 2 -d '"')
-		local CLANG_SLOT=$(clang-major-version)
-		einfo "CLANG_SLOT: ${CLANG_SLOT}"
 		einfo "MESA_LLVM_MAX_SLOT: ${MESA_LLVM_MAX_SLOT}"
-		verify_llvm_toolchain
+		unset LLVM_REPORT_CARDS
+		for s in ${LLVM_SLOTS[@]} ; do
+			verify_llvm_toolchain ${s}
+		done
+		LLVM_SLOT=
+		local slots
+		if use official ; then
+			slots=${CR_CLANG_SLOT}
+		else
+			slots=$(echo "${LLVM_SLOTS[@]}" | tr " " "\n" | tac | tr "\n" " ")
+		fi
+		for s in ${slots} ; do
+			if [[ ${LLVM_REPORT_CARDS[${s}]} == "pass" ]] ; then
+				LLVM_SLOT=${s}
+				break
+			fi
+		done
+		if [[ -z "${LLVM_SLOT}" ]] ; then
+eerror
+eerror "You must choose a LLVM slot to update properly:"
+eerror
+			for s in $(echo "${LLVM_SLOTS[@]}" | tr " " "\n" | tac) ; do
+				[[ ${LLVM_REPORT_CARDS[${s}]} == "not installed" ]] \
+					&& continue
+eerror
+eerror "The LLVM ${s} toolchain needs the following update:"
+echo -e "${LLVM_REPORT_CARDS[${s}]}"
+			done
+			die
+		else
+			LLVM_MAX_SLOT=${LLVM_SLOT}
+			llvm_pkg_setup
+			einfo "Using llvm:${LLVM_SLOT}"
+		fi
 	fi
 	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" ]] ; then
 		if [[ -z "${MY_OVERLAY_DIR}" ]] ; then
@@ -1679,7 +1724,7 @@ ewarn
 ewarn "  libstdc++ (non-hardened):  CET (if supported by CPU, similiar"
 ewarn "    to CFI, forward and backward edge protected); Partial RELRO,"
 ewarn "    NO noexecstack, NO SSP, NO shadow-call-stack with ~18"
-ewarn "    unbundled third party ebuild-packages without CET, without SSP,"
+ewarn "    unbundled third party ebuild-packages without CFI/CET, without SSP,"
 ewarn "    without Full RELRO by default on the desktop distro profile."
 # The 18 packages in question can be found in [D] of this ebuild.
 ewarn

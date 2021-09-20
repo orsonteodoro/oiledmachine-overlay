@@ -35,6 +35,12 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       pgo-full - incomplete
       shadowcallstack - needs testing... (report back if it works)
 
+
+    Full PGO
+
+    Full PGO (i.e. 3 step PGO) is not complete and is in development in the
+    ebuild level.  The trainer portion is blocking completion.
+
     Users can set the CR_PGO_TRAINERS USE flags to generate PGO profiles for
     either mobile or desktop.  For more details see the component and
     documentation fields in the files contained in [1].  Certain benchmarks will
@@ -72,7 +78,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="clang">Uses clang and allows access to clang or LLVM related
       USE flags.  Turning on clang implies ThinLTO on.  (See the lto-opt
       USE flag description for memory requirements if out-of-memory (OOM)
-      problems.)</flag>
+      problems.)  Support for a newer LLVM version is possible only if
+      the official USE flag is disabled.</flag>
     <flag name="cfi-cast">
       Compile the build with mitigation against possible bad casting
       vulnerabilities in addition to forward edge attack mitigation.
@@ -112,8 +119,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       binary size concerns.  Building may required 12 GiB virtual memory
       minimal for dedicated builds, 16 GiB virtual memory recommended for
       multitasking, meaning add more swap space.</flag>
-    <flag name="official">Enable the official build instead of the developer
-      build.  Implies cfi and cfi-icall (both enabled on x86_64), pgo, debug
+    <flag name="official">Enable the official build settings instead of the
+      developer build.  Enables security hardending (for both the browser and
+      internal bundled third party dependencies built with cfi and cfi-icall
+      [both enabled on x86_64], Full RELRO, noexecstac, PIE, SSP), PGO, debug
       symbols level 2.</flag>
     <flag name="partitionalloc">Use PartitionAlloc as the default allocator and
       replacement to TCMalloc.  It's designed for security and lower latency,
