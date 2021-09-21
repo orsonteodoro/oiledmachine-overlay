@@ -1781,8 +1781,8 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +check_pgo_requirements() {
 +	if ( is_genkernel && [[ -n "${CMD_PGI}" || -n "${CMD_PGO}" ]] ) \
 +		|| ( ! is_genkernel && true ) ; then
-+		check_pgo_profraw_fixes_applied
 +		check_pgo_applied
++		check_pgo_profraw_fixes_applied
 +	fi
 +}
 +
