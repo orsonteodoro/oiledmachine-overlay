@@ -12,8 +12,12 @@ KEYWORDS="~amd64"
 SLOT="0"
 DEPEND+=" dev-db/sqlcipher"
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" <net-libs/nodejs-14[npm]
-	>=net-libs/nodejs-12[npm]"
+BDEPEND+="
+	(
+		<net-libs/nodejs-14[npm]
+		>=net-libs/nodejs-12[npm]
+	)
+	net-libs/nodejs[npm]"
 ELECTRON_APP_ELECTRON_V="3.1.13" # todo, update version
 ELECTRON_APP_VUE_V="2.5.16"
 MY_PN="Epic Journal"
