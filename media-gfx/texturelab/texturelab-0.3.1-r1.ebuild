@@ -12,10 +12,12 @@ KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+="
 	|| (
-		net-libs/nodejs:12[npm]
-		net-libs/nodejs:14[npm]
-		net-libs/nodejs:16[npm]
-	)"
+		net-libs/nodejs:12
+		net-libs/nodejs:14
+		net-libs/nodejs:16
+	)
+	net-libs/nodejs[npm]
+"
 ELECTRON_APP_ELECTRON_V="13.1.4"
 ELECTRON_APP_VUE_V="2.6.11"
 ELECTRON_APP_MODE="yarn"
