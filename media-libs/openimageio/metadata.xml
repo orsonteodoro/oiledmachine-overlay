@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<!-- only for this ebuild fork on the oiledmachine-overlay -->
 	<maintainer type="person" proxied="yes">
-		<email>gentoo@aisha.cc</email>
-		<name>Aisha Tammy</name>
+		<!-- only for this ebuild fork on the oiledmachine-overlay -->
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
 	</maintainer>
-	<!-- ebuild originators -->
 	<maintainer type="person" proxied="yes">
+		<!-- ebuild originators -->
 		<email>gentoo@aisha.cc</email>
 		<name>Aisha Tammy</name>
 	</maintainer>
 	<maintainer type="project">
+		<!-- ebuild originators -->
 		<email>sci@gentoo.org</email>
 		<name>Gentoo Science Project</name>
 	</maintainer>

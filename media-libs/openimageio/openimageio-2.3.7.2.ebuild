@@ -3,9 +3,10 @@
 
 EAPI=7
 
+LLVM_MAX_SLOT=12
 FONT_PN=OpenImageIO
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake font python-single-r1
+inherit cmake font llvm python-single-r1
 
 DESCRIPTION="A library for reading and writing images"
 HOMEPAGE="https://sites.google.com/site/openimageio/ https://github.com/OpenImageIO"
@@ -22,10 +23,14 @@ OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 # font install is enabled upstream
 # building test enabled upstream
 IUSE+=" ${CPU_FEATURES[@]%:*} ${OPENVDB_APIS_[@]}
-color-management cxx17 dds dicom +doc ffmpeg field3d gif heif jpeg2k libressl opencv
-opengl openvdb ptex +python +qt5 raw ssl +truetype"
-REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )
-	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )"
+aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc jpeg2k
+libressl opencv opengl openvdb ptex +python +qt5 raw rav1e ssl +truetype"
+REQUIRED_USE="
+	aom? ( avif )
+	avif? ( || ( aom rav1e ) )
+	python? ( ${PYTHON_REQUIRED_USE} )
+	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )
+	rav1e? ( avif )"
 # See https://github.com/OpenImageIO/oiio/blob/Release-2.2.15.1/INSTALL.md for requirements
 QT_V="5.6"
 ONETBB_SLOT="12"
@@ -43,12 +48,15 @@ RDEPEND+="
 	color-management? ( >=media-libs/opencolorio-1.1:= )
 	dds? ( >=media-libs/libsquish-1.13 )
 	dicom? ( >=sci-libs/dcmtk-3.6.1 )
-	ffmpeg? ( >=media-video/ffmpeg-2.6:= )
+	ffmpeg? ( >=media-video/ffmpeg-3.0:= )
 	field3d? ( >=media-libs/Field3D-1.7.3:= )
 	gif? ( >=media-libs/giflib-4.1:0= )
-	heif? ( >=media-libs/libheif-1.3:= )
+	heif? (
+		>=media-libs/libheif-1.3:=
+		avif? ( >=media-libs/libheif-1.7:=[aom?,rav1e?] )
+	)
 	jpeg2k? ( >=media-libs/openjpeg-2:2= )
-	opencv? ( >=media-libs/opencv-2:= )
+	opencv? ( >=media-libs/opencv-3:= )
 	opengl? (
 		media-libs/glew:=
 		virtual/glu
@@ -66,7 +74,7 @@ RDEPEND+="
 		)
 		>=media-libs/openvdb-5[abi5-compat?,abi6-compat?,abi7-compat?,abi8-compat?]
 	)
-	ptex? ( >=media-libs/ptex-2.3.0:= )
+	ptex? ( >=media-libs/ptex-2.3.1:= )
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
@@ -91,17 +99,7 @@ RDEPEND+="
 	)
 	truetype? ( media-libs/freetype:2= )"
 DEPEND+=" ${RDEPEND}"
-BDEPEND+="
-	>=dev-util/cmake-3.12
-	|| (
-		sys-devel/gcc:11
-		sys-devel/gcc:10
-		sys-devel/gcc:9.4.0
-		sys-devel/gcc:9.3.0
-		sys-devel/gcc:8.5.0
-		sys-devel/gcc:8.4.0
-		sys-devel/gcc:7.5.0
-		sys-devel/gcc:6.5.0
+BDEPEND_CLANG="
 		(
 			sys-devel/clang:12
 			sys-devel/llvm:12
@@ -117,8 +115,18 @@ BDEPEND+="
 			sys-devel/llvm:10
 			>=sys-devel/lld-10
 		)
+"
+BDEPEND_ICC="
 		>=sys-devel/icc-13
+"
+BDEPEND+="
+	>=dev-util/cmake-3.12
+	|| (
+		${BDEPEND_CLANG}
+		${BDEPEND_ICC}
+		>=sys-devel/gcc-8.5
 	)
+	clang? ( ${BDEPEND_CLANG} )
 	doc? (
 		app-doc/doxygen
 		dev-texlive/texlive-bibtexextra
@@ -126,17 +134,28 @@ BDEPEND+="
 		dev-texlive/texlive-fontutils
 		dev-texlive/texlive-latex
 		dev-texlive/texlive-latexextra
-	)"
+	)
+	icc? ( ${BDEPEND_ICC} )"
 SRC_URI="
-https://github.com/OpenImageIO/oiio/archive/Release-${PV}.tar.gz
+https://github.com/OpenImageIO/oiio/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 
 DOCS=( CHANGES.md CREDITS.md README.md )
 RESTRICT="test" # bug 431412
-S="${WORKDIR}/oiio-Release-${PV}"
+RESTRICT+=" mirror"
+S="${WORKDIR}/oiio-${PV}"
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
+
+	if use icc ; then
+		which icc 2>/dev/null 1>/dev/null || die "You must set the PATH to icc as a per-package envvar"
+	fi
+
+	if use clang ; then
+		llvm_pkg_setup
+	fi
+	export CC CXX
 }
 
 src_prepare() {
