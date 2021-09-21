@@ -97,23 +97,22 @@
 		    kernel_compiler_patch 		N
 		    O3 [6]				N
 		    PDS					N
-		    TRESOR (AES-NI) [3,4]		y
-		    TRESOR (x86) [3,4]			y
-		    TRESOR (x86-64) [3]			Y
+		    TRESOR (AES-NI) [3,4,6]		y
+		    TRESOR (x86) [3,4,6]		y
+		    TRESOR (x86-64) [3,6]		Y
 		    UKSM [5]				N
 
     5.4							Y
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
 		    BMQ					N
-		    futex-wait-multiple			N
-		    futex2				N
+		    futex-wait-multiple [7]		N
 		    genpatches				Y
 		    kernel_compiler_patch		N
-		    TRESOR (AES-NI)			y
-		    TRESOR (x86)			y
-		    TRESOR (x86-64)			Y
-		    UKSM				N
+		    TRESOR (AES-NI) [6]			y
+		    TRESOR (x86) [6]			y
+		    TRESOR (x86-64) [6]			Y
+		    UKSM [5]				N
 		    zen-muqss				N
 		    zen-sauce				N
 
@@ -121,16 +120,16 @@
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
 		    BMQ					N
-		    futex-wait-multiple			N
-		    futex2				N
+		    futex-wait-multiple [7]		N
+		    futex2 [7]				N
 		    genpatches				Y
 		    kernel_compiler_patch		N
 		    Project C				N
 		    TCP BBR v2				N
-		    TRESOR (AES-NI)			y
-		    TRESOR (x86)			y
-		    TRESOR (x86-64)			Y
-		    UKSM				N
+		    TRESOR (AES-NI) [6]			y
+		    TRESOR (x86) [6]			y
+		    TRESOR (x86-64) [6]			Y
+		    UKSM [5]				N
 		    zen-muqss				N
 		    zen-sauce				N
 
@@ -138,17 +137,17 @@
 		    -rt	(RT_PREEMPT)			N
 		    BMQ					N
 		    Clang PGO				S (6/2021)
-		    futex-wait-multiple			N
-		    futex2				N
+		    futex-wait-multiple [7]		N
+		    futex2 [7]				N
 		    genpatches				A
 		    kernel_compiler_patch		N
 		    lru_gen				N
 		    Project C				N
 		    TCP BBR v2				A
-		    TRESOR (AES-NI)			I
-		    TRESOR (x86)			I
-		    TRESOR (x86-64)			I
-		    UKSM				N
+		    TRESOR (AES-NI) [6]			I
+		    TRESOR (x86) [6]			I
+		    TRESOR (x86-64) [6]			I
+		    UKSM [5]				N
 		    x86-cfi [6]				A
 		    zen-muqss				N
 		    zen-sauce				N
@@ -156,17 +155,17 @@
     5.14						N
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				S (6/2021)
-		    futex (futex-wait-multiple)		A
-		    futex2				A
+		    futex (futex-wait-multiple) [7]	A
+		    futex2 [7]				A
 		    kernel_compiler_patch		A
 		    genpatches				A
 		    lru_gen				N
 		    Project C				A
-		    TCP BBR v2				A
-		    TRESOR (AES-NI)			I
-		    TRESOR (x86)			I
-		    TRESOR (x86-64)			I
-		    UKSM				N
+		    TCP BBR v2 [6]			A
+		    TRESOR (AES-NI) [6]			I
+		    TRESOR (x86) [6]			I
+		    TRESOR (x86-64) [6]			I
+		    UKSM [5]				N
 		    x86-cfi [6]				A
 		    zen-lru_gen				A
 		    zen-muqss				A
@@ -181,8 +180,11 @@
         agnostic independent code.
     [5] updates usually only once, which may indicate bugs or lack of
         sufficient testing.  No versioning system between patch fixes.
-    [6] backported, but not intended for this series, but build time
-        fixes provided by ebuild maintainer
+    [6] backported or forwardported, but not intended for this series, but build
+        time fixes are provided by the ebuild maintainer
+    [7] backported or forwardported, but not intended for this series, but build
+        time fixes are provided by others if it is a recent new kernel
+        series.
 
     A - currently actively updatable
     N - under the Patchset LTS indicates that the patchset is EOL or likely
