@@ -1,3 +1,4 @@
+commit: a56a17374772a48a60057447dc4f1b4ec62697fb
 --- a/Makefile.orig	2019-05-06 18:23:16.360910326 -0700
 +++ b/Makefile	2019-05-06 20:09:21.726200906 -0700
 @@ -683,8 +683,12 @@ KBUILD_CFLAGS	+= $(call cc-disable-warni
