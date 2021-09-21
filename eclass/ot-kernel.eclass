@@ -1101,10 +1101,13 @@ function apply_zen_lru_gen() {
 # For example,
 # GENPATCHES_BLACKLIST="2500 2600"
 function _filter_genpatches() {
-	# Possibly locks up computer during OOM tests
-	P_GENPATCHES_BLACKLIST+=" 1510"
+	P_GENPATCHES_BLACKLIST=""
+	if ! use genpatches_1510 ; then
+		# Possibly locks up computer during OOM tests
+		P_GENPATCHES_BLACKLIST+=" 1510"
+	fi
 	# Already applied since 5.13.14
-	P_GENPATCHES_BLACKLIST=" 2700"
+	P_GENPATCHES_BLACKLIST+=" 2700"
 	# Already applied 5010-5013 GraySky2's kernel_compiler_patches
 	P_GENPATCHES_BLACKLIST+=" 5010 5011 5012 5013"
 	# Already applied 5000-5007 ZSTD patches

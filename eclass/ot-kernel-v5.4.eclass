@@ -98,10 +98,10 @@ d1bebeb959a56324fe436443ea2f21a8391632d9
 ZEN_MUQSS_EXCLUDED_COMMITS=(
 )
 
-IUSE+=" bmq +cfs clang disable_debug +genpatches +kernel-compiler-patch
-muqss +O3 futex-wait-multiple tresor rt tresor_aesni tresor_i686 tresor_sysfs
-tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
-zen-sauce-all -zen-tune"
+IUSE+=" bmq +cfs clang disable_debug +genpatches -genpatches_1510
++kernel-compiler-patch muqss +O3 futex-wait-multiple tresor rt tresor_aesni
+tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
+zen-muqss zen-sauce zen-sauce-all -zen-tune"
 REQUIRED_USE+="
 	^^ ( bmq cfs muqss zen-muqss )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )

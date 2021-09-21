@@ -365,6 +365,12 @@ https://github.com/dolohow/uksm
     <flag name="disable_debug">Installs scripts to disable debugging, tracing,
       verbose output or related code paths.</flag>
     <flag name="genpatches">Applies the genkernel patch set.</flag>
+    <flag name="genpatches_1510">Applies the genkernel patch 1510 for
+      protected hardlinks and symlinks during early boot.  Disabled because it
+      may cause indefinte lock up before OOM or cause failures in different
+      software during runtime.  Enabling it reverts
+https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd415
+    </flag>
     <flag name="futex-wait-multiple">Patches the kernel with
       FUTEX_WAIT_MULTIPLE futex syscall option which may be used in the
       wine-proton package and in Steam Play (based on Proton).  It may reduce 

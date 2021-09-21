@@ -31,11 +31,12 @@ PATCH_TRESOR_V="3.18.5"
 # Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
 LINUX_TIMESTAMP=1510512373
 
-IUSE="+cfs disable_debug +genpatches +kernel-compiler-patch
+IUSE="+cfs disable_debug +genpatches -genpatches_1510 +kernel-compiler-patch
 muqss pds +O3 rt tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
 uksm"
 REQUIRED_USE+="
 	^^ ( cfs muqss pds )
+	genpatches_1510? ( genpatches )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
 	tresor_i686? ( tresor )

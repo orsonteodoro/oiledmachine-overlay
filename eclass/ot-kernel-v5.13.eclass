@@ -193,13 +193,14 @@ KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex-wait-multiple
-futex2 +genpatches +kernel-compiler-patch lru_gen lto +O3 prjc rt
-shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
+futex2 +genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto +O3 prjc
+rt shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce zen-sauce-all
 -zen-tune"
 IUSE+=" clang-pgo"
 REQUIRED_USE+="
 	^^ ( cfs prjc zen-muqss )
+	genpatches_1510? ( genpatches )
 	O3? ( zen-sauce )
 	prjc? ( !rt )
 	shadowcallstack? ( cfi )

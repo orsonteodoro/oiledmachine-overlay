@@ -132,11 +132,13 @@ KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" ${KCP_IUSE} bbrv2 +cfs clang disable_debug futex-wait-multiple futex2
-+genpatches +kernel-compiler-patch muqss +O3 prjc rt tresor tresor_aesni
-tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
-zen-muqss zen-sauce zen-sauce-all -zen-tune"
++genpatches -genpatches_1510 +kernel-compiler-patch muqss +O3 prjc rt tresor
+tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
+tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce zen-sauce-all
+-zen-tune"
 REQUIRED_USE+="
 	^^ ( cfs muqss prjc zen-muqss )
+	genpatches_1510? ( genpatches )
 	O3? ( zen-sauce )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
