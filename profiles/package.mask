@@ -9,9 +9,6 @@
 # Ebuilds currently in develpment
 #-------------------------------------------------------------------------------
 
-# ebuild stuck in development for csharp and c++ bindings
-games-utils/godot
-
 # undergoing rennovation with the dotnet.eclass
 dev-dotnet/aforgedotnet
 dev-dotnet/assimp-net
@@ -40,15 +37,6 @@ dev-dotnet/sharpnav
 dev-dotnet/tesseract
 dev-dotnet/tiledsharp
 dev-dotnet/xwt
-
-# Reserved for kernel live patching for branches
-# KLP ready is Work In Progress (WIP) for this package
-=sys-kernel/ot-sources-5.8.9999
-=sys-kernel/ot-sources-5.4.9999
-
-# ebuild in development
-# Fixing major problems related to testing and restoring files.
-sys-kernel/kpatch
 
 # Masked for security reasons
 #-------------------------------------------------------------------------------
@@ -113,7 +101,6 @@ media-libs/woff2
 media-plugins/gst-plugins-omx
 
 # worked in the past but untested today
-app-portage/systemwide-pgo
 dev-util/bear
 dev-util/ycm-generator
 www-misc/rtv
