@@ -1,0 +1,44 @@
+--- a/arch/x86/Kconfig.orig	2021-09-22 14:45:34.066122741 -0700
++++ b/arch/x86/Kconfig	2021-09-22 14:47:53.733127343 -0700
+@@ -958,6 +958,22 @@ config NR_CPUS
+ config SCHED_SMT
+ 	def_bool y if SMP
+ 
++config SMT_NICE
++	bool "SMT (Hyperthreading) aware nice priority and policy support"
++	depends on SCHED_MUQSS && SCHED_SMT
++	default y
++	---help---
++	  Enabling Hyperthreading on Intel CPUs decreases the effectiveness
++	  of the use of 'nice' levels and different scheduling policies
++	  (e.g. realtime) due to sharing of CPU power between hyperthreads.
++	  SMT nice support makes each logical CPU aware of what is running on
++	  its hyperthread siblings, maintaining appropriate distribution of
++	  CPU according to nice levels and scheduling policies at the expense
++	  of slightly increased overhead.
++
++	  If unsure say Y here.
++
++
+ config SCHED_MC
+ 	def_bool y
+ 	prompt "Multi-core scheduler support"
+--- a/kernel/sysctl.c.orig	2021-09-22 14:45:57.218123504 -0700
++++ b/kernel/sysctl.c	2021-09-22 14:49:16.561130073 -0700
+@@ -127,8 +127,14 @@ static int __maybe_unused four = 4;
+ static unsigned long zero_ul;
+ static unsigned long one_ul = 1;
+ static unsigned long long_max = LONG_MAX;
+-static int one_hundred = 100;
+-static int one_thousand = 1000;
++static int __read_mostly one_hundred = 100;
++static int __read_mostly one_thousand = 1000;
++#ifdef CONFIG_SCHED_MUQSS
++extern int rr_interval;
++extern int sched_interactive;
++extern int sched_iso_cpu;
++extern int sched_yield_type;
++#endif
+ #ifdef CONFIG_PRINTK
+ static int ten_thousand = 10000;
+ #endif

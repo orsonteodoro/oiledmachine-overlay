@@ -1,0 +1,20 @@
+--- a/mm/memory.c.orig	2021-09-22 10:51:13.417659408 -0700
++++ b/mm/memory.c	2021-09-22 10:52:46.673662481 -0700
+@@ -2378,6 +2378,7 @@ static inline bool cow_user_page(struct
+ 
+ 	if (likely(src)) {
+ 		copy_user_highpage(dst, src, addr, vma);
++		uksm_cow_page(vma, src);
+ 		return true;
+ 	}
+ 
+--- a/mm/mmap.c.orig	2021-09-22 10:51:13.420659408 -0700
++++ b/mm/mmap.c	2021-09-22 10:53:39.196664212 -0700
+@@ -46,6 +46,7 @@
+ #include <linux/pkeys.h>
+ #include <linux/oom.h>
+ #include <linux/sched/mm.h>
++#include <linux/ksm.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/cacheflush.h>

@@ -24,21 +24,42 @@ PATCH_BBRV2_TAG_NAME="v2alpha-2021-07-07"
 PATCH_BBRV2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442" # 5.10
 PATCH_BBRV2_COMMIT_A="c13e23b9782c9a7f4bcc409bfde157e44a080e82" # ancestor / oldest
 PATCH_BBRV2_COMMIT_D="3d76056b85feab3aade8007eb560c3451e7d3433" # descendant / newest
-PATCH_CK_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442"
-PATCH_CK_COMMIT_A="35f6640868573a07b1291c153021f5d75749c15e" # ancestor / oldest
-PATCH_CK_COMMIT_D="13f5f8abb25489af1cc019a4a3bc83cced6da67c" # descendant / newest
-PATCH_FUTEX_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442"
-PATCH_FUTEX_COMMIT_A="9fd101849c8a3324c6038ef31fe08a528f7a6fe4" # ancestor / oldest
-PATCH_FUTEX_COMMIT_D="f678870308608b485d1c771509208c93eab8538a" # descendant / newest
-PATCH_FUTEX2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442"
-PATCH_FUTEX2_COMMIT_A="4f6d01d9753e7ff0e6ca0ab6082f8b75256cdb57" # ancestor / oldest
-PATCH_FUTEX2_COMMIT_D="65d8ec592b14a8c75ce2a04bfef5a188cd279d00" # descendant / newest
 PATCH_KCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8"
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
 #   | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-# where A is top parent and D
+# from A to D, where a is ancestor and d is descendant.
+# When using that commit list generator, it may miss some commits, so verify all
+# the commits in order.
+
+CK_COMMITS=(
+35f6640868573a07b1291c153021f5d75749c15e
+ea9b4218b46eae24eef6162be269934f4bb5dfb6
+aa59b50641d91d37ca28bfadbcd5281ff40f148d
+e123b4092b42207e6b73373e5d583533e5f81d57
+0b9ec366834a7cb054ac486230b52706c5c100bf
+2ea8fdb7dc4d79679a7f77e483a8fc54ef5a727f
+04468a7eb2c75c6e0bdfdcbe754674c8e50c0c08
+6ca339e2a03ab0281cacfe684bd0f1c538f485c5
+202d57347034c71c786cd37310a3f4bdb0900744
+8a04d624810bc8abe736c704c5f918999b6f95cd
+21fef3fefa84f136104c32c150c038dac7ea0edf
+8a06fc83fb4698eed8580738d449a05c4604b38f
+fa98200feaf4f5e593326b19261bee010e66d533
+6ad64c43e446bd13db9758bf254be544461a76cb
+0be1591cfd163660fe0fdb850e013e29ba355351
+9cdf59bc2dbfb640dbb057757e4101b147275e86
+a2fb34e34d157c303d07ee16b1ad42c8720ab320
+13f5f8abb25489af1cc019a4a3bc83cced6da67c
+)
+
+# Avoid merge conflict or dupes
+CK_COMMITS_BL=(
+9cdf59bc2dbfb640dbb057757e4101b147275e86
+a2fb34e34d157c303d07ee16b1ad42c8720ab320
+)
+
 PATCH_ZENSAUCE_COMMITS=(
 dda238180bacda4c39f71dd16d754a48da38e676
 9a2e0d950bfd77fb51a42a5fc7e81a9187606c38
@@ -69,10 +90,10 @@ b7b984993f303b89dd738c26f8742cfcf0ac98ea
 e1b127aa22601f9cb2afa3daad4c69e6a42a89f5
 )
 
-#--
-
-# Disabled 0cbcc41992693254e5e4c7952853c6aa7404f28e : ZEN: INTERACTIVE: Use BFQ as our elevator
-# Reason: It's better to change via sysfs.  Benchmarks show throughput performance degration with SSD with BFQ.
+# Avoid merge conflict.
+PATCH_ZENSAUCE_BRANDING="
+dda238180bacda4c39f71dd16d754a48da38e676
+"
 
 # LEFT_ZENTUNE:RIGHT_ZENSAUCE
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE="
@@ -94,9 +115,11 @@ b7b24b494b62e02c21a9a349da2d036849f9dd8b
 )
 PATCH_BFQ_DEFAULT="0cbcc41992693254e5e4c7952853c6aa7404f28e"
 PATCH_ZENSAUCE_BL=(
+	${PATCH_ZENSAUCE_BRANDING}
 	${PATCH_KCP_COMMIT}
 )
 
+# Backport from 5.9, updated to 5.10, with zen changes
 ZEN_MUQSS_COMMITS=(
 9d6b3eef3a1ec22d4d3c74e0b773ff52d3b3a209
 3b17bfa60ca1e8d94cb7a4c490dd79a14c53a074
@@ -128,10 +151,21 @@ abcc55ee0e4b908af47d67d2a594d63862a5e914
 ZEN_MUQSS_EXCLUDED_COMMITS=(
 )
 
+# For 5.6
+# This corresponds to the futex-proton-v3 branch.
+# Repo order is bottom oldest and top newest.
+FUTEX_COMMITS=( # oldest
+dc3e0456bf719cde7ce44e1beb49d4ad0e5f0c71
+714afdc15b847a7a33c5206b6e1ddf64697c07d6
+ec85ea95a00b490a059bcc817bc1b4660062dba0
+00d3ee9cff824d4d38e82d252e4300999f87f1a5
+e8d4d6ded8544b5716c66d326aa290db8501518c
+) # newest
+
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
-IUSE+=" ${KCP_IUSE} bbrv2 +cfs clang disable_debug futex-wait-multiple futex2
+IUSE+=" ${KCP_IUSE} bbrv2 +cfs clang disable_debug futex
 +genpatches -genpatches_1510 +kernel-compiler-patch muqss +O3 prjc rt tresor
 tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce zen-sauce-all
@@ -171,8 +205,7 @@ LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" prjc? ( GPL-3 )" # see \
   # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
-LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
-LICENSE+=" futex2? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
+LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 gen_kcp_license() {
@@ -292,8 +325,7 @@ gen_kcp_ma_uri() {
 
 SRC_URI+=" "$(gen_kcp_ma_uri)
 SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
-	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
-	   futex2? ( ${FUTEX2_SRC_URI} )
+	   futex? ( ${FUTEX_SRC_URIS} )
 	   genpatches? (
 		${GENPATCHES_URI}
 		${GENPATCHES_BASE_SRC_URI}
@@ -308,7 +340,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   kernel-compiler-patch-cortex-a72? (
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
-	   muqss? ( ${CK_SRC_URI} )
+	   muqss? ( ${CK_SRC_URIS} )
 	   prjc? ( ${PRJC_SRC_URI} )
 	   rt? ( ${RT_SRC_URI} )
 	   tresor? (
@@ -444,6 +476,11 @@ ot-kernel_filter_genpatches_blacklist_cb() {
 # Filtered patch function
 function ot-kernel_filter_patch_cb() {
 	local path="${1}"
+
+	# WARNING: Fuzzing is not intelligent enough to distiniguish syscall
+	#          number overlap.  Always inspect each and every hunk.
+	# Using patch with fuzz factor is disallowed with futex
+
 	if [[ "${path}" =~ "prjc_v5.10-r2.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
@@ -455,10 +492,6 @@ einfo "Already applied ${path} upstream"
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
-	elif [[ "${path}" =~ "${CK_FN}" ]] ; then
-		_dpatch "${PATCH_OPS}" "${path}"
-		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
 	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
@@ -466,6 +499,9 @@ einfo "Already applied ${path} upstream"
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
 		_dpatch "${PATCH_OPS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
+	elif [[ "${path}" =~ "futex-5.10-e8d4d6d.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-e8d4d6d-2-hunk-fix-for-5.10.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

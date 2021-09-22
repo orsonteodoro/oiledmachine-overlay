@@ -21,13 +21,16 @@
 # BMQ CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/BMQ
 #   https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
+# futex (aka futex_wait_multiple):
+#   https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
+# futex2:
+#   https://gitlab.collabora.com/tonyk/linux/-/commits/futex2
 # genpatches:
 #   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.4.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.10.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.12.html
-#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.13.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.14.html
 #   The person below who updates the release links above lag. See instead:
 #     https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-kernel/gentoo-sources
@@ -39,10 +42,9 @@
 #   https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #   https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
 # MUQSS CPU Scheduler (zen):
-#   https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/muqss
 #   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/muqss
 # Multigenerational LRU:
-#   https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/lru
+#   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/lru
 #   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/lru-v3
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
@@ -61,7 +63,6 @@
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.13/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.14/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
@@ -73,25 +74,10 @@
 # x86-cfi-v3:
 #   https://github.com/torvalds/linux/compare/d0ee23f9...samitolvanen:x86-cfi-v3
 #   d0ee23f9 - comes from commit of master
-# zen-kernel 5.{10..13}/futex-multiple-wait-v3:
-#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex-multiple-wait-v3
-# zen-kernel 5.{10..14}/futex2:
-#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex2
-# zen-kernel 5.14/futex:
-#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex-multiple-wait-v3
-# zen-kernel 5.4/futex-backports:
-#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
-# zen-tune:
+# zen-sauce, zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
-#     in particular 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
-#     in particular in between \
-#     [890ac85,b7b24b4] \
-#     [exclusive-old^,inclusive-new] [top,bottom]
-#   https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/zen-sauce
-#     in particular in between \
-#     [bfbbf97,732e540] \
-#     [exclusive-old^,inclusive-new] [top,bottom]
+#   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/zen-sauce
 
 case ${EAPI:-0} in
 	7) ;;
@@ -149,12 +135,6 @@ S="${WORKDIR}/linux-${PV}${K_TAG}"
 
 inherit check-reqs ot-kernel-cve toolchain-funcs
 
-if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
-RDEPEND+=" dev-vcs/git
-	   sys-kernel/kpatch
-	   sys-kernel/kpatch-daemon"
-fi
-
 BDEPEND+=" dev-util/patchutils
 	   sys-apps/grep[pcre]"
 
@@ -197,34 +177,6 @@ gen_zensauce_uris()
 BMQ_FN="${BMQ_FN:=v${K_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
 BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${K_MAJOR_MINOR}/"
 BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
-
-CK_COMMITS="${PATCH_CK_COMMIT_A}^..${PATCH_CK_COMMIT_D}" # [oldest,newest] [top,bottom]
-CK_COMMITS_SHORT="${PATCH_CK_COMMIT_A:0:7}-${PATCH_CK_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
-CK_FN=\
-"ck-${MUQSS_VER}-for-${K_MAJOR_MINOR}-${CK_COMMITS_SHORT}.patch"
-CK_SRC_URI=\
-"https://github.com/torvalds/linux/compare/${CK_COMMITS}.patch"
-CK_SRC_URI="${CK_SRC_URI} -> ${CK_FN}"
-
-FUTEX_WAIT_MULTIPLE_COMMITS="${PATCH_FUTEX_COMMIT_A}^..${PATCH_FUTEX_COMMIT_D}" # [oldest,newest] [top,bottom]
-FUTEX_WAIT_MULTIPLE_COMMITS_SHORT=\
-"${PATCH_FUTEX_COMMIT_A:0:7}-${PATCH_FUTEX_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
-FUTEX_WAIT_MULTIPLE_BASE_URI=\
-"https://github.com/torvalds/linux/compare/${FUTEX_WAIT_MULTIPLE_COMMITS}"
-FUTEX_WAIT_MULTIPLE_FN=\
-"futex-multiple-wait-${K_MAJOR_MINOR}-${FUTEX_WAIT_MULTIPLE_COMMITS_SHORT}.patch"
-FUTEX_WAIT_MULTIPLE_SRC_URI=\
-"${FUTEX_WAIT_MULTIPLE_BASE_URI}.patch -> ${FUTEX_WAIT_MULTIPLE_FN}"
-
-FUTEX2_COMMITS="${PATCH_FUTEX2_COMMIT_A}^..${PATCH_FUTEX2_COMMIT_D}" # [oldest,newest] [top,bottom]
-FUTEX2_COMMITS_SHORT=\
-"${PATCH_FUTEX2_COMMIT_A:0:7}-${PATCH_FUTEX2_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
-FUTEX2_BASE_URI=\
-"https://github.com/torvalds/linux/compare/${FUTEX2_COMMITS}"
-FUTEX2_FN=\
-"futex2-${K_MAJOR_MINOR}-${FUTEX2_COMMITS_SHORT}.patch"
-FUTEX2_SRC_URI=\
-"${FUTEX2_BASE_URI}.patch -> ${FUTEX2_FN}"
 
 BBRV2_COMMITS="${PATCH_BBRV2_COMMIT_A}^..${PATCH_BBRV2_COMMIT_D}" # [oldest,newest] [top,bottom]
 BBRV2_COMMITS_SHORT=\
@@ -335,6 +287,17 @@ gen_zen_muqss_uris() {
 }
 ZEN_MUQSS_SRC_URIS=" "$(gen_zen_muqss_uris)
 
+CK_BASE_URI=\
+"https://github.com/torvalds/linux/commit/"
+gen_ck_uris() {
+	local s=""
+	for c in ${CK_COMMITS[@]} ; do
+		s+=" ${CK_BASE_URI}${c}.patch -> ck-${MUQSS_VER}-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
+	echo "${s}"
+}
+CK_SRC_URIS=" "$(gen_ck_uris)
+
 CFI_X86_BASE_URI=\
 "https://github.com/torvalds/linux/commit/"
 gen_cfi_x86_uris() {
@@ -346,16 +309,30 @@ gen_cfi_x86_uris() {
 }
 CFI_X86_SRC_URIS=" "$(gen_cfi_x86_uris)
 
+FUTEX_BASE_URI=\
+"https://gitlab.collabora.com/tonyk/linux/-/commit/"
+gen_futex_uris() {
+	local s=""
+	for c in ${FUTEX_COMMITS[@]} ; do
+		s+=" ${FUTEX_BASE_URI}${c}.patch -> futex-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
+	echo "${s}"
+}
+FUTEX_SRC_URIS=" "$(gen_futex_uris)
+
+FUTEX2_BASE_URI=\
+"https://gitlab.collabora.com/tonyk/linux/-/commit/"
+gen_futex2_uris() {
+	local s=""
+	for c in ${FUTEX2_COMMITS[@]} ; do
+		s+=" ${FUTEX2_BASE_URI}${c}.patch -> futex2-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
+	echo "${s}"
+}
+FUTEX2_SRC_URIS=" "$(gen_futex2_uris)
+
 LINUX_REPO_URI=\
 "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
-
-CFI_X86_COMMITS="${PATCH_CFI_X86_COMMIT_A}^..${PATCH_CFI_X86_COMMIT_D}" # [oldest,newest] [top,bottom]
-CFI_X86_COMMITS_SHORT="${PATCH_CFI_X86_COMMIT_A:0:7}-${PATCH_CFI_X86_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
-CFI_X86_FN=\
-"cfi-x86-${MUQSS_VER}-for-${K_MAJOR_MINOR}-${CFI_X86_COMMITS_SHORT}.patch"
-CFI_X86_SRC_URI=\
-"https://github.com/torvalds/linux/compare/${CFI_X86_COMMITS}.patch"
-CFI_X86_SRC_URI="${CFI_X86_SRC_URI} -> ${CFI_X86_FN}"
 
 O3_SRC_URI="https://github.com/torvalds/linux/commit/"
 O3_ALLOW_FN="O3-allow-unrestricted-${PATCH_ALLOW_O3_COMMIT:0:7}.patch"
@@ -412,9 +389,7 @@ elif ver_test ${PV} -eq ${K_MAJOR_MINOR}.0 ; then
 KERNEL_0_TO_1_ONLY="1"
 fi
 
-if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
-	:;
-elif [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
+if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URIS=()
 elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
 	KERNEL_PATCH_URIS=(${KERNEL_PATCH_0_TO_1_URI})
@@ -476,8 +451,8 @@ einfo "Applying ${path}${msg_extra}"
 function _tpatch() {
 	local opts="${1}"
 	local path="${2}"
-	local failed_hunks_acceptable="${3}" # corresponds to n_failures below
-	local reversed_acceptable="${4}" # corresponds to failed_hunks_acceptable below
+	local failed_hunks_acceptable="${3}" # must be the same as n_failures (part 1)
+	local reversed_acceptable="${4}" # must be the same as n_reversed (part 2)
 	local msg_extra="${5}"
 einfo
 einfo "Applying ${path}${msg_extra}"
@@ -820,12 +795,6 @@ function ot-kernel_pkg_setup() {
 			verify_profraw_compatibility
 		fi
 	fi
-
-	if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
-ewarn
-ewarn "Live patchable branches is experimental and is a Work In Progress (WIP)"
-ewarn
-	fi
 }
 
 # @FUNCTION: get_current_tag_for_k_major_minor_branch
@@ -1051,19 +1020,23 @@ function apply_cfi_x86() {
 	done
 }
 
-# @FUNCTION: apply_futex_wait_multiple
+# @FUNCTION: apply_futex
 # @DESCRIPTION:
 # Adds a new syscall operation FUTEX_WAIT_MULTIPLE to the futex
 # syscall.  It may shave of < 5% CPU usage.
-function apply_futex_wait_multiple() {
-	_fpatch "${DISTDIR}/${FUTEX_WAIT_MULTIPLE_FN}"
+function apply_futex() {
+	for c in ${FUTEX_COMMITS[@]} ; do
+		_fpatch "${DISTDIR}/futex-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
 }
 
 # @FUNCTION: apply_futex2
 # @DESCRIPTION:
 # Adds a new futex2 syscalls.  It may shave of < 5% CPU usage.
 function apply_futex2() {
-	_fpatch "${DISTDIR}/${FUTEX2_FN}"
+	for c in ${FUTEX2_COMMITS[@]} ; do
+		_fpatch "${DISTDIR}/futex2-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
 }
 
 # @FUNCTION: apply_bbrv2
@@ -1174,7 +1147,22 @@ einfo "Applying bmq"
 # @DESCRIPTION:
 # applies the ck patchset
 function apply_ck() {
-	_fpatch "${DISTDIR}/${CK_FN}"
+	for c in ${CK_COMMITS[@]} ; do
+		local blacklisted=0
+		for b in ${CK_COMMITS_BL[@]} ; do
+			[[ "${c}" == "${b}" ]] && blacklisted=1
+			if ver_test ${K_MAJOR_MINOR} -eq 4.14 ; then
+				if ! use bfq-mq ; then
+					for b2 in ${CK_BFQ_MQ[@]} ; do
+						[[ "${c}" == "${b2}" ]] && blacklisted=1
+					done
+				fi
+			fi
+		done
+
+		(( ${blacklisted} == 1 )) && continue
+		_fpatch "${DISTDIR}/ck-${MUQSS_VER}-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
 }
 
 # @FUNCTION: apply_genpatches_base
@@ -1404,28 +1392,14 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 		fi
 	fi
 
-	if [[ -z "${K_LIVE_PATCHABLE}" ]] ; then
-		ot-kernel_unpack_tarball
-		# unpacking point releases found in apply_vanilla_point_releases
-		cd "${WORKDIR}" || die
-		mv "linux-${K_MAJOR_MINOR}" "${S}" || die
-	else
-		ot-kernel_fetch_linux_sources
-		cp -r "${d}" "${WORKDIR}" || die
-		cd "${WORKDIR}" || die
-		mv linux "${S}" || die
-		echo $(get_current_tag_for_k_major_minor_branch) \
-			> "${S}/tag" || die
-		echo $(get_current_commit_for_k_major_minor_branch) \
-			> "${S}/commit" || die
-		rm -rf "${S}/.git" || die
-	fi
+	ot-kernel_unpack_tarball
+	# unpacking point releases found in apply_vanilla_point_releases
+	cd "${WORKDIR}" || die
+	mv "linux-${K_MAJOR_MINOR}" "${S}" || die
 
 	cd "${S}" || die
 
-	if [[ -z "${K_LIVE_PATCHABLE}" ]] ; then
-		apply_vanilla_point_releases
-	fi
+	apply_vanilla_point_releases
 
 	# This should be done immediately after all the kernel point releases.
 	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
@@ -1449,9 +1423,9 @@ ewarn
 		fi
 	fi
 
-	if has futex-wait-multiple ${IUSE_EFFECTIVE} ; then
-		if use futex-wait-multiple ; then
-			apply_futex_wait_multiple
+	if has futex ${IUSE_EFFECTIVE} ; then
+		if use futex ; then
+			apply_futex
 		fi
 	fi
 
@@ -1729,18 +1703,6 @@ einfo
 		ot-kernel_pkg_postinst_cb
 	fi
 
-	if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
-		local sublevel=$(grep -F -e "SUBLEVEL =" \
-			"${EROOT}"/usr/src/linux-${K_MAJOR_MINOR}.9999-ot/Makefile \
-			| head -n 1 | cut -f 3 -d " ")
-		local machine=$(uname -m)
-ewarn
-ewarn "If you use dkms, you must manually set the symlink to the kernel"
-ewarn "modules from /lib/modules/${K_MAJOR_MINOR}.${sublevel}-ot-${machine} to"
-ewarn "/lib/modules/${K_MAJOR_MINOR}.9999-ot-${machine}"
-ewarn
-	fi
-
 	# For possible impractical passthough (pt) DMA attack, see
 	# https://link.springer.com/article/10.1186/s13173-017-0066-7#Fn1
 ewarn
@@ -1892,6 +1854,23 @@ einfo
 einfo "To make BBRv2 the default go to"
 einfo
 einfo "  Networking support > Networking options >  TCP: advanced congestion control > Default TCP congestion control > BBR2"
+einfo
+		fi
+	fi
+
+	if has futex ; then
+		if use futex ; then
+einfo
+einfo "Additional envvars may be required like WINEFSYNC=1.  Check the forked"
+einfo "wine code for details."
+einfo
+		fi
+	fi
+	if has futex2 ; then
+		if use futex2 ; then
+einfo
+einfo "Additional envvars may be required like WINEFSYNC_FUTEX2=1.  Check the"
+einfo "forked wine code for details."
 einfo
 		fi
 	fi

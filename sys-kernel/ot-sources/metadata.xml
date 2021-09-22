@@ -106,7 +106,7 @@
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
 		    BMQ					N
-		    futex-wait-multiple [7]		N
+		    futex (futex-wait-multiple) [6]	N
 		    genpatches				Y
 		    kernel_compiler_patch		N
 		    TRESOR (AES-NI) [6]			y
@@ -120,8 +120,8 @@
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
 		    BMQ					N
-		    futex-wait-multiple [7]		N
-		    futex2 [7]				N
+		    futex (futex-wait-multiple) [6]	N
+		    futex2 [6]				A
 		    genpatches				Y
 		    kernel_compiler_patch		N
 		    Project C				N
@@ -133,30 +133,11 @@
 		    zen-muqss				N
 		    zen-sauce				N
 
-    5.13						N
-		    -rt	(RT_PREEMPT)			N
-		    BMQ					N
-		    Clang PGO				S (6/2021)
-		    futex-wait-multiple [7]		N
-		    futex2 [7]				N
-		    genpatches				A
-		    kernel_compiler_patch		N
-		    lru_gen				N
-		    Project C				N
-		    TCP BBR v2				A
-		    TRESOR (AES-NI) [6]			I
-		    TRESOR (x86) [6]			I
-		    TRESOR (x86-64) [6]			I
-		    UKSM [5]				N
-		    x86-cfi [6]				A
-		    zen-muqss				N
-		    zen-sauce				N
-
     5.14						N
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				S (6/2021)
-		    futex (futex-wait-multiple) [7]	A
-		    futex2 [7]				A
+		    futex (futex-wait-multiple)	[6]	N
+		    futex2 [6]				A
 		    kernel_compiler_patch		A
 		    genpatches				A
 		    lru_gen				N
@@ -235,11 +216,10 @@ https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/MAINTAINERS?
       <name>Gentoo Kernel Project</name>
     </maintainer>
 
-    <maintainer status="active" type="person">
-      <!-- for FUTEX_WAIT_MULTIPLE -->
-      <email>krisman-AT-collabora.com</email>
-      <name>Gabriel Krisman Bertazi</name>
-    </maintainer>
+    <!-- for futex (FUTEX_WAIT_MULTIPLE), futex2, see
+https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
+https://gitlab.collabora.com/tonyk/linux/-/commits/futex2
+    -->
 
     <maintainer status="active" type="person">
       <!-- for kernel_compiler_patches -->
@@ -299,6 +279,10 @@ https://github.com/dolohow/uksm
       its predecessor with around less than 5 percent retransmission comparable
       to Cubic but trading off ~5-10 MBps raw throughput, which includes data
       retransmissions and overhead.
+    <flag name="bfq-mq">Update the BFQ IO scheduler from single queue to
+      multi-queue in 4.14.x series only.  The multi-queue design was utilized
+      in later kernels.  Updating may present IO related problems, or have
+      hidden unfixed bugs</flag>
     <flag name="bmq">Patches the kernel to use BMQ CPU scheduler, a more
       simple scheduler.</flag>
     <flag name="bmq-quick-fix">Patches the kernel with fixes to BMQ.</flag>
@@ -373,12 +357,13 @@ https://github.com/dolohow/uksm
       cause failures in different software during runtime.  Enabling it reverts
 https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd415
     </flag>
-    <flag name="futex-wait-multiple">Patches the kernel with
-      FUTEX_WAIT_MULTIPLE futex syscall option which may be used in the
-      wine-proton package and in Steam Play (based on Proton).  It may reduce 
-      CPU usage by less than 5%.</flag>
-    <flag name="futex2">Patches the kernel with futex2 syscalls.
-      This may reduce the CPU usage by less than 5%.</flag>
+01234567890123456789012345678901234567890123456789012345678901234567890123456789
+    <flag name="futex">Patches the kernel with FUTEX_WAIT_MULTIPLE futex syscall
+      option which may be used in the wine-proton package.  It may reduce CPU
+      usage by less than 5%.</flag>
+    <flag name="futex2">Patches the kernel with futex2 syscalls used in
+      wine-tkg ().  This may
+      reduce the CPU usage by less than 5%.</flag>
     <flag name="kernel-compiler-patch">Patches the kernel for more CPU
       microarchitectures that are released before 2020</flag>
     <flag name="kernel-compiler-patch-cortex-a72">Patches the kernel for the
@@ -457,9 +442,6 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
 
       for 5.10 see:
       https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
-
-      for 5.13 see:
-      https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.13/zen-sauce
 
       for 5.14 see:
       https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.14/zen-sauce

@@ -1,0 +1,10 @@
+--- a/mm/memory.c.orig	2021-09-22 10:11:32.858580963 -0700
++++ b/mm/memory.c	2021-09-22 10:12:35.858583039 -0700
+@@ -2210,6 +2210,7 @@ static inline bool cow_user_page(struct
+ 
+ 	if (likely(src)) {
+ 		copy_user_highpage(dst, src, addr, vma);
++		uksm_cow_page(vma, src);
+ 		return true;
+ 	}
+ 

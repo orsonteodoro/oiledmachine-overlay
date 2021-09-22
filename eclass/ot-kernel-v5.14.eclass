@@ -18,37 +18,19 @@ EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-BBRV2_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
-BBRV2_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor / oldest
-BBRV2_D="v2alpha-2021-08-21" # descendant / newest
 MUQSS_VER="0.210"
 PATCH_ALLOW_O3_COMMIT="40fecdec8599c28fc9d1003c301d2202e39db8a6"
 PATCH_BBRV2_TAG_NAME="v2alpha-2021-08-21"
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor / oldest
 PATCH_BBRV2_COMMIT_D="1a45fd4faf30229a3d3116de7bfe9d2f933d3562" # descendant / newest
-PATCH_CFI_X86_COMMIT_A_PARENT="d0ee23f9d78be5531c4b055ea424ed0b489dfe9b"
-PATCH_CFI_X86_COMMIT_A="e4a7957ae2ae2b22476bdf71199afa5a2bc9142b" # ancestor / oldest
-PATCH_CFI_X86_COMMIT_D="5140d56af9b8ee5584a90014c86ce6b174a7653f" # descendant / newest
-PATCH_CK_COMMIT_A_PARENT=""
-PATCH_CK_COMMIT_A="" # ancestor / oldest
-PATCH_CK_COMMIT_D="" # descendant / newest (EOL 5.12-ck is the last patchset)
 PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
 PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
 PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant / newest
-PATCH_FUTEX_COMMIT_A_PARENT="7d2a07b769330c34b4deabeed939325c77a7ec2f"
-PATCH_FUTEX_COMMIT_A="cba204184fc7af716d29bb3659ccfe9d6c84ecd0" # ancestor / oldest
-PATCH_FUTEX_COMMIT_D="bff1c1603cc294ddcbbd7612b1806d7c8f55e7bd" # descendant / newest
-PATCH_FUTEX2_COMMIT_A_PARENT="7d2a07b769330c34b4deabeed939325c77a7ec2f"
-PATCH_FUTEX2_COMMIT_A="cc20b5f100d4f345e0b090a7a76daea256e6097d" # ancestor / oldest
-PATCH_FUTEX2_COMMIT_D="fa99bbb4cf0a5c6ed18cf58ecca678e82e008cb9" # descendant / newest
 PATCH_KCP_COMMIT="b9369c4a4f43b8cf182c9726dc5c7e6eb4115722"
 PATCH_LRU_GEN_COMMIT_A_PARENT="7d2a07b769330c34b4deabeed939325c77a7ec2f"
 PATCH_LRU_GEN_COMMIT_A="1d1d59e750744b3c6b7cb51006cb59392e2fef65" # ancestor / oldest
 PATCH_LRU_GEN_COMMIT_D="58423b0ba935bb76ff3f6754703e8fb8533ecae3" # descendant / newest
-PATCH_ZEN_MUQSS_COMMIT_A_PARENT="7d2a07b769330c34b4deabeed939325c77a7ec2f"
-PATCH_ZEN_MUQSS_COMMIT_A="8ded360073512fd443a98a988a1e96fa265fe124" # ancestor / oldest
-PATCH_ZEN_MUQSS_COMMIT_D="9b274548a67017db47e964756f0cc903bf69c3b6" # descendant / newest
 PATCH_ZEN_LRU_GEN_COMMIT_A_PARENT="7d2a07b769330c34b4deabeed939325c77a7ec2f"
 PATCH_ZEN_LRU_GEN_COMMIT_A="502566438ca9e8ad3d32107e3ef6ace65e307a0c" # ancestor / oldest
 PATCH_ZEN_LRU_GEN_COMMIT_D="604cd836f7e6aff5346527d869ecac3868135aea" # descendant / newest
@@ -57,7 +39,10 @@ PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \
 #   | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-# from A to D, where a is ancestor and d is descendant
+# from A to D, where a is ancestor and d is descendant.
+# When using that commit list generator, it may miss some commits, so verify all
+# the commits in order.
+
 PATCH_ZENSAUCE_COMMITS=(
 6c19e74f92407b935262366c90fcd1259d939fcf
 40cbbf2a2215c36d24676746ae98b20c77806355
@@ -90,12 +75,13 @@ f05a76bbac2ea8737c5b6a64a1e842da8c52a146
 5ad20a83f37c759f74c00397fd144c85e882b9a6
 1cef3393a74deef8acc864392e9e73c3857fbd59
 f79f04d6d36298431febf69d06dd0ac4e3fbb337
+04b07f27895150f21f3ce18b3ea1b94ea84463a2
 )
 
-# ancestor / oldest, descendant / newest
-# Diced to let user can choose between UKSM, KSWAPD, OOMD
-PATCH_DEFER_MADVISE_COMMIT=\
-"519eab42710cd0b9abab9dc4d5a313f80b66ecec"
+# Avoid merge conflict.
+PATCH_ZENSAUCE_BRANDING="
+6c19e74f92407b935262366c90fcd1259d939fcf
+"
 
 # LEFT_ZENTUNE:RIGHT_ZENSAUCE
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
@@ -118,10 +104,10 @@ f69969a3ab15a2b66a535791dc5c23242099fce3
 1c8509527a7a90511fdefba4df904fc5c2fa543d
 5ae84d6ea7fa6c05bb9017baab3a3de93d707149
 1cef3393a74deef8acc864392e9e73c3857fbd59
-f79f04d6d36298431febf69d06dd0ac4e3fbb337
 )
 PATCH_BFQ_DEFAULT="c6d1cd7ca0e23d3d17abab2350eb49f2aa00ac73"
 PATCH_ZENSAUCE_BL=(
+	${PATCH_ZENSAUCE_BRANDING}
 	${PATCH_KCP_COMMIT}
 )
 
@@ -130,6 +116,7 @@ PATCH_ZENSAUCE_BL=(
 # Disabled 7d443dabec118b2c869461d8740e010bca976931 : ZEN: INTERACTIVE: Use BFQ as our elevator
 # Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
 
+# From 5.12, forwardported to 5.13
 ZEN_MUQSS_COMMITS=(
 8ded360073512fd443a98a988a1e96fa265fe124
 8a76ca15ee7f8e596a2ba69636c224b91000da65
@@ -217,15 +204,47 @@ d710665e6be5b9b820f85787951288c2885ad964
 CFI_EXCLUDE_COMMITS=(
 )
 
+# For 5.6
+# This corresponds to the futex-proton-v3 branch.
+# Repo order is bottom oldest and top newest.
+FUTEX_COMMITS=( # oldest
+dc3e0456bf719cde7ce44e1beb49d4ad0e5f0c71
+714afdc15b847a7a33c5206b6e1ddf64697c07d6
+ec85ea95a00b490a059bcc817bc1b4660062dba0
+00d3ee9cff824d4d38e82d252e4300999f87f1a5
+e8d4d6ded8544b5716c66d326aa290db8501518c
+) # newest
+
+# For 5.12
+# This corresponds to the futex2 branch.
+# Repo order is bottom oldest and top newest.
+FUTEX2_COMMITS=( # oldest
+c9d8776e4faad378adbbcd4d2e930cce2a3ae7ab
+1e7fd7973139c13c3c4175f3afb3adb2cae0f492
+12b55c1f5b5be73f15f51f3d5b8f38cbfaefe286
+a942311f7f2a9e0a775f7435a99b7a1b8c3b8dff
+45ae0b61801c4d691fab790275bea174c77f542c
+d174085b3f42ad142fe48a3006413608b0df82f1
+84bf1c3899444e0dfdb9186db26b5835b93eea91
+d59f169a44ecfc8b1e486840c0010d68ec5bd2fb
+848b3b584da05fe19050c821bcba08269fc265ad
+8021a26df7920ab95d668392753386576c4309d3
+3c55be83bb2790af9e5a67b1238612be015cabbe
+2f05d29e273e9caf912f5522e11adab66c847227
+96db7320e8b0d0193fc419f280f740f37a159e23
+) # newest
+
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
-IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex-wait-multiple
+IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex
 futex2 +genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto +O3 prjc
 rt shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-lru_gen zen-muqss zen-sauce
 zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
+#	futex? ( !futex2 )
+#	futex2? ( !futex )
 REQUIRED_USE+="
 	^^ ( cfs prjc zen-muqss )
 	genpatches_1510? ( genpatches )
@@ -274,7 +293,7 @@ LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" prjc? ( GPL-3 )" # see \
   # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
-LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
+LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" futex2? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
@@ -484,8 +503,8 @@ SRC_URI+=" "$(gen_kcp_ma_uri)
 SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   cfi? ( amd64? ( ${CFI_X86_SRC_URIS} ) )
 	   clang-pgo? ( ${CLANG_PGO_URI} )
-	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
-	   futex2? ( ${FUTEX2_SRC_URI} )
+	   futex? ( ${FUTEX_SRC_URIS} )
+	   futex2? ( ${FUTEX2_SRC_URIS} )
 	   genpatches? (
 		${GENPATCHES_URI}
 		${GENPATCHES_BASE_SRC_URI}
@@ -654,6 +673,11 @@ function ot-kernel_pkg_postinst_cb() {
 # Filtered patch function
 function ot-kernel_filter_patch_cb() {
 	local path="${1}"
+
+	# WARNING: Fuzzing is not intelligent enough to distiniguish syscall
+	#          number overlap.  Always inspect each and every hunk.
+	# Using patch with fuzz factor is disallowed with futex and futex2
+
 	if [[ "${path}" =~ "prjc_v5.12-r1.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
@@ -677,10 +701,6 @@ einfo "Already applied ${path} upstream"
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
-	elif [[ "${path}" =~ "${CK_FN}" ]] ; then
-		_dpatch "${PATCH_OPS}" "${path}"
-		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
 	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
@@ -700,6 +720,55 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv2-5.14-1ca5498-1a45fd4.patch" ]] ; then
 		_tpatch "${PATCH_OPS}" "${path}" 10 0 "" # actually only 1 failed not 10
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
+	elif [[ "${path}" =~ "futex-5.14-dc3e045.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 5 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-dc3e045-5-hunk-fix-for-5.14.patch"
+	elif [[ "${path}" =~ "futex-5.14-714afdc.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 4 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-714afdc-4-hunk-fix-for-5.14.patch"
+	elif [[ "${path}" =~ "futex-5.14-00d3ee9.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-00d3ee9-3-hunk-fix-for-5.14.patch"
+	elif [[ "${path}" =~ "futex-5.14-e8d4d6d.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-e8d4d6d-3-hunk-fix-for-5.14.patch"
+	elif [[ "${path}" =~ "futex2-5.14-c9d8776.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 8 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-c9d8776-8-hunk-fix-for-5.14.patch"
+	elif [[ "${path}" =~ "futex2-5.14-12b55c1.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 8 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-12b55c1-8-hunk-fix-for-5.14.patch"
+	elif [[ "${path}" =~ "futex2-5.14-a942311.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 6 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-a942311-6-hunk-fix-for-5.14.patch"
+	elif [[ "${path}" =~ "futex2-5.14-84bf1c3.patch" ]] ; then
+		if use futex && use futex2 ; then
+			_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-84bf1c3-3-hunk-fix-for-5.14-combined-with-futex.patch"
+		else
+			_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-84bf1c3-3-hunk-fix-for-5.14.patch"
+		fi
+	elif [[ "${path}" =~ "futex2-5.14-d59f169.patch" ]] ; then
+		if use futex && use futex2 ; then
+			_tpatch "${PATCH_OPS}" "${path}" 4 0 ""
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-d59f169-4-hunk-fix-for-5.14-combined-with-futex.patch"
+		else
+			_tpatch "${PATCH_OPS}" "${path}" 4 0 ""
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-d59f169-4-hunk-fix-for-5.14.patch"
+		fi
+	elif [[ "${path}" =~ "futex2-5.14-848b3b5.patch" ]] ; then
+		if use futex && use futex2 ; then
+einfo "see ${path}"
+die
+			_tpatch "${PATCH_OPS}" "${path}" 4 0 ""
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-d59f169-4-hunk-fix-for-5.14-combined-with-futex.patch"
+		else
+			_dpatch "${PATCH_OPS}" "${path}"
+		fi
+	elif [[ "${path}" =~ "futex2-5.14-8021a26.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-8021a26-1-hunk-fix-for-5.14.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

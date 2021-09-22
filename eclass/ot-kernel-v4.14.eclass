@@ -19,23 +19,86 @@ K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.162"
-PATCH_CK_COMMIT_A_PARENT="bebc6082da0a9f5d47a1ea2edc099bf671058bd4"
-PATCH_CK_COMMIT_A="fbc0b4595aeccc2cc03e292ac8743565b3d3037b" # ancestor / oldest
-PATCH_CK_COMMIT_D="78f861790848e83e6c98cd8f3408dbad7c9f4c3d" # descendant / newest
 PATCH_KCP_COMMIT="c53ae690ee282d129fae7e6e10a4c00e5030d588" # GraySky2's kernel_compiler_patch
 PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
 PATCH_PDS_V="${PATCH_PDS_V:=098i}"
 PATCH_TRESOR_V="3.18.5"
 
+CK_COMMITS=(
+fbc0b4595aeccc2cc03e292ac8743565b3d3037b
+e8e37da685f7988182d7920a711e00dd2457af65
+44fc740a3ff85d378c28a416a076cc7e019d7b8c
+d27b58b0707ac311be5a51594fc6f22ed1d109e5
+5da7d1778b96c514394334c92de9b3d8d71f4a29
+9df803c28bb8ccb2588c0ccaf857b9e673175fed
+ff1ab759022323229ca1e7b368c0df5e2aa1dabc
+3ef5df78c2f425115b87f0f2f59fd189c0f1bbe3
+6044370cf4bbc5e05f5d78f5772c1d88e3153603
+071486de633698dcdd163295173ce4663ec9158c
+ef412af05347ab4a0885080864677b85bf51072a
+9e47a80f690080c12ce607158b96c305707543b8
+5902b315d4061ebbe73a62c52e6d3b618066cebc
+ed0ab4c80fcb6fa4abb4f2f897e591df6eaa2d0e
+99d2963b648787f2fc2b72343674b8726f5c3ab2
+8e9317792c2f83621445c386240d62d54cebb826
+811cb391e71c1d60387dbbd6ae0bbc4e61f06acb
+6bfb805cbac27b18fb4ad7537fe90dfc39e17f35
+1588e6bf316231685204e358dfe172851b39fd1e
+df2a75f4864b30011ab6a6f365d9378d8eafa53b
+a79d648fcde72fc98048d4435bc86864a59fd01b
+a17a37f6698721fe40c0f6e68c4ded5317d8477b
+24da54ee4acc4ba2675e838da27bd28df08016bf
+8faec5cb69d9ea6e641155e20ff70930a88f1e65
+315a82476414f83cf099458a05148d76f30b6c8c
+03ee562c01e1a60b2b4dae80e88db83b87559cba
+721f586b71653a931e73d25116fd92e0ee62a434
+78f861790848e83e6c98cd8f3408dbad7c9f4c3d
+)
+
+# Split commits, but not final commit
+CK_COMMITS_BL_BFQ_SPLIT=(
+811cb391e71c1d60387dbbd6ae0bbc4e61f06acb
+6bfb805cbac27b18fb4ad7537fe90dfc39e17f35
+1588e6bf316231685204e358dfe172851b39fd1e
+df2a75f4864b30011ab6a6f365d9378d8eafa53b
+a79d648fcde72fc98048d4435bc86864a59fd01b
+)
+
+CK_BFQ_MQ=(
+99d2963b648787f2fc2b72343674b8726f5c3ab2
+24da54ee4acc4ba2675e838da27bd28df08016bf
+)
+
+# Split commits, but not final commit
+CK_COMMITS_BL_RQSHARE_SPLIT=(
+a17a37f6698721fe40c0f6e68c4ded5317d8477b
+8faec5cb69d9ea6e641155e20ff70930a88f1e65
+315a82476414f83cf099458a05148d76f30b6c8c
+03ee562c01e1a60b2b4dae80e88db83b87559cba
+721f586b71653a931e73d25116fd92e0ee62a434
+)
+
+# Avoid merge conflicts or already upstreamed.
+CK_COMMITS_BL=(
+${CK_COMMITS_BL_BFQ_SPLIT[@]}
+${CK_COMMITS_BL_RQSHARE_SPLIT[@]}
+8e9317792c2f83621445c386240d62d54cebb826
+)
+
+
+# 811cb39 -> a79d648 is about the same as 24da54e
+# a17a37f, 8faec5c -> 721f586 is about the same as 78f8617
+
 # Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
 LINUX_TIMESTAMP=1510512373
 
-IUSE="+cfs disable_debug +genpatches -genpatches_1510 +kernel-compiler-patch
+IUSE="bfq-mq +cfs disable_debug +genpatches -genpatches_1510 +kernel-compiler-patch
 muqss pds +O3 rt tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
 uksm"
 REQUIRED_USE+="
 	^^ ( cfs muqss pds )
+	bfq-mq? ( muqss )
 	genpatches_1510? ( genpatches )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
@@ -96,7 +159,7 @@ SRC_URI+=" genpatches? (
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
 	   )
-	   muqss? ( ${CK_SRC_URI} )
+	   muqss? ( ${CK_SRC_URIS} )
 	   O3? (
 		${O3_CO_SRC_URI}
 		${O3_RO_SRC_URI}
@@ -210,34 +273,27 @@ function ot-kernel_pkg_postinst_cb() {
 # Filtered patch function
 function ot-kernel_filter_patch_cb() {
 	local path="${1}"
-	if [[ "${path}" =~ "${CK_FN}" ]] ; then
-		# Using --dry-run reports more failures than on the actual.
-		# The point is that --dry-run is not reliable in some way.
-		# The reason is that patching is restarted from the original
-		# and does not resume at the intermediate images.
-		# In the actual patching, 2 hunks actually failed.
-		# The added -N arg is used to skip the duplicate hunks
-		_tpatch "${PATCH_OPS} -N -F 3" "${path}" 9 1 ""
-		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/muqss-0.162-rebase-for-4.14.213.patch"
-		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
+
+	# WARNING: Fuzzing is not intelligent enough to distiniguish syscall
+	#          number overlap.  Always inspect each and every hunk.
+
+	if [[ "${path}" =~ "ck-0.162-4.14-fbc0b45.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/ck-0.162-4.14-fbc0b45-2-hunk-fix-for-4.14.246.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/ck-0.162-4.14-fbc0b45-build-time-fixes-for-4.14.213.patch"
+	elif [[ "${path}" =~ "ck-0.162-4.14-ff1ab75.patch" ]] ; then
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
+	elif [[ "${path}" =~ "ck-0.162-4.14-071486d.patch" ]] ; then
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
+	elif [[ "${path}" =~ "ck-0.162-4.14-24da54e.patch" ]] ; then
+		# -N is used to skip the duplicate hunks
+		_tpatch "${PATCH_OPS} -N" "${path}" 0 1 ""
 	elif [[ "${path}" =~ "0179-mm-memcontrol-Replace-local_irq_disable-with-local-l.patch" ]] ; then
 		# PREEMPT_RT
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ "0235-rtmutex-Handle-the-various-new-futex-race-conditions.patch" ]] ; then
 		# PREEMPT_RT
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
-	elif [[ "${path}" =~ "0249-rtmutex-add-sleeping-lock-implementation.patch" ]] ; then
-		# PREEMPT_RT
-		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
-		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/4.14.215-rt105-0249-rtmutex-add-sleeping-lock-implementation-fix-for-4.14.220.patch"
-	elif [[ "${path}" =~ "0362-net-core-protect-users-of-napi_alloc_cache-against-r.patch" ]] ; then
-		# PREEMPT_RT
-		_tpatch "${PATCH_OPS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPS} -F 3" \
-"${FILESDIR}/4.14.215-rt105-0362-net-core-protect-users-of-napi_alloc_cache-against-r-fix-for-4.14.220.patch"
 	elif [[ "${path}" =~ "0467-Revert-rtmutex-Handle-the-various-new-futex-race-con.patch" ]] ; then
 		# PREEMPT_RT
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
@@ -262,9 +318,9 @@ function ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then
-		_tpatch "${PATCH_OPS} -F 3" "${path}" 1 0 ""
+		_tpatch "${PATCH_OPS}" "${path}" 2 0 "" # 2 hunk failure without fuzz
 		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/uksm-4.14-rebase-for-4.14.212.patch"
+			"${FILESDIR}/uksm-4.14-rebase-for-4.14.246.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

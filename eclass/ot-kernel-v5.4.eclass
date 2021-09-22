@@ -22,14 +22,33 @@ K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.196"
 
 PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e"
-PATCH_CK_COMMIT_A_PARENT=""
-PATCH_CK_COMMIT_A="7acac2e4000e75f3349106a8847cf1021651446b" # ancestor / oldest
-PATCH_CK_COMMIT_D="5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213" # descendant / newest
-PATCH_FUTEX_COMMIT_A_PARENT=""
-PATCH_FUTEX_COMMIT_A="dee34186c97c4b224d97f16bf1bbd75c2ea2492e" # ancestor / oldest
-PATCH_FUTEX_COMMIT_D="1ade6c3ea42b794a49296a486ac8ad780d1faf46" # descendant / newest
 PATCH_KCP_COMMIT="cbf238bae1a5132b8b35392f3f3769267b2acaf5"
 PATCH_TRESOR_V="3.18.5"
+
+CK_COMMITS=(
+7acac2e4000e75f3349106a8847cf1021651446b
+36d5e8df1fead191fa6fe9e83fcdfc69532238f2
+8e6e0d9402f93bb4759f89c0f01ec03cbefe5efa
+6d1555691d16804bb16d61f16996692f50bc1374
+ea1ace768425220e605f405f36560a4a6d2b0859
+7012590838d45aa3b6c6833bb0e1f624c5fcaaea
+688c8d0716e6598dd7c25c89d4699704a3337bd5
+e907c530c3d52bb212ebe09efba6b78a2ff393a6
+96cf984e774168908dc1b67b052a7a8afd62cb3b
+33b744fc53a49695b73d2f54868b72ea83b6809e
+07b17741bbe52aa1660dfde672540375bea92d2a
+aa88bb077c4091cc11481585b6579919c2b01210
+87dd1d82e1df3f3809fe39614061a33b01e5d6f0
+32d7185a9368c7ff9e79cbedd1c8ff03298340a4
+1b7439521c9c12fbae47b827f51970b65e3357f1
+5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213
+)
+
+# Avoid merge conflict.
+CK_COMMITS_BL=(
+5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213
+)
+
 PATCH_ZENSAUCE_COMMITS=(
 1baa02fbd7a419fdd0e484ba31ba82c90c7036cf
 ef12d902c1323bbbeacc3babc91aae15976474ca
@@ -56,6 +75,11 @@ a7c2e93c81a96375414db26fdd18cb9fae8421b9
 376d7ed3c04b5576fe753c0dbe588a423c8be9c3
 )
 
+# Avoid merge conflict.
+PATCH_ZENSAUCE_BRANDING="
+1baa02fbd7a419fdd0e484ba31ba82c90c7036cf
+"
+
 # top is oldest, bottom is newest
 # TODO: Split patch like in newer versions
 PATCH_ZENTUNE_COMMITS=\
@@ -70,11 +94,14 @@ PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
 # zen-sauce(c9a8f36) requires zen-tune
 
 PATCH_ZENSAUCE_BL=(
+	${PATCH_ZENSAUCE_BRANDING}
 	${PATCH_KCP_COMMIT}
 )
 
+# For 5.4
 ZEN_MUQSS_COMMITS=(
 7acac2e4000e75f3349106a8847cf1021651446b
+50955efefbe23a4270faca36a99999b76d2dc4db
 c73934ea38cffac75c43ea4fd9f67100e82d8ea2
 be525d11c201565e2c8999efc3f78c745f5d6886
 6c26d7bda791335dc0bf7b401c1cecad359b1a15
@@ -98,8 +125,20 @@ d1bebeb959a56324fe436443ea2f21a8391632d9
 ZEN_MUQSS_EXCLUDED_COMMITS=(
 )
 
+# For 5.6
+# This corresponds to the futex-proton-v3 branch.
+# Repo order is bottom oldest and top newest.
+FUTEX_COMMITS=( # oldest
+dc3e0456bf719cde7ce44e1beb49d4ad0e5f0c71
+714afdc15b847a7a33c5206b6e1ddf64697c07d6
+ec85ea95a00b490a059bcc817bc1b4660062dba0
+00d3ee9cff824d4d38e82d252e4300999f87f1a5
+e8d4d6ded8544b5716c66d326aa290db8501518c
+) # newest
+
+
 IUSE+=" bmq +cfs clang disable_debug +genpatches -genpatches_1510
-+kernel-compiler-patch muqss +O3 futex-wait-multiple tresor rt tresor_aesni
++kernel-compiler-patch muqss +O3 futex tresor rt tresor_aesni
 tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
 zen-muqss zen-sauce zen-sauce-all -zen-tune"
 REQUIRED_USE+="
@@ -134,7 +173,7 @@ LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" bmq? ( GPL-3 )" # see \
   # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
-LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
+LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 LICENSE+=" muqss? ( GPL-2 )"
@@ -193,7 +232,7 @@ https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARB
 fi
 
 SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
-	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
+	   futex? ( ${FUTEX_SRC_URIS} )
 	   genpatches? (
 		${GENPATCHES_URI}
 		${GENPATCHES_BASE_SRC_URI}
@@ -205,7 +244,7 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 		${KCP_SRC_8_1_URI}
 		${KCP_SRC_9_0_URI}
 	   )
-	   muqss? ( ${CK_SRC_URI} )
+	   muqss? ( ${CK_SRC_URIS} )
 	   O3? ( ${O3_ALLOW_SRC_URI} )
 	   rt? ( ${RT_SRC_URI} )
 	   tresor? (
@@ -333,25 +372,20 @@ ewarn
 # Filtered patch function
 function ot-kernel_filter_patch_cb() {
 	local path="${1}"
+
+	# WARNING: Fuzzing is not intelligent enough to distiniguish syscall
+	#          number overlap.  Always inspect each and every hunk.
+	# Using patch with fuzz factor is disallowed with futex and futex2
+
 	if [[ "${path}" =~ "${BMQ_FN}" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
-	elif [[ "${path}" =~ "${CK_FN}" ]] ; then
-		# Using --dry-run reports more failures than on the actual.
-		# The point is that --dry-run is not reliable in some way.
-		# The reason is that patching is restarted from the original
-		# and does not resume at the not the intermediate images.
-		# In the actual patching, 2 hunks actually failed.
-		_tpatch "${PATCH_OPS} -F 3" "${path}" 7 0 ""
-		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
+	elif [[ "${path}" =~ "ck-0.196-5.4-7acac2e.patch" ]] ; then
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
+	elif [[ "${path}" =~ "ck-0.196-5.4-33b744f.patch" ]] ; then
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ "0148-rtmutex-Handle-the-various-new-futex-race-conditions.patch" ]] ; then
 		# PREEMPT_RT
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
-	elif [[ "${path}" =~ "0160-rtmutex-add-sleeping-lock-implementation.patch" ]] ; then
-		# PREEMPT_RT
-		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
-		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/5.4.93-rt51-0160-rtmutex-add-sleeping-lock-implementation-fix-for-5.4.96.patch"
 	elif [[ "${path}" =~ "${O3_ALLOW_FN}" ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
@@ -360,9 +394,9 @@ function ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
+		_tpatch "${PATCH_OPS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/uksm-5.4-rebase-for-5.4.85.patch"
+			"${FILESDIR}/uksm-5.4-rebase-for-5.4.147.patch"
 	elif [[ "${path}" =~ "zen-muqss-5.4-7acac2e.patch" ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ "zen-muqss-5.4-c181de6.patch" ]] ; then
