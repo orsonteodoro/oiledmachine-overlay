@@ -41,3 +41,95 @@ www-client/chromium pgo-full
 
 # in development, pgo trainer is unfinished
 net-libs/webkit-gtk pgo
+
+# unfinished USE flags (dev pre-alpha quality at ebuild level).  Disabled for QA reasons.
+# Add "dev-games/godot -use_flag" row to /etc/portage/package.use.force to fix them
+=dev-games/godot-2* godot_iphone_arm
+=dev-games/godot-2* godot_iphone_armv64
+=dev-games/godot-2* godot_iphone_armv7
+=dev-games/godot-2* godot_iphone_x86
+=dev-games/godot-2* godot_iphone_x86_64
+=dev-games/godot-2* ios-sim
+=dev-games/godot-2* android
+=dev-games/godot-2* godot_android_arm6
+=dev-games/godot-2* godot_android_arm64v8
+=dev-games/godot-2* godot_android_arm7
+=dev-games/godot-2* godot_android_x86
+=dev-games/godot-2* godot_android_x86_64
+=dev-games/godot-2* godot_linux_x86
+=dev-games/godot-2* godot_osx_x86_64
+=dev-games/godot-2* godot_platforms_android
+=dev-games/godot-2* godot_platforms_ios
+=dev-games/godot-2* godot_platforms_osx
+=dev-games/godot-2* godot_platforms_web
+=dev-games/godot-2* godot_platforms_windows
+=dev-games/godot-2* godot_web_asmjs
+=dev-games/godot-2* godot_windows_i686
+=dev-games/godot-2* godot_windows_x86_64
+=dev-games/godot-2* store-kit
+=dev-games/godot-2* web
+
+# unfinished USE flags (dev pre-alpha quality at ebuild level).  Disabled for QA reasons.
+# Add "dev-games/godot -use_flag" row to /etc/portage/package.use.force to fix them
+=dev-games/godot-3* android
+=dev-games/godot-3* gdnative
+=dev-games/godot-3* gdscript
+=dev-games/godot-3* gdscript_lsp
+=dev-games/godot-3* ios-sim
+=dev-games/godot-3* mono
+=dev-games/godot-3* mono_pregen_assemblies
+=dev-games/godot-3* web
+=dev-games/godot-3* godot_android_arm64v8
+=dev-games/godot-3* godot_android_arm7
+=dev-games/godot-3* godot_android_x86
+=dev-games/godot-3* godot_android_x86_64
+=dev-games/godot-3* godot_ios_arm
+=dev-games/godot-3* godot_ios_armv64
+=dev-games/godot-3* godot_ios_armv7
+=dev-games/godot-3* godot_ios_x86
+=dev-games/godot-3* godot_ios_x86_64
+=dev-games/godot-3* godot_linux_x86
+=dev-games/godot-3* godot_mono_android_arm64-v8a
+=dev-games/godot-3* godot_mono_android_armabi-v7a
+=dev-games/godot-3* godot_mono_android_cross-arm
+=dev-games/godot-3* godot_mono_android_cross-arm64
+=dev-games/godot-3* godot_mono_android_cross-x86
+=dev-games/godot-3* godot_mono_android_cross-x86_64
+=dev-games/godot-3* godot_mono_android_x86
+=dev-games/godot-3* godot_mono_android_x86_64
+=dev-games/godot-3* godot_mono_ios_arm7
+=dev-games/godot-3* godot_mono_ios_armv64
+=dev-games/godot-3* godot_mono_ios_cross-arm64
+=dev-games/godot-3* godot_mono_ios_cross-armv7
+=dev-games/godot-3* godot_mono_ios_i386
+=dev-games/godot-3* godot_mono_ios_x86_64
+=dev-games/godot-3* godot_mono_linux_x86
+=dev-games/godot-3* godot_mono_linux_x86_64
+=dev-games/godot-3* godot_mono_osx_x86_64
+=dev-games/godot-3* godot_mono_web_wasm32
+=dev-games/godot-3* godot_mono_windows_x86
+=dev-games/godot-3* godot_mono_windows_x86_64
+=dev-games/godot-3* godot_osx_arm64
+=dev-games/godot-3* godot_osx_x86_64
+=dev-games/godot-3* godot_mono_web_wasm32
+=dev-games/godot-3* godot_mono_windows_x86
+=dev-games/godot-3* godot_mono_windows_x86_64
+=dev-games/godot-3* godot_osx_arm64
+=dev-games/godot-3* godot_osx_x86_64
+=dev-games/godot-3* godot_platforms_android
+=dev-games/godot-3* godot_platforms_ios
+=dev-games/godot-3* godot_platforms_mono
+=dev-games/godot-3* godot_platforms_osx
+=dev-games/godot-3* godot_platforms_web
+=dev-games/godot-3* godot_platforms_windows
+=dev-games/godot-3* godot_web_wasm32
+=dev-games/godot-3* godot_windows_i686
+=dev-games/godot-3* godot_windows_x86_64
+=dev-games/godot-3* javascript_threads
+=dev-games/godot-3* store-kit
+
+# untested
+# Add "dev-games/godot -use_flag" row to /etc/portage/package.use.force to fix them
+=dev-games/godot-2* touch
+=dev-games/godot-3* mobile-vr
+=dev-games/godot-3* touch
