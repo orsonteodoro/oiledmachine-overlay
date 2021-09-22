@@ -32,7 +32,7 @@ CC-BY-3.0 FTL ISC LGPL-2.1 MIT MPL-2.0 OFL-1.1 openssl Unlicense ZLIB"
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
-#KEYWORDS="~amd64 ~x86" # disabled because ebuilds are still in development
+KEYWORDS="~amd64 ~x86"
 PND="${PN}-demo-projects"
 
 # tag 3 deterministic / static snapshot / master / 20210529

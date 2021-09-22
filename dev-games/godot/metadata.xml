@@ -267,6 +267,7 @@ https://docs.godotengine.org/en/2.1/development/cpp/custom_modules_in_cpp.html
     <flag name="python_targets_python3_9">For generating docs and
       translations.</flag>
     <flag name="recast">Enable mesh generation for 3D games.</flag>
+    <flag name="rst">This configure option is related to rst documentation.</flag>
     <flag name="s3tc">Enables DXT compression.</flag>
     <flag name="server">Builds servers.</flag>
     <flag name="server_dedicated">Builds a Linux dedicated game server</flag>
