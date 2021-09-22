@@ -8,6 +8,8 @@
 # The blender eclass helps reduce code duplication
 # across the blender eclasses to reduce maintenance cost.
 
+PGO_SAMPLE_SIZE_=${PGO_SAMPLE_SIZE:=30}
+
 inherit eapi7-ver
 inherit blender-multibuild check-reqs cmake-utils flag-o-matic llvm pax-utils \
 	python-single-r1 toolchain-funcs xdg
@@ -16,7 +18,7 @@ DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
 KEYWORDS=${KEYWORDS:="~amd64 ~x86"}
 
-LICENSE="|| ( GPL-2 BL )
+LICENSE=" || ( GPL-2 BL )
 all-rights-reserved
 LGPL-2.1+
 MPL-2.0
@@ -55,6 +57,8 @@ cycles? (
 	MIT
 )
 "
+PROPERTIES=interactive # For PGO
+
 # intern/mikktspace contains ZLIB
 # intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
 #   all rights reserved in the vanilla GPL-2
@@ -85,6 +89,21 @@ IUSE+=" ${CPU_FLAGS[@]%:*}"
 IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
+IUSE+=" pgo
+	pgo-trainer-cycles-still
+	pgo-trainer-cycles-anim
+	pgo-trainer-eevee-still
+	pgo-trainer-eevee-anim
+"
+
+# Assets categories are listed in https://www.blender.org/download/demo-files/
+# PGO is not ready yet
+REQUIRED_USE+="
+	pgo-trainer-cycles-still? ( pgo )
+	pgo-trainer-cycles-anim? ( pgo )
+	pgo-trainer-eevee-still? ( pgo )
+	pgo-trainer-eevee-anim? ( pgo )
+"
 
 # At the source code level, they mix the sse2 intrinsics functions up with the
 #   __KERNEL_SSE__.
@@ -145,6 +164,14 @@ REQUIRED_USE+="
 	${REQUIRED_USE_CYCLES}
 	${REQUIRED_USE_MINIMAL_CPU_FLAGS}
 "
+
+RDEPEND+="
+	pgo? (
+		app-admin/sudo
+		x11-base/xorg-server
+	)
+"
+
 # This could be modded for multiabi builds.
 declare -A _LD_LIBRARY_PATHS
 declare -A _LIBGL_DRIVERS_DIRS
@@ -233,6 +260,41 @@ check_embree() {
 }
 
 blender_pkg_setup() {
+#      [ebuild developer note - rough draft]
+#      PGO Trainer (PGT) Options and still deciding:
+#      #1 - run the trainer as root accelerated (easiest but risky if assets are
+#           not vetted and assumed not)
+#      #2 - run the trainer as non-root with accelerated separate pgo account
+#           and video group permission (preferred in order to use GPU header
+#           only data structures like nvdb, follows typical use)
+#      #3 - run the trainer with headless software rendering (distro standard
+#           possibly skips nvdb code paths, fastest, but not typical. PGO
+#           assumes typical use or else performance regression)
+	if use pgo ; then
+ewarn
+ewarn "The pgo USE flag is in development"
+ewarn
+		if ! id pgo ; then
+eerror
+eerror "PGO requires a pgo system account in the video group with a password."
+eerror "Increase timestamp_timeout if frequent password request annoys you."
+eerror
+die
+		fi
+		if [[ $(id pgo) =~ "(video)" ]] ; then
+eerror
+eerror "The pgo system account must be in the video group."
+eerror
+die
+		fi
+		if [[ $(passwd --status pgo | cut -f 2 -d " ") != "P" ]] ; then
+eerror
+eerror "The pgo system account must have a password."
+eerror
+die
+		fi
+	fi
+
 	llvm_pkg_setup
 	blender_check_requirements
 	python-single-r1_pkg_setup
@@ -958,11 +1020,7 @@ The build scripts expect BLENDER_OPTIX_ROOT_DIR/include/optix.h.\n\
 }
 
 blender_src_configure() {
-	blender_configure() {
-		cd "${BUILD_DIR}" || die
-		_src_configure
-	}
-	blender-multibuild_foreach_impl blender_configure
+	:;
 }
 
 _src_compile() {
@@ -1004,17 +1062,140 @@ _src_compile_docs() {
 	fi
 }
 
+_install_pgx() {
+	einfo "Installing sandboxed copy"
+	_src_install
+}
+
+_clean_pgx() {
+	einfo "Wiping sandboxed install"
+	cd "${S}" || die
+	rm -rf "${D}" || die
+}
+
 blender_src_compile() {
 	blender_compile() {
 		_ORIG_PATH="${PATH}"
 		cd "${BUILD_DIR}" || die
-		_src_compile
+		if use pgo ; then
+			PGO_PHASE="pgi"
+			_src_configure
+			_src_compile
+			_src_install
+			_run_trainer
+			_clean_pgx
+			PGO_PHASE="pgo"
+			_src_configure
+			_src_compile
+		else
+			_src_configure
+			_src_compile
+		fi
 		if [[ "${EBLENDER}" == "build_creator" ]] ; then
 			_src_compile_docs
 		fi
 		export PATH="${_ORIG_PATH}"
 	}
 	blender-multibuild_foreach_impl blender_compile
+}
+
+_run_trainer() {
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+
+	local search_paths=()
+	if [[ -d "${distdir}/blender/demo_assets" ]] ; then
+		search_paths+=( "${distdir}/blender/demo_assets" )
+	fi
+	if [[ -d "/usr/share/blender/demo_assets" ]] ; then
+		search_paths+=( "/usr/share/blender/demo_assets" )
+	fi
+
+	local asset_list=( $(find "${search_paths[@]}" -name "*.blend" ) )
+
+	export PATH="${D}/usr/bin:${PATH}"
+
+	# See https://www.blender.org/download/demo-files/ for assets
+	if use pgo-trainer-cycles-still ; then
+		local renderer_name="Cycles"
+		for asset in ${asset_list[@]} ; do
+			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
+			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_CYCLES_ASSETS} ) ]] && continue
+
+			einfo "Obtaining start and end frame data"
+			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
+			local start=$(echo "${O}" | cut -f 1 -d " ")
+			local end=$(echo "${O}" | cut -f 2 -d " ")
+
+			local cmd
+			einfo "Running PGO trainer for ${asset} as still image using ${renderer_name}"
+			for i in $(seq ${PGO_SAMPLE_SIZE}) ; do
+				local rand=$((${RANDOM} % $((${end}-${start}+1)) + ${start} ))
+				cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E CYCLES -f ${rand} -o /dev/null"
+				einfo "Note:  sudo may ask you for password"
+				einfo "sudo -u pgo bash -c \"${cmd}\""
+				sudo -u pgo bash -c "${cmd}"
+			done
+		done
+	fi
+	if use pgo-trainer-cycles-anim ; then
+		local renderer_name="Cycles"
+		for asset in ${asset_list[@]} ; do
+			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
+			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_CYCLES_ASSETS} ) ]] && continue
+
+			einfo "Obtaining start and end frame data"
+			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
+			local start=$(echo "${O}" | cut -f 1 -d " ")
+			local end=$(echo "${O}" | cut -f 2 -d " ")
+
+			einfo "Running PGO trainer for ${asset} as an animation using ${renderer_name}"
+			cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E BLENDER_EEVEE -s ${start} -e ${end} -o /dev/null"
+			einfo "Note:  sudo may ask you for password"
+			einfo "sudo -u pgo bash -c \"${cmd}\""
+			sudo -u pgo bash -c "${cmd}"
+		done
+	fi
+	if use pgo-trainer-eevee-still ; then
+		local renderer_name="EEVEE"
+		for asset in ${asset_list[@]} ; do
+			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
+			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_EEVEE_ASSETS} ) ]] && continue
+
+			einfo "Obtaining start and end frame data"
+			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
+			local start=$(echo "${O}" | cut -f 1 -d " ")
+			local end=$(echo "${O}" | cut -f 2 -d " ")
+
+			local cmd
+			einfo "Running PGO trainer for ${asset} as a still image using ${renderer_name}"
+			for i in $(seq ${PGO_SAMPLE_SIZE}) ; do
+				local rand=$((${RANDOM} % $((${end}-${start}+1)) + ${start} ))
+				cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E BLENDER_EEVEE -f ${rand} -o /dev/null"
+				einfo "Note:  sudo may ask you for password"
+				einfo "sudo -u pgo bash -c \"${cmd}\""
+				sudo -u pgo bash -c "${cmd}"
+			done
+		done
+	fi
+	if use pgo-trainer-eevee-anim ; then
+		local renderer_name="EEVEE"
+		for asset in ${asset_list[@]} ; do
+			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
+			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_EEVEE_ASSETS} ) ]] && continue
+
+			einfo "Obtaining start and end frame data"
+			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
+			local start=$(echo "${O}" | cut -f 1 -d " ")
+			local end=$(echo "${O}" | cut -f 2 -d " ")
+
+			local cmd
+			einfo "Running PGO trainer for ${asset} as an animation using ${renderer_name}"
+			cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E BLENDER_EEVEE -s ${start} -e ${end} -o /dev/null"
+			einfo "Note:  sudo may ask you for password"
+			einfo "sudo -u pgo bash -c \"${cmd}\""
+			sudo -u pgo bash -c "${cmd}"
+		done
+	fi
 }
 
 _src_test() {

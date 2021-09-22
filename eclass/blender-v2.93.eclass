@@ -34,9 +34,11 @@ IUSE+=" llvm-11 +llvm-12" # same as Mesa and LLVM latest stable keyword \
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
+
 inherit blender
 
 # See the blender.eclass for the LICENSE variable.
+LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
 
 # The release USE flag depends on platform defaults.
 REQUIRED_USE+="
@@ -354,6 +356,30 @@ _src_prepare_patches() {
 }
 
 _src_configure() {
+	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
+		&& has_pgo_requirement ; then
+		einfo "Setting up PGI"
+		if tc-is-clang ; then
+			append-cflags -fprofile-generate="${T}/pgo-${ABI}"
+			append-cxxflags -fprofile-generate="${T}/pgo-${ABI}"
+		else
+			append-cflags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
+			append-cxxflags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
+		fi
+	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
+		&& has_pgo_requirement ; then
+		einfo "Setting up PGO"
+		if tc-is-clang ; then
+			llvm-profdata merge -output="${T}/pgo-${ABI}/code.profdata" \
+				"${T}/pgo-${ABI}" || die
+			append-cflags -fprofile-use="${T}/pgo-${ABI}/code.profdata"
+			append-cxxflags -fprofile-use="${T}/pgo-${ABI}/code.profdata"
+		else
+			append-cflags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
+			append-cxxflags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
+		fi
+	fi
+
 	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
@@ -469,11 +495,22 @@ ebuild/upstream developers only."
 			-DWITH_CYCLES_NATIVE_ONLY=$(usex cpudetection)
 			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
 			-DWITH_CYCLES_OSL=$(usex osl)
-			-DWITH_INSTALL_PORTABLE=OFF
 			-DWITH_STATIC_LIBS=OFF
 			-DWITH_SYSTEM_EIGEN3=ON
 			-DWITH_SYSTEM_GLEW=ON
 			-DWITH_SYSTEM_LZO=ON
+		)
+	fi
+
+	if use pgo && [[ ${PGO_PHASE} == "pgi" ]] ; then
+		# The paths are relative
+		mycmakeargs+=(
+			-DWITH_INSTALL_PORTABLE=ON
+		)
+	else
+		# The paths are hardcoded?
+		mycmakeargs+=(
+			-DWITH_INSTALL_PORTABLE=OFF
 		)
 	fi
 

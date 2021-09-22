@@ -32,3 +32,12 @@ x11-drivers/amdgpu-pro abi_x86_32
 
 # python2 only
 net-libs/libsoup test-websockets
+
+# in development, pgo trainer needs testing/debugging
+media-gfx/blender pgo
+
+# in development, pgo trainer is unfinished
+www-client/chromium pgo-full
+
+# in development, pgo trainer is unfinished
+net-libs/webkit-gtk pgo

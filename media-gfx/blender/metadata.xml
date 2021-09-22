@@ -6,16 +6,18 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!-- originators -->
   <maintainer type="person">
+    <!-- originators -->
     <email>agrigo2001@yahoo.com.au</email>
     <name>Adrian Grigo</name>
   </maintainer>
   <maintainer type="project">
+    <!-- originators -->
     <email>proxy-maint@gentoo.org</email>
     <name>Proxy Maintainers</name>
   </maintainer>
   <maintainer type="project">
+    <!-- originators -->
     <email>graphics@gentoo.org</email>
     <name>Gentoo Graphics Project</name>
   </maintainer>
@@ -64,6 +66,67 @@
     You may define BLENDER_CC_ALT and BLENDER_CXX_ALT to change the compiler.
     Using gcc may result in less optimal code when compiling Cycles.  If not
     defined, it will fall back to clang++, then icpc.
+
+
+    PGO (Profile Guided Optimized) build of Blender
+
+    (Ebuild status:  In development)
+
+    This ebuild is currently being modified to be able to generate optimized
+    PGO Blender builds.  Only the CPU portions can be optimized.
+
+    Steps required for PGO optimized build:
+
+    Let USER0=root
+    Let USER1=the seated user running X currently
+    Let USER2=pgo
+
+      (1) Obtain assets for training (described in next section)
+          Be sure to choose an asset or your own that has all the features
+          of interest.
+      (2) Place them into ${DISTDIR}/blender/demo_assets
+          or /usr/share/blender/demo_assets
+      (3) Set the envvar to these assets
+      (3) Add media-gfx/blender pgo to /etc/portage/package.use/blender
+      (4) Create a pgo account with video, input permissions and given a password
+      (5) Run USE="suid -systemd elogind" emerge -1 xorg-server
+      (6) Close all running X servers
+      (7) Run X on USER1 account and take note of the value of the
+          $DISPLAY varaible
+      (8) Run with xhost +local: on USER1 account while in X
+      (9) Run  DISPLAY=":X" emerge -1 blender  in X with USER0 replacing :X with
+          the value of $DISPLAY in step 6 which is likely :0
+          (automatically handled by the ebuild)
+        - Build once with PGI compiler flags 
+        - Train (PGT)
+        - Build an optimized PGO build.
+      (10) Close X
+      (11) Run emerge -1 xorg-server
+
+    The reason why we don't use virtx (xvfb) is so we can profile
+    the code paths just before entering the GPU contexts.
+
+    Environment variables:
+      BLENDER_PGO_CYCLES_ASSETS="a.blend b.blend c.blend" - a space separated
+        list of .blend files to run with the EEVEE renderer.  Accepts 1 or more
+        basenames.  You may use the demo(s) below or your own assets.
+      BLENDER_PGO_EEVEE_ASSETS="a.blend b.blend c.blend" - a space separated
+        list of .blend files to run with the Cycles renderer.  Accepts 1 or
+        more basenames.  You may use the demo(s) below or your own assets.
+      PGO_SAMPLE_SIZE - how many times to data collect.  Default 30.
+
+    PGO Training and Demos
+
+    The 2nd phase requires generating data to feedback into PGO stage 3.
+    Typically, this information is obtained through benchmarking a
+    instrumented build that is equipped with performance measuring code.
+
+    Additional Blender assets can be found at
+    https://www.blender.org/download/demo-files/
+
+    Some demos require manually to download since they do not come with
+    straight forward licensing details.  Additional assets for testing
+    can be placed in /usr/portage/distfiles/blender/assets.
   </longdescription>
   <upstream>
     <doc lang="en">https://docs.blender.org/manual/en/2.83/index.html</doc>
@@ -187,6 +250,14 @@
     <flag name="llvm">
       Enable features depending on llvm.
     </flag>
+    <flag name="llvm-11">
+      Build against llvm:11 to avoid multiple libLLVM.so load bug.  This
+      must correspond to the same LLVM linked to the system's Mesa.
+    </flag>
+    <flag name="llvm-12">
+      Build against llvm:12 to avoid multiple libLLVM.so load bug.  This
+      must correspond to the same LLVM linked to the system's Mesa.
+    </flag>
     <flag name="man">
       Build and install man pages.
     </flag>
@@ -232,6 +303,21 @@
     </flag>
     <flag name="osl">
       Add support for OpenShadingLanguage scripting.
+    </flag>
+    <flag name="pgo">
+      Builds with PGO optimizations.  Only CPU side code will benefit.
+    </flag>
+    <flag name="pgo-trainer-cycles-still">
+      Run the PGO trainer for cycles rendering still photo, like hitting the preview
+    </flag>
+    <flag name="pgo-trainer-cycles-anim">
+      Run the PGO trainer for cycles rendering animating and rendering all frames
+    </flag>
+    <flag name="pgo-trainer-eevee-still">
+      Run the PGO trainer for EEVEE rendering still photo, like hitting the preview
+    </flag>
+    <flag name="pgo-trainer-eevee-anim">
+      Run the PGO trainer for EEVEE rendering animating and rendering all frames
     </flag>
     <flag name="pdf">
       Adds support to export to PDF directly.
