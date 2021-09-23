@@ -453,15 +453,6 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
     <flag name="zen-sauce-all">Blanket whitelist all zen-sauce commits</flag>
     <flag name="zen-tune">Patches the kernel with some Zen Interactive
       Tuning, particularly those marked INTERACTIVE.
-
-      Disabled commits:
-      "ZEN: INTERACTIVE: Use BFQ as our elevator"
-      Reason:  Can set via custom init script to set
-      /sys/block/sd*/queue/scheduler per device.  BFQ is suboptimal for
-      SSD.
-
-      You may manually add them back by /etc/portage/patches.  This is
-      to allow people a choice.
     </flag>
   </use>
 </pkgmetadata>
