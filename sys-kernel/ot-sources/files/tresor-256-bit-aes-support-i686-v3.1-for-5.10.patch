@@ -528,7 +528,7 @@ diff -urp linux-5.10.8-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.10.8-ot/arch
 +   w47_rsc w46  w45     w44   r11                                                  w
 +   w51     w50  w49     w48   r12                      0x80                        w
 +
-+   /*
++
 +    Needs left fill to complete row
 +    w7  w6
 +    w19 w18
