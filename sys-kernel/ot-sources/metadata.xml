@@ -361,13 +361,13 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       option which may be used in the proton, proton-wine, experimental-wine
       version 5 or above packages.  It may reduce CPU usage by less than
       5%.</flag>
-    <flag name="futex2">Patches the kernel with futex2 syscalls. used in the
-      experimental-wine version 5.13 or above packages.  This may reduce the CPU
-      usage by less than 5%.  It is recommended combine with the futex2-proton
-      USE flag as well since no known software uses the futex2 git branch data
-      structures.</flag>
+    <flag name="futex2">Patches the kernel with older futex2 syscall
+      specification.  This may reduce the CPU usage by less than 5%.  It is
+      recommended combine with the futex2-proton USE flag as well since no
+      known software uses the syscall's original data structures.</flag>
     <flag name="futex2-proton">Modifies the syscall data structures to be
-      compatible with experimental-wine.  This will break compatibility.</flag>
+      compatible with experimental-wine version 5.13 or above.  This will
+      break compatibility.</flag>
     <flag name="kernel-compiler-patch">Patches the kernel for more CPU
       microarchitectures that are released before 2020</flag>
     <flag name="kernel-compiler-patch-cortex-a72">Patches the kernel for the
