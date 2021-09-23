@@ -360,7 +360,7 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       option which may be used in the proton, proton-wine version 5 or above
       packages.  It may reduce CPU usage by less than 5%.</flag>
     <flag name="futex2">Patches the kernel with futex2 syscalls used in the
-      experimental-wine version 5.13 or above packages packages.
+      experimental-wine version 5.13 or above packages.
       This may reduce the CPU usage by less than 5%.</flag>
     <flag name="futex2-tkg">Patches the kernel with futex2 syscalls used in the
       wine-tkg, proton-tkg packages.  This may reduce the CPU usage by less than
