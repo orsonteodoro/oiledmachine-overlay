@@ -357,11 +357,14 @@ https://github.com/dolohow/uksm
 https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd415
     </flag>
     <flag name="futex">Patches the kernel with FUTEX_WAIT_MULTIPLE futex syscall
-      option which may be used in the proton / proton-wine >= 5 packages.  It
-      may reduce CPU usage by less than 5%.</flag>
+      option which may be used in the proton, proton-wine version 5 or above
+      packages.  It may reduce CPU usage by less than 5%.</flag>
     <flag name="futex2">Patches the kernel with futex2 syscalls used in the
-      wine-tkg, proton-tkg packages.  This may reduce the CPU usage by less
-      than 5%.</flag>
+      experimental-wine version 5.13 or above packages packages.
+      This may reduce the CPU usage by less than 5%.</flag>
+    <flag name="futex2-tkg">Patches the kernel with futex2 syscalls used in the
+      wine-tkg, proton-tkg packages.  This may reduce the CPU usage by less than
+      5%.  This modifies the syscall data structures for compatibility.</flag>
     <flag name="kernel-compiler-patch">Patches the kernel for more CPU
       microarchitectures that are released before 2020</flag>
     <flag name="kernel-compiler-patch-cortex-a72">Patches the kernel for the

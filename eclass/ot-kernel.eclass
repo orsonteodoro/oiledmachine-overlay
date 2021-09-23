@@ -1874,4 +1874,16 @@ einfo "forked wine code for details."
 einfo
 		fi
 	fi
+
+	if has tresor ; then
+		if use tresor ; then
+ewarn
+ewarn "TRESOR is currently not compatible with Integrated Assembler used by."
+ewarn "LLVM It is only compatible with GAS.  You may try to pass"
+ewarn "-no-integrated-as to CLANG_FLAGS or CFLAGS or build only with the GCC"
+ewarn "toolchain only.  Compatibility with Integrated Assembler may be"
+ewarn "provided later."
+ewarn
+		fi
+	fi
 }
