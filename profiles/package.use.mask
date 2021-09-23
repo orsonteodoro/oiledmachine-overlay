@@ -1,3 +1,7 @@
+# ebuild developers, you may fix a feature by modifying /etc/portage/profile/package.use.mask
+# and adding a row containing ${CATEGORY}/${PN} -use_flag.  This will remove the
+# the hard USE flag disable restriction.
+
 # Freezes or just shows black screen
 x11-drivers/amdgpu-pro-lts opengl_mesa
 
@@ -43,7 +47,6 @@ www-client/chromium pgo-full
 net-libs/webkit-gtk pgo
 
 # unfinished USE flags (dev pre-alpha quality at ebuild level).  Disabled for QA reasons.
-# Add "dev-games/godot -use_flag" row to /etc/portage/package.use.force to fix them
 =dev-games/godot-2* godot_iphone_arm
 =dev-games/godot-2* godot_iphone_armv64
 =dev-games/godot-2* godot_iphone_armv7
@@ -70,7 +73,6 @@ net-libs/webkit-gtk pgo
 =dev-games/godot-2* web
 
 # unfinished USE flags (dev pre-alpha quality at ebuild level).  Disabled for QA reasons.
-# Add "dev-games/godot -use_flag" row to /etc/portage/package.use.force to fix them
 =dev-games/godot-3* android
 =dev-games/godot-3* gdnative
 =dev-games/godot-3* gdscript
@@ -129,13 +131,9 @@ net-libs/webkit-gtk pgo
 =dev-games/godot-3* store-kit
 
 # untested
-# Add "dev-games/godot -use_flag" row to /etc/portage/package.use.force to fix them
 =dev-games/godot-2* touch
 =dev-games/godot-3* mobile-vr
 =dev-games/godot-3* touch
 
 # needs a fix for build time breakage
 sys-kernel/ot-sources futex
-
-# reviewing compatibility issues with data structures
-sys-kernel/ot-sources futex2

@@ -1,4 +1,4 @@
-# Copy the lines you need below to your /etc/portage/profile/package.use.force
+# Copy the lines you need below to your /etc/portage/profile/package.use.mask
 # It will not work from the overlay directory.
 
 # Allows to disable the 64 ABI
