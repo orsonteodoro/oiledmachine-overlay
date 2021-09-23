@@ -215,7 +215,13 @@ ec85ea95a00b490a059bcc817bc1b4660062dba0
 e8d4d6ded8544b5716c66d326aa290db8501518c
 ) # newest
 
-# For 5.12
+# From the futex-proton branch
+FUTEX2_PROTON_COMPAT=(
+be703ffe14a9562140272abe2e0fa4abd3e52e0d
+1d8ed8c38196b0cbed555c1b624d3a0205a59a53
+)
+
+# For 5.12 of the futex2 branch
 # This corresponds to the futex2 branch.
 # Repo order is bottom oldest and top newest.
 FUTEX2_COMMITS=( # oldest
@@ -232,19 +238,21 @@ d59f169a44ecfc8b1e486840c0010d68ec5bd2fb
 3c55be83bb2790af9e5a67b1238612be015cabbe
 2f05d29e273e9caf912f5522e11adab66c847227
 96db7320e8b0d0193fc419f280f740f37a159e23
+${FUTEX2_PROTON_COMPAT[@]}
 ) # newest
 
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
-IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex
-futex2 +genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto +O3 prjc
-rt shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
-tresor_x86_64-256-bit-key-support uksm zen-lru_gen zen-muqss zen-sauce
-zen-sauce-all -zen-tune"
+IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex futex2
+futex2-proton +genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto
++O3 prjc rt shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs
+tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-lru_gen zen-muqss
+zen-sauce zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
 REQUIRED_USE+="
 	^^ ( cfs prjc zen-muqss )
+	futex2-proton? ( futex2 )
 	genpatches_1510? ( genpatches )
 	O3? ( zen-sauce )
 	lru_gen? ( !zen-lru_gen )
@@ -756,6 +764,11 @@ einfo "Already applied ${path} upstream"
 		else
 			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-8021a26-1-hunk-fix-for-5.14.patch"
 		fi
+	elif [[ "${path}" =~ "futex2-5.14-be703ff.patch" ]] ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-be703ff-1-hunk-fix-for-5.14.patch"
+	elif [[ "${path}" =~ "futex2-5.14-1e7fd79.patch" ]] ; then
+		_dpatch "${PATCH_OPS}" "${path}"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-1e7fd79-fix-build-time-failure-for-5.14.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

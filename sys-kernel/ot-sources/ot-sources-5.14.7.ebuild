@@ -8,3 +8,7 @@ PATCH_PROJC_VER="5.14-r2"
 PATCH_RT_VER="5.14.2-rt21"
 
 inherit ot-kernel-v5.14
+
+# See also,
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v5.14.eclass

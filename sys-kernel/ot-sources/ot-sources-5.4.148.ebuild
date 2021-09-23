@@ -9,3 +9,7 @@ BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 PATCH_RT_VER="5.4.143-rt64"
 
 inherit ot-kernel-v5.4
+
+# See also,
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v5.4.eclass

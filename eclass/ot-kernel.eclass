@@ -25,6 +25,7 @@
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
 # futex2:
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/futex2
+#   https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-proton
 # genpatches:
 #   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
@@ -979,8 +980,7 @@ function apply_zensauce() {
 		local is_blacklisted=0
 		if [[ -n "${#use_blacklisted}" ]] ; then
 			for c_bl in ${use_blacklisted} ; do
-				if [[ "${c:0:7}" == "${c_bl:0:7}" ]]
-				then
+				if [[ "${c:0:7}" == "${c_bl:0:7}" ]] ; then
 ewarn
 ewarn "If ${c} is already applied via USE flag.  Please remove it from the"
 ewarn "ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_} and use the USE flag instead."
@@ -988,6 +988,7 @@ ewarn "This is to ensure the BDEPENDS/RDEPENDS/DEPENDs are met."
 ewarn "Skipping ${c} for now."
 ewarn
 					is_blacklisted=1
+					break
 				fi
 			done
 		fi
@@ -1002,6 +1003,7 @@ einfo
 einfo "Skipping ${c}"
 einfo
 					is_blacklisted=1
+					break
 				fi
 			done
 		fi
@@ -1035,6 +1037,18 @@ function apply_futex() {
 # Adds a new futex2 syscalls.  It may shave of < 5% CPU usage.
 function apply_futex2() {
 	for c in ${FUTEX2_COMMITS[@]} ; do
+		local blacklisted=0
+		if has futex2-proton ${IUSE_EFFECTIVE} ; then
+			if ! use futex2-proton ;then
+				for b in ${FUTEX2_PROTON_COMPAT[@]} ; do
+					if [[ "${b}" == "${c}" ]] ; then
+						blacklisted=1
+						break
+					fi
+				done
+			fi
+			(( ${blacklisted} == 1 )) && continue
+		fi
 		_fpatch "${DISTDIR}/futex2-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 }
@@ -1104,24 +1118,27 @@ function _filter_genpatches() {
 					# already applied
 					continue
 				fi
-				local is_blacklist
-				is_blacklist=0
+				local is_blacklisted
+				is_blacklisted=0
 				for x in ${P_GENPATCHES_BLACKLIST} ; do
 					if [[ "${l}" == "${x}" ]] ; then
-						is_blacklist=1
+						is_blacklisted=1
+						break
 					fi
 				done
-				if [[ "${is_blacklist}" == "1" ]] ; then
+				if [[ "${is_blacklisted}" == "1" ]] ; then
+einfo "Skipping genpatches ${l}"
 					continue
 				fi
 
-				is_blacklist=0
+				is_blacklisted=0
 				for x in ${GENPATCHES_BLACKLIST} ; do
 					if [[ "${l}" == "${x}" ]] ; then
-						is_blacklist=1
+						is_blacklisted=1
+						break
 					fi
 				done
-				if [[ "${is_blacklist}" == "1" ]] ; then
+				if [[ "${is_blacklisted}" == "1" ]] ; then
 einfo "Skipping genpatches ${l}"
 					continue
 				fi
@@ -1150,16 +1167,22 @@ function apply_ck() {
 	for c in ${CK_COMMITS[@]} ; do
 		local blacklisted=0
 		for b in ${CK_COMMITS_BL[@]} ; do
-			[[ "${c}" == "${b}" ]] && blacklisted=1
+			if [[ "${c}" == "${b}" ]] ; then
+				blacklisted=1
+				break
+			fi
 			if ver_test ${K_MAJOR_MINOR} -eq 4.14 ; then
 				if ! use bfq-mq ; then
 					for b2 in ${CK_BFQ_MQ[@]} ; do
-						[[ "${c}" == "${b2}" ]] && blacklisted=1
+						if [[ "${c}" == "${b2}" ]] ; then
+							blacklisted=1
+							break
+						fi
 					done
 				fi
 			fi
+			(( ${blacklisted} == 1 )) && break
 		done
-
 		(( ${blacklisted} == 1 )) && continue
 		_fpatch "${DISTDIR}/ck-${MUQSS_VER}-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
@@ -1861,6 +1884,8 @@ einfo
 	if has futex ; then
 		if use futex ; then
 einfo
+einfo "Enable futex also in Configure standard kernel features (expert users) > Enable futex support"
+einfo
 einfo "Additional envvars may be required like WINEFSYNC=1.  Check the forked"
 einfo "wine code for details."
 einfo
@@ -1868,6 +1893,13 @@ einfo
 	fi
 	if has futex2 ; then
 		if use futex2 ; then
+einfo
+einfo "Enable futex2 also in Configure standard kernel features (expert users) > Enable futex support"
+einfo
+einfo "  with"
+einfo
+einfo "Enable futex also in Configure standard kernel features (expert users) > Enable futex2 support"
+einfo
 einfo
 einfo "Additional envvars may be required like WINEFSYNC_FUTEX2=1.  Check the"
 einfo "forked wine code for details."

@@ -7,3 +7,7 @@ K_GENPATCHES_VER="256"
 PATCH_RT_VER="4.14.246-rt122"
 
 inherit ot-kernel-v4.14
+
+# See also,
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v4.14.eclass
