@@ -363,8 +363,9 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       5%.</flag>
     <flag name="futex2">Patches the kernel with older futex2 syscall
       specification.  This may reduce the CPU usage by less than 5%.  It is
-      recommended combine with the futex2-proton USE flag as well since no
-      known software uses the syscall's original data structures.</flag>
+      recommended to combine this USE flag with the futex2-proton USE flag as
+      well since no known software uses the syscall's original data
+      structures.</flag>
     <flag name="futex2-proton">Modifies the syscall data structures to be
       compatible with experimental-wine version 5.13 or above.  This will
       break compatibility.</flag>
