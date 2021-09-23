@@ -718,6 +718,7 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "futex-5.14-dc3e045.patch" ]] ; then
 		_tpatch "${PATCH_OPS}" "${path}" 5 0 ""
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-dc3e045-5-hunk-fix-for-5.14.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-dc3e045-fix-build-time-errors-for-5.14.patch"
 	elif [[ "${path}" =~ "futex-5.14-714afdc.patch" ]] ; then
 		_tpatch "${PATCH_OPS}" "${path}" 4 0 ""
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-714afdc-4-hunk-fix-for-5.14.patch"
