@@ -243,8 +243,6 @@ rt shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-lru_gen zen-muqss zen-sauce
 zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
-#	futex? ( !futex2 )
-#	futex2? ( !futex )
 REQUIRED_USE+="
 	^^ ( cfs prjc zen-muqss )
 	genpatches_1510? ( genpatches )
