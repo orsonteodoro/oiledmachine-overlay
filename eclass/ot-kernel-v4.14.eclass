@@ -274,7 +274,7 @@ function ot-kernel_pkg_postinst_cb() {
 function ot-kernel_filter_patch_cb() {
 	local path="${1}"
 
-	# WARNING: Fuzzing is not intelligent enough to distiniguish syscall
+	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
 
 	if [[ "${path}" =~ "ck-0.162-4.14-fbc0b45.patch" ]] ; then

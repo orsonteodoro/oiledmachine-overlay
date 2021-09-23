@@ -373,7 +373,7 @@ ewarn
 function ot-kernel_filter_patch_cb() {
 	local path="${1}"
 
-	# WARNING: Fuzzing is not intelligent enough to distiniguish syscall
+	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
 	# Using patch with fuzz factor is disallowed with futex and futex2
 
