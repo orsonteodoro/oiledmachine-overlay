@@ -133,3 +133,9 @@ net-libs/webkit-gtk pgo
 =dev-games/godot-2* touch
 =dev-games/godot-3* mobile-vr
 =dev-games/godot-3* touch
+
+# needs a fix for build time breakage
+sys-kernel/ot-sources futex
+
+# reviewing compatibility issues with data structures
+sys-kernel/ot-sources futex2
