@@ -1894,11 +1894,11 @@ einfo
 	if has futex2 ; then
 		if use futex2 ; then
 einfo
-einfo "Enable futex2 also in Configure standard kernel features (expert users) > Enable futex support"
+einfo "Enable futex also in Configure standard kernel features (expert users) > Enable futex support"
 einfo
 einfo "  with"
 einfo
-einfo "Enable futex also in Configure standard kernel features (expert users) > Enable futex2 support"
+einfo "Enable futex2 also in Configure standard kernel features (expert users) > Enable futex2 support"
 einfo
 einfo
 einfo "Additional envvars may be required like WINEFSYNC_FUTEX2=1.  Check the"

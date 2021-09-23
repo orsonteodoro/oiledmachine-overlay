@@ -218,6 +218,7 @@ https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/MAINTAINERS?
     <!-- for futex (FUTEX_WAIT_MULTIPLE), futex2, see
 https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
 https://gitlab.collabora.com/tonyk/linux/-/commits/futex2
+https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-proton
     -->
 
     <maintainer status="active" type="person">
