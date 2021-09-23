@@ -676,18 +676,7 @@ function ot-kernel_filter_patch_cb() {
 	#          number overlap.  Always inspect each and every hunk.
 	# Using patch with fuzz factor is disallowed with futex and futex2
 
-	if [[ "${path}" =~ "prjc_v5.12-r1.patch" ]] ; then
-		_dpatch "${PATCH_OPS}" "${path}"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
-	elif [[ "${path}" =~ prjc_v5.12 ]] ; then
-		_dpatch "${PATCH_OPS}" "${path}"
-ewarn
-ewarn "Applying genpatches 5022 kernel/sched/pelt.h fix for newer Project C."
-ewarn "It still needs testing.  Remove this notice or codeblock if it is a"
-ewarn "success or fixed upstream."
-ewarn
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
-	elif [[ "${path}" =~ "ck-0.210-for-5.12-d66b728-47a8b81.patch" ]] ; then
+	if [[ "${path}" =~ "ck-0.210-for-5.12-d66b728-47a8b81.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
 		_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/ck-patchset-5.12-ck1-fix-cpufreq-gov-performance.patch"
