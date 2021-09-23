@@ -742,33 +742,33 @@ einfo "Already applied ${path} upstream"
 		_tpatch "${PATCH_OPS}" "${path}" 6 0 ""
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-a942311-6-hunk-fix-for-5.14.patch"
 	elif [[ "${path}" =~ "futex2-5.14-84bf1c3.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
 		if use futex && use futex2 ; then
-			_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
 			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-84bf1c3-3-hunk-fix-for-5.14-combined-with-futex.patch"
 		else
-			_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
 			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-84bf1c3-3-hunk-fix-for-5.14.patch"
 		fi
 	elif [[ "${path}" =~ "futex2-5.14-d59f169.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 4 0 ""
 		if use futex && use futex2 ; then
-			_tpatch "${PATCH_OPS}" "${path}" 4 0 ""
 			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-d59f169-4-hunk-fix-for-5.14-combined-with-futex.patch"
 		else
-			_tpatch "${PATCH_OPS}" "${path}" 4 0 ""
 			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-d59f169-4-hunk-fix-for-5.14.patch"
 		fi
 	elif [[ "${path}" =~ "futex2-5.14-848b3b5.patch" ]] ; then
 		if use futex && use futex2 ; then
-einfo "see ${path}"
-die
-			_tpatch "${PATCH_OPS}" "${path}" 4 0 ""
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-d59f169-4-hunk-fix-for-5.14-combined-with-futex.patch"
+			_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-848b3b5-2-hunk-fix-for-5.14-combined-with-futex.patch"
 		else
 			_dpatch "${PATCH_OPS}" "${path}"
 		fi
 	elif [[ "${path}" =~ "futex2-5.14-8021a26.patch" ]] ; then
 		_tpatch "${PATCH_OPS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-8021a26-1-hunk-fix-for-5.14.patch"
+		if use futex && use futex2 ; then
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-8021a26-1-hunk-fix-for-5.14-combined-with-futex.patch"
+		else
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-8021a26-1-hunk-fix-for-5.14.patch"
+		fi
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi
