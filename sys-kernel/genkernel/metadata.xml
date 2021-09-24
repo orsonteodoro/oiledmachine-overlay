@@ -18,8 +18,10 @@
     3.5.x.x - subdir_mount (works), crypt_root_plain (works)
     4.0.x - subdir_mount (untested), crypt_root_plain (works), llvm (works)
     4.2.x - subdir_mount (untested), crypt_root_plain (works), llvm (works),
-      pgo (PGI done, PGT in development and open to feedback or expansion,
-      PGO stage built an ran without bugs)
+      pgo (done, but may expand for a few more benchmarks.  Testing
+      was not done yet to confirm that there was a performance gain before
+      and after.),  cfi (builds sucessfully, but needs testing of it
+      actually working)
 
     When switching between 4.2.x and older versions, The /dev/disk/by-id/
     entries may change.  This means that you need to adjust the kernel
@@ -46,15 +48,6 @@
     PGO support requires a PGO toolchain to run benchmarks.  All benchmarks
     are done on a live system to make it more accessible without getting
     too technical.
-
-    The performance of the instrumented build to the normal build is not
-    dramatically slower and about the same perceptual performance as
-    the normal build, but it does have a slightly have a few bugs
-    present compared to a normal build compared to the instrumented.
-
-    Phase 1 and 2 have been tested and currently trying to close
-    compatibility issues with the profraw to profdata merger and
-    debug phase 3.
 
     The following steps must be take for a PGO kernel:
 

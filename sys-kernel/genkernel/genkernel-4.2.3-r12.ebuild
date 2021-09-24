@@ -1,6 +1,17 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# The reuse of revision r7 was used so that newer bumps
+# do not interfere with an ongoing patch update for a stable working build.
+# This experimental series could have have been revision -r(x+1),
+# and the stable series -rX, but this one will be frozen until it
+# is at least in working state.
+
+# 4.2.3-rX is stable patches
+# 4.2.3-r7 is just 4.2.3-rX with Work in Progress (WIP) PGO changes.  Experimental custom patches.
+
+# Changes to the 4.2.x PGO will be backported to genkernel 4.0.x later.
+
 # genkernel-9999        -> latest Git branch "master"
 # genkernel-VERSION     -> normal genkernel release
 
@@ -94,7 +105,7 @@ if [[ ${PV} == 9999* ]] ; then
 else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86"
+	#KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86" # PGO support WIP
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
@@ -107,10 +118,44 @@ IUSE+=" ibm +firmware"
 IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
+IUSE+=" clang-pgo
+	sudo
+	pgo-custom
+	pgo_trainer_crypto
+	pgo_trainer_memory
+	pgo_trainer_network
+	pgo_trainer_p2p
+	pgo_trainer_webcam
+	pgo_trainer_xscreensaver_2d
+	pgo_trainer_xscreensaver_3d
+	pgo_trainer_yt
+	plausable-deniable-dmcrypt-plain
+" # Added by the oiledmachine-overlay.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
 REQUIRED_USE+=" cfi? ( llvm lto )
+		clang-pgo? (
+			llvm
+			|| (
+				pgo_trainer_crypto
+				pgo_trainer_memory
+				pgo_trainer_network
+				pgo_trainer_p2p
+				pgo_trainer_webcam
+				pgo_trainer_xscreensaver_2d
+				pgo_trainer_xscreensaver_3d
+				pgo_trainer_yt
+			)
+		)
 		lto? ( llvm )
+		pgo_trainer_crypto? ( clang-pgo )
+		pgo_trainer_memory? ( clang-pgo )
+		pgo_trainer_network? ( clang-pgo )
+		pgo_trainer_p2p? ( clang-pgo )
+		pgo_trainer_webcam? ( clang-pgo )
+		pgo_trainer_xscreensaver_2d? ( clang-pgo )
+		pgo_trainer_xscreensaver_3d? ( clang-pgo )
+		pgo_trainer_yt? ( clang-pgo )
 		shadowcallstack? ( cfi )"
 gen_scs_exclusion() {
 	for a in ${EXCLUDE_SCS[@]} ; do
@@ -123,6 +168,18 @@ LLVM_SLOTS=(11 12 13 14)
 LLVM_LTO_SLOTS=(11 12 13 14)
 LLVM_CFI_ARM64_SLOTS=(12 13 14)
 LLVM_CFI_X86_SLOTS=(13 14)
+LLVM_PGO_SLOTS=(13 14)
+
+gen_clang_pgo_rdepends() {
+	for s in ${LLVM_PGO_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+			)
+		"
+	done
+}
 
 gen_llvm_rdepends() {
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -184,7 +241,7 @@ gen_cfi_x86_rdepends() {
 # mdadm... during initramfs generation which will require these
 # things.
 DEPEND=""
-RDEPEND="${PYTHON_DEPS}
+RDEPEND+=" ${PYTHON_DEPS}
 	app-arch/cpio
 	>=app-misc/pax-utils-1.2.2
 	app-portage/elt-patches
@@ -195,7 +252,6 @@ RDEPEND="${PYTHON_DEPS}
 	sys-devel/automake
 	sys-devel/libtool
 	virtual/pkgconfig
-	firmware? ( sys-kernel/linux-firmware )
 	cfi? (
 		amd64? (
 			llvm? ( || ( $(gen_cfi_x86_rdepends) ) )
@@ -204,9 +260,51 @@ RDEPEND="${PYTHON_DEPS}
 			llvm? ( || ( $(gen_cfi_arm64_rdepends) ) )
 		)
 	)
+	clang-pgo? (
+		|| ( $(gen_clang_pgo_rdepends) )
+		sudo? ( app-admin/sudo )
+	)
+	firmware? ( sys-kernel/linux-firmware )
 	llvm? (
 		|| ( $(gen_llvm_rdepends) )
 		lto? ( || ( $(gen_lto_rdepends) ) )
+	)
+	pgo_trainer_crypto? (
+		sys-fs/cryptsetup
+	)
+	pgo_trainer_memory? (
+		sys-apps/util-linux
+		sys-process/procps
+	)
+	pgo_trainer_network? (
+		net-analyzer/traceroute
+		net-misc/curl
+		net-misc/iputils
+	)
+	pgo_trainer_p2p? (
+		net-p2p/ctorrent
+		sys-apps/util-linux
+		sys-process/procps
+	)
+	pgo_trainer_webcam? (
+		media-tv/v4l-utils
+		media-video/ffmpeg[encode,v4l]
+	)
+	pgo_trainer_yt? (
+		|| (
+			www-client/chromium
+			www-client/firefox
+		)
+		$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
+	)
+	pgo_trainer_xscreensaver_2d? (
+		sys-process/procps
+		x11-misc/xscreensaver[X]
+	)
+	pgo_trainer_xscreensaver_3d? (
+		virtual/opengl
+		sys-process/procps
+		x11-misc/xscreensaver[X,opengl]
 	)
 "
 
@@ -292,7 +390,11 @@ src_prepare() {
 	fi
 
 	if use llvm ; then
-		eapply "${FILESDIR}/${PN}-4.2.3-llvm-support-v5.patch"
+		eapply "${FILESDIR}/${PN}-4.2.3-llvm-support-v6.patch"
+	fi
+
+	if use clang-pgo ; then
+		eapply "${FILESDIR}/${PN}-4.2.3-pgo-support.patch"
 	fi
 
 	cp -aT "${FILESDIR}/genkernel-4.2.x" "${S}/patches" || die
@@ -432,7 +534,7 @@ pkg_postinst() {
 	ewarn
 	ewarn "You must load all modules by adding \"gk.hw.use-modules_load=1\" from"
 	ewarn "the kernel parameter list for grub or have the drivers built in to use"
-	ewarn "the kernel with the crypt_root_plain USE flag."
+	ewarn " the kernel with the crypt_root_plain USE flag."
 	ewarn
 
 	ewarn
@@ -458,8 +560,21 @@ pkg_postinst() {
 	ewarn "The --clang-utils or --llvm-utils options are experimental.  Only basic"
 	ewarn "initramfs modules were tested.  If runtime or buildtime failure occurs"
 	ewarn "with clang, you may need to switch to gcc for that package.  Details"
-	ewarn "can be found in genkernel-4.2.3-llvm-support-v3.patch.  Either fork the"
+	ewarn "can be found in genkernel-4.2.3-llvm-support-v2.patch.  Either fork the"
 	ewarn "ebuild, supply a user patch, or send the option as an issue request for"
 	ewarn "review."
 	ewarn
+
+	einfo
+	einfo "The --clang, --llvm, --clang-kernel, ---llvm-kernel do not imply"
+	einfo "--lto.  You must add --lto if you want to automatically"
+	einfo "configure and build with the lto and llvm."
+	einfo
+
+	if use clang-pgo ; then
+	ewarn
+	ewarn "See the metadata.xml next to this ebuild for additional environment"
+	ewarn "variables for PGO training."
+	ewarn
+	fi
 }

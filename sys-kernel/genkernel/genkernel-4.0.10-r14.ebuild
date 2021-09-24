@@ -274,7 +274,7 @@ src_prepare() {
 	fi
 
 	if use llvm ; then
-		eapply "${FILESDIR}/${PN}-4.0.10-llvm-support-v5.patch"
+		eapply "${FILESDIR}/${PN}-4.0.10-llvm-support-v6.patch"
 	fi
 
 	cp -aT "${FILESDIR}/genkernel-4.0.x" "${S}/patches" || die
@@ -416,4 +416,10 @@ pkg_postinst() {
 	ewarn "ebuild, supply a user patch, or send the option as an issue request for"
 	ewarn "review."
 	ewarn
+
+	einfo
+	einfo "The --clang, --llvm, --clang-kernel, ---llvm-kernel do not imply"
+	einfo "--lto.  You must add --lto if you want to automatically"
+	einfo "configure and build with the lto and llvm."
+	einfo
 }

@@ -1,8 +1,9 @@
 Subject:       Support Clang/LLVM for LTO and CFI for the kernel only for genkernel
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Patch Status:  Complete
-Date:          Sat Sep 11 09:28:10 PM PDT 2021 (Unix time: 1631420890)
+Date:          Fri Sep 24 04:11:24 PM PDT 2021 (Unix time: 1632525084)
 
+v6 - Split --lto from --clang-kernel for older kernels
 v5 - Always disable cfi permissive
      Filter supported arches for cfi
 v4 - Added --scs option
@@ -28,7 +29,7 @@ v1   Added llvm support
 
 diff -urp genkernel-4.0.10.orig/arch/ppc64le/config.sh genkernel-4.0.10/arch/ppc64le/config.sh
 --- genkernel-4.0.10.orig/arch/ppc64le/config.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/arch/ppc64le/config.sh	2021-09-11 21:19:39.660447719 -0700
++++ genkernel-4.0.10/arch/ppc64le/config.sh	2021-09-24 16:14:30.005446122 -0700
 @@ -18,9 +18,34 @@ DEFAULT_KERNEL_MAKE=make
  DEFAULT_UTILS_MAKE=make
  
@@ -67,7 +68,7 @@ diff -urp genkernel-4.0.10.orig/arch/ppc64le/config.sh genkernel-4.0.10/arch/ppc
 +DEFAULT_UTILS_LLVM_LD=ld.lld
 diff -urp genkernel-4.0.10.orig/defaults/config.sh genkernel-4.0.10/defaults/config.sh
 --- genkernel-4.0.10.orig/defaults/config.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/defaults/config.sh	2021-09-11 21:19:39.660447719 -0700
++++ genkernel-4.0.10/defaults/config.sh	2021-09-24 16:14:30.006446122 -0700
 @@ -41,8 +41,27 @@ DEFAULT_KERNEL_MAKE=make
  DEFAULT_UTILS_MAKE=make
  
@@ -109,9 +110,9 @@ diff -urp genkernel-4.0.10.orig/defaults/config.sh genkernel-4.0.10/defaults/con
  PORTAGE_CHOST="$(portageq envvar CHOST)"
  DEFAULT_CHOST="${PORTAGE_CHOST:-$(${DEFAULT_UTILS_CC} -dumpmachine 2>/dev/null)}"
 diff -urp genkernel-4.0.10.orig/gen_cmdline.sh genkernel-4.0.10/gen_cmdline.sh
---- genkernel-4.0.10.orig/gen_cmdline.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gen_cmdline.sh	2021-09-11 21:25:07.876230862 -0700
-@@ -85,6 +85,17 @@ longusage() {
+--- genkernel-4.0.10.orig/gen_cmdline.sh	2021-09-24 16:13:54.602444955 -0700
++++ genkernel-4.0.10/gen_cmdline.sh	2021-09-24 16:15:34.624448251 -0700
+@@ -86,6 +86,17 @@ longusage() {
    echo "	--module-prefix=<dir>	Prefix to kernel module destination, modules"
    echo "				will be installed in <prefix>/lib/modules"
    echo "  Low-Level Compile settings"
@@ -129,10 +130,15 @@ diff -urp genkernel-4.0.10.orig/gen_cmdline.sh genkernel-4.0.10/gen_cmdline.sh
    echo "	--cross-compile=<target-triplet>"
    echo "				Target triple (i.e. aarch64-linux-gnu) to build for"
    echo "	--kernel-as=<assembler>	Assembler to use for kernel"
-@@ -815,6 +825,32 @@ parse_cmdline() {
+@@ -820,6 +831,37 @@ parse_cmdline() {
  		--config=*)
  			print_info 3 "CMD_GK_CONFIG: "${*#*=}""
  			;;
++		--lto)
++			CMD_LLVM_KERNEL=1
++			CMD_LTO=1
++			print_info 3 "CMD_LLVM_KERNEL: ${CMD_LLVM_KERNEL}"
++			print_info 3 "CMD_LTO: ${CMD_LTO}"
 +		--clang|--clang-kernel|--llvm|--llvm-kernel|--lto)
 +			CMD_LLVM_KERNEL=1
 +			print_info 3 "CMD_LLVM_KERNEL: ${CMD_LLVM_KERNEL}"
@@ -162,10 +168,11 @@ diff -urp genkernel-4.0.10.orig/gen_cmdline.sh genkernel-4.0.10/gen_cmdline.sh
  		--nice)
  			CMD_NICE=10
  			print_info 3 "CMD_NICE: ${CMD_NICE}"
+Only in genkernel-4.0.10: gen_cmdline.sh.orig
 diff -urp genkernel-4.0.10.orig/gen_compile.sh genkernel-4.0.10/gen_compile.sh
---- genkernel-4.0.10.orig/gen_compile.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gen_compile.sh	2021-09-11 21:25:36.324350507 -0700
-@@ -107,11 +107,22 @@ compile_generic() {
+--- genkernel-4.0.10.orig/gen_compile.sh	2021-09-24 16:13:54.603444955 -0700
++++ genkernel-4.0.10/gen_compile.sh	2021-09-24 16:14:30.007446122 -0700
+@@ -112,11 +112,22 @@ compile_generic() {
  			compile_cmd+=( "ARCH='${KERNEL_ARCH}'" )
  
  			local tc_var
@@ -189,13 +196,53 @@ diff -urp genkernel-4.0.10.orig/gen_compile.sh genkernel-4.0.10/gen_compile.sh
  			compile_cmd+=( "HOSTAR='$(tc-getBUILD_AR)'" )
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
+Only in genkernel-4.0.10: gen_compile.sh.orig
 diff -urp genkernel-4.0.10.orig/gen_configkernel.sh genkernel-4.0.10/gen_configkernel.sh
 --- genkernel-4.0.10.orig/gen_configkernel.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gen_configkernel.sh	2021-09-11 21:20:39.082736327 -0700
-@@ -995,6 +995,69 @@ config_kernel() {
++++ genkernel-4.0.10/gen_configkernel.sh	2021-09-24 16:18:03.193453147 -0700
+@@ -995,6 +995,98 @@ config_kernel() {
  		fi
  	fi
  
++	enable_lto_clang() {
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for LTO support are set ..."
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_ARCH_SUPPORTS_LTO_CLANG" "y"
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_ARCH_SUPPORTS_LTO_CLANG_THIN" "y"
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_FTRACE_MCOUNT_USE_RECORDMCOUNT" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_GCOV_KERNEL" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_HAS_LTO_CLANG" "y"
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_KALLSYMS" "y"
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_KASAN" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_KASAN_HW_TAGS" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO" "y"
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG" "y"
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_FULL" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_THIN" "y"
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_NONE" ""
++	}
++
++	disable_lto_clang() {
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for LTO support are unset ..."
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_HAS_LTO_CLANG" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_FULL" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_THIN" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_NONE" "y"
++	}
++
++	if isTrue "${CMD_LTO}"
++	then
++		if isTrue "${CMD_LLVM_KERNEL}"
++		then
++			enable_lto_clang
++		else
++			disable_lto_clang
++		fi
++	else
++		disable_lto_clang
++	fi
++
 +	if isTrue "${CMD_LLVM_KERNEL}"
 +	then
 +		local llvm_slot
@@ -204,36 +251,26 @@ diff -urp genkernel-4.0.10.orig/gen_configkernel.sh genkernel-4.0.10/gen_configk
 +		else
 +			llvm_slot=$(ls "${BROOT}/usr/lib/llvm" | sort -rV | head -n 1)
 +		fi
-+		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for LTO support are set ..."
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_ARCH_SUPPORTS_LTO_CLANG" "y"
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_ARCH_SUPPORTS_LTO_CLANG_THIN" "y"
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for Clang/LLVM support are set ..."
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_AS_IS_LLVM" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_AS_VERSION" "${llvm_slot}0000"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_CC_IS_CLANG" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_CC_VERSION_TEXT" "clang version ${llvm_slot}.0.0"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_GCC_VERSION" "0"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_CLANG_VERSION" "${llvm_slot}0000"
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_FTRACE_MCOUNT_USE_RECORDMCOUNT" ""
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_GCOV_KERNEL" ""
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_HAS_LTO_CLANG" "y"
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_KALLSYMS" "y"
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_KASAN" ""
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_KASAN_HW_TAGS" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_GCC_VERSION" "0"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LD_IS_LLD" "y"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LD_VERSION" "0"
 +		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LLD_VERSION" "${llvm_slot}0000"
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO" "y"
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG" "y"
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_FULL" ""
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_THIN" "y"
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_NONE" ""
 +	else
-+		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for LTO support are unset ..."
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO" ""
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG" ""
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_FULL" ""
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_CLANG_THIN" ""
-+		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LTO_NONE" "y"
++		print_info 2 "$(get_indent 1)>> Ensure that required kernel options for Clang/LLVM support are unset ..."
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_AS_IS_LLVM" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_CC_IS_CLANG" ""
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_LD_IS_LLD" ""
++		local gcc_v=$(gcc --version | head -n 1 | cut -f 3 -d " ")
++		local gcc_major_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 1 -d "."))
++		local gcc_minor_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 1 -d "."))
++		kconfig_set_opt "${KERNEL_OUTPUTDIR}/.config" "CONFIG_GCC_VERSION" "${gcc_major_v}${gcc_minor_v}00"
 +	fi
 +
 +	if isTrue "${CMD_CFI}" && ( [ "${ARCH}" = "arm64" ] || [ "${ARCH}" = "x86_64" ] )
@@ -262,10 +299,9 @@ diff -urp genkernel-4.0.10.orig/gen_configkernel.sh genkernel-4.0.10/gen_configk
  	if [ -f "${KCONFIG_MODIFIED_MARKER}" ]
  	then
  		if isTrue "${OLDCONFIG}"
-Only in genkernel-4.0.10: gen_configkernel.sh.orig
 diff -urp genkernel-4.0.10.orig/gen_determineargs.sh genkernel-4.0.10/gen_determineargs.sh
 --- genkernel-4.0.10.orig/gen_determineargs.sh	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gen_determineargs.sh	2021-09-11 21:19:39.661447757 -0700
++++ genkernel-4.0.10/gen_determineargs.sh	2021-09-24 16:14:30.008446122 -0700
 @@ -258,6 +258,26 @@ determine_output_filenames() {
  	done
  }
@@ -324,7 +360,7 @@ diff -urp genkernel-4.0.10.orig/gen_determineargs.sh genkernel-4.0.10/gen_determ
  	set_config_with_override STRING BOOTDIR                               CMD_BOOTDIR                               "/boot"
 diff -urp genkernel-4.0.10.orig/genkernel genkernel-4.0.10/genkernel
 --- genkernel-4.0.10.orig/genkernel	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/genkernel	2021-09-11 21:23:12.678695458 -0700
++++ genkernel-4.0.10/genkernel	2021-09-24 16:14:30.009446122 -0700
 @@ -364,6 +364,15 @@ if isTrue "${BUILD_RAMDISK}"
  then
  	print_info 1 '' 1 0
@@ -343,7 +379,7 @@ diff -urp genkernel-4.0.10.orig/genkernel genkernel-4.0.10/genkernel
  else
 diff -urp genkernel-4.0.10.orig/genkernel.8 genkernel-4.0.10/genkernel.8
 --- genkernel-4.0.10.orig/genkernel.8	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/genkernel.8	2021-09-11 21:26:24.964264508 -0700
++++ genkernel-4.0.10/genkernel.8	2021-09-24 16:14:30.009446122 -0700
 @@ -358,6 +358,51 @@ Prefix to kernel module destination, mod
  .RE
  .SS "LOW\-LEVEL COMPILATION OPTIONS"
@@ -398,7 +434,7 @@ diff -urp genkernel-4.0.10.orig/genkernel.8 genkernel-4.0.10/genkernel.8
  Target triple (i\&.e\&. aarch64\-linux\-gnu) to build for\&. Only needed when the system running genkernel has a different architecture like the system which should boot the created kernel/initramfs\&.
 diff -urp genkernel-4.0.10.orig/gkbuilds/busybox.gkbuild genkernel-4.0.10/gkbuilds/busybox.gkbuild
 --- genkernel-4.0.10.orig/gkbuilds/busybox.gkbuild	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gkbuilds/busybox.gkbuild	2021-09-11 21:19:39.662447796 -0700
++++ genkernel-4.0.10/gkbuilds/busybox.gkbuild	2021-09-24 16:14:30.010446122 -0700
 @@ -1,7 +1,28 @@
  # Copyright 1999-2020 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -430,7 +466,7 @@ diff -urp genkernel-4.0.10.orig/gkbuilds/busybox.gkbuild genkernel-4.0.10/gkbuil
  	# flag cleanup
 diff -urp genkernel-4.0.10.orig/gkbuilds/lvm.gkbuild genkernel-4.0.10/gkbuilds/lvm.gkbuild
 --- genkernel-4.0.10.orig/gkbuilds/lvm.gkbuild	2020-07-20 09:05:15.000000000 -0700
-+++ genkernel-4.0.10/gkbuilds/lvm.gkbuild	2021-09-11 21:19:39.662447796 -0700
++++ genkernel-4.0.10/gkbuilds/lvm.gkbuild	2021-09-24 16:14:30.010446122 -0700
 @@ -1,7 +1,28 @@
  # Copyright 1999-2019 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -460,4 +496,3 @@ diff -urp genkernel-4.0.10.orig/gkbuilds/lvm.gkbuild genkernel-4.0.10/gkbuilds/l
  
  	append-ldflags -Wl,-rpath-link,${BROOT}/usr/lib
  
-Only in genkernel-4.0.10: t.patch
