@@ -134,6 +134,7 @@ IUSE+=" clang-pgo
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
 REQUIRED_USE+=" cfi? ( llvm lto )
+		plausable-deniable-dmcrypt-plain? ( crypt_root_plain )
 		clang-pgo? (
 			llvm
 			|| (
@@ -395,6 +396,15 @@ src_prepare() {
 
 	if use clang-pgo ; then
 		eapply "${FILESDIR}/${PN}-4.2.3-pgo-support.patch"
+	fi
+
+	if use plausable-deniable-dmcrypt-plain ; then
+		# Technically, one can't have plausable deniability because the packages
+		# are named libgcrypt or cryptsetup.  One would have to rename everything
+		# without crypt or the ciphers involved.  This patch will try to fix the
+		# facade issue (aka immediate password prompt) and the encrypted device
+		# referencing issue (destroying the plausable deniability of plain).
+		eapply "${FILESDIR}/${PN}-4.2.3-plausable-deniable-dmcrypt-plain.patch"
 	fi
 
 	cp -aT "${FILESDIR}/genkernel-4.2.x" "${S}/patches" || die
