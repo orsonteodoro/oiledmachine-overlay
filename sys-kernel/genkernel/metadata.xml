@@ -145,6 +145,11 @@
       These changes only apply to building the kernel only.</flag>
     <flag name="lto">Ensure that the Link Time Optimization toolchain
       requirements are met.</flag>
+    <flag name="plausable-deniable-dmcrypt-plain">This will fix the issue
+      of exposed dm-crypt plain device in the
+      "Initramfs kernel command-line parameters" with the crypt_root_plain USE
+      flag which itself destroys plausable deniability.  References to
+      the device will be dereferenced up to a point.</flag>
     <flag name="pgo-clang">Add clang PGO support to genkernel.</flag>
     <flag name="pgo-custom">Add a PGO custom script to genkernel
       to PGO train unconventional portions of the kernel or whatever

@@ -120,6 +120,7 @@ IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
 IUSE+=" clang-pgo
 	sudo
+	plausable-deniable-dmcrypt-plain
 	pgo-custom
 	pgo_trainer_crypto
 	pgo_trainer_memory
