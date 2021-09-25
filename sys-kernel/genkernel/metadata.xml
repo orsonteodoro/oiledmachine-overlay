@@ -21,7 +21,7 @@
       pgo (done, but may expand for a few more benchmarks.  Testing
       was not done yet to confirm that there was a performance gain before
       and after.),  cfi (builds sucessfully, but needs testing of it
-      actually working)
+      actually working), plausable-deniable-dmcrypt-plain (in development)
 
     When switching between 4.2.x and older versions, The /dev/disk/by-id/
     entries may change.  This means that you need to adjust the kernel
