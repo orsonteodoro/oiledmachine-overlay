@@ -983,6 +983,9 @@ DEPEND+="${COMMON_DEPEND}"
 # development and may change.  The RDEPEND sections below ensure the
 # transferrance of security policy or security expectations to ebuild-packages.
 
+# These additional security flags exist to prevent vanilla ebuilds without these
+# changes from weakening the security and indicate that they exist.
+
 # exe, .a, .so, get treated with CFI w/o exclusions, noexecstack, full RELRO.
 
 # The first problem with unbundling is the CFI bypass problem.
@@ -1719,37 +1722,6 @@ ewarn
 ewarn
 ewarn "The system's libcxx or libstdcxx may weaken the security.  Consider"
 ewarn "using only the bundled-libcxx instead."
-ewarn
-ewarn "Tradeoffs:"
-ewarn
-ewarn "  libstdc++ (non-hardened):  CET (if supported by CPU, similiar"
-ewarn "    to CFI, forward and backward edge protected); Partial RELRO,"
-ewarn "    NO noexecstack, NO SSP, NO shadow-call-stack with ~18"
-ewarn "    unbundled third party ebuild-packages without CFI/CET, without SSP,"
-ewarn "    without Full RELRO by default on the desktop distro profile."
-# The 18 packages in question can be found in [D] of this ebuild.
-ewarn
-ewarn "  libstdc++ (hardened):  Partial RELRO, CET (if supported by hardware,"
-ewarn "    equivalent to some CFI, forward and backward edge protected),"
-ewarn "    NO noexecstack, SSP, ~18 CFI/CET unprotected third party packages,"
-ewarn "    ~18 protected SSP, ~18 unprotected Full RELRO and unprotected"
-ewarn "    noexecstack."
-ewarn
-# Currently the dependencies related to system-libcxx is protected but a ebuild
-# maintainer can decide to switch to unprotected if user wants to unbundle as
-# shared libs.  See [C] in ebuild for the reason.  Some packages have too
-# much control over flags that they ignore the per-package c{,xx}flags.  Keeping
-# them internal/bundled ensures that the 5-6 security protections are present
-# almost all the time.
-ewarn "  libc++ (bundled internal):  CFI (vcall, icall; forward edge"
-ewarn "    protected), Full RELRO, noexecstack, SSP, shadow-call-stack (arm64"
-ewarn "    only; backward edge), third party protected with same protections."
-ewarn
-ewarn "  libc++ (vanilla external):  NO CFI, NO RELRO, NO noexecstack, NO SSP"
-ewarn "    NO shadow-call-stack, third party protected as if bundled."
-ewarn
-ewarn "  libc++ (vanilla external hardened):  NO CFI, NO RELRO, NO noexecstack,"
-ewarn "    SSP, NO shadow-call-stack, third party protected as if bundled."
 ewarn
 	fi
 
