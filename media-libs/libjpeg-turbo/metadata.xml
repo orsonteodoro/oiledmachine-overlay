@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- only for this ebuild fork on the oiledmachine overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- ebuild originators -->
+    <email>codec@gentoo.org</email>
+    <name>Gentoo Codec Project</name>
+  </maintainer>
+  <slots>
+    <subslots>Reflect ABI of libturbojpeg.so.</subslots>
+  </slots>
+  <upstream>
+    <remote-id type="github">libjpeg-turbo/libjpeg-turbo</remote-id>
+    <remote-id type="sourceforge">libjpeg-turbo</remote-id>
+    <remote-id type="cpe">cpe:/a:libjpeg-turbo:libjpeg-turbo</remote-id>
+  </upstream>
+  <longdescription>
+    This ebuild fork will focus on PGO optimization and hardened flags.
+
+    Assets for PGO training are not provided.  You may provide
+    your own by adding assets to the
+    ${PORTAGE_DIR}/distfiles/pgo/assets/jpeg folder.  It is recommend
+    to use your own images or public domain images for training.
+
+    One may extend the PGO training by providing a per-package
+    userpatch with custom.sh placed in ${S}.  You should consider
+    this option if you work with alternative input image formats for conversion
+    or use color management profiles.
+
+    CFI requires static linking for it to be effective.
+  </longdescription>
+  <use>
+    <!-- added to ebuild by oiledmachine-overlay -->
+    <flag name="cfi">Build with full CFI with all schemes</flag>
+    <flag name="cfi-cast">Build with cfi-cast</flag>
+    <flag name="cfi-icall">Build with cfi-icall</flag>
+    <flag name="cfi-vcall">Build with cfi-vcall with forward edge
+      protection.</flag>
+    <flag name="full-relro">Build with Full RELRO</flag>
+    <flag name="libcxx">Link against the more secured libcxx package.</flag>
+    <flag name="lto">Use link time optimization.</flag>
+    <flag name="pgo-custom-audio">Use a custom profile guided optimization
+       script to train video codecs with.  Use this for video filter
+       training as well.</flag>
+    <flag name="pgo-custom-video">Use a custom profile guided optimization
+      script to train video codecs with.  Use this for audio filter
+      training as well.</flag>
+    <flag name="pgo-trainer-audio-cbr">Use the CBR PGO audio trainer.</flag>
+    <flag name="pgo-trainer-audio-vbr">Use the VBR PGO audio trainer.</flag>
+    <flag name="pgo-trainer-audio-lossless">Use the lossless PGO audio
+      trainer.</flag>
+    <flag name="pgo-trainer-video-2-pass-constrained-quality">Performs an
+      addtional 2 pass training.  Two pass improves quality and rate
+      control.  This step can be skipped for live streamers.</flag>
+    <flag name="pgo-trainer-video-constrained-quality">Use the 1 pass
+      constrained quality PGO video trainer.</flag>
+    <flag name="pgo-trainer-video-lossless">Use the lossless PGO video
+      trainer.</flag>
+    <flag name="ssp">Build with stack smashing protection</flag>
+    <flag name="pgo-custom">Runs PGO training with a custom script</flag>
+    <flag name="pgo-trainer-70-pct-quality-baseline">PGO train with 70% quality
+      baseline for encode and decode for offline</flag>
+    <flag name="pgo-trainer-75-pct-quality-baseline">PGO train with 75% quality
+      baseline for encode and decode for offline</flag>
+    <flag name="pgo-trainer-80-pct-quality-baseline">PGO train with 80% quality
+      baseline for encode and decode for offline</flag>
+    <flag name="pgo-trainer-90-pct-quality-baseline">PGO train with 90% quality
+      baseline for encode and decode for offline</flag>
+    <flag name="pgo-trainer-95-pct-quality-baseline">PGO train with 95% quality
+      baseline for encode and decode for offline</flag>
+    <flag name="pgo-trainer-98-pct-quality-baseline">PGO train with 98% quality
+      baseline for encode and decode for offline</flag>
+    <flag name="pgo-trainer-99-pct-quality-baseline">PGO train with 99% quality
+      baseline for encode and decode for offline</flag>
+    <flag name="pgo-trainer-100-pct-quality-baseline">PGO train with 100% quality
+      baseline for encode and decode for offline</flag>
+    <flag name="pgo-trainer-70-pct-quality-progressive">PGO train with 70% quality
+      progressive for encode and decode for web</flag>
+    <flag name="pgo-trainer-75-pct-quality-progressive">PGO train with 75% quality
+      progressive rendering for encode and decode for web</flag>
+    <flag name="pgo-trainer-80-pct-quality-progressive">PGO train with 80% quality
+      progressive rendering for encode and decode for web</flag>
+    <flag name="pgo-trainer-90-pct-quality-progressive">PGO train with 90% quality
+      progressive rendering for encode and decode for web</flag>
+    <flag name="pgo-trainer-95-pct-quality-progressive">PGO train with 95% quality
+      progressive rendering for encode and decode for web</flag>
+    <flag name="pgo-trainer-98-pct-quality-progressive">PGO train with 98% quality
+      progressive rendering for encode and decode for web</flag>
+    <flag name="pgo-trainer-99-pct-quality-progressive">PGO train with 99% quality
+      progressive rendering for encode and decode for web</flag>
+    <flag name="pgo-trainer-100-pct-quality-progressive">PGO train with 100%
+      quality progressive for encode and decode for web</flag>
+    <flag name="pgo-trainer-crop">PGO train for slicing images</flag>
+    <flag name="pgo-trainer-grayscale">PGO train for black and white
+      photos</flag>
+    <flag name="pgo-trainer-transformations">PGO train for rotations</flag>
+  </use>
+</pkgmetadata>
