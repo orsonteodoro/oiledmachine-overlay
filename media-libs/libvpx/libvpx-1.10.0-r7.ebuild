@@ -372,6 +372,8 @@ configure_pgx() {
 			-frename-registers
 	fi
 
+	use lto && append_lto
+	use noexecstack && append-ldflags -Wl,-z,noexecstack
 	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
 		:;
 	else
@@ -396,8 +398,6 @@ configure_pgx() {
 		use ssp && append-ldflags --param=ssp-buffer-size=4 \
 					-fstack-protector
 	fi
-	use lto && append_lto
-	use noexecstack && append-ldflags -Wl,-z,noexecstack
 
 	export FFMPEG=$(get_multiabi_ffmpeg)
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
