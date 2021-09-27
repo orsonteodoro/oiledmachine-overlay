@@ -321,7 +321,7 @@ configure_pgx() {
 		'-fprofile-generate*' \
 		'-fprofile-use*'
 
-	if use lto || use shadowcallstack ; then
+	if use clang && ( use lto || use shadowcallstack ) ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
 		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
 		AR=llvm-ar
@@ -330,6 +330,9 @@ configure_pgx() {
 		RANLIB=llvm-ranlib
 		READELF=llvm-readelf
 		unset LD
+	fi
+	if tc-is-clang && ! use clang ; then
+		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
 	fi
 
 	export CC CXX AR AS NM RANDLIB READELF LD
