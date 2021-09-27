@@ -48,7 +48,6 @@ REQUIRED_USE="
 		pgo-trainer-decode
 		|| (
 			pgo-custom
-			pgo-trainer-decode
 			pgo-trainer-70-pct-quality-baseline
 			pgo-trainer-75-pct-quality-baseline
 			pgo-trainer-80-pct-quality-baseline
@@ -66,6 +65,7 @@ REQUIRED_USE="
 			pgo-trainer-99-pct-quality-progressive
 			pgo-trainer-100-pct-quality-progressive
 			pgo-trainer-crop
+			pgo-trainer-decode
 			pgo-trainer-grayscale
 			pgo-trainer-transformations
 		)
