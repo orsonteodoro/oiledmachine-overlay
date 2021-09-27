@@ -213,7 +213,7 @@ gen_clang_gcc_pair() {
 }
 
 KCP_RDEPEND="
-	clang? ( $(gen_clang_gcc_pair 10 14) )
+	clang? ( || ( $(gen_clang_gcc_pair 10 14) ) )
 	|| (
 		>=sys-devel/gcc-6.5.0
 		$(gen_clang_gcc_pair 10 14)
@@ -331,7 +331,6 @@ function ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c-for-5.4.patch"
 	if use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
-einfo "See ${FILESDIR}/tresor-256-bit-aes-support-i686-v3.2-for-5.4.patch"
 			_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/tresor-256-bit-aes-support-i686-v3.2-for-5.4.patch"
 		fi

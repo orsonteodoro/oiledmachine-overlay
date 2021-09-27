@@ -431,7 +431,7 @@ gen_clang_gcc_pair() {
 }
 
 KCP_RDEPEND="
-	clang? ( $(gen_clang_gcc_pair 10 14) )
+	clang? ( || ( $(gen_clang_gcc_pair 10 14) ) )
 	|| (
 		(
 			>=sys-devel/gcc-6.5.0
@@ -441,7 +441,7 @@ KCP_RDEPEND="
 "
 
 KCP_TC0="
-	clang? ( $(gen_clang_gcc_pair 10 14) )
+	clang? ( || ( $(gen_clang_gcc_pair 10 14) ) )
 	|| (
 		(
 			>=sys-devel/gcc-10
@@ -450,7 +450,7 @@ KCP_TC0="
 	)"
 
 KCP_TC1="
-	clang? ( $(gen_clang_gcc_pair 10 14) )
+	clang? ( || ( $(gen_clang_gcc_pair 10 14) ) )
 	|| (
 		(
 			>=sys-devel/gcc-10.3
@@ -459,7 +459,7 @@ KCP_TC1="
 	)"
 
 KCP_TC2="
-	clang? ( $(gen_clang_gcc_pair 12 14) )
+	clang? ( || ( $(gen_clang_gcc_pair 12 14) ) )
 	|| (
 		(
 			>=sys-devel/gcc-11.1
