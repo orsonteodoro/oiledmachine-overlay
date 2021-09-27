@@ -32,10 +32,17 @@
     this option if you work with alternative input image formats for conversion
     or use color management profiles.
 
+    Multiple pgo-trainer-*-pct-quality-baseline or
+    pgo-trainer-*-pct-quality-progressive has been provided for flexibility
+    on typical use.  75% is the default without quality setting.  Using
+    trainers that don't reflect typical use may result in a performance
+    regression.
+
     CFI requires static linking for it to be effective.
   </longdescription>
   <use>
     <!-- added to ebuild by oiledmachine-overlay -->
+    <flag name="asm">Build with SIMD acceleration</flag>
     <flag name="cfi">Build with full CFI with all schemes</flag>
     <flag name="cfi-cast">Build with cfi-cast</flag>
     <flag name="cfi-icall">Build with cfi-icall</flag>
