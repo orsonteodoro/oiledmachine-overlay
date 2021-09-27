@@ -24,7 +24,7 @@ SLOT="0/6"
 KEYWORDS="amd64 ~arm arm64 ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux"
 IUSE="doc +highbitdepth postproc static-libs svc test +threads"
 IUSE+=" +examples"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall full-relro libcxx lto noexecstack shadowcallstack ssp"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang full-relro libcxx lto noexecstack shadowcallstack ssp"
 IUSE+=" pgo
 	pgo-custom
 	pgo-trainer-2-pass-constrained-quality
@@ -33,10 +33,10 @@ IUSE+=" pgo
 "
 
 REQUIRED_USE="
-	cfi? ( lto static-libs )
-	cfi-cast? ( lto cfi-vcall static-libs )
-	cfi-icall? ( lto cfi-vcall static-libs )
-	cfi-vcall? ( lto static-libs )
+	cfi? ( clang lto static-libs )
+	cfi-cast? ( clang lto cfi-vcall static-libs )
+	cfi-icall? ( clang lto cfi-vcall static-libs )
+	cfi-vcall? ( clang lto static-libs )
 	pgo? (
 		|| (
 			pgo-custom
@@ -50,6 +50,7 @@ REQUIRED_USE="
 	pgo-trainer-constrained-quality? ( pgo )
 	pgo-trainer-lossless? ( pgo )
 	test? ( threads )
+	shadowcallstack? ( clang )
 "
 
 # Disable test phase when USE="-test"
@@ -141,7 +142,7 @@ BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
-BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
+BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND="abi_x86_32? ( dev-lang/yasm )
@@ -312,8 +313,13 @@ append_all() {
 
 append_lto() {
 	filter-flags '-flto*' '-fuse-ld=*'
-	append-flags -flto=thin
-	append-ldflags -fuse-ld=lld -flto=thin
+	if tc-is-clang ; then
+		append-flags -flto=thin
+		append-ldflags -fuse-ld=lld -flto=thin
+	else
+		append-flags -flto=auto
+		append-ldflags -flto=auto
+	fi
 }
 
 configure_pgx() {
@@ -326,16 +332,21 @@ configure_pgx() {
 		'-fprofile-generate*' \
 		'-fprofile-use*'
 
-	if use lto || use shadowcallstack ; then
-		export CC="clang $(get_abi_CFLAGS ${ABI})"
-		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		export AR=llvm-ar
-		export AS=llvm-as
-		export NM=llvm-nm
-		export RANLIB=llvm-ranlib
-		export READELF=llvm-readelf
+	if use clang && ( use lto || use shadowcallstack ) ; then
+		CC="clang $(get_abi_CFLAGS ${ABI})"
+		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
+		AR=llvm-ar
+		AS=llvm-as
+		NM=llvm-nm
+		RANLIB=llvm-ranlib
+		READELF=llvm-readelf
 		unset LD
 	fi
+	if tc-is-clang && ! use clang ; then
+		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
+	fi
+
+	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
 		'-fsanitize=*' \
@@ -361,28 +372,32 @@ configure_pgx() {
 			-frename-registers
 	fi
 
-	# The cfi enables all cfi schemes, but the selective tries to balance
-	# performance and security while maintaining a performance limit.
-	if [[ "${build_type}" == "static-libs" ]] ;then
-		if use cfi ; then
-			append_all -fvisibility=hidden -fsanitize=cfi
-		else
-			use cfi-cast && append_all -fvisibility=hidden \
-						-fsanitize=cfi-derived-cast \
-						-fsanitize=cfi-unrelated-cast
-			use cfi-icall && append_all -fvisibility=hidden \
-						-fsanitize=cfi-icall
-			use cfi-vcall && append_all -fvisibility=hidden \
-						-fsanitize=cfi-vcall
+	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
+		:;
+	else
+		# The cfi enables all cfi schemes, but the selective tries to balance
+		# performance and security while maintaining a performance limit.
+		if [[ "${build_type}" == "static-libs" ]] ;then
+			if use cfi ; then
+				append_all -fvisibility=hidden -fsanitize=cfi
+			else
+				use cfi-cast && append_all -fvisibility=hidden \
+							-fsanitize=cfi-derived-cast \
+							-fsanitize=cfi-unrelated-cast
+				use cfi-icall && append_all -fvisibility=hidden \
+							-fsanitize=cfi-icall
+				use cfi-vcall && append_all -fvisibility=hidden \
+							-fsanitize=cfi-vcall
+			fi
 		fi
+		use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
+		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
+						-fsanitize=shadow-call-stack
+		use ssp && append-ldflags --param=ssp-buffer-size=4 \
+					-fstack-protector
 	fi
-	use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
 	use lto && append_lto
 	use noexecstack && append-ldflags -Wl,-z,noexecstack
-	use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-					-fsanitize=shadow-call-stack
-	use ssp && append-ldflags --param=ssp-buffer-size=4 \
-				-fstack-protector
 
 	export FFMPEG=$(get_multiabi_ffmpeg)
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
