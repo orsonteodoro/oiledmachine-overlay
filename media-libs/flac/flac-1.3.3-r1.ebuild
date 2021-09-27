@@ -13,13 +13,13 @@ LICENSE="BSD FDL-1.2 GPL-2 LGPL-2.1"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 IUSE="+cxx debug ogg cpu_flags_ppc_altivec cpu_flags_ppc_vsx cpu_flags_x86_sse static-libs"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall full-relro libcxx lto noexecstack shadowcallstack ssp"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang full-relro libcxx lto noexecstack shadowcallstack ssp"
 RDEPEND="ogg? ( >=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}] )"
 REQUIRED_USE="
-	cfi? ( lto static-libs )
-	cfi-cast? ( lto cfi-vcall static-libs )
-	cfi-icall? ( lto cfi-vcall static-libs )
-	cfi-vcall? ( lto static-libs )
+	cfi? ( clang lto static-libs )
+	cfi-cast? ( clang lto cfi-vcall static-libs )
+	cfi-icall? ( clang lto cfi-vcall static-libs )
+	cfi-vcall? ( clang lto static-libs )
 "
 
 _seq() {
@@ -106,7 +106,7 @@ BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
-BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
+BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND+="
@@ -145,21 +145,31 @@ append_all() {
 
 append_lto() {
 	filter-flags '-flto*' '-fuse-ld=*'
-	append-flags -flto=thin
-	append-ldflags -fuse-ld=lld -flto=thin
+	if tc-is-clang ; then
+		append-flags -flto=thin
+		append-ldflags -fuse-ld=lld -flto=thin
+	else
+		append-flags -flto=auto
+		append-ldflags -flto=auto
+	fi
 }
 
 _src_configure() {
-	if use lto || use shadowcallstack ; then
-		export CC="clang $(get_abi_CFLAGS ${ABI})"
-		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		export AR=llvm-ar
-		export AS=llvm-as
-		export NM=llvm-nm
-		export RANLIB=llvm-ranlib
-		export READELF=llvm-readelf
+	if use clang && ( use lto || use shadowcallstack ) ; then
+		CC="clang $(get_abi_CFLAGS ${ABI})"
+		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
+		AR=llvm-ar
+		AS=llvm-as
+		NM=llvm-nm
+		RANLIB=llvm-ranlib
+		READELF=llvm-readelf
 		unset LD
 	fi
+	if tc-is-clang && ! use clang ; then
+		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
+	fi
+
+	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
 		'-fsanitize=*' \
@@ -187,27 +197,31 @@ _src_configure() {
 		append-cppflags -DFLAC__USE_VISIBILITY_ATTR
 	fi
 
-	if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
-		if use cfi ; then
-			append_all -fvisibility=hidden \
-					-fsanitize=cfi
-		else
-			use cfi-cast && append_all -fvisibility=hidden \
-						-fsanitize=cfi-derived-cast \
-						-fsanitize=cfi-unrelated-cast
-			use cfi-icall && append_all -fvisibility=hidden \
-						-fsanitize=cfi-icall
-			use cfi-vcall && append_all -fvisibility=hidden \
-						-fsanitize=cfi-vcall
+	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
+		:;
+	else
+		if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+			if use cfi ; then
+				append_all -fvisibility=hidden \
+						-fsanitize=cfi
+			else
+				use cfi-cast && append_all -fvisibility=hidden \
+							-fsanitize=cfi-derived-cast \
+							-fsanitize=cfi-unrelated-cast
+				use cfi-icall && append_all -fvisibility=hidden \
+							-fsanitize=cfi-icall
+				use cfi-vcall && append_all -fvisibility=hidden \
+							-fsanitize=cfi-vcall
+			fi
 		fi
+		use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
+		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
+						-fsanitize=shadow-call-stack
+		use ssp && append-ldflags --param=ssp-buffer-size=4 \
+					-fstack-protector
 	fi
-	use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
 	use lto && append_lto
 	use noexecstack && append-ldflags -Wl,-z,noexecstack
-	use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-					-fsanitize=shadow-call-stack
-	use ssp && append-ldflags --param=ssp-buffer-size=4 \
-				-fstack-protector
 
 	local myeconfargs=(
 		--disable-doxygen-docs
