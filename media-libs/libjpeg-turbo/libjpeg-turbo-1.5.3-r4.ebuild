@@ -13,7 +13,7 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz
 LICENSE="BSD IJG ZLIB"
 SLOT="0/0.1"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos"
-IUSE="asm java static-libs"
+IUSE="+asm java static-libs"
 IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang full-relro lto noexecstack shadowcallstack ssp"
 IUSE+="
 	pgo
