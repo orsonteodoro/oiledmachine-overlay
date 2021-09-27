@@ -206,6 +206,10 @@ pkg_setup() {
 		ewarn "and relatively the same dimension and quality that you typically USE."
 		ewarn
 	fi
+	if use java ; then
+		java-pkg-opt-2_pkg_setup
+	fi
+	ewarn "Install may fail.  \`emerge -C ${PN}\` then \`emerge -1 =${P}\`."
 }
 
 get_build_types() {
@@ -507,7 +511,7 @@ src_compile() {
 				fi
 				_configure_pgx
 				_build_pgx
-				export RAN_PGO=1
+				export PGO_RAN=1
 			else
 				einfo "Skipping PGO training for ${ABI}"
 				_configure_pgx
