@@ -38,6 +38,7 @@ IUSE+="
 	pgo-trainer-99-pct-quality-progressive
 	pgo-trainer-100-pct-quality-progressive
 	pgo-trainer-crop
+	pgo-trainer-decode
 	pgo-trainer-grayscale
 	pgo-trainer-transformations
 "
@@ -46,28 +47,32 @@ REQUIRED_USE="
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
-	pgo? ( || (
-		pgo-custom
-		pgo-trainer-70-pct-quality-baseline
-		pgo-trainer-75-pct-quality-baseline
-		pgo-trainer-80-pct-quality-baseline
-		pgo-trainer-90-pct-quality-baseline
-		pgo-trainer-95-pct-quality-baseline
-		pgo-trainer-98-pct-quality-baseline
-		pgo-trainer-99-pct-quality-baseline
-		pgo-trainer-100-pct-quality-baseline
-		pgo-trainer-70-pct-quality-progressive
-		pgo-trainer-75-pct-quality-progressive
-		pgo-trainer-80-pct-quality-progressive
-		pgo-trainer-90-pct-quality-progressive
-		pgo-trainer-95-pct-quality-progressive
-		pgo-trainer-98-pct-quality-progressive
-		pgo-trainer-99-pct-quality-progressive
-		pgo-trainer-100-pct-quality-progressive
-		pgo-trainer-crop
-		pgo-trainer-grayscale
-		pgo-trainer-transformations
-	) )
+	pgo? (
+		pgo-trainer-decode
+		|| (
+			pgo-custom
+			pgo-trainer-decode
+			pgo-trainer-70-pct-quality-baseline
+			pgo-trainer-75-pct-quality-baseline
+			pgo-trainer-80-pct-quality-baseline
+			pgo-trainer-90-pct-quality-baseline
+			pgo-trainer-95-pct-quality-baseline
+			pgo-trainer-98-pct-quality-baseline
+			pgo-trainer-99-pct-quality-baseline
+			pgo-trainer-100-pct-quality-baseline
+			pgo-trainer-70-pct-quality-progressive
+			pgo-trainer-75-pct-quality-progressive
+			pgo-trainer-80-pct-quality-progressive
+			pgo-trainer-90-pct-quality-progressive
+			pgo-trainer-95-pct-quality-progressive
+			pgo-trainer-98-pct-quality-progressive
+			pgo-trainer-99-pct-quality-progressive
+			pgo-trainer-100-pct-quality-progressive
+			pgo-trainer-crop
+			pgo-trainer-grayscale
+			pgo-trainer-transformations
+		)
+	)
 	pgo-custom? ( pgo )
 	pgo-trainer-70-pct-quality-baseline? ( pgo )
 	pgo-trainer-75-pct-quality-baseline? ( pgo )
@@ -86,6 +91,7 @@ REQUIRED_USE="
 	pgo-trainer-99-pct-quality-progressive? ( pgo )
 	pgo-trainer-100-pct-quality-progressive? ( pgo )
 	pgo-trainer-crop? ( pgo )
+	pgo-trainer-decode? ( pgo )
 	pgo-trainer-grayscale? ( pgo )
 	pgo-trainer-transformations? ( pgo )
 	shadowcallstack? ( clang )
@@ -412,17 +418,10 @@ _run_trainers() {
                                 | sed -r -e "s|\.jpg|.bmp$|g" -e "s|\.jpeg|.bmp$|"
 		)
 
-		cp -a "${p}" "${sandbox_path}/orig-${bn}" || die
-
-		einfo "Decoding image jpeg -> bmp"
-		djpeg -verbose "${p}" > "${sandbox_path}/${bn_bmp}" || die
-
-		local w=$(jpegtran -flip horizontal -verbose "${sandbox_path}/orig-${bn}" 2>&1 \
-			> /dev/null | grep "Start Of Frame" | grep -E -o -e "width=[0-9]+" \
-			| sed -e "s|width=||g")
-		local h=$(jpegtran -flip horizontal -verbose "${sandbox_path}/orig-${bn}" 2>&1 \
-			> /dev/null | grep "Start Of Frame" | grep -E -o -e "height=[0-9]+" \
-			| sed -e "s|height=||g")
+		if use pgo-trainer-decode ; then
+			einfo "Decoding image jpeg -> bmp"
+			djpeg -verbose "${p}" > "${sandbox_path}/${bn_bmp}" || die
+		fi
 
 		for pct in 70 75 80 90 95 98 99 100 ; do
 			if use "pgo-trainer-${pct}-pct-quality-baseline" ; then
@@ -472,6 +471,15 @@ _run_trainers() {
 		fi
 
 		if use pgo-trainer-crop ; then
+			cp -a "${p}" "${sandbox_path}/orig-${bn}" || die
+
+			local w=$(jpegtran -flip horizontal -verbose "${sandbox_path}/orig-${bn}" 2>&1 \
+				> /dev/null | grep "Start Of Frame" | grep -E -o -e "width=[0-9]+" \
+				| sed -e "s|width=||g")
+			local h=$(jpegtran -flip horizontal -verbose "${sandbox_path}/orig-${bn}" 2>&1 \
+				> /dev/null | grep "Start Of Frame" | grep -E -o -e "height=[0-9]+" \
+				| sed -e "s|height=||g")
+
 			for i in $(seq 60) ; do # 60 is the sample size
 				local cx1=$((${RANDOM} % (${w} * 95 / 100)))
 				local cx2=${w}

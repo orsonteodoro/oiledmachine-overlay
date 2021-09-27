@@ -34,9 +34,9 @@
 
     Multiple pgo-trainer-*-pct-quality-baseline or
     pgo-trainer-*-pct-quality-progressive has been provided for flexibility
-    on typical use.  75% is the default without quality setting.  Using
-    trainers that don't reflect typical use may result in a performance
-    regression.
+    on typical use but used typically for content creators.  75% is the
+    default without quality setting.  Using trainers that don't reflect
+    typical use may result in a performance regression.
 
     CFI requires static linking for it to be effective.
   </longdescription>
@@ -84,6 +84,10 @@
       progressive rendering for encode and decode for web</flag>
     <flag name="pgo-trainer-100-pct-quality-progressive">PGO train with 100%
       quality progressive for encode and decode for web</flag>
+    <flag name="pgo-trainer-decode">Runs PGO training to simply batch decode
+      assets from the pgo jpeg folder.  You may just provide this and skip
+      the other trainers, but apps may use transformations as well so
+      consider pgo-trainer-crop and pgo-trainer-transformations USE flags.</flag>
     <flag name="pgo-trainer-crop">PGO train for slicing images</flag>
     <flag name="pgo-trainer-grayscale">PGO train for black and white
       photos</flag>
