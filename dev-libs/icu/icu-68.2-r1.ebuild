@@ -16,12 +16,13 @@ SLOT="0/${PV}"
 
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="debug doc examples static-libs"
-IUSE+=" cfi cfi-vcall cfi-cast cfi-icall full-relro libcxx lto noexecstack shadowcallstack ssp"
+IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang full-relro libcxx lto noexecstack shadowcallstack ssp"
 REQUIRED_USE="
-	cfi? ( lto static-libs )
-	cfi-cast? ( lto cfi-vcall static-libs )
-	cfi-icall? ( lto cfi-vcall static-libs )
-	cfi-vcall? ( lto static-libs )"
+	cfi? ( clang lto static-libs )
+	cfi-cast? ( clang lto cfi-vcall static-libs )
+	cfi-icall? ( clang lto cfi-vcall static-libs )
+	cfi-vcall? ( clang lto static-libs )
+	shadowcallstack? ( clang )"
 
 _seq() {
 	local min=${1}
@@ -103,7 +104,7 @@ BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
-BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
+BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND+=" ${PYTHON_DEPS}
@@ -169,8 +170,13 @@ append_all() {
 
 append_lto() {
 	filter-flags '-flto*' '-fuse-ld=*'
-	append-flags -flto=thin
-	append-ldflags -fuse-ld=lld -flto=thin
+	if tc-is-clang ; then
+		append-flags -flto=thin
+		append-ldflags -fuse-ld=lld -flto=thin
+	else
+		append-flags -flto=auto
+		append-ldflags -flto=auto
+	fi
 }
 
 src_configure() {
@@ -202,16 +208,21 @@ src_configure() {
 }
 
 _configure_abi() {
-	if use lto || use shadowcallstack ; then
-		export CC="clang $(get_abi_CFLAGS ${ABI})"
-		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		export AR=llvm-ar
-		export AS=llvm-as
-		export NM=llvm-nm
-		export RANLIB=llvm-ranlib
-		export READELF=llvm-readelf
-		export LD="${CC}"
+	if use clang && ( use lto || use shadowcallstack ) ; then
+		CC="clang $(get_abi_CFLAGS ${ABI})"
+		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
+		AR=llvm-ar
+		AS=llvm-as
+		NM=llvm-nm
+		RANLIB=llvm-ranlib
+		READELF=llvm-readelf
+		LD="${CC}"
 	fi
+	if tc-is-clang && ! use clang ; then
+		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
+	fi
+
+	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
 		'-fsanitize=*' \
@@ -237,27 +248,31 @@ _configure_abi() {
 		die "libcxx requires clang++"
 	fi
 
-	if [[ "${build_type}" == "static-libs" ]] ; then
-		if use cfi ; then
-			append_all -fvisibility=hidden \
-					-fsanitize=cfi
-		else
-			use cfi-cast && append_all -fvisibility=hidden \
-						-fsanitize=cfi-derived-cast \
-						-fsanitize=cfi-unrelated-cast
-			use cfi-icall && append_all -fvisibility=hidden \
-						-fsanitize=cfi-icall
-			use cfi-vcall && append_all -fvisibility=hidden \
-						-fsanitize=cfi-vcall
-		fi
-	fi
 	use lto && append_lto
-	use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
 	use noexecstack && append-ldflags -Wl,-z,noexecstack
-	use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-					-fsanitize=shadow-call-stack
-	use ssp && append-ldflags --param=ssp-buffer-size=4 \
-				-fstack-protector
+	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
+		:;
+	else
+		if [[ "${build_type}" == "static-libs" ]] ; then
+			if use cfi ; then
+				append_all -fvisibility=hidden \
+						-fsanitize=cfi
+			else
+				use cfi-cast && append_all -fvisibility=hidden \
+							-fsanitize=cfi-derived-cast \
+							-fsanitize=cfi-unrelated-cast
+				use cfi-icall && append_all -fvisibility=hidden \
+							-fsanitize=cfi-icall
+				use cfi-vcall && append_all -fvisibility=hidden \
+							-fsanitize=cfi-vcall
+			fi
+		fi
+		use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
+		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
+						-fsanitize=shadow-call-stack
+		use ssp && append-ldflags --param=ssp-buffer-size=4 \
+					-fstack-protector
+	fi
 
 	local myeconfargs=(
 		--disable-renaming
