@@ -67,6 +67,7 @@ REQUIRED_USE="
 	pgo-trainer-minizip-text-max-compression? ( pgo minizip )
 	pgo-trainer-minizip-text-short? ( pgo minizip )
 	pgo-trainer-minizip-text-store? ( pgo minizip )
+	shadowcallstack? ( clang )
 "
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -207,6 +208,7 @@ append_lto() {
 		append-ldflags -fuse-ld=lld -flto=thin
 	else
 		append-flags -flto=auto
+		append-ldflags -flto=auto
 	fi
 }
 
@@ -228,6 +230,9 @@ _configure_pgx() {
 		RANLIB=llvm-ranlib
 		READELF=llvm-readelf
 		LD="ld.lld"
+	fi
+	if tc-is-clang && ! use clang ; then
+		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
 	fi
 
 	export CC CXX AR AS NM RANDLIB READELF LD
