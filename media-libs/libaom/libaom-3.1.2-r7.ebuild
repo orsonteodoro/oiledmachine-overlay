@@ -25,7 +25,7 @@ IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
-IUSE+=" cfi full-relro libcxx lto noexecstack shadowcallstack ssp static-libs"
+IUSE+=" cfi clang full-relro libcxx lto noexecstack shadowcallstack ssp static-libs"
 IUSE+=" +asm"
 IUSE+=" pgo pgo-custom
 	pgo-trainer-2-pass-constrained-quality
@@ -37,7 +37,7 @@ IUSE+=" pgo pgo-custom
 REQUIRED_USE="
 	cpu_flags_x86_sse2? ( cpu_flags_x86_mmx )
 	cpu_flags_x86_ssse3? ( cpu_flags_x86_sse2 )
-	cfi? ( lto static-libs )
+	cfi? ( clang lto static-libs )
 	pgo? (
 		|| (
 			pgo-custom
@@ -50,6 +50,7 @@ REQUIRED_USE="
 	pgo-trainer-2-pass-constrained-quality? ( pgo )
 	pgo-trainer-constrained-quality? ( pgo )
 	pgo-trainer-lossless? ( pgo )
+	shadowcallstack? ( clang )
 "
 
 _seq() {
@@ -135,7 +136,7 @@ DEPEND+=" ${RDEPEND}"
 
 BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
-BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
+BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND+=" abi_x86_32? ( dev-lang/yasm )
@@ -302,8 +303,13 @@ append_all() {
 
 append_lto() {
 	filter-flags '-flto*' '-fuse-ld=*'
-	append-flags -flto=thin
-	append-ldflags -fuse-ld=lld -flto=thin
+	if tc-is-clang ; then
+		append-flags -flto=thin
+		append-ldflags -fuse-ld=lld -flto=thin
+	else
+		append-flags -flto=auto
+		append-ldflags -flto=auto
+	fi
 }
 
 configure_pgx() {
@@ -316,15 +322,17 @@ configure_pgx() {
 		'-fprofile-use*'
 
 	if use lto || use shadowcallstack ; then
-		export CC="clang $(get_abi_CFLAGS ${ABI})"
-		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		export AR=llvm-ar
-		export AS=llvm-as
-		export NM=llvm-nm
-		export RANLIB=llvm-ranlib
-		export READELF=llvm-readelf
+		CC="clang $(get_abi_CFLAGS ${ABI})"
+		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
+		AR=llvm-ar
+		AS=llvm-as
+		NM=llvm-nm
+		RANLIB=llvm-ranlib
+		READELF=llvm-readelf
 		unset LD
 	fi
+
+	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
 		--param=ssp-buffer-size=4 \
@@ -350,14 +358,18 @@ configure_pgx() {
 			-frename-registers
 	fi
 
+	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
+		:;
+	else
+		use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
+		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
+						-fsanitize=shadow-call-stack
+		use ssp && append-ldflags --param=ssp-buffer-size=4 \
+						-fstack-protector
+	fi
 	use chromium && append-cppflags -DCHROMIUM
-	use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
 	use lto && append_lto
 	use noexecstack && append-ldflags -Wl,-z,noexecstack
-	use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-					-fsanitize=shadow-call-stack
-	use ssp && append-ldflags --param=ssp-buffer-size=4 \
-				-fstack-protector
 
 	tc-export CC CXX
 	export FFMPEG=$(get_multiabi_ffmpeg)
