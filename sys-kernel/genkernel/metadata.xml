@@ -136,20 +136,20 @@
   <use>
     <flag name="cfi">Ensure that the Code Flow Integrity toolchain requirements
       are met.</flag>
-    <flag name="crypt_root_plain">Adds dmcrypt plain support</flag>
+    <flag name="crypt_root_plain">Adds dmcrypt plain support.
+      This version of the patch will be deprecated due to design flaws
+      concerning plausable deniability.
+      </flag>
     <flag name="cryptsetup">Enable support for Luks disk encryption using
       <pkg>sys-fs/cryptsetup</pkg></flag>
     <flag name="firmware">Prefer system firmware
       <pkg>sys-kernel/linux-firmware</pkg> over local copy.</flag>
+    <flag name="entry">Replaces the vanilla entry access
+      with a customizable one.</flag>
     <flag name="llvm">Enable support for the Clang/LLVM toolchain
       These changes only apply to building the kernel only.</flag>
     <flag name="lto">Ensure that the Link Time Optimization toolchain
       requirements are met.</flag>
-    <flag name="plausable-deniable-dmcrypt-plain">This will fix the issue
-      of exposed dm-crypt plain device in the
-      "Initramfs kernel command-line parameters" with the crypt_root_plain USE
-      flag which itself destroys plausable deniability.  References to
-      the device will be dereferenced up to a point.</flag>
     <flag name="pgo-clang">Add clang PGO support to genkernel.</flag>
     <flag name="pgo-custom">Add a PGO custom script to genkernel
       to PGO train unconventional portions of the kernel or whatever
@@ -185,6 +185,9 @@
     </flag>
     <flag name="sudo">Allow use of sudo to mark non-root PGO training
       complete</flag>
+    <flag name="steghide">Allow to access the password keyfile into
+      an audio or image file to improve dm-crypt crypt plain
+      plausable deniablity.</flag>
   </use>
   <!--
     <upstream>

@@ -43,6 +43,7 @@ VERSION_GPG="1.4.23"
 VERSION_HWIDS="20210613"
 VERSION_ISCSI="2.0.878"
 VERSION_JSON_C="0.13.1"
+VERSION_KBD="2.4.0"
 VERSION_KMOD="29"
 VERSION_LIBAIO="0.3.112"
 VERSION_LIBGCRYPT="1.9.3"
@@ -51,8 +52,13 @@ VERSION_LIBXCRYPT="4.4.23"
 VERSION_LVM="2.02.188"
 VERSION_LZO="2.10"
 VERSION_MDADM="4.1"
+VERSION_LIBMCRYPT="2.5.8"
+VERSION_MHASH="0.9.9.9"
+VERSION_LIBJPEG_TURBO="1.5.3"
+VERSION_LIBJPEG="8.8d-2"
 VERSION_POPT="1.18"
 VERSION_STRACE="5.12"
+VERSION_STEGHIDE="0.5.1"
 VERSION_THIN_PROVISIONING_TOOLS="0.9.0"
 VERSION_UNIONFS_FUSE="2.0"
 VERSION_UTIL_LINUX="2.37"
@@ -95,6 +101,13 @@ COMMON_URI="
 	https://tukaani.org/xz/xz-${VERSION_XZ}.tar.gz
 	https://zlib.net/zlib-${VERSION_ZLIB}.tar.gz
 	https://github.com/facebook/zstd/archive/v${VERSION_ZSTD}.tar.gz -> zstd-${VERSION_ZSTD}.tar.gz
+	https://www.kernel.org/pub/linux/utils/kbd/kbd-${VERSION_KBD}.tar.xz
+	steghide? (
+		mirror://sourceforge/mhash/mhash-${VERSION_MHASH}.tar.gz
+		mirror://sourceforge/steghide/steghide-${VERSION_STEGHIDE}.tar.bz2
+		mirror://sourceforge/libjpeg-turbo/libjpeg-turbo-${VERSION_LIBJPEG_TURBO}.tar.gz
+		mirror://gentoo/libjpeg${VERSION_LIBJPEG/./_}.debian.tar.gz
+	)
 "
 
 if [[ ${PV} == 9999* ]] ; then
@@ -105,13 +118,16 @@ if [[ ${PV} == 9999* ]] ; then
 else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86"
+	#KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86"
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Genkernel https://gitweb.gentoo.org/proj/genkernel.git/"
 
-LICENSE="GPL-2"
+LICENSE="GPL-2
+	crypt_root_plain? ( GPL-2 Linux-syscall-note )
+	steghide? ( GPL-2 BSD IJG LGPL-2.1 ZLIB )
+	"
 SLOT="0"
 RESTRICT=""
 IUSE+=" ibm +firmware"
@@ -119,8 +135,8 @@ IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
 IUSE+=" clang-pgo
+	steghide
 	sudo
-	plausable-deniable-dmcrypt-plain
 	pgo-custom
 	pgo_trainer_crypto
 	pgo_trainer_memory
@@ -134,7 +150,6 @@ IUSE+=" clang-pgo
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 EXCLUDE_SCS=( alpha amd64 arm hppa ia64 mips ppc ppc64 riscv s390 sparc x86 )
 REQUIRED_USE+=" cfi? ( llvm lto )
-		plausable-deniable-dmcrypt-plain? ( crypt_root_plain )
 		clang-pgo? (
 			llvm
 			|| (
@@ -157,7 +172,8 @@ REQUIRED_USE+=" cfi? ( llvm lto )
 		pgo_trainer_xscreensaver_2d? ( clang-pgo )
 		pgo_trainer_xscreensaver_3d? ( clang-pgo )
 		pgo_trainer_yt? ( clang-pgo )
-		shadowcallstack? ( cfi )"
+		shadowcallstack? ( cfi )
+		steghide? ( crypt_root_plain )"
 gen_scs_exclusion() {
 	for a in ${EXCLUDE_SCS[@]} ; do
 		echo " ${a}? ( !shadowcallstack )"
@@ -387,7 +403,13 @@ src_prepare() {
 	fi
 
 	if use crypt_root_plain ; then
-		eapply "${FILESDIR}/${PN}-4.2.3-dmcrypt-plain-support-v3.patch"
+		# Technically, one can't have plausable deniability because the packages
+		# are named libgcrypt or cryptsetup.  One would have to rename everything
+		# without crypt or the ciphers involved.  This patch will try to fix the
+		# facade issue (aka immediate password prompt) and the encrypted device
+		# referencing issue (destroying the plausable deniability of plain).
+		eapply "${FILESDIR}/${PN}-4.2.3-dmcrypt-plain-support-v4.patch"
+		die "patch is not ready yet"
 	fi
 
 	if use llvm ; then
@@ -396,15 +418,6 @@ src_prepare() {
 
 	if use clang-pgo ; then
 		eapply "${FILESDIR}/${PN}-4.2.3-pgo-support.patch"
-	fi
-
-	if use plausable-deniable-dmcrypt-plain ; then
-		# Technically, one can't have plausable deniability because the packages
-		# are named libgcrypt or cryptsetup.  One would have to rename everything
-		# without crypt or the ciphers involved.  This patch will try to fix the
-		# facade issue (aka immediate password prompt) and the encrypted device
-		# referencing issue (destroying the plausable deniability of plain).
-		eapply "${FILESDIR}/${PN}-4.2.3-plausable-deniable-dmcrypt-plain.patch"
 	fi
 
 	cp -aT "${FILESDIR}/genkernel-4.2.x" "${S}/patches" || die
@@ -585,6 +598,20 @@ pkg_postinst() {
 	ewarn
 	ewarn "See the metadata.xml next to this ebuild for additional environment"
 	ewarn "variables for PGO training."
+	ewarn
+	fi
+
+	if use crypt_root_plain ; then
+	ewarn
+	ewarn "The crypt_root_plain patchset has made a major rewrite and redesign."
+	ewarn "You must manually configure it."
+	ewarn
+	fi
+
+	if use steghide ; then
+	ewarn
+	ewarn "The steghide requires you manually embed the payload into a compatible"
+	ewarn "audio or image asset.  Only decode supported."
 	ewarn
 	fi
 }

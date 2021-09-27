@@ -422,4 +422,10 @@ pkg_postinst() {
 	einfo "--lto.  You must add --lto if you want to automatically"
 	einfo "configure and build with the lto and llvm."
 	einfo
+
+	ewarn
+	ewarn "The current crypt_root_plain will be deprecated for security reasons."
+	ewarn "It will be announced later when the replacement is ready and require"
+	ewarn "upgrading."
+	ewarn
 }

@@ -576,4 +576,10 @@ pkg_postinst() {
 	ewarn "variables for PGO training."
 	ewarn
 	fi
+
+	ewarn
+	ewarn "The current crypt_root_plain will be deprecated for security reasons."
+	ewarn "It will be announced later when the replacement is ready and require"
+	ewarn "upgrading."
+	ewarn
 }

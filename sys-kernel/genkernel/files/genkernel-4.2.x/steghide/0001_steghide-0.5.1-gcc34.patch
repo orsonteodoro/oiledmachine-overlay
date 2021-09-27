@@ -1,0 +1,43 @@
+diff -ur a/src/AuSampleValues.cc b/src/AuSampleValues.cc
+--- a/src/AuSampleValues.cc	2003-09-28 19:30:30.000000000 +0400
++++ b/src/AuSampleValues.cc	2019-11-06 18:42:01.574894484 +0300
+@@ -18,20 +18,21 @@
+  *
+  */
+ 
++#include "common.h"
+ #include "AuSampleValues.h"
+ 
+ // AuMuLawSampleValue
+-const BYTE AuMuLawSampleValue::MinValue = 0 ;
+-const BYTE AuMuLawSampleValue::MaxValue = BYTE_MAX ;
++template<> const BYTE  AuMuLawSampleValue::MinValue = 0 ;
++template<> const BYTE AuMuLawSampleValue::MaxValue = BYTE_MAX ;
+ 
+ // AuPCM8SampleValue
+-const SBYTE AuPCM8SampleValue::MinValue = SBYTE_MIN ;
+-const SBYTE AuPCM8SampleValue::MaxValue = SBYTE_MAX ;
++template<> const SBYTE AuPCM8SampleValue::MinValue = SBYTE_MIN ;
++template<> const SBYTE AuPCM8SampleValue::MaxValue = SBYTE_MAX ;
+ 
+ // AuPCM16SampleValue
+-const SWORD16 AuPCM16SampleValue::MinValue = SWORD16_MIN ;
+-const SWORD16 AuPCM16SampleValue::MaxValue = SWORD16_MAX ;
++template<> const SWORD16 AuPCM16SampleValue::MinValue = SWORD16_MIN ;
++template<> const SWORD16 AuPCM16SampleValue::MaxValue = SWORD16_MAX ;
+ 
+ // AuPCM32SampleValue
+-const SWORD32 AuPCM32SampleValue::MinValue = SWORD32_MIN ;
+-const SWORD32 AuPCM32SampleValue::MaxValue = SWORD32_MAX ;
++template<> const SWORD32 AuPCM32SampleValue::MinValue = SWORD32_MIN ;
++template<> const SWORD32 AuPCM32SampleValue::MaxValue = SWORD32_MAX ;
+diff -ur a/src/Makefile.am b/src/Makefile.am
+--- a/src/Makefile.am	2003-09-28 20:33:21.000000000 +0400
++++ b/src/Makefile.am	2019-11-06 18:40:25.141385349 +0300
+@@ -33,5 +33,5 @@
+ WavPCMSampleValue.cc error.cc main.cc msg.cc SMDConstructionHeuristic.cc
+ LIBS = @LIBINTL@ @LIBS@
+ localedir = $(datadir)/locale
+-LIBTOOL = $(SHELL) libtool
++LIBTOOL = $(SHELL) libtool --tag=CXX
+ MAINTAINERCLEANFILES = Makefile.in

@@ -1,0 +1,537 @@
+Subject:       New entry system
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch Status:  In development (DO NOT USE YET) pre-alpha quality, untested
+Date:          Sun Sep 26 10:37:20 PM PDT 2021 (Unix time: 1632721040)
+
+Requires input-event-codes.h from the linux kernel
+
+A complete rewrite of the flawed existing one.
+
+diff -urpN genkernel-4.2.3.orig/defaults/initrd.defaults genkernel-4.2.3/defaults/initrd.defaults
+--- genkernel-4.2.3.orig/defaults/initrd.defaults	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/defaults/initrd.defaults	2021-09-26 20:30:43.707610368 -0700
+@@ -158,3 +158,20 @@ HWOPTS="keymap cache modules virtio hype
+ # This is the set of default HWOPTS, in the order that they are loaded.
+ # This is whitespace aligned with HWOPTS above.
+ MY_HWOPTS="          modules virtio hyperv ${HWOPTS_BLK}        lvm dmraid           mdadm     fs       crypto"
++
++# For pad possibilities, see
++# ${KERNEL_DIR}/include/uapi/linux/input-event-codes.h
++# IMPORTANT:  Remove all comments and these two lines.  DO NOT REUSE OR USE THEM
++# All of these values are weak and need re-editing.
++ENTRY_PAD='S0VZXzEgS0VZXzIgS0VZXzMgS0VZX0NIQVQgS0VZX1ZPSUNFTUFJTA=='
++ENTRY_DEVICE='Y3J5cHRzZXR1cCBvcGVuICAgJiYgbWtkaXIgLXAgL21udC9kb25nbGUgJiYgbW91bnQgL2Rldi9tYXBwZXIvIC9tbnQvZG9uZ2xlCg=='
++ENTRY_ROOTB='cG93ZXJvZmYgLWY='
++ENTRY_ROOTG='Z3BnIC0tZGVjcnlwdCAke2twfSB8IGNyeXB0c2V0dXAgb3BlbiAke0VOVFJZX1JPT1RfREVWfSAke21wfQo='
++ENTRY_ROOTS='c3RlZ2hpZGUgLXEgLXNmICR7a3B9IC14ZiAtIHwgY3J5cHRzZXR1cCBvcGVuICR7RU5UUllfUk9PVF9ERVZ9ICR7bXB9Cg=='
++ENTRY_ROOTP='Y3J5cHRzZXR1cCBvcGVuICR7RU5UUllfUk9PVF9ERVZ9ICR7bXB9'
++ENTRY_RESUMEB='cG93ZXJvZmYgLWY='
++ENTRY_RESUMES='c3RlZ2hpZGUgLXEgLXNmICR7a3B9IC14ZiAtIHwgY3J5cHRzZXR1cCBvcGVuICR7RU5UUllfUkVTVU1FX0RFVn0gJHttcH0K'
++ENTRY_RESUMEG='Z3BnIC0tZGVjcnlwdCAke2twfSB8IGNyeXB0c2V0dXAgb3BlbiAke0VOVFJZX1JFU1VNRV9ERVZ9ICR7bXB9Cg=='
++ENTRY_RESUMEP='Y3J5cHRzZXR1cCBvcGVuICR7RkFDQURFX1JFU1VNRV9ERVZ9ICR7bXB9Cg=='
++ENTRY_SUPPORT_DEVICE=0
++ENTRY_SUPPORT_RESUME=0
+diff -urpN genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults/initrd.scripts
+--- genkernel-4.2.3.orig/defaults/initrd.scripts	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/defaults/initrd.scripts	2021-09-26 22:22:38.974502870 -0700
+@@ -2337,6 +2337,329 @@ ipv6_tentative() {
+ 	fi
+ }
+ 
++start_entry_dots() {
++	local duration=20
++	# check keyboard at this time
++	for s in $(seq ${duration}) ; do
++		echo "."
++		sleep 0.$((${RANDOM} % 10))
++	done
++}
++
++start_entry_boot() {
++	local duration=200
++	# check for keyboard at this time
++	local c=0
++	local O=$(dmesg | cut -c 16-)
++	local timestamps=0
++	local l=$(dmesg | sed -n "1,1p")
++	[ "${l:0:1}" = "[" ] && timestamps=1
++	local nlines=$(echo "${O}" | wc -l)
++	for s in $(seq ${duration}) ; do
++		local r=$((${RANDOM} % ${nlines} + 1))
++		local t=$(printf "%0.6f" $(echo "scale=6;${c}/60" | bc))
++		if [ ${timestamps} -eq 1 ]
++		then
++			echo "[    ${t}] "$(echo "${O}" | sed -n "${r},${r}p")
++		else
++			echo $(echo "${O}" | sed -n "${r},${r}p")
++		fi
++		sleep 0.0$((${RANDOM} % 10))
++		c=$((${c} + 1))
++	done
++}
++
++open_device() {
++	local D=""
++	for f in $(ls /dev/disk/by-id | sort | tr "\n" " ")
++	do
++		D="${D} ${f}"
++	done
++
++        local c=0
++        for d in ${D} ; do
++                echo "${c} ${d}"
++                c=$((${c} + 1))
++        done
++	echo "N none"
++	echo
++	echo "Choose a token device:"
++        read C
++	if [ "${C}" = "N" ]
++	then
++		return
++	fi
++	if [ "${C}" = "n" ]
++	then
++		return
++	fi
++	if [ "${C}" = "n" ]
++	then
++		return
++	fi
++	echo
++	echo "Choose a file in the token device:"
++        read kf
++	export kf
++	export ENTRY_DEVICE="/dev/disk/by-id/"$(echo "${D}" | cut -f ${C} -d " ")
++	eval $(get_entry_cmd "ENTRY_DEVICE")
++}
++
++open_root() {
++	local D=""
++	for f in $(ls /dev/disk/by-id | sort | tr "\n" " ")
++	do
++		D="${D} ${f}"
++	done
++
++        local c=0
++        for d in ${D} ; do
++                echo "${c} ${d}"
++                c=$((${c} + 1))
++        done
++	echo "N none"
++	echo
++	echo "Choose a root drive or partition:"
++        read C
++	if [ "${C}" = "N" ]
++	then
++		return
++	fi
++	if [ "${C}" = "n" ]
++	then
++		return
++	fi
++	export ENTRY_ROOT_DEV="/dev/disk/by-id/"$(echo "${D}" | cut -f ${C} -d " ")
++	if [ ${C} = "s" ]
++	then
++		eval $(get_entry_cmd "ENTRY_ROOTB")
++	elif [ ${ENTRY_SUPPORT_DEVICE} -eq 3 ]
++	then
++		eval $(get_entry_cmd "ENTRY_ROOTS")
++	elif [ ${ENTRY_SUPPORT_DEVICE} -eq 2 ]
++	then
++		eval $(get_entry_cmd "ENTRY_ROOTG")
++	elif [ ${ENTRY_SUPPORT_DEVICE} -eq 1 ]
++	then
++		eval $(get_entry_cmd "ENTRY_ROOTP")
++	else
++		return
++	fi
++}
++
++open_resume() {
++	local D=""
++	for f in $(ls /dev/disk/by-id | sort | tr "\n" " ")
++	do
++		D="${D} ${f}"
++	done
++
++        local c=0
++        for d in ${D} ; do
++                echo "${c} ${d}"
++                c=$((${c} + 1))
++        done
++	echo "N none"
++	echo
++	echo "Choose a resume device or partition:"
++        read C
++	if [ "${C}" = "N" ]
++	then
++		return
++	fi
++	if [ "${C}" = "n" ]
++	then
++		return
++	fi
++	if [ "${C}" = "n" ]
++	then
++		return
++	fi
++	export ENTRY_RESUME_DEV="/dev/disk/by-id/"$(echo "${D}" | cut -f ${C} -d " ")
++	if [ ${C} = "s" ]
++	then
++		eval $(get_entry_cmd "ENTRY_RESUMEB")
++	elif [ ${ENTRY_SUPPORT_DEVICE} -eq 3 ]
++	then
++		eval $(get_entry_cmd "ENTRY_RESUMES")
++	elif [ ${ENTRY_SUPPORT_DEVICE} -eq 2 ]
++	then
++		eval $(get_entry_cmd "ENTRY_RESUMEG")
++	elif [ ${ENTRY_SUPPORT_DEVICE} -eq 1 ]
++	then
++		eval $(get_entry_cmd "ENTRY_RESUMEP")
++	else
++		return
++	fi
++}
++
++start_entry_beep() {
++	echo -ne '\007'
++}
++
++pad_key_code() {
++	local v="${1}"
++	t=$(printf "%04x" "${v}")
++	echo "${t:2:2}${t:0:2}"
++}
++
++get_code()
++{
++	local sym="${1}"
++	local v=$(grep -E "${sym}"$'\t' /usr/src/linux/include/uapi/linux/input-event-codes.h \
++		| sed -E -e "s|[[:space:]]+| |g" | cut -f 3 -d " ")
++	pad_key_code "${v}"
++}
++
++key_code_expr_gen() {
++	local keys="${@}"
++	local e="
++		if false
++		then
++			:;
++		"
++	for n in ${keys}
++	do
++		e="
++		${e}
++		elif [ \"\${key_code}\" = '${n}' ]
++		then
++			echo 'elif'
++			matches=1
++		"
++	done
++	local e="
++		${e}
++		else
++			echo 'else'
++			echo "${n}"
++			matches=0
++		fi
++		"
++	echo "${e}"
++}
++
++get_pad() {
++	echo -n "${ENTRY_PAD}" | base64 -d
++}
++
++get_entry_cmd() {
++	echo -n "${ENTRY_RUN}"
++}
++
++filter_keyboard() {
++	local cbuffer_path=$(mktemp)
++	local time_now
++	local duration=15
++	time_start=$(date +%s)
++	time_expire=$((${time_start} + ${duration}))
++	for i in $(seq 50)
++	do
++		local l=$(wc -c)
++		for i in $(seq $((${l} / 24)))
++		do
++			hexdump -s $((24*${i})) -n 24 | sed -n "2,2p" | cut -c 11- >> "${cbuffer_path}"
++		done
++		time_now=$(date +%s)
++		[ ${time_now} -ge ${time_expire} ] && break
++	done
++
++	local n=0
++	for l in $(cat "${cbuffer_path}")
++	do
++		local key_value=$(echo "${l}" | cut -f 5-8 -d " ") # press 01 xx xx xx, unpressed 00 xx xx xx
++		local key_press=$(echo "${l}" | cut -f 5 -d " ") # press 01 xx xx xx, unpressed 00 xx xx xx
++		local key_code=$(echo "${l}" | cut -f 3-4 -d " " | sed -e "s| ||g")
++		local ex=$(key_code_expr_gen $(get_pad)) # Dynamically generates a if else chain
++		local matches=0
++		eval "${ex}"
++		if [ ${matches} -eq 1 ]
++		then
++			n=$((${n} + 1))
++		fi
++	done
++}
++
++entry_kcheck() {
++	local duration=15
++	while true
++	do
++		sleep 0.5
++	done
++	local n_padlen=0
++	for f in $(get_pad) ; do
++		n_padlen=$((${n_padlen} + 1))
++	done
++	local c=0
++	# Change your entry here
++	for k in $(get_pad) ; do
++		if echo "${KEYS_PRESSED}" | grep -q -o "${k}"
++		then
++			c=$((${c} + 1))
++		fi
++	done
++	if [ ${c} -eq ${len} ]
++	then
++		return 0
++	else
++		return 1
++	fi
++}
++
++is_user_valid() {
++	local opened=0
++
++	filter_keyboard &
++
++        # The signal is a visual or auditory cue to enter The Area
++	# By default we do not enter The Area unless we have control
++	# The lag time between cold boot and reaching this part
++	# of code could be very long.
++	if [ "${ENTRY_MODE}" = "dots" ]
++	then
++		start_entry_dots
++	elif [ "${ENTRY_MODE}" = "boot" ]
++	then
++		start_entry_boot
++	elif [ "${ENTRY_MODE}" = "beep" ]
++	then
++		start_entry_beep
++	elif [ "${ENTRY_MODE}" = "custom" ]
++	then
++		# You must define your own start_entry_custom
++		start_entry_custom
++	fi
++
++	# This is a check to ensure that we are not next to the rubberhoser
++	# after lag time.
++	# Wait for key sequence.
++	local opened=0
++	if entry_kcheck
++	then
++		export opened=1
++	fi
++
++	if [ "${opened}" -eq "1" ]
++	then
++		[ ${ENTRY_SUPPORT_DEVICE} -ge 1 ] && open_device
++		open_root
++		[ ${ENTRY_SUPPORT_RESUME} -ge 1 ] && open_resume
++		# Swap mounting is done in openrc or systemd init scripts instead
++		# If you need immediate swap, just copy paste function and call.
++	# else # \
++	#	Load either
++	#	(1) a rescuecd
++	#	(2) regular partition WITHOUT passwords
++	#       (3) garbage to imitate damage
++	#       (4) power off to imitate damage
++	#	BUT NEVER PRESENT A PASSWORD PROMPT
++	fi
++}
++
++start_dm_plain() {
++	is_user_valid
++}
++
+ start_LUKS() {
+ 	# if key is set but neither ssh enabled or key device is given, find
+ 	# the key device
+diff -urpN genkernel-4.2.3.orig/defaults/linuxrc genkernel-4.2.3/defaults/linuxrc
+--- genkernel-4.2.3.orig/defaults/linuxrc	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/defaults/linuxrc	2021-09-24 19:48:17.903868832 -0700
+@@ -641,6 +641,7 @@ fi
+ # Initialize LUKS root device except for livecd's
+ if [ "${CDROOT}" != '1' ]
+ then
++	start_dm_plain
+ 	start_LUKS
+ 	if [ "${NORESUME}" != '1' ] && [ -n "${REAL_RESUME}" ]
+ 	then
+@@ -1032,6 +1033,8 @@ then
+ 
+ 	cache_cd_contents
+ 
++	start_dm_plain
++
+ 	# If encrypted, find key and mount, otherwise mount as usual
+ 	if [ -n "${CRYPT_ROOT}" ]
+ 	then
+diff -urpN genkernel-4.2.3.orig/gen_initramfs.sh genkernel-4.2.3/gen_initramfs.sh
+--- genkernel-4.2.3.orig/gen_initramfs.sh	2021-07-08 14:09:46.000000000 -0700
++++ genkernel-4.2.3/gen_initramfs.sh	2021-09-26 14:13:15.983972913 -0700
+@@ -1889,6 +1889,11 @@ append_auxiliary() {
+ 	ln -s init linuxrc || gen_die "Failed to create symlink 'linuxrc' to 'init'!"
+ 	popd &>/dev/null || gen_die "Failed to chdir!"
+ 
++	print_info 2 "$(get_indent 2)>> Copying '${KERNEL_DIR}/include/uapi/linux/input-event-codes.h' to '/usr/src/linux/include/uapi/linux/input-event-codes.h' ..."
++	mkdir -p "${TDIR}/usr/src/linux/include/uapi/linux" || gen_die "Failed to create dir '${TDIR}/usr/src/linux/include/uapi/linux'"
++	cp -a "${KERNEL_DIR}/include/uapi/linux/input-event-codes.h" "${TDIR}/usr/src/linux/include/uapi/linux" \
++		|| gen_die "Failed to copy '${KERNEL_DIR}/include/uapi/linux/input-event-codes.h' to '${TDIR}/usr/src/linux/include/uapi/linux/input-event-codes.h'"
++
+ 	local myinitrd_script=
+ 	if [ -f "${GK_SHARE}/arch/${ARCH}/initrd.scripts" ]
+ 	then
+diff -urpN genkernel-4.2.3.orig/gkbuilds/libjpeg-turbo.gkbuild genkernel-4.2.3/gkbuilds/libjpeg-turbo.gkbuild
+--- genkernel-4.2.3.orig/gkbuilds/libjpeg-turbo.gkbuild	1969-12-31 16:00:00.000000000 -0800
++++ genkernel-4.2.3/gkbuilds/libjpeg-turbo.gkbuild	2021-09-26 22:09:44.631515265 -0700
+@@ -0,0 +1,35 @@
++# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
++# Copyright 1999-2021 Gentoo Authors
++# Distributed under the terms of the GNU General Public License v2
++
++src_prepare(){
++	default
++	gkautoreconf
++}
++
++src_configure() {
++	local myconf=(
++		--disable-shared
++		--enable-static
++		--without-java
++		--with-mem-srcdst
++		--without-simd
++	)
++	# x32 cannot use simd
++	CONFIG_SHELL="${EPREFIX}"/bin/bash \
++	gkconf "${myconf[@]}"
++}
++
++src_compile(){
++	local MYMAKEOPTS=( "V=1" )
++	gkmake "${MYMAKEOPTS[@]}"
++}
++
++src_install() {
++	local MYMAKEOPTS=( "V=1" )
++	MYMAKEOPTS+=( "DESTDIR=${D}" )
++	gkmake "${MYMAKEOPTS[@]}" install
++	rm -rf \
++		"${D}"/usr/bin \
++		"${D}"/usr/share
++}
+diff -urpN genkernel-4.2.3.orig/gkbuilds/libmcrypt.gkbuild genkernel-4.2.3/gkbuilds/libmcrypt.gkbuild
+--- genkernel-4.2.3.orig/gkbuilds/libmcrypt.gkbuild	1969-12-31 16:00:00.000000000 -0800
++++ genkernel-4.2.3/gkbuilds/libmcrypt.gkbuild	2021-09-26 22:10:08.325514886 -0700
+@@ -0,0 +1,29 @@
++# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
++# Copyright 1999-2021 Gentoo Authors
++# Distributed under the terms of the GNU General Public License v2
++
++src_prepare(){
++	default
++	gkautoreconf
++}
++
++src_configure() {
++	local myconf=(
++		--disable-shared
++		--enable-static
++	)
++	export CXXFLAGS="$CXXFLAGS -std=c++0x"
++	[[ ${CHOST} == *-darwin* ]] && die "${CHOST} is not supported"
++	gkconf "${myconf[@]}"
++}
++
++src_compile(){
++	local MYMAKEOPTS=( "V=1" )
++	gkmake "${MYMAKEOPTS[@]}"
++}
++
++src_install() {
++	local MYMAKEOPTS=( "V=1" )
++	MYMAKEOPTS+=( "DESTDIR=${D}" )
++	gkmake "${MYMAKEOPTS[@]}" install
++}
+diff -urpN genkernel-4.2.3.orig/gkbuilds/mhash.gkbuild genkernel-4.2.3/gkbuilds/mhash.gkbuild
+--- genkernel-4.2.3.orig/gkbuilds/mhash.gkbuild	1969-12-31 16:00:00.000000000 -0800
++++ genkernel-4.2.3/gkbuilds/mhash.gkbuild	2021-09-26 21:55:12.102529233 -0700
+@@ -0,0 +1,28 @@
++# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
++# Copyright 1999-2021 Gentoo Authors
++# Distributed under the terms of the GNU General Public License v2
++
++src_prepare(){
++	default
++	gkautoreconf
++}
++
++src_configure() {
++	export ac_cv_func_malloc_0_nonnull=yes
++	local myconf=(
++		--disable-shared
++		--enable-static
++	)
++	gkconf "${myconf[@]}"
++}
++
++src_compile(){
++	local MYMAKEOPTS=( "V=1" )
++	gkmake "${MYMAKEOPTS[@]}"
++}
++
++src_install() {
++	local MYMAKEOPTS=( "V=1" )
++	MYMAKEOPTS+=( "DESTDIR=${D}" )
++	gkmake "${MYMAKEOPTS[@]}"
++}
+diff -urpN genkernel-4.2.3.orig/gkbuilds/steghide.gkbuild genkernel-4.2.3/gkbuilds/steghide.gkbuild
+--- genkernel-4.2.3.orig/gkbuilds/steghide.gkbuild	1969-12-31 16:00:00.000000000 -0800
++++ genkernel-4.2.3/gkbuilds/steghide.gkbuild	2021-09-26 22:10:09.765514863 -0700
+@@ -0,0 +1,28 @@
++# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
++# Copyright 1999-2020 Gentoo Authors
++# Distributed under the terms of the GNU General Public License v2
++
++src_prepare(){
++	default
++	gkautoreconf
++}
++
++src_configure() {
++	append-ldflags -static
++	export CXXFLAGS="$CXXFLAGS -std=c++0x"
++
++	[[ ${CHOST} == *-darwin* ]] && die "${CHOST} is not supported"
++
++	gkconf
++}
++
++src_compile(){
++	local MYMAKEOPTS=( "V=1" )
++	gkmake "${MYMAKEOPTS[@]}"
++}
++
++src_install() {
++	local MYMAKEOPTS=( "V=1" )
++	MYMAKEOPTS+=( "DESTDIR=${D}" )
++	gkmake "${MYMAKEOPTS[@]}" install
++}

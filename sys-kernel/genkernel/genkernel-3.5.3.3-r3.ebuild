@@ -199,4 +199,10 @@ pkg_postinst() {
 	ewarn "The ebuild for the 3.5.x series has been removed from the original repo."
 	ewarn "Please switch to later versions.  This ebuild may be removed anytime."
 	ewarn
+
+	ewarn
+	ewarn "The current crypt_root_plain will be deprecated for security reasons."
+	ewarn "It will be announced later when the replacement is ready and require"
+	ewarn "upgrading."
+	ewarn
 }
