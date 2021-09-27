@@ -14,13 +14,13 @@ LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS="amd64 arm arm64 ~riscv x86 ~x64-macos"
 IUSE="elibc_glibc elibc_musl +libcxxabi +libunwind static-libs test"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall full-relro lto noexecstack shadowcallstack ssp"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang full-relro lto noexecstack shadowcallstack ssp"
 REQUIRED_USE="libunwind? ( libcxxabi )"
 REQUIRED_USE+="
-	cfi? ( lto static-libs )
-	cfi-cast? ( lto cfi-vcall static-libs )
-	cfi-icall? ( lto cfi-vcall static-libs )
-	cfi-vcall? ( lto static-libs )"
+	cfi? ( clang lto static-libs )
+	cfi-cast? ( clang lto cfi-vcall static-libs )
+	cfi-icall? ( clang lto cfi-vcall static-libs )
+	cfi-vcall? ( clang lto static-libs )"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -94,7 +94,7 @@ BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" lto? ( || ( $(gen_lto_bdepend 11 14) ) )"
+BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND+="
@@ -175,15 +175,20 @@ src_configure() {
 }
 
 _configure_abi() {
-	if use lto || use shadow-call-stack ; then
-		export CC="clang $(get_abi_CFLAGS ${ABI})"
-		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
-		export NM=llvm-nm
-		export AR=llvm-ar
-		export READELF=llvm-readelf
-		export AS=llvm-as
-		export LD="${CC}"
+	if use clang && ( use lto || use shadow-call-stack ) ; then
+		CC="clang $(get_abi_CFLAGS ${ABI})"
+		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
+		NM=llvm-nm
+		AR=llvm-ar
+		READELF=llvm-readelf
+		AS=llvm-as
+		LD="${CC}"
 	fi
+	if tc-is-clang && ! use clang ; then
+		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
+	fi
+
+	export CC CXX AR AS NM RANDLIB READELF LD
 
 	if tc-is-clang ; then
 		filter-flags -fprefetch-loop-arrays \
@@ -242,21 +247,46 @@ _configure_abi() {
 		-DLIBCXX_USE_COMPILER_RT=${want_compiler_rt}
 		-DLIBCXX_HAS_ATOMIC_LIB=${want_gcc_s}
 		-DCMAKE_SHARED_LINKER_FLAGS="${extra_libs[*]} ${LDFLAGS}"
-		-DFULL_RELRO=$(usex full-relro)
 		-DNOEXECSTACK=$(usex noexecstack)
-		-DTHINLTO=$(usex lto)
-		-DSHADOW_CALL_STACK=$(usex shadowcallstack)
-		-DSSP=$(usex ssp)
+		-DLTO=$(usex lto)
 	)
 
+	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
+		# Already done by hardened gcc
+		mycmakeargs+=(
+			-DCFI=OFF
+			-DFULL_RELRO=OFF
+			-DSHADOW_CALL_STACK=OFF
+			-DSSP=OFF
+		)
+	else
+		mycmakeargs+=(
+			-DFULL_RELRO=$(usex full-relro)
+			-DSSP=$(usex ssp)
+		)
+		if tc-is-clang ; then
+			mycmakeargs+=(
+				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
+			)
+			if [[ "${build_type}" == "static-libs" ]] ; then
+				mycmakeargs+=(
+					-DCFI=$(usex cfi)
+					-DCFI_CAST=$(usex cfi-cast)
+					-DCFI_ICALL=OFF
+					-DCFI_VCALL=$(usex cfi-vcall)
+				)
+			fi
+		else
+			mycmakeargs+=(
+				-DCFI=OFF
+				-DSHADOW_CALL_STACK=OFF
+			)
+		fi
+	fi
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		mycmakeargs+=(
 			-DLIBCXX_ENABLE_SHARED=OFF
 			-DLIBCXX_ENABLE_STATIC=ON
-			-DCFI=$(usex cfi)
-			-DCFI_CAST=$(usex cfi-cast)
-			-DCFI_ICALL=OFF
-			-DCFI_VCALL=$(usex cfi-vcall)
 		)
 	else
 		mycmakeargs+=(
