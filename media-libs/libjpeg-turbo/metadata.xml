@@ -49,25 +49,7 @@
     <flag name="cfi-vcall">Build with cfi-vcall with forward edge
       protection.</flag>
     <flag name="full-relro">Build with Full RELRO</flag>
-    <flag name="libcxx">Link against the more secured libcxx package.</flag>
     <flag name="lto">Use link time optimization.</flag>
-    <flag name="pgo-custom-audio">Use a custom profile guided optimization
-       script to train video codecs with.  Use this for video filter
-       training as well.</flag>
-    <flag name="pgo-custom-video">Use a custom profile guided optimization
-      script to train video codecs with.  Use this for audio filter
-      training as well.</flag>
-    <flag name="pgo-trainer-audio-cbr">Use the CBR PGO audio trainer.</flag>
-    <flag name="pgo-trainer-audio-vbr">Use the VBR PGO audio trainer.</flag>
-    <flag name="pgo-trainer-audio-lossless">Use the lossless PGO audio
-      trainer.</flag>
-    <flag name="pgo-trainer-video-2-pass-constrained-quality">Performs an
-      addtional 2 pass training.  Two pass improves quality and rate
-      control.  This step can be skipped for live streamers.</flag>
-    <flag name="pgo-trainer-video-constrained-quality">Use the 1 pass
-      constrained quality PGO video trainer.</flag>
-    <flag name="pgo-trainer-video-lossless">Use the lossless PGO video
-      trainer.</flag>
     <flag name="ssp">Build with stack smashing protection</flag>
     <flag name="pgo-custom">Runs PGO training with a custom script</flag>
     <flag name="pgo-trainer-70-pct-quality-baseline">PGO train with 70% quality
