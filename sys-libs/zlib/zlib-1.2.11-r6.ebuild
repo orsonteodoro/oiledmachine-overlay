@@ -132,13 +132,14 @@ gen_lto_bdepend() {
 	done
 }
 
-BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
-BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
-BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
+# Avoid circular dependency problem, after building llvm/clang it should be fine
+PDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
+PDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+PDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+PDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+PDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+PDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
+PDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND+=" minizip? ( ${AUTOTOOLS_DEPEND} )"
 # See #309623 for libxml2
@@ -156,6 +157,49 @@ PATCHES=(
 get_build_types() {
 	echo "shared-libs"
 	use static-libs && echo "static-libs"
+}
+
+is_clang_ready() {
+	for i in $(seq 10 14) ; do
+		if has_version "sys-devel/clang:${v}" \
+			&& has_version "sys-devel/llvm:${v}" \
+			&& has_version "=sys-devel/clang-runtime-${v}*" \
+			&& has_verison ">=sys-devel/lld-${v}"
+		then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_cfi_ready() {
+	for i in $(seq 12 14) ; do
+		if has_version "sys-devel/clang:${v}" \
+			&& has_version "sys-devel/llvm:${v}" \
+			&& has_version "=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]" \
+			&& has_version ">=sys-devel/lld-${v}" \
+			&& has_version "=sys-libs/compiler-rt-${v}*" \
+			&& has_version "=sys-libs/compiler-rt-sanitizers-${v}*[cfi]"
+		then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_scs_ready() {
+	for i in $(seq 12 14) ; do
+		if has_version "sys-devel/clang:${v}" \
+			&& has_version "sys-devel/llvm:${v}" \
+			&& has_version "=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]" \
+			&& has_version ">=sys-devel/lld-${v}" \
+			&& has_version "=sys-libs/compiler-rt-${v}*" \
+			&& has_version "=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack]"
+		then
+			return 0
+		fi
+	done
+	return 1
 }
 
 src_prepare() {
@@ -204,7 +248,7 @@ append_all() {
 
 append_lto() {
 	filter-flags '-flto*' '-fuse-ld=*'
-	if tc-is-clang ; then
+	if tc-is-clang && is_clang_ready ; then
 		append-flags -flto=thin -fuse-ld=lld
 		append-ldflags -fuse-ld=lld -flto=thin
 	else
@@ -222,7 +266,7 @@ _configure_pgx() {
 		&& grep -q -e "^clean:" contrib/minizip/Makefile \
 		&& emake clean -C contrib/minizip
 	cd "${BUILD_DIR}" || die
-	if use clang ; then
+	if use clang && is_clang_ready ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
 		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
 		AR=llvm-ar
@@ -231,6 +275,15 @@ _configure_pgx() {
 		RANLIB=llvm-ranlib
 		READELF=llvm-readelf
 		LD="ld.lld"
+	else
+		CC="gcc $(get_abi_CFLAGS ${ABI})"
+		CXX="g++ $(get_abi_CFLAGS ${ABI})"
+		AR="ar"
+		AS="as"
+		NM="nm"
+		RANLIB="ranlib"
+		READELF="readelf"
+		LD="ld.bfd"
 	fi
 	if tc-is-clang && ! use clang ; then
 		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
@@ -266,7 +319,7 @@ _configure_pgx() {
 	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
 		:;
 	else
-		if [[ "${build_type}" == "static-libs" ]] ; then
+		if is_clang_ready && [[ "${build_type}" == "static-libs" ]] ; then
 			if use cfi ; then
 				append_all -fvisibility=hidden \
 						-fsanitize=cfi
@@ -281,7 +334,7 @@ _configure_pgx() {
 			fi
 		fi
 		use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
-		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
+		is_scs_ready && use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
 		use ssp && append-ldflags --param=ssp-buffer-size=4 \
 					-fstack-protector
