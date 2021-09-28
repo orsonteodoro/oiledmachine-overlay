@@ -43,7 +43,6 @@ REQUIRED_USE="
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
-	clang? ( lto )
 	pgo? ( || (
 		pgo-custom
 		pgo-trainer-minizip-binary-long
@@ -133,6 +132,7 @@ gen_lto_bdepend() {
 	done
 }
 
+BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
 BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
