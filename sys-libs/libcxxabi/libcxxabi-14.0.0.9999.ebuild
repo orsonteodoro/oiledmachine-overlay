@@ -100,6 +100,7 @@ BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
+BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
 BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
@@ -140,7 +141,7 @@ src_configure() {
 }
 
 _configure_abi() {
-	if use lto || use shadow-call-stack ; then
+	if use clang ; then
 		export CC="clang $(get_abi_CFLAGS ${ABI})"
 		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
 		export NM=llvm-nm
