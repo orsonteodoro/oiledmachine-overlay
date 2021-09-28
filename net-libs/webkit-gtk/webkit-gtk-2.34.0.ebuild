@@ -11,7 +11,7 @@ EAPI=7
 
 # Corresponds to
 # WebKit 613.1.3 (20210913, main) ; See Source/WebKit/Configurations/Version.xcconfig
-# or https://trac.webkit.org/browser/webkit/trunk/Source/WebKit/Configurations/Version.xcconfig?rev=282649
+# or https://trac.webkit.org/browser/webkit/trunk/Source/WebKit/Configurations/Version.xcconfig?rev=282869
 
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
@@ -432,8 +432,8 @@ SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
 # WEBKITGTK_API_VERSION is 4.0
-CURRENT="90"
-AGE="53"
+CURRENT="92"
+AGE="55"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
@@ -640,7 +640,7 @@ GSTREAMER_V="1.14.0"
 MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
-# Dependencies last updated at revision 282649, Sep 17, 2021
+# Dependencies last updated at revision 282869, Sep 22, 2021
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
@@ -784,7 +784,7 @@ BDEPEND+="
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
 EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="282649"
+ESVN_REVISION="282869"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
