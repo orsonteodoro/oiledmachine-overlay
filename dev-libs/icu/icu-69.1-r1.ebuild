@@ -208,7 +208,7 @@ src_configure() {
 }
 
 _configure_abi() {
-	if use clang && ( use lto || use shadowcallstack ) ; then
+	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
 		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
 		AR=llvm-ar
