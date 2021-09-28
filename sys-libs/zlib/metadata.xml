@@ -16,6 +16,11 @@
     <remote-id type="cpe">cpe:/a:gnu:zlib</remote-id>
   </upstream>
   <longdescription>
+    The zlib library is used in many situations such as
+    HTTP compression, file formats, etc.
+
+    This ebuild fork introduces hardening flags and PGO.
+
     Only use the cfi* and pgo USE flags after the stage 3 or stage 4
     bootstrapping process.
 
@@ -41,6 +46,13 @@
     MINIZIP_PGO_MAX_FILES=N, where N >= 1 will limit the number of
     files to add to archived binary zip files.  The default is
     500.
+
+    At least one
+${PORTAGE_DISTDIR}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
+    folder is required for pgo-trainer-zlib-images USE flag.
+    Image assets will not be provided but you may provide your own
+    or obtain them from the web if they are marked public domain or
+    permissive or license compatible.
   </longdescription>
   <use>
     <flag name="cfi">Build with full CFI with all schemes</flag>
@@ -79,6 +91,8 @@
       binary files for minizip only abridged training with with N=30 with
       store only archival</flag>
     <flag name="pgo-trainer-zlib-binary">Run the PGO trainer against text
+      files for zlib only</flag>
+    <flag name="pgo-trainer-zlib-images">Run the PGO trainer against image
       files for zlib only</flag>
     <flag name="pgo-trainer-zlib-text">Run the PGO trainer against binary
       files for zlib only</flag>

@@ -36,6 +36,7 @@ IUSE+="
 	pgo-trainer-minizip-text-short
 	pgo-trainer-minizip-text-store
 	pgo-trainer-zlib-binary
+	pgo-trainer-zlib-images
 	pgo-trainer-zlib-text
 "
 REQUIRED_USE="
@@ -54,10 +55,12 @@ REQUIRED_USE="
 		pgo-trainer-minizip-text-short
 		pgo-trainer-minizip-text-store
 		pgo-trainer-zlib-binary
+		pgo-trainer-zlib-images
 		pgo-trainer-zlib-text
 	) )
 	pgo-custom? ( pgo )
 	pgo-trainer-zlib-binary? ( pgo )
+	pgo-trainer-zlib-images? ( pgo )
 	pgo-trainer-zlib-text? ( pgo )
 	pgo-trainer-minizip-binary-long? ( pgo minizip )
 	pgo-trainer-minizip-binary-max-compression? ( pgo minizip )
@@ -322,7 +325,8 @@ _configure_pgx() {
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
-		-stdlib=libc++
+		-stdlib=libc++ \
+		'-Wno-error=*'
 
 	if tc-is-clang ; then
 		filter-flags -fprefetch-loop-arrays \
@@ -377,6 +381,11 @@ _configure_pgx() {
 		else
 			append-cflags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
 			append-cxxflags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
+			if use minizip ; then
+				# Apply, only during configure.
+				append-cflags -Wno-error=coverage-mismatch
+				append-cxxflags -Wno-error=coverage-mismatch
+			fi
 		fi
 	fi
 
@@ -426,6 +435,11 @@ _configure_pgx() {
 		fi
 		ECONF_SOURCE="${S}/${minizipdir}" \
 		econf ${myconf[@]}
+		if use pgo ;  then
+			sed -i -e "s|-Wno-error=coverage-mismatch||g" "${S}/contrib/minizip/Makefile" || die
+			sed -i -e "s|-Wno-error=coverage-mismatch||g" "${S}/contrib/minizip/libtool" || die
+			sed -i -e "s|-Wno-error=coverage-mismatch||g" "${S}/Makefile" || die
+		fi
 	fi
 }
 
@@ -456,6 +470,132 @@ _build_pgx() {
 			emake -C contrib/minizip minizip miniunzip
 		fi
 	fi
+}
+
+_run_trainer_images_zlib() {
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	( ! has_pgo_requirement ) && return
+	einfo "Running image compression PGO training for ${ABI} for zlib"
+	if multilib_is_native_abi ; then
+		export PIGZEXE="pigz"
+	else
+		export PIGZEXE="pigz-${ABI}"
+	fi
+
+	#einfo "Preparing training sandbox"
+	mkdir -p "${T}/sandbox" || die
+	cd "${T}/sandbox" || die
+	local N=270 # 30 * 9 compression levels
+
+	has_image_folder() {
+		if [[ -d "${distdir}/pgo/assets/avif" ]] ; then
+			return 0
+		fi
+		if [[ -d "${distdir}/pgo/assets/bmp" ]] ; then
+			return 0
+		fi
+		if [[ -d "${distdir}/pgo/assets/gif" ]] ; then
+			return 0
+		fi
+		if [[ -d "${distdir}/pgo/assets/images" ]] ; then
+			return 0
+		fi
+		if [[ -d "${distdir}/pgo/assets/jpeg" ]] ; then
+			return 0
+		fi
+		if [[ -d "${distdir}/pgo/assets/png" ]] ; then
+			return 0
+		fi
+		if [[ -d "${distdir}/pgo/assets/svg" ]] ; then
+			return 0
+		fi
+		if [[ -d "${distdir}/pgo/assets/webp" ]] ; then
+			return 0
+		fi
+		return 1
+	}
+
+	if has_image_folder ; then
+		local c=0
+
+		local search_path=()
+		if [[ -d "${distdir}/pgo/assets/apng" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/apng" )
+		fi
+		if [[ -d "${distdir}/pgo/assets/avif" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/avif" )
+		fi
+		if [[ -d "${distdir}/pgo/assets/bmp" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/bmp" )
+		fi
+		if [[ -d "${distdir}/pgo/assets/gif" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/gif" )
+		fi
+		if [[ -d "${distdir}/pgo/assets/ico" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/ico" )
+		fi
+		if [[ -d "${distdir}/pgo/assets/images" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/images" )
+		fi
+		if [[ -d "${distdir}/pgo/assets/jpeg" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/jpeg" )
+		fi
+		if [[ -d "${distdir}/pgo/assets/png" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/png" )
+		fi
+		if [[ -d "${distdir}/pgo/assets/svg" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/svg" )
+		fi
+		if [[ -d "${distdir}/pgo/assets/tiff" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/tiff" )
+		fi
+		if [[ -d "${distdir}/pgo/assets/webp" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/webp" )
+		fi
+
+		for f in $(find ${search_path} -type f \
+			-iname "*.apng" \
+			-o -iname "*.avif" \
+			-o -iname "*.bmp" \
+			-o -iname "*.gif" \
+			-o -iname "*.ico" \
+			-o -iname "*.jfif" \
+			-o -iname "*.jpg" \
+			-o -iname "*.jpeg" \
+			-o -iname "*.pjpeg" \
+			-o -iname "*.pjp" \
+			-o -iname "*.png" \
+			-o -iname "*.svg" \
+			-o -iname "*.tiff" \
+			-o -iname "*.webp" \
+			| shuf) ; do
+			if [[ -f "${f}" && ! -L "${f}" ]] ; then
+				#einfo "Adding ${f} to the compression sandbox"
+				cp -a "${f}" "${T}/sandbox" || die
+				c=$(( ${c} + 1 ))
+			else
+				:; #einfo "Skipping ${f} which may not be a text file but a symlink"
+			fi
+			(( ${c} >= ${N} )) && break
+		done
+		rm -rf "${T}/sandbox-headers" || die
+	else
+		die "Missing at least one ${distdir}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp} folder for PGO training"
+	fi
+	einfo "zlib image compression training"
+	for f in $(find "${T}/sandbox" -type f) ; do
+		local cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
+		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+		"${cmd[@]}" || die
+	done
+	einfo "zlib image decompression training"
+	for f in $(find "${T}/sandbox" -type f) ; do
+		local cmd=( "${PIGZEXE}" -d "${f}" )
+		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+		"${cmd[@]}" || die
+	done
+	#einfo "Clearing sandbox"
+	rm -rf "${T}/sandbox" || die
 }
 
 _run_trainer_text_zlib() {
@@ -707,6 +847,9 @@ _run_trainers() {
 	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
 	if use pgo-trainer-zlib-binary ; then
 		_run_trainer_binary_zlib
+	fi
+	if use pgo-trainer-zlib-images ; then
+		_run_trainer_images_zlib
 	fi
 	if use pgo-trainer-zlib-text ; then
 		_run_trainer_text_zlib
