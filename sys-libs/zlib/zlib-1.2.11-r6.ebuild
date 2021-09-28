@@ -576,23 +576,26 @@ _run_trainer_images_zlib() {
 			else
 				:; #einfo "Skipping ${f} which may not be a text file but a symlink"
 			fi
-			(( ${c} >= ${N} )) && break
+			(( ${c} >= ${MINIZIP_PGO_MAX_FILES} )) && break
 		done
 		rm -rf "${T}/sandbox-headers" || die
 	else
 		die "Missing at least one ${distdir}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp} folder for PGO training"
 	fi
-	einfo "zlib image compression training"
+	einfo "zlib image compression/decompress training"
 	for f in $(find "${T}/sandbox" -type f) ; do
-		local cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
-		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
-		"${cmd[@]}" || die
-	done
-	einfo "zlib image decompression training"
-	for f in $(find "${T}/sandbox" -type f) ; do
-		local cmd=( "${PIGZEXE}" -d "${f}" )
-		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
-		"${cmd[@]}" || die
+		# due to limited
+		local cmd
+
+		for i in $(seq ${N}) ; do
+			cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
+			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+			"${cmd[@]}" || die
+
+			cmd=( "${PIGZEXE}" -d "${f}" )
+			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+			"${cmd[@]}" || die
+		done
 	done
 	#einfo "Clearing sandbox"
 	rm -rf "${T}/sandbox" || die
