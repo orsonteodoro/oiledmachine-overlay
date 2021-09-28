@@ -148,6 +148,9 @@ RDEPEND+="
 	!sys-libs/zlib-ng[compat]
 "
 DEPEND+="${RDEPEND}"
+BDEPEND="
+	dev-lang/perl
+"
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.2.11-fix-deflateParams-usage.patch
@@ -160,7 +163,7 @@ get_build_types() {
 }
 
 is_clang_ready() {
-	for i in $(seq 10 14) ; do
+	for v in $(seq 10 14) ; do
 		if has_version "sys-devel/clang:${v}" \
 			&& has_version "sys-devel/llvm:${v}" \
 			&& has_version "=sys-devel/clang-runtime-${v}*" \
@@ -173,7 +176,7 @@ is_clang_ready() {
 }
 
 is_lto_ready() {
-	for i in $(seq 11 14) ; do
+	for v in $(seq 11 14) ; do
 		if has_version "sys-devel/clang:${v}" \
 			&& has_version "sys-devel/llvm:${v}" \
 			&& has_version "=sys-devel/clang-runtime-${v}*" \
@@ -186,7 +189,7 @@ is_lto_ready() {
 }
 
 is_cfi_ready() {
-	for i in $(seq 12 14) ; do
+	for v in $(seq 12 14) ; do
 		if has_version "sys-devel/clang:${v}" \
 			&& has_version "sys-devel/llvm:${v}" \
 			&& has_version "=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]" \
@@ -201,7 +204,7 @@ is_cfi_ready() {
 }
 
 is_scs_ready() {
-	for i in $(seq 12 14) ; do
+	for v in $(seq 12 14) ; do
 		if has_version "sys-devel/clang:${v}" \
 			&& has_version "sys-devel/llvm:${v}" \
 			&& has_version "=sys-devel/clang-runtime-${v}*[compiler-rt,sanitize]" \
@@ -756,11 +759,10 @@ _run_trainers() {
 has_pgo_requirement() {
 	if multilib_is_native_abi && which pigz 2>/dev/null 1>/dev/null ; then
 		return 0
-	elif multilib_is_native_abi && which pigz-${ABI} 2>/dev/null 1>/dev/null ; then
+	elif ! multilib_is_native_abi && which pigz-${ABI} 2>/dev/null 1>/dev/null ; then
 		return 0
-	return
-		return 1
 	fi
+	return 1
 }
 
 src_compile() {
