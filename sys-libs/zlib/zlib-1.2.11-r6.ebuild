@@ -172,6 +172,19 @@ is_clang_ready() {
 	return 1
 }
 
+is_lto_ready() {
+	for i in $(seq 11 14) ; do
+		if has_version "sys-devel/clang:${v}" \
+			&& has_version "sys-devel/llvm:${v}" \
+			&& has_version "=sys-devel/clang-runtime-${v}*" \
+			&& has_verison ">=sys-devel/lld-${v}"
+		then
+			return 0
+		fi
+	done
+	return 1
+}
+
 is_cfi_ready() {
 	for i in $(seq 12 14) ; do
 		if has_version "sys-devel/clang:${v}" \
@@ -248,7 +261,7 @@ append_all() {
 
 append_lto() {
 	filter-flags '-flto*' '-fuse-ld=*'
-	if tc-is-clang && is_clang_ready ; then
+	if tc-is-clang && is_lto_ready ; then
 		append-flags -flto=thin -fuse-ld=lld
 		append-ldflags -fuse-ld=lld -flto=thin
 	else
@@ -880,5 +893,44 @@ ewarn "https://clang.llvm.org/docs/ControlFlowIntegrity.html with"
 ewarn "\"statically linked\" keyword search."
 ewarn
 	fi
+
+	if ( use cfi || use cfi-cast || use cfi-icall || use cfi-vcall ) \
+		&& ! is_cfi_ready ; then
+ewarn
+ewarn "A circular depends was avoided, but you still need to re-emerge this"
+ewarn "package after LLVM for CFI support then rebuild all CFI dependants"
+ewarn "of this package."
+ewarn
+	fi
+
+	if use clang && ! is_clang_ready ; then
+ewarn
+ewarn "A circular depends was avoided, but you still need to re-emerge this"
+ewarn "package after LLVM."
+ewarn
+	fi
+
+	if use lto && ! is_lto_ready ; then
+ewarn
+ewarn "A circular depends was avoided, but you still need to re-emerge this"
+ewarn "package after LLVM for LTO support."
+ewarn
+	fi
+
+	if use shadowcallstack && ! is_scs_ready ; then
+ewarn
+ewarn "A circular depends was avoided, but you still need to re-emerge this"
+ewarn "package after LLVM for shadowcallstack support."
+ewarn
+	fi
+	if use static-libs &&
+		( ! is_cfi_ready || ! is_clang_ready || ! is_lto_ready \
+		|| ! is_scs_ready ) ; then
+ewarn
+ewarn "A circular depends was avoided, but you may need to re-emerge this"
+ewarn "package optimized/protected after emerging clang and then re-emerge"
+ewarn "dependencies that use this package's static-libs."
+ewarn
+	fi
 }
- 
+
