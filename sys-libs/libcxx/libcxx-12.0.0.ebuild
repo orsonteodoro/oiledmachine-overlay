@@ -247,18 +247,13 @@ _configure_abi() {
 		-DLIBCXX_USE_COMPILER_RT=${want_compiler_rt}
 		-DLIBCXX_HAS_ATOMIC_LIB=${want_gcc_s}
 		-DCMAKE_SHARED_LINKER_FLAGS="${extra_libs[*]} ${LDFLAGS}"
-		-DNOEXECSTACK=$(usex noexecstack)
 		-DLTO=$(usex lto)
+		-DNOEXECSTACK=$(usex noexecstack)
 	)
 
 	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
 		# Already done by hardened gcc
-		mycmakeargs+=(
-			-DCFI=OFF
-			-DFULL_RELRO=OFF
-			-DSHADOW_CALL_STACK=OFF
-			-DSSP=OFF
-		)
+		:;
 	else
 		mycmakeargs+=(
 			-DFULL_RELRO=$(usex full-relro)
@@ -276,11 +271,6 @@ _configure_abi() {
 					-DCFI_VCALL=$(usex cfi-vcall)
 				)
 			fi
-		else
-			mycmakeargs+=(
-				-DCFI=OFF
-				-DSHADOW_CALL_STACK=OFF
-			)
 		fi
 	fi
 	if [[ "${build_type}" == "static-libs" ]] ; then
