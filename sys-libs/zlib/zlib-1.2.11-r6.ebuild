@@ -43,6 +43,7 @@ REQUIRED_USE="
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
+	clang? ( lto )
 	pgo? ( || (
 		pgo-custom
 		pgo-trainer-minizip-binary-long
