@@ -71,7 +71,7 @@ REQUIRED_USE="
 "
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
-PDEPEND="pgo? ( app-arch/pigz )"
+PDEPEND="pgo? ( app-arch/pigz[${MULTILIB_USEDEP}] )"
 
 _seq() {
 	local min=${1}
