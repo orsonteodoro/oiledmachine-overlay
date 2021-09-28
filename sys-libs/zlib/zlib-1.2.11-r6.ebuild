@@ -576,16 +576,22 @@ _run_trainer_images_zlib() {
 			else
 				:; #einfo "Skipping ${f} which may not be a text file but a symlink"
 			fi
-			(( ${c} >= ${MINIZIP_PGO_MAX_FILES} )) && break
+			(( ${c} >= ${N} )) && break
 		done
 		rm -rf "${T}/sandbox-headers" || die
 	else
 		die "Missing at least one ${distdir}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp} folder for PGO training"
 	fi
 	einfo "zlib image compression/decompress training"
+
+	local L=1
+	if (( $(find "${T}/sandbox" -type f | wc -l) < "${N}" )) ; then
+		L=${N}
+	fi
+
 	for f in $(find "${T}/sandbox" -type f) ; do
 		# Due to limited assets combine and vary parameter inputs.
-		for i in $(seq ${N}) ; do
+		for i in $(seq ${L}) ; do
 			local cmd
 			cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
 			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
