@@ -134,6 +134,7 @@ gen_libcxx_depend() {
 RDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
 DEPEND+=" ${RDEPEND}"
 
+BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
 BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
 BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
@@ -321,7 +322,7 @@ configure_pgx() {
 		'-fprofile-generate*' \
 		'-fprofile-use*'
 
-	if use clang && ( use lto || use shadowcallstack ) ; then
+	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
 		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
 		AR=llvm-ar
