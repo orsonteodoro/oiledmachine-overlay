@@ -16,9 +16,6 @@
     <remote-id type="cpe">cpe:/a:gnu:zlib</remote-id>
   </upstream>
   <longdescription>
-    The zlib library is used in many situations such as
-    HTTP compression, file formats, etc.
-
     This ebuild fork introduces hardening flags and PGO.
 
     Only use the cfi* and pgo USE flags after the stage 3 or stage 4
@@ -28,6 +25,7 @@
     (1) emerge the zlib ebuild without pgo USE flag
     (2) emerge pigz
     (3) emerge with pgo USE flag and at least one trainer USE flag.
+        For web, the default compression levels are recommended.
 
     The pgo-custom USE flag can be extended for your particular
     typical use pattern.  For example, you may add a custom script
@@ -90,12 +88,36 @@ ${PORTAGE_DISTDIR}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
     <flag name="pgo-trainer-minizip-text-store">Run the PGO trainer against
       binary files for minizip only abridged training with with N=30 with
       store only archival</flag>
-    <flag name="pgo-trainer-zlib-binary">Run the PGO trainer against text
-      files for zlib only</flag>
-    <flag name="pgo-trainer-zlib-images">Run the PGO trainer against image
-      files for zlib only</flag>
-    <flag name="pgo-trainer-zlib-text">Run the PGO trainer against binary
-      files for zlib only</flag>
+    <flag name="pgo-trainer-zlib-binary-all">Run the PGO trainer against text
+      files for zlib only with all compression levels</flag>
+    <flag name="pgo-trainer-zlib-binary-default">Run the PGO trainer against text
+      files for zlib only with compression level 6</flag>
+    <flag name="pgo-trainer-zlib-binary-max">Run the PGO trainer against text
+      files for zlib only with compression level 9</flag>
+    <flag name="pgo-trainer-zlib-binary-min">Run the PGO trainer against text
+      files for zlib only with compression level 1</flag>
+    <flag name="pgo-trainer-zlib-binary-random">Run the PGO trainer against text
+      files for zlib only with random compression levels</flag>
+    <flag name="pgo-trainer-zlib-images-all">Run the PGO trainer against image
+      files for zlib only with all compression levels</flag>
+    <flag name="pgo-trainer-zlib-images-default">Run the PGO trainer against image
+      files for zlib only with compression level 6</flag>
+    <flag name="pgo-trainer-zlib-images-max">Run the PGO trainer against image
+      files for zlib only with compression level 9</flag>
+    <flag name="pgo-trainer-zlib-images-min">Run the PGO trainer against image
+      files for zlib only with compression level 1</flag>
+    <flag name="pgo-trainer-zlib-images-random">Run the PGO trainer against image
+      files for zlib only with random compression levels</flag>
+    <flag name="pgo-trainer-zlib-text-all">Run the PGO trainer against binary
+      files for zlib only with all compression levels</flag>
+    <flag name="pgo-trainer-zlib-text-default">Run the PGO trainer against binary
+      files for zlib only with compression level 6</flag>
+    <flag name="pgo-trainer-zlib-text-max">Run the PGO trainer against binary
+      files for zlib only with compression level 9</flag>
+    <flag name="pgo-trainer-zlib-text-min">Run the PGO trainer against binary
+      files for zlib only with compression level 1</flag>
+    <flag name="pgo-trainer-zlib-text-random">Run the PGO trainer against binary
+      files for zlib only with random compression levels</flag>
     <flag name="shadowcallstack">Enable backward edge protection (arm64
       only)</flag>
     <flag name="ssp">Build with stack smashing protection</flag>

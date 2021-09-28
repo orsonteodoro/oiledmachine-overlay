@@ -35,9 +35,21 @@ IUSE+="
 	pgo-trainer-minizip-text-max-compression
 	pgo-trainer-minizip-text-short
 	pgo-trainer-minizip-text-store
-	pgo-trainer-zlib-binary
-	pgo-trainer-zlib-images
-	pgo-trainer-zlib-text
+	pgo-trainer-zlib-binary-all
+	pgo-trainer-zlib-binary-default
+	pgo-trainer-zlib-binary-max
+	pgo-trainer-zlib-binary-min
+	pgo-trainer-zlib-binary-random
+	pgo-trainer-zlib-images-all
+	pgo-trainer-zlib-images-default
+	pgo-trainer-zlib-images-max
+	pgo-trainer-zlib-images-min
+	pgo-trainer-zlib-images-random
+	pgo-trainer-zlib-text-all
+	pgo-trainer-zlib-text-default
+	pgo-trainer-zlib-text-max
+	pgo-trainer-zlib-text-min
+	pgo-trainer-zlib-text-random
 "
 REQUIRED_USE="
 	cfi? ( clang lto static-libs )
@@ -54,14 +66,38 @@ REQUIRED_USE="
 		pgo-trainer-minizip-text-max-compression
 		pgo-trainer-minizip-text-short
 		pgo-trainer-minizip-text-store
-		pgo-trainer-zlib-binary
-		pgo-trainer-zlib-images
-		pgo-trainer-zlib-text
+		pgo-trainer-zlib-binary-all
+		pgo-trainer-zlib-binary-default
+		pgo-trainer-zlib-binary-max
+		pgo-trainer-zlib-binary-min
+		pgo-trainer-zlib-binary-random
+		pgo-trainer-zlib-images-all
+		pgo-trainer-zlib-images-default
+		pgo-trainer-zlib-images-max
+		pgo-trainer-zlib-images-min
+		pgo-trainer-zlib-images-random
+		pgo-trainer-zlib-text-all
+		pgo-trainer-zlib-text-default
+		pgo-trainer-zlib-text-max
+		pgo-trainer-zlib-text-min
+		pgo-trainer-zlib-text-random
 	) )
 	pgo-custom? ( pgo )
-	pgo-trainer-zlib-binary? ( pgo )
-	pgo-trainer-zlib-images? ( pgo )
-	pgo-trainer-zlib-text? ( pgo )
+	pgo-trainer-zlib-binary-all? ( pgo )
+	pgo-trainer-zlib-binary-default? ( pgo )
+	pgo-trainer-zlib-binary-max? ( pgo )
+	pgo-trainer-zlib-binary-min? ( pgo )
+	pgo-trainer-zlib-binary-random? ( pgo )
+	pgo-trainer-zlib-images-all? ( pgo )
+	pgo-trainer-zlib-images-default? ( pgo )
+	pgo-trainer-zlib-images-max? ( pgo )
+	pgo-trainer-zlib-images-min? ( pgo )
+	pgo-trainer-zlib-images-random? ( pgo )
+	pgo-trainer-zlib-text-all? ( pgo )
+	pgo-trainer-zlib-text-default? ( pgo )
+	pgo-trainer-zlib-text-max? ( pgo )
+	pgo-trainer-zlib-text-min? ( pgo )
+	pgo-trainer-zlib-text-random? ( pgo )
 	pgo-trainer-minizip-binary-long? ( pgo minizip )
 	pgo-trainer-minizip-binary-max-compression? ( pgo minizip )
 	pgo-trainer-minizip-binary-short? ( pgo minizip )
@@ -473,6 +509,7 @@ _build_pgx() {
 }
 
 _run_trainer_images_zlib() {
+	local mode="${1}"
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	( ! has_pgo_requirement ) && return
 	einfo "Running image compression PGO training for ${ABI} for zlib"
@@ -583,14 +620,22 @@ _run_trainer_images_zlib() {
 	else
 		die "Missing at least one ${distdir}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp} folder for PGO training"
 	fi
-	einfo "zlib image compression/decompress training"
 
-	local L=270 # Test all the levels 30 times (N=270 iterations, after that just do a random one)
+	einfo "zlib image compression/decompress all compression levels training for ${mode} compression level(s)"
+	local L=1
+	[[ "${mode}" == "all" ]] && L=270 # Increase the weight of the code paths related to compression levels
 	for f in $(find "${T}/sandbox" -type f) ; do
-		# Due to limited assets combine and vary parameter inputs.
 		for i in $(seq ${L}) ; do
 			local cmd
-			cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
+			if [[ "${mode}" == "all" || "${mode}" == "random" ]] ; then
+				cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
+			elif [[ "${mode}" == "default" ]] ; then
+				cmd=( "${PIGZEXE}" -z -6 "${f}" )
+			elif [[ "${mode}" == "max" ]] ; then
+				cmd=( "${PIGZEXE}" -z -9 "${f}" )
+			elif [[ "${mode}" == "min" ]] ; then
+				cmd=( "${PIGZEXE}" -z -1 "${f}" )
+			fi
 			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
 			"${cmd[@]}" || die
 
@@ -598,13 +643,14 @@ _run_trainer_images_zlib() {
 			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
 			"${cmd[@]}" || die
 		done
-		L=1
+		[[ "${mode}" == "all" ]] && break # do only once
 	done
 	#einfo "Clearing sandbox"
 	rm -rf "${T}/sandbox" || die
 }
 
 _run_trainer_text_zlib() {
+	local mode="${1}"
 	( ! has_pgo_requirement ) && return
 	einfo "Running text compression PGO training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
@@ -645,17 +691,29 @@ _run_trainer_text_zlib() {
 	else
 		die "Missing /usr/include/linux or /usr/lib/gcc/${CHOST}/$(gcc-version).0/include for PGO training"
 	fi
-	einfo "zlib text compression training"
+	einfo "zlib text compression/decompression training for ${mode} compression level(s)"
+	local L=1
+	[[ "${mode}" == "all" ]] && L=270
 	for f in $(find "${T}/sandbox" -type f) ; do
-		local cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
-		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
-		"${cmd[@]}" || die
-	done
-	einfo "zlib text decompression training"
-	for f in $(find "${T}/sandbox" -type f) ; do
-		local cmd=( "${PIGZEXE}" -d "${f}" )
-		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
-		"${cmd[@]}" || die
+		for i in ${L} ; do
+			local cmd
+			if [[ "${mode}" == "all" || "${mode}" == "random" ]] ; then
+				cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
+			elif [[ "${mode}" == "default" ]] ; then
+				cmd=( "${PIGZEXE}" -z -6 "${f}" )
+			elif [[ "${mode}" == "max" ]] ; then
+				cmd=( "${PIGZEXE}" -z -9 "${f}" )
+			elif [[ "${mode}" == "min" ]] ; then
+				cmd=( "${PIGZEXE}" -z -1 "${f}" )
+			fi
+			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+			"${cmd[@]}" || die
+
+			cmd=( "${PIGZEXE}" -d "${f}" )
+			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+			"${cmd[@]}" || die
+		done
+		[[ "${mode}" == "all" ]] && break # once only
 	done
 	#einfo "Clearing sandbox"
 	rm -rf "${T}/sandbox" || die
@@ -733,6 +791,7 @@ _run_trainer_text_minizip() {
 }
 
 _run_trainer_binary_zlib() {
+	local mode="${1}"
 	( ! has_pgo_requirement ) && return
 	einfo "Running binary compression PGO training for ${ABI} for zlib"
 	if multilib_is_native_abi ; then
@@ -765,17 +824,29 @@ _run_trainer_binary_zlib() {
 		fi
 		(( ${c} >= 270 )) && break # 30 * 9 compression levels
 	done
-	einfo "zlib binary compression training"
+	einfo "zlib binary compression/decompression training for ${mode} compression level(s)"
+	local L=1
+	[[ "${mode}" == "all" ]] && L=270
 	for f in $(find "${T}/sandbox" -type f) ; do
-		local cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
-		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
-		"${cmd[@]}" || die
-	done
-	einfo "zlib binary decompression training"
-	for f in $(find "${T}/sandbox" -type f) ; do
-		local cmd=( "${PIGZEXE}" -d "${f}" )
-		einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
-		"${cmd[@]}" || die
+		for i in $(seq ${L}) ; do
+			local cmd
+			if [[ "${mode}" == "all" || "${mode}" == "random" ]] ; then
+				cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
+			elif [[ "${mode}" == "default" ]] ; then
+				cmd=( "${PIGZEXE}" -z -6 "${f}" )
+			elif [[ "${mode}" == "max" ]] ; then
+				cmd=( "${PIGZEXE}" -z -9 "${f}" )
+			elif [[ "${mode}" == "min" ]] ; then
+				cmd=( "${PIGZEXE}" -z -1 "${f}" )
+			fi
+			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+			"${cmd[@]}" || die
+
+			cmd=( "${PIGZEXE}" -d "${f}" )
+			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+			"${cmd[@]}" || die
+		done
+		[[ "${mode}" == "all" ]] && break
 	done
 	#einfo "Clearing sandbox"
 	rm -rf "${T}/sandbox" || die
@@ -851,14 +922,50 @@ _run_trainer_custom() {
 _run_trainers() {
 	export PATH="${S}/contrib/minizip:${PATH_orig}"
 	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
-	if use pgo-trainer-zlib-binary ; then
-		_run_trainer_binary_zlib
+	if use pgo-trainer-zlib-binary-all ; then
+		_run_trainer_binary_zlib "all"
 	fi
-	if use pgo-trainer-zlib-images ; then
-		_run_trainer_images_zlib
+	if use pgo-trainer-zlib-binary-default ; then
+		_run_trainer_binary_zlib "default"
 	fi
-	if use pgo-trainer-zlib-text ; then
-		_run_trainer_text_zlib
+	if use pgo-trainer-zlib-binary-max ; then
+		_run_trainer_binary_zlib "max"
+	fi
+	if use pgo-trainer-zlib-binary-min ; then
+		_run_trainer_binary_zlib "min"
+	fi
+	if use pgo-trainer-zlib-binary-random ; then
+		_run_trainer_binary_zlib "random"
+	fi
+	if use pgo-trainer-zlib-images-all ; then
+		_run_trainer_images_zlib "all"
+	fi
+	if use pgo-trainer-zlib-images-default ; then
+		_run_trainer_images_zlib "default"
+	fi
+	if use pgo-trainer-zlib-images-max ; then
+		_run_trainer_images_zlib "max"
+	fi
+	if use pgo-trainer-zlib-images-min ; then
+		_run_trainer_images_zlib "min"
+	fi
+	if use pgo-trainer-zlib-images-random ; then
+		_run_trainer_images_zlib "random"
+	fi
+	if use pgo-trainer-zlib-text-all ; then
+		_run_trainer_text_zlib "all"
+	fi
+	if use pgo-trainer-zlib-text-default ; then
+		_run_trainer_text_zlib "default"
+	fi
+	if use pgo-trainer-zlib-text-max ; then
+		_run_trainer_text_zlib "max"
+	fi
+	if use pgo-trainer-zlib-text-min ; then
+		_run_trainer_text_zlib "min"
+	fi
+	if use pgo-trainer-zlib-text-random ; then
+		_run_trainer_text_zlib "random"
 	fi
 	if use pgo-trainer-minizip-binary-long ; then
 		local N=${MINIZIP_PGO_LONG_N_ITERATIONS:=300}
