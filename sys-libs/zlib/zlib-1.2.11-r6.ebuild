@@ -486,6 +486,7 @@ _run_trainer_images_zlib() {
 	mkdir -p "${T}/sandbox" || die
 	cd "${T}/sandbox" || die
 	local N=270 # 30 * 9 compression levels
+	local MAX_FILES_IN_ARCHIVE=${MINIZIP_PGO_MAX_FILES:=500} # arbitrary
 
 	has_image_folder() {
 		if [[ -d "${distdir}/pgo/assets/avif" ]] ; then
@@ -576,7 +577,7 @@ _run_trainer_images_zlib() {
 			else
 				:; #einfo "Skipping ${f} which may not be a text file but a symlink"
 			fi
-			(( ${c} >= ${N} )) && break
+			(( ${c} >= ${MAX_FILES_IN_ARCHIVE} )) && break
 		done
 		rm -rf "${T}/sandbox-headers" || die
 	else
@@ -584,12 +585,7 @@ _run_trainer_images_zlib() {
 	fi
 	einfo "zlib image compression/decompress training"
 
-	local L=1
-	if (( $(find "${T}/sandbox" -type f | wc -l) < $((${N}/2)) )) ; then
-		# Don't do 2*N iterations (work) if approaching 90% of N assets discovered.
-		L=${N}
-	fi
-
+	local L=270 # Test all the levels 30 times (N=270 iterations, after that just do a random one)
 	for f in $(find "${T}/sandbox" -type f) ; do
 		# Due to limited assets combine and vary parameter inputs.
 		for i in $(seq ${L}) ; do
@@ -602,6 +598,7 @@ _run_trainer_images_zlib() {
 			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
 			"${cmd[@]}" || die
 		done
+		L=1
 	done
 	#einfo "Clearing sandbox"
 	rm -rf "${T}/sandbox" || die
