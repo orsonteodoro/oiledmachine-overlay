@@ -584,10 +584,9 @@ _run_trainer_images_zlib() {
 	fi
 	einfo "zlib image compression/decompress training"
 	for f in $(find "${T}/sandbox" -type f) ; do
-		# due to limited
-		local cmd
-
+		# Due to limited assets combine and vary parameter inputs.
 		for i in $(seq ${N}) ; do
+			local cmd
 			cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
 			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
 			"${cmd[@]}" || die
