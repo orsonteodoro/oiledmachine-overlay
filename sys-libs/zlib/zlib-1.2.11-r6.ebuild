@@ -221,7 +221,7 @@ _configure_pgx() {
 		&& grep -q -e "^clean:" contrib/minizip/Makefile \
 		&& emake clean -C contrib/minizip
 	cd "${BUILD_DIR}" || die
-	if use clang && ( use lto || use shadowcallstack ) ; then
+	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
 		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
 		AR=llvm-ar
