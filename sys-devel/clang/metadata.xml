@@ -46,7 +46,7 @@
 
     Default ON patch status:
     testing -- _FORITIFY_SOURCE=2
-    testing --  -fstack-clash-protection
+    testing --  -fstack-clash-protection (x86/x86_64 only)
     testing --  -fstack-protector-strong with --param=ssp-buffer-size=4
     testing -- -Wl,relro -Wl,now
 
