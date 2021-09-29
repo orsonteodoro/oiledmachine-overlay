@@ -735,13 +735,15 @@ _run_trainer_images_zlib() {
 				rm "${T}/sandbox/tmp.bmp" || die
 			fi
 			local o1="${T}/sandbox/temp.bmp"
-			local o2="${T}/sandbox/temp.jpg"
+			local o2=""
 			local msg1=""
+			local cmd2=""
 			if which gm 2>/dev/null 1>/dev/null \
 				&& has_version "media-gfx/graphicsmagick[png,zlib]" \
 				&& [[ "${f,,}" =~ png$ ]] ; then
 				cmd1=( gm convert "${f}" "${o1}" )
 				cmd2=( gm convert "${o1}" -quality ${quality}0 "${o2}" )
+				o2="${T}/sandbox/temp.png"
 				has_zlib_image_format=1
 			elif which magick 2>/dev/null 1>/dev/null \
 				&& has_version "media-gfx/imagemagick[png,zlib]" \
@@ -749,6 +751,7 @@ _run_trainer_images_zlib() {
 				o="${T}/sandbox/temp.bmp"
 				cmd1=( magick convert "${f}" "${o1}" )
 				cmd2=( magick convert "${o1}" -quality ${quality}0 "${o2}" )
+				o2="${T}/sandbox/temp.png"
 				has_zlib_image_format=1
 
 			elif which gm 2>/dev/null 1>/dev/null \
@@ -758,6 +761,7 @@ _run_trainer_images_zlib() {
 				o="${T}/sandbox/temp.bmp"
 				cmd1=( gm convert "${f}" "${o1}" )
 				cmd2=( gm convert "${o1}" -quality ${quality}0 "${o2}" )
+				o2="${T}/sandbox/temp.tiff"
 				has_zlib_image_format=1
 			elif which magick 2>/dev/null 1>/dev/null \
 				&& has_version "media-gfx/imagemagick[tiff,zlib]" \
@@ -766,10 +770,11 @@ _run_trainer_images_zlib() {
 				o="${T}/sandbox/temp.bmp"
 				cmd1=( magick convert "${f}" "${o1}" )
 				cmd2=( magick convert "${o1}" -quality ${quality}0 "${o2}" )
+				o2="${T}/sandbox/temp.tiff"
 				has_zlib_image_format=1
 			fi
 
-			if (( ${has_zlib_image_format} == 1 )) ; then
+			if multilib_is_native_abi && (( ${has_zlib_image_format} == 1 )) ; then
 				einfo "Compressing/decompressing zlib image formats -> bitmap -> zlib compressed"
 				einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
 				"${cmd1[@]}" || die
@@ -780,6 +785,11 @@ _run_trainer_images_zlib() {
 				# Remove temporary files
 				rm -rf "${o1}" || die
 				rm -rf "${o2}" || die
+			elif (( ${has_zlib_image_format} == 1 )) ; then
+				einfo
+				einfo "Profiling skipped with libpng/tiff for non-native ABI because"
+				einfo "of unpackaged ${ABI} image converter"
+				einfo
 			fi
 		done
 		[[ "${mode}" == "all" ]] && break # do only once
