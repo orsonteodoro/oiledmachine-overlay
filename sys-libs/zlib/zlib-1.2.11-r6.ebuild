@@ -110,7 +110,15 @@ REQUIRED_USE="
 "
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
-PDEPEND="pgo? ( app-arch/pigz[${MULTILIB_USEDEP}] )"
+PDEPEND="
+	pgo? (
+		app-arch/pigz[${MULTILIB_USEDEP}]
+		|| (
+			media-gfx/graphicsmagick
+			media-gfx/imagemagick
+		)
+	)
+"
 
 _seq() {
 	local min=${1}
@@ -255,6 +263,75 @@ is_scs_ready() {
 		fi
 	done
 	return 1
+}
+
+check_img_converter() {
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	has_image_folder() {
+		if [[ -d "${distdir}/pgo/assets/png" ]] ; then
+			return 0
+		fi
+		return 1
+	}
+
+	local png=0
+	local tiff=0
+	if has_image_folder ; then
+		local c=0
+
+		local search_path=()
+		if [[ -d "${distdir}/pgo/assets/png" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/png" )
+		fi
+		if [[ -d "${distdir}/pgo/assets/tiff" ]] ; then
+			search_path+=( "${distdir}/pgo/assets/tiff" )
+		fi
+
+		for f in $(find ${search_path} -type f \
+			-iname "*.png" \
+			-o -iname "*.tiff" \
+			) ; do
+			if [[ "${f,,}" =~ png$ ]] ; then
+				png=0
+			elif [[ "${f,,}" =~ tiff$ ]] ; then
+				jpeg=0
+			fi
+		done
+
+		# For zlib image formats
+		if (( ${png} == 1 )) ; then
+			if has_version "media-gfx/graphicsmagick[png]" ; then
+				:;
+			elif has_version "media-gfx/imagemagick[png]" ; then
+				:;
+			else
+				ewarn
+				ewarn "You need at least one of media-gfx/graphicsmagick[png] or"
+				ewarn "media-gfx/imagemagick[png] for proper compression profiling"
+				ewarn
+			fi
+		fi
+		if (( ${tiff} == 1 )) && has_version "media-libs/tiff[zlib]" ; then
+			if has_version "media-gfx/graphicsmagick[tiff,zlib]" ; then
+				:;
+			elif has_version "media-gfx/imagemagick[tiff,zlib]" ; then
+				:;
+			else
+				ewarn
+				ewarn "You need at least one of media-gfx/graphicsmagick[tiff,zlib] or"
+				ewarn "media-gfx/imagemagick[tiff,zlib] for proper compression profiling"
+				ewarn
+			fi
+		fi
+	fi
+}
+
+pkg_setup() {
+	echo "USE=${USE}"
+	die
+	if [[ "${IUSE}" =~ "pgo-trainer-zlib-images-" ]] ; then
+		check_img_converter
+	fi
 }
 
 src_prepare() {
@@ -638,12 +715,77 @@ _run_trainer_images_zlib() {
 			elif [[ "${mode}" == "min" ]] ; then
 				cmd=( "${PIGZEXE}" -z -1 "${f}" )
 			fi
+
+			einfo "Compressing/decompressing image as is"
 			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
 			"${cmd[@]}" || die
-
 			cmd=( "${PIGZEXE}" -d "${f}" )
 			einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
 			"${cmd[@]}" || die
+
+			einfo "Compressing/decompressing zlib image formats -> bitmap -> zlib compressed"
+			# Convert the image as uncompressed bitmap, then optimize with compression
+			local bmp_ready=0
+			if [[ -e "${T}/sandbox/tmp.bmp" ]] ; then
+				rm "${T}/sandbox/tmp.bmp" || die
+			fi
+			local o=""
+			if which gm 2>/dev/null 1>/dev/null \
+				&& has_version "media-gfx/graphicsmagick[png]" \
+				&& [[ "${f,,}" =~ png$ ]] ; then
+				o="${T}/sandbox/temp.bmp"
+				einfo "Converting image uncompressed png -> bmp"
+				gm convert "${f}" "${o}" || die
+				bmp_ready=1
+			elif which magick 2>/dev/null 1>/dev/null \
+				&& has_version "media-gfx/imagemagick[png]" \
+				&& [[ "${f,,}" =~ png$ ]]; then
+				o="${T}/sandbox/temp.bmp"
+				einfo "Converting image uncompressed png -> bmp"
+				magick convert "${f}" "${o}" || die
+				bmp_ready=1
+
+			elif which gm 2>/dev/null 1>/dev/null \
+				&& has_version "media-gfx/graphicsmagick[tiff,zlib]" \
+				&& [[ "${f,,}" =~ tiff$ ]] \
+				&& has_version "media-libs/tiff[zlib]" ; then
+				o="${T}/sandbox/temp.bmp"
+				einfo "Converting image uncompressed tiff -> bmp"
+				gm convert "${f}" "${o}" || die
+				bmp_ready=1
+			elif which magick 2>/dev/null 1>/dev/null \
+				&& has_version "media-gfx/imagemagick[tiff,zlib]" \
+				&& [[ "${f,,}" =~ tiff$ ]] \
+				&& has_version "media-libs/tiff[zlib]" ; then
+				o="${T}/sandbox/temp.bmp"
+				einfo "Converting image uncompressed tiff -> bmp"
+				magick convert "${f}" "${o}" || die
+				bmp_ready=1
+			fi
+
+			if (( ${bmp_ready} == 1 )) ; then
+				if [[ "${mode}" == "all" || "${mode}" == "random" ]] ; then
+					cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${o}" )
+				elif [[ "${mode}" == "default" ]] ; then
+					cmd=( "${PIGZEXE}" -z -6 "${o}" )
+				elif [[ "${mode}" == "level-8" ]] ; then
+					cmd=( "${PIGZEXE}" -z -8 "${o}" )
+				elif [[ "${mode}" == "max" ]] ; then
+					cmd=( "${PIGZEXE}" -z -9 "${o}" )
+				elif [[ "${mode}" == "min" ]] ; then
+					cmd=( "${PIGZEXE}" -z -1 "${o}" )
+				fi
+
+				einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+				"${cmd[@]}" || die
+
+				cmd=( "${PIGZEXE}" -d "${f}" )
+				einfo "Running: PATH=\"${PATH}\" LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\" ${cmd[@]}"
+				"${cmd[@]}" || die
+
+				# Remove temporary bmp
+				rm -rf "${o}" || die
+			fi
 		done
 		[[ "${mode}" == "all" ]] && break # do only once
 	done
