@@ -631,6 +631,8 @@ _run_trainer_images_zlib() {
 				cmd=( "${PIGZEXE}" -z -$(($((${RANDOM} % 9)) + 1)) "${f}" )
 			elif [[ "${mode}" == "default" ]] ; then
 				cmd=( "${PIGZEXE}" -z -6 "${f}" )
+			elif [[ "${mode}" == "level-8" ]] ; then
+				cmd=( "${PIGZEXE}" -z -8 "${f}" )
 			elif [[ "${mode}" == "max" ]] ; then
 				cmd=( "${PIGZEXE}" -z -9 "${f}" )
 			elif [[ "${mode}" == "min" ]] ; then
@@ -942,6 +944,9 @@ _run_trainers() {
 	fi
 	if use pgo-trainer-zlib-images-default ; then
 		_run_trainer_images_zlib "default"
+	fi
+	if use pgo-trainer-zlib-images-level-8 ; then
+		_run_trainer_images_zlib "level-8"
 	fi
 	if use pgo-trainer-zlib-images-max ; then
 		_run_trainer_images_zlib "max"

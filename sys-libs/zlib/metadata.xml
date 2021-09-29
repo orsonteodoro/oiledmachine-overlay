@@ -25,7 +25,9 @@
     (1) emerge the zlib ebuild without pgo USE flag
     (2) emerge pigz
     (3) emerge with pgo USE flag and at least one trainer USE flag.
-        For web, the default compression levels are recommended.
+        For web, the default compression levels are recommended.  Also,
+        consider 8 and max for image compression if using png often
+        used on the web.
 
     The pgo-custom USE flag can be extended for your particular
     typical use pattern.  For example, you may add a custom script
@@ -103,7 +105,11 @@ ${PORTAGE_DISTDIR}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
     <flag name="pgo-trainer-zlib-images-default">Run the PGO trainer against image
       files for zlib only with compression level 6</flag>
     <flag name="pgo-trainer-zlib-images-max">Run the PGO trainer against image
-      files for zlib only with compression level 9</flag>
+      files for zlib only with compression level 9, which is also used
+      by libpng as the default for saving</flag>
+    <flag name="pgo-trainer-zlib-images-level-8">Run the PGO trainer against
+      image files for zlib only with compression level 8, used for memory
+      compression in libpng</flag>
     <flag name="pgo-trainer-zlib-images-min">Run the PGO trainer against image
       files for zlib only with compression level 1</flag>
     <flag name="pgo-trainer-zlib-images-random">Run the PGO trainer against image
