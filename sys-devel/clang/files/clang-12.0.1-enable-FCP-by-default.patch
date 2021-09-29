@@ -1,0 +1,16 @@
+# oteodoro changes:
+# Patch status:  testing
+# Changes -fstack-clash-protection from default off to default on
+# For use for the distro's hardened profile
+diff -urp clang.orig/include/clang/Basic/CodeGenOptions.def clang/include/clang/Basic/CodeGenOptions.def
+--- clang.orig/include/clang/Basic/CodeGenOptions.def	2021-06-28 09:23:38.000000000 -0700
++++ clang/include/clang/Basic/CodeGenOptions.def	2021-09-28 17:00:24.159046196 -0700
+@@ -164,7 +164,7 @@ CODEGENOPT(NoWarn            , 1, 0) ///
+ CODEGENOPT(EnableSegmentedStacks , 1, 0) ///< Set when -fsplit-stack is enabled.
+ CODEGENOPT(NoInlineLineTables, 1, 0) ///< Whether debug info should contain
+                                      ///< inline line tables.
+-CODEGENOPT(StackClashProtector, 1, 0) ///< Set when -fstack-clash-protection is enabled.
++CODEGENOPT(StackClashProtector, 1, 1) ///< Set when -fstack-clash-protection is enabled.	// oteodoro:  Changed to default on for the hardened profile
+ CODEGENOPT(NoImplicitFloat   , 1, 0) ///< Set when -mno-implicit-float is enabled.
+ CODEGENOPT(NullPointerIsValid , 1, 0) ///< Assume Null pointer deference is defined.
+ CODEGENOPT(CorrectlyRoundedDivSqrt, 1, 0) ///< -cl-fp32-correctly-rounded-divide-sqrt

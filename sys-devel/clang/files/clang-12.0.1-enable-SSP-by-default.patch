@@ -1,0 +1,67 @@
+From 6878f5376dec0a3d75674d5a2076d4af911f7c7c Mon Sep 17 00:00:00 2001
+From: Evangelos Foutras <evangelos@foutrelis.com>
+Date: Wed, 12 May 2021 08:55:14 +0300
+Subject: [PATCH] Enable SSP and PIE by default
+
+This is a minimal set of changes needed to make clang use SSP and PIE by
+default on Arch Linux. Tests that were easy to adjust have been changed
+accordingly; only test/Driver/linux-ld.c has been marked as "expected
+failure" due to the number of changes it would require (mostly replacing
+crtbegin.o with crtbeginS.o).
+
+Doing so is needed in order to align clang with the new default GCC
+behavior in Arch which generates PIE executables by default and also
+defaults to -fstack-protector-strong. It is not meant to be a long term
+solution, but a simple temporary fix.
+
+Hopefully these changes will be obsoleted by the introduction upstream
+of a compile-time option (https://bugs.llvm.org/show_bug.cgi?id=13410)
+---
+ clang/lib/Driver/ToolChains/Linux.cpp     | 10 ++++++++--
+ clang/lib/Driver/ToolChains/Linux.h       |  5 +++++
+ clang/test/Driver/cross-linux.c           | 16 ++++++++--------
+ clang/test/Driver/env.c                   |  2 +-
+ clang/test/Driver/fsanitize.c             | 14 +++++++-------
+ clang/test/Driver/gcc-toolchain.cpp       |  2 +-
+ clang/test/Driver/hexagon-toolchain-elf.c |  2 +-
+ clang/test/Driver/hip-fpie-option.hip     |  4 ++--
+ clang/test/Driver/linux-as.c              |  4 ++--
+ clang/test/Driver/linux-ld.c              |  2 ++
+ clang/test/Driver/ppc-abi.c               | 18 +++++++++++-------
+ clang/test/Driver/riscv32-toolchain.c     |  4 ++--
+ clang/test/Driver/riscv64-toolchain.c     |  4 ++--
+ clang/test/Driver/stack-protector.c       |  4 ++--
+ 14 files changed, 54 insertions(+), 37 deletions(-)
+
+---
+
+# oteodoro changes:
+# Patch changes: modifed paths for the ebuilds working directory
+# Patch obtained from arch linux (https://github.com/archlinux/svntogit-packages/tree/packages/clang/trunk)
+# Split and kept only SSP (-fstack-protector-strong) on default changes.
+# Removed tests because they are broken.  May re-add and fix them.
+# Added comments for license compliance.
+
+diff --git a/lib/Driver/ToolChains/Linux.h b/lib/Driver/ToolChains/Linux.h
+index 6b16b0e64990..04c4d176ca71 100644
+--- a/lib/Driver/ToolChains/Linux.h
++++ b/lib/Driver/ToolChains/Linux.h
+@@ -10,6 +10,7 @@
+ #define LLVM_CLANG_LIB_DRIVER_TOOLCHAINS_LINUX_H
+ 
+ #include "Gnu.h"
++#include "clang/Basic/LangOptions.h"						// Added by Foutras for SSP default ON
+ #include "clang/Driver/ToolChain.h"
+ 
+ namespace clang {
+@@ -39,6 +40,10 @@ public:
+   bool isPIEDefault() const override;
+   bool isNoExecStackDefault() const override;
+   bool IsMathErrnoDefault() const override;
++  LangOptions::StackProtectorMode						// Added by Foutras for SSP default ON
++  GetDefaultStackProtectorLevel(bool KernelOrKext) const override {		// Added by Foutras
++    return LangOptions::SSPStrong;						// Added by Foutras
++  }
+   SanitizerMask getSupportedSanitizers() const override;
+   void addProfileRTLibs(const llvm::opt::ArgList &Args,
+                         llvm::opt::ArgStringList &CmdArgs) const override;

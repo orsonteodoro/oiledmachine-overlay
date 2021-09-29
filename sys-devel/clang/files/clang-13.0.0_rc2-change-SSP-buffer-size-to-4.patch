@@ -1,0 +1,37 @@
+# oteodoro changes:
+# Patch status:  testing
+# For use for the distro's hardened profile
+diff -urp clang.orig/include/clang/Basic/CodeGenOptions.def clang/include/clang/Basic/CodeGenOptions.def
+--- clang.orig/include/clang/Basic/CodeGenOptions.def	2021-08-26 11:45:39.000000000 -0700
++++ clang/include/clang/Basic/CodeGenOptions.def	2021-09-28 18:57:07.604934085 -0700
+@@ -338,7 +338,7 @@ VALUE_CODEGENOPT(NumRegisterParameters,
+ VALUE_CODEGENOPT(SmallDataLimit, 32, 0)
+ 
+ /// The lower bound for a buffer to be considered for stack protection.
+-VALUE_CODEGENOPT(SSPBufferSize, 32, 0)
++VALUE_CODEGENOPT(SSPBufferSize, 32, 4)								// Changed by oteodoro for hardened SSP feature parity
+ 
+ /// The kind of generated debug info.
+ ENUM_CODEGENOPT(DebugInfo, codegenoptions::DebugInfoKind, 4, codegenoptions::NoDebugInfo)
+Only in clang/include/clang/Basic: CodeGenOptions.def.orig
+diff -urp clang.orig/include/clang/Driver/Options.td clang/include/clang/Driver/Options.td
+--- clang.orig/include/clang/Driver/Options.td	2021-09-28 18:56:36.964934575 -0700
++++ clang/include/clang/Driver/Options.td	2021-09-28 18:57:39.541933573 -0700
+@@ -2512,7 +2512,7 @@ def fstack_protector : Flag<["-"], "fsta
+   HelpText<"Enable stack protectors for some functions vulnerable to stack smashing. "
+            "This uses a loose heuristic which considers functions vulnerable if they "
+            "contain a char (or 8bit integer) array or constant sized calls to alloca "
+-           ", which are of greater size than ssp-buffer-size (default: 8 bytes). All "
++           ", which are of greater size than ssp-buffer-size (default: 4 bytes). All "		// Changed by oteodoro
+            "variable sized calls to alloca are considered vulnerable. A function with "
+            "a stack protector has a guard value added to the stack frame that is "
+            "checked on function exit. The guard value must be positioned in the "
+@@ -5560,7 +5560,7 @@ def stack_protector : Separate<["-"], "s
+   MarshallingInfoEnum<LangOpts<"StackProtector">, "SSPStrong">;		// Changed by oteodoro
+ def stack_protector_buffer_size : Separate<["-"], "stack-protector-buffer-size">,
+   HelpText<"Lower bound for a buffer to be considered for stack protection">,
+-  MarshallingInfoInt<CodeGenOpts<"SSPBufferSize">, "8">;
++  MarshallingInfoInt<CodeGenOpts<"SSPBufferSize">, "4">;					// Changed by oteodoro
+ def fvisibility : Separate<["-"], "fvisibility">,
+   HelpText<"Default type and symbol visibility">,
+   MarshallingInfoVisibility<LangOpts<"ValueVisibilityMode">, "DefaultVisibility">,

@@ -1,0 +1,27 @@
+# oteodoro changes:
+# Patch status:  testing
+# For use for the distro's hardened profile
+diff -urp clang.orig/include/clang/Basic/CodeGenOptions.def clang/include/clang/Basic/CodeGenOptions.def
+--- clang.orig/include/clang/Basic/CodeGenOptions.def	2021-02-03 13:51:10.000000000 -0800
++++ clang/include/clang/Basic/CodeGenOptions.def	2021-09-28 18:47:34.898943252 -0700
+@@ -310,7 +310,7 @@ VALUE_CODEGENOPT(NumRegisterParameters,
+ VALUE_CODEGENOPT(SmallDataLimit, 32, 0)
+ 
+ /// The lower bound for a buffer to be considered for stack protection.
+-VALUE_CODEGENOPT(SSPBufferSize, 32, 0)
++VALUE_CODEGENOPT(SSPBufferSize, 32, 4)									// Changed by oteodoro to match hardened profile feature parity
+ 
+ /// The kind of generated debug info.
+ ENUM_CODEGENOPT(DebugInfo, codegenoptions::DebugInfoKind, 3, codegenoptions::NoDebugInfo)
+diff -urp clang.orig/include/clang/Driver/Options.td clang/include/clang/Driver/Options.td
+--- clang.orig/include/clang/Driver/Options.td	2021-02-03 13:51:10.000000000 -0800
++++ clang/include/clang/Driver/Options.td	2021-09-28 18:47:56.947942899 -0700
+@@ -1791,7 +1791,7 @@ def fstack_protector : Flag<["-"], "fsta
+   HelpText<"Enable stack protectors for some functions vulnerable to stack smashing. "
+            "This uses a loose heuristic which considers functions vulnerable "
+            "if they contain a char (or 8bit integer) array or constant sized calls to "
+-           "alloca, which are of greater size than ssp-buffer-size (default: 8 bytes). "
++           "alloca, which are of greater size than ssp-buffer-size (default: 4 bytes). "		// Changed by oteodoro
+            "All variable sized calls to alloca are considered vulnerable">;
+ def ftrivial_auto_var_init : Joined<["-"], "ftrivial-auto-var-init=">, Group<f_Group>,
+   Flags<[CC1Option, CoreOption]>, HelpText<"Initialize trivial automatic stack variables: uninitialized (default)"

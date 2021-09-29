@@ -1,0 +1,65 @@
+From 6878f5376dec0a3d75674d5a2076d4af911f7c7c Mon Sep 17 00:00:00 2001
+From: Evangelos Foutras <evangelos@foutrelis.com>
+Date: Wed, 12 May 2021 08:55:14 +0300
+Subject: [PATCH] Enable SSP and PIE by default
+
+This is a minimal set of changes needed to make clang use SSP and PIE by
+default on Arch Linux. Tests that were easy to adjust have been changed
+accordingly; only test/Driver/linux-ld.c has been marked as "expected
+failure" due to the number of changes it would require (mostly replacing
+crtbegin.o with crtbeginS.o).
+
+Doing so is needed in order to align clang with the new default GCC
+behavior in Arch which generates PIE executables by default and also
+defaults to -fstack-protector-strong. It is not meant to be a long term
+solution, but a simple temporary fix.
+
+Hopefully these changes will be obsoleted by the introduction upstream
+of a compile-time option (https://bugs.llvm.org/show_bug.cgi?id=13410)
+---
+ clang/lib/Driver/ToolChains/Linux.cpp     | 10 ++++++++--
+ clang/lib/Driver/ToolChains/Linux.h       |  5 +++++
+ clang/test/Driver/cross-linux.c           | 16 ++++++++--------
+ clang/test/Driver/env.c                   |  2 +-
+ clang/test/Driver/fsanitize.c             | 14 +++++++-------
+ clang/test/Driver/gcc-toolchain.cpp       |  2 +-
+ clang/test/Driver/hexagon-toolchain-elf.c |  2 +-
+ clang/test/Driver/hip-fpie-option.hip     |  4 ++--
+ clang/test/Driver/linux-as.c              |  4 ++--
+ clang/test/Driver/linux-ld.c              |  2 ++
+ clang/test/Driver/ppc-abi.c               | 18 +++++++++++-------
+ clang/test/Driver/riscv32-toolchain.c     |  4 ++--
+ clang/test/Driver/riscv64-toolchain.c     |  4 ++--
+ clang/test/Driver/stack-protector.c       |  4 ++--
+ 14 files changed, 54 insertions(+), 37 deletions(-)
+
+---
+
+oteodoro changes:
+Patch changes: modifed paths for the ebuilds working directory
+Patch obtained from arch linux (https://github.com/archlinux/svntogit-packages/tree/packages/clang/trunk)
+Split and kept only PIE on default changes.
+Removed tests because they are broken.  May re-add and fix them.
+Added comments for license compliance.
+
+diff --git a/lib/Driver/ToolChains/Linux.cpp b/lib/Driver/ToolChains/Linux.cpp
+index 9663a7390ada..2f8d01092557 100644
+--- a/lib/Driver/ToolChains/Linux.cpp
++++ b/lib/Driver/ToolChains/Linux.cpp
+@@ -832,8 +832,14 @@ void Linux::AddIAMCUIncludeArgs(const ArgList &DriverArgs,
+ }
+ 
+ bool Linux::isPIEDefault() const {
+-  return (getTriple().isAndroid() && !getTriple().isAndroidVersionLT(16)) ||
+-          getTriple().isMusl() || getSanitizerArgs().requiresPIE();
++  const bool IsMips = getTriple().isMIPS();						// Added by Foutras for PIE default ON
++  const bool IsAndroid = getTriple().isAndroid();					// Added by Foutras
++											// Added by Foutras
++  if (IsMips || IsAndroid)								// Added by Foutras
++    return (getTriple().isAndroid() && !getTriple().isAndroidVersionLT(16)) ||		// Moved by Foutras
++            getTriple().isMusl() || getSanitizerArgs().requiresPIE();			// Moved by Foutras
++											// Added by Foutras
++  return true;										// Added/Changed by Foutras
+ }
+ 
+ bool Linux::isNoExecStackDefault() const {
