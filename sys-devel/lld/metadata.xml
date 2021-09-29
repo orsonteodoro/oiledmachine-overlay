@@ -13,6 +13,13 @@
   <longdescription>
     This ebuild fork enables Full RELRO ON by default.  This is to match the
     same RELRO level of the binutils counterpart.
+
+    eclass/ebuild creators can check the -v to determine if the linker meets the
+    required default RELRO security level for the app, but it can be overridden
+    by changing the linker from now to lazy binding or from relro to norelro
+    binding which the -v will not dynamically change and recognize.  One still
+    needs to check the build logs to see if the program unecessarily overrides
+    the default.
   </longdescription>
   <use>
     <flag name="hardened">Enables Full RELRO by default</flag>
