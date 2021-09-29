@@ -42,6 +42,16 @@ Split and kept only PIE on default changes.
 Removed tests because they are broken.  May re-add and fix them.
 Added comments for license compliance.
 
+License header for lib/Driver/ToolChains/Linux.cpp:
+
+//===--- Linux.h - Linux ToolChain Implementations --------------*- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
 diff --git a/lib/Driver/ToolChains/Linux.cpp b/lib/Driver/ToolChains/Linux.cpp
 index 9663a7390ada..2f8d01092557 100644
 --- a/lib/Driver/ToolChains/Linux.cpp

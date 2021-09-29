@@ -1,6 +1,17 @@
 # oteodoro changes:
 # Patch status:  testing
 # For use for the distro's hardened profile
+
+License header for lib/Driver/Driver.cpp:
+
+//===--- Driver.cpp - Clang GCC Compatible Driver -------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
 diff -urp clang.orig/lib/Driver/Driver.cpp clang/lib/Driver/Driver.cpp
 --- clang.orig/lib/Driver/Driver.cpp	2021-06-28 09:23:38.000000000 -0700
 +++ clang/lib/Driver/Driver.cpp	2021-09-28 21:12:54.808803664 -0700

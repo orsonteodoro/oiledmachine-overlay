@@ -1,6 +1,27 @@
 # oteodoro changes:
 # Patch status:  testing
 # For use for the distro's hardened profile
+
+License header for include/clang/Basic/CodeGenOptions.def:
+
+//===--- CodeGenOptions.def - Code generation option database ----- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+License header for include/clang/Driver/Options.td:
+
+//===--- Options.td - Options for clang -----------------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
 diff -urp clang.orig/include/clang/Basic/CodeGenOptions.def clang/include/clang/Basic/CodeGenOptions.def
 --- clang.orig/include/clang/Basic/CodeGenOptions.def	2021-08-26 11:45:39.000000000 -0700
 +++ clang/include/clang/Basic/CodeGenOptions.def	2021-09-28 18:57:07.604934085 -0700
@@ -13,7 +34,6 @@ diff -urp clang.orig/include/clang/Basic/CodeGenOptions.def clang/include/clang/
  
  /// The kind of generated debug info.
  ENUM_CODEGENOPT(DebugInfo, codegenoptions::DebugInfoKind, 4, codegenoptions::NoDebugInfo)
-Only in clang/include/clang/Basic: CodeGenOptions.def.orig
 diff -urp clang.orig/include/clang/Driver/Options.td clang/include/clang/Driver/Options.td
 --- clang.orig/include/clang/Driver/Options.td	2021-09-28 18:56:36.964934575 -0700
 +++ clang/include/clang/Driver/Options.td	2021-09-28 18:57:39.541933573 -0700
