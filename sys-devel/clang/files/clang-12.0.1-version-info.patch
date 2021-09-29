@@ -19,7 +19,7 @@ diff -urp clang.orig/lib/Driver/Driver.cpp clang/lib/Driver/Driver.cpp
    // If configuration file was used, print its path.
    if (!ConfigFile.empty())
      OS << "Configuration file: " << ConfigFile << '\n';
-+  OS << "Hardened: __HARDENED_FEATURES__";					// Added by oteodoro for ebuild/class compatibility
++  OS << "Hardened: __HARDENED_FEATURES__" << '\n';					// Added by oteodoro for ebuild/class compatibility
  }
  
  /// PrintDiagnosticCategories - Implement the --print-diagnostic-categories
