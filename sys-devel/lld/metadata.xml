@@ -11,7 +11,8 @@
     <email>llvm@gentoo.org</email>
   </maintainer>
   <longdescription>
-    This ebuild fork enables Full RELRO ON by default.
+    This ebuild fork enables Full RELRO ON by default.  This is to match the
+    same RELRO level of the binutils counterpart.
   </longdescription>
   <use>
     <flag name="hardened">Enables Full RELRO by default</flag>
