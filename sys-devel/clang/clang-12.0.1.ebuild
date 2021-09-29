@@ -90,7 +90,7 @@ llvm.org_set_globals
 # multilib clang* libraries (not runtime, not wrappers).
 
 pkg_setup() {
-#	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
+	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
 	python-single-r1_pkg_setup
 }
 
