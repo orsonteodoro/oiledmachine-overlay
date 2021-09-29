@@ -50,7 +50,7 @@ BDEPEND="
 
 LLVM_COMPONENTS=( compiler-rt )
 LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support llvm/utils/unittest )
-LLVM_PATCHSET=9999-1
+LLVM_PATCHSET=13.0.0-rc2
 llvm.org_set_globals
 
 python_check_deps() {
@@ -202,11 +202,4 @@ src_test() {
 	local -x LD_PRELOAD=
 
 	cmake_build check-all
-}
-
-src_install()
-{
-	cmake_src_install
-	# Prevent collision with sys-libs/compiler-rt-13.0.0.9999:13.0.0::gentoo
-	rm -v "${ED}/usr/lib/clang/$(ver_cut 1-3 ${PV})/"*"/linux/libclang_rt.orc-"*".a" || die
 }

@@ -3,33 +3,24 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{7..9} )
 inherit check-reqs cmake flag-o-matic llvm llvm.org python-any-r1
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
 HOMEPAGE="https://llvm.org/"
+LLVM_COMPONENTS=( compiler-rt )
+LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support llvm/utils/unittest )
+LLVM_PATCHSET=10.0.1-4
+llvm.org_set_globals
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="$(ver_cut 1-3)"
-KEYWORDS=""
-IUSE="+clang test elibc_glibc"
-# base targets
-IUSE+=" +libfuzzer +memprof +orc +profile +xray"
-# sanitizer targets, keep in sync with config-ix.cmake
-# NB: ubsan, scudo deliberately match two entries
-SANITIZER_FLAGS=(
-	asan dfsan lsan msan hwasan tsan ubsan safestack cfi scudo
-	shadowcallstack gwp-asan
-)
+KEYWORDS="amd64 arm arm64 ppc64 x86 ~amd64-linux ~ppc-macos ~x64-macos"
 CPU_X86_FLAGS=( sse3 sse4_2 )
-IUSE+=" ${SANITIZER_FLAGS[@]/#/+}"
+IUSE="+clang +libfuzzer +profile +sanitize test +xray elibc_glibc"
 IUSE+=" ${CPU_X86_FLAGS[@]/#/cpu_flags_x86_}"
-REQUIRED_USE="
-	|| ( ${SANITIZER_FLAGS[*]} libfuzzer orc profile xray )
-	test? (
-		cfi? ( ubsan )
-		gwp-asan? ( scudo )
-	)"
+# FIXME: libfuzzer does not enable all its necessary dependencies
+REQUIRED_USE="libfuzzer? ( || ( sanitize xray ) )"
 RESTRICT="!test? ( test ) !clang? ( test )"
 
 CLANG_SLOT=${SLOT%%.*}
@@ -37,21 +28,14 @@ CLANG_SLOT=${SLOT%%.*}
 DEPEND="
 	>=sys-devel/llvm-6"
 BDEPEND="
-	>=dev-util/cmake-3.16
 	clang? ( sys-devel/clang )
 	elibc_glibc? ( net-libs/libtirpc )
 	test? (
 		!<sys-apps/sandbox-2.13
 		$(python_gen_any_dep ">=dev-python/lit-5[\${PYTHON_USEDEP}]")
 		=sys-devel/clang-${PV%_*}*:${CLANG_SLOT}
-		sys-libs/compiler-rt:${SLOT}
-	)
+		sys-libs/compiler-rt:${SLOT} )
 	${PYTHON_DEPS}"
-
-LLVM_COMPONENTS=( compiler-rt )
-LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support llvm/utils/unittest )
-LLVM_PATCHSET=9999-1
-llvm.org_set_globals
 
 python_check_deps() {
 	use test || return 0
@@ -78,23 +62,6 @@ pkg_setup() {
 src_prepare() {
 	sed -i -e 's:-Werror::' lib/tsan/go/buildgo.sh || die
 
-	local flag
-	for flag in "${SANITIZER_FLAGS[@]}"; do
-		if ! use "${flag}"; then
-			local cmake_flag=${flag/-/_}
-			sed -i -e "/COMPILER_RT_HAS_${cmake_flag^^}/s:TRUE:FALSE:" \
-				cmake/config-ix.cmake || die
-		fi
-	done
-
-	# TODO: fix these tests to be skipped upstream
-	if use asan && ! use profile; then
-		rm test/asan/TestCases/asan_and_llvm_coverage_test.cpp || die
-	fi
-	if use ubsan && ! use cfi; then
-		> test/cfi/CMakeLists.txt || die
-	fi
-
 	llvm.org_src_prepare
 }
 
@@ -108,14 +75,6 @@ src_configure() {
 		strip-unsupported-flags
 	fi
 
-	local flag want_sanitizer=OFF
-	for flag in "${SANITIZER_FLAGS[@]}"; do
-		if use "${flag}"; then
-			want_sanitizer=ON
-			break
-		fi
-	done
-
 	local mycmakeargs=(
 		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${SLOT}"
 		# use a build dir structure consistent with install
@@ -127,15 +86,11 @@ src_configure() {
 		-DCOMPILER_RT_BUILD_BUILTINS=OFF
 		-DCOMPILER_RT_BUILD_CRT=OFF
 		-DCOMPILER_RT_BUILD_LIBFUZZER=$(usex libfuzzer)
-		-DCOMPILER_RT_BUILD_MEMPROF=$(usex memprof)
-		-DCOMPILER_RT_BUILD_ORC=$(usex orc)
 		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
-		-DCOMPILER_RT_BUILD_SANITIZERS="${want_sanitizer}"
+		-DCOMPILER_RT_BUILD_SANITIZERS=$(usex sanitize)
 		-DCOMPILER_RT_BUILD_XRAY=$(usex xray)
 		-DCOMPILER_RT_HAS_MSSE3_FLAG=$(usex cpu_flags_x86_sse3)
 		-DCOMPILER_RT_HAS_MSSE4_2_FLAG=$(usex cpu_flags_x86_sse4_2)
-
-		-DPython3_EXECUTABLE="${PYTHON}"
 	)
 	if use test; then
 		mycmakeargs+=(
@@ -157,15 +112,8 @@ src_configure() {
 
 	if use prefix && [[ "${CHOST}" == *-darwin* ]] ; then
 		mycmakeargs+=(
-			# setting -isysroot is disabled with compiler-rt-prefix-paths.patch
-			# this allows adding arm64 support using SDK in EPREFIX
-			-DDARWIN_macosx_CACHED_SYSROOT="${EPREFIX}/MacOSX.sdk"
-			# Set version based on the SDK in EPREFIX
-			# This disables i386 for SDK >= 10.15
-			# Will error if has_use tsan and SDK < 10.12
-			-DDARWIN_macosx_OVERRIDE_SDK_VERSION="$(realpath ${EPREFIX}/MacOSX.sdk | sed -e 's/.*MacOSX\(.*\)\.sdk/\1/')"
-			# Use our libtool instead of looking it up with xcrun
-			-DCMAKE_LIBTOOL="${EPREFIX}/usr/bin/${CHOST}-libtool"
+			# disable use of SDK for the system itself
+			-DDARWIN_macosx_CACHED_SYSROOT=/
 		)
 	fi
 
@@ -202,11 +150,4 @@ src_test() {
 	local -x LD_PRELOAD=
 
 	cmake_build check-all
-}
-
-src_install()
-{
-	cmake_src_install
-	# Prevent collision with sys-libs/compiler-rt-13.0.0.9999:13.0.0::gentoo
-	rm -v "${ED}/usr/lib/clang/$(ver_cut 1-3 ${PV})/"*"/linux/libclang_rt.orc-"*".a" || die
 }

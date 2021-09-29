@@ -1,31 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="project">
-		<email>llvm@gentoo.org</email>
-	</maintainer>
-	<use>
-		<flag name="clang">Force building using installed clang (rather
-			than the default CC/CXX).</flag>
-		<flag name="libfuzzer">Build fuzzing runtime.</flag>
-		<flag name="memprof">Build memory profiler runtime.</flag>
-		<flag name="profile">Build profiling runtime.</flag>
-		<flag name="sanitize">Build sanitizer runtimes.</flag>
-		<flag name="xray">Build XRay runtime.</flag>
+  <maintainer type="person">
+    <!-- ebuild fork only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- ebuild originator -->
+    <email>llvm@gentoo.org</email>
+  </maintainer>
+  <use>
+    <flag name="clang">Force building using installed clang (rather than the
+      default CC/CXX).</flag>
+    <flag name="libfuzzer">Build fuzzing runtime.</flag>
+    <flag name="memprof">Build memory profiler runtime.</flag>
+    <flag name="orc">Build ORC runtime.</flag>
+    <flag name="profile">Build profiling runtime.</flag>
+    <flag name="sanitize">Build sanitizer runtimes.</flag>
+    <flag name="xray">Build XRay runtime.</flag>
 
-		<flag name="asan">Build Address Sanitizer runtime.</flag>
-		<flag name="dfsan">Build Data Flow Sanitizer runtime.</flag>
-		<flag name="lsan">Build Leak Sanitizer runtime.</flag>
-		<flag name="msan">Build Memory Sanitizer runtime.</flag>
-		<flag name="hwasan">Build Hardware ASAN runtime.</flag>
-		<flag name="tsan">Build Thread Sanitizer runtime.</flag>
-		<flag name="ubsan">
-			Build Undefined Behavior Sanitizer runtime.
-		</flag>
-		<flag name="safestack">Build SafeStack runtime.</flag>
-		<flag name="cfi">Build Control Flow Integrity runtime.</flag>
-		<flag name="scudo">Build Scudo Hardened Allocator.</flag>
-		<flag name="shadowcallstack">Build ShadowCallStack.</flag>
-		<flag name="gwp-asan">Build GWP-ASAN runtime.</flag>
-	</use>
+    <flag name="asan">Build Address Sanitizer runtime.</flag>
+    <flag name="dfsan">Build Data Flow Sanitizer runtime.</flag>
+    <flag name="lsan">Build Leak Sanitizer runtime.</flag>
+    <flag name="msan">Build Memory Sanitizer runtime.</flag>
+    <flag name="hwasan">Build Hardware ASAN runtime.</flag>
+    <flag name="tsan">Build Thread Sanitizer runtime.</flag>
+    <flag name="ubsan">
+      Build Undefined Behavior Sanitizer runtime.
+    </flag>
+    <flag name="safestack">Build SafeStack runtime.</flag>
+    <flag name="cfi">Build Control Flow Integrity runtime.</flag>
+    <flag name="scudo">Build Scudo Hardened Allocator.</flag>
+    <flag name="shadowcallstack">Build ShadowCallStack.</flag>
+    <flag name="gwp-asan">Build GWP-ASAN runtime.</flag>
+  </use>
+  <longdescription>
+    These ebuilds forks fix several problems:
+
+    13.0.0.9999 - merge conflict fix with compiler-rt package
+    all - Override config-ix.cmake SIMD checks related to sse3/sse4.2
+          with USE flag overrides.  This fixes the possibility for
+          missing crc32 sse4.2 intrinsic function.
+  </longdescription>
 </pkgmetadata>
