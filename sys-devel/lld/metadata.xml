@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- ebuild fork only on the oiledmachine overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- ebuild originator -->
+    <email>llvm@gentoo.org</email>
+  </maintainer>
+  <longdescription>
+    This ebuild fork enables Full RELRO ON by default.
+  </longdescription>
+  <use>
+    <flag name="hardened">Enables Full RELRO by default</flag>
+  </use>
+</pkgmetadata>

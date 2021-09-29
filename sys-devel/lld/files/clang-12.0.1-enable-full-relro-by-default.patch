@@ -1,0 +1,16 @@
+# oteodoro changes:
+# Patch status:  testing
+# Changed from Partial RELRO to Full RELRO
+# For use for the hardened profile
+diff -urp lld.orig/ELF/Driver.cpp lld/ELF/Driver.cpp
+--- lld.orig/ELF/Driver.cpp	2021-06-28 09:23:38.000000000 -0700
++++ lld/ELF/Driver.cpp	2021-09-29 01:27:42.342558941 -0700
+@@ -1112,7 +1112,7 @@ static void readConfigs(opt::InputArgLis
+   config->zNodefaultlib = hasZOption(args, "nodefaultlib");
+   config->zNodelete = hasZOption(args, "nodelete");
+   config->zNodlopen = hasZOption(args, "nodlopen");
+-  config->zNow = getZFlag(args, "now", "lazy", false);
++  config->zNow = getZFlag(args, "now", "lazy", true);		// Changed by oteodoro to now binding is true by default for Full RELRO
+   config->zOrigin = hasZOption(args, "origin");
+   config->zPacPlt = hasZOption(args, "pac-plt");
+   config->zRelro = getZFlag(args, "relro", "norelro", true);
