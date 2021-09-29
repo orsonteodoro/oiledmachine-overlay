@@ -38,7 +38,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
-#	LLVM_MAX_SLOT=${PV%%.*} llvm_pkg_setup
+	LLVM_MAX_SLOT=${PV%%.*} llvm_pkg_setup
 	use test && python-any-r1_pkg_setup
 }
 
