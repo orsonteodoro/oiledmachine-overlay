@@ -40,6 +40,10 @@
     ensure that packages built with clang/llvm are properly protected with the
     equivalent security flags as its counterpart (Hardened GCC 10.3.0).
 
+    Default ON doesn't necessarily mean hardcoded always ON.  If the package
+    does not specify the option, the default ON value will be the one used
+    so the flags below will be implied in use.
+
     Default ON patch status:
     testing -- _FORITIFY_SOURCE=2
     testing --  -fstack-clash-protection
