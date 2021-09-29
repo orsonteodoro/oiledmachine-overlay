@@ -14,6 +14,7 @@ SLOT="0"
 #KEYWORDS="" # Still testing Full RELRO default ON.
 IUSE="test"
 IUSE+=" hardened"
+REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
 
 RDEPEND="~sys-devel/llvm-${PV}"

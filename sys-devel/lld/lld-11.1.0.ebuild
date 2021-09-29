@@ -14,6 +14,7 @@ SLOT="0"
 #KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86" # Still testing Full RELRO default ON.
 IUSE="test"
 IUSE+=" hardened"
+REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
 
 RDEPEND="~sys-devel/llvm-${PV}"
