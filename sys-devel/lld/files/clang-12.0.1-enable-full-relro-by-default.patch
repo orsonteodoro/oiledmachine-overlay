@@ -2,6 +2,17 @@
 # Patch status:  testing
 # Changed from Partial RELRO to Full RELRO
 # For use for the hardened profile
+
+License header of ELF/Driver.cpp:
+
+//===- Driver.cpp ---------------------------------------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
 diff -urp lld.orig/ELF/Driver.cpp lld/ELF/Driver.cpp
 --- lld.orig/ELF/Driver.cpp	2021-06-28 09:23:38.000000000 -0700
 +++ lld/ELF/Driver.cpp	2021-09-29 01:27:42.342558941 -0700
