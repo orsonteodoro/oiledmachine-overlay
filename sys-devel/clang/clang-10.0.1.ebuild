@@ -93,9 +93,9 @@ src_prepare() {
 
 	llvm.org_src_prepare
 	if use hardened ; then
+		ewarn "The hardened USE flag and associated patches are still in testing."
 		eapply ${PATCHES_HARDENED[@]}
 		ewarn "There's no -fstack-clash-protection in the 10.x series."
-		ewarn "The Full RELRO default on is in testing."
 		# no FCF
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
 		sed -i -e "s|__HARDENED_FEATURES__|${hardened_features}|g" \

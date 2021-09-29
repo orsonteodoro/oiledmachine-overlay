@@ -47,9 +47,8 @@
     testing -- -Wl,relro -Wl,now
 
     When all testing switches to works, then it is ready for production.
-    To ensure Full RELRO is applied default ON set LD="${CC}", but may
-    sometimes not work.  The feasibility of hardcoding Full RELRO in lld
-    is still being investigated.
+    To ensure Full RELRO is applied default ON set LD="${CC}" or LD="ld.lld",
+    The lld package on this overlay has been modified for Full RELRO default ON.
 
     While the toolchain-funcs.eclass only recognize hardened gcc existance
     in the ssp checking functions, you may verify a hardenedized counterpart

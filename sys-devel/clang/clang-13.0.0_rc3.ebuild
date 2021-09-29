@@ -89,14 +89,15 @@ src_prepare() {
 
 	llvm.org_src_prepare
 	if use hardened ; then
+		ewarn "The hardened USE flag and associated patches are still in testing."
 		eapply ${PATCHES_HARDENED[@]}
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
 		if use x86 || use amd64 ; then
-			ewarn "-fstack-clash-protection default on is in testing"
 			eapply "${FILESDIR}/clang-12.0.1-enable-FCP-by-default.patch"
 			hardened_features+=", SCP"
 		elif use arm64 ; then
-			ewarn "arm64 -fstack-clash-protection is not default on.  The feature is still in development."
+			ewarn "arm64 -fstack-clash-protection is not default ON.  The feature is still"
+			ewarn "in development."
 		fi
 		ewarn "The Full RELRO default on is in testing."
 		sed -i -e "s|__HARDENED_FEATURES__|${hardened_features}|g" \
