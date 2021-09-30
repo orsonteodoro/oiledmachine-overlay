@@ -152,16 +152,7 @@ _configure_abi() {
 		export LD="${CC}"
 	fi
 
-	if tc-is-clang ; then
-		filter-flags -fprefetch-loop-arrays \
-			'-fopt-info*' \
-			-frename-registers \
-			'-mindirect-branch=*' \
-			-mindirect-branch-register
-	fi
-	if tc-is-gcc ; then
-		filter-flags -mretpoline
-	fi
+	autofix_flags
 	filter-flags '-flto*' '-fuse-ld=*'
 
 	# link against compiler-rt instead of libgcc if we are using clang with libunwind
