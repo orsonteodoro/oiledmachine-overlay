@@ -199,6 +199,9 @@ _src_configure() {
 			-mindirect-branch-register
 		append-cppflags -DFLAC__USE_VISIBILITY_ATTR
 	fi
+	if tc-is-gcc ; then
+		filter-flags -mretpoline
+	fi
 
 	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
 		:;
