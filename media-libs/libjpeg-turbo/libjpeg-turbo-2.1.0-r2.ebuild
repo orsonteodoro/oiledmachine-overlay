@@ -316,7 +316,9 @@ _configure_pgx() {
 	if tc-is-clang ; then
 		filter-flags -fprefetch-loop-arrays \
 			'-fopt-info*' \
-			-frename-registers
+			-frename-registers \
+			'-mindirect-branch=*' \
+			-mindirect-branch-register
 	fi
 
 	use lto && append_lto
@@ -338,11 +340,16 @@ _configure_pgx() {
 							-fsanitize=cfi-vcall
 			fi
 		fi
-		use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
+		if tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
+			# Already done by hardened clang
+			:;
+		else
+			use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
+			use ssp && append-ldflags --param=ssp-buffer-size=4 \
+						-fstack-protector
+		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
-		use ssp && append-ldflags --param=ssp-buffer-size=4 \
-					-fstack-protector
 	fi
 
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
