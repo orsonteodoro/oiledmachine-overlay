@@ -303,6 +303,9 @@ _configure_pgx() {
 			'-mindirect-branch=*' \
 			-mindirect-branch-register
 	fi
+	if tc-is-gcc ; then
+		filter-flags -mretpoline
+	fi
 
 	use lto && append_lto
 	use noexecstack && append-ldflags -Wl,-z,noexecstack
