@@ -327,8 +327,6 @@ check_img_converter() {
 }
 
 pkg_setup() {
-	echo "USE=${USE}"
-	die
 	if [[ "${IUSE}" =~ "pgo-trainer-zlib-images-" ]] ; then
 		check_img_converter
 	fi
