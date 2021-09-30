@@ -182,16 +182,7 @@ _configure_abi() {
 
 	export CC CXX AR AS NM RANDLIB READELF LD
 
-	if tc-is-clang ; then
-		filter-flags -fprefetch-loop-arrays \
-			'-fopt-info*' \
-			-frename-registers \
-			'-mindirect-branch=*' \
-			-mindirect-branch-register
-	fi
-	if tc-is-gcc ; then
-		filter-flags -mretpoline
-	fi
+	autofix_flags
 	filter-flags '-flto*' '-fuse-ld=*'
 
 	# we want -lgcc_s for unwinder, and for compiler runtime when using
