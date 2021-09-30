@@ -356,16 +356,7 @@ configure_pgx() {
 		die "libcxx requires clang++"
 	fi
 
-	if tc-is-clang ; then
-		filter-flags -fprefetch-loop-arrays \
-			'-fopt-info*' \
-			-frename-registers \
-			'-mindirect-branch=*' \
-			-mindirect-branch-register
-	fi
-	if tc-is-gcc ; then
-		filter-flags -mretpoline
-	fi
+	autofix_flags
 
 	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
 		:;
