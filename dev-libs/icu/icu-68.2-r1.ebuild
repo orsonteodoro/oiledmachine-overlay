@@ -243,6 +243,9 @@ _configure_abi() {
 			'-mindirect-branch=*' \
 			-mindirect-branch-register
 	fi
+	if tc-is-gcc ; then
+		filter-flags -mretpoline
+	fi
 
 	if tc-is-clang && use libcxx ; then
 		append-cxxflags -stdlib=libc++
