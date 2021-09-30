@@ -159,6 +159,9 @@ _configure_abi() {
 			'-mindirect-branch=*' \
 			-mindirect-branch-register
 	fi
+	if tc-is-gcc ; then
+		filter-flags -mretpoline
+	fi
 	filter-flags '-flto*' '-fuse-ld=*'
 
 	# link against compiler-rt instead of libgcc if we are using clang with libunwind
