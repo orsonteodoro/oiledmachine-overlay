@@ -141,6 +141,23 @@ Some packages or ebuilds may be hard masked in
 if the package still has some utility but unable to be removed, or
 contains a known infamous critical vulnerability.
 
+## PGO packages
+
+The following list contains ebuilds modified by this overlay with PGO (Profile
+Guided Optimization) support, with additional patches from others listed in
+the metadata.xml.
+
+* media-libs/libaom
+* media-libs/libjpeg-turbo
+* media-libs/libvpx
+* media-video/ffmpeg (WIP)
+* net-libs/nodejs
+* sys-kernel/ot-sources
+* sys-kernel/genkernel
+* sys-libs/zlib
+* www-client/chromium (1 stage PGO yes, 3 stage PGO WIP)
+* net-libs/webkit-gtk (WIP)
+
 ## Packages
 
 | package | description |
