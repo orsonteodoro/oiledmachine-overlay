@@ -938,6 +938,54 @@ filter_incompatible_per_compiler_flags() {
 	filter_incompatible_gcc_flags
 }
 
+# @FUNCTION: translate_lto
+# @DESCRIPTION:
+# Translates incompatible args of lto
+translate_lto() {
+	has_lto=0
+	for f in CFLAGS CXXFLAGS LDFLAGS ; do
+		if [[ "${!f}" =~ "-flto" ]] ; then
+			has_lto=1
+		fi
+	done
+	(( ${has_lto} == 0 )) return
+	einfo "Auto translating LTO arg"
+	if tc-is-gcc && ver_test $(gcc-major-version) -ge 10 ; then
+		einfo "Using LTO with auto core detection"
+		replace-flags "-flto=thin" "-flto=auto"
+		replace-flags "-flto=full" "-flto=auto"
+		replace-flags "-flto" "-flto=auto"
+	elif tc-is-gcc && ver_test $(gcc-major-version) -lt 10 ; then
+		ewarn "Using LTO defaults"
+		replace-flags "-flto=thin" "-flto"
+		replace-flags "-flto=full" "-flto"
+		replace-flags "-flto" "-flto"
+	fi
+	if tc-is-clang ; then
+		if [[ "${LD}" =~ "ld.lld" ]] ; then
+			# Thin is preferred because of OOM issue on improper configured
+			# swapless systems and for speed.
+			einfo "Using ThinLTO"
+			replace-flags "-flto=auto" "-flto=thin"
+			replace-flags "-flto=jobserver" "-flto=thin"
+			for f in CFLAGS CXXFLAGS LDFLAGS ; do
+				${f}=$(echo ${!f} | sed -r -e "s|-flto=[0-9]+|-flto=thin|g")
+			done
+		elif has_version "sys-devel/llvm[gold]"
+			ewarn "Using Full LTO"
+			replace-flags "-flto=auto" "-flto=full"
+			replace-flags "-flto=jobserver" "-flto=full"
+			for f in CFLAGS CXXFLAGS LDFLAGS ; do
+				${f}=$(echo ${!f} | sed -r -e "s|-flto=[0-9]+|-flto=full|g")
+			done
+		elif
+			ewarn "Using LTO defaults"
+			replace-flags "-flto*" "-flto"
+		fi
+	fi
+	export CFLAGS CXXFLAGS LDFLAGS
+}
+
 # It should belong in pkg_setup
 # @FUNCTION: autofix_flags
 # @DESCRIPTION:
@@ -945,6 +993,7 @@ filter_incompatible_per_compiler_flags() {
 autofix_flags() {
 	filter_incompatible_per_compiler_flags
 	translate_retpoline
+	translate_lto
 }
 
 fi
