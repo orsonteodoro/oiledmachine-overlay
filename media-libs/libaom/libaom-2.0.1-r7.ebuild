@@ -363,6 +363,9 @@ configure_pgx() {
 			'-mindirect-branch=*' \
 			-mindirect-branch-register
 	fi
+	if tc-is-gcc ; then
+		filter-flags -mretpoline
+	fi
 
 	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
 		:;
