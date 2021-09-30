@@ -189,6 +189,9 @@ _configure_abi() {
 			'-mindirect-branch=*' \
 			-mindirect-branch-register
 	fi
+	if tc-is-gcc ; then
+		filter-flags -mretpoline
+	fi
 	filter-flags '-flto*' '-fuse-ld=*'
 
 	# we want -lgcc_s for unwinder, and for compiler runtime when using
