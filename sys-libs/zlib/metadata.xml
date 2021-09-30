@@ -18,11 +18,13 @@
   <longdescription>
     This ebuild fork introduces hardening flags and PGO.
 
+    IMPORTANT:
     Only use the cfi* and pgo USE flags after the stage 3 or stage 4
     bootstrapping process.  If you have problems during or before
     "emerge -e @system" try temporarly adding to your
-    /etc/portage/package.use/zlib the line "sys-libs/zlib -pgo -clang".
-    After emerging @system, you can then remove that line.
+    /etc/portage/package.use/zlib the line "sys-libs/zlib -pgo -clang"
+    and disabling the trainers.  After emerging @system, you can
+    then remove that line.
 
     PGO instructions
     (1) emerge the zlib ebuild without pgo USE flag
