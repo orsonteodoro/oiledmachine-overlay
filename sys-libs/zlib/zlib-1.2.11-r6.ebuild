@@ -452,6 +452,7 @@ _configure_pgx() {
 	use lto && append_lto
 	use noexecstack && append-ldflags -Wl,-z,noexecstack
 	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
+		# Already done in hardened gcc
 		:;
 	else
 		if is_clang_ready && [[ "${build_type}" == "static-libs" ]] ; then
@@ -469,7 +470,7 @@ _configure_pgx() {
 			fi
 		fi
 		if tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
-			# Some already done by hardened clang
+			# Already done in hardened clang
 			:;
 		else
 			use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
