@@ -948,7 +948,7 @@ translate_lto() {
 			has_lto=1
 		fi
 	done
-	(( ${has_lto} == 0 )) return
+	(( ${has_lto} == 0 )) && return
 	einfo "Auto translating LTO arg"
 	if tc-is-gcc && ver_test $(gcc-major-version) -ge 10 ; then
 		einfo "Using LTO with auto core detection"
