@@ -318,16 +318,7 @@ _configure_pgx() {
 		-Wl,-z,relro \
 		-stdlib=libc++
 
-	if tc-is-clang ; then
-		filter-flags -fprefetch-loop-arrays \
-			'-fopt-info*' \
-			-frename-registers \
-			'-mindirect-branch=*' \
-			-mindirect-branch-register
-	fi
-	if tc-is-gcc ; then
-		filter-flags -mretpoline
-	fi
+	autofix_flags
 
 	use lto && append_lto
 	use noexecstack && append-ldflags -Wl,-z,noexecstack
