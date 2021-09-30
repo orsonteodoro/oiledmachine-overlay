@@ -978,7 +978,7 @@ translate_lto() {
 			for f in CFLAGS CXXFLAGS LDFLAGS ; do
 				${f}=$(echo ${!f} | sed -r -e "s|-flto=[0-9]+|-flto=full|g")
 			done
-		elif
+		else
 			ewarn "Using LTO defaults"
 			replace-flags "-flto*" "-flto"
 		fi
