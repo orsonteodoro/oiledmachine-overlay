@@ -194,7 +194,9 @@ _configure_abi() {
 	if tc-is-clang ; then
 		filter-flags -fprefetch-loop-arrays \
 			'-fopt-info*' \
-			-frename-registers
+			-frename-registers \
+			'-mindirect-branch=*' \
+			-mindirect-branch-register
 	fi
 	filter-flags '-flto*' '-fuse-ld=*'
 
@@ -255,6 +257,19 @@ _configure_abi() {
 	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
 		# Already done by hardened gcc
 		:;
+	elif tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
+		# Some already done by hardened clang
+		mycmakeargs+=(
+			-DSHADOW_CALL_STACK=$(usex shadowcallstack)
+		)
+		if [[ "${build_type}" == "static-libs" ]] ; then
+			mycmakeargs+=(
+				-DCFI=$(usex cfi)
+				-DCFI_CAST=$(usex cfi-cast)
+				-DCFI_ICALL=OFF
+				-DCFI_VCALL=$(usex cfi-vcall)
+			)
+		fi
 	else
 		mycmakeargs+=(
 			-DFULL_RELRO=$(usex full-relro)
