@@ -868,9 +868,15 @@ translate_retpoline() {
 	einfo "Auto translating retpoline flags"
 	local f
 	if tc-is-clang ; then
+		for f in CFLAGS CXXFLAGS LDFLAGS ; do
+			if [[ "${!f}" =~ "-mindirect-branch-register" ]]  ; then
+				ewarn "No direct translation for -mindirect-branch-register.  Removing."
+			fi
+		done
 		replace-flags -mindirect-branch=thunk -mretpoline
 		replace-flags -mindirect-branch=thunk-inline -mretpoline
 		filter-flags -mindirect-branch=keep
+		filter-flags -mindirect-branch-register
 		for f in CFLAGS CXXFLAGS LDFLAGS ; do
 			if [[ "${!f}" =~ "-mindirect-branch=thunk-extern" ]]  ; then
 				eerror
@@ -905,6 +911,12 @@ filter_incompatible_clang_flags() {
 		filter-flags -fprefetch-loop-arrays \
 			'-fopt-info*' \
 			-frename-registers
+		for f in CFLAGS CXXFLAGS LDFLAGS ; do
+			if [[ "${!f}" =~ "-mindirect-branch-register" ]]  ; then
+				ewarn "No direct translation for -mindirect-branch-register.  Removing."
+			fi
+		done
+		filter-flags -mindirect-branch-register
 	fi
 }
 
