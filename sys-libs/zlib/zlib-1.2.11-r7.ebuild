@@ -214,7 +214,7 @@ is_clang_ready() {
 		if has_version "sys-devel/clang:${v}" \
 			&& has_version "sys-devel/llvm:${v}" \
 			&& has_version "=sys-devel/clang-runtime-${v}*" \
-			&& has_verison ">=sys-devel/lld-${v}"
+			&& has_version ">=sys-devel/lld-${v}"
 		then
 			return 0
 		fi
@@ -227,7 +227,7 @@ is_lto_ready() {
 		if has_version "sys-devel/clang:${v}" \
 			&& has_version "sys-devel/llvm:${v}" \
 			&& has_version "=sys-devel/clang-runtime-${v}*" \
-			&& has_verison ">=sys-devel/lld-${v}"
+			&& has_version ">=sys-devel/lld-${v}"
 		then
 			return 0
 		fi
@@ -439,16 +439,7 @@ _configure_pgx() {
 		-stdlib=libc++ \
 		'-Wno-error=*'
 
-	if tc-is-clang ; then
-		filter-flags -fprefetch-loop-arrays \
-			'-fopt-info*' \
-			-frename-registers \
-			'-mindirect-branch=*' \
-			-mindirect-branch-register
-	fi
-	if tc-is-gcc ; then
-		filter-flags -mretpoline
-	fi
+	autofix_flags
 
 	use lto && append_lto
 	use noexecstack && append-ldflags -Wl,-z,noexecstack
