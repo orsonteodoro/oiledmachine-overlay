@@ -236,16 +236,7 @@ _configure_abi() {
 		-Wl,-z,relro \
 		-stdlib=libc++
 
-	if tc-is-clang ; then
-		filter-flags -fprefetch-loop-arrays \
-			'-fopt-info*' \
-			-frename-registers \
-			'-mindirect-branch=*' \
-			-mindirect-branch-register
-	fi
-	if tc-is-gcc ; then
-		filter-flags -mretpoline
-	fi
+	autofix_flags
 
 	if tc-is-clang && use libcxx ; then
 		append-cxxflags -stdlib=libc++
