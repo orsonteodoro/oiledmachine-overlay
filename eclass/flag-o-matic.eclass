@@ -911,6 +911,7 @@ filter_incompatible_clang_flags() {
 		filter-flags -fprefetch-loop-arrays \
 			'-fopt-info*' \
 			-frename-registers
+		local f
 		for f in CFLAGS CXXFLAGS LDFLAGS ; do
 			if [[ "${!f}" =~ "-mindirect-branch-register" ]]  ; then
 				ewarn "No direct translation for -mindirect-branch-register.  Removing."
@@ -943,6 +944,7 @@ filter_incompatible_per_compiler_flags() {
 # Translates incompatible args of lto
 translate_lto() {
 	has_lto=0
+	local f
 	for f in CFLAGS CXXFLAGS LDFLAGS ; do
 		if [[ "${!f}" =~ "-flto" ]] ; then
 			has_lto=1
