@@ -188,24 +188,16 @@ _configure_abi() {
 	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
 		# Already done by hardened gcc
 		:;
-	elif tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
-		# Some already done by hardened clang
-		mycmakeargs+=(
-			-DSHADOW_CALL_STACK=$(usex shadowcallstack)
-		)
-		if [[ "${build_type}" == "static-libs" ]] ; then
+	else
+		if tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
+			# Already done done by hardened clang
+			:;
+		else
 			mycmakeargs+=(
-				-DCFI=$(usex cfi)
-				-DCFI_CAST=$(usex cfi-cast)
-				-DCFI_ICALL=$(usex cfi-icall)
-				-DCFI_VCALL=$(usex cfi-vcall)
+				-DFULL_RELRO=$(usex full-relro)
+				-DSSP=$(usex ssp)
 			)
 		fi
-	else
-		mycmakeargs+=(
-			-DFULL_RELRO=$(usex full-relro)
-			-DSSP=$(usex ssp)
-		)
 		if tc-is-clang ; then
 			mycmakeargs+=(
 				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
@@ -266,24 +258,16 @@ build_libcxx() {
 	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
 		# Already done by hardened gcc
 		:;
-	elif tc-is-clang && clang --version | grep "Hardened:" ; then
-		# Some already done by hardened clang
-		mycmakeargs+=(
-			-DSHADOW_CALL_STACK=$(usex shadowcallstack)
-		)
-		if [[ "${build_type}" == "static-libs" ]] ; then
+	else
+		if tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
+			# Already done done by hardened clang
+			:;
+		else
 			mycmakeargs+=(
-				-DCFI=$(usex cfi)
-				-DCFI_CAST=$(usex cfi-cast)
-				-DCFI_ICALL=$(usex cfi-icall)
-				-DCFI_VCALL=$(usex cfi-vcall)
+				-DFULL_RELRO=$(usex full-relro)
+				-DSSP=$(usex ssp)
 			)
 		fi
-	else
-		mycmakeargs+=(
-			-DFULL_RELRO=$(usex full-relro)
-			-DSSP=$(usex ssp)
-		)
 		if tc-is-clang ; then
 			mycmakeargs+=(
 				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
