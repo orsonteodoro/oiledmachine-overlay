@@ -141,7 +141,8 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 >=dev-util/cunit-2.1
 	 >=dev-libs/expat-2.0.1
 	 >=dev-libs/libedit-3.1[${MULTILIB_USEDEP}]
-	   dev-libs/libffi-compat[${MULTILIB_USEDEP}]
+	 || ( dev-libs/libffi:0/7[${MULTILIB_USEDEP}]
+	      dev-libs/libffi-compat:7[${MULTILIB_USEDEP}] )
 	 >=sys-devel/gcc-${PKG_VER_GCC}
 	 >=sys-libs/zlib-1.2.0
 	 developer? (
@@ -168,7 +169,8 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		open-stack? (
 			X? ( x11-libs/libX11 )
 			sys-libs/ncurses[tinfo]
-			virtual/libffi
+			|| ( dev-libs/libffi:0/7[${MULTILIB_USEDEP}]
+			     dev-libs/libffi-compat:7[${MULTILIB_USEDEP}] )
 			virtual/libudev
 		)
 	 )

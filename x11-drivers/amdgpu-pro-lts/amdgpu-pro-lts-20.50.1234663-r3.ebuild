@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-21-10"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-50"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	dkms? ( AMDGPU-FIRMWARE GPL-2 MIT )
@@ -67,7 +67,7 @@ PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
 PKG_ARCH_SUFFIX="_"
 PKG_VER_AMF="1.4.17"
-PKG_VER_COMGR="2.0.0"
+PKG_VER_COMGR="1.9.0"
 PKG_VER_GCC="5.2.0"
 PKG_VER_GLAMOR="1.19.0"
 PKG_VER_GST_OMX="1.0.0.1"
@@ -81,7 +81,7 @@ PKG_VER_LIBWAYLAND="1.16.0"
 PKG_VER_LLVM_TRIPLE="11.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="20.3.4"
+PKG_VER_MESA="20.2.4"
 PKG_VER_ROCM_LLVM="12.0"
 PKG_VER_ROCT="1.0.9"
 PKG_VER_ROCM_DEVLIBS="1.0.0"
@@ -94,7 +94,7 @@ ROCK_V="4.0.0" # an approximate
 IUSE="+amf bindist clinfo developer dkms doc +egl +gles2 freesync glamor
 hip-clang +hwe +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_rocr
 +opengl +opengl_pro opengl_mesa openmax osmesa +pro-stack rocm strict-pairing
-+vaapi vaapi_r600 +vaapi_radeonsi +vdpau +vdpau vdpau_r600 +vdpau_radeonsi
++vaapi vaapi_r600 +vaapi_radeonsi +vdpau vdpau_r300 vdpau_r600 +vdpau_radeonsi
 +vulkan vulkan_open vulkan_pro wayland +X xa"
 REQUIRED_USE="
 	amf? ( pro-stack opencl opencl_rocr vulkan_pro )
@@ -119,7 +119,8 @@ REQUIRED_USE="
 	vaapi? ( open-stack ^^ ( vaapi_r600 vaapi_radeonsi ) )
 	vaapi_r600? ( vaapi )
 	vaapi_radeonsi? ( vaapi )
-	vdpau? ( open-stack ^^ ( vdpau_r600 vdpau_radeonsi ) )
+	vdpau? ( open-stack ^^ ( vdpau_r300 vdpau_r600 vdpau_radeonsi ) )
+	vdpau_r300? ( vdpau )
 	vdpau_r600? ( vdpau )
 	vdpau_radeonsi? ( vdpau )
 	vulkan? ( || ( vulkan_open vulkan_pro ) wayland )
@@ -142,7 +143,8 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 >=dev-util/cunit-2.1
 	 >=dev-libs/expat-2.0.1
 	 >=dev-libs/libedit-3.1[${MULTILIB_USEDEP}]
-	   dev-libs/libffi-compat[${MULTILIB_USEDEP}]
+	 || ( dev-libs/libffi:0/7[${MULTILIB_USEDEP}]
+	      dev-libs/libffi-compat:7[${MULTILIB_USEDEP}] )
 	 >=sys-devel/gcc-${PKG_VER_GCC}
 	 >=sys-libs/zlib-1.2.0
 	 developer? (
@@ -169,7 +171,8 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		open-stack? (
 			X? ( x11-libs/libX11 )
 			sys-libs/ncurses[tinfo]
-			virtual/libffi
+			|| ( dev-libs/libffi:0/7[${MULTILIB_USEDEP}]
+			     dev-libs/libffi-compat:7[${MULTILIB_USEDEP}] )
 			virtual/libudev
 		)
 	 )
@@ -184,18 +187,18 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		    >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
 	 rocm? (  >=sys-apps/pciutils-3.5.2
 		  >=sys-process/numactl-2.0.11
-		   !strict-pairing? ( >=virtual/amdgpu-drm-3.2.121[dkms,firmware] )
-		    strict-pairing? ( ~virtual/amdgpu-drm-3.2.121[dkms,firmware] )
+		   !strict-pairing? ( >=virtual/amdgpu-drm-3.2.114[dkms,firmware] )
+		    strict-pairing? ( ~virtual/amdgpu-drm-3.2.114[dkms,firmware] )
 		    >=dev-libs/roct-thunk-interface-${ROCK_V} )
 	 !strict-pairing? (
 		freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
-		>=virtual/amdgpu-drm-3.2.121[dkms?]
+		>=virtual/amdgpu-drm-3.2.114[dkms?]
 	 )
 	 strict-pairing? (
-		~virtual/amdgpu-drm-3.2.121[dkms?,strict-pairing]
+		~virtual/amdgpu-drm-3.2.114[dkms?,strict-pairing]
 	 )
 	 vaapi? ( >=x11-libs/libva-2.1.0
-		  >=virtual/amdgpu-drm-3.2.121[dkms?,firmware] )
+		  >=virtual/amdgpu-drm-3.2.114[dkms?,firmware] )
 	 vdpau? ( >=x11-libs/libvdpau-1.1.1 )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:= )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:=[-vulkan]
@@ -736,6 +739,9 @@ src_install() {
 	if use vaapi_r600 ; then
 		vaapi_drv_name="r600"
 	fi
+	if use vdpau_r300 ; then
+		vdpau_drv_name="r300"
+	fi
 	if use vdpau_r600 ; then
 		vdpau_drv_name="r600"
 	fi
@@ -744,20 +750,15 @@ src_install() {
 
 	if use vaapi ; then
 		cat <<-EOF > "${T}"/50${P}-vaapi
-			if use amd64 ; then
-				LIBVA_DRIVERS_PATH="${libva_drivers_path}"
-				LIBVA_DRIVER_NAME="${vaapi_drv_name}"
-			else use x86 ; then
-				LIBVA_DRIVERS_PATH="${libva_drivers_path}"
-				LIBVA_DRIVER_NAME="${vaapi_drv_name}"
-			fi
+			LIBVA_DRIVERS_PATH="${libva_drivers_path}"
+			LIBVA_DRIVER_NAME="${vaapi_drv_name}"
 		EOF
 		doenvd "${T}"/50${P}-vaapi
 	fi
 
 	if use vdpau ; then
 		cat <<-EOF > "${T}"/50${P}-vdpau
-			VDPAU_DRIVER_PATH="${libvdpau_drivers_path}"
+			VDPAU_DRIVER_PATH="${libva_drivers_path}"
 			VDPAU_DRIVER="${vdpau_drv_name}"
 		EOF
 		doenvd "${T}"/50${P}-vdpau
