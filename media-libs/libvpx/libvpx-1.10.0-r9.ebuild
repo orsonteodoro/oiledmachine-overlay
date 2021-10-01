@@ -12,7 +12,7 @@ inherit flag-o-matic llvm toolchain-funcs multilib-minimal
 # 5. make testdata
 # 6. tar -caf libvpx-testdata-${MY_PV}.tar.xz libvpx-testdata
 
-LIBVPX_TESTDATA_VER=1.9.0
+LIBVPX_TESTDATA_VER=1.10.0
 
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
@@ -21,7 +21,7 @@ SRC_URI="https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.
 
 LICENSE="BSD"
 SLOT="0/6"
-KEYWORDS="amd64 arm arm64 ~ia64 ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux"
+KEYWORDS="amd64 ~arm arm64 ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux"
 IUSE="doc +highbitdepth postproc static-libs svc test +threads"
 IUSE+=" +examples"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang full-relro libcxx lto noexecstack shadowcallstack ssp"
@@ -177,7 +177,7 @@ pkg_setup() {
 			ewarn "After you install ffmpeg, re-emerge this package again."
 		fi
 		if ! ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
-			die "Missing WebM support from ffmpeg"
+			ewarn "Missing WebM support from ffmpeg"
 		fi
 		if [[ -z "${LIBVPX_PGO_VIDEO}" ]] ; then
 eerror
@@ -227,7 +227,6 @@ eerror
 eerror "${LIBVPX_PGO_VIDEO} is possibly not a valid video file.  Ensure that"
 eerror "the proper codec is supported for that file"
 eerror
-			die
 		fi
 	fi
 	llvm_pkg_setup
@@ -264,8 +263,21 @@ has_ffmpeg() {
 	fi
 }
 
+has_codec_requirements() {
+	local meets_input_req=0
+	local meets_output_req=0
+	if ffprobe "${LIBAOM_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
+		meets_input_req=1
+	fi
+	if ( ffmpeg -formats 2>&1 | grep -q -e "E.*webm .*WebM" ) ; then
+		meets_output_req=1
+	fi
+	(( ${meets_input_req} && ${meets_output_req} )) && return 0
+	return 1
+}
+
 has_pgo_requirement() {
-	if has_ffmpeg ; then
+	if has_ffmpeg && has_codec_requirements ; then
 		return 0
 	else
 		return 1
