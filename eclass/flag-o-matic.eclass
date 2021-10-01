@@ -908,9 +908,14 @@ translate_retpoline() {
 filter_incompatible_clang_flags() {
 	if tc-is-clang ; then
 		einfo "Auto removing incompatible clang flags"
-		filter-flags -fprefetch-loop-arrays \
-			'-fopt-info*' \
-			-frename-registers
+		filter-flags \
+			'-f*fat-lto-objects' \
+			'-f*prefetch-loop-arrays' \
+			'-f*rename-registers' \
+			'-f*use-linker-plugin' \
+			'-f*lto-compression-level*' \
+			'-f*lto-partition*' \
+			'-f*opt-info*'
 		local f
 		for f in CFLAGS CXXFLAGS LDFLAGS ; do
 			if [[ "${!f}" =~ "-mindirect-branch-register" ]]  ; then
@@ -932,6 +937,7 @@ filter_incompatible_gcc_flags() {
 }
 
 # @FUNCTION: filter_incompatible_per_compiler_flags
+# @INTERNAL
 # @DESCRIPTION:
 # Removes incompatible flags
 filter_incompatible_per_compiler_flags() {
@@ -941,7 +947,8 @@ filter_incompatible_per_compiler_flags() {
 
 # @FUNCTION: translate_lto
 # @DESCRIPTION:
-# Translates incompatible args of lto
+# Translates incompatible args of LTO in the best way possible.  Also, removes
+# incompatible flags that would result in configure time failures.
 translate_lto() {
 	has_lto=0
 	local f
@@ -964,6 +971,10 @@ translate_lto() {
 		replace-flags "-flto" "-flto"
 	fi
 	if tc-is-clang ; then
+		filter-flags '-f*fat-lto-objects'
+		filter-flags '-f*lto-compression-level*'
+		filter-flags '-f*lto-partition*'
+		filter-flags '-f*use-linker-plugin'
 		if [[ "${LD}" =~ "ld.lld" ]] ; then
 			# Thin is preferred because of OOM issue on improper configured
 			# swapless systems and for speed.
@@ -988,7 +999,7 @@ translate_lto() {
 	export CFLAGS CXXFLAGS LDFLAGS
 }
 
-# It should belong in pkg_setup
+# It should belong in pkg_setup, but src_configure is fine
 # @FUNCTION: autofix_flags
 # @DESCRIPTION:
 # Removes incompatible flags and translates flags
