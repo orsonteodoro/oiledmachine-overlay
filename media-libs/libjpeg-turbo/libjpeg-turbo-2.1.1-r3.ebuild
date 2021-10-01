@@ -5,6 +5,7 @@ EAPI=7
 
 CMAKE_ECLASS=cmake
 inherit cmake-multilib java-pkg-opt-2
+inherit flag-o-matic
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
 HOMEPAGE="https://libjpeg-turbo.org/ https://sourceforge.net/projects/libjpeg-turbo/"
@@ -14,7 +15,7 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz
 LICENSE="BSD IJG ZLIB"
 SLOT="0/0.2"
 if [[ "$(ver_cut 3)" -lt 90 ]] ; then
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
+	KEYWORDS="~alpha amd64 arm ~arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
 fi
 IUSE="+asm cpu_flags_arm_neon java static-libs"
 IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang full-relro lto noexecstack shadowcallstack ssp"
@@ -51,6 +52,7 @@ REQUIRED_USE="
 		pgo-trainer-decode
 		|| (
 			pgo-custom
+			pgo-trainer-decode
 			pgo-trainer-70-pct-quality-baseline
 			pgo-trainer-75-pct-quality-baseline
 			pgo-trainer-80-pct-quality-baseline
@@ -68,7 +70,6 @@ REQUIRED_USE="
 			pgo-trainer-99-pct-quality-progressive
 			pgo-trainer-100-pct-quality-progressive
 			pgo-trainer-crop
-			pgo-trainer-decode
 			pgo-trainer-grayscale
 			pgo-trainer-transformations
 		)
@@ -180,13 +181,18 @@ BDEPEND+=" >=dev-util/cmake-3.16.5
 	x64-cygwin? ( ${ASM_DEPEND} )"
 
 DEPEND="${COMMON_DEPEND}
-	java? ( >=virtual/jdk-1.8:* )"
+	java? ( >=virtual/jdk-1.8:*[-headless-awt] )"
 
 RDEPEND="${COMMON_DEPEND}
 	java? ( >=virtual/jre-1.8:* )"
 PDEPEND=" pgo? ( media-video/mpv )"
 
 MULTILIB_WRAPPED_HEADERS=( /usr/include/jconfig.h )
+
+PATCHES=(
+	# Upstream patch
+	"${FILESDIR}"/${P}-arm64-relro.patch
+)
 
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -278,6 +284,8 @@ append_lto() {
 		append-ldflags -flto=auto
 	fi
 }
+
+cmake-multilib_src_configure() { :; }
 
 _configure_pgx() {
 	if use clang ; then

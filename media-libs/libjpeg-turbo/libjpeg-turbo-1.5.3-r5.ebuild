@@ -3,8 +3,8 @@
 
 EAPI=7
 
-CMAKE_ECLASS=cmake
-inherit cmake-multilib java-pkg-opt-2
+inherit autotools java-pkg-opt-2 toolchain-funcs multilib-minimal
+inherit flag-o-matic
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
 HOMEPAGE="https://libjpeg-turbo.org/ https://sourceforge.net/projects/libjpeg-turbo/"
@@ -12,11 +12,9 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz
 	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz"
 
 LICENSE="BSD IJG ZLIB"
-SLOT="0/0.2"
-if [[ "$(ver_cut 3)" -lt 90 ]] ; then
-	KEYWORDS="~alpha amd64 arm ~arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
-fi
-IUSE="+asm cpu_flags_arm_neon java static-libs"
+SLOT="0/0.1"
+KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos"
+IUSE="+asm java static-libs"
 IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang full-relro lto noexecstack shadowcallstack ssp"
 IUSE+="
 	pgo
@@ -51,7 +49,6 @@ REQUIRED_USE="
 		pgo-trainer-decode
 		|| (
 			pgo-custom
-			pgo-trainer-decode
 			pgo-trainer-70-pct-quality-baseline
 			pgo-trainer-75-pct-quality-baseline
 			pgo-trainer-80-pct-quality-baseline
@@ -69,6 +66,7 @@ REQUIRED_USE="
 			pgo-trainer-99-pct-quality-progressive
 			pgo-trainer-100-pct-quality-progressive
 			pgo-trainer-crop
+			pgo-trainer-decode
 			pgo-trainer-grayscale
 			pgo-trainer-transformations
 		)
@@ -169,8 +167,7 @@ BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
 BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
-BDEPEND+=" >=dev-util/cmake-3.16.5
-	amd64? ( ${ASM_DEPEND} )
+BDEPEND+=" amd64? ( ${ASM_DEPEND} )
 	x86? ( ${ASM_DEPEND} )
 	amd64-fbsd? ( ${ASM_DEPEND} )
 	x86-fbsd? ( ${ASM_DEPEND} )
@@ -180,17 +177,19 @@ BDEPEND+=" >=dev-util/cmake-3.16.5
 	x64-cygwin? ( ${ASM_DEPEND} )"
 
 DEPEND="${COMMON_DEPEND}
-	java? ( >=virtual/jdk-1.8:*[-headless-awt] )"
+	java? ( >=virtual/jdk-1.5 )"
 
 RDEPEND="${COMMON_DEPEND}
-	java? ( >=virtual/jre-1.8:* )"
+	java? ( >=virtual/jre-1.5 )"
 PDEPEND=" pgo? ( media-video/mpv )"
 
 MULTILIB_WRAPPED_HEADERS=( /usr/include/jconfig.h )
 
 PATCHES=(
-	# Upstream patch
-	"${FILESDIR}"/${P}-arm64-relro.patch
+	"${FILESDIR}"/${PN}-1.2.0-x32.patch #420239
+	"${FILESDIR}"/${P}-divzero_fix.patch #658624
+	"${FILESDIR}"/${P}-cve-2018-11813.patch
+	"${FILESDIR}"/${P}-CVE-2020-13790.patch
 )
 
 S="${WORKDIR}/${P}"
@@ -227,30 +226,10 @@ get_build_types() {
 }
 
 src_prepare() {
-	local FILE
-	ln -snf ../debian/extra/*.c . || die
+	default
 
-	for FILE in ../debian/extra/*.c; do
-		FILE=${FILE##*/}
-		cat >> CMakeLists.txt <<EOF || die
-add_executable(${FILE%.c} ${FILE})
-install(TARGETS ${FILE%.c})
-EOF
-	done
+	eautoreconf
 
-	for FILE in ../debian/extra/exifautotran; do
-		cat >> CMakeLists.txt <<EOF || die
-install(FILES \${CMAKE_CURRENT_SOURCE_DIR}/${FILE} DESTINATION \${CMAKE_INSTALL_BINDIR})
-EOF
-	done
-
-	for FILE in ../debian/extra/*.[0-9]*; do
-		cat >> CMakeLists.txt <<EOF || die
-install(FILES \${CMAKE_CURRENT_SOURCE_DIR}/${FILE} DESTINATION \${CMAKE_INSTALL_MANDIR}/man${FILE##*.})
-EOF
-	done
-
-	cmake_src_prepare
 	java-pkg-opt-2_src_prepare
 
 	prepare_abi() {
@@ -283,6 +262,8 @@ append_lto() {
 		append-ldflags -flto=auto
 	fi
 }
+
+multilib-minimal_src_configure() { :; }
 
 _configure_pgx() {
 	if use clang ; then
@@ -375,42 +356,38 @@ _configure_pgx() {
 		fi
 	fi
 
-	if multilib_is_native_abi && use java ; then
-		export JAVACFLAGS="$(java-pkg_javac-args)"
-		export JNI_CFLAGS="$(java-pkg_get-jni-cflags)"
+	local myconf=()
+	if multilib_is_native_abi; then
+		myconf+=( $(use_with java) )
+		if use java; then
+			export JAVACFLAGS="$(java-pkg_javac-args)"
+			export JNI_CFLAGS="$(java-pkg_get-jni-cflags)"
+		fi
+	else
+		myconf+=( --without-java )
 	fi
+	[[ ${ABI} == "x32" ]] && myconf+=( --without-simd ) #420239
 
-	local mycmakeargs=(
-		-DCMAKE_INSTALL_DEFAULT_DOCDIR="${EPREFIX}/usr/share/doc/${PF}"
-		-DENABLE_STATIC="$(usex static-libs)"
-		-DWITH_JAVA="$(multilib_native_usex java)"
-		-DWITH_MEM_SRCDST=ON
-	)
-
-	if ! use asm ; then
-		mycmakeargs+=(
-			-DWITH_SIMD:BOOL=OFF
-		)
-	elif use arm; then
-		# Avoid ARM ABI issues by disabling SIMD for CPUs without NEON. #792810
-		mycmakeargs+=(
-			-DWITH_SIMD:BOOL=$(usex cpu_flags_arm_neon ON OFF)
-		)
-	fi
-
-	# mostly for Prefix, ensure that we use our yasm if installed and
-	# not pick up host-provided nasm
-	if has_version -b dev-lang/yasm && ! has_version -b dev-lang/nasm; then
-		mycmakeargs+=(
-			-DCMAKE_ASM_NASM_COMPILER=$(type -P yasm)
-		)
-	fi
-
-	cmake_src_configure
+	# Force /bin/bash until upstream generates a new version. #533902
+	CONFIG_SHELL="${EPREFIX}"/bin/bash \
+	ECONF_SOURCE=${S} \
+	econf \
+		$(use_enable static-libs static) \
+		$(use_with asm simd) \
+		--with-mem-srcdst \
+		"${myconf[@]}"
 }
 
 _build_pgx() {
-	cmake_src_compile
+	local _java_makeopts
+	use java && _java_makeopts="-j1"
+	emake ${_java_makeopts}
+
+	if multilib_is_native_abi; then
+		pushd ../debian/extra >/dev/null
+		emake CC="$(tc-getCC)" CFLAGS="${LDFLAGS} ${CFLAGS}"
+		popd >/dev/null
+	fi
 }
 
 _run_trainers() {
@@ -558,6 +535,10 @@ src_compile() {
 	multilib_foreach_abi compile_abi
 }
 
+src_test() {
+	emake test
+}
+
 _install_pgx() {
 	einfo "Installing image into sandbox staging area"
 	_install
@@ -570,11 +551,24 @@ _clean_pgx() {
 }
 
 _install() {
-	cmake_src_install
+	emake \
+		DESTDIR="${D}" \
+		docdir="${EPREFIX}"/usr/share/doc/${PF} \
+		exampledir="${EPREFIX}"/usr/share/doc/${PF} \
+		install
 
-	if multilib_is_native_abi && use java ; then
-		rm -rf "${ED}"/usr/classes || die
-		java-pkg_dojar java/turbojpeg.jar
+	if multilib_is_native_abi; then
+		pushd "${WORKDIR}"/debian/extra >/dev/null
+		emake \
+			DESTDIR="${D}" prefix="${EPREFIX}"/usr \
+			INSTALL="install -m755" INSTALLDIR="install -d -m755" \
+			install
+		popd >/dev/null
+
+		if use java; then
+			rm -rf "${ED}"/usr/classes
+			java-pkg_dojar java/turbojpeg.jar
+		fi
 	fi
 }
 
@@ -582,17 +576,12 @@ _install_once() {
 	cd "${S}" || die
 	find "${ED}" -type f -name '*.la' -delete || die
 
-	local -a DOCS=( README.md ChangeLog.md )
-	einstalldocs
-
-	newdoc "${WORKDIR}"/debian/changelog changelog.debian
-
 	docinto html
-	dodoc -r "${S}"/doc/html/.
-
+	dodoc -r "${S}"/doc/html/*
+	newdoc "${WORKDIR}"/debian/changelog changelog.debian
 	if use java; then
 		docinto html/java
-		dodoc -r "${S}"/java/doc/.
+		dodoc -r "${S}"/java/doc/*
 		newdoc "${S}"/java/README README.java
 	fi
 }
