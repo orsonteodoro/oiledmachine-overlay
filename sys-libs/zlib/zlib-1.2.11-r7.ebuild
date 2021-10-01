@@ -387,6 +387,8 @@ append_lto() {
 	fi
 }
 
+src_configure() { :; }
+
 _configure_pgx() {
 	[[ -f Makefile && "${PGO_PHASE}" == "pgo" ]] \
 		&& grep -q -e "^clean:" Makefile \
