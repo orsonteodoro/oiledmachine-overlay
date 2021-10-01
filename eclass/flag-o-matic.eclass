@@ -984,15 +984,18 @@ translate_lto() {
 			einfo "Using ThinLTO"
 			replace-flags "-flto=auto" "-flto=thin"
 			replace-flags "-flto=jobserver" "-flto=thin"
+			local t
 			for f in CFLAGS CXXFLAGS LDFLAGS ; do
-				${f}=$(echo ${!f} | sed -r -e "s|-flto=[0-9]+|-flto=thin|g")
+				t=$(echo ${!f} | sed -r -e "s|-flto=[0-9]+|-flto=thin|g")
+				eval ${f}=${t}
 			done
 		elif has_version "sys-devel/llvm[gold]" ; then
 			ewarn "Using Full LTO"
 			replace-flags "-flto=auto" "-flto=full"
 			replace-flags "-flto=jobserver" "-flto=full"
 			for f in CFLAGS CXXFLAGS LDFLAGS ; do
-				${f}=$(echo ${!f} | sed -r -e "s|-flto=[0-9]+|-flto=full|g")
+				t=$(echo ${!f} | sed -r -e "s|-flto=[0-9]+|-flto=full|g")
+				eval ${f}=${t}
 			done
 		else
 			ewarn "Using LTO defaults"
