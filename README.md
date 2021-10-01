@@ -151,6 +151,7 @@ the metadata.xml.
 * media-libs/libjpeg-turbo
 * media-libs/libvpx
 * media-video/ffmpeg (WIP)
+* media-gfx/blender (WIP)
 * net-libs/nodejs
 * sys-kernel/ot-sources
 * sys-kernel/genkernel
