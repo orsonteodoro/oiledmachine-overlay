@@ -3,8 +3,10 @@
 
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
+# The HOMEPAGE link (1164792) doesn't have this exact release (1188099).  See DL_PAGE instead.
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-50"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-45"
+DL_PAGE="https://www.amd.com/en/support/graphics/amd-radeon-6000-series/amd-radeon-6900-series/amd-radeon-rx-6900-xt"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	dkms? ( AMDGPU-FIRMWARE GPL-2 MIT )
@@ -56,10 +58,10 @@ PKG_VER=$(ver_cut 1-2)
 PKG_VER_MAJ=$(ver_cut 1)
 PKG_REV=$(ver_cut 3)
 PKG_ARCH="rhel"
-PKG_ARCH_VER="8.3"
+PKG_ARCH_VER="8.2"
 PKG_ARCH_VER_MAJOR=$(ver_cut 1 ${PKG_ARCH_VER})
 PKG_ARCH_SUFFIX=".el${PKG_ARCH_VER_MAJOR}."
-PKG_VER_COMGR="1.9.0"
+PKG_VER_COMGR="1.7.0"
 PKG_VER_GCC="8.2.1"
 PKG_VER_GST_OMX="1.0.0.1"
 PKG_VER_HSART="1.2.0"
@@ -67,22 +69,22 @@ PKG_VER_HSAKMT="1.0.6"
 PKG_VER_HSAKMT_A="1.0.9"
 PKG_VER_ID="1.0.0"
 PKG_VER_LIBDRM="2.4.100"
-PKG_VER_LLVM_TRIPLE="11.0.0"
+PKG_VER_LLVM_TRIPLE="10.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="20.2.4"
+PKG_VER_MESA="20.1.6"
 PKG_VER_ROCM_DEVLIBS="1.0.0"
-PKG_VER_ROCM_LLVM="12.0"
+PKG_VER_ROCM_LLVM="11.0"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_VA="1.8.3"
-PKG_VER_XORG_VIDEO_AMDGPU_DRV="24.1.0" # about the same as the mesa version
+PKG_VER_XORG_VIDEO_AMDGPU_DRV="24.0.0" # about the same as the mesa version
 VULKAN_SDK_VER="1.2.148"
-ROCK_V="4.0.0" # an approximate
+ROCK_V="3.9.0_pre20201021" # an approximate
 IUSE="amf bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang
 +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_rocr +opengl
-opengl_mesa +opengl_pro osmesa +pro-stack rocm strict-pairing system-roct
-system-hsa-rt +vaapi vaapi_r600 +vaapi_radeonsi +vdpau vdpau_r300 vdpau_r600
+opengl_mesa +opengl_pro osmesa +pro-stack rocm strict-pairing system-hsa-rt
+system-roct +vaapi vaapi_r600 +vaapi_radeonsi +vdpau vdpau_r300 vdpau_r600
 +vdpau_radeonsi +vulkan vulkan_open vulkan_pro +X xa"
 REQUIRED_USE="
 	!abi_x86_32
@@ -151,8 +153,11 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 		)
 		open-stack? (
 			X? ( x11-libs/libX11 )
+			|| (
+				dev-libs/libffi:0/7[${MULTILIB_USEDEP}]
+				dev-libs/libffi-compat:7[${MULTILIB_USEDEP}]
+			)
 			sys-libs/ncurses[tinfo]
-			virtual/libffi
 			virtual/libudev
 		)
 	 )
@@ -162,18 +167,18 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 	 opencl? ( !opencl-icd-loader? ( >=virtual/opencl-3 ) )
 	 rocm? ( >=sys-apps/pciutils-3.5.6
 		 >=sys-process/numactl-2.0.11
-		  !strict-pairing? ( >=virtual/amdgpu-drm-3.2.114[dkms,firmware] )
-		   strict-pairing? ( ~virtual/amdgpu-drm-3.2.114[dkms,firmware] )
+		  !strict-pairing? ( >=virtual/amdgpu-drm-3.2.99[dkms,firmware] )
+		   strict-pairing? ( ~virtual/amdgpu-drm-3.2.99[dkms,firmware] )
 		   system-roct? ( >=dev-libs/roct-thunk-interface-${ROCK_V} ) )
 	 !strict-pairing? (
 		freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
-		>=virtual/amdgpu-drm-3.2.114[dkms?]
+		>=virtual/amdgpu-drm-3.2.99[dkms?]
 	 )
 	 strict-pairing? (
-		~virtual/amdgpu-drm-3.2.114[dkms?,strict-pairing]
+		~virtual/amdgpu-drm-3.2.99[dkms?,strict-pairing]
 	 )
 	 vaapi? (  >=x11-libs/libva-${PKG_VER_VA}
-		   >=virtual/amdgpu-drm-3.2.114[dkms?,firmware] )
+		   >=virtual/amdgpu-drm-3.2.99[dkms?,firmware] )
 	 vdpau? ( >=x11-libs/libvdpau-1.1.1 )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:= )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:=[-vulkan]
@@ -210,7 +215,7 @@ pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo "Please download"
 	einfo "  - ${FN}"
-	einfo "from ${HOMEPAGE} and place them in ${distdir}"
+	einfo "from ${DL_PAGE} and place them in ${distdir}"
 }
 
 unpack_rpm() {
@@ -244,8 +249,6 @@ driver to work"
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
-	einfo "Detected mesa using libglvnd"
-	export MESA_USES_LIBGLVND="Y"
 	if [[ -f "${EROOT}/etc/env.d/000opengl" ]] ; then
 		ewarn \
 "Please remove /etc/env.d/000opengl and do ldconfig && env-update manually. \
