@@ -42,6 +42,7 @@ IUSE+="
 	pgo-trainer-zlib-binary-random
 	pgo-trainer-zlib-images-all
 	pgo-trainer-zlib-images-default
+	pgo-trainer-zlib-images-level-8
 	pgo-trainer-zlib-images-max
 	pgo-trainer-zlib-images-min
 	pgo-trainer-zlib-images-random
