@@ -987,7 +987,7 @@ translate_lto() {
 			local t
 			for f in CFLAGS CXXFLAGS LDFLAGS ; do
 				t=$(echo ${!f} | sed -r -e "s|-flto=[0-9]+|-flto=thin|g")
-				eval ${f}="${t}"
+				eval ${f}=\"${t}\"
 			done
 		elif has_version "sys-devel/llvm[gold]" ; then
 			ewarn "Using Full LTO"
@@ -995,7 +995,7 @@ translate_lto() {
 			replace-flags "-flto=jobserver" "-flto=full"
 			for f in CFLAGS CXXFLAGS LDFLAGS ; do
 				t=$(echo ${!f} | sed -r -e "s|-flto=[0-9]+|-flto=full|g")
-				eval ${f}="${t}"
+				eval ${f}=\"${t}\"
 			done
 		else
 			ewarn "Using LTO defaults"
