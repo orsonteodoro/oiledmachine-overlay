@@ -855,6 +855,9 @@ no-as-needed() {
 
 ###### oiledmachine-overlay extentions ######
 
+# @FUNCTION: translate_retpoline
+# @DESCRIPTION:
+# Translates retpoline flags in the best possible way between compilers.
 translate_retpoline() {
 	# Translation is necessary when package.env is a static list
 	# It is preferred to do it in the compiler level.
