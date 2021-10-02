@@ -935,7 +935,8 @@ filter_incompatible_clang_flags() {
 filter_incompatible_gcc_flags() {
 	if tc-is-gcc ; then
 		einfo "Auto removing incompatible gcc flags"
-		:;
+		filter-flags \
+			'-f*split-lto-unit'
 	fi
 }
 
