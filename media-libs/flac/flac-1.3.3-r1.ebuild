@@ -153,6 +153,9 @@ append_lto() {
 		append-flags -flto=auto
 		append-ldflags -flto=auto
 	fi
+	if [[ "${USE}" =~ "cfi" ]] ; then
+		append-flags -fsplit-lto-unit
+	fi
 }
 
 _src_configure() {
@@ -165,6 +168,9 @@ _src_configure() {
 		RANLIB=llvm-ranlib
 		READELF=llvm-readelf
 		unset LD
+
+		# Avoid undefined reference to fread.inline
+		replace-flags '-O*' -O1
 	fi
 	if tc-is-clang && ! use clang ; then
 		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
