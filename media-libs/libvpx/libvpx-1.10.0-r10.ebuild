@@ -12,7 +12,7 @@ inherit flag-o-matic llvm toolchain-funcs multilib-minimal
 # 5. make testdata
 # 6. tar -caf libvpx-testdata-${MY_PV}.tar.xz libvpx-testdata
 
-LIBVPX_TESTDATA_VER=1.9.0
+LIBVPX_TESTDATA_VER=1.10.0
 
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
@@ -21,7 +21,7 @@ SRC_URI="https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.
 
 LICENSE="BSD"
 SLOT="0/6"
-KEYWORDS="amd64 arm arm64 ~ia64 ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux"
+KEYWORDS="amd64 ~arm arm64 ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux"
 IUSE="doc +highbitdepth postproc static-libs svc test +threads"
 IUSE+=" +examples"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang full-relro libcxx lto noexecstack shadowcallstack ssp"
@@ -331,6 +331,9 @@ append_lto() {
 	else
 		append-flags -flto=auto
 		append-ldflags -flto=auto
+	fi
+	if [[ "${USE}" =~ "cfi" ]] ; then
+		append-flags -fsplit-lto-unit
 	fi
 }
 
@@ -992,6 +995,15 @@ src_install() {
 		done
 	}
 	multilib_foreach_abi install_abi
+}
+
+get_arch_enabled_use_flags() {
+	local all_use=()
+	for p in $(multilib_get_enabled_abi_pairs) ; do
+		local u=${p%.*}
+		all_use+=( ${u} )
+	done
+	echo "${all_use[@]}" | tr " " ","
 }
 
 pkg_postinst() {
