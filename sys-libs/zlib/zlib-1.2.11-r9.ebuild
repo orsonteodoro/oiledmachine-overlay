@@ -386,6 +386,9 @@ append_lto() {
 		append-flags -flto=auto
 		append-ldflags -flto=auto
 	fi
+	if [[ "${USE}" =~ "cfi" ]] ; then
+		append-flags -fsplit-lto-unit
+	fi
 }
 
 src_configure() { :; }
