@@ -180,6 +180,8 @@ eerror "per-package envvar.  The video must be 3840x2160 resolution,"
 eerror "60fps, >= 3 seconds."
 eerror
 			die
+		else
+			einfo "LIBAOM_PGO_VIDEO=${LIBAOM_PGO_VIDEO}"
 		fi
 		if ffprobe "${LIBAOM_PGO_VIDEO}" 2>/dev/null 1>/dev/null ; then
 			einfo "Verifying asset requirements"
@@ -323,6 +325,9 @@ append_lto() {
 	else
 		append-flags -flto=auto
 		append-ldflags -flto=auto
+	fi
+	if [[ "${USE}" =~ "cfi" ]] ; then
+		append-flags -fsplit-lto-unit
 	fi
 }
 
