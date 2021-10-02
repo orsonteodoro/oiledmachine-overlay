@@ -444,7 +444,6 @@ configure_pgx() {
 		--enable-pic
 		--enable-vp8
 		--enable-vp9
-		--enable-shared
 		--extra-cflags="${CFLAGS}"
 		$(use_enable examples)
 		$(use_enable postproc)
