@@ -468,7 +468,6 @@ configure_pgx() {
 			append-ldflags --param=ssp-buffer-size=4 \
 					-fstack-protector
 			append-ldflags -Wl,-z,relro -Wl,-z,now
-			use clang && append-ldflags -fuse-ld=lld
 			mycmakeargs+=(
 				-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -pie"
 			)
