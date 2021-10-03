@@ -15,7 +15,7 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz
 LICENSE="BSD IJG ZLIB"
 SLOT="0/0.2"
 if [[ "$(ver_cut 3)" -lt 90 ]] ; then
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
+	KEYWORDS="~alpha amd64 arm ~arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
 fi
 IUSE="+asm cpu_flags_arm_neon java static-libs"
 IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang hardened lto shadowcallstack"
@@ -70,7 +70,6 @@ REQUIRED_USE="
 			pgo-trainer-99-pct-quality-progressive
 			pgo-trainer-100-pct-quality-progressive
 			pgo-trainer-crop
-			pgo-trainer-decode
 			pgo-trainer-grayscale
 			pgo-trainer-transformations
 		)
@@ -182,13 +181,18 @@ BDEPEND+=" >=dev-util/cmake-3.16.5
 	x64-cygwin? ( ${ASM_DEPEND} )"
 
 DEPEND="${COMMON_DEPEND}
-	java? ( >=virtual/jdk-1.8:* )"
+	java? ( >=virtual/jdk-1.8:*[-headless-awt] )"
 
 RDEPEND="${COMMON_DEPEND}
 	java? ( >=virtual/jre-1.8:* )"
 PDEPEND=" pgo? ( media-video/mpv )"
 
 MULTILIB_WRAPPED_HEADERS=( /usr/include/jconfig.h )
+
+PATCHES=(
+	# Upstream patch
+	"${FILESDIR}"/${P}-arm64-relro.patch
+)
 
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -298,6 +302,7 @@ is_hardened_gcc() {
 src_configure() { :; }
 
 _configure_pgx() {
+	local mycmakeargs=()
 	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
 		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
@@ -365,18 +370,34 @@ _configure_pgx() {
 			append-ldflags -Wl,-z,relro -Wl,-z,now
 			append-ldflags --param=ssp-buffer-size=4 \
 					-fstack-protector
+			mycmakeargs+=(
+				-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -pie"
+			)
 		fi
+	fi
+
+	if use static-libs && [[ "${build_type}" == "static-libs" ]] ;then
+		mycmakeargs+=(
+			-DENABLE_SHARED=OFF
+			-DENABLE_STATIC=ON
+		)
+	else
+		mycmakeargs+=(
+			-DENABLE_SHARED=ON
+			-DENABLE_STATIC=OFF
+		)
 	fi
 
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
-			append-cflags -fprofile-generate="${T}/pgo-${ABI}"
-			append-cxxflags -fprofile-generate="${T}/pgo-${ABI}"
+			append-flags -fprofile-generate="${T}/pgo-${ABI}" -Wno-backend-plugin
+			if ver_test $(clang-major-version) -ge 11 ; then
+				append-flags -mllvm -vp-counters-per-site=4
+			fi
 		else
-			append-cflags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
-			append-cxxflags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
 		&& has_pgo_requirement ; then
@@ -384,11 +405,9 @@ _configure_pgx() {
 		if tc-is-clang ; then
 			llvm-profdata merge -output="${T}/pgo-${ABI}/code.profdata" \
 				"${T}/pgo-${ABI}" || die
-			append-cflags -fprofile-use="${T}/pgo-${ABI}/code.profdata"
-			append-cxxflags -fprofile-use="${T}/pgo-${ABI}/code.profdata"
+			append-flags -fprofile-use="${T}/pgo-${ABI}/code.profdata" -Wno-backend-plugin
 		else
-			append-cflags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
-			append-cxxflags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
 		fi
 	fi
 
@@ -397,9 +416,8 @@ _configure_pgx() {
 		export JNI_CFLAGS="$(java-pkg_get-jni-cflags)"
 	fi
 
-	local mycmakeargs=(
+	mycmakeargs+=(
 		-DCMAKE_INSTALL_DEFAULT_DOCDIR="${EPREFIX}/usr/share/doc/${PF}"
-		-DENABLE_STATIC="$(usex static-libs)"
 		-DWITH_JAVA="$(multilib_native_usex java)"
 		-DWITH_MEM_SRCDST=ON
 	)

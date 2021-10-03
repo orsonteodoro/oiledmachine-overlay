@@ -1,0 +1,44 @@
+diff -urp libjpeg-turbo-1.5.3.orig/Makefile.am libjpeg-turbo-1.5.3/Makefile.am
+--- libjpeg-turbo-1.5.3.orig/Makefile.am	2017-12-13 20:39:01.000000000 -0800
++++ libjpeg-turbo-1.5.3/Makefile.am	2021-10-03 10:46:44.026553146 -0700
+@@ -126,6 +126,7 @@ if WITH_12BIT
+ else
+ cjpeg_CFLAGS += -DBMP_SUPPORTED -DTARGA_SUPPORTED
+ endif
++cjpeg_LDFLAGS = -pie
+ 
+ djpeg_SOURCES = cdjpeg.h cderror.h cdjpeg.c djpeg.c rdcolmap.c rdswitch.c \
+ 	wrgif.c wrppm.c
+@@ -141,23 +142,32 @@ if WITH_12BIT
+ else
+ djpeg_CFLAGS += -DBMP_SUPPORTED -DTARGA_SUPPORTED
+ endif
++djpeg_LDFLAGS = -pie
+ 
+ jpegtran_SOURCES = jpegtran.c rdswitch.c cdjpeg.c transupp.c transupp.h
+ 
+ jpegtran_LDADD = libjpeg.la
+ 
++jpegtran_LDFLAGS = -pie
++
+ rdjpgcom_SOURCES = rdjpgcom.c
+ 
+ rdjpgcom_LDADD = libjpeg.la
+ 
++rdjpgcom_LDFLAGS = -pie
++
+ wrjpgcom_SOURCES = wrjpgcom.c
+ 
+ wrjpgcom_LDADD = libjpeg.la
+ 
++wrjpgcom_LDFLAGS = -pie
++
+ jcstest_SOURCES = jcstest.c
+ 
+ jcstest_LDADD = libjpeg.la
+ 
++jcstest_LDFLAGS = -pie
++
+ dist_man1_MANS = cjpeg.1 djpeg.1 jpegtran.1 rdjpgcom.1 wrjpgcom.1
+ 
+ DOCS= coderules.txt jconfig.txt change.log rdrle.c wrrle.c BUILDING.md \
