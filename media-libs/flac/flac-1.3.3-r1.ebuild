@@ -13,7 +13,7 @@ LICENSE="BSD FDL-1.2 GPL-2 LGPL-2.1"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 IUSE="+cxx debug ogg cpu_flags_ppc_altivec cpu_flags_ppc_vsx cpu_flags_x86_sse static-libs"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang full-relro libcxx lto noexecstack shadowcallstack ssp"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack"
 RDEPEND="ogg? ( >=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}] )"
 REQUIRED_USE="
 	cfi? ( clang lto static-libs )
@@ -92,7 +92,7 @@ gen_libcxx_depend() {
 		echo "
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			>=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,full-relro?,noexecstack?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}]
+			>=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}]
 		)
 		"
 	done
@@ -158,6 +158,20 @@ append_lto() {
 	fi
 }
 
+is_hardened_clang() {
+	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
+		return 0
+	fi
+	return 1
+}
+
+is_hardened_gcc() {
+	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
+		return 0
+	fi
+	return 1
+}
+
 _src_configure() {
 	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
@@ -199,13 +213,12 @@ _src_configure() {
 
 	autofix_flags
 
-	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
-		:;
-	else
-		if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+	set_cfi() {
+		# The cfi enables all cfi schemes, but the selective tries to balance
+		# performance and security while maintaining a performance limit.
+		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
 			if use cfi ; then
-				append_all -fvisibility=hidden \
-						-fsanitize=cfi
+				append_all -fvisibility=hidden -fsanitize=cfi
 			else
 				use cfi-cast && append_all -fvisibility=hidden \
 							-fsanitize=cfi-derived-cast \
@@ -216,19 +229,24 @@ _src_configure() {
 							-fsanitize=cfi-vcall
 			fi
 		fi
-		if tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
-			# Already done by hardened clang
-			:;
-		else
-			use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
-			use ssp && append-ldflags --param=ssp-buffer-size=4 \
-						-fstack-protector
-		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
-	fi
+	}
+
+	use hardened && append-ldflags -Wl,-z,noexecstack
 	use lto && append_lto
-	use noexecstack && append-ldflags -Wl,-z,noexecstack
+	if is_hardened_gcc ; then
+		:;
+	elif is_hardened_clang ; then
+		set_cfi
+	else
+		set_cfi
+		if use hardened ; then
+			append-ldflags -Wl,-z,relro -Wl,-z,now
+			append-ldflags --param=ssp-buffer-size=4 \
+					-fstack-protector
+		fi
+	fi
 
 	local myeconfargs=(
 		--disable-doxygen-docs
