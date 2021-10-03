@@ -151,6 +151,10 @@ src_prepare() {
 		-e 's:icudefs.mk:icudefs.mk Doxyfile:' \
 		configure.ac || die
 
+	if use hardened ; then
+		eapply "${FILESDIR}/icu-69.1-pie.patch"
+	fi
+
 	eautoreconf
 
 	prepare_abi() {
@@ -305,16 +309,62 @@ _configure_abi() {
 		$(multilib_native_use_enable examples samples)
 	)
 
+	filter-flags -fpic -fPIC -fpie -fPIE
+
 	if [[ "${build_type}" == "static-libs" ]] ; then
+		if is_hardened_gcc || is_hardened_clang ; then
+			:; # Already applies fPIE
+		else
+			use hardened && append-cppflags -fPIE
+		fi
 		myeconfargs+=(
 			--enable-static
 			--disable-shared
 		)
+		if multilib_is_native_abi ; then
+			myeconfargs+=(
+				--enable-extras
+				--enable-tools
+			)
+			use examples && \
+			myeconfargs+=( --enable-samples )
+		else
+			# Always disable exe for non-native ABI
+			myeconfargs+=(
+				--disable-extras
+				--disable-samples
+				--disable-tools
+			)
+		fi
 	else
+		# -fPIC already done in build scripts
 		myeconfargs+=(
 			--disable-static
 			--enable-shared
 		)
+		if use static-libs ; then
+			# Prevent exe becoming fPIC when using PIE
+			myeconfargs+=(
+				--disable-extras
+				--disable-samples
+				--disable-tools
+			)
+		elif multilib_is_native_abi ; then
+			# Wants shared only
+			myeconfargs+=(
+				--enable-extras
+				--enable-tools
+			)
+			use examples && \
+			myeconfargs+=( --enable-samples )
+		else
+			# Always disable exe for non-native ABI
+			myeconfargs+=(
+				--disable-extras
+				--disable-samples
+				--disable-tools
+			)
+		fi
 	fi
 
 	tc-is-cross-compiler && myeconfargs+=(
@@ -339,6 +389,7 @@ _configure_abi() {
 }
 
 src_compile() {
+	export VERBOSE=1
 	compile_abi() {
 		for build_type in $(get_build_types) ; do
 			export S="${S_orig}.${ABI}_${build_type/-*}"
