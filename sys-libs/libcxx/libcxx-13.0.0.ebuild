@@ -12,9 +12,9 @@ HOMEPAGE="https://libcxx.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
 IUSE="elibc_glibc elibc_musl +libcxxabi +libunwind static-libs test"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang full-relro lto noexecstack shadowcallstack ssp"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 REQUIRED_USE="libunwind? ( libcxxabi )"
 REQUIRED_USE+="
 	cfi? ( clang lto static-libs )
@@ -24,7 +24,7 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	libcxxabi? ( ~sys-libs/libcxxabi-${PV}[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,full-relro?,noexecstack?,shadowcallstack?,ssp?,libunwind=,static-libs?,${MULTILIB_USEDEP}] )
+	libcxxabi? ( ~sys-libs/libcxxabi-${PV}[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,hardened?,shadowcallstack?,libunwind=,static-libs?,${MULTILIB_USEDEP}] )
 	!libcxxabi? ( >=sys-devel/gcc-4.7:=[cxx] )"
 DEPEND="${RDEPEND}"
 
@@ -110,7 +110,7 @@ PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-cfi.patch" )
 S="${WORKDIR}"
 
 LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake,utils/llvm-lit} )
-LLVM_PATCHSET=13.0.0-rc4
+LLVM_PATCHSET=${PV/_/-}
 llvm.org_set_globals
 
 python_check_deps() {
@@ -164,6 +164,20 @@ src_configure() {
 		done
 	}
 	multilib_foreach_abi configure_abi
+}
+
+is_hardened_clang() {
+	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
+		return 0
+	fi
+	return 1
+}
+
+is_hardened_gcc() {
+	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
+		return 0
+	fi
+	return 1
 }
 
 _configure_abi() {
@@ -236,26 +250,13 @@ _configure_abi() {
 		-DLIBCXX_HAS_ATOMIC_LIB=${want_gcc_s}
 		-DCMAKE_SHARED_LINKER_FLAGS="${extra_libs[*]} ${LDFLAGS}"
 		-DLTO=$(usex lto)
-		-DNOEXECSTACK=$(usex noexecstack)
+		-DNOEXECSTACK=$(usex hardened)
 	)
 
-	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
-		# Already done by hardened gcc
-		:;
-	else
-		if tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
-			# Already done by hardened clang
-			:;
-		else
-			mycmakeargs+=(
-				-DFULL_RELRO=$(usex full-relro)
-				-DSSP=$(usex ssp)
-			)
-		fi
-		if tc-is-clang ; then
-			mycmakeargs+=(
-				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
-			)
+	set_cfi() {
+		# The cfi enables all cfi schemes, but the selective tries to balance
+		# performance and security while maintaining a performance limit.
+		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
 			if [[ "${build_type}" == "static-libs" ]] ; then
 				mycmakeargs+=(
 					-DCFI=$(usex cfi)
@@ -265,7 +266,27 @@ _configure_abi() {
 				)
 			fi
 		fi
+		if tc-is-clang ; then
+			mycmakeargs+=(
+				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
+			)
+		fi
+	}
+
+	if is_hardened_gcc ; then
+		:;
+	elif is_hardened_clang ; then
+		set_cfi
+	else
+		set_cfi
+		if use hardened ; then
+			mycmakeargs+=(
+				-DFULL_RELRO=$(usex hardened)
+				-DSSP=$(usex hardened)
+			)
+		fi
 	fi
+
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		mycmakeargs+=(
 			-DLIBCXX_ENABLE_SHARED=OFF
