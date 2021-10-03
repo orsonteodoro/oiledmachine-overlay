@@ -48,7 +48,7 @@
     works -- _FORITIFY_SOURCE=2
     testing --  -fstack-clash-protection (x86/x86_64 only)
     works --  -fstack-protector-strong
-    unverfied --param=ssp-buffer-size=4
+    unverified --param=ssp-buffer-size=4
     works -- -Wl,relro -Wl,now
 
     Verification is done via the app-admin/checksec package.
