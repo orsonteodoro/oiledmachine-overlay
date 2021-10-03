@@ -25,7 +25,7 @@ IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
-IUSE+=" cfi clang full-relro libcxx lto noexecstack shadowcallstack ssp static-libs"
+IUSE+=" cfi clang hardened libcxx lto shadowcallstack static-libs"
 IUSE+=" +asm"
 IUSE+=" pgo pgo-custom
 	pgo-trainer-2-pass-constrained-quality
@@ -124,7 +124,7 @@ gen_libcxx_depend() {
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
 			libcxx? (
-				>=sys-libs/libcxx-${v}:=[cfi?,full-relro?,noexecstack?,shadowcallstack?,ssp?,${MULTILIB_USEDEP}]
+				>=sys-libs/libcxx-${v}:=[cfi?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}]
 			)
 		)
 		"
@@ -331,6 +331,20 @@ append_lto() {
 	fi
 }
 
+is_hardened_clang() {
+	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
+		return 0
+	fi
+	return 1
+}
+
+is_hardened_gcc() {
+	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
+		return 0
+	fi
+	return 1
+}
+
 configure_pgx() {
 	[[ -f build.ninja ]] && eninja clean
 	find "${BUILD_DIR}" -name "CMakeCache.txt" -delete 2>/dev/null
@@ -376,23 +390,41 @@ configure_pgx() {
 
 	autofix_flags
 
-	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
-		:;
-	else
-		if tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
-			# Already done by hardened clang
-			:;
-		else
-			use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
-			use ssp && append-ldflags --param=ssp-buffer-size=4 \
-							-fstack-protector
+	set_cfi() {
+		# The cfi enables all cfi schemes, but the selective tries to balance
+		# performance and security while maintaining a performance limit.
+		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
+			if use cfi ; then
+				append_all -fvisibility=hidden -fsanitize=cfi
+			else
+				use cfi-cast && append_all -fvisibility=hidden \
+							-fsanitize=cfi-derived-cast \
+							-fsanitize=cfi-unrelated-cast
+				use cfi-icall && append_all -fvisibility=hidden \
+							-fsanitize=cfi-icall
+				use cfi-vcall && append_all -fvisibility=hidden \
+							-fsanitize=cfi-vcall
+			fi
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
-	fi
+	}
+
 	use chromium && append-cppflags -DCHROMIUM
+	use hardened && append-ldflags -Wl,-z,noexecstack
 	use lto && append_lto
-	use noexecstack && append-ldflags -Wl,-z,noexecstack
+	if is_hardened_gcc ; then
+		:;
+	elif is_hardened_clang ; then
+		set_cfi
+	else
+		set_cfi
+		if use hardened ; then
+			append-ldflags --param=ssp-buffer-size=4 \
+					-fstack-protector
+			append-ldflags -Wl,-z,relro -Wl,-z,now
+		fi
+	fi
 
 	tc-export CC CXX
 	export FFMPEG=$(get_multiabi_ffmpeg)
