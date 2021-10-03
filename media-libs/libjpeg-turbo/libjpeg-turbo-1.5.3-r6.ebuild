@@ -15,7 +15,7 @@ LICENSE="BSD IJG ZLIB"
 SLOT="0/0.1"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos"
 IUSE="+asm java static-libs"
-IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang full-relro lto noexecstack shadowcallstack ssp"
+IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang hardened lto shadowcallstack"
 IUSE+="
 	pgo
 	pgo-custom
@@ -49,6 +49,7 @@ REQUIRED_USE="
 		pgo-trainer-decode
 		|| (
 			pgo-custom
+			pgo-trainer-decode
 			pgo-trainer-70-pct-quality-baseline
 			pgo-trainer-75-pct-quality-baseline
 			pgo-trainer-80-pct-quality-baseline
@@ -263,6 +264,20 @@ append_lto() {
 	fi
 }
 
+is_hardened_clang() {
+	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
+		return 0
+	fi
+	return 1
+}
+
+is_hardened_gcc() {
+	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
+		return 0
+	fi
+	return 1
+}
+
 src_configure() { :; }
 
 _configure_pgx() {
@@ -301,15 +316,12 @@ _configure_pgx() {
 
 	autofix_flags
 
-	use lto && append_lto
-	use noexecstack && append-ldflags -Wl,-z,noexecstack
-	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
-		:;
-	else
-		if [[ "${build_type}" == "static-libs" ]] ; then
+	set_cfi() {
+		# The cfi enables all cfi schemes, but the selective tries to balance
+		# performance and security while maintaining a performance limit.
+		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
 			if use cfi ; then
-				append_all -fvisibility=hidden \
-						-fsanitize=cfi
+				append_all -fvisibility=hidden -fsanitize=cfi
 			else
 				use cfi-cast && append_all -fvisibility=hidden \
 							-fsanitize=cfi-derived-cast \
@@ -320,16 +332,23 @@ _configure_pgx() {
 							-fsanitize=cfi-vcall
 			fi
 		fi
-		if tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
-			# Already done by hardened clang
-			:;
-		else
-			use full-relro && append-ldflags -Wl,-z,relro -Wl,-z,now
-			use ssp && append-ldflags --param=ssp-buffer-size=4 \
-						-fstack-protector
-		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
+	}
+
+	use hardened && append-ldflags -Wl,-z,noexecstack
+	use lto && append_lto
+	if is_hardened_gcc ; then
+		:;
+	elif is_hardened_clang ; then
+		set_cfi
+	else
+		set_cfi
+		if use hardened ; then
+			append-ldflags -Wl,-z,relro -Wl,-z,now
+			append-ldflags --param=ssp-buffer-size=4 \
+					-fstack-protector
+		fi
 	fi
 
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \

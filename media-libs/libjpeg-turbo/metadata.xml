@@ -48,9 +48,10 @@
     <flag name="cfi-icall">Build with cfi-icall</flag>
     <flag name="cfi-vcall">Build with cfi-vcall with forward edge
       protection.</flag>
-    <flag name="full-relro">Build with Full RELRO</flag>
+    <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
+      Hardened profiles get mid SSP by default and non-hardened profiles get low
+      SSP.</flag>
     <flag name="lto">Use link time optimization.</flag>
-    <flag name="ssp">Build with stack smashing protection</flag>
     <flag name="pgo-custom">Runs PGO training with a custom script</flag>
     <flag name="pgo-trainer-70-pct-quality-baseline">PGO train with 70% quality
       baseline for encode and decode for offline</flag>
