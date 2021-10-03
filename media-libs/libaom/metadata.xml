@@ -78,7 +78,7 @@
     <flag name="cfi">Build with full CFI with all schemes</flag>
     <flag name="chromium">Prevent symbol conflicts in the browser
       (testing)</flag>
-    <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
+    <flag name="hardened">Build with Full RELRO, noexecstack, PIE, SSP.
       Hardened profiles get mid SSP by default and non-hardened profiles get low
       SSP.</flag>
     <flag name="libcxx">Link against the more secured libcxx package.</flag>

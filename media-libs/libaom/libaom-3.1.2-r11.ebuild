@@ -10,17 +10,17 @@ if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 else
-	SRC_URI="https://dev.gentoo.org/~polynomial-c/dist/${P}.tar.xz"
+	SRC_URI="https://storage.googleapis.com/aom-releases/${P}.tar.gz"
 	S="${WORKDIR}/${P}"
 	S_orig="${WORKDIR}/${P}"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~riscv ~sparc ~x86"
 fi
 
 DESCRIPTION="Alliance for Open Media AV1 Codec SDK"
 HOMEPAGE="https://aomedia.org"
 
 LICENSE="BSD-2"
-SLOT="0/2"
+SLOT="0/3"
 IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
@@ -154,7 +154,9 @@ PDEPEND="
 		media-video/ffmpeg[encode,libaom,${MULTILIB_USEDEP}]
 	)
 "
-PATCHES=( "${FILESDIR}/libaom-2.0.1-aom_sadXXXxh-are-ssse3.patch" )
+PATCHES=(
+	"${FILESDIR}/libaom-2.0.1-aom_sadXXXxh-are-ssse3.patch"
+)
 
 # the PATENTS file is required to be distributed with this package bug #682214
 DOCS=( PATENTS )
@@ -240,9 +242,11 @@ get_build_types() {
 
 src_prepare() {
 	cmake_src_prepare
-	if use cfi ; then
+	if use clang && use lto ; then
 		sed -i -e "s|-fuse-ld=gold|-fuse-ld=lld|g" \
 			build/cmake/sanitizers.cmake || die
+	fi
+	if use cfi ; then
 		sed -i -e "s|-fno-sanitize-trap=cfi||g" \
 			build/cmake/sanitizers.cmake || die
 	fi
@@ -390,42 +394,6 @@ configure_pgx() {
 
 	autofix_flags
 
-	set_cfi() {
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
-			if use cfi ; then
-				append_all -fvisibility=hidden -fsanitize=cfi
-			else
-				use cfi-cast && append_all -fvisibility=hidden \
-							-fsanitize=cfi-derived-cast \
-							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all -fvisibility=hidden \
-							-fsanitize=cfi-icall
-				use cfi-vcall && append_all -fvisibility=hidden \
-							-fsanitize=cfi-vcall
-			fi
-		fi
-		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-						-fsanitize=shadow-call-stack
-	}
-
-	use chromium && append-cppflags -DCHROMIUM
-	use hardened && append-ldflags -Wl,-z,noexecstack
-	use lto && append_lto
-	if is_hardened_gcc ; then
-		:;
-	elif is_hardened_clang ; then
-		set_cfi
-	else
-		set_cfi
-		if use hardened ; then
-			append-ldflags --param=ssp-buffer-size=4 \
-					-fstack-protector
-			append-ldflags -Wl,-z,relro -Wl,-z,now
-		fi
-	fi
-
 	tc-export CC CXX
 	export FFMPEG=$(get_multiabi_ffmpeg)
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
@@ -472,18 +440,48 @@ configure_pgx() {
 		-DENABLE_AVX=$(usex cpu_flags_x86_avx ON OFF)
 		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
 	)
-	if [[ "${build_type}" == "static-libs" ]] ; then
-		mycmakeargs+=(
-			-DBUILD_SHARED_LIBS=ON
-		)
+
+	set_cfi() {
+		# The cfi enables all cfi schemes, but the selective tries to balance
+		# performance and security while maintaining a performance limit.
+		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
+			if use cfi ; then
+				mycmakeargs+=(
+					-DSANITIZE=cfi
+				)
+			fi
+		fi
+		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
+						-fsanitize=shadow-call-stack
+	}
+
+	use chromium && append-cppflags -DCHROMIUM
+	use hardened && append-ldflags -Wl,-z,noexecstack
+	use lto && append_lto
+	if is_hardened_gcc ; then
+		:;
+	elif is_hardened_clang ; then
+		set_cfi
 	else
-		if use cfi ; then
+		set_cfi
+		if use hardened ; then
+			append-ldflags --param=ssp-buffer-size=4 \
+					-fstack-protector
+			append-ldflags -Wl,-z,relro -Wl,-z,now
+			use clang && append-ldflags -fuse-ld=lld
 			mycmakeargs+=(
-				-DSANITIZE=cfi
+				-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -pie"
 			)
 		fi
+	fi
+
+	if [[ "${build_type}" == "static-libs" ]] ; then
 		mycmakeargs+=(
 			-DBUILD_SHARED_LIBS=OFF
+		)
+	else
+		mycmakeargs+=(
+			-DBUILD_SHARED_LIBS=ON
 		)
 	fi
 	# Bug when building for various ABIs.
