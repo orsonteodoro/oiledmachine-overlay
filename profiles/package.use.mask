@@ -2,6 +2,9 @@
 # and adding a row containing ${CATEGORY}/${PN} -use_flag.  This will remove the
 # the hard USE flag disable restriction.
 
+# Developer note:
+# without -<use> means block USE flag.
+
 # Freezes or just shows black screen
 x11-drivers/amdgpu-pro-lts opengl_mesa
 
@@ -134,4 +137,3 @@ net-libs/webkit-gtk pgo
 =dev-games/godot-2* touch
 =dev-games/godot-3* mobile-vr
 =dev-games/godot-3* touch
-

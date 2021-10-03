@@ -1,0 +1,9 @@
+# It is possible to remove these restrictions locally by changing /etc/portage/profile/package.use.mask
+# with a line ${CATEGORY}/${PN} -<use>
+
+# Developer note:
+# -<use> means remove USE block, without - means block USE
+
+# "debug ... is unsafe by definition and that is not a vulnerability" from NVD entry CVE-2019-19391
+# Avoid CWE-215 related class of errors and vulnerabilities
+debug
