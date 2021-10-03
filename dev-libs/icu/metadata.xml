@@ -16,11 +16,11 @@
     <flag name="cfi-cast">Build with cfi-cast</flag>
     <flag name="cfi-icall">Build with cfi-icall</flag>
     <flag name="cfi-vcall">Build with cfi-vcall</flag>
-    <flag name="full-relro">Build with Full RELRO</flag>
+    <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
+      Hardened profiles get mid SSP by default and non-hardened profiles get low
+      SSP.</flag>
     <flag name="lto">Use link time optimization.</flag>
-    <flag name="noexecstack">Build with noexecstack</flag>
     <flag name="shadowcallstack">Enable backward edge protection (arm64
       only)</flag>
-    <flag name="ssp">Build with stack smashing protection</flag>
   </use>
 </pkgmetadata>
