@@ -84,7 +84,7 @@
     <flag name="cfi-cast">Build with cfi-cast</flag>
     <flag name="cfi-icall">Build with cfi-icall</flag>
     <flag name="cfi-vcall">Build with cfi-vcall protecting the forward edge</flag>
-    <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
+    <flag name="hardened">Build with Full RELRO, noexecstack, PIE, SSP.
       Hardened profiles get mid SSP by default and non-hardened profiles get low
       SSP.</flag>
     <flag name="highbitdepth">Enable 10 and 12 bit support for VP9.</flag>

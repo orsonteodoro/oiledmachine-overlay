@@ -165,6 +165,7 @@ PDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/libvpx-1.3.0-sparc-configure.patch" # 501010
+	"${FILESDIR}/libvpx-1.10.0-exeldflags.patch"
 )
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -397,41 +398,6 @@ configure_pgx() {
 
 	autofix_flags
 
-	set_cfi() {
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
-			if use cfi ; then
-				append_all -fvisibility=hidden -fsanitize=cfi
-			else
-				use cfi-cast && append_all -fvisibility=hidden \
-							-fsanitize=cfi-derived-cast \
-							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all -fvisibility=hidden \
-							-fsanitize=cfi-icall
-				use cfi-vcall && append_all -fvisibility=hidden \
-							-fsanitize=cfi-vcall
-			fi
-		fi
-		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
-						-fsanitize=shadow-call-stack
-	}
-
-	use hardened && append-ldflags -Wl,-z,noexecstack
-	use lto && append_lto
-	if is_hardened_gcc ; then
-		:;
-	elif is_hardened_clang ; then
-		set_cfi
-	else
-		set_cfi
-		if use hardened ; then
-			append-ldflags --param=ssp-buffer-size=4 \
-					-fstack-protector
-			append-ldflags -Wl,-z,relro -Wl,-z,now
-		fi
-	fi
-
 	export FFMPEG=$(get_multiabi_ffmpeg)
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
 		&& has_pgo_requirement ; then
@@ -474,6 +440,44 @@ configure_pgx() {
 		$(use_enable highbitdepth vp9-highbitdepth)
 	)
 
+	set_cfi() {
+		# The cfi enables all cfi schemes, but the selective tries to balance
+		# performance and security while maintaining a performance limit.
+		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
+			if use cfi ; then
+				append_all -fvisibility=hidden -fsanitize=cfi
+			else
+				use cfi-cast && append_all -fvisibility=hidden \
+							-fsanitize=cfi-derived-cast \
+							-fsanitize=cfi-unrelated-cast
+				use cfi-icall && append_all -fvisibility=hidden \
+							-fsanitize=cfi-icall
+				use cfi-vcall && append_all -fvisibility=hidden \
+							-fsanitize=cfi-vcall
+			fi
+		fi
+		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
+						-fsanitize=shadow-call-stack
+	}
+
+	use hardened && append-ldflags -Wl,-z,noexecstack
+	use lto && append_lto
+	if is_hardened_gcc ; then
+		:;
+	elif is_hardened_clang ; then
+		set_cfi
+	else
+		set_cfi
+		if use hardened ; then
+			append-ldflags --param=ssp-buffer-size=4 \
+					-fstack-protector
+			append-ldflags -Wl,-z,relro -Wl,-z,now
+			mycmakeargs+=(
+				-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -pie"
+			)
+		fi
+	fi
+
 	if [[ "${build_type}" == "shared-libs" ]] ; then
 		myconfargs+=(
 			--enable-shared
@@ -511,6 +515,11 @@ configure_pgx() {
 
 	if use pgo && has_pgo_requirement && tc-is-gcc && [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		myconfargs+=( --enable-gcov )
+	fi
+
+	unset EXELDFLAGS
+	if use hardened ; then
+		export EXELDFLAGS="-pie"
 	fi
 
 	echo "${S}"/configure "${myconfargs[@]}" >&2
