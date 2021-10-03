@@ -84,11 +84,12 @@
     <flag name="cfi-cast">Build with cfi-cast</flag>
     <flag name="cfi-icall">Build with cfi-icall</flag>
     <flag name="cfi-vcall">Build with cfi-vcall protecting the forward edge</flag>
-    <flag name="full-relro">Build with Full RELRO</flag>
+    <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
+      Hardened profiles get mid SSP by default and non-hardened profiles get low
+      SSP.</flag>
     <flag name="highbitdepth">Enable 10 and 12 bit support for VP9.</flag>
     <flag name="libcxx">Link against the more secured libcxx package.</flag>
     <flag name="lto">Use link time optimization.</flag>
-    <flag name="noexecstack">Build with noexecstack</flag>
     <flag name="pgo">Use profile guided optimization.</flag>
     <flag name="pgo-custom">Use a custom profile guided optimization script to
       train with.</flag>
@@ -101,7 +102,6 @@
     <flag name="postproc">Enable additional post processing filters</flag>
     <flag name="shadowcallstack">Enable backward edge protection (arm64
       only)</flag>
-    <flag name="ssp">Build with stack smashing protection</flag>
     <flag name="svc">Enable spatial-svc support (experimental)</flag>
   </use>
   <upstream>
