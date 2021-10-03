@@ -12,9 +12,9 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
 IUSE="+libunwind static-libs test elibc_musl"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall full-relro clang lto noexecstack shadowcallstack ssp"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall full-relro clang hardened lto shadowcallstack"
 REQUIRED_USE+="
 	cfi? ( clang lto static-libs )
 	cfi-cast? ( clang lto cfi-vcall static-libs )
@@ -130,6 +130,20 @@ get_build_types() {
 	use static-libs && echo "static-libs"
 }
 
+is_hardened_clang() {
+	if tc-is-clang && clang --version 2>/dev/null | grep -q -e "Hardened:" ; then
+		return 0
+	fi
+	return 1
+}
+
+is_hardened_gcc() {
+	if tc-is-gcc && gcc --version 2>/dev/null | grep -q -e "Hardened" ; then
+		return 0
+	fi
+	return 1
+}
+
 src_configure() {
 	configure_abi() {
 		for build_type in $(get_build_types) ; do
@@ -179,26 +193,11 @@ _configure_abi() {
 		# probably because gcc & clang are bundling their own unwind.h
 		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}"/usr/include
 		-DLTO=$(usex lto)
-		-DNOEXECSTACK=$(usex noexecstack)
+		-DNOEXECSTACK=$(usex hardened)
 	)
 
-	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
-		# Already done by hardened gcc
-		:;
-	else
-		if tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
-			# Already done done by hardened clang
-			:;
-		else
-			mycmakeargs+=(
-				-DFULL_RELRO=$(usex full-relro)
-				-DSSP=$(usex ssp)
-			)
-		fi
-		if tc-is-clang ; then
-			mycmakeargs+=(
-				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
-			)
+	set_cfi() {
+		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
 			if [[ "${build_type}" == "static-libs" ]] ; then
 				mycmakeargs+=(
 					-DCFI=$(usex cfi)
@@ -207,6 +206,25 @@ _configure_abi() {
 					-DCFI_VCALL=$(usex cfi-vcall)
 				)
 			fi
+		fi
+		if use shadowcallstack ; then
+			mycmakeargs+=(
+				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
+			)
+		fi
+	}
+
+	if is_hardened_gcc ; then
+		:;
+	elif is_hardened_clang ; then
+		set_cfi
+	else
+		set_cfi
+		if use hardened ; then
+			mycmakeargs+=(
+				-DFULL_RELRO=$(usex hardened)
+				-DSSP=$(usex hardened)
+			)
 		fi
 	fi
 
@@ -249,26 +267,11 @@ wrap_libcxx() {
 		-DLIBCXX_HAS_GCC_S_LIB=OFF
 		-DLIBCXX_INCLUDE_TESTS=OFF
 		-DLTO=$(usex lto)
-		-DNOEXECSTACK=$(usex noexecstack)
+		-DNOEXECSTACK=$(usex hardened)
 	)
 
-	if tc-is-gcc && gcc --version | grep -q -e "Hardened" ; then
-		# Already done by hardened gcc
-		:;
-	else
-		if tc-is-clang && clang --version | grep -q -e "Hardened:" ; then
-			# Already done done by hardened clang
-			:;
-		else
-			mycmakeargs+=(
-				-DFULL_RELRO=$(usex full-relro)
-				-DSSP=$(usex ssp)
-			)
-		fi
-		if tc-is-clang ; then
-			mycmakeargs+=(
-				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
-			)
+	set_cfi() {
+		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
 			if [[ "${build_type}" == "static-libs" ]] ; then
 				mycmakeargs+=(
 					-DCFI=$(usex cfi)
@@ -277,6 +280,25 @@ wrap_libcxx() {
 					-DCFI_VCALL=$(usex cfi-vcall)
 				)
 			fi
+		fi
+		if use shadowcallstack ; then
+			mycmakeargs+=(
+				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
+			)
+		fi
+	}
+
+	if is_hardened_gcc ; then
+		:;
+	elif is_hardened_clang ; then
+		set_cfi
+	else
+		set_cfi
+		if use hardened ; then
+			mycmakeargs+=(
+				-DFULL_RELRO=$(usex hardened)
+				-DSSP=$(usex hardened)
+			)
 		fi
 	fi
 
