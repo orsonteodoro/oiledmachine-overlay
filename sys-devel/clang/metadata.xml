@@ -45,10 +45,13 @@
     so the flags below will be implied in use.
 
     Default ON patch status:
-    testing -- _FORITIFY_SOURCE=2
+    works -- _FORITIFY_SOURCE=2
     testing --  -fstack-clash-protection (x86/x86_64 only)
-    testing --  -fstack-protector-strong with --param=ssp-buffer-size=4
-    testing -- -Wl,relro -Wl,now
+    works --  -fstack-protector-strong
+    unverfied --param=ssp-buffer-size=4
+    works -- -Wl,relro -Wl,now
+
+    Verification is done via the app-admin/checksec package.
 
     When all testing switches to works, then it is ready for production.
     To ensure Full RELRO is applied default ON set LD="${CC}" or LD="ld.lld",
