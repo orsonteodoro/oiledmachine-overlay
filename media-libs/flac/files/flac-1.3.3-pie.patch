@@ -1,0 +1,22 @@
+diff -urp flac-1.3.3.orig/src/flac/Makefile.am flac-1.3.3/src/flac/Makefile.am
+--- flac-1.3.3.orig/src/flac/Makefile.am	2017-01-14 17:38:56.829033068 -0800
++++ flac-1.3.3/src/flac/Makefile.am	2021-10-03 12:36:14.758769667 -0700
+@@ -17,6 +17,7 @@
+ #  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ 
+ bin_PROGRAMS = flac
++flac_LDFLAGS = -pie
+ 
+ AM_CFLAGS = @OGG_CFLAGS@
+ AM_CPPFLAGS = -I$(top_builddir) -I$(srcdir)/include -I$(top_srcdir)/include
+diff -urp flac-1.3.3.orig/src/metaflac/Makefile.am flac-1.3.3/src/metaflac/Makefile.am
+--- flac-1.3.3.orig/src/metaflac/Makefile.am	2017-01-14 17:38:56.829033068 -0800
++++ flac-1.3.3/src/metaflac/Makefile.am	2021-10-03 12:36:01.974769246 -0700
+@@ -17,6 +17,7 @@
+ #  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ 
+ bin_PROGRAMS = metaflac
++metaflac_LDFLAGS = -pie
+ 
+ AM_CFLAGS = @OGG_CFLAGS@
+ AM_CPPFLAGS = -I$(top_builddir) -I$(srcdir)/include -I$(top_srcdir)/include

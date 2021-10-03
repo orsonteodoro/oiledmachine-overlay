@@ -4,6 +4,7 @@
 EAPI=7
 
 inherit flag-o-matic multilib-minimal toolchain-funcs
+inherit autotools
 
 DESCRIPTION="free lossless audio encoder and decoder"
 HOMEPAGE="https://xiph.org/flac/"
@@ -128,6 +129,12 @@ get_build_types() {
 
 src_prepare() {
 	default
+
+	if use hardened ; then
+		eapply "${FILESDIR}/flac-1.3.3-pie.patch"
+	fi
+	eautoreconf
+
 	prepare_abi() {
 		for build_type in $(get_build_types) ; do
 			einfo "Build type is ${build_type}"

@@ -19,7 +19,7 @@
     <flag name="cfi-cast">Build with cfi-cast</flag>
     <flag name="cfi-icall">Build with cfi-icall</flag>
     <flag name="cfi-vcall">Build with cfi-vcall</flag>
-    <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
+    <flag name="hardened">Build with Full RELRO, noexecstack, PIE, SSP.
       Hardened profiles get mid SSP by default and non-hardened profiles get low
       SSP.</flag>
     <flag name="lto">Use link time optimization.</flag>
