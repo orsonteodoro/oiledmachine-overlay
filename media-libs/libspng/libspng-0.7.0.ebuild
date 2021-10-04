@@ -17,7 +17,7 @@ REQUIRED_USE+=" pgo? ( examples )"
 DEPEND+=" virtual/libc
 	 test? ( >=media-libs/libpng-1.6 )
 	 !zlib? ( dev-libs/miniz:=[static-libs?] )
-	 zlib? ( sys-libs/zlib:=[static-libs?] )"
+	 zlib? ( sys-libs/zlib:=[static-libs?,${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	|| (

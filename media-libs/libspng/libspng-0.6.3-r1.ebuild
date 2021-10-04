@@ -16,7 +16,7 @@ IUSE+=" doc pgo +opt -static-libs -test -threads zlib"
 DEPEND+=" virtual/libc
 	 test? ( >=media-libs/libpng-1.6 )
 	 !zlib? ( dev-libs/miniz:=[static-libs?] )
-	 zlib? ( sys-libs/zlib:=[static-libs?] )"
+	 zlib? ( sys-libs/zlib:=[static-libs?,${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	|| (
