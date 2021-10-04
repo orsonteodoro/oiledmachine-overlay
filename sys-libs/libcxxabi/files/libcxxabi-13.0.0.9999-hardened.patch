@@ -1,7 +1,7 @@
-diff -urp work1/libcxxabi/CMakeLists.txt work/libcxxabi/CMakeLists.txt
---- work1/libcxxabi/CMakeLists.txt	2021-09-07 15:28:06.912650240 -0700
-+++ work/libcxxabi/CMakeLists.txt	2021-09-07 15:31:03.323447100 -0700
-@@ -77,6 +77,15 @@ include(CMakeDependentOption)
+diff -urp a/libcxxabi/CMakeLists.txt b/libcxxabi/CMakeLists.txt
+--- a/libcxxabi/CMakeLists.txt	2021-10-04 16:19:24.885057994 -0700
++++ b/libcxxabi/CMakeLists.txt	2021-10-04 16:20:50.958060830 -0700
+@@ -77,6 +77,18 @@ include(CMakeDependentOption)
  include(HandleCompilerRT)
  
  # Define options.
@@ -9,18 +9,29 @@ diff -urp work1/libcxxabi/CMakeLists.txt work/libcxxabi/CMakeLists.txt
 +option(CFI_CAST "Enable cfi-derived-cast, cfi-unrelated-cast." OFF)
 +option(CFI_ICALL "Enable cfi-icall." OFF)
 +option(CFI_VCALL "Enable cfi-vcall." OFF)
-+option(LTO "Enable LTO." OFF)
-+option(SSP "Enable Stack Smashing Protection (SSP)." OFF)
-+option(SHADOW_CALL_STACK "Enable Shadow Call Stack." OFF)
++option(FORTIFY_SOURCE "Sets the _FORTIFY_SOURCE level.  Setting to -1 means do not emit." -1)
 +option(FULL_RELRO "Enable Full Relocation Read Only (RELRO)." OFF)
++option(LTO "Enable LTO." OFF)
 +option(NOEXECSTACK "Enable noexecstack." OFF)
++option(SHADOW_CALL_STACK "Enable Shadow Call Stack." OFF)
++option(SSP "Enable Stack Smashing Protection (SSP)." OFF)
++option(SSP_LEVEL "Stack Smashing Protection (SSP) level (weak/strong/all)." "weak")
++option(STACK_CLASH_PROTECTION "Enable Stack Clash Protection (SCP)." OFF)
  option(LIBCXXABI_ENABLE_EXCEPTIONS
    "Provide support for exceptions in the runtime.
    When disabled, libc++abi does not support stack unwinding and other exceptions-related features." ON)
-@@ -257,6 +266,92 @@ include(HandleLibcxxabiFlags)
+@@ -257,6 +269,113 @@ include(HandleLibcxxabiFlags)
  # Configure target flags
  add_target_flags_if(LIBCXXABI_BUILD_32_BITS "-m32")
  
++if(FORTIFY_SOURCE GREATER_EQUAL 0)
++    add_definitions(-D_FORTIFY_SOURCE=${FORTIFY_SOURCE})
++endif()
++
++if(FULL_RELRO)
++    set(LIBCXXABI_LINK_FLAGS "${LIBCXXABI_LINK_FLAGS} -Wl,-z,relro -Wl,-z,now")
++endif()
++
 +if(LTO)
 +  if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 +    set(LIBCXXABI_C_FLAGS "${LIBCXXABI_C_FLAGS} -flto=thin")
@@ -35,16 +46,29 @@ diff -urp work1/libcxxabi/CMakeLists.txt work/libcxxabi/CMakeLists.txt
 +  endif()
 +endif()
 +
-+if(SSP)
-+    set(LIBCXXABI_LINK_FLAGS "${LIBCXXABI_LINK_FLAGS} --param=ssp-buffer-size=4 -fstack-protector")
-+endif()
-+
-+if(FULL_RELRO)
-+    set(LIBCXXABI_LINK_FLAGS "${LIBCXXABI_LINK_FLAGS} -Wl,-z,relro -Wl,-z,now")
-+endif()
-+
 +if(NOEXECSTACK)
 +    set(LIBCXXABI_LINK_FLAGS "${LIBCXXABI_LINK_FLAGS} -Wl,-z,noexecstack")
++endif()
++
++if(SSP)
++    if (SSP_LEVEL STREQUAL "weak")
++        set(LIBCXXABI_C_FLAGS "${LIBCXXABI_C_FLAGS} --param=ssp-buffer-size=4 -fstack-protector")
++        set(LIBCXXABI_CXX_FLAGS "${LIBCXXABI_CXX_FLAGS} --param=ssp-buffer-size=4 -fstack-protector")
++    elseif (SSP_LEVEL STREQUAL "strong")
++        set(LIBCXXABI_C_FLAGS "${LIBCXXABI_C_FLAGS} --param=ssp-buffer-size=4 -fstack-protector-strong")
++        set(LIBCXXABI_CXX_FLAGS "${LIBCXXABI_CXX_FLAGS} --param=ssp-buffer-size=4 -fstack-protector-strong")
++    elseif (SSP_LEVEL STREQUAL "all")
++        set(LIBCXXABI_C_FLAGS "${LIBCXXABI_C_FLAGS} -fstack-protector-all")
++        set(LIBCXXABI_CXX_FLAGS "${LIBCXXABI_CXX_FLAGS} -fstack-protector-all")
++    endif()
++endif()
++
++if(STACK_CLASH_PROTECTION)
++    check_cxx_compiler_flag(-fstack-clash-protection SUPPORTS_FSTACK_CLASH_PROTECTION)
++    if(SUPPORTS_FSTACK_CLASH_PROTECTION)
++        set(LIBCXXABI_C_FLAGS "${LIBCXXABI_C_FLAGS} -fstack-clash-protection")
++        set(LIBCXXABI_CXX_FLAGS "${LIBCXXABI_CXX_FLAGS} -fstack-clash-protection")
++    endif()
 +endif()
 +
 +if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")

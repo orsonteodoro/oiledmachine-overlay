@@ -12,7 +12,7 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
+KEYWORDS=""
 IUSE="+libunwind static-libs test elibc_musl"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall full-relro clang hardened lto shadowcallstack"
 REQUIRED_USE+="
@@ -30,8 +30,8 @@ RDEPEND="
 		)
 	)"
 DEPEND+=" ${RDEPEND}"
-PATCHES=( "${FILESDIR}/libcxxabi-13.0.0.9999-cfi.patch"
-	  "${FILESDIR}/libcxx-13.0.0.9999-cfi.patch" )
+PATCHES=( "${FILESDIR}/libcxxabi-13.0.0.9999-hardened.patch"
+	  "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 S="${WORKDIR}"
 
 _seq() {
@@ -225,6 +225,18 @@ _configure_abi() {
 				-DFULL_RELRO=$(usex hardened)
 				-DSSP=$(usex hardened)
 			)
+			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
+				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
+				mycmakeargs+=(
+					-DFORTIFY_SOURCE=2
+					-DSTACK_CLASH_PROTECTION=ON
+					-DSSP_LEVEL="strong"
+				)
+			else
+				mycmakeargs+=(
+					-DSSP_LEVEL="weak"
+				)
+			fi
 		fi
 	fi
 
@@ -299,6 +311,18 @@ wrap_libcxx() {
 				-DFULL_RELRO=$(usex hardened)
 				-DSSP=$(usex hardened)
 			)
+			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
+				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
+				mycmakeargs+=(
+					-DFORTIFY_SOURCE=2
+					-DSTACK_CLASH_PROTECTION=ON
+					-DSSP_LEVEL="strong"
+				)
+			else
+				mycmakeargs+=(
+					-DSSP_LEVEL="weak"
+				)
+			fi
 		fi
 	fi
 
