@@ -151,7 +151,9 @@ src_prepare() {
 		-e 's:icudefs.mk:icudefs.mk Doxyfile:' \
 		configure.ac || die
 
-	if use hardened ; then
+	if is_hardened_clang || is_hardened_gcc ; then
+		:; # Already applied by default
+	elif use hardened ; then
 		eapply "${FILESDIR}/icu-69.1-pie.patch"
 	fi
 
