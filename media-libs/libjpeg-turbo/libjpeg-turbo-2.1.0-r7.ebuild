@@ -3,7 +3,8 @@
 
 EAPI=7
 
-inherit autotools java-pkg-opt-2 toolchain-funcs multilib-minimal
+CMAKE_ECLASS=cmake
+inherit cmake-multilib java-pkg-opt-2
 inherit flag-o-matic
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
@@ -12,9 +13,11 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz
 	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz"
 
 LICENSE="BSD IJG ZLIB"
-SLOT="0/0.1"
-KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos"
-IUSE="+asm java static-libs"
+SLOT="0/0.2"
+if [[ "$(ver_cut 3)" -lt 90 ]] ; then
+	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
+fi
+IUSE="+asm cpu_flags_arm_neon java static-libs"
 IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang hardened lto shadowcallstack"
 IUSE+="
 	pgo
@@ -168,7 +171,8 @@ BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
 BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
-BDEPEND+=" amd64? ( ${ASM_DEPEND} )
+BDEPEND+=" >=dev-util/cmake-3.16.5
+	amd64? ( ${ASM_DEPEND} )
 	x86? ( ${ASM_DEPEND} )
 	amd64-fbsd? ( ${ASM_DEPEND} )
 	x86-fbsd? ( ${ASM_DEPEND} )
@@ -178,20 +182,13 @@ BDEPEND+=" amd64? ( ${ASM_DEPEND} )
 	x64-cygwin? ( ${ASM_DEPEND} )"
 
 DEPEND="${COMMON_DEPEND}
-	java? ( >=virtual/jdk-1.5 )"
+	java? ( >=virtual/jdk-1.8:* )"
 
 RDEPEND="${COMMON_DEPEND}
-	java? ( >=virtual/jre-1.5 )"
+	java? ( >=virtual/jre-1.8:* )"
 PDEPEND=" pgo? ( media-video/mpv )"
 
 MULTILIB_WRAPPED_HEADERS=( /usr/include/jconfig.h )
-
-PATCHES=(
-	"${FILESDIR}"/${PN}-1.2.0-x32.patch #420239
-	"${FILESDIR}"/${P}-divzero_fix.patch #658624
-	"${FILESDIR}"/${P}-cve-2018-11813.patch
-	"${FILESDIR}"/${P}-CVE-2020-13790.patch
-)
 
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -227,16 +224,30 @@ get_build_types() {
 }
 
 src_prepare() {
-	default
+	local FILE
+	ln -snf ../debian/extra/*.c . || die
 
-	if use is_hardened_clang || use is_hardened_gcc ; then
-		:;
-	elif use hardened ; then
-		eapply "${FILESDIR}/libjpeg-turbo-1.5.3-pie.patch"
-	fi
+	for FILE in ../debian/extra/*.c; do
+		FILE=${FILE##*/}
+		cat >> CMakeLists.txt <<EOF || die
+add_executable(${FILE%.c} ${FILE})
+install(TARGETS ${FILE%.c})
+EOF
+	done
 
-	eautoreconf
+	for FILE in ../debian/extra/exifautotran; do
+		cat >> CMakeLists.txt <<EOF || die
+install(FILES \${CMAKE_CURRENT_SOURCE_DIR}/${FILE} DESTINATION \${CMAKE_INSTALL_BINDIR})
+EOF
+	done
 
+	for FILE in ../debian/extra/*.[0-9]*; do
+		cat >> CMakeLists.txt <<EOF || die
+install(FILES \${CMAKE_CURRENT_SOURCE_DIR}/${FILE} DESTINATION \${CMAKE_INSTALL_MANDIR}/man${FILE##*.})
+EOF
+	done
+
+	cmake_src_prepare
 	java-pkg-opt-2_src_prepare
 
 	prepare_abi() {
@@ -287,7 +298,7 @@ is_hardened_gcc() {
 src_configure() { :; }
 
 _configure_pgx() {
-	local myconf=()
+	local mycmakeargs=()
 	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
 		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
@@ -351,24 +362,27 @@ _configure_pgx() {
 				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
 				append-cppflags -D_FORTIFY_SOURCE=2
 				append-flags $(test-flags-CC -fstack-clash-protection)
-				append-ldflags --param=ssp-buffer-size=4 \
+				append-flags --param=ssp-buffer-size=4 \
 						-fstack-protector-strong
 			else
-				append-ldflags --param=ssp-buffer-size=4 \
+				append-flags --param=ssp-buffer-size=4 \
 						-fstack-protector
 			fi
+			mycmakeargs+=(
+				-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -pie"
+			)
 		fi
 	fi
 
 	if use static-libs && [[ "${build_type}" == "static-libs" ]] ;then
-		myconf+=(
-			--disable-shared
-			--enable-static
+		mycmakeargs+=(
+			-DENABLE_SHARED=OFF
+			-DENABLE_STATIC=ON
 		)
 	else
-		myconf+=(
-			--enable-shared
-			--disable-static
+		mycmakeargs+=(
+			-DENABLE_SHARED=ON
+			-DENABLE_STATIC=OFF
 		)
 	fi
 
@@ -395,37 +409,41 @@ _configure_pgx() {
 		fi
 	fi
 
-	if multilib_is_native_abi; then
-		myconf+=( $(use_with java) )
-		if use java; then
-			export JAVACFLAGS="$(java-pkg_javac-args)"
-			export JNI_CFLAGS="$(java-pkg_get-jni-cflags)"
-		fi
-	else
-		myconf+=( --without-java )
+	if multilib_is_native_abi && use java ; then
+		export JAVACFLAGS="$(java-pkg_javac-args)"
+		export JNI_CFLAGS="$(java-pkg_get-jni-cflags)"
 	fi
-	[[ ${ABI} == "x32" ]] && myconf+=( --without-simd ) #420239
 
-	# Force /bin/bash until upstream generates a new version. #533902
-	CONFIG_SHELL="${EPREFIX}"/bin/bash \
-	ECONF_SOURCE=${S} \
-	econf \
-		$(use_enable static-libs static) \
-		$(use_with asm simd) \
-		--with-mem-srcdst \
-		"${myconf[@]}"
+	mycmakeargs+=(
+		-DCMAKE_INSTALL_DEFAULT_DOCDIR="${EPREFIX}/usr/share/doc/${PF}"
+		-DWITH_JAVA="$(multilib_native_usex java)"
+		-DWITH_MEM_SRCDST=ON
+	)
+
+	if ! use asm ; then
+		mycmakeargs+=(
+			-DWITH_SIMD:BOOL=OFF
+		)
+	elif use arm; then
+		# Avoid ARM ABI issues by disabling SIMD for CPUs without NEON. #792810
+		mycmakeargs+=(
+			-DWITH_SIMD:BOOL=$(usex cpu_flags_arm_neon ON OFF)
+		)
+	fi
+
+	# mostly for Prefix, ensure that we use our yasm if installed and
+	# not pick up host-provided nasm
+	if has_version -b dev-lang/yasm && ! has_version -b dev-lang/nasm; then
+		mycmakeargs+=(
+			-DCMAKE_ASM_NASM_COMPILER=$(type -P yasm)
+		)
+	fi
+
+	cmake_src_configure
 }
 
 _build_pgx() {
-	local _java_makeopts
-	use java && _java_makeopts="-j1"
-	emake ${_java_makeopts}
-
-	if multilib_is_native_abi; then
-		pushd ../debian/extra >/dev/null
-		emake CC="$(tc-getCC)" CFLAGS="${LDFLAGS} ${CFLAGS}"
-		popd >/dev/null
-	fi
+	cmake_src_compile
 }
 
 _run_trainers() {
@@ -573,10 +591,6 @@ src_compile() {
 	multilib_foreach_abi compile_abi
 }
 
-src_test() {
-	emake test
-}
-
 _install_pgx() {
 	einfo "Installing image into sandbox staging area"
 	_install
@@ -589,24 +603,11 @@ _clean_pgx() {
 }
 
 _install() {
-	emake \
-		DESTDIR="${D}" \
-		docdir="${EPREFIX}"/usr/share/doc/${PF} \
-		exampledir="${EPREFIX}"/usr/share/doc/${PF} \
-		install
+	cmake_src_install
 
-	if multilib_is_native_abi; then
-		pushd "${WORKDIR}"/debian/extra >/dev/null
-		emake \
-			DESTDIR="${D}" prefix="${EPREFIX}"/usr \
-			INSTALL="install -m755" INSTALLDIR="install -d -m755" \
-			install
-		popd >/dev/null
-
-		if use java; then
-			rm -rf "${ED}"/usr/classes
-			java-pkg_dojar java/turbojpeg.jar
-		fi
+	if multilib_is_native_abi && use java ; then
+		rm -rf "${ED}"/usr/classes || die
+		java-pkg_dojar java/turbojpeg.jar
 	fi
 }
 
@@ -614,12 +615,17 @@ _install_once() {
 	cd "${S}" || die
 	find "${ED}" -type f -name '*.la' -delete || die
 
-	docinto html
-	dodoc -r "${S}"/doc/html/*
+	local -a DOCS=( README.md ChangeLog.md )
+	einstalldocs
+
 	newdoc "${WORKDIR}"/debian/changelog changelog.debian
+
+	docinto html
+	dodoc -r "${S}"/doc/html/.
+
 	if use java; then
 		docinto html/java
-		dodoc -r "${S}"/java/doc/*
+		dodoc -r "${S}"/java/doc/.
 		newdoc "${S}"/java/README README.java
 	fi
 }
