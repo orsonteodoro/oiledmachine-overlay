@@ -97,37 +97,49 @@ _src_configure() {
 	meson_src_configure ${1}
 }
 
-src_configure_pgo_instrumented() {
-	einfo "Instrumenting a PGO build"
+_configure_pgx() {
 	mkdir -p "${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}" || die
 	filter-flags '-fprofile*'
-	if tc-is-clang ; then
-		append-cflags -fprofile-generate="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}"
+	local arg=""
+	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] ; then
+		einfo "Instrumenting a PGO build"
+		if tc-is-clang ; then
+			append-cflags -fprofile-generate="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}"
+		else
+			append-cflags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}"
+		fi
+	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] ; then
+		einfo "Optimizing a PGO build"
+		if tc-is-clang ; then
+			llvm-profdata merge -output="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}/code.profdata" \
+				"${T}/pgo-${ABI}" || die
+			append-cflags -fprofile-use="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}/code.profdata"
+		else
+			append-cflags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}"
+		fi
+		arg="--wipe"
 	else
-		append-cflags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}"
+		einfo "Building as normal"
 	fi
-	_src_configure
-}
-
-src_configure_pgo_optimized() {
-	einfo "Optimizing a PGO build"
-	filter-flags '-fprofile*'
-	if tc-is-clang ; then
-		llvm-profdata merge -output="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}/code.profdata" \
-			"${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}" || die
-		append-cflags -fprofile-use="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}/code.profdata"
-	else
-		append-cflags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}"
-	fi
-	_src_configure --wipe
-}
-
-src_configure_non_pgo() {
-	_src_configure
+	_src_configure ${arg}
 }
 
 src_configure() {
 	:;
+}
+
+_run_trainer() {
+	pushd "${WORKDIR}/${P}-build-${ABI}-${ESTSH_LIB_TYPE}/examples" || die
+		./example ../../benchmark_images/medium_rgb8.png || die
+		./example ../../benchmark_images/medium_rgba8.png || die
+		./example ../../benchmark_images/large_palette.png || die
+	popd
+}
+
+_compile() {
+	EMESON_SOURCE="${BUILD_DIR}" \
+	BUILD_DIR="${WORKDIR}/${P}-build-${ABI}-${ESTSH_LIB_TYPE}" \
+	meson_src_compile
 }
 
 src_compile() {
@@ -135,24 +147,18 @@ src_compile() {
 		cd "${BUILD_DIR}" || die
 		compile_stsh() {
 			cd "${BUILD_DIR}" || die
-			_compile() {
-				EMESON_SOURCE="${BUILD_DIR}" \
-				BUILD_DIR="${WORKDIR}/${P}-build-${ABI}-${ESTSH_LIB_TYPE}" \
-				meson_src_compile
-			}
 			if use pgo ; then
 # See https://github.com/randy408/libspng/blob/master/docs/build.md#profile-guided-optimization
-				src_configure_pgo_instrumented
+				PGO_PHASE="pgi"
+				_configure_pgx
 				_compile
-				pushd "${WORKDIR}/${P}-build-${ABI}-${ESTSH_LIB_TYPE}/examples" || die
-					./example ../../benchmark_images/medium_rgb8.png || die
-					./example ../../benchmark_images/medium_rgba8.png || die
-					./example ../../benchmark_images/large_palette.png || die
-				popd
-				src_configure_pgo_optimized
+				_run_trainer
+				PGO_PHASE="pgo"
+				_configure_pgx
 				_compile
 			else
-				src_configure_non_pgo
+				PGO_PHASE="pg0"
+				_configure_pgx
 				_compile
 			fi
 		}
