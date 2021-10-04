@@ -14,7 +14,7 @@ LICENSE="BSD"
 
 SLOT="0/${PV}"
 
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
+KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="debug doc examples static-libs"
 IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang hardened libcxx lto shadowcallstack"
 REQUIRED_USE="
@@ -301,10 +301,10 @@ _configure_abi() {
 				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
 				append-cppflags -D_FORTIFY_SOURCE=2
 				append-flags $(test-flags-CC -fstack-clash-protection)
-				append-ldflags --param=ssp-buffer-size=4 \
+				append-flags --param=ssp-buffer-size=4 \
 						-fstack-protector-strong
 			else
-				append-ldflags --param=ssp-buffer-size=4 \
+				append-flags --param=ssp-buffer-size=4 \
 						-fstack-protector
 			fi
 		fi
