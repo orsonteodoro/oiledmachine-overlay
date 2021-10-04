@@ -149,6 +149,7 @@ the metadata.xml.
 
 * media-libs/libaom
 * media-libs/libjpeg-turbo
+* media-libs/libspng
 * media-libs/libvpx
 * media-video/ffmpeg (WIP)
 * media-gfx/blender (WIP)
