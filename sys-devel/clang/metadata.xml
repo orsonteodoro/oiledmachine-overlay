@@ -47,7 +47,7 @@
     Default ON patch status:
     works -- _FORITIFY_SOURCE=2
     testing --  -fstack-clash-protection (x86/x86_64 only)
-    works --  -fstack-protector-strong
+    SSP canary is verified but strength is unverified --  -fstack-protector-strong
     unverified --param=ssp-buffer-size=4
     works -- -Wl,relro -Wl,now
 
