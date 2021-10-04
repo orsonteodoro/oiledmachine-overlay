@@ -98,7 +98,7 @@ _src_configure() {
 src_configure_pgo_instrumented() {
 	einfo "Instrumenting a PGO build"
 	mkdir -p "${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}" || die
-	filter-flags '-fprofile-generate*' '-fprofile-use*' '-fprofile-dir=*'
+	filter-flags '-fprofile*'
 	if tc-is-clang ; then
 		append-cflags -fprofile-generate="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}"
 	else
@@ -109,7 +109,7 @@ src_configure_pgo_instrumented() {
 
 src_configure_pgo_optimized() {
 	einfo "Optimizing a PGO build"
-	filter-flags '-fprofile-generate*' '-fprofile-use*' '-fprofile-dir=*'
+	filter-flags '-fprofile*'
 	if tc-is-clang ; then
 		llvm-profdata merge -output="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}/code.profdata" \
 			"${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}" || die
