@@ -50,6 +50,7 @@
     SSP canary is verified but strength is unverified --  -fstack-protector-strong
     unverified --param=ssp-buffer-size=4
     present -- -Wl,relro -Wl,now
+    present -- PIE
 
     Verification is done via the app-admin/checksec package.
 
