@@ -305,17 +305,11 @@ _configure_pgx() {
 	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
-		'-fprofile-correction' \
-		'-fprofile-dir*' \
-		'-fprofile-generate*' \
-		'-fprofile-use*'
-
-	filter-flags \
-		'-fsanitize=*' \
+		'-f*sanitize*' \
+		'-f*stack*' \
+		'-fprofile*' \
 		'-fvisibility=hidden' \
-		--param=ssp-buffer-size=4 \
-		-fno-sanitize=safe-stack \
-		-fstack-protector \
+		'--param=ssp-buffer-size=*' \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
