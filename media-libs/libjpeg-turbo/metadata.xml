@@ -48,9 +48,10 @@
     <flag name="cfi-icall">Build with cfi-icall</flag>
     <flag name="cfi-vcall">Build with cfi-vcall with forward edge
       protection.</flag>
-    <flag name="hardened">Build with Full RELRO, noexecstack, PIE, SSP.
-      Hardened profiles get mid SSP by default and non-hardened profiles get low
-      SSP.</flag>
+    <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
+      For the non-hardened profile, set USE_HARDENED_PROFILE_DEFAULTS=1 in
+      make.conf to use the hardened profile settings or fallback to the browser
+      defaults.  See ebuild for details.</flag>
     <flag name="lto">Use link time optimization.</flag>
     <flag name="pgo-custom">Runs PGO training with a custom script</flag>
     <flag name="pgo-trainer-70-pct-quality-baseline">PGO train with 70% quality
