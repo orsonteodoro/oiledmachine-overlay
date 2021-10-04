@@ -106,7 +106,7 @@ BDEPEND+="
 	)"
 
 DOCS=( CREDITS.TXT )
-PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-cfi.patch" )
+PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 S="${WORKDIR}"
 
 LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake,utils/llvm-lit} )
@@ -284,6 +284,18 @@ _configure_abi() {
 				-DFULL_RELRO=$(usex hardened)
 				-DSSP=$(usex hardened)
 			)
+			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
+				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
+				mycmakeargs+=(
+					-DFORTIFY_SOURCE=2
+					-DSTACK_CLASH_PROTECTION=ON
+					-DSSP_LEVEL="strong"
+				)
+			else
+				mycmakeargs+=(
+					-DSSP_LEVEL="weak"
+				)
+			fi
 		fi
 	fi
 

@@ -12,7 +12,7 @@ HOMEPAGE="https://libcxx.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS="amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
+KEYWORDS=""
 IUSE="elibc_glibc elibc_musl +libcxxabi +libunwind static-libs test"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 REQUIRED_USE="libunwind? ( libcxxabi )"
@@ -106,11 +106,11 @@ BDEPEND+="
 	)"
 
 DOCS=( CREDITS.TXT )
-PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-cfi.patch" )
+PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 S="${WORKDIR}"
 
-LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake/modules,utils/llvm-lit} )
-LLVM_PATCHSET=12.0.1
+LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake,utils/llvm-lit} )
+LLVM_PATCHSET=9999-1
 llvm.org_set_globals
 
 python_check_deps() {
@@ -284,6 +284,18 @@ _configure_abi() {
 				-DFULL_RELRO=$(usex hardened)
 				-DSSP=$(usex hardened)
 			)
+			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
+				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
+				mycmakeargs+=(
+					-DFORTIFY_SOURCE=2
+					-DSTACK_CLASH_PROTECTION=ON
+					-DSSP_LEVEL="strong"
+				)
+			else
+				mycmakeargs+=(
+					-DSSP_LEVEL="weak"
+				)
+			fi
 		fi
 	fi
 
@@ -306,6 +318,7 @@ _configure_abi() {
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
 			-DLLVM_LIT_ARGS="$(get_lit_flags);--param=cxx_under_test=${clang_path}"
+			-DLIBCXX_LINK_TESTS_WITH_SHARED_LIBCXXABI=ON
 			-DPython3_EXECUTABLE="${PYTHON}"
 		)
 	fi
