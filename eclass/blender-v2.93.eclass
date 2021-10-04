@@ -356,27 +356,24 @@ _src_prepare_patches() {
 }
 
 _src_configure() {
+	filter-flags '-fprofile*'
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
-			append-cflags -fprofile-generate="${T}/pgo-${ABI}"
-			append-cxxflags -fprofile-generate="${T}/pgo-${ABI}"
+			append-flags -fprofile-generate="${T}/pgo-${ABI}"
 		else
-			append-cflags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
-			append-cxxflags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGO"
 		if tc-is-clang ; then
-			llvm-profdata merge -output="${T}/pgo-${ABI}/code.profdata" \
+			llvm-profdata merge -output="${T}/pgo-${ABI}/pgo-custom.profdata" \
 				"${T}/pgo-${ABI}" || die
-			append-cflags -fprofile-use="${T}/pgo-${ABI}/code.profdata"
-			append-cxxflags -fprofile-use="${T}/pgo-${ABI}/code.profdata"
+			append-flags -fprofile-use="${T}/pgo-${ABI}/pgo-custom.profdata"
 		else
-			append-cflags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
-			append-cxxflags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
 		fi
 	fi
 
