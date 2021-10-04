@@ -1090,7 +1090,7 @@ _config_pgx() {
 	tc-export CC
 
 	filter-flags -DENABLE_JIT=* -DENABLE_YARR_JIT=* -DENABLE_ASSEMBLER=*
-	filter-flags -fprofile-generate* -fprofile-use* -fprofile-dir=*
+	filter-flags '-fprofile*'
 
 	# It does not compile on alpha without this in LDFLAGS
 	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648761
@@ -1348,21 +1348,23 @@ _config_pgx() {
 
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		if tc-is-clang ; then
-			append-cflags -fprofile-generate="${BUILD_DIR}"
-			append-cxxflags -fprofile-generate="${BUILD_DIR}"
+			append-flags -fprofile-generate="${T}/pgo-${ABI}"
 		elif tc-is-gcc ; then
-			append-cflags -fprofile-generate -fprofile-dir="${BUILD_DIR}"
-			append-cxxflags -fprofile-generate -fprofile-dir="${BUILD_DIR}"
+			append-flags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
 		else
 			die "Only GCC and Clang are supported for PGO."
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		if tc-is-clang ; then
-			append-cflags -fprofile-use="${BUILD_DIR}/custom-pgo.profdata"
-			append-cxxflags -fprofile-use="${BUILD_DIR}/custom-pgo.profdata"
+			einfo "Merging PGO data to generate a PGO profile"
+			if ! ls "${BUILD_DIR}/"*.profraw 2>/dev/null 1>/dev/null ; then
+				die "Missing *.profraw files"
+			fi
+			llvm-profdata merge -output="${T}/pgo-${ABI}/custom-pgo.profdata" \
+				"${T}/pgo-${ABI}" || die
+			append-flags -fprofile-use="${T}/pgo-${ABI}/custom-pgo.profdata"
 		elif tc-is-gcc ; then
-			append-cflags -fprofile-use -fprofile-dir="${BUILD_DIR}"
-			append-cxxflags -fprofile-use -fprofile-dir="${BUILD_DIR}"
+			append-flags -fprofile-use -fprofile-dir="${T}/pgo-${ABI}"
 		fi
 	fi
 
@@ -1449,14 +1451,6 @@ _run_trainer() {
 			--local-copy $(_get_local_perf_path ${t}) \
 			|| die
 	done
-	if use tc-is-clang ; then
-		einfo "Merging PGO data to generate a PGO profile"
-		if ! ls "${BUILD_DIR}/"*.profraw 2>/dev/null 1>/dev/null ; then
-			die "Missing *.profraw files"
-		fi
-		llvm-profdata merge -output="${BUILD_DIR}/custom-pgo.profdata" \
-			"${BUILD_DIR}" || die
-	fi
 }
 
 multilib_src_compile() {
