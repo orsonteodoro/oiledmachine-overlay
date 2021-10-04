@@ -978,29 +978,31 @@ COMMON_DEPEND="
 RDEPEND+="${COMMON_DEPEND}"
 DEPEND+="${COMMON_DEPEND}"
 
-#
 # This section in the context of SECURITY_DEPENDS is rough draft or in
 # development and may change.  The RDEPEND sections below ensure the
-# transferrance of security policy or security expectations to ebuild-packages.
+# transferrance of security policy or security expectations to ebuild-packages
+# down the package hierarchy.
 
 # These additional security flags exist to prevent vanilla ebuilds without these
 # changes from weakening the security and indicate that they exist.
 
-# exe, .a, .so, get treated with CFI w/o exclusions, noexecstack, full RELRO.
-
+# Some concerns about about externalizing below:
 # The first problem with unbundling is the CFI bypass problem.
 # The second problem with unbundling is the lack of PGO support in
 # the ebuilds themselves, causing unmatched performance.
-#
-# These CFI/SSP checks are to ensure that it meets or exceeds upstream security
-# standards or expectations.
+
+# Over time, the security USE flags have been simplied to hardened, cfi-*,
+# libcxx.  The hardened profiles will keep the hardened default ONs and
+# add noexecstack.  The non-hardened profiles will keep the suggestions
+# by this package or may choose to use the same distro settings by the
+# hardened profile.
 
 # For recommended CFI flags, see
 # https://github.com/chromium/chromium/blob/94.0.4606.71/build/config/sanitizers/BUILD.gn#L196
 # https://github.com/chromium/chromium/blob/94.0.4606.71/build/config/sanitizers/BUILD.gn#L313
 #   full cfi which includes cfi-icall, cfi-cast, cfi-mfcall must be statically linked
 #   for cfi to be effective.  See https://clang.llvm.org/docs/ControlFlowIntegrity.html
-#   with "statically linked" search for details.  This is obviously a licensing problem.
+#   with "statically linked" search for details.  Static linking is obviously a licensing problem.
 
 # For fstack-protector SSP details, see
 # See https://github.com/chromium/chromium/blob/94.0.4606.71/build/config/compiler/BUILD.gn#L335
@@ -1012,7 +1014,6 @@ DEPEND+="${COMMON_DEPEND}"
 # For Full RELRO details, see
 # See https://github.com/chromium/chromium/blob/94.0.4606.71/build/config/compiler/BUILD.gn#L436
 
-#
 # Check supported FFmpeg decoders, encoders, containers in the ebuild-dependency for proper security.
 # Video decoders listed https://github.com/chromium/chromium/blob/94.0.4606.71/media/ffmpeg/ffmpeg_common.cc#L213
 #   https://github.com/chromium/chromium/blob/94.0.4606.71/media/ffmpeg/ffmpeg_common.cc#L189
@@ -1024,14 +1025,13 @@ DEPEND+="${COMMON_DEPEND}"
 #   to find other 2+ deep dependency tree.
 # FFmpeg will autoselect the algorithm with an ambiguious codec ID
 # This means all relevant codecs for that codec ID should be scanned.
-#
 
 # The already has lists:
-# fortify_source: libxml2
-# ssp: openh264, opus
-# full relro: ffmpeg
-# noexecstack: ffmpeg
-# cannot use libcxx: zlib
+# FORTIFY_SOURCE:  libxml2
+# SSP:  openh264, opus
+# Full RELRO:  ffmpeg
+# noexecstack:  ffmpeg
+# Cannot use libcxx:  zlib
 
 # [D]
 BZIP2_DEPENDS=" app-arch/bzip2[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]"
