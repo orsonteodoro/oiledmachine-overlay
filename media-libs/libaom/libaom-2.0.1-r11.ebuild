@@ -352,11 +352,6 @@ is_hardened_gcc() {
 configure_pgx() {
 	[[ -f build.ninja ]] && eninja clean
 	find "${BUILD_DIR}" -name "CMakeCache.txt" -delete 2>/dev/null
-	filter-flags \
-		'-fprofile-correction' \
-		'-fprofile-dir*' \
-		'-fprofile-generate*' \
-		'-fprofile-use*'
 
 	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
@@ -375,11 +370,11 @@ configure_pgx() {
 	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
-		--param=ssp-buffer-size=4 \
+		'-fprofile*' \
+		'-f*sanitize*' \
+		'-f*stack*' \
+		'--param=ssp-buffer-size=*' \
 		-DCHROMIUM \
-		-fno-sanitize=safe-stack \
-		-fsanitize=shadow-call-stack \
-		-fstack-protector \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
