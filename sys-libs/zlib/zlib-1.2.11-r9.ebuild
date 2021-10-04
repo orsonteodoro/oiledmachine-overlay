@@ -442,16 +442,16 @@ _configure_pgx() {
 	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
-		'-fprofile*' \
 		'-f*sanitize*' \
+		'-f*stack*' \
+		'-fprofile*' \
 		'-fvisibility=hidden' \
-		--param=ssp-buffer-size=4 \
-		-fstack-protector \
+		'-Wno-error=*'
+		'--param=ssp-buffer-size=*' \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
-		-stdlib=libc++ \
-		'-Wno-error=*'
+		-stdlib=libc++
 
 	autofix_flags
 
