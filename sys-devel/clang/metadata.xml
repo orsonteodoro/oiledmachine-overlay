@@ -45,11 +45,11 @@
     so the flags below will be implied in use.
 
     Default ON patch status:
-    works -- _FORITIFY_SOURCE=2
+    present -- _FORITIFY_SOURCE=2
     testing --  -fstack-clash-protection (x86/x86_64 only)
     SSP canary is verified but strength is unverified --  -fstack-protector-strong
     unverified --param=ssp-buffer-size=4
-    works -- -Wl,relro -Wl,now
+    present -- -Wl,relro -Wl,now
 
     Verification is done via the app-admin/checksec package.
 
