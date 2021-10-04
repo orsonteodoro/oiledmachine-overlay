@@ -1045,7 +1045,7 @@ FFMPEG_DEPENDS="
 		media-video/ffmpeg[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 		media-libs/dav1d[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 		media-libs/flac[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
-		media-libs/libaom[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
+		media-libs/libaom[cfi,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 		media-libs/libogg[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 		media-libs/libtheora[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 		media-libs/libvorbis[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
