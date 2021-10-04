@@ -130,7 +130,9 @@ get_build_types() {
 src_prepare() {
 	default
 
-	if use hardened ; then
+	if is_hardened_clang || is_hardened_gcc ; then
+		:;
+	elif use hardened ; then
 		eapply "${FILESDIR}/flac-1.3.3-pie.patch"
 	fi
 	eautoreconf
@@ -271,6 +273,7 @@ _src_configure() {
 		# no effect if ogg support is disabled
 		--with-ogg
 	)
+
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		myeconfargs+=(
 			--enable-static
