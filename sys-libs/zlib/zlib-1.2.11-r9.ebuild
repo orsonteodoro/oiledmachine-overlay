@@ -442,16 +442,10 @@ _configure_pgx() {
 	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
-		'-fprofile-correction' \
-		'-fprofile-dir*' \
-		'-fprofile-generate*' \
-		'-fprofile-use*'
-
-	filter-flags \
-		'-fsanitize=*' \
+		'-fprofile*' \
+		'-f*sanitize*' \
 		'-fvisibility=hidden' \
 		--param=ssp-buffer-size=4 \
-		-fno-sanitize=safe-stack \
 		-fstack-protector \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
