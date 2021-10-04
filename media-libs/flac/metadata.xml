@@ -20,8 +20,7 @@
     <flag name="cfi-icall">Build with cfi-icall</flag>
     <flag name="cfi-vcall">Build with cfi-vcall</flag>
     <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
-      Hardened profiles get mid SSP by default and non-hardened profiles get low
-      SSP.  For the non-hardened profile, set USE_HARDENED_PROFILE_DEFAULTS=1 in
+      For the non-hardened profile, set USE_HARDENED_PROFILE_DEFAULTS=1 in
       make.conf to use the hardened profile settings or fallback to the browser
       defaults.</flag>
     <flag name="lto">Use link time optimization.</flag>
