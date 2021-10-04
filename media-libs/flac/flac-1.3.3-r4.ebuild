@@ -255,10 +255,10 @@ _src_configure() {
 				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
 				append-cppflags -D_FORTIFY_SOURCE=2
 				append-flags $(test-flags-CC -fstack-clash-protection)
-				append-ldflags --param=ssp-buffer-size=4 \
+				append-flags --param=ssp-buffer-size=4 \
 						-fstack-protector-strong
 			else
-				append-ldflags --param=ssp-buffer-size=4 \
+				append-flags --param=ssp-buffer-size=4 \
 						-fstack-protector
 			fi
 		fi
