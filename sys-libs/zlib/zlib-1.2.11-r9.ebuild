@@ -486,8 +486,16 @@ _configure_pgx() {
 		set_cfi
 		if use hardened ; then
 			append-ldflags -Wl,-z,relro -Wl,-z,now
-			append-ldflags --param=ssp-buffer-size=4 \
-					-fstack-protector
+			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
+				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
+				append-cppflags -D_FORTIFY_SOURCE=2
+				append-flags $(test-flags-CC -fstack-clash-protection)
+				append-ldflags --param=ssp-buffer-size=4 \
+						-fstack-protector-strong
+			else
+				append-ldflags --param=ssp-buffer-size=4 \
+						-fstack-protector
+			fi
 		fi
 	fi
 
