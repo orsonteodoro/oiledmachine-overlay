@@ -519,6 +519,7 @@ _configure_pgx() {
 			if use minizip ; then
 				# Apply, only during configure.
 				append-flags -Wno-error=coverage-mismatch
+				append-flags -Wbackend-plugin # It should be okay if no code changes.
 			fi
 		fi
 	fi
