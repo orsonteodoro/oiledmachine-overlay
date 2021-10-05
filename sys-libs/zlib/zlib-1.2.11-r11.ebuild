@@ -446,7 +446,7 @@ _configure_pgx() {
 		'-f*stack*' \
 		'-fprofile*' \
 		'-fvisibility=hidden' \
-		'-Wno-error=*'
+		'-Wno-error=*' \
 		'--param=ssp-buffer-size=*' \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
