@@ -1274,6 +1274,10 @@ _install() {
 		einfo "Installing minizip for ${ABI}"
 		emake -C "${S}/contrib/minizip" install DESTDIR="${D}"
 		sed_macros "${ED}"/usr/include/minizip/*.h
+		if multilib_is_native_abi ; then
+			dobin contrib/minizip/miniunzip
+			dobin contrib/minizip/minizip
+		fi
 	fi
 
 	#if [[ "${build_type}" == "shared-libs" ]] ; then

@@ -221,7 +221,8 @@ configure_pgx() {
 	xdg_environment_reset
 
 	# LTO compiler flags are handled by configure.py itself
-	filter-flags '-flto*'
+	filter-flags '-flto*' \
+		'-fprofile*'
 
 	local myconf=(
 		--shared-brotli
@@ -249,11 +250,9 @@ configure_pgx() {
 			myconf+=( --enable-pgo-use )
 		fi
 	fi
-	if tc-is-clang ; then
-		filter-flags \
-			'-fopt-info*' \
-			-frename-registers
-	fi
+
+	autofix_flags
+
 	use snapshot || myconf+=( --without-node-snapshot )
 	if use ssl; then
 		use system-ssl && myconf+=( --shared-openssl --openssl-use-def-ca-store )
