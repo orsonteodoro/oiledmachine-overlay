@@ -1276,8 +1276,19 @@ _install() {
 		emake -C "${S}/contrib/minizip" install DESTDIR="${D}"
 		sed_macros "${ED}"/usr/include/minizip/*.h
 		if multilib_is_native_abi ; then
-			dobin contrib/minizip/miniunzip
-			dobin contrib/minizip/minizip
+			if [[ "${PGO_PHASE}" == "pgi" ]] ; then
+				# Bugs
+				mkdir -p "${ED}/usr/bin" || die
+				cp -a contrib/minizip/miniunzip \
+					"${ED}/usr/bin" || die
+				cp -a contrib/minizip/minizip \
+					"${ED}/usr/bin" || die
+				chmod 0775 "${ED}/usr/bin/minizip" || die
+				chmod 0775 "${ED}/usr/bin/miniunzip" || die
+			else
+				dobin contrib/minizip/miniunzip
+				dobin contrib/minizip/minizip
+			fi
 		fi
 	fi
 
