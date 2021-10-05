@@ -511,9 +511,9 @@ _configure_pgx() {
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGO"
 		if tc-is-clang ; then
-			llvm-profdata merge -output="${T}/pgo-${ABI}/code.profdata" \
+			llvm-profdata merge -output="${T}/pgo-${ABI}/pgo-custom.profdata" \
 				"${T}/pgo-${ABI}" || die
-			append-flags -fprofile-use="${T}/pgo-${ABI}/code.profdata"
+			append-flags -fprofile-use="${T}/pgo-${ABI}/pgo-custom.profdata"
 		else
 			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
 			if use minizip ; then
