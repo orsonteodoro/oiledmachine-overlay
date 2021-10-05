@@ -460,7 +460,7 @@ configure_pgx() {
 		if use hardened ; then
 			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
 				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
-				append-cppflags -D_FORTIFY_SOURCE=2
+				#append-cppflags -D_FORTIFY_SOURCE=2 # override by package which disables default
 				append-flags $(test-flags-CC -fstack-clash-protection)
 				append-flags --param=ssp-buffer-size=4 \
 						-fstack-protector-strong
