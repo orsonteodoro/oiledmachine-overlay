@@ -1283,8 +1283,8 @@ _install() {
 					"${ED}/usr/bin" || die
 				cp -a contrib/minizip/minizip \
 					"${ED}/usr/bin" || die
-				chmod 0775 "${ED}/usr/bin/minizip" || die
-				chmod 0775 "${ED}/usr/bin/miniunzip" || die
+				chmod 0755 "${ED}/usr/bin/minizip" || die
+				chmod 0755 "${ED}/usr/bin/miniunzip" || die
 			else
 				dobin contrib/minizip/miniunzip
 				dobin contrib/minizip/minizip
