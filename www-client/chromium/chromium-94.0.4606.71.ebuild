@@ -1116,8 +1116,8 @@ WAYLAND_DEPENDS="
 # src:*/common/*
 #
 # In common COMMON_DEPENDS, search for [A] in ebuild
-# The lack of hardending for openh264 is due to royalty issues (see Wikipedia),
-# we assume only the binary only version.
+# The lack of hardening for openh264 is due to royalty issues (see Wikipedia).
+# We assume only the binary only version.
 SYSTEM_LIBXCXX_DEPENDS="
 	dev-libs/libxslt[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 	dev-libs/re2[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
