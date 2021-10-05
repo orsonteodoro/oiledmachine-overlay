@@ -18,8 +18,10 @@ SRC_URI="https://zlib.net/${P}.tar.gz
 	http://www.zlib.net/current/beta/${P}.tar.gz
 	elibc_Cygwin? ( ${CYGWINPATCHES[*]} )"
 
-LICENSE="ZLIB
-	pgo? ( GPL-2 )"
+LICENSE="ZLIB"
+# pgo? ( GPL-2 ) # unsourced, can't remember why this was added.
+# The FAQ does mention GPL-2 but the file is not there but a file with a
+# similar name exist but under different licensing.
 SLOT="0/1" # subslot = SONAME
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="minizip static-libs"
