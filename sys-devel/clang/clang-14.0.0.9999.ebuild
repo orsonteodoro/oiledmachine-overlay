@@ -62,6 +62,7 @@ PATCHES_HARDENED=(
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-version-info.patch"
+	"${FILESDIR}/clang-14.0.0.9999-add-cfi-stdlib.patch"
 )
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals

@@ -65,6 +65,9 @@
     in the ssp checking functions, you may verify a hardenedized counterpart
     though `clang --version` if using these patches from this overlay which
     also report the default ON hardened options.
+
+    When using -stdlib=libc++, add -cfi-stdlib in front of it for a
+    proper CFI build.
   </longdescription>
   <use>
     <flag name="default-compiler-rt">Use compiler-rt instead of libgcc as the
