@@ -12,7 +12,7 @@ inherit flag-o-matic llvm toolchain-funcs multilib-minimal
 # 5. make testdata
 # 6. tar -caf libvpx-testdata-${MY_PV}.tar.xz libvpx-testdata
 
-LIBVPX_TESTDATA_VER=1.10.0
+LIBVPX_TESTDATA_VER=1.9.0
 
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
@@ -21,7 +21,7 @@ SRC_URI="https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.
 
 LICENSE="BSD"
 SLOT="0/6"
-KEYWORDS="amd64 ~arm arm64 ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux"
+KEYWORDS="amd64 arm arm64 ~ia64 ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux"
 IUSE="doc +highbitdepth postproc static-libs svc test +threads"
 IUSE+=" +examples"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang chromium hardened libcxx lto shadowcallstack"
@@ -457,12 +457,13 @@ configure_pgx() {
 						-fsanitize=shadow-call-stack
 	}
 
-	if false && use chromium && [[ "${build_type}" == "static-libs" ]] ; then
+	if use chromium && [[ "${build_type}" == "static-libs" ]] ; then
 		export ASFLAGS="-DCHROMIUM"
 		myconfargs+=( --as=nasm )
 	else
 		unset ASFLAGS
 	fi
+
 	use hardened && append-ldflags -Wl,-z,noexecstack
 	use lto && append_lto
 	if is_hardened_gcc ; then
@@ -531,10 +532,6 @@ configure_pgx() {
 	unset EXELDFLAGS
 	if use hardened ; then
 		export EXELDFLAGS="-pie"
-	fi
-
-	if use chromium ; then
-		myconfargs+=( --as=nasm )
 	fi
 
 	echo "${S}"/configure "${myconfargs[@]}" >&2
