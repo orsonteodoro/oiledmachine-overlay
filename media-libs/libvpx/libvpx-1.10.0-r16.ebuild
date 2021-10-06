@@ -383,11 +383,16 @@ configure_pgx() {
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
+		-Wl,-Bdynamic \
+		-Wl,-Bstatic \
+		-lc++ \
 		-stdlib=libc++
 
 	if tc-is-clang && use libcxx ; then
 		append-cxxflags $(test-flags-CC -cfi-stdlib)
                 append-cxxflags -stdlib=libc++
+		append-ldflags $(test-flags-CC -cfi-stdlib) # passes through clang++
+                append-ldflags -stdlib=libc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
 	fi
@@ -439,12 +444,13 @@ configure_pgx() {
 		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
 			if use cfi ; then
 				append_all -fvisibility=hidden -fsanitize=cfi
+				append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with vpxenc --help
 			else
 				use cfi-cast && append_all -fvisibility=hidden \
 							-fsanitize=cfi-derived-cast \
 							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all -fvisibility=hidden \
-							-fsanitize=cfi-icall
+				#use cfi-icall && append_all -fvisibility=hidden \
+				#			-fsanitize=cfi-icall
 				use cfi-vcall && append_all -fvisibility=hidden \
 							-fsanitize=cfi-vcall
 			fi
