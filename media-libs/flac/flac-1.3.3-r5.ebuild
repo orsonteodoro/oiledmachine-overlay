@@ -207,10 +207,15 @@ _src_configure() {
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
+		-static-libstdc++ \
 		-stdlib=libc++
 
 	if tc-is-clang && use libcxx ; then
+		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
+			&& append-cxxflags $(test-flags-CC -static-libstdc++)
 		append-cxxflags -stdlib=libc++
+		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
+			&& append-ldflags $(test-flags-CC -static-libstdc++) # Passes through clang++
 		append-ldflags -stdlib=libc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
