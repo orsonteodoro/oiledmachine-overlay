@@ -439,5 +439,7 @@ ewarn "was never used.  For details, see"
 ewarn "https://clang.llvm.org/docs/ControlFlowIntegrity.html with"
 ewarn "\"statically linked\" keyword search."
 ewarn
+ewarn "You must add -static-libstdc++ before -stdlib=libc++ for proper CFI."
+ewarn
 	fi
 }
