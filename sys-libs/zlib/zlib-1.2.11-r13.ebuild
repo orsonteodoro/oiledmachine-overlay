@@ -24,7 +24,7 @@ LICENSE="ZLIB"
 # similar name exist but under different licensing.
 SLOT="0/1" # subslot = SONAME
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
-IUSE="minizip static-libs"
+IUSE="minizip minizip-utils static-libs"
 IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang hardened lto shadowcallstack"
 IUSE+="
 	pgo
@@ -59,32 +59,35 @@ REQUIRED_USE="
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
-	pgo? ( || (
-		pgo-custom
-		pgo-trainer-minizip-binary-long
-		pgo-trainer-minizip-binary-max-compression
-		pgo-trainer-minizip-binary-short
-		pgo-trainer-minizip-binary-store
-		pgo-trainer-minizip-text-long
-		pgo-trainer-minizip-text-max-compression
-		pgo-trainer-minizip-text-short
-		pgo-trainer-minizip-text-store
-		pgo-trainer-zlib-binary-all
-		pgo-trainer-zlib-binary-default
-		pgo-trainer-zlib-binary-max
-		pgo-trainer-zlib-binary-min
-		pgo-trainer-zlib-binary-random
-		pgo-trainer-zlib-images-all
-		pgo-trainer-zlib-images-default
-		pgo-trainer-zlib-images-max
-		pgo-trainer-zlib-images-min
-		pgo-trainer-zlib-images-random
-		pgo-trainer-zlib-text-all
-		pgo-trainer-zlib-text-default
-		pgo-trainer-zlib-text-max
-		pgo-trainer-zlib-text-min
-		pgo-trainer-zlib-text-random
-	) )
+	pgo? (
+		minizip? ( minizip-utils )
+		|| (
+			pgo-custom
+			pgo-trainer-minizip-binary-long
+			pgo-trainer-minizip-binary-max-compression
+			pgo-trainer-minizip-binary-short
+			pgo-trainer-minizip-binary-store
+			pgo-trainer-minizip-text-long
+			pgo-trainer-minizip-text-max-compression
+			pgo-trainer-minizip-text-short
+			pgo-trainer-minizip-text-store
+			pgo-trainer-zlib-binary-all
+			pgo-trainer-zlib-binary-default
+			pgo-trainer-zlib-binary-max
+			pgo-trainer-zlib-binary-min
+			pgo-trainer-zlib-binary-random
+			pgo-trainer-zlib-images-all
+			pgo-trainer-zlib-images-default
+			pgo-trainer-zlib-images-max
+			pgo-trainer-zlib-images-min
+			pgo-trainer-zlib-images-random
+			pgo-trainer-zlib-text-all
+			pgo-trainer-zlib-text-default
+			pgo-trainer-zlib-text-max
+			pgo-trainer-zlib-text-min
+			pgo-trainer-zlib-text-random
+		)
+	)
 	pgo-custom? ( pgo )
 	pgo-trainer-zlib-binary-all? ( pgo )
 	pgo-trainer-zlib-binary-default? ( pgo )
@@ -388,9 +391,6 @@ append_lto() {
 		append-flags -flto=auto
 		append-ldflags -flto=auto
 	fi
-	if [[ "${USE}" =~ "cfi" ]] ; then
-		append-flags -fsplit-lto-unit
-	fi
 }
 
 src_configure() { :; }
@@ -603,7 +603,7 @@ _build_pgx() {
 	if use minizip ; then
 		einfo "Building minizip ${build_type} for ${ABI}"
 		emake -C contrib/minizip
-		if use pgo ; then
+		if use minizip-utils ; then
 			emake -C contrib/minizip minizip miniunzip
 		fi
 	fi
@@ -1277,7 +1277,7 @@ _install() {
 		einfo "Installing minizip for ${ABI}"
 		emake -C "${S}/contrib/minizip" install DESTDIR="${D}"
 		sed_macros "${ED}"/usr/include/minizip/*.h
-		if multilib_is_native_abi ; then
+		if use minizip-utils && multilib_is_native_abi ; then
 			if [[ "${PGO_PHASE}" == "pgi" ]] ; then
 				# Bugs
 				mkdir -p "${ED}/usr/bin" || die
@@ -1313,6 +1313,21 @@ src_install() {
 	cd "${S}" || die
 	dodoc FAQ README ChangeLog doc/*.txt
 	use minizip && dodoc contrib/minizip/*.txt
+	# This is to save register cache space (compared to -frecord-command-line) and
+	# for ffmpeg auto lib categorization with -Wl,-Bstatic.
+	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
+	# way to check for CFI presence.
+	if [[ "${USE}" =~ "cfi" ]] ; then
+		for f in $(find "${ED}" -name "*.a") ; do
+			if use cfi ; then
+				touch "${f}.cfi" || die
+			else
+				use cfi-cast && ( touch "${f}.cfi" || die )
+				use cfi-icall && ( touch "${f}.cfi" || die )
+				use cfi-vcall && ( touch "${f}.cfi" || die )
+			fi
+		done
+	fi
 }
 
 get_arch_enabled_use_flags() {

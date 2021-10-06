@@ -69,8 +69,9 @@ ${PORTAGE_DISTDIR}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
       make.conf to use the hardened profile settings or fallback to the browser
       defaults.  See ebuild for details.</flag>
     <flag name="lto">Use link time optimization.</flag>
-    <flag name="minizip">include the minizip library for quick and dirty zip
+    <flag name="minizip">Include the minizip library for quick and dirty zip
       extraction</flag>
+    <flag name="minizip">Include the minizip demo frontends</flag>
     <flag name="pgo">Build with Profiled Guided Optimizations</flag>
     <flag name="pgo-custom">Run a custom PGO optimization script</flag>
     <flag name="pgo-trainer-minizip-binary-long">Run the PGO trainer against
