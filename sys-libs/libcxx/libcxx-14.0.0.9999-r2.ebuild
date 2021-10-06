@@ -261,7 +261,7 @@ _configure_abi() {
 				mycmakeargs+=(
 					-DCFI=$(usex cfi)
 					-DCFI_CAST=$(usex cfi-cast)
-					-DCFI_ICALL=OFF
+					-DCFI_ICALL=$(usex cfi-icall)
 					-DCFI_VCALL=$(usex cfi-vcall)
 				)
 			fi
@@ -406,6 +406,21 @@ src_install() {
 		done
 	}
 	multilib_foreach_abi install_abi
+	# This is to save register cache space (compared to -frecord-command-line) and
+	# for auto lib categorization with -Wl,-Bstatic.
+	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
+	# way to check for CFI presence.
+	if [[ "${USE}" =~ "cfi" ]] ; then
+		for f in $(find "${ED}" -name "*.a") ; do
+			if use cfi ; then
+				touch "${f}.cfi" || die
+			else
+				use cfi-cast && ( touch "${f}.cfi" || die )
+				use cfi-icall && ( touch "${f}.cfi" || die )
+				use cfi-vcall && ( touch "${f}.cfi" || die )
+			fi
+		done
+	fi
 }
 
 pkg_postinst() {

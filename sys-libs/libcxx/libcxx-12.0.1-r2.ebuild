@@ -12,7 +12,7 @@ HOMEPAGE="https://libcxx.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
+KEYWORDS="amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
 IUSE="elibc_glibc elibc_musl +libcxxabi +libunwind static-libs test"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 REQUIRED_USE="libunwind? ( libcxxabi )"
@@ -109,8 +109,8 @@ DOCS=( CREDITS.TXT )
 PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 S="${WORKDIR}"
 
-LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake,utils/llvm-lit} )
-LLVM_PATCHSET=${PV/_/-}
+LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake/modules,utils/llvm-lit} )
+LLVM_PATCHSET=12.0.1
 llvm.org_set_globals
 
 python_check_deps() {
@@ -261,7 +261,7 @@ _configure_abi() {
 				mycmakeargs+=(
 					-DCFI=$(usex cfi)
 					-DCFI_CAST=$(usex cfi-cast)
-					-DCFI_ICALL=OFF
+					-DCFI_ICALL=$(usex cfi-icall)
 					-DCFI_VCALL=$(usex cfi-vcall)
 				)
 			fi
@@ -318,7 +318,6 @@ _configure_abi() {
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
 			-DLLVM_LIT_ARGS="$(get_lit_flags);--param=cxx_under_test=${clang_path}"
-			-DLIBCXX_LINK_TESTS_WITH_SHARED_LIBCXXABI=ON
 			-DPython3_EXECUTABLE="${PYTHON}"
 		)
 	fi
@@ -406,6 +405,21 @@ src_install() {
 		done
 	}
 	multilib_foreach_abi install_abi
+	# This is to save register cache space (compared to -frecord-command-line) and
+	# for auto lib categorization with -Wl,-Bstatic.
+	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
+	# way to check for CFI presence.
+	if [[ "${USE}" =~ "cfi" ]] ; then
+		for f in $(find "${ED}" -name "*.a") ; do
+			if use cfi ; then
+				touch "${f}.cfi" || die
+			else
+				use cfi-cast && ( touch "${f}.cfi" || die )
+				use cfi-icall && ( touch "${f}.cfi" || die )
+				use cfi-vcall && ( touch "${f}.cfi" || die )
+			fi
+		done
+	fi
 }
 
 pkg_postinst() {
