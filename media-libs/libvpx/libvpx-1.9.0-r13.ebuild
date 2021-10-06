@@ -24,7 +24,7 @@ SLOT="0/6"
 KEYWORDS="amd64 arm arm64 ~ia64 ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux"
 IUSE="doc +highbitdepth postproc static-libs svc test +threads"
 IUSE+=" +examples"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang chromium hardened libcxx lto shadowcallstack"
 IUSE+=" pgo
 	pgo-custom
 	pgo-trainer-2-pass-constrained-quality
@@ -151,6 +151,9 @@ BDEPEND="abi_x86_32? ( dev-lang/yasm )
 	abi_x86_x32? ( dev-lang/yasm )
 	x86-fbsd? ( dev-lang/yasm )
 	amd64-fbsd? ( dev-lang/yasm )
+	chromium? (
+		>=dev-lang/nasm-2.14
+	)
 	doc? (
 		app-doc/doxygen
 		dev-lang/php
@@ -165,7 +168,6 @@ PDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/libvpx-1.3.0-sparc-configure.patch" # 501010
-	"${FILESDIR}/libvpx-1.10.0-exeldflags.patch"
 )
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -298,6 +300,13 @@ src_prepare() {
 	else
 		eapply "${FILESDIR}/libvpx-1.10.0-gcov.patch"
 	fi
+
+	if is_hardened_clang || is_hardened_gcc ; then
+		:;
+	elif use hardened ; then
+		eapply "${FILESDIR}/libvpx-1.10.0-exeldflags.patch"
+	fi
+
 	prepare_abi() {
 		for build_type in $(get_build_types) ; do
 			einfo "Build type is ${build_type}"
@@ -332,9 +341,6 @@ append_lto() {
 	else
 		append-flags -flto=auto
 		append-ldflags -flto=auto
-	fi
-	if [[ "${USE}" =~ "cfi" ]] ; then
-		append-flags -fsplit-lto-unit
 	fi
 }
 
@@ -398,6 +404,7 @@ configure_pgx() {
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${T}/pgo-${ABI}"
+			append-ldflags -fprofile-generate="${T}/pgo-${ABI}"
 		else
 			append-flags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
 		fi
@@ -405,9 +412,10 @@ configure_pgx() {
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGO"
 		if tc-is-clang ; then
-			llvm-profdata merge -output="${T}/pgo-${ABI}/code.profdata" \
+			llvm-profdata merge -output="${T}/pgo-${ABI}/pgo-custom.profdata" \
 				"${T}/pgo-${ABI}" || die
-			append-flags -fprofile-use="${T}/pgo-${ABI}/code.profdata"
+			append-flags -fprofile-use="${T}/pgo-${ABI}/pgo-custom.profdata"
+			append-ldflags -fprofile-use="${T}/pgo-${ABI}/pgo-custom.profdata"
 		else
 			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
 		fi
@@ -448,6 +456,13 @@ configure_pgx() {
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
 	}
+
+	if false && use chromium && [[ "${build_type}" == "static-libs" ]] ; then
+		export ASFLAGS="-DCHROMIUM"
+		myconfargs+=( --as=nasm )
+	else
+		unset ASFLAGS
+	fi
 
 	use hardened && append-ldflags -Wl,-z,noexecstack
 	use lto && append_lto
@@ -1018,6 +1033,21 @@ src_install() {
 		done
 	}
 	multilib_foreach_abi install_abi
+	# This is to save register cache space (compared to -frecord-command-line) and
+	# for ffmpeg auto lib categorization with -Wl,-Bstatic.
+	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
+	# way to check for CFI presence.
+	if [[ "${USE}" =~ "cfi" ]] ; then
+		for f in $(find "${ED}" -name "*.a") ; do
+			if use cfi ; then
+				touch "${f}.cfi" || die
+			else
+				use cfi-cast && ( touch "${f}.cfi" || die )
+				use cfi-icall && ( touch "${f}.cfi" || die )
+				use cfi-vcall && ( touch "${f}.cfi" || die )
+			fi
+		done
+	fi
 }
 
 get_arch_enabled_use_flags() {
