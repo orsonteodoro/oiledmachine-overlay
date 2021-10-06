@@ -383,9 +383,7 @@ configure_pgx() {
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
-		-Wl,-Bdynamic \
-		-Wl,-Bstatic \
-		-lc++ \
+		-static-libstdc++ \
 		-stdlib=libc++
 
 	if tc-is-clang && use libcxx ; then
