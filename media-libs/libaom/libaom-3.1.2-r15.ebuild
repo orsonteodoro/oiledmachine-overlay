@@ -10,17 +10,17 @@ if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 else
-	SRC_URI="https://dev.gentoo.org/~polynomial-c/dist/${P}.tar.xz"
+	SRC_URI="https://storage.googleapis.com/aom-releases/${P}.tar.gz"
 	S="${WORKDIR}/${P}"
 	S_orig="${WORKDIR}/${P}"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~riscv ~sparc ~x86"
 fi
 
 DESCRIPTION="Alliance for Open Media AV1 Codec SDK"
 HOMEPAGE="https://aomedia.org"
 
 LICENSE="BSD-2"
-SLOT="0/2"
+SLOT="0/3"
 IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
@@ -373,10 +373,15 @@ configure_pgx() {
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
+		-ldl \
 		-stdlib=libc++
 
 	if tc-is-clang && use libcxx ; then
+		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
+			&& append-cxxflags $(test-flags-CC -static-libstdc++)
                 append-cxxflags -stdlib=libc++
+		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
+			&& append-ldflags $(test-flags-CC -static-libstdc++) # Passes through clang++
                 append-ldflags -stdlib=libc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
@@ -407,7 +412,6 @@ configure_pgx() {
 	fi
 	local mycmakeargs=(
 		-DENABLE_DOCS=$(multilib_native_usex doc ON OFF)
-		-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
 		-DENABLE_TESTS=OFF
 		-DENABLE_TOOLS=ON
 		-DENABLE_WERROR=OFF
@@ -483,6 +487,24 @@ configure_pgx() {
 			-DBUILD_SHARED_LIBS=ON
 		)
 	fi
+
+	if [[ ! ( "${USE}" =~ "cfi" ) ]] ; then
+		mycmakeargs+=(
+			-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
+		)
+	else
+		if [[ "${build_type}" == "static-libs" ]] ; then
+			mycmakeargs+=(
+				-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
+			)
+			[[ "${USE}" =~ "cfi" ]] && append-ldflags -ldl # It's missing for some reason.
+		else
+			mycmakeargs+=(
+				-DENABLE_EXAMPLES=OFF
+			)
+		fi
+	fi
+
 	# Bug when building for various ABIs.
 	if ! use asm ; then
 		mycmakeargs+=( -DAOM_TARGET_CPU=generic )
@@ -932,14 +954,7 @@ src_install() {
 			if multilib_is_native_abi && use doc ; then
 				local HTML_DOCS=( "${BUILD_DIR}"/docs/html/. )
 			fi
-			if [[ "${build_type}" == "shared-libs" ]] ; then
-				cmake_src_install
-			else
-				if use static-libs ; then
-					insinto /usr/$(get_libdir)
-					doins ${PN}.a
-				fi
-			fi
+			cmake_src_install
 		done
 	}
 	multilib_foreach_abi install_abi
