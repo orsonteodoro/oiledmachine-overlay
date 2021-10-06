@@ -14,7 +14,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
 IUSE="+libunwind static-libs test elibc_musl"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall full-relro clang hardened lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 REQUIRED_USE+="
 	cfi? ( clang lto static-libs )
 	cfi-cast? ( clang lto cfi-vcall static-libs )
