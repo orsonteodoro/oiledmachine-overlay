@@ -162,9 +162,6 @@ append_lto() {
 		append-flags -flto=auto
 		append-ldflags -flto=auto
 	fi
-	if [[ "${USE}" =~ "cfi" ]] ; then
-		append-flags -fsplit-lto-unit
-	fi
 }
 
 is_hardened_clang() {
@@ -348,6 +345,21 @@ src_install() {
 	multilib_foreach_abi install_abi
 	einstalldocs
 	find "${ED}" -type f -name '*.la' -delete || die
+	# This is to save register cache space (compared to -frecord-command-line) and
+	# for auto lib categorization with -Wl,-Bstatic.
+	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
+	# way to check for CFI presence.
+	if [[ "${USE}" =~ "cfi" ]] ; then
+		for f in $(find "${ED}" -name "*.a") ; do
+			if use cfi ; then
+				touch "${f}.cfi" || die
+			else
+				use cfi-cast && ( touch "${f}.cfi" || die )
+				use cfi-icall && ( touch "${f}.cfi" || die )
+				use cfi-vcall && ( touch "${f}.cfi" || die )
+			fi
+		done
+	fi
 }
 
 pkg_postinst() {
