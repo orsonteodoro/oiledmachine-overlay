@@ -389,9 +389,11 @@ configure_pgx() {
 		-stdlib=libc++
 
 	if tc-is-clang && use libcxx ; then
-		append-cxxflags $(test-flags-CC -cfi-stdlib)
+		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
+			&& append-cxxflags $(test-flags-CC -static-libstdc++)
                 append-cxxflags -stdlib=libc++
-		append-ldflags $(test-flags-CC -cfi-stdlib) # passes through clang++
+		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
+			&& append-ldflags $(test-flags-CC -static-libstdc++) # Passes through clang++
                 append-ldflags -stdlib=libc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
