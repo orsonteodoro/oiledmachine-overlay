@@ -1,6 +1,6 @@
 diff -urp libvpx-1.10.0.orig/build/make/Makefile libvpx-1.10.0/build/make/Makefile
 --- libvpx-1.10.0.orig/build/make/Makefile	2021-03-18 12:59:46.000000000 -0700
-+++ libvpx-1.10.0/build/make/Makefile	2021-10-03 10:11:17.788483081 -0700
++++ libvpx-1.10.0/build/make/Makefile	2021-10-05 19:28:21.487278652 -0700
 @@ -266,7 +266,7 @@ define linker_template
  $(1): $(filter-out -%,$(2))
  $(1):

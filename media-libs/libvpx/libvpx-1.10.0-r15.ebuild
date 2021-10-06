@@ -12,7 +12,7 @@ inherit flag-o-matic llvm toolchain-funcs multilib-minimal
 # 5. make testdata
 # 6. tar -caf libvpx-testdata-${MY_PV}.tar.xz libvpx-testdata
 
-LIBVPX_TESTDATA_VER=1.9.0
+LIBVPX_TESTDATA_VER=1.10.0
 
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
@@ -21,7 +21,7 @@ SRC_URI="https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.
 
 LICENSE="BSD"
 SLOT="0/6"
-KEYWORDS="amd64 arm arm64 ~ia64 ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux"
+KEYWORDS="amd64 ~arm arm64 ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux"
 IUSE="doc +highbitdepth postproc static-libs svc test +threads"
 IUSE+=" +examples"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang chromium hardened libcxx lto shadowcallstack"
@@ -168,6 +168,8 @@ PDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/libvpx-1.3.0-sparc-configure.patch" # 501010
+	"${FILESDIR}/libvpx-1.10.0-cfi-exeldflags.patch"
+	"${FILESDIR}/libvpx-1.10.0-cfi-static-link.patch"
 )
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -301,12 +303,6 @@ src_prepare() {
 		eapply "${FILESDIR}/libvpx-1.10.0-gcov.patch"
 	fi
 
-	if is_hardened_clang || is_hardened_gcc ; then
-		:;
-	elif use hardened ; then
-		eapply "${FILESDIR}/libvpx-1.10.0-exeldflags.patch"
-	fi
-
 	prepare_abi() {
 		for build_type in $(get_build_types) ; do
 			einfo "Build type is ${build_type}"
@@ -390,8 +386,8 @@ configure_pgx() {
 		-stdlib=libc++
 
 	if tc-is-clang && use libcxx ; then
+		append-cxxflags $(test-flags-CC -cfi-stdlib)
                 append-cxxflags -stdlib=libc++
-                append-ldflags -stdlib=libc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
 	fi
@@ -530,8 +526,17 @@ configure_pgx() {
 	fi
 
 	unset EXELDFLAGS
-	if use hardened ; then
+	if is_hardened_clang || is_hardened_gcc ; then
+		:;
+	elif use hardened ; then
 		export EXELDFLAGS="-pie"
+	fi
+	if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+		myconfargs+=( --enable-cfi )
+	fi
+
+	if use chromium ; then
+		myconfargs+=( --as=nasm )
 	fi
 
 	echo "${S}"/configure "${myconfargs[@]}" >&2

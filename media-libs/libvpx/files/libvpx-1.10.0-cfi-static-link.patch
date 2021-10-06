@@ -1,0 +1,53 @@
+diff -urp libvpx-1.10.0.orig/configure libvpx-1.10.0/configure
+--- libvpx-1.10.0.orig/configure	2021-10-05 19:20:46.157263648 -0700
++++ libvpx-1.10.0/configure	2021-10-05 19:21:33.208265199 -0700
+@@ -31,6 +31,7 @@ Advanced options:
+   --libc=PATH                     path to alternate libc
+   --size-limit=WxH                max size to allow in the decoder
+   --as={yasm|nasm|auto}           use specified assembler [auto, yasm preferred]
++  ${toggle_cfi}                   statically link libvpx as a CFI requirement
+   ${toggle_codec_srcs}            in/exclude codec library source code
+   ${toggle_debug_libs}            in/exclude debug version of libraries
+   ${toggle_static_msvcrt}         use static MSVCRT (VS builds only)
+@@ -299,6 +300,7 @@ CONFIG_LIST="
+     codec_srcs
+     debug_libs
+ 
++    cfi
+     dequant_tokens
+     dc_recon
+     runtime_cpu_detect
+@@ -367,6 +369,7 @@ CMDLINE_SELECT="
+     codec_srcs
+     debug_libs
+ 
++    cfi
+     dequant_tokens
+     dc_recon
+     postproc
+diff -urp libvpx-1.10.0.orig/examples.mk libvpx-1.10.0/examples.mk
+--- libvpx-1.10.0.orig/examples.mk	2021-03-18 12:59:46.000000000 -0700
++++ libvpx-1.10.0/examples.mk	2021-10-05 19:28:19.295278580 -0700
+@@ -322,6 +322,13 @@ INSTALL-SRCS-yes           += $(UTIL_SRC
+ OBJS-$(NOT_MSVS)           += $(call objs,$(ALL_SRCS))
+ BINS-$(NOT_MSVS)           += $(addprefix $(BUILD_PFX),$(ALL_EXAMPLES:.c=$(EXE_SFX)))
+ 
++ifeq ($(CONFIG_CFI),yes)
++PRE_CFI=-Wl,-Bstatic
++POST_CFI=-Wl,-Bdynamic
++else
++PRE_CFI=
++POST_CFI=
++endif
+ 
+ # Instantiate linker template for all examples.
+ CODEC_LIB=$(if $(CONFIG_DEBUG_LIBS),vpx_g,vpx)
+@@ -339,7 +346,7 @@ $(foreach bin,$(BINS-yes),\
+     $(eval $(bin):$(LIB_PATH)/lib$(CODEC_LIB)$(CODEC_LIB_SUF))\
+     $(eval $(call linker_template,$(bin),\
+         $(call objs,$($(notdir $(bin:$(EXE_SFX)=)).SRCS)) \
+-        -l$(CODEC_LIB) $(addprefix -l,$(CODEC_EXTRA_LIBS))\
++        $(PRE_CFI) -l$(CODEC_LIB) $(POST_CFI) $(addprefix -l,$(CODEC_EXTRA_LIBS))\
+         )))
+ 
+ # The following pairs define a mapping of locations in the distribution
