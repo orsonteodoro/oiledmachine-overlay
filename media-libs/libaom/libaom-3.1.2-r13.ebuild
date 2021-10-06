@@ -10,17 +10,17 @@ if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 else
-	SRC_URI="https://dev.gentoo.org/~polynomial-c/dist/${P}.tar.xz"
+	SRC_URI="https://storage.googleapis.com/aom-releases/${P}.tar.gz"
 	S="${WORKDIR}/${P}"
 	S_orig="${WORKDIR}/${P}"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~riscv ~sparc ~x86"
 fi
 
 DESCRIPTION="Alliance for Open Media AV1 Codec SDK"
 HOMEPAGE="https://aomedia.org"
 
 LICENSE="BSD-2"
-SLOT="0/2"
+SLOT="0/3"
 IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
@@ -322,16 +322,12 @@ append_all() {
 
 append_lto() {
 	filter-flags '-flto*' '-fuse-ld=*'
-	filter-flags -fsplit-lto-unit
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
 	else
 		append-flags -flto=auto
 		append-ldflags -flto=auto
-	fi
-	if [[ "${USE}" =~ "cfi" ]] ; then
-		append-flags -fsplit-lto-unit
 	fi
 }
 
@@ -374,7 +370,7 @@ configure_pgx() {
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'--param=ssp-buffer-size=*' \
-		-DCHROMIUM \
+		-fstack-protector \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
@@ -413,7 +409,6 @@ configure_pgx() {
 	local mycmakeargs=(
 		-DENABLE_DOCS=$(multilib_native_usex doc ON OFF)
 		-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
-		-DENABLE_NASM=OFF
 		-DENABLE_TESTS=OFF
 		-DENABLE_TOOLS=ON
 		-DENABLE_WERROR=OFF
@@ -446,7 +441,14 @@ configure_pgx() {
 						-fsanitize=shadow-call-stack
 	}
 
-	use chromium && append-cppflags -DCHROMIUM
+	if use chromium && [[ "${build_type}" == "static-libs" ]] ; then
+		mycmakeargs+=(
+			-DAOM_AS_FLAGS="-DCHROMIUM"
+			-DENABLE_NASM=ON
+		)
+	else
+		mycmakeargs+=( -DENABLE_NASM=OFF )
+	fi
 	use hardened && append-ldflags -Wl,-z,noexecstack
 	use lto && append_lto
 	if is_hardened_gcc ; then
@@ -944,6 +946,21 @@ src_install() {
 	multilib_foreach_abi install_abi
 
 	find "${ED}" -type f \( -name "*.la" \) -delete || die
+	# This is to save register cache space (compared to -frecord-command-line) and
+	# for ffmpeg auto lib categorization with -Wl,-Bstatic.
+	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
+	# way to check for CFI presence.
+	if [[ "${USE}" =~ "cfi" ]] ; then
+		for f in $(find "${ED}" -name "*.a") ; do
+			if use cfi ; then
+				touch "${f}.cfi" || die
+			else
+				use cfi-cast && ( touch "${f}.cfi" || die )
+				use cfi-icall && ( touch "${f}.cfi" || die )
+				use cfi-vcall && ( touch "${f}.cfi" || die )
+			fi
+		done
+	fi
 }
 
 get_arch_enabled_use_flags() {
