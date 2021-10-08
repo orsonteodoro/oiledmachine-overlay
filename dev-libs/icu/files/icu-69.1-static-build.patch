@@ -1,0 +1,294 @@
+diff -urp a/extra/scrptrun/Makefile.in b/extra/scrptrun/Makefile.in
+--- a/extra/scrptrun/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/extra/scrptrun/Makefile.in	2021-10-07 01:22:51.282826633 -0700
+@@ -23,8 +23,8 @@ TARGET = srtest$(EXEEXT)
+ 
+ DEFS = @DEFS@
+ CPPFLAGS = @CPPFLAGS@ -I$(top_srcdir)/common -I$(top_srcdir) 
+-CFLAGS = @CFLAGS@
+-CXXFLAGS = @CXXFLAGS@
++CFLAGS = @CFLAGS@ -static
++CXXFLAGS = @CXXFLAGS@ -static
+ ENABLE_RPATH = @ENABLE_RPATH@
+ ifeq ($(ENABLE_RPATH),YES)
+ RPATHLDFLAGS = $(LD_RPATH)$(LD_RPATH_PRE)$(libdir)
+diff -urp a/extra/uconv/Makefile.in b/extra/uconv/Makefile.in
+--- a/extra/uconv/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/extra/uconv/Makefile.in	2021-10-07 01:22:52.754826682 -0700
+@@ -44,6 +44,8 @@ CLEANFILES = *~ $(DEPS) $(ALL_MAN_FILES)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(srcdir) -I$(top_srcdir)/common -I$(top_srcdir)/i18n -I$(srcdir)/../toolutil
+ CPPFLAGS += -DUNISTR_FROM_CHAR_EXPLICIT=explicit -DUNISTR_FROM_STRING_EXPLICIT=explicit
+ LIBS = $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+diff -urp a/samples/cal/Makefile.in b/samples/cal/Makefile.in
+--- a/samples/cal/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/samples/cal/Makefile.in	2021-10-07 01:23:58.750828857 -0700
+@@ -23,6 +23,8 @@ CLEANFILES = *~ $(DEPS)
+ ## Target information
+ TARGET = icucal$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(top_srcdir)/i18n
+ LIBS = $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/samples/date/Makefile.in b/samples/date/Makefile.in
+--- a/samples/date/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/samples/date/Makefile.in	2021-10-07 01:23:59.550828883 -0700
+@@ -23,6 +23,8 @@ CLEANFILES = *~ $(DEPS)
+ ## Target information
+ TARGET = icudate$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(top_srcdir)/i18n
+ LIBS = $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/samples/layout/Makefile.in b/samples/layout/Makefile.in
+--- a/samples/layout/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/samples/layout/Makefile.in	2021-10-07 01:23:57.278828808 -0700
+@@ -26,6 +26,8 @@ CLEANFILES = *~ $(DEPS)
+ TARGET  = gnomelayout
+ CTARGET = cgnomelayout
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -DLE_USE_CMEMORY `pkg-config --cflags libgnomeui-2.0 freetype2 cairo` -I$(top_srcdir)/common -I$(top_srcdir)/i18n -I$(top_srcdir)/layoutex -I$(top_srcdir)/layout -I$(top_srcdir) -g
+ 
+ LIBS = $(LIBICULX) $(LIBICULE) $(LIBICUUC) $(LIBICUI18N) @LIBS@ @LIB_M@ `pkg-config --libs libgnomeui-2.0 freetype2 cairo`
+diff -urp a/tools/ctestfw/Makefile.in b/tools/ctestfw/Makefile.in
+--- a/tools/ctestfw/Makefile.in	2021-10-07 01:18:54.656818836 -0700
++++ b/tools/ctestfw/Makefile.in	2021-10-07 01:21:31.462824003 -0700
+@@ -46,8 +46,8 @@ ALL_TARGETS = $(TARGET) $(ALL_SO_TARGETS
+ DYNAMICCPPFLAGS = $(SHAREDLIBCPPFLAGS)
+ DYNAMICCFLAGS = $(SHAREDLIBCFLAGS)
+ DYNAMICCXXFLAGS = $(SHAREDLIBCXXFLAGS)
+-CFLAGS += $(LIBCFLAGS)
+-CXXFLAGS += $(LIBCXXFLAGS)
++CFLAGS += $(LIBCFLAGS) -static
++CXXFLAGS += $(LIBCXXFLAGS) -static
+ 
+ CPPFLAGS += -I$(top_srcdir)/common -I$(top_srcdir)/i18n -I$(srcdir)/../toolutil -I$(srcdir) $(LIBCPPFLAGS) $(CPPFLAGSCTESTFW)
+ DEFS += -DT_CTEST_IMPLEMENTATION
+diff -urp a/tools/escapesrc/Makefile.in b/tools/escapesrc/Makefile.in
+--- a/tools/escapesrc/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/escapesrc/Makefile.in	2021-10-07 01:21:32.310824031 -0700
+@@ -31,6 +31,8 @@ CLEANFILES = *~ $(DEPS) $(MAN_FILES) ./o
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ #LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC)
+ LIBS += $(DEFAULT_LIBS) $(LIB_M)
+diff -urp a/tools/genbrk/Makefile.in b/tools/genbrk/Makefile.in
+--- a/tools/genbrk/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/genbrk/Makefile.in	2021-10-07 01:21:33.110824057 -0700
+@@ -28,6 +28,8 @@ CLEANFILES = *~ $(DEPS) $(MAN_FILES)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/tools/genccode/Makefile.in b/tools/genccode/Makefile.in
+--- a/tools/genccode/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/genccode/Makefile.in	2021-10-07 01:21:33.910824084 -0700
+@@ -29,6 +29,8 @@ CLEANFILES = *~ $(DEPS) $(MAN_FILES)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/tools/gencfu/Makefile.in b/tools/gencfu/Makefile.in
+--- a/tools/gencfu/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/gencfu/Makefile.in	2021-10-07 01:21:34.694824110 -0700
+@@ -28,6 +28,8 @@ CLEANFILES = *~ $(DEPS) $(MAN_FILES)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(top_srcdir)/i18n -I$(srcdir)/../toolutil
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/tools/gencmn/Makefile.in b/tools/gencmn/Makefile.in
+--- a/tools/gencmn/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/gencmn/Makefile.in	2021-10-07 01:21:35.542824138 -0700
+@@ -29,6 +29,8 @@ CLEANFILES = *~ $(DEPS) $(MAN_FILES)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/tools/gencnval/Makefile.in b/tools/gencnval/Makefile.in
+--- a/tools/gencnval/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/gencnval/Makefile.in	2021-10-07 01:21:36.326824163 -0700
+@@ -29,6 +29,8 @@ CLEANFILES = *~ $(DEPS) $(MAN_FILES)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/tools/gendict/Makefile.in b/tools/gendict/Makefile.in
+--- a/tools/gendict/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/gendict/Makefile.in	2021-10-07 01:21:37.094824189 -0700
+@@ -28,6 +28,8 @@ CLEANFILES = *~ $(DEPS) $(MAN_FILES)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/tools/gennorm2/Makefile.in b/tools/gennorm2/Makefile.in
+--- a/tools/gennorm2/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/gennorm2/Makefile.in	2021-10-07 01:21:37.814824212 -0700
+@@ -24,6 +24,8 @@ CLEANFILES = *~ $(DEPS)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(srcdir) -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/tools/genrb/Makefile.in b/tools/genrb/Makefile.in
+--- a/tools/genrb/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/genrb/Makefile.in	2021-10-07 01:21:38.614824239 -0700
+@@ -33,6 +33,8 @@ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(
+ # derb depends on icuio
+ @ICUIO_TRUE@DERB = $(BINDIR)/$(DERB_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(srcdir) -I$(top_srcdir)/common -I$(top_srcdir)/i18n -I$(srcdir)/../toolutil -I$(top_srcdir)/io
+ CPPFLAGS += -DUNISTR_FROM_CHAR_EXPLICIT=explicit -DUNISTR_FROM_STRING_EXPLICIT=explicit
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+diff -urp a/tools/gensprep/Makefile.in b/tools/gensprep/Makefile.in
+--- a/tools/gensprep/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/gensprep/Makefile.in	2021-10-07 01:21:39.430824266 -0700
+@@ -29,6 +29,8 @@ CLEANFILES = *~ $(DEPS) $(MAN_FILES)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/tools/gentest/Makefile.in b/tools/gentest/Makefile.in
+--- a/tools/gentest/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/gentest/Makefile.in	2021-10-07 01:21:40.166824290 -0700
+@@ -22,6 +22,8 @@ CLEANFILES = *~ $(DEPS)
+ ## Target information
+ TARGET = gentest$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(srcdir)/../toolutil -I$(top_srcdir)/tools/ctestfw 
+ CPPFLAGS+= -I$(top_srcdir)/i18n
+ LIBS = $(LIBCTESTFW) $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+diff -urp a/tools/icuinfo/Makefile.in b/tools/icuinfo/Makefile.in
+--- a/tools/icuinfo/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/icuinfo/Makefile.in	2021-10-07 01:21:40.902824314 -0700
+@@ -26,6 +26,8 @@ CPPFLAGS += -I$(top_srcdir)/common -I$(s
+ CPPFLAGS+= -I$(top_srcdir)/i18n
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ SOURCES = $(shell cat $(srcdir)/sources.txt)
+ OBJECTS = $(SOURCES:.cpp=.o)
+ @PLUGINS_TRUE@PLUGIN_SOURCES = $(shell cat $(srcdir)/plugin_sources.txt)
+diff -urp a/tools/icupkg/Makefile.in b/tools/icupkg/Makefile.in
+--- a/tools/icupkg/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/icupkg/Makefile.in	2021-10-07 01:21:41.669824339 -0700
+@@ -28,6 +28,8 @@ CLEANFILES = *~ $(DEPS) $(MAN_FILES)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/tools/icuswap/Makefile.in b/tools/icuswap/Makefile.in
+--- a/tools/icuswap/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/icuswap/Makefile.in	2021-10-07 01:21:42.438824365 -0700
+@@ -28,6 +28,8 @@ CLEANFILES = *~ $(DEPS) $(MAN_FILES)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/tools/makeconv/Makefile.in b/tools/makeconv/Makefile.in
+--- a/tools/makeconv/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/makeconv/Makefile.in	2021-10-07 01:21:43.157824389 -0700
+@@ -28,6 +28,8 @@ CLEANFILES = *~ $(DEPS) $(MAN_FILES)
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(srcdir) -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+ 
+diff -urp a/tools/pkgdata/Makefile.in b/tools/pkgdata/Makefile.in
+--- a/tools/pkgdata/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/pkgdata/Makefile.in	2021-10-07 01:21:43.909824413 -0700
+@@ -32,6 +32,8 @@ endif
+ ## Target information
+ TARGET = $(BINDIR)/$(TARGET_STUB_NAME)$(EXEEXT)
+ 
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS += -I$(srcdir) -I$(top_srcdir)/common -I$(srcdir)/../toolutil
+ DEFS += -DUDATA_SO_SUFFIX=\".$(SO)\" -DSTATIC_O=\"$(STATIC_O)\"
+ LIBS = $(LIBICUTOOLUTIL) $(LIBICUI18N) $(LIBICUUC) $(DEFAULT_LIBS) $(LIB_M)
+diff -urp a/tools/toolutil/Makefile.in b/tools/toolutil/Makefile.in
+--- a/tools/toolutil/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/toolutil/Makefile.in	2021-10-07 01:21:44.693824439 -0700
+@@ -48,6 +48,8 @@ CXXFLAGS += $(LIBCXXFLAGS)
+ CPPFLAGS += -I$(srcdir) -I$(top_srcdir)/common -I$(top_srcdir)/i18n $(LIBCPPFLAGS)
+ 
+ # from icuinfo
++CFLAGS += -static
++CXXFLAGS += -static
+ CPPFLAGS+=  "-DU_BUILD=\"@build@\"" "-DU_HOST=\"@host@\"" "-DU_CC=\"@CC@\"" "-DU_CXX=\"@CXX@\""
+ CPPFLAGS += -DUNISTR_FROM_CHAR_EXPLICIT=explicit -DUNISTR_FROM_STRING_EXPLICIT=explicit
+ 
+diff -urp a/tools/tzcode/Makefile.in b/tools/tzcode/Makefile.in
+--- a/tools/tzcode/Makefile.in	2021-04-07 17:10:27.000000000 -0700
++++ b/tools/tzcode/Makefile.in	2021-10-07 01:21:29.238823930 -0700
+@@ -27,8 +27,8 @@ TDATA =	$(PRIMARY_DATA) $(SUPPLEMENTAL_D
+ 
+ TZDIR=zoneinfo
+ 
+-CFLAGS+=-D_POSIX_C_SOURCE
+-CPPFLAGS+= -DTZDIR=\"$(TZDIR)\" 
++CFLAGS+=-D_POSIX_C_SOURCE -static
++CPPFLAGS+= -DTZDIR=\"$(TZDIR)\" -static
+ 
+ # more data
+ XDATA=zone.tab leapseconds iso3166.tab

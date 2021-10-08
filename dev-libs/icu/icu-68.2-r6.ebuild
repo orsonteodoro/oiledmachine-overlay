@@ -14,7 +14,7 @@ LICENSE="BSD"
 
 SLOT="0/${PV}"
 
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
+KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="debug doc examples static-libs"
 IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang hardened libcxx lto shadowcallstack"
 REQUIRED_USE="
@@ -157,6 +157,10 @@ src_prepare() {
 		eapply "${FILESDIR}/icu-69.1-pie.patch"
 	fi
 
+	if [[ "${USE}" =~ "cfi" ]] ; then
+		eapply "${FILESDIR}/icu-69.1-static-build.patch"
+	fi
+
 	eautoreconf
 
 	prepare_abi() {
@@ -180,6 +184,7 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
+		append-flags -fsplit-lto-unit
 	else
 		append-flags -flto=auto
 		append-ldflags -flto=auto
@@ -248,37 +253,54 @@ _configure_abi() {
 	filter-flags \
 		'-f*sanitize*' \
 		'-f*stack*' \
-		'-fvisibility=hidden' \
+		'-fvisibility=*' \
 		'--param=ssp-buffer-size=*' \
+		-DU_STATIC_IMPLEMENTATION \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
+		-fomit-frame-pointer \
 		-stdlib=libc++
 
 	autofix_flags
 
 	if tc-is-clang && use libcxx ; then
+		if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+			append-cxxflags $(test-flags-CC -static-libstdc++) \
+				-Wno-unused-command-line-argument
+			append-cppflags -DDHAVE_DLOPEN=0 -DU_DISABLE_RENAMING=1 -DU_STATIC_IMPLEMENTATION
+		fi
 		append-cxxflags -stdlib=libc++
+		if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+			append-ldflags $(test-flags-CC -static-libstdc++) \
+				-Wno-unused-command-line-argument # Passes through clang++
+		fi
 		append-ldflags -stdlib=libc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
 	fi
 
 	set_cfi() {
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
+		if tc-is-clang ; then
+			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+				append_all -fvisibility=hidden
+			elif [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
+				append_all -fvisibility=default
+			fi
 			if use cfi ; then
-				append_all -fvisibility=hidden -fsanitize=cfi
+				append_all -fsanitize=cfi
 			else
-				use cfi-cast && append_all -fvisibility=hidden \
+				use cfi-cast && append_all \
 							-fsanitize=cfi-derived-cast \
 							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all -fvisibility=hidden \
-							-fsanitize=cfi-icall
-				use cfi-vcall && append_all -fvisibility=hidden \
+				#use cfi-icall && append_all \
+				#			-fsanitize=cfi-icall
+				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
+			append_all -fno-sanitize=cfi-icall
+			[[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
+				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
@@ -318,6 +340,7 @@ _configure_abi() {
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		myeconfargs+=(
 			--enable-static
+			--disable-dyload
 			--disable-shared
 		)
 	else
@@ -326,6 +349,24 @@ _configure_abi() {
 			--enable-shared
 		)
 	fi
+
+	if [[ ! ( "${USE}" =~ "cfi" ) ]] ; then
+		myeconfargs+=(
+			--enable-extras
+			--enable-tools
+		)
+	elif [[ "${build_type}" == "static-libs" ]] ; then
+		myeconfargs+=(
+			--enable-extras
+			--enable-tools
+		)
+	else
+		myeconfargs+=(
+			--disable-extras
+			--disable-tools
+		)
+	fi
+
 
 	tc-is-cross-compiler && myeconfargs+=(
 		--with-cross-build="${WORKDIR}"/host
@@ -412,7 +453,7 @@ src_install() {
 	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
 	# way to check for CFI presence.
 	if [[ "${USE}" =~ "cfi" ]] ; then
-		for f in $(find "${ED}" -name "*.a") ; do
+		for f in $(find "${ED}" -name "*.a" -o -name "*.so*") ; do
 			if use cfi ; then
 				touch "${f}.cfi" || die
 			else
@@ -426,15 +467,16 @@ src_install() {
 
 pkg_postinst() {
 	if [[ "${USE}" =~ "cfi" ]] ; then
+# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
 ewarn
-ewarn "cfi, cfi-cast, cfi-icall, cfi-vcall require static linking of this"
-ewarn "library."
+ewarn "Cross-DSO CFI is experimental."
 ewarn
-ewarn "If you do \`ldd <path to exe>\` and you still see libicui18n.so"
-ewarn "libicuuc.so, libicudata.so, then it breaks the CFI runtime protection"
-ewarn "spec as if that scheme of CFI was never used.  For details, see"
-ewarn "https://clang.llvm.org/docs/ControlFlowIntegrity.html with"
-ewarn "\"statically linked\" keyword search."
+ewarn "You must link these libraries as static for plain CFI to work."
 ewarn
 	fi
+if use static-libs ; then
+ewarn
+ewarn "static-lib consumers require -DU_STATIC_IMPLEMENTATION"
+ewarn
+fi
 }
