@@ -86,10 +86,10 @@ sys-devel/llvm:14 llvm-14-commit.conf
 sys-devel/clang:14 llvm-14-commit.conf
 =sys-libs/compiler-rt-14* llvm-14-commit.conf
 =sys-libs/compiler-rt-sanitizers-14* llvm-14-commit.conf
-sys-libs/libcxx:14 llvm-14-commit.conf
-sys-libs/libcxxabi:14 llvm-14-commit.conf
-sys-libs/libomp:14 llvm-14-commit.conf
-sys-devel/lld:14 llvm-14-commit.conf
+=sys-libs/libcxx-14* llvm-14-commit.conf
+=sys-libs/libcxxabi-14* llvm-14-commit.conf
+=sys-libs/libomp-14* llvm-14-commit.conf
+=sys-devel/lld-14* llvm-14-commit.conf
 
   Then, emerge -1 all of the above ebuilds.
 
