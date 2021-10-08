@@ -905,50 +905,6 @@ translate_retpoline() {
 	export CFLAGS CXXFLAGS LDFLAGS
 }
 
-# @FUNCTION: filter_incompatible_clang_flags
-# @DESCRIPTION:
-# Removes incompatible clang flags
-filter_incompatible_clang_flags() {
-	if tc-is-clang ; then
-		einfo "Auto removing incompatible clang flags"
-		filter-flags \
-			'-f*fat-lto-objects' \
-			'-f*prefetch-loop-arrays' \
-			'-f*rename-registers' \
-			'-f*use-linker-plugin' \
-			'-f*lto-compression-level*' \
-			'-f*lto-partition*' \
-			'-f*opt-info*'
-		local f
-		for f in CFLAGS CXXFLAGS LDFLAGS ; do
-			if [[ "${!f}" =~ "-mindirect-branch-register" ]]  ; then
-				ewarn "No direct translation for -mindirect-branch-register.  Removing."
-			fi
-		done
-		filter-flags -mindirect-branch-register
-	fi
-}
-
-# @FUNCTION: filter_incompatible_gcc_flags
-# @DESCRIPTION:
-# Removes incompatible gcc flags
-filter_incompatible_gcc_flags() {
-	if tc-is-gcc ; then
-		einfo "Auto removing incompatible gcc flags"
-		filter-flags \
-			'-f*split-lto-unit'
-	fi
-}
-
-# @FUNCTION: filter_incompatible_per_compiler_flags
-# @INTERNAL
-# @DESCRIPTION:
-# Removes incompatible flags
-filter_incompatible_per_compiler_flags() {
-	filter_incompatible_clang_flags
-	filter_incompatible_gcc_flags
-}
-
 # @FUNCTION: translate_lto
 # @DESCRIPTION:
 # Translates incompatible args of LTO in the best way possible.  Also, removes
@@ -1011,9 +967,9 @@ translate_lto() {
 # @DESCRIPTION:
 # Removes incompatible flags and translates flags
 autofix_flags() {
-	filter_incompatible_per_compiler_flags
 	translate_retpoline
 	translate_lto
+	strip-unsupported-flags
 }
 
 fi
