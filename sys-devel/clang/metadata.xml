@@ -38,7 +38,7 @@
 
     The oiledmachine overlay modifies these ebuilds for hardened support to
     ensure that packages built with clang/llvm are properly protected with the
-    equivalent security flags as its counterpart (Hardened GCC 10.3.0).
+    equivalent security defaults as its counterpart (Hardened GCC 10.3.0).
 
     Default ON doesn't necessarily mean hardcoded always ON.  If the package
     does not specify the option, the default ON value will be the one used
