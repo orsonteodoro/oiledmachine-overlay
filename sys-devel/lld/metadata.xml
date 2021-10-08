@@ -27,8 +27,8 @@
     Due to the problematic design of the live ebuild system, it
     is recommened to use a commit snapshot on the same slot for all
     LLVM live packages.  To have deterministic builds, per-package
-    environmental variable must be set by add the following once a
-    successful build of  LLVM has been discovered:
+    environmental variable must be set by adding the following once a
+    successful build of LLVM has been discovered:
 
 Contents of /etc/portage/env/llvm-14-commit.conf:
 EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="ADD_40_DIGIT_COMMIT_HERE"

@@ -68,6 +68,36 @@
 
     When using -stdlib=libc++, add -static-libstdc++ in front of it for a
     proper CFI build.
+
+
+    Deterministic reliable builds
+
+    Due to the problematic design of the live ebuild system, it
+    is recommened to use a commit snapshot on the same slot for all
+    LLVM live packages.  To have deterministic builds, per-package
+    environmental variable must be set by adding the following once a
+    successful build of LLVM has been discovered:
+
+Contents of /etc/portage/env/llvm-14-commit.conf:
+EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="ADD_40_DIGIT_COMMIT_HERE"
+
+Contents of /etc/portage/package.env:
+sys-devel/llvm:14 llvm-14-commit.conf
+sys-devel/clang:14 llvm-14-commit.conf
+=sys-libs/compiler-rt-14* llvm-14-commit.conf
+=sys-libs/compiler-rt-sanitizers-14* llvm-14-commit.conf
+sys-libs/libcxx:14 llvm-14-commit.conf
+sys-libs/libcxxabi:14 llvm-14-commit.conf
+sys-libs/libomp:14 llvm-14-commit.conf
+sys-devel/lld:14 llvm-14-commit.conf
+
+  Then, emerge -1 all of the above ebuilds.
+
+  Replace 14 with the particular slots of the live ebuilds that you are
+  interested.  When you need to update, just add and remove a # in front
+  of EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT to switch on and off when
+  updating the 40 digit hash code again.
+
   </longdescription>
   <use>
     <flag name="default-compiler-rt">Use compiler-rt instead of libgcc as the
