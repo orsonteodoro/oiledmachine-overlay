@@ -11,7 +11,7 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="$(ver_cut 1-3)"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="+clang test elibc_glibc"
 # base targets
 IUSE+=" +libfuzzer +memprof +orc +profile +xray"
@@ -202,4 +202,11 @@ src_test() {
 	local -x LD_PRELOAD=
 
 	cmake_build check-all
+}
+
+src_install()
+{
+	cmake_src_install
+	# Prevent collision with sys-libs/compiler-rt-13.0.0.9999:13.0.0::gentoo
+	rm -v "${ED}/usr/lib/clang/$(ver_cut 1-3 ${PV})/"*"/linux/libclang_rt.orc-"*".a" || die
 }
