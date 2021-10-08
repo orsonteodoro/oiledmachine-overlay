@@ -12,7 +12,7 @@
 
 # Modifications in the oiledmachine-overlay are found below:
 # (1) retpoline flag translation
-# (2) auto filter flags per compiler
+# (2) lto flag translation
 
 # Forked flag-o-matic.eclass updates every EAPI or API change.
 
