@@ -25,23 +25,31 @@ ld.lld: error: undefined symbol: __cfi_slowpath
 v2: [WIP] Fix breakage when using built Cross-DSO zlib
 v1: Initial release
 
---- clang/lib/Driver/ToolChains/Gnu.cpp.orig	2021-10-09 00:46:44.747449420 -0700
-+++ clang/lib/Driver/ToolChains/Gnu.cpp	2021-10-09 00:46:36.571449151 -0700
-@@ -565,7 +565,11 @@ void tools::gnutools::Linker::ConstructJ
-   if (Args.hasArg(options::OPT_Z_Xlinker__no_demangle))
+--- clang/lib/Driver/ToolChains/Gnu.cpp.orig	2021-10-09 09:51:06.368525700 -0700
++++ clang/lib/Driver/ToolChains/Gnu.cpp	2021-10-09 10:03:58.156551132 -0700
+@@ -566,6 +566,11 @@ void tools::gnutools::Linker::ConstructJ
      CmdArgs.push_back("--no-demangle");
  
--  bool NeedsSanitizerDeps = addSanitizerRuntimes(ToolChain, Args, CmdArgs);
-+  bool NeedsSanitizerDeps = addSanitizerRuntimes(ToolChain, Args, CmdArgs) ||  // oteodoro: Begin section change
-+      // Prevent missing -pthread when reusing Cross-DSO CFIed zlib from       // oteodoro: Set flag to link -pthread and -ldl
-+      // borking the system.                                                   // oteodoro: when -shared and fsanitize-cfi-cross-dso
+   bool NeedsSanitizerDeps = addSanitizerRuntimes(ToolChain, Args, CmdArgs);
++  // Prevent missing -pthread when reusing Cross-DSO CFIed zlib from           // oteodoro: Set flag to link -pthread and -ldl
++  // borking the system.                                                       // oteodoro: when -shared and fsanitize-cfi-cross-dso
++  bool NeedsSanitizerCrossDsoCfiDeps =                                         // oteodoro: Begin section change
 +      (Args.hasArg(options::OPT_fsanitize_cfi_cross_dso) &&                    // oteodoro: are used together.
 +       Args.hasArg(options::OPT_shared));                                      // oteodoro: End section change
    bool NeedsXRayDeps = addXRayRuntime(ToolChain, Args, CmdArgs);
    addLinkerCompressDebugSectionsOption(ToolChain, Args, CmdArgs);
    AddLinkerInputs(ToolChain, Inputs, Args, CmdArgs, JA);
---- clang/lib/Driver/ToolChains/CommonArgs.cpp.orig	2021-10-09 00:29:17.910414924 -0700
-+++ clang/lib/Driver/ToolChains/CommonArgs.cpp	2021-10-09 00:41:51.594439760 -0700
+@@ -593,7 +598,7 @@ void tools::gnutools::Linker::ConstructJ
+       if (IsStatic || IsStaticPIE)
+         CmdArgs.push_back("--start-group");
+ 
+-      if (NeedsSanitizerDeps)
++      if (NeedsSanitizerDeps || NeedsSanitizerCrossDsoCfiDeps)
+         linkSanitizerRuntimeDeps(ToolChain, CmdArgs);
+ 
+       if (NeedsXRayDeps)
+--- clang/lib/Driver/ToolChains/CommonArgs.cpp.orig	2021-10-09 09:51:06.308525698 -0700
++++ clang/lib/Driver/ToolChains/CommonArgs.cpp	2021-10-09 09:52:45.378528962 -0700
 @@ -967,6 +967,16 @@ bool tools::addSanitizerRuntimes(const T
    if (SanArgs.hasCrossDsoCfi() && !AddExportDynamic)
      CmdArgs.push_back("--export-dynamic-symbol=__cfi_check");
