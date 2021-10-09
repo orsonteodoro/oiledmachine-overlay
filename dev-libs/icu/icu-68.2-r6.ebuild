@@ -234,6 +234,15 @@ src_configure() {
 	multilib_foreach_abi configure_abi
 }
 
+is_cfi_supported() {
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		return 0
+	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
 _configure_abi() {
 	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
@@ -282,7 +291,7 @@ _configure_abi() {
 	fi
 
 	set_cfi() {
-		if tc-is-clang ; then
+		if tc-is-clang && is_cfi_supported ; then
 			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
 				append_all -fvisibility=hidden
 			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then

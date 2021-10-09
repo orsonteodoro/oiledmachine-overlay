@@ -206,6 +206,15 @@ is_hardened_gcc() {
 	return 1
 }
 
+is_cfi_supported() {
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		return 0
+	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
 src_configure() {
 	append-cxxflags -std=c++14
 
@@ -232,6 +241,15 @@ src_configure() {
 		done
 	}
 	multilib_foreach_abi configure_abi
+}
+
+is_cfi_supported() {
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		return 0
+	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+		return 0
+	fi
+	return 1
 }
 
 _configure_abi() {
@@ -282,7 +300,7 @@ _configure_abi() {
 	fi
 
 	set_cfi() {
-		if tc-is-clang ; then
+		if tc-is-clang && is_cfi_supported ; then
 			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
 				append_all -fvisibility=hidden
 			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
