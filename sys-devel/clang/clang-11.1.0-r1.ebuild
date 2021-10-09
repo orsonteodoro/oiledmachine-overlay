@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{7..9} )
 inherit cmake llvm llvm.org multilib multilib-minimal \
 	prefix python-single-r1 toolchain-funcs
 
@@ -11,7 +11,7 @@ DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
 
 # Keep in sync with sys-devel/llvm
-ALL_LLVM_EXPERIMENTAL_TARGETS=( ARC CSKY VE )
+ALL_LLVM_EXPERIMENTAL_TARGETS=( ARC VE )
 ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM AVR BPF Hexagon Lanai Mips MSP430
 	NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 XCore
 	"${ALL_LLVM_EXPERIMENTAL_TARGETS[@]}" )
@@ -21,10 +21,10 @@ ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 # sorttable.js: MIT
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
-SLOT="$(ver_cut 1)"
-#KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x64-macos"  # The hardened default ON patches are in testing.
+SLOT="$(ver_cut 1)/$(ver_cut 1-2)"
+#KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~x64-macos"  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
-	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD ${ALL_LLVM_TARGETS[*]}"
+	doc +static-analyzer test xml kernel_FreeBSD ${ALL_LLVM_TARGETS[*]}"
 IUSE+=" hardened"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	|| ( ${ALL_LLVM_TARGETS[*]} )"
@@ -32,13 +32,13 @@ REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	~sys-devel/llvm-${PV}:${SLOT}=[debug=,${MULTILIB_USEDEP}]
+	~sys-devel/llvm-${PV}:${SLOT%/*}=[debug=,${MULTILIB_USEDEP}]
 	static-analyzer? ( dev-lang/perl:* )
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	${PYTHON_DEPS}"
 for x in "${ALL_LLVM_TARGETS[@]}"; do
 	RDEPEND+="
-		${x}? ( ~sys-devel/llvm-${PV}:${SLOT}[${x}] )"
+		${x}? ( ~sys-devel/llvm-${PV}:${SLOT%/*}[${x}] )"
 done
 unset x
 
@@ -51,11 +51,7 @@ BDEPEND="
 PDEPEND="
 	sys-devel/clang-common
 	~sys-devel/clang-runtime-${PV}
-	default-compiler-rt? (
-		=sys-libs/compiler-rt-${PV%_*}*
-		llvm-libunwind? ( sys-libs/llvm-libunwind )
-		!llvm-libunwind? ( sys-libs/libunwind )
-	)
+	default-compiler-rt? ( =sys-libs/compiler-rt-${PV%_*}* )
 	default-libcxx? ( >=sys-libs/libcxx-${PV} )
 	default-lld? ( sys-devel/lld )"
 
@@ -66,15 +62,15 @@ LLVM_TEST_COMPONENTS=(
 	llvm/utils/{lit,llvm-lit,unittest}
 	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
 )
-LLVM_PATCHSET=12.0.1
+LLVM_PATCHSET=11.1.0-1
 PATCHES_HARDENED=(
 	"${FILESDIR}/clang-12.0.1-enable-PIE-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
-	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default-doc.patch"
-	"${FILESDIR}/clang-12.0.1-change-SSP-buffer-size-to-4.patch"
+	"${FILESDIR}/clang-11.1.0-change-SSP-buffer-size-to-4.patch"
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-version-info.patch"
+	"${FILESDIR}/clang-14.0.0.9999-cross-dso-link-with-shared.patch"
 )
 llvm.org_set_globals
 
@@ -90,7 +86,7 @@ llvm.org_set_globals
 # multilib clang* libraries (not runtime, not wrappers).
 
 pkg_setup() {
-	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
+	LLVM_MAX_SLOT=${SLOT%/*} llvm_pkg_setup
 	python-single-r1_pkg_setup
 }
 
@@ -105,6 +101,7 @@ src_prepare() {
 		eapply ${PATCHES_HARDENED[@]}
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
 		if use x86 || use amd64 ; then
+			ewarn "-fstack-clash-protection default on is in testing"
 			eapply "${FILESDIR}/clang-12.0.1-enable-FCP-by-default.patch"
 			hardened_features+=", SCP"
 		elif use arm64 ; then
@@ -115,6 +112,8 @@ src_prepare() {
 		sed -i -e "s|__HARDENED_FEATURES__|${hardened_features}|g" \
 			lib/Driver/Driver.cpp || die
 	fi
+
+	mv ../clang-tools-extra tools/extra || die
 
 	# add Gentoo Portage Prefix for Darwin (see prefix-dirs.patch)
 	eprefixify \
@@ -260,9 +259,9 @@ multilib_src_configure() {
 	local clang_version=$(ver_cut 1-3 "${llvm_version}")
 
 	local mycmakeargs=(
-		-DLLVM_CMAKE_PATH="${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)/cmake/llvm"
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
-		-DCMAKE_INSTALL_MANDIR="${EPREFIX}/usr/lib/llvm/${SLOT}/share/man"
+		-DLLVM_CMAKE_PATH="${EPREFIX}/usr/lib/llvm/${SLOT%/*}/$(get_libdir)/cmake/llvm"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT%/*}"
+		-DCMAKE_INSTALL_MANDIR="${EPREFIX}/usr/lib/llvm/${SLOT%/*}/share/man"
 		# relative to bindir
 		-DCLANG_RESOURCE_DIR="../../../../lib/clang/${clang_version}"
 
@@ -282,14 +281,10 @@ multilib_src_configure() {
 		# furthermore, it provides only syntax checking
 		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
 
-		# disable using CUDA to autodetect GPU, just build for all
-		-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
-
 		# override default stdlib and rtlib
 		-DCLANG_DEFAULT_CXX_STDLIB=$(usex default-libcxx libc++ "")
 		-DCLANG_DEFAULT_RTLIB=$(usex default-compiler-rt compiler-rt "")
 		-DCLANG_DEFAULT_LINKER=$(usex default-lld lld "")
-		-DCLANG_DEFAULT_UNWINDLIB=$(usex default-compiler-rt libunwind "")
 
 		-DCLANG_ENABLE_ARCMT=$(usex static-analyzer)
 		-DCLANG_ENABLE_STATIC_ANALYZER=$(usex static-analyzer)
@@ -313,8 +308,10 @@ multilib_src_configure() {
 				-DSPHINX_WARNINGS_AS_ERRORS=OFF
 			)
 		fi
+
 		mycmakeargs+=(
-			-DLLVM_EXTERNAL_CLANG_TOOLS_EXTRA_SOURCE_DIR="${WORKDIR}"/clang-tools-extra
+			# normally copied from LLVM_INCLUDE_DOCS but the latter
+			# is lacking value in stand-alone builds
 			-DCLANG_INCLUDE_DOCS=${build_docs}
 			-DCLANG_TOOLS_EXTRA_INCLUDE_DOCS=${build_docs}
 		)
@@ -381,7 +378,7 @@ src_install() {
 	# Move runtime headers to /usr/lib/clang, where they belong
 	mv "${ED}"/usr/include/clangrt "${ED}"/usr/lib/clang || die
 	# move (remaining) wrapped headers back
-	mv "${ED}"/usr/include "${ED}"/usr/lib/llvm/${SLOT}/include || die
+	mv "${ED}"/usr/include "${ED}"/usr/lib/llvm/${SLOT%/*}/include || die
 
 	# Apply CHOST and version suffix to clang tools
 	# note: we use two version components here (vs 3 in runtime path)
@@ -401,9 +398,9 @@ src_install() {
 	# - clang, clang++, clang-cl, clang-cpp -> clang*-X
 	# also in CHOST variant
 	for i in "${clang_tools[@]:1}"; do
-		rm "${ED}/usr/lib/llvm/${SLOT}/bin/${i}" || die
-		dosym "clang-${clang_version}" "/usr/lib/llvm/${SLOT}/bin/${i}-${clang_version}"
-		dosym "${i}-${clang_version}" "/usr/lib/llvm/${SLOT}/bin/${i}"
+		rm "${ED}/usr/lib/llvm/${SLOT%/*}/bin/${i}" || die
+		dosym "clang-${clang_version}" "/usr/lib/llvm/${SLOT%/*}/bin/${i}-${clang_version}"
+		dosym "${i}-${clang_version}" "/usr/lib/llvm/${SLOT%/*}/bin/${i}"
 	done
 
 	# now create target symlinks for all supported ABIs
@@ -411,9 +408,9 @@ src_install() {
 		local abi_chost=$(get_abi_CHOST "${abi}")
 		for i in "${clang_tools[@]}"; do
 			dosym "${i}-${clang_version}" \
-				"/usr/lib/llvm/${SLOT}/bin/${abi_chost}-${i}-${clang_version}"
+				"/usr/lib/llvm/${SLOT%/*}/bin/${abi_chost}-${i}-${clang_version}"
 			dosym "${abi_chost}-${i}-${clang_version}" \
-				"/usr/lib/llvm/${SLOT}/bin/${abi_chost}-${i}"
+				"/usr/lib/llvm/${SLOT%/*}/bin/${abi_chost}-${i}"
 		done
 	done
 
@@ -429,22 +426,22 @@ multilib_src_install() {
 	# move headers to /usr/include for wrapping & ABI mismatch checks
 	# (also drop the version suffix from runtime headers)
 	rm -rf "${ED}"/usr/include || die
-	mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
-	mv "${ED}"/usr/lib/llvm/${SLOT}/$(get_libdir)/clang "${ED}"/usr/include/clangrt || die
+	mv "${ED}"/usr/lib/llvm/${SLOT%/*}/include "${ED}"/usr/include || die
+	mv "${ED}"/usr/lib/llvm/${SLOT%/*}/$(get_libdir)/clang "${ED}"/usr/include/clangrt || die
 }
 
 multilib_src_install_all() {
 	python_fix_shebang "${ED}"
 	if use static-analyzer; then
-		python_optimize "${ED}"/usr/lib/llvm/${SLOT}/share/scan-view
+		python_optimize "${ED}"/usr/lib/llvm/${SLOT%/*}/share/scan-view
 	fi
 
-	docompress "/usr/lib/llvm/${SLOT}/share/man"
+	docompress "/usr/lib/llvm/${SLOT%/*}/share/man"
 	llvm_install_manpages
 	# match 'html' non-compression
 	use doc && docompress -x "/usr/share/doc/${PF}/tools-extra"
 	# +x for some reason; TODO: investigate
-	use static-analyzer && fperms a-x "/usr/lib/llvm/${SLOT}/share/man/man1/scan-build.1"
+	use static-analyzer && fperms a-x "/usr/lib/llvm/${SLOT%/*}/share/man/man1/scan-build.1"
 }
 
 pkg_postinst() {
@@ -453,7 +450,7 @@ pkg_postinst() {
 	fi
 
 	elog "You can find additional utility scripts in:"
-	elog "  ${EROOT}/usr/lib/llvm/${SLOT}/share/clang"
+	elog "  ${EROOT}/usr/lib/llvm/${SLOT%/*}/share/clang"
 	elog "Some of them are vim integration scripts (with instructions inside)."
 	elog "The run-clang-tidy.py script requires the following additional package:"
 	elog "  dev-python/pyyaml"

@@ -3,47 +3,23 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake llvm llvm.org multilib multilib-minimal \
-	python-single-r1 toolchain-funcs
+	prefix python-single-r1 toolchain-funcs
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
-LLVM_COMPONENTS=( clang clang-tools-extra )
-LLVM_MANPAGES=pregenerated
-LLVM_TEST_COMPONENTS=(
-	llvm/lib/Testing/Support
-	llvm/utils/{lit,llvm-lit,unittest}
-)
-LLVM_PATCHSET=10.0.1-1
-PATCHES_HARDENED=(
-	"${FILESDIR}/clang-12.0.1-enable-PIE-by-default.patch"
-	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
-	"${FILESDIR}/clang-11.1.0-change-SSP-buffer-size-to-4.patch"
-	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
-	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
-	"${FILESDIR}/clang-12.0.1-version-info.patch"
-)
-llvm.org_set_globals
-
-# Keep in sync with sys-devel/llvm
-ALL_LLVM_EXPERIMENTAL_TARGETS=( ARC AVR )
-ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM BPF Hexagon Lanai Mips MSP430
-	NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 XCore
-	"${ALL_LLVM_EXPERIMENTAL_TARGETS[@]}" )
-ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 
 # MSVCSetupApi.h: MIT
 # sorttable.js: MIT
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
-#KEYWORDS="amd64 arm arm64 ppc64 x86 ~amd64-linux" # The hardened default ON patches are in testing.
-IUSE="debug default-compiler-rt default-libcxx default-lld doc
-	+static-analyzer test xml kernel_FreeBSD ${ALL_LLVM_TARGETS[*]}"
+#KEYWORDS=""  # The hardened default ON patches are in testing.
+IUSE="debug default-compiler-rt default-libcxx default-lld
+	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD"
 IUSE+=" hardened"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	|| ( ${ALL_LLVM_TARGETS[*]} )"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
 
@@ -52,23 +28,44 @@ RDEPEND="
 	static-analyzer? ( dev-lang/perl:* )
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	${PYTHON_DEPS}"
-for x in "${ALL_LLVM_TARGETS[@]}"; do
-	RDEPEND+="
-		${x}? ( ~sys-devel/llvm-${PV}:${SLOT}[${x}] )"
-done
-unset x
 
 DEPEND="${RDEPEND}"
 BDEPEND="
+	>=dev-util/cmake-3.16
 	doc? ( dev-python/sphinx )
 	xml? ( virtual/pkgconfig )
 	${PYTHON_DEPS}"
 PDEPEND="
 	sys-devel/clang-common
 	~sys-devel/clang-runtime-${PV}
-	default-compiler-rt? ( =sys-libs/compiler-rt-${PV%_*}* )
+	default-compiler-rt? (
+		=sys-libs/compiler-rt-${PV%_*}*
+		llvm-libunwind? ( sys-libs/llvm-libunwind )
+		!llvm-libunwind? ( sys-libs/libunwind )
+	)
 	default-libcxx? ( >=sys-libs/libcxx-${PV} )
 	default-lld? ( sys-devel/lld )"
+
+LLVM_COMPONENTS=( clang clang-tools-extra )
+LLVM_MANPAGES=build
+LLVM_TEST_COMPONENTS=(
+	llvm/lib/Testing/Support
+	llvm/utils/{lit,llvm-lit,unittest}
+	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
+)
+LLVM_PATCHSET=9999-2
+PATCHES_HARDENED=(
+	"${FILESDIR}/clang-12.0.1-enable-PIE-by-default.patch"
+	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
+	"${FILESDIR}/clang-13.0.0_rc2-enable-SSP-by-default-doc.patch"
+	"${FILESDIR}/clang-13.0.0_rc2-change-SSP-buffer-size-to-4.patch"
+	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
+	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
+	"${FILESDIR}/clang-12.0.1-version-info.patch"
+	"${FILESDIR}/clang-14.0.0.9999-cross-dso-link-with-shared.patch"
+)
+LLVM_USE_TARGETS=llvm
+llvm.org_set_globals
 
 # Multilib notes:
 # 1. ABI_* flags control ABIs libclang* is built for only.
@@ -95,14 +92,23 @@ src_prepare() {
 	if use hardened ; then
 		ewarn "The hardened USE flag and associated patches are still in testing."
 		eapply ${PATCHES_HARDENED[@]}
-		ewarn "There's no -fstack-clash-protection in the 10.x series."
-		# no FCF
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
+		if use x86 || use amd64 ; then
+			eapply "${FILESDIR}/clang-12.0.1-enable-FCP-by-default.patch"
+			hardened_features+=", SCP"
+		elif use arm64 ; then
+			ewarn "arm64 -fstack-clash-protection is not default ON.  The feature is still"
+			ewarn "in development."
+		fi
+		ewarn "The Full RELRO default on is in testing."
 		sed -i -e "s|__HARDENED_FEATURES__|${hardened_features}|g" \
 			lib/Driver/Driver.cpp || die
 	fi
 
-	mv ../clang-tools-extra tools/extra || die
+	# add Gentoo Portage Prefix for Darwin (see prefix-dirs.patch)
+	eprefixify \
+		lib/Frontend/InitHeaderSearch.cpp \
+		lib/Driver/ToolChains/Darwin.cpp || die
 }
 
 check_distribution_components() {
@@ -120,15 +126,15 @@ check_distribution_components() {
 					clang-libraries|distribution)
 						continue
 						;;
+					# headers for clang-tidy static library
+					clang-tidy-headers)
+						continue
+						;;
 					# tools
 					clang|clangd|clang-*)
 						;;
 					# static libraries
 					clang*|findAllSymbols)
-						continue
-						;;
-					# headers for clang-tidy static library
-					clang-tidy-headers)
 						continue
 						;;
 					# conditional to USE=doc
@@ -191,7 +197,6 @@ get_distribution_components() {
 			c-index-test
 			clang
 			clang-format
-			clang-import-test
 			clang-offload-bundler
 			clang-offload-wrapper
 			clang-refactor
@@ -232,6 +237,7 @@ get_distribution_components() {
 			clang-check
 			clang-extdef-mapping
 			scan-build
+			scan-build-py
 			scan-view
 		)
 	fi
@@ -266,13 +272,19 @@ multilib_src_configure() {
 		# furthermore, it provides only syntax checking
 		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
 
+		# disable using CUDA to autodetect GPU, just build for all
+		-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
+
 		# override default stdlib and rtlib
 		-DCLANG_DEFAULT_CXX_STDLIB=$(usex default-libcxx libc++ "")
 		-DCLANG_DEFAULT_RTLIB=$(usex default-compiler-rt compiler-rt "")
 		-DCLANG_DEFAULT_LINKER=$(usex default-lld lld "")
+		-DCLANG_DEFAULT_UNWINDLIB=$(usex default-compiler-rt libunwind "")
 
 		-DCLANG_ENABLE_ARCMT=$(usex static-analyzer)
 		-DCLANG_ENABLE_STATIC_ANALYZER=$(usex static-analyzer)
+
+		-DPython3_EXECUTABLE="${PYTHON}"
 	)
 	use test && mycmakeargs+=(
 		-DLLVM_MAIN_SRC_DIR="${WORKDIR}/llvm"
@@ -291,10 +303,8 @@ multilib_src_configure() {
 				-DSPHINX_WARNINGS_AS_ERRORS=OFF
 			)
 		fi
-
 		mycmakeargs+=(
-			# normally copied from LLVM_INCLUDE_DOCS but the latter
-			# is lacking value in stand-alone builds
+			-DLLVM_EXTERNAL_CLANG_TOOLS_EXTRA_SOURCE_DIR="${WORKDIR}"/clang-tools-extra
 			-DCLANG_INCLUDE_DOCS=${build_docs}
 			-DCLANG_TOOLS_EXTRA_INCLUDE_DOCS=${build_docs}
 		)
@@ -331,7 +341,7 @@ multilib_src_configure() {
 }
 
 multilib_src_compile() {
-	cmake_src_compile
+	cmake_build distribution
 
 	# provide a symlink for tests
 	if [[ ! -L ${WORKDIR}/lib/clang ]]; then

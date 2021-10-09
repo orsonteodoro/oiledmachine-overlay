@@ -15,7 +15,7 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
-# KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos" # The hardened default ON patches are in testing.
+#KEYWORDS=""  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
 	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD"
 IUSE+=" hardened"
@@ -47,13 +47,13 @@ PDEPEND="
 	default-lld? ( sys-devel/lld )"
 
 LLVM_COMPONENTS=( clang clang-tools-extra )
-LLVM_MANPAGES=pregenerated
+LLVM_MANPAGES=build
 LLVM_TEST_COMPONENTS=(
 	llvm/lib/Testing/Support
 	llvm/utils/{lit,llvm-lit,unittest}
 	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
 )
-LLVM_PATCHSET=${PV/_/-}
+LLVM_PATCHSET=9999-2
 PATCHES_HARDENED=(
 	"${FILESDIR}/clang-12.0.1-enable-PIE-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
@@ -62,6 +62,7 @@ PATCHES_HARDENED=(
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-version-info.patch"
+	"${FILESDIR}/clang-14.0.0.9999-cross-dso-link-with-shared.patch"
 )
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
@@ -96,7 +97,7 @@ src_prepare() {
 			eapply "${FILESDIR}/clang-12.0.1-enable-FCP-by-default.patch"
 			hardened_features+=", SCP"
 		elif use arm64 ; then
-			ewarn "arm64 -fstack-clash-protection is not default ON.  The feature is still"
+			ewarn "arm64 -fstack-clash-protection is not default on.  The feature is still"
 			ewarn "in development."
 		fi
 		ewarn "The Full RELRO default on is in testing."

@@ -1,0 +1,37 @@
+Subject:  Emit linker options when -fsanitize-cfi-cross-dso is used with -shared
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Fri Oct  8 01:21:21 PM PDT 2021 (Unix time: 1633724481)
+
+License header for clang/lib/Driver/ToolChains/CommonArgs.cpp:
+
+//===--- CommonArgs.cpp - Args handling for multiple toolchains -*- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+Fixes the below error when linking a shared library with -shared:
+ld.lld: error: undefined symbol: __cfi_slowpath
+
+--- clang/lib/Driver/ToolChains/CommonArgs.cpp.orig	2021-10-08 16:40:53.623488820 -0700
++++ clang/lib/Driver/ToolChains/CommonArgs.cpp	2021-10-08 16:52:40.332512108 -0700
+@@ -967,6 +967,17 @@ bool tools::addSanitizerRuntimes(const T
+   if (SanArgs.hasCrossDsoCfi() && !AddExportDynamic)
+     CmdArgs.push_back("--export-dynamic-symbol=__cfi_check");
+ 
++  if (Args.hasArg(options::OPT_fsanitize_cfi_cross_dso)                // oteodoro: Begin section add
++    && Args.hasArg(options::OPT_shared)) {                             // oteodoro:
++    CmdArgs.push_back("--whole-archive");                              // oteodoro:
++    if (SanArgs.needsCfiRt() && SanArgs.linkRuntimes())                // oteodoro:
++      CmdArgs.push_back(TC.getCompilerRTArgString(Args, "cfi"));       // oteodoro: Added section for -shared linkage with -fsanitize-cfi-cross-dso
++    if (SanArgs.needsCfiDiagRt() && SanArgs.linkRuntimes())            // oteodoro:
++      CmdArgs.push_back(TC.getCompilerRTArgString(Args, "cfi_diag"));  // oteodoro:
++    CmdArgs.push_back("--no-whole-archive");                           // oteodoro:
++    CmdArgs.push_back("-ldl");                                         // oteodoro:
++  }                                                                    // oteodoro: End section add
++
+   return !StaticRuntimes.empty() || !NonWholeStaticRuntimes.empty();
+ }
+ 
