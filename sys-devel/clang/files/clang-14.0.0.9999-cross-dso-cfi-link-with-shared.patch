@@ -1,5 +1,5 @@
 Subject:  Emit linker options when -fsanitize-cfi-cross-dso is used with -shared (v2)
-Patch Status:  Testing
+Patch Status:  Testing (zlib rebuild works, more packages being tested)
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Date: Fri Oct  8 01:21:21 PM PDT 2021 (Unix time: 1633724481)
 
@@ -22,7 +22,7 @@ WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING 
 Fixes the below error when linking a shared library with -shared:
 ld.lld: error: undefined symbol: __cfi_slowpath
 
-v2: [WIP] Fix breakage when using built Cross-DSO zlib
+v2: Fix breakage when using built Cross-DSO zlib
 v1: Initial release
 
 --- clang/lib/Driver/ToolChains/Gnu.cpp.orig	2021-10-09 09:51:06.368525700 -0700
