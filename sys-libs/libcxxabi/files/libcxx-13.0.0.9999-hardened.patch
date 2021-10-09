@@ -1,7 +1,7 @@
 diff -urp a/libcxx/CMakeLists.txt b/libcxx/CMakeLists.txt
---- a/libcxx/CMakeLists.txt	2021-10-07 13:46:51.846297648 -0700
-+++ b/libcxx/CMakeLists.txt	2021-10-07 13:52:54.738309606 -0700
-@@ -83,6 +83,18 @@ include(CMakeDependentOption)
+--- a/libcxx/CMakeLists.txt	2021-10-09 12:53:56.088887179 -0700
++++ b/libcxx/CMakeLists.txt	2021-10-09 12:58:41.251896576 -0700
+@@ -83,6 +83,19 @@ include(CMakeDependentOption)
  include(HandleCompilerRT)
  
  # Basic options ---------------------------------------------------------------
@@ -9,6 +9,7 @@ diff -urp a/libcxx/CMakeLists.txt b/libcxx/CMakeLists.txt
 +option(CFI_CAST "Enable cfi-derived-cast, cfi-unrelated-cast." OFF)
 +option(CFI_ICALL "Enable cfi-icall." OFF)
 +option(CFI_VCALL "Enable cfi-vcall." OFF)
++option(CROSS_DSO_CFI "Enable Cross-DSO CFI mode in shared libs" OFF)
 +option(FORTIFY_SOURCE "Sets the _FORTIFY_SOURCE level.  Setting to -1 means do not emit." -1)
 +option(FULL_RELRO "Enable Full Relocation Read Only (RELRO)." OFF)
 +option(LTO "Enable LTO." OFF)
@@ -20,7 +21,7 @@ diff -urp a/libcxx/CMakeLists.txt b/libcxx/CMakeLists.txt
  option(LIBCXX_ENABLE_ASSERTIONS "Enable assertions independent of build mode." OFF)
  option(LIBCXX_ENABLE_SHARED "Build libc++ as a shared library." ON)
  option(LIBCXX_ENABLE_STATIC "Build libc++ as a static library." ON)
-@@ -485,6 +497,110 @@ elseif(CMAKE_CXX_COMPILER_EXTERNAL_TOOLC
+@@ -495,6 +508,110 @@ elseif(CMAKE_CXX_COMPILER_EXTERNAL_TOOLC
    set(LIBCXX_GCC_TOOLCHAIN "${CMAKE_CXX_COMPILER_EXTERNAL_TOOLCHAIN}")
  endif()
  
@@ -69,7 +70,7 @@ diff -urp a/libcxx/CMakeLists.txt b/libcxx/CMakeLists.txt
 +  if(LIBCXX_ENABLE_STATIC AND (CFI OR CFI_CAST OR CFI_ICALL OR CFI_VCALL))
 +    set(LIBCXX_COMPILE_FLAGS "${LIBCXX_COMPILE_FLAGS} -fvisibility=hidden")
 +    set(LIBCXX_LINK_FLAGS "${LIBCXX_LINK_FLAGS} -fvisibility=hidden")
-+  elseif(LIBCXX_ENABLE_SHARED AND (CFI OR CFI_CAST OR CFI_ICALL OR CFI_VCALL))
++  elseif(CROSS_DSO_CFI AND LIBCXX_ENABLE_SHARED AND (CFI OR CFI_CAST OR CFI_ICALL OR CFI_VCALL))
 +    set(LIBCXX_COMPILE_FLAGS "${LIBCXX_COMPILE_FLAGS} -fvisibility=default")
 +    set(LIBCXX_LINK_FLAGS "${LIBCXX_LINK_FLAGS} -fvisibility=default")
 +  endif()
@@ -120,7 +121,7 @@ diff -urp a/libcxx/CMakeLists.txt b/libcxx/CMakeLists.txt
 +  endif()
 +endif()
 +
-+if(LIBCXX_ENABLE_SHARED AND (CFI OR CFI_CAST OR CFI_ICALL OR CFI_VCALL))
++if(CROSS_DSO_CFI AND LIBCXX_ENABLE_SHARED AND (CFI OR CFI_CAST OR CFI_ICALL OR CFI_VCALL))
 +    set(LIBCXX_COMPILE_FLAGS "${LIBCXX_COMPILE_FLAGS} -fsanitize-cfi-cross-dso")
 +    set(LIBCXX_LINK_FLAGS "${LIBCXX_LINK_FLAGS} -fsanitize-cfi-cross-dso")
 +endif()
@@ -131,3 +132,4 @@ diff -urp a/libcxx/CMakeLists.txt b/libcxx/CMakeLists.txt
  # Configure compiler.
  include(config-ix)
  
+Only in libcxx: CMakeLists.txt.orig

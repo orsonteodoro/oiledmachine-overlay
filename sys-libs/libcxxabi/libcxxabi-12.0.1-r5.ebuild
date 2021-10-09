@@ -12,14 +12,15 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
 IUSE="+libunwind static-libs test elibc_musl"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang hardened lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cross-dso-cfi hardened lto shadowcallstack"
 REQUIRED_USE+="
 	cfi? ( clang lto static-libs )
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
-	cfi-vcall? ( clang lto static-libs )"
+	cfi-vcall? ( clang lto static-libs )
+	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -57,6 +58,7 @@ gen_cfi_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
+			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -109,7 +111,8 @@ BDEPEND+="
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)"
 
-LLVM_COMPONENTS=( libcxx{abi,} llvm/cmake )
+# libcxx is needed uncondtionally for the headers
+LLVM_COMPONENTS=( libcxx{abi,} llvm/cmake/modules )
 llvm.org_set_globals
 
 python_check_deps() {
@@ -168,10 +171,6 @@ _configure_abi() {
 	autofix_flags
 	filter-flags '-flto*' '-fuse-ld=*'
 
-	# we need a configured libc++ for __config_site
-	wrap_libcxx cmake_src_configure
-	wrap_libcxx cmake_build generate-cxx-headers
-
 	# link against compiler-rt instead of libgcc if we are using clang with libunwind
 	local want_compiler_rt=OFF
 	if use libunwind && tc-is-clang; then
@@ -188,7 +187,7 @@ _configure_abi() {
 		-DLIBCXXABI_USE_LLVM_UNWINDER=$(usex libunwind)
 		-DLIBCXXABI_INCLUDE_TESTS=$(usex test)
 		-DLIBCXXABI_USE_COMPILER_RT=${want_compiler_rt}
-		-DLIBCXXABI_LIBCXX_INCLUDES="${BUILD_DIR}"/libcxx/include/c++/v1
+		-DLIBCXXABI_LIBCXX_INCLUDES="${WORKDIR}"/libcxx/include
 		# upstream is omitting standard search path for this
 		# probably because gcc & clang are bundling their own unwind.h
 		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}"/usr/include
@@ -203,6 +202,7 @@ _configure_abi() {
 				-DCFI_CAST=$(usex cfi-cast)
 				-DCFI_ICALL=$(usex cfi-icall)
 				-DCFI_VCALL=$(usex cfi-vcall)
+				-DCROSS_DSO_CFI=$(usex cross-dso-cfi)
 				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
 			)
 		fi
@@ -259,7 +259,7 @@ _configure_abi() {
 	cmake_src_configure
 }
 
-wrap_libcxx() {
+build_libcxx() {
 	local -x LDFLAGS="${LDFLAGS} -L${BUILD_DIR}/$(get_libdir)"
 	local CMAKE_USE_DIR=${WORKDIR}/libcxx
 	local BUILD_DIR=${BUILD_DIR}/libcxx
@@ -284,6 +284,7 @@ wrap_libcxx() {
 				-DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall"
 				-DCFI_ICALL=OFF
 				-DCFI_VCALL=$(usex cfi-vcall)
+				-DCROSS_DSO_CFI=$(usex cross-dso-cfi)
 				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
 			)
 		fi
@@ -327,7 +328,8 @@ wrap_libcxx() {
 		)
 	fi
 
-	"${@}"
+	cmake_src_configure
+	cmake_src_compile
 }
 
 src_compile() {
@@ -344,7 +346,8 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for build_type in $(get_build_types) ; do
-			wrap_libcxx cmake_src_compile
+			# build a local copy of libc++ for testing to avoid circular dep
+			build_libcxx
 			mv "${BUILD_DIR}"/libcxx/lib/libc++* "${BUILD_DIR}/$(get_libdir)/" || die
 			local -x LIT_PRESERVES_TMP=1
 			cmake_build check-cxxabi

@@ -15,6 +15,7 @@
     <flag name="cfi-cast">Build with cfi-cast</flag>
     <flag name="cfi-icall">Build with cfi-icall</flag>
     <flag name="cfi-vcall">Build with cfi-vcall</flag>
+    <flag name="cross-dso-cfi">Build shared libs with Cross-DSO CFI mode</flag>
     <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
       For the non-hardened profile, set USE_HARDENED_PROFILE_DEFAULTS=1 in
       make.conf to use the hardened profile settings or fallback to the browser
