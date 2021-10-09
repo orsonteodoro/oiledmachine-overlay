@@ -663,7 +663,9 @@ src_install() {
 	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
 	# way to check for CFI presence.
 	if [[ "${USE}" =~ "cfi" ]] ; then
-		for f in $(find "${ED}" -name "*.a") ; do
+		local arg=()
+		use cross-dso-cfi && arg+=( -o -name "*.so*" )
+		for f in $(find "${ED}" -name "*.a" ${arg[@]}) ; do
 			if use cfi ; then
 				touch "${f}.cfi" || die
 			else
