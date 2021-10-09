@@ -12,7 +12,7 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
+KEYWORDS=""
 IUSE="+libunwind static-libs test elibc_musl"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cross-dso-cfi hardened lto shadowcallstack"
 REQUIRED_USE+="
@@ -388,7 +388,9 @@ src_install() {
 	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
 	# way to check for CFI presence.
 	if [[ "${USE}" =~ "cfi" ]] ; then
-		for f in $(find "${ED}" -name "*.a" -o -name "*.so*") ; do
+		local arg=()
+		use cross-dso-cfi && arg+=( -o -name "*.so*" )
+		for f in $(find "${ED}" -name "*.a" ${arg[@]}) ; do
 			if use cfi ; then
 				touch "${f}.cfi" || die
 			else
