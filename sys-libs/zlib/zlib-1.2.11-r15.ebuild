@@ -26,7 +26,7 @@ LICENSE="ZLIB"
 SLOT="0/1" # subslot = SONAME
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="minizip minizip-utils static-libs"
-IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang hardened lto shadowcallstack"
+IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang -cross-dso-cfi hardened lto shadowcallstack"
 IUSE+="
 	pgo
 	pgo-custom
@@ -60,6 +60,7 @@ REQUIRED_USE="
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
+	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 	pgo? (
 		minizip? ( minizip-utils )
 		|| (
@@ -149,6 +150,7 @@ gen_cfi_bdepend() {
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
+			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -421,6 +423,15 @@ is_hardened_gcc() {
 	return 1
 }
 
+is_cfi_supported() {
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		return 0
+	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
 _configure_pgx() {
 	[[ -f Makefile && "${PGO_PHASE}" == "pgo" ]] \
 		&& grep -q -e "^clean:" Makefile \
@@ -459,9 +470,10 @@ _configure_pgx() {
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'-fprofile*' \
-		'-fvisibility=hidden' \
+		'-fvisibility=*' \
 		'-Wno-error=*' \
 		'--param=ssp-buffer-size=*' \
+		-pthread \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
@@ -472,18 +484,27 @@ _configure_pgx() {
 	set_cfi() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
+		if tc-is-clang && is_cfi_supported ; then
+			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+				append_all -fvisibility=hidden
+				append_all -pthread
+			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
+				append_all -fvisibility=default
+			fi
 			if use cfi ; then
-				append_all -fvisibility=hidden -fsanitize=cfi
+				append_all -fsanitize=cfi
 			else
-				use cfi-cast && append_all -fvisibility=hidden \
+				use cfi-cast && append_all \
 							-fsanitize=cfi-derived-cast \
 							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all -fvisibility=hidden \
+				use cfi-icall && append_all \
 							-fsanitize=cfi-icall
-				use cfi-vcall && append_all -fvisibility=hidden \
+				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
+			use cross-dso-cfi \
+				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
+				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
@@ -1330,7 +1351,7 @@ src_install() {
 	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
 	# way to check for CFI presence.
 	if [[ "${USE}" =~ "cfi" ]] ; then
-		for f in $(find "${ED}" -name "*.a") ; do
+		for f in $(find "${ED}" -name "*.a" -o -name "*.so*") ; do
 			if use cfi ; then
 				touch "${f}.cfi" || die
 			else
@@ -1358,15 +1379,11 @@ elog "The following package must be installed before PGOing this package:"
 elog "  app-arch/pigz[$(get_arch_enabled_use_flags)]"
 	fi
 	if [[ "${USE}" =~ "cfi" ]] ; then
+# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
 ewarn
-ewarn "cfi, cfi-cast, cfi-icall, cfi-vcall require static linking of this"
-ewarn "library."
+ewarn "Cross-DSO CFI is experimental."
 ewarn
-ewarn "If you do \`ldd <path to exe>\` and you still see zlib.so then it breaks"
-ewarn "The CFI runtime protection spec as if that scheme of CFI was never used."
-ewarn "For details, see"
-ewarn "https://clang.llvm.org/docs/ControlFlowIntegrity.html with"
-ewarn "\"statically linked\" keyword search."
+ewarn "You must link these libraries as static for plain CFI to work."
 ewarn
 	fi
 
