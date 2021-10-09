@@ -19,6 +19,48 @@
     This ebuild fork introduces hardening flags and PGO.
 
     IMPORTANT:
+
+    *NECESSARY PRECAUTION*:
+    The zlib library is a essential and core toolchain library if
+    built incorrectly can prevent from using emerge, running the compiler,
+    even possibly break the init process.  Before emerging
+    this ebuild fork, it is necessary to have a rescue CD and an
+    uncompressed image of the zlib package.  Using a compressed tarball
+    dependent on zlib will not work.
+
+    The Cross-DSO CFI (aka shared-lib CFI) is experimental quality
+    and can bork a system with problems mentioned above if
+    linkage is incomplete.
+
+    Borking is a similar condition to bricking except one may
+    fix/rebuild the installation, while bricking means it is
+    practically astronomically impossible or irreversibly impossible.
+
+    Repeated must haves:
+    (1)  Rescue CD
+    (2)  All keys and procedures to access WiFi and encrypted devices.
+    (3)  Verified the procedures in 2 indeed work and are correct.
+    (4)  Uncompressed backup copy of the zlib image without
+         Cross-DSO CFI built with only GCC without the clang USE flag.
+         This is obtained with the command:
+    USE="-clang" emerge -1vO --quickpkg-direct y --root=/bak sys-libs/zlib
+
+    To restore the image:
+    cp -aT /bak /
+
+      or
+
+    Copy the *.so or every file one-by-one from /bak back into / with
+    the same relative path.
+
+    Once you taken the necessary precautions you may add
+    ZLIB_PRECAUTIONS_TAKEN=1 to /etc/make.conf
+    and maybe enable the cross-dso-cfi USE flag.
+
+    These changes and this ebuild are under the GPL-2 license and come
+    with NO WARRANTY.
+
+
     Only use the cfi* and pgo USE flags after the stage 3 or stage 4
     bootstrapping process.  If you have problems during or before
     "emerge -e @system" try temporarly adding to your
