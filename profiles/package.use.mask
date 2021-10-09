@@ -142,4 +142,5 @@ net-libs/webkit-gtk pgo
 sys-devel/clang experimental
 
 # Prevents libpng from being built, breaks pngfix when zlib libs are being replaced
+# Prevents loading of precompiled www browser
 sys-libs/zlib cross-dso-cfi
