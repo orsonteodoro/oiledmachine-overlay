@@ -3,8 +3,7 @@
 
 EAPI=7
 
-CMAKE_ECLASS=cmake
-inherit cmake-multilib java-pkg-opt-2
+inherit autotools java-pkg-opt-2 toolchain-funcs multilib-minimal
 inherit flag-o-matic
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
@@ -13,12 +12,10 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz
 	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz"
 
 LICENSE="BSD IJG ZLIB"
-SLOT="0/0.2"
-if [[ "$(ver_cut 3)" -lt 90 ]] ; then
-	KEYWORDS="~alpha amd64 arm ~arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
-fi
-IUSE="+asm cpu_flags_arm_neon java static-libs"
-IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang hardened lto shadowcallstack"
+SLOT="0/0.1"
+KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos"
+IUSE="+asm java static-libs"
+IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang cross-dso-cfi hardened lto shadowcallstack"
 IUSE+="
 	pgo
 	pgo-custom
@@ -48,11 +45,11 @@ REQUIRED_USE="
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
+	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 	pgo? (
 		pgo-trainer-decode
 		|| (
 			pgo-custom
-			pgo-trainer-decode
 			pgo-trainer-70-pct-quality-baseline
 			pgo-trainer-75-pct-quality-baseline
 			pgo-trainer-80-pct-quality-baseline
@@ -70,6 +67,7 @@ REQUIRED_USE="
 			pgo-trainer-99-pct-quality-progressive
 			pgo-trainer-100-pct-quality-progressive
 			pgo-trainer-crop
+			pgo-trainer-decode
 			pgo-trainer-grayscale
 			pgo-trainer-transformations
 		)
@@ -124,7 +122,8 @@ gen_cfi_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
+			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -141,7 +140,7 @@ gen_shadowcallstack_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
 		)
 		     "
 	done
@@ -170,8 +169,7 @@ BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
 BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
-BDEPEND+=" >=dev-util/cmake-3.16.5
-	amd64? ( ${ASM_DEPEND} )
+BDEPEND+=" amd64? ( ${ASM_DEPEND} )
 	x86? ( ${ASM_DEPEND} )
 	amd64-fbsd? ( ${ASM_DEPEND} )
 	x86-fbsd? ( ${ASM_DEPEND} )
@@ -181,17 +179,19 @@ BDEPEND+=" >=dev-util/cmake-3.16.5
 	x64-cygwin? ( ${ASM_DEPEND} )"
 
 DEPEND="${COMMON_DEPEND}
-	java? ( >=virtual/jdk-1.8:*[-headless-awt] )"
+	java? ( >=virtual/jdk-1.5 )"
 
 RDEPEND="${COMMON_DEPEND}
-	java? ( >=virtual/jre-1.8:* )"
+	java? ( >=virtual/jre-1.5 )"
 PDEPEND=" pgo? ( media-video/mpv )"
 
 MULTILIB_WRAPPED_HEADERS=( /usr/include/jconfig.h )
 
 PATCHES=(
-	# Upstream patch
-	"${FILESDIR}"/${P}-arm64-relro.patch
+	"${FILESDIR}"/${PN}-1.2.0-x32.patch #420239
+	"${FILESDIR}"/${P}-divzero_fix.patch #658624
+	"${FILESDIR}"/${P}-cve-2018-11813.patch
+	"${FILESDIR}"/${P}-CVE-2020-13790.patch
 )
 
 S="${WORKDIR}/${P}"
@@ -228,30 +228,16 @@ get_build_types() {
 }
 
 src_prepare() {
-	local FILE
-	ln -snf ../debian/extra/*.c . || die
+	default
 
-	for FILE in ../debian/extra/*.c; do
-		FILE=${FILE##*/}
-		cat >> CMakeLists.txt <<EOF || die
-add_executable(${FILE%.c} ${FILE})
-install(TARGETS ${FILE%.c})
-EOF
-	done
+	if use is_hardened_clang || use is_hardened_gcc ; then
+		:;
+	elif use hardened ; then
+		eapply "${FILESDIR}/libjpeg-turbo-1.5.3-pie.patch"
+	fi
 
-	for FILE in ../debian/extra/exifautotran; do
-		cat >> CMakeLists.txt <<EOF || die
-install(FILES \${CMAKE_CURRENT_SOURCE_DIR}/${FILE} DESTINATION \${CMAKE_INSTALL_BINDIR})
-EOF
-	done
+	eautoreconf
 
-	for FILE in ../debian/extra/*.[0-9]*; do
-		cat >> CMakeLists.txt <<EOF || die
-install(FILES \${CMAKE_CURRENT_SOURCE_DIR}/${FILE} DESTINATION \${CMAKE_INSTALL_MANDIR}/man${FILE##*.})
-EOF
-	done
-
-	cmake_src_prepare
 	java-pkg-opt-2_src_prepare
 
 	prepare_abi() {
@@ -301,8 +287,17 @@ is_hardened_gcc() {
 
 src_configure() { :; }
 
+is_cfi_supported() {
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		return 0
+	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
 _configure_pgx() {
-	local mycmakeargs=()
+	local myconf=()
 	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
 		CXX="clang++ $(get_abi_CFLAGS ${ABI})"
@@ -323,30 +318,37 @@ _configure_pgx() {
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'-fprofile*' \
-		'-fvisibility=hidden' \
+		'-fvisibility=*' \
 		'--param=ssp-buffer-size=*' \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
-		-Wl,-z,relro \
-		-stdlib=libc++
+		-Wl,-z,relro
 
 	autofix_flags
 
 	set_cfi() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
+		if tc-is-clang && is_cfi_supported ; then
+			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+				append_all -fvisibility=hidden
+			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
+				append_all -fvisibility=default
+			fi
 			if use cfi ; then
-				append_all -fvisibility=hidden -fsanitize=cfi
+				append_all -fsanitize=cfi
 			else
-				use cfi-cast && append_all -fvisibility=hidden \
+				use cfi-cast && append_all \
 							-fsanitize=cfi-derived-cast \
 							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all -fvisibility=hidden \
+				use cfi-icall && append_all \
 							-fsanitize=cfi-icall
-				use cfi-vcall && append_all -fvisibility=hidden \
+				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
+			use cross-dso-cfi \
+				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
+				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
@@ -372,21 +374,18 @@ _configure_pgx() {
 				append-flags --param=ssp-buffer-size=4 \
 						-fstack-protector
 			fi
-			mycmakeargs+=(
-				-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -pie"
-			)
 		fi
 	fi
 
 	if use static-libs && [[ "${build_type}" == "static-libs" ]] ;then
-		mycmakeargs+=(
-			-DENABLE_SHARED=OFF
-			-DENABLE_STATIC=ON
+		myconf+=(
+			--disable-shared
+			--enable-static
 		)
 	else
-		mycmakeargs+=(
-			-DENABLE_SHARED=ON
-			-DENABLE_STATIC=OFF
+		myconf+=(
+			--enable-shared
+			--disable-static
 		)
 	fi
 
@@ -396,7 +395,7 @@ _configure_pgx() {
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${T}/pgo-${ABI}" -Wno-backend-plugin
 			if ver_test $(clang-major-version) -ge 11 ; then
-				append-flags -mllvm -vp-counters-per-site=4
+				append-flags -mllvm -vp-counters-per-site=8
 			fi
 		else
 			append-flags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
@@ -413,41 +412,37 @@ _configure_pgx() {
 		fi
 	fi
 
-	if multilib_is_native_abi && use java ; then
-		export JAVACFLAGS="$(java-pkg_javac-args)"
-		export JNI_CFLAGS="$(java-pkg_get-jni-cflags)"
+	if multilib_is_native_abi; then
+		myconf+=( $(use_with java) )
+		if use java; then
+			export JAVACFLAGS="$(java-pkg_javac-args)"
+			export JNI_CFLAGS="$(java-pkg_get-jni-cflags)"
+		fi
+	else
+		myconf+=( --without-java )
 	fi
+	[[ ${ABI} == "x32" ]] && myconf+=( --without-simd ) #420239
 
-	mycmakeargs+=(
-		-DCMAKE_INSTALL_DEFAULT_DOCDIR="${EPREFIX}/usr/share/doc/${PF}"
-		-DWITH_JAVA="$(multilib_native_usex java)"
-		-DWITH_MEM_SRCDST=ON
-	)
-
-	if ! use asm ; then
-		mycmakeargs+=(
-			-DWITH_SIMD:BOOL=OFF
-		)
-	elif use arm; then
-		# Avoid ARM ABI issues by disabling SIMD for CPUs without NEON. #792810
-		mycmakeargs+=(
-			-DWITH_SIMD:BOOL=$(usex cpu_flags_arm_neon ON OFF)
-		)
-	fi
-
-	# mostly for Prefix, ensure that we use our yasm if installed and
-	# not pick up host-provided nasm
-	if has_version -b dev-lang/yasm && ! has_version -b dev-lang/nasm; then
-		mycmakeargs+=(
-			-DCMAKE_ASM_NASM_COMPILER=$(type -P yasm)
-		)
-	fi
-
-	cmake_src_configure
+	# Force /bin/bash until upstream generates a new version. #533902
+	CONFIG_SHELL="${EPREFIX}"/bin/bash \
+	ECONF_SOURCE=${S} \
+	econf \
+		$(use_enable static-libs static) \
+		$(use_with asm simd) \
+		--with-mem-srcdst \
+		"${myconf[@]}"
 }
 
 _build_pgx() {
-	cmake_src_compile
+	local _java_makeopts
+	use java && _java_makeopts="-j1"
+	emake ${_java_makeopts}
+
+	if multilib_is_native_abi; then
+		pushd ../debian/extra >/dev/null
+		emake CC="$(tc-getCC)" CFLAGS="${LDFLAGS} ${CFLAGS}"
+		popd >/dev/null
+	fi
 }
 
 _run_trainers() {
@@ -595,6 +590,10 @@ src_compile() {
 	multilib_foreach_abi compile_abi
 }
 
+src_test() {
+	emake test
+}
+
 _install_pgx() {
 	einfo "Installing image into sandbox staging area"
 	_install
@@ -607,11 +606,24 @@ _clean_pgx() {
 }
 
 _install() {
-	cmake_src_install
+	emake \
+		DESTDIR="${D}" \
+		docdir="${EPREFIX}"/usr/share/doc/${PF} \
+		exampledir="${EPREFIX}"/usr/share/doc/${PF} \
+		install
 
-	if multilib_is_native_abi && use java ; then
-		rm -rf "${ED}"/usr/classes || die
-		java-pkg_dojar java/turbojpeg.jar
+	if multilib_is_native_abi; then
+		pushd "${WORKDIR}"/debian/extra >/dev/null
+		emake \
+			DESTDIR="${D}" prefix="${EPREFIX}"/usr \
+			INSTALL="install -m755" INSTALLDIR="install -d -m755" \
+			install
+		popd >/dev/null
+
+		if use java; then
+			rm -rf "${ED}"/usr/classes
+			java-pkg_dojar java/turbojpeg.jar
+		fi
 	fi
 }
 
@@ -619,17 +631,12 @@ _install_once() {
 	cd "${S}" || die
 	find "${ED}" -type f -name '*.la' -delete || die
 
-	local -a DOCS=( README.md ChangeLog.md )
-	einstalldocs
-
-	newdoc "${WORKDIR}"/debian/changelog changelog.debian
-
 	docinto html
-	dodoc -r "${S}"/doc/html/.
-
+	dodoc -r "${S}"/doc/html/*
+	newdoc "${WORKDIR}"/debian/changelog changelog.debian
 	if use java; then
 		docinto html/java
-		dodoc -r "${S}"/java/doc/.
+		dodoc -r "${S}"/java/doc/*
 		newdoc "${S}"/java/README README.java
 	fi
 }
@@ -670,15 +677,11 @@ elog "The following package must be installed before PGOing this package:"
 elog "  jpeg assets placed in ${distdir}/pgo/assets/jpeg"
 	fi
 	if [[ "${USE}" =~ "cfi" ]] ; then
+# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
 ewarn
-ewarn "cfi, cfi-cast, cfi-icall, cfi-vcall require static linking of this"
-ewarn "library."
+ewarn "Cross-DSO CFI is experimental."
 ewarn
-ewarn "If you do ldd and you still see libjpeg.so libturbojpeg.so, then it"
-ewarn "breaks the CFI runtime protection spec as if that scheme of CFI was"
-ewarn "never used.  For details, see"
-ewarn "https://clang.llvm.org/docs/ControlFlowIntegrity.html"
-ewarn "with \"statically linked\" keyword search."
+ewarn "You must link these libraries as static for plain CFI to work."
 ewarn
 	fi
 }

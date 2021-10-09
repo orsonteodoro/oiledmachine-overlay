@@ -18,7 +18,7 @@ if [[ "$(ver_cut 3)" -lt 90 ]] ; then
 	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
 fi
 IUSE="+asm cpu_flags_arm_neon java static-libs"
-IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang hardened lto shadowcallstack"
+IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang cross-dso-cfi hardened lto shadowcallstack"
 IUSE+="
 	pgo
 	pgo-custom
@@ -48,11 +48,11 @@ REQUIRED_USE="
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
+	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 	pgo? (
 		pgo-trainer-decode
 		|| (
 			pgo-custom
-			pgo-trainer-decode
 			pgo-trainer-70-pct-quality-baseline
 			pgo-trainer-75-pct-quality-baseline
 			pgo-trainer-80-pct-quality-baseline
@@ -125,7 +125,8 @@ gen_cfi_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
+			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -142,7 +143,7 @@ gen_shadowcallstack_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
 		)
 		     "
 	done
@@ -297,6 +298,15 @@ is_hardened_gcc() {
 
 src_configure() { :; }
 
+is_cfi_supported() {
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		return 0
+	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
 _configure_pgx() {
 	local mycmakeargs=()
 	if use clang ; then
@@ -319,30 +329,37 @@ _configure_pgx() {
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'-fprofile*' \
-		'-fvisibility=hidden' \
+		'-fvisibility=*' \
 		'--param=ssp-buffer-size=*' \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
-		-Wl,-z,relro \
-		-stdlib=libc++
+		-Wl,-z,relro
 
 	autofix_flags
 
 	set_cfi() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
+		if tc-is-clang && is_cfi_supported ; then
+			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+				append_all -fvisibility=hidden
+			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
+				append_all -fvisibility=default
+			fi
 			if use cfi ; then
-				append_all -fvisibility=hidden -fsanitize=cfi
+				append_all -fsanitize=cfi
 			else
-				use cfi-cast && append_all -fvisibility=hidden \
+				use cfi-cast && append_all \
 							-fsanitize=cfi-derived-cast \
 							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all -fvisibility=hidden \
+				use cfi-icall && append_all \
 							-fsanitize=cfi-icall
-				use cfi-vcall && append_all -fvisibility=hidden \
+				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
+			use cross-dso-cfi \
+				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
+				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
@@ -392,7 +409,7 @@ _configure_pgx() {
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${T}/pgo-${ABI}" -Wno-backend-plugin
 			if ver_test $(clang-major-version) -ge 11 ; then
-				append-flags -mllvm -vp-counters-per-site=4
+				append-flags -mllvm -vp-counters-per-site=8
 			fi
 		else
 			append-flags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
@@ -666,15 +683,11 @@ elog "The following package must be installed before PGOing this package:"
 elog "  jpeg assets placed in ${distdir}/pgo/assets/jpeg"
 	fi
 	if [[ "${USE}" =~ "cfi" ]] ; then
+# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
 ewarn
-ewarn "cfi, cfi-cast, cfi-icall, cfi-vcall require static linking of this"
-ewarn "library."
+ewarn "Cross-DSO CFI is experimental."
 ewarn
-ewarn "If you do ldd and you still see libjpeg.so libturbojpeg.so, then it"
-ewarn "breaks the CFI runtime protection spec as if that scheme of CFI was"
-ewarn "never used.  For details, see"
-ewarn "https://clang.llvm.org/docs/ControlFlowIntegrity.html"
-ewarn "with \"statically linked\" keyword search."
+ewarn "You must link these libraries as static for plain CFI to work."
 ewarn
 	fi
 }
