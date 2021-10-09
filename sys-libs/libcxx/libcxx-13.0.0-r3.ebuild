@@ -12,7 +12,7 @@ HOMEPAGE="https://libcxx.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
 IUSE="elibc_glibc elibc_musl +libcxxabi +libunwind static-libs test"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 REQUIRED_USE="libunwind? ( libcxxabi )"
@@ -24,7 +24,7 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	libcxxabi? ( ~sys-libs/libcxxabi-${PV}[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,hardened?,shadowcallstack?,libunwind=,static-libs?,${MULTILIB_USEDEP}] )
+	libcxxabi? ( ~sys-libs/libcxxabi-${PV}:=[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,hardened?,shadowcallstack?,libunwind=,static-libs?,${MULTILIB_USEDEP}] )
 	!libcxxabi? ( >=sys-devel/gcc-4.7:=[cxx] )"
 DEPEND="${RDEPEND}"
 
@@ -110,7 +110,7 @@ PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 S="${WORKDIR}"
 
 LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake,utils/llvm-lit} )
-LLVM_PATCHSET=9999-1
+LLVM_PATCHSET=${PV/_/-}
 llvm.org_set_globals
 
 python_check_deps() {
@@ -256,18 +256,14 @@ _configure_abi() {
 	set_cfi() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
-			if [[ "${build_type}" == "static-libs" ]] ; then
-				mycmakeargs+=(
-					-DCFI=$(usex cfi)
-					-DCFI_CAST=$(usex cfi-cast)
-					-DCFI_ICALL=$(usex cfi-icall)
-					-DCFI_VCALL=$(usex cfi-vcall)
-				)
-			fi
-		fi
+		# cfi-icall breaks icu/genrb
 		if tc-is-clang ; then
 			mycmakeargs+=(
+				-DCFI=$(usex cfi)
+				-DCFI_CAST=$(usex cfi-cast)
+				-DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall"
+				-DCFI_ICALL=OFF
+				-DCFI_VCALL=$(usex cfi-vcall)
 				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
 			)
 		fi
@@ -411,7 +407,7 @@ src_install() {
 	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
 	# way to check for CFI presence.
 	if [[ "${USE}" =~ "cfi" ]] ; then
-		for f in $(find "${ED}" -name "*.a") ; do
+		for f in $(find "${ED}" -name "*.a" -o -name "*.so*") ; do
 			if use cfi ; then
 				touch "${f}.cfi" || die
 			else
@@ -430,17 +426,11 @@ elog "To use it, instead of libstdc++, use:"
 elog "    clang++ -stdlib=libc++"
 elog "to compile your C++ programs."
 	if [[ "${USE}" =~ "cfi" ]] ; then
+# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
 ewarn
-ewarn "cfi, cfi-cast, cfi-icall, cfi-vcall require static linking of this"
-ewarn "library."
+ewarn "Cross-DSO CFI is experimental."
 ewarn
-ewarn "If you do \`ldd <path to exe>\` and you still see libc++.so"
-ewarn "then it breaks the CFI runtime protection spec as if that scheme of CFI"
-ewarn "was never used.  For details, see"
-ewarn "https://clang.llvm.org/docs/ControlFlowIntegrity.html with"
-ewarn "\"statically linked\" keyword search."
-ewarn
-ewarn "You must add -static-libstdc++ before -stdlib=libc++ for proper CFI."
+ewarn "You must add -static-libstdc++ before -stdlib=libc++ for plain CFI to work."
 ewarn
 	fi
 }
