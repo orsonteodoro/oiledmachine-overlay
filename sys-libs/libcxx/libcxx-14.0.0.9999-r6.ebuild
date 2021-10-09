@@ -182,6 +182,15 @@ is_hardened_gcc() {
 	return 1
 }
 
+is_cfi_supported() {
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		return 0
+	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
 _configure_abi() {
 	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
@@ -259,7 +268,7 @@ _configure_abi() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
 		# cfi-icall breaks icu/genrb
-		if tc-is-clang ; then
+		if tc-is-clang && is_cfi_supported ; then
 			mycmakeargs+=(
 				-DCFI=$(usex cfi)
 				-DCFI_CAST=$(usex cfi-cast)
@@ -267,9 +276,11 @@ _configure_abi() {
 				-DCFI_ICALL=OFF
 				-DCFI_VCALL=$(usex cfi-vcall)
 				-DCROSS_DSO_CFI=$(usex cross-dso-cfi)
-				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
 			)
 		fi
+		mycmakeargs+=(
+			-DSHADOW_CALL_STACK=$(usex shadowcallstack)
+		)
 	}
 
 	if is_hardened_gcc ; then
