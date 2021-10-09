@@ -492,7 +492,7 @@ pkg_postinst() {
 ewarn
 ewarn "Cross-DSO CFI is experimental."
 ewarn
-ewarn "You must link these libraries as static for plain CFI to work."
+ewarn "You must link these libraries with static linkage for plain CFI to work."
 ewarn
 	fi
 if use static-libs ; then

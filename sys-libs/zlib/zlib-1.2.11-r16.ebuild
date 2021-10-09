@@ -1385,7 +1385,7 @@ elog "  app-arch/pigz[$(get_arch_enabled_use_flags)]"
 ewarn
 ewarn "Cross-DSO CFI is experimental."
 ewarn
-ewarn "You must link these libraries as static for plain CFI to work."
+ewarn "You must link these libraries with static linkage for plain CFI to work."
 ewarn
 	fi
 
