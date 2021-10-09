@@ -50,7 +50,7 @@ gen_cfi_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
 		)
 		     "
 	done
@@ -68,7 +68,7 @@ gen_shadowcallstack_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
 		)
 		     "
 	done
