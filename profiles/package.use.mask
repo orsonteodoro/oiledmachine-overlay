@@ -137,3 +137,6 @@ net-libs/webkit-gtk pgo
 =dev-games/godot-2* touch
 =dev-games/godot-3* mobile-vr
 =dev-games/godot-3* touch
+
+# May break zlib
+sys-devel/clang experimental

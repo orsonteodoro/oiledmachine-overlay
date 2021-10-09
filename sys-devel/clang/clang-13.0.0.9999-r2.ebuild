@@ -10,24 +10,16 @@ inherit cmake llvm llvm.org multilib multilib-minimal \
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
 
-# Keep in sync with sys-devel/llvm
-ALL_LLVM_EXPERIMENTAL_TARGETS=( ARC CSKY VE )
-ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM AVR BPF Hexagon Lanai Mips MSP430
-	NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 XCore
-	"${ALL_LLVM_EXPERIMENTAL_TARGETS[@]}" )
-ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
-
 # MSVCSetupApi.h: MIT
 # sorttable.js: MIT
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
-#KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x64-macos"  # The hardened default ON patches are in testing.
+#KEYWORDS=""  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
-	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD ${ALL_LLVM_TARGETS[*]}"
-IUSE+=" hardened"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	|| ( ${ALL_LLVM_TARGETS[*]} )"
+	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD"
+IUSE+=" experimental hardened"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
 
@@ -36,11 +28,6 @@ RDEPEND="
 	static-analyzer? ( dev-lang/perl:* )
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	${PYTHON_DEPS}"
-for x in "${ALL_LLVM_TARGETS[@]}"; do
-	RDEPEND+="
-		${x}? ( ~sys-devel/llvm-${PV}:${SLOT}[${x}] )"
-done
-unset x
 
 DEPEND="${RDEPEND}"
 BDEPEND="
@@ -60,23 +47,23 @@ PDEPEND="
 	default-lld? ( sys-devel/lld )"
 
 LLVM_COMPONENTS=( clang clang-tools-extra )
-LLVM_MANPAGES=pregenerated
+LLVM_MANPAGES=build
 LLVM_TEST_COMPONENTS=(
 	llvm/lib/Testing/Support
 	llvm/utils/{lit,llvm-lit,unittest}
 	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
 )
-LLVM_PATCHSET=12.0.1
+LLVM_PATCHSET=9999-2
 PATCHES_HARDENED=(
 	"${FILESDIR}/clang-12.0.1-enable-PIE-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
-	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default-doc.patch"
-	"${FILESDIR}/clang-12.0.1-change-SSP-buffer-size-to-4.patch"
+	"${FILESDIR}/clang-13.0.0_rc2-enable-SSP-by-default-doc.patch"
+	"${FILESDIR}/clang-13.0.0_rc2-change-SSP-buffer-size-to-4.patch"
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-version-info.patch"
-	"${FILESDIR}/clang-14.0.0.9999-cross-dso-link-with-shared.patch"
 )
+LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 
 # Multilib notes:
@@ -102,6 +89,11 @@ src_prepare() {
 
 	llvm.org_src_prepare
 	if use hardened ; then
+		if use experimental ; then
+			ewarn "The experimental USE flag may break your system."
+			ewarn "Patches are totally not recommended if you are not a developer or expert."
+			eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-link-with-shared.patch"
+		fi
 		ewarn "The hardened USE flag and associated patches are still in testing."
 		eapply ${PATCHES_HARDENED[@]}
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
@@ -249,6 +241,7 @@ get_distribution_components() {
 			clang-check
 			clang-extdef-mapping
 			scan-build
+			scan-build-py
 			scan-view
 		)
 	fi

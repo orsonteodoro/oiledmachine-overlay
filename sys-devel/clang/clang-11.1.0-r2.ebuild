@@ -25,7 +25,7 @@ SLOT="$(ver_cut 1)/$(ver_cut 1-2)"
 #KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~x64-macos"  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
 	doc +static-analyzer test xml kernel_FreeBSD ${ALL_LLVM_TARGETS[*]}"
-IUSE+=" hardened"
+IUSE+=" experimental hardened"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+=" hardened? ( !test )"
@@ -70,7 +70,6 @@ PATCHES_HARDENED=(
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-version-info.patch"
-	"${FILESDIR}/clang-14.0.0.9999-cross-dso-link-with-shared.patch"
 )
 llvm.org_set_globals
 
@@ -97,6 +96,11 @@ src_prepare() {
 
 	llvm.org_src_prepare
 	if use hardened ; then
+		if use experimental ; then
+			ewarn "The experimental USE flag may break your system."
+			ewarn "Patches are totally not recommended if you are not a developer or expert."
+			eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-link-with-shared.patch"
+		fi
 		ewarn "The hardened USE flag and associated patches are still in testing."
 		eapply ${PATCHES_HARDENED[@]}
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"

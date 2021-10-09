@@ -1,4 +1,5 @@
-Subject:  Emit linker options when -fsanitize-cfi-cross-dso is used with -shared
+Subject:  Emit linker options when -fsanitize-cfi-cross-dso is used with -shared (v2)
+Patch Status:  Testing
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Date: Fri Oct  8 01:21:21 PM PDT 2021 (Unix time: 1633724481)
 
@@ -12,12 +13,21 @@ License header for clang/lib/Driver/ToolChains/CommonArgs.cpp:
 //
 //===----------------------------------------------------------------------===//
 
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+
+DO NOT APPLY THIS PATCH IN PRODUCTION UNTIL THE PATCH STATUS ABOVE IS SET TO WORKING.
+
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+
 Fixes the below error when linking a shared library with -shared:
 ld.lld: error: undefined symbol: __cfi_slowpath
 
---- clang/lib/Driver/ToolChains/CommonArgs.cpp.orig	2021-10-08 16:40:53.623488820 -0700
-+++ clang/lib/Driver/ToolChains/CommonArgs.cpp	2021-10-08 16:52:40.332512108 -0700
-@@ -967,6 +967,17 @@ bool tools::addSanitizerRuntimes(const T
+v2: [WIP] Fix breakage when using built Cross-DSO zlib
+v1: Initial release
+
+--- clang/lib/Driver/ToolChains/CommonArgs.cpp.orig	2021-10-08 21:28:23.679057251 -0700
++++ clang/lib/Driver/ToolChains/CommonArgs.cpp	2021-10-08 21:39:18.298078822 -0700
+@@ -967,6 +967,20 @@ bool tools::addSanitizerRuntimes(const T
    if (SanArgs.hasCrossDsoCfi() && !AddExportDynamic)
      CmdArgs.push_back("--export-dynamic-symbol=__cfi_check");
  
@@ -30,6 +40,9 @@ ld.lld: error: undefined symbol: __cfi_slowpath
 +      CmdArgs.push_back(TC.getCompilerRTArgString(Args, "cfi_diag"));  // oteodoro:
 +    CmdArgs.push_back("--no-whole-archive");                           // oteodoro:
 +    CmdArgs.push_back("-ldl");                                         // oteodoro:
++    const bool isAndroid = ToolChain.getTriple().isAndroid();          // oteodoro:
++    if (!isAndroid)                                                    // oteodoro:
++      CmdArgs.push_back("-pthread");                                   // oteodoro: For unborking zlib
 +  }                                                                    // oteodoro: End section add
 +
    return !StaticRuntimes.empty() || !NonWholeStaticRuntimes.empty();

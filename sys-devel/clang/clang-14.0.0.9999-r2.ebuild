@@ -18,7 +18,7 @@ SLOT="$(ver_cut 1)"
 #KEYWORDS=""  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
 	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD"
-IUSE+=" hardened"
+IUSE+=" experimental hardened"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
@@ -62,7 +62,6 @@ PATCHES_HARDENED=(
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-version-info.patch"
-	"${FILESDIR}/clang-14.0.0.9999-cross-dso-link-with-shared.patch"
 )
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
@@ -90,6 +89,11 @@ src_prepare() {
 
 	llvm.org_src_prepare
 	if use hardened ; then
+		if use experimental ; then
+			ewarn "The experimental USE flag may break your system."
+			ewarn "Patches are totally not recommended if you are not a developer or expert."
+			eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-link-with-shared.patch"
+		fi
 		ewarn "The hardened USE flag and associated patches are still in testing."
 		eapply ${PATCHES_HARDENED[@]}
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
@@ -97,7 +101,7 @@ src_prepare() {
 			eapply "${FILESDIR}/clang-12.0.1-enable-FCP-by-default.patch"
 			hardened_features+=", SCP"
 		elif use arm64 ; then
-			ewarn "arm64 -fstack-clash-protection is not default ON.  The feature is still"
+			ewarn "arm64 -fstack-clash-protection is not default on.  The feature is still"
 			ewarn "in development."
 		fi
 		ewarn "The Full RELRO default on is in testing."
