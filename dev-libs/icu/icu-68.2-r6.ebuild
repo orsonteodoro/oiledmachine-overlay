@@ -16,7 +16,7 @@ SLOT="0/${PV}"
 
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="debug doc examples static-libs"
-IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang hardened libcxx lto shadowcallstack"
+IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang cross-dso-cfi hardened libcxx lto shadowcallstack"
 REQUIRED_USE="
 	cfi? ( clang lto static-libs )
 	cfi-cast? ( clang lto cfi-vcall static-libs )
@@ -45,7 +45,8 @@ gen_cfi_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
+			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -62,7 +63,7 @@ gen_shadowcallstack_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
 		)
 		     "
 	done
@@ -284,7 +285,7 @@ _configure_abi() {
 		if tc-is-clang ; then
 			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
 				append_all -fvisibility=hidden
-			elif [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
+			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -299,7 +300,8 @@ _configure_abi() {
 							-fsanitize=cfi-vcall
 			fi
 			append_all -fno-sanitize=cfi-icall
-			[[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
+			use cross-dso-cfi \
+				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
