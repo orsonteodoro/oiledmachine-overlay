@@ -40,7 +40,7 @@ v1: Initial release
 +      CmdArgs.push_back(TC.getCompilerRTArgString(Args, "cfi_diag"));  // oteodoro:
 +    CmdArgs.push_back("--no-whole-archive");                           // oteodoro:
 +    CmdArgs.push_back("-ldl");                                         // oteodoro:
-+    const bool isAndroid = ToolChain.getTriple().isAndroid();          // oteodoro:
++    const bool isAndroid = TC.getTriple().isAndroid();                 // oteodoro:
 +    if (!isAndroid)                                                    // oteodoro:
 +      CmdArgs.push_back("-pthread");                                   // oteodoro: For unborking zlib
 +  }                                                                    // oteodoro: End section add

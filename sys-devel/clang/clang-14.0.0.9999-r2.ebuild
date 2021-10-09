@@ -89,13 +89,13 @@ src_prepare() {
 
 	llvm.org_src_prepare
 	if use hardened ; then
+		ewarn "The hardened USE flag and associated patches are still in testing."
+		eapply ${PATCHES_HARDENED[@]}
 		if use experimental ; then
 			ewarn "The experimental USE flag may break your system."
 			ewarn "Patches are totally not recommended if you are not a developer or expert."
 			eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-link-with-shared.patch"
 		fi
-		ewarn "The hardened USE flag and associated patches are still in testing."
-		eapply ${PATCHES_HARDENED[@]}
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
 		if use x86 || use amd64 ; then
 			eapply "${FILESDIR}/clang-12.0.1-enable-FCP-by-default.patch"
