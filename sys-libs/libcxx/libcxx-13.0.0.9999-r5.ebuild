@@ -14,13 +14,14 @@ LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS=""
 IUSE="elibc_glibc elibc_musl +libcxxabi +libunwind static-libs test"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang hardened lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cross-dso-cfi hardened lto shadowcallstack"
 REQUIRED_USE="libunwind? ( libcxxabi )"
 REQUIRED_USE+="
 	cfi? ( clang lto static-libs )
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
-	cfi-vcall? ( clang lto static-libs )"
+	cfi-vcall? ( clang lto static-libs )
+	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -51,6 +52,7 @@ gen_cfi_bdepend() {
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
+			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -264,6 +266,7 @@ _configure_abi() {
 				-DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall"
 				-DCFI_ICALL=OFF
 				-DCFI_VCALL=$(usex cfi-vcall)
+				-DCROSS_DSO_CFI=$(usex cross-dso-cfi)
 				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
 			)
 		fi
