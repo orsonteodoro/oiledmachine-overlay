@@ -194,18 +194,12 @@ _configure_abi() {
 	)
 
 	set_cfi() {
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
-			if [[ "${build_type}" == "static-libs" ]] ; then
-				mycmakeargs+=(
-					-DCFI=$(usex cfi)
-					-DCFI_CAST=$(usex cfi-cast)
-					-DCFI_ICALL=$(usex cfi-icall)
-					-DCFI_VCALL=$(usex cfi-vcall)
-				)
-			fi
-		fi
-		if use shadowcallstack ; then
+		if tc-is-clang ; then
 			mycmakeargs+=(
+				-DCFI=$(usex cfi)
+				-DCFI_CAST=$(usex cfi-cast)
+				-DCFI_ICALL=$(usex cfi-icall)
+				-DCFI_VCALL=$(usex cfi-vcall)
 				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
 			)
 		fi
@@ -280,18 +274,13 @@ build_libcxx() {
 	)
 
 	set_cfi() {
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
-			if [[ "${build_type}" == "static-libs" ]] ; then
-				mycmakeargs+=(
-					-DCFI=$(usex cfi)
-					-DCFI_CAST=$(usex cfi-cast)
-					-DCFI_ICALL=$(usex cfi-icall)
-					-DCFI_VCALL=$(usex cfi-vcall)
-				)
-			fi
-		fi
-		if use shadowcallstack ; then
+		if tc-is-clang ; then
 			mycmakeargs+=(
+				-DCFI=$(usex cfi)
+				-DCFI_CAST=$(usex cfi-cast)
+				-DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall"
+				-DCFI_ICALL=OFF
+				-DCFI_VCALL=$(usex cfi-vcall)
 				-DSHADOW_CALL_STACK=$(usex shadowcallstack)
 			)
 		fi
@@ -381,7 +370,7 @@ src_install() {
 	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
 	# way to check for CFI presence.
 	if [[ "${USE}" =~ "cfi" ]] ; then
-		for f in $(find "${ED}" -name "*.a") ; do
+		for f in $(find "${ED}" -name "*.a" -o -name "*.so*") ; do
 			if use cfi ; then
 				touch "${f}.cfi" || die
 			else
@@ -395,15 +384,11 @@ src_install() {
 
 pkg_postinst() {
 	if [[ "${USE}" =~ "cfi" ]] ; then
+# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
 ewarn
-ewarn "cfi, cfi-cast, cfi-icall, cfi-vcall require static linking of this"
-ewarn "library."
+ewarn "Cross-DSO CFI is experimental."
 ewarn
-ewarn "If you do \`ldd <path to exe>\` and you still see libc++abi.so"
-ewarn "then it breaks the CFI runtime protection spec as if that scheme of CFI"
-ewarn "was never used.  For details, see"
-ewarn "https://clang.llvm.org/docs/ControlFlowIntegrity.html with"
-ewarn "\"statically linked\" keyword search."
+ewarn "You must add -static-libstdc++ before -stdlib=libc++ for plain CFI to work."
 ewarn
 	fi
 }
