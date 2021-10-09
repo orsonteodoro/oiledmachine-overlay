@@ -12,7 +12,7 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
 IUSE="+libunwind static-libs test elibc_musl"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 REQUIRED_USE+="
@@ -56,7 +56,7 @@ gen_cfi_bdepend() {
 			>=sys-devel/lld-${v}
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
 		)
 		     "
 	done
@@ -74,7 +74,7 @@ gen_shadowcallstack_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
 		)
 		     "
 	done
