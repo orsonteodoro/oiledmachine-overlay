@@ -25,9 +25,24 @@ ld.lld: error: undefined symbol: __cfi_slowpath
 v2: [WIP] Fix breakage when using built Cross-DSO zlib
 v1: Initial release
 
---- clang/lib/Driver/ToolChains/CommonArgs.cpp.orig	2021-10-08 21:28:23.679057251 -0700
-+++ clang/lib/Driver/ToolChains/CommonArgs.cpp	2021-10-08 21:39:18.298078822 -0700
-@@ -967,6 +967,20 @@ bool tools::addSanitizerRuntimes(const T
+--- clang/lib/Driver/ToolChains/Gnu.cpp.orig	2021-10-09 00:46:44.747449420 -0700
++++ clang/lib/Driver/ToolChains/Gnu.cpp	2021-10-09 00:46:36.571449151 -0700
+@@ -565,7 +565,11 @@ void tools::gnutools::Linker::ConstructJ
+   if (Args.hasArg(options::OPT_Z_Xlinker__no_demangle))
+     CmdArgs.push_back("--no-demangle");
+ 
+-  bool NeedsSanitizerDeps = addSanitizerRuntimes(ToolChain, Args, CmdArgs);
++  bool NeedsSanitizerDeps = addSanitizerRuntimes(ToolChain, Args, CmdArgs) ||  // oteodoro: Begin section change
++      // Prevent missing -pthread when reusing Cross-DSO CFIed zlib from       // oteodoro: Set flag to link -pthread and -ldl
++      // borking the system.                                                   // oteodoro: when -shared and fsanitize-cfi-cross-dso
++      (Args.hasArg(options::OPT_fsanitize_cfi_cross_dso) &&                    // oteodoro: are used together.
++       Args.hasArg(options::OPT_shared));                                      // oteodoro: End section change
+   bool NeedsXRayDeps = addXRayRuntime(ToolChain, Args, CmdArgs);
+   addLinkerCompressDebugSectionsOption(ToolChain, Args, CmdArgs);
+   AddLinkerInputs(ToolChain, Inputs, Args, CmdArgs, JA);
+--- clang/lib/Driver/ToolChains/CommonArgs.cpp.orig	2021-10-09 00:29:17.910414924 -0700
++++ clang/lib/Driver/ToolChains/CommonArgs.cpp	2021-10-09 00:41:51.594439760 -0700
+@@ -967,6 +967,16 @@ bool tools::addSanitizerRuntimes(const T
    if (SanArgs.hasCrossDsoCfi() && !AddExportDynamic)
      CmdArgs.push_back("--export-dynamic-symbol=__cfi_check");
  
@@ -35,14 +50,10 @@ v1: Initial release
 +    && Args.hasArg(options::OPT_shared)) {                             // oteodoro:
 +    CmdArgs.push_back("--whole-archive");                              // oteodoro:
 +    if (SanArgs.needsCfiRt() && SanArgs.linkRuntimes())                // oteodoro:
-+      CmdArgs.push_back(TC.getCompilerRTArgString(Args, "cfi"));       // oteodoro: Added section for -shared linkage with -fsanitize-cfi-cross-dso
-+    if (SanArgs.needsCfiDiagRt() && SanArgs.linkRuntimes())            // oteodoro:
++      CmdArgs.push_back(TC.getCompilerRTArgString(Args, "cfi"));       // oteodoro: Added section for -shared linkage
++    if (SanArgs.needsCfiDiagRt() && SanArgs.linkRuntimes())            // oteodoro: with -fsanitize-cfi-cross-dso
 +      CmdArgs.push_back(TC.getCompilerRTArgString(Args, "cfi_diag"));  // oteodoro:
 +    CmdArgs.push_back("--no-whole-archive");                           // oteodoro:
-+    CmdArgs.push_back("-ldl");                                         // oteodoro:
-+    const bool isAndroid = TC.getTriple().isAndroid();                 // oteodoro:
-+    if (!isAndroid)                                                    // oteodoro:
-+      CmdArgs.push_back("-pthread");                                   // oteodoro: For unborking zlib
 +  }                                                                    // oteodoro: End section add
 +
    return !StaticRuntimes.empty() || !NonWholeStaticRuntimes.empty();

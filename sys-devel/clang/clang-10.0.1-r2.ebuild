@@ -98,7 +98,7 @@ src_prepare() {
 		if use experimental ; then
 			ewarn "The experimental USE flag may break your system."
 			ewarn "Patches are totally not recommended if you are not a developer or expert."
-			eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-link-with-shared.patch"
+			eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"
 		fi
 		ewarn "There's no -fstack-clash-protection in the 10.x series."
 		# no FCF
