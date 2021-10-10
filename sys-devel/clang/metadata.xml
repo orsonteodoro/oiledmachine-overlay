@@ -52,14 +52,17 @@
     present -- -Wl,relro -Wl,now
     present -- PIE
 
+    Secondary patches:
+    testing -- -shared and fsanitize-cfi-cross-dso
+
     Verification is done via the app-admin/checksec package.
 
-    When all testing switches to works, then it is ready for production.
-    To ensure Full RELRO is applied default ON set LD="${CC}" or LD="ld.lld",
-    The lld package on this overlay has been modified for Full RELRO default ON.
-    However, packages may override the defaults if they are problematic or
-    accidently lower the security level unintentionally, so you need to
-    recheck the build log to be certain.
+    When all testing switches to works for the Default ON set, then it is ready
+    for production. To ensure Full RELRO is applied default ON set LD="${CC}" or
+    LD="ld.lld", The lld package on this overlay has been modified for
+    Full RELRO default ON.  However, packages may override the defaults if they
+    are problematic or accidently lower the security level unintentionally, so
+    you need to recheck the build log to be certain.
 
     While the toolchain-funcs.eclass only recognize hardened gcc existance
     in the ssp checking functions, you may verify a hardenedized counterpart
