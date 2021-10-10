@@ -84,6 +84,7 @@
     <flag name="cfi-cast">Build with cfi-cast</flag>
     <flag name="cfi-icall">Build with cfi-icall</flag>
     <flag name="cfi-vcall">Build with cfi-vcall protecting the forward edge</flag>
+    <flag name="cross-dso-cfi">Build shared libs with Cross-DSO CFI mode</flag>
     <flag name="chromium">Prevent symbol conflicts in the browser
       (testing)</flag>
     <flag name="hardened">Build with Full RELRO, noexecstack, SSP.

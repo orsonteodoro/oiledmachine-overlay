@@ -24,7 +24,7 @@ SLOT="0/6"
 KEYWORDS="amd64 arm arm64 ~ia64 ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux"
 IUSE="doc +highbitdepth postproc static-libs svc test +threads"
 IUSE+=" +examples"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang chromium hardened libcxx lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang chromium cross-dso-cfi hardened libcxx lto shadowcallstack"
 IUSE+=" pgo
 	pgo-custom
 	pgo-trainer-2-pass-constrained-quality
@@ -37,6 +37,7 @@ REQUIRED_USE="
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
+	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 	pgo? (
 		|| (
 			pgo-custom
@@ -78,7 +79,8 @@ gen_cfi_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
+			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -96,7 +98,7 @@ gen_shadowcallstack_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
 		)
 		     "
 	done
@@ -354,6 +356,15 @@ is_hardened_gcc() {
 	return 1
 }
 
+is_cfi_supported() {
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		return 0
+	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
 configure_pgx() {
 	[[ -f Makefile ]] && emake clean
 	unset CODECS #357487
@@ -441,19 +452,28 @@ configure_pgx() {
 	set_cfi() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
+		if tc-is-clang && is_cfi_supported ; then
+			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+				append_all -fvisibility=hidden
+				append_all -pthread
+			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
+				append_all -fvisibility=default
+			fi
 			if use cfi ; then
-				append_all -fvisibility=hidden -fsanitize=cfi
+				append_all -fsanitize=cfi
 				append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with vpxenc --help
 			else
-				use cfi-cast && append_all -fvisibility=hidden \
+				use cfi-cast && append_all \
 							-fsanitize=cfi-derived-cast \
 							-fsanitize=cfi-unrelated-cast
-				#use cfi-icall && append_all -fvisibility=hidden \
+				#use cfi-icall && append_all \
 				#			-fsanitize=cfi-icall
-				use cfi-vcall && append_all -fvisibility=hidden \
+				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
+			use cross-dso-cfi \
+				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
+				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
@@ -1045,7 +1065,9 @@ src_install() {
 	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
 	# way to check for CFI presence.
 	if [[ "${USE}" =~ "cfi" ]] ; then
-		for f in $(find "${ED}" -name "*.a") ; do
+		local arg=()
+		use cross-dso-cfi && arg+=( -o -name "*.so*" )
+		for f in $(find "${ED}" -name "*.a" ${arg[@]}) ; do
 			if use cfi ; then
 				touch "${f}.cfi" || die
 			else
@@ -1073,14 +1095,11 @@ elog "The following package must be installed before PGOing this package:"
 elog "  media-video/ffmpeg[encode,vpx,$(get_arch_enabled_use_flags)]"
 	fi
 	if [[ "${USE}" =~ "cfi" ]] ; then
+# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
 ewarn
-ewarn "cfi, cfi-cast, cfi-icall, cfi-vcall require static linking of this"
-ewarn "library."
+ewarn "Cross-DSO CFI is experimental."
 ewarn
-ewarn "If you do ldd and you still see libvpx.so, then it breaks the CFI"
-ewarn "runtime protection spec as if that scheme of CFI was never used."
-ewarn "For details, see https://clang.llvm.org/docs/ControlFlowIntegrity.html"
-ewarn "with \"statically linked\" keyword search."
+ewarn "You must link these libraries with static linkage for plain CFI to work."
 ewarn
 	fi
 }
