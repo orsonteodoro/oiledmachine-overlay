@@ -357,6 +357,7 @@ is_hardened_gcc() {
 }
 
 is_cfi_supported() {
+	[[ "${USE}" =~ "cfi" ]] || return 1
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		return 0
 	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
@@ -453,10 +454,9 @@ configure_pgx() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
 		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+			if [[ "${build_type}" == "static-libs" ]] ; then
 				append_all -fvisibility=hidden
-				append_all -pthread
-			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
+			elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -472,7 +472,7 @@ configure_pgx() {
 							-fsanitize=cfi-vcall
 			fi
 			use cross-dso-cfi \
-				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
+				&& [[ "${build_type}" == "shared-libs" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
