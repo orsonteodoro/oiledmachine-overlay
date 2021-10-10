@@ -875,10 +875,10 @@ BDEPEND="
 				=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 				>=sys-devel/lld-13
 				=sys-libs/compiler-rt-13*
-				=sys-libs/compiler-rt-sanitizers-13*[shadowcallstack?]
-				cfi-cast? ( =sys-libs/compiler-rt-sanitizers-13*[cfi] )
-				cfi-icall? ( =sys-libs/compiler-rt-sanitizers-13*[cfi] )
-				cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-13*[cfi] )
+				=sys-libs/compiler-rt-sanitizers-13*:=[shadowcallstack?]
+				cfi-cast? ( =sys-libs/compiler-rt-sanitizers-13*:=[cfi] )
+				cfi-icall? ( =sys-libs/compiler-rt-sanitizers-13*:=[cfi] )
+				cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-13*:=[cfi] )
 			)
 			(
 				sys-devel/clang:14[${MULTILIB_USEDEP}]
@@ -886,10 +886,10 @@ BDEPEND="
 				=sys-devel/clang-runtime-14*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 				>=sys-devel/lld-14
 				=sys-libs/compiler-rt-14*
-				=sys-libs/compiler-rt-sanitizers-14*[shadowcallstack?]
-				cfi-cast? ( =sys-libs/compiler-rt-sanitizers-14*[cfi] )
-				cfi-icall? ( =sys-libs/compiler-rt-sanitizers-14*[cfi] )
-				cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-14*[cfi] )
+				=sys-libs/compiler-rt-sanitizers-14*:=[shadowcallstack?]
+				cfi-cast? ( =sys-libs/compiler-rt-sanitizers-14*:=[cfi] )
+				cfi-icall? ( =sys-libs/compiler-rt-sanitizers-14*:=[cfi] )
+				cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-14*:=[cfi] )
 			)
 		)
 		official? (
@@ -898,10 +898,10 @@ BDEPEND="
 			=sys-devel/clang-runtime-13*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-13
 			=sys-libs/compiler-rt-13*
-			=sys-libs/compiler-rt-sanitizers-13*[shadowcallstack?]
-			cfi-cast? ( =sys-libs/compiler-rt-sanitizers-13*[cfi] )
-			cfi-icall? ( =sys-libs/compiler-rt-sanitizers-13*[cfi] )
-			cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-13*[cfi] )
+			=sys-libs/compiler-rt-sanitizers-13*:=[shadowcallstack?]
+			cfi-cast? ( =sys-libs/compiler-rt-sanitizers-13*:=[cfi] )
+			cfi-icall? ( =sys-libs/compiler-rt-sanitizers-13*:=[cfi] )
+			cfi-vcall? ( =sys-libs/compiler-rt-sanitizers-13*:=[cfi] )
 		)
 	)
 	js-type-check? ( virtual/jre )
@@ -1045,7 +1045,7 @@ FFMPEG_DEPENDS="
 		media-video/ffmpeg[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 		media-libs/dav1d[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 		media-libs/flac[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
-		media-libs/libaom[cfi,clang,hardened,libcxx,${MULTILIB_USEDEP}]
+		media-libs/libaom[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 		media-libs/libogg[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 		media-libs/libtheora[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 		media-libs/libvorbis[cfi-cast?,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
@@ -3569,8 +3569,9 @@ ewarn
 	fi
 
 	if use system-libcxx ; then
-		append-flags -stdlib=libc++
-		append-ldflags -stdlib=libc++
+		# libcxx is to be statically linked for plain CFI
+		append-flags -static-libstdc++ -stdlib=libc++
+		append-ldflags -static-libstdc++ -stdlib=libc++
 	fi
 
 	if [[ $myarch = amd64 ]] ; then
