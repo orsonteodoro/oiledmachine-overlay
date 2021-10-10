@@ -25,7 +25,7 @@ IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
-IUSE+=" cfi clang hardened libcxx lto shadowcallstack static-libs"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cross-dso-cfi hardened libcxx lto shadowcallstack static-libs"
 IUSE+=" +asm"
 IUSE+=" pgo pgo-custom
 	pgo-trainer-2-pass-constrained-quality
@@ -38,6 +38,10 @@ REQUIRED_USE="
 	cpu_flags_x86_sse2? ( cpu_flags_x86_mmx )
 	cpu_flags_x86_ssse3? ( cpu_flags_x86_sse2 )
 	cfi? ( clang lto static-libs )
+	cfi-cast? ( clang lto cfi-vcall static-libs )
+	cfi-icall? ( clang lto cfi-vcall static-libs )
+	cfi-vcall? ( clang lto static-libs )
+	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 	pgo? (
 		|| (
 			pgo-custom
@@ -75,7 +79,8 @@ gen_cfi_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[cfi?]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi?]
+			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -93,7 +98,7 @@ gen_shadowcallstack_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
 		)
 		     "
 	done
@@ -156,6 +161,8 @@ PDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/libaom-2.0.1-aom_sadXXXxh-are-ssse3.patch"
+	"${FILESDIR}/libaom-3.1.2-cfi-rework.patch"
+	"${FILESDIR}/libaom-3.1.2-static-link-apps.patch"
 )
 
 # the PATENTS file is required to be distributed with this package bug #682214
@@ -345,6 +352,15 @@ is_hardened_gcc() {
 	return 1
 }
 
+is_cfi_supported() {
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		return 0
+	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
 configure_pgx() {
 	[[ -f build.ninja ]] && eninja clean
 	find "${BUILD_DIR}" -name "CMakeCache.txt" -delete 2>/dev/null
@@ -403,9 +419,9 @@ configure_pgx() {
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGO"
 		if tc-is-clang ; then
-			llvm-profdata merge -output="${T}/pgo-${ABI}/code.profdata" \
+			llvm-profdata merge -output="${T}/pgo-${ABI}/pgo-custom.profdata" \
 				"${T}/pgo-${ABI}" || die
-			append-flags -fprofile-use="${T}/pgo-${ABI}/code.profdata"
+			append-flags -fprofile-use="${T}/pgo-${ABI}/pgo-custom.profdata"
 		else
 			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
 		fi
@@ -433,12 +449,16 @@ configure_pgx() {
 	set_cfi() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
-			if use cfi ; then
-				mycmakeargs+=(
-					-DSANITIZE=cfi
-				)
+		if tc-is-clang && is_cfi_supported ; then
+			[[ "${USE}" =~ "cfi" ]] && mycmakeargs+=( -DSANITIZE=cfi )
+			mycmakeargs+=( -DCFI=$(usex cfi) )
+			mycmakeargs+=( -DCFI_CAST=$(usex cfi-cast) )
+			#mycmakeargs+=( -DCFI_ICALL=$(usex cfi-icall) )
+			mycmakeargs+=( -DCFI_VCALL=$(usex cfi-vcall) )
+			if [[ "${build_type}" == "shared-libs" ]] ; then
+				mycmakeargs+=( -DCROSS_DSO_CFI=$(usex cross-dso-cfi) )
 			fi
+			mycmakeargs+=( -DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall" ) # Prevent Illegal instruction with /usr/bin/aomdec --help
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
@@ -497,7 +517,7 @@ configure_pgx() {
 			mycmakeargs+=(
 				-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
 			)
-			[[ "${USE}" =~ "cfi" ]] && append-ldflags -ldl # It's missing for some reason.
+#			[[ "${USE}" =~ "cfi" ]] && append-ldflags -ldl # It's missing for some reason.
 		else
 			mycmakeargs+=(
 				-DENABLE_EXAMPLES=OFF
@@ -989,13 +1009,11 @@ elog "The following package must be installed before PGOing this package:"
 elog "  media-video/ffmpeg[encode,libaom,$(get_arch_enabled_use_flags)]"
 	fi
 	if [[ "${USE}" =~ "cfi" ]] ; then
+# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
 ewarn
-ewarn "cfi, cfi-icall, cfi-cast require static linking of this library."
+ewarn "Cross-DSO CFI is experimental."
 ewarn
-ewarn "If you do ldd and you still see libaom.so, then it breaks the CFI"
-ewarn "runtime protection spec as if that scheme of CFI was never used."
-ewarn "For details, see https://clang.llvm.org/docs/ControlFlowIntegrity.html"
-ewarn "with \"statically linked\" keyword search."
+ewarn "You must link these libraries with static linkage for plain CFI to work."
 ewarn
 	fi
 }

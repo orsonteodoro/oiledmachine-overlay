@@ -1,0 +1,16 @@
+Subject:  Static link to prevent explicit linking to libdl
+--- a/CMakeLists.txt.orig	2021-10-09 22:11:53.353990336 -0700
++++ b/CMakeLists.txt	2021-10-09 22:32:46.493031630 -0700
+@@ -618,7 +618,11 @@ if(ENABLE_EXAMPLES AND CONFIG_AV1_ENCODE
+ endif()
+ 
+ foreach(aom_app ${AOM_APP_TARGETS})
+-  target_link_libraries(${aom_app} ${AOM_LIB_LINK_TYPE} aom)
++  if(BUILD_SHARED_LIBS)
++    target_link_libraries(${aom_app} ${AOM_LIB_LINK_TYPE} aom)
++  else()
++    target_link_libraries(${aom_app} ${AOM_LIB_LINK_TYPE} aom -static)
++  endif()
+ endforeach()
+ 
+ if(ENABLE_EXAMPLES OR ENABLE_TESTS OR ENABLE_TOOLS)
