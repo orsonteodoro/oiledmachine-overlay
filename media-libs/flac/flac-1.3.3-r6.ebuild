@@ -14,13 +14,14 @@ LICENSE="BSD FDL-1.2 GPL-2 LGPL-2.1"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 IUSE="+cxx debug ogg cpu_flags_ppc_altivec cpu_flags_ppc_vsx cpu_flags_x86_sse static-libs"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cross-dso-cfi hardened libcxx lto shadowcallstack"
 RDEPEND="ogg? ( >=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}] )"
 REQUIRED_USE="
 	cfi? ( clang lto static-libs )
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
+	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 "
 
 _seq() {
@@ -45,7 +46,8 @@ gen_cfi_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
+			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -63,7 +65,7 @@ gen_shadowcallstack_bdepend() {
 			=sys-devel/clang-runtime-${v}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
-			=sys-libs/compiler-rt-sanitizers-${v}*[shadowcallstack?]
+			=sys-libs/compiler-rt-sanitizers-${v}*:=[shadowcallstack?]
 		)
 		     "
 	done
@@ -178,6 +180,15 @@ is_hardened_gcc() {
 	return 1
 }
 
+is_cfi_supported() {
+	if [[ "${build_type}" == "static-libs" ]] ; then
+		return 0
+	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+		return 0
+	fi
+	return 1
+}
+
 _src_configure() {
 	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
@@ -201,7 +212,7 @@ _src_configure() {
 	filter-flags \
 		'-f*sanitize*' \
 		'-f*stack*' \
-		'-fvisibility=hidden' \
+		'-fvisibility=*' \
 		'--param=ssp-buffer-size=*' \
 		-DFLAC__USE_VISIBILITY_ATTR \
 		-Wl,-z,noexecstack \
@@ -226,18 +237,26 @@ _src_configure() {
 	set_cfi() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
-		if tc-is-clang && [[ "${build_type}" == "static-libs" ]] ;then
+		if tc-is-clang && is_cfi_supported ; then
+			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+				append_all -fvisibility=hidden
+			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
+				append_all -fvisibility=default
+			fi
 			if use cfi ; then
-				append_all -fvisibility=hidden -fsanitize=cfi
+				append_all -fsanitize=cfi
 			else
-				use cfi-cast && append_all -fvisibility=hidden \
+				use cfi-cast && append_all \
 							-fsanitize=cfi-derived-cast \
 							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all -fvisibility=hidden \
+				use cfi-icall && append_all \
 							-fsanitize=cfi-icall
-				use cfi-vcall && append_all -fvisibility=hidden \
+				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
+			use cross-dso-cfi \
+				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
+				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
@@ -355,7 +374,9 @@ src_install() {
 	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
 	# way to check for CFI presence.
 	if [[ "${USE}" =~ "cfi" ]] ; then
-		for f in $(find "${ED}" -name "*.a") ; do
+		local arg=()
+		use cross-dso-cfi && arg+=( -o -name "*.so*" )
+		for f in $(find "${ED}" -name "*.a" ${arg[@]}) ; do
 			if use cfi ; then
 				touch "${f}.cfi" || die
 			else
@@ -369,15 +390,11 @@ src_install() {
 
 pkg_postinst() {
 	if [[ "${USE}" =~ "cfi" ]] ; then
+# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
 ewarn
-ewarn "cfi, cfi-cast, cfi-icall, cfi-vcall require static linking of this"
-ewarn "library."
+ewarn "Cross-DSO CFI is experimental."
 ewarn
-ewarn "If you do \`ldd <path to exe>\` and you still see libFLAC.so or"
-ewarn "libFLAC++.so, then it breaks the CFI runtime protection"
-ewarn "spec as if that scheme of CFI was never used.  For details, see"
-ewarn "https://clang.llvm.org/docs/ControlFlowIntegrity.html with"
-ewarn "\"statically linked\" keyword search."
+ewarn "You must link these libraries with static linkage for plain CFI to work."
 ewarn
 	fi
 einfo
