@@ -145,9 +145,5 @@ sys-devel/clang experimental
 # Prevents loading of precompiled www browser
 sys-libs/zlib cross-dso-cfi
 
-# Fails during configure test.
-# cfi.cpp:161: void __cfi::ShadowBuilder::Add(__sanitizer::uptr, __sanitizer::uptr, __sanitizer::uptr): Assertion `(cfi_check & (kShadowAlign - 1)) == 0' failed
-dev-libs/icu cross-dso-cfi
-
 # undefined symbol: __cfi_slowpath with pulseaudio -k
 media-libs/flac cross-dso-cfi
