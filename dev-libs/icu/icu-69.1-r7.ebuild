@@ -206,16 +206,6 @@ is_hardened_gcc() {
 	return 1
 }
 
-is_cfi_supported() {
-	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${build_type}" == "static-libs" ]] ; then
-		return 0
-	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
-		return 0
-	fi
-	return 1
-}
-
 src_configure() {
 	append-cxxflags -std=c++14
 
@@ -245,6 +235,7 @@ src_configure() {
 }
 
 is_cfi_supported() {
+	[[ "${USE}" =~ "cfi" ]] || return 1
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		return 0
 	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
@@ -302,9 +293,9 @@ _configure_abi() {
 
 	set_cfi() {
 		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+			if [[ "${build_type}" == "static-libs" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
+			elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -319,7 +310,7 @@ _configure_abi() {
 							-fsanitize=cfi-vcall
 			fi
 			use cross-dso-cfi \
-				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
+				&& [[ "${build_type}" == "shared-libs" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
