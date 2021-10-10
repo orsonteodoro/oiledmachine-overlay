@@ -53,6 +53,10 @@
     Copy the *.so or every file one-by-one from /bak back into / with
     the same relative path.
 
+    You should test the zlib is working by re-emerging twice this same
+    package before rebooting.  If it fails, to work you can replace
+    the working copy before rebooting.
+
     Once you taken the necessary precautions you may add
     ZLIB_PRECAUTIONS_TAKEN=1 to /etc/make.conf
     and maybe enable the cross-dso-cfi USE flag.
