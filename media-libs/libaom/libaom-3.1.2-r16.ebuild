@@ -353,6 +353,7 @@ is_hardened_gcc() {
 }
 
 is_cfi_supported() {
+	[[ "${USE}" =~ "cfi" ]] || return 1
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		return 0
 	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
@@ -450,7 +451,7 @@ configure_pgx() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
 		if tc-is-clang && is_cfi_supported ; then
-			[[ "${USE}" =~ "cfi" ]] && mycmakeargs+=( -DSANITIZE=cfi )
+			mycmakeargs+=( -DSANITIZE=cfi )
 			mycmakeargs+=( -DCFI=$(usex cfi) )
 			mycmakeargs+=( -DCFI_CAST=$(usex cfi-cast) )
 			#mycmakeargs+=( -DCFI_ICALL=$(usex cfi-icall) )
