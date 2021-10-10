@@ -474,7 +474,6 @@ _configure_pgx() {
 		'-fvisibility=*' \
 		'-Wno-error=*' \
 		'--param=ssp-buffer-size=*' \
-		-pthread \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
@@ -488,7 +487,6 @@ _configure_pgx() {
 		if tc-is-clang && is_cfi_supported ; then
 			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
 				append_all -fvisibility=hidden
-				append_all -pthread
 			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
 				append_all -fvisibility=default
 			fi
