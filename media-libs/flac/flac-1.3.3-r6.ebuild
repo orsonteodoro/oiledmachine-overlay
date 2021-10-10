@@ -120,7 +120,10 @@ BDEPEND+="
 	!elibc_uclibc? ( sys-devel/gettext )
 "
 
-PATCHES=( "${FILESDIR}/${P}-fix-zero-first-byte-md5sum-check.patch" )
+PATCHES=(
+	"${FILESDIR}/${P}-fix-zero-first-byte-md5sum-check.patch"
+	"${FILESDIR}/${PN}-1.3.3-fPIC.patch"
+)
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
 
@@ -199,9 +202,6 @@ _src_configure() {
 		RANLIB=llvm-ranlib
 		READELF=llvm-readelf
 		unset LD
-
-		# Avoid undefined reference to fread.inline
-		replace-flags '-O*' -O1
 	fi
 	if tc-is-clang && ! use clang ; then
 		die "You must enable the clang USE flag or remove clang/clang++ from CC/CXX."
@@ -222,12 +222,13 @@ _src_configure() {
 		-stdlib=libc++
 
 	if tc-is-clang && use libcxx ; then
-		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
-			&& append-cxxflags $(test-flags-CC -static-libstdc++)
-		append-cxxflags -stdlib=libc++
-		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
-			&& append-ldflags $(test-flags-CC -static-libstdc++) # Passes through clang++
-		append-ldflags -stdlib=libc++
+		:;
+#		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
+#			&& append-cxxflags $(test-flags-CC -static-libstdc++)
+#		append-cxxflags -stdlib=libc++
+#		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
+#			&& append-ldflags $(test-flags-CC -static-libstdc++) # Passes through clang++
+#		append-ldflags -stdlib=libc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
 	fi
@@ -335,6 +336,7 @@ src_compile() {
 			export S="${S_orig}.${ABI}_${build_type/-*}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
+			einfo "Running src_compile for ${build_type}"
 			emake
 		done
 	}
