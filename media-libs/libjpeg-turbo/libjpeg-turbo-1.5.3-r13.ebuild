@@ -289,6 +289,7 @@ is_hardened_gcc() {
 src_configure() { :; }
 
 is_cfi_supported() {
+	[[ "${USE}" =~ "cfi" ]] || return 1
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		return 0
 	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
