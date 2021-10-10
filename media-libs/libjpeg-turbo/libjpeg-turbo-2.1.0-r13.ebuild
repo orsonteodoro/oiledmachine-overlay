@@ -217,6 +217,7 @@ pkg_setup() {
 		java-pkg-opt-2_pkg_setup
 	fi
 	ewarn "Install may fail.  \`emerge -C ${PN}\` then \`emerge -1 =${P}\`."
+	ewarn "PGO may randomly fail with CFI.  Disable the pgo USE flag to fix it."
 }
 
 get_build_types() {
@@ -352,11 +353,12 @@ _configure_pgx() {
 				use cfi-cast && append_all \
 							-fsanitize=cfi-derived-cast \
 							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all \
-							-fsanitize=cfi-icall
+				#use cfi-icall && append_all \
+				#			-fsanitize=cfi-icall
 				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
+			append_all -fno-sanitize=cfi-icall # breaks precompiled cef based apps
 			use cross-dso-cfi \
 				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
