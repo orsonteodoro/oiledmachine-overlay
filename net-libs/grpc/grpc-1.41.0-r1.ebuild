@@ -19,7 +19,7 @@ LICENSE="Apache-2.0
 # BSD-2 GPL-2 third_party/xxhash/LICENSE
 # MIT third_party/upb/third_party/lunit/LICENSE
 # Unlicense third_party/upb/third_party/wyhash/LICENSE
-#KEYWORDS="~amd64 ~ppc64 ~x86" # missing xhash >= 0.8.1
+KEYWORDS="~amd64 ~ppc64 ~x86"
 IUSE+=" doc examples test"
 SLOT_MAJ="0"
 SLOT="${SLOT_MAJ}/19.141" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
@@ -29,7 +29,6 @@ RDEPEND+="
 	>=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-3.17.3:=[${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2020.05.27:=[${MULTILIB_USEDEP}]
-	>=dev-libs/xxhash-0.8.1
 	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]"
 DEPEND+=" ${RDEPEND}

@@ -29,7 +29,6 @@ RDEPEND+="
 	>=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-3.15.8:=[${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2020.05.27:=[${MULTILIB_USEDEP}]
-	>=dev-libs/xxhash-0.8.0
 	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]"
 DEPEND+=" ${RDEPEND}
