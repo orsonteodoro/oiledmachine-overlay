@@ -561,10 +561,6 @@ configure_pgx() {
 		myconfargs+=( --enable-cfi )
 	fi
 
-	if use chromium ; then
-		myconfargs+=( --as=nasm )
-	fi
-
 	echo "${S}"/configure "${myconfargs[@]}" >&2
 	"${S}"/configure "${myconfargs[@]}"
 }
