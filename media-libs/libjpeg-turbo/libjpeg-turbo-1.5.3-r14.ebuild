@@ -231,7 +231,7 @@ get_build_types() {
 src_prepare() {
 	default
 
-	if use is_hardened_clang || use is_hardened_gcc ; then
+	if is_hardened_clang || is_hardened_gcc ; then
 		:;
 	elif use hardened ; then
 		eapply "${FILESDIR}/libjpeg-turbo-1.5.3-pie.patch"
