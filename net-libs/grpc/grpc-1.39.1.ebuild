@@ -22,12 +22,13 @@ LICENSE="Apache-2.0
 KEYWORDS="~amd64 ~ppc64 ~x86"
 IUSE+=" doc examples test"
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/18.139"
+SLOT="${SLOT_MAJ}/18.139" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+# third_party last update: 20210621
 RDEPEND+="
 	 =dev-cpp/abseil-cpp-20210324*:=[${MULTILIB_USEDEP}]
 	>=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-3.15.8:=[${MULTILIB_USEDEP}]
-	>=dev-libs/re2-0.2020.06.01:=[${MULTILIB_USEDEP}]
+	>=dev-libs/re2-0.2020.05.27:=[${MULTILIB_USEDEP}]
 	>=dev-libs/xxhash-0.8.0
 	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]"
