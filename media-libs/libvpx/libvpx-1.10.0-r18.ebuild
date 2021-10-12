@@ -455,8 +455,7 @@ configure_pgx() {
 		# performance and security while maintaining a performance limit.
 		if tc-is-clang && is_cfi_supported ; then
 			if [[ "${build_type}" == "static-libs" ]] ; then
-#				append_all -fvisibility=hidden
-				append_all -fvisibility=default
+				append_all -fvisibility=hidden
 			elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
 				append_all -fvisibility=default
 			fi
