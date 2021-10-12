@@ -12,18 +12,24 @@ LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE+=" curl doc mms static-libs"
-DEPEND+=" sys-libs/zlib[${MULTILIB_USEDEP}]
-	dev-libs/tinyxml2:=[${MULTILIB_USEDEP}]
-	>=media-libs/libzen-0.4.37:=[static-libs=,${MULTILIB_USEDEP}]
-	curl? ( net-misc/curl[${MULTILIB_USEDEP}] )
-	mms? ( >=media-libs/libmms-0.6.1:=[static-libs=,${MULTILIB_USEDEP}] )"
+# U 20.04
+DEPEND+=" >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
+	>=dev-libs/tinyxml2-7.0.0:=[${MULTILIB_USEDEP}]
+	>=dev-util/desktop-file-utils-0.24
+	>=media-libs/libzen-0.4.39:=[static-libs=,${MULTILIB_USEDEP}]
+	>=net-libs/webkit-gtk-2.28.1:4[${MULTILIB_USEDEP}]
+	>=sys-apps/bubblewrap-0.4.0
+	>=x11-libs/libSM-1.2.3[${MULTILIB_USEDEP}]
+	>=x11-libs/wxGTK-3.0.4:3.0-gtk3[${MULTILIB_USEDEP}]
+	curl? ( >=net-misc/curl-7.68.0[${MULTILIB_USEDEP}] )
+	mms? ( >=media-libs/libmms-0.6.4:=[static-libs=,${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
+		>=dev-util/pkgconf-1.6.3[${MULTILIB_USEDEP},pkg-config]
+		>=dev-util/pkgconfig-0.29.1[${MULTILIB_USEDEP}]
 	)
-	doc? ( app-doc/doxygen )"
+	doc? ( >=app-doc/doxygen-1.8.17 )"
 SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.xz"
 # tests try to fetch data from online sources
 RESTRICT="test"
