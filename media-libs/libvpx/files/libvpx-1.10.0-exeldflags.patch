@@ -1,3 +1,9 @@
+Subject:  Allow vpx{enc,dec} to build with -pie and other flags.
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Mon Oct 11 09:43:30 AM PDT 2021 (Unix Time: 1633970610)
+
+Allows to add explicit -pie in non-hardened (vanilla) compilers through setting EXELDFLAGS envvar.
+
 diff -urp libvpx-1.10.0.orig/build/make/Makefile libvpx-1.10.0/build/make/Makefile
 --- libvpx-1.10.0.orig/build/make/Makefile	2021-03-18 12:59:46.000000000 -0700
 +++ libvpx-1.10.0/build/make/Makefile	2021-10-05 19:28:21.487278652 -0700

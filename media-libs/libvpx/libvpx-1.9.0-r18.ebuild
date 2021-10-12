@@ -170,7 +170,7 @@ PDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/libvpx-1.3.0-sparc-configure.patch" # 501010
-	"${FILESDIR}/libvpx-1.10.0-cfi-exeldflags.patch"
+	"${FILESDIR}/libvpx-1.10.0-exeldflags.patch"
 	"${FILESDIR}/libvpx-1.10.0-cfi-static-link.patch"
 )
 S="${WORKDIR}/${P}"

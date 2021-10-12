@@ -170,7 +170,7 @@ PDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/libvpx-1.3.0-sparc-configure.patch" # 501010
-	"${FILESDIR}/libvpx-1.10.0-cfi-exeldflags.patch"
+	"${FILESDIR}/libvpx-1.10.0-exeldflags.patch"
 	"${FILESDIR}/libvpx-1.10.0-cfi-static-link.patch"
 )
 S="${WORKDIR}/${P}"
@@ -455,7 +455,8 @@ configure_pgx() {
 		# performance and security while maintaining a performance limit.
 		if tc-is-clang && is_cfi_supported ; then
 			if [[ "${build_type}" == "static-libs" ]] ; then
-				append_all -fvisibility=hidden
+#				append_all -fvisibility=hidden
+				append_all -fvisibility=default
 			elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
 				append_all -fvisibility=default
 			fi
