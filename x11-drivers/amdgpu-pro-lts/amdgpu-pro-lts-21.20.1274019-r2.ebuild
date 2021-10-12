@@ -82,6 +82,7 @@ PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_MESA="21.1.0"
 PKG_VER_ROCM_LLVM="13.0"
+PKG_VER_ROCM_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_ROCM_LLVM})
 PKG_VER_ROCT="1.0.9"
 PKG_VER_ROCM_DEVLIBS="1.0.0"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
@@ -93,8 +94,8 @@ ROCK_V="4.2.0" # an approximate
 IUSE="+amf bindist clinfo developer dkms doc +egl +gles2 freesync glamor
 hip-clang +hwe +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_rocr
 +opengl +opengl_pro opengl_mesa openmax +pro-stack rocm strict-pairing
-+vaapi vaapi_r600 +vaapi_radeonsi +vdpau +vdpau vdpau_r600 +vdpau_radeonsi
-+vulkan vulkan_open vulkan_pro wayland +X xa"
++system-llvm +vaapi vaapi_r600 +vaapi_radeonsi +vdpau +vdpau vdpau_r600
++vdpau_radeonsi +vulkan vulkan_open vulkan_pro wayland +X xa"
 REQUIRED_USE="
 	amf? ( pro-stack opencl opencl_rocr vulkan_pro )
 	bindist? ( !pro-stack !doc )
@@ -193,6 +194,17 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 )
 	 strict-pairing? (
 		~virtual/amdgpu-drm-3.2.131[dkms?,strict-pairing]
+	 )
+	 system-llvm? (
+		>=sys-devel/llvm-${PKG_VER_LLVM_TRIPLE}:${PKG_VER_LLVM_MAJ}[llvm_targets_AMDGPU]
+		!~sys-devel/llvm-${PKG_VER_LLVM_MAJ}.0.0.9999:${PKG_VER_LLVM_MAJ}
+		>=sys-devel/clang-${PKG_VER_LLVM_TRIPLE}:${PKG_VER_LLVM_MAJ}[llvm_targets_AMDGPU]
+		!~sys-devel/clang-${PKG_VER_LLVM_MAJ}.0.0.9999:${PKG_VER_LLVM_MAJ}
+		rocm? (
+			~sys-devel/clang-${PKG_VER_ROCM_LLVM_MAJ}.0.0.9999:${PKG_VER_ROCM_LLVM_MAJ}[llvm_targets_AMDGPU]
+			>=sys-devel/lld-${PKG_VER_ROCM_LLVM_MAJ}.0.0.9999:${PKG_VER_ROCM_LLVM_MAJ}
+			~sys-devel/llvm-${PKG_VER_ROCM_LLVM_MAJ}.0.0.9999:${PKG_VER_ROCM_LLVM_MAJ}[llvm_targets_AMDGPU]
+		)
 	 )
 	 vaapi? ( >=x11-libs/libva-2.1.0
 		  >=virtual/amdgpu-drm-3.2.131[dkms?,firmware] )
@@ -326,7 +338,7 @@ src_unpack_open_stack() {
 
 	unpack_deb "${d_debs}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 	unpack_deb "${d_debs}/libdrm-amdgpu-common_${PKG_VER_ID}-${PKG_REV}${PKG_ARCH_SUFFIX}${archall}.deb"
-	use developer && \
+	! use system-llvm && use developer && \
 	unpack_deb "${d_debs}/libdrm-amdgpu-dev_${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 	unpack_deb "${d_debs}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 	unpack_deb "${d_debs}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
@@ -337,8 +349,8 @@ src_unpack_open_stack() {
 	# shared libLLVM-9.so with -DLLVM_BUILD_LLVM_DYLIB=ON that is
 	# enabled on >=llvm-10.  Gentoo only use split llvm libraries
 	# but the driver components use the shared.
-	unpack_deb "${d_debs}/libllvm${PKG_VER_LLVM}-amdgpu_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	if use developer ; then
+	! use system-llvm && unpack_deb "${d_debs}/libllvm${PKG_VER_LLVM}-amdgpu_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	if ! use system-llvm && use developer ; then
 		unpack_deb "${d_debs}/llvm-amdgpu-${PKG_VER_LLVM}-dev_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/llvm-amdgpu-${PKG_VER_LLVM}-runtime_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/llvm-amdgpu-${PKG_VER_LLVM}_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
@@ -500,12 +512,12 @@ src_unpack_pro_stack() {
 	if use rocm ; then
 		if [[ "${ABI}" == "amd64" ]] ; then
 			unpack_deb "${d_debs}/hsa-runtime-rocr-amdgpu_${PKG_VER_HSA_RT}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-			unpack_deb "${d_debs}/libllvm-amdgpu-pro-rocm_${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-			unpack_deb "${d_debs}/llvm-amdgpu-pro-rocm_${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			! use system-llvm && unpack_deb "${d_debs}/libllvm-amdgpu-pro-rocm_${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			! use system-llvm && unpack_deb "${d_debs}/llvm-amdgpu-pro-rocm_${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 			if use developer ; then
 				unpack_deb "${d_debs}/hsa-runtime-rocr-amdgpu-dev_${PKG_VER_HSA_RT}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 				unpack_deb "${d_debs}/rocm-device-libs-amdgpu-pro_${PKG_VER_ROCM_DEVLIBS}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-				unpack_deb "${d_debs}/llvm-amdgpu-pro-rocm-dev_${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+				! use system-llvm && unpack_deb "${d_debs}/llvm-amdgpu-pro-rocm-dev_${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 				if use hip-clang ; then
 					if [[ "${ABI}" == "amd64" ]] ; then
 						unpack_deb "${d_debs}/hip-rocr-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
@@ -651,8 +663,9 @@ src_install() {
 			if use vdpau ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/vdpau/"*.so* || die
 			fi
+			! use system-llvm && \
 			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-${PKG_VER_LLVM}/lib/"*.so* || die
-			if use developer ; then
+			if ! use system-llvm && use developer ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-${PKG_VER_LLVM}/bin/"* || die
 				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-${PKG_VER_LLVM}/share/opt-viewer/"*.py || die
 			fi
@@ -720,7 +733,7 @@ src_install() {
 		doman usr/share/man/man7/amdgpu-doc.7.gz
 	fi
 
-	if use open-stack && use developer ; then
+	if ! use system-llvm && use open-stack && use developer ; then
 		insinto /usr/share/binfmts
 		doins usr/share/binfmts/llvm-amdgpu-${PKG_VER_LLVM}-runtime.binfmt
 	fi
@@ -816,6 +829,12 @@ that either amdgpu-dkms or rock-dkms is installed"
 		einfo \
 "Re-emerge this package with the opencl-icd-loader USE flag to fix the\n\
 libOpenCL.so symlink complaint by eselect-opencl"
+	fi
+
+	if ! use system-llvm ; then
+		ewarn \
+"You must manually set LD_LIBRARY_PATH=\"/opt/amdgpu-pro/lib/x86_64-linux-gnu:/opt/amdgpu/lib/x86_64-linux-gnu:/opt/amdgpu-pro/lib/i386-linux-gnu:/opt/amdgpu/lib/i386-linux-gnu\"\n
+whenever VA-API, VDPAU, XA (libxatracker) are being used."
 	fi
 }
 

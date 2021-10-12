@@ -69,8 +69,16 @@
     <flag name="rocm">Installs some of the ROCm parts (KFD [available in
       amdgpu-dkms or rock-dkms], ROCt, HSA KMT) if available and HSA parts
       (HSA runtime).</flag>
-    <flag name="system-roct">Install the hsakmt library needed for API calls to
-      communicate with the ROCk kernel.</flag>
+    <flag name="system-llvm">Prefer the Clang/LLVM toolchain instead of the one
+      provided by the driver.  There is a possibility of missing symbols when
+      parts of the drivers use code paths related to the live git LLVM branches
+      due to unstable API.  If this occurs, disable this USE flag.  Disabling
+      this may inadvertantly link to the driver LLVM instead of the system
+      when compiling or linking to an outdated version.  This is why
+      the system-llvm USE flag was enabled to prevent these situations.
+    <flag name="system-roct">Prefer the hsakmt library provided by the system
+      needed for API calls to communicate with the ROCk kernel.  Otherwise,
+      use the internal if the rocm USE flag is specified.</flag>
     <flag name="strict-pairing">Pairs the amdgpu-pro-lts package to the
       same firmware and same DRM kernel driver.</flag>
     <flag name="vaapi">Install VAAPI (Video Acceleration API)
