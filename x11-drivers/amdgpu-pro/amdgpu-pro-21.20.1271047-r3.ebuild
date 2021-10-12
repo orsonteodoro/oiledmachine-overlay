@@ -179,13 +179,14 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 		~virtual/amdgpu-drm-3.2.131[dkms?,strict-pairing]
 	 )
 	 system-llvm? (
-		>=sys-devel/llvm-${PKG_VER_LLVM_TRIPLE}:${PKG_VER_LLVM_MAJ}[llvm_targets_AMDGPU]
+		!~sys-devel/clang-${PKG_VER_LLVM_MAJ}.0.0.9999:${PKG_VER_LLVM_MAJ}
 		!~sys-devel/llvm-${PKG_VER_LLVM_MAJ}.0.0.9999:${PKG_VER_LLVM_MAJ}
-		rocm? ( ~sys-devel/llvm-${PKG_VER_ROCM_LLVM_MAJ}.0.0.9999:${PKG_VER_ROCM_LLVM_MAJ}[llvm_targets_AMDGPU] )
-		developer? (
-			>=sys-devel/clang-${PKG_VER_LLVM_TRIPLE}:${PKG_VER_LLVM_MAJ}[llvm_targets_AMDGPU]
-			!~sys-devel/clang-${PKG_VER_LLVM_MAJ}.0.0.9999:${PKG_VER_LLVM_MAJ}
-			rocm? ( ~sys-devel/clang-${PKG_VER_ROCM_LLVM_MAJ}.0.0.9999:${PKG_VER_ROCM_LLVM_MAJ}[llvm_targets_AMDGPU] )
+		>=sys-devel/clang-${PKG_VER_LLVM_TRIPLE}:${PKG_VER_LLVM_MAJ}[llvm_targets_AMDGPU]
+		>=sys-devel/llvm-${PKG_VER_LLVM_TRIPLE}:${PKG_VER_LLVM_MAJ}[llvm_targets_AMDGPU]
+		rocm? (
+			>=sys-devel/lld-${PKG_VER_ROCM_LLVM_MAJ}.0.0.9999:${PKG_VER_ROCM_LLVM_MAJ}
+			~sys-devel/clang-${PKG_VER_ROCM_LLVM_MAJ}.0.0.9999:${PKG_VER_ROCM_LLVM_MAJ}[llvm_targets_AMDGPU]
+			~sys-devel/llvm-${PKG_VER_ROCM_LLVM_MAJ}.0.0.9999:${PKG_VER_ROCM_LLVM_MAJ}[llvm_targets_AMDGPU]
 		)
 	 )
 	 vaapi? (  >=x11-libs/libva-${PKG_VER_VA}
@@ -572,7 +573,7 @@ src_install() {
 			if use vdpau ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/vdpau/"*.so* || die
 			fi
-			if use developer ; then
+			if ! use system-llvm && use developer ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/lib/"*.so* || die
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/bin/"* || die
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/share/opt-viewer/"*.py || die
