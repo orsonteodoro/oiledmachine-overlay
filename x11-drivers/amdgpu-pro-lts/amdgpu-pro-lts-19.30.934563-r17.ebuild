@@ -849,7 +849,7 @@ libOpenCL.so symlink complaint by eselect-opencl"
 	if ! use system-llvm ; then
 		ewarn \
 "You must manually set LD_LIBRARY_PATH=\"/opt/amdgpu-pro/lib/x86_64-linux-gnu:/opt/amdgpu/lib/x86_64-linux-gnu:/opt/amdgpu-pro/lib/i386-linux-gnu:/opt/amdgpu/lib/i386-linux-gnu\"\n
-whenever VA-API, VDPAU, XA (libxatracker) are being used."
+whenever VA-API, VDPAU, XA are being used."
 	fi
 }
 
