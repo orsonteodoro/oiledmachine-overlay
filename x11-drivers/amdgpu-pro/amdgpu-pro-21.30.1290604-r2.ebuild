@@ -3,10 +3,8 @@
 
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
-# The HOMEPAGE link (1164792) doesn't have this exact release (1188099).  See DL_PAGE instead.
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-45"
-DL_PAGE="https://www.amd.com/en/support/graphics/amd-radeon-6000-series/amd-radeon-6900-series/amd-radeon-rx-6900-xt"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-21-30"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	dkms? ( AMDGPU-FIRMWARE GPL-2 MIT )
@@ -15,7 +13,6 @@ LICENSE="AMDGPUPROEULA
 		gles2? ( MIT developer? ( Apache-2.0 MIT ) )
 		opengl? ( MIT SGI-B-2.0 )
 		opengl_mesa? ( all-rights-reserved MIT SGI-B-2.0 )
-		osmesa? ( all-rights-reserved MIT )
 		vdpau? ( MIT )
 		vulkan_open? ( MIT )
 		xa? ( MIT )
@@ -58,33 +55,34 @@ PKG_VER=$(ver_cut 1-2)
 PKG_VER_MAJ=$(ver_cut 1)
 PKG_REV=$(ver_cut 3)
 PKG_ARCH="rhel"
-PKG_ARCH_VER="8.2"
+PKG_ARCH_VER="8.4"
 PKG_ARCH_VER_MAJOR=$(ver_cut 1 ${PKG_ARCH_VER})
 PKG_ARCH_SUFFIX=".el${PKG_ARCH_VER_MAJOR}."
-PKG_VER_COMGR="1.7.0"
+PKG_VER_COMGR="2.1.0"
 PKG_VER_GCC="8.2.1"
 PKG_VER_GST_OMX="1.0.0.1"
-PKG_VER_HSART="1.2.0"
+PKG_VER_HSART="1.3.0"
 PKG_VER_HSAKMT="1.0.6"
 PKG_VER_HSAKMT_A="1.0.9"
 PKG_VER_ID="1.0.0"
-PKG_VER_LIBDRM="2.4.100"
-PKG_VER_LLVM_TRIPLE="10.0.0"
+PKG_VER_LIBDRM="2.4.106"
+PKG_VER_LLVM_TRIPLE="12.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="20.1.6"
+PKG_VER_MESA="21.2.0"
 PKG_VER_ROCM_DEVLIBS="1.0.0"
-PKG_VER_ROCM_LLVM="11.0"
+PKG_VER_ROCM_LLVM="13.0"
+PKG_VER_ROCM_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_ROCM_LLVM})
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_VA="1.8.3"
-PKG_VER_XORG_VIDEO_AMDGPU_DRV="24.0.0" # about the same as the mesa version
-VULKAN_SDK_VER="1.2.148"
-ROCK_V="3.9.0_pre20201021" # an approximate
+PKG_VER_XORG_VIDEO_AMDGPU_DRV="24.1.0" # about the same as the mesa version
+VULKAN_SDK_VER="1.2.180"
+ROCK_V="4.3.0" # an approximate
 IUSE="amf bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang
 +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_rocr +opengl
-opengl_mesa +opengl_pro osmesa +pro-stack rocm strict-pairing system-hsa-rt
-system-roct +vaapi vaapi_r600 +vaapi_radeonsi +vdpau vdpau_r300 vdpau_r600
+opengl_mesa +opengl_pro +pro-stack rocm strict-pairing +system-llvm system-roct
+system-hsa-rt +vaapi vaapi_r600 +vaapi_radeonsi +vdpau vdpau_r600
 +vdpau_radeonsi +vulkan vulkan_open vulkan_pro +X xa"
 REQUIRED_USE="
 	!abi_x86_32
@@ -101,13 +99,11 @@ REQUIRED_USE="
 	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
 	opengl_mesa? ( open-stack opengl X )
 	opengl_pro? ( egl pro-stack opengl X )
-	osmesa? ( developer? ( X ) open-stack )
 	rocm? ( dkms open-stack pro-stack )
 	vaapi? ( open-stack X ^^ ( vaapi_r600 vaapi_radeonsi ) )
 	vaapi_r600? ( vaapi )
 	vaapi_radeonsi? ( vaapi )
-	vdpau? ( open-stack ^^ ( vdpau_r300 vdpau_r600 vdpau_radeonsi ) )
-	vdpau_r300? ( vdpau )
+	vdpau? ( open-stack ^^ ( vdpau_r600 vdpau_radeonsi ) )
 	vdpau_r600? ( vdpau )
 	vdpau_radeonsi? ( vdpau )
 	vulkan? ( || ( vulkan_open vulkan_pro ) )
@@ -122,6 +118,11 @@ SLOT="1"
 #
 # For more info on VIDEODRV see https://www.x.org/wiki/XorgModuleABIVersions/
 # sys-libs/ncurses[tinfo] required by llvm in this package
+
+# llvm required:
+# mesa-amdgpu-dri-drivers (vaapi)
+# mesa-amdgpu-libxatracker
+# mesa-amdgpu-vdpau-drivers
 
 RDEPEND="!x11-drivers/amdgpu-pro-lts
 	 || ( >=dev-libs/libelf-0.174 virtual/libelf:0/1 )
@@ -167,18 +168,28 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 	 opencl? ( !opencl-icd-loader? ( >=virtual/opencl-3 ) )
 	 rocm? ( >=sys-apps/pciutils-3.5.6
 		 >=sys-process/numactl-2.0.11
-		  !strict-pairing? ( >=virtual/amdgpu-drm-3.2.99[dkms,firmware] )
-		   strict-pairing? ( ~virtual/amdgpu-drm-3.2.99[dkms,firmware] )
+		  !strict-pairing? ( >=virtual/amdgpu-drm-3.2.140[dkms,firmware] )
+		   strict-pairing? ( ~virtual/amdgpu-drm-3.2.140[dkms,firmware] )
 		   system-roct? ( >=dev-libs/roct-thunk-interface-${ROCK_V} ) )
 	 !strict-pairing? (
 		freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
-		>=virtual/amdgpu-drm-3.2.99[dkms?]
+		>=virtual/amdgpu-drm-3.2.140[dkms?]
 	 )
 	 strict-pairing? (
-		~virtual/amdgpu-drm-3.2.99[dkms?,strict-pairing]
+		~virtual/amdgpu-drm-3.2.140[dkms?,strict-pairing]
+	 )
+	 system-llvm? (
+		>=sys-devel/llvm-${PKG_VER_LLVM_TRIPLE}:${PKG_VER_LLVM_MAJ}[llvm_targets_AMDGPU]
+		!~sys-devel/llvm-${PKG_VER_LLVM_MAJ}.0.0.9999:${PKG_VER_LLVM_MAJ}
+		rocm? ( ~sys-devel/llvm-${PKG_VER_ROCM_LLVM_MAJ}.0.0.9999:${PKG_VER_ROCM_LLVM_MAJ}[llvm_targets_AMDGPU] )
+		developer? (
+			>=sys-devel/clang-${PKG_VER_LLVM_TRIPLE}:${PKG_VER_LLVM_MAJ}[llvm_targets_AMDGPU]
+			!~sys-devel/clang-${PKG_VER_LLVM_MAJ}.0.0.9999:${PKG_VER_LLVM_MAJ}
+			rocm? ( ~sys-devel/clang-${PKG_VER_ROCM_LLVM_MAJ}.0.0.9999:${PKG_VER_ROCM_LLVM_MAJ}[llvm_targets_AMDGPU] )
+		)
 	 )
 	 vaapi? (  >=x11-libs/libva-${PKG_VER_VA}
-		   >=virtual/amdgpu-drm-3.2.99[dkms?,firmware] )
+		   >=virtual/amdgpu-drm-3.2.140[dkms?,firmware] )
 	 vdpau? ( >=x11-libs/libvdpau-1.1.1 )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:= )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:=[-vulkan]
@@ -215,7 +226,7 @@ pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo "Please download"
 	einfo "  - ${FN}"
-	einfo "from ${DL_PAGE} and place them in ${distdir}"
+	einfo "from ${HOMEPAGE} and place them in ${distdir}"
 }
 
 unpack_rpm() {
@@ -249,6 +260,8 @@ driver to work"
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
+	einfo "Detected mesa using libglvnd"
+	export MESA_USES_LIBGLVND="Y"
 	if [[ -f "${EROOT}/etc/env.d/000opengl" ]] ; then
 		ewarn \
 "Please remove /etc/env.d/000opengl and do ldconfig && env-update manually. \
@@ -278,7 +291,7 @@ src_unpack_open_stack() {
 	unpack_rpm "${d_rpms}/drm-utils-amdgpu-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_rpms}/libdrm-amdgpu-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_noarch}/libdrm-amdgpu-common-${PKG_VER_ID}-${PKG_REV}${PKG_ARCH_SUFFIX}${noarch}.rpm"
-	use developer && \
+	! use system-llvm && use developer && \
 	unpack_rpm "${d_rpms}/libdrm-amdgpu-devel-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
 	# vdpau and mesa-amdgpu are consumers of llvm
@@ -286,8 +299,8 @@ src_unpack_open_stack() {
 	# shared libLLVM-9.so with -DLLVM_BUILD_LLVM_DYLIB=ON that is
 	# enabled on >=llvm-10.  Gentoo only use split llvm libraries
 	# but the driver components use the shared.
-	unpack_rpm "${d_rpms}/llvm-amdgpu-libs-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	if use developer ; then
+	! use system-llvm && unpack_rpm "${d_rpms}/llvm-amdgpu-libs-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	if ! use system-llvm && use developer ; then
 		unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/llvm-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
@@ -321,12 +334,6 @@ src_unpack_open_stack() {
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		use developer && \
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libGL-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	fi
-
-	if use osmesa ; then
-		unpack_rpm "${d_rpms}/mesa-amdgpu-libOSMesa-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		use developer && \
-		unpack_rpm "${d_rpms}/mesa-amdgpu-libOSMesa-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
 	if use xa ; then
@@ -411,10 +418,10 @@ src_unpack_pro_stack() {
 	fi
 
 	if use rocm ; then
-		unpack_rpm "${d_rpms}/llvm-amdgpu-pro-rocm-${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		unpack_rpm "${d_rpms}/llvm-amdgpu-pro-rocm-libs-${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		! use system-llvm && unpack_rpm "${d_rpms}/llvm-amdgpu-pro-rocm-${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		! use system-llvm && unpack_rpm "${d_rpms}/llvm-amdgpu-pro-rocm-libs-${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		if use developer ; then
-			unpack_rpm "${d_rpms}/llvm-amdgpu-pro-rocm-devel-${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			! use system-llvm && unpack_rpm "${d_rpms}/llvm-amdgpu-pro-rocm-devel-${PKG_VER_ROCM_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 			if use hip-clang ; then
 				unpack_rpm "${d_rpms}/hip-rocr-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 			fi
@@ -635,9 +642,6 @@ src_install() {
 	if use vaapi_r600 ; then
 		vaapi_drv_name="r600"
 	fi
-	if use vdpau_r300 ; then
-		vdpau_drv_name="r300"
-	fi
 	if use vdpau_r600 ; then
 		vdpau_drv_name="r600"
 	fi
@@ -717,6 +721,12 @@ that either amdgpu-dkms or rock-dkms is installed"
 		einfo \
 "Re-emerge this package with the opencl-icd-loader USE flag to fix the\n\
 libOpenCL.so symlink complaint by eselect-opencl"
+	fi
+
+	if ! use system-llvm ; then
+		ewarn \
+"You must manually set LD_LIBRARY_PATH=\"/opt/amdgpu-pro/lib64:/opt/amdgpu/lib64\"\n
+whenever VA-API, VDPAU, XA (libxatracker) are being used."
 	fi
 }
 
