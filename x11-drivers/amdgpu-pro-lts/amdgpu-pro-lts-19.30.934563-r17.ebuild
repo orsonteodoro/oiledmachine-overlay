@@ -197,10 +197,10 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		~virtual/amdgpu-drm-3.2.42[dkms?,strict-pairing]
 	 )
 	 system-llvm? (
-		>=sys-devel/llvm-${PKG_VER_LLVM_TRIPLE}:${PKG_VER_LLVM_MAJ}[llvm_targets_AMDGPU]
+		!~sys-devel/clang-${PKG_VER_LLVM_MAJ}.0.0.9999:${PKG_VER_LLVM_MAJ}
 		!~sys-devel/llvm-${PKG_VER_LLVM_MAJ}.0.0.9999:${PKG_VER_LLVM_MAJ}
 		>=sys-devel/clang-${PKG_VER_LLVM_TRIPLE}:${PKG_VER_LLVM_MAJ}[llvm_targets_AMDGPU]
-		!~sys-devel/clang-${PKG_VER_LLVM_MAJ}.0.0.9999:${PKG_VER_LLVM_MAJ}
+		>=sys-devel/llvm-${PKG_VER_LLVM_TRIPLE}:${PKG_VER_LLVM_MAJ}[llvm_targets_AMDGPU]
 	 )
 	 vaapi? ( >=x11-libs/libva-2.1.0
 		  >=virtual/amdgpu-drm-3.2.42[dkms?,firmware] )
