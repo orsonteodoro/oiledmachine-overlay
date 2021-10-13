@@ -96,8 +96,7 @@ hip-clang +hwe llvm +open-stack +opencl opencl-icd-loader +opencl_orca
 +opencl_pal +opengl +opengl_pro opengl_mesa openmax osmesa +pro-stack rocm
 strict-pairing -system-llvm system-roct +vaapi vaapi_r600
 +vaapi_radeonsi +vdpau vdpau_r300 vdpau_r600 +vdpau_radeonsi +vulkan vulkan_open
-vulkan_pro wayland +X
-xa"
+vulkan_pro wayland +X xa"
 REQUIRED_USE="
 	amf? ( pro-stack opencl vulkan_pro )
 	bindist? ( !pro-stack !doc )
