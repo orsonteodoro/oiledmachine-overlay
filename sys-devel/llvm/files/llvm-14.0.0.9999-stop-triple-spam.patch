@@ -1,0 +1,35 @@
+Subject:  Stop -static-libstdc++ spam with differing vendor names (src: unknown, dst: pc)
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Wed Oct 13 01:17:46 PM PDT 2021 (Unix time: 1634156266)
+
+Spamming messages on stdout can cause orders of magnitude slowdown or increase
+compile time significantly.
+
+Copyright notice for llvm/lib/Linker/IRMover.cpp:
+
+//===- lib/Linker/IRMover.cpp ---------------------------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+--- a/llvm/lib/Linker/IRMover.cpp.orig	2021-10-13 11:51:07.237151345 -0700
++++ b/llvm/lib/Linker/IRMover.cpp	2021-10-13 13:16:44.383320626 -0700
+@@ -1478,6 +1478,15 @@ Error IRLinker::run() {
+     EnableDLWarning = !(SrcIsLibDevice && SrcHasLibDeviceDL);
+   }
+ 
++  // Stop spam with -static-libstdc++
++  if (
++    SrcTriple.getVendorName() == Triple::UnknownVendor && DstTriple.getVendorName() == Triple::PC &&
++    SrcTriple.getArch() == DstTriple.getVendorName() &&
++    SrcTriple.getSubArch() == DstTriple.getSubArch() &&
++    SrcTriple.getOS() == DstTriple.getOS()
++  )
++    EnableTripleWarning = false;
++
+   if (EnableDLWarning && (SrcM->getDataLayout() != DstM.getDataLayout())) {
+     emitWarning("Linking two modules of different data layouts: '" +
+                 SrcM->getModuleIdentifier() + "' is '" +

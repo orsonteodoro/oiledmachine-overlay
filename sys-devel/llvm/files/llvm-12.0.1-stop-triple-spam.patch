@@ -1,0 +1,39 @@
+Subject:  Stop -static-libstdc++ spam with differing vendor names (src: unknown, dst: pc)
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Wed Oct 13 01:17:46 PM PDT 2021 (Unix time: 1634156266)
+
+Spamming messages on stdout can cause orders of magnitude slowdown or increase
+compile time significantly.
+
+Copyright notice for llvm/lib/Linker/IRMover.cpp:
+
+//===- lib/Linker/IRMover.cpp ---------------------------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+--- a/llvm/lib/Linker/IRMover.cpp.orig	2021-06-28 09:23:38.000000000 -0700
++++ b/llvm/lib/Linker/IRMover.cpp	2021-10-13 13:28:56.933344765 -0700
+@@ -1436,7 +1436,18 @@ Error IRLinker::run() {
+ 
+   Triple SrcTriple(SrcM->getTargetTriple()), DstTriple(DstM.getTargetTriple());
+ 
+-  if (!SrcM->getTargetTriple().empty()&&
++  bool EnableTripleWarning = true;
++  // Stop spam with -static-libstdc++
++  if (
++    SrcTriple.getVendorName() == Triple::UnknownVendor && DstTriple.getVendorName() == Triple::PC &&
++    SrcTriple.getArch() == DstTriple.getVendorName() &&
++    SrcTriple.getSubArch() == DstTriple.getSubArch() &&
++    SrcTriple.getOS() == DstTriple.getOS()
++  )
++    EnableTripleWarning = false;
++
++  if (EnableTripleWarning &&
++      !SrcM->getTargetTriple().empty()&&
+       !SrcTriple.isCompatibleWith(DstTriple))
+     emitWarning("Linking two modules of different target triples: '" +
+                 SrcM->getModuleIdentifier() + "' is '" +
