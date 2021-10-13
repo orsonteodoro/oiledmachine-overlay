@@ -70,12 +70,13 @@
       amdgpu-dkms or rock-dkms], ROCt, HSA KMT) if available and HSA parts
       (HSA runtime).</flag>
     <flag name="system-llvm">Prefer the Clang/LLVM toolchain instead of the one
-      provided by the driver.  There is a possibility of missing symbols when
-      parts of the drivers use code paths related to the live git LLVM branches
-      due to unstable API.  If this occurs, disable this USE flag.  Disabling
-      this may inadvertantly link to the driver LLVM instead of the system
-      when compiling or linking to an outdated version.  This is why
-      the system-llvm USE flag was enabled to prevent these situations.
+      provided by the driver.  Disabling this may inadvertantly link built
+      programs to the driver LLVM instead of the system when compiling or
+      linking to an outdated version.  This is why the system-llvm USE flag
+      was enabled to prevent these situations.
+    <flag name="system-llvm-roc">
+      For the same reason in system-llvm, prefer the system's llvm-roc over
+      the driver provided.</flag>
     <flag name="system-roct">Prefer the hsakmt library provided by the system
       needed for API calls to communicate with the ROCk kernel.  Otherwise,
       use the internal if the rocm USE flag is specified.</flag>
