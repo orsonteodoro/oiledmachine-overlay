@@ -80,11 +80,14 @@ PKG_VER_WAYLAND="1.15.0"
 PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
 VULKAN_SDK_VER="1.1.109.0"
 ROCK_V="2.7.0_p20190627" # an approximate
+ROCK_V_TRIPLE=$(ver_cut 1-3)
+ROCK_V_MAJ_MIN=$(ver_cut 1-2 ${ROCK_V})
 IUSE="bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang lf
-+open-stack +opencl opencl-icd-loader +opencl_orca +opencl_pal +opengl
-opengl_mesa +opengl_pro osmesa +pro-stack rocm strict-pairing -system-llvm
-system-libva system-roct +vaapi vaapi_r600 +vaapi_radeonsi +vdpau vdpau_r300
-vdpau_r600 +vdpau_radeonsi +vulkan vulkan_open vulkan_pro wayland +X xa"
+llvm +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_pal
++opengl opengl_mesa +opengl_pro osmesa +pro-stack rocm strict-pairing
+-system-llvm system-libva system-roct +vaapi vaapi_r600
++vaapi_radeonsi +vdpau vdpau_r300 vdpau_r600 +vdpau_radeonsi +vulkan vulkan_open
+vulkan_pro wayland +X xa"
 REQUIRED_USE="
 	!abi_x86_32
 	bindist? ( !doc !pro-stack )
@@ -92,6 +95,7 @@ REQUIRED_USE="
 	egl? ( || ( open-stack pro-stack ) X )
 	gles2? ( egl || ( open-stack pro-stack ) )
 	hip-clang? ( developer pro-stack rocm )
+	llvm? ( || ( vaapi vdpau xa ) )
 	opencl? ( || ( opencl_orca opencl_pal ) pro-stack )
 	opencl-icd-loader? ( open-stack )
 	opencl_orca? ( opencl )
@@ -101,10 +105,12 @@ REQUIRED_USE="
 	opengl_pro? ( egl pro-stack opengl X )
 	osmesa? ( developer? ( X ) open-stack )
 	rocm? ( dkms open-stack pro-stack )
-	vaapi? ( open-stack X ^^ ( vaapi_r600 vaapi_radeonsi ) )
+	system-llvm? ( llvm )
+	system-llvm-roc? ( llvm-roc )
+	vaapi? ( llvm open-stack X ^^ ( vaapi_r600 vaapi_radeonsi ) )
 	vaapi_r600? ( vaapi )
 	vaapi_radeonsi? ( vaapi )
-	vdpau? ( open-stack ^^ ( vdpau_r300 vdpau_r600 vdpau_radeonsi ) )
+	vdpau? ( llvm open-stack ^^ ( vdpau_r300 vdpau_r600 vdpau_radeonsi ) )
 	vdpau_r300? ( vdpau )
 	vdpau_r600? ( vdpau )
 	vdpau_radeonsi? ( vdpau )
@@ -112,7 +118,7 @@ REQUIRED_USE="
 	vulkan_open? ( open-stack vulkan )
 	vulkan_pro? ( pro-stack vulkan )
 	wayland? ( open-stack )
-	xa? ( open-stack )"
+	xa? ( llvm open-stack )"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -174,7 +180,7 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 		  !strict-pairing? ( >=virtual/amdgpu-drm-3.2.42[dkms,firmware] )
 		   strict-pairing? ( ~virtual/amdgpu-drm-3.2.42[dkms,firmware] )
 		  !system-roct? ( !dev-libs/roct-thunk-interface )
-		   system-roct? ( >=dev-libs/roct-thunk-interface-${ROCK_V} ) )
+		   system-roct? ( ~dev-libs/roct-thunk-interface-${ROCK_V_TRIPLE} ) )
 	 !strict-pairing? (
 		freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
 		>=virtual/amdgpu-drm-3.2.42[dkms?]
@@ -306,7 +312,7 @@ src_unpack_open_stack() {
 	unpack_rpm "${d_rpms}/drm-utils-amdgpu-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_rpms}/libdrm-amdgpu-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_noarch}/libdrm-amdgpu-common-${PKG_VER_ID}-${PKG_REV}${PKG_ARCH_SUFFIX}${noarch}.rpm"
-	! use system-llvm && use developer && \
+	use developer && \
 	unpack_rpm "${d_rpms}/libdrm-amdgpu-devel-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
 	# vdpau and mesa-amdgpu are consumers of llvm
@@ -314,13 +320,15 @@ src_unpack_open_stack() {
 	# shared libLLVM-9.so with -DLLVM_BUILD_LLVM_DYLIB=ON that is
 	# enabled on >=llvm-10.  Gentoo only use split llvm libraries
 	# but the driver components use the shared.
-	! use system-llvm && unpack_rpm "${d_rpms}/llvm-amdgpu-libs-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	if ! use system-llvm && use developer ; then
-		unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		unpack_rpm "${d_rpms}/llvm-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		unpack_rpm "${d_rpms}/llvm-amdgpu-static-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		unpack_rpm "${d_rpms}/llvm-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	if use llvm && ! use system-llvm ; then
+		unpack_rpm "${d_rpms}/llvm-amdgpu-libs-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		if use developer ; then
+			unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			unpack_rpm "${d_rpms}/llvm-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			unpack_rpm "${d_rpms}/llvm-amdgpu-static-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			unpack_rpm "${d_rpms}/llvm-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		fi
 	fi
 
 	if use egl ; then
@@ -592,10 +600,16 @@ src_install() {
 			if use vdpau ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/vdpau/"*.so* || die
 			fi
-			if ! use system-llvm && use developer ; then
-				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/lib/"*.so* || die
-				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/bin/"* || die
-				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/share/opt-viewer/"*.py || die
+			if use llvm && ! use system-llvm ; then
+				if ls "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/lib/"*.so* 2>/dev/null 1>/dev/null ; then
+					chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/lib/"*.so* || die
+				fi
+				if ls "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/bin/"* 2>/dev/null 1>/dev/null ; then
+					chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/bin/"* || die
+				fi
+				if ls "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/share/opt-viewer/"*.py 2>/dev/null 1>/dev/null ; then
+					chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/share/opt-viewer/"*.py || die
+				fi
 			fi
 			if use open-stack && use X ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/xorg/modules/drivers/"*.so* || die
