@@ -22,18 +22,18 @@ Copyright notice for llvm/lib/Linker/IRMover.cpp:
    Triple SrcTriple(SrcM->getTargetTriple()), DstTriple(DstM.getTargetTriple());
  
 -  if (!SrcM->getTargetTriple().empty()&&
-+  bool EnableTripleWarning = true;
-+  // Stop spam with -static-libstdc++
-+  if (
-+    SrcTriple.getVendorName().equals("unknown") && DstTriple.getVendorName().equals("pc") &&
-+    SrcTriple.getArch().equals(DstTriple.getVendorName()) &&
-+    SrcTriple.getSubArch().equals(DstTriple.getSubArch()) &&
-+    SrcTriple.getOS().equals(DstTriple.getOS())
-+  )
-+    EnableTripleWarning = false;
-+
-+  if (EnableTripleWarning &&
-+      !SrcM->getTargetTriple().empty()&&
++  bool EnableTripleWarning = true;                                                                     // oteodoro: start addition
++  // Stop spam with -static-libstdc++                                                                  //
++  if (                                                                                                 //
++    SrcTriple.getVendor() == Triple::UnknownVendor && DstTriple.getVendor() == Triple::PC &&           //
++    SrcTriple.getArch() == DstTriple.getArch() &&                                                      //
++    SrcTriple.getSubArch() == DstTriple.getSubArch() &&                                                // oteodoro: make xxx-unknown-linux-gnu && xxx-pc-linux-gnu pass
++    SrcTriple.getOS() == DstTriple.getOS()                                                             //
++  )                                                                                                    //
++    EnableTripleWarning = false;                                                                       //
++                                                                                                       //
++  if (EnableTripleWarning &&                                                                           // oteodoro: end addition
++      !SrcM->getTargetTriple().empty()&&                                                               // oteodoro: moved down
        !SrcTriple.isCompatibleWith(DstTriple))
      emitWarning("Linking two modules of different target triples: '" +
                  SrcM->getModuleIdentifier() + "' is '" +

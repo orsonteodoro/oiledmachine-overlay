@@ -21,15 +21,15 @@ Copyright notice for llvm/lib/Linker/IRMover.cpp:
      EnableDLWarning = !(SrcIsLibDevice && SrcHasLibDeviceDL);
    }
  
-+  // Stop spam with -static-libstdc++
-+  if (
-+    SrcTriple.getVendorName() == Triple::UnknownVendor && DstTriple.getVendorName() == Triple::PC &&
-+    SrcTriple.getArch() == DstTriple.getVendorName() &&
-+    SrcTriple.getSubArch() == DstTriple.getSubArch() &&
-+    SrcTriple.getOS() == DstTriple.getOS()
-+  )
-+    EnableTripleWarning = false;
-+
++  // Stop spam with -static-libstdc++                                                              // oteodoro: start addition
++  if (                                                                                             //
++    SrcTriple.getVendor() == Triple::UnknownVendor && DstTriple.getVendor() == Triple::PC &&       //
++    SrcTriple.getArch() == DstTriple.getArch() &&                                                  //
++    SrcTriple.getSubArch() == DstTriple.getSubArch() &&                                            // oteodoro: make xxx-unknown-linux-gnu && xxx-pc-linux-gnu pass
++    SrcTriple.getOS() == DstTriple.getOS()                                                         //
++  )                                                                                                //
++    EnableTripleWarning = false;                                                                   //
++                                                                                                   // oteodoro: end addition
    if (EnableDLWarning && (SrcM->getDataLayout() != DstM.getDataLayout())) {
      emitWarning("Linking two modules of different data layouts: '" +
                  SrcM->getModuleIdentifier() + "' is '" +
