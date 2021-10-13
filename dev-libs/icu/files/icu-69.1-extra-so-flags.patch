@@ -1,0 +1,111 @@
+Patches only linux, additional changes required for other platforms.
+diff -urp source.orig/config/mh-alpha-linux-cc source/config/mh-alpha-linux-cc
+--- source.orig/config/mh-alpha-linux-cc	2021-04-07 17:10:27.000000000 -0700
++++ source/config/mh-alpha-linux-cc	2021-10-12 10:45:31.078174549 -0700
+@@ -14,6 +14,11 @@ SHAREDLIBCFLAGS = -fPIC
+ SHAREDLIBCXXFLAGS = -fPIC
+ SHAREDLIBCPPFLAGS = -DPIC
+ 
++## Extra flags
++SHAREDLIBCFLAGS += $(ESHAREDLIBCFLAGS)
++SHAREDLIBCXXFLAGS += $(ESHAREDLIBCXXFLAGS)
++SHAREDLIBCPPFLAGS += $(ESHAREDLIBCPPFLAGS)
++
+ ## Additional flags when building libraries and with threads
+ THREADSCPPFLAGS = -D_REENTRANT
+ LIBCPPFLAGS =
+@@ -38,6 +43,9 @@ LD_RPATH_PRE=	-Wl,-rpath,
+ ## Compiler switch to embed a library name
+ LD_SONAME = -Wl,-soname -Wl,$(notdir $(MIDDLE_SO_TARGET))
+ 
++## Shared library options
++LD_SOOPTIONS = $(ELD_SOOPTIONS)
++
+ ## Shared object suffix
+ SO = so
+ ## Non-shared intermediate object suffix
+diff -urp source.orig/config/mh-alpha-linux-gcc source/config/mh-alpha-linux-gcc
+--- source.orig/config/mh-alpha-linux-gcc	2021-04-07 17:10:27.000000000 -0700
++++ source/config/mh-alpha-linux-gcc	2021-10-12 10:45:17.607174105 -0700
+@@ -14,6 +14,11 @@ SHAREDLIBCFLAGS = -fPIC
+ SHAREDLIBCXXFLAGS = -fPIC
+ SHAREDLIBCPPFLAGS = -DPIC
+ 
++## Extra flags
++SHAREDLIBCFLAGS += $(ESHAREDLIBCFLAGS)
++SHAREDLIBCXXFLAGS += $(ESHAREDLIBCXXFLAGS)
++SHAREDLIBCPPFLAGS += $(ESHAREDLIBCPPFLAGS)
++
+ ## Additional flags when building libraries and with threads
+ THREADSCPPFLAGS = -D_REENTRANT
+ LIBCPPFLAGS =
+@@ -32,6 +37,7 @@ LD_SONAME = -Wl,-soname -Wl,$(notdir $(M
+ 
+ ## Shared library options
+ LD_SOOPTIONS= -Wl,-Bsymbolic
++LD_SOOPTIONS += $(ELD_SOOPTIONS)
+ 
+ ## Shared object suffix
+ SO = so
+diff -urp source.orig/config/mh-linux source/config/mh-linux
+--- source.orig/config/mh-linux	2021-04-07 17:10:27.000000000 -0700
++++ source/config/mh-linux	2021-10-12 10:45:18.471174134 -0700
+@@ -14,6 +14,11 @@ SHAREDLIBCFLAGS = -fPIC
+ SHAREDLIBCXXFLAGS = -fPIC
+ SHAREDLIBCPPFLAGS = -DPIC
+ 
++## Extra flags
++SHAREDLIBCFLAGS += $(ESHAREDLIBCFLAGS)
++SHAREDLIBCXXFLAGS += $(ESHAREDLIBCXXFLAGS)
++SHAREDLIBCPPFLAGS += $(ESHAREDLIBCPPFLAGS)
++
+ ## Additional flags when building libraries and with threads
+ THREADSCPPFLAGS = -D_REENTRANT
+ LIBCPPFLAGS =
+@@ -33,6 +38,7 @@ LDFLAGSICUDT=-nodefaultlibs -nostdlib
+ 
+ ## Shared library options
+ LD_SOOPTIONS= -Wl,-Bsymbolic
++LD_SOOPTIONS += $(ELD_SOOPTIONS)
+ 
+ ## Shared object suffix
+ SO = so
+diff -urp source.orig/config/mh-linux-va source/config/mh-linux-va
+--- source.orig/config/mh-linux-va	2021-04-07 17:10:27.000000000 -0700
++++ source/config/mh-linux-va	2021-10-12 10:45:21.383174229 -0700
+@@ -21,6 +21,11 @@ SHAREDLIBCFLAGS = -qpic=large
+ SHAREDLIBCXXFLAGS = -qpic=large
+ SHAREDLIBCPPFLAGS = -DPIC
+ 
++## Extra flags
++SHAREDLIBCFLAGS += $(ESHAREDLIBCFLAGS)
++SHAREDLIBCXXFLAGS += $(ESHAREDLIBCXXFLAGS)
++SHAREDLIBCPPFLAGS += $(ESHAREDLIBCPPFLAGS)
++
+ ## Additional flags when building libraries and with threads
+ THREADSCPPFLAGS = -D_REENTRANT
+ LIBCPPFLAGS =
+@@ -38,6 +43,9 @@ LD_RPATH= -Wl,-zorigin,-rpath,'$$'ORIGIN
+ ## The type of assembly needed when pkgdata is used for generating shared libraries.
+ GENCCODE_ASSEMBLY=-a gcc
+ 
++## Shared library options
++LD_SOOPTIONS = $(ELD_SOOPTIONS)
++
+ ## Shared object suffix
+ SO = so
+ ## Non-shared intermediate object suffix
+--- source.orig/configure.ac.orig	2021-10-12 12:28:07.786377427 -0700
++++ source/configure.ac	2021-10-12 12:27:48.795376802 -0700
+@@ -1397,6 +1397,11 @@ AC_CONFIG_FILES([icudefs.mk Doxyfile \
+ 		samples/cal/Makefile samples/layout/Makefile])
+ AC_OUTPUT
+ 
++echo "ESHAREDLIBCFLAGS=$ESHAREDLIBCFLAGS" >> icudefs.mk
++echo "ESHAREDLIBCXXFLAGS=$ESHAREDLIBCXXFLAGS" >> icudefs.mk
++echo "ESHAREDLIBCPPFLAGS=$ESHAREDLIBCPPFLAGS" >> icudefs.mk
++echo "ELD_SOOPTIONS=$ELD_SOOPTIONS" >> icudefs.mk
++
+ if test -z "$PYTHON";
+ then
+     echo "" > data/rules.mk

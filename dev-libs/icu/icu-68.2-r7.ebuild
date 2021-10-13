@@ -125,6 +125,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-65.1-remove-bashisms.patch"
 	"${FILESDIR}/${PN}-64.2-darwin.patch"
 	"${FILESDIR}/${PN}-68.1-nonunicode.patch"
+	"${FILESDIR}/${PN}-69.1-extra-so-flags.patch"
 )
 
 get_build_types() {
@@ -149,7 +150,7 @@ src_prepare() {
 
 	# Append doxygen configuration to configure
 	sed -i \
-		-e 's:icudefs.mk:icudefs.mk Doxyfile:' \
+		-e 's:icudefs.mk :icudefs.mk Doxyfile :' \
 		configure.ac || die
 
 	if is_hardened_clang || is_hardened_gcc ; then
@@ -309,9 +310,17 @@ _configure_abi() {
 				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
-			use cross-dso-cfi \
-				&& [[ "${build_type}" == "shared-libs" ]] \
-				&& append_all -fsanitize-cfi-cross-dso
+			if use cross-dso-cfi \
+				&& [[ "${build_type}" == "shared-libs" ]] ; then
+				# setting -fsanitize-cfi-cross-dso for cflags breaks keepassx
+				export ESHAREDLIBCFLAGS="-fsanitize-cfi-cross-dso"
+				export ESHAREDLIBCXXFLAGS="-fsanitize-cfi-cross-dso"
+				export ELD_SOOPTIONS="-fsanitize-cfi-cross-dso"
+			else
+				export ESHAREDLIBCFLAGS=""
+				export ESHAREDLIBCXXFLAGS=""
+				export ELD_SOOPTIONS=""
+			fi
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
