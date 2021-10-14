@@ -36,7 +36,7 @@ DEPEND+=" ${RDEPEND}
 		dev-cpp/benchmark
 		dev-cpp/gflags[${MULTILIB_USEDEP}]
 	)"
-BDEPEND+=" virtual/pkgconfig"
+BDEPEND+=" >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
 # requires sources of many google tools
 RESTRICT="test"
 MY_PV="${PV//_pre/-pre}"
