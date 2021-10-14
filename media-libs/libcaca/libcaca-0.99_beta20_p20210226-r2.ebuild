@@ -36,6 +36,7 @@ RDEPEND+=" imlib? ( >=media-libs/imlib2-1.4.6-r2[${MULTILIB_USEDEP}] )
 	     >=x11-libs/libXt-1.1.4[${MULTILIB_USEDEP}] )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	doc? (    app-doc/doxygen
 		>=dev-texlive/texlive-fontsrecommended-2012
 		>=dev-texlive/texlive-latexextra-2012
@@ -44,8 +45,7 @@ BDEPEND+="
 	java? ( >=virtual/jdk-1.5 )
 	test? ( dev-util/cppunit
 		app-forensics/zzuf
-		python? ( ${PYTHON_DEPS} ) )
-	virtual/pkgconfig"
+		python? ( ${PYTHON_DEPS} ) )"
 RUBY_OPTIONAL=yes
 EGIT_COMMIT="e4968ba6e93e9fd35429eb16895c785c51072015"
 SRC_URI="
