@@ -19,7 +19,7 @@ DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=media-sound/pulseaudio-5.0"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="eabe5d3e8ec38606c3abe5b4fda677e8fc29e280"
 SRC_URI="
