@@ -12,24 +12,16 @@
 # is not valid, but LLVM='c:\\llvm\\' and LLVM='c:/llvm/'
 # are.
 
-import os
-
 # This is used by external projects in order to find emscripten.  It is not used
 # by emscripten itself.
-EMSCRIPTEN_ROOT = os.path.expanduser(os.getenv('EMSCRIPTEN') or '/usr/share/emscripten-${PV}') # directory
+EMSCRIPTEN_ROOT = '/usr/share/emscripten-${PV}' # directory
 
-LLVM_ROOT = os.path.expanduser(os.getenv('LLVM') or '__LLVM_BIN_PATH__') # directory
-BINARYEN_ROOT = os.path.expanduser(os.getenv('BINARYEN', '') or '/usr/$(get_libdir)/binaryen/${BINARYEN_SLOT}') # directory
-
-# Add this if you have manually built the JS optimizer executable (in
-# Emscripten/tools/optimizer) and want to run it from a custom location.
-# Alternatively, you can set this as the environment variable
-# EMSCRIPTEN_NATIVE_OPTIMIZER.
-# EMSCRIPTEN_NATIVE_OPTIMIZER='/path/to/custom/optimizer(.exe)'
+LLVM_ROOT = '__LLVM_BIN_PATH__' # directory
+BINARYEN_ROOT = '/usr/$(get_libdir)/binaryen/${BINARYEN_SLOT}' # directory
 
 # Location of the node binary to use for running the JS parts of the compiler.
 # This engine must exist, or nothing can be compiled.
-NODE_JS = os.path.expanduser(os.getenv('NODE') or '/usr/bin/node') # executable
+NODE_JS = '/usr/bin/node' # executable
 
 JAVA = 'java' # executable
 
@@ -57,4 +49,3 @@ JAVA = 'java' # executable
 # Other options
 #
 # FROZEN_CACHE = True # never clears the cache, and disallows building to the cache
-TEMP_DIR = '/tmp'

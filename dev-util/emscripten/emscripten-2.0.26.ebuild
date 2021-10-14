@@ -5,15 +5,17 @@
 # https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
 # For the closure-compiler-npm version see:
-# https://github.com/emscripten-core/emscripten/blob/2.0.14/package.json
+# https://github.com/emscripten-core/emscripten/blob/2.0.26/package.json
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/2.0.14/tools/settings_template.py
+# https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/settings_template.py
 
 EAPI=7
 
+LLVM_V=13
+LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 \
+inherit cmake-utils flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1 \
 	toolchain-funcs
 
 DESCRIPTION="LLVM-to-JavaScript Compiler"
@@ -93,19 +95,19 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 			closure_compiler_nodejs )
 	)"
 # See also .circleci/config.yml
-# See also tools/shared.py EXPECTED_BINARYEN_VERSION
-JAVA_V="1.8"
-# See https://github.com/google/closure-compiler-npm/blob/v20200920.0.0/packages/google-closure-compiler/package.json
+# See also https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/building.py EXPECTED_BINARYEN_VERSION
+JAVA_V="11" # See https://github.com/google/closure-compiler/blob/v20210601/.github/workflows/ci.yaml#L43
+# See https://github.com/google/closure-compiler-npm/blob/v20210601.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/2.0.14/tools/shared.py#L39
-# For the required nodejs, see https://github.com/emscripten-core/emscripten/blob/2.0.14/tools/shared.py#L43
-LLVM_V="13.0.0"
-BINARYEN_V="99"
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/2.0.26/package.json
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/shared.py#L39
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/shared.py#L43
+BINARYEN_V="101"
 RDEPEND+=" ${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
 		system-closure-compiler? ( \
-			>=dev-util/closure-compiler-npm-20200920:\
+			>=dev-util/closure-compiler-npm-20210601.0.0:\
 ${CLOSURE_COMPILER_SLOT}\
 [closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?] )
 		closure_compiler_java? (
@@ -121,9 +123,11 @@ ${CLOSURE_COMPILER_SLOT}\
 	)
 	dev-util/binaryen:${BINARYEN_V}
 	>=net-libs/nodejs-4.1.1
-	>=sys-devel/lld-${LLVM_V}
-	>=sys-devel/llvm-${LLVM_V}:=[llvm_targets_WebAssembly]
-	>=sys-devel/clang-${LLVM_V}:=[llvm_targets_WebAssembly]"
+	(
+		>=sys-devel/lld-${LLVM_V}
+		>=sys-devel/llvm-${LLVM_V}:${LLVM_V}=[llvm_targets_WebAssembly]
+		>=sys-devel/clang-${LLVM_V}:${LLVM_V}=[llvm_targets_WebAssembly]
+	)"
 # The java-utils-2 doesn't like nested conditionals.  The eclass needs at least
 # a virtual/jdk.  This package doesn't really need jdk to use closure-compiler
 # because packages are prebuilt.  If we have closure_compiler_native, we don't
@@ -149,10 +153,11 @@ TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
-	"${FILESDIR}/emscripten-1.39.20-set-wrappers-path.patch"
-	"${FILESDIR}/emscripten-2.0.14-gentoo-wasm-ld-path.patch"
+	"${FILESDIR}/emscripten-2.0.26-set-wrappers-path.patch"
+	"${FILESDIR}/emscripten-2.0.26-gentoo-wasm-ld-path.patch"
 )
 CMAKE_BUILD_TYPE=Release
+EMSCRIPTEN_CONFIG_V="2.0.26"
 
 pkg_nofetch() {
 	# No fetch on all-rights-reserved
@@ -196,36 +201,8 @@ FEATURES"
 		fi
 	fi
 	python-single-r1_pkg_setup
-	export HIGHEST_LLVM_SLOT=$(basename $(find "${EROOT}/usr/lib/llvm" -maxdepth 1 \
-		-regextype 'posix-extended' -regex ".*[0-9]+.*" \
-		| sort -V | tail -n 1))
-	for llvm_slot in $(seq $(ver_cut 1 ${LLVM_V}) ${HIGHEST_LLVM_SLOT}) ; do
-		if has_version "sys-devel/clang:${llvm_slot}[llvm_targets_WebAssembly]" \
-		&& has_version "sys-devel/llvm:${llvm_slot}[llvm_targets_WebAssembly]" ; then
-			export LLVM_SLOT="${llvm_slot}"
-			CXX="${EROOT}/usr/lib/llvm/${llvm_slot}/bin/clang++"
-			einfo "CXX=${CXX}"
-			if [[ ! -f "${CXX}" ]] ; then
-				die "CXX path is wrong and doesn't exist"
-			fi
-			lld_slot=$(ver_cut 1 $(wasm-ld --version \
-					| sed -e "s|LLD ||"))
-# The lld slotting is broken.  See https://bugs.gentoo.org/691900
-# ldd lld shows that libLLVM-10.so => /usr/lib64/llvm/10/lib64/libLLVM-10.so but
-# but slot 10 doesn't have wasm and one of the other >=${LLVM_V} do have it and
-# tricking the RDEPENDs.  We need to make sure that =lld-${lld_slot}*
-# with =llvm-${lld_slot}*[llvm_targets_WebAssembly].
-			if ! has_version "sys-devel/clang:${lld_slot}[llvm_targets_WebAssembly]" \
-			|| ! has_version "sys-devel/llvm:${lld_slot}[llvm_targets_WebAssembly]" ; then
-				die \
-"lld's corresponding version to clang and llvm versions must have\n\
-llvm_targets_WebAssembly.  Either upgrade lld to version ${LLVM_SLOT} or\n\
-rebuild with llvm:${lld_slot}[llvm_targets_WebAssembly] and\n\
-clang:${lld_slot}[llvm_targets_WebAssembly]"
-			fi
-			break
-		fi
-	done
+	CXX="${EROOT}/usr/lib/llvm/${LLVM_V}/bin/clang++"
+	einfo "CXX=${CXX}"
 }
 
 # The activated_cfg goes in emscripten.config from the json file.
@@ -243,11 +220,11 @@ prepare_file() {
 	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" \
 		"${dest_dir}/${source_filename}" || die
 	sed -i -e \
-"s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${LLVM_SLOT}/bin|" \
+"s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${LLVM_V}/bin|" \
 		-e \
 "s|__EMCC_WASM_BACKEND__|1|" \
 		-e \
-"s|__LLVM_BIN_PATH__|/usr/lib/llvm/${LLVM_SLOT}/bin|" \
+"s|__LLVM_BIN_PATH__|/usr/lib/llvm/${LLVM_V}/bin|" \
 		-e \
 "s|\$(get_libdir)|$(get_libdir)|" \
 		-e \
@@ -310,11 +287,10 @@ npm-secaudit_src_compile() {
 }
 
 gen_files() {
-	local config_v="1.39.20"
 	mkdir "${TEST}" || die "Could not create test directory!"
 	prepare_file "${t}" "${TEST}" "99emscripten"
-	prepare_file "${t}" "${TEST}" "emscripten.config.${config_v}"
-	mv "${TEST}/emscripten.config"{.${config_v},} || die
+	prepare_file "${t}" "${TEST}" "emscripten.config.${EMSCRIPTEN_CONFIG_V}"
+	mv "${TEST}/emscripten.config"{.${EMSCRIPTEN_CONFIG_V},} || die
 	source "${TEST}/99emscripten"
 }
 
@@ -383,7 +359,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	eselect emscripten set "emscripten-${PV} llvm-${LLVM_SLOT}"
+	eselect emscripten set "emscripten-${PV} llvm-${LLVM_V}"
 	if use closure-compiler && ! use system-closure-compiler ; then
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst

@@ -23,11 +23,16 @@
   </upstream>
   <longdescription>
     Only in the oiledmachine-overlay:
-    This ebuild tracks only the highest minor version modulo 10 changes
-    for slotting.
 
-    Send a GitHub issue request to only oiledmachine-overlay if you need
-    a particular release that breaks API/ABI before or after changes.
+    This ebuild tracks only the highest point releases corresponding to
+    the corresponding LLVM version up to the latest current stable LLVM.
+
+    LLVM 14 (dev) - 2.0.31
+    LLVM 13 (dev) - 2.0.26
+    LLVM 12 (stable) - 2.0.12
+
+    The release cycle is rolling, so no there's no stable or no LTS versions
+    for this project.
   </longdescription>
   <use>
     <flag name="asmjs">Adds asm.js output support.  This is deprecated.
