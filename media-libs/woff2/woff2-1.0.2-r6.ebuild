@@ -16,10 +16,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~s390 ~sparc ~x86 ~a
 RDEPEND+=" app-arch/brotli[${MULTILIB_USEDEP}]"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)"
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
 
 src_configure() {
 	local mycmakeargs=(
