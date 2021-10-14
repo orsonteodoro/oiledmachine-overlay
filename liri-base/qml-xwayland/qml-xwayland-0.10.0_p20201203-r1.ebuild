@@ -23,7 +23,7 @@ DEPEND+=" dev-libs/wayland
 	  x11-libs/xcb-util-cursor"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="f33df7385d1bb099a1b3e7eeceaa7f9dc55d3ad8"
 SRC_URI="
