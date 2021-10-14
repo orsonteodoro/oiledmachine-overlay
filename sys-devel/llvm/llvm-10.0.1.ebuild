@@ -59,7 +59,7 @@ BDEPEND="
 		dev-python/recommonmark[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	') )
-	libffi? ( virtual/pkgconfig )
+	libffi? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
 	${PYTHON_DEPS}"
 # There are no file collisions between these versions but having :0
 # installed means llvm-config there will take precedence.
