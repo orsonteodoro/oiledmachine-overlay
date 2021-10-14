@@ -115,7 +115,7 @@ BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14)
 
 BDEPEND+="
 	app-arch/xz-utils
-	virtual/pkgconfig
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	abi_x86_32? ( dev-lang/nasm )
 	!elibc_uclibc? ( sys-devel/gettext )
 "
