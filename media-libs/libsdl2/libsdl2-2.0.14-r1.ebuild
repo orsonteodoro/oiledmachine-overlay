@@ -120,7 +120,7 @@ DEPEND="${CDEPEND}
 	X? ( x11-base/xorg-proto )
 "
 BDEPEND="
-	virtual/pkgconfig
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 "
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/SDL2/SDL_config.h
