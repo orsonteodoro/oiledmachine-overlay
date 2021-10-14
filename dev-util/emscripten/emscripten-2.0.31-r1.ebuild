@@ -201,6 +201,7 @@ FEATURES"
 		fi
 	fi
 	python-single-r1_pkg_setup
+	llvm_pkg_setup
 	CXX="${EROOT}/usr/lib/llvm/${LLVM_V}/bin/clang++"
 	einfo "CXX=${CXX}"
 }
