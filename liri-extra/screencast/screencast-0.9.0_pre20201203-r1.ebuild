@@ -19,7 +19,7 @@ DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	  media-plugins/gst-plugins-meta:1.0"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="a28ba6e0f041d86441dbe214ed4ce07b73cad13e"
