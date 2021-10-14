@@ -22,7 +22,7 @@ IUSE="test"
 RESTRICT="!test? ( test )"
 
 BDEPEND="
-	virtual/pkgconfig
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 "
 DEPEND="
 	>=dev-libs/libfmt-8.0.0:=[${MULTILIB_USEDEP}]
