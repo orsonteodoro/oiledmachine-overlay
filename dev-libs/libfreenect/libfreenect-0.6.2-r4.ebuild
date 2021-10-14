@@ -31,10 +31,7 @@ BDEPEND+="
 	>=dev-util/cmake-3.12.4
 	python? ( ${PYTHON_DEPS} )
 	doc? ( app-doc/doxygen )
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)"
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
 SRC_URI="
 https://github.com/OpenKinect/libfreenect/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
