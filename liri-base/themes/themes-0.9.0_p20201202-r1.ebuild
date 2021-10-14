@@ -23,7 +23,7 @@ DEPEND+=" grub? ( sys-boot/grub )
 		x11-misc/sddm )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="ab914ebb01c9720eb4f43e9d05d9cf965c0589d3"
 SRC_URI="
