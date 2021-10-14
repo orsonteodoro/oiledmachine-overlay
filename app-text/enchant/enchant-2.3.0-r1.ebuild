@@ -23,10 +23,7 @@ RDEPEND+="
 DEPEND+=" ${RDEPEND}
 	test? ( >=dev-libs/unittest++-2.0.0-r2[${MULTILIB_USEDEP}] )"
 BDEPEND+="
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)"
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
 SRC_URI="
 https://github.com/AbiWord/enchant/releases/download/v${PV}/${P}.tar.gz"
 RESTRICT="test" # Tests fail
