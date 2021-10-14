@@ -25,7 +25,7 @@ DEPEND+=" dev-libs/libinput
 	  x11-libs/libxkbcommon"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=liri-base/cmake-shared-1.0.0
 	sys-kernel/linux-headers"
 EGIT_COMMIT="d55225b4edcfebabef3b2f2ff0f338ab31bad68a"
