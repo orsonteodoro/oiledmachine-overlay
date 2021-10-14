@@ -26,7 +26,7 @@ DEPEND+=" >=dev-libs/wayland-1.15
 	  liri-base/qtaccountsservice"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=kde-frameworks/extra-cmake-modules-1.7.0
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
