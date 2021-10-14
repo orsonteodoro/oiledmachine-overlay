@@ -44,7 +44,7 @@ DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	!system-fluid? ( ${FLUID_DEPEND} )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	  system-fluid? ( >=liri-base/cmake-shared-1.0.0 )
 	 !system-fluid? ( ${FLUID_BDEPEND} )"
 EGIT_COMMIT="626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d"
