@@ -29,7 +29,7 @@ DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=liri-base/qtgsettings-1.1.0"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="95ee87ca583e26823f7f12ed36cfe4498ea09951"
