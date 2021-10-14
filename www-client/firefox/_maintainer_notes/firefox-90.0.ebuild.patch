@@ -103,7 +103,7 @@
 -	virtual/pkgconfig
 -	>=virtual/rust-1.47.0
 +	|| (
-+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
++		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 +		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
 +	)
 +	>=dev-lang/rust-1.47.0[${MULTILIB_USEDEP}]
