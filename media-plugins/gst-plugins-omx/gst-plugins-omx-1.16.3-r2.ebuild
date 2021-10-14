@@ -32,7 +32,7 @@ DEPEND+=" ${RDEPEND}
 BDEPEND+=" ${BDEPEND}
 	${PYTHON_DEPS}
 	>=dev-util/meson-0.47
-	virtual/pkgconfig"
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
 SRC_URI="http://gstreamer.freedesktop.org/src/${MY_PN}/${MY_PN}-${PV}.tar.xz"
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-${PV}"
