@@ -25,10 +25,7 @@ DEPEND+=" >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
 	mms? ( >=media-libs/libmms-0.6.4:=[static-libs=,${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
-	|| (
-		>=dev-util/pkgconf-1.6.3[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.1[${MULTILIB_USEDEP}]
-	)
+	>=dev-util/pkgconf-1.6.3[${MULTILIB_USEDEP},pkg-config(+)]
 	doc? ( >=app-doc/doxygen-1.8.17 )"
 SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.xz"
 # tests try to fetch data from online sources
