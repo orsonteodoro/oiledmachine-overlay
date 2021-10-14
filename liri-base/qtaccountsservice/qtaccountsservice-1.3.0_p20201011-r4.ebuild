@@ -20,7 +20,7 @@ DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5="
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 EGIT_COMMIT="cc8bbdcb42feaa456bfef1aff1f1e67c2d67a786"
