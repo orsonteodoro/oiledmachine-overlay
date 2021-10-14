@@ -62,7 +62,7 @@ NOTOTOOLS_DEPEND="
 	$(python_gen_any_dep '>=media-gfx/scour-0.37[${PYTHON_USEDEP}]')"
 INTERNAL_NOTOTOOLS_PV="0.2.12" # see setup.py for versioning
 BDEPEND+=" ${PYTHON_DEPS}
-	dev-util/pkgconfig
+	virtual/pkgconfig
         media-gfx/imagemagick
 	media-gfx/pngquant
 	$(python_gen_any_dep '>=dev-python/fonttools-4.7.0[${PYTHON_USEDEP}]')

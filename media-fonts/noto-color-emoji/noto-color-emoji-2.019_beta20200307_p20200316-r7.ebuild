@@ -38,7 +38,7 @@ NOTOTOOLS_DEPEND="
 INTERNAL_NOTOTOOLS_PV="0.2.0_p20200401" # see setup.py for versioning ; official release was 20191017
 BDEPEND+=" ${PYTHON_DEPS}
 	$(python_gen_any_dep 'dev-python/fonttools[${PYTHON_USEDEP}]')
-	dev-util/pkgconfig
+	virtual/pkgconfig
         media-gfx/imagemagick
 	media-gfx/pngquant
 	!system-nototools? ( ${NOTOTOOLS_DEPEND} )
