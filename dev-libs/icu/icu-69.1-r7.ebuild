@@ -110,7 +110,7 @@ BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND+=" ${PYTHON_DEPS}
-	virtual/pkgconfig
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	doc? ( app-doc/doxygen[dot] )
 "
 
