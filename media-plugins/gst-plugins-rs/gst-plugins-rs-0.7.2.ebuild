@@ -82,10 +82,7 @@ DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${BDEPEND}
 	${RUST_DEPEND}
 	>=virtual/rust-${RUST_V}
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-                >=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-        )
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	|| (
 		(
 			sys-devel/llvm:11[${MULTILIB_USEDEP}]
