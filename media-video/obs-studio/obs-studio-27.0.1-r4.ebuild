@@ -61,7 +61,7 @@ REQUIRED_USE+="
 # deps/obs-scripting/obspython/CMakeLists.txt
 BDEPEND+="
 	>=dev-util/cmake-3.10.2
-	>=dev-util/pkgconfig-0.29.1
+	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
 	lua? ( >=dev-lang/swig-3.0.12 )
 	python? (
 		${PYTHON_DEPS}
