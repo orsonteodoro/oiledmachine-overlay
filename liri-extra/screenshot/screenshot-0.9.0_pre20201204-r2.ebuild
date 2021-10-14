@@ -25,7 +25,7 @@ DEPEND+=" >=dev-db/sqlite-3.7.15
 	  liri-base/wayland"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="0b137881751d618d618895c8d9a0600b738056c0"
