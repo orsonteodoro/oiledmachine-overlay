@@ -43,7 +43,7 @@ BDEPEND+=" || (
 	)
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="ded359509328211e74346cdbfc6d67470b0fd872"
 SRC_URI="
