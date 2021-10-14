@@ -46,10 +46,7 @@ DEPEND+="
 	tabbed? ( x11-misc/tabbed )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	update_adblock? ( ${PYTHON_DEPS} )"
 EGIT_BRANCH="surf-webkit2"
 EGIT_COMMIT="761ea9e4c6c4d8aba4a4d39da9c9b4db8ac471b1"
