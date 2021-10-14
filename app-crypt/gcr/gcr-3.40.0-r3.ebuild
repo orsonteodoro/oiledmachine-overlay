@@ -36,10 +36,7 @@ BDEPEND+="
 	gtk-doc? ( >=dev-util/gtk-doc-1.9
 		app-text/docbook-xml-dtd:4.1.2 )
 	>=sys-devel/gettext-0.19.8[${MULTILIB_USEDEP}]
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	vala? ( $(vala_depend) )"
 
 PATCHES=(
