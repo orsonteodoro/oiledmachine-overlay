@@ -5,14 +5,14 @@
 # https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
 # For the closure-compiler-npm version see:
-# https://github.com/emscripten-core/emscripten/blob/2.0.31/package.json
+# https://github.com/emscripten-core/emscripten/blob/2.0.26/package.json
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/2.0.31/tools/settings_template.py
+# https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/settings_template.py
 
 EAPI=7
 
-LLVM_V=14
+LLVM_V=13
 LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-utils flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1 \
@@ -34,51 +34,54 @@ closure-compiler? (
 	MPL-2.0
 	NPL-1.1
 )"
-LICENSE_NOTES="
-Third-party
-  ansidecl.h - GPL-2+
-  cp-demangle.h - GPL-2+
-  demangle.h - GPL-2+
-  emjvm - UoI-NCSA MIT
-  filelock.py - Unlicense
-  gcc_demangler.c - GPL-2+
-  jni.h - Apache-2.0
-  libiberty.h - GPL-2+
-  PLY (Python Lex-Yacc) - all-rights-reserved for cpp.py, BSD for project
-  stb_image.c - public domain + no warranty
-  WebIDL.py - MPL-2.0
-  websockify LGPL-3 MPL-2 BSD BSD-2 MIT
-    websockify/include/VT100.js LGPL-2.1
-
-Tools
-  acorn - MIT
-  terser - BSD-2
-  source-map - BSD
-
-Tests
-  all-rights-reserved || (MIT UoI-NCSA)
-  box2d - ZLIB
-    freeglut - MIT LGPL-2
-  bullet - ZLIB GPL-2
-  closure-compiler/node-externs Apache-2.0
-  enet - MIT
-  freealut - LGPL-2
-    files under src is UoI-NCSA MIT
-  freetype - || (FTL GPL-2) MIT ZLIB
-    LiberationSansBold - OFL-1.1
-  openjpeg - BSD-2
-  tests/python - PSF-2.4
-  tests/sounds - cc-by-sa-3.0
-  poppler - GPL-2
-  poppler/cmake - BSD
-
-Package
-  Package - UoI-NCSA MIT
-    all-rights-reserved (in source) even with MIT license
-  compiler-rt - Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA
-  sdl - ZLIB
-  musl - all-rights-reserved MIT
-  libcxx, libcxxabi, libunwind - MIT UoI-NCSA "
+#
+# LICENSE_NOTES=
+#
+# Third-party
+#   ansidecl.h - GPL-2+
+#   cp-demangle.h - GPL-2+
+#   demangle.h - GPL-2+
+#   emjvm - UoI-NCSA MIT
+#   filelock.py - Unlicense
+#   gcc_demangler.c - GPL-2+
+#   jni.h - Apache-2.0
+#   libiberty.h - GPL-2+
+#   PLY (Python Lex-Yacc) - all-rights-reserved for cpp.py, BSD for project
+#   stb_image.c - public domain + no warranty
+#   WebIDL.py - MPL-2.0
+#   websockify LGPL-3 MPL-2 BSD BSD-2 MIT
+#     websockify/include/VT100.js LGPL-2.1
+#
+# Tools
+#   acorn - MIT
+#   terser - BSD-2
+#   source-map - BSD
+#
+# Tests
+#   all-rights-reserved || (MIT UoI-NCSA)
+#   box2d - ZLIB
+#     freeglut - MIT LGPL-2
+#   bullet - ZLIB GPL-2
+#   closure-compiler/node-externs Apache-2.0
+#   enet - MIT
+#   freealut - LGPL-2
+#     files under src is UoI-NCSA MIT
+#   freetype - || (FTL GPL-2) MIT ZLIB
+#     LiberationSansBold - OFL-1.1
+#   openjpeg - BSD-2
+#   tests/python - PSF-2.4
+#   tests/sounds - cc-by-sa-3.0
+#   poppler - GPL-2
+#   poppler/cmake - BSD
+#
+# Package
+#   Package - UoI-NCSA MIT
+#     all-rights-reserved (in source) even with MIT license
+#   compiler-rt - Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA
+#   sdl - ZLIB
+#   musl - all-rights-reserved MIT
+#   libcxx, libcxxabi, libunwind - MIT UoI-NCSA
+#
 KEYWORDS="~amd64 ~x86"
 SLOT_MAJOR=$(ver_cut 1-2 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
@@ -95,13 +98,13 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 			closure_compiler_nodejs )
 	)"
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/2.0.31/tools/building.py EXPECTED_BINARYEN_VERSION
+# See also https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/building.py EXPECTED_BINARYEN_VERSION
 JAVA_V="11" # See https://github.com/google/closure-compiler/blob/v20210601/.github/workflows/ci.yaml#L43
 # See https://github.com/google/closure-compiler-npm/blob/v20210601.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/2.0.31/package.json
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/2.0.31/tools/shared.py#L39
-# For the required nodejs, see https://github.com/emscripten-core/emscripten/blob/2.0.31/tools/shared.py#L43
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/2.0.26/package.json
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/shared.py#L39
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/2.0.26/tools/shared.py#L43
 BINARYEN_V="101"
 RDEPEND+=" ${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
@@ -153,7 +156,7 @@ TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
-	"${FILESDIR}/emscripten-2.0.31-set-wrappers-path.patch"
+	"${FILESDIR}/emscripten-2.0.26-set-wrappers-path.patch"
 	"${FILESDIR}/emscripten-2.0.26-gentoo-wasm-ld-path.patch"
 )
 CMAKE_BUILD_TYPE=Release
@@ -162,14 +165,13 @@ EMSCRIPTEN_CONFIG_V="2.0.26"
 pkg_nofetch() {
 	# No fetch on all-rights-reserved
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	einfo \
-"Please download\n\
-  ${FN_SRC}\n\
-from ${DOWNLOAD_SITE}\n\
-and rename it to ${FN_DEST} place it in ${distdir} .\n\
-\n\
-If you are in a hurry, you can do \`wget -O ${distdir}/${FN_DEST} \
-https://github.com/emscripten-core/emscripten/archive/${FN_SRC}\`"
+eerror "Please download"
+eerror "  ${FN_SRC}"
+eerror "from ${DOWNLOAD_SITE}"
+eerror "and rename it to ${FN_DEST} place it in ${distdir}."
+eerror
+eerror "If you are in a hurry, you can do \`wget -O ${distdir}/${FN_DEST}\
+ https://github.com/emscripten-core/emscripten/archive/${FN_SRC}\`"
 }
 
 pkg_setup() {
@@ -177,15 +179,19 @@ pkg_setup() {
 		if ! use closure_compiler_native ; then
 			java-pkg_init
 			if [[ -n "${JAVA_HOME}" \
-				&& -f "${JAVA_HOME}/bin/java" ]] ; then
+				&& -e "${JAVA_HOME}/bin/java" ]] ; then
 				export JAVA="${JAVA_HOME}/bin/java"
 			elif [[ -z "${JAVA_HOME}" ]] ; then
-				die \
-"JAVA_HOME is not set.  Use \`eselect java-vm\` to set this up."
+eerror
+eerror "JAVA_HOME is not set.  Use \`eselect java-vm\` to set this up."
+eerror
+				die
 			else
-				die \
-"JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java.\n\
-Use \`eselect java-vm\` to set this up."
+eerror
+eerror "JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java."
+eerror "Use \`eselect java-vm\` to set this up."
+eerror
+				die
 			fi
 			java-pkg_ensure-vm-version-ge ${JAVA_V}
 		fi
@@ -195,9 +201,11 @@ Use \`eselect java-vm\` to set this up."
 	fi
 	if use test ; then
 		if [[ ! "${FEATURES}" =~ test ]] ; then
-			die \
-"The test USE flag requires the environmental variable test to be added to\n\
-FEATURES"
+eerror
+eerror "The test USE flag requires the environmental variable test to be added to"
+eerror "FEATURES"
+eerror
+			die
 		fi
 	fi
 	python-single-r1_pkg_setup
@@ -215,21 +223,17 @@ prepare_file() {
 	local type="${1}"
 	local dest_dir="${2}"
 	local source_filename="${3}"
-	cp "${FILESDIR}/${source_filename}" "${dest_dir}/" || die "could not copy '${source_filename}'"
+	cp "${FILESDIR}/${source_filename}" "${dest_dir}/" \
+		|| die "could not copy '${source_filename}'"
 	sed -i -e "s/\${PV}/${PV}/g" "${dest_dir}/${source_filename}" || \
 		die "could not adjust path for '${source_filename}'"
 	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" \
 		"${dest_dir}/${source_filename}" || die
-	sed -i -e \
-"s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${LLVM_V}/bin|" \
-		-e \
-"s|__EMCC_WASM_BACKEND__|1|" \
-		-e \
-"s|__LLVM_BIN_PATH__|/usr/lib/llvm/${LLVM_V}/bin|" \
-		-e \
-"s|\$(get_libdir)|$(get_libdir)|" \
-		-e \
-"s|\${BINARYEN_SLOT}|${BINARYEN_V}|" \
+	sed -i -e "s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${LLVM_V}/bin|" \
+		-e "s|__EMCC_WASM_BACKEND__|1|" \
+		-e "s|__LLVM_BIN_PATH__|/usr/lib/llvm/${LLVM_V}/bin|" \
+		-e "s|\$(get_libdir)|$(get_libdir)|" \
+		-e "s|\${BINARYEN_SLOT}|${BINARYEN_V}|" \
 		"${dest_dir}/${source_filename}" || die
 	sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
 		"${dest_dir}/${source_filename}" || die
@@ -237,14 +241,11 @@ prepare_file() {
 		if use system-closure-compiler ; then
 			local cmd
 			if use closure_compiler_java ; then
-				cmd=\
-"/usr/bin/closure-compiler-java"
+				cmd="/usr/bin/closure-compiler-java"
 			elif use closure_compiler_nodejs ; then
-				cmd=\
-"/usr/bin/closure-compiler-node"
+				cmd="/usr/bin/closure-compiler-node"
 			elif use closure_compiler_native ; then
-				cmd=\
-"/usr/bin/closure-compiler"
+				cmd="/usr/bin/closure-compiler"
 			fi
 			sed -i -e "s|__EMSDK_CLOSURE_COMPILER__|\"${cmd}\"|" \
 				"${dest_dir}/${source_filename}" || die
@@ -296,6 +297,7 @@ gen_files() {
 }
 
 src_test() {
+	local t="wasm"
 	einfo "Testing ${t}"
 	gen_files "${t}"
 	if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
@@ -365,5 +367,7 @@ pkg_postinst() {
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst
 	fi
+	einfo
 	einfo "Set to wasm (llvm) output via app-eselect/eselect-emscripten."
+	einfo
 }
