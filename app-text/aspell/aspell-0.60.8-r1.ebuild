@@ -34,10 +34,7 @@ RDEPEND+="
 	nls? ( >=virtual/libintl-0-r1[${MULTILIB_USEDEP}] )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	nls? ( sys-devel/gettext[${MULTILIB_USEDEP}] )"
 HTML_DOCS=( manual/aspell{,-dev}.html )
 MY_P="${P/_/-}"
