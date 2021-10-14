@@ -21,10 +21,8 @@ DEPEND+="
 	speex? ( media-libs/speex[${MULTILIB_USEDEP}] )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)"
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+"
 
 # bug #395153
 RESTRICT="test"
