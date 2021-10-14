@@ -764,10 +764,7 @@ BDEPEND+="
 	>=dev-lang/ruby-1.9
 	>=sys-devel/bison-3.0.4
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	virtual/perl-Carp
 	virtual/perl-Data-Dumper
 	virtual/perl-JSON-PP
