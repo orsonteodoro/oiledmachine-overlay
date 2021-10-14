@@ -1,4 +1,4 @@
-# Copyright 2019-2020 Orson Teodoro
+# Copyright 2019-2021 Orson Teodoro
 # Copyright 1999-2016 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 

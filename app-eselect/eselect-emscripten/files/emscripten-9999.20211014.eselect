@@ -7,10 +7,18 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20210314-r1"
+VERSION="20211014"
 PN="emscripten"
 
+# 2.0.31 llvm 14 ; node 4.1.1 ; binaryen 101
+# 2.0.27 llvm 14 ; node 4.1.1 ; binaryen 101
+# 2.0.26 llvm 13 ; node 4.1.1 ; binaryen 101
+# 2.0.18 llvm 13 ; node 4.1.1 ; binaryen 101
+# 2.0.17 llvm 13 ; node 4.1.1 ; binaryen 100
+# 2.0.15 llvm 13 ; node 4.1.1 ; binaryen 100
+# 2.0.14 llvm 13 ; node 4.1.1 ; binaryen 99
 # 2.0.13 llvm 13 ; node 4.1.1 ; binaryen 99
+# 2.0.12 llvm 12 ; node 4.1.1 ; binaryen 98
 # 2.0.8 llvm 12 ; node 4.1.1 ; binaryen 98
 # 2.0.5 llvm 12 ; node 4.1.1 ; binaryen 97
 # 2.0.1 llvm 12 ; node 4.1.1 ; binaryen 95
@@ -166,7 +174,11 @@ find_targets() {
 				| sed -e "s|clang-||")
                         llvm_major="${llvm_slot}"
                         llvm_major_minor=$(echo "${llvm_v}" | cut -f 1-2 -d '.')
-                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" \
+                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.27" \
+                            && [[ "${llvm_major}" -ge 14 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.27" \
+                            is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" \
                             && [[ "${llvm_major}" -ge 13 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.13" \
@@ -303,7 +315,13 @@ set_config() {
         __EMSDK_NODE_VERSION_MIN__="0.8.0"
     fi
 
-    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" ; then
+    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.18" ; then
+        __EMSDK_BINARYEN_VERSION__="101"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.18" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.15" ; then
+        __EMSDK_BINARYEN_VERSION__="100"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.15" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" ; then
         __EMSDK_BINARYEN_VERSION__="99"
     elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.13" \
         && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.8" ; then
@@ -324,7 +342,10 @@ set_config() {
         __EMSDK_BINARYEN_VERSION__="90"
     fi
 
-    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" ; then
+    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.27" ; then
+        __EMSDK_LLVM_VERSION__="14"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.26" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" ; then
         __EMSDK_LLVM_VERSION__="13"
     elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.13" \
         && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" ; then
