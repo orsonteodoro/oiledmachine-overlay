@@ -24,7 +24,7 @@ DEPEND+=" >=dev-db/sqlite-3.7.15
 	>=liri-base/fluid-1.0.0"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="17c038316d213d4926f674b7afb6b3ff9afc095a"
