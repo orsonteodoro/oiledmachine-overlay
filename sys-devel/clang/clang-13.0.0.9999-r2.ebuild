@@ -33,7 +33,7 @@ DEPEND="${RDEPEND}"
 BDEPEND="
 	>=dev-util/cmake-3.16
 	doc? ( dev-python/sphinx )
-	xml? ( virtual/pkgconfig )
+	xml? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
 	${PYTHON_DEPS}"
 PDEPEND="
 	sys-devel/clang-common

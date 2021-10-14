@@ -61,7 +61,7 @@ unset x
 DEPEND="${RDEPEND}"
 BDEPEND="
 	doc? ( dev-python/sphinx )
-	xml? ( virtual/pkgconfig )
+	xml? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
 	${PYTHON_DEPS}"
 PDEPEND="
 	sys-devel/clang-common
