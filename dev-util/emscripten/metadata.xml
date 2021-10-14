@@ -31,7 +31,7 @@
     LLVM 13 (dev) - 2.0.26
     LLVM 12 (stable) - 2.0.12
 
-    The release cycle is rolling, so no there's no stable or no LTS versions
+    The release cycle is rolling, so there is no stable or no LTS versions
     for this project.
   </longdescription>
   <use>
