@@ -7,7 +7,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-92-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-93-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=12
 
@@ -71,8 +71,8 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 LICENSE_FINGERPRINT="\
 20eb3b10bf7c7cba8e42edbc8d8ad58a3a753e214b8751fb60eddb827ebff067\
 456f77f36e7abe6d06861b1be52011303fa08db8a981937e38733f961c4a39d9" # SHA512
-# FF-92.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
-LICENSE+=" FF-92.0-THIRD-PARTY-LICENSES"
+# FF-93.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
+LICENSE+=" FF-93.0-THIRD-PARTY-LICENSES"
 LICENSE+="
 	( BSD-2
 		BSD
@@ -212,10 +212,7 @@ BDEPEND="${PYTHON_DEPS}
 	app-arch/zip
 	>=dev-util/cbindgen-0.19.0
 	>=net-libs/nodejs-10.23.1
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=virtual/rust-1.51.0[${MULTILIB_USEDEP}]
 	|| (
 		(
@@ -247,7 +244,7 @@ BDEPEND="${PYTHON_DEPS}
 	x86? ( >=dev-lang/nasm-2.13 )"
 
 CDEPEND="
-	>=dev-libs/nss-3.69[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.70[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.32[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -313,6 +310,8 @@ RDEPEND="${CDEPEND}
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${CDEPEND}
+	x11-libs/libICE[${MULTILIB_USEDEP}]
+	x11-libs/libSM[${MULTILIB_USEDEP}]
 	pulseaudio? (
 		|| (
 			media-sound/pulseaudio[${MULTILIB_USEDEP}]
@@ -1502,6 +1501,7 @@ multilib_src_install() {
 	local desktop_file="${FILESDIR}/icon/${PN}-r2.desktop"
 	local desktop_filename="${PN}-${ABI}.desktop"
 	local exec_command="${PN}-${ABI}"
+	local icon="${PN}"
 	local use_wayland="false"
 
 	if use wayland ; then

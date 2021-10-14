@@ -4,7 +4,7 @@
 # @ECLASS: mozcoreconf-v6.eclass
 # @MAINTAINER:
 # Mozilla team <mozilla@gentoo.org>
-# @SUPPORTED_EAPIS: 6 7
+# @SUPPORTED_EAPIS: 6 7 8
 # @BLURB: core options and configuration functions for mozilla
 # @DESCRIPTION:
 #
@@ -17,13 +17,10 @@
 
 if [[ ! ${_MOZCORECONF} ]]; then
 
-inherit multilib-build toolchain-funcs flag-o-matic python-any-r1
+inherit toolchain-funcs flag-o-matic python-any-r1
 
 BDEPEND="
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	dev-lang/python:2.7[ncurses,sqlite,ssl,threads(+)]
 	${PYTHON_DEPS}"
 
@@ -32,7 +29,7 @@ case "${EAPI:-0}" in
 		inherit multilib versionator
 		DEPEND+=" ${BDEPEND}"
 		;;
-	7)
+	7|8)
 		;;
 	*)
 		die "EAPI ${EAPI} is not supported, contact eclass maintainers"
@@ -124,7 +121,8 @@ moz_pkgsetup() {
 	# workaround to set python3 into PYTHON3 until mozilla doesn't need py2
 	if [[ "${PYTHON_COMPAT[@]}" != "${PYTHON_COMPAT[@]#python3*}" ]]; then
 		export PYTHON3=${PYTHON}
-		python_export python2_7 PYTHON EPYTHON
+		export PYTHON=python2.7
+		export EPYTHON="${EPREFIX}"/usr/bin/python2.7
 	fi
 }
 
