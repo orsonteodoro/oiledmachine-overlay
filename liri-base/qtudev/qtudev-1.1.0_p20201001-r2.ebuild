@@ -18,7 +18,7 @@ DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	  virtual/libudev"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	  dev-util/umockdev
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
