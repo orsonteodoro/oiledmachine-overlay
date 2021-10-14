@@ -35,7 +35,7 @@ DEPEND+=" dev-libs/glib
 	  liri-base/wayland"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=liri-base/cmake-shared-1.1.0_p20200511"
 EGIT_COMMIT="22ebac8f7f760071d7e1c4f39cf0707d5ab48929"
 SRC_URI="
