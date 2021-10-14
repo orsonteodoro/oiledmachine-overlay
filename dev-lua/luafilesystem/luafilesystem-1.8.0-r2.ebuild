@@ -17,10 +17,7 @@ RDEPEND="${LUA_DEPS}
 	dev-lang/lua:*[${MULTILIB_USEDEP}]
 	luajit? ( dev-lang/luajit:2 )"
 BDEPEND="
-	|| (
-		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config]
-		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-	)
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? ( ${RDEPEND} )"
 DEPEND="${RDEPEND}"
 MY_PV=${PV//./_}
