@@ -20,10 +20,7 @@ DEPEND+=" virtual/libc
 	 zlib? ( sys-libs/zlib:=[static-libs?,${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
-	|| (
-		dev-util/pkgconf[${MULTILIB_USEDEP}]
-		dev-util/pkgconfig[${MULTILIB_USEDEP}]
-	)
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	dev-util/meson-format-array
 	doc? (
 		dev-python/mkdocs
