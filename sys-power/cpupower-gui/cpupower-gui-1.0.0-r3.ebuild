@@ -33,7 +33,7 @@ DEPEND+=" ${RDEPEND}
 BDEPEND+=" ${PYTHON_DEPS}
 	>=dev-util/meson-0.50
 	dev-util/ninja
-	dev-util/pkgconfig"
+	virtual/pkgconfig"
 RESTRICT="mirror"
 SRC_URI="
 https://github.com/vagnum08/cpupower-gui/archive/v${PV}.tar.gz
