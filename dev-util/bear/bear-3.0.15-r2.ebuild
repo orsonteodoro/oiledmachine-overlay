@@ -29,7 +29,7 @@ BDEPEND+=" ${CDEPEND}
 		$(python_gen_any_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]')
 		dev-util/valgrind
 	)
-	virtual/pkgconfig"
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
 SRC_URI="
 https://github.com/rizsotto/Bear/archive/${PV}.tar.gz
 	-> ${P}.tar.gz"
