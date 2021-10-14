@@ -21,7 +21,7 @@ DEPEND+=" dev-libs/glib
 	>=liri-base/qtgsettings-1.3.0_p20200312"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=liri-base/cmake-shared-1.1.0"
 EGIT_COMMIT="3d74bbce60abf9ce918029ae51259e5efeba963d"
 SRC_URI="
