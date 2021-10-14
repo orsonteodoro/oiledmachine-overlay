@@ -19,7 +19,7 @@ RDEPEND+=" >=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
 	test? ( >=dev-util/cppunit-1.13.2[${MULTILIB_USEDEP}] )
-	virtual/pkgconfig"
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
 EGIT_COMMIT="65a6a4e225fff1288148de92721418e1c634713b"
 SRC_URI="https://github.com/${PN}/${PN}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 PATCHES=(
