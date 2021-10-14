@@ -26,7 +26,7 @@ DEPEND+=" >=kde-frameworks/networkmanager-qt-${KDE_FRAMEWORKS_MIN_PV}:5
 	  liri-base/libliri"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	  dev-util/pkgconfig
+	  virtual/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
 EGIT_COMMIT="79a77a6a010f999de28ae313a9abbf141a9adf7d"
