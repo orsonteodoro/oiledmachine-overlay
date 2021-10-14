@@ -232,7 +232,7 @@ BDEPEND="
 	)
 	sys-devel/bison
 	sys-devel/flex
-	virtual/pkgconfig
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	$(python_gen_any_dep ">=dev-python/mako-0.8.0[\${PYTHON_USEDEP}]")
 	wayland? ( dev-util/wayland-scanner[${MULTILIB_USEDEP}] )
 "
