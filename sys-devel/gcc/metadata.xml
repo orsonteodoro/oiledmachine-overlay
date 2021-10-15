@@ -50,5 +50,13 @@
     spawned with 600-900 MiB swap and 220 MiB RSS.  If unfixed it will result in
     OOM with 8 GiB combined.  To fix add 16 GiB of total memory with memory
     compression or this patch.
+
+    Per-Package Environment Variables:
+
+    OVERRIDE_NCORES -- number of CPUs on the system.
+    DISABLE_LTO1_WPA_STREAMING_FIX -- Set to 1 to disable or 0 to enable scaling
+                                      per core.  The ebuild has been patched to
+                                      enabled scaling by CPU by default, but
+                                      could negatively impact other setups.
   </longdescription>
 </pkgmetadata>

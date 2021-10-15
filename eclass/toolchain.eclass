@@ -2441,7 +2441,9 @@ fix_param_max_lto_streaming_parallelism() {
 
 	local active_mem_mib=$(( ${ncores} * ${max_lto1_streaming_size_mib} ))
 
-	if ! use vanilla ; then
+	if ! use vanilla && [[ -z "${DISABLE_LTO1_WPA_STREAMING_FIX}" \
+		|| ( -n "${DISABLE_LTO1_WPA_STREAMING_FIX}" \
+			&& "${DISABLE_LTO1_WPA_STREAMING_FIX}" == 0 ) ]] ; then
 		if (( ${ram_free_mib} < ${active_mem_mib} )) ; then
 			ewarn
 			ewarn "${ram_free_mib} MiB of free RAM is less than ${active_mem_mib} MiB"
