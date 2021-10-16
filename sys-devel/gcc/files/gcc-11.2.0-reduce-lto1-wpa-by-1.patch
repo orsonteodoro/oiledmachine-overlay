@@ -1,0 +1,20 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Fri Oct 15 08:03:50 PM PDT 2021 (Unix time: 1634353430)
+
+Reserve 1 GiB to reduce swap penalty across all lto1-wpas running.
+
+--- a/gcc/lto-wrapper.c.orig	2021-07-27 23:55:07.352288251 -0700
++++ b/gcc/lto-wrapper.c	2021-10-15 20:01:58.788507603 -0700
+@@ -1780,6 +1780,12 @@ cont1:
+ 	{
+ 	  char buf[256];
+ 	  init_num_threads ();
++
++	  /* Reduce trashing for lto1-wpa1 by reserving 1 GiB.
++	     Each spawned lto1-wpa is about 1 GiB.
++	  */
++	  nthreads_var -= 1;
++
+ 	  if (nthreads_var == 0)
+ 	    nthreads_var = 1;
+ 	  if (verbose)

@@ -58,5 +58,10 @@
                                       per core.  The ebuild has been patched to
                                       enabled scaling by CPU by default, but
                                       could negatively impact other setups.
+    DISABLE_LTO1_WPA_MEM_RESERVATION -- Set to 1 to disable or 0 to reserve
+				      1 GiB to prevent swap penalty across
+				      all lto1-wpa processes when the sum of
+				      all running lto1-wpa exceeds the RAM
+				      available.
   </longdescription>
 </pkgmetadata>

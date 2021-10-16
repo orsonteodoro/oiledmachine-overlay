@@ -17,6 +17,12 @@ src_prepare() {
 		rm -v "${WORKDIR}/patch/23_all_disable-riscv32-ABIs.patch" || die
 	fi
 
+	if ! use vanilla && [[ -z "${DISABLE_LTO1_WPA_MEM_RESERVATION}" \
+		|| ( -n "${DISABLE_LTO1_WPA_MEM_RESERVATION}" \
+			&& "${DISABLE_LTO1_WPA_MEM_RESERVATION}" == "0" ) ]] ; then
+		eapply "${FILESDIR}/gcc-10.3.0-reduce-lto1-wpa-by-1.patch"
+	fi
+
 	fix_param_max_lto_streaming_parallelism
 	toolchain_src_prepare
 }

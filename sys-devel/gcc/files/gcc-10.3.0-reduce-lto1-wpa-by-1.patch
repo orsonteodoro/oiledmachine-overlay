@@ -1,0 +1,18 @@
+--- a/gcc/lto-wrapper.c.orig	2021-04-08 04:56:28.441745172 -0700
++++ b/gcc/lto-wrapper.c	2021-10-15 20:40:27.303583674 -0700
+@@ -1741,6 +1741,15 @@ cont1:
+ 	{
+ 	  char buf[256];
+ 	  init_num_threads ();
++
++	  /* Reduce trashing for lto1-wpa1 by reserving 1 GiB.
++	     Each spawned lto1-wpa is about 1 GiB.
++	  */
++	  nthreads_var -= 1;
++
++	  if (nthreads_var == 0)
++	    nthreads_var = 1;
++
+ 	  if (verbose)
+ 	    fprintf (stderr, "LTO parallelism level set to %ld\n",
+ 		     nthreads_var);
