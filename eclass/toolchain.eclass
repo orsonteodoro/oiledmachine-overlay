@@ -2467,7 +2467,7 @@ fix_param_max_lto_streaming_parallelism() {
 			einfo
 		fi
 
-		ewarn "Changing hardcoded param_max_lto_streaming_parallelism from 32 to ${nprocs_min}"
+		ewarn "Changing hardcoded param_max_lto_streaming_parallelism from 32 to ${ncores}"
 		sed -i "s|Var(param_max_lto_streaming_parallelism) Init(32)|Var(param_max_lto_streaming_parallelism) Init(${ncores})|" \
 			gcc/params.opt || die
 	else
