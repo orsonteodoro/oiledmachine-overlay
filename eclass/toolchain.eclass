@@ -2437,7 +2437,7 @@ fix_param_max_lto_streaming_parallelism() {
 	# is slightly > 1024 MiB.
 	ncores=$(( ${ncores} - 1 ))
 
-	(( ${ncores} < 0 )) && ncores=1
+	(( ${ncores} <= 0 )) && ncores=1
 
 	local active_mem_mib=$(( ${ncores} * ${max_lto1_streaming_size_mib} ))
 
