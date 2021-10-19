@@ -23,9 +23,9 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-1.0.0:0/2.0.0
+	>=liri-base/cmake-shared-1.0.0:0/1.1.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
-EGIT_COMMIT="6350523b1e0ab24b865c17e109e66413b49ce42a"
+EGIT_COMMIT="94b02829f7f9d2f5feab1c3c7fb66a332f4ea333"
 SRC_URI="
 https://github.com/lirios/libliri/archive/${EGIT_COMMIT}.tar.gz
 	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
