@@ -23,7 +23,7 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-1.0.0:0/2.0.0
+	>=liri-base/cmake-shared-1.0.0:0/1.1.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 EGIT_COMMIT="6350523b1e0ab24b865c17e109e66413b49ce42a"
 SRC_URI="
