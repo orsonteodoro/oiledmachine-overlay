@@ -24,7 +24,7 @@ DEPEND+=" dev-libs/wayland
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-1.0.0"
+	>=liri-base/cmake-shared-1.0.0:0/1.1.0"
 EGIT_COMMIT="f33df7385d1bb099a1b3e7eeceaa7f9dc55d3ad8"
 SRC_URI="
 https://github.com/lirios/qml-xwayland/archive/${EGIT_COMMIT}.tar.gz
