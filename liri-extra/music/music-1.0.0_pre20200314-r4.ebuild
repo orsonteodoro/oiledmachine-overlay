@@ -30,7 +30,7 @@ FLUID_DEPEND=" >=dev-libs/wayland-1.15
 FLUID_BDEPEND=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
 	>=kde-frameworks/extra-cmake-modules-1.7.0
-	>=liri-base/cmake-shared-1.0.0
+	>=liri-base/cmake-shared-1.0.0:0/1.1.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
