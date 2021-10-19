@@ -20,7 +20,7 @@ DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	>=dev-qt/qttest-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
-	>=liri-base/fluid-1.1.0
+	>=liri-base/fluid-1.1.0:0/1.1.0
 	taglib? ( media-libs/taglib )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
