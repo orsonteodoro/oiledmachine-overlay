@@ -23,7 +23,7 @@ DEPEND+=" >=dev-libs/wayland-1.15
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-2.0.0_p20200511:0/2.0.0
+	>=liri-base/cmake-shared-2.0.0:0/2.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 EGIT_COMMIT="649e5bc2fd5588ab82f846ef732424b593be8070"
 SRC_URI="
