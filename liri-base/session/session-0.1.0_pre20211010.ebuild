@@ -28,7 +28,7 @@ BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 EGIT_COMMIT="07e50f776b5a3de88ea768d6fdf6c094e4504709"
 SRC_URI="
 https://github.com/lirios/session/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
+	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 DESKTOP_DATABASE_DIR="/usr/share/wayland-sessions"
