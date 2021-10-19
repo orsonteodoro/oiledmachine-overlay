@@ -22,7 +22,7 @@ DEPEND+=" dev-libs/glib
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-1.1.0"
+	>=liri-base/cmake-shared-1.1.0:0/1.1.0"
 EGIT_COMMIT="3d74bbce60abf9ce918029ae51259e5efeba963d"
 SRC_URI="
 https://github.com/lirios/platformtheme/archive/${EGIT_COMMIT}.tar.gz
