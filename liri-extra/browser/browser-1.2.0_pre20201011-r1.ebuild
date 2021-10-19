@@ -23,12 +23,12 @@ DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtwebengine-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.0.0
-	>=liri-base/qtgsettings-1.1.0:0/1.1.0"
+	>=liri-base/qtgsettings-1.1.0"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
-	>=liri-base/cmake-shared-1.0.0"
+	>=liri-base/cmake-shared-1.0.0:0/1.1.0"
 EGIT_COMMIT="7140867b1768aea371fd74e5babb816123b481ff"
 SRC_URI="
 https://github.com/lirios/browser/archive/${EGIT_COMMIT}.tar.gz
