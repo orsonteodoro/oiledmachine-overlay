@@ -23,7 +23,7 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
 	>=liri-base/cmake-shared-2.0.0:0/2.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
-EGIT_COMMIT="cc8bbdcb42feaa456bfef1aff1f1e67c2d67a786"
+EGIT_COMMIT="710a1ad962b864482a5625cac1ee1e6400474e7f"
 SRC_URI="
 https://github.com/lirios/qtaccountsservice/archive/${EGIT_COMMIT}.tar.gz
 	-> ${CATEGORY}-${P}-${EGIT_COMMIT:0:7}.tar.gz"
