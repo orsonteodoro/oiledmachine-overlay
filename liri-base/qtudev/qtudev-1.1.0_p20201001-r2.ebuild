@@ -20,7 +20,7 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
 	  dev-util/umockdev
-	>=liri-base/cmake-shared-1.0.0
+	>=liri-base/cmake-shared-1.0.0:0/1.1.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 EGIT_COMMIT="f80ba68becac258004c7e331a6bdbb001b4e5a4f"
 SRC_URI="
