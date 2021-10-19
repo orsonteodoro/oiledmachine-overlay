@@ -28,7 +28,7 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
 	>=kde-frameworks/extra-cmake-modules-1.7.0
-	>=liri-base/cmake-shared-1.0.0
+	>=liri-base/cmake-shared-1.0.0:0/1.1.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 EGIT_COMMIT="60d5dc0c3dfbf440f814140713cf87b58317c95b"
 SRC_URI="
