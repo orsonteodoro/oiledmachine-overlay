@@ -23,7 +23,7 @@ DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtwebengine-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.0.0
-	>=liri-base/qtgsettings-1.1.0"
+	>=liri-base/qtgsettings-1.1.0:0/1.1.0"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
