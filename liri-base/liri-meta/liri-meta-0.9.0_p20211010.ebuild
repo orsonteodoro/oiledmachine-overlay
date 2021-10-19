@@ -20,7 +20,7 @@ DEPEND+="
 	music? ( liri-extra/music )
 	networkmanager? ( liri-extra/networkmanager )
 	platformtheme? ( liri-base/platformtheme )
-	player? ( liri-extra/player )
+	player? ( ~liri-extra/player-0.1.0_pre20211009 )
 	power-manager? ( liri-extra/power-manager )
 	pulseaudio? ( liri-base/pulseaudio )
 	screencast? ( liri-extra/screencast )
