@@ -24,7 +24,7 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-1.0.0"
+	>=liri-base/cmake-shared-2.0.0:0/2.0.0"
 EGIT_COMMIT="07e50f776b5a3de88ea768d6fdf6c094e4504709"
 SRC_URI="
 https://github.com/lirios/session/archive/${EGIT_COMMIT}.tar.gz
