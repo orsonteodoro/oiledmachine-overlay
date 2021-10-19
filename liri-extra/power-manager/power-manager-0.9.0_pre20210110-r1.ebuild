@@ -31,7 +31,7 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
-	>=liri-base/cmake-shared-1.0.0"
+	>=liri-base/cmake-shared-1.0.0:0/1.1.0"
 EGIT_COMMIT="95ee87ca583e26823f7f12ed36cfe4498ea09951"
 SRC_URI="
 https://github.com/lirios/power-manager/archive/${EGIT_COMMIT}.tar.gz
