@@ -8,28 +8,34 @@ SLOT="0/${PV}" # based on liri-base/liri-shell
 IUSE+=" appcenter browser calculator +files flatpak materialdecoration music \
 networkmanager +platformtheme player power-manager pulseaudio screencast \
 screenshot +settings systemd +terminal text themes wallpaper xwayland"
-DEPEND+=" appcenter? ( liri-base/appcenter )
-	 browser? ( liri-extra/browser )
-	 calculator? ( liri-extra/calculator )
-	 files? ( liri-base/files )
-	 flatpak? ( liri-base/xdg-desktop-portal-liri[flatpak] )
-	 >=liri-base/session-0.1.0_pre20211010[systemd?]
-	   liri-base/shell:${SLOT}[systemd?]
-	 materialdecoration? ( liri-base/materialdecoration )
-	 music? ( liri-extra/music )
-	 networkmanager? ( liri-extra/networkmanager )
-	 platformtheme? ( liri-base/platformtheme )
-	 player? ( liri-extra/player )
-	 power-manager? ( liri-extra/power-manager )
-	 pulseaudio? ( liri-base/pulseaudio )
-	 screencast? ( liri-extra/screencast )
-	 screenshot? ( liri-extra/screenshot )
-	 settings? ( liri-base/settings )
-	 terminal? ( liri-base/terminal )
-	 text? ( liri-extra/text )
-	 themes? ( liri-base/themes )
-	 xwayland? ( liri-base/qml-xwayland )"
+DEPEND+="
+	~liri-base/session-0.1.0_pre20211010[systemd?]
+	~liri-base/shell-0.9.0_p20211010:${SLOT}[systemd?]
+	appcenter? ( liri-base/appcenter )
+	browser? ( ~liri-extra/browser-1.2.0_pre20211009 )
+	calculator? ( liri-extra/calculator )
+	files? ( liri-base/files )
+	flatpak? ( liri-base/xdg-desktop-portal-liri[flatpak] )
+	materialdecoration? ( liri-base/materialdecoration )
+	music? ( liri-extra/music )
+	networkmanager? ( liri-extra/networkmanager )
+	platformtheme? ( liri-base/platformtheme )
+	player? ( liri-extra/player )
+	power-manager? ( liri-extra/power-manager )
+	pulseaudio? ( liri-base/pulseaudio )
+	screencast? ( liri-extra/screencast )
+	screenshot? ( liri-extra/screenshot )
+	settings? ( liri-base/settings )
+	terminal? ( liri-base/terminal )
+	text? ( liri-extra/text )
+	themes? ( liri-base/themes )
+	wallpaper? ( liri-base/wallpapers )
+	xwayland? ( liri-base/qml-xwayland )"
 RDEPEND+=" ${DEPEND}"
+BDEPEND+="
+	~liri-base/cmake-shared-2.0.0_p20211010
+	~liri-base/fluid-1.2.0_p20211009
+"
 RESTRICT="mirror"
 
 pkg_postinst() {
