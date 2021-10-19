@@ -33,7 +33,7 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 EGIT_COMMIT="60d5dc0c3dfbf440f814140713cf87b58317c95b"
 SRC_URI="
 https://github.com/lirios/fluid/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
+	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
