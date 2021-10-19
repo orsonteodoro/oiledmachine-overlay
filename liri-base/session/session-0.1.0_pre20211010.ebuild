@@ -25,10 +25,10 @@ BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
-EGIT_COMMIT="bfae9be74ba57dc3e9c8467799e3b94a1ed3ae0d"
+EGIT_COMMIT="07e50f776b5a3de88ea768d6fdf6c094e4504709"
 SRC_URI="
 https://github.com/lirios/session/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
+	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 DESKTOP_DATABASE_DIR="/usr/share/wayland-sessions"
