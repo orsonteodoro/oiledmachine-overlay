@@ -15,7 +15,7 @@ SLOT="0/$(ver_cut 1-3 ${PV})"
 DEPEND+=" >=kde-frameworks/extra-cmake-modules-5.48.0"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0"
-EGIT_COMMIT="8122f2b96c8da38ea41b653cf69958e75fe2129d"
+EGIT_COMMIT="9aa63aa3e85b8040f862eb42cb69a78a91be3d5e"
 SRC_URI="
 https://github.com/lirios/cmake-shared/archive/${EGIT_COMMIT}.tar.gz
 	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
