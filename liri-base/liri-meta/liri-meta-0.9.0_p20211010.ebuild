@@ -18,7 +18,7 @@ DEPEND+="
 	flatpak? ( liri-base/xdg-desktop-portal-liri[flatpak] )
 	materialdecoration? ( liri-base/materialdecoration )
 	music? ( liri-extra/music )
-	networkmanager? ( liri-extra/networkmanager )
+	networkmanager? ( ~liri-extra/networkmanager-0.9.0_pre20211009 )
 	platformtheme? ( liri-base/platformtheme )
 	player? ( ~liri-extra/player-0.1.0_pre20211009 )
 	power-manager? ( liri-extra/power-manager )
