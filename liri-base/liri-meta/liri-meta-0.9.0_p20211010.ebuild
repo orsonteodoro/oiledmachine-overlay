@@ -13,7 +13,7 @@ DEPEND+=" appcenter? ( liri-base/appcenter )
 	 calculator? ( liri-extra/calculator )
 	 files? ( liri-base/files )
 	 flatpak? ( liri-base/xdg-desktop-portal-liri[flatpak] )
-	 >=liri-base/session-0.1.0_pre20201010[systemd?]
+	 >=liri-base/session-0.1.0_pre20211010[systemd?]
 	   liri-base/shell:${SLOT}[systemd?]
 	 materialdecoration? ( liri-base/materialdecoration )
 	 music? ( liri-extra/music )
