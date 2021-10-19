@@ -15,7 +15,7 @@ SLOT="0/${PV}"
 IUSE+=" test"
 QT_MIN_PV=5.12
 BDEPEND+=" >=dev-util/cmake-3.10.0
-	>=liri-base/cmake-shared-1.1.0_p20200511"
+	>=liri-base/cmake-shared-1.1.0_p20200511:0/1.1.0"
 EGIT_COMMIT="2a6c99965075a9a56e32df06ae9333b6da5ca017"
 SRC_URI="
 https://github.com/lirios/wallpapers/archive/${EGIT_COMMIT}.tar.gz
