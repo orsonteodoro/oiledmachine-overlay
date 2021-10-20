@@ -35,7 +35,7 @@ DEPEND+="
 	terminal? ( ~liri-base/terminal-0.2.0_p20211010 )
 	text? ( liri-extra/text )
 	themes? ( ~liri-base/themes-0.9.0_p20211009 )
-	wallpaper? ( liri-base/wallpapers )
+	wallpaper? ( ~liri-base/wallpapers-0.10.0_p20211009 )
 	xwayland? ( liri-base/qml-xwayland )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
