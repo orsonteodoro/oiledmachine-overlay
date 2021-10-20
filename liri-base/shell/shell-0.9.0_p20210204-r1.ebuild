@@ -48,7 +48,7 @@ BDEPEND+=" || (
 EGIT_COMMIT="ded359509328211e74346cdbfc6d67470b0fd872"
 SRC_URI="
 https://github.com/lirios/shell/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
+	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
