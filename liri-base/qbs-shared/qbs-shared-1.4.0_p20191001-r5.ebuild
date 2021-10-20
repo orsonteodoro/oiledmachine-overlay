@@ -18,7 +18,7 @@ BDEPEND+=" >=dev-util/qbs-1.11"
 EGIT_COMMIT="c176452261a562a8f319fe068bd635adbdce141b"
 SRC_URI="
 https://github.com/lirios/qbs-shared/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
+	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 QBS_CONFIG=( --settings-dir "${S}/qbs-config" )
