@@ -1,0 +1,17 @@
+--- a/third_party/angle/gni/angle.gni.orig	2021-10-18 12:26:54.000000000 -0700
++++ b/third_party/angle/gni/angle.gni	2021-10-20 03:42:12.968780232 -0700
+@@ -108,12 +108,8 @@ declare_args() {
+   # There's no "is_winuwp" helper in BUILDCONFIG.gn, so we define one ourselves
+   angle_is_winuwp = is_win && target_os == "winuwp"
+ 
+-  # Default to using "_angle" suffix on Android
+-  if (is_android) {
+-    angle_libs_suffix = "_angle"
+-  } else {
+-    angle_libs_suffix = ""
+-  }
++  # Default to using "_angle" suffix to prevent output name conflicts with swiftshader
++  angle_libs_suffix = "_angle"
+ 
+   # Currently Windows on Arm doesn't support OpenGL or Vulkan.
+   is_win_arm64 = is_win && target_cpu == "arm64"
