@@ -16,7 +16,7 @@ DEPEND+="
 	browser? ( ~liri-extra/browser-1.2.0_pre20211009 )
 	calculator? ( ~liri-extra/calculator-1.3.0_p20211009 )
 	files? ( ~liri-base/files-0.2.0_p20211010 )
-	flatpak? ( liri-base/xdg-desktop-portal-liri[flatpak] )
+	flatpak? ( ~liri-base/xdg-desktop-portal-liri-0.0.0_pre20211009[flatpak] )
 	music? ( liri-extra/music )
 	networkmanager? ( ~liri-extra/networkmanager-0.9.0_pre20211009 )
 	player? ( ~liri-extra/player-0.1.0_pre20211009 )
