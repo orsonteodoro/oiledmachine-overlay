@@ -20,8 +20,8 @@ DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-1.0.0:0/1.1.0"
-EGIT_COMMIT="eabe5d3e8ec38606c3abe5b4fda677e8fc29e280"
+	>=liri-base/cmake-shared-2.0.0:0/2.0.0"
+EGIT_COMMIT="a42019cd3f27c07b6bdb291391dcebe28e2474f6"
 SRC_URI="
 https://github.com/lirios/pulseaudio/archive/${EGIT_COMMIT}.tar.gz
 	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
