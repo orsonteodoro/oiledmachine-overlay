@@ -53,13 +53,13 @@ CMAKE_SHARED_COMMIT="4fdf2cb6edd23aaa467cfdbc758ee8ed15cbfc81"
 QBS_SHARED_COMMIT="ebee5a8798ab0a063b56cf7c73be2a28ec353a2e"
 SRC_URI="
 https://github.com/lirios/music/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}.tar.gz
+	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz
 https://github.com/lirios/fluid/archive/${FLUID_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-fluid-${FLUID_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-fluid-${FLUID_COMMIT:0:7}.tar.gz
 https://github.com/lirios/cmake-shared/archive/${CMAKE_SHARED_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-cmake-shared-${CMAKE_SHARED_COMMIT}.tar.gz
+	-> ${CATEGORY}-${PN}-cmake-shared-${CMAKE_SHARED_COMMIT:0:7}.tar.gz
 https://github.com/lirios/qbs-shared/archive/${QBS_SHARED_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-qbs-shared-${QBS_SHARED_COMMIT}.tar.gz"
+	-> ${CATEGORY}-${PN}-qbs-shared-${QBS_SHARED_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 _PATCHES=(
