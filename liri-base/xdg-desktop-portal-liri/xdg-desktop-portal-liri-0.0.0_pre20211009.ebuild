@@ -36,8 +36,8 @@ DEPEND+=" dev-libs/glib
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-1.1.0_p20200511:0/1.1.0"
-EGIT_COMMIT="22ebac8f7f760071d7e1c4f39cf0707d5ab48929"
+	>=liri-base/cmake-shared-2.0.0:0/2.0.0"
+EGIT_COMMIT="d7432f0396e44e845d220a8e3fbbfd88712dbbbe"
 SRC_URI="
 https://github.com/lirios/xdg-desktop-portal-liri/archive/${EGIT_COMMIT}.tar.gz
 	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
