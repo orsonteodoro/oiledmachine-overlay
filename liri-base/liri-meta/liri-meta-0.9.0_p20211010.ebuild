@@ -11,7 +11,8 @@ screencast screenshot +settings systemd +terminal text themes wallpaper \
 xwayland"
 REQUIRED_USE="
 	materialdecoration? ( !qtintegration )
-	qtintegration? ( materialdecoration )
+	platformtheme? ( !qtintegration )
+	qtintegration? ( !materialdecoration !platformtheme )
 "
 DEPEND+="
 	~liri-base/session-0.1.0_pre20211010[systemd?]

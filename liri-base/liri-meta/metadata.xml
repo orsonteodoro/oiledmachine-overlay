@@ -22,6 +22,8 @@
     <flag name="player">Installs a video media player</flag>
     <flag name="power-manager">Adds power management support</flag>
     <flag name="pulseaudio">Adds PulseAudio support</flag>
+    <flag name="qtintegration">Sets the default font and icon theme and material
+      decoration for Qt apps under wayland and wayland shell integration.</flag>
     <flag name="terminal">Installs a terminal emulator named Terminal</flag>
     <flag name="screencast">Installs a video desktop capture program</flag>
     <flag name="screenshot">Installs a desktop still capture program</flag>
