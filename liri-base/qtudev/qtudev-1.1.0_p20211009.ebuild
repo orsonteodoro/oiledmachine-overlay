@@ -20,9 +20,9 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
 	  dev-util/umockdev
-	>=liri-base/cmake-shared-1.0.0:0/1.1.0
+	>=liri-base/cmake-shared-2.0.0:0/2.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
-EGIT_COMMIT="f80ba68becac258004c7e331a6bdbb001b4e5a4f"
+EGIT_COMMIT="a787c56e625c3e48d8a58cb010ff3ddccf02da48"
 SRC_URI="
 https://github.com/lirios/qtudev/archive/${EGIT_COMMIT}.tar.gz
 	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
