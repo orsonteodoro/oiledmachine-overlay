@@ -31,7 +31,7 @@ DEPEND+="
 	qtintegration? ( ~liri-base/qtintegration-1.0.0_p20211009 )
 	screencast? ( liri-extra/screencast )
 	screenshot? ( liri-extra/screenshot )
-	settings? ( liri-base/settings )
+	settings? ( ~liri-base/settings-0.9.0_p20211010 )
 	terminal? ( ~liri-base/terminal-0.2.0_p20211010 )
 	text? ( liri-extra/text )
 	themes? ( ~liri-base/themes-0.9.0_p20211009 )
