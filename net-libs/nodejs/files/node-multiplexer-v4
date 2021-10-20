@@ -4,7 +4,9 @@ ACTIVE_VERSION=$(grep -r -e "#define NODE_MAJOR_VERSION" \
 	"${EPREFIX}/usr/include/node/node_version.h" | cut -f 3 -d " ")
 NODE_VERSION=${NODE_VERSION:-${ACTIVE_VERSION}}
 
-if [[ "${NODE_VERSION}" == "16" ]] ; then
+if [[ "${NODE_VERSION}" == "17" ]] ; then
+	"${EPREFIX}/usr/bin/node17" "${@}"
+elif [[ "${NODE_VERSION}" == "16" ]] ; then
 	"${EPREFIX}/usr/bin/node16" "${@}"
 elif [[ "${NODE_VERSION}" == "14" ]] ; then
 	"${EPREFIX}/usr/bin/node14" "${@}"

@@ -1,7 +1,7 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# IMPORTANT:  The node-multiplexer-v2 must be updated each time a new major version is introduced.
+# IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
 
 EAPI=7
 PYTHON_COMPAT=( python3_{8..10} )
@@ -15,8 +15,8 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm pax-kernel
-+snapshot +ssl system-icu +system-ssl systemtap test"
+IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm
+pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man pgo"
 
 BENCHMARK_TYPES=(
@@ -84,7 +84,7 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Oct 11, 2021
+# Last deps commit date:  Oct 18, 2021
 NGHTTP2_V="1.45.1"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
@@ -103,11 +103,11 @@ BDEPEND+=" ${PYTHON_DEPS}
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
 	pax-kernel? ( sys-apps/elfix )"
-PATCHES=( "${FILESDIR}"/${PN}-12.22.1-jinja_collections_abc.patch
+PATCHES=( "${FILESDIR}"/${PN}-17.0.0-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
 	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="8.0.0" # See https://github.com/nodejs/node/blob/v16.7.0/deps/npm/package.json
+NPM_V="8.1.0" # See https://github.com/nodejs/node/blob/v16.7.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -262,7 +262,11 @@ configure_pgx() {
 
 	use snapshot || myconf+=( --without-node-snapshot )
 	if use ssl; then
-		use system-ssl && myconf+=( --shared-openssl --openssl-use-def-ca-store )
+		if use system-ssl ; then
+			myconf+=( --shared-openssl --openssl-use-def-ca-store )
+			has_version ">=dev-libs/openssl-3.0.0" \
+				|| myconf+=( --openssl-legacy-provider )
+		fi
 	else
 		myconf+=( --without-ssl )
 	fi
@@ -529,7 +533,7 @@ pkg_postinst() {
 	else
 		eselect nodejs set node${SLOT_MAJOR}
 	fi
-	cp "${FILESDIR}/node-multiplexer-v3" "${EROOT}/usr/bin/node" || die
+	cp "${FILESDIR}/node-multiplexer-v4" "${EROOT}/usr/bin/node" || die
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die
 	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."

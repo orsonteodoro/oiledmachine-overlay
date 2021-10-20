@@ -1,7 +1,7 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# IMPORTANT:  The node-multiplexer-v2 must be updated each time a new major version is introduced.
+# IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
 
 EAPI=7
 PYTHON_COMPAT=( python3_{8..10} )
@@ -536,7 +536,7 @@ pkg_postinst() {
 	else
 		eselect nodejs set node${SLOT_MAJOR}
 	fi
-	cp "${FILESDIR}/node-multiplexer-v3" "${EROOT}/usr/bin/node" || die
+	cp "${FILESDIR}/node-multiplexer-v4" "${EROOT}/usr/bin/node" || die
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die
 	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."
