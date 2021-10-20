@@ -32,7 +32,7 @@ DEPEND+="
 	screencast? ( liri-extra/screencast )
 	screenshot? ( liri-extra/screenshot )
 	settings? ( liri-base/settings )
-	terminal? ( liri-base/terminal )
+	terminal? ( ~liri-base/terminal-0.2.0_p20211010 )
 	text? ( liri-extra/text )
 	themes? ( liri-base/themes )
 	wallpaper? ( liri-base/wallpapers )
