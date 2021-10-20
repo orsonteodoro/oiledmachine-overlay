@@ -24,8 +24,8 @@ DEPEND+=" grub? ( sys-boot/grub )
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-1.0.0:0/1.1.0"
-EGIT_COMMIT="ab914ebb01c9720eb4f43e9d05d9cf965c0589d3"
+	>=liri-base/cmake-shared-2.0.0:0/2.0.0"
+EGIT_COMMIT="7d44bcd33d1dcde8864629e5bbdb461051299b59"
 SRC_URI="
 https://github.com/lirios/themes/archive/${EGIT_COMMIT}.tar.gz
 	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
