@@ -1,0 +1,80 @@
+diff -urp node-v17.0.0.orig/deps/v8/third_party/jinja2/runtime.py node-v17.0.0/deps/v8/third_party/jinja2/runtime.py
+--- node-v17.0.0.orig/deps/v8/third_party/jinja2/runtime.py	2021-10-18 17:48:31.000000000 -0700
++++ node-v17.0.0/deps/v8/third_party/jinja2/runtime.py	2021-10-20 07:25:38.500221976 -0700
+@@ -315,7 +315,7 @@ class Context(with_metaclass(ContextMeta
+ 
+ # register the context as mapping if possible
+ try:
+-    from collections import Mapping
++    from collections.abc import Mapping
+     Mapping.register(Context)
+ except ImportError:
+     pass
+diff -urp node-v17.0.0.orig/deps/v8/third_party/jinja2/sandbox.py node-v17.0.0/deps/v8/third_party/jinja2/sandbox.py
+--- node-v17.0.0.orig/deps/v8/third_party/jinja2/sandbox.py	2021-10-18 17:48:31.000000000 -0700
++++ node-v17.0.0/deps/v8/third_party/jinja2/sandbox.py	2021-10-20 07:25:38.501221976 -0700
+@@ -14,7 +14,7 @@
+ """
+ import types
+ import operator
+-from collections import Mapping
++from collections.abc import Mapping
+ from jinja2.environment import Environment
+ from jinja2.exceptions import SecurityError
+ from jinja2._compat import string_types, PY2
+@@ -79,7 +79,7 @@ except ImportError:
+     pass
+ 
+ #: register Python 2.6 abstract base classes
+-from collections import MutableSet, MutableMapping, MutableSequence
++from collections.abc import MutableSet, MutableMapping, MutableSequence
+ _mutable_set_types += (MutableSet,)
+ _mutable_mapping_types += (MutableMapping,)
+ _mutable_sequence_types += (MutableSequence,)
+Only in node-v17.0.0/deps/v8/third_party/jinja2: tests.py.rej
+diff -urp node-v17.0.0.orig/deps/v8/third_party/jinja2/utils.py node-v17.0.0/deps/v8/third_party/jinja2/utils.py
+--- node-v17.0.0.orig/deps/v8/third_party/jinja2/utils.py	2021-10-18 17:48:31.000000000 -0700
++++ node-v17.0.0/deps/v8/third_party/jinja2/utils.py	2021-10-20 07:25:38.501221976 -0700
+@@ -482,7 +482,7 @@ class LRUCache(object):
+ 
+ # register the LRU cache as mutable mapping if possible
+ try:
+-    from collections import MutableMapping
++    from collections.abc import MutableMapping
+     MutableMapping.register(LRUCache)
+ except ImportError:
+     pass
+diff -urp node-v17.0.0.orig/tools/inspector_protocol/jinja2/runtime.py node-v17.0.0/tools/inspector_protocol/jinja2/runtime.py
+--- node-v17.0.0.orig/tools/inspector_protocol/jinja2/runtime.py	2021-10-18 17:48:32.000000000 -0700
++++ node-v17.0.0/tools/inspector_protocol/jinja2/runtime.py	2021-10-20 07:25:38.502221976 -0700
+@@ -315,7 +315,7 @@ class Context(with_metaclass(ContextMeta
+ 
+ # register the context as mapping if possible
+ try:
+-    from collections import Mapping
++    from collections.abc import Mapping
+     Mapping.register(Context)
+ except ImportError:
+     pass
+diff -urp node-v17.0.0.orig/tools/inspector_protocol/jinja2/sandbox.py node-v17.0.0/tools/inspector_protocol/jinja2/sandbox.py
+--- node-v17.0.0.orig/tools/inspector_protocol/jinja2/sandbox.py	2021-10-18 17:48:32.000000000 -0700
++++ node-v17.0.0/tools/inspector_protocol/jinja2/sandbox.py	2021-10-20 07:25:38.503221976 -0700
+@@ -14,7 +14,7 @@
+ """
+ import types
+ import operator
+-from collections import Mapping
++from collections.abc import Mapping
+ from jinja2.environment import Environment
+ from jinja2.exceptions import SecurityError
+ from jinja2._compat import string_types, PY2
+@@ -79,7 +79,7 @@ except ImportError:
+     pass
+ 
+ #: register Python 2.6 abstract base classes
+-from collections import MutableSet, MutableMapping, MutableSequence
++from collections.abc import MutableSet, MutableMapping, MutableSequence
+ _mutable_set_types += (MutableSet,)
+ _mutable_mapping_types += (MutableMapping,)
+ _mutable_sequence_types += (MutableSequence,)
+Only in node-v17.0.0/tools/inspector_protocol/jinja2: tests.py.rej
