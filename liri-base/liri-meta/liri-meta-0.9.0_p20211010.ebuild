@@ -14,7 +14,7 @@ DEPEND+="
 	~liri-base/shell-0.9.0_p20211010:${SLOT}[systemd?]
 	appcenter? ( liri-base/appcenter )
 	browser? ( ~liri-extra/browser-1.2.0_pre20211009 )
-	calculator? ( liri-extra/calculator )
+	calculator? ( ~liri-extra/calculator-1.3.0_p20211009 )
 	files? ( ~liri-base/files-0.2.0_p20211010 )
 	flatpak? ( liri-base/xdg-desktop-portal-liri[flatpak] )
 	music? ( liri-extra/music )
