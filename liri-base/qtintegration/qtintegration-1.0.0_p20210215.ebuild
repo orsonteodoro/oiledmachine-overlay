@@ -23,11 +23,11 @@ DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	   virtual/pkgconfig
-	 >=liri-base/cmake-shared-2.0.0:0/2.0.0"
+	 >=liri-base/cmake-shared-1.0.0:0/1.1.0"
 EGIT_COMMIT="6a5de23f2e5162fbee39d16f938473ff970a2ec0"
 SRC_URI="
 https://github.com/lirios/qtintegration/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
+	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

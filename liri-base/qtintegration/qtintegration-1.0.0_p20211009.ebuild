@@ -27,7 +27,7 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 EGIT_COMMIT="afb973e2f106d49f1746f614b021cf9f4c913c70"
 SRC_URI="
 https://github.com/lirios/qtintegration/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
+	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
