@@ -5,15 +5,10 @@ EAPI=7
 DESCRIPTION="Meta package for liri"
 HOMEPAGE="https://liri.io/"
 SLOT="0/${PV}" # based on liri-base/liri-shell
-IUSE+=" appcenter browser calculator +files flatpak materialdecoration music \
-networkmanager +platformtheme player power-manager pulseaudio qtintegration \
+IUSE+=" appcenter browser calculator +files flatpak music \
+networkmanager player power-manager pulseaudio qtintegration \
 screencast screenshot +settings systemd +terminal text themes wallpaper \
 xwayland"
-REQUIRED_USE="
-	materialdecoration? ( !qtintegration )
-	platformtheme? ( !qtintegration )
-	qtintegration? ( !materialdecoration !platformtheme )
-"
 DEPEND+="
 	~liri-base/session-0.1.0_pre20211010[systemd?]
 	~liri-base/shell-0.9.0_p20211010:${SLOT}[systemd?]
@@ -22,16 +17,14 @@ DEPEND+="
 	calculator? ( liri-extra/calculator )
 	files? ( ~liri-base/files-0.2.0_p20211010 )
 	flatpak? ( liri-base/xdg-desktop-portal-liri[flatpak] )
-	materialdecoration? ( liri-base/materialdecoration )
 	music? ( liri-extra/music )
 	networkmanager? ( ~liri-extra/networkmanager-0.9.0_pre20211009 )
-	platformtheme? ( liri-base/platformtheme )
 	player? ( ~liri-extra/player-0.1.0_pre20211009 )
 	power-manager? ( ~liri-extra/power-manager-0.9.0_pre20211010 )
 	pulseaudio? ( ~liri-base/pulseaudio-0.9.0_pre20211010 )
 	qtintegration? ( ~liri-base/qtintegration-1.0.0_p20211009 )
 	screencast? ( ~liri-extra/screencast-0.9.0_pre20211009 )
-	screenshot? ( liri-extra/screenshot )
+	screenshot? ( ~liri-extra/screenshot-0.9.0_pre20211009 )
 	settings? ( ~liri-base/settings-0.9.0_p20211010 )
 	terminal? ( ~liri-base/terminal-0.2.0_p20211010 )
 	text? ( ~liri-extra/text-0.5.0_p20211009 )
