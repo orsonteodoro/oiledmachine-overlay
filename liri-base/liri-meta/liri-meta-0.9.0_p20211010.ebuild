@@ -19,7 +19,7 @@ DEPEND+="
 	appcenter? ( liri-base/appcenter )
 	browser? ( ~liri-extra/browser-1.2.0_pre20211009 )
 	calculator? ( liri-extra/calculator )
-	files? ( liri-base/files )
+	files? ( ~liri-base/files-0.2.0_p20211010 )
 	flatpak? ( liri-base/xdg-desktop-portal-liri[flatpak] )
 	materialdecoration? ( liri-base/materialdecoration )
 	music? ( liri-extra/music )
