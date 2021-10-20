@@ -9,6 +9,7 @@
     This is a meta package for liri.
   </longdescription>
   <use>
+    <flag name="appcenter">Installs a Flatpak App Center</flag>
     <flag name="browser">Installs a qtwebengine based web browser</flag>
     <flag name="calculator">Installs a calculator program</flag>
     <flag name="systemd">Adds systemd support</flag>
