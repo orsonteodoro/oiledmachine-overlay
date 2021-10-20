@@ -30,7 +30,7 @@ DEPEND+="
 	power-manager? ( ~liri-extra/power-manager-0.9.0_pre20211010 )
 	pulseaudio? ( ~liri-base/pulseaudio-0.9.0_pre20211010 )
 	qtintegration? ( ~liri-base/qtintegration-1.0.0_p20211009 )
-	screencast? ( liri-extra/screencast )
+	screencast? ( ~liri-extra/screencast-0.9.0_pre20211009 )
 	screenshot? ( liri-extra/screenshot )
 	settings? ( ~liri-base/settings-0.9.0_p20211010 )
 	terminal? ( ~liri-base/terminal-0.2.0_p20211010 )
