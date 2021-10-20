@@ -26,7 +26,7 @@ DEPEND+="
 	networkmanager? ( ~liri-extra/networkmanager-0.9.0_pre20211009 )
 	platformtheme? ( liri-base/platformtheme )
 	player? ( ~liri-extra/player-0.1.0_pre20211009 )
-	power-manager? ( liri-extra/power-manager )
+	power-manager? ( ~liri-extra/power-manager-0.9.0_pre20211010 )
 	pulseaudio? ( ~liri-base/pulseaudio-0.9.0_pre20211010 )
 	qtintegration? ( ~liri-base/qtintegration-1.0.0_p20211009 )
 	screencast? ( liri-extra/screencast )
