@@ -4,6 +4,11 @@
 # Developer note:
 # -<use> means remove USE block, without - means block USE
 
+# Disabled USE options that pose a security risk:
+
 # "debug ... is unsafe by definition and that is not a vulnerability" from NVD entry CVE-2019-19391
 # Avoid CWE-215 related class of errors and vulnerabilities
 debug
+
+# Avoid running programs as root which certain exploits (e.g. stack clash exploit) depend on
+suid
