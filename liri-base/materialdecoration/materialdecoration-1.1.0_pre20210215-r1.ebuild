@@ -23,7 +23,7 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 EGIT_COMMIT="6a5de23f2e5162fbee39d16f938473ff970a2ec0"
 SRC_URI="
 https://github.com/lirios/materialdecoration/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
+	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
