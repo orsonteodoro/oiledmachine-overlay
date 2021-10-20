@@ -12,7 +12,7 @@ xwayland"
 DEPEND+="
 	~liri-base/session-0.1.0_pre20211010[systemd?]
 	~liri-base/shell-0.9.0_p20211010:${SLOT}[systemd?]
-	appcenter? ( liri-base/appcenter )
+	appcenter? ( ~liri-base/appcenter-0.1.0_p20211010 )
 	browser? ( ~liri-extra/browser-1.2.0_pre20211009 )
 	calculator? ( ~liri-extra/calculator-1.3.0_p20211009 )
 	files? ( ~liri-base/files-0.2.0_p20211010 )
