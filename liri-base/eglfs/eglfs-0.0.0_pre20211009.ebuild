@@ -26,9 +26,9 @@ DEPEND+=" dev-libs/libinput
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-1.0.0:0/1.1.0
+	>=liri-base/cmake-shared-2.0.0:0/2.0.0
 	sys-kernel/linux-headers"
-EGIT_COMMIT="d55225b4edcfebabef3b2f2ff0f338ab31bad68a"
+EGIT_COMMIT="77f5ac9e2a7ac831bcff0c250968f0fca1eaef43"
 SRC_URI="
 https://github.com/lirios/eglfs/archive/${EGIT_COMMIT}.tar.gz
 	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
