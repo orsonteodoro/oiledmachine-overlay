@@ -28,7 +28,7 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 EGIT_COMMIT="98cb78ac81c18e4123fe6885b46282e5ef8dede0"
 SRC_URI="
 https://github.com/lirios/qml-xwayland/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}.tar.gz"
+	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
