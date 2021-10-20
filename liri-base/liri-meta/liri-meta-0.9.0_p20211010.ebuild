@@ -36,7 +36,7 @@ DEPEND+="
 	text? ( liri-extra/text )
 	themes? ( ~liri-base/themes-0.9.0_p20211009 )
 	wallpaper? ( ~liri-base/wallpapers-0.10.0_p20211009 )
-	xwayland? ( liri-base/qml-xwayland )"
+	xwayland? ( ~liri-base/qml-xwayland-0.10.0_p20211009 )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	~liri-base/cmake-shared-2.0.0_p20211010
