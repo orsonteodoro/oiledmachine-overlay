@@ -5,8 +5,8 @@ EAPI=7
 
 inherit cmake-utils eutils
 
-DESCRIPTION="Client-side decoration for all Qt-based Wayland clients"
-HOMEPAGE="https://github.com/lirios/materialdecoration"
+DESCRIPTION="Qt platform theme plugin for apps integration with Liri"
+HOMEPAGE="https://github.com/lirios/qtintegration"
 LICENSE="GPL-3+ LGPL-3+"
 
 # Live/snapshot ebuild do not get KEYWORDed
