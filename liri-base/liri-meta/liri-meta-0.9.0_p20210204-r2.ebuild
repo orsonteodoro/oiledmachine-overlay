@@ -6,8 +6,13 @@ DESCRIPTION="Meta package for liri"
 HOMEPAGE="https://liri.io/"
 SLOT="0/${PV}" # based on liri-base/liri-shell
 IUSE+=" appcenter browser calculator +files flatpak materialdecoration music \
-networkmanager +platformtheme player power-manager pulseaudio screencast \
-screenshot +settings systemd +terminal text themes wallpaper xwayland"
+networkmanager +platformtheme player power-manager pulseaudio qtintegration \
+screencast screenshot +settings systemd +terminal text themes wallpaper \
+xwayland"
+REQUIRED_USE="
+	materialdecoration? ( !qtintegration )
+	qtintegration? ( materialdecoration )
+"
 DEPEND+="
 	~liri-base/session-0.1.0_pre20200524[systemd?]
 	~liri-base/shell-0.9.0_p20210204:${SLOT}[systemd?]
@@ -23,6 +28,7 @@ DEPEND+="
 	player? ( ~liri-extra/player-0.1.0_pre20201030 )
 	power-manager? ( ~liri-extra/power-manager-0.9.0_pre20210110 )
 	pulseaudio? ( ~liri-base/pulseaudio-0.9.0_pre20210111 )
+	qtintegration? ( ~liri-base/qtintegration-1.0.0_p20210215 )
 	screencast? ( ~liri-extra/screencast-0.9.0_pre20201203 )
 	screenshot? ( ~liri-extra/screenshot-0.9.0_pre20201204 )
 	settings? ( ~liri-base/settings-0.9.0_p20201219 )
