@@ -22,14 +22,16 @@ inherit multilib-minimal
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
 PATCHSET="4"
-PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
+PATCHSET_NAME="chromium-95-patchset-${PATCHSET}"
 CIPD_V="8e9b0c80860d00dfe951f7ea37d74e210d376c13" # in \
 # third_party/depot_tools/cipd_client_version
 MTD_V="${PV}"
 CTDM_V="${PV}"
+# a4de986 - ozone/x11: fix VA-API.
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
+	https://github.com/chromium/chromium/commit/a4de986102a45e29c3ef596f22704bdca244c26c.patch -> ${PN}-a4de986.patch
 	pgo-full? (
 		amd64? ( https://chrome-infra-packages.appspot.com/client?platform=linux-amd64&version=git_revision:${CIPD_V} -> .cipd_client-amd64-${CIPD_V} )
 		arm64? ( https://chrome-infra-packages.appspot.com/client?platform=linux-arm64&version=git_revision:${CIPD_V} -> .cipd_client-arm64-${CIPD_V} )
@@ -49,6 +51,8 @@ SRC_URI="
 		)
 	)
 "
+
+
 
 # Some assets encoded by proprietary-codecs (mp3, aac, h264) are found in both
 #   ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
@@ -346,8 +350,10 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 #   incompatible as a shared lib.
 # The suid is built by default upstream but not necessarily used:  \
 #   https://github.com/chromium/chromium/blob/94.0.4588.2/sandbox/linux/BUILD.gn
-IUSE="component-build cups cpu_flags_arm_neon -debug +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid -system-ffmpeg -system-icu -system-harfbuzz +vaapi wayland widevine"
-IUSE+=" weston"
+CPU_FLAGS_ARM=( neon )
+CPU_FLAGS_X86=( ssse3 sse4_2 )
+IUSE="${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_} ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_} component-build cups -debug +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid -system-ffmpeg -system-icu -system-harfbuzz +vaapi wayland widevine"
+IUSE+=" weston r1"
 # What is considered a proprietary codec can be found at:
 #   https://github.com/chromium/chromium/blob/94.0.4606.71/media/filters/BUILD.gn#L160
 #   https://github.com/chromium/chromium/blob/94.0.4606.71/media/media_options.gni#L38
@@ -1620,6 +1626,51 @@ eerror
 	fi
 }
 
+get_pregenerated_profdata_version()
+{
+	test -e "${S}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" || die
+	echo $(od -An -j 8 -N 1 -t d1 "${S}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" | grep -E -o -e "[0-7]+")
+}
+
+get_llvm_profdata_version_info()
+{
+	local profdata_v=0
+	local v
+	local ver
+	# The live versions can have different profdata versions over time.
+	for v in "10.0.1" "11.1.0" "12.0.1" "13.0.0" "13.0.0.9999" "14.0.0.9999" ; do
+		(( $(ver_cut 1 "${v}") != ${LLVM_SLOT} )) && continue
+		(! has_version "~sys-devel/llvm-${v}" ) && continue
+		local llvm_version
+		if [[ "${v}" =~ "9999" ]] ; then
+			local llvm_version=$(bzless \
+				"${ESYSROOT}/var/db/pkg/sys-devel/llvm-${v}"*"/environment.bz2" \
+				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
+		else
+			llvm_version="llvmorg-${v/_/-}"
+		fi
+		ver=${v}
+		profdata_v=$(wget -q -O - \
+https://raw.githubusercontent.com/llvm/llvm-project/${llvm_version}/llvm/include/llvm/ProfileData/InstrProfData.inc \
+			| grep "INSTR_PROF_INDEX_VERSION" \
+			| head -n 1 \
+			| grep -E -o -e "[0-9]+")
+	done
+	echo "${profdata_v}:${ver}"
+}
+
+is_profdata_compatible() {
+	local a=$(get_pregenerated_profdata_version)
+	local b=${CURRENT_PROFDATA_VERSION}
+	if (( ${a} == ${b} )) ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+CURRENT_PROFDATA_VERSION=
+CURRENT_PROFDATA_LLVM_VERSION=
 NABIS=0
 pkg_setup() {
 	einfo "The $(ver_cut 1 ${PV}) series is the stable channel."
@@ -1711,6 +1762,11 @@ echo -e "${LLVM_REPORT_CARDS[${s}]}"
 				| sed -e "/^$/d" | tr "\n" ":" | sed -e "s|:$||")
 			export PATH+=":/usr/lib/llvm/${LLVM_SLOT}/bin"
 			einfo "Using llvm:${LLVM_SLOT}"
+		fi
+		if use pgo ; then
+			local vi=$(get_llvm_profdata_version_info)
+			CURRENT_PROFDATA_VERSION=$(echo "${vi}" | cut -f 1 -d ":")
+			CURRENT_PROFDATA_LLVM_VERSION=$(echo "${vi}" | cut -f 2 -d ":")
 		fi
 	fi
 	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" ]] ; then
@@ -2043,7 +2099,11 @@ ewarn
 		ceapply "${FILESDIR}/chromium-94-arm64-shadow-call-stack.patch"
 	fi
 
-	ceapply "${FILESDIR}/chromium-95.0.4638.54-angle-suffix.patch"
+	if use vaapi ; then
+		ceapply "${DISTDIR}/${PN}-a4de986.patch"
+	fi
+
+	ceapply "${FILESDIR}/chromium-95.0.4638.54-zlib-selective-simd.patch"
 
 	default
 
@@ -2297,6 +2357,7 @@ eerror
 		third_party/xcbproto
 		third_party/zxcvbn-cpp
 		third_party/zlib/google
+		third_party/zlib
 		url/third_party/mozilla
 		v8/src/third_party/siphash
 		v8/src/third_party/valgrind
@@ -2310,11 +2371,9 @@ eerror
 		third_party/usb_ids
 		third_party/xdg-utils
 	)
-	if use cfi-cast || use cfi-icall || use cfi-vcall || use official ; then
-		keeplibs+=(
-			third_party/zlib
-		)
-	fi
+#	if use cfi-cast || use cfi-icall || use cfi-vcall || use official ; then
+		# third_party/zlib is already kept but may use system
+#	fi
 	if use pgo-full ; then
 		keeplibs+=(
 			third_party/catapult/third_party/gsutil
@@ -3641,6 +3700,14 @@ ewarn
 	myconf_gn+=" host_cpu=\"${target_cpu}\""
 	myconf_gyp+=" -Dtarget_arch=${target_arch}"
 
+	if ! use cpu_flags_x86_sse4_2 ; then
+		myconf_gn+=" use_sse4_2=false"
+	fi
+
+	if ! use cpu_flags_x86_ssse3 ; then
+		myconf_gn+=" use_ssse3=false"
+	fi
+
 	# Make sure that -Werror doesn't get added to CFLAGS by the build system.
 	# Depending on GCC version the warnings are different and we don't want
 	# the build to fail because of that.
@@ -3745,6 +3812,26 @@ ewarn
 
 	if use arm64 && use shadowcallstack ; then
 		myconf_gn+=" use_shadow_call_stack=true"
+	fi
+
+	if use pgo ; then
+		if ! is_profdata_compatible ; then
+			eerror
+			eerror "Profraw compatibility:"
+			eerror
+			eerror "The PGO profile is not compatible with this version of LLVM"
+			eerror "Expected:  $(get_pregenerated_profdata_version)"
+			eerror "Found:  ${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
+			eerror
+			die
+		else
+			einfo
+			einfo "Profraw compatibility:"
+			einfo
+			einfo "Expected:  $(get_pregenerated_profdata_version)"
+			einfo "Found:  ${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
+			einfo
+		fi
 	fi
 
 # See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.

@@ -1,0 +1,66 @@
+--- third_party/zlib/BUILD.gn.orig	2021-10-18 12:24:23.000000000 -0700
++++ third_party/zlib/BUILD.gn	2021-10-20 15:38:34.519196578 -0700
+@@ -19,6 +19,9 @@ config("zlib_config") {
+ config("zlib_internal_config") {
+   defines = [ "ZLIB_IMPLEMENTATION" ]
+ 
++  use_sse4_2 = true
++  use_ssse3 = true
++
+   if (!is_debug) {
+     # Build code using -O3, see: crbug.com/1084371.
+     configs = [ "//build/config/compiler:optimize_speed" ]
+@@ -57,7 +60,7 @@ use_x86_x64_optimizations =
+     (current_cpu == "x86" || current_cpu == "x64") && !is_ios
+ 
+ config("zlib_adler32_simd_config") {
+-  if (use_x86_x64_optimizations) {
++  if (use_x86_x64_optimizations && use_ssse3) {
+     defines = [ "ADLER32_SIMD_SSSE3" ]
+     if (is_win) {
+       defines += [ "X86_WINDOWS" ]
+@@ -80,7 +83,7 @@ source_set("zlib_adler32_simd") {
+       "adler32_simd.h",
+     ]
+ 
+-    if (!is_win || is_clang) {
++    if ((!is_win || is_clang) && use_ssse3) {
+       cflags = [ "-mssse3" ]
+     }
+   }
+@@ -193,7 +196,7 @@ source_set("zlib_inflate_chunk_simd") {
+ }
+ 
+ config("zlib_crc32_simd_config") {
+-  if (use_x86_x64_optimizations) {
++  if (use_x86_x64_optimizations && use_sse4_2) {
+     defines = [ "CRC32_SIMD_SSE42_PCLMUL" ]
+   }
+ }
+@@ -207,7 +210,7 @@ source_set("zlib_crc32_simd") {
+       "crc32_simd.h",
+     ]
+ 
+-    if (!is_win || is_clang) {
++    if ((!is_win || is_clang) && use_sse4_2) {
+       cflags = [
+         "-msse4.2",
+         "-mpclmul",
+@@ -222,7 +225,7 @@ source_set("zlib_crc32_simd") {
+ }
+ 
+ config("zlib_x86_simd_config") {
+-  if (use_x86_x64_optimizations) {
++  if (use_x86_x64_optimizations && use_sse4_2) {
+     defines = [
+       "CRC32_SIMD_SSE42_PCLMUL",
+       "DEFLATE_FILL_WINDOW_SSE2",
+@@ -239,7 +242,7 @@ source_set("zlib_x86_simd") {
+       "fill_window_sse.c",
+     ]
+ 
+-    if (!is_win || is_clang) {
++    if ( ( !is_win || is_clang ) && use_sse4_2) {
+       cflags = [
+         "-msse4.2",
+         "-mpclmul",

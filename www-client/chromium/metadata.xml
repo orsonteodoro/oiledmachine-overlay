@@ -178,5 +178,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       generation</flag>
     <flag name="widevine">Unsupported closed-source DRM capability (required for
       premium web content)</flag>
+
+    <flag name="rN">(FOR INTERNAL USE ONLY) Bumps the revision through the
+      USE the flag instead of file name to reuse previous ccache runs.</flag>
   </use>
 </pkgmetadata>
