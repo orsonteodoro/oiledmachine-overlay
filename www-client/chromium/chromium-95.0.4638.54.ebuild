@@ -1214,13 +1214,23 @@ pre_build_checks() {
 		fi
 	fi
 
-	local virt_mem_sources=$(free --giga | tail -n +2 \
+	# Assumes 2.1875 ratio (as the uncompressed:compressed ratio)
+	local required_total_memory=27
+	local required_total_memory_lto=16
+	local has_compressed_memory=0
+	if grep -q -e "Y" "/sys/module/zswap/parameters/enabled" ; then
+		has_compressed_memory=1
+		required_total_memory=12 # Done with zswap
+		required_total_memory_lto=8
+	fi
+
+	local total_memory_sources=$(free --giga | tail -n +2 \
 		| sed -r -e "s|[ ]+| |g" | cut -f 2 -d " ")
-	local total_virtual_mem=0
-	for virt_mem_source in ${virt_mem_sources[@]} ; do
-		total_virtual_mem=$((${total_virtual_mem} + ${virt_mem_source}))
+	local total_memory=0
+	for total_memory_source in ${total_memory_sources[@]} ; do
+		total_memory=$((${total_memory} + ${total_memory_source}))
 	done
-	if (( ${total_virtual_mem} < 12 )) ; then
+	if (( ${total_memory} < ${required_total_memory} )) ; then
 # It randomly fails and a success observed with 8 GiB of total memory
 # (ram + swap) when multitasking.  It works with 16 GiB of total memory when
 # multitasking, but peak virtual memory (used + reserved) is ~10.2 GiB for
@@ -1230,14 +1240,20 @@ pre_build_checks() {
 # [43744.101600] oom_reaper: reaped process 27154 (ld.lld), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
 ewarn
 ewarn "You may need >= 12 GiB of total memory to link ${PN}.  Please add more"
-ewarn "swap space.  You currently have ${total_virtual_mem} GiB of total memory."
+ewarn "swap space.  You currently have ${total_memory} GiB of total memory."
 ewarn
 	else
-einfo "Total memory (RAM + swap) is sufficient (>= 12 GiB)."
+einfo
+einfo "Total memory is sufficient (>= ${required_total_memory} GiB."
+einfo
 	fi
 
-	if use lto-opt && (( ${total_virtual_mem} <= 8 )) ; then
-		die "Add more swap space."
+	if use lto-opt && (( ${total_memory} <= ${required_total_memory_lto} )) ; then
+eerror
+eerror "lto-opt requires >= ${required_total_memory_lto} of total memory.  Add"
+eerror "more swap space."
+eerror
+		die
 	fi
 
 	if has_version "x11-libs/libva-intel-driver" ; then
