@@ -3819,9 +3819,14 @@ ewarn
 			eerror
 			eerror "Profraw compatibility:"
 			eerror
-			eerror "The PGO profile is not compatible with this version of LLVM"
+			eerror "The PGO profile is not compatible with this version of LLVM."
 			eerror "Expected:  $(get_pregenerated_profdata_version)"
 			eerror "Found:  ${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
+			eerror
+			eerror "The solution is to rebuild using a newer/older the revision or tag."
+			eerror
+			eerror "The mapping between INSTR_PROF_INDEX_VERSION and the commit / tag can be"
+			eerror "found in InstrProfData.inc in the LLVM repo."
 			eerror
 			die
 		else
