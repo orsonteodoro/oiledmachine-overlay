@@ -3823,9 +3823,9 @@ ewarn
 			eerror "Expected:  $(get_pregenerated_profdata_version)"
 			eerror "Found:  ${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
 			eerror
-			eerror "The solution is to rebuild using a newer/older the revision or tag."
+			eerror "The solution is to rebuild using a newer/older commit or tag."
 			eerror
-			eerror "The mapping between INSTR_PROF_INDEX_VERSION and the commit / tag can be"
+			eerror "The mapping between INSTR_PROF_INDEX_VERSION and the commit or tag can be"
 			eerror "found in InstrProfData.inc in the LLVM repo."
 			eerror
 			die
