@@ -696,7 +696,7 @@ verify_profraw_compatibility() {
 	local found_upstream_version=0 # corresponds to original patch requirements for < llvm 13 (broken)
 	local found_patched_version=0 # corresponds to oiledmachine patches to use >= llvm 13 (fixed)
 	local v
-	for v in "10.0.1" "11.1.0" "12.0.1" "13.0.0_rc2" "13.0.0.9999" "14.0.0.9999" ; do
+	for v in "10.0.1" "11.1.0" "12.0.1" "13.0.0" "13.0.0.9999" "14.0.0.9999" ; do
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
 		local llvm_version
 		if [[ "${v}" =~ "9999" ]] ; then
