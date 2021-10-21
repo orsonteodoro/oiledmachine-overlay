@@ -1202,6 +1202,7 @@ pre_build_checks() {
 		fi
 	fi
 
+	# https://github.com/chromium/chromium/blob/95.0.4638.54/docs/linux/build_instructions.md#system-requirements
 	# Check build requirements, bug #541816 and bug #471810 .
 	CHECKREQS_MEMORY="4G"
 	CHECKREQS_DISK_BUILD="9G"
