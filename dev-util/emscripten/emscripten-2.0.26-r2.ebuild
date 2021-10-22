@@ -20,9 +20,9 @@ inherit cmake-utils flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1
 
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
-LICENSE="all-rights-reserved UoI-NCSA Apache-2.0 Apache-2.0-with-LLVM-exceptions \
-BSD BSD-2 CC-BY-SA-3.0 \
-|| ( FTL GPL-2 ) GPL-2+ LGPL-2.1 LGPL-3 MIT MPL-2.0 OFL-1.1 PSF-2.4 Unlicense \
+LICENSE="all-rights-reserved UoI-NCSA Apache-2.0 Apache-2.0-with-LLVM-exceptions
+BSD BSD-2 CC-BY-SA-3.0
+|| ( FTL GPL-2 ) GPL-2+ LGPL-2.1 LGPL-3 MIT MPL-2.0 OFL-1.1 PSF-2.4 Unlicense
 ZLIB
 closure-compiler? (
 	Apache-2.0
@@ -94,7 +94,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	closure_compiler_nodejs? ( closure-compiler )
 	system-closure-compiler? (
 		closure-compiler
-		^^ ( closure_compiler_java closure_compiler_native \
+		^^ ( closure_compiler_java closure_compiler_native
 			closure_compiler_nodejs )
 	)"
 # See also .circleci/config.yml
@@ -109,7 +109,7 @@ BINARYEN_V="101"
 RDEPEND+=" ${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
-		system-closure-compiler? ( \
+		system-closure-compiler? (
 			>=dev-util/closure-compiler-npm-20210601.0.0:\
 ${CLOSURE_COMPILER_SLOT}\
 [closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?] )
