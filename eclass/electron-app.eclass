@@ -118,20 +118,23 @@ ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 # Tracked supported versions
 # https://www.electronjs.org/docs/tutorial/support#currently-supported-versions
 
+# Track "Security:" in https://www.electronjs.org/releases/alpha?version=16
+CVE_PATCHED_ELECTRON_16="16.0.0_alpha8"
+
+# Track "Security:" in https://www.electronjs.org/releases/stable?version=15
+CVE_PATCHED_ELECTRON_15="15.2.0"
+
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=14
-CVE_PATCHED_ELECTRON_14="14.0.0"
+CVE_PATCHED_ELECTRON_14="14.1.1"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=13
-CVE_PATCHED_ELECTRON_13="13.3.0"
-
-# Track "Security:" in https://www.electronjs.org/releases/stable?version=12
-CVE_PATCHED_ELECTRON_12="12.1.0"
+CVE_PATCHED_ELECTRON_13="13.5.2"
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
-CVE_PATCHED_NODE_16="16.6.2" # Electron 16
+CVE_PATCHED_NODE_16="16.11.1" # Electron 16, Electron 15
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V14.md
-CVE_PATCHED_NODE_14="14.17.6" # Electron 14, Electron 13, Electron 12
+CVE_PATCHED_NODE_14="14.18.1" # Electron 14, Electron 13
 
 # These Chromium desktop versions listed are non vulnerable versions:
 # Reason why is to minimize vulnerability checks in this eclass.
@@ -141,19 +144,13 @@ CVE_PATCHED_NODE_14="14.17.6" # Electron 14, Electron 13, Electron 12
 # clean.  For the latest, Linux version see:
 # https://omahaproxy.appspot.com/
 
-# Dev channel
-# Track "security updates" in https://chromereleases.googleblog.com/search/label/Dev%20updates
-LATEST_CHROMIUM_95="95.0.4638.10" # Electron 16
-
 # Beta channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
-LATEST_CHROMIUM_94="94.0.4606.54"
+LATEST_CHROMIUM_96="96.0.4664.18" # Electron Nightly, Electron 16
 
-# Stable channel
-# Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-LATEST_CHROMIUM_93="93.0.4577.82" # Electron 14
+# Electron 15 uses EOL Cr94
+# Electron 14 uses EOL Cr93
 # Electron 13 uses EOL Cr91
-# Electron 12 uses EOL Cr89
 
 # Check the runtime dependencies for electron
 # Most electron apps will have electron bundled already.  No need for seperate
@@ -889,6 +886,7 @@ critical vulnerabilities in the internal Chromium."
 			| tail -n 1) # used by package and json search
 		ELECTRON_V_=${ELECTRON_V}
 		ELECTRON_V_=${ELECTRON_V_/-/_}
+		ELECTRON_V_=${ELECTRON_V_/alpha./alpha}
 		ELECTRON_V_=${ELECTRON_V_/beta./beta}
 		ELECTRON_V_=${ELECTRON_V_/nightly./pre} # sanitize for ver_test
 	elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] ; then
@@ -896,6 +894,7 @@ critical vulnerabilities in the internal Chromium."
 		ELECTRON_V=${ELECTRON_APP_ELECTRON_V} # for json search
 		ELECTRON_V_=${ELECTRON_APP_ELECTRON_V}
 		ELECTRON_V_=${ELECTRON_V_/-/_}
+		ELECTRON_V_=${ELECTRON_V_/alpha./alpha}
 		ELECTRON_V_=${ELECTRON_V_/beta./beta}
 		ELECTRON_V_=${ELECTRON_V_/nightly./pre} # sanitize for ver_test
 	else
@@ -912,9 +911,21 @@ critical vulnerabilities in the internal Chromium."
 	# ##### Vulnerability and End Of Life (EOL) Tests ######################
 
 	# Check Electron
-	if ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 ; then
-		# Stable in Nov 16
+	if ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 17 ; then
+		# Electron Nightly (live)
+		:; # Auto pass
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 16 ; then
+		# Electron 16 Alpha
+		:; # Auto pass
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 \
+		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_15} ; then
+		# Patched
 		:; # Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 \
+		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_15} ; then
+		# Unpatched
+		adie \
+"Electron ${ELECTRON_V} is not receiving proper security updates."
 	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 14 \
 		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_14} ; then
 		# Patched
@@ -930,15 +941,6 @@ critical vulnerabilities in the internal Chromium."
 		:; # Passed
 	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 \
 		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_13} ; then
-		# Unpatched
-		adie \
-"Electron ${ELECTRON_V} is not receiving proper security updates."
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 12 \
-		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_12} ; then
-		# Patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 12 \
-		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_12} ; then
 		# Unpatched
 		adie \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
@@ -976,36 +978,16 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 95 \
+	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 96 \
 		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_95} ; then
 		# Dev patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 95 \
-		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_95} ; then
-		# Dev unpatched
-		adie \
-"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
-proper security updates."
-	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 94 \
-		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_94} ; then
-		# Beta patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 94 \
-		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_94} ; then
-		# Beta unpatched
-		adie \
-"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
-proper security updates."
-	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
-		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_93} ; then
-		# Stable patched beta
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 93 \
-		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_93} ; then
-		# Stable unpatched
-		adie \
-"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
-proper security updates."
+		:; # Auto passed because no vulnerabilites disclosed
+#	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 96 \
+#		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_95} ; then
+#		# Dev unpatched
+#		adie \
+#"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
+#proper security updates."
 	else
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} is End Of Life (EOL)."
