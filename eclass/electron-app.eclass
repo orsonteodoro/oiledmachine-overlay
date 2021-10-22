@@ -160,12 +160,11 @@ LATEST_CHROMIUM_96="96.0.4664.18" # Electron Nightly, Electron 16
 # https://github.com/electron/electron/blob/12-x-y/DEPS#L17 ,  replacing 12 with one of the stable versions
 
 # See https://www.electronjs.org/docs/development/build-instructions-linux
-# For Electron main, see https://github.com/chromium/chromium/blob/94.0.4584.0/build/install-build-deps.sh#L242
-# For Electron 15, see https://github.com/chromium/chromium/blob/94.0.4584.0/build/install-build-deps.sh#L242
-# For Electron 14, see https://github.com/chromium/chromium/blob/93.0.4566.0/build/install-build-deps.sh#L242
-# For Electron 13, see https://github.com/chromium/chromium/blob/91.0.4472.164/build/install-build-deps.sh#L237 # Chromium 91.x is EOL.  Vulnerabilities?
-# For Electron 12, see https://github.com/chromium/chromium/blob/89.0.4389.128/build/install-build-deps.sh#L238 # Chromium 89.x is EOL.  Vulnerabilities?
-# For Electron 11, see https://github.com/chromium/chromium/blob/87.0.4280.141/build/install-build-deps.sh#L242 # Chromium 87.x is EOL.  Vulnerabilities?
+# For Electron 17, see https://github.com/chromium/chromium/blob/96.0.4647.0/build/install-build-deps.sh#L242
+# For Electron 16, see https://github.com/chromium/chromium/blob/96.0.4647.0/build/install-build-deps.sh#L242
+# For Electron 15, see https://github.com/chromium/chromium/blob/94.0.4606.81/build/install-build-deps.sh#L242
+# For Electron 14, see https://github.com/chromium/chromium/blob/93.0.4577.82/build/install-build-deps.sh#L242
+# For Electron 13, see https://github.com/chromium/chromium/blob/91.0.4472.164/build/install-build-deps.sh#L237
 
 # ##################  END End of Life or patched versions ######################
 
