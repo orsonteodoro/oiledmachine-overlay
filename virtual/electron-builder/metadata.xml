@@ -11,11 +11,13 @@
     the Chromium parts.  Ebuilds that wish to update should add one of the
     following corresponding to the officially supported branch(es):
 
-    virtual/electron-builder:17=    # *nightly, corresponding to Chromium Beta, Node.js 16 latest
     virtual/electron-builder:16=    # alpha, corresponding to Chromium Beta, Node.js 16 outdated (possibly vulnerable)
     virtual/electron-builder:15=    # stable, corresponding to Chromium EOL, Node.js 16 outdated
     virtual/electron-builder:14=    # stable, corresponding to Chromium EOL, Node.js 14 outdated (possibly vulnerable)
     virtual/electron-builder:13=    # stable, corresponding to Chromium EOL, Node.js 14 outdated
+
+    For unsupported, but a more secure build:
+    virtual/electron-builder:17=    # *nightly, corresponding to Chromium Beta, Node.js 16 latest
 
     * Upstream updates everyday but this overlay plans to bump every week or
       on every Chromium or Node.js release.
