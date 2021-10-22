@@ -3,7 +3,6 @@
 
 # See https://www.electronjs.org/releases/alpha?version=16
 
-
 EAPI=7
 DESCRIPTION="Electron updates for ebuild-packages with electron-builder \
 or electron-packager"
