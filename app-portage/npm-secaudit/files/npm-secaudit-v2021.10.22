@@ -297,10 +297,19 @@ function electron_version_audit() {
 		return 0
 	fi
 
-	ELECTRON_V=$(npm ls electron | grep -E -e "electron@[0-9.]+" \
-		| tail -n 1 | sed -r -e "s|[^0-9\.]*||g") # used by package
+	ELECTRON_V=$(npm ls electron \
+		| grep -E -e "electron@[0-9.]+" \
+		| tail -n 1 \
+		| grep -E -o -e "[0-9\.a-z-]*" \
+		| tail -n 1) # used by package and json search
 	CHROMIUM_V=$(_query_lite_json '.deps.chrome')
 	V8_V=$(_query_lite_json '.deps.v8')
+
+	ELECTRON_V_=${ELECTRON_V}
+	ELECTRON_V_=${ELECTRON_V_/-/_}
+	ELECTRON_V_=${ELECTRON_V_/alpha./alpha}
+	ELECTRON_V_=${ELECTRON_V_/beta./beta}
+	ELECTRON_V_=${ELECTRON_V_/nightly./pre} # sanitize versioning
 
 	local is_vulnerable=0
 	# Check Electron
