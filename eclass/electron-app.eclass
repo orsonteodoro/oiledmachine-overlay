@@ -978,13 +978,13 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 96 \
-		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_95} ; then
-		# Dev patched
-		:; # Auto passed because no vulnerabilites disclosed
+	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 96 ; then
+#		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_96} ; then
+		# Beta patched
+		:; # Auto passed because vulnerabilites are typically not announced for beta and dev channels
 #	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 96 \
-#		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_95} ; then
-#		# Dev unpatched
+#		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_96} ; then
+#		# Beta unpatched
 #		adie \
 #"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 #proper security updates."
