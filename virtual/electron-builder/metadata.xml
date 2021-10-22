@@ -9,11 +9,16 @@
     This is used to force updates of packages that use electron-builder or
     electron-packager so they pick up security updates for the Chromium parts.
     Ebuilds that wish to update should add one of the following corresponding
-    LTS branch(es):
 
-    virtual/electron-builder:14=
-    virtual/electron-builder:13=
-    virtual/electron-builder:12=
+    Officially supported branch(es):
+
+    virtual/electron-builder:16=    # alpha, corresponding to Chromium beta
+    virtual/electron-builder:15=    # stable, corresponding Chromium stable
+    virtual/electron-builder:14=    # stable, corresponding Chromium EOL
+    virtual/electron-builder:13=    # stable, corresponding Chromium EOL
+
+    Slot 14, 13 are NOT RECOMMENDED for web based Electron apps and may likely
+    contain vulnerabilities in the EOL Chromium parts.
 
     These versions are listed in:
     https://www.electronjs.org/docs/tutorial/support#currently-supported-versions
