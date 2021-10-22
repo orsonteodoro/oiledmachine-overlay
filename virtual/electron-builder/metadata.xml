@@ -12,9 +12,9 @@
     following corresponding to the officially supported branch(es):
 
     virtual/electron-builder:16=    # alpha, corresponding to Chromium beta
-    virtual/electron-builder:15=    # stable, corresponding Chromium EOL
-    virtual/electron-builder:14=    # stable, corresponding Chromium EOL
-    virtual/electron-builder:13=    # stable, corresponding Chromium EOL
+    virtual/electron-builder:15=    # stable, corresponding to Chromium EOL
+    virtual/electron-builder:14=    # stable, corresponding to Chromium EOL
+    virtual/electron-builder:13=    # stable, corresponding to Chromium EOL
 
     Slots 13-15 are NOT RECOMMENDED for web based Electron apps or apps that
     consume assets or documents from outside the organization or personal domain
