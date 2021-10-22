@@ -1240,8 +1240,9 @@ pre_build_checks() {
 # [43742.787817] Out of memory: Killed process 27154 (ld.lld) total-vm:10471016kB, anon-rss:2440396kB, file-rss:3180kB, shmem-rss:0kB, UID:250 pgtables:20168kB oom_score_adj:0
 # [43744.101600] oom_reaper: reaped process 27154 (ld.lld), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
 ewarn
-ewarn "You may need >= 12 GiB of total memory to link ${PN}.  Please add more"
-ewarn "swap space.  You currently have ${total_memory} GiB of total memory."
+ewarn "You may need >= ${required_total_memory} GiB of total memory to link"
+ewarn "${PN}.  Please add more swap space or enable swap compression.  You"
+ewarn "currently have ${total_memory} GiB of total memory."
 ewarn
 	else
 einfo
@@ -1252,7 +1253,7 @@ einfo
 	if use lto-opt && (( ${total_memory} <= ${required_total_memory_lto} )) ; then
 eerror
 eerror "lto-opt requires >= ${required_total_memory_lto} of total memory.  Add"
-eerror "more swap space."
+eerror "more swap space or enable swap compression."
 eerror
 		die
 	fi
