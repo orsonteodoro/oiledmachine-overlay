@@ -387,11 +387,25 @@ COMMON_DEPEND+="
 	>=net-libs/nodejs-8
 	<net-libs/nodejs-12
 "
-elif [[ -n "${ELECTRON_APP_REACT_V}" ]] \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_V}") -eq 9999 ; then
+elif [[ -n "${ELECTRON_APP_REACT_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_V}") -ge 16.13.0 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_V}") -le 16.13.1 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-8
+	<net-libs/nodejs-14
+"
+elif [[ -n "${ELECTRON_APP_REACT_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_V}") -ge 16.14.0 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_V}") -lt 9999 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-8
 	<net-libs/nodejs-15
+"
+elif [[ -n "${ELECTRON_APP_REACT_V}" ]] \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_V}") -ge 9999 ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-12.17
+	<net-libs/nodejs-17
 "
 fi
 
