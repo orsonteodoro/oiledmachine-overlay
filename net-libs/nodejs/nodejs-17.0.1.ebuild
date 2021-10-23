@@ -107,7 +107,7 @@ PATCHES=( "${FILESDIR}"/${PN}-17.0.0-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
 	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="8.1.0" # See https://github.com/nodejs/node/blob/v16.7.0/deps/npm/package.json
+NPM_V="8.1.0" # See https://github.com/nodejs/node/blob/v17.0.1/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
