@@ -117,6 +117,7 @@ ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
 # Tracked supported versions
 # https://www.electronjs.org/docs/tutorial/support#currently-supported-versions
+# IMPORTANT: Update section [A] below
 
 # Track "Security:" in https://www.electronjs.org/releases/alpha?version=16
 CVE_PATCHED_ELECTRON_16="16.0.0_alpha8"
@@ -259,17 +260,23 @@ COMMON_DEPEND="
 	x11-libs/pango
 	x11-libs/pixman"
 
-# Supported versions (LTS) are listed in
+# [A] Supported versions (LTS) are listed in
 # https://www.electronjs.org/docs/tutorial/support#currently-supported-versions
 if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 17.0 ; then
+:; # nightly series unsupported
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 16.0 ; then
+:; # E16 alpha series officially supported upstream
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 15.0 ; then
+:; # series officially supported upstream
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 14.0 ; then
+:; # series officially supported upstream
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
 && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 13.0 ; then
-:; # series supported upstream
-elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
-&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 12.0 ; then
-:; # series supported upstream
-elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
-&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 11.0 ; then
-:; # series supported upstream
+:; # series officially supported upstream
 else
 if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
 die "Electron should be updated to one of the latest Long Term Support (LTS)\n\
@@ -308,10 +315,36 @@ COMMON_DEPEND+="
 "
 elif [[ -n "${ELECTRON_APP_ANGULAR_V}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -ge 9.0 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_V}") -le 9999 ) ; then
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_V}") -le 11.2.8 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-10.9.0
 	<net-libs/nodejs-13
+"
+elif [[ -n "${ELECTRON_APP_ANGULAR_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -ge 11.2.9 \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_V}") -le 11.2.14 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-10.19.0
+	<net-libs/nodejs-16
+"
+elif [[ -n "${ELECTRON_APP_ANGULAR_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -ge 12.0.0 \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_V}") -le 12.2.11 ) ; then
+COMMON_DEPEND+="
+	|| (
+		>=net-libs/nodejs-12.20.0:12
+		>=net-libs/nodejs-14:14
+	)
+"
+elif [[ -n "${ELECTRON_APP_ANGULAR_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -ge 13 \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_V}") -le 9999 ) ; then
+COMMON_DEPEND+="
+	|| (
+		>=net-libs/nodejs-12.20.0:12
+		>=net-libs/nodejs-14.15:14
+		>=net-libs/nodejs-16.10.0:16
+	)
 "
 fi
 
