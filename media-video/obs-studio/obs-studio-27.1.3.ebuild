@@ -156,6 +156,7 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 	pipewire? (
 		dev-libs/glib:2
 		>=media-video/pipewire-0.3
+		x11-libs/libdrm
 	)
 "
 
@@ -290,7 +291,6 @@ DEPEND_PLUGINS="
 DEPEND_UNSOURCED="
 	>=dev-qt/qtdeclarative-${QT_V}:5=
 	>=dev-qt/qtmultimedia-${QT_V}:5=
-	>=dev-qt/qtnetwork-${QT_V}:5=
 	>=dev-qt/qtquickcontrols-${QT_V}:5=
 	>=dev-qt/qtsql-${QT_V}:5=
 "
@@ -314,6 +314,7 @@ DEPEND_UI="
 	${DEPEND_FFMPEG}
 	${DEPEND_LIBOBS}
 	>=dev-qt/qtcore-5.9.5:5=
+	>=dev-qt/qtnetwork-${QT_V}:5=
 	>=dev-qt/qtsvg-${QT_V}:5=
 	>=dev-qt/qtgui-${QT_V}:5=
 	>=dev-qt/qtwidgets-${QT_V}:5=
@@ -414,7 +415,7 @@ qt_check() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
 #	QTMULTIMEDIA_PV=$(pkg-config --modversion Qt5Multimedia)
-#	QTNETWORK_PV=$(pkg-config --modversion Qt5Network)
+	QTNETWORK_PV=$(pkg-config --modversion Qt5Network)
 #	QTSQL_PV=$(pkg-config --modversion Qt5Sql)
 	QTSVG_PV=$(pkg-config --modversion Qt5Svg)
 #	QTQML_PV=$(pkg-config --modversion Qt5Qml)
@@ -428,9 +429,9 @@ qt_check() {
 #	if ver_test ${QTCORE_PV} -ne ${QTMULTIMEDIA_PV} ; then
 #		die "Qt5Core is not the same version as Qt5Multimedia"
 #	fi
-#	if ver_test ${QTCORE_PV} -ne ${QTNETWORK_PV} ; then
-#		die "Qt5Core is not the same version as Qt5Network"
-#	fi
+	if ver_test ${QTCORE_PV} -ne ${QTNETWORK_PV} ; then
+		die "Qt5Core is not the same version as Qt5Network"
+	fi
 #	if ver_test ${QTCORE_PV} -ne ${QTSQL_PV} ; then
 #		die "Qt5Core is not the same version as Qt5Sql"
 #	fi
@@ -480,6 +481,15 @@ ewarn "select hardware.  See also x11-libs/libva-intel-media-driver package"
 ewarn "to access more vaapi accelerated encoders if driver support overlaps."
 ewarn
 	fi
+
+	if [[ -z "${YOUTUBE_CLIENTID}" \
+		|| -z "${YOUTUBE_CLIENTID_HASH}" \
+		|| -z "${YOUTUBE_SECRET}" \
+		|| -z "${YOUTUBE_SECRET_HASH}" ]] ; then
+		einfo
+		einfo "YT support is disabled.  For details on how to enable it, see the metadata.xml."
+		einfo
+	fi
 }
 
 src_unpack() {
@@ -519,6 +529,7 @@ src_prepare() {
 		plugins/obs-ffmpeg/CMakeLists.txt || die
 	sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
 		plugins/obs-browser/FindCEF.cmake || die
+
 }
 
 src_configure() {

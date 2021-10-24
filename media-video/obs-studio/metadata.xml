@@ -25,6 +25,20 @@
 
     The video_cards_amdgpu, video_cards_amdgpu-pro, video_cards_amdgpu-pro-lts
     are mutually exclusive.  Choose one.
+
+
+    YT Environment Variables:
+
+    YOUTUBE_CLIENTID
+    YOUTUBE_CLIENTID_HASH
+    YOUTUBE_SECRET
+    YOUTUBE_SECRET_HASH
+
+    If all of the above are not defined, then support is disabled.  See
+
+    https://wiki.gentoo.org/wiki//etc/portage/package.env
+
+    for details in adding them.
   </longdescription>
   <use>
     <flag name="browser">Enable adding web pages as a source.</flag>
