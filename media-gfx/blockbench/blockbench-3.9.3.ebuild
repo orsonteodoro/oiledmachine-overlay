@@ -33,6 +33,6 @@ src_install() {
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}/"
 	electron-app_desktop_install "dist/linux-unpacked/*" "icon.png" "${PN^}" \
 	"Graphics;3DGraphics" "${ELECTRON_APP_INSTALL_PATH}/blockbench \"\$@\""
-	fperms 755 ${ELECTRON_APP_INSTALL_PATH}/blockbench
+	fperms 0755 ${ELECTRON_APP_INSTALL_PATH}/blockbench
 	npm-utils_install_licenses
 }
