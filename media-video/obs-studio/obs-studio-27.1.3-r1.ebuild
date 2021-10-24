@@ -70,6 +70,8 @@ BDEPEND+="
 	test? ( >=dev-util/cmocka-1.1.1 )
 "
 
+# CI uses U 18.04
+
 CEF_V="87" # See https://github.com/obsproject/obs-studio/blob/27.0.0/.github/workflows/main.yml#L20
 FFMPEG_V="3.4.2"
 LIBVA_V="2.1.0"
@@ -77,9 +79,9 @@ LIBX11_V="1.6.4"
 MESA_V="18"
 QT_V="5.15.2"
 
-#OBS_AMD_ENCODER_COMMIT="9ceb1254c379bce6124912671afee67c9a07d1a4"
-OBS_BROWSER_COMMIT="f1a61c5a2579e5673765c31a47c2053d4b502d4b"
-OBS_VST_COMMIT="aaa7b7fa32c40b37f59e7d3d194672115451f198"
+#OBS_AMD_ENCODER_COMMIT="e9ed62a08eeff439d589bba2c18afe794fb56192"
+OBS_BROWSER_COMMIT="aee43000bd994022cd73e32dc50938ab777d4a06"
+OBS_VST_COMMIT="0dc95ed584b3f14ca308706d0d0324252bd9700b"
 OBS_FTL_SDK_COMMIT="d0c8469f66806b5ea738d607f7d2b000af8b1129"
 
 DEPEND_FFMPEG="
@@ -397,12 +399,12 @@ SRC_URI="
 https://github.com/obsproject/${PN}/archive/${PV}.tar.gz \
 	-> ${P}.tar.gz
 https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz \
-	-> obs-browser-${OBS_BROWSER_COMMIT}.tar.gz
+	-> obs-browser-${OBS_BROWSER_COMMIT:0:7}.tar.gz
 https://github.com/obsproject/obs-vst/archive/${OBS_VST_COMMIT}.tar.gz \
-	-> obs-vst-${OBS_VST_COMMIT}.tar.gz
+	-> obs-vst-${OBS_VST_COMMIT:0:7}.tar.gz
 ftl? (
 https://github.com/mixer/ftl-sdk/archive/${OBS_FTL_SDK_COMMIT}.tar.gz \
-	-> ftl-sdk-${OBS_FTL_SDK_COMMIT}.tar.gz
+	-> ftl-sdk-${OBS_FTL_SDK_COMMIT:0:7}.tar.gz
 )
 "
 
@@ -516,7 +518,6 @@ src_prepare() {
 	pushd "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" || die
 		eapply -p1 "${FILESDIR}/obs-studio-25.0.8-install-libcef_dll_wrapper.patch"
 		eapply -p1 "${FILESDIR}/obs-studio-27.0.0-obs-browser-web-security-limit-to-le-4389.patch"
-		eapply -p1 "${FILESDIR}/obs-studio-27.0.0-product_version-ge-4430.patch"
 		eapply -p1 "${FILESDIR}/obs-studio-27.0.1-obs-browser-4577-null-to-nullptr.patch"
 	popd
 	if use ftl ; then
