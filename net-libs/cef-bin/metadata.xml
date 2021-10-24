@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- only for this ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -15,4 +16,11 @@
       and without an URL bar</flag>
     <flag name="test">Runs automated testing</flag>
   </use>
+  <longdescription>
+    Expect a delay of 1+ day per update.
+
+    Updates to this ebuild-package will be done when
+    the CEF Chromium version matches the latest Chromium stable
+    which has the latest security fixes.
+  </longdescription>
 </pkgmetadata>
