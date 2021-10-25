@@ -88,10 +88,6 @@ DEPEND_FFMPEG="
 	>=media-video/ffmpeg-${FFMPEG_V}:=
 "
 
-DEPEND_QT11EXTRAS="
-	>=dev-qt/qtx11extras-${QT_V}:5=
-"
-
 DEPEND_LIBX11="
         >=x11-libs/libX11-${LIBX11_V}
 "
@@ -120,7 +116,7 @@ DEPEND_ZLIB="
 # See plugins/sndio/CMakeLists.txt
 DEPEND_PLUGINS_SNDIO="
 	${DEPEND_LIBOBS}
-	media-sound/sndio
+	sndio? ( media-sound/sndio )
 "
 
 # See UI/frontend-plugins/decklink-captions/CMakeLists.txt
@@ -406,6 +402,8 @@ ftl? (
 https://github.com/mixer/ftl-sdk/archive/${OBS_FTL_SDK_COMMIT}.tar.gz \
 	-> ftl-sdk-${OBS_FTL_SDK_COMMIT:0:7}.tar.gz
 )
+https://github.com/obsproject/obs-browser/commit/a499db21fe1475e75afcf7ce320ff759627eefd0.patch
+	-> obs-browser-pull-323-a499db2.patch
 "
 
 MAKEOPTS="-j1"
@@ -423,7 +421,6 @@ qt_check() {
 #	QTQML_PV=$(pkg-config --modversion Qt5Qml)
 #	QTQUICKCONTROLS_PV=$(pkg-config --modversion Qt5QuickControls)
 	QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
-	QTX11EXTRAS_PV=$(pkg-config --modversion Qt5X11Extras)
 	QTXML_PV=$(pkg-config --modversion Qt5Xml)
 	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
 		die "Qt5Core is not the same version as Qt5Gui"
@@ -448,9 +445,6 @@ qt_check() {
 #	fi
 	if ver_test ${QTCORE_PV} -ne ${QTWIDGETS_PV} ; then
 		die "Qt5Core is not the same version as Qt5Widgets"
-	fi
-	if ver_test ${QTCORE_PV} -ne ${QTX11EXTRAS_PV} ; then
-		die "Qt5Core is not the same version as Qt5X11Extras"
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTXML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Xml"
@@ -518,7 +512,7 @@ src_prepare() {
 	pushd "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" || die
 		eapply -p1 "${FILESDIR}/obs-studio-25.0.8-install-libcef_dll_wrapper.patch"
 		eapply -p1 "${FILESDIR}/obs-studio-27.0.0-obs-browser-web-security-limit-to-le-4389.patch"
-		eapply -p1 "${FILESDIR}/obs-studio-27.0.1-obs-browser-4577-null-to-nullptr.patch"
+		eapply "${DISTDIR}/obs-browser-pull-323-a499db2.patch"
 	popd
 	if use ftl ; then
 	pushd "${WORKDIR}/ftl-sdk-${OBS_FTL_SDK_COMMIT}" || die
@@ -530,7 +524,6 @@ src_prepare() {
 		plugins/obs-ffmpeg/CMakeLists.txt || die
 	sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
 		plugins/obs-browser/FindCEF.cmake || die
-
 }
 
 src_configure() {

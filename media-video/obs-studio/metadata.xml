@@ -39,6 +39,15 @@
     https://wiki.gentoo.org/wiki//etc/portage/package.env
 
     for details in adding them.
+
+
+    Browser plugin:
+
+    The lag time for fixing the the browser plugin could be 4+ days.  Expect
+    1+ day(s) lag time for a new cef-bin to match the upstream latest stable
+    build.  Sometimes API changes can be fixed on the same day the cef-bin
+    ebuild has been updated.  It is important to update the cef-bin whenever
+    the browser is updated for security reasons.
   </longdescription>
   <use>
     <flag name="browser">Enable adding web pages as a source.</flag>
