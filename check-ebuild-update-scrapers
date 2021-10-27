@@ -2259,7 +2259,8 @@ repo_latest_version_get_zsync2_pv() {
 https://raw.githubusercontent.com/AppImage/zsync2/master/CMakeLists.txt \
 		| grep -F -e "set(VERSION" \
 		| sed -e "s|set(VERSION \"||g" -e "s|\")||g" \
-		| sed -e "s|-|_|g")
+		| sed -e "s|-|_|g" \
+		| sed -e "s|alpha_|alpha|g")
 	local suffix=$(get_head_suffix "github.com" "AppImage/zsync2" "master")
 	echo "${pv}_p${suffix}"
 }
