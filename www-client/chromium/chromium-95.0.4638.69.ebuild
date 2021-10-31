@@ -666,7 +666,7 @@ REQUIRED_USE+=" pgo-full? ( || ( $(gen_pgo_profile_use) ) )"
 REQUIRED_USE+="
 	^^ ( ${IUSE_LIBCXX[@]} )
 	^^ ( partitionalloc tcmalloc libcmalloc )
-	!clang? ( !cfi-vcall )
+	!clang? ( !cfi-cast !cfi-icall !cfi-vcall !shadowcallstack )
 	!proprietary-codecs? ( !system-ffmpeg !vaapi )
 	amd64? ( !shadowcallstack )
 	bundled-libcxx? ( clang )
