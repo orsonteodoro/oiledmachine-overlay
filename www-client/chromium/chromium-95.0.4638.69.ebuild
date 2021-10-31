@@ -353,7 +353,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 CPU_FLAGS_ARM=( neon )
 CPU_FLAGS_X86=( ssse3 sse4_2 )
 IUSE="${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_} ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_} component-build cups -debug +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid -system-ffmpeg -system-icu -system-harfbuzz +vaapi wayland widevine"
-IUSE+=" weston r1"
+IUSE+=" weston r2"
 # What is considered a proprietary codec can be found at:
 #   https://github.com/chromium/chromium/blob/94.0.4606.71/media/filters/BUILD.gn#L160
 #   https://github.com/chromium/chromium/blob/94.0.4606.71/media/media_options.gni#L38
@@ -2087,10 +2087,6 @@ ewarn
 		PATCHES+=( "${WORKDIR}/patches" )
 	fi
 
-	# It's already applied upstream.
-	rm -rf "${WORKDIR}/patches/chromium-93-dawn-raw-string-literal.patch" || die
-	rm -rf "${WORKDIR}/patches/chromium-swiftshader-export.patch" || die
-
 	PATCHES+=(
 		"${FILESDIR}/chromium-93-EnumTable-crash.patch"
 		"${FILESDIR}/chromium-93-InkDropHost-crash.patch"
@@ -2099,6 +2095,7 @@ ewarn
 		"${FILESDIR}/chromium-95-eigen-avx-2.patch"
 		"${FILESDIR}/chromium-95-eigen-avx-3.patch"
 		"${FILESDIR}/chromium-95-harfbuzz-3.patch"
+		"${FILESDIR}/chromium-95-xfce-maximize.patch"
 		"${FILESDIR}/chromium-use-oauth2-client-switches-as-default.patch"
 		"${FILESDIR}/chromium-shim_headers.patch"
 	)
@@ -2337,6 +2334,7 @@ eerror
 		third_party/skia/third_party/skcms
 		third_party/skia/third_party/vulkan
 		third_party/smhasher
+		third_party/snappy
 		third_party/sqlite
 		third_party/swiftshader
 		third_party/swiftshader/third_party/astc-encoder
@@ -3558,7 +3556,6 @@ ewarn
 		gn_system_libraries+=( libxml )
 		gn_system_libraries+=( libxslt )
 		gn_system_libraries+=( re2 )
-		gn_system_libraries+=( snappy )
 		if use proprietary-codecs ; then
 			gn_system_libraries+=( openh264 )
 		fi
