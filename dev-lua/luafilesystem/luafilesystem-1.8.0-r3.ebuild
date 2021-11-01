@@ -50,6 +50,8 @@ lua_src_configure()
 "You are missing ${pkgcfgpath}.  You must manually symlink it because eselect \
 for lua is broken for multilib abi_x86_32."
 	fi
+	LUA_INC=("-I$(pwd)/src")
+	LUA_INC+=(" -I$(${chost}-pkg-config --variable includedir ${pkgcfgpath})")
 	cat > "${BUILD_DIR}/config" <<-EOF
 		# Installation directories
 		# Default installation prefix
@@ -57,8 +59,6 @@ for lua is broken for multilib abi_x86_32."
 		# System's libraries directory (where binary libraries are installed)
 		LUA_LIBDIR="$(${chost}-pkg-config --variable INSTALL_CMOD ${pkgcfgpath})"
 		# Lua includes directory
-		LUA_INC=("-I$(pwd)/src")
-		LUA_INC+=(" -I$(${chost}-pkg-config --variable includedir ${pkgcfgpath})")
 		# OS dependent
 		LIB_OPTION=\$(LDFLAGS) -shared
 		LIBNAME=$T.so.$V
@@ -66,7 +66,7 @@ for lua is broken for multilib abi_x86_32."
 		WARN=-O2 -Wall -fPIC -W -Waggregate-return -Wcast-align \
 			-Wmissing-prototypes -Wnested-externs -Wshadow \
 			-Wwrite-strings -pedantic
-		INCS=\${LUA_INC[@]}
+		INCS=${LUA_INC[@]}
 		CFLAGS+=\$(WARN) \$(INCS)
 		CC=$(tc-getCC)
 	EOF
