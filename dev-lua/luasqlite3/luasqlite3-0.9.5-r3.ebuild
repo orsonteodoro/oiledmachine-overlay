@@ -92,8 +92,10 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			exeinto $(lua_get_cmod_dir)
 			doexe shared/lsqlite3.so
-			insinto $(lua_get_cmod_dir)
-			doins static/lsqlite3complete.a
+			if [[ -e "static/lsqlite3complete.a" ]] ; then
+				insinto $(lua_get_cmod_dir)
+				doins static/lsqlite3complete.a
+			fi
 		}
 		lua_foreach_impl lua_src_install
 		dodoc doc/lsqlite3.wiki
