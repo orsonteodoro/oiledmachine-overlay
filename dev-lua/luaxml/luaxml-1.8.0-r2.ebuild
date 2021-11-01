@@ -6,7 +6,7 @@
 
 EAPI=7
 
-LUA_COMPAT=( lua5-{2..3} )
+LUA_COMPAT=( lua5-{1..3} ) # See https://github.com/n1tehawk/LuaXML/#luaxml
 IS_MULTILIB=true
 
 inherit lua
@@ -18,8 +18,8 @@ SRC_URI="https://github.com/n1tehawk/LuaXML/archive/v${PV}.tar.gz -> ${P}.tar.gz
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
-REQUIRED_USE="${LUA_REQUIRED_USE}"
+IUSE+=" ${LUA_COMPAT[@]/#/lua_targets_}" # for some reason the lua eclass is broken
+REQUIRED_USE+=" ${LUA_REQUIRED_USE}"
 DEPEND="${LUA_DEPS}"
 RDEPEND="${DEPEND}"
 MY_PN="LuaXML"
