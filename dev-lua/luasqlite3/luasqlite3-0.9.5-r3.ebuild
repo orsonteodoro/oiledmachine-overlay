@@ -92,7 +92,7 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			exeinto $(lua_get_cmod_dir)
 			doexe shared/lsqlite3.so
-			if [[ -e "static/lsqlite3complete.a" ]] ; then
+			if use static-libs ; then
 				insinto $(lua_get_cmod_dir)
 				doins static/lsqlite3complete.a
 			fi
