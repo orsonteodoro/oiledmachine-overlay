@@ -11,9 +11,10 @@ HOMEPAGE="https://github.com/civetweb"
 LICENSE="MIT"
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc ~x86"
-IUSE+=" +asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 -cxx +caching \
-debug doc -duktape -ipv6 -lto -lua -serve_no_files +server_executable \
--server_stats +ssl ssl_1_0 +ssl_1_1 static -test -websockets"
+IUSE+=" ${LUA_COMPAT[@]/#/lua_targets_}" # for some reason the lua eclass looks broken
+IUSE+=" +asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 -cxx +caching
+debug doc -duktape -ipv6 -lto -lua -serve_no_files +server_executable
+-server_stats +ssl ssl_1_0 +ssl_1_1 static -test -websockets -zlib"
 REQUIRED_USE+="
 	lua? ( ${LUA_REQUIRED_USE} gnu17 )
 	lua_targets_lua5-1? ( lua )
@@ -24,12 +25,14 @@ REQUIRED_USE+="
 	^^ ( c11 c89 c99 gnu17 )
 	^^ ( c++98 c++11 c++14 )"
 # CMakeLists.txt lists versions
-# See https://github.com/civetweb/civetweb/tree/v1.14/src/third_party
+# See https://github.com/civetweb/civetweb/tree/v1.15/src/third_party
 LUA_5_1_MIN="5.1.5"
 LUA_5_2_MIN="5.2.4"
 LUA_5_3_MIN="5.3.6"
 LUA_5_4_MIN="5.4.3"
+# CI uses U 14.04
 DEPEND+=" >=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
+	virtual/libc
 	lua? (
 		${LUA_DEPS}
 		>=dev-lua/luafilesystem-1.6.3[${MULTILIB_USEDEP},${LUA_USEDEP}]
@@ -61,13 +64,12 @@ DEPEND+=" >=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
 			)
 		)
 	)
-	virtual/libc"
+	zlib? ( sys-libs/zlib[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" >=dev-util/cmake-2.8.11"
-SRC_URI="\
+BDEPEND+=" >=dev-util/cmake-3.3.0"
+SRC_URI="
 https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz \
-	-> ${P}.tar.gz
-"
+	-> ${P}.tar.gz"
 inherit eutils flag-o-matic
 S="${WORKDIR}/civetweb-${PV}"
 DOCS=( docs/Embedding.md docs/OpenSSL.md README.md RELEASE_NOTES.md \
@@ -188,6 +190,7 @@ _configure() {
 		-DCIVETWEB_ENABLE_IPV6=$(usex ipv6)
 		-DCIVETWEB_ENABLE_SERVER_STATS=$(usex server_stats)
 		-DCIVETWEB_ENABLE_WEBSOCKETS=$(usex websockets)
+		-DCIVETWEB_ENABLE_ZLIB=$(usex zlib)
 		-DCIVETWEB_SERVE_NO_FILES=$(usex serve_no_files)
 		-DCIVETWEB_ENABLE_LUA_FILESYSTEM_SHARED=$(usex lua)
 		-DCIVETWEB_ENABLE_LUA_SQLITE_SHARED=$(usex lua)
