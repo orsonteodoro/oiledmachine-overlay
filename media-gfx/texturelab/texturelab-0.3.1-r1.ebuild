@@ -49,6 +49,6 @@ src_install() {
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}"
 	electron-app_desktop_install "dist_electron/linux-unpacked/*" "src/assets/logo.png" "${MY_PN}" \
 	"Graphics;2DGraphics" "${ELECTRON_APP_INSTALL_PATH}/texturelab \"\$@\""
-	fperms 755 ${ELECTRON_APP_INSTALL_PATH}/texturelab
+	fperms 0755 ${ELECTRON_APP_INSTALL_PATH}/texturelab
 	npm-utils_install_licenses
 }
