@@ -47,7 +47,7 @@ src_install() {
 	python_install_impl() {
 		python_moduleinto "${PN}"
 		python_domodule *.py fake-toolchain plugin
-		fperms 755 \
+		fperms 0755 \
 		"$(python_get_sitedir)/${PN}/fake-toolchain/Unix"/{cc,cxx,true} \
 		"$(python_get_sitedir)/${PN}/config_gen.py"
 		dodir "/usr/lib/python-exec/${EPYTHON}"
