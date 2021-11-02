@@ -9,13 +9,15 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+=" >=net-libs/nodejs-9[npm]"
-ELECTRON_APP_ELECTRON_V="9.1.2"
+ELECTRON_APP_ELECTRON_V="11.5.0"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 inherit desktop electron-app eutils
-SRC_URI=\
-"https://github.com/alexdevero/instatron/archive/v${PV}.tar.gz
-	-> ${PN}-${PV}.tar.gz"
+EGIT_COMMIT="4ebf917a86f90ecf55775182312eee75f4c7427e"
+SRC_URI="
+https://github.com/alexdevero/instatron/archive/${EGIT_COMMIT}.tar.gz
+	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 RESTRICT="mirror"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
 electron-app_src_compile() {
 	cd "${S}"
@@ -29,5 +31,5 @@ src_install() {
 		"builds/${PN}-linux-"$(electron-app_get_arch)"/*" \
 		"assets/instagram-uploader-icon.png" \
 		"${PN^}" "Network" "${ELECTRON_APP_INSTALL_PATH}/${PN}"
-	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN} \"\$@\""
+	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 }
