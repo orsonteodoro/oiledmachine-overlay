@@ -72,7 +72,7 @@ npm-secaudit_src_postcompile() {
 src_install() {
 	export NPM_SECAUDIT_INSTALL_PATH="/opt/${PN}/${SLOT}"
 	npm-secaudit_install "*"
-	fperms 755 "${NPM_SECAUDIT_INSTALL_PATH}/bin/tsc" \
+	fperms 0755 "${NPM_SECAUDIT_INSTALL_PATH}/bin/tsc" \
 		"${NPM_SECAUDIT_INSTALL_PATH}/bin/tsserver"
 }
 
