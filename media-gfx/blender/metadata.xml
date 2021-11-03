@@ -129,24 +129,24 @@
     can be placed in /usr/portage/distfiles/blender/assets.
   </longdescription>
   <upstream>
-    <doc lang="en">https://docs.blender.org/manual/en/2.83/index.html</doc>
-    <doc lang="de">https://docs.blender.org/manual/de/2.83/index.html</doc>
-    <doc lang="es">https://docs.blender.org/manual/es/2.83/index.html</doc>
-    <doc lang="fr">https://docs.blender.org/manual/fr/2.83/index.html</doc>
-    <doc lang="it">https://docs.blender.org/manual/it/2.83/index.html</doc>
-    <doc lang="ja">https://docs.blender.org/manual/ja/2.83/index.html</doc>
-    <doc lang="ko">https://docs.blender.org/manual/ko/2.83/index.html</doc>
-    <doc lang="nb">https://docs.blender.org/manual/nb/2.83/index.html</doc>
-    <doc lang="pt">https://docs.blender.org/manual/pt/2.83/index.html</doc>
-    <doc lang="ru">https://docs.blender.org/manual/ru/2.83/index.html</doc>
-    <doc lang="fi">https://docs.blender.org/manual/fi/2.83/index.html</doc>
-    <doc lang="uk">https://docs.blender.org/manual/uk/2.83/index.html</doc>
-    <doc lang="vi">https://docs.blender.org/manual/vi/2.83/index.html</doc>
+    <doc lang="en">https://docs.blender.org/manual/en/2.93/index.html</doc>
+    <doc lang="de">https://docs.blender.org/manual/de/2.93/index.html</doc>
+    <doc lang="es">https://docs.blender.org/manual/es/2.93/index.html</doc>
+    <doc lang="fr">https://docs.blender.org/manual/fr/2.93/index.html</doc>
+    <doc lang="it">https://docs.blender.org/manual/it/2.93/index.html</doc>
+    <doc lang="ja">https://docs.blender.org/manual/ja/2.93/index.html</doc>
+    <doc lang="ko">https://docs.blender.org/manual/ko/2.93/index.html</doc>
+    <doc lang="nb">https://docs.blender.org/manual/nb/2.93/index.html</doc>
+    <doc lang="pt">https://docs.blender.org/manual/pt/2.93/index.html</doc>
+    <doc lang="ru">https://docs.blender.org/manual/ru/2.93/index.html</doc>
+    <doc lang="fi">https://docs.blender.org/manual/fi/2.93/index.html</doc>
+    <doc lang="uk">https://docs.blender.org/manual/uk/2.93/index.html</doc>
+    <doc lang="vi">https://docs.blender.org/manual/vi/2.93/index.html</doc>
     <doc lang="zh-hans">
-      https://docs.blender.org/manual/zh-hans/2.83/index.html
+      https://docs.blender.org/manual/zh-hans/2.93/index.html
     </doc>
     <doc lang="zh-hant">
-      https://docs.blender.org/manual/zh-hant/2.83/index.html
+      https://docs.blender.org/manual/zh-hant/2.93/index.html
     </doc>
     <bugs-to>
       https://developer.blender.org/
