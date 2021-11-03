@@ -1300,14 +1300,18 @@ pkg_postinst() {
 	einfo "use this product."
 	einfo
 	# This applies to the GUI part.
+	ewarn
         ewarn "If you are using dwm or non-parenting window manager and see"
 	ewarn "no buttons or input boxes, you need to:"
 	ewarn "  emerge wmname"
 	ewarn "  wmname LG3D"
 	ewarn "Run 'wmname LG3D' before you run '${PN}'"
+	ewarn
 	if use opencl ; then
+		ewarn
 		ewarn "OpenCL support is not officially supported for Linux."
 		ewarn "For details see, https://github.com/laurent-clouet/sheepit-client/issues/165"
+		ewarn
 	fi
 	einfo
 	einfo "Don't forget to add your user account to the video group."
