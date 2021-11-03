@@ -771,14 +771,6 @@ check_embree() {
 	fi
 }
 
-get_java_home() {
-	if find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
-	elif find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
-	fi
-}
-
 pkg_setup() {
 	ewarn "This ebuild is currently undergoing development and may not work even as vanilla (unpatched)."
 
@@ -844,8 +836,6 @@ pkg_setup() {
 
 	local jdk_bin_basepath
 	local jdk_basepath
-
-	get_java_home
 
 	if find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
 		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
