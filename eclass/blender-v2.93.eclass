@@ -22,18 +22,17 @@ PYTHON_COMPAT=( python3_{9,10} ) # For the max exclusive Python supported (and
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada \
-+color-management -cpudetection +cuda +cycles -cycles-network +dds -debug doc \
-+elbeem +embree +ffmpeg +fftw flac -gmp +jack +jemalloc +jpeg2k -llvm -man \
-+nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise \
-+openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf -potrace \
+IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada
++color-management -cpudetection +cuda +cycles -cycles-network +dds -debug doc
++elbeem +embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm -man
++nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
++openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
 release +sdl +sndfile +tbb test +tiff +usd -valgrind"
 IUSE+=" llvm-11 +llvm-12" # same as Mesa and LLVM latest stable keyword \
 # See max exclusive llvm at \
 # https://github.com/blender/blender/blob/v2.93.1/build_files/build_environment/install_deps.sh#L488
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
-
 
 inherit blender
 
