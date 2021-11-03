@@ -239,6 +239,17 @@
     <flag name="flac">
       Adds support for FLAC lossless audio support.
     </flag>
+    <flag name="gmp">
+      Enables the dependency for adding Intersect (Knife) and Intersect
+      (Boolean) to Face Tools and switch between fast and the default exact
+      solver modes for the mesh modifier.  GMP allows for exact booleans than fast
+      approximations with floats.
+
+      Details:
+https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html#boolean-modifier
+https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect_knife.html
+https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect_boolean.html
+    </flag>
     <flag name="ffmpeg">
       Adds support for FFMPEG enabling internal FFMPEG codecs support and
       possibly external codec support if added.
@@ -304,6 +315,9 @@
     <flag name="osl">
       Add support for OpenShadingLanguage scripting.
     </flag>
+    <flag name="pdf">
+      Adds support to export to PDF directly.
+    </flag>
     <flag name="pgo">
       Builds with PGO optimizations.  Only CPU side code will benefit.
     </flag>
@@ -319,8 +333,9 @@
     <flag name="pgo-trainer-eevee-anim">
       Run the PGO trainer for EEVEE rendering animating and rendering all frames
     </flag>
-    <flag name="pdf">
-      Adds support to export to PDF directly.
+    <flag name="potrace">
+      Add support for converting bitmaps into a grease pencil line for smoother
+      edges.
     </flag>
     <flag name="release">
       Builds Blender with the release configuration (AKA precompiled Blender),
