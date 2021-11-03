@@ -1,0 +1,81 @@
+#!/bin/bash
+
+#USE_SYSTEM_BLENDER="1"
+#USE_FIREJAIL="1"
+
+JAVA_V=__JAVA_V__
+if find /usr/*/openjdk-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+	export JAVA_HOME=$(find /usr/*/openjdk-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+elif find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+	export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+fi
+
+export PATH="${JAVA_HOME}/bin:${PATH}"
+
+function exit_error() {
+	local msg="${1}"
+	if [[ -n "${DISPLAY}" ]] ; then
+		if which zenity >/dev/null ; then
+			zenity --error --text="${msg}"
+		elif which kdialog >/dev/null ; then
+			kdialog --msgbox "${msg}"
+		else
+			echo "${msg}"
+		fi
+	else
+		echo "${msg}"
+	fi
+	exit 1
+}
+
+function cleanup() {
+	echo "Stopping Blender (aka rend.exe)"
+	killall -9 rend.exe
+}
+
+groups | grep video > /dev/null
+if [[ "$?" != "0" ]] ; then
+	exit_error "User must be in the video group"
+fi
+
+if which wmname >/dev/null ; then
+	wmname LG3D
+fi
+
+d="${HOME}/.sheepit-client"
+
+for f in $(find "${d}"/sheepit -maxdepth 1 -type f \
+		-name "*.zip") ; do
+	[[ -n "${USE_SYSTEM_BLENDER}" && "${USE_SYSTEM_BLENDER}" == "1" \
+		&& "${f}" =~ "sheepit_binary_cache" ]] && continue
+	md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
+	md5_expected=$(basename "${f}" | cut -f 1 -d '.')
+	echo "${f} : md5_x=${md5_x} md5_expected=${md5_expected}"
+	if [[ "${md5_x}" != "${md5_expected}" ]] ; then
+		echo "Removing corrupt file ${f}"
+		rm "${f}"
+	fi
+	if [[ -f "${f}" && $(stat -c "%U" "${f}") != "${USER}" ]] ; then
+		exit_error "You must remove ${f} with root."
+	fi
+done
+
+for f in $(find "${d}" -type f) ; do
+	if [[ -f "${f}" && $(stat -c "%U" "${f}") != "${USER}" ]] ; then
+		exit_error "You must remove ${d} with root."
+	fi
+done
+
+mkdir -p "${d}"
+if [[ -n "${USE_FIREJAIL}" && "${USE_FIREJAIL}" == "1" ]] ; then
+	firejail --profile="/etc/firejail/sheepit-client.profile" \
+		java -jar /usr/share/sheepit-client/sheepit-client-all.jar \
+			-cache-dir "${d}" \
+			"$@"
+else
+	java -jar /usr/share/sheepit-client/sheepit-client-all.jar \
+		-cache-dir "${d}" \
+		"$@"
+fi
+
+trap cleanup EXIT

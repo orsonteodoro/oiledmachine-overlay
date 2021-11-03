@@ -3,13 +3,10 @@
 
 2_79b - Support Blender 2.79b projects for older OpenGL 2.1 video cards
 2_79b_filmic - Support Blender 2.79b projects with filmic color correction profile for enhanced photo realism for older OpenGL 2.1 video cards
-2_80 - Support Blender 2.80 projects  and OpenGL 3.3 or newer video cards
-2_81a - Support Blender 2.81a projects and OpenGL 3.3 or newer video cards
-2_82 - Support Blender 2.82 projects and OpenGL 3.3 or newer video cards
-2_83_1 - Support Blender 2.83.1 projects and OpenGL 3.3 or newer video cards
-2_83_2 - Support Blender 2.83.2 projects and OpenGL 3.3 or newer video cards
-2_83_6 - Support Blender 2.83.6 projects and OpenGL 3.3 or newer video cards
+2_83_16 - Support Blender 2.83.16 projects and OpenGL 3.3 or newer video cards
 2_83_9 - Support Blender 2.83.9 projects and OpenGL 3.3 or newer video cards
 2_90_0 - Support Blender 2.90.0 projects and OpenGL 3.3 or newer video cards
 2_90_1 - Support Blender 2.90.1 projects and OpenGL 3.3 or newer video cards
 2_91_0 - Support Blender 2.91.0 projects and OpenGL 3.3 or newer video cards
+2_92_0 - Support Blender 2.92.0 projects and OpenGL 3.3 or newer video cards
+2_93_2 - Support Blender 2.93.2 projects and OpenGL 3.3 or newer video cards

@@ -3,30 +3,5 @@ Ebuild maintainer notes
 
 The following assumed that we are working with unpacked custom build of Blender.
 
-Finding licenses:
-# t8d is unpacked source
-# update value of dbase per version
-dbase="blender-2.82-licenses" ; \
-for f in $(find t8d -iname "*license*" \
-  -o -iname "*copyright*" -o -path "*/license/*" \
-  -o -path "*/macholib/README.ctypes" \
-  -o -path "*/materials_library_vx/README.txt" ) ; \
-do \
-  d=$(dirname "${f}") ; \
-  mkdir -p "${dbase}/${d}" ; \
-  cp -a "${f}" "${dbase}/${d}" ; \
-done
-
-Finding readmes:
-# t8d is unpacked source
-# update value of dbase per version
-dbase="blender-2.82-readmes" ; \
-for f in $(find t8d -iname "*readme*") ; \
-do \
-  d=$(dirname "${f}") ; \
-  mkdir -p "${dbase}/${d}" ; \
-  cp -a "${f}" "${dbase}/${d}" ; \
-done
-
 Finding .so libraries:
 ldd $(find . -type f) 2>/dev/null | grep "=" | cut -f 2 -d ">" | sort | uniq

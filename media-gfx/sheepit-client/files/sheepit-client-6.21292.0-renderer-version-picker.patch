@@ -1,0 +1,648 @@
+Original license headers
+
+src/com/sheepit/client/Client.java:
+src/com/sheepit/client/Configuration.java:
+src/com/sheepit/client/Job.java:
+src/com/sheepit/client/os/Linux.java:
+src/com/sheepit/client/os/Mac.java:
+src/com/sheepit/client/os/OS.java:
+src/com/sheepit/client/os/Windows.java:
+src/com/sheepit/client/standalone/Worker.java:
+src/com/sheepit/client/Server.java:
+
+/*
+ * Copyright (C) 2010-2014 Laurent CLOUET
+ * Author Laurent CLOUET <laurent.clouet@nopnop.net>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; version 2
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+src/com/sheepit/client/os/FreeBSD.java:
+
+/*
+ * Copyright (C) 2010-2015 Laurent CLOUET
+ * Author Laurent CLOUET <laurent.clouet@nopnop.net>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; version 2
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
+----
+Summary: Patch changes automatic opt-in to automatic opt-out policy for downloading
+renderers (e.g. Blender).
+
+This allows users to pick the degree of security mitigation.  It's recommended
+to only allow the latest stable.
+
+Change HARDBLOCK_BLENDER_ constants in src/com/sheepit/client/Configuration.java
+to false to enforce hardcoded block otherwise end-user decides.
+
+Also, this makes it so that it doesn't download renderers but use the system
+provided renderers instead via the USE_SYSTEM_RENDERERS constants in both
+in Configuration.java and Linux.java only for Linux currently.  You need to
+mod it for other distros or operating systems.
+
+Also, it changes the renderer sourcing.  This patch uses upstream sources, currently
+Linux only supported.
+
+May 06, 2021 changes:
+ -The -shared-zip option with functionality has been removed.
+ -Disable unpacking of renderer.  This is done before install into live system.
+ -Removed selection renderer from UI and from command line options.
+
+Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
+----
+diff -urp client-v6.21292.0.orig/src/com/sheepit/client/Client.java client-v6.21292.0/src/com/sheepit/client/Client.java
+--- client-v6.21292.0.orig/src/com/sheepit/client/Client.java	2021-10-09 13:56:04.000000000 -0700
++++ client-v6.21292.0/src/com/sheepit/client/Client.java	2021-11-02 17:17:34.731182217 -0700
+@@ -19,9 +19,12 @@
+ 
+ package com.sheepit.client;
+ 
++import java.io.BufferedReader;
+ import java.io.File;
+ import java.io.FileOutputStream;
+ import java.io.IOException;
++import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.PrintWriter;
+ import java.io.StringWriter;
+ import java.nio.file.Files;
+@@ -602,6 +605,7 @@ import okhttp3.HttpUrl;
+ 	}
+ 	
+ 	protected void sendError(int step_, Job job_to_reset_, Error.Type error) {
++		this.disableErrorSending = true;
+ 		if (this.disableErrorSending) {
+ 			this.log.debug("Error sending is disabled, do not send log");
+ 			return;
+@@ -802,9 +806,153 @@ import okhttp3.HttpUrl;
+ 				String.format("%s?type=job&job=%s", this.server.getPage("download-archive"), ajob_.getId()), "project");
+ 	}
+ 	
++	private boolean isRendererAllowed(String md5_renderer) {
++		/* Comment off the conditional chain if it fails to download.  */
++		/* 32-bit versions */
++			if (md5_renderer.equals(Configuration.MD5_LINUX_X86_2_79B)) {
++			if (Configuration.HARDBLOCK_BLENDER_2_79B) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2_79B == false");
++				return false;
++			}
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_2_79B_FILMIC)) {
++			if (Configuration.HARDBLOCK_BLENDER_2_79B_FILMIC) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2_79B_FILMIC == false");
++				return false;
++			}
++
++		/* 64-bit versions */
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2_79B)) {
++			if (Configuration.HARDBLOCK_BLENDER_2_79B) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2_79B == false");
++				return false;
++			}
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2_79B_FILMIC)) {
++			if (Configuration.HARDBLOCK_BLENDER_2_79B_FILMIC) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2_79B_FILMIC == false");
++				return false;
++			}
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2_83_16)) {
++			if (Configuration.HARDBLOCK_BLENDER_2_83_16) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2_83_16 == false");
++				return false;
++			}
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2_90_1)) {
++			if (Configuration.HARDBLOCK_BLENDER_2_90_1) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2_90_1 == false");
++				return false;
++			}
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2_91_0)) {
++			if (Configuration.HARDBLOCK_BLENDER_2_91_0) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2_91_0 == false");
++				return false;
++			}
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2_92_0)) {
++			if (Configuration.HARDBLOCK_BLENDER_2_92_0) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2_92_0 == false");
++				return false;
++			}
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2_93_2)) {
++			if (Configuration.HARDBLOCK_BLENDER_2_93_2) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2_93_2 == false");
++				return false;
++			}
++		} else if (Configuration.USE_SYSTEM_RENDERERS) {
++			log.debug("Client::isRendererAllowed Configuration.USE_SYSTEM_RENDERERS == true (unknown version = denied)");
++			return false;
++		} else if (Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG) {
++			log.debug("Client::isRendererAllowed Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG == true (unknown version = denied)");
++			return false;
++		}
++		return true;
++	}
++	
++	private String getRendererName(String md5_renderer) {
++		switch (md5_renderer) {
++			case Configuration.MD5_LINUX_X86_2_79B:
++				return "Blender 2.79b";
++			case Configuration.MD5_LINUX_X86_2_79B_FILMIC:
++				return "Blender 2.79b (Filmic)";
++			case Configuration.MD5_LINUX_X86_64_2_79B:
++				return "Blender 2.79b";
++			case Configuration.MD5_LINUX_X86_64_2_79B_FILMIC:
++				return "Blender 2.79b (Filmic)";
++			case Configuration.MD5_LINUX_X86_64_2_83_16:
++				return "Blender 2.83.16";
++			case Configuration.MD5_LINUX_X86_64_2_90_1:
++				return "Blender 2.90.1";
++			case Configuration.MD5_LINUX_X86_64_2_91_0:
++				return "Blender 2.91.0";
++			case Configuration.MD5_LINUX_X86_64_2_92_0:
++				return "Blender 2.92.0";
++			case Configuration.MD5_LINUX_X86_64_2_93_2:
++				return "Blender 2.93.2";
++			default:
++				break;
++		}
++		return "unknown renderer (md5: " + md5_renderer + ")";
++	}
++	
++	public static String downloadDotBlenderDotOrgHash(String md5_renderer) {
++		switch (md5_renderer) {
++			case Configuration.MD5_LINUX_X86_2_79B:
++				return Configuration.MD5_LINUX_X86_VANILLA_2_79B;
++			case Configuration.MD5_LINUX_X86_2_79B_FILMIC:
++				return Configuration.MD5_LINUX_X86_VANILLA_2_79B;
++			case Configuration.MD5_LINUX_X86_64_2_79B:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_2_79B;
++			case Configuration.MD5_LINUX_X86_64_2_79B_FILMIC:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_2_79B;
++			case Configuration.MD5_LINUX_X86_64_2_83_16:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_2_83_16;
++			case Configuration.MD5_LINUX_X86_64_2_90_1:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_2_90_1;
++			case Configuration.MD5_LINUX_X86_64_2_91_0:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_2_91_0;
++			case Configuration.MD5_LINUX_X86_64_2_92_0:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_2_92_0;
++			case Configuration.MD5_LINUX_X86_64_2_93_2:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_2_93_2;
++		}
++		return "";
++	}
++	
+ 	protected Error.Type downloadExecutable(Job ajob) throws FermeExceptionNoSpaceLeftOnDevice {
+-		return this.downloadFile(ajob, ajob.getRequiredRendererArchivePath(), ajob.getRendererMD5(),
+-				String.format("%s?type=binary&job=%s", this.server.getPage("download-archive"), ajob.getId()), "renderer");
++		String renderer_md5 = ajob.getRendererMD5();
++		String renderer_path;
++		File renderer_path_file;
++		
++		if (isRendererAllowed(ajob.getRendererMD5())) {
++			this.log.debug("Client::downloadExecutable allowing " + getRendererName(renderer_md5));
++		} else {
++			this.log.debug("Client::downloadExecutable blocking " + getRendererName(renderer_md5));
++			return Type.RENDERER_KILLED_BY_USER;
++		}
++		
++		if (Configuration.USE_SYSTEM_RENDERERS) {
++			renderer_path = ajob.getRendererPath();
++			renderer_path_file = new File(renderer_path);
++			if (renderer_path_file.exists()) {
++				return Type.OK;
++			} else {
++				return Type.RENDERER_KILLED_BY_USER;
++			}
++		} else if (Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG) {
++			renderer_path = ajob.getRendererPath();
++			renderer_path_file = new File(renderer_path);
++			if (renderer_path_file.exists()) {
++				return Type.OK;
++			} else {
++				return Type.RENDERER_KILLED_BY_USER;
++			}
++		}
++		
++		renderer_path = ajob.getRendererPath();
++		renderer_path_file = new File(renderer_path);
++		if (renderer_path_file.exists()) {
++			return Type.OK;
++		} else {
++			return Type.RENDERER_KILLED_BY_USER;
++		}
+ 	}
+ 	
+ 	private Error.Type downloadFile(Job ajob, String local_path, String md5_server, String url, String download_type) throws FermeExceptionNoSpaceLeftOnDevice {
+@@ -814,12 +962,6 @@ import okhttp3.HttpUrl;
+ 		int remaining = 1800000; // 30 minutes max timeout
+ 		
+ 		try {
+-			// If the client is using a shared cache then introduce some random delay to minimise race conditions on the partial file creation on multiple
+-			// instances of a client (when started with a script or rendering a recently downloaded scene)
+-			if (configuration.getSharedDownloadsDirectory() != null) {
+-				Thread.sleep((new Random().nextInt(9) + 1) * 1000);
+-			}
+-			
+ 			// For a maximum of 30 minutes
+ 			do {
+ 				// if the binary or scene already exists in the cache
+@@ -874,6 +1016,7 @@ import okhttp3.HttpUrl;
+ 		this.gui.status(String.format("Downloading %s", download_type));
+ 		
+ 		// must download the archive
++		this.log.debug("Client::downloadFile url: " + url + " local_path: " + local_path);
+ 		Error.Type ret = this.server.HTTPGetFile(url, local_path, this.gui, update_ui);
+ 		
+ 		if (ret == Type.RENDERER_KILLED_BY_SERVER || ret == Type.RENDERER_KILLED_BY_USER_OVER_TIME || ret == Type.RENDERER_KILLED_BY_USER) {
+@@ -944,39 +1087,8 @@ import okhttp3.HttpUrl;
+ 		String renderer_path = ajob.getRendererDirectory();
+ 		File renderer_path_file = new File(renderer_path);
+ 		
+-		if (!new File(renderer_archive).exists()) {
+-			this.gui.status("Copying renderer from shared downloads directory");
+-			
+-			try {
+-				Files.copy(Paths.get(bestRendererArchive), Paths.get(renderer_archive), StandardCopyOption.REPLACE_EXISTING);
+-			}
+-			catch (IOException e) {
+-				this.gui.error("Error while copying renderer from shared downloads directory to working dir");
+-			}
+-		}
+-		
+ 		if (!renderer_path_file.exists()) {
+-			// we create the directory
+-			renderer_path_file.mkdir();
+-			
+-			this.gui.status("Extracting renderer");
+-			
+-			// unzip the archive
+-			ret = Utils.unzipFileIntoDirectory(renderer_archive, renderer_path, null, log);
+-			if (ret != 0) {
+-				this.log.error(
+-						"Client::prepareWorkingDirectory, error(1) with Utils.unzipFileIntoDirectory(" + renderer_archive + ", " + renderer_path + ") returned "
+-								+ ret);
+-				this.gui.error(String.format("Unable to extract the renderer (error %d)", ret));
+-				return -1;
+-			}
+-			
+-			try {
+-				File f = new File(ajob.getRendererPath());
+-				f.setExecutable(true);
+-			}
+-			catch (SecurityException e) {
+-			}
++			return -1;
+ 		}
+ 		
+ 		String bestSceneArchive = ajob.getRequiredSceneArchivePath();
+diff -urp client-v6.21292.0.orig/src/com/sheepit/client/Configuration.java client-v6.21292.0/src/com/sheepit/client/Configuration.java
+--- client-v6.21292.0.orig/src/com/sheepit/client/Configuration.java	2021-10-09 13:56:04.000000000 -0700
++++ client-v6.21292.0/src/com/sheepit/client/Configuration.java	2021-11-02 17:19:47.962173561 -0700
+@@ -46,7 +46,6 @@ import lombok.Data;
+ 	
+ 	private String configFilePath;
+ 	private File workingDirectory;
+-	private File sharedDownloadsDirectory;
+ 	private File storageDirectory; // for permanent storage (binary archive)
+ 	private boolean userHasSpecifiedACacheDir;
+ 	private String static_exeDirName;
+@@ -73,6 +72,39 @@ import lombok.Data;
+ 	private String UIType;
+ 	private String hostname;
+ 	private String theme;
++	public static final boolean HARDBLOCK_BLENDER_2_79B = false;
++	public static final boolean HARDBLOCK_BLENDER_2_79B_FILMIC = false;
++	public static final boolean HARDBLOCK_BLENDER_2_83_16 = false;
++	public static final boolean HARDBLOCK_BLENDER_2_90_1 = false;
++	public static final boolean HARDBLOCK_BLENDER_2_91_0 = false;
++	public static final boolean HARDBLOCK_BLENDER_2_92_0 = false;
++	public static final boolean HARDBLOCK_BLENDER_2_93_2 = false;
++	public static final boolean USE_SYSTEM_RENDERERS = true;
++	public static final boolean USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = false;
++	public static final String SYSTEM_RENDERER_TYPE = "oiledmachine-overlay";
++	
++	/* Hashes from modified tarballs from service */
++	public static final String MD5_LINUX_X86_2_79B = "63767e58dfde9f0d6d59ccd77b8ec341";
++	public static final String MD5_LINUX_X86_2_79B_FILMIC = "85b9016273a41426b28b555ae6002b16";
++	public static final String MD5_LINUX_X86_64_2_79B = "3d0e05e7a43ae213eccf33c47b5900c5";
++	public static final String MD5_LINUX_X86_64_2_79B_FILMIC = "a6e995c16e72b9b0e2b3857fcf45a1d0";
++	public static final String MD5_LINUX_X86_64_2_83_16 = "b7a2bffa9597d11db0cb93b355949d50";
++	public static final String MD5_LINUX_X86_64_2_90_1 = "05234503229a4660e428e8d227746d8d";
++	public static final String MD5_LINUX_X86_64_2_91_0 = "96a408177b324f9172d137b4db117924";
++	public static final String MD5_LINUX_X86_64_2_92_0 = "306afa0a931b0edffed57594b872a6ad";
++	public static final String MD5_LINUX_X86_64_2_93_2 = "b8c91564ad5dfb58917df9f76158ab03";
++	
++	/* Hashes from downloads.blender.org tarballs */
++	public static final String MD5_LINUX_X86_VANILLA_2_79B = "7fafed4d8a22f1e8a60e3b3d10babb7d";
++	public static final String MD5_LINUX_X86_64_VANILLA_2_79B = "099555c6c8cb16bfcc0745dd303d692c";
++	public static final String MD5_LINUX_X86_64_VANILLA_2_83_16 = "3cab6228799792ab730a73429bd9aa3f";
++	public static final String MD5_LINUX_X86_64_VANILLA_2_90_1 = "38c75023edf4c11aff79459a82808a62";
++	public static final String MD5_LINUX_X86_64_VANILLA_2_91_0 = "c5d9b0e9e526fe611cfcdd225abc2b40";
++	public static final String MD5_LINUX_X86_64_VANILLA_2_92_0 = "43b909ee3e36d4ed3bb9d004b5fbc3e7";
++	public static final String MD5_LINUX_X86_64_VANILLA_2_93_2 = "4e43c851b73cd2ef7936531f9ae4828c";
++	
++	// Dated Jan 21, 2018
++	public static final String MD5_FILMIC_BLENDER_DL_F94EBAB = "5efedb0597fe15378808e847edaadab1";
+ 	
+ 	public Configuration(File cache_dir_, String login_, String password_) {
+ 		this.configFilePath = null;
+@@ -92,7 +124,6 @@ import lombok.Data;
+ 		this.userHasSpecifiedACacheDir = false;
+ 		this.detectGPUs = true;
+ 		this.workingDirectory = null;
+-		this.sharedDownloadsDirectory = null;
+ 		this.storageDirectory = null;
+ 		this.setCacheDir(cache_dir_);
+ 		this.printLog = false;
+@@ -108,7 +139,7 @@ import lombok.Data;
+ 	}
+ 	
+ 	public Configuration(Configuration config) {
+-		this(config.configFilePath, config.workingDirectory, config.sharedDownloadsDirectory, config.storageDirectory, config.userHasSpecifiedACacheDir,
++		this(config.configFilePath, config.workingDirectory, config.storageDirectory, config.userHasSpecifiedACacheDir,
+ 			config.static_exeDirName, config.login, config.password, config.proxy, config.maxUploadingJob, config.nbCores, config.maxMemory, config.maxRenderTime,
+ 			config.priority, config.computeMethod, config.GPUDevice, config.renderbucketSize, config.detectGPUs, config.printLog, config.requestTime, config.shutdownTime,
+ 			config.shutdownMode, config.extras, config.autoSignIn, config.useSysTray, config.headless, config.UIType, config.hostname, config.theme);
+@@ -160,14 +191,6 @@ import lombok.Data;
+ 			this.workingDirectory.mkdirs();
+ 			this.storageDirectory.mkdirs();
+ 		}
+-		
+-		if (this.sharedDownloadsDirectory != null) {
+-			this.sharedDownloadsDirectory.mkdirs();
+-			
+-			if (!this.sharedDownloadsDirectory.exists()) {
+-				System.err.println("Configuration::setCacheDir Unable to create common directory " + this.sharedDownloadsDirectory.getAbsolutePath());
+-			}
+-		}
+ 	}
+ 	
+ 	public void setStorageDir(File dir) {
+@@ -273,12 +296,6 @@ import lombok.Data;
+ 			if (filesInDirectory != null) {
+ 				files.addAll(Arrays.asList(filesInDirectory));
+ 			}
+-		}
+-		if (this.sharedDownloadsDirectory != null) {
+-			File[] filesInDirectory = this.sharedDownloadsDirectory.listFiles();
+-			if (filesInDirectory != null) {
+-				files.addAll(Arrays.asList(filesInDirectory));
+-			}
+ 		}
+ 		
+ 		for (File file : files) {
+diff -urp client-v6.21292.0.orig/src/com/sheepit/client/Job.java client-v6.21292.0/src/com/sheepit/client/Job.java
+--- client-v6.21292.0.orig/src/com/sheepit/client/Job.java	2021-10-09 13:56:04.000000000 -0700
++++ client-v6.21292.0/src/com/sheepit/client/Job.java	2021-11-02 17:17:34.733182217 -0700
+@@ -138,20 +138,32 @@ import java.util.regex.Pattern;
+ 	}
+ 	
+ 	public String getRendererDirectory() {
+-		return configuration.getWorkingDirectory().getAbsolutePath() + File.separator + rendererMD5;
++		if (configuration.USE_SYSTEM_RENDERERS) {
++			switch (rendererMD5) {
++				case Configuration.MD5_LINUX_X86_2_79B:
++				case Configuration.MD5_LINUX_X86_2_79B_FILMIC:
++				case Configuration.MD5_LINUX_X86_64_2_79B:
++				case Configuration.MD5_LINUX_X86_64_2_79B_FILMIC:
++				case Configuration.MD5_LINUX_X86_64_2_83_16:
++				case Configuration.MD5_LINUX_X86_64_2_90_1:
++				case Configuration.MD5_LINUX_X86_64_2_91_0:
++				case Configuration.MD5_LINUX_X86_64_2_92_0:
++				case Configuration.MD5_LINUX_X86_64_2_93_2:
++					return "/usr/bin";
++			}
++		} else if (Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG) {
++			return "/opt/sheepit-client/renderers/" + Client.downloadDotBlenderDotOrgHash(rendererMD5);
++		}
++		/* Upstream default */
++		return "/opt/sheepit-client/renderers/" + rendererMD5;
+ 	}
+ 	
+ 	public String getRequiredRendererArchivePath() {
+-		if (configuration.getSharedDownloadsDirectory() != null) {
+-			return configuration.getSharedDownloadsDirectory().getAbsolutePath() + File.separator + rendererMD5 + ".zip";
+-		}
+-		else {
+-			return getRendererArchivePath();
+-		}
++		return getRendererArchivePath();
+ 	}
+ 	
+ 	public String getRendererPath() {
+-		return getRendererDirectory() + File.separator + OS.getOS().getRenderBinaryPath();
++		return getRendererDirectory() + File.separator + OS.getOS().getRenderBinaryPath(rendererMD5);
+ 	}
+ 	
+ 	public String getRendererArchivePath() {
+@@ -159,12 +171,7 @@ import java.util.regex.Pattern;
+ 	}
+ 	
+ 	public String getRequiredSceneArchivePath() {
+-		if (configuration.getSharedDownloadsDirectory() != null) {
+-			return configuration.getSharedDownloadsDirectory().getAbsolutePath() + File.separator + sceneMD5 + ".zip";
+-		}
+-		else {
+-			return getSceneArchivePath();
+-		}
++		return getSceneArchivePath();
+ 	}
+ 	
+ 	public String getSceneDirectory() {
+diff -urp client-v6.21292.0.orig/src/com/sheepit/client/os/Linux.java client-v6.21292.0/src/com/sheepit/client/os/Linux.java
+--- client-v6.21292.0.orig/src/com/sheepit/client/os/Linux.java	2021-10-09 13:56:04.000000000 -0700
++++ client-v6.21292.0/src/com/sheepit/client/os/Linux.java	2021-11-02 17:17:34.733182217 -0700
+@@ -27,6 +27,7 @@ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ 
++import com.sheepit.client.Configuration;
+ import com.sheepit.client.Log;
+ 
+ public class Linux extends OS {
+@@ -41,7 +42,35 @@ public class Linux extends OS {
+ 		return "linux";
+ 	}
+ 	
+-	@Override public String getRenderBinaryPath() {
++	@Override public String getRenderBinaryPath(String rendererMD5) {
++		if (Configuration.USE_SYSTEM_RENDERERS) {
++			if (Configuration.SYSTEM_RENDERER_TYPE.equals("oiledmachine-overlay")) {
++				switch (rendererMD5) {
++					case Configuration.MD5_LINUX_X86_2_79B:
++						return "blender-2.79b";
++					case Configuration.MD5_LINUX_X86_2_79B_FILMIC:
++						return "blender-2.79b-filmic-sheepit";
++					case Configuration.MD5_LINUX_X86_64_2_79B:
++						return "blender-2.79b";
++					case Configuration.MD5_LINUX_X86_64_2_79B_FILMIC:
++						return "blender-2.79b-filmic-sheepit";
++					case Configuration.MD5_LINUX_X86_64_2_83_16:
++						return "blender-2.83.16";
++					case Configuration.MD5_LINUX_X86_64_2_90_1:
++						return "blender-2.90.1";
++					case Configuration.MD5_LINUX_X86_64_2_91_0:
++						return "blender-2.91.0";
++					case Configuration.MD5_LINUX_X86_64_2_92_0:
++						return "blender-2.92.0";
++					case Configuration.MD5_LINUX_X86_64_2_93_2:
++						return "blender-2.93.2";
++				}
++			} else if (Configuration.SYSTEM_RENDERER_TYPE.equals("gentoo-overlay")) {
++				return "blender";
++			}
++		} else if (Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG) {
++			return "blender";
++		}
+ 		return "rend.exe";
+ 	}
+ 	
+@@ -53,18 +82,21 @@ public class Linux extends OS {
+ 		Map<String, String> new_env = new HashMap<String, String>();
+ 		new_env.putAll(java.lang.System.getenv()); // clone the env
+ 		
+-		// if Blender is already loading an OpenGL library, don't need to load Blender's default one (it will
+-		// create system incompatibilities). If no OpenGL library is found, then load the one included in the binary
+-		// zip file
+-		if (isOpenGLAlreadyInstalled(command.get(0)) == false) {
+-			Boolean has_ld_library_path = new_env.containsKey("LD_LIBRARY_PATH");
+-			
+-			String lib_dir = (new File(command.get(0))).getParent() + File.separator + "lib";
+-			if (has_ld_library_path == false) {
+-				new_env.put("LD_LIBRARY_PATH", lib_dir);
+-			}
+-			else {
+-				new_env.put("LD_LIBRARY_PATH", new_env.get("LD_LIBRARY_PATH") + ":" + lib_dir);
++		if (Configuration.USE_SYSTEM_RENDERERS == false) {
++			// if Blender is already loading an OpenGL library, don't need to load Blender's default one (it will
++			// create system incompatibilities). If no OpenGL library is found, then load the one included in the binary
++			// zip file
++			if (isOpenGLAlreadyInstalled(command.get(0)) == false) {
++				Boolean has_ld_library_path = new_env.containsKey("LD_LIBRARY_PATH");
++				
++				String lib_dir = (new File(command.get(0))).getParent() + File.separator + "lib";
++				System.err.println("Linux::exec lib_dir: " + lib_dir);
++				if (has_ld_library_path == false) {
++					new_env.put("LD_LIBRARY_PATH", lib_dir);
++				}
++				else {
++					new_env.put("LD_LIBRARY_PATH", new_env.get("LD_LIBRARY_PATH") + ":" + lib_dir);
++				}
+ 			}
+ 		}
+ 		
+diff -urp client-v6.21292.0.orig/src/com/sheepit/client/os/Mac.java client-v6.21292.0/src/com/sheepit/client/os/Mac.java
+--- client-v6.21292.0.orig/src/com/sheepit/client/os/Mac.java	2021-10-09 13:56:04.000000000 -0700
++++ client-v6.21292.0/src/com/sheepit/client/os/Mac.java	2021-11-02 17:17:34.734182217 -0700
+@@ -40,7 +40,7 @@ public class Mac extends OS {
+ 		return "mac";
+ 	}
+ 	
+-	@Override public String getRenderBinaryPath() {
++	@Override public String getRenderBinaryPath(String rendererMD5) {
+ 		return "Blender" + File.separator + "blender.app" + File.separator + "Contents" + File.separator + "MacOS" + File.separator + "blender";
+ 	}
+ 	
+diff -urp client-v6.21292.0.orig/src/com/sheepit/client/os/OS.java client-v6.21292.0/src/com/sheepit/client/os/OS.java
+--- client-v6.21292.0.orig/src/com/sheepit/client/os/OS.java	2021-10-09 13:56:04.000000000 -0700
++++ client-v6.21292.0/src/com/sheepit/client/os/OS.java	2021-11-02 17:17:34.734182217 -0700
+@@ -56,7 +56,7 @@ public abstract class OS {
+ 		return hardwareAbstractionLayer.getMemory().getAvailable() / 1024;
+ 	}
+ 	
+-	public abstract String getRenderBinaryPath();
++	public abstract String getRenderBinaryPath(String rendererMD5);
+ 	
+ 	public String getCUDALib() {
+ 		return null;
+diff -urp client-v6.21292.0.orig/src/com/sheepit/client/os/Windows.java client-v6.21292.0/src/com/sheepit/client/os/Windows.java
+--- client-v6.21292.0.orig/src/com/sheepit/client/os/Windows.java	2021-10-09 13:56:04.000000000 -0700
++++ client-v6.21292.0/src/com/sheepit/client/os/Windows.java	2021-11-02 17:17:34.734182217 -0700
+@@ -32,7 +32,7 @@ public class Windows extends OS {
+ 		return "windows";
+ 	}
+ 	
+-	@Override public String getRenderBinaryPath() {
++	@Override public String getRenderBinaryPath(String rendererMD5) {
+ 		return "rend.exe";
+ 	}
+ 	
+diff -urp client-v6.21292.0.orig/src/com/sheepit/client/Server.java client-v6.21292.0/src/com/sheepit/client/Server.java
+--- client-v6.21292.0.orig/src/com/sheepit/client/Server.java	2021-10-09 13:56:04.000000000 -0700
++++ client-v6.21292.0/src/com/sheepit/client/Server.java	2021-11-02 17:17:34.735182217 -0700
+@@ -629,14 +629,6 @@ public class Server extends Thread {
+ 					File file_to_delete = new File(path + ".zip");
+ 					file_to_delete.delete();
+ 					Utils.delete(new File(path));
+-					
+-					// If we are using a shared downloads directory, then delete the file from the shared downloads directory as well :)
+-					if (this.user_config.getSharedDownloadsDirectory() != null) {
+-						String commonCacheFile = this.user_config.getSharedDownloadsDirectory().getAbsolutePath() + File.separatorChar + fileMD5.getMd5();
+-						this.log.debug("Server::handleFileMD5DeleteDocument delete common file " + commonCacheFile + ".zip");
+-						file_to_delete = new File(commonCacheFile + ".zip");
+-						file_to_delete.delete();
+-					}
+ 				}
+ 			}
+ 		}
+diff -urp client-v6.21292.0.orig/src/com/sheepit/client/SettingsLoader.java client-v6.21292.0/src/com/sheepit/client/SettingsLoader.java
+--- client-v6.21292.0.orig/src/com/sheepit/client/SettingsLoader.java	2021-10-09 13:56:04.000000000 -0700
++++ client-v6.21292.0/src/com/sheepit/client/SettingsLoader.java	2021-11-02 17:17:34.736182217 -0700
+@@ -81,7 +81,6 @@ public class SettingsLoader {
+ 	public static final String ARG_LOGIN = "-login";
+ 	public static final String ARG_PASSWORD = "-password";
+ 	public static final String ARG_CACHE_DIR = "-cache-dir";
+-	public static final String ARG_SHARED_ZIP = "-shared-zip";
+ 	public static final String ARG_GPU = "-gpu";
+ 	public static final String ARG_NO_GPU = "--no-gpu";
+ 	public static final String ARG_COMPUTE_METHOD = "-compute-method";
+diff -urp client-v6.21292.0.orig/src/com/sheepit/client/standalone/Worker.java client-v6.21292.0/src/com/sheepit/client/standalone/Worker.java
+--- client-v6.21292.0.orig/src/com/sheepit/client/standalone/Worker.java	2021-10-09 13:56:04.000000000 -0700
++++ client-v6.21292.0/src/com/sheepit/client/standalone/Worker.java	2021-11-02 17:17:34.736182217 -0700
+@@ -64,8 +64,6 @@ public class Worker {
+ 	
+ 	@Option(name = SettingsLoader.ARG_CACHE_DIR, usage = "Cache/Working directory. Caution, everything in it not related to the render-farm will be removed", metaVar = "/tmp/cache", required = false) private String cache_dir = null;
+ 	
+-	@Option(name = SettingsLoader.ARG_SHARED_ZIP, usage = "Shared directory for downloaded binaries and scenes. Useful when running two or more clients in the same computer/network to download once and render many times. IMPORTANT: This option and value must be identical in ALL clients sharing the directory.", required = false) private String sharedDownloadsDir = null;
+-	
+ 	@Option(name = SettingsLoader.ARG_GPU, usage = "Name of the GPU used for the render, for example CUDA_0 for Nvidia or OPENCL_0 for AMD/Intel card", metaVar = "CUDA_0", required = false) private String gpu_device = null;
+ 	
+ 	@Option(name = SettingsLoader.ARG_NO_GPU, usage = "Don't detect GPUs", required = false) private boolean no_gpu_detection = false;
+@@ -141,15 +139,6 @@ public class Worker {
+ 		config.setUsePriority(priority);
+ 		config.setDetectGPUs(!no_gpu_detection);
+ 		
+-		if (sharedDownloadsDir != null) {
+-			File dir = new File(sharedDownloadsDir);
+-			if (dir.exists() == false || dir.canWrite() == false) {
+-				System.err.println("ERROR: The shared-zip directory must exist and be writeable");
+-				return;
+-			}
+-			config.setSharedDownloadsDirectory(dir);
+-		}
+-		
+ 		if (cache_dir != null) {
+ 			Pattern cache_dirValidator = Pattern.compile("^(\\/|\\\\|[a-z]:)?[a-z0-9\\/\\\\\\s-_.]+$",Pattern.CASE_INSENSITIVE);
+ 			Matcher cache_dirCandidate = cache_dirValidator.matcher(cache_dir);

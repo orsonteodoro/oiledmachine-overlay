@@ -1,81 +1,37 @@
 # For security and vulnerability details see NVD
 Blender: https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=blender&search_type=all
 SDL: https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl&search_type=all
-libcaca: https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=libcaca&search_type=all
 Mesa: https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=mesa&search_type=all
 Python: https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python&search_type=all
 
 # This information is used for security audits
+Bundled in Blender 2.93.2:
+# See https://github.com/blender/blender/blob/v2.93.2/build_files/build_environment/cmake/versions.cmake
+
 Bundled in Blender 2.92.0:
-GLU 9.0.1 (built with	GCC: (GNU) 9.3.1 20200408 (Red Hat 9.3.1-2))
-Mesa (libGL) 18.3.1
-Python 3.7.7
+# https://github.com/blender/blender/blob/v2.92.0/build_files/build_environment/cmake/versions.cmake
 
 Bundled in Blender 2.91.0:
-GLU 9.0.1
-Mesa (libGL) 18.3.1
-Python 3.7.7
+# https://github.com/blender/blender/blob/v2.91.0/build_files/build_environment/cmake/versions.cmake
 
 Bundled in Blender 2.90.1:
-GLU 9.0.1
-Mesa (libGL) 18.3.1
-Python 3.7.7
+# https://github.com/blender/blender/blob/v2.90.1/build_files/build_environment/cmake/versions.cmake
 
 Bundled in Blender 2.90.0:
-GLU 9.0.1
-Mesa (libGL) 18.3.1
-Python 3.7.7
+# https://github.com/blender/blender/blob/v2.90.0/build_files/build_environment/cmake/versions.cmake
 
-Bundled in Blender 2.83.9:
-GLU 9.0.1 (built with GCC: (GNU) 6.3.1 20170216 (Red Hat 6.3.1-3))
-Mesa (libGL) 18.3.1
-Python 3.7.4
-
-Bundled in Blender 2.83.6:
-GLU 9.0.1
-Mesa (libGL) 18.3.1
-Python 3.7.4
-
-Bundled in Blender 2.83.2:
-GLU 9.0.1
-Mesa (libGL) 18.3.1
-Python 3.7.4
-
-Bundled in Blender 2.83.1:
-GLU 9.0.1
-Mesa (libGL) 18.3.1
-Python 3.7.4
-
-*Bundled in repackaged Blender 2.82:
-DirectFB 1.2.10
-GLU 9.0.1
-libcaca 0.99.beta18
-Mesa (libGL) 18.3.1
-Python 3.7.4
-SDL 1.2.14_pre20091018 # not atomic update to 1.2.14 built with GCC: (GNU) 6.3.1 20170216 (Red Hat 6.3.1-3)
-slang 2.2.4
-
-*Bundled in repackaged Blender 2.81a:
-DirectFB 1.2.10
-GLU 9.0.1
-libcaca 0.99.beta18
-Mesa (libGL) 18.3.1
-Python 3.7.4
-SDL 1.2.14_pre20091018 # not atomic update to 1.2.14 built with GCC: (GNU) 6.3.1 20170216 (Red Hat 6.3.1-3)
-slang 2.2.4
-
-Bundled in Blender 2.80:
-GLU
-Mesa (libGL) 18.3.1
-Python 3.7.0
+Bundled in Blender 2.83.16:
+# https://github.com/blender/blender/blob/v2.83.16/build_files/build_environment/cmake/versions.cmake
 
 Bundled in Blender 2.79b with filmic:
+# No versions.cmake
 GLU 8.0.5
 Mesa (libGL) 8.0.5
 Python 3.5.3
 Filmic Blender, master circa 20180121 f94ebab8ad3ad917d3201230ebca1bc3a93b7c86
 
 Bundled in Blender 2.79b:
+# No versions.cmake
 GLU 8.0.5
 Mesa (libGL) 8.0.5
 Python 3.5.3
@@ -83,8 +39,6 @@ Python 3.5.3
 Comparison is done with sha256sum between the Sheepit service tarballs and tarballs from downloads.blender.org.
 
 All tarballs are repackaged with renamed blender as rend.exe.
-
-*Contains extra library files not found in downloads.blender.org tarball from unspecified source.
 
 GLU versions based on build_files/build_environment/cmake/versions.cmake and the hash in the same file as
 the cmake file, but the version for 2.80 is undocumented.

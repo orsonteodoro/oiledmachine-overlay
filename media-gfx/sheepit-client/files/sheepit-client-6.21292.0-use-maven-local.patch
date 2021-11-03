@@ -1,0 +1,33 @@
+diff -urp client-v6.21292.0.orig/build.gradle client-v6.21292.0/build.gradle
+--- client-v6.21292.0.orig/build.gradle	2021-10-09 13:56:04.000000000 -0700
++++ client-v6.21292.0/build.gradle	2021-11-02 15:29:42.100602736 -0700
+@@ -1,8 +1,15 @@
+-plugins {
+-	id 'java-library'
+-	id 'com.github.johnrengelman.shadow' version '7.0.0'
++buildscript {
++	repositories {
++		maven { url '__MAVEN_PATH__' }
++	}
++	dependencies {
++		classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
++	}
+ }
+ 
++apply plugin: 'java-library'
++apply plugin: 'com.github.johnrengelman.shadow'
++
+ sourceCompatibility = '1.11'
+ targetCompatibility = '1.11'
+ 
+@@ -18,7 +25,7 @@ shadowJar {
+ }
+ 
+ repositories {
+-	mavenCentral()
++	maven { url '__MAVEN_PATH__' }
+ }
+ 
+ dependencies {
+Only in client-v6.21292.0: build.gradle.orig
+Only in client-v6.21292.0: build.gradle.rej
