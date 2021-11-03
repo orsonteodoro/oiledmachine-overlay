@@ -1037,8 +1037,11 @@ apply_client_patches()
 			| grep -q -F -e "parent-datafiles-dir-change" ; then
 			:;
 		else
-			die \
-"Use either gentoo-blender or the blender ebuilds from the oiledmachine-overlay"
+			eerror
+			eerror "Use either gentoo-blender or the blender ebuilds from the"
+			eerror "oiledmachine-overlay"
+			eerror
+			die
 		fi
 	fi
 
@@ -1072,31 +1075,31 @@ src_prepare() {
 		| cut -f 1 -d " ")
 	if [[ "${X_GRADLE_WRAPPER_JAR_SHA256}" \
 		!= "${EXPECTED_GRADLE_WRAPPER_JAR_SHA256}" ]] ; then
-		die \
-"X_GRADLE_WRAPPER_JAR_SHA256=${X_GRADLE_WRAPPER_JAR_SHA256} \
-EXPECTED_GRADLE_WRAPPER_JAR_SHA256=${EXPECTED_GRADLE_WRAPPER_JAR_SHA256} \
-wrong checksum.  Ebuild maintainer:  Update the jars also."
+		eerror "X_GRADLE_WRAPPER_JAR_SHA256=${X_GRADLE_WRAPPER_JAR_SHA256}"
+		eerror "EXPECTED_GRADLE_WRAPPER_JAR_SHA256=${EXPECTED_GRADLE_WRAPPER_JAR_SHA256}"
+		eerror "Wrong checksum.  Ebuild maintainer note:  Update the jars also."
+		die
 	fi
 
 	if ! use system-blender ; then
-		ewarn \
-"\n\
-Security notices:\n\
-\n\
-${PN} downloads Blender 2.79 with Python 3.5.3 having critical security CVE \
-advisories\n\
-https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all\n\
-\n\
-${PN} downloads Blender 2.83.16 with Python 3.7.4 having high security CVE \
-advisory\n\
-${PN} downloads Blender 2.90.1 with Python 3.7.7 having high security CVE \
-advisory\n\
-${PN} downloads Blender 2.91.0 with Python 3.7.7 having high security CVE \
-advisory\n\
-${PN} downloads Blender 2.92.0 with Python 3.7.7 having high security CVE \
-advisory\n\
-https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all\n\
-\n"
+		ewarn
+		ewarn "Security notices:"
+		ewarn
+		ewarn "${PN} downloads Blender 2.79 with Python 3.5.3 having critical security CVE advisories"
+		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all"
+		ewarn
+		ewarn "${PN} downloads Blender 2.83.16 with Python 3.7.4 having high security CVE advisory"
+		ewarn "${PN} downloads Blender 2.90.1 with Python 3.7.7 having high security CVE advisory"
+		ewarn "${PN} downloads Blender 2.91.0 with Python 3.7.7 having high security CVE advisory"
+		ewarn "${PN} downloads Blender 2.92.0 with Python 3.7.7 having high security CVE advisory"
+		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all"
+		ewarn
+		ewarn "${PN} downloads Blender 2.93.2 with statically linked libsdl 2.0.12 having high and medium CVE advisories"
+		ewarn "${PN} downloads Blender 2.92.0 with statically linked libsdl 2.0.12 having high and medium CVE advisories"
+		ewarn "${PN} downloads Blender 2.91.0 with statically linked libsdl 2.0.12 having high and medium CVE advisories"
+		ewarn "${PN} downloads Blender 2.83.16 with statically linked libsdl 2.0.8 having multiple high and medium CVE advisories"
+		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=libsdl&search_type=all&isCpeNameSearch=false"
+		ewarn
 	fi
 
 	default
@@ -1138,6 +1141,7 @@ compile_with_gradlew_prefetched()
 		die "Running X_GRADLE_V=${X_GRADLE_V} which should be GRADLE_V=${GRADLE_V}"
 	fi
 	if [[ -n "${GEN_DL_DETAILS}" && "${GEN_DL_DETAILS}" == "1" ]] ; then
+		einfo
 		einfo "Generating prefix gradle download details..."
 		gradle -d shadowJar || die
 		einfo
@@ -1149,7 +1153,9 @@ compile_with_gradlew_prefetched()
 		einfo
 		einfo "Updated GRADLE_PKGS_UNPACK:"
 		einfo
-		for f in $(find "${HOME}/.gradle/caches/modules-2/files-2.1" -name "*.jar" -o -name "*.pom" -o -name "*.module" | cut -f 12- -d "/") ; do \
+		for f in $(find "${HOME}/.gradle/caches/modules-2/files-2.1" \
+			-name "*.jar" -o -name "*.pom" -o -name "*.module" \
+			| cut -f 12- -d "/") ; do \
 			echo -e "\t\"${f}\"" \
 			| sed -e "s|okio-jvm|okio|g" ; \
 		done | sort > "${T}/t2"
@@ -1172,6 +1178,7 @@ compile_with_gradlew()
 	cd "${S}" || die
 	chmod +x gradlew || die
 	if [[ -n "${GEN_DL_DETAILS}" && "${GEN_DL_DETAILS}" == "1" ]] ; then
+		einfo
 		einfo "Generating prefix gradle download details..."
 		./gradlew -d shadowJar || die
 		einfo
@@ -1183,7 +1190,9 @@ compile_with_gradlew()
 		einfo
 		einfo "Updated GRADLE_PKGS_UNPACK:"
 		einfo
-		for f in $(find "${HOME}/.gradle/caches/modules-2/files-2.1" -name "*.jar" -o -name "*.pom" -o -name "*.module" | cut -f 12- -d "/") ; do \
+		for f in $(find "${HOME}/.gradle/caches/modules-2/files-2.1" \
+			-name "*.jar" -o -name "*.pom" -o -name "*.module" \
+			| cut -f 12- -d "/") ; do \
 			echo -e "\t\"${f}\"" \
 			| sed -e "s|okio-jvm|okio|g" ; \
 		done | sort > "${T}/t2"
@@ -1297,21 +1306,18 @@ src_install() {
 
 pkg_postinst() {
 	einfo
-	einfo \
-"You need an account from https://www.sheepit-renderfarm.com/ to use this \n\
-product."
+	einfo "You need an account from https://www.sheepit-renderfarm.com/ to"
+	einfo "use this product."
 	einfo
 	# This applies to the GUI part.
-        elog \
-"If you are using dwm or non-parenting window manager and see\n\
-no buttons or input boxes, you need to:\n\
-  emerge wmname\n\
-  wmname LG3D\n\
-Run 'wmname LG3D' before you run '${PN}'"
+        ewarn "If you are using dwm or non-parenting window manager and see"
+	ewarn "no buttons or input boxes, you need to:"
+	ewarn "  emerge wmname"
+	ewarn "  wmname LG3D"
+	ewarn "Run 'wmname LG3D' before you run '${PN}'"
 	if use opencl ; then
 		ewarn "OpenCL support is not officially supported for Linux."
-		ewarn "For details see, \
-https://github.com/laurent-clouet/sheepit-client/issues/165"
+		ewarn "For details see, https://github.com/laurent-clouet/sheepit-client/issues/165"
 	fi
 	einfo
 	einfo "Don't forget to add your user account to the video group."
@@ -1319,27 +1325,34 @@ https://github.com/laurent-clouet/sheepit-client/issues/165"
 	einfo
 
 	if use firejail ; then
-		ewarn \
-"The Firejail profile is experimental.  Several updates may occur to improve \n\
-the privacy within the sandboxed image and reduce the attack surface.  Also, \n\
-updates may occur to fix errors between different configurations."
-		einfo \
-"The Firejail profile requires additional rules for your JRE and video card \n\
-drivers.  Add them to /etc/firejail/sheepit-client.local.  Use ldd on the\n\
-shared libraries and drivers to add more private-lib or whitelist rules."
+		ewarn
+		ewarn "The Firejail profile is experimental.  Several updates"
+		ewarn "may occur to improve the privacy within the sandboxed"
+		ewarn "image and reduce the attack surface.  Also, updates may"
+		ewarn "occur to fix errors between different configurations."
+		ewarn
+		ewarn "The Firejail profile requires additional rules for your"
+		ewarn "JRE and video card drivers.  Add them to"
+		ewarn "/etc/firejail/sheepit-client.local.  Use ldd on the"
+		ewarn "shared libraries and drivers to add more private-lib or"
+		ewarn "whitelist rules."
+		ewarn
 	fi
 
 	if ! use vanilla ; then
+		einfo
 		einfo "Since this ebuild automatically uses an unpacked shared folder"
 		einfo "of renderers, the per user /usr/<user>/.sheepit-client/sheepit_binary_cache"
 		einfo "is no longer required and can be deleted."
 		einfo
 	fi
 	if ! use ${BENCHMARK_VERSION} ; then
+		ewarn
 		ewarn "${PN} may use the ${BENCHMARK_VERSION} for benchmarks"
 		ewarn "when using the service.  If it fails, try the latest"
 		ewarn "stable or LTS version.  It may also help to pass"
 		ewarn "--verbose to see what the first project requires."
+		ewarn
 	fi
 	if use firejail ; then
 		ewarn
