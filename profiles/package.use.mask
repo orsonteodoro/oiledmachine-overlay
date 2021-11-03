@@ -18,6 +18,7 @@ media-gfx/sheepit-client disable-hard-version-blocks
 media-gfx/sheepit-client sheepit_client_blender_2_79b
 media-gfx/sheepit-client sheepit_client_blender_2_79b_filmic
 # media-gfx/sheepit-client sheepit_client_blender_2_90_1 # This should be hard masked but required for testing, fetching projects, and allowed to use the service/product.  It also contains static sdl with multiple vulnerabilities.
+media-gfx/sheepit-client sheepit_client_blender_2_83_16 # multiple high vulnerabilities
 media-gfx/sheepit-client sheepit_client_blender_2_91_0
 media-gfx/sheepit-client sheepit_client_blender_2_92_0
 # sheepit_client_blender_2_93_2 # This should be masked because of static sdl contains multiple vulnerabilities.  Allowed to be able to use the product since a majority of users use this one.
