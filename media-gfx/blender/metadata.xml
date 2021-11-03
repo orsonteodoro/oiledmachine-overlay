@@ -240,10 +240,11 @@
       Adds support for FLAC lossless audio support.
     </flag>
     <flag name="gmp">
-      Enables the dependency for adding Intersect (Knife) and Intersect
-      (Boolean) to Face Tools and switch between fast and the default exact
-      solver modes for the mesh modifier.  GMP allows for exact booleans than fast
-      approximations with floats.
+      Adds Intersect (Knife) and Intersect (Boolean) to Face Tools, and the
+      ability to switch between fast and the default exact solver modes for
+      the mesh modifier.  It adds support for exact booleans with overlapping
+      geometry support than fast float approximations without overlapping
+      geometry support.
 
       Details:
 https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html#boolean-modifier
