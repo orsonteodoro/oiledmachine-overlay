@@ -343,7 +343,7 @@ LICENSE="BSD
 #   give the wrong impression that the entire software was released in public
 #   domain.
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="amd64 arm64 ~x86"
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/94.0.4606.71/media/gpu/args.gni#L24
 # Using the system-ffmpeg or system-icu breaks cfi-icall or cfi-cast which is
@@ -864,7 +864,7 @@ BDEPEND="
 	')
 	>=app-arch/gzip-1.7
 	dev-lang/perl
-	>=dev-util/gn-0.1807
+	<dev-util/gn-0.1943
 	dev-vcs/git
 	>=dev-util/gperf-3.0.3
 	>=dev-util/ninja-1.7.2
