@@ -1,0 +1,11 @@
+diff -urp libvpx-1.10.0.orig/libs.mk libvpx-1.10.0/libs.mk
+--- libvpx-1.10.0.orig/libs.mk	2021-03-18 12:59:46.000000000 -0700
++++ libvpx-1.10.0/libs.mk	2021-10-11 15:08:39.312847720 -0700
+@@ -8,6 +8,7 @@
+ ##  be found in the AUTHORS file in the root of the source tree.
+ ##
+ 
++CFLAGS += -fPIC
+ 
+ # ARM assembly files are written in RVCT-style. We use some make magic to
+ # filter those files to allow GCC compilation
