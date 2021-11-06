@@ -15,7 +15,6 @@ DESCRIPTION="The GNU Compiler Collection"
 HOMEPAGE="https://gcc.gnu.org/"
 
 inherit flag-o-matic gnuconfig libtool multilib pax-utils toolchain-funcs prefix
-inherit 
 
 tc_is_live() {
 	[[ ${PV} == *9999* ]]
@@ -131,7 +130,7 @@ STDCXX_INCDIR=${TOOLCHAIN_STDCXX_INCDIR:-${LIBPATH}/include/g++-v${GCC_BRANCH_VE
 #---->> LICENSE+SLOT+IUSE logic <<----
 
 LICENSE="GPL-3+ LGPL-3+ || ( GPL-3+ libgcc libstdc++ gcc-runtime-library-exception-3.1 ) FDL-1.3+"
-IUSE="test vanilla +nls"
+IUSE="experimental test vanilla +nls"
 RESTRICT="!test? ( test )"
 
 tc_supports_dostrip() {
@@ -296,7 +295,7 @@ S=$(
 gentoo_urls() {
 	local devspace="HTTP~vapier/dist/URI HTTP~rhill/dist/URI
 	HTTP~zorry/patches/gcc/URI HTTP~blueness/dist/URI
-	HTTP~tamiko/distfiles/URI HTTP~slyfox/distfiles/URI"
+	HTTP~tamiko/distfiles/URI HTTP~sam/distfiles/URI HTTP~slyfox/distfiles/URI"
 	devspace=${devspace//HTTP/https:\/\/dev.gentoo.org\/}
 	echo mirror://gentoo/$1 ${devspace//URI/$1}
 }

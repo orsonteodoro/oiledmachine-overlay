@@ -11,12 +11,52 @@
     <email>toolchain@gentoo.org</email>
     <name>Gentoo Toolchain Project</name>
   </maintainer>
+  <longdescription>
+    This ebuild fork is to properly fix GCC LTO on older machines or low end
+    machines with 1 GiB per core.
+
+    It also fixes the lto1-wpa-streaming spam with ~39 processes
+    spawned with 600-900 MiB swap and 220 MiB RSS.  If unfixed it will result in
+    OOM with 8 GiB combined.  To fix this problem, you can either (1) add 16 GiB
+    of total memory with memory compression or (2) apply this patch.
+
+    Per-Package Environment Variables:
+
+    OVERRIDE_NCORES -- number of CPUs on the system.
+    DISABLE_LTO1_WPA_STREAMING_FIX -- Set to 1 to disable or 0 to enable scaling
+                                      the number of lto1-wpa-streaming per core.
+                                      The ebuild has been patched to enabled
+                                      scaling by CPU by default, but it could
+                                      negatively impact other setups.
+    GCC_SEM_WPA_PATCH - Set to 0 to disable the semaphone lto1-wpa patch that
+			limits the number of processes based on CPU / 2 - 1, but
+			increases compilation time.  The benefit of this patch
+                        comes with smoother multitasking while linking.[1]  It
+                        requires the experimental USE flag to apply this patch.
+
+    Optional CPPFLAGS tuneables:
+
+    -DWPA_CPU_OVERRIDE=N -- The actual number of CPUs
+    -DWPA_TOTAL_RAM=N -- The actual number of RAM
+
+    Footnotes:
+
+    [1] This overlay adds an extra patch to scale lto1-wpa to RAM / 2 - 1 to prevent
+    Out of Memory (OOM).  It is observed that each lto1-wpa can be 2 GiB per process.
+    WPA is whole program optimization.  In an event that GCC linking is deadlocked or
+    when Ctrl+C is used, the manual removal of the semaphore lock my be required
+    at the location /dev/shm/sem.gcc-lto-wpa.  If you have 2 GiB per core or more,
+    then this patch is not necessary.  What this means is that for a 4 core processor
+    with 2 GiB total memory per lto1-wpa is 16 GiB worst case.  This patch will reduce
+    it to just 2 GiB total with the extra GiB as a safety buffer.
+  </longdescription>
   <use>
     <flag name="ada">Build the ADA language (GNAT) frontend</flag>
     <flag name="awt">Useful only when building GCJ, this enables Abstract Window Toolkit
       (AWT) peer support on top of GTK+</flag>
     <flag name="cilk">Support the Cilk Plus language (C/C++ based languages for parallel programming)</flag>
     <flag name="d">Enable support for the D programming language</flag>
+    <flag name="experimental">Enable experimental patches.  Limits use of of lto1-wpa memory to NCORES / 2 - 1.</flag>
     <flag name="fixed-point">Enable fixed-point arithmetic support for MIPS targets 
       in gcc (Warning: significantly increases compile time!)</flag>
     <flag name="gcj">Build the GCJ Java language frontend.</flag>
@@ -45,18 +85,4 @@
     <remote-id type="cpe">cpe:/a:gnu:gcc</remote-id>
     <remote-id type="sourceforge">dgcc</remote-id>
   </upstream>
-  <longdescription>
-    This ebuild fork is to fix the lto1-wpa-streaming spam with ~39 processes
-    spawned with 600-900 MiB swap and 220 MiB RSS.  If unfixed it will result in
-    OOM with 8 GiB combined.  To fix add 16 GiB of total memory with memory
-    compression or this patch.
-
-    Per-Package Environment Variables:
-
-    OVERRIDE_NCORES -- number of CPUs on the system.
-    DISABLE_LTO1_WPA_STREAMING_FIX -- Set to 1 to disable or 0 to enable scaling
-                                      per core.  The ebuild has been patched to
-                                      enabled scaling by CPU by default, but
-                                      could negatively impact other setups.
-  </longdescription>
 </pkgmetadata>
