@@ -17,8 +17,9 @@
 
     It also fixes the lto1-wpa-streaming spam with ~39 processes
     spawned with 600-900 MiB swap and 220 MiB RSS.  If unfixed it will result in
-    OOM with 8 GiB combined.  To fix this problem, you can either (1) add 16 GiB
-    of total memory with memory compression or (2) apply this patch.
+    OOM on a machine with 8 GiB combined.  To fix this problem, you can either
+    (1) add 16 GiB of total memory with memory compression with swap if
+    necessary or (2) apply this patch.
 
     Per-Package Environment Variables:
 
@@ -47,7 +48,7 @@
     when Ctrl+C is used, the manual removal of the semaphore lock my be required
     at the location /dev/shm/sem.gcc-lto-wpa.  If you have 2 GiB per core or more,
     then this patch is not necessary.  What this means is that for a 4 core processor
-    with 2 GiB total memory per lto1-wpa is 16 GiB worst case.  This patch will reduce
+    with 2 GiB total memory per lto1-wpa is ~8 GiB worst case.  This patch will reduce
     it to just 2 GiB total with the extra GiB as a safety buffer.
   </longdescription>
   <use>
