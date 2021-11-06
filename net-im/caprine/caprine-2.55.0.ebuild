@@ -11,8 +11,8 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+=" >=net-libs/nodejs-14[npm]" # based on their CI
-ELECTRON_APP_ELECTRON_V="10.1.5"
-ELECTRON_APP_TYPESCRIPT_V="4.1.2"
+ELECTRON_APP_ELECTRON_V="10.4.7"
+ELECTRON_APP_TYPESCRIPT_V="4.4.4"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 SRC_URI=\
 "https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz \
