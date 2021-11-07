@@ -238,7 +238,7 @@ _seq() {
 	done
 }
 
-gen_clang_gcc_pair() {
+gen_clang_llvm_pair() {
 	local min=${1}
 	local max=${2}
 	local v
@@ -253,40 +253,40 @@ gen_clang_gcc_pair() {
 }
 
 KCP_RDEPEND="
-	clang? ( || ( $(gen_clang_gcc_pair 10 14) ) )
+	clang? ( || ( $(gen_clang_llvm_pair 10 14) ) )
 	|| (
 		(
 			>=sys-devel/gcc-6.5.0
 		)
-		$(gen_clang_gcc_pair 10 14)
+		$(gen_clang_llvm_pair 10 14)
 	)
 "
 
 KCP_TC0="
-	clang? ( || ( $(gen_clang_gcc_pair 10 14) ) )
+	clang? ( || ( $(gen_clang_llvm_pair 10 14) ) )
 	|| (
 		(
-			>=sys-devel/gcc-10
+			>=sys-devel/gcc-10.1
 		)
-		$(gen_clang_gcc_pair 10 14)
+		$(gen_clang_llvm_pair 10 14)
 	)"
 
 KCP_TC1="
-	clang? ( || ( $(gen_clang_gcc_pair 10 14) ) )
+	clang? ( || ( $(gen_clang_llvm_pair 10 14) ) )
 	|| (
 		(
 			>=sys-devel/gcc-10.3
 		)
-		$(gen_clang_gcc_pair 10 14)
+		$(gen_clang_llvm_pair 10 14)
 	)"
 
 KCP_TC2="
-	clang? ( || ( $(gen_clang_gcc_pair 12 13) ) )
+	clang? ( || ( $(gen_clang_llvm_pair 12 13) ) )
 	|| (
 		(
 			>=sys-devel/gcc-11.1
 		)
-		$(gen_clang_gcc_pair 12 13)
+		$(gen_clang_llvm_pair 12 13)
 	)"
 
 KCP_MA_RDEPEND="
@@ -317,7 +317,7 @@ gen_kcp_ma_uri() {
 		[[ "${a}" =~ cortex-a72 ]] && continue
 		out+="
 	   kernel-compiler-patch-${a}? (
-		${KCP_SRC_9_0_URI}
+		${KCP_SRC_9_1_URI}
 	   )"
 	done
 	echo "${out}"
@@ -335,7 +335,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
-		${KCP_SRC_9_0_URI}
+		${KCP_SRC_9_1_URI}
 	   )
 	   kernel-compiler-patch-cortex-a72? (
 		${KCP_SRC_CORTEX_A72_URI}

@@ -26,13 +26,15 @@
 # futex2:
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/futex2
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-proton
+# tonyk/futex_waitv
+#   https://gitlab.collabora.com/tonyk/linux/-/commits/tonyk/futex_waitv
 # genpatches:
 #   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.4.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.10.html
-#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.12.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.14.html
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.15.html
 #   The person below who updates the release links above lag. See instead:
 #     https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-kernel/gentoo-sources
 # kernel_compiler_patch:
@@ -65,6 +67,7 @@
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.14/
+#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
 #   https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -73,12 +76,13 @@
 # UKSM:
 #   https://github.com/dolohow/uksm
 # x86-cfi-v3:
-#   https://github.com/torvalds/linux/compare/d0ee23f9...samitolvanen:x86-cfi-v3
-#   d0ee23f9 - comes from commit of master
+#   https://github.com/torvalds/linux/compare/e4a7957^...samitolvanen:x86-cfi-v3 # for >= 5.15-rc1, e4a7957^ is the parent of the first commit of this patchset
+#   https://github.com/torvalds/linux/compare/1d7789c^...samitolvanen:x86-cfi-v5 # for >= 5.15-rc5, 1d7789c^ is the parent of the first commit of this patchset
 # zen-sauce, zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/zen-sauce
+#   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
 
 case ${EAPI:-0} in
 	7) ;;
@@ -204,7 +208,7 @@ GENPATCHES_BASE_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_BASE_FN}"
 GENPATCHES_EXPERIMENTAL_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_EXPERIMENTAL_FN}"
 GENPATCHES_EXTRAS_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_EXTRAS_FN}"
 
-KCP_COMMIT_SNAPSHOT="f1d0af2c9d807b137909e98c11caf7504f4e2066" # 20210818
+KCP_COMMIT_SNAPSHOT="b3967a789a54334ff9a8e28bd6da58348fd5dd2e" # 20210914
 
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:="cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${K_MAJOR_MINOR}.tar.xz"
@@ -215,15 +219,23 @@ KERNEL_PATCH_0_TO_1_URI=\
 
 KCP_CORTEX_A72_BN=\
 "build-with-mcpu-for-cortex-a72"
-if ver_test ${K_MAJOR_MINOR} -ge 5.8 ; then
-KCP_9_0_BN=\
-"more-uarches-for-kernel-5.8%2B"
+
+if ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+KCP_9_1_BN=\
+"more-uarches-for-kernel-5.15+"
+KCP_8_1_BN=\
+"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
+KCP_4_9_BN=\
+"enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
+elif ver_test ${K_MAJOR_MINOR} -ge 5.8 ; then
+KCP_9_1_BN=\
+"more-uarches-for-kernel-5.8-5.14"
 KCP_8_1_BN=\
 "enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
 KCP_4_9_BN=\
 "enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.4 ; then
-KCP_9_0_BN=\
+KCP_9_1_BN=\
 "more-uarches-for-kernel-4.19-5.4"
 KCP_8_1_BN=\
 "enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
@@ -243,8 +255,8 @@ fi
 if [[ -n "${KCP_8_1_BN}" ]] ; then
 KCP_SRC_8_1_URI="${KCP_URI_BASE}/outdated_versions/${KCP_8_1_BN}.patch -> ${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
 fi
-if [[ -n "${KCP_9_0_BN}" ]] ; then
-KCP_SRC_9_0_URI="${KCP_URI_BASE}${KCP_9_0_BN}.patch -> ${KCP_9_0_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
+if [[ -n "${KCP_9_1_BN}" ]] ; then
+KCP_SRC_9_1_URI="${KCP_URI_BASE}${KCP_9_1_BN}.patch -> ${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
 fi
 KCP_SRC_CORTEX_A72_URI="${KCP_URI_BASE}${KCP_CORTEX_A72_BN}.patch -> ${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
 
@@ -331,6 +343,17 @@ gen_futex2_uris() {
 	echo "${s}"
 }
 FUTEX2_SRC_URIS=" "$(gen_futex2_uris)
+
+FUTEX_WAITV_BASE_URI=\
+"https://gitlab.collabora.com/tonyk/linux/-/commit/"
+gen_futex_waitv_uris() {
+	local s=""
+	for c in ${FUTEX_WAITV_COMMITS[@]} ; do
+		s+=" ${FUTEX_WAITV_BASE_URI}${c}.patch -> futex_waitv-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
+	echo "${s}"
+}
+FUTEX_WAITV_SRC_URIS=" "$(gen_futex_waitv_uris)
 
 LINUX_REPO_URI=\
 "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
@@ -549,7 +572,7 @@ ewarn "between a week to several months."
 ewarn
 einfo
 einfo "Use the virtual/ot-sources-stable meta package to ensure a smooth"
-einfo "updates between stable releases differing between major.minor branches"
+einfo "update between stable releases differing between major.minor branches"
 einfo
 	fi
 }
@@ -699,6 +722,7 @@ verify_profraw_compatibility() {
 	for v in "10.0.1" "11.1.0" "12.0.1" "13.0.0" "13.0.0.9999" "14.0.0.9999" ; do
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
 		local llvm_version
+		einfo "v=${v}"
 		if [[ "${v}" =~ "9999" ]] ; then
 			local llvm_version=$(bzless \
 				"${ESYSROOT}/var/db/pkg/sys-devel/llvm-${v}"*"/environment.bz2" \
@@ -711,6 +735,7 @@ https://raw.githubusercontent.com/llvm/llvm-project/${llvm_version}/llvm/include
 			| grep "INSTR_PROF_RAW_VERSION" \
 			| head -n 1 \
 			| grep -E -o -e "[0-9]+")
+		einfo "instr_prof_raw_v=${instr_prof_raw_v}"
 		if (( ${instr_prof_raw_v} == ${IPD_RAW_V} )) ; then
 			found_upstream_version=1
 		fi
@@ -793,7 +818,7 @@ function ot-kernel_pkg_setup() {
 	if has clang-pgo ${IUSE_EFFECTIVE} ; then
 		if use clang-pgo ; then
 			verify_clang_compiler_updated
-			verify_profraw_compatibility
+			#verify_profraw_compatibility
 		fi
 	fi
 }
@@ -1050,6 +1075,15 @@ function apply_futex2() {
 			(( ${blacklisted} == 1 )) && continue
 		fi
 		_fpatch "${DISTDIR}/futex2-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
+}
+
+# @FUNCTION: apply_futex_waitv
+# @DESCRIPTION:
+# Adds a new futex_wait syscall.  It may shave of < 5% CPU usage.
+function apply_futex_waitv() {
+	for c in ${FUTEX_WAITV_COMMITS[@]} ; do
+		_fpatch "${DISTDIR}/futex_waitv-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 }
 
@@ -1385,13 +1419,13 @@ function ot-kernel_src_unpack() {
 einfo "Best GCC version:  ${gcc_v}"
 einfo "Best Clang version:  ${clang_v}"
 
-		if (  (				 $(ver_test ${gcc_v}   -ge 9.0) ) \
-		   || ( [[ -n "${clang_v}" ]] && $(ver_test ${clang_v} -ge 9.0) ) \
+		if (  (				 $(ver_test ${gcc_v}   -ge 9.1) ) \
+		   || ( [[ -n "${clang_v}" ]] && $(ver_test ${clang_v} -ge 10.0) ) \
 		   ) \
-			&& test -f "${DISTDIR}/${KCP_9_0_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
+			&& test -f "${DISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
-einfo "Queuing the kernel_compiler_patch for use under gcc >= 9.0 or clang >= 9.0."
-			_PATCHES+=( "${DISTDIR}/${KCP_9_0_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
+einfo "Queuing the kernel_compiler_patch for use under gcc >= 9.1 or clang >= 10.0."
+			_PATCHES+=( "${DISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
 		elif ( tc-is-gcc && $(ver_test ${gcc_v} -ge 8.1) ) \
 			&& test -f "${DISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
@@ -1455,6 +1489,12 @@ ewarn
 	if has futex2 ${IUSE_EFFECTIVE} ; then
 		if use futex2 ; then
 			apply_futex2
+		fi
+	fi
+
+	if has futex-waitv ${IUSE_EFFECTIVE} ; then
+		if use futex-waitv ; then
+			apply_futex_waitv
 		fi
 	fi
 

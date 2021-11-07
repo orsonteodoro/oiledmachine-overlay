@@ -1,0 +1,11 @@
+--- a/tools/objtool/include/objtool/elf.h.orig	2021-08-29 15:04:50.000000000 -0700
++++ b/tools/objtool/include/objtool/elf.h	2021-11-06 23:18:35.980321684 -0700
+@@ -39,7 +39,7 @@ struct section {
+ 	char *name;
+ 	int idx;
+ 	unsigned int len;
+-	bool changed, text, rodata, noinstr;
++	bool changed, text, rodata, noinstr, cfi_jt;
+ };
+ 
+ struct symbol {

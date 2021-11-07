@@ -2,15 +2,15 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v5.14.eclass
+# @ECLASS: ot-kernel-v5.15.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7
-# @BLURB: Eclass for patching the 5.14.x kernel
+# @BLURB: Eclass for patching the 5.15.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.14 eclass defines specific applicable patching for the 5.14.x
+# The ot-kernel-v5.15 eclass defines specific applicable patching for the 5.15.x
 # linux kernel.
 
 DISABLE_DEBUG_V="1.1"
@@ -27,7 +27,7 @@ PATCH_BBRV2_COMMIT_D="1a45fd4faf30229a3d3116de7bfe9d2f933d3562" # descendant / n
 PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
 PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
 PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant / newest
-PATCH_KCP_COMMIT="b9369c4a4f43b8cf182c9726dc5c7e6eb4115722"
+PATCH_KCP_COMMIT="ff1381103099207c61c0e8426e82eabbb2808b04"
 PATCH_LRU_GEN_COMMIT_A_PARENT="7d2a07b769330c34b4deabeed939325c77a7ec2f"
 PATCH_LRU_GEN_COMMIT_A="1d1d59e750744b3c6b7cb51006cb59392e2fef65" # ancestor / oldest
 PATCH_LRU_GEN_COMMIT_D="58423b0ba935bb76ff3f6754703e8fb8533ecae3" # descendant / newest
@@ -44,69 +44,62 @@ PATCH_TRESOR_V="3.18.5"
 # the commits in order.
 
 PATCH_ZENSAUCE_COMMITS=(
-6c19e74f92407b935262366c90fcd1259d939fcf
-40cbbf2a2215c36d24676746ae98b20c77806355
-7ab2a592090c1cf843bb10d267bb585317d0e289
-b9369c4a4f43b8cf182c9726dc5c7e6eb4115722
-40fecdec8599c28fc9d1003c301d2202e39db8a6
-04fcedd90e574042883f5ba655903fcfc7f2cfae
-67f2b942ab4f2eab6dfafee23ad4c27575ec95f3
-fed9cf973d6c74ed9736d2b95c42075894d53ed2
-39376e2c9e2d20de215dc154cc27c3a1c44e0288
-5ce4b72d373ab3fad2b1cc45450f59370e6ffb5a
-1a931f871e849e85123de286919641e6c4d502e4
-76933ae58372a45bfad754d242ff2124758b07de
-0902f17304380ccf89112984a099b08505f3535c
-a655ad71e371e811943afdb533d52946155a2a6b
-149d85a8e32e7802340e8288829a126d711d8e58
-a04d09fad3419e0db39db29f9fd35b3eed5948a6
-c6d1cd7ca0e23d3d17abab2350eb49f2aa00ac73
-2a92000db1307319f691020858a443495e40f7e5
-c7ab6359906def4fbdbfd2510f8038826f27060f
-4c7ea2cb54eaa2d1d76722b4f7b2e28a837ef138
-f69969a3ab15a2b66a535791dc5c23242099fce3
-2aeeaeba306699007a9a9295a2f43f639b2415d0
-1c8509527a7a90511fdefba4df904fc5c2fa543d
-f05a76bbac2ea8737c5b6a64a1e842da8c52a146
-146ae111c1c1a112b0f267a0bd72794cc3c70013
-0d419b3e995b3dfbd5f9261d1604a3c6656c825d
-2c10658071555b23a397ed3a9c0969a4f36d1f12
-5ae84d6ea7fa6c05bb9017baab3a3de93d707149
-5ad20a83f37c759f74c00397fd144c85e882b9a6
-1cef3393a74deef8acc864392e9e73c3857fbd59
-f79f04d6d36298431febf69d06dd0ac4e3fbb337
-04b07f27895150f21f3ce18b3ea1b94ea84463a2
-08fa0c26a3f97066fdb47aa4bea0bda555bfa98e
+7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
+dcc1c5d635f155c7a9458cd93827899211224486
+aa864eded832387e4ace9652ca2edbeb8155d703
+ff1381103099207c61c0e8426e82eabbb2808b04
+b67c5033547771052515687e96adf98858ea0de6
+e5a3bbcb4908996f6034817704297979cbf2dc07
+4398d18270d5391b13d108a79b8ec235e0ffa10a
+fb7fb66f2c1f923dc039d99125ed94d54435bb9f
+05447263701b202e0086bb2cae098cf6d46c158e
+10a037e3ae47516141287fb489fb7ea0ae18fc0a
+f1030c5bd8cd8f67cef664c0b6b9841afbc49363
+e6e6ceba3e07be085b0249d7fc03e795d58dc577
+bd79567171b5faa0394ebdfcf46394864b60479f
+0d865e68797b90a0de0123adcbe8c77c4ea4ae22
+57a46dc390017363b2db52e70f4b07c9a71f76c6
+00e58bccf05365ce65f6e9694e1ca3b9ad30f345
+de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac
+3045edebf785deb5d687abd9898ac9702be5325c
+7bfc78d87614496288ad4e90f7d749a942a83718
+be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
+09955b8fd454ae284590fc4c9f47e7c96f3bad51
+16b72839cb862810bbf976e223f85ff4d1959ebd
+96c43bfad5c8dcb116ab2088e46228707aaeca9f
+ce769e35208203536d176326e72560548848b5ff
+35b5b825073000f04477651683c4aa11b98d12c8
+c793cc79debeafd0d1cee613dfc99d64c2cbcc94
+4218499052f1010e8b466db363b0ce4857756299
+81ba2917231b206b7b6b9b160e456c5452c4f62e
 )
 
 # Avoid merge conflict.
 PATCH_ZENSAUCE_BRANDING="
-6c19e74f92407b935262366c90fcd1259d939fcf
+7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
 "
 
 # LEFT_ZENTUNE:RIGHT_ZENSAUCE
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
-c6d1cd7ca0e23d3d17abab2350eb49f2aa00ac73:39376e2c9e2d20de215dc154cc27c3a1c44e0288
-1cef3393a74deef8acc864392e9e73c3857fbd59:5ad20a83f37c759f74c00397fd144c85e882b9a6
+de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac:05447263701b202e0086bb2cae098cf6d46c158e
 )
 #ZEN: INTERACTIVE: Use BFQ as our elevator (c6d1cd) needs \
 #ZEN: Add CONFIG to rename the mq-deadline scheduler (39376e2)
 # fixup! ZEN: INTERACTIVE: Increase max number of tasks rebalanced at once (1cef339) needs
 # ZEN: Reduce up threshold for all non-muqss schedulers (5ad20a8)
 
+# Message marked with INTERACTIVE:
 PATCH_ZENTUNE_COMMITS=(
-a04d09fad3419e0db39db29f9fd35b3eed5948a6
-c6d1cd7ca0e23d3d17abab2350eb49f2aa00ac73
-2a92000db1307319f691020858a443495e40f7e5
-c7ab6359906def4fbdbfd2510f8038826f27060f
-4c7ea2cb54eaa2d1d76722b4f7b2e28a837ef138
-f69969a3ab15a2b66a535791dc5c23242099fce3
-2aeeaeba306699007a9a9295a2f43f639b2415d0
-1c8509527a7a90511fdefba4df904fc5c2fa543d
-5ae84d6ea7fa6c05bb9017baab3a3de93d707149
-1cef3393a74deef8acc864392e9e73c3857fbd59
+7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
+de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac
+3045edebf785deb5d687abd9898ac9702be5325c
+7bfc78d87614496288ad4e90f7d749a942a83718
+be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
+09955b8fd454ae284590fc4c9f47e7c96f3bad51
+16b72839cb862810bbf976e223f85ff4d1959ebd
+96c43bfad5c8dcb116ab2088e46228707aaeca9f
 )
-PATCH_BFQ_DEFAULT="c6d1cd7ca0e23d3d17abab2350eb49f2aa00ac73"
+PATCH_BFQ_DEFAULT="de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac"
 PATCH_ZENSAUCE_BL=(
 	${PATCH_ZENSAUCE_BRANDING}
 	${PATCH_KCP_COMMIT}
@@ -118,66 +111,8 @@ PATCH_ZENSAUCE_BL=(
 # Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
 
 # From 5.12, forwardported to 5.13
+# not present
 ZEN_MUQSS_COMMITS=(
-8ded360073512fd443a98a988a1e96fa265fe124
-8a76ca15ee7f8e596a2ba69636c224b91000da65
-0675730a57fe0d8e15bf1f473e3140a23f452d3a
-3e15c06a6ec87197145d7b72ca375881648f568e
-ab0fc26bc0c024d22a308ae63a9400df4eea19fb
-0c52e6745e8384802a99e59347b47845108f45e8
-34c0ab34802a189ac7fc20473729f69cde964891
-b44e58da8ed481ac608b3e78f74a85e7d91c1a24
-a842bb58f27a847d5f4069f429e05d1167b75340
-10222c78262730b91a5e150757a99ee516f93dbf
-a2ccbab45f1d3ff4bf5d41b270e6b771490d8fae
-31893dcb7295fd17af9277103d16cf9565f2f105
-1d5feee490a36788d1929a57e02d649b98f10e0d
-73b30acfbe4524667d961cb2e99e4eb50b84bde0
-a1b3431fbd525c30c52a138a72dfba17e4c31a63
-6e4aab0c82cbf44dae51a91fd7633b49b1f4114d
-339325b9f946004ed40b0fc03c393197391a70b6
-eab5dba7687b961da03f552ac2b0db42dd1655b7
-335141fd7c7ef892e928e83c9448f99dd7f663e4
-aed98074a89d6fedbde4c42eb18c9eee5bf7f960
-8ca62f8e77cd3059c4d53dadf52f28709f7d958d
-10b79808773f52ab90e1620ab22d63aa3c2ade2a
-23173edfedbc9611a828360ba3c49d5d3782fb72
-1ecfdc3687207a970d5268e177c3992e05d4583d
-573eae0fd4af4c513a34e761a6bd9d7a6b5bb254
-4406a8b509517e53ddd609bbf9a1806590e9a9d2
-6c0482407412960b79f4d3491f5af02d934a93ae
-2d8e0c2b5305e2a6433706571bf0ff27e11f65c2
-1ca9d4f5a95acbcd642b386767c0d77760e03ffc
-7948b2a127c511898204cce5643fbdbd0b33fa61
-cead0a476acdf95f96656294eb9269daabe34d0f
-5b4a33cf5fd55257b2bf19d085067e79c00dada0
-59526f23b3dd89b45618d5a2b2defd2275b68a2f
-3eb61cbfa1c8d008b732074f2e598895bcae626c
-6010ea0ca9ce264595fa5d2e74832e1974cdc15c
-d272fdf9eb456d6e1b92d95a1d56367ff900a68c
-7f375f4e05fe9ec2b82a21486992f04f49ef0776
-4de1b7547e11004d329b736089b4f82495da2829
-9df1781f9202adc2a32901deb007f63e6bd85878
-8f47fdc6f18bb48d147c2cb0a7dda853a9e8ec96
-cdb7953afd1ad6b262642ec0a27012ba54182e4c
-1333f264d6c0de818eb9778cbe97fddf81ab063b
-3bbe5d74e8f9b2579647b521ea2bb4c95c318c69
-039be2c88c309271eedcd91d6b73d77f1a1cf6b7
-8b91d104d3bae383fce0228088c2612fa53aa088
-faba2cc75d0a7ab8bb5e4a66b2d24323513b7d2f
-1b37f0566b443b6e94458fed7c6e6a5b2984d45b
-c036bcb894c974a8c91cc35eae14142107425545
-654c9ac965150c2243aa6a2181aa9ef220a57543
-3104c885d8a960a39923e5839c546cd472b361be
-7479ef1c9ea56ec6acc1cea9117177eb4f7e409b
-af392798312ef558ded78c5268d3a7eccef2f345
-f86b44da0b2cf869cb2c84a0d8a21a6f855a1aeb
-4710c31d3ccab2c0c5bbd83a76e5fd5bb3e1d5ba
-175580d5adeaaaef1939cb7763a95d86b062606c
-f4795d85cf20f41708626772152afadf10c415b0
-1d265af2be4b2b96d5e2e003355cd81dfa164681
-e676ac55d70594735cba80c3a64de22ba4126a9c
-9b274548a67017db47e964756f0cc903bf69c3b6
 )
 ZEN_MUQSS_EXCLUDED_COMMITS=(
 )
@@ -204,55 +139,32 @@ a7e53b07af8df54620788b3b290660f8b1cbd2fa
 CFI_EXCLUDE_COMMITS=(
 )
 
-# For 5.6
-# This corresponds to the futex-proton-v3 branch.
+# For 5.13
+# This corresponds to the futex_waitv branch.
 # Repo order is bottom oldest and top newest.
-FUTEX_COMMITS=( # oldest
-dc3e0456bf719cde7ce44e1beb49d4ad0e5f0c71
-714afdc15b847a7a33c5206b6e1ddf64697c07d6
-ec85ea95a00b490a059bcc817bc1b4660062dba0
-00d3ee9cff824d4d38e82d252e4300999f87f1a5
-e8d4d6ded8544b5716c66d326aa290db8501518c
-) # newest
-
-# From the futex-proton branch
-FUTEX2_PROTON_COMPAT=(
-be703ffe14a9562140272abe2e0fa4abd3e52e0d
-1d8ed8c38196b0cbed555c1b624d3a0205a59a53
-)
-
-# For 5.12 of the futex2 branch
-# This corresponds to the futex2 branch.
-# Repo order is bottom oldest and top newest.
-FUTEX2_COMMITS=( # oldest
-c9d8776e4faad378adbbcd4d2e930cce2a3ae7ab
-1e7fd7973139c13c3c4175f3afb3adb2cae0f492
-12b55c1f5b5be73f15f51f3d5b8f38cbfaefe286
-a942311f7f2a9e0a775f7435a99b7a1b8c3b8dff
-45ae0b61801c4d691fab790275bea174c77f542c
-d174085b3f42ad142fe48a3006413608b0df82f1
-84bf1c3899444e0dfdb9186db26b5835b93eea91
-d59f169a44ecfc8b1e486840c0010d68ec5bd2fb
-848b3b584da05fe19050c821bcba08269fc265ad
-8021a26df7920ab95d668392753386576c4309d3
-3c55be83bb2790af9e5a67b1238612be015cabbe
-2f05d29e273e9caf912f5522e11adab66c847227
-96db7320e8b0d0193fc419f280f740f37a159e23
-${FUTEX2_PROTON_COMPAT[@]}
+FUTEX_WAITV_COMMITS=( # oldest
+f4cf25af935c5eed6800efcc7e1d6cafe5e73aec
+2bb06148a84a0278b5505b7e4da8ea86bd9b6b85
+07af04a9c9a1a7c89734fbfd8b9f394a779b8506
+fa234eff16cb60a96d8d978f8ff51b62ffa5fc62
+b9832ced7cca0c410f66de954ab49c328a555f96
+c39f8239fc2a306c5749883850c47405ed93b755
+e189317c106a6ee9c8099624ddf14da3a8035ac5
+62de1fadaae1a8b5453e1d18d5fa9c23f64cb64e
+b70e738f08403950aa3053c36b98c6b0eeb0eb90
 ) # newest
 
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
-IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex futex2
-futex2-proton +genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto
+IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex-waitv
++genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto
 +O3 prjc rt shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs
 tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-lru_gen zen-muqss
 zen-sauce zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
 REQUIRED_USE+="
 	^^ ( cfs prjc zen-muqss )
-	futex2-proton? ( futex2 )
 	genpatches_1510? ( genpatches )
 	O3? ( zen-sauce )
 	lru_gen? ( !zen-lru_gen )
@@ -278,6 +190,10 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
+	!futex-waitv
+	!uksm
+	!zen-lru_gen
+	!zen-muqss
 	prjc? ( !rt )
 	zen-muqss? ( !rt )
 	rt? ( cfs !prjc !zen-muqss )
@@ -299,8 +215,7 @@ LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" prjc? ( GPL-3 )" # see \
   # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
-LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )"
-LICENSE+=" futex2? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
+LICENSE+=" futex-waitv? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 gen_kcp_license() {
@@ -434,7 +349,7 @@ KCP_RDEPEND="
 	clang? ( || ( $(gen_clang_llvm_pair 10 14) ) )
 	|| (
 		(
-			>=sys-devel/gcc-6.5.0
+			>=sys-devel/gcc-9.0
 		)
 		$(gen_clang_llvm_pair 10 14)
 	)
@@ -503,14 +418,16 @@ gen_kcp_ma_uri() {
 
 # Not on the servers yet
 NOT_READY_YET="
+	   uksm? ( ${UKSM_SRC_URI} )
+	   zen-lru_gen? ( ${ZEN_LRU_GEN_SRC_URI} )
+	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
 "
 
 SRC_URI+=" "$(gen_kcp_ma_uri)
 SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   cfi? ( amd64? ( ${CFI_X86_SRC_URIS} ) )
 	   clang-pgo? ( ${CLANG_PGO_URI} )
-	   futex? ( ${FUTEX_SRC_URIS} )
-	   futex2? ( ${FUTEX2_SRC_URIS} )
+	   futex-waitv? ( ${FUTEX_WAITV_SRC_URIS} )
 	   genpatches? (
 		${GENPATCHES_URI}
 		${GENPATCHES_BASE_SRC_URI}
@@ -535,10 +452,8 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
 	   )
-	   uksm? ( ${UKSM_SRC_URI} )
-	   zen-lru_gen? ( ${ZEN_LRU_GEN_SRC_URI} )
-	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
 	   zen-sauce? ( ${ZENSAUCE_URIS} )"
+
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -682,7 +597,7 @@ function ot-kernel_filter_patch_cb() {
 
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
-	# Using patch with fuzz factor is disallowed with futex and futex2
+	# Using patch with fuzz factor is disallowed with futex_waitv
 
 	if [[ "${path}" =~ "ck-0.210-for-5.12-d66b728-47a8b81.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
@@ -704,7 +619,9 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${CLANG_PGO_FN}" ]] ; then
-		_dpatch "${PATCH_OPS}" "${path}"
+		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/cfi-x86-3bc6889-makefile-fix-for-5.15.patch"
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/clang-pgo-support-profraw-v6-to-v8.patch"
 	elif [[ "${path}" =~ "cfi-x86-5.14-5140d56.patch" ]] ; then
@@ -712,68 +629,10 @@ einfo "Already applied ${path} upstream"
 
 		# Add this to the end of the cfi commit list
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
-	elif [[ "${path}" =~ "bbrv2-5.14-1ca5498-1a45fd4.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-5.15-1ca5498-1a45fd4.patch" ]] ; then
 		_tpatch "${PATCH_OPS}" "${path}" 10 0 "" # actually only 1 failed not 10
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
-	elif [[ "${path}" =~ "futex-5.14-dc3e045.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 5 0 ""
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-dc3e045-5-hunk-fix-for-5.14.patch"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-dc3e045-fix-build-time-errors-for-5.14.patch"
-	elif [[ "${path}" =~ "futex-5.14-714afdc.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 4 0 ""
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-714afdc-4-hunk-fix-for-5.14.patch"
-	elif [[ "${path}" =~ "futex-5.14-00d3ee9.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-00d3ee9-3-hunk-fix-for-5.14.patch"
-	elif [[ "${path}" =~ "futex-5.14-e8d4d6d.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-e8d4d6d-3-hunk-fix-for-5.14.patch"
-	elif [[ "${path}" =~ "futex2-5.14-c9d8776.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 8 0 ""
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-c9d8776-8-hunk-fix-for-5.14.patch"
-	elif [[ "${path}" =~ "futex2-5.14-12b55c1.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 8 0 ""
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-12b55c1-8-hunk-fix-for-5.14.patch"
-	elif [[ "${path}" =~ "futex2-5.14-a942311.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 6 0 ""
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-a942311-6-hunk-fix-for-5.14.patch"
-	elif [[ "${path}" =~ "futex2-5.14-84bf1c3.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
-		if use futex && use futex2 ; then
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-84bf1c3-3-hunk-fix-for-5.14-combined-with-futex.patch"
-		else
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-84bf1c3-3-hunk-fix-for-5.14.patch"
-		fi
-	elif [[ "${path}" =~ "futex2-5.14-d59f169.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 4 0 ""
-		if use futex && use futex2 ; then
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-d59f169-4-hunk-fix-for-5.14-combined-with-futex.patch"
-		else
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-d59f169-4-hunk-fix-for-5.14.patch"
-		fi
-	elif [[ "${path}" =~ "futex2-5.14-848b3b5.patch" ]] ; then
-		if use futex && use futex2 ; then
-			_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-848b3b5-2-hunk-fix-for-5.14-combined-with-futex.patch"
-		else
-			_dpatch "${PATCH_OPS}" "${path}"
-		fi
-	elif [[ "${path}" =~ "futex2-5.14-8021a26.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 1 0 ""
-		if use futex && use futex2 ; then
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-8021a26-1-hunk-fix-for-5.14-combined-with-futex.patch"
-		else
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-8021a26-1-hunk-fix-for-5.14.patch"
-		fi
-	elif [[ "${path}" =~ "futex2-5.14-be703ff.patch" ]] ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-be703ff-1-hunk-fix-for-5.14.patch"
-	elif [[ "${path}" =~ "futex2-5.14-1e7fd79.patch" ]] ; then
-		_dpatch "${PATCH_OPS}" "${path}"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex2-1e7fd79-fix-build-time-failure-for-5.14.patch"
-	elif [[ "${path}" =~ "cfi-x86-5.14-1d7789c.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-1d7789c-fix-for-5.14.patch"
-	elif [[ "${path}" =~ "cfi-x86-5.14-343e289.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-x86-5.15-343e289.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"

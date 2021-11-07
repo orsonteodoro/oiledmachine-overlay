@@ -198,7 +198,7 @@ _seq() {
 	done
 }
 
-gen_clang_gcc_pair() {
+gen_clang_llvm_pair() {
 	local min=${1}
 	local max=${2}
 	local v
@@ -213,10 +213,10 @@ gen_clang_gcc_pair() {
 }
 
 KCP_RDEPEND="
-	clang? ( || ( $(gen_clang_gcc_pair 10 14) ) )
+	clang? ( || ( $(gen_clang_llvm_pair 10 14) ) )
 	|| (
 		>=sys-devel/gcc-6.5.0
-		$(gen_clang_gcc_pair 10 14)
+		$(gen_clang_llvm_pair 10 14)
 	)
 "
 
@@ -242,7 +242,7 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
-		${KCP_SRC_9_0_URI}
+		${KCP_SRC_9_1_URI}
 	   )
 	   muqss? ( ${CK_SRC_URIS} )
 	   O3? ( ${O3_ALLOW_SRC_URI} )
