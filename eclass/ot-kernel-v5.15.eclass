@@ -29,11 +29,11 @@ PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exc
 PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant / newest
 PATCH_KCP_COMMIT="ff1381103099207c61c0e8426e82eabbb2808b04"
 PATCH_LRU_GEN_COMMIT_A_PARENT="7d2a07b769330c34b4deabeed939325c77a7ec2f"
-PATCH_LRU_GEN_COMMIT_A="1d1d59e750744b3c6b7cb51006cb59392e2fef65" # ancestor / oldest
-PATCH_LRU_GEN_COMMIT_D="58423b0ba935bb76ff3f6754703e8fb8533ecae3" # descendant / newest
+PATCH_LRU_GEN_COMMIT_A="f48857ddf21f86a716a88b6278851c0066fbf66f" # ancestor / oldest
+PATCH_LRU_GEN_COMMIT_D="c43874ec588df89dfe285e1fa978c9f3f9b7e570" # descendant / newest
 PATCH_ZEN_LRU_GEN_COMMIT_A_PARENT="7d2a07b769330c34b4deabeed939325c77a7ec2f"
-PATCH_ZEN_LRU_GEN_COMMIT_A="502566438ca9e8ad3d32107e3ef6ace65e307a0c" # ancestor / oldest
-PATCH_ZEN_LRU_GEN_COMMIT_D="604cd836f7e6aff5346527d869ecac3868135aea" # descendant / newest
+PATCH_ZEN_LRU_GEN_COMMIT_A="f48857ddf21f86a716a88b6278851c0066fbf66f" # ancestor / oldest
+PATCH_ZEN_LRU_GEN_COMMIT_D="99e7c83f97caf5a659eadcd6d547d68ae648ab0d" # descendant / newest
 # Corresponding to [5.15-rc1, x86-cfi-v3]
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
@@ -191,6 +191,7 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
 	!futex-waitv
+	!lru_gen
 	!uksm
 	!zen-lru_gen
 	!zen-muqss

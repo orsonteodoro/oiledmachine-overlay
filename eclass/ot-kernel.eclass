@@ -48,7 +48,7 @@
 #   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/muqss
 # Multigenerational LRU:
 #   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/lru
-#   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/lru-v3
+#   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/lru-v5
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
 #   5.10 https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c
