@@ -119,8 +119,8 @@ eerror
 		die
 	fi
 
-	if ver_test ${X_JDK_V} -lt 11 ; then
-		die "Must have SDK_V >= 11.  Best is ${X_JDK_V}."
+	if ver_test ${X_JDK_V} -lt ${JAVA_V} ; then
+		die "You must have OpenJDK >= ${JAVA_V}.  Best is ${X_JDK_V}."
 	fi
 
 	if ! which mvn 2>/dev/null 1>/dev/null ; then
