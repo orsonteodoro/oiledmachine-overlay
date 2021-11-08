@@ -771,6 +771,21 @@ check_embree() {
 	fi
 }
 
+setup_openjdk() {
+	local jdk_bin_basepath
+	local jdk_basepath
+
+	if find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+		export PATH="${JAVA_HOME}/bin:${PATH}"
+	elif find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+		export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+		export PATH="${JAVA_HOME}/bin:${PATH}"
+	else
+		die "dev-java/openjdk:${JDK_V} or dev-java/openjdk-bin:${JDK_V} must be installed"
+	fi
+}
+
 pkg_setup() {
 	ewarn "This ebuild is currently undergoing development and may not work even as vanilla (unpatched)."
 
@@ -834,26 +849,14 @@ pkg_setup() {
 		fi
 	fi
 
-	local jdk_bin_basepath
-	local jdk_basepath
+	setup_openjdk
 
-	if find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
-		einfo "JAVA_HOME=${JAVA_HOME}"
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	elif find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
-		einfo "JAVA_HOME=${JAVA_HOME}"
-		export PATH="${JAVA_HOME}/bin:${PATH}"
-	else
-		die "dev-java/openjdk:${JDK_V} or dev-java/openjdk-bin:${JDK_V} must be installed"
-	fi
-
+	einfo "JAVA_HOME=${JAVA_HOME}"
 	einfo "PATH=${PATH}"
 
 	# Not fixed for several months
-	java-pkg_init
-	#java-pkg_ensure-vm-version-ge ${JAVA_V}
+	# java-pkg_init # unsets JAVA_HOME
+	# java-pkg_ensure-vm-version-ge ${JAVA_V}
 
 	if use system-gradle ; then
 		export GRADLE_BIN="gradle"
