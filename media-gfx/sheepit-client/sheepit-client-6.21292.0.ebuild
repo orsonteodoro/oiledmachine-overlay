@@ -191,6 +191,18 @@ RDEPEND_BLENDER="
 # are toggleable.
 
 JAVA_V="11"
+JDK_DEPEND="
+|| (
+	dev-java/openjdk-bin:${JAVA_V}
+	dev-java/openjdk:${JAVA_V}
+)"
+JRE_DEPEND="
+|| (
+	${JDK_DEPEND}
+	dev-java/openjdk-jre-bin:${JAVA_V}
+)"
+#JDK_DEPEND=" virtual/jdk:${JAVA_V}"
+#JRE_DEPEND=" virtual/jre:${JAVA_V}"
 RDEPEND="
 	blender? (
 		firejail? ( sys-apps/firejail )
@@ -312,14 +324,14 @@ sheepit_client_blender_2_93_2? (
 		app-arch/tar
 		app-arch/xz-utils
 	)
-	>=virtual/jre-${JAVA_V}"
+	${JRE_DEPEND}"
 GRADLE_V="7.0" # See gradle/wrapper/gradle-wrapper.properties
 BDEPEND="${RDEPEND}
 	app-arch/bzip2
 	app-arch/tar
 	app-arch/unzip
 	app-arch/xz-utils
-	virtual/jdk:${JAVA_V}
+	${JDK_DEPEND}
 	system-gradle? ( >=dev-java/gradle-bin-${GRADLE_V} )"
 
 GRADLE_PKGS_UNPACK=(
