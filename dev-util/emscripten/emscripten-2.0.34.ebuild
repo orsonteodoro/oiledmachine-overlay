@@ -5,10 +5,10 @@
 # https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
 # For the closure-compiler-npm version see:
-# https://github.com/emscripten-core/emscripten/blob/2.0.32/package.json
+# https://github.com/emscripten-core/emscripten/blob/2.0.34/package.json
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/2.0.32/tools/settings_template.py
+# https://github.com/emscripten-core/emscripten/blob/2.0.34/tools/settings_template.py
 
 EAPI=7
 
@@ -98,13 +98,13 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 			closure_compiler_nodejs )
 	)"
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/2.0.32/tools/building.py EXPECTED_BINARYEN_VERSION
+# See also https://github.com/emscripten-core/emscripten/blob/2.0.34/tools/building.py EXPECTED_BINARYEN_VERSION
 JAVA_V="11" # See https://github.com/google/closure-compiler/blob/v20210601/.github/workflows/ci.yaml#L43
 # See https://github.com/google/closure-compiler-npm/blob/v20210601.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/2.0.32/package.json
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/2.0.32/tools/shared.py#L39
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/2.0.32/tools/shared.py#L43
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/2.0.34/package.json
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/2.0.34/tools/shared.py#L39
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/2.0.34/tools/shared.py#L43
 BINARYEN_V="101"
 RDEPEND+=" ${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
