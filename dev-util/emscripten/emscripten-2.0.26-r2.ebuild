@@ -131,10 +131,6 @@ ${CLOSURE_COMPILER_SLOT}\
 		>=sys-devel/llvm-${LLVM_V}:${LLVM_V}=[llvm_targets_WebAssembly]
 		>=sys-devel/clang-${LLVM_V}:${LLVM_V}=[llvm_targets_WebAssembly]
 	)"
-# The java-utils-2 doesn't like nested conditionals.  The eclass needs at least
-# a virtual/jdk.  This package doesn't really need jdk to use closure-compiler
-# because packages are prebuilt.  If we have closure_compiler_native, we don't
-# need Java.
 DEPEND+=" ${RDEPEND}
 	closure-compiler? (
 		closure_compiler_java? (
@@ -146,8 +142,9 @@ DEPEND+=" ${RDEPEND}
 		!system-closure-compiler? (
 			>=virtual/jre-${JAVA_V}
 		)
-	)
-	>=virtual/jdk-${JAVA_V}"
+	)"
+BDEPEND+="
+	virtual/jdk:${JAVA_V}"
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
 RESTRICT="fetch mirror"
@@ -174,10 +171,30 @@ eerror "If you are in a hurry, you can do \`wget -O ${distdir}/${FN_DEST}\
  https://github.com/emscripten-core/emscripten/archive/${FN_SRC}\`"
 }
 
+setup_openjdk() {
+	local jdk_bin_basepath
+	local jdk_basepath
+
+	if find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+		export PATH="${JAVA_HOME}/bin:${PATH}"
+	elif find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+		export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+		export PATH="${JAVA_HOME}/bin:${PATH}"
+	else
+		die "dev-java/openjdk:${JDK_V} or dev-java/openjdk-bin:${JDK_V} is required to be installed"
+	fi
+}
+
 pkg_setup() {
 	if use closure-compiler ; then
-		if ! use closure_compiler_native ; then
-			java-pkg_init
+		if use closure_compiler_java ; then
+			setup_openjdk
+			einfo "JAVA_HOME=${JAVA_HOME}"
+			einfo "PATH=${PATH}"
+
+			# java-pkg_init # unsets JAVA_HOME
+
 			if [[ -n "${JAVA_HOME}" \
 				&& -e "${JAVA_HOME}/bin/java" ]] ; then
 				export JAVA="${JAVA_HOME}/bin/java"
@@ -193,7 +210,7 @@ eerror "Use \`eselect java-vm\` to set this up."
 eerror
 				die
 			fi
-			java-pkg_ensure-vm-version-ge ${JAVA_V}
+			# java-pkg_ensure-vm-version-ge ${JAVA_V}
 		fi
 		if ! use system-closure-compiler ; then
 			npm-secaudit_pkg_setup
@@ -370,4 +387,7 @@ pkg_postinst() {
 	einfo
 	einfo "Set to wasm (llvm) output via app-eselect/eselect-emscripten."
 	einfo
+	if use closure_compiler_java ; then
+		ewarn "You must manually setup the JAVA_HOME, and PATH when using closure-compiler for Java."
+	fi
 }
