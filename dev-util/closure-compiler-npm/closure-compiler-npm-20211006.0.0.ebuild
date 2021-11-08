@@ -35,10 +35,10 @@ REQUIRED_USE+="
 		closure_compiler_native
 		closure_compiler_nodejs	)"
 # For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/v20210907.0.0/packages/google-closure-compiler/package.json
+# https://github.com/google/closure-compiler-npm/blob/v20211006.0.0/packages/google-closure-compiler/package.json
 # For dependencies, see
-# https://github.com/google/closure-compiler-npm/blob/v20210907.0.0/.github/workflows/build.yml
-NODE_V="12" # Upstream uses 14 on linux but others 10, 12
+# https://github.com/google/closure-compiler-npm/blob/v20211006.0.0/.github/workflows/build.yml
+NODE_V="14" # Upstream uses 14 on linux but others 10, 12
 CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_V} )"
 JDK_DEPEND=" >=dev-java/openjdk-bin-${JAVA_V}:${JAVA_V}"
 JRE_DEPEND=" >=dev-java/openjdk-jre-bin-${JAVA_V}:${JAVA_V}"
@@ -82,8 +82,28 @@ pkg_pretend() {
 	check-reqs_pkg_setup
 }
 
+setup_openjdk() {
+	local jdk_bin_basepath
+	local jdk_basepath
+
+	if find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+		export PATH="${JAVA_HOME}/bin:${PATH}"
+	elif find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+		export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+		export PATH="${JAVA_HOME}/bin:${PATH}"
+	else
+		die "dev-java/openjdk:${JDK_V} or dev-java/openjdk-bin:${JDK_V} must be installed"
+	fi
+}
+
 pkg_setup() {
-	java-pkg_init
+	setup_openjdk
+
+	einfo "JAVA_HOME=${JAVA_HOME}"
+	einfo "PATH=${PATH}"
+
+	# java-pkg_init
 
 	# the eclass/eselect system is broken
 	X_JDK_V=$(best_version "dev-java/openjdk-bin:${JAVA_V}" | sed -e "s|dev-java/openjdk-bin-||g" -e "s|-r[0-9]$||g")
@@ -93,9 +113,10 @@ pkg_setup() {
 	if [[ -n "${JAVA_HOME}" && -f "${JAVA_HOME}/bin/java" ]] ; then
 		export JAVA="${JAVA_HOME}/bin/java"
 	else
-		die \
-"JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java.\n\
-Use \`eselect java-vm\` to set this up."
+eerror
+eerror "JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java."
+eerror
+		die
 	fi
 
 	if ver_test ${X_JDK_V} -lt 11 ; then
@@ -107,21 +128,21 @@ Use \`eselect java-vm\` to set this up."
 	fi
 
 	if has network-sandbox $FEATURES ; then
-		die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
-download micropackages."
+eerror
+eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
+eerror "to download micropackages."
+eerror
+		die
 	fi
 	npm-secaudit_pkg_setup
 
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
-#	if [[ ! -e /usr/libexec/bin/java ]] ; then
-#		die "Missing /usr/libexec/bin/java"
-#	fi
-
+	ewarn
 	ewarn "Re-emerge if it randomly fails with message: cb() never called!"
 	ewarn "Re-emerge if exitCode: 18 when downloading graal image for google-closure-compiler-linux."
+	ewarn
 }
 
 src_unpack() {
