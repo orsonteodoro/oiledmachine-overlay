@@ -206,7 +206,6 @@ eerror
 			else
 eerror
 eerror "JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java."
-eerror "Use \`eselect java-vm\` to set this up."
 eerror
 				die
 			fi
