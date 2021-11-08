@@ -1092,18 +1092,23 @@ src_prepare() {
 		ewarn
 		ewarn "${PN} downloads Blender 2.79 with Python 3.5.3 having critical security CVE advisories"
 		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all"
+		ewarn "https://security.gentoo.org/glsa/202003-26"
+		ewarn "https://security.gentoo.org/glsa/202005-09"
 		ewarn
 		ewarn "${PN} downloads Blender 2.83.16 with Python 3.7.4 having high security CVE advisory"
 		ewarn "${PN} downloads Blender 2.90.1 with Python 3.7.7 having high security CVE advisory"
 		ewarn "${PN} downloads Blender 2.91.0 with Python 3.7.7 having high security CVE advisory"
 		ewarn "${PN} downloads Blender 2.92.0 with Python 3.7.7 having high security CVE advisory"
 		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all"
+		ewarn "https://security.gentoo.org/glsa/202104-04"
+		ewarn "https://security.gentoo.org/glsa/202101-18"
 		ewarn
 		ewarn "${PN} downloads Blender 2.93.2 with statically linked libsdl 2.0.12 having high and medium CVE advisories"
 		ewarn "${PN} downloads Blender 2.92.0 with statically linked libsdl 2.0.12 having high and medium CVE advisories"
 		ewarn "${PN} downloads Blender 2.91.0 with statically linked libsdl 2.0.12 having high and medium CVE advisories"
 		ewarn "${PN} downloads Blender 2.83.16 with statically linked libsdl 2.0.8 having multiple high and medium CVE advisories"
 		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=libsdl&search_type=all&isCpeNameSearch=false"
+		ewarn "https://security.gentoo.org/glsa/202107-55"
 		ewarn
 	fi
 
