@@ -186,9 +186,10 @@ setup_openjdk() {
 	fi
 }
 
+
 pkg_setup() {
 	if use closure-compiler ; then
-		if use closure_compiler_java ; then
+		if ! use closure_compiler_native ; then
 			setup_openjdk
 			einfo "JAVA_HOME=${JAVA_HOME}"
 			einfo "PATH=${PATH}"
