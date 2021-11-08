@@ -47,7 +47,7 @@ JDK_DEPEND="
 )"
 JRE_DEPEND="
 || (
-	virtual/jdk:${JAVA_V}
+	${JDK_DEPEND}
 	dev-java/openjdk-jre-bin:${JAVA_V}
 )"
 #JDK_DEPEND=" virtual/jdk:${JAVA_V}"
