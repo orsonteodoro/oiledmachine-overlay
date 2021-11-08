@@ -26,6 +26,7 @@
 # futex2:
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/futex2
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-proton
+#   https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-dev
 # tonyk/futex_waitv
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/tonyk/futex_waitv
 # genpatches:
@@ -343,17 +344,6 @@ gen_futex2_uris() {
 	echo "${s}"
 }
 FUTEX2_SRC_URIS=" "$(gen_futex2_uris)
-
-FUTEX_WAITV_BASE_URI=\
-"https://gitlab.collabora.com/tonyk/linux/-/commit/"
-gen_futex_waitv_uris() {
-	local s=""
-	for c in ${FUTEX_WAITV_COMMITS[@]} ; do
-		s+=" ${FUTEX_WAITV_BASE_URI}${c}.patch -> futex_waitv-${K_MAJOR_MINOR}-${c:0:7}.patch"
-	done
-	echo "${s}"
-}
-FUTEX_WAITV_SRC_URIS=" "$(gen_futex_waitv_uris)
 
 LINUX_REPO_URI=\
 "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
@@ -1053,6 +1043,18 @@ function apply_cfi_x86() {
 # syscall.  It may shave of < 5% CPU usage.
 function apply_futex() {
 	for c in ${FUTEX_COMMITS[@]} ; do
+		local blacklisted=0
+		if has futex-proton ${IUSE_EFFECTIVE} ; then
+			if ! use futex-proton ;then
+				for b in ${FUTEX_PROTON_COMPAT[@]} ; do
+					if [[ "${b}" == "${c}" ]] ; then
+						blacklisted=1
+						break
+					fi
+				done
+			fi
+			(( ${blacklisted} == 1 )) && continue
+		fi
 		_fpatch "${DISTDIR}/futex-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 }
@@ -1075,15 +1077,6 @@ function apply_futex2() {
 			(( ${blacklisted} == 1 )) && continue
 		fi
 		_fpatch "${DISTDIR}/futex2-${K_MAJOR_MINOR}-${c:0:7}.patch"
-	done
-}
-
-# @FUNCTION: apply_futex_waitv
-# @DESCRIPTION:
-# Adds a new futex_wait syscall.  It may shave of < 5% CPU usage.
-function apply_futex_waitv() {
-	for c in ${FUTEX_WAITV_COMMITS[@]} ; do
-		_fpatch "${DISTDIR}/futex_waitv-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 }
 
@@ -1489,12 +1482,6 @@ ewarn
 	if has futex2 ${IUSE_EFFECTIVE} ; then
 		if use futex2 ; then
 			apply_futex2
-		fi
-	fi
-
-	if has futex-waitv ${IUSE_EFFECTIVE} ; then
-		if use futex-waitv ; then
-			apply_futex_waitv
 		fi
 	fi
 

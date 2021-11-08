@@ -140,24 +140,37 @@ CFI_EXCLUDE_COMMITS=(
 )
 
 # For 5.13
-# This corresponds to the futex_waitv branch.
+# This corresponds to the tonyk/futex_waitv branch.
 # Repo order is bottom oldest and top newest.
-FUTEX_WAITV_COMMITS=( # oldest
-f4cf25af935c5eed6800efcc7e1d6cafe5e73aec
-2bb06148a84a0278b5505b7e4da8ea86bd9b6b85
-07af04a9c9a1a7c89734fbfd8b9f394a779b8506
-fa234eff16cb60a96d8d978f8ff51b62ffa5fc62
-b9832ced7cca0c410f66de954ab49c328a555f96
-c39f8239fc2a306c5749883850c47405ed93b755
-e189317c106a6ee9c8099624ddf14da3a8035ac5
-62de1fadaae1a8b5453e1d18d5fa9c23f64cb64e
+# Used for fsync in proton
+FUTEX_WAIT_MULTIPLE_OPTCODE31=( # oldest
 b70e738f08403950aa3053c36b98c6b0eeb0eb90
+) # newest
+
+FUTEX_PROTON_COMPAT=(
+${FUTEX_WAIT_MULTIPLE_OPTCODE31[@]}
+)
+
+# The futex2-dev commits with fwm opcode31 commits codepaths follow as if futex_wait_multiple not futex2.
+
+# Corresponding to futex2-dev branch
+# for 5.15-rc1
+FUTEX_COMMITS=( # oldest
+6f9eb8a836b2620327c0d4ded960673dbd761179
+b6382cdf6ec279fe61e9242a6a89d6146c870404
+f5c1ee46eeb68a59e3a6781959d0d1c25f40f5df
+4f9c741df0a35f9bbfb6f2fea653ecd3e583d663
+2b0c72de17e96323ea9c71610364a1b44e0f10dc
+8067fd6dc22722b36915718603cb4dd513d64962
+b88c926ac58eee428e37663e7ba8061af2528c06
+d810c70ed7b8228349af3c277f8c3cc0d5fa0f7b
+${FUTEX_PROTON_COMPAT[@]}
 ) # newest
 
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
-IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex-waitv
+IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex futex-proton
 +genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto
 +O3 prjc rt shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs
 tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-lru_gen zen-muqss
@@ -165,6 +178,7 @@ zen-sauce zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
 REQUIRED_USE+="
 	^^ ( cfs prjc zen-muqss )
+	futex-proton? ( futex )
 	genpatches_1510? ( genpatches )
 	O3? ( zen-sauce )
 	lru_gen? ( !zen-lru_gen )
@@ -190,7 +204,6 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
-	!futex-waitv
 	!lru_gen
 	!uksm
 	!zen-lru_gen
@@ -216,7 +229,7 @@ LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" prjc? ( GPL-3 )" # see \
   # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
-LICENSE+=" futex-waitv? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
+LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 gen_kcp_license() {
@@ -428,7 +441,7 @@ SRC_URI+=" "$(gen_kcp_ma_uri)
 SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   cfi? ( amd64? ( ${CFI_X86_SRC_URIS} ) )
 	   clang-pgo? ( ${CLANG_PGO_URI} )
-	   futex-waitv? ( ${FUTEX_WAITV_SRC_URIS} )
+	   futex? ( ${FUTEX_SRC_URIS} )
 	   genpatches? (
 		${GENPATCHES_URI}
 		${GENPATCHES_BASE_SRC_URI}
@@ -598,7 +611,7 @@ function ot-kernel_filter_patch_cb() {
 
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
-	# Using patch with fuzz factor is disallowed with futex_waitv
+	# Using patch with fuzz factor is disallowed with define parts or syscall_*.tbl of futex
 
 	if [[ "${path}" =~ "ck-0.210-for-5.12-d66b728-47a8b81.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
@@ -635,6 +648,9 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
 	elif [[ "${path}" =~ "cfi-x86-5.15-343e289.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
+	elif [[ "${path}" =~ "futex-5.15-b70e738.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-b70e738-2-hunk-fix-for-5.15.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

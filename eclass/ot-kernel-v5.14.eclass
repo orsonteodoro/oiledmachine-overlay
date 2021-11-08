@@ -682,7 +682,7 @@ function ot-kernel_filter_patch_cb() {
 
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
-	# Using patch with fuzz factor is disallowed with futex and futex2
+	# Using patch with fuzz factor is disallowed with define parts or syscall_*.tbl of futex and futex2
 
 	if [[ "${path}" =~ "ck-0.210-for-5.12-d66b728-47a8b81.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
