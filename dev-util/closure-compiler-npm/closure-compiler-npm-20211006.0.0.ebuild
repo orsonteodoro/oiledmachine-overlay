@@ -40,8 +40,16 @@ REQUIRED_USE+="
 # https://github.com/google/closure-compiler-npm/blob/v20211006.0.0/.github/workflows/build.yml
 NODE_V="14" # Upstream uses 14 on linux but others 10, 12
 CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_V} )"
-JDK_DEPEND=" >=dev-java/openjdk-bin-${JAVA_V}:${JAVA_V}"
-JRE_DEPEND=" >=dev-java/openjdk-jre-bin-${JAVA_V}:${JAVA_V}"
+JDK_DEPEND="
+|| (
+	dev-java/openjdk-bin:${JAVA_V}
+	dev-java/openjdk:${JAVA_V}
+)"
+JRE_DEPEND="
+|| (
+	virtual/jdk:${JAVA_V}
+	dev-java/openjdk-jre-bin:${JAVA_V}
+)"
 #JDK_DEPEND=" virtual/jdk:${JAVA_V}"
 #JRE_DEPEND=" virtual/jre:${JAVA_V}"
 # The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
