@@ -106,6 +106,18 @@ JAVA_V="11" # See https://github.com/google/closure-compiler/blob/v20210601/.git
 # For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/2.0.34/tools/shared.py#L39
 # For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/2.0.34/tools/shared.py#L43
 BINARYEN_V="101"
+JDK_DEPEND="
+|| (
+	dev-java/openjdk-bin:${JAVA_V}
+	dev-java/openjdk:${JAVA_V}
+)"
+JRE_DEPEND="
+|| (
+	${JDK_DEPEND}
+	dev-java/openjdk-jre-bin:${JAVA_V}
+)"
+#JDK_DEPEND="virtual/jdk:${JAVA_V}"
+#JRE_DEPEND=">=virtual/jre-${JAVA_V}"
 RDEPEND+=" ${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
@@ -114,13 +126,13 @@ RDEPEND+=" ${PYTHON_DEPS}
 ${CLOSURE_COMPILER_SLOT}\
 [closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?] )
 		closure_compiler_java? (
-			>=virtual/jre-${JAVA_V}
+			${JRE_DEPEND}
 		)
 		closure_compiler_nodejs? (
-			>=virtual/jre-${JAVA_V}
+			${JRE_DEPEND}
 		)
 		!system-closure-compiler? (
-			>=virtual/jre-${JAVA_V}
+			${JRE_DEPEND}
 			>=net-libs/nodejs-10
 		)
 	)
@@ -134,17 +146,16 @@ ${CLOSURE_COMPILER_SLOT}\
 DEPEND+=" ${RDEPEND}
 	closure-compiler? (
 		closure_compiler_java? (
-			>=virtual/jre-${JAVA_V}
+			${JRE_DEPEND}
 		)
 		closure_compiler_nodejs? (
-			>=virtual/jre-${JAVA_V}
+			${JRE_DEPEND}
 		)
 		!system-closure-compiler? (
-			>=virtual/jre-${JAVA_V}
+			${JRE_DEPEND}
 		)
 	)"
-BDEPEND+="
-	virtual/jdk:${JAVA_V}"
+BDEPEND+=" ${JDK_DEPEND}"
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
 RESTRICT="fetch mirror"
