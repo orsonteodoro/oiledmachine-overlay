@@ -48,5 +48,3 @@ All tarballs are repackaged with renamed blender as rend.exe.
 
 GLU versions based on build_files/build_environment/cmake/versions.cmake and the hash in the same file as
 the cmake file, but the version for 2.80 is undocumented.
-
-For static/shared status see:
