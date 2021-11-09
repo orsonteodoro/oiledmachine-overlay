@@ -99,7 +99,6 @@ REQUIRED_USE="
 	osmesa? ( developer? ( X ) open-stack )
 	rocm? ( dkms open-stack pro-stack )
 	system-llvm? ( llvm )
-	system-llvm-roc? ( llvm-roc )
 	vaapi? ( llvm open-stack X ^^ ( vaapi_r600 vaapi_radeonsi ) )
 	vaapi_r600? ( vaapi )
 	vaapi_radeonsi? ( vaapi )
