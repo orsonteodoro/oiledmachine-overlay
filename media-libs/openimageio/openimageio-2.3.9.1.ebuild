@@ -3,7 +3,7 @@
 
 EAPI=7
 
-LLVM_MAX_SLOT=12
+LLVM_MAX_SLOT=13
 FONT_PN=OpenImageIO
 PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake font llvm python-single-r1
@@ -23,11 +23,15 @@ OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 # font install is enabled upstream
 # building test enabled upstream
 IUSE+=" ${CPU_FEATURES[@]%:*} ${OPENVDB_APIS_[@]}
-clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc jpeg2k
-libressl opencv opengl openvdb ptex +python +qt5 raw ssl +truetype"
-REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )
-	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )"
-# See https://github.com/OpenImageIO/oiio/blob/Release-2.2.15.1/INSTALL.md for requirements
+aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc jpeg2k
+libressl opencv opengl openvdb ptex +python +qt5 raw rav1e ssl +truetype"
+REQUIRED_USE="
+	aom? ( avif )
+	avif? ( || ( aom rav1e ) )
+	python? ( ${PYTHON_REQUIRED_USE} )
+	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )
+	rav1e? ( avif )"
+# See https://github.com/OpenImageIO/oiio/blob/Release-2.3.9.1/INSTALL.md for requirements
 QT_V="5.6"
 ONETBB_SLOT="12"
 RDEPEND+="
@@ -44,12 +48,15 @@ RDEPEND+="
 	color-management? ( >=media-libs/opencolorio-1.1:= )
 	dds? ( >=media-libs/libsquish-1.13 )
 	dicom? ( >=sci-libs/dcmtk-3.6.1 )
-	ffmpeg? ( >=media-video/ffmpeg-2.6:= )
+	ffmpeg? ( >=media-video/ffmpeg-3.0:= )
 	field3d? ( >=media-libs/Field3D-1.7.3:= )
 	gif? ( >=media-libs/giflib-4.1:0= )
-	heif? ( >=media-libs/libheif-1.3:= )
+	heif? (
+		>=media-libs/libheif-1.3:=
+		avif? ( >=media-libs/libheif-1.7:=[aom?,rav1e?] )
+	)
 	jpeg2k? ( >=media-libs/openjpeg-2:2= )
-	opencv? ( >=media-libs/opencv-2:= )
+	opencv? ( >=media-libs/opencv-3:= )
 	opengl? (
 		media-libs/glew:=
 		virtual/glu
@@ -67,11 +74,14 @@ RDEPEND+="
 		)
 		>=media-libs/openvdb-5[abi5-compat?,abi6-compat?,abi7-compat?,abi8-compat?]
 	)
-	ptex? ( >=media-libs/ptex-2.3.0:= )
+	ptex? ( >=media-libs/ptex-2.3.1:= )
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			dev-libs/boost:=[python,${PYTHON_MULTI_USEDEP}]
+		')
+		$(python_gen_cond_dep '
+			dev-python/numpy[${PYTHON_MULTI_USEDEP}]
 		')
 		$(python_gen_cond_dep '
 			>=dev-python/pybind11-2.4.2[${PYTHON_MULTI_USEDEP}]
@@ -130,13 +140,13 @@ BDEPEND+="
 	)
 	icc? ( ${BDEPEND_ICC} )"
 SRC_URI="
-https://github.com/OpenImageIO/oiio/archive/Release-${PV}.tar.gz
+https://github.com/OpenImageIO/oiio/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 
 DOCS=( CHANGES.md CREDITS.md README.md )
 RESTRICT="test" # bug 431412
 RESTRICT+=" mirror"
-S="${WORKDIR}/oiio-Release-${PV}"
+S="${WORKDIR}/oiio-${PV}"
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
@@ -170,6 +180,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_DOCS=$(usex doc)
 		-DVERBOSE=ON
+		-DENABLE_FIELD3D=$(usex field3d)
 		-DINSTALL_DOCS=$(usex doc)
 		-DINSTALL_FONTS=OFF
 		-DOIIO_BUILD_TESTS=OFF # as they are RESTRICTed
