@@ -31,9 +31,11 @@ REQUIRED_USE+="
 # For dependencies, see https://github.com/PixarAnimationStudios/USD/blob/v21.11/VERSIONS.md
 # https://github.com/PixarAnimationStudios/USD/blob/v21.11/build_scripts/build_usd.py#L2019
 # TBB 2021 not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
-#		>=dev-cpp/tbb-2021:12=
 RDEPEND+="
-	(
+	experimental? (
+		>=dev-cpp/tbb-2021:12=
+	)
+	!experimental? (
 		<dev-cpp/tbb-2021:0=
 		>=dev-cpp/tbb-2018.6:0=
 	)
