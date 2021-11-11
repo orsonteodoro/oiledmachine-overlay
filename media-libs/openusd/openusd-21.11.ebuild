@@ -33,11 +33,9 @@ REQUIRED_USE+="
 # TBB 2021 not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
 #		>=dev-cpp/tbb-2021:12=
 RDEPEND+="
-	|| (
-		(
-			<dev-cpp/tbb-2021:0=
-			>=dev-cpp/tbb-2018.6:0=
-		)
+	(
+		<dev-cpp/tbb-2021:0=
+		>=dev-cpp/tbb-2018.6:0=
 	)
 	>=sys-libs/zlib-1.2.11
 	draco? ( >=media-libs/draco-1.4.3 )
