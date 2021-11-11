@@ -71,7 +71,10 @@ RDEPEND+="
 			>=dev-libs/boost-1.70.0:=[python,${PYTHON_MULTI_USEDEP}]
 			usdview? (
 				(
-					>=dev-python/pyside2-2.0.0[${PYTHON_MULTI_USEDEP},quick,script,scripttools]
+					(
+						dev-qt/qtquickcontrols2:5
+						>=dev-python/pyside2-2.0.0[${PYTHON_MULTI_USEDEP},quickcontrols2(+),script,scripttools]
+					)
 					dev-python/shiboken2[${PYTHON_MULTI_USEDEP}]
 				)
 				dev-python/pyside2-tools[tools(+),${PYTHON_MULTI_USEDEP}]
