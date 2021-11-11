@@ -25,6 +25,9 @@
       Enables a plugin for compressing and decompressing meshes and point
       clouds.
     </flag>
+    <flag name="experimental">
+      Enables experimental not production ready patches.
+    </flag>
     <flag name="embree">
       Enables an example rendering backend for usdview.
     </flag>

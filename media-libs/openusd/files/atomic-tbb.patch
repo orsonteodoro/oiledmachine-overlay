@@ -1,6 +1,7 @@
-Subject:  Changed tbb::atomic to std::atomic for compatibility with 2021.2.0
-Author:   Orson Teodoro <orsonteodoro@hotmail.com>
-Date:     Mon Jun 28 04:39:56 AM PDT 2021 (Unix timestamp: 1624880396)
+Subject:       Changed tbb::atomic to std::atomic for compatibility with 2021.2.0
+Author:        Orson Teodoro <orsonteodoro@hotmail.com>
+Patch status:  Testing
+Date:          Mon Jun 28 04:39:56 AM PDT 2021 (Unix timestamp: 1624880396)
 
 
 Copyright notice for
@@ -43,7 +44,7 @@ pxr/usdImaging/usdImaging/resolvedAttributeCache.h:
 
 diff -urp USD-21.05.orig/pxr/base/tf/diagnosticMgr.cpp USD-21.05/pxr/base/tf/diagnosticMgr.cpp
 --- USD-21.05.orig/pxr/base/tf/diagnosticMgr.cpp	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/base/tf/diagnosticMgr.cpp	2021-06-28 12:32:44.293149554 -0700
++++ USD-21.05/pxr/base/tf/diagnosticMgr.cpp	2021-11-09 19:18:18.872184539 -0800
 @@ -22,6 +22,8 @@
  // language governing permissions and limitations under the Apache License.
  //
@@ -81,7 +82,7 @@ diff -urp USD-21.05.orig/pxr/base/tf/diagnosticMgr.cpp USD-21.05/pxr/base/tf/dia
          }
 diff -urp USD-21.05.orig/pxr/base/tf/diagnosticMgr.h USD-21.05/pxr/base/tf/diagnosticMgr.h
 --- USD-21.05.orig/pxr/base/tf/diagnosticMgr.h	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/base/tf/diagnosticMgr.h	2021-06-28 12:32:44.293149554 -0700
++++ USD-21.05/pxr/base/tf/diagnosticMgr.h	2021-11-09 19:18:18.873184538 -0800
 @@ -21,6 +21,9 @@
  // KIND, either express or implied. See the Apache License for the specific
  // language governing permissions and limitations under the Apache License.
@@ -114,7 +115,7 @@ diff -urp USD-21.05.orig/pxr/base/tf/diagnosticMgr.h USD-21.05/pxr/base/tf/diagn
      tbb::enumerable_thread_specific<ErrorList> _errorList;
 diff -urp USD-21.05.orig/pxr/base/tf/error.cpp USD-21.05/pxr/base/tf/error.cpp
 --- USD-21.05.orig/pxr/base/tf/error.cpp	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/base/tf/error.cpp	2021-06-28 12:37:45.632807322 -0700
++++ USD-21.05/pxr/base/tf/error.cpp	2021-11-09 19:18:18.874184538 -0800
 @@ -22,11 +22,14 @@
  // language governing permissions and limitations under the Apache License.
  //
@@ -141,7 +142,7 @@ diff -urp USD-21.05.orig/pxr/base/tf/error.cpp USD-21.05/pxr/base/tf/error.cpp
  PXR_NAMESPACE_CLOSE_SCOPE
 diff -urp USD-21.05.orig/pxr/base/work/threadLimits.cpp USD-21.05/pxr/base/work/threadLimits.cpp
 --- USD-21.05.orig/pxr/base/work/threadLimits.cpp	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/base/work/threadLimits.cpp	2021-06-28 12:32:44.293149554 -0700
++++ USD-21.05/pxr/base/work/threadLimits.cpp	2021-11-09 19:18:18.875184538 -0800
 @@ -24,15 +24,18 @@
  // threadLimits.cpp
  //
@@ -173,7 +174,7 @@ diff -urp USD-21.05.orig/pxr/base/work/threadLimits.cpp USD-21.05/pxr/base/work/
  // PXR_WORK_THREAD_LIMIT is set to a nonzero value.  Otherwise this stays NULL.
 diff -urp USD-21.05.orig/pxr/usd/pcp/cache.cpp USD-21.05/pxr/usd/pcp/cache.cpp
 --- USD-21.05.orig/pxr/usd/pcp/cache.cpp	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/usd/pcp/cache.cpp	2021-06-28 12:32:44.293149554 -0700
++++ USD-21.05/pxr/usd/pcp/cache.cpp	2021-11-09 19:18:18.876184538 -0800
 @@ -22,6 +22,8 @@
  // language governing permissions and limitations under the Apache License.
  //
@@ -200,7 +201,7 @@ diff -urp USD-21.05.orig/pxr/usd/pcp/cache.cpp USD-21.05/pxr/usd/pcp/cache.cpp
  #include <vector>
 diff -urp USD-21.05.orig/pxr/usd/pcp/mapExpression.cpp USD-21.05/pxr/usd/pcp/mapExpression.cpp
 --- USD-21.05.orig/pxr/usd/pcp/mapExpression.cpp	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/usd/pcp/mapExpression.cpp	2021-06-28 12:38:01.905436974 -0700
++++ USD-21.05/pxr/usd/pcp/mapExpression.cpp	2021-11-09 19:26:11.913153806 -0800
 @@ -22,6 +22,8 @@
  // language governing permissions and limitations under the Apache License.
  //
@@ -227,9 +228,18 @@ diff -urp USD-21.05.orig/pxr/usd/pcp/mapExpression.cpp USD-21.05/pxr/usd/pcp/map
              // Either there was no node in the table, or there was but it had
              // begun dying (another client dropped its refcount to 0).  We have
              // to create a new node in the table.  When the client that is
+@@ -403,7 +406,7 @@ intrusive_ptr_add_ref(PcpMapExpression::
+ void
+ intrusive_ptr_release(PcpMapExpression::_Node* p)
+ {
+-    if (p->_refCount.fetch_and_decrement() == 1)
++    if (p->_refCount.fetch_sub(1, std::memory_order_seq_cst) == 1)					// oteodoro: used std::atomic<T>::fetch_sub()
+         delete p;
+ }
+ 
 diff -urp USD-21.05.orig/pxr/usd/pcp/mapExpression.h USD-21.05/pxr/usd/pcp/mapExpression.h
 --- USD-21.05.orig/pxr/usd/pcp/mapExpression.h	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/usd/pcp/mapExpression.h	2021-06-28 12:32:44.293149554 -0700
++++ USD-21.05/pxr/usd/pcp/mapExpression.h	2021-11-09 19:18:18.879184538 -0800
 @@ -21,6 +21,9 @@
  // KIND, either express or implied. See the Apache License for the specific
  // language governing permissions and limitations under the Apache License.
@@ -260,7 +270,7 @@ diff -urp USD-21.05.orig/pxr/usd/pcp/mapExpression.h USD-21.05/pxr/usd/pcp/mapEx
          Value _valueForVariable;
 diff -urp USD-21.05.orig/pxr/usd/sdf/changeManager.cpp USD-21.05/pxr/usd/sdf/changeManager.cpp
 --- USD-21.05.orig/pxr/usd/sdf/changeManager.cpp	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/usd/sdf/changeManager.cpp	2021-06-28 12:37:57.857280333 -0700
++++ USD-21.05/pxr/usd/sdf/changeManager.cpp	2021-11-09 19:18:18.880184538 -0800
 @@ -22,6 +22,8 @@
  // language governing permissions and limitations under the Apache License.
  //
@@ -310,7 +320,7 @@ diff -urp USD-21.05.orig/pxr/usd/sdf/changeManager.cpp USD-21.05/pxr/usd/sdf/cha
      SdfNotice::LayersDidChange(changes, serialNumber).Send();
 diff -urp USD-21.05.orig/pxr/usd/sdf/pathNode.cpp USD-21.05/pxr/usd/sdf/pathNode.cpp
 --- USD-21.05.orig/pxr/usd/sdf/pathNode.cpp	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/usd/sdf/pathNode.cpp	2021-06-28 12:38:00.305375060 -0700
++++ USD-21.05/pxr/usd/sdf/pathNode.cpp	2021-11-09 19:18:18.881184538 -0800
 @@ -22,6 +22,8 @@
  // language governing permissions and limitations under the Apache License.
  //
@@ -348,7 +358,7 @@ diff -urp USD-21.05.orig/pxr/usd/sdf/pathNode.cpp USD-21.05/pxr/usd/sdf/pathNode
          // a new entry in the table.  When the client that is killing the other
 diff -urp USD-21.05.orig/pxr/usd/sdf/pathNode.h USD-21.05/pxr/usd/sdf/pathNode.h
 --- USD-21.05.orig/pxr/usd/sdf/pathNode.h	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/usd/sdf/pathNode.h	2021-06-28 12:32:44.293149554 -0700
++++ USD-21.05/pxr/usd/sdf/pathNode.h	2021-11-09 19:26:07.443154096 -0800
 @@ -21,6 +21,9 @@
  // KIND, either express or implied. See the Apache License for the specific
  // language governing permissions and limitations under the Apache License.
@@ -381,9 +391,18 @@ diff -urp USD-21.05.orig/pxr/usd/sdf/pathNode.h USD-21.05/pxr/usd/sdf/pathNode.h
  
      const short _elementCount;
      const unsigned char _nodeType;
+@@ -723,7 +727,7 @@ inline void intrusive_ptr_add_ref(const
+     ++p->_refCount;
+ }
+ inline void intrusive_ptr_release(const PXR_NS::Sdf_PathNode* p) {
+-    if (p->_refCount.fetch_and_decrement() == 1)
++    if (p->_refCount.fetch_sub(1, std::memory_order_seq_cst) == 1)					// oteodoro: used std::atomic<T>::fetch_sub()
+         p->_Destroy();
+ }
+ 
 diff -urp USD-21.05.orig/pxr/usd/usdGeom/bboxCache.cpp USD-21.05/pxr/usd/usdGeom/bboxCache.cpp
 --- USD-21.05.orig/pxr/usd/usdGeom/bboxCache.cpp	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/usd/usdGeom/bboxCache.cpp	2021-06-28 12:32:44.297149709 -0700
++++ USD-21.05/pxr/usd/usdGeom/bboxCache.cpp	2021-11-09 19:26:13.262153718 -0800
 @@ -21,6 +21,9 @@
  // KIND, either express or implied. See the Apache License for the specific
  // language governing permissions and limitations under the Apache License.
@@ -411,9 +430,18 @@ diff -urp USD-21.05.orig/pxr/usd/usdGeom/bboxCache.cpp USD-21.05/pxr/usd/usdGeom
  
          // List of prototype prims that depend on this prototype.
          std::vector<_PrimContext> dependentPrototypes;
+@@ -193,7 +197,7 @@ private:
+             _PrototypeTask& dependentPrototypeData =
+                 prototypeTasks->find(dependentPrototype)->second;
+             if (dependentPrototypeData.numDependencies
+-                .fetch_and_decrement() == 1){
++                .fetch_sub(1, std::memory_order_seq_cst) == 1){						// oteodoro: used std::atomic<T>::fetch_sub()
+                 dispatcher->Run(
+                     &_PrototypeBBoxResolver::_ExecuteTaskForPrototype,
+                     this, dependentPrototype, prototypeTasks, xfCaches,
 diff -urp USD-21.05.orig/pxr/usdImaging/usdImaging/resolvedAttributeCache.h USD-21.05/pxr/usdImaging/usdImaging/resolvedAttributeCache.h
 --- USD-21.05.orig/pxr/usdImaging/usdImaging/resolvedAttributeCache.h	2021-04-12 15:09:41.000000000 -0700
-+++ USD-21.05/pxr/usdImaging/usdImaging/resolvedAttributeCache.h	2021-06-28 12:32:44.297149709 -0700
++++ USD-21.05/pxr/usdImaging/usdImaging/resolvedAttributeCache.h	2021-11-09 19:18:18.883184538 -0800
 @@ -21,6 +21,9 @@
  // KIND, either express or implied. See the Apache License for the specific
  // language governing permissions and limitations under the Apache License.

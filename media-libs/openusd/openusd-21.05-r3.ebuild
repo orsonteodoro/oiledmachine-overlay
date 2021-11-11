@@ -13,7 +13,7 @@ LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
 # test USE flag is enabled upstream
-IUSE+=" -alembic -doc +draco -embree +examples +hdf5 +imaging +jemalloc
+IUSE+=" -alembic -doc +draco -embree +examples -experimental +hdf5 +imaging +jemalloc
 -opencolorio +opengl -openimageio -openvdb openexr -osl +ptex +python
 +safety-over-speed -static-libs +tutorials -test +tools +usdview -vulkan"
 REQUIRED_USE+="
@@ -23,41 +23,59 @@ REQUIRED_USE+="
 	hdf5? ( alembic )
 	opencolorio? ( imaging )
 	opengl? ( imaging )
-	openimageio? ( imaging )
-	openvdb? ( imaging )
+	openimageio? ( imaging openexr )
+	openvdb? ( imaging openexr )
 	ptex? ( imaging )
 	test? ( python )
 	usdview? ( python opengl )"
 # For dependencies, see https://github.com/PixarAnimationStudios/USD/blob/v21.05/VERSIONS.md
+# https://github.com/PixarAnimationStudios/USD/blob/v21.05/build_scripts/build_usd.py#L2019
 # TBB 2021 not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
 #		>=dev-cpp/tbb-2021:12=
 RDEPEND+="
 	|| (
-		<dev-cpp/tbb-2021:0=
+		(
+			<dev-cpp/tbb-2021:0=
+			>=dev-cpp/tbb-2018.6:0=
+		)
 	)
-	draco? ( media-libs/draco )
-	alembic? ( >=media-gfx/alembic-1.7.10 )
+	>=sys-libs/zlib-1.2.11
+	draco? ( >=media-libs/draco-1.4.0 )
+	alembic? ( >=media-gfx/alembic-1.7.10[hdf5?] )
 	embree? ( >=media-libs/embree-3.2.2 )
-	imaging? ( x11-libs/libX11 )
-	hdf5? (
-		>=media-gfx/alembic-1.7.10[hdf5]
-		>=sci-libs/hdf5-1.8.11[cxx,hl]
+	hdf5? ( >=sci-libs/hdf5-1.10[cxx,hl] )
+	imaging? (
+		>=media-libs/opensubdiv-3.4.3
+		x11-libs/libX11
 	)
-	imaging? ( >=media-libs/opensubdiv-3.4.3 )
 	jemalloc? ( dev-libs/jemalloc-usd )
-	opencolorio? ( >=media-libs/opencolorio-1.0.9 )
+	opencolorio? ( >=media-libs/opencolorio-1.1 )
 	openexr? ( >=media-libs/openexr-2.2.0 )
 	opengl? ( >=media-libs/glew-2.0.0 )
-	openimageio? ( >=media-libs/openimageio-2.1.16.0:= )
-	openvdb? ( >=media-gfx/openvdb-5.2.0 )
+	openimageio? (
+		>=media-libs/libpng-1.6.29
+		>=media-libs/openimageio-2.1.16.0:=
+		>=media-libs/tiff-4.0.7
+		virtual/jpeg
+	)
+	openvdb? (
+		>=dev-libs/c-blosc-1.20.1
+		>=media-gfx/openvdb-6.1.0
+	)
 	osl? ( >=media-libs/osl-1.8.12 )
 	ptex? ( >=media-libs/ptex-2.1.28 )
+	!python? (
+		>=dev-libs/boost-1.70.0
+	)
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=dev-libs/boost-1.61.0:=[python,${PYTHON_MULTI_USEDEP}]
+			>=dev-libs/boost-1.70.0:=[python,${PYTHON_MULTI_USEDEP}]
 			usdview? (
-				>=dev-python/pyside2-2.0.0[${PYTHON_MULTI_USEDEP}]
+				(
+					>=dev-python/pyside2-2.0.0[${PYTHON_MULTI_USEDEP},quick,script,scripttools]
+					dev-python/shiboken2[${PYTHON_MULTI_USEDEP}]
+				)
 				dev-python/pyside2-tools[tools(+),${PYTHON_MULTI_USEDEP}]
 				opengl? ( >=dev-python/pyopengl-3.1.5[${PYTHON_MULTI_USEDEP}] )
 			)
@@ -71,7 +89,13 @@ BDEPEND+="
 	>=dev-util/cmake-3.14.6
 	dev-util/patchelf
 	>=sys-devel/bison-2.4.1
-	>=sys-devel/gcc-6.3.1
+	|| (
+		(
+			>=sys-devel/gcc-6.3.1
+			<sys-devel/gcc-11
+		)
+		<sys-devel/clang-12
+	)
 	>=sys-devel/flex-2.5.39
 	virtual/pkgconfig
 	doc? ( >=app-doc/doxygen-1.8.14[dot] )"
@@ -91,12 +115,14 @@ pkg_setup() {
 }
 
 src_prepare() {
-	if [[ -n "${OILEDMACHINE_OVERLAY_DEVELOPER}" && "${OILEDMACHINE_OVERLAY_DEVELOPER}" == "1" \
-		&& "${FORCE_LEGACY_TBB}" == "0" ]] ; then
+	if use experimental ; then
 		if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
-				ewarn "Using oneTBB.  Support is experimental, incomplete, and in-development."
-				eapply "${FILESDIR}/tbb.patch"
-				eapply "${FILESDIR}/atomic-tbb.patch"
+			ewarn "Using oneTBB.  Support is experimental, incomplete, and in-development."
+			eapply "${FILESDIR}/tbb.patch"
+			eapply "${FILESDIR}/atomic-tbb.patch"
+			eapply "${FILESDIR}/onetbb-compat.patch"
+		else
+			einfo "Using legacy TBB"
 		fi
 	else
 		einfo "Using legacy TBB"
@@ -113,8 +139,7 @@ EOF
 }
 
 src_configure() {
-	if [[ -n "${OILEDMACHINE_OVERLAY_DEVELOPER}" && "${OILEDMACHINE_OVERLAY_DEVELOPER}" == "1" \
-		&& "${FORCE_LEGACY_TBB}" == "0" ]] ; then
+	if use experimental ; then
 		if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
 			append-cppflags -DTBB_ALLOCATOR_TRAITS_BROKEN
 		fi
@@ -237,8 +262,7 @@ EOF
 	fi
 	use doc && einstalldocs
 	dodoc LICENSE.txt NOTICE.txt
-	if [[ -n "${OILEDMACHINE_OVERLAY_DEVELOPER}" && "${OILEDMACHINE_OVERLAY_DEVELOPER}" == "1" \
-		&& "${FORCE_LEGACY_TBB}" == "0" ]] ; then
+	if use experimental ; then
 		if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
 			for f in $(find "${ED}") ; do
 				test -L "${f}" && continue

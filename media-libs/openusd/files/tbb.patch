@@ -1,6 +1,7 @@
-Subject:  Fixed version checking with 2021.2.0 in FindTBB.cmake
-Author:   Orson Teodoro <orsonteodoro@hotmail.com>
-Date:     Mon Jun 28 03:48:23 AM PDT 2021 (Unix timestamp: 1624877303)
+Subject:       Fixed version checking with 2021.2.0 in FindTBB.cmake
+Author:        Orson Teodoro <orsonteodoro@hotmail.com>
+Patsh status:  Testing
+Date:          Mon Jun 28 03:48:23 AM PDT 2021 (Unix timestamp: 1624877303)
 
 Copyright notice of cmake/modules/FindTBB.cmake:
 
@@ -43,11 +44,11 @@ diff -urp USD-21.05.orig/cmake/modules/FindTBB.cmake USD-21.05/cmake/modules/Fin
  
    if(TBB_INCLUDE_DIRS)
 -    file(READ "${TBB_INCLUDE_DIRS}/tbb/tbb_stddef.h" _tbb_version_file)
-+    if (EXISTS "${TBB_INCLUDE_DIRS}/tbb/tbb_stddef.h")
-+      file(READ "${TBB_INCLUDE_DIRS}/tbb/tbb_stddef.h" _tbb_version_file)
-+    else()
-+      file(READ "${TBB_INCLUDE_DIRS}/oneapi/tbb/version.h" _tbb_version_file)
-+    endif()
++    if (EXISTS "${TBB_INCLUDE_DIRS}/tbb/tbb_stddef.h")					# oteodoro: added
++      file(READ "${TBB_INCLUDE_DIRS}/tbb/tbb_stddef.h" _tbb_version_file)		# oteodoro: indent line
++    else()										# oteodoro: added line
++      file(READ "${TBB_INCLUDE_DIRS}/oneapi/tbb/version.h" _tbb_version_file)		# oteodoro: added line
++    endif()										# oteodoro: added line
      string(REGEX REPLACE ".*#define TBB_VERSION_MAJOR ([0-9]+).*" "\\1"
          TBB_VERSION_MAJOR "${_tbb_version_file}")
      string(REGEX REPLACE ".*#define TBB_VERSION_MINOR ([0-9]+).*" "\\1"
