@@ -1,8 +1,6 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# FIXME: next update fix multilib *DEPENDS
-
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} ) # upstream tested it up to 3.9 (inclusive)
@@ -17,10 +15,10 @@ X86_CPU_FEATURES=(
 	sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4.1 sse4_2:sse4.2
 	avx:avx avx2:avx2 avx512f:avx512f f16c:f16c )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-LLVM_SUPPORT=(10 11 12) # can support llvm-9 but only >=10 available on gentoo
+LLVM_SUPPORT=(10 11 12 13) # can support llvm-9 but only >=10 available on the distro
 LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
 # The highest stable llvm was used as the default.  Revisions may update this in the future.
-IUSE+=" ${CPU_FEATURES[@]%:*} doc ${LLVM_SUPPORT_[@]} +llvm-12 optix partio python qt5 test"
+IUSE+=" ${CPU_FEATURES[@]%:*} doc ${LLVM_SUPPORT_[@]} +llvm-13 optix partio python qt5 test"
 REQUIRED_USE+=" ^^ ( ${LLVM_SUPPORT_[@]} )"
 # See https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.11.14.1/INSTALL.md
 # For optix requirements, see
@@ -33,41 +31,47 @@ gen_llvm_depend()
 	for v in ${LLVM_SUPPORT[@]} ; do
 		echo "
 		llvm-${v}? (
-			sys-devel/llvm:${v}
-			sys-devel/clang:${v}
+			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
+			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
 		)
 
 "
 	done
 }
 
+# Multilib requires openexr built as multilib.
 RDEPEND+=" "$(gen_llvm_depend)
 RDEPEND+="
-	>=dev-libs/boost-1.55:=
-	dev-libs/libfmt
-	dev-libs/pugixml
+	>=dev-libs/boost-1.55:=[${MULTILIB_USEDEP}]
+	dev-libs/libfmt[${MULTILIB_USEDEP}]
+	dev-libs/pugixml[${MULTILIB_USEDEP}]
 	>=media-libs/openexr-2:=
-	>=media-libs/ilmbase-2:=
-	>=media-libs/openimageio-2:=
-	sys-libs/zlib:=
+	>=media-libs/ilmbase-2:=[${MULTILIB_USEDEP}]
+	$(python_gen_any_dep '>=media-libs/openimageio-2:=[${PYTHON_SINGLE_USEDEP}]')
+	sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	optix? (
 		>=dev-libs/optix-5.1
 		>=dev-util/nvidia-cuda-toolkit-8
-		>=media-libs/openimageio-1.8:=
+		$(python_gen_any_dep '>=media-libs/openimageio-1.8:=[${PYTHON_SINGLE_USEDEP}]')
 		|| (
 			(
-				sys-devel/llvm:12[llvm_targets_NVPTX]
-				sys-devel/clang:12[llvm_targets_NVPTX]
+				sys-devel/llvm:13[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
+				sys-devel/clang:13[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
+				>=sys-devel/lld-13
+			)
+			(
+				sys-devel/llvm:12[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
+				sys-devel/clang:12[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
 				>=sys-devel/lld-12
 			)
 			(
-				sys-devel/llvm:11[llvm_targets_NVPTX]
-				sys-devel/clang:11[llvm_targets_NVPTX]
+				sys-devel/llvm:11[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
+				sys-devel/clang:11[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
 				>=sys-devel/lld-11
 			)
 			(
-				sys-devel/llvm:10[llvm_targets_NVPTX]
-				sys-devel/clang:10[llvm_targets_NVPTX]
+				sys-devel/llvm:10[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
+				sys-devel/clang:10[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
 				>=sys-devel/lld-10
 			)
 		)
@@ -87,34 +91,35 @@ DEPEND+=" ${RDEPEND}"
 BDEPEND+=" "$(gen_llvm_depend)
 BDEPEND+="
 	|| (
-		sys-devel/gcc:11
-		sys-devel/gcc:10
-		sys-devel/gcc:9.4.0
-		sys-devel/gcc:9.3.0
-		sys-devel/gcc:8.5.0
-		sys-devel/gcc:8.4.0
-		sys-devel/gcc:7.5.0
-		sys-devel/gcc:6.5.0
 		(
-			sys-devel/clang:12
-			sys-devel/llvm:12
+			<sys-devel/gcc-12
+			>=sys-devel/gcc-6
+		)
+		(
+			sys-devel/clang:13[${MULTILIB_USEDEP}]
+			sys-devel/llvm:13[${MULTILIB_USEDEP}]
+			>=sys-devel/lld-13
+		)
+		(
+			sys-devel/clang:12[${MULTILIB_USEDEP}]
+			sys-devel/llvm:12[${MULTILIB_USEDEP}]
 			>=sys-devel/lld-12
 		)
 		(
-			sys-devel/clang:11
-			sys-devel/llvm:11
+			sys-devel/clang:11[${MULTILIB_USEDEP}]
+			sys-devel/llvm:11[${MULTILIB_USEDEP}]
 			>=sys-devel/lld-11
 		)
 		(
-			sys-devel/clang:10
-			sys-devel/llvm:10
+			sys-devel/clang:10[${MULTILIB_USEDEP}]
+			sys-devel/llvm:10[${MULTILIB_USEDEP}]
 			>=sys-devel/lld-10
 		)
-		>=dev-lang/icc-13
+		>=dev-lang/icc-13[${MULTILIB_USEDEP}]
 	)
 	>=dev-util/cmake-3.12
-	sys-devel/bison
-	sys-devel/flex
+	>=sys-devel/bison-2.7
+	>=sys-devel/flex-2.5.35[${MULTILIB_USEDEP}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
 SRC_URI="
 https://github.com/imageworks/OpenShadingLanguage/archive/Release-${PV}.tar.gz
@@ -129,7 +134,7 @@ llvm_check_deps() {
 
 pkg_setup() {
 	# See https://github.com/imageworks/OpenShadingLanguage/blob/master/INSTALL.md
-	# Supports LLVM-{7,8,9,10} but should be the same throughout the system.
+	# Supports LLVM-{7..13} but should be the same throughout the system.
 	if use llvm-10 ; then
 		einfo "Linking with LLVM-10"
 		export LLVM_MAX_SLOT=10
@@ -139,6 +144,9 @@ pkg_setup() {
 	elif use llvm-12 ; then
 		einfo "Linking with LLVM-12"
 		export LLVM_MAX_SLOT=12
+	elif use llvm-13 ; then
+		einfo "Linking with LLVM-13"
+		export LLVM_MAX_SLOT=13
 	fi
 
 	if use qt5 ; then
