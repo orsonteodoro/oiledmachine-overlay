@@ -160,24 +160,24 @@ RDEPEND="
 	system-icu? ( dev-libs/icu:${ICU_V} )
 	system-openssl? ( >=dev-libs/openssl-${OPENSSL_V}:1.0 )
 	system-qt5? (
-		=${QT_CATEGORY}/qtcore-${QT_VERSION}*:${QT_SLOT}[icu]
-		=${QT_CATEGORY}/qtdbus-${QT_VERSION}*:${QT_SLOT}
-		=${QT_CATEGORY}/qtdeclarative-${QT_VERSION}*:${QT_SLOT}
-		=${QT_CATEGORY}/qtgui-${QT_VERSION}*:${QT_SLOT}[dbus,gif,jpeg,png,xcb]
-		=${QT_CATEGORY}/qtmultimedia-${QT_VERSION}*:${QT_SLOT}[widgets,alsa]
-		=${QT_CATEGORY}/qtnetwork-${QT_VERSION}*:${QT_SLOT}[ssl]
-		=${QT_CATEGORY}/qtopengl-${QT_VERSION}*:${QT_SLOT}
-		=${QT_CATEGORY}/qtpositioning-${QT_VERSION}*:${QT_SLOT}
-		=${QT_CATEGORY}/qtprintsupport-${QT_VERSION}*:${QT_SLOT}
-		=${QT_CATEGORY}/qtscript-${QT_VERSION}*:${QT_SLOT}[scripttools]
-		=${QT_CATEGORY}/qtsensors-${QT_VERSION}*:${QT_SLOT}
-		=${QT_CATEGORY}/qtsql-${QT_VERSION}*:${QT_SLOT}[sqlite]
-		=${QT_CATEGORY}/qtsvg-${QT_VERSION}*:${QT_SLOT}
-		=${QT_CATEGORY}/qtwebchannel-${QT_VERSION}*:${QT_SLOT}
-		=${QT_CATEGORY}/qtwebkit-${QT_VERSION}*:${QT_SLOT}
-		=${QT_CATEGORY}/qtwebsockets-${QT_VERSION}*:${QT_SLOT}[ssl]
-		=${QT_CATEGORY}/qtwidgets-${QT_VERSION}*:${QT_SLOT}
-		=${QT_CATEGORY}/qtx11extras-${QT_VERSION}*:${QT_SLOT}
+		~${QT_CATEGORY}/qtcore-${QT_VERSION}:${QT_SLOT}[icu]
+		~${QT_CATEGORY}/qtdbus-${QT_VERSION}:${QT_SLOT}
+		~${QT_CATEGORY}/qtdeclarative-${QT_VERSION}:${QT_SLOT}
+		~${QT_CATEGORY}/qtgui-${QT_VERSION}:${QT_SLOT}[dbus,gif,jpeg,png,xcb]
+		~${QT_CATEGORY}/qtmultimedia-${QT_VERSION}:${QT_SLOT}[widgets,alsa]
+		~${QT_CATEGORY}/qtnetwork-${QT_VERSION}:${QT_SLOT}[ssl]
+		~${QT_CATEGORY}/qtopengl-${QT_VERSION}:${QT_SLOT}
+		~${QT_CATEGORY}/qtpositioning-${QT_VERSION}:${QT_SLOT}
+		~${QT_CATEGORY}/qtprintsupport-${QT_VERSION}:${QT_SLOT}
+		~${QT_CATEGORY}/qtscript-${QT_VERSION}:${QT_SLOT}[scripttools]
+		~${QT_CATEGORY}/qtsensors-${QT_VERSION}:${QT_SLOT}
+		~${QT_CATEGORY}/qtsql-${QT_VERSION}:${QT_SLOT}[sqlite]
+		~${QT_CATEGORY}/qtsvg-${QT_VERSION}:${QT_SLOT}
+		~${QT_CATEGORY}/qtwebchannel-${QT_VERSION}:${QT_SLOT}
+		~${QT_CATEGORY}/qtwebkit-${QT_VERSION}:${QT_SLOT}
+		~${QT_CATEGORY}/qtwebsockets-${QT_VERSION}:${QT_SLOT}[ssl]
+		~${QT_CATEGORY}/qtwidgets-${QT_VERSION}:${QT_SLOT}
+		~${QT_CATEGORY}/qtx11extras-${QT_VERSION}:${QT_SLOT}
 	)
 	system-spnav? ( >=dev-libs/libspnav-0.2.3 )"
 S="${WORKDIR}"
