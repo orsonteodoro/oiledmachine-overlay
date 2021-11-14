@@ -17,6 +17,7 @@ MATLIB_NAME="rprmaterials"
 S_FN="radeonprorendermateriallibraryinstaller.run"
 MIN_BLENDER_V="2.80"
 MAX_BLENDER_V="2.94" # exclusive
+# Hash verified in Nov 13, 2021
 SHA512SUM_MATLIB="f119d9002c2f1d2b260777393816660cb88a84e3e88e0c353297e787d5ce5672899c5b99527d42d28a86f5e6167931c7761d674148dadba1fc11b5d26980c317"
 D_FN="${PN}-matlib-${SHA512SUM_MATLIB:0:7}.run"
 SLOT="0/${PV}"
