@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    AMD Radeon ProRender for Blender is a rendering plugin for Blender.
+
+    The plugin product highlights can be found at:
+    https://www.amd.com/en/technologies/radeon-prorender-blender
+
+    To see if your GPU is supported see:
+    https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-3-blender-2-80-2-81-2-82
+    https://www.amd.com/en/technologies/radeon-prorender-blender#SYSTEM-REQUIREMENTS
+
+    GPUs require both OpenCL 1.2 on hardware support and an OpenCL 1.2 driver
+    to use this product.
+    CPUs may require at least SSE2 support.
+
+    Hardware accelerated ray tracing is only supported on RX 6000 (codenamed
+    Big Navi, released 2020).
+
+    Rendering may require Vulkan for Full Spectrum Rendering (FSR).  You need 
+    a Vulkan compatible device and Vulkan driver but will fall back to OpenCL if
+    it doesn't meet requirements.  For details see:
+    https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/full_spectrum_rendering.html
+  </longdescription>
+  <upstream>
+    <bugs-to>https://community.amd.com/community/prorender/blender</bugs-to>
+    <doc lang="en">https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/about.html</doc>
+  </upstream>
+  <use>
+    <flag name="denoiser">Checks for dynamic libraries that may be
+      required to use the denoiser.</flag>
+    <flag name="intel-ocl">Checks for OpenCL 1.2 support for Intel
+      CPUs that may be required.</flag>
+    <flag name="materials">Installs the material library.</flag>
+    <flag name="opencl">Checks for proper OpenCL support for GPUs.</flag>
+    <flag name="opencl_orca">Checks for proper OpenCL support for pre-Vega 10
+      from the split packages (<pkg>dev-libs/amdgpu-pro-opencl</pkg>) or
+      from the AMDGPU-PRO monolithic driver
+      package (<pkg>x11-drivers/amdgpu-pro</pkg> or
+      <pkg>x11-drivers/amdgpu-pro-lts</pkg>).</flag>
+    <flag name="opencl_pal">Checks for proper OpenCL support for Vega 10
+      (GCN 5.x) or newer from only the AMDGPU-PRO drivers package
+      (<pkg>x11-drivers/amdgpu-pro</pkg> or
+      <pkg>x11-drivers/amdgpu-pro-lts</pkg>).</flag>
+    <flag name="opencl_rocr">Checks for proper OpenCL support for Vega 10
+      (GCN 5.x) or newer from the split ROCm packages
+      (<pkg>dev-libs/rocm-opencl-runtime</pkg>) or from the AMDGPU-PRO
+      monolithic driver package (<pkg>x11-drivers/amdgpu-pro</pkg> or
+      <pkg>x11-drivers/amdgpu-pro-lts</pkg>).</flag>
+    <flag name="opengl_mesa">Pulls the required dependencies if Pro support in
+      the AMDGPU-PRO driver has not been installed.</flag>
+    <flag name="materials">Installs the material library.</flag>
+    <flag name="split-drivers">Preference for the split AMDGPU-PRO
+      packages.</flag>
+    <flag name="systemwide">Installs the plugin systemwide.  Not recommened.
+      </flag>
+    <flag name="video_cards_amdgpu">
+      Checks for OpenCL 1.2 support or Vulkan compatibility for open amdgpu
+      drivers.</flag>
+    <flag name="video_cards_amdgpu-pro">
+      Checks for OpenCL 1.2 support or Vulkan compatibility for AMDGPU-PRO
+      drivers.</flag>
+    <flag name="video_cards_amdgpu-lts">
+      Checks for OpenCL 1.2 support or Vulkan compatibility for AMDGPU-PRO
+      (HWE/LTS) drivers.</flag>
+    <flag name="video_cards_i965">Checks for OpenCL 1.2 support or Vulkan
+      compatibility for Intel or IGPs/GPUs.  For Gen 7.5+ (Haswell)
+      users.</flag>
+    <flag name="video_cards_iris">Checks for OpenCL 1.2 support or Vulkan
+      compatibility for Intel or IGPs/GPUs.  For Gen 8+ (Broadwell)
+      users.</flag>
+    <flag name="video_cards_nvidia">Checks if the GPU driver is OpenCL 1.2
+      or Vulkan compatibility.</flag>
+    <flag name="video_cards_radeonsi">Checks if the GPU driver is OpenCL 1.2
+      or Vulkan compatibility for Mesa Gallium3D users.</flag>
+    <flag name="vulkan">Installs dependencies for Vulkan support.  Vulkan
+      is used for Full Spectrum Rendering (RPR).</flag>
+    <flag name="test">Checks if hardware is supported.</flag>
+  </use>
+</pkgmetadata>
