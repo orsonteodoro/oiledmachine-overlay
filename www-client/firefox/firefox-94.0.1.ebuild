@@ -2,14 +2,14 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
-# with update sync updated with 90.0 ebuild.
+# with update sync updated with 94.0.1-r1 ebuild.
 # Revisions may change in the oiledmachine-overlay.
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-93-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-94-patches-02.tar.xz"
 
-LLVM_MAX_SLOT=12
+LLVM_MAX_SLOT=13
 
 PYTHON_COMPAT=( python3_{8..10} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -72,7 +72,7 @@ LICENSE_FINGERPRINT="\
 20eb3b10bf7c7cba8e42edbc8d8ad58a3a753e214b8751fb60eddb827ebff067\
 456f77f36e7abe6d06861b1be52011303fa08db8a981937e38733f961c4a39d9" # SHA512
 # FF-93.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
-LICENSE+=" FF-93.0-THIRD-PARTY-LICENSES"
+LICENSE+=" FF-94.0-THIRD-PARTY-LICENSES"
 LICENSE+="
 	( BSD-2
 		BSD
@@ -195,51 +195,62 @@ LICENSE+="
 # ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- \#
 #   the vanilla ZLIB lib license doesn't contain all rights reserved
 
-IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
-	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast sndio selinux
+IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel
+	jack lto +openh264 pgo pulseaudio sndio selinux
 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
-	+system-libvpx +system-webp wayland wifi"
-_ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 \
-abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
+	+system-libvpx +system-webp
+	wayland wifi"
+_ABIS="abi_x86_32
+	abi_x86_64
+	abi_x86_x32
+	abi_mips_n32
+	abi_mips_n64
+	abi_mips_o32
+	abi_ppc_32
+	abi_ppc_64
+	abi_s390_32
+	abi_s390_64"
 IUSE+=" ${_ABIS}"
 IUSE+=" -jemalloc"
 
-REQUIRED_USE="debug? ( !system-av1 )
-	screencast? ( wayland )"
+# Firefox-only IUSE
+IUSE+=" geckodriver"
+IUSE+=" +gmp-autoupdate"
+IUSE+=" screencast"
 
-BDEPEND="${PYTHON_DEPS}
+REQUIRED_USE="debug? ( !system-av1 )
+	wifi? ( dbus )"
+
+# Firefox-only REQUIRED_USE flags
+REQUIRED_USE+=" screencast? ( wayland )"
+
+LLVM_SLOTS=(10 11 12 13)
+
+gen_llvm_bdepends() {
+	local o=""
+	for s in ${LLVM_SLOTS[@]} ; do
+		o+="
+		(
+			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			clang? (
+				>=sys-devel/lld-${s}
+				pgo? ( =sys-libs/compiler-rt-sanitizers-${s}*[profile] )
+			)
+		)
+		"
+	done
+	echo -e "${o}"
+}
+
+BDEPEND+=" || ( $(gen_llvm_bdepends) )"
+BDEPEND+=" ${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
 	>=dev-util/cbindgen-0.19.0
 	>=net-libs/nodejs-10.23.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=virtual/rust-1.51.0[${MULTILIB_USEDEP}]
-	|| (
-		(
-			sys-devel/clang:12[${MULTILIB_USEDEP}]
-			sys-devel/llvm:12[${MULTILIB_USEDEP}]
-			clang? (
-				>=sys-devel/lld-12
-				pgo? ( =sys-libs/compiler-rt-sanitizers-12*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:11[${MULTILIB_USEDEP}]
-			sys-devel/llvm:11[${MULTILIB_USEDEP}]
-			clang? (
-				>=sys-devel/lld-11
-				pgo? ( =sys-libs/compiler-rt-sanitizers-11*[profile] )
-			)
-		)
-		(
-			sys-devel/clang:10[${MULTILIB_USEDEP}]
-			sys-devel/llvm:10[${MULTILIB_USEDEP}]
-			clang? (
-				>=sys-devel/lld-10
-				pgo? ( =sys-libs/compiler-rt-sanitizers-10*[profile] )
-			)
-		)
-	)
 	amd64? ( >=dev-lang/nasm-2.13 )
 	x86? ( >=dev-lang/nasm-2.13 )"
 
@@ -264,10 +275,12 @@ CDEPEND="
 	>=dev-libs/libffi-3.0.10:=[${MULTILIB_USEDEP}]
 	media-video/ffmpeg[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
+	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	x11-libs/libXcomposite[${MULTILIB_USEDEP}]
 	x11-libs/libXdamage[${MULTILIB_USEDEP}]
 	x11-libs/libXext[${MULTILIB_USEDEP}]
 	x11-libs/libXfixes[${MULTILIB_USEDEP}]
+	x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	x11-libs/libXrender[${MULTILIB_USEDEP}]
 	dbus? (
 		sys-apps/dbus[${MULTILIB_USEDEP}]
@@ -358,14 +371,49 @@ llvm_check_deps() {
 }
 
 MOZ_LANGS=(
-	ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy
-	da de dsb el en-CA en-GB en-US eo es-AR es-CL es-ES es-MX et eu
-	fa ff fi fr fy-NL ga-IE gd gl gn gu-IN he hi-IN hr hsb hu hy-AM
-	ia id is it ja ka kab kk km kn ko lij lt lv mk mr ms my
-	nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sco
-	si sk sl son sq sr sv-SE szl ta te th tl tr trs uk ur uz vi
-	xh zh-CN zh-TW
+	af ar ast be bg br ca cak cs cy da de dsb
+	el en-CA en-GB en-US es-AR es-ES et eu
+	fi fr fy-NL ga-IE gd gl he hr hsb hu
+	id is it ja ka kab kk ko lt lv ms nb-NO nl nn-NO
+	pa-IN pl pt-BR pt-PT rm ro ru
+	sk sl sq sr sv-SE th tr uk uz vi zh-CN zh-TW
 )
+
+# Firefox-only LANGS
+MOZ_LANGS+=( ach )
+MOZ_LANGS+=( an )
+MOZ_LANGS+=( az )
+MOZ_LANGS+=( bn )
+MOZ_LANGS+=( bs )
+MOZ_LANGS+=( ca-valencia )
+MOZ_LANGS+=( eo )
+MOZ_LANGS+=( es-CL )
+MOZ_LANGS+=( es-MX )
+MOZ_LANGS+=( fa )
+MOZ_LANGS+=( ff )
+MOZ_LANGS+=( gn )
+MOZ_LANGS+=( gu-IN )
+MOZ_LANGS+=( hi-IN )
+MOZ_LANGS+=( hy-AM )
+MOZ_LANGS+=( ia )
+MOZ_LANGS+=( km )
+MOZ_LANGS+=( kn )
+MOZ_LANGS+=( lij )
+MOZ_LANGS+=( mk )
+MOZ_LANGS+=( mr )
+MOZ_LANGS+=( my )
+MOZ_LANGS+=( ne-NP )
+MOZ_LANGS+=( oc )
+MOZ_LANGS+=( sco )
+MOZ_LANGS+=( si )
+MOZ_LANGS+=( son )
+MOZ_LANGS+=( szl )
+MOZ_LANGS+=( ta )
+MOZ_LANGS+=( te )
+MOZ_LANGS+=( tl )
+MOZ_LANGS+=( trs )
+MOZ_LANGS+=( ur )
+MOZ_LANGS+=( xh )
 
 mozilla_set_globals() {
 	# https://bugs.gentoo.org/587334
@@ -592,6 +640,34 @@ pkg_setup() {
 		# Build system is using /proc/self/oom_score_adj, bug #604394
 		addpredict /proc/self/oom_score_adj
 
+		if use pgo ; then
+			# Allow access to GPU during PGO run
+			local ati_cards mesa_cards nvidia_cards render_cards
+			shopt -s nullglob
+
+			ati_cards=$(echo -n /dev/ati/card* | sed 's/ /:/g')
+			if [[ -n "${ati_cards}" ]] ; then
+				addpredict "${ati_cards}"
+			fi
+
+			mesa_cards=$(echo -n /dev/dri/card* | sed 's/ /:/g')
+			if [[ -n "${mesa_cards}" ]] ; then
+				addpredict "${mesa_cards}"
+			fi
+
+			nvidia_cards=$(echo -n /dev/nvidia* | sed 's/ /:/g')
+			if [[ -n "${nvidia_cards}" ]] ; then
+				addpredict "${nvidia_cards}"
+			fi
+
+			render_cards=$(echo -n /dev/dri/renderD128* | sed 's/ /:/g')
+			if [[ -n "${render_cards}" ]] ; then
+				addpredict "${render_cards}"
+			fi
+
+			shopt -u nullglob
+		fi
+
 		if ! mountpoint -q /dev/shm ; then
 			# If /dev/shm is not available, configure is known to fail with
 			# a traceback report referencing /usr/lib/pythonN.N/multiprocessing/synchronize.py
@@ -692,10 +768,12 @@ einfo "Verifying about:license fingerprint"
 		]] ; then
 eerror
 eerror "A change in the license was detected.  Please change"
-eerror "LICENSE_FINGERPRINT=${x_license_fingerprint} and copy the license file as"
-eerror "follows:"
+eerror "LICENSE_FINGERPRINT=${x_license_fingerprint} and do a"
+eerror
 eerror "  \`cp -a ${S}/toolkit/content/license.html \
 ${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
+eerror
+eerror "and update the license variable."
 eerror
 			die
 		fi
@@ -741,6 +819,10 @@ src_prepare() {
 		|| die "sed failed to set num_cores"
 
 	# sed-in toolchain prefix patch section was moved to the bottom of this function
+	#
+	# Moved down
+	#
+	#
 
 	sed -i \
 		-e 's/ccache_stats = None/return None/' \
@@ -754,6 +836,8 @@ src_prepare() {
 	moz_clear_vendor_checksums target-lexicon-0.9.0
 
 	# Removed creation of a single build dir
+	#
+	#
 
 	# Write API keys to disk
 	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
@@ -770,8 +854,7 @@ src_prepare() {
 
 	verify_license_fingerprint
 
-	(( ${NABIS} > 1 )) \
-		&& multilib_copy_sources
+	(( ${NABIS} > 1 )) && multilib_copy_sources
 
 	_src_prepare() {
 		if (( ${NABIS} == 1 )) ; then
@@ -876,18 +959,23 @@ multilib_src_configure() {
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
 	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
-
 	_fix_paths
-
 	# Pass the correct toolchain paths through cbindgen
 	if tc-is-cross-compiler ; then
 		export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --host=${chost} --target=${ctarget} ${BINDGEN_CFLAGS-}"
 	fi
 
-	# MOZILLA_FIVE_HOME and MOZCONFIG are dynamically generated per ABI
+	# MOZILLA_FIVE_HOME is dynamically generated per ABI in _fix_paths().
+	#
 
 	# python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
+
+	# Set state path
+	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
+
+	# MOZCONFIG is dynamically generated per ABI in _fix_paths().
+	#
 
 	# Initialize MOZCONFIG
 	mozconfig_add_options_ac '' --enable-application=browser
@@ -912,6 +1000,7 @@ multilib_src_configure() {
 		--target="${ctarget}" \
 		--without-ccache \
 		--with-intl-api \
+		\
 		--with-system-nspr \
 		--with-system-nss \
 		--with-system-png \
@@ -1428,9 +1517,9 @@ multilib_src_install() {
 	# Install system-wide preferences
 	local PREFS_DIR="${MOZILLA_FIVE_HOME}/browser/defaults/preferences"
 	insinto "${PREFS_DIR}"
-	newins "${FILESDIR}"/gentoo-default-prefs.js all-gentoo.js
+	newins "${FILESDIR}"/gentoo-default-prefs.js gentoo-prefs.js
 
-	local GENTOO_PREFS="${ED}${PREFS_DIR}/all-gentoo.js"
+	local GENTOO_PREFS="${ED}${PREFS_DIR}/gentoo-prefs.js"
 
 	# Set dictionary path to use system hunspell
 	cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set spellchecker.dictionary_path pref"
@@ -1578,7 +1667,9 @@ pkg_postinst() {
 		elog
 	fi
 
-	local show_doh_information show_normandy_information show_shortcut_information
+	local show_doh_information
+	local show_normandy_information
+	local show_shortcut_information
 
 	if [[ -z "${REPLACING_VERSIONS}" ]] ; then
 		# New install; Tell user that DoH is disabled by default
@@ -1625,10 +1716,10 @@ pkg_postinst() {
 
 	if [[ -n "${show_shortcut_information}" ]] ; then
 		elog
-		elog "Since firefox-91.0 we no longer install multiple shortcuts for"
+		elog "Since ${PN}-91.0 we no longer install multiple shortcuts for"
 		elog "each supported display protocol.  Instead we will only install"
-		elog "one generic Mozilla Firefox shortcut."
-		elog "If you still want to be able to select between running Mozilla Firefox"
+		elog "one generic Mozilla ${PN^} shortcut."
+		elog "If you still want to be able to select between running Mozilla ${PN^}"
 		elog "on X11 or Wayland, you have to re-create these shortcuts on your own."
 	fi
 
