@@ -480,6 +480,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	einfo "This is the release build."
 	default
 	eapply "-F3" "${DISTDIR}/rpr-pull-request-345.patch"
 	eapply "${FILESDIR}/rpr-3.3-build-linux-sh-generic-python3.patch"

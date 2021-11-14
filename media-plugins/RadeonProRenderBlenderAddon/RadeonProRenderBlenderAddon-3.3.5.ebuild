@@ -479,6 +479,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	ewarn "This is the weekly development build."
 	default
 	eapply "-F3" "${DISTDIR}/rpr-pull-request-345.patch"
 	eapply "${FILESDIR}/rpr-3.3-build-linux-sh-generic-python3.patch"

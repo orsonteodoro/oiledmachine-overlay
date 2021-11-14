@@ -29,6 +29,7 @@
   </longdescription>
   <upstream>
     <bugs-to>https://community.amd.com/community/prorender/blender</bugs-to>
+    <changelog>https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/master/Changelog.md</changelog>
     <doc lang="en">https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/about.html</doc>
   </upstream>
   <use>
