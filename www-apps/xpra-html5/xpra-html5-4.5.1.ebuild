@@ -12,6 +12,7 @@ LICENSE="MPL-2.0
 	Apache-2.0
 	all-rights-reserved
 	BSD
+	CC-BY-SA-3.0
 	GPL-2
 	LGPL-2.1+
 	LGPL-3+
