@@ -373,10 +373,6 @@ CDEPEND_CLANG="
 	clang? (
 		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
 		lto? ( || ( $(gen_cdepend_lto_llvm) ) )
-		godot_web_wasm32? (
-			sys-devel/clang:13[${MULTILIB_USEDEP}]
-			sys-devel/llvm:13[${MULTILIB_USEDEP}]
-		)
 	)"
 CDEPEND_GCC="
 	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )"
