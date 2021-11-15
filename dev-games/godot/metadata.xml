@@ -278,6 +278,8 @@ https://docs.godotengine.org/en/2.1/development/cpp/custom_modules_in_cpp.html
     <flag name="svg">Enable SVG vector image format support.</flag>
     <flag name="system-bullet">Uses the system's external library instead of
       the internal version.</flag>
+    <flag name="system-embree">Uses the system's external library instead of the
+      internal version.</flag>
     <flag name="system-enet">Uses the system's external library instead of the
       internal version.</flag>
     <flag name="system-freetype">Uses the system's external library instead of

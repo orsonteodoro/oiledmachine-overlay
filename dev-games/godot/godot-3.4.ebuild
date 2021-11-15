@@ -35,14 +35,14 @@ CC-BY-3.0 FTL ISC LGPL-2.1 MIT MPL-2.0 OFL-1.1 openssl Unlicense ZLIB"
 KEYWORDS="~amd64 ~x86"
 PND="${PN}-demo-projects"
 
-# tag 3 deterministic / static snapshot / master / 20211105
-EGIT_COMMIT_DEMOS_SNAPSHOT="098e13cca240e03b625e2e5efdd638c77cd63410"
+# tag 3 deterministic / static snapshot / master / 20211111
+EGIT_COMMIT_DEMOS_SNAPSHOT="f82dd94089e43c218be9289b0aba9d66a0517407"
 
 # latest release
-EGIT_COMMIT_DEMOS_STABLE="5c154dac255113be2aee1a7f456ee8eaca89e62f"
+EGIT_COMMIT_DEMOS_STABLE="585455e67ca38a124f670565f342d49ab2f82d5e"
 
-# Commit dated 20210226
-EGIT_COMMIT_GODOT_CPP_SNAPSHOT="77d41fa179e40560f1e264ed483638bf51713779"
+# Commit dated 20211104
+EGIT_COMMIT_GODOT_CPP_SNAPSHOT="68ce78179f90be9bec8cc88106dba0c244bdc4f6"
 
 # Commit dated 20210706
 EGIT_COMMIT_GMB_STABLE="c3a9d311bcb49ccb498a722f451ac6845b52c97e"
@@ -90,10 +90,11 @@ mono? (
 SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
 
-IUSE+=" +3d +advanced-gui clang +camera +dds debug docs examples-snapshot examples-stable
-examples-live jit +linux lld lto +neon +optimize-speed +opensimplex
-optimize-size portable server server_dedicated server_headless"
-IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +ogg +opus +pvrtc +svg +s3tc +theora
+# webxr is enabled upstream by default
+IUSE+=" +3d +advanced-gui clang camera +dds debug +denoise docs examples-snapshot examples-stable
+examples-live jit +lightmapper_cpu +linux lld lto +neon +optimize-speed +opensimplex
+optimize-size portable +raycast server server_dedicated server_headless webxr"
+IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc +theora
 +tga +vorbis +webm webm-simd +webp" # encoding/container formats
 
 GODOT_ANDROID_=(arm7 arm64v8 x86 x86_64)
@@ -163,26 +164,26 @@ REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_MONO_WINDOWS}" godot_platf
 IUSE+=" -closure-compiler gdnative -gdscript gdscript_lsp
 +javascript_eval -javascript_threads -mono
 -mono_pregen_assemblies +visual-script web" # for scripting languages
-IUSE+=" +bullet +csg +gridmap +mobile-vr +recast +vhacd +xatlas" # for 3d
+IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
 IUSE+=" -gamepad +touch" # for input
 IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
-IUSE+=" system-bullet system-enet system-freetype system-libogg system-libpng
-system-libtheora system-libvorbis system-libvpx system-libwebp
+IUSE+=" system-bullet system-embree system-enet system-freetype system-libogg
+system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp
 system-libwebsockets system-mbedtls system-miniupnpc system-opus system-pcre2
 system-recast system-squish system-wslay system-xatlas
 system-zlib system-zstd"
 IUSE+=" android"
 IUSE+=" doxygen rst"
 # in master, sanitizers also applies to javascript
-IUSE+=" asan_server lsan_server tsan_server ubsan_server"
-IUSE+=" asan_client lsan_client tsan_client ubsan_client"
+IUSE+=" asan_server lsan_server msan_server tsan_server ubsan_server"
+IUSE+=" asan_client lsan_client msan_client tsan_client ubsan_client"
 IUSE+=" -ios-sim +icloud +game-center +store-kit" # ios
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
-# See https://github.com/godotengine/godot/tree/3.2.3-stable/thirdparty for versioning
-# See https://docs.godotengine.org/en/3.2/development/compiling/compiling_for_android.html
-# See https://docs.godotengine.org/en/3.2/development/compiling/compiling_for_web.html
+# See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
+# See https://docs.godotengine.org/en/3.4/development/compiling/compiling_for_android.html
+# See https://docs.godotengine.org/en/3.4/development/compiling/compiling_for_web.html
 # See https://github.com/tpoechtrager/osxcross/blob/master/build.sh#L36      ; for XCODE VERSION <-> EOSXCROSS_SDK
 # See https://developer.apple.com/ios/submit/ for app store requirement
 # Some are repeated because they were shown to be in the ldd list
@@ -224,6 +225,7 @@ REQUIRED_USE+="
 		!asan_client
 		!asan_server
 		!system-bullet
+		!system-embree
 		!system-enet
 		!system-freetype
 		!system-libogg
@@ -248,18 +250,20 @@ REQUIRED_USE+="
 	server? ( || ( server_dedicated
 		server_headless ) )
 	server_dedicated? ( server )
-	server_headless? ( server )"
+	server_headless? ( server )
+	webxr? ( godot_platforms_web )"
 # See https://developer.apple.com/ios/submit/ for app store requirement
 APST_REQ_STORE_DATE="April 2021"
 IOS_SDK_MIN_STORE="14"
 XCODE_SDK_MIN_STORE="12"
+EMSCRIPTEN_V="2.0.10"
 EXPECTED_XCODE_SDK_MIN_VERSION_IOS="10"
 EXPECTED_IOS_SDK_MIN_VERSION="10"
-EXPECTED_XCODE_SDK_MIN_VERSION_ARM64="10.15" # https://github.com/godotengine/godot/blob/3.2.3-stable/platform/osx/detect.py#L87
-EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.9"
+EXPECTED_XCODE_SDK_MIN_VERSION_ARM64="10.15" # See https://github.com/godotengine/godot/blob/3.4-stable/platform/osx/detect.py#L80
+EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.12"
 EXPECTED_MIN_ANDROID_API_LEVEL="29"
-FREETYPE_V="2.10.2" # The thirdparty/README.md is 2.10.1 but the thirdparty/freetype folder is 2.10.2
-JAVA_V="8" # See https://github.com/godotengine/godot/blob/3.2.3-stable/.github/workflows/android_builds.yml#L27
+FREETYPE_V="2.10.4"
+JAVA_V="11" # See https://github.com/godotengine/godot/blob/3.4-stable/.github/workflows/android_builds.yml#L32
 LIBOGG_V="1.3.4"
 LIBVORBIS_V="1.3.6"
 NDK_V="21"
@@ -276,7 +280,7 @@ gen_cdepend_mono() {
 	echo "${o}"
 }
 
-LLVM_SLOTS=(11 12)
+LLVM_SLOTS=(12 13) # See https://github.com/godotengine/godot/blob/3.4-stable/misc/hooks/pre-commit-clang-format#L79
 gen_cdepend_lto_llvm() {
 	local o=""
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -357,9 +361,9 @@ CDEPEND+="
 		 dev-util/msbuild
 		 >=dev-lang/mono-5.2[${MULTILIB_USEDEP}] )
 	godot_platforms_web? (
-		!closure-compiler? ( >=dev-util/emscripten-1.39.0[wasm(+)] )
+		!closure-compiler? ( >=dev-util/emscripten-${EMSCRIPTEN_V}[wasm(+)] )
 		closure-compiler? (
->=dev-util/emscripten-1.39.0[closure-compiler,closure_compiler_nodejs,wasm(+)] ) )
+>=dev-util/emscripten-${EMSCRIPTEN_V}[closure-compiler,closure_compiler_nodejs,wasm(+)] ) )
 	godot_platforms_osx? ( sys-devel/osxcross )
 	godot_platforms_windows? ( sys-devel/crossdev )"
 CDEPEND_CLANG="
@@ -406,13 +410,14 @@ DEPEND+=" ${PYTHON_DEPS}
 	x11-libs/libX11[${MULTILIB_USEDEP}]
 	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
-	!portable? ( >=app-misc/ca-certificates-20180226 )
+	!portable? ( >=app-misc/ca-certificates-20210705 )
         gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
 	gdnative? ( dev-util/scons
 		     || ( ${CDEPEND_CLANG}
 	                  ${CDEPEND_GCC} ) )
-	system-bullet? ( >=sci-physics/bullet-2.89[${MULTILIB_USEDEP}] )
-	system-enet? ( >=net-libs/enet-1.3.15[${MULTILIB_USEDEP}] )
+	system-bullet? ( >=sci-physics/bullet-3.17[${MULTILIB_USEDEP}] )
+	system-enet? ( >=net-libs/enet-1.3.17[${MULTILIB_USEDEP}] )
+	system-embree? ( >=media-libs/embree-3.13.0[${MULTILIB_USEDEP}] )
 	system-freetype? ( >=media-libs/freetype-${FREETYPE_V}[${MULTILIB_USEDEP}] )
 	system-libogg? ( >=media-libs/libogg-${LIBOGG_V}[${MULTILIB_USEDEP}] )
 	system-libpng? ( >=media-libs/libpng-1.6.37[${MULTILIB_USEDEP}] )
@@ -420,19 +425,19 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}] )
 	system-libvpx? ( >=media-libs/libvpx-1.6.0[${MULTILIB_USEDEP}] )
 	system-libwebp? ( >=media-libs/libwebp-1.1.0[${MULTILIB_USEDEP}] )
-	system-mbedtls? ( >=net-libs/mbedtls-2.16.8[${MULTILIB_USEDEP}] )
-	system-miniupnpc? ( >=net-libs/miniupnpc-2.1[${MULTILIB_USEDEP}] )
+	system-mbedtls? ( >=net-libs/mbedtls-2.16.11[${MULTILIB_USEDEP}] )
+	system-miniupnpc? ( >=net-libs/miniupnpc-2.2.2[${MULTILIB_USEDEP}] )
 	system-opus? (
 		>=media-libs/opus-1.1.5[${MULTILIB_USEDEP}]
 		>=media-libs/opusfile-0.8[${MULTILIB_USEDEP}]
 	)
-	system-pcre2? ( >=dev-libs/libpcre2-10.34[${MULTILIB_USEDEP},jit?] )
+	system-pcre2? ( >=dev-libs/libpcre2-10.36[${MULTILIB_USEDEP},jit?] )
 	system-recast? ( dev-games/recastnavigation[${MULTILIB_USEDEP}] )
 	system-squish? ( >=media-libs/libsquish-1.15[${MULTILIB_USEDEP}] )
 	system-wslay? ( >=net-libs/wslay-1.1.1[${MULTILIB_USEDEP}] )
 	system-xatlas? ( media-libs/xatlas[${MULTILIB_USEDEP}] )
 	system-zlib? ( >=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}] )
-	system-zstd? ( >=app-arch/zstd-1.4.4[${MULTILIB_USEDEP}] )"
+	system-zstd? ( >=app-arch/zstd-1.4.8[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND_SANTIZIER="
 	${CDEPEND_CLANG}
@@ -461,6 +466,12 @@ BDEPEND+=" ${CDEPEND}
 	lsan_server? (
 		${BDEPEND_SANTIZIER}
 	)
+	msan_client? (
+		${BDEPEND_SANTIZIER}
+	)
+	msan_server? (
+		${BDEPEND_SANTIZIER}
+	)
 	tsan_client? (
 		${BDEPEND_SANTIZIER}
 	)
@@ -483,7 +494,6 @@ RESTRICT="fetch mirror"
 #GEN_DL_MANIFEST=1
 # 20b171c - used for ccache
 PATCHES=(
-	"${FILESDIR}/godot-3.2.3-20b171c.patch"
 	"${FILESDIR}/godot-3.2.3-add-lld-thinlto-to-platform-server.patch"
 )
 
@@ -978,7 +988,10 @@ ewarn
 	check-reqs_pkg_setup
 	python-any-r1_pkg_setup
 	if use lto && use clang ; then
-		if has_version "sys-devel/clang:12" \
+		if has_version "sys-devel/clang:13" \
+			&& has_version "sys-devel/llvm:13" ; then
+			LLVM_MAX_SLOT=13
+		elif has_version "sys-devel/clang:12" \
 			&& has_version "sys-devel/llvm:12" ; then
 			LLVM_MAX_SLOT=12
 		elif has_version "sys-devel/clang:11" \
@@ -987,7 +1000,7 @@ ewarn
 		else
 eerror
 eerror "Both sys-devel/clang:\${SLOT} and sys-devel/llvm:\${SLOT} must have the"
-eerror "same slot.  LTO enabled for LLVM 11-12 for this series only."
+eerror "same slot.  LTO enabled for LLVM 11-13 for this series only."
 eerror
 			die
 		fi
@@ -1987,6 +2000,7 @@ build_GodotSharp/GodotSharpEditor/bin/${configuration}/GodotSharpEditor.{dll,pdb
 
 src_compile() {
 	local myoptions=()
+	myoptions+=( production=$(usex !debug) )
 	local options_android=(
 		platform=android
 	)
@@ -2011,7 +2025,6 @@ src_compile() {
 		platform=osx
 		osxcross_sdk=${EOSXCROSS_SDK}
 		use_asan=$(usex asan_client)
-		use_lsan=$(usex lsan_client)
 		use_tsan=$(usex tsan_client)
 		use_ubsan=$(usex ubsan_client)
 	)
@@ -2022,6 +2035,7 @@ src_compile() {
 		use_llvm=$(usex clang)
 		use_lto=$(usex lto)
 		use_lsan=$(usex lsan_server)
+		use_msan=$(usex msan_server)
 		use_thinlto=$(usex lto)
 		use_tsan=$(usex tsan_server)
 		use_ubsan=$(usex ubsan_server)
@@ -2031,6 +2045,7 @@ src_compile() {
 		use_llvm=$(usex clang)
 		use_lto=$(usex lto)
 		use_thinlto=$(usex lto)
+		use_asan=$(usex asan_client)
 	)
 	local options_x11=(
 		platform=x11
@@ -2042,12 +2057,14 @@ src_compile() {
 		use_llvm=$(usex clang)
 		use_lto=$(usex lto)
 		use_lsan=$(usex lsan_client)
+		use_msan=$(usex msan_client)
 		use_thinlto=$(usex lto)
 		use_tsan=$(usex tsan_client)
 		use_ubsan=$(usex ubsan_client)
 	)
 	local options_modules_shared=(
 		builtin_bullet=$(usex !system-bullet)
+		builtin_embree=$(usex !system-embree)
 		builtin_enet=$(usex !system-enet)
 		builtin_freetype=$(usex !system-freetype)
 		builtin_libogg=$(usex !system-libogg)
@@ -2075,6 +2092,7 @@ src_compile() {
 	)
 	local options_modules_static=(
 		builtin_bullet=True
+		builtin_embree=True
 		builtin_enet=True
 		builtin_freetype=True
 		builtin_libogg=True
@@ -2116,21 +2134,26 @@ src_compile() {
 		module_csg_enabled=$(usex csg)
 		module_cvtt_enabled=$(usex cvtt)
 		module_dds_enabled=$(usex dds)
+		module_denoise_enabled=$(usex denoise)
 		module_etc_enabled=$(usex etc1)
 		module_enet_enabled=$(usex enet)
 		module_freetype_enabled=$(usex freetype)
 		module_gdnative_enabled=$(usex gdnative)
 		module_gdscript_enabled=$(usex gdscript)
+		module_gltf_enabled=$(usex gltf)
 		module_gridmap_enabled=$(usex gridmap)
 		module_hdr_enabled=$(usex hdr)
 		module_jpg_enabled=$(usex jpeg)
 		module_jsonrpc_enabled=$(usex jsonrpc)
+		module_lightmapper_cpu_enabled=$(usex lightmapper_cpu)
 		module_mbedtls_enabled=$(usex mbedtls)
+		module_minimp3_enabled=$(usex mp3)
 		module_mobile_vr_enabled=$(usex mobile-vr)
 		module_ogg_enabled=$(usex ogg)
 		module_opensimplex_enabled=$(usex opensimplex)
 		module_opus_enabled=$(usex opus)
 		module_pvr_enabled=$(usex pvrtc)
+		module_raycast_enabled=$(usex raycast)
 		module_regex_enabled=$(usex pcre2)
 		module_recast_enabled=$(usex recast)
 		module_squish_enabled=$(usex s3tc)
@@ -2147,6 +2170,7 @@ src_compile() {
 		module_websocket_enabled=$(usex websocket)
 		module_webp_enabled=$(usex webp)
 		module_webrtc_enabled=$(usex webrtc)
+		module_webxr_enabled=$(usex webxr)
 		module_xatlas_enabled=$(usex xatlas)
 		${EGODOT_ADDITIONAL_CONFIG} )
 

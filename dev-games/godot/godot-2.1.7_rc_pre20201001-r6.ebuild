@@ -17,7 +17,7 @@ python-any-r1 scons-utils toolchain-funcs
 DESCRIPTION="Godot Engine - Multi-platform 2D and 3D game engine"
 HOMEPAGE="http://godotengine.org"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
-LICENSE="all-rights-reserved Apache-2.0 BSD BSD-2 CC-BY-3.0 FTL ISC MIT \
+LICENSE="all-rights-reserved Apache-2.0 BSD BSD-2 CC-BY-3.0 FTL ISC MIT
 MPL-2.0 OFL-1.1 openssl RSA Unlicense ZLIB"
 
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
@@ -35,20 +35,20 @@ MPL-2.0 OFL-1.1 openssl RSA Unlicense ZLIB"
 KEYWORDS="~amd64 ~x86"
 PND="${PN}-demo-projects"
 
-# tag 2.1 deterministic / static snapshot / 2.1 branch / 20200203
-EGIT_COMMIT_2_1_DEMOS_SNAPSHOT="7dec39be19f9d8b486a5d4a1dae24e1fb9c848e6"
+# tag 2.1 deterministic / static snapshot / 2.1 branch / 20211105
+EGIT_COMMIT_DEMOS_SNAPSHOT="0b47703fc49fb4c931dc3508377008a296984e9b"
 
 # 2.1 stable
-EGIT_COMMIT_2_1_DEMOS_STABLE="5fe6147a345a9fa75d94cfb84c1bb5221645160c"
+EGIT_COMMIT_DEMOS_STABLE="5fe6147a345a9fa75d94cfb84c1bb5221645160c"
 
 EGIT_COMMIT="89e531d223ef189219e266cc61ea79a7dd2d5f54"
 
 FN_SRC="${EGIT_COMMIT}.zip"
 FN_DEST="${P}.zip"
-FN_SRC_ESN="${EGIT_COMMIT_2_1_DEMOS_SNAPSHOT}.zip" # examples snapshot
-FN_DEST_ESN="${PND}-${EGIT_COMMIT_2_1_DEMOS_SNAPSHOT}.zip"
-FN_SRC_EST="${EGIT_COMMIT_2_1_DEMOS_STABLE}.zip" # examples stable
-FN_DEST_EST="${PND}-${EGIT_COMMIT_2_1_DEMOS_STABLE}.zip"
+FN_SRC_ESN="${EGIT_COMMIT_DEMOS_SNAPSHOT}.zip" # examples snapshot
+FN_DEST_ESN="${PND}-${EGIT_COMMIT_DEMOS_SNAPSHOT:0:7}.zip"
+FN_SRC_EST="${EGIT_COMMIT_DEMOS_STABLE}.zip" # examples stable
+FN_DEST_EST="${PND}-${EGIT_COMMIT_DEMOS_STABLE:0:7}.zip"
 URI_ORG="https://github.com/godotengine"
 URI_PROJECT="${URI_ORG}/godot"
 URI_PROJECT_DEMO="${URI_ORG}/godot-demo-projects"
@@ -102,18 +102,18 @@ REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_OSX}" godot_platforms_osx)
 REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_WEB}" godot_platforms_web)
 REQUIRED_USE+=" "$(gen_required_use_template "${GODOT_WINDOWS}" godot_platforms_windows)
 
-IUSE+=" +3d +advanced-gui +clang debug docs examples-snapshot examples-stable \
+IUSE+=" +3d +advanced-gui +clang +dds debug docs examples-snapshot examples-stable
 +linux lld lto portable server server_dedicated server_headless"
-IUSE+=" +bmp +dds +exr +etc1 +minizip +musepack +pbm +jpeg +mod +ogg +pvrtc \
+IUSE+=" +bmp +dds +exr +etc1 +minizip +musepack +pbm +jpeg +mod +ogg +opus +pvrtc
 +svg +s3tc +speex +theora +vorbis +webm +webp +xml" # encoding/container formats
 IUSE+=" +gdscript +visual-script web" # for scripting languages
 IUSE+=" +gridmap +ik +recast" # for 3d
 IUSE+=" +openssl" # for connections
 IUSE+=" -gamepad +touch" # for input
 IUSE+=" +freetype +pulseaudio +speex" # for libraries
-IUSE+=" system-freetype system-glew system-libmpcdec system-libogg \
-system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp \
-system-openssl system-opus system-recast system-speex \
+IUSE+=" system-freetype system-glew system-libmpcdec system-libogg
+system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp
+system-openssl system-opus system-recast system-speex
 system-squish system-zlib"
 IUSE+=" android"
 IUSE+=" doxygen"
@@ -175,18 +175,49 @@ IOS_SDK_MIN_STORE="14"
 XCODE_SDK_MIN_STORE="12"
 EXPECTED_IOS_SDK_MIN_VERSION_SIM="9"
 EXPECTED_IOS_SDK_MIN_VERSION_=""
-EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.9"
+EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.9" # See https://github.com/godotengine/godot/blob/2.1/platform/osx/detect.py#L80
+JAVA_V="8"
 LIBOGG_V="1.3.3"
 LIBVORBIS_V="1.3.6"
+NDK_V="21"
+
+LLVM_SLOTS=(11 12)
+gen_cdepend_lto_llvm() {
+	local o=""
+	for s in ${LLVM_SLOTS[@]} ; do
+		o+="
+				(
+					sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+					sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+					>=sys-devel/lld-${s}
+				)
+		"
+	done
+	echo -e "${o}"
+}
+
+JDK_DEPEND="
+|| (
+	dev-java/openjdk-bin:${JAVA_V}
+	dev-java/openjdk:${JAVA_V}
+)"
+JRE_DEPEND="
+|| (
+	${JDK_DEPEND}
+	dev-java/openjdk-jre-bin:${JAVA_V}
+)"
+#JDK_DEPEND=" virtual/jdk:${JAVA_V}"
+#JRE_DEPEND=" virtual/jre:${JAVA_V}"
+
 CDEPEND="
-	godot_android_x86? ( >=dev-util/android-ndk-21 )
-	godot_android_x86_64? ( >=dev-util/android-ndk-21 )
-	godot_android_arm64v8? ( >=dev-util/android-ndk-21 )
+	godot_android_x86? ( >=dev-util/android-ndk-${NDK_V} )
+	godot_android_x86_64? ( >=dev-util/android-ndk-${NDK_V} )
+	godot_android_arm64v8? ( >=dev-util/android-ndk-${NDK_V} )
 	godot_platforms_android? (
+		${JDK_DEPEND}
 		dev-util/android-sdk-update-manager
 		>=dev-util/android-ndk-17:=
 		dev-java/gradle-bin
-		dev-java/openjdk:8
 	)
 	godot_platforms_ios? ( sys-devel/osxcross )
 	godot_platforms_osx? ( sys-devel/osxcross )
@@ -195,20 +226,7 @@ CDEPEND="
 CDEPEND_CLANG="
 	clang? (
 		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
-		lto? (
-			|| (
-				(
-					sys-devel/clang:11[${MULTILIB_USEDEP}]
-					sys-devel/llvm:11[${MULTILIB_USEDEP}]
-					>=sys-devel/lld-11
-				)
-				(
-					sys-devel/clang:12[${MULTILIB_USEDEP}]
-					sys-devel/llvm:12[${MULTILIB_USEDEP}]
-					>=sys-devel/lld-12
-				)
-			)
-		)
+		lto? ( || ( $(gen_cdepend_lto_llvm) ) )
 	)"
 CDEPEND_GCC="
 	!clang? ( <sys-devel/gcc-6.0 )"
@@ -280,6 +298,7 @@ BDEPEND+=" ${CDEPEND}
 		${BDEPEND_SANTIZIER}
 	)
 	doxygen? ( app-doc/doxygen )
+	godot_platforms_android? ( ${JDK_DEPEND} )
 	lld? ( sys-devel/lld )
 	lsan_client? (
 		${BDEPEND_SANTIZIER}
@@ -290,6 +309,7 @@ BDEPEND+=" ${CDEPEND}
 	web? ( app-arch/zip )"
 S="${WORKDIR}/godot-${EGIT_COMMIT}"
 RESTRICT="fetch mirror"
+#GEN_DL_MANIFEST=1
 
 # 43757fc - 20170924 - gcc lto fix
 # ec644cc - 20170926 - flto number of jobs and adds llvm+thinlto options
@@ -338,19 +358,23 @@ pkg_pretend() {
 check_android_native()
 {
 	if [[ -z "${ANDROID_NDK_ROOT}" ]] ; then
-		ewarn \
-"ANDROID_NDK_ROOT must be set as a per-package environmental variable pointing\n\
-to the root of the NDK."
+ewarn
+ewarn "ANDROID_NDK_ROOT must be set as a per-package environmental variable"
+ewarn "pointing to the root of the NDK."
+ewarn
 	fi
 	if [[ -z "${ANDROID_HOME}" ]] ; then
-		ewarn \
-"ANDROID_HOME must be set as a per-package environmental variable pointing\n\
-to the root of the SDK."
+ewarn
+ewarn "ANDROID_HOME must be set as a per-package environmental variable"
+ewarn "pointing to the root of the SDK."
+ewarn
 	fi
 	if [[ -z "${EGODOT_ANDROID_API_LEVEL}" ]] ; then
-		die \
-"EGODOT_ANDROID_API_LEVEL must be set as a per-package environmental variable.\n\
-See metadata.xml or \`epkginfo -x godot\` for more info."
+eerror
+eerror "EGODOT_ANDROID_API_LEVEL must be set as a per-package environmental"
+eerror "variable.  See metadata.xml or \`epkginfo -x godot\` for more info."
+eerror
+		die
 	fi
 }
 
@@ -358,9 +382,11 @@ check_android_sandbox()
 {
 	# For gradle wrapper
 	if has network-sandbox $FEATURES ; then
-		die \
-"${PN} requires network-sandbox to be disabled in FEATURES for gradle wrapper\n\
-and the android USE flag."
+eerror
+eerror "${PN} requires network-sandbox to be disabled in FEATURES for gradle"
+eerror "wrapper and the android USE flag."
+eerror
+		die
 	fi
 }
 
@@ -371,9 +397,11 @@ check_emscripten()
 			&& "${EMCC_WASM_BACKEND}" == "0" ) ]] ; then
 		:;
 	else
-		die \
-"You must switch your emscripten to asmjs followed by\n\
-\`source /etc/profile\`.  See \`eselect emscripten\` for details."
+eerror
+eerror "You must switch your emscripten to asmjs followed by"
+eerror "\`source /etc/profile\`.  See \`eselect emscripten\` for details."
+eerror
+		die
 	fi
 
 	if eselect emscripten 2>/dev/null 1>/dev/null ; then
@@ -381,46 +409,62 @@ check_emscripten()
 			| grep -q -F -e "emscripten-fastcomp" ; then
 			:;
 		else
-			die \
-"You must switch your emscripten to asmjs (with emscripten-fastcomp) followed\n\
-by \`source /etc/profile\`.  See \`eselect emscripten\` for details."
+eerror
+eerror "You must switch your emscripten to asmjs (with emscripten-fastcomp)"
+eerror "followed by \`source /etc/profile\`.  See \`eselect emscripten\` for"
+eerror "details."
+eerror
+			die
 		fi
 	fi
 	if [[ -z "${EMSCRIPTEN}" ]] ; then
-		die "EMSCRIPTEN environmental variable must be set"
+eerror
+eerror "EMSCRIPTEN environmental variable must be set"
+eerror
+		die
 	fi
 
 	local emcc_v=$(emcc --version | head -n 1 | grep -E -o -e "[0-9.]+")
 	local emscripten_v=$(echo "${EMSCRIPTEN}" | cut -f 2 -d "-")
 	if [[ "${emcc_v}" != "${emscripten_v}" ]] ; then
-		die \
-"EMCC_V=${emcc_v} != EMSCRIPTEN_V=${emscripten_v}.  A \
-\`eselect emscripten set <#>\` followed by \`source /etc/profile\` \
-are required."
+eerror
+eerror "EMCC_V=${emcc_v} != EMSCRIPTEN_V=${emscripten_v}.  A"
+eerror "\`eselect emscripten set <#>\` followed by \`source /etc/profile\`"
+eerror "are required."
+eerror
+		die
 	fi
 }
 
 check_ios()
 {
 	if [[ -z "${IPHONEPATH}" ]] ; then
-		die \
-"IPHONEPATH must be set as a per-package environmental variable."
+eerror
+eerror "IPHONEPATH must be set as a per-package environmental variable."
+eerror
+		die
 	fi
 	if [[ -z "${IPHONESDK}" ]] ; then
-		die \
-"IPHONESDK must be set as a per-package environmental variable."
+eerror
+eerror "IPHONESDK must be set as a per-package environmental variable."
+eerror
+		die
 	fi
 
 	if [[ -z "${EIOS_SDK_VERSION}" ]] ; then
-		die \
-"EIOS_SDK_VERSION must be defined as a per-package environmental variable.\n\
-See metadata.xml or \`epkginfo -x godot\`for details."
+eerror
+eerror "EIOS_SDK_VERSION must be defined as a per-package environmental"
+eerror "variable.  See metadata.xml or \`epkginfo -x godot\`for details."
+eerror
+		die
 	fi
 
 	if [[ -z "${EXCODE_SDK_VERSION}" ]] ; then
-		die \
-"EXCODE_SDK_VERSION must be defined as a per-package environmental variable.\n\
-See metadata.xml or \`epkginfo -x godot\`for details."
+eerror
+eerror "EXCODE_SDK_VERSION must be defined as a per-package environmental"
+eerror "variable.  See metadata.xml or \`epkginfo -x godot\`for details."
+eerror
+		die
 	fi
 }
 
@@ -428,22 +472,27 @@ check_mingw()
 {
 	if [[ -z "${EGODOT_MINGW32_SYSROOT}" \
 		&& -z "${EGODOT_MINGW64_SYSROOT}" ]] ; then
-		ewarn \
-"EGODOT_MINGW32_SYSROOT or EGODOT_MINGW64_SYSROOT must be specified.\n\
-See metadata.xml or \`epkginfo -x godot\` for details"
+ewarn
+ewarn "EGODOT_MINGW32_SYSROOT or EGODOT_MINGW64_SYSROOT must be specified."
+ewarn "See metadata.xml or \`epkginfo -x godot\` for details"
+ewarn
 	fi
 
 	if [[ -n "${EGODOT_MINGW32_SYSROOT}" ]] ; then
 		if [[ -f "${EGODOT_MINGW32_SYSROOT}/i686-w64-mingw32-gcc" ]] ; then
-			die \
-"${EGODOT_MINGW32_SYSROOT}/i686-w64-mingw32-gcc was not found."
+eerror
+eerror "${EGODOT_MINGW32_SYSROOT}/i686-w64-mingw32-gcc was not found."
+eerror
+			die
 		fi
 	fi
 
 	if [[ -n "${EGODOT_MINGW64_SYSROOT}" ]] ; then
 		if [[ -f "${EGODOT_MINGW64_SYSROOT}/x86_64-w64-mingw32-gcc" ]] ; then
-			die \
-"${EGODOT_MINGW64_SYSROOT}/i686-w64-mingw32-gcc was not found."
+eerror
+eerror "${EGODOT_MINGW64_SYSROOT}/i686-w64-mingw32-gcc was not found."
+eerror
+			die
 		fi
 	fi
 }
@@ -452,32 +501,43 @@ See metadata.xml or \`epkginfo -x godot\` for details"
 check_osxcross()
 {
 	if [[ -z "${OSXCROSS_ROOT}" ]] ; then
-		die \
-"OSXCROSS_ROOT must be set as a per-package environmental variable.  See\n\
-metadata.xml or \`epkginfo -x godot\` for details."
+eerror
+eerror "OSXCROSS_ROOT must be set as a per-package environmental variable.  See"
+eerror "metadata.xml or \`epkginfo -x godot\` for details."
+eerror
+		die
 	fi
 	if which xcrun ; then
-		die \
-"Missing xcrun from the osxcross package."
+eerror
+eerror "Missing xcrun from the osxcross package."
+eerror
+		die
 	fi
 	if [[ -z "${EOSXCROSS_SDK}" ]] ; then
-		die \
-"EOSXCROSS_SDK must be set as a per-package environmental variable.  See\n\
-metadata.xml or \`epkginfo -x godot\` for details."
+eerror
+eerror "EOSXCROSS_SDK must be set as a per-package environmental variable.  See"
+eerror "metadata.xml or \`epkginfo -x godot\` for details."
+eerror
+		die
 	fi
 	if [[ ! -f \
 "${OSXCROSS_ROOT}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc" \
 	   ]] ; then
-		die \
-"Cannot find x86_64-apple-${EOSXCROSS_SDK}-cc.  Fix either OSXCROSS_ROOT \
-(${OSXCROSS_ROOT}) or EOSXCROSS_SDK (${EOSXCROSS_SDK}).  Did not find \
-${OSXCROSS_ROOT}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc"
+eerror
+eerror "Cannot find x86_64-apple-${EOSXCROSS_SDK}-cc.  Fix either OSXCROSS_ROOT"
+eerror "(${OSXCROSS_ROOT}) or EOSXCROSS_SDK (${EOSXCROSS_SDK}).  Did not find"
+eerror "${OSXCROSS_ROOT}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc"
+eerror
+		die
 	fi
 	if use godot_osx_x86_64 ; then
 		if ver_test ${EXCODE_SDK_VERSION} \
 			-lt ${EXPECTED_XCODE_SDK_MIN_VERSION_X86_64} ; then
-			die \
-"${PN} requires Xcode >= ${EXPECTED_XCODE_SDK_MIN_VERSION_X86_64} for x86_64"
+eerror
+eerror "${PN} requires Xcode >= ${EXPECTED_XCODE_SDK_MIN_VERSION_X86_64} for"
+eerror "x86_64."
+eerror
+			die
 		fi
 	fi
 }
@@ -486,51 +546,82 @@ check_store_apl()
 {
 	if use godot_platforms_ios ; then
 		if ver_test ${EIOS_SDK_VERSION} -lt ${IOS_SDK_MIN_STORE} ; then
-			ewarn \
-"Your IOS SDK does not meet minimum store requirements of\n\
->=${IOS_SDK_MIN_STORE} as of ${APST_REQ_STORE_DATE}."
+ewarn
+ewarn "Your IOS SDK does not meet minimum store requirements of"
+ewarn ">=${IOS_SDK_MIN_STORE} as of ${APST_REQ_STORE_DATE}."
+ewarn
 		fi
 	fi
 
 	if use godot_platforms_ios || use godot_platforms_osx ; then
 		if ver_test ${EXCODE_SDK_VERSION} -lt ${APST_REQ_STORE_DATE} ; then
-			ewarn \
-"Your Xcode SDK does not meet minimum store requirements of\n\
->=${XCODE_SDK_MIN_STORE} as of ${APST_REQ_STORE_DATE}."
+ewarn
+ewarn "Your Xcode SDK does not meet minimum store requirements of"
+ewarn ">=${XCODE_SDK_MIN_STORE} as of ${APST_REQ_STORE_DATE}."
+ewarn
 		fi
+	fi
+}
+
+setup_openjdk() {
+	local jdk_bin_basepath
+	local jdk_basepath
+
+	if find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+		export PATH="${JAVA_HOME}/bin:${PATH}"
+	elif find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
+		export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+		export PATH="${JAVA_HOME}/bin:${PATH}"
+	else
+eerror
+eerror "dev-java/openjdk:${JAVA_V} or dev-java/openjdk-bin:${JAVA_V} must be installed."
+eerror
+		die
 	fi
 }
 
 pkg_setup() {
 	if use gdscript ; then
-		ewarn \
-"The gdscript USE flag is untested."
+ewarn
+ewarn "The gdscript USE flag is untested."
+ewarn
 	fi
 	if use godot_platforms_android ; then
-		ewarn \
-"The godot_platforms_android USE flag is untested.  Help test and fix."
+ewarn
+ewarn "The godot_platforms_android USE flag is untested.  Help test and fix."
+ewarn
 		check_android_native
 		check_android_sandbox
+
+		setup_openjdk
+
+		einfo "JAVA_HOME=${JAVA_HOME}"
+		einfo "PATH=${PATH}"
 	fi
 	if use godot_platforms_ios ; then
-		ewarn \
-"The godot_platforms_ios USE flag is untested.  Help test and fix."
+ewarn
+ewarn "The godot_platforms_ios USE flag is untested.  Help test and fix."
+ewarn
 		check_ios
 		check_osxcross
 	fi
 	if use godot_platforms_osx ; then
-		ewarn \
-"The godot_platforms_osx USE flag is untested.  Help test and fix."
+ewarn
+ewarn "The godot_platforms_osx USE flag is untested.  Help test and fix."
+ewarn
 		check_osxcross
 	fi
 	if use godot_platforms_web ; then
-		ewarn \
-"The godot_platforms_web USE flag is a Work In Progress (WIP)."
+ewarn
+ewarn "The godot_platforms_web USE flag is a Work In Progress (WIP)."
+ewarn
 		check_emscripten
 	fi
 	if use godot_platforms_windows ; then
-		ewarn \
-"The godot_platforms_windows USE flag is untested.  Help test and fix."
+ewarn
+ewarn "The godot_platforms_windows USE flag is untested.  Help test and fix."
+ewarn
 		check_mingw
 	fi
 	check_store_apl
@@ -541,16 +632,20 @@ pkg_setup() {
 	if use lto && use clang ; then
 		if has_version "sys-devel/clang:12" \
 			&& has_version "sys-devel/llvm:12" ; then
-			LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
+			LLVM_MAX_SLOT=12
 		elif has_version "sys-devel/clang:11" \
 			&& has_version "sys-devel/llvm:11" ; then
-			LLVM_MAX_SLOT=${LLVM_MAX_LTO_SLOT}
+			LLVM_MAX_SLOT=11
 		else
-			die \
-"Both sys-devel/clang:\${SLOT} and sys-devel/llvm:\${SLOT} must have the same\n\
-slot."
+eerror
+eerror "Both sys-devel/clang:\${SLOT} and sys-devel/llvm:\${SLOT} must have the"
+eerror "same slot.  LTO enabled for LLVM 11-12 for this series only."
+eerror
+			die
 		fi
-		einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
+einfo
+einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
+einfo
 		llvm_pkg_setup
 	fi
 }
@@ -558,43 +653,40 @@ slot."
 pkg_nofetch() {
 	# fetch restriction is on third party packages with all-rights-reserved in code
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	einfo \
-"\n\
-This package contains an all-rights-reserved for several third-party packages\n\
-and a font is fetch restricted because the font doesn't come from the\n\
-originator's site.  Please read:\n\
-https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/all-rights-reserved\n\
-\n\
-If you agree, you may download\n\
-  - ${FN_SRC}\n\
-from ${PN}'s GitHub page which the URL should be\n\
-\n\
-${URI_DL}\n\
-\n\
-at the green download button and rename it to ${FN_DEST} and place them in\n\
-${distdir} or you can \`wget -O ${distdir}/${FN_DEST} ${URI_A}\`\n\
-\n"
-	if use examples-snapshot ; then
-		einfo \
-"\n\
-You also need to obtain the godot-demo-projects snapshot tarball from\n\
-${URI_PROJECT_DEMO}/tree/${EGIT_COMMIT_2_1_DEMOS_SNAPSHOT}\n\
-through the green button > download ZIP and place it in ${distdir} as\n\
-${FN_DEST_ESN} or you can copy and paste the\n\
-below command \`wget -O ${distdir}/${FN_DEST_ESN} \
-${URI_PROJECT_DEMO}/archive/${FN_SRC_ESN}\`\n\
-\n"
+einfo
+einfo "This package contains an all-rights-reserved for several third-party"
+einfo "packages and a font is fetch restricted because the font doesn't come"
+einfo "from the originator's site.  Please read:"
+einfo "https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/all-rights-reserved"
+einfo
+einfo "If you agree, you may download"
+einfo "  - ${FN_SRC}"
+einfo "from ${PN}'s GitHub page which the URL should be"
+einfo
+einfo "${URI_DL}"
+einfo
+einfo "at the green download button and rename it to ${FN_DEST} and place them"
+einfo "in ${distdir} or you can \`wget -O ${distdir}/${FN_DEST} ${URI_A}\`"
+einfo
+	if use examples-snapshot || [[ -n "${GEN_DL_MANIFEST}" ]] ; then
+einfo
+einfo "You also need to obtain the godot-demo-projects snapshot tarball from"
+einfo "${URI_PROJECT_DEMO}/tree/${EGIT_COMMIT_DEMOS_SNAPSHOT}"
+einfo "through the green button > download ZIP and place it in ${distdir} as"
+einfo "${FN_DEST_ESN} or you can copy and paste the"
+einfo "below command \`wget -O ${distdir}/${FN_DEST_ESN} \
+${URI_PROJECT_DEMO}/archive/${FN_SRC_ESN}\`"
+einfo
 	fi
-	if use examples-stable ; then
-		einfo \
-"\n\
-You also need to obtain the godot-demo-projects stable tarball from\n\
-${URI_PROJECT_DEMO}/tree/${EGIT_COMMIT_2_1_DEMOS_STABLE}\n\
-through the green button > download ZIP and place it in ${distdir} as\n\
-${FN_DEST_EST} or you can copy and paste the\n\
-below command \`wget -O ${distdir}/${FN_DEST_EST} \
-${URI_PROJECT_DEMO}/archive/${FN_SRC_EST}\`\n\
-\n"
+	if use examples-stable || [[ -n "${GEN_DL_MANIFEST}" ]] ; then
+einfo
+einfo "You also need to obtain the godot-demo-projects stable tarball from"
+einfo "${URI_PROJECT_DEMO}/tree/${EGIT_COMMIT_DEMOS_STABLE}"
+einfo "through the green button > download ZIP and place it in ${distdir} as"
+einfo "${FN_DEST_EST} or you can copy and paste the"
+einfo "below command \`wget -O ${distdir}/${FN_DEST_EST} \
+${URI_PROJECT_DEMO}/archive/${FN_SRC_EST}\`"
+einfo
 	fi
 }
 
@@ -615,9 +707,9 @@ src_prepare() {
 	platforms_foreach_impl godot_prepare_impl1
 
 	if use examples-stable ; then
-		export S_DEMOS="${WORKDIR}/${PND}-${EGIT_COMMIT_2_1_DEMOS_STABLE}"
+		export S_DEMOS="${WORKDIR}/${PND}-${EGIT_COMMIT_DEMOS_STABLE}"
 	elif use examples-snapshot ; then
-		export S_DEMOS="${WORKDIR}/${PND}-${EGIT_COMMIT_2_1_DEMOS_SNAPSHOT}"
+		export S_DEMOS="${WORKDIR}/${PND}-${EGIT_COMMIT_DEMOS_SNAPSHOT}"
 	fi
 }
 
@@ -936,6 +1028,7 @@ src_compile() {
 		builtin_freetype=$(usex !system-freetype)
 		builtin_glew=$(usex !system-glew)
 		builtin_libmpcdec=$(usex !system-libmpcdec)
+		builtin_libogg=$(usex !system-libogg)
 		builtin_libpng=$(usex !system-libpng)
 		builtin_libtheora=$(usex !system-libtheora)
 		builtin_libvorbis=$(usex !system-libvorbis)
@@ -952,6 +1045,7 @@ src_compile() {
 		builtin_freetype=True
 		builtin_glew=True
 		builtin_libmpcdec=True
+		builtin_libogg=True
 		builtin_libpng=True
 		builtin_libtheora=True
 		builtin_libvorbis=True
@@ -983,6 +1077,7 @@ src_compile() {
 		module_mpc_enabled=$(usex musepack)
 		module_ogg_enabled=$(usex ogg)
 		module_openssl_enabled=$(usex ogg)
+		module_opus_enabled=$(usex opus)
 		module_pbm_enabled=$(usex pbm)
 		module_pvrtc_enabled=$(usex pvrtc)
 		module_recast_enabled=$(usex recast)
@@ -1246,23 +1341,27 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo "2.1.x branch is still supported partially upstream as of 2021."
-	einfo "It's recommended to use 3.x instead."
-	einfo
-	einfo "For details see:"
-	einfo "https://docs.godotengine.org/en/stable/about/release_policy.html"
+einfo
+einfo "2.1.x branch is still supported partially upstream as of 2021."
+einfo "It's recommended to use 3.x instead."
+einfo
+einfo "For details see:"
+einfo "https://docs.godotengine.org/en/stable/about/release_policy.html"
+einfo
 
 	for p in ${EPLATFORMS} ; do
 		if use ${p} ; then
-			einfo \
-"You need to copy the ${p} templates from /usr/share/godot/${SLOT_MAJ}/${p}/templates\n\
-to ~/.local/share/godot/templates or \${XDG_DATA_HOME}/godot/templates"
+einfo
+einfo "You need to copy the ${p} templates from /usr/share/godot/${SLOT_MAJ}/${p}/templates"
+einfo "to ~/.local/share/godot/templates or \${XDG_DATA_HOME}/godot/templates"
+einfo
 		fi
 	done
 
 	if use web ; then
-		einfo \
-"asmjs is deprecated and used as the default for 2.1.x.  Use WASM found on\n\
-the >=3.2 branch."
+einfo
+einfo "asmjs is deprecated and used as the default for 2.1.x.  Use WASM found"
+einfo "on the >=3.2 branch."
+einfo
 	fi
 }
