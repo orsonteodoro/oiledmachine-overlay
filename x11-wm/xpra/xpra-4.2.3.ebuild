@@ -122,7 +122,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	enc_x265? ( >=media-video/ffmpeg-2:0=[x265]
 		      media-libs/x265 )
 	gss? ( dev-python/gssapi[${PYTHON_USEDEP}] )
-	html5-client? ( >=www-apps/xpra-html5-4.2 )
+	html5-client? ( www-apps/xpra-html5 )
 	jpeg? ( >=media-libs/libjpeg-turbo-1.4 )
 	kerberos? ( dev-python/pykerberos[${PYTHON_USEDEP}] )
 	ldap? ( dev-python/python-ldap[${PYTHON_USEDEP}] )
@@ -508,15 +508,15 @@ pkg_postinst() {
 	xdg_pkg_postinst
 	einfo "You need to add yourself to the xpra, tty, dialout groups."
 	if use opengl ; then
-	  einfo "If you are using the amdgpu-pro driver, make sure you are"
-	  einfo "using Mesa GL.  To switch to open-stack Mesa GL do:"
-	  einfo ""
-	  einfo "  eselect opengl set amdgpu"
-	  einfo ""
-	  einfo "or if you're using the Gallium driver try:"
-	  einfo ""
-	  einfo "  eselect opengl set xorg-x11"
-	  einfo ""
+		einfo "If you are using the amdgpu-pro driver, make sure you"
+		einfo "are using Mesa GL.  To switch to open-stack Mesa GL do:"
+		einfo
+		einfo "  eselect opengl set amdgpu"
+		einfo
+		einfo "or if you're using the Gallium driver try:"
+		einfo
+		einfo "  eselect opengl set xorg-x11"
+		einfo
 	fi
 	if use pillow ; then
 		einfo "Manually add jpeg or webp optional USE flags to pillow"
