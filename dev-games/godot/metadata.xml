@@ -50,8 +50,8 @@
     separated folder:command pair in EGODOT_CUSTOM_MODULES_BUILD.  
     Details about custom modules can be found at:
 
-https://docs.godotengine.org/en/3.2/development/cpp/custom_modules_in_cpp.html
-https://docs.godotengine.org/en/2.1/development/cpp/custom_modules_in_cpp.html
+https://docs.godotengine.org/en/3.4/development/cpp/custom_modules_in_cpp.html
+https://docs.godotengine.org/en/3.3/development/cpp/custom_modules_in_cpp.html
 
     Consider making a custom local ebuild of your custom C++ module
     instead to reduce compile times because it is not required to keep
@@ -136,9 +136,13 @@ https://docs.godotengine.org/en/2.1/development/cpp/custom_modules_in_cpp.html
       dev-games/godot godot.conf
   </longdescription>
   <upstream>
+<!--
+End of Life details can be found at
+https://docs.godotengine.org/en/stable/about/release_policy.html#release-support-timeline
+-->
     <doc lang="en">https://docs.godotengine.org/en/stable/</doc>
-    <doc lang="en">https://docs.godotengine.org/en/3.2/</doc>
-    <doc lang="en">https://docs.godotengine.org/en/2.1/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/3.4/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/3.3/</doc>
     <doc lang="de">https://docs.godotengine.org/de/latest/</doc>
     <doc lang="es">https://docs.godotengine.org/es/latest/</doc>
     <doc lang="fi">https://docs.godotengine.org/fi/latest/</doc>
