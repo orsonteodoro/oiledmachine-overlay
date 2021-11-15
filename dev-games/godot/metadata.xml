@@ -176,6 +176,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="advanced-gui">Enables the advanced GUI.</flag>
     <flag name="bullet">Enables support for the Bullet 3D physics engine.</flag>
     <flag name="bmp">Enables support for bitmap images.</flag>
+    <flag name="camera">Enables camera support on non-native platforms.</flag>
     <flag name="clang">Compiles the software using clang and LLVM.</flag>
     <flag name="closure-compiler">Enables minifying JavaScript code</flag>
     <flag name="csg">Enables use of Constructive Solid Geometry used to produce
@@ -183,6 +184,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       operations.</flag>
     <flag name="cvtt">Enables use for BPTC texture
       compression / decompression.</flag>
+    <flag name="denoise">Enables the denoiser module to improve lightmap
+      generation quality.</flag>
     <flag name="dds">Enables support for DDS (DirectDraw Surface) format and
       loading BCn compressed (DXT1, DXT2, DXT3, DXT4, DXT5) textures.</flag>
     <flag name="debug">Enables debugging support.  Disabling builds as
@@ -207,6 +210,12 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="gdscript">Enables the Python like scripting language.</flag>
     <flag name="gdscript_lsp">Enables Language Server Protocol for (LSP)
       for GDScript for improved IDE features like code completion.</flag>
+    <flag name="gltf">Enables support for the glTF interchange format to
+      import or export 3D models or scenes between Godot and 3D editor
+      programs to make changes to them on either editor side or Godot
+      side.  Overview details can be found in the documentation and at
+https://godotengine.org/article/introducing-the-godot-gltf-2-0-scene-exporter
+      </flag>
     <flag name="gridmap">Enables support for gridmaps for 3D level making
       similar to tile maps but for 3D.</flag>
     <flag name="hdr">Enables support for HDR images.</flag>
@@ -227,6 +236,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       threads.</flag>
     <flag name="jsonrpc">Enables support JSON-RPC for GDScript LSP.</flag>
     <flag name="jpeg">Enables JPEG support.</flag>
+    <flag name="lightmapper_cpu">Enables building the a new lightmap generator
+      module.</flag>
     <flag name="lld">Uses the LLD linker for faster linking.  Disable to
       fall back to the gold linker when using LTO.</flag>
     <flag name="lsan_client">Enables LSAN for Linux client and editor for
@@ -245,6 +256,11 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       available in the 2.1 slot.</flag>
     <flag name="mono">Enables C# scripting support.</flag>
     <flag name="mono_pregen_assemblies">Pregenerates Godot API assemblies</flag>
+    <flag name="mp3">Enables MP3 support.</flag>
+    <flag name="msan_client">Enables MSAN for Linux client and editor for
+      reporting but not necessarily fixing uninitialized variables.</flag>
+    <flag name="msan_server">Enables MSAN for Linux server builds for reporting
+       but not necessarily fixing uninitialized variables.</flag>
     <flag name="musepack">Enables support for Musepack audio files.</flag>
     <flag name="ogg">Enables support for the Ogg container format.</flag>
     <flag name="opus">Enables Opus voice compression support used in used in
@@ -270,6 +286,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       translations.</flag>
     <flag name="python_targets_python3_9">For generating docs and
       translations.</flag>
+    <flag name="raycast">Build the module for occlusion culling with 3 levels
+      of quality.</flag>
     <flag name="recast">Enable mesh generation for 3D games.</flag>
     <flag name="rst">This configure option is related to rst documentation.</flag>
     <flag name="s3tc">Enables DXT compression.</flag>
@@ -356,6 +374,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="webp">Enables support for the WebP image format.</flag>
     <flag name="webrtc">Enables support for direct Peer-to-Peer (P2P)
       support.</flag>
+    <flag name="webxr">Enables WebXR support.</flag>
     <flag name="websocket">Enables support for the WebSocket protocol.</flag>
     <flag name="xml">Enables XML support.</flag>
     <flag name="X">Enables building the editor with X support.</flag>

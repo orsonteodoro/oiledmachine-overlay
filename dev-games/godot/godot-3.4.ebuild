@@ -90,12 +90,13 @@ mono? (
 SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
 
-# webxr is enabled upstream by default
-IUSE+=" +3d +advanced-gui clang camera +dds debug +denoise docs examples-snapshot examples-stable
-examples-live jit +lightmapper_cpu +linux lld lto +neon +optimize-speed +opensimplex
-optimize-size portable +raycast server server_dedicated server_headless webxr"
-IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc +theora
-+tga +vorbis +webm webm-simd +webp" # encoding/container formats
+# webxr, camera is enabled upstream by default
+IUSE+=" +3d +advanced-gui camera clang +dds debug +denoise docs
+examples-snapshot examples-stable examples-live jit +lightmapper_cpu +linux lld
+lto +neon +optimize-speed +opensimplex optimize-size portable +raycast server
+server_dedicated server_headless webxr"
+IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
++theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
 
 GODOT_ANDROID_=(arm7 arm64v8 x86 x86_64)
 GODOT_IOS_=(arm armv7 armv64 x86 x86_64)
@@ -194,6 +195,8 @@ REQUIRED_USE+="
 	godot_web_wasm32? ( !lto )
 	abi_x86_32? ( godot_linux_x86 godot_platforms_linux )
 	abi_x86_64? ( godot_linux_x86_64 godot_platforms_linux )
+	camera? ( godot_platforms_osx )
+	denoise? ( lightmapper_cpu )
 	docs? ( || ( doxygen rst ) )
 	examples-live? ( !examples-snapshot !examples-stable )
 	examples-snapshot? ( !examples-live !examples-stable )
