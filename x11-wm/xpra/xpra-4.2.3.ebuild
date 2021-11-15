@@ -224,8 +224,12 @@ BDEPEND+=" ${PYTHON_DEPS}
 	doc? ( app-text/pandoc )
 	test? ( dev-python/numpy[${PYTHON_USEDEP}] )
 	virtual/pkgconfig"
-PATCHES=( "${FILESDIR}/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch"
-	  "${FILESDIR}/${PN}-3.0_rc1-ldconfig-skip.patch"
+PATCHES=( "${FILESDIR}/${PN}-3.0.2_ignore-gentoo-no-compile.patch"
+	  "${FILESDIR}/${PN}-4.2-suid-warning.patch"
+	  "${FILESDIR}/${PN}-4.2.2-true-false-bin-path.patch"
+	  "${FILESDIR}/${PN}-4.2.3-dup-ip.patch"
+	  "${FILESDIR}/${PN}-4.2.2-bad-tests.patch"
+	  "${FILESDIR}/${PN}-4.2.3-ldconfig-skip.patch"
 	  "${FILESDIR}/${PN}-4.2.2-openrc-init-fix-v3.patch"
 	  "${FILESDIR}/${PN}-4.1.3-change-init-config-path.patch"
 	  "${FILESDIR}/${PN}-4.2-udev-path.patch" )
