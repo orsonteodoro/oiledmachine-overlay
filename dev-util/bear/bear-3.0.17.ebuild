@@ -19,7 +19,7 @@ CDEPEND=" >=net-libs/grpc-1.26[${MULTILIB_USEDEP}]
 DEPEND+=" ${CDEPEND}
 	  >=dev-cpp/nlohmann_json-3.7.3[${MULTILIB_USEDEP}]
 	  >=dev-libs/libfmt-6.1[${MULTILIB_USEDEP}]
-	  >=dev-libs/spdlog-1.5[${MULTILIB_USEDEP}]"
+	  >=dev-libs/spdlog-1.5[${MULTILIB_USEDEP}]" # The libfmt requirement is based on the CMakeLists.txt differing from the INSTALL.md requiring 6.2.
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
 	>=dev-util/cmake-3.12
@@ -52,10 +52,19 @@ src_prepare() {
 }
 
 src_configure() {
+	local nabis=0
+	for a in $(multilib_get_enabled_abis) ; do
+		nabis=$((${nabis} + 1))
+	done
 	local mycmakeargs=(
 		-DENABLE_UNIT_TESTS=$(usex test)
 		-DENABLE_FUNC_TESTS=$(usex test)
 	)
+	if (( ${nabis} > 1 )) ; then
+		mycmakeargs+=( -DENABLE_MULTILIB=ON  )
+	else
+		mycmakeargs+=( -DENABLE_MULTILIB=OFF  )
+	fi
 	cmake-multilib_src_configure
 }
 
