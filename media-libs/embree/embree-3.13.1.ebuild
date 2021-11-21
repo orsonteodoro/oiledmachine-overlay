@@ -170,12 +170,25 @@ src_prepare() {
 
 src_configure() {
 	if use clang; then
-		strip-flags
-		filter-flags "-frecord-gcc-switches"
-		filter-ldflags "-Wl,--as-needed"
-		filter-ldflags "-Wl,-O1"
-		filter-ldflags "-Wl,--defsym=__gentoo_check_ldflags__=0"
+		strip-unsupported-flags
 	fi
+
+	if tc-is-clang && !use clang ; then
+		eerror
+		eerror "Enable the clang USE flag or switch to GCC."
+		eerror
+		die
+	fi
+
+	# NOTE: You can make embree accept custom CXXFLAGS by turning off
+	# EMBREE_IGNORE_CMAKE_CXX_FLAGS. However, the linking will fail if you use
+	# any "march" compile flags. This is because embree builds modules for the
+	# different supported ISAs and picks the correct one at runtime.
+	# "march" will pull in cpu instructions that shouldn't be in specific modules
+	# and it fails to link properly.
+	# https://github.com/embree/embree/issues/115
+
+	filter-flags -march=*
 
 # FIXME:
 #	any option with a comment # default at the end of the line is
