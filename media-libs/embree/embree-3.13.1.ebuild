@@ -19,7 +19,7 @@ avx512skx:avx512skx )
 ARM_CPU_FLAGS=( neon:neon )
 CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_} )
-IUSE+=" clang debug doc doc-docfiles doc-html doc-images doc-man gcc icc ispc
+IUSE+=" clang custom-cflags debug doc doc-docfiles doc-html doc-images doc-man gcc icc ispc
 raymask -ssp static-libs +tbb tutorials ${CPU_FLAGS[@]%:*}"
 REQUIRED_USE+=" ^^ ( clang gcc icc )"
 MIN_CLANG_V="3.3" # for c++11
@@ -169,15 +169,21 @@ src_prepare() {
 }
 
 src_configure() {
-	if use clang; then
-		strip-unsupported-flags
-	fi
+	strip-unsupported-flags
 
-	if tc-is-clang && !use clang ; then
+	if tc-is-clang && ! use clang ; then
 		eerror
 		eerror "Enable the clang USE flag or switch to GCC."
 		eerror
 		die
+	fi
+
+	if ! use custom-cflags ; then
+		strip-flags
+		filter-flags "-frecord-gcc-switches"
+		filter-ldflags "-Wl,--as-needed"
+		filter-ldflags "-Wl,-O1"
+		filter-ldflags "-Wl,--defsym=__gentoo_check_ldflags__=0"
 	fi
 
 	# NOTE: You can make embree accept custom CXXFLAGS by turning off
