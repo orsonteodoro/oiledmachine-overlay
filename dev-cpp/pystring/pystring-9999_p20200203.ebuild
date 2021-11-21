@@ -64,7 +64,6 @@ src_configure() {
 	else
 		strip-flags
 		filter-flags -O*
-		sed -i -e "s|CXXFLAGS =|CXXFLAGS = ${CXXFLAGS}|g" Makefile || die
 	fi
 }
 
