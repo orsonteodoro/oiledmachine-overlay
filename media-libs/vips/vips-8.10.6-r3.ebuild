@@ -276,8 +276,7 @@ sys-devel/clang:\${SLOT}, \
 		einfo "ctarget=${ctarget}"
 		export CC=${ctarget}-clang
 		export CXX=${ctarget}-clang++
-		filter-flags -frename-registers
-		strip-flags
+		strip-unsupported-flags
 		filter-flags -g \
 			-fsanitize=* \
 			-fomit-frame-pointer \

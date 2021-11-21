@@ -276,9 +276,7 @@ _apply_env()
 }
 
 _strip_flags() {
-	if tc-is-clang ; then
-		filter-flags -frename-registers
-	fi
+	strip-unsupported-flags
 	# sync below
 	filter-flags -g \
 		-fsanitize=* \
