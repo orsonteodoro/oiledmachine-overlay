@@ -350,7 +350,7 @@ KEYWORDS="amd64 arm64 ~x86"
 CPU_FLAGS_ARM=( neon )
 CPU_FLAGS_X86=( ssse3 sse4_2 )
 IUSE="${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_} ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_} component-build cups -debug +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid -system-ffmpeg -system-icu -system-harfbuzz +vaapi wayland widevine"
-IUSE+=" weston"
+IUSE+=" weston r2"
 # What is considered a proprietary codec can be found at:
 #   https://github.com/chromium/chromium/blob/94.0.4606.71/media/filters/BUILD.gn#L160
 #   https://github.com/chromium/chromium/blob/94.0.4606.71/media/media_options.gni#L38
@@ -2362,7 +2362,6 @@ eerror
 		third_party/tflite
 		third_party/tflite/src/third_party/eigen3
 		third_party/tflite/src/third_party/fft2d
-		third_party/tflite-support
 		third_party/ruy
 		third_party/six
 		third_party/ukey2
@@ -3845,7 +3844,7 @@ ewarn
 	if use pgo ; then
 		if ! is_profdata_compatible ; then
 			eerror
-			eerror "Profraw compatibility:"
+			eerror "Profdata compatibility:"
 			eerror
 			eerror "The PGO profile is not compatible with this version of LLVM."
 			eerror "Expected:  $(get_pregenerated_profdata_version)"
@@ -3859,7 +3858,7 @@ ewarn
 			die
 		else
 			einfo
-			einfo "Profraw compatibility:"
+			einfo "Profdata compatibility:"
 			einfo
 			einfo "Expected:  $(get_pregenerated_profdata_version)"
 			einfo "Found:  ${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
