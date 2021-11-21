@@ -22,7 +22,7 @@ inherit multilib-minimal
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
 PATCHSET="4"
-PATCHSET_NAME="chromium-95-patchset-${PATCHSET}"
+PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
 CIPD_V="8e9b0c80860d00dfe951f7ea37d74e210d376c13" # in \
 # third_party/depot_tools/cipd_client_version
 MTD_V="${PV}"
@@ -31,7 +31,6 @@ CTDM_V="${PV}"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
-	https://github.com/chromium/chromium/commit/a4de986102a45e29c3ef596f22704bdca244c26c.patch -> ${PN}-a4de986.patch
 	pgo-full? (
 		amd64? ( https://chrome-infra-packages.appspot.com/client?platform=linux-amd64&version=git_revision:${CIPD_V} -> .cipd_client-amd64-${CIPD_V} )
 		arm64? ( https://chrome-infra-packages.appspot.com/client?platform=linux-arm64&version=git_revision:${CIPD_V} -> .cipd_client-arm64-${CIPD_V} )
@@ -51,8 +50,6 @@ SRC_URI="
 		)
 	)
 "
-
-
 
 # Some assets encoded by proprietary-codecs (mp3, aac, h264) are found in both
 #   ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
@@ -178,13 +175,13 @@ LICENSE_BENCHMARK_WEBSITES="
 	)
 " # emerge does not understand ^^ in the LICENSE variable and have been replaced
 # with ||.  You should choose at most one at some instances.
-# GEN_ABOUT_CREDITS=1 # Uncomment to generate about_credits.html including bundled.
+#GEN_ABOUT_CREDITS=1 # Uncomment to generate about_credits.html including bundled.
 # SHA512 about_credits.html fingerprint:
 LICENSE_FINGERPRINT="\
-44ed73089efaab964695696547e9936c2ed8ad66d894412a1456365cc19a71f3\
-245217f2ca433def6505e3f8203881a5aba41bd87e84a15245e08e3befa98f5d"
+5c573dd14cb9a411d2a85021a0924b8ce39a50f4ab7da07f0a580cd69473e51e\
+0f59ab282f848bb1cf35f000a55e9121469c838c9a371b22cd8eaed5c968e8a0"
 LICENSE="BSD
-	chromium-95.0.4638.x
+	chromium-96.0.4664.x
 	APSL-2
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -353,7 +350,7 @@ KEYWORDS="amd64 arm64 ~x86"
 CPU_FLAGS_ARM=( neon )
 CPU_FLAGS_X86=( ssse3 sse4_2 )
 IUSE="${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_} ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_} component-build cups -debug +hangouts headless +js-type-check kerberos +official pic +proprietary-codecs pulseaudio screencast selinux +suid -system-ffmpeg -system-icu -system-harfbuzz +vaapi wayland widevine"
-IUSE+=" weston r2"
+IUSE+=" weston"
 # What is considered a proprietary codec can be found at:
 #   https://github.com/chromium/chromium/blob/94.0.4606.71/media/filters/BUILD.gn#L160
 #   https://github.com/chromium/chromium/blob/94.0.4606.71/media/media_options.gni#L38
@@ -864,7 +861,7 @@ BDEPEND="
 	')
 	>=app-arch/gzip-1.7
 	dev-lang/perl
-	<dev-util/gn-0.1943
+	>=dev-util/gn-0.1807
 	dev-vcs/git
 	>=dev-util/gperf-3.0.3
 	>=dev-util/ninja-1.7.2
@@ -1246,7 +1243,7 @@ ewarn "currently have ${total_memory} GiB of total memory."
 ewarn
 	else
 einfo
-einfo "Total memory is sufficient (>= ${required_total_memory} GiB."
+einfo "Total memory is sufficient (>= ${required_total_memory} GiB met)."
 einfo
 	fi
 
@@ -1365,15 +1362,19 @@ _get_release_hash() {
 _get_llvm_timestamp() {
 	if [[ -z "${emerged_llvm_commit}" ]] ; then
 		# Should check against the llvm milestone if not live
-		v=$(ver_cut 1-3 "${pv}")
+		v=$(ver_cut 1-3 "${pv/llvm-}")
+		einfo "v=${v}"
 		local suffix=""
 		if [[ "${pv}" =~ "_rc" ]] ; then
 			suffix=$(echo "${pv}" | grep -E -o -e "_rc[0-9]+")
 			suffix=${suffix//_/-}
 		fi
 		v="${v}${suffix}"
+		einfo "v=${v}"
 		emerged_llvm_commit=$(_get_release_hash ${v})
+		einfo "emerged_llvm_commit=${emerged_llvm_commit}"
 	fi
+	einfo "emerged_llvm_commit=${emerged_llvm_commit}"
 	if [[ -z "${emerged_llvm_timestamps[${emerged_llvm_commit}]}" ]] ; then
 		einfo "Fetching timestamp for ${emerged_llvm_commit}"
 		# Uncached
@@ -1454,7 +1455,7 @@ verify_llvm_report_card() {
 			fi
 			local p_=${p//-/_}
 			p_=${p_//\//_}
-			if (( ${llvm_packages_status[${p_}]} == 1 )) ; then
+			if [[ -z "${llvm_packages_status[${p_}]}" ]] || (( ${llvm_packages_status[${p_}]} == 1 )) ; then
 				if contains_slotted_major_version "${p}" ; then
 					LLVM_REPORT_CARDS[${llvm_slot}]+="emerge -1v ${p}:${llvm_slot}\n"
 				elif contains_slotted_triple_version "${p}" ; then
@@ -1508,6 +1509,8 @@ verify_llvm_toolchain() {
 
 	local old_triple_slot_packages=()
 
+	[[ -z "${llvm_slot}" ]] && die "llvm_slot is empty"
+
 	local pass=0
 	local needs_emerge=0
 	# The llvm library or llvm-ar doesn't embed the hash info, so scan the /var/db/pkg.
@@ -1534,22 +1537,36 @@ verify_llvm_toolchain() {
 			if contains_slotted_major_version "${p}" ; then
 				einfo
 				einfo "Checking ${p}:${llvm_slot}"
-				emerged_llvm_commit=$(bzcat \
-					"${ESYSROOT}/var/db/pkg/${p}-${llvm_slot}"*"/environment.bz2" \
-					| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
-				pv=$(cat "${ESYSROOT}/var/db/pkg/${p}-${llvm_slot}"*"/PF" | sed "s|${p}-||")
-				_get_llvm_timestamp
-				[[ "${p}" == "sys-devel/llvm" ]] \
-					&& LLVM_TIMESTAMP=${emerged_llvm_timestamp}
+				local path=$(realpath "${ESYSROOT}/var/db/pkg/${p}-${llvm_slot}"*"/environment.bz2")
+				if [[ -e "${path}" ]] ; then
+					emerged_llvm_commit=$(bzcat \
+						"${path}" \
+						| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
+					pv=$(cat "${ESYSROOT}/var/db/pkg/${p}-${llvm_slot}"*"/PF" | sed "s|${p}-||")
+					_get_llvm_timestamp
+					[[ "${p}" == "sys-devel/llvm" ]] \
+						&& LLVM_TIMESTAMP=${emerged_llvm_timestamp}
+				else
+					ewarn "Missing ${p}:${llvm_slot}"
+					p="sys-devel/llvm"
+					emerged_llvm_timestamp=$(( ${CR_CLANG_USED_UNIX_TIMESTAMP} -1 ))
+				fi
 				_check_llvm_updated
 			elif contains_slotted_zero "${p}" ; then
 				einfo
 				einfo "Checking ${p}:0"
-				emerged_llvm_commit=$(bzcat \
-					"${ESYSROOT}/var/db/pkg/${p}"*"/environment.bz2" \
-					| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
-				pv=$(cat "${ESYSROOT}/var/db/pkg/${p}"*"/PF" | sed "s|${p}-||")
-				_get_llvm_timestamp
+				local path=$(realpath "${ESYSROOT}/var/db/pkg/${p}"*"/environment.bz2")
+				if [[ -e "${path}" ]] ; then
+					emerged_llvm_commit=$(bzcat \
+						"${path}" \
+						| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
+					pv=$(cat "${ESYSROOT}/var/db/pkg/${p}"*"/PF" | sed "s|${p}-||")
+					_get_llvm_timestamp
+				else
+					ewarn "Missing ${p}:${llvm_slot}"
+					p="sys-devel/llvm"
+					emerged_llvm_timestamp=$(( ${CR_CLANG_USED_UNIX_TIMESTAMP} -1 ))
+				fi
 				_check_llvm_updated
 			else
 				local category=${p/\/*}
@@ -1563,15 +1580,19 @@ verify_llvm_toolchain() {
 					-type d \
 					-regextype "posix-extended" \
 					-regex ".*${pn}-${llvm_slot}.[0-9.]+") ; do
-					einfo
-					einfo "Checking ="$(basename ${mp})
-					emerged_llvm_commit=$(bzcat \
-						"${mp}/environment.bz2" \
-						| grep -F -e "EGIT_VERSION" \
-						| head -n 1 \
-						| cut -f 2 -d '"')
-					pv=$(cat "${mp}/PF" | sed "s|${p}-||")
-					_get_llvm_timestamp
+					local path=$(realpath "${mp}/environment.bz2")
+					if [[ -e "${path}" ]] ; then
+						emerged_llvm_commit=$(bzcat \
+							"${path}" \
+							| grep -F -e "EGIT_VERSION" \
+							| head -n 1 \
+							| cut -f 2 -d '"')
+						pv=$(cat "${mp}/PF" | sed "s|${p}-||")
+						_get_llvm_timestamp
+					else
+						ewarn "Missing ${p}:${llvm_slot}"
+						emerged_llvm_timestamp=$(( ${CR_CLANG_USED_UNIX_TIMESTAMP} -1 ))
+					fi
 					_check_llvm_updated_triple
 				done
 			fi
@@ -2088,14 +2109,11 @@ ewarn
 	fi
 
 	PATCHES+=(
-		"${FILESDIR}/chromium-93-EnumTable-crash.patch"
 		"${FILESDIR}/chromium-93-InkDropHost-crash.patch"
-		"${FILESDIR}/chromium-95-maldoca-zlib.patch"
-		"${FILESDIR}/chromium-95-eigen-avx-1.patch"
-		"${FILESDIR}/chromium-95-eigen-avx-2.patch"
-		"${FILESDIR}/chromium-95-eigen-avx-3.patch"
-		"${FILESDIR}/chromium-95-harfbuzz-3.patch"
-		"${FILESDIR}/chromium-95-xfce-maximize.patch"
+		"${FILESDIR}/chromium-96-EnumTable-crash.patch"
+		"${FILESDIR}/chromium-96-freetype-unbundle.patch"
+		"${FILESDIR}/chromium-96-xfce-maximize.patch"
+		"${FILESDIR}/chromium-glibc-2.34.patch"
 		"${FILESDIR}/chromium-use-oauth2-client-switches-as-default.patch"
 		"${FILESDIR}/chromium-shim_headers.patch"
 	)
@@ -2106,19 +2124,15 @@ ewarn
 	fi
 
 	if use clang ; then
-		ceapply "${FILESDIR}/${PN}-92-clang-toolchain-1.patch"
-		ceapply "${FILESDIR}/${PN}-92-clang-toolchain-2.patch"
+		ceapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-1.patch"
+		ceapply "${FILESDIR}/extra-patches/${PN}-92-clang-toolchain-2.patch"
 	fi
 
 	if use arm64 && use shadowcallstack ; then
-		ceapply "${FILESDIR}/chromium-94-arm64-shadow-call-stack.patch"
+		ceapply "${FILESDIR}/extra-patches/chromium-94-arm64-shadow-call-stack.patch"
 	fi
 
-	if use vaapi ; then
-		ceapply "${DISTDIR}/${PN}-a4de986.patch"
-	fi
-
-	ceapply "${FILESDIR}/chromium-95.0.4638.54-zlib-selective-simd.patch"
+	ceapply "${FILESDIR}/extra-patches/chromium-95.0.4638.54-zlib-selective-simd.patch"
 
 	default
 
@@ -2229,6 +2243,7 @@ eerror
 		third_party/devtools-frontend/src/front_end/third_party/wasmparser
 		third_party/devtools-frontend/src/test/unittests/front_end/third_party/i18n
 		third_party/devtools-frontend/src/third_party
+		third_party/distributed_point_functions
 		third_party/dom_distiller_js
 		third_party/eigen3
 		third_party/emoji-segmenter
@@ -3526,9 +3541,7 @@ ewarn
 	# Use system-provided libraries.
 	# TODO: freetype -- remove sources (https://bugs.chromium.org/p/pdfium/issues/detail?id=733).
 	# TODO: use_system_hunspell (upstream changes needed).
-	# TODO: use_system_libsrtp (bug #459932).
 	# TODO: use_system_protobuf (bug #525560).
-	# TODO: use_system_ssl (http://crbug.com/58087).
 	# TODO: use_system_sqlite (http://crbug.com/22208).
 
 	# libevent: https://bugs.gentoo.org/593458
@@ -4424,16 +4437,16 @@ pkg_postinst() {
 		elog "to CHROMIUM_FLAGS in /etc/chromium/default."
 	fi
 
-einfo
-einfo "By default, the /usr/bin/chromium and /usr/bin/chromedriver symlinks are"
-einfo "set to the last ABI installed.  You must change it manually if you want"
-einfo "to run on a different default ABI."
-einfo
-einfo "Examples:"
-einfo
-einfo "  ln -sf /usr/lib64/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-einfo "  ln -sf /usr/lib/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-einfo "  ln -sf /usr/lib32/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-einfo "  ln -sf /usr/lib32/chromium-browser/chromedriver-${ABI} /usr/bin/chromedriver"
-einfo
+	einfo
+	einfo "By default, the /usr/bin/chromium and /usr/bin/chromedriver symlinks are"
+	einfo "set to the last ABI installed.  You must change it manually if you want"
+	einfo "to run on a different default ABI."
+	einfo
+	einfo "Examples:"
+	einfo
+	einfo "  ln -sf /usr/lib64/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+	einfo "  ln -sf /usr/lib/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+	einfo "  ln -sf /usr/lib32/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+	einfo "  ln -sf /usr/lib32/chromium-browser/chromedriver-${ABI} /usr/bin/chromedriver"
+	einfo
 }
