@@ -17,9 +17,9 @@ KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 
 # In Aug 7, we switching back to stable which is sufficient for security standards
 
-# 10/29/2021 - 95.7.14+g9f72f35+chromium-95.0.4638.69 / Chromium 95.0.4638.69
-CHROMIUM_V="95.0.4638.69" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
-CEF_COMMIT="g9f72f35" # same as https://bitbucket.org/chromiumembedded/cef/commits/
+# 11/19/2021 - 96.0.14+g28ba5c8+chromium-96.0.4664.55 / Chromium 96.0.4664.55
+CHROMIUM_V="96.0.4664.55" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
+CEF_COMMIT="g28ba5c8" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 TARBALL_SUFFIX="" # can be _beta or "" (stable)
 SRC_URI="
 	x86? (
@@ -48,8 +48,8 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/95.0.4638.69/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/95.0.4638.69/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/96.0.4664.55/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/96.0.4664.55/build/install-build-deps.sh#L151
 # TODO: app-accessibility/speech-dispatcher needs multilib
 GLIB_V="2.48"
 XI_V="1.7.6"
@@ -153,8 +153,10 @@ S_abi() {
 pkg_setup() {
 	if use test ; then
 		if [[ "${FEATURES}" =~ sandbox ]] ; then
-			die \
-"-sandbox must be added to FEATURES to use the test USE flag."
+eerror
+eerror "-sandbox must be added to FEATURES to use the test USE flag."
+eerror
+			die
 		fi
 		ewarn \
 "The test is expected to fail.  To install, add test-fail-continue to\n\
@@ -175,7 +177,7 @@ src_prepare() {
 }
 
 src_configure() {
-	strip-flags
+	strip-unsupported-flags
 	filter-flags -march=* -O*
 
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
@@ -194,7 +196,9 @@ src_configure() {
 	}
 	multilib_foreach_abi configure_abi
 	if use test ; then
-		ewarn "Adding sandbox exceptions for GPU"
+ewarn
+ewarn "Adding sandbox exceptions for the GPU."
+ewarn
 		for d in /dev/dri/card*; do
 			einfo "addwrite ${d}"
 			addwrite "${d}"
@@ -250,18 +254,18 @@ src_install() {
 }
 
 pkg_postinst() {
-	ewarn
-	ewarn "Security notice:"
-	ewarn "This package needs to be updated at the same time as your Chromium web browser"
-	ewarn "to avoid the same critical vulnerabilities."
-	ewarn
-	ewarn "The cefclient, cefsimple, and programs linked to it are not CFI protected."
-	ewarn "This issue will be looked into at later may be resolved."
-	ewarn
-	ewarn "Even though it may be resolved it will still not get full protection."
-	ewarn "cfi-icall would be disabled for some parts.  shadow-call-stack"
-	ewarn "(backward edge protection) is unknown."
-	ewarn
-	ewarn "For full protection, use the regular browser bin package instead."
-	ewarn
+ewarn
+ewarn "Security notice:"
+ewarn "This package needs to be updated at the same time as your Chromium web"
+ewarn "browser to avoid the same critical vulnerabilities."
+ewarn
+ewarn "The cefclient, cefsimple, and programs linked to it are not CFI"
+ewarn "protected.  This issue will be looked into at later may be resolved."
+ewarn
+ewarn "Even though it may be resolved it will still not get full protection."
+ewarn "cfi-icall would be disabled for some parts.  shadow-call-stack"
+ewarn "(backward edge protection) is unknown."
+ewarn
+ewarn "For full protection, use the regular browser bin package instead."
+ewarn
 }
