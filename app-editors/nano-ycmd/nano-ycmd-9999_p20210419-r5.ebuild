@@ -27,7 +27,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	ycm-generator? ( || ( bear ninja ) )"
 LIB_DEPEND="
 	!ncurses? ( slang? ( sys-libs/slang:=[static-libs(+)] ) )
-	>=sys-libs/ncurses-5.9-r1:0=[unicode?]
+	>=sys-libs/ncurses-5.9-r1:0=[unicode(+)]
 	sys-libs/ncurses:0=[static-libs(+)]
 	magic? ( sys-apps/file:=[static-libs(+)] )
 	nls? ( virtual/libintl )"
