@@ -28,12 +28,12 @@ PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
 PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
 PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant / newest
 PATCH_KCP_COMMIT="ff1381103099207c61c0e8426e82eabbb2808b04"
-PATCH_LRU_GEN_COMMIT_A_PARENT="7d2a07b769330c34b4deabeed939325c77a7ec2f"
-PATCH_LRU_GEN_COMMIT_A="f48857ddf21f86a716a88b6278851c0066fbf66f" # ancestor / oldest
-PATCH_LRU_GEN_COMMIT_D="c43874ec588df89dfe285e1fa978c9f3f9b7e570" # descendant / newest
-PATCH_ZEN_LRU_GEN_COMMIT_A_PARENT="7d2a07b769330c34b4deabeed939325c77a7ec2f"
-PATCH_ZEN_LRU_GEN_COMMIT_A="f48857ddf21f86a716a88b6278851c0066fbf66f" # ancestor / oldest
-PATCH_ZEN_LRU_GEN_COMMIT_D="99e7c83f97caf5a659eadcd6d547d68ae648ab0d" # descendant / newest
+PATCH_LRU_GEN_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
+PATCH_LRU_GEN_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor / oldest
+PATCH_LRU_GEN_COMMIT_D="87542b28c81281bd1a54969df035ccf5ce1853da" # descendant / newest
+PATCH_ZEN_LRU_GEN_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
+PATCH_ZEN_LRU_GEN_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor / oldest
+PATCH_ZEN_LRU_GEN_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # descendant / newest
 # Corresponding to [5.15-rc1, x86-cfi-v3]
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
@@ -185,6 +185,7 @@ REQUIRED_USE+="
 	O3? ( zen-sauce )
 	lru_gen? ( !zen-lru_gen )
 	prjc? ( !rt )
+	rt? ( cfs !prjc !zen-muqss )
 	shadowcallstack? ( cfi )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
@@ -206,13 +207,9 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
-	!lru_gen
 	!uksm
-	!zen-lru_gen
 	!zen-muqss
-	prjc? ( !rt )
 	zen-muqss? ( !rt )
-	rt? ( cfs !prjc !zen-muqss )
 "
 fi
 
@@ -435,7 +432,6 @@ gen_kcp_ma_uri() {
 # Not on the servers yet
 NOT_READY_YET="
 	   uksm? ( ${UKSM_SRC_URI} )
-	   zen-lru_gen? ( ${ZEN_LRU_GEN_SRC_URI} )
 	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
 "
 
@@ -468,8 +464,8 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
 	   )
+	   zen-lru_gen? ( ${ZEN_LRU_GEN_SRC_URI} )
 	   zen-sauce? ( ${ZENSAUCE_URIS} )"
-
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
