@@ -12,16 +12,17 @@ DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
 LICENSE="LGPL-2.1+"
 KEYWORDS="~amd64 ~x86"
-SO_C=55
-SO_R=3
-SO_A=13
+SO_C=0
+SO_R=56
+SO_A=14
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 SLOT="1/${PV}-${SO_MAJOR}"
-IUSE+=" +analyze aom cairo cxx debug doxygen exif fftw fits gif graphicsmagick
+IUSE+=" +analyze aom cairo cgif cxx debug doxygen exif fftw fits gif graphicsmagick
 gsf -gtk-doc fontconfig +hdr heif imagemagick imagequant jpeg jpeg2k jxl lcms
 libde265 matio -minimal openexr openslide orc pangocairo png poppler python
 rav1e +ppm spng static-libs svg test tiff webp x265 zlib"
 REQUIRED_USE="
+	cgif? ( imagequant )
 	imagequant? ( png )
 	poppler? ( cairo )
 	svg? ( cairo )"
@@ -37,6 +38,7 @@ RDEPEND+="
 	>=sci-libs/gsl-2.5
 	>=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}]
 	cairo? ( >=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}] )
+	cgif? ( media-libs/cgif[${MULTILIB_USEDEP}] )
 	exif? ( >=media-libs/libexif-0.6.21[${MULTILIB_USEDEP}] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0=[${MULTILIB_USEDEP}] )
 	fits? ( >=sci-libs/cfitsio-3.470[${MULTILIB_USEDEP}] )
@@ -55,7 +57,7 @@ RDEPEND+="
 	jpeg2k? (
 		>=media-libs/openjpeg-2.3.1[${MULTILIB_USEDEP}]
 	)
-	jxl? ( >=media-libs/libjxl-0.3.7 )
+	jxl? ( >=media-libs/libjxl-0.5 )
 	lcms? ( >=media-libs/lcms-2.9[${MULTILIB_USEDEP}] )
 	matio? ( >=sci-libs/matio-1.5.17[${MULTILIB_USEDEP}] )
 	openexr? ( >=media-libs/openexr-2.3.0[${MULTILIB_USEDEP}] )
@@ -350,9 +352,10 @@ eerror
 		--without-pdfium \
 		$(multilib_native_use_enable gtk-doc) \
 		$(use_enable debug) \
+		$(use_enable doxygen) \
 		$(use_enable static-libs static) \
 		$(use_with analyze) \
-		$(use_with doxygen) \
+		$(use_with cgif) \
 		$(use_with exif libexif) \
 		$(use_with jpeg) \
 		$(use_with fits cfitsio) \
