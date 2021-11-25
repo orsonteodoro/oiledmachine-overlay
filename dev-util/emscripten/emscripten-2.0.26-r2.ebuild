@@ -165,7 +165,7 @@ DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
 	"${FILESDIR}/emscripten-2.0.26-set-wrappers-path.patch"
-	"${FILESDIR}/emscripten-2.0.26-gentoo-wasm-ld-path.patch"
+	"${FILESDIR}/emscripten-2.0.14-gentoo-wasm-ld-path.patch"
 )
 CMAKE_BUILD_TYPE=Release
 EMSCRIPTEN_CONFIG_V="2.0.26"
