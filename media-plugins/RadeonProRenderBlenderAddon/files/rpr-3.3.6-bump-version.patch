@@ -4,8 +4,8 @@
  bl_info = {
      "name": "Radeon ProRender",
      "author": "AMD",
--    "version": (3, 3, 4),
-+    "version": (3, 3, 5), # oteodoro: bumped version so the generated zip file name matches
+-    "version": (3, 3, 5),
++    "version": (3, 3, 6), # oteodoro: bumped version so the generated zip file name matches
      "blender": (2, 80, 0),
      "location": "Info header, render engine menu",
      "description": "Radeon ProRender rendering plugin for Blender 2.8x",

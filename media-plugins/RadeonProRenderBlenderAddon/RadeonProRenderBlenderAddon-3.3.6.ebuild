@@ -483,7 +483,7 @@ src_prepare() {
 	default
 	eapply "-F3" "${DISTDIR}/rpr-pull-request-345.patch"
 	eapply "${FILESDIR}/rpr-3.3-build-linux-sh-generic-python3.patch"
-	eapply "${FILESDIR}/rpr-3.3.5-bump-version.patch"
+	eapply "${FILESDIR}/rpr-3.3.6-bump-version.patch"
 	git init || die
 	touch dummy || die
 	git config user.email "name@example.com" || die
