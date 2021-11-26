@@ -11,7 +11,7 @@ EAPI=7
 
 # Corresponds to
 # WebKit 613.1.1 (20210823, main) ; See Source/WebKit/Configurations/Version.xcconfig
-# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.1/Source/WebKit/Configurations/Version.xcconfig
+# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.2/Source/WebKit/Configurations/Version.xcconfig
 
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
@@ -641,7 +641,7 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.1?rev=284594
+# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.2?rev=286145
 # Do not use trunk!
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
@@ -788,7 +788,7 @@ BDEPEND+="
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
 EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="284594"
+ESVN_REVISION="286145"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
