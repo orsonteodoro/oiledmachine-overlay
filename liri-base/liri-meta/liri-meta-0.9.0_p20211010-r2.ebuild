@@ -33,7 +33,7 @@ DEPEND+="
 	xwayland? ( ~liri-base/qml-xwayland-0.10.0_p20211009 )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
-	~liri-base/cmake-shared-2.0.0_p20211010
+	~liri-base/cmake-shared-2.0.0_p20211030
 	~liri-base/fluid-1.2.0_p20211009
 "
 RESTRICT="mirror"
