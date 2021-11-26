@@ -24,7 +24,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	dev-python/itsdangerous[${PYTHON_USEDEP}]
 	dev-python/jinja[${PYTHON_USEDEP}]
 	dev-python/toml[${PYTHON_USEDEP}]
-	>=dev-python/werkzeug-1.0.0[${PYTHON_USEDEP}]"
+	>=dev-python/werkzeug-2.0.0[${PYTHON_USEDEP}]"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	test? (
@@ -36,7 +36,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
-		dev-python/poetry[${PYTHON_USEDEP}]
+		>=dev-python/poetry-1[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-asyncio[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
