@@ -77,8 +77,8 @@ RDEPEND+=" ${DEPEND}"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
 PATCHES_=(
-	"${FILESDIR}/${PN}-3.10.0-tutorials-oiio-unique_ptr-to-auto.patch"
 	"${FILESDIR}/${PN}-3.13.0-findtbb-more-debug-messages.patch"
+	"${FILESDIR}/${PN}-3.13.2-glibc-2.34-catch.hpp-fix.patch"
 )
 
 chcxx() {

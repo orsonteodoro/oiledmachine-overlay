@@ -1,0 +1,12 @@
+diff -urp embree-3.13.2.orig/tutorials/external/catch.hpp embree-3.13.2/tutorials/external/catch.hpp
+--- embree-3.13.2.orig/tutorials/external/catch.hpp	2021-10-26 09:31:08.000000000 -0700
++++ embree-3.13.2/tutorials/external/catch.hpp	2021-11-25 23:52:05.962950710 -0800
+@@ -8750,7 +8750,7 @@ namespace Catch {
+ 
+     // 32kb for the alternate stack seems to be sufficient. However, this value
+     // is experimentally determined, so that's not guaranteed.
+-    constexpr static std::size_t sigStackSize = 32768 >= MINSIGSTKSZ ? 32768 : MINSIGSTKSZ;
++    constexpr static std::size_t sigStackSize = 32768; // oteodoro: changes for glibc 2.34
+ 
+     static SignalDefs signalDefs[] = {
+         { SIGINT,  "SIGINT - Terminal interrupt signal" },
