@@ -23,8 +23,8 @@ LICENSE="Apache-2.0
 KEYWORDS="~amd64 ~ppc64 ~x86"
 IUSE+=" doc examples test"
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/19.141" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
-# third_party last update: 20210907
+SLOT="${SLOT_MAJ}/20.142" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+# third_party last update: 20211103
 RDEPEND+="
 	(
 		>=dev-cpp/abseil-cpp-20210324.2:=[${MULTILIB_USEDEP}]

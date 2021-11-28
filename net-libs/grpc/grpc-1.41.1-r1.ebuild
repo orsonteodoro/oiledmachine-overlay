@@ -23,7 +23,7 @@ KEYWORDS="~amd64 ~ppc64 ~x86"
 IUSE+=" doc examples test"
 SLOT_MAJ="0"
 SLOT="${SLOT_MAJ}/19.141" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
-# third_party last update: 20210907
+# third_party last update: 20211006
 RDEPEND+="
 	(
 		>=dev-cpp/abseil-cpp-20210324.0:=[${MULTILIB_USEDEP}]
