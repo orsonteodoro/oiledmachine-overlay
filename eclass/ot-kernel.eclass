@@ -982,6 +982,7 @@ function apply_zensauce() {
 	blacklisted=$(echo "${blacklisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
 	use_blacklisted=$(echo "${use_blacklisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
 
+	einfo "Applying zen-sauce patches"
 	for c in ${PATCH_ZENSAUCE_COMMITS[@]} ; do
 		local is_whitelisted=0
 		for c_wl in ${whitelisted[@]} ; do
@@ -1007,7 +1008,7 @@ ewarn
 				fi
 			done
 		fi
-		(( ${is_blacklisted} == 0 )) && continue
+		(( ${is_blacklisted} == 1 )) && continue
 
 		local is_blacklisted=0
 		if [[ -n "${#blacklisted}" ]] ; then
@@ -1022,7 +1023,7 @@ einfo
 				fi
 			done
 		fi
-		(( ${is_blacklisted} == 0 )) && continue
+		(( ${is_blacklisted} == 1 )) && continue
 
 		_fpatch "${DISTDIR}/zen-sauce-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
@@ -1864,6 +1865,8 @@ CC=/usr/lib/llvm/${llvm_v_maj}/bin/clang \
 LD=/usr/bin/ld.lld \
 NM=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-nm \
 CLANG_FLAGS=\"-integrated-as\"\`"
+einfo
+einfo "The CLANG_FLAGS=\"-integrated-as\"\` may not be required in newer kernels."
 einfo
 einfo "CFI or LTO requires that the menuconfig settings are changed to:"
 einfo
