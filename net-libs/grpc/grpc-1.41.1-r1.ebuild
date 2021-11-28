@@ -25,16 +25,19 @@ SLOT_MAJ="0"
 SLOT="${SLOT_MAJ}/19.141" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
 # third_party last update: 20210907
 RDEPEND+="
-	 =dev-cpp/abseil-cpp-20210324*:=[${MULTILIB_USEDEP}]
+	(
+		>=dev-cpp/abseil-cpp-20210324.0:=[${MULTILIB_USEDEP}]
+		<dev-cpp/abseil-cpp-20210325:=[${MULTILIB_USEDEP}]
+	)
 	>=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-3.17.3:=[${MULTILIB_USEDEP}]
-	>=dev-libs/re2-0.2020.05.27:=[${MULTILIB_USEDEP}]
+	>=dev-libs/re2-0.2020.06.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]"
 DEPEND+=" ${RDEPEND}
 	test? (
-		dev-cpp/benchmark
-		dev-cpp/gflags[${MULTILIB_USEDEP}]
+		>=dev-cpp/benchmark-1.5.2
+		>=dev-cpp/gflags-2.2.0[${MULTILIB_USEDEP}]
 	)"
 BDEPEND+=" >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
 # requires sources of many google tools
