@@ -55,7 +55,7 @@ diff -urp genkernel-4.2.3.orig/arch/ppc64le/config.sh genkernel-4.2.3/arch/ppc64
 +DEFAULT_KERNEL_LLVM_AS=llvm-as
 +DEFAULT_KERNEL_LLVM_CC=clang
 +DEFAULT_KERNEL_LLVM_CXX=clang++
-+DEFAULT_KERNEL_LLVM_CLANG_FLAGS="-integrated-as"
++DEFAULT_KERNEL_LLVM_CLANG_FLAGS=""
 +DEFAULT_KERNEL_LLVM_LD=ld.lld
 +DEFAULT_KERNEL_LLVM_NM=llvm-nm
 +DEFAULT_KERNEL_LLVM_OBJCOPY=llvm-objcopy
@@ -110,7 +110,7 @@ diff -urp genkernel-4.2.3.orig/defaults/config.sh genkernel-4.2.3/defaults/confi
 +DEFAULT_KERNEL_LLVM_AR=llvm-ar
 +DEFAULT_KERNEL_LLVM_AS=llvm-as
 +DEFAULT_KERNEL_LLVM_CC=clang
-+DEFAULT_KERNEL_LLVM_CLANG_FLAGS="-integrated-as"
++DEFAULT_KERNEL_LLVM_CLANG_FLAGS=""
 +DEFAULT_KERNEL_LLVM_LD=ld.lld
 +DEFAULT_KERNEL_LLVM_NM=llvm-nm
 +DEFAULT_KERNEL_LLVM_OBJCOPY=llvm-objcopy
@@ -229,7 +229,7 @@ diff -urp genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
 +					llvm_slot=$(ls "${BROOT}/usr/lib/llvm" | sort -rV | head -n 1)
 +				fi
 +				export PATH="${BROOT}/usr/lib/llvm/${llvm_slot}/bin:${PATH}"
-+				compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
++				#compile_cmd+=( "CLANG_FLAGS='${CMD_KERNEL_CLANG_FLAGS}'" )
 +			fi
 +
  			compile_cmd+=( "HOSTAR='$(tc-getBUILD_AR)'" )

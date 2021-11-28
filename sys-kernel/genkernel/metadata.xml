@@ -118,8 +118,8 @@
       PGO patch commit history:
       https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=for-next/clang/pgo
 
-      profraw v6 and v7 compat patch:
-      https://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/clang-pgo-support-profraw-v6-and-v7.patch
+      profraw v6 to v8 compat patch:
+      https://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/clang-pgo-support-profraw-v6-to-v8.patch
 
       cfi-x86-v3 patch
       https://github.com/torvalds/linux/compare/d0ee23f9...samitolvanen:x86-cfi-v3.patch

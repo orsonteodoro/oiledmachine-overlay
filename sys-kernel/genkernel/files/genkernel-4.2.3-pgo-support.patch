@@ -728,7 +728,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 +.sp
 +\fIhttps://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=for-next/clang/pgo\fR \- PGO patch commit history
 +.sp
-+\fIhttps://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/clang-pgo-support-profraw-v6-and-v7.patch\fR \- profraw v6 and v7 compat patch
++\fIhttps://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/clang-pgo-support-profraw-v6-to-v8.patch\fR \- profraw v6 to v8 compat patch
 +.sp
 +\fIhttps://wiki.gentoo.org/wiki//etc/portage/patches\fR - Instructions for applying per-package user patches
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
@@ -1772,7 +1772,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +		print_info 1 "$(get_indent 1)>> or for recent llvm releases"
 +		print_info 1 "$(get_indent 1)>>"
 +		print_info 1 "$(get_indent 1)>> Apply the following patch to the kernel sources:"
-+		print_info 1 "$(get_indent 1)>> https://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/clang-pgo-support-profraw-v6-and-v7.patch"
++		print_info 1 "$(get_indent 1)>> https://raw.githubusercontent.com/orsonteodoro/oiledmachine-overlay/master/sys-kernel/ot-sources/files/clang-pgo-support-profraw-v6-to-v8.patch"
 +		print_info 1 "$(get_indent 1)>>"
 +		exit 1
 +	fi
