@@ -1863,10 +1863,7 @@ AR=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-ar \
 AS=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-as \
 CC=/usr/lib/llvm/${llvm_v_maj}/bin/clang \
 LD=/usr/bin/ld.lld \
-NM=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-nm \
-CLANG_FLAGS=\"-integrated-as\"\`"
-einfo
-einfo "The CLANG_FLAGS=\"-integrated-as\"\` may not be required in newer kernels."
+NM=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-nm"
 einfo
 einfo "CFI or LTO requires that the menuconfig settings are changed to:"
 einfo
