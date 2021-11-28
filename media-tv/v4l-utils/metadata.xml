@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- only for this ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+  <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- ebuild originator -->
+    <email>chewi@gentoo.org</email>
+    <name>James Le Cuirot</name>
+  </maintainer>
+  <use>
+    <flag name="bpf">Enables support for IR BPF decoders.</flag>
+  </use>
+  <longdescription>
+    oiledmachine-overlay changes:  Add patch to disable ssp for bpf parts for
+    hardened clang ebuild.
+  </longdescription>
+</pkgmetadata>

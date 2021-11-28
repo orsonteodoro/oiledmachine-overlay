@@ -1,0 +1,109 @@
+Fixes:
+error: A call to built-in function '__stack_chk_fail' is not supported.
+int bpf_decoder(unsigned int *sample)
+
+Causes:
+SSP default ON with patched hardened clang.
+
+note: expanded from macro 'BPF_PARAM'
+#define BPF_PARAM(x) (int)(&(x))
+
+diff -urp v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/grundig.c v4l-utils-1.20.0/utils/keytable/bpf_protocols/grundig.c
+--- v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/grundig.c	2019-09-01 05:41:14.000000000 -0700
++++ v4l-utils-1.20.0/utils/keytable/bpf_protocols/grundig.c	2021-11-27 15:46:50.505615693 -0800
+@@ -46,6 +46,7 @@ int leader_pulse = 1300;
+ 
+ #define BPF_PARAM(x) (int)(&(x))
+ 
++__attribute__((no_stack_protector))
+ SEC("grundig")
+ int bpf_decoder(unsigned int *sample)
+ {
+diff -urp v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/imon_rsc.c v4l-utils-1.20.0/utils/keytable/bpf_protocols/imon_rsc.c
+--- v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/imon_rsc.c	2020-05-14 02:23:59.000000000 -0700
++++ v4l-utils-1.20.0/utils/keytable/bpf_protocols/imon_rsc.c	2021-11-27 15:46:44.410616089 -0800
+@@ -41,6 +41,7 @@ static inline int eq_margin(unsigned d1,
+ 	return ((d1 > (d2 - BPF_PARAM(margin))) && (d1 < (d2 + BPF_PARAM(margin))));
+ }
+ 
++__attribute__((no_stack_protector))
+ SEC("imon_rsc")
+ int bpf_decoder(unsigned int *sample)
+ {
+diff -urp v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/manchester.c v4l-utils-1.20.0/utils/keytable/bpf_protocols/manchester.c
+--- v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/manchester.c	2019-09-01 05:41:14.000000000 -0700
++++ v4l-utils-1.20.0/utils/keytable/bpf_protocols/manchester.c	2021-11-27 15:46:49.562615754 -0800
+@@ -79,6 +79,7 @@ static int emitBit(unsigned int *sample,
+ 	return state;
+ }
+ 
++__attribute__((no_stack_protector))
+ SEC("manchester")
+ int bpf_decoder(unsigned int *sample)
+ {
+diff -urp v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/pulse_distance.c v4l-utils-1.20.0/utils/keytable/bpf_protocols/pulse_distance.c
+--- v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/pulse_distance.c	2019-09-01 05:41:14.000000000 -0700
++++ v4l-utils-1.20.0/utils/keytable/bpf_protocols/pulse_distance.c	2021-11-27 15:46:42.970616183 -0800
+@@ -56,6 +56,7 @@ static inline int eq_margin(unsigned d1,
+ 	return ((d1 > (d2 - BPF_PARAM(margin))) && (d1 < (d2 + BPF_PARAM(margin))));
+ }
+ 
++__attribute__((no_stack_protector))
+ SEC("pulse_distance")
+ int bpf_decoder(unsigned int *sample)
+ {
+diff -urp v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/pulse_length.c v4l-utils-1.20.0/utils/keytable/bpf_protocols/pulse_length.c
+--- v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/pulse_length.c	2019-09-01 05:41:14.000000000 -0700
++++ v4l-utils-1.20.0/utils/keytable/bpf_protocols/pulse_length.c	2021-11-27 15:46:47.754615872 -0800
+@@ -56,6 +56,7 @@ static inline int eq_margin(unsigned d1,
+ 	return ((d1 > (d2 - BPF_PARAM(margin))) && (d1 < (d2 + BPF_PARAM(margin))));
+ }
+ 
++__attribute__((no_stack_protector))
+ SEC("pulse_length")
+ int bpf_decoder(unsigned int *sample)
+ {
+diff -urp v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/raw.c v4l-utils-1.20.0/utils/keytable/bpf_protocols/raw.c
+--- v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/raw.c	2020-05-02 05:16:20.000000000 -0700
++++ v4l-utils-1.20.0/utils/keytable/bpf_protocols/raw.c	2021-11-27 15:46:48.666615813 -0800
+@@ -67,6 +67,7 @@ static inline int eq_margin(unsigned d1,
+ 	return ((d1 > (d2 - BPF_PARAM(margin))) && (d1 < (d2 + BPF_PARAM(margin))));
+ }
+ 
++__attribute__((no_stack_protector))
+ SEC("raw")
+ int bpf_decoder(unsigned int *sample)
+ {
+diff -urp v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/rc_mm.c v4l-utils-1.20.0/utils/keytable/bpf_protocols/rc_mm.c
+--- v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/rc_mm.c	2019-09-01 05:41:14.000000000 -0700
++++ v4l-utils-1.20.0/utils/keytable/bpf_protocols/rc_mm.c	2021-11-27 15:46:46.922615926 -0800
+@@ -56,6 +56,7 @@ static inline int eq_margin(unsigned d1,
+ 	return ((d1 > (d2 - BPF_PARAM(margin))) && (d1 < (d2 + BPF_PARAM(margin))));
+ }
+ 
++__attribute__((no_stack_protector))
+ SEC("rc_mm")
+ int bpf_decoder(unsigned int *sample)
+ {
+diff -urp v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/samsung36.c v4l-utils-1.20.0/utils/keytable/bpf_protocols/samsung36.c
+--- v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/samsung36.c	2020-05-14 02:23:59.000000000 -0700
++++ v4l-utils-1.20.0/utils/keytable/bpf_protocols/samsung36.c	2021-11-27 15:46:45.258616034 -0800
+@@ -49,6 +49,7 @@ static inline int eq_margin(unsigned d1,
+ 	return ((d1 > (d2 - BPF_PARAM(margin))) && (d1 < (d2 + BPF_PARAM(margin))));
+ }
+ 
++__attribute__((no_stack_protector))
+ SEC("samsung36")
+ int bpf_decoder(unsigned int *sample)
+ {
+diff -urp v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/xbox-dvd.c v4l-utils-1.20.0/utils/keytable/bpf_protocols/xbox-dvd.c
+--- v4l-utils-1.20.0.orig/utils/keytable/bpf_protocols/xbox-dvd.c	2020-05-02 05:16:20.000000000 -0700
++++ v4l-utils-1.20.0/utils/keytable/bpf_protocols/xbox-dvd.c	2021-11-27 15:46:46.090615980 -0800
+@@ -51,6 +51,7 @@ static inline int eq_margin(unsigned d1,
+ 	return ((d1 > (d2 - BPF_PARAM(margin))) && (d1 < (d2 + BPF_PARAM(margin))));
+ }
+ 
++__attribute__((no_stack_protector))
+ SEC("xbox_dvd")
+ int bpf_decoder(unsigned int *sample)
+ {
