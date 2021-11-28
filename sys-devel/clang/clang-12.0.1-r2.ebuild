@@ -25,7 +25,7 @@ SLOT="$(ver_cut 1)"
 #KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x64-macos"  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
 	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD ${ALL_LLVM_TARGETS[*]}"
-IUSE+=" experimental hardened"
+IUSE+=" experimental hardened r3"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+=" hardened? ( !test )"
@@ -70,7 +70,6 @@ LLVM_PATCHSET=12.0.1
 PATCHES_HARDENED=(
 	"${FILESDIR}/clang-12.0.1-enable-PIE-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
-	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default-doc.patch"
 	"${FILESDIR}/clang-12.0.1-change-SSP-buffer-size-to-4.patch"
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"

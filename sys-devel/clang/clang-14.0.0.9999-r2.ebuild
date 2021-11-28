@@ -18,7 +18,7 @@ SLOT="$(ver_cut 1)"
 #KEYWORDS=""  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
 	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD"
-IUSE+=" experimental hardened"
+IUSE+=" experimental hardened r3"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
@@ -57,7 +57,6 @@ LLVM_PATCHSET=9999-2
 PATCHES_HARDENED=(
 	"${FILESDIR}/clang-12.0.1-enable-PIE-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
-	"${FILESDIR}/clang-13.0.0_rc2-enable-SSP-by-default-doc.patch"
 	"${FILESDIR}/clang-13.0.0_rc2-change-SSP-buffer-size-to-4.patch"
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"

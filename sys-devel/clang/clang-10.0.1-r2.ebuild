@@ -41,7 +41,7 @@ SLOT="$(ver_cut 1)"
 #KEYWORDS="amd64 arm arm64 ppc64 x86 ~amd64-linux" # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld doc
 	+static-analyzer test xml kernel_FreeBSD ${ALL_LLVM_TARGETS[*]}"
-IUSE+=" experimental hardened"
+IUSE+=" experimental hardened r3"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+=" hardened? ( !test )"

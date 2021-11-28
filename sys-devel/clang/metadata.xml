@@ -111,5 +111,9 @@ sys-devel/clang:14 llvm-14-commit.conf
     <flag name="hardened">Match the hardened default on settings from hardened
       GCC</flag>
     <flag name="static-analyzer">Install the Clang static analyzer</flag>
+
+    <flag name="rN">(INTERNAL USE ONLY: oiledmachine-overlay) bumped revisions
+      to reuse ccache [for faster rebuilds on very large packages] while
+      applying ebuild fixes.</flag>
   </use>
 </pkgmetadata>
