@@ -15,8 +15,8 @@
 # genkernel-9999        -> latest Git branch "master"
 # genkernel-VERSION     -> normal genkernel release
 
-# The original version of this ebuild is 4.2.6-r1 from the gentoo overlay
-# modified with subdir_mount, crypt_root_plain, llvm, pgo changes.  Revision
+# The original version of this ebuild is 4.2.3 from the gentoo overlay
+# modified with subdir_mount, crypt_root_plain, llvm changes.  Revision
 # bumps may change on the oiledmachine-overlay.
 
 EAPI="7"
@@ -29,15 +29,15 @@ inherit bash-completion-r1 python-single-r1
 # or add new patches!
 VERSION_BCACHE_TOOLS="1.0.8_p20141204"
 VERSION_BOOST="1.76.0"
-VERSION_BTRFS_PROGS="5.15"
-VERSION_BUSYBOX="1.34.1"
+VERSION_BTRFS_PROGS="5.12.1"
+VERSION_BUSYBOX="1.33.1"
 VERSION_COREUTILS="8.32"
-VERSION_CRYPTSETUP="2.4.1"
+VERSION_CRYPTSETUP="2.3.6"
 VERSION_DMRAID="1.0.0.rc16-3"
 VERSION_DROPBEAR="2020.81"
 VERSION_EUDEV="3.2.10"
 VERSION_EXPAT="2.4.1"
-VERSION_E2FSPROGS="1.46.4"
+VERSION_E2FSPROGS="1.46.2"
 VERSION_FUSE="2.9.9"
 VERSION_GPG="1.4.23"
 VERSION_HWIDS="20210613"
@@ -45,18 +45,18 @@ VERSION_ISCSI="2.0.878"
 VERSION_JSON_C="0.13.1"
 VERSION_KMOD="29"
 VERSION_LIBAIO="0.3.112"
-VERSION_LIBGCRYPT="1.9.4"
-VERSION_LIBGPGERROR="1.43"
-VERSION_LIBXCRYPT="4.4.26"
+VERSION_LIBGCRYPT="1.9.3"
+VERSION_LIBGPGERROR="1.42"
+VERSION_LIBXCRYPT="4.4.23"
 VERSION_LVM="2.02.188"
 VERSION_LZO="2.10"
 VERSION_MDADM="4.1"
 VERSION_POPT="1.18"
-VERSION_STRACE="5.14"
+VERSION_STRACE="5.12"
 VERSION_THIN_PROVISIONING_TOOLS="0.9.0"
 VERSION_UNIONFS_FUSE="2.0"
-VERSION_UTIL_LINUX="2.37.2"
-VERSION_XFSPROGS="5.13.0"
+VERSION_UTIL_LINUX="2.37"
+VERSION_XFSPROGS="5.12.0"
 VERSION_XZ="5.2.5"
 VERSION_ZLIB="1.2.11"
 VERSION_ZSTD="1.5.0"
@@ -105,7 +105,7 @@ if [[ ${PV} == 9999* ]] ; then
 else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
-#	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86" # untested oiledmachine-overlay patches
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86"
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
@@ -213,7 +213,7 @@ gen_cfi_arm64_rdepends() {
 				sys-devel/llvm:${s}
 				>=sys-devel/lld-${s}
 				=sys-libs/compiler-rt-${s}*
-				=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
+				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 			)
 		"
 	done
@@ -228,7 +228,7 @@ gen_cfi_x86_rdepends() {
 				sys-devel/llvm:${s}
 				>=sys-devel/lld-${s}
 				=sys-libs/compiler-rt-${s}*
-				=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
+				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 			)
 		"
 	done
@@ -251,9 +251,6 @@ RDEPEND+=" ${PYTHON_DEPS}
 	sys-devel/automake
 	sys-devel/libtool
 	virtual/pkgconfig
-	elibc_glibc? ( sys-libs/glibc[static-libs(+)] )
-	firmware? ( sys-kernel/linux-firmware )"
-RDEPEND+="
 	cfi? (
 		amd64? (
 			llvm? ( || ( $(gen_cfi_x86_rdepends) ) )
@@ -313,8 +310,6 @@ RDEPEND+="
 if [[ ${PV} == 9999* ]]; then
 	DEPEND="${DEPEND} app-text/asciidoc"
 fi
-
-PATCHES=( "${FILESDIR}"/${P}-fix-btrfs-progs-deps.patch )
 
 src_unpack() {
 	if [[ ${PV} == 9999* ]]; then
@@ -586,10 +581,5 @@ pkg_postinst() {
 	ewarn "The current crypt_root_plain will be deprecated for security reasons."
 	ewarn "It will be announced later when the replacement is ready and require"
 	ewarn "upgrading."
-	ewarn
-
-	ewarn
-	ewarn "This version with oiledmachine-overlay patches has not been tested."
-	ewarn "Do not use at this time.  Use 4.2.3 instead."
 	ewarn
 }

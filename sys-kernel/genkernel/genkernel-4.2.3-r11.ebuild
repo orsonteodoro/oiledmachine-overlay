@@ -232,7 +232,7 @@ gen_cfi_arm64_rdepends() {
 				sys-devel/llvm:${s}
 				>=sys-devel/lld-${s}
 				=sys-libs/compiler-rt-${s}*
-				=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
+				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 			)
 		"
 	done
@@ -247,7 +247,7 @@ gen_cfi_x86_rdepends() {
 				sys-devel/llvm:${s}
 				>=sys-devel/lld-${s}
 				=sys-libs/compiler-rt-${s}*
-				=sys-libs/compiler-rt-sanitizers-13*[cfi?,shadowcallstack?]
+				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 			)
 		"
 	done
