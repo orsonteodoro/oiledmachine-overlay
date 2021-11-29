@@ -15,7 +15,10 @@ KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86"
 SLOT="0"
 LANGS=( ca )
 IUSE+=" ${LANGS[@]/#/l10n_} doc gpg gtk nls openssl pam pkcs11 python suid test tpm"
-REQUIRED_USE+=" python? ( ${PYTHON_REQUIRED_USE} )"
+REQUIRED_USE+="
+	pam? ( suid )
+	python? ( ${PYTHON_REQUIRED_USE} )
+"
 RDEPEND+="
 	>=sys-apps/keyutils-1.5.11-r1:=
 	>=dev-libs/libgcrypt-1.2.0:0

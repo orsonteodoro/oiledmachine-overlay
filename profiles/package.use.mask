@@ -156,3 +156,6 @@ media-libs/flac cross-dso-cfi
 
 # Breaks keepassxc will illegal instruction
 dev-libs/icu cross-dso-cfi
+
+# For pam plugin
+sys-fs/ecryptfs-utils -suid
