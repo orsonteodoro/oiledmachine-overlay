@@ -105,7 +105,7 @@ if [[ ${PV} == 9999* ]] ; then
 else
 	SRC_URI="https://dev.gentoo.org/~whissi/dist/genkernel/${P}.tar.xz
 		${COMMON_URI}"
-#	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86" # untested oiledmachine-overlay patches
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
@@ -589,7 +589,7 @@ pkg_postinst() {
 	ewarn
 
 	ewarn
-	ewarn "This version with oiledmachine-overlay patches has not been tested."
-	ewarn "Do not use at this time.  Use 4.2.3 instead."
+	ewarn "This version with oiledmachine-overlay PGO patches are still being"
+	ewarn "tested, but booting is working."
 	ewarn
 }
