@@ -12,15 +12,18 @@ LICENSE="GDevelop MIT"
 KEYWORDS="~amd64"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" asmjs doc electron +extensions +html5 minimal native +wasm web-browser"
+IUSE+=" asmjs doc electron +extensions +html5 minimal native openrc +wasm web-browser"
 REQUIRED_USE+=" ^^ ( html5 native )
 	|| ( electron web-browser )
 	^^ ( asmjs wasm )
+	openrc
 	asmjs? ( html5 )
 	wasm? ( html5 )
 	wasm" # building with asmjs is broken
 #See https://github.com/4ian/GDevelop/blob/master/ExtLibs/installDeps.sh
-DEPEND+=" native? (
+DEPEND+="
+	virtual/opengl
+	native? (
 		app-arch/p7zip
 		media-libs/freetype
 		media-libs/glew
@@ -33,9 +36,10 @@ DEPEND+=" native? (
 		x11-apps/xrandr
 		x11-libs/gtk+:3
 	)
+	openrc? ( sys-apps/openrc[bash] )
 	web-browser? ( x11-misc/xdg-utils )
-	virtual/opengl"
-RDEPEND="${DEPEND}"
+"
+RDEPEND+=" ${DEPEND}"
 # For the required emscripten version, \
 # see https://github.com/4ian/GDevelop/blob/v5.0.0-beta101/.circleci/config.yml
 # See also electron-app_src_compile about the wasm (llvm) vs \

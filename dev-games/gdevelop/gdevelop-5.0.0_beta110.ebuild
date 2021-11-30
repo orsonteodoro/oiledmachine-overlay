@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit check-reqs cmake-utils desktop electron-app eutils user xdg
+inherit check-reqs cmake-utils desktop electron-app eutils user toolchain-funcs xdg
 
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed \
 to be used by everyone."
@@ -20,7 +20,7 @@ REQUIRED_USE+=" ^^ ( html5 native )
 	asmjs? ( html5 )
 	wasm? ( html5 )
 	wasm" # building with asmjs is broken
-#See https://github.com/4ian/GDevelop/blob/master/ExtLibs/installDeps.sh
+#See https://github.com/4ian/GDevelop/blob/v5.0.0-beta110/ExtLibs/installDeps.sh
 DEPEND+="
 	virtual/opengl
 	native? (
@@ -41,7 +41,7 @@ DEPEND+="
 "
 RDEPEND+=" ${DEPEND}"
 # For the required emscripten version, \
-# see https://github.com/4ian/GDevelop/blob/v5.0.0-beta103/.circleci/config.yml
+# see https://github.com/4ian/GDevelop/blob/v5.0.0-beta110/.circleci/config.yml
 # See also electron-app_src_compile about the wasm (llvm) vs \
 # asmjs (emscripten-fastcomp) requirement.
 EMSCRIPTEN_MIN_V="1.39.6"
@@ -55,12 +55,14 @@ BDEPEND+=" html5? (
 	)
 	dev-vcs/git
 	media-gfx/imagemagick[png]"
-ELECTRON_APP_ELECTRON_V="8.2.5"
-ELECTRON_APP_REACT_V="16.8.6"
+ELECTRON_APP_ELECTRON_V="8.2.5" # See \
+# https://github.com/4ian/GDevelop/blob/v5.0.0-beta110/newIDE/electron-app/package.json
+ELECTRON_APP_REACT_V="16.8.6" # See \
+# https://github.com/4ian/GDevelop/blob/v5.0.0-beta110/newIDE/app/package.json
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
-# For the SFML version, see
-# https://github.com/4ian/GDevelop/blob/v5.0.0-beta103/ExtLibs/CMakeLists.txt
+# For the SFML version, see \
+# https://github.com/4ian/GDevelop/blob/v5.0.0-beta110/ExtLibs/CMakeLists.txt
 SFML_V="2.4.1"
 SRC_URI=\
 "https://github.com/4ian/GDevelop/archive/v${MY_PV}.tar.gz \
@@ -163,11 +165,45 @@ See \`eselect emscripten\` for details.  (2)"
         "${EROOT}/usr/include/node/node_version.h" | cut -f 3 -d " ")
 }
 
+check_lld() {
+	export HIGHEST_LLVM_SLOT=$(basename $(find "${EROOT}/usr/lib/llvm" -maxdepth 1 \
+		-regextype 'posix-extended' -regex ".*[0-9]+.*" \
+		| sort -V | tail -n 1))
+	for llvm_slot in $(seq $(ver_cut 1 ${LLVM_V}) ${HIGHEST_LLVM_SLOT}) ; do
+		if has_version "sys-devel/clang:${llvm_slot}[llvm_targets_WebAssembly]" \
+		&& has_version "sys-devel/llvm:${llvm_slot}[llvm_targets_WebAssembly]" ; then
+			export LLVM_SLOT="${llvm_slot}"
+			CXX="${EROOT}/usr/lib/llvm/${llvm_slot}/bin/clang++"
+			einfo "CXX=${CXX}"
+			if [[ ! -f "${CXX}" ]] ; then
+				die "CXX path is wrong and doesn't exist"
+			fi
+			lld_slot=$(ver_cut 1 $(wasm-ld --version \
+					| sed -e "s|LLD ||"))
+# The lld slotting is broken.  See https://bugs.gentoo.org/691900
+# ldd lld shows that libLLVM-10.so => /usr/lib64/llvm/10/lib64/libLLVM-10.so but
+# but slot 10 doesn't have wasm and one of the other >=${LLVM_V} do have it and
+# tricking the RDEPENDs.  We need to make sure that =lld-${lld_slot}*
+# with =llvm-${lld_slot}*[llvm_targets_WebAssembly].
+			if ! has_version "sys-devel/clang:${lld_slot}[llvm_targets_WebAssembly]" \
+			|| ! has_version "sys-devel/llvm:${lld_slot}[llvm_targets_WebAssembly]" ; then
+				die \
+"lld's corresponding version to clang and llvm versions must have\n\
+llvm_targets_WebAssembly.  Either upgrade lld to version ${LLVM_SLOT} or\n\
+rebuild with llvm:${lld_slot}[llvm_targets_WebAssembly] and\n\
+clang:${lld_slot}[llvm_targets_WebAssembly]"
+			fi
+			break
+		fi
+	done
+}
+
 pkg_setup() {
 	if use html5 ; then
 		pkg_setup_html5
 		_set_check_reqs_requirements
 		check-reqs_pkg_setup
+		check_lld
 	fi
 
 	if use native ; then
@@ -182,24 +218,23 @@ used in GDevelop 5.  Use gdevelop:4 instead."
 		ewarn \
 "Consider using the web-browser only version instead which the browser itself\n\
 which is updated frequently and consistently.  It is more secure than the\n\
-Electron version which is based on an outdated Chromium 80.0.3987.165\n\
-internally with several high vulnerabilties and possibly critical ones.\n\
+Electron version which is based on an outdated parts of Chromium and Node.js.\n\
 There is also a responsiblity to notify all users of wrapping your games in\n\
 vulnerable versions of Electron and to update them with non defective\n\
-versions of Electron and internal Chromium.  The internal v8 is\n\
-8.0.426.27-electron.0.\n\
+versions of Electron, internal Chromium, internal Node.js.\n\
 \n\
 Details about chrome security can be found at:\n\
 https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all\n\
-https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=v8%20chrome&search_type=all"
+https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=v8%20chrome&search_type=all\n\
+https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=node.js&search_type=all"
 	fi
 }
 
 _patch() {
-	eapply "${FILESDIR}/gdevelop-5.0.0_beta97-patch-sfml-if-downloaded.patch"
 	eapply \
 "${FILESDIR}/gdevelop-5.0.0_beta97-use-emscripten-envvar-for-webidl_binder_py.patch"
-	sed -i -e "s|emconfigure cmake|emcmake cmake|" GDevelop.js/Gruntfile.js || die
+	eapply \
+"${FILESDIR}/gdevelop-5.0.0_beta108-unix-make.patch"
 }
 
 src_unpack() {
@@ -220,13 +255,18 @@ src_unpack() {
 		mkdir -p "${EMBUILD_DIR}" || die
 		cp "${EM_CONFIG}" \
 			"${EMBUILD_DIR}/emscripten.config" || die
-		export CC=emcc
-		export CXX=em++
+#		export EMMAKEN_CFLAGS='-std=gnu++11'
+#		export EMCC_CFLAGS='-std=gnu++11'
+#		export CC=emcc
+#		export CXX=em++
+		export CC=gcc
+		export CXX=g++
 		export NODE_VERSION=${ACTIVE_VERSION}
 		export EM_CACHE="${T}/emscripten/cache"
-		BINARYEN_LIB_PATH=$(echo -e "${A}\nprint (BINARYEN_ROOT)" | python3)"/lib"
+		emconfig_path=$(cat ${EM_CONFIG})
+		BINARYEN_LIB_PATH=$(echo -e "${emconfig_path}\nprint (BINARYEN_ROOT)" | python3)"/lib"
 		export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
-		einfo "CC=${CC} CXX=${CXX}"
+		einfo "LDFLAGS=${LDFLAGS}"
 		einfo "NODE_VERSION=${NODE_VERSION}"
 
 		einfo "Building GDevelop.js"
@@ -285,7 +325,7 @@ electron-app_src_compile() {
 		einfo "Compiling GDevelop.js"
 # In https://github.com/4ian/GDevelop/blob/v5.0.0-beta98/GDevelop.js/Gruntfile.js#L88
 		if use wasm ; then
-			npm run build -- --dev || die
+			npm run build -- --dev --ninja || die
 			if [[ ! \
 -f "${S_BAK}/Binaries/embuild/GDevelop.js/libGD.wasm" ]] ; then
 				die \
