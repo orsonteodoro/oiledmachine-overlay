@@ -19,7 +19,7 @@ RDEPEND="${RDEPEND}
 	dev-libs/xdg-utils-cxx:=[static-libs]
 	firejail? ( sys-apps/firejail )
 	openrc? (
-		sys-apps/openrc
+		sys-apps/openrc[bash]
 		sys-apps/grep[pcre]
 	)
 	systemd? ( sys-apps/systemd )
