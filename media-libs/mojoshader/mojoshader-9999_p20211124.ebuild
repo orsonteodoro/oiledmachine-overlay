@@ -2,59 +2,45 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils
+
 DESCRIPTION="MojoShader is a library to work with Direct3D shaders on alternate\
  3D APIs and non-Windows platforms."
 HOMEPAGE="https://icculus.org/mojoshader/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86 ~x64-macos"
-inherit cmake-utils eutils mercurial
-EHG_REVISION_C="f9036699b53a"
-EHG_REVISION="${PV}"
-EHG_REPO_URI="https://hg.icculus.org/icculus/mojoshader/"
+
 # Wrong CMakeLists.txt ; use mercurial
 #SRC_URI=\
 #"https://hg.icculus.org/icculus/${PN}/archive/${EGH_REVISION}.tar.bz2 -> ${P}.tar.bz2"
-IUSE="+compiler_support debug -depth_clipping +profile_arb1 +profile_arb1_nv \
-+profile_bytecode +profile_d3d +profile_glsl120 +profile_glsl +profile_glsles \
-+profile_hlsl +profile_metal +profile_spirv +profile_glspirv +effect_support \
+DATE="20211124"
+EGIT_COMMIT="76293ed6d5c4bb33875abb92979309e2797cc6ed"
+SRC_URI="
+https://github.com/icculus/mojoshader/archive/${EGIT_COMMIT}.tar.gz
+	-> ${PN}-9999_p${DATE}-${EGIT_COMMIT:0:7}.tar.gz
+"
+# profile_metal support is default ON upstream
+IUSE="+compiler_support debug -depth_clipping +profile_arb1 +profile_arb1_nv
++profile_bytecode +profile_d3d +profile_glsl120 +profile_glsl +profile_glsles
++profile_hlsl -profile_metal +profile_spirv +profile_glspirv +effect_support
 -flip_viewport static-libs -xna_vertextexture"
 REQUIRED_USE=""
 SLOT="0/${PV}"
-RDEPEND=">=dev-util/re2c-1.2.1
+RDEPEND+=" >=dev-util/re2c-1.2.1
 	 media-libs/libsdl2
 	 profile_metal? ( sys-devel/gcc[objc] )"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-2.6
-	dev-vcs/mercurial"
+DEPEND+=" ${RDEPEND}
+	>=dev-util/cmake-2.6"
 RESTRICT="mirror"
-S="${WORKDIR}/${PN}-"
-
-src_unpack() {
-	mercurial_src_unpack
-}
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
 src_prepare() {
 	default
-	eapply "${FILESDIR}/mojoshader-1310-cmake-fixes.patch"
-	eapply "${FILESDIR}/mojoshader-1240-cmake-build-both-static-and-shared.patch"
-	# Bugged CMakeLists.txt always points to tip but not static values as
-	# expected.
-	sed -i -e "s|\
-MOJOSHADER_VERSION -1|\
-MOJOSHADER_VERSION ${EHG_REVISION}|" \
-		CMakeLists.txt || die
-	sed -i -e "s|\
-MOJOSHADER_CHANGESET \"[?][?][?]\"|\
-MOJOSHADER_CHANGESET \"hg-${EHG_REVISION}:${EHG_REVISION_C}\"|" \
-		CMakeLists.txt || die
-	sed -i -e "s|\
-hg tip --template {rev}|\
-hg tip --template ${EHG_REVISION}|" \
-		CMakeLists.txt || die
-	sed -i -e "s;\
-hg tip --template hg-{rev}:{node|short};\
-hg tip --template hg-${EHG_REVISION}:{node|short};" \
-		CMakeLists.txt || die
+	eapply "${FILESDIR}/${PN}-1310-cmake-fixes.patch"
+	eapply "${FILESDIR}/${PN}-1240-cmake-build-both-static-and-shared.patch"
+	eapply "${FILESDIR}/${PN}-9999_p20211124-remove-mercurial.patch"
+	eapply "${FILESDIR}/${PN}-9999_p20211124-hash_remove-ctx-fixes.patch"
 	cmake-utils_src_prepare
 }
 
@@ -101,4 +87,5 @@ src_compile() {
 
 src_install() {
 	cmake-utils_src_install
+	dodoc LICENSE.txt
 }

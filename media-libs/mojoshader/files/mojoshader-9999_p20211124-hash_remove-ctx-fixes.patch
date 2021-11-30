@@ -1,0 +1,21 @@
+diff -urp mojoshader-76293ed6d5c4bb33875abb92979309e2797cc6ed.orig/mojoshader_compiler.c mojoshader-76293ed6d5c4bb33875abb92979309e2797cc6ed/mojoshader_compiler.c
+--- mojoshader-76293ed6d5c4bb33875abb92979309e2797cc6ed.orig/mojoshader_compiler.c	2021-11-24 13:07:48.000000000 -0800
++++ mojoshader-76293ed6d5c4bb33875abb92979309e2797cc6ed/mojoshader_compiler.c	2021-11-29 23:39:43.013727763 -0800
+@@ -475,7 +475,7 @@ static void pop_symbol(Context *ctx, Sym
+     if (!item)
+         return;
+     if (item->symbol)
+-        hash_remove(map->hash, item->symbol);
++        hash_remove(map->hash, item->symbol, ctx);
+     map->scope = item->next;
+     Free(ctx, item);
+ } // pop_symbol
+@@ -524,7 +524,7 @@ static void destroy_symbolmap(Context *c
+ {
+     while (map->scope)
+         pop_symbol(ctx, map);
+-    hash_destroy(map->hash);
++    hash_destroy(map->hash, ctx);
+ } // destroy_symbolmap
+ 
+ 
