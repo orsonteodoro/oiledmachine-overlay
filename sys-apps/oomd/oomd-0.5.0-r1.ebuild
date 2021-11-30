@@ -110,7 +110,7 @@ REQUIRED_USE+="
 	)"
 RDEPEND+=" dev-libs/jsoncpp
 	openrc? (
-		sys-apps/openrc
+		sys-apps/openrc[bash]
 		boost_realtime? (
 			dev-util/vmtouch
 			sys-apps/util-linux
