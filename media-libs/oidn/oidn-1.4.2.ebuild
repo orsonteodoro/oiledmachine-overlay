@@ -260,7 +260,7 @@ eerror
 			-DCMAKE_C_COMPILER="/${OIDN_ICC_C_PATH}"
 		)
 	else
-		die "The compiler is not supported."
+		ewarn "The compiler is not supported."
 	fi
 	strip-unsupported-flags
 	if use openimageio ; then
