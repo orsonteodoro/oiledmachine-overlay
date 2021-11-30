@@ -39,7 +39,7 @@ RDEPEND+="
 	firejail? ( sys-apps/firejail )
 	gnome? ( gnome-base/gvfs[udisks] )
 	kde? ( kde-frameworks/solid )
-	openrc? ( sys-apps/openrc )
+	openrc? ( sys-apps/openrc[bash] )
 	system-binaries? (
 		app-arch/AppImageKit[runtime]
 		>=app-arch/libarchive-3.3.2:=
