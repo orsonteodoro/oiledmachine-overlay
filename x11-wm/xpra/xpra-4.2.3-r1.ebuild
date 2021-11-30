@@ -146,7 +146,10 @@ DEPEND+=" ${PYTHON_DEPS}
 	        >=x11-drivers/nvidia-drivers-${NVJPEG_MIN_DRV_V} )
 	opengl? ( client? ( dev-python/pyopengl_accelerate[${PYTHON_USEDEP}] )
 		  x11-base/xorg-drivers[video_cards_dummy] )
-	openrc? ( sys-apps/net-tools )
+	openrc? (
+		sys-apps/net-tools
+		sys-apps/openrc[bash]
+	)
 	pam? ( sys-libs/pam[selinux?] )
 	pillow? ( dev-python/pillow[${PYTHON_USEDEP},jpeg?,webp?,zlib?] )
 	pulseaudio? ( media-sound/pulseaudio[dbus?] )
