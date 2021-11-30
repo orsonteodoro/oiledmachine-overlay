@@ -5,20 +5,21 @@ EAPI=7
 
 CMAKE_BUILD_TYPE=Release
 PYTHON_COMPAT=( python3_{8..10} )
+
 inherit cmake-utils eutils flag-o-matic python-single-r1 toolchain-funcs
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
 KEYWORDS="~amd64"
 LICENSE="Apache-2.0"
-# MKL_DNN is oneDNN 1.6.2 with additional custom commits.
-MKL_DNN_COMMIT="eb3e9670053192258d5a66f61486e3cfe25618b3"
+# MKL_DNN is oneDNN 2.2.4 with additional custom commits.
+MKL_DNN_COMMIT="f53274c9fef211396655fc4340cb838452334089"
 OIDN_WEIGHTS_COMMIT="a34b7641349c5a79e46a617d61709c35df5d6c28"
 ORG_GH="https://github.com/OpenImageDenoise"
 SLOT="0/${PV}"
-IUSE+=" +apps +built-in-weights +clang doc disable-sse41-check gcc icc openimageio"
+IUSE+=" +apps +built-in-weights +clang custom-tc doc disable-sse41-check gcc icc openimageio"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
-	^^ ( clang gcc icc )"
+	^^ ( clang custom-tc gcc icc )"
 # Clang is more smoother multitask-wise
 # c++11 minimal
 MIN_CLANG_V="3.3"
@@ -36,31 +37,23 @@ DEPEND+=" ${CDEPEND}
 	virtual/libc
 	openimageio? ( media-libs/openimageio )"
 RDEPEND+=" ${DEPEND}"
-CLANG_DEPENDS="
-	(
-		sys-devel/clang:10
-		sys-devel/llvm:10
-		=sys-devel/clang-runtime-10*
-		>=sys-devel/lld-10
-	)
-	(
-		sys-devel/clang:11
-		sys-devel/llvm:11
-		=sys-devel/clang-runtime-11*
-		>=sys-devel/lld-11
-	)
-	(
-		sys-devel/clang:12
-		sys-devel/llvm:12
-		=sys-devel/clang-runtime-12*
-		>=sys-devel/lld-12
-	)
-	(
-		sys-devel/clang:13
-		sys-devel/llvm:13
-		=sys-devel/clang-runtime-13*
-		>=sys-devel/lld-13
-	)"
+LLVM_SLOTS=(14 13 12 11 10)
+gen_depends() {
+	local o
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		o+="
+		(
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
+			=sys-devel/clang-runtime-${s}*
+			>=sys-devel/lld-${s}
+		)
+		"
+	done
+	echo "${o}"
+}
+CLANG_DEPENDS=$(gen_depends)
 BDEPEND+=" ${CDEPEND}
 	|| (
 		clang? (
@@ -99,9 +92,11 @@ pkg_setup() {
 	fi
 	if ! use disable-sse41-check ; then
 		if ! grep -F -e "sse4_1" /proc/cpuinfo ; then
-			die \
-"You need SSE4.1 to use this product.  Add disable-sse41-check to the USE\n\
-flag to build and emerge anyways."
+eerror
+eerror "You need SSE4.1 to use this product.  Add disable-sse41-check to the"
+eerror "USE flag to build and emerge anyways."
+eerror
+			die
 		fi
 	fi
 	python-single-r1_pkg_setup
@@ -129,11 +124,6 @@ src_prepare() {
 
 src_configure() {
 	mycmakeargs=()
-	CC=$(tc-getCC)
-	CXX=$(tc-getCXX)
-	einfo "CC=${CC}"
-	einfo "CXX=${CXX}"
-	einfo "CHOST=${CHOST}"
 	if use clang ; then
 		CC=clang
 		CXX=clang++
@@ -143,17 +133,18 @@ src_configure() {
 	elif use icc ; then
 		CC=icc
 		CXX=icpc
+	else
+		einfo "Using custom toolchain"
+		CC=$(tc-getCC)
+		CXX=$(tc-getCXX)
 	fi
+	einfo "CC=${CC}"
+	einfo "CXX=${CXX}"
+	einfo "CHOST=${CHOST}"
 	local gcc_v
 	local target_v=""
 
-	# gcc flags that clang++ dislikes:
-	filter-flags \
-		-fopt-info* \
-		-frename-registers
-
-	if use gcc && \
-	ls /usr/${CHOST}/gcc-bin/*/g++ 2>/dev/null 1>/dev/null ; then
+	if use gcc && ls /usr/${CHOST}/gcc-bin/*/g++ 2>/dev/null 1>/dev/null ; then
 		# GCC 9.3.0 will freeze indefinitely if -jN,
 		# where N is number of cores
 
@@ -171,7 +162,8 @@ src_configure() {
 			cc_v=$(gcc-version)
 			if ver_test $(ver_cut 1-3 ${v}) -eq 9.3.0 ; then
 				continue
-			elif ver_test ${cc_v} -ne 7.5.0 && ver_test ${cc_v} -ge ${MIN_GCC_V} ; then
+			elif ver_test ${cc_v} -ne 7.5.0 \
+				&& ver_test ${cc_v} -ge ${MIN_GCC_V} ; then
 				if \
 [[ -n "${OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_WITH_UNTESTED_GCC}" \
 && "${OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_WITH_UNTESTED_GCC^^}" == "AGREE" ]]
@@ -179,17 +171,17 @@ src_configure() {
 					target_v="${v}"
 					break
 				else
-					die \
-"\n\
-This package may be problematic with GCC especially 9.3.0 and cause an\n\
-indefinite freeze when compiling.  It's recommended to use the clang\n\
-USE flag instead, but you may proceed by setting\n\
-\n\
-  OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_WITH_UNTESTED_GCC=\"AGREE\"\n\
-\n\
-as a per-package environmental variable or in front of emerge command\n\
-to continue.\n
-\n"
+eerror
+eerror "This package may be problematic with GCC especially 9.3.0 and cause an"
+eerror "indefinite freeze when compiling.  It's recommended to use the clang"
+eerror "USE flag instead, but you may proceed by setting"
+eerror
+eerror "OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_WITH_UNTESTED_GCC=\"AGREE\""
+eerror
+eerror "as a per-package environmental variable or in front of emerge command"
+eerror "to continue."
+eerror
+					die
 				fi
 			elif ver_test ${cc_v} -eq 7.5.0 ; then
 				target_v="${v}"
@@ -205,8 +197,7 @@ to continue.\n
 		-DCMAKE_CXX_COMPILER="/usr/${CHOST}/gcc-bin/${target_v}/g++"
 		-DCMAKE_C_COMPILER="/usr/${CHOST}/gcc-bin/${target_v}/gcc"
 		)
-	elif use clang \
-	&& ls /usr/lib/llvm/*/bin/clang 2>/dev/null 1>/dev/null ; then
+	elif use clang && ls /usr/lib/llvm/*/bin/clang 2>/dev/null 1>/dev/null ; then
 		for v in $(ls /usr/lib/llvm/ | tr "\n" " " \
 				| tr " " "\n" | sort -rV) ; do
 			einfo "Checking ${v}"
@@ -232,36 +223,37 @@ to continue.\n
 		-DCMAKE_CXX_COMPILER="/usr/lib/llvm/${target_v}/bin/clang++"
 		-DCMAKE_C_COMPILER="/usr/lib/llvm/${target_v}/bin/clang"
 		)
-	elif use icc \
-	&& has_version '>=sys-devel/icc-${MIN_ICC_V}' ; then
+		append-ldflags -fuse-ld=lld
+	elif use icc && has_version '>=sys-devel/icc-${MIN_ICC_V}' ; then
 		if [[ -z "${OIDN_ICPC_CXX_PATH}" ]] ; then
-			die \
-"You must set OIDN_ICPC_CXX_PATH to the absolute path to icpc without EROOT."
+eerror
+eerror "You must set OIDN_ICPC_CXX_PATH to the absolute path to icpc without"
+eerror "EROOT."
+eerror
+			die
 		fi
 		if [[ -z "${OIDN_ICC_C_PATH}" ]] ; then
-			die \
-"You must set OIDN_ICC_C_PATH to the absolute path to icc without EROOT."
+eerror
+eerror "You must set OIDN_ICC_C_PATH to the absolute path to icc without EROOT."
+eerror
+			die
 		fi
 		if [[ ! -f "/${OIDN_ICPC_CXX_PATH}" ]] ; then
-			die \
-"Cannot find${OIDN_ICPC_CXX_PATH}."
+			die "Cannot find${OIDN_ICPC_CXX_PATH}."
 		fi
 		if [[ ! -f "/${OIDN_ICC_C_PATH}" ]] ; then
-			die \
-"Cannot find${OIDN_ICC_CXX_PATH}."
+			die "Cannot find${OIDN_ICC_CXX_PATH}."
 		fi
 		local cxx_v=$("/${OIDN_ICPC_CXX_PATH}" --version \
 				| head -n 1 | cut -f 3 -d " ")
 		einfo "Falling back to icpc ${cc_v}"
 		if ver_test ${cxx_v} -lt ${MIN_ICC_V} ; then
-			die \
-"icpc version ${cxx_v} not supported"
+			die "icpc version ${cxx_v} not supported"
 		fi
 		local cc_v=$("/${OIDN_ICC_C_PATH}" --version \
 				| head -n 1 | cut -f 3 -d " ")
 		if ver_test ${cc_v} -lt ${MIN_ICC_V} ; then
-			die \
-"icc version ${cc_v} not supported"
+			die "icc version ${cc_v} not supported"
 		fi
 		mycmakeargs+=(
 			-DCMAKE_CXX_COMPILER="/${OIDN_ICPC_CXX_PATH}"
@@ -270,6 +262,7 @@ to continue.\n
 	else
 		die "The compiler is not supported."
 	fi
+	strip-unsupported-flags
 	if use openimageio ; then
 		mycmakeargs+=(
 			-DOIDN_APPS_OPENIMAGEIO=$(usex openimageio)
