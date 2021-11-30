@@ -103,23 +103,22 @@ RDEPEND+="
 	)
 	truetype? ( media-libs/freetype:2= )"
 DEPEND+=" ${RDEPEND}"
-BDEPEND_CLANG="
+LLVM_SLOTS=(12 11 10)
+gen_bdepend_clang() {
+	local o=""
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		o+="
 		(
-			sys-devel/clang:12
-			sys-devel/llvm:12
-			>=sys-devel/lld-12
-		)
-		(
-			sys-devel/clang:11
-			sys-devel/llvm:11
-			>=sys-devel/lld-11
-		)
-		(
-			sys-devel/clang:10
-			sys-devel/llvm:10
-			>=sys-devel/lld-10
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
+			>=sys-devel/lld-${s}
 		)
 "
+	done
+	echo "${o}"
+}
+BDEPEND_CLANG=" "$(gen_bdepend_clang)
 BDEPEND_ICC="
 		>=sys-devel/icc-13
 "
