@@ -21,7 +21,7 @@ LICENSE+=" !system-nototools? ( unicode )" # nototools/third_party/{cldr,ucd,uni
 KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 \
 ~s390 ~sh ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris"
 SLOT="0/${PV}"
-IUSE+=" doc +optipng system-nototools zopflipng"
+IUSE+=" doc optipng system-nototools +zopflipng"
 REQUIRED_USE+=" ^^ ( optipng zopflipng )"
 RDEPEND+=" >=media-libs/fontconfig-2.11.91
 	   media-libs/freetype[png]
@@ -56,6 +56,7 @@ NOTOTOOLS_DEPEND="
 	)
 	$(python_gen_any_dep '>=dev-python/six-1.15.0[${PYTHON_USEDEP}]')
 	$(python_gen_any_dep '>=dev-python/toml-0.10.1[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '>=dev-python/typed-ast-1.4.1[${PYTHON_USEDEP}]')
 	$(python_gen_any_dep '>=dev-python/ufoNormalizer-0.4.1[${PYTHON_USEDEP}]')
 	$(python_gen_any_dep '>=dev-python/ufoProcessor-1.9.0[${PYTHON_USEDEP}]')
 	$(python_gen_any_dep '>=dev-python/unicodedata2-13.0.0_p2[${PYTHON_USEDEP}]')
