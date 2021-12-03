@@ -208,5 +208,8 @@ src_install()
 {
 	cmake_src_install
 	# Prevent collision with sys-libs/compiler-rt-13.0.0.9999:13.0.0::gentoo
-	rm -v "${ED}/usr/lib/clang/$(ver_cut 1-3 ${PV})/"*"/linux/libclang_rt.orc-"*".a" || die
+	local L=($(ls "${ED}/usr/lib/clang/${SLOT}/"*"/linux/libclang_rt.orc-"*".a"))
+	for p in ${L[@]} ; do
+		rm -v "${p}" || die
+	done
 }
