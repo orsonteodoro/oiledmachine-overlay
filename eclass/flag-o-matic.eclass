@@ -926,12 +926,14 @@ translate_lto() {
 	if tc-is-gcc ; then
 		replace-flags "-flto=thin" "-flto"
 		replace-flags "-flto=full" "-flto"
-		filter-flags '-fuse-ld=*'
+		[[ "${LDFLAGS}" =~ "-fuse-ld=lld" ]] \
+			&& filter-flags '-fuse-ld=*'
 	fi
 	if tc-is-clang ; then
 		replace-flags "-flto=auto" "-flto"
 		replace-flags "-flto=jobserver" "-flto"
-		filter-flags '-fuse-ld=*'
+		[[ "${LDFLAGS}" =~ "-fuse-ld=bfd" ]] \
+			&& filter-flags '-fuse-ld=*'
 		filter-flags '-f*fat-lto-objects'
 		filter-flags '-f*lto-compression-level*'
 		filter-flags '-f*lto-partition*'
