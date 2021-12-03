@@ -91,6 +91,23 @@ llvm.org_set_globals
 pkg_setup() {
 	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
 	python-single-r1_pkg_setup
+	if tc-is-gcc ; then
+		local gcc_slot=$(best_version "sys-devel/gcc" | cut -f 3- -d "-")
+		gcc_slot=$(ver_cut 1-3 ${gcc_slot})
+		if (( $(ver_cut 1 ${gcc_slot}) != $(gcc-major-version) )) ; then
+			# Prevent: undefined reference to `std::__throw_bad_array_new_length()'
+			ewarn
+			ewarn "Detected not using latest gcc."
+			ewarn
+			ewarn "Build may break if highest gcc version not chosen and profile not sourced."
+			ewarn "To fix do the following:"
+			ewarn
+			ewarn "  gcc-config -l"
+			ewarn "  gcc-config ${CHOST}-${gcc_slot}  # must match at least one row from the above list"
+			ewarn "  source /etc/profile"
+			ewarn
+		fi
+	fi
 }
 
 src_prepare() {
