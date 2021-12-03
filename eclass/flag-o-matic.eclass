@@ -871,16 +871,19 @@ translate_retpoline() {
 	einfo "Auto translating retpoline flags"
 	local f
 	if tc-is-clang ; then
-		for f in CFLAGS CXXFLAGS LDFLAGS ; do
+		local found=0
+		for f in ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS ; do
 			if [[ "${!f}" =~ "-mindirect-branch-register" ]]  ; then
-				ewarn "No direct translation for -mindirect-branch-register.  Removing."
+				found=1
 			fi
 		done
+		(( ${found} == 1 )) \
+			&& ewarn "No direct translation for -mindirect-branch-register.  Removing."
 		replace-flags -mindirect-branch=thunk -mretpoline
 		replace-flags -mindirect-branch=thunk-inline -mretpoline
 		filter-flags -mindirect-branch=keep
 		filter-flags -mindirect-branch-register
-		for f in CFLAGS CXXFLAGS LDFLAGS ; do
+		for f in ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS ; do
 			if [[ "${!f}" =~ "-mindirect-branch=thunk-extern" ]]  ; then
 				eerror
 				eerror "-mindirect-branch=thunk-extern cannot be directly translated.  Remove"
@@ -892,7 +895,7 @@ translate_retpoline() {
 	fi
 	if tc-is-gcc ; then
 		replace-flags -mretpoline -mindirect-branch=thunk
-		for f in CFLAGS CXXFLAGS LDFLAGS ; do
+		for f in ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS ; do
 			if [[ "${!f}" =~ "-mretpoline-external-thunk" ]]  ; then
 				eerror
 				eerror "-mretpoline-external-thunk cannot be directly translated.  Remove the"
@@ -902,7 +905,7 @@ translate_retpoline() {
 			fi
 		done
 	fi
-	export CFLAGS CXXFLAGS LDFLAGS
+	export ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS
 }
 
 # @FUNCTION: translate_lto
@@ -912,54 +915,29 @@ translate_retpoline() {
 translate_lto() {
 	has_lto=0
 	local f
-	for f in CFLAGS CXXFLAGS LDFLAGS ; do
+	for f in ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS ; do
 		if [[ "${!f}" =~ "-flto" ]] ; then
 			has_lto=1
 		fi
 	done
 	(( ${has_lto} == 0 )) && return
-	einfo "Auto translating LTO arg"
-	if tc-is-gcc && ver_test $(gcc-major-version) -ge 10 ; then
-		einfo "Using LTO with auto core detection"
-		replace-flags "-flto=thin" "-flto=auto"
-		replace-flags "-flto=full" "-flto=auto"
-		replace-flags "-flto" "-flto=auto"
-	elif tc-is-gcc && ver_test $(gcc-major-version) -lt 10 ; then
-		ewarn "Using LTO defaults"
+	einfo "Auto translating LTO args"
+	# The defaults are usually good enough.
+	if tc-is-gcc ; then
 		replace-flags "-flto=thin" "-flto"
 		replace-flags "-flto=full" "-flto"
-		replace-flags "-flto" "-flto"
+		filter-flags '-fuse-ld=*'
 	fi
 	if tc-is-clang ; then
+		replace-flags "-flto=auto" "-flto"
+		replace-flags "-flto=jobserver" "-flto"
+		filter-flags '-fuse-ld=*'
 		filter-flags '-f*fat-lto-objects'
 		filter-flags '-f*lto-compression-level*'
 		filter-flags '-f*lto-partition*'
 		filter-flags '-f*use-linker-plugin'
-		if [[ "${LD}" =~ "ld.lld" ]] ; then
-			# Thin is preferred because of OOM issue on improper configured
-			# swapless systems and for speed.
-			einfo "Using ThinLTO"
-			replace-flags "-flto=auto" "-flto=thin"
-			replace-flags "-flto=jobserver" "-flto=thin"
-			local t
-			for f in CFLAGS CXXFLAGS LDFLAGS ; do
-				t=$(echo ${!f} | sed -r -e "s|-flto=[0-9]+|-flto=thin|g")
-				eval ${f}=\"${t}\"
-			done
-		elif has_version "sys-devel/llvm[gold]" ; then
-			ewarn "Using Full LTO"
-			replace-flags "-flto=auto" "-flto=full"
-			replace-flags "-flto=jobserver" "-flto=full"
-			for f in CFLAGS CXXFLAGS LDFLAGS ; do
-				t=$(echo ${!f} | sed -r -e "s|-flto=[0-9]+|-flto=full|g")
-				eval ${f}=\"${t}\"
-			done
-		else
-			ewarn "Using LTO defaults"
-			replace-flags "-flto*" "-flto"
-		fi
 	fi
-	export CFLAGS CXXFLAGS LDFLAGS
+	export ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS
 }
 
 # It should belong in pkg_setup, but src_configure is fine
