@@ -38,10 +38,10 @@ BDEPEND+="
 		dev-tex/latexmk )
 	singlehtml? ( ${DEPEND_SPHINX} )
 	texinfo? ( ${DEPEND_SPHINX} )"
-EGIT_COMMIT="1a303f1028baf973d92bec037f92a2516d7060a9"
+EGIT_COMMIT="a8103857826e480026b63c1e4730feb1ce9b3672"
 SRC_URI="
 https://github.com/nanodbc/${PN}/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/nanodbc-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
@@ -52,14 +52,16 @@ pkg_setup() {
 		fi
 	fi
 	if use texinfo ; then
-		ewarn \
-"The texinfo USE flags may need FEATURES=\"-network-sandbox\" as a per-package \
-environmental setting for doc generation completeness."
+ewarn
+ewarn "The texinfo USE flags may need FEATURES=\"-network-sandbox\" as a"
+ewarn "per-package environmental setting for doc generation completeness."
+ewarn
 	fi
 	if use pdf ; then
-		ewarn \
-"The pdf USE flags may need FEATURES=\"-network-sandbox\" as a per-package \
-environmental setting for doc generation completeness."
+ewarn
+ewarn "The pdf USE flags may need FEATURES=\"-network-sandbox\" as a"
+ewarn "per-package environmental setting for doc generation completeness."
+ewarn
 	fi
 	if use html || use man || use pdf || use singlehtml || use texinfo ; then
 		python-any-r1_pkg_setup
