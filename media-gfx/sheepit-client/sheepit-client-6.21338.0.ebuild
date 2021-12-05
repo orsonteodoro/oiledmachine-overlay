@@ -30,9 +30,6 @@ MIT
 		SGI-B-1.1
 		SGI-B-2.0
 	)
-	sheepit_client_blender_2_79b_filmic? (
-		all-rights-reserved
-	)
 )"
 
 #
@@ -58,13 +55,6 @@ MIT
 #
 #   The libglapi is under SGI-B-2.0.  It was bundled in precompiled Blender
 #   2.80+.
-#
-#   No license stated or declared copyright in the filmic-blender project
-#   or in any of the files.  For commentary about licensing numbers by
-#   the owner of the filmic-blender project, see:
-#
-#     https://github.com/sobotka/filmic-blender/pull/29#issuecomment-502137400
-#
 #
 # Additional Third Party Licenses (in SheepIt's Blender 2.82)
 #
@@ -94,13 +84,12 @@ KEYWORDS="~amd64"
 SLOT="0"
 
 BLENDER_VERSIONS=(
-	2_79b
-	2_79b_filmic
-	2_83_16
+	2_83_18
 	2_90_1
-	2_91_0
+	2_91_2
 	2_92_0
-	2_93_2
+	2_93_6
+	3_0_0
 )
 
 IUSE=" blender disable-hard-version-blocks cuda doc firejail gentoo-blender
@@ -211,16 +200,8 @@ RDEPEND="
 		)
 		system-blender? (
 			gentoo-blender? (
-				sheepit_client_blender_2_83_16? (
-~media-gfx/blender-2.83.16\
-[alembic,bullet,collada,color-management,cycles,dds,-debug,embree,fluid,fftw,\
--headless,jpeg2k,nls,openexr,oidn,openimageio,opensubdiv,openvdb,openxr,\
-osl,tiff,usd]
-					media-libs/embree[raymask]
-					sci-physics/bullet
-				)
-				sheepit_client_blender_2_93_2? (
-~media-gfx/blender-2.93.2\
+				sheepit_client_blender_2_93_6? (
+~media-gfx/blender-2.93.6\
 [alembic,bullet,collada,color-management,cycles,dds,-debug,embree,fluid,fftw,\
 gmp,-headless,jpeg2k,nls,openexr,oidn,openimageio,opensubdiv,openvdb,\
 openxr,osl,potrace,pugixml,tiff,usd]
@@ -229,27 +210,23 @@ openxr,osl,potrace,pugixml,tiff,usd]
 				)
 			)
 			!gentoo-blender? (
-sheepit_client_blender_2_79b? (
-	~media-gfx/blender-2.79b[cycles,build_creator(+),release(+)]
-)
-sheepit_client_blender_2_79b_filmic? (
-	~media-gfx/blender-2.79b[cycles,build_creator(+),release(+)]
-	media-plugins/filmic-blender:sheepit
-)
-sheepit_client_blender_2_83_16? (
-	~media-gfx/blender-2.83.16[cycles,build_creator(+),release(+)]
+sheepit_client_blender_2_83_18? (
+	~media-gfx/blender-2.83.18[cycles,build_creator(+),release(+)]
 )
 sheepit_client_blender_2_90_1? (
 	~media-gfx/blender-2.90.1[cycles,build_creator(+),release(+)]
 )
-sheepit_client_blender_2_91_0? (
-	~media-gfx/blender-2.91.0[cycles,build_creator(+),release(+)]
+sheepit_client_blender_2_91_2? (
+	~media-gfx/blender-2.91.2[cycles,build_creator(+),release(+)]
 )
 sheepit_client_blender_2_92_0? (
 	~media-gfx/blender-2.92.0[cycles,build_creator(+),release(+)]
 )
-sheepit_client_blender_2_93_2? (
-	~media-gfx/blender-2.93.2[cycles,build_creator(+),release(+)]
+sheepit_client_blender_2_93_6? (
+	~media-gfx/blender-2.93.6[cycles,build_creator(+),release(+)]
+)
+sheepit_client_blender_3_0_0? (
+	~media-gfx/blender-3.0.0[cycles,build_creator(+),release(+)]
 )
 			)
 		)
@@ -541,9 +518,8 @@ GRADLE_DOWNLOAD="
 https://services.gradle.org/distributions/gradle-${GRADLE_V}-all.zip
 "
 
-# See https://www.sheepit-renderfarm.com/servers.php
+# See https://www.sheepit-renderfarm.com/servers.php under the "binary mirrors" section.
 # See profiles/thirdpartymirrors in this repo.
-# Currently gra-fr is publicly accessible.
 SI_RENDERER_MIRROR="mirror://sheepit-blender-binaries/"
 
 # See https://www.blender.org/about/website/
@@ -555,31 +531,21 @@ VANILLA_RENDERER_MIRROR="mirror://vanilla-blender-binaries/release/"
 # For allowed renderers, see https://www.sheepit-renderfarm.com/index.php?show=binaries
 # For renderer archives, see https://static-binary-gra-fr.sheepit-renderfarm.com/
 SI_RENDERERS_X86_64=(
-	"sheepit_client_blender_2_93_2;blender293.2_linux_64bit.zip"
+	"sheepit_client_blender_3_00_0;blender300_linux_64bit.zip"
+	"sheepit_client_blender_2_93_6;blender293.6_linux_64bit.zip"
 	"sheepit_client_blender_2_92_0;blender292.0_linux_64bit.zip"
-	"sheepit_client_blender_2_91_0;blender291.0_linux_64bit.zip"
+	"sheepit_client_blender_2_91_2;blender291.2_linux_64bit.zip"
 	"sheepit_client_blender_2_90_1;blender290.1_linux_64bit.zip"
-	"sheepit_client_blender_2_83_16;blender283.16_linux_64bit.zip"
-	"sheepit_client_blender_2_79b_filmic;blender279b-filmic_linux_64bit.zip"
-	"sheepit_client_blender_2_79b;blender279b_linux_64bit.zip"
-)
-
-SI_RENDERERS_X86=(
-	"sheepit_client_blender_2_79b_filmic;blender279b-filmic_linux_32bit.zip"
-	"sheepit_client_blender_2_79b;blender279b_linux_32bit.zip"
+	"sheepit_client_blender_2_83_18;blender283.18_linux_64bit.zip"
 )
 
 VANILLA_RENDERERS_X86_64=(
-	"sheepit_client_blender_2_93_2;Blender2.93/blender-2.93.2-linux-x64.tar.xz"
+	"sheepit_client_blender_3_0_0;Blender3.0/blender-3.0.0-linux-x64.tar.xz"
+	"sheepit_client_blender_2_93_6;Blender2.93/blender-2.93.6-linux-x64.tar.xz"
 	"sheepit_client_blender_2_92_0;Blender2.92/blender-2.92.0-linux64.tar.xz"
-	"sheepit_client_blender_2_91_0;Blender2.91/blender-2.91.0-linux64.tar.xz"
+	"sheepit_client_blender_2_91_2;Blender2.91/blender-2.91.2-linux64.tar.xz"
 	"sheepit_client_blender_2_90_1;Blender2.90/blender-2.90.1-linux64.tar.xz"
-	"sheepit_client_blender_2_83_16;Blender2.83/blender-2.83.16-linux64.tar.xz"
-	"sheepit_client_blender_2_79b;Blender2.79/blender-2.79b-linux-glibc219-x86_64.tar.bz2"
-)
-
-VANILLA_RENDERERS_X86=(
-	"sheepit_client_blender_2_79b;Blender2.79/blender-2.79b-linux-glibc219-i686.tar.bz2"
+	"sheepit_client_blender_2_83_18;Blender2.83/blender-2.83.18-linux64.tar.xz"
 )
 
 gen_renderer_repack_urls()
@@ -614,21 +580,8 @@ gen_renderer_vanilla_urls()
 	echo "${o}"
 }
 
-SOBOTKA_FILMIC_BLENDER_COMMIT="f94ebab8ad3ad917d3201230ebca1bc3a93b7c86"
 RENDERER_DOWNLOADS+=" "$(gen_renderer_repack_urls "amd64" "${SI_RENDERER_MIRROR}" SI_RENDERERS_X86_64)
-RENDERER_DOWNLOADS+=" "$(gen_renderer_repack_urls "x86" "${SI_RENDERER_MIRROR}" SI_RENDERERS_X86)
 RENDERER_DOWNLOADS+=" "$(gen_renderer_vanilla_urls "amd64" "${VANILLA_RENDERER_MIRROR}" VANILLA_RENDERERS_X86_64)
-RENDERER_DOWNLOADS+=" "$(gen_renderer_vanilla_urls "x86" "${VANILLA_RENDERER_MIRROR}" VANILLA_RENDERERS_X86)
-SOBOTKA_FILMIC_BLENDER_F94EBAB_FN="sobotka-filmic-blender-${SOBOTKA_FILMIC_BLENDER_COMMIT:0:7}.tar.gz"
-RENDERER_DOWNLOADS+="
-!system-blender? (
-	no-repacks? (
-		sheepit_client_blender_2_79b_filmic? (
-https://github.com/sobotka/filmic-blender/archive/${SOBOTKA_FILMIC_BLENDER_COMMIT}.tar.gz
-	-> ${SOBOTKA_FILMIC_BLENDER_F94EBAB_FN}
-		)
-	)
-)"
 
 SRC_URI="https://gitlab.com/sheepitrenderfarm/client/-/archive/v${PV}/client-v${PV}.tar.bz2
 	-> ${PN}-${PV}.tar.bz2
@@ -799,7 +752,12 @@ setup_openjdk() {
 }
 
 pkg_setup() {
-	ewarn "This ebuild is currently undergoing development and may not work even as vanilla (unpatched)."
+	ewarn
+	ewarn "New ebuild maintainer needed.  See metadata.xml for details."
+	ewarn "Must have recent hardware described here: https://gitlab.com/sheepitrenderfarm/client/-/issues/21"
+	ewarn
+	ewarn "This ebuild package will be deleted due to newer hardware requirements."
+	ewarn
 
 	if use vanilla ; then
 		if has network-sandbox $FEATURES ; then
@@ -932,13 +890,6 @@ unpack_blender() {
 						"${DISTDIR}/${fn}" \
 						-C "${d}" \
 						|| die
-
-					if [[ "${useflag}" == "sheepit_client_blender_2_79b_filmic" ]] ; then
-						tar --strip-components=1 \
-							-zxvf \
-							"${DISTDIR}/${SOBOTKA_FILMIC_BLENDER_F94EBAB_FN}" \
-							-C "${d}/2.79/datafiles/colormanagement" || die
-					fi
 				fi
 			done
 		elif ! use system-blender ; then
@@ -957,53 +908,6 @@ unpack_blender() {
 				fi
 			done
 		fi
-	elif use x86 ; then
-		if use no-repacks ; then
-			for x in ${VANILLA_RENDERERS_X86[@]} ; do
-				local useflag="${x%;*}"
-				local fn="${x#*;}"
-				if use ${useflag} ; then
-					md5_hash=$(md5sum $(realpath ${DISTDIR}/${fn}) \
-                                                | cut -f 1 -d " ")
-					d="${WORKDIR}/blender/opt/sheepit-client/renderers/${md5_hash}"
-					mkdir -p "${d}" || die
-					local arg=""
-					if [[ "${fn}" =~ ".tar.bz2" ]] ; then
-						arg="j"
-					elif [[ "${fn}" =~ ".tar.xz" ]] ; then
-						arg="J"
-					fi
-					tar --strip-components=1 \
-						-${arg}xvf \
-						"${DISTDIR}/${fn}" \
-						-C "${d}" \
-						|| die
-
-					if [[ "${useflag}" == "sheepit_client_blender_2_79b_filmic" ]] ; then
-						tar --strip-components=1 \
-							-zxvf \
-					"${SOBOTKA_FILMIC_BLENDER_F94EBAB_FN}" \
-					-C "${d}/2.79/datafiles/colormanagement" \
-							|| die
-					fi
-				fi
-			done
-		elif ! use system-blender ; then
-			for x in ${SI_RENDERERS_X86[@]} ; do
-				local useflag="${x%;*}"
-				local uri="${x#*;}"
-				local fn=$(basename ${uri})
-				if use ${useflag} ; then
-					md5_hash=$(md5sum $(realpath ${DISTDIR}/${fn}) \
-                                                | cut -f 1 -d " ")
-					d="${WORKDIR}/blender/opt/sheepit-client/renderers/${md5_hash}"
-					mkdir -p "${d}" || die
-					unzip "${fn}" \
-						-d "${DISTDIR}/${d}" \
-						|| die
-				fi
-			done
-		fi
 	fi
 }
 
@@ -1014,7 +918,8 @@ src_unpack() {
 	&& ! use system-blender \
 	&& [[ -z "${GEN_DL_DETAILS}" \
 		|| ( -n "${GEN_DL_DETAILS}" && "${GEN_DL_DETAILS}" == "0" ) ]] ; then
-		unpack_blender
+		#unpack_blender
+		:;
 	fi
 }
 
@@ -1025,7 +930,7 @@ apply_client_patches()
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.21292.0-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.21338.0-renderer-version-picker.patch"
 	if [[ -n "${GEN_DL_DETAILS}" && "${GEN_DL_DETAILS}" == "1" ]] ; then
 		:;
 	else

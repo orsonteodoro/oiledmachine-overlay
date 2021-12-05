@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <maintainer type="person">
-    <email>orsonteodoro@hotmail.com</email>
-    <name>Orson Teodoro</name>
-  </maintainer>
+  <!-- Maintainer wanted -->
+  <!-- Dropping package on this overlay due to new future hardware requirements
+       once commits relevant to newer GPU and CPU requirements are in place.  -->
+  <!-- You must have requirements: https://gitlab.com/sheepitrenderfarm/client/-/issues/21 -->
+  <!-- If you decide to pick it up, copy:
+       (1) This folder into your repo.
+       (2) Copy profiles/desc/sheepit_client_blender.desc
+       (3) Copy profiles/thirdpartymirrors
+       (4) Fill out the metadata tag.  For details see https://devmanual.gentoo.org/ebuild-writing/misc-files/metadata/index.html -->
   <longdescription>
     You need an account from https://www.sheepit-renderfarm.com to use this
     product.
+
+    For hardware requirements see:
+    https://gitlab.com/sheepitrenderfarm/client/-/issues/21
 
     The list of Blender versions supported can be found at:
     https://www.sheepit-renderfarm.com/index.php?show=binaries
@@ -24,6 +32,20 @@
 
     It's recommended to choose only the latest stable Blender only for
     security mitigation.
+
+    If you are using the prebuilt Blender binaries, it is strongly
+    recommended to choose the closest mirror.  For details on how to set
+    this up see:
+    https://wiki.gentoo.org/wiki//etc/portage/mirrors
+
+    You may set either vanilla-blender-binaries and sheepit-blender-binaries in
+    the mirrors file.
+
+    For valid values of mirrors see:
+    https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/thirdpartymirrors
+
+    For the status of each *binary mirror* see:
+    https://www.sheepit-renderfarm.com/servers.php
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/laurent-clouet/sheepit-client/issues</bugs-to>
