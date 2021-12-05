@@ -6,6 +6,7 @@ EAPI=7
 PYTHON_COMPAT=( python3_{7..9} )
 inherit cmake llvm llvm.org multilib multilib-minimal \
 	python-single-r1 toolchain-funcs
+inherit flag-o-matic
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
@@ -264,6 +265,13 @@ get_distribution_components() {
 multilib_src_configure() {
 	local llvm_version=$(llvm-config --version) || die
 	local clang_version=$(ver_cut 1-3 "${llvm_version}")
+
+	if tc-is-gcc ; then
+		# Bugs with gcc 10.3.0, 11.2.0
+		# internal compiler error: maximum number of LRA assignment passes is achieved (30)
+		replace-flags '-O3' '-Os'
+		replace-flags '-O2' '-Os'
+	fi
 
 	local mycmakeargs=(
 		-DLLVM_CMAKE_PATH="${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)/cmake/llvm"
