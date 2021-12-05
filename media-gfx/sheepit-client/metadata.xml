@@ -32,20 +32,6 @@
 
     It's recommended to choose only the latest stable Blender only for
     security mitigation.
-
-    If you are using the prebuilt Blender binaries, it is strongly
-    recommended to choose the closest mirror.  For details on how to set
-    this up see:
-    https://wiki.gentoo.org/wiki//etc/portage/mirrors
-
-    You may set either vanilla-blender-binaries and sheepit-blender-binaries in
-    the mirrors file.
-
-    For valid values of mirrors see:
-    https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/thirdpartymirrors
-
-    For the status of each *binary mirror* see:
-    https://www.sheepit-renderfarm.com/servers.php
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/laurent-clouet/sheepit-client/issues</bugs-to>
