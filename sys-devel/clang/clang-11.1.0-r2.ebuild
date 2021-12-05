@@ -105,6 +105,16 @@ pkg_setup() {
 			ewarn
 		fi
 	fi
+
+	if [[ -n "${MAKEOPTS}" ]] ; then
+		local nmakeopts=$(echo "${MAKEOPTS}" | grep -o -E -e "-j[ ]*[0-9]+( |$)" | sed -e "s|-j||g" -e "s|[ ]*||")
+		if [[ -n "${nmakeopts}" ]] && (( ${nmakeopts} > 1 )) ; then
+			ewarn
+			ewarn "MAKEOPTS=-jN should be -j1 if linking with BFD or <= 4 GiB RAM or <= 3 GiB per core."
+			ewarn "Adjust your per-package package.env to avoid very long linking times."
+			ewarn
+		fi
+	fi
 }
 
 src_prepare() {
