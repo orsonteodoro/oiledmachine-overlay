@@ -1218,7 +1218,8 @@ blender_src_test() {
 }
 
 _src_install_cycles_network() {
-	if use cycles-network ; then
+	if has cycles-network ${IUSE_EFFECTIVE} \
+		&& use cycles-network ; then
 		exeinto "${d_dest}"
 		dosym "../../..${d_dest}/cycles_server" \
 			"/usr/bin/cycles_server-${SLOT_MAJ}" || die
@@ -1372,7 +1373,8 @@ _src_install() {
 		fi
 		exeinto /usr/bin
 		doexe "${T}/${PN}${suffix}-${SLOT_MAJ}"
-		if use cycles-network ; then
+		if has cycles-network ${IUSE_EFFECTIVE} \
+			&& use cycles-network ; then
 			cp "${FILESDIR}/blender-wrapper" \
 				"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
 			if declare -f blender_set_wrapper_deps > /dev/null ; then
@@ -1486,7 +1488,8 @@ blender_pkg_postinst() {
 	ewarn "If you are concerned about security, file a bug upstream:"
 	ewarn "  https://developer.blender.org/"
 	ewarn
-	if use cycles-network ; then
+	if has cycles-network ${IUSE_EFFECTIVE} \
+		&& use cycles-network ; then
 		einfo
 		ewarn "The Cycles Networking support is experimental and"
 		ewarn "incomplete."
@@ -1531,7 +1534,8 @@ blender_pkg_postinst() {
 		if use build_creator ; then
 			ln -sf "${EROOT}/usr/bin/${PN}-${V}" \
 				"${EROOT}/usr/bin/${PN}" || die
-			if use cycles-network ; then
+			if has cycles-network ${IUSE_EFFECTIVE} \
+				&& use cycles-network ; then
 				ln -sf "${EROOT}/usr/bin/cycles_server-${V}" \
 					"${EROOT}/usr/bin/cycles_server" || die
 			fi
@@ -1539,7 +1543,8 @@ blender_pkg_postinst() {
 		if use build_headless ; then
 			ln -sf "${EROOT}/usr/bin/${PN}-headless-${V}" \
 				"${EROOT}/usr/bin/${PN}-headless" || die
-			if use cycles-network ; then
+			if has cycles-network ${IUSE_EFFECTIVE} \
+				&& use cycles-network ; then
 				ln -sf "${EROOT}/usr/bin/cycles_server_headless-${V}" \
 					"${EROOT}/usr/bin/cycles_server_headless" || die
 			fi

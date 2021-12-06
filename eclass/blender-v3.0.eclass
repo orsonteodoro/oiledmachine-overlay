@@ -1,11 +1,11 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: blender-v2.93.eclass
+# @ECLASS: blender-v3.0.eclass
 # @MAINTAINER: orsonteodoro@hotmail.com
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender-v2.93.eclass helps reduce code duplication across ebuilds
+# The blender-v3.0.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
 # Upstream uses LLVM 9 for Linux.  For prebuilt binary only addons, this may be
@@ -17,17 +17,17 @@
 CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
 PYTHON_COMPAT=( python3_{9,10} ) # For the max exclusive Python supported (and
 # others), see \
-# https://github.com/blender/blender/blob/v2.93.0/build_files/build_environment/install_deps.sh#L382
+# https://github.com/blender/blender/blob/v3.0.0/build_files/build_environment/install_deps.sh#L382
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada
-+color-management -cpudetection +cuda +cycles -cycles-network +dds -debug doc
+IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada -cycles-hip
++color-management -cpudetection +cuda +cycles +dds -debug doc
 +elbeem +embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm -man
 +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
 +openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
 +pulseaudio release +sdl +sndfile +tbb test +tiff +usd -valgrind"
-LLVM_MAX_UPSTREAM="11" # (inclusive)
+LLVM_MAX_UPSTREAM="12" # (inclusive)
 LLVM_SLOTS=(13 12 11)
 gen_llvm_iuse()
 {
@@ -40,7 +40,7 @@ gen_llvm_iuse()
 }
 IUSE+=" "$(gen_llvm_iuse) # same as Mesa and LLVM latest stable keyword \
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v2.93.6/build_files/build_environment/install_deps.sh#L488
+# https://github.com/blender/blender/blob/v3.0.0/build_files/build_environment/install_deps.sh#L488
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
@@ -52,12 +52,13 @@ LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender
 # The release USE flag depends on platform defaults.
 REQUIRED_USE+="
 	^^ ( llvm-11 llvm-12 llvm-13 )
-	!boost? ( !alembic !cycles !cycles-network !nls !openvdb
+	!boost? ( !alembic !cycles !nls !openvdb
 		!color-management )
 	!tbb? ( !cycles !elbeem !openimagedenoise !openvdb )
 	build_creator? ( X )
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
 	cycles? ( tbb )
+	cycles-hip? ( cycles )
 	embree? ( cycles )
 	mp3? ( ffmpeg )
 	nanovdb? ( cycles openvdb || ( cuda opencl ) )
@@ -78,7 +79,6 @@ REQUIRED_USE+="
 		color-management
 		cuda? ( nvcc )
 		cycles
-		!cycles-network
 		dds
 		!debug
 		elbeem
@@ -121,12 +121,12 @@ REQUIRED_USE+="
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # no need to look past those dates.
 
-# Last change was May 26, 2021 for:
-# https://github.com/blender/blender/commits/v2.93.0/build_files/cmake/config/blender_release.cmake
+# Last change was Nov 10, 2021 for:
+# https://github.com/blender/blender/commits/v3.0.0/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was Mar 16, 2021 for:
-# https://github.com/blender/blender/commits/v2.93.0/build_files/build_environment/cmake/versions.cmake
+# Last change was Oct 21, 2021 for:
+# https://github.com/blender/blender/commits/v3.0.0/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
 # dependency version requirements see
@@ -175,19 +175,21 @@ gen_osl_depends()
 }
 
 BOOST_DEPEND=">=dev-libs/boost-1.73:=[nls?,threads(+)]"
-OSL_V="1.11.10.0"
+OSL_V="1.11.14.1"
 TBB_DEPEND=">=dev-cpp/tbb-2020.2"
 PUGIXML_DEPEND=">=dev-libs/pugixml-1.10"
 RDEPEND+="  ${PYTHON_DEPS}
-	>=dev-lang/python-3.9.2
+	>=dev-lang/python-3.9.7
+	>=dev-libs/wayland-protocols-1.21
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/certifi-2020.4.5.2[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/chardet-3.0.4[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/idna-2.9[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/numpy-1.17.5[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/requests-2.23.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/urllib3-1.25.9[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/certifi-2021.10.8[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/charset_normalizer-2.0.6[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/idna-3.2[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/numpy-1.21.2[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/requests-2.26.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/urllib3-1.26.7[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/zstd-0.15.2[${PYTHON_MULTI_USEDEP}]
 	')
 	>=media-libs/freetype-2.10.2
 	>=media-libs/glew-1.13.0:*
@@ -208,7 +210,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 		>=sys-libs/libomp-11
 	)
 	llvm-12? (
-		>=media-libs/mesa-20.1.1
+		>=media-libs/mesa-20.1.5
 		>=sys-libs/libomp-12
 	)
 	llvm-13? (
@@ -233,9 +235,15 @@ RDEPEND+="  ${PYTHON_DEPS}
 	cycles? (
 		osl? ( ${PUGIXML_DEPEND} )
 	)
+	cycles-hip? (
+		|| (
+			dev-util/hip
+			dev-libs/rocm-bin[hip-devel,hip-runtime-amd]
+		)
+	)
 	embree? ( >=media-libs/embree-3.10.0:=\
 [cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,raymask,static-libs] )
-	ffmpeg? ( >=media-video/ffmpeg-4.2.3:=\
+	ffmpeg? ( >=media-video/ffmpeg-4.4:=\
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
 	flac? ( >=media-libs/flac-1.3.3 )
@@ -257,11 +265,11 @@ RDEPEND+="  ${PYTHON_DEPS}
 	openal? ( >=media-libs/openal-1.20.1 )
 	opencl? ( virtual/opencl )
 	openimagedenoise? (
-		>=media-libs/oidn-1.3.0
+		>=media-libs/oidn-1.4.1
 	)
 	openimageio? (
 		${PUGIXML_DEPEND}
-		>=media-libs/openimageio-2.1.15.0[color-management?,jpeg2k?]
+		>=media-libs/openimageio-2.2.15.1[color-management?,jpeg2k?]
 	)
 	openexr? (
 		>=media-libs/ilmbase-2.5.5:=
@@ -271,9 +279,9 @@ RDEPEND+="  ${PYTHON_DEPS}
 	openvdb? (
 		>=media-gfx/openvdb-8.0.1[${PYTHON_SINGLE_USEDEP},abi8-compat(+)]
 		>=dev-libs/c-blosc-1.5.0
-		nanovdb? ( >=media-gfx/nanovdb-25.0.0_pre20200924:= )
+		nanovdb? ( >=media-gfx/nanovdb-32.3.3:= )
 	)
-	openxr? ( >=media-libs/openxr-1.0.14 )
+	openxr? ( >=media-libs/openxr-1.0.17 )
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( $(gen_osl_depends) )
 	pdf? ( >=media-libs/libharu-2.3.0 )
@@ -319,11 +327,7 @@ BDEPEND+="
 
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
-	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
-	"${FILESDIR}/${PN}-2.83.1-device_network_h-fixes.patch"
-	"${FILESDIR}/${PN}-2.83.1-device_network_h-add-device-header.patch"
-	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
-	"${FILESDIR}/${PN}-2.91.0-install-paths-change.patch"
+	"${FILESDIR}/${PN}-3.0.0-install-paths-change.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -368,14 +372,15 @@ ebuilds for compatibility details."
 _blender_pkg_setup() {
 	# Needs OpenCL 1.2 (GCN 2)
 	check_multiple_llvm_versions_in_native_libs
-	einfo
-	einfo "This version a Long Term Support (LTS) version till 2023."
-	einfo
+	ewarn
+	ewarn "This version is not a Long Term Support (LTS) version."
+	ewarn "Consider using 2.93.x series instead."
+	ewarn
 
 	local found=0
 	for s in ${LLVM_SLOTS[@]} ; do
 		if (( "${s}" > ${LLVM_MAX_UPSTREAM} )) ; then
-			use "llvm-${s}" && found=1
+			use "llvm-${s}" && found=${s}
 		fi
 	done
 
@@ -393,7 +398,7 @@ ewarn
 }
 
 _src_prepare_patches() {
-	eapply "${FILESDIR}/blender-2.91.0-parent-datafiles-dir-change.patch"
+	eapply "${FILESDIR}/blender-3.0.0-parent-datafiles-dir-change.patch"
 }
 
 _src_configure() {
@@ -427,12 +432,6 @@ _src_configure() {
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
 
-	if use cycles-network ; then
-		ewarn \
-"Cycles Networking support does not work at all even for CPU rendering.  For \
-ebuild/upstream developers only."
-	fi
-
 	unset CMAKE_INCLUDE_PATH
 	unset CMAKE_LIBRARY_PATH
 	unset CMAKE_PREFIX_PATH
@@ -452,6 +451,7 @@ ebuild/upstream developers only."
 
 	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated
 
+	# WITH_INPUT_IME is default ON upstream but only supports non-linux
 	mycmakeargs+=(
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
@@ -467,9 +467,11 @@ ebuild/upstream developers only."
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
+		-DWITH_CYCLES_HIP_BINARIES=$(usex cycles-hip)
 		-DWITH_DOC_MANPAGE=$(usex man)
-		-DWITH_IK_SOLVER=ON
 		-DWITH_GMP=$(usex gmp)
+		-DWITH_IK_SOLVER=ON
+		-DWITH_INPUT_IME=OFF
 		-DWITH_IMAGE_DDS=$(usex dds)
 		-DWITH_IMAGE_OPENEXR=$(usex openexr)
 		-DWITH_IMAGE_OPENJPEG=$(usex jpeg2k)
@@ -520,7 +522,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.93.0/build_files/cmake/config
+# https://github.com/blender/blender/tree/v3.0.0/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -533,7 +535,6 @@ ebuild/upstream developers only."
 			-DWITH_CYCLES_EMBREE=$(usex embree)
 			-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
 			-DWITH_CYCLES_NATIVE_ONLY=$(usex cpudetection)
-			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
 			-DWITH_CYCLES_OSL=$(usex osl)
 			-DWITH_STATIC_LIBS=OFF
 			-DWITH_SYSTEM_EIGEN3=ON
