@@ -313,12 +313,12 @@ diff -urp client-v6.21338.0.orig/src/com/sheepit/client/Configuration.java clien
 +	public static final String SYSTEM_RENDERER_TYPE = "oiledmachine-overlay";
 +	
 +	/* Hashes from modified tarballs from service */
-+	public static final String MD5_LINUX_X86_64_2_83_18 = "FIXME0";
++	public static final String MD5_LINUX_X86_64_2_83_18 = "15df476177ee4460a475c55ab5659a00";
 +	public static final String MD5_LINUX_X86_64_2_90_1 = "05234503229a4660e428e8d227746d8d";
-+	public static final String MD5_LINUX_X86_64_2_91_2 = "FIXME1";
++	public static final String MD5_LINUX_X86_64_2_91_2 = "cbedc6a546b1ae575a957945807de248";
 +	public static final String MD5_LINUX_X86_64_2_92_0 = "306afa0a931b0edffed57594b872a6ad";
-+	public static final String MD5_LINUX_X86_64_2_93_6 = "FIXME2";
-+	public static final String MD5_LINUX_X86_64_3_0_0 = "FIXME3";
++	public static final String MD5_LINUX_X86_64_2_93_6 = "9255c154b3126662815e0c63887b7dd6";
++	public static final String MD5_LINUX_X86_64_3_0_0 = "96868e150a10f0e4d7b322739a9409c0";
 +	
 +	/* Hashes from downloads.blender.org tarballs */
 +	public static final String MD5_LINUX_X86_64_VANILLA_2_83_18 = "a831314bc3f94e053782ad50aba7a376";

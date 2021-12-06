@@ -5,42 +5,30 @@ Mesa: https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=over
 Python: https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python&search_type=all
 
 # This information is used for security audits
-Bundled in Blender 2.93.2:
-# See https://github.com/blender/blender/blob/v2.93.2/build_files/build_environment/cmake/versions.cmake
-# See https://github.com/blender/blender/tree/v2.93.2/build_files/build_environment/cmake # for static/shared status
+
+Bundled in Blender 3.0.0:
+# See https://github.com/blender/blender/blob/v3.0.0/build_files/build_environment/cmake/versions.cmake
+# See https://github.com/blender/blender/tree/v3.0.0/build_files/build_environment/cmake # for static/shared status
+
+Bundled in Blender 2.93.6:
+# See https://github.com/blender/blender/blob/v2.93.6/build_files/build_environment/cmake/versions.cmake
+# See https://github.com/blender/blender/tree/v2.93.6/build_files/build_environment/cmake # for static/shared status
 
 Bundled in Blender 2.92.0:
 # https://github.com/blender/blender/blob/v2.92.0/build_files/build_environment/cmake/versions.cmake
 # https://github.com/blender/blender/tree/v2.92.0/build_files/build_environment/cmake # for static/shared status
 
-Bundled in Blender 2.91.0:
-# https://github.com/blender/blender/blob/v2.91.0/build_files/build_environment/cmake/versions.cmake
-# https://github.com/blender/blender/tree/v2.91.0/build_files/build_environment/cmake # for static/shared status
+Bundled in Blender 2.91.2:
+# https://github.com/blender/blender/blob/v2.91.2/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/tree/v2.91.2/build_files/build_environment/cmake # for static/shared status
 
 Bundled in Blender 2.90.1:
 # https://github.com/blender/blender/blob/v2.90.1/build_files/build_environment/cmake/versions.cmake
 # https://github.com/blender/blender/tree/v2.90.1/build_files/build_environment/cmake # for static/shared status
 
-Bundled in Blender 2.90.0:
-# https://github.com/blender/blender/blob/v2.90.0/build_files/build_environment/cmake/versions.cmake
-# https://github.com/blender/blender/tree/v2.90.0/build_files/build_environment/cmake # for static/shared status
-
-Bundled in Blender 2.83.16:
-# https://github.com/blender/blender/blob/v2.83.16/build_files/build_environment/cmake/versions.cmake
-# https://github.com/blender/blender/tree/v2.83.16/build_files/build_environment/cmake # for static/shared status
-
-Bundled in Blender 2.79b with filmic:
-# No versions.cmake
-GLU 8.0.5
-Mesa (libGL) 8.0.5
-Python 3.5.3
-Filmic Blender, master circa 20180121 f94ebab8ad3ad917d3201230ebca1bc3a93b7c86
-
-Bundled in Blender 2.79b:
-# No versions.cmake
-GLU 8.0.5
-Mesa (libGL) 8.0.5
-Python 3.5.3
+Bundled in Blender 2.83.18:
+# https://github.com/blender/blender/blob/v2.83.18/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/tree/v2.83.18/build_files/build_environment/cmake # for static/shared status
 
 Comparison is done with sha256sum between the Sheepit service tarballs and tarballs from downloads.blender.org.
 

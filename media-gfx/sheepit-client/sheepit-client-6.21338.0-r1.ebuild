@@ -98,9 +98,11 @@ pro-drivers split-drivers system-blender system-gradle vanilla
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia
 video_cards_radeonsi"
 IUSE_BLENDER_VERSIONS=( ${BLENDER_VERSIONS[@]/#/sheepit_client_blender_} )
-BENCHMARK_VERSION="sheepit_client_blender_2_90_1"
+BENCHMARK_V="2.93.6"
+BENCHMARK_VERSION="sheepit_client_blender_${BENCHMARK_V//./_}"
 IUSE+=" ${IUSE_BLENDER_VERSIONS[@]} +${BENCHMARK_VERSION}"
 #GEN_DL_DETAILS="1" # Uncomment to generate download details for GRADLE_PKGS_URIS and GRADLE_PKGS_UNPACK
+#EBUILD_MAINTENANCE_MODE=""
 
 gen_required_use_blender()
 {
@@ -192,6 +194,7 @@ JRE_DEPEND="
 )"
 #JDK_DEPEND=" virtual/jdk:${JAVA_V}"
 #JRE_DEPEND=" virtual/jre:${JAVA_V}"
+
 RDEPEND="
 	blender? (
 		firejail? ( sys-apps/firejail )
@@ -202,6 +205,14 @@ RDEPEND="
 			gentoo-blender? (
 				sheepit_client_blender_2_93_6? (
 ~media-gfx/blender-2.93.6\
+[alembic,bullet,collada,color-management,cycles,dds,-debug,embree,fluid,fftw,\
+gmp,-headless,jpeg2k,nls,openexr,oidn,openimageio,opensubdiv,openvdb,\
+openxr,osl,potrace,pugixml,tiff,usd]
+					media-libs/embree[raymask]
+					sci-physics/bullet
+				)
+				sheepit_client_blender_3_0_0? (
+~media-gfx/blender-3.0.0\
 [alembic,bullet,collada,color-management,cycles,dds,-debug,embree,fluid,fftw,\
 gmp,-headless,jpeg2k,nls,openexr,oidn,openimageio,opensubdiv,openvdb,\
 openxr,osl,potrace,pugixml,tiff,usd]
@@ -524,14 +535,14 @@ SI_RENDERER_MIRROR="mirror://sheepit-blender-binaries/"
 
 # See https://www.blender.org/about/website/
 # See profiles/thirdpartymirrors in this repo.
-VANILLA_RENDERER_MIRROR="mirror://vanilla-blender-binaries/release/"
+VANILLA_RENDERER_MIRROR="mirror://vanilla-blender-binaries/"
 
 # The renders are fetched at the ebuild level instead of runtime.
 
 # For allowed renderers, see https://www.sheepit-renderfarm.com/index.php?show=binaries
 # For renderer archives, see https://static-binary-gra-fr.sheepit-renderfarm.com/
 SI_RENDERERS_X86_64=(
-	"sheepit_client_blender_3_00_0;blender300_linux_64bit.zip"
+	"sheepit_client_blender_3_0_0;blender300_linux_64bit.zip"
 	"sheepit_client_blender_2_93_6;blender293.6_linux_64bit.zip"
 	"sheepit_client_blender_2_92_0;blender292.0_linux_64bit.zip"
 	"sheepit_client_blender_2_91_2;blender291.2_linux_64bit.zip"
@@ -545,7 +556,7 @@ VANILLA_RENDERERS_X86_64=(
 	"sheepit_client_blender_2_92_0;Blender2.92/blender-2.92.0-linux64.tar.xz"
 	"sheepit_client_blender_2_91_2;Blender2.91/blender-2.91.2-linux64.tar.xz"
 	"sheepit_client_blender_2_90_1;Blender2.90/blender-2.90.1-linux64.tar.xz"
-	"sheepit_client_blender_2_83_18;Blender2.83/blender-2.83.18-linux64.tar.xz"
+	"sheepit_client_blender_2_83_18;Blender2.83/blender-2.83.18-linux-x64.tar.xz"
 )
 
 gen_renderer_repack_urls()
@@ -558,8 +569,11 @@ gen_renderer_repack_urls()
 	for x in ${filelist[@]} ; do
 		local r="${x%;*}"
 		local fn="${x#*;}"
-#		o+=" !no-repacks? ( ${arch}? ( ${r}? ( ${mirror_host}${fn} ) ) )"
-		o+=" ${mirror_host}${fn} "
+		if [[ -n "${EBUILD_MAINTENANCE_MODE}" && "${EBUILD_MAINTENANCE_MODE}" == "1" ]] ; then
+			o+=" ${mirror_host}${fn} "
+		else
+			o+=" !no-repacks? ( ${arch}? ( ${r}? ( ${mirror_host}${fn} ) ) )"
+		fi
 	done
 	echo "${o}"
 }
@@ -569,13 +583,16 @@ gen_renderer_vanilla_urls()
 	local arch="${1}"
 	local mirror_host="${2}"
 	unset filelist
-	local -n fileist=$3
+	local -n filelist=$3
 	local o=""
 	for x in ${filelist[@]} ; do
 		local r="${x%;*}"
 		local p="${x#*;}"
-#		o+=" no-repacks? ( ${arch}? ( ${r}? ( ${mirror_host}/${p} ) ) )"
-		o+=" ${mirror_host}${p} "
+		if [[ -n "${EBUILD_MAINTENANCE_MODE}" && "${EBUILD_MAINTENANCE_MODE}" == "1" ]] ; then
+			o+=" ${mirror_host}${p} "
+		else
+			o+=" no-repacks? ( ${arch}? ( ${r}? ( ${mirror_host}/${p} ) ) )"
+		fi
 	done
 	echo "${o}"
 }
@@ -918,8 +935,7 @@ src_unpack() {
 	&& ! use system-blender \
 	&& [[ -z "${GEN_DL_DETAILS}" \
 		|| ( -n "${GEN_DL_DETAILS}" && "${GEN_DL_DETAILS}" == "0" ) ]] ; then
-		#unpack_blender
-		:;
+		unpack_blender
 	fi
 }
 
@@ -995,23 +1011,18 @@ src_prepare() {
 		ewarn
 		ewarn "Security notices:"
 		ewarn
-		ewarn "${PN} downloads Blender 2.79 with Python 3.5.3 having critical security CVE advisories"
-		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all"
-		ewarn "https://security.gentoo.org/glsa/202003-26"
-		ewarn "https://security.gentoo.org/glsa/202005-09"
-		ewarn
-		ewarn "${PN} downloads Blender 2.83.16 with Python 3.7.4 having high security CVE advisory"
+		ewarn "${PN} downloads Blender 2.83.18 with Python 3.7.4 having high security CVE advisory"
 		ewarn "${PN} downloads Blender 2.90.1 with Python 3.7.7 having high security CVE advisory"
-		ewarn "${PN} downloads Blender 2.91.0 with Python 3.7.7 having high security CVE advisory"
+		ewarn "${PN} downloads Blender 2.91.2 with Python 3.7.7 having high security CVE advisory"
 		ewarn "${PN} downloads Blender 2.92.0 with Python 3.7.7 having high security CVE advisory"
 		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all"
 		ewarn "https://security.gentoo.org/glsa/202104-04"
 		ewarn "https://security.gentoo.org/glsa/202101-18"
 		ewarn
-		ewarn "${PN} downloads Blender 2.93.2 with statically linked libsdl 2.0.12 having high and medium CVE advisories"
+		ewarn "${PN} downloads Blender 2.93.6 with statically linked libsdl 2.0.12 having high and medium CVE advisories"
 		ewarn "${PN} downloads Blender 2.92.0 with statically linked libsdl 2.0.12 having high and medium CVE advisories"
-		ewarn "${PN} downloads Blender 2.91.0 with statically linked libsdl 2.0.12 having high and medium CVE advisories"
-		ewarn "${PN} downloads Blender 2.83.16 with statically linked libsdl 2.0.8 having multiple high and medium CVE advisories"
+		ewarn "${PN} downloads Blender 2.91.2 with statically linked libsdl 2.0.12 having high and medium CVE advisories"
+		ewarn "${PN} downloads Blender 2.83.18 with statically linked libsdl 2.0.8 having multiple high and medium CVE advisories"
 		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=libsdl&search_type=all&isCpeNameSearch=false"
 		ewarn "https://security.gentoo.org/glsa/202107-55"
 		ewarn
