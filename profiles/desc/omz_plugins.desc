@@ -2,7 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 adb - Installs the adb plugin.
+ag - Installs the ag plugin.
 alias-finder - Installs the alias-finder plugin.
+aliases - Installs the aliases plugin.
 ansible - Installs the ansible plugin.
 ant - Installs the ant plugin.
 apache2-macports - Installs the apache2-macports plugin.
@@ -16,6 +18,7 @@ aws - Installs the aws plugin.
 battery - Installs the battery plugin.
 bazel - Installs the bazel plugin.
 bbedit - Installs the bbedit plugin.
+bedtools - Installs the bedtools plugin.
 bgnotify - Installs the bgnotify plugin.
 boot2docker - Installs the boot2docker plugin.
 bower - Installs the bower plugin.
@@ -32,7 +35,6 @@ catimg - Installs the catimg plugin.
 celery - Installs the celery plugin.
 chruby - Installs the chruby plugin.
 chucknorris - Installs the chucknorris plugin.
-cloudapp - Installs the cloudapp plugin.
 cloudfoundry - Installs the cloudfoundry plugin.
 codeclimate - Installs the codeclimate plugin.
 coffee - Installs the coffee plugin.
@@ -63,6 +65,7 @@ docker-compose - Installs the docker-compose plugin.
 docker-machine - Installs the docker-machine plugin.
 doctl - Installs the doctl plugin.
 dotenv - Installs the dotenv plugin.
+dotnet - Installs the dotnet plugin.
 droplr - Installs the droplr plugin.
 drush - Installs the drush plugin.
 eecms - Installs the eecms plugin.
@@ -79,9 +82,9 @@ fasd - Installs the fasd plugin.
 fastfile - Installs the fastfile plugin.
 fbterm - Installs the fbterm plugin.
 fd - Installs the fd plugin.
-fedora - Installs the fedora plugin.
 firewalld - Installs the firewalld plugin.
 flutter - Installs the flutter plugin.
+fnm - Installs the fnm plugin.
 forklift - Installs the forklift plugin.
 fossil - Installs the fossil plugin.
 frontend-search - Installs the frontend-search plugin.
@@ -92,23 +95,23 @@ gb - Installs the gb plugin.
 gcloud - Installs the gcloud plugin.
 geeknote - Installs the geeknote plugin.
 gem - Installs the gem plugin.
+genpass - Installs the genpass plugin.
+gh - Installs the gh plugin.
 git - Installs the git plugin.
-git-auto-fetch Installs the git-auto-fetch plugin.
+git-auto-fetch - Installs the git-auto-fetch plugin.
 git-escape-magic - Installs the git-escape-magic plugin.
 git-extras - Installs the git-extras plugin.
-gitfast - Installs the gitfast plugin.
 git-flow - Installs the git-flow plugin.
 git-flow-avh - Installs the git-flow-avh plugin.
-github - Installs the github plugin.
 git-hubflow - Installs the git-hubflow plugin.
-gitignore - Installs the gitignore plugin.
 git-lfs - Installs the git-lfs plugin.
 git-prompt - Installs the git-prompt plugin.
-git-remote-branch - Installs the git-remote-branch plugin.
+gitfast - Installs the gitfast plugin.
+github - Installs the github plugin.
+gitignore - Installs the gitignore plugin.
 glassfish - Installs the glassfish plugin.
 globalias - Installs the globalias plugin.
 gnu-utils - Installs the gnu-utils plugin.
-go - Installs the go plugin.
 golang - Installs the golang plugin.
 gpg-agent - Installs the gpg-agent plugin.
 gradle - Installs the gradle plugin.
@@ -119,12 +122,16 @@ gulp - Installs the gulp plugin.
 hanami - Installs the hanami plugin.
 helm - Installs the helm plugin.
 heroku - Installs the heroku plugin.
-hitokoto - Installs the hitokoto plugin.
 history - Installs the history plugin.
 history-substring-search - Installs the history-substring-search plugin.
 hitchhiker - Installs the hitchhiker plugin.
+hitokoto - Installs the hitokoto plugin.
 homestead - Installs the homestead plugin.
 httpie - Installs the httpie plugin.
+invoke - Installs the invoke plugin.
+ionic - Installs the ionic plugin.
+ipfs - Installs the ipfs plugin.
+isodate - Installs the isodate plugin.
 iterm2 - Installs the iterm2 plugin.
 jake-node - Installs the jake-node plugin.
 jenv - Installs the jenv plugin.
@@ -133,15 +140,18 @@ jhbuild - Installs the jhbuild plugin.
 jira - Installs the jira plugin.
 jruby - Installs the jruby plugin.
 jsontools - Installs the jsontools plugin.
+juju - Installs the juju plugin.
 jump - Installs the jump plugin.
 kate - Installs the kate plugin.
 keychain - Installs the keychain plugin.
 kitchen - Installs the kitchen plugin.
+kn - Installs the kn plugin.
 knife - Installs the knife plugin.
-Installs the knife_ssh plugin.
+knife_ssh - Installs the knife_ssh plugin.
 kops - Installs the kops plugin.
-kubectl - Installs the kubectl plugin.
 kube-ps1 - Installs the kube-ps1 plugin.
+kubectl - Installs the kubectl plugin.
+kubectx - Installs the kubectx plugin.
 lando - Installs the lando plugin.
 laravel - Installs the laravel plugin.
 laravel4 - Installs the laravel4 plugin.
@@ -150,12 +160,15 @@ last-working-dir - Installs the last-working-dir plugin.
 lein - Installs the lein plugin.
 lighthouse - Installs the lighthouse plugin.
 lol - Installs the lol plugin.
+lxd - Installs the lxd plugin.
+macos - Installs the macos plugin.
 macports - Installs the macports plugin.
 magic-enter - Installs the magic-enter plugin.
 man - Installs the man plugin.
 marked2 - Installs the marked2 plugin.
 mercurial - Installs the mercurial plugin.
 meteor - Installs the meteor plugin.
+microk8s - Installs the microk8s plugin.
 minikube - Installs the minikube plugin.
 mix - Installs the mix plugin.
 mix-fast - Installs the mix-fast plugin.
@@ -172,15 +185,15 @@ nomad - Installs the nomad plugin.
 npm - Installs the npm plugin.
 npx - Installs the npx plugin.
 nvm - Installs the nvm plugin.
-nyan - Installs the nyan plugin.
 oc - Installs the oc plugin.
+octozen - Installs the octozen plugin.
 osx - Installs the osx plugin.
 otp - Installs the otp plugin.
 pass - Installs the pass plugin.
 paver - Installs the paver plugin.
 pep8 - Installs the pep8 plugin.
-percol - Installs the percol plugin.
 per-directory-history - Installs the per-directory-history plugin.
+percol - Installs the percol plugin.
 perl - Installs the perl plugin.
 perms - Installs the perms plugin.
 phing - Installs the phing plugin.
@@ -188,6 +201,7 @@ pip - Installs the pip plugin.
 pipenv - Installs the pipenv plugin.
 pj - Installs the pj plugin.
 please - Installs the please plugin.
+pm2 - Installs the pm2 plugin.
 pod - Installs the pod plugin.
 postgres - Installs the postgres plugin.
 pow - Installs the pow plugin.
@@ -216,6 +230,7 @@ rustup - Installs the rustup plugin.
 rvm - Installs the rvm plugin.
 safe-paste - Installs the safe-paste plugin.
 salt - Installs the salt plugin.
+samtools - Installs the samtools plugin.
 sbt - Installs the sbt plugin.
 scala - Installs the scala plugin.
 scd - Installs the scd plugin.
@@ -245,9 +260,8 @@ symfony2 - Installs the symfony2 plugin.
 systemadmin - Installs the systemadmin plugin.
 systemd - Installs the systemd plugin.
 taskwarrior - Installs the taskwarrior plugin.
-terminalapp - Installs the terminalapp plugin.
+term_tab - Installs the term_tab plugin.
 terminitor - Installs the terminitor plugin.
-Installs the term_tab plugin.
 terraform - Installs the terraform plugin.
 textastic - Installs the textastic plugin.
 textmate - Installs the textmate plugin.
@@ -269,8 +283,8 @@ urltools - Installs the urltools plugin.
 vagrant - Installs the vagrant plugin.
 vagrant-prompt - Installs the vagrant-prompt plugin.
 vault - Installs the vault plugin.
-vim-interaction - Installs the vim-interaction plugin.
 vi-mode - Installs the vi-mode plugin.
+vim-interaction - Installs the vim-interaction plugin.
 virtualenv - Installs the virtualenv plugin.
 virtualenvwrapper - Installs the virtualenvwrapper plugin.
 vscode - Installs the vscode plugin.
@@ -287,6 +301,8 @@ yum - Installs the yum plugin.
 z - Installs the z plugin.
 zbell - Installs the zbell plugin.
 zeus - Installs the zeus plugin.
+zoxide - Installs the zoxide plugin.
 zsh-interactive-cd - Installs the zsh-interactive-cd plugin.
 zsh-navigation-tools - Installs the zsh-navigation-tools plugin.
 zsh_reload - Installs the zsh_reload plugin.
+
