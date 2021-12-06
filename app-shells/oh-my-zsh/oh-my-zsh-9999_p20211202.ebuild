@@ -514,12 +514,18 @@ src_unpack() {
 		popd
 	fi
 
-	local plugins=$(ls -1 "${S}/plugins" | tr "\n" " " | fold -w 80 -s | sed -e "s| $||g")
+	local plugins=$(ls -1 "${S}/plugins" \
+		| tr "\n" " " \
+		| fold -w 80 -s \
+		| sed -e "s| $||g")
 	local n
 	for n in ${plugins} ; do
 		local x
 		local found=0
-		for x in $(echo "${PLUGINS_RDEPEND}" | tr " " "\n" | grep -E -o -e "omz_plugins_[^ ?]+" | sed -e "s|omz_plugins_||g") ; do
+		for x in $(echo "${PLUGINS_RDEPEND}" \
+			| tr " " "\n" \
+			| grep -E -o -e "omz_plugins_[^ ?]+" \
+			| sed -e "s|omz_plugins_||g") ; do
 			if [[ "${n}" == "${x}" ]] ; then
 				found=1
 			fi
@@ -539,7 +545,11 @@ src_unpack() {
 		echo
 
 		einfo "OMZSH_THEMES:"
-		local themes=$(ls -1 "${S}/themes" | tr "\n" " " | sed -e "s|.zsh-theme||g" -e "s|wezm[+]|wezmx|g" | fold -w 80 -s | sed -e "s| $||g")
+		local themes=$(ls -1 "${S}/themes" \
+			| tr "\n" " " \
+			| sed -e "s|.zsh-theme||g" -e "s|wezm[+]|wezmx|g" \
+			| fold -w 80 -s \
+			| sed -e "s| $||g")
 		echo -e "${themes}"
 
 		echo
