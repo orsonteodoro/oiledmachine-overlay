@@ -15,7 +15,7 @@ X86_CPU_FEATURES=(
 	sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4.1 sse4_2:sse4.2
 	avx:avx avx2:avx2 avx512f:avx512f f16c:f16c )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-LLVM_SUPPORT=(10 11 12 13) # can support llvm-9 but only >=10 available on the distro
+LLVM_SUPPORT=(10 11 12 13) # Upstream supports llvm:9 to llvm:12 but only >=10 available on the distro.
 LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
 # The highest stable llvm was used as the default.  Revisions may update this in the future.
 IUSE+=" ${CPU_FEATURES[@]%:*} doc ${LLVM_SUPPORT_[@]} +llvm-13 optix partio python qt5 test"
@@ -39,6 +39,34 @@ gen_llvm_depend()
 	done
 }
 
+gen_opx_llvm_rdepend() {
+	local o=""
+	for s in ${LLVM_SUPPORT[@]} ; do
+		o+="
+			(
+				sys-devel/llvm:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
+				sys-devel/clang:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
+				>=sys-devel/lld-${s}
+			)
+		"
+	done
+	echo "${o}"
+}
+
+gen_llvm_bdepend() {
+	local o=""
+	for s in ${LLVM_SUPPORT[@]} ; do
+		o+="
+			(
+				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				>=sys-devel/lld-${s}
+			)
+		"
+	done
+	echo "${o}"
+}
+
 # Multilib requires openexr built as multilib.
 RDEPEND+=" "$(gen_llvm_depend)
 RDEPEND+="
@@ -53,28 +81,7 @@ RDEPEND+="
 		>=dev-libs/optix-5.1
 		>=dev-util/nvidia-cuda-toolkit-8
 		$(python_gen_any_dep '>=media-libs/openimageio-1.8:=[${PYTHON_SINGLE_USEDEP}]')
-		|| (
-			(
-				sys-devel/llvm:13[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
-				sys-devel/clang:13[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
-				>=sys-devel/lld-13
-			)
-			(
-				sys-devel/llvm:12[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
-				sys-devel/clang:12[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
-				>=sys-devel/lld-12
-			)
-			(
-				sys-devel/llvm:11[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
-				sys-devel/clang:11[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
-				>=sys-devel/lld-11
-			)
-			(
-				sys-devel/llvm:10[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
-				sys-devel/clang:10[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
-				>=sys-devel/lld-10
-			)
-		)
+		|| ( $(gen_opx_llvm_rdepend) )
 	)
 	partio? ( media-libs/partio )
 	qt5? (
@@ -95,26 +102,7 @@ BDEPEND+="
 			<sys-devel/gcc-12
 			>=sys-devel/gcc-6
 		)
-		(
-			sys-devel/clang:13[${MULTILIB_USEDEP}]
-			sys-devel/llvm:13[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-13
-		)
-		(
-			sys-devel/clang:12[${MULTILIB_USEDEP}]
-			sys-devel/llvm:12[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-12
-		)
-		(
-			sys-devel/clang:11[${MULTILIB_USEDEP}]
-			sys-devel/llvm:11[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-11
-		)
-		(
-			sys-devel/clang:10[${MULTILIB_USEDEP}]
-			sys-devel/llvm:10[${MULTILIB_USEDEP}]
-			>=sys-devel/lld-10
-		)
+		$(gen_llvm_bdepend)
 		>=dev-lang/icc-13[${MULTILIB_USEDEP}]
 	)
 	>=dev-util/cmake-3.12
