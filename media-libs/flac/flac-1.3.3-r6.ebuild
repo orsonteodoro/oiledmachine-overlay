@@ -407,4 +407,11 @@ einfo "description of a typical USE pattern (or benchmark).  There's a"
 einfo "consideration for adding a PGO training profile for voice.  If you"
 einfo "would like that added to the ebuild, send an issue request."
 einfo
+
+	if use lto ; then
+ewarn
+ewarn "The lto USE flag can only used with only one systemwide LTO compiler"
+ewarn "especially with static linking."
+ewarn
+	fi
 }

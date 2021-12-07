@@ -495,9 +495,17 @@ ewarn
 ewarn "You must link these libraries with static linkage for plain CFI to work."
 ewarn
 	fi
-if use static-libs ; then
+
+	if use static-libs ; then
 ewarn
 ewarn "static-lib consumers require -DU_STATIC_IMPLEMENTATION"
 ewarn
-fi
+	fi
+
+	if use lto ; then
+ewarn
+ewarn "The lto USE flag can only used with only one systemwide LTO compiler"
+ewarn "especially with static linking."
+ewarn
+	fi
 }

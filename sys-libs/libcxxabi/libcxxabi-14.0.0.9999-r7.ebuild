@@ -412,4 +412,11 @@ ewarn
 ewarn "You must add -static-libstdc++ before -stdlib=libc++ for plain CFI to work."
 ewarn
 	fi
+
+	if use lto ; then
+ewarn
+ewarn "The lto USE flag can only used with only one systemwide LTO compiler"
+ewarn "especially with static linking."
+ewarn
+	fi
 }
