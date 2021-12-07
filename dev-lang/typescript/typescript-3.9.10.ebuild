@@ -30,8 +30,8 @@ BDEPEND+=" ${CDEPEND}"
 MY_PN="TypeScript"
 FN_SRC="v${PV}.tar.gz"
 FN_DEST="${PN}-${PV}.tar.gz"
-SRC_URI=\
-"https://github.com/Microsoft/${MY_PN}/archive/v${PV}.tar.gz \
+SRC_URI="
+https://github.com/Microsoft/${MY_PN}/archive/v${PV}.tar.gz
 	-> ${FN_DEST}"
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="fetch mirror"
@@ -40,23 +40,30 @@ GITHUB_HOMEPAGE="https://github.com/microsoft/TypeScript"
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	local homepage="${GITHUB_HOMEPAGE}/releases"
-	einfo \
-"This package asserts all rights reserved in the source code and the\n\
-third party modules. Please read:\n\
-  https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/all-rights-reserved\n\
-\n\
-If you agree, please download\n\
-  - ${FN_SRC}\n\
-from ${homepage} and rename it to ${FN_DEST} place it in ${distdir}\n\
-or do \`wget -O ${distdir}/${FN_DEST} ${GITHUB_HOMEPAGE}/archive/${FN_SRC}\`"
+einfo
+einfo "This package asserts all rights reserved in the source code and the"
+einfo "third party modules. Please read:"
+einfo
+einfo "  https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/all-rights-reserved"
+einfo
+einfo "If you agree, please download"
+einfo
+einfo "  ${FN_SRC}"
+einfo
+einfo "from ${homepage} and rename it to ${FN_DEST} place it in ${distdir}"
+einfo "or do \`wget -O ${distdir}/${FN_DEST} ${GITHUB_HOMEPAGE}/archive/${FN_SRC}\`"
+einfo
 }
 
 pkg_setup() {
 	npm-secaudit_pkg_setup
 	NODE_VERSION=$(/usr/bin/node --version | sed -e "s|v||g" | cut -f 1 -d ".")
         if (( ${NODE_VERSION} < ${MIN_NODE_VERSION} )) ; then
-                echo "NODE_VERSION must be >=${MIN_NODE_VERSION}"
-		die "Switch Node.js to >=${MIN_NODE_VERSION}"
+		eerror
+		eerror "NODE_VERSION must be >=${MIN_NODE_VERSION}"
+		eerror "Switch Node.js to >=${MIN_NODE_VERSION}"
+		eerror
+		die
         fi
 	einfo "Node.js is ${NODE_VERSION}"
 }
