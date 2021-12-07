@@ -3,24 +3,12 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 \
 	toolchain-funcs
 
 DESCRIPTION="Low Level Virtual Machine"
 HOMEPAGE="https://llvm.org/"
-LLVM_COMPONENTS=( llvm )
-LLVM_MANPAGES=pregenerated
-LLVM_PATCHSET=10.0.1-3
-llvm.org_set_globals
-
-# Those are in lib/Targets, without explicit CMakeLists.txt mention
-ALL_LLVM_EXPERIMENTAL_TARGETS=( ARC AVR )
-# Keep in sync with CMakeLists.txt
-ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM BPF Hexagon Lanai Mips MSP430
-	NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 XCore
-	"${ALL_LLVM_EXPERIMENTAL_TARGETS[@]}" )
-ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 
 # Additional licenses:
 # 1. OpenBSD regex: Henry Spencer's license ('rc' in Gentoo) + BSD.
@@ -30,16 +18,15 @@ ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
-KEYWORDS="amd64 arm arm64 ppc64 x86 ~amd64-linux ~ppc-macos ~x64-macos"
-IUSE="debug doc exegesis gold libedit +libffi ncurses test xar xml z3
-	kernel_Darwin ${ALL_LLVM_TARGETS[*]}"
-REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
+KEYWORDS=""
+IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml
+	z3 kernel_Darwin"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
 	sys-libs/zlib:0=[${MULTILIB_USEDEP}]
+	binutils-plugin? ( >=sys-devel/binutils-2.31.1-r4:*[plugins] )
 	exegesis? ( dev-libs/libpfm:= )
-	gold? ( >=sys-devel/binutils-2.31.1-r4:*[plugins] )
 	libedit? ( dev-libs/libedit:0=[${MULTILIB_USEDEP}] )
 	libffi? ( >=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}] )
 	ncurses? ( >=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}] )
@@ -47,9 +34,10 @@ RDEPEND="
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	z3? ( >=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
-	gold? ( sys-libs/binutils-libs )"
+	binutils-plugin? ( sys-libs/binutils-libs )"
 BDEPEND="
 	dev-lang/perl
+	>=dev-util/cmake-3.16
 	sys-devel/gnuconfig
 	kernel_Darwin? (
 		<sys-libs/libcxx-$(ver_cut 1-3).9999
@@ -66,16 +54,52 @@ BDEPEND="
 RDEPEND="${RDEPEND}
 	!sys-devel/llvm:0"
 PDEPEND="sys-devel/llvm-common
-	gold? ( >=sys-devel/llvmgold-${SLOT} )"
+	binutils-plugin? ( >=sys-devel/llvmgold-${SLOT} )"
 PATCHES=(
 	"${FILESDIR}/llvm-12.0.1-stop-triple-spam.patch"
 )
+
+LLVM_COMPONENTS=( llvm )
+LLVM_MANPAGES=build
+LLVM_PATCHSET=9999-1
+LLVM_USE_TARGETS=provide
+llvm.org_set_globals
 
 python_check_deps() {
 	use doc || return 0
 
 	has_version -b "dev-python/recommonmark[${PYTHON_USEDEP}]" &&
 	has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
+}
+
+check_live_ebuild() {
+	local prod_targets=(
+		$(sed -n -e '/set(LLVM_ALL_TARGETS/,/)/p' CMakeLists.txt \
+			| tail -n +2 | head -n -1)
+	)
+	local all_targets=(
+		lib/Target/*/
+	)
+	all_targets=( "${all_targets[@]#lib/Target/}" )
+	all_targets=( "${all_targets[@]%/}" )
+
+	local exp_targets=() i
+	for i in "${all_targets[@]}"; do
+		has "${i}" "${prod_targets[@]}" || exp_targets+=( "${i}" )
+	done
+
+	if [[ ${exp_targets[*]} != ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]} ]]; then
+		eqawarn "ALL_LLVM_EXPERIMENTAL_TARGETS is outdated!"
+		eqawarn "    Have: ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]}"
+		eqawarn "Expected: ${exp_targets[*]}"
+		eqawarn
+	fi
+
+	if [[ ${prod_targets[*]} != ${ALL_LLVM_PRODUCTION_TARGETS[*]} ]]; then
+		eqawarn "ALL_LLVM_PRODUCTION_TARGETS is outdated!"
+		eqawarn "    Have: ${ALL_LLVM_PRODUCTION_TARGETS[*]}"
+		eqawarn "Expected: ${prod_targets[*]}"
+	fi
 }
 
 check_distribution_components() {
@@ -145,10 +169,8 @@ src_prepare() {
 	# Update config.guess to support more systems
 	cp "${BROOT}/usr/share/gnuconfig/config.guess" cmake/ || die
 
-	# manpages don't use markdown
-	if ! use doc; then
-		sed -i -e '/source_parsers/d' docs/conf.py || die
-	fi
+	# Verify that the live ebuild is up-to-date
+	check_live_ebuild
 
 	llvm.org_src_prepare
 }
@@ -207,6 +229,7 @@ get_distribution_components() {
 			llvm-ar
 			llvm-as
 			llvm-bcanalyzer
+			llvm-bitcode-strip
 			llvm-c-test
 			llvm-cat
 			llvm-cfi-verify
@@ -221,45 +244,54 @@ get_distribution_components() {
 			llvm-dlltool
 			llvm-dwarfdump
 			llvm-dwp
-			llvm-elfabi
 			llvm-exegesis
 			llvm-extract
+			llvm-gsymutil
 			llvm-ifs
 			llvm-install-name-tool
 			llvm-jitlink
+			llvm-jitlink-executor
 			llvm-lib
+			llvm-libtool-darwin
 			llvm-link
 			llvm-lipo
 			llvm-lto
 			llvm-lto2
 			llvm-mc
 			llvm-mca
+			llvm-ml
 			llvm-modextract
 			llvm-mt
 			llvm-nm
 			llvm-objcopy
 			llvm-objdump
 			llvm-opt-report
+			llvm-otool
 			llvm-pdbutil
 			llvm-profdata
+			llvm-profgen
 			llvm-ranlib
 			llvm-rc
 			llvm-readelf
 			llvm-readobj
 			llvm-reduce
 			llvm-rtdyld
+			llvm-sim
 			llvm-size
 			llvm-split
 			llvm-stress
 			llvm-strings
 			llvm-strip
 			llvm-symbolizer
+			llvm-tapi-diff
 			llvm-undname
+			llvm-windres
 			llvm-xray
 			obj2yaml
 			opt
 			sancov
 			sanstats
+			split-file
 			verify-uselistorder
 			yaml2obj
 
@@ -279,7 +311,7 @@ get_distribution_components() {
 			docs-llvm-html
 		)
 
-		use gold && out+=(
+		use binutils-plugin && out+=(
 			LLVMgold
 		)
 	fi
@@ -328,7 +360,9 @@ multilib_src_configure() {
 		-DFFI_INCLUDE_DIR="${ffi_cflags#-I}"
 		-DFFI_LIBRARY_DIR="${ffi_ldflags#-L}"
 		# used only for llvm-objdump tool
-		-DHAVE_LIBXAR=$(multilib_native_usex xar 1 0)
+		-DLLVM_HAVE_LIBXAR=$(multilib_native_usex xar 1 0)
+
+		-DPython3_EXECUTABLE="${PYTHON}"
 
 		# disable OCaml bindings (now in dev-ml/llvm-ocaml)
 		-DOCAMLFIND=NO
@@ -340,6 +374,7 @@ multilib_src_configure() {
 		# libraries with libstdc++ clang, and the other way around.
 		mycmakeargs+=(
 			-DLLVM_VERSION_SUFFIX="libcxx"
+			-DLLVM_ENABLE_LIBCXX=ON
 		)
 	fi
 
@@ -373,7 +408,7 @@ multilib_src_configure() {
 			-DLLVM_ENABLE_DOXYGEN=OFF
 			-DLLVM_INSTALL_UTILS=ON
 		)
-		use gold && mycmakeargs+=(
+		use binutils-plugin && mycmakeargs+=(
 			-DLLVM_BINUTILS_INCDIR="${EPREFIX}"/usr/include
 		)
 	fi
@@ -410,7 +445,7 @@ multilib_src_configure() {
 }
 
 multilib_src_compile() {
-	cmake_src_compile
+	cmake_build distribution
 
 	pax-mark m "${BUILD_DIR}"/bin/llvm-rtdyld
 	pax-mark m "${BUILD_DIR}"/bin/lli
