@@ -35,9 +35,9 @@ REQUIRED_USE+="
 		closure_compiler_native
 		closure_compiler_nodejs	)"
 # For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/v20211006.0.0/packages/google-closure-compiler/package.json
+# https://github.com/google/closure-compiler-npm/blob/v20211201.0.0/packages/google-closure-compiler/package.json
 # For dependencies, see
-# https://github.com/google/closure-compiler-npm/blob/v20211006.0.0/.github/workflows/build.yml
+# https://github.com/google/closure-compiler-npm/blob/v20211201.0.0/.github/workflows/build.yml
 NODE_V="14" # Upstream uses 14 on linux but others 10, 12
 CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_V} )"
 JDK_DEPEND="
