@@ -12,7 +12,6 @@
 
 # Modifications in the oiledmachine-overlay are found below:
 # (1) retpoline flag translation
-# (2) lto flag translation
 
 # Forked flag-o-matic.eclass updates every EAPI or API change.
 
@@ -908,47 +907,12 @@ translate_retpoline() {
 	export ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS
 }
 
-# @FUNCTION: translate_lto
-# @DESCRIPTION:
-# Translates incompatible args of LTO in the best way possible.  Also, removes
-# incompatible flags that would result in configure time failures.
-translate_lto() {
-	has_lto=0
-	local f
-	for f in ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS ; do
-		if [[ "${!f}" =~ "-flto" ]] ; then
-			has_lto=1
-		fi
-	done
-	(( ${has_lto} == 0 )) && return
-	einfo "Auto translating LTO args"
-	# The defaults are usually good enough.
-	if tc-is-gcc ; then
-		replace-flags "-flto=thin" "-flto"
-		replace-flags "-flto=full" "-flto"
-		[[ "${LDFLAGS}" =~ "-fuse-ld=lld" ]] \
-			&& filter-flags '-fuse-ld=*'
-	fi
-	if tc-is-clang ; then
-		replace-flags "-flto=auto" "-flto"
-		replace-flags "-flto=jobserver" "-flto"
-		[[ "${LDFLAGS}" =~ "-fuse-ld=bfd" ]] \
-			&& filter-flags '-fuse-ld=*'
-		filter-flags '-f*fat-lto-objects'
-		filter-flags '-f*lto-compression-level*'
-		filter-flags '-f*lto-partition*'
-		filter-flags '-f*use-linker-plugin'
-	fi
-	export ADAFLAGS CFLAGS CPPFLAGS CXXFLAGS CCASFLAGS FFLAGS FCFLAGS LDFLAGS
-}
-
 # It should belong in pkg_setup, but src_configure is fine
 # @FUNCTION: autofix_flags
 # @DESCRIPTION:
 # Removes incompatible flags and translates flags
 autofix_flags() {
 	translate_retpoline
-	translate_lto
 	strip-unsupported-flags
 }
 
