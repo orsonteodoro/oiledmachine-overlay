@@ -17,7 +17,7 @@ X86_CPU_FEATURES=(
 	sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4.1 sse4_2:sse4.2
 	avx:avx avx2:avx2 avx512f:avx512f f16c:f16c )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-OPENVDB_APIS=( 5 6 7 8 )
+OPENVDB_APIS=( 5 6 7 8 9 )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 # font install is enabled upstream
@@ -31,7 +31,7 @@ REQUIRED_USE="
 	python? ( ${PYTHON_REQUIRED_USE} )
 	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )
 	rav1e? ( avif )"
-# See https://github.com/OpenImageIO/oiio/blob/Release-2.3.9.1/INSTALL.md for requirements
+# See https://github.com/OpenImageIO/oiio/blob/Release-2.3.10.1/INSTALL.md for requirements
 QT_V="5.6"
 ONETBB_SLOT="12"
 RDEPEND+="
@@ -207,6 +207,17 @@ src_configure() {
 		)
 	elif use abi8-compat ; then
 		einfo "Using abi8-compat and added CMAKE_CXX_STANDARD=14"
+		mycmakeargs+=(
+			-DCMAKE_CXX_STANDARD=14
+		)
+	elif use abi9-compat && usex cxx17 ; then
+		set_cxx17=1
+		einfo "Using abi9-compat and added CMAKE_CXX_STANDARD=17"
+		mycmakeargs+=(
+			-DCMAKE_CXX_STANDARD=17
+		)
+	elif use abi9-compat ; then
+		einfo "Using abi9-compat and added CMAKE_CXX_STANDARD=14"
 		mycmakeargs+=(
 			-DCMAKE_CXX_STANDARD=14
 		)
