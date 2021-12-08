@@ -18,7 +18,7 @@ else
 	SRC_URI="https://www.wireshark.org/download/src/all-versions/${P/_/}.tar.xz"
 	S="${WORKDIR}/${P/_/}"
 
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc64 ~x86"
+	KEYWORDS="~alpha amd64 arm ~arm64 ~hppa ~ia64 ppc64 x86"
 fi
 
 LICENSE="GPL-2"
@@ -29,6 +29,8 @@ IUSE+=" +mergecap +minizip +netlink opus +plugins plugin-ifdemo +pcap +qt5 +rand
 IUSE+=" +randpktdump +reordercap sbc selinux +sharkd smi snappy spandsp sshdump ssl"
 IUSE+=" sdjournal test +text2pcap tfshark +tshark +udpdump zlib +zstd"
 IUSE+=" mtp"
+
+RESTRICT="!test? ( test )"
 
 # bug #753062 for speexdsp
 CDEPEND="
@@ -102,8 +104,6 @@ REQUIRED_USE="
 	lua? ( ${LUA_REQUIRED_USE} )
 	plugin-ifdemo? ( plugins )
 "
-
-RESTRICT="test"
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.6.0-redhat.patch
@@ -209,6 +209,9 @@ src_test() {
 		--disable-capture
 		--skip-missing-programs=all
 		--verbose
+
+		# Skip known failing tests
+		-E "(suite_decryption|suite_extcaps|suite_nameres)"
 	)
 
 	cmake_src_test
