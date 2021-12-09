@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- only for this fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- originally from the gentoo-overlay -->
+    <!-- originator -->
+    <email>prometheanfire@gentoo.org</email>
+    <name>Matthew Thode</name>
+  </maintainer>
+  <longdescription>
+    This ebuild fork is to try keep up to date the latest stable and ensure
+    dependency compleness and transparency.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://community.spotify.com/t5/Desktop-Linux/Troubleshooting-Linux-Spotify/td-p/1192307</bugs-to>
+  </upstream>
+  <use>
+    <flag name="libnotify">Add support for popup info bubble dialogs</flag>
+    <flag name="ffmpeg">Add support for loading local media files</flag>
+    <flag name="pax_kernel">Triggers a paxmarking of the main Spotify
+      binary</flag>
+    <flag name="pulseaudio">Controls the dependency on pulseaudio or
+      apulse</flag>
+    <flag name="systray">Pulls in dependencies needed for systray support on
+      some desktop environments</flag>
+    <flag name="ffmpeg">Add support for file picker to select local media
+      files</flag>
+  </use>
+</pkgmetadata>
