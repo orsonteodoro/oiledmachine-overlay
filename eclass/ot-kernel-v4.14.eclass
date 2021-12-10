@@ -151,9 +151,6 @@ fi
 
 SRC_URI+=" genpatches? (
 		${GENPATCHES_URI}
-		${GENPATCHES_BASE_SRC_URI}
-		${GENPATCHES_EXPERIMENTAL_SRC_URI}
-		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
 	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}

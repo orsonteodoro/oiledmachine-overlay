@@ -235,9 +235,6 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 	   futex? ( ${FUTEX_SRC_URIS} )
 	   genpatches? (
 		${GENPATCHES_URI}
-		${GENPATCHES_BASE_SRC_URI}
-		${GENPATCHES_EXPERIMENTAL_SRC_URI}
-		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
 	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}

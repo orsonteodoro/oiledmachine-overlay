@@ -30,14 +30,11 @@
 # tonyk/futex_waitv
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/tonyk/futex_waitv
 # genpatches:
-#   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
-#   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
-#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.4.html
-#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.10.html
-#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.14.html
-#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.15.html
-#   The person below who updates the release links above lag. See instead:
-#     https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-kernel/gentoo-sources
+#   https://gitweb.gentoo.org/proj/linux-patches.git/
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.14
 # kernel_compiler_patch:
 #   https://github.com/graysky2/kernel_compiler_patch
 #   https://github.com/graysky2/kernel_gcc_patch
@@ -200,14 +197,10 @@ CLANG_PGO_URI="
 ${CLANG_PGO_BASE_URI}&id=${PATCH_CLANG_PGO_COMMIT_D}&id2=${PATCH_CLANG_PGO_COMMIT_A_PARENT}
 		-> ${CLANG_PGO_FN}" # [oldest,newest]
 
-GENPATCHES_URI_BASE_URI="https://dev.gentoo.org/~mpagano/genpatches/tarballs/"
+GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapshot/"
 GENPATCHES_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
-GENPATCHES_BASE_FN="genpatches-${GENPATCHES_MAJOR_MINOR_REVISION}.base.tar.xz"
-GENPATCHES_EXPERIMENTAL_FN="genpatches-${GENPATCHES_MAJOR_MINOR_REVISION}.experimental.tar.xz"
-GENPATCHES_EXTRAS_FN="genpatches-${GENPATCHES_MAJOR_MINOR_REVISION}.extras.tar.xz"
-GENPATCHES_BASE_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_BASE_FN}"
-GENPATCHES_EXPERIMENTAL_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_EXPERIMENTAL_FN}"
-GENPATCHES_EXTRAS_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_EXTRAS_FN}"
+GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
+GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
 
 KCP_COMMIT_SNAPSHOT="9c9c7e817dd2718566ec95f7742b162ab125316f" # 20211114
 
@@ -1216,62 +1209,21 @@ function apply_ck() {
 	done
 }
 
-# @FUNCTION: apply_genpatches_base
+# @FUNCTION: apply_genpatches
 # @DESCRIPTION:
 # Apply the base genpatches patchset.
-function apply_genpatches_base() {
-einfo "Applying the genpatches base"
+function apply_genpatches() {
+einfo "Applying the genpatches"
 	local d
-	d="${T}/${GENPATCHES_BASE_FN%.tar.xz}"
-	mkdir "$d"
+	local dn="${GENPATCHES_FN%.tar.bz2}"
+	d="${T}/${dn}"
+	mkdir "$d" || die
 	cd "$d" || die
-	unpack "${GENPATCHES_BASE_FN}"
-
-	sed -i -e "s|EXTRAVERSION = ${EXTRAVERSION}|EXTRAVERSION =|" \
-		"${S}"/Makefile \
-		|| die
-
-	# Section replaced by apply_vanilla_point_release
-
-	sed -i -e "s|EXTRAVERSION =|EXTRAVERSION = ${EXTRAVERSION}|" \
-		"${S}"/Makefile \
-		|| die
+	unpack "${GENPATCHES_FN}"
+	d="${T}/${dn}/${dn}"
 
 	cd "${S}" || die
 
-	_filter_genpatches
-}
-
-# @FUNCTION: apply_genpatches_experimental
-# @DESCRIPTION:
-# Apply the experimental genpatches patchset.
-function apply_genpatches_experimental() {
-einfo "Applying genpatches experimental"
-
-	local d
-	d="${T}/${GENPATCHES_EXPERIMENTAL_FN%.tar.xz}"
-	mkdir "$d"
-	cd "$d" || die
-	unpack "${GENPATCHES_EXPERIMENTAL_FN}"
-
-	cd "${S}" || die
-
-	_filter_genpatches
-}
-
-# @FUNCTION: apply_genpatches_extras
-# @DESCRIPTION:
-# Apply the extra genpatches patchset.
-function apply_genpatches_extras() {
-einfo "Applying genpatches extras"
-
-	local d
-	d="${T}/${GENPATCHES_EXTRAS_FN%.tar.xz}"
-	mkdir "$d"
-	cd "$d" || die
-	unpack "${GENPATCHES_EXTRAS_FN}"
-
-	cd "${S}" || die
 	_filter_genpatches
 }
 
@@ -1540,9 +1492,7 @@ ewarn
 
 	if has genpatches ${IUSE_EFFECTIVE} ; then
 		if use genpatches ; then
-			apply_genpatches_base
-			apply_genpatches_extras
-			apply_genpatches_experimental
+			apply_genpatches
 		fi
 	fi
 
