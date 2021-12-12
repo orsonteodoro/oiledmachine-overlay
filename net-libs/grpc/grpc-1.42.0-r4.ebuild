@@ -85,6 +85,7 @@ src_configure() {
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
+			-DCMAKE_CXX_STANDARD=17
 			$(usex test '-DgRPC_GFLAGS_PROVIDER=package' '')
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
