@@ -52,7 +52,7 @@ DEPEND+=" ${CDEPEND}
 	sys-libs/zlib[${MULTILIB_USEDEP}]
 	virtual/jpeg[${MULTILIB_USEDEP}]
 	virtual/libc
-	android? ( dev-util/android-ndk
+	android? ( >=dev-util/android-ndk-23
 		   dev-util/android-sdk-update-manager )
 	box2d? ( || ( <dev-games/box2d-2.4:2.3[${MULTILIB_USEDEP}]
 			<games-engines/box2d-2.4:2.3.0[${MULTILIB_USEDEP}] ) )
@@ -108,7 +108,7 @@ BDEPEND+=" ${CDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
-EGIT_COMMIT="3daf5a92ef6b3e9e83a015cbba903006b5731f6f"
+EGIT_COMMIT="65f91e22bd43d48be563b39806bc42743e80b1e7"
 SRC_URI="
 https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
@@ -121,15 +121,19 @@ pkg_setup() {
 	CXX=$(tc-getCXX)
 	if tc-is-gcc ; then
 		if ver_test $(gcc-version) -lt 9 ; then
-			die \
-"You need to update your GCC to >=9 via eselect or switch to Clang/LLVM to \
->=10 in your per-package environmental variable settings."
+eerror
+eerror "You need to update your GCC to >=9 via eselect or switch to Clang/LLVM"
+eerror "to >=10 in your per-package environmental variable settings."
+eerror
+			die
 		fi
 	elif tc-is-clang ; then
 		if ver_test $(clang-version) -lt 10 ; then
-			die \
-"You need to update your Clang/LLVM to >=10 or switch to GCC >=9 via eselect \
-in your per-package environmental variable settings."
+eerror
+eerror "You need to update your Clang/LLVM to >=10 or switch to GCC >=9 via"
+eerror "eselect in your per-package environmental variable settings."
+eerror
+			die
 		fi
 	else
 		die "Compiler CC=${CC} CXX=${CXX} is not supported"
@@ -150,12 +154,10 @@ src_prepare() {
 	}
 	platforms_foreach_impl platform_prepare
 	if use android ; then
-		ewarn \
-"Android support is experimental"
+ewarn "Android support is experimental"
 	fi
 	if use wine ; then
-		ewarn \
-"WINE support is experimental and may not work and be feature complete."
+ewarn "WINE support is experimental and may not work and be feature complete."
 	fi
 }
 
@@ -458,7 +460,6 @@ src_install() {
 pkg_postinst()
 {
 	if use android ; then
-		einfo \
-	"You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"
+einfo "You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"
 	fi
 }
