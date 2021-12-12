@@ -25,7 +25,7 @@ SLOT_MAJ="0"
 SLOT="${SLOT_MAJ}/19.141" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
 # third_party last update: 20211006
 RDEPEND+="
-	~dev-cpp/abseil-cpp-20210324.0:=[${MULTILIB_USEDEP}]
+	~dev-cpp/abseil-cpp-20210324.0:=[${MULTILIB_USEDEP},cxx17(+)]
 	>=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-3.17.3:=[${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2020.06.01:=[${MULTILIB_USEDEP}]
@@ -84,6 +84,7 @@ src_configure() {
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
+			-DCMAKE_CXX_STANDARD=17
 			$(usex test '-DgRPC_GFLAGS_PROVIDER=package' '')
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
