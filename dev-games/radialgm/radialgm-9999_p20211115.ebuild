@@ -36,9 +36,9 @@ DEPEND+=" ${CDEPEND}
 RDEPEND=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
 	   media-gfx/imagemagick[png]"
-EGIT_COMMIT="394448fff27e4cdd63b108a8be898c17a25a711d"
-SRC_URI=\
-"https://github.com/enigma-dev/RadialGM/archive/${EGIT_COMMIT}.tar.gz \
+EGIT_COMMIT="1c5de9a580d27bed1979f225433f7cd039d675c5"
+SRC_URI="
+https://github.com/enigma-dev/RadialGM/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
 MY_PN="RadialGM"
 S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
@@ -51,8 +51,11 @@ pkg_setup() {
 	LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help \
 		| grep -q -F -e "--server"
 	if [[ "$?" != "0" ]] ; then
-		die \
-"Your enigma is not built with --server.  Re-emerge with the radialgm USE flag."
+eerror
+eerror "Your enigma is not built with --server.  Re-emerge with the radialgm"
+eerror "USE flag."
+eerror
+		die
 	fi
 	popd 2>/dev/null 1>/dev/null || die
 }
