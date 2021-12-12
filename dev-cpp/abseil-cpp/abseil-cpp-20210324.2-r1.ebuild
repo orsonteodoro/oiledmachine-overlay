@@ -27,6 +27,10 @@ https://github.com/google/googletest/archive/${GTEST_COMMIT}.tar.gz
 	-> ${GTEST_FILE}"
 RESTRICT="!test? ( test ) mirror"
 
+PATCHES=(
+	"${FILESDIR}/${PN}-20200923-arm_no_crypto.patch"
+)
+
 src_prepare() {
 	cmake-utils_src_prepare
 	# un-hardcode abseil compiler flags
