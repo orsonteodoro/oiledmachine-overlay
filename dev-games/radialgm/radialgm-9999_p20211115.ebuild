@@ -11,7 +11,8 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE="doc"
-ENIGMA_V="9999_p20201116"
+ENIGMA_V="9999_p20211017" # Same as link in https://github.com/enigma-dev/RadialGM/tree/${EGIT_COMMIT}/Submodules
+# https://github.com/enigma-dev/enigma-dev/tree/b3732c7e66bf77acbd6a65410b1ab0df8ca34b70 (Oct 17, 2021)
 CDEPEND="dev-libs/protobuf
 	 net-libs/grpc
 	 >=sys-devel/gcc-7.4.0"
@@ -53,7 +54,8 @@ pkg_setup() {
 	if [[ "$?" != "0" ]] ; then
 eerror
 eerror "Your enigma is not built with --server.  Re-emerge with the radialgm"
-eerror "USE flag."
+eerror "USE flag.  Enigma must be built against the same abseil-cpp version"
+eerror "installed."
 eerror
 		die
 	fi
