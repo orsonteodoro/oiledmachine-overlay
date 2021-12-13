@@ -1,0 +1,12 @@
+diff -urp RadialGM-1c5de9a580d27bed1979f225433f7cd039d675c5.orig/CMakeLists.txt RadialGM-1c5de9a580d27bed1979f225433f7cd039d675c5/CMakeLists.txt
+--- RadialGM-1c5de9a580d27bed1979f225433f7cd039d675c5.orig/CMakeLists.txt	2021-12-12 18:24:56.903184351 -0800
++++ RadialGM-1c5de9a580d27bed1979f225433f7cd039d675c5/CMakeLists.txt	2021-12-12 18:35:52.085048720 -0800
+@@ -242,7 +242,7 @@ find_package(yaml-cpp CONFIG REQUIRED)
+ target_link_libraries(${EXE} PRIVATE yaml-cpp)
+ 
+  #Find gRPC
+- if (MSVC) # Windows actually does something right for once
++ if (TRUE)
+    find_package(gRPC CONFIG REQUIRED)
+    target_link_libraries(${EXE} PRIVATE gRPC::gpr gRPC::grpc gRPC::grpc++)
+  else() # https://tinyurl.com/arch-grpc-bug

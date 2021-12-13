@@ -46,6 +46,9 @@ S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 DOCS=( README.md )
 CMAKE_BUILD_TYPE="Release"
+_PATCHES=(
+	"${FILESDIR}/radialgm-9999_p20211115-re-enable-grpc-block.patch"
+)
 
 pkg_setup() {
 	pushd /usr/$(get_libdir)/enigma/vanilla 2>/dev/null 1>/dev/null || die
@@ -68,6 +71,7 @@ src_prepare() {
 	rm -rf "${S}/Submodules/enigma-dev" || die
 	cp -a /usr/$(get_libdir)/enigma/vanilla "${S}/Submodules" || die
 	mv "${S}/Submodules/vanilla" "${S}/Submodules/enigma-dev" || die
+	eapply "${_PATCHES[@]}"
 }
 
 src_configure() {
