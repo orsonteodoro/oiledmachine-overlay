@@ -287,6 +287,7 @@ wrap_libcxx() {
 		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
 		-DLIBCXX_HAS_GCC_S_LIB=OFF
 		-DLIBCXX_INCLUDE_TESTS=OFF
+		-DLIBCXX_TARGET_TRIPLE="${CHOST}"
 		-DLTO=$(usex lto)
 		-DNOEXECSTACK=$(usex hardened)
 	)

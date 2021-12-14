@@ -12,7 +12,7 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
+KEYWORDS="amd64 arm arm64 ~riscv x86 ~x64-macos"
 IUSE="+libunwind static-libs test elibc_musl"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cross-dso-cfi hardened lto shadowcallstack"
 REQUIRED_USE+="
@@ -204,6 +204,7 @@ _configure_abi() {
 		# upstream is omitting standard search path for this
 		# probably because gcc & clang are bundling their own unwind.h
 		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}"/usr/include
+		-DLIBCXXABI_TARGET_TRIPLE="${CHOST}"
 		-DLTO=$(usex lto)
 		-DNOEXECSTACK=$(usex hardened)
 	)
@@ -287,6 +288,7 @@ wrap_libcxx() {
 		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
 		-DLIBCXX_HAS_GCC_S_LIB=OFF
 		-DLIBCXX_INCLUDE_TESTS=OFF
+		-DLIBCXX_TARGET_TRIPLE="${CHOST}"
 		-DLTO=$(usex lto)
 		-DNOEXECSTACK=$(usex hardened)
 	)
