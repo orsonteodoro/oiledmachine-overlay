@@ -108,7 +108,7 @@ BDEPEND+="
 	)"
 
 DOCS=( CREDITS.TXT )
-PATCHES=( "A${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
+PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 S="${WORKDIR}"
 
 LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake,utils/llvm-lit} )
