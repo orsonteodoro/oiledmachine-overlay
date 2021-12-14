@@ -12,7 +12,7 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="$(ver_cut 1-3)"
 KEYWORDS=""
-IUSE="+clang test elibc_glibc"
+IUSE="+abi_x86_32 abi_x86_64 +clang debug test elibc_glibc"
 # base targets
 IUSE+=" +libfuzzer +memprof +orc +profile +xray"
 # sanitizer targets, keep in sync with config-ix.cmake
@@ -31,11 +31,15 @@ REQUIRED_USE="
 		gwp-asan? ( scudo )
 	)"
 RESTRICT="!test? ( test ) !clang? ( test )"
+PATCHES=(
+	"${FILESDIR}/compiler-rt-sanitizers-13.0.0-disable-cfi-assert-for-autoconf.patch"
+)
 
 CLANG_SLOT=${SLOT%%.*}
 # llvm-6 for new lit options
 DEPEND="
-	>=sys-devel/llvm-6"
+	>=sys-devel/llvm-6
+	virtual/libcrypt[abi_x86_32(-)?,abi_x86_64(-)?]"
 BDEPEND="
 	>=dev-util/cmake-3.16
 	clang? ( sys-devel/clang )
@@ -46,7 +50,9 @@ BDEPEND="
 		=sys-devel/clang-${PV%_*}*:${CLANG_SLOT}
 		sys-libs/compiler-rt:${SLOT}
 	)
-	${PYTHON_DEPS}"
+	!test? (
+		${PYTHON_DEPS}
+	)"
 
 LLVM_COMPONENTS=( compiler-rt )
 LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support llvm/utils/unittest )
@@ -99,6 +105,9 @@ src_prepare() {
 }
 
 src_configure() {
+	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
+	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
+
 	# pre-set since we need to pass it to cmake
 	BUILD_DIR=${WORKDIR}/compiler-rt_build
 
@@ -137,6 +146,14 @@ src_configure() {
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
+
+	if use amd64; then
+		mycmakeargs+=(
+			-DCAN_TARGET_i386=$(usex abi_x86_32)
+			-DCAN_TARGET_x86_64=$(usex abi_x86_64)
+		)
+	fi
+
 	if use test; then
 		mycmakeargs+=(
 			-DLLVM_MAIN_SRC_DIR="${WORKDIR}/llvm"

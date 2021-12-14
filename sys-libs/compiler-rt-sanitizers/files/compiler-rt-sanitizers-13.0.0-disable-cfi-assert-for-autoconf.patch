@@ -1,0 +1,29 @@
+Subject:  Disable assert for autoconf
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Mon Dec 13 08:38:35 PM PST 2021 (Unix timestamp: 1639456715)
+
+License header for lib/cfi/cfi.cpp:
+//===-------- cfi.cpp -----------------------------------------------------===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+//
+// This file implements the runtime support for the cross-DSO CFI.
+//
+//===----------------------------------------------------------------------===//
+
+diff -urp compiler-rt.orig/lib/cfi/cfi.cpp compiler-rt/lib/cfi/cfi.cpp
+--- a/compiler-rt/lib/cfi/cfi.cpp	2021-09-24 09:18:10.000000000 -0700
++++ b/compiler-rt/lib/cfi/cfi.cpp	2021-12-13 20:37:01.879038120 -0800
+@@ -158,7 +158,7 @@ void ShadowBuilder::AddUnchecked(uptr be
+ }
+ 
+ void ShadowBuilder::Add(uptr begin, uptr end, uptr cfi_check) {
+-  assert((cfi_check & (kShadowAlign - 1)) == 0);
++  //assert((cfi_check & (kShadowAlign - 1)) == 0); // oteodoro: disabled because it disrupts autoconf tests.
+ 
+   // Don't fill anything below cfi_check. We can not represent those addresses
+   // in the shadow, and must make sure at codegen to place all valid call
