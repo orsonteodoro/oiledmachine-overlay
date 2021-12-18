@@ -179,9 +179,16 @@ _configure_abi() {
 	fi
 
 	autofix_flags
-	filter-flags '-flto*' \
+	filter-flags \
+		'--param=ssp-buffer-size=*' \
+		'-f*sanitize*' \
+		'-f*stack*' \
+		'-flto*' \
 		'-fuse-ld=*' \
-		'-fvisibility=*'
+		'-fvisibility=*' \
+                -Wl,-z,noexecstack \
+                -Wl,-z,now \
+                -Wl,-z,relro
 
 	# link against compiler-rt instead of libgcc if we are using clang with libunwind
 	local want_compiler_rt=OFF

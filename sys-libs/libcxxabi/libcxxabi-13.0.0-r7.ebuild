@@ -178,9 +178,16 @@ _configure_abi() {
 	fi
 
 	autofix_flags
-	filter-flags '-flto*' \
+	filter-flags \
+		'--param=ssp-buffer-size=*' \
+		'-f*sanitize*' \
+		'-f*stack*' \
+		'-flto*' \
 		'-fuse-ld=*' \
-		'-fvisibility=*'
+		'-fvisibility=*' \
+                -Wl,-z,noexecstack \
+                -Wl,-z,now \
+                -Wl,-z,relro
 
 	# we need a configured libc++ for __config_site
 	wrap_libcxx cmake_src_configure
