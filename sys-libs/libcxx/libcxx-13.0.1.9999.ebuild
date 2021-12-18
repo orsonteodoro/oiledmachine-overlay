@@ -212,6 +212,7 @@ _configure_abi() {
 	filter-flags \
 		'--param=ssp-buffer-size=*' \
 		'-f*sanitize*' \
+		'-f*stack*' \
 		'-flto*' \
 		'-fuse-ld=*' \
 		'-fvisibility=*' \
