@@ -55,7 +55,8 @@ REQUIRED_USE="
 "
 
 # Disable test phase when USE="-test"
-RESTRICT="!test? ( test )"
+# checksec says that no CFI with strip, but present after compile.
+RESTRICT="!test? ( test ) strip"
 
 _seq() {
 	local min=${1}
