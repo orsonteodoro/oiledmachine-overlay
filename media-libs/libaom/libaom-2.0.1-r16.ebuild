@@ -383,9 +383,10 @@ configure_pgx() {
 	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
-		'-fprofile*' \
 		'-f*sanitize*' \
 		'-f*stack*' \
+		'-fprofile*' \
+		'-fvisibility=*' \
 		'--param=ssp-buffer-size=*' \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
