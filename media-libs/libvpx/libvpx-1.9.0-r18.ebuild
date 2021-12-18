@@ -390,7 +390,7 @@ configure_pgx() {
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'-fprofile*' \
-		'-fvisibility=hidden' \
+		'-fvisibility=*' \
 		'--param=ssp-buffer-size=*' \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
