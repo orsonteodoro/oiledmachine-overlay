@@ -263,15 +263,14 @@ _configure_abi() {
 	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
+		'--param=ssp-buffer-size=*' \
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'-fvisibility=*' \
-		'--param=ssp-buffer-size=*' \
 		-DU_STATIC_IMPLEMENTATION \
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
-		-fomit-frame-pointer \
 		-stdlib=libc++
 
 	autofix_flags
