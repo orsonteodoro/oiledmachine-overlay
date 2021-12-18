@@ -209,7 +209,9 @@ _configure_abi() {
 	export CC CXX AR AS NM RANDLIB READELF LD
 
 	autofix_flags
-	filter-flags '-flto*' '-fuse-ld=*'
+	filter-flags '-flto*' \
+		'-fuse-ld=*' \
+		'-fvisibility=*'
 
 	# we want -lgcc_s for unwinder, and for compiler runtime when using
 	# gcc, clang with gcc runtime (or any unknown compiler)
