@@ -5,8 +5,8 @@ Required for PGO with clang/llvm
  $(1): $(filter-out -%,$(2))
  $(1):
  	$(if $(quiet),@echo    "    [LD] $$@")
--	$(qexec)$$(LD) $$(strip $$(INTERNAL_LDFLAGS) $$(LDFLAGS) -o $$@ $(2) $(3) $$(extralibs))
-+	$(qexec)$$(LD) $$(strip $$(INTERNAL_LDFLAGS) $$(LDFLAGS) $$(CFLAGS) -o $$@ $(2) $(3) $$(extralibs))
+-	$(qexec)$$(LD) $$(strip $$(INTERNAL_LDFLAGS) $$(LDFLAGS) $$(EXELDFLAGS) -o $$@ $(2) $(3) $$(extralibs))
++	$(qexec)$$(LD) $$(strip $$(INTERNAL_LDFLAGS) $$(LDFLAGS) $$(CFLAGS) $$(EXELDFLAGS) -o $$@ $(2) $(3) $$(extralibs))
  endef
  define linkerxx_template
  $(1): $(filter-out -%,$(2))
