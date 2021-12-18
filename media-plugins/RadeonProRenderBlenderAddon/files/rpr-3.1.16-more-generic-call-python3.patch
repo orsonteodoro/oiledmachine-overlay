@@ -67,7 +67,7 @@ diff -urp RadeonProRenderBlenderAddon-3.3.16.orig/build.py RadeonProRenderBlende
 +os.chdir('RPRBlenderHelper')									#
 +os.makedirs('.build', exist_ok=True)								#
 +os.chdir('.build')										#
-+if 'Windows' == platform.system():								# Toorero: python3 minor agnostic
++if 'Windows' == platform.system():								# Toorero: Also build RPRBlenderHelper for other python3 versions 5b735f2
 +    subprocess.check_call(['cmake', '-G', 'Visual Studio 14 2015 Win64',  '..'])		#
 +else:												#
 +    subprocess.check_call(['cmake', '..'])							#
@@ -82,13 +82,13 @@ diff -urp RadeonProRenderBlenderAddon-3.3.16.orig/build.sh RadeonProRenderBlende
  if [ -f "$cxml" ]; then
 -    python3.7 cmd_tools/create_sdk.py
 -	python3.7 src/bindings/pyrpr/src/pyrprapi.py $cxml
-+    python3 cmd_tools/create_sdk.py								# oteodoro: python3 minor agnostic
-+	python3 src/bindings/pyrpr/src/pyrprapi.py $cxml					# oteodoro:
++    python3 cmd_tools/create_sdk.py								# Toorero: Specifically calls python3 7829e36
++	python3 src/bindings/pyrpr/src/pyrprapi.py $cxml					# Toorero:
  	if [ -f "./bindings-ok" ]; then
 -		python3.7 build.py
 -		python3.9 build.py
-+		python3 build.py								# oteodoro: python3 minor agnostic
-+		python3 build.py								# oteodoro
++		python3 build.py								# Toorero: Specifically calls python3 7829e36
++		python3 build.py								# Toorero
  	else
  		echo Compiling bindings failed
  	fi
@@ -100,7 +100,7 @@ diff -urp RadeonProRenderBlenderAddon-3.3.16.orig/src/bindings/pyrpr/rpr.py Rade
            cffi_libs_dir = Path(_cffi_backend.__file__).parent / '.libs_cffi_backend'                    # oteodoro changed indent
            if not cffi_libs_dir.is_dir():                                                                # oteodoro changed indent
 -              cffi_libs_dir = Path(_cffi_backend.__file__).parent / 'cffi.libs'                         # oteodoro changed indent
-+              cffi_libs_dir = Path(_cffi_backend.__file__).parent / 'cffi'                              # oteodoro changed indent, Toorero changed
++              cffi_libs_dir = Path(_cffi_backend.__file__).parent / 'cffi'                              # oteodoro changed indent, Toorero: Added alternative cffi_libs_dir location 46be6f1
  
            for path in cffi_libs_dir.iterdir():                                                          # oteodoro changed indent
                if '.so' in path.suffixes:                                                                # oteodoro changed indent
