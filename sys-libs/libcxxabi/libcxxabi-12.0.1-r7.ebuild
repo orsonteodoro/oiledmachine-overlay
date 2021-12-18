@@ -179,7 +179,9 @@ _configure_abi() {
 	fi
 
 	autofix_flags
-	filter-flags '-flto*' '-fuse-ld=*'
+	filter-flags '-flto*' \
+		'-fuse-ld=*' \
+		'-fvisibility=*'
 
 	# link against compiler-rt instead of libgcc if we are using clang with libunwind
 	local want_compiler_rt=OFF

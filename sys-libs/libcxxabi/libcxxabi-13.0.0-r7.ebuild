@@ -178,7 +178,9 @@ _configure_abi() {
 	fi
 
 	autofix_flags
-	filter-flags '-flto*' '-fuse-ld=*'
+	filter-flags '-flto*' \
+		'-fuse-ld=*' \
+		'-fvisibility=*'
 
 	# we need a configured libc++ for __config_site
 	wrap_libcxx cmake_src_configure
