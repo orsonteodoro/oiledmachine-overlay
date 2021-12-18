@@ -1,0 +1,11 @@
+--- a/src/rprblender/__init__.py.orig	2021-10-29 12:33:58.000000000 -0700
++++ b/src/rprblender/__init__.py	2021-11-13 20:35:21.558430981 -0800
+@@ -20,7 +20,7 @@ import bpy
+ bl_info = {
+     "name": "Radeon ProRender",
+     "author": "AMD",
+-    "version": (3, 3, 15),
++    "version": (3, 3, 16), # oteodoro: bumped version so the generated zip file name matches
+     "blender": (2, 80, 0),
+     "location": "Info header, render engine menu",
+     "description": "Radeon ProRender rendering plugin for Blender 2.8x",

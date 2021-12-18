@@ -3,11 +3,15 @@
 
 EAPI=7
 
-MY_PV="${PV}.0"
 # It supports Python 3.7 but 3.7 is deprecated in this distro in python-utils-r1.eclass.
 PYTHON_COMPAT=( python3_9 ) # same as blender
 
-inherit check-reqs linux-info python-r1 unpacker
+# Download problems with download by tarball force us to use git-r3.
+
+EGIT_COMMIT="a74d8789d63f61812d05da4b245d8b29a0c0fa35"
+EGIT_REPO_URI="https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon.git"
+
+inherit check-reqs git-r3 linux-info python-r1 unpacker
 
 DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
 Blender"
@@ -29,7 +33,7 @@ RIF_LICENSE="
 	Apache-2.0
 	MIT
 	UoI-NCSA"
-# See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.3/src/rprblender/EULA.html
+# See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.3.5/src/rprblender/EULA.html
 RPRBLENDER_EULA_LICENSE="
 	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES
 	SPA-DISCLAIMER-DATA-AND-SOFTWARE
@@ -105,7 +109,7 @@ CDEPEND_NOT_LISTED="
 	dev-lang/python[xml]
 	sys-devel/gcc[openmp]"
 DEPEND_NOT_LISTED=""
-# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.3/README-LNX.md#build-requirements
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.3.5/README-LNX.md#build-requirements
 DEPEND+="  ${CDEPEND_NOT_LISTED}
 	${DEPEND_NOT_LISTED}
 	${PYTHON_DEPS}
@@ -144,7 +148,7 @@ RDEPEND_NOT_LISTED="
 		dev-lang/vtune
 		sys-libs/libomp
 	)"
-# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.3/README-LNX.md#addon-runuse-linux-ubuntu-requirements
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.3.5/README-LNX.md#addon-runuse-linux-ubuntu-requirements
 
 
 RDEPEND+="  ${CDEPEND_NOT_LISTED}
@@ -274,35 +278,12 @@ BDEPEND+="  ${CDEPEND_NOT_LISTED}
 	$(python_gen_cond_dep '>=dev-python/pytest-3[${PYTHON_USEDEP}]')
 	>=dev-util/cmake-3.11
 	dev-vcs/git"
-RIF_V="1.7.1"
-RPRSDK_V="2.02.7.hotfix1"
-RPRSC_V="9999_p20201109"
-# Commits based on left side.  The commit associated with the message (right) differs
-# with the commit associated with the folder (left) on the GitHub website.
-EGIT_COMMIT_RIF="9dc9175cd7b2ab99227ed50a76338f35e3c927dd"
-EGIT_COMMIT_RPRSC="41d2e5fb8631ef2bfa60fa27f5dbf7c4a8e2e4aa"
-EGIT_COMMIT_RPRSDK="25123a44e4dcc0458374757175aecabfc7b30373"
-RIF_DF="RadeonImageFilter-${RIF_V}-${EGIT_COMMIT_RIF:0:7}.tar.gz"
-RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_V}-${EGIT_COMMIT_RPRSDK:0:7}.tar.gz"
-RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_V}-${EGIT_COMMIT_RPRSC:0:7}.tar.gz"
-GH_ORG_BURI="https://github.com/GPUOpen-LibrariesAndSDKs"
 SRC_URI="
-${GH_ORG_BURI}/RadeonProRenderBlenderAddon/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-${GH_ORG_BURI}/RadeonImageFilter/archive/${EGIT_COMMIT_RIF}.tar.gz
-	-> ${RIF_DF}
-${GH_ORG_BURI}/RadeonProRenderSDK/archive/${EGIT_COMMIT_RPRSDK}.tar.gz
-	-> ${RPRSDK_DF}
-${GH_ORG_BURI}/RadeonProRenderSharedComponents/archive/${EGIT_COMMIT_RPRSC}.tar.gz
-	-> ${RPRSC_DF}
 https://patch-diff.githubusercontent.com/raw/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/pull/345.patch
 	-> rpr-pull-request-345.patch"
 # 345 - More generic call of python3
 RESTRICT="mirror strip"
 S="${WORKDIR}/${P}"
-S_RIF="${WORKDIR}/RadeonImageFilter-${EGIT_COMMIT_RIF}"
-S_RPRSDK="${WORKDIR}/RadeonProRenderSDK-${EGIT_COMMIT_RPRSDK}"
-S_RPRSC="${WORKDIR}/RadeonProRenderSharedComponents-${EGIT_COMMIT_RPRSC}"
 PATCHES=(
 	"${FILESDIR}/rpr-3.1.6-gentoo-skip-libs_cffi_backend.patch"
 	"${FILESDIR}/rpr-3.3-disable-download-wheel-boto3.patch"
@@ -467,30 +448,17 @@ support for pre-Vega 10."
 	fi
 }
 
-
 src_unpack() {
-	unpack ${A}
-	cd "${S}" || die
-	rm -rf RadeonProImageProcessingSDK \
-		RadeonProRenderSDK \
-		RadeonProRenderSharedComponents || die
-	ln -s "${S_RIF}" "RadeonProImageProcessingSDK" || die
-	ln -s "${S_RPRSDK}" "RadeonProRenderSDK" || die
-	ln -s "${S_RPRSC}" "RadeonProRenderSharedComponents" || die
+	git-r3_fetch
+	git-r3_checkout
 }
 
 src_prepare() {
-	einfo "This is the release build."
+	ewarn "This is the release build."
 	default
 	eapply "-F3" "${DISTDIR}/rpr-pull-request-345.patch"
 	eapply "${FILESDIR}/rpr-3.3-build-linux-sh-generic-python3.patch"
-	git init || die
-	touch dummy || die
-	git config user.email "name@example.com" || die
-	git config user.name "John Doe" || die
-	git add dummy || die
-	git commit -m "Dummy" || die
-	git tag v${PV} || die
+	eapply "${FILESDIR}/rpr-3.3.15-bump-version.patch"
 }
 
 src_configure() {
@@ -561,7 +529,7 @@ src_install_packed_shared() {
 	pushd "${S}" || die
 		head_commit=$(git rev-parse HEAD)
 	popd
-	D_FN="${PLUGIN_NAME}-${MY_PV}-${head_commit:0:7}-linux.zip"
+	D_FN="${PLUGIN_NAME}-${PV}-${head_commit:0:7}-linux.zip"
 
 	einfo "Installing addon in shared"
 	cd "${S}" || die
