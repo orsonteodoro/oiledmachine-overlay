@@ -167,6 +167,8 @@ PATCHES=(
 
 # the PATENTS file is required to be distributed with this package bug #682214
 DOCS=( PATENTS )
+# Don't strip CFI
+RESTRICT="strip"
 
 pkg_setup() {
 	if use chromium ; then
