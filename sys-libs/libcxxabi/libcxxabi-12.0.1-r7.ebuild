@@ -392,23 +392,6 @@ src_install() {
 	cd "${S}" || die
 	insinto /usr/include/libcxxabi
 	doins -r include/.
-	# This is to save register cache space (compared to -frecord-command-line) and
-	# for auto lib categorization with -Wl,-Bstatic.
-	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
-	# way to check for CFI presence.
-	if [[ "${USE}" =~ "cfi" ]] ; then
-		local arg=()
-		use cross-dso-cfi && arg+=( -o -name "*.so*" )
-		for f in $(find "${ED}" -name "*.a" ${arg[@]}) ; do
-			if use cfi ; then
-				touch "${f}.cfi" || die
-			else
-				use cfi-cast && ( touch "${f}.cfi" || die )
-				use cfi-icall && ( touch "${f}.cfi" || die )
-				use cfi-vcall && ( touch "${f}.cfi" || die )
-			fi
-		done
-	fi
 }
 
 pkg_postinst() {
