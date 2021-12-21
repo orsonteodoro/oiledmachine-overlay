@@ -57,9 +57,9 @@ IUSE+="
 "
 REQUIRED_USE="
 	cfi? ( clang lto )
-	cfi-cast? ( clang lto cfi-vcall static-libs )
-	cfi-icall? ( clang lto cfi-vcall static-libs )
-	cfi-vcall? ( clang lto static-libs )
+	cfi-cast? ( clang lto cfi-vcall )
+	cfi-icall? ( clang lto cfi-vcall )
+	cfi-vcall? ( clang lto )
 	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 	pgo? (
 		minizip? ( minizip-utils )
