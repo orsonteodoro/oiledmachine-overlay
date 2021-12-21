@@ -16,10 +16,10 @@ KEYWORDS="amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
 IUSE="+libunwind static-libs test elibc_musl"
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cross-dso-cfi hardened lto shadowcallstack"
 REQUIRED_USE+="
-	cfi? ( clang lto static-libs )
-	cfi-cast? ( clang lto cfi-vcall static-libs )
-	cfi-icall? ( clang lto cfi-vcall static-libs )
-	cfi-vcall? ( clang lto static-libs )
+	cfi? ( clang lto )
+	cfi-cast? ( clang lto cfi-vcall )
+	cfi-icall? ( clang lto cfi-vcall )
+	cfi-vcall? ( clang lto )
 	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )"
 RESTRICT="!test? ( test )"
 
@@ -395,19 +395,24 @@ src_install() {
 }
 
 pkg_postinst() {
-	if [[ "${USE}" =~ "cfi" ]] ; then
-# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
-ewarn
-ewarn "Cross-DSO CFI is experimental."
-ewarn
-ewarn "You must add -static-libstdc++ before -stdlib=libc++ for plain CFI to work."
-ewarn
+	if use cross-dso-cfi ; then
+ewarn "Using cross-dso-cfi requires a rebuild of the app with only the clang"
+ewarn "compiler."
 	fi
 
-	if use lto ; then
-ewarn
-ewarn "The lto USE flag can only used with only one systemwide LTO compiler"
-ewarn "especially with static linking."
-ewarn
+	if [[ "${USE}" =~ "cfi" ]] && use static-libs ; then
+ewarn "Using cfi with static-libs requires the app be built with only the clang"
+ewarn "compiler."
+	fi
+
+	if use lto && use static-libs ; then
+		if tc-is-clang ; then
+ewarn "You are only allowed to static link this library with clang."
+		elif tc-is-gcc ; then
+ewarn "You are only allowed to static link this library with gcc."
+		else
+ewarn "You are only allowed to static link this library with CC=${CC}"
+ewarn "CXX=${CXX}."
+		fi
 	fi
 }
