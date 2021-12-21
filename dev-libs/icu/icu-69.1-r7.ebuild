@@ -469,25 +469,30 @@ src_install() {
 }
 
 pkg_postinst() {
-	if [[ "${USE}" =~ "cfi" ]] ; then
-# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
-ewarn
-ewarn "Cross-DSO CFI is experimental."
-ewarn
-ewarn "You must link these libraries with static linkage for plain CFI to work."
-ewarn
-	fi
-
 	if use static-libs ; then
 ewarn
 ewarn "static-lib consumers require -DU_STATIC_IMPLEMENTATION"
 ewarn
 	fi
 
-	if use lto ; then
-ewarn
-ewarn "The lto USE flag can only used with only one systemwide LTO compiler"
-ewarn "especially with static linking."
-ewarn
+	if use cross-dso-cfi ; then
+ewarn "Using cross-dso-cfi requires a rebuild of the app with only the clang"
+ewarn "compiler."
+	fi
+
+	if [[ "${USE}" =~ "cfi" ]] && use static-libs ; then
+ewarn "Using cfi with static-libs requires the app be built with only the clang"
+ewarn "compiler."
+	fi
+
+	if use lto && use static-libs ; then
+		if tc-is-clang ; then
+ewarn "You are only allowed to static link this library with clang."
+		elif tc-is-gcc ; then
+ewarn "You are only allowed to static link this library with gcc."
+		else
+ewarn "You are only allowed to static link this library with CC=${CC}"
+ewarn "CXX=${CXX}."
+		fi
 	fi
 }
