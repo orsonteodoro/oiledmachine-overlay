@@ -56,7 +56,7 @@ IUSE+="
 	pgo-trainer-zlib-text-random
 "
 REQUIRED_USE="
-	cfi? ( clang lto static-libs )
+	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
