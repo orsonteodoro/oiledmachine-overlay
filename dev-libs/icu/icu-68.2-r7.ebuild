@@ -18,7 +18,7 @@ KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 s
 IUSE="debug doc examples static-libs"
 IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang cross-dso-cfi hardened libcxx lto shadowcallstack"
 REQUIRED_USE="
-	cfi? ( clang lto static-libs )
+	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
@@ -159,7 +159,7 @@ src_prepare() {
 		eapply "${FILESDIR}/icu-69.1-pie.patch"
 	fi
 
-	if [[ "${USE}" =~ "cfi" ]] ; then
+	if [[ "${USE}" =~ "cfi" ]] && ! use cross-dso-cfi ; then
 		eapply "${FILESDIR}/icu-69.1-static-build.patch"
 	fi
 
