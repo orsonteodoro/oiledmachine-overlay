@@ -33,7 +33,7 @@ IUSE+=" pgo
 "
 
 REQUIRED_USE="
-	cfi? ( clang lto static-libs )
+	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall static-libs )
 	cfi-icall? ( clang lto cfi-vcall static-libs )
 	cfi-vcall? ( clang lto static-libs )
@@ -172,7 +172,6 @@ PDEPEND="
 PATCHES=(
 	"${FILESDIR}/libvpx-1.3.0-sparc-configure.patch" # 501010
 	"${FILESDIR}/libvpx-1.10.0-exeldflags.patch"
-	"${FILESDIR}/libvpx-1.10.0-cfi-static-link.patch"
 )
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -300,6 +299,7 @@ get_build_types() {
 src_prepare() {
 	default
 	if tc-is-clang ; then
+		! use cross-dso-cfi && eapply "${FILESDIR}/libvpx-1.10.0-cfi-static-link.patch"
 		eapply "${FILESDIR}/libvpx-1.10.0-add-cxxflags-to-linking-libvpx.patch"
 		eapply "${FILESDIR}/libvpx-1.10.0-add-cxxflags-to-linking-examples.patch"
 	else
