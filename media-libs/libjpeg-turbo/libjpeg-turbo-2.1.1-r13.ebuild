@@ -283,8 +283,8 @@ append_lto() {
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
 	else
-		append-flags -flto=auto
-		append-ldflags -flto=auto
+		append-flags -flto
+		append-ldflags -flto
 	fi
 }
 
@@ -666,23 +666,6 @@ src_install() {
 	}
 	multilib_foreach_abi install_abi
 	_install_once
-	# This is to save register cache space (compared to -frecord-command-line) and
-	# for auto lib categorization with -Wl,-Bstatic.
-	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
-	# way to check for CFI presence.
-	if [[ "${USE}" =~ "cfi" ]] ; then
-		local arg=()
-		use cross-dso-cfi && arg+=( -o -name "*.so*" )
-		for f in $(find "${ED}" -name "*.a" ${arg[@]}) ; do
-			if use cfi ; then
-				touch "${f}.cfi" || die
-			else
-				use cfi-cast && ( touch "${f}.cfi" || die )
-				use cfi-icall && ( touch "${f}.cfi" || die )
-				use cfi-vcall && ( touch "${f}.cfi" || die )
-			fi
-		done
-	fi
 }
 
 pkg_postinst() {
