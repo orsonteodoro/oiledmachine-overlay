@@ -1362,13 +1362,28 @@ elog "No PGO optimization performed.  Please re-emerge this package."
 elog "The following package must be installed before PGOing this package:"
 elog "  app-arch/pigz[$(get_arch_enabled_use_flags)]"
 	fi
-	if [[ "${USE}" =~ "cfi" ]] ; then
-# https://clang.llvm.org/docs/ControlFlowIntegrityDesign.html#shared-library-support
-ewarn
-ewarn "Cross-DSO CFI is experimental."
-ewarn
-ewarn "You must link these libraries with static linkage for plain CFI to work."
-ewarn
+
+	# CFI and LTO is only allowed in (musl based) clang only linux.
+
+	if use cross-dso-cfi ; then
+ewarn "Using cross-dso-cfi requires a rebuild of the app with only the clang"
+ewarn "compiler."
+	fi
+
+	if use cfi && use static-libs ; then
+ewarn "Using cfi with static-libs requires the app be built with only the clang"
+ewarn "compiler."
+	fi
+
+	if use lto && use static-libs ; then
+		if tc-is-clang ; then
+ewarn "You are only allowed to static link this library with clang."
+		elif tc-is-gcc ; then
+ewarn "You are only allowed to static link this library with gcc."
+		else
+ewarn "You are only allowed to static link this library with CC=${CC}"
+ewarn "CXX=${CXX}."
+		fi
 	fi
 
 	if ( use cfi || use cfi-cast || use cfi-icall || use cfi-vcall ) \
