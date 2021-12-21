@@ -19,9 +19,9 @@ IUSE="debug doc examples static-libs"
 IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang cross-dso-cfi hardened libcxx lto shadowcallstack"
 REQUIRED_USE="
 	cfi? ( clang lto )
-	cfi-cast? ( clang lto cfi-vcall static-libs )
-	cfi-icall? ( clang lto cfi-vcall static-libs )
-	cfi-vcall? ( clang lto static-libs )
+	cfi-cast? ( clang lto cfi-vcall )
+	cfi-icall? ( clang lto cfi-vcall )
+	cfi-vcall? ( clang lto )
 	shadowcallstack? ( clang )"
 
 _seq() {
