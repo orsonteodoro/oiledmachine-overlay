@@ -1014,11 +1014,11 @@ ewarn "compiler."
 
 	if use lto && use static-libs ; then
 		if tc-is-clang ; then
-ewarn "You are only allowed to static-link this library with clang."
+ewarn "You are only allowed to static link this library with clang."
 		elif tc-is-gcc ; then
-ewarn "You are only allowed to static-link this library with gcc."
+ewarn "You are only allowed to static link this library with gcc."
 		else
-ewarn "You are only allowed to static-link this library with CC=${CC}"
+ewarn "You are only allowed to static link this library with CC=${CC}"
 ewarn "CXX=${CXX}."
 		fi
 	fi
