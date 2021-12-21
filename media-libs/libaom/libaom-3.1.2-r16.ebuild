@@ -335,8 +335,8 @@ append_lto() {
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
 	else
-		append-flags -flto=auto
-		append-ldflags -flto=auto
+		append-flags -flto
+		append-ldflags -flto
 	fi
 }
 
@@ -984,17 +984,6 @@ src_install() {
 	multilib_foreach_abi install_abi
 
 	find "${ED}" -type f \( -name "*.la" \) -delete || die
-	# This is to save register cache space (compared to -frecord-command-line) and
-	# for ffmpeg auto lib categorization with -Wl,-Bstatic.
-	# The "CFI Canonical Jump Tables" only emits when cfi-icall and not a good
-	# way to check for CFI presence.
-	if [[ "${USE}" =~ "cfi" ]] ; then
-		for f in $(find "${ED}" -name "*.a") ; do
-			if use cfi ; then
-				touch "${f}.cfi" || die
-			fi
-		done
-	fi
 }
 
 get_arch_enabled_use_flags() {
