@@ -1370,7 +1370,7 @@ ewarn "Using cross-dso-cfi requires a rebuild of the app with only the clang"
 ewarn "compiler."
 	fi
 
-	if use cfi && use static-libs ; then
+	if [[ "${USE}" =~ "cfi" ]] && use static-libs ; then
 ewarn "Using cfi with static-libs requires the app be built with only the clang"
 ewarn "compiler."
 	fi
