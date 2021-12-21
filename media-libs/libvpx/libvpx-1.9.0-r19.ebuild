@@ -1089,15 +1089,14 @@ ewarn "Using cfi with static-libs requires the app be built with only the clang"
 ewarn "compiler."
 	fi
 
-	if use lto ; then
-		if use static-libs && use lto ; then
-			if tc-is-clang ; then
+	if use lto && use static-libs ; then
+		if tc-is-clang ; then
 ewarn "You are only allowed to static-link this library with clang."
-			elif tc-is-gcc ; then
+		elif tc-is-gcc ; then
 ewarn "You are only allowed to static-link this library with gcc."
-			else
-ewarn "You are only allowed to static-link this library with CC=${CC} CXX=${CXX}."
-			fi
+		else
+ewarn "You are only allowed to static-link this library with CC=${CC}"
+ewarn "CXX=${CXX}."
 		fi
 	fi
 }
