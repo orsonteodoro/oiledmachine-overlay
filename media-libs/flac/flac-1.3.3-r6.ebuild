@@ -17,10 +17,10 @@ IUSE="+cxx debug ogg cpu_flags_ppc_altivec cpu_flags_ppc_vsx cpu_flags_x86_sse s
 IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cross-dso-cfi hardened libcxx lto shadowcallstack"
 RDEPEND="ogg? ( >=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}] )"
 REQUIRED_USE="
-	cfi? ( clang lto static-libs )
-	cfi-cast? ( clang lto cfi-vcall static-libs )
-	cfi-icall? ( clang lto cfi-vcall static-libs )
-	cfi-vcall? ( clang lto static-libs )
+	cfi? ( clang lto )
+	cfi-cast? ( clang lto cfi-vcall )
+	cfi-icall? ( clang lto cfi-vcall )
+	cfi-vcall? ( clang lto )
 	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 "
 
