@@ -58,7 +58,7 @@ IUSE+="
 REQUIRED_USE="
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
-	cfi-cross-dso? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
+	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
 	cfi-icall? ( clang lto cfi-vcall )
 	cfi-vcall? ( clang lto )
 	pgo? (
