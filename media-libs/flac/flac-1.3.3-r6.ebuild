@@ -14,14 +14,14 @@ LICENSE="BSD FDL-1.2 GPL-2 LGPL-2.1"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 IUSE="+cxx debug ogg cpu_flags_ppc_altivec cpu_flags_ppc_vsx cpu_flags_x86_sse static-libs"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cross-dso-cfi hardened libcxx lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack"
 RDEPEND="ogg? ( >=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}] )"
 REQUIRED_USE="
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
+	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
 	cfi-icall? ( clang lto cfi-vcall )
 	cfi-vcall? ( clang lto )
-	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 "
 
 _seq() {
@@ -47,7 +47,7 @@ gen_cfi_bdepend() {
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
+			cfi-cross-dso? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -95,7 +95,7 @@ gen_libcxx_depend() {
 		echo "
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			>=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}]
+			>=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}]
 		)
 		"
 	done
@@ -187,7 +187,7 @@ is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		return 0
-	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
 		return 0
 	fi
 	return 1
@@ -242,7 +242,7 @@ _src_configure() {
 		if tc-is-clang && is_cfi_supported ; then
 			if [[ "${build_type}" == "static-libs" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+			elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -256,7 +256,7 @@ _src_configure() {
 				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
-			use cross-dso-cfi \
+			use cfi-cross-dso \
 				&& [[ "${build_type}" == "shared-libs" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 		fi
@@ -375,8 +375,8 @@ src_install() {
 }
 
 pkg_postinst() {
-	if use cross-dso-cfi ; then
-ewarn "Using cross-dso-cfi requires a rebuild of the app with only the clang"
+	if use cfi-cross-dso ; then
+ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
 ewarn "compiler."
 	fi
 
