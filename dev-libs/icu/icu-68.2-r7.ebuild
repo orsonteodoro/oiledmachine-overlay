@@ -20,7 +20,7 @@ IUSE+=" cfi cfi-cross-dso cfi-cast cfi-icall cfi-vcall clang hardened libcxx lto
 REQUIRED_USE="
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
-	cfi-cross-dso? ( || ( cfi cfi-vcall ) clang lto )
+	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
 	cfi-icall? ( clang lto cfi-vcall )
 	cfi-vcall? ( clang lto )
 	shadowcallstack? ( clang )"
