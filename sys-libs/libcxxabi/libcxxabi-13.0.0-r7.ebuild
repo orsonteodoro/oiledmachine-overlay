@@ -34,6 +34,8 @@ DEPEND+=" ${RDEPEND}"
 PATCHES=( "${FILESDIR}/libcxxabi-13.0.0.9999-hardened.patch"
 	  "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 S="${WORKDIR}"
+# Don't strip CFI from .so files
+RESTRICT="strip"
 
 _seq() {
 	local min=${1}
