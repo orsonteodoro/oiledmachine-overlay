@@ -25,7 +25,7 @@ IUSE="doc examples"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cfi-cross-dso hardened libcxx lto shadowcallstack static-libs"
+IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack static-libs"
 IUSE+=" +asm"
 IUSE+=" pgo pgo-custom
 	pgo-trainer-2-pass-constrained-quality
@@ -33,15 +33,21 @@ IUSE+=" pgo pgo-custom
 	pgo-trainer-lossless
 	chromium
 "
-
+# Link libraries with CFI Cross-DSO (.so) or Basic mode (.a)
 REQUIRED_USE="
+	!cfi-cross-dso? (
+		cfi? ( static-libs )
+		cfi-cast? ( static-libs )
+		cfi-icall? ( static-libs )
+		cfi-vcall? ( static-libs )
+	)
 	cpu_flags_x86_sse2? ( cpu_flags_x86_mmx )
 	cpu_flags_x86_ssse3? ( cpu_flags_x86_sse2 )
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
+	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
 	cfi-icall? ( clang lto cfi-vcall )
 	cfi-vcall? ( clang lto )
-	cfi-cross-dso? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 	pgo? (
 		|| (
 			pgo-custom
