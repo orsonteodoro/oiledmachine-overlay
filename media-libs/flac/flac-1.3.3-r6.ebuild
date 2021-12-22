@@ -16,7 +16,14 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv sparc x86 ~a
 IUSE="+cxx debug ogg cpu_flags_ppc_altivec cpu_flags_ppc_vsx cpu_flags_x86_sse static-libs"
 IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack"
 RDEPEND="ogg? ( >=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}] )"
+# Link utilities with CFI Cross-DSO (.so) or CFI Basic Mode (.a)
 REQUIRED_USE="
+	!cfi-cross-dso? (
+		cfi? ( static-libs )
+		cfi-cast? ( static-libs )
+		cfi-icall? ( static-libs )
+		cfi-vcall? ( static-libs )
+	)
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
 	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
