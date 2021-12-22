@@ -92,7 +92,7 @@ gen_libcxx_depend() {
 		echo "
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			libcxx? ( >=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}] )
+			libcxx? ( >=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,static-libs?,${MULTILIB_USEDEP}] )
 		)
 		"
 	done
@@ -276,21 +276,20 @@ _configure_abi() {
 
 	autofix_flags
 
-	if tc-is-clang && use libcxx ; then
-		if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
-			has_version "sys-libs/libcxx[cfi,static-libs]" \
-				&& append-cxxflags -stdlib=libc++
-			append-cxxflags \
-				-Wno-unused-command-line-argument
-			append-cppflags -DDHAVE_DLOPEN=0 -DU_DISABLE_RENAMING=1 -DU_STATIC_IMPLEMENTATION
-		fi
-		if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
-			has_version "sys-libs/libcxx[cfi,static-libs]" \
-				&& append-ldflags -stdlib=libc++
-			append-ldflags \
-				-Wno-unused-command-line-argument # Passes through clang++
-		fi
+	if tc-is-clang && use libcxx && [[ "${USE}" =~ "cfi" ]] ; then
+		# The -static-libstdc++ is a misnomer.  It also means \
+		# -static-libc++ which does not exist.
+		append-cxxflags -stdlib=libc++
 		append-ldflags -stdlib=libc++
+		if [[ "${build_type}" == "shared-libs" ]] ; then
+			append-ldflags -lc++
+		fi
+		if [[ "${build_type}" == "static-libs" ]] ; then
+			append-cxxflags -Wno-unused-command-line-argument
+			append-cppflags -DDHAVE_DLOPEN=0 -DU_DISABLE_RENAMING=1 -DU_STATIC_IMPLEMENTATION
+			append-ldflags -Wno-unused-command-line-argument
+			append-ldflags -static-libstdc++
+		fi
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
 	fi
