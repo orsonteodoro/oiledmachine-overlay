@@ -95,7 +95,7 @@ gen_libcxx_depend() {
 		echo "
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			>=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}]
+			>=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,static-libs?,${MULTILIB_USEDEP}]
 		)
 		"
 	done
@@ -219,15 +219,19 @@ _src_configure() {
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
+		-lc++ \
 		-static-libstdc++ \
 		-stdlib=libc++
 
 	if tc-is-clang && use libcxx && [[ "${USE}" =~ "cfi" ]] ; then
+		# The -static-libstdc++ is a misnomer.  It also means \
+		# -static-libc++ which does not exist.
 		append-cxxflags -stdlib=libc++
+                append-ldflags -stdlib=libc++
 		[[ "${build_type}" == "shared-libs" ]] \
 			&& append-ldflags -lc++
 		[[ "${build_type}" == "static-libs" ]] \
-			&& append-ldflags -static-libc++
+			&& append-ldflags -static-libstdc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
 	fi
