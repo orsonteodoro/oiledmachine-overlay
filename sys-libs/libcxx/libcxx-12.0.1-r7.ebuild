@@ -14,18 +14,18 @@ LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS="amd64 arm arm64 ~riscv x86 ~x64-macos"
 IUSE="elibc_glibc elibc_musl +libcxxabi +libunwind static-libs test"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang cross-dso-cfi hardened lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 REQUIRED_USE="libunwind? ( libcxxabi )"
 REQUIRED_USE+="
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
+	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
 	cfi-icall? ( clang lto cfi-vcall )
-	cfi-vcall? ( clang lto )
-	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )"
+	cfi-vcall? ( clang lto )"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	libcxxabi? ( ~sys-libs/libcxxabi-${PV}:=[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,hardened?,shadowcallstack?,libunwind=,static-libs?,${MULTILIB_USEDEP}] )
+	libcxxabi? ( ~sys-libs/libcxxabi-${PV}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,libunwind=,static-libs?,${MULTILIB_USEDEP}] )
 	!libcxxabi? ( >=sys-devel/gcc-4.7:=[cxx] )"
 DEPEND="${RDEPEND}"
 
@@ -52,7 +52,7 @@ gen_cfi_bdepend() {
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
+			cfi-cross-dso? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -186,7 +186,7 @@ is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		return 0
-	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
 		return 0
 	fi
 	return 1
@@ -285,7 +285,7 @@ _configure_abi() {
 				-DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall"
 				-DCFI_ICALL=OFF
 				-DCFI_VCALL=$(usex cfi-vcall)
-				-DCROSS_DSO_CFI=$(usex cross-dso-cfi)
+				-DCROSS_DSO_CFI=$(usex cfi-cross-dso)
 			)
 		fi
 		mycmakeargs+=(
@@ -434,8 +434,8 @@ elog "To use it, instead of libstdc++, use:"
 elog "    clang++ -stdlib=libc++"
 elog "to compile your C++ programs."
 
-	if use cross-dso-cfi ; then
-ewarn "Using cross-dso-cfi requires a rebuild of the app with only the clang"
+	if use cfi-cross-dso ; then
+ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
 ewarn "compiler."
 	fi
 
