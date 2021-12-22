@@ -299,7 +299,7 @@ get_build_types() {
 src_prepare() {
 	default
 	if tc-is-clang ; then
-		! use cross-dso-cfi && eapply "${FILESDIR}/libvpx-1.10.0-cfi-static-link.patch"
+		eapply "${FILESDIR}/libvpx-1.10.0-cfi-static-link.patch"
 		eapply "${FILESDIR}/libvpx-1.10.0-add-cxxflags-to-linking-libvpx.patch"
 		eapply "${FILESDIR}/libvpx-1.10.0-add-cxxflags-to-linking-examples.patch"
 	else
@@ -399,13 +399,13 @@ configure_pgx() {
 		-static-libstdc++ \
 		-stdlib=libc++
 
-	if tc-is-clang && use libcxx ; then
-		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
-			&& append-cxxflags $(test-flags-CC -static-libstdc++)
+	if tc-is-clang && use libcxx && [[ "${USE}" =~ "cfi" ]] ; then
                 append-cxxflags -stdlib=libc++
-		[[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] \
-			&& append-ldflags $(test-flags-CC -static-libstdc++) # Passes through clang++
                 append-ldflags -stdlib=libc++
+		[[ "${build_type}" == "shared-libs" ]] \
+			&& append-ldflags -lc++
+		[[ "${build_type}" == "static-libs" ]] \
+			&& append-ldflags -static-libc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
 	fi
