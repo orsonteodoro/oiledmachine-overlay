@@ -19,7 +19,7 @@ IUSE="debug doc examples static-libs"
 IUSE+=" cfi cfi-cross-dso cfi-cast cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack"
 # Link the examples and utilties with cfi-cross-dso or basic-cfi
 REQUIRED_USE="
-	cfi-cross-dso? (
+	!cfi-cross-dso? (
 		cfi? ( static-libs )
 		cfi-cast? ( static-libs )
 		cfi-icall? ( static-libs )
