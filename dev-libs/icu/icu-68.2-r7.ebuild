@@ -16,7 +16,7 @@ SLOT="0/${PV}"
 
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="debug doc examples static-libs"
-IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang cross-dso-cfi hardened libcxx lto shadowcallstack"
+IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang cfi-cross-dso hardened libcxx lto shadowcallstack"
 REQUIRED_USE="
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
@@ -46,7 +46,7 @@ gen_cfi_bdepend() {
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
+			cfi-cross-dso? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -91,7 +91,7 @@ gen_libcxx_depend() {
 		echo "
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			libcxx? ( >=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}] )
+			libcxx? ( >=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}] )
 		)
 		"
 	done
@@ -159,7 +159,7 @@ src_prepare() {
 		eapply "${FILESDIR}/icu-69.1-pie.patch"
 	fi
 
-	if [[ "${USE}" =~ "cfi" ]] && ! use cross-dso-cfi ; then
+	if [[ "${USE}" =~ "cfi" ]] && ! use cfi-cross-dso ; then
 		eapply "${FILESDIR}/icu-69.1-static-build.patch"
 	fi
 
@@ -239,7 +239,7 @@ is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		return 0
-	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
 		return 0
 	fi
 	return 1
@@ -277,13 +277,16 @@ _configure_abi() {
 
 	if tc-is-clang && use libcxx ; then
 		if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
-			append-cxxflags $(test-flags-CC -static-libstdc++) \
+			has_version "sys-libs/libcxx[cfi,static-libs]" \
+				&& append-cxxflags -stdlib=libc++
+			append-cxxflags \
 				-Wno-unused-command-line-argument
 			append-cppflags -DDHAVE_DLOPEN=0 -DU_DISABLE_RENAMING=1 -DU_STATIC_IMPLEMENTATION
 		fi
-		append-cxxflags -stdlib=libc++
 		if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
-			append-ldflags $(test-flags-CC -static-libstdc++) \
+			has_version "sys-libs/libcxx[cfi,static-libs]" \
+				&& append-ldflags -stdlib=libc++
+			append-ldflags \
 				-Wno-unused-command-line-argument # Passes through clang++
 		fi
 		append-ldflags -stdlib=libc++
@@ -295,7 +298,7 @@ _configure_abi() {
 		if tc-is-clang && is_cfi_supported ; then
 			if [[ "${build_type}" == "static-libs" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+			elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -309,7 +312,7 @@ _configure_abi() {
 				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
-			if use cross-dso-cfi \
+			if use cfi-cross-dso \
 				&& [[ "${build_type}" == "shared-libs" ]] ; then
 				# setting -fsanitize-cfi-cross-dso for cflags breaks keepassx
 				export ESHAREDLIBCFLAGS="-fsanitize-cfi-cross-dso"
@@ -475,8 +478,8 @@ ewarn "static-lib consumers require -DU_STATIC_IMPLEMENTATION"
 ewarn
 	fi
 
-	if use cross-dso-cfi ; then
-ewarn "Using cross-dso-cfi requires a rebuild of the app with only the clang"
+	if use cfi-cross-dso ; then
+ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
 ewarn "compiler."
 	fi
 
