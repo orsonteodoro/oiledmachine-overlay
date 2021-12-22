@@ -92,7 +92,7 @@ gen_libcxx_depend() {
 		echo "
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			libcxx? ( >=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}] )
+			libcxx? ( >=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,clang?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}] )
 		)
 		"
 	done
