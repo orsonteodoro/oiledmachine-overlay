@@ -18,7 +18,7 @@ if [[ "$(ver_cut 3)" -lt 90 ]] ; then
 	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
 fi
 IUSE="+asm cpu_flags_arm_neon java static-libs"
-IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang cross-dso-cfi hardened lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 IUSE+="
 	pgo
 	pgo-custom
@@ -44,11 +44,11 @@ IUSE+="
 	pgo-trainer-transformations
 "
 REQUIRED_USE="
-	cfi? ( clang lto static-libs )
-	cfi-cast? ( clang lto cfi-vcall static-libs )
-	cfi-icall? ( clang lto cfi-vcall static-libs )
-	cfi-vcall? ( clang lto static-libs )
-	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
+	cfi? ( clang lto )
+	cfi-cast? ( clang lto cfi-vcall )
+	cfi-icall? ( clang lto cfi-vcall )
+	cfi-vcall? ( clang lto )
+	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
 	pgo? (
 		pgo-trainer-decode
 		|| (
@@ -126,7 +126,7 @@ gen_cfi_bdepend() {
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
+			cfi-cross-dso? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -308,7 +308,7 @@ is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		return 0
-	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
 		return 0
 	fi
 	return 1
@@ -350,7 +350,7 @@ _configure_pgx() {
 		if tc-is-clang && is_cfi_supported ; then
 			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cross-dso-cfi && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
+			elif use cfi-cross-dso && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -365,7 +365,7 @@ _configure_pgx() {
 							-fsanitize=cfi-vcall
 			fi
 			append_all -fno-sanitize=cfi-icall # breaks precompiled cef based apps
-			use cross-dso-cfi \
+			use cfi-cross-dso \
 				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 		fi
