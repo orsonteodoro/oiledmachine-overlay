@@ -26,7 +26,7 @@ LICENSE="ZLIB"
 SLOT="0/1" # subslot = SONAME
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="minizip minizip-utils static-libs"
-IUSE+=" cfi cfi-vcall cfi-cast cfi-icall clang -cross-dso-cfi hardened lto shadowcallstack"
+IUSE+=" cfi -cfi-cross-dso cfi-cast cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 IUSE+="
 	pgo
 	pgo-custom
@@ -58,9 +58,9 @@ IUSE+="
 REQUIRED_USE="
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
+	cfi-cross-dso? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 	cfi-icall? ( clang lto cfi-vcall )
 	cfi-vcall? ( clang lto )
-	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
 	pgo? (
 		minizip? ( minizip-utils )
 		|| (
@@ -150,7 +150,7 @@ gen_cfi_bdepend() {
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
+			cfi-cross-dso? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -427,7 +427,7 @@ is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		return 0
-	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
 		return 0
 	fi
 	return 1
@@ -487,7 +487,7 @@ _configure_pgx() {
 		if tc-is-clang && is_cfi_supported ; then
 			if [[ "${build_type}" == "static-libs" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+			elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -501,7 +501,7 @@ _configure_pgx() {
 				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
-			use cross-dso-cfi \
+			use cfi-cross-dso \
 				&& [[ "${build_type}" == "shared-libs" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 		fi
@@ -1365,8 +1365,8 @@ elog "  app-arch/pigz[$(get_arch_enabled_use_flags)]"
 
 	# CFI and LTO is only allowed in (musl based) clang only linux.
 
-	if use cross-dso-cfi ; then
-ewarn "Using cross-dso-cfi requires a rebuild of the app with only the clang"
+	if use cfi-cross-dso ; then
+ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
 ewarn "compiler."
 	fi
 

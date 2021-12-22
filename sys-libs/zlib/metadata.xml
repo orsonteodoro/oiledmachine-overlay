@@ -28,7 +28,7 @@
     uncompressed image of the zlib package.  Using a compressed tarball
     dependent on zlib will not work.
 
-    The Cross-DSO CFI (aka shared-lib CFI) is experimental quality
+    The CFI Cross-DSO (aka shared-lib CFI) is experimental quality
     and can bork a system with problems mentioned above if
     linkage is incomplete.
 
@@ -41,7 +41,7 @@
     (2)  All keys and procedures to access WiFi and encrypted devices.
     (3)  Verified the procedures in 2 indeed work and are correct.
     (4)  Uncompressed backup copy of the zlib image without
-         Cross-DSO CFI built with only GCC without the clang USE flag.
+         CFI Cross-DSO built with only GCC without the clang USE flag.
          This is obtained with the command:
     USE="-clang" emerge -1vO --quickpkg-direct y --root=/bak sys-libs/zlib
 
@@ -59,7 +59,7 @@
 
     Once you taken the necessary precautions you may add
     ZLIB_PRECAUTIONS_TAKEN=1 to /etc/make.conf
-    and maybe enable the cross-dso-cfi USE flag.
+    and maybe enable the cfi-cross-dso USE flag.
 
     These changes and this ebuild are under the GPL-2 license and come
     with NO WARRANTY.
@@ -108,9 +108,9 @@ ${PORTAGE_DISTDIR}/pgo/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
   <use>
     <flag name="cfi">Build with full CFI with all schemes</flag>
     <flag name="cfi-cast">Build with cfi-cast</flag>
+    <flag name="cfi-cross-dso">Build shared libs with CFI Cross-DSO mode</flag>
     <flag name="cfi-icall">Build with cfi-icall</flag>
     <flag name="cfi-vcall">Build with cfi-vcall</flag>
-    <flag name="cross-dso-cfi">Build shared libs with Cross-DSO CFI mode</flag>
     <flag name="hardened">Build with Full RELRO, noexecstack, SSP.
       For the non-hardened profile, set USE_HARDENED_PROFILE_DEFAULTS=1 in
       make.conf to use the hardened profile settings or fallback to the browser
