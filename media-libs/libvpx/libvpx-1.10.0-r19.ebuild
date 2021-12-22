@@ -24,7 +24,7 @@ SLOT="0/6"
 KEYWORDS="amd64 ~arm arm64 ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux ~x86-linux"
 IUSE="doc +highbitdepth postproc static-libs svc test +threads"
 IUSE+=" +examples"
-IUSE+=" cfi cfi-cast cfi-icall cfi-vcall clang chromium cross-dso-cfi hardened libcxx lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang chromium hardened libcxx lto shadowcallstack"
 IUSE+=" pgo
 	pgo-custom
 	pgo-trainer-2-pass-constrained-quality
@@ -37,7 +37,7 @@ REQUIRED_USE="
 	cfi-cast? ( clang lto cfi-vcall )
 	cfi-icall? ( clang lto cfi-vcall )
 	cfi-vcall? ( clang lto )
-	cross-dso-cfi? ( clang || ( cfi cfi-cast cfi-icall cfi-vcall ) )
+	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
 	pgo? (
 		|| (
 			pgo-custom
@@ -81,7 +81,7 @@ gen_cfi_bdepend() {
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*:=[cfi]
-			cross-dso-cfi? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
+			cfi-cross-dso? ( sys-devel/clang:${v}[${MULTILIB_USEDEP},experimental] )
 		)
 		     "
 	done
@@ -130,7 +130,7 @@ gen_libcxx_depend() {
 		(
 			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
 			libcxx? (
-				>=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-icall?,cfi-vcall?,hardened?,shadowcallstack?,${MULTILIB_USEDEP}]
+				>=sys-libs/libcxx-${v}:=[cfi?,cfi-cast?,cfi-cross-dso?,cfi-icall?,cfi-vcall?,hardened?,shadowcallstack?,static-libs?,${MULTILIB_USEDEP}]
 			)
 		)
 		"
@@ -361,7 +361,7 @@ is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
 	if [[ "${build_type}" == "static-libs" ]] ; then
 		return 0
-	elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
 		return 0
 	fi
 	return 1
@@ -396,16 +396,19 @@ configure_pgx() {
 		-Wl,-z,noexecstack \
 		-Wl,-z,now \
 		-Wl,-z,relro \
+		-lc++ \
 		-static-libstdc++ \
 		-stdlib=libc++
 
 	if tc-is-clang && use libcxx && [[ "${USE}" =~ "cfi" ]] ; then
+		# The -static-libstdc++ is a misnomer.  It also means \
+		# -static-libc++ which does not exist.
                 append-cxxflags -stdlib=libc++
                 append-ldflags -stdlib=libc++
 		[[ "${build_type}" == "shared-libs" ]] \
 			&& append-ldflags -lc++
 		[[ "${build_type}" == "static-libs" ]] \
-			&& append-ldflags -static-libc++
+			&& append-ldflags -static-libstdc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
 	fi
@@ -457,7 +460,7 @@ configure_pgx() {
 		if tc-is-clang && is_cfi_supported ; then
 			if [[ "${build_type}" == "static-libs" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cross-dso-cfi && [[ "${build_type}" == "shared-libs" ]] ; then
+			elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -472,7 +475,7 @@ configure_pgx() {
 				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
-			use cross-dso-cfi \
+			use cfi-cross-dso \
 				&& [[ "${build_type}" == "shared-libs" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 		fi
@@ -1079,8 +1082,8 @@ elog "The following package must be installed before PGOing this package:"
 elog "  media-video/ffmpeg[encode,vpx,$(get_arch_enabled_use_flags)]"
 	fi
 
-	if use cross-dso-cfi ; then
-ewarn "Using cross-dso-cfi requires a rebuild of the app with only the clang"
+	if use cfi-cross-dso ; then
+ewarn "Using cfi-cross-dso requires a rebuild of the app with only the clang"
 ewarn "compiler."
 	fi
 
