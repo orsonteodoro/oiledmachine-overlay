@@ -31,8 +31,14 @@ IUSE+=" pgo
 	pgo-trainer-constrained-quality
 	pgo-trainer-lossless
 "
-
+# Link utils to either CFI Cross-DSO (.so) or Basic (.a)
 REQUIRED_USE="
+	!cfi-cross-dso? (
+		cfi? ( static-libs )
+		cfi-cast? ( static-libs )
+		cfi-icall? ( static-libs )
+		cfi-vcall? ( static-libs )
+	)
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
 	cfi-icall? ( clang lto cfi-vcall )
