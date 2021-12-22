@@ -17,7 +17,14 @@ SLOT="0/${PV}"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="debug doc examples static-libs"
 IUSE+=" cfi cfi-cross-dso cfi-cast cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack"
+# Link the examples and utilties with cfi-cross-dso or basic-cfi
 REQUIRED_USE="
+	cfi-cross-dso? (
+		cfi? ( static-libs )
+		cfi-cast? ( static-libs )
+		cfi-icall? ( static-libs )
+		cfi-vcall? ( static-libs )
+	)
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
 	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
