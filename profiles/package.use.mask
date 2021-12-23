@@ -151,14 +151,8 @@ sys-devel/clang experimental
 # Prevents loading of precompiled www browser
 sys-libs/zlib cross-dso-cfi
 
-# undefined symbol: __cfi_slowpath with pulseaudio -k
-media-libs/flac cross-dso-cfi
-
 # Breaks keepassxc will illegal instruction
 dev-libs/icu cross-dso-cfi
 
 # For pam plugin
 sys-fs/ecryptfs-utils -suid
-
-# static-libs broken
-sys-libs/zlib clang

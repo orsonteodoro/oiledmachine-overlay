@@ -260,14 +260,15 @@ _src_configure() {
 				use cfi-cast && append_all \
 							-fsanitize=cfi-derived-cast \
 							-fsanitize=cfi-unrelated-cast
-				use cfi-icall && append_all \
-							-fsanitize=cfi-icall
+				#use cfi-icall && append_all \
+				#			-fsanitize=cfi-icall
 				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
 			use cfi-cross-dso \
 				&& [[ "${build_type}" == "shared-libs" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
+			append_all -fno-sanitize=cfi-icall # cfi-icall breaks CEF with illegal instruction
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
