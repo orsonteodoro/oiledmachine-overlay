@@ -194,7 +194,6 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
-		append-flags -fsplit-lto-unit
 	else
 		append-flags -flto
 		append-ldflags -flto
@@ -330,6 +329,8 @@ _configure_abi() {
 				export ESHAREDLIBCXXFLAGS=""
 				export ELD_SOOPTIONS=""
 			fi
+			append_all -fno-sanitize=cfi-icall # Build time failure when running tools
+			append_all -fno-sanitize=cfi-nvcall # Breaks toolutil
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
@@ -384,16 +385,32 @@ _configure_abi() {
 			--enable-extras
 			--enable-tools
 		)
-	elif [[ "${build_type}" == "static-libs" ]] ; then
-		myeconfargs+=(
-			--enable-extras
-			--enable-tools
-		)
+	elif use cfi-cross-dso ; then
+		if [[ "${build_type}" == "shared-libs" ]] ; then
+			# Link against CFI Cross DSO (.so)
+			myeconfargs+=(
+				--enable-extras
+				--enable-tools
+			)
+		else
+			myeconfargs+=(
+				--disable-extras
+				--disable-tools
+			)
+		fi
 	else
-		myeconfargs+=(
-			--disable-extras
-			--disable-tools
-		)
+		if [[ "${build_type}" == "static-libs" ]] ; then
+			# Link against Basic mode (.a)
+			myeconfargs+=(
+				--enable-extras
+				--enable-tools
+			)
+		else
+			myeconfargs+=(
+				--disable-extras
+				--disable-tools
+			)
+		fi
 	fi
 
 	tc-is-cross-compiler && myeconfargs+=(
