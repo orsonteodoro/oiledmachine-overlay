@@ -170,6 +170,8 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
+		[[ "${build_type}" == "static-libs" ]] \
+			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
 		append-ldflags -flto
@@ -220,15 +222,16 @@ _src_configure() {
 	filter-flags \
 		'-f*sanitize*' \
 		'-f*stack*' \
+		'-fsplit-lto-unit' \
 		'-fvisibility=*' \
 		'--param=ssp-buffer-size=*' \
-		-DFLAC__USE_VISIBILITY_ATTR \
-		-Wl,-z,noexecstack \
-		-Wl,-z,now \
-		-Wl,-z,relro \
-		-lc++ \
-		-static-libstdc++ \
-		-stdlib=libc++
+		'-DFLAC__USE_VISIBILITY_ATTR' \
+		'-Wl,-z,noexecstack' \
+		'-Wl,-z,now' \
+		'-Wl,-z,relro' \
+		'-lc++' \
+		'-static-libstdc++' \
+		'-stdlib=libc++'
 
 	if tc-is-clang && use libcxx && [[ "${USE}" =~ "cfi" ]] ; then
 		# The -static-libstdc++ is a misnomer.  It also means \
