@@ -320,7 +320,6 @@ _configure_abi() {
 			fi
 			if use cfi-cross-dso \
 				&& [[ "${build_type}" == "shared-libs" ]] ; then
-				# setting -fsanitize-cfi-cross-dso for cflags breaks keepassx
 				export ESHAREDLIBCFLAGS="-fsanitize-cfi-cross-dso"
 				export ESHAREDLIBCXXFLAGS="-fsanitize-cfi-cross-dso"
 				export ELD_SOOPTIONS="-fsanitize-cfi-cross-dso"
