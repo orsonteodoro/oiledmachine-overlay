@@ -21,7 +21,7 @@ diff -urp a/libcxxabi/CMakeLists.txt b/libcxxabi/CMakeLists.txt
  option(LIBCXXABI_ENABLE_EXCEPTIONS
    "Provide support for exceptions in the runtime.
    When disabled, libc++abi does not support stack unwinding and other exceptions-related features." ON)
-@@ -267,6 +280,125 @@ include(HandleLibcxxabiFlags)
+@@ -267,6 +280,130 @@ include(HandleLibcxxabiFlags)
  # Configure target flags
  add_target_flags_if(LIBCXXABI_BUILD_32_BITS "-m32")
  
@@ -38,6 +38,11 @@ diff -urp a/libcxxabi/CMakeLists.txt b/libcxxabi/CMakeLists.txt
 +    set(LIBCXXABI_C_FLAGS "${LIBCXXABI_C_FLAGS} -flto=thin")
 +    set(LIBCXXABI_CXX_FLAGS "${LIBCXXABI_CXX_FLAGS} -flto=thin")
 +    set(LIBCXXABI_LINK_FLAGS "${LIBCXXABI_LINK_FLAGS} -fuse-ld=lld -flto=thin")
++    if(LIBCXXABI_ENABLE_STATIC)
++      set(LIBCXXABI_C_FLAGS "${LIBCXXABI_C_FLAGS} -fsplit-lto-unit")
++      set(LIBCXXABI_CXX_FLAGS "${LIBCXXABI_CXX_FLAGS} -fsplit-lto-unit")
++      set(LIBCXXABI_LINK_FLAGS "${LIBCXXABI_LINK_FLAGS} -fsplit-lto-unit")
++    endif()
 +  elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 +    set(LIBCXXABI_C_FLAGS "${LIBCXXABI_C_FLAGS} -flto=auto")
 +    set(LIBCXXABI_CXX_FLAGS "${LIBCXXABI_CXX_FLAGS} -flto")
@@ -147,4 +152,3 @@ diff -urp a/libcxxabi/CMakeLists.txt b/libcxxabi/CMakeLists.txt
  if(LIBCXXABI_TARGET_TRIPLE)
    add_target_flags_if_supported("--target=${LIBCXXABI_TARGET_TRIPLE}")
  elseif(CMAKE_CXX_COMPILER_TARGET)
-Only in libcxxabi: CMakeLists.txt.orig

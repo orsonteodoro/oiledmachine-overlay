@@ -186,11 +186,12 @@ _configure_abi() {
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'-flto*' \
+		'-fsplit-lto-unit' \
 		'-fuse-ld=*' \
 		'-fvisibility=*' \
-                -Wl,-z,noexecstack \
-                -Wl,-z,now \
-                -Wl,-z,relro
+		'-Wl,-z,noexecstack' \
+		'-Wl,-z,now' \
+		'-Wl,-z,relro'
 
 	# link against compiler-rt instead of libgcc if we are using clang with libunwind
 	local want_compiler_rt=OFF

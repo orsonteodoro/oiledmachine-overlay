@@ -185,11 +185,12 @@ _configure_abi() {
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'-flto*' \
+		'-fsplit-lto-unit' \
 		'-fuse-ld=*' \
 		'-fvisibility=*' \
-                -Wl,-z,noexecstack \
-                -Wl,-z,now \
-                -Wl,-z,relro
+		'-Wl,-z,noexecstack' \
+		'-Wl,-z,now' \
+		'-Wl,-z,relro'
 
 	# we need a configured libc++ for __config_site
 	wrap_libcxx cmake_src_configure
