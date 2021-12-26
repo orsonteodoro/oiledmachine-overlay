@@ -214,11 +214,12 @@ _configure_abi() {
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'-flto*' \
+		'-fsplit-lto-unit' \
 		'-fuse-ld=*' \
 		'-fvisibility=*' \
-                -Wl,-z,noexecstack \
-                -Wl,-z,now \
-                -Wl,-z,relro
+		'-Wl,-z,noexecstack' \
+		'-Wl,-z,now' \
+		'-Wl,-z,relro'
 
 	# we want -lgcc_s for unwinder, and for compiler runtime when using
 	# gcc, clang with gcc runtime (or any unknown compiler)
