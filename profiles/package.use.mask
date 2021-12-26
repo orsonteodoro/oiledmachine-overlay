@@ -149,10 +149,7 @@ sys-devel/clang experimental
 
 # Prevents libpng from being built, breaks pngfix when zlib libs are being replaced
 # Prevents loading of precompiled www browser
-sys-libs/zlib cross-dso-cfi
-
-# Breaks keepassxc will illegal instruction
-dev-libs/icu cross-dso-cfi
+sys-libs/zlib cfi-cross-dso
 
 # For pam plugin
 sys-fs/ecryptfs-utils -suid
