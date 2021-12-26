@@ -194,6 +194,8 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
+		[[ "${build_type}" == "static-libs" ]] \
+			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
 		append-ldflags -flto
@@ -273,12 +275,13 @@ _configure_abi() {
 		'--param=ssp-buffer-size=*' \
 		'-f*sanitize*' \
 		'-f*stack*' \
+		'-fsplit-lto-unit' \
 		'-fvisibility=*' \
-		-DU_STATIC_IMPLEMENTATION \
-		-Wl,-z,noexecstack \
-		-Wl,-z,now \
-		-Wl,-z,relro \
-		-stdlib=libc++
+		'-DU_STATIC_IMPLEMENTATION' \
+		'-Wl,-z,noexecstack' \
+		'-Wl,-z,now' \
+		'-Wl,-z,relro' \
+		'-stdlib=libc++'
 
 	autofix_flags
 
