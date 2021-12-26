@@ -149,7 +149,12 @@ sys-devel/clang experimental
 
 # Prevents libpng from being built, breaks pngfix when zlib libs are being replaced
 # Prevents loading of precompiled www browser
+# cfi-cross-dso is only allowed for clang only profiles.
 sys-libs/zlib cfi-cross-dso
+sys-libs/zlib cfi
+sys-libs/zlib cfi-vcall
+sys-libs/zlib cfi-icall
+sys-libs/zlib cfi-cast
 
 # For pam plugin
 sys-fs/ecryptfs-utils -suid
