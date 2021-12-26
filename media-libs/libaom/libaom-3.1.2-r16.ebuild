@@ -340,6 +340,8 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
+		[[ "${build_type}" == "static-libs" ]] \
+			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
 		append-ldflags -flto
@@ -394,15 +396,16 @@ configure_pgx() {
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'-fprofile*' \
+		'-fsplit-lto-unit' \
 		'-fvisibility=*' \
 		'--param=ssp-buffer-size=*' \
-		-Wl,-z,noexecstack \
-		-Wl,-z,now \
-		-Wl,-z,relro \
-		-lc++ \
-		-ldl \
-		-static-libc++ \
-		-stdlib=libc++
+		'-Wl,-z,noexecstack' \
+		'-Wl,-z,now' \
+		'-Wl,-z,relro' \
+		'-lc++' \
+		'-ldl' \
+		'-static-libc++' \
+		'-stdlib=libc++'
 
 	if tc-is-clang && use libcxx && [[ "${USE}" =~ "cfi" ]] ; then
 		# The -static-libstdc++ is a misnomer.  It also means \
