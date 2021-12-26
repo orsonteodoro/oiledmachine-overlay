@@ -289,6 +289,8 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
+		[[ "${build_type}" == "static-libs" ]] \
+			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
 		append-ldflags -flto
@@ -343,11 +345,12 @@ _configure_pgx() {
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'-fprofile*' \
+		'-fsplit-lto-unit' \
 		'-fvisibility=*' \
 		'--param=ssp-buffer-size=*' \
-		-Wl,-z,noexecstack \
-		-Wl,-z,now \
-		-Wl,-z,relro
+		'-Wl,-z,noexecstack' \
+		'-Wl,-z,now' \
+		'-Wl,-z,relro'
 
 	autofix_flags
 
