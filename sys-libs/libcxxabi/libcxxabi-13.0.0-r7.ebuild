@@ -310,7 +310,8 @@ wrap_libcxx() {
 			mycmakeargs+=(
 				-DCFI=$(usex cfi)
 				-DCFI_CAST=$(usex cfi-cast)
-				-DCFI_ICALL=$(usex cfi-icall)
+				-DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall"
+				-DCFI_ICALL=OFF
 				-DCFI_VCALL=$(usex cfi-vcall)
 				-DCROSS_DSO_CFI=$(usex cfi-cross-dso)
 			)
