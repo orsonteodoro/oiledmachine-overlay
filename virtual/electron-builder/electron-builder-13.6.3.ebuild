@@ -1,7 +1,8 @@
 # Copyright 2021 Orson Teodoro
 # Distributed under the terms of the GNU General Public License v2
 
-# See https://www.electronjs.org/releases/stable?version=13
+# See https://www.electronjs.org/releases/stable?version=13 # lags
+# See https://github.com/electron/releases/blob/master/lite.json
 
 EAPI=7
 DESCRIPTION="Electron updates for ebuild-packages with electron-builder \

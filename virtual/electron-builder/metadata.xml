@@ -17,7 +17,7 @@
     virtual/electron-builder:13=    # stable, corresponding to Chromium EOL, Node.js 14 outdated
 
     For unsupported, but a more secure build:
-    virtual/electron-builder:17=    # *nightly, corresponding to Chromium Stable, Node.js 16 latest
+    virtual/electron-builder:17=    # *nightly, corresponding to Chromium Dev, Node.js 16 behind one point release with double free avoidance
     virtual/electron-builder:18=    # *nightly, corresponding to Chromium Dev, Node.js 16 latest
 
     * Upstream updates everyday but this overlay plans to bump every week or
