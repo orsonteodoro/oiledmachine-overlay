@@ -41,10 +41,13 @@ src_prepare() {
 		-e '/"-march=armv8-a+crypto"/d' \
 		absl/copts/copts.py || die
 	# now generate cmake files
+	python_fix_shebang absl/copts/generate_copts.py
 	absl/copts/generate_copts.py || die
-	sed -i 's/-Werror//g' \
+	if use test ; then
+		sed -i 's/-Werror//g' \
 "${WORKDIR}/googletest-${GTEST_COMMIT}"/googletest/cmake/internal_utils.cmake \
-		|| die
+			|| die
+	fi
 	multilib_copy_sources
 }
 
@@ -60,7 +63,6 @@ src_configure() {
 	local mycmakeargs=(
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_LOCAL_GOOGLETEST_DIR="${WORKDIR}/googletest-${GTEST_COMMIT}"
-		-DABSL_RUN_TESTS=$(usex test)
 		$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '') # it has to be a useflag for some consumers
 		$(usex test -DBUILD_TESTING=ON '') #intentional usex
 	)

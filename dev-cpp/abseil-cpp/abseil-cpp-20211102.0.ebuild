@@ -17,20 +17,15 @@ BDEPEND+=" ${PYTHON_DEPS}
 	   test? ( sys-libs/timezone-data )"
 # yes, it needs SOURCE, not just installed one
 # Uses master, see
-# https://github.com/abseil/abseil-cpp/blob/20210324.0/CMake/Googletest/CMakeLists.txt.in
-GTEST_COMMIT="e2239ee6043f73722e7aa812a459f54a28552929" # Up to tag date version
-GTEST_FILE="gtest-1.11.0.tar.gz"
+# https://github.com/abseil/abseil-cpp/blob/20211102.0/CMake/Googletest/CMakeLists.txt.in
+GTEST_COMMIT="1b18723e874b256c1e39378c6774a90701d70f7a" #
+GTEST_FILE="gtest-1.11.0_p20211112-${GTEST_COMMIT:0:7}.tar.gz"
 SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/google/googletest/archive/${GTEST_COMMIT}.tar.gz
 	-> ${GTEST_FILE}"
 RESTRICT="!test? ( test ) mirror"
-
-PATCHES=(
-	"${FILESDIR}/${PN}-20200923-arm_no_crypto.patch"
-	"${FILESDIR}/${PN}-20210324.1-glibc-2.34.patch"
-)
 
 src_prepare() {
 	cmake-utils_src_prepare
@@ -53,17 +48,10 @@ src_prepare() {
 }
 
 src_configure() {
-	if use arm || use arm64 ; then
-		# bug #778926
-		if [[ $($(tc-getCXX) ${CXXFLAGS} -E -P - \
-			<<<$'#if defined(__ARM_FEATURE_CRYPTO)\nHAVE_ARM_FEATURE_CRYPTO\n#endif') \
-			!= *HAVE_ARM_FEATURE_CRYPTO* ]]; then
-			append-cxxflags -DABSL_ARCH_ARM_NO_CRYPTO
-		fi
-	fi
 	local mycmakeargs=(
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_LOCAL_GOOGLETEST_DIR="${WORKDIR}/googletest-${GTEST_COMMIT}"
+		-DABSL_PROPAGATE_CXX_STD=TRUE
 		$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '') # it has to be a useflag for some consumers
 		$(usex test -DBUILD_TESTING=ON '') #intentional usex
 	)
