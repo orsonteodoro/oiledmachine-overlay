@@ -248,11 +248,10 @@ the metadata.xml.
 | media-fonts/noto-color-emoji | This currently supports Emoji 5.0.  This one you can use to compile noto color emoji.  The benefit is that you can get updated emojis.  This one also contains a black smiling face emoji to replace the text presentation unlike the -bin.  `emerge noto-color-emoji-config` to apply emojis as default. |
 | media-fonts/noto-color-emoji-bin | This one has been precompiled containing old or new emoji aesthetic as in round or jellybean style.  `emerge noto-color-emoji-config` to apply emojis as default. |
 | media-fonts/noto-color-emoji-config | This package will apply fontconfig fixes to firefox, google chrome, etc systemwide.  You can use Gentoo's noto-emoji package instead of the one on this overlay. |
-| media-gfx/blender | This ebuild fork is for purposes for sheepit-client.  Designed to multislotted and comprehensive to match the feature release enablement upstream.  Use the `virtual/blender-lts` or `virtual/blender-stable` to choose the update path. |
+| media-gfx/blender | Ebuild was fork designed to multislotted and comprehensive to match the feature release enablement upstream.  Use the `virtual/blender-lts` or `virtual/blender-stable` to choose the update path. |
 | media-gfx/blockbench | This is an Electron based boxy 3D modeler and animator program used in games |
 | media-gfx/caesiumclt | This is a command line image compressor for PNG and JPEG files. |
 | media-gfx/nvidia-texture-tools | This one builds the C# language binding and nvtt native library required for MonoGame.  You need to install this one from the repository for MonoGame to compile correctly.  This ebuild generates Nvidia.TextureTools.dll per each vc{10,8,9,12,monogame} because upstream don't delete one of them so a consumer may depend on the old one.  You need to enable the `monogame` USE flag to generate the proper older Nvidia.TextureTools.dll. |
-| media-gfx/sheepit-client | A CPU and/or GPU render farm client with Blender support using Internal, Eevee, or Cycles renderers. |
 | media-gfx/texturelab | This is an Electron based GPU accelerated texture maker. |
 | media-libs/glfw | TBA |
 | media-libs/libcaca | This library contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated GIFs, and Facebook videos to try to better render skin color.  I still think Termpic colors rendering is better. |
