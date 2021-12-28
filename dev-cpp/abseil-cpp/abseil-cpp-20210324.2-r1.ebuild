@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-multilib python-any-r1
+inherit cmake-multilib python-any-r1 toolchain-funcs
 
 DESCRIPTION="Abseil Common Libraries (C++), LTS Branch"
 LICENSE="Apache-2.0
