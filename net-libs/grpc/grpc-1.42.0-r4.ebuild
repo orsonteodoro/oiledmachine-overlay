@@ -38,7 +38,6 @@ DEPEND+=" ${RDEPEND}
 		>=dev-cpp/gflags-2.2.0[${MULTILIB_USEDEP}]
 	)"
 BDEPEND+=" >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
-# requires sources of many google tools
 RESTRICT="test"
 MY_PV="${PV//_pre/-pre}"
 SRC_URI="https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz"

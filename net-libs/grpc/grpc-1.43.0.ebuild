@@ -12,6 +12,7 @@ LICENSE="Apache-2.0
 	BSD-2 GPL-2+
 	GPL-2
 	MIT
+	MPL-2.0
 	Unlicense"
 # BSD third_party/address_sorting/LICENSE
 # BSD third_party/upb/LICENSE
@@ -22,18 +23,18 @@ LICENSE="Apache-2.0
 KEYWORDS="~amd64 ~ppc64 ~x86"
 IUSE+=" doc examples test"
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/19.141" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
-# third_party last update: 20211006
+SLOT="${SLOT_MAJ}/21.143" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+# third_party last update: 20211103
 RDEPEND+="
-	~dev-cpp/abseil-cpp-20210324.0:=[${MULTILIB_USEDEP},cxx17(+)]
+	~dev-cpp/abseil-cpp-20211102.0:=[${MULTILIB_USEDEP},cxx17(+)]
 	>=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}]
-	>=dev-libs/protobuf-3.17.3:=[${MULTILIB_USEDEP}]
-	>=dev-libs/re2-0.2020.06.01:=[${MULTILIB_USEDEP}]
+	>=dev-libs/protobuf-3.18.1:=[${MULTILIB_USEDEP}]
+	>=dev-libs/re2-0.2021.09.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]"
 DEPEND+=" ${RDEPEND}
 	test? (
-		>=dev-cpp/benchmark-1.5.2
+		>=dev-cpp/benchmark-1.6.0
 		>=dev-cpp/gflags-2.2.0[${MULTILIB_USEDEP}]
 	)"
 BDEPEND+=" >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
