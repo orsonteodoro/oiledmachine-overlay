@@ -1,7 +1,0 @@
-Ebuild maintainer notes
-=======================
-
-The following assumed that we are working with unpacked custom build of Blender.
-
-Finding .so libraries:
-ldd $(find . -type f) 2>/dev/null | grep "=" | cut -f 2 -d ">" | sort | uniq
