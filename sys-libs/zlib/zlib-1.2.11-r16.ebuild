@@ -477,17 +477,17 @@ _configure_pgx() {
 	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
+		'--param=ssp-buffer-size=*' \
 		'-f*sanitize*' \
 		'-f*stack*' \
+		'-f*visibility*' \
 		'-fprofile*' \
 		'-fsplit-lto-unit' \
-		'-fvisibility=*' \
-		'-Wno-error=*' \
-		'--param=ssp-buffer-size=*' \
+		'-stdlib=libc++'
 		'-Wl,-z,noexecstack' \
 		'-Wl,-z,now' \
 		'-Wl,-z,relro' \
-		'-stdlib=libc++'
+		'-Wno-error=*'
 
 	autofix_flags
 

@@ -53,8 +53,6 @@ REQUIRED_USE+="
 # TODO: app-accessibility/speech-dispatcher needs multilib
 GLIB_V="2.48"
 XI_V="1.7.6"
-# TODO: certain static-lib dependencies are require static-libs USE flags for CFI
-# These static dependencies should also be CFI built.
 CHROMIUM_CDEPEND="
 	>=app-accessibility/at-spi2-atk-2.18.3[${MULTILIB_USEDEP}]
 	>=app-accessibility/speech-dispatcher-0.8.3
@@ -137,6 +135,7 @@ DEPEND+="
 BDEPEND+="
 	test? ( ${VIRTUALX_DEPEND} )
 	>=dev-util/cmake-3.10.2"
+
 S="${WORKDIR}"
 declare -Ax ABIx=( \
         [x86]="linux32" \
@@ -168,8 +167,7 @@ src_prepare() {
 	prepare_abi() {
 		S=$(S_abi)
 		cd "${S}" || die
-		# Remove the disable visibility hidden patch if using CFI
-		eapply "${FILESDIR}/cef-bin-93.1.11-disable-visibility-hidden.patch"
+		eapply "${FILESDIR}/cef-bin-93.1.11-visibility-changes.patch"
 		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
 		cmake-utils_src_prepare
 	}
@@ -178,19 +176,19 @@ src_prepare() {
 
 src_configure() {
 	strip-unsupported-flags
-	filter-flags -march=* -O*
+	filter-flags \
+		'-f*sanitize*' \
+		'-f*visibility*' \
+		'-march=*' \
+		'-O*'
 
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 	configure_abi() {
 		S=$(S_abi)
 		cd "${S}" || die
-		# TODO static build for CFI
-		# It should have been build entirely as static from the beginning
-#		local mycmakeargs=(
-#			-DBUILD_SHARED_LIBS=OFF
-#			-DCMAKE_EXE_LINKER_FLAGS="-static"
-#			-DCMAKE_FIND_LIBRARY_SUFFIXES=".a"
-#		)
+		mycmakeargs=(
+			-DBUILD_SHARED_LIBS=ON
+		)
 		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
 		cmake-utils_src_configure
 	}
@@ -256,15 +254,20 @@ src_install() {
 pkg_postinst() {
 ewarn
 ewarn "Security notice:"
+ewarn
 ewarn "This package needs to be updated at the same time as your Chromium web"
 ewarn "browser to avoid the same critical vulnerabilities."
 ewarn
-ewarn "The cefclient, cefsimple, and programs linked to it are not CFI"
-ewarn "protected.  This issue will be looked into at later may be resolved."
+ewarn "Some parts such as libcef_dll_wrapper.so are not CFI protected and"
+ewarn "cannot be Cross-DSO CFI protected at this time."
 ewarn
-ewarn "Even though it may be resolved it will still not get full protection."
-ewarn "cfi-icall would be disabled for some parts.  shadow-call-stack"
-ewarn "(backward edge protection) is unknown."
+ewarn "But, the prebuilt parts may be CFI Basic protected for the .so files"
+ewarn "which may not require CFI symbols."
+ewarn
+ewarn "Even though problems may be resolved, it will still not get full."
+ewarn "protection cfi-icall would be disabled for some parts."
+ewarn "shadow-call-stack (backward edge protection) applied to these binaries"
+ewarn "is unknown."
 ewarn
 ewarn "For full protection, use the regular browser bin package instead."
 ewarn

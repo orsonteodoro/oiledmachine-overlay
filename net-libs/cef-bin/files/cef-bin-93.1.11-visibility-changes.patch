@@ -1,0 +1,52 @@
+--- a/cmake/cef_variables.cmake.orig	2021-11-19 22:00:07.000000000 -0800
++++ b/cmake/cef_variables.cmake	2021-12-28 11:47:15.292035006 -0800
+@@ -7,6 +7,7 @@ if(NOT DEFINED _CEF_ROOT_EXPLICIT)
+   message(FATAL_ERROR "Use find_package(CEF) to load this file.")
+ endif()
+ 
++option(BUILD_SHARED_LIBS "Build as shared libs" ON)
+ 
+ #
+ # Shared configuration.
+@@ -85,7 +86,6 @@ if(OS_LINUX)
+     -fPIC                           # Generate position-independent code for shared libraries
+     -fstack-protector               # Protect some vulnerable functions from stack-smashing (security feature)
+     -funwind-tables                 # Support stack unwinding for backtrace()
+-    -fvisibility=hidden             # Give hidden visibility to declarations that are not explicitly marked as visible
+     --param=ssp-buffer-size=4       # Set the minimum buffer size protected by SSP (security feature, related to stack-protector)
+     -pipe                           # Use pipes rather than temporary files for communication between build stages
+     -pthread                        # Use the pthread library
+@@ -97,6 +97,17 @@ if(OS_LINUX)
+     -Wno-comment                    # Don't warn about code in comments
+     -Wno-deprecated-declarations    # Don't warn about using deprecated methods
+     )
++  if(BUILD_SHARED_LIBS)
++    list(APPEND CEF_COMPILER_FLAGS
++      -fvisibility=default          # Shared libs cannot have hidden visibility
++				    # -fvisibility is required for CFI
++    )
++  else()
++    list(APPEND CEF_COMPILER_FLAGS
++      -fvisibility=hidden           # Give hidden visibility to declarations that are not explicitly marked as visible
++				    # Hidden visibility is required for CFI
++    )
++  endif()
+   list(APPEND CEF_C_COMPILER_FLAGS
+     -std=c99                        # Use the C99 language standard
+     )
+@@ -104,10 +115,14 @@ if(OS_LINUX)
+     -fno-exceptions                 # Disable exceptions
+     -fno-rtti                       # Disable real-time type information
+     -fno-threadsafe-statics         # Don't generate thread-safe statics
+-    -fvisibility-inlines-hidden     # Give hidden visibility to inlined class member functions
+     -std=c++14                      # Use the C++14 language standard
+     -Wsign-compare                  # Warn about mixed signed/unsigned type comparisons
+     )
++  if(NOT BUILD_SHARED_LIBS)
++    list(APPEND CEF_CXX_COMPILER_FLAGS
++      -fvisibility-inlines-hidden     # Give hidden visibility to inlined class member functions
++    )
++  endif()
+   list(APPEND CEF_COMPILER_FLAGS_DEBUG
+     -O0                             # Disable optimizations
+     -g                              # Generate debug information
