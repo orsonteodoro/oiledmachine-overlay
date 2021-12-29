@@ -213,10 +213,10 @@ _configure_abi() {
 		'--param=ssp-buffer-size=*' \
 		'-f*sanitize*' \
 		'-f*stack*' \
+		'-f*visibility*' \
 		'-flto*' \
 		'-fsplit-lto-unit' \
 		'-fuse-ld=*' \
-		'-fvisibility=*' \
 		'-Wl,-z,noexecstack' \
 		'-Wl,-z,now' \
 		'-Wl,-z,relro'
