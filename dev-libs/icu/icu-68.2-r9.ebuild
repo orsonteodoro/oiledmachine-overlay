@@ -273,15 +273,15 @@ _configure_abi() {
 
 	filter-flags \
 		'--param=ssp-buffer-size=*' \
+		'-DU_STATIC_IMPLEMENTATION' \
 		'-f*sanitize*' \
 		'-f*stack*' \
+		'-f*visibility*' \
 		'-fsplit-lto-unit' \
-		'-fvisibility=*' \
-		'-DU_STATIC_IMPLEMENTATION' \
+		'-stdlib=libc++' \
 		'-Wl,-z,noexecstack' \
 		'-Wl,-z,now' \
-		'-Wl,-z,relro' \
-		'-stdlib=libc++'
+		'-Wl,-z,relro'
 
 	autofix_flags
 
