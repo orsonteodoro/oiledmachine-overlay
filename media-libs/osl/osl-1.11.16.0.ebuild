@@ -20,10 +20,9 @@ LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
 # The highest stable llvm was used as the default.  Revisions may update this in the future.
 IUSE+=" ${CPU_FEATURES[@]%:*} doc ${LLVM_SUPPORT_[@]} +llvm-13 optix partio python qt5 test"
 REQUIRED_USE+=" ^^ ( ${LLVM_SUPPORT_[@]} )"
-# See https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.11.14.1/INSTALL.md
+# See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.11.16.0/INSTALL.md
 # For optix requirements, see
-#   https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.11.14.1/src/cmake/externalpackages.cmake
-#   https://github.com/imageworks/OpenShadingLanguage/releases/tag/Release-1.11.14.1
+#   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.11.16.0/src/cmake/externalpackages.cmake
 QT_MIN=5.6
 
 gen_llvm_depend()
