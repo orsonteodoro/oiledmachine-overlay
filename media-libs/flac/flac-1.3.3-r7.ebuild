@@ -220,18 +220,18 @@ _src_configure() {
 	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
-		'-f*sanitize*' \
-		'-f*stack*' \
-		'-fsplit-lto-unit' \
-		'-fvisibility=*' \
 		'--param=ssp-buffer-size=*' \
 		'-DFLAC__USE_VISIBILITY_ATTR' \
-		'-Wl,-z,noexecstack' \
-		'-Wl,-z,now' \
-		'-Wl,-z,relro' \
+		'-f*sanitize*' \
+		'-f*stack*' \
+		'-f*visibility*' \
+		'-fsplit-lto-unit' \
 		'-lc++' \
 		'-static-libstdc++' \
-		'-stdlib=libc++'
+		'-stdlib=libc++' \
+		'-Wl,-z,noexecstack' \
+		'-Wl,-z,now' \
+		'-Wl,-z,relro'
 
 	if tc-is-clang && use libcxx && [[ "${USE}" =~ "cfi" ]] ; then
 		# The -static-libstdc++ is a misnomer.  It also means \
