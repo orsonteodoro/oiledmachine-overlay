@@ -483,7 +483,7 @@ _configure_pgx() {
 		'-f*visibility*' \
 		'-fprofile*' \
 		'-fsplit-lto-unit' \
-		'-stdlib=libc++'
+		'-stdlib=libc++' \
 		'-Wl,-z,noexecstack' \
 		'-Wl,-z,now' \
 		'-Wl,-z,relro' \
