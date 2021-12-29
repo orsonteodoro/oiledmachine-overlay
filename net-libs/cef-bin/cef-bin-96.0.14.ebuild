@@ -249,6 +249,7 @@ src_install() {
 			> "${ED}/opt/${PN}/${ABI}/.version" || die
 	}
 	multilib_foreach_abi install_abi
+	find "${ED}" -name "*.o" -delete
 }
 
 pkg_postinst() {
