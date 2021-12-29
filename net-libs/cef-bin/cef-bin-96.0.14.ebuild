@@ -149,6 +149,11 @@ S_abi() {
 	echo "${WORKDIR}/cef_binary_${PV}+${CEF_COMMIT}+chromium-${CHROMIUM_V}_${ABIx[${ABI}]}${TARBALL_SUFFIX}${minimal}"
 }
 
+append_all() {
+	append-flags ${@}
+	append-ldflags ${@}
+}
+
 pkg_setup() {
 	if use test ; then
 		if [[ "${FEATURES}" =~ sandbox ]] ; then
@@ -181,6 +186,13 @@ src_configure() {
 		'-f*visibility*' \
 		'-march=*' \
 		'-O*'
+
+	if has_version "sys-libs/compiler-rt-sanitizers[cfi,ubsan]" ; then
+		# Link to UBSan indirectly to avoid missing symbols like these
+		# when linking to CFI .so files:
+		# undefined reference to __ubsan_handle_cfi_check_fail_abort
+		append_all -fsanitize=alignment
+	fi
 
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 	configure_abi() {
