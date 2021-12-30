@@ -107,6 +107,13 @@ pkg_setup() {
 			ewarn
 		fi
 	fi
+	ewarn
+	ewarn "If you encounter the follwing during the build:"
+	ewarn
+	ewarn "FAILED: lib/Tooling/ASTNodeAPI.json"
+	ewarn
+	ewarn "Build clang:13 with only gcc, and llvm:13 without lto."
+	ewarn
 }
 
 src_prepare() {
