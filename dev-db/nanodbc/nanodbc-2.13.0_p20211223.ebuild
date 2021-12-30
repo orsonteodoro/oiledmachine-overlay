@@ -38,7 +38,7 @@ BDEPEND+="
 		dev-tex/latexmk )
 	singlehtml? ( ${DEPEND_SPHINX} )
 	texinfo? ( ${DEPEND_SPHINX} )"
-EGIT_COMMIT="a8103857826e480026b63c1e4730feb1ce9b3672"
+EGIT_COMMIT="308329c4985eff77e27f1e3428068e28af1e9e06"
 SRC_URI="
 https://github.com/nanodbc/${PN}/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz"
