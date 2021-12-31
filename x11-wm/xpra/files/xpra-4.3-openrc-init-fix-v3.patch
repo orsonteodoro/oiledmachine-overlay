@@ -1,0 +1,289 @@
+diff -urp xpra-4.3.orig/fs/etc/init.d/xpra xpra-4.3/fs/etc/init.d/xpra
+--- xpra-4.3.orig/fs/etc/init.d/xpra	2021-12-16 00:16:40.000000000 -0800
++++ xpra-4.3/fs/etc/init.d/xpra	2021-12-30 21:36:27.477608033 -0800
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/sbin/openrc-run
+ ### BEGIN INIT INFO
+ # Provides:          xpra
+ # Required-Start:    $local_fs $network $named $time $syslog
+@@ -9,93 +9,194 @@
+ # Description:       Xpra proxy server
+ ### END INIT INFO
+ 
+-VIRTUAL_DISPLAY=:14500
+-PORT=14500
+-LOGFILE=xpra.log
+-if [ "$(id -u)" != "0" ]; then
+-  PIDFILE=$HOME/.xpra/proxy.pid
+-  LOGDIR=$HOME/.xpra
+-else
+-  PIDFILE=/run/xpra/proxy.pid
+-  LOGDIR=/var/log/
+-fi
+-
+-# Read configuration variable file if it is present
+-[ -e /etc/sysconfig/xpra ] && . /etc/sysconfig/xpra
+-[ -e /etc/default/xpra ] && . /etc/default/xpra
+-# Load the VERBOSE setting and other rcS variables
+-[ -f /etc/default/rcS ] && . /etc/default/rcS
+-
+-# Define LSB log_* functions.
+-if [ -f /etc/init.d/functions ]; then
+-  # Red Hat
+-  . /etc/init.d/functions
+-elif [ -f /etc/rc.d/init.d/functions ]; then
+-  # Red Hat
+-  . /etc/rc.d/init.d/functions
+-elif [ -f /etc/rc.status ]; then
+-  # SUSE
+-  . /etc/rc.status
+-  rc_reset
+-  LC_ALL=en_US.UTF-8
+-elif [ -f /lib/lsb/init-functions ]; then
+-  # Debian
+-  . /lib/lsb/init-functions
+-else
+-  exit 1
+-fi
++# Don't use /etc/default/xpra.  Use /etc/conf.d/xpra instead.
++
++ALLOW_ROOT=${ALLOW_ROOT:=0} # security risk - see bottom of the init script for reasons
++AUTH=${AUTH:=peercred} # from /etc/default/xpra
++DEBUG=${DEBUG:=} # from /etc/default/xpra ; can be auth,proxy or all
++PORT=${PORT:=14500}
++SOCKET_PERMISSION=${SOCKET_PERMISSION:=600} # the xpra default is 666 before \
++# modding
++TCP_AUTH=${TCP_AUTH:=sys} # from /etc/default/xpra
++VIRTUAL_DISPLAY=${VIRTUAL_DISPLAY:=:14500} # the xpra default
++LOGDIR="/var/log"
++
++# It's recommended to set this below
++XPRA_USER_TO_PORT=${XPRA_USER_TO_PORT:=} # \
++# it should be in user0:port0;user1:port1;...;userN:portN format \
++# if not specified it will the next available port counting from 14500 with \
++# (14500 reserved for root) to port=port+1
++
++# It's recommended to set this below
++XPRA_USER_TO_DISPLAY=${XPRA_USER_TO_DISPLAY:=} # \
++# it should be in user0:display0;user1:display1;...;userN:displayN format \
++# if not specified it will the next available display counting from 14500 with \
++# (14500 reserved to for root) to display=display+1
++
++XPRA_LOG_FORMAT=${XPRA_LOG_FORMAT:="%(message)s"} # from /etc/default/xpra
++
++depend()
++{
++  need localmount
++}
++
++create_base_bind_location() {
++  local user="$1"
++  local path="$2"
++  mkdir -p $path
++  chmod 700 $path
++  chown -R $user:$user $path
++}
++
++get_users() {
++  echo $(cat /etc/group | grep -F -e "xpra" | cut -f4 -d ':' | tr ',' ' ')
++}
++
++get_uid() {
++  local user="$1"
++  echo $(cat /etc/passwd | grep -F -e "${user}:" | cut -f 3 -d ':')
++}
++
++get_gid() {
++  local group_name="$1"
++  echo $(grep "${group_name}:" /etc/group | cut -f 3 -d ":")
++}
+ 
+ start() {
+-  echo 'Starting service…' >&2
+-  xpra proxy $VIRTUAL_DISPLAY \
+-    --bind=/run/xpra/system --auth=$AUTH \
+-    --bind-tcp=0.0.0.0:$PORT --tcp-auth=$TCP_AUTH --ssl-cert=/etc/xpra/ssl-cert.pem \
+-    --socket-permissions=666 --debug=$DEBUG \
+-    --daemon=yes --log-file=$LOGFILE --log-dir=$LOGDIR --pidfile=$PIDFILE
+-  if [ "$?" = "0" ];then
+-    echo 'Service started' >&2
+-  else
+-    echo 'Service failed to start' >&2
+-    exit 1
+-  fi
++  declare -A user_to_port
++  OIFS="${IFS}"
++  IFS=';'
++  for pair in ${XPRA_USER_TO_PORT} ; do
++    local user=$(echo "$pair" | cut -f 1 -d ":")
++    local port=$(echo "$pair" | cut -f 2 -d ":")
++    user_to_port[$user]=$port
++  done
++  IFS="${OIFS}"
++
++  declare -A taken_display
++  declare -A taken_port
++  declare -A user_to_display
++  OIFS="${IFS}"
++  IFS=';'
++  for pair in ${XPRA_USER_TO_DISPLAY} ; do
++    local user=$(echo "$pair" | cut -f 1 -d ":")
++    local display=$(echo "$pair" | cut -f 2 -d ":")
++    user_to_display[$user]=$display
++  done
++  IFS="${OIFS}"
++
++  local _logdir
++  for user in $(get_users) ; do
++    [[ "${user}" == "root" && "${ALLOW_ROOT}" != "1" ]] \
++      && continue
++    ebegin "Starting xpra for ${user}"
++    uid=$(get_uid "${user}")
++    create_base_bind_location $user /run/user/$uid/xpra/
++
++    local _binddir
++    local _piddir
++    local _port
++    local _display
++    local _auto_assigned_port="assigned"
++    local _auto_assigned_display="assigned"
++    _piddir="/run/user/$uid/xpra"
++    _binddir="${_piddir}/system"
++    _logdir="${LOGDIR}/xpra/${user}"
++    mkdir -p "${_logdir}"
++    chown -R $user:$user "${_logdir}"
++    mkdir -p "${_piddir}"
++    chown -R $user:$user "${_piddir}"
++    if [[ "$user" == "root" ]] ; then
++      _port=$PORT
++      _display=${VIRTUAL_DISPLAY/:/}
++      taken_port[${_port}]=1
++      taken_display[${_display}]=1
++      einfo \
++"${user} been assigned port ${_port} and display ${_display} for xpra use.\
++  Use these for the client."
++    else
++      if [[ -n "${user_to_port[$user]}" ]] ; then
++        _port=${user_to_port[$user]}
++        taken_port[${_port}]=1
++      else
++        for p in $(seq $((${PORT} + 1)) 65535) ; do
++          netstat -tulpn 2>/dev/null | grep -F -e "LISTEN" \
++            | sed -r -e "s|[ ]+|\t|g" | cut -f 4 -d $'\t' \
++            | grep -q -F -e ":${p}"
++          ret1=$?
++
++          ps -aux | grep -F -e "/xpra proxy" | grep -v -F -e "grep" \
++            | grep -E -o -e " :[0-9]+" | sed -e "s| :||g" | grep -q -F -e "${p}"
++          ret2=$?
++          if [[ "${ret1}" != "0" && "${ret2}" != "0" && -z "${taken_port[${p}]}" ]] ; then
++            _port=${p}
++            taken_port[${_port}]=1
++            _auto_assigned_port="auto-assigned"
++            break
++          fi
++        done
++      fi
++
++      if [[ -n "${user_to_display[$user]}" ]] ; then
++        _display=${user_to_display[$user]}
++        taken_display[${_display}]=1
++      else
++        for d in $(seq $((${VIRTUAL_DISPLAY/:/} + 1)) 65535) ; do
++          ps -aux | grep -F -e "/usr/bin/X" | grep -v -F -e "grep" \
++            | grep -q -F -e ":${d} "
++          if [[ "$?" != "0" && -z "${taken_display[${d}]}" ]] ; then
++            _display=${d}
++            taken_display[${_display}]=1
++            _auto_assigned_display="auto-assigned"
++            break
++          fi
++        done
++      fi
++      einfo \
++"${user} been ${_auto_assigned_port} port ${_port} and ${_auto_assigned_display} display ${_display} for xpra use.\
++  Tell ${user} to use these for their client."
++    fi
++
++    # Security:  roots can expose all sessions, but the user who starts it is
++    # exposed.  For details on the security, see
++    # https://xpra.org/trac/wiki/ProxyServer
++    start-stop-daemon \
++      --start \
++      --name $user \
++      --user $user \
++      --group $user \
++      --pidfile "${_piddir}/xpra.pid" \
++      --background \
++      --stdout "${_logdir}/xpra.log" \
++      --stderr "${_logdir}/xpra.log" \
++      xpra -- proxy :${_display} \
++        --bind=${_binddir} --auth=$AUTH \
++        --bind-tcp=0.0.0.0:${_port} --tcp-auth=$TCP_AUTH \
++        --ssl-cert=/etc/xpra/ssl-cert.pem \
++        --socket-permissions=$SOCKET_PERMISSION --debug=$DEBUG \
++        --daemon=yes --log-file="xpra.log" --log-dir="${_logdir}" \
++        --uid=$(get_uid $user) --gid=$(get_gid $user) \
++        --pidfile="${_piddir}/xpra.pid"
++    echo "${_display}" > "${_piddir}/display"
++  done
++
++  eend 0
+ }
+ 
+ stop() {
+-  PID=`cat $PIDFILE 2> /dev/null`
+-  if [ -z "$PID" ]; then
+-    echo "Service not started, pidfile not found"
+-  else
+-    echo "Stopping service with pid $PID…" >&2
+-    kill $PID
+-    echo 'Service stopped' >&2
+-  fi
+-}
+-
+-status() {
+-  # No pidfile, probably no daemon present
+-  [ ! -f "$PIDFILE" ] && return 1
+-  PID=`cat $PIDFILE 2> /dev/null`
+-  if [ -z "$PID" ]; then
+-    echo "Service not started"
+-  else
+-    echo "Service running with pid $PID…" >&2
+-  fi
+-}
+-
+-case "$1" in
+-  start)
+-    start
+-    ;;
+-  stop)
+-    stop
+-    ;;
+-  status)
+-    status
+-    ;;
+-  restart|force-reload)
+-    stop
+-    start
+-    ;;
+-  *)
+-    echo "Usage: $0 {start|stop|restart|force-reload}"
+-esac
++  for user in $(get_users) ; do
++    ebegin "Stopping xpra for ${user}"
++    uid=$(get_uid "${user}")
++    local _piddir
++    _piddir="/run/user/$uid/xpra"
++    # graceful shutdown first
++    #sudo -u "${user}" xpra stop :$(cat "${_piddir}/display")
++    #start-stop-daemon \
++    #  --stop \
++    #  --pidfile "${_piddir}/xpra.pid"
++    kill -9 $(cat "${_piddir}/xpra.pid")
++    rm "${_piddir}/display"
++    rm "${_piddir}/xpra.pid"
++  done
++  eend 0
++}

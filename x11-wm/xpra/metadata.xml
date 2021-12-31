@@ -85,6 +85,8 @@
   <flag name="pillow">Enable pillow support to encode and decode PNG, JPEG,
     WebP.</flag>
   <flag name="png">Adds PNG encoding support.</flag>
+  <flag name="rencodeplus">Enables use of the forked rencode named rencodeplus
+    to fix issues.  Rencode is used for packet encoding.</flag>
   <flag name="speex">Adds voice compression.</flag>
   <flag name="pulseaudio">Enables support for PulseAudio.</flag>
   <flag name="python_targets_python3_5">Compatible with this python
@@ -97,6 +99,8 @@
     feature.</flag>
   <flag name="server">Enables server-side code.</flag>
   <flag name="sound">Enables the sound support.</flag>
+  <flag name="spng">Enables use of secure/fuzzed spng for encoding and decoding
+    pngs.</flag>
   <flag name="sqlite">Add support for SQLite authentication.</flag>
   <flag name="ssh">Enables SSH networking support.</flag>
   <flag name="sshpass">Enables sshpass support to supply passwords for SSH.</flag>
