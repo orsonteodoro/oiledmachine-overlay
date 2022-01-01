@@ -17,26 +17,29 @@ KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 
 # In Aug 7, we switching back to stable which is sufficient for security standards
 
-# 11/19/2021 - 96.0.14+g28ba5c8+chromium-96.0.4664.55 / Chromium 96.0.4664.55
-CHROMIUM_V="96.0.4664.55" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
-CEF_COMMIT="g28ba5c8" # same as https://bitbucket.org/chromiumembedded/cef/commits/
+CEF_VERSION_RAW="12/14/2021 - 96.0.18+gfe551e4+chromium-96.0.4664.110 / Chromium 96.0.4664.110"
+CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
+CEF_COMMIT="${CEF_VERSION_RAW#*\+}" # same as https://bitbucket.org/chromiumembedded/cef/commits/
+CEF_COMMIT="${CEF_COMMIT%\+*}"
+CEF_COMMIT="${CEF_COMMIT:1:7}"
+
 TARBALL_SUFFIX="" # can be _beta or "" (stable)
 SRC_URI="
 	x86? (
-		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32${TARBALL_SUFFIX}_minimal.tar.bz2 )
-		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32${TARBALL_SUFFIX}.tar.bz2 )
+		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32${TARBALL_SUFFIX}_minimal.tar.bz2 )
+		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32${TARBALL_SUFFIX}.tar.bz2 )
 	)
 	amd64? (
-		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}_minimal.tar.bz2 )
-		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}.tar.bz2 )
+		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}_minimal.tar.bz2 )
+		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}.tar.bz2 )
 	)
 	arm? (
-		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm${TARBALL_SUFFIX}_minimal.tar.bz2 )
-		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm${TARBALL_SUFFIX}.tar.bz2 )
+		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm${TARBALL_SUFFIX}_minimal.tar.bz2 )
+		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm${TARBALL_SUFFIX}.tar.bz2 )
 	)
 	arm64? (
-		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}_minimal.tar.bz2 )
-		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}.tar.bz2 )
+		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}_minimal.tar.bz2 )
+		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}.tar.bz2 )
 	)"
 SLOT="0/${PV}"
 IUSE+=" cefclient cefsimple debug minimal test"
@@ -48,8 +51,8 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/96.0.4664.55/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/96.0.4664.55/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/96.0.4664.110/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/96.0.4664.110/build/install-build-deps.sh#L151
 # TODO: app-accessibility/speech-dispatcher needs multilib
 GLIB_V="2.48"
 XI_V="1.7.6"
@@ -146,7 +149,7 @@ declare -Ax ABIx=( \
 
 S_abi() {
 	local minimal=$(usex minimal "_minimal" "")
-	echo "${WORKDIR}/cef_binary_${PV}+${CEF_COMMIT}+chromium-${CHROMIUM_V}_${ABIx[${ABI}]}${TARBALL_SUFFIX}${minimal}"
+	echo "${WORKDIR}/cef_binary_${PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_V}_${ABIx[${ABI}]}${TARBALL_SUFFIX}${minimal}"
 }
 
 append_all() {
@@ -257,7 +260,7 @@ src_install() {
 		dodir "/opt/${PN}/${ABI}"
 		S=$(S_abi)
 		cp -rT "${S}" "${ED}/opt/${PN}/${ABI}" || die
-		echo "cef_binary_${PV}+${CEF_COMMIT}+chromium-${CHROMIUM_V}_${ABIx[${ABI}]}" \
+		echo "cef_binary_${PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_V}_${ABIx[${ABI}]}" \
 			> "${ED}/opt/${PN}/${ABI}/.version" || die
 	}
 	multilib_foreach_abi install_abi
