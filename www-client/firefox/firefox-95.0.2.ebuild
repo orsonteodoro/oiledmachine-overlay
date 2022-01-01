@@ -5,9 +5,11 @@
 # with update sync updated with 94.0.1-r1 ebuild.
 # Revisions may change in the oiledmachine-overlay.
 
+# Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
+
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-94-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-95-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -53,7 +55,7 @@ if [[ ${PV} == *_rc* ]] ; then
 fi
 
 PATCH_URIS=(
-	https://dev.gentoo.org/~{axs,polynomial-c,whissi}/mozilla/patchsets/${FIREFOX_PATCHSET}
+	https://dev.gentoo.org/~{polynomial-c,whissi}/mozilla/patchsets/${FIREFOX_PATCHSET}
 )
 
 SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
@@ -71,8 +73,9 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 LICENSE_FINGERPRINT="\
 20eb3b10bf7c7cba8e42edbc8d8ad58a3a753e214b8751fb60eddb827ebff067\
 456f77f36e7abe6d06861b1be52011303fa08db8a981937e38733f961c4a39d9" # SHA512
-# FF-93.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
-LICENSE+=" FF-94.0-THIRD-PARTY-LICENSES"
+# FF-95.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
+# Update the license version also.
+LICENSE+=" FF-95.0-THIRD-PARTY-LICENSES"
 LICENSE+="
 	( BSD-2
 		BSD
@@ -219,6 +222,7 @@ IUSE+=" +gmp-autoupdate"
 IUSE+=" screencast"
 
 REQUIRED_USE="debug? ( !system-av1 )
+	wayland? ( dbus )
 	wifi? ( dbus )"
 
 # Firefox-only REQUIRED_USE flags
@@ -255,7 +259,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 	x86? ( >=dev-lang/nasm-2.13 )"
 
 CDEPEND="
-	>=dev-libs/nss-3.70[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.72[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.32[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -288,7 +292,7 @@ CDEPEND="
 	)
 	screencast? ( media-video/pipewire:0/0.3 )
 	system-av1? (
-		>=media-libs/dav1d-0.8.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-0.9.3:=[${MULTILIB_USEDEP}]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
@@ -773,7 +777,7 @@ eerror
 eerror "  \`cp -a ${S}/toolkit/content/license.html \
 ${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
 eerror
-eerror "and update the license variable."
+eerror "and update the license variable with the correct version."
 eerror
 			die
 		fi
@@ -791,11 +795,11 @@ eerror
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	# Defer 0028-Make-elfhack-use-toolchain.patch in multilib_foreach_abi
-	mv "${WORKDIR}/firefox-patches"/0028-Make-elfhack-use-toolchain.patch{,.bak} || die
+	# Defer 0027-Make-elfhack-use-toolchain.patch in multilib_foreach_abi
+	mv "${WORKDIR}/firefox-patches"/0027-Make-elfhack-use-toolchain.patch{,.bak} || die
 
 	eapply "${WORKDIR}/firefox-patches"
-	mv "${WORKDIR}/firefox-patches"/0028-Make-elfhack-use-toolchain.patch{.bak,} || die
+	mv "${WORKDIR}/firefox-patches"/0027-Make-elfhack-use-toolchain.patch{.bak,} || die
 
 	# Only partial patching was done because Gentoo doesn't support multilib
 	# Python.  Only native ABI is supported.  This means cbindgen cannot
@@ -866,7 +870,7 @@ src_prepare() {
 		local ctarget=$(get_abi_CHOST ${ABI})
 		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-objdump" ) \
 			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${ctarget}-objdump" ) ; then
-			eapply "${WORKDIR}/firefox-patches/0028-Make-elfhack-use-toolchain.patch"
+			eapply "${WORKDIR}/firefox-patches/0027-Make-elfhack-use-toolchain.patch"
 			# sed-in toolchain prefix
 			sed -i \
 				-e "s/objdump/${ctarget}-objdump/" \
@@ -999,6 +1003,7 @@ multilib_src_configure() {
 		--prefix="${EPREFIX}/usr" \
 		--target="${ctarget}" \
 		--without-ccache \
+		--without-wasm-sandboxed-libraries \
 		--with-intl-api \
 		\
 		--with-system-nspr \
@@ -1106,8 +1111,12 @@ multilib_src_configure() {
 
 			mozconfig_add_options_ac '+lto' --enable-lto=cross
 		else
+			# ld.gold is known to fail:
+			# /usr/lib/gcc/x86_64-pc-linux-gnu/11.2.1/../../../../x86_64-pc-linux-gnu/bin/ld.gold: internal error in set_xindex, at /var/tmp/portage/sys-devel/binutils-2.37_p1-r1/work/binutils-2.37/gold/object.h:1050
+
 			# ThinLTO is currently broken, see bmo#1644409
 			mozconfig_add_options_ac '+lto' --enable-lto=full
+			mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
 		fi
 
 		if use pgo ; then
@@ -1243,6 +1252,7 @@ multilib_src_configure() {
 
 	# Use system's Python environment
 	export MACH_USE_SYSTEM_PYTHON=1
+	export PIP_NO_CACHE_DIR=off
 
 	# Disable notification when build system has finished
 	export MOZ_NOSPAM=1
