@@ -1625,7 +1625,7 @@ is_profdata_compatible() {
 check_deps_cfi_cross_dso() {
 	if ! use cfi-vcall ; then
 		einfo "Skipping CFI Cross-DSO checks"
-#		return
+		return
 	fi
 	# These are libs required by the prebuilt bin version.
 	# This list was generated from the _maintainer_notes/get_package_libs script.
