@@ -1705,8 +1705,10 @@ libz.so.1
 
 	# TODO: check dependency n levels deep.
 	# We assume CFI cross DSO.
-	einfo "Evaluating system for possible weaknesses (or side-channels)."
+	einfo
+	einfo "Evaluating system for possible weaknesses."
 	einfo "Assuming systemwide CFI Cross-DSO."
+	einfo
 	for f in ${pkg_libs[@]} ; do
 		local paths=($(realpath {/usr/lib/gcc/*-pc-linux-gnu/{,32/},/lib,/usr/lib}*"/${f}" 2>/dev/null))
 		if (( "${#paths[@]}" == 0 )) ; then
