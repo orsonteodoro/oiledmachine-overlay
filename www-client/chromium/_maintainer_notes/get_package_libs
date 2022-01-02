@@ -1,0 +1,19 @@
+#!/bin/bash
+# The purpose of this script is to obtain a list of direct libs
+# used by this package bin version.
+
+# TODO: Update path to only this package.
+get_pkg_libs() {
+	for f in $(find /opt/google/chrome/) ; do
+		local o=$(file "${f}")
+		if [[ "${o}" =~ "ELF".*"executable" ]] ; then
+			ldd "${f}" 2>/dev/null | grep "=>"
+		elif [[ "${o}" =~ "ELF".*"shared object" ]] ; then
+			ldd "${f}" 2>/dev/null | grep "=>"
+		else
+			:;
+		fi
+	done
+}
+
+get_pkg_libs | cut -f 1 -d "=" | sed -E -e "s|[\t ]+||g" | sort | uniq

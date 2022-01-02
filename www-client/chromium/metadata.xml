@@ -33,7 +33,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       official - production ready previously but undergoing retesting
       pgo - production ready
       pgo-full - incomplete
-      shadowcallstack - needs testing... (report back if it works)
+      shadowcallstack - needs testing... not tested due to lack of hardware
+        (report back if it works)
 
 
     Full PGO
@@ -79,26 +80,25 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Build against the internal libc++ for proper cfi-icall and cfi-icast
       protection.  This also builds libcxx with CFI, Full RELRO, noexecstack,
       SSP security features.  This is the upstream default.
-    <flag name="clang">Uses clang and allows access to clang or LLVM related
+    <flag name="clang">Uses Clang and allows access to Clang or LLVM related
       USE flags.  Turning on clang implies ThinLTO on.  (See the lto-opt
       USE flag description for memory requirements if out-of-memory (OOM)
-      problems.)  Support for a newer LLVM version is possible only if
-      the official USE flag is disabled.</flag>
+      problems.)</flag>
     <flag name="cfi-cast">
       Compile the build with mitigation against possible bad casting
-      vulnerabilities in addition to forward edge attack mitigation.
-      When a violation is encountered, the program aborts.
+      vulnerabilities.  When a violation is encountered, the program aborts.
       </flag>
     <flag name="cfi-icall">
       Compile the build with bad function cast checks and non static function
       pointers checks.  When a violation is encountered, the program aborts.
       </flag>
-    <flag name="cfi-vcall">Compile the build with Control Flow Integrity (CFI)
-      security protections to mitigate against arbitrary code execution caused
-      by from memory corruption attempts from forward edge attacks from virtual
-      functions.  For backward edge protection see shadowcallstack USE flag.
-      The estimated impact is around 1% CPU overhead, around 15% or less code
-      size increase.  When a violation is encountered, the program aborts.</flag>
+    <flag name="cfi-vcall">Compile the build with Clang Control Flow Integrity
+      (CFI) security protections to mitigate against arbitrary code execution
+      caused by from memory corruption attempts from forward edge attacks from
+      virtual functions.  For backward edge protection see shadowcallstack USE
+      flag.  The estimated impact is around 1% CPU overhead, around 15% or less
+      code size increase.  When a violation is encountered, the program aborts.
+      </flag>
     <flag name="component-build">Split build into more shared libraries to speed
       up linking. Mostly intended for debugging and development, NOT RECOMMENDED
       for general use.</flag>
@@ -120,24 +120,26 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       browser binary and other targets while others use the default --lto-O0.
       This optimization is not enabled by default upstream due to increased
       binary size concerns.  Building may required 12 GiB total memory
-      minimal for dedicated builds, 16 GiB total memory recommended for
-      multitasking, meaning add more swap space.</flag>
-    <flag name="official">Enable the official build settings instead of the
-      developer build.  Enables security hardending (for both the browser and
-      internal bundled third party dependencies built with cfi and cfi-icall
-      [both enabled on x86_64], Full RELRO, noexecstac, PIE, SSP), PGO, debug
-      symbols level 2.  Disables use of third party ebuilds (without CFI and
-      PGO) and uses the internal bundled hardened and PGOed version with static
-      linkage.</flag>
+      minimal for dedicated compile only machines, but 16 GiB total memory
+      recommended for multitasking builder machines.</flag>
+    <flag name="official">Enable the use of official build settings instead of
+      the developer build settings.  Enables security hardending (for both the
+      browser and internal bundled third party dependencies built with the
+      stronger CFI Basic mode with cfi-vcall and cfi-icall [both enabled on
+      x86_64], Full RELRO, noexecstack, PIE, SSP), PGO, debug symbols level 2.
+      Disables use of third party ebuilds (without CFI and PGO) and uses the
+      internal bundled hardened and PGOed version of those libraries with
+      static linkage.</flag>
     <flag name="partitionalloc">Use PartitionAlloc as the default allocator and
       replacement to TCMalloc.  It's designed for security and lower latency,
       and benefits the most from memory use effiency.  It is actively being
       improved which may present newer bugs.  It's the default in 92 and later.
       </flag>
-    <flag name="pic">Disable optimized assembly code that is not PIC
-      friendly</flag>
-    <flag name="pgo">Builds with Profile Guided Optimizations to improve
-      -- page loads, input reponsiveness, web reponsiveness -- by ~10% or less.
+    <flag name="pic">Disable optimized assembly code that is not PIC friendly
+      </flag>
+    <flag name="pgo">Builds in one step with Profile Guided Optimizations to
+      improve -- page loads, input reponsiveness, web reponsiveness -- by ~10%
+      or less, using a pregenerated PGO profile.
       </flag>
     <flag name="pgo-full">Builds with the 3-step Profile Guided Optimization,
       natively using upstream's trainer(s).  This will double the build times.
@@ -158,13 +160,16 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       increase the attack surface and possibly an open door for arbitary code
       execution for untrusted assets.  It is not recommended for security
       reasons but it is the original ebuild maintainers and this distro's
-      preference.</flag>
+      preference.  This setting is only allowed for systemwide GCC LTO due
+      to IR (Intermediate Representation) compatibility.</flag>
     <flag name="system-libcxx">
       Build against the system's libc++ instead of the system default libstdc++.
       This option is not recommended because there is no protections if you
       use the ebuild from the distro's overlay.  Use the one in the
       oiledmachine-overlay instead which allows to apply cfi-vcall, Full RELRO,
-      noexecstack, SSP.</flag>
+      noexecstack, SSP.  This setting is only allowed for systemwide
+      Clang LTO or systemwide Clang CFI due to IR (Intermediate Representation)
+      compatibility.</flag>
     <flag name="system-ffmpeg">Use system ffmpeg instead of the bundled
       one</flag>
     <flag name="system-icu">Use system icu instead of the bundled one</flag>
@@ -178,7 +183,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       generation</flag>
     <flag name="widevine">Unsupported closed-source DRM capability (required for
       premium web content)</flag>
-
     <flag name="rN">(FOR INTERNAL USE ONLY) Bumps the revision through the
       USE flag instead of file name to reuse previous ccache runs.</flag>
   </use>
