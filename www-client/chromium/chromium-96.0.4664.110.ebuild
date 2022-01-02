@@ -1021,6 +1021,7 @@ FFMPEG_DEPENDS="
 UNBUNDLE_DEPENDS="
 	${FFMPEG_DEPENDS}
 	media-libs/flac[cfi-cast?,cfi-cross-dso,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
+	media-libs/libjpeg-turbo[cfi-cast?,cfi-cross-dso,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}]
 	libcxx? ( sys-libs/libcxx[cfi-cast?,cfi-cross-dso,cfi-icall?,cfi-vcall?,clang,hardened,libcxx,${MULTILIB_USEDEP}] )
 "
 
