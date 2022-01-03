@@ -1700,7 +1700,6 @@ libXfixes.so.3
 libxkbcommon.so.0
 libXrandr.so.2
 libXrender.so.1
-libxshmfence.so.1
 libz.so.1
 	)
 
