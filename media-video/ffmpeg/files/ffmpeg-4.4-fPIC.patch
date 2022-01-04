@@ -1,0 +1,11 @@
+--- a/libavcodec/Makefile.orig	2021-04-08 14:28:39.000000000 -0700
++++ b/libavcodec/Makefile	2021-10-11 16:03:16.905955725 -0700
+@@ -1,6 +1,8 @@
+ NAME = avcodec
+ DESC = FFmpeg codec library
+ 
++CFLAGS += -fPIC
++
+ HEADERS = ac3_parser.h                                                  \
+           adts_parser.h                                                 \
+           avcodec.h                                                     \
