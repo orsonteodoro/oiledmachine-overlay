@@ -264,8 +264,6 @@ configure_pgx() {
 	if use ssl; then
 		if use system-ssl ; then
 			myconf+=( --shared-openssl --openssl-use-def-ca-store )
-			has_version ">=dev-libs/openssl-3.0.0" \
-				|| myconf+=( --openssl-legacy-provider )
 		fi
 	else
 		myconf+=( --without-ssl )
@@ -543,4 +541,8 @@ pkg_postinst() {
 	einfo "matching the corresponding SLOT.  This means that you cannot"
 	einfo "compile with different SLOTS simultaneously."
 	einfo
+
+	if ! has_version ">=dev-libs/openssl-3.0.1" && use system-ssl ; then
+		einfo "Add --openssl-legacy-provider before running nodejs."
+	fi
 }
