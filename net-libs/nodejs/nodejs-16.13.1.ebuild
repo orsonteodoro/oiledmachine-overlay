@@ -15,7 +15,7 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm pax-kernel
+IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto npm pax-kernel
 +snapshot +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man pgo"
 
