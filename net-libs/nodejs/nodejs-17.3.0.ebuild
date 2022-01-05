@@ -267,7 +267,7 @@ configure_pgx() {
 			has_version ">=dev-libs/openssl-3.0.1" \
 				|| myconf+=( --openssl-legacy-provider )
 
-			has_version "dev-libs/openssl-3.0.0" \
+			has_version "=dev-libs/openssl-3.0.0" \
 				&& die "CVE-2021-4044 - Use OpenSSL 3.0.1 instead."
 		fi
 	else
