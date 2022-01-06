@@ -21,7 +21,7 @@ diff -urp a/libcxxabi/CMakeLists.txt b/libcxxabi/CMakeLists.txt
  option(LIBCXXABI_ENABLE_EXCEPTIONS
    "Provide support for exceptions in the runtime.
    When disabled, libc++abi does not support stack unwinding and other exceptions-related features." ON)
-@@ -267,6 +280,130 @@ include(HandleLibcxxabiFlags)
+@@ -267,6 +280,133 @@ include(HandleLibcxxabiFlags)
  # Configure target flags
  add_target_flags_if(LIBCXXABI_BUILD_32_BITS "-m32")
  
@@ -131,6 +131,9 @@ diff -urp a/libcxxabi/CMakeLists.txt b/libcxxabi/CMakeLists.txt
 +        message(FATAL_ERROR "LIBCXXABI_ENABLE_STATIC and LIBCXXABI_ENABLE_SHARED cannot be both ON for CFI_VCALL")
 +      endif()
 +    endif()
++  endif()
++  if(CFI OR CFI_CAST OR CFI_ICALL OR CFI_VCALL)
++    set(LIBCXXABI_LINK_FLAGS "${LIBCXXABI_LINK_FLAGS} -Wl,-lubsan")
 +  endif()
 +  if(SHADOW_CALL_STACK)
 +    set(LIBCXXABI_C_FLAGS "${LIBCXXABI_C_FLAGS} -fno-sanitize=safe-stack -fsanitize=shadow-call-stack")

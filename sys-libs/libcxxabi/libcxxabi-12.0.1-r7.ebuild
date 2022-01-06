@@ -189,6 +189,8 @@ _configure_abi() {
 		'-flto*' \
 		'-fsplit-lto-unit' \
 		'-fuse-ld=*' \
+		'-lubsan' \
+		'-Wl,-lubsan' \
 		'-Wl,-z,noexecstack' \
 		'-Wl,-z,now' \
 		'-Wl,-z,relro'
