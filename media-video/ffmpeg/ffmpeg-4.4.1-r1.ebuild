@@ -948,17 +948,19 @@ configure_pgx() {
 	export CC CXX AR AS NM RANDLIB READELF LD
 
 	filter-flags \
+		'--param=ssp-buffer-size=*' \
 		'-f*sanitize*' \
 		'-f*stack*' \
+		'-f*visibility*' \
 		'-fprofile*' \
 		'-fsplit-lto-unit' \
-		'-fvisibility=*' \
-		'--param=ssp-buffer-size=*' \
+		'-lubsan' \
+		'-stdlib=libc++' \
+		'-Wl,--allow-shlib-undefined' \
+		'-Wl,-lubsan' \
 		'-Wl,-z,noexecstack' \
 		'-Wl,-z,now' \
-		'-Wl,-z,relro' \
-		'-stdlib=libc++' \
-		'-Wl,--allow-shlib-undefined'
+		'-Wl,-z,relro'
 
 	autofix_flags
 
@@ -982,6 +984,7 @@ configure_pgx() {
 				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
+			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
 			append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with ffprobe
 			use cfi-cross-dso \
 				&& [[ "${build_type}" == "shared-libs" ]] \
