@@ -227,8 +227,10 @@ _src_configure() {
 		'-f*visibility*' \
 		'-fsplit-lto-unit' \
 		'-lc++' \
+		'-lubsan' \
 		'-static-libstdc++' \
 		'-stdlib=libc++' \
+		'-Wl,-lubsan' \
 		'-Wl,-z,noexecstack' \
 		'-Wl,-z,now' \
 		'-Wl,-z,relro'
@@ -268,6 +270,7 @@ _src_configure() {
 				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
+			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
 			use cfi-cross-dso \
 				&& [[ "${build_type}" == "shared-libs" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
