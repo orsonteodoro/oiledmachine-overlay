@@ -346,8 +346,10 @@ _configure_pgx() {
 		'-f*sanitize*' \
 		'-f*stack*' \
 		'-f*visibility*' \
+		'-lubsan' \
 		'-fprofile*' \
 		'-fsplit-lto-unit' \
+		'-Wl,-lubsan' \
 		'-Wl,-z,noexecstack' \
 		'-Wl,-z,now' \
 		'-Wl,-z,relro'
@@ -374,6 +376,7 @@ _configure_pgx() {
 				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
+			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
 			append_all -fno-sanitize=cfi-icall # breaks precompiled cef based apps
 			use cfi-cross-dso \
 				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
