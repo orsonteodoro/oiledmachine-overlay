@@ -52,13 +52,14 @@ src_configure() {
 		[[ "${ABI}" == "arm64" ]] && export SR_ARCH="arm64"
 		[[ "${ABI}" == "x86" ]] && export SR_ARCH="x86"
 		local mycmakeargs=(
-			-DSR_DEBUG_LEVEL=env
 			-DCMAKE_BUILD_TYPE=Release
-			-DSR_BUILD_LIBELF=0
-			-DSR_ARCH=${SR_ARCH}
-			-DSR_LOG=console
-			-DSR_FORCE_INPLACE=1 -G "Unix Makefiles"
 			-DCMAKE_INSTALL_PREFIX:PATH=/usr/lib/${PN}
+			-DSR_ARCH=${SR_ARCH}
+			-DSR_BUILD_LIBELF=0
+			-DSR_DEBUG_LEVEL=env
+			-DSR_FORCE_INPLACE=1
+			-DSR_LOG=console
+			-G "Unix Makefiles"
 		)
 		cmake_src_configure
 	}
