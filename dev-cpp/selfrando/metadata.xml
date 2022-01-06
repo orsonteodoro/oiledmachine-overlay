@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription lang="en">
+  </longdescription>
+  <upstream>
+    <remote-id type="github">immunant/selfrando</remote-id>
+  </upstream>
+  <use>
+    <flag name="doc">Installs documentation.</flag>
+  </use>
+</pkgmetadata>
