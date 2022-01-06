@@ -1,7 +1,7 @@
 diff -urp libaom-3.1.2.orig/build/cmake/sanitizers.cmake libaom-3.1.2/build/cmake/sanitizers.cmake
 --- libaom-3.1.2.orig/build/cmake/sanitizers.cmake	2021-07-22 15:41:34.000000000 -0700
 +++ libaom-3.1.2/build/cmake/sanitizers.cmake	2021-10-09 19:12:41.638636041 -0700
-@@ -21,13 +21,53 @@ include("${AOM_ROOT}/build/cmake/compile
+@@ -21,13 +21,56 @@ include("${AOM_ROOT}/build/cmake/compile
  
  string(TOLOWER ${SANITIZE} SANITIZE)
  
@@ -23,20 +23,23 @@ diff -urp libaom-3.1.2.orig/build/cmake/sanitizers.cmake libaom-3.1.2/build/cmak
 +  set(CFI_LDFLAGS "")
 +  if(CFI)
 +    set(CFI_CFLAGS "${CFI_CFLAGS} -fsanitize=cfi")
-+    set(CFI_LDFLAGS "${CFI_LDFLAGS} -fsanitize=cfi -Wl,-lubsan")
++    set(CFI_LDFLAGS "${CFI_LDFLAGS} -fsanitize=cfi")
 +  else()
 +    if(CFI_CAST)
 +      set(CFI_CFLAGS "${CFI_CFLAGS} -fsanitize=cfi-derived-cast -fsanitize=cfi-unrelated-cast")
-+      set(CFI_LDFLAGS "${CFI_LDFLAGS} -fsanitize=cfi-derived-cast -fsanitize=cfi-unrelated-cast -Wl,-lubsan")
++      set(CFI_LDFLAGS "${CFI_LDFLAGS} -fsanitize=cfi-derived-cast -fsanitize=cfi-unrelated-cast")
 +    endif()
 +    if(CFI_ICALL)
 +      set(CFI_CFLAGS "${CFI_CFLAGS} -fsanitize=cfi-icall")
-+      set(CFI_LDFLAGS "${CFI_LDFLAGS} -fsanitize=cfi-icall -Wl,-lubsan")
++      set(CFI_LDFLAGS "${CFI_LDFLAGS} -fsanitize=cfi-icall")
 +    endif()
 +    if(CFI_VCALL)
 +      set(CFI_CFLAGS "${CFI_CFLAGS} -fsanitize=cfi-vcall")
-+      set(CFI_LDFLAGS "${CFI_LDFLAGS} -fsanitize=cfi-vcall -Wl,-lubsan")
++      set(CFI_LDFLAGS "${CFI_LDFLAGS} -fsanitize=cfi-vcall")
 +    endif()
++  endif()
++  if(CFI OR CFI_CAST OR CFI_ICALL OR CFI_VCALL)
++    set(CFI_LDFLAGS "${CFI_LDFLAGS} -Wl,-lubsan")
 +  endif()
 +  set(CFI_CFLAGS "${CFI_CFLAGS} ${CFI_EXCEPTIONS}")
 +  set(CFI_LDFLAGS "${CFI_LDFLAGS} ${CFI_EXCEPTIONS}")
