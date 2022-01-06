@@ -278,7 +278,9 @@ _configure_abi() {
 		'-f*stack*' \
 		'-f*visibility*' \
 		'-fsplit-lto-unit' \
+		'-lubsan' \
 		'-stdlib=libc++' \
+		'-Wl,-lubsan' \
 		'-Wl,-z,noexecstack' \
 		'-Wl,-z,now' \
 		'-Wl,-z,relro'
@@ -321,6 +323,7 @@ _configure_abi() {
 				use cfi-vcall && append_all \
 							-fsanitize=cfi-vcall
 			fi
+			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
 			if use cfi-cross-dso \
 				&& [[ "${build_type}" == "shared-libs" ]] ; then
 				export ESHAREDLIBCFLAGS="-fsanitize-cfi-cross-dso"
