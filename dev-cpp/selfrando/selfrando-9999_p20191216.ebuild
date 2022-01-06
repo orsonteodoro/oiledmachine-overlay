@@ -16,7 +16,7 @@ IUSE+=" doc +gold"
 CDEPEND=" >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
 	  sys-devel/gcc[cxx(+)]
 	  virtual/libc
-	  gold? ( sys-devel/binutils[gold] )"
+	  gold? ( sys-devel/binutils[gold,plugins] )"
 DEPEND+=" ${CDEPEND}"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
