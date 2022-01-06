@@ -401,8 +401,10 @@ configure_pgx() {
 		'-fsplit-lto-unit' \
 		'-lc++' \
 		'-ldl' \
+		'-lubsan' \
 		'-static-libc++' \
 		'-stdlib=libc++' \
+		'-Wl,-lubsan' \
 		'-Wl,-z,noexecstack' \
 		'-Wl,-z,now' \
 		'-Wl,-z,relro'
