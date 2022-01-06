@@ -514,6 +514,7 @@ _configure_pgx() {
 			use cfi-cross-dso \
 				&& [[ "${build_type}" == "shared-libs" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
+			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
