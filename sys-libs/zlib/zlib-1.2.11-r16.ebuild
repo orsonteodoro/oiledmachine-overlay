@@ -484,6 +484,8 @@ _configure_pgx() {
 		'-fprofile*' \
 		'-fsplit-lto-unit' \
 		'-stdlib=libc++' \
+		'-lubsan' \
+		'-Wl,-lubsan' \
 		'-Wl,-z,noexecstack' \
 		'-Wl,-z,now' \
 		'-Wl,-z,relro' \
