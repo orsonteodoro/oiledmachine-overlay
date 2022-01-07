@@ -156,5 +156,13 @@ sys-libs/zlib cfi-vcall
 sys-libs/zlib cfi-icall
 sys-libs/zlib cfi-cast
 
+# Breaks building vte
+# ==367==ERROR: SanitizerTool failed to allocate noreserve 0x0 (0) bytes of CFI shadow (error code: 22)
+dev-libs/icu cfi-cross-dso
+dev-libs/icu cfi
+dev-libs/icu cfi-vcall
+dev-libs/icu cfi-icall
+dev-libs/icu cfi-cast
+
 # For pam plugin
 sys-fs/ecryptfs-utils -suid
