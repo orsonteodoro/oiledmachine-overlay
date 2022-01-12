@@ -194,7 +194,8 @@ src_configure() {
 		# Link to UBSan indirectly to avoid missing symbols like these
 		# when linking to CFI .so files:
 		# undefined reference to __ubsan_handle_cfi_check_fail_abort
-		append_all -fsanitize=alignment
+		append-ldflags -Wl,-lubsan
+		:;
 	fi
 
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
