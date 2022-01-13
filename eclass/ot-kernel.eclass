@@ -365,6 +365,8 @@ RT_BASE_URI=\
 "http://cdn.kernel.org/pub/linux/kernel/projects/rt/${K_MAJOR_MINOR}/"
 RT_FN="patches-${PATCH_RT_VER}.tar.xz"
 RT_SRC_URI="${RT_BASE_URI}${RT_FN}"
+RT_ALT_FN="patches-${PATCH_RT_VER}.tar.gz"
+RT_SRC_ALT_URI="${RT_BASE_URI}${RT_ALT_FN}"
 
 TRESOR_AESNI_FN="tresor-patch-${PATCH_TRESOR_V}_aesni"
 TRESOR_I686_FN="tresor-patch-${PATCH_TRESOR_V}_i686"
@@ -922,7 +924,11 @@ function apply_rt() {
 einfo "Applying PREEMPT_RT patches"
 	mkdir -p "${T}/rt" || die
 	pushd "${T}/rt" || die
-		unpack "${DISTDIR}/${RT_FN}"
+		if [[ -e "${DISTDIR}/${RT_FN}" ]] ; then
+			unpack "${DISTDIR}/${RT_FN}"
+		elif [[ -e "${DISTDIR}/${RT_ALT_FN}" ]] ; then
+			unpack "${DISTDIR}/${RT_ALT_FN}"
+		fi
 	popd
 	for p in $(cat "${T}/rt/patches/series" | grep -E -e "^[^#]") ; do
 		_fpatch "${T}/rt/patches/${p}"

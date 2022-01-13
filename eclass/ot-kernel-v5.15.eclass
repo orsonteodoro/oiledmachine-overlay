@@ -76,6 +76,7 @@ e350f22a04b707a15d6af29d6d5a97e86445eacc
 776bded2cf3b004f783d7dc52d9d74aeab966cd3
 66ebd054e5444851a69974541525e0f651202aea
 6c274a0c3cd6e014d388022c54f2bf0dbe6a12a3
+05429691ac69cfe6704530bfed1d5911efb828bb
 )
 
 # Avoid merge conflict.
@@ -455,7 +456,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   )
 	   lru_gen? ( ${LRU_GEN_SRC_URI} )
 	   prjc? ( ${PRJC_SRC_URI} )
-	   rt? ( ${RT_SRC_URI} )
+	   rt? ( ${RT_SRC_ALT_URI} )
 	   tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
