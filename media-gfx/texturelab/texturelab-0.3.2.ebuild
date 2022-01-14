@@ -21,11 +21,11 @@ BDEPEND+="
 ELECTRON_APP_ELECTRON_V="13.1.4"
 ELECTRON_APP_VUE_V="2.6.11"
 ELECTRON_APP_MODE="yarn"
-ASSETS_COMMIT="db62cecd809465235f5bbc3cf2c69ef1b5c495ae"
-SRC_URI=\
-"https://github.com/njbrown/texturelab/archive/v${PV}.tar.gz \
+ASSETS_COMMIT="eed449f3f9abe8f17ae354ab4cb9932272c7811b"
+SRC_URI="
+https://github.com/njbrown/texturelab/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz
-https://github.com/njbrown/texturelabdata/archive/${ASSETS_COMMIT}.tar.gz \
+https://github.com/njbrown/texturelabdata/archive/${ASSETS_COMMIT}.tar.gz
 	-> ${PN}-assets-${ASSETS_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
