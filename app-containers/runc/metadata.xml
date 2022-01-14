@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<!-- ebuild fork only on the oiledmachine-overlay -->
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
+	</maintainer>
+	<longdescription lang="en">
+		runc is a CLI tool for spawning and running containers according
+		to the OCF (Open Container Format) specification.
+	</longdescription>
+	<maintainer type="person">
+		<!-- ebuild originators -->
+		<email>williamh@gentoo.org</email>
+		<name>William Hubbs</name>
+	</maintainer>
+	<maintainer type="person">
+		<!-- ebuild originators -->
+		<email>gyakovlev@gentoo.org</email>
+		<name>Georgy Yakovlev</name>
+	</maintainer>
+	<use>
+		<flag name="apparmor">
+			Enable AppArmor support.
+		</flag>
+		<flag name="kmem">
+			Enable Kernel Memory Accounting.
+		</flag>
+	</use>
+	<longdescription>
+Temporary ebuild fork for CGO_CFLAGS and CGO_LDFLAGS changes.
+	</longdescription>
+	<upstream>
+		<remote-id type="github">opencontainers/runc</remote-id>
+		<remote-id type="cpe">cpe:/a:linuxfoundation:runc</remote-id>
+	</upstream>
+</pkgmetadata>
