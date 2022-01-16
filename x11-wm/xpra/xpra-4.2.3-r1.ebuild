@@ -235,7 +235,8 @@ PATCHES=( "${FILESDIR}/${PN}-3.0.2_ignore-gentoo-no-compile.patch"
 	  "${FILESDIR}/${PN}-4.2.3-ldconfig-skip.patch"
 	  "${FILESDIR}/${PN}-4.2.2-openrc-init-fix-v3.patch"
 	  "${FILESDIR}/${PN}-4.1.3-change-init-config-path.patch"
-	  "${FILESDIR}/${PN}-4.2-udev-path.patch" )
+	  "${FILESDIR}/${PN}-4.2-udev-path.patch"
+	  "${FILESDIR}/${PN}-4.3-translate-flags.patch" )
 SRC_URI="https://github.com/Xpra-org/xpra/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${P}"
@@ -369,6 +370,7 @@ python_configure_all() {
 		$(use_with sound)
 		$(use_with sd_listen)
 		--with-strict
+		--with-verbose
 		$(use_with vpx)
 		$(use_with vsock)
 		$(use_with v4l2)
