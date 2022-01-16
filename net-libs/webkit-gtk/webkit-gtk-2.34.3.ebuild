@@ -11,7 +11,7 @@ EAPI=7
 
 # Corresponds to
 # WebKit 613.1.1 (20210823, main) ; See Source/WebKit/Configurations/Version.xcconfig
-# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.2/Source/WebKit/Configurations/Version.xcconfig
+# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.3/Source/WebKit/Configurations/Version.xcconfig
 
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
@@ -599,16 +599,18 @@ REQUIRED_USE+="
 #
 # This means also you cannot use the geolocation feature.
 
+# Prev rev: 286145
 # For dependencies, see:
-#   CMakeLists.txt
-#   Source/cmake/BubblewrapSandboxChecks.cmake
-#   Source/cmake/FindGStreamer.cmake
-#   Source/cmake/GStreamerChecks.cmake
-#   Source/cmake/OptionsGTK.cmake
-#   Source/cmake/WebKitCommon.cmake
-#   Tools/gtk/install-dependencies
-#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
-#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.3/CMakeLists.txt?rev=287256
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.3/Source/cmake/BubblewrapSandboxChecks.cmake?rev=287256
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.3/Source/cmake/BubblewrapSandboxChecks.cmake?rev=287256
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.3/Source/cmake/FindGStreamer.cmake?rev=287256
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.3/Source/cmake/GStreamerChecks.cmake?rev=287256
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.3/Source/cmake/OptionsGTK.cmake?rev=287256
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.3/Source/cmake/WebKitCommon.cmake?rev=287256
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.3/Tools/gtk/install-dependencies?rev=287256
+#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=287256
+#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=287256
 #   https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Tools/gstreamer/jhbuild.modules#L16
 
 # Upstream tests with U 18.04 LTS and U 20.04
@@ -641,8 +643,9 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.2?rev=286145
+# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.3?rev=287256
 # Do not use trunk!
+# media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
@@ -779,11 +782,12 @@ BDEPEND+="
 # webkit-gtk project.
 # Revisions can be found at:
 # https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
+# https://trac.webkit.org/browser/webkit/releases/WebKitGTK
 # Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
 EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="286145"
+ESVN_REVISION="287256"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -1071,7 +1075,9 @@ Source/ThirdParty/libwebrtc
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/2.33.1-opengl-without-X-fixes.patch"
+	eapply "${FILESDIR}/2.34.3-opengl-without-X-fixes.patch"
+	eapply "${FILESDIR}/2.34.3-non-jumbo-fix.patch"
+	eapply "${FILESDIR}/2.34.3-jumbo-fix.patch" # bug 830638
 	if use webrtc ; then
 		eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
 	fi
