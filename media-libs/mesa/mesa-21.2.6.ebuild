@@ -17,7 +17,7 @@ if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 else
 	SRC_URI="https://archive.mesa3d.org/${MY_P}.tar.xz"
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x64-solaris ~x86-solaris"
+	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x64-solaris ~x86-solaris"
 fi
 
 LICENSE="MIT"
@@ -230,7 +230,7 @@ BDEPEND="
 	)
 	sys-devel/bison
 	sys-devel/flex
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	virtual/pkgconfig
 	$(python_gen_any_dep ">=dev-python/mako-0.8.0[\${PYTHON_USEDEP}]")
 	wayland? ( dev-util/wayland-scanner[${MULTILIB_USEDEP}] )
 "
