@@ -154,8 +154,6 @@ BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14)
 BDEPEND+=" abi_x86_32? ( dev-lang/yasm )
 	abi_x86_64? ( dev-lang/yasm )
 	abi_x86_x32? ( dev-lang/yasm )
-	x86-fbsd? ( dev-lang/yasm )
-	amd64-fbsd? ( dev-lang/yasm )
 	chromium? ( >=dev-lang/nasm-2.14 )
 	doc? ( app-doc/doxygen )
 "
@@ -168,7 +166,6 @@ PDEPEND="
 PATCHES=(
 	"${FILESDIR}/libaom-2.0.1-aom_sadXXXxh-are-ssse3.patch"
 	"${FILESDIR}/libaom-3.1.2-cfi-rework.patch"
-	"${FILESDIR}/libaom-3.1.2-static-link-apps.patch"
 )
 
 # the PATENTS file is required to be distributed with this package bug #682214
@@ -264,6 +261,9 @@ src_prepare() {
 	if use cfi ; then
 		sed -i -e "s|-fno-sanitize-trap=cfi||g" \
 			build/cmake/sanitizers.cmake || die
+		if use static-libs ; then
+			eapply "${FILESDIR}/libaom-3.1.2-static-link-apps.patch"
+		fi
 	fi
 	prepare_abi() {
 		for build_type in $(get_build_types) ; do
@@ -532,14 +532,23 @@ configure_pgx() {
 			-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
 		)
 	else
-		if [[ "${build_type}" == "static-libs" ]] ; then
-			mycmakeargs+=(
-				-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
-			)
-#			[[ "${USE}" =~ "cfi" ]] && append-ldflags -ldl # It's missing for some reason.
+		# Build only once
+		if use static-libs ; then
+			# Build only once
+			# If static-libs, then use CFI basic mode, else use CFI Cross-DSO mode.
+			if [[ "${build_type}" == "static-libs" ]] ; then
+				mycmakeargs+=(
+					-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
+				)
+				#[[ "${USE}" =~ "cfi" ]] && append-ldflags -ldl # It's missing for some reason.
+			else
+				mycmakeargs+=(
+					-DENABLE_EXAMPLES=OFF
+				)
+			fi
 		else
 			mycmakeargs+=(
-				-DENABLE_EXAMPLES=OFF
+				-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
 			)
 		fi
 	fi
