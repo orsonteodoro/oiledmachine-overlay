@@ -2,13 +2,16 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit savedconfig toolchain-funcs
+
 DESCRIPTION="a dynamic window manager for X11"
 HOMEPAGE="https://dwm.suckless.org/"
-LICENSE="MIT \
+LICENSE="MIT
 	mod_fibonacci? ( all-rights-reserved )
 	mod_rotatestack? ( all-rights-reserved )"
-KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
-IUSE="  xinerama \
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
+IUSE="  xinerama
 	mod_fibonacci mod_rotatestack mod_sizehintsoff"
 SLOT="0"
 RDEPEND="media-libs/fontconfig
@@ -23,7 +26,6 @@ DWM_FN="${P}.tar.gz"
 SRC_URI="https://dl.suckless.org/${PN}/${DWM_FN}
 	mod_fibonacci? ( ${FIBONACCI_FN} )
 	mod_rotatestack? ( ${ROTATESTACK_FN} )"
-inherit savedconfig toolchain-funcs
 RESTRICT="fetch"
 
 _boilerplate_dl_link_hints() {
@@ -72,14 +74,19 @@ src_prepare() {
 		eapply "${DISTDIR}/${ROTATESTACK_FN}"
 	fi
 	if use mod_sizehintsoff ; then
-		sed -i -e "s|resizehints = 1|resizehints = 0|g"
+		sed -i -e "s|resizehints = 1|resizehints = 0|g" config.def.h || die
 	fi
 	eapply "${FILESDIR}"/dwm-6.1-no-emoji-title-crash.patch
 	sed -i \
 		-e "s/ -Os / /" \
 		-e "/^\(LDFLAGS\|CFLAGS\|CPPFLAGS\)/{s| = | += |g;s|-s ||g}" \
+		-e "/^X11LIB/{s:/usr/X11R6/lib:/usr/$(get_libdir)/X11:}" \
+		-e '/^X11INC/{s:/usr/X11R6/include:/usr/include/X11:}' \
 		config.mk || die
 	restore_config config.h
+	if use mod_sizehintsoff && [[ -e "${S}/config.h" ]] ; then
+		sed -i -e "s|resizehints = 1|resizehints = 0|g" config.h || die
+	fi
 }
 
 src_compile() {
