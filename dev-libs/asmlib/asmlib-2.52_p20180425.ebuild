@@ -6,8 +6,8 @@ DESCRIPTION="The Subroutine library is a library of optimized subroutines \
 coded in assembly language."
 HOMEPAGE="http://www.agner.org/optimize/"
 LICENSE="GPL-3"
-KEYWORDS="~alpha ~amd64 ~amd64-fbsd ~amd64-linux ~arm ~ia64 ~mips ~ppc ~ppc64 \
-~sparc ~ia64-linux ~x86 ~x86-fbsd ~x86-freebsd ~x86-linux ~x86-macos"
+KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~ia64 ~mips ~ppc ~ppc64 \
+~sparc ~ia64-linux ~x86 ~x86-freebsd ~x86-linux ~x86-macos"
 SLOT="0/${PV}"
 IUSE="doc"
 DEPEND="dev-lang/nasm
