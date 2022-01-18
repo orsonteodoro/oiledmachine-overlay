@@ -8,11 +8,12 @@ EAPI=7
 DESCRIPTION="Virtual for the ot-sources LTS ebuilds for"
 KEYWORDS=\
 "~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
-IUSE="4_14 5_4 5_10"
+IUSE="4_14 5_4 5_10 5_15"
 RDEPEND="
 	4_14? ( ~sys-kernel/ot-sources-4.14.262 )
-	5_4? ( ~sys-kernel/ot-sources-5.4.171 )
-	5_10? ( ~sys-kernel/ot-sources-5.10.91 )
+	5_4? ( ~sys-kernel/ot-sources-5.4.172 )
+	5_10? ( ~sys-kernel/ot-sources-5.10.92 )
+	5_15? ( ~sys-kernel/ot-sources-5.15.15 )
 "
 REQUIRED_USE=""
 SLOT="0/${PV}"

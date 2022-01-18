@@ -449,7 +449,13 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 
       for 5.14 see:
-      https://github.com/torvalds/linux/compare/v5.13...zen-kernel:5.14/zen-sauce
+      https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/zen-sauce
+
+      for 5.15 see:
+      https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
+
+      for 5.16 see:
+      https://github.com/torvalds/linux/compare/v5.16...zen-kernel:5.16/zen-sauce
 
       Use the O3, zen-sauce, kernel-compiler-patch USE flags instead of passing their
       commit IDs.

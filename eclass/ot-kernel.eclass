@@ -31,6 +31,7 @@
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/tonyk/futex_waitv
 # genpatches:
 #   https://gitweb.gentoo.org/proj/linux-patches.git/
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.16
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
@@ -47,6 +48,8 @@
 # Multigenerational LRU:
 #   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/lru
 #   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/lru-v5
+#   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
+#   https://github.com/torvalds/linux/compare/v5.16...zen-kernel:5.16/lru
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
 #   5.10 https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c
@@ -66,6 +69,7 @@
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.14/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
+#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.16/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
 #   https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -81,6 +85,7 @@
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
+#   https://github.com/torvalds/linux/compare/v5.16...zen-kernel:5.16/zen-sauce
 
 case ${EAPI:-0} in
 	7) ;;
