@@ -35,14 +35,14 @@ CC-BY-3.0 FTL ISC LGPL-2.1 MIT MPL-2.0 OFL-1.1 openssl Unlicense ZLIB"
 KEYWORDS="~amd64 ~x86"
 PND="${PN}-demo-projects"
 
-# tag 3 deterministic / static snapshot / master / 20211111
-EGIT_COMMIT_DEMOS_SNAPSHOT="f82dd94089e43c218be9289b0aba9d66a0517407"
+# tag 3 deterministic / static snapshot / master / 20211213
+EGIT_COMMIT_DEMOS_SNAPSHOT="0200ba6c95a087af043e5b6cf29496d4a7dbcaaf"
 
 # latest release
 EGIT_COMMIT_DEMOS_STABLE="585455e67ca38a124f670565f342d49ab2f82d5e"
 
-# Commit dated 20211104
-EGIT_COMMIT_GODOT_CPP_SNAPSHOT="68ce78179f90be9bec8cc88106dba0c244bdc4f6"
+# Commit dated 20211217
+EGIT_COMMIT_GODOT_CPP_SNAPSHOT="59ecf3b99060b49882bd854101d54f53c05870a9"
 
 # Commit dated 20210706
 EGIT_COMMIT_GMB_STABLE="c3a9d311bcb49ccb498a722f451ac6845b52c97e"
@@ -68,6 +68,21 @@ URI_PROJECT="${URI_ORG}/godot"
 URI_PROJECT_DEMO="${URI_ORG}/godot-demo-projects"
 URI_DL="${URI_PROJECT}/releases"
 URI_A="${URI_PROJECT}/archive/${PV}-stable.tar.gz"
+if [[ "0" == "1" ]] ; then
+# Used to generate hashes and download all assets.
+SRC_URI="${URI_PROJECT}/archive/${FN_SRC} -> ${FN_DEST}
+  ${URI_PROJECT_DEMO}/archive/${FN_SRC_ESN} \
+	-> ${FN_DEST_ESN}
+  ${URI_PROJECT_DEMO}/archive/${FN_SRC_EST} \
+		-> ${FN_DEST_EST}
+  ${URI_ORG}/godot-cpp/archive/${FN_SRC_CPP} \
+		-> ${FN_DEST_CPP}
+  ${URI_ORG}/godot-mono-builds/archive/${FN_SRC_GMB} \
+		-> ${FN_DEST_GMB}
+  ${URI_MONO_PRJ}/archive/${FN_SRC_MONO} \
+		-> ${FN_DEST_MONO}
+"
+else
 SRC_URI="${URI_PROJECT}/archive/${FN_SRC} -> ${FN_DEST}
 examples-snapshot? (
   ${URI_PROJECT_DEMO}/archive/${FN_SRC_ESN} \
@@ -87,6 +102,8 @@ mono? (
   ${URI_MONO_PRJ}/archive/${FN_SRC_MONO} \
 		-> ${FN_DEST_MONO}
 )"
+RESTRICT="fetch mirror"
+fi
 SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
 
@@ -267,8 +284,8 @@ EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.12"
 EXPECTED_MIN_ANDROID_API_LEVEL="29"
 FREETYPE_V="2.10.4"
 JAVA_V="11" # See https://github.com/godotengine/godot/blob/3.4-stable/.github/workflows/android_builds.yml#L32
-LIBOGG_V="1.3.4"
-LIBVORBIS_V="1.3.6"
+LIBOGG_V="1.3.5"
+LIBVORBIS_V="1.3.7"
 NDK_V="21"
 ZLIB_V="1.2.11"
 
@@ -409,7 +426,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	x11-libs/libX11[${MULTILIB_USEDEP}]
 	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
-	!portable? ( >=app-misc/ca-certificates-20210705 )
+	!portable? ( >=app-misc/ca-certificates-20211101 )
         gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
 	gdnative? ( dev-util/scons
 		     || ( ${CDEPEND_CLANG}
@@ -424,7 +441,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}] )
 	system-libvpx? ( >=media-libs/libvpx-1.6.0[${MULTILIB_USEDEP}] )
 	system-libwebp? ( >=media-libs/libwebp-1.1.0[${MULTILIB_USEDEP}] )
-	system-mbedtls? ( >=net-libs/mbedtls-2.16.11[${MULTILIB_USEDEP}] )
+	system-mbedtls? ( >=net-libs/mbedtls-2.16.12[${MULTILIB_USEDEP}] )
 	system-miniupnpc? ( >=net-libs/miniupnpc-2.2.2[${MULTILIB_USEDEP}] )
 	system-opus? (
 		>=media-libs/opus-1.1.5[${MULTILIB_USEDEP}]
@@ -489,7 +506,6 @@ BDEPEND+=" ${CDEPEND}
 S="${WORKDIR}/godot-${PV}-stable"
 S_GMB="${WORKDIR}/godot-mono-builds-release-${EGIT_COMMIT_GMB_STABLE:0:7}"
 S_MONO="${WORKDIR}/mono-mono-${GMB_MONO_V}"
-RESTRICT="fetch mirror"
 #GEN_DL_MANIFEST=1
 # 20b171c - used for ccache
 PATCHES=(
