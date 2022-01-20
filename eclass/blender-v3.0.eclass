@@ -279,7 +279,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 	openvdb? (
 		>=media-gfx/openvdb-8.0.1[${PYTHON_SINGLE_USEDEP},abi8-compat(+)]
 		>=dev-libs/c-blosc-1.5.0
-		nanovdb? ( >=media-gfx/nanovdb-32.3.3:= )
+		nanovdb? ( >=media-gfx/nanovdb-32.3.3_pre20211001:= )
 	)
 	openxr? ( >=media-libs/openxr-1.0.17 )
 	optix? ( >=dev-libs/optix-7 )
