@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils eutils python-any-r1 toolchain-funcs
+inherit cmake-utils eutils flag-o-matic python-any-r1 toolchain-funcs
 
 DESCRIPTION="Generated headers and sources for OpenXR loader."
 HOMEPAGE="https://khronos.org/openxr"
@@ -77,12 +77,16 @@ DEPEND+=" ${PYTHON_DEPS}
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	$(python_gen_any_dep '>=dev-python/jinja-2[${PYTHON_USEDEP}]')
-	>=dev-util/cmake-3.0"
+	>=dev-util/cmake-3.0
+	sys-devel/clang"
 CMAKE_BUILD_TYPE=Release
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-release-${PV}"
 
 src_configure() {
+	export CC=clang
+	export CXX=clang++
+	strip-unsupported-flags
 	mycmakeargs=(
 		-DBUILD_API_LAYERS=OFF
 		-DBUILD_TESTS=OFF
