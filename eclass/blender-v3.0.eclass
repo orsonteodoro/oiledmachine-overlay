@@ -214,7 +214,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 		>=sys-libs/libomp-12
 	)
 	llvm-13? (
-		>=media-libs/mesa-22.2.2
+		>=media-libs/mesa-21.2.5
 		>=sys-libs/libomp-13
 	)
 	media-libs/libglvnd
