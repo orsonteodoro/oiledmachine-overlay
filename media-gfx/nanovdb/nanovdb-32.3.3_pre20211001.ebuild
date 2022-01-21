@@ -325,7 +325,7 @@ src_install()
 	cmake_src_install
 	cd "${S}" || die
 	dodoc Readme.md
-	cd "${S}/.." || die
+	cd "${S}/../.." || die
 	docinto licenses
 	dodoc LICENSE
 	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
