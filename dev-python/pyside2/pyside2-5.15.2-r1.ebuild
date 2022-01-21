@@ -121,6 +121,7 @@ BDEPEND="
 "
 
 pkg_setup() {
+	ewarn "ebuild fork is in testing"
 	python_setup
 	llvm_pkg_setup
 }

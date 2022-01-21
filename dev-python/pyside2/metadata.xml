@@ -40,4 +40,7 @@
 	<upstream>
 		<remote-id type="pypi">PySide2</remote-id>
 	</upstream>
+	<longdescription>
+		This is a temporary ebuild fork to fix a build time bug.
+	</longdescription>
 </pkgmetadata>
