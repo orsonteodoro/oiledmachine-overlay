@@ -200,6 +200,7 @@ src_configure()
 		-DNANOVDB_GTEST=$(usex test)
 		-DNANOVDB_USE_BLOSC=$(usex blosc)
 		-DNANOVDB_USE_CUDA=$(usex cuda)
+		-DNANOVDB_USE_MAGICAVOXEL=OFF # on hold until dependency exists or issue request made
 		-DNANOVDB_USE_OPENCL=$(usex opencl)
 		-DNANOVDB_USE_OPENGL=$(usex opengl)
 		-DNANOVDB_USE_OPENVDB=$(usex openvdb)
