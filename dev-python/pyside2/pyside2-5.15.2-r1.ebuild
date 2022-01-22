@@ -35,7 +35,7 @@ S="${WORKDIR}/${MY_P}/sources/pyside2"
 # See "sources/pyside2/PySide2/licensecomment.txt" for licensing details.
 LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 )"
 SLOT="0"
-KEYWORDS="amd64 arm64 x86"
+#KEYWORDS="amd64 arm64 x86"
 IUSE="
 	3d charts concurrent datavis designer gles2-only +gui help location
 	multimedia +network positioning printsupport qml quick quickcontrols2 script scripttools
@@ -132,8 +132,8 @@ src_configure() {
 	#export PATH="${llvm_path}/bin:"$(echo "${PATH}" | tr ":" "\n" | sed -e "\|/usr/lib/llvm|d" | tr "\n" ":")
 	#einfo "llvm_prefix=$(get_llvm_prefix ${LLVM_MAX_SLOT})"
 	einfo "PATH=${PATH}"
-	export CC=clang
-	export CXX=clang++
+#	export CC=clang
+#	export CXX=clang++
 	clang --version || die
 
 	export CLANG_INSTALL_DIR="${llvm_path}"
