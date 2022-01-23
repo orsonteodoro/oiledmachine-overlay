@@ -146,6 +146,31 @@ src_configure() {
 	export CXX="${LLVM_PATH}/bin/clang++"
 	export STRIP="/bin/true" # do not strip
 
+	# ld.lld: error: /usr/lib/llvm/14/bin/../lib/libclang.so is incompatible with elf64-x86-64
+	if ( has_version "sys-devel/llvm[binutils-plugin]" || has_version "sys-devel/llvm[gold]" ) \
+		&& has_version "sys-devel/llvmgold" \
+		&& has_version "sys-devel/binutils[gold,plugins]" ; then
+		einfo "GOLD: yes"
+		if [[ "${LDFLAGS}" =~ "-fuse-ld=lld" ]] ; then
+			einfo "Converting -fuse-ld=lld -> -fuse-ld=gold"
+			replace-flags "-fuse-ld=lld" "-fuse-ld=gold"
+		fi
+		if [[ "${CXXFLAGS}" =~ "-flto=thin" ]] ; then
+			einfo "Converting -flto=thin -> -flto=full"
+			replace-flags "-flto=thin" "-flto=full"
+		fi
+	else
+		einfo "GOLD: no"
+		if [[ "${LDFLAGS}" =~ "-fuse-ld=lld" ]] ; then
+			einfo "Converting -fuse-ld=lld -> -fuse-ld=bfd"
+			replace-flags "-fuse-ld=lld" "-fuse-ld=bfd"
+		fi
+		if [[ "${CXXFLAGS}" =~ "-flto=thin" ]] ; then
+			einfo "Converting -flto=thin -> -flto=full"
+			replace-flags "-flto=thin" "-flto=full"
+		fi
+	fi
+
 	# It's picking up the wrong version
 	export LD_LIBRARY_PATH="${LLVM_PATH}/$(get_libdir)/:${LD_LIBRARY_PATH}"
 
