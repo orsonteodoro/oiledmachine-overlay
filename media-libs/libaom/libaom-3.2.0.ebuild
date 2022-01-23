@@ -1,10 +1,11 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 CMAKE_ECLASS=cmake
-inherit cmake-multilib flag-o-matic toolchain-funcs
+PYTHON_COMPAT=( python3_{8..10} )
+inherit cmake-multilib flag-o-matic python-any-r1 toolchain-funcs
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -450,6 +451,9 @@ configure_pgx() {
 		-DENABLE_TESTS=OFF
 		-DENABLE_TOOLS=ON
 		-DENABLE_WERROR=OFF
+
+		# Needs libjxl, currently unpackaged.
+		-DCONFIG_TUNE_BUTTERAUGLI=0
 
 		# neon support is assumed to be always enabled on arm64
 		-DENABLE_NEON=$(usex cpu_flags_arm_neon ON $(usex arm64 ON OFF))
