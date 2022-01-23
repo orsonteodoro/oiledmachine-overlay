@@ -1,0 +1,14 @@
+Subject:  Fix for segfaults with pyside2 with clang
+Patch author:  Orson Teodoro
+Date:  Sat Jan 22 05:52:03 PM PST 2022 (Unix timestamp: 1642902723)
+diff -urp a/ApiExtractor/clangparser/clangparser.cpp b/ApiExtractor/clangparser/clangparser.cpp
+--- a/ApiExtractor/clangparser/clangparser.cpp	2022-01-05 05:26:23.000000000 -0800
++++ b/ApiExtractor/clangparser/clangparser.cpp	2022-01-22 16:50:41.334697220 -0800
+@@ -237,6 +237,7 @@ static CXTranslationUnit createTranslati
+         | CXTranslationUnit_Incomplete;
+ 
+     static const QByteArrayList defaultArgs = {
++	"-O1",
+ #ifndef Q_OS_WIN
+         "-fPIC",
+ #endif

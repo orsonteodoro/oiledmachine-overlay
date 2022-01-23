@@ -5,9 +5,8 @@ EAPI=7
 
 # TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{7..10} )
 
-LLVM_MAX_SLOT=13
 inherit cmake llvm python-r1 virtualx
 
 # TODO: Add conditional support for "QtRemoteObjects" via a new "remoteobjects"
@@ -25,7 +24,7 @@ inherit cmake llvm python-r1 virtualx
 # be conditionally patched to avoid these tests. An issue should be filed with
 # upstream requesting a CLI-settable variable to control this.
 
-MY_P=pyside-setup-opensource-src-${PV}
+MY_P=pyside-setup-opensource-src-$(ver_cut 1-3 ${PV})
 
 DESCRIPTION="Python bindings for the Qt framework"
 HOMEPAGE="https://wiki.qt.io/PySide2"
@@ -35,19 +34,22 @@ S="${WORKDIR}/${MY_P}/sources/pyside2"
 # See "sources/pyside2/PySide2/licensecomment.txt" for licensing details.
 LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 )"
 SLOT="0"
-#KEYWORDS="amd64 arm64 x86"
+KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="
 	3d charts concurrent datavis designer gles2-only +gui help location
 	multimedia +network positioning printsupport qml quick quickcontrols2 script scripttools
 	scxml sensors speech sql svg test testlib webchannel webengine websockets
 	+widgets x11extras xml xmlpatterns
 "
+LLVM_SLOTS=(11 12 13 14)
+IUSE+=" ${LLVM_SLOTS[@]/#/llvm-}"
+IUSE+=" +llvm-13" # latest stable
 
 # Manually reextract these requirements on version bumps by running the
 # following one-liner from within "${S}":
 #     $ grep 'set.*_deps' PySide2/Qt*/CMakeLists.txt
 # Note that the "designer" USE flag corresponds to the "Qt5UiTools" module.
-REQUIRED_USE="${PYTHON_REQUIRED_USE}
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	3d? ( gui network )
 	charts? ( widgets )
 	datavis? ( gui )
@@ -80,7 +82,6 @@ RESTRICT="test"
 QT_PV="$(ver_cut 1-2):5"
 
 RDEPEND="${PYTHON_DEPS}
-	>=dev-python/shiboken2-${PV}[${PYTHON_USEDEP}]
 	dev-qt/qtcore:5=
 	dev-qt/qtopengl:5=
 	dev-qt/qtserialport:5=
@@ -113,6 +114,18 @@ RDEPEND="${PYTHON_DEPS}
 	xml? ( >=dev-qt/qtxml-${QT_PV} )
 	xmlpatterns? ( >=dev-qt/qtxmlpatterns-${QT_PV}[qml?] )
 "
+gen_llvm_rdepend() {
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+			llvm-${s}? (
+				>=dev-python/shiboken2-${PV}[llvm-${s},${PYTHON_USEDEP}]
+				sys-devel/clang:${s}=
+				=sys-devel/clang-runtime-${s}*:=
+			)
+		"
+	done
+}
+RDEPEND+=" "$(gen_llvm_rdepend)
 DEPEND="${RDEPEND}
 	test? ( x11-misc/xvfb-run )
 "
@@ -121,22 +134,42 @@ BDEPEND="
 "
 
 pkg_setup() {
-	ewarn "ebuild fork is in testing"
 	python_setup
 	llvm_pkg_setup
+	if use qml ; then
+		# Prevent segfault with shiboken2.
+		for u in 3d charts datavis multimedia positioning sensors webchannel websockets xmlpatterns ; do
+			local u2="${u}"
+			[[ "${u}" == "datavis" ]] && u2="datavis3d"
+			if use "${u}" && ! has_version "dev-qt/qt${u2}[qml]" ; then
+				die "Missing dev-qt/qt${u2}[qml].  Emerge with -1vuDN instead."
+			fi
+		done
+	fi
 }
 
 src_configure() {
-	local llvm_path=$(get_llvm_prefix ${LLVM_MAX_SLOT})
-	einfo "llvm_path=${llvm_path}"
-	#export PATH="${llvm_path}/bin:"$(echo "${PATH}" | tr ":" "\n" | sed -e "\|/usr/lib/llvm|d" | tr "\n" ":")
-	#einfo "llvm_prefix=$(get_llvm_prefix ${LLVM_MAX_SLOT})"
-	einfo "PATH=${PATH}"
-#	export CC=clang
-#	export CXX=clang++
-	clang --version || die
 
-	export CLANG_INSTALL_DIR="${llvm_path}"
+	local _PATH=$(echo "${PATH}" | tr ":" "\n" | sed -E -e "\|llvm\/[0-9]+|d")
+	export LLVM_PATH=""
+	for s in ${LLVM_SLOTS[@]} ; do
+		if use "llvm-${s}" ; then
+			_PATH=$(echo -e "${_PATH}\n/usr/lib/llvm/${s}/bin" | tr "\n" ":")
+			export PATH="${_PATH}"
+			LLVM_PATH="/usr/lib/llvm/${s}"
+		fi
+	done
+	# Avoid ccache for now
+	export CC="${LLVM_PATH}/bin/clang"
+	export CXX="${LLVM_PATH}/bin/clang++"
+	clang --version || die
+	einfo "PATH=${PATH}"
+	einfo "CFLAGS=${CFLAGS}"
+	einfo "CXXFLAGS=${CXXFLAGS}"
+	einfo "LDFLAGS=${LDFLAGS}"
+	einfo "LLVM_INSTALL_DIR=${LLVM_PATH}"
+
+	export CLANG_INSTALL_DIR="${LLVM_PATH}"
 
 	# See COLLECT_MODULE_IF_FOUND macros in CMakeLists.txt
 	local mycmakeargs=(

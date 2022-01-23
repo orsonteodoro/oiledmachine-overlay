@@ -2,6 +2,12 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 	<maintainer type="person">
+		<!-- ebuild fork only on the oiledmachine-overlay -->
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
+	</maintainer>
+	<maintainer type="person">
+		<!-- ebuild originator -->
 		<email>zerochaos@gentoo.org</email>
 		<name>Rick Farina</name>
 	</maintainer>
@@ -21,6 +27,7 @@
 		<flag name="printsupport">Build QtPrintSupport module</flag>
 		<flag name="qml">Build QtQml module</flag>
 		<flag name="quick">Build QtQuick and QtQuickWidgets modules</flag>
+		<flag name="quickcontrols2">Build QtQuickControls2 module</flag>
 		<flag name="script">Build QtScript module</flag>
 		<flag name="scripttools">Build QtScriptTools module</flag>
 		<flag name="scxml">Build QtScxml module</flag>
@@ -41,6 +48,7 @@
 		<remote-id type="pypi">PySide2</remote-id>
 	</upstream>
 	<longdescription>
-		This is a temporary ebuild fork to fix a build time bug.
+		This is a ebuild fork to fix a build time bug with dependencies that
+		may require QtQuickControls2.
 	</longdescription>
 </pkgmetadata>
