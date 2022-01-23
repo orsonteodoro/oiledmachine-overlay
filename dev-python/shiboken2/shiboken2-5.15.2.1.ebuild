@@ -124,6 +124,37 @@ src_prepare() {
 	cmake_src_prepare
 }
 
+has_gold() {
+	if ( has_version "sys-devel/llvm[binutils-plugin]" || has_version "sys-devel/llvm[gold]" ) \
+                && has_version "sys-devel/llvmgold" \
+                && has_version "sys-devel/binutils[gold,plugins]" ; then
+		return 0
+	fi
+	return 1
+}
+
+use_gold() {
+	if [[ "${LDFLAGS}" =~ "-fuse-ld=lld" ]] ; then
+		einfo "Converting -fuse-ld=lld -> -fuse-ld=gold"
+		replace-flags "-fuse-ld=lld" "-fuse-ld=gold"
+	fi
+	if [[ "${CXXFLAGS}" =~ "-flto=thin" ]] ; then
+		einfo "Converting -flto=thin -> -flto=full"
+		replace-flags "-flto=thin" "-flto=full"
+	fi
+}
+
+use_bfd() {
+	if [[ "${LDFLAGS}" =~ "-fuse-ld=lld" ]] ; then
+		einfo "Converting -fuse-ld=lld -> -fuse-ld=bfd"
+		replace-flags "-fuse-ld=lld" "-fuse-ld=bfd"
+	fi
+	if [[ "${CXXFLAGS}" =~ "-flto=thin" ]] ; then
+		einfo "Converting -flto=thin -> -flto=full"
+		replace-flags "-flto=thin" "-flto=full"
+	fi
+}
+
 src_configure() {
 	# Minimal tests for now, 2 failing with the extended version
 	# FIXME Subscripted generics cannot be used with class and instance checks
@@ -147,28 +178,18 @@ src_configure() {
 	export STRIP="/bin/true" # do not strip
 
 	# ld.lld: error: /usr/lib/llvm/14/bin/../lib/libclang.so is incompatible with elf64-x86-64
-	if ( has_version "sys-devel/llvm[binutils-plugin]" || has_version "sys-devel/llvm[gold]" ) \
-		&& has_version "sys-devel/llvmgold" \
-		&& has_version "sys-devel/binutils[gold,plugins]" ; then
+	if has_version "sys-devel/clang[default-lld]" && has_gold ; then
 		einfo "GOLD: yes"
-		if [[ "${LDFLAGS}" =~ "-fuse-ld=lld" ]] ; then
-			einfo "Converting -fuse-ld=lld -> -fuse-ld=gold"
-			replace-flags "-fuse-ld=lld" "-fuse-ld=gold"
-		fi
-		if [[ "${CXXFLAGS}" =~ "-flto=thin" ]] ; then
-			einfo "Converting -flto=thin -> -flto=full"
-			replace-flags "-flto=thin" "-flto=full"
-		fi
+		use_gold
+	elif has_version "sys-devel/clang[default-lld]" ; then
+		einfo "GOLD: no"
+		use_bfd
+	elif has_gold && has_version "sys-devel/lld" ; then
+		einfo "GOLD: yes"
+		use_gold
 	else
 		einfo "GOLD: no"
-		if [[ "${LDFLAGS}" =~ "-fuse-ld=lld" ]] ; then
-			einfo "Converting -fuse-ld=lld -> -fuse-ld=bfd"
-			replace-flags "-fuse-ld=lld" "-fuse-ld=bfd"
-		fi
-		if [[ "${CXXFLAGS}" =~ "-flto=thin" ]] ; then
-			einfo "Converting -flto=thin -> -flto=full"
-			replace-flags "-flto=thin" "-flto=full"
-		fi
+		use_bfd
 	fi
 
 	# It's picking up the wrong version
