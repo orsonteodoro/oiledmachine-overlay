@@ -32,7 +32,7 @@ S="${WORKDIR}/${MY_P}/sources/shiboken2"
 # arbitrarily relicensed. (TODO)
 LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 ) GPL-3"
 SLOT="0"
-KEYWORDS="amd64 arm64 x86"
+KEYWORDS="~amd64 ~arm64 ~x86"
 IUSE="+docstrings numpy test vulkan"
 LLVM_SLOTS=(11 12 13 14)
 IUSE+=" ${LLVM_SLOTS[@]/#/llvm-}"
