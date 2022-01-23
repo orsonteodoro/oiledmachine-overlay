@@ -17,7 +17,7 @@ KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 
 # In Aug 7, we switching back to stable which is sufficient for security standards
 
-CEF_VERSION_RAW="12/14/2021 - 96.0.18+gfe551e4+chromium-96.0.4664.110 / Chromium 96.0.4664.110"
+CEF_VERSION_RAW="01/20/2022 - 97.1.6+g8961cdb+chromium-97.0.4692.99 / Chromium 97.0.4692.99"
 CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
 CEF_COMMIT="${CEF_VERSION_RAW#*\+}" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 CEF_COMMIT="${CEF_COMMIT%\+*}"
@@ -51,8 +51,8 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/96.0.4664.110/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/96.0.4664.110/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/97.0.4692.99/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/97.0.4692.99/build/install-build-deps.sh#L151
 # TODO: app-accessibility/speech-dispatcher needs multilib
 GLIB_V="2.48"
 XI_V="1.7.6"
@@ -138,6 +138,7 @@ DEPEND+="
 BDEPEND+="
 	test? ( ${VIRTUALX_DEPEND} )
 	>=dev-util/cmake-3.10.2"
+RESTRICT="mirror"
 
 S="${WORKDIR}"
 declare -Ax ABIx=( \
