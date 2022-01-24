@@ -1,25 +1,19 @@
---- firefox-90.0.ebuild.orig	2021-07-12 16:39:44.000000000 -0700
-+++ firefox-90.0.ebuild	2021-07-14 23:38:35.592370621 -0700
-@@ -1,13 +1,17 @@
- # Copyright 1999-2021 Gentoo Authors
+--- firefox-96.0.2.ebuild.orig	2022-01-23 17:06:54.000000000 -0800
++++ firefox-96.0.2.ebuild	2022-01-23 17:08:45.086139549 -0800
+@@ -1,6 +1,12 @@
+ # Copyright 1999-2022 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
  
 +# Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
-+# with update sync updated with 90.0 ebuild.
++# with update sync updated with 96.0.2 ebuild.
 +# Revisions may change in the oiledmachine-overlay.
++
++# Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
 +
  EAPI="7"
  
- FIREFOX_PATCHSET="firefox-90-patches-01.tar.xz"
- 
- LLVM_MAX_SLOT=12
- 
--PYTHON_COMPAT=( python3_{7..9} )
-+PYTHON_COMPAT=( python3_{8..10} )
- PYTHON_REQ_USE="ncurses,sqlite,ssl"
- 
- WANT_AUTOCONF="2.1"
-@@ -40,6 +44,7 @@ MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DIST
+ FIREFOX_PATCHSET="firefox-96-patches-02j.tar.xz"
+@@ -40,6 +46,7 @@ MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DIST
  inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info \
  	llvm multiprocessing pax-utils python-any-r1 toolchain-funcs \
  	virtualx xdg
@@ -27,24 +21,102 @@
  
  MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
  
-@@ -61,10 +66,68 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+@@ -61,11 +68,153 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
  
  SLOT="0/$(ver_cut 1)"
  LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
+-
+-IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel"
+-IUSE+=" jack lto +openh264 pgo pulseaudio sndio selinux"
+-IUSE+=" +system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx system-png +system-webp"
+-IUSE+=" wayland wifi"
 +# MPL-2.0 is the mostly used and default
 +#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-+LICENSE+=" FF-87.0-THIRD-PARTY-LICENSES" # Converted toolkit/content/license.html by html2text -nobs
-+LICENSE+=" Apache-2.0 Apache-2.0-with-LLVM-exceptions all-rights-reserved
-+Boost-1.0 BSD BSD-2 CC0-1.0 CC-BY-4.0 curl GPL-2+ GPL-3+ icu ISC Ispell libpng
-+MIT NAIST-IPADIC OFL-1.1 Old-MIT OPENLDAP PSF-2 PSF-2.4 SunPro UoI-NCSA unicode
-+W3C-document ZLIB"
-+# Other licenses are from third party (few are mentioned for a random license
-+# audit out of ~31M lines)
++LICENSE_FINGERPRINT="\
++0297907923dc62a2c9ebd3e5b0572e053dd11673af9af7606b0368a2cc9ac4c6\
++cb397048079dda1254f41a71170e0014d7edd29ac3b0952b6b2a77a54946e45a" # SHA512
++# FF-96.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
++# Update the license version also.
++LICENSE+=" FF-96.0-THIRD-PARTY-LICENSES"
++LICENSE+="
++	( BSD-2
++		BSD
++		LGPL-2.1
++		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
++		( all-rights-reserved || ( MIT AFL-2.1 ) )
++		( MIT GPL-2 )
++		( all-rights-reserved || ( AFL-2.1 BSD ) ) )
++	( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
++	Apache-2.0
++	Apache-2.0-with-LLVM-exceptions
++	all-rights-reserved
++	Boost-1.0
++	BSD
++	BSD-2
++	CC0-1.0
++	CC-BY-4.0
++	curl
++	GPL-2+
++	GPL-3+
++	icu
++	ISC
++	Ispell
++	libpng
++	MIT
++	NAIST-IPADIC
++	OFL-1.1
++	Old-MIT
++	OPENLDAP
++	PSF-2
++	PSF-2.4
++	SunPro
++	UoI-NCSA
++	unicode
++	W3C-document
++	ZLIB
++	pgo? ( ( BSD-2
++		  ( all-rights-reserved || ( MIT AFL-2.1 ) )
++		  ( MIT GPL-2 )
++		  BSD
++		  MIT )
++		BSD
++		BSD-2
++		LGPL-2.1
++		LGPL-2.1+
++		MPL-2.0	)" # \
++# emerge does not recognize ^^ for the LICENSE variable.  You must choose
++# at most one for some packages when || is present.
++
++# Third party licenses:
 +#
++# build/pgo/** folder:
++#   ( BSD-2
++#     ( all-rights-reserved || ( MIT AFL-2.1 ) )
++#     ( MIT GPL-2 )
++#     BSD
++#     MIT ) \
++#     build/pgo/js-input/sunspider/string-unpack-code.html
++#   || ( MIT GPL-2 ) build/pgo/blueprint/LICENSE
++#   BSD
++#   BSD-2
++#   LGPL-2.1
++#   LGPL-2.1+
++#   MPL-2.0
++#
++# ( BSD-2 BSD LGPL-2.1
++#   ( all-rights-reserved ^^ ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
++#   ( all-rights-reserved || ( MIT AFL-2.1 ) )
++#   ( MIT GPL-2 )
++#   ( all-rights-reserved || ( AFL-2.1 BSD) ) ) \
++#     third_party/webkit/PerformanceTests/SunSpider/sunspider-1.0.1/sunspider-1.0.1/sunspider-test-contents.js
++# ( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) ) \
++#   testing/talos/talos/pageloader/chrome/pageloader.xhtml
 +# ^^ ( GPL-3? ( FTL ) GPL-2 ) modules/freetype2/LICENSE.TXT - GPL-2 assumed # \
 +#   since original ebuild cites it
-+# all-rights-reserved MIT mfbt/Span.h -- the standard MIT license does not contain all rights reserved
-+# all-rights-reserved MIT devtools/client/shared/widgets/CubicBezierWidget.js -- the standard MIT license does not contain all rights reserved
++# all-rights-reserved MIT mfbt/Span.h \
++#   The standard MIT license template does not contain all rights reserved.
++# all-rights-reserved MIT devtools/client/shared/widgets/CubicBezierWidget.js \
++#   The standard MIT license template does not contain all rights reserved.
 +# Apache-2.0 for files listed in dom/encoding/test/stringencoding-license.txt
 +# Apache-2.0-with-LLVM-exceptions tools/fuzzing/libfuzzer/FuzzerUtilLinux.cpp
 +# Boost-1.0 - third_party/msgpack/include/msgpack/predef/compiler/ibm.h
@@ -52,7 +124,8 @@
 +# BSD dom/media/webrtc/transport/third_party/nrappkit/src/util/util.c
 +# BSD-2 ISC third_party/dav1d/tools/compat/getopt.c
 +# BSD, MIT, ISC nsprpub/pr/src/misc/praton.c
-+# CC-BY-4.0 browser/fonts/TwemojiMozilla.ttf (See https://github.com/mozilla/twemoji-colr/blob/master/LICENSE.md)
++# CC-BY-4.0 browser/fonts/TwemojiMozilla.ttf \
++#   (See https://github.com/mozilla/twemoji-colr/blob/master/LICENSE.md)
 +# curl - toolkit/crashreporter/google-breakpad/src/third_party/curl/COPYING
 +# custom testing/web-platform/tests/css/tools/w3ctestlib/catalog/xhtml11.dtd *
 +# custom testing/web-platform/tests/css/CSS2/LICENSE-W3CTS *
@@ -69,7 +142,8 @@
 +# PSF-2.4 (is a variation of) third_party/python/virtualenv/__virtualenv__/typing-3.7.4.3-py2-none-any/typing-3.7.4.3.dist-info/LICENSE
 +# PSF-2 third_party/python/virtualenv/__virtualenv__/contextlib2-0.6.0.post1-py2.py3-none-any/contextlib2-0.6.0.post1.dist-info/LICENSE.txt
 +# M+ FONTS LICENSE_E - layout/reftests/fonts/mplus/mplus-license.txt *
-+# MIT CC0-1.0 devtools/client/shared/vendor/lodash.js (more details can be found at https://github.com/lodash/lodash/blob/master/LICENSE)
++# MIT CC0-1.0 devtools/client/shared/vendor/lodash.js (more details can be \
++#   found at https://github.com/lodash/lodash/blob/master/LICENSE)
 +# MIT UoI-NCSA js/src/jit/arm/llvm-compiler-rt/assembly.h
 +# UoI-NCSA tools/fuzzing/libfuzzer/LICENSE.TXT
 +# unicode BSD NAIST-IPADIC intl/icu/source/data/brkitr/dictionaries/cjdict.txt
@@ -83,79 +157,107 @@
 +# ZLIB media/ffvpx/libavutil/adler32.c
 +# ZLIB third_party/rust/libz-sys/src/zlib/zlib.h
 +# ZLIB MIT devtools/client/shared/vendor/jszip.js
-+# ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- the vanilla ZLIB lib license doesn't contain all rights reserved
++# ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- \#
++#   the vanilla ZLIB lib license doesn't contain all rights reserved
 +
- IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
- 	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast sndio selinux
- 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
- 	+system-libvpx +system-webp wayland wifi"
-+_ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 \
-+abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
++IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel
++	jack lto +openh264 pgo pulseaudio sndio selinux
++	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
++	+system-libvpx system-png +system-webp
++	wayland wifi"
++_ABIS="abi_x86_32
++	abi_x86_64
++	abi_x86_x32
++	abi_mips_n32
++	abi_mips_n64
++	abi_mips_o32
++	abi_ppc_32
++	abi_ppc_64
++	abi_s390_32
++	abi_s390_64"
 +IUSE+=" ${_ABIS}"
 +IUSE+=" -jemalloc"
  
- REQUIRED_USE="debug? ( !system-av1 )
- 	screencast? ( wayland )"
-@@ -74,28 +137,32 @@ BDEPEND="${PYTHON_DEPS}
- 	app-arch/zip
- 	>=dev-util/cbindgen-0.19.0
- 	>=net-libs/nodejs-10.23.1
+ # Firefox-only IUSE
+ IUSE+=" geckodriver"
+@@ -80,125 +229,125 @@ REQUIRED_USE="debug? ( !system-av1 )
+ # Firefox-only REQUIRED_USE flags
+ REQUIRED_USE+=" screencast? ( wayland )"
+ 
+-BDEPEND="${PYTHON_DEPS}
+-	app-arch/unzip
+-	app-arch/zip
+-	>=dev-util/cbindgen-0.19.0
+-	>=net-libs/nodejs-10.23.1
 -	virtual/pkgconfig
--	>=virtual/rust-1.47.0
-+	|| (
-+		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-+		>=dev-util/pkgconfig-0.29.2[${MULTILIB_USEDEP}]
-+	)
-+	>=dev-lang/rust-1.47.0[${MULTILIB_USEDEP}]
-+	!dev-lang/rust-bin
- 	|| (
- 		(
+-	>=virtual/rust-1.53.0
+-	|| (
+-		(
+-			sys-devel/clang:13
+-			sys-devel/llvm:13
+-			clang? (
+-				=sys-devel/lld-13*
+-				pgo? ( =sys-libs/compiler-rt-sanitizers-13*[profile] )
+-			)
+-		)
+-		(
 -			sys-devel/clang:12
 -			sys-devel/llvm:12
-+			sys-devel/clang:12[${MULTILIB_USEDEP}]
-+			sys-devel/llvm:12[${MULTILIB_USEDEP}]
- 			clang? (
- 				=sys-devel/lld-12*
- 				pgo? ( =sys-libs/compiler-rt-sanitizers-12*[profile] )
- 			)
- 		)
+-			clang? (
+-				=sys-devel/lld-12*
+-				pgo? ( =sys-libs/compiler-rt-sanitizers-12*[profile] )
+-			)
+-		)
++LLVM_SLOTS=(10 11 12 13)
++
++gen_llvm_bdepends() {
++	local o=""
++	for s in ${LLVM_SLOTS[@]} ; do
++		o+="
  		(
 -			sys-devel/clang:11
 -			sys-devel/llvm:11
-+			sys-devel/clang:11[${MULTILIB_USEDEP}]
-+			sys-devel/llvm:11[${MULTILIB_USEDEP}]
++			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
++			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
  			clang? (
- 				=sys-devel/lld-11*
- 				pgo? ( =sys-libs/compiler-rt-sanitizers-11*[profile] )
+-				=sys-devel/lld-11*
+-				pgo? ( =sys-libs/compiler-rt-sanitizers-11*[profile] )
++				>=sys-devel/lld-${s}
++				pgo? ( =sys-libs/compiler-rt-sanitizers-${s}*[profile] )
  			)
  		)
- 		(
--			sys-devel/clang:10
--			sys-devel/llvm:10
-+			sys-devel/clang:10[${MULTILIB_USEDEP}]
-+			sys-devel/llvm:10[${MULTILIB_USEDEP}]
- 			clang? (
- 				=sys-devel/lld-10*
- 				pgo? ( =sys-libs/compiler-rt-sanitizers-10*[profile] )
-@@ -106,68 +173,68 @@ BDEPEND="${PYTHON_DEPS}
+-	)
++		"
++	done
++	echo -e "${o}"
++}
++
++BDEPEND+=" || ( $(gen_llvm_bdepends) )"
++BDEPEND+=" ${PYTHON_DEPS}
++	app-arch/unzip
++	app-arch/zip
++	>=dev-util/cbindgen-0.19.0
++	>=net-libs/nodejs-10.23.1
++	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
++	>=virtual/rust-1.53.0[${MULTILIB_USEDEP}]
+ 	amd64? ( >=dev-lang/nasm-2.13 )
  	x86? ( >=dev-lang/nasm-2.13 )"
  
  CDEPEND="
--	>=dev-libs/nss-3.66
--	>=dev-libs/nspr-4.29
+-	>=dev-libs/nss-3.73
+-	>=dev-libs/nspr-4.32
 -	dev-libs/atk
 -	dev-libs/expat
 -	>=x11-libs/cairo-1.10[X]
 -	>=x11-libs/gtk+-3.4.0:3[X]
 -	x11-libs/gdk-pixbuf
 -	>=x11-libs/pango-1.22.0
--	>=media-libs/libpng-1.6.35:0=[apng]
 -	>=media-libs/mesa-10.2:*
 -	media-libs/fontconfig
 -	>=media-libs/freetype-2.4.10
 -	kernel_linux? ( !pulseaudio? ( media-libs/alsa-lib ) )
-+	>=dev-libs/nss-3.66[${MULTILIB_USEDEP}]
-+	>=dev-libs/nspr-4.29[${MULTILIB_USEDEP}]
++	>=dev-libs/nss-3.73[${MULTILIB_USEDEP}]
++	>=dev-libs/nspr-4.32[${MULTILIB_USEDEP}]
 +	dev-libs/atk[${MULTILIB_USEDEP}]
 +	dev-libs/expat[${MULTILIB_USEDEP}]
 +	>=x11-libs/cairo-1.10[X,${MULTILIB_USEDEP}]
@@ -178,8 +280,10 @@
 -	x11-libs/libXdamage
 -	x11-libs/libXext
 -	x11-libs/libXfixes
+-	x11-libs/libXrandr
 -	x11-libs/libXrender
--	x11-libs/libXt
+-	x11-libs/libXtst
+-	x11-libs/libxcb
 +	>=x11-libs/pixman-0.19.2[${MULTILIB_USEDEP}]
 +	>=dev-libs/glib-2.26:2[${MULTILIB_USEDEP}]
 +	>=sys-libs/zlib-1.2.3[${MULTILIB_USEDEP}]
@@ -190,36 +294,41 @@
 +	x11-libs/libXdamage[${MULTILIB_USEDEP}]
 +	x11-libs/libXext[${MULTILIB_USEDEP}]
 +	x11-libs/libXfixes[${MULTILIB_USEDEP}]
++	x11-libs/libXrandr[${MULTILIB_USEDEP}]
 +	x11-libs/libXrender[${MULTILIB_USEDEP}]
-+	x11-libs/libXt[${MULTILIB_USEDEP}]
++	x11-libs/libXtst[${MULTILIB_USEDEP}]
++	x11-libs/libxcb[${MULTILIB_USEDEP}]
  	dbus? (
 -		sys-apps/dbus
 -		dev-libs/dbus-glib
 +		sys-apps/dbus[${MULTILIB_USEDEP}]
 +		dev-libs/dbus-glib[${MULTILIB_USEDEP}]
  	)
- 	screencast? ( media-video/pipewire:0/0.3 )
+-	screencast? ( media-video/pipewire:= )
++	screencast? ( media-video/pipewire:0/0.3 )
  	system-av1? (
--		>=media-libs/dav1d-0.8.1:=
+-		>=media-libs/dav1d-0.9.3:=
 -		>=media-libs/libaom-1.0.0:=
-+		>=media-libs/dav1d-0.8.1:=[${MULTILIB_USEDEP}]
++		>=media-libs/dav1d-0.9.3:=[${MULTILIB_USEDEP}]
 +		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
  	)
  	system-harfbuzz? (
--		>=media-libs/harfbuzz-2.7.4:0=
+-		>=media-libs/harfbuzz-2.8.1:0=
 -		>=media-gfx/graphite2-1.3.13
-+		>=media-libs/harfbuzz-2.7.4:0=[${MULTILIB_USEDEP}]
++		>=media-libs/harfbuzz-2.8.1:0=[${MULTILIB_USEDEP}]
 +		>=media-gfx/graphite2-1.3.13[${MULTILIB_USEDEP}]
  	)
--	system-icu? ( >=dev-libs/icu-67.1:= )
+-	system-icu? ( >=dev-libs/icu-70.1:= )
 -	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1 )
 -	system-libevent? ( >=dev-libs/libevent-2.0:0=[threads] )
 -	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc] )
+-	system-png? ( >=media-libs/libpng-1.6.35:0=[apng] )
 -	system-webp? ( >=media-libs/libwebp-1.1.0:0= )
-+	system-icu? ( >=dev-libs/icu-67.1:=[${MULTILIB_USEDEP}] )
++	system-icu? ( >=dev-libs/icu-70.1:=[${MULTILIB_USEDEP}] )
 +	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}] )
 +	system-libevent? ( >=dev-libs/libevent-2.0:0=[threads,${MULTILIB_USEDEP}] )
 +	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc,${MULTILIB_USEDEP}] )
++	system-png? ( >=media-libs/libpng-1.6.35:0=[apng,${MULTILIB_USEDEP}] )
 +	system-webp? ( >=media-libs/libwebp-1.1.0:0=[${MULTILIB_USEDEP}] )
  	wifi? (
  		kernel_linux? (
@@ -251,8 +360,12 @@
  		)
  	)
  	selinux? ( sec-policy/selinux-mozilla )"
-@@ -175,15 +242,21 @@ RDEPEND="${CDEPEND}
+ 
  DEPEND="${CDEPEND}
+-	x11-libs/libICE
+-	x11-libs/libSM
++	x11-libs/libICE[${MULTILIB_USEDEP}]
++	x11-libs/libSM[${MULTILIB_USEDEP}]
  	pulseaudio? (
  		|| (
 -			media-sound/pulseaudio
@@ -267,8 +380,7 @@
 +	wayland? ( >=x11-libs/gtk+-3.11:3[wayland,${MULTILIB_USEDEP}] )
 +	amd64? ( virtual/opengl[${MULTILIB_USEDEP}] )
 +	x86? ( virtual/opengl[${MULTILIB_USEDEP}] )"
-+# Gentoo's rust-bin package doesn't install the i686 libs.  Use only the
-+# compiled source version.
++RESTRICT="mirror"
  
  S="${WORKDIR}/${PN}-${PV%_*}"
 +S_BAK="${WORKDIR}/${PN}-${PV%_*}"
@@ -278,49 +390,131 @@
  
  # Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or
  # overridden in the enviromnent (advanced hackers only)
-@@ -377,6 +450,7 @@ pkg_pretend() {
+@@ -213,8 +362,8 @@ llvm_check_deps() {
+ 	fi
+ 
+ 	if use clang ; then
+-		if ! has_version -b "=sys-devel/lld-${LLVM_SLOT}*" ; then
+-			einfo "=sys-devel/lld-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
++		if ! has_version -b ">=sys-devel/lld-${LLVM_SLOT}" ; then
++			einfo ">=sys-devel/lld-${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+ 			return 1
+ 		fi
+ 
+@@ -426,7 +575,9 @@ pkg_pretend() {
+ 	fi
  }
  
++NABIS=0
  pkg_setup() {
 +	ewarn "This ebuild is a Work In Progress (WIP) / Testing.  It may freeze or lock up for both 32 and 64-bit builds."
  	if [[ ${MERGE_TYPE} != binary ]] ; then
  		if use pgo ; then
  			if ! has userpriv ${FEATURES} ; then
-@@ -478,6 +552,24 @@ pkg_setup() {
+@@ -464,7 +615,7 @@ pkg_setup() {
+ 				[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
+ 			fi
+ 
+-			if ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
++			if ver_test "${version_lld}" -lt "${version_llvm_rust}" ; then
+ 				eerror "Rust is using LLVM version ${version_llvm_rust} but ld.lld version belongs to LLVM version ${version_lld}."
+ 				eerror "You will be unable to link ${CATEGORY}/${PN}. To proceed you have the following options:"
+ 				eerror "  - Manually switch rust version using 'eselect rust' to match used LLVM version"
+@@ -556,6 +707,40 @@ pkg_setup() {
  	CONFIG_CHECK="~SECCOMP"
  	WARNING_SECCOMP="CONFIG_SECCOMP not set! This system will be unable to play DRM-protected content."
  	linux-info_pkg_setup
 +
-+	einfo
-+	einfo \
-+"To set up cross-compile for other ABIs see \`epkginfo -d firefox\` or the \
-+metadata.xml"
++einfo
++einfo "To set up cross-compile for other ABIs see \`epkginfo -d firefox\` or"
++einfo "the metadata.xml"
++einfo
 +
 +	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" \
 +			| sed -r -e "s#(-j|--jobs=)\s*##g")
 +	local cores=$(nproc)
 +	if (( ${jobs} > $((${cores}/2)) )) ; then
-+		ewarn \
-+"Firefox may lock up or freeze the computer if the N value in MAKEOPTS=\"-jN\" \
-+is greater than \$(nproc)/2"
++ewarn
++ewarn "Firefox may lock up or freeze the computer if the N value in"
++ewarn "MAKEOPTS=\"-jN\" is greater than \$(nproc)/2"
++ewarn
 +	fi
 +
 +	if ! use pulseaudio ; then
 +		ewarn "Microphone support may be disabled when pulseaudio is disabled."
 +	fi
++
++	if [[ -n "${FF_EBUILD_MAINTAINER}" ]] ; then
++		if [[ -z "${MY_OVERLAY_DIR}" ]] ; then
++eerror
++eerror "You need to set MY_OVERLAY_DIR as a per-package envvar to the base path"
++eerror "of your overlay or local repo.  The base path should contain all the"
++eerror "overlay's categories."
++eerror
++			die
++		fi
++	fi
++
++	for a in $(multilib_get_enabled_abis) ; do
++		NABIS=$((${NABIS} + 1))
++	done
  }
  
  src_unpack() {
-@@ -499,7 +591,18 @@ src_unpack() {
+@@ -570,14 +755,62 @@ src_unpack() {
+ 		if [[ ${_src_file} == *.xpi ]]; then
+ 			cp "${DISTDIR}/${_src_file}" "${_lp_dir}" || die "Failed to copy '${_src_file}' to '${_lp_dir}'!"
+ 		else
++			# TODO:  Add files with all-rights-reserved or crazy
++			# licensing to the exclusion list if possible to
++			# simpify LICENSE variable.
+ 			unpack ${_src_file}
+ 		fi
+ 	done
+ }
  
++verify_license_fingerprint() {
++einfo "Verifying about:license fingerprint"
++	x_license_fingerprint=$(sha512sum "${S}/toolkit/content/license.html" \
++		| cut -f 1 -d " ")
++	# Check even between patched versions and/or new features.
++	if [[ -n "${FF_EBUILD_MAINTAINER}" ]] ; then
++		local license_file_name="FF-$(ver_cut 1-2)-THIRD-PARTY-LICENSES"
++		if [[ ! ( "${LICENSE}" =~ "${license_file_name}" ) \
++			|| ! -f "${MY_OVERLAY_DIR}/licenses/${license_file_name}" \
++			|| "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}" \
++		]] ; then
++eerror
++eerror "A change in the license was detected.  Please change"
++eerror "LICENSE_FINGERPRINT=${x_license_fingerprint} and do a"
++eerror
++eerror "  \`cp -a ${S}/toolkit/content/license.html \
++${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
++eerror
++eerror "and update the license variable with the correct version."
++eerror
++			die
++		fi
++	else
++		if [[ "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}" ]] ; then
++eerror
++eerror "A change in the license was detected.  Please notify the ebuild"
++eerror "maintainer."
++eerror
++			die
++		fi
++	fi
++}
++
  src_prepare() {
  	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 +
-+	# Defer 0028-Make-elfhack-use-toolchain.patch in multilib_foreach_abi
-+	mv "${WORKDIR}/firefox-patches"/0029-Make-elfhack-use-toolchain.patch{,.bak}
++	local elfhack_tc_pn=$(basename $(find "${WORKDIR}/firefox-patches" -name "*Make-elfhack-use-toolchain.patch"))
++	# Defer 0027-Make-elfhack-use-toolchain.patch in multilib_foreach_abi
++	mv "${WORKDIR}/firefox-patches"/${elfhack_tc_pn}{,.bak} || die
 +
  	eapply "${WORKDIR}/firefox-patches"
-+	mv "${WORKDIR}/firefox-patches"/0029-Make-elfhack-use-toolchain.patch{.bak,}
++	mv "${WORKDIR}/firefox-patches"/${elfhack_tc_pn}{.bak,} || die
 +
 +	# Only partial patching was done because Gentoo doesn't support multilib
 +	# Python.  Only native ABI is supported.  This means cbindgen cannot
@@ -330,7 +524,7 @@
  
  	# Allow user to apply any additional patches without modifing ebuild
  	eapply_user
-@@ -516,11 +619,7 @@ src_prepare() {
+@@ -594,11 +827,11 @@ src_prepare() {
  		"${S}"/intl/icu_sources_data.py \
  		|| die "sed failed to set num_cores"
  
@@ -340,10 +534,14 @@
 -		"${S}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 -		|| die "sed failed to set toolchain prefix"
 +	# sed-in toolchain prefix patch section was moved to the bottom of this function
++	#
++	# Moved down
++	#
++	#
  
  	sed -i \
  		-e 's/ccache_stats = None/return None/' \
-@@ -533,9 +632,7 @@ src_prepare() {
+@@ -611,9 +844,9 @@ src_prepare() {
  	# Clearing checksums where we have applied patches
  	moz_clear_vendor_checksums target-lexicon-0.9.0
  
@@ -351,10 +549,12 @@
 -	BUILD_DIR="${WORKDIR}/${PN}_build"
 -	mkdir -p "${BUILD_DIR}" || die
 +	# Removed creation of a single build dir
++	#
++	#
  
  	# Write API keys to disk
  	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
-@@ -543,9 +640,70 @@ src_prepare() {
+@@ -621,9 +854,72 @@ src_prepare() {
  	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
  
  	xdg_src_prepare
@@ -365,15 +565,21 @@
 +		popd || die
 +	fi
 +
-+	multilib_copy_sources
++	verify_license_fingerprint
++
++	(( ${NABIS} > 1 )) && multilib_copy_sources
 +
 +	_src_prepare() {
++		if (( ${NABIS} == 1 )) ; then
++			export BUILD_DIR="${S}"
++		fi
++
 +		cd "${BUILD_DIR}" || die
 +		local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 +		local ctarget=$(get_abi_CHOST ${ABI})
 +		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-objdump" ) \
 +			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${ctarget}-objdump" ) ; then
-+			eapply "${WORKDIR}/firefox-patches/0029-Make-elfhack-use-toolchain.patch"
++			eapply "${WORKDIR}/firefox-patches/${elfhack_tc_pn}"
 +			# sed-in toolchain prefix
 +			sed -i \
 +				-e "s/objdump/${ctarget}-objdump/" \
@@ -382,15 +588,6 @@
 +			einfo "Using ${ctarget}-objdump for ctarget"
 +		else
 +			ewarn "Using objdump from chost"
-+		fi
-+
-+		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-readelf" ) \
-+			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${ctarget}-readelf" ) ; then
-+			einfo "Using ${ctarget}-readelf for ctarget"
-+		else
-+			eapply "${FILESDIR}/multiabi/${PN}-84.0.1-check_binary-no-prefix-for-readelf.patch"
-+			eapply "${FILESDIR}/multiabi/${PN}-84.0.1-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
-+			ewarn "Using readelf from chost"
 +		fi
 +	}
 +
@@ -421,12 +618,17 @@
  
 -src_configure() {
 +multilib_src_configure() {
++	if (( ${NABIS} == 1 )) ; then
++		export BUILD_DIR="${S}"
++		cd "${BUILD_DIR}" || die
++	fi
++
 +	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 +	local ctarget=$(get_abi_CHOST ${ABI})
  	# Show flags set at the beginning
  	einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
  	einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
-@@ -553,14 +711,15 @@ src_configure() {
+@@ -631,14 +927,15 @@ src_configure() {
  	einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
  	einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
  
@@ -444,7 +646,7 @@
  		NM=llvm-nm
  		RANLIB=llvm-ranlib
  	elif ! use clang && ! tc-is-gcc ; then
-@@ -568,8 +727,8 @@ src_configure() {
+@@ -646,8 +943,8 @@ src_configure() {
  		have_switched_compiler=yes
  		einfo "Enforcing the use of gcc due to USE=-clang ..."
  		AR=gcc-ar
@@ -455,12 +657,12 @@
  		NM=gcc-nm
  		RANLIB=gcc-ranlib
  	fi
-@@ -585,20 +744,18 @@ src_configure() {
+@@ -662,14 +959,14 @@ src_configure() {
+ 	export HOST_CC="$(tc-getBUILD_CC)"
  	export HOST_CXX="$(tc-getBUILD_CXX)"
  	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
- 
+-
 +	_fix_paths
-+
  	# Pass the correct toolchain paths through cbindgen
  	if tc-is-cross-compiler ; then
 -		export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --target=${CHOST} ${BINDGEN_CFLAGS-}"
@@ -469,18 +671,23 @@
  
 -	# Set MOZILLA_FIVE_HOME
 -	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
-+	# MOZILLA_FIVE_HOME and MOZCONFIG are dynamically generated per ABI
++	# MOZILLA_FIVE_HOME is dynamically generated per ABI in _fix_paths().
++	#
  
  	# python/mach/mach/mixin/process.py fails to detect SHELL
  	export SHELL="${EPREFIX}/bin/bash"
+@@ -677,8 +974,8 @@ src_configure() {
+ 	# Set state path
+ 	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
  
 -	# Set MOZCONFIG
 -	export MOZCONFIG="${S}/.mozconfig"
--
++	# MOZCONFIG is dynamically generated per ABI in _fix_paths().
++	#
+ 
  	# Initialize MOZCONFIG
  	mozconfig_add_options_ac '' --enable-application=browser
- 
-@@ -616,63 +773,68 @@ src_configure() {
+@@ -697,63 +994,69 @@ src_configure() {
  		--enable-release \
  		--enable-system-ffi \
  		--enable-system-pixman \
@@ -491,11 +698,12 @@
 -		--target="${CHOST}" \
 +		--target="${ctarget}" \
  		--without-ccache \
+ 		--without-wasm-sandboxed-libraries \
  		--with-intl-api \
 -		--with-libclang-path="$(llvm-config --libdir)" \
++		\
  		--with-system-nspr \
  		--with-system-nss \
- 		--with-system-png \
  		--with-system-zlib \
 -		--with-toolchain-prefix="${CHOST}-" \
 +		--with-toolchain-prefix="${ctarget}-" \
@@ -563,7 +771,7 @@
  	else
  		einfo "Building without Mozilla API key ..."
  	fi
-@@ -794,13 +956,13 @@ src_configure() {
+@@ -880,13 +1183,13 @@ src_configure() {
  		fi
  	fi
  
@@ -579,7 +787,7 @@
  				|| die
  		fi
  	fi
-@@ -868,7 +1030,18 @@ src_configure() {
+@@ -956,7 +1259,18 @@ src_configure() {
  	mozconfig_add_options_ac 'Gentoo default' "XARGS=${EPREFIX}/usr/bin/xargs"
  
  	# Set build dir
@@ -599,12 +807,17 @@
  
  	# Show flags we will use
  	einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
-@@ -902,7 +1075,11 @@ src_configure() {
+@@ -990,7 +1304,16 @@ src_configure() {
  	./mach configure || die
  }
  
 -src_compile() {
 +multilib_src_compile() {
++	if (( ${NABIS} == 1 )) ; then
++		export BUILD_DIR="${S}"
++		cd "${BUILD_DIR}" || die
++	fi
++
 +	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 +	local ctarget=$(get_abi_CHOST ${ABI})
 +	_fix_paths
@@ -612,7 +825,7 @@
  	local virtx_cmd=
  
  	if use pgo ; then
-@@ -920,12 +1097,175 @@ src_compile() {
+@@ -1008,12 +1331,179 @@ src_compile() {
  		|| die
  }
  
@@ -777,6 +990,10 @@
 +}
 +
 +multilib_src_install() {
++	if (( ${NABIS} == 1 )) ; then
++		export BUILD_DIR="${S}"
++	fi
++
 +	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 +	local ctarget=$(get_abi_CHOST ${ABI})
 +	_fix_paths
@@ -792,7 +1009,7 @@
  
  	DESTDIR="${D}" ./mach install || die
  
-@@ -988,15 +1328,15 @@ src_install() {
+@@ -1076,15 +1566,15 @@ src_install() {
  	# Install geckodriver
  	if use geckodriver ; then
  		einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
@@ -811,106 +1028,60 @@
  	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
  
  	insinto /usr/share/icons/hicolor/symbolic/apps
-@@ -1015,12 +1355,12 @@ src_install() {
+@@ -1103,10 +1593,10 @@ src_install() {
  	done
  
- 	# Install menus
--	local wrapper_wayland="${PN}-wayland.sh"
--	local wrapper_x11="${PN}-x11.sh"
-+	local wrapper_wayland="${PN}-${ABI}-wayland.sh"
-+	local wrapper_x11="${PN}-${ABI}-x11.sh"
- 	local desktop_file="${FILESDIR}/icon/${PN}-r2.desktop"
- 	local display_protocols="auto X11"
+ 	# Install menu
+-	local app_name="Mozilla ${MOZ_PN^}"
+-	local desktop_file="${FILESDIR}/icon/${PN}-r3.desktop"
+-	local desktop_filename="${PN}.desktop"
+-	local exec_command="${PN}"
++	local app_name="Mozilla ${MOZ_PN^} (${ABI})"
++	local desktop_file="${FILESDIR}/icon/${PN}-r2.desktop"
++	local desktop_filename="${PN}-${ABI}.desktop"
++	local exec_command="${PN}-${ABI}"
  	local icon="${PN}"
--	local name="Mozilla ${MOZ_PN^}"
-+	local name="Mozilla ${MOZ_PN^} (${ABI})"
  	local use_wayland="false"
  
- 	if use wayland ; then
-@@ -1031,12 +1371,12 @@ src_install() {
- 	local app_name desktop_filename display_protocol exec_command
- 	for display_protocol in ${display_protocols} ; do
- 		app_name="${name} on ${display_protocol}"
--		desktop_filename="${PN}-${display_protocol,,}.desktop"
-+		desktop_filename="${PN}-${ABI}-${display_protocol,,}.desktop"
+@@ -1129,16 +1619,19 @@ src_install() {
  
- 		case ${display_protocol} in
- 			Wayland)
--				exec_command="${PN}-wayland --name ${PN}-wayland"
--				newbin "${FILESDIR}/${wrapper_wayland}" ${PN}-wayland
-+				exec_command="${PN}-${ABI}-wayland --name ${PN}-${ABI}-wayland"
-+				newbin "${FILESDIR}/multiabi/${wrapper_wayland}" ${PN}-${ABI}-wayland
- 				;;
- 			X11)
- 				if ! use wayland ; then
-@@ -1045,13 +1385,15 @@ src_install() {
- 					continue
- 				fi
- 
--				exec_command="${PN}-x11 --name ${PN}-x11"
--				newbin "${FILESDIR}/${wrapper_x11}" ${PN}-x11
-+				exec_command="${PN}-${ABI}-x11 --name ${PN}-${ABI}-x11"
-+				newbin "${FILESDIR}/multiabi/${wrapper_x11}" ${PN}-${ABI}-x11
-+				[ -e "/usr/bin/${PN}-x11" ] && rm /usr/bin/${PN}-x11
-+				dosym /usr/bin/${PN}-${ABI}-x11 /usr/bin/${PN}-x11
- 				;;
- 			*)
- 				app_name="${name}"
--				desktop_filename="${PN}.desktop"
--				exec_command="${PN}"
-+				desktop_filename="${PN}-${ABI}.desktop"
-+				exec_command="${PN}-${ABI}"
- 				;;
- 		esac
- 
-@@ -1071,25 +1413,28 @@ src_install() {
- 
- 	# Install generic wrapper script
+ 	# Install wrapper script
  	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
--	newbin "${FILESDIR}/${PN}.sh" ${PN}
-+	newbin "${FILESDIR}/multiabi/${PN}.sh" ${PN}-${ABI}
+-	newbin "${FILESDIR}/${PN}-r1.sh" ${PN}
++	newbin "${FILESDIR}/multiabi/${PN}-r1.sh" ${PN}-${ABI}
 +	dosym /usr/bin/${PN}-${ABI} /usr/bin/${PN}
  
  	# Update wrapper
- 	local wrapper
- 	for wrapper in \
+ 	sed -i \
+ 		-e "s:@PREFIX@:${EPREFIX}/usr:" \
++		-e "s:@LIBDIR@:$(get_libdir):" \
+ 		-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
+ 		-e "s:@APULSELIB_DIR@:${apulselib}:" \
+ 		-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
 -		"${ED}/usr/bin/${PN}" \
--		"${ED}/usr/bin/${PN}-x11" \
--		"${ED}/usr/bin/${PN}-wayland" \
 +		"${ED}/usr/bin/${PN}-${ABI}" \
-+		"${ED}/usr/bin/${PN}-${ABI}-x11" \
-+		"${ED}/usr/bin/${PN}-${ABI}-wayland" \
- 	; do
- 		[[ ! -f "${wrapper}" ]] && continue
- 
- 		sed -i \
- 			-e "s:@PREFIX@:${EPREFIX}/usr:" \
-+			-e "s:@LIBDIR@:$(get_libdir):" \
- 			-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
- 			-e "s:@APULSELIB_DIR@:${apulselib}:" \
- 			-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
- 			"${wrapper}" \
- 			|| die
- 	done
+ 		|| die
 +	_install_licenses
  }
  
  pkg_preinst() {
-@@ -1179,4 +1524,17 @@ pkg_postinst() {
- 		elog
- 		elog "in about:config."
+@@ -1236,4 +1729,19 @@ pkg_postinst() {
+ 		elog "If you still want to be able to select between running Mozilla ${PN^}"
+ 		elog "on X11 or Wayland, you have to re-create these shortcuts on your own."
  	fi
 +
-+	elog
-+	elog "By default, the /usr/bin/firefox symlink is set to the last ABI installed."
-+	elog "You must change it manually if you want to run on a different default ABI."
-+	elog
-+	elog "Examples"
-+	elog "ln -sf /usr/lib64/${PN} /usr/bin/firefox"
-+	elog "ln -sf /usr/lib/${PN} /usr/bin/firefox"
-+	elog "ln -sf /usr/lib32/${PN} /usr/bin/firefox"
-+	elog
-+	# Reported in bugid 1010527, 1646007, 1449901
-+	elog "WebGL performance is suboptimal and runs at ~40 FPS.  There is currently no fix for this."
-+	elog
++einfo
++einfo "By default, the /usr/bin/firefox symlink is set to the last ABI"
++einfo "installed.  You must change it manually if you want to run on a"
++einfo "different default ABI."
++einfo
++einfo "Examples"
++einfo "ln -sf /usr/lib64/${PN} /usr/bin/firefox"
++einfo "ln -sf /usr/lib/${PN} /usr/bin/firefox"
++einfo "ln -sf /usr/lib32/${PN} /usr/bin/firefox"
++einfo
++# Reported in bugid 1010527, 1646007, 1449901
++einfo "WebGL performance is suboptimal and runs at ~40 FPS.  There is currently"
++einfo "no fix for this."
++einfo
  }

@@ -1,15 +1,15 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
-# with update sync updated with 94.0.1-r1 ebuild.
+# with update sync updated with 96.0.2 ebuild.
 # Revisions may change in the oiledmachine-overlay.
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-95-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-96-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -55,7 +55,7 @@ if [[ ${PV} == *_rc* ]] ; then
 fi
 
 PATCH_URIS=(
-	https://dev.gentoo.org/~{polynomial-c,whissi}/mozilla/patchsets/${FIREFOX_PATCHSET}
+	https://dev.gentoo.org/~{juippis,polynomial-c,whissi}/mozilla/patchsets/${FIREFOX_PATCHSET}
 )
 
 SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
@@ -71,11 +71,11 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 LICENSE_FINGERPRINT="\
-20eb3b10bf7c7cba8e42edbc8d8ad58a3a753e214b8751fb60eddb827ebff067\
-456f77f36e7abe6d06861b1be52011303fa08db8a981937e38733f961c4a39d9" # SHA512
-# FF-95.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
+0297907923dc62a2c9ebd3e5b0572e053dd11673af9af7606b0368a2cc9ac4c6\
+cb397048079dda1254f41a71170e0014d7edd29ac3b0952b6b2a77a54946e45a" # SHA512
+# FF-96.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
 # Update the license version also.
-LICENSE+=" FF-95.0-THIRD-PARTY-LICENSES"
+LICENSE+=" FF-96.0-THIRD-PARTY-LICENSES"
 LICENSE+="
 	( BSD-2
 		BSD
@@ -201,7 +201,7 @@ LICENSE+="
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel
 	jack lto +openh264 pgo pulseaudio sndio selinux
 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
-	+system-libvpx +system-webp
+	+system-libvpx system-png +system-webp
 	wayland wifi"
 _ABIS="abi_x86_32
 	abi_x86_64
@@ -222,6 +222,7 @@ IUSE+=" +gmp-autoupdate"
 IUSE+=" screencast"
 
 REQUIRED_USE="debug? ( !system-av1 )
+	pgo? ( lto )
 	wayland? ( dbus )
 	wifi? ( dbus )"
 
@@ -254,12 +255,12 @@ BDEPEND+=" ${PYTHON_DEPS}
 	>=dev-util/cbindgen-0.19.0
 	>=net-libs/nodejs-10.23.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=virtual/rust-1.51.0[${MULTILIB_USEDEP}]
+	>=virtual/rust-1.53.0[${MULTILIB_USEDEP}]
 	amd64? ( >=dev-lang/nasm-2.13 )
 	x86? ( >=dev-lang/nasm-2.13 )"
 
 CDEPEND="
-	>=dev-libs/nss-3.72[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.73[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.32[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -279,13 +280,14 @@ CDEPEND="
 	>=dev-libs/libffi-3.0.10:=[${MULTILIB_USEDEP}]
 	media-video/ffmpeg[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
-	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	x11-libs/libXcomposite[${MULTILIB_USEDEP}]
 	x11-libs/libXdamage[${MULTILIB_USEDEP}]
 	x11-libs/libXext[${MULTILIB_USEDEP}]
 	x11-libs/libXfixes[${MULTILIB_USEDEP}]
 	x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	x11-libs/libXrender[${MULTILIB_USEDEP}]
+	x11-libs/libXtst[${MULTILIB_USEDEP}]
+	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	dbus? (
 		sys-apps/dbus[${MULTILIB_USEDEP}]
 		dev-libs/dbus-glib[${MULTILIB_USEDEP}]
@@ -299,10 +301,11 @@ CDEPEND="
 		>=media-libs/harfbuzz-2.8.1:0=[${MULTILIB_USEDEP}]
 		>=media-gfx/graphite2-1.3.13[${MULTILIB_USEDEP}]
 	)
-	system-icu? ( >=dev-libs/icu-69.1:=[${MULTILIB_USEDEP}] )
+	system-icu? ( >=dev-libs/icu-70.1:=[${MULTILIB_USEDEP}] )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}] )
 	system-libevent? ( >=dev-libs/libevent-2.0:0=[threads,${MULTILIB_USEDEP}] )
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc,${MULTILIB_USEDEP}] )
+	system-png? ( >=media-libs/libpng-1.6.35:0=[apng,${MULTILIB_USEDEP}] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0=[${MULTILIB_USEDEP}] )
 	wifi? (
 		kernel_linux? (
@@ -338,6 +341,7 @@ DEPEND="${CDEPEND}
 	wayland? ( >=x11-libs/gtk+-3.11:3[wayland,${MULTILIB_USEDEP}] )
 	amd64? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	x86? ( virtual/opengl[${MULTILIB_USEDEP}] )"
+RESTRICT="mirror"
 
 S="${WORKDIR}/${PN}-${PV%_*}"
 S_BAK="${WORKDIR}/${PN}-${PV%_*}"
@@ -564,7 +568,7 @@ pkg_pretend() {
 		if use pgo || use lto || use debug ; then
 			CHECKREQS_DISK_BUILD="13500M"
 		else
-			CHECKREQS_DISK_BUILD="6400M"
+			CHECKREQS_DISK_BUILD="6500M"
 		fi
 
 		check-reqs_pkg_pretend
@@ -795,11 +799,12 @@ eerror
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
+	local elfhack_tc_pn=$(basename $(find "${WORKDIR}/firefox-patches" -name "*Make-elfhack-use-toolchain.patch"))
 	# Defer 0027-Make-elfhack-use-toolchain.patch in multilib_foreach_abi
-	mv "${WORKDIR}/firefox-patches"/0027-Make-elfhack-use-toolchain.patch{,.bak} || die
+	mv "${WORKDIR}/firefox-patches"/${elfhack_tc_pn}{,.bak} || die
 
 	eapply "${WORKDIR}/firefox-patches"
-	mv "${WORKDIR}/firefox-patches"/0027-Make-elfhack-use-toolchain.patch{.bak,} || die
+	mv "${WORKDIR}/firefox-patches"/${elfhack_tc_pn}{.bak,} || die
 
 	# Only partial patching was done because Gentoo doesn't support multilib
 	# Python.  Only native ABI is supported.  This means cbindgen cannot
@@ -870,7 +875,7 @@ src_prepare() {
 		local ctarget=$(get_abi_CHOST ${ABI})
 		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-objdump" ) \
 			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${ctarget}-objdump" ) ; then
-			eapply "${WORKDIR}/firefox-patches/0027-Make-elfhack-use-toolchain.patch"
+			eapply "${WORKDIR}/firefox-patches/${elfhack_tc_pn}"
 			# sed-in toolchain prefix
 			sed -i \
 				-e "s/objdump/${ctarget}-objdump/" \
@@ -879,15 +884,6 @@ src_prepare() {
 			einfo "Using ${ctarget}-objdump for ctarget"
 		else
 			ewarn "Using objdump from chost"
-		fi
-
-		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-readelf" ) \
-			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${ctarget}-readelf" ) ; then
-			einfo "Using ${ctarget}-readelf for ctarget"
-		else
-			eapply "${FILESDIR}/multiabi/${PN}-84.0.1-check_binary-no-prefix-for-readelf.patch"
-			eapply "${FILESDIR}/multiabi/${PN}-84.0.1-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
-			ewarn "Using readelf from chost"
 		fi
 	}
 
@@ -1008,7 +1004,6 @@ multilib_src_configure() {
 		\
 		--with-system-nspr \
 		--with-system-nss \
-		--with-system-png \
 		--with-system-zlib \
 		--with-toolchain-prefix="${ctarget}-" \
 		--with-unsigned-addon-scopes=app,system \
@@ -1073,6 +1068,7 @@ multilib_src_configure() {
 	mozconfig_use_with system-jpeg
 	mozconfig_use_with system-libevent system-libevent "${SYSROOT}${EPREFIX}/usr"
 	mozconfig_use_with system-libvpx
+	mozconfig_use_with system-png
 	mozconfig_use_with system-webp
 
 	mozconfig_use_enable dbus
@@ -1252,6 +1248,7 @@ multilib_src_configure() {
 
 	# Use system's Python environment
 	export MACH_USE_SYSTEM_PYTHON=1
+	export MACH_SYSTEM_ASSERTED_COMPATIBLE_WITH_MACH_SITE=1
 	export PIP_NO_CACHE_DIR=off
 
 	# Disable notification when build system has finished
