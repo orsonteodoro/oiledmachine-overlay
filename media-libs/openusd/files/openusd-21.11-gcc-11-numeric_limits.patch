@@ -1,0 +1,18 @@
+Fixes for:
+
+/var/tmp/portage/media-libs/openusd-21.11/work/USD-21.11/pxr/usd/sdr/shaderMetadataHelpers.h:70:36: error: ‘numeric_limits’ is not a member of ‘std’
+   70 |            int defaultValue = std::numeric_limits<int>::max());
+      |                                    ^~~~~~~~~~~~~~
+/var/tmp/portage/media-libs/openusd-21.11/work/USD-21.11/pxr/usd/sdr/shaderMetadataHelpers.h:70:51: error: expected primary-expression before ‘int’
+   70 |            int defaultValue = std::numeric_limits<int>::max());
+
+--- USD-21.11.orig/pxr/usd/sdr/shaderMetadataHelpers.h	2021-11-01 10:10:51.000000000 -0700
++++ USD-21.11/pxr/usd/sdr/shaderMetadataHelpers.h	2022-01-25 09:02:04.647929535 -0800
+@@ -31,6 +31,7 @@
+ #include "pxr/usd/sdr/api.h"
+ #include "pxr/base/tf/token.h"
+ #include "pxr/usd/sdr/declare.h"
++#include <limits>
+ 
+ PXR_NAMESPACE_OPEN_SCOPE
+ 
