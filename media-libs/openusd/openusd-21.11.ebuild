@@ -107,6 +107,7 @@ https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 PATCHES=(
 	"${FILESDIR}/algorithm.patch"
+	"${FILESDIR}/openusd-21.11-gcc-11-size_t.patch"
 )
 S="${WORKDIR}/USD-${PV}"
 DOCS=( CHANGELOG.md README.md )

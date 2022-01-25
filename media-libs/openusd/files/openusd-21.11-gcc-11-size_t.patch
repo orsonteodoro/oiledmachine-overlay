@@ -1,0 +1,11 @@
+--- USD-21.11.orig/pxr/base/work/singularTask.h	2021-11-01 10:10:51.000000000 -0700
++++ USD-21.11/pxr/base/work/singularTask.h	2022-01-25 07:51:49.638548425 -0800
+@@ -108,7 +108,7 @@ private:
+                     // case we go again to ensure the task can do whatever it
+                     // was awakened to do.  Once we successfully take the count
+                     // to zero, we stop.
+-                    size_t old = count;
++                    std::size_t old = count;
+                     do { _fn(); } while (
+                         !count.compare_exchange_strong(old, 0));
+                 });
