@@ -330,8 +330,6 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.93.7-openusd-21.11-lightapi.patch"
 )
 
-
-
 check_multiple_llvm_versions_in_native_libs() {
 	# Checks to avoid loading multiple versions of LLVM.
 

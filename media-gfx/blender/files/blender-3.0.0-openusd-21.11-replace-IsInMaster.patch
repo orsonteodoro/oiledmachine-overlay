@@ -1,0 +1,11 @@
+--- a/source/blender/io/usd/intern/usd_reader_xform.cc.orig	2021-10-27 11:46:39.000000000 -0700
++++ b/source/blender/io/usd/intern/usd_reader_xform.cc	2022-01-26 13:03:41.330854975 -0800
+@@ -148,7 +148,7 @@ bool USDXformReader::is_root_xform_prim(
+     return false;
+   }
+ 
+-  if (prim_.IsInMaster()) {
++  if (prim_.IsInPrototype()) {
+     /* We don't consider prototypes to be root prims,
+      * because we never want to apply global scaling
+      * or rotations to the prototypes themselves. */
