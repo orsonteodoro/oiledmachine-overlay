@@ -327,7 +327,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lib-renamed.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-python.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
-	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lightapi.patch"
+	"${FILESDIR}/${PN}-2.93.7-openusd-21.11-lightapi.patch"
 )
 
 
