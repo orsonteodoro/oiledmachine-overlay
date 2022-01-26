@@ -283,7 +283,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tbb? ( ${TBB_DEPEND} )
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
-	usd? ( >=media-libs/openusd-21.02 )
+	usd? ( >=media-libs/openusd-21.02[monolithic] )
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
