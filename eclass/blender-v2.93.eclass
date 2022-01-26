@@ -283,7 +283,10 @@ RDEPEND+="  ${PYTHON_DEPS}
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tbb? ( ${TBB_DEPEND} )
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
-	usd? ( >=media-libs/openusd-21.11[monolithic] )
+	usd? (
+		>=media-libs/openusd-21[monolithic]
+		<media-libs/openusd-21.11[monolithic]
+	)
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
@@ -324,7 +327,8 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.83.1-device_network_h-add-device-header.patch"
 	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.91.0-install-paths-change.patch"
-	"${FILESDIR}/${PN}-3.0.0-openusd-21.11.patch"
+#	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lib-renamed.patch"
+	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-python.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
 )
 
@@ -429,9 +433,6 @@ _src_configure() {
 	if use abi8-compat ; then
 		append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=8
 	fi
-
-	# openusd cannot find PYTHON_INCLUDE_CONFIG_DIR/pyconfig.h
-	append-cppflags -I$(python_get_includedir)
 
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )

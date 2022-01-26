@@ -1,0 +1,20 @@
+From: https://developer.blender.org/D12291
+--- a/source/blender/io/usd/CMakeLists.txt
++++ b/source/blender/io/usd/CMakeLists.txt
+@@ -53,6 +53,7 @@
+   ${USD_INCLUDE_DIRS}
+   ${BOOST_INCLUDE_DIR}
+   ${TBB_INCLUDE_DIR}
++  ${PYTHON_INCLUDE_DIRS}
+ )
+ 
+ set(SRC
+@@ -86,6 +87,8 @@
+ 
+ list(APPEND LIB
+   ${BOOST_LIBRARIES}
++  ${PYTHON_LINKFLAGS}
++  ${PYTHON_LIBRARIES}
+ )
+ 
+ list(APPEND LIB
