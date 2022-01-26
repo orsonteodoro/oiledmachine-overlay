@@ -207,7 +207,7 @@ src_configure() {
 				-DINSTALL_DOCS=$(usex doc)
 				-DLLVM_STATIC=OFF
 				-DOSL_BUILD_TESTS=$(usex test)
-				-DOSL_SHADER_INSTALL_DIR="include/OSL/shaders"
+				#-DOSL_SHADER_INSTALL_DIR="include/OSL/shaders"
 				-DSTOP_ON_WARNING=OFF
 				-DUSE_OPTIX=$(usex optix)
 				-DUSE_PARTIO=$(usex partio)
