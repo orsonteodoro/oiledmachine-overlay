@@ -1,0 +1,11 @@
+--- blender-3.0.0/build_files/cmake/Modules/FindUSD.cmake.orig	2021-10-27 11:46:25.000000000 -0700
++++ blender-3.0.0/build_files/cmake/Modules/FindUSD.cmake	2022-01-26 01:26:20.969234807 -0800
+@@ -38,7 +38,7 @@ FIND_PATH(USD_INCLUDE_DIR
+ 
+ FIND_LIBRARY(USD_LIBRARY
+   NAMES
+-    usd_m usd_ms
++    usd_usd_m usd_usd_ms
+   NAMES_PER_DIR
+   HINTS
+     ${_usd_SEARCH_DIRS}

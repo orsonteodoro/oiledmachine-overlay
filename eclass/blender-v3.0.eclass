@@ -291,7 +291,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tbb? ( ${TBB_DEPEND} )
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
-	usd? ( >=media-libs/openusd-21.02[monolithic] )
+	usd? ( >=media-libs/openusd-21.11[monolithic] )
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
@@ -328,6 +328,7 @@ BDEPEND+="
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
 	"${FILESDIR}/${PN}-3.0.0-install-paths-change.patch"
+	"${FILESDIR}/${PN}-3.0.0-openusd-21.11.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -502,6 +503,10 @@ _src_configure() {
 		-DWITH_TBB=$(usex tbb)
 		-DWITH_XR_OPENXR=$(usex openxr)
 	)
+
+	if use usd ; then
+		blender_configure_openusd
+	fi
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		if use jack || use openal || use pulseaudio ; then

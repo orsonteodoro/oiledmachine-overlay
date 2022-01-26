@@ -875,6 +875,13 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 }
 
+blender_configure_openusd() {
+	if use usd ; then
+		export USD_ROOT_DIR="/usr/$(get_libdir)/openusd/lib"
+		_LD_LIBRARY_PATH="/usr/$(get_libdir)/openusd/lib:${_LD_LIBRARY_PATH}"
+	fi
+}
+
 blender_configure_openxr_cxxyy() {
 	if use openxr ; then
 		export XR_OPENXR_SDK_ROOT_DIR="$(erdpfx)/openxr/${CXXABI_V}/usr"
