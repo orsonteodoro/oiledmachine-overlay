@@ -13,9 +13,10 @@ LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
 # test USE flag is enabled upstream
-IUSE+=" -alembic -doc +draco -embree +examples -experimental +hdf5 +imaging +jemalloc
--opencolorio +opengl -openimageio -openvdb openexr -osl +ptex +python
-+safety-over-speed -static-libs +tutorials -test +tools +usdview -vulkan"
+IUSE+=" -alembic -doc +draco -embree +examples -experimental +hdf5 +imaging
++jemalloc -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
++ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
+-vulkan"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	alembic? ( openexr )
@@ -168,7 +169,7 @@ src_configure() {
 		-DPXR_BUILD_EXAMPLES=$(usex examples ON OFF)
 		-DPXR_BUILD_IMAGING=$(usex imaging ON OFF)
 		-DPXR_BUILD_MATERIALX_PLUGIN=OFF
-		-DPXR_BUILD_MONOLITHIC=$(usex static-libs ON OFF)
+		-DPXR_BUILD_MONOLITHIC=$(usex monolithic ON OFF)
 		-DPXR_BUILD_OPENCOLORIO_PLUGIN=$(usex opencolorio ON OFF)
 		-DPXR_BUILD_OPENIMAGEIO_PLUGIN=$(usex openimageio ON OFF)
 		-DPXR_BUILD_PRMAN_PLUGIN=OFF
