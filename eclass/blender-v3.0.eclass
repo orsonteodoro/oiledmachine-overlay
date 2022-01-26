@@ -427,7 +427,9 @@ _src_configure() {
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
 	append-lfs-flags
-	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=${OPENVDB_V}
+	if use abi8-compat ; then
+		append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=8
+	fi
 
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
