@@ -325,7 +325,9 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.91.0-install-paths-change.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11.patch"
+	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
 )
+
 
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -427,6 +429,9 @@ _src_configure() {
 	if use abi8-compat ; then
 		append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=8
 	fi
+
+	# openusd cannot find PYTHON_INCLUDE_CONFIG_DIR/pyconfig.h
+	append-cppflags -I$(python_get_includedir)
 
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
