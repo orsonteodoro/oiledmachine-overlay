@@ -283,10 +283,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tbb? ( ${TBB_DEPEND} )
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
-	usd? (
-		>=media-libs/openusd-21[monolithic]
-		<media-libs/openusd-21.11[monolithic]
-	)
+	usd? ( >=media-libs/openusd-21.11[monolithic] )
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
@@ -327,9 +324,10 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.83.1-device_network_h-add-device-header.patch"
 	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.91.0-install-paths-change.patch"
-#	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lib-renamed.patch"
+	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lib-renamed.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-python.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
+	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lightapi.patch"
 )
 
 

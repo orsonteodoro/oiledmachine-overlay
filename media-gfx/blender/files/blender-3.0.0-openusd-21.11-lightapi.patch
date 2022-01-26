@@ -1,0 +1,65 @@
+From:  https://developer.blender.org/D13629
+diff --git a/source/blender/io/usd/intern/usd_reader_light.cc b/source/blender/io/usd/intern/usd_reader_light.cc
+--- a/source/blender/io/usd/intern/usd_reader_light.cc
++++ b/source/blender/io/usd/intern/usd_reader_light.cc
+@@ -25,7 +25,7 @@
+ #include "DNA_light_types.h"
+ #include "DNA_object_types.h"
+ 
+-#include <pxr/usd/usdLux/light.h>
++#include <pxr/usd/usdLux/lightAPI.h>
+ 
+ #include <pxr/usd/usdLux/diskLight.h>
+ #include <pxr/usd/usdLux/distantLight.h>
+@@ -57,7 +57,7 @@
+     return;
+   }
+ 
+-  pxr::UsdLuxLight light_prim(prim_);
++  pxr::UsdLuxLightAPI light_prim(prim_);
+ 
+   if (!light_prim) {
+     return;
+diff --git a/source/blender/io/usd/intern/usd_reader_stage.cc b/source/blender/io/usd/intern/usd_reader_stage.cc
+--- a/source/blender/io/usd/intern/usd_reader_stage.cc
++++ b/source/blender/io/usd/intern/usd_reader_stage.cc
+@@ -34,7 +34,7 @@
+ #include <pxr/usd/usdGeom/nurbsCurves.h>
+ #include <pxr/usd/usdGeom/scope.h>
+ #include <pxr/usd/usdGeom/xform.h>
+-#include <pxr/usd/usdLux/light.h>
++#include <pxr/usd/usdLux/lightAPI.h>
+ 
+ #include <iostream>
+ 
+@@ -71,7 +71,7 @@
+   if (params_.import_meshes && prim.IsA<pxr::UsdGeomMesh>()) {
+     return new USDMeshReader(prim, params_, settings_);
+   }
+-  if (params_.import_lights && prim.IsA<pxr::UsdLuxLight>()) {
++  if (params_.import_lights && prim.IsA<pxr::UsdLuxLightAPI>()) {
+     return new USDLightReader(prim, params_, settings_);
+   }
+   if (params_.import_volumes && prim.IsA<pxr::UsdVolVolume>()) {
+@@ -98,7 +98,7 @@
+   if (prim.IsA<pxr::UsdGeomMesh>()) {
+     return new USDMeshReader(prim, params_, settings_);
+   }
+-  if (prim.IsA<pxr::UsdLuxLight>()) {
++  if (prim.IsA<pxr::UsdLuxLightAPI>()) {
+     return new USDLightReader(prim, params_, settings_);
+   }
+   if (prim.IsA<pxr::UsdVolVolume>()) {
+diff --git a/source/blender/io/usd/intern/usd_writer_light.cc b/source/blender/io/usd/intern/usd_writer_light.cc
+--- a/source/blender/io/usd/intern/usd_writer_light.cc
++++ b/source/blender/io/usd/intern/usd_writer_light.cc
+@@ -49,7 +49,7 @@
+   pxr::UsdTimeCode timecode = get_export_time_code();
+ 
+   Light *light = static_cast<Light *>(context.object->data);
+-  pxr::UsdLuxLight usd_light;
++  pxr::UsdLuxLightAPI usd_light;
+ 
+   switch (light->type) {
+     case LA_AREA:
+
