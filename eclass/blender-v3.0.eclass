@@ -189,7 +189,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 		>=dev-python/numpy-1.21.2[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/requests-2.26.0[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/urllib3-1.26.7[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/zstd-0.15.2[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/zstandard-0.15.2[${PYTHON_MULTI_USEDEP}]
 	')
 	>=media-libs/freetype-2.10.2
 	>=media-libs/glew-1.13.0:*
