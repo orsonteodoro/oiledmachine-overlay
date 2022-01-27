@@ -21,6 +21,10 @@ PYTHON_COMPAT=( python3_{9,10} ) # For the max exclusive Python supported (and
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
+OPENVDB_ABIS_SLOTS=( 8 )
+OPENVDB_ABIS=( ${OPENVDB_ABIS_SLOTS[@]/#/abi} )
+OPENVDB_ABIS=( ${OPENVDB_ABIS[@]/%/-compat} )
+IUSE+=" ${OPENVDB_ABIS[@]}"
 IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada
 +color-management -cpudetection +cuda +cycles -cycles-network +dds -debug doc
 +elbeem +embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm -man
@@ -162,6 +166,19 @@ gen_llvm_depends()
 	echo "${o}"
 }
 
+gen_oiio_depends() {
+	local o
+	local s
+	for s in ${OPENVDB_ABIS[@]} ; do
+		o+="
+			${s}? (
+				>=media-libs/openimageio-2.1.15.0[${s},color-management?,jpeg2k?]
+			)
+		"
+	done
+	echo "${o}"
+}
+
 gen_osl_depends()
 {
 	local o
@@ -260,8 +277,8 @@ RDEPEND+="  ${PYTHON_DEPS}
 		>=media-libs/oidn-1.3.0
 	)
 	openimageio? (
+		$(gen_oiio_depends)
 		${PUGIXML_DEPEND}
-		>=media-libs/openimageio-2.1.15.0[color-management?,jpeg2k?]
 	)
 	openexr? (
 		>=media-libs/ilmbase-2.5.5:=
