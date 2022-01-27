@@ -34,6 +34,18 @@ REQUIRED_USE="
 # See https://github.com/OpenImageIO/oiio/blob/Release-2.3.10.1/INSTALL.md for requirements
 QT_V="5.6"
 ONETBB_SLOT="12"
+gen_openvdb_depends() {
+	local o
+	local s
+	for s in ${OPENVDB_APIS[@]} ; do
+		o+="
+			abi${s}-compat? (
+				>=media-libs/openvdb-${s}[abi${s}-compat]
+			)
+		"
+	done
+	echo "${o}"
+}
 RDEPEND+="
 	>=dev-cpp/robin-map-0.6.2
 	>=dev-libs/boost-1.53:=
@@ -73,7 +85,7 @@ RDEPEND+="
 				>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
 			)
 		)
-		>=media-libs/openvdb-5[abi5-compat?,abi6-compat?,abi7-compat?,abi8-compat?]
+		$(gen_openvdb_depends)
 	)
 	ptex? ( >=media-libs/ptex-2.3.1:= )
 	python? (
