@@ -11,7 +11,7 @@ HOMEPAGE=\
 "https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb"
 LICENSE="MPL-2.0"
 # For versioning, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/7ac9bcdab236026a020528f860a7df02829ad433/nanovdb/nanovdb/NanoVDB.h#L68
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/7ac9bcdab236026a020528f860a7df02829ad433/nanovdb/nanovdb/nanovdb/NanoVDB.h#L104
 SLOT="$(ver_cut 1 ${PV})/${PV}"
 # Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
