@@ -48,6 +48,8 @@ IUSE+=" "$(gen_llvm_iuse) # same as Mesa and LLVM latest stable keyword \
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
+CLANG_MIN="8.0"
+GCC_MIN="9.3"
 inherit blender
 
 # See the blender.eclass for the LICENSE variable.
@@ -332,11 +334,34 @@ RDEPEND+="  ${PYTHON_DEPS}
 DEPEND+=" ${RDEPEND}
 	>=dev-cpp/eigen-3.3.7:3=
 "
+gen_asan_bdepend() {
+	local s
+	local o
+	for s in ${LLVM_SLOTS[@]} ; do
+		o+="
+			llvm-${s}? (
+				sys-devel/clang:${s}
+				=sys-libs/compiler-rt-sanitizers-${s}*[asan]
+				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
+			)
+		"
+	done
+	echo "${o}"
+}
 BDEPEND+="
+	|| (
+		>=sys-devel/clang-${CLANG_MIN}
+		>=sys-devel/gcc-${GCC_MIN}
+	)
 	>=dev-util/cmake-3.10
 	virtual/pkgconfig
-	asan? ( || ( sys-devel/clang
-                     sys-devel/gcc ) )
+	asan? ( || (
+			$(gen_asan_bdepend)
+			(
+				>=sys-devel/gcc-${GCC_MIN}[sanitizer]
+			)
+		)
+	)
 	cycles? (
 		x86? ( || (
 			sys-devel/clang

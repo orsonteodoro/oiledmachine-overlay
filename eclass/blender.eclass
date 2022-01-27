@@ -263,12 +263,12 @@ check_compiler() {
 	test-flags-CXX "-std=c++${CXXABI_V}" 2>/dev/null 1>/dev/null \
 		|| die "Switch to a c++${CXXABI_V} compatible compiler."
 	if tc-is-gcc ; then
-		if ver_test $(gcc-fullversion) -lt 9.3.1 ; then
-			die "${PN} requires GCC >= 9.3.1"
+		if ver_test $(gcc-fullversion) -lt ${GCC_MIN} ; then
+			die "${PN} requires GCC >= ${GCC_MIN}"
 		fi
 	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt 8 ; then
-			die "${PN} requires Clang >= 8"
+		if ver_test $(clang-version) -lt ${CLANG_MIN} ; then
+			die "${PN} requires Clang >= ${CLANG_MIN}"
 		fi
 	else
 		die "Compiler is not supported"
