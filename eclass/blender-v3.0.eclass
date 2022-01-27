@@ -508,6 +508,8 @@ _src_configure() {
 		-DWITH_XR_OPENXR=$(usex openxr)
 	)
 
+	blender_configure_linker_flags
+
 	if use usd ; then
 		blender_configure_openusd
 	fi
