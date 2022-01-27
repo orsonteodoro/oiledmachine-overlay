@@ -7,9 +7,10 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20211228"
+VERSION="20220127"
 PN="emscripten"
 
+# 3.1.2 llvm 14 ; node 4.1.1 ; binaryen 104
 # 3.0.1 llvm 14 ; node 4.1.1 ; binaryen 103
 # 2.0.31 llvm 14 ; node 4.1.1 ; binaryen 101
 # 2.0.27 llvm 14 ; node 4.1.1 ; binaryen 101
@@ -316,7 +317,10 @@ set_config() {
         __EMSDK_NODE_VERSION_MIN__="0.8.0"
     fi
 
-    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.0.1" ; then
+    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.2" ; then
+        __EMSDK_BINARYEN_VERSION__="104"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.2" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.0.1" ; then
         __EMSDK_BINARYEN_VERSION__="103"
     elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.0.1" \
         && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.15" ; then
