@@ -268,7 +268,7 @@ check_compiler() {
 		fi
 	elif tc-is-clang ; then
 		if ver_test $(clang-version) -lt 8 ; then
-			die "${PN} requires Clang >= 8 for"
+			die "${PN} requires Clang >= 8"
 		fi
 	else
 		die "Compiler is not supported"
