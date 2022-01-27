@@ -30,14 +30,23 @@
     <remote-id type="github">AcademySoftwareFoundation/openvdb</remote-id>
   </upstream>
   <use>
-    <flag restrict="&lt;=media-gfx/openvdb-7.1.0" name="abi5-compat">
-      Disables newer features to maintain compatibility with ABI5.
+    <flag name="abi5-compat">
+      Maintain compatibility with ABI5.
     </flag>
-    <flag restrict="&gt;=media-gfx/openvdb-6.0.0" name="abi6-compat">
-      Disables newer features to maintain compatibility with ABI6.
+    <flag name="abi6-compat">
+      Maintain compatibility with ABI6.
     </flag>
-    <flag restrict="&gt;=media-gfx/openvdb-7.0.0" name="abi7-compat">
-      Disables newer features to maintain compatibility with ABI7.
+    <flag name="abi7-compat">
+      Maintain compatibility with ABI7.
+    </flag>
+    <flag name="abi8-compat">
+      Maintain compatibility with ABI8.
+    </flag>
+    <flag name="abi9-compat">
+      Maintain compatibility with ABI9.
+    </flag>
+    <flag name="abi10-compat">
+      Maintain compatibility with ABI10.
     </flag>
     <flag name="blosc">
       Adds improved disk compression support
