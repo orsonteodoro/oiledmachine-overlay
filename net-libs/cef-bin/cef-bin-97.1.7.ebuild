@@ -17,7 +17,7 @@ KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 
 # In Aug 7, we switching back to stable which is sufficient for security standards
 
-CEF_VERSION_RAW="01/20/2022 - 97.1.6+g8961cdb+chromium-97.0.4692.99 / Chromium 97.0.4692.99"
+CEF_VERSION_RAW="01/24/2022 - 97.1.7+g45ce543+chromium-97.0.4692.99 / Chromium 97.0.4692.99"
 CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/add734a/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4515
 CEF_COMMIT="${CEF_VERSION_RAW#*\+}" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 CEF_COMMIT="${CEF_COMMIT%\+*}"
