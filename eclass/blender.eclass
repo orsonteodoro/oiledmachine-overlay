@@ -741,7 +741,7 @@ blender_configure_linker_flags() {
 		einfo "Using GOLD (8)"
 		mycmakeargs+=(
 			-DWITH_LINKER_LLD=OFF
-			-DWITH_LINKER_GOLD=OO
+			-DWITH_LINKER_GOLD=ON
 		)
 	elif tc-is-gcc && has_version "sys-devel/binutils[plugins,gold]" ; then
 		einfo "Using GOLD (9)"
