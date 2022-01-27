@@ -328,6 +328,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-python.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
 	"${FILESDIR}/${PN}-2.93.7-openusd-21.11-lightapi.patch"
+	"${FILESDIR}/${PN}-3.0.0-clang-linker.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
