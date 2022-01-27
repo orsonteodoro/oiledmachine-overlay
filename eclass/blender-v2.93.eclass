@@ -21,8 +21,8 @@ PYTHON_COMPAT=( python3_{9,10} ) # For the max exclusive Python supported (and
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-OPENVDB_ABIS_SLOTS=( 8 )
-OPENVDB_ABIS=( ${OPENVDB_ABIS_SLOTS[@]/#/abi} )
+OPENVDB_ABIS_MAJOR_VERS=( 8 )
+OPENVDB_ABIS=( ${OPENVDB_ABIS_MAJOR_VERS[@]/#/abi} )
 OPENVDB_ABIS=( ${OPENVDB_ABIS[@]/%/-compat} )
 IUSE+=" ${OPENVDB_ABIS[@]}"
 IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada
@@ -55,7 +55,8 @@ LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender
 
 # The release USE flag depends on platform defaults.
 REQUIRED_USE+="
-	^^ ( llvm-11 llvm-12 llvm-13 )
+	^^ ( ${LLVM_SLOTS[@]/#/llvm-} )
+	^^ ( ${OPENVDB_ABIS[@]} )
 	!boost? ( !alembic !cycles !cycles-network !nls !openvdb
 		!color-management )
 	!tbb? ( !cycles !elbeem !openimagedenoise !openvdb )
@@ -69,7 +70,7 @@ REQUIRED_USE+="
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
 	openimagedenoise? ( tbb )
-	openvdb? ( abi8-compat openexr tbb )
+	openvdb? ( || ( ${OPENVDB_ABIS[@]} ) openexr tbb )
 	optix? ( cuda cycles nvcc )
 	opus? ( ffmpeg )
 	osl? ( cycles llvm )
@@ -175,6 +176,27 @@ gen_oiio_depends() {
 				>=media-libs/openimageio-2.1.15.0[${s},color-management?,jpeg2k?]
 			)
 		"
+	done
+	echo "${o}"
+}
+
+gen_openvdb_depends() {
+	local o
+	local s
+	for s in ${OPENVDB_ABIS_MAJOR_VERS[@]} ; do
+		if (( ${s} == 8 )) ; then
+			o+="
+				abi${s}-compat? (
+					>=media-gfx/openvdb-8.0.1[${PYTHON_SINGLE_USEDEP},abi${s}-compat(+)]
+				)
+			"
+		else
+			o+="
+				abi${s}-compat? (
+					>=media-gfx/openvdb-${s}[${PYTHON_SINGLE_USEDEP},abi${s}-compat(+)]
+				)
+			"
+		fi
 	done
 	echo "${o}"
 }
@@ -286,7 +308,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=] )
 	openvdb? (
-		>=media-gfx/openvdb-8.0.1[${PYTHON_SINGLE_USEDEP},abi8-compat(+)]
+		$(gen_openvdb_depends)
 		>=dev-libs/c-blosc-1.5.0
 		nanovdb? ( >=media-gfx/nanovdb-25.0.0_pre20200924:= )
 	)
@@ -443,9 +465,12 @@ _src_configure() {
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
 	append-lfs-flags
-	if use abi8-compat ; then
-		append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=8
-	fi
+
+	for s in ${OPENVDB_ABIS_MAJOR_VERS[@]} ; do
+		if use abi${s}-compat ; then
+			append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=${s}
+		fi
+	done
 
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
