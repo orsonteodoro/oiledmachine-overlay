@@ -187,13 +187,13 @@ gen_openvdb_depends() {
 		if (( ${s} == 8 )) ; then
 			o+="
 				abi${s}-compat? (
-					>=media-gfx/openvdb-8.0.1[${PYTHON_SINGLE_USEDEP},abi${s}-compat(+)]
+					>=media-gfx/openvdb-8.0.1[${PYTHON_SINGLE_USEDEP},abi${s}-compat]
 				)
 			"
 		else
 			o+="
 				abi${s}-compat? (
-					>=media-gfx/openvdb-${s}[${PYTHON_SINGLE_USEDEP},abi${s}-compat(+)]
+					>=media-gfx/openvdb-${s}[${PYTHON_SINGLE_USEDEP},abi${s}-compat]
 				)
 			"
 		fi
