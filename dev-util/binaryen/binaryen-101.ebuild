@@ -3,7 +3,7 @@
 
 EAPI=7
 
-CMAKE_MIN_VERSION="3.1.3"
+CMAKE_MIN_VERSION="3.10.2"
 CMAKE_BUILD_TYPE="Release"
 PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-utils python-any-r1 toolchain-funcs
@@ -17,9 +17,19 @@ KEYWORDS="~amd64 ~x86"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" doc"
-RDEPEND+=" ${PYTHON_DEPS}"
+CDEPEND+="
+	|| (
+		>=sys-devel/gcc-5
+		>=sys-devel/clang-3.4
+	)
+"
+RDEPEND+=" ${PYTHON_DEPS}
+	${CDEPEND}
+"
 DEPEND+=" ${RDEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}"
+BDEPEND+=" ${PYTHON_DEPS}
+	${CDEPEND}
+"
 SRC_URI="
 https://github.com/WebAssembly/binaryen/archive/version_${PV}.tar.gz
 	-> ${P}.tar.gz"
