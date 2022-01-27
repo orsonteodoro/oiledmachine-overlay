@@ -364,7 +364,7 @@ BDEPEND+="
 	)
 	cycles? (
 		x86? ( || (
-			sys-devel/clang
+			>=sys-devel/clang-${CLANG_MIN}
 			dev-lang/icc
 		) )
 	)
