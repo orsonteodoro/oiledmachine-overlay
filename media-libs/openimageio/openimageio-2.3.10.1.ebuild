@@ -25,7 +25,16 @@ OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 IUSE+=" ${CPU_FEATURES[@]%:*} ${OPENVDB_APIS_[@]}
 aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc jpeg2k
 libressl opencv opengl openvdb ptex +python +qt5 raw rav1e ssl +truetype"
+gen_abi_compat_required_use() {
+	local o
+	local s
+	for s in ${OPENVDB_APIS[@]} ; do
+		o+=" abi${s}-compat? ( openvdb ) "
+	done
+	echo "${o}"
+}
 REQUIRED_USE="
+	$(gen_abi_compat_required_use)
 	aom? ( avif )
 	avif? ( || ( aom rav1e ) )
 	python? ( ${PYTHON_REQUIRED_USE} )
@@ -205,37 +214,25 @@ src_configure() {
 	)
 
 	local set_cxx17=0
-	if use abi5-compat ; then
-		ewarn "Using abi5-compat"
-	elif use abi6-compat ; then
-		ewarn "Using abi6-compat"
-	elif use abi7-compat ; then
-		ewarn "Using abi7-compat"
-	elif use abi8-compat && usex cxx17 ; then
-		set_cxx17=1
-		einfo "Using abi8-compat and added CMAKE_CXX_STANDARD=17"
-		mycmakeargs+=(
-			-DCMAKE_CXX_STANDARD=17
-		)
-	elif use abi8-compat ; then
-		einfo "Using abi8-compat and added CMAKE_CXX_STANDARD=14"
-		mycmakeargs+=(
-			-DCMAKE_CXX_STANDARD=14
-		)
-	elif use abi9-compat && usex cxx17 ; then
-		set_cxx17=1
-		einfo "Using abi9-compat and added CMAKE_CXX_STANDARD=17"
-		mycmakeargs+=(
-			-DCMAKE_CXX_STANDARD=17
-		)
-	elif use abi9-compat ; then
-		einfo "Using abi9-compat and added CMAKE_CXX_STANDARD=14"
-		mycmakeargs+=(
-			-DCMAKE_CXX_STANDARD=14
-		)
-	else
-		ewarn "One of ${OPENVDB_APIS_[@]} was not set."
-	fi
+
+	for s in ${OPENVDB_APIS[@]} ; do
+		if (( ${s} >= 8 )) ; then
+			if use "abi${s}-compat" && usex cxx17 ; then
+				set_cxx17=1
+				einfo "Using abi${s}-compat and added CMAKE_CXX_STANDARD=17"
+				mycmakeargs+=(
+					-DCMAKE_CXX_STANDARD=17
+				)
+			elif use "abi${s}-compat" ; then
+				einfo "Using abi${s}-compat and added CMAKE_CXX_STANDARD=14"
+				mycmakeargs+=(
+					-DCMAKE_CXX_STANDARD=14
+				)
+			fi
+		else
+			use "abi${s}-compat" && einfo "Using abi${s}-compat"
+		fi
+	done
 
 	if use cxx17 && (( ${set_cxx17} == 0 )) ; then
 		einfo "Added CMAKE_CXX_STANDARD=17"
