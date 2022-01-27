@@ -260,7 +260,8 @@ check_embree() {
 }
 
 check_compiler() {
-	test-flags-CXX "-std=c++${CXXABI_V}" || die "Switch to a C++ ${CXXABI_V} compatible compiler."
+	test-flags-CXX "-std=c++${CXXABI_V}" 2>/dev/null 1>/dev/null \
+		|| die "Switch to a c++${CXXABI_V} compatible compiler."
 	if tc-is-gcc ; then
 		if ver_test $(gcc-fullversion) -lt 9.3.1 ; then
 			die "${PN} requires GCC >= 9.3.1"
