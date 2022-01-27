@@ -19,7 +19,7 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" doc"
 CDEPEND+="
 	|| (
-		>=sys-devel/gcc-12
+		>=sys-devel/gcc-11
 		>=sys-devel/clang-11
 	)
 "
@@ -40,10 +40,11 @@ DOCS=( CHANGELOG.md README.md )
 pkg_setup() {
 	CC=$(tc-getCC)
 	CXX=$(tc-getCXX)
-	echo "CC=${CC} CXX=${CXX}"
+	einfo "CC=${CC} CXX=${CXX}"
+	test-flags-CXX "-std=c++17" 2>/dev/null 1>/dev/null || die "Switch to a c++17 compatible compiler."
 	if tc-is-gcc ; then
-		if ver_test $(gcc-major-version) -lt 12 ; then
-			die "${PN} requires GCC >=12 for c++17 support"
+		if ver_test $(gcc-major-version) -lt 11 ; then
+			die "${PN} requires GCC >=11 for c++17 support"
 		fi
 	elif tc-is-clang ; then
 		if ver_test $(clang-version) -lt 11 ; then

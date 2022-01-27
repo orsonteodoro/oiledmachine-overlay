@@ -40,7 +40,8 @@ DOCS=( CHANGELOG.md README.md )
 pkg_setup() {
 	CC=$(tc-getCC)
 	CXX=$(tc-getCXX)
-	echo "CC=${CC} CXX=${CXX}"
+	einfo "CC=${CC} CXX=${CXX}"
+	test-flags-CXX "-std=c++14" 2>/dev/null 1>/dev/null || die "Switch to a c++14 compatible compiler."
 	if tc-is-gcc ; then
 		if ver_test $(gcc-major-version) -lt 5 ; then
 			die "${PN} requires GCC >=5.x for c++14 support"
