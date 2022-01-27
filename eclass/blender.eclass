@@ -259,6 +259,21 @@ check_embree() {
 	fi
 }
 
+check_compiler() {
+	test-flags-CXX "-std=c++${CXXABI_V}" || die "Switch to a C++ ${CXXABI_V} compatible compiler."
+	if tc-is-gcc ; then
+		if ver_test $(gcc-fullversion) -lt 9.3.1 ; then
+			die "${PN} requires GCC >= 9.3.1"
+		fi
+	elif tc-is-clang ; then
+		if ver_test $(clang-version) -lt 8 ; then
+			die "${PN} requires Clang >= 8 for"
+		fi
+	else
+		die "Compiler is not supported"
+	fi
+}
+
 blender_pkg_setup() {
 #      [ebuild developer note - rough draft]
 #      PGO Trainer (PGT) Options and still deciding:
@@ -302,6 +317,7 @@ die
 	check_cpu
 	check_optimal_compiler_for_cycles_x86
 	check_embree
+	check_compiler
 	if declare -f _blender_pkg_setup > /dev/null ; then
 		_blender_pkg_setup
 	fi
