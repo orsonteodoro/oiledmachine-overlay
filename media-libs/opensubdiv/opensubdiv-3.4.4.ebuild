@@ -1,12 +1,14 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+# Some parts synced with opensubdiv-3.4.4-r2.
+
+EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR=emake
 PYTHON_COMPAT=( python2_7 )
 
-inherit cmake flag-o-matic python-utils-r1 toolchain-funcs
+inherit cmake cuda flag-o-matic python-utils-r1 toolchain-funcs
 
 MY_PV="$(ver_rs "1-3" '_')"
 DESCRIPTION="An Open-Source subdivision surface library"
@@ -17,7 +19,7 @@ SRC_URI="https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v${MY_PV}.t
 # See for example CMakeLists.txt for details.
 LICENSE="Apache-2.0"
 SLOT="0"
-KEYWORDS="amd64 ~arm ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="cuda doc examples opencl openmp ptex tbb test tutorials"
 
 ONETBB_SLOT="12"
@@ -42,26 +44,21 @@ BDEPEND="
 		app-doc/doxygen
 		dev-python/docutils
 	)
-	cuda? ( <sys-devel/gcc-9[cxx] )
+	cuda? ( <sys-devel/gcc-12[cxx] )
 "
 
 S="${WORKDIR}/OpenSubdiv-${MY_PV}"
 
 PATCHES_=(
 	"${FILESDIR}/${PN}-3.3.0-use-gnuinstalldirs.patch"
-	"${FILESDIR}/${PN}-3.3.0-add-CUDA9-compatibility.patch"
+	"${FILESDIR}/${PN}-3.4.4-add-CUDA11-compatibility.patch"
+	"${FILESDIR}/${PN}-3.4.3-install-tutorials-into-bin.patch"
 	"${FILESDIR}/${PN}-3.4.0-0001-documentation-CMakeLists.txt-force-python2.patch"
-	"${FILESDIR}/${P}-install-tutorials-into-bin.patch"
 )
 
 RESTRICT="!test? ( test )"
 
 pkg_pretend() {
-	if use cuda; then
-		[[ $(gcc-major-version) -gt 8 ]] && \
-		eerror "USE=cuda requires gcc < 9. Run gcc-config to switch your default compiler" && \
-		die "Need gcc version earlier than 9"
-	fi
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
 }
 
