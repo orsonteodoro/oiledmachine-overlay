@@ -695,67 +695,10 @@ knl|knm) ]] \
 
 blender_configure_linker_flags() {
 	# Respect the user linker choice.
-	if [[ "${CFLAGS}" =~ "-flto=thin" ]] ; then
-		einfo "Using LLD (1)"
-		mycmakeargs+=(
-			-DWITH_LINKER_LLD=ON
-			-DWITH_LINKER_GOLD=OFF
-		)
-	elif [[ "${CFLAGS}" =~ "-flto=full" ]] ; then
-		einfo "Using GOLD (2)"
-		mycmakeargs+=(
-			-DWITH_LINKER_LLD=OFF
-			-DWITH_LINKER_GOLD=ON
-		)
-	elif tc-is-clang && use llvm-13 && has_version "sys-devel/llvm:13" && has_version "sys-devel/clang:13[default-lld]" ; then
-		einfo "Using LLD (3)"
-		mycmakeargs+=(
-			-DWITH_LINKER_LLD=ON
-			-DWITH_LINKER_GOLD=OFF
-		)
-	elif tc-is-clang && use llvm-12 && has_version "sys-devel/llvm:12" && has_version "sys-devel/clang:12[default-lld]" ; then
-		einfo "Using LLD (4)"
-		mycmakeargs+=(
-			-DWITH_LINKER_LLD=ON
-			-DWITH_LINKER_GOLD=OFF
-		)
-	elif tc-is-clang && use llvm-11 && has_version "sys-devel/llvm:11" && has_version "sys-devel/clang:11[default-lld]" ; then
-		einfo "Using LLD (5)"
-		mycmakeargs+=(
-			-DWITH_LINKER_LLD=ON
-			-DWITH_LINKER_GOLD=OFF
-		)
-	elif tc-is-clang && use llvm-13 && has_version "sys-devel/llvm:13[gold]" && has_version "sys-devel/llvmgold" && has_version "sys-devel/binutils[plugins,gold]" ; then
-		einfo "Using GOLD (6)"
-		mycmakeargs+=(
-			-DWITH_LINKER_LLD=OFF
-			-DWITH_LINKER_GOLD=ON
-		)
-	elif tc-is-clang && use llvm-12 && has_version "sys-devel/llvm:12[gold]" && has_version "sys-devel/llvmgold" && has_version "sys-devel/binutils[plugins,gold]" ; then
-		einfo "Using GOLD (7)"
-		mycmakeargs+=(
-			-DWITH_LINKER_LLD=OFF
-			-DWITH_LINKER_GOLD=ON
-		)
-	elif tc-is-clang && use llvm-11 && has_version "sys-devel/llvm:11[gold]" && has_version "sys-devel/llvmgold" && has_version "sys-devel/binutils[plugins,gold]" ; then
-		einfo "Using GOLD (8)"
-		mycmakeargs+=(
-			-DWITH_LINKER_LLD=OFF
-			-DWITH_LINKER_GOLD=ON
-		)
-	elif tc-is-gcc && has_version "sys-devel/binutils[plugins,gold]" ; then
-		einfo "Using GOLD (9)"
-		mycmakeargs+=(
-			-DWITH_LINKER_LLD=OFF
-			-DWITH_LINKER_GOLD=ON
-		)
-	else
-		einfo "Using BFD"
-		mycmakeargs+=(
-			-DWITH_LINKER_LLD=OFF
-			-DWITH_LINKER_GOLD=OFF
-		)
-	fi
+	mycmakeargs+=(
+		-DWITH_LINKER_LLD=OFF
+		-DWITH_LINKER_GOLD=OFF
+	)
 }
 
 blender_configure_simd_cycles() {
