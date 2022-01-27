@@ -19,8 +19,8 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" doc"
 CDEPEND+="
 	|| (
-		>=sys-devel/gcc-11
-		>=sys-devel/clang-12
+		>=sys-devel/gcc-12
+		>=sys-devel/clang-11
 	)
 "
 RDEPEND+=" ${PYTHON_DEPS}
@@ -42,12 +42,12 @@ pkg_setup() {
 	CXX=$(tc-getCXX)
 	echo "CC=${CC} CXX=${CXX}"
 	if tc-is-gcc ; then
-		if ver_test $(gcc-major-version) -lt 11 ; then
-			die "${PN} requires GCC >=11 for c++17 support"
+		if ver_test $(gcc-major-version) -lt 12 ; then
+			die "${PN} requires GCC >=12 for c++17 support"
 		fi
 	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt 12 ; then
-			die "${PN} requires Clang >=12 for c++17 support"
+		if ver_test $(clang-version) -lt 11 ; then
+			die "${PN} requires Clang >=11 for c++17 support"
 		fi
 	else
 		die "Compiler is not supported"
