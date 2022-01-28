@@ -216,7 +216,6 @@ gen_osl_depends()
 	echo "${o}"
 }
 
-BOOST_DEPEND=">=dev-libs/boost-1.73:=[nls?,threads(+)]"
 OSL_V="1.11.14.1"
 TBB_DEPEND=">=dev-cpp/tbb-2020.2"
 PUGIXML_DEPEND=">=dev-libs/pugixml-1.10"
@@ -261,7 +260,10 @@ RDEPEND+="  ${PYTHON_DEPS}
 	)
 	media-libs/libglvnd
 	alembic? ( >=media-gfx/alembic-1.7.16[boost(+),hdf(+)] )
-	boost? ( ${BOOST_DEPEND} )
+	boost? (
+		!usd? ( >=dev-libs/boost-1.73:=[nls?,threads(+)] )
+		usd? ( >=dev-libs/boost-1.73:=[nls?,threads(+),python] )
+	)
 	collada? (
 		dev-libs/libpcre:=[static-libs]
 		>=media-libs/opencollada-1.6.68:=
@@ -400,6 +402,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-replace-IsInMaster.patch"
 	"${FILESDIR}/${PN}-2.93.7-build-draco.patch"
 	"${FILESDIR}/${PN}-3.0.0-intern-ghost-fix-typo-in-finding-XF86VMODE.patch"
+	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {

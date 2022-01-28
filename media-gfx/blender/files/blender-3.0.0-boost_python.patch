@@ -1,0 +1,18 @@
+Subject:  Link to boost_python for bf_usd
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Fri Jan 28 01:50:12 PM PST 2022 (Unix time: 1643406612)
+
+Fixes ld: ../../lib/libbf_usd.a(usd_capi_export.cc.o): undefined reference to symbol '_ZN5boost6python23throw_error_already_setEv'
+--- a/build_files/cmake/platform/platform_unix.cmake.orig	2021-10-27 11:46:25.000000000 -0700
++++ b/build_files/cmake/platform/platform_unix.cmake	2022-01-28 13:55:58.002588249 -0800
+@@ -354,6 +354,10 @@ if(WITH_BOOST)
+     find_package(IcuLinux)
+     list(APPEND BOOST_LIBRARIES ${ICU_LIBRARIES})
+   endif()
++  if(WITH_USD)
++    string(REPLACE "." "" PYTHON_VERSION_NO_DOT PYTHON_VERSION)
++    list(APPEND BOOST_LIBRARIES boost_python${PYTHON_VERSION_NO_DOT})
++  endif()
+ endif()
+ 
+ if(WITH_PUGIXML)
