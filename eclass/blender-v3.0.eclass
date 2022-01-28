@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: blender-v3.0.eclass
@@ -399,6 +399,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lightapi.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-replace-IsInMaster.patch"
 	"${FILESDIR}/${PN}-2.93.7-build-draco.patch"
+	"${FILESDIR}/${PN}-3.0.0-intern-ghost-fix-typo-in-finding-XF86VMODE.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
