@@ -232,6 +232,9 @@
     <flag name="doc">
       Build C and Python API documentation directly from the source code.
     </flag>
+    <flag name="draco">
+      Adds Draco Compression support for glTF.
+    </flag>
     <flag name="elbeem">
       Adds surface fluid simulation to Blender using El'Beem library.
     </flag>
