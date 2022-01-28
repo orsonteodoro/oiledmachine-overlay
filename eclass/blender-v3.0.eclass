@@ -403,6 +403,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.93.7-build-draco.patch"
 	"${FILESDIR}/${PN}-3.0.0-intern-ghost-fix-typo-in-finding-XF86VMODE.patch"
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
+	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {

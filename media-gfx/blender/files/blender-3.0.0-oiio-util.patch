@@ -1,0 +1,36 @@
+Subject:  Fix link time failure with libcycles_session.a
+Patch status:  Testing
+Patch author:  Orson Teodoro
+Date:  Fri Jan 28 02:24:29 PM PST 2022 (Unix time: 1643408669)
+
+Fixes:
+ld: ../../lib/libcycles_session.a(merge.cpp.o): undefined reference to symbol '_ZN16OpenImageIO_v2_310Filesystem6renameENS_11string_viewES1_RNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE'
+
+--- a/build_files/cmake/Modules/FindOpenImageIO.cmake.orig	2021-10-27 11:46:25.000000000 -0700
++++ b/build_files/cmake/Modules/FindOpenImageIO.cmake	2022-01-28 14:19:44.842704096 -0800
+@@ -48,6 +48,15 @@ FIND_LIBRARY(OPENIMAGEIO_LIBRARY
+     lib64 lib
+   )
+ 
++FIND_LIBRARY(OPENIMAGEIO_UTIL_LIBRARY
++  NAMES
++    OpenImageIO_Util
++  HINTS
++    ${_openimageio_SEARCH_DIRS}
++  PATH_SUFFIXES
++    lib64 lib
++  )
++
+ FIND_FILE(OPENIMAGEIO_IDIFF
+   NAMES
+     idiff
+--- a/intern/cycles/session/CMakeLists.txt.orig	2021-10-27 11:46:32.000000000 -0700
++++ b/intern/cycles/session/CMakeLists.txt	2022-01-28 14:22:09.497394039 -0800
+@@ -38,6 +38,7 @@ set(LIB
+   cycles_device
+   cycles_integrator
+   cycles_util
++  ${OPENIMAGEIO_UTIL_LIBRARY}
+ )
+ 
+ include_directories(${INC})
