@@ -84,5 +84,8 @@
     <flag name="tools">
       Build commandline tools
     </flag>
+    <flag name="rN">
+      For internal use only.  Keep paths for CCACHE for faster rebuilds.
+    </flag>
   </use>
 </pkgmetadata>

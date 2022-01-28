@@ -16,7 +16,7 @@ KEYWORDS="~amd64"
 IUSE+=" -alembic -doc +draco -embree +examples -experimental +hdf5 +imaging
 +jemalloc -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 +ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
--vulkan"
+-vulkan r1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	alembic? ( openexr )
@@ -110,6 +110,7 @@ PATCHES=(
 	"${FILESDIR}/algorithm.patch"
 	"${FILESDIR}/openusd-21.11-gcc-11-size_t.patch"
 	"${FILESDIR}/openusd-21.11-gcc-11-numeric_limits.patch"
+	"${FILESDIR}/openusd-21.11-glibc-2.34.patch"
 )
 S="${WORKDIR}/USD-${PV}"
 DOCS=( CHANGELOG.md README.md )
