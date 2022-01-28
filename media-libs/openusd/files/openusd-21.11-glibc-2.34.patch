@@ -74,7 +74,7 @@ https://github.com/PixarAnimationStudios/USD/issues/1592
      string* errMsg)
  {
 -#if !defined(ARCH_OS_LINUX)
-+#if !defined(ARCH_OS_LINUX) || !HAVE_MEMALLOC_HOOKS						// oteodoro: Changed.  Allow only for < GLIBC 2.34
++#if !defined(ARCH_OS_LINUX) || !HAVE_MEM_ALLOC_HOOKS						// oteodoro: Changed.  Allow only for < GLIBC 2.34
      *errMsg = "ArchMallocHook functionality not implemented for non-linux systems";
      return false;
  #else

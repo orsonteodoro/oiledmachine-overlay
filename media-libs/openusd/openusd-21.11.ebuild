@@ -16,7 +16,7 @@ KEYWORDS="~amd64"
 IUSE+=" -alembic -doc +draco -embree +examples -experimental +hdf5 +imaging
 +jemalloc -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 +ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
--vulkan r1"
+-vulkan r2"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	alembic? ( openexr )
