@@ -26,11 +26,11 @@ OPENVDB_ABIS=( ${OPENVDB_ABIS_MAJOR_VERS[@]/#/abi} )
 OPENVDB_ABIS=( ${OPENVDB_ABIS[@]/%/-compat} )
 IUSE+=" ${OPENVDB_ABIS[@]}"
 IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada -cycles-hip
-+color-management -cpudetection +cuda +cycles +dds -debug doc
-+elbeem +embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm -man
-+nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
-+openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
-+pulseaudio release +sdl +sndfile +tbb test +tiff +usd -valgrind"
++color-management -cpudetection +cuda +cycles +dds -debug doc +draco +elbeem
++embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm -man +nanovdb
++ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise +openimageio
++openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace +pulseaudio
+release +sdl +sndfile +tbb test +tiff +usd -valgrind"
 LLVM_MAX_UPSTREAM="12" # (inclusive)
 LLVM_SLOTS=(13 12 11)
 gen_llvm_iuse()
@@ -88,6 +88,7 @@ REQUIRED_USE+="
 		cycles
 		dds
 		!debug
+		draco
 		elbeem
 		embree
 		ffmpeg
@@ -397,6 +398,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lightapi.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-replace-IsInMaster.patch"
+	"${FILESDIR}/${PN}-2.93.7-build-draco.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -543,6 +545,7 @@ _src_configure() {
 		-DWITH_CXX11_ABI=ON
 		-DWITH_CYCLES_HIP_BINARIES=$(usex cycles-hip)
 		-DWITH_DOC_MANPAGE=$(usex man)
+		-DWITH_DRACO=$(usex draco)
 		-DWITH_GMP=$(usex gmp)
 		-DWITH_IK_SOLVER=ON
 		-DWITH_INPUT_IME=OFF

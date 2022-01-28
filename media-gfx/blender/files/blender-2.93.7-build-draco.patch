@@ -1,0 +1,11 @@
+--- blender-2.93.7.orig/CMakeLists.txt	2022-01-27 16:33:18.004497034 -0800
++++ blender-2.93.7/CMakeLists.txt	2022-01-27 16:43:12.550932428 -0800
+@@ -705,7 +705,7 @@ endif()
+ set_and_warn_dependency(WITH_PYTHON WITH_CYCLES        OFF)
+ set_and_warn_dependency(WITH_PYTHON WITH_DRACO         OFF)
+ 
+-if(WITH_DRACO AND NOT WITH_PYTHON_INSTALL)
++if(FALSE AND WITH_DRACO AND NOT WITH_PYTHON_INSTALL)
+   message(STATUS "WITH_DRACO requires WITH_PYTHON_INSTALL to be ON, disabling WITH_DRACO for now")
+   set(WITH_DRACO OFF)
+ endif()

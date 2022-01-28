@@ -1398,6 +1398,7 @@ _src_install() {
 				-e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
 				-e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|g" \
 				-e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|g" \
+				-e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
 				"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
 		else
 			sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
@@ -1415,6 +1416,7 @@ _src_install() {
 					-e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
 					-e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|g" \
 					-e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|g" \
+					-e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
 					"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
 			else
 				sed -i -e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \

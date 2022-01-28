@@ -25,12 +25,12 @@ OPENVDB_ABIS_MAJOR_VERS=( 8 )
 OPENVDB_ABIS=( ${OPENVDB_ABIS_MAJOR_VERS[@]/#/abi} )
 OPENVDB_ABIS=( ${OPENVDB_ABIS[@]/%/-compat} )
 IUSE+=" ${OPENVDB_ABIS[@]}"
-IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada
-+color-management -cpudetection +cuda +cycles -cycles-network +dds -debug doc
-+elbeem +embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm -man
-+nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
-+openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
-+pulseaudio release +sdl +sndfile +tbb test +tiff +usd -valgrind"
+IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada +color-management
+-cpudetection +cuda +cycles -cycles-network +dds -debug doc +draco +elbeem
++embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm -man +nanovdb
++ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise +openimageio
++openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace +pulseaudio
+release +sdl +sndfile +tbb test +tiff +usd -valgrind"
 LLVM_MAX_UPSTREAM="11" # (inclusive)
 LLVM_SLOTS=(13 12 11)
 gen_llvm_iuse()
@@ -88,6 +88,7 @@ REQUIRED_USE+="
 		!cycles-network
 		dds
 		!debug
+		draco
 		elbeem
 		embree
 		ffmpeg
@@ -392,6 +393,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-python.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
 	"${FILESDIR}/${PN}-2.93.7-openusd-21.11-lightapi.patch"
+	"${FILESDIR}/${PN}-2.93.7-build-draco.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -541,6 +543,7 @@ ebuild/upstream developers only."
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
 		-DWITH_DOC_MANPAGE=$(usex man)
+		-DWITH_DRACO=$(usex draco)
 		-DWITH_IK_SOLVER=ON
 		-DWITH_GMP=$(usex gmp)
 		-DWITH_IMAGE_DDS=$(usex dds)
