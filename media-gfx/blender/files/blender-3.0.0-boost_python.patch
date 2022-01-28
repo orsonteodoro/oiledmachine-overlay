@@ -10,7 +10,7 @@ Fixes ld: ../../lib/libbf_usd.a(usd_capi_export.cc.o): undefined reference to sy
      list(APPEND BOOST_LIBRARIES ${ICU_LIBRARIES})
    endif()
 +  if(WITH_USD)
-+    string(REPLACE "." "" PYTHON_VERSION_NO_DOT PYTHON_VERSION)
++    string(REPLACE "." "" PYTHON_VERSION_NO_DOT ${PYTHON_VERSION})
 +    list(APPEND BOOST_LIBRARIES boost_python${PYTHON_VERSION_NO_DOT})
 +  endif()
  endif()

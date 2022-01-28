@@ -1,5 +1,5 @@
 Subject:  Fix link time failure with libcycles_session.a
-Patch status:  Testing
+Patch status:  Complete
 Patch author:  Orson Teodoro
 Date:  Fri Jan 28 02:24:29 PM PST 2022 (Unix time: 1643408669)
 
