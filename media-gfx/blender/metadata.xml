@@ -234,6 +234,9 @@
     </flag>
     <flag name="draco">
       Adds Draco Compression support for glTF.
+
+      Details:
+https://docs.blender.org/manual/en/latest/addons/import_export/scene_gltf2.html#compression
     </flag>
     <flag name="elbeem">
       Adds surface fluid simulation to Blender using El'Beem library.
