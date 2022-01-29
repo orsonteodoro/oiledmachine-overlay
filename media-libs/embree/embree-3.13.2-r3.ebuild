@@ -68,8 +68,10 @@ BDEPEND+=" >=dev-util/cmake-3.1.0
 DEPEND+=" media-libs/glfw
 	 virtual/opengl
 	 tbb? (
-		>=dev-cpp/tbb-2021.3.0:${ONETBB_SLOT}=
-		 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+		|| (
+			>=dev-cpp/tbb-2021.3.0:${ONETBB_SLOT}=
+			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+		)
 	 )
 	 tutorials? ( media-libs/libpng:0=
 		     media-libs/openimageio
