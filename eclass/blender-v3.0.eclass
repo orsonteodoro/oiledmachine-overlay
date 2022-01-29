@@ -548,7 +548,6 @@ _src_configure() {
 	fi
 
 	blender_configure_nanovdb
-	blender_configure_opensubdiv
 
 	# Just attach the abi as a suffix for the key for multiabi support.
 	_LD_LIBRARY_PATHS[${EBLENDER}]="${_LD_LIBRARY_PATH}"
