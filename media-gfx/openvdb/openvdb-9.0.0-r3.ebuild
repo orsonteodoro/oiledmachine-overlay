@@ -99,13 +99,10 @@ BDEPEND+="
 		>=dev-util/cppunit-1.10
 		>=dev-cpp/gtest-1.10
 	)"
-TBB_2021_PATCH="${PN}-5b0ec82.patch"
 SRC_URI="
 https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/AcademySoftwareFoundation/openvdb/commit/5b0ec82307c603adb147cee4bc1a925d407141f5.patch
-	-> ${TBB_2021_PATCH}"
-# 5b0ec82 - Changes to support TBB 2021
+"
 PATCHES=(
 	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
 	"${FILESDIR}/${PN}-8.1.0-glfw-libdir.patch"
@@ -123,7 +120,6 @@ src_prepare() {
 	sed -i -e "s|lib/cmake|$(get_libdir)/cmake|g" \
 		cmake/OpenVDBGLFW3Setup.cmake || die
 	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		eapply "${DISTDIR}/${TBB_2021_PATCH}"
 		eapply "${FILESDIR}/openvdb-8.1.0-findtbb-more-debug-messages.patch"
 		eapply "${FILESDIR}/openvdb-8.1.0-prioritize-onetbb.patch"
 	fi
