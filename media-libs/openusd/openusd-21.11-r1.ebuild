@@ -32,13 +32,15 @@ REQUIRED_USE+="
 # For dependencies, see https://github.com/PixarAnimationStudios/USD/blob/v21.11/VERSIONS.md
 # https://github.com/PixarAnimationStudios/USD/blob/v21.11/build_scripts/build_usd.py#L2019
 # TBB 2021 not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
+ONETBB_SLOT="0"
+LEGACY_TBB_SLOT="2"
 RDEPEND+="
 	experimental? (
-		>=dev-cpp/tbb-2021:12=
+		>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
 	)
 	!experimental? (
-		<dev-cpp/tbb-2021:0=
-		>=dev-cpp/tbb-2018.6:0=
+		 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+		>=dev-cpp/tbb-2018.6:${LEGACY_TBB_SLOT}=
 	)
 	>=sys-libs/zlib-1.2.11
 	draco? ( >=media-libs/draco-1.4.3 )
@@ -114,8 +116,6 @@ PATCHES=(
 )
 S="${WORKDIR}/USD-${PV}"
 DOCS=( CHANGELOG.md README.md )
-ONETBB_SLOT="12"
-FORCE_LEGACY_TBB=0
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
@@ -123,7 +123,7 @@ pkg_setup() {
 
 src_prepare() {
 	if use experimental ; then
-		if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 			ewarn "Using oneTBB.  Support is experimental, incomplete, and in-development."
 			eapply "${FILESDIR}/tbb.patch"
 			eapply "${FILESDIR}/atomic-tbb.patch"
@@ -147,7 +147,7 @@ EOF
 
 src_configure() {
 	if use experimental ; then
-		if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+		if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 			append-cppflags -DTBB_ALLOCATOR_TRAITS_BROKEN
 		fi
 	fi
@@ -269,15 +269,15 @@ EOF
 	fi
 	use doc && einstalldocs
 	dodoc LICENSE.txt NOTICE.txt
-	if use experimental ; then
-		if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if ! use experimental ; then
+		if has_version "=dev-cpp/tbb-2020*:${LEGACY_TBB_SLOT}" ; then
 			for f in $(find "${ED}") ; do
 				test -L "${f}" && continue
 				if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
 					einfo "Old rpath for ${f}:"
 					patchelf --print-rpath "${f}" || die
 					einfo "Setting rpath for ${f}"
-					patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
+					patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 						"${f}" || die
 				fi
 			done
