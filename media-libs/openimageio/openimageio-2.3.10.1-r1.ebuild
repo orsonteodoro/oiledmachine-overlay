@@ -42,7 +42,8 @@ REQUIRED_USE="
 	rav1e? ( avif )"
 # See https://github.com/OpenImageIO/oiio/blob/Release-2.3.10.1/INSTALL.md for requirements
 QT_V="5.6"
-ONETBB_SLOT="12"
+ONETBB_SLOT="0"
+LEGACY_TBB_SLOT="2"
 gen_openvdb_depends() {
 	local o
 	local s
@@ -87,8 +88,8 @@ RDEPEND+="
 	openvdb? (
 		|| (
 			(
-				>=dev-cpp/tbb-2018:0=
-				<dev-cpp/tbb-2021:0=
+				>=dev-cpp/tbb-2018:${LEGACY_TBB_SLOT}=
+				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 			)
 			(
 				>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
@@ -241,13 +242,18 @@ src_configure() {
 		)
 	fi
 
-	if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR=/usr/include/oneTBB/${ONETBB_SLOT}
-			-DTBB_LIBRARY=/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}
+			-DTBB_INCLUDE_DIR=/usr/include
+			-DTBB_LIBRARY=/usr/$(get_libdir)
 		)
 		sed -i -e "s|tbb/tbb_stddef.h|oneapi/tbb/version.h|g" \
 			"src/cmake/modules/FindTBB.cmake" || die
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+		mycmakeargs+=(
+			-DTBB_INCLUDE_DIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
+			-DTBB_LIBRARY=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
+		)
 	fi
 
 	cmake_src_configure
@@ -266,14 +272,14 @@ src_install() {
 	for dir in "${FONT_S[@]}"; do
 		doins "${dir}"/*.ttf
 	done
-	if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
 				einfo "Old rpath for ${f}:"
 				patchelf --print-rpath "${f}" || die
 				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
+				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 					"${f}" || die
 			fi
 		done
