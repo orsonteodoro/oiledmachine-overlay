@@ -32,12 +32,13 @@ REQUIRED_USE+="
 # See
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/doc/dependencies.txt
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/ci/install.sh
-ONETBB_SLOT="12"
+ONETBB_SLOT="0"
+LEGACY_TBB_SLOT="2"
 DEPEND+="
 	|| (
 		(
-			>=dev-cpp/tbb-2018.0:=
-			<dev-cpp/tbb-2021:0=
+			>=dev-cpp/tbb-2018.0:${LEGACY_TBB_SLOT}=
+			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 		)
 		(
 			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
@@ -118,7 +119,7 @@ src_prepare() {
 	cmake_src_prepare
 	sed -i -e "s|lib/cmake|$(get_libdir)/cmake|g" \
 		cmake/OpenVDBGLFW3Setup.cmake || die
-	if has_version ">=dev-cpp/tbb-2021" ; then
+	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		eapply "${DISTDIR}/${TBB_2021_PATCH}"
 		eapply "${FILESDIR}/openvdb-8.1.0-findtbb-more-debug-messages.patch"
 		eapply "${FILESDIR}/openvdb-8.1.0-prioritize-onetbb.patch"
@@ -174,7 +175,7 @@ src_configure() {
 		mycmakeargs+=( -DOPENVDB_SIMD=SSE42 )
 	fi
 
-	if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		einfo "Using oneTBB"
 		mycmakeargs+=(
 			-DUSE_PKGCONFIG=ON
@@ -191,11 +192,11 @@ src_install()
 	dodoc README.md
 	docinto licenses
 	dodoc LICENSE openvdb/openvdb/COPYRIGHT
-	if has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			if readelf -h "${f}" 2>/dev/null 1>/dev/null && test -x "${f}" ; then
 				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
+				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 					"${f}" || die
 			fi
 		done
