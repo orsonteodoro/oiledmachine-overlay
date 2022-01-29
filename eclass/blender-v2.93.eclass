@@ -472,6 +472,7 @@ _src_prepare_patches() {
 	if has_version "dev-cpp/tbb:12" ; then
 		eapply "${FILESDIR}/${PN}-3.0.0-tbb-changes.patch"
 	else
+		# There is a major incompatibility between 2020 and 2021.
 		if has_version ">=dev-cpp/tbb-2021:0" && use usd ; then
 			eerror
 			eerror "You can only choose one adventure:"
@@ -479,6 +480,9 @@ _src_prepare_patches() {
 			eerror "  (1) disable the usd USE flag"
 			eerror "  (2) use the tbb:12 from the oiledmachine-overlay"
 			eerror "  (3) use the <tbb-2021 and hardmask tbb >= 2021"
+			eerror
+			eerror "Any downgrade or upgrade may require a rebuild of those packages"
+			eerror "depending on them."
 			eerror
 			die
 		fi

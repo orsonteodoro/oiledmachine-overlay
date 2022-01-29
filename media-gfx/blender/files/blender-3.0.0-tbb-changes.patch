@@ -119,7 +119,7 @@ diff -urpN blender-3.0.0.orig/source/blender/io/usd/CMakeLists.txt blender-3.0.0
    ${USD_INCLUDE_DIRS}
    ${BOOST_INCLUDE_DIR}
 -  ${TBB_INCLUDE_DIR}
-+  ${TBB2_INCLUDE_DIR}
++  ${TBB_INCLUDE_DIR}
    ${PYTHON_INCLUDE_DIRS}
  )
  
@@ -128,13 +128,13 @@ diff -urpN blender-3.0.0.orig/source/blender/io/usd/CMakeLists.txt blender-3.0.0
    target_link_libraries(bf_usd INTERFACE -Wl,-force_load ${USD_LIBRARIES})
  elseif(UNIX)
 -  target_link_libraries(bf_usd INTERFACE "-Wl,--whole-archive ${USD_LIBRARIES} -Wl,--no-whole-archive ${TBB_LIBRARIES}")
-+  target_link_libraries(bf_usd INTERFACE "-Wl,--whole-archive ${USD_LIBRARIES} -Wl,--no-whole-archive ${TBB2_LIBRARIES}")
++  target_link_libraries(bf_usd INTERFACE "-Wl,--whole-archive ${USD_LIBRARIES} -Wl,--no-whole-archive ${TBB_LIBRARIES}")
  else()
    message(FATAL_ERROR "Unknown how to link USD with your compiler ${CMAKE_CXX_COMPILER_ID}")
  endif()
  
 -target_link_libraries(bf_usd INTERFACE ${TBB_LIBRARIES})
-+target_link_libraries(bf_usd INTERFACE ${TBB2_LIBRARIES})
++target_link_libraries(bf_usd INTERFACE ${TBB_LIBRARIES})
  
  if(WITH_GTESTS)
    set(TEST_SRC

@@ -489,6 +489,9 @@ _src_prepare_patches() {
 			eerror "  (2) use the tbb:12 from the oiledmachine-overlay"
 			eerror "  (3) use the <tbb-2021 and hardmask tbb >= 2021"
 			eerror
+			eerror "Any downgrade or upgrade may require a rebuild of those packages"
+			eerror "depending on them."
+			eerror
 			die
 		fi
 	fi
