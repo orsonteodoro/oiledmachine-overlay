@@ -270,7 +270,7 @@ EOF
 	use doc && einstalldocs
 	dodoc LICENSE.txt NOTICE.txt
 	if ! use experimental ; then
-		if has_version "=dev-cpp/tbb-2020*:${LEGACY_TBB_SLOT}" ; then
+		if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 			for f in $(find "${ED}") ; do
 				test -L "${f}" && continue
 				if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
