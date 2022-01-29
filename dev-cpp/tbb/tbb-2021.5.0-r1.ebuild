@@ -46,6 +46,7 @@ REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	X? ( examples )"
 RDEPEND+="
+	sys-apps/hwloc:=
 	examples? (
 		sci-libs/mkl[${MULTILIB_USEDEP}]
 		X? (
@@ -69,6 +70,13 @@ S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 fi
 DOCS=( README.md )
 RESTRICT="mirror"
+PATCHES=(
+	# should be in.. 2022?
+	"${FILESDIR}"/${PN}-2021.4.0-lto.patch
+	"${FILESDIR}"/${PN}-2021.5.0-musl-deepbind.patch
+	# need to verify this is in master
+	"${FILESDIR}"/${PN}-2021.5.0-musl-mallinfo.patch
+)
 
 pkg_setup()
 {
