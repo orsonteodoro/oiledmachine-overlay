@@ -13,7 +13,8 @@ DESCRIPTION="High level abstract threading library"
 HOMEPAGE="https://www.threadingbuildingblocks.org"
 SRC_URI="https://github.com/intel/${PN}/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="Apache-2.0"
-SLOT="0"
+SLOT_MAJOR="2"
+SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x86-linux"
 IUSE="debug examples"
 
@@ -43,8 +44,8 @@ multilib_src_configure() {
 	# some deps use them
 	cat <<-EOF > ${PN}.pc.template
 		prefix=${EPREFIX}/usr
-		libdir=\${prefix}/$(get_libdir)
-		includedir=\${prefix}/include
+		libdir=\${prefix}/$(get_libdir)/${PN}/${SLOT_MAJOR}
+		includedir=\${prefix}/include/${PN}/${SLOT_MAJOR}
 		Name: ${PN}
 		Description: ${DESCRIPTION}
 		Version: ${PV}
@@ -121,13 +122,14 @@ multilib_src_install() {
 	else
 		buildtypes="release"
 	fi
+	exeinto /usr/$(get_libdir)/${PN}/${SLOT_MAJOR}
 	for bt in ${buildtypes}; do
 		cd "${BUILD_DIR}_${bt}" || die
 		local l
 		for l in $(find . -name lib\*$(get_libname \*)); do
-			dolib.so ${l}
+			doexe ${l}
 			local bl=$(basename ${l})
-			dosym ${bl} /usr/$(get_libdir)/${bl%%.*}$(get_libname)
+			dosym ${bl} /usr/$(get_libdir)/${PN}/${SLOT_MAJOR}/${bl%%.*}$(get_libname)
 		done
 	done
 
@@ -137,7 +139,8 @@ multilib_src_install() {
 }
 
 multilib_src_install_all() {
-	doheader -r include/*
+	insinto /usr/include/${PN}/${SLOT_MAJOR}
+	doins -r include/*
 
 	einstalldocs
 

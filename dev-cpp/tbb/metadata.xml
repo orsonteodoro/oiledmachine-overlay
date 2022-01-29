@@ -47,8 +47,8 @@
   </use>
   <slots>
     <slot name="0">
-      <!-- Same as original ebuild, currently TBB_COMPATIBLE_INTERFACE_VERSION -->
-      (Legacy) TBB version.  C++03/98 compatible.
+      <!-- Same as the latest version -->
+      oneTBB version.  C++11 mandatory.
     </slot>
     <slot name="2">
       <!-- Same as TBB_COMPATIBLE_INTERFACE_VERSION in include/tbb/tbb_stddef.h -->

@@ -37,7 +37,7 @@ https://github.com/oneapi-src/${MY_PN}/archive/refs/heads/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
 fi
 LICENSE="Apache-2.0"
-SLOT_MAJOR="12" # Same as __TBB_BINARY_VERSION in include/oneapi/tbb/version.h or the M in libtbb.so.M.m
+SLOT_MAJOR="0"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86
 ~amd64-linux ~x86-linux"
@@ -155,8 +155,8 @@ INCLUDE_PATH           = ${S}/include/oneapi ${S}/include/tbb|g" \
 	esac
 
 	mycmakeargs=(
-		-DCMAKE_INSTALL_INCLUDEDIR="include/${MY_PN}/${SLOT_MAJOR}"
-		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)/${MY_PN}/${SLOT_MAJOR}"
+#		-DCMAKE_INSTALL_INCLUDEDIR="include/${MY_PN}/${SLOT_MAJOR}"
+#		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)/${MY_PN}/${SLOT_MAJOR}"
 		-DBUILD_SHARED_LIBS=ON
 		-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 		-DCMAKE_C_COMPILER=${comp}
@@ -203,8 +203,8 @@ gen_pkg_config() {
 	# some deps use them
 	cat <<-EOF > ${PN}.pc.template
 		prefix=${EPREFIX}/usr
-		libdir=\${prefix}/$(get_libdir)/${MY_PN}/${SLOT_MAJOR}
-		includedir=\${prefix}/include/${MY_PN}/${SLOT_MAJOR}
+		libdir=\${prefix}/$(get_libdir)
+		includedir=\${prefix}/include
 		Name: ${MY_PN}
 		Description: ${DESCRIPTION}
 		Version: ${PV}
@@ -415,44 +415,6 @@ src_install()
 		fi
 	}
 	multilib_foreach_abi src_install_abi
-
-	# Change RPATHS for python .so files and examples matching ABI
-	for f in $(find "${ED}") ; do
-		test -L "${f}" && continue
-		if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
-			local old_rpath
-			einfo "Old unsanitized rpath for ${f}:"
-			local old_rpath=$(patchelf --print-rpath "${f}")
-			echo -e "${old_rpath}"
-			einfo "Old sanitized rpath for ${f}:"
-			local old_rpath=$(echo "${old_rpath}" \
-				| sed -E -e "s|/var/tmp[^:]+||g" -e "s|^:||g" -e "s|:$||g")
-			echo -e "${old_rpath}"
-			einfo "Setting rpath for ${f}:"
-			local a_dl=$(ldd "${f}" 2>/dev/null | grep "libdl.so" | cut -f 2 -d "/")
-			local a_libc=$(ldd "${f}" 2>/dev/null | grep "libc.so" | cut -f 2 -d "/")
-			if (( ${#a_dl} > 0 )) ; then
-				if (( ${#old_rpath} == 0 )) ; then
-					patchelf --set-rpath "/usr/${a_dl}/oneTBB/${SLOT_MAJOR}" \
-						"${f}" || die
-				else
-					patchelf --set-rpath "${old_rpath}:/usr/${a_dl}/oneTBB/${SLOT_MAJOR}" \
-						"${f}" || die
-				fi
-			elif (( ${#a_libc} > 0 )) ; then
-				if (( ${#old_rpath} == 0 )) ; then
-					patchelf --set-rpath "/usr/${a_libc}/oneTBB/${SLOT_MAJOR}" \
-						"${f}" || die
-				else
-					patchelf --set-rpath "${old_rpath}:/usr/${a_libc}/oneTBB/${SLOT_MAJOR}" \
-						"${f}" || die
-				fi
-			fi
-			einfo "New rpath:"
-			patchelf --print-rpath "${f}"
-			echo
-		fi
-	done
 }
 
 pkg_postinst()
