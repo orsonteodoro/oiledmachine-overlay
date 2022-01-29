@@ -167,6 +167,7 @@ CDEPEND="python? (
 		${PYTHON_DEPS}
 		numpy? ( $(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]') )
 	 )"
+LEGACY_TBB_SLOT="2"
 DEPEND+=" ${CDEPEND}
 	media-libs/freeglut[${MULTILIB_USEDEP}]
 	virtual/opengl[${MULTILIB_USEDEP}]
@@ -174,7 +175,7 @@ DEPEND+=" ${CDEPEND}
 		media-libs/mesa[${MULTILIB_USEDEP},egl]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
 	)
-	tbb? ( <dev-cpp/tbb-2021:2= )"
+	tbb? ( <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}= )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
 	dev-util/patchelf
@@ -184,7 +185,6 @@ DOCS=( AUTHORS.txt LICENSE.txt README.md )
 # Building / linking of third Party library BussIK does not work out of the box
 RESTRICT="mirror test"
 S="${WORKDIR}/${PN}3-${PV}"
-LEGACY_TBB_SLOT="2"
 
 pkg_pretend() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
