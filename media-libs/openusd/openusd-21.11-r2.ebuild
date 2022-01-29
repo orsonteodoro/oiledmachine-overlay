@@ -158,12 +158,6 @@ src_configure() {
 			-DDRACO_ATTRIBUTE_INDICES_DEDUPLICATION_SUPPORTED=ON \
 			-DTBB_SUPPRESS_DEPRECATED_MESSAGES=1
 	fi
-	if use imaging ; then
-		if has_version ">=dev-cpp/tbb-2021:0" && has_version "media-libs/opensubdiv[tbb]" ; then
-			# For opensubdiv header
-			append-cppflags -DUSE_ONETBB
-		fi
-	fi
         # See https://github.com/PixarAnimationStudios/USD/blob/v21.05/cmake/defaults/Options.cmake
 	mycmakeargs+=(
 		-DBUILD_SHARED_LIBS=ON
