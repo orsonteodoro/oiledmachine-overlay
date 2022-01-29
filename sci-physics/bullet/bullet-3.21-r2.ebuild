@@ -184,7 +184,7 @@ DOCS=( AUTHORS.txt LICENSE.txt README.md )
 # Building / linking of third Party library BussIK does not work out of the box
 RESTRICT="mirror test"
 S="${WORKDIR}/${PN}3-${PV}"
-TBB_SLOT="2"
+LEGACY_TBB_SLOT="2"
 
 pkg_pretend() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
@@ -229,13 +229,13 @@ src_configure() {
 			-DUSE_DOUBLE_PRECISION=$(usex double-precision)
 			-DUSE_GRAPHICAL_BENCHMARK=OFF
 		)
-		if use tbb && has_version "<dev-cpp/tbb-2021:${TBB_SLOT}" ; then
+		if use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 			mycmakeargs+=(
-				-DBULLET2_TBB_INCLUDE_DIR="/usr/include/tbb/2/tbb"
-				-DBULLET2_TBB_LIB_DIR="/usr/lib64/tbb/2"
+				-DBULLET2_TBB_INCLUDE_DIR="/usr/include/tbb/${LEGACY_TBB_SLOT}"
+				-DBULLET2_TBB_LIB_DIR="/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 			)
 		elif use tbb ; then
-			die "dev-cpp/tbb:2 must be installed from the oiledmachine-overlay"
+			die "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} must be installed from the oiledmachine-overlay"
 		fi
 		cmake-utils_src_configure
 	}
