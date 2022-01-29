@@ -52,18 +52,18 @@ multilib_src_configure() {
 		URL: ${HOMEPAGE}
 		Cflags: -I\${includedir}
 	EOF
-	cp ${PN}.pc.template ${PN}.pc || die
-	cat <<-EOF >> ${PN}.pc
+	cp ${PN}.pc.template ${PN}-${SLOT_MAJOR}.pc || die
+	cat <<-EOF >> ${PN}-${SLOT_MAJOR}.pc
 		Libs: -L\${libdir} -ltbb
 		Libs.private: -lm -lrt
 	EOF
-	cp ${PN}.pc.template ${PN}malloc.pc || die
-	cat <<-EOF >> ${PN}malloc.pc
+	cp ${PN}.pc.template ${PN}malloc-${SLOT_MAJOR}.pc || die
+	cat <<-EOF >> ${PN}malloc-${SLOT_MAJOR}.pc
 		Libs: -L\${libdir} -ltbbmalloc
 		Libs.private: -lm -lrt
 	EOF
-	cp ${PN}.pc.template ${PN}malloc_proxy.pc || die
-	cat <<-EOF >> ${PN}malloc_proxy.pc
+	cp ${PN}.pc.template ${PN}malloc_proxy-${SLOT_MAJOR}.pc || die
+	cat <<-EOF >> ${PN}malloc_proxy-${SLOT_MAJOR}.pc
 		Libs: -L\${libdir} -ltbbmalloc_proxy
 		Libs.private: -lrt
 		Requires: tbbmalloc

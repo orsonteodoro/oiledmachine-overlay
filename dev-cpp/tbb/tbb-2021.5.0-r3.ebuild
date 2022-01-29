@@ -209,18 +209,18 @@ gen_pkg_config() {
 		URL: ${HOMEPAGE}
 		Cflags: -I\${includedir}
 	EOF
-	cp ${PN}.pc.template ${PN}${c}-${v}.pc || die
-	cat <<-EOF >> ${PN}${c}-${v}.pc
+	cp ${PN}.pc.template ${PN}${c}.pc || die
+	cat <<-EOF >> ${PN}${c}.pc
 		Libs: -L\${libdir} -ltbb${c}
 		Libs.private: -lm -lrt
 	EOF
-	cp ${PN}.pc.template ${PN}malloc${c}-${v}.pc || die
-	cat <<-EOF >> ${PN}malloc${c}-${v}.pc
+	cp ${PN}.pc.template ${PN}malloc${c}.pc || die
+	cat <<-EOF >> ${PN}malloc${c}.pc
 		Libs: -L\${libdir} -ltbbmalloc${c}
 		Libs.private: -lm -lrt
 	EOF
-	cp ${PN}.pc.template ${PN}malloc_proxy${c}-${v}.pc || die
-	cat <<-EOF >> ${PN}malloc_proxy${c}-${v}.pc
+	cp ${PN}.pc.template ${PN}malloc_proxy${c}.pc || die
+	cat <<-EOF >> ${PN}malloc_proxy${c}.pc
 		Libs: -L\${libdir} -ltbbmalloc_proxy${c}
 		Libs.private: -lrt
 		Requires: tbbmalloc${c}
