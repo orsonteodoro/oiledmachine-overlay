@@ -5,7 +5,7 @@
      # Try getting TBB via config first
      find_package(TBB 2021 COMPONENTS tbb CONFIG ${TBB_FIND_PACKAGE_OPTION})
 -    if (TBB_FOUND)
-+    if (TBB_FOUND && FALSE)								# oteodoro: changed line
++    if (TBB_FOUND AND FALSE)								# oteodoro: changed line
        TARGET_LINK_LIBRARIES(tasking PUBLIC TBB::tbb)
        message("-- Found TBB: ${TBB_VERSION} at ${TBB_DIR} via TBBConfig.cmake")
      else()
