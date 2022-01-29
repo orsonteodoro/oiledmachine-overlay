@@ -13,7 +13,7 @@ HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 SLOT="0"
-OPENVDB_ABIS=( 6 7 8 9 10 )
+OPENVDB_ABIS=( 6 7 8 )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 X86_CPU_FLAGS=( avx sse4_2 )
@@ -22,7 +22,7 @@ IUSE+=" ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat"
 IUSE+=" +blosc doc egl -imath-half +jemalloc -log4cplus -numpy -python
 +static-libs tbb test -vdb_lod +vdb_print -vdb_render -vdb_view"
 VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
-# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/CMakeLists.txt#L256
+# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/CMakeLists.txt#L205
 REQUIRED_USE+="
 	^^ ( ${OPENVDB_ABIS_[@]} )
 	jemalloc? ( || ( test ${VDB_UTILS} ) )
@@ -30,8 +30,8 @@ REQUIRED_USE+="
 	python? ( ${PYTHON_REQUIRED_USE} )
 	vdb_render? ( imath-half )"
 # See
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/ci/install.sh
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/ci/install.sh
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 DEPEND+="
@@ -97,7 +97,7 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-util/cppunit-1.10
-		>=dev-cpp/gtest-1.10
+		>=dev-cpp/gtest-1.8
 	)"
 TBB_2021_PATCH="${PN}-5b0ec82.patch"
 SRC_URI="
@@ -108,9 +108,6 @@ https://github.com/AcademySoftwareFoundation/openvdb/commit/5b0ec82307c603adb147
 # 5b0ec82 - Changes to support TBB 2021
 PATCHES=(
 	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
-	"${FILESDIR}/${PN}-8.1.0-glfw-libdir.patch"
-	"${FILESDIR}/${PN}-9.0.0-numpy.patch"
-	"${FILESDIR}/${PN}-9.0.0-unconditionally-search-Python-interpreter.patch"
 )
 RESTRICT="!test? ( test )"
 
@@ -183,6 +180,14 @@ src_configure() {
 		mycmakeargs+=(
 			-DUSE_PKGCONFIG=ON
 			-DTBB_FORCE_ONETBB=ON
+			-DTBB_SLOT=""
+		)
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+		einfo "Legacy TBB"
+		mycmakeargs+=(
+			-DUSE_PKGCONFIG=ON
+			-DTBB_FORCE_ONETBB=OFF
+			-DTBB_SLOT="-${LEGACY_TBB_SLOT}"
 		)
 	fi
 

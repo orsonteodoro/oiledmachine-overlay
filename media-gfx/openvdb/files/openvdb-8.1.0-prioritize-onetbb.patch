@@ -50,7 +50,7 @@ diff -urp openvdb-8.1.0.orig/cmake/FindTBB.cmake openvdb-8.1.0/cmake/FindTBB.cma
    endif()
    if(PKG_CONFIG_FOUND)
 -    pkg_check_modules(PC_Tbb QUIET tbb)
-+    pkg_check_modules(PC_Tbb QUIET tbb-12)			# oteodoro - changed line tbb -> tbb-12
++    pkg_check_modules(PC_Tbb QUIET tbb${TBB_SLOT})			# oteodoro - changed line tbb -> tbb${TBB_SLOT}
    endif()
  endif()
  
