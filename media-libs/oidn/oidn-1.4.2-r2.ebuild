@@ -34,7 +34,7 @@ ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 DEPEND+=" ${CDEPEND}
 	|| (
-		<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+		 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
 	)
 	virtual/libc
@@ -173,7 +173,7 @@ src_configure() {
 			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)
 			-DTBB_SOVER="${ONETBB_SLOT}"
 		)
-	elif has_version "=dev-cpp/tbb-2020*:${LEGACY_TBB_SLOT}" ; then
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		mycmakeargs+=(
 			-DTBB_INCLUDE_DIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
 			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
@@ -195,7 +195,7 @@ src_install() {
 		third-party-programs.txt \
 		third-party-programs-oneDNN.txt \
 		third-party-programs-oneTBB.txt
-	if has_version "=dev-cpp/tbb-2020*:${LEGACY_TBB_SLOT}" ; then
+	if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
