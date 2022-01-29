@@ -333,12 +333,12 @@ RDEPEND+="  ${PYTHON_DEPS}
 	sdl? ( >=media-libs/libsdl2-2.0.12[sound] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tbb? (
-		>=dev-cpp/tbb-2021
+		>=dev-cpp/tbb-2021:12
 	)
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
 	usd? (
 		>=media-libs/openusd-21.11[monolithic]
-		<dev-cpp/tbb-2021
+		<dev-cpp/tbb-2021:0=
 	)
 	valgrind? ( dev-util/valgrind )
 	X? (
@@ -588,7 +588,6 @@ _src_configure() {
 		-DWITH_XR_OPENXR=$(usex openxr)
 	)
 
-	blender_configure_openvdb
 	blender_configure_linker_flags
 
 	if use usd ; then
