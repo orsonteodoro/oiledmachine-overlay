@@ -124,28 +124,44 @@ https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz
 	-> ${P}.tar.gz"
 SLOT="0/${PV}"
 IUSE+=" +bullet3
+	+bullet-robotics
+	+bullet-robotics-gui
+	+convex-decomposition
 	+demos
 	doc
 	-double-precision
 	examples
 	+extras
+	+gimpactutils
+	+hacd
+	+inverse-dynamic
 	+network
 	-numpy
+	+obj2sdf
 	-openmp
 	-openvr
 	-python
+	+serialize
 	-tbb
 	test
 	-threads"
 REQUIRED_USE+="
+	bullet-robotics? ( extras )
+	bullet-robotics-gui? ( extras )
+	convex-decomposition? ( extras )
 	demos? ( extras )
+	gimpactutils? ( extras )
+	hacd? ( extras )
+	inverse-dynamic? ( extras )
 	numpy? ( python )
+	obj2sdf? ( extras )
 	openmp? ( threads )
 	openvr? ( examples )
 	python? (
 		${PYTHON_REQUIRED_USE}
 		demos
 	)
+	serialize? ( extras )
 	tbb? ( threads )"
 CDEPEND="python? (
 		${PYTHON_DEPS}
@@ -158,7 +174,7 @@ DEPEND+=" ${CDEPEND}
 		media-libs/mesa[${MULTILIB_USEDEP},egl]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
 	)
-	tbb? ( <dev-cpp/tbb-2021:0= )"
+	tbb? ( <dev-cpp/tbb-2021:2= )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
 	dev-util/patchelf
@@ -168,7 +184,7 @@ DOCS=( AUTHORS.txt LICENSE.txt README.md )
 # Building / linking of third Party library BussIK does not work out of the box
 RESTRICT="mirror test"
 S="${WORKDIR}/${PN}3-${PV}"
-TBB_SLOT="12"
+TBB_SLOT="2"
 
 pkg_pretend() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
@@ -190,11 +206,19 @@ src_configure() {
 		local mycmakeargs=(
 			-DBUILD_BULLET2_DEMOS=$(usex demos)
 			-DBUILD_BULLET3=$(usex bullet3)
+			-DBUILD_BULLET_ROBOTICS_GUI_EXTRA=$(usex bullet-robotics-gui)
+			-DBUILD_BULLET_ROBOTICS_EXTRA=$(usex bullet-robotics)
 			-DBUILD_CLSOCKET=$(usex network)
+			-DBUILD_CONVEX_DECOMPOSITION_EXTRA=$(usex convex-decomposition)
 			-DBUILD_ENET=$(usex network)
 			-DBUILD_EXTRAS=$(usex extras)
+			-DBUILD_GIMPACTUTILS_EXTRA=$(usex gimpactutils)
+			-DBUILD_HACD_EXTRA=$(usex hacd)
+			-DBUILD_INVERSE_DYNAMIC_EXTRA=$(usex inverse-dynamic)
+			-DBUILD_OBJ2SDF_EXTRA=$(usex obj2sdf)
 			-DBUILD_PYBULLET=$(multilib_native_usex python $(usex python) OFF)
 			-DBUILD_PYBULLET_NUMPY=$(multilib_native_usex python $(usex numpy) OFF)
+			-DBUILD_SERIALIZE_EXTRA=$(usex serialize)
 			-DBUILD_SHARED_LIBS=ON
 			-DBUILD_UNIT_TESTS=$(usex test)
 			-DBULLET2_MULTITHREADING=$(usex threads)
@@ -205,11 +229,13 @@ src_configure() {
 			-DUSE_DOUBLE_PRECISION=$(usex double-precision)
 			-DUSE_GRAPHICAL_BENCHMARK=OFF
 		)
-		if false && use tbb && has_version "dev-cpp/tbb:${TBB_SLOT}" ; then
+		if use tbb && has_version "dev-cpp/tbb:${TBB_SLOT}" ; then
 			mycmakeargs+=(
-				-DBULLET2_TBB_INCLUDE_DIR="/usr/include/oneTBB/${TBB_SLOT}"
-				-DBULLET2_TBB_LIB_DIR="/usr/$(get_libdir)/oneTBB/${TBB_SLOT}"
+				-DBULLET2_TBB_INCLUDE_DIR="/usr/include/tbb/2/tbb"
+				-DBULLET2_TBB_LIB_DIR="/usr/lib64/tbb/2"
 			)
+		elif use tbb ; then
+			die "dev-cpp/tbb:2 must be installed from the oiledmachine-overlay"
 		fi
 		cmake-utils_src_configure
 	}
@@ -267,13 +293,14 @@ sanitize_rpaths()
 		local old_rpath=$(echo "${old_rpath}" \
 			| sed -E -e "s|/var/tmp[^:]+||g" -e "s|^:||g" \
 				-e "s|:$||g" -e "s|:+|:|g" -e "s|^:$||g")
+		patchelf --set-rpath "${old_rpath}" "${f}" || die
 		echo -e "${old_rpath}"
 		if (( ${#old_rpath} == 0 )) ; then
 			patchelf --remove-rpath "${f}" || die
 		else
 			patchelf --set-rpath "${old_rpath}" "${f}" || die
 		fi
-		[[ "${old_rpath}" =~ "tmp" ]] && die "rpath is still unsanitized"
+		[[ "${old_rpath}" =~ "tmp" ]] && die "rpath is still unsanitized."
 		echo
 	done
 	# There's no need to restore rpath for broken_rpaths libs/bins because
@@ -311,18 +338,6 @@ src_install() {
 	multilib_foreach_abi install_abi
 	_install_licenses
 	sanitize_rpaths
-	if false && use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
-		for f in $(find "${ED}") ; do
-			test -L "${f}" && continue
-			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
-				einfo "Old rpath for ${f}:"
-				patchelf --print-rpath "${f}" || die
-				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
-					"${f}" || die
-			fi
-		done
-	fi
 }
 
 pkg_postinst() {
