@@ -49,7 +49,7 @@ gen_openvdb_depends() {
 	for s in ${OPENVDB_APIS[@]} ; do
 		o+="
 			abi${s}-compat? (
-				>=media-libs/openvdb-${s}[abi${s}-compat]
+				>=media-gfx/openvdb-${s}[abi${s}-compat]
 			)
 		"
 	done
