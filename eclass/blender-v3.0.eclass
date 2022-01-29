@@ -216,6 +216,8 @@ gen_osl_depends()
 	echo "${o}"
 }
 
+ONETBB_SLOT="0"
+LEGACY_TBB_SLOT="2"
 OSL_V="1.11.14.1"
 PUGIXML_DEPEND=">=dev-libs/pugixml-1.10"
 RDEPEND+="  ${PYTHON_DEPS}
@@ -336,7 +338,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
 	usd? (
 		>=media-libs/openusd-21.11[monolithic]
-		<dev-cpp/tbb-2021:2=
+		<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 	)
 	valgrind? ( dev-util/valgrind )
 	X? (
@@ -480,7 +482,7 @@ show_tbb_error() {
 	eerror "You can only choose one adventure:"
 	eerror
 	eerror "  (1) disable the usd USE flag"
-	eerror "  (2) use the tbb:2 from the oiledmachine-overlay"
+	eerror "  (2) use the tbb:${LEGACY_TBB_SLOT} from the oiledmachine-overlay"
 	eerror "  (3) use the <tbb-2021:0::gentoo and hardmask tbb >= 2021"
 	eerror
 	eerror "Any downgrade or upgrade may require a rebuild of those packages"
@@ -491,9 +493,9 @@ show_tbb_error() {
 
 _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-3.0.0-parent-datafiles-dir-change.patch"
-	if ( has_version "<dev-cpp/tbb-2021:0" || has_version "dev-cpp/tbb:2" ) && use usd ; then
+	if ( has_version "<dev-cpp/tbb-2021:0" || has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ) && use usd ; then
 		:;
-	elif has_version ">=dev-cpp/tbb-2021:0" && ! has_version "dev-cpp/tbb:2" && use usd ; then
+	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && ! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && use usd ; then
 		show_tbb_error
 	fi
 }
