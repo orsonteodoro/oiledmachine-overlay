@@ -22,7 +22,8 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="cuda doc examples opencl openmp ptex tbb test tutorials"
 
-ONETBB_SLOT="12"
+ONETBB_SLOT="0"
+LEGACY_TBB_SLOT="2"
 RDEPEND="
 	${PYTHON_DEPS}
 	media-libs/glew:=
@@ -35,7 +36,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	tbb? (
-		<dev-cpp/tbb-2021:0=
+		<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
 	)
 "
@@ -68,7 +69,7 @@ pkg_setup() {
 
 src_prepare() {
 	eapply ${PATCHES_[@]}
-	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		eapply "${FILESDIR}/${PN}-3.4.3-findtbb-onetbb-changes.patch"
 		eapply "${FILESDIR}/${PN}-3.4.3-use-task-arena.patch"
 	fi
@@ -94,14 +95,18 @@ src_configure() {
 		-DNO_TUTORIALS=$(usex !tutorials)
 	)
 
-	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="/usr/include/oneTBB/${ONETBB_SLOT}"
-			-DTBB_LIBRARY_PATH="/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}"
+			-DTBB_INCLUDE_DIR="/usr/include"
+			-DTBB_LIBRARY_PATH="/usr/$(get_libdir)"
+		)
+		append-cxxflags -DUSE_ONETBB
+	elif use tbb && has_version "=dev-cpp/tbb-2020*:${LEGACY_TBB_SLOT}" ; then
+		mycmakeargs+=(
+			-DTBB_INCLUDE_DIR="/usr/include/tbb/${LEGACY_TBB_SLOT}"
+			-DTBB_LIBRARY_PATH="/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 		)
 	fi
-
-	append-cxxflags -DUSE_ONETBB
 
 	# fails with building cuda kernels when using multiple jobs
 	export MAKEOPTS="-j1"
@@ -129,14 +134,14 @@ src_test() {
 
 src_install() {
 	cmake_src_install
-	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if use tbb && has_version "=dev-cpp/tbb-2020*:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
 				einfo "Old rpath for ${f}:"
 				patchelf --print-rpath "${f}" || die
 				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
+				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 					"${f}" || die
 			fi
 		done
