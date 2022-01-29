@@ -83,6 +83,7 @@ PATCHES_=(
 	"${FILESDIR}/${PN}-3.13.0-findtbb-more-debug-messages.patch"
 	"${FILESDIR}/${PN}-3.13.2-glibc-2.34-catch.hpp-fix.patch"
 	"${FILESDIR}/${PN}-3.13.0-findtbb-alt-lib-path.patch"
+	"${FILESDIR}/${PN}-3.13.2-tbb-alt-config.patch"
 )
 
 chcxx() {
@@ -260,8 +261,8 @@ src_configure() {
 
 	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR=/usr/include/
-			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/
+			-DTBB_INCLUDE_DIR=/usr/include
+			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)
 			-DTBB_SOVER=$(echo $(basename $(realpath /usr/$(get_libdir)/libtbb.so)) | cut -f 3 -d ".")
 		)
 	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
