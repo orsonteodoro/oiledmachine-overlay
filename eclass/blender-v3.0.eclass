@@ -336,7 +336,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
 	usd? (
 		>=media-libs/openusd-21.11[monolithic]
-		<dev-cpp/tbb-2021:0=
+		<dev-cpp/tbb-2021:2=
 	)
 	valgrind? ( dev-util/valgrind )
 	X? (
@@ -475,25 +475,26 @@ ewarn
 	fi
 }
 
+show_tbb_error() {
+	eerror
+	eerror "You can only choose one adventure:"
+	eerror
+	eerror "  (1) disable the usd USE flag"
+	eerror "  (2) use the tbb:2 from the oiledmachine-overlay"
+	eerror "  (3) use the <tbb-2021:0::gentoo and hardmask tbb >= 2021"
+	eerror
+	eerror "Any downgrade or upgrade may require a rebuild of those packages"
+	eerror "depending on them."
+	eerror
+	die
+}
+
 _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-3.0.0-parent-datafiles-dir-change.patch"
-	if has_version "dev-cpp/tbb:12" ; then
-		eapply "${FILESDIR}/${PN}-3.0.0-tbb-changes.patch"
-	else
-		# There is a major incompatibility between 2020 and 2021.
-		if has_version ">=dev-cpp/tbb-2021:0" && use usd ; then
-			eerror
-			eerror "You can only choose one adventure:"
-			eerror
-			eerror "  (1) disable the usd USE flag"
-			eerror "  (2) use the tbb:12 from the oiledmachine-overlay"
-			eerror "  (3) use the <tbb-2021 and hardmask tbb >= 2021"
-			eerror
-			eerror "Any downgrade or upgrade may require a rebuild of those packages"
-			eerror "depending on them."
-			eerror
-			die
-		fi
+	if ( has_version "<dev-cpp/tbb-2021:0" || has_version "dev-cpp/tbb:2" ) && use usd ; then
+		:;
+	elif has_version ">=dev-cpp/tbb-2021:0" && ! has_version "dev-cpp/tbb:2" && use usd ; then
+		show_tbb_error
 	fi
 }
 
