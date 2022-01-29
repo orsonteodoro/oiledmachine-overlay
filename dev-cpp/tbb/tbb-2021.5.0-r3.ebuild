@@ -82,11 +82,9 @@ pkg_setup()
 {
 	if use test ; then
 		if [[ ${FEATURES} =~ test ]] ; then
-			einfo \
-"Testing enabled."
+			einfo "Testing enabled."
 		else
-			ewarn \
-"Testing disabled.  Add FEATURES=test before ebuild."
+			ewarn "Testing disabled.  Add FEATURES=test before ebuild."
 		fi
 	fi
 
@@ -394,8 +392,6 @@ _src_install() {
 			docompress -x "/usr/share/doc/${PF}/examples"
 		fi
 	fi
-	sed -i -e "s|/include|/include/${MY_PN}/${SLOT_MAJOR}|g" \
-		"${ED}/usr/$(get_libdir)/${MY_PN}/${SLOT_MAJOR}/cmake/TBB/TBBTargets.cmake" || die
 }
 
 src_install()
@@ -419,8 +415,10 @@ src_install()
 
 pkg_postinst()
 {
-	einfo \
-"Packages that depend on ${CATEGORY}/${PN}:${SLOT_MAJOR} must either set the\n\
-RPATH or add a LD_LIBRARY_PATH wrapper to use ${MY_PN} instead of legacy TBB.\n\
-You must verify that the linking is proper via ldd."
+	einfo
+	einfo "Packages that depend on ${CATEGORY}/${PN}:${SLOT_MAJOR} must"
+	einfo "either set the RPATH or add a LD_LIBRARY_PATH wrapper to use"
+	einfo "${MY_PN} instead of legacy TBB.  You must verify that the"
+	einfo "linking is proper via ldd."
+	einfo
 }
