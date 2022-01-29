@@ -29,7 +29,8 @@ REQUIRED_USE+="
 # For dependencies, see
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/doc/dependencies.txt
 # openvdb should be 7.1.1 but downgraded to minor.  No 7.1.1 release either.
-ONETBB_SLOT="12"
+ONETBB_SLOT="0"
+LEGACY_TBB_SLOT="2"
 DEPEND_GTEST=" >=dev-cpp/gtest-1.10"
 # media-gfx/openvdb-7.1[abi7-compat] # Placed here because the constraint has be relaxed.
 DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
@@ -55,8 +56,8 @@ DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 	tbb? (
 		|| (
 			(
-				>=dev-cpp/tbb-2017.6:0=
-				<dev-cpp/tbb-2021:0=
+				>=dev-cpp/tbb-2017.6:${LEGACY_TBB_SLOT}=
+				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 			)
 			(
 				>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
@@ -175,7 +176,7 @@ pkg_setup()
 src_prepare()
 {
 	eapply ${PATCHES_[@]}
-	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-findtbb-onetbb-changes.patch"
 		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-onetbb-split-header-location.patch"
 		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-replace-ttb-atomic-with-std-atomic.patch"
@@ -230,12 +231,17 @@ src_configure()
 		)
 	fi
 
-	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDEDIR=/usr/include/oneTBB/${ONETBB_SLOT}
-			-DTBB_LIBRARYDIR=/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}
+			-DTBB_INCLUDEDIR=/usr/include
+			-DTBB_LIBRARYDIR=/usr/$(get_libdir)
 		)
 		append-cppflags -DNANOVDB_USE_ONETBB
+	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+		mycmakeargs+=(
+			-DTBB_INCLUDEDIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
+			-DTBB_LIBRARYDIR=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
+		)
 	fi
 
 	cmake_src_configure
@@ -326,14 +332,14 @@ src_install()
 	cd "${S}/.." || die
 	docinto licenses
 	dodoc LICENSE
-	if use tbb && has_version "dev-cpp/tbb:${ONETBB_SLOT}" ; then
+	if use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
 				einfo "Old rpath for ${f}:"
 				patchelf --print-rpath "${f}" || die
 				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/oneTBB/${ONETBB_SLOT}" \
+				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 					"${f}" || die
 			fi
 		done
