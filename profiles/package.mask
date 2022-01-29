@@ -1,11 +1,5 @@
 # Ebuilds masked because other reasons
 
-# Masked until all blender dependencies are oneTBB compatible and to avoid
-# possible oversubscription [more threads than cores available] performance
-# penalty when both TBB and oneTBB are used.
-# openusd - not oneTBB ready
->=dev-cpp/tbb-2021
-
 # Ebuilds currently in develpment
 #-------------------------------------------------------------------------------
 
