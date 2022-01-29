@@ -129,31 +129,26 @@ src_configure() {
 	if use gcc ; then
 		export CC="gcc"
 		export CXX="g++"
+		test-flags-CXX "-std=c++11" 2>/dev/null 1>/dev/null \
+	                || die "Switch to a c++11 compatible compiler."
+		# Prevent lock up
+		tc-is-gcc && export MAKEOPTS="-j1"
 	elif use clang ; then
 		export CC="clang"
 		export CXX="clang++"
+		test-flags-CXX "-std=c++11" 2>/dev/null 1>/dev/null \
+	                || die "Switch to a c++11 compatible compiler."
 	elif use icc ; then
-		export CC=""
-		export CXX=""
+		export CC=icc
+		export CXX=icpc
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 	fi
 
-	if [[ -z "${CC}" ]] ; then
-		einfo "Using gcc"
-		CC="gcc"
-		CXX="g++"
-	fi
-
 	einfo "CC=${CC}"
 	einfo "CXX=${CXX}"
 	einfo "CHOST=${CHOST}"
-	local gcc_v
-	local target_v=""
-
-	# Prevent lock up
-	tc-is-gcc && export MAKEOPTS="-j1"
 
 	mycmakeargs+=(
 		-DCMAKE_CXX_COMPILER="${CXX}"
@@ -207,7 +202,7 @@ src_install() {
 				einfo "Old rpath for ${f}:"
 				patchelf --print-rpath "${f}" || die
 				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${ONETBB_SLOT}" \
+				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 					"${f}" || die
 			fi
 		done
