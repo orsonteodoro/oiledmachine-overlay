@@ -68,8 +68,8 @@ BDEPEND+=" >=dev-util/cmake-3.1.0
 DEPEND+=" media-libs/glfw
 	 virtual/opengl
 	 tbb? (
-		>=dev-cpp/tbb-2021.3.0:0=
-		 <dev-cpp/tbb-2021:2=
+		>=dev-cpp/tbb-2021.3.0:${ONETBB_SLOT}=
+		 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 	 )
 	 tutorials? ( media-libs/libpng:0=
 		     media-libs/openimageio
@@ -262,7 +262,7 @@ src_configure() {
 			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/
 			-DTBB_SOVER="${ONETBB_SLOT}"
 		)
-	elif use tbb && has_version "=dev-cpp/tbb-2020*:2" ; then
+	elif use tbb && has_version "=dev-cpp/tbb-2020*:${LEGACY_TBB_SLOT}" ; then
 		mycmakeargs+=(
 			-DTBB_INCLUDE_DIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
 			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
