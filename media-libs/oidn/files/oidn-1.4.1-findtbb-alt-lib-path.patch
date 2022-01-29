@@ -63,7 +63,7 @@ diff -urp oidn-1.4.1.orig/cmake/FindTBB.cmake oidn-1.4.1/cmake/FindTBB.cmake
    # dependency easier.
    if (UNIX)
 -    set(LIB_NAME lib${LIB_NAME}.so.2 ${LIB_NAME})
-+    set(LIB_NAME lib${LIB_NAME}.so.${TBB_SOVER} lib${LIB_NAME}.so.2 ${LIB_NAME})	# oteodoro - added a particular sover to match
++    set(LIB_NAME lib${LIB_NAME}.so.${TBB_SOVER} ${LIB_NAME})	# oteodoro - added a particular sover to match
    endif()
  
    find_library(${LIB_VAR}
