@@ -124,6 +124,7 @@ PIP_DOWNLOADED="
 	$(python_gen_cond_dep 'dev-python/boto3[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/wheel[${PYTHON_USEDEP}]')"
+LEGACY_TBB_SLOT="2" # https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/blob/master/OpenVDB/include/tbb/tbb_stddef.h
 RDEPEND_NOT_LISTED="
 	${PIP_DOWNLOADED}
 	dev-libs/libbsd
@@ -139,7 +140,16 @@ RDEPEND_NOT_LISTED="
 	x11-libs/libxshmfence
 	x11-libs/libXxf86vm
 	denoiser? (
-		dev-cpp/tbb
+		|| (
+			(
+				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+				>=dev-cpp/tbb-2020.1:${LEGACY_TBB_SLOT}=
+			)
+			(
+				 <dev-cpp/tbb-2021:0=
+				>=dev-cpp/tbb-2020.1:0=
+			)
+		)
 		dev-lang/vtune
 		sys-libs/libomp
 	)"
