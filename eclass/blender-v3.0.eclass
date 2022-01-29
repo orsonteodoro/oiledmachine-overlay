@@ -332,9 +332,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 	pulseaudio? ( media-sound/pulseaudio )
 	sdl? ( >=media-libs/libsdl2-2.0.12[sound] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
-	tbb? (
-		>=dev-cpp/tbb-2021:12
-	)
+	tbb? ( >=dev-cpp/tbb-2020.2 )
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
 	usd? (
 		>=media-libs/openusd-21.11[monolithic]
@@ -408,7 +406,6 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-3.0.0-intern-ghost-fix-typo-in-finding-XF86VMODE.patch"
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
-	"${FILESDIR}/${PN}-3.0.0-tbb-changes.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -480,6 +477,21 @@ ewarn
 
 _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-3.0.0-parent-datafiles-dir-change.patch"
+	if has_version "dev-cpp/tbb:12" ; then
+		eapply "${FILESDIR}/${PN}-3.0.0-tbb-changes.patch"
+	else
+		# There is a major incompatibility between 2020 and 2021.
+		if has_version ">=dev-cpp/tbb-2021:0" && use usd ; then
+			eerror
+			eerror "You can only choose one adventure:"
+			eerror
+			eerror "  (1) disable the usd USE flag"
+			eerror "  (2) use the tbb:12 from the oiledmachine-overlay"
+			eerror "  (3) use the <tbb-2021 and hardmask tbb >= 2021"
+			eerror
+			die
+		fi
+	fi
 }
 
 _src_configure() {
