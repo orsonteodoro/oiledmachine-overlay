@@ -174,6 +174,8 @@ src_configure() {
 		einfo "Using oneTBB"
 		mycmakeargs+=(
 			-DUSE_PKGCONFIG=ON
+			-DTbb_INCLUDE_DIR=/usr/include
+			-DTBB_LIBRARYDIR=/usr/$(get_libdir)
 			-DTBB_FORCE_ONETBB=ON
 			-DTBB_SLOT=""
 		)
@@ -181,6 +183,8 @@ src_configure() {
 		einfo "Legacy TBB"
 		mycmakeargs+=(
 			-DUSE_PKGCONFIG=ON
+			-DTbb_INCLUDE_DIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
+			-DTBB_LIBRARYDIR=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
 			-DTBB_FORCE_ONETBB=OFF
 			-DTBB_SLOT="-${LEGACY_TBB_SLOT}"
 		)
