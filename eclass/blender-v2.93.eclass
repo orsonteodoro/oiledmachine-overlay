@@ -217,7 +217,6 @@ gen_osl_depends()
 }
 
 OSL_V="1.11.10.0"
-TBB_DEPEND=">=dev-cpp/tbb-2020.2"
 PUGIXML_DEPEND=">=dev-libs/pugixml-1.10"
 RDEPEND+="  ${PYTHON_DEPS}
 	>=dev-lang/python-3.9.2
@@ -325,9 +324,14 @@ RDEPEND+="  ${PYTHON_DEPS}
 	pulseaudio? ( media-sound/pulseaudio )
 	sdl? ( >=media-libs/libsdl2-2.0.12[sound] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
-	tbb? ( ${TBB_DEPEND} )
+	tbb? (
+		>=dev-cpp/tbb-2021
+	)
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
-	usd? ( >=media-libs/openusd-21.11[monolithic] )
+	usd? (
+		>=media-libs/openusd-21.11[monolithic]
+		<dev-cpp/tbb-2021
+	)
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
@@ -397,6 +401,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.93.7-openusd-21.11-lightapi.patch"
 	"${FILESDIR}/${PN}-2.93.7-build-draco.patch"
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
+	"${FILESDIR}/${PN}-3.0.0-tbb-changes.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -578,6 +583,7 @@ ebuild/upstream developers only."
 		-DWITH_XR_OPENXR=$(usex openxr)
 	)
 
+	blender_configure_openvdb
 	blender_configure_linker_flags
 
 	if use usd ; then

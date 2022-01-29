@@ -718,6 +718,18 @@ blender_configure_linker_flags() {
 	)
 }
 
+blender_configure_openvdb() {
+	if has_version "dev-cpp/tbb:12" ; then
+		# Same as >=dev-cpp/tbb-2021
+		einfo "Using dev-cpp/tbb:12"
+		# For openvdb cmake files
+		mycmakeargs+=(
+			-DUSE_PKGCONFIG=ON
+			-DTBB_FORCE_ONETBB=ON
+		)
+	fi
+}
+
 blender_configure_simd_cycles() {
 	if ver_test $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
 		if ! has_version 'media-libs/embree[cpu_flags_x86_avx]' ; then
