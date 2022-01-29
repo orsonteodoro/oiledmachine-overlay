@@ -959,6 +959,24 @@ blender_configure_mesa_match_system_llvm() {
 	fi
 }
 
+blender_configure_nanovdb() {
+	if use nanovdb ; then
+		if has_version ">=dev-cpp/tbb-2021:0" && has_version "media-gfx/nanovdb[tbb]" ; then
+			# For possibly header
+			append-cppflags -DNANOVDB_USE_ONETBB
+		fi
+	fi
+}
+
+blender_configure_opensubdiv() {
+	if use opensubdiv ; then
+		if has_version ">=dev-cpp/tbb-2021:0" && has_version "media-libs/opensubdiv[tbb]" ; then
+			# For possibly header
+			append-cppflags -DUSE_ONETBB
+		fi
+	fi
+}
+
 blender_configure_osl_match_llvm() {
 	if use osl ; then
 		export OSL_ROOT_DIR="$(erdpfx)/osl/${LLVM_V}/usr"
