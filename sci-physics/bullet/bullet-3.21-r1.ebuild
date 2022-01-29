@@ -229,7 +229,7 @@ src_configure() {
 			-DUSE_DOUBLE_PRECISION=$(usex double-precision)
 			-DUSE_GRAPHICAL_BENCHMARK=OFF
 		)
-		if use tbb && has_version "dev-cpp/tbb:${TBB_SLOT}" ; then
+		if use tbb && has_version "<dev-cpp/tbb-2021:${TBB_SLOT}" ; then
 			mycmakeargs+=(
 				-DBULLET2_TBB_INCLUDE_DIR="/usr/include/tbb/2/tbb"
 				-DBULLET2_TBB_LIB_DIR="/usr/lib64/tbb/2"
