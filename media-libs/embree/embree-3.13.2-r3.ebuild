@@ -262,7 +262,7 @@ src_configure() {
 		mycmakeargs+=(
 			-DTBB_INCLUDE_DIR=/usr/include/
 			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/
-			-DTBB_SOVER="${ONETBB_SLOT}"
+			-DTBB_SOVER="12"
 		)
 	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		mycmakeargs+=(
