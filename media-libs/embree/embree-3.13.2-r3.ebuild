@@ -264,7 +264,7 @@ src_configure() {
 			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/
 			-DTBB_SOVER="${ONETBB_SLOT}"
 		)
-	elif use tbb && has_version "=dev-cpp/tbb-2020*:${LEGACY_TBB_SLOT}" ; then
+	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		mycmakeargs+=(
 			-DTBB_INCLUDE_DIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
 			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
