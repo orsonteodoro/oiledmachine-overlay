@@ -195,7 +195,9 @@ src_install() {
 		third-party-programs.txt \
 		third-party-programs-oneDNN.txt \
 		third-party-programs-oneTBB.txt
-	if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+		:;
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
