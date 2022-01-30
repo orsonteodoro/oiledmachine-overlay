@@ -206,7 +206,9 @@ src_install()
 	dodoc README.md
 	docinto licenses
 	dodoc LICENSE openvdb/openvdb/COPYRIGHT
-	if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+		:;
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			if readelf -h "${f}" 2>/dev/null 1>/dev/null && test -x "${f}" ; then
 				einfo "Setting rpath for ${f}"
