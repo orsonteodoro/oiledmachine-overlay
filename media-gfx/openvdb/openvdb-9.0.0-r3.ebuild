@@ -11,7 +11,7 @@ inherit cmake flag-o-matic python-single-r1
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
+#KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86" # Build time problems
 SLOT="0"
 OPENVDB_ABIS=( 6 7 8 9 10 )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
