@@ -124,6 +124,7 @@ src_prepare() {
 }
 
 src_configure() {
+	export MAKEOPTS="-j1" # prevent stall
 	local myprefix="${EPREFIX}/usr/"
 
 	local version
