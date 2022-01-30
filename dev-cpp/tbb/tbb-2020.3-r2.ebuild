@@ -18,7 +18,7 @@ SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x86-linux"
 IUSE="debug examples"
 
-DEPEND=""
+DEPEND="!<dev-cpp/tbb-2021:0"
 RDEPEND="${DEPEND}"
 S="${WORKDIR}/oneTBB-${MY_PV}"
 
