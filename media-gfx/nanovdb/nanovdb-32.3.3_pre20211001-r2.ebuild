@@ -189,7 +189,7 @@ src_prepare()
 src_configure()
 {
 	export MAKEOPTS="-j1" # Prevent counterproductive swapping.  Observed a 3 GiB process.
-	[[ "${CC}" == "gcc" || -z "${CC}" ]] && ewarn "Switch to clang if it takes more than 1.5 hrs to build."
+	ewarn "Switch to clang + lld if it takes more than 1.5 hrs to build."
 	# Completed build in 1 hr and 3 min in 32.x, but noticible stall with gcc.
 	if use opencl ; then
 		append-cppflags -DCL_TARGET_OPENCL_VERSION=120
