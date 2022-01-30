@@ -338,7 +338,8 @@ RDEPEND+="  ${PYTHON_DEPS}
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
 	usd? (
 		>=media-libs/openusd-21.11[monolithic]
-		<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+		!<dev-cpp/tbb-2021:0=
+		 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 	)
 	valgrind? ( dev-util/valgrind )
 	X? (
