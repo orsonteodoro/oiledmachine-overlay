@@ -17,7 +17,7 @@ X86_CPU_FEATURES=(
 	sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4.1 sse4_2:sse4.2
 	avx:avx avx2:avx2 avx512f:avx512f f16c:f16c )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-OPENVDB_APIS=( 5 6 7 8 )
+OPENVDB_APIS=( 5 6 7 8 9 )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 # font install is enabled upstream
@@ -40,7 +40,7 @@ REQUIRED_USE="
 	python? ( ${PYTHON_REQUIRED_USE} )
 	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )
 	rav1e? ( avif )"
-# See https://github.com/OpenImageIO/oiio/blob/Release-2.3.9.1/INSTALL.md for requirements
+# See https://github.com/OpenImageIO/oiio/blob/Release-2.3.10.1/INSTALL.md for requirements
 QT_V="5.6"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
@@ -272,7 +272,9 @@ src_install() {
 	for dir in "${FONT_S[@]}"; do
 		doins "${dir}"/*.ttf
 	done
-	if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+		:;
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
