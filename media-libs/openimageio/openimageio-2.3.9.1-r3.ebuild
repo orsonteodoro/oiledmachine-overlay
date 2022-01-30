@@ -90,6 +90,7 @@ RDEPEND+="
 			(
 				>=dev-cpp/tbb-2018:${LEGACY_TBB_SLOT}=
 				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+				!<dev-cpp/tbb-2021:0=
 			)
 			(
 				>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
