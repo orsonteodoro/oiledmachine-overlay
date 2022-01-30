@@ -61,8 +61,8 @@
       Switch back to OpenEXR's Half implementation
     </flag>
     <flag name="jemalloc">
-      Uses jemalloc as the concurrent memory allocator for binaries (that use the
-      utils USE flag) or unit tests.
+      Uses jemalloc as the concurrent memory allocator for binaries (that use
+      the utils USE flag) or for unit tests.
     </flag>
     <flag name="log4cplus">
       Adds improved logging support
@@ -76,10 +76,13 @@
     <flag restrict="&gt;=media-gfx/openvdb-7.0.0" name="utils">
       Build utility binaries
     </flag>
+    <flag name="no-concurrent-malloc">
+      Do not use a concurrent malloc
+    </flag>
     <flag name="test">
       Runs unit tests
     </flag>
-    <flag name="tbb">
+    <flag name="tbbmalloc">
       Uses TBB as the concurrent memory allocator for binaries (that use the
       utils USE flag) or unit tests.
     </flag>

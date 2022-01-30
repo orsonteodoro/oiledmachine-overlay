@@ -20,11 +20,13 @@ X86_CPU_FLAGS=( avx sse4_2 )
 IUSE+=" ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}"
 IUSE+=" ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat"
 IUSE+=" +blosc doc egl -imath-half +jemalloc -log4cplus -numpy -python
-+static-libs tbb test -vdb_lod +vdb_print -vdb_render -vdb_view"
++static-libs -tbbmalloc -no-concurrent-malloc test -vdb_lod +vdb_print
+-vdb_render -vdb_view"
 VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
 # For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/CMakeLists.txt#L256
 REQUIRED_USE+="
 	^^ ( ${OPENVDB_ABIS_[@]} )
+	^^ ( jemalloc tbbmalloc no-concurrent-malloc )
 	jemalloc? ( || ( test ${VDB_UTILS} ) )
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
@@ -139,7 +141,7 @@ src_configure() {
 		-DCHOST="${CHOST}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}/"
 		-DCONCURRENT_MALLOC=$(usex jemalloc "Jemalloc" \
-			$(usex tbb "Tbbmalloc" "None"))
+			$(usex tbbmalloc "Tbbmalloc" "None"))
 		-DOPENVDB_ABI_VERSION_NUMBER="${version}"
 		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON $(usex vdb_print ON \
 			$(usex vdb_render ON $(usex vdb_view ON OFF))))
