@@ -60,6 +60,7 @@ DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 			(
 				>=dev-cpp/tbb-2017.6:${LEGACY_TBB_SLOT}=
 				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+				!<dev-cpp/tbb-2021:0=
 			)
 			(
 				>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
