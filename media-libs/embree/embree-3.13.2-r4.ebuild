@@ -70,7 +70,10 @@ DEPEND+=" media-libs/glfw
 	 tbb? (
 		|| (
 			>=dev-cpp/tbb-2021.3.0:${ONETBB_SLOT}=
-			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+			(
+				!<dev-cpp/tbb-2021:0=
+				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+			)
 		)
 	 )
 	 tutorials? ( media-libs/libpng:0=
