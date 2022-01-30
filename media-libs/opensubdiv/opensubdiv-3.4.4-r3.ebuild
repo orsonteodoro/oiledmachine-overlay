@@ -136,7 +136,9 @@ src_test() {
 
 src_install() {
 	cmake_src_install
-	if use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+		:;
+	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
