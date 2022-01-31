@@ -362,7 +362,89 @@ CDEPEND+=" "$(gen_cdepend_mono "${GODOT_MONO_OSX}" "${CDEPEND_MONO_APL}")
 CDEPEND+=" "$(gen_cdepend_mono "${GODOT_MONO_WEB}" "${CDEPEND_MONO_WEB}")
 CDEPEND+=" "$(gen_cdepend_mono "${GODOT_MONO_WINDOWS}" "${CDEPEND_MONO_WINDOWS}")
 
+CDEPEND_GCC_SANITIZER="
+	!clang? ( sys-devel/gcc[sanitize] )
+"
+gen_clang_sanitizer() {
+	local san_type="${1}"
+	local s
+	local o=""
+	for s in ${LLVM_SLOTS[@]} ; do
+		o+="
+			(
+				 sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				=sys-devel/clang-runtime-${s}[${MULTILIB_USEDEP},compiler-rt,sanitize]
+				 sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},${san_type}]
+			)
+		"
+	done
+	echo "${o}"
+}
+CDEPEND_SANITIZER="
+	asan_client? (
+		|| (
+			${CDEPEND_GCC_SANITIZER}
+			clang? ( || ( $(gen_clang_sanitizer asan) ) )
+		)
+	)
+	asan_server? (
+		|| (
+			${CDEPEND_GCC_SANITIZER}
+			clang? ( || ( $(gen_clang_sanitizer asan) ) )
+		)
+	)
+	lsan_client? (
+		|| (
+			${CDEPEND_GCC_SANITIZER}
+			clang? ( || ( $(gen_clang_sanitizer lsan) ) )
+		)
+	)
+	lsan_server? (
+		|| (
+			${CDEPEND_GCC_SANITIZER}
+			clang? ( || ( $(gen_clang_sanitizer lsan) ) )
+		)
+	)
+	msan_client? (
+		|| (
+			${CDEPEND_GCC_SANITIZER}
+			clang? ( || ( $(gen_clang_sanitizer msan) ) )
+		)
+	)
+	msan_server? (
+		|| (
+			${CDEPEND_GCC_SANITIZER}
+			clang? ( || ( $(gen_clang_sanitizer msan) ) )
+		)
+	)
+	tsan_client? (
+		|| (
+			${CDEPEND_GCC_SANITIZER}
+			clang? ( || ( $(gen_clang_sanitizer tsan) ) )
+		)
+	)
+	tsan_server? (
+		|| (
+			${CDEPEND_GCC_SANITIZER}
+			clang? ( || ( $(gen_clang_sanitizer tsan) ) )
+		)
+	)
+	ubsan_client? (
+		|| (
+			${CDEPEND_GCC_SANITIZER}
+			clang? ( || ( $(gen_clang_sanitizer ubsan) ) )
+		)
+	)
+	ubsan_server? (
+		|| (
+			${CDEPEND_GCC_SANITIZER}
+			clang? ( || ( $(gen_clang_sanitizer ubsan) ) )
+		)
+	)
+"
 CDEPEND+="
+	${CDEPEND_SANITIZER}
 	godot_android_arm64v8? ( >=dev-util/android-ndk-${NDK_V} )
 	godot_android_x86? ( >=dev-util/android-ndk-${NDK_V} )
 	godot_android_x86_64? ( >=dev-util/android-ndk-${NDK_V} )
@@ -455,9 +537,6 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-zlib? ( >=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}] )
 	system-zstd? ( >=app-arch/zstd-1.4.8[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
-BDEPEND_SANTIZIER="
-	${CDEPEND_CLANG}
-	${CDEPEND_GCC}"
 BDEPEND+=" ${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -466,40 +545,10 @@ BDEPEND+=" ${CDEPEND}
 		${CDEPEND_GCC}
 	)
 	dev-util/scons
-	asan_client? (
-		${BDEPEND_SANTIZIER}
-	)
-	asan_server? (
-		${BDEPEND_SANTIZIER}
-	)
 	doxygen? ( app-doc/doxygen )
 	gdnative? ( linux? ( ${VIRTUALX_DEPEND} ) )
 	godot_platforms_android? ( ${JDK_DEPEND} )
 	lld? ( sys-devel/lld )
-	lsan_client? (
-		${BDEPEND_SANTIZIER}
-	)
-	lsan_server? (
-		${BDEPEND_SANTIZIER}
-	)
-	msan_client? (
-		${BDEPEND_SANTIZIER}
-	)
-	msan_server? (
-		${BDEPEND_SANTIZIER}
-	)
-	tsan_client? (
-		${BDEPEND_SANTIZIER}
-	)
-	tsan_server? (
-		${BDEPEND_SANTIZIER}
-	)
-	ubsan_client? (
-		${BDEPEND_SANTIZIER}
-	)
-	ubsan_server? (
-		${BDEPEND_SANTIZIER}
-	)
 	webm-simd? (
 		dev-lang/yasm
 	)"
