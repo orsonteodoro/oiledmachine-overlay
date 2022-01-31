@@ -28,7 +28,7 @@
     the corresponding LLVM version up to the latest current stable LLVM.
 
     LLVM 14 (dev) - 3.1.2
-    LLVM 13 (dev) - 2.0.26
+    LLVM 13 (stable) - 2.0.26
     LLVM 12 (stable) - 2.0.12
 
     The release cycle is rolling, so there is no stable or no LTS versions
