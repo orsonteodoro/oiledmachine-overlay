@@ -114,6 +114,7 @@ PATCHES=(
 	"${FILESDIR}/openusd-21.11-gcc-11-size_t.patch"
 	"${FILESDIR}/openusd-21.11-gcc-11-numeric_limits.patch"
 	"${FILESDIR}/openusd-21.11-glibc-2.34.patch"
+	"${FILESDIR}/openusd-21.11-clang-14-compat.patch"
 )
 S="${WORKDIR}/USD-${PV}"
 DOCS=( CHANGELOG.md README.md )
@@ -147,13 +148,6 @@ EOF
 }
 
 src_configure() {
-	# command.cpp:30:22: error: defaulting this default constructor would delete it after its first declaration
-	export CC=gcc
-	export CXX=g++
-	filter-flags -flto=thin
-	filter-flags -fuse-ld=lld
-	strip-unsupported-flags
-
 	if use experimental ; then
 		if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 			append-cppflags -DTBB_ALLOCATOR_TRAITS_BROKEN
