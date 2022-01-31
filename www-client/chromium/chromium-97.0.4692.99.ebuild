@@ -1700,7 +1700,7 @@ libz.so.1
 		path=$(echo "${paths[@]}" | tr " " "\n" | tail -n 1)
 		local real_path=$(realpath "${path}")
 		#einfo "real_path=${real_path}"
-		if readelf -Ws "${real_path}" 2>/dev/null | grep -E -q -e "(cfi_bad_type|cfi_check_fail)" ; then
+		if readelf -Ws "${real_path}" 2>/dev/null | grep -E -q -e "(cfi_bad_type|cfi_check_fail|__cfi_init)" ; then
 			einfo "${f} is CFI protected."
 		else
 			ewarn "${f} is NOT CFI protected."
