@@ -32,7 +32,7 @@ G_LONG_SCAN=${G_LONG_SCAN:="0"}
 G_NPM_APPS="/var/lib/portage/npm-packages" # location of registered npm packages
 G_PACKAGE_LOCK_DIR="/dev/shm"
 G_VERBOSE=${G_VERBOSE:="0"} # can only be 0 for silent, or 1 for more output
-G_VERSION="2021.10.22"
+G_VERSION="2022.01.30"
 G_DATA_CACHE_DIR="/var/cache/npm-secaudit"
 G_DATA_VERSION_DATA_PATH="${G_DATA_CACHE_DIR}/lite.json"
 G_USE_ELECTRON=${G_USE_ELECTRON:="1"}
@@ -41,23 +41,25 @@ G_USE_ELECTRON=${G_USE_ELECTRON:="1"}
 # include in the @${G_INSECURE_SET_FN} set.  Use at your own risk.
 G_BLACKLIST="/etc/portage/npm-secaudit-blacklist"
 
-# Track "Security:" in https://www.electronjs.org/releases/alpha?version=16
-G_CVE_PATCHED_ELECTRON_16="16.0.0_alpha8"
+# Stable versions list https://www.electronjs.org/docs/latest/tutorial/support#currently-supported-versions
 
-# Track "Security:" in https://www.electronjs.org/releases/stable?version=15
-G_CVE_PATCHED_ELECTRON_15="15.2.0"
+# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=16
+G_CVE_PATCHED_ELECTRON_16="16.0.6" # with latest non vulnerable chromium 96.x
 
-# Track "Security:" in https://www.electronjs.org/releases/stable?version=14
-G_CVE_PATCHED_ELECTRON_14="14.1.1"
+# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=15
+G_CVE_PATCHED_ELECTRON_15="15.3.5"
 
-# Track "Security:" in https://www.electronjs.org/releases/stable?version=13
-G_CVE_PATCHED_ELECTRON_13="13.5.2"
+# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=14
+G_CVE_PATCHED_ELECTRON_14="14.2.4"
+
+# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=13
+G_CVE_PATCHED_ELECTRON_13="13.6.7"
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
-G_CVE_PATCHED_NODE_16="16.11.1" # E16, E15
+G_CVE_PATCHED_NODE_16="16.13.2" # E16, E15
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V14.md
-G_CVE_PATCHED_NODE_14="14.18.1" # E14-E13
+G_CVE_PATCHED_NODE_14="14.18.3" # E14-E13
 
 # These Chromium desktop versions listed are non vulnerable versions:
 # Reason why is to minimize vulnerability checks in this eclass.
@@ -67,13 +69,13 @@ G_CVE_PATCHED_NODE_14="14.18.1" # E14-E13
 # version are listed in the link below:
 # https://omahaproxy.appspot.com/
 
-# Beta channel
-# Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
-G_LATEST_CHROMIUM_96="96.0.4664.18" # E16
+# Stable channel
+# Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
+G_LATEST_CHROMIUM_97="97.0.4692.99" #
 
 H_INFO="\
 $(basename $BASH_SOURCE) ${G_VERSION}
-Copyright 2019-2020 Orson Teodoro
+Copyright 2019-2022 Orson Teodoro
 License: Dual licensed under MIT or GPL2+"
 
 H_HELP="\
@@ -313,12 +315,20 @@ function electron_version_audit() {
 
 	local is_vulnerable=0
 	# Check Electron
-	if is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 17 ; then
-		# ENightly
+	if is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-ge" 17 ; then
+		# E17 Beta
+		# E18 Nightly
+		:; # Auto pass since no vulnerabilites reported for beta and nightly but only on stable releases
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_16} ; then
+		# Patched
 		:; # Auto pass
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 16 ; then
-		# E16 alpha
-		:; # Auto pass
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_16} ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} is not receiving proper security updates."
+		is_vulnerable=1
 	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 15 \
 		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_15} ; then
 		# Patched
@@ -387,15 +397,14 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 96 ; then
-#		&& is_x_op_y ${CHROMIUM_V} "-ge" ${G_LATEST_CHROMIUM_96} ; then
-		:; # Auto-pass because vulnerabilities are not announced
-#	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 96 \
-#		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_LATEST_CHROMIUM_96} ; then
-#		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-#"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
-#proper security updates."
-#		is_vulnerable=1
+	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-ge" 98 ; then
+		:; # Auto-pass because vulnerabilities are not announced in beta and dev channels
+	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 97 \
+		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_LATEST_CHROMIUM_97} ; then
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
+proper security updates."
+		is_vulnerable=1
 	else
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is End Of Life (EOL)."
