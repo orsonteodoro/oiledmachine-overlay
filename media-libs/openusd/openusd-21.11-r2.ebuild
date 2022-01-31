@@ -203,6 +203,17 @@ src_configure() {
 			-DPXR_MALLOC_LIBRARY="${EPREFIX}/usr/$(get_libdir)/${PN}/$(get_libdir)/libjemalloc.so"
 		)
 	fi
+	if use experimental ; then
+		mycmakeargs+=(
+			-DTBB_INCLUDE_DIR="/usr/include"
+			-DTBB_LIBRARY="/usr/$(get_libdir)"
+		)
+	else
+		mycmakeargs+=(
+                        -DTBB_INCLUDE_DIR="/usr/include/tbb/${LEGACY_TBB_SLOT}"
+                        -DTBB_LIBRARY_PATH="/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
+		)
+	fi
 	cmake_src_configure
 }
 
