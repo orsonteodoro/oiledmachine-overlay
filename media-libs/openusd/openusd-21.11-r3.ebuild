@@ -147,6 +147,11 @@ EOF
 }
 
 src_configure() {
+	# command.cpp:30:22: error: defaulting this default constructor would delete it after its first declaration
+	export CC=gcc
+	export CXX=g++
+	strip-unsupported-flags
+
 	if use experimental ; then
 		if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 			append-cppflags -DTBB_ALLOCATOR_TRAITS_BROKEN
