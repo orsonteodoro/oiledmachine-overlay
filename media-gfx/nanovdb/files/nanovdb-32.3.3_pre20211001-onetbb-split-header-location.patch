@@ -7,17 +7,18 @@ Copyright notice for nanovdb/util/Range.h:
 // Copyright Contributors to the OpenVDB Project
 // SPDX-License-Identifier: MPL-2.0
 
-You must add -DNANOVDB_USE_ONETBB to CPPFLAGS.
+You must replace __NANOVDB_USE_ONETBB__ with 0 or 1.
 
 diff -urp nanovdb.orig/nanovdb/util/Range.h nanovdb/nanovdb/util/Range.h
 --- nanovdb.orig/nanovdb/util/Range.h	2021-10-01 12:58:12.000000000 -0700
 +++ nanovdb/nanovdb/util/Range.h	2021-11-12 22:49:17.449522205 -0800
-@@ -17,7 +17,11 @@
+@@ -17,7 +17,12 @@
  #include <cassert>
  
++#define NANOVDB_USE_ONETBB __NANOVDB_USE_ONETBB__
  #ifdef NANOVDB_USE_TBB
 -#include <tbb/blocked_range.h>// for tbb::split
-+  #ifdef NANOVDB_USE_ONETBB					// oteodoro - added line
++  #if NANOVDB_USE_ONETBB					// oteodoro - added line
 +    #include "tbb/blocked_range.h"// for tbb::split		// oteodoro - reindent line
 +  #else								// oteodoro - added line
 +    #include "tbb/tbb_stddef.h"// for tbb::split		// oteodoro - re-added line
