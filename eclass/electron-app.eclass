@@ -115,27 +115,27 @@ ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
 # Also bump if for unpublished vulnerabilities published as bugs, weakened security, or Chromium security updates.
 
-# Tracked supported versions
-# https://www.electronjs.org/docs/tutorial/support#currently-supported-versions
+# Stable versions list https://www.electronjs.org/docs/latest/tutorial/support#currently-supported-versions
+
 # IMPORTANT: Update section [A] below
 
-# Track "Security:" in https://www.electronjs.org/releases/alpha?version=16
-CVE_PATCHED_ELECTRON_16="16.0.0_alpha8"
+# Track "Security:" in https://www.electronjs.org/releases/stable?version=16
+CVE_PATCHED_ELECTRON_16="16.0.6"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=15
-CVE_PATCHED_ELECTRON_15="15.2.0"
+CVE_PATCHED_ELECTRON_15="15.3.5"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=14
-CVE_PATCHED_ELECTRON_14="14.1.1"
+CVE_PATCHED_ELECTRON_14="14.2.4"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=13
-CVE_PATCHED_ELECTRON_13="13.5.2"
+CVE_PATCHED_ELECTRON_13="13.6.7"
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
-CVE_PATCHED_NODE_16="16.11.1" # Electron 16, Electron 15
+CVE_PATCHED_NODE_16="16.13.2" # Electron 16, Electron 15
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V14.md
-CVE_PATCHED_NODE_14="14.18.1" # Electron 14, Electron 13
+CVE_PATCHED_NODE_14="14.18.3" # Electron 14, Electron 13
 
 # These Chromium desktop versions listed are non vulnerable versions:
 # Reason why is to minimize vulnerability checks in this eclass.
@@ -146,8 +146,8 @@ CVE_PATCHED_NODE_14="14.18.1" # Electron 14, Electron 13
 # https://omahaproxy.appspot.com/
 
 # Beta channel
-# Track "security updates" in https://chromereleases.googleblog.com/search/label/Beta%20updates
-LATEST_CHROMIUM_96="96.0.4664.18" # Electron Nightly, Electron 16
+# Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
+LATEST_CHROMIUM_97="97.0.4692.99" #
 
 # Electron 15 uses EOL Cr94
 # Electron 14 uses EOL Cr93
@@ -964,11 +964,18 @@ critical vulnerabilities in the internal Chromium."
 
 	# Check Electron
 	if ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 17 ; then
-		# Electron Nightly (live)
-		:; # Auto pass
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 16 ; then
-		# Electron 16 Alpha
-		:; # Auto pass
+		# E18 Nightly
+		# E17 Beta
+		:; # Auto pass since vulnerabilies only announced on stable releases
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 16 \
+		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_16} ; then
+		# Patched
+		:; # Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 16 \
+		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_16} ; then
+		# Unpatched
+		adie \
+"Electron ${ELECTRON_V} is not receiving proper security updates."
 	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 \
 		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_15} ; then
 		# Patched
@@ -1030,16 +1037,14 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 96 ; then
-#		&& ver_test ${CHROMIUM_V} -ge ${LATEST_CHROMIUM_96} ; then
-		# Beta patched
+	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -ge 98 ; then
 		:; # Auto passed because vulnerabilites are typically not announced for beta and dev channels
-#	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 96 \
-#		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_96} ; then
-#		# Beta unpatched
-#		adie \
-#"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
-#proper security updates."
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 97 \
+		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_97} ; then
+		# Beta unpatched
+		adie \
+"Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
+proper security updates."
 	else
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} is End Of Life (EOL)."
