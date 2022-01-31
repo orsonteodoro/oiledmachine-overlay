@@ -241,7 +241,6 @@ src_configure()
 			-DTBB_INCLUDEDIR=/usr/include
 			-DTBB_LIBRARYDIR=/usr/$(get_libdir)
 		)
-		append-cppflags -DNANOVDB_USE_ONETBB
 	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		mycmakeargs+=(
 			-DTBB_INCLUDEDIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
