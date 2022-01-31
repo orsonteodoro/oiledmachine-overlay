@@ -150,6 +150,8 @@ src_configure() {
 	# command.cpp:30:22: error: defaulting this default constructor would delete it after its first declaration
 	export CC=gcc
 	export CXX=g++
+	filter-flags -flto=thin
+	filter-flags -fuse-ld=lld
 	strip-unsupported-flags
 
 	if use experimental ; then
