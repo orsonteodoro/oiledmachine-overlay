@@ -11,8 +11,8 @@ HOMEPAGE=\
 "https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb"
 LICENSE="MPL-2.0"
 # For versioning, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/7ac9bcdab236026a020528f860a7df02829ad433/nanovdb/nanovdb/nanovdb/NanoVDB.h#L104
-SLOT="$(ver_cut 1 ${PV})/${PV}"
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/nanovdb/nanovdb/NanoVDB.h#L68
+SLOT="0/${PV}"
 # Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
 # are disabled
@@ -27,14 +27,12 @@ REQUIRED_USE+="
 	test? ( openvdb tbb )
 	test-renderer? ( test )"
 # For dependencies, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/7ac9bcdab236026a020528f860a7df02829ad433/doc/dependencies.txt
-# openvdb should be 8.1.1 but downgraded to minor.  No 8.1.1 release either.
-# 8.1.1 reference
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/feature/nanovdb/CMakeLists.txt#L55
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/doc/dependencies.txt
+# openvdb should be 7.1.1 but downgraded to minor.  No 7.1.1 release either.
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 DEPEND_GTEST=" >=dev-cpp/gtest-1.10"
-# media-gfx/openvdb-8.1[abi8-compat] # Placed here because the constraint has be relaxed.
+# media-gfx/openvdb-7.1[abi7-compat] # Placed here because the constraint has be relaxed.
 DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 	blosc? ( >=dev-libs/c-blosc-1.5 )
 	cuda? (
@@ -48,9 +46,9 @@ DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 		virtual/opengl
 	)
 	openvdb? (
-		>=dev-libs/boost-1.66
+		>=dev-libs/boost-1.61
 		>=media-libs/ilmbase-2.2
-		>=media-gfx/openvdb-8.1
+		>=media-gfx/openvdb-7.1
 	)
 	optix? (
 		>=dev-libs/optix-7
@@ -87,7 +85,7 @@ BDEPEND+="
 		>=sys-devel/gcc-6.3.1
 		>=dev-lang/icc-17
 	)
-	>=dev-util/cmake-3.12
+	>=dev-util/cmake-3.11.4
 	doc? ( >=app-doc/doxygen-1.8.8 )
 	test? (
 		${DEPEND_GTEST}
@@ -96,8 +94,8 @@ BDEPEND+="
 		)
 	)"
 GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
-EGIT_COMMIT="7ac9bcdab236026a020528f860a7df02829ad433"
-EGIT_COMMIT_IMGUI="dc8c3618e8f8e2dada23daa1aa237626af341fd8" # 20211110
+EGIT_COMMIT="e62f7a0bf1e27397223c61ddeaaf57edf111b77f"
+EGIT_COMMIT_IMGUI="124c2608f1bf708b3abf039c93d16d704f76a815" # 20201012
 EGIT_COMMIT_NFD="67345b80ebb429ecc2aeda94c478b3bcc5f7888e" # 20190930
 GLFW_V="3.3"
 GTEST_V="1.10.0"
@@ -116,7 +114,7 @@ https://github.com/mlabbe/nativefiledialog/archive/${EGIT_COMMIT_NFD}.tar.gz
 	-> ${NFD_DFN}
 https://github.com/google/googletest/archive/refs/tags/release-${GTEST_V}.tar.gz
 	-> ${GTEST_DFN}"
-S="${WORKDIR}/openvdb-${EGIT_COMMIT}/${PN}/${PN}"
+S="${WORKDIR}/openvdb-${EGIT_COMMIT}/${PN}"
 S_IMGUI="${WORKDIR}/imgui-${EGIT_COMMIT_IMGUI}"
 S_GLFW="${WORKDIR}/glfw-${GLFW_V}"
 S_NFD="${WORKDIR}/nativefiledialog-${EGIT_COMMIT_NFD}"
@@ -124,7 +122,7 @@ S_GTEST="${WORKDIR}/googletest-${GTEST_V}"
 RESTRICT="mirror"
 CMAKE_BUILD_TYPE=Release
 PATCHES_=(
-	"${FILESDIR}/${PN}-32.3.3_pre20211001-cmake-use-tarballs.patch"
+	"${FILESDIR}/${PN}-25.0.0_pre20200924-cmake-use-tarballs.patch"
 	"${FILESDIR}/${PN}-25.0.0_pre20200924-opencl-version-120.patch"
 	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-examples-destdir.patch"
 	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-header-destdir.patch"
@@ -181,7 +179,8 @@ src_prepare()
 	eapply ${PATCHES_[@]}
 	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-findtbb-onetbb-changes.patch"
-		eapply "${FILESDIR}/${PN}-32.3.3_pre20211001-onetbb-split-header-location.patch"
+		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-onetbb-split-header-location.patch"
+		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-replace-ttb-atomic-with-std-atomic.patch"
 		sed -i -e "s|__NANOVDB_USE_ONETBB__|1|g" "${S}/nanovdb/util/Range.h" || die
 	fi
 	cmake_src_prepare
@@ -206,7 +205,6 @@ src_configure()
 		-DNANOVDB_GTEST=$(usex test)
 		-DNANOVDB_USE_BLOSC=$(usex blosc)
 		-DNANOVDB_USE_CUDA=$(usex cuda)
-		-DNANOVDB_USE_MAGICAVOXEL=OFF # on hold until dependency exists or issue request made
 		-DNANOVDB_USE_OPENCL=$(usex opencl)
 		-DNANOVDB_USE_OPENGL=$(usex opengl)
 		-DNANOVDB_USE_OPENVDB=$(usex openvdb)
@@ -336,7 +334,7 @@ src_install()
 	cmake_src_install
 	cd "${S}" || die
 	dodoc Readme.md
-	cd "${S}/../.." || die
+	cd "${S}/.." || die
 	docinto licenses
 	dodoc LICENSE
 	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
