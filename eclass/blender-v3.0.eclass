@@ -548,8 +548,6 @@ _src_configure() {
 		blender_configure_mesa_match_system_llvm
 	fi
 
-	blender_configure_nanovdb
-
 	# Just attach the abi as a suffix for the key for multiabi support.
 	_LD_LIBRARY_PATHS[${EBLENDER}]="${_LD_LIBRARY_PATH}"
 	_LIBGL_DRIVERS_DIRS[${EBLENDER}]="${_LIBGL_DRIVERS_DIR}"
