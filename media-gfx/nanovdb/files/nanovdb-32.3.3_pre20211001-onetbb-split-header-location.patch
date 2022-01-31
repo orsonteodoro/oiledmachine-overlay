@@ -15,7 +15,7 @@ diff -urp nanovdb.orig/nanovdb/util/Range.h nanovdb/nanovdb/util/Range.h
 @@ -17,7 +17,12 @@
  #include <cassert>
  
-+#define NANOVDB_USE_ONETBB __NANOVDB_USE_ONETBB__
++#define NANOVDB_USE_ONETBB __NANOVDB_USE_ONETBB__		// oteodoro - added line
  #ifdef NANOVDB_USE_TBB
 -#include <tbb/blocked_range.h>// for tbb::split
 +  #if NANOVDB_USE_ONETBB					// oteodoro - added line
