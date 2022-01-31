@@ -316,7 +316,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 	openvdb? (
 		$(gen_openvdb_depends)
 		>=dev-libs/c-blosc-1.5.0
-		nanovdb? ( >=media-gfx/nanovdb-25.0.0_pre20200924:= )
+		nanovdb? ( >=media-gfx/nanovdb-25.0.0_pre20200924:0= )
 	)
 	openxr? ( >=media-libs/openxr-1.0.14 )
 	optix? ( >=dev-libs/optix-7 )
