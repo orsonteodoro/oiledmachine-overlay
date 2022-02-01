@@ -16,7 +16,7 @@ KEYWORDS="~amd64"
 IUSE+=" -alembic -doc +draco -embree +examples -experimental +hdf5 +imaging
 +jemalloc -monolithic -opencolorio +opengl -openimageio -openvdb openexr -osl
 +ptex +python +safety-over-speed -static-libs +tutorials -test +tools +usdview
--vulkan r2"
+-vulkan r3"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	alembic? ( openexr )
@@ -228,8 +228,9 @@ src_install() {
 	doins 99-${PN}.conf
 	for f in $(find "${ED}${USD_PATH}/lib" -name "*.so*") ; do
 		einfo "Removing rpath from ${f}"
-		 patchelf --remove-rpath "${f}" || die # triggers warning
+		patchelf --remove-rpath "${f}" || die # triggers warning
 	done
+	export STRIP="/bin/true" # strip breaks rpath
 	if use jemalloc ; then
 		for f in $(find "${ED}${USD_PATH}" -executable) ; do
 			if ldd "${f}" 2>/dev/null | grep -q -e "libjemalloc.so.2" ; then
