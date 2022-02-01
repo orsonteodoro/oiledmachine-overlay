@@ -213,7 +213,7 @@ src_configure() {
 	else
 		mycmakeargs+=(
                         -DTBB_INCLUDE_DIR="/usr/include/tbb/${LEGACY_TBB_SLOT}"
-                        -DTBB_LIBRARY_PATH="/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
+                        -DTBB_LIBRARY="/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 		)
 	fi
 	cmake_src_configure
