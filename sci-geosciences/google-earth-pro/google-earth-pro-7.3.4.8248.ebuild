@@ -158,7 +158,7 @@ RDEPEND="
 	system-gdal? ( >=sci-libs/gdal-${GDAL_V}:2 )
 	system-gpsbabel? ( >=sci-geosciences/gpsbabel-1.6.0 )
 	system-icu? ( dev-libs/icu:${ICU_V} )
-	system-openssl? ( >=dev-libs/openssl-${OPENSSL_V}:1.0 )
+	system-openssl? ( >=dev-libs/openssl-${OPENSSL_V}:0 )
 	system-qt5? (
 		~${QT_CATEGORY}/qtcore-${QT_VERSION}:${QT_SLOT}[icu]
 		~${QT_CATEGORY}/qtdbus-${QT_VERSION}:${QT_SLOT}
