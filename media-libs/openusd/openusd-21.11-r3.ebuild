@@ -115,6 +115,7 @@ PATCHES=(
 	"${FILESDIR}/openusd-21.11-gcc-11-numeric_limits.patch"
 	"${FILESDIR}/openusd-21.11-glibc-2.34.patch"
 	"${FILESDIR}/openusd-21.11-clang-14-compat.patch"
+	"${FILESDIR}/openusd-21.11-use-whole-archive-for-lld.patch"
 )
 S="${WORKDIR}/USD-${PV}"
 DOCS=( CHANGELOG.md README.md )

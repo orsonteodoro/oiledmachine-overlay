@@ -1,0 +1,61 @@
+Subject:  Fix linking with LLD on Linux
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Mon Jan 31 04:19:31 PM PST 2022 (Unix time:  1643674771)
+
+Error:
+
+ld.lld: error: unknown argument '-force_load'
+clang-14: error: linker command failed with exit code 1 (use -v to see invocation)
+
+License header for
+cmake/macros/Private.cmake:
+cmake/macros/Public.cmake:
+
+#
+# Copyright 2016 Pixar
+#
+# Licensed under the Apache License, Version 2.0 (the "Apache License")
+# with the following modification; you may not use this file except in
+# compliance with the Apache License and the following modification to it:
+# Section 6. Trademarks. is deleted and replaced with:
+#
+# 6. Trademarks. This License does not grant permission to use the trade
+#    names, trademarks, service marks, or product names of the Licensor
+#    and its affiliates, except as required to comply with Section 4(c) of
+#    the License and to reproduce the content of the NOTICE file.
+#
+# You may obtain a copy of the Apache License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the Apache License with the above modification is
+# distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied. See the Apache License for the specific
+# language governing permissions and limitations under the Apache License.
+#
+
+diff -urp USD-21.11.orig/cmake/macros/Private.cmake USD-21.11/cmake/macros/Private.cmake
+--- USD-21.11.orig/cmake/macros/Private.cmake	2021-11-01 10:10:51.000000000 -0700
++++ USD-21.11/cmake/macros/Private.cmake	2022-01-31 16:16:30.333324542 -0800
+@@ -852,7 +852,7 @@ function(_pxr_target_link_libraries NAME
+                     #
+                     list(APPEND final -WHOLEARCHIVE:$<TARGET_FILE:${lib}>)
+                     list(APPEND final ${lib})
+-                elseif(CMAKE_COMPILER_IS_GNUCXX)
++                elseif(CMAKE_COMPILER_IS_GNUCXX OR ((UNIX AND NOT APPLE) AND "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang"))	# oteodoro: fix for linux + clang + lld
+                     list(APPEND final -Wl,--whole-archive ${lib} -Wl,--no-whole-archive)
+                 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+                     list(APPEND final -Wl,-force_load ${lib})
+diff -urp USD-21.11.orig/cmake/macros/Public.cmake USD-21.11/cmake/macros/Public.cmake
+--- USD-21.11.orig/cmake/macros/Public.cmake	2021-11-01 10:10:51.000000000 -0700
++++ USD-21.11/cmake/macros/Public.cmake	2022-01-31 16:16:31.482374353 -0800
+@@ -977,7 +977,7 @@ function(pxr_toplevel_epilogue)
+                 PRIVATE
+                     -WHOLEARCHIVE:$<TARGET_FILE:usd_m>
+             )
+-        elseif(CMAKE_COMPILER_IS_GNUCXX)
++        elseif(CMAKE_COMPILER_IS_GNUCXX OR ((UNIX AND NOT APPLE) AND "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang"))	       # oteodoro: fix for linux + clang + lld
+             target_link_libraries(usd_ms
+                 PRIVATE
+                     -Wl,--whole-archive $<TARGET_FILE:usd_m> -Wl,--no-whole-archive
