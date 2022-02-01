@@ -499,6 +499,9 @@ _src_prepare_patches() {
 	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && ! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && use usd ; then
 		show_tbb_error
 	fi
+	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && use usd ; then
+		eapply "${FILESDIR}/blender-3.0.0-link-usd-to-legacy-tbb.patch"
+	fi
 }
 
 _src_configure() {

@@ -486,10 +486,13 @@ show_tbb_error() {
 
 _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-2.91.0-parent-datafiles-dir-change.patch"
-	if ( has_version "<dev-cpp/tbb-2021:0" || has_version "<dev-cpp-2021/tbb:${LEGACY_TBB_SLOT}" ) && use usd ; then
+	if ( has_version "<dev-cpp/tbb-2021:0" || has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ) && use usd ; then
 		:;
 	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && ! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && use usd ; then
 		show_tbb_error
+	fi
+	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && use usd ; then
+		eapply "${FILESDIR}/blender-3.0.0-link-usd-to-legacy-tbb.patch"
 	fi
 }
 
