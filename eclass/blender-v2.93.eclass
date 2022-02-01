@@ -120,6 +120,7 @@ REQUIRED_USE+="
 		!valgrind
 	)
 	theora? ( ffmpeg )
+	usd? ( tbb )
 	vorbis? ( ffmpeg )
 	vpx? ( ffmpeg )
 	webm? ( ffmpeg opus vpx )
@@ -327,21 +328,14 @@ RDEPEND+="  ${PYTHON_DEPS}
 	sdl? ( >=media-libs/libsdl2-2.0.12[sound] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tbb? (
-		>=dev-cpp/tbb-2020.2
-		!usd? (
-			>=dev-cpp/tbb-2021:${ONETBB_SLOT}
-		)
+		>=dev-cpp/tbb-2021:${ONETBB_SLOT}
 		usd? (
-			>=dev-cpp/tbb-2021:${ONETBB_SLOT}
-			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}
+			!<dev-cpp/tbb-2021:0=
+			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 		)
 	)
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
-	usd? (
-		>=media-libs/openusd-21.11[monolithic]
-		!<dev-cpp/tbb-2021:0=
-		 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-	)
+	usd? ( >=media-libs/openusd-21.11[monolithic] )
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
