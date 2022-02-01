@@ -489,7 +489,7 @@ src_prepare() {
 	ewarn "This is the weekly development build."
 	default
 	eapply "${FILESDIR}/rpr-3.1.16-more-generic-call-python3.patch"
-	eapply "${FILESDIR}/rpr-3.3.16-bump-version.patch"
+	eapply "${FILESDIR}/rpr-3.3.17-bump-version.patch"
 	git init || die
 	touch dummy || die
 	git config user.email "name@example.com" || die
