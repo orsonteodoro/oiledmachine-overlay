@@ -117,6 +117,7 @@ REQUIRED_USE+="
 		tbb
 		!test
 		tiff
+		usd
 		!valgrind
 	)
 	theora? ( ffmpeg )
