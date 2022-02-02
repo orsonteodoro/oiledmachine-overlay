@@ -350,6 +350,11 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       Builds Blender with the release configuration (AKA precompiled Blender),
       a subset of release configuration but allows for flexibility.  Otherwise,
       it falls back to the platform default.
+
+      Hard USE requirements are for formats and quality standards.
+      Flexible requirements are for (proprietary) performance libs or drivers.
+
+      The hard USE requirements are to ensure compatibility with render farms.
     </flag>
     <flag name="tbb">
       Enables using TBB componenents which also may enable sculpt multithreading,
