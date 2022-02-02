@@ -351,8 +351,9 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       a subset of release configuration but allows for flexibility.  Otherwise,
       it falls back to the platform default.
 
-      Hard USE requirements are for formats and quality standards.
-      Flexible requirements are for (proprietary) performance libs or drivers.
+      * Hard USE requirements are for formats and quality standards.
+      * Flexible requirements are for (proprietary) performance libs or driver
+      support.
 
       The hard USE requirements are to ensure compatibility and render quality
       consistency with render farms.
