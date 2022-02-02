@@ -354,7 +354,8 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       Hard USE requirements are for formats and quality standards.
       Flexible requirements are for (proprietary) performance libs or drivers.
 
-      The hard USE requirements are to ensure compatibility with render farms.
+      The hard USE requirements are to ensure compatibility and render quality
+      consistency with render farms.
     </flag>
     <flag name="tbb">
       Enables using TBB componenents which also may enable sculpt multithreading,
