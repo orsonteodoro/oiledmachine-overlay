@@ -1353,7 +1353,11 @@ _src_install() {
 
 	local d_dest=$(get_dest)
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
-		python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
+		if [[ -e "${ED%/}${d_dest}/blender-thumbnailer.py" ]] ; then
+			python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
+		elif [[ -e "${ED%/}${d_dest}/blender-thumbnailer" ]] ; then
+			python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer"
+		fi
 		python_optimize "${ED%/}/usr/share/${PN}/${SLOT_MAJ}/scripts"
 	fi
 
