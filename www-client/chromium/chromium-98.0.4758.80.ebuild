@@ -58,7 +58,7 @@ SRC_URI="
 #   ${PN}-${MTD_V}-media-test-data.tar.gz
 # but shouldn't be necessary to use the USE flag.
 
-RESTRICT="mirror"
+#RESTRICT="mirror"
 #PROPERTIES="interactive" # For interactive login in social networks for PGO profile generation. \
 # See _init_cr_pgo_trainers_rasterize_and_record_micro_top_25() function below. \
 # Disabled until the inner workings is understood.
