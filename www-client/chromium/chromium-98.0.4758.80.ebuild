@@ -3162,8 +3162,6 @@ ewarn
 
 	ceapply "${FILESDIR}/extra-patches/chromium-95.0.4638.54-zlib-selective-simd.patch"
 
-	use ppc64 && PATCHES+=( "${WORKDIR}/${PN}-ppc64le" )
-
 	default
 
 	if use cr_pgo_trainers_custom && [[ ! -f "${T}/epatch_user.log" ]] ; then

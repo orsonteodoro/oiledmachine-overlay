@@ -1,5 +1,5 @@
---- chromium-98.0.4758.80.ebuild.orig	2022-02-02 00:28:29.000000000 -0800
-+++ chromium-98.0.4758.80.ebuild	2022-02-02 12:49:57.686298344 -0800
+--- chromium-98.0.4758.80.ebuild.orig	2022-02-02 13:00:15.000000000 -0800
++++ chromium-98.0.4758.80.ebuild	2022-02-02 13:02:17.266284999 -0800
 @@ -1,7 +1,12 @@
  # Copyright 2009-2022 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -3198,7 +3198,7 @@
  		"${FILESDIR}/chromium-98-EnumTable-crash.patch"
  		"${FILESDIR}/chromium-98-system-libdrm.patch"
  		"${FILESDIR}/chromium-glibc-2.34.patch"
-@@ -238,8 +3141,53 @@ src_prepare() {
+@@ -238,8 +3141,51 @@ src_prepare() {
  		"${FILESDIR}/chromium-shim_headers.patch"
  	)
  
@@ -3222,8 +3222,6 @@
 +	fi
 +
 +	ceapply "${FILESDIR}/extra-patches/chromium-95.0.4638.54-zlib-selective-simd.patch"
-+
-+	use ppc64 && PATCHES+=( "${WORKDIR}/${PN}-ppc64le" )
 +
  	default
  
@@ -3252,7 +3250,7 @@
  	mkdir -p third_party/node/linux/node-linux-x64/bin || die
  	ln -s "${EPREFIX}"/usr/bin/node third_party/node/linux/node-linux-x64/bin/node || die
  
-@@ -469,6 +3417,7 @@ src_prepare() {
+@@ -469,6 +3415,7 @@ src_prepare() {
  		third_party/xcbproto
  		third_party/zxcvbn-cpp
  		third_party/zlib/google
@@ -3260,7 +3258,7 @@
  		url/third_party/mozilla
  		v8/src/third_party/siphash
  		v8/src/third_party/valgrind
-@@ -482,10 +3431,18 @@ src_prepare() {
+@@ -482,10 +3429,18 @@ src_prepare() {
  		third_party/usb_ids
  		third_party/xdg-utils
  	)
@@ -3281,7 +3279,7 @@
  		keeplibs+=( third_party/icu )
  	fi
  	if ! use system-png; then
-@@ -499,12 +3456,19 @@ src_prepare() {
+@@ -499,12 +3454,19 @@ src_prepare() {
  	if use wayland && ! use headless ; then
  		keeplibs+=( third_party/wayland )
  	fi
@@ -3304,7 +3302,7 @@
  			keeplibs+=( third_party/icu )
  		fi
  	fi
-@@ -513,54 +3477,104 @@ src_prepare() {
+@@ -513,54 +3475,104 @@ src_prepare() {
  	fi
  	# we need to generate ppc64 stuff because upstream does not ship it yet
  	# it has to be done before unbundling.
@@ -3427,7 +3425,7 @@
  		tc-export BUILD_{AR,CC,CXX,NM}
  		myconf_gn+=" host_toolchain=\"//build/toolchain/linux/unbundle:host\""
  		myconf_gn+=" v8_snapshot_toolchain=\"//build/toolchain/linux/unbundle:host\""
-@@ -568,6 +3582,8 @@ src_configure() {
+@@ -568,6 +3580,8 @@ src_configure() {
  		myconf_gn+=" host_toolchain=\"//build/toolchain/linux/unbundle:default\""
  	fi
  
@@ -3436,7 +3434,7 @@
  	# GN needs explicit config for Debug/Release as opposed to inferring it from build directory.
  	myconf_gn+=" is_debug=false"
  
-@@ -583,6 +3599,14 @@ src_configure() {
+@@ -583,6 +3597,14 @@ src_configure() {
  	# Disable nacl, we can't build without pnacl (http://crbug.com/269560).
  	myconf_gn+=" enable_nacl=false"
  
@@ -3451,7 +3449,7 @@
  	# Use system-provided libraries.
  	# TODO: freetype -- remove sources (https://bugs.chromium.org/p/pdfium/issues/detail?id=733).
  	# TODO: use_system_hunspell (upstream changes needed).
-@@ -590,6 +3614,7 @@ src_configure() {
+@@ -590,6 +3612,7 @@ src_configure() {
  	# TODO: use_system_sqlite (http://crbug.com/22208).
  
  	# libevent: https://bugs.gentoo.org/593458
@@ -3459,7 +3457,7 @@
  	local gn_system_libraries=(
  		flac
  		fontconfig
-@@ -601,23 +3626,45 @@ src_configure() {
+@@ -601,23 +3624,45 @@ src_configure() {
  		libwebp
  		zlib
  	)
@@ -3511,7 +3509,7 @@
  
  	# See dependency logic in third_party/BUILD.gn
  	myconf_gn+=" use_system_harfbuzz=$(usex system-harfbuzz true false)"
-@@ -637,15 +3684,25 @@ src_configure() {
+@@ -637,15 +3682,25 @@ src_configure() {
  
  	# TODO: link_pulseaudio=true for GN.
  
@@ -3541,7 +3539,7 @@
  
  	# Disable pseudolocales, only used for testing
  	myconf_gn+=" enable_pseudolocales=false"
-@@ -671,25 +3728,34 @@ src_configure() {
+@@ -671,25 +3726,34 @@ src_configure() {
  	local myarch="$(tc-arch)"
  
  	# Avoid CFLAGS problems, bug #352457, bug #390147.
@@ -3580,7 +3578,7 @@
  	fi
  
  	if [[ $myarch = amd64 ]] ; then
-@@ -715,6 +3781,42 @@ src_configure() {
+@@ -715,6 +3779,42 @@ src_configure() {
  		die "Failed to determine target arch, got '$myarch'."
  	fi
  
@@ -3623,7 +3621,7 @@
  	# Make sure that -Werror doesn't get added to CFLAGS by the build system.
  	# Depending on GCC version the warnings are different and we don't want
  	# the build to fail because of that.
-@@ -730,10 +3832,10 @@ src_configure() {
+@@ -730,10 +3830,10 @@ src_configure() {
  	# https://bugs.gentoo.org/654216
  	addpredict /dev/dri/ #nowarn
  
@@ -3637,7 +3635,7 @@
  			build_ffmpeg_args+=" --disable-asm"
  		fi
  
-@@ -751,7 +3853,7 @@ src_configure() {
+@@ -751,7 +3851,7 @@ src_configure() {
  	tc-is-clang && append-flags -Wno-unknown-warning-option
  
  	# Explicitly disable ICU data file support for system-icu builds.
@@ -3646,7 +3644,7 @@
  		myconf_gn+=" icu_use_data_file=false"
  	fi
  
-@@ -759,16 +3861,16 @@ src_configure() {
+@@ -759,16 +3859,16 @@ src_configure() {
  	myconf_gn+=" use_ozone=true ozone_auto_platforms=false"
  	myconf_gn+=" ozone_platform_headless=true"
  	myconf_gn+=" ozone_platform_x11=$(usex headless false true)"
@@ -3666,7 +3664,7 @@
  		fi
  	else
  		myconf_gn+=" ozone_platform=\"x11\""
-@@ -776,17 +3878,90 @@ src_configure() {
+@@ -776,17 +3876,90 @@ src_configure() {
  
  	# Enable official builds
  	myconf_gn+=" is_official_build=$(usex official true false)"
@@ -3763,7 +3761,7 @@
  	fi
  
  	einfo "Configuring Chromium..."
-@@ -795,38 +3970,266 @@ src_configure() {
+@@ -795,38 +3968,266 @@ src_configure() {
  	"$@" || die
  }
  
@@ -4048,7 +4046,7 @@
  
  	# Build manpage; bug #684550
  	sed -e 's|@@PACKAGE@@|chromium-browser|g;
-@@ -835,9 +4238,7 @@ src_compile() {
+@@ -835,9 +4236,7 @@ src_compile() {
  		out/Release/chromium-browser.1 || die
  
  	# Build desktop file; bug #706786
@@ -4059,7 +4057,7 @@
  		s|\(^Exec=\)/usr/bin/|\1|g;' \
  		chrome/installer/linux/common/desktop.template > \
  		out/Release/chromium-browser-chromium.desktop || die
-@@ -846,19 +4247,104 @@ src_compile() {
+@@ -846,19 +4245,104 @@ src_compile() {
  	sed -e 's|${ICD_LIBRARY_PATH}|./libvk_swiftshader.so|g' \
  		third_party/swiftshader/src/Vulkan/vk_swiftshader_icd.json.tmpl > \
  		out/Release/vk_swiftshader_icd.json || die
@@ -4167,7 +4165,7 @@
  	doexe out/Release/chrome_crashpad_handler
  
  	ozone_auto_session () {
-@@ -866,18 +4352,22 @@ src_install() {
+@@ -866,18 +4350,22 @@ src_install() {
  	}
  	local sedargs=( -e
  			"s:/usr/lib/:/usr/$(get_libdir)/:g;
@@ -4194,7 +4192,7 @@
  
  	# Allow users to override command-line options, bug #357629.
  	insinto /etc/chromium
-@@ -896,17 +4386,18 @@ src_install() {
+@@ -896,17 +4384,18 @@ src_install() {
  		[[ ${#files[@]} -gt 0 ]] && doins "${files[@]}"
  	)
  
@@ -4215,7 +4213,7 @@
  		insinto "${CHROMIUM_HOME}/swiftshader"
  		doins out/Release/swiftshader/*.so
  	fi
-@@ -923,7 +4414,7 @@ src_install() {
+@@ -923,7 +4412,7 @@ src_install() {
  	done
  
  	# Install desktop entry
@@ -4224,7 +4222,7 @@
  
  	# Install GNOME default application entry (bug #303100).
  	insinto /usr/share/gnome-control-center/default-apps
-@@ -934,6 +4425,11 @@ src_install() {
+@@ -934,6 +4423,11 @@ src_install() {
  	dosym chromium-browser.1 /usr/share/man/man1/chromium.1
  
  	readme.gentoo_create_doc
@@ -4236,7 +4234,7 @@
  }
  
  pkg_postrm() {
-@@ -946,15 +4442,103 @@ pkg_postinst() {
+@@ -946,15 +4440,103 @@ pkg_postinst() {
  	xdg_desktop_database_update
  	readme.gentoo_print_elog
  
