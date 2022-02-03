@@ -54,7 +54,8 @@ diff -urp blender-3.0.0.orig/source/blender/blenkernel/intern/appdir.c blender-3
 +++ blender-3.0.0/source/blender/blenkernel/intern/appdir.c	2021-12-05 18:18:00.880822022 -0800
 @@ -137,7 +137,7 @@ static char *blender_version_decimal(con
  {
-   static char version_str[5];
+-  static char version_str[5];
++  static char version_str[6];
    BLI_assert(version < 1000);
 -  BLI_snprintf(version_str, sizeof(version_str), "%d.%d", version / 100, version % 100);
 +  BLI_snprintf(version_str, sizeof(version_str), "%d.%d.%s%s", version / 100, version % 100, STRINGIFY(BLENDER_VERSION_PATCH), STRINGIFY(BLENDER_VERSION_TAG));
