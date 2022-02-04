@@ -41,7 +41,7 @@ SLOT_MAJOR="0"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86
 ~amd64-linux ~x86-linux"
-IUSE+=" -X debug doc -examples +lto -python +tbbmalloc +test"
+IUSE+=" -X debug doc -examples -python +tbbmalloc +test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	X? ( examples )"
@@ -72,7 +72,6 @@ DOCS=( README.md )
 RESTRICT="mirror"
 PATCHES=(
 	# should be in.. 2022?
-	"${FILESDIR}"/${PN}-2021.4.0-lto.patch
 	"${FILESDIR}"/${PN}-2021.5.0-musl-deepbind.patch
 	# need to verify this is in master
 	"${FILESDIR}"/${PN}-2021.5.0-musl-mallinfo.patch
@@ -159,7 +158,6 @@ INCLUDE_PATH           = ${S}/include/oneapi ${S}/include/tbb|g" \
 		-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 		-DCMAKE_C_COMPILER=${comp}
 		-DCMAKE_CXX_COMPILER=${comp}
-		-DTBB_ENABLE_IPO=$(usex lto)
 		-DTBB_EXAMPLES=$(usex examples)
 		-DTBB_STRICT=OFF
 		-DTBB_TEST=$(usex test)
