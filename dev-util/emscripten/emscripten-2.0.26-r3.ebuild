@@ -86,7 +86,7 @@ KEYWORDS="~amd64 ~x86"
 SLOT_MAJOR=$(ver_cut 1-2 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 CLOSURE_COMPILER_SLOT="0"
-IUSE+=" +closure-compiler closure_compiler_java closure_compiler_native
+IUSE+=" -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs system-closure-compiler test"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	closure_compiler_java? ( closure-compiler )
@@ -164,7 +164,7 @@ TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
-	"${FILESDIR}/emscripten-2.0.26-set-wrappers-path.patch"
+#	"${FILESDIR}/emscripten-2.0.26-set-wrappers-path.patch"
 	"${FILESDIR}/emscripten-2.0.14-gentoo-wasm-ld-path.patch"
 )
 CMAKE_BUILD_TYPE=Release
