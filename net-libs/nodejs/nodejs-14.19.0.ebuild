@@ -84,7 +84,7 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Nov 25, 2021
+# Last deps commit date:  Jan 25, 2022
 NGHTTP2_V="1.42.0"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
@@ -93,9 +93,9 @@ RDEPEND+=" !net-libs/nodejs:0
 	>=net-dns/c-ares-1.18.1
 	>=net-libs/nghttp2-${NGHTTP2_V}
 	>=sys-libs/zlib-1.2.11
-	system-icu? ( >=dev-libs/icu-69.1:= )
+	system-icu? ( >=dev-libs/icu-70.1:= )
 	system-ssl? (
-		>=dev-libs/openssl-1.1.1l:0=
+		>=dev-libs/openssl-1.1.1m:0=
 		<dev-libs/openssl-3.0.0_beta1:0=
 	)"
 DEPEND+=" ${RDEPEND}"
@@ -110,7 +110,7 @@ PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
 	  "${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.15" # See https://github.com/nodejs/node/blob/v14.17.6/deps/npm/package.json
+NPM_V="6.14.16" # See https://github.com/nodejs/node/blob/v14.17.6/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
