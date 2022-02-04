@@ -152,3 +152,13 @@ multilib_src_install_all() {
 		docompress -x "/usr/share/doc/${PF}/examples"
 	fi
 }
+
+pkg_postinst()
+{
+	einfo
+	einfo "Packages that depend on ${CATEGORY}/${PN}:${SLOT_MAJOR} must"
+	einfo "either set the RPATH or add a LD_LIBRARY_PATH wrapper to use"
+	einfo "${MY_PN} instead of legacy TBB.  You must verify that the"
+	einfo "linking is proper via ldd."
+	einfo
+}

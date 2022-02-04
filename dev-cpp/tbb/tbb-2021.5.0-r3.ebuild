@@ -41,7 +41,8 @@ SLOT_MAJOR="0"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86
 ~amd64-linux ~x86-linux"
-IUSE+=" -X debug doc -examples -python +tbbmalloc +test"
+# Upstream enables tests by default.
+IUSE+=" -X debug doc -examples -python +tbbmalloc -test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	X? ( examples )"
@@ -410,14 +411,4 @@ src_install()
 		fi
 	}
 	multilib_foreach_abi src_install_abi
-}
-
-pkg_postinst()
-{
-	einfo
-	einfo "Packages that depend on ${CATEGORY}/${PN}:${SLOT_MAJOR} must"
-	einfo "either set the RPATH or add a LD_LIBRARY_PATH wrapper to use"
-	einfo "${MY_PN} instead of legacy TBB.  You must verify that the"
-	einfo "linking is proper via ldd."
-	einfo
 }
