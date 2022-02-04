@@ -3,18 +3,17 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit autotools flag-o-matic llvm multilib-minimal python-any-r1 toolchain-funcs
 
 DESCRIPTION="International Components for Unicode"
-HOMEPAGE="http://site.icu-project.org/"
+HOMEPAGE="https://icu.unicode.org/"
 SRC_URI="https://github.com/unicode-org/icu/releases/download/release-${PV//./-}/icu4c-${PV//./_}-src.tgz"
+S="${WORKDIR}/${PN}/source"
 
 LICENSE="BSD"
-
 SLOT="0/${PV}"
-
-KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="debug doc examples static-libs"
 IUSE+=" cfi cfi-cross-dso cfi-cast cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack"
 # Link the examples and utilties with cfi-cross-dso or basic-cfi
@@ -118,6 +117,7 @@ BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
 BDEPEND+=" ${PYTHON_DEPS}
+	sys-devel/autoconf-archive
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	doc? ( app-doc/doxygen[dot] )
 "
@@ -133,6 +133,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-65.1-remove-bashisms.patch"
 	"${FILESDIR}/${PN}-64.2-darwin.patch"
 	"${FILESDIR}/${PN}-68.1-nonunicode.patch"
+	# Should both be in the next release, but check
+	# https://bugs.gentoo.org/788112
+	"${FILESDIR}/${PN}-69.1-fix-ub-units.patch"
+	"${FILESDIR}/${PN}-70.1-fix-ucptrietest.patch"
 	"${FILESDIR}/${PN}-69.1-extra-so-flags.patch"
 )
 
@@ -495,9 +499,8 @@ src_install() {
 	}
 	multilib_foreach_abi install_abi
 
+	local HTML_DOCS=( ../readme.html )
 	einstalldocs
-	docinto html
-	dodoc ../readme.html
 }
 
 pkg_postinst() {
