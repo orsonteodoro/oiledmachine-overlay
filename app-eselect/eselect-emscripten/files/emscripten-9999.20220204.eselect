@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20220127"
+VERSION="20220204"
 PN="emscripten"
 
 # 3.1.2 llvm 14 ; node 4.1.1 ; binaryen 104
@@ -428,7 +428,7 @@ EOF
     [[ -z "${__EMSDK_CLOSURE_COMPILER__}" ]] && sed -i "/EMSDK_CLOSURE_COMPILER/d" \
         "${EROOT}/etc/env.d/99emscripten"
 
-    if grep -q -F -e "native-optimizer" "${use_path}" ; then
+    if ! grep -q -F -e "native-optimizer" "${use_path}" ; then
         sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
             "${EROOT}/etc/env.d/99emscripten"
     fi
