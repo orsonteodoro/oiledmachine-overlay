@@ -39,6 +39,7 @@
     <flag name="debug">Builds with debug symbols.</flag>
     <flag name="doc">Generates and installs documentation.</flag>
     <flag name="examples">Builds and installs examples.</flag>
+    <flag name="lto">Enables Interprocedural Optimization (IPO) [aka LTO].</flag>
     <flag name="python">Builds Python bindings for efficient composable
       threading and a replacement of Python's ThreadPool.</flag>
     <flag name="test">Builds and runs test suite.</flag>
