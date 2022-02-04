@@ -29,6 +29,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	${CDEPEND}
+	dev-util/patchelf
 "
 SRC_URI="
 https://github.com/WebAssembly/binaryen/archive/version_${PV}.tar.gz
@@ -91,4 +92,9 @@ src_install() {
 	cat third_party/llvm-project/include/llvm/LICENSE.TXT \
 		> "${T}/LICENSE.llvm-project.TXT"
 	dodoc "${T}/LICENSE.llvm-project.TXT"
+	for f in $(find "${ED}" -executable) ; do
+		if ldd "${f}" 2>/dev/null | grep -q "libbinaryen.so" ; then
+			patchelf --set-rpath "/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/$(get_libdir)" "${f}" || die
+		fi
+	done
 }
