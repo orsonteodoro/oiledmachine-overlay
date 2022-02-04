@@ -6,11 +6,11 @@ diff -urp emscripten-2.0.31.orig/em++ emscripten-2.0.31/em++
  
  if [ -z "$_EMCC_CCACHE" ]; then
 -  exec "$PYTHON" "$0.py" "$@"
-+  exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++  exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
  else
    unset _EMCC_CCACHE
 -  exec ccache "$0" "$@"
-+  exec ccache "$(realpath $(dirname $0))/$0" "$@"
++  exec ccache "$(dirname $(readlink -f $0))/$(basename $0)" "$@"
  fi
 diff -urp emscripten-2.0.31.orig/emar emscripten-2.0.31/emar
 --- emscripten-2.0.31.orig/emar	2021-10-01 07:07:23.000000000 -0700
@@ -20,7 +20,7 @@ diff -urp emscripten-2.0.31.orig/emar emscripten-2.0.31/emar
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emar.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emar.py" "$@"
 diff -urp emscripten-2.0.31.orig/embuilder emscripten-2.0.31/embuilder
 --- emscripten-2.0.31.orig/embuilder	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/embuilder	2021-10-14 12:07:27.582030739 -0700
@@ -29,7 +29,7 @@ diff -urp emscripten-2.0.31.orig/embuilder emscripten-2.0.31/embuilder
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/embuilder.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/embuilder.py" "$@"
 diff -urp emscripten-2.0.31.orig/emcc emscripten-2.0.31/emcc
 --- emscripten-2.0.31.orig/emcc	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/emcc	2021-10-14 12:07:25.454030669 -0700
@@ -38,11 +38,11 @@ diff -urp emscripten-2.0.31.orig/emcc emscripten-2.0.31/emcc
  
  if [ -z "$_EMCC_CCACHE" ]; then
 -  exec "$PYTHON" "$0.py" "$@"
-+  exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++  exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
  else
    unset _EMCC_CCACHE
 -  exec ccache "$0" "$@"
-+  exec ccache "$(realpath $(dirname $0))/$0" "$@"
++  exec ccache "$(dirname $(readlink -f $0))/$(basename $0)" "$@"
  fi
 diff -urp emscripten-2.0.31.orig/emcmake emscripten-2.0.31/emcmake
 --- emscripten-2.0.31.orig/emcmake	2021-10-01 07:07:23.000000000 -0700
@@ -52,7 +52,7 @@ diff -urp emscripten-2.0.31.orig/emcmake emscripten-2.0.31/emcmake
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emcmake.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emcmake.py" "$@"
 diff -urp emscripten-2.0.31.orig/em-config emscripten-2.0.31/em-config
 --- emscripten-2.0.31.orig/em-config	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/em-config	2021-10-14 12:07:26.846030715 -0700
@@ -61,7 +61,7 @@ diff -urp emscripten-2.0.31.orig/em-config emscripten-2.0.31/em-config
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/em-config.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/em-config.py" "$@"
 diff -urp emscripten-2.0.31.orig/emconfigure emscripten-2.0.31/emconfigure
 --- emscripten-2.0.31.orig/emconfigure	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/emconfigure	2021-10-14 12:07:26.174030693 -0700
@@ -70,7 +70,7 @@ diff -urp emscripten-2.0.31.orig/emconfigure emscripten-2.0.31/emconfigure
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emconfigure.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emconfigure.py" "$@"
 diff -urp emscripten-2.0.31.orig/emdump emscripten-2.0.31/emdump
 --- emscripten-2.0.31.orig/emdump	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/emdump	2021-10-14 12:07:23.950030619 -0700
@@ -79,7 +79,7 @@ diff -urp emscripten-2.0.31.orig/emdump emscripten-2.0.31/emdump
  fi
  
 -exec "$PYTHON" "$(dirname $0)/tools/emdump.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/tools/emdump.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/tools/emdump.py" "$@"
 diff -urp emscripten-2.0.31.orig/emdwp emscripten-2.0.31/emdwp
 --- emscripten-2.0.31.orig/emdwp	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/emdwp	2021-10-14 12:07:19.023030457 -0700
@@ -88,7 +88,7 @@ diff -urp emscripten-2.0.31.orig/emdwp emscripten-2.0.31/emdwp
  fi
  
 -exec "$PYTHON" "$(dirname $0)/tools/emdwp.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/tools/emdwp.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/tools/emdwp.py" "$@"
 diff -urp emscripten-2.0.31.orig/emmake emscripten-2.0.31/emmake
 --- emscripten-2.0.31.orig/emmake	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/emmake	2021-10-14 12:07:16.079030360 -0700
@@ -97,7 +97,7 @@ diff -urp emscripten-2.0.31.orig/emmake emscripten-2.0.31/emmake
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emmake.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emmake.py" "$@"
 diff -urp emscripten-2.0.31.orig/emnm emscripten-2.0.31/emnm
 --- emscripten-2.0.31.orig/emnm	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/emnm	2021-10-14 12:07:20.655030511 -0700
@@ -106,7 +106,7 @@ diff -urp emscripten-2.0.31.orig/emnm emscripten-2.0.31/emnm
  fi
  
 -exec "$PYTHON" "$(dirname $0)/tools/emnm.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/tools/emnm.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/tools/emnm.py" "$@"
 diff -urp emscripten-2.0.31.orig/emprofile emscripten-2.0.31/emprofile
 --- emscripten-2.0.31.orig/emprofile	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/emprofile	2021-10-14 12:07:17.791030416 -0700
@@ -115,7 +115,7 @@ diff -urp emscripten-2.0.31.orig/emprofile emscripten-2.0.31/emprofile
  fi
  
 -exec "$PYTHON" "$(dirname $0)/tools/emprofile.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/tools/emprofile.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/tools/emprofile.py" "$@"
 diff -urp emscripten-2.0.31.orig/emranlib emscripten-2.0.31/emranlib
 --- emscripten-2.0.31.orig/emranlib	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/emranlib	2021-10-14 12:07:17.039030392 -0700
@@ -124,7 +124,7 @@ diff -urp emscripten-2.0.31.orig/emranlib emscripten-2.0.31/emranlib
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emranlib.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emranlib.py" "$@"
 diff -urp emscripten-2.0.31.orig/emrun emscripten-2.0.31/emrun
 --- emscripten-2.0.31.orig/emrun	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/emrun	2021-10-14 12:07:31.262030860 -0700
@@ -133,7 +133,7 @@ diff -urp emscripten-2.0.31.orig/emrun emscripten-2.0.31/emrun
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emrun.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emrun.py" "$@"
 diff -urp emscripten-2.0.31.orig/emscons emscripten-2.0.31/emscons
 --- emscripten-2.0.31.orig/emscons	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/emscons	2021-10-14 12:07:32.190030891 -0700
@@ -142,7 +142,7 @@ diff -urp emscripten-2.0.31.orig/emscons emscripten-2.0.31/emscons
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emscons.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emscons.py" "$@"
 diff -urp emscripten-2.0.31.orig/emsize emscripten-2.0.31/emsize
 --- emscripten-2.0.31.orig/emsize	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/emsize	2021-10-14 12:07:23.135030592 -0700
@@ -151,7 +151,7 @@ diff -urp emscripten-2.0.31.orig/emsize emscripten-2.0.31/emsize
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emsize.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emsize.py" "$@"
 diff -urp emscripten-2.0.31.orig/tests/runner emscripten-2.0.31/tests/runner
 --- emscripten-2.0.31.orig/tests/runner	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/tests/runner	2021-10-14 12:07:19.887030485 -0700
@@ -160,7 +160,7 @@ diff -urp emscripten-2.0.31.orig/tests/runner emscripten-2.0.31/tests/runner
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
 diff -urp emscripten-2.0.31.orig/tools/file_packager emscripten-2.0.31/tools/file_packager
 --- emscripten-2.0.31.orig/tools/file_packager	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/tools/file_packager	2021-10-14 12:07:29.742030810 -0700
@@ -169,7 +169,7 @@ diff -urp emscripten-2.0.31.orig/tools/file_packager emscripten-2.0.31/tools/fil
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
 diff -urp emscripten-2.0.31.orig/tools/run_python_compiler.sh emscripten-2.0.31/tools/run_python_compiler.sh
 --- emscripten-2.0.31.orig/tools/run_python_compiler.sh	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/tools/run_python_compiler.sh	2021-10-14 12:07:29.038030787 -0700
@@ -178,11 +178,11 @@ diff -urp emscripten-2.0.31.orig/tools/run_python_compiler.sh emscripten-2.0.31/
  
  if [ -z "$_EMCC_CCACHE" ]; then
 -  exec "$PYTHON" "$0.py" "$@"
-+  exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++  exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
  else
    unset _EMCC_CCACHE
 -  exec ccache "$0" "$@"
-+  exec ccache "$(realpath $(dirname $0))/$0" "$@"
++  exec ccache "$(dirname $(readlink -f $0))/$(basename $0)" "$@"
  fi
 diff -urp emscripten-2.0.31.orig/tools/run_python.sh emscripten-2.0.31/tools/run_python.sh
 --- emscripten-2.0.31.orig/tools/run_python.sh	2021-10-01 07:07:23.000000000 -0700
@@ -192,7 +192,7 @@ diff -urp emscripten-2.0.31.orig/tools/run_python.sh emscripten-2.0.31/tools/run
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
 diff -urp emscripten-2.0.31.orig/tools/webidl_binder emscripten-2.0.31/tools/webidl_binder
 --- emscripten-2.0.31.orig/tools/webidl_binder	2021-10-01 07:07:23.000000000 -0700
 +++ emscripten-2.0.31/tools/webidl_binder	2021-10-14 12:07:28.318030763 -0700
@@ -201,4 +201,4 @@ diff -urp emscripten-2.0.31.orig/tools/webidl_binder emscripten-2.0.31/tools/web
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"

@@ -6,11 +6,11 @@ diff -urp emscripten-2.0.26.orig/em++ emscripten-2.0.26/em++
  
  if [ -z "$_EMCC_CCACHE" ]; then
 -  exec "$PYTHON" "$0.py" "$@"
-+  exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++  exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
  else
    unset _EMCC_CCACHE
 -  exec ccache "$0" "$@"
-+  exec ccache "$(realpath $(dirname $0))/$0" "$@"
++  exec ccache "$(dirname $(readlink -f $0))/$(basename $0)" "$@"
  fi
 diff -urp emscripten-2.0.26.orig/emar emscripten-2.0.26/emar
 --- emscripten-2.0.26.orig/emar	2021-07-25 10:43:09.000000000 -0700
@@ -20,7 +20,7 @@ diff -urp emscripten-2.0.26.orig/emar emscripten-2.0.26/emar
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emar.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emar.py" "$@"
 diff -urp emscripten-2.0.26.orig/embuilder emscripten-2.0.26/embuilder
 --- emscripten-2.0.26.orig/embuilder	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/embuilder	2021-10-14 12:04:03.226024005 -0700
@@ -29,7 +29,7 @@ diff -urp emscripten-2.0.26.orig/embuilder emscripten-2.0.26/embuilder
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/embuilder.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/embuilder.py" "$@"
 diff -urp emscripten-2.0.26.orig/emcc emscripten-2.0.26/emcc
 --- emscripten-2.0.26.orig/emcc	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/emcc	2021-10-14 12:04:00.890023928 -0700
@@ -38,11 +38,11 @@ diff -urp emscripten-2.0.26.orig/emcc emscripten-2.0.26/emcc
  
  if [ -z "$_EMCC_CCACHE" ]; then
 -  exec "$PYTHON" "$0.py" "$@"
-+  exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++  exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
  else
    unset _EMCC_CCACHE
 -  exec ccache "$0" "$@"
-+  exec ccache "$(realpath $(dirname $0))/$0" "$@"
++  exec ccache "$(dirname $(readlink -f $0))/$(basename $0)" "$@"
  fi
 diff -urp emscripten-2.0.26.orig/emcmake emscripten-2.0.26/emcmake
 --- emscripten-2.0.26.orig/emcmake	2021-07-25 10:43:09.000000000 -0700
@@ -52,7 +52,7 @@ diff -urp emscripten-2.0.26.orig/emcmake emscripten-2.0.26/emcmake
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emcmake.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emcmake.py" "$@"
 diff -urp emscripten-2.0.26.orig/em-config emscripten-2.0.26/em-config
 --- emscripten-2.0.26.orig/em-config	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/em-config	2021-10-14 12:04:02.458023980 -0700
@@ -61,7 +61,7 @@ diff -urp emscripten-2.0.26.orig/em-config emscripten-2.0.26/em-config
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/em-config.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/em-config.py" "$@"
 diff -urp emscripten-2.0.26.orig/emconfigure emscripten-2.0.26/emconfigure
 --- emscripten-2.0.26.orig/emconfigure	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/emconfigure	2021-10-14 12:04:01.689023954 -0700
@@ -70,7 +70,7 @@ diff -urp emscripten-2.0.26.orig/emconfigure emscripten-2.0.26/emconfigure
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emconfigure.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emconfigure.py" "$@"
 diff -urp emscripten-2.0.26.orig/emdump emscripten-2.0.26/emdump
 --- emscripten-2.0.26.orig/emdump	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/emdump	2021-10-14 12:03:58.426023847 -0700
@@ -79,7 +79,7 @@ diff -urp emscripten-2.0.26.orig/emdump emscripten-2.0.26/emdump
  fi
  
 -exec "$PYTHON" "$(dirname $0)/tools/emdump.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/tools/emdump.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/tools/emdump.py" "$@"
 diff -urp emscripten-2.0.26.orig/em-dwp emscripten-2.0.26/em-dwp
 --- emscripten-2.0.26.orig/em-dwp	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/em-dwp	2021-10-14 12:04:00.058023901 -0700
@@ -88,7 +88,7 @@ diff -urp emscripten-2.0.26.orig/em-dwp emscripten-2.0.26/em-dwp
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
 diff -urp emscripten-2.0.26.orig/emdwp emscripten-2.0.26/emdwp
 --- emscripten-2.0.26.orig/emdwp	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/emdwp	2021-10-14 12:03:53.402023681 -0700
@@ -97,7 +97,7 @@ diff -urp emscripten-2.0.26.orig/emdwp emscripten-2.0.26/emdwp
  fi
  
 -exec "$PYTHON" "$(dirname $0)/tools/emdwp.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/tools/emdwp.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/tools/emdwp.py" "$@"
 diff -urp emscripten-2.0.26.orig/emmake emscripten-2.0.26/emmake
 --- emscripten-2.0.26.orig/emmake	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/emmake	2021-10-14 12:03:50.666023591 -0700
@@ -106,7 +106,7 @@ diff -urp emscripten-2.0.26.orig/emmake emscripten-2.0.26/emmake
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emmake.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emmake.py" "$@"
 diff -urp emscripten-2.0.26.orig/emnm emscripten-2.0.26/emnm
 --- emscripten-2.0.26.orig/emnm	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/emnm	2021-10-14 12:03:55.018023735 -0700
@@ -115,7 +115,7 @@ diff -urp emscripten-2.0.26.orig/emnm emscripten-2.0.26/emnm
  fi
  
 -exec "$PYTHON" "$(dirname $0)/tools/emnm.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/tools/emnm.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/tools/emnm.py" "$@"
 diff -urp emscripten-2.0.26.orig/emprofile emscripten-2.0.26/emprofile
 --- emscripten-2.0.26.orig/emprofile	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/emprofile	2021-10-14 12:03:52.634023656 -0700
@@ -124,7 +124,7 @@ diff -urp emscripten-2.0.26.orig/emprofile emscripten-2.0.26/emprofile
  fi
  
 -exec "$PYTHON" "$(dirname $0)/tools/emprofile.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/tools/emprofile.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/tools/emprofile.py" "$@"
 diff -urp emscripten-2.0.26.orig/emranlib emscripten-2.0.26/emranlib
 --- emscripten-2.0.26.orig/emranlib	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/emranlib	2021-10-14 12:03:51.578023621 -0700
@@ -133,7 +133,7 @@ diff -urp emscripten-2.0.26.orig/emranlib emscripten-2.0.26/emranlib
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emranlib.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emranlib.py" "$@"
 diff -urp emscripten-2.0.26.orig/emrun emscripten-2.0.26/emrun
 --- emscripten-2.0.26.orig/emrun	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/emrun	2021-10-14 12:04:09.641024216 -0700
@@ -142,7 +142,7 @@ diff -urp emscripten-2.0.26.orig/emrun emscripten-2.0.26/emrun
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emrun.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emrun.py" "$@"
 diff -urp emscripten-2.0.26.orig/emscons emscripten-2.0.26/emscons
 --- emscripten-2.0.26.orig/emscons	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/emscons	2021-10-14 12:04:10.857024256 -0700
@@ -151,7 +151,7 @@ diff -urp emscripten-2.0.26.orig/emscons emscripten-2.0.26/emscons
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emscons.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emscons.py" "$@"
 diff -urp emscripten-2.0.26.orig/emsize emscripten-2.0.26/emsize
 --- emscripten-2.0.26.orig/emsize	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/emsize	2021-10-14 12:03:57.642023821 -0700
@@ -160,7 +160,7 @@ diff -urp emscripten-2.0.26.orig/emsize emscripten-2.0.26/emsize
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emsize.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emsize.py" "$@"
 diff -urp emscripten-2.0.26.orig/tests/runner emscripten-2.0.26/tests/runner
 --- emscripten-2.0.26.orig/tests/runner	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/tests/runner	2021-10-14 12:03:54.170023707 -0700
@@ -169,7 +169,7 @@ diff -urp emscripten-2.0.26.orig/tests/runner emscripten-2.0.26/tests/runner
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
 diff -urp emscripten-2.0.26.orig/tools/file_packager emscripten-2.0.26/tools/file_packager
 --- emscripten-2.0.26.orig/tools/file_packager	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/tools/file_packager	2021-10-14 12:04:06.537024114 -0700
@@ -178,7 +178,7 @@ diff -urp emscripten-2.0.26.orig/tools/file_packager emscripten-2.0.26/tools/fil
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
 diff -urp emscripten-2.0.26.orig/tools/run_python_compiler.sh emscripten-2.0.26/tools/run_python_compiler.sh
 --- emscripten-2.0.26.orig/tools/run_python_compiler.sh	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/tools/run_python_compiler.sh	2021-10-14 12:04:05.193024070 -0700
@@ -187,11 +187,11 @@ diff -urp emscripten-2.0.26.orig/tools/run_python_compiler.sh emscripten-2.0.26/
  
  if [ -z "$_EMCC_CCACHE" ]; then
 -  exec "$PYTHON" "$0.py" "$@"
-+  exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++  exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
  else
    unset _EMCC_CCACHE
 -  exec ccache "$0" "$@"
-+  exec ccache "$(realpath $(dirname $0))/$0" "$@"
++  exec ccache "$(dirname $(readlink -f $0))/$(basename $0)" "$@"
  fi
 diff -urp emscripten-2.0.26.orig/tools/run_python.sh emscripten-2.0.26/tools/run_python.sh
 --- emscripten-2.0.26.orig/tools/run_python.sh	2021-07-25 10:43:09.000000000 -0700
@@ -201,7 +201,7 @@ diff -urp emscripten-2.0.26.orig/tools/run_python.sh emscripten-2.0.26/tools/run
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
 diff -urp emscripten-2.0.26.orig/tools/webidl_binder emscripten-2.0.26/tools/webidl_binder
 --- emscripten-2.0.26.orig/tools/webidl_binder	2021-07-25 10:43:09.000000000 -0700
 +++ emscripten-2.0.26/tools/webidl_binder	2021-10-14 12:04:04.041024032 -0700
@@ -210,4 +210,4 @@ diff -urp emscripten-2.0.26.orig/tools/webidl_binder emscripten-2.0.26/tools/web
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"

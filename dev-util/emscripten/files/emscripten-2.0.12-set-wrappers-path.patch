@@ -6,7 +6,7 @@ diff -urp emscripten-2.0.12.orig/em++ emscripten-2.0.12/em++
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/em++.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/em++.py" "$@"
 diff -urp emscripten-2.0.12.orig/emar emscripten-2.0.12/emar
 --- emscripten-2.0.12.orig/emar	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/emar	2021-10-14 11:59:27.432014917 -0700
@@ -15,7 +15,7 @@ diff -urp emscripten-2.0.12.orig/emar emscripten-2.0.12/emar
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emar.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emar.py" "$@"
 diff -urp emscripten-2.0.12.orig/embuilder emscripten-2.0.12/embuilder
 --- emscripten-2.0.12.orig/embuilder	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/embuilder	2021-10-14 11:59:31.384015047 -0700
@@ -24,7 +24,7 @@ diff -urp emscripten-2.0.12.orig/embuilder emscripten-2.0.12/embuilder
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/embuilder.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/embuilder.py" "$@"
 diff -urp emscripten-2.0.12.orig/emcc emscripten-2.0.12/emcc
 --- emscripten-2.0.12.orig/emcc	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/emcc	2021-10-14 11:59:29.400014982 -0700
@@ -33,7 +33,7 @@ diff -urp emscripten-2.0.12.orig/emcc emscripten-2.0.12/emcc
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emcc.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emcc.py" "$@"
 diff -urp emscripten-2.0.12.orig/emcmake emscripten-2.0.12/emcmake
 --- emscripten-2.0.12.orig/emcmake	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/emcmake	2021-10-14 11:59:28.760014961 -0700
@@ -42,7 +42,7 @@ diff -urp emscripten-2.0.12.orig/emcmake emscripten-2.0.12/emcmake
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emcmake.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emcmake.py" "$@"
 diff -urp emscripten-2.0.12.orig/em-config emscripten-2.0.12/em-config
 --- emscripten-2.0.12.orig/em-config	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/em-config	2021-10-14 11:59:30.712015025 -0700
@@ -51,7 +51,7 @@ diff -urp emscripten-2.0.12.orig/em-config emscripten-2.0.12/em-config
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/em-config.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/em-config.py" "$@"
 diff -urp emscripten-2.0.12.orig/emconfigure emscripten-2.0.12/emconfigure
 --- emscripten-2.0.12.orig/emconfigure	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/emconfigure	2021-10-14 11:59:30.040015003 -0700
@@ -60,7 +60,7 @@ diff -urp emscripten-2.0.12.orig/emconfigure emscripten-2.0.12/emconfigure
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emconfigure.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emconfigure.py" "$@"
 diff -urp emscripten-2.0.12.orig/emmake emscripten-2.0.12/emmake
 --- emscripten-2.0.12.orig/emmake	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/emmake	2021-10-14 11:59:25.128014841 -0700
@@ -69,7 +69,7 @@ diff -urp emscripten-2.0.12.orig/emmake emscripten-2.0.12/emmake
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emmake.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emmake.py" "$@"
 diff -urp emscripten-2.0.12.orig/emranlib emscripten-2.0.12/emranlib
 --- emscripten-2.0.12.orig/emranlib	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/emranlib	2021-10-14 11:59:25.944014868 -0700
@@ -78,7 +78,7 @@ diff -urp emscripten-2.0.12.orig/emranlib emscripten-2.0.12/emranlib
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emranlib.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emranlib.py" "$@"
 diff -urp emscripten-2.0.12.orig/emrun emscripten-2.0.12/emrun
 --- emscripten-2.0.12.orig/emrun	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/emrun	2021-10-14 11:59:34.248015142 -0700
@@ -87,7 +87,7 @@ diff -urp emscripten-2.0.12.orig/emrun emscripten-2.0.12/emrun
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emrun.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emrun.py" "$@"
 diff -urp emscripten-2.0.12.orig/emscons emscripten-2.0.12/emscons
 --- emscripten-2.0.12.orig/emscons	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/emscons	2021-10-14 11:59:35.032015167 -0700
@@ -96,7 +96,7 @@ diff -urp emscripten-2.0.12.orig/emscons emscripten-2.0.12/emscons
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emscons.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emscons.py" "$@"
 diff -urp emscripten-2.0.12.orig/emsize emscripten-2.0.12/emsize
 --- emscripten-2.0.12.orig/emsize	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/emsize	2021-10-14 11:59:28.104014939 -0700
@@ -105,7 +105,7 @@ diff -urp emscripten-2.0.12.orig/emsize emscripten-2.0.12/emsize
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/emsize.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/emsize.py" "$@"
 diff -urp emscripten-2.0.12.orig/tools/emdump emscripten-2.0.12/tools/emdump
 --- emscripten-2.0.12.orig/tools/emdump	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/tools/emdump	2021-10-14 11:59:32.072015070 -0700
@@ -114,7 +114,7 @@ diff -urp emscripten-2.0.12.orig/tools/emdump emscripten-2.0.12/tools/emdump
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
 diff -urp emscripten-2.0.12.orig/tools/file_packager emscripten-2.0.12/tools/file_packager
 --- emscripten-2.0.12.orig/tools/file_packager	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/tools/file_packager	2021-10-14 11:59:32.760015092 -0700
@@ -123,7 +123,7 @@ diff -urp emscripten-2.0.12.orig/tools/file_packager emscripten-2.0.12/tools/fil
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
 diff -urp emscripten-2.0.12.orig/tools/run_python.sh emscripten-2.0.12/tools/run_python.sh
 --- emscripten-2.0.12.orig/tools/run_python.sh	2021-01-09 08:21:25.000000000 -0800
 +++ emscripten-2.0.12/tools/run_python.sh	2021-10-14 11:59:33.464015116 -0700
@@ -132,4 +132,4 @@ diff -urp emscripten-2.0.12.orig/tools/run_python.sh emscripten-2.0.12/tools/run
  fi
  
 -exec "$PYTHON" "$0.py" "$@"
-+exec "$PYTHON" "$(realpath $(dirname $0))/$0.py" "$@"
++exec "$PYTHON" "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
