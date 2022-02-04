@@ -5,10 +5,10 @@
 # https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
 # For the closure-compiler-npm version see:
-# https://github.com/emscripten-core/emscripten/blob/3.1.2/package.json
+# https://github.com/emscripten-core/emscripten/blob/3.1.3/package.json
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/3.1.2/tools/config_template.py
+# https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/config_template.py
 
 EAPI=7
 
@@ -98,13 +98,13 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 			closure_compiler_nodejs )
 	)"
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/3.1.2/tools/building.py EXPECTED_BINARYEN_VERSION
+# See also https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/building.py EXPECTED_BINARYEN_VERSION
 JAVA_V="11" # See https://github.com/google/closure-compiler/blob/v20220104/.github/workflows/ci.yaml#L43
 # See https://github.com/google/closure-compiler-npm/blob/v20220104.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.2/package.json
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.2/tools/shared.py#L50
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.2/tools/shared.py#L43
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.3/package.json
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/shared.py#L50
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/shared.py#L43
 BINARYEN_V="104"
 JDK_DEPEND="
 || (
@@ -291,7 +291,7 @@ src_unpack() {
 	unpack ${A}
 	if use closure-compiler && ! use system-closure-compiler ; then
 		# Fetches and builds the closure compiler here.
-		npm-secaudit_src_unpack
+		:;#npm-secaudit_src_unpack
 	fi
 }
 
