@@ -72,7 +72,7 @@ CHROMIUM_STABLE_V="97"
 npm_check_npm_error()
 {
 	if find "${HOME}/npm/_logs/"* 2>/dev/null 1>/dev/null ; then
-		ewarn \
+		die \
 "Detected potential download failure(s).  Retry if build fails.  Logs can be found in \
 ${HOME}/npm/_logs"
 	fi
