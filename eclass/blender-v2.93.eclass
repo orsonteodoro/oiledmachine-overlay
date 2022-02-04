@@ -30,7 +30,7 @@ IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada +color-management
 +embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm -man +nanovdb
 +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise +openimageio
 +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace +pulseaudio
-release +sdl +sndfile +tbb test +tiff +usd -valgrind"
+release +sdl +sndfile +tbb test +tiff +usd -valgrind r1"
 LLVM_MAX_UPSTREAM="11" # (inclusive)
 LLVM_SLOTS=(13 12 11)
 gen_llvm_iuse()

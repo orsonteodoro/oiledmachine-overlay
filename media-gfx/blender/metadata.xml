@@ -393,5 +393,8 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     <flag name="xvid">
       Adds support for the Xvid codec to render and output MPEG-4 video.
     </flag>
+    <flag name="rN">
+      FOR INTERNAL USE ONLY.  Bump revision while keeping CCACHE paths for faster rebuilds.
+    </flag>
   </use>
 </pkgmetadata>
