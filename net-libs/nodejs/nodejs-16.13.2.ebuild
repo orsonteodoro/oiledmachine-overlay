@@ -105,7 +105,8 @@ BDEPEND+=" ${PYTHON_DEPS}
 	pax-kernel? ( sys-apps/elfix )"
 PATCHES=( "${FILESDIR}"/${PN}-16.12.0-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
+	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch
+	  "${FILESDIR}"/${PN}-16.13.2-add-fno-strict-aliasing-libuv-3b8d8c2.patch )
 S="${WORKDIR}/node-v${PV}"
 NPM_V="8.1.2" # See https://github.com/nodejs/node/blob/v16.12.0/deps/npm/package.json
 
@@ -116,17 +117,6 @@ WRK_V="1.2.1"
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
 		die "Your CPU doesn't support the required SSE2 instruction."
-
-	if [[ ${MERGE_TYPE} != "binary" ]]; then
-		if use lto; then
-			if tc-is-gcc; then
-				if [[ $(gcc-major-version) -ge 11 ]]; then
-					# Bug #787158
-					die "LTO builds of ${PN} using gcc-11+ currently fail tests and produce runtime errors. Either switch to gcc-10 or unset USE=lto for this ebuild"
-				fi
-			fi
-		fi
-	fi
 }
 
 pkg_setup() {
@@ -224,7 +214,7 @@ configure_pgx() {
 
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*' \
-		 '-fprofile*'
+		'-fprofile*'
 
 	local myconf=(
 		--shared-brotli

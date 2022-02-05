@@ -1,0 +1,38 @@
+From 3b8d8c28eb3b2ce1475a350ee9b1ac791a086501 Mon Sep 17 00:00:00 2001
+From: Daniel Bevenius <daniel.bevenius@gmail.com>
+Date: Tue, 16 Nov 2021 20:20:34 +0100
+Subject: [PATCH] deps: add -fno-strict-aliasing flag to libuv
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This commit turns on `-fno-strict-aliasing` in libuv.
+
+Fixes: https://github.com/nodejs/node/issues/40368
+Refs: https://github.com/libuv/libuv/issues/1230
+
+PR-URL: https://github.com/nodejs/node/pull/40631
+Reviewed-By: Colin Ihrig <cjihrig@gmail.com>
+Reviewed-By: Richard Lau <rlau@redhat.com>
+Reviewed-By: Tobias Nießen <tniessen@tnie.de>
+Reviewed-By: Santiago Gimeno <santiago.gimeno@gmail.com>
+Reviewed-By: James M Snell <jasnell@gmail.com>
+Reviewed-By: Michael Dawson <midawson@redhat.com>
+Reviewed-By: Voltrex <mohammadkeyvanzade94@gmail.com>
+Reviewed-By: Luigi Pinca <luigipinca@gmail.com>
+---
+ deps/uv/uv.gyp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/deps/uv/uv.gyp b/deps/uv/uv.gyp
+index f03b4b4c0f3a..47de0d7edefe 100644
+--- a/deps/uv/uv.gyp
++++ b/deps/uv/uv.gyp
+@@ -221,6 +221,7 @@
+             '-Wextra',
+             '-Wno-unused-parameter',
+             '-Wstrict-prototypes',
++            '-fno-strict-aliasing',
+           ],
+         }],
+         [ 'OS in "mac ios"', {

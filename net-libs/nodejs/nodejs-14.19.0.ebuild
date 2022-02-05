@@ -119,20 +119,6 @@ WRK_V="1.2.1"
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
 		die "Your CPU doesn't support the required SSE2 instruction."
-
-	if [[ ${MERGE_TYPE} != "binary" ]]; then
-		if use lto; then
-			if tc-is-gcc; then
-				if [[ $(gcc-major-version) -ge 11 ]]; then
-					# Bug #787158
-					die "LTO builds of ${PN} using gcc-11+ currently fail tests and produce runtime errors. Either switch to gcc-10 or unset USE=lto for this ebuild"
-				fi
-			else
-				# configure.py will abort on this later if we do not
-				die "${PN} only supports LTO for gcc"
-			fi
-		fi
-	fi
 }
 
 pkg_setup() {
