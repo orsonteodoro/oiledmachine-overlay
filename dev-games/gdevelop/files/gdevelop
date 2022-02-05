@@ -1,0 +1,27 @@
+#!/bin/bash
+SETTINGS=$(realpath ~/)"/.config/gdevelop/gdevelop.conf"
+if [[ -f "${SETTINGS}" ]] ; then
+	gperms=$(stat -c '%a' "${SETTINGS}" | cut -c 2)
+	operms=$(stat -c '%a' "${SETTINGS}" | cut -c 3)
+	group=$(stat -c '%G' "${SETTINGS}")
+	# Prevent code injection when guest account is users and file has group
+	# write access
+	if [[ "${group}" == "${USER}" && "${gperms}" =~ (5|4|1|0) && "${operms}" =~ (5|4|1|0) ]] ; then
+		source "${SETTINGS}"
+	else
+		echo "${SETTINGS} must have chown ${USER}:${USER} and chmod go-w."
+		echo "Make sure that the contents of gdevelop.conf is clean."
+		echo "Prevented possible injection execution.  Exiting."
+		exit 1
+	fi
+fi
+ROOT="/usr/$(get_libdir)/node/${PN}/${SLOT_MAJOR}"
+IDE_MODE=${IDE_MODE:="Electron"} # can be either Electron or Web_Browser
+
+pushd "${ROOT}/newIDE/electron-app"
+if [[ "${IDE_MODE}" == "Electron" ]] ; then
+	./node_modules/electron/dist/electron app "${@}"
+else
+	xdg-open "http://localhost:3000"
+fi
+popd

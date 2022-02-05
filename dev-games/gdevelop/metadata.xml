@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    ebuild status:
+
+    HTML5 is only complete on the ebuild level.
+    Currently it only builds GDevelop 5.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/4ian/GDevelop/issues</bugs-to>
+    <!-- GDevelop 5 wiki -->
+    <doc lang="en">http://wiki.compilgames.net/doku.php/gdevelop5/start</doc>
+    <!-- GDevelop 4 wiki -->
+    <doc lang="en">http://wiki.compilgames.net/doku.php</doc>
+    <!-- Pregenerated documentation for classes/structures for C++/JS -->
+    <doc lang="en">https://docs.gdevelop-app.com/GDCore%20Documentation/</doc>
+  </upstream>
+  <use>
+    <flag name="asmjs">Builds as asm.js.  (Does not work)</flag>
+    <flag name="doc">Installs additional documentation</flag>
+    <flag name="electron">Builds the Electron frontend</flag>
+    <flag name="extensions">Builds additional extensions</flag>
+    <flag name="html5">Builds the IDE used in either for Electron or web
+      browser</flag>
+    <flag name="minimal">Reduces the size of the installation as much as
+      possible</flag>
+    <flag name="native">Builds the native OS version.  (Incomplete)</flag>
+    <flag name="wasm">Builds as WebAssembly</flag>
+    <flag name="web-browser">Builds the IDE for the web browser and checks for
+      additional tools.</flag>
+  </use>
+</pkgmetadata>

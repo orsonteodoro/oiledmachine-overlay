@@ -1,0 +1,21 @@
+--- a/newIDE/app/node_modules/react-scripts/node_modules/react-dev-utils/WebpackDevServerUtils.js.orig	1985-10-26 01:15:00.000000000 -0700
++++ b/newIDE/app/node_modules/react-scripts/node_modules/react-dev-utils/WebpackDevServerUtils.js	2020-07-29 00:46:49.704991989 -0700
+@@ -19,6 +19,7 @@ const formatWebpackMessages = require('.
+ const getProcessForPort = require('./getProcessForPort');
+ const typescriptFormatter = require('./typescriptFormatter');
+ const forkTsCheckerWebpackPlugin = require('./ForkTsCheckerWebpackPlugin');
++const os = require('os');
+ 
+ const isInteractive = process.stdout.isTTY;
+ 
+@@ -77,6 +78,10 @@ function prepareUrls(protocol, host, por
+ }
+ 
+ function printInstructions(appName, urls, useYarn) {
++  var path = '/var/run/gdevelop/gdevelop-server.pid';
++  fs.writeFile(path, `${process.pid}`, (err) => {
++    if (err) throw err;
++  });
+   console.log();
+   console.log(`You can now view ${chalk.bold(appName)} in the browser.`);
+   console.log();

@@ -1,0 +1,32 @@
+--- GDevelop-5.0.0-beta108/GDevelop.js/Gruntfile.js.orig	2021-03-28 08:55:22.000000000 -0700
++++ GDevelop-5.0.0-beta108/GDevelop.js/Gruntfile.js	2021-04-28 14:42:16.993048889 -0700
+@@ -4,7 +4,9 @@ module.exports = function (grunt) {
+   const fs = require('fs');
+   const path = require('path');
+   const isWin = /^win/.test(process.platform);
++  const isLinux = /^linux/.test(process.platform);
+   const isDev = grunt.option('dev') || false;
++  const isNinja = grunt.option('ninja') || false;
+   const useMinGW = grunt.option('use-MinGW') || false;
+ 
+   const buildOutputPath = '../Binaries/embuild/GDevelop.js/';
+@@ -54,6 +56,19 @@ module.exports = function (grunt) {
+         "⚠️ Can't find CMake in its usual Program Files folder. Make sure you have cmake in your PATH instead."
+       );
+     }
++  } else if (isLinux) {
++      cmakeBinary = 'emcmake cmake';
++      if (isNinja) {
++        cmakeGeneratorArgs = [
++          '-G "Ninja"',
++          `-DCMAKE_MAKE_PROGRAM="/usr/bin/ninja"`,
++        ];
++      } else {
++        cmakeGeneratorArgs = [
++          '-G "Unix Makefiles"',
++          `-DCMAKE_MAKE_PROGRAM="/usr/bin/make"`,
++        ];
++      }
+   }
+ 
+   grunt.initConfig({

@@ -1,0 +1,68 @@
+#!/sbin/openrc-run
+# We run the server to below root but a bit privileged (write access)
+# but not root.  Must create a user called gdevelop that to not be used
+# by normal users but only the server.
+
+PROJECT_ROOT="/usr/lib64/node/gdevelop/5"
+SERVER_PID_FILE="/var/run/gdevelop/gdevelop-server.pid"
+LOGFILE="/var/log/gdevelop-server.log"
+ENABLE_LOGGING=${ENABLE_LOGGING:="1"} # can set this in /etc/conf.d/gdevelop-server
+WAIT_TIME="180000" # It took 2:46.03 to start it up.
+
+logmsg() {
+	local msg="${1}"
+	touch "${LOGFILE}"
+	chown gdevelop:gdevelop "${LOGFILE}"
+	if [[ "${ENABLE_LOGGING}" == "1" ]] ; then
+		echo -e "${msg}" >> "${LOGFILE}"
+	fi
+}
+
+check_prereqs() {
+	if ! which npm ; then
+		local msg="You need npm to start the server."
+		logmsg "${msg}"
+		exit 1
+	fi
+	if ! which node ; then
+		local msg="You need node/nodejs to start the server."
+		logmsg "${msg}"
+		exit 1
+	fi
+}
+
+start_server() {
+	mkdir -p "$(dirname ${SERVER_PID_FILE})"
+	touch "${SERVER_PID_FILE}"
+	chown gdevelop:gdevelop "$(dirname ${SERVER_PID_FILE})" "${SERVER_PID_FILE}"
+
+	cd "${PROJECT_ROOT}/newIDE/app"
+	start-stop-daemon \
+		--background \
+		--start \
+		--group gdevelop \
+		--user gdevelop \
+		--pidfile "${SERVER_PID_FILE}" \
+		--wait ${WAIT_TIME} \
+		--stdout "${LOGFILE}" \
+		--stderr "${LOGFILE}" \
+		--exec /usr/bin/npm -- start
+	eend $?
+}
+
+start()
+{
+	local m="Starting GDevelop server"
+	ebegin "${m}"
+	logmsg "${m}"
+	start_server
+}
+
+stop() {
+	local m="Stopping GDevelop server"
+	ebegin "${m}"
+	logmsg "${m}"
+	start-stop-daemon \
+		--stop \
+		--pidfile "${SERVER_PID_FILE}"
+}
