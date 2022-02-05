@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python3_{8..10} )
 PYTHON_REQ_USE="threads(+)"
 inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
 	toolchain-funcs xdg-utils
-DESCRIPTION="A JavaScript runtime built on Chrome's V8 JavaScript engine"
+DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
 LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
