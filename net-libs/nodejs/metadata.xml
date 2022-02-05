@@ -104,6 +104,8 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
 		or may cause degraded performance.
 	</longdescription>
 	<use>
+		<flag name="custom-optimization">Override the default -O3
+			flag.</flag>
 		<flag name="doc">It installs docs.  It should only
 			be enabled for the highest request slot.</flag>
 		<flag name="inspector">Enable V8 inspector</flag>

@@ -15,8 +15,8 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 debug doc +icu inspector lto +npm
-pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test"
+IUSE+=" cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector lto
++npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man pgo"
 
 BENCHMARK_TYPES=(
@@ -187,6 +187,33 @@ src_prepare() {
 	sed -i -e "/DEPFLAGS =/d" tools/gyp/pylib/gyp/generator/make.py || die
 
 	# -O3 removal breaks _FORITIFY_SOURCE
+	if use custom-optimization ; then
+		if is-flag -O0; then
+			ewarn "Using O3 may disable _FORITIFY_SOURCE"
+			use pgo && ewarn "Using -O0 with PGO is uncommon"
+			sed -i -e "s|'-O3'|'-O0'|s" common.gypi node.gypi || die
+		elif is-flag -O1; then
+			use pgo && ewarn "Using -O1 with PGO is uncommon"
+			sed -i -e "s|'-O3'|'-O1'|s" common.gypi node.gypi || die
+		elif is-flag -O2; then
+			use pgo && ewarn "Using -O2 with PGO is uncommon"
+			sed -i -e "s|'-O3'|'-O2'|s" common.gypi node.gypi || die
+		elif is-flag -O3; then
+			sed -i -e "s|'-O3'|'-O3'|s" common.gypi node.gypi || die
+		elif is-flag -O4; then
+			sed -i -e "s|'-O3'|'-O4'|s" common.gypi node.gypi || die
+		elif is-flag -Ofast; then
+			sed -i -e "s|'-O3'|'-Ofast'|s" common.gypi node.gypi || die
+		elif is-flag -Os; then
+			use pgo && ewarn "Using -Os with PGO is uncommon"
+			sed -i -e "s|'-O3'|'-Os'|s" common.gypi node.gypi || die
+		elif is-flag -Oz; then
+			use pgo && ewarn "Using -Oz with PGO is uncommon"
+			sed -i -e "s|'-O3'|'-Oz'|s" common.gypi node.gypi || die
+		else
+			sed -i -e "s|'-O3'|'-O2'|s" common.gypi node.gypi || die
+		fi
+	fi
 
 	# debug builds. change install path, remove optimisations and override buildtype
 	if use debug; then
@@ -233,6 +260,7 @@ configure_pgx() {
 		'-fuse-ld*' \
 		'-fprofile*'
 
+	use custom-optimization && filter-flags '-O3'
 	use debug && myconf+=( --debug )
 	if use system-icu; then
 		myconf+=( --with-intl=system-icu )
