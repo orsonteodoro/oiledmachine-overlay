@@ -106,7 +106,8 @@ BDEPEND+=" ${PYTHON_DEPS}
 PATCHES=( "${FILESDIR}"/${PN}-17.0.0-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
 	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch
-	  "${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch )
+	  "${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch
+	  "${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch )
 S="${WORKDIR}/node-v${PV}"
 NPM_V="8.3.1" # See https://github.com/nodejs/node/blob/v17.3.0/deps/npm/package.json
 
@@ -243,12 +244,17 @@ configure_pgx() {
 	use inspector || myconf+=( --without-inspector )
 	use npm || myconf+=( --without-npm )
 	if use pgo ; then
-		einfo "Forcing GCC for PGO"
-		export CC=${CHOST}-gcc
-		export CXX=${CHOST}-g++
-		export LD=ld.bfd
-		export AR=ar
-		export NM=nm
+		if [[ "${CC}" =~ "clang" ]] ; then
+			ewarn "PGO clang support is experimental"
+		fi
+		export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
+		export PGO_PROFILE_PROFDATA="${T}/pgo-${ABI}/pgo-custom.profdata"
+		mkdir -p "${PGO_PROFILE_DIR}" || die
+		if [[ "${PGO_PHASE}" == "pgo" && "${CC}" =~ "clang" ]] ; then
+			einfo "Converting .profraw -> .profdata"
+			llvm-profdata merge -output="${T}/pgo-${ABI}/pgo-custom.profdata" \
+				"${T}/pgo-${ABI}" || die
+		fi
 		if [[ "${PGO_PHASE}" == "pgi" ]] ; then
 			myconf+=( --enable-pgo-generate )
 		elif [[ "${PGO_PHASE}" == "pgo" ]] ; then

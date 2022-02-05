@@ -1,0 +1,82 @@
+Subject:  Changes to support PGO with the Clang toolchain
+Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Sat Feb  5 12:30:38 AM PST 2022 (Unix time: 1644049838)
+
+User is still responsible for prodata generation.
+PGO_PROFILE_DIR and PGO_PROFILE_PROFDATA environment variables must be set.
+
+diff -urp node-v16.13.2.orig/common.gypi node-v16.13.2/common.gypi
+--- node-v16.13.2.orig/common.gypi	2022-02-04 23:42:35.787567088 -0800
++++ node-v16.13.2/common.gypi	2022-02-05 00:24:11.202730779 -0800
+@@ -167,8 +167,10 @@
+       'Release': {
+         'variables': {
+           'v8_enable_handle_zapping': 0,
+-          'pgo_generate': ' -fprofile-generate ',
+-          'pgo_use': ' -fprofile-use -fprofile-correction ',
++          'pgo_generate_gcc': ' -fprofile-generate ',
++          'pgo_use_gcc': ' -fprofile-use -fprofile-correction ',
++          'pgo_generate_clang': ' -fprofile-generate=<(pgo_profile_dir) ',
++          'pgo_use_clang': ' -fprofile-use=<(pgo_profile_profdata) ',
+           'conditions': [
+             ['node_shared != "true"', {
+               'MSVC_runtimeType': 0    # MultiThreaded (/MT)
+@@ -227,15 +229,27 @@
+           ['OS!="mac" and OS!="win"', {
+             'cflags': [ '-fno-omit-frame-pointer' ],
+           }],
+-          ['OS=="linux"', {
++          ['OS=="linux" and llvm_version=="0.0"', {
++            'conditions': [
++              ['enable_pgo_generate=="true"', {
++                'cflags': ['<(pgo_generate_gcc)'],
++                'ldflags': ['<(pgo_generate_gcc)'],
++              },],
++              ['enable_pgo_use=="true"', {
++                'cflags': ['<(pgo_use_gcc)'],
++                'ldflags': ['<(pgo_use_gcc)'],
++              },],
++            ],
++          },],
++          ['OS=="linux" and llvm_version!="0.0"', {
+             'conditions': [
+               ['enable_pgo_generate=="true"', {
+-                'cflags': ['<(pgo_generate)'],
+-                'ldflags': ['<(pgo_generate)'],
++                'cflags': ['<(pgo_generate_clang)'],
++                'ldflags': ['<(pgo_generate_clang)'],
+               },],
+               ['enable_pgo_use=="true"', {
+-                'cflags': ['<(pgo_use)'],
+-                'ldflags': ['<(pgo_use)'],
++                'cflags': ['<(pgo_use_clang)'],
++                'ldflags': ['<(pgo_use_clang)'],
+               },],
+             ],
+           },],
+diff -urp node-v16.13.2.orig/configure.py node-v16.13.2/configure.py
+--- node-v16.13.2.orig/configure.py	2022-02-04 23:42:35.789567167 -0800
++++ node-v16.13.2/configure.py	2022-02-05 00:24:39.300830581 -0800
+@@ -1225,12 +1225,18 @@ def configure_node(o):
+ 
+   if flavor == 'linux':
+     if options.enable_pgo_generate or options.enable_pgo_use:
+-      version_checked = (5, 4, 1)
+-      if not gcc_version_ge(version_checked):
+-        version_checked_str = ".".join(map(str, version_checked))
++      gcc_version_checked = (5, 4, 1)
++      clang_version_checked = (3, 9, 1)
++      if not gcc_version_ge(gcc_version_checked) and not clang_version_ge(clang_version_checked):
++        gcc_version_checked_str = ".".join(map(str, gcc_version_checked))
++        clang_version_checked_str = ".".join(map(str, clang_version_checked))
+         raise Exception(
+           'The options --enable-pgo-generate and --enable-pgo-use '
+-          'are supported for gcc and gxx %s or newer only.' % (version_checked_str))
++          'are supported for gcc and gxx %s or newer only'
++	  'or for clang and clang++ %s or newer only' % (gcc_version_checked_str, clang_version_checked_str))
++      if clang_version_ge(clang_version_checked):
++        o['variables']['pgo_profile_dir'] = os.environ.get('PGO_PROFILE_DIR')
++        o['variables']['pgo_profile_profdata'] = os.environ.get('PGO_PROFILE_PROFDATA')
+ 
+     if options.enable_pgo_generate and options.enable_pgo_use:
+       raise Exception(
