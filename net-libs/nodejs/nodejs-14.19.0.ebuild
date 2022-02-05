@@ -108,7 +108,8 @@ BDEPEND+=" ${PYTHON_DEPS}
 PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
 	  "${FILESDIR}"/${PN}-14.18.2-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	  "${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch )
+	  "${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch
+	  "${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch )
 S="${WORKDIR}/node-v${PV}"
 NPM_V="6.14.16" # See https://github.com/nodejs/node/blob/v14.17.6/deps/npm/package.json
 
@@ -214,10 +215,6 @@ configure_pgx() {
 	emake clean
 	xdg_environment_reset
 
-	# LTO compiler flags are handled by configure.py itself
-	filter-flags '-flto*' \
-		'-fprofile*'
-
 	local myconf=(
 		--shared-brotli
 		--shared-cares
@@ -225,8 +222,19 @@ configure_pgx() {
 		--shared-nghttp2
 		--shared-zlib
 	)
-	use debug && myconf+=( --debug )
 	use lto && myconf+=( --enable-lto )
+	if use lto && [[ "${CFLAGS}" =~ "-flto=thin" ]] \
+		|| ( "${CFLAGS}" =~ "-flto" && has_version "sys-devel/clang[default-lld]" )  ; then
+		myconf+=( --with-thinlto )
+	elif use lto && [[ "${CFLAGS}" =~ "-flto" ]] && has_version "sys-devel/binutils[gold,plugins]" ; then
+		myconf+=( --with-goldlto )
+	fi
+
+	# LTO compiler flags are handled by configure.py itself
+	filter-flags '-flto*' \
+		'-fprofile*'
+
+	use debug && myconf+=( --debug )
 	if use system-icu; then
 		myconf+=( --with-intl=system-icu )
 	elif use icu; then

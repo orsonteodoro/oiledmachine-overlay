@@ -1,0 +1,84 @@
+Subject:  Control flto for ThinLTO and Gold when using Clang. (Backport to 12.x)
+Author:  Orson Teodoro <orsonteodoro@hotmail.com
+Date:  Fri Feb  4 10:41:12 PM PST 2022 (Unix time: 1644043272)
+diff -urp node-v12.22.10.orig/common.gypi node-v12.22.10/common.gypi
+--- node-v12.22.10.orig/common.gypi	2022-02-04 22:49:08.221277882 -0800
++++ node-v12.22.10/common.gypi	2022-02-04 22:51:59.122039047 -0800
+@@ -196,8 +196,15 @@
+             }],
+             ['llvm_version=="0.0"', {
+               'lto': ' -flto=4 -fuse-linker-plugin -ffat-lto-objects ', # GCC
+-            }, {
+-              'lto': ' -flto ', # Clang
++            }],
++            ['llvm_version!="0.0" and with_thinlto=="true"', {
++              'lto': ' -flto=thin', # Clang ThinLTO
++            }],
++            ['llvm_version!="0.0" and with_goldlto=="true"', {
++              'lto': ' -flto', # Clang Gold LTO
++            }],
++            ['llvm_version!="0.0" and with_goldlto=="false" and with_thinlto=="false"', {
++              'lto': ' -flto', # Clang with system default
+             }],
+           ],
+         },
+@@ -216,6 +223,16 @@
+           ['OS!="mac" and OS!="win"', {
+             'cflags': [ '-fno-omit-frame-pointer' ],
+           }],
++          ['OS=="linux" and with_thinlto=="true"', {
++            'ldflags': [
++              '-fuse-ld=lld',
++            ],
++          }],
++          ['OS=="linux" and (with_goldlto=="true" or node_section_ordering_info!="")', {
++            'ldflags': [
++              '-fuse-ld=gold',
++            ],
++          }],
+           ['OS=="linux"', {
+             'conditions': [
+               ['enable_pgo_generate=="true"', {
+Only in node-v12.22.10: common.gypi.orig
+Only in node-v12.22.10: common.gypi.rej
+diff -urp node-v12.22.10.orig/configure.py node-v12.22.10/configure.py
+--- node-v12.22.10.orig/configure.py	2022-02-04 22:49:08.224278001 -0800
++++ node-v12.22.10/configure.py	2022-02-04 22:53:25.718465075 -0800
+@@ -444,6 +444,18 @@ parser.add_option('--use-largepages-scri
+     dest='node_use_large_pages_script_lld',
+     help='This option has no effect. --use-largepages is now a runtime option.')
+ 
++parser.add_argument('--with-thinlto',
++    action='store_true',
++    dest='with_thinlto',
++    default=None,
++    help='Use ThinLTO and LLD')
++
++parser.add_argument('--with-goldlto',
++    action='store_true',
++    dest='with_goldlto',
++    default=None,
++    help='Use Gold LTO')
++
+ intl_optgroup.add_option('--with-intl',
+     action='store',
+     dest='with_intl',
+@@ -1225,6 +1237,16 @@ def configure_node(o):
+     print('Warning! Loading builtin modules from disk is for development')
+     o['variables']['node_builtin_modules_path'] = options.node_builtin_modules_path
+ 
++  o['variables']['with_thinlto'] = 'false'
++  o['variables']['with_goldlto'] = 'false'
++  if options.enable_lto:
++    if options.with_thinlto and options.with_goldlto:
++      error('''with_thinlto and with_goldlto cannot both be enabled''')
++    if options.with_thinlto:
++      o['variables']['with_thinlto'] = 'true'
++    elif options.with_goldlto:
++      o['variables']['with_goldlto'] = 'true'
++
+ def configure_napi(output):
+   version = getnapibuildversion.get_napi_version()
+   output['variables']['napi_build_version'] = version
+Only in node-v12.22.10: configure.py.orig
+Only in node-v12.22.10: configure.py.rej
