@@ -255,7 +255,7 @@ configure_pgx() {
 		'-fuse-ld*' \
 		'-fprofile*'
 
-	use custom-optimization && filter-flags '-O3'
+	filter-flags '-O*'
 	use debug && myconf+=( --debug )
 	use icu && myconf+=( --with-intl=system-icu ) || myconf+=( --with-intl=none )
 	use inspector || myconf+=( --without-inspector )
