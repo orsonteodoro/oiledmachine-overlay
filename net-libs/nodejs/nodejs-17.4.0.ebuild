@@ -189,7 +189,7 @@ src_prepare() {
 	# -O3 removal breaks _FORITIFY_SOURCE
 	if use custom-optimization ; then
 		if is-flag -O0; then
-			ewarn "Using O3 may disable _FORITIFY_SOURCE"
+			ewarn "Using -O0 may disable _FORITIFY_SOURCE lowering security"
 			use pgo && ewarn "Using -O0 with PGO is uncommon"
 			sed -i -e "s|'-O3'|'-O0'|s" common.gypi node.gypi || die
 		elif is-flag -O1; then
