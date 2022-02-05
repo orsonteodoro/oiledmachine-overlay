@@ -6,7 +6,7 @@
 EAPI=7
 PYTHON_COMPAT=( python3_{8..10} )
 PYTHON_REQ_USE="threads(+)"
-inherit bash-completion-r1 flag-o-matic pax-utils python-any-r1 \
+inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
 	toolchain-funcs xdg-utils
 DESCRIPTION="A JavaScript runtime built on Chrome's V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
@@ -98,6 +98,7 @@ RDEPEND+=" !net-libs/nodejs:0
 	)"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
+	dev-util/ninja
 	sys-apps/coreutils
 	pgo? ( ${PN}_pgo_trainers_http2? ( >=net-libs/nghttp2-${NGHTTP2_V}[utils] ) )
 	systemtap? ( dev-util/systemtap )
@@ -121,6 +122,7 @@ WRK_V="1.2.1"
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
 		die "Your CPU doesn't support the required SSE2 instruction."
+	# Does not need 6ca785b
 }
 
 pkg_setup() {
@@ -231,10 +233,12 @@ src_prepare() {
 src_configure() { :; }
 
 configure_pgx() {
-	emake clean
+	export ENINJA_BUILD_DIR="out/"$(usex debug "Debug" "Release")
+	[[ "${PGO_PHASE}" == "pgo" ]] && eninja -C ${ENINJA_BUILD_DIR} -t clean
 	xdg_environment_reset
 
 	local myconf=(
+		--ninja
 		--shared-brotli
 		--shared-cares
 		--shared-http-parser
@@ -313,9 +317,9 @@ configure_pgx() {
 }
 
 build_pgx() {
-	emake -C out mksnapshot
+	eninja -C ${ENINJA_BUILD_DIR} mksnapshot
 	pax-mark m "out/${BUILDTYPE}/mksnapshot"
-	emake -C out
+	eninja -C ${ENINJA_BUILD_DIR}
 }
 
 init_local_npm() {
@@ -451,11 +455,7 @@ src_install() {
 	local REL_D_BASE="usr/$(get_libdir)"
 	local D_BASE="/${REL_D_BASE}"
 	local ED_BASE="${ED}/${REL_D_BASE}"
-	if [[ "${PGO_PHASE}" == "pgi" ]] ; then
-		emake DESTDIR="${D}" install
-	else
-		default
-	fi
+	DESTDIR="${D}" eninja -C ${ENINJA_BUILD_DIR} install
 
 	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
 	if [[ "${PGO_PHASE}" == "pgi" ]] ; then
