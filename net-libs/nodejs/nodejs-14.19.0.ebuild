@@ -249,8 +249,7 @@ configure_pgx() {
 		--shared-zlib
 	)
 	use lto && myconf+=( --enable-lto )
-	if use lto && [[ "${CFLAGS}" =~ "-flto=thin" ]] \
-		|| ( "${CFLAGS}" =~ "-flto" && has_version "sys-devel/clang[default-lld]" )  ; then
+	if use lto && [[ "${CFLAGS}" =~ "-flto=thin" ]] ; then
 		myconf+=( --with-thinlto )
 	elif use lto && [[ "${CFLAGS}" =~ "-flto" ]] && has_version "sys-devel/binutils[gold,plugins]" ; then
 		myconf+=( --with-goldlto )
