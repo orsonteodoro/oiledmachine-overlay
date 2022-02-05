@@ -61,10 +61,7 @@ BDEPEND+="
 	>=sys-devel/gcc-5.4
 	html5? (
 		>=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[wasm(+)]
-		(
-			>=net-libs/nodejs-${NODEJS_V}[npm]
-			<net-libs/nodejs-17[npm]
-		)
+		>=net-libs/nodejs-${NODEJS_V}:$(ver_cut 1 ${NODEJS_V})[npm]
 	)
 "
 ELECTRON_APP_ELECTRON_V="8.2.5" # See \
