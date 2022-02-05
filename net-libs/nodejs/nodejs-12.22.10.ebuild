@@ -194,25 +194,25 @@ src_prepare() {
 		if is-flag -O0; then
 			ewarn "Using -O0 may disable _FORITIFY_SOURCE lowering security"
 			use pgo && ewarn "Using -O0 with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-O0'|s" common.gypi node.gypi || die
+			sed -i -e "s|'-O3'|'-O0'|g" common.gypi node.gypi || die
 		elif is-flag -O1; then
 			use pgo && ewarn "Using -O1 with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-O1'|s" common.gypi node.gypi || die
+			sed -i -e "s|'-O3'|'-O1'|g" common.gypi node.gypi || die
 		elif is-flag -O2; then
 			use pgo && ewarn "Using -O2 with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-O2'|s" common.gypi node.gypi || die
+			sed -i -e "s|'-O3'|'-O2'|g" common.gypi node.gypi || die
 		elif is-flag -O3; then
-			sed -i -e "s|'-O3'|'-O3'|s" common.gypi node.gypi || die
+			sed -i -e "s|'-O3'|'-O3'|g" common.gypi node.gypi || die
 		elif is-flag -O4; then
-			sed -i -e "s|'-O3'|'-O4'|s" common.gypi node.gypi || die
+			sed -i -e "s|'-O3'|'-O4'|g" common.gypi node.gypi || die
 		elif is-flag -Ofast; then
-			sed -i -e "s|'-O3'|'-Ofast'|s" common.gypi node.gypi || die
+			sed -i -e "s|'-O3'|'-Ofast'|g" common.gypi node.gypi || die
 		elif is-flag -Os; then
 			use pgo && ewarn "Using -Os with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-Os'|s" common.gypi node.gypi || die
+			sed -i -e "s|'-O3'|'-Os'|g" common.gypi node.gypi || die
 		elif is-flag -Oz; then
 			use pgo && ewarn "Using -Oz with PGO is uncommon"
-			sed -i -e "s|'-O3'|'-Oz'|s" common.gypi node.gypi || die
+			sed -i -e "s|'-O3'|'-Oz'|g" common.gypi node.gypi || die
 		fi
 	fi
 
