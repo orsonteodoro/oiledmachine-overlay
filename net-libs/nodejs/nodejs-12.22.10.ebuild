@@ -226,6 +226,7 @@ configure_pgx() {
 
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*' \
+		'-fuse-ld*' \
 		'-fprofile*'
 
 	use debug && myconf+=( --debug )
