@@ -213,8 +213,6 @@ src_prepare() {
 		elif is-flag -Oz; then
 			use pgo && ewarn "Using -Oz with PGO is uncommon"
 			sed -i -e "s|'-O3'|'-Oz'|s" common.gypi node.gypi || die
-		else
-			sed -i -e "s|'-O3'|'-O2'|s" common.gypi node.gypi || die
 		fi
 	fi
 
