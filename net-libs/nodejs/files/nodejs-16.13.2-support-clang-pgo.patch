@@ -74,7 +74,7 @@ diff -urp node-v16.13.2.orig/configure.py node-v16.13.2/configure.py
            'The options --enable-pgo-generate and --enable-pgo-use '
 -          'are supported for gcc and gxx %s or newer only.' % (version_checked_str))
 +          'are supported for gcc and gxx %s or newer only'
-+	  'or for clang and clang++ %s or newer only' % (gcc_version_checked_str, clang_version_checked_str))
++          'or for clang and clang++ %s or newer only' % (gcc_version_checked_str, clang_version_checked_str))
 +      if clang_version_ge(clang_version_checked):
 +        o['variables']['pgo_profile_dir'] = os.environ.get('PGO_PROFILE_DIR')
 +        o['variables']['pgo_profile_profdata'] = os.environ.get('PGO_PROFILE_PROFDATA')
