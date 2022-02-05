@@ -61,7 +61,7 @@ BDEPEND+="
 	>=sys-devel/gcc-5.4
 	html5? (
 		>=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[wasm(+)]
-		>=net-libs/nodejs-${NODEJS_V}:$(ver_cut 1 ${NODEJS_V})
+		>=net-libs/nodejs-${NODEJS_V}:${NODEJS_V%%.*}
 		>=net-libs/nodejs-${NODEJS_V}[npm]
 	)
 "
@@ -163,9 +163,9 @@ eerror
 		-e "#define NODE_MAJOR_VERSION" \
 		"${EROOT}/usr/include/node/node_version.h" \
 		| cut -f 3 -d " ")
-	if ver_test $(ver_cut 1 ${ACTIVE_VERSION}) -lt $(ver_cut 1 ${NODEJS_V}) ; then
+	if ver_test ${ACTIVE_VERSION%%.*} -ne ${NODEJS_V%%.*} ; then
 eerror
-eerror "Please switch Node.js to $(ver_cut 1 ${NODEJS_V})"
+eerror "Please switch Node.js to ${NODEJS_V%%.*}"
 eerror
 		die
 	fi
