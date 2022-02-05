@@ -189,7 +189,7 @@ src_prepare() {
 	# Avoid writing a depfile, not useful
 	sed -i -e "/DEPFLAGS =/d" tools/gyp/pylib/gyp/generator/make.py || die
 
-	sed -i -e "/'-O3'/d" common.gypi node.gypi || die
+	# -O3 removal breaks _FORITIFY_SOURCE
 
 	# Known-to-fail test of a deprecated, legacy HTTP parser. Just don't bother.
 	rm -f test/parallel/test-http-transfer-encoding-smuggling-legacy.js

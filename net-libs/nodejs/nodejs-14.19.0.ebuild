@@ -189,7 +189,7 @@ src_prepare() {
 	# Avoid writing a depfile, not useful
 	sed -i -e "/DEPFLAGS =/d" tools/gyp/pylib/gyp/generator/make.py || die
 
-	sed -i -e "/'-O3'/d" common.gypi node.gypi || die
+	# -O3 removal breaks _FORITIFY_SOURCE
 
 	# debug builds. change install path, remove optimisations and override buildtype
 	if use debug; then
