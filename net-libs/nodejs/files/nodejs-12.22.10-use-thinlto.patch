@@ -1,6 +1,7 @@
 Subject:  Control flto for ThinLTO and Gold when using Clang. (Backport to 12.x)
 Author:  Orson Teodoro <orsonteodoro@hotmail.com
 Date:  Fri Feb  4 10:41:12 PM PST 2022 (Unix time: 1644043272)
+Patch status:  Testing
 diff -urp node-v12.22.10.orig/common.gypi node-v12.22.10/common.gypi
 --- node-v12.22.10.orig/common.gypi	2022-02-04 22:49:08.221277882 -0800
 +++ node-v12.22.10/common.gypi	2022-02-04 22:51:59.122039047 -0800

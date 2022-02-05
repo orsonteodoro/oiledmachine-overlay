@@ -1,6 +1,7 @@
 Subject:  Changes to support PGO with the Clang toolchain
 Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Date:  Sat Feb  5 12:30:38 AM PST 2022 (Unix time: 1644049838)
+Patch status:  Testing
 
 User is still responsible for prodata generation.
 PGO_PROFILE_DIR and PGO_PROFILE_PROFDATA environment variables must be set.
