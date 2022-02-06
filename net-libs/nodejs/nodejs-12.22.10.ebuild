@@ -455,7 +455,8 @@ src_install() {
 	local REL_D_BASE="usr/$(get_libdir)"
 	local D_BASE="/${REL_D_BASE}"
 	local ED_BASE="${ED}/${REL_D_BASE}"
-	DESTDIR="${D}" eninja -C ${ENINJA_BUILD_DIR} install
+
+	${EPYTHON} tools/install.py install "${D}" "${EPREFIX}/usr"
 
 	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
 	if [[ "${PGO_PHASE}" == "pgi" ]] ; then
