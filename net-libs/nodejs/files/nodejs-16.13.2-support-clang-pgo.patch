@@ -9,7 +9,7 @@ PGO_PROFILE_DIR and PGO_PROFILE_PROFDATA environment variables must be set.
 diff -urp node-v16.13.2.orig/common.gypi node-v16.13.2/common.gypi
 --- node-v16.13.2.orig/common.gypi	2022-02-04 23:42:35.787567088 -0800
 +++ node-v16.13.2/common.gypi	2022-02-05 00:24:11.202730779 -0800
-@@ -167,8 +167,10 @@
+@@ -167,8 +167,12 @@
        'Release': {
          'variables': {
            'v8_enable_handle_zapping': 0,
@@ -18,7 +18,9 @@ diff -urp node-v16.13.2.orig/common.gypi node-v16.13.2/common.gypi
 +          'pgo_generate_gcc': ' -fprofile-generate ',
 +          'pgo_use_gcc': ' -fprofile-use -fprofile-correction ',
 +          'pgo_generate_clang': ' -fprofile-generate=<(pgo_profile_dir) -mllvm -vp-counters-per-site=3 ',
++          'pgo_generate_clang_ldflags': ' -fprofile-generate=<(pgo_profile_dir) ',
 +          'pgo_use_clang': ' -fprofile-use=<(pgo_profile_profdata) -mllvm -vp-counters-per-site=3 ',
++          'pgo_use_clang_ldflags': ' -fprofile-use=<(pgo_profile_profdata) ',
            'conditions': [
              ['node_shared != "true"', {
                'MSVC_runtimeType': 0    # MultiThreaded (/MT)
@@ -45,13 +47,13 @@ diff -urp node-v16.13.2.orig/common.gypi node-v16.13.2/common.gypi
 -                'cflags': ['<(pgo_generate)'],
 -                'ldflags': ['<(pgo_generate)'],
 +                'cflags': ['<(pgo_generate_clang)'],
-+                'ldflags': ['<(pgo_generate_clang)'],
++                'ldflags': ['<(pgo_generate_clang_ldflags)'],
                },],
                ['enable_pgo_use=="true"', {
 -                'cflags': ['<(pgo_use)'],
 -                'ldflags': ['<(pgo_use)'],
 +                'cflags': ['<(pgo_use_clang)'],
-+                'ldflags': ['<(pgo_use_clang)'],
++                'ldflags': ['<(pgo_use_clang_ldflags)'],
                },],
              ],
            },],
