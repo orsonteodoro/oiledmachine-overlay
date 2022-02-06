@@ -16,7 +16,7 @@
 # genkernel-VERSION     -> normal genkernel release
 
 # The original version of this ebuild is 4.2.6-r1 from the gentoo overlay
-# modified with subdir_mount, crypt_root_plain, llvm, pgo changes.  Revision
+# modified with subdir_mount, entry, llvm, pgo changes.  Revision
 # bumps may change on the oiledmachine-overlay.
 
 EAPI="7"
@@ -47,13 +47,14 @@ VERSION_KMOD="29"
 VERSION_LIBAIO="0.3.112"
 VERSION_LIBGCRYPT="1.9.4"
 VERSION_LIBGPGERROR="1.43"
+VERSION_LIBJPEG="9e"
 VERSION_LIBMCRYPT="2.5.8"
 VERSION_LIBXCRYPT="4.4.26"
 VERSION_LVM="2.02.188"
 VERSION_LZO="2.10"
+VERSION_MCRYPT="2.6.8"
 VERSION_MDADM="4.1"
 VERSION_MHASH="0.9.9.9"
-VERSION_LIBJPEG_TURBO="1.5.3"
 VERSION_POPT="1.18"
 VERSION_STEGHIDE="0.5.1"
 VERSION_STRACE="5.14"
@@ -100,13 +101,13 @@ COMMON_URI="
 	https://zlib.net/zlib-${VERSION_ZLIB}.tar.gz
 	https://github.com/facebook/zstd/archive/v${VERSION_ZSTD}.tar.gz -> zstd-${VERSION_ZSTD}.tar.gz
 	steghide? (
-		mirror://sourceforge/libjpeg-turbo/libjpeg-turbo-${VERSION_LIBJPEG_TURBO}.tar.gz
+		https://www.ijg.org/files/jpegsrc.v${VERSION_LIBJPEG}.tar.gz
+		mirror://sourceforge/mcrypt/libmcrypt-${VERSION_LIBMCRYPT}.tar.gz
+		mirror://sourceforge/mcrypt/mcrypt-${VERSION_MCRYPT}.tar.gz
 		mirror://sourceforge/mhash/mhash-${VERSION_MHASH}.tar.gz
 		mirror://sourceforge/steghide/steghide-${VERSION_STEGHIDE}.tar.bz2
 	)
 "
-#		mirror://gentoo/libjpeg${VERSION_LIBJPEG/./_}.debian.tar.gz # put back in steghide conditional
-# missing VERSION_LIBMCRYPT uri
 
 if [[ ${PV} == 9999* ]] ; then
 	EGIT_REPO_URI="https://anongit.gentoo.org/git/proj/${PN}.git"
@@ -123,13 +124,13 @@ DESCRIPTION="Gentoo automatic kernel building scripts"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Genkernel https://gitweb.gentoo.org/proj/genkernel.git/"
 
 LICENSE="GPL-2
-	crypt_root_plain? ( GPL-2 Linux-syscall-note )
+	entry? ( GPL-2 Linux-syscall-note )
 	steghide? ( GPL-2 BSD IJG LGPL-2.1 ZLIB )
-	"
+"
 SLOT="0"
 RESTRICT=""
 IUSE+=" ibm +firmware"
-IUSE+=" crypt_root_plain"			# Added by oteodoro.
+IUSE+=" entry"					# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
 IUSE+=" clang-pgo
@@ -171,7 +172,7 @@ REQUIRED_USE+=" cfi? ( llvm lto )
 		pgo_trainer_xscreensaver_3d? ( clang-pgo )
 		pgo_trainer_yt? ( clang-pgo )
 		shadowcallstack? ( cfi )
-		steghide? ( crypt_root_plain )"
+		steghide? ( entry )"
 gen_scs_exclusion() {
 	for a in ${EXCLUDE_SCS[@]} ; do
 		echo " ${a}? ( !shadowcallstack )"
@@ -405,14 +406,28 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-4.1.2-subdir-mount.patch"
 	fi
 
-	if use crypt_root_plain ; then
-		# Technically, one can't have plausable deniability because the packages
-		# are named libgcrypt or cryptsetup.  One would have to rename everything
-		# without crypt or the ciphers involved.  This patch will try to fix the
-		# facade issue (aka immediate password prompt) and the encrypted device
-		# referencing issue (destroying the plausable deniability of plain).
-		eapply "${FILESDIR}/${PN}-4.2.3-entry.patch"
-		die "patch is not ready yet"
+	if use entry ; then
+		# Technically, one can't have plausable deniability because the packages are
+		# named libgcrypt or cryptsetup or crypt anything.  One would have to
+		# obfuscate or strip everything without crypt or the ciphers or anything
+		# related.  This patch will try to fix the facade issue (aka immediate password
+		# prompt) and the encrypted device referencing issue (destroying the plausable
+		# deniability of plain).
+		eapply "${FILESDIR}/${PN}-4.2.3-entry-r1.patch"
+		eapply "${FILESDIR}/${PN}-4.2.3-dmcrypt-plain-support-v3.patch"
+		eapply "${FILESDIR}/${PN}-4.2.6-fallback.patch"
+		ewarn
+		ewarn "The entry USE flag is in testing."
+		ewarn
+		ewarn "DO NOT USE until you have filled out and edited the missing settings,"
+		ewarn "and have a full understanding of the patch itself."
+		ewarn
+		eerror
+		eerror "Complete emerge is stopped as safeguard.  Please wait for the finished"
+		eerror "patch or fork ebuild.  The patch may result in data loss if there is no"
+		eerror "backup bootdisk for this experimental release."
+		eerror
+		die
 	fi
 
 	if use llvm ; then
@@ -560,7 +575,7 @@ pkg_postinst() {
 	ewarn
 	ewarn "You must load all modules by adding \"gk.hw.use-modules_load=1\" from"
 	ewarn "the kernel parameter list for grub or have the drivers built in to use"
-	ewarn " the kernel with the crypt_root_plain USE flag."
+	ewarn " the kernel with the entry USE flag."
 	ewarn
 
 	ewarn
@@ -605,9 +620,12 @@ pkg_postinst() {
 	fi
 
 	ewarn
-	ewarn "The current crypt_root_plain will be deprecated for security reasons."
-	ewarn "It will be announced later when the replacement is ready and require"
-	ewarn "upgrading."
+	ewarn "Entry is currently in development but will announce when it is ready."
+	ewarn "It is pre-alpha quality at this time."
+	ewarn
+	ewarn "Access though the crypt_root_plain is provided as a fallback until"
+	ewarn "entry is production ready.  It is recommended to use genkernel-4.2.6-r2"
+	ewarn "or the highest revision instead."
 	ewarn
 
 	if use steghide ; then

@@ -7,9 +7,9 @@ Requires input-event-codes.h from the linux kernel
 
 A complete rewrite of the flawed existing one.
 
-diff -urpN genkernel-4.2.3.orig/defaults/initrd.defaults genkernel-4.2.3/defaults/initrd.defaults
---- genkernel-4.2.3.orig/defaults/initrd.defaults	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/defaults/initrd.defaults	2021-09-26 20:30:43.707610368 -0700
+diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/initrd.defaults genkernel-4.2.6/defaults/initrd.defaults
+--- genkernel-4.2.6.orig/defaults/initrd.defaults	2021-11-15 10:35:10.000000000 -0800
++++ genkernel-4.2.6/defaults/initrd.defaults	2022-02-05 16:27:55.387012508 -0800
 @@ -158,3 +158,20 @@ HWOPTS="keymap cache modules virtio hype
  # This is the set of default HWOPTS, in the order that they are loaded.
  # This is whitespace aligned with HWOPTS above.
@@ -31,10 +31,10 @@ diff -urpN genkernel-4.2.3.orig/defaults/initrd.defaults genkernel-4.2.3/default
 +ENTRY_RESUMEP='Y3J5cHRzZXR1cCBvcGVuICR7RkFDQURFX1JFU1VNRV9ERVZ9ICR7bXB9Cg=='
 +ENTRY_SUPPORT_DEVICE=0
 +ENTRY_SUPPORT_RESUME=0
-diff -urpN genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults/initrd.scripts
---- genkernel-4.2.3.orig/defaults/initrd.scripts	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/defaults/initrd.scripts	2021-09-26 22:22:38.974502870 -0700
-@@ -2337,6 +2337,329 @@ ipv6_tentative() {
+diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/initrd.scripts genkernel-4.2.6/defaults/initrd.scripts
+--- genkernel-4.2.6.orig/defaults/initrd.scripts	2021-11-15 10:35:10.000000000 -0800
++++ genkernel-4.2.6/defaults/initrd.scripts	2022-02-05 16:27:55.388012548 -0800
+@@ -2319,6 +2319,325 @@ ipv6_tentative() {
  	fi
  }
  
@@ -77,11 +77,11 @@ diff -urpN genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults
 +		D="${D} ${f}"
 +	done
 +
-+        local c=0
-+        for d in ${D} ; do
-+                echo "${c} ${d}"
-+                c=$((${c} + 1))
-+        done
++	local c=0
++	for d in ${D} ; do
++		echo "${c} ${d}"
++		c=$((${c} + 1))
++	done
 +	echo "N none"
 +	echo
 +	echo "Choose a token device:"
@@ -100,7 +100,7 @@ diff -urpN genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults
 +	fi
 +	echo
 +	echo "Choose a file in the token device:"
-+        read kf
++	read kf
 +	export kf
 +	export ENTRY_DEVICE="/dev/disk/by-id/"$(echo "${D}" | cut -f ${C} -d " ")
 +	eval $(get_entry_cmd "ENTRY_DEVICE")
@@ -113,15 +113,15 @@ diff -urpN genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults
 +		D="${D} ${f}"
 +	done
 +
-+        local c=0
-+        for d in ${D} ; do
-+                echo "${c} ${d}"
-+                c=$((${c} + 1))
-+        done
++	local c=0
++	for d in ${D} ; do
++		echo "${c} ${d}"
++		c=$((${c} + 1))
++	done
 +	echo "N none"
 +	echo
 +	echo "Choose a root drive or partition:"
-+        read C
++	read C
 +	if [ "${C}" = "N" ]
 +	then
 +		return
@@ -155,15 +155,15 @@ diff -urpN genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults
 +		D="${D} ${f}"
 +	done
 +
-+        local c=0
-+        for d in ${D} ; do
-+                echo "${c} ${d}"
-+                c=$((${c} + 1))
-+        done
++	local c=0
++	for d in ${D} ; do
++		echo "${c} ${d}"
++		c=$((${c} + 1))
++	done
 +	echo "N none"
 +	echo
 +	echo "Choose a resume device or partition:"
-+        read C
++	read C
 +	if [ "${C}" = "N" ]
 +	then
 +		return
@@ -307,12 +307,12 @@ diff -urpN genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults
 +	fi
 +}
 +
-+is_user_valid() {
++start_entry() {
 +	local opened=0
 +
 +	filter_keyboard &
 +
-+        # The signal is a visual or auditory cue to enter The Area
++	# The signal is a visual or auditory cue to enter The Area
 +	# By default we do not enter The Area unless we have control
 +	# The lag time between cold boot and reaching this part
 +	# of code could be very long.
@@ -331,7 +331,7 @@ diff -urpN genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults
 +		start_entry_custom
 +	fi
 +
-+	# This is a check to ensure that we are not next to the rubberhoser
++	# This is a check to ensure that we are not next to "our friend"
 +	# after lag time.
 +	# Wait for key sequence.
 +	local opened=0
@@ -357,21 +357,17 @@ diff -urpN genkernel-4.2.3.orig/defaults/initrd.scripts genkernel-4.2.3/defaults
 +	fi
 +}
 +
-+start_dm_plain() {
-+	is_user_valid
-+}
-+
  start_LUKS() {
  	# if key is set but neither ssh enabled or key device is given, find
  	# the key device
-diff -urpN genkernel-4.2.3.orig/defaults/linuxrc genkernel-4.2.3/defaults/linuxrc
---- genkernel-4.2.3.orig/defaults/linuxrc	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/defaults/linuxrc	2021-09-24 19:48:17.903868832 -0700
+diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/linuxrc genkernel-4.2.6/defaults/linuxrc
+--- genkernel-4.2.6.orig/defaults/linuxrc	2021-11-15 10:35:10.000000000 -0800
++++ genkernel-4.2.6/defaults/linuxrc	2022-02-05 16:27:55.392012709 -0800
 @@ -641,6 +641,7 @@ fi
  # Initialize LUKS root device except for livecd's
  if [ "${CDROOT}" != '1' ]
  then
-+	start_dm_plain
++	start_entry
  	start_LUKS
  	if [ "${NORESUME}" != '1' ] && [ -n "${REAL_RESUME}" ]
  	then
@@ -379,15 +375,79 @@ diff -urpN genkernel-4.2.3.orig/defaults/linuxrc genkernel-4.2.3/defaults/linuxr
  
  	cache_cd_contents
  
-+	start_dm_plain
++	start_entry
 +
  	# If encrypted, find key and mount, otherwise mount as usual
  	if [ -n "${CRYPT_ROOT}" ]
  	then
-diff -urpN genkernel-4.2.3.orig/gen_initramfs.sh genkernel-4.2.3/gen_initramfs.sh
---- genkernel-4.2.3.orig/gen_initramfs.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_initramfs.sh	2021-09-26 14:13:15.983972913 -0700
-@@ -1889,6 +1889,11 @@ append_auxiliary() {
+diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/software.sh genkernel-4.2.6/defaults/software.sh
+--- genkernel-4.2.6.orig/defaults/software.sh	2022-02-05 16:24:30.909805236 -0800
++++ genkernel-4.2.6/defaults/software.sh	2022-02-05 16:59:53.980989930 -0800
+@@ -156,6 +156,13 @@ GKPKG_LIBGPG_ERROR_SRCTAR="${GKPKG_LIBGP
+ GKPKG_LIBGPG_ERROR_SRCDIR="${GKPKG_LIBGPG_ERROR_SRCDIR:-libgpg-error-${GKPKG_LIBGPG_ERROR_PV}}"
+ GKPKG_LIBGPG_ERROR_BINPKG="${GKPKG_LIBGPG_ERROR_BINPKG:-%%CACHE%%/libgpg-error-${GKPKG_LIBGPG_ERROR_PV}-%%ARCH%%.tar.xz}"
+ 
++GKPKG_LIBMCRYPT_PN="libmcrypt"
++GKPKG_LIBMCRYPT_PV="${GKPKG_LIBMCRYPT_PV:-2.5.8}"
++GKPKG_LIBMCRYPT_DEPS=""
++GKPKG_LIBMCRYPT_SRCTAR="${GKPKG_LIBMCRYPT_SRCTAR:-${DISTDIR}/libmcrypt-${GKPKG_LIBMCRYPT_PV}.tar.gz}"
++GKPKG_LIBMCRYPT_SRCDIR="${GKPKG_LIBMCRYPT_SRCDIR:-libmcrypt-${GKPKG_LIBMCRYPT_PV}}"
++GKPKG_LIBMCRYPT_BINPKG="${GKPKG_LIBMCRYPT_BINPKG:-%%CACHE%%/libmcrypt-${GKPKG_LIBMCRYPT_PV}-%%ARCH%%.tar.xz}"
++
+ GKPKG_LIBXCRYPT_PN="libxcrypt"
+ GKPKG_LIBXCRYPT_PV="${GKPKG_LIBXCRYPT_PV:-4.4.26}"
+ GKPKG_LIBXCRYPT_DEPS=""
+@@ -177,6 +184,13 @@ GKPKG_LZO_SRCTAR="${GKPKG_LZO_SRCTAR:-${
+ GKPKG_LZO_SRCDIR="${GKPKG_LZO_SRCDIR:-lzo-${GKPKG_LZO_PV}}"
+ GKPKG_LZO_BINPKG="${GKPKG_LZO_BINPKG:-%%CACHE%%/lzo-${GKPKG_LZO_PV}-%%ARCH%%.tar.xz}"
+ 
++GKPKG_MCRYPT_PN="mcrypt"
++GKPKG_MCRYPT_PV="${GKPKG_MCRYPT_PV:-2.6.8}"
++GKPKG_MCRYPT_DEPS="libmcrypt mhash zlib"
++GKPKG_MCRYPT_SRCTAR="${GKPKG_MCRYPT_SRCTAR:-${DISTDIR}/mcrypt-${GKPKG_MCRYPT_PV}.tar.gz}"
++GKPKG_MCRYPT_SRCDIR="${GKPKG_MCRYPT_SRCDIR:-mcrypt-${GKPKG_MCRYPT_PV}}"
++GKPKG_MCRYPT_BINPKG="${GKPKG_MCRYPT_BINPKG:-%%CACHE%%/mcrypt-${GKPKG_MCRYPT_PV}-%%ARCH%%.tar.xz}"
++
+ GKPKG_MDADM_PN="mdadm"
+ GKPKG_MDADM_PV="${GKPKG_MDADM_PV:-4.1}"
+ GKPKG_MDADM_DEPS="eudev"
+@@ -184,6 +198,13 @@ GKPKG_MDADM_SRCTAR="${GKPKG_MDADM_SRCTAR
+ GKPKG_MDADM_SRCDIR="${GKPKG_MDADM_SRCDIR:-mdadm-${GKPKG_MDADM_PV}}"
+ GKPKG_MDADM_BINPKG="${GKPKG_MDADM_BINPKG:-%%CACHE%%/mdadm-${GKPKG_MDADM_PV}-%%ARCH%%.tar.xz}"
+ 
++GKPKG_MHASH_PN="mhash"
++GKPKG_MHASH_PV="${GKPKG_MHASH_PV:-0.9.9.9}"
++GKPKG_MHASH_DEPS=""
++GKPKG_MHASH_SRCTAR="${GKPKG_MHASH_SRCTAR:-${DISTDIR}/mhash-${GKPKG_MHASH_PV}.tar.gz}"
++GKPKG_MHASH_SRCDIR="${GKPKG_MHASH_SRCDIR:-mhash-${GKPKG_MHASH_PV}}"
++GKPKG_MHASH_BINPKG="${GKPKG_MHASH_BINPKG:-%%CACHE%%/mhash-${GKPKG_MHASH_PV}-%%ARCH%%.tar.xz}"
++
+ GKPKG_POPT_PN="popt"
+ GKPKG_POPT_PV="${GKPKG_POPT_PV:-1.18}"
+ GKPKG_POPT_DEPS=""
+@@ -191,6 +212,13 @@ GKPKG_POPT_SRCTAR="${GKPKG_POPT_SRCTAR:-
+ GKPKG_POPT_SRCDIR="${GKPKG_POPT_SRCDIR:-popt-${GKPKG_POPT_PV}}"
+ GKPKG_POPT_BINPKG="${GKPKG_POPT_BINPKG:-%%CACHE%%/popt-${GKPKG_POPT_PV}-%%ARCH%%.tar.xz}"
+ 
++GKPKG_STEGHIDE_PN="steghide"
++GKPKG_STEGHIDE_PV="${GKPKG_STEGHIDE_PV:-0.5.1}"
++GKPKG_STEGHIDE_DEPS="mhash libmcrypt zlib"
++GKPKG_STEGHIDE_SRCTAR="${GKPKG_STEGHIDE_SRCTAR:-${DISTDIR}/steghide-${GKPKG_STEGHIDE_PV}.tar.bz2}"
++GKPKG_STEGHIDE_SRCDIR="${GKPKG_STEGHIDE_SRCDIR:-steghide-${GKPKG_STEGHIDE_PV}}"
++GKPKG_STEGHIDE_BINPKG="${GKPKG_STEGHIDE_BINPKG:-%%CACHE%%/steghide-${GKPKG_STEGHIDE_PV}-%%ARCH%%.tar.xz}"
++
+ GKPKG_STRACE_PN="strace"
+ GKPKG_STRACE_PV="${GKPKG_STRACE_PV:-5.14}"
+ GKPKG_STRACE_DEPS="libaio"
+@@ -246,3 +274,4 @@ GKPKG_ZSTD_DEPS=""
+ GKPKG_ZSTD_SRCTAR="${GKPKG_ZSTD_SRCTAR:-${DISTDIR}/zstd-${GKPKG_ZSTD_PV}.tar.gz}"
+ GKPKG_ZSTD_SRCDIR="${GKPKG_ZSTD_SRCDIR:-zstd-${GKPKG_ZSTD_PV}}"
+ GKPKG_ZSTD_BINPKG="${GKPKG_ZSTD_BINPKG:-%%CACHE%%/zstd-${GKPKG_ZSTD_PV}-%%ARCH%%.tar.xz}"
++
+diff -x '*.orig' -urpN genkernel-4.2.6.orig/gen_initramfs.sh genkernel-4.2.6/gen_initramfs.sh
+--- genkernel-4.2.6.orig/gen_initramfs.sh	2021-11-15 10:35:10.000000000 -0800
++++ genkernel-4.2.6/gen_initramfs.sh	2022-02-05 16:27:55.393012749 -0800
+@@ -1924,6 +1924,11 @@ append_auxiliary() {
  	ln -s init linuxrc || gen_die "Failed to create symlink 'linuxrc' to 'init'!"
  	popd &>/dev/null || gen_die "Failed to chdir!"
  
@@ -399,11 +459,11 @@ diff -urpN genkernel-4.2.3.orig/gen_initramfs.sh genkernel-4.2.3/gen_initramfs.s
  	local myinitrd_script=
  	if [ -f "${GK_SHARE}/arch/${ARCH}/initrd.scripts" ]
  	then
-diff -urpN genkernel-4.2.3.orig/gkbuilds/libjpeg-turbo.gkbuild genkernel-4.2.3/gkbuilds/libjpeg-turbo.gkbuild
---- genkernel-4.2.3.orig/gkbuilds/libjpeg-turbo.gkbuild	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gkbuilds/libjpeg-turbo.gkbuild	2021-09-26 22:09:44.631515265 -0700
-@@ -0,0 +1,35 @@
-+# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
+diff -x '*.orig' -urpN genkernel-4.2.6.orig/gkbuilds/libjpeg.gkbuild genkernel-4.2.6/gkbuilds/libjpeg.gkbuild
+--- genkernel-4.2.6.orig/gkbuilds/libjpeg.gkbuild	1969-12-31 16:00:00.000000000 -0800
++++ genkernel-4.2.6/gkbuilds/libjpeg.gkbuild	2022-02-05 17:09:16.858730344 -0800
+@@ -0,0 +1,31 @@
++# Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
 +# Copyright 1999-2021 Gentoo Authors
 +# Distributed under the terms of the GNU General Public License v2
 +
@@ -416,11 +476,7 @@ diff -urpN genkernel-4.2.3.orig/gkbuilds/libjpeg-turbo.gkbuild genkernel-4.2.3/g
 +	local myconf=(
 +		--disable-shared
 +		--enable-static
-+		--without-java
-+		--with-mem-srcdst
-+		--without-simd
 +	)
-+	# x32 cannot use simd
 +	CONFIG_SHELL="${EPREFIX}"/bin/bash \
 +	gkconf "${myconf[@]}"
 +}
@@ -438,11 +494,11 @@ diff -urpN genkernel-4.2.3.orig/gkbuilds/libjpeg-turbo.gkbuild genkernel-4.2.3/g
 +		"${D}"/usr/bin \
 +		"${D}"/usr/share
 +}
-diff -urpN genkernel-4.2.3.orig/gkbuilds/libmcrypt.gkbuild genkernel-4.2.3/gkbuilds/libmcrypt.gkbuild
---- genkernel-4.2.3.orig/gkbuilds/libmcrypt.gkbuild	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gkbuilds/libmcrypt.gkbuild	2021-09-26 22:10:08.325514886 -0700
-@@ -0,0 +1,29 @@
-+# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
+diff -x '*.orig' -urpN genkernel-4.2.6.orig/gkbuilds/libmcrypt.gkbuild genkernel-4.2.6/gkbuilds/libmcrypt.gkbuild
+--- genkernel-4.2.6.orig/gkbuilds/libmcrypt.gkbuild	1969-12-31 16:00:00.000000000 -0800
++++ genkernel-4.2.6/gkbuilds/libmcrypt.gkbuild	2022-02-05 17:09:17.796768207 -0800
+@@ -0,0 +1,30 @@
++# Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
 +# Copyright 1999-2021 Gentoo Authors
 +# Distributed under the terms of the GNU General Public License v2
 +
@@ -456,8 +512,9 @@ diff -urpN genkernel-4.2.3.orig/gkbuilds/libmcrypt.gkbuild genkernel-4.2.3/gkbui
 +		--disable-shared
 +		--enable-static
 +	)
-+	export CXXFLAGS="$CXXFLAGS -std=c++0x"
-+	[[ ${CHOST} == *-darwin* ]] && die "${CHOST} is not supported"
++	mv configure.in configure.ac
++	mv libltdl/configure.in libltdl/configure.ac
++	sed -i 's/AM_CONFIG_HEADER/AC_CONFIG_HEADERS/g' configure.ac libltdl/configure.ac || die
 +	gkconf "${myconf[@]}"
 +}
 +
@@ -471,11 +528,43 @@ diff -urpN genkernel-4.2.3.orig/gkbuilds/libmcrypt.gkbuild genkernel-4.2.3/gkbui
 +	MYMAKEOPTS+=( "DESTDIR=${D}" )
 +	gkmake "${MYMAKEOPTS[@]}" install
 +}
-diff -urpN genkernel-4.2.3.orig/gkbuilds/mhash.gkbuild genkernel-4.2.3/gkbuilds/mhash.gkbuild
---- genkernel-4.2.3.orig/gkbuilds/mhash.gkbuild	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gkbuilds/mhash.gkbuild	2021-09-26 21:55:12.102529233 -0700
+diff -x '*.orig' -urpN genkernel-4.2.6.orig/gkbuilds/mcrypt.gkbuild genkernel-4.2.6/gkbuilds/mcrypt.gkbuild
+--- genkernel-4.2.6.orig/gkbuilds/mcrypt.gkbuild	1969-12-31 16:00:00.000000000 -0800
++++ genkernel-4.2.6/gkbuilds/mcrypt.gkbuild	2022-02-05 17:09:18.580799853 -0800
 @@ -0,0 +1,28 @@
-+# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
++# Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
++# Copyright 1999-2021 Gentoo Authors
++# Distributed under the terms of the GNU General Public License v2
++
++src_prepare(){
++	default
++	gkautoreconf
++}
++
++src_configure() {
++	local myconf=(
++		--disable-shared
++		--enable-static
++		--enable-static-link
++	)
++	gkconf "${myconf[@]}"
++}
++
++src_compile(){
++	local MYMAKEOPTS=( "V=1" )
++	gkmake "${MYMAKEOPTS[@]}"
++}
++
++src_install() {
++	local MYMAKEOPTS=( "V=1" )
++	MYMAKEOPTS+=( "DESTDIR=${D}" )
++	gkmake "${MYMAKEOPTS[@]}" install
++}
+diff -x '*.orig' -urpN genkernel-4.2.6.orig/gkbuilds/mhash.gkbuild genkernel-4.2.6/gkbuilds/mhash.gkbuild
+--- genkernel-4.2.6.orig/gkbuilds/mhash.gkbuild	1969-12-31 16:00:00.000000000 -0800
++++ genkernel-4.2.6/gkbuilds/mhash.gkbuild	2022-02-05 17:09:19.396832790 -0800
+@@ -0,0 +1,28 @@
++# Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
 +# Copyright 1999-2021 Gentoo Authors
 +# Distributed under the terms of the GNU General Public License v2
 +
@@ -501,13 +590,13 @@ diff -urpN genkernel-4.2.3.orig/gkbuilds/mhash.gkbuild genkernel-4.2.3/gkbuilds/
 +src_install() {
 +	local MYMAKEOPTS=( "V=1" )
 +	MYMAKEOPTS+=( "DESTDIR=${D}" )
-+	gkmake "${MYMAKEOPTS[@]}"
++	gkmake "${MYMAKEOPTS[@]}" install
 +}
-diff -urpN genkernel-4.2.3.orig/gkbuilds/steghide.gkbuild genkernel-4.2.3/gkbuilds/steghide.gkbuild
---- genkernel-4.2.3.orig/gkbuilds/steghide.gkbuild	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.3/gkbuilds/steghide.gkbuild	2021-09-26 22:10:09.765514863 -0700
+diff -x '*.orig' -urpN genkernel-4.2.6.orig/gkbuilds/steghide.gkbuild genkernel-4.2.6/gkbuilds/steghide.gkbuild
+--- genkernel-4.2.6.orig/gkbuilds/steghide.gkbuild	1969-12-31 16:00:00.000000000 -0800
++++ genkernel-4.2.6/gkbuilds/steghide.gkbuild	2022-02-05 17:14:13.937716037 -0800
 @@ -0,0 +1,28 @@
-+# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
++# Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
 +# Copyright 1999-2020 Gentoo Authors
 +# Distributed under the terms of the GNU General Public License v2
 +
@@ -517,12 +606,12 @@ diff -urpN genkernel-4.2.3.orig/gkbuilds/steghide.gkbuild genkernel-4.2.3/gkbuil
 +}
 +
 +src_configure() {
-+	append-ldflags -static
++	local myconf=()
++	local libtool
 +	export CXXFLAGS="$CXXFLAGS -std=c++0x"
-+
-+	[[ ${CHOST} == *-darwin* ]] && die "${CHOST} is not supported"
-+
-+	gkconf
++	[[ ${CHOST} == *-darwin* ]] && die "${CHOST} is not supported" # missing glibtool
++	[[ ${CHOST} == *-darwin* ]] && glibtool libtool=$(type -P glibtool) || libtool=$(type -P libtool)
++	LIBTOOL="${libtool}" gkconf "${myconf[@]}"
 +}
 +
 +src_compile(){
