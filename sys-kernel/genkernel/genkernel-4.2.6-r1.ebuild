@@ -7,15 +7,15 @@
 # and the stable series -rX, but this one will be frozen until it
 # is at least in working state.
 
-# 4.2.6-rX is stable oiledmachine-overlay patches
-# 4.2.6-r0 is just 4.2.6-rX with Work in Progress (WIP) entry changes.
+# 4.2.6-rX (highest revision) is stable oiledmachine-overlay patches
+# 4.2.6-r1 is with Work in Progress (WIP) entry changes and experimental patches.
 
 # Changes to the 4.2.x PGO will be backported to genkernel 4.0.x later.
 
 # genkernel-9999        -> latest Git branch "master"
 # genkernel-VERSION     -> normal genkernel release
 
-# The original version of this ebuild is 4.2.6-r1 from the gentoo overlay
+# The original version of this ebuild is 4.2.6-r1::gentoo
 # modified with subdir_mount, entry, llvm, pgo changes.  Revision
 # bumps may change on the oiledmachine-overlay.
 
@@ -424,8 +424,9 @@ src_prepare() {
 		ewarn
 		eerror
 		eerror "Complete emerge is stopped as safeguard.  Please wait for the finished"
-		eerror "patch or fork ebuild.  The patch may result in data loss if there is no"
-		eerror "backup bootdisk for this experimental release."
+		eerror "patch or fork ebuild.  The patch may result in data loss if there is"
+		eerror "no backup bootdisk built with =genkernel-4.2.6-r2[crypt_root_plain]"
+		eerror "for this experimental release."
 		eerror
 		die
 	fi

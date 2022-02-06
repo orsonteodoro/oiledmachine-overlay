@@ -4,7 +4,7 @@
 # genkernel-9999        -> latest Git branch "master"
 # genkernel-VERSION     -> normal genkernel release
 
-# The original version of this ebuild is 4.0.10 from the gentoo overlay
+# The original version of this ebuild is 4.0.10::gentoo
 # modified with subdir_mount, crypt_root_plain, llvm changes.  Revision
 # bumps may change on the oiledmachine-overlay.
 
