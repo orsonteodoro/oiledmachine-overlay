@@ -464,7 +464,7 @@ src_install() {
 	local D_BASE="/${REL_D_BASE}"
 	local ED_BASE="${ED}/${REL_D_BASE}"
 
-	${EPYTHON} tools/install.py install "${D}" "${EPREFIX}/usr"
+	${EPYTHON} tools/install.py install "${D}" "${EPREFIX}/usr" || die
 
 	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
 	if [[ "${PGO_PHASE}" == "pgi" ]] ; then
