@@ -420,7 +420,12 @@ eerror
 		./pgo-custom-trainer.sh || die
 	fi
 
-	if (( $(find "${S}/out" -name "*.gcda" | wc -l) == 0 )) ; then
+	if [[ -z "${CC}" || "${CC}" =~ "gcc" ]] \
+		&& (( $(find "${S}/out" -name "*.gcda" | wc -l) == 0 )) ; then
+		die "No PGO data produced."
+	fi
+	if [[ "${CC}" =~ "clang" ]] \
+		&& (( $(find "${T}/pgo-${ABI}" -name "*.profraw" | wc -l) == 0 )) ; then
 		die "No PGO data produced."
 	fi
 }
