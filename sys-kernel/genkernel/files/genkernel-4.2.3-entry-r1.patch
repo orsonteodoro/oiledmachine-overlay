@@ -10,7 +10,7 @@ A complete rewrite of the flawed existing one.
 diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/initrd.defaults genkernel-4.2.6/defaults/initrd.defaults
 --- genkernel-4.2.6.orig/defaults/initrd.defaults	2021-11-15 10:35:10.000000000 -0800
 +++ genkernel-4.2.6/defaults/initrd.defaults	2022-02-05 19:49:39.449728855 -0800
-@@ -158,3 +158,20 @@ HWOPTS="keymap cache modules virtio hype
+@@ -158,3 +158,21 @@ HWOPTS="keymap cache modules virtio hype
  # This is the set of default HWOPTS, in the order that they are loaded.
  # This is whitespace aligned with HWOPTS above.
  MY_HWOPTS="          modules virtio hyperv ${HWOPTS_BLK}        lvm dmraid           mdadm     fs       crypto"
@@ -21,6 +21,7 @@ diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/initrd.defaults genkernel-4
 +# All of these values are weak and need re-editing.
 +ENTRY_PAD='S0VZXzEgS0VZXzIgS0VZXzMgS0VZX0NIQVQgS0VZX1ZPSUNFTUFJTA=='
 +ENTRY_DEVICE='Y3J5cHRzZXR1cCBvcGVuICAgJiYgbWtkaXIgLXAgL21udC9kb25nbGUgJiYgbW91bnQgL2Rldi9tYXBwZXIvIC9tbnQvZG9uZ2xlCg=='
++ENTRY_MODE='boot'
 +ENTRY_ROOTB='cG93ZXJvZmYgLWY='
 +ENTRY_ROOTG='Z3BnIC0tZGVjcnlwdCAke2twfSB8IGNyeXB0c2V0dXAgb3BlbiAke0VOVFJZX1JPT1RfREVWfSAke21wfQo='
 +ENTRY_ROOTS='c3RlZ2hpZGUgLXEgLXNmICR7a3B9IC14ZiAtIHwgY3J5cHRzZXR1cCBvcGVuICR7RU5UUllfUk9PVF9ERVZ9ICR7bXB9Cg=='
