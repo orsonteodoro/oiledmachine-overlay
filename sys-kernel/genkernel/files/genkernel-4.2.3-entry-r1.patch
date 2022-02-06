@@ -20,7 +20,7 @@ diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/initrd.defaults genkernel-4
 +# IMPORTANT:  Remove all comments and these two lines.  DO NOT REUSE OR USE THEM
 +# All of these values are weak and need re-editing.
 +ENTRY_PAD='S0VZXzEgS0VZXzIgS0VZXzMgS0VZX0NIQVQgS0VZX1ZPSUNFTUFJTA=='
-+ENTRY_DEVICE='Y3J5cHRzZXR1cCBvcGVuICAgJiYgbWtkaXIgLXAgL21udC9kb25nbGUgJiYgbW91bnQgL2Rldi9tYXBwZXIvIC9tbnQvZG9uZ2xlCg=='
++ENTRY_DEVICE='Y3J5cHRzZXR1cCBvcGVuICR7RU5UUllfREVWSUNFfSBkb25nbGUgJiYgbWtkaXIgLXAgL21udC9kb25nbGUgJiYgbW91bnQgL2Rldi9tYXBwZXIvZG9uZ2xlIC9tbnQvZG9uZ2xlCg=='
 +ENTRY_MODE='boot'
 +ENTRY_ROOTB='cG93ZXJvZmYgLWY='
 +ENTRY_ROOTG='Z3BnIC0tZGVjcnlwdCAke2tmX2dwZ30gfCBjcnlwdHNldHVwIG9wZW4gJHtFTlRSWV9ST09UX0RFVn0gcm9vdCA7IFJFQUxfUk9PVD0nL2Rldi9tYXBwZXIvcm9vdCcK'
