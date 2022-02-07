@@ -48,8 +48,8 @@
 	circa Jan 11, 2022 and is only offered in LLVM 14 or newer.
 
 	BOLT users please see
-	https://github.com/facebookincubator/BOLT/tree/main/bolt#input-binary-requirements
-	https://github.com/facebookincubator/BOLT/blob/main/bolt/docs/OptimizingClang.md
+	https://github.com/llvm/llvm-project/blob/main/bolt/README.md#input-binary-requirements
+	https://github.com/llvm/llvm-project/blob/main/bolt/docs/OptimizingClang.md
 	</longdescription>
 	<use>
 		<flag name="bolt">Build the Binary Optimization and Layout Tool
