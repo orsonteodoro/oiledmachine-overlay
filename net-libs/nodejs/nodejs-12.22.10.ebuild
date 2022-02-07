@@ -227,6 +227,13 @@ src_prepare() {
 		BUILDTYPE=Debug
 	fi
 
+	if [[ "${NM}" == "llvm-nm" ]] ; then
+		# llvm-nm: error: : --format value should be one of: bsd, posix, sysv, darwin, just-symbols
+		einfo "Detected llvm-nm: -f p -> -f posix"
+		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" "deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py" || die
+		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" "tools/gyp/pylib/gyp/generator/ninja.py" || die
+	fi
+
 	default
 }
 
