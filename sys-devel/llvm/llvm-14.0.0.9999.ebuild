@@ -19,7 +19,7 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS=""
-IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml
+IUSE="bolt +binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml
 	z3 kernel_Darwin"
 RESTRICT="!test? ( test )"
 
@@ -59,7 +59,7 @@ PATCHES=(
 	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"
 )
 
-LLVM_COMPONENTS=( llvm )
+LLVM_COMPONENTS=( llvm bolt )
 LLVM_MANPAGES=build
 LLVM_PATCHSET=9999-1
 LLVM_USE_TARGETS=provide
@@ -385,6 +385,10 @@ multilib_src_configure() {
 			-DGO_EXECUTABLE=GO_EXECUTABLE-NOTFOUND
 		)
 #	fi
+
+	use bolt && mycmakeargs+=(
+		-DLLVM_ENABLE_PROJECTS="bolt"
+	)
 
 	use test && mycmakeargs+=(
 		-DLLVM_LIT_ARGS="$(get_lit_flags)"
