@@ -56,7 +56,6 @@ LLVM_TEST_COMPONENTS=(
 )
 LLVM_PATCHSET=9999-r3
 PATCHES_HARDENED=(
-	"${FILESDIR}/clang-12.0.1-enable-PIE-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
 	"${FILESDIR}/clang-13.0.0_rc2-change-SSP-buffer-size-to-4.patch"
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
@@ -238,6 +237,7 @@ get_distribution_components() {
 			clang-format
 			clang-offload-bundler
 			clang-offload-wrapper
+			clang-pseudo
 			clang-refactor
 			clang-repl
 			clang-rename
@@ -332,6 +332,7 @@ multilib_src_configure() {
 		-DCLANG_ENABLE_STATIC_ANALYZER=$(usex static-analyzer)
 
 		-DPython3_EXECUTABLE="${PYTHON}"
+		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex hardened)
 	)
 	use test && mycmakeargs+=(
 		-DLLVM_MAIN_SRC_DIR="${WORKDIR}/llvm"
