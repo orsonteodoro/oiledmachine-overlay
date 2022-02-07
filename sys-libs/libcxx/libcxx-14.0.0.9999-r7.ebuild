@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -14,7 +14,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS=""
 IUSE="elibc_glibc elibc_musl +libcxxabi +libunwind static-libs test"
-IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack r8"
 REQUIRED_USE="libunwind? ( libcxxabi )"
 REQUIRED_USE+="
 	cfi? ( clang lto )
@@ -104,6 +104,7 @@ BDEPEND+="
 	test? (
 		>=dev-util/cmake-3.16
 		>=sys-devel/clang-3.9.0
+		sys-devel/gdb[python]
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)"
 
@@ -111,7 +112,7 @@ DOCS=( CREDITS.TXT )
 PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 S="${WORKDIR}"
 
-LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake,utils/llvm-lit} )
+LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake,utils/llvm-lit} cmake )
 LLVM_PATCHSET=9999-1
 llvm.org_set_globals
 
@@ -272,6 +273,7 @@ _configure_abi() {
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
 		-DLIBCXX_USE_COMPILER_RT=${want_compiler_rt}
 		-DLIBCXX_HAS_ATOMIC_LIB=${want_gcc_s}
+		-DLIBCXX_TARGET_TRIPLE="${CHOST}"
 		-DCMAKE_SHARED_LINKER_FLAGS="${extra_libs[*]} ${LDFLAGS}"
 		-DLTO=$(usex lto)
 		-DNOEXECSTACK=$(usex hardened)
