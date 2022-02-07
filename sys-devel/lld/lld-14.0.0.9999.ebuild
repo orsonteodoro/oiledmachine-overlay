@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -12,7 +12,7 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA"
 SLOT="0"
 #KEYWORDS="" # Still testing Full RELRO default ON.
-IUSE="test"
+IUSE="debug test"
 IUSE+=" hardened"
 REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
@@ -25,7 +25,7 @@ BDEPEND="
 		$(python_gen_any_dep "~dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
 	)"
 
-LLVM_COMPONENTS=( lld libunwind/include/mach-o )
+LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
 LLVM_TEST_COMPONENTS=( llvm/utils/{lit,unittest} )
 llvm.org_set_globals
 HARDENED_PATCHES=(
@@ -62,6 +62,11 @@ src_prepare() {
 }
 
 src_configure() {
+	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
+	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
+
+	use elibc_musl && append-ldflags -Wl,-z,stack-size=2097152
+
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 		-DLLVM_INCLUDE_TESTS=$(usex test)
