@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -61,7 +61,7 @@ PATCHES=(
 
 LLVM_COMPONENTS=( llvm bolt cmake third-party )
 LLVM_MANPAGES=build
-LLVM_PATCHSET=9999-1
+LLVM_PATCHSET=9999-r3
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
 
@@ -239,6 +239,7 @@ get_distribution_components() {
 			llvm-cxxdump
 			llvm-cxxfilt
 			llvm-cxxmap
+			llvm-debuginfod-find
 			llvm-diff
 			llvm-dis
 			llvm-dlltool
@@ -284,6 +285,7 @@ get_distribution_components() {
 			llvm-strip
 			llvm-symbolizer
 			llvm-tapi-diff
+			llvm-tli-checker
 			llvm-undname
 			llvm-windres
 			llvm-xray
@@ -445,6 +447,9 @@ multilib_src_configure() {
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 	cmake_src_configure
 
+	grep -q -E "^CMAKE_PROJECT_VERSION_MAJOR(:.*)?=$(ver_cut 1)$" \
+			CMakeCache.txt ||
+		die "Incorrect version, did you update _LLVM_MASTER_MAJOR?"
 	multilib_is_native_abi && check_distribution_components
 }
 
