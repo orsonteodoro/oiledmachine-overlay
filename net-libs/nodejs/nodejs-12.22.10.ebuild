@@ -126,6 +126,11 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	if [[ "${CC}" =~ "clang" ]] && use pgo ; then
+eerror "PGO is temporarily disallowed.  Use GCC with PGO instead.  Investigating"
+eerror "solution for counter overflow problem during profdata generation."
+		die
+	fi
 	python-any-r1_pkg_setup
 
 	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2022-04-30."
