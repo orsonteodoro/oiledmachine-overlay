@@ -70,6 +70,8 @@ sys-devel/clang:14 llvm-14-commit.conf
   Replace 14 with the particular slots of the live ebuilds that you are
   interested.  When you need to update, just add and remove a # in front
   of EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT to switch on and off when
-  updating the 40 digit hash code again.
+  updating the 40 digit hash code again.  For the best success only pick
+  the commits with a green checkmark in the commit history:
+  https://github.com/llvm/llvm-project/commit/ADD_40_DIGIT_COMMIT_HERE
   </longdescription>
 </pkgmetadata>
