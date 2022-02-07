@@ -67,5 +67,7 @@
 			(uses <pkg>app-arch/xar</pkg>)</flag>
 		<flag name="z3">Enable support for <pkg>sci-mathematics/z3</pkg>
 			constraint solver</flag>
+		<flag name="rN">FOR INTERNAL USE ONLY.  Bump revision but save CCACHE paths
+			for faster rebuilds.</flag>
 	</use>
 </pkgmetadata>

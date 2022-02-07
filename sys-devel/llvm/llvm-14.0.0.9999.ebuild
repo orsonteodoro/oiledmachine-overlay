@@ -20,7 +20,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS=""
 IUSE="bolt +binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml
-	z3 kernel_Darwin"
+	z3 kernel_Darwin r1"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
