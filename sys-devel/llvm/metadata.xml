@@ -41,7 +41,7 @@
 
 	This ebuild fork changes the following:
 
-		* Makes, builds, installs BOLT support.
+		* Makes available, builds, installs BOLT support.
 		* Reduce spam and slowdown with -static-libstdc++
 
 	Bolt support requires commit 4c106cfdf7cf7eec861ad3983a3dd9a9e8f3a8ae or newer
