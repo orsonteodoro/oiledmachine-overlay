@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -14,7 +14,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS=""
 IUSE="+libunwind static-libs test elibc_musl"
-IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack r8"
 REQUIRED_USE+="
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
@@ -113,7 +113,7 @@ BDEPEND+="
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)"
 
-LLVM_COMPONENTS=( libcxx{abi,} llvm/cmake )
+LLVM_COMPONENTS=( libcxx{abi,} llvm/cmake cmake )
 llvm.org_set_globals
 
 python_check_deps() {
@@ -220,6 +220,7 @@ _configure_abi() {
 		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}"/usr/include
 		-DLTO=$(usex lto)
 		-DNOEXECSTACK=$(usex hardened)
+		-DLIBCXXABI_TARGET_TRIPLE="${CHOST}"
 	)
 
 	set_cfi() {
