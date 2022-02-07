@@ -127,6 +127,7 @@ pkg_setup() {
 	if [[ "${CC}" =~ "clang" ]] && use pgo ; then
 eerror "PGO is temporarily disallowed.  Use GCC with PGO instead.  Investigating"
 eerror "solution for counter overflow problem during profdata generation."
+eerror "If using CFI, disable PGO instead."
 		die
 	fi
 	python-any-r1_pkg_setup
