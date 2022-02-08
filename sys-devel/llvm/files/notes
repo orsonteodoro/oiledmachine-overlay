@@ -1,13 +1,17 @@
+These are notes to update the disable-peepholes patch.
+
 The following patches are obtained from
 https://github.com/regehr/llvm-project
 
-Used in build_deps.sh
+The version (v03) used in build_deps.sh:
 wget -O disable-peepholes-v03.patch https://github.com/regehr/llvm-project/compare/757752f568db698e3c0c35065c008489f2319a7b^..disable-peepholes-v03.patch
 disable-peepholes-v03.patch
 
 Newest version:
 wget -O disable-peepholes-v07.patch https://github.com/regehr/llvm-project/compare/757752f568db698e3c0c35065c008489f2319a7b^..disable-peepholes-v07.patch
 disable-peepholes-v07.patch
+
+757752f568db698e3c0c35065c008489f2319a7b^ includes the commit titled "Bump version to 12.0.1" of the LLVM package.
 
 The following commits must be manually removed from patch:
 757752f568db698e3c0c35065c008489f2319a7b 
