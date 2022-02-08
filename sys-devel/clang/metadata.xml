@@ -73,6 +73,12 @@
     proper CFI build.
 
 
+    LTO+PGO+BOLT (ebuild mod in development)
+
+    * clang-14.0.0.9999-r1 -- experimental ebuild containing mod
+    * clang-14.0.0.9999-r2 -- for stable reliable ebuild
+
+
     Deterministic reliable builds
 
     Due to the problematic design of the live ebuild system, it
@@ -103,8 +109,15 @@ sys-devel/clang:14 llvm-14-commit.conf
   the commits with a green checkmark in the commit history:
   https://github.com/llvm/llvm-project/commit/ADD_40_DIGIT_COMMIT_HERE
 
+  References:
+[1] https://research.facebook.com/publications/bolt-a-practical-binary-optimizer-for-data-centers-and-beyond/
   </longdescription>
   <use>
+    <flag name="pgo-lto-bolt">Build an optimized build that combines
+      PGO with LTO with BOLT.  This will build the compiler 5 times which
+      may take 5 days to complete on slower machines, but upstream claims it
+      may result in around 20-50% runtime performance gain.[1]
+    </flag>
     <flag name="default-compiler-rt">Use compiler-rt instead of libgcc as the
       default rtlib for clang</flag>
     <flag name="default-libcxx">Use libc++ instead of libstdc++ as the default
