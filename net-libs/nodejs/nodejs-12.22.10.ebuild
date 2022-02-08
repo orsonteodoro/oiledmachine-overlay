@@ -171,6 +171,7 @@ ewarn
 	fi
 }
 
+LTO_TYPE="none"
 src_prepare() {
 	tc-export CC CXX PKG_CONFIG
 	export V=1
@@ -234,6 +235,13 @@ src_prepare() {
 		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" "tools/gyp/pylib/gyp/generator/ninja.py" || die
 	fi
 
+	# Save before using filter-flag
+	if is-flag -flto=thin; then
+		LTO_TYPE="thin"
+	elif is-flag -flto; then
+		LTO_TYPE="full"
+	fi
+
 	default
 }
 
@@ -254,9 +262,9 @@ configure_pgx() {
 		--shared-zlib
 	)
 	use lto && myconf+=( --enable-lto )
-	if use lto && [[ "${CFLAGS}" =~ "-flto=thin" ]] ; then
+	if use lto && [[ "${LTO_TYPE}" =~ "thin" ]] ; then
 		myconf+=( --with-thinlto )
-	elif use lto && [[ "${CFLAGS}" =~ "-flto" ]] && has_version "sys-devel/binutils[gold,plugins]" ; then
+	elif use lto && [[ "${LTO_TYPE}" =~ "full" ]] && has_version "sys-devel/binutils[gold,plugins]" ; then
 		myconf+=( --with-goldlto )
 	fi
 
