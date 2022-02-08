@@ -17,12 +17,13 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
 #KEYWORDS=""  # The hardened default ON patches are in testing.
-IUSE="pgo-lto-bolt debug default-compiler-rt default-libcxx default-lld
+IUSE="debug default-compiler-rt default-libcxx default-lld
 	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD"
-IUSE+=" experimental hardened r4"
+IUSE+=" experimental hardened jemalloc pgo-lto-bolt tcmalloc r4"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
 	hardened? ( !test )
+	?? ( jemalloc tcmalloc )
 "
 RESTRICT="!test? ( test )"
 
@@ -37,7 +38,11 @@ DEPEND="${RDEPEND}"
 BDEPEND="
 	>=dev-util/cmake-3.16
 	doc? ( dev-python/sphinx )
-	pgo-lto-bolt? ( >=dev-util/perf-4.5 )
+	pgo-lto-bolt? (
+		>=dev-util/perf-4.5
+		jemalloc? ( dev-libs/jemalloc )
+		tcmalloc? ( dev-util/google-perftools )
+	)
 	xml? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
 	${PYTHON_DEPS}"
 PDEPEND="
@@ -543,16 +548,32 @@ _bolt_optimize() {
 	einfo "Called _bolt_optimize()"
 	# Both clang++ and clang are symlinked to clang-${SLOT}
 	einfo "bolt profile + PGO+LTO binary -> PGO+LTO+BOLT binary"
-	llvm-bolt "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}" \
-		-o "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}.bolt" \
-		-b clang-${SLOT}.yaml \
-		-reorder-blocks=cache+ \
-		-reorder-functions=hfsort+ \
-		-split-functions=3 \
-		-split-all-cold \
-		-dyno-stats \
-		-icf=1 \
-		-use-gnu-stack || die
+
+	local args=(
+		 "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}"
+		-o "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}.bolt"
+		-b clang-${SLOT}.yaml
+		-reorder-blocks=cache+
+		-reorder-functions=hfsort+
+		-split-functions=3
+		-split-all-cold
+		-dyno-stats
+		-icf=1
+		-use-gnu-stack
+	)
+
+	if use jemalloc ; then
+		LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" llvm-bolt ${args[@]} || die
+	elif use tcmalloc ; then
+		if [[ -e "/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" ]] ; then
+			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" llvm-bolt ${args[@]} || die
+		else
+			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" llvm-bolt ${args[@]} || die
+		fi
+	else
+		llvm-bolt ${args[@]} || die
+	fi
+
 	mv "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}{.bolt,}" || die
 }
 
