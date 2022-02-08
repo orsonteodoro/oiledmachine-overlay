@@ -22,7 +22,9 @@ KEYWORDS=""
 IUSE="bolt +binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml
 	z3 kernel_Darwin r1"
 IUSE+=" souper"
+# Currently klee, as a dependency of souper, only supports llvm <14
 REQUIRED_USE="
+	!souper
 	souper? (
 		!z3
 		test? ( debug )
