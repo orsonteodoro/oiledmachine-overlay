@@ -34,14 +34,17 @@ RDEPEND="
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	${PYTHON_DEPS}"
 
-DEPEND="${RDEPEND}"
+DEPEND="${RDEPEND}
+	pgo-lto-bolt? (
+		jemalloc? ( dev-libs/jemalloc )
+		tcmalloc? ( dev-util/google-perftools )
+	)
+"
 BDEPEND="
 	>=dev-util/cmake-3.16
 	doc? ( dev-python/sphinx )
 	pgo-lto-bolt? (
 		>=dev-util/perf-4.5
-		jemalloc? ( dev-libs/jemalloc )
-		tcmalloc? ( dev-util/google-perftools )
 	)
 	xml? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
 	${PYTHON_DEPS}"
