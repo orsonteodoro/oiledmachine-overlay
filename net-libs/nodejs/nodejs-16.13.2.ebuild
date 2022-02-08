@@ -124,12 +124,6 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	if [[ "${CC}" =~ "clang" ]] && use pgo ; then
-eerror "PGO is temporarily disallowed.  Use GCC with PGO instead.  Investigating"
-eerror "solution for counter overflow problem during profdata generation."
-eerror "If using CFI, disable PGO instead."
-		die
-	fi
 	python-any-r1_pkg_setup
 
 	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2024-04-30."
@@ -294,6 +288,7 @@ configure_pgx() {
 		export PGO_PROFILE_PROFDATA="${T}/pgo-${ABI}/pgo-custom.profdata"
 		mkdir -p "${PGO_PROFILE_DIR}" || die
 		if [[ "${PGO_PHASE}" == "pgo" && "${CC}" =~ "clang" ]] ; then
+			# The "counter overflow" is either a discared result or a saturated max value.
 			einfo "Converting .profraw -> .profdata"
 			llvm-profdata merge -output="${T}/pgo-${ABI}/pgo-custom.profdata" \
 				"${T}/pgo-${ABI}" || die
@@ -337,6 +332,15 @@ configure_pgx() {
 	# Prevent double build on install.
 	sed -i -e "s|^install: all|install: |g" \
 		Makefile || die
+
+	# Prevent build failure
+#/usr/bin/*-ld: /usr/lib/llvm/14/bin/../../../../lib/clang/14.0.0/lib/linux/libclang_rt.cfi-*.a(cfi.cpp.o): .preinit_array section is not allowed in DSO
+#/usr/bin/*-ld: failed to set dynamic section sizes: nonrepresentable section on output
+	if [[ -e "${S}/out/Release/obj/test_crypto_engine.ninja" ]] ; then
+		einfo "Removing CFI Cross-DSO from test_crypto_engine"
+		sed -i -e "s|-fsanitize-cfi-cross-dso||g" "${S}/out/Release/obj/test_crypto_engine.ninja" || die
+		sed -i -e "s|-fsanitize-cfi-cross-dso||g" "${S}/out/Debug/obj/test_crypto_engine.ninja" || die
+	fi
 }
 
 build_pgx() {
