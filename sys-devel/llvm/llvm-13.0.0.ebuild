@@ -21,6 +21,13 @@ SLOT="$(ver_cut 1)"
 KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="debug doc exegesis +gold libedit +libffi ncurses test xar xml z3
 	kernel_Darwin"
+IUSE+=" souper"
+REQUIRED_USE="
+	souper? (
+		!z3
+		test? ( debug )
+	)
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -54,7 +61,9 @@ BDEPEND="
 RDEPEND="${RDEPEND}
 	!sys-devel/llvm:0"
 PDEPEND="sys-devel/llvm-common
-	gold? ( >=sys-devel/llvmgold-${SLOT} )"
+	gold? ( >=sys-devel/llvmgold-${SLOT} )
+	souper? ( sys-devel/souper[llvm-${SLOT}] )
+"
 PATCHES=(
 	"${FILESDIR}/llvm-12.0.1-stop-triple-spam.patch"
 )
@@ -173,6 +182,10 @@ src_prepare() {
 	check_live_ebuild
 
 	llvm.org_src_prepare
+
+	if use disable-peepholes ; then
+		eapply "${FILESDIR}/disable-peepholes-v07.patch"
+	fi
 }
 
 # Is LLVM being linked against libc++?
@@ -385,6 +398,13 @@ multilib_src_configure() {
 			-DGO_EXECUTABLE=GO_EXECUTABLE-NOTFOUND
 		)
 #	fi
+
+	if use souper ; then
+		mycmakeargs+=(
+			-DCMAKE_CXX_FLAGS="-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=true -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false"
+			-DLLVM_FORCE_ENABLE_STATS=$(use test)
+		)
+	fi
 
 	use test && mycmakeargs+=(
 		-DLLVM_LIT_ARGS="$(get_lit_flags)"

@@ -1,0 +1,4765 @@
+Commits from https://github.com/regehr/llvm-project.git
+See also notes in this folder.
+
+Headers of some of these files fall under:
+
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+From 1a22c90bb997d1b706da3f08c3e6d62fd62a2111 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 5 Dec 2019 21:05:57 -0700
+Subject: [PATCH 01/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp             | 11 +++++++++++
+ .../Transforms/InstCombine/InstructionCombining.cpp   |  2 ++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 7942cb09e84c9..6bd4b8bc1b1b2 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -71,6 +71,8 @@ static Value *SimplifyGEPInst(Type *, ArrayRef<Value *>, const SimplifyQuery &,
+ 
+ static Value *foldSelectWithBinaryOp(Value *Cond, Value *TrueVal,
+                                      Value *FalseVal) {
++  return nullptr;
++  
+   BinaryOperator::BinaryOps BinOpCode;
+   if (auto *BO = dyn_cast<BinaryOperator>(Cond))
+     BinOpCode = BO->getOpcode();
+@@ -126,6 +128,7 @@ static Constant *getTrue(Type *Ty) {
+ /// isSameCompare - Is V equivalent to the comparison "LHS Pred RHS"?
+ static bool isSameCompare(Value *V, CmpInst::Predicate Pred, Value *LHS,
+                           Value *RHS) {
++  return false;
+   CmpInst *Cmp = dyn_cast<CmpInst>(V);
+   if (!Cmp)
+     return false;
+@@ -139,6 +142,7 @@ static bool isSameCompare(Value *V, CmpInst::Predicate Pred, Value *LHS,
+ 
+ /// Does the given value dominate the specified phi node?
+ static bool valueDominatesPHI(Value *V, PHINode *P, const DominatorTree *DT) {
++  return false;
+   Instruction *I = dyn_cast<Instruction>(V);
+   if (!I)
+     // Arguments and constants dominate all instructions.
+@@ -171,6 +175,7 @@ static bool valueDominatesPHI(Value *V, PHINode *P, const DominatorTree *DT) {
+ static Value *ExpandBinOp(Instruction::BinaryOps Opcode, Value *LHS, Value *RHS,
+                           Instruction::BinaryOps OpcodeToExpand,
+                           const SimplifyQuery &Q, unsigned MaxRecurse) {
++  return nullptr;
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return nullptr;
+@@ -230,6 +235,7 @@ static Value *SimplifyAssociativeBinOp(Instruction::BinaryOps Opcode,
+                                        Value *LHS, Value *RHS,
+                                        const SimplifyQuery &Q,
+                                        unsigned MaxRecurse) {
++  return nullptr;
+   assert(Instruction::isAssociative(Opcode) && "Not an associative operation!");
+ 
+   // Recursion is always used, so bail out at once if we already hit the limit.
+@@ -329,6 +335,7 @@ static Value *SimplifyAssociativeBinOp(Instruction::BinaryOps Opcode,
+ static Value *ThreadBinOpOverSelect(Instruction::BinaryOps Opcode, Value *LHS,
+                                     Value *RHS, const SimplifyQuery &Q,
+                                     unsigned MaxRecurse) {
++  return nullptr;
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return nullptr;
+@@ -401,6 +408,7 @@ static Value *ThreadBinOpOverSelect(Instruction::BinaryOps Opcode, Value *LHS,
+ static Value *ThreadCmpOverSelect(CmpInst::Predicate Pred, Value *LHS,
+                                   Value *RHS, const SimplifyQuery &Q,
+                                   unsigned MaxRecurse) {
++  return nullptr;
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return nullptr;
+@@ -525,6 +533,7 @@ static Value *ThreadBinOpOverPHI(Instruction::BinaryOps Opcode, Value *LHS,
+ /// otherwise returns null.
+ static Value *ThreadCmpOverPHI(CmpInst::Predicate Pred, Value *LHS, Value *RHS,
+                                const SimplifyQuery &Q, unsigned MaxRecurse) {
++  return nullptr;
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return nullptr;
+@@ -564,6 +573,7 @@ static Constant *foldOrCommuteConstant(Instruction::BinaryOps Opcode,
+     if (auto *CRHS = dyn_cast<Constant>(Op1))
+       return ConstantFoldBinaryOpOperands(Opcode, CLHS, CRHS, Q.DL);
+ 
++    return nullptr;
+     // Canonicalize the constant to the RHS if this is a commutative operation.
+     if (Instruction::isCommutative(Opcode))
+       std::swap(Op0, Op1);
+@@ -575,6 +585,7 @@ static Constant *foldOrCommuteConstant(Instruction::BinaryOps Opcode,
+ /// If not, this returns null.
+ static Value *SimplifyAddInst(Value *Op0, Value *Op1, bool IsNSW, bool IsNUW,
+                               const SimplifyQuery &Q, unsigned MaxRecurse) {
++  return nullptr;
+   if (Constant *C = foldOrCommuteConstant(Instruction::Add, Op0, Op1, Q))
+     return C;
+ 
+diff --git a/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp b/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
+index 5383da8fd869d..0da10abac82e3 100644
+--- a/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
++++ b/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
+@@ -3626,6 +3626,8 @@ void InstructionCombiningPass::getAnalysisUsage(AnalysisUsage &AU) const {
+ }
+ 
+ bool InstructionCombiningPass::runOnFunction(Function &F) {
++  return false;
++
+   if (skipFunction(F))
+     return false;
+ 
+
+From ea624fb0036f687206cb2e2a7e224d79193e7f15 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 5 Dec 2019 21:11:27 -0700
+Subject: [PATCH 02/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 6bd4b8bc1b1b2..af387777be39f 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -687,6 +687,7 @@ static Constant *stripAndComputeConstantOffsets(const DataLayout &DL, Value *&V,
+ /// If the difference is not a constant, returns zero.
+ static Constant *computePointerDifference(const DataLayout &DL, Value *LHS,
+                                           Value *RHS) {
++  return nullptr;
+   Constant *LHSOffset = stripAndComputeConstantOffsets(DL, LHS);
+   Constant *RHSOffset = stripAndComputeConstantOffsets(DL, RHS);
+ 
+@@ -709,6 +710,8 @@ static Value *SimplifySubInst(Value *Op0, Value *Op1, bool isNSW, bool isNUW,
+   if (Constant *C = foldOrCommuteConstant(Instruction::Sub, Op0, Op1, Q))
+     return C;
+ 
++  return nullptr;
++  
+   // X - undef -> undef
+   // undef - X -> undef
+   if (match(Op0, m_Undef()) || match(Op1, m_Undef()))
+@@ -844,6 +847,8 @@ static Value *SimplifyMulInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+   if (Constant *C = foldOrCommuteConstant(Instruction::Mul, Op0, Op1, Q))
+     return C;
+ 
++  return nullptr;
++  
+   // X * undef -> 0
+   // X * 0 -> 0
+   if (match(Op1, m_CombineOr(m_Undef(), m_Zero())))
+@@ -900,6 +905,8 @@ Value *llvm::SimplifyMulInst(Value *Op0, Value *Op1, const SimplifyQuery &Q) {
+ /// Check for common or similar folds of integer division or integer remainder.
+ /// This applies to all 4 opcodes (sdiv/udiv/srem/urem).
+ static Value *simplifyDivRem(Value *Op0, Value *Op1, bool IsDiv) {
++  return nullptr;
++  
+   Type *Ty = Op0->getType();
+ 
+   // X / undef -> undef
+@@ -967,6 +974,8 @@ static bool isICmpTrue(ICmpInst::Predicate Pred, Value *LHS, Value *RHS,
+ /// to simplify X % Y to X.
+ static bool isDivZero(Value *X, Value *Y, const SimplifyQuery &Q,
+                       unsigned MaxRecurse, bool IsSigned) {
++  return false;
++  
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return false;
+
+From 620ab7f30116bd0613c15211db1477cf163791d0 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 5 Dec 2019 21:31:41 -0700
+Subject: [PATCH 03/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 29 +++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index af387777be39f..a55a614ef5ab7 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -1030,6 +1030,8 @@ static Value *simplifyDiv(Instruction::BinaryOps Opcode, Value *Op0, Value *Op1,
+   if (Constant *C = foldOrCommuteConstant(Opcode, Op0, Op1, Q))
+     return C;
+ 
++  return nullptr;
++  
+   if (Value *V = simplifyDivRem(Op0, Op1, true))
+     return V;
+ 
+@@ -1088,6 +1090,8 @@ static Value *simplifyRem(Instruction::BinaryOps Opcode, Value *Op0, Value *Op1,
+   if (Constant *C = foldOrCommuteConstant(Opcode, Op0, Op1, Q))
+     return C;
+ 
++  return nullptr;
++  
+   if (Value *V = simplifyDivRem(Op0, Op1, false))
+     return V;
+ 
+@@ -1129,6 +1133,7 @@ static Value *simplifyRem(Instruction::BinaryOps Opcode, Value *Op0, Value *Op1,
+ /// If not, this returns null.
+ static Value *SimplifySDivInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+                                unsigned MaxRecurse) {
++  return nullptr;
+   // If two operands are negated and no signed overflow, return -1.
+   if (isKnownNegation(Op0, Op1, /*NeedNSW=*/true))
+     return Constant::getAllOnesValue(Op0->getType());
+@@ -1155,6 +1160,7 @@ Value *llvm::SimplifyUDivInst(Value *Op0, Value *Op1, const SimplifyQuery &Q) {
+ /// If not, this returns null.
+ static Value *SimplifySRemInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+                                unsigned MaxRecurse) {
++  return nullptr;
+   // If the divisor is 0, the result is undefined, so assume the divisor is -1.
+   // srem Op0, (sext i1 X) --> srem Op0, -1 --> 0
+   Value *X;
+@@ -1217,6 +1223,8 @@ static Value *SimplifyShift(Instruction::BinaryOps Opcode, Value *Op0,
+   if (Constant *C = foldOrCommuteConstant(Opcode, Op0, Op1, Q))
+     return C;
+ 
++  return nullptr;
++  
+   // 0 shift by X -> 0
+   if (match(Op0, m_Zero()))
+     return Constant::getNullValue(Op0->getType());
+@@ -1265,6 +1273,8 @@ static Value *SimplifyShift(Instruction::BinaryOps Opcode, Value *Op0,
+ static Value *SimplifyRightShift(Instruction::BinaryOps Opcode, Value *Op0,
+                                  Value *Op1, bool isExact, const SimplifyQuery &Q,
+                                  unsigned MaxRecurse) {
++  return nullptr;
++  
+   if (Value *V = SimplifyShift(Opcode, Op0, Op1, Q, MaxRecurse))
+     return V;
+ 
+@@ -1291,6 +1301,8 @@ static Value *SimplifyRightShift(Instruction::BinaryOps Opcode, Value *Op0,
+ /// If not, this returns null.
+ static Value *SimplifyShlInst(Value *Op0, Value *Op1, bool isNSW, bool isNUW,
+                               const SimplifyQuery &Q, unsigned MaxRecurse) {
++  return nullptr;
++  
+   if (Value *V = SimplifyShift(Instruction::Shl, Op0, Op1, Q, MaxRecurse))
+     return V;
+ 
+@@ -1323,6 +1335,8 @@ Value *llvm::SimplifyShlInst(Value *Op0, Value *Op1, bool isNSW, bool isNUW,
+ /// If not, this returns null.
+ static Value *SimplifyLShrInst(Value *Op0, Value *Op1, bool isExact,
+                                const SimplifyQuery &Q, unsigned MaxRecurse) {
++  return nullptr;
++  
+   if (Value *V = SimplifyRightShift(Instruction::LShr, Op0, Op1, isExact, Q,
+                                     MaxRecurse))
+       return V;
+@@ -1361,6 +1375,8 @@ Value *llvm::SimplifyLShrInst(Value *Op0, Value *Op1, bool isExact,
+ /// If not, this returns null.
+ static Value *SimplifyAShrInst(Value *Op0, Value *Op1, bool isExact,
+                                const SimplifyQuery &Q, unsigned MaxRecurse) {
++  return nullptr;
++  
+   if (Value *V = SimplifyRightShift(Instruction::AShr, Op0, Op1, isExact, Q,
+                                     MaxRecurse))
+     return V;
+@@ -1393,6 +1409,8 @@ Value *llvm::SimplifyAShrInst(Value *Op0, Value *Op1, bool isExact,
+ static Value *simplifyUnsignedRangeCheck(ICmpInst *ZeroICmp,
+                                          ICmpInst *UnsignedICmp, bool IsAnd,
+                                          const SimplifyQuery &Q) {
++  return nullptr;
++  
+   Value *X, *Y;
+ 
+   ICmpInst::Predicate EqPred;
+@@ -1502,6 +1520,7 @@ static Value *simplifyUnsignedRangeCheck(ICmpInst *ZeroICmp,
+ /// Commuted variants are assumed to be handled by calling this function again
+ /// with the parameters swapped.
+ static Value *simplifyAndOfICmpsWithSameOperands(ICmpInst *Op0, ICmpInst *Op1) {
++  return nullptr;
+   ICmpInst::Predicate Pred0, Pred1;
+   Value *A ,*B;
+   if (!match(Op0, m_ICmp(Pred0, m_Value(A), m_Value(B))) ||
+@@ -1527,6 +1546,7 @@ static Value *simplifyAndOfICmpsWithSameOperands(ICmpInst *Op0, ICmpInst *Op1) {
+ /// Commuted variants are assumed to be handled by calling this function again
+ /// with the parameters swapped.
+ static Value *simplifyOrOfICmpsWithSameOperands(ICmpInst *Op0, ICmpInst *Op1) {
++  return nullptr;
+   ICmpInst::Predicate Pred0, Pred1;
+   Value *A ,*B;
+   if (!match(Op0, m_ICmp(Pred0, m_Value(A), m_Value(B))) ||
+@@ -1555,6 +1575,7 @@ static Value *simplifyOrOfICmpsWithSameOperands(ICmpInst *Op0, ICmpInst *Op1) {
+ /// the other.
+ static Value *simplifyAndOrOfICmpsWithConstants(ICmpInst *Cmp0, ICmpInst *Cmp1,
+                                                 bool IsAnd) {
++  return nullptr;
+   // Look for this pattern: {and/or} (icmp X, C0), (icmp X, C1)).
+   if (Cmp0->getOperand(0) != Cmp1->getOperand(0))
+     return nullptr;
+@@ -1592,6 +1613,7 @@ static Value *simplifyAndOrOfICmpsWithConstants(ICmpInst *Cmp0, ICmpInst *Cmp1,
+ 
+ static Value *simplifyAndOrOfICmpsWithZero(ICmpInst *Cmp0, ICmpInst *Cmp1,
+                                            bool IsAnd) {
++  return nullptr;
+   ICmpInst::Predicate P0 = Cmp0->getPredicate(), P1 = Cmp1->getPredicate();
+   if (!match(Cmp0->getOperand(1), m_Zero()) ||
+       !match(Cmp1->getOperand(1), m_Zero()) || P0 != P1)
+@@ -1629,6 +1651,7 @@ static Value *simplifyAndOrOfICmpsWithZero(ICmpInst *Cmp0, ICmpInst *Cmp1,
+ 
+ static Value *simplifyAndOfICmpsWithAdd(ICmpInst *Op0, ICmpInst *Op1,
+                                         const InstrInfoQuery &IIQ) {
++  return nullptr;
+   // (icmp (add V, C0), C1) & (icmp V, C0)
+   ICmpInst::Predicate Pred0, Pred1;
+   const APInt *C0, *C1;
+@@ -1676,6 +1699,7 @@ static Value *simplifyAndOfICmpsWithAdd(ICmpInst *Op0, ICmpInst *Op1,
+ 
+ static Value *simplifyAndOfICmps(ICmpInst *Op0, ICmpInst *Op1,
+                                  const SimplifyQuery &Q) {
++  return nullptr;
+   if (Value *X = simplifyUnsignedRangeCheck(Op0, Op1, /*IsAnd=*/true, Q))
+     return X;
+   if (Value *X = simplifyUnsignedRangeCheck(Op1, Op0, /*IsAnd=*/true, Q))
+@@ -1702,6 +1726,7 @@ static Value *simplifyAndOfICmps(ICmpInst *Op0, ICmpInst *Op1,
+ 
+ static Value *simplifyOrOfICmpsWithAdd(ICmpInst *Op0, ICmpInst *Op1,
+                                        const InstrInfoQuery &IIQ) {
++  return nullptr;
+   // (icmp (add V, C0), C1) | (icmp V, C0)
+   ICmpInst::Predicate Pred0, Pred1;
+   const APInt *C0, *C1;
+@@ -1749,6 +1774,7 @@ static Value *simplifyOrOfICmpsWithAdd(ICmpInst *Op0, ICmpInst *Op1,
+ 
+ static Value *simplifyOrOfICmps(ICmpInst *Op0, ICmpInst *Op1,
+                                 const SimplifyQuery &Q) {
++  return nullptr;
+   if (Value *X = simplifyUnsignedRangeCheck(Op0, Op1, /*IsAnd=*/false, Q))
+     return X;
+   if (Value *X = simplifyUnsignedRangeCheck(Op1, Op0, /*IsAnd=*/false, Q))
+@@ -1775,6 +1801,7 @@ static Value *simplifyOrOfICmps(ICmpInst *Op0, ICmpInst *Op1,
+ 
+ static Value *simplifyAndOrOfFCmps(const TargetLibraryInfo *TLI,
+                                    FCmpInst *LHS, FCmpInst *RHS, bool IsAnd) {
++  return nullptr;
+   Value *LHS0 = LHS->getOperand(0), *LHS1 = LHS->getOperand(1);
+   Value *RHS0 = RHS->getOperand(0), *RHS1 = RHS->getOperand(1);
+   if (LHS0->getType() != RHS0->getType())
+@@ -1813,6 +1840,7 @@ static Value *simplifyAndOrOfFCmps(const TargetLibraryInfo *TLI,
+ 
+ static Value *simplifyAndOrOfCmps(const SimplifyQuery &Q,
+                                   Value *Op0, Value *Op1, bool IsAnd) {
++  return nullptr;
+   // Look through casts of the 'and' operands to find compares.
+   auto *Cast0 = dyn_cast<CastInst>(Op0);
+   auto *Cast1 = dyn_cast<CastInst>(Op1);
+@@ -1852,6 +1880,7 @@ static Value *simplifyAndOrOfCmps(const SimplifyQuery &Q,
+ ///   %Op1 = extractvalue { i4, i1 } %Agg, 1
+ static bool omitCheckForZeroBeforeMulWithOverflowInternal(Value *Op1,
+                                                           Value *X) {
++  return false;
+   auto *Extract = dyn_cast<ExtractValueInst>(Op1);
+   // We should only be extracting the overflow bit.
+   if (!Extract || !Extract->getIndices().equals(1))
+
+From e055cfd1690155dd5f72a6c790fd52b100db8ef7 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 5 Dec 2019 21:34:48 -0700
+Subject: [PATCH 04/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index a55a614ef5ab7..9ba4185df97e2 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -1907,6 +1907,7 @@ static bool omitCheckForZeroBeforeMulWithOverflowInternal(Value *Op1,
+ ///   %??? = and i1 %Op0, %Op1
+ /// We can just return  %Op1
+ static Value *omitCheckForZeroBeforeMulWithOverflow(Value *Op0, Value *Op1) {
++  return nullptr;
+   ICmpInst::Predicate Pred;
+   Value *X;
+   if (!match(Op0, m_ICmp(Pred, m_Value(X), m_Zero())) ||
+@@ -1931,6 +1932,7 @@ static Value *omitCheckForZeroBeforeMulWithOverflow(Value *Op0, Value *Op1) {
+ /// We can just return  %NotOp1
+ static Value *omitCheckForZeroBeforeInvertedMulWithOverflow(Value *Op0,
+                                                             Value *NotOp1) {
++  return nullptr;
+   ICmpInst::Predicate Pred;
+   Value *X;
+   if (!match(Op0, m_ICmp(Pred, m_Value(X), m_Zero())) ||
+@@ -1954,6 +1956,8 @@ static Value *SimplifyAndInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+   if (Constant *C = foldOrCommuteConstant(Instruction::And, Op0, Op1, Q))
+     return C;
+ 
++  return nullptr;
++  
+   // X & undef -> 0
+   if (match(Op1, m_Undef()))
+     return Constant::getNullValue(Op0->getType());
+@@ -2110,6 +2114,8 @@ static Value *SimplifyOrInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+   if (Constant *C = foldOrCommuteConstant(Instruction::Or, Op0, Op1, Q))
+     return C;
+ 
++  return nullptr;
++  
+   // X | undef -> -1
+   // X | -1 = -1
+   // Do not return Op1 because it may contain undef elements if it's a vector.
+@@ -2251,6 +2257,7 @@ Value *llvm::SimplifyOrInst(Value *Op0, Value *Op1, const SimplifyQuery &Q) {
+ /// If not, this returns null.
+ static Value *SimplifyXorInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+                               unsigned MaxRecurse) {
++  return nullptr;
+   if (Constant *C = foldOrCommuteConstant(Instruction::Xor, Op0, Op1, Q))
+     return C;
+ 
+@@ -2302,6 +2309,7 @@ static Type *GetCompareTy(Value *Op) {
+ /// Helper function for analyzing max/min idioms.
+ static Value *ExtractEquivalentCondition(Value *V, CmpInst::Predicate Pred,
+                                          Value *LHS, Value *RHS) {
++  return nullptr;
+   SelectInst *SI = dyn_cast<SelectInst>(V);
+   if (!SI)
+     return nullptr;
+@@ -2350,6 +2358,7 @@ computePointerICmp(const DataLayout &DL, const TargetLibraryInfo *TLI,
+                    const DominatorTree *DT, CmpInst::Predicate Pred,
+                    AssumptionCache *AC, const Instruction *CxtI,
+                    const InstrInfoQuery &IIQ, Value *LHS, Value *RHS) {
++  return nullptr;
+   // First, skip past any trivial no-ops.
+   LHS = LHS->stripPointerCasts();
+   RHS = RHS->stripPointerCasts();
+@@ -2535,6 +2544,7 @@ computePointerICmp(const DataLayout &DL, const TargetLibraryInfo *TLI,
+ /// Fold an icmp when its operands have i1 scalar type.
+ static Value *simplifyICmpOfBools(CmpInst::Predicate Pred, Value *LHS,
+                                   Value *RHS, const SimplifyQuery &Q) {
++  return nullptr;
+   Type *ITy = GetCompareTy(LHS); // The return type.
+   Type *OpTy = LHS->getType();   // The operand type.
+   if (!OpTy->isIntOrIntVectorTy(1))
+@@ -2609,6 +2619,7 @@ static Value *simplifyICmpOfBools(CmpInst::Predicate Pred, Value *LHS,
+ /// Try hard to fold icmp with zero RHS because this is a common case.
+ static Value *simplifyICmpWithZero(CmpInst::Predicate Pred, Value *LHS,
+                                    Value *RHS, const SimplifyQuery &Q) {
++  return nullptr;
+   if (!match(RHS, m_Zero()))
+     return nullptr;
+ 
+@@ -2671,6 +2682,7 @@ static Value *simplifyICmpWithZero(CmpInst::Predicate Pred, Value *LHS,
+ 
+ static Value *simplifyICmpWithConstant(CmpInst::Predicate Pred, Value *LHS,
+                                        Value *RHS, const InstrInfoQuery &IIQ) {
++  return nullptr;
+   Type *ITy = GetCompareTy(RHS); // The return type.
+ 
+   Value *X;
+@@ -2713,6 +2725,7 @@ static Value *simplifyICmpWithConstant(CmpInst::Predicate Pred, Value *LHS,
+ static Value *simplifyICmpWithBinOp(CmpInst::Predicate Pred, Value *LHS,
+                                     Value *RHS, const SimplifyQuery &Q,
+                                     unsigned MaxRecurse) {
++  return nullptr;
+   Type *ITy = GetCompareTy(LHS); // The return type.
+ 
+   BinaryOperator *LBO = dyn_cast<BinaryOperator>(LHS);
+
+From 5335ccb0b3a675c483d21f640751102d0f68e11d Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 5 Dec 2019 21:37:42 -0700
+Subject: [PATCH 05/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 9ba4185df97e2..745c5e6f89564 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -3040,6 +3040,7 @@ static Value *simplifyICmpWithBinOp(CmpInst::Predicate Pred, Value *LHS,
+ static Value *simplifyICmpWithMinMax(CmpInst::Predicate Pred, Value *LHS,
+                                      Value *RHS, const SimplifyQuery &Q,
+                                      unsigned MaxRecurse) {
++  return nullptr;
+   Type *ITy = GetCompareTy(LHS); // The return type.
+   Value *A, *B;
+   CmpInst::Predicate P = CmpInst::BAD_ICMP_PREDICATE;
+@@ -3243,6 +3244,7 @@ static Value *simplifyICmpWithMinMax(CmpInst::Predicate Pred, Value *LHS,
+ /// If not, this returns null.
+ static Value *SimplifyICmpInst(unsigned Predicate, Value *LHS, Value *RHS,
+                                const SimplifyQuery &Q, unsigned MaxRecurse) {
++  return nullptr;
+   CmpInst::Predicate Pred = (CmpInst::Predicate)Predicate;
+   assert(CmpInst::isIntPredicate(Pred) && "Not an integer compare!");
+ 
+@@ -3545,11 +3547,13 @@ static Value *SimplifyFCmpInst(unsigned Predicate, Value *LHS, Value *RHS,
+     if (Constant *CRHS = dyn_cast<Constant>(RHS))
+       return ConstantFoldCompareInstOperands(Pred, CLHS, CRHS, Q.DL, Q.TLI);
+ 
++  return nullptr;
+     // If we have a constant, make sure it is on the RHS.
+     std::swap(LHS, RHS);
+     Pred = CmpInst::getSwappedPredicate(Pred);
+   }
+ 
++  return nullptr;
+   // Fold trivial predicates.
+   Type *RetTy = GetCompareTy(LHS);
+   if (Pred == FCmpInst::FCMP_FALSE)
+@@ -3726,6 +3730,7 @@ Value *llvm::SimplifyFCmpInst(unsigned Predicate, Value *LHS, Value *RHS,
+ static const Value *SimplifyWithOpReplaced(Value *V, Value *Op, Value *RepOp,
+                                            const SimplifyQuery &Q,
+                                            unsigned MaxRecurse) {
++  return nullptr;
+   // Trivial replacement.
+   if (V == Op)
+     return RepOp;
+@@ -3825,6 +3830,7 @@ static const Value *SimplifyWithOpReplaced(Value *V, Value *Op, Value *RepOp,
+ /// integer comparison where one operand of the compare is a constant.
+ static Value *simplifySelectBitTest(Value *TrueVal, Value *FalseVal, Value *X,
+                                     const APInt *Y, bool TrueWhenUnset) {
++  return nullptr;
+   const APInt *C;
+ 
+   // (X & Y) == 0 ? X & ~Y : X  --> X
+@@ -3861,6 +3867,7 @@ static Value *simplifySelectBitTest(Value *TrueVal, Value *FalseVal, Value *X,
+ static Value *simplifySelectWithFakeICmpEq(Value *CmpLHS, Value *CmpRHS,
+                                            ICmpInst::Predicate Pred,
+                                            Value *TrueVal, Value *FalseVal) {
++  return nullptr;
+   Value *X;
+   APInt Mask;
+   if (!decomposeBitTestICmp(CmpLHS, CmpRHS, Pred, X, Mask))
+@@ -3875,6 +3882,7 @@ static Value *simplifySelectWithFakeICmpEq(Value *CmpLHS, Value *CmpRHS,
+ static Value *simplifySelectWithICmpCond(Value *CondVal, Value *TrueVal,
+                                          Value *FalseVal, const SimplifyQuery &Q,
+                                          unsigned MaxRecurse) {
++  return nullptr;
+   ICmpInst::Predicate Pred;
+   Value *CmpLHS, *CmpRHS;
+   if (!match(CondVal, m_ICmp(Pred, m_Value(CmpLHS), m_Value(CmpRHS))))
+@@ -3967,6 +3975,7 @@ static Value *simplifySelectWithICmpCond(Value *CondVal, Value *TrueVal,
+ /// floating-point comparison.
+ static Value *simplifySelectWithFCmp(Value *Cond, Value *T, Value *F,
+                                      const SimplifyQuery &Q) {
++  return nullptr;
+   FCmpInst::Predicate Pred;
+   if (!match(Cond, m_FCmp(Pred, m_Specific(T), m_Specific(F))) &&
+       !match(Cond, m_FCmp(Pred, m_Specific(F), m_Specific(T))))
+@@ -3998,6 +4007,7 @@ static Value *simplifySelectWithFCmp(Value *Cond, Value *T, Value *F,
+ /// If not, this returns null.
+ static Value *SimplifySelectInst(Value *Cond, Value *TrueVal, Value *FalseVal,
+                                  const SimplifyQuery &Q, unsigned MaxRecurse) {
++  return nullptr;
+   if (auto *CondC = dyn_cast<Constant>(Cond)) {
+     if (auto *TrueC = dyn_cast<Constant>(TrueVal))
+       if (auto *FalseC = dyn_cast<Constant>(FalseVal))
+@@ -4052,6 +4062,7 @@ Value *llvm::SimplifySelectInst(Value *Cond, Value *TrueVal, Value *FalseVal,
+ /// If not, this returns null.
+ static Value *SimplifyGEPInst(Type *SrcTy, ArrayRef<Value *> Ops,
+                               const SimplifyQuery &Q, unsigned) {
++  return nullptr;
+   // The type of the GEP pointer operand.
+   unsigned AS =
+       cast<PointerType>(Ops[0]->getType()->getScalarType())->getAddressSpace();
+@@ -4172,6 +4183,7 @@ Value *llvm::SimplifyGEPInst(Type *SrcTy, ArrayRef<Value *> Ops,
+ static Value *SimplifyInsertValueInst(Value *Agg, Value *Val,
+                                       ArrayRef<unsigned> Idxs, const SimplifyQuery &Q,
+                                       unsigned) {
++  return nullptr;
+   if (Constant *CAgg = dyn_cast<Constant>(Agg))
+     if (Constant *CVal = dyn_cast<Constant>(Val))
+       return ConstantFoldInsertValueInstruction(CAgg, CVal, Idxs);
+@@ -4211,6 +4223,8 @@ Value *llvm::SimplifyInsertElementInst(Value *Vec, Value *Val, Value *Idx,
+   if (VecC && ValC && IdxC)
+     return ConstantFoldInsertElementInstruction(VecC, ValC, IdxC);
+ 
++  return nullptr;
++
+   // Fold into undef if index is out of bounds.
+   if (auto *CI = dyn_cast<ConstantInt>(Idx)) {
+     uint64_t NumElements = cast<VectorType>(Vec->getType())->getNumElements();
+@@ -4243,6 +4257,7 @@ static Value *SimplifyExtractValueInst(Value *Agg, ArrayRef<unsigned> Idxs,
+   if (auto *CAgg = dyn_cast<Constant>(Agg))
+     return ConstantFoldExtractValueInstruction(CAgg, Idxs);
+ 
++  return nullptr;
+   // extractvalue x, (insertvalue y, elt, n), n -> elt
+   unsigned NumIdxs = Idxs.size();
+   for (auto *IVI = dyn_cast<InsertValueInst>(Agg); IVI != nullptr;
+@@ -4274,6 +4289,7 @@ static Value *SimplifyExtractElementInst(Value *Vec, Value *Idx, const SimplifyQ
+     if (auto *CIdx = dyn_cast<Constant>(Idx))
+       return ConstantFoldExtractElementInstruction(CVec, CIdx);
+ 
++    return nullptr;
+     // The index is not relevant if our vector is a splat.
+     if (auto *Splat = CVec->getSplatValue())
+       return Splat;
+@@ -4282,6 +4298,7 @@ static Value *SimplifyExtractElementInst(Value *Vec, Value *Idx, const SimplifyQ
+       return UndefValue::get(Vec->getType()->getVectorElementType());
+   }
+ 
++  return nullptr;
+   // If extracting a specified index from the vector, see if we can recursively
+   // find a previously computed scalar that was inserted into the vector.
+   if (auto *IdxC = dyn_cast<ConstantInt>(Idx)) {
+
+From 27a53cf2abaf35ae2040406efafa8cbe67b749c9 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 5 Dec 2019 21:47:44 -0700
+Subject: [PATCH 06/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 745c5e6f89564..f56b397fd9e08 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -4360,6 +4360,7 @@ static Value *SimplifyCastInst(unsigned CastOpc, Value *Op,
+   if (auto *C = dyn_cast<Constant>(Op))
+     return ConstantFoldCastOperand(CastOpc, C, Ty, Q.DL);
+ 
++  return nullptr;
+   if (auto *CI = dyn_cast<CastInst>(Op)) {
+     auto *Src = CI->getOperand(0);
+     Type *SrcTy = Src->getType();
+@@ -4400,6 +4401,7 @@ Value *llvm::SimplifyCastInst(unsigned CastOpc, Value *Op, Type *Ty,
+ static Value *foldIdentityShuffles(int DestElt, Value *Op0, Value *Op1,
+                                    int MaskVal, Value *RootVec,
+                                    unsigned MaxRecurse) {
++  return nullptr;
+   if (!MaxRecurse--)
+     return nullptr;
+ 
+@@ -4448,6 +4450,7 @@ static Value *foldIdentityShuffles(int DestElt, Value *Op0, Value *Op1,
+ static Value *SimplifyShuffleVectorInst(Value *Op0, Value *Op1, Constant *Mask,
+                                         Type *RetTy, const SimplifyQuery &Q,
+                                         unsigned MaxRecurse) {
++  return nullptr;
+   if (isa<UndefValue>(Mask))
+     return UndefValue::get(RetTy);
+ 
+@@ -4541,6 +4544,7 @@ static Value *simplifyFNegInst(Value *Op, FastMathFlags FMF,
+   if (Constant *C = foldConstant(Instruction::FNeg, Op, Q))
+     return C;
+ 
++  return nullptr;
+   Value *X;
+   // fneg (fneg X) ==> X
+   if (match(Op, m_FNeg(m_Value(X))))
+@@ -4556,6 +4560,7 @@ Value *llvm::SimplifyFNegInst(Value *Op, FastMathFlags FMF,
+ 
+ static Constant *propagateNaN(Constant *In) {
+   // If the input is a vector with undef elements, just return a default NaN.
++  return nullptr;
+   if (!In->isNaN())
+     return ConstantFP::getNaN(In->getType());
+ 
+@@ -4568,6 +4573,7 @@ static Constant *propagateNaN(Constant *In) {
+ /// transforms based on undef/NaN because the operation itself makes no
+ /// difference to the result.
+ static Constant *simplifyFPOp(ArrayRef<Value *> Ops) {
++  return nullptr;
+   if (any_of(Ops, [](Value *V) { return isa<UndefValue>(V); }))
+     return ConstantFP::getNaN(Ops[0]->getType());
+ 
+@@ -4585,6 +4591,7 @@ static Value *SimplifyFAddInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+   if (Constant *C = foldOrCommuteConstant(Instruction::FAdd, Op0, Op1, Q))
+     return C;
+ 
++  return nullptr;
+   if (Constant *C = simplifyFPOp({Op0, Op1}))
+     return C;
+ 
+
+From 6486aefa0d9a29254417b41412cbd8e5004ce385 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 5 Dec 2019 21:50:09 -0700
+Subject: [PATCH 07/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index f56b397fd9e08..ca82bee69aab5 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -4639,6 +4639,7 @@ static Value *SimplifyFSubInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+   if (Constant *C = foldOrCommuteConstant(Instruction::FSub, Op0, Op1, Q))
+     return C;
+ 
++  return nullptr;
+   if (Constant *C = simplifyFPOp({Op0, Op1}))
+     return C;
+ 
+@@ -4681,6 +4682,7 @@ static Value *SimplifyFSubInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+ 
+ static Value *SimplifyFMAFMul(Value *Op0, Value *Op1, FastMathFlags FMF,
+                               const SimplifyQuery &Q, unsigned MaxRecurse) {
++  return nullptr;
+   if (Constant *C = simplifyFPOp({Op0, Op1}))
+     return C;
+ 
+@@ -4717,6 +4719,7 @@ static Value *SimplifyFMulInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+                                const SimplifyQuery &Q, unsigned MaxRecurse) {
+   if (Constant *C = foldOrCommuteConstant(Instruction::FMul, Op0, Op1, Q))
+     return C;
++  return nullptr;
+ 
+   // Now apply simplifications that do not require rounding.
+   return SimplifyFMAFMul(Op0, Op1, FMF, Q, MaxRecurse);
+@@ -4748,6 +4751,7 @@ static Value *SimplifyFDivInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+   if (Constant *C = foldOrCommuteConstant(Instruction::FDiv, Op0, Op1, Q))
+     return C;
+ 
++  return nullptr;
+   if (Constant *C = simplifyFPOp({Op0, Op1}))
+     return C;
+ 
+@@ -4793,6 +4797,7 @@ static Value *SimplifyFRemInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+   if (Constant *C = foldOrCommuteConstant(Instruction::FRem, Op0, Op1, Q))
+     return C;
+ 
++  return nullptr;
+   if (Constant *C = simplifyFPOp({Op0, Op1}))
+     return C;
+ 
+@@ -4822,6 +4827,7 @@ Value *llvm::SimplifyFRemInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+ /// If not, this returns null.
+ static Value *simplifyUnOp(unsigned Opcode, Value *Op, const SimplifyQuery &Q,
+                            unsigned MaxRecurse) {
++  return nullptr;
+   switch (Opcode) {
+   case Instruction::FNeg:
+     return simplifyFNegInst(Op, FastMathFlags(), Q, MaxRecurse);
+@@ -4836,6 +4842,7 @@ static Value *simplifyUnOp(unsigned Opcode, Value *Op, const SimplifyQuery &Q,
+ static Value *simplifyFPUnOp(unsigned Opcode, Value *Op,
+                              const FastMathFlags &FMF,
+                              const SimplifyQuery &Q, unsigned MaxRecurse) {
++  return nullptr;
+   switch (Opcode) {
+   case Instruction::FNeg:
+     return simplifyFNegInst(Op, FMF, Q, MaxRecurse);
+
+From 5b433ea657f43534d8a88de54d7ec4a13522867e Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 5 Dec 2019 21:52:37 -0700
+Subject: [PATCH 08/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index ca82bee69aab5..85766399b324e 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -4324,6 +4324,9 @@ Value *llvm::SimplifyExtractElementInst(Value *Vec, Value *Idx,
+ 
+ /// See if we can fold the given phi. If not, returns null.
+ static Value *SimplifyPHINode(PHINode *PN, const SimplifyQuery &Q) {
++
++  // JDR: can't disable this w/o breaking the compiler
++  
+   // If all of the PHI's incoming values are the same then replace the PHI node
+   // with the common value.
+   Value *CommonValue = nullptr;
+@@ -4968,6 +4971,7 @@ static bool IsIdempotent(Intrinsic::ID ID) {
+ 
+ static Value *SimplifyRelativeLoad(Constant *Ptr, Constant *Offset,
+                                    const DataLayout &DL) {
++  return nullptr;
+   GlobalValue *PtrSym;
+   APInt PtrOffset;
+   if (!IsConstantOffsetFromGlobal(Ptr, PtrSym, PtrOffset, DL))
+@@ -5024,6 +5028,7 @@ static Value *SimplifyRelativeLoad(Constant *Ptr, Constant *Offset,
+ 
+ static Value *simplifyUnaryIntrinsic(Function *F, Value *Op0,
+                                      const SimplifyQuery &Q) {
++  return nullptr;
+   // Idempotent functions return the same result when called repeatedly.
+   Intrinsic::ID IID = F->getIntrinsicID();
+   if (IsIdempotent(IID))
+@@ -5097,6 +5102,7 @@ static Value *simplifyUnaryIntrinsic(Function *F, Value *Op0,
+ 
+ static Value *simplifyBinaryIntrinsic(Function *F, Value *Op0, Value *Op1,
+                                       const SimplifyQuery &Q) {
++  return nullptr;
+   Intrinsic::ID IID = F->getIntrinsicID();
+   Type *ReturnType = F->getReturnType();
+   switch (IID) {
+@@ -5240,6 +5246,7 @@ static Value *simplifyBinaryIntrinsic(Function *F, Value *Op0, Value *Op1,
+ 
+ static Value *simplifyIntrinsic(CallBase *Call, const SimplifyQuery &Q) {
+ 
++  return nullptr;
+   // Intrinsics with no operands have some kind of side effect. Don't simplify.
+   unsigned NumOperands = Call->getNumArgOperands();
+   if (!NumOperands)
+@@ -5302,6 +5309,7 @@ static Value *simplifyIntrinsic(CallBase *Call, const SimplifyQuery &Q) {
+ }
+ 
+ Value *llvm::SimplifyCall(CallBase *Call, const SimplifyQuery &Q) {
++  return nullptr;
+   Value *Callee = Call->getCalledValue();
+ 
+   // call undef -> undef
+@@ -5335,6 +5343,7 @@ Value *llvm::SimplifyCall(CallBase *Call, const SimplifyQuery &Q) {
+ 
+ /// Given operands for a Freeze, see if we can fold the result.
+ static Value *SimplifyFreezeInst(Value *Op0) {
++  return nullptr;
+   // Use a utility function defined in ValueTracking.
+   if (llvm::isGuaranteedNotToBeUndefOrPoison(Op0))
+     return Op0;
+
+From 46700449d12b33a266a575afd2253fda045fc78e Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Tue, 21 Jan 2020 13:00:45 -0700
+Subject: [PATCH 09/57] foo
+
+---
+ .../Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp  | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp b/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp
+index 59b94567a9c24..c025fc331d688 100644
+--- a/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp
++++ b/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp
+@@ -370,6 +370,7 @@ void AggressiveInstCombinerLegacyPass::getAnalysisUsage(
+ }
+ 
+ bool AggressiveInstCombinerLegacyPass::runOnFunction(Function &F) {
++  return false;
+   auto &TLI = getAnalysis<TargetLibraryInfoWrapperPass>().getTLI(F);
+   auto &DT = getAnalysis<DominatorTreeWrapperPass>().getDomTree();
+   return runImpl(F, TLI, DT);
+@@ -377,6 +378,7 @@ bool AggressiveInstCombinerLegacyPass::runOnFunction(Function &F) {
+ 
+ PreservedAnalyses AggressiveInstCombinePass::run(Function &F,
+                                                  FunctionAnalysisManager &AM) {
++  return PreservedAnalyses::all();
+   auto &TLI = AM.getResult<TargetLibraryAnalysis>(F);
+   auto &DT = AM.getResult<DominatorTreeAnalysis>(F);
+   if (!runImpl(F, TLI, DT)) {
+
+From da34384f27ac01bee147a3f779b65f60fa716d1e Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 27 Feb 2020 19:25:23 -0700
+Subject: [PATCH 10/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp       | 4 ++++
+ llvm/lib/Transforms/Vectorize/VectorCombine.cpp | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 725cf96a11262..7261c9959dcee 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -43,6 +43,10 @@
+ using namespace llvm;
+ using namespace llvm::PatternMatch;
+ 
++cl::opt<bool> DisablePeepholes(
++    "disable-peepholes", cl::init(false),
++    cl::desc("Don't run peephole passes."));
++
+ #define DEBUG_TYPE "instsimplify"
+ 
+ enum { RecursionLimit = 3 };
+diff --git a/llvm/lib/Transforms/Vectorize/VectorCombine.cpp b/llvm/lib/Transforms/Vectorize/VectorCombine.cpp
+index 76c63dd238509..555d030632abd 100644
+--- a/llvm/lib/Transforms/Vectorize/VectorCombine.cpp
++++ b/llvm/lib/Transforms/Vectorize/VectorCombine.cpp
+@@ -27,6 +27,8 @@
+ #include "llvm/Transforms/Vectorize.h"
+ #include "llvm/Transforms/Utils/Local.h"
+ 
++extern bool DisablePeepholes;
++
+ using namespace llvm;
+ using namespace llvm::PatternMatch;
+ 
+@@ -225,6 +227,8 @@ class VectorCombineLegacyPass : public FunctionPass {
+   }
+ 
+   bool runOnFunction(Function &F) override {
++    if (DisablePeepholes)
++      return false;
+     if (skipFunction(F))
+       return false;
+     auto &TTI = getAnalysis<TargetTransformInfoWrapperPass>().getTTI(F);
+
+From b6459f2c848e80e61802fd723391ca3bea9df462 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Mon, 2 Mar 2020 16:21:08 -0700
+Subject: [PATCH 11/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 7261c9959dcee..55882fb59a353 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -75,8 +75,9 @@ static Value *SimplifyGEPInst(Type *, ArrayRef<Value *>, const SimplifyQuery &,
+ 
+ static Value *foldSelectWithBinaryOp(Value *Cond, Value *TrueVal,
+                                      Value *FalseVal) {
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   BinaryOperator::BinaryOps BinOpCode;
+   if (auto *BO = dyn_cast<BinaryOperator>(Cond))
+     BinOpCode = BO->getOpcode();
+
+From 396af395c64e1c1f2e43cdd32076cd149cfb53fa Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Mon, 23 Mar 2020 15:38:18 -0600
+Subject: [PATCH 12/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 145 ++++++++++++++++------
+ 1 file changed, 109 insertions(+), 36 deletions(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 63ae64fb0a056..40717be65d1c2 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -133,7 +133,9 @@ static Constant *getTrue(Type *Ty) {
+ /// isSameCompare - Is V equivalent to the comparison "LHS Pred RHS"?
+ static bool isSameCompare(Value *V, CmpInst::Predicate Pred, Value *LHS,
+                           Value *RHS) {
+-  return false;
++  if (DisablePeepholes)
++    return false;
++
+   CmpInst *Cmp = dyn_cast<CmpInst>(V);
+   if (!Cmp)
+     return false;
+@@ -212,7 +214,9 @@ static Value *handleOtherCmpSelSimplifications(Value *TCmp, Value *FCmp,
+ 
+ /// Does the given value dominate the specified phi node?
+ static bool valueDominatesPHI(Value *V, PHINode *P, const DominatorTree *DT) {
+-  return false;
++  if (DisablePeepholes)
++    return false;
++
+   Instruction *I = dyn_cast<Instruction>(V);
+   if (!I)
+     // Arguments and constants dominate all instructions.
+@@ -3282,7 +3286,9 @@ static Value *simplifyICmpWithMinMax(CmpInst::Predicate Pred, Value *LHS,
+ /// If not, this returns null.
+ static Value *SimplifyICmpInst(unsigned Predicate, Value *LHS, Value *RHS,
+                                const SimplifyQuery &Q, unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   CmpInst::Predicate Pred = (CmpInst::Predicate)Predicate;
+   assert(CmpInst::isIntPredicate(Pred) && "Not an integer compare!");
+ 
+@@ -3592,7 +3598,9 @@ static Value *SimplifyFCmpInst(unsigned Predicate, Value *LHS, Value *RHS,
+     Pred = CmpInst::getSwappedPredicate(Pred);
+   }
+ 
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Fold trivial predicates.
+   Type *RetTy = GetCompareTy(LHS);
+   if (Pred == FCmpInst::FCMP_FALSE)
+@@ -3769,7 +3777,9 @@ Value *llvm::SimplifyFCmpInst(unsigned Predicate, Value *LHS, Value *RHS,
+ static const Value *SimplifyWithOpReplaced(Value *V, Value *Op, Value *RepOp,
+                                            const SimplifyQuery &Q,
+                                            unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Trivial replacement.
+   if (V == Op)
+     return RepOp;
+@@ -3869,7 +3879,9 @@ static const Value *SimplifyWithOpReplaced(Value *V, Value *Op, Value *RepOp,
+ /// integer comparison where one operand of the compare is a constant.
+ static Value *simplifySelectBitTest(Value *TrueVal, Value *FalseVal, Value *X,
+                                     const APInt *Y, bool TrueWhenUnset) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   const APInt *C;
+ 
+   // (X & Y) == 0 ? X & ~Y : X  --> X
+@@ -3906,7 +3918,9 @@ static Value *simplifySelectBitTest(Value *TrueVal, Value *FalseVal, Value *X,
+ static Value *simplifySelectWithFakeICmpEq(Value *CmpLHS, Value *CmpRHS,
+                                            ICmpInst::Predicate Pred,
+                                            Value *TrueVal, Value *FalseVal) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   Value *X;
+   APInt Mask;
+   if (!decomposeBitTestICmp(CmpLHS, CmpRHS, Pred, X, Mask))
+@@ -3921,7 +3935,9 @@ static Value *simplifySelectWithFakeICmpEq(Value *CmpLHS, Value *CmpRHS,
+ static Value *simplifySelectWithICmpCond(Value *CondVal, Value *TrueVal,
+                                          Value *FalseVal, const SimplifyQuery &Q,
+                                          unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   ICmpInst::Predicate Pred;
+   Value *CmpLHS, *CmpRHS;
+   if (!match(CondVal, m_ICmp(Pred, m_Value(CmpLHS), m_Value(CmpRHS))))
+@@ -4014,7 +4030,9 @@ static Value *simplifySelectWithICmpCond(Value *CondVal, Value *TrueVal,
+ /// floating-point comparison.
+ static Value *simplifySelectWithFCmp(Value *Cond, Value *T, Value *F,
+                                      const SimplifyQuery &Q) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   FCmpInst::Predicate Pred;
+   if (!match(Cond, m_FCmp(Pred, m_Specific(T), m_Specific(F))) &&
+       !match(Cond, m_FCmp(Pred, m_Specific(F), m_Specific(T))))
+@@ -4046,7 +4064,9 @@ static Value *simplifySelectWithFCmp(Value *Cond, Value *T, Value *F,
+ /// If not, this returns null.
+ static Value *SimplifySelectInst(Value *Cond, Value *TrueVal, Value *FalseVal,
+                                  const SimplifyQuery &Q, unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (auto *CondC = dyn_cast<Constant>(Cond)) {
+     if (auto *TrueC = dyn_cast<Constant>(TrueVal))
+       if (auto *FalseC = dyn_cast<Constant>(FalseVal))
+@@ -4138,7 +4158,9 @@ Value *llvm::SimplifySelectInst(Value *Cond, Value *TrueVal, Value *FalseVal,
+ /// If not, this returns null.
+ static Value *SimplifyGEPInst(Type *SrcTy, ArrayRef<Value *> Ops,
+                               const SimplifyQuery &Q, unsigned) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // The type of the GEP pointer operand.
+   unsigned AS =
+       cast<PointerType>(Ops[0]->getType()->getScalarType())->getAddressSpace();
+@@ -4260,7 +4282,9 @@ Value *llvm::SimplifyGEPInst(Type *SrcTy, ArrayRef<Value *> Ops,
+ static Value *SimplifyInsertValueInst(Value *Agg, Value *Val,
+                                       ArrayRef<unsigned> Idxs, const SimplifyQuery &Q,
+                                       unsigned) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Constant *CAgg = dyn_cast<Constant>(Agg))
+     if (Constant *CVal = dyn_cast<Constant>(Val))
+       return ConstantFoldInsertValueInstruction(CAgg, CVal, Idxs);
+@@ -4300,7 +4324,8 @@ Value *llvm::SimplifyInsertElementInst(Value *Vec, Value *Val, Value *Idx,
+   if (VecC && ValC && IdxC)
+     return ConstantFoldInsertElementInstruction(VecC, ValC, IdxC);
+ 
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
+ 
+   // For fixed-length vector, fold into undef if index is out of bounds.
+   if (auto *CI = dyn_cast<ConstantInt>(Idx)) {
+@@ -4334,7 +4359,9 @@ static Value *SimplifyExtractValueInst(Value *Agg, ArrayRef<unsigned> Idxs,
+   if (auto *CAgg = dyn_cast<Constant>(Agg))
+     return ConstantFoldExtractValueInstruction(CAgg, Idxs);
+ 
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // extractvalue x, (insertvalue y, elt, n), n -> elt
+   unsigned NumIdxs = Idxs.size();
+   for (auto *IVI = dyn_cast<InsertValueInst>(Agg); IVI != nullptr;
+@@ -4366,7 +4393,9 @@ static Value *SimplifyExtractElementInst(Value *Vec, Value *Idx, const SimplifyQ
+     if (auto *CIdx = dyn_cast<Constant>(Idx))
+       return ConstantFoldExtractElementInstruction(CVec, CIdx);
+ 
+-    return nullptr;
++    if (DisablePeepholes)
++      return nullptr;
++
+     // The index is not relevant if our vector is a splat.
+     if (auto *Splat = CVec->getSplatValue())
+       return Splat;
+@@ -4375,7 +4404,9 @@ static Value *SimplifyExtractElementInst(Value *Vec, Value *Idx, const SimplifyQ
+       return UndefValue::get(Vec->getType()->getVectorElementType());
+   }
+ 
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // If extracting a specified index from the vector, see if we can recursively
+   // find a previously computed scalar that was inserted into the vector.
+   if (auto *IdxC = dyn_cast<ConstantInt>(Idx)) {
+@@ -4441,7 +4472,9 @@ static Value *SimplifyCastInst(unsigned CastOpc, Value *Op,
+   if (auto *C = dyn_cast<Constant>(Op))
+     return ConstantFoldCastOperand(CastOpc, C, Ty, Q.DL);
+ 
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (auto *CI = dyn_cast<CastInst>(Op)) {
+     auto *Src = CI->getOperand(0);
+     Type *SrcTy = Src->getType();
+@@ -4482,7 +4515,9 @@ Value *llvm::SimplifyCastInst(unsigned CastOpc, Value *Op, Type *Ty,
+ static Value *foldIdentityShuffles(int DestElt, Value *Op0, Value *Op1,
+                                    int MaskVal, Value *RootVec,
+                                    unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (!MaxRecurse--)
+     return nullptr;
+ 
+@@ -4531,7 +4566,9 @@ static Value *foldIdentityShuffles(int DestElt, Value *Op0, Value *Op1,
+ static Value *SimplifyShuffleVectorInst(Value *Op0, Value *Op1, Constant *Mask,
+                                         Type *RetTy, const SimplifyQuery &Q,
+                                         unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (isa<UndefValue>(Mask))
+     return UndefValue::get(RetTy);
+ 
+@@ -4668,7 +4705,9 @@ static Value *simplifyFNegInst(Value *Op, FastMathFlags FMF,
+   if (Constant *C = foldConstant(Instruction::FNeg, Op, Q))
+     return C;
+ 
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   Value *X;
+   // fneg (fneg X) ==> X
+   if (match(Op, m_FNeg(m_Value(X))))
+@@ -4683,8 +4722,10 @@ Value *llvm::SimplifyFNegInst(Value *Op, FastMathFlags FMF,
+ }
+ 
+ static Constant *propagateNaN(Constant *In) {
++  if (DisablePeepholes)
++    return nullptr;
++
+   // If the input is a vector with undef elements, just return a default NaN.
+-  return nullptr;
+   if (!In->isNaN())
+     return ConstantFP::getNaN(In->getType());
+ 
+@@ -4698,7 +4739,9 @@ static Constant *propagateNaN(Constant *In) {
+ /// difference to the result.
+ static Constant *simplifyFPOp(ArrayRef<Value *> Ops,
+                               FastMathFlags FMF = FastMathFlags()) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   for (Value *V : Ops) {
+     bool IsNan = match(V, m_NaN());
+     bool IsInf = match(V, m_Inf());
+@@ -4725,7 +4768,8 @@ static Value *SimplifyFAddInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+   if (Constant *C = foldOrCommuteConstant(Instruction::FAdd, Op0, Op1, Q))
+     return C;
+ 
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
+ 
+   if (Constant *C = simplifyFPOp({Op0, Op1}, FMF))
+     return C;
+@@ -4774,7 +4818,9 @@ static Value *SimplifyFSubInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+   if (Constant *C = foldOrCommuteConstant(Instruction::FSub, Op0, Op1, Q))
+     return C;
+ 
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Constant *C = simplifyFPOp({Op0, Op1}, FMF))
+     return C;
+ 
+@@ -4817,7 +4863,9 @@ static Value *SimplifyFSubInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+ 
+ static Value *SimplifyFMAFMul(Value *Op0, Value *Op1, FastMathFlags FMF,
+                               const SimplifyQuery &Q, unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Constant *C = simplifyFPOp({Op0, Op1}, FMF))
+     return C;
+ 
+@@ -4854,7 +4902,9 @@ static Value *SimplifyFMulInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+                                const SimplifyQuery &Q, unsigned MaxRecurse) {
+   if (Constant *C = foldOrCommuteConstant(Instruction::FMul, Op0, Op1, Q))
+     return C;
+-  return nullptr;
++
++  if (DisablePeepholes)
++    return nullptr;
+ 
+   // Now apply simplifications that do not require rounding.
+   return SimplifyFMAFMul(Op0, Op1, FMF, Q, MaxRecurse);
+@@ -4886,7 +4936,9 @@ static Value *SimplifyFDivInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+   if (Constant *C = foldOrCommuteConstant(Instruction::FDiv, Op0, Op1, Q))
+     return C;
+ 
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Constant *C = simplifyFPOp({Op0, Op1}, FMF))
+     return C;
+ 
+@@ -4932,7 +4984,9 @@ static Value *SimplifyFRemInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+   if (Constant *C = foldOrCommuteConstant(Instruction::FRem, Op0, Op1, Q))
+     return C;
+ 
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Constant *C = simplifyFPOp({Op0, Op1}, FMF))
+     return C;
+ 
+@@ -4962,7 +5016,9 @@ Value *llvm::SimplifyFRemInst(Value *Op0, Value *Op1, FastMathFlags FMF,
+ /// If not, this returns null.
+ static Value *simplifyUnOp(unsigned Opcode, Value *Op, const SimplifyQuery &Q,
+                            unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   switch (Opcode) {
+   case Instruction::FNeg:
+     return simplifyFNegInst(Op, FastMathFlags(), Q, MaxRecurse);
+@@ -4977,7 +5033,9 @@ static Value *simplifyUnOp(unsigned Opcode, Value *Op, const SimplifyQuery &Q,
+ static Value *simplifyFPUnOp(unsigned Opcode, Value *Op,
+                              const FastMathFlags &FMF,
+                              const SimplifyQuery &Q, unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   switch (Opcode) {
+   case Instruction::FNeg:
+     return simplifyFNegInst(Op, FMF, Q, MaxRecurse);
+@@ -5103,7 +5161,9 @@ static bool IsIdempotent(Intrinsic::ID ID) {
+ 
+ static Value *SimplifyRelativeLoad(Constant *Ptr, Constant *Offset,
+                                    const DataLayout &DL) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   GlobalValue *PtrSym;
+   APInt PtrOffset;
+   if (!IsConstantOffsetFromGlobal(Ptr, PtrSym, PtrOffset, DL))
+@@ -5160,7 +5220,9 @@ static Value *SimplifyRelativeLoad(Constant *Ptr, Constant *Offset,
+ 
+ static Value *simplifyUnaryIntrinsic(Function *F, Value *Op0,
+                                      const SimplifyQuery &Q) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Idempotent functions return the same result when called repeatedly.
+   Intrinsic::ID IID = F->getIntrinsicID();
+   if (IsIdempotent(IID))
+@@ -5234,7 +5296,9 @@ static Value *simplifyUnaryIntrinsic(Function *F, Value *Op0,
+ 
+ static Value *simplifyBinaryIntrinsic(Function *F, Value *Op0, Value *Op1,
+                                       const SimplifyQuery &Q) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   Intrinsic::ID IID = F->getIntrinsicID();
+   Type *ReturnType = F->getReturnType();
+   switch (IID) {
+@@ -5383,7 +5447,9 @@ static Value *simplifyBinaryIntrinsic(Function *F, Value *Op0, Value *Op1,
+ 
+ static Value *simplifyIntrinsic(CallBase *Call, const SimplifyQuery &Q) {
+ 
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Intrinsics with no operands have some kind of side effect. Don't simplify.
+   unsigned NumOperands = Call->getNumArgOperands();
+   if (!NumOperands)
+@@ -5446,7 +5512,9 @@ static Value *simplifyIntrinsic(CallBase *Call, const SimplifyQuery &Q) {
+ }
+ 
+ Value *llvm::SimplifyCall(CallBase *Call, const SimplifyQuery &Q) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   Value *Callee = Call->getCalledValue();
+ 
+   // musttail calls can only be simplified if they are also DCEd.
+@@ -5485,7 +5553,9 @@ Value *llvm::SimplifyCall(CallBase *Call, const SimplifyQuery &Q) {
+ 
+ /// Given operands for a Freeze, see if we can fold the result.
+ static Value *SimplifyFreezeInst(Value *Op0, const SimplifyQuery &Q) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Use a utility function defined in ValueTracking.
+   if (llvm::isGuaranteedNotToBeUndefOrPoison(Op0, Q.CxtI, Q.DT))
+     return Op0;
+@@ -5502,6 +5572,9 @@ Value *llvm::SimplifyFreezeInst(Value *Op0, const SimplifyQuery &Q) {
+ 
+ Value *llvm::SimplifyInstruction(Instruction *I, const SimplifyQuery &SQ,
+                                  OptimizationRemarkEmitter *ORE) {
++  if (DisablePeepholes)
++    return nullptr;
++
+   const SimplifyQuery Q = SQ.CxtI ? SQ : SQ.getWithInstruction(I);
+   Value *Result;
+ 
+
+From f4c8bafdda0ee99a43938cdb4f4083258e3d9ab9 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Mon, 23 Mar 2020 15:59:12 -0600
+Subject: [PATCH 13/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp     | 203 ++++++++++++------
+ .../AggressiveInstCombine.cpp                 |   7 +-
+ .../InstCombine/InstructionCombining.cpp      |   5 +-
+ .../Transforms/Vectorize/VectorCombine.cpp    |   1 +
+ 4 files changed, 153 insertions(+), 63 deletions(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 40717be65d1c2..915fb397e8a24 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -249,7 +249,9 @@ static bool valueDominatesPHI(Value *V, PHINode *P, const DominatorTree *DT) {
+ static Value *ExpandBinOp(Instruction::BinaryOps Opcode, Value *LHS, Value *RHS,
+                           Instruction::BinaryOps OpcodeToExpand,
+                           const SimplifyQuery &Q, unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return nullptr;
+@@ -309,7 +311,9 @@ static Value *SimplifyAssociativeBinOp(Instruction::BinaryOps Opcode,
+                                        Value *LHS, Value *RHS,
+                                        const SimplifyQuery &Q,
+                                        unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   assert(Instruction::isAssociative(Opcode) && "Not an associative operation!");
+ 
+   // Recursion is always used, so bail out at once if we already hit the limit.
+@@ -409,7 +413,9 @@ static Value *SimplifyAssociativeBinOp(Instruction::BinaryOps Opcode,
+ static Value *ThreadBinOpOverSelect(Instruction::BinaryOps Opcode, Value *LHS,
+                                     Value *RHS, const SimplifyQuery &Q,
+                                     unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return nullptr;
+@@ -488,7 +494,9 @@ static Value *ThreadBinOpOverSelect(Instruction::BinaryOps Opcode, Value *LHS,
+ static Value *ThreadCmpOverSelect(CmpInst::Predicate Pred, Value *LHS,
+                                   Value *RHS, const SimplifyQuery &Q,
+                                   unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return nullptr;
+@@ -535,6 +543,9 @@ static Value *ThreadCmpOverSelect(CmpInst::Predicate Pred, Value *LHS,
+ static Value *ThreadBinOpOverPHI(Instruction::BinaryOps Opcode, Value *LHS,
+                                  Value *RHS, const SimplifyQuery &Q,
+                                  unsigned MaxRecurse) {
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return nullptr;
+@@ -577,7 +588,9 @@ static Value *ThreadBinOpOverPHI(Instruction::BinaryOps Opcode, Value *LHS,
+ /// otherwise returns null.
+ static Value *ThreadCmpOverPHI(CmpInst::Predicate Pred, Value *LHS, Value *RHS,
+                                const SimplifyQuery &Q, unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return nullptr;
+@@ -623,7 +636,9 @@ static Constant *foldOrCommuteConstant(Instruction::BinaryOps Opcode,
+     if (auto *CRHS = dyn_cast<Constant>(Op1))
+       return ConstantFoldBinaryOpOperands(Opcode, CLHS, CRHS, Q.DL);
+ 
+-    return nullptr;
++    if (DisablePeepholes)
++      return nullptr;
++
+     // Canonicalize the constant to the RHS if this is a commutative operation.
+     if (Instruction::isCommutative(Opcode))
+       std::swap(Op0, Op1);
+@@ -635,10 +650,12 @@ static Constant *foldOrCommuteConstant(Instruction::BinaryOps Opcode,
+ /// If not, this returns null.
+ static Value *SimplifyAddInst(Value *Op0, Value *Op1, bool IsNSW, bool IsNUW,
+                               const SimplifyQuery &Q, unsigned MaxRecurse) {
+-  return nullptr;
+   if (Constant *C = foldOrCommuteConstant(Instruction::Add, Op0, Op1, Q))
+     return C;
+ 
++  if (DisablePeepholes)
++    return nullptr;
++
+   // X + undef -> undef
+   if (match(Op1, m_Undef()))
+     return Op1;
+@@ -736,7 +753,9 @@ static Constant *stripAndComputeConstantOffsets(const DataLayout &DL, Value *&V,
+ /// If the difference is not a constant, returns zero.
+ static Constant *computePointerDifference(const DataLayout &DL, Value *LHS,
+                                           Value *RHS) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   Constant *LHSOffset = stripAndComputeConstantOffsets(DL, LHS);
+   Constant *RHSOffset = stripAndComputeConstantOffsets(DL, RHS);
+ 
+@@ -759,8 +778,9 @@ static Value *SimplifySubInst(Value *Op0, Value *Op1, bool isNSW, bool isNUW,
+   if (Constant *C = foldOrCommuteConstant(Instruction::Sub, Op0, Op1, Q))
+     return C;
+ 
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   // X - undef -> undef
+   // undef - X -> undef
+   if (match(Op0, m_Undef()) || match(Op1, m_Undef()))
+@@ -896,8 +916,9 @@ static Value *SimplifyMulInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+   if (Constant *C = foldOrCommuteConstant(Instruction::Mul, Op0, Op1, Q))
+     return C;
+ 
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   // X * undef -> 0
+   // X * 0 -> 0
+   if (match(Op1, m_CombineOr(m_Undef(), m_Zero())))
+@@ -954,8 +975,9 @@ Value *llvm::SimplifyMulInst(Value *Op0, Value *Op1, const SimplifyQuery &Q) {
+ /// Check for common or similar folds of integer division or integer remainder.
+ /// This applies to all 4 opcodes (sdiv/udiv/srem/urem).
+ static Value *simplifyDivRem(Value *Op0, Value *Op1, bool IsDiv) {
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   Type *Ty = Op0->getType();
+ 
+   // X / undef -> undef
+@@ -1023,8 +1045,9 @@ static bool isICmpTrue(ICmpInst::Predicate Pred, Value *LHS, Value *RHS,
+ /// to simplify X % Y to X.
+ static bool isDivZero(Value *X, Value *Y, const SimplifyQuery &Q,
+                       unsigned MaxRecurse, bool IsSigned) {
+-  return false;
+-  
++  if (DisablePeepholes)
++    return false;
++
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return false;
+@@ -1079,8 +1102,9 @@ static Value *simplifyDiv(Instruction::BinaryOps Opcode, Value *Op0, Value *Op1,
+   if (Constant *C = foldOrCommuteConstant(Opcode, Op0, Op1, Q))
+     return C;
+ 
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Value *V = simplifyDivRem(Op0, Op1, true))
+     return V;
+ 
+@@ -1139,8 +1163,9 @@ static Value *simplifyRem(Instruction::BinaryOps Opcode, Value *Op0, Value *Op1,
+   if (Constant *C = foldOrCommuteConstant(Opcode, Op0, Op1, Q))
+     return C;
+ 
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Value *V = simplifyDivRem(Op0, Op1, false))
+     return V;
+ 
+@@ -1182,7 +1207,9 @@ static Value *simplifyRem(Instruction::BinaryOps Opcode, Value *Op0, Value *Op1,
+ /// If not, this returns null.
+ static Value *SimplifySDivInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+                                unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // If two operands are negated and no signed overflow, return -1.
+   if (isKnownNegation(Op0, Op1, /*NeedNSW=*/true))
+     return Constant::getAllOnesValue(Op0->getType());
+@@ -1209,7 +1236,9 @@ Value *llvm::SimplifyUDivInst(Value *Op0, Value *Op1, const SimplifyQuery &Q) {
+ /// If not, this returns null.
+ static Value *SimplifySRemInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+                                unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // If the divisor is 0, the result is undefined, so assume the divisor is -1.
+   // srem Op0, (sext i1 X) --> srem Op0, -1 --> 0
+   Value *X;
+@@ -1272,8 +1301,9 @@ static Value *SimplifyShift(Instruction::BinaryOps Opcode, Value *Op0,
+   if (Constant *C = foldOrCommuteConstant(Opcode, Op0, Op1, Q))
+     return C;
+ 
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   // 0 shift by X -> 0
+   if (match(Op0, m_Zero()))
+     return Constant::getNullValue(Op0->getType());
+@@ -1322,8 +1352,9 @@ static Value *SimplifyShift(Instruction::BinaryOps Opcode, Value *Op0,
+ static Value *SimplifyRightShift(Instruction::BinaryOps Opcode, Value *Op0,
+                                  Value *Op1, bool isExact, const SimplifyQuery &Q,
+                                  unsigned MaxRecurse) {
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Value *V = SimplifyShift(Opcode, Op0, Op1, Q, MaxRecurse))
+     return V;
+ 
+@@ -1350,8 +1381,9 @@ static Value *SimplifyRightShift(Instruction::BinaryOps Opcode, Value *Op0,
+ /// If not, this returns null.
+ static Value *SimplifyShlInst(Value *Op0, Value *Op1, bool isNSW, bool isNUW,
+                               const SimplifyQuery &Q, unsigned MaxRecurse) {
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Value *V = SimplifyShift(Instruction::Shl, Op0, Op1, Q, MaxRecurse))
+     return V;
+ 
+@@ -1384,8 +1416,9 @@ Value *llvm::SimplifyShlInst(Value *Op0, Value *Op1, bool isNSW, bool isNUW,
+ /// If not, this returns null.
+ static Value *SimplifyLShrInst(Value *Op0, Value *Op1, bool isExact,
+                                const SimplifyQuery &Q, unsigned MaxRecurse) {
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Value *V = SimplifyRightShift(Instruction::LShr, Op0, Op1, isExact, Q,
+                                     MaxRecurse))
+       return V;
+@@ -1424,8 +1457,9 @@ Value *llvm::SimplifyLShrInst(Value *Op0, Value *Op1, bool isExact,
+ /// If not, this returns null.
+ static Value *SimplifyAShrInst(Value *Op0, Value *Op1, bool isExact,
+                                const SimplifyQuery &Q, unsigned MaxRecurse) {
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Value *V = SimplifyRightShift(Instruction::AShr, Op0, Op1, isExact, Q,
+                                     MaxRecurse))
+     return V;
+@@ -1458,8 +1492,9 @@ Value *llvm::SimplifyAShrInst(Value *Op0, Value *Op1, bool isExact,
+ static Value *simplifyUnsignedRangeCheck(ICmpInst *ZeroICmp,
+                                          ICmpInst *UnsignedICmp, bool IsAnd,
+                                          const SimplifyQuery &Q) {
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   Value *X, *Y;
+ 
+   ICmpInst::Predicate EqPred;
+@@ -1563,7 +1598,9 @@ static Value *simplifyUnsignedRangeCheck(ICmpInst *ZeroICmp,
+ /// Commuted variants are assumed to be handled by calling this function again
+ /// with the parameters swapped.
+ static Value *simplifyAndOfICmpsWithSameOperands(ICmpInst *Op0, ICmpInst *Op1) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   ICmpInst::Predicate Pred0, Pred1;
+   Value *A ,*B;
+   if (!match(Op0, m_ICmp(Pred0, m_Value(A), m_Value(B))) ||
+@@ -1589,7 +1626,9 @@ static Value *simplifyAndOfICmpsWithSameOperands(ICmpInst *Op0, ICmpInst *Op1) {
+ /// Commuted variants are assumed to be handled by calling this function again
+ /// with the parameters swapped.
+ static Value *simplifyOrOfICmpsWithSameOperands(ICmpInst *Op0, ICmpInst *Op1) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   ICmpInst::Predicate Pred0, Pred1;
+   Value *A ,*B;
+   if (!match(Op0, m_ICmp(Pred0, m_Value(A), m_Value(B))) ||
+@@ -1618,7 +1657,9 @@ static Value *simplifyOrOfICmpsWithSameOperands(ICmpInst *Op0, ICmpInst *Op1) {
+ /// the other.
+ static Value *simplifyAndOrOfICmpsWithConstants(ICmpInst *Cmp0, ICmpInst *Cmp1,
+                                                 bool IsAnd) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Look for this pattern: {and/or} (icmp X, C0), (icmp X, C1)).
+   if (Cmp0->getOperand(0) != Cmp1->getOperand(0))
+     return nullptr;
+@@ -1656,7 +1697,9 @@ static Value *simplifyAndOrOfICmpsWithConstants(ICmpInst *Cmp0, ICmpInst *Cmp1,
+ 
+ static Value *simplifyAndOrOfICmpsWithZero(ICmpInst *Cmp0, ICmpInst *Cmp1,
+                                            bool IsAnd) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   ICmpInst::Predicate P0 = Cmp0->getPredicate(), P1 = Cmp1->getPredicate();
+   if (!match(Cmp0->getOperand(1), m_Zero()) ||
+       !match(Cmp1->getOperand(1), m_Zero()) || P0 != P1)
+@@ -1694,7 +1737,9 @@ static Value *simplifyAndOrOfICmpsWithZero(ICmpInst *Cmp0, ICmpInst *Cmp1,
+ 
+ static Value *simplifyAndOfICmpsWithAdd(ICmpInst *Op0, ICmpInst *Op1,
+                                         const InstrInfoQuery &IIQ) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // (icmp (add V, C0), C1) & (icmp V, C0)
+   ICmpInst::Predicate Pred0, Pred1;
+   const APInt *C0, *C1;
+@@ -1742,7 +1787,9 @@ static Value *simplifyAndOfICmpsWithAdd(ICmpInst *Op0, ICmpInst *Op1,
+ 
+ static Value *simplifyAndOfICmps(ICmpInst *Op0, ICmpInst *Op1,
+                                  const SimplifyQuery &Q) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Value *X = simplifyUnsignedRangeCheck(Op0, Op1, /*IsAnd=*/true, Q))
+     return X;
+   if (Value *X = simplifyUnsignedRangeCheck(Op1, Op0, /*IsAnd=*/true, Q))
+@@ -1769,7 +1816,9 @@ static Value *simplifyAndOfICmps(ICmpInst *Op0, ICmpInst *Op1,
+ 
+ static Value *simplifyOrOfICmpsWithAdd(ICmpInst *Op0, ICmpInst *Op1,
+                                        const InstrInfoQuery &IIQ) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // (icmp (add V, C0), C1) | (icmp V, C0)
+   ICmpInst::Predicate Pred0, Pred1;
+   const APInt *C0, *C1;
+@@ -1817,7 +1866,9 @@ static Value *simplifyOrOfICmpsWithAdd(ICmpInst *Op0, ICmpInst *Op1,
+ 
+ static Value *simplifyOrOfICmps(ICmpInst *Op0, ICmpInst *Op1,
+                                 const SimplifyQuery &Q) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Value *X = simplifyUnsignedRangeCheck(Op0, Op1, /*IsAnd=*/false, Q))
+     return X;
+   if (Value *X = simplifyUnsignedRangeCheck(Op1, Op0, /*IsAnd=*/false, Q))
+@@ -1844,7 +1895,9 @@ static Value *simplifyOrOfICmps(ICmpInst *Op0, ICmpInst *Op1,
+ 
+ static Value *simplifyAndOrOfFCmps(const TargetLibraryInfo *TLI,
+                                    FCmpInst *LHS, FCmpInst *RHS, bool IsAnd) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   Value *LHS0 = LHS->getOperand(0), *LHS1 = LHS->getOperand(1);
+   Value *RHS0 = RHS->getOperand(0), *RHS1 = RHS->getOperand(1);
+   if (LHS0->getType() != RHS0->getType())
+@@ -1883,7 +1936,9 @@ static Value *simplifyAndOrOfFCmps(const TargetLibraryInfo *TLI,
+ 
+ static Value *simplifyAndOrOfCmps(const SimplifyQuery &Q,
+                                   Value *Op0, Value *Op1, bool IsAnd) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Look through casts of the 'and' operands to find compares.
+   auto *Cast0 = dyn_cast<CastInst>(Op0);
+   auto *Cast1 = dyn_cast<CastInst>(Op1);
+@@ -1923,7 +1978,9 @@ static Value *simplifyAndOrOfCmps(const SimplifyQuery &Q,
+ ///   %Op1 = extractvalue { i4, i1 } %Agg, 1
+ static bool omitCheckForZeroBeforeMulWithOverflowInternal(Value *Op1,
+                                                           Value *X) {
+-  return false;
++  if (DisablePeepholes)
++    return false;
++
+   auto *Extract = dyn_cast<ExtractValueInst>(Op1);
+   // We should only be extracting the overflow bit.
+   if (!Extract || !Extract->getIndices().equals(1))
+@@ -1950,7 +2007,9 @@ static bool omitCheckForZeroBeforeMulWithOverflowInternal(Value *Op1,
+ ///   %??? = and i1 %Op0, %Op1
+ /// We can just return  %Op1
+ static Value *omitCheckForZeroBeforeMulWithOverflow(Value *Op0, Value *Op1) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   ICmpInst::Predicate Pred;
+   Value *X;
+   if (!match(Op0, m_ICmp(Pred, m_Value(X), m_Zero())) ||
+@@ -1975,7 +2034,9 @@ static Value *omitCheckForZeroBeforeMulWithOverflow(Value *Op0, Value *Op1) {
+ /// We can just return  %NotOp1
+ static Value *omitCheckForZeroBeforeInvertedMulWithOverflow(Value *Op0,
+                                                             Value *NotOp1) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   ICmpInst::Predicate Pred;
+   Value *X;
+   if (!match(Op0, m_ICmp(Pred, m_Value(X), m_Zero())) ||
+@@ -1999,8 +2060,9 @@ static Value *SimplifyAndInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+   if (Constant *C = foldOrCommuteConstant(Instruction::And, Op0, Op1, Q))
+     return C;
+ 
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   // X & undef -> 0
+   if (match(Op1, m_Undef()))
+     return Constant::getNullValue(Op0->getType());
+@@ -2157,8 +2219,9 @@ static Value *SimplifyOrInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+   if (Constant *C = foldOrCommuteConstant(Instruction::Or, Op0, Op1, Q))
+     return C;
+ 
+-  return nullptr;
+-  
++  if (DisablePeepholes)
++    return nullptr;
++
+   // X | undef -> -1
+   // X | -1 = -1
+   // Do not return Op1 because it may contain undef elements if it's a vector.
+@@ -2300,7 +2363,9 @@ Value *llvm::SimplifyOrInst(Value *Op0, Value *Op1, const SimplifyQuery &Q) {
+ /// If not, this returns null.
+ static Value *SimplifyXorInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+                               unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (Constant *C = foldOrCommuteConstant(Instruction::Xor, Op0, Op1, Q))
+     return C;
+ 
+@@ -2352,7 +2417,9 @@ static Type *GetCompareTy(Value *Op) {
+ /// Helper function for analyzing max/min idioms.
+ static Value *ExtractEquivalentCondition(Value *V, CmpInst::Predicate Pred,
+                                          Value *LHS, Value *RHS) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   SelectInst *SI = dyn_cast<SelectInst>(V);
+   if (!SI)
+     return nullptr;
+@@ -2401,7 +2468,9 @@ computePointerICmp(const DataLayout &DL, const TargetLibraryInfo *TLI,
+                    const DominatorTree *DT, CmpInst::Predicate Pred,
+                    AssumptionCache *AC, const Instruction *CxtI,
+                    const InstrInfoQuery &IIQ, Value *LHS, Value *RHS) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   // First, skip past any trivial no-ops.
+   LHS = LHS->stripPointerCasts();
+   RHS = RHS->stripPointerCasts();
+@@ -2586,7 +2655,9 @@ computePointerICmp(const DataLayout &DL, const TargetLibraryInfo *TLI,
+ /// Fold an icmp when its operands have i1 scalar type.
+ static Value *simplifyICmpOfBools(CmpInst::Predicate Pred, Value *LHS,
+                                   Value *RHS, const SimplifyQuery &Q) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   Type *ITy = GetCompareTy(LHS); // The return type.
+   Type *OpTy = LHS->getType();   // The operand type.
+   if (!OpTy->isIntOrIntVectorTy(1))
+@@ -2661,7 +2732,9 @@ static Value *simplifyICmpOfBools(CmpInst::Predicate Pred, Value *LHS,
+ /// Try hard to fold icmp with zero RHS because this is a common case.
+ static Value *simplifyICmpWithZero(CmpInst::Predicate Pred, Value *LHS,
+                                    Value *RHS, const SimplifyQuery &Q) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   if (!match(RHS, m_Zero()))
+     return nullptr;
+ 
+@@ -2724,7 +2797,9 @@ static Value *simplifyICmpWithZero(CmpInst::Predicate Pred, Value *LHS,
+ 
+ static Value *simplifyICmpWithConstant(CmpInst::Predicate Pred, Value *LHS,
+                                        Value *RHS, const InstrInfoQuery &IIQ) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   Type *ITy = GetCompareTy(RHS); // The return type.
+ 
+   Value *X;
+@@ -2767,7 +2842,9 @@ static Value *simplifyICmpWithConstant(CmpInst::Predicate Pred, Value *LHS,
+ static Value *simplifyICmpWithBinOp(CmpInst::Predicate Pred, Value *LHS,
+                                     Value *RHS, const SimplifyQuery &Q,
+                                     unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   Type *ITy = GetCompareTy(LHS); // The return type.
+ 
+   BinaryOperator *LBO = dyn_cast<BinaryOperator>(LHS);
+@@ -3082,7 +3159,9 @@ static Value *simplifyICmpWithBinOp(CmpInst::Predicate Pred, Value *LHS,
+ static Value *simplifyICmpWithMinMax(CmpInst::Predicate Pred, Value *LHS,
+                                      Value *RHS, const SimplifyQuery &Q,
+                                      unsigned MaxRecurse) {
+-  return nullptr;
++  if (DisablePeepholes)
++    return nullptr;
++
+   Type *ITy = GetCompareTy(LHS); // The return type.
+   Value *A, *B;
+   CmpInst::Predicate P = CmpInst::BAD_ICMP_PREDICATE;
+@@ -3592,7 +3671,9 @@ static Value *SimplifyFCmpInst(unsigned Predicate, Value *LHS, Value *RHS,
+     if (Constant *CRHS = dyn_cast<Constant>(RHS))
+       return ConstantFoldCompareInstOperands(Pred, CLHS, CRHS, Q.DL, Q.TLI);
+ 
+-  return nullptr;
++    if (DisablePeepholes)
++      return nullptr;
++
+     // If we have a constant, make sure it is on the RHS.
+     std::swap(LHS, RHS);
+     Pred = CmpInst::getSwappedPredicate(Pred);
+@@ -4435,7 +4516,7 @@ Value *llvm::SimplifyExtractElementInst(Value *Vec, Value *Idx,
+ static Value *SimplifyPHINode(PHINode *PN, const SimplifyQuery &Q) {
+ 
+   // JDR: can't disable this w/o breaking the compiler
+-  
++
+   // If all of the PHI's incoming values are the same then replace the PHI node
+   // with the common value.
+   Value *CommonValue = nullptr;
+diff --git a/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp b/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp
+index c025fc331d688..827f422d58b18 100644
+--- a/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp
++++ b/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp
+@@ -31,6 +31,8 @@
+ using namespace llvm;
+ using namespace PatternMatch;
+ 
++extern bool DisablePeepholes;
++
+ #define DEBUG_TYPE "aggressive-instcombine"
+ 
+ namespace {
+@@ -370,7 +372,9 @@ void AggressiveInstCombinerLegacyPass::getAnalysisUsage(
+ }
+ 
+ bool AggressiveInstCombinerLegacyPass::runOnFunction(Function &F) {
+-  return false;
++  if (DisablePeepholes)
++    return false;
++
+   auto &TLI = getAnalysis<TargetLibraryInfoWrapperPass>().getTLI(F);
+   auto &DT = getAnalysis<DominatorTreeWrapperPass>().getDomTree();
+   return runImpl(F, TLI, DT);
+@@ -379,6 +383,7 @@ bool AggressiveInstCombinerLegacyPass::runOnFunction(Function &F) {
+ PreservedAnalyses AggressiveInstCombinePass::run(Function &F,
+                                                  FunctionAnalysisManager &AM) {
+   return PreservedAnalyses::all();
++
+   auto &TLI = AM.getResult<TargetLibraryAnalysis>(F);
+   auto &DT = AM.getResult<DominatorTreeAnalysis>(F);
+   if (!runImpl(F, TLI, DT)) {
+diff --git a/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp b/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
+index 40322f1057954..aa02f6dd8ebcf 100644
+--- a/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
++++ b/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
+@@ -111,6 +111,8 @@
+ using namespace llvm;
+ using namespace llvm::PatternMatch;
+ 
++extern bool DisablePeepholes;
++
+ #define DEBUG_TYPE "instcombine"
+ 
+ STATISTIC(NumCombined , "Number of insts combined");
+@@ -3846,7 +3848,8 @@ void InstructionCombiningPass::getAnalysisUsage(AnalysisUsage &AU) const {
+ }
+ 
+ bool InstructionCombiningPass::runOnFunction(Function &F) {
+-  return false;
++  if (DisablePeepholes)
++    return false;
+ 
+   if (skipFunction(F))
+     return false;
+diff --git a/llvm/lib/Transforms/Vectorize/VectorCombine.cpp b/llvm/lib/Transforms/Vectorize/VectorCombine.cpp
+index 774ca0b90f40a..d21e3ddf88851 100644
+--- a/llvm/lib/Transforms/Vectorize/VectorCombine.cpp
++++ b/llvm/lib/Transforms/Vectorize/VectorCombine.cpp
+@@ -297,6 +297,7 @@ class VectorCombineLegacyPass : public FunctionPass {
+   bool runOnFunction(Function &F) override {
+     if (DisablePeepholes)
+       return false;
++
+     if (skipFunction(F))
+       return false;
+     auto &TTI = getAnalysis<TargetTransformInfoWrapperPass>().getTTI(F);
+
+From f26c26961feadec1704819e6bdd042740c072442 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Mon, 23 Mar 2020 16:02:26 -0600
+Subject: [PATCH 14/57] foo
+
+---
+ .../Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp b/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp
+index 827f422d58b18..ebdcbe57c4625 100644
+--- a/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp
++++ b/llvm/lib/Transforms/AggressiveInstCombine/AggressiveInstCombine.cpp
+@@ -382,7 +382,8 @@ bool AggressiveInstCombinerLegacyPass::runOnFunction(Function &F) {
+ 
+ PreservedAnalyses AggressiveInstCombinePass::run(Function &F,
+                                                  FunctionAnalysisManager &AM) {
+-  return PreservedAnalyses::all();
++  if (DisablePeepholes)
++    return PreservedAnalyses::all();
+ 
+   auto &TLI = AM.getResult<TargetLibraryAnalysis>(F);
+   auto &DT = AM.getResult<DominatorTreeAnalysis>(F);
+
+From d44c8a9bf0a56eb1fab4aedf5270472bc82ffc8c Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Mon, 23 Mar 2020 16:21:09 -0600
+Subject: [PATCH 15/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 915fb397e8a24..c9155106894f0 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -43,9 +43,13 @@
+ using namespace llvm;
+ using namespace llvm::PatternMatch;
+ 
++#if 0
+ cl::opt<bool> DisablePeepholes(
+     "disable-peepholes", cl::init(false),
+     cl::desc("Don't run peephole passes."));
++#else
++bool DisablePeepholes = false;
++#endif
+ 
+ #define DEBUG_TYPE "instsimplify"
+ 
+
+From c87487ca2fd094f22b66feb29483c68123499879 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Mon, 23 Mar 2020 16:30:21 -0600
+Subject: [PATCH 16/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index c9155106894f0..67be738fa0483 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -43,13 +43,12 @@
+ using namespace llvm;
+ using namespace llvm::PatternMatch;
+ 
+-#if 0
+-cl::opt<bool> DisablePeepholes(
+-    "disable-peepholes", cl::init(false),
+-    cl::desc("Don't run peephole passes."));
+-#else
+ bool DisablePeepholes = false;
+-#endif
++
++static cl::opt<bool, true>
++DisablePeepholesOption("disable-all-peepholes",
++                       cl::desc("Don't perform peephole optimizations"),
++                       cl::location(DisablePeepholes));
+ 
+ #define DEBUG_TYPE "instsimplify"
+ 
+
+From 5c75a3b9ce52c07d0db63d3bf24fc184beb5923e Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Mon, 23 Mar 2020 20:33:35 -0600
+Subject: [PATCH 17/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 67be738fa0483..d2cecf7acbf2b 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -43,8 +43,9 @@
+ using namespace llvm;
+ using namespace llvm::PatternMatch;
+ 
+-bool DisablePeepholes = false;
++bool DisablePeepholes = true;
+ 
++// "true" for 2nd template argument means use external storage
+ static cl::opt<bool, true>
+ DisablePeepholesOption("disable-all-peepholes",
+                        cl::desc("Don't perform peephole optimizations"),
+@@ -217,9 +218,6 @@ static Value *handleOtherCmpSelSimplifications(Value *TCmp, Value *FCmp,
+ 
+ /// Does the given value dominate the specified phi node?
+ static bool valueDominatesPHI(Value *V, PHINode *P, const DominatorTree *DT) {
+-  if (DisablePeepholes)
+-    return false;
+-
+   Instruction *I = dyn_cast<Instruction>(V);
+   if (!I)
+     // Arguments and constants dominate all instructions.
+@@ -5656,9 +5654,6 @@ Value *llvm::SimplifyFreezeInst(Value *Op0, const SimplifyQuery &Q) {
+ 
+ Value *llvm::SimplifyInstruction(Instruction *I, const SimplifyQuery &SQ,
+                                  OptimizationRemarkEmitter *ORE) {
+-  if (DisablePeepholes)
+-    return nullptr;
+-
+   const SimplifyQuery Q = SQ.CxtI ? SQ : SQ.getWithInstruction(I);
+   Value *Result;
+ 
+
+From 976c5e3308c0c0c94d097c2687d4954d986e9e82 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Mon, 23 Mar 2020 21:11:45 -0600
+Subject: [PATCH 18/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index d2cecf7acbf2b..c648ffd7f833b 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -43,7 +43,7 @@
+ using namespace llvm;
+ using namespace llvm::PatternMatch;
+ 
+-bool DisablePeepholes = true;
++bool DisablePeepholes = false;
+ 
+ // "true" for 2nd template argument means use external storage
+ static cl::opt<bool, true>
+
+From d5b38a3149d0c97d53c76cbc7a7b125e4c3fd800 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Mon, 13 Apr 2020 21:54:55 -0600
+Subject: [PATCH 19/57] oops, left a hole!
+
+---
+ llvm/lib/Transforms/InstCombine/InstructionCombining.cpp | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp b/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
+index bfe49ebb3ca00..02a836a96b984 100644
+--- a/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
++++ b/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
+@@ -3816,6 +3816,11 @@ InstCombinePass::InstCombinePass(unsigned MaxIterations)
+ 
+ PreservedAnalyses InstCombinePass::run(Function &F,
+                                        FunctionAnalysisManager &AM) {
++  if (DisablePeepholes) {
++    PreservedAnalyses PA;
++    return PA;
++  }
++
+   auto &AC = AM.getResult<AssumptionAnalysis>(F);
+   auto &DT = AM.getResult<DominatorTreeAnalysis>(F);
+   auto &TLI = AM.getResult<TargetLibraryAnalysis>(F);
+
+From 627b2194a56fe03a60ba34004a832530b35bd84e Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Wed, 15 Apr 2020 09:36:49 -0600
+Subject: [PATCH 20/57] foo
+
+---
+ llvm/lib/Transforms/InstCombine/InstructionCombining.cpp | 6 ++----
+ llvm/lib/Transforms/Scalar/NaryReassociate.cpp           | 8 ++++++++
+ llvm/lib/Transforms/Scalar/Reassociate.cpp               | 8 ++++++++
+ 3 files changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp b/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
+index f05ea0216c7a6..15604a4de87e3 100644
+--- a/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
++++ b/llvm/lib/Transforms/InstCombine/InstructionCombining.cpp
+@@ -3827,10 +3827,8 @@ InstCombinePass::InstCombinePass(unsigned MaxIterations)
+ 
+ PreservedAnalyses InstCombinePass::run(Function &F,
+                                        FunctionAnalysisManager &AM) {
+-  if (DisablePeepholes) {
+-    PreservedAnalyses PA;
+-    return PA;
+-  }
++  if (DisablePeepholes)
++    return PreservedAnalyses::all();
+ 
+   auto &AC = AM.getResult<AssumptionAnalysis>(F);
+   auto &DT = AM.getResult<DominatorTreeAnalysis>(F);
+diff --git a/llvm/lib/Transforms/Scalar/NaryReassociate.cpp b/llvm/lib/Transforms/Scalar/NaryReassociate.cpp
+index bba9082e31b2f..b05da5a187980 100644
+--- a/llvm/lib/Transforms/Scalar/NaryReassociate.cpp
++++ b/llvm/lib/Transforms/Scalar/NaryReassociate.cpp
+@@ -114,6 +114,8 @@ using namespace PatternMatch;
+ 
+ #define DEBUG_TYPE "nary-reassociate"
+ 
++extern bool DisablePeepholes;
++
+ namespace {
+ 
+ class NaryReassociateLegacyPass : public FunctionPass {
+@@ -165,6 +167,9 @@ FunctionPass *llvm::createNaryReassociatePass() {
+ }
+ 
+ bool NaryReassociateLegacyPass::runOnFunction(Function &F) {
++  if (DisablePeepholes)
++    return false;
++
+   if (skipFunction(F))
+     return false;
+ 
+@@ -179,6 +184,9 @@ bool NaryReassociateLegacyPass::runOnFunction(Function &F) {
+ 
+ PreservedAnalyses NaryReassociatePass::run(Function &F,
+                                            FunctionAnalysisManager &AM) {
++  if (DisablePeepholes)
++    return PreservedAnalyses::all();
++
+   auto *AC = &AM.getResult<AssumptionAnalysis>(F);
+   auto *DT = &AM.getResult<DominatorTreeAnalysis>(F);
+   auto *SE = &AM.getResult<ScalarEvolutionAnalysis>(F);
+diff --git a/llvm/lib/Transforms/Scalar/Reassociate.cpp b/llvm/lib/Transforms/Scalar/Reassociate.cpp
+index 8b4e36a85132a..9d494d9f6f3ef 100644
+--- a/llvm/lib/Transforms/Scalar/Reassociate.cpp
++++ b/llvm/lib/Transforms/Scalar/Reassociate.cpp
+@@ -85,6 +85,8 @@ static void PrintOps(Instruction *I, const SmallVectorImpl<ValueEntry> &Ops) {
+ }
+ #endif
+ 
++extern bool DisablePeepholes;
++
+ /// Utility class representing a non-constant Xor-operand. We classify
+ /// non-constant Xor-Operands into two categories:
+ ///  C1) The operand is in the form "X & C", where C is a constant and C != ~0
+@@ -2386,6 +2388,9 @@ ReassociatePass::BuildPairMap(ReversePostOrderTraversal<Function *> &RPOT) {
+ }
+ 
+ PreservedAnalyses ReassociatePass::run(Function &F, FunctionAnalysisManager &) {
++  if (DisablePeepholes)
++    return PreservedAnalyses::all();
++
+   // Get the functions basic blocks in Reverse Post Order. This order is used by
+   // BuildRankMap to pre calculate ranks correctly. It also excludes dead basic
+   // blocks (it has been seen that the analysis in this pass could hang when
+@@ -2477,6 +2482,9 @@ namespace {
+     }
+ 
+     bool runOnFunction(Function &F) override {
++      if (DisablePeepholes)
++        return false;
++
+       if (skipFunction(F))
+         return false;
+ 
+
+From dac2005f6ae48d13c4ea5eb8a66e9eb8910e70f1 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Wed, 20 May 2020 20:59:02 -0600
+Subject: [PATCH 21/57] foo
+
+---
+ llvm/include/llvm/Transforms/Scalar/DCE.h |  3 ++
+ llvm/lib/Transforms/Scalar/DCE.cpp        | 48 +++++++++++------------
+ 2 files changed, 27 insertions(+), 24 deletions(-)
+
+diff --git a/llvm/include/llvm/Transforms/Scalar/DCE.h b/llvm/include/llvm/Transforms/Scalar/DCE.h
+index 974e4b20d152d..b72f82a2d47a3 100644
+--- a/llvm/include/llvm/Transforms/Scalar/DCE.h
++++ b/llvm/include/llvm/Transforms/Scalar/DCE.h
+@@ -13,9 +13,12 @@
+ #ifndef LLVM_TRANSFORMS_SCALAR_DCE_H
+ #define LLVM_TRANSFORMS_SCALAR_DCE_H
+ 
++#include "llvm/Analysis/TargetLibraryInfo.h"
+ #include "llvm/IR/Function.h"
+ #include "llvm/IR/PassManager.h"
+ 
++bool eliminateDeadCode(llvm::Function &F, llvm::TargetLibraryInfo *TLI);
++
+ namespace llvm {
+ 
+ /// Basic Dead Code Elimination pass.
+diff --git a/llvm/lib/Transforms/Scalar/DCE.cpp b/llvm/lib/Transforms/Scalar/DCE.cpp
+index 28947482e3031..7ef0e66fb810d 100644
+--- a/llvm/lib/Transforms/Scalar/DCE.cpp
++++ b/llvm/lib/Transforms/Scalar/DCE.cpp
+@@ -18,7 +18,6 @@
+ #include "llvm/Transforms/Scalar/DCE.h"
+ #include "llvm/ADT/SetVector.h"
+ #include "llvm/ADT/Statistic.h"
+-#include "llvm/Analysis/TargetLibraryInfo.h"
+ #include "llvm/IR/InstIterator.h"
+ #include "llvm/IR/Instruction.h"
+ #include "llvm/InitializePasses.h"
+@@ -154,29 +153,6 @@ static bool DCEInstruction(Instruction *I,
+   return false;
+ }
+ 
+-static bool eliminateDeadCode(Function &F, TargetLibraryInfo *TLI) {
+-  bool MadeChange = false;
+-  SmallSetVector<Instruction *, 16> WorkList;
+-  // Iterate over the original function, only adding insts to the worklist
+-  // if they actually need to be revisited. This avoids having to pre-init
+-  // the worklist with the entire function's worth of instructions.
+-  for (inst_iterator FI = inst_begin(F), FE = inst_end(F); FI != FE;) {
+-    Instruction *I = &*FI;
+-    ++FI;
+-
+-    // We're visiting this instruction now, so make sure it's not in the
+-    // worklist from an earlier visit.
+-    if (!WorkList.count(I))
+-      MadeChange |= DCEInstruction(I, WorkList, TLI);
+-  }
+-
+-  while (!WorkList.empty()) {
+-    Instruction *I = WorkList.pop_back_val();
+-    MadeChange |= DCEInstruction(I, WorkList, TLI);
+-  }
+-  return MadeChange;
+-}
+-
+ PreservedAnalyses DCEPass::run(Function &F, FunctionAnalysisManager &AM) {
+   if (!eliminateDeadCode(F, AM.getCachedResult<TargetLibraryAnalysis>(F)))
+     return PreservedAnalyses::all();
+@@ -215,3 +191,27 @@ INITIALIZE_PASS(DCELegacyPass, "dce", "Dead Code Elimination", false, false)
+ FunctionPass *llvm::createDeadCodeEliminationPass() {
+   return new DCELegacyPass();
+ }
++
++bool eliminateDeadCode(Function &F, TargetLibraryInfo *TLI) {
++  bool MadeChange = false;
++  SmallSetVector<Instruction *, 16> WorkList;
++  // Iterate over the original function, only adding insts to the worklist
++  // if they actually need to be revisited. This avoids having to pre-init
++  // the worklist with the entire function's worth of instructions.
++  for (inst_iterator FI = inst_begin(F), FE = inst_end(F); FI != FE;) {
++    Instruction *I = &*FI;
++    ++FI;
++
++    // We're visiting this instruction now, so make sure it's not in the
++    // worklist from an earlier visit.
++    if (!WorkList.count(I))
++      MadeChange |= DCEInstruction(I, WorkList, TLI);
++  }
++
++  while (!WorkList.empty()) {
++    Instruction *I = WorkList.pop_back_val();
++    MadeChange |= DCEInstruction(I, WorkList, TLI);
++  }
++  return MadeChange;
++}
++
+
+From 485ece8224b6be4353a3e3d6f1e9bedd31decd20 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 21 May 2020 23:20:37 -0600
+Subject: [PATCH 22/57] foo
+
+---
+ llvm/lib/Transforms/Utils/SimplifyCFG.cpp | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/llvm/lib/Transforms/Utils/SimplifyCFG.cpp b/llvm/lib/Transforms/Utils/SimplifyCFG.cpp
+index 5bccb7d7b9df0..3f85f412cbeab 100644
+--- a/llvm/lib/Transforms/Utils/SimplifyCFG.cpp
++++ b/llvm/lib/Transforms/Utils/SimplifyCFG.cpp
+@@ -2801,7 +2801,9 @@ bool llvm::FoldBranchToCommonDest(BranchInst *BI, MemorySSAUpdater *MSSAU,
+ 
+     if (BI->isConditional()) {
+       Instruction *NewCond = cast<Instruction>(
+-          Builder.CreateBinOp(Opc, PBI->getCondition(), CondInPred, "or.cond"));
++          Builder.CreateBinOp(Opc,
++                              Builder.CreateFreeze(PBI->getCondition()),
++                              Builder.CreateFreeze(CondInPred), "or.cond"));
+       PBI->setCondition(NewCond);
+ 
+       uint64_t PredTrueWeight, PredFalseWeight, SuccTrueWeight, SuccFalseWeight;
+
+From 3e3168fa742a8f4682e79e43c89515fa031d59b6 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Fri, 22 May 2020 15:57:59 -0600
+Subject: [PATCH 23/57] foo
+
+---
+ llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp | 5 +++++
+ llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp    | 4 ++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp b/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
+index 914fadc40d74f..9a150d13e309d 100644
+--- a/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
++++ b/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
+@@ -2877,6 +2877,9 @@ static bool unswitchLoop(Loop &L, DominatorTree &DT, LoopInfo &LI,
+ PreservedAnalyses SimpleLoopUnswitchPass::run(Loop &L, LoopAnalysisManager &AM,
+                                               LoopStandardAnalysisResults &AR,
+                                               LPMUpdater &U) {
++  PreservedAnalyses PA1;
++  return PA1;
++
+   Function &F = *L.getHeader()->getParent();
+   (void)F;
+ 
+@@ -2954,6 +2957,8 @@ class SimpleLoopUnswitchLegacyPass : public LoopPass {
+ } // end anonymous namespace
+ 
+ bool SimpleLoopUnswitchLegacyPass::runOnLoop(Loop *L, LPPassManager &LPM) {
++  return false;
++
+   if (skipLoop(L))
+     return false;
+ 
+diff --git a/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp b/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp
+index ac53ff33e8362..bb75ed61e4022 100644
+--- a/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp
++++ b/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp
+@@ -232,6 +232,8 @@ SimplifyCFGPass::SimplifyCFGPass(const SimplifyCFGOptions &Opts) {
+ 
+ PreservedAnalyses SimplifyCFGPass::run(Function &F,
+                                        FunctionAnalysisManager &AM) {
++  PreservedAnalyses PA1;
++  return PA1;
+   auto &TTI = AM.getResult<TargetIRAnalysis>(F);
+   Options.AC = &AM.getResult<AssumptionAnalysis>(F);
+   if (!simplifyFunctionCFG(F, TTI, Options))
+@@ -277,6 +279,8 @@ struct CFGSimplifyPass : public FunctionPass {
+   }
+ 
+   bool runOnFunction(Function &F) override {
++    return false;
++
+     if (skipFunction(F) || (PredicateFtor && !PredicateFtor(F)))
+       return false;
+ 
+
+From e9e0c8e2d9f3bcdf8ca2594b862ecab6ce70a64c Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Mon, 8 Jun 2020 12:34:13 -0600
+Subject: [PATCH 24/57] foo
+
+---
+ test-disable-peepholes.sh | 75 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 75 insertions(+)
+ create mode 100755 test-disable-peepholes.sh
+
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+new file mode 100755
+index 0000000000000..ee519efc24e26
+--- /dev/null
++++ b/test-disable-peepholes.sh
+@@ -0,0 +1,75 @@
++set -e
++
++export DIR=$HOME/llvm-project
++export CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON ../llvm -DLLVM_ENABLE_PROJECTS=clang;openmp'
++
++rm -rf $DIR/build-*
++
++echo "step 1"
++
++(
++set -e
++mkdir $DIR/build-peeps
++cd $DIR/build-peeps
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps > cmake.out 2>&1
++ninja > build.out 2>&1
++# only fails if LLVM is broken
++ninja check > check.out 2>&1
++ninja install
++)
++
++echo "step 2"
++
++(
++set -e
++export PATH=$DIR/install-peeps/bin:$PATH
++mkdir $DIR/build-peeps2
++cd $DIR/build-peeps2
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps2 > cmake.out 2>&1
++ninja > build.out 2>&1
++# only fails if LLVM is broken
++ninja check > check.out 2>&1
++ninja install
++)
++
++echo "step 3"
++
++# dodgy part, yikes!
++cd $DIR
++perl -pi.bak -e "s/bool DisablePeepholes = false;/bool DisablePeepholes = true;/" llvm/lib/Analysis/InstructionSimplify.cpp
++
++(
++set -e
++mkdir $DIR/build-no-peeps
++cd $DIR/build-no-peeps
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-peeps > cmake.out 2>&1
++ninja > build.out 2>&1
++# don't test this one! it fails on a huge number of tests, by design
++ninja install
++)
++
++echo "step 4"
++
++# the other dodgy part, yikes!
++cd $DIR
++perl -pi.bak -e "s/bool DisablePeepholes = true;/bool DisablePeepholes = false;/" llvm/lib/Analysis/InstructionSimplify.cpp
++
++(
++set -e
++export PATH=$DIR/install-no-peeps/bin:$PATH
++mkdir $DIR/build-no-peeps2
++cd $DIR/build-no-peeps2
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-peeps2 > cmake.out 2>&1
++ninja > build.out 2>&1
++# this is the risky one!
++ninja check > check.out 2>&1
++ninja install
++)
++
++echo "There should be no diffs here!"
++
++cd $DIR
++git diff
++
++size $DIR/build-peeps2/bin/clang
++size $DIR/build-no-peeps2/bin/clang
+
+From 4dc27da0c214c2aa30befd155bbf5dd0ae13faad Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Tue, 9 Jun 2020 14:37:53 -0600
+Subject: [PATCH 25/57] foo
+
+---
+ llvm/lib/IR/LegacyPassManager.cpp | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/llvm/lib/IR/LegacyPassManager.cpp b/llvm/lib/IR/LegacyPassManager.cpp
+index d5c7e2874825d..2e2db620d4a36 100644
+--- a/llvm/lib/IR/LegacyPassManager.cpp
++++ b/llvm/lib/IR/LegacyPassManager.cpp
+@@ -19,6 +19,7 @@
+ #include "llvm/IR/LegacyPassManagers.h"
+ #include "llvm/IR/LegacyPassNameParser.h"
+ #include "llvm/IR/Module.h"
++#include "llvm/IR/Verifier.h"
+ #include "llvm/IR/PassTimingInfo.h"
+ #include "llvm/Support/Chrono.h"
+ #include "llvm/Support/CommandLine.h"
+@@ -84,6 +85,11 @@ static cl::opt<bool> PrintAfterAll("print-after-all",
+                                    llvm::cl::desc("Print IR after each pass"),
+                                    cl::init(false), cl::Hidden);
+ 
++static cl::opt<bool>
++VerifyAfterAll("verify-after-all",
++	       llvm::cl::desc("Verify the IR after each pass (and crash if the IR does not verify)"),
++	       cl::init(false));
++
+ static cl::opt<bool>
+     PrintModuleScope("print-module-scope",
+                      cl::desc("When printing IR for print-[before|after]{-all} "
+@@ -746,6 +752,11 @@ void PMTopLevelManager::schedulePass(Pass *P) {
+         dbgs(), ("*** IR Dump After " + P->getPassName() + " ***").str());
+     PP->assignPassManager(activeStack, getTopLevelPassManagerType());
+   }
++
++  if (PI && !PI->isAnalysis() && VerifyAfterAll) {
++    createVerifierPass()->assignPassManager(activeStack,
++					    getTopLevelPassManagerType());
++  }
+ }
+ 
+ /// Find the pass that implements Analysis AID. Search immutable
+
+From f430fc0b14324d08aa61a95904f9c4b41ac354e6 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Tue, 9 Jun 2020 14:47:39 -0600
+Subject: [PATCH 26/57] Revert "foo"
+
+This reverts commit 4dc27da0c214c2aa30befd155bbf5dd0ae13faad.
+---
+ llvm/lib/IR/LegacyPassManager.cpp | 11 -----------
+ 1 file changed, 11 deletions(-)
+
+diff --git a/llvm/lib/IR/LegacyPassManager.cpp b/llvm/lib/IR/LegacyPassManager.cpp
+index 2e2db620d4a36..d5c7e2874825d 100644
+--- a/llvm/lib/IR/LegacyPassManager.cpp
++++ b/llvm/lib/IR/LegacyPassManager.cpp
+@@ -19,7 +19,6 @@
+ #include "llvm/IR/LegacyPassManagers.h"
+ #include "llvm/IR/LegacyPassNameParser.h"
+ #include "llvm/IR/Module.h"
+-#include "llvm/IR/Verifier.h"
+ #include "llvm/IR/PassTimingInfo.h"
+ #include "llvm/Support/Chrono.h"
+ #include "llvm/Support/CommandLine.h"
+@@ -85,11 +84,6 @@ static cl::opt<bool> PrintAfterAll("print-after-all",
+                                    llvm::cl::desc("Print IR after each pass"),
+                                    cl::init(false), cl::Hidden);
+ 
+-static cl::opt<bool>
+-VerifyAfterAll("verify-after-all",
+-	       llvm::cl::desc("Verify the IR after each pass (and crash if the IR does not verify)"),
+-	       cl::init(false));
+-
+ static cl::opt<bool>
+     PrintModuleScope("print-module-scope",
+                      cl::desc("When printing IR for print-[before|after]{-all} "
+@@ -752,11 +746,6 @@ void PMTopLevelManager::schedulePass(Pass *P) {
+         dbgs(), ("*** IR Dump After " + P->getPassName() + " ***").str());
+     PP->assignPassManager(activeStack, getTopLevelPassManagerType());
+   }
+-
+-  if (PI && !PI->isAnalysis() && VerifyAfterAll) {
+-    createVerifierPass()->assignPassManager(activeStack,
+-					    getTopLevelPassManagerType());
+-  }
+ }
+ 
+ /// Find the pass that implements Analysis AID. Search immutable
+
+From c520a276c7020f9f36892d4949fd741b2ca967a8 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Tue, 9 Jun 2020 14:56:20 -0600
+Subject: [PATCH 27/57] foo
+
+---
+ llvm/test/CodeGen/Hexagon/swp-epilog-numphis.ll | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/llvm/test/CodeGen/Hexagon/swp-epilog-numphis.ll b/llvm/test/CodeGen/Hexagon/swp-epilog-numphis.ll
+index f57f94bf03cec..cbf87ed5ecaa7 100644
+--- a/llvm/test/CodeGen/Hexagon/swp-epilog-numphis.ll
++++ b/llvm/test/CodeGen/Hexagon/swp-epilog-numphis.ll
+@@ -1,4 +1,3 @@
+-; XFAIL: *
+ ; Needs some fixed in the pipeliner.
+ ; RUN: llc -march=hexagon < %s -pipeliner-experimental-cg=true | FileCheck %s
+ 
+
+From 4be9bdebbe09c3cbacc54eca8b1346cba7d432b1 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Tue, 9 Jun 2020 15:56:46 -0600
+Subject: [PATCH 28/57] foo
+
+---
+ llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp | 9 ++++++---
+ llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp    | 5 ++++-
+ test-disable-peepholes.sh                         | 4 ++++
+ 3 files changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp b/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
+index ec678ba69e70b..aa9ed4ddfa15b 100644
+--- a/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
++++ b/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
+@@ -2882,8 +2882,10 @@ static bool unswitchLoop(Loop &L, DominatorTree &DT, LoopInfo &LI,
+ PreservedAnalyses SimpleLoopUnswitchPass::run(Loop &L, LoopAnalysisManager &AM,
+                                               LoopStandardAnalysisResults &AR,
+                                               LPMUpdater &U) {
+-  PreservedAnalyses PA1;
+-  return PA1;
++  if (DisablePeepholes) {
++    PreservedAnalyses PA1;
++    return PA1;
++  }
+ 
+   Function &F = *L.getHeader()->getParent();
+   (void)F;
+@@ -2962,7 +2964,8 @@ class SimpleLoopUnswitchLegacyPass : public LoopPass {
+ } // end anonymous namespace
+ 
+ bool SimpleLoopUnswitchLegacyPass::runOnLoop(Loop *L, LPPassManager &LPM) {
+-  return false;
++  if (DisablePeepholes)
++    return false;
+ 
+   if (skipLoop(L))
+     return false;
+diff --git a/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp b/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp
+index 86e2fccfe130f..7cc54af130c87 100644
+--- a/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp
++++ b/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp
+@@ -45,6 +45,8 @@ using namespace llvm;
+ 
+ #define DEBUG_TYPE "simplifycfg"
+ 
++extern bool DisablePeepholes;
++
+ static cl::opt<unsigned> UserBonusInstThreshold(
+     "bonus-inst-threshold", cl::Hidden, cl::init(1),
+     cl::desc("Control the number of bonus instructions (default = 1)"));
+@@ -279,7 +281,8 @@ struct CFGSimplifyPass : public FunctionPass {
+   }
+ 
+   bool runOnFunction(Function &F) override {
+-    return false;
++    if (DisablePeepholes)
++      return false;
+ 
+     if (skipFunction(F) || (PredicateFtor && !PredicateFtor(F)))
+       return false;
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index ee519efc24e26..89b9e8a9359ea 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -5,6 +5,10 @@ export CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Nin
+ 
+ rm -rf $DIR/build-*
+ 
++### better exit out if this isn't set this way!
++### FIXME: better to do this using a global CPP definition or something
++grep "bool DisablePeepholes = false" $DIR/llvm/lib/Analysis/InstructionSimplify.cpp
++
+ echo "step 1"
+ 
+ (
+
+From be95782f67fbb649b166069cc7757d16cf29b5b5 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Tue, 9 Jun 2020 19:50:36 -0600
+Subject: [PATCH 29/57] foo
+
+---
+ llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp | 2 ++
+ llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp    | 7 +++++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp b/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
+index aa9ed4ddfa15b..e0974730feda8 100644
+--- a/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
++++ b/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
+@@ -57,6 +57,8 @@
+ #include <numeric>
+ #include <utility>
+ 
++extern bool DisablePeepholes;
++
+ #define DEBUG_TYPE "simple-loop-unswitch"
+ 
+ using namespace llvm;
+diff --git a/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp b/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp
+index 7cc54af130c87..d37f89a6696fa 100644
+--- a/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp
++++ b/llvm/lib/Transforms/Scalar/SimplifyCFGPass.cpp
+@@ -234,8 +234,11 @@ SimplifyCFGPass::SimplifyCFGPass(const SimplifyCFGOptions &Opts) {
+ 
+ PreservedAnalyses SimplifyCFGPass::run(Function &F,
+                                        FunctionAnalysisManager &AM) {
+-  PreservedAnalyses PA1;
+-  return PA1;
++  if (DisablePeepholes) {
++    PreservedAnalyses PA1;
++    return PA1;
++  }
++
+   auto &TTI = AM.getResult<TargetIRAnalysis>(F);
+   Options.AC = &AM.getResult<AssumptionAnalysis>(F);
+   if (!simplifyFunctionCFG(F, TTI, Options))
+
+From 38a263f097938022f49de3ad0dd87c7ddefca297 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Wed, 10 Jun 2020 15:25:22 -0600
+Subject: [PATCH 30/57] foo
+
+---
+ llvm/lib/Transforms/InstCombine/InstCombineSelect.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/llvm/lib/Transforms/InstCombine/InstCombineSelect.cpp b/llvm/lib/Transforms/InstCombine/InstCombineSelect.cpp
+index f406eb40e16b0..007311fa393d6 100644
+--- a/llvm/lib/Transforms/InstCombine/InstCombineSelect.cpp
++++ b/llvm/lib/Transforms/InstCombine/InstCombineSelect.cpp
+@@ -2491,6 +2491,7 @@ Instruction *InstCombiner::visitSelectInst(SelectInst &SI) {
+     return &SI;
+   }
+ 
++  if (!DisableWrongOptimizations) {
+   if (SelType->isIntOrIntVectorTy(1) &&
+       TrueVal->getType() == CondVal->getType()) {
+     if (match(TrueVal, m_One())) {
+@@ -2555,6 +2556,7 @@ Instruction *InstCombiner::visitSelectInst(SelectInst &SI) {
+       return new SExtInst(NotCond, SelType);
+     }
+   }
++  } // fi !DisableWrongOptimizations
+ 
+   // See if we are selecting two values based on a comparison of the two values.
+   if (FCmpInst *FCI = dyn_cast<FCmpInst>(CondVal)) {
+
+From 8c67be1e3cb4ca6dc5fd3ade606049212aaac1ea Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Wed, 10 Jun 2020 19:10:13 -0600
+Subject: [PATCH 31/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp             | 1 +
+ llvm/lib/Transforms/InstCombine/InstCombineSelect.cpp | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index efc390f65a2b3..1d69edcb15776 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -44,6 +44,7 @@ using namespace llvm;
+ using namespace llvm::PatternMatch;
+ 
+ bool DisablePeepholes = false;
++bool DisableWrongOptimizations = false;
+ 
+ // "true" for 2nd template argument means use external storage
+ static cl::opt<bool, true>
+diff --git a/llvm/lib/Transforms/InstCombine/InstCombineSelect.cpp b/llvm/lib/Transforms/InstCombine/InstCombineSelect.cpp
+index 007311fa393d6..2d7261e493585 100644
+--- a/llvm/lib/Transforms/InstCombine/InstCombineSelect.cpp
++++ b/llvm/lib/Transforms/InstCombine/InstCombineSelect.cpp
+@@ -41,6 +41,8 @@
+ #include <cassert>
+ #include <utility>
+ 
++extern bool DisableWrongOptimizations;
++
+ using namespace llvm;
+ using namespace PatternMatch;
+ 
+
+From de3390e2466936598cb0b5bd548b129e259b2660 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Wed, 10 Jun 2020 22:16:43 -0600
+Subject: [PATCH 32/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp |  2 +-
+ test-disable-peepholes.sh                 | 20 ++++++--------------
+ 2 files changed, 7 insertions(+), 15 deletions(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 1d69edcb15776..8a599cca56984 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -43,7 +43,7 @@
+ using namespace llvm;
+ using namespace llvm::PatternMatch;
+ 
+-bool DisablePeepholes = false;
++bool DisablePeepholes = DISABLE_PEEPHOLES_DEFAULT_VALUE;
+ bool DisableWrongOptimizations = false;
+ 
+ // "true" for 2nd template argument means use external storage
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index 89b9e8a9359ea..c076228f1d193 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -1,30 +1,24 @@
+ set -e
+ 
+ export DIR=$HOME/llvm-project
+-export CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON ../llvm -DLLVM_ENABLE_PROJECTS=clang;openmp'
++export CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON ../llvm -DLLVM_ENABLE_PROJECTS="llvm;clang;compiler-rt"'
+ 
+ rm -rf $DIR/build-*
+ 
+-### better exit out if this isn't set this way!
+-### FIXME: better to do this using a global CPP definition or something
+-grep "bool DisablePeepholes = false" $DIR/llvm/lib/Analysis/InstructionSimplify.cpp
+-
+-echo "step 1"
+-
+ (
++echo "step 1"
+ set -e
+ mkdir $DIR/build-peeps
+ cd $DIR/build-peeps
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps > cmake.out 2>&1
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+ # only fails if LLVM is broken
+ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
+-echo "step 2"
+-
+ (
++echo "step 2"
+ set -e
+ export PATH=$DIR/install-peeps/bin:$PATH
+ mkdir $DIR/build-peeps2
+@@ -36,13 +30,12 @@ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
+-echo "step 3"
+-
+ # dodgy part, yikes!
+ cd $DIR
+ perl -pi.bak -e "s/bool DisablePeepholes = false;/bool DisablePeepholes = true;/" llvm/lib/Analysis/InstructionSimplify.cpp
+ 
+ (
++echo "step 3"
+ set -e
+ mkdir $DIR/build-no-peeps
+ cd $DIR/build-no-peeps
+@@ -52,13 +45,12 @@ ninja > build.out 2>&1
+ ninja install
+ )
+ 
+-echo "step 4"
+-
+ # the other dodgy part, yikes!
+ cd $DIR
+ perl -pi.bak -e "s/bool DisablePeepholes = true;/bool DisablePeepholes = false;/" llvm/lib/Analysis/InstructionSimplify.cpp
+ 
+ (
++echo "step 4"
+ set -e
+ export PATH=$DIR/install-no-peeps/bin:$PATH
+ mkdir $DIR/build-no-peeps2
+
+From 08fd60947fe4ba5753dc2c110f0728e50451f897 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Fri, 12 Jun 2020 14:46:41 -0600
+Subject: [PATCH 33/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp |  2 +-
+ test-disable-peepholes.sh                 | 14 +++++++++++++-
+ 2 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 8a599cca56984..2c3809558e377 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -44,7 +44,7 @@ using namespace llvm;
+ using namespace llvm::PatternMatch;
+ 
+ bool DisablePeepholes = DISABLE_PEEPHOLES_DEFAULT_VALUE;
+-bool DisableWrongOptimizations = false;
++bool DisableWrongOptimizations = DISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE;
+ 
+ // "true" for 2nd template argument means use external storage
+ static cl::opt<bool, true>
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index c076228f1d193..8b1dc363f2757 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -5,12 +5,24 @@ export CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Nin
+ 
+ rm -rf $DIR/build-*
+ 
++(
++echo "step 0"
++set -e
++mkdir $DIR/build-standard
++cd $DIR/build-peeps
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
++ninja > build.out 2>&1
++# only fails if LLVM is broken
++ninja check > check.out 2>&1
++ninja install
++)
++
+ (
+ echo "step 1"
+ set -e
+ mkdir $DIR/build-peeps
+ cd $DIR/build-peeps
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=true -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+ # only fails if LLVM is broken
+ ninja check > check.out 2>&1
+
+From bf1e3de060586b62b5b941f6d04a56fe6a800197 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Fri, 12 Jun 2020 14:47:24 -0600
+Subject: [PATCH 34/57] foo
+
+---
+ test-disable-peepholes.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index 8b1dc363f2757..b30b1032262e1 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -8,8 +8,8 @@ rm -rf $DIR/build-*
+ (
+ echo "step 0"
+ set -e
+-mkdir $DIR/build-standard
+-cd $DIR/build-peeps
++mkdir $DIR/build-default
++cd $DIR/build-default
+ $CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+ # only fails if LLVM is broken
+
+From e0f4582bf91f58087501b97e868e40068e2d8b41 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 08:05:47 -0600
+Subject: [PATCH 35/57] foo
+
+---
+ llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp b/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
+index e0974730feda8..61c583e9a6373 100644
+--- a/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
++++ b/llvm/lib/Transforms/Scalar/SimpleLoopUnswitch.cpp
+@@ -57,7 +57,7 @@
+ #include <numeric>
+ #include <utility>
+ 
+-extern bool DisablePeepholes;
++extern bool DisableWrongOptimizations;
+ 
+ #define DEBUG_TYPE "simple-loop-unswitch"
+ 
+@@ -2884,7 +2884,7 @@ static bool unswitchLoop(Loop &L, DominatorTree &DT, LoopInfo &LI,
+ PreservedAnalyses SimpleLoopUnswitchPass::run(Loop &L, LoopAnalysisManager &AM,
+                                               LoopStandardAnalysisResults &AR,
+                                               LPMUpdater &U) {
+-  if (DisablePeepholes) {
++  if (DisableWrongOptimizations) {
+     PreservedAnalyses PA1;
+     return PA1;
+   }
+@@ -2966,7 +2966,7 @@ class SimpleLoopUnswitchLegacyPass : public LoopPass {
+ } // end anonymous namespace
+ 
+ bool SimpleLoopUnswitchLegacyPass::runOnLoop(Loop *L, LPPassManager &LPM) {
+-  if (DisablePeepholes)
++  if (DisableWrongOptimizations)
+     return false;
+ 
+   if (skipLoop(L))
+
+From b68b0b5ae2efdc26a0079a6d9b372684bdafc646 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 08:31:36 -0600
+Subject: [PATCH 36/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 6 ++++++
+ test-disable-peepholes.sh                 | 7 +------
+ 2 files changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 107c0a632e28b..18a58726046b4 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -38,6 +38,7 @@
+ #include "llvm/IR/Operator.h"
+ #include "llvm/IR/PatternMatch.h"
+ #include "llvm/IR/ValueHandle.h"
++#include "llvm/Support/CommandLine.h"
+ #include "llvm/Support/KnownBits.h"
+ #include <algorithm>
+ using namespace llvm;
+@@ -52,6 +53,11 @@ DisablePeepholesOption("disable-all-peepholes",
+                        cl::desc("Don't perform peephole optimizations"),
+                        cl::location(DisablePeepholes));
+ 
++static cl::opt<bool, true>
++DisableWrongOptsOption("disable-wrongs-opts",
++                       cl::desc("Disable optimizations that may increase the amount of undefined behavior"),
++                       cl::location(DisableWrongOptimizations));
++
+ #define DEBUG_TYPE "instsimplify"
+ 
+ enum { RecursionLimit = 3 };
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index b30b1032262e1..cfdc8d5ef0ad3 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -24,8 +24,7 @@ mkdir $DIR/build-peeps
+ cd $DIR/build-peeps
+ $CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=true -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+-# only fails if LLVM is broken
+-ninja check > check.out 2>&1
++# ninja check > check.out 2>&1
+ ninja install
+ )
+ 
+@@ -42,10 +41,6 @@ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
+-# dodgy part, yikes!
+-cd $DIR
+-perl -pi.bak -e "s/bool DisablePeepholes = false;/bool DisablePeepholes = true;/" llvm/lib/Analysis/InstructionSimplify.cpp
+-
+ (
+ echo "step 3"
+ set -e
+
+From e733506ad3fd34eb8f7ae8a455f03cf25796bc37 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 08:34:20 -0600
+Subject: [PATCH 37/57] foo
+
+---
+ test-disable-peepholes.sh | 28 +++++++++-------------------
+ 1 file changed, 9 insertions(+), 19 deletions(-)
+
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index cfdc8d5ef0ad3..596e7ccaa8fac 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -5,31 +5,32 @@ export CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Nin
+ 
+ rm -rf $DIR/build-*
+ 
++# this LLVM should behave identically to its twin on the main branch
+ (
+-echo "step 0"
+ set -e
+ mkdir $DIR/build-default
+ cd $DIR/build-default
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-default -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+ # only fails if LLVM is broken
+ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
++# this makes sure our default LLVM can build a working LLVM
+ (
+-echo "step 1"
+ set -e
+-mkdir $DIR/build-peeps
+-cd $DIR/build-peeps
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=true -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
++export PATH=$DIR/install-default/bin:$PATH
++mkdir $DIR/build-default2
++cd $DIR/build-default2
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+-# ninja check > check.out 2>&1
++# only fails if LLVM is broken
++ninja check > check.out 2>&1
+ ninja install
+ )
+ 
+ (
+-echo "step 2"
+ set -e
+ export PATH=$DIR/install-peeps/bin:$PATH
+ mkdir $DIR/build-peeps2
+@@ -42,7 +43,6 @@ ninja install
+ )
+ 
+ (
+-echo "step 3"
+ set -e
+ mkdir $DIR/build-no-peeps
+ cd $DIR/build-no-peeps
+@@ -52,12 +52,7 @@ ninja > build.out 2>&1
+ ninja install
+ )
+ 
+-# the other dodgy part, yikes!
+-cd $DIR
+-perl -pi.bak -e "s/bool DisablePeepholes = true;/bool DisablePeepholes = false;/" llvm/lib/Analysis/InstructionSimplify.cpp
+-
+ (
+-echo "step 4"
+ set -e
+ export PATH=$DIR/install-no-peeps/bin:$PATH
+ mkdir $DIR/build-no-peeps2
+@@ -69,10 +64,5 @@ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
+-echo "There should be no diffs here!"
+-
+-cd $DIR
+-git diff
+-
+ size $DIR/build-peeps2/bin/clang
+ size $DIR/build-no-peeps2/bin/clang
+
+From cd367e56c304362e113c18032d73901ca87c3415 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 10:03:46 -0600
+Subject: [PATCH 38/57] foo
+
+---
+ test-disable-peepholes.sh | 51 +++++++++++++++++++++------------------
+ 1 file changed, 27 insertions(+), 24 deletions(-)
+
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index 596e7ccaa8fac..d0695fdc406d6 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -1,23 +1,39 @@
+ set -e
+ 
++export CLANGBIN=$HOME/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin:
++
+ export DIR=$HOME/llvm-project
+ export CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON ../llvm -DLLVM_ENABLE_PROJECTS="llvm;clang;compiler-rt"'
+ 
+ rm -rf $DIR/build-*
+ 
++function is_bin_in_path {
++  builtin type -P "$1" &> /dev/null
++}
++
++if is_bin_in_path clang; then
++    echo "oops, please make sure clang is not in PATH";
++    exit -1;
++fi
++
++if is_bin_in_path clang++; then
++    echo "oops, please make sure clang++ is not in PATH";
++    exit -1;
++fi
++
+ # this LLVM should behave identically to its twin on the main branch
+ (
+ set -e
++export PATH=$CLANGBIN:$PATH
+ mkdir $DIR/build-default
+ cd $DIR/build-default
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-default -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-default -DCMAKE_EXECUTABLE_SUFFIX='-default' -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+-# only fails if LLVM is broken
+ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
+-# this makes sure our default LLVM can build a working LLVM
++# this makes sure the default LLVM we just built can build a working LLVM
+ (
+ set -e
+ export PATH=$DIR/install-default/bin:$PATH
+@@ -25,41 +41,28 @@ mkdir $DIR/build-default2
+ cd $DIR/build-default2
+ $CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+-# only fails if LLVM is broken
+ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
++# this LLVM only disables unsound optimizations, it fails tests that look for those optimizations
+ (
+ set -e
+-export PATH=$DIR/install-peeps/bin:$PATH
+-mkdir $DIR/build-peeps2
+-cd $DIR/build-peeps2
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps2 > cmake.out 2>&1
++mkdir $DIR/build-disable-unsound
++cd $DIR/build-disable-unsound
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-disable-unsound -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=true -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+-# only fails if LLVM is broken
+ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
++# this makes sure the LLVM without unsound optimizations can build a working LLVM
+ (
+ set -e
+-mkdir $DIR/build-no-peeps
+-cd $DIR/build-no-peeps
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-peeps > cmake.out 2>&1
+-ninja > build.out 2>&1
+-# don't test this one! it fails on a huge number of tests, by design
+-ninja install
+-)
+-
+-(
+-set -e
+-export PATH=$DIR/install-no-peeps/bin:$PATH
+-mkdir $DIR/build-no-peeps2
+-cd $DIR/build-no-peeps2
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-peeps2 > cmake.out 2>&1
++mkdir $DIR/build-disable-unsound2
++cd $DIR/build-disable-unsound2
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-disable-unsound -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+-# this is the risky one!
+ ninja check > check.out 2>&1
+ ninja install
+ )
+
+From 356617a4db006a1bcc6a277ff3e96257384eba6a Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 10:07:28 -0600
+Subject: [PATCH 39/57] foo
+
+---
+ test-disable-peepholes.sh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index d0695fdc406d6..08b7f61877a6e 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -1,6 +1,6 @@
+ set -e
+ 
+-export CLANGBIN=$HOME/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin:
++export CLANGBIN=$HOME/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin
+ 
+ export DIR=$HOME/llvm-project
+ export CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON ../llvm -DLLVM_ENABLE_PROJECTS="llvm;clang;compiler-rt"'
+@@ -45,6 +45,8 @@ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
++exit 0;
++
+ # this LLVM only disables unsound optimizations, it fails tests that look for those optimizations
+ (
+ set -e
+
+From 0ba558db91f9f00b9eda76072b22d68ea8c7e3d0 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 14:16:23 -0600
+Subject: [PATCH 40/57] foo
+
+---
+ test-disable-peepholes.sh | 45 +++++++++++++++++++++++++++++----------
+ 1 file changed, 34 insertions(+), 11 deletions(-)
+
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index 08b7f61877a6e..b90441bc67d17 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -27,7 +27,7 @@ set -e
+ export PATH=$CLANGBIN:$PATH
+ mkdir $DIR/build-default
+ cd $DIR/build-default
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-default -DCMAKE_EXECUTABLE_SUFFIX='-default' -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-default -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+ ninja check > check.out 2>&1
+ ninja install
+@@ -39,31 +39,54 @@ set -e
+ export PATH=$DIR/install-default/bin:$PATH
+ mkdir $DIR/build-default2
+ cd $DIR/build-default2
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-default2 -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
+-exit 0;
++# this LLVM avoids optimizations that introduce UB, it will fail tests that look for those optimizations
++(
++set -e
++export PATH=$CLANGBIN:$PATH
++mkdir $DIR/build-no-ub
++cd $DIR/build-no-ub
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-ub -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=true -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
++ninja > build.out 2>&1
++ninja install
++)
+ 
+-# this LLVM only disables unsound optimizations, it fails tests that look for those optimizations
++# this makes sure the no-UB LLVM we just built can build a working LLVM
+ (
+ set -e
+-mkdir $DIR/build-disable-unsound
+-cd $DIR/build-disable-unsound
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-disable-unsound -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=true -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
++export PATH=$DIR/install-no-ub/bin:$PATH
++mkdir $DIR/build-no-ub2
++cd $DIR/build-no-ub2
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-ub2 -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
+-# this makes sure the LLVM without unsound optimizations can build a working LLVM
++# this LLVM avoids optimizations that do peephole-like things and that
++# introduce UB, it will fail tests that look for those optimizations
++(
++set -e
++export PATH=$CLANGBIN:$PATH
++mkdir $DIR/build-no-ub-no-peeps
++cd $DIR/build-no-ub-no-peeps
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-ub-no-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=true -DDISABLE_PEEPHOLES_DEFAULT_VALUE=true' > cmake.out 2>&1
++ninja > build.out 2>&1
++ninja install
++)
++
++# this makes sure the no-UB, no-peephole LLVM we just built can build a working LLVM
+ (
+ set -e
+-mkdir $DIR/build-disable-unsound2
+-cd $DIR/build-disable-unsound2
+-$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-disable-unsound -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
++export PATH=$DIR/install-no-ub-no-peeps/bin:$PATH
++mkdir $DIR/build-no-ub-no-peeps2
++cd $DIR/build-no-ub-no-peeps2
++$CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-ub-no-peeps2 -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+ ninja check > check.out 2>&1
+ ninja install
+
+From 815c733c6b6c0932f36c1dfbe0e1becffe9b4210 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 14:18:03 -0600
+Subject: [PATCH 41/57] foo
+
+---
+ test-disable-peepholes.sh | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index b90441bc67d17..7b2644d2d1f37 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -92,5 +92,8 @@ ninja check > check.out 2>&1
+ ninja install
+ )
+ 
++# fixme
+ size $DIR/build-peeps2/bin/clang
+ size $DIR/build-no-peeps2/bin/clang
++
++find build* -name 'check.out'| xargs grep Failed
+
+From a089fb13f2be391a6320d559f26f408856bfd3ed Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 14:19:31 -0600
+Subject: [PATCH 42/57] foo
+
+---
+ test-disable-peepholes.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index 7b2644d2d1f37..6e1573b9b3be6 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -6,6 +6,7 @@ export DIR=$HOME/llvm-project
+ export CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON ../llvm -DLLVM_ENABLE_PROJECTS="llvm;clang;compiler-rt"'
+ 
+ rm -rf $DIR/build-*
++rm -rf $DIR/install-*
+ 
+ function is_bin_in_path {
+   builtin type -P "$1" &> /dev/null
+
+From a70e3c1a728bcb1792f9bc43ffa298c81dd90e60 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 15:56:24 -0600
+Subject: [PATCH 43/57] foo
+
+---
+ test-disable-peepholes.sh | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/test-disable-peepholes.sh b/test-disable-peepholes.sh
+index 6e1573b9b3be6..16e6a176eb39c 100755
+--- a/test-disable-peepholes.sh
++++ b/test-disable-peepholes.sh
+@@ -30,7 +30,7 @@ mkdir $DIR/build-default
+ cd $DIR/build-default
+ $CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-default -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+-ninja check > check.out 2>&1
++ninja check > check.out 2>&1 || true
+ ninja install
+ )
+ 
+@@ -42,7 +42,7 @@ mkdir $DIR/build-default2
+ cd $DIR/build-default2
+ $CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-default2 -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+-ninja check > check.out 2>&1
++ninja check > check.out 2>&1 || true
+ ninja install
+ )
+ 
+@@ -54,6 +54,7 @@ mkdir $DIR/build-no-ub
+ cd $DIR/build-no-ub
+ $CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-ub -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=true -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
++ninja check > check.out 2>&1 || true
+ ninja install
+ )
+ 
+@@ -65,7 +66,7 @@ mkdir $DIR/build-no-ub2
+ cd $DIR/build-no-ub2
+ $CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-ub2 -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+-ninja check > check.out 2>&1
++ninja check > check.out 2>&1 || true
+ ninja install
+ )
+ 
+@@ -78,6 +79,7 @@ mkdir $DIR/build-no-ub-no-peeps
+ cd $DIR/build-no-ub-no-peeps
+ $CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-ub-no-peeps -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=true -DDISABLE_PEEPHOLES_DEFAULT_VALUE=true' > cmake.out 2>&1
+ ninja > build.out 2>&1
++ninja check > check.out 2>&1 || true
+ ninja install
+ )
+ 
+@@ -89,7 +91,7 @@ mkdir $DIR/build-no-ub-no-peeps2
+ cd $DIR/build-no-ub-no-peeps2
+ $CMAKE -DCMAKE_INSTALL_PREFIX=$DIR/install-no-ub-no-peeps2 -DCMAKE_CXX_FLAGS='-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false' > cmake.out 2>&1
+ ninja > build.out 2>&1
+-ninja check > check.out 2>&1
++ninja check > check.out 2>&1 || true
+ ninja install
+ )
+ 
+
+From 62fcbf1d74ac63897865b7cd79582d374384d535 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 19:10:10 -0600
+Subject: [PATCH 44/57] foo
+
+---
+ .../test-disable-peepholes.sh                               | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+ rename test-disable-peepholes.sh => souper-scripts/test-disable-peepholes.sh (93%)
+
+diff --git a/test-disable-peepholes.sh b/souper-scripts/test-disable-peepholes.sh
+similarity index 93%
+rename from test-disable-peepholes.sh
+rename to souper-scripts/test-disable-peepholes.sh
+index 16e6a176eb39c..e543f3d5dff18 100755
+--- a/test-disable-peepholes.sh
++++ b/souper-scripts/test-disable-peepholes.sh
+@@ -95,8 +95,6 @@ ninja check > check.out 2>&1 || true
+ ninja install
+ )
+ 
+-# fixme
+-size $DIR/build-peeps2/bin/clang
+-size $DIR/build-no-peeps2/bin/clang
++size $DIR/install-default2/bin/clang-11 $DIR/install-no-ub2/bin/clang-11 $DIR/install-no-ub-no-peeps2/bin/clang-11
+ 
+-find build* -name 'check.out'| xargs grep Failed
++grep 'Failed Tests' build-default2/check.out build-no-ub2/check.out build-no-ub-no-peeps2/check.out
+
+From 6ccc4fde552f423a3ba4344e883cecf435a25bd2 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 22:26:45 -0600
+Subject: [PATCH 45/57] foo
+
+---
+ souper-scripts/default.cfg  | 571 ++++++++++++++++++++++++++++++++++++
+ souper-scripts/test-spec.sh |  10 +
+ 2 files changed, 581 insertions(+)
+ create mode 100644 souper-scripts/default.cfg
+ create mode 100755 souper-scripts/test-spec.sh
+
+diff --git a/souper-scripts/default.cfg b/souper-scripts/default.cfg
+new file mode 100644
+index 0000000000000..eab5fd958b45a
+--- /dev/null
++++ b/souper-scripts/default.cfg
+@@ -0,0 +1,571 @@
++#------------------------------------------------------------------------------
++# SPEC CPU2017 config file for: gcc / g++ / gfortran on Linux x86
++#------------------------------------------------------------------------------
++# 
++# Usage: (1) Copy this to a new name
++#             cd $SPEC/config
++#             cp Example-x.cfg myname.cfg
++#        (2) Change items that are marked 'EDIT' (search for it)
++# 
++# SPEC tested this config file with:
++#    Compiler version(s):    4.4.7, 4.9.2, 5.2.0, 6.3.0
++#    Operating system(s):    Oracle Linux Server 6.5 and 7.2 / 
++#                            Red Hat Enterprise Linux Server 6.5 and 7.2
++#    Hardware:               Xeon 
++#
++# If your system differs, this config file might not work.
++# You might find a better config file at http://www.spec.org/cpu2017/results
++#
++# Known Limitations with GCC 4 
++#
++#   (1) Possible problem: compile time messages
++#                             error: unrecognized command line option '...'
++#      Recommendation:    Use a newer version of the compiler.
++#                         If that is not possible, remove the unrecognized 
++#                         option from this config file.
++#
++#   (2) Possible problem: run time errors messages 
++#           527.cam4_r or 627.cam4_s    *** Miscompare of cam4_validate.txt    
++#      Recommendation: Use a newer version of the compiler.
++#                      If that is not possible, try reducing the optimization.
++#
++# Compiler issues: Contact your compiler vendor, not SPEC.
++# For SPEC help:   http://www.spec.org/cpu2017/Docs/techsupport.html
++#------------------------------------------------------------------------------
++
++
++#--------- Label --------------------------------------------------------------
++# Arbitrary string to tag binaries 
++#                  Two Suggestions: # (1) EDIT this label as you try new ideas.
++%define label mytest                # (2)      Use a label meaningful to *you*.
++
++
++#--------- Preprocessor -------------------------------------------------------
++%   define  bits        64     #      you can set it on the command line using:
++
++%ifndef %{build_ncpus}         # EDIT to adjust number of simultaneous compiles.
++%   define  build_ncpus 20      #      Or, you can set it on the command line: 
++%endif                         #      'runcpu --define build_ncpus=nn'
++
++# Don't change this part.
++%define    os           LINUX
++
++%   define model        -m64
++
++
++#--------- Global Settings ----------------------------------------------------
++# For info, see:
++#            https://www.spec.org/cpu2017/Docs/config.html#fieldname   
++#   Example: https://www.spec.org/cpu2017/Docs/config.html#tune        
++
++command_add_redirect = 1
++flagsurl             = $[top]/config/flags/gcc.xml
++ignore_errors        = 1
++iterations           = 1
++label                = %{label}-m%{bits}
++line_width           = 1020
++log_line_width       = 1020
++makeflags            = --jobs=%{build_ncpus} 
++mean_anyway          = 1
++output_format        = txt,html,cfg,pdf,csv
++preenv               = 1
++reportable           = 0
++tune                 = base
++
++
++#--------- How Many CPUs? -----------------------------------------------------
++# Both SPECrate and SPECspeed can test multiple chips / cores / hw threads
++#    - For SPECrate,  you set the number of copies.
++#    - For SPECspeed, you set the number of threads. 
++# See: https://www.spec.org/cpu2017/Docs/system-requirements.html#MultipleCPUs
++#
++#    q. How many should I set?  
++#    a. Unknown, you will have to try it and see!
++#
++# To get you started, some suggestions:
++#
++#     copies - This config file defaults to testing only 1 copy.   You might
++#              try changing it to match the number of cores on your system, 
++#              or perhaps the number of virtual CPUs as reported by:
++#                     grep -c processor /proc/cpuinfo
++#              Be sure you have enough memory.  See:
++#              https://www.spec.org/cpu2017/Docs/system-requirements.html#memory
++#
++#     threads - This config file sets a starting point.  You could try raising 
++#               it.  A higher thread count is much more likely to be useful for
++#               fpspeed than for intspeed.
++#
++intrate,fprate:
++   copies           = 1   # EDIT to change number of copies (see above)
++intspeed,fpspeed:
++   threads          = 1   # EDIT to change number of OpenMP threads (see above)
++
++
++#------- Compilers ------------------------------------------------------------
++default:
++#                    EDIT: the directory where your compiler is installed
++%ifndef %{gcc_dir}
++%   define  gcc_dir        /SW/compilers/GCC/Linux/x86_64/gcc-6.3.0
++%endif
++
++%define LLVM /home/regehr/llvm-project/install-default2
++
++# EDIT if needed: the preENV line adds library directories to the runtime
++#      path.  You can adjust it, or add lines for other environment variables. 
++#      See: https://www.spec.org/cpu2017/Docs/config.html#preenv
++#      and: https://gcc.gnu.org/onlinedocs/gcc/Environment-Variables.html
++   preENV_LD_LIBRARY_PATH  = %{LLVM}/lib
++  #preENV_LD_LIBRARY_PATH  = %{gcc_dir}/lib64/:%{gcc_dir}/lib/:/lib64:%{ENV_LD_LIBRARY_PATH}
++   SPECLANG                = /usr/bin/
++   LLVMBIN = %{LLVM}/bin
++   CC                      = $(LLVMBIN)/clang     -std=c99   %{model}
++   CXX                     = $(LLVMBIN)/clang++                %{model}
++   FC                      = $(SPECLANG)gfortran           %{model}
++   # How to say "Show me your version, please"
++   CC_VERSION_OPTION       = -v
++   CXX_VERSION_OPTION      = -v
++   FC_VERSION_OPTION       = -v
++
++default:
++%if %{bits} == 64
++   sw_base_ptrsize = 64-bit
++   sw_peak_ptrsize = 64-bit
++%else
++   sw_base_ptrsize = 32-bit
++   sw_peak_ptrsize = 32-bit
++%endif
++
++
++#--------- Portability --------------------------------------------------------
++default:               # data model applies to all benchmarks
++%if %{bits} == 32
++    # Strongly recommended because at run-time, operations using modern file 
++    # systems may fail spectacularly and frequently (or, worse, quietly and 
++    # randomly) if a program does not accommodate 64-bit metadata.
++    EXTRA_PORTABILITY = -D_FILE_OFFSET_BITS=64
++%else
++    EXTRA_PORTABILITY = -DSPEC_LP64
++%endif
++
++# Benchmark-specific portability (ordered by last 2 digits of bmark number)
++
++500.perlbench_r,600.perlbench_s:  #lang='C'
++%if %{bits} == 32
++%   define suffix IA32
++%else
++%   define suffix X64
++%endif
++   PORTABILITY    = -DSPEC_%{os}_%{suffix}
++
++521.wrf_r,621.wrf_s:  #lang='F,C'
++   CPORTABILITY  = -DSPEC_CASE_FLAG 
++   FPORTABILITY  = -fconvert=big-endian
++
++523.xalancbmk_r,623.xalancbmk_s:  #lang='CXX'
++   PORTABILITY   = -DSPEC_%{os}
++
++526.blender_r:  #lang='CXX,C'
++   PORTABILITY   = -funsigned-char -DSPEC_LINUX
++
++527.cam4_r,627.cam4_s:  #lang='F,C'
++   PORTABILITY   = -DSPEC_CASE_FLAG
++
++628.pop2_s:  #lang='F,C'
++   CPORTABILITY    = -DSPEC_CASE_FLAG
++   FPORTABILITY    = -fconvert=big-endian
++
++
++#-------- Tuning Flags common to Base and Peak --------------------------------
++
++#
++# Speed (OpenMP and Autopar allowed)
++#
++%if %{bits} == 32
++   intspeed,fpspeed:
++   #
++   # Many of the speed benchmarks (6nn.benchmark_s) do not fit in 32 bits
++   # If you wish to run SPECint2017_speed or SPECfp2017_speed, please use
++   #
++   #     runcpu --define bits=64
++   #
++   fail_build = 1
++%else
++   intspeed,fpspeed:
++      EXTRA_OPTIMIZE = -fopenmp -DSPEC_OPENMP
++   fpspeed:
++      #
++      # 627.cam4 needs a big stack; the preENV will apply it to all 
++      # benchmarks in the set, as required by the rules.  
++      #
++      preENV_OMP_STACKSIZE = 120M
++%endif
++
++
++#--------  Baseline Tuning Flags ----------------------------------------------
++#
++# EDIT if needed -- Older GCC might not support some of the optimization
++#                   switches here.  See also 'About the -fno switches' below.
++#
++default=base:         # flags for all base 
++   OPTIMIZE       = -g -O3 -march=native -fno-unsafe-math-optimizations
++
++intrate,intspeed=base: # flags for integer base
++%if %{bits} == 32                    
++    EXTRA_COPTIMIZE = -fgnu89-inline -fno-strict-aliasing 
++%else                                
++    EXTRA_COPTIMIZE = -fno-strict-aliasing 
++    LDCFLAGS        = -z muldefs     
++%endif                               
++# Notes about the above
++#  - 500.perlbench_r/600.perlbench_s needs -fno-strict-aliasing.
++#  - 502.gcc_r/602.gcc_s             needs -fgnu89-inline or -z muldefs
++#  - For 'base', all benchmarks in a set must use the same options.   
++#  - Therefore, all base benchmarks get the above.  See:
++#       www.spec.org/cpu2017/Docs/runrules.html#BaseFlags  
++#       www.spec.org/cpu2017/Docs/benchmarks/500.perlbench_r.html
++#       www.spec.org/cpu2017/Docs/benchmarks/502.gcc_r.html
++
++
++#--------  Peak Tuning Flags ----------------------------------------------
++default=peak:
++   basepeak = yes  # if you develop some peak tuning, remove this line.
++   #
++   # -----------------------
++   # About the -fno switches
++   # -----------------------
++   #
++   # For 'base', this config file (conservatively) disables some optimizations.
++   # You might want to try turning some of them back on, by creating a 'peak' 
++   # section here, with individualized benchmark options:
++   #
++   #        500.perlbench_r=peak:
++   #           OPTIMIZE = this
++   #        502.gcc_r=peak:
++   #           OPTIMIZE = that 
++   #        503.bwaves_r=peak:
++   #           OPTIMIZE = other   .....(and so forth)
++   #
++   # If you try it:
++   #   - You must remove the 'basepeak' option, above.
++   #   - You will need time and patience, to diagnose and avoid any errors.
++   #   - perlbench is unlikely to work with strict aliasing 
++   #   - Some floating point benchmarks may get wrong answers, depending on:
++   #         the particular chip 
++   #         the version of GCC 
++   #         other optimizations enabled
++   #         -m32 vs. -m64
++   #   - See: http://www.spec.org/cpu2017/Docs/config.html
++   #   - and: http://www.spec.org/cpu2017/Docs/runrules.html
++
++
++#------------------------------------------------------------------------------
++# Tester and System Descriptions - EDIT all sections below this point              
++#------------------------------------------------------------------------------
++#   For info about any field, see
++#             https://www.spec.org/cpu2017/Docs/config.html#fieldname 
++#   Example:  https://www.spec.org/cpu2017/Docs/config.html#hw_memory  
++#-------------------------------------------------------------------------------
++
++#--------- EDIT to match your version -----------------------------------------
++default:
++   sw_compiler001   = C/C++/Fortran: Version 6.2.0 of GCC, the
++   sw_compiler002   = GNU Compiler Collection
++
++#--------- EDIT info about you ------------------------------------------------
++# To understand the difference between hw_vendor/sponsor/tester, see:
++#     https://www.spec.org/cpu2017/Docs/config.html#test_sponsor
++intrate,intspeed,fprate,fpspeed: # Important: keep this line
++   hw_vendor          = My Corporation
++   tester             = My Corporation
++   test_sponsor       = My Corporation
++   license_num        = nnn (Your SPEC license number) 
++#  prepared_by        = # Ima Pseudonym                       # Whatever you like: is never output
++
++
++#--------- EDIT system availability dates -------------------------------------
++intrate,intspeed,fprate,fpspeed: # Important: keep this line
++                        # Example                             # Brief info about field
++   hw_avail           = # Nov-2099                            # Date of LAST hardware component to ship
++   sw_avail           = # Nov-2099                            # Date of LAST software component to ship
++
++#--------- EDIT system information --------------------------------------------
++intrate,intspeed,fprate,fpspeed: # Important: keep this line
++                        # Example                             # Brief info about field
++#  hw_cpu_name        = # Intel Xeon E9-9999 v9               # chip name
++   hw_cpu_nominal_mhz = # 9999                                # Nominal chip frequency, in MHz
++   hw_cpu_max_mhz     = # 9999                                # Max chip frequency, in MHz
++#  hw_disk            = # 9 x 9 TB SATA III 9999 RPM          # Size, type, other perf-relevant info
++   hw_model           = # TurboBlaster 3000                   # system model name
++#  hw_nchips          = # 99                                  # number chips enabled
++   hw_ncores          = # 9999                                # number cores enabled
++   hw_ncpuorder       = # 1-9 chips                           # Ordering options
++   hw_nthreadspercore = # 9                                   # number threads enabled per core
++   hw_other           = # TurboNUMA Router 10 Gb              # Other perf-relevant hw, or "None"
++
++#  hw_memory001       = # 999 GB (99 x 9 GB 2Rx4 PC4-2133P-R, # The 'PCn-etc' is from the JEDEC 
++#  hw_memory002       = # running at 1600 MHz)                # label on the DIMM.
++
++   hw_pcache          = # 99 KB I + 99 KB D on chip per core  # Primary cache size, type, location
++   hw_scache          = # 99 KB I+D on chip per 9 cores       # Second cache or "None"
++   hw_tcache          = # 9 MB I+D on chip per chip           # Third  cache or "None"
++   hw_ocache          = # 9 GB I+D off chip per system board  # Other cache or "None"
++
++   fw_bios            = # American Megatrends 39030100 02/29/2016 # Firmware information
++#  sw_file            = # ext99                               # File system
++#  sw_os001           = # Linux Sailboat                      # Operating system
++#  sw_os002           = # Distribution 7.2 SP1                # and version
++   sw_other           = # TurboHeap Library V8.1              # Other perf-relevant sw, or "None"
++#  sw_state           = # Run level 99                        # Software state.
++
++# Note: Some commented-out fields above are automatically set to preliminary 
++# values by sysinfo
++#       https://www.spec.org/cpu2017/Docs/config.html#sysinfo
++# Uncomment lines for which you already know a better answer than sysinfo 
++
++__HASH__
++648.exchange2_s=base=mytest-m64:
++# Last updated 2020-05-19 10:13:21
++opthash=db22c3632ab36100655456be45ecf60b0f22c9463246851c114e017ac2d6fe81
++baggage=
++compiler_version=\
++@eNp9VE1v2zAMvftX+NYNteK26ZIigA9Z6hQDsqZI3e0YyBLtqJUlTx+Js8N++2THib202MWC+Cjy\
++kXy0P5+tf8Sr52/Lx/XyKXHHxHvRTOR+ahk3iAlfl0D0wJstF4t4lqwfZrMotFqFKRNhnkllFBYn\
++dJEs1z9X06eneHXw4iwNc0LC6m60Ht0izoStUC5sOA65kWincFmC8pbz+WI5vV8n09VDnKwfp9/j\
++50hsS1MhIQWc4/fxfPqySKJrL8EqBzPxz+N7MykyllsF1N8xs5n4g0GoFQnJ0e6jrY9QjaHyLd+C\
++0kyK6OIltcJYfzz4MrhCQ9vcrv9c3w2ubi+O/ql1AXiUMQ6TMGzq1BusIKSS1NWicbiKp/ff48FX\
++m2v3CgROOSCORW5xDjoiAaY4IJeXQS6DVLE8oEHby0Cmr6T+IAe7t6WCjFVNN4/56xQFfpUKtbSR\
++FHzf+Mpc4QJpm9Vv0Lhna+OcNwp19JoaaI8uE2+gUK0EilgNuGlCBYQydZpuy0naWiyEWwoUuYkY\
++qEwXyWwUYKqjUmpWHeKcxWgdBe+1K5XSaNeSsjMRLgnmEDnifZ6pNpRUFaLgRvMRYFgB0R70sYMU\
++MmydvjsPnLJIwK57XPfGCvbLAnLDAFKXQ5lusK05HKBYtv8nX1FW3b3kNncbdLofs5YMjkT0Xhso\
++0O+uk8g0kj5D2gi1Ntz4I2yN7KyFC8qwIpsexR0oJU+KqUE0vInY6G50srmKi9Ht8doEcclcFdpE\
++xfAmcGBQVMObs0R9qla4WYBwfSA9klnGJaZtIbq3xz2xEEsxooq5HvbGuwHy5v4+kQIOWNf+jfre\
++qdYBG+lofmA/ZH2HeEmjQb+QFPjEb5TouUXy2xU6bLz/6T/7/9n3/gIWLsdL
++compile_options=\
++@eNq9kV1vgjAUhu/5FU3vi1v2kUjERBENG0KjmGy7MYhFu422acFs/voVFEYWk+ku1pue5rw95z3P\
++CThDWfxGUvpOABc55UxZhsolTfKlLNiayuWOSJp+2vAaGjpUWmLDK7N7dQcNY4yxBaASJBECoNEc\
++u46+gpE7XEyO72WI3WCK65eP729BT/FCJqQPEG9iMxWC7snaTLsf0NBlHbwY+4PJ3IY/CkMjtID7\
++FM0GunbkTb0Xt9Ycm1X/DwoczqLB0PO96LkRlR6g4YTT0nynULKzoqyzSbnMZczA90GZNouS0uYR\
++jskB2gAU3uhcLJOtzeKc7ghAKeOoYCpOiU7kW1TqM7qPq186zQVhmWim1e0tMHbsX9sfhOHwQY+q\
++B2h7OYNSi8/lrk9zrie5HLjvBY/nAD9Ef6BcFzlpEYAeX72SJFd90O7Y4ASgYu2PzlnKv7KtXIWL\
++cv+t5X8Bpw4cAg==
++exehash=755215fc6b305a0c3fe7c1fcac5b4cdb200e55afc30087cccb0da00163d223de
++
++998.specrand_is=base=mytest-m64:
++# Last updated 2020-05-19 12:57:38
++opthash=cb17f0c4a7a88a21b142b5ffc3a57bdd32f2bc1cc98f0a9242264d2aab7d74fd
++baggage=
++compiler_version=\
++@eNqlkDtvwyAUhXf/CsZ2MMSPEOIukdyHsjRVE3WNMFzZtBgsDKl/flEbNUOytBEChnPud8+9qK73\
++bw+v2/Xmeb952cWvSoTmpkUHcKOyBmUZnuEZummVX8XbhQYL21cOWugc0frQp4Oz7yA8jjLKS8gY\
++CMqabMk4z1lTzMsiHikXmShyJpeU8rm8TXbcteArNDG6p2UazIexnybVyoQpbU1Idp0DLlFvJegK\
++DXZUU7I2o+dag7xXrkKksz2QC1GI+vGlA8AwkkaZ5NEGI5HgRirJPaCnukZHF/dx0EgLY6SohrRC\
++EEUZPWUh7K/1x6lOhMX1BDzHs6spLNmCjisC+c8A9W/rPmivortC+G7V0/KiVORRK/KL2vQtxveU\
++6Yz5BW4y4iE=
++compile_options=\
++@eNrNklFP2zAUhd/zK678bgICTWpFkFo3Y2FpHEErbXuJjOu0HrEd2Wml8etxXAqB7QWtD/gllu65\
++J/cef4XRWLEHUctGgGk7abQbR66zkneV3eqVtNVOWFn/SdAZivzVeUmCTk9Gp+coigidl2NA8cYo\
++EVuxFhsbN81O4daa34J3sdSuY02DWyFaF99LHfOG6TX0B7tulfDRqL+qLxeAOWBzmOLEAJ7dlSnx\
++n2KWTpfXgDPXCm6ZXmFulDLa960B03PfzizfJJp1cicA19rgrXasFr7QbXBvqeQjC8bwenBtWqFV\
+++/ynipZpMS/3/fsMMGskczIM/CzKSz8qXDqztVxcoYiMgZDkOBHs3ej0hpaLBL3JA0U+aFIuv+aT\
++6ztfe5tNqE7TgnyrDoL3YaGIjsH7ZvPsV+rrH08uOKQ/FreTauDzzwwHUjLU/h1smHyvLOntYjLN\
++8mzx87BgSBtFeVZ8PxpmgB9BbZuVqAML/4HQR/i5NPf9pO4KhgC+PC9AePt8djSSaO9GDjS8rPxp\
++MQjb02XP/QD6J8tAc9E=
++exehash=0dd6b7947a61dd2a9a3198a701cd4f5d81066b3cd0866f27303a6769b979d14a
++
++657.xz_s=base=mytest-m64:
++# Last updated 2020-06-25 22:08:15
++opthash=aca1bbdc7135c7d394d0e6181d2b5e24583855c8ab8a22b88b9ab8309c185903
++baggage=
++compiler_version=\
++@eNqljk1PwzAMhu/5Fb6jNPuoqlIuSGWgXRhiFdcqTaw2WuqgNBn9+UQbGhLsBLJkH177eQx13b5t\
++Xvfb3XO7e2nSqJiykno4op+MI1guslTAGul7DBXMZdEWOY90IPdB3BqKM+8psmbwKDWMTqOt4N1N\
++ZmZbmoK0FvWD8RWIwY0oPPY4eHGy3Fh7HPlZwb/IFyKPXaQQ+bLMFrnoDLFHF0mDkqSNlgHhqa7B\
++nBUypGeTIk5eWNOJXinxEyjKfxNu2R4tqoD6D6f1RTtGG0zarCC7ux+L/Gq0XqVsvbqazacw9e9/\
++fjE/AfWcnt4=
++compile_options=\
++@eNrlVF1v2jAUfc+vsPI6mY+WMUBNJQgpZIU4omFq+2IZ4xCvsR3lAzF+/ZxQaFD3Uk1IleoosW98\
++fB2fe048JaEgLyzkMQMqybmS2cDI8pTTHKeFXPMUb1nKwz+W2TYNPcw0xDJbjX6raxqGjeb+AJjN\
++SAnWTNmGRWmTxkRuvsXxVsB2q6EvuOt1cbcDYy6LHdzIAharQuYFbPcarU5zxeVhDSgbzPK1Rfv9\
++cii6HQApgOr4aQ0F4PjBd2zdeWNntJy8xni4DBAePQUOWoydhdXata+uO9+7P3oaMB3+crCNvDt3\
++gqdW+7hk7syxi47R4zOAbkPfWcIoFkxgrsooIvBK91QJoaQexHwV7wVpkoTXovJRC9+hacToSy3O\
++uEg0428v1izOyVnCWpBqchhVa5ZqUjYAomvNDUlpZEmS863OE0oFC5mRkOmJPIIlX4LvScUaeGsw\
++VAmTIjmeGvmON/cP6w9VhyTmJONVNV5BM1/XAdxkqkgpuzUNewBs27pg0Q9boNFP5AeWeaYA09B6\
++s/3l3Ww4edBz52qoZkeOZ0/xGeCryMM00ABo0ty5++zow39cK1UG5zFYDHEtzz9VU4Padex7KVVl\
++OSB9tAiGI3fmBk+n4pT6Mo2Z691f9lcC4B6IIl6zsLLEfzjpIza6UavfjObZLaj78CRoACq1z8aX\
++NRQqt7CPpjjx8GkFU1GClqX9a97/C581FVs=
++exehash=831ba8adc1fa08446508f40baa067a6ab08d84d7ca6f4c41b3c815f76844b3ec
++
++600.perlbench_s=base=mytest-m64:
++# Last updated 2020-06-25 22:09:45
++opthash=907b0cc45c96e8c82841c3fdf8e5ad9f953d17059f668d61583d8acba5b7ba87
++baggage=
++compiler_version=\
++@eNqljk1PwzAMhu/5Fb6jNPuoqlIuSGWgXRhiFdcqTaw2WuqgNBn9+UQbGhLsBLJkH177eQx13b5t\
++Xvfb3XO7e2nSqJiykno4op+MI1guslTAGul7DBXMZdEWOY90IPdB3BqKM+8psmbwKDWMTqOt4N1N\
++ZmZbmoK0FvWD8RWIwY0oPPY4eHGy3Fh7HPlZwb/IFyKPXaQQ+bLMFrnoDLFHF0mDkqSNlgHhqa7B\
++nBUypGeTIk5eWNOJXinxEyjKfxNu2R4tqoD6D6f1RTtGG0zarCC7ux+L/Gq0XqVsvbqazacw9e9/\
++fjE/AfWcnt4=
++compile_options=\
++@eNrVVFuPmkAUfudXTHhtRjQ1ZjXLJoCj0qJDuCS2LxPEUaeFwXAx7v76noHVuum+tI0PCyGcmXP5\
++5juXWRUS58lPvhMZR8WxFoWsJlpVlyKtWdnIrSjZiZdi92zqA10DsQITU+/3xv2RrmkOXfoTpBuH\
++IudGyff8UBpplsj9pyw75XjQ78GLzw8jNhriTMjmjPeywc2mkXWDBw+9/tDYCNn5IPXgqt6a6Xis\
++xHw0RDhFuLgcrVcgPA194sBvNSV2PAfBJ4HHHBoQhN0efFtR1YZLQUqPiTQikXO8EAGvLjuLaOlh\
++PykrXsIWP9dwchCqI0/LRG4h5JTGtkdY6FnhgoRMIbqWZ/ZBxTwrmBM2cz0SXpdqxUIaBw5Re+2S\
++zmYhiZjtRqEJPBDeI0w/A6mkTA+mTGpxAtSdLHAjq2THQVEfsCKai5ekpYten44z89xVvGZrFQwc\
++iyOX+fGioz5ZLf0uXlc+nGQiqUSb1ksAX/k+VkVTpvxJ15wJchzzjtXrIKj9hfqRqb8ppa5B4zh+\
++PPOseQi6t2VttTZZOQt2NfgQddY1OkHA1l263wmc+u+L3lL3aRBZtuu50bdLbn6Xv8Ug6yiw2A3S\
++uw1xY+rc2v7ZJS1sZ/kuuK9w4Qhf7zvuCL+gvMm2fNd2/78OzX9OzGOx+cHTunpSflmOroN4bV+E\
++2t72pvcdH6ognMsIXFPzgbsMkra0ogXg2IpSlr/mkcbqhri5Hn4BqSr+bQ==
++exehash=1ee7e30760e0713c443ffed500f5c499e47ec1798060286a93dce3e5f0f3d14d
++
++602.gcc_s=base=mytest-m64:
++# Last updated 2020-06-25 22:10:32
++opthash=14f1196589cb9b1dd88642f41aec44e5db7becf08349215dede2ee1803515245
++baggage=
++compiler_version=\
++@eNqljk1PwzAMhu/5Fb6jNPuoqlIuSGWgXRhiFdcqTaw2WuqgNBn9+UQbGhLsBLJkH177eQx13b5t\
++Xvfb3XO7e2nSqJiykno4op+MI1guslTAGul7DBXMZdEWOY90IPdB3BqKM+8psmbwKDWMTqOt4N1N\
++ZmZbmoK0FvWD8RWIwY0oPPY4eHGy3Fh7HPlZwb/IFyKPXaQQ+bLMFrnoDLFHF0mDkqSNlgHhqa7B\
++nBUypGeTIk5eWNOJXinxEyjKfxNu2R4tqoD6D6f1RTtGG0zarCC7ux+L/Gq0XqVsvbqazacw9e9/\
++fjE/AfWcnt4=
++compile_options=\
++@eNrNU11vmzAUfedXWLxOBrJlUROVSuDQhI1g1JJp24tFiEm8GTvDEHX99TMQ2lTbS1VFmhHyle65\
++X+cex1LAMvtJC8YpkIeaSaFmhqorltekasSWVeRIK1b8ds2RaWhTaYhrOtbU+WgaBsKrZAZMey9L\
++ald0R/eVnfNM7N5xfizhyLH0Bx+uJmQyhpyJ5gHuRAObTSPqBo6uLGdsb5joY0B7oKq3bj6dtmY5\
++GQOYAyiH1iwJ4Pw+CZC+4nngrxcAhlb720zkvNnSzlYHmpNfSlb1CU4mzntthjFZoDZ26X0JCMLx\
++bbggS11oByD+oOtlVb53RVazo05UCAkbobKCake9h20PJXvMuk7A84GFPFBRHoZaOAniVdLH90zC\
++jLNMsW7CEyhK9GzgWsmmyumNaaAZQMi9IJF9Cex/wknqmi9YNQ29Q5SsbyNvca99LxnuvH4QoyUZ\
++AG+m3DTwDOhGwlX4PdAJX89/lyH4mt555CzPPzdxBkXn2L/X043aIxN8l3p+GIXpt4GRbmemEYXx\
++58tKHsBHUDZ8S4tOZm9Q52ukeS03P2heq5s2jpfP8n7SCQCdiKL5ZXWK2xJo0NoTFf+tZjQlKy9d\
++kij024Z5eWIJr9uHdvbK/gBv0qVM
++exehash=0654b3abce3760d642c090c666702a69a4c0c9112b22110d275ca022933ede0c
++
++605.mcf_s=base=mytest-m64:
++# Last updated 2020-06-25 22:10:34
++opthash=1e68d6f40376a933c48dd1d3feb70318f9d13d20dda7acf6ff62347aaffbd80d
++baggage=
++compiler_version=\
++@eNqljk1PwzAMhu/5Fb6jNPuoqlIuSGWgXRhiFdcqTaw2WuqgNBn9+UQbGhLsBLJkH177eQx13b5t\
++Xvfb3XO7e2nSqJiykno4op+MI1guslTAGul7DBXMZdEWOY90IPdB3BqKM+8psmbwKDWMTqOt4N1N\
++ZmZbmoK0FvWD8RWIwY0oPPY4eHGy3Fh7HPlZwb/IFyKPXaQQ+bLMFrnoDLFHF0mDkqSNlgHhqa7B\
++nBUypGeTIk5eWNOJXinxEyjKfxNu2R4tqoD6D6f1RTtGG0zarCC7ux+L/Gq0XqVsvbqazacw9e9/\
++fjE/AfWcnt4=
++compile_options=\
++@eNrNU11vmzAUfedXWH6dnA8ti5qoVALCWjaCrQDStheLEJN4AzvDJmr762dISFNtD6umSLMfbOme\
++e4/vuceRFKjKfrCClwzIveZSqLmldM1zTetGbHhND6zmxZMNx9AyV2UgNhwNZqMP0LI8vCRzAIc7\
++WbFhzbZsVw/zMhPbd2V5qNB4NDAbPd5M6XSCSi6aR7QVDWrWjdANGt8MRpPhmotjDmgXUnpj57NZ\
++e62mE4BygGT/tIEEaBET3zNHtPDd9N6gArVnOf2pZK1PUeqkCaZxSsjKj2OKiR8tCUBbgPB7UzWr\
++850tMs0PDKBCSNQIlRXMBPQOtUwVf846PvCyUCH3TFT7nqIv2uYf9UJZyTPFuz5OoJCYDsCtkk2d\
++sztoeXPgefYV5TpSYPcTJokNX2kHLTMpj6QfQ+c+NrHXOnZR14+8B+r1iL8UFlp4DgxfsAy++Sbt\
++7TJ3FfwvycqhF3X+KPgF1LvE/j6FrqMjkuBV4rhBGCRf+8a70UArDKLP1/UvQM+gasoNKzo3/YMJ\
++3+LAW7n+znKt7tq8snpx8dkOAHReCRfXtSNuKc6OOkvx33rGSLJ0kgcaBm774LI6qYTT9j9dfKZf\
++nnCZew==
++exehash=74301dbb564b8ee971cd477f84b57b7a0755bde3b525851ffd1f07b2538a2619
++
++620.omnetpp_s=base=mytest-m64:
++# Last updated 2020-06-25 22:10:47
++opthash=ac82ef050b5d602e5ea409917b179e4c825ee611121ec9d5bfc75bc7d43856cf
++baggage=
++compiler_version=\
++@eNqljk1rwzAMhu/+FboPx/0IIcsug+yDXtaxhtFbcGyRmDnycOwuP3+mHR1sPW0IpMMrPY+g3u/r\
++9vX+ZbfZPrXb5yaNiikrqYcD+sk4guUiSwWskb7HUMFcFm2R80hv5D6IW0Nx5j1F1gwepYbRabQV\
++vLvJzGxDU5DWor4zvgIxuBGFxx4HL46WK2sPIz8p+Bf5TOSxixQiX5bZIhedIfbgImlQkrTRMiA8\
++1jWYk0KG9GxSxMkLazrRKyV+AkX5b8I126FFFVD/4bQ+a8dog0mbFWQ3t2ORX4zWq5StVxez+Rim\
++/v3PL+YnPWqfjg==
++compile_options=\
++@eNq9UtFugjAUfecrmr6aimbOOCMmgkzZEIhi5vZCEIt2g5YUaty+fhVl0WV7mIkrD7303t57es5x\
++GEVp+IZjkmDAsoIwmneVvOAkKgIu6IrwYIs5id812ISKDHNZosFG/a5xCxXFcCdeF0B1w1KscrzG\
++G65GSUjXtSTZpqjZqMsP7TrtoN1CCaFih9ZUILEUtBCo2ak3WuqS0OOdGvi2UNpuARQBxCpwdQbQ\
++cOaZhtycoanPRwBZOUlFEhaMq5ncVjg7PZNxylY4kReeLH8cOKavzy17aE5l/zVA7o0cE/Joo9Gw\
++IFsMUEwZEjQPYywTxQbtR6fkIywBVMhilmGaZkc0geuZzsQD1a/tSeCglzPBI9yHitEFxmKhXZWo\
++aoqrP7ier8Ez3qAidTK8+b09GM1k7pzDMqubjjEOqoJLSYWK2wVyvjWxXkzZ5+8Mlx3MhT8dBCd9\
++fuS7xH0o9dypP9At2/Kfq+eVKkDFtpzHa3v0EF3spl/t1GPLVxwVef9s4peqAJSi28NrO+tfNS1f\
++5M73Fj7x7ydUcWbI
++exehash=88de3f578825ea272fbfaf5b6014c6d9dc0d161584c69a1fdcf399e08a8e958c
++
++623.xalancbmk_s=base=mytest-m64:
++# Last updated 2020-06-25 22:13:30
++opthash=e157e2d78ed014f146dcf4f980554a1bbc61340376242e383ba7104fc05ee8b3
++baggage=
++compiler_version=\
++@eNqljk1rwzAMhu/+FboPx/0IIcsug+yDXtaxhtFbcGyRmDnycOwuP3+mHR1sPW0IpMMrPY+g3u/r\
++9vX+ZbfZPrXb5yaNiikrqYcD+sk4guUiSwWskb7HUMFcFm2R80hv5D6IW0Nx5j1F1gwepYbRabQV\
++vLvJzGxDU5DWor4zvgIxuBGFxx4HL46WK2sPIz8p+Bf5TOSxixQiX5bZIhedIfbgImlQkrTRMiA8\
++1jWYk0KG9GxSxMkLazrRKyV+AkX5b8I126FFFVD/4bQ+a8dog0mbFWQ3t2ORX4zWq5StVxez+Rim\
++/v3PL+YnPWqfjg==
++compile_options=\
++@eNrtVFtvmzAUfudXWLxWDsmWRV3UVHKApXSALS4T24tFiJN4AzviEqX79TNkpEnVh61SpD0MhDg3\
++Hx+f7zv2pYBF+oOtec6A3NVcimqqVXXJs5qWjVjxku5ZyddPM32ka0qsVMhMHw4+Dj/ommZij0yB\
++bmxlwYySbdi2NLI8FZubPN8XcDQcqBcebid0MoY5F80BbkQDm2Uj6gaObgfDsbHk4veaG/DigcVk\
++DGAGoOyLG0gArZDYpvr5lj2PFyrKQoRQH9PoIbCRFSpDglzkU8f3bI964YK6GFl2AKAzUN+BlRmr\
++smfJWMniUjN4scvPTFV6ONOamueGV21cma5URwxHeKyQ5dPLkKhMRZXJY0wmxb4NSNVRM4OLLG9W\
++TJVKAvxIE88lKAjbEk+GOHLcXj06w14NUTI2z5R3vWxhrxe/INexUIS7VSodjUO774gdhmhh903Z\
++AIjfq16nZbadibTme1XXWkjYiCpdM+Wot7Dtf8F/ph0KHTYdDNR1/Dhp1bXcMVHsejsmtu+R5zCi\
++kAR3lWxUf+51zZwCM0lmV2VOvwueP2ISzfQLIumaIq5J4k8uWoTKd0mqzju3ffOBqgSnmP88ezvP\
++dA1PgcLB8Zxvtmrm37OuA4XgIEJzx3Wirz1qRw52+e0kChA92+VVVnaJjqGvpiMtd1TSz9e+2o7S\
++2+bvTwfwTi6/s6yu7i92P80BAN2YuNa1Z/EfQr87L47bK+HsPvgFP4cjFg==
++exehash=46100421a58a2fce0b5e2e77a8ac0a49ee11501c95be0c9a6fec64849d6c3c24
++
++625.x264_s=base=mytest-m64:
++# Last updated 2020-06-25 22:13:39
++opthash=4e249d09be8d3df6af70cc6ed4c18c6713211c2bda4e20b62a940f3be8c64b6e
++baggage=
++compiler_version=\
++@eNqljk1PwzAMhu/5Fb6jNPuoqlIuSGWgXRhiFdcqTaw2WuqgNBn9+UQbGhLsBLJkH177eQx13b5t\
++Xvfb3XO7e2nSqJiykno4op+MI1guslTAGul7DBXMZdEWOY90IPdB3BqKM+8psmbwKDWMTqOt4N1N\
++ZmZbmoK0FvWD8RWIwY0oPPY4eHGy3Fh7HPlZwb/IFyKPXaQQ+bLMFrnoDLFHF0mDkqSNlgHhqa7B\
++nBUypGeTIk5eWNOJXinxEyjKfxNu2R4tqoD6D6f1RTtGG0zarCC7ux+L/Gq0XqVsvbqazacw9e9/\
++fjE/AfWcnt4=
++compile_options=\
++@eNrtVF1vmzAUfedXWLxODqSlLIlKJSCsZSMYpURa94IIMYk3bEd8RKy/fgZCS7W9VFOkTcI8YPC1\
++7/U55x6fM0jjHzglGQb8WBLOioVUlDlJyiiv2I7k0QnnJP1pyFNZEtNChBiyOpmrN7Ik2WgVLICs\
++HDjFSo73+JArSRaz/YcsO1E4VSfigfVMj3QNZoRVNdyzClbbipUVnM4mqqZsCev2gGbAotwZyXze\
++TKmuAZgAyPvSJhzA5WPg2OLlLx1rcw+gm+1wwndRkScKYSLara90rfkcTBVcl3lcDP8knFLOzudF\
++5iZEkfUUOmi9dNaGWk+vrrUb/eNMlLEHEF2LauI8ORgsLskJA5gyDitWxCkWC+UBNhVS8hy3dYLX\
++AVN+xIwe+0QocPxV0O3vcIZxRuKCtPc/B3mBuDm4LXiVJ/hOluwFsG3jgjB3KZD1GQWhIb/BXJYE\
++w3aw+eSZ949i7S3+7arl+PZD1AdcmBBZQgsgynRX7jdHpHs/O+0JztdwbUaDc/7I0yDUHsb+Tl4L\
++RBcZoHVoWq7nhk89Xi2jsuS5/pfLtguAz4BWgoG0FeFfaPc9wr3l2+84KYu7Zl9GX8X/oiIAWol5\
++y8uqGDUp7F6JL1D8s5oRkKzM8CHyXKspOKNnlNCmacNBD45OOzrt6LSj045OOzrt6LSj045OOzrt\
++/+60vwD2jQdA
++exehash=febddc7bbd4725640e41c696768cb2b935f16a40a8cfb974f6a8b3e415e91e24
++
++631.deepsjeng_s=base=mytest-m64:
++# Last updated 2020-06-25 22:13:42
++opthash=5da7ed2900e822c354523d8b71fc01a2b542353da3cb9b2cd67111d8ee5a9227
++baggage=
++compiler_version=\
++@eNqljk1rwzAMhu/+FboPx/0IIcsug+yDXtaxhtFbcGyRmDnycOwuP3+mHR1sPW0IpMMrPY+g3u/r\
++9vX+ZbfZPrXb5yaNiikrqYcD+sk4guUiSwWskb7HUMFcFm2R80hv5D6IW0Nx5j1F1gwepYbRabQV\
++vLvJzGxDU5DWor4zvgIxuBGFxx4HL46WK2sPIz8p+Bf5TOSxixQiX5bZIhedIfbgImlQkrTRMiA8\
++1jWYk0KG9GxSxMkLazrRKyV+AkX5b8I126FFFVD/4bQ+a8dog0mbFWQ3t2ORX4zWq5StVxez+Rim\
++/v3PL+YnPWqfjg==
++compile_options=\
++@eNq9Ut9PwjAQft9f0fSVdIOIRBdGwsbE6bY2/EjAl2XMDqpbS/aDoH+9ZTAEow+aYPvQa+7uu7vv\
++Pl9wlIavNGYJBWJdMMFzXcmLjEVFkJX8mWXBhmYsfjNgCyrSzGWIAZvqbfMaKoqFPaIDqK1ESrWM\
++Lukq06Ik5MtGkmxS1Gqq8qLtTSfotFHCeLlFS16iclHyokStG7XZ1haMH3Ia4MtBaacNUASQqJtT\
++BUCDMbEt+fgD25wOpWE6w8CzPTyay5QlQPhKZoZZtDJ4WLANBSjmApU8D2MqHcUK7dBS9h5WmHWx\
++WKwpT9eHAgEmtu8RUH9dInsB3VyUWUR7ULF0YM1mxkVnr6tg8wGTiQHPqICKpN4i0zu3PxxL3zkt\
++lde0fes+OAZ88gQVrAMJ6XjOky1dvyetQrBnk1E/OMH5lsKqlX0owaNJ33RcZzKvO66IhYrr+I+X\
++VtLe+rNAflRIVyxeaFTkvbOKx0UBUO3RHVxaLP+602oiPN2p8kSSH3DKRnI=
++exehash=fe58038d418ab5a96dcea993f4e1f5fa71235a4cc92cd8f702f5e01a7908e4f2
++
++641.leela_s=base=mytest-m64:
++# Last updated 2020-06-25 22:13:45
++opthash=211129e285d3881be653ebcba5d4ff7057a8e12dd91adf1e053e7a1b1f70fbaa
++baggage=
++compiler_version=\
++@eNqljk1rwzAMhu/+FboPx/0IIcsug+yDXtaxhtFbcGyRmDnycOwuP3+mHR1sPW0IpMMrPY+g3u/r\
++9vX+ZbfZPrXb5yaNiikrqYcD+sk4guUiSwWskb7HUMFcFm2R80hv5D6IW0Nx5j1F1gwepYbRabQV\
++vLvJzGxDU5DWor4zvgIxuBGFxx4HL46WK2sPIz8p+Bf5TOSxixQiX5bZIhedIfbgImlQkrTRMiA8\
++1jWYk0KG9GxSxMkLazrRKyV+AkX5b8I126FFFVD/4bQ+a8dog0mbFWQ3t2ORX4zWq5StVxez+Rim\
++/v3PL+YnPWqfjg==
++compile_options=\
++@eNq9Ut9vgjAQfuevaPpqCpg544iYCDLHhtAoJm4vBFmBbtAafhi3v34VZdFle9gS1z702rv77vrd\
++53KG8vCVxDQjgG8qylmpSWVV0KgKipo90yLYkoLGbzrsQkmYpQjRoSrfqNdQkkxvhjUAlZTnRClI\
++QtJCibKQJZ0s2+aoq8pio92gH/R7KKOs3qGE1ahe16yqUXcgqz1lTdkxpwO+LJT3ewBFAPG2OZkD\
++NFlgyxSHO7GM5RQgWxaRCUDelUgIiyjVWVjRLQEoZhzVrAxjIhxVivYgOX0PG6i2Rsw3hOWbI27g\
++YcudYdBeHSxaAMOS10VERlAyNWCuVvpFv9xW8Yx7D/s6PGMASoJxEy9vnfF0IXznbDRew3LNu6AN\
++sGUoeRoQSPbMfrLEy++5ahCslT8fByc43zLXdHAIxd7cHxu2Y/uPbaMNn1BybPfh0ro5WH/WxY/C\
++GPL1C4mqcnRW8XM+ADTjcyaX1si/zrT5kbfci/FEiR+VsUDE
++exehash=2b341b860afcb4fb72dbdc2bab75ba57c448767e2deca2c36f2d40694ccc433a
++
+diff --git a/souper-scripts/test-spec.sh b/souper-scripts/test-spec.sh
+new file mode 100755
+index 0000000000000..7c356b565ed20
+--- /dev/null
++++ b/souper-scripts/test-spec.sh
+@@ -0,0 +1,10 @@
++export SPEC=$HOME/cpu2017
++export DIR=$HOME/llvm-project
++export ARGS="--rebuild --input test 600.perlbench_s 602.gcc_s 605.mcf_s 620.omnetpp_s 623.xalancbmk_s 625.x264_s 631.deepsjeng_s 641.leela_s 657.xz_s"
++
++cp $DIR/souper-scripts/default.cfg $SPEC/config
++
++cd $SPEC
++. ./shrc
++
++runcpu $ARGS
+
+From d077f2dbdbe702ba6e3a5db9eaeb97968fadefcd Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Thu, 25 Jun 2020 22:50:25 -0600
+Subject: [PATCH 46/57] foo
+
+---
+ souper-scripts/default.cfg  | 4 ++--
+ souper-scripts/test-spec.sh | 5 +++++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/souper-scripts/default.cfg b/souper-scripts/default.cfg
+index eab5fd958b45a..f0bb3d002ddd4 100644
+--- a/souper-scripts/default.cfg
++++ b/souper-scripts/default.cfg
+@@ -108,7 +108,7 @@ default:
+ %   define  gcc_dir        /SW/compilers/GCC/Linux/x86_64/gcc-6.3.0
+ %endif
+ 
+-%define LLVM /home/regehr/llvm-project/install-default2
++%define LLVM LLVMDIR
+ 
+ # EDIT if needed: the preENV line adds library directories to the runtime
+ #      path.  You can adjust it, or add lines for other environment variables. 
+@@ -191,7 +191,7 @@ default:               # data model applies to all benchmarks
+    fail_build = 1
+ %else
+    intspeed,fpspeed:
+-      EXTRA_OPTIMIZE = -fopenmp -DSPEC_OPENMP
++      EXTRA_OPTIMIZE =
+    fpspeed:
+       #
+       # 627.cam4 needs a big stack; the preENV will apply it to all 
+diff --git a/souper-scripts/test-spec.sh b/souper-scripts/test-spec.sh
+index 7c356b565ed20..dc6a001e1c968 100755
+--- a/souper-scripts/test-spec.sh
++++ b/souper-scripts/test-spec.sh
+@@ -2,6 +2,11 @@ export SPEC=$HOME/cpu2017
+ export DIR=$HOME/llvm-project
+ export ARGS="--rebuild --input test 600.perlbench_s 602.gcc_s 605.mcf_s 620.omnetpp_s 623.xalancbmk_s 625.x264_s 631.deepsjeng_s 641.leela_s 657.xz_s"
+ 
++
++/home/regehr/llvm-project/install-default2
++/home/regehr/llvm-project/install-no-ub2
++/home/regehr/llvm-project/install-no-ub-no-peeps2
++
+ cp $DIR/souper-scripts/default.cfg $SPEC/config
+ 
+ cd $SPEC
+
+From 6cc05f8ffb38dd6d2cbd9a69792a1d132c57afe4 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Fri, 26 Jun 2020 10:32:15 -0600
+Subject: [PATCH 47/57] foo
+
+---
+ souper-scripts/default.cfg  |  1 -
+ souper-scripts/test-spec.sh | 22 +++++++++++++++-------
+ 2 files changed, 15 insertions(+), 8 deletions(-)
+
+diff --git a/souper-scripts/default.cfg b/souper-scripts/default.cfg
+index f0bb3d002ddd4..a04966ed0c90e 100644
+--- a/souper-scripts/default.cfg
++++ b/souper-scripts/default.cfg
+@@ -60,7 +60,6 @@
+ 
+ command_add_redirect = 1
+ flagsurl             = $[top]/config/flags/gcc.xml
+-ignore_errors        = 1
+ iterations           = 1
+ label                = %{label}-m%{bits}
+ line_width           = 1020
+diff --git a/souper-scripts/test-spec.sh b/souper-scripts/test-spec.sh
+index dc6a001e1c968..41839ab49fe76 100755
+--- a/souper-scripts/test-spec.sh
++++ b/souper-scripts/test-spec.sh
+@@ -1,15 +1,23 @@
++set -e
++
+ export SPEC=$HOME/cpu2017
+ export DIR=$HOME/llvm-project
+ export ARGS="--rebuild --input test 600.perlbench_s 602.gcc_s 605.mcf_s 620.omnetpp_s 623.xalancbmk_s 625.x264_s 631.deepsjeng_s 641.leela_s 657.xz_s"
+ 
+-
+-/home/regehr/llvm-project/install-default2
+-/home/regehr/llvm-project/install-no-ub2
+-/home/regehr/llvm-project/install-no-ub-no-peeps2
+-
+-cp $DIR/souper-scripts/default.cfg $SPEC/config
+-
+ cd $SPEC
+ . ./shrc
+ 
++sed -e 's/LLVMDIR/\/home\/regehr\/llvm-project\/install-default2/g' < $DIR/souper-scripts/default.cfg > $SPEC/config/default.cfg
+ runcpu $ARGS
++
++sed -e 's/LLVMDIR/\/home\/regehr\/llvm-project\/install-no-ub2/g' < $DIR/souper-scripts/default.cfg > $SPEC/config/default.cfg
++runcpu $ARGS
++
++sed -e 's/LLVMDIR/\/home\/regehr\/llvm-project\/install-no-ub-no-peeps2/g' < $DIR/souper-scripts/default.cfg > $SPEC/config/default.cfg
++runcpu $ARGS
++
++echo
++echo =======
++echo SUCCESS
++echo =======
++echo
+
+From cbd3118ced344b1c1d7b7023a13abdbc68ba5624 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Fri, 26 Jun 2020 10:41:33 -0600
+Subject: [PATCH 48/57] foo
+
+---
+ souper-scripts/test-disable-peepholes.sh | 6 +++---
+ souper-scripts/test-spec.sh              | 9 ++++++---
+ 2 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/souper-scripts/test-disable-peepholes.sh b/souper-scripts/test-disable-peepholes.sh
+index e543f3d5dff18..bd0a9aefd6cda 100755
+--- a/souper-scripts/test-disable-peepholes.sh
++++ b/souper-scripts/test-disable-peepholes.sh
+@@ -1,9 +1,9 @@
+ set -e
+ 
+-export CLANGBIN=$HOME/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin
++CLANGBIN=$HOME/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin
+ 
+-export DIR=$HOME/llvm-project
+-export CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON ../llvm -DLLVM_ENABLE_PROJECTS="llvm;clang;compiler-rt"'
++DIR=$HOME/llvm-project
++CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON ../llvm -DLLVM_ENABLE_PROJECTS="llvm;clang;compiler-rt"'
+ 
+ rm -rf $DIR/build-*
+ rm -rf $DIR/install-*
+diff --git a/souper-scripts/test-spec.sh b/souper-scripts/test-spec.sh
+index 41839ab49fe76..1336715bd6505 100755
+--- a/souper-scripts/test-spec.sh
++++ b/souper-scripts/test-spec.sh
+@@ -1,8 +1,11 @@
+ set -e
+ 
+-export SPEC=$HOME/cpu2017
+-export DIR=$HOME/llvm-project
+-export ARGS="--rebuild --input test 600.perlbench_s 602.gcc_s 605.mcf_s 620.omnetpp_s 623.xalancbmk_s 625.x264_s 631.deepsjeng_s 641.leela_s 657.xz_s"
++#INPUT=test
++INPUT=ref
++
++SPEC=$HOME/cpu2017
++DIR=$HOME/llvm-project
++ARGS="--rebuild --input $INPUT 600.perlbench_s 602.gcc_s 605.mcf_s 620.omnetpp_s 623.xalancbmk_s 625.x264_s 631.deepsjeng_s 641.leela_s 657.xz_s"
+ 
+ cd $SPEC
+ . ./shrc
+
+From d1e7d46a36afc1c9329cb1cafa399a22ddc7f705 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Fri, 26 Jun 2020 11:03:20 -0600
+Subject: [PATCH 49/57] foo
+
+---
+ souper-scripts/README.txt | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+ create mode 100644 souper-scripts/README.txt
+
+diff --git a/souper-scripts/README.txt b/souper-scripts/README.txt
+new file mode 100644
+index 0000000000000..11b14c0a097a7
+--- /dev/null
++++ b/souper-scripts/README.txt
+@@ -0,0 +1,21 @@
++This directory contains scripts used to qualify a hacked LLVM before
++it is used by Souper.
++
++The LLVM is hacked to disable some unsound optimizations (that
++increase the amount of undefined behavior) and also to disable
++peephole optimizations that Souper competes with, in order to answer
++the research question "can Souper replace InstCombine and some of its
++friends."
++
++The strategy is to build three LLVMs:
++1. all peepholes and unsound optimizations enabled by default
++2. only unsound disabled by default
++3. both peepholes and unsound disabled by default
++
++Then to make sure that each of these can build a working LLVM that
++passes all of its tests, and to make sure that each can build
++benchmarks from SPEC CPU 2017, and those pass all their test.
++
++TODO
++- also test debug builds?
++
+
+From 4b1b717ee6f693da751088588c7f4a33a1ba0ff2 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Tue, 13 Oct 2020 19:09:06 -0600
+Subject: [PATCH 50/57] foo
+
+---
+ souper-scripts/test-disable-peepholes.sh | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/souper-scripts/test-disable-peepholes.sh b/souper-scripts/test-disable-peepholes.sh
+index bd0a9aefd6cda..d9c923ee44a0a 100755
+--- a/souper-scripts/test-disable-peepholes.sh
++++ b/souper-scripts/test-disable-peepholes.sh
+@@ -1,6 +1,6 @@
+-set -e
++set -e -x
+ 
+-CLANGBIN=$HOME/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04/bin
++CLANGBIN=$HOME/clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04/bin
+ 
+ DIR=$HOME/llvm-project
+ CMAKE='cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_ASSERTIONS=ON ../llvm -DLLVM_ENABLE_PROJECTS="llvm;clang;compiler-rt"'
+@@ -95,6 +95,8 @@ ninja check > check.out 2>&1 || true
+ ninja install
+ )
+ 
+-size $DIR/install-default2/bin/clang-11 $DIR/install-no-ub2/bin/clang-11 $DIR/install-no-ub-no-peeps2/bin/clang-11
++size $DIR/install-default2/bin/clang-12 $DIR/install-no-ub2/bin/clang-12 $DIR/install-no-ub-no-peeps2/bin/clang-12
+ 
+ grep 'Failed Tests' build-default2/check.out build-no-ub2/check.out build-no-ub-no-peeps2/check.out
++
++exit 0
+
+From 3afb2791376d1804e21c0bbdf11f822d554cec1c Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Wed, 28 Apr 2021 21:54:43 -0600
+Subject: [PATCH 54/57] foo
+
+---
+ llvm/lib/Transforms/Utils/SimplifyCFG.cpp | 189 +---------------------
+ 1 file changed, 1 insertion(+), 188 deletions(-)
+
+diff --git a/llvm/lib/Transforms/Utils/SimplifyCFG.cpp b/llvm/lib/Transforms/Utils/SimplifyCFG.cpp
+index 511340e10f188..de9560df9785e 100644
+--- a/llvm/lib/Transforms/Utils/SimplifyCFG.cpp
++++ b/llvm/lib/Transforms/Utils/SimplifyCFG.cpp
+@@ -3065,194 +3065,7 @@ bool llvm::FoldBranchToCommonDest(BranchInst *BI, DomTreeUpdater *DTU,
+         continue;
+     }
+ 
+-    LLVM_DEBUG(dbgs() << "FOLDING BRANCH TO COMMON DEST:\n" << *PBI << *BB);
+-    Changed = true;
+-
+-    IRBuilder<> Builder(PBI);
+-
+-    // If we need to invert the condition in the pred block to match, do so now.
+-    if (InvertPredCond) {
+-      Value *NewCond = PBI->getCondition();
+-
+-      if (NewCond->hasOneUse() && isa<CmpInst>(NewCond)) {
+-        CmpInst *CI = cast<CmpInst>(NewCond);
+-        CI->setPredicate(CI->getInversePredicate());
+-      } else {
+-        NewCond =
+-            Builder.CreateNot(NewCond, PBI->getCondition()->getName() + ".not");
+-      }
+-
+-      PBI->setCondition(NewCond);
+-      PBI->swapSuccessors();
+-    }
+-
+-    // If we have bonus instructions, clone them into the predecessor block.
+-    // Note that there may be multiple predecessor blocks, so we cannot move
+-    // bonus instructions to a predecessor block.
+-    ValueToValueMapTy VMap; // maps original values to cloned values
+-    // We already make sure Cond is the last instruction before BI. Therefore,
+-    // all instructions before Cond other than DbgInfoIntrinsic are bonus
+-    // instructions.
+-    for (auto BonusInst = BB->begin(); Cond != &*BonusInst; ++BonusInst) {
+-      if (isa<DbgInfoIntrinsic>(BonusInst))
+-        continue;
+-      Instruction *NewBonusInst = BonusInst->clone();
+-
+-      // When we fold the bonus instructions we want to make sure we
+-      // reset their debug locations in order to avoid stepping on dead
+-      // code caused by folding dead branches.
+-      NewBonusInst->setDebugLoc(DebugLoc());
+-
+-      RemapInstruction(NewBonusInst, VMap,
+-                       RF_NoModuleLevelChanges | RF_IgnoreMissingLocals);
+-      VMap[&*BonusInst] = NewBonusInst;
+-
+-      // If we moved a load, we cannot any longer claim any knowledge about
+-      // its potential value. The previous information might have been valid
+-      // only given the branch precondition.
+-      // For an analogous reason, we must also drop all the metadata whose
+-      // semantics we don't understand.
+-      NewBonusInst->dropUnknownNonDebugMetadata();
+-
+-      PredBlock->getInstList().insert(PBI->getIterator(), NewBonusInst);
+-      NewBonusInst->takeName(&*BonusInst);
+-      BonusInst->setName(BonusInst->getName() + ".old");
+-    }
+-
+-    // Clone Cond into the predecessor basic block, and or/and the
+-    // two conditions together.
+-    Instruction *CondInPred = Cond->clone();
+-
+-    // Reset the condition debug location to avoid jumping on dead code
+-    // as the result of folding dead branches.
+-    CondInPred->setDebugLoc(DebugLoc());
+-
+-    RemapInstruction(CondInPred, VMap,
+-                     RF_NoModuleLevelChanges | RF_IgnoreMissingLocals);
+-    PredBlock->getInstList().insert(PBI->getIterator(), CondInPred);
+-    CondInPred->takeName(Cond);
+-    Cond->setName(CondInPred->getName() + ".old");
+-
+-    if (BI->isConditional()) {
+-      Instruction *NewCond = cast<Instruction>(
+-          Builder.CreateBinOp(Opc,
+-                              Builder.CreateFreeze(PBI->getCondition()),
+-                              Builder.CreateFreeze(CondInPred), "or.cond"));
+-      PBI->setCondition(NewCond);
+-
+-      uint64_t PredTrueWeight, PredFalseWeight, SuccTrueWeight, SuccFalseWeight;
+-      bool HasWeights =
+-          extractPredSuccWeights(PBI, BI, PredTrueWeight, PredFalseWeight,
+-                                 SuccTrueWeight, SuccFalseWeight);
+-      SmallVector<uint64_t, 8> NewWeights;
+-
+-      if (PBI->getSuccessor(0) == BB) {
+-        if (HasWeights) {
+-          // PBI: br i1 %x, BB, FalseDest
+-          // BI:  br i1 %y, TrueDest, FalseDest
+-          // TrueWeight is TrueWeight for PBI * TrueWeight for BI.
+-          NewWeights.push_back(PredTrueWeight * SuccTrueWeight);
+-          // FalseWeight is FalseWeight for PBI * TotalWeight for BI +
+-          //               TrueWeight for PBI * FalseWeight for BI.
+-          // We assume that total weights of a BranchInst can fit into 32 bits.
+-          // Therefore, we will not have overflow using 64-bit arithmetic.
+-          NewWeights.push_back(PredFalseWeight *
+-                                   (SuccFalseWeight + SuccTrueWeight) +
+-                               PredTrueWeight * SuccFalseWeight);
+-        }
+-        AddPredecessorToBlock(TrueDest, PredBlock, BB, MSSAU);
+-        PBI->setSuccessor(0, TrueDest);
+-      }
+-      if (PBI->getSuccessor(1) == BB) {
+-        if (HasWeights) {
+-          // PBI: br i1 %x, TrueDest, BB
+-          // BI:  br i1 %y, TrueDest, FalseDest
+-          // TrueWeight is TrueWeight for PBI * TotalWeight for BI +
+-          //              FalseWeight for PBI * TrueWeight for BI.
+-          NewWeights.push_back(PredTrueWeight *
+-                                   (SuccFalseWeight + SuccTrueWeight) +
+-                               PredFalseWeight * SuccTrueWeight);
+-          // FalseWeight is FalseWeight for PBI * FalseWeight for BI.
+-          NewWeights.push_back(PredFalseWeight * SuccFalseWeight);
+-        }
+-        AddPredecessorToBlock(FalseDest, PredBlock, BB, MSSAU);
+-        PBI->setSuccessor(1, FalseDest);
+-      }
+-      if (NewWeights.size() == 2) {
+-        // Halve the weights if any of them cannot fit in an uint32_t
+-        FitWeights(NewWeights);
+-
+-        SmallVector<uint32_t, 8> MDWeights(NewWeights.begin(),
+-                                           NewWeights.end());
+-        setBranchWeights(PBI, MDWeights[0], MDWeights[1]);
+-      } else
+-        PBI->setMetadata(LLVMContext::MD_prof, nullptr);
+-    } else {
+-      // Update PHI nodes in the common successors.
+-      for (unsigned i = 0, e = PHIs.size(); i != e; ++i) {
+-        ConstantInt *PBI_C = cast<ConstantInt>(
+-            PHIs[i]->getIncomingValueForBlock(PBI->getParent()));
+-        assert(PBI_C->getType()->isIntegerTy(1));
+-        Instruction *MergedCond = nullptr;
+-        if (PBI->getSuccessor(0) == TrueDest) {
+-          // Create (PBI_Cond and PBI_C) or (!PBI_Cond and BI_Value)
+-          // PBI_C is true: PBI_Cond or (!PBI_Cond and BI_Value)
+-          //       is false: !PBI_Cond and BI_Value
+-          Instruction *NotCond = cast<Instruction>(
+-              Builder.CreateNot(PBI->getCondition(), "not.cond"));
+-          MergedCond = cast<Instruction>(
+-               Builder.CreateBinOp(Instruction::And, NotCond, CondInPred,
+-                                   "and.cond"));
+-          if (PBI_C->isOne())
+-            MergedCond = cast<Instruction>(Builder.CreateBinOp(
+-                Instruction::Or, PBI->getCondition(), MergedCond, "or.cond"));
+-        } else {
+-          // Create (PBI_Cond and BI_Value) or (!PBI_Cond and PBI_C)
+-          // PBI_C is true: (PBI_Cond and BI_Value) or (!PBI_Cond)
+-          //       is false: PBI_Cond and BI_Value
+-          MergedCond = cast<Instruction>(Builder.CreateBinOp(
+-              Instruction::And, PBI->getCondition(), CondInPred, "and.cond"));
+-          if (PBI_C->isOne()) {
+-            Instruction *NotCond = cast<Instruction>(
+-                Builder.CreateNot(PBI->getCondition(), "not.cond"));
+-            MergedCond = cast<Instruction>(Builder.CreateBinOp(
+-                Instruction::Or, NotCond, MergedCond, "or.cond"));
+-          }
+-        }
+-        // Update PHI Node.
+-	PHIs[i]->setIncomingValueForBlock(PBI->getParent(), MergedCond);
+-      }
+-
+-      // PBI is changed to branch to TrueDest below. Remove itself from
+-      // potential phis from all other successors.
+-      if (MSSAU)
+-        MSSAU->changeCondBranchToUnconditionalTo(PBI, TrueDest);
+-
+-      // Change PBI from Conditional to Unconditional.
+-      BranchInst *New_PBI = BranchInst::Create(TrueDest, PBI);
+-      EraseTerminatorAndDCECond(PBI, MSSAU);
+-      PBI = New_PBI;
+-    }
+-
+-    // If BI was a loop latch, it may have had associated loop metadata.
+-    // We need to copy it to the new latch, that is, PBI.
+-    if (MDNode *LoopMD = BI->getMetadata(LLVMContext::MD_loop))
+-      PBI->setMetadata(LLVMContext::MD_loop, LoopMD);
+-
+-    // TODO: If BB is reachable from all paths through PredBlock, then we
+-    // could replace PBI's branch probabilities with BI's.
+-
+-    // Copy any debug value intrinsics into the end of PredBlock.
+-    for (Instruction &I : *BB) {
+-      if (isa<DbgInfoIntrinsic>(I)) {
+-        Instruction *NewI = I.clone();
+-        RemapInstruction(NewI, VMap,
+-                         RF_NoModuleLevelChanges | RF_IgnoreMissingLocals);
+-        NewI->insertBefore(PBI);
+-      }
+-    }
+-
+-    return Changed;
++    return PerformBranchToCommonDestFolding(BI, PBI, DTU, MSSAU);
+   }
+   return Changed;
+ }
+
+From 4a1342b521ba88f208f7feb9d5a3313af9fd2978 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Tue, 25 May 2021 15:12:35 -0600
+Subject: [PATCH 55/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 34 +++++++++++++++++------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 5b3d3342b2f40..7fa280ee249a3 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -203,6 +203,9 @@ static Value *handleOtherCmpSelSimplifications(Value *TCmp, Value *FCmp,
+                                                Value *Cond,
+                                                const SimplifyQuery &Q,
+                                                unsigned MaxRecurse) {
++  if (DisablePeepholes)
++    return nullptr;
++
+   // If the false value simplified to false, then the result of the compare
+   // is equal to "Cond && TCmp".  This also catches the case when the false
+   // value simplified to false and the true value to true, returning "Cond".
+@@ -294,6 +297,9 @@ static Value *expandCommutativeBinOp(Instruction::BinaryOps Opcode,
+                                      Instruction::BinaryOps OpcodeToExpand,
+                                      const SimplifyQuery &Q,
+                                      unsigned MaxRecurse) {
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Recursion is always used, so bail out at once if we already hit the limit.
+   if (!MaxRecurse--)
+     return nullptr;
+@@ -636,9 +642,6 @@ static Constant *foldOrCommuteConstant(Instruction::BinaryOps Opcode,
+     if (auto *CRHS = dyn_cast<Constant>(Op1))
+       return ConstantFoldBinaryOpOperands(Opcode, CLHS, CRHS, Q.DL);
+ 
+-    if (DisablePeepholes)
+-      return nullptr;
+-
+     // Canonicalize the constant to the RHS if this is a commutative operation.
+     if (Instruction::isCommutative(Opcode))
+       std::swap(Op0, Op1);
+@@ -978,6 +981,7 @@ static Value *simplifyDivRem(Value *Op0, Value *Op1, bool IsDiv,
+                              const SimplifyQuery &Q) {
+   if (DisablePeepholes)
+     return nullptr;
++
+   Type *Ty = Op0->getType();
+ 
+   // X / undef -> poison
+@@ -1796,6 +1800,9 @@ static Value *simplifyAndOfICmpsWithAdd(ICmpInst *Op0, ICmpInst *Op1,
+ /// Try to eliminate compares with signed or unsigned min/max constants.
+ static Value *simplifyAndOrOfICmpsWithLimitConst(ICmpInst *Cmp0, ICmpInst *Cmp1,
+                                                  bool IsAnd) {
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Canonicalize an equality compare as Cmp0.
+   if (Cmp1->isEquality())
+     std::swap(Cmp0, Cmp1);
+@@ -2052,9 +2059,6 @@ static Value *simplifyAndOrOfCmps(const SimplifyQuery &Q,
+ ///   %Op1 = extractvalue { i4, i1 } %Agg, 1
+ static bool omitCheckForZeroBeforeMulWithOverflowInternal(Value *Op1,
+                                                           Value *X) {
+-  if (DisablePeepholes)
+-    return false;
+-
+   auto *Extract = dyn_cast<ExtractValueInst>(Op1);
+   // We should only be extracting the overflow bit.
+   if (!Extract || !Extract->getIndices().equals(1))
+@@ -2131,6 +2135,9 @@ static Value *omitCheckForZeroBeforeInvertedMulWithOverflow(Value *Op0,
+ /// source value and inverted constant (identity: C - X -> ~(X + ~C)).
+ static Value *simplifyLogicOfAddSub(Value *Op0, Value *Op1,
+                                     Instruction::BinaryOps Opcode) {
++  if (DisablePeepholes)
++    return false;
++
+   assert(Op0->getType() == Op1->getType() && "Mismatched binop types");
+   assert(BinaryOperator::isBitwiseLogicOp(Opcode) && "Expected logic op");
+   Value *X;
+@@ -2505,12 +2512,12 @@ Value *llvm::SimplifyOrInst(Value *Op0, Value *Op1, const SimplifyQuery &Q) {
+ /// If not, this returns null.
+ static Value *SimplifyXorInst(Value *Op0, Value *Op1, const SimplifyQuery &Q,
+                               unsigned MaxRecurse) {
+-  if (DisablePeepholes)
+-    return nullptr;
+-
+   if (Constant *C = foldOrCommuteConstant(Instruction::Xor, Op0, Op1, Q))
+     return C;
+ 
++  if (DisablePeepholes)
++    return nullptr;
++
+   // A ^ undef -> undef
+   if (Q.isUndefValue(Op1))
+     return Op1;
+@@ -2994,6 +3001,9 @@ static Value *simplifyICmpWithConstant(CmpInst::Predicate Pred, Value *LHS,
+ static Value *simplifyICmpWithBinOpOnLHS(
+     CmpInst::Predicate Pred, BinaryOperator *LBO, Value *RHS,
+     const SimplifyQuery &Q, unsigned MaxRecurse) {
++  if (DisablePeepholes)
++    return nullptr;
++
+   Type *ITy = GetCompareTy(RHS); // The return type.
+ 
+   Value *Y = nullptr;
+@@ -3513,6 +3523,9 @@ static Value *simplifyICmpWithMinMax(CmpInst::Predicate Pred, Value *LHS,
+ static Value *simplifyICmpWithDominatingAssume(CmpInst::Predicate Predicate,
+                                                Value *LHS, Value *RHS,
+                                                const SimplifyQuery &Q) {
++  if (DisablePeepholes)
++    return nullptr;
++
+   // Gracefully handle instructions that have not been inserted yet.
+   if (!Q.AC || !Q.CxtI || !Q.CxtI->getParent())
+     return nullptr;
+@@ -5667,6 +5680,9 @@ static ICmpInst::Predicate getMaxMinPredicate(Intrinsic::ID IID) {
+ /// operand that is another min/max intrinsic with shared operand(s). The caller
+ /// is expected to swap the operand arguments to handle commutation.
+ static Value *foldMinMaxSharedOp(Intrinsic::ID IID, Value *Op0, Value *Op1) {
++  if (DisablePeepholes)
++    return nullptr;
++
+   Value *X, *Y;
+   if (!match(Op0, m_MaxOrMin(m_Value(X), m_Value(Y))))
+     return nullptr;
+
+From 3244cae1eca98ad8411c2b9918c767f2f3971363 Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Tue, 25 May 2021 16:07:43 -0600
+Subject: [PATCH 56/57] workin
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 7fa280ee249a3..50c52e9902ef4 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -2136,7 +2136,7 @@ static Value *omitCheckForZeroBeforeInvertedMulWithOverflow(Value *Op0,
+ static Value *simplifyLogicOfAddSub(Value *Op0, Value *Op1,
+                                     Instruction::BinaryOps Opcode) {
+   if (DisablePeepholes)
+-    return false;
++    return nullptr;
+ 
+   assert(Op0->getType() == Op1->getType() && "Mismatched binop types");
+   assert(BinaryOperator::isBitwiseLogicOp(Opcode) && "Expected logic op");
+
+From aea4dff581c3bd2eef95f32148fb58a77d271ade Mon Sep 17 00:00:00 2001
+From: John Regehr <regehr@cs.utah.edu>
+Date: Mon, 7 Jun 2021 12:56:05 -0600
+Subject: [PATCH 57/57] foo
+
+---
+ llvm/lib/Analysis/InstructionSimplify.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/llvm/lib/Analysis/InstructionSimplify.cpp b/llvm/lib/Analysis/InstructionSimplify.cpp
+index 50c52e9902ef4..fb20360d7639b 100644
+--- a/llvm/lib/Analysis/InstructionSimplify.cpp
++++ b/llvm/lib/Analysis/InstructionSimplify.cpp
+@@ -3551,9 +3551,6 @@ static Value *simplifyICmpWithDominatingAssume(CmpInst::Predicate Predicate,
+ /// If not, this returns null.
+ static Value *SimplifyICmpInst(unsigned Predicate, Value *LHS, Value *RHS,
+                                const SimplifyQuery &Q, unsigned MaxRecurse) {
+-  if (DisablePeepholes)
+-    return nullptr;
+-
+   CmpInst::Predicate Pred = (CmpInst::Predicate)Predicate;
+   assert(CmpInst::isIntPredicate(Pred) && "Not an integer compare!");
+ 
+@@ -3567,6 +3564,9 @@ static Value *SimplifyICmpInst(unsigned Predicate, Value *LHS, Value *RHS,
+   }
+   assert(!isa<UndefValue>(LHS) && "Unexpected icmp undef,%X");
+ 
++  if (DisablePeepholes)
++    return nullptr;
++
+   Type *ITy = GetCompareTy(LHS); // The return type.
+ 
+   // For EQ and NE, we can always pick a value for the undef to make the

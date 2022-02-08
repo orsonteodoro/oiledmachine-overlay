@@ -54,7 +54,15 @@
 	<use>
 		<flag name="bolt">Build the Binary Optimization and Layout Tool
 			to improve CPU caching and branch prediction using execution
-			sampling data used to optimize code layout</flag>
+			sampling data used to optimize code layout.  (EXPERIMENTAL)</flag>
+		<flag name="souper">Apply the disable-peepholes patch required by Souper
+			superoptimizer and pulls in the Souper package as a PDEPEND.
+			The Souper optimization pass can further reduce code size by
+			~4.4% or 3 MB in some cases with a tradeoff of a 2% runtime
+			penalty.  This will hard disable the built-in compiler peepholes
+			optimization and overlapping optimizations that Souper
+			provides in addition to optimizations that increase undefined
+			behavior.  (EXPERIMENTAL)</flag>
 		<flag name="doc">Build and install the HTML documentation and regenerate
 			the man pages</flag>
 		<flag name="exegesis">Enable performance counter support for
