@@ -246,13 +246,21 @@ ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=ove
 ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=node.js&search_type=all"
 ewarn
 	fi
+	if [[ "${NPM_UTILS_ALLOW_AUDIT}" != "0" ]] ; then
+eerror
+eerror "NPM_UTILS_ALLOW_AUDIT=0 needs to be added as a per-package envvar"
+eerror
+		die
+	fi
 }
 
 _patch() {
 	eapply \
-"${FILESDIR}/gdevelop-5.0.0_beta97-use-emscripten-envvar-for-webidl_binder_py.patch"
+"${FILESDIR}/${PN}-5.0.0_beta97-use-emscripten-envvar-for-webidl_binder_py.patch"
 	eapply \
-"${FILESDIR}/gdevelop-5.0.0_beta108-unix-make.patch"
+"${FILESDIR}/${PN}-5.0.0_beta108-unix-make.patch"
+	eapply \
+"${FILESDIR}/${PN}-5.0.127-fix-cmake-cxx-tests.patch"
 }
 
 src_unpack() {
@@ -276,10 +284,11 @@ src_unpack() {
 			"${EMBUILD_DIR}/emscripten.config" || die
 #		export EMMAKEN_CFLAGS='-std=gnu++11'
 #		export EMCC_CFLAGS='-std=gnu++11'
-#		export CC=emcc
-#		export CXX=em++
-		export CC=gcc
-		export CXX=g++
+		export CC=emcc
+		export CXX=em++
+		strip-unsupported-flags
+#		export CC=gcc
+#		export CXX=g++
 		export NODE_VERSION=${ACTIVE_VERSION}
 		export EM_CACHE="${T}/emscripten/cache"
 		emconfig_path=$(cat ${EM_CONFIG})
@@ -287,6 +296,10 @@ src_unpack() {
 			-e "${emconfig_path}\nprint (BINARYEN_ROOT)" \
 			| python3)"/lib"
 		export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
+		einfo "CC=${CC}"
+		einfo "CXX=${CXX}"
+		einfo "CFLAGS=${CFLAGS}"
+		einfo "CXXFLAGS=${CXXFLAGS}"
 		einfo "LDFLAGS=${LDFLAGS}"
 		einfo "NODE_VERSION=${NODE_VERSION}"
 
@@ -329,6 +342,8 @@ src_prepare() {
 }
 
 src_configure() {
+	export MAKEOPTS="-j1"
+	sed -i -e "s|-j 4||g" "GDevelop.js/Gruntfile.js" || die
 	if use native ; then
 		local mycmakeargs=(
 			-DBUILD_GDCPP=$(usex native)
@@ -353,7 +368,7 @@ electron-app_src_compile() {
 		einfo "Compiling GDevelop.js"
 		einfo
 # In https://github.com/4ian/GDevelop/blob/v5.0.0-beta98/GDevelop.js/Gruntfile.js#L88
-		npm run build -- --dev --ninja || die
+		npm run build -- --force --dev --ninja || die
 		if [[ ! \
 -f "${S_BAK}/Binaries/embuild/GDevelop.js/libGD.wasm" \
 		]] ; then
