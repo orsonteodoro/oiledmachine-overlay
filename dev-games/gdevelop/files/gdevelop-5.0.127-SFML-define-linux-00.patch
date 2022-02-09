@@ -1,0 +1,12 @@
+File contains DOS (CFLF) line endings
+diff -urp GDevelop-5.0.127.orig/Core/CMakeLists.txt GDevelop-5.0.127/Core/CMakeLists.txt
+--- GDevelop-5.0.127.orig/Core/CMakeLists.txt	2022-02-01 04:15:41.000000000 -0800
++++ GDevelop-5.0.127/Core/CMakeLists.txt	2022-02-08 22:38:32.967561896 -0800
+@@ -37,6 +37,7 @@ ELSE()
+     add_definitions( -DMACOS )
+     ELSE()
+ 	add_definitions( -DLINUX )
++	add_definitions( -D__linux__ )
+ 	ENDIF()
+ 	add_definitions( -DGD_API= )
+ 	add_definitions( -DGD_CORE_API= )

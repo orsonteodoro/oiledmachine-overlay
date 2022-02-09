@@ -1,0 +1,22 @@
+File contains Unix (LF) line endings.
+diff -urp GDevelop-5.0.127.orig/GDJS/CMakeLists.txt GDevelop-5.0.127/GDJS/CMakeLists.txt
+--- GDevelop-5.0.127.orig/GDJS/CMakeLists.txt	2022-02-01 04:15:41.000000000 -0800
++++ GDevelop-5.0.127/GDJS/CMakeLists.txt	2022-02-08 22:38:34.679629644 -0800
+@@ -29,6 +29,7 @@ ELSE()
+     add_definitions( -DMACOS )
+     ELSE()
+ 	add_definitions( -DLINUX )
++	add_definitions( -D__linux__ )
+ 	ENDIF()
+ 	add_definitions( -DGD_API= )
+ 	add_definitions( -DGD_CORE_API= )
+--- a/GDevelop.js/CMakeLists.txt.orig	2022-02-01 04:15:41.000000000 -0800
++++ b/GDevelop.js/CMakeLists.txt	2022-02-08 22:12:22.343787225 -0800
+@@ -45,6 +45,7 @@ ENDIF(CMAKE_BUILD_TYPE MATCHES DEBUG)
+ 
+ add_definitions( -Dlinux )
+ add_definitions( -DLINUX )
++add_definitions( -D__linux__ )
+ add_definitions( -DGD_API= )
+ add_definitions( -DGD_CORE_API= )
+ add_definitions( -DGD_EXTENSION_API= )

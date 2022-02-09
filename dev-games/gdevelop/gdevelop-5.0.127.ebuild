@@ -261,6 +261,10 @@ _patch() {
 "${FILESDIR}/${PN}-5.0.0_beta108-unix-make.patch"
 	eapply \
 "${FILESDIR}/${PN}-5.0.127-fix-cmake-cxx-tests.patch"
+	eapply --binary \
+"${FILESDIR}/${PN}-5.0.127-SFML-define-linux-00.patch"
+	eapply \
+"${FILESDIR}/${PN}-5.0.127-SFML-define-linux-01.patch"
 }
 
 src_unpack() {
