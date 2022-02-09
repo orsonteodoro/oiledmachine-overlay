@@ -1,17 +1,31 @@
-File contains Unix (LF) line endings.
-diff -urp GDevelop-5.0.127.orig/GDJS/CMakeLists.txt GDevelop-5.0.127/GDJS/CMakeLists.txt
---- GDevelop-5.0.127.orig/GDJS/CMakeLists.txt	2022-02-01 04:15:41.000000000 -0800
-+++ GDevelop-5.0.127/GDJS/CMakeLists.txt	2022-02-08 22:38:34.679629644 -0800
-@@ -29,6 +29,7 @@ ELSE()
-     add_definitions( -DMACOS )
-     ELSE()
- 	add_definitions( -DLINUX )
-+	add_definitions( -D__linux__ )
+Contains Unix (LF) line endings.
+diff -urp GDevelop-5.0.127.orig/Extensions/CMakeUtils.txt GDevelop-5.0.127/Extensions/CMakeUtils.txt
+--- GDevelop-5.0.127.orig/Extensions/CMakeUtils.txt	2022-02-01 04:15:41.000000000 -0800
++++ GDevelop-5.0.127/Extensions/CMakeUtils.txt	2022-02-09 01:23:27.734351738 -0800
+@@ -23,12 +23,14 @@ function(gd_add_extension_definitions ta
+ 	#Defne used in GD to identify the environment
+ 	IF (EMSCRIPTEN)
+ 		add_definitions( -DEMSCRIPTEN )
+-	ELSEIF(WIN32)
++	ENDIF(EMSCRIPTEN)
++	IF(WIN32)
+ 		add_definitions( -DWINDOWS )
+-    ELSEIF(APPLE)
+-    	add_definitions( -DMACOS )
+-    ELSE()
++	ELSEIF(APPLE)
++		add_definitions( -DMACOS )
++	ELSE()
+ 		add_definitions( -DLINUX )
++		add_definitions( -D__linux__ )
  	ENDIF()
- 	add_definitions( -DGD_API= )
- 	add_definitions( -DGD_CORE_API= )
---- a/GDevelop.js/CMakeLists.txt.orig	2022-02-01 04:15:41.000000000 -0800
-+++ b/GDevelop.js/CMakeLists.txt	2022-02-08 22:12:22.343787225 -0800
+ 
+ 	IF(WIN32) #Windows specific defines
+Only in GDevelop-5.0.127/Extensions: CMakeUtils.txt.orig
+Only in GDevelop-5.0.127/Extensions: CMakeUtils.txt.rej
+diff -urp GDevelop-5.0.127.orig/GDevelop.js/CMakeLists.txt GDevelop-5.0.127/GDevelop.js/CMakeLists.txt
+--- GDevelop-5.0.127.orig/GDevelop.js/CMakeLists.txt	2022-02-01 04:15:41.000000000 -0800
++++ GDevelop-5.0.127/GDevelop.js/CMakeLists.txt	2022-02-09 01:22:21.805776672 -0800
 @@ -45,6 +45,7 @@ ENDIF(CMAKE_BUILD_TYPE MATCHES DEBUG)
  
  add_definitions( -Dlinux )
@@ -20,3 +34,14 @@ diff -urp GDevelop-5.0.127.orig/GDJS/CMakeLists.txt GDevelop-5.0.127/GDJS/CMakeL
  add_definitions( -DGD_API= )
  add_definitions( -DGD_CORE_API= )
  add_definitions( -DGD_EXTENSION_API= )
+diff -urp GDevelop-5.0.127.orig/GDJS/CMakeLists.txt GDevelop-5.0.127/GDJS/CMakeLists.txt
+--- GDevelop-5.0.127.orig/GDJS/CMakeLists.txt	2022-02-01 04:15:41.000000000 -0800
++++ GDevelop-5.0.127/GDJS/CMakeLists.txt	2022-02-09 01:22:21.804776634 -0800
+@@ -29,6 +29,7 @@ ELSE()
+     add_definitions( -DMACOS )
+     ELSE()
+ 	add_definitions( -DLINUX )
++	add_definitions( -D__linux__ )
+ 	ENDIF()
+ 	add_definitions( -DGD_API= )
+ 	add_definitions( -DGD_CORE_API= )
