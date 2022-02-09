@@ -63,8 +63,8 @@ RDEPEND="${RDEPEND}
 	!sys-devel/llvm:0"
 PDEPEND="sys-devel/llvm-common
 	binutils-plugin? ( >=sys-devel/llvmgold-${SLOT} )
-	souper? ( sys-devel/souper[llvm-${SLOT}] )
 "
+#	souper? ( sys-devel/souper[llvm-${SLOT}] )
 PATCHES=(
 	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"
 )
@@ -184,7 +184,7 @@ src_prepare() {
 
 	llvm.org_src_prepare
 
-	if use disable-peepholes ; then
+	if use souper ; then
 		eapply "${FILESDIR}/disable-peepholes-v07.patch"
 	fi
 }
