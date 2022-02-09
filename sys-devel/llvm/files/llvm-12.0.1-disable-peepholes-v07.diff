@@ -18,6 +18,9 @@ Additional notes:
 Some hunks related to lit were dropped or already applied upstream.
 The testing scripts is not updated to be dev environment agnostic.
 
+The diff patch was used to drop extraneous patches/hunks in the generated .patch version.
+This is to avoid possible duplicate hunks.
+
 diff -urpN work.orig/llvm/include/llvm/Transforms/Scalar/DCE.h work/llvm/include/llvm/Transforms/Scalar/DCE.h
 --- work.orig/llvm/include/llvm/Transforms/Scalar/DCE.h	2021-06-28 09:23:38.000000000 -0700
 +++ work/llvm/include/llvm/Transforms/Scalar/DCE.h	2022-02-09 07:20:42.581964828 -0800

@@ -19,6 +19,9 @@ Some hunks related to lit were dropped or already applied upstream.
 Some hunks were dropped related to omitCheck* in work/llvm/lib/Analysis/InstructionSimplify.cpp.
 The testing scripts is not updated to be version and dev environment agnostic.
 
+The diff patch was used to drop extraneous patches/hunks in the generated .patch version.
+This is to avoid possible duplicate hunks.
+
 diff -x '*.orig' -x '*.rej' -urpN work.orig/llvm/include/llvm/Transforms/Scalar/DCE.h work/llvm/include/llvm/Transforms/Scalar/DCE.h
 --- work.orig/llvm/include/llvm/Transforms/Scalar/DCE.h	2022-02-09 13:36:17.582771665 -0800
 +++ work/llvm/include/llvm/Transforms/Scalar/DCE.h	2022-02-09 13:38:21.914683322 -0800
