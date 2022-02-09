@@ -194,7 +194,8 @@ src_prepare() {
 	llvm.org_src_prepare
 
 	if use souper ; then
-		eapply "${FILESDIR}/disable-peepholes-v07.patch"
+		cd "${WORKDIR}" || die
+		eapply "${FILESDIR}/llvm-12.0.1-disable-peepholes-v07.diff"
 	fi
 }
 

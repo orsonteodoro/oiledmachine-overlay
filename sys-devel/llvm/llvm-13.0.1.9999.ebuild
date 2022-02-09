@@ -184,7 +184,9 @@ src_prepare() {
 	llvm.org_src_prepare
 
 	if use souper ; then
-		eapply "${FILESDIR}/disable-peepholes-v07.patch"
+		ewarn "The forward port of disable-peepholes-v07.diff is in testing."
+		cd "${WORKDIR}" || die
+		eapply "${FILESDIR}/llvm-13.0.0-disable-peepholes-v07.diff"
 	fi
 }
 
