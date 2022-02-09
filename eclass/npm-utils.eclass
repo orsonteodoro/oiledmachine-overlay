@@ -75,7 +75,7 @@ npm_check_npm_error()
 ewarn "Detected some potential download failure(s).  Logs can be found in"
 ewarn "${HOME}/npm/_logs .  Retry if the build fails."
 	fi
-	if grep -q -r -e "ERR_SOCKET_TIMEOUT" "${HOME}/npm/_logs" ; then
+	if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|FETCH_ERROR)" "${HOME}/npm/_logs" ; then
 eerror "Detected some download failure(s).  Logs can be found in"
 eerror "${HOME}/npm/_logs .  Re-emerge the package."
 		die
