@@ -342,8 +342,6 @@ src_prepare() {
 }
 
 src_configure() {
-	export MAKEOPTS="-j1"
-	sed -i -e "s|-j 4||g" "GDevelop.js/Gruntfile.js" || die
 	if use native ; then
 		local mycmakeargs=(
 			-DBUILD_GDCPP=$(usex native)
@@ -368,7 +366,7 @@ electron-app_src_compile() {
 		einfo "Compiling GDevelop.js"
 		einfo
 # In https://github.com/4ian/GDevelop/blob/v5.0.0-beta98/GDevelop.js/Gruntfile.js#L88
-		npm run build -- --force --dev --ninja || die
+		npm run build -- --force --dev || die
 		if [[ ! \
 -f "${S_BAK}/Binaries/embuild/GDevelop.js/libGD.wasm" \
 		]] ; then
