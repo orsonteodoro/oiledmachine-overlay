@@ -9,10 +9,10 @@ The header license of many of these files:
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 The original .diff patch can be obtained from:
-https://github.com/regehr/llvm-project/compare/757752f568db698e3c0c35065c008489f2319a7b..disable-peepholes-v03.diff
+https://github.com/regehr/llvm-project/compare/757752f568db698e3c0c35065c008489f2319a7b..disable-peepholes-v07.diff
 
 For details see:
-https://github.com/regehr/llvm-project/compare/757752f568db698e3c0c35065c008489f2319a7b..disable-peepholes-v03
+https://github.com/regehr/llvm-project/compare/757752f568db698e3c0c35065c008489f2319a7b..disable-peepholes-v07
 
 Additional notes:
 Some hunks related to lit were dropped or already applied upstream.
