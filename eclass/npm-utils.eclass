@@ -72,9 +72,13 @@ CHROMIUM_STABLE_V="97"
 npm_check_npm_error()
 {
 	if find "${HOME}/npm/_logs/"* 2>/dev/null 1>/dev/null ; then
-		ewarn \
-"Detected potential download failure(s).  Retry if build fails.  Logs can be found in \
-${HOME}/npm/_logs"
+ewarn "Detected a potential download failure(s).  Retry if build fails.  Logs"
+ewarn "can be found in ${HOME}/npm/_logs ."
+	fi
+	if grep -q -r -e "ERR_SOCKET_TIMEOUT" "${HOME}/npm/_logs" ; then
+eerror "Detected a download failure(s).  Logs can be found in"
+eerror "${HOME}/npm/_logs .  Re-emerge the package."
+		die
 	fi
 }
 
