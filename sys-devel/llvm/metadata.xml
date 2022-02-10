@@ -52,6 +52,7 @@
 	https://github.com/llvm/llvm-project/blob/main/bolt/docs/OptimizingClang.md
 	</longdescription>
 	<use>
+		<flag name="binutils-plugin">Build the binutils plugin</flag>
 		<flag name="bolt">Build the Binary Optimization and Layout Tool
 			to improve CPU caching and branch prediction using execution
 			sampling data used to optimize code layout.  (EXPERIMENTAL)</flag>
