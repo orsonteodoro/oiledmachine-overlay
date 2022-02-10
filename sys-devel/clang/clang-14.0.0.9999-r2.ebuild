@@ -78,8 +78,8 @@ llvm.org_set_globals
 # multilib clang* libraries (not runtime, not wrappers).
 
 pkg_setup() {
-	einfo "This is the \"stable mod\" ebuild."
-	einfo "For the \"experimental mod\" ebuild with BOLT see =${PN}-${PV}-r1 instead."
+	einfo "This is the stable modded ebuild."
+	einfo "For the experimental modded ebuild with BOLT see =${PN}-${PV}-r1 instead."
 	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
 	python-single-r1_pkg_setup
 	if tc-is-gcc ; then

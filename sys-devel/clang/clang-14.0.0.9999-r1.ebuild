@@ -90,8 +90,8 @@ llvm.org_set_globals
 # multilib clang* libraries (not runtime, not wrappers).
 
 pkg_setup() {
-	ewarn "This is the \"experimental mod\" ebuild."
-	ewarn "For the \"stable mod\" ebuild use the ${PN}-${PV}-r2 ebuild instead."
+	ewarn "This is the experimental modded ebuild."
+	ewarn "For the stable modded ebuild use the ${PN}-${PV}-r2 instead."
 	ewarn "It is a Work In Progress (WIP) and incomplete."
 	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
 	python-single-r1_pkg_setup

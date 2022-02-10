@@ -75,9 +75,10 @@
 
     LTO+PGO+BOLT (ebuild mod in development)
 
-    * clang-14.0.0.9999-r1 -- experimental ebuild containing mod
-    * clang-14.0.0.9999-r2 -- for stable reliable ebuild
-
+    * clang-14.0.0.9999-r1 -- experimental modded ebuild with LTO+PGO+BOLT
+    * clang-14.0.0.9999-r2 -- for stable reliable ebuild without LTO+PGO+BOLT
+    * clang-15.0.0.9999-r1 -- experimental modded ebuild with LTO+PGO+BOLT
+    * clang-15.0.0.9999-r2 -- for stable reliable ebuild without LTO+PGO+BOLT
 
     Deterministic reliable builds
 
