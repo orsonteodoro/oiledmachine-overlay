@@ -11,8 +11,8 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA"
 SLOT="0"
-#KEYWORDS="" # Still testing Full RELRO default ON.
-IUSE="debug test"
+#KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86" # Still testing Full RELRO default ON.
+IUSE="test"
 IUSE+=" hardened"
 REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
@@ -25,7 +25,7 @@ BDEPEND="
 		$(python_gen_any_dep "~dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
 	)"
 
-LLVM_COMPONENTS=( lld cmake libunwind/include/mach-o )
+LLVM_COMPONENTS=( lld libunwind/include/mach-o )
 LLVM_TEST_COMPONENTS=( llvm/utils/{lit,unittest} )
 llvm.org_set_globals
 HARDENED_PATCHES=(
