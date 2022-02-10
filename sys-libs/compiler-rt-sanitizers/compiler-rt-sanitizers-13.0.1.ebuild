@@ -11,10 +11,10 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="$(ver_cut 1-3)"
-KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos"
-IUSE="+clang test elibc_glibc"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
+IUSE="+abi_x86_32 abi_x86_64 +clang debug test elibc_glibc"
 # base targets
-IUSE+=" +libfuzzer +memprof +profile +xray"
+IUSE+=" +libfuzzer +memprof +orc +profile +xray"
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
 SANITIZER_FLAGS=(
@@ -25,7 +25,7 @@ CPU_X86_FLAGS=( sse3 sse4_2 )
 IUSE+=" ${SANITIZER_FLAGS[@]/#/+}"
 IUSE+=" ${CPU_X86_FLAGS[@]/#/cpu_flags_x86_}"
 REQUIRED_USE="
-	|| ( ${SANITIZER_FLAGS[*]} libfuzzer profile xray )
+	|| ( ${SANITIZER_FLAGS[*]} libfuzzer orc profile xray )
 	test? (
 		cfi? ( ubsan )
 		gwp-asan? ( scudo )
@@ -39,7 +39,7 @@ CLANG_SLOT=${SLOT%%.*}
 # llvm-6 for new lit options
 DEPEND="
 	>=sys-devel/llvm-6
-	virtual/libcrypt"
+	virtual/libcrypt[abi_x86_32(-)?,abi_x86_64(-)?]"
 BDEPEND="
 	>=dev-util/cmake-3.16
 	clang? ( sys-devel/clang )
@@ -50,11 +50,13 @@ BDEPEND="
 		=sys-devel/clang-${PV%_*}*:${CLANG_SLOT}
 		sys-libs/compiler-rt:${SLOT}
 	)
-	${PYTHON_DEPS}"
+	!test? (
+		${PYTHON_DEPS}
+	)"
 
 LLVM_COMPONENTS=( compiler-rt )
 LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support llvm/utils/unittest )
-LLVM_PATCHSET=12.0.1
+LLVM_PATCHSET=${PV/_/-}
 llvm.org_set_globals
 
 python_check_deps() {
@@ -103,6 +105,9 @@ src_prepare() {
 }
 
 src_configure() {
+	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
+	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
+
 	# pre-set since we need to pass it to cmake
 	BUILD_DIR=${WORKDIR}/compiler-rt_build
 
@@ -132,6 +137,7 @@ src_configure() {
 		-DCOMPILER_RT_BUILD_CRT=OFF
 		-DCOMPILER_RT_BUILD_LIBFUZZER=$(usex libfuzzer)
 		-DCOMPILER_RT_BUILD_MEMPROF=$(usex memprof)
+		-DCOMPILER_RT_BUILD_ORC=$(usex orc)
 		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
 		-DCOMPILER_RT_BUILD_SANITIZERS="${want_sanitizer}"
 		-DCOMPILER_RT_BUILD_XRAY=$(usex xray)
@@ -140,6 +146,14 @@ src_configure() {
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
+
+	if use amd64; then
+		mycmakeargs+=(
+			-DCAN_TARGET_i386=$(usex abi_x86_32)
+			-DCAN_TARGET_x86_64=$(usex abi_x86_64)
+		)
+	fi
+
 	if use test; then
 		mycmakeargs+=(
 			-DLLVM_MAIN_SRC_DIR="${WORKDIR}/llvm"

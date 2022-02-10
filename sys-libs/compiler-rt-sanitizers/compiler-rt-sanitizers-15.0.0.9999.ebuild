@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -54,7 +54,7 @@ BDEPEND="
 		${PYTHON_DEPS}
 	)"
 
-LLVM_COMPONENTS=( compiler-rt )
+LLVM_COMPONENTS=( compiler-rt cmake )
 LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support llvm/utils/unittest )
 LLVM_PATCHSET=9999-1
 llvm.org_set_globals
@@ -219,14 +219,4 @@ src_test() {
 	local -x LD_PRELOAD=
 
 	cmake_build check-all
-}
-
-src_install()
-{
-	cmake_src_install
-	# Prevent collision with sys-libs/compiler-rt-13.0.0.9999:13.0.0::gentoo
-	local L=($(ls "${ED}/usr/lib/clang/${SLOT}/"*"/linux/libclang_rt.orc-"*".a"))
-	for p in ${L[@]} ; do
-		rm -v "${p}" || die
-	done
 }
