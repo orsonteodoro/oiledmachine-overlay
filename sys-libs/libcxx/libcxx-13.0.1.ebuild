@@ -12,7 +12,7 @@ HOMEPAGE="https://libcxx.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~riscv x86 ~x64-macos"
+KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
 IUSE="elibc_glibc elibc_musl +libcxxabi +libunwind static-libs test"
 IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 REQUIRED_USE="libunwind? ( libcxxabi )"
@@ -104,6 +104,7 @@ BDEPEND+="
 	test? (
 		>=dev-util/cmake-3.16
 		>=sys-devel/clang-3.9.0
+		sys-devel/gdb[python]
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)"
 
@@ -111,8 +112,8 @@ DOCS=( CREDITS.TXT )
 PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 S="${WORKDIR}"
 
-LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake/modules,utils/llvm-lit} )
-LLVM_PATCHSET=12.0.1
+LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake,utils/llvm-lit} )
+LLVM_PATCHSET=${PV/_/-}
 llvm.org_set_globals
 
 python_check_deps() {
@@ -272,6 +273,7 @@ _configure_abi() {
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
 		-DLIBCXX_USE_COMPILER_RT=${want_compiler_rt}
 		-DLIBCXX_HAS_ATOMIC_LIB=${want_gcc_s}
+		-DLIBCXX_TARGET_TRIPLE="${CHOST}"
 		-DCMAKE_SHARED_LINKER_FLAGS="${extra_libs[*]} ${LDFLAGS}"
 		-DLTO=$(usex lto)
 		-DNOEXECSTACK=$(usex hardened)
@@ -341,6 +343,7 @@ _configure_abi() {
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
 			-DLLVM_LIT_ARGS="$(get_lit_flags);--param=cxx_under_test=${clang_path}"
+			-DLIBCXX_LINK_TESTS_WITH_SHARED_LIBCXXABI=ON
 			-DPython3_EXECUTABLE="${PYTHON}"
 		)
 	fi
