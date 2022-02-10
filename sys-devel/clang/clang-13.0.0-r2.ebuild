@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -109,7 +109,7 @@ pkg_setup() {
 	fi
 
 	ewarn
-	ewarn "If you encounter the follwing during the build:"
+	ewarn "If you encounter the following during the build:"
 	ewarn
 	ewarn "FAILED: lib/Tooling/ASTNodeAPI.json"
 	ewarn

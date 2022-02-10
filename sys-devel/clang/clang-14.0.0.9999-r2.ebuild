@@ -51,6 +51,7 @@ LLVM_COMPONENTS=( clang clang-tools-extra cmake )
 LLVM_MANPAGES=build
 LLVM_TEST_COMPONENTS=(
 	llvm/lib/Testing/Support
+	llvm/lib/Transforms/Hello
 	llvm/utils/{lit,llvm-lit,unittest}
 	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
 )
@@ -77,7 +78,8 @@ llvm.org_set_globals
 # multilib clang* libraries (not runtime, not wrappers).
 
 pkg_setup() {
-	einfo "This is the stable ${PN}:${SLOT} ebuild"
+	einfo "This is the stable =${PN}-${PVR}:${SLOT} ebuild"
+	einfo "For the experimental modded version with BOLT see =${PN}-${PV}-r1"
 	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
 	python-single-r1_pkg_setup
 	if tc-is-gcc ; then
@@ -109,7 +111,7 @@ pkg_setup() {
 	fi
 
 	ewarn
-	ewarn "If you encounter the follwing during the build:"
+	ewarn "If you encounter the following during the build:"
 	ewarn
 	ewarn "FAILED: lib/Tooling/ASTNodeAPI.json"
 	ewarn

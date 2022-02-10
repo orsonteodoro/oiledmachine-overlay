@@ -122,6 +122,7 @@ sys-devel/clang:14 llvm-14-commit.conf
       default rtlib for clang</flag>
     <flag name="default-libcxx">Use libc++ instead of libstdc++ as the default
       stdlib for clang</flag>
+    <flag name="default-lld">Use lld as the default linker for clang</flag>
     <flag name="jemalloc">Use jemalloc for better concurrency to improve
       processing time during the BOLT optimization phase</flag>
     <flag name="tcmalloc">Use TCMalloc for better concurrency to improve
