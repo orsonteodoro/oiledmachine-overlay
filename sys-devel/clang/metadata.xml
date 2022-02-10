@@ -101,7 +101,7 @@ sys-devel/clang:14 llvm-14-commit.conf
 =sys-libs/libomp-14* llvm-14-commit.conf
 =sys-devel/lld-14* llvm-14-commit.conf
 
-  Then, emerge -1 all of the above ebuilds.
+  Then, emerge -1vuDN all of the above ebuilds.
 
   Replace 14 with the particular slots of the live ebuilds that you are
   interested.  When you need to update, just add and remove a # in front
