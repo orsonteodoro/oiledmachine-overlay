@@ -34,6 +34,7 @@ REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+="
 	souper? (
 		!z3
+		debug? ( dump )
 		test? ( debug dump )
 	)
 "
