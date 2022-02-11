@@ -64,6 +64,8 @@
 			optimization and overlapping optimizations that Souper
 			provides in addition to optimizations that increase undefined
 			behavior.  (EXPERIMENTAL)</flag>
+		<flag name="dump">Build with dump functions to print additional (debugging)
+			information</flag>
 		<flag name="doc">Build and install the HTML documentation and regenerate
 			the man pages</flag>
 		<flag name="exegesis">Enable performance counter support for

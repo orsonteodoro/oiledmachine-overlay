@@ -19,12 +19,13 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
-IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3
+IUSE="+binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar xml z3
 	kernel_Darwin"
 IUSE+=" souper"
 REQUIRED_USE="
 	souper? (
 		!z3
+		debug? ( dump )
 		test? ( debug )
 	)
 "
@@ -360,6 +361,7 @@ multilib_src_configure() {
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 		-DLLVM_BUILD_TESTS=$(usex test)
 
+		-DLLVM_ENABLE_DUMP=$(usex dump)
 		-DLLVM_ENABLE_FFI=$(usex libffi)
 		-DLLVM_ENABLE_LIBEDIT=$(usex libedit)
 		-DLLVM_ENABLE_TERMINFO=$(usex ncurses)
