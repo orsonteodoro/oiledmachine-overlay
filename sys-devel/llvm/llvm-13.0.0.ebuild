@@ -25,8 +25,7 @@ IUSE+=" souper"
 REQUIRED_USE="
 	souper? (
 		!z3
-		debug? ( dump )
-		test? ( debug )
+		test? ( debug dump )
 	)
 "
 RESTRICT="!test? ( test )"
