@@ -18,7 +18,7 @@ Additional notes:
 Some hunks related to lit were dropped or already applied upstream.
 Some hunks were dropped related to omitCheck* in work/llvm/lib/Analysis/InstructionSimplify.cpp.
 The testing scripts is not updated to be version and dev environment agnostic.
-There was a mispatch without fuzz with InstCombineSelect.cpp, but corrected.
+There was a misplaced hunk in the without fuzz placed in the wrong function with InstCombineSelect.cpp, but corrected.
 
 The diff patch was used to drop extraneous patches/hunks in the generated .patch version.
 This is to avoid possible duplicate hunks.

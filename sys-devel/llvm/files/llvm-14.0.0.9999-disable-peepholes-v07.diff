@@ -19,7 +19,7 @@ Some hunks related to lit were dropped or already applied upstream.
 Some hunks were dropped related to omitCheck* in work/llvm/lib/Analysis/InstructionSimplify.cpp.
 The testing scripts is not updated to be version and dev environment agnostic.
 
-There was a mispatch without fuzz with InstCombineSelect.cpp in the forward-port for llvm 13, but corrected.
+There was a misplaced hunk without fuzz placed in the wrong function with InstCombineSelect.cpp in the forward-port for llvm 13, but corrected.
 The relative hunk positions in 14.x forward port is verified to be the same.
 
 The diff patch was used to drop extraneous patches/hunks in the generated .patch version.
