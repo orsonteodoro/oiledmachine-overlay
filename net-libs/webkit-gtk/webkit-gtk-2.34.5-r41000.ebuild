@@ -5,13 +5,13 @@ EAPI=7
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.0)
+# ab = WEBKITGTK_API_VERSION version (4.1)
 # c = reserved
 # de = ebuild revision
 
-# Corresponds to
-# WebKit 613.1.1 (20210823, main) ; See Source/WebKit/Configurations/Version.xcconfig
-# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.4/Source/WebKit/Configurations/Version.xcconfig
+# This release corresponds to
+# WebKit 613.1.1 ; See Source/WebKit/Configurations/Version.xcconfig
+# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/WebKit/Configurations/Version.xcconfig
 
 LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
 # dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
@@ -23,7 +23,7 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
+DESCRIPTION="Open source web browser engine (GTK+3 with libsoup3)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
@@ -426,14 +426,14 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
-API_VERSION="4.0"
+API_VERSION="4.1"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.0
-CURRENT="92"
-AGE="55"
+# WEBKITGTK_API_VERSION is 4.1
+CURRENT="0"
+AGE="0"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
@@ -599,18 +599,19 @@ REQUIRED_USE+="
 #
 # This means also you cannot use the geolocation feature.
 
-# Prev rev: 287256
+# Prev rev: 288331
+# Curr rev: 289434
 # For dependencies, see:
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.4/CMakeLists.txt?rev=288331
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.4/Source/cmake/BubblewrapSandboxChecks.cmake?rev=288331
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.4/Source/cmake/FindGStreamer.cmake?rev=288331
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.4/Source/cmake/GStreamerChecks.cmake?rev=288331
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.4/Source/cmake/OptionsGTK.cmake?rev=288331
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.4/Source/cmake/WebKitCommon.cmake?rev=288331
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.4/Tools/gtk/install-dependencies?rev=288331
-#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=288331
-#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=288331
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.4/Tools/gstreamer/jhbuild.modules?rev=288331
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/CMakeLists.txt?rev=289434
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/cmake/BubblewrapSandboxChecks.cmake?rev=289434
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/cmake/FindGStreamer.cmake?rev=289434
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/cmake/GStreamerChecks.cmake?rev=289434
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/cmake/OptionsGTK.cmake?rev=289434
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/cmake/WebKitCommon.cmake?rev=289434
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Tools/gtk/install-dependencies?rev=289434
+#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=289434
+#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=289434
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Tools/gstreamer/jhbuild.modules?rev=289434
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
@@ -642,7 +643,7 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.4?rev=288331
+# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5?rev=289434
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 RDEPEND+="
@@ -662,7 +663,7 @@ RDEPEND+="
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.99.9:3.0[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
@@ -786,7 +787,7 @@ BDEPEND+="
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
 EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="288331"
+ESVN_REVISION="289434"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -1195,7 +1196,7 @@ _config_pgx() {
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=ON
+		-DUSE_SOUP2=OFF
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
