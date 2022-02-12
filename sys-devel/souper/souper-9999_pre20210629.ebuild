@@ -182,10 +182,6 @@ src_configure() { :; }
 
 _configure_compiler() {
 	# Make sure the bitcode is the same or highest especially if LTOing.
-	filter-flags \
-		'-DLLVM_VERSION_MAJOR=*' \
-		'-DLLVM_VERSION_MINOR=*' \
-		'-DLLVM_14_HEAD*'
 	local clang_v_maj=$(ver_cut 1 $(best_version "sys-devel/clang:${s}" | sed -e "s|sys-devel/clang-||"))
 	local lld_v_maj=$(ver_cut 1 $(best_version "sys-devel/lld" | sed -e "s|sys-devel/lld-||"))
 	export CC="$(get_llvm_prefix ${clang_v_maj})/bin/clang"
@@ -202,6 +198,12 @@ _configure_compiler() {
 }
 
 _configure_souper() {
+	if (( ${s} != 12 )) ; then
+ewarn
+ewarn "Compatibility with LLVM ${s} is experimental.  Use the llvm-12 USE flag"
+ewarn "to match the upstream supported LLVM version."
+ewarn
+	fi
 	local mycmakeargs=(
 		-DBUILD_DOCUMENTATION=$(usex doxygen)
 		-DCLANG_INCLUDE_DIR="/usr/lib/llvm/${s}/include/clang"
