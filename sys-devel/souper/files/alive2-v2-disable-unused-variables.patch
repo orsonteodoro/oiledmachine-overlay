@@ -1,0 +1,30 @@
+Subject:  Disable code that cause warnings to trigger build failure because of -Wall.
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Fri Feb 11 07:09:44 PM PST 2022 (Unix time:  1644635384)
+Patch status:  Testing
+
+// Copyright notice and license type in header of original file:
+
+// Copyright (c) 2018-present The Alive2 Authors.
+// Distributed under the MIT license that can be found in the LICENSE file.
+
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1/third_party/alive2/tools/transform.cpp.orig	2021-05-01 11:08:33.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/third_party/alive2/tools/transform.cpp	2022-02-09 23:58:26.737227887 -0800
+@@ -777,7 +777,7 @@ static void calculateAndInitConstants(Tr
+   unsigned min_vect_elem_sz = 0;
+   bool does_mem_access = false;
+   bool has_ptr_load = false;
+-  bool has_vector_bitcast = false;
++  //bool has_vector_bitcast = false;						// oteodoro:  unused variable
+ 
+   for (auto fn : { &t.src, &t.tgt }) {
+     unsigned &cur_num_locals = fn == &t.src ? num_locals_src : num_locals_tgt;
+@@ -867,7 +867,7 @@ static void calculateAndInitConstants(Tr
+ 
+       } else if (auto *bc = isCast(ConversionOp::BitCast, i)) {
+         auto &t = bc->getType();
+-        has_vector_bitcast |= t.isVectorType();
++        //has_vector_bitcast |= t.isVectorType();				// oteodoro:  unused variable
+         min_access_size = gcd(min_access_size, getCommonAccessSize(t));
+ 
+       } else if (auto *ic = dynamic_cast<const ICmp*>(&i)) {

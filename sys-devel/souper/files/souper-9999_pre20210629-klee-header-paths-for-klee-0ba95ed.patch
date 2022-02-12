@@ -1,0 +1,37 @@
+Subject:  Fix header paths for klee 2.3-pre (0ba95ed)
+Patch author:   Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Fri Feb 11 07:09:44 PM PST 2022 (Unix time:  1644635384)
+Patch status:  Testing
+
+License header for patched file:
+
+// Copyright 2014 The Souper Authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Extractor/KLEEBuilder.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Extractor/KLEEBuilder.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Extractor/KLEEBuilder.cpp	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Extractor/KLEEBuilder.cpp	2022-02-08 23:08:57.713141046 -0800
+@@ -12,9 +12,9 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
+-#include "klee/Expr.h"
+-#include "klee/util/ExprPPrinter.h"
+-#include "klee/util/ExprSMTLIBPrinter.h"
++#include "klee/Expr/Expr.h"			// oteodoro:  update for klee 0ba95ed
++#include "klee/Expr/ExprPPrinter.h"		// oteodoro:  update for klee 0ba95ed
++#include "klee/Expr/ExprSMTLIBPrinter.h"	// oteodoro:  update for klee 0ba95ed
+ #include "souper/Extractor/ExprBuilder.h"
+ #include "llvm/ADT/SmallVector.h"
+ #include "llvm/Analysis/LoopInfo.h"

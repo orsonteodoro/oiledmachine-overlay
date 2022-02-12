@@ -1,0 +1,226 @@
+Subject:  Adds compatibility with LLVM 13.
+Patch author:   Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Fri Feb 11 07:09:44 PM PST 2022 (Unix time:  1644635384)
+Patch status:  Testing
+
+License header for patched files:
+
+// Copyright 2014 The Souper Authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Inst/InstGraph.h souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Inst/InstGraph.h
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Inst/InstGraph.h	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Inst/InstGraph.h	2022-02-10 19:03:58.005479445 -0800
+@@ -22,6 +22,9 @@
+ 
+ #include "llvm/ADT/DepthFirstIterator.h"
+ #include "llvm/ADT/GraphTraits.h"
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++#include "llvm/ADT/StringExtras.h"													// oteodoro:  added line with API update
++#endif																	// oteodoro:  added line
+ #include "llvm/Support/raw_ostream.h"
+ #include "llvm/Support/DOTGraphTraits.h"
+ 
+@@ -65,7 +68,11 @@ template<> struct llvm::DOTGraphTraits<s
+     case souper::Inst::Kind::Var:
+       return "Var " + instr->Name;
+     case souper::Inst::Kind::Const:
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++      return llvm::toString(instr->Val, 10, false);											// oteodoro:  added line with API update
++#else
+       return instr->Val.toString(10, false);
++#endif																	// oteodoro:  added line
+     default:
+       return std::string(souper::Inst::getKindName(instr->K));
+     }
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Util/LLVMUtils.h souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Util/LLVMUtils.h
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Util/LLVMUtils.h	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Util/LLVMUtils.h	2022-02-10 19:03:58.021480079 -0800
+@@ -15,11 +15,19 @@
+ #ifndef SOUPER_UTIL_LLVMUTILS_H
+ #define SOUPER_UTIL_LLVMUTILS_H
+ 
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++#include "llvm/ADT/StringExtras.h"													// oteodoro:  added line with API update
++#endif																	// oteodoro:  added line
++																	// oteodoro:  added line
+ namespace souper {
+ 
+   std::string inline getPaddedBinaryString(llvm::APInt Result) {
+     auto W = Result.getBitWidth();
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++    auto Str = llvm::toString(Result, 2, false);											// oteodoro:  added line with API update
++#else																	// oteodoro:  added line
+     auto Str = Result.toString(2, false);
++#endif																	// oteodoro:  added line
+     while (Str.length() < W) {
+       Str = "0" + Str;
+     }
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Infer/AliveDriver.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Infer/AliveDriver.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Infer/AliveDriver.cpp	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Infer/AliveDriver.cpp	2022-02-10 19:03:58.021480079 -0800
+@@ -17,6 +17,9 @@
+ 
+ #include "llvm/Support/raw_ostream.h"
+ #include "llvm/Support/CommandLine.h"
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++#include "llvm/ADT/StringExtras.h"													// oteodoro:  added line
++#endif																	// oteodoro:  added line
+ 
+ #include <iostream>
+ #include <memory>
+@@ -161,7 +164,11 @@ private:
+   }
+ 
+   IR::Value *toValue(IR::Type &t, llvm::APInt x) {
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++    auto c = std::make_unique<IR::IntConst>(t, llvm::toString(x, 10, false));								// oteodoro:  added line with API update
++#else																	// oteodoro:  added line
+     auto c = std::make_unique<IR::IntConst>(t, x.toString(10, false));
++#endif																	// oteodoro:  added line
+     auto ptr = c.get();
+     F.addConstant(std::move(c));
+     return ptr;
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Infer/Pruning.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Infer/Pruning.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Infer/Pruning.cpp	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Infer/Pruning.cpp	2022-02-10 19:03:58.022480118 -0800
+@@ -12,6 +12,9 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++#include "llvm/ADT/StringExtras.h"													// oteodoro:  added line
++#endif																	// oteodoro:  added line
+ #include "llvm/Support/CommandLine.h"
+ #include "souper/Infer/AbstractInterpreter.h"
+ #include "souper/Infer/Pruning.h"
+@@ -178,7 +181,11 @@ bool PruningManager::isInfeasible(souper
+       if (StatsLevel > 2) {
+         llvm::errs() << "  pruned using restricted bits analysis.\n";
+         llvm::errs() << "  LHSKB : " << KnownBitsAnalysis::knownBitsString(LHSKnownBitsNoSpec) << "\n";
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++        llvm::errs() << "  RB    : " << llvm::toString(RestrictedBits, 2, false) << "\n";						// oteodoro:  added line with API update
++#else																	// oteodoro:  added line
+         llvm::errs() << "  RB    : " << RestrictedBits.toString(2, false) << "\n";
++#endif																	// oteodoro:  added line
+       }
+       return true;
+     }
+@@ -186,13 +193,21 @@ bool PruningManager::isInfeasible(souper
+ //     auto LHSCR = ConstantRangeAnalysis().findConstantRange(SC.LHS, BlankCI, false);
+ //     if (StatsLevel > 2) {
+ //         llvm::errs() << "  LHSCR : " << LHSCR << "\n";
++//#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++//         llvm::errs() << "  RB    : " << llvm::toString(RestrictedBits, 2, false) << "\n";						// oteodoro:  added line with API update
++//#else																// oteodoro:  added line
+ //         llvm::errs() << "  RB    : " << RestrictedBits.toString(2, false) << "\n";
++//#endif																// oteodoro:  added line
+ //     }
+ //     if (RestrictedBits == 0 && !LHSCR.isFullSet()) {
+ //       if (StatsLevel > 2) {
+ //         llvm::errs() << "  pruned using restricted bits cr analysis.\n";
+ //         llvm::errs() << "  LHSCR : " << LHSCR << "\n";
++//#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++//         llvm::errs() << "  RB    : " << llvm::toString(RestrictedBits, 2, false) << "\n";						// oteodoro:  added line with API update
++//#else																// oteodoro:  added line
+ //         llvm::errs() << "  RB    : " << RestrictedBits.toString(2, false) << "\n";
++//#endif																// oteodoro:  added line
+ //       }
+ //       return true;
+ //     }
+@@ -217,8 +232,13 @@ bool PruningManager::isInfeasible(souper
+         // This input is must demanded in LHS and DontCare in RHS.
+         if (StatsLevel > 2) {
+           llvm::errs() << "Var : " << Pair.first->Name << " : ";
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++          llvm::errs() << llvm::toString(Pair.second, 2, false) << "\t"								// oteodoro:  add line with API update
++                       << llvm::toString(DontCareBits[Pair.first], 2, false) << "\n";							// oteodoro:  add line with API update
++#else																	// oteodoro:  added line
+           llvm::errs() << Pair.second.toString(2, false) << "\t"
+                        << DontCareBits[Pair.first].toString(2, false) << "\n";
++#endif																	// oteodoro:  added line
+           llvm::errs() << "  pruned using demanded bits analysis.\n";
+         }
+         return true;
+@@ -379,7 +399,11 @@ bool PruningManager::isInfeasible(souper
+               KNOTB.One = ConstantKnownNotOne[C];
+               if (KNOTB.hasConflict()) {
+                 if (StatsLevel > 2) {
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++                  llvm::errs() << llvm::toString(KNOTB.Zero, 2, false) << "\n" << llvm::toString(KNOTB.One, 2, false) << "\n";		// oteodoro:  add line with API update
++#else																	// oteodoro:  added line
+                   llvm::errs() << KNOTB.Zero.toString(2, false) << "\n" << KNOTB.One.toString(2, false) << "\n";
++#endif																	// oteodoro:  added line
+                   llvm::errs() << "  pruned using KB refinement! ";
+                   llvm::errs() << "Inst had a symbolic const.";
+                   llvm::errs() << "\n";
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/clang-souper.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/clang-souper.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/clang-souper.cpp	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/clang-souper.cpp	2022-02-10 19:03:58.022480118 -0800
+@@ -48,9 +48,16 @@ DebugFlagParser("souper-debug-level",
+ 
+ int main(int argc, const char **argv) {
+   llvm::sys::PrintStackTraceOnErrorSignal(argv[0]);
++#if LLVM_VERSION_MAJOR >= 13								// oteodoro:  added line
++  llvm::Expected<CommonOptionsParser> OptionsParser = CommonOptionsParser::create(	// oteodoro:  update with API changes see 5952125 in LLVM repo
++      argc, argv, ClangSouperCategory, llvm::cl::OneOrMore);				// oteodoro:  update with API changes see 5952125 in LLVM repo
++  ClangTool Tool(OptionsParser->getCompilations(),					// oteodoro:  update with API changes see 5952125 in LLVM repo
++                 OptionsParser->getSourcePathList());					// oteodoro:  update with API changes see 5952125 in LLVM repo
++#else											// oteodoro:  added line
+   CommonOptionsParser OptionsParser(argc, argv, ClangSouperCategory);
+   ClangTool Tool(OptionsParser.getCompilations(),
+                  OptionsParser.getSourcePathList());
++#endif											// oteodoro:  added line
+   InstContext IC;
+   ExprBuilderContext EBC;
+   CandidateMap CandMap;
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-interpret.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-interpret.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-interpret.cpp	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-interpret.cpp	2022-02-10 19:08:12.974581573 -0800
+@@ -14,6 +14,9 @@
+ 
+ #include "llvm/Support/KnownBits.h"
+ #include "llvm/Support/MemoryBuffer.h"
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++#include "llvm/ADT/StringExtras.h"													// oteodoro:  added line with API update
++#endif																	// oteodoro:  added line
+ 
+ #include "souper/Infer/AbstractInterpreter.h"
+ #include "souper/Infer/Interpreter.h"
+@@ -102,8 +105,13 @@ static bool parseInput(const std::string
+ 
+ static bool fitsInBits(std::string str, unsigned bits) {
+   auto I = APInt(bits, str, 10);
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++  std::string S = llvm::toString(I, 10, true);												// oteodoro:  added line with API update
++  std::string U = llvm::toString(I, 10, false);												// oteodoro:  added line with API update
++#else																	// oteodoro:  added line
+   std::string S = I.toString(10, true);
+   std::string U = I.toString(10, false);
++#endif																	// oteodoro:  added line
+   return (str.compare(S) == 0) || (str.compare(U) == 0);
+ }
+ 
+@@ -142,7 +150,11 @@ static int Interpret(const MemoryBufferR
+       llvm::outs() << "Constant Range result: " << CR << "\n";
+ 
+       auto RB = RestrictedBitsAnalysis().findRestrictedBits(Reps[i].Mapping.LHS);
++#if LLVM_VERSION_MAJOR >= 13														// oteodoro:  added line
++      llvm::outs() << "Restricted Bits result: " << llvm::toString(RB, 2, false) << "\n";						// oteodoro:  added line with API update
++#else																	// oteodoro:  added line
+       llvm::outs() << "Restricted Bits result: " << RB.toString(2, false) << "\n";
++#endif																	// oteodoro:  added line
+ 
+ 
+       auto PrintDB = [](std::string Preamble, auto DB) {

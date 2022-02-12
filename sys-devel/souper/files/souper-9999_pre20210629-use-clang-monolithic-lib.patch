@@ -1,0 +1,61 @@
+Subject:  Use the monolithic clang library instead of split component libraries.
+Patch author:   Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Fri Feb 11 07:09:44 PM PST 2022 (Unix time:  1644635384)
+Patch status:  Testing
+
+Re-order LDFLAGS
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt	2022-02-11 10:01:13.603676786 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt	2022-02-11 10:06:56.058953836 -0800
+@@ -78,7 +78,14 @@ set(ALIVE_BUILDDIR "${CMAKE_SOURCE_DIR}/
+ include_directories("${CMAKE_SOURCE_DIR}/third_party")
+ include_directories("${ALIVE_SRCDIR}")
+ 
++find_library(CLANG_FRONTEND_LIB clangFrontend)								# otoedoro:  added line
++if(CLANG_FRONTEND_LIB)											# oteodoro:  added line
++  message(STATUS "Clang split component libs (CLANG_LINK_CLANG_DYLIB=OFF)")				# oteodoro:  added line
+-set(CLANG_LIBS "-lclangCodeGen -lclangTooling -lclangRewrite -lclangFrontend -lclangAnalysis -lclangParse -lclangSerialization -lclangSema -lclangEdit -lclangAnalysis -lclangAST -lclangDriver -lclangLex -lclangBasic -lclangASTMatchers")
++  set(CLANG_LIBS "-lclangCodeGen -lclangTooling -lclangRewrite -lclangFrontend -lclangAnalysis -lclangParse -lclangSerialization -lclangSema -lclangEdit -lclangAnalysis -lclangAST -lclangDriver -lclangLex -lclangBasic -lclangASTMatchers")		# oteodoro:  reindent.  project default.
++else()													# oteodoro:  added line
++  message(STATUS "Clang monolithic lib (CLANG_LINK_CLANG_DYLIB=ON)")					# oteodoro:  added line
++  set(CLANG_LIBS "-lclang -lclang-cpp")								# oteodoro:  use monolithic lib.  distro default.
++endif()												# oteodoro:  added line
+ 
+ set(GTEST_CXXFLAGS "-DGTEST_HAS_RTTI=0")
+ set(GTEST_INCLUDEDIR "/usr/include/gtest")					# oteodoro:  use system package
+@@ -432,18 +437,18 @@ foreach(target extractor_tests inst_test
+ endforeach()
+ 
+ # static
+-target_link_libraries(kleeExpr ${LLVM_LIBS} ${LLVM_LDFLAGS})
+-target_link_libraries(souperClangTool souperExtractor souperTool ${CLANG_LIBS} ${LLVM_LIBS} ${LLVM_LDFLAGS})
++target_link_libraries(kleeExpr ${LLVM_LDFLAGS} ${LLVM_LIBS})								# oteodoro:  changed flags order
++target_link_libraries(souperClangTool souperExtractor souperTool ${LLVM_LDFLAGS} ${LLVM_LIBS} ${CLANG_LIBS})		# oteodoro:  changed flags order
+ target_link_libraries(souperExtractor souperParser ${KVSTORE_LIB} souperInfer souperInst kleeExpr souperCodegen)	# oteodoro:  changed line
+-target_link_libraries(souperInfer souperExtractor ${LLVM_LIBS} ${LLVM_LDFLAGS} ${Z3_LIBRARY})
+-target_link_libraries(souperInst ${LLVM_LIBS} ${LLVM_LDFLAGS})
++target_link_libraries(souperInfer souperExtractor ${LLVM_LDFLAGS} ${LLVM_LIBS} ${Z3_LIBRARY})				# oteodoro:  changed flags order
++target_link_libraries(souperInst ${LLVM_LDFLAGS} ${LLVM_LIBS})								# oteodoro:  changed flags order
+ if(FEATURE_EXTERNAL_CACHE)												# oteodoro:  add line
+-  target_link_libraries(souperKVStore ${HIREDIS_LIBRARY} ${LLVM_LIBS} ${LLVM_LDFLAGS})					# oteodoro:  reindent line
++  target_link_libraries(souperKVStore ${HIREDIS_LIBRARY} ${LLVM_LDFLAGS} ${LLVM_LIBS})					# oteodoro:  reindent line and change flags order
+ endif()														# oteodoro:  add line
+-target_link_libraries(souperParser souperInst ${LLVM_LIBS} ${LLVM_LDFLAGS} ${ALIVE_LIBRARY})
+-target_link_libraries(souperSMTLIB2 ${LLVM_LIBS} ${LLVM_LDFLAGS})
++target_link_libraries(souperParser souperInst ${LLVM_LDFLAGS} ${LLVM_LIBS} ${ALIVE_LIBRARY})				# oteodoro:  changed flags order
++target_link_libraries(souperSMTLIB2 ${LLVM_LDFLAGS} ${LLVM_LIBS})							# oteodoro:  changed flags order
+ target_link_libraries(souperTool souperExtractor souperSMTLIB2)
+-target_link_libraries(souperCodegen ${LLVM_LIBS} ${LLVM_LDFLAGS})
++target_link_libraries(souperCodegen ${LLVM_LDFLAGS} ${LLVM_LIBS})							# oteodoro:  changed flags order
+ 
+ # dynamic
+ target_link_libraries(souperCodegen ${PASS_LDFLAGS})
+@@ -457,7 +462,7 @@ target_link_libraries(lexer-test souperP
+ target_link_libraries(parser-test souperParser)
+ target_link_libraries(souper-check souperTool souperExtractor ${KVSTORE_LIB} souperSMTLIB2 souperParser ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})		# oteodoro:  changed line
+ target_link_libraries(souper-interpret souperTool souperExtractor ${KVSTORE_LIB} souperSMTLIB2 souperParser ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})		# oteodoro:  changed line
+-target_link_libraries(clang-souper souperClangTool souperExtractor ${KVSTORE_LIB} souperParser souperSMTLIB2 souperTool kleeExpr ${CLANG_LIBS} ${LLVM_LIBS} ${LLVM_LDFLAGS} ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})		# oteodoro:  changed line
++target_link_libraries(clang-souper souperClangTool souperExtractor ${KVSTORE_LIB} souperParser souperSMTLIB2 souperTool kleeExpr ${LLVM_LDFLAGS} ${LLVM_LIBS} ${CLANG_LIBS} ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})		# oteodoro:  changed line and flags order
+ target_link_libraries(count-insts souperParser)
+ target_link_libraries(souper2llvm souperParser souperCodegen)
+ target_link_libraries(extractor_tests souperExtractor souperParser ${GTEST_LIBS} ${ALIVE_LIBRARY})

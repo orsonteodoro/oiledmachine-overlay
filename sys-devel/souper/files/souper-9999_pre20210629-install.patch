@@ -1,0 +1,319 @@
+Subject:  Install files for ninja build systems and mux support tools install location
+Patch author:   Orson Teodoro <orsonteodoro@hotmail.com>
+Author:   Orson Teodoro <orsonteodoro@hotmail.com>
+Date:     Tue Feb  8 01:57:17 PM PST 2022 (Unix time: 1644357437)
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt	2022-02-11 18:06:14.354741858 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt	2022-02-11 18:52:58.465774997 -0800
+@@ -477,9 +477,9 @@ string(REPLACE "-DNDEBUG" "" CMAKE_CXX_F
+ add_library(profileRuntime STATIC
+   runtime/souperPassProfile.c)
+ 
+-set(SOUPER_PASS ${CMAKE_BINARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}souperPass${CMAKE_SHARED_LIBRARY_SUFFIX})
+-set(SOUPER_PASS_PROFILE_ALL ${CMAKE_BINARY_DIR}/${CMAKE_SHARED_LIBRARY_PREFIX}souperPassProfileAll${CMAKE_SHARED_LIBRARY_SUFFIX})
+-set(PROFILE_LIBRARY ${CMAKE_BINARY_DIR}/${CMAKE_STATIC_LIBRARY_PREFIX}profileRuntime${CMAKE_STATIC_LIBRARY_SUFFIX})
++set(SOUPER_PASS ${CMAKE_SHARED_LIBRARY_PREFIX}souperPass${CMAKE_SHARED_LIBRARY_SUFFIX})					# oteodoro:  removed path
++set(SOUPER_PASS_PROFILE_ALL ${CMAKE_SHARED_LIBRARY_PREFIX}souperPassProfileAll${CMAKE_SHARED_LIBRARY_SUFFIX})		# oteodoro:  removed path
++set(PROFILE_LIBRARY ${CMAKE_STATIC_LIBRARY_PREFIX}profileRuntime${CMAKE_STATIC_LIBRARY_SUFFIX})				# oteodoro:  removed path
+ configure_file(${CMAKE_SOURCE_DIR}/utils/compare_pruning_output.in ${CMAKE_BINARY_DIR}/compare_pruning_output @ONLY)
+ configure_file(${CMAKE_SOURCE_DIR}/utils/reduce.in ${CMAKE_BINARY_DIR}/reduce @ONLY)
+ configure_file(${CMAKE_SOURCE_DIR}/utils/cache_dump.in ${CMAKE_BINARY_DIR}/cache_dump @ONLY)
+@@ -497,3 +497,17 @@ if (BUILD_CLANG_TOOL)
+ endif()
+ 
+ add_subdirectory(docs)
++															# oteodoro:  added line
++install(TARGETS souper DESTINATION ${CMAKE_INSTALL_BINDIR})								# oteodoro:  added install for ninja
++install(TARGETS profileRuntime souperCodegen souperPass souperPassProfileAll DESTINATION ${CMAKE_INSTALL_LIBDIR})	# oteodoro:  added install for ninja
++install(FILES "${CMAKE_BINARY_DIR}/sclang" "${CMAKE_BINARY_DIR}/sclang" DESTINATION ${CMAKE_INSTALL_BINDIR})		# oteodoro:  added install
++install(FILES "${CMAKE_BINARY_DIR}/redis-unix-socket.conf" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/souper)		# oteodoro:  added install
++if(INSTALL_SUPPORT_TOOLS)												# oteodoro:  added line
++  foreach(SUPPORT_TOOL reduce cache_dump cache_import cache_infer py_souper2llvm souper-check)				# oteodoro:  added line
++    install(FILES "${CMAKE_BINARY_DIR}/${SUPPORT_TOOL}" DESTINATION ${CMAKE_INSTALL_BINDIR})				# oteodoro:  added install
++  endforeach()														# oteodoro:  added line
++endif()															# oteodoro:  added line
++option(INSTALL_GDB_PRETTY_PRINT "Installs GDB pretty print support for souper::Inst*" OFF)				# oteodoro:  added line
++if(INSTALL_GDB_PRETTY_PRINT)												# oteodoro:  added line
++  install(FILES "${CMAKE_BINARY_DIR}/souper-check-gdb.py" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/souper/gdb)		# oteodoro:  added install
++endif()															# oteodoro:  added line
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dfa.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dfa.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dfa.in	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dfa.in	2022-02-11 18:06:44.559918201 -0800
+@@ -25,12 +25,34 @@ eval { require Sys::CPU; Sys::CPU->impor
+ my $NPROCS = 4;
+ $NPROCS = Sys::CPU::cpu_count() if defined(&Sys::CPU::cpu_count);
+ 
+-my $souper = "@CMAKE_BINARY_DIR@/souper";
++my $MODE_PRODUCTION = 0;									# oteodoro:  added line
++my $MODE_TESTING = 1;										# oteodoro:  added line
++my $MODE = "$ENV{SOUPER_UTILS_MODE}";								# oteodoro:  added line
++if ($MODE eq "") {										# oteodoro:  added line
++	$MODE = $MODE_PRODUCTION;								# oteodoro:  added line
++} elsif ($MODE eq $MODE_PRODUCTION) {								# oteodoro:  added line
++	# valid											# oteodoro:  added line
++} elsif ($MODE eq $MODE_TESTING) {								# oteodoro:  added line
++	# valid											# oteodoro:  added line
++} else {											# oteodoro:  added line
++	# fix											# oteodoro:  added line
++	$MODE = $MODE_PRODUCTION;								# oteodoro:  added line
++}												# oteodoro:  added line
++if ($MODE eq $MODE_PRODUCTION) {								# oteodoro:  added line
++    my $souper = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/souper";			# oteodoro:  indent and changed to production install location
++} else {											# oteodoro:  changed to production install location
++    my $souper = "@CMAKE_BINARY_DIR@/souper";							# oteodoro:  indent
++}												# oteodoro:  added line
+ my $llvmas = "@LLVM_BINDIR@/llvm-as";
+ my $llvmopt = "@LLVM_BINDIR@/opt";
+ my $llvmdis = "@LLVM_BINDIR@/llvm-dis";
+-my $check = "@CMAKE_BINARY_DIR@/souper-check";
+-my $triager = "@CMAKE_BINARY_DIR@/py_souper2llvm";
++if ($MODE eq $MODE_PRODUCTION) {								# oteodoro:  added line
++    my $check = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/souper-check";			# oteodoro:  changed to production install location
++    my $triager = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/py_souper2llvm";		# oteodoro:  changed to production install location
++} else {											# oteodoro:  added line
++    my $check = "@CMAKE_BINARY_DIR@/souper-check";						# oteodoro:  indent
++    my $triager = "@CMAKE_BINARY_DIR@/py_souper2llvm";						# oteodoro:  indent
++}												# oteodoro:  added line
+ 
+ sub runit ($) {
+     my $cmd = shift;
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dump.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dump.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dump.in	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dump.in	2022-02-11 18:06:44.559918201 -0800
+@@ -21,12 +21,31 @@ use Getopt::Long;
+ use File::Temp;
+ use Time::HiRes;
+ 
++my $MODE_PRODUCTION = 0;								# oteodoro:  added line
++my $MODE_TESTING = 1;									# oteodoro:  added line
++my $MODE = "$ENV{SOUPER_UTILS_MODE}";							# oteodoro:  added line
++if ($MODE eq "") {									# oteodoro:  added line
++	$MODE = $MODE_PRODUCTION;							# oteodoro:  added line
++} elsif ($MODE eq $MODE_PRODUCTION) {							# oteodoro:  added line
++	# valid										# oteodoro:  added line
++} elsif ($MODE eq $MODE_TESTING) {							# oteodoro:  added line
++	# valid										# oteodoro:  added line
++} else {										# oteodoro:  added line
++	# fix										# oteodoro:  added line
++	$MODE = $MODE_PRODUCTION;							# oteodoro:  added line
++}											# oteodoro:  added line
+ my $llvmas = "@LLVM_BINDIR@/llvm-as";
+ my $llvmopt = "@LLVM_BINDIR@/opt";
+ my $llvmdis = "@LLVM_BINDIR@/llvm-dis";
+-my $check = "@CMAKE_BINARY_DIR@/souper-check";
+-my $reducer = "@CMAKE_BINARY_DIR@/reduce";
+-my $triager = "@CMAKE_BINARY_DIR@/py_souper2llvm";
++if ($MODE eq $MODE_PRODUCTION) {							# oteodoro:  added line
++    my $check = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/souper-check";		# oteodoro:  changed to production install location
++    my $reducer = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/reduce";		# oteodoro:  changed to production install location
++    my $triager = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/py_souper2llvm";	# oteodoro:  changed to production install location
++} else {										# oteodoro:  added line
++    my $check = "@CMAKE_BINARY_DIR@/souper-check";					# oteodoro:  indent
++    my $reducer = "@CMAKE_BINARY_DIR@/reduce";						# oteodoro:  indent
++    my $triager = "@CMAKE_BINARY_DIR@/py_souper2llvm";					# oteodoro:  indent
++}											# oteodoro:  added line
+ 
+ sub runit ($) {
+     my $cmd = shift;
+@@ -115,7 +134,11 @@ my %toprint;
+ 
+ my $r;
+ if ($UNIX) {
+-    $r = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");
++    if ($MODE eq $MODE_PRODUCTION) {								# oteodoro:  added line
++        $r = Redis->new(sock => "@CMAKE_INSTALL_RUNSTATEDIR@/souper/cache.sock");		# oteodoro:  changed to production install location
++    } else {											# oteodoro:  added line
++        $r = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");				# oteodoro:  indent
++    }												# oteodoro:  added line
+ } else {
+     $r = Redis->new(server => "localhost:" . $REDISPORT);
+ }
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_import.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_import.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_import.in	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_import.in	2022-02-11 18:06:44.560918240 -0800
+@@ -21,12 +21,31 @@ use Getopt::Long;
+ use File::Temp;
+ use Time::HiRes;
+ 
++my $MODE_PRODUCTION = 0;									# oteodoro:  added line
++my $MODE_TESTING = 1;										# oteodoro:  added line
++my $MODE = "$ENV{SOUPER_UTILS_MODE}";								# oteodoro:  added line
++if ($MODE eq "") {										# oteodoro:  added line
++	$MODE = $MODE_PRODUCTION;								# oteodoro:  added line
++} elsif ($MODE eq $MODE_PRODUCTION) {								# oteodoro:  added line
++	# valid											# oteodoro:  added line
++} elsif ($MODE eq $MODE_TESTING) {								# oteodoro:  added line
++	# valid											# oteodoro:  added line
++} else {											# oteodoro:  added line
++	# fix											# oteodoro:  added line
++	$MODE = $MODE_PRODUCTION;								# oteodoro:  added line
++}												# oteodoro:  added line
+ my $llvmas = "@LLVM_BINDIR@/llvm-as";
+ my $llvmopt = "@LLVM_BINDIR@/opt";
+ my $llvmdis = "@LLVM_BINDIR@/llvm-dis";
+-my $check = "@CMAKE_BINARY_DIR@/souper-check";
+-my $reducer = "@CMAKE_BINARY_DIR@/reduce";
+-my $triager = "@CMAKE_BINARY_DIR@/py_souper2llvm";
++if ($MODE eq $MODE_PRODUCTION) {								# oteodoro:  added line
++    my $check = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/souper-check";			# oteodoro:  changed to production install location
++    my $reducer = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/reduce";			# oteodoro:  changed to production install location
++    my $triager = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/py_souper2llvm";		# oteodoro:  changed to production install location
++} else {											# oteodoro:  added line
++    my $check = "@CMAKE_BINARY_DIR@/souper-check";						# oteodoro:  indent
++    my $reducer = "@CMAKE_BINARY_DIR@/reduce";							# oteodoro:  indent
++    my $triager = "@CMAKE_BINARY_DIR@/py_souper2llvm";						# oteodoro:  indent
++}												# oteodoro:  added line
+ 
+ sub parse ($) {
+     (my $opt) = @_;
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_infer.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_infer.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_infer.in	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_infer.in	2022-02-11 18:06:44.560918240 -0800
+@@ -30,6 +30,13 @@ $NPROCS = Sys::CPU::cpu_count() if defin
+ my $CPU_LIMIT = 15 * 60;
+ my $RAM_LIMIT = 4 * 1024 * 1024 * 1024;
+ 
++my $MODE_PRODUCTION = 0;									# oteodoro:  added line
++my $MODE_TESTING = 1;										# oteodoro:  added line
++my $MODE = "$ENV{SOUPER_UTILS_MODE}";								# oteodoro:  added line
++if ($MODE eq "") {										# oteodoro:  added line
++	$MODE = $MODE_PRODUCTION;								# oteodoro:  added line
++}												# oteodoro:  added line
++												# oteodoro:  added line
+ sub usage() {
+     print <<"END";
+ Options:
+@@ -90,11 +97,19 @@ if ($SOUPER_DEBUG != -1) {
+     $OPTS .= "-souper-debug-level=${SOUPER_DEBUG} ";
+ }
+ 
+-my $SOUPER_CHECK = "@CMAKE_BINARY_DIR@/souper-check -solver-timeout=15";
++if ($MODE eq $MODE_PRODUCTION) {										# oteodoro:  added line
++    my $SOUPER_CHECK = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/souper-check -solver-timeout=15";		# oteodoro:  changed to production install location
++} else {													# oteodoro:  added line
++    my $SOUPER_CHECK = "@CMAKE_BINARY_DIR@/souper-check -solver-timeout=15";					# oteodoro:  reindent
++}														# oteodoro:  added line
+ 
+ my $r;
+ if ($UNIX) {
+-    $r = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");
++    if ($MODE eq $MODE_PRODUCTION) {										# oteodoro:  added line
++        $r = Redis->new(sock => "@CMAKE_INSTALL_RUNSTATEDIR@/souper/cache.sock");				# oteodoro:  changed to production install location
++    } else {													# oteodoro:  added line
++        $r = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");						# oteodoro:  changed to production install location
++    }														# oteodoro:  added line
+ } else {
+     $r = Redis->new(server => "localhost:" . $REDISPORT);
+ }
+@@ -156,7 +171,11 @@ sub infer($) {
+ 
+     my $red;
+     if ($UNIX) {
+-	$red = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");
++        if ($MODE eq $MODE_PRODUCTION) {									# oteodoro:  added line
++	    $red = Redis->new(sock => "@CMAKE_INSTALL_RUNSTATEDIR@/souper/cache.sock");				# oteodoro:  changed to production install location
++        } else {												# oteodoro:  added line
++	    $red = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");						# oteodoro:  reindent
++        }													# oteodoro:  added line
+     } else {
+ 	$red = Redis->new(server => "localhost:" . $REDISPORT);
+     }
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/redis-unix-socket.conf.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/redis-unix-socket.conf.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/redis-unix-socket.conf.in	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/redis-unix-socket.conf.in	2022-02-11 19:02:17.880879509 -0800
+@@ -2,6 +2,6 @@
+ # talk to it using UNIX domain sockets, instead of TCP
+ 
+ port 0
+-unixsocket @CMAKE_BINARY_DIR@/cache.sock
++unixsocket @CMAKE_INSTALL_RUNSTATEDIR@/souper/cache.sock	# oteodoro:  changed to production install location
+ unixsocketperm 700
+ timeout 0
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/reduce.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/reduce.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/reduce.in	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/reduce.in	2022-02-11 18:06:44.560918240 -0800
+@@ -18,7 +18,24 @@ use warnings;
+ use strict;
+ use File::Temp;
+ 
+-my $check = "@CMAKE_BINARY_DIR@/souper-check -solver-timeout=15";
++my $MODE_PRODUCTION = 0;										# oteodoro:  added line
++my $MODE_TESTING = 1;											# oteodoro:  added line
++my $MODE = "$ENV{SOUPER_UTILS_MODE}";									# oteodoro:  added line
++if ($MODE eq "") {											# oteodoro:  added line
++	$MODE = $MODE_PRODUCTION;									# oteodoro:  added line
++} elsif ($MODE eq $MODE_PRODUCTION) {									# oteodoro:  added line
++	# valid												# oteodoro:  added line
++} elsif ($MODE eq $MODE_TESTING) {									# oteodoro:  added line
++	# valid												# oteodoro:  added line
++} else {												# oteodoro:  added line
++	# fix												# oteodoro:  added line
++	$MODE = $MODE_PRODUCTION;									# oteodoro:  added line
++}													# oteodoro:  added line
++if ($MODE eq $MODE_PRODUCTION) {									# oteodoro:  added line
++    my $check = "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/souper-check -solver-timeout=15";	# oteodoro:  changed to production install location
++} else {												# oteodoro:  added line
++    my $check = "@CMAKE_BINARY_DIR@/souper-check -solver-timeout=15";					# oteodoro:  changed to production install location
++}													# oteodoro:  added line
+ 
+ sub check ($) {
+     (my $s) = @_;
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/sclang.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/sclang.in	2022-02-11 18:06:44.561918279 -0800
+@@ -18,6 +18,20 @@ use warnings;
+ use strict;
+ use File::Temp;
+ 
++my $MODE_PRODUCTION = 0;										# oteodoro:  added line
++my $MODE_TESTING = 1;											# oteodoro:  added line
++my $MODE = "$ENV{SOUPER_UTILS_MODE}";									# oteodoro:  added line
++if ($MODE eq "") {											# oteodoro:  added line
++	$MODE = $MODE_PRODUCTION;									# oteodoro:  added line
++} elsif ($MODE eq $MODE_PRODUCTION) {									# oteodoro:  added line
++	# valid												# oteodoro:  added line
++} elsif ($MODE eq $MODE_TESTING) {									# oteodoro:  added line
++	# valid												# oteodoro:  added line
++} else {												# oteodoro:  added line
++	# fix												# oteodoro:  added line
++	$MODE = $MODE_PRODUCTION;									# oteodoro:  added line
++}													# oteodoro:  added line
++													# oteodoro:  added line
+ sub compiling() {
+     foreach my $arg (@ARGV) {
+         return 1
+@@ -185,11 +199,19 @@ if ($souper) {
+ 
+ if (getenv("SOUPER_DYNAMIC_PROFILE_ALL")) {
+     if ($souper) {
+-        push @ARGV, ("-Xclang", "@SOUPER_PASS_PROFILE_ALL@");
++        if ($MODE eq $MODE_PRODUCTION) {										# oteodoro:  added line
++            push @ARGV, ("-Xclang", "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/@SOUPER_PASS_PROFILE_ALL@");		# oteodoro:  indent line and change line
++        } else {													# oteodoro:  added line
++            push @ARGV, ("-Xclang", "@CMAKE_BINARY_DIR@/@SOUPER_PASS_PROFILE_ALL@");					# oteodoro:  indent line and change line
++        }														# oteodoro:  added line
+     }
+ } else {
+     if ($souper) {
+-        push @ARGV, ("-Xclang", "@SOUPER_PASS@");
++        if ($MODE eq $MODE_PRODUCTION) {										# oteodoro:  added line
++            push @ARGV, ("-Xclang", "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/@SOUPER_PASS@");			# oteodoro:  indent line and change line
++        } else {													# oteodoro:  added line
++            push @ARGV, ("-Xclang", "@CMAKE_BINARY_DIR@/@SOUPER_PASS@");						# oteodoro:  indent line and change line
++        }														# oteodoro:  added line
+     }
+ }
+ 
+@@ -283,7 +305,11 @@ if (getenv("SOUPER_DISABLE_LLVM_PEEPHOLE
+ 
+ if ((getenv("SOUPER_DYNAMIC_PROFILE") ||
+      getenv("SOUPER_DYNAMIC_PROFILE_ALL")) && linkp() && $souper) {
+-    push @ARGV, ("@PROFILE_LIBRARY@", "@HIREDIS_LIBRARY@");
++    if ($MODE eq $MODE_PRODUCTION) {											# oteodoro:  added line
++        push @ARGV, ("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/@PROFILE_LIBRARY@", "@HIREDIS_LIBRARY@");		# oteodoro:  indent and change line
++    } else {														# oteodoro:  added line
++        push @ARGV, ("@CMAKE_BINARY_DIR@/@PROFILE_LIBRARY@", "@HIREDIS_LIBRARY@");					# oteodoro:  indent and change line
++    }															# oteodoro:  added line
+ }
+ 
+ if (getenv("SOUPER_DEBUG") && $souper) {

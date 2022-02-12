@@ -1,0 +1,680 @@
+Subject:  Not make hiredis a hard dependency but make it optional
+Patch author:   Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Fri Feb 11 07:09:44 PM PST 2022 (Unix time:  1644635384)
+Patch status:  Testing
+
+License header for patched files:
+
+// Copyright 2014 The Souper Authors. All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt	2022-02-12 01:42:53.840457570 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt	2022-02-12 01:44:21.032895095 -0800
+@@ -116,22 +116,26 @@ add_library(kleeExpr STATIC
+   ${KLEE_EXPR_FILES}
+ )
+ 
+-find_path(HIREDIS_INCLUDE_DIR
+-  NAMES
+-  hiredis/hiredis.h
+-  PATHS
+-  /usr/include									# oteodoro:  use system package
+-  NO_DEFAULT_PATH)
+-
+-include_directories(${HIREDIS_INCLUDE_DIR}/hiredis)
+-
+-find_library(HIREDIS_LIBRARY
+-  NAMES
+-  hiredis
+-  PATHS
+-  /usr/lib64									# oteodoro:  use system package
+-  /usr/lib									# oteodoro:  use system package
+-  NO_DEFAULT_PATH)
++option(FEATURE_EXTERNAL_CACHE "Use a external cache for caching to reduce time costs")		# oteodoro:  added line
++if(FEATURE_EXTERNAL_CACHE)									# oteodoro:  reindent
++  find_path(HIREDIS_INCLUDE_DIR								# oteodoro:  reindent
++    NAMES											# oteodoro:  reindent
++    hiredis/hiredis.h										# oteodoro:  reindent
++    PATHS											# oteodoro:  reindent
++    /usr/include									# oteodoro:  use system package with indent
++    NO_DEFAULT_PATH)										# oteodoro:  reindent
++												# oteodoro:  reindent
++  include_directories(${HIREDIS_INCLUDE_DIR}/hiredis)						# oteodoro:  reindent
++												# oteodoro:  reindent
++  find_library(HIREDIS_LIBRARY									# oteodoro:  reindent
++    NAMES											# oteodoro:  reindent
++    hiredis											# oteodoro:  reindent
++    PATHS											# oteodoro:  reindent
++    /usr/lib64									# oteodoro:  use system package with indent
++    /usr/lib									# oteodoro:  use system package with indent
++    NO_DEFAULT_PATH)
++  add_definitions(-DUSE_EXTERNAL_CACHE)
++endif(FEATURE_EXTERNAL_CACHE)
+ 
+ find_library(ALIVE_IR ir PATHS "${ALIVE_BUILDDIR}" NO_DEFAULT_PATH)
+ if (ALIVE_IR)
+@@ -197,6 +201,7 @@ add_library(souperExtractor STATIC
+   ${SOUPER_EXTRACTOR_FILES}
+ )
+ 
++if(FEATURE_EXTERNAL_CACHE)							# oteodoro:  add conditional
+ set(SOUPER_KVSTORE_FILES
+   lib/KVStore/KVStore.cpp
+   include/souper/KVStore/KVStore.h
+@@ -205,6 +210,7 @@ set(SOUPER_KVSTORE_FILES
+ add_library(souperKVStore STATIC
+   ${SOUPER_KVSTORE_FILES}
+ )
++endif()									# oteodoro:  end add conditional
+ 
+ set(SOUPER_INFER_FILES
+   lib/Infer/InstSynthesis.cpp
+@@ -279,12 +285,21 @@ add_library(souperCodegen STATIC
+ set(SOUPER_SOURCES
+   ${SOUPER_EXTRACTOR_FILES}
+   ${SOUPER_INST_FILES}
+-  ${SOUPER_KVSTORE_FILES}
++)										# oteodoro:  restyle
++if(FEATURE_EXTERNAL_CACHE)							# oteodoro:  add line
++  set(SOUPER_SOURCES								# oteodoro:  add line
++    ${SOUPER_SOURCES}								# oteodoro:  add line
++    ${SOUPER_KVSTORE_FILES}							# oteodoro:  moved line here
++  )										# oteodoro:  add line
++endif()									# oteodoro:  add line
++set(SOUPER_SOURCES								# oteodoro:  add line
++  ${SOUPER_SOURCES}								# oteodoro:  add line
+   ${SOUPER_PARSER_FILES}
+   ${SOUPER_SMTLIB2_FILES}
+   ${SOUPER_TOOL_FILES}
+   ${SOUPER_INFER_FILES}
+-  ${SOUPER_CODEGEN_FILES})
++  ${SOUPER_CODEGEN_FILES}							# oteodoro:  restyle
++)										# oteodoro:  restyle
+ 
+ add_library(souperPass SHARED
+   ${KLEE_EXPR_FILES}
+@@ -394,9 +409,14 @@ configure_file(
+   COPYONLY
+ )
+ 
++if(FEATURE_EXTERNAL_CACHE)							# oteodoro:  add line
++  set(KVSTORE_LIB souperKVStore)						# oteodoro:  add line
++else()										# oteodoro:  add line
++  unset(KVSTORE_LIB)								# oteodoro:  add line
++endif()									# oteodoro:  add line
+ foreach(target souper internal-solver-test lexer-test parser-test souper-check count-insts
+                souper2llvm souper-interpret
+-               souperExtractor souperInfer souperInst souperKVStore souperParser
++               souperExtractor souperInfer souperInst ${KVSTORE_LIB} souperParser	# oteodoro:  changed line
+                souperSMTLIB2 souperTool souperPass souperPassProfileAll kleeExpr
+                souperCodegen)
+   set_target_properties(${target} PROPERTIES COMPILE_FLAGS "${LLVM_CXXFLAGS}")
+@@ -414,10 +434,12 @@ endforeach()
+ # static
+ target_link_libraries(kleeExpr ${LLVM_LIBS} ${LLVM_LDFLAGS})
+ target_link_libraries(souperClangTool souperExtractor souperTool ${CLANG_LIBS} ${LLVM_LIBS} ${LLVM_LDFLAGS})
+-target_link_libraries(souperExtractor souperParser souperKVStore souperInfer souperInst kleeExpr souperCodegen)
++target_link_libraries(souperExtractor souperParser ${KVSTORE_LIB} souperInfer souperInst kleeExpr souperCodegen)	# oteodoro:  changed line
+ target_link_libraries(souperInfer souperExtractor ${LLVM_LIBS} ${LLVM_LDFLAGS} ${Z3_LIBRARY})
+ target_link_libraries(souperInst ${LLVM_LIBS} ${LLVM_LDFLAGS})
+-target_link_libraries(souperKVStore ${HIREDIS_LIBRARY} ${LLVM_LIBS} ${LLVM_LDFLAGS})
++if(FEATURE_EXTERNAL_CACHE)												# oteodoro:  add line
++  target_link_libraries(souperKVStore ${HIREDIS_LIBRARY} ${LLVM_LIBS} ${LLVM_LDFLAGS})					# oteodoro:  reindent line
++endif()														# oteodoro:  add line
+ target_link_libraries(souperParser souperInst ${LLVM_LIBS} ${LLVM_LDFLAGS} ${ALIVE_LIBRARY})
+ target_link_libraries(souperSMTLIB2 ${LLVM_LIBS} ${LLVM_LDFLAGS})
+ target_link_libraries(souperTool souperExtractor souperSMTLIB2)
+@@ -429,13 +451,13 @@ target_link_libraries(souperPass ${PASS_
+ target_link_libraries(souperPassProfileAll ${PASS_LDFLAGS} ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})
+ 
+ # executables
+-target_link_libraries(souper souperExtractor souperKVStore souperParser souperSMTLIB2 souperTool kleeExpr ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})
++target_link_libraries(souper souperExtractor ${KVSTORE_LIB} souperParser souperSMTLIB2 souperTool kleeExpr ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})	# oteodoro:  changed line
+ target_link_libraries(internal-solver-test souperSMTLIB2)
+ target_link_libraries(lexer-test souperParser)
+ target_link_libraries(parser-test souperParser)
+-target_link_libraries(souper-check souperTool souperExtractor souperKVStore souperSMTLIB2 souperParser ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})
+-target_link_libraries(souper-interpret souperTool souperExtractor souperKVStore souperSMTLIB2 souperParser ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})
+-target_link_libraries(clang-souper souperClangTool souperExtractor souperKVStore souperParser souperSMTLIB2 souperTool kleeExpr ${CLANG_LIBS} ${LLVM_LIBS} ${LLVM_LDFLAGS} ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})
++target_link_libraries(souper-check souperTool souperExtractor ${KVSTORE_LIB} souperSMTLIB2 souperParser ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})		# oteodoro:  changed line
++target_link_libraries(souper-interpret souperTool souperExtractor ${KVSTORE_LIB} souperSMTLIB2 souperParser ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})		# oteodoro:  changed line
++target_link_libraries(clang-souper souperClangTool souperExtractor ${KVSTORE_LIB} souperParser souperSMTLIB2 souperTool kleeExpr ${CLANG_LIBS} ${LLVM_LIBS} ${LLVM_LDFLAGS} ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})		# oteodoro:  changed line
+ target_link_libraries(count-insts souperParser)
+ target_link_libraries(souper2llvm souperParser souperCodegen)
+ target_link_libraries(extractor_tests souperExtractor souperParser ${GTEST_LIBS} ${ALIVE_LIBRARY})
+@@ -469,20 +491,30 @@ configure_file(
+   ${CMAKE_BINARY_DIR}/souper-check-gdb.py
+ )
+ 
++if(FEATURE_EXTERNAL_CACHE)			# oteodoro:  add line
++  set(PROFILERUNTIME_LIB profileRuntime)	# oteodoro:  add line
++else()						# oteodoro:  add line
++  unset(PROFILERUNTIME_LIB)			# oteodoro:  add line
++endif()						# oteodoro:  add line
++
+ add_custom_target(check
+   COMMAND ${CMAKE_BINARY_DIR}/run_lit
+-  DEPENDS extractor_tests inst_tests parser-test parser_tests profileRuntime souper souper-check souper-interpret souperPass souper2llvm souperPassProfileAll count-insts interpreter_tests bulk_tests codegen_tests
++  DEPENDS extractor_tests inst_tests parser-test parser_tests ${PROFILERUNTIME_LIB} souper souper-check souper-interpret souperPass souper2llvm souperPassProfileAll count-insts interpreter_tests bulk_tests codegen_tests		# oteodoro:  changed line
+   USES_TERMINAL)
+ 
+ # we want assertions even in release mode!
+ string(REPLACE "-DNDEBUG" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+ 
++if(FEATURE_EXTERNAL_CACHE)			# oteodoro:  add line
+ add_library(profileRuntime STATIC
+   runtime/souperPassProfile.c)
++endif()						# oteodoro:  add line
+ 
+ set(SOUPER_PASS ${CMAKE_SHARED_LIBRARY_PREFIX}souperPass${CMAKE_SHARED_LIBRARY_SUFFIX})					# oteodoro:  removed path
+ set(SOUPER_PASS_PROFILE_ALL ${CMAKE_SHARED_LIBRARY_PREFIX}souperPassProfileAll${CMAKE_SHARED_LIBRARY_SUFFIX})		# oteodoro:  removed path
+-set(PROFILE_LIBRARY ${CMAKE_STATIC_LIBRARY_PREFIX}profileRuntime${CMAKE_STATIC_LIBRARY_SUFFIX})				# oteodoro:  removed path
++if(FEATURE_EXTERNAL_CACHE)												# oteodoro:  add line
++  set(PROFILE_LIBRARY ${CMAKE_STATIC_LIBRARY_PREFIX}profileRuntime${CMAKE_STATIC_LIBRARY_SUFFIX})			# oteodoro:  removed path and indent
++endif()															# oteodoro:  add line
+ configure_file(${CMAKE_SOURCE_DIR}/utils/compare_pruning_output.in ${CMAKE_BINARY_DIR}/compare_pruning_output @ONLY)
+ configure_file(${CMAKE_SOURCE_DIR}/utils/reduce.in ${CMAKE_BINARY_DIR}/reduce @ONLY)
+ configure_file(${CMAKE_SOURCE_DIR}/utils/cache_dump.in ${CMAKE_BINARY_DIR}/cache_dump @ONLY)
+@@ -491,8 +523,10 @@ configure_file(${CMAKE_SOURCE_DIR}/utils
+ configure_file(${CMAKE_SOURCE_DIR}/utils/cache_infer.in ${CMAKE_BINARY_DIR}/cache_infer @ONLY)
+ configure_file(${CMAKE_SOURCE_DIR}/utils/py_souper2llvm.in ${CMAKE_BINARY_DIR}/py_souper2llvm @ONLY)
+ configure_file(${CMAKE_SOURCE_DIR}/include/souper/Tool/GetSolver.h.in ${CMAKE_BINARY_DIR}/include/souper/Tool/GetSolver.h @ONLY)
+-configure_file(${CMAKE_SOURCE_DIR}/include/souper/KVStore/KVSocket.h.in ${CMAKE_BINARY_DIR}/include/souper/KVStore/KVSocket.h @ONLY)
+-configure_file(${CMAKE_SOURCE_DIR}/utils/redis-unix-socket.conf.in ${CMAKE_BINARY_DIR}/redis-unix-socket.conf @ONLY)
++if(FEATURE_EXTERNAL_CACHE)															# oteodoro:  add line
++  configure_file(${CMAKE_SOURCE_DIR}/include/souper/KVStore/KVSocket.h.in ${CMAKE_BINARY_DIR}/include/souper/KVStore/KVSocket.h @ONLY)		# oteodoro:  reindent line
++  configure_file(${CMAKE_SOURCE_DIR}/utils/redis-unix-socket.conf.in ${CMAKE_BINARY_DIR}/redis-unix-socket.conf @ONLY)				# oteodoro:  reindent line
++endif()																		# oteodoro:  add line
+ 
+ if (BUILD_CLANG_TOOL)
+   configure_file(${CMAKE_SOURCE_DIR}/utils/sclang.in ${CMAKE_BINARY_DIR}/sclang @ONLY)
+@@ -502,9 +536,11 @@ endif()
+ add_subdirectory(docs)
+ 															# oteodoro:  added line
+ install(TARGETS souper DESTINATION ${CMAKE_INSTALL_BINDIR})								# oteodoro:  added install for ninja
+-install(TARGETS profileRuntime souperCodegen souperPass souperPassProfileAll DESTINATION ${CMAKE_INSTALL_LIBDIR})	# oteodoro:  added install for ninja
++install(TARGETS ${PROFILERUNTIME_LIB} souperCodegen souperPass souperPassProfileAll DESTINATION ${CMAKE_INSTALL_LIBDIR})	# oteodoro:  added install for ninja
+ install(FILES "${CMAKE_BINARY_DIR}/sclang" "${CMAKE_BINARY_DIR}/sclang" DESTINATION ${CMAKE_INSTALL_BINDIR})		# oteodoro:  added install
+-install(FILES "${CMAKE_BINARY_DIR}/redis-unix-socket.conf" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/souper)		# oteodoro:  added install
++if(FEATURE_EXTERNAL_CACHE)												# oteodoro:  added line
++  install(FILES "${CMAKE_BINARY_DIR}/redis-unix-socket.conf" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/souper)		# oteodoro:  added install
++endif()															# oteodoro:  added line
+ if(INSTALL_SUPPORT_TOOLS)												# oteodoro:  added line
+   foreach(SUPPORT_TOOL reduce cache_dump cache_import cache_infer py_souper2llvm souper-check)				# oteodoro:  added line
+     install(FILES "${CMAKE_BINARY_DIR}/${SUPPORT_TOOL}" DESTINATION ${CMAKE_INSTALL_BINDIR})				# oteodoro:  added install
+Only in souper-69536e134478ae1d44c912c90c3db96ad06437c1: CMakeLists.txt.orig
+Only in souper-69536e134478ae1d44c912c90c3db96ad06437c1: CMakeLists.txt.rej
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Extractor/Solver.h souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Extractor/Solver.h
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Extractor/Solver.h	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Extractor/Solver.h	2022-02-12 01:43:21.117532880 -0800
+@@ -16,7 +16,9 @@
+ #define SOUPER_EXTRACTOR_SOLVER_H
+ 
+ #include "llvm/ADT/APInt.h"
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ #include "souper/KVStore/KVStore.h"
++#endif										// oteodoro:  added line
+ #include "souper/Tool/CandidateMapUtils.h"
+ #include "souper/Extractor/Candidates.h"
+ #include "souper/SMTLIB2/Solver.h"
+@@ -98,9 +100,10 @@ std::unique_ptr<Solver> createBaseSolver
+     std::unique_ptr<SMTLIBSolver> SMTSolver, unsigned Timeout);
+ std::unique_ptr<Solver> createMemCachingSolver(
+     std::unique_ptr<Solver> UnderlyingSolver);
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ std::unique_ptr<Solver> createExternalCachingSolver(
+     std::unique_ptr<Solver> UnderlyingSolver, KVStore *KV);
+-
++#endif										// oteodoro:  added line
+ }
+ 
+ #endif  // SOUPER_EXTRACTOR_SOLVER_H
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Tool/CandidateMapUtils.h souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Tool/CandidateMapUtils.h
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Tool/CandidateMapUtils.h	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Tool/CandidateMapUtils.h	2022-02-12 01:43:21.555550148 -0800
+@@ -19,7 +19,9 @@
+ #include "souper/Extractor/Candidates.h"
+ #include "souper/Extractor/ExprBuilder.h"
+ #include "souper/Extractor/Solver.h"
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ #include "souper/KVStore/KVStore.h"
++#endif										// oteodoro:  added line
+ 
+ namespace llvm {
+ 
+@@ -38,9 +40,14 @@ void AddToCandidateMap(CandidateMap &M,
+ void AddModuleToCandidateMap(InstContext &IC, ExprBuilderContext &EBC,
+                              CandidateMap &CandMap, llvm::Module *M);
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ bool SolveCandidateMap(llvm::raw_ostream &OS, CandidateMap &M,
+                        Solver *Solver, InstContext &IC,
+                        KVStore *KVForStaticProfile);
++#else										// oteodoro:  added line
++bool SolveCandidateMap(llvm::raw_ostream &OS, CandidateMap &M,			// oteodoro:  copied line
++                       Solver *Solver, InstContext &IC);			// oteodoro:  removed arg
++#endif										// oteodoro:  added line
+ 
+ bool CheckCandidateMap(llvm::Module &Mod, CandidateMap &M, Solver *S,
+                        InstContext &IC);
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Tool/GetSolver.h.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Tool/GetSolver.h.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Tool/GetSolver.h.in	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Tool/GetSolver.h.in	2022-02-12 01:43:21.560550345 -0800
+@@ -17,7 +17,9 @@
+ 
+ #include "llvm/Support/CommandLine.h"
+ #include "souper/Extractor/Solver.h"
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ #include "souper/KVStore/KVStore.h"
++#endif										// oteodoro:  added lined
+ #include "souper/SMTLIB2/Solver.h"
+ #include <unistd.h>
+ #include <memory>
+@@ -38,10 +40,12 @@ static llvm::cl::opt<bool> MemCache(
+   llvm::cl::desc("Cache solver results in memory (default=true)"),
+   llvm::cl::init(true));
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ static llvm::cl::opt<bool> ExternalCache(
+   "souper-external-cache",
+   llvm::cl::desc("Use external Redis-based cache (default=false)"),
+   llvm::cl::init(false));
++#endif										// oteodoro:  added line
+ 
+ static llvm::cl::opt<int> SolverTimeout(
+   "solver-timeout",
+@@ -60,15 +64,21 @@ static std::unique_ptr<SMTLIBSolver> Get
+                         KeepSolverInputs);
+ }
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ static std::unique_ptr<Solver> GetSolver(KVStore *&KV) {
++#else										// oteodoro:  removed arg
++static std::unique_ptr<Solver> GetSolver() {
++#endif
+   std::unique_ptr<SMTLIBSolver> US = GetUnderlyingSolver();
+   if (!US)
+     return NULL;
+   std::unique_ptr<Solver> S = createBaseSolver (std::move(US), SolverTimeout);
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+   if (ExternalCache) {
+     KV = new KVStore;
+     S = createExternalCachingSolver (std::move(S), KV);
+   }
++#endif										// oteodoro:  added line
+   if (MemCache) {
+     S = createMemCachingSolver (std::move(S));
+   }
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Extractor/Solver.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Extractor/Solver.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Extractor/Solver.cpp	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Extractor/Solver.cpp	2022-02-12 01:43:21.569550700 -0800
+@@ -29,7 +29,9 @@
+ #include "souper/Infer/InstSynthesis.h"
+ #include "souper/Infer/Preconditions.h"
+ #include "souper/Infer/Pruning.h"
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ #include "souper/KVStore/KVStore.h"
++#endif										// oteodoro:  added line
+ #include "souper/Parser/Parser.h"
+ 
+ #include <unordered_map>
+@@ -38,8 +40,10 @@ STATISTIC(MemHitsInfer, "Number of inter
+ STATISTIC(MemMissesInfer, "Number of internal cache misses for infer()");
+ STATISTIC(MemHitsIsValid, "Number of internal cache hits for isValid()");
+ STATISTIC(MemMissesIsValid, "Number of internal cache misses for isValid()");
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ STATISTIC(ExternalHits, "Number of external cache hits");
+ STATISTIC(ExternalMisses, "Number of external cache misses");
++#endif										// oteodoro:  added line
+ 
+ using namespace souper;
+ using namespace llvm;
+@@ -798,6 +802,7 @@ public:
+ 
+ };
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ class ExternalCachingSolver : public Solver {
+   std::unique_ptr<Solver> UnderlyingSolver;
+   KVStore *KV;
+@@ -941,6 +946,7 @@ public:
+   }
+ 
+ };
++#endif										// oteodoro:  added line
+ 
+ }
+ 
+@@ -959,10 +965,12 @@ std::unique_ptr<Solver> createMemCaching
+       new MemCachingSolver(std::move(UnderlyingSolver)));
+ }
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ std::unique_ptr<Solver> createExternalCachingSolver(
+     std::unique_ptr<Solver> UnderlyingSolver, KVStore *KV) {
+   return std::unique_ptr<Solver>(
+       new ExternalCachingSolver(std::move(UnderlyingSolver), KV));
+ }
++#endif										// oteodoro:  added line
+ 
+ }
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Pass/Pass.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Pass/Pass.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Pass/Pass.cpp	2022-02-12 01:42:53.862458438 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Pass/Pass.cpp	2022-02-12 01:43:21.574550897 -0800
+@@ -40,7 +40,9 @@
+ #include "llvm/Transforms/IPO/PassManagerBuilder.h"
+ #include "llvm/Transforms/Utils/BasicBlockUtils.h"
+ #include "llvm/Transforms/Utils/ModuleUtils.h"
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ #include "souper/KVStore/KVStore.h"
++#endif										// oteodoro:  added line
+ #include "souper/SMTLIB2/Solver.h"
+ #include "souper/Codegen/Codegen.h"
+ #include "souper/Tool/GetSolver.h"
+@@ -58,7 +60,9 @@ unsigned DebugLevel;
+ namespace {
+ std::unique_ptr<Solver> S;
+   unsigned ReplacementIdx, ReplacementsDone, LHSNum;
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ KVStore *KV;
++#endif										// oteodoro:  added line
+ 
+ static cl::opt<unsigned, /*ExternalStorage=*/true>
+ DebugFlagParser("souper-debug-level",
+@@ -70,11 +74,13 @@ DebugFlagParser("souper-debug-level",
+ static cl::opt<bool> Verify("souper-verify", cl::init(false),
+     cl::desc("Verify functions before Souper processes them (default=false)"));
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ static cl::opt<bool> DynamicProfile("souper-dynamic-profile", cl::init(false),
+     cl::desc("Dynamic profiling of Souper optimizations (default=false)"));
+ 
+ static cl::opt<bool> StaticProfile("souper-static-profile", cl::init(false),
+     cl::desc("Static profiling of Souper optimizations (default=false)"));
++#endif										// oteodoro:  added line
+ 
+ static cl::opt<unsigned> FirstReplace("souper-first-opt", cl::Hidden,
+     cl::init(0),
+@@ -84,10 +90,12 @@ static cl::opt<unsigned> LastReplace("so
+     cl::init(std::numeric_limits<unsigned>::max()),
+     cl::desc("Last Souper optimization to perform (default=infinite)"));
+ 
+-#ifdef DYNAMIC_PROFILE_ALL
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
++#  ifdef DYNAMIC_PROFILE_ALL							// oteodoro:  reindent line
+ static const bool DynamicProfileAll = true;
+-#else
++#  else									// oteodoro:  reindent line
+ static const bool DynamicProfileAll = false;
++#  endif									// oteodoro:  reindent line
+ #endif
+ 
+ struct SouperPass : public ModulePass {
+@@ -111,9 +119,13 @@ struct SouperPass : public ModulePass {
+ public:
+   SouperPass() : ModulePass(ID) {
+     if (!S) {
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+       S = GetSolver(KV);
+       if (StaticProfile && !KV)
+         KV = new KVStore;
++#else										// oteodoro:  added line
++      S = GetSolver();								// oteodoro:  removed arg
++#endif										// otoedoro:  added line
+     }
+   }
+ 
+@@ -126,6 +138,7 @@ public:
+     Info.addRequired<TargetLibraryInfoWrapperPass>();
+   }
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+   void dynamicProfile(Function *F, CandidateReplacement &Cand) {
+     std::string Str;
+     llvm::raw_string_ostream Loc(Str);
+@@ -190,6 +203,7 @@ public:
+                       A, AtomicOrdering::Monotonic,
+                       SyncScope::System, Cand.Origin);
+   }
++#endif										// oteodoro:  added line
+ 
+   Value *getValue(Inst *I, Instruction *ReplacedInst,
+                   ExprBuilderContext &EBC, DominatorTree &DT,
+@@ -273,6 +287,7 @@ public:
+         PrintReplacementLHS(errs(), Cand.BPCs, Cand.PCs, Cand.Mapping.LHS, Context);
+       }
+       
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+       if (StaticProfile) {
+         std::string Str;
+         llvm::raw_string_ostream Loc(Str);
+@@ -287,6 +302,7 @@ public:
+         dynamicProfile(F, Cand);
+         continue;
+       }
++#endif										// oteodoro:  added line
+       std::vector<Inst *> RHSs;
+       if (std::error_code EC =
+           S->infer(Cand.BPCs, Cand.PCs, Cand.Mapping.LHS,
+@@ -372,8 +388,10 @@ public:
+         errs() << "\"\n";
+       }
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+       if (DynamicProfile)
+         dynamicProfile(F, Cand);
++#endif										// oteodoro:  added line
+ 
+       if (Cand.Mapping.LHS->HarvestKind == HarvestType::HarvestedFromDef) {
+         I->replaceAllUsesWith(NewVal);
+@@ -473,7 +491,7 @@ static void registerSouperPass(
+ }
+ 
+ static llvm::RegisterStandardPasses
+-#ifdef DYNAMIC_PROFILE_ALL
++#if defined(USE_EXTERNAL_CACHE) && defined(DYNAMIC_PROFILE_ALL)		// oteodoro:  changed and added subexpression
+ RegisterSouperOptimizer(llvm::PassManagerBuilder::EP_OptimizerLast,
+                         registerSouperPass);
+ #else
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Tool/CandidateMapUtils.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Tool/CandidateMapUtils.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Tool/CandidateMapUtils.cpp	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Tool/CandidateMapUtils.cpp	2022-02-12 01:43:21.587551410 -0800
+@@ -22,7 +22,9 @@
+ #include "llvm/Support/ErrorHandling.h"
+ #include "llvm/Support/KnownBits.h"
+ #include "llvm/Support/raw_ostream.h"
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ #include "souper/KVStore/KVStore.h"
++#endif										// oteodoro:  added line
+ #include "souper/SMTLIB2/Solver.h"
+ 
+ 
+@@ -45,8 +47,13 @@ void souper::AddModuleToCandidateMap(Ins
+ 
+ namespace souper {
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ bool SolveCandidateMap(llvm::raw_ostream &OS, CandidateMap &M,
+                        Solver *S, InstContext &IC, KVStore *KVForStaticProfile) {
++#else										// oteodoro:  added line
++bool SolveCandidateMap(llvm::raw_ostream &OS, CandidateMap &M,			// oteodoro:  copy line
++                       Solver *S, InstContext &IC) {				// oteodoro:  removed arg
++#endif										// oteodoro:  added line
+   if (S) {
+     OS << "; Listing valid replacements.\n";
+     OS << "; Using solver: " << S->getName() << '\n';
+@@ -72,6 +79,7 @@ bool SolveCandidateMap(llvm::raw_ostream
+         continue;
+       auto &Cand = M[I];
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+       if (KVForStaticProfile) {
+         std::string Str;
+         llvm::raw_string_ostream Loc(Str);
+@@ -82,6 +90,7 @@ bool SolveCandidateMap(llvm::raw_ostream
+         KVForStaticProfile->hIncrBy(GetReplacementLHSString(Cand.BPCs,
+             Cand.PCs, Cand.Mapping.LHS, Context), HField, 1);
+       }
++#endif										// oteodoro:  added line
+ 
+       if (isInferDFA()) {
+         OS << '\n';
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/clang-souper.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/clang-souper.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/clang-souper.cpp	2022-02-12 01:42:53.781455244 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/clang-souper.cpp	2022-02-12 01:43:21.589551489 -0800
+@@ -67,7 +67,12 @@ int main(int argc, const char **argv) {
+       Context, IC, EBC, OwnedMods, CandMap));
+   Tool.run(Factory.get());
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+   KVStore *KV = 0;
+   std::unique_ptr<Solver> S = GetSolver(KV);
+   return SolveCandidateMap(llvm::outs(), CandMap, S.get(), IC, 0) ? 0 : 1;
++#else										// oteodoro:  added line
++  std::unique_ptr<Solver> S = GetSolver();					// oteodoro:  copied line
++  return SolveCandidateMap(llvm::outs(), CandMap, S.get(), IC) ? 0 : 1;	// oteodoro:  removed arg
++#endif										// oteodoro:  added line
+ }
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-check.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-check.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-check.cpp	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-check.cpp	2022-02-12 01:43:21.596551765 -0800
+@@ -381,11 +381,17 @@ int SolveInst(const MemoryBufferRef &MB,
+ 
+ int main(int argc, char **argv) {
+   cl::ParseCommandLineOptions(argc, argv);
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+   KVStore *KV = 0;
++#endif										// oteodoro:  added line
+ 
+   std::unique_ptr<Solver> S = 0;
+   if (!ParseOnly && !ParseLHSOnly)
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+     S = GetSolver(KV);
++#else										// oteodoro:  added line
++    S = GetSolver();								// oteodoro:  removed arg
++#endif										// oteodoro:  added line
+ 
+   auto MB = MemoryBuffer::getFileOrSTDIN(InputFilename);
+   if (!MB) {
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper.cpp	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper.cpp	2022-02-12 01:43:21.601551962 -0800
+@@ -50,8 +50,10 @@ static cl::opt<std::string>
+ OutputFilename("o", cl::desc("Override output filename"),
+     cl::init(""), cl::value_desc("filename"));
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+ static cl::opt<bool> StaticProfile("souper-static-profile", cl::init(false),
+     cl::desc("Static profiling of Souper optimizations (default=false)"));
++#endif										// oteodoro:  added line
+ 
+ static cl::opt<bool>
+ Check("check", cl::desc("Check input for expected results"),
+@@ -99,8 +101,12 @@ int main(int argc, char **argv) {
+     return 1;
+   }
+ 
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+   KVStore *KV = 0;
+   std::unique_ptr<Solver> S = GetSolver(KV);
++#else										// oteodoro:  added line
++  std::unique_ptr<Solver> S = GetSolver();					// oteodoro:  removed arg
++#endif										// oteodoro:  added line
+ 
+   InstContext IC;
+   ExprBuilderContext EBC;
+@@ -111,9 +117,13 @@ int main(int argc, char **argv) {
+   if (Check) {
+     return CheckCandidateMap(*M.get(), CandMap, S.get(), IC) ? 0 : 1;
+   } else {
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+     if (StaticProfile && !KV)
+       KV = new KVStore;
+     return SolveCandidateMap(llvm::outs(), CandMap, S.get(), IC,
+                              StaticProfile ? KV : 0) ? 0 : 1;
++#else										// oteodoro:  added line
++    return SolveCandidateMap(llvm::outs(), CandMap, S.get(), IC) ? 0 : 1;	// oteodoro:  removed arg
++#endif										// oteodoro:  added line
+   }
+ }
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-interpret.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-interpret.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-interpret.cpp	2022-02-12 01:42:53.782455284 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-interpret.cpp	2022-02-12 01:43:21.611552356 -0800
+@@ -292,9 +292,15 @@ static int Interpret(const MemoryBufferR
+ 
+ int main(int argc, char **argv) {
+   cl::ParseCommandLineOptions(argc, argv);
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+   KVStore *KV = 0;
++#endif										// oteodoro:  added line
+   std::unique_ptr<Solver> S = 0;
++#ifdef USE_EXTERNAL_CACHE							// oteodoro:  added line
+   S = GetSolver(KV);
++#else										// oteodoro:  added line
++  S = GetSolver();								// oteodoro:  removed arg
++#endif										// oteodoro:  added line
+ 
+   auto MB = MemoryBuffer::getFileOrSTDIN(InputFilename);
+   if (!MB) {
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/sclang.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in	2022-02-12 01:42:53.741453667 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/sclang.in	2022-02-12 01:43:21.618552632 -0800
+@@ -17,6 +17,7 @@
+ use warnings;
+ use strict;
+ use File::Temp;
++my USE_EXTERNAL_CACHE=1							# oteodoro:  added constant variable
+ 
+ my $MODE_PRODUCTION = 0;										# oteodoro:  added line
+ my $MODE_TESTING = 1;											# oteodoro:  added line
+@@ -223,11 +224,11 @@ if (getenv("SOUPER_EXPLOIT_BLOCKPCS") &&
+     push @ARGV, ("-mllvm", "-souper-exploit-blockpcs");
+ }
+ 
+-if (!getenv("SOUPER_NO_EXTERNAL_CACHE") && $souper) {
++if (USE_EXTERNAL_CACHE && !getenv("SOUPER_NO_EXTERNAL_CACHE") && $souper) {	# oteodoro:  added subexpr
+     push @ARGV, ("-mllvm", "-souper-external-cache");
+ }
+ 
+-if (getenv("SOUPER_CACHE_UNIX") && $souper) {
++if (USE_EXTERNAL_CACHE && getenv("SOUPER_CACHE_UNIX") && $souper) {		# oteodoro:  added subexpr
+     push @ARGV, ("-mllvm", "-souper-external-cache-unix");
+ }
+ 
+@@ -243,12 +244,12 @@ if (getenv("SOUPER_LAST_OPT") && $souper
+     push @ARGV, ("-mllvm", "-souper-last-opt=".$ENV{"SOUPER_LAST_OPT"});
+ }
+ 
+-if (getenv("SOUPER_STATIC_PROFILE") && $souper) {
++if (USE_EXTERNAL_CACHE && getenv("SOUPER_STATIC_PROFILE") && $souper) {	# oteodoro:  added subexpr
+     push @ARGV, ("-mllvm", "-souper-static-profile");
+ }
+ 
+-if (getenv("SOUPER_DYNAMIC_PROFILE") ||
+-    getenv("SOUPER_DYNAMIC_PROFILE_ALL") && $souper) {
++if (USE_EXTERNAL_CACHE && (getenv("SOUPER_DYNAMIC_PROFILE") ||			# oteodoro:  added subexpr and (
++    getenv("SOUPER_DYNAMIC_PROFILE_ALL")) && $souper) {			# oteodoro:  added )
+     push @ARGV, ("-g", "-mllvm", "-souper-dynamic-profile");
+ }
+ 
+@@ -303,7 +304,7 @@ if (getenv("SOUPER_DISABLE_LLVM_PEEPHOLE
+     push @ARGV, ("-mllvm", "-disable-all-peepholes");
+ }
+ 
+-if ((getenv("SOUPER_DYNAMIC_PROFILE") ||
++if (USE_EXTERNAL_CACHE && (getenv("SOUPER_DYNAMIC_PROFILE") ||			# oteodoro:  added subexpression
+      getenv("SOUPER_DYNAMIC_PROFILE_ALL")) && linkp() && $souper) {
+     if ($MODE eq $MODE_PRODUCTION) {											# oteodoro:  added line
+         push @ARGV, ("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/@PROFILE_LIBRARY@", "@HIREDIS_LIBRARY@");		# oteodoro:  indent and change line

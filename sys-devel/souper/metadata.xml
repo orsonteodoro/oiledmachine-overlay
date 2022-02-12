@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- ebuild only in the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    Souper is an LLVM IR optimizer pass that can reduce a binary by around 4.4%
+    but with a 2% runtime performance slowdown tradeoff.[1]
+
+    It automatically generates random code sequences of optimized code
+    sequences.  Because of this random code generation, two additional CFLAGS
+    can be used as input to additional functions when computing the cost.
+
+
+    Ricer notes:
+
+    Two profile options can improve optimization over time but require the redis
+    USE flag.
+
+    Extra CFLAGS
+
+     * -souper-static-profile -- can be used to add performance counters for
+          size
+     * -souper-dynamic-profile -- can be used to add performance counters for
+          execution speed
+
+    The above settings correspond to sclang front-end ENVIRONMENT VARIABLES as
+    well:
+
+      *  SOUPER_STATIC_PROFILE
+      *  SOUPER_DYNAMIC_PROFILE
+
+
+    Fontend wrappers:
+
+    sclang can be used in place of clang when setting CC environment variable.
+
+    sclang++ can be used in place of clang++ when setting CXX environment
+    variable.
+
+    References:
+    [1] https://research.google/pubs/pub46467/
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/google/souper/issues</bugs-to>
+    <doc lang="en">https://github.com/google/souper#using-souper</doc>
+    <remote-id type="github">google/souper</remote-id>
+  </upstream>
+  <use>
+    <flag name="debug">
+      Allow use of assertions for correctness checking.  Upstream defaults
+      and hardcodes this ON even on release builds.
+    </flag>
+    <flag name="dump">
+      Allow use of dump functions to increase verbosity of helpful debug
+      information.  Only useful for developers or testers.  Upstream defaults
+      and hardcodes this ON even on release builds.
+    </flag>
+    <flag name="support-tools">
+      Install extra tools designed for compiler developers
+    </flag>
+    <flag name="redis">
+      Use the Redis DB as an external query cache to reduce time cost
+      of looking up the most frequent encountered code sequences mapped to
+      the to cheapest code sequence while skipping steps to obtain it.
+
+      Note the use of redis can increase the cost of RAM in the order
+      of 100s of MB but the time savings is amortized (meaning high
+      initial cost but decreased over time).  Without redis the cost
+      could be 6.28-13x times larger in the initial compilation
+      relative to warm cache runs.
+
+      It is recommended to hardmask newer versions of Redis in package.mask.
+    </flag>
+  </use>
+</pkgmetadata>

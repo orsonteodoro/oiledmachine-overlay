@@ -1,0 +1,29 @@
+Subject:  Check -std=c++20 in a multi-compiler / multi-version dev environment
+Patch author:   Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Fri Feb 11 07:09:44 PM PST 2022 (Unix time:  1644635384)
+Patch status:  Complete
+
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt.orig	2022-02-12 14:16:14.734759242 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt	2022-02-12 14:42:13.603969116 -0800
+@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.8)
+ project(Souper)
+ 
+ include(CheckIncludeFileCXX)						# oteodoro:  added line
++include(CheckCXXCompilerFlag)						# oteodoro:  added line
+ 									# oteodoro:  added line
+ set(CMAKE_MACOSX_RPATH NEW)
+ 
+@@ -119,7 +120,12 @@ set(GTEST_CXXFLAGS "-DGTEST_HAS_RTTI=0")
+ set(GTEST_INCLUDEDIR "/usr/include/gtest")					# oteodoro:  use system package
+ set(GTEST_LIBS "-lgtest_main -lgtest")
+ 
+-set(LLVM_CXXFLAGS "${LLVM_CXXFLAGS} -std=c++20")
++CHECK_CXX_COMPILER_FLAG("-std=c++20" COMPILER_SUPPORTS_STDCXX20_FLAG)				# oteodoro:  added line
++if(COMPILER_SUPPORTS_STDCXX20_FLAG)								# oteodoro:  added line
++  set(LLVM_CXXFLAGS "${LLVM_CXXFLAGS} -std=c++20")				# oteodoro:  indent line
++else()										# oteodoro:  added line
++  message(FATAL_ERROR "${CMAKE_CXX_COMPILER} does not support the -std=c++20 flag")	# oteodoro:  added line
++endif()										# oteodoro:  added line
+ 										# oteodoro:  added line
+ CHECK_INCLUDE_FILE_CXX("${LLVM_INCLUDEDIR}/llvm/Passes/OptimizationLevel.h"	# oteodoro:  added line
+   HAVE_OPTIMIZATIONLEVEL_H)							# oteodoro:  added line

@@ -1,0 +1,43 @@
+Subject:  Obtain the LLVM version instead of hard coding and perform version checks
+Patch author:   Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Fri Feb 11 07:09:44 PM PST 2022 (Unix time:  1644635384)
+Patch status:  Complete
+
+Requires souper-9999_pre20210629-disable-llvm-version-change.patch
+
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt	2022-02-12 11:20:37.453046332 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt	2022-02-12 11:26:43.972745455 -0800
+@@ -72,6 +72,32 @@ execute_process(
+   OUTPUT_STRIP_TRAILING_WHITESPACE
+ )
+ 
++if(LLVM_CONFIG_H_PATH)										# oteodoro:  added line
++  file(READ "${LLVM_CONFIG_H_PATH}" LLVM_CONFIG_H_DATA)					# otoeooro:  added line
++elseif(UNIX)											# oteodoro:  added line
++  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine OUTPUT_VARIABLE TARGET_TRIPLE)	# oteodoro:  added line
++  string(REGEX REPLACE "\n$" "" TARGET_TRIPLE "${TARGET_TRIPLE}")				# oteodoro:  added line
++  message(STATUS "Target triple:  ${TARGET_TRIPLE}")						# oteodoro:  added line
++  if(EXISTS "${LLVM_INCLUDEDIR}/${TARGET_TRIPLE}/llvm/Config/llvm-config.h")			# oteodoro:  added line.  for gentoo support
++    file(READ "${LLVM_INCLUDEDIR}/${TARGET_TRIPLE}/llvm/Config/llvm-config.h" LLVM_CONFIG_H_DATA)	# oteodoro:  added line
++  else()											# oteodoro:  added line
++    file(READ "${LLVM_INCLUDEDIR}/llvm/Config/llvm-config.h" LLVM_CONFIG_H_DATA)		# oteodoro:  added line
++  endif()											# oteodoro:  added line
++else()												# oteodoro:  added line
++  file(READ "${LLVM_INCLUDEDIR}/llvm/Config/llvm-config.h" LLVM_CONFIG_H_DATA)			# otoeooro:  added line
++endif()											# oteodoro:  added line
++string(REGEX MATCH "LLVM_VERSION_MAJOR ([0-9]+)" _ ${LLVM_CONFIG_H_DATA})					# oteodoro:  added line
++set(LLVM_VERSION_MAJOR_FOUND ${CMAKE_MATCH_1})							# oteodoro:  added line
++add_definitions(-DLLVM_VERSION_MAJOR=${LLVM_VERSION_MAJOR_FOUND})				# oteodoro:  added line
++string(REGEX MATCH "LLVM_VERSION_MINOR ([0-9]+)" _ ${LLVM_CONFIG_H_DATA})					# oteodoro:  added line
++set(LLVM_VERSION_MINOR_FOUND ${CMAKE_MATCH_1})							# oteodoro:  added line
++add_definitions(-DLLVM_VERSION_MINOR=${LLVM_VERSION_MINOR_FOUND})				# oteodoro:  added line
++if(${LLVM_VERSION_MAJOR_FOUND} LESS 12)							# oteodoro:  added line
++  message(FATAL_ERROR "LLVM >= 12 is required")						# oteodoro:  added line
++elseif(${LLVM_VERSION_MAJOR_FOUND} GREATER_EQUAL 15)						# oteodoro:  added line
++  message(WARNING "LLVM >= 15 is untested.  Try LLVM 12-14 if build fails.")			# oteodoro:  added line
++endif()											# oteodoro:  added line
++												# oteodoro:  added line
+ set(CLANG_CXXFLAGS "")
+ set(CLANG_INCLUDEDIR "${CLANG_INCLUDE_DIR}")					# oteodoro:  use system package
+ 
