@@ -278,13 +278,13 @@ src_test() {
 
 pkg_postinst() {
 	env-update
-	ewarn
-	ewarn "The redis cache must stopped and dumped each time this package"
-	ewarn "bumped to a newer version or commit."
-	ewarn
 	if use redis ; then
-		ewarn
-		ewarn "The redis server should be listening in port 6379."
-		ewarn
+ewarn
+ewarn "The redis cache must stopped and dumped each time this package"
+ewarn "bumped to a newer version or commit."
+ewarn
+ewarn
+ewarn "The redis server should be listening in port 6379."
+ewarn
 	fi
 }
