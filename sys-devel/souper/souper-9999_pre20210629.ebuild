@@ -149,6 +149,9 @@ pkg_setup()
 	if use doxygen ; then
 		ewarn "The doxygen USE flag has not been tested."
 	fi
+	if use test ; then
+		ewarn "The test USE flag has not been tested."
+	fi
 	ewarn "This package with compatibility patches has not been unit tested yet."
 	python-any-r1_pkg_setup
 }
