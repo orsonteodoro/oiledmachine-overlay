@@ -9,7 +9,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-96-patches-02j.tar.xz"
+FIREFOX_PATCHSET="firefox-97-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -66,7 +66,7 @@ HOMEPAGE="https://www.mozilla.com/firefox"
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
-SLOT="0/$(ver_cut 1)"
+SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
@@ -75,7 +75,7 @@ LICENSE_FINGERPRINT="\
 cb397048079dda1254f41a71170e0014d7edd29ac3b0952b6b2a77a54946e45a" # SHA512
 # FF-96.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
 # Update the license version also.
-LICENSE+=" FF-96.0-THIRD-PARTY-LICENSES"
+LICENSE+=" FF-97.0-THIRD-PARTY-LICENSES"
 LICENSE+="
 	( BSD-2
 		BSD
@@ -199,7 +199,7 @@ LICENSE+="
 #   the vanilla ZLIB lib license doesn't contain all rights reserved
 
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel
-	jack lto +openh264 pgo pulseaudio sndio selinux
+	jack libproxy lto +openh264 pgo pulseaudio sndio selinux
 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 	+system-libvpx system-png +system-webp
 	wayland wifi"
@@ -229,7 +229,7 @@ REQUIRED_USE="debug? ( !system-av1 )
 # Firefox-only REQUIRED_USE flags
 REQUIRED_USE+=" screencast? ( wayland )"
 
-LLVM_SLOTS=(10 11 12 13)
+LLVM_SLOTS=(13 12 11 10)
 
 gen_llvm_bdepends() {
 	local o=""
@@ -255,12 +255,12 @@ BDEPEND+=" ${PYTHON_DEPS}
 	>=dev-util/cbindgen-0.19.0
 	>=net-libs/nodejs-10.23.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=virtual/rust-1.53.0[${MULTILIB_USEDEP}]
-	amd64? ( >=dev-lang/nasm-2.13 )
-	x86? ( >=dev-lang/nasm-2.13 )"
+	>=virtual/rust-1.57.0[${MULTILIB_USEDEP}]
+	amd64? ( >=dev-lang/nasm-2.14 )
+	x86? ( >=dev-lang/nasm-2.14 )"
 
 CDEPEND="
-	>=dev-libs/nss-3.73[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.74[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.32[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -268,14 +268,13 @@ CDEPEND="
 	>=x11-libs/gtk+-3.4.0:3[X,${MULTILIB_USEDEP}]
 	x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.6.35:0=[apng,${MULTILIB_USEDEP}]
 	>=media-libs/mesa-10.2:*[${MULTILIB_USEDEP}]
 	media-libs/fontconfig[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.4.10[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.9[${MULTILIB_USEDEP}]
 	kernel_linux? ( !pulseaudio? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] ) )
 	virtual/freedesktop-icon-theme
 	>=x11-libs/pixman-0.19.2[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.26:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.3[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-3.0.10:=[${MULTILIB_USEDEP}]
 	media-video/ffmpeg[${MULTILIB_USEDEP}]
@@ -292,7 +291,8 @@ CDEPEND="
 		sys-apps/dbus[${MULTILIB_USEDEP}]
 		dev-libs/dbus-glib[${MULTILIB_USEDEP}]
 	)
-	screencast? ( media-video/pipewire:0/0.3 )
+	libproxy? ( net-libs/libproxy[${MULTILIB_USEDEP}] )
+	screencast? ( media-video/pipewire:0/0.3[${MULTILIB_USEDEP}] )
 	system-av1? (
 		>=media-libs/dav1d-0.9.3:=[${MULTILIB_USEDEP}]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
@@ -319,6 +319,8 @@ CDEPEND="
 	sndio? ( media-sound/sndio[${MULTILIB_USEDEP}] )"
 
 RDEPEND="${CDEPEND}
+	!www-client/firefox:0
+	!www-client/firefox:esr
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	openh264? ( media-libs/openh264:*[plugin,${MULTILIB_USEDEP}] )
 	pulseaudio? (
@@ -799,12 +801,7 @@ eerror
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 
-	local elfhack_tc_pn=$(basename $(find "${WORKDIR}/firefox-patches" -name "*Make-elfhack-use-toolchain.patch"))
-	# Defer 0027-Make-elfhack-use-toolchain.patch in multilib_foreach_abi
-	mv "${WORKDIR}/firefox-patches"/${elfhack_tc_pn}{,.bak} || die
-
 	eapply "${WORKDIR}/firefox-patches"
-	mv "${WORKDIR}/firefox-patches"/${elfhack_tc_pn}{.bak,} || die
 
 	# Only partial patching was done because Gentoo doesn't support multilib
 	# Python.  Only native ABI is supported.  This means cbindgen cannot
@@ -814,6 +811,9 @@ src_prepare() {
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
+
+	# Make cargo respect MAKEOPTS
+	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
 
 	# Make LTO respect MAKEOPTS
 	sed -i \
@@ -871,19 +871,18 @@ src_prepare() {
 		fi
 
 		cd "${BUILD_DIR}" || die
-		local chost=$(get_abi_CHOST ${DEFAULT_ABI})
-		local ctarget=$(get_abi_CHOST ${ABI})
-		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${ctarget}-objdump" ) \
-			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${ctarget}-objdump" ) ; then
-			eapply "${WORKDIR}/firefox-patches/${elfhack_tc_pn}"
+		local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})	# builder machine
+		local chost=$(get_abi_CHOST ${ABI})		# target machine
+		if ( tc-is-cross-compiler && test -f "${ESYSROOT}/usr/bin/${chost}-objdump" ) \
+			|| ( ! tc-is-cross-compiler && test -f "/usr/bin/${chost}-objdump" ) ; then
 			# sed-in toolchain prefix
 			sed -i \
-				-e "s/objdump/${ctarget}-objdump/" \
+				-e "s/objdump/${chost}-objdump/" \
 				"${BUILD_DIR}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 				|| die "sed failed to set toolchain prefix"
-			einfo "Using ${ctarget}-objdump for ctarget"
+			einfo "Using ${chost}-objdump for chost"
 		else
-			ewarn "Using objdump from chost"
+			ewarn "Using objdump from cbuild"
 		fi
 	}
 
@@ -893,8 +892,8 @@ src_prepare() {
 # corrections based on the ABI being compiled
 _fix_paths() {
 	# For proper rust cargo cross-compile for libloading and glslopt
-	export PKG_CONFIG=${ctarget}-pkg-config
-	export CARGO_CFG_TARGET_ARCH=$(echo ${ctarget} | cut -f 1 -d "-")
+	export PKG_CONFIG=${chost}-pkg-config
+	export CARGO_CFG_TARGET_ARCH=$(echo ${chost} | cut -f 1 -d "-")
 	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 	export BUILD_OBJ_DIR="${BUILD_DIR}/ff"
 
@@ -903,11 +902,11 @@ _fix_paths() {
 
 	# for rust crates libloading and glslopt
 	if use clang && ! tc-is-clang ; then
-		CC=${ctarget}-clang
-		CXX=${ctarget}-clang++
+		CC=${chost}-clang
+		CXX=${chost}-clang++
 	elif ! use clang && ! tc-is-gcc ; then
-		CC=${ctarget}-gcc
-		CXX=${ctarget}-g++
+		CC=${chost}-gcc
+		CXX=${chost}-g++
 	fi
 	tc-export CC CXX
 }
@@ -918,8 +917,8 @@ multilib_src_configure() {
 		cd "${BUILD_DIR}" || die
 	fi
 
-	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
-	local ctarget=$(get_abi_CHOST ${ABI})
+	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
+	local chost=$(get_abi_CHOST ${ABI})
 	# Show flags set at the beginning
 	einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
 	einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
@@ -927,15 +926,15 @@ multilib_src_configure() {
 	einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
 	einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
 
-	einfo "Cross-compile: ctarget=${ctarget}"
+	einfo "Cross-compile: chost=${chost}"
 	local have_switched_compiler=
 	if use clang && ! tc-is-clang ; then
 		# Force clang
 		einfo "Enforcing the use of clang due to USE=clang ..."
 		have_switched_compiler=yes
 		AR=llvm-ar
-		CC=${ctarget}-clang
-		CXX=${ctarget}-clang++
+		CC=${chost}-clang
+		CXX=${chost}-clang++
 		NM=llvm-nm
 		RANLIB=llvm-ranlib
 	elif ! use clang && ! tc-is-gcc ; then
@@ -943,8 +942,8 @@ multilib_src_configure() {
 		have_switched_compiler=yes
 		einfo "Enforcing the use of gcc due to USE=-clang ..."
 		AR=gcc-ar
-		CC=${ctarget}-gcc
-		CXX=${ctarget}-g++
+		CC=${chost}-gcc
+		CXX=${chost}-g++
 		NM=gcc-nm
 		RANLIB=gcc-ranlib
 	fi
@@ -962,7 +961,7 @@ multilib_src_configure() {
 	_fix_paths
 	# Pass the correct toolchain paths through cbindgen
 	if tc-is-cross-compiler ; then
-		export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --host=${chost} --target=${ctarget} ${BINDGEN_CFLAGS-}"
+		export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --host=${cbuild} --target=${chost} ${BINDGEN_CFLAGS-}"
 	fi
 
 	# MOZILLA_FIVE_HOME is dynamically generated per ABI in _fix_paths().
@@ -988,16 +987,19 @@ multilib_src_configure() {
 		--disable-cargo-incremental \
 		--disable-crashreporter \
 		--disable-install-strip \
+		--disable-parental-controls \
 		--disable-strip \
 		--disable-updater \
+		--enable-negotiateauth \
+		--enable-new-pass-manager \
 		--enable-official-branding \
 		--enable-release \
 		--enable-system-ffi \
 		--enable-system-pixman \
-		--host="${chost}" \
+		--host="${cbuild}" \
 		--libdir="${EPREFIX}/usr/$(get_libdir)" \
 		--prefix="${EPREFIX}/usr" \
-		--target="${ctarget}" \
+		--target="${chost}" \
 		--without-ccache \
 		--without-wasm-sandboxed-libraries \
 		--with-intl-api \
@@ -1005,12 +1007,12 @@ multilib_src_configure() {
 		--with-system-nspr \
 		--with-system-nss \
 		--with-system-zlib \
-		--with-toolchain-prefix="${ctarget}-" \
+		--with-toolchain-prefix="${chost}-" \
 		--with-unsigned-addon-scopes=app,system \
 		--x-includes="${SYSROOT}${EPREFIX}/usr/include" \
 		--x-libraries="${SYSROOT}${EPREFIX}/usr/$(get_libdir)"
 
-	# mozconfig_add_options_ac '' --with-libclang-path="$(${ctarget}-llvm-config --libdir)"
+	# mozconfig_add_options_ac '' --with-libclang-path="$(${chost}-llvm-config --libdir)"
 	#   disabled because Gentoo doesn't support multilib python, so full cross-compile is not supported.
 
 	#   the commented above is mutually exclusive with this line below.
@@ -1021,8 +1023,17 @@ multilib_src_configure() {
 	[[ -n ${MOZ_ESR} ]] && update_channel=esr
 	mozconfig_add_options_ac '' --update-channel=${update_channel}
 
-	if ! use x86 && [[ ${chost} != armv*h* ]] ; then
+	if ! use x86 && [[ ${cbuild} != armv*h* ]] ; then
 		mozconfig_add_options_ac '' --enable-rust-simd
+	fi
+
+	# For future keywording: This is currently (97.0) only supported on:
+	# amd64, arm, arm64 & x86.
+	# Might want to flip the logic around if Firefox is to support more arches.
+	if use ppc64; then
+		mozconfig_add_options_ac '' --disable-sandbox
+	else
+		mozconfig_add_options_ac '' --enable-sandbox
 	fi
 
 	if [[ -s "${BUILD_DIR}/api-google.key" ]] ; then
@@ -1066,12 +1077,13 @@ multilib_src_configure() {
 	mozconfig_use_with system-harfbuzz system-graphite2
 	mozconfig_use_with system-icu
 	mozconfig_use_with system-jpeg
-	mozconfig_use_with system-libevent system-libevent "${SYSROOT}${EPREFIX}/usr"
+	mozconfig_use_with system-libevent
 	mozconfig_use_with system-libvpx
 	mozconfig_use_with system-png
 	mozconfig_use_with system-webp
 
 	mozconfig_use_enable dbus
+	mozconfig_use_enable libproxy
 
 	use eme-free && mozconfig_add_options_ac '+eme-free' --disable-eme
 
@@ -1106,13 +1118,16 @@ multilib_src_configure() {
 			mozconfig_add_options_ac "forcing ld=lld due to USE=clang and USE=lto" --enable-linker=lld
 
 			mozconfig_add_options_ac '+lto' --enable-lto=cross
-		else
-			# ld.gold is known to fail:
-			# /usr/lib/gcc/x86_64-pc-linux-gnu/11.2.1/../../../../x86_64-pc-linux-gnu/bin/ld.gold: internal error in set_xindex, at /var/tmp/portage/sys-devel/binutils-2.37_p1-r1/work/binutils-2.37/gold/object.h:1050
 
+		else
 			# ThinLTO is currently broken, see bmo#1644409
 			mozconfig_add_options_ac '+lto' --enable-lto=full
-			mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
+			if tc-ld-is-gold; then
+				mozconfig_add_options_ac "linker is set to gold" --enable-linker=gold
+				export MOZ_FORCE_GOLD=1
+			else
+				mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
+			fi
 		fi
 
 		if use pgo ; then
@@ -1129,7 +1144,12 @@ multilib_src_configure() {
 			# This is upstream's default
 			mozconfig_add_options_ac "forcing ld=lld due to USE=clang" --enable-linker=lld
 		else
-			mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
+			if tc-ld-is-gold; then
+				mozconfig_add_options_ac "linker is set to gold" --enable-linker=gold
+				export MOZ_FORCE_GOLD=1
+			else
+				mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
+			fi
 		fi
 	fi
 
@@ -1183,7 +1203,7 @@ multilib_src_configure() {
 		fi
 	fi
 
-	if [[ ${chost} == armv*h* ]] ; then
+	if [[ ${cbuild} == armv*h* ]] ; then
 		mozconfig_add_options_ac 'CHOST=armv*h*' --with-float-abi=hard
 
 		if ! use system-libvpx ; then
@@ -1249,6 +1269,7 @@ multilib_src_configure() {
 	# Use system's Python environment
 	export MACH_USE_SYSTEM_PYTHON=1
 	export MACH_SYSTEM_ASSERTED_COMPATIBLE_WITH_MACH_SITE=1
+	export MACH_SYSTEM_ASSERTED_COMPATIBLE_WITH_BUILD_SITE=1
 	export PIP_NO_CACHE_DIR=off
 
 	# Disable notification when build system has finished
@@ -1269,7 +1290,7 @@ multilib_src_configure() {
 
 	einfo "Cross-compile: ${ABI} CFLAGS=${CFLAGS}"
 	einfo "Cross-compile: CC=${CC} CXX=${CXX}"
-	echo "export PKG_CONFIG=${ctarget}-pkg-config" >>${MOZCONFIG}
+	echo "export PKG_CONFIG=${chost}-pkg-config" >>${MOZCONFIG}
 	echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" >>${MOZCONFIG}
 
 	# Show flags we will use
@@ -1310,8 +1331,8 @@ multilib_src_compile() {
 		cd "${BUILD_DIR}" || die
 	fi
 
-	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
-	local ctarget=$(get_abi_CHOST ${ABI})
+	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
+	local chost=$(get_abi_CHOST ${ABI})
 	_fix_paths
 	cd "${BUILD_DIR}" || die
 	local virtx_cmd=
@@ -1495,8 +1516,8 @@ multilib_src_install() {
 		export BUILD_DIR="${S}"
 	fi
 
-	local chost=$(get_abi_CHOST ${DEFAULT_ABI})
-	local ctarget=$(get_abi_CHOST ${ABI})
+	local cbuild=$(get_abi_CHOST ${DEFAULT_ABI})
+	local chost=$(get_abi_CHOST ${ABI})
 	_fix_paths
 	cd "${BUILD_DIR}" || die
 	# xpcshell is getting called during install
@@ -1594,7 +1615,7 @@ multilib_src_install() {
 
 	# Install menu
 	local app_name="Mozilla ${MOZ_PN^} (${ABI})"
-	local desktop_file="${FILESDIR}/icon/${PN}-r2.desktop"
+	local desktop_file="${FILESDIR}/icon/${PN}-r3.desktop"
 	local desktop_filename="${PN}-${ABI}.desktop"
 	local exec_command="${PN}-${ABI}"
 	local icon="${PN}"

@@ -27,6 +27,11 @@
 	----- CUT BELOW HERE -----
 www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
 	----- CUT ABOVE HERE -----
+
+	References:
+
+	https://support.mozilla.org/en-US/kb/choosing-firefox-update-channel
+
 </longdescription>
 <upstream>
 	<bugs-to>https://developer.mozilla.org/en-US/docs/Mozilla/QA/Bug_writing_guidelines</bugs-to>
@@ -46,6 +51,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
 	<flag name="gmp-autoupdate">Allow Gecko Media Plugins (binary blobs) to be automatically
 		downloaded and kept up-to-date in user profiles</flag>
 	<flag name="hwaccel">Force-enable hardware-accelerated rendering (Mozilla bug 594876)</flag>
+	<flag name="libproxy">Enable libproxy support</flag>
 	<flag name="lto">Enable Link Time Optimization (LTO). Requires Gold linker when using GCC
 		or LDD linker when using Clang</flag>
 	<flag name="openh264">Use <pkg>media-libs/openh264</pkg> for H.264 support
@@ -74,4 +80,14 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
 	<flag name="system-webp">Use the system-wide <pkg>media-libs/libwebp</pkg>
 		instead of bundled.</flag>
 </use>
+<slots>
+  <slot name="rapid">
+    Major updates every 4 weeks with security and crash fixes every 4 weeks.
+  </slot>
+  <slot name="0">
+  </slot>
+  <slot name="esr">
+    Major updates every 42 weeks with security and crash fixes every 4 weeks.
+  </slot>
+</slots>
 </pkgmetadata>
