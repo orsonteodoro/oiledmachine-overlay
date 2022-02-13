@@ -18,18 +18,19 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt so
  configure_file(${CMAKE_SOURCE_DIR}/utils/compare_pruning_output.in ${CMAKE_BINARY_DIR}/compare_pruning_output @ONLY)
  configure_file(${CMAKE_SOURCE_DIR}/utils/reduce.in ${CMAKE_BINARY_DIR}/reduce @ONLY)
  configure_file(${CMAKE_SOURCE_DIR}/utils/cache_dump.in ${CMAKE_BINARY_DIR}/cache_dump @ONLY)
-@@ -497,3 +497,17 @@ if (BUILD_CLANG_TOOL)
+@@ -497,3 +497,18 @@ if (BUILD_CLANG_TOOL)
  endif()
  
  add_subdirectory(docs)
 +															# oteodoro:  added line
 +install(TARGETS souper DESTINATION ${CMAKE_INSTALL_BINDIR})								# oteodoro:  added install for ninja
 +install(TARGETS profileRuntime souperCodegen souperPass souperPassProfileAll DESTINATION ${CMAKE_INSTALL_LIBDIR})	# oteodoro:  added install for ninja
-+install(FILES "${CMAKE_BINARY_DIR}/sclang" "${CMAKE_BINARY_DIR}/sclang" DESTINATION ${CMAKE_INSTALL_BINDIR})		# oteodoro:  added install
++install(PROGRAMS "${CMAKE_BINARY_DIR}/sclang" "${CMAKE_BINARY_DIR}/sclang" DESTINATION ${CMAKE_INSTALL_BINDIR})		# oteodoro:  added install
++install(PROGRAMS "${CMAKE_BINARY_DIR}/sclang++" "${CMAKE_BINARY_DIR}/sclang" DESTINATION ${CMAKE_INSTALL_BINDIR})		# oteodoro:  added install
 +install(FILES "${CMAKE_BINARY_DIR}/redis-unix-socket.conf" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/souper)		# oteodoro:  added install
 +if(INSTALL_SUPPORT_TOOLS)												# oteodoro:  added line
 +  foreach(SUPPORT_TOOL reduce cache_dump cache_import cache_infer py_souper2llvm souper-check)				# oteodoro:  added line
-+    install(FILES "${CMAKE_BINARY_DIR}/${SUPPORT_TOOL}" DESTINATION ${CMAKE_INSTALL_BINDIR})				# oteodoro:  added install
++    install(PROGRAMS "${CMAKE_BINARY_DIR}/${SUPPORT_TOOL}" DESTINATION ${CMAKE_INSTALL_BINDIR})				# oteodoro:  added install
 +  endforeach()														# oteodoro:  added line
 +endif()															# oteodoro:  added line
 +option(INSTALL_GDB_PRETTY_PRINT "Installs GDB pretty print support for souper::Inst*" OFF)				# oteodoro:  added line

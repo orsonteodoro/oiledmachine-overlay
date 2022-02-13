@@ -42,7 +42,7 @@ gen_iuse() {
 IUSE+=" $(gen_iuse)"
 # Both assertions (debug) and dump are default ON upstream,
 # but in the distro, both are OFF for the llvm package by default.
-IUSE+=" -debug -dump +redis r1"
+IUSE+=" -debug -dump +redis r2"
 REQUIRED_USE+="
 	|| ( $(gen_iuse) )
 	support-tools? ( redis )
@@ -287,4 +287,9 @@ ewarn
 ewarn "The redis server should be listening in port 6379."
 ewarn
 	fi
+einfo
+einfo "See \`epkginfo -x sys-devel/souper\` or"
+einfo "https://github.com/google/souper#using-souper"
+einfo "for usage details."
+einfo
 }

@@ -20,8 +20,8 @@ License header for patched files:
 // limitations under the License.
 
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt
---- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt	2022-02-12 01:42:53.840457570 -0800
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt	2022-02-12 01:44:21.032895095 -0800
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt	2022-02-12 22:47:28.318181403 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt	2022-02-12 22:48:35.662908616 -0800
 @@ -116,22 +116,26 @@ add_library(kleeExpr STATIC
    ${KLEE_EXPR_FILES}
  )
@@ -200,25 +200,26 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt so
  
  if (BUILD_CLANG_TOOL)
    configure_file(${CMAKE_SOURCE_DIR}/utils/sclang.in ${CMAKE_BINARY_DIR}/sclang @ONLY)
-@@ -502,9 +536,11 @@ endif()
+@@ -502,10 +536,12 @@ endif()
  add_subdirectory(docs)
  															# oteodoro:  added line
  install(TARGETS souper DESTINATION ${CMAKE_INSTALL_BINDIR})								# oteodoro:  added install for ninja
 -install(TARGETS profileRuntime souperCodegen souperPass souperPassProfileAll DESTINATION ${CMAKE_INSTALL_LIBDIR})	# oteodoro:  added install for ninja
 +install(TARGETS ${PROFILERUNTIME_LIB} souperCodegen souperPass souperPassProfileAll DESTINATION ${CMAKE_INSTALL_LIBDIR})	# oteodoro:  added install for ninja
- install(FILES "${CMAKE_BINARY_DIR}/sclang" "${CMAKE_BINARY_DIR}/sclang" DESTINATION ${CMAKE_INSTALL_BINDIR})		# oteodoro:  added install
+ install(PROGRAMS "${CMAKE_BINARY_DIR}/sclang" "${CMAKE_BINARY_DIR}/sclang" DESTINATION ${CMAKE_INSTALL_BINDIR})		# oteodoro:  added install
+ install(PROGRAMS "${CMAKE_BINARY_DIR}/sclang++" "${CMAKE_BINARY_DIR}/sclang" DESTINATION ${CMAKE_INSTALL_BINDIR})		# oteodoro:  added install
 -install(FILES "${CMAKE_BINARY_DIR}/redis-unix-socket.conf" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/souper)		# oteodoro:  added install
 +if(FEATURE_EXTERNAL_CACHE)												# oteodoro:  added line
 +  install(FILES "${CMAKE_BINARY_DIR}/redis-unix-socket.conf" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/souper)		# oteodoro:  added install
 +endif()															# oteodoro:  added line
  if(INSTALL_SUPPORT_TOOLS)												# oteodoro:  added line
    foreach(SUPPORT_TOOL reduce cache_dump cache_import cache_infer py_souper2llvm souper-check)				# oteodoro:  added line
-     install(FILES "${CMAKE_BINARY_DIR}/${SUPPORT_TOOL}" DESTINATION ${CMAKE_INSTALL_BINDIR})				# oteodoro:  added install
+     install(PROGRAMS "${CMAKE_BINARY_DIR}/${SUPPORT_TOOL}" DESTINATION ${CMAKE_INSTALL_BINDIR})				# oteodoro:  added install
 Only in souper-69536e134478ae1d44c912c90c3db96ad06437c1: CMakeLists.txt.orig
 Only in souper-69536e134478ae1d44c912c90c3db96ad06437c1: CMakeLists.txt.rej
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Extractor/Solver.h souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Extractor/Solver.h
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Extractor/Solver.h	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Extractor/Solver.h	2022-02-12 01:43:21.117532880 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Extractor/Solver.h	2022-02-12 22:47:54.947259944 -0800
 @@ -16,7 +16,9 @@
  #define SOUPER_EXTRACTOR_SOLVER_H
  
@@ -243,7 +244,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Ex
  #endif  // SOUPER_EXTRACTOR_SOLVER_H
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Tool/CandidateMapUtils.h souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Tool/CandidateMapUtils.h
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Tool/CandidateMapUtils.h	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Tool/CandidateMapUtils.h	2022-02-12 01:43:21.555550148 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Tool/CandidateMapUtils.h	2022-02-12 22:47:54.947259944 -0800
 @@ -19,7 +19,9 @@
  #include "souper/Extractor/Candidates.h"
  #include "souper/Extractor/ExprBuilder.h"
@@ -271,7 +272,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/To
                         InstContext &IC);
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Tool/GetSolver.h.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Tool/GetSolver.h.in
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/Tool/GetSolver.h.in	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Tool/GetSolver.h.in	2022-02-12 01:43:21.560550345 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/Tool/GetSolver.h.in	2022-02-12 22:47:54.947259944 -0800
 @@ -17,7 +17,9 @@
  
  #include "llvm/Support/CommandLine.h"
@@ -319,7 +320,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/To
    }
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Extractor/Solver.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Extractor/Solver.cpp
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Extractor/Solver.cpp	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Extractor/Solver.cpp	2022-02-12 01:43:21.569550700 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Extractor/Solver.cpp	2022-02-12 22:47:54.948259984 -0800
 @@ -29,7 +29,9 @@
  #include "souper/Infer/InstSynthesis.h"
  #include "souper/Infer/Preconditions.h"
@@ -371,8 +372,8 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Extractor/Sol
  
  }
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Pass/Pass.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Pass/Pass.cpp
---- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Pass/Pass.cpp	2022-02-12 01:42:53.862458438 -0800
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Pass/Pass.cpp	2022-02-12 01:43:21.574550897 -0800
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Pass/Pass.cpp	2022-02-12 22:47:28.341182335 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Pass/Pass.cpp	2022-02-12 22:47:54.948259984 -0800
 @@ -40,7 +40,9 @@
  #include "llvm/Transforms/IPO/PassManagerBuilder.h"
  #include "llvm/Transforms/Utils/BasicBlockUtils.h"
@@ -490,7 +491,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Pass/Pass.cpp
  #else
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Tool/CandidateMapUtils.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Tool/CandidateMapUtils.cpp
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Tool/CandidateMapUtils.cpp	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Tool/CandidateMapUtils.cpp	2022-02-12 01:43:21.587551410 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/Tool/CandidateMapUtils.cpp	2022-02-12 22:47:54.949260025 -0800
 @@ -22,7 +22,9 @@
  #include "llvm/Support/ErrorHandling.h"
  #include "llvm/Support/KnownBits.h"
@@ -532,8 +533,8 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/Tool/Candidat
        if (isInferDFA()) {
          OS << '\n';
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/clang-souper.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/clang-souper.cpp
---- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/clang-souper.cpp	2022-02-12 01:42:53.781455244 -0800
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/clang-souper.cpp	2022-02-12 01:43:21.589551489 -0800
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/clang-souper.cpp	2022-02-12 22:47:28.259179013 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/clang-souper.cpp	2022-02-12 22:47:54.949260025 -0800
 @@ -67,7 +67,12 @@ int main(int argc, const char **argv) {
        Context, IC, EBC, OwnedMods, CandMap));
    Tool.run(Factory.get());
@@ -549,7 +550,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/clang-soupe
  }
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-check.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-check.cpp
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-check.cpp	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-check.cpp	2022-02-12 01:43:21.596551765 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-check.cpp	2022-02-12 22:47:54.949260025 -0800
 @@ -381,11 +381,17 @@ int SolveInst(const MemoryBufferRef &MB,
  
  int main(int argc, char **argv) {
@@ -570,7 +571,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-chec
    if (!MB) {
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper.cpp
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper.cpp	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper.cpp	2022-02-12 01:43:21.601551962 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper.cpp	2022-02-12 22:47:54.950260065 -0800
 @@ -50,8 +50,10 @@ static cl::opt<std::string>
  OutputFilename("o", cl::desc("Override output filename"),
      cl::init(""), cl::value_desc("filename"));
@@ -610,8 +611,8 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper.cpp 
    }
  }
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-interpret.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-interpret.cpp
---- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-interpret.cpp	2022-02-12 01:42:53.782455284 -0800
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-interpret.cpp	2022-02-12 01:43:21.611552356 -0800
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-interpret.cpp	2022-02-12 22:47:28.259179013 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/tools/souper-interpret.cpp	2022-02-12 22:47:54.950260065 -0800
 @@ -292,9 +292,15 @@ static int Interpret(const MemoryBufferR
  
  int main(int argc, char **argv) {
@@ -629,8 +630,8 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/tools/souper-inte
    auto MB = MemoryBuffer::getFileOrSTDIN(InputFilename);
    if (!MB) {
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/sclang.in
---- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in	2022-02-12 01:42:53.741453667 -0800
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/sclang.in	2022-02-12 01:43:21.618552632 -0800
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in	2022-02-12 22:47:28.214177191 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/sclang.in	2022-02-12 22:47:54.950260065 -0800
 @@ -17,6 +17,7 @@
  use warnings;
  use strict;

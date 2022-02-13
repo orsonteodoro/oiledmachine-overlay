@@ -14,18 +14,21 @@
     sequences.  Because of this random code generation, two additional CFLAGS
     can be used as input to additional functions when computing the cost.
 
-
     Ricer notes:
 
     Two profile options can improve optimization over time but require the redis
     USE flag.
 
-    Extra CFLAGS
 
-     * -souper-static-profile -- can be used to add performance counters for
+    Extra CFLAGS to pass directly to clang/clang++:
+
+     * -mllvm -souper-static-profile -- can be used to add performance counters for
           size
-     * -souper-dynamic-profile -- can be used to add performance counters for
+     * -g -mllvm -souper-dynamic-profile -- can be used to add performance counters for
           execution speed
+
+    If you do not want to use the wrapper, see the contents of the wrapper
+    to see how each of these extra args are invoked.
 
     The above settings correspond to sclang front-end ENVIRONMENT VARIABLES as
     well:
@@ -34,12 +37,33 @@
       *  SOUPER_DYNAMIC_PROFILE
 
 
-    Fontend wrappers:
+    Using souper with fontend wrappers:
+
+    The wrapper scripts simplify passing args to clang/clang++ without getting
+    too technical when to use -Xclang or -mllvm.
 
     sclang can be used in place of clang when setting CC environment variable.
 
     sclang++ can be used in place of clang++ when setting CXX environment
     variable.
+
+    These wrappers are located in /usr/lib/souper/14/bin, where 14 is the LLVM
+    version.
+
+    For a full list of supported wrapper commands see `sclang --help`.
+
+    Using souper Via CFLAGS in the new school way:
+
+      COMMON_FLAGS="${COMMON_FLAGS} -Xclang -load -Xclang /usr/lib/souper/14/lib64/libsouperPass.so"
+
+    or in old the school way:
+
+      CFLAGS="${CFLAGS} -Xclang -load -Xclang /usr/lib/souper/14/lib64/libsouperPass.so"
+      CXXFLAGS="${CXXFLAGS} -Xclang -load -Xclang /usr/lib/souper/14/lib64/libsouperPass.so"
+
+    It's recommended to use a bashrc script with package.env changes to
+    dynamically adjust these especially for packages that require older versions
+    of clang/llvm.  You may also apply them per-package wise.
 
     References:
     [1] https://research.google/pubs/pub46467/
