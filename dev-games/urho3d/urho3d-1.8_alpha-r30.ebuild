@@ -1472,8 +1472,8 @@ src_configure() {
 
 				if ( use bindings || use clang-tools ) && [[ "${EPLATFORM}" != "web" ]] ; then
 					local chost=$(get_abi_CHOST ${ABI})
-					export CC=/usr/lib/llvm/${LLVM_SLOT}/bin/${chost}-clang
-					export CXX=/usr/lib/llvm/${LLVM_SLOT}/bin/${chost}-clang++
+					export CC=${chost}-clang-${LLVM_SLOT}
+					export CXX=${chost}-clang++-${LLVM_SLOT}
 				fi
 
 				if [[ "${EPLATFORM}" == "android" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
