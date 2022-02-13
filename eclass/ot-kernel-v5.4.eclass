@@ -136,7 +136,6 @@ ec85ea95a00b490a059bcc817bc1b4660062dba0
 e8d4d6ded8544b5716c66d326aa290db8501518c
 ) # newest
 
-
 IUSE+=" bmq +cfs clang disable_debug +genpatches -genpatches_1510
 +kernel-compiler-patch muqss +O3 futex tresor rt tresor_aesni
 tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm

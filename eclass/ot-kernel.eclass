@@ -1822,7 +1822,7 @@ einfo
 einfo "  \`make menuconfig \
 AR=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-ar \
 AS=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-as \
-CC=/usr/lib/llvm/${llvm_v_maj}/bin/clang \
+CC=clang-${llvm_v_maj} \
 LD=/usr/bin/ld.lld \
 NM=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-nm"
 einfo
