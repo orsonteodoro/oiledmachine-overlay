@@ -33,7 +33,7 @@
 
 		The removal cycle is now delayed to better enjoy the product
 		for those with longer compile times.  Minor versions before an
-		announced security release or ebuilds older than 3 point
+		announced security release or ebuilds older than 2 point
 		releases in the same major version are removed without notice.
 
 
