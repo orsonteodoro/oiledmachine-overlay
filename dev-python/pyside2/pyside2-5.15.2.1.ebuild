@@ -149,7 +149,6 @@ pkg_setup() {
 }
 
 src_configure() {
-
 	local _PATH=$(echo "${PATH}" | tr ":" "\n" | sed -E -e "\|llvm\/[0-9]+|d")
 	export LLVM_PATH=""
 	for s in ${LLVM_SLOTS[@]} ; do
