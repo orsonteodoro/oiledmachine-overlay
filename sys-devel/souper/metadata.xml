@@ -55,7 +55,7 @@
 
     For a full list of supported wrapper commands see `sclang --help`.
 
-    Using souper Via CFLAGS in the new school way:
+    Using souper via CFLAGS in the new school way:
 
       COMMON_FLAGS="${COMMON_FLAGS} -Xclang -load -Xclang /usr/lib/souper/14/lib64/libsouperPass.so"
 
@@ -66,7 +66,7 @@
 
     It's recommended to use a bashrc script with package.env changes to
     dynamically adjust these especially for packages that require older versions
-    of clang/llvm.  You may also apply them per-package wise.
+    of Clang / LLVM.  You may also apply them per-package wise.
 
     References:
     [1] https://research.google/pubs/pub46467/
