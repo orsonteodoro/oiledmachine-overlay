@@ -128,14 +128,14 @@ PATCHES=(
 	"${FILESDIR}/${PN}-9999_pre20210629-disable-llvm-version-change.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-constraintmanager-klee-0ba95ed.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-KLEEBuilder-use-arraycache.patch"
-#	"${FILESDIR}/temp-disable.patch"							# didn't build llvm with disable-peephole patch yet
+	"${FILESDIR}/temp-disable.patch"							# didn't build llvm with disable-peephole patch yet
 	"${FILESDIR}/${PN}-9999_pre20210629-optional-redis.patch"
 	"${FILESDIR}/alive2-v2-disable-unused-variables.patch"
+	"${FILESDIR}/${PN}-9999_pre20210629-llvm-version-get-and-define.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-llvm-dump-optional.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-use-clang-monolithic-lib.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-report_fatal_error-changes-llvm14rc1.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-optimizationlevel-llvm14rc1.patch"
-	"${FILESDIR}/${PN}-9999_pre20210629-llvm-version-get-and-define.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-check-stdcxx20-flag.patch"
 )
 MIN_CXX="20"
@@ -184,8 +184,8 @@ _configure_compiler() {
 	# Make sure the bitcode is the same or highest especially if LTOing.
 	local clang_v_maj=$(ver_cut 1 $(best_version "sys-devel/clang:${s}" | sed -e "s|sys-devel/clang-||"))
 	local lld_v_maj=$(ver_cut 1 $(best_version "sys-devel/lld" | sed -e "s|sys-devel/lld-||"))
-	export CC="$(get_llvm_prefix ${clang_v_maj})/bin/clang"
-	export CXX="$(get_llvm_prefix ${clang_v_maj})/bin/clang++"
+	export CC="clang-${s}"
+	export CXX="clang++-${s}"
 	einfo "CC=${CC}"
 	einfo "CXX=${CXX}"
 	"${CXX}" --version || die
