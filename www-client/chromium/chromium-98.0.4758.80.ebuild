@@ -17,7 +17,7 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
 LLVM_MAX_SLOT=14
 LLVM_MIN_SLOT=13
 CR_CLANG_SLOT_OFFICIAL=14
-LLVM_SLOTS=(${LLVM_MIN_SLOT} ${LLVM_MAX_SLOT}) # [inclusive, inclusive]
+LLVM_SLOTS=(${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT}) # [inclusive, inclusive] high to low
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
 inherit llvm multilib multilib-minimal
 
@@ -1773,14 +1773,9 @@ ewarn
 
 	# These checks are a maybe required.
 	if use clang ; then
-		CC=${CHOST}-clang
-		CXX=${CHOST}-clang++
-		local MESA_LLVM_MAX_SLOT=$(bzcat \
-			"${ESYSROOT}/var/db/pkg/media-libs/mesa"*"/environment.bz2" \
-			| grep -F -e "LLVM_MAX_SLOT" \
-			| head -n 1 \
-			| cut -f 2 -d '"')
-		einfo "MESA_LLVM_MAX_SLOT: ${MESA_LLVM_MAX_SLOT}"
+		# No LLVM multi version bug here.
+		# Cr will still work if Mesa slot is lower and Cr is built with
+		# a higher version.
 		unset LLVM_REPORT_CARDS
 		for s in ${LLVM_SLOTS[@]} ; do
 			verify_llvm_toolchain ${s}
@@ -1794,7 +1789,7 @@ ewarn
 		fi
 		for s in ${slots} ; do
 			if [[ ${LLVM_REPORT_CARDS[${s}]} == "pass" ]] ; then
-				LLVM_SLOT=${s}
+				export LLVM_SLOT=${s}
 				break
 			fi
 		done
@@ -1817,8 +1812,16 @@ eerror
 		else
 			export PATH=$(echo "${PATH}" | tr ":" "\n" | sed -e "s|.*llvm/.*||" | uniq \
 				| sed -e "/^$/d" | tr "\n" ":" | sed -e "s|:$||")
+			# If building without ccache, include in the search path:
+			# 1.  Path to clang/clang++ (/usr/lib/llvm/${LLVM_SLOT}/bin)
+			# 2.  Path to highest LLD (/usr/lib/llvm/${v_major_lld}/bin)
+			# If ccache is installed, this really does nothing because
+			# /usr/lib/ccache/bin has a higher precedence.
 			export PATH+=":/usr/lib/llvm/${LLVM_SLOT}/bin"
-			einfo "Using llvm:${LLVM_SLOT}"
+			einfo "Using sys-devel/llvm:${LLVM_SLOT}"
+			local lld_v_maj=$(ver_cut 1 $(best_version "sys-devel/lld" | sed -e "s|sys-devel/lld-||"))
+			v_major_lld=$(ver_cut 1 "${v_major_lld}")
+			export PATH+=":/usr/lib/llvm/${v_major_lld}/bin"
 		fi
 		if use pgo ; then
 			local vi=$(get_llvm_profdata_version_info)
@@ -3534,11 +3537,12 @@ ewarn
 		die
 	fi
 
+	# Final CC selected
 	if use clang ; then
 		# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
 		# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
-		export CC="clang $(get_abi_CFLAGS ${ABI})"
-		export CXX="clang++ $(get_abi_CFLAGS ${ABI})"
+		export CC="clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+		export CXX="clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
 		export AR=llvm-ar # Required for LTO
 		export NM=llvm-nm
 		export READELF=llvm-readelf
