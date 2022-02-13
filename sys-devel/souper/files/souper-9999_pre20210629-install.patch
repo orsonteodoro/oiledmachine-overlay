@@ -47,7 +47,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dfa.i
 -my $souper = "@CMAKE_BINARY_DIR@/souper";
 +my $MODE_PRODUCTION = 0;									# oteodoro:  added line
 +my $MODE_TESTING = 1;										# oteodoro:  added line
-+my $MODE = "$ENV{SOUPER_UTILS_MODE}";								# oteodoro:  added line
++my $MODE = $ENV{SOUPER_UTILS_MODE} ? $ENV{SOUPER_UTILS_MODE} : "";				# oteodoro:  added line
 +if ($MODE eq "") {										# oteodoro:  added line
 +	$MODE = $MODE_PRODUCTION;								# oteodoro:  added line
 +} elsif ($MODE eq $MODE_PRODUCTION) {								# oteodoro:  added line
