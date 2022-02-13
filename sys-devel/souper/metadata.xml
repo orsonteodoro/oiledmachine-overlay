@@ -78,13 +78,11 @@
   </upstream>
   <use>
     <flag name="debug">
-      Allow use of assertions for correctness checking.  Upstream defaults
-      and hardcodes this ON even on release builds.
+      Allow use of assertions for correctness checking.
     </flag>
     <flag name="dump">
       Allow use of dump functions to increase verbosity of helpful debug
-      information.  Only useful for developers or testers.  Upstream defaults
-      and hardcodes this ON even on release builds.
+      information.  Only useful for developers or testers.
     </flag>
     <flag name="support-tools">
       Install extra tools designed for compiler developers
