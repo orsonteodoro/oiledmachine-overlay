@@ -3,8 +3,8 @@
 
 EAPI="7"
 
-K_GENPATCHES_VER="275"
-PATCH_RT_VER="4.14.261-rt127"
+K_GENPATCHES_VER="277"
+PATCH_RT_VER="4.14.266-rt129"
 
 inherit ot-kernel-v4.14
 
