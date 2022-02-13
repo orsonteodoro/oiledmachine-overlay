@@ -60,8 +60,8 @@
 			superoptimizer and pulls in the Souper package as a PDEPEND.
 			The Souper optimization pass can further reduce code size by
 			~4.4% or 3 MB in some cases with a tradeoff of a 2% runtime
-			penalty.  This will hard disable the built-in compiler peepholes
-			optimization and overlapping optimizations that Souper
+			penalty.  This will add new flags to toggle the built-in compiler
+			peepholes optimization and overlapping optimizations that Souper
 			provides in addition to optimizations that increase undefined
 			behavior.  (EXPERIMENTAL)</flag>
 		<flag name="dump">Build with dump functions to print additional (debugging)
