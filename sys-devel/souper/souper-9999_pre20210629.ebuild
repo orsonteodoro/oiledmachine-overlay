@@ -272,8 +272,13 @@ src_install() {
 }
 
 src_test() {
-	cd "${BUILD_DIR}" || die
-	./run_lit || die
+	for s in ${LLVM_SLOTS[@]} ; do
+		einfo "Running tests for ${PN} linked to LLVM ${s}"
+		export SOUPER_UTILS_MODE=1 # Set to testing mode
+		export BUILD_DIR="${WORKDIR}/${P}_llvm${s}_build"
+		cd "${BUILD_DIR}" || die
+		./run_lit || die
+	done
 }
 
 pkg_postinst() {

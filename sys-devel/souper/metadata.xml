@@ -40,7 +40,7 @@
       *  SOUPER_DYNAMIC_PROFILE
 
 
-    Using souper with frontend wrappers:
+    Using souper with frontend wrappers via CC/CXX:
 
     The wrapper scripts simplify passing args to clang/clang++ without getting
     too technical when to use -Xclang or -mllvm.
@@ -55,7 +55,10 @@
 
     For a full list of supported wrapper commands see `sclang --help`.
 
-    Using souper via CFLAGS in the new school way:
+
+    Using souper via CFLAGS:
+
+    Do it in the new school way:
 
       COMMON_FLAGS="${COMMON_FLAGS} -Xclang -load -Xclang /usr/lib/souper/14/lib64/libsouperPass.so"
 
@@ -64,9 +67,13 @@
       CFLAGS="${CFLAGS} -Xclang -load -Xclang /usr/lib/souper/14/lib64/libsouperPass.so"
       CXXFLAGS="${CXXFLAGS} -Xclang -load -Xclang /usr/lib/souper/14/lib64/libsouperPass.so"
 
-    It's recommended to use a bashrc script with package.env changes to
-    dynamically adjust these especially for packages that require older versions
-    of Clang / LLVM.  You may also apply them per-package wise.
+    It's required to use a bashrc script to delete/replace these settings if
+    this is applied systemwide with a per package switcher.  If it is a GCC
+    only package, these flags should be deleted.
+
+    As an alternative, you can apply it individually with package.env
+    configuration (.conf) to easily adjust these especially for packages that
+    require older versions of Clang / LLVM.
 
     References:
     [1] https://research.google/pubs/pub46467/
