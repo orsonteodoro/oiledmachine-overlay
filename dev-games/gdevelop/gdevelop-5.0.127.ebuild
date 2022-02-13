@@ -182,7 +182,7 @@ check_lld() {
 		if has_version "sys-devel/clang:${llvm_slot}[llvm_targets_WebAssembly]" \
 		&& has_version "sys-devel/llvm:${llvm_slot}[llvm_targets_WebAssembly]" ; then
 			export LLVM_SLOT="${llvm_slot}"
-			export CXX="${EROOT}/usr/lib/llvm/${llvm_slot}/bin/clang++"
+			export CXX="clang++-${LLVM_SLOT}"
 			einfo "CXX=${CXX}"
 			if [[ ! -f "${CXX}" ]] ; then
 eerror
