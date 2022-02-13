@@ -3541,8 +3541,13 @@ ewarn
 	if use clang ; then
 		# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
 		# See build/toolchain/gcc_toolchain.gni#L657 for consistency.
-		export CC="clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
-		export CXX="clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+		if [[ -n ${FORCE_LLVM_SLOT} ]] ; then
+			export CC="clang-${FORCE_LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export CXX="clang++-${FORCE_LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+		else
+			export CC="clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export CXX="clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+		fi
 		export AR=llvm-ar # Required for LTO
 		export NM=llvm-nm
 		export READELF=llvm-readelf
