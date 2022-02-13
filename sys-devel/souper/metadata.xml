@@ -22,13 +22,16 @@
 
     Extra CFLAGS to pass directly to clang/clang++:
 
-     * -mllvm -souper-static-profile -- can be used to add performance counters for
-          size
-     * -g -mllvm -souper-dynamic-profile -- can be used to add performance counters for
-          execution speed
+     * -mllvm -souper-static-profile -- can be used to add performance profiling
+          counters for size
+     * -g -mllvm -souper-dynamic-profile -- can be used to add performance
+          profiling counters for execution speed
 
-    If you do not want to use the wrapper, see the contents of the wrapper
-    to see how each of these extra args are invoked.
+    Use of these counters may improve optimization over time after recompiling.
+    See the academic paper on how this really works.
+
+    If you do not want to use the wrapper, see the contents of the sclang
+    wrapper to see how each of these extra args are invoked.
 
     The above settings correspond to sclang front-end ENVIRONMENT VARIABLES as
     well:
@@ -37,7 +40,7 @@
       *  SOUPER_DYNAMIC_PROFILE
 
 
-    Using souper with fontend wrappers:
+    Using souper with frontend wrappers:
 
     The wrapper scripts simplify passing args to clang/clang++ without getting
     too technical when to use -Xclang or -mllvm.
