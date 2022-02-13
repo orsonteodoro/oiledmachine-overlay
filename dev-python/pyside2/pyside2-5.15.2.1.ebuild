@@ -157,11 +157,10 @@ src_configure() {
 			_PATH=$(echo -e "${_PATH}\n/usr/lib/llvm/${s}/bin" | tr "\n" ":")
 			export PATH="${_PATH}"
 			LLVM_PATH="/usr/lib/llvm/${s}"
+			export CC="clang-${s}"
+			export CXX="clang++-${s}"
 		fi
 	done
-	# Avoid ccache for now
-	export CC="${LLVM_PATH}/bin/clang"
-	export CXX="${LLVM_PATH}/bin/clang++"
 	clang --version || die
 	einfo "PATH=${PATH}"
 	einfo "CFLAGS=${CFLAGS}"
