@@ -14,10 +14,10 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
 	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
 	sv sw ta te th tr uk vi zh-CN zh-TW"
 
-LLVM_MAX_SLOT=14
+LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=13
 CR_CLANG_SLOT_OFFICIAL=14
-LLVM_SLOTS=(${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT}) # [inclusive, inclusive] high to low
+LLVM_SLOTS=(${LLVM_MAX_SLOT} 14 ${LLVM_MIN_SLOT}) # [inclusive, inclusive] high to low
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
 inherit llvm multilib multilib-minimal
 
@@ -1579,7 +1579,7 @@ get_llvm_profdata_version_info()
 	local v
 	local ver
 	# The live versions can have different profdata versions over time.
-	for v in "11.1.0" "12.0.1" "13.0.0" "13.0.1.9999" "14.0.0.9999" ; do
+	for v in "11.1.0" "12.0.1" "13.0.0" "14.0.0_rc1" "14.0.0.9999" "15.0.0.9999" ; do
 		(( $(ver_cut 1 "${v}") != ${LLVM_SLOT} )) && continue
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
 		local llvm_version
