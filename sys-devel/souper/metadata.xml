@@ -36,8 +36,8 @@
     The above settings correspond to sclang front-end ENVIRONMENT VARIABLES as
     well:
 
-      *  SOUPER_STATIC_PROFILE
-      *  SOUPER_DYNAMIC_PROFILE
+      *  SOUPER_STATIC_PROFILE=1
+      *  SOUPER_DYNAMIC_PROFILE=1
 
 
     Using souper with frontend wrappers via CC/CXX:
