@@ -44,6 +44,10 @@
 		* Makes available, builds, installs BOLT support.
 		* Reduce spam and slowdown with -static-libstdc++
 
+	For this repo only, due to limited time and lack of time to verify working
+	ebuilds completely, only live ebuilds and point releases will be kept.  Release
+	candidates and inits will be ignored.
+
 	Bolt support requires commit 4c106cfdf7cf7eec861ad3983a3dd9a9e8f3a8ae or newer
 	circa Jan 11, 2022 and is only offered in LLVM 14 or newer.
 
