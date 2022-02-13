@@ -671,11 +671,15 @@ NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463" # Mon Jun 21 06:34:23 PM UTC 2021
 
 verify_clang_compiler_updated() {
 	local p
-	for p in "sys-devel/llvm-13.0.0.9999" "sys-devel/clang-13.0.0.9999" "sys-devel/clang-runtime-13.0.0.9999" ; do
+	for p in "sys-devel/clang-13.0.1" \
+		"sys-devel/clang-14.0.0_rc1" \
+		"sys-devel/clang-runtime-14.0.0.9999" \
+		"sys-devel/clang-runtime-15.0.0.9999" \
+	; do
 		einfo "Verifying prereqs for PGO for ${p}"
 		if has_version "=${p}" ; then
 			local emerged_llvm_commit=$(bzless \
-				"${ESYSROOT}/var/db/pkg/${p}/environment.bz2" \
+				"${ESYSROOT}/var/db/pkg/${p/_/-}/environment.bz2" \
 				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
 			local emerged_llvm_time_desc=$(wget -q -O - \
 				https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch \
@@ -709,7 +713,15 @@ verify_profraw_compatibility() {
 	local found_upstream_version=0 # corresponds to original patch requirements for < llvm 13 (broken)
 	local found_patched_version=0 # corresponds to oiledmachine patches to use >= llvm 13 (fixed)
 	local v
-	for v in "10.0.1" "11.1.0" "12.0.1" "13.0.0" "13.0.0.9999" "14.0.0.9999" ; do
+	for v in \
+		"11.1.0" \
+		"12.0.1" \
+		"13.0.0" \
+		"13.0.1" \
+		"14.0.0_rc1" \
+		"14.0.0.9999" \
+		"15.0.0.9999" \
+	; do
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
 		local llvm_version
 		einfo "v=${v}"
