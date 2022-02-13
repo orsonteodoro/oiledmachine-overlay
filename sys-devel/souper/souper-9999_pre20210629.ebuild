@@ -42,7 +42,7 @@ gen_iuse() {
 IUSE+=" $(gen_iuse)"
 # Both assertions (debug) and dump are default ON upstream,
 # but in the distro, both are OFF for the llvm package by default.
-IUSE+=" -debug -dump +redis r2"
+IUSE+=" -debug -dump +redis r3"
 REQUIRED_USE+="
 	|| ( $(gen_iuse) )
 	support-tools? ( redis )

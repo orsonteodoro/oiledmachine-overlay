@@ -636,7 +636,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in s
  use warnings;
  use strict;
  use File::Temp;
-+my USE_EXTERNAL_CACHE=1							# oteodoro:  added constant variable
++my $USE_EXTERNAL_CACHE=1;							# oteodoro:  added constant variable
  
  my $MODE_PRODUCTION = 0;										# oteodoro:  added line
  my $MODE_TESTING = 1;											# oteodoro:  added line
@@ -645,12 +645,12 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in s
  }
  
 -if (!getenv("SOUPER_NO_EXTERNAL_CACHE") && $souper) {
-+if (USE_EXTERNAL_CACHE && !getenv("SOUPER_NO_EXTERNAL_CACHE") && $souper) {	# oteodoro:  added subexpr
++if ($USE_EXTERNAL_CACHE && !getenv("SOUPER_NO_EXTERNAL_CACHE") && $souper) {	# oteodoro:  added subexpr
      push @ARGV, ("-mllvm", "-souper-external-cache");
  }
  
 -if (getenv("SOUPER_CACHE_UNIX") && $souper) {
-+if (USE_EXTERNAL_CACHE && getenv("SOUPER_CACHE_UNIX") && $souper) {		# oteodoro:  added subexpr
++if ($USE_EXTERNAL_CACHE && getenv("SOUPER_CACHE_UNIX") && $souper) {		# oteodoro:  added subexpr
      push @ARGV, ("-mllvm", "-souper-external-cache-unix");
  }
  
@@ -659,13 +659,13 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in s
  }
  
 -if (getenv("SOUPER_STATIC_PROFILE") && $souper) {
-+if (USE_EXTERNAL_CACHE && getenv("SOUPER_STATIC_PROFILE") && $souper) {	# oteodoro:  added subexpr
++if ($USE_EXTERNAL_CACHE && getenv("SOUPER_STATIC_PROFILE") && $souper) {	# oteodoro:  added subexpr
      push @ARGV, ("-mllvm", "-souper-static-profile");
  }
  
 -if (getenv("SOUPER_DYNAMIC_PROFILE") ||
 -    getenv("SOUPER_DYNAMIC_PROFILE_ALL") && $souper) {
-+if (USE_EXTERNAL_CACHE && (getenv("SOUPER_DYNAMIC_PROFILE") ||			# oteodoro:  added subexpr and (
++if ($USE_EXTERNAL_CACHE && (getenv("SOUPER_DYNAMIC_PROFILE") ||			# oteodoro:  added subexpr and (
 +    getenv("SOUPER_DYNAMIC_PROFILE_ALL")) && $souper) {			# oteodoro:  added )
      push @ARGV, ("-g", "-mllvm", "-souper-dynamic-profile");
  }
@@ -675,7 +675,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in s
  }
  
 -if ((getenv("SOUPER_DYNAMIC_PROFILE") ||
-+if (USE_EXTERNAL_CACHE && (getenv("SOUPER_DYNAMIC_PROFILE") ||			# oteodoro:  added subexpression
++if ($USE_EXTERNAL_CACHE && (getenv("SOUPER_DYNAMIC_PROFILE") ||			# oteodoro:  added subexpression
       getenv("SOUPER_DYNAMIC_PROFILE_ALL")) && linkp() && $souper) {
      if ($MODE eq $MODE_PRODUCTION) {											# oteodoro:  added line
          push @ARGV, ("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/@PROFILE_LIBRARY@", "@HIREDIS_LIBRARY@");		# oteodoro:  indent and change line
