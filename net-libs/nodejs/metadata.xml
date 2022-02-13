@@ -33,7 +33,8 @@
 
 		The removal cycle is now delayed to better enjoy the product
 		for those with longer compile times.  Minor versions before an
-		announced security release are removed without notice.
+		announced security release or ebuilds older than 3 point
+		releases in the same major version are removed without notice.
 
 
 		Petition for SLOT support at https://bugs.gentoo.org/580698
