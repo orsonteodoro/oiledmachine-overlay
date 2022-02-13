@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
-# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
+# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V17.md
 
 EAPI=7
 PYTHON_COMPAT=( python3_{8..10} )
@@ -16,8 +16,8 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector lto npm
-pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test"
+IUSE+=" cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector lto
++npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man pgo"
 
 BENCHMARK_TYPES=(
@@ -85,7 +85,7 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Feb 5, 2022
+# Last deps commit date:  Feb 7, 2022
 NGHTTP2_V="1.45.1"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
@@ -95,7 +95,7 @@ RDEPEND+=" !net-libs/nodejs:0
 	>=net-libs/nghttp2-${NGHTTP2_V}
 	>=sys-libs/zlib-1.2.11
 	system-icu? ( >=dev-libs/icu-70.1:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1m:0= )"
+	system-ssl? ( >=dev-libs/openssl-1.1.1l:0= )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	dev-util/ninja
@@ -105,13 +105,13 @@ BDEPEND+=" ${PYTHON_DEPS}
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
 	pax-kernel? ( sys-apps/elfix )"
-PATCHES=( "${FILESDIR}"/${PN}-16.12.0-jinja_collections_abc.patch
+PATCHES=( "${FILESDIR}"/${PN}-17.0.0-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
 	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch
 	  "${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch
 	  "${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="8.3.1" # See https://github.com/nodejs/node/blob/v16.14.0/deps/npm/package.json
+NPM_V="8.4.1" # See https://github.com/nodejs/node/blob/v17.3.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -126,10 +126,10 @@ pkg_pretend() {
 pkg_setup() {
 	python-any-r1_pkg_setup
 
-	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2024-04-30."
+	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2022-06-01."
 
 	# For man page reasons
-	for v in 12 14 17 ; do
+	for v in 12 14 16 ; do
 		if use npm && has_version "net-libs/nodejs:${v}[npm]" ; then
 			die \
 "You need to disable npm on net-libs/nodejs:${v}[npm].  Only enable\n\
@@ -312,7 +312,11 @@ configure_pgx() {
 
 	use snapshot || myconf+=( --without-node-snapshot )
 	if use ssl; then
-		use system-ssl && myconf+=( --shared-openssl --openssl-use-def-ca-store )
+		if use system-ssl ; then
+			myconf+=( --shared-openssl --openssl-use-def-ca-store )
+			has_version "=dev-libs/openssl-3.0.0" \
+				&& die "CVE-2021-4044 - Use OpenSSL 3.0.1 instead."
+		fi
 	else
 		myconf+=( --without-ssl )
 	fi
@@ -600,4 +604,8 @@ pkg_postinst() {
 	einfo "matching the corresponding SLOT.  This means that you cannot"
 	einfo "compile with different SLOTS simultaneously."
 	einfo
+
+	if ! has_version ">=dev-libs/openssl-3.0.1" && use system-ssl ; then
+		einfo "Add --openssl-legacy-provider before running nodejs."
+	fi
 }

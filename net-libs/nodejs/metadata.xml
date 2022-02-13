@@ -24,11 +24,17 @@
 		More info about LTS versions see:
 		https://nodejs.org/en/about/releases/
 
-		v10 EOL is 2021-04-30
 		v12 EOL is 2022-04-30
 		v14 EOL is 2023-04-30
-		v15 EOL is 2021-06-01
 		v16 EOL is 2024-04-30
+		v17 EOL is 2022-06-31
+		v18 EOL is 2025-04-30
+
+
+		The removal cycle is now delayed to better enjoy the product
+		for those with longer compile times.  Minor versions before an
+		announced security release are removed without notice.
+
 
 		Petition for SLOT support at https://bugs.gentoo.org/580698
 		It has been an issue since 2016.
