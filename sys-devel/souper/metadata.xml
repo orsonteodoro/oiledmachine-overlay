@@ -45,13 +45,15 @@
     The wrapper scripts simplify passing args to clang/clang++ without getting
     too technical when to use -Xclang or -mllvm.
 
-    sclang can be used in place of clang when setting CC environment variable.
+    Set CC/CXX for the wrapper for highest built llvm-N USE flag:
 
-    sclang++ can be used in place of clang++ when setting CXX environment
-    variable.
+      CC=sclang
+      CXX=sclang++
 
-    These wrappers are located in /usr/lib/souper/14/bin, where 14 is the LLVM
-    version.
+    Alternatively, you can set to a specific slot as follows: 
+   
+      CC=sclang-N	# where N=[11,12,13,14] corresponds to clang-N
+      CXX=sclang++-N	# where N=[11,12,13,14] corresponds to clang++-N
 
     For a full list of supported wrapper commands see `sclang --help`.
 

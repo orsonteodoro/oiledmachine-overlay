@@ -42,7 +42,7 @@ gen_iuse() {
 IUSE+=" $(gen_iuse)"
 # Both assertions (debug) and dump are default ON upstream,
 # but in the distro, both are OFF for the llvm package by default.
-IUSE+=" -debug -dump +redis r3"
+IUSE+=" -debug -dump +redis r4"
 REQUIRED_USE+="
 	|| ( $(gen_iuse) )
 	support-tools? ( redis )
@@ -138,6 +138,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-9999_pre20210629-optimizationlevel-llvm14rc1.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-check-stdcxx20-flag.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-custom-docs-prefix.patch"
+	"${FILESDIR}/${PN}-9999_pre20210629-use-ccache.patch"
 )
 MIN_CXX="20"
 
@@ -255,12 +256,20 @@ src_compile() {
 }
 
 src_install() {
+	local s_max=0
 	for s in ${LLVM_SLOTS[@]} ; do
 		if use "llvm-${s}" ; then
 			export BUILD_DIR="${WORKDIR}/${P}_llvm${s}_build"
 			cmake_src_install
+			dosym /usr/lib/souper/${s}/bin/sclang /usr/bin/sclang-${s}
+			dosym /usr/lib/souper/${s}/bin/sclang++ /usr/bin/sclang++-${s}
+			(( ${s} > ${s_max} )) && s_max=${s}
 		fi
 	done
+
+	einfo "sclang defaults to highest slot LLVM ${s_max}"
+	dosym /usr/lib/souper/${s_max}/bin/sclang /usr/bin/sclang
+	dosym /usr/lib/souper/${s_max}/bin/sclang++ /usr/bin/sclang++
 
 	if ! use redis ; then
 		cat <<-EOF > "${T}"/50${P}-redis
