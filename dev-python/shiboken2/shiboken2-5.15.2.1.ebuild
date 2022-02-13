@@ -172,6 +172,13 @@ src_configure() {
 			LLVM_PATH="/usr/lib/llvm/${s}"
 		fi
 	done
+	# Add also LLD's path
+	if has_version "sys-devel/lld" ; then
+		local lld_v_maj=$(ver_cut 1 $(best_version "sys-devel/lld" | sed -e "s|sys-devel/lld-||"))
+		v_major_lld=$(ver_cut 1 "${v_major_lld}")
+		export PATH+=":/usr/lib/llvm/${v_major_lld}/bin"
+	fi
+
 	# Avoid ccache for now
 	export CC="${LLVM_PATH}/bin/clang"
 	export CXX="${LLVM_PATH}/bin/clang++"
