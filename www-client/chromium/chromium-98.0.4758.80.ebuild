@@ -1110,9 +1110,9 @@ pre_build_checks() {
 	fi
 
 	# Assumes 2.1875 ratio (as the uncompressed:compressed ratio)
+	local has_compressed_memory=0
 	local required_total_memory=27
 	local required_total_memory_lto=16
-	local has_compressed_memory=0
 	if grep -q -e "Y" "/sys/module/zswap/parameters/enabled" ; then
 		has_compressed_memory=1
 		required_total_memory=12 # Done with zswap
