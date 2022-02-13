@@ -42,7 +42,7 @@ gen_iuse() {
 IUSE+=" $(gen_iuse)"
 # Both assertions (debug) and dump are default ON upstream,
 # but in the distro, both are OFF for the llvm package by default.
-IUSE+=" -debug -dump +redis"
+IUSE+=" -debug -dump +redis r1"
 REQUIRED_USE+="
 	|| ( $(gen_iuse) )
 	support-tools? ( redis )
@@ -128,7 +128,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-9999_pre20210629-disable-llvm-version-change.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-constraintmanager-klee-0ba95ed.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-KLEEBuilder-use-arraycache.patch"
-	"${FILESDIR}/temp-disable.patch"							# didn't build llvm with disable-peephole patch yet
+	#"${FILESDIR}/temp-disable.patch"							# didn't build llvm with disable-peephole patch yet
 	"${FILESDIR}/${PN}-9999_pre20210629-optional-redis.patch"
 	"${FILESDIR}/alive2-v2-disable-unused-variables.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-llvm-version-get-and-define.patch"
