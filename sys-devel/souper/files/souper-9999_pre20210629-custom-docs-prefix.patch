@@ -1,0 +1,15 @@
+Subject:  Customize install for one install location instead of using multislot location
+Patch author:   Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Sat Feb 12 08:00:45 PM PST 2022 (Unix time:  1644724845)
+Patch status:  Complete
+
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/docs/CMakeLists.txt souper-69536e134478ae1d44c912c90c3db96ad06437c1/docs/CMakeLists.txt
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/docs/CMakeLists.txt	2022-02-12 19:57:00.017301665 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/docs/CMakeLists.txt	2022-02-12 19:59:36.055320470 -0800
+@@ -21,5 +21,5 @@ if(BUILD_DOCUMENTATION)
+   add_custom_target(docs ALL
+                     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/html/index.html)
+ 
+-  install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
++  install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION "${CMAKE_INSTALL_DOCS}")	# oteodoro:  change with customizable path
+ endif()

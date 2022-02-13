@@ -137,6 +137,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-9999_pre20210629-report_fatal_error-changes-llvm14rc1.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-optimizationlevel-llvm14rc1.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-check-stdcxx20-flag.patch"
+	"${FILESDIR}/${PN}-9999_pre20210629-custom-docs-prefix.patch"
 )
 MIN_CXX="20"
 
@@ -145,9 +146,6 @@ pkg_setup()
 	ewarn "This ebuild is a Work In Progress (WIP) and is incomplete."
 	if use llvm-15 ; then
 		ewarn "LLVM 15 has not been compile time tested."
-	fi
-	if use doxygen ; then
-		ewarn "The doxygen USE flag has not been tested."
 	fi
 	if use test ; then
 		ewarn "The test USE flag has not been tested."
@@ -208,8 +206,10 @@ ewarn
 		-DBUILD_DOCUMENTATION=$(usex doxygen)
 		-DCLANG_INCLUDE_DIR="/usr/lib/llvm/${s}/include/clang"
 		-DCMAKE_INSTALL_BINDIR="bin"
+		-DCMAKE_INSTALL_DATAROOTDIR="/usr/share"
 		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)"
 		-DCMAKE_INSTALL_PREFIX="/usr/lib/souper/${s}"
+		-DCMAKE_INSTALL_DOCS="/usr/share/doc/${P}"
 		-DCMAKE_INSTALL_RUNSTATEDIR="/var/run"
 		-DFEATURE_EXTERNAL_CACHE=$(usex redis)
 		-DINSTALL_GDB_PRETTY_PRINT=$(usex gdb)
