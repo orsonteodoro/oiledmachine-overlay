@@ -237,7 +237,7 @@ eerror
 	fi
 	python-single-r1_pkg_setup
 	llvm_pkg_setup
-	CXX="${EROOT}/usr/lib/llvm/${LLVM_V}/bin/clang++"
+	export CXX="clang++-${LLVM_V}"
 	einfo "CXX=${CXX}"
 }
 
