@@ -8,7 +8,8 @@
   </maintainer>
   <longdescription>
     Souper is an LLVM IR optimizer pass that can reduce a binary by around 4.4%
-    but with a 2% runtime performance slowdown tradeoff.[1]
+    but with a 2% runtime performance slowdown tradeoff.[1]  [The savings may
+    become substantial when storing GiB or TiB of compiled code.]
 
     It automatically generates random code sequences of optimized code
     sequences.  Because of this random code generation, two additional CFLAGS
