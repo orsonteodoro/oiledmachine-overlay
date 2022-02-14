@@ -167,6 +167,11 @@ dev-libs/icu cfi-cast
 # For pam plugin
 sys-fs/ecryptfs-utils -suid
 
-# Prevent the possibly bad generated code with the forward port of disable-peepholes patch
+# Prevent the possibly of bad generated code with the forward port of disable-peepholes patch
 # (only a concern only for >= llvm 13) and undoing emerges without the patch.
+# Hard USE mask removal dependent on unit tests
 >=sys-devel/llvm-13 souper
+
+# Prevent the use of bad disable-peepholes.
+# Hard USE mask removal dependent on unit tests in llvm-13
+sys-devel/souper llvm-15 llvm-14 llvm-13
