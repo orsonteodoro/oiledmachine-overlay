@@ -20,7 +20,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS=""
 IUSE="bolt +binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar xml
-	z3 kernel_Darwin r1"
+	z3 kernel_Darwin r2"
 IUSE+=" souper"
 REQUIRED_USE="
 	souper? (
@@ -189,6 +189,7 @@ src_prepare() {
 		ewarn "The forward port of disable-peepholes-v07.diff is in testing."
 		cd "${WORKDIR}" || die
 		eapply "${FILESDIR}/llvm-14.0.0.9999-disable-peepholes-v07.diff"
+		#eapply "${FILESDIR}/disable-peepholes-v07-tests.diff"
 	fi
 }
 
@@ -496,6 +497,11 @@ multilib_src_test() {
 	# respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
 	cmake_build check
+	# To test disable-peepholes patch
+	# loop -- Permute -DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=X -DDISABLE_PEEPHOLES_DEFAULT_VALUE=Y, where X=[true,false], Y=[true,false]
+	#   1. Rebuild source code again
+	#   2. Run test suite
+	#   3. Check for "Failed Tests" in ${T}/build.log.
 }
 
 src_install() {

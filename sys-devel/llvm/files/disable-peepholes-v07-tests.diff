@@ -1,0 +1,47 @@
+Split disable-peeopholes-v07 tests in a separate .diff file.
+
+The original .diff patch can be obtained from:
+https://github.com/regehr/llvm-project/compare/072c90a863aac1334a4950b3da262a025516dea0...disable-peepholes-v07.diff
+
+For commit history details see:
+https://github.com/regehr/llvm-project/compare/072c90a863aac1334a4950b3da262a025516dea0...disable-peepholes-v07
+
+The default.cfg and test-spec.sh for benchmarking have been dropped.
+The test-disable-peepholes.sh has been dropped since the tests are rebuild, test suite run, and grepping stderr/stdout for "Failed Tests".
+
+diff --git a/llvm/test/CodeGen/Hexagon/swp-epilog-numphis.ll b/llvm/test/CodeGen/Hexagon/swp-epilog-numphis.ll
+index f57f94bf03cec..cbf87ed5ecaa7 100644
+--- a/llvm/test/CodeGen/Hexagon/swp-epilog-numphis.ll
++++ b/llvm/test/CodeGen/Hexagon/swp-epilog-numphis.ll
+@@ -1,4 +1,3 @@
+-; XFAIL: *
+ ; Needs some fixed in the pipeliner.
+ ; RUN: llc -march=hexagon < %s -pipeliner-experimental-cg=true | FileCheck %s
+ 
+diff --git a/souper-scripts/README.txt b/souper-scripts/README.txt
+new file mode 100644
+index 0000000000000..11b14c0a097a7
+--- /dev/null
++++ b/souper-scripts/README.txt
+@@ -0,0 +1,21 @@
++This directory contains scripts used to qualify a hacked LLVM before
++it is used by Souper.
++
++The LLVM is hacked to disable some unsound optimizations (that
++increase the amount of undefined behavior) and also to disable
++peephole optimizations that Souper competes with, in order to answer
++the research question "can Souper replace InstCombine and some of its
++friends."
++
++The strategy is to build three LLVMs:
++1. all peepholes and unsound optimizations enabled by default
++2. only unsound disabled by default
++3. both peepholes and unsound disabled by default
++
++Then to make sure that each of these can build a working LLVM that
++passes all of its tests, and to make sure that each can build
++benchmarks from SPEC CPU 2017, and those pass all their test.
++
++TODO
++- also test debug builds?
++

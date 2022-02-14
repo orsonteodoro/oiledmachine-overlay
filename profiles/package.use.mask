@@ -166,3 +166,7 @@ dev-libs/icu cfi-cast
 
 # For pam plugin
 sys-fs/ecryptfs-utils -suid
+
+# Prevent the possibly bad generated code with the forward port of disable-peepholes patch
+# (only a concern only for >= llvm 13) and undoing emerges without the patch.
+>=sys-devel/llvm-13 souper

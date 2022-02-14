@@ -28,7 +28,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="debug doc -dump exegesis +gold libedit +libffi ncurses test xar xml z3
-	kernel_Darwin ${ALL_LLVM_TARGETS[*]}"
+	kernel_Darwin ${ALL_LLVM_TARGETS[*]} r1"
 IUSE+=" souper"
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+="
@@ -197,6 +197,7 @@ src_prepare() {
 	if use souper ; then
 		cd "${WORKDIR}" || die
 		eapply "${FILESDIR}/llvm-12.0.1-disable-peepholes-v07.diff"
+		#eapply "${FILESDIR}/disable-peepholes-v07-tests.diff"
 	fi
 }
 
@@ -492,6 +493,11 @@ multilib_src_test() {
 	# respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
 	cmake_build check
+	# To test disable-peepholes patch
+	# loop -- Permute -DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=X -DDISABLE_PEEPHOLES_DEFAULT_VALUE=Y, where X=[true,false], Y=[true,false]
+	#   1. Rebuild source code again
+	#   2. Run test suite
+	#   3. Check for "Failed Tests" in ${T}/build.log.
 }
 
 src_install() {
