@@ -25,8 +25,7 @@ IUSE+=" souper"
 REQUIRED_USE="
 	souper? (
 		!z3
-		debug? ( dump )
-		test? ( debug dump )
+		test? ( debug )
 	)
 "
 RESTRICT="!test? ( test )"
@@ -57,6 +56,7 @@ BDEPEND="
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	') )
 	libffi? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
+	test? ( souper? ( dev-util/ccache ) )
 	${PYTHON_DEPS}"
 # There are no file collisions between these versions but having :0
 # installed means llvm-config there will take precedence.
@@ -189,7 +189,9 @@ src_prepare() {
 		ewarn "The forward port of disable-peepholes-v07.diff is in testing."
 		cd "${WORKDIR}" || die
 		eapply "${FILESDIR}/llvm-14.0.0.9999-disable-peepholes-v07.diff"
-		#eapply "${FILESDIR}/disable-peepholes-v07-tests.diff"
+		if use test ; then
+			eapply "${FILESDIR}/disable-peepholes-v07-tests.diff"
+		fi
 	fi
 }
 
@@ -339,7 +341,19 @@ get_distribution_components() {
 	printf "%s${sep}" "${out[@]}"
 }
 
-multilib_src_configure() {
+bool_trans() {
+	local arg="${1}"
+	if [[ "${arg}" == "1" ]] ; then
+		echo "true"
+	else
+		echo "false"
+	fi
+}
+
+src_configure() { :; }
+
+_configure() {
+	use souper && "wo=${wo} ph=${ph} (${s_idx}/7)"
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
 		ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
@@ -413,7 +427,10 @@ multilib_src_configure() {
 
 	if use souper ; then
 		mycmakeargs+=(
-			-DCMAKE_CXX_FLAGS="-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=true -DDISABLE_PEEPHOLES_DEFAULT_VALUE=false"
+			# Setting DISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false and running the souper pass can cause miscompile in other programs.
+			# See 2.10-2.11 section in academic paper.
+			# To match the LLVM defaults, set WO=false and PH=false.
+			-DCMAKE_CXX_FLAGS="-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=$(bool_trans ${wo}) -DDISABLE_PEEPHOLES_DEFAULT_VALUE=$(bool_trans ${ph})"
 			-DLLVM_FORCE_ENABLE_STATS=$(use test)
 		)
 	fi
@@ -479,7 +496,7 @@ multilib_src_configure() {
 	multilib_is_native_abi && check_distribution_components
 }
 
-multilib_src_compile() {
+_compile() {
 	cmake_build distribution
 
 	pax-mark m "${BUILD_DIR}"/bin/llvm-rtdyld
@@ -493,15 +510,200 @@ multilib_src_compile() {
 	fi
 }
 
-multilib_src_test() {
+_souper_test() {
+	# This can be completed in a day
+	if [[ ! ( "${FEATURES}" =~ "ccache" ) ]] || ! which ccache 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "It could take 7 days to test without ccache.  Please emerge ccache and"
+eerror "enable it."
+eerror
+		die
+	fi
+
+	# Force gcc to skip a LLVM rebuild without the disabled-peepholes patch.
+	# If you use clang at this point, you must use a LLVM without the disabled-peepholes patch.
+	export CC=gcc
+	export CXX=g++
+	autofix_flags # translate retpoline, strip unsupported flags during switch
+	filter-flags '-f*aggressive-loop-optimizations'
+	append-flags -fno-aggressive-loop-optimizations # This is mentioned in section 2.11 of the academic paper.
+	append-ldflags -fno-aggressive-loop-optimizations
+
+	wo=0
+	ph=0
+	s_idx=1
+	_configure
+	_compile
+	_install
+	_test
+
+	export CC=clang
+	export CXX=clang++
+	autofix_flags # translate retpoline, strip unsupported flags during switch
+	filter-flags -fno-aggressive-loop-optimizations
+
+	# The goal here is to test recompilation using the (re)built llvm
+	# with different configurations.
+	export LD_LIBRARY_PATH="${ED}/usr/lib/llvm/${SLOT}/$(get_libdir)"
+
+	wo=0
+	ph=0
+	s_idx=2
+	_configure
+	_compile
+	_install
+	_test
+
+	wo=1
+	ph=0
+	s_idx=3
+	_configure
+	_compile
+	_install
+	_test
+
+	wo=0
+	ph=0
+	s_idx=4
+	_configure
+	_compile
+	_install
+	_test
+
+	wo=1
+	ph=1
+	s_idx=5
+	_configure
+	_compile
+	_install
+	_test
+
+	wo=0
+	ph=0
+	s_idx=6
+	_configure
+	_compile
+	_install
+	_test
+}
+
+_build_abi() {
+	if use souper ; then
+		# A:(wo=0, ph=0) # Configuration set
+		# B:(wo=1, ph=0)
+		# C:(wo=1, ph=1)
+		# A > A > B > A > C > A # Build transition between configuration sets, x_(i-1) builds x_i
+		local wo
+		local ph
+		local s_idx
+
+		if use test ; then
+			_souper_test
+		fi
+
+		if use bootstrap ; then
+			# Build against vanilla unpatched.
+			export CC=gcc
+			export CXX=g++
+			autofix_flags # translate retpoline, strip unsupported flags during switch
+			filter-flags '-f*aggressive-loop-optimizations'
+			append-flags -fno-aggressive-loop-optimizations # This is mentioned in section 2.11 of the academic paper.
+			append-ldflags -fno-aggressive-loop-optimizations
+		fi
+
+		# Build with build_deps.sh settings
+		unset LD_LIBRARY_PATH
+		wo=1
+		ph=0
+		s_idx=7
+		_configure
+		_compile
+		_install
+		_test
+	else
+		if use bootstrap ; then
+			# Build against vanilla unpatched.
+			export CC=gcc
+			export CXX=g++
+			autofix_flags # translate retpoline, strip unsupported flags during switch
+		fi
+		_configure
+		_compile
+		use test && _test
+	fi
+}
+
+get_m_abi() {
+	for r in ${_MULTILIB_FLAGS[@]} ; do
+		local m_abi=$"${r#*:}"
+		local m_flag="${r%:*}"
+		if [[ "${m_flag}" =~ "${ABI}" ]] ; then
+			echo "${m_abi}"
+			return
+		fi
+	done
+}
+
+src_compile() {
+	_compile_abi() {
+		export BUILD_DIR="${WORKDIR}/${P}_build-$(get_m_abi).${ABI}"
+		_build_abi
+	}
+	multilib_foreach_abi _compile_abi
+}
+
+src_test() { :; }
+
+_test() {
 	# respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
-	cmake_build check
-	# To test disable-peepholes patch
-	# loop -- Permute -DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=X -DDISABLE_PEEPHOLES_DEFAULT_VALUE=Y, where X=[true,false], Y=[true,false]
-	#   1. Rebuild source code again
-	#   2. Run test suite
-	#   3. Check for "Failed Tests" in ${T}/build.log.
+	if use souper ; then
+		einfo "Testing DISABLE_PEEPHOLES=${ph} DISABLE_WRONG_OPTIMIZATIONS=${wo}"
+		# Behavior wo meaning
+		#	0	possible undefined behavior allowed in LLVM lib [llvm default]
+		#	1	possible undefined behavior disallowed in LLVM lib [souper default]
+		# The undefined behavior described within LLVM is discussed in the academic paper 2.10-2.11 sections.
+
+		# Behavior ph meaning
+		#	0	allow llvm peepholes implementation [llvm default, souper default]
+		#	1	disallow llvm peepholes implementation
+
+		# Correctness table expectations based on test-disable-peepholes.sh comments
+		#	wo	ph	expected result
+		#	0	0	pass (llvm default)
+		#	1	0	fail on undefined behavior tests (souper default)
+		#	0	1	? [guestimated fail for peephole tests]
+		#	1	1	fail on peephole-like tests [and possibly undefined behavior tests]
+		local results_path="${T}/test_results_${s_idx}.txt"
+		"${CMAKE_MAKEFILE_GENERATOR}" check 2&>1 > "${results_path}" || true # non fatal because failures are expected
+
+		if (( ${s_idx} == 6 )) ; then
+			for i in $(seq 1 6) ; do
+				if grep -q -e "Failed Tests" \
+	                                "${T}/test_results_${i}.txt" ; then
+					ewarn "Test FAILED in run ${i}"
+				else
+					einfo "Test PASSED in run ${i}"
+				fi
+			done
+			grep -q -e "Failed Tests" \
+				"${T}/test_results_2.txt" \
+				"${T}/test_results_4.txt" \
+				"${T}/test_results_6.txt" \
+			|| die "At least one failure must be present (wo == 1 || ph == 1)"
+			grep -q -e "Failed Tests" \
+				"${T}/test_results_2.txt" \
+				&& die "The LLVM defaults (s_idx=2, wo=0, ph=0) should not fail."
+			grep -q -e "Failed Tests" \
+				"${T}/test_results_4.txt" \
+				&& ewarn "The undefined behavior tests (s_idx=2, wo=1, ph=0) should have failed."
+			grep -q -e "Failed Tests" \
+				"${T}/test_results_6.txt" \
+				&& ewarn "The undefined behavior and peephole tests (s_idx=2, wo=1, ph=1) should have failed."
+		fi
+	else
+		cmake_build check
+	fi
 }
 
 src_install() {
@@ -520,7 +722,7 @@ src_install() {
 	mv "${ED}"/usr/include "${ED}"/usr/lib/llvm/${SLOT}/include || die
 }
 
-multilib_src_install() {
+_install() {
 	DESTDIR=${D} cmake_build install-distribution
 
 	# move headers to /usr/include for wrapping
@@ -528,6 +730,10 @@ multilib_src_install() {
 	mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
 
 	LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
+}
+
+multilib_src_install() {
+	_install
 }
 
 multilib_src_install_all() {

@@ -14,7 +14,9 @@ https://github.com/regehr/llvm-project/compare/072c90a863aac1334a4950b3da262a025
 For commit history details see:
 https://github.com/regehr/llvm-project/compare/072c90a863aac1334a4950b3da262a025516dea0...disable-peepholes-v07
 
-Additional notes:
+
+Additional notes and oteodoro changes:
+
 Some hunks were dropped related to omitCheck* in work/llvm/lib/Analysis/InstructionSimplify.cpp.
 The testing scripts is not updated to be version and dev environment agnostic.
 
@@ -23,7 +25,7 @@ There was a misplaced hunk in the without fuzz placed in the wrong relative loca
 The eliminateDeadCode function in the patch was replaced with the same 13.x version but without static keyword.
 
 New Poison sections were encountered.  The placement for these DisablePeepholes points should be peer reviewed or unit tested,
-but as for now are treated as part of the problem in that particular peephole function.
+but as for now they are treated as part of the problem in that particular peephole function implementation.
 
 The diff patch was used to drop extraneous patches/hunks in the generated .patch version.
 This is to avoid possible duplicate hunks.

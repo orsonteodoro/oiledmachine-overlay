@@ -56,6 +56,9 @@
 	https://github.com/llvm/llvm-project/blob/main/bolt/docs/OptimizingClang.md
 	</longdescription>
 	<use>
+		<flag name="bootstrap">Build against a vanilla unpatched compiler.  This USE
+			flag can be used to undo a broken build by avoiding a possibly broken
+			patched one.</flag>
 		<flag name="binutils-plugin">Build the binutils plugin</flag>
 		<flag name="bolt">Build the Binary Optimization and Layout Tool
 			to improve CPU caching and branch prediction using execution

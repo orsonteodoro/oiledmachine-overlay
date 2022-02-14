@@ -6,6 +6,7 @@ https://github.com/regehr/llvm-project/compare/072c90a863aac1334a4950b3da262a025
 For commit history details see:
 https://github.com/regehr/llvm-project/compare/072c90a863aac1334a4950b3da262a025516dea0...disable-peepholes-v07
 
+oteodoro changes:
 The default.cfg and test-spec.sh for benchmarking have been dropped.
 The test-disable-peepholes.sh has been dropped since the tests are rebuild, test suite run, and grepping stderr/stdout for "Failed Tests".
 Removed TM name from souper-scripts/README.txt
@@ -41,7 +42,7 @@ index 0000000000000..11b14c0a097a7
 +
 +Then to make sure that each of these can build a working LLVM that
 +passes all of its tests, and to make sure that each can build
-+benchmarks, and those pass all their test.
++benchmarks, and those pass all their test.					# oteodoro:  removed TM name
 +
 +TODO
 +- also test debug builds?
