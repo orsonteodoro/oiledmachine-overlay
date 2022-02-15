@@ -68,9 +68,10 @@
 			The Souper optimization pass can further reduce code size by
 			~4.4% or 3 MB in some cases with a tradeoff of a 2% runtime
 			penalty.  This will add new flags to toggle the built-in compiler
-			peepholes optimization and overlapping optimizations that Souper
-			provides in addition to optimizations that increase undefined
-			behavior.  (EXPERIMENTAL)</flag>
+			peepholes optimization, overlapping optimizations that Souper
+			provides, in addition to disablement of code that may produce
+			to undefined behavior during the souper pass that may lead to a
+			crash.  (EXPERIMENTAL)</flag>
 		<flag name="dump">Build with dump functions to print additional (debugging)
 			information</flag>
 		<flag name="doc">Build and install the HTML documentation and regenerate
