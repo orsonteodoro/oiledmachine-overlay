@@ -436,20 +436,20 @@ _configure() {
 
 	if use souper ; then
 		if (( ${s_idx} == 7 )) ; then
-			mycmakeargs=(
+			mycmakeargs+=(
 				-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
 			)
 		elif (( ${s_idx} % 2 == 0 )) ; then
-			mycmakeargs=(
+			mycmakeargs+=(
 				-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
 			)
 		else
-			mycmakeargs=(
+			mycmakeargs+=(
 				-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/prev"
 			)
 		fi
 	else
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
 		)
 	fi
