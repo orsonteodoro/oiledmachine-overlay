@@ -520,6 +520,13 @@ eerror
 		die
 	fi
 
+	if ! has_version "sys-devel/clang:${SLOT}" ; then
+eerror
+eerror "clang must be installed for testing the disable-peepholes patch."
+eerror
+		die
+	fi
+
 	CFLAGS_BAK="${CFLAGS}"
 	CXXFLAGS_BAK="${CXXFLAGS}"
 	LDFLAGS_BAK="${LDFLAGS}"
@@ -546,8 +553,8 @@ eerror
 	_install
 	_test
 
-	export CC=clang
-	export CXX=clang++
+	export CC=clang-${SLOT}
+	export CXX=clang++-${SLOT}
 	autofix_flags # translate retpoline, strip unsupported flags during switch
 	filter-flags -fno-aggressive-loop-optimizations
 
