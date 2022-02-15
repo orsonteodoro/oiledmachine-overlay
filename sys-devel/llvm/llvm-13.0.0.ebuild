@@ -647,13 +647,17 @@ _build_abi() {
 }
 
 get_m_abi() {
+	local r
 	for r in ${_MULTILIB_FLAGS[@]} ; do
 		local m_abi=$"${r%:*}"
 		local m_flag="${r#*:}"
-		if [[ "${m_flag}" =~ "${ABI}" ]] ; then
-			echo "${m_abi}"
-			return
-		fi
+		local a
+		for a in $(echo ${m_flag} | tar "," " ") ; do
+			if [[ "${m_flag}" == "${ABI}" ]] ; then
+				echo "${m_abi}"
+				return
+			fi
+		done
 	done
 }
 
@@ -687,32 +691,32 @@ _test() {
 		#	1	0	fail on undefined behavior tests (souper default)
 		#	0	1	? [guestimated fail for peephole tests]
 		#	1	1	fail on peephole-like tests [and possibly undefined behavior tests]
-		local results_path="${T}/test_results_${s_idx}.txt"
+		local results_path="${T}/test_results_${s_idx}_${ABI}.txt"
 		"${CMAKE_MAKEFILE_GENERATOR}" check 2&>1 > "${results_path}" || true # non fatal because failures are expected
 
 		if (( ${s_idx} == 6 )) ; then
 			for i in $(seq 1 6) ; do
 				if grep -q -e "Failed Tests" \
-	                                "${T}/test_results_${i}.txt" ; then
-					ewarn "Test FAILED in run ${i}"
+	                                "${T}/test_results_${i}_${ABI}.txt" ; then
+					ewarn "Test FAILED in run ${i} (${ABI})"
 				else
-					einfo "Test PASSED in run ${i}"
+					einfo "Test PASSED in run ${i} (${ABI})"
 				fi
 			done
 			grep -q -e "Failed Tests" \
-				"${T}/test_results_2.txt" \
-				"${T}/test_results_4.txt" \
-				"${T}/test_results_6.txt" \
-			|| die "At least one failure must be present (wo == 1 || ph == 1)"
+				"${T}/test_results_2_${ABI}.txt" \
+				"${T}/test_results_4_${ABI}.txt" \
+				"${T}/test_results_6_${ABI}.txt" \
+			|| die "At least one failure must be present (wo == 1 || ph == 1) (${ABI})"
 			grep -q -e "Failed Tests" \
-				"${T}/test_results_2.txt" \
-				&& die "The LLVM defaults (s_idx=2, wo=0, ph=0) should not fail."
+				"${T}/test_results_2_${ABI}.txt" \
+				&& die "The LLVM defaults (s_idx=2, wo=0, ph=0) should not fail. (${ABI})"
 			grep -q -e "Failed Tests" \
-				"${T}/test_results_4.txt" \
-				&& ewarn "The undefined behavior tests (s_idx=2, wo=1, ph=0) should have failed."
+				"${T}/test_results_4_${ABI}.txt" \
+				&& ewarn "The undefined behavior tests (s_idx=2, wo=1, ph=0) should have failed. (${ABI})"
 			grep -q -e "Failed Tests" \
-				"${T}/test_results_6.txt" \
-				&& ewarn "The undefined behavior and peephole tests (s_idx=2, wo=1, ph=1) should have failed."
+				"${T}/test_results_6_${ABI}.txt" \
+				&& ewarn "The undefined behavior and peephole tests (s_idx=2, wo=1, ph=1) should have failed. (${ABI})"
 		fi
 	else
 		cmake_build check
