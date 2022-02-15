@@ -658,7 +658,7 @@ get_m_abi() {
 		OIFS="${IFS}"
 		IFS=','
 		for a in ${m_flag} ; do
-			if [[ "${m_flag}" == "${ABI}" ]] ; then
+			if [[ "${a}" == "${ABI}" ]] ; then
 				echo "${m_abi}"
 				return
 			fi
