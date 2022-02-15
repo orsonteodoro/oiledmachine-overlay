@@ -55,7 +55,6 @@ BDEPEND="
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	') )
 	libffi? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
-	test? ( souper? ( dev-util/ccache ) )
 	${PYTHON_DEPS}"
 # There are no file collisions between these versions but having :0
 # installed means llvm-config there will take precedence.
@@ -349,21 +348,6 @@ bool_trans() {
 
 src_configure() { :; }
 
-# Update ccache calculation
-uccc() {
-	# Two choices really for correct testing:  disable ccache or update the hash calculation correctly.
-	# This is to ensure that all sibling obj files use the same libLLVMs.so with the same fingerprint.
-	# Also, we want to test the effects of the binary code generated homogenously throughout
-	# the LLVM library not just the source code associated with a few objs that was just changed.
-	export CCACHE_EXTRAFILES=""
-	for f in \
-		$(readlink -f "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null) \
-		$(readlink -f "${ED}/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
-	do
-		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${f}"
-	done
-}
-
 _cmake_clean() {
 	cd "${BUILD_DIR}" || die
 	if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
@@ -374,9 +358,13 @@ _cmake_clean() {
 }
 
 _configure() {
+	# Two choices really for correct testing:  disable ccache or update the hash calculation correctly.
+	# This is to ensure that all sibling obj files use the same libLLVMs.so with the same fingerprint.
+	# Also, we want to test the effects of the binary code generated homogenously throughout
+	# the LLVM library not just the source code associated with a few objs that was just changed.
+	export CCACHE_EXTRAFILES=$(readlink -f "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
 	if use souper ; then
 		einfo "wo=${wo} ph=${ph} (${s_idx}/7)"
-		uccc
 		if use test ; then
 			(( ${s_idx} > 1 )) && _cmake_clean
 			(( ${s_idx} == 7 )) && rm -rf "${ED}"
@@ -388,6 +376,7 @@ _configure() {
 			elif (( ${s_idx} % 2 == 0 )) ; then
 				export PATH="${ED}/usr/lib/llvm/prev/bin:${PATH_ORIG}"
 				export LD_LIBRARY_PATH="${ED}/usr/lib/llvm/prev/$(get_libdir)"
+				export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:"$(readlink -f "${ED}/usr/lib/llvm/prev/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
 			fi
 		fi
 		(( ${s_idx} == 7 )) && unset LD_LIBRARY_PATH
