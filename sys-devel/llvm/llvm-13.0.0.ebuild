@@ -359,7 +359,7 @@ _cmake_clean() {
 
 _configure() {
 	# Two choices really for correct testing:  disable ccache or update the hash calculation correctly.
-	# This is to ensure that all sibling obj files use the same libLLVMs.so with the same fingerprint.
+	# This is to ensure that all sibling obj files use the same libLLVM.so with the same fingerprint.
 	# Also, we want to test the effects of the binary code generated homogenously throughout
 	# the LLVM library not just the source code associated with a few objs that was just changed.
 	export CCACHE_EXTRAFILES=$(readlink -f "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
