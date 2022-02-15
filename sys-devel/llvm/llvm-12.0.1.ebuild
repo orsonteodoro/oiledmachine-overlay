@@ -655,12 +655,15 @@ get_m_abi() {
 		local m_abi=$"${r%:*}"
 		local m_flag="${r#*:}"
 		local a
-		for a in $(echo ${m_flag} | tr "," " ") ; do
+		OIFS="${IFS}"
+		IFS=','
+		for a in ${m_flag} ; do
 			if [[ "${m_flag}" == "${ABI}" ]] ; then
 				echo "${m_abi}"
 				return
 			fi
 		done
+		IFS="${OIFS}"
 	done
 }
 
