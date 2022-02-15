@@ -376,7 +376,7 @@ _configure() {
 			elif (( ${s_idx} % 2 == 1 )) ; then
 				rm -rf "${ED}"
 				export PATH="${PATH_ORIG}"
-				unset LD_LIBRARY_PATH
+				unset LD_LIBRARY_PATH # Use RUNPATH instead
 			elif (( ${s_idx} % 2 == 0 )) ; then
 				export PATH="${ED}/usr/lib/llvm/prev/bin:${PATH_ORIG}"
 				export LD_LIBRARY_PATH="${ED}/usr/lib/llvm/prev/$(get_libdir)"
