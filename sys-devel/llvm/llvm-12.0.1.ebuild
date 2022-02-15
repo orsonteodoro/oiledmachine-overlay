@@ -655,7 +655,7 @@ get_m_abi() {
 		local m_abi=$"${r%:*}"
 		local m_flag="${r#*:}"
 		local a
-		for a in $(echo ${m_flag} | tar "," " ") ; do
+		for a in $(echo ${m_flag} | tr "," " ") ; do
 			if [[ "${m_flag}" == "${ABI}" ]] ; then
 				echo "${m_abi}"
 				return
