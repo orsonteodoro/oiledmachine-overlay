@@ -357,11 +357,11 @@ uccc() {
 	# Two choices really for correct testing:  disable ccache or update the hash calculation correctly.
 	# This is to ensure that all sibling obj files use the same LLVMs.so with the same fingerprint.
 	export CCACHE_EXTRAFILES=""
-	if [[ -e "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM-${SLOT}.so" ]] ; then
-		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM-${SLOT}.so"
+	if [[ -e $(readlink -f "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null) ]] ; then
+		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:"$(readlink -f "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
 	fi
-	if [[ -e "${ED}/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM-${SLOT}.so" ]] ; then
-		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${ED}/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM-${SLOT}.so"
+	if [[ -e $(readlink -f "${ED}/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null) ]] ; then
+		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:"$(readlink -f "${ED}/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
 	fi
 }
 
