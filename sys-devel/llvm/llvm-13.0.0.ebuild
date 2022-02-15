@@ -352,7 +352,9 @@ src_configure() { :; }
 # Update ccache calculation
 uccc() {
 	# Two choices really for correct testing:  disable ccache or update the hash calculation correctly.
-	# This is to ensure that all sibling obj files use the same LLVMs.so with the same fingerprint.
+	# This is to ensure that all sibling obj files use the same libLLVMs.so with the same fingerprint.
+	# Also, we want to test the effects of the binary code generated homogenously throughout
+	# the LLVM library not just the source code associated with a few objs that was just changed.
 	export CCACHE_EXTRAFILES=""
 	for f in \
 		$(readlink -f "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null) \
@@ -363,6 +365,7 @@ uccc() {
 }
 
 _cmake_clean() {
+	cd "${BUILD_DIR}" || die
 	if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
 		eninja -t clean
 	else
@@ -374,7 +377,21 @@ _configure() {
 	if use souper ; then
 		einfo "wo=${wo} ph=${ph} (${s_idx}/7)"
 		uccc
-		use test && (( ${s_idx} > 1 )) && _cmake_clean
+		if use test ; then
+			(( ${s_idx} > 1 )) && _cmake_clean
+			(( ${s_idx} == 7 )) && rm -rf "${ED}"
+			if (( ${s_idx} == 7 )) ; then
+				export PATH="${PATH_ORIG}"
+			elif (( ${s_idx} % 2 == 1 )) ; then
+				export PATH="${PATH_ORIG}"
+				export LD_LIBRARY_PATH="/usr/lib/llvm/${SLOT}/$(get_libdir)"
+			elif (( ${s_idx} % 2 == 0 )) ; then
+				export PATH="${ED}/usr/lib/llvm/prev/bin:${PATH_ORIG}"
+				export LD_LIBRARY_PATH="${ED}/usr/lib/llvm/prev/$(get_libdir)"
+			fi
+		fi
+		(( ${s_idx} == 7 )) && unset LD_LIBRARY_PATH
+		ldd /usr/lib/llvm/${SLOT}/bin/clang || die
 	fi
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
@@ -387,7 +404,6 @@ _configure() {
 		# disable appending VCS revision to the version to improve
 		# direct cache hit ratio
 		-DLLVM_APPEND_VC_REV=OFF
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
 		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
 
 		-DBUILD_SHARED_LIBS=OFF
@@ -424,6 +440,26 @@ _configure() {
 		# disable OCaml bindings (now in dev-ml/llvm-ocaml)
 		-DOCAMLFIND=NO
 	)
+
+	if use souper ; then
+		if (( ${s_idx} == 7 )) ; then
+			mycmakeargs=(
+				-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
+			)
+		elif (( ${s_idx} % 2 == 0 )) ; then
+			mycmakeargs=(
+				-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
+			)
+		else
+			mycmakeargs=(
+				-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/prev"
+			)
+		fi
+	else
+		mycmakeargs=(
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
+		)
+	fi
 
 	if is_libcxx_linked; then
 		# Smart hack: alter version suffix -> SOVERSION when linking
@@ -516,6 +552,9 @@ _configure() {
 
 _compile() {
 	cmake_build distribution
+	if use test ; then
+		cmake_build test-depends
+	fi
 
 	pax-mark m "${BUILD_DIR}"/bin/llvm-rtdyld
 	pax-mark m "${BUILD_DIR}"/bin/lli
@@ -548,6 +587,7 @@ eerror
 	CFLAGS_BAK="${CFLAGS}"
 	CXXFLAGS_BAK="${CXXFLAGS}"
 	LDFLAGS_BAK="${LDFLAGS}"
+	PATH_ORIG="${PATH}"
 
 	# Force gcc to skip a LLVM rebuild without the disabled-peepholes patch.
 	# If you use clang at this point, you must use a LLVM without the disabled-peepholes patch.
@@ -575,10 +615,6 @@ eerror
 	export CXX=clang++-${SLOT}
 	autofix_flags # translate retpoline, strip unsupported flags during switch
 	filter-flags -fno-aggressive-loop-optimizations
-
-	# The goal here is to test recompilation using the (re)built llvm
-	# with different configurations.
-	export LD_LIBRARY_PATH="${ED}/usr/lib/llvm/${SLOT}/$(get_libdir)"
 
 	wo=0
 	ph=0
@@ -620,12 +656,14 @@ eerror
 	_install
 	_test
 
+	export PATH="${PATH_ORIG}"
 	export CFLAGS="${CFLAGS_BAK}"
 	export CXXFLAGS="${CXXFLAGS_BAK}"
 	export LDFLAGS="${LDFLAGS_BAK}"
 }
 
 _build_abi() {
+	PATH_ORIG="${PATH}"
 	if use souper ; then
 		# A:(wo=0, ph=0) # Configuration set
 		# B:(wo=1, ph=0)
@@ -650,7 +688,6 @@ _build_abi() {
 		fi
 
 		# Build with build_deps.sh settings
-		unset LD_LIBRARY_PATH
 		wo=1
 		ph=0
 		s_idx=7
@@ -719,8 +756,9 @@ _test() {
 		#	1	0	fail on undefined behavior tests (souper default)
 		#	0	1	? [guestimated fail for peephole tests]
 		#	1	1	fail on peephole-like tests [and possibly undefined behavior tests]
+		cd "${BUILD_DIR}" || die
 		local results_path="${T}/test_results_${s_idx}_${ABI}.txt"
-		"${CMAKE_MAKEFILE_GENERATOR}" check 2&>1 > "${results_path}" || true # non fatal because failures are expected
+		"${CMAKE_MAKEFILE_GENERATOR}" check 2>&1 | tee "${results_path}" || true # non fatal because failures are expected
 
 		if (( ${s_idx} == 6 )) ; then
 			for i in $(seq 1 6) ; do
