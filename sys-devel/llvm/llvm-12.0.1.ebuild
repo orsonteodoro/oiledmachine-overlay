@@ -353,7 +353,7 @@ bool_trans() {
 src_configure() { :; }
 
 _configure() {
-	use souper && "wo=${wo} ph=${ph} (${s_idx}/7)"
+	use souper && einfo "wo=${wo} ph=${ph} (${s_idx}/7)"
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
 		ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
