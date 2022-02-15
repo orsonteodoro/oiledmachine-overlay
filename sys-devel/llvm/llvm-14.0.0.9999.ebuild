@@ -757,6 +757,7 @@ _test() {
 		#	0	1	? [guestimated fail for peephole tests]
 		#	1	1	fail on peephole-like tests [and possibly undefined behavior tests]
 		cd "${BUILD_DIR}" || die
+		unset LD_LIBRARY_PATH # Use RUNPATH
 		local results_path="${T}/test_results_${s_idx}_${ABI}.txt"
 		"${CMAKE_MAKEFILE_GENERATOR}" check 2>&1 | tee "${results_path}" || true # non fatal because failures are expected
 
