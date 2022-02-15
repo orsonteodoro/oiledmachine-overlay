@@ -349,8 +349,24 @@ bool_trans() {
 
 src_configure() { :; }
 
+# Update ccache calculation
+uccc() {
+	# Two choices really for correct testing:  disable ccache or update the hash calculation correctly.
+	# This is to ensure that all sibling obj files use the same LLVMs.so with the same fingerprint.
+	export CCACHE_EXTRAFILES=""
+	if [[ -e "/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM-${SLOT}.so" ]] ; then
+		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM-${SLOT}.so"
+	fi
+	if [[ -e "${ED}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM-${SLOT}.so" ]] ; then
+		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${ED}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM-${SLOT}.so"
+	fi
+}
+
 _configure() {
-	use souper && einfo "wo=${wo} ph=${ph} (${s_idx}/7)"
+	if use souper ; then
+		einfo "wo=${wo} ph=${ph} (${s_idx}/7)"
+		uccc
+	fi
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
 		ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
