@@ -365,10 +365,21 @@ uccc() {
 	fi
 }
 
+_cmake_clean() {
+	if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
+		eninja -t clean
+	else
+		emake clean
+	fi
+}
+
 _configure() {
 	if use souper ; then
 		einfo "wo=${wo} ph=${ph} (${s_idx}/7)"
-		uccc
+		if use test ; then
+			uccc
+			(( ${s_idx} > 1 )) && _cmake_clean
+		fi
 	fi
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
