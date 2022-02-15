@@ -374,7 +374,7 @@ _configure() {
 	if use souper ; then
 		einfo "wo=${wo} ph=${ph} (${s_idx}/7)"
 		uccc
-		use clean && (( ${s_idx} > 1 )) && _cmake_clean
+		use test && (( ${s_idx} > 1 )) && _cmake_clean
 	fi
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
