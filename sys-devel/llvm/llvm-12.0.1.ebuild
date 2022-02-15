@@ -376,10 +376,8 @@ _cmake_clean() {
 _configure() {
 	if use souper ; then
 		einfo "wo=${wo} ph=${ph} (${s_idx}/7)"
-		if use test ; then
-			uccc
-			(( ${s_idx} > 1 )) && _cmake_clean
-		fi
+		uccc
+		use clean && (( ${s_idx} > 1 )) && _cmake_clean
 	fi
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
