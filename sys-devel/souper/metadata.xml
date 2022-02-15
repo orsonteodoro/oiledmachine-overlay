@@ -17,8 +17,8 @@
 
     Ricer notes:
 
-    Two profile options can improve optimization over time but require the redis
-    USE flag.
+    Two profile options can improve optimization over time but require the
+    external-cache USE flag.
 
 
     Extra CFLAGS to pass directly to clang/clang++:
@@ -97,13 +97,13 @@
     <flag name="support-tools">
       Install extra tools designed for compiler developers
     </flag>
-    <flag name="redis">
-      Use the Redis DB as an external query cache to reduce time cost
-      of looking up the most frequent encountered code sequences mapped to
-      the to cheapest code sequence while skipping steps to obtain it.
+    <flag name="external-cache">
+      An external query cache to reduce time cost of looking up the most
+      frequent encountered code sequences mapped to the to cheapest code
+      sequence while skipping steps to obtain it.
 
-      Note the use of redis can increase the cost of RAM in the order
-      of 100s of MB but the time savings is amortized (meaning high
+      Note the use of an external cache can increase the cost of RAM in the
+      order of 100s of MB but the time savings is amortized (meaning high
       initial cost but decreased over time).  Without redis the time cost
       could be 6.28-13x times larger in the initial compilation
       relative to warm cache runs.

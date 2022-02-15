@@ -42,10 +42,10 @@ gen_iuse() {
 IUSE+=" $(gen_iuse)"
 # Both assertions (debug) and dump are default ON upstream,
 # but in the distro, both are OFF for the llvm package by default.
-IUSE+=" -debug -dump +redis r5"
+IUSE+=" -debug -dump +external-cache r5"
 REQUIRED_USE+="
 	|| ( $(gen_iuse) )
-	support-tools? ( redis )
+	support-tools? ( external-cache )
 "
 gen_rdepends() {
 	local s
@@ -71,7 +71,7 @@ RDEPEND+="
 		${PYTHON_DEPS}
 		$(python_gen_any_dep 'sys-devel/gdb[${PYTHON_USEDEP}]')
 	)
-	redis? (
+	external-cache? (
 		>=dev-libs/hiredis-1.0.1[static-libs]
 		>=dev-db/redis-5.0.7
 	)
@@ -171,7 +171,7 @@ src_prepare() {
 		)
 		eapply ${KLEE_RSAS_PURE_BV_QF[@]}
 	popd
-	if ! use redis ; then
+	if ! use external-cache ; then
 		sed -i -e "s|USE_EXTERNAL_CACHE=1|USE_EXTERNAL_CACHE=0|g" \
 			"${S}/utils/sclang.in" || die
 	fi
@@ -212,7 +212,7 @@ ewarn
 		-DCMAKE_INSTALL_PREFIX="/usr/lib/souper/${s}"
 		-DCMAKE_INSTALL_DOCS="/usr/share/doc/${P}"
 		-DCMAKE_INSTALL_RUNSTATEDIR="/var/run"
-		-DFEATURE_EXTERNAL_CACHE=$(usex redis)
+		-DFEATURE_EXTERNAL_CACHE=$(usex external-cache)
 		-DINSTALL_GDB_PRETTY_PRINT=$(usex gdb)
 		-DINSTALL_SUPPORT_TOOLS=$(usex support-tools)
 		-DLLVM_CONFIG_PATH="/usr/lib/llvm/${s}/bin/llvm-config"
@@ -271,11 +271,11 @@ src_install() {
 	dosym /usr/lib/souper/${s_max}/bin/sclang /usr/bin/sclang
 	dosym /usr/lib/souper/${s_max}/bin/sclang++ /usr/bin/sclang++
 
-	if ! use redis ; then
-		cat <<-EOF > "${T}"/50${P}-redis
+	if ! use external-cache ; then
+		cat <<-EOF > "${T}"/50${P}-external-cache
 			SOUPER_NO_EXTERNAL_CACHE=1
 		EOF
-		doenvd "${T}"/50${P}-redis
+		doenvd "${T}"/50${P}-external-cache
 	fi
 	dodoc LICENSE
 }
@@ -292,11 +292,10 @@ src_test() {
 
 pkg_postinst() {
 	env-update
-	if use redis ; then
+	if use external-cache ; then
 ewarn
 ewarn "The redis cache must stopped and dumped each time this package"
 ewarn "bumped to a newer version or commit."
-ewarn
 ewarn
 ewarn "The redis server should be listening in port 6379."
 ewarn
