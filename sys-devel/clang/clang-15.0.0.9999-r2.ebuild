@@ -111,7 +111,7 @@ pkg_setup() {
 	fi
 
 	ewarn
-	ewarn "If you encounter the follwing during the build:"
+	ewarn "If you encounter the following during the build:"
 	ewarn
 	ewarn "FAILED: lib/Tooling/ASTNodeAPI.json"
 	ewarn

@@ -352,7 +352,7 @@ _configure() {
 		'-flto*' \
 		'-fuse-ld*' \
 		'-f*reorder-blocks-and-partition' \
-		'-Wl,-q'
+		'-Wl,--emit-relocs'
 
 	if use pgo-lto-bolt ; then
 		append-flags -fno-reorder-blocks-and-partition
@@ -488,7 +488,7 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
 		"${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
-		append-ldflags -Wl,-q
+		append-ldflags -Wl,--emit-relocs
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang"
 			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang++"
