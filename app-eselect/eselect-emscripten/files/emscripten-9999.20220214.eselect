@@ -7,9 +7,10 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20220204-r1"
+VERSION="20220214"
 PN="emscripten"
 
+# 3.1.4 llvm 15 ; node 4.1.1 ; binaryen 104
 # 3.1.2 llvm 14 ; node 4.1.1 ; binaryen 104
 # 3.0.1 llvm 14 ; node 4.1.1 ; binaryen 103
 # 2.0.31 llvm 14 ; node 4.1.1 ; binaryen 101
@@ -176,15 +177,19 @@ find_targets() {
 				| sed -e "s|clang-||")
                         llvm_major="${llvm_slot}"
                         llvm_major_minor=$(echo "${llvm_v}" | cut -f 1-2 -d '.')
-                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.27" \
+                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.4" \
+                            && [[ "${llvm_major}" -ge 15 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.2" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.27" \
                             && [[ "${llvm_major}" -ge 14 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.27" \
-                            is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" \
                             && [[ "${llvm_major}" -ge 13 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.13" \
-                            is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" \
                             && [[ "${llvm_major}" -ge 12 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.20" \
@@ -192,11 +197,11 @@ find_targets() {
                             && [[ "${llvm_major}" -ge 11 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.7" \
-                            is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.40" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.40" \
                             && [[ "${llvm_major}" -ge 10 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.40" \
-                            is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.24" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.24" \
                             && [[ "${llvm_major}" -ge 9 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.24" \
