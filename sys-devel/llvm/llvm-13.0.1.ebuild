@@ -367,10 +367,11 @@ _configure() {
 		einfo "wo=${wo} ph=${ph} (${s_idx}/7)"
 		if use test ; then
 			(( ${s_idx} > 1 )) && _cmake_clean
-			(( ${s_idx} == 7 )) && rm -rf "${ED}"
 			if (( ${s_idx} == 7 )) ; then
+				rm -rf "${ED}"
 				export PATH="${PATH_ORIG}"
 			elif (( ${s_idx} % 2 == 1 )) ; then
+				rm -rf "${ED}"
 				export PATH="${PATH_ORIG}"
 				export LD_LIBRARY_PATH="/usr/lib/llvm/${SLOT}/$(get_libdir)"
 			elif (( ${s_idx} % 2 == 0 )) ; then
