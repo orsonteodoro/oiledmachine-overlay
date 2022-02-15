@@ -19,6 +19,7 @@
       <name>The Emscripten Authors</name>
     </maintainer>
     <bugs-to>https://github.com/emscripten-core/emscripten/issues</bugs-to>
+    <changelog>https://github.com/emscripten-core/emscripten/blob/main/ChangeLog.md</changelog>
     <remote-id type="github">emscripten-core/emscripten</remote-id>
   </upstream>
   <longdescription>
@@ -27,6 +28,7 @@
     This ebuild tracks only the highest point releases corresponding to
     the corresponding LLVM version up to the latest current stable LLVM.
 
+    LLVM 15 (dev) - 3.1.4
     LLVM 14 (dev) - 3.1.3
     LLVM 13 (stable) - 2.0.26
     LLVM 12 (stable) - 2.0.12
