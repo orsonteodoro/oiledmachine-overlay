@@ -628,8 +628,8 @@ _build_abi() {
 
 get_m_abi() {
 	for r in ${_MULTILIB_FLAGS[@]} ; do
-		local m_abi=$"${r#*:}"
-		local m_flag="${r%:*}"
+		local m_abi=$"${r%:*}"
+		local m_flag="${r#*:}"
 		if [[ "${m_flag}" =~ "${ABI}" ]] ; then
 			echo "${m_abi}"
 			return
