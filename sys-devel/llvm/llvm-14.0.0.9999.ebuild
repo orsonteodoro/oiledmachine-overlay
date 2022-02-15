@@ -426,11 +426,14 @@ _configure() {
 	)
 
 	if use souper ; then
+		filter-flags \
+			'-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE*' \
+			'-DDISABLE_PEEPHOLES_DEFAULT_VALUE*'
+		# Setting DISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false and running the souper pass can cause miscompile in other programs.
+		# See 2.10-2.11 section in academic paper.
+		# To match the LLVM defaults, set WO=false and PH=false.
+		append-cppflags -DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=$(bool_trans ${wo}) -DDISABLE_PEEPHOLES_DEFAULT_VALUE=$(bool_trans ${ph})
 		mycmakeargs+=(
-			# Setting DISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false and running the souper pass can cause miscompile in other programs.
-			# See 2.10-2.11 section in academic paper.
-			# To match the LLVM defaults, set WO=false and PH=false.
-			-DCMAKE_CXX_FLAGS="-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=$(bool_trans ${wo}) -DDISABLE_PEEPHOLES_DEFAULT_VALUE=$(bool_trans ${ph})"
 			-DLLVM_FORCE_ENABLE_STATS=$(use test)
 		)
 	fi
