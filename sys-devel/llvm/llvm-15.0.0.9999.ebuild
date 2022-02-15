@@ -520,9 +520,9 @@ eerror
 		die
 	fi
 
-	if ! has_version "sys-devel/clang:${SLOT}" ; then
+	if ! has_version "sys-devel/clang:${SLOT}[$(get_m_abi)]" ; then
 eerror
-eerror "clang must be installed for testing the disable-peepholes patch."
+eerror "sys-devel/clang:${SLOT}[$(get_m_abi)] must be installed for testing the disable-peepholes patch."
 eerror
 		die
 	fi
