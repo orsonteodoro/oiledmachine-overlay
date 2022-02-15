@@ -357,11 +357,11 @@ uccc() {
 	# Two choices really for correct testing:  disable ccache or update the hash calculation correctly.
 	# This is to ensure that all sibling obj files use the same LLVMs.so with the same fingerprint.
 	export CCACHE_EXTRAFILES=""
-	if [[ -e "/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM-${SLOT}.so" ]] ; then
-		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM-${SLOT}.so"
+	if [[ -e "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM-${SLOT}.so" ]] ; then
+		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM-${SLOT}.so"
 	fi
-	if [[ -e "${ED}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM-${SLOT}.so" ]] ; then
-		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${ED}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM-${SLOT}.so"
+	if [[ -e "${ED}/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM-${SLOT}.so" ]] ; then
+		export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:${ED}/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM-${SLOT}.so"
 	fi
 }
 
