@@ -520,6 +520,10 @@ eerror
 		die
 	fi
 
+	CFLAGS_BAK="${CFLAGS}"
+	CXXFLAGS_BAK="${CXXFLAGS}"
+	LDFLAGS_BAK="${LDFLAGS}"
+
 	# Force gcc to skip a LLVM rebuild without the disabled-peepholes patch.
 	# If you use clang at this point, you must use a LLVM without the disabled-peepholes patch.
 	export CC=gcc
@@ -528,6 +532,10 @@ eerror
 	filter-flags '-f*aggressive-loop-optimizations'
 	append-flags -fno-aggressive-loop-optimizations # This is mentioned in section 2.11 of the academic paper.
 	append-ldflags -fno-aggressive-loop-optimizations
+
+	# Speed up build times
+	replace-flags '-O*' '-O1'
+	strip-flags
 
 	wo=0
 	ph=0
@@ -585,6 +593,10 @@ eerror
 	_compile
 	_install
 	_test
+
+	export CFLAGS="${CFLAGS_BAK}"
+	export CXXFLAGS="${CXXFLAGS_BAK}"
+	export LDFLAGS="${LDFLAGS_BAK}"
 }
 
 _build_abi() {
