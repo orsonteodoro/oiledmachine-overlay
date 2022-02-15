@@ -528,14 +528,15 @@ eerror
 	# If you use clang at this point, you must use a LLVM without the disabled-peepholes patch.
 	export CC=gcc
 	export CXX=g++
-	autofix_flags # translate retpoline, strip unsupported flags during switch
-	filter-flags '-f*aggressive-loop-optimizations'
-	append-flags -fno-aggressive-loop-optimizations # This is mentioned in section 2.11 of the academic paper.
-	append-ldflags -fno-aggressive-loop-optimizations
 
 	# Speed up build times
 	replace-flags '-O*' '-O1'
 	strip-flags
+
+	autofix_flags # translate retpoline, strip unsupported flags during switch
+	filter-flags '-f*aggressive-loop-optimizations'
+	append-flags -fno-aggressive-loop-optimizations # This is mentioned in section 2.11 of the academic paper.
+	append-ldflags -fno-aggressive-loop-optimizations
 
 	wo=0
 	ph=0
