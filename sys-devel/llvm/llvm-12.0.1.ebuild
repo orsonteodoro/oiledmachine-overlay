@@ -804,9 +804,19 @@ _install() {
 
 	# move headers to /usr/include for wrapping
 	rm -rf "${ED}"/usr/include || die
-	mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
-
-	LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
+	if use souper ; then
+		if (( ${s_idx} == 7 )) ; then
+			mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
+			LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
+		elif (( ${s_idx} % 2 == 0 )) ; then
+			mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
+		else
+			mv "${ED}"/usr/lib/llvm/prev/include "${ED}"/usr/include || die
+		fi
+	else
+		mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
+		LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
+	fi
 }
 
 multilib_src_install() {
