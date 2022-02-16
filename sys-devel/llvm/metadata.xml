@@ -42,38 +42,52 @@
 	This ebuild fork changes the following:
 
 		* Makes available, builds, installs BOLT support.
-		* Reduce spam and slowdown with -static-libstdc++
+		* Reduce spam and slowdown with -static-libstdc++.
+		* Applies disable-peepholes patch for stability or overlap reasons.
 
 	For this repo only, due to limited time and lack of time to verify working
 	ebuilds completely, only live ebuilds and point releases will be kept.  Release
 	candidates and inits will be ignored.
 
-	Bolt support requires commit 4c106cfdf7cf7eec861ad3983a3dd9a9e8f3a8ae or newer
+
+	BOLT notes:
+
+	BOLT support requires commit 4c106cfdf7cf7eec861ad3983a3dd9a9e8f3a8ae or newer
 	circa Jan 11, 2022 and is only offered in LLVM 14 or newer.
 
 	BOLT users please see
 	https://github.com/llvm/llvm-project/blob/main/bolt/README.md#input-binary-requirements
 	https://github.com/llvm/llvm-project/blob/main/bolt/docs/OptimizingClang.md
+
+
+	disable-peepholes notes:
+
+	To obtain the default behavior as if disable-peepholes was not applied, one may
+	pass to C{,XX}FLAGS -disable-wrongs-opts=0 and -disable-all-peepholes=0.  The
+	patch defaults are effectively set to -disable-wrongs-opts=1 and
+	-disable-all-peepholes=0.
+
 	</longdescription>
 	<use>
-		<flag name="bootstrap">Build against a vanilla unpatched compiler.  This USE
-			flag can be used to undo a broken build by avoiding a possibly broken
-			patched one or a broken LLVM lib build.</flag>
+		<flag name="bootstrap">Build against a vanilla unpatched compiler.  This
+			USE flag can be used to undo a broken build by avoiding a
+			possibly broken patched one or a broken LLVM lib build.</flag>
 		<flag name="binutils-plugin">Build the binutils plugin</flag>
 		<flag name="bolt">Build the Binary Optimization and Layout Tool
 			to improve CPU caching and branch prediction using execution
-			sampling data used to optimize code layout.  (EXPERIMENTAL)</flag>
+			sampling data used to optimize code layout.  (EXPERIMENTAL)
+			</flag>
 		<flag name="souper">Apply the disable-peepholes patch required by Souper
 			superoptimizer and pulls in the Souper package as a PDEPEND.
 			The Souper optimization pass can further reduce code size by
 			~4.4% or 3 MB in some cases with a tradeoff of a 2% runtime
-			penalty.  This will add new flags to toggle the built-in compiler
-			peepholes optimization, overlapping optimizations that Souper
-			provides, in addition to disablement of code that may produce
-			undefined behavior during the Souper optimization pass that may
-			lead to a crash.  (EXPERIMENTAL)</flag>
-		<flag name="dump">Build with dump functions to print additional (debugging)
-			information</flag>
+			penalty.  This will add new flags to toggle the built-in
+			compiler peepholes optimization, overlapping optimizations that
+			Souper provides, in addition to disablement of code that may
+			produce undefined behavior during the Souper optimization pass
+			that may lead to a crash.  (EXPERIMENTAL)</flag>
+		<flag name="dump">Build with dump functions to print additional
+			(debugging) information</flag>
 		<flag name="doc">Build and install the HTML documentation and regenerate
 			the man pages</flag>
 		<flag name="exegesis">Enable performance counter support for
@@ -86,7 +100,7 @@
 			(uses <pkg>app-arch/xar</pkg>)</flag>
 		<flag name="z3">Enable support for <pkg>sci-mathematics/z3</pkg>
 			constraint solver</flag>
-		<flag name="rN">FOR INTERNAL USE ONLY.  Bump revision but save CCACHE paths
-			for faster rebuilds.</flag>
+		<flag name="rN">FOR INTERNAL USE ONLY.  Bump revision but save CCACHE
+			paths for faster rebuilds.</flag>
 	</use>
 </pkgmetadata>
