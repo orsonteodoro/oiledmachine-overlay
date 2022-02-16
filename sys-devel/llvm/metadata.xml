@@ -63,9 +63,13 @@
 	disable-peepholes notes:
 
 	To obtain the default behavior as if disable-peepholes was not applied, one may
-	pass to C{,XX}FLAGS -disable-wrongs-opts=0 and -disable-all-peepholes=0.  The
-	patch defaults are effectively set to -disable-wrongs-opts=1 and
-	-disable-all-peepholes=0.
+	pass to C{,XX}FLAGS
+
+	  "-mllvm -disable-wrongs-opts=false -mllvm -disable-all-peepholes=false".
+
+	The patch defaults are effectively set to
+
+	  "-mllvm -disable-wrongs-opts=true -mllvm -disable-all-peepholes=false".
 
 	</longdescription>
 	<use>
