@@ -362,10 +362,15 @@ setup_gcc() {
 	export CC=gcc
 	export CXX=g++
 
+	use test && filter-flags '-f*-aggressive-loop-optimizations'
 	if use test && use souper && (( ${s_idx} != 7 )) ; then
 		# Speed up build times
 		replace-flags '-O*' '-O1'
 		strip-flags
+
+		# Prevent possibility of generating undefined behavior (UB) that can interfere with testing UB.
+		append-flags -fno-aggressive-loop-optimizations
+		append-ldflags -fno-aggressive-loop-optimizations
 	fi
 	autofix_flags # translate retpoline, strip unsupported flags during switch
 }
