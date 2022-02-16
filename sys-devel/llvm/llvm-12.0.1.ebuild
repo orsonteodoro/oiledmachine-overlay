@@ -32,7 +32,7 @@ IUSE="debug doc -dump exegesis +gold libedit +libffi ncurses test xar xml z3
 IUSE+=" bootstrap souper"
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+="
-	bootstrap? ( !test !souper )
+	bootstrap? ( !souper )
 	souper? (
 		!z3
 		test? ( debug )

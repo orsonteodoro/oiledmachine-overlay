@@ -23,7 +23,7 @@ IUSE="bolt +binutils-plugin debug doc -dump exegesis libedit +libffi ncurses tes
 	z3 kernel_Darwin r2"
 IUSE+=" bootstrap souper"
 REQUIRED_USE="
-	bootstrap? ( !test !souper )
+	bootstrap? ( !souper )
 	souper? (
 		!z3
 		test? ( debug )

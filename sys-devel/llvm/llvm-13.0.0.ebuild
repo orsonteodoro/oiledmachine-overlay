@@ -23,7 +23,7 @@ IUSE="debug doc -dump exegesis +gold libedit +libffi ncurses test xar xml z3
 	kernel_Darwin r1"
 IUSE+=" bootstrap souper"
 REQUIRED_USE="
-	bootstrap? ( !test !souper )
+	bootstrap? ( !souper )
 	souper? (
 		!z3
 		test? ( debug )

@@ -23,7 +23,7 @@ IUSE="+binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar
 	kernel_Darwin r1"
 IUSE+=" bootstrap souper"
 REQUIRED_USE="
-	bootstrap? ( !test !souper )
+	bootstrap? ( !souper )
 	souper? (
 		!z3
 		test? ( debug )
