@@ -409,6 +409,8 @@ _configure() {
 				setup_clang # Rebuild with the disable-peephole LLVM lib.
 			fi
 		fi
+		einfo "CC=${CC}"
+		einfo "CXX=${CXX}"
 		(( ${s_idx} == 7 )) && unset LD_LIBRARY_PATH
 		ldd /usr/lib/llvm/${SLOT}/bin/clang || die
 	fi
@@ -420,6 +422,8 @@ _configure() {
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
+		-DCMAKE_C_COMPILER=${CC}
+		-DCMAKE_CXX_COMPILER=${CXX}
 		# disable appending VCS revision to the version to improve
 		# direct cache hit ratio
 		-DLLVM_APPEND_VC_REV=OFF
@@ -596,9 +600,10 @@ eerror
 		die
 	fi
 
-	if ! has_version "sys-devel/clang:${SLOT}[$(get_m_abi)]" ; then
+	# Required to avoid missing symbols problem
+	if ! has_version "~sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]" ; then
 eerror
-eerror "sys-devel/clang:${SLOT}[$(get_m_abi)] must be installed for testing the disable-peepholes patch."
+eerror "~sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)] must be installed for testing the disable-peepholes patch."
 eerror
 		die
 	fi
