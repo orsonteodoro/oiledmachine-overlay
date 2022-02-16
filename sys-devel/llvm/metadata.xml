@@ -73,14 +73,14 @@
 
 	</longdescription>
 	<use>
-		<flag name="bootstrap">Build against a vanilla unpatched compiler.  This
-			USE flag can be used to undo a broken build by avoiding a
-			possibly broken patched one or a broken LLVM lib build.</flag>
 		<flag name="binutils-plugin">Build the binutils plugin</flag>
 		<flag name="bolt">Build the Binary Optimization and Layout Tool
 			to improve CPU caching and branch prediction using execution
 			sampling data used to optimize code layout.  (EXPERIMENTAL)
 			</flag>
+		<flag name="bootstrap">Build against a vanilla unpatched compiler.  This
+			USE flag can be used to undo a broken build by avoiding a
+			possibly broken patched one or a broken LLVM lib build.</flag>
 		<flag name="souper">Apply the disable-peepholes patch required by Souper
 			superoptimizer and pulls in the Souper package as a PDEPEND.
 			The Souper optimization pass can further reduce code size by
