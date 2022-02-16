@@ -600,6 +600,15 @@ eerror
 	LDFLAGS_BAK="${LDFLAGS}"
 	PATH_ORIG="${PATH}"
 
+	# Configuration set
+	# A:  (wo=0, ph=0)
+	# B:  (wo=1, ph=0)
+	# C:  (wo=1, ph=1)
+	# A > A > B > A > C > A # Build transition between configuration sets as 1 based index
+	#   x_(i-1) builds x_i when i is even and i >= 2
+	# else
+	#   vanilla_tc builds x_i when i is odd and i >= 1
+
 	wo=0
 	ph=0
 	s_idx=1
@@ -657,10 +666,6 @@ eerror
 _build_abi() {
 	PATH_ORIG="${PATH}"
 	if use souper ; then
-		# A:(wo=0, ph=0) # Configuration set
-		# B:(wo=1, ph=0)
-		# C:(wo=1, ph=1)
-		# A > A > B > A > C > A # Build transition between configuration sets, x_(i-1) builds x_i
 		local wo
 		local ph
 		local s_idx
