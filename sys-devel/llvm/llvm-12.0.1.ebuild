@@ -29,9 +29,10 @@ SLOT="$(ver_cut 1)"
 KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="debug doc -dump exegesis +gold libedit +libffi ncurses test xar xml z3
 	kernel_Darwin ${ALL_LLVM_TARGETS[*]} r1"
-IUSE+=" souper"
+IUSE+=" bootstrap souper"
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+="
+	bootstrap? ( !test !souper )
 	souper? (
 		!z3
 		test? ( debug )

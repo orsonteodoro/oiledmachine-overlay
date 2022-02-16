@@ -21,8 +21,9 @@ SLOT="$(ver_cut 1)"
 KEYWORDS=""
 IUSE="bolt +binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar xml
 	z3 kernel_Darwin r2"
-IUSE+=" souper"
+IUSE+=" bootstrap souper"
 REQUIRED_USE="
+	bootstrap? ( !test !souper )
 	souper? (
 		!z3
 		test? ( debug )
