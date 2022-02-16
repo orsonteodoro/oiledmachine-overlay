@@ -28,7 +28,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="debug doc -dump exegesis +gold libedit +libffi ncurses test xar xml z3
-	kernel_Darwin ${ALL_LLVM_TARGETS[*]} r1"
+	kernel_Darwin ${ALL_LLVM_TARGETS[*]} r2"
 IUSE+=" bootstrap souper"
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+="
@@ -423,8 +423,8 @@ _configure() {
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
-		-DCMAKE_C_COMPILER=${CC}
-		-DCMAKE_CXX_COMPILER=${CXX}
+		-DCMAKE_C_COMPILER="${CC} $(get_abi_CFLAGS)"
+		-DCMAKE_CXX_COMPILER="${CXX} $(get_abi_CFLAGS)"
 		# disable appending VCS revision to the version to improve
 		# direct cache hit ratio
 		-DLLVM_APPEND_VC_REV=OFF
