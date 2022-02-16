@@ -81,15 +81,6 @@
 		<flag name="bootstrap">Build against a vanilla unpatched compiler.  This
 			USE flag can be used to undo a broken build by avoiding a
 			possibly broken patched one or a broken LLVM lib build.</flag>
-		<flag name="souper">Apply the disable-peepholes patch required by Souper
-			superoptimizer and pulls in the Souper package as a PDEPEND.
-			The Souper optimization pass can further reduce code size by
-			~4.4% or 3 MB in some cases with a tradeoff of a 2% runtime
-			penalty.  This will add new flags to toggle the built-in
-			compiler peepholes optimization, overlapping optimizations that
-			Souper provides, in addition to disablement of code that may
-			produce undefined behavior during the Souper optimization pass
-			that may lead to a crash.  (EXPERIMENTAL)</flag>
 		<flag name="dump">Build with dump functions to print additional
 			(debugging) information</flag>
 		<flag name="doc">Build and install the HTML documentation and regenerate
@@ -100,6 +91,15 @@
 		<flag name="gold">Build the gold linker plugin</flag>
 		<flag name="ncurses">Support querying terminal properties using ncurses'
 			terminfo</flag>
+		<flag name="souper">Apply the disable-peepholes patch required by Souper
+			superoptimizer and pulls in the Souper package as a PDEPEND.
+			The Souper optimization pass can further reduce code size by
+			~4.4% or 3 MB in some cases with a tradeoff of a 2% runtime
+			penalty.  This will add new flags to toggle the built-in
+			compiler peepholes optimization, overlapping optimizations that
+			Souper provides, in addition to disablement of code that may
+			produce undefined behavior during the Souper optimization pass
+			that may lead to a crash.  (EXPERIMENTAL)</flag>
 		<flag name="xar">Support dumping LLVM bitcode sections in Mach-O files
 			(uses <pkg>app-arch/xar</pkg>)</flag>
 		<flag name="z3">Enable support for <pkg>sci-mathematics/z3</pkg>
