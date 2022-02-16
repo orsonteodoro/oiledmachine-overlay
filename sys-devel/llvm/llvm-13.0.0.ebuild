@@ -599,9 +599,9 @@ eerror
 	fi
 
 	# Required to avoid missing symbols problem
-	if ! has_version "~sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]" ; then
+	if ! has_version ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]" ; then
 eerror
-eerror "~sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)] must be installed for testing the disable-peepholes patch."
+eerror ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)] must be installed for testing the disable-peepholes patch."
 eerror
 		die
 	fi
