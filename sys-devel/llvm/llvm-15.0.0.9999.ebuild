@@ -774,7 +774,7 @@ _test() {
 			[[ -z "${total_tests}" ]] && die "total_tests cannot be empty"
 			local n_failed=$(grep -o -E -e "Failed Tests.*" "${results_path}"  | grep -o -E -e "[0-9]+")
 			[[ -z "${n_failed}" ]] && n_failed=0
-			local one_percent=$(${EPYTHON} -c "print(${total_tests}*0.01)" | bc | cut -f 1 -d ".")
+			local one_percent=$(${EPYTHON} -c "print(${total_tests}*0.01)" | cut -f 1 -d ".")
 			# 1% fail (or 421) is still a lot compared to the actual number of fails which is 3.
 			grep -q -e "Failed Tests" \
 				"${T}/test_results_2_${ABI}.txt" \
