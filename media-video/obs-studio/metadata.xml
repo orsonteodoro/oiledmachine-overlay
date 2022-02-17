@@ -23,9 +23,6 @@
     For Nouveau VA-API details see
     https://nouveau.freedesktop.org/wiki/VideoAcceleration/
 
-    The video_cards_amdgpu, video_cards_amdgpu-pro, video_cards_amdgpu-pro-lts
-    are mutually exclusive.  Choose one.
-
 
     YT Environment Variables:
 
@@ -76,10 +73,6 @@
     <flag name="vlc">Build support for using <pkg>media-video/vlc</pkg> as a
       media source.</flag>
     <flag name="video_cards_amdgpu">Prefer the Gallium Mesa VA-API driver</flag>
-    <flag name="video_cards_amdgpu-pro">Prefer the unilib AMDGPU-PRO VA-API
-      driver</flag>
-    <flag name="video_cards_amdgpu-pro-lts">Prefer the multilib AMDGPU-PRO
-      VA-API driver</flag>
     <flag name="video_cards_i965">Pulls or checks for a VA-API driver</flag>
     <flag name="video_cards_intel">Pulls or checks for a VA-API driver</flag>
     <flag name="video_cards_iris">Pulls or checks for a VA-API driver</flag>

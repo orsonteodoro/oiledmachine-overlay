@@ -16,40 +16,21 @@ KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0"
 IUSE+=" +alsa +browser -decklink fdk ftl imagemagick jack +lua nvenc oss
 +pipewire pulseaudio +python +speexdsp +ssl -test freetype sndio v4l2 vaapi
-video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts
-video_cards_intel video_cards_iris video_cards_i965 video_cards_r600
+video_cards_amdgpu video_cards_intel video_cards_iris video_cards_i965 video_cards_r600
 video_cards_radeonsi vlc +vst +wayland"
 REQUIRED_USE+="
 	lua? ( ${LUA_REQUIRED_USE} )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	video_cards_amdgpu? (
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
-		!video_cards_r600
-		!video_cards_radeonsi
-	)
-	video_cards_amdgpu-pro? (
-		!video_cards_amdgpu
-		!video_cards_amdgpu-pro-lts
-		!video_cards_r600
-		!video_cards_radeonsi
-	)
-	video_cards_amdgpu-pro-lts? (
-		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
 		!video_cards_r600
 		!video_cards_radeonsi
 	)
 	video_cards_r600? (
 		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
 		!video_cards_radeonsi
 	)
 	video_cards_radeonsi? (
 		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
 		!video_cards_r600
 	)
 "
@@ -172,12 +153,6 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 		|| (
 			video_cards_amdgpu? (
 				>=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_radeonsi]
-			)
-			video_cards_amdgpu-pro? (
-				x11-drivers/amdgpu-pro[open-stack,vaapi]
-			)
-			video_cards_amdgpu-pro-lts? (
-				x11-drivers/amdgpu-pro-lts[open-stack,vaapi]
 			)
 			video_cards_i965? (
 				|| (
@@ -661,8 +636,8 @@ pkg_postinst() {
 			einfo "https://github.com/intel/media-driver#decodingencoding-features"
 			einfo
 		fi
-		if use video_cards_amdgpu || use video_cards_amdgpu-pro \
-			|| use video_cards_amdgpu-pro-lts || use video_cards_r600 \
+		if use video_cards_amdgpu \
+			|| use video_cards_r600 \
 			|| use video_cards_radeonsi  ; then
 			einfo
 			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for"
@@ -692,12 +667,6 @@ pkg_postinst() {
 			&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
 		( use video_cards_radeonsi || use video_cards_amdgpu ) \
 			&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
-		use video_cards_amdgpu-pro \
-			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
-			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for Southern Islands or newer"
-		use video_cards_amdgpu-pro-lts \
-			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib/x86_64-linux-gnu/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
-			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib/x86_64-linux-gnu/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for Southern Islands or newer"
 		einfo
 		einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
 		einfo
