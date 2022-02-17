@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python3_9 ) # same as blender
 
 inherit check-reqs linux-info python-r1 unpacker
 
-DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
+DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for
 Blender"
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
 # The default license is Apache-2.0, the rest are third party.
