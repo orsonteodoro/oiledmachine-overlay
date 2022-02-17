@@ -742,6 +742,8 @@ get_m_abi() {
 src_compile() {
 	_compile_abi() {
 		export BUILD_DIR="${WORKDIR}/${P}_build-$(get_m_abi).${ABI}"
+		mkdir -p "${BUILD_DIR}" || die
+		cd "${BUILD_DIR}" || die
 		_build_abi
 	}
 	multilib_foreach_abi _compile_abi
