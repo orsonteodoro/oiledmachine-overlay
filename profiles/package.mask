@@ -100,7 +100,3 @@ dev-util/bear
 dev-util/ycm-generator
 www-misc/rtv
 www-misc/rainbowstream
-
-# May no longer work but did in the past, tested
-<=x11-drivers/amdgpu-pro-19.30.934563-r8
-<=x11-drivers/amdgpu-pro-lts-19.30.934563-r5
