@@ -114,7 +114,7 @@ sys-devel/clang:14 llvm-14-commit.conf
 [1] https://research.facebook.com/publications/bolt-a-practical-binary-optimizer-for-data-centers-and-beyond/
   </longdescription>
   <use>
-    <flag name="pgo-lto-bolt">Build an optimized build that combines
+    <flag name="bolt">Build an optimized build that combines
       PGO with LTO with BOLT.  This will build the compiler 5 times which
       may take 5 days to complete on slower machines, but upstream claims it
       may result in around 20-50% runtime performance gain.[1]
@@ -124,13 +124,14 @@ sys-devel/clang:14 llvm-14-commit.conf
     <flag name="default-libcxx">Use libc++ instead of libstdc++ as the default
       stdlib for clang</flag>
     <flag name="default-lld">Use lld as the default linker for clang</flag>
-    <flag name="jemalloc">Use jemalloc for better concurrency to improve
-      processing time during the BOLT optimization phase</flag>
-    <flag name="tcmalloc">Use TCMalloc for better concurrency to improve
-      processing time during the BOLT optimization phase</flag>
-    <flag name="default-lld">Use lld as the default linker for clang</flag>
     <flag name="hardened">Match the hardened default on settings from hardened
       GCC</flag>
+    <flag name="lto">Build with Link Time Optimization</flag>
+    <flag name="jemalloc">Use jemalloc for better concurrency to improve
+      processing time during the BOLT optimization phase</flag>
+    <flag name="pgo">Build with Profile Guided Optimization</flag>
+    <flag name="tcmalloc">Use TCMalloc for better concurrency to improve
+      processing time during the BOLT optimization phase</flag>
     <flag name="static-analyzer">Install the Clang static analyzer</flag>
 
     <flag name="rN">(INTERNAL USE ONLY: oiledmachine-overlay) bumped revisions

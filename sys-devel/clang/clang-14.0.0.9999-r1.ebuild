@@ -19,34 +19,40 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
 #KEYWORDS=""  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
-	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD"
-IUSE+=" experimental hardened jemalloc pgo-lto-bolt tcmalloc r5"
+	doc llvm-libunwind lto +static-analyzer test xml kernel_FreeBSD"
+IUSE+=" bolt experimental hardened jemalloc pgo tcmalloc r5"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
-	hardened? ( !test )
 	?? ( jemalloc tcmalloc )
+	bolt? ( pgo )
+	hardened? ( !test )
+	jemalloc? ( bolt )
+	tcmalloc? ( bolt )
 "
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	!pgo-lto-bolt? ( ~sys-devel/llvm-${PV}:${SLOT}=[debug=,${MULTILIB_USEDEP}] )
-	 pgo-lto-bolt? ( ~sys-devel/llvm-${PV}:${SLOT}=[bolt,debug=,${MULTILIB_USEDEP}] )
+	~sys-devel/llvm-${PV}:${SLOT}=[debug=,${MULTILIB_USEDEP}]
+	bolt? ( ~sys-devel/llvm-${PV}:${SLOT}=[bolt,debug=,${MULTILIB_USEDEP}] )
 	static-analyzer? ( dev-lang/perl:* )
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	${PYTHON_DEPS}"
 
 DEPEND="${RDEPEND}
-	pgo-lto-bolt? (
+	bolt? (
 		jemalloc? ( dev-libs/jemalloc )
 		tcmalloc? ( dev-util/google-perftools )
 	)
 "
 BDEPEND="
 	>=dev-util/cmake-3.16
-	doc? ( dev-python/sphinx )
-	pgo-lto-bolt? (
+	bolt? (
 		>=dev-util/perf-4.5
+		sys-devel/lld
 	)
+	doc? ( dev-python/sphinx )
+	lto? ( sys-devel/lld )
+	pgo? ( sys-devel/lld )
 	xml? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
 	${PYTHON_DEPS}"
 PDEPEND="
@@ -355,7 +361,7 @@ _configure() {
 		'-f*reorder-blocks-and-partition' \
 		'-Wl,--emit-relocs'
 
-	if use pgo-lto-bolt ; then
+	if use bolt ; then
 		append-flags -fno-reorder-blocks-and-partition
 		append-ldflags -fno-reorder-blocks-and-partition
 	fi
@@ -460,8 +466,8 @@ _configure() {
 	if [[ "${PGO_PHASE}" == "pgv" ]] ; then
 		strip-flags
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="gcc $(get_abi_CFLAGS)"
-			-DCMAKE_CXX_COMPILER="g++ $(get_abi_CFLAGS)"
+			-DCMAKE_C_COMPILER=gcc
+			-DCMAKE_CXX_COMPILER=g++
 			-DCMAKE_ASM_COMPILER=gcc
 			-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
 			-DCOMPILER_RT_BUILD_SANITIZERS=OFF
@@ -471,8 +477,8 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang $(get_abi_CFLAGS)"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang++ $(get_abi_CFLAGS)"
+			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang"
+			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=ON
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -480,8 +486,8 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgt" ]] ; then
 		# Use the package itself as the asset for training.
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang $(get_abi_CFLAGS)"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++ $(get_abi_CFLAGS)"
+			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
+			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -491,21 +497,37 @@ _configure() {
 		"${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
 		append-ldflags -Wl,--emit-relocs
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang $(get_abi_CFLAGS)"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang++ $(get_abi_CFLAGS)"
+			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang"
+			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
-			-DLLVM_ENABLE_LTO=Thin
+			-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
 			-DLLVM_PROFDATA_FILE="${T}/pgo-custom.profdata"
 			-DLLVM_USE_LINKER=lld
 		)
 	elif [[ "${PGO_PHASE}" == "bolt" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang $(get_abi_CFLAGS)"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang++ $(get_abi_CFLAGS)"
+			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang"
+			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
-			-DLLVM_ENABLE_LTO=Thin
+			-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
 			-DLLVM_USE_LINKER=lld
 		)
+	elif [[ "${PGO_PHASE}" == "pg0" ]] ; then
+		if [[ "${CC}" =~ "clang" ]] ; then
+			mycmakeargs+=(
+				-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
+				-DLLVM_USE_LINKER=lld
+			)
+		elif [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
+			mycmakeargs+=(
+				-DLLVM_ENABLE_LTO=$(usex lto "Full" "Off")
+			)
+			if has_version "sys-devel/binutils[gold,plugins]" ; then
+				mycmakeargs+=( -DLLVM_USE_LINKER=gold )
+			else
+				mycmakeargs+=( -DLLVM_USE_LINKER=bfd )
+			fi
+		fi
 	fi
 
 	# LLVM can have very high memory consumption while linking,
@@ -609,7 +631,6 @@ _compile() {
 		_bolt_train
 		_bolt_profile_generator
 		_bolt_optimize
-		_cleanup
 	else
 		cmake_build distribution
 	fi
@@ -627,7 +648,7 @@ src_compile() {
 	export LDFLAGS_BAK="${LDFLAGS}"
 	compile_abi() {
 		# See https://github.com/llvm/llvm-project/blob/main/bolt/docs/OptimizingClang.md#bootstrapping-clang-7-with-pgo-and-lto
-		if use pgo-lto-bolt ; then
+		if use pgo || use bolt ; then
 			PGO_PHASE="pgv" # S1
 			_configure
 			_compile
@@ -643,9 +664,12 @@ src_compile() {
 			_configure
 			_compile
 			_install
-			PGO_PHASE="bolt" # S3
-			_configure
-			_compile
+			if use bolt ; then
+				PGO_PHASE="bolt" # S3
+				_configure
+				_compile
+			fi
+			_cleanup
 		else
 			PGO_PHASE="pg0" # N0 PGO
 			_configure
