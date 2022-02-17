@@ -218,12 +218,18 @@ S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
 pkg_setup() {
-	use nvenc && einfo \
-"The nvenc USE flag has not been tested.  Left for ebuild developers with that \
-GPU to work on."
-	use nvfbc && einfo \
-"The nvfbc USE flag has not been tested.  Left for ebuild developers with that \
-GPU to work on."
+	if use nvenc ; then
+einfo
+einfo "The nvenc USE flag has not been tested.  It is left for ebuild"
+einfo "developers with that kind of GPU to work on."
+einfo
+	fi
+	if use nvfbc ; then
+einfo
+einfo "The nvfbc USE flag has not been tested.  It is left for ebuild"
+einfo "developers with that kind GPU to work on."
+einfo
+	fi
 
 	if use v4l2 ; then
 		CONFIG_CHECK="~VIDEO_V4L2"
@@ -246,9 +252,10 @@ GPU to work on."
 "${EROOT}/usr/lib/${EPYTHON}/site-packages/OpenGL_accelerate/__init__.py" \
 			| grep -F -e "__version__" | grep -E -o -e "[0-9.]+")
 		if ver_test ${PYOPENGL_V} -ne ${PYOPENGL_ACCELERATE_V} ; then
-			die \
-"${PN} demands pyopengl-${PYOPENGL_V} and \
-pyopengl_accelerate-${PYOPENGL_ACCELERATE_V} be the same version."
+eerror
+eerror "${PN} demands pyopengl-${PYOPENGL_V} and"
+eerror "pyopengl_accelerate-${PYOPENGL_ACCELERATE_V} be the same version."
+eerror
 		fi
 	fi
 	if use selinux && use pam ; then
@@ -478,33 +485,39 @@ vaapi_message() {
 pkg_postinst() {
 	tmpfiles_process /usr/lib/tmpfiles.d/xpra.conf
 	xdg_pkg_postinst
+	einfo
 	einfo "You need to add yourself to the xpra, tty, dialout groups."
+	einfo
 	if use opengl ; then
-		einfo "If you are using the amdgpu-pro driver, make sure you"
-		einfo "are using Mesa GL.  To switch to open-stack Mesa GL do:"
 		einfo
-		einfo "  eselect opengl set amdgpu"
-		einfo
-		einfo "or if you're using the Gallium driver try:"
+		einfo "If you're using the Gallium driver try:"
 		einfo
 		einfo "  eselect opengl set xorg-x11"
 		einfo
 	fi
 	if use pillow ; then
+		einfo
 		einfo "Manually add jpeg or webp optional USE flags to pillow"
 		einfo "package to enable support for them."
+		einfo
 	fi
+	elog
 	elog "You need to enable the xpra service for this to work."
+	elog
 	if which rc-update 2>/dev/null 1>/dev/null ; then
+		elog
 		elog "For OpenRC, do:"
 		elog "  rc-update add xpra"
 		elog "  /etc/init.d/xpra restart"
+		elog
 	fi
 	if which systemctl 2>/dev/null 1>/dev/null ; then
+		elog
 		elog "For systemd, do:"
 		elog "  systemctl stop xpra@username"
 		elog "  systemctl enable xpra@username"
 		elog "  systemctl start xpra@username"
+		elog
 	fi
 	einfo
 	einfo "The init config has been moved to /etc/conf.d/xpra"
