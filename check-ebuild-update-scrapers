@@ -1880,35 +1880,6 @@ repo_latest_version_get_recastnavigation_pv() {
 	echo "${pv}_p${suffix}"
 }
 
-#repo_latest_version_get_r_ock-dkms_pv() {
-#	echo $(get_tags \
-#https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver.git \
-#		| sed -r -e "s|Beta|_beta|g" -e "s#(roc-|hipclang-|rocm-)##g" \
-#		| esort \
-#		| tr " " "\n" \
-#		| tail -n 1)
-#}
-
-repo_latest_version_get_rock-dkms_pv() {
-	echo $(wget -q -O - \
-http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/ \
-		| html2text -nobs \
-		| grep -F -e "rock-dkms_" \
-		| cut -f 1 -d " " \
-		| sed -e "s|rock-dkms_||" -e "s|_all\.deb||" \
-		| sed -r -e "s|([0-9].[0-9])-([0-9]+)|\1_p\2|")
-}
-
-repo_latest_version_get_rock-firmware_pv() {
-	echo $(wget -q -O - \
-http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/ \
-		| html2text -nobs \
-		| grep -F -e "rock-dkms-firmware" \
-		| cut -f 1 -d " " \
-		| sed -e "s|rock-dkms-firmware_||" -e "s|_all\.deb||" \
-		| sed -r -e "s|([0-9].[0-9])-([0-9]+)|\1_p\2|")
-}
-
 repo_latest_version_get_rvt_pv() {
 	echo $(get_newest_prefixed_v_pv \
 https://github.com/michael-lazar/rtv.git)
