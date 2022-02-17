@@ -49,9 +49,9 @@ MIN_BLENDER_V="2.80"
 MAX_BLENDER_V="2.94" # exclusive
 SLOT="0"
 IUSE+=" +blender-lts +blender-stable blender-master"
-IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca
--systemwide test video_cards_amdgpu video_cards_i965
-video_cards_iris video_cards_nvidia video_cards_radeonsi +vulkan"
+IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide
+video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia
+video_cards_radeonsi +vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
 # systemwide is preferred but currently doesn't work but did in the past in <2.0
@@ -244,88 +244,29 @@ pkg_pretend() {
 	check-reqs_pkg_setup
 }
 
-show_codename_docs() {
-	einfo
-	einfo "Details about codenames can be found at"
-	einfo
-	einfo "Radeon Pro:  https://en.wikipedia.org/wiki/Radeon_Pro"
-	einfo "Radeon RX Vega:  https://en.wikipedia.org/wiki/Radeon_RX_Vega_series"
-	einfo "Radeon RX 5xx:  https://en.wikipedia.org/wiki/Radeon_RX_500_series"
-	einfo "Radeon RX 4xx:  https://en.wikipedia.org/wiki/Radeon_RX_400_series"
-	einfo "Radeon R5/R7/R9:  https://en.wikipedia.org/wiki/Radeon_Rx_300_series"
-	einfo "APU:  https://en.wikipedia.org/wiki/AMD_Accelerated_Processing_Unit"
-	einfo "Device IDs <-> codename: \
-https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c#L777"
-	einfo
-}
-
-show_notice_pcie3_atomics_required() {
-	# See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdkfd/kfd_device.c
-	# https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/master/runtime/device/rocm/rocdevice.cpp
-	# Device should be supported end-to-end from kfd to runtime.
-	ewarn
-	ewarn "Detected no PCIe atomics."
-	ewarn
-	ewarn "ROCm OpenCL requires PCIe atomics for the following:"
-	ewarn "raven"
-	ewarn "fiji"
-	ewarn "polaris10"
-	ewarn "polaris11"
-	ewarn "polaris12"
-	einfo
-	einfo "If your device matches one of the codenames above, use the"
-	einfo "opencl_orca (for polaris 10, polaris 11, polaris 12, fiji)"
-	einfo "USE flag instead or upgrade CPU and"
-	einfo "Mobo combo with both PCIe 3.0 support, or upgrade to one of"
-	einfo "the GPUs in the list following immediately."
-	einfo
-	einfo "In addition, your kernel config must have CONFIG_HSA_AMD=y."
-	einfo
-	einfo
-	einfo "You may ignore if your device is the following:"
-	einfo "kaveri"
-	einfo "carrizo"
-	einfo "hawaii"
-	einfo "vega10"
-	einfo "vega20"
-	einfo "renoir"
-	einfo "navi10"
-	einfo "navi12"
-	einfo "navi14"
-	einfo
-	einfo "Not supported for ROCm:"
-	ewarn "tonga (PCIe atomics required, don't work on ROCm)"
-	ewarn "vegam (PCIe atomics required, may work on ROCm)"
-	ewarn "iceland"
-	ewarn "vega12 (no PCIE atomics required)"
-	einfo
-	einfo "Try opencl_orca for tonga, vegam, iceland."
-	einfo
-	einfo "If ROCm OpenCL doesn't work, stick to opencl_orca."
-	einfo
-	show_codename_docs
-}
-
 pkg_setup() {
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
 	if ! use opencl ; then
-		einfo \
-"The OpenCL USE flag is strongly recommended or else the GPU selection will \
-not be available."
+einfo
+einfo "The OpenCL USE flag is strongly recommended or else the GPU selection"
+einfo "will not be available."
+einfo
 	fi
 
 	if ! use vulkan ; then
-		einfo \
-"The vulkan USE flag is strongly recommended or rendering at any quality \
-setting for Hybrid rendering will fail."
+einfo
+einfo "The vulkan USE flag is strongly recommended or rendering at any quality"
+einfo "setting for Hybrid rendering will fail."
+einfo
 	fi
 
 	if has_version "media-libs/mesa[opencl]" ; then
-		ewarn \
-"${PN} may not be compatibile with media-libs/mesa[opencl] (Mesa Clover, \
-OpenCL 1.1)"
+ewarn
+ewarn "${PN} may not be compatibile with media-libs/mesa[opencl] (Mesa Clover,"
+ewarn "OpenCL 1.1)"
+ewarn
 	fi
 
 	# We know because of embree and may be statically linked.
@@ -341,16 +282,10 @@ OpenCL 1.1)"
 		ERROR_HSA_AMD=\
 "Change CONFIG_HSA_AMD=y in kernel config.  It's required for opencl_rocr support."
 		linux-info_pkg_setup
-		if dmesg \
-			| grep kfd \
-			| grep "PCI rejects atomics" \
-			2>/dev/null 1>/dev/null ; then
-			show_notice_pcie3_atomics_required
-		elif dmesg \
-			| grep -e '\[drm\] PCIE atomic ops is not supported' \
-			2>/dev/null 1>/dev/null ; then
-			show_notice_pcie3_atomics_required
-		fi
+ewarn
+ewarn "You need PCI atomics to use opencl_rocr.  Use opencl_orca if opencl_rocr"
+ewarn "doesn't work."
+ewarn
 	fi
 }
 
@@ -490,7 +425,9 @@ pkg_postinst() {
 	if use systemwide ; then
 		einfo
 		einfo "It is listed under: Edit > Preferences > Add-ons > Community > Render: Radeon ProRender"
+		einfo
 	else
+		einfo
 		einfo "You must install this product manually through blender per user."
 		einfo "The addon can be found in /usr/share/${PN}/addon.zip"
 		einfo
@@ -499,6 +436,7 @@ pkg_postinst() {
 		einfo
 		einfo "The addon can be found and check enabled on after installation by going to:"
 		einfo "Edit > Preferences > Add-ons > Community > Render: Radeon ProRender"
+		einfo
 		ewarn
 		ewarn "You must completely uninstall and reinstall the addon through the same menu for changes or upgrades to take affect."
 		ewarn
@@ -523,8 +461,10 @@ pkg_postinst() {
 	ewarn "the scene, disable CPU rendering.  Edge artifacts may appear when"
 	ewarn "using medium or lower quality settings.  Using the latest drivers"
 	ewarn "may improve initial compilation time."
+	ewarn
 
 	einfo
 	einfo "To see the material browser, the renderer must be set to Radeon ProRender"
 	einfo "It is located at the bottom of the materials property tab."
+	einfo
 }
