@@ -518,7 +518,7 @@ _configure() {
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
 		)
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite" ]] ; then
+	elif [[ "${PGO_PHASE}" =~ "pgt_test_suite" ]] ; then
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
 			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
