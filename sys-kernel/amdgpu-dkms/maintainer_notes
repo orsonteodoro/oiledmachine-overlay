@@ -1,2 +1,0 @@
-To find compilation errors, see:
-find /var/lib/dkms/ -name "*.log"
