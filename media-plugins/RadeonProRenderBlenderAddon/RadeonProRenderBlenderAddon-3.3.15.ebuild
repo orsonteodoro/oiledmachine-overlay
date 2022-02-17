@@ -50,7 +50,7 @@ MAX_BLENDER_V="2.94" # exclusive
 SLOT="0"
 IUSE+=" +blender-lts +blender-stable blender-master"
 IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca
-opengl_mesa -systemwide test video_cards_amdgpu video_cards_i965
+-systemwide test video_cards_amdgpu video_cards_i965
 video_cards_iris video_cards_nvidia video_cards_radeonsi +vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
@@ -370,7 +370,7 @@ src_prepare() {
 	ewarn "This is the release build."
 	default
 	eapply "${FILESDIR}/rpr-3.1.16-more-generic-call-python3.patch"
-	eapply "${FILESDIR}/rpr-3.3.15-bump-version.patch"
+	eapply "${FILESDIR}/rpr-${PV}-bump-version.patch"
 	git init || die
 	touch dummy || die
 	git config user.email "name@example.com" || die

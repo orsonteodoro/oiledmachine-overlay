@@ -44,8 +44,6 @@
     <flag name="opencl_rocr">Checks for proper OpenCL support for Vega 10
       (GCN 5.x) or newer from the ROCm packages
       (<pkg>dev-libs/rocm-opencl-runtime</pkg>).</flag>
-    <flag name="opengl_mesa">Pulls the required dependencies if Pro support in
-      the AMDGPU-PRO driver has not been installed.</flag>
     <flag name="materials">Installs the material library.</flag>
     <flag name="systemwide">Installs the plugin systemwide.  Not recommened.
       </flag>
