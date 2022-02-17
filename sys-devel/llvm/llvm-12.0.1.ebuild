@@ -745,8 +745,6 @@ src_compile() {
 		_build_abi
 	}
 	multilib_foreach_abi _compile_abi
-	grep -F -q -e "invokes undefined behavior" "${T}/build.log" \
-		|| die "Please add -fno-aggressive-loop-optimizations to ${PV} per-package env.  This is to prevent a possible crash with Souper."
 }
 
 src_test() { :; }
