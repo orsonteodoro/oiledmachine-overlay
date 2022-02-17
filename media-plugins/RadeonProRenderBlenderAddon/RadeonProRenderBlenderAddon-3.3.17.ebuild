@@ -49,7 +49,7 @@ MIN_BLENDER_V="2.80"
 MAX_BLENDER_V="2.94" # exclusive
 SLOT="0"
 IUSE+=" +blender-lts +blender-stable blender-master"
-IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca \
+IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca
 opengl_mesa -systemwide test video_cards_amdgpu video_cards_i965
 video_cards_iris video_cards_nvidia video_cards_radeonsi +vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
