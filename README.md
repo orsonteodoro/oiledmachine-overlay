@@ -292,13 +292,8 @@ the metadata.xml.
 | sci-geosciences/google-earth-pro | This is a working ebuild of Google Earth Pro.  The Gentoo overlay had abandoned the old Google Earth ebuild. |
 | sci-physics/bullet | This library is a dependency for BulletSharpPInvoke.  It combines all modules, which were originally seperate dlls, into one shared object/dll. |
 | sys-apps/oomd | This is an intelligent userspace daemon to prevent halting by terminating memory leaks or heavy IO based on a decision tree before they happen.  It can be extended with custom coded modules. |
-| sys-firmware/amdgpu-firmware | Same firmware in the amdgpu-pro package.  Same firmware in the latest hardware in the compatibility list.  |
-| sys-firmware/rock-firmware | Same firmware in the rock-dkms package.  May contain the latest firmware not found in linux-firmware. |
-| sys-kernel/amdgpu-dkms | This is the amdgpu DRM (Direct Rendering Manager) kernel driver found in the amdgpu-pro.  It contains older versions of ROCk and drm-next/amd-staging-drm-next updates. |
-| sys-kernel/rock-dkms | This is another amdgpu DRM (Direct Rendering Manager) kernel driver for the ROCm platform and API.  It is like the amdgpu-dkms package but more bleeding edge in releases. |
 | sys-kernel/genkernel | This is a modified genkernel with `subdir_mount` use flag to mount the system from a folder other than `/` and `crypt_root_plain` use flag to mount plain mode dm-crypt.  For crypt_root_plain kernel option, you provide the path from /dev/disk/by-id/ .  For subdir_mount, you provide the path to the folder.  See https://github.com/orsonteodoro/muslx32#notes for details on how to use subdir_mount. |
 | sys-kernel/ot-sources | This package contains a collection of patches.  It contains UKSM, zen-tune, GraySky2's kernel_gcc_patch, MuQSS CPU scheduler, PDS CPU scheduler, genpatches (kernel updates), BFQ updates, TRESOR cold boot resistant patch, O3 optimize harder patch, CVE fixes.  The TRESOR patch is experimental for x86_64 arch which is just the x86 generic that has been modified for x86_64 generic; and has passed the self tests.  Use the `ot-sources-lts` or `ot-sources-stable` to choose the type of update path. |
-| sys-kernel/rock-dkms | This is the amdgpu DRM (Direct Rendering Manager) kernel driver.  It contains the latest ROCk patches and near latest amd-staging-drm-next commits. |
 | sys-power/cpupower-gui | This is a package for a graphical user interface (GUI) for changing the CPU frequency limits and the governor.  It needs elevated privileges to use it like with sudo. |
 | sys-process/psdoom-ng | This is a process killer based on Chocolate Doom 2.2.1 with man file and simple wrapper. |
 | www-client/chromium | This ebuild mod has multi-ABI support meaning it can build 32-bit Chromium on a 64-bit machine and both 64-bit and 32-bit builds be present.  You may also choose to build just one ABI.|
@@ -310,7 +305,5 @@ the metadata.xml.
 | www-misc/rtv | This is a command line Reddit client which has been updated. |
 | www-misc/socli | This is a Stack Overflow command line client. |
 | www-servers/civetweb | Kept around for Urho3D. |
-| x11-drivers/amdgpu-pro | This is the unilib version of the AMDGPU-PRO driver.<br /><br /> |
-| x11-drivers/amdgpu-pro-lts | This is the semi multilib version of the AMDGPU-PRO driver that is more feature rich.<br /><br /> |
 | x11-wm/dwm | This ebuild fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied. |
 | x11-wm/xpra | This is an alternative VNC like client.  It's kept around for Firejail. |
