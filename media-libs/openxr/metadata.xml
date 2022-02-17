@@ -13,7 +13,6 @@
   </upstream>
   <use>
     <flag name="doc">Install documentation.</flag>
-    <flag name="lts">Prefer the amdgpu-pro lts driver</flag>
     <flag name="system-jsoncpp">Use the system provide jsoncpp package instead
       of the internal</flag>
     <flag name="test">Builds tests</flag>
