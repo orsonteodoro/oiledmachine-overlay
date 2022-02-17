@@ -50,8 +50,7 @@ MAX_BLENDER_V="2.94" # exclusive
 SLOT="0"
 IUSE+=" +blender-lts +blender-stable blender-master"
 IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca \
-opencl_pal opengl_mesa split-drivers -systemwide test video_cards_amdgpu \
-video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_i965 \
+opengl_mesa -systemwide test video_cards_amdgpu video_cards_i965
 video_cards_iris video_cards_nvidia video_cards_radeonsi +vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
@@ -64,41 +63,19 @@ REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
 	blender-master? ( python_targets_python3_9 )
 	blender-stable? ( python_targets_python3_9 )
 	opencl_orca? (
-		|| ( video_cards_amdgpu
-			video_cards_amdgpu-pro
-			video_cards_amdgpu-pro-lts ) )
-	opencl_pal? (
-		|| ( video_cards_amdgpu-pro
-		video_cards_amdgpu-pro-lts ) )
+		video_cards_amdgpu
+	)
 	opencl_rocr? (
-		|| ( video_cards_amdgpu
-			video_cards_amdgpu-pro
-			video_cards_amdgpu-pro-lts )
-		split-drivers )
-	split-drivers? ( || (
-		opencl_orca
-		opencl_rocr ) )
+		video_cards_amdgpu
+	)
 	video_cards_amdgpu? (
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
 		!video_cards_radeonsi
-		|| ( opencl_orca
-			opencl_rocr )
-		split-drivers )
-	video_cards_amdgpu-pro? (
-		!video_cards_amdgpu
-		!video_cards_amdgpu-pro-lts
-		!video_cards_radeonsi
-		|| ( opencl_orca
-			opencl_pal
-			opencl_rocr ) )
-	video_cards_amdgpu-pro-lts? (
-		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
-		!video_cards_radeonsi
-		|| ( opencl_orca
-			opencl_pal
-			opencl_rocr ) )"
+		|| (
+			opencl_orca
+			opencl_rocr
+		)
+	)
+"
 # Assumes U 18.04.03 minimal
 CDEPEND_NOT_LISTED="
 	dev-lang/python[xml]
@@ -176,73 +153,22 @@ RDEPEND+="  ${CDEPEND_NOT_LISTED}
 	opencl? (
 		intel-ocl? ( dev-util/intel-ocl-sdk )
 		|| (
-		video_cards_amdgpu-pro? (
-			!split-drivers? (
-				opengl_mesa? (
-					|| (
-<x11-drivers/amdgpu-pro-20.45\
-[X,developer,open-stack,opencl,opencl_orca?,opencl_pal?,opengl_mesa,-opengl_pro]
->=x11-drivers/amdgpu-pro-20.45\
-[X,developer,open-stack,opencl,opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
-
-					)
-				)
-				!opengl_mesa? (
-					|| (
-<x11-drivers/amdgpu-pro-20.45\
-[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
->=x11-drivers/amdgpu-pro-20.45\
-[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
-					)
-				)
+			video_cards_amdgpu? (
+		opencl_orca? ( dev-libs/amdgpu-pro-opencl )
+		opencl_rocr? ( dev-libs/rocm-opencl-runtime )
 			)
-			split-drivers? (
-				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
-				opencl_rocr? ( dev-libs/rocm-opencl-runtime )
+			video_cards_i965? (
+				dev-libs/intel-neo
 			)
-		)
-		video_cards_amdgpu-pro-lts? (
-			!split-drivers? (
-				opengl_mesa? (
-					|| (
-<x11-drivers/amdgpu-pro-lts-20.45\
-[X,developer,open-stack,opencl,opencl_orca?,opencl_pal?,opengl_mesa,-opengl_pro]
->=x11-drivers/amdgpu-pro-lts-20.45\
-[X,developer,open-stack,opencl,opencl_orca?,opencl_rocr?,opengl_mesa,-opengl_pro]
-					)
-				)
-				!opengl_mesa? (
-					|| (
-<x11-drivers/amdgpu-pro-lts-20.45\
-[opencl,opencl_orca?,opencl_pal?,-opengl_mesa,opengl_pro]
->=x11-drivers/amdgpu-pro-lts-20.45\
-[opencl,opencl_orca?,opencl_rocr?,-opengl_mesa,opengl_pro]
-					)
-				)
+			video_cards_iris? (
+				dev-libs/intel-neo
 			)
-			split-drivers? (
-				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
-				opencl_rocr? ( dev-libs/rocm-opencl-runtime )
+			video_cards_nvidia? (
+		>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
 			)
-		)
-		video_cards_amdgpu? (
-			split-drivers? (
-				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
-				opencl_rocr? ( dev-libs/rocm-opencl-runtime )
+			video_cards_radeonsi? (
+				dev-libs/amdgpu-pro-opencl
 			)
-		)
-		video_cards_i965? (
-			dev-libs/intel-neo
-		)
-		video_cards_iris? (
-			dev-libs/intel-neo
-		)
-		video_cards_nvidia? (
-			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
-		)
-		video_cards_radeonsi? (
-			dev-libs/amdgpu-pro-opencl
-		)
 		)
 	)
 	vulkan? (
@@ -253,12 +179,6 @@ RDEPEND+="  ${CDEPEND_NOT_LISTED}
 		media-libs/mesa[video_cards_radeonsi,vulkan]
 		media-libs/amdvlk
 				)
-			)
-			video_cards_amdgpu-pro? (
-		x11-drivers/amdgpu-pro[vulkan]
-			)
-			video_cards_amdgpu-pro-lts? (
-		x11-drivers/amdgpu-pro-lts[vulkan]
 			)
 			video_cards_i965? (
 		media-libs/mesa[video_cards_i965,vulkan]
@@ -354,8 +274,8 @@ show_notice_pcie3_atomics_required() {
 	ewarn "polaris12"
 	einfo
 	einfo "If your device matches one of the codenames above, use the"
-	einfo "opencl_orca (for polaris 10, polaris 11, polaris 12, fiji) or"
-	einfo "opencl_pal (for raven) USE flag instead or upgrade CPU and"
+	einfo "opencl_orca (for polaris 10, polaris 11, polaris 12, fiji)"
+	einfo "USE flag instead or upgrade CPU and"
 	einfo "Mobo combo with both PCIe 3.0 support, or upgrade to one of"
 	einfo "the GPUs in the list following immediately."
 	einfo
@@ -380,29 +300,8 @@ show_notice_pcie3_atomics_required() {
 	ewarn "vega12 (no PCIE atomics required)"
 	einfo
 	einfo "Try opencl_orca for tonga, vegam, iceland."
-	einfo "Try opencl_pal for vega12."
 	einfo
-	einfo "If ROCm OpenCL doesn't work, stick to either opencl_pal"
-	einfo "opencl_orca."
-	einfo
-	show_codename_docs
-}
-
-show_notice_pal_support() {
-	# Vega 10 is in the GFX_v9 set
-	# Navi 10 is GFX_v10
-	einfo
-	einfo "opencl_pal is only supported for GFX_v9 and the following:"
-	einfo "vega10"
-	einfo "vega12"
-	einfo "vega20"
-	einfo "renoir"
-	einfo "navi10"
-	einfo "raven"
-	einfo
-	einfo "If your device does not match one of the codenames above, use"
-	einfo "the opencl_rocr if CPU and Mobo both have PCIe 3.0 support;"
-	einfo "otherwise, try opencl_orca."
+	einfo "If ROCm OpenCL doesn't work, stick to opencl_orca."
 	einfo
 	show_codename_docs
 }
@@ -451,24 +350,6 @@ OpenCL 1.1)"
 			| grep -e '\[drm\] PCIE atomic ops is not supported' \
 			2>/dev/null 1>/dev/null ; then
 			show_notice_pcie3_atomics_required
-		fi
-	fi
-
-	if use opencl_pal ; then
-		CONFIG_CHECK="HSA_AMD"
-		WARNING_HSA_AMD=\
-"Change CONFIG_HSA_AMD=y kernel config.  It may be required for opencl_pal \
-support for pre-Vega 10."
-		linux-info_pkg_setup
-		if dmesg \
-			| grep kfd \
-			| grep "PCI rejects atomics" \
-			2>/dev/null 1>/dev/null ; then
-			show_notice_pal_support
-		elif dmesg \
-			| grep -e '\[drm\] PCIE atomic ops is not supported' \
-			2>/dev/null 1>/dev/null ; then
-			show_notice_pal_support
 		fi
 	fi
 }

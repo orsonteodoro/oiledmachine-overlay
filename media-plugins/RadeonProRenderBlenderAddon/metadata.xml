@@ -40,35 +40,18 @@
     <flag name="materials">Installs the material library.</flag>
     <flag name="opencl">Checks for proper OpenCL support for GPUs.</flag>
     <flag name="opencl_orca">Checks for proper OpenCL support for pre-Vega 10
-      from the split packages (<pkg>dev-libs/amdgpu-pro-opencl</pkg>) or
-      from the AMDGPU-PRO monolithic driver
-      package (<pkg>x11-drivers/amdgpu-pro</pkg> or
-      <pkg>x11-drivers/amdgpu-pro-lts</pkg>).</flag>
-    <flag name="opencl_pal">Checks for proper OpenCL support for Vega 10
-      (GCN 5.x) or newer from only the AMDGPU-PRO drivers package
-      (<pkg>x11-drivers/amdgpu-pro</pkg> or
-      <pkg>x11-drivers/amdgpu-pro-lts</pkg>).</flag>
+      </flag>
     <flag name="opencl_rocr">Checks for proper OpenCL support for Vega 10
-      (GCN 5.x) or newer from the split ROCm packages
-      (<pkg>dev-libs/rocm-opencl-runtime</pkg>) or from the AMDGPU-PRO
-      monolithic driver package (<pkg>x11-drivers/amdgpu-pro</pkg> or
-      <pkg>x11-drivers/amdgpu-pro-lts</pkg>).</flag>
+      (GCN 5.x) or newer from the ROCm packages
+      (<pkg>dev-libs/rocm-opencl-runtime</pkg>).</flag>
     <flag name="opengl_mesa">Pulls the required dependencies if Pro support in
       the AMDGPU-PRO driver has not been installed.</flag>
     <flag name="materials">Installs the material library.</flag>
-    <flag name="split-drivers">Preference for the split AMDGPU-PRO
-      packages.</flag>
     <flag name="systemwide">Installs the plugin systemwide.  Not recommened.
       </flag>
     <flag name="video_cards_amdgpu">
       Checks for OpenCL 1.2 support or Vulkan compatibility for open amdgpu
       drivers.</flag>
-    <flag name="video_cards_amdgpu-pro">
-      Checks for OpenCL 1.2 support or Vulkan compatibility for AMDGPU-PRO
-      drivers.</flag>
-    <flag name="video_cards_amdgpu-lts">
-      Checks for OpenCL 1.2 support or Vulkan compatibility for AMDGPU-PRO
-      (HWE/LTS) drivers.</flag>
     <flag name="video_cards_i965">Checks for OpenCL 1.2 support or Vulkan
       compatibility for Intel or IGPs/GPUs.  For Gen 7.5+ (Haswell)
       users.</flag>
