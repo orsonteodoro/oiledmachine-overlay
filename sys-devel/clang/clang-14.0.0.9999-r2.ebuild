@@ -241,7 +241,6 @@ get_distribution_components() {
 			clang-format
 			clang-offload-bundler
 			clang-offload-wrapper
-			clang-pseudo
 			clang-refactor
 			clang-repl
 			clang-rename
