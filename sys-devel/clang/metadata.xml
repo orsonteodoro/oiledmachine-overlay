@@ -130,6 +130,10 @@ sys-devel/clang:14 llvm-14-commit.conf
     <flag name="jemalloc">Use jemalloc for better concurrency to improve
       processing time during the BOLT optimization phase</flag>
     <flag name="pgo">Build with Profile Guided Optimization</flag>
+    <flag name="pgo_trainer_build_self">Trains and generates a PGO profile by
+      building the source code itself</flag>
+    <flag name="pgo_trainer_test_suite">Runs the test-suite to build a
+      PGO profile from built benchmarks examples.</flag>
     <flag name="tcmalloc">Use TCMalloc for better concurrency to improve
       processing time during the BOLT optimization phase</flag>
     <flag name="static-analyzer">Install the Clang static analyzer</flag>

@@ -20,13 +20,14 @@ SLOT="$(ver_cut 1)"
 #KEYWORDS=""  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
 	doc llvm-libunwind lto +static-analyzer test xml kernel_FreeBSD"
-IUSE+=" bolt experimental hardened jemalloc pgo tcmalloc r5"
+IUSE+=" bolt experimental hardened jemalloc pgo pgo_trainer_build_self pgo_trainer_test_suite tcmalloc r5"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
 	?? ( jemalloc tcmalloc )
 	bolt? ( pgo )
 	hardened? ( !test )
 	jemalloc? ( bolt )
+	pgo? ( || ( pgo_trainer_build_self pgo_trainer_test_suite ) )
 	tcmalloc? ( bolt )
 "
 RESTRICT="!test? ( test )"
@@ -66,7 +67,7 @@ PDEPEND="
 	default-libcxx? ( >=sys-libs/libcxx-${PV} )
 	default-lld? ( sys-devel/lld )"
 
-LLVM_COMPONENTS=( clang clang-tools-extra cmake )
+LLVM_COMPONENTS=( clang clang-tools-extra cmake llvm-test-suite )
 LLVM_MANPAGES=build
 LLVM_TEST_COMPONENTS=(
 	llvm/lib/Testing/Support
@@ -319,7 +320,7 @@ src_configure() { :; }
 
 _configure() {
 	einfo "Called _configure()"
-	if [[ "${PGO_PHASE}" =~ ("pgi"|"pgt"|"pgo"|"bolt") ]] ; then
+	if [[ "${PGO_PHASE}" =~ ("pgi"|"pgt_build_self"|"pgt_test_suite"|"pgo"|"bolt") ]] ; then
 		if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
 			eninja -t clean
 		else
@@ -365,6 +366,31 @@ _configure() {
 		append-flags -fno-reorder-blocks-and-partition
 		append-ldflags -fno-reorder-blocks-and-partition
 	fi
+
+	# LLVM can have very high memory consumption while linking,
+	# exhausting the limit on 32-bit linker executable
+	use x86 && local -x LDFLAGS="${LDFLAGS} -Wl,--no-keep-memory"
+
+	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
+	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
+
+	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
+	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
+	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
+	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
+
+	einfo
+	einfo "*FLAGS for ${ABI}:"
+	einfo
+	einfo "  CFLAGS=${CFLAGS}"
+	einfo "  CXXFLAGS=${CXXFLAGS}"
+	einfo "  LDFLAGS=${LDFLAGS}"
+	if tc-is-cross-compiler ; then
+		einfo "  IS_CROSS_COMPILE=True"
+	else
+		einfo "  IS_CROSS_COMPILE=False"
+	fi
+	einfo
 
 	local mycmakeargs=(
 		# relative to bindir
@@ -445,8 +471,8 @@ _configure() {
 		)
 	fi
 
-	if [[ "${PGO_PHASE}" =~ ("pgv"|"pgi"|"pgt"|"pgo"|"bolt") ]] ; then
-		# pgt and bolt output are to be discarded and only used for profiling.
+	if [[ "${PGO_PHASE}" =~ ("pgv"|"pgi"|"pgt_build_self"|"pgt_test_suite"|"pgo"|"bolt") ]] ; then
+		# pgt* and bolt output are to be discarded and only used for profiling.
 		# The reason why for the existance of intermediate builds is because the
 		# previous stages are used to build the current.
 		mycmakeargs+=(
@@ -483,7 +509,7 @@ _configure() {
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
 		)
-	elif [[ "${PGO_PHASE}" == "pgt" ]] ; then
+	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
 		# Use the package itself as the asset for training.
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
@@ -491,6 +517,15 @@ _configure() {
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
+		)
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite" ]] ; then
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
+			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+			-DLLVM_BUILD_INSTRUMENTED=OFF
+			-DLLVM_ENABLE_LTO=Off
+			-DLLVM_USE_LINKER=lld
+			-DTEST_SUITE_BENCHMARKING_ONLY=ON
 		)
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
@@ -530,30 +565,16 @@ _configure() {
 		fi
 	fi
 
-	# LLVM can have very high memory consumption while linking,
-	# exhausting the limit on 32-bit linker executable
-	use x86 && local -x LDFLAGS="${LDFLAGS} -Wl,--no-keep-memory"
-
-	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
-	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
-
-	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
-	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
-	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
-	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
-
-	einfo
-	einfo "*FLAGS for ${ABI}:"
-	einfo
-	einfo "  CFLAGS=${CFLAGS}"
-	einfo "  CXXFLAGS=${CXXFLAGS}"
-	einfo "  LDFLAGS=${LDFLAGS}"
-	if tc-is-cross-compiler ; then
-		einfo "  IS_CROSS_COMPILE=True"
-	else
-		einfo "  IS_CROSS_COMPILE=False"
+	if [[ "${PGO_PHASE}" == "pgt_test_suite" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		cmake_src_configure
+		CMAKE_USE_DIR="${WORKDIR}/llvm"
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
 	fi
-	einfo
 
 	cmake_src_configure
 
@@ -631,6 +652,37 @@ _compile() {
 		_bolt_train
 		_bolt_profile_generator
 		_bolt_optimize
+	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
+		cmake_build distribution
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		# Profile the PGI step
+		cmake_build
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		cmake_build check-lit
+		"${BUILD_DIR_BAK}/bin/llvm-lit" .
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		# Profile the PGO step
+		cmake_build
+		cmake_build check-lit
+		"${BUILD_DIR_BAK}/bin/llvm-lit" -o result.json .
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
 	else
 		cmake_build distribution
 	fi
@@ -657,9 +709,22 @@ src_compile() {
 			_configure
 			_compile
 			_install
-			PGO_PHASE="pgt" # S2 upstream says without lto
-			_configure
-			_compile
+			if use pgt_trainer_build_self ; then
+				PGO_PHASE="pgt_build_self" # S2 upstream says without lto
+				_configure
+				_compile
+			fi
+			if use pgt_trainer_test_suite ; then
+				PGO_PHASE="pgt_test_suite_inst"
+				_configure
+				_compile
+				PGO_PHASE="pgt_test_suite_train"
+				_configure
+				_compile
+				PGO_PHASE="pgt_test_suite_opt"
+				_configure
+				_compile
+			fi
 			PGO_PHASE="pgo" # S2 upstream says with lto
 			_configure
 			_compile
