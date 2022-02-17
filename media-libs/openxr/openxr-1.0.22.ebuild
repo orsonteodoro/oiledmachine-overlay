@@ -21,8 +21,8 @@ SRC_URI="
 ${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
 	-> ${P}.tar.gz"
 NV_DRIVER_VERSION_VULKAN="390.132"
-IUSE+=" doc egl gles2 +system-jsoncpp video_cards_amdgpu video_cards_amdgpu-pro
-video_cards_amdgpu-pro-lts video_cards_i965 video_cards_iris
+IUSE+=" doc egl gles2 +system-jsoncpp video_cards_amdgpu
+video_cards_i965 video_cards_iris
 video_cards_nvidia video_cards_radeonsi wayland xcb +xlib"
 REQUIRED_USE+=" ^^ ( xlib xcb wayland )"
 DEPEND+=" ${PYTHON_DEPS}
@@ -30,14 +30,6 @@ DEPEND+=" ${PYTHON_DEPS}
 		video_cards_amdgpu? (
 	media-libs/mesa[video_cards_radeonsi,vulkan]
 	x11-base/xorg-drivers[video_cards_amdgpu]
-		)
-		video_cards_amdgpu-pro? (
-	media-libs/mesa:=[video_cards_radeonsi]
-	x11-drivers/amdgpu-pro[-opengl_pro,opengl_mesa,vulkan]
-		)
-		video_cards_amdgpu-pro-lts? (
-	media-libs/mesa:=[video_cards_radeonsi]
-	x11-drivers/amdgpu-pro-lts[-opengl_pro,opengl_mesa,vulkan]
 		)
 		video_cards_i965? (
 	media-libs/mesa[video_cards_i965,vulkan]

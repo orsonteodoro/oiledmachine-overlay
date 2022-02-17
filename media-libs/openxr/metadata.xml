@@ -18,7 +18,7 @@
       of the internal</flag>
     <flag name="test">Builds tests</flag>
     <flag name="video_cards_amdgpu">Checks if the mesa Vulkan driver is
-      installed.  AMDGPU-PRO is not supported.</flag>
+      installed.</flag>
     <flag name="video_cards_i965">Checks if the Gen7.5+ (Haswell or newer)
       Vulkan driver is installed</flag>
     <flag name="video_cards_iris">Checks if the Gen8+ (Broadwell or newer)
