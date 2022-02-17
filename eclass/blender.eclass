@@ -314,22 +314,12 @@ die
 	llvm_pkg_setup
 	blender_check_requirements
 	python-single-r1_pkg_setup
-	check_amdgpu_pro
 	check_cpu
 	check_optimal_compiler_for_cycles_x86
 	check_embree
 	check_compiler
 	if declare -f _blender_pkg_setup > /dev/null ; then
 		_blender_pkg_setup
-	fi
-}
-
-check_amdgpu_pro() {
-	if ( has_version 'x11-drivers/amdgpu-pro[opengl_pro]' ) \
-	|| ( has_version 'x11-drivers/amdgpu-pro-lts[opengl_pro]' ); then
-		die \
-"You must switch to x11-drivers/amdgpu-pro[opengl_mesa] or \
-x11-drivers/amdgpu-pro-lts[opengl_mesa] instead"
 	fi
 }
 
