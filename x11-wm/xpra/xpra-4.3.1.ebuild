@@ -28,9 +28,8 @@ IUSE+=" avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups dbus
 	png rencodeplus sd_listen selinux +server sound spng
 	sqlite ssh sshpass +ssl systemd test u2f vaapi vpx vsock
 	v4l2 webcam webp websockets X xdg zeroconf zlib"
-IUSE+=" video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts
-video_cards_intel video_cards_iris video_cards_i965 video_cards_r600
-video_cards_radeonsi"
+IUSE+=" video_cards_amdgpu video_cards_intel video_cards_iris video_cards_i965
+video_cards_r600 video_cards_radeonsi"
 
 #LIMD # ATM, GEN 5-12
 #LID # C2M, GEN 5-9
@@ -58,33 +57,15 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	sound? ( pulseaudio )
 	sshpass? ( ssh )
 	video_cards_amdgpu? (
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
-		!video_cards_r600
-		!video_cards_radeonsi
-	)
-	video_cards_amdgpu-pro? (
-		!video_cards_amdgpu
-		!video_cards_amdgpu-pro-lts
-		!video_cards_r600
-		!video_cards_radeonsi
-	)
-	video_cards_amdgpu-pro-lts? (
-		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
 		!video_cards_r600
 		!video_cards_radeonsi
 	)
 	video_cards_r600? (
 		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
 		!video_cards_radeonsi
 	)
 	video_cards_radeonsi? (
 		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
 		!video_cards_r600
 	)
 	webp? ( pillow )
@@ -179,12 +160,6 @@ DEPEND+=" ${PYTHON_DEPS}
 		 || (
 		       video_cards_amdgpu? (
 				media-libs/mesa[gallium,vaapi,video_cards_radeonsi]
-		       )
-		       video_cards_amdgpu-pro? (
-				x11-drivers/amdgpu-pro[open-stack,vaapi]
-		       )
-		       video_cards_amdgpu-pro-lts? (
-				x11-drivers/amdgpu-pro-lts[open-stack,vaapi]
 		       )
 		       video_cards_i965? (
 				|| (
@@ -417,8 +392,6 @@ python_install_all() {
 
 vaapi_message() {
 	if use video_cards_amdgpu \
-		|| use video_cards_amdgpu-pro \
-		|| use video_cards_amdgpu-pro-lts \
 		|| use video_cards_r600 \
 		|| use video_cards_radeonsi ; then \
 		einfo
@@ -499,12 +472,6 @@ vaapi_message() {
 		&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
 	( use video_cards_radeonsi || use video_cards_amdgpu ) \
 		&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
-	use video_cards_amdgpu-pro \
-		&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib64/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
-		&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib64/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for Southern Islands or newer"
-	use video_cards_amdgpu-pro-lts \
-		&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib/x86_64-linux-gnu/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
-		&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib/x86_64-linux-gnu/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for Southern Islands or newer"
 	einfo
 	einfo "to your ~/.bashrc or ~/.xinitrc and relog."
 	einfo
