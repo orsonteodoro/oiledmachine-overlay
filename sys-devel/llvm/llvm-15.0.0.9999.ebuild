@@ -841,6 +841,8 @@ src_install() {
 _install() {
 	DESTDIR=${D} cmake_build install-distribution
 
+	# move headers to /usr/include for wrapping
+	rm -rf "${ED}"/usr/include || die
 	if use souper ; then
 		if (( ${s_idx} == 7 )) ; then
 			mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
