@@ -364,9 +364,9 @@ IUSE+=" weston r0"
 #     Upstream doesn't consider MP3 proprietary, but this ebuild does.
 #   https://github.com/chromium/chromium/blob/98.0.4758.80/media/base/supported_types.cc#L284
 # Codec upstream default: https://github.com/chromium/chromium/blob/98.0.4758.80/tools/mb/mb_config_expectations/chromium.linux.json#L89
-IUSE+=" video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts
-video_cards_intel video_cards_iris video_cards_i965 video_cards_nouveau
-video_cards_nvidia video_cards_r600 video_cards_radeonsi" # For VA-API
+IUSE+=" video_cards_amdgpu video_cards_intel video_cards_iris
+video_cards_i965 video_cards_nouveau video_cards_nvidia
+video_cards_r600 video_cards_radeonsi" # For VA-API
 IUSE+=" +partitionalloc tcmalloc libcmalloc"
 # For cfi-vcall, cfi-icall defaults status, see \
 #   https://github.com/chromium/chromium/blob/98.0.4758.80/build/config/sanitizers/sanitizers.gni
@@ -704,33 +704,15 @@ REQUIRED_USE+="
 	system-libstdcxx? ( !cfi-vcall )
 	vaapi? ( proprietary-codecs )
 	video_cards_amdgpu? (
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
-		!video_cards_r600
-		!video_cards_radeonsi
-	)
-	video_cards_amdgpu-pro? (
-		!video_cards_amdgpu
-		!video_cards_amdgpu-pro-lts
-		!video_cards_r600
-		!video_cards_radeonsi
-	)
-	video_cards_amdgpu-pro-lts? (
-		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
 		!video_cards_r600
 		!video_cards_radeonsi
 	)
 	video_cards_r600? (
 		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
 		!video_cards_radeonsi
 	)
 	video_cards_radeonsi? (
 		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
 		!video_cards_r600
 	)
 	widevine? ( !arm64 !ppc64 )
@@ -814,12 +796,6 @@ RDEPEND="${COMMON_DEPEND}
 		|| (
 			video_cards_amdgpu? (
 				media-libs/mesa:=[gallium,vaapi,video_cards_radeonsi,${MULTILIB_USEDEP}]
-			)
-			video_cards_amdgpu-pro? (
-				x11-drivers/amdgpu-pro[open-stack,vaapi]
-			)
-			video_cards_amdgpu-pro-lts? (
-				x11-drivers/amdgpu-pro-lts[open-stack,vaapi]
 			)
 			video_cards_i965? (
 				|| (
@@ -4481,9 +4457,9 @@ pkg_postinst() {
 			einfo "https://github.com/intel/media-driver#decodingencoding-features"
 			einfo
 		fi
-		if use video_cards_amdgpu || use video_cards_amdgpu-pro \
-			|| use video_cards_amdgpu-pro-lts || use video_cards_r600 \
-			|| use video_cards_radeonsi  ; then
+		if use video_cards_amdgpu \
+			|| use video_cards_r600 \
+			|| use video_cards_radeonsi ; then
 			einfo
 			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for"
 			einfo "hardware accelerated H.264 VA-API encode."
@@ -4519,12 +4495,6 @@ pkg_postinst() {
 			&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
 		( use video_cards_radeonsi || use video_cards_amdgpu ) \
 			&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
-		use video_cards_amdgpu-pro \
-			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
-			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/$(get_libdir)/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for Southern Islands or newer"
-		use video_cards_amdgpu-pro-lts \
-			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib/x86_64-linux-gnu/dri\" LIBVA_DRIVER_NAME=\"r600\"      # for Northern Islands" \
-			&& einfo "  LIBVA_DRIVERS_PATH=\"/opt/amdgpu/lib/x86_64-linux-gnu/dri\" LIBVA_DRIVER_NAME=\"radeonsi\"  # for Southern Islands or newer"
 		einfo
 		einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
 		einfo
