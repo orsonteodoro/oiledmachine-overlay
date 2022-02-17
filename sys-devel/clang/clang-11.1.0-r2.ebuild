@@ -124,6 +124,8 @@ pkg_setup() {
 	ewarn
 	ewarn "Build ~clang-${PV} with only gcc and ~llvm-${PV} without LTO."
 	ewarn
+	ewarn "To avoid missing symbols.  Make sure clang-${PV} and llvm-${PV} are the same version."
+	ewarn
 }
 
 src_prepare() {

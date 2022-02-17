@@ -118,6 +118,10 @@ pkg_setup() {
 	ewarn
 	ewarn "Build ~clang-${PV} with only gcc and ~llvm-${PV} without LTO."
 	ewarn
+	ewarn
+	ewarn "To avoid missing symbols, both clang-${PV} and llvm-${PV} should be built with the same commit."
+	ewarn "See \`epkginfo -x sys-devel/clang::oiledmachine-overlay\` or the metadata.xml to see how to accomplish this."
+	ewarn
 }
 
 src_prepare() {
