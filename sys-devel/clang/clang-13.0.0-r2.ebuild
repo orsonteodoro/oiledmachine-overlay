@@ -651,11 +651,6 @@ _configure() {
 			mycmakeargs+=(
 				-DLLVM_ENABLE_LTO=$(usex lto "On" "Off")
 			)
-			if has_version "sys-devel/binutils[gold,plugins]" ; then
-				mycmakeargs+=( -DLLVM_USE_LINKER=gold )
-			else
-				mycmakeargs+=( -DLLVM_USE_LINKER=bfd )
-			fi
 		fi
 	fi
 
