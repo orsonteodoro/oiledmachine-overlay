@@ -155,7 +155,8 @@ ewarn "metadata.xml to see how to accomplish this."
 ewarn
 
 	if [[ "${CC}" == "clang" ]] ; then
-		if /usr/lib/llvm/${SLOT_MAJ}/bin/clang-${SLOT_MAJ} --help \
+		local clang_path="clang-${SLOT_MAJ}"
+		if [[ -e "${clang_path}" ]] && "${clang_path}" --help \
 			| grep "symbol lookup error" ; then
 eerror
 eerror "The bootstrap USE flag must be used or set CC=gcc and CXX=g++"
