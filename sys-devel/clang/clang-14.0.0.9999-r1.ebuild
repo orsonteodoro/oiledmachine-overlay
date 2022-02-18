@@ -777,7 +777,7 @@ _cleanup() {
 declare -Ax EMESSAGE_COMPILE=(
 	[pgv]="Building vanilla ${PN}"
 	[pgi]="Building instrumented ${PN}"
-	[pgt_build_trainer]="Running PGO trainer:  Build itself"
+	[pgt_build_self]="Running PGO trainer:  Build itself"
 	[pgt_test_suite_inst]="Running PGO trainer:   test-suite instrumenting"
 	[pgt_test_suite_train]="Running PGO trainer:   test-suite training"
 	[pgt_test_suite_opt]="Running PGO trainer:   test-suite optimization"
