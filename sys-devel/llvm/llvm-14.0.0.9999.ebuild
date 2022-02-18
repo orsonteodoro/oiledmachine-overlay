@@ -20,11 +20,14 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS=""
-IUSE="bolt +binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar xml
-	z3 kernel_Darwin r3"
-IUSE+=" bootstrap souper"
+IUSE="+binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar xml
+	z3 kernel_Darwin"
+IUSE+=" bolt bootstrap lto pgo pgo_build_self pgo_trainer_test_suite souper r3"
 REQUIRED_USE="
-	bootstrap? ( !souper )
+	bootstrap? ( !pgo !souper )
+	pgo? ( || ( pgo_build_self pgo_trainer_test_suite ) )
+	pgo_build_self? ( pgo )
+	pgo_trainer_test_suite? ( pgo )
 	souper? (
 		!z3
 		test? ( debug )
@@ -58,6 +61,8 @@ BDEPEND="
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	') )
 	libffi? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
+	lto? ( sys-devel/lld )
+	pgo? ( sys-devel/lld )
 	${PYTHON_DEPS}"
 # There are no file collisions between these versions but having :0
 # installed means llvm-config there will take precedence.
@@ -76,6 +81,19 @@ LLVM_MANPAGES=build
 LLVM_PATCHSET=9999-r3
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
+#if [[ ${PV} == *.9999 ]] ; then
+EGIT_REPO_URI_LLVM_TEST_SUITE="https://github.com/llvm/llvm-test-suite.git"
+EGIT_BRANCH_LLVM_TEST_SUITE="release/${SLOT}.x"
+EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-${EGIT_BRANCH_LLVM_TEST_SUITE}}"
+#else
+#SRC_URI+="
+#pgo_trainer_test_suite? (
+#https://github.com/llvm/llvm-test-suite/archive/refs/tags/llvmorg-${PV/_/-}.tar.gz
+#	-> llvm-test-suite-${PV/_/-}.tar.gz
+#)
+#"
+#fi
+# llvm-test-suite tarball is disabled until download problems resolved.
 
 python_check_deps() {
 	use doc || return 0
@@ -174,6 +192,18 @@ check_distribution_components() {
 	fi
 }
 
+src_unpack() {
+	llvm.org_src_unpack
+#	if use pgo_trainer_test_suite && [[ ${PV} == *.9999 ]] ; then
+	if use pgo_trainer_test_suite ; then
+		EGIT_REPO_URI="${EGIT_REPO_URI_LLVM_TEST_SUITE}" \
+		EGIT_COMMIT="${EGIT_BRANCH_LLVM_TEST_SUITE}" \
+		git-r3_fetch
+		EGIT_REPO_URI="${EGIT_REPO_URI_LLVM_TEST_SUITE}" \
+		EGIT_COMMIT="${EGIT_BRANCH_LLVM_TEST_SUITE}" \
+		git-r3_checkout
+	fi
+}
 src_prepare() {
 	# disable use of SDK on OSX, bug #568758
 	sed -i -e 's/xcrun/false/' utils/lit/lit/util.py || die
@@ -194,6 +224,10 @@ src_prepare() {
 			eapply "${FILESDIR}/disable-peepholes-v07-tests.diff"
 		fi
 	fi
+
+	export CFLAGS_BAK="${CFLAGS}"
+	export CXXFLAGS_BAK="${CXXFLAGS}"
+	export LDFLAGS_BAK="${LDFLAGS}"
 }
 
 # Is LLVM being linked against libc++?
@@ -387,6 +421,23 @@ setup_clang() {
 }
 
 _configure() {
+	if use pgo && ! has_version ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]" ; then
+		eerror
+		eerror "PGO requires >=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]"
+		eerror
+		eerror "The correct steps to PGOing:"
+		eerror
+		eerror "1.  Build =${P}[bootstrap,-pgo,abi0,...,abiN]"
+		eerror "2.  Build ~clang-${PV}[abi0,...,abiN]"
+		eerror "3.  Build =${P}[-bootstrap,pgo,pgo_trainer_...]"
+		eerror
+		eerror "Both llvm and clang must have the same versions and commits within the same slot to avoid missing symbols."
+		eerror "Both llvm and clang have the same abi0, ..., abiN."
+		eerror "PGO trainer(s) must be chosen that reflects typical use."
+		eerror
+		die
+	fi
+
 	# Two choices really for correct testing:  disable ccache or update the hash calculation correctly.
 	# This is to ensure that all sibling obj files use the same libLLVM.so with the same fingerprint.
 	# Also, we want to test the effects of the binary code generated homogenously throughout
@@ -414,7 +465,11 @@ _configure() {
 		einfo "CC=${CC}"
 		einfo "CXX=${CXX}"
 		(( ${s_idx} == 7 )) && unset LD_LIBRARY_PATH
-		ldd /usr/lib/llvm/${SLOT}/bin/clang || die
+		if use test ; then
+			ldd /usr/lib/llvm/${SLOT}/bin/clang || die
+		else
+			ldd /usr/lib/llvm/${SLOT}/bin/clang || ewarn "Missing clang required for Souper"
+		fi
 	fi
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
@@ -422,10 +477,46 @@ _configure() {
 		ffi_ldflags=$($(tc-getPKG_CONFIG) --libs-only-L libffi)
 	fi
 
+	if [[ "${PGO_PHASE}" == "pgv" ]] || tc-is-cross-compiler ; then
+		strip-flags
+	else
+		einfo "Restoring *FLAGS"
+		export CFLAGS="${CFLAGS_BAK}"
+		export CXXFLAGS="${CXXFLAGS_BAK}"
+		export LDFLAGS="${LDFLAGS_BAK}"
+	fi
+
+	filter-flags \
+		'-flto*' \
+		'-fuse-ld*'
+
+	# workaround BMI bug in gcc-7 (fixed in 7.4)
+	# https://bugs.gentoo.org/649880
+	# apply only to x86, https://bugs.gentoo.org/650506
+	if tc-is-gcc && [[ ${MULTILIB_ABI_FLAG} == abi_x86* ]] &&
+			[[ $(gcc-major-version) -eq 7 && $(gcc-minor-version) -lt 4 ]]
+	then
+		local CFLAGS="${CFLAGS} -mno-bmi"
+		local CXXFLAGS="${CXXFLAGS} -mno-bmi"
+	fi
+
+	# LLVM can have very high memory consumption while linking,
+	# exhausting the limit on 32-bit linker executable
+	use x86 && local -x LDFLAGS="${LDFLAGS} -Wl,--no-keep-memory"
+
+	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
+	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
+
+	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
+	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
+	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
+	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
+	autofix_flags # translate retpoline, strip unsupported flags during switch
+	einfo "CFLAGS=${CFLAGS}"
+	einfo "CXXFLAGS=${CXXFLAGS}"
+
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
-		-DCMAKE_C_COMPILER="${CC}"
-		-DCMAKE_CXX_COMPILER="${CXX}"
 		# disable appending VCS revision to the version to improve
 		# direct cache hit ratio
 		-DLLVM_APPEND_VC_REV=OFF
@@ -466,25 +557,37 @@ _configure() {
 		-DOCAMLFIND=NO
 	)
 
+	local slot=""
 	if use souper ; then
 		if (( ${s_idx} == 7 )) ; then
-			mycmakeargs+=(
-				-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
-			)
+			if use pgo ; then
+				if [[ "${PGO_PHASE}" == "pgo" ]] ; then
+					slot="${SLOT}"
+				else
+					slot="${PGO_PHASE}"
+				fi
+			else
+				slot="${SLOT}"
+			fi
 		elif (( ${s_idx} % 2 == 0 )) ; then
-			mycmakeargs+=(
-				-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
-			)
+			slot="${SLOT}"
 		else
-			mycmakeargs+=(
-				-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/prev"
-			)
+			slot="prev"
 		fi
 	else
-		mycmakeargs+=(
-			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
-		)
+		if use pgo ; then
+			if [[ "${PGO_PHASE}" == "pgo" ]] ; then
+				slot="${SLOT}"
+			else
+				slot="${PGO_PHASE}"
+			fi
+		else
+			slot="${SLOT}"
+		fi
 	fi
+	mycmakeargs+=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${slot}"
+	)
 
 	if is_libcxx_linked; then
 		# Smart hack: alter version suffix -> SOVERSION when linking
@@ -558,29 +661,84 @@ _configure() {
 		)
 	fi
 
-	# workaround BMI bug in gcc-7 (fixed in 7.4)
-	# https://bugs.gentoo.org/649880
-	# apply only to x86, https://bugs.gentoo.org/650506
-	if tc-is-gcc && [[ ${MULTILIB_ABI_FLAG} == abi_x86* ]] &&
-			[[ $(gcc-major-version) -eq 7 && $(gcc-minor-version) -lt 4 ]]
-	then
-		local CFLAGS="${CFLAGS} -mno-bmi"
-		local CXXFLAGS="${CXXFLAGS} -mno-bmi"
+	if [[ "${PGO_PHASE}" == "pgv" ]] ; then
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER=gcc
+			-DCMAKE_CXX_COMPILER=g++
+			-DCMAKE_ASM_COMPILER=gcc
+			-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
+			-DCOMPILER_RT_BUILD_SANITIZERS=OFF
+			-DCOMPILER_RT_BUILD_XRAY=OFF
+			-DLLVM_BUILD_INSTRUMENTED=OFF
+			-DLLVM_ENABLE_LTO=Off
+		)
+	elif [[ "${PGO_PHASE}" == "pgi" ]] ; then
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DLLVM_BUILD_INSTRUMENTED=ON
+			-DLLVM_ENABLE_LTO=Off
+			-DLLVM_USE_LINKER=lld
+		)
+	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
+		# Use the package itself as the asset for training.
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DLLVM_BUILD_INSTRUMENTED=OFF
+			-DLLVM_ENABLE_LTO=Off
+			-DLLVM_USE_LINKER=lld
+		)
+	elif [[ "${PGO_PHASE}" =~ "pgt_test_suite" ]] ; then
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DLLVM_BUILD_INSTRUMENTED=OFF
+			-DLLVM_ENABLE_LTO=Off
+			-DLLVM_USE_LINKER=lld
+			-DTEST_SUITE_BENCHMARKING_ONLY=ON
+		)
+	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
+		einfo "Merging .profraw -> .profdata"
+		"/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
+		append-ldflags -Wl,--emit-relocs
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DLLVM_BUILD_INSTRUMENTED=OFF
+			-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
+			-DLLVM_PROFDATA_FILE="${T}/pgo-custom.profdata"
+			-DLLVM_USE_LINKER=lld
+		)
+	# llvm-bolt only does executables
+	elif [[ "${PGO_PHASE}" == "pg0" ]] ; then
+		if [[ "${CC}" =~ "clang" ]] ; then
+			mycmakeargs+=(
+				-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
+				-DLLVM_USE_LINKER=lld
+			)
+		elif [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
+			mycmakeargs+=(
+				-DLLVM_ENABLE_LTO=$(usex lto "Full" "Off")
+			)
+			if has_version "sys-devel/binutils[gold,plugins]" ; then
+				mycmakeargs+=( -DLLVM_USE_LINKER=gold )
+			else
+				mycmakeargs+=( -DLLVM_USE_LINKER=bfd )
+			fi
+		fi
 	fi
 
-	# LLVM can have very high memory consumption while linking,
-	# exhausting the limit on 32-bit linker executable
-	use x86 && local -x LDFLAGS="${LDFLAGS} -Wl,--no-keep-memory"
-
-	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
-	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
-
-	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
-	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
-	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
-	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
-	einfo "CFLAGS=${CFLAGS}"
-	einfo "CXXFLAGS=${CXXFLAGS}"
+	if [[ "${PGO_PHASE}" =~ "pgt_test_suite" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		cmake_src_configure
+		CMAKE_USE_DIR="${WORKDIR}/llvm"
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
+	fi
 
 	cmake_src_configure
 
@@ -590,10 +748,54 @@ _configure() {
 	multilib_is_native_abi && check_distribution_components
 }
 
+declare -Ax EMESSAGE_COMPILE=(
+	[pgv]="Building vanilla ${PN}"
+	[pgi]="Building instrumented ${PN}"
+	[pgt_build_trainer]="Running PGO trainer:  Build itself"
+	[pgt_test_suite_inst]="Running PGO trainer:   test-suite instrumenting"
+	[pgt_test_suite_train]="Running PGO trainer:   test-suite training"
+	[pgt_test_suite_opt]="Running PGO trainer:   test-suite optimization"
+	[pgo]="Building PGOed ${PN}"
+)
 _compile() {
-	cmake_build distribution
-	if use test ; then
-		cmake_build test-depends
+	einfo "Called _compile()"
+	if [[ "${PGO_PHASE}" =~ ("pgv"|"pgi"|"pgt_"|"pgo") ]] ; then
+		use pgo && einfo "${EMESSAGE_COMPILE[${PGO_PHASE}]} for ${ABI}"
+	fi
+	if [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
+		cmake_build distribution
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		# Profile the PGI step
+		cmake_build
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		cmake_build check-lit
+		"${BUILD_DIR_BAK}/bin/llvm-lit" .
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		# Profile the PGO step
+		cmake_build
+		cmake_build check-lit
+		"${BUILD_DIR_BAK}/bin/llvm-lit" -o result.json .
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
+	else
+		cmake_build distribution
+		use test && cmake_build test-depends
 	fi
 
 	pax-mark m "${BUILD_DIR}"/bin/llvm-rtdyld
@@ -694,6 +896,52 @@ eerror
 	export LDFLAGS="${LDFLAGS_BAK}"
 }
 
+_build_final() {
+	if use pgo ; then
+		if use bootstrap ; then
+			PGO_PHASE="pgv"
+			_configure
+			_compile
+			_install
+		fi
+		PGO_PHASE="pgi"
+		_configure
+		_compile
+		_install
+		if use pgo_trainer_build_self ; then
+			PGO_PHASE="pgt_build_self"
+			_configure
+			_compile
+			_install
+		fi
+		if use pgo_trainer_test_suite ; then
+			PGO_PHASE="pgt_test_suite_inst"
+			_configure
+			_compile
+			_install
+			PGO_PHASE="pgt_test_suite_train"
+			_configure
+			_compile
+			_install
+			PGO_PHASE="pgt_test_suite_opt"
+			_configure
+			_compile
+			_install
+		fi
+		PGO_PHASE="pgo"
+		_configure
+		_compile
+		_install
+		# Tests are already done in _souper_test().
+	else
+		PGO_PHASE="pg0"
+		_configure
+		_compile
+		_install
+		use test && _test
+	fi
+}
+
 _build_abi() {
 	PATH_ORIG="${PATH}"
 	if use souper ; then
@@ -714,18 +962,13 @@ _build_abi() {
 		wo=1
 		ph=0
 		s_idx=7
-		_configure
-		_compile
-		_install
-		_test
+		_build_final
 	else
 		if use bootstrap ; then
 			# Build against vanilla unpatched.
 			setup_gcc
 		fi
-		_configure
-		_compile
-		use test && _test
+		_build_final
 	fi
 }
 

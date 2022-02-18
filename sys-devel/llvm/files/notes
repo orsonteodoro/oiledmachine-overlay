@@ -3,12 +3,14 @@ These are notes to update the disable-peepholes patch.
 The following patches are obtained from
 https://github.com/regehr/llvm-project
 
-The version (v03) used in build_deps.sh:
+The version (v03) used in build_deps.sh For LLVM 11 [but applied to LLVM 12]:
 wget -O disable-peepholes-v03.patch https://github.com/regehr/llvm-project/compare/b5769a777f1c146e5457200fe52fa2041e182da4...disable-peepholes-v03.patch
 
-Newest version:
+Newest version for LLVM 12:
 wget -O disable-peepholes-v07.patch https://github.com/regehr/llvm-project/compare/072c90a863aac1334a4950b3da262a025516dea0...disable-peepholes-v07.patch
 
 ... means (parent commit of first commit of tag, tag or last commit] (exclusive,inclusive] meaning [first commit of tag, last commit of tag]
 
 The diff patch is used to avoid a possible bug with duplicate hunks.
+
+The diff between disable-peepholes-llvm12-v03 and disable-peepholes-v07 is the same.

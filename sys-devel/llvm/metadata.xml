@@ -44,10 +44,24 @@
 		* Makes available, builds, installs BOLT support.
 		* Reduce spam and slowdown with -static-libstdc++.
 		* Applies disable-peepholes patch for stability or overlap reasons.
+		* Profile Guided Optimization (PGO) build support.
 
 	For this repo only, due to limited time and lack of time to verify working
 	ebuilds completely, only live ebuilds and point releases will be kept.  Release
 	candidates and inits will be ignored.
+
+
+	PGO notes:
+
+	The correct steps to building a PGO optimized build:
+
+		1. Build llvm-${PV}[bootstrap,-pgo,abi0,...,abiN]
+		2. Build clang-${PV}[abi0,...,abiN]
+		3. Build llvm-${PV}[-bootstrap,pgo,pgo_trainer...]
+
+	Both llvm-${PV} and clang-${PV} have matching ${PV}s (or commits) within the same slots to avoid missing symbols.
+	Both abi0, ..., abiN match in llvm-${PV} and clang-${PV}.
+	PGO trainer(s) must be chosen that reflect typical use.
 
 
 	BOLT notes:
@@ -91,6 +105,12 @@
 		<flag name="gold">Build the gold linker plugin</flag>
 		<flag name="ncurses">Support querying terminal properties using ncurses'
 			terminfo</flag>
+		<flag name="pgo">Build with Profile Guided Optimization</flag>
+		<flag name="pgo_trainer_build_self">Trains and generates a PGO profile by
+			building the source code itself</flag>
+		<flag name="pgo_trainer_test_suite">Runs the test-suite to build a
+			PGO profile from built benchmarks examples which may be consumed
+			by the optimizers.</flag>
 		<flag name="souper">Apply the disable-peepholes patch required by Souper
 			superoptimizer and pulls in the Souper package as a PDEPEND.
 			The Souper optimization pass can further reduce code size by

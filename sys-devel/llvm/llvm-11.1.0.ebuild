@@ -29,8 +29,19 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="debug doc -dump exegesis +gold libedit +libffi ncurses test xar xml z3
-	kernel_Darwin ${ALL_LLVM_TARGETS[*]} r2"
+	kernel_Darwin ${ALL_LLVM_TARGETS[*]}"
+IUSE+=" bootstrap lto pgo pgo_build_self pgo_trainer_test_suite souper r3"
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
+REQUIRED_USE+="
+	bootstrap? ( !pgo !souper )
+	pgo? ( || ( pgo_build_self pgo_trainer_test_suite ) )
+	pgo_build_self? ( pgo )
+	pgo_trainer_test_suite? ( pgo )
+	souper? (
+		!z3
+		test? ( debug )
+	)
+"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
@@ -58,13 +69,17 @@ BDEPEND="
 		dev-python/sphinx[${PYTHON_USEDEP}]
 	') )
 	libffi? ( >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)] )
+	lto? ( sys-devel/lld )
+	pgo? ( sys-devel/lld )
 	${PYTHON_DEPS}"
 # There are no file collisions between these versions but having :0
 # installed means llvm-config there will take precedence.
 RDEPEND="${RDEPEND}
 	!sys-devel/llvm:0"
 PDEPEND="sys-devel/llvm-common
-	gold? ( >=sys-devel/llvmgold-${SLOT} )"
+	gold? ( >=sys-devel/llvmgold-${SLOT} )
+"
+#	souper? ( sys-devel/souper[llvm-${SLOT}] )
 PATCHES=(
 	"${FILESDIR}/llvm-12.0.1-stop-triple-spam.patch"
 )
@@ -73,6 +88,19 @@ LLVM_COMPONENTS=( llvm )
 LLVM_MANPAGES=pregenerated
 LLVM_PATCHSET=11.1.0-1
 llvm.org_set_globals
+#if [[ ${PV} == *.9999 ]] ; then
+EGIT_REPO_URI_LLVM_TEST_SUITE="https://github.com/llvm/llvm-test-suite.git"
+EGIT_BRANCH_LLVM_TEST_SUITE="release/${SLOT}.x"
+EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-${EGIT_BRANCH_LLVM_TEST_SUITE}}"
+#else
+#SRC_URI+="
+#pgo_trainer_test_suite? (
+#https://github.com/llvm/llvm-test-suite/archive/refs/tags/llvmorg-${PV/_/-}.tar.gz
+#	-> llvm-test-suite-${PV/_/-}.tar.gz
+#)
+#"
+#fi
+# llvm-test-suite tarball is disabled until download problems resolved.
 
 python_check_deps() {
 	use doc || return 0
@@ -173,6 +201,18 @@ check_distribution_components() {
 	fi
 }
 
+src_unpack() {
+	llvm.org_src_unpack
+#	if use pgo_trainer_test_suite && [[ ${PV} == *.9999 ]] ; then
+	if use pgo_trainer_test_suite ; then
+		EGIT_REPO_URI="${EGIT_REPO_URI_LLVM_TEST_SUITE}" \
+		EGIT_COMMIT="${EGIT_BRANCH_LLVM_TEST_SUITE}" \
+		git-r3_fetch
+		EGIT_REPO_URI="${EGIT_REPO_URI_LLVM_TEST_SUITE}" \
+		EGIT_COMMIT="${EGIT_BRANCH_LLVM_TEST_SUITE}" \
+		git-r3_checkout
+	fi
+}
 src_prepare() {
 	# disable use of SDK on OSX, bug #568758
 	sed -i -e 's/xcrun/false/' utils/lit/lit/util.py || die
@@ -184,6 +224,14 @@ src_prepare() {
 	check_live_ebuild
 
 	llvm.org_src_prepare
+	if use souper ; then
+		cd "${WORKDIR}" || die
+		eapply "${FILESDIR}/llvm-11.1.0-disable-peepholes-v03.diff"
+	fi
+
+	export CFLAGS_BAK="${CFLAGS}"
+	export CXXFLAGS_BAK="${CXXFLAGS}"
+	export LDFLAGS_BAK="${LDFLAGS}"
 }
 
 # Is LLVM being linked against libc++?
@@ -322,21 +370,150 @@ get_distribution_components() {
 	printf "%s${sep}" "${out[@]}"
 }
 
-multilib_src_configure() {
+bool_trans() {
+	local arg="${1}"
+	if [[ "${arg}" == "1" ]] ; then
+		echo "true"
+	else
+		echo "false"
+	fi
+}
+
+src_configure() { :; }
+
+_cmake_clean() {
+	cd "${BUILD_DIR}" || die
+	if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
+		eninja -t clean
+	else
+		emake clean
+	fi
+}
+
+setup_gcc() {
+	# Force gcc to skip a LLVM rebuild without the disabled-peepholes patch.
+	export CC=gcc
+	export CXX=g++
+
+	use test && filter-flags '-f*-aggressive-loop-optimizations'
+	if use test && use souper && (( ${s_idx} != 7 )) ; then
+		# Speed up build times
+		replace-flags '-O*' '-O1'
+		strip-flags
+
+		# Prevent possibility of generating undefined behavior (UB) that can interfere with testing UB.
+		append-flags -fno-aggressive-loop-optimizations
+		append-ldflags -fno-aggressive-loop-optimizations
+	fi
+	autofix_flags # translate retpoline, strip unsupported flags during switch
+}
+
+setup_clang() {
+	export CC=clang-${SLOT}
+	export CXX=clang++-${SLOT}
+	autofix_flags # translate retpoline, strip unsupported flags during switch
+}
+
+_configure() {
+	if use pgo && ! has_version ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]" ; then
+		eerror
+		eerror "PGO requires >=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]"
+		eerror
+		eerror "The correct steps to PGOing:"
+		eerror
+		eerror "1.  Build =${P}[bootstrap,-pgo,abi0,...,abiN]"
+		eerror "2.  Build ~clang-${PV}[abi0,...,abiN]"
+		eerror "3.  Build =${P}[-bootstrap,pgo,pgo_trainer_...]"
+		eerror
+		eerror "Both llvm and clang must have the same versions within the same slot to avoid missing symbols."
+		eerror "Both llvm and clang have the same abi0, ..., abiN."
+		eerror "PGO trainer(s) must be chosen that reflects typical use."
+		eerror
+		die
+	fi
+
+	# Two choices really for correct testing:  disable ccache or update the hash calculation correctly.
+	# This is to ensure that all sibling obj files use the same libLLVM.so with the same fingerprint.
+	# Also, we want to test the effects of the binary code generated homogenously throughout
+	# the LLVM library not just the source code associated with a few objs that was just changed.
+	export CCACHE_EXTRAFILES=$(readlink -f "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
+	if use souper ; then
+		einfo "wo=${wo} ph=${ph} (${s_idx}/7)"
+		if use test ; then
+			(( ${s_idx} > 1 )) && _cmake_clean
+			if (( ${s_idx} == 7 )) ; then
+				rm -rf "${ED}"
+				export PATH="${PATH_ORIG}"
+			elif (( ${s_idx} % 2 == 1 )) ; then
+				rm -rf "${ED}"
+				export PATH="${PATH_ORIG}"
+				unset LD_LIBRARY_PATH # Use RUNPATH instead
+				setup_gcc # Build with a reliable vanilla compiler.
+			elif (( ${s_idx} % 2 == 0 )) ; then
+				export PATH="${ED}/usr/lib/llvm/prev/bin:${PATH_ORIG}"
+				export LD_LIBRARY_PATH="${ED}/usr/lib/llvm/prev/$(get_libdir)"
+				export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:"$(readlink -f "${ED}/usr/lib/llvm/prev/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
+				setup_clang # Rebuild with the disable-peephole LLVM lib.
+			fi
+		fi
+		einfo "CC=${CC}"
+		einfo "CXX=${CXX}"
+		(( ${s_idx} == 7 )) && unset LD_LIBRARY_PATH
+		if use test ; then
+			ldd /usr/lib/llvm/${SLOT}/bin/clang || die
+		else
+			ldd /usr/lib/llvm/${SLOT}/bin/clang || ewarn "Missing clang required for Souper"
+		fi
+	fi
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
 		ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
 		ffi_ldflags=$($(tc-getPKG_CONFIG) --libs-only-L libffi)
 	fi
 
+	if [[ "${PGO_PHASE}" == "pgv" ]] || tc-is-cross-compiler ; then
+		strip-flags
+	else
+		einfo "Restoring *FLAGS"
+		export CFLAGS="${CFLAGS_BAK}"
+		export CXXFLAGS="${CXXFLAGS_BAK}"
+		export LDFLAGS="${LDFLAGS_BAK}"
+	fi
+
+	filter-flags \
+		'-flto*' \
+		'-fuse-ld*'
+
+	# workaround BMI bug in gcc-7 (fixed in 7.4)
+	# https://bugs.gentoo.org/649880
+	# apply only to x86, https://bugs.gentoo.org/650506
+	if tc-is-gcc && [[ ${MULTILIB_ABI_FLAG} == abi_x86* ]] &&
+			[[ $(gcc-major-version) -eq 7 && $(gcc-minor-version) -lt 4 ]]
+	then
+		local CFLAGS="${CFLAGS} -mno-bmi"
+		local CXXFLAGS="${CXXFLAGS} -mno-bmi"
+	fi
+
+	# LLVM can have very high memory consumption while linking,
+	# exhausting the limit on 32-bit linker executable
+	use x86 && local -x LDFLAGS="${LDFLAGS} -Wl,--no-keep-memory"
+
+	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
+	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
+
+	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
+	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
+	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
+	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
+	autofix_flags # translate retpoline, strip unsupported flags during switch
+	einfo "CFLAGS=${CFLAGS}"
+	einfo "CXXFLAGS=${CXXFLAGS}"
+
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
-		-DCMAKE_C_COMPILER="${CC}"
-		-DCMAKE_CXX_COMPILER="${CXX}"
 		# disable appending VCS revision to the version to improve
 		# direct cache hit ratio
 		-DLLVM_APPEND_VC_REV=OFF
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${SLOT}"
 		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
 
 		-DBUILD_SHARED_LIBS=OFF
@@ -374,6 +551,38 @@ multilib_src_configure() {
 		-DOCAMLFIND=NO
 	)
 
+	local slot=""
+	if use souper ; then
+		if (( ${s_idx} == 7 )) ; then
+			if use pgo ; then
+				if [[ "${PGO_PHASE}" == "pgo" ]] ; then
+					slot="${SLOT}"
+				else
+					slot="${PGO_PHASE}"
+				fi
+			else
+				slot="${SLOT}"
+			fi
+		elif (( ${s_idx} % 2 == 0 )) ; then
+			slot="${SLOT}"
+		else
+			slot="prev"
+		fi
+	else
+		if use pgo ; then
+			if [[ "${PGO_PHASE}" == "pgo" ]] ; then
+				slot="${SLOT}"
+			else
+				slot="${PGO_PHASE}"
+			fi
+		else
+			slot="${SLOT}"
+		fi
+	fi
+	mycmakeargs+=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${slot}"
+	)
+
 	if is_libcxx_linked; then
 		# Smart hack: alter version suffix -> SOVERSION when linking
 		# against libc++. This way we won't end up mixing LLVM libc++
@@ -391,6 +600,19 @@ multilib_src_configure() {
 			-DGO_EXECUTABLE=GO_EXECUTABLE-NOTFOUND
 		)
 #	fi
+
+	if use souper ; then
+		filter-flags \
+			'-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE*' \
+			'-DDISABLE_PEEPHOLES_DEFAULT_VALUE*'
+		# Setting DISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false and running the souper pass can cause miscompile in other programs.
+		# See 2.10-2.11 section in academic paper.
+		# To match the LLVM defaults, set WO=false and PH=false.
+		append-cppflags -DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=$(bool_trans ${wo}) -DDISABLE_PEEPHOLES_DEFAULT_VALUE=$(bool_trans ${ph})
+		mycmakeargs+=(
+			-DLLVM_FORCE_ENABLE_STATS=$(use test)
+		)
+	fi
 
 	use test && mycmakeargs+=(
 		-DLLVM_LIT_ARGS="$(get_lit_flags)"
@@ -429,37 +651,139 @@ multilib_src_configure() {
 		)
 	fi
 
-	# workaround BMI bug in gcc-7 (fixed in 7.4)
-	# https://bugs.gentoo.org/649880
-	# apply only to x86, https://bugs.gentoo.org/650506
-	if tc-is-gcc && [[ ${MULTILIB_ABI_FLAG} == abi_x86* ]] &&
-			[[ $(gcc-major-version) -eq 7 && $(gcc-minor-version) -lt 4 ]]
-	then
-		local CFLAGS="${CFLAGS} -mno-bmi"
-		local CXXFLAGS="${CXXFLAGS} -mno-bmi"
+	if [[ "${PGO_PHASE}" == "pgv" ]] ; then
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER=gcc
+			-DCMAKE_CXX_COMPILER=g++
+			-DCMAKE_ASM_COMPILER=gcc
+			-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
+			-DCOMPILER_RT_BUILD_SANITIZERS=OFF
+			-DCOMPILER_RT_BUILD_XRAY=OFF
+			-DLLVM_BUILD_INSTRUMENTED=OFF
+			-DLLVM_ENABLE_LTO=Off
+		)
+	elif [[ "${PGO_PHASE}" == "pgi" ]] ; then
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DLLVM_BUILD_INSTRUMENTED=ON
+			-DLLVM_ENABLE_LTO=Off
+			-DLLVM_USE_LINKER=lld
+		)
+	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
+		# Use the package itself as the asset for training.
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DLLVM_BUILD_INSTRUMENTED=OFF
+			-DLLVM_ENABLE_LTO=Off
+			-DLLVM_USE_LINKER=lld
+		)
+	elif [[ "${PGO_PHASE}" =~ "pgt_test_suite" ]] ; then
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DLLVM_BUILD_INSTRUMENTED=OFF
+			-DLLVM_ENABLE_LTO=Off
+			-DLLVM_USE_LINKER=lld
+			-DTEST_SUITE_BENCHMARKING_ONLY=ON
+		)
+	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
+		einfo "Merging .profraw -> .profdata"
+		"/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
+		append-ldflags -Wl,--emit-relocs
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DLLVM_BUILD_INSTRUMENTED=OFF
+			-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
+			-DLLVM_PROFDATA_FILE="${T}/pgo-custom.profdata"
+			-DLLVM_USE_LINKER=lld
+		)
+	# llvm-bolt only does executables
+	elif [[ "${PGO_PHASE}" == "pg0" ]] ; then
+		if [[ "${CC}" =~ "clang" ]] ; then
+			mycmakeargs+=(
+				-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
+				-DLLVM_USE_LINKER=lld
+			)
+		elif [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
+			mycmakeargs+=(
+				-DLLVM_ENABLE_LTO=$(usex lto "Full" "Off")
+			)
+			if has_version "sys-devel/binutils[gold,plugins]" ; then
+				mycmakeargs+=( -DLLVM_USE_LINKER=gold )
+			else
+				mycmakeargs+=( -DLLVM_USE_LINKER=bfd )
+			fi
+		fi
 	fi
 
-	# LLVM can have very high memory consumption while linking,
-	# exhausting the limit on 32-bit linker executable
-	use x86 && local -x LDFLAGS="${LDFLAGS} -Wl,--no-keep-memory"
-
-	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
-	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
-
-	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
-	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
-	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
-	export CXXFLAGS="$(get_abi_CFLAGS ${ABI}) ${CXXFLAGS}"
-	einfo "CFLAGS=${CFLAGS}"
-	einfo "CXXFLAGS=${CXXFLAGS}"
+	if [[ "${PGO_PHASE}" =~ "pgt_test_suite" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		cmake_src_configure
+		CMAKE_USE_DIR="${WORKDIR}/llvm"
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
+	fi
 
 	cmake_src_configure
 
 	multilib_is_native_abi && check_distribution_components
 }
 
-multilib_src_compile() {
-	cmake_build distribution
+declare -Ax EMESSAGE_COMPILE=(
+	[pgv]="Building vanilla ${PN}"
+	[pgi]="Building instrumented ${PN}"
+	[pgt_build_trainer]="Running PGO trainer:  Build itself"
+	[pgt_test_suite_inst]="Running PGO trainer:   test-suite instrumenting"
+	[pgt_test_suite_train]="Running PGO trainer:   test-suite training"
+	[pgt_test_suite_opt]="Running PGO trainer:   test-suite optimization"
+	[pgo]="Building PGOed ${PN}"
+)
+_compile() {
+	einfo "Called _compile()"
+	if [[ "${PGO_PHASE}" =~ ("pgv"|"pgi"|"pgt_"|"pgo") ]] ; then
+		use pgo && einfo "${EMESSAGE_COMPILE[${PGO_PHASE}]} for ${ABI}"
+	fi
+	if [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
+		cmake_build distribution
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		# Profile the PGI step
+		cmake_build
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		cmake_build check-lit
+		"${BUILD_DIR_BAK}/bin/llvm-lit" .
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		BUILD_DIR_BAK="${BUILD_DIR}"
+		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		cd "${BUILD_DIR}" || die
+		# Profile the PGO step
+		cmake_build
+		cmake_build check-lit
+		"${BUILD_DIR_BAK}/bin/llvm-lit" -o result.json .
+		BUILD_DIR="${BUILD_DIR_BAK}"
+		cd "${BUILD_DIR}" || die
+	else
+		cmake_build distribution
+		use test && cmake_build test-depends
+	fi
 
 	pax-mark m "${BUILD_DIR}"/bin/llvm-rtdyld
 	pax-mark m "${BUILD_DIR}"/bin/lli
@@ -472,10 +796,259 @@ multilib_src_compile() {
 	fi
 }
 
-multilib_src_test() {
+_souper_test() {
+	# This can be completed in a day
+	if [[ ! ( "${FEATURES}" =~ "ccache" ) ]] || ! which ccache 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "It could take 7 days to test without ccache.  Please emerge ccache and"
+eerror "enable it."
+eerror
+		die
+	fi
+
+	# Required to avoid missing symbols problem
+	if ! has_version ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]" ; then
+eerror
+eerror ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)] must be installed for testing the disable-peepholes patch."
+eerror
+		die
+	fi
+
+	CFLAGS_BAK="${CFLAGS}"
+	CXXFLAGS_BAK="${CXXFLAGS}"
+	LDFLAGS_BAK="${LDFLAGS}"
+	PATH_ORIG="${PATH}"
+
+	# Configuration set
+	# A:  (wo=0, ph=0)
+	# B:  (wo=1, ph=0)
+	# C:  (wo=1, ph=1)
+	# A > A > B > A > C > A # Build transition between configuration sets as 1 based index
+	#   x_(i-1) builds x_i when i is even and i >= 2
+	# else
+	#   vanilla_tc builds x_i when i is odd and i >= 1
+
+	wo=0
+	ph=0
+	s_idx=1
+	_configure
+	_compile
+	_install
+	_test
+
+	wo=0
+	ph=0
+	s_idx=2
+	_configure
+	_compile
+	_install
+	_test
+
+	wo=1
+	ph=0
+	s_idx=3
+	_configure
+	_compile
+	_install
+	_test
+
+	wo=0
+	ph=0
+	s_idx=4
+	_configure
+	_compile
+	_install
+	_test
+
+	wo=1
+	ph=1
+	s_idx=5
+	_configure
+	_compile
+	_install
+	_test
+
+	wo=0
+	ph=0
+	s_idx=6
+	_configure
+	_compile
+	_install
+	_test
+
+	export PATH="${PATH_ORIG}"
+	export CFLAGS="${CFLAGS_BAK}"
+	export CXXFLAGS="${CXXFLAGS_BAK}"
+	export LDFLAGS="${LDFLAGS_BAK}"
+}
+
+_build_final() {
+	if use pgo ; then
+		if use bootstrap ; then
+			PGO_PHASE="pgv"
+			_configure
+			_compile
+			_install
+		fi
+		PGO_PHASE="pgi"
+		_configure
+		_compile
+		_install
+		if use pgo_trainer_build_self ; then
+			PGO_PHASE="pgt_build_self"
+			_configure
+			_compile
+			_install
+		fi
+		if use pgo_trainer_test_suite ; then
+			PGO_PHASE="pgt_test_suite_inst"
+			_configure
+			_compile
+			_install
+			PGO_PHASE="pgt_test_suite_train"
+			_configure
+			_compile
+			_install
+			PGO_PHASE="pgt_test_suite_opt"
+			_configure
+			_compile
+			_install
+		fi
+		PGO_PHASE="pgo"
+		_configure
+		_compile
+		_install
+		# Tests are already done in _souper_test().
+	else
+		PGO_PHASE="pg0"
+		_configure
+		_compile
+		_install
+		use test && _test
+	fi
+}
+
+_build_abi() {
+	PATH_ORIG="${PATH}"
+	if use souper ; then
+		local wo
+		local ph
+		local s_idx
+
+		if use test ; then
+			_souper_test
+		fi
+
+		if use bootstrap ; then
+			# Build against vanilla unpatched.
+			setup_gcc
+		fi
+
+		# Build with build_deps.sh settings
+		wo=1
+		ph=0
+		s_idx=7
+		_build_final
+	else
+		if use bootstrap ; then
+			# Build against vanilla unpatched.
+			setup_gcc
+		fi
+		_build_final
+	fi
+}
+
+get_m_abi() {
+	local r
+	for r in ${_MULTILIB_FLAGS[@]} ; do
+		local m_abi=$"${r%:*}"
+		local m_flag="${r#*:}"
+		local a
+		OIFS="${IFS}"
+		IFS=','
+		for a in ${m_flag} ; do
+			if [[ "${a}" == "${ABI}" ]] ; then
+				echo "${m_abi}"
+				return
+			fi
+		done
+		IFS="${OIFS}"
+	done
+}
+
+src_compile() {
+	_compile_abi() {
+		export BUILD_DIR="${WORKDIR}/${P}_build-$(get_m_abi).${ABI}"
+		mkdir -p "${BUILD_DIR}" || die
+		cd "${BUILD_DIR}" || die
+		_build_abi
+	}
+	multilib_foreach_abi _compile_abi
+}
+
+src_test() { :; }
+
+_test() {
 	# respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
-	cmake_build check
+	if use souper ; then
+		einfo "Testing DISABLE_PEEPHOLES=${ph} DISABLE_WRONG_OPTIMIZATIONS=${wo}"
+		# Behavior wo meaning
+		#	0	possible undefined behavior allowed in LLVM lib [llvm default]
+		#	1	possible undefined behavior disallowed in LLVM lib [souper default]
+		# The undefined behavior described within LLVM is discussed in the academic paper 2.10-2.11 sections.
+
+		# Behavior ph meaning
+		#	0	allow llvm peepholes implementation [llvm default, souper default]
+		#	1	disallow llvm peepholes implementation
+
+		# Correctness table expectations based on test-disable-peepholes.sh comments
+		#	wo	ph	expected result
+		#	0	0	pass (llvm default)
+		#	1	0	fail on undefined behavior tests (souper default)
+		#	0	1	? [guestimated fail for peephole tests]
+		#	1	1	fail on peephole-like tests [and possibly undefined behavior tests]
+		cd "${BUILD_DIR}" || die
+		unset LD_LIBRARY_PATH # Use RUNPATH
+		local results_path="${T}/test_results_${s_idx}_${ABI}.txt"
+		"${CMAKE_MAKEFILE_GENERATOR}" check 2>&1 | tee "${results_path}" || true # non fatal because failures are expected
+
+		if (( ${s_idx} == 6 )) ; then
+			for i in $(seq 1 6) ; do
+				if grep -q -e "Failed Tests" \
+	                                "${T}/test_results_${i}_${ABI}.txt" ; then
+					ewarn "Test FAILED in run ${i} (${ABI})"
+				else
+					einfo "Test PASSED in run ${i} (${ABI})"
+				fi
+			done
+			grep -q -e "Failed Tests" \
+				"${T}/test_results_2_${ABI}.txt" \
+				"${T}/test_results_4_${ABI}.txt" \
+				"${T}/test_results_6_${ABI}.txt" \
+			|| die "At least one failure must be present (wo == 1 || ph == 1) (${ABI})" # This may always be a pass.
+			local total_tests=$(grep -o -E -e "of [0-9]+)" "${results_path}" | uniq | grep -E -o "[0-9]+") # 42k in 12.x
+			[[ -z "${total_tests}" ]] && die "total_tests cannot be empty"
+			local n_failed=$(grep -o -E -e "Failed Tests.*" "${results_path}"  | grep -o -E -e "[0-9]+")
+			[[ -z "${n_failed}" ]] && n_failed=0
+			local one_percent=$(${EPYTHON} -c "print(${total_tests}*0.01)" | cut -f 1 -d ".")
+			# 1% fail (or 421) is still a lot compared to the actual number of fails which is 3.
+			grep -q -e "Failed Tests" \
+				"${T}/test_results_2_${ABI}.txt" \
+				&& (( ${n_failed} > 42 )) && die "The LLVM defaults (s_idx=2, wo=0, ph=0) failure should be <= 42 cutoff. (${ABI})"
+			# 42 is used because we didn't test all the features.  Ideally, this number is 0.
+			# Slack is given because in reality, unit tests can be broken.
+			# TODO:  Find tests that trigger UB FAIL and Peephole FAIL below
+			grep -q -e "Failed Tests" \
+				"${T}/test_results_4_${ABI}.txt" \
+				&& ewarn "The undefined behavior tests (s_idx=2, wo=1, ph=0) should have failed. (${ABI})"
+			grep -q -e "Failed Tests" \
+				"${T}/test_results_6_${ABI}.txt" \
+				&& ewarn "The undefined behavior and peephole tests (s_idx=2, wo=1, ph=1) should have failed. (${ABI})"
+		fi
+	else
+		cmake_build check
+	fi
 }
 
 src_install() {
@@ -494,14 +1067,28 @@ src_install() {
 	mv "${ED}"/usr/include "${ED}"/usr/lib/llvm/${SLOT}/include || die
 }
 
-multilib_src_install() {
+_install() {
 	DESTDIR=${D} cmake_build install-distribution
 
 	# move headers to /usr/include for wrapping
 	rm -rf "${ED}"/usr/include || die
-	mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
+	if use souper ; then
+		if (( ${s_idx} == 7 )) ; then
+			mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
+			LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
+		elif (( ${s_idx} % 2 == 0 )) ; then
+			mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
+		else
+			mv "${ED}"/usr/lib/llvm/prev/include "${ED}"/usr/include || die
+		fi
+	else
+		mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
+		LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
+	fi
+}
 
-	LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
+multilib_src_install() {
+	_install
 }
 
 multilib_src_install_all() {
