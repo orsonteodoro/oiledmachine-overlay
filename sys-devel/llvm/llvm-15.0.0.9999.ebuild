@@ -209,6 +209,7 @@ src_unpack() {
 		EGIT_REPO_URI="${EGIT_REPO_URI_LLVM_TEST_SUITE}" \
 		EGIT_BRANCH="${EGIT_BRANCH_LLVM_TEST_SUITE}" \
 		EGIT_COMMIT="${EGIT_COMMIT_LLVM_TEST_SUITE}" \
+		EGIT_CHECKOUT_DIR="${WORKDIR}/test-suite" \
 		git-r3_checkout
 	fi
 }
@@ -738,9 +739,9 @@ _configure() {
 	fi
 
 	if [[ "${PGO_PHASE}" =~ "pgt_test_suite" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
 		cd "${BUILD_DIR}" || die
 		cmake_src_configure
 		CMAKE_USE_DIR="${WORKDIR}/llvm"
@@ -773,27 +774,27 @@ _compile() {
 	if [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
 		cmake_build distribution
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
 		cd "${BUILD_DIR}" || die
 		# Profile the PGI step
 		cmake_build
 		BUILD_DIR="${BUILD_DIR_BAK}"
 		cd "${BUILD_DIR}" || die
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
 		cd "${BUILD_DIR}" || die
 		cmake_build check-lit
 		"${BUILD_DIR_BAK}/bin/llvm-lit" .
 		BUILD_DIR="${BUILD_DIR_BAK}"
 		cd "${BUILD_DIR}" || die
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/llvm-test-suite"
+		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/llvm-test-suite_build_${ABI}"
+		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
 		cd "${BUILD_DIR}" || die
 		# Profile the PGO step
 		cmake_build

@@ -71,7 +71,8 @@
 	An environment variable named EGIT_COMMIT_LLVM_TEST_SUITE can be used to
 	checkout the exact commit for the llvm-test-suite repo for the branch
 	with the same major version.  By default it is set to the latest
-	commit of that branch.
+	commit of that branch in live ebuilds and to the same point release
+	in point releases.
 
 
 	BOLT notes:
