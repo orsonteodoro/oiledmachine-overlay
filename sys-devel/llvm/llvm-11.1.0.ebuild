@@ -31,12 +31,12 @@ SLOT="$(ver_cut 1)"
 KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="debug doc -dump exegesis +gold libedit +libffi ncurses test xar xml z3
 	kernel_Darwin ${ALL_LLVM_TARGETS[*]}"
-IUSE+=" bootstrap lto pgo pgo_build_self pgo_trainer_test_suite souper r3"
+IUSE+=" bootstrap lto pgo pgo_trainer_build_self pgo_trainer_test_suite souper r3"
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+="
 	bootstrap? ( !souper )
-	pgo? ( || ( pgo_build_self pgo_trainer_test_suite ) )
-	pgo_build_self? ( pgo )
+	pgo? ( || ( pgo_trainer_build_self pgo_trainer_test_suite ) )
+	pgo_trainer_build_self? ( pgo )
 	pgo_trainer_test_suite? ( pgo )
 	souper? (
 		!z3
@@ -134,7 +134,7 @@ eerror "Testing with souper requires >=sys-devel/clang-${SLOT}:${SLOT}[${abi_pai
 		fi
 	fi
 	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)"
-	use pgo_build_self && ewarn "The pgo_build_self USE flag has not been tested."
+	use pgo_trainer_build_self && ewarn "The pgo_trainer_build_self USE flag has not been tested."
 	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite USE flag has not been tested."
 }
 
