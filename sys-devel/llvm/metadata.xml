@@ -53,6 +53,10 @@
 
 	PGO notes:
 
+	The motiviation for PGOing this library is that it serves as the backend
+	to clang containing optimization portion for the IR (Intermediate
+	Representation).
+
 	The correct steps to building a PGO optimized build:
 
 		1. Build llvm-${PV}[bootstrap,-pgo,abi0,...,abiN]
