@@ -461,7 +461,7 @@ _configure() {
 		fi
 	elif [[ "${PGO_PHASE}" == "pgv" ]] ; then
 		setup_gcc
-	elif [[ "${PGO_PHASE}" =~ ("pgi"|"pgt"|"pgo") ]] ; then
+	elif [[ "${PGO_PHASE}" =~ ("pgi"|"pgt"|"pgo"|"bolt") ]] ; then
 		setup_clang
 	fi
 
