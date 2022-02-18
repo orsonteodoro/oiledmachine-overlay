@@ -85,7 +85,7 @@ llvm.org_set_globals
 #if [[ ${PV} == *.9999 ]] ; then
 EGIT_REPO_URI_LLVM_TEST_SUITE="https://github.com/llvm/llvm-test-suite.git"
 EGIT_BRANCH_LLVM_TEST_SUITE="release/${SLOT}.x"
-EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-${EGIT_BRANCH_LLVM_TEST_SUITE}}"
+EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-HEAD}"
 #else
 #SRC_URI+="
 #pgo_trainer_test_suite? (
@@ -198,10 +198,12 @@ src_unpack() {
 #	if use pgo_trainer_test_suite && [[ ${PV} == *.9999 ]] ; then
 	if use pgo_trainer_test_suite ; then
 		EGIT_REPO_URI="${EGIT_REPO_URI_LLVM_TEST_SUITE}" \
-		EGIT_COMMIT="${EGIT_BRANCH_LLVM_TEST_SUITE}" \
+		EGIT_BRANCH="${EGIT_BRANCH_LLVM_TEST_SUITE}" \
+		EGIT_COMMIT="${EGIT_COMMIT_LLVM_TEST_SUITE}" \
 		git-r3_fetch
 		EGIT_REPO_URI="${EGIT_REPO_URI_LLVM_TEST_SUITE}" \
-		EGIT_COMMIT="${EGIT_BRANCH_LLVM_TEST_SUITE}" \
+		EGIT_BRANCH="${EGIT_BRANCH_LLVM_TEST_SUITE}" \
+		EGIT_COMMIT="${EGIT_COMMIT_LLVM_TEST_SUITE}" \
 		git-r3_checkout
 	fi
 }
