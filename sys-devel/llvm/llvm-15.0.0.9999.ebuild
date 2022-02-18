@@ -1071,8 +1071,8 @@ _test() {
 		# Correctness table expectations based on test-disable-peepholes.sh comments
 		#	wo	ph	expected result
 		#	0	0	pass (llvm default)
-		#	1	0	fail on undefined behavior tests (souper default)
 		#	0	1	? [guestimated fail for peephole tests]
+		#	1	0	fail on undefined behavior tests (souper default)
 		#	1	1	fail on peephole-like tests [and possibly undefined behavior tests]
 		cd "${BUILD_DIR}" || die
 		unset LD_LIBRARY_PATH # Use RUNPATH
