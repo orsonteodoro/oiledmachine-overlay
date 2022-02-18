@@ -102,7 +102,7 @@ EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-HEAD}"
 # llvm-test-suite tarball is disabled until download problems are resolved.
 
 pkg_setup() {
-	pkg_setup
+	python_setup
 	if [[ "${CC}" == "clang" ]] ; then
 		if /usr/lib/llvm/${SLOT}/bin/clang-${SLOT} --help \
 			| grep "symbol lookup error" ; then
@@ -121,6 +121,10 @@ eerror "the pgo USE flag."
 eerror
 		die
 	fi
+	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)"
+	use pgo_build_self && ewarn "The pgo_build_self USE flag has not been tested."
+	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite USE flag has not been tested."
+	use souper && ewarn "The forward port of disable-peepholes-v07.diff is in testing."
 }
 
 python_check_deps() {
@@ -249,7 +253,6 @@ src_prepare() {
 	llvm.org_src_prepare
 
 	if use souper ; then
-		ewarn "The forward port of disable-peepholes-v07.diff is in testing."
 		cd "${WORKDIR}" || die
 		eapply "${FILESDIR}/llvm-14.0.0.9999-disable-peepholes-v07.diff"
 		if use test ; then
