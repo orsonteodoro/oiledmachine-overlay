@@ -73,6 +73,31 @@
     proper CFI build.
 
 
+    PGO notes:
+
+    Choose one of the correct steps to building a PGO optimized build:
+
+    As clang[-bootstrap] USE flag:
+
+      1. Build llvm-${PV}[bootstrap,-pgo,abi0,...,abiN]
+      2. Build lld
+      3. Build clang-${PV}[-pgo,abi0,...,abiN]
+      4. Build llvm-${PV}[-bootstrap,pgo,pgo_trainer...]
+      5. Build clang-${PV}[-bootstrap,pgo,abi0,...,abiN,pgo_trainer...]
+
+    As clang[+bootstrap] USE flag:
+
+      1. Build llvm-${PV}[bootstrap,-pgo,abi0,...,abiN]
+      2. Build lld
+      2. Build clang-${PV}[bootstrap,pgo,abi0,...,abiN,pgo_trainer...]
+      3. Build llvm-${PV}[-bootstrap,pgo,pgo_trainer...]
+
+    Both llvm-${PV} and clang-${PV} have matching ${PV}s (or commits) within the
+      same slots to avoid missing symbols.
+    The abi0, ..., abiN set must match in llvm-${PV} and in clang-${PV}.
+    PGO trainer(s) must be chosen that reflect typical use.
+
+
     LTO+PGO+BOLT (ebuild mod in development)
 
     * clang-14.0.0.9999-r1 -- experimental modded ebuild with LTO+PGO+BOLT
@@ -110,6 +135,11 @@ sys-devel/clang:14 llvm-14-commit.conf
   the commits with a green checkmark in the commit history:
   https://github.com/llvm/llvm-project/commit/ADD_40_DIGIT_COMMIT_HERE
 
+  For the 9999 ebuilds, an environment variable named
+  EGIT_COMMIT_LLVM_TEST_SUITE can be used to checkout the exact commit for the
+  llvm-test-suite repo.  By default it is set to the latest commit for
+  that major version branch.
+
   References:
 [1] https://research.facebook.com/publications/bolt-a-practical-binary-optimizer-for-data-centers-and-beyond/
   </longdescription>
@@ -119,6 +149,8 @@ sys-devel/clang:14 llvm-14-commit.conf
       may take 5 days to complete on slower machines, but upstream claims it
       may result in around 20-50% runtime performance gain.[1]
     </flag>
+    <flag name="bootstrap">Use the upstream recommendations for bootstrapping.
+     </flag>
     <flag name="default-compiler-rt">Use compiler-rt instead of libgcc as the
       default rtlib for clang</flag>
     <flag name="default-libcxx">Use libc++ instead of libstdc++ as the default
