@@ -172,6 +172,10 @@ eerror "the pgo USE flag."
 eerror
 		die
 	fi
+
+	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)"
+	use pgo_trainer_build_self && ewarn "The pgo_trainer_build_self has not been tested or is in development."
+	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite has not been tested or is in development."
 }
 
 src_unpack() {
