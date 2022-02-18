@@ -25,7 +25,7 @@ IUSE="+binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar
 	z3 kernel_Darwin"
 IUSE+=" bolt bootstrap lto pgo pgo_build_self pgo_trainer_test_suite souper r3"
 REQUIRED_USE="
-	bootstrap? ( !pgo !souper )
+	bootstrap? ( !souper )
 	pgo? ( || ( pgo_build_self pgo_trainer_test_suite ) )
 	pgo_build_self? ( pgo )
 	pgo_trainer_test_suite? ( pgo )
@@ -95,6 +95,28 @@ EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-HEAD}"
 #"
 #fi
 # llvm-test-suite tarball is disabled until download problems are resolved.
+
+pkg_setup() {
+	pkg_setup
+	if [[ "${CC}" == "clang" ]] ; then
+		if /usr/lib/llvm/${SLOT}/bin/clang-${SLOT} --help \
+			| grep "symbol lookup error" ; then
+eerror
+eerror "The bootstrap USE flag must be used or set CC=gcc and CXX=g++"
+eerror
+			die
+		fi
+	fi
+	if [[ -z "${CC}" || "${CC}" == "gcc" ]] && use pgo && ! use bootstrap; then
+eerror
+eerror "PGO with bootstrap disable requires clang."
+eerror
+eerror "Enable the bootstrap USE flag to continue or disable"
+eerror "the pgo USE flag."
+eerror
+		die
+	fi
+}
 
 python_check_deps() {
 	use doc || return 0
@@ -465,9 +487,11 @@ _configure() {
 		einfo "CXX=${CXX}"
 		(( ${s_idx} == 7 )) && unset LD_LIBRARY_PATH
 		if use test ; then
-			ldd /usr/lib/llvm/${SLOT}/bin/clang || die
+			ldd /usr/lib/llvm/${SLOT}/bin/clang \
+				|| die "Tests require a clang without symbol problems."
 		else
-			ldd /usr/lib/llvm/${SLOT}/bin/clang || ewarn "Missing clang required for Souper"
+			ldd /usr/lib/llvm/${SLOT}/bin/clang \
+				|| ewarn "Missing clang required for Souper"
 		fi
 	fi
 	local ffi_cflags ffi_ldflags
@@ -488,6 +512,22 @@ _configure() {
 	filter-flags \
 		'-flto*' \
 		'-fuse-ld*'
+
+	if use souper && (( ${s_idx} != 7 )) ; then
+		:;
+	elif [[ "${PGO_PHASE}" == "pg0" ]] ; then
+		if use bootstrap ; then
+			setup_gcc
+		elif [[ "${CC}" == "clang" ]] ; then
+			setup_clang
+		else
+			setup_gcc
+		fi
+	elif [[ "${PGO_PHASE}" == "pgv" ]] ; then
+		setup_gcc
+	elif [[ "${PGO_PHASE}" =~ ("pgi"|"pgt"|"pgo") ]] ; then
+		setup_clang
+	fi
 
 	# workaround BMI bug in gcc-7 (fixed in 7.4)
 	# https://bugs.gentoo.org/649880
@@ -690,8 +730,8 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -701,8 +741,8 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -968,21 +1008,12 @@ _build_abi() {
 			_souper_test
 		fi
 
-		if use bootstrap ; then
-			# Build against vanilla unpatched.
-			setup_gcc
-		fi
-
 		# Build with build_deps.sh settings
 		wo=1
 		ph=0
 		s_idx=7
 		_build_final
 	else
-		if use bootstrap ; then
-			# Build against vanilla unpatched.
-			setup_gcc
-		fi
 		_build_final
 	fi
 }
