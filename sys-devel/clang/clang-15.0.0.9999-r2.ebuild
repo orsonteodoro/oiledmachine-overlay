@@ -163,7 +163,7 @@ ewarn
 
 	if [[ "${CC}" == "clang" ]] ; then
 		local clang_path="clang-${SLOT}"
-		if [[ -e "${clang_path}" ]] && "${clang_path}" --help \
+		if which "${clang_path}" 2>/dev/null 1>/dev/null && "${clang_path}" --help \
 			| grep "symbol lookup error" ; then
 eerror
 eerror "The bootstrap USE flag must be used or set CC=gcc and CXX=g++"
