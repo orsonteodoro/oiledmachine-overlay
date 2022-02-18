@@ -104,7 +104,8 @@ EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-HEAD}"
 pkg_setup() {
 	python_setup
 	if [[ "${CC}" == "clang" ]] ; then
-		if /usr/lib/llvm/${SLOT}/bin/clang-${SLOT} --help \
+		local clang_path="/usr/lib/llvm/${SLOT}/bin/clang-${SLOT}"
+		if [[ -e "${clang_path}" ]] && "${clang_path}" --help \
 			| grep "symbol lookup error" ; then
 eerror
 eerror "The bootstrap USE flag must be used or set CC=gcc and CXX=g++"
@@ -120,6 +121,15 @@ eerror "Enable the bootstrap USE flag to continue or disable"
 eerror "the pgo USE flag."
 eerror
 		die
+	fi
+	if use test ; then
+		if use souper && ! has_version ">=sys-devel/clang-${SLOT}:${SLOT}[${MULTILIB_USEDEP}]" ; then
+			local abi_pairs=($(multilib_get_enabled_abi_pairs))
+			abi_pairs=${abi_pairs[@]%.*}
+			abi_pairs=${abi_pairs// /,}
+eerror "Testing with souper requires >=sys-devel/clang-${SLOT}:${SLOT}[${abi_pairs}]"
+			die
+		fi
 	fi
 	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)"
 	use pgo_build_self && ewarn "The pgo_build_self USE flag has not been tested."
@@ -494,13 +504,6 @@ _configure() {
 		einfo "CC=${CC}"
 		einfo "CXX=${CXX}"
 		(( ${s_idx} == 7 )) && unset LD_LIBRARY_PATH
-		if use test ; then
-			ldd /usr/lib/llvm/${SLOT}/bin/clang \
-				|| die "Tests require a clang without symbol problems."
-		else
-			ldd /usr/lib/llvm/${SLOT}/bin/clang \
-				|| ewarn "Missing clang required for Souper"
-		fi
 	fi
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
