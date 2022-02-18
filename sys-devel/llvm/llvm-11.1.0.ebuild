@@ -7,7 +7,7 @@ EAPI=7
 PYTHON_COMPAT=( python3_{7..9} )
 inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 \
 	toolchain-funcs
-inherit git-r3
+inherit flag-o-matic git-r3 ninja-utils
 
 DESCRIPTION="Low Level Virtual Machine"
 HOMEPAGE="https://llvm.org/"
@@ -101,7 +101,7 @@ EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-llvmorg-${PV/_/-}}"
 #)
 #"
 #fi
-# llvm-test-suite tarball is disabled until download problems resolved.
+# llvm-test-suite tarball is disabled until download problems are resolved.
 
 python_check_deps() {
 	use doc || return 0
@@ -217,6 +217,7 @@ src_unpack() {
 		git-r3_checkout
 	fi
 }
+
 src_prepare() {
 	# disable use of SDK on OSX, bug #568758
 	sed -i -e 's/xcrun/false/' utils/lit/lit/util.py || die
@@ -228,6 +229,7 @@ src_prepare() {
 	check_live_ebuild
 
 	llvm.org_src_prepare
+
 	if use souper ; then
 		cd "${WORKDIR}" || die
 		eapply "${FILESDIR}/llvm-11.1.0-disable-peepholes-v03.diff"
@@ -423,15 +425,9 @@ _configure() {
 		eerror
 		eerror "PGO requires >=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]"
 		eerror
-		eerror "The correct steps to PGOing:"
+		eerror "For correct steps to PGOing see the metadata.xml or"
 		eerror
-		eerror "1.  Build =${P}[bootstrap,-pgo,abi0,...,abiN]"
-		eerror "2.  Build ~clang-${PV}[abi0,...,abiN]"
-		eerror "3.  Build =${P}[-bootstrap,pgo,pgo_trainer_...]"
-		eerror
-		eerror "Both llvm and clang must have the same versions within the same slot to avoid missing symbols."
-		eerror "Both llvm and clang have the same abi0, ..., abiN."
-		eerror "PGO trainer(s) must be chosen that reflects typical use."
+		eerror "  \`epkginfo -x ${PN}::oiledmachine-overlay\`"
 		eerror
 		die
 	fi
@@ -683,14 +679,27 @@ _configure() {
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
 		)
-	elif [[ "${PGO_PHASE}" =~ "pgt_test_suite" ]] ; then
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
+			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
 			-DTEST_SUITE_BENCHMARKING_ONLY=ON
+			-DTEST_SUITE_PROFILE_GENERATE=ON
+			-DTEST_SUITE_RUN_TYPE=Train
+		)
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
+		mycmakeargs+=(
+			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
+			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+			-DLLVM_BUILD_INSTRUMENTED=OFF
+			-DLLVM_ENABLE_LTO=Off
+			-DLLVM_USE_LINKER=lld
+			-DTEST_SUITE_PROFILE_GENERATE=OFF
+			-DTEST_SUITE_PROFILE_USE=ON
+			-DTEST_SUITE_RUN_TYPE=ref
 		)
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
@@ -713,7 +722,7 @@ _configure() {
 			)
 		elif [[ -z "${CC}" || "${CC}" =~ "gcc" ]] ; then
 			mycmakeargs+=(
-				-DLLVM_ENABLE_LTO=$(usex lto "Full" "Off")
+				-DLLVM_ENABLE_LTO=$(usex lto "On" "Off")
 			)
 			if has_version "sys-devel/binutils[gold,plugins]" ; then
 				mycmakeargs+=( -DLLVM_USE_LINKER=gold )
@@ -727,6 +736,7 @@ _configure() {
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		BUILD_DIR_BAK="${BUILD_DIR}"
 		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
+		mkdir -p "${BUILD_DIR}" || die
 		cd "${BUILD_DIR}" || die
 		cmake_src_configure
 		CMAKE_USE_DIR="${WORKDIR}/llvm"
@@ -737,6 +747,7 @@ _configure() {
 	cmake_src_configure
 
 	multilib_is_native_abi && check_distribution_components
+	cd "${BUILD_DIR}" || die
 }
 
 declare -Ax EMESSAGE_COMPILE=(
@@ -771,6 +782,7 @@ _compile() {
 		cd "${BUILD_DIR}" || die
 		cmake_build check-lit
 		"${BUILD_DIR_BAK}/bin/llvm-lit" .
+		_cmake_clean
 		BUILD_DIR="${BUILD_DIR_BAK}"
 		cd "${BUILD_DIR}" || die
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then

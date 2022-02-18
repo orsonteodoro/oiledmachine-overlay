@@ -57,16 +57,28 @@
 	to clang containing optimization portion for the IR (Intermediate
 	Representation).
 
-	The correct steps to building a PGO optimized build:
+	Choose one of the correct steps to building a PGO optimized build:
 
-		1. Build llvm-${PV}[bootstrap,-pgo,abi0,...,abiN]
-		2. Build clang-${PV}[abi0,...,abiN]
-		3. Build llvm-${PV}[-bootstrap,pgo,pgo_trainer...]
+	As clang[-bootstrap] USE flag:
+
+	1. emerge -1 =llvm-${PV}[bootstrap,-pgo,abi0,...,abiN]
+	2. emerge -1 lld
+	3. emerge -1 =clang-${PV}[-pgo,abi0,...,abiN]
+	4. emerge -1 =llvm-${PV}[-bootstrap,pgo,pgo_trainer...]
+	5. emerge -1 =clang-${PV}[-bootstrap,pgo,abi0,...,abiN,pgo_trainer...]
+
+	As clang[+bootstrap] USE flag:
+
+	1. emerge -1 =llvm-${PV}[bootstrap,-pgo,abi0,...,abiN]
+	2. emerge -1 lld
+	3. emerge -1 =clang-${PV}[bootstrap,pgo,abi0,...,abiN,pgo_trainer...]
+	4. emerge -1 =llvm-${PV}[-bootstrap,pgo,pgo_trainer...]
 
 	Both llvm-${PV} and clang-${PV} have matching ${PV}s (or commits) within the
-		same slots to avoid missing symbols.
+	  same slots to avoid missing symbols.
 	The abi0, ..., abiN set must match in llvm-${PV} and in clang-${PV}.
 	PGO trainer(s) must be chosen that reflect typical use.
+
 
 	An environment variable named EGIT_COMMIT_LLVM_TEST_SUITE can be used to
 	checkout the exact commit for the llvm-test-suite repo for the branch
