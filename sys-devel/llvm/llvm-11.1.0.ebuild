@@ -7,6 +7,7 @@ EAPI=7
 PYTHON_COMPAT=( python3_{7..9} )
 inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 \
 	toolchain-funcs
+inherit git-r3
 
 DESCRIPTION="Low Level Virtual Machine"
 HOMEPAGE="https://llvm.org/"

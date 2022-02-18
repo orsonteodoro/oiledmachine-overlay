@@ -59,9 +59,15 @@
 		2. Build clang-${PV}[abi0,...,abiN]
 		3. Build llvm-${PV}[-bootstrap,pgo,pgo_trainer...]
 
-	Both llvm-${PV} and clang-${PV} have matching ${PV}s (or commits) within the same slots to avoid missing symbols.
-	Both abi0, ..., abiN match in llvm-${PV} and clang-${PV}.
+	Both llvm-${PV} and clang-${PV} have matching ${PV}s (or commits) within the
+		same slots to avoid missing symbols.
+	The abi0, ..., abiN set must match in llvm-${PV} and in clang-${PV}.
 	PGO trainer(s) must be chosen that reflect typical use.
+
+	An environment variable named EGIT_COMMIT_LLVM_TEST_SUITE can be used to
+	checkout the exact commit for the llvm-test-suite repo for the branch
+	with the same major version.  By default it is set to the latest
+	commit of that branch.
 
 
 	BOLT notes:
