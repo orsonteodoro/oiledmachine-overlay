@@ -448,7 +448,8 @@ _configure() {
 		'-flto*' \
 		'-fuse-ld*' \
 		'-f*reorder-blocks-and-partition' \
-		'-Wl,--emit-relocs'
+		'-Wl,--emit-relocs' \
+		'-Wl,-q'
 
 	if [[ "${PGO_PHASE}" == "pg0" ]] ; then
 		if use bootstrap ; then
