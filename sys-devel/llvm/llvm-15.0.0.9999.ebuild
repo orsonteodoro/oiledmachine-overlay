@@ -104,7 +104,7 @@ EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-HEAD}"
 pkg_setup() {
 	python_setup
 	if [[ "${CC}" == "clang" ]] ; then
-		local clang_path="/usr/lib/llvm/${SLOT}/bin/clang-${SLOT}"
+		local clang_path="clang-${SLOT}"
 		if [[ -e "${clang_path}" ]] && "${clang_path}" --help \
 			| grep "symbol lookup error" ; then
 eerror
