@@ -155,6 +155,7 @@ the metadata.xml.
 * media-gfx/blender (WIP)
 * net-libs/nodejs
 * sys-devel/clang (WIP)
+* sys-devel/llvm (WIP)
 * sys-kernel/ot-sources
 * sys-kernel/genkernel
 * sys-libs/zlib
