@@ -1134,6 +1134,8 @@ _test() {
 
 src_install() {
 	if use bolt-prepare ; then
+		# For BOLT requirements, see
+# https://github.com/llvm/llvm-project/tree/main/bolt#input-binary-requirements
 		export STRIP="/bin/true"
 	fi
 	local MULTILIB_CHOST_TOOLS=(
@@ -1240,6 +1242,61 @@ _bolt_optimize_lib() {
 	# TODO: complete stripping debug symbols
 }
 
+strip_package() {
+	if readelf -S "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM.so" 2>/dev/null \
+		| grep -F -e ".comment" ; then
+		einfo "${PN} is already stripped"
+		return
+	fi
+	# Remove debug symbols
+	local STRIP
+	local RANDLIB
+	if [[ "${CC}" == "clang" ]] ; then
+		STRIP="llvm-strip"
+		RANDLIB="llvm-ranlib"
+	else
+		STRIP="strip"
+		RANDLIB="ranlib"
+	fi
+	# Keep in sync with:
+	# https://github.com/gentoo/portage/blob/master/bin/estrip#L133
+	local strip_args=(
+		--strip-unneeded
+		-N __gentoo_check_ldflags__
+		-R .comment
+		-R .GCC.command.line
+		-R .note.gnu.gold-version
+	)
+
+	einfo "Stripping package.  Please wait."
+	local f
+	for f in $(cat /var/db/pkg/${PN}/${PV}/CONTENTS | cut -f 2 -d " ") ; do
+		f=$(readlink -f "${f}")
+		local is_exe=0
+		local is_so=0
+		local is_a=0
+		local is_o=0
+		local is_writeable=0 # for prefix
+		[[ ! -w "${f}" ]] && is_writeable=1 && chmod u+w "${f}"
+		# Keep in sync with:
+		# https://github.com/gentoo/portage/blob/master/bin/estrip#L471
+		file "${f}" 2>/dev/null | grep -E -e "ELF.*relocatable" && is_o=1
+		file "${f}" 2>/dev/null | grep -E -e "ELF.*executable" && is_elf=1
+		file "${f}" 2>/dev/null | grep -E -e "ELF.*shared object" && is_so=1
+		file "${f}" 2>/dev/null | grep -E -e "ar archive" && is_a=1
+		if (( ${is_o} == 1 )) ; then
+			ewarn "Found .o file:  ${f}"
+		fi
+		if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
+			"${STRIP}" ${strip_args[@]} "${f}"
+		fi
+		if (( ${is_a} == 1 )) ; then
+			"${STRIP}" -g "${f}" && "${RANDLIB}" "${f}"
+		fi
+		(( ${is_writeable} == 1 )) && chmod u-w "${f}"
+	done
+}
+
 pkg_config() {
 	local llvm_used_commit
 	if [[ ${PV} == *.9999 ]] ; then
@@ -1257,5 +1314,6 @@ eerror "Missing clang-${SLOT}.yaml required for a BOLT optimized LLVM."
 	fi
 	local p=$(readlink -f /usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so)
 	[[ -e "${p}" ]] && _bolt_optimize_lib "${p}"
+	strip_package
 	# TODO:  Find a way to profile and optimize the non-default ABI
 }
