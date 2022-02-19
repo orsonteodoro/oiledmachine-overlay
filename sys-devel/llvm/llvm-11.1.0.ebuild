@@ -459,6 +459,8 @@ setup_clang() {
 }
 
 _configure() {
+	einfo "Called _configure()"
+	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
 	_cmake_clean
 	if use pgo && ! has_version ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]" ; then
 		eerror
