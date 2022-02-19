@@ -761,7 +761,6 @@ _configure() {
 			-DLLVM_PROFDATA_FILE="${T}/pgo-custom.profdata"
 			-DLLVM_USE_LINKER=lld
 		)
-	# llvm-bolt only does executables
 	elif [[ "${PGO_PHASE}" == "pg0" ]] ; then
 		if [[ "${CC}" =~ "clang" ]] ; then
 			mycmakeargs+=(

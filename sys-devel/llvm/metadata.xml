@@ -97,6 +97,21 @@
 	https://github.com/llvm/llvm-project/blob/main/bolt/docs/OptimizingClang.md
 
 
+	BOLT optimized builds steps:
+
+	1.  emerge -1 llvm-${PV}:${SLOT}[bolt,bolt-prepare]
+	2.  emerge -1 lld
+	3.  emerge -1 clang:${PV}:${SLOT}[bolt]
+	4.  emerge --config =llvm-${PV}
+
+	Both clang must be built with the same ${SLOT} as llvm, but the llvm backend
+	should be the same version or commit as the one used to build with clang.  BOLT
+	profiling is done within the clang package which it will generate a prof.data.
+	This prof.data is then used in step 4 to generate an optimized libLLVM.so.
+	libLLVM.so contains the binary code (or brains) used as the optimization backend
+	for clang.
+
+
 	disable-peepholes notes:
 
 	To obtain the default behavior as if disable-peepholes was not applied, one may
@@ -115,6 +130,7 @@
 			to improve CPU caching and branch prediction using execution
 			sampling data used to optimize code layout.  (EXPERIMENTAL)
 			</flag>
+		<flag name="bolt-prepare">BOLT prepare the LLVM library.</flag>
 		<flag name="bootstrap">Build against a vanilla unpatched compiler.  This
 			USE flag can be used to undo a broken build by avoiding a
 			possibly broken patched one or a broken LLVM lib build.</flag>

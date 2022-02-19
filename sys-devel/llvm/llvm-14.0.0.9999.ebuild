@@ -23,9 +23,10 @@ SLOT="$(ver_cut 1)"
 KEYWORDS=""
 IUSE="+binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar xml
 	z3 kernel_Darwin"
-IUSE+=" bolt bootstrap lto pgo pgo_trainer_build_self pgo_trainer_test_suite souper r3"
+IUSE+=" bolt bolt-prepare bootstrap lto pgo pgo_trainer_build_self pgo_trainer_test_suite souper r3"
 REQUIRED_USE="
 	bootstrap? ( !souper )
+	jemalloc? ( bolt )
 	pgo? ( || ( pgo_trainer_build_self pgo_trainer_test_suite ) )
 	pgo_trainer_build_self? ( pgo )
 	pgo_trainer_test_suite? ( pgo )
@@ -33,6 +34,7 @@ REQUIRED_USE="
 		!z3
 		test? ( debug )
 	)
+	tcmalloc? ( bolt )
 "
 RESTRICT="!test? ( test )"
 
@@ -48,11 +50,20 @@ RDEPEND="
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	z3? ( >=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
-	binutils-plugin? ( sys-libs/binutils-libs )"
+	binutils-plugin? ( sys-libs/binutils-libs )
+	bolt? (
+		jemalloc? ( dev-libs/jemalloc )
+		tcmalloc? ( dev-util/google-perftools )
+	)
+"
 BDEPEND="
 	dev-lang/perl
 	>=dev-util/cmake-3.16
 	sys-devel/gnuconfig
+	bolt? (
+		>=dev-util/perf-4.5
+		sys-devel/lld
+	)
 	kernel_Darwin? (
 		<sys-libs/libcxx-$(ver_cut 1-3).9999
 		>=sys-devel/binutils-apple-5.1
@@ -516,8 +527,11 @@ _configure() {
 	fi
 
 	filter-flags \
+		'-f*reorder-blocks-and-partition' \
 		'-flto*' \
-		'-fuse-ld*'
+		'-fuse-ld*' \
+		'-Wl,--emit-relocs' \
+		'-Wl,-q'
 
 	if use souper && (( ${s_idx} != 7 )) ; then
 		:;
@@ -533,6 +547,12 @@ _configure() {
 		setup_gcc
 	elif [[ "${PGO_PHASE}" =~ ("pgi"|"pgt"|"pgo") ]] ; then
 		setup_clang
+	fi
+
+	if use bolt-prepare ; then
+		append-flags -fno-reorder-blocks-and-partition
+		append-ldflags -fno-reorder-blocks-and-partition
+		append-ldflags -Wl,--emit-relocs
 	fi
 
 	# workaround BMI bug in gcc-7 (fixed in 7.4)
@@ -759,7 +779,6 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
 		"/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
-		append-ldflags -Wl,--emit-relocs
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
 			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
@@ -1113,6 +1132,9 @@ _test() {
 }
 
 src_install() {
+	if use bolt-prepare ; then
+		export STRIP="/bin/true"
+	fi
 	local MULTILIB_CHOST_TOOLS=(
 		/usr/lib/llvm/${SLOT}/bin/llvm-config
 	)
@@ -1173,4 +1195,63 @@ pkg_postinst() {
 	elog "packages:"
 	elog "  dev-python/pygments (for opt-viewer)"
 	elog "  dev-python/pyyaml (for all of them)"
+	if use bolt-prepare ; then
+		einfo
+		einfo "Run \`emerge --config =${P}\` to bolt optimize after emerging a bolt"
+		einfo "optimized clang."
+		einfo
+	fi
+}
+
+_bolt_optimize_lib() {
+	# From the unit test and issue 279, it should be possible to BOLT optimize .so files.
+	local f="${1}"
+	einfo "BOLTing ${f}"
+	local args=(
+		 "${f}"
+		-o "${f}.bolt"
+		-b "${EPREFIX}/usr/share/${PN}/${SLOT}/perf-data/clang-${SLOT}.yaml"
+		-reorder-blocks=cache+
+		-reorder-functions=hfsort+
+		-split-functions=3
+		-split-all-cold
+		-dyno-stats
+		-icf=1
+		-use-gnu-stack
+	)
+
+	if use jemalloc ; then
+		LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" llvm-bolt ${args[@]} || die
+	elif use tcmalloc ; then
+		if [[ -e "/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" ]] ; then
+			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" llvm-bolt ${args[@]} || die
+		else
+			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" llvm-bolt ${args[@]} || die
+		fi
+	else
+		llvm-bolt ${args[@]} || die
+	fi
+
+	mv "${f}{.bolt,}" || die
+	# TODO: complete stripping debug symbols
+}
+
+pkg_config() {
+	local llvm_used_commit
+	if [[ ${PV} == *.9999 ]] ; then
+		llvm_used_commit=$(cat ${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-commit)
+	fi
+	if [[ "${EGIT_VERSION}" != "${llvm_used_commit}" ]] ; then
+		ewarn
+		ewarn "Expected EGIT_VERSION:  ${llvm_used_commit}"
+		ewarn "Actual EGIT_VERSION:    ${EGIT_VERSION}"
+		ewarn
+	fi
+	if [[ ! -e "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/clang-${SLOT}.yaml" ]] ; then
+eerror "Missing clang-${SLOT}.yaml required for a BOLT optimized LLVM."
+		die
+	fi
+	local p=$(readlink -f /usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so)
+	[[ -e "${p}" ]] && _bolt_optimize_lib "${p}"
+	# TODO:  Find a way to profile and optimize the non-default ABI
 }
