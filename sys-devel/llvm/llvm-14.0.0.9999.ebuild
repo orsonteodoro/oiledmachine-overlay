@@ -25,6 +25,7 @@ IUSE="+binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar
 	z3 kernel_Darwin"
 IUSE+=" bolt bolt-prepare bootstrap lto pgo pgo_trainer_build_self pgo_trainer_test_suite souper r3"
 REQUIRED_USE="
+	bolt-prepare? ( bolt )
 	bootstrap? ( !souper )
 	jemalloc? ( bolt )
 	pgo? ( || ( pgo_trainer_build_self pgo_trainer_test_suite ) )
