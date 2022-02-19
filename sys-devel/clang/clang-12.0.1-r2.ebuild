@@ -111,6 +111,13 @@ EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-${EGIT_BRANCH_LLVM_T
 pkg_setup() {
 	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
 	python-single-r1_pkg_setup
+	if ! use bootstrap && ! has_version "clang:${SLOT}" ; then
+eerror
+eerror "Disabling the bootstrap USE flag requires a previous install of"
+eerror "clang:${SLOT}.  Enable the bootstrap USE flag to fix this problem."
+eerror
+		die
+	fi
 	if tc-is-gcc ; then
 		local gcc_slot=$(best_version "sys-devel/gcc" | cut -f 3- -d "-")
 		gcc_slot=$(ver_cut 1-3 ${gcc_slot})
@@ -372,11 +379,12 @@ is_late_stage() {
 }
 
 _cmake_clean() {
+	[[ ! -d "${BUILD_DIR}" ]] && return
 	cd "${BUILD_DIR}" || die
 	if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
-		eninja -t clean
+		[[ -e "build.ninja" ]] && eninja -t clean
 	else
-		emake clean
+		[[ -e "Makefile" ]] && emake clean
 	fi
 }
 
@@ -398,11 +406,7 @@ src_configure() { :; }
 _configure() {
 	einfo "Called _configure()"
 	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
-	if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
-		[[ -e "build.ninja" ]] && eninja -t clean
-	else
-		[[ -e "Makefile" ]] && emake clean
-	fi
+	_cmake_clean
 	local llvm_version=$(llvm-config --version) || die
 	local clang_version=$(ver_cut 1-3 "${llvm_version}")
 
@@ -670,6 +674,7 @@ _configure() {
 		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
 		mkdir -p "${BUILD_DIR}" || die
 		cd "${BUILD_DIR}" || die
+		[[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] && _cmake_clean
 		cmake_src_configure
 		CMAKE_USE_DIR="${WORKDIR}/llvm"
 		BUILD_DIR="${BUILD_DIR_BAK}"
@@ -727,7 +732,6 @@ _compile() {
 		cd "${BUILD_DIR}" || die
 		cmake_build check-lit
 		"${BUILD_DIR_BAK}/bin/llvm-lit" .
-		_cmake_clean
 		BUILD_DIR="${BUILD_DIR_BAK}"
 		cd "${BUILD_DIR}" || die
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
