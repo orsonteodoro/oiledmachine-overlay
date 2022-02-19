@@ -831,7 +831,6 @@ _configure() {
 			CMakeCache.txt ||
 		die "Incorrect version, did you update _LLVM_MASTER_MAJOR?"
 	multilib_is_native_abi && check_distribution_components
-	cd "${BUILD_DIR}" || die
 }
 
 declare -Ax EMESSAGE_COMPILE=(
@@ -843,8 +842,10 @@ declare -Ax EMESSAGE_COMPILE=(
 	[pgt_test_suite_opt]="Running PGO trainer:   test-suite optimization"
 	[pgo]="Building PGOed ${PN}"
 )
+
 _compile() {
 	einfo "Called _compile()"
+	cd "${BUILD_DIR}" || die
 	if [[ "${PGO_PHASE}" =~ ("pgv"|"pgi"|"pgt_"|"pgo") ]] ; then
 		use pgo && einfo "${EMESSAGE_COMPILE[${PGO_PHASE}]} for ${ABI}"
 	fi
@@ -1079,6 +1080,8 @@ src_compile() {
 src_test() { :; }
 
 _test() {
+	einfo "Called _test()"
+	cd "${BUILD_DIR}" || die
 	# respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
 	if use souper ; then
@@ -1163,6 +1166,8 @@ src_install() {
 }
 
 _install() {
+	einfo "Called _install()"
+	cd "${BUILD_DIR}" || die
 	DESTDIR=${D} cmake_build install-distribution
 
 	# move headers to /usr/include for wrapping
