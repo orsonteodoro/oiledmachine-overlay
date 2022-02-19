@@ -1200,6 +1200,9 @@ pkg_postinst() {
 		einfo "Run \`emerge --config =${P}\` to bolt optimize after emerging a bolt"
 		einfo "optimized clang."
 		einfo
+		einfo "See the metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
+		einfo "for instructions on a BOLT optimized ${PN} library."
+		einfo
 	fi
 }
 
