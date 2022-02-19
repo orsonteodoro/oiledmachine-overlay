@@ -27,7 +27,7 @@ SLOT="$(ver_cut 1)"
 #KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x64-macos"  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
 	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD ${ALL_LLVM_TARGETS[*]}"
-IUSE+=" bootstrap experimental hardened lto pgo pgo_trainer_build_self pgo_trainer_test_suite r3"
+IUSE+=" +bootstrap experimental hardened lto pgo pgo_trainer_build_self pgo_trainer_test_suite r3"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+="

@@ -150,7 +150,7 @@ sys-devel/clang:14 llvm-14-commit.conf
       may result in around 20-50% runtime performance gain.[1]
     </flag>
     <flag name="bootstrap">Use the upstream recommendations for bootstrapping.
-     </flag>
+      </flag>
     <flag name="default-compiler-rt">Use compiler-rt instead of libgcc as the
       default rtlib for clang</flag>
     <flag name="default-libcxx">Use libc++ instead of libstdc++ as the default

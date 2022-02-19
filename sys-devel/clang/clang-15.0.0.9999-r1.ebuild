@@ -20,7 +20,7 @@ SLOT="$(ver_cut 1)"
 #KEYWORDS=""  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
 	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD"
-IUSE+=" bolt bootstrap experimental hardened jemalloc lto pgo pgo_trainer_build_self pgo_trainer_test_suite tcmalloc r5"
+IUSE+=" bolt +bootstrap experimental hardened jemalloc lto pgo pgo_trainer_build_self pgo_trainer_test_suite tcmalloc r5"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
 	?? ( jemalloc tcmalloc )
