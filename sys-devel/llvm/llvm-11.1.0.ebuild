@@ -976,7 +976,7 @@ _build_final() {
 		_configure
 		_compile
 		_install
-		# Tests are already done in _souper_test().
+		! use souper && use test && _test
 	else
 		PGO_PHASE="pg0"
 		_configure
