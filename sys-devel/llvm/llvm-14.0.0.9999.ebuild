@@ -1300,7 +1300,7 @@ strip_package() {
 pkg_config() {
 	local llvm_used_commit
 	if [[ ${PV} == *.9999 ]] ; then
-		llvm_used_commit=$(cat ${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-commit)
+		llvm_used_commit=$(cat "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-commit")
 	fi
 	if [[ "${EGIT_VERSION}" != "${llvm_used_commit}" ]] ; then
 		ewarn
