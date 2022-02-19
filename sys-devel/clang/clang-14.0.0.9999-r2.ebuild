@@ -1003,14 +1003,14 @@ multilib_src_install_all() {
 		[[ -e "${llvm_so_path}" ]] || die
 		local llvm_so_sha256=$(sha256sum "${llvm_so_path}" | cut -f 1 -d " ")
 		echo "${llvm_so_sha256}" \
-			> "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-fingerprint-${llvm_so_sha256:0:7}" || die
+			> "${D}/${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-fingerprint-${llvm_so_sha256:0:7}" || die
 		local llvm_best_version=$(best_version "sys-devel/llvm:${SLOT}")
 		echo "${llvm_best_version}" | sed -e "s|sys-devel/llvm-||g" \
-			> "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-version" || die
+			> "${D}/${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-version" || die
 		if [[ "${llvm_best_version}" =~ ".9999" ]] ; then
 			local commit_id=$(bzcat $(realpath /var/db/pkg/${llvm_best_version}/environment.bz2) \
 				| grep -e "-x EGIT_VERSION" | cut -f 2 -d "\"")
-			echo "${commit_id}" > "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-commit" || die
+			echo "${commit_id}" > "${D}/${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-commit" || die
 		fi
 	fi
 }
