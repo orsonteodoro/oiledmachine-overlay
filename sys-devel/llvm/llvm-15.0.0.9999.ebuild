@@ -1285,10 +1285,10 @@ strip_package() {
 		[[ ! -w "${f}" ]] && is_writeable=1 && chmod u+w "${f}"
 		# Keep in sync with:
 		# https://github.com/gentoo/portage/blob/master/bin/estrip#L471
-		file "${f}" 2>/dev/null | grep -E -e "ELF.*relocatable" && is_o=1
-		file "${f}" 2>/dev/null | grep -E -e "ELF.*executable" && is_exe=1
-		file "${f}" 2>/dev/null | grep -E -e "ELF.*shared object" && is_so=1
-		file "${f}" 2>/dev/null | grep -E -e "ar archive" && is_a=1
+		file "${f}" 2>/dev/null | grep -q -E -e "ELF.*relocatable" && is_o=1
+		file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
+		file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
+		file "${f}" 2>/dev/null | grep -q -E -e "ar archive" && is_a=1
 		if (( ${is_o} == 1 )) ; then
 			ewarn "Found .o file:  ${f}"
 		fi
