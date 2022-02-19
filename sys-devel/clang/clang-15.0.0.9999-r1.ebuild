@@ -994,7 +994,8 @@ multilib_src_install_all() {
 
 	if use bolt ; then
 		# Save the BOLT profile to BOLT optimize the libraries in the sys-devel/llvm package.
-		dodir /usr/share/${PN}/${SLOT}/bolt-profile
+		local bolt_profile_dir="/usr/share/${PN}/${SLOT}/bolt-profile"
+		dodir "${bolt_profile_dir}"
 		doins "${BUILD_DIR}/perf.data"
 		doins "${BUILD_DIR}/clang-${SLOT}.fdata"
 		doins "${BUILD_DIR}/clang-${SLOT}.yaml"
@@ -1004,14 +1005,14 @@ multilib_src_install_all() {
 		[[ -e "${llvm_so_path}" ]] || die
 		local llvm_so_sha256=$(sha256sum "${llvm_so_path}" | cut -f 1 -d " ")
 		echo "${llvm_so_sha256}" \
-			> "${D}/${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-fingerprint-${llvm_so_sha256:0:7}" || die
+			> "${D}/${EPREFIX}${bolt_profile_dir}/llvm-fingerprint-${llvm_so_sha256:0:7}" || die
 		local llvm_best_version=$(best_version "sys-devel/llvm:${SLOT}")
 		echo "${llvm_best_version}" | sed -e "s|sys-devel/llvm-||g" \
-			> "${D}/${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-version" || die
+			> "${D}/${EPREFIX}${bolt_profile_dir}/llvm-version" || die
 		if [[ "${llvm_best_version}" =~ ".9999" ]] ; then
 			local commit_id=$(bzcat $(realpath /var/db/pkg/${llvm_best_version}/environment.bz2) \
 				| grep -e "-x EGIT_VERSION" | cut -f 2 -d "\"")
-			echo "${commit_id}" > "${D}/${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-commit" || die
+			echo "${commit_id}" > "${D}/${EPREFIX}${bolt_profile_dir}/llvm-commit" || die
 		fi
 	fi
 }
