@@ -712,7 +712,6 @@ _configure() {
 	cmake_src_configure
 
 	multilib_is_native_abi && check_distribution_components
-	cd "${BUILD_DIR}" || die
 }
 
 _bolt_train() {
@@ -787,8 +786,10 @@ declare -Ax EMESSAGE_COMPILE=(
 	[pgo]="Building PGOed ${PN}"
 	[bolt]="Running BOLT trainer"
 )
+
 _compile() {
 	einfo "Called _compile()"
+	cd "${BUILD_DIR}" || die
 	if [[ "${PGO_PHASE}" =~ ("pgv"|"pgi"|"pgt_"|"pgo"|"bolt") ]] ; then
 		use pgo && einfo "${EMESSAGE_COMPILE[${PGO_PHASE}]} for ${ABI}"
 	fi
@@ -954,7 +955,10 @@ declare -Ax EMESSAGE_INSTALL=(
 	[pgi]="instrumented ${PN}"
 	[pgo]="PGOed ${PN}"
 )
+
 _install() {
+	einfo "Called _install()"
+	cd "${BUILD_DIR}" || die
 	DESTDIR=${D} cmake_build install-distribution
 
 	local slot
