@@ -443,11 +443,12 @@ bool_trans() {
 src_configure() { :; }
 
 _cmake_clean() {
+	[[ ! -d "${BUILD_DIR}" ]] && return
 	cd "${BUILD_DIR}" || die
 	if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
-		eninja -t clean
+		[[ -e "build.ninja" ]] && eninja -t clean
 	else
-		emake clean
+		[[ -e "Makefile" ]] && emake clean
 	fi
 }
 
@@ -476,6 +477,7 @@ setup_clang() {
 }
 
 _configure() {
+	_cmake_clean
 	if use pgo && ! has_version ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]" ; then
 		eerror
 		eerror "PGO requires >=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]"
@@ -811,6 +813,7 @@ _configure() {
 		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
 		mkdir -p "${BUILD_DIR}" || die
 		cd "${BUILD_DIR}" || die
+		[[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] && _cmake_clean
 		cmake_src_configure
 		CMAKE_USE_DIR="${WORKDIR}/llvm"
 		BUILD_DIR="${BUILD_DIR_BAK}"
@@ -858,7 +861,6 @@ _compile() {
 		cd "${BUILD_DIR}" || die
 		cmake_build check-lit
 		"${BUILD_DIR_BAK}/bin/llvm-lit" .
-		_cmake_clean
 		BUILD_DIR="${BUILD_DIR_BAK}"
 		cd "${BUILD_DIR}" || die
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
