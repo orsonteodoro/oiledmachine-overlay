@@ -405,12 +405,10 @@ src_configure() { :; }
 _configure() {
 	einfo "Called _configure()"
 	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
-	if [[ "${PGO_PHASE}" =~ ("pgi"|"pgt_build_self"|"pgt_test_suite"|"pgo"|"bolt") ]] ; then
-		if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
-			eninja -t clean
-		else
-			emake clean
-		fi
+	if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
+		[[ -e "build.ninja" ]] && eninja -t clean
+	else
+		[[ -e "Makefile" ]] && emake clean
 	fi
 	local llvm_version=$(llvm-config --version) || die
 	local clang_version=$(ver_cut 1-3 "${llvm_version}")
