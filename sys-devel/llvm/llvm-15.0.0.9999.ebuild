@@ -23,7 +23,7 @@ SLOT="$(ver_cut 1)"
 KEYWORDS=""
 IUSE="+binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar xml
 	z3 kernel_Darwin"
-IUSE+=" bolt bolt-prepare bootstrap jemalloc lto pgo pgo_trainer_build_self
+IUSE+=" bolt bolt-prepare +bootstrap jemalloc lto pgo pgo_trainer_build_self
 pgo_trainer_test_suite souper tcmalloc r4"
 REQUIRED_USE="
 	bolt-prepare? ( bolt )
