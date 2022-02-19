@@ -121,14 +121,16 @@ eerror
 			die
 		fi
 	fi
-	if [[ -z "${CC}" || "${CC}" == "gcc" ]] && use pgo && ! use bootstrap; then
+	if use pgo ; then
+		if ! has_version ">=clang-${PV}:${SLOT}" ; then
+# Many of these problems (extra ebuild code, overbuilding, overchecking) would"
+# have been avoided if this was a monolithic package.
 eerror
-eerror "PGO with bootstrap disable requires clang."
+eerror "PGO requires >=clang-${PV}:${SLOT} be installed because build scripts"
+eerror "can only use the clang PGO only compiler flags."
 eerror
-eerror "Enable the bootstrap USE flag to continue or disable"
-eerror "the pgo USE flag."
-eerror
-		die
+			die
+		fi
 	fi
 	if use test ; then
 		if use souper && ! has_version ">=sys-devel/clang-${SLOT}:${SLOT}[${MULTILIB_USEDEP}]" ; then
