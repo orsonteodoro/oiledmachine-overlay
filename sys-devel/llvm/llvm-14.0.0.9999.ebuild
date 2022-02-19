@@ -1270,7 +1270,7 @@ strip_package() {
 
 	einfo "Stripping package.  Please wait."
 	local f
-	for f in $(cat /var/db/pkg/${PN}/${PV}/CONTENTS | cut -f 2 -d " ") ; do
+	for f in $(cat /var/db/pkg/${CATEGORY}/${P}/CONTENTS | cut -f 2 -d " ") ; do
 		f=$(readlink -f "${f}")
 		local is_exe=0
 		local is_so=0
