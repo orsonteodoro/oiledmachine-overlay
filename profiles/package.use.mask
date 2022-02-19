@@ -158,6 +158,10 @@ sys-fs/ecryptfs-utils -suid
 # Hard USE mask removal dependent on unit tests in llvm-13
 sys-devel/souper llvm-15 llvm-14 llvm-13
 
-# For souper defaults
+# For souper defaults or assertions or testing
+sys-devel/clang -debug
+sys-devel/lld -debug
 sys-devel/llvm -debug
-
+sys-libs/compiler-rt -debug
+sys-libs/compiler-rt-sanitizers -debug
+sys-libs/libomp -debug
