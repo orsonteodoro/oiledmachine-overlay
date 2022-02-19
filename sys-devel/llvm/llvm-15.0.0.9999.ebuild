@@ -901,7 +901,6 @@ eerror
 		die
 	fi
 
-	ewarn "clang must be built and have the same commit or newer in the same slot to avoid missing symbols problems."
 	# Required to avoid missing symbols problem
 	if ! has_version ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]" ; then
 eerror
