@@ -142,6 +142,7 @@ sys-devel/clang:14 llvm-14-commit.conf
 
   References:
 [1] https://research.facebook.com/publications/bolt-a-practical-binary-optimizer-for-data-centers-and-beyond/
+[2] https://llvm.org/docs/HowToBuildWithPGO.html
   </longdescription>
   <use>
     <flag name="bolt">Build an optimized build that combines
@@ -161,7 +162,8 @@ sys-devel/clang:14 llvm-14-commit.conf
     <flag name="lto">Build with Link Time Optimization</flag>
     <flag name="jemalloc">Use jemalloc for better concurrency to improve
       processing time during the BOLT optimization phase</flag>
-    <flag name="pgo">Build with Profile Guided Optimization</flag>
+    <flag name="pgo">Build with Profile Guided Optimization which may
+      reduce compile times by 20%, with the PGOed llvm package.</flag>
     <flag name="pgo_trainer_build_self">Trains and generates a PGO profile by
       building the source code itself</flag>
     <flag name="pgo_trainer_test_suite">Runs the test-suite to build a
