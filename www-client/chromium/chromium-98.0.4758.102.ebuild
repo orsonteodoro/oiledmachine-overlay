@@ -1307,7 +1307,7 @@ _check_llvm_updated() {
 		fi
 		timestamp_type=0
 	else
-		einfo "Using LLVM_TIMESTAMP"
+		#einfo "Using LLVM_TIMESTAMP"
 		root_pkg_timestamp="${LLVM_TIMESTAMP}"
 		timestamp_type=1
 	fi
