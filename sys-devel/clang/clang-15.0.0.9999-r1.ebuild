@@ -847,38 +847,48 @@ src_compile() {
 	compile_abi() {
 		# See https://github.com/llvm/llvm-project/blob/main/bolt/docs/OptimizingClang.md#bootstrapping-clang-7-with-pgo-and-lto
 		if use pgo || use bolt ; then
-			if use bootstrap ; then
-				PGO_PHASE="pgv" # S1
+			if multilib_is_native_abi ; then
+				if use bootstrap ; then
+					PGO_PHASE="pgv" # S1
+					_configure
+					_compile
+					_install
+				fi
+				PGO_PHASE="pgi" # S2
 				_configure
 				_compile
 				_install
-			fi
-			PGO_PHASE="pgi" # S2
-			_configure
-			_compile
-			_install
-			if use pgt_trainer_build_self ; then
-				PGO_PHASE="pgt_build_self" # S2 upstream says without lto
+				local abis=($(multilib_get_enabled_abi_pairs))
+				local a
+				for a in ${abis[@]#*.} ; do
+					if use pgt_trainer_build_self && multilib_is_native_abi ; then
+						PGO_PHASE="pgt_build_self" # S2 upstream says without lto
+						_configure
+						_compile
+					fi
+					if use pgt_trainer_test_suite ; then
+						PGO_PHASE="pgt_test_suite_inst"
+						_configure
+						_compile
+						PGO_PHASE="pgt_test_suite_train"
+						_configure
+						_compile
+						PGO_PHASE="pgt_test_suite_opt"
+						_configure
+						_compile
+					fi
+				done
+				PGO_PHASE="pgo" # S2 upstream says with lto
 				_configure
 				_compile
-			fi
-			if use pgt_trainer_test_suite ; then
-				PGO_PHASE="pgt_test_suite_inst"
-				_configure
-				_compile
-				PGO_PHASE="pgt_test_suite_train"
-				_configure
-				_compile
-				PGO_PHASE="pgt_test_suite_opt"
-				_configure
-				_compile
-			fi
-			PGO_PHASE="pgo" # S2 upstream says with lto
-			_configure
-			_compile
-			_install
-			if use bolt ; then
-				PGO_PHASE="bolt" # S3
+				_install
+				if use bolt ; then
+					PGO_PHASE="bolt" # S3
+					_configure
+					_compile
+				fi
+			else
+				PGO_PHASE="pg0" # N0 PGO
 				_configure
 				_compile
 			fi
