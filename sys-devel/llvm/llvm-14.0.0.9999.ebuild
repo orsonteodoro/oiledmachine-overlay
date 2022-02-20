@@ -1308,6 +1308,7 @@ strip_package() {
 }
 
 pkg_config() {
+	use bolt-prepare || return
 	local llvm_used_commit
 	if [[ ${PV} == *.9999 ]] ; then
 		llvm_used_commit=$(cat "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-commit")
