@@ -558,7 +558,7 @@ _configure() {
 
 	local slot=""
 	if use pgo ; then
-		if [[ "${PGO_PHASE}" =~ "pgo" ]] ; then
+		if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
 			slot="${SLOT}"
 		else
 			slot="${PGO_PHASE}"
