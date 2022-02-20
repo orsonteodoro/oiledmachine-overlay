@@ -1225,14 +1225,14 @@ pkg_postinst() {
 	fi
 }
 
-_bolt_optimize_lib() {
+_bolt_optimize_file() {
 	# From the unit test and issue 279, it should be possible to BOLT optimize .so files.
 	local f="${1}"
 	einfo "BOLTing ${f}"
 	local args=(
-		 "${f}"
+		"${f}"
 		-o "${f}.bolt"
-		-b "${EPREFIX}/usr/share/${PN}/${SLOT}/perf-data/clang-${SLOT}.yaml"
+		-data="${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/clang-${SLOT}-merged-${ABI}.fdata"
 		-reorder-blocks=cache+
 		-reorder-functions=hfsort+
 		-split-functions=3
@@ -1251,11 +1251,10 @@ _bolt_optimize_lib() {
 			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" llvm-bolt ${args[@]} || die
 		fi
 	else
-		llvm-bolt ${args[@]} || die
+		llvm-bolt ${args[@]} || true
 	fi
 
 	mv "${f}{.bolt,}" || die
-	# TODO: complete stripping debug symbols
 }
 
 strip_package() {
@@ -1324,12 +1323,32 @@ pkg_config() {
 		ewarn "Actual EGIT_VERSION:    ${EGIT_VERSION}"
 		ewarn
 	fi
-	if [[ ! -e "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/clang-${SLOT}.yaml" ]] ; then
-eerror "Missing clang-${SLOT}.yaml required for a BOLT optimized LLVM."
+	if [[ ! -d "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile" ]] ; then
+eerror "Missing BOLT profile required for a BOLT optimized LLVM."
 		die
 	fi
-	local p=$(readlink -f /usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so)
-	[[ -e "${p}" ]] && _bolt_optimize_lib "${p}"
+	local abis=($(multilib_get_enabled_abi_pairs))
+	local a
+	for a in ${abis[@]#*.} ; do
+		_bolt_optimize_file $(readlink -f /usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM.so)
+		if multilib_is_native_abi ; then
+			# All binaries involved in building down the process tree should be added.
+			local f
+			for f in $(cat /var/db/pkg/sys-devel/${PN}-${SLOT}*/CONTENTS | cut -f 2 -d " ") ; do
+				f=$(readlink -f "${f}")
+				local is_exe=0
+				local is_so=0
+				file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
+				file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
+				if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
+					if grep -q -e $(basename "${f}") "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile" ; then
+						_bolt_optimize_file "${f}"
+					else
+						einfo "Skipping "$(basename "${f}")" because it was not BOLT profiled."
+					fi
+				fi
+			done
+		fi
+	done
 	strip_package
-	# TODO:  Find a way to profile and optimize the non-default ABI
 }
