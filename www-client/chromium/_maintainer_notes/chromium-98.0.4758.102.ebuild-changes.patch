@@ -1,5 +1,5 @@
---- chromium-98.0.4758.80.ebuild.orig	2022-02-02 20:09:54.000000000 -0800
-+++ chromium-98.0.4758.80.ebuild	2022-02-16 16:32:47.125573627 -0800
+--- chromium-98.0.4758.102.ebuild.orig	2022-02-19 12:09:08.000000000 -0800
++++ chromium-98.0.4758.102.ebuild	2022-02-20 01:04:55.862345529 -0800
 @@ -1,7 +1,12 @@
  # Copyright 2009-2022 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -969,9 +969,12 @@
 +		)
 +	)
 +	vaapi? ( media-video/libva-utils )
-+"
+ "
 +# pgo related:  dev-python/requests is python3 but testing/scripts/run_performance_tests.py is python2
-+
+ 
+-# These are intended for ebuild maintainer use to force clang if GCC is broken.
+-: ${CHROMIUM_FORCE_CLANG=no}
+-: ${CHROMIUM_FORCE_LIBCXX=no}
 +# Upstream uses llvm:13
 +# When CFI + PGO + official was tested, it didn't work well with LLVM12.  Error noted in
 +# https://github.com/orsonteodoro/oiledmachine-overlay/blob/f0c13049dc89f068370511b4664f7fb111df2d3a/www-client/chromium/bug_notes
@@ -1006,16 +1009,26 @@
 +		proprietary-codecs? ( >=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}] )
 +		system-icu? ( >=dev-libs/icu-69.1:=[${MULTILIB_USEDEP}] )
 +	)
- "
- 
--# These are intended for ebuild maintainer use to force clang if GCC is broken.
--: ${CHROMIUM_FORCE_CLANG=no}
--: ${CHROMIUM_FORCE_LIBCXX=no}
-+RDEPEND+="${COMMON_DEPEND}"
-+DEPEND+="${COMMON_DEPEND}"
++"
  
 -if [[ ${CHROMIUM_FORCE_CLANG} == yes ]]; then
 -	BDEPEND+=" >=sys-devel/clang-12"
+-fi
++RDEPEND+="${COMMON_DEPEND}"
++DEPEND+="${COMMON_DEPEND}"
+ 
+-if [[ ${CHROMIUM_FORCE_LIBCXX} == yes ]]; then
+-	RDEPEND+=" >=sys-libs/libcxx-12"
+-	DEPEND+=" >=sys-libs/libcxx-12"
+-else
+-	COMMON_DEPEND="
+-		dev-libs/libxslt:=
+-		>=dev-libs/re2-0.2019.08.01:=
+-		>=media-libs/openh264-1.6.0:=
+-		system-icu? ( >=dev-libs/icu-69.1:= )
+-	"
+-	RDEPEND+="${COMMON_DEPEND}"
+-	DEPEND+="${COMMON_DEPEND}"
 -fi
 +# The preference now is CFI Cross-DSO if one prefers unbundled libs.
 +# CFI Cross-DSO is preferred to reduce duplicate pages at the cost of some
@@ -1032,20 +1045,7 @@
 +# Some require CFI flags because they support both CFI Cross-DSO mode (.so) and
 +# CFI Basic mode (.a).  Some should have the CFI flag so that CFI packages
 +# are properly prioritized in *DEPENDs to avoid missing symbols problems.
- 
--if [[ ${CHROMIUM_FORCE_LIBCXX} == yes ]]; then
--	RDEPEND+=" >=sys-libs/libcxx-12"
--	DEPEND+=" >=sys-libs/libcxx-12"
--else
--	COMMON_DEPEND="
--		dev-libs/libxslt:=
--		>=dev-libs/re2-0.2019.08.01:=
--		>=media-libs/openh264-1.6.0:=
--		system-icu? ( >=dev-libs/icu-69.1:= )
--	"
--	RDEPEND+="${COMMON_DEPEND}"
--	DEPEND+="${COMMON_DEPEND}"
--fi
++
 +# [D]
 +FFMPEG_DEPENDS="
 +	system-ffmpeg? (
@@ -1196,7 +1196,7 @@
  	check-reqs_pkg_setup
  }
  
-@@ -211,26 +1143,1976 @@ pkg_pretend() {
+@@ -211,26 +1143,2053 @@ pkg_pretend() {
  	pre_build_checks
  }
  
@@ -1215,6 +1215,11 @@
 +# https://github.com/llvm/llvm-project/blob/37fbf238f4427b651a16956eca1cb0e2ab5cdbfd/llvm/CMakeLists.txt#L14
 +# The 37fbf238 is from the CR_CLANG_USED below.
 +
++# Breaks PGO with non Linux platforms
++CF_CLANG_USED_13="98033fdc50e61273b1d5c77ba5f0f75afe3965c1" # LLVM 13 / 93.X
++CR_CLANG_USED_UNIX_TIMESTAMP_13="1626129557"
++
++# LLVM 14
 +CR_CLANG_USED="37fbf238f4427b651a16956eca1cb0e2ab5cdbfd" # Obtained from \
 +# https://github.com/chromium/chromium/blob/98.0.4758.80/tools/clang/scripts/update.py#L42
 +CR_CLANG_USED_UNIX_TIMESTAMP="1638856450" # Cached.  Use below to obtain this. \
@@ -1270,7 +1275,7 @@
 +	if [[ -n "${emerged_llvm_timestamp}" ]] ; then
 +		einfo "System's ${p} timestamp:  "$(date -d "@${emerged_llvm_timestamp}")
 +		if [[ "${p}" == "sys-devel/llvm" ]] ; then
-+			einfo "${PN^}'s LLVM timestamp:  "$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
++			einfo "${PN^}'s LLVM timestamp:  "$(date -d "@${cr_clang_used_unix_timestamp}")
 +		else
 +			einfo "System's sys-devel/llvm timestamp:  "$(date -d "@${LLVM_TIMESTAMP}")
 +		fi
@@ -1280,10 +1285,21 @@
 +_get_release_hash() {
 +	local v="${1}"
 +	if [[ -z "${cached_release_hashes[${v}]}" ]] ; then
-+		local hash=$(git --no-pager ls-remote \
-+			https://github.com/llvm/llvm-project.git \
-+			llvmorg-${v} \
-+			| cut -f 1 -d $'\t')
++
++		# This doesn't redirect to the tip
++		#local hash=$(git --no-pager ls-remote \
++		#	https://github.com/llvm/llvm-project.git \
++		#	llvmorg-${v} \
++		#	| cut -f 1 -d $'\t')
++
++		# Get the tip
++		local hash=$(
++			wget -q -O - https://github.com/llvm/llvm-project/commits/llvmorg-${v} \
++				| grep "/commit/" \
++				| head -n 1 \
++				| cut -f 2 -d "\"" \
++				| cut -f 5 -d "/"
++		)
 +		cached_release_hashes[${v}]="${hash}"
 +	fi
 +	echo "${cached_release_hashes[${v}]}"
@@ -1313,9 +1329,14 @@
 +	if [[ -z "${emerged_llvm_timestamps[${emerged_llvm_commit}]}" ]] ; then
 +		einfo "Fetching timestamp for ${emerged_llvm_commit}"
 +		# Uncached
++		# Fetched uncached because of potential partial download problems.
 +		local emerged_llvm_time_desc=$(wget -q -O - \
-+			https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch \
-+			| grep -F -e "Date:" | sed -e "s|Date: ||")
++			https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch)
++		[[ -z "${emerged_llvm_time_desc}" ]] \
++			&& die "${emerged_llvm_commit} didn't download anything."
++		echo "${emerged_llvm_time_desc}" | grep "Not Found" \
++			&& die "The commit ${emerged_llvm_commit} doesn't exist."
++		emerged_llvm_time_desc=$(echo -e "${emerged_llvm_time_desc}" | grep -F -e "Date:" | sed -e "s|Date: ||")
 +		emerged_llvm_timestamp=$(date -u -d "${emerged_llvm_time_desc}" +%s)
 +		emerged_llvm_timestamps[${emerged_llvm_commit}]=${emerged_llvm_timestamp}
 +		einfo "Timestamp comparison for ${p}"
@@ -1332,20 +1353,45 @@
 +_check_llvm_updated() {
 +	local root_pkg_timestamp=""
 +
++	local timestamp_type=-1
 +	if [[ "${p}" == "sys-devel/llvm" ]] ; then
-+		root_pkg_timestamp="${CR_CLANG_USED_UNIX_TIMESTAMP}"
++		if use official ; then
++			#einfo "Using cr_clang_used_unix_timestamp"
++			root_pkg_timestamp="${cr_clang_used_unix_timestamp}"
++		else
++			#einfo "Using LLVM_TIMESTAMP"
++			root_pkg_timestamp="${LLVM_TIMESTAMP}"
++		fi
++		timestamp_type=0
 +	else
++		einfo "Using LLVM_TIMESTAMP"
 +		root_pkg_timestamp="${LLVM_TIMESTAMP}"
++		timestamp_type=1
 +	fi
 +
 +	[[ -z "${emerged_llvm_timestamp}" ]] && die
 +	[[ -z "${root_pkg_timestamp}" ]] && die
 +
-+	if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
-+		needs_emerge=1
-+		llvm_packages_status[${p_}]="1" # needs emerge
++	if (( ${timestamp_type} == 0 )) ; then
++		#einfo "${emerged_llvm_timestamp} < ${root_pkg_timestamp} ? ${p} (1)"
++		if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
++			#einfo "needs merge"
++			needs_emerge=1
++			llvm_packages_status[${p_}]="1" # needs emerge
++		else
++			#einfo "no merge needed"
++			llvm_packages_status[${p_}]="0" # package is okay
++		fi
 +	else
-+		llvm_packages_status[${p_}]="0" # package is okay
++		#einfo "${emerged_llvm_timestamp} < ${root_pkg_timestamp} ? ${p} (1)"
++		if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
++			#einfo "needs merge"
++			needs_emerge=1
++			llvm_packages_status[${p_}]="1" # needs emerge
++		else
++			#einfo "no merge needed"
++			llvm_packages_status[${p_}]="0" # package is okay
++		fi
 +	fi
 +}
 +
@@ -1354,11 +1400,15 @@
 +	[[ -z "${emerged_llvm_timestamp}" ]] && die
 +	[[ -z "${LLVM_TIMESTAMP}" ]] && die
 +
++	#einfo "Using LLVM_TIMESTAMP"
++	#einfo "${emerged_llvm_timestamp} < ${LLVM_TIMESTAMP} ? ${p} (2)"
 +	if (( ${emerged_llvm_timestamp} < ${LLVM_TIMESTAMP} )) ; then
++		#einfo "needs merge"
 +		needs_emerge=1
 +		llvm_packages_status[${p_}]="1" # needs emerge
 +		old_triple_slot_packages+=( "${category}/${pn}:"$(cat "${mp}/SLOT") )
 +	else
++		#einfo "no merge needed"
 +		llvm_packages_status[${p_}]="0" # package is okay
 +	fi
 +}
@@ -1409,6 +1459,14 @@
 +verify_llvm_toolchain() {
 +	local llvm_slot=${1}
 +	einfo "Inspecting for llvm:${llvm_slot}"
++
++	if use official ; then
++		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP}
++	elif (( ${llvm_slot} == 13 )) ; then
++		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP_13}
++	else
++		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP}
++	fi
 +
 +	# Everything that inherits the llvm.org must be checked.
 +	# sys-devel/clang-runtime doesn't need check
@@ -1484,7 +1542,7 @@
 +				else
 +					ewarn "Missing ${p}:${llvm_slot}"
 +					p="sys-devel/llvm"
-+					emerged_llvm_timestamp=$(( ${CR_CLANG_USED_UNIX_TIMESTAMP} -1 ))
++					emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
 +				fi
 +				_check_llvm_updated
 +			elif contains_slotted_zero "${p}" ; then
@@ -1500,7 +1558,7 @@
 +				else
 +					ewarn "Missing ${p}:${llvm_slot}"
 +					p="sys-devel/llvm"
-+					emerged_llvm_timestamp=$(( ${CR_CLANG_USED_UNIX_TIMESTAMP} -1 ))
++					emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
 +				fi
 +				_check_llvm_updated
 +			else
@@ -1526,7 +1584,7 @@
 +						_get_llvm_timestamp
 +					else
 +						ewarn "Missing ${p}:${llvm_slot}"
-+						emerged_llvm_timestamp=$(( ${CR_CLANG_USED_UNIX_TIMESTAMP} -1 ))
++						emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
 +					fi
 +					_check_llvm_updated_triple
 +				done
@@ -1751,6 +1809,9 @@
 +	einfo "represent your configuration.  Some libraries listed"
 +	einfo "may not be be able to be CFI Cross-DSOed."
 +	einfo
++	einfo "An estimated >= 43% (30/69) of the libraries listed should be"
++	einfo "marked CFI protected."
++	einfo
 +}
 +
 +CURRENT_PROFDATA_VERSION=
@@ -1837,9 +1898,25 @@
 +echo -e "${LLVM_REPORT_CARDS[${s}]}"
 +			done
 +eerror
-+eerror "or remove the official USE flag.  The official use flag strictly"
-+eerror "requires LLVM ${CR_CLANG_SLOT_OFFICIAL} and for related packages.  To use a"
-+eerror "different slotted LLVM, disable the official USE flag."
++eerror "OR"
++eerror
++eerror "You can remove the official USE flag.  The official USE flag strictly"
++eerror "requires LLVM ${CR_CLANG_SLOT_OFFICIAL} and for related packages.  To"
++eerror "use a different slotted LLVM, disable the official USE flag."
++eerror
++eerror "You must ensure that the timestamps of the installed packages are the"
++eerror "same or newer than the installed LLVM for that slot for missing symbols"
++eerror "avoidance AND the timestamp or commit is the same or newer than the"
++eerror "timestamp of the one used to build the official build if using the"
++eerror "official USE flag.  Some of these issue may be avoided if the official"
++eerror "USE flag is disabled for more relaxed requirement constraints which"
++eerror "requires the commits/version be the same or newer as the LLVM lib"
++eerror "for missing symbols reasons."
++eerror
++eerror "For live ebuilds (*.9999) you might have to replace -1vuDN with -1vO to"
++eerror "force a rebuild if the following message is encountered:"
++eerror
++eerror "  Nothing to merge; quitting."
 +eerror
 +# One reason is possibly for crash reporting.
 +			die
@@ -3176,8 +3253,8 @@
 +		$(usex arm64 "${FILESDIR}/chromium-97-arm-tflite-cast.patch" "")
  		"${FILESDIR}/chromium-98-EnumTable-crash.patch"
  		"${FILESDIR}/chromium-98-system-libdrm.patch"
- 		"${FILESDIR}/chromium-glibc-2.34.patch"
-@@ -238,8 +3120,51 @@ src_prepare() {
+ 		"${FILESDIR}/chromium-98-gtk4-build.patch"
+@@ -239,8 +3198,51 @@ src_prepare() {
  		"${FILESDIR}/chromium-shim_headers.patch"
  	)
  
@@ -3229,7 +3306,7 @@
  	mkdir -p third_party/node/linux/node-linux-x64/bin || die
  	ln -s "${EPREFIX}"/usr/bin/node third_party/node/linux/node-linux-x64/bin/node || die
  
-@@ -469,6 +3394,7 @@ src_prepare() {
+@@ -470,6 +3472,7 @@ src_prepare() {
  		third_party/xcbproto
  		third_party/zxcvbn-cpp
  		third_party/zlib/google
@@ -3237,7 +3314,7 @@
  		url/third_party/mozilla
  		v8/src/third_party/siphash
  		v8/src/third_party/valgrind
-@@ -482,10 +3408,18 @@ src_prepare() {
+@@ -483,10 +3486,18 @@ src_prepare() {
  		third_party/usb_ids
  		third_party/xdg-utils
  	)
@@ -3258,7 +3335,7 @@
  		keeplibs+=( third_party/icu )
  	fi
  	if ! use system-png; then
-@@ -499,12 +3433,19 @@ src_prepare() {
+@@ -500,12 +3511,19 @@ src_prepare() {
  	if use wayland && ! use headless ; then
  		keeplibs+=( third_party/wayland )
  	fi
@@ -3273,7 +3350,7 @@
 -		keeplibs+=( third_party/openh264 )
  		keeplibs+=( third_party/re2 )
 -		if use system-icu; then
-+		keeplibs+=( third_party/snappy )
++		#keeplibs+=( third_party/snappy )
 +		if use proprietary-codecs ; then
 +			keeplibs+=( third_party/openh264 )
 +		fi
@@ -3281,7 +3358,7 @@
  			keeplibs+=( third_party/icu )
  		fi
  	fi
-@@ -513,54 +3454,110 @@ src_prepare() {
+@@ -514,7 +3532,7 @@ src_prepare() {
  	fi
  	# we need to generate ppc64 stuff because upstream does not ship it yet
  	# it has to be done before unbundling.
@@ -3289,7 +3366,8 @@
 +	if use ppc64 ; then
  		pushd third_party/libvpx >/dev/null || die
  		mkdir -p source/config/linux/ppc64 || die
- 		./generate_gni.sh || die
+ 		# requires git and clang, bug #832803
+@@ -524,47 +3542,103 @@ src_prepare() {
  		popd >/dev/null || die
  	fi
  
@@ -3315,7 +3393,7 @@
 +		ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 +	fi
 +
-+	#verify_clang_commit
++	verify_clang_commit
 +	gen_full_pgo_assets
 +	gen_full_pgo_external_access_uris
 +
@@ -3357,6 +3435,7 @@
 -		# Force clang since gcc is pretty broken at the moment.
 -		CC=${CHOST}-clang
 -		CXX=${CHOST}-clang++
+-		strip-unsupported-flags
 +	# Final CC selected
 +	if use clang ; then
 +		# See build/toolchain/linux/unbundle/BUILD.gn for allowed overridable envvars.
@@ -3372,7 +3451,6 @@
 +		export NM=llvm-nm
 +		export READELF=llvm-readelf
 +		export STRIP=llvm-strip
- 		strip-unsupported-flags
 +		if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
 +			die "llvm-ar is unreachable"
 +		fi
@@ -3386,13 +3464,14 @@
 +		export STRIP=strip
 +		export LD=ld.bfd
  	fi
- 
--	if tc-is-clang; then
++	strip-unsupported-flags
++
 +	# Handled by the build scripts
 +	filter-flags \
 +		'-f*sanitize*' \
 +		'-f*visibility*'
-+
+ 
+-	if tc-is-clang; then
 +	if use clang ; then
  		myconf_gn+=" is_clang=true clang_use_chrome_plugins=false"
  	else
@@ -3410,7 +3489,7 @@
  		tc-export BUILD_{AR,CC,CXX,NM}
  		myconf_gn+=" host_toolchain=\"//build/toolchain/linux/unbundle:host\""
  		myconf_gn+=" v8_snapshot_toolchain=\"//build/toolchain/linux/unbundle:host\""
-@@ -568,6 +3565,8 @@ src_configure() {
+@@ -572,6 +3646,8 @@ src_configure() {
  		myconf_gn+=" host_toolchain=\"//build/toolchain/linux/unbundle:default\""
  	fi
  
@@ -3419,7 +3498,7 @@
  	# GN needs explicit config for Debug/Release as opposed to inferring it from build directory.
  	myconf_gn+=" is_debug=false"
  
-@@ -583,6 +3582,14 @@ src_configure() {
+@@ -587,6 +3663,14 @@ src_configure() {
  	# Disable nacl, we can't build without pnacl (http://crbug.com/269560).
  	myconf_gn+=" enable_nacl=false"
  
@@ -3434,7 +3513,7 @@
  	# Use system-provided libraries.
  	# TODO: freetype -- remove sources (https://bugs.chromium.org/p/pdfium/issues/detail?id=733).
  	# TODO: use_system_hunspell (upstream changes needed).
-@@ -590,6 +3597,7 @@ src_configure() {
+@@ -594,6 +3678,7 @@ src_configure() {
  	# TODO: use_system_sqlite (http://crbug.com/22208).
  
  	# libevent: https://bugs.gentoo.org/593458
@@ -3442,7 +3521,7 @@
  	local gn_system_libraries=(
  		flac
  		fontconfig
-@@ -601,23 +3609,45 @@ src_configure() {
+@@ -605,23 +3690,45 @@ src_configure() {
  		libwebp
  		zlib
  	)
@@ -3494,7 +3573,7 @@
  
  	# See dependency logic in third_party/BUILD.gn
  	myconf_gn+=" use_system_harfbuzz=$(usex system-harfbuzz true false)"
-@@ -637,15 +3667,25 @@ src_configure() {
+@@ -641,15 +3748,25 @@ src_configure() {
  
  	# TODO: link_pulseaudio=true for GN.
  
@@ -3524,7 +3603,7 @@
  
  	# Disable pseudolocales, only used for testing
  	myconf_gn+=" enable_pseudolocales=false"
-@@ -671,25 +3711,34 @@ src_configure() {
+@@ -675,25 +3792,34 @@ src_configure() {
  	local myarch="$(tc-arch)"
  
  	# Avoid CFLAGS problems, bug #352457, bug #390147.
@@ -3563,7 +3642,7 @@
  	fi
  
  	if [[ $myarch = amd64 ]] ; then
-@@ -715,6 +3764,42 @@ src_configure() {
+@@ -719,6 +3845,42 @@ src_configure() {
  		die "Failed to determine target arch, got '$myarch'."
  	fi
  
@@ -3606,7 +3685,7 @@
  	# Make sure that -Werror doesn't get added to CFLAGS by the build system.
  	# Depending on GCC version the warnings are different and we don't want
  	# the build to fail because of that.
-@@ -730,10 +3815,10 @@ src_configure() {
+@@ -734,10 +3896,10 @@ src_configure() {
  	# https://bugs.gentoo.org/654216
  	addpredict /dev/dri/ #nowarn
  
@@ -3620,7 +3699,7 @@
  			build_ffmpeg_args+=" --disable-asm"
  		fi
  
-@@ -751,7 +3836,7 @@ src_configure() {
+@@ -755,7 +3917,7 @@ src_configure() {
  	tc-is-clang && append-flags -Wno-unknown-warning-option
  
  	# Explicitly disable ICU data file support for system-icu builds.
@@ -3629,7 +3708,7 @@
  		myconf_gn+=" icu_use_data_file=false"
  	fi
  
-@@ -759,16 +3844,16 @@ src_configure() {
+@@ -763,16 +3925,16 @@ src_configure() {
  	myconf_gn+=" use_ozone=true ozone_auto_platforms=false"
  	myconf_gn+=" ozone_platform_headless=true"
  	myconf_gn+=" ozone_platform_x11=$(usex headless false true)"
@@ -3649,7 +3728,7 @@
  		fi
  	else
  		myconf_gn+=" ozone_platform=\"x11\""
-@@ -776,17 +3861,90 @@ src_configure() {
+@@ -780,17 +3942,90 @@ src_configure() {
  
  	# Enable official builds
  	myconf_gn+=" is_official_build=$(usex official true false)"
@@ -3746,27 +3825,27 @@
  	fi
  
  	einfo "Configuring Chromium..."
-@@ -795,38 +3953,266 @@ src_configure() {
+@@ -799,38 +4034,266 @@ src_configure() {
  	"$@" || die
  }
  
 -src_compile() {
 -	# Final link uses lots of file descriptors.
 -	ulimit -n 2048
+-
+-	# Calling this here supports resumption via FEATURES=keepwork
+-	python_setup
 +_build() {
 +	local ninja_into="${1}"
 +	local target_id="${2}"
 +	local pax_path="${3}"
 +	local file_name=$(basename "${2}")
  
--	# Calling this here supports resumption via FEATURES=keepwork
--	python_setup
+-	# Don't inherit PYTHONPATH from environment, bug #789021, #812689
+-	local -x PYTHONPATH=
 +	einfo "Building ${file_name}"
 +	eninja -C "${ninja_into}" "${target_id}"
  
--	# Don't inherit PYTHONPATH from environment, bug #789021, #812689
--	local -x PYTHONPATH=
--
 -	#"${EPYTHON}" tools/clang/scripts/update.py --force-local-build --gcc-toolchain /usr --skip-checkout --use-system-cmake --without-android || die
 +	if [[ -n "${pax_path}" ]] ; then
 +		pax-mark m "${pax_path}"
@@ -4031,7 +4110,7 @@
  
  	# Build manpage; bug #684550
  	sed -e 's|@@PACKAGE@@|chromium-browser|g;
-@@ -835,9 +4221,7 @@ src_compile() {
+@@ -839,9 +4302,7 @@ src_compile() {
  		out/Release/chromium-browser.1 || die
  
  	# Build desktop file; bug #706786
@@ -4042,7 +4121,7 @@
  		s|\(^Exec=\)/usr/bin/|\1|g;' \
  		chrome/installer/linux/common/desktop.template > \
  		out/Release/chromium-browser-chromium.desktop || die
-@@ -846,19 +4230,104 @@ src_compile() {
+@@ -850,19 +4311,104 @@ src_compile() {
  	sed -e 's|${ICD_LIBRARY_PATH}|./libvk_swiftshader.so|g' \
  		third_party/swiftshader/src/Vulkan/vk_swiftshader_icd.json.tmpl > \
  		out/Release/vk_swiftshader_icd.json || die
@@ -4084,8 +4163,9 @@
 +		| head -n ${length} > \
 +		"${T}/${dl}/${license_name}" || die
 +	dodoc "${T}/${dl}/${license_name}"
-+}
-+
+ }
+ 
+-src_install() {
 +# @FUNCTION: _install_licenses
 +# @DESCRIPTION:
 +# Installs licenses and copyright notices from packages and other internal
@@ -4126,9 +4206,8 @@
 +	# calls here.
 +
 +	touch "${T}/.copied_licenses"
- }
- 
--src_install() {
++}
++
 +multilib_src_install() {
 +	if (( ${NABIS} == 1 )) ; then
 +		export BUILD_DIR="${S}"
@@ -4150,7 +4229,7 @@
  	doexe out/Release/chrome_crashpad_handler
  
  	ozone_auto_session () {
-@@ -866,18 +4335,22 @@ src_install() {
+@@ -870,18 +4416,22 @@ src_install() {
  	}
  	local sedargs=( -e
  			"s:/usr/lib/:/usr/$(get_libdir)/:g;
@@ -4177,7 +4256,7 @@
  
  	# Allow users to override command-line options, bug #357629.
  	insinto /etc/chromium
-@@ -896,17 +4369,18 @@ src_install() {
+@@ -900,7 +4450,7 @@ src_install() {
  		[[ ${#files[@]} -gt 0 ]] && doins "${files[@]}"
  	)
  
@@ -4186,10 +4265,7 @@
  		doins out/Release/icudtl.dat
  	fi
  
- 	doins -r out/Release/locales
-+	doins -r out/Release/resources
- 	doins -r out/Release/MEIPreload
- 
+@@ -910,7 +4460,7 @@ src_install() {
  	# Install vk_swiftshader_icd.json; bug #827861
  	doins out/Release/vk_swiftshader_icd.json
  
@@ -4198,7 +4274,7 @@
  		insinto "${CHROMIUM_HOME}/swiftshader"
  		doins out/Release/swiftshader/*.so
  	fi
-@@ -923,7 +4397,7 @@ src_install() {
+@@ -927,7 +4477,7 @@ src_install() {
  	done
  
  	# Install desktop entry
@@ -4207,7 +4283,7 @@
  
  	# Install GNOME default application entry (bug #303100).
  	insinto /usr/share/gnome-control-center/default-apps
-@@ -934,6 +4408,11 @@ src_install() {
+@@ -938,6 +4488,11 @@ src_install() {
  	dosym chromium-browser.1 /usr/share/man/man1/chromium.1
  
  	readme.gentoo_create_doc
@@ -4219,7 +4295,7 @@
  }
  
  pkg_postrm() {
-@@ -946,15 +4425,97 @@ pkg_postinst() {
+@@ -950,15 +4505,97 @@ pkg_postinst() {
  	xdg_desktop_database_update
  	readme.gentoo_print_elog
  

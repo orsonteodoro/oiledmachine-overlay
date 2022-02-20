@@ -1158,6 +1158,11 @@ pkg_pretend() {
 # https://github.com/llvm/llvm-project/blob/37fbf238f4427b651a16956eca1cb0e2ab5cdbfd/llvm/CMakeLists.txt#L14
 # The 37fbf238 is from the CR_CLANG_USED below.
 
+# Breaks PGO with non Linux platforms
+CF_CLANG_USED_13="98033fdc50e61273b1d5c77ba5f0f75afe3965c1" # LLVM 13 / 93.X
+CR_CLANG_USED_UNIX_TIMESTAMP_13="1626129557"
+
+# LLVM 14
 CR_CLANG_USED="37fbf238f4427b651a16956eca1cb0e2ab5cdbfd" # Obtained from \
 # https://github.com/chromium/chromium/blob/98.0.4758.80/tools/clang/scripts/update.py#L42
 CR_CLANG_USED_UNIX_TIMESTAMP="1638856450" # Cached.  Use below to obtain this. \
@@ -1213,7 +1218,7 @@ _print_timestamps() {
 	if [[ -n "${emerged_llvm_timestamp}" ]] ; then
 		einfo "System's ${p} timestamp:  "$(date -d "@${emerged_llvm_timestamp}")
 		if [[ "${p}" == "sys-devel/llvm" ]] ; then
-			einfo "${PN^}'s LLVM timestamp:  "$(date -d "@${CR_CLANG_USED_UNIX_TIMESTAMP}")
+			einfo "${PN^}'s LLVM timestamp:  "$(date -d "@${cr_clang_used_unix_timestamp}")
 		else
 			einfo "System's sys-devel/llvm timestamp:  "$(date -d "@${LLVM_TIMESTAMP}")
 		fi
@@ -1223,10 +1228,21 @@ _print_timestamps() {
 _get_release_hash() {
 	local v="${1}"
 	if [[ -z "${cached_release_hashes[${v}]}" ]] ; then
-		local hash=$(git --no-pager ls-remote \
-			https://github.com/llvm/llvm-project.git \
-			llvmorg-${v} \
-			| cut -f 1 -d $'\t')
+
+		# This doesn't redirect to the tip
+		#local hash=$(git --no-pager ls-remote \
+		#	https://github.com/llvm/llvm-project.git \
+		#	llvmorg-${v} \
+		#	| cut -f 1 -d $'\t')
+
+		# Get the tip
+		local hash=$(
+			wget -q -O - https://github.com/llvm/llvm-project/commits/llvmorg-${v} \
+				| grep "/commit/" \
+				| head -n 1 \
+				| cut -f 2 -d "\"" \
+				| cut -f 5 -d "/"
+		)
 		cached_release_hashes[${v}]="${hash}"
 	fi
 	echo "${cached_release_hashes[${v}]}"
@@ -1256,9 +1272,14 @@ _get_llvm_timestamp() {
 	if [[ -z "${emerged_llvm_timestamps[${emerged_llvm_commit}]}" ]] ; then
 		einfo "Fetching timestamp for ${emerged_llvm_commit}"
 		# Uncached
+		# Fetched uncached because of potential partial download problems.
 		local emerged_llvm_time_desc=$(wget -q -O - \
-			https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch \
-			| grep -F -e "Date:" | sed -e "s|Date: ||")
+			https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch)
+		[[ -z "${emerged_llvm_time_desc}" ]] \
+			&& die "${emerged_llvm_commit} didn't download anything."
+		echo "${emerged_llvm_time_desc}" | grep "Not Found" \
+			&& die "The commit ${emerged_llvm_commit} doesn't exist."
+		emerged_llvm_time_desc=$(echo -e "${emerged_llvm_time_desc}" | grep -F -e "Date:" | sed -e "s|Date: ||")
 		emerged_llvm_timestamp=$(date -u -d "${emerged_llvm_time_desc}" +%s)
 		emerged_llvm_timestamps[${emerged_llvm_commit}]=${emerged_llvm_timestamp}
 		einfo "Timestamp comparison for ${p}"
@@ -1275,20 +1296,45 @@ _get_llvm_timestamp() {
 _check_llvm_updated() {
 	local root_pkg_timestamp=""
 
+	local timestamp_type=-1
 	if [[ "${p}" == "sys-devel/llvm" ]] ; then
-		root_pkg_timestamp="${CR_CLANG_USED_UNIX_TIMESTAMP}"
+		if use official ; then
+			#einfo "Using cr_clang_used_unix_timestamp"
+			root_pkg_timestamp="${cr_clang_used_unix_timestamp}"
+		else
+			#einfo "Using LLVM_TIMESTAMP"
+			root_pkg_timestamp="${LLVM_TIMESTAMP}"
+		fi
+		timestamp_type=0
 	else
+		einfo "Using LLVM_TIMESTAMP"
 		root_pkg_timestamp="${LLVM_TIMESTAMP}"
+		timestamp_type=1
 	fi
 
 	[[ -z "${emerged_llvm_timestamp}" ]] && die
 	[[ -z "${root_pkg_timestamp}" ]] && die
 
-	if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
-		needs_emerge=1
-		llvm_packages_status[${p_}]="1" # needs emerge
+	if (( ${timestamp_type} == 0 )) ; then
+		#einfo "${emerged_llvm_timestamp} < ${root_pkg_timestamp} ? ${p} (1)"
+		if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
+			#einfo "needs merge"
+			needs_emerge=1
+			llvm_packages_status[${p_}]="1" # needs emerge
+		else
+			#einfo "no merge needed"
+			llvm_packages_status[${p_}]="0" # package is okay
+		fi
 	else
-		llvm_packages_status[${p_}]="0" # package is okay
+		#einfo "${emerged_llvm_timestamp} < ${root_pkg_timestamp} ? ${p} (1)"
+		if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
+			#einfo "needs merge"
+			needs_emerge=1
+			llvm_packages_status[${p_}]="1" # needs emerge
+		else
+			#einfo "no merge needed"
+			llvm_packages_status[${p_}]="0" # package is okay
+		fi
 	fi
 }
 
@@ -1297,11 +1343,15 @@ _check_llvm_updated_triple() {
 	[[ -z "${emerged_llvm_timestamp}" ]] && die
 	[[ -z "${LLVM_TIMESTAMP}" ]] && die
 
+	#einfo "Using LLVM_TIMESTAMP"
+	#einfo "${emerged_llvm_timestamp} < ${LLVM_TIMESTAMP} ? ${p} (2)"
 	if (( ${emerged_llvm_timestamp} < ${LLVM_TIMESTAMP} )) ; then
+		#einfo "needs merge"
 		needs_emerge=1
 		llvm_packages_status[${p_}]="1" # needs emerge
 		old_triple_slot_packages+=( "${category}/${pn}:"$(cat "${mp}/SLOT") )
 	else
+		#einfo "no merge needed"
 		llvm_packages_status[${p_}]="0" # package is okay
 	fi
 }
@@ -1352,6 +1402,14 @@ LLVM_TIMESTAMP=
 verify_llvm_toolchain() {
 	local llvm_slot=${1}
 	einfo "Inspecting for llvm:${llvm_slot}"
+
+	if use official ; then
+		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP}
+	elif (( ${llvm_slot} == 13 )) ; then
+		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP_13}
+	else
+		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP}
+	fi
 
 	# Everything that inherits the llvm.org must be checked.
 	# sys-devel/clang-runtime doesn't need check
@@ -1427,7 +1485,7 @@ verify_llvm_toolchain() {
 				else
 					ewarn "Missing ${p}:${llvm_slot}"
 					p="sys-devel/llvm"
-					emerged_llvm_timestamp=$(( ${CR_CLANG_USED_UNIX_TIMESTAMP} -1 ))
+					emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
 				fi
 				_check_llvm_updated
 			elif contains_slotted_zero "${p}" ; then
@@ -1443,7 +1501,7 @@ verify_llvm_toolchain() {
 				else
 					ewarn "Missing ${p}:${llvm_slot}"
 					p="sys-devel/llvm"
-					emerged_llvm_timestamp=$(( ${CR_CLANG_USED_UNIX_TIMESTAMP} -1 ))
+					emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
 				fi
 				_check_llvm_updated
 			else
@@ -1469,7 +1527,7 @@ verify_llvm_toolchain() {
 						_get_llvm_timestamp
 					else
 						ewarn "Missing ${p}:${llvm_slot}"
-						emerged_llvm_timestamp=$(( ${CR_CLANG_USED_UNIX_TIMESTAMP} -1 ))
+						emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
 					fi
 					_check_llvm_updated_triple
 				done
@@ -1694,6 +1752,9 @@ libz.so.1
 	einfo "represent your configuration.  Some libraries listed"
 	einfo "may not be be able to be CFI Cross-DSOed."
 	einfo
+	einfo "An estimated >= 43% (30/69) of the libraries listed should be"
+	einfo "marked CFI protected."
+	einfo
 }
 
 CURRENT_PROFDATA_VERSION=
@@ -1779,9 +1840,25 @@ eerror "The LLVM ${s} toolchain needs the following update(s):"
 echo -e "${LLVM_REPORT_CARDS[${s}]}"
 			done
 eerror
-eerror "or remove the official USE flag.  The official use flag strictly"
-eerror "requires LLVM ${CR_CLANG_SLOT_OFFICIAL} and for related packages.  To use a"
-eerror "different slotted LLVM, disable the official USE flag."
+eerror "OR"
+eerror
+eerror "You can remove the official USE flag.  The official USE flag strictly"
+eerror "requires LLVM ${CR_CLANG_SLOT_OFFICIAL} and for related packages.  To"
+eerror "use a different slotted LLVM, disable the official USE flag."
+eerror
+eerror "You must ensure that the timestamps of the installed packages are the"
+eerror "same or newer than the installed LLVM for that slot for missing symbols"
+eerror "avoidance AND the timestamp or commit is the same or newer than the"
+eerror "timestamp of the one used to build the official build if using the"
+eerror "official USE flag.  Some of these issue may be avoided if the official"
+eerror "USE flag is disabled for more relaxed requirement constraints which"
+eerror "requires the commits/version be the same or newer as the LLVM lib"
+eerror "for missing symbols reasons."
+eerror
+eerror "For live ebuilds (*.9999) you might have to replace -1vuDN with -1vO to"
+eerror "force a rebuild if the following message is encountered:"
+eerror
+eerror "  Nothing to merge; quitting."
 eerror
 # One reason is possibly for crash reporting.
 			die
@@ -3115,6 +3192,7 @@ ewarn
 		$(usex arm64 "${FILESDIR}/chromium-97-arm-tflite-cast.patch" "")
 		"${FILESDIR}/chromium-98-EnumTable-crash.patch"
 		"${FILESDIR}/chromium-98-system-libdrm.patch"
+		"${FILESDIR}/chromium-98-gtk4-build.patch"
 		"${FILESDIR}/chromium-glibc-2.34.patch"
 		"${FILESDIR}/chromium-use-oauth2-client-switches-as-default.patch"
 		"${FILESDIR}/chromium-shim_headers.patch"
@@ -3441,7 +3519,7 @@ eerror
 		keeplibs+=( third_party/libxml )
 		keeplibs+=( third_party/libxslt )
 		keeplibs+=( third_party/re2 )
-		keeplibs+=( third_party/snappy )
+		#keeplibs+=( third_party/snappy )
 		if use proprietary-codecs ; then
 			keeplibs+=( third_party/openh264 )
 		fi
@@ -3457,6 +3535,9 @@ eerror
 	if use ppc64 ; then
 		pushd third_party/libvpx >/dev/null || die
 		mkdir -p source/config/linux/ppc64 || die
+		# requires git and clang, bug #832803
+		sed -i -e "s|^update_readme||g; s|clang-format|${EPREFIX}/bin/true|g" \
+			generate_gni.sh || die
 		./generate_gni.sh || die
 		popd >/dev/null || die
 	fi
@@ -3477,7 +3558,7 @@ eerror
 		ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
 	fi
 
-	#verify_clang_commit
+	verify_clang_commit
 	gen_full_pgo_assets
 	gen_full_pgo_external_access_uris
 
@@ -3528,7 +3609,6 @@ ewarn
 		export NM=llvm-nm
 		export READELF=llvm-readelf
 		export STRIP=llvm-strip
-		strip-unsupported-flags
 		if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
 			die "llvm-ar is unreachable"
 		fi
@@ -3542,6 +3622,7 @@ ewarn
 		export STRIP=strip
 		export LD=ld.bfd
 	fi
+	strip-unsupported-flags
 
 	# Handled by the build scripts
 	filter-flags \
@@ -4374,7 +4455,6 @@ multilib_src_install() {
 	fi
 
 	doins -r out/Release/locales
-	doins -r out/Release/resources
 	doins -r out/Release/MEIPreload
 
 	# Install vk_swiftshader_icd.json; bug #827861
