@@ -784,8 +784,6 @@ _bolt_merge_profiles() {
 _bolt_optimize_file() {
 	local f="${1}"
 	einfo "Called _bolt_optimize_file() for ${f}"
-	# Both clang++ and clang are symlinked to clang-${SLOT}
-	einfo "bolt profile + PGO+LTO binary -> PGO+LTO+BOLT binary"
 
 	local args=(
 		"${f}"
@@ -809,10 +807,10 @@ _bolt_optimize_file() {
 			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" llvm-bolt ${args[@]} || die
 		fi
 	else
-		llvm-bolt ${args[@]} || die
+		llvm-bolt ${args[@]} || true
 	fi
 
-	mv "${f}{.bolt,}" || die
+	[[ -e "${f}.bolt" ]] && mv "${f}{.bolt,}" || die
 }
 
 _cleanup() {
@@ -1001,12 +999,20 @@ src_install() {
 	if use bolt ; then
 		# Complete optimization
 		_bolt_merge_profiles
-		_bolt_optimize "${D}/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang-${SLOT}" # binary size = 246K
-		local abis=($(multilib_get_enabled_abi_pairs))
-		local a
-		for a in ${abis[@]#*.} ; do
-			# libLLVM-14.so binary size = 126M
-			_bolt_optimize $(readlink -f "${D}/${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)/libclang-cpp.so") # binary size = 72M
+		local f
+		for f in $(file "${D}") ; do
+			f=$(readlink -f "${f}")
+			local is_exe=0
+			local is_so=0
+			file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
+			file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
+			if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
+				if grep -q -e $(basename "${f}") "${T}/bolt-profile" ; then
+					_bolt_optimize_file "${f}"
+				else
+					einfo "Skipping "$(basename "${f}")" because it was not BOLT profiled."
+				fi
+			fi
 		done
 	fi
 
