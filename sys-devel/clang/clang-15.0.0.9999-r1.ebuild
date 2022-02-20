@@ -195,7 +195,7 @@ eerror
 	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)"
 	use pgo_trainer_build_self && ewarn "The pgo_trainer_build_self has not been tested or is in development."
 	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite has not been tested or is in development."
-	use bolt && ewarn "The bolt USE flag has not been tested."
+	use bolt && ewarn "The bolt USE flag has not been tested and is in development in the ebuild level.  DO NOT USE."
 }
 
 src_unpack() {
@@ -631,10 +631,19 @@ _configure() {
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
 		)
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
+	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_inst"|"bolt_train_test_suite_inst") ]] ; then
+		if [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
+			mycmakeargs+=(
+				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
+				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+			)
+		elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_inst" ]] ; then
+			mycmakeargs+=(
+				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang"
+				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang++"
+			)
+		fi
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -642,10 +651,19 @@ _configure() {
 			-DTEST_SUITE_PROFILE_GENERATE=ON
 			-DTEST_SUITE_RUN_TYPE=Train
 		)
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
+	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_opt"|"bolt_train_test_suite_opt") ]] ; then
+		if [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
+			mycmakeargs+=(
+				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
+				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+			)
+		elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_opt" ]] ; then
+			mycmakeargs+=(
+				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang"
+				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang++"
+			)
+		fi
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -676,7 +694,7 @@ _configure() {
 			-DLLVM_PROFDATA_FILE="${T}/pgo-custom.profdata"
 			-DLLVM_USE_LINKER=lld
 		)
-	elif [[ "${PGO_PHASE}" == "bolt" ]] ; then
+	elif [[ "${PGO_PHASE}" == "bolt_train_build_self" ]] ; then
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang"
 			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang++"
@@ -715,31 +733,64 @@ _configure() {
 	multilib_is_native_abi && check_distribution_components
 }
 
-_bolt_train() {
-	einfo "Called _bolt_train()"
+_bolt_train_build_self() {
+	einfo "Called _bolt_train_build_self()"
 	# Use the package itself as the asset for training.
-	einfo "Running BOLT trainer"
-	perf record -e cycles:u -j any,u -- ninja clang || die
+	einfo "Running BOLT trainer to build self"
+	mkdir -p "${T}/bolt-profile" || die
+	perf record -e cycles:u -j any,u -o "${T}/bolt-profile/clang-${SLOT}_build_self.perfdata" -- ninja clang || die
 }
 
-_bolt_profile_generator() {
-	einfo "Called _bolt_profile_generator()"
+_bolt_train_test_suite() {
+	local tag="${1}"
+	shift
+	einfo "Called _bolt_train_test_suite()"
+	# Use the package itself as the asset for training.
+	einfo "Running BOLT trainer to build test suite (tag: ${tag}, ninja args: ${@})"
+	mkdir -p "${T}/bolt-profile" || die
+	perf record -e cycles:u -j any,u -o "${T}/bolt-profile/clang-${SLOT}_test_suite_${tag}.perfdata" -- ninja ${@} || die
+}
+
+_bolt_profile_generator_build_self() {
+	einfo "Called _bolt_profile_generator_build_self()"
 	einfo "perf profile -> bolt profile"
 	perf2bolt "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}" \
-		-p perf.data \
-		-o clang-${SLOT}.fdata \
-		-w clang-${SLOT}.yaml || die
+		-p "${T}/bolt-profile/clang-${SLOT}_build_self.perfdata" \
+		-o "${T}/bolt-profile/clang-${SLOT}_build_self.fdata" \
+		-w "${T}/bolt-profile/clang-${SLOT}_build_self.yaml" || die
 }
 
-_bolt_optimize() {
-	einfo "Called _bolt_optimize()"
+_bolt_profile_generator_test_suite() {
+	local tag="${1}"
+	einfo "Called _bolt_profile_generator_test_suite()"
+	einfo "perf profile -> bolt profile"
+	perf2bolt "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}" \
+		-p "${T}/bolt-profile/clang-${SLOT}_test_suite_${tag}.perfdata" \
+		-o "${T}/bolt-profile/clang-${SLOT}_test_suite_${tag}.fdata" \
+		-w "${T}/bolt-profile/clang-${SLOT}_test_suite_${tag}.yaml" || die
+}
+
+_bolt_merge_profiles() {
+	local abis=($(multilib_get_enabled_abi_pairs))
+	local a
+	for a in ${abis[@]#*.} ; do
+		# For LLVM lib
+		merge-fdata "${T}/bolt-profile/"*${ABI}*.fdata > "${T}/bolt-profile/clang-${SLOT}-merged-${ABI}.fdata" || die
+	done
+	# For DEFAULT_ABI clang{,++}
+	merge-fdata "${T}/bolt-profile/clang-${SLOT}-merged-"*.fdata > "${T}/bolt-profile/clang-${SLOT}-merged-all.fdata" || die
+}
+
+_bolt_optimize_file() {
+	local f="${1}"
+	einfo "Called _bolt_optimize_file() for ${f}"
 	# Both clang++ and clang are symlinked to clang-${SLOT}
 	einfo "bolt profile + PGO+LTO binary -> PGO+LTO+BOLT binary"
 
 	local args=(
-		 "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}"
-		-o "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}.bolt"
-		-b clang-${SLOT}.yaml
+		"${f}"
+		-o "${f}.bolt"
+		-data="${T}/bolt-profile/clang-${SLOT}-merged-all.fdata"
 		-reorder-blocks=cache+
 		-reorder-functions=hfsort+
 		-split-functions=3
@@ -761,7 +812,7 @@ _bolt_optimize() {
 		llvm-bolt ${args[@]} || die
 	fi
 
-	mv "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}{.bolt,}" || die
+	mv "${f}{.bolt,}" || die
 }
 
 _cleanup() {
@@ -794,42 +845,55 @@ _compile() {
 	if [[ "${PGO_PHASE}" =~ ("pgv"|"pgi"|"pgt_"|"pgo"|"bolt") ]] ; then
 		use pgo && einfo "${EMESSAGE_COMPILE[${PGO_PHASE}]} for ${ABI}"
 	fi
-	if [[ "${PGO_PHASE}" == "bolt" ]] ; then
-		_bolt_train
-		_bolt_profile_generator
-		_bolt_optimize
-	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
-		cmake_build distribution
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
+	if [[ "${PGO_PHASE}" == "bolt_train_build_self" ]] ; then
+		_bolt_train_build_self
+		_bolt_profile_generator_build_self
+	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_inst"|"bolt_train_test_suite_inst") ]] ; then
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		BUILD_DIR_BAK="${BUILD_DIR}"
 		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
 		cd "${BUILD_DIR}" || die
 		# Profile the PGI step
-		cmake_build
+		if [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
+			cmake_build
+		else
+			_bolt_train_test_suite "bolt_train_test_suite_inst_${ABI}"
+		fi
 		BUILD_DIR="${BUILD_DIR_BAK}"
 		cd "${BUILD_DIR}" || die
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
+	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_train"|"bolt_train_test_suite_train") ]] ; then
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		BUILD_DIR_BAK="${BUILD_DIR}"
 		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
 		cd "${BUILD_DIR}" || die
-		cmake_build check-lit
-		"${BUILD_DIR_BAK}/bin/llvm-lit" .
+		if [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
+			cmake_build check-lit
+			"${BUILD_DIR_BAK}/bin/llvm-lit" .
+		else
+			_bolt_train_test_suite "bolt_train_test_suite_train_${ABI}_check_lit" check_list
+			"${BUILD_DIR_BAK}/bin/llvm-lit" .
+		fi
 		BUILD_DIR="${BUILD_DIR_BAK}"
 		cd "${BUILD_DIR}" || die
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
+	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_opt"|"bolt_train_test_suite_opt") ]] ; then
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		BUILD_DIR_BAK="${BUILD_DIR}"
 		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
 		cd "${BUILD_DIR}" || die
 		# Profile the PGO step
-		cmake_build
-		cmake_build check-lit
-		"${BUILD_DIR_BAK}/bin/llvm-lit" -o result.json .
+		if [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
+			cmake_build
+			cmake_build check-lit
+			"${BUILD_DIR_BAK}/bin/llvm-lit" -o result.json .
+		else
+			_bolt_train_test_suite "bolt_train_test_suite_opt_${ABI}"
+			_bolt_train_test_suite "bolt_train_test_suite_opt_${ABI}_check_lit" check_list
+			"${BUILD_DIR_BAK}/bin/llvm-lit" -o result.json .
+		fi
 		BUILD_DIR="${BUILD_DIR_BAK}"
 		cd "${BUILD_DIR}" || die
 	else
+		# Includes pgt_build_self
 		cmake_build distribution
 	fi
 
@@ -883,9 +947,24 @@ src_compile() {
 				_compile
 				_install
 				if use bolt ; then
-					PGO_PHASE="bolt" # S3
-					_configure
-					_compile
+					for a in ${abis[@]#*.} ; do
+						if use pgt_trainer_build_self && multilib_is_native_abi ; then
+							PGO_PHASE="bolt_train_build_self" # S3
+							_configure
+							_compile
+						fi
+						if use pgt_trainer_test_suite ; then
+							PGO_PHASE="bolt_train_test_suite_inst"
+							_configure
+							_compile
+							PGO_PHASE="bolt_train_test_suite_train"
+							_configure
+							_compile
+							PGO_PHASE="bolt_train_test_suite_opt"
+							_configure
+							_compile
+						fi
+					done
 				fi
 			else
 				PGO_PHASE="pg0" # N0 PGO
@@ -918,6 +997,18 @@ src_install() {
 	MULTILIB_WRAPPED_HEADERS=(
 		/usr/include/clang/Config/config.h
 	)
+
+	if use bolt ; then
+		# Complete optimization
+		_bolt_merge_profiles
+		_bolt_optimize "${D}/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang-${SLOT}" # binary size = 246K
+		local abis=($(multilib_get_enabled_abi_pairs))
+		local a
+		for a in ${abis[@]#*.} ; do
+			# libLLVM-14.so binary size = 126M
+			_bolt_optimize $(readlink -f "${D}/${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)/libclang-cpp.so") # binary size = 72M
+		done
+	fi
 
 	multilib-minimal_src_install
 
@@ -1010,14 +1101,12 @@ multilib_src_install_all() {
 
 	if use bolt ; then
 		# Save the BOLT profile to BOLT optimize the libraries in the sys-devel/llvm package.
-		local bolt_profile_dir="/usr/share/${PN}/${SLOT}/bolt-profile"
+		local bolt_profile_dir="/usr/share/${PN}/${SLOT}"
 		dodir "${bolt_profile_dir}"
-		doins "${BUILD_DIR}/perf.data"
-		doins "${BUILD_DIR}/clang-${SLOT}.fdata"
-		doins "${BUILD_DIR}/clang-${SLOT}.yaml"
+		doins -r "${T}/bolt-profile"
 
 		# Fingerprint the llvm library
-		local llvm_so_path=$(readlink -f "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM.so")
+		local llvm_so_path=$(readlink -f "${D}/${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM.so")
 		[[ -e "${llvm_so_path}" ]] || die
 		local llvm_so_sha256=$(sha256sum "${llvm_so_path}" | cut -f 1 -d " ")
 		echo "${llvm_so_sha256}" \

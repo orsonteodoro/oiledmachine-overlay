@@ -715,9 +715,7 @@ _compile() {
 	if [[ "${PGO_PHASE}" =~ ("pgv"|"pgi"|"pgt_"|"pgo") ]] ; then
 		use pgo && einfo "${EMESSAGE_COMPILE[${PGO_PHASE}]} for ${ABI}"
 	fi
-	if [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
-		cmake_build distribution
-	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
+	if [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		BUILD_DIR_BAK="${BUILD_DIR}"
 		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
@@ -747,6 +745,7 @@ _compile() {
 		BUILD_DIR="${BUILD_DIR_BAK}"
 		cd "${BUILD_DIR}" || die
 	else
+		# Includes pgt_build_self
 		cmake_build distribution
 	fi
 
