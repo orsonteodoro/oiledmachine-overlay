@@ -612,7 +612,7 @@ _configure() {
 	if use souper ; then
 		if (( ${s_idx} == 7 )) ; then
 			if use pgo ; then
-				if [[ "${PGO_PHASE}" == "pgo" ]] ; then
+				if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
 					slot="${SLOT}"
 				else
 					slot="${PGO_PHASE}"
@@ -627,7 +627,7 @@ _configure() {
 		fi
 	else
 		if use pgo ; then
-			if [[ "${PGO_PHASE}" == "pgo" ]] ; then
+			if [[ "${PGO_PHASE}" =~ ("pgo"|"pgo") ]] ; then
 				slot="${SLOT}"
 			else
 				slot="${PGO_PHASE}"
