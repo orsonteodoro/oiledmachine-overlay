@@ -1329,8 +1329,8 @@ eerror "Missing BOLT profile required for a BOLT optimized LLVM."
 		die
 	fi
 	local abis=($(multilib_get_enabled_abi_pairs))
-	local a
-	for a in ${abis[@]#*.} ; do
+	local ABI
+	for ABI in ${abis[@]#*.} ; do
 		_bolt_optimize_file $(readlink -f /usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM.so)
 		if multilib_is_native_abi ; then
 			# All binaries involved in building down the process tree should be added.
