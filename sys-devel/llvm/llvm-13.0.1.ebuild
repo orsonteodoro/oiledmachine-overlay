@@ -624,7 +624,7 @@ _configure() {
 		fi
 	else
 		if use pgo ; then
-			if [[ "${PGO_PHASE}" =~ ("pgo"|"pgo") ]] ; then
+			if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
 				slot="${SLOT}"
 			else
 				slot="${PGO_PHASE}"
