@@ -1254,7 +1254,7 @@ _bolt_optimize_file() {
 		llvm-bolt ${args[@]} || true
 	fi
 
-	mv "${f}{.bolt,}" || die
+	[[ -e "${f}.bolt" ]] && mv "${f}{.bolt,}" || die
 }
 
 strip_package() {
