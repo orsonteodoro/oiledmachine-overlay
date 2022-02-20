@@ -162,8 +162,9 @@ sys-devel/clang:14 llvm-14-commit.conf
     <flag name="lto">Build with Link Time Optimization</flag>
     <flag name="jemalloc">Use jemalloc for better concurrency to improve
       processing time during the BOLT optimization phase</flag>
-    <flag name="pgo">Build with Profile Guided Optimization which may
-      reduce compile times by 20%, with the PGOed llvm package.</flag>
+    <flag name="pgo">Build with Profile Guided Optimization which may reduce
+      compile times of other packages by 20%, with the PGOed llvm package.
+      </flag>
     <flag name="pgo_trainer_build_self">Trains and generates a PGO profile by
       building the source code itself</flag>
     <flag name="pgo_trainer_test_suite">Runs the test-suite to build a

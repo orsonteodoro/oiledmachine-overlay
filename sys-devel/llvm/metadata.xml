@@ -147,8 +147,9 @@
 		<flag name="gold">Build the gold linker plugin</flag>
 		<flag name="ncurses">Support querying terminal properties using ncurses'
 			terminfo</flag>
-		<flag name="pgo">Build with Profile Guided Optimization which may
-			reduce compile times by 20%, with a PGOed clang.</flag>
+		<flag name="pgo">Build with Profile Guided Optimization which may reduce
+			compile times of other programs by 20%, with a PGOed clang
+			package.</flag>
 		<flag name="pgo_trainer_build_self">Trains and generates a PGO profile by
 			building the source code itself</flag>
 		<flag name="pgo_trainer_test_suite">Runs the test-suite to build a
