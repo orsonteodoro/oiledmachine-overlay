@@ -772,8 +772,8 @@ _bolt_profile_generator_test_suite() {
 
 _bolt_merge_profiles() {
 	local abis=($(multilib_get_enabled_abi_pairs))
-	local a
-	for a in ${abis[@]#*.} ; do
+	local ABI
+	for ABI in ${abis[@]#*.} ; do
 		# For LLVM lib
 		merge-fdata "${T}/bolt-profile/"*${ABI}*.fdata > "${T}/bolt-profile/clang-${SLOT}-merged-${ABI}.fdata" || die
 	done
@@ -902,6 +902,56 @@ _compile() {
 	fi
 }
 
+# Modularize for variable scoping
+_pgo_train() {
+	local abis=($(multilib_get_enabled_abi_pairs))
+	local ABI
+	for ABI in ${abis[@]#*.} ; do
+		if use pgt_trainer_build_self && multilib_is_native_abi ; then
+			PGO_PHASE="pgt_build_self" # S2 upstream says without lto
+			_configure
+			_compile
+		fi
+		if use pgt_trainer_test_suite ; then
+			PGO_PHASE="pgt_test_suite_inst"
+			_configure
+			_compile
+			PGO_PHASE="pgt_test_suite_train"
+			_configure
+			_compile
+			PGO_PHASE="pgt_test_suite_opt"
+			_configure
+			_compile
+		fi
+	done
+}
+
+# Modularize for variable scoping
+_bolt_train() {
+	local abis=($(multilib_get_enabled_abi_pairs))
+	if use bolt ; then
+		local ABI
+		for ABI in ${abis[@]#*.} ; do
+			if use pgt_trainer_build_self && multilib_is_native_abi ; then
+				PGO_PHASE="bolt_train_build_self" # S3
+				_configure
+				_compile
+			fi
+			if use pgt_trainer_test_suite ; then
+				PGO_PHASE="bolt_train_test_suite_inst"
+				_configure
+				_compile
+				PGO_PHASE="bolt_train_test_suite_train"
+				_configure
+				_compile
+				PGO_PHASE="bolt_train_test_suite_opt"
+				_configure
+				_compile
+			fi
+		done
+	fi
+}
+
 src_compile() {
 	export CFLAGS_BAK="${CFLAGS}"
 	export CXXFLAGS_BAK="${CXXFLAGS}"
@@ -920,50 +970,12 @@ src_compile() {
 				_configure
 				_compile
 				_install
-				local abis=($(multilib_get_enabled_abi_pairs))
-				local a
-				for a in ${abis[@]#*.} ; do
-					if use pgt_trainer_build_self && multilib_is_native_abi ; then
-						PGO_PHASE="pgt_build_self" # S2 upstream says without lto
-						_configure
-						_compile
-					fi
-					if use pgt_trainer_test_suite ; then
-						PGO_PHASE="pgt_test_suite_inst"
-						_configure
-						_compile
-						PGO_PHASE="pgt_test_suite_train"
-						_configure
-						_compile
-						PGO_PHASE="pgt_test_suite_opt"
-						_configure
-						_compile
-					fi
-				done
+				_pgo_train
 				PGO_PHASE="pgo" # S2 upstream says with lto
 				_configure
 				_compile
 				_install
-				if use bolt ; then
-					for a in ${abis[@]#*.} ; do
-						if use pgt_trainer_build_self && multilib_is_native_abi ; then
-							PGO_PHASE="bolt_train_build_self" # S3
-							_configure
-							_compile
-						fi
-						if use pgt_trainer_test_suite ; then
-							PGO_PHASE="bolt_train_test_suite_inst"
-							_configure
-							_compile
-							PGO_PHASE="bolt_train_test_suite_train"
-							_configure
-							_compile
-							PGO_PHASE="bolt_train_test_suite_opt"
-							_configure
-							_compile
-						fi
-					done
-				fi
+				_bolt_train
 			else
 				PGO_PHASE="pg0" # N0 PGO
 				_configure
