@@ -162,6 +162,37 @@ ec85ea95a00b490a059bcc817bc1b4660062dba0
 e8d4d6ded8544b5716c66d326aa290db8501518c
 ) # newest
 
+BBR2_VERSION="v2alpha-2021-07-07"
+BBR2_COMMITS=( # oldest
+c13e23b9782c9a7f4bcc409bfde157e44a080e82
+89fe5fca59f015a7370543d9c906548a6ac7c7ac
+f6da35cbef6549b1141a4a5631b91748d2ed0922
+cf201e3528890c96645167f6dbb4a6b285d03580
+f85b140f08ad704091af612e6abdc2d32def89b9
+cd58ed7eb9645b2e54136cf52be6279dbdebe936
+98e9594ea12f91b83309d9153ea1eb9a82175e9d
+5c8358928dccb808566494aaf17f5ce3dc1b3357
+2f3913b4f30c18f9da90d02a39a7d84f4e85fe53
+40746a8365da9e096efb7a893e9adeec26d621d8
+deafdb32913ce4aa0509ba0e422c6eb03cf5ebdf
+aeabbacac09d7d0e7908369ac95591149ee42960
+862ad4d62437e19a69d4a65c6ccc96dede981b97
+b8d3909fa091fabfbc084ed89b16de30409d9d31
+1079d54e66bd8fc301367db40deba0f4e33d157c
+819ea23298351f49fb69bab72e27c15102762f0e
+65c4ae957f9db04d0fc81f70d91b2a39df7bf50f
+629fcdc2efbaa9cff5b765b9410e0bc22f2de29d
+cddec48ad515cccbfa37d7780bf770eb27b7fdd9
+13d090b12311d0981a3873bc72e3c5684d23825d
+af303e47dad6085d9436a3038908c50185caf74c
+d3760c4d93ed59d2992f94044e2f75d3150f3e34
+fe6b56a9c48b934d2ffaafd60eb89b9dae6e912d
+627fad86219ccb869260469eaab13f7f0ebab428
+63217d9a2fe9f05967b5a2b5b966ae2921b4b725
+74f603c704691b97cf6dbadcafd1f24ce74fe46c
+3d76056b85feab3aade8007eb560c3451e7d3433
+) # newest
+
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
@@ -324,7 +355,7 @@ gen_kcp_ma_uri() {
 }
 
 SRC_URI+=" "$(gen_kcp_ma_uri)
-SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
+SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 	   futex? ( ${FUTEX_SRC_URIS} )
 	   genpatches? (
 		${GENPATCHES_URI}

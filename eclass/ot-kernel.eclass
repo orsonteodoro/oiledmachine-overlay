@@ -186,15 +186,16 @@ BMQ_FN="${BMQ_FN:=v${K_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
 BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${K_MAJOR_MINOR}/"
 BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
 
-BBRV2_COMMITS="${PATCH_BBRV2_COMMIT_A}^..${PATCH_BBRV2_COMMIT_D}" # [oldest,newest] [top,bottom]
-BBRV2_COMMITS_SHORT=\
-"${PATCH_BBRV2_COMMIT_A:0:7}-${PATCH_BBRV2_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
 BBRV2_BASE_URI=\
-"https://github.com/google/bbr/compare/${BBRV2_COMMITS}"
-BBRV2_FN=\
-"bbrv2-${K_MAJOR_MINOR}-${BBRV2_COMMITS_SHORT}.patch"
-BBRV2_SRC_URI=\
-"${BBRV2_BASE_URI}.patch -> ${BBRV2_FN}"
+"https://github.com/google/bbr/commit/"
+gen_bbrv2_uris() {
+	local s=""
+	for c in ${BBR2_COMMITS[@]} ; do
+		s+=" ${BBRV2_BASE_URI}${c}.patch -> bbrv2-${BBR2_VERSION}-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
+	echo "${s}"
+}
+BBRV2_SRC_URIS=" "$(gen_bbrv2_uris)
 
 CLANG_PGO_FN="clang-pgo-${PATCH_CLANG_PGO_COMMIT_A:0:7}-${PATCH_CLANG_PGO_COMMIT_D:0:7}.patch"
 CLANG_PGO_BASE_URI="https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/patch/?h=for-next/clang/pgo"
@@ -1105,7 +1106,9 @@ function apply_futex2() {
 # some packet loss 3% but CUBIC will have < 1% thoughput when there is a
 # few percent of packet loss.
 function apply_bbrv2() {
-	_fpatch "${DISTDIR}/${BBRV2_FN}"
+	for c in ${BBR2_COMMITS[@]} ; do
+		_fpatch "${DISTDIR}/bbrv2-${BBR2_VERSION}-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
 }
 
 # @FUNCTION: apply_lru_gen

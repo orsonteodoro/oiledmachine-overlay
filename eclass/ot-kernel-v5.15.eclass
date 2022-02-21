@@ -173,6 +173,37 @@ d810c70ed7b8228349af3c277f8c3cc0d5fa0f7b
 ${FUTEX_PROTON_COMPAT[@]}
 ) # newest
 
+BBR2_VERSION="v2alpha-2021-08-21"
+BBR2_COMMITS=( # oldest
+1ca5498fa4c6d4d8d634b1245d41f1427482824f
+46ddceed8f8dad02a97e79c40893c385b859d1c8
+94af063d5a381af0e2063cfd97dcce9783ed25c6
+2bab755134b19856f11a2f693f4bc40f864b00f2
+50b614c0a65125d5c22fca6605fdcf88e0a9258a
+41ceaf5611bf5b9384e3f2aec5b591d5734126f9
+0511a3cf52a609f30c1f3f4ebb5924ddce7daca1
+16ac0c6cb9ecb89e4815cfedf15d7bfd456f5ae4
+7636a4ccf0f51e69a1e37bff97851dff0d344919
+e46c8a0354f91d6e0d5c20f812212ddc39f0a550
+1e924b1343bfa67d78ab3293c63e6cff8062dc48
+73f8adbd5afbe316ed091b073c5ec2efea8b8b36
+602b949a1c191599c6243a7bef62e5f6dcbc7553
+3ff0ac8e14d8b260ba04a980fc62fabbf61db1aa
+5ab6f739f03ff9bd533c43e7c7e0fa904b84236f
+c6ef88ba01cc47ac4c6a2cfe51e15eaa4d833476
+51b6837ecb1ab7d4dacdcc0be92e56ba7b99fbb8
+f1097cdeb6d4b2413bbd4cf6fb824993c0808e5a
+a20075fb0483240680164d7117bb48eb14c4d221
+cf413174f0934b09b6537a7bec41690c4ee3a52d
+6f7df9135aed2181681cc57c4dd167efed4052be
+e707a7fbb949daa7214c597ebdb56dbb89466853
+e77879755ff930875d0747fa5c7d94923d248a22
+41b842efcd2a6b70b94068d106c1cff19f88a416
+0e156e93538efa4c03b60f763ceb23bdbd6e52bc
+d29d596279f9ce7a33c7cc68277886e49381ea05
+1a45fd4faf30229a3d3116de7bfe9d2f933d3562
+) # newest
+
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
@@ -440,7 +471,7 @@ NOT_READY_YET="
 "
 
 SRC_URI+=" "$(gen_kcp_ma_uri)
-SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
+SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 	   cfi? ( amd64? ( ${CFI_X86_SRC_URIS} ) )
 	   clang-pgo? ( ${CLANG_PGO_URI} )
 	   futex? ( ${FUTEX_SRC_URIS} )
@@ -625,7 +656,7 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
-		_dpatch "${PATCH_OPS}" "${path}"
+		_dpatch "${PATCH_OPS} -F 3" "${path}" # 1 hunk failure without fuzz
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
@@ -642,14 +673,14 @@ einfo "Already applied ${path} upstream"
 
 		# Add this to the end of the cfi commit list
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
-	elif [[ "${path}" =~ "bbrv2-5.15-1ca5498-1a45fd4.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 10 0 "" # actually only 1 failed not 10
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
 	elif [[ "${path}" =~ "cfi-x86-5.15-343e289.patch" ]] ; then
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
 	elif [[ "${path}" =~ "futex-5.15-b70e738.patch" ]] ; then
 		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-b70e738-2-hunk-fix-for-5.15.patch"
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.15-c6ef88b.patch" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi
