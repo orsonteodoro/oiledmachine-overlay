@@ -812,11 +812,13 @@ _bolt_optimize_file() {
 	[[ -z "${ABI}" ]] && return
 
 	if [[ "${f}" =~ "/${SLOT}/$(get_libdir)/" ]] ; then
+		# For libs
 		args+=(
 			-data="${T}/bolt-profile/clang-${SLOT}-merged-${ABI}.fdata"
 		)
 	elif [[ "${f}" =~ "/bin/" ]] ; then
-		# It can be -all or -${ABI} but /bin/* is DEFAULT_ABI.
+		# For exes
+		# It can be -all or -${ABI} but /bin/* is the DEFAULT_ABI.
 		args+=(
 			-data="${T}/bolt-profile/clang-${SLOT}-merged-all.fdata"
 		)

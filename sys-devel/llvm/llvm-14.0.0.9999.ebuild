@@ -1257,7 +1257,7 @@ _bolt_optimize_file() {
 		)
 	elif [[ "${f}" =~ "/bin/" ]] ; then
 		# For exes
-		# It is maybe -all or -${ABI} but the exe is DEFAULT_ABI.
+		# It is maybe -all or -${ABI} but the exe is the DEFAULT_ABI.
 		args+=(
 			-data="${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/clang-${SLOT}-merged-all.fdata"
 		)
