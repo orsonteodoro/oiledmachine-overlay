@@ -793,7 +793,7 @@ _bolt_optimize_file() {
 		-use-gnu-stack
 	)
 
-	if [[ "${f}" =~ "/$(get_libdir)/" ]] ; then
+	if [[ "${f}" =~ "/${SLOT}/$(get_libdir)/" ]] ; then
 		args+=(
 			-data="${T}/bolt-profile/clang-${SLOT}-merged-${ABI}.fdata"
 		)
@@ -1032,7 +1032,7 @@ src_install() {
 
 				# Match the ABIs, otherwise, pass
 				multilib_is_native_abi && file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
-				[[ "${f}" =~ "/$(get_libdir)/" ]] && file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
+				[[ "${f}" =~ "/${SLOT}/$(get_libdir)/" ]] && file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
 
 				if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
 					if grep -q -e $(basename "${f}") "${T}/bolt-profile" ; then
