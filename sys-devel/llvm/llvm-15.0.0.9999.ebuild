@@ -1352,8 +1352,11 @@ eerror "Missing BOLT profile required for a BOLT optimized LLVM."
 			f=$(readlink -f "${f}")
 			local is_exe=0
 			local is_so=0
-			file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
-			file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
+
+			# Match the ABIs, otherwise, pass
+			multilib_is_native_abi && file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
+			[[ "${f}" =~ "/$(get_libdir)/" ]] && file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
+
 			if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
 				if grep -q -e $(basename "${f}") "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile" ; then
 					_bolt_optimize_file "${f}"
