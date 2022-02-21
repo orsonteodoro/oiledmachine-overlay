@@ -1236,7 +1236,7 @@ _bolt_optimize_file() {
 		-use-gnu-stack
 	)
 
-	if [[ "${f}" =~ $(get_libdir ${ABI}) ]] ; then
+	if [[ "${f}" =~ "/$(get_libdir ${ABI})/" ]] ; then
 		# For libs
 		args+=(
 			-data="${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/clang-${SLOT}-merged-${ABI}.fdata"
