@@ -11,10 +11,9 @@ EAPI=7
 
 # This release corresponds to
 # WebKit 613.1.1 ; See Source/WebKit/Configurations/Version.xcconfig
-# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/WebKit/Configurations/Version.xcconfig
+# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/WebKit/Configurations/Version.xcconfig
 
-LLVM_MAX_SLOT=12 # This should not be more than Mesa's llvm \
-# dependency (mesa 20.x (stable): llvm-11, mesa 21.x (testing): llvm-12).
+LLVM_MAX_SLOT=13 # This should not be more than Mesa's package LLVM_MAX_SLOT
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{8..10} )
@@ -599,19 +598,19 @@ REQUIRED_USE+="
 #
 # This means also you cannot use the geolocation feature.
 
-# Prev rev: 288331
-# Curr rev: 289434
+# Prev rev: 289434
+# Curr rev: 290020
 # For dependencies, see:
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/CMakeLists.txt?rev=289434
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/cmake/BubblewrapSandboxChecks.cmake?rev=289434
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/cmake/FindGStreamer.cmake?rev=289434
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/cmake/GStreamerChecks.cmake?rev=289434
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/cmake/OptionsGTK.cmake?rev=289434
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Source/cmake/WebKitCommon.cmake?rev=289434
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Tools/gtk/install-dependencies?rev=289434
-#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=289434
-#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=289434
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5/Tools/gstreamer/jhbuild.modules?rev=289434
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/CMakeLists.txt?rev=290020
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/BubblewrapSandboxChecks.cmake?rev=290020
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/FindGStreamer.cmake?rev=290020
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/GStreamerChecks.cmake?rev=290020
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/OptionsGTK.cmake?rev=290020
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/WebKitCommon.cmake?rev=290020
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Tools/gtk/install-dependencies?rev=290020
+#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=290020
+#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=290020
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Tools/gstreamer/jhbuild.modules?rev=290020
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
@@ -643,7 +642,7 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.5?rev=289434
+# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6?rev=290020
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 RDEPEND+="
@@ -787,7 +786,7 @@ BDEPEND+="
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
 EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="289434"
+ESVN_REVISION="290020"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -1075,7 +1074,6 @@ Source/ThirdParty/libwebrtc
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/2.34.3-opengl-without-X-fixes.patch"
 	eapply "${FILESDIR}/2.34.3-non-jumbo-fix.patch"
 	eapply "${FILESDIR}/2.34.3-jumbo-fix.patch" # bug 830638
 	if use webrtc ; then
