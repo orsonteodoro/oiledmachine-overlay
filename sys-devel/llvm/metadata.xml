@@ -111,6 +111,17 @@
 	libLLVM.so contains the binary code (or brains) used as the optimization backend
 	for clang.
 
+	BOLT profiling for the LLVM library is done in the clang package and not within
+	this package.  Some reasons why it is designed this way:
+
+	1.  It reduces the duplicate code between the two packages for BOLT training.
+	2.  BOLT training is performed only in one run instead of two times.
+	3.  It avoids the missing symbol problem when using clang, which is the
+	biggest reason.
+	4.  Less maintenence cost in trying to fix both packages.
+	5.  Running the BOLT profiling inside the clang package closely resembles
+	typical use.
+
 
 	disable-peepholes notes:
 
