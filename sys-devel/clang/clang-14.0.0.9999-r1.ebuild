@@ -787,7 +787,6 @@ _bolt_optimize_file() {
 	local args=(
 		"${f}"
 		-o "${f}.bolt"
-		-data="${T}/bolt-profile/clang-${SLOT}-merged-all.fdata"
 		-reorder-blocks=cache+
 		-reorder-functions=hfsort+
 		-split-functions=3
@@ -796,6 +795,20 @@ _bolt_optimize_file() {
 		-icf=1
 		-use-gnu-stack
 	)
+
+	if [[ "${f}" =~ "/$(get_libdir)/" ]] ; then
+		args+=(
+			-data="${T}/bolt-profile/clang-${SLOT}-merged-${ABI}.fdata"
+		)
+	elif [[ "${f}" =~ "/bin/" ]] ; then
+		# It can be -all or -${ABI} but /bin/* is DEFAULT_ABI.
+		args+=(
+			-data="${T}/bolt-profile/clang-${SLOT}-merged-all.fdata"
+		)
+	else
+		ewarn "${f} is not part of lib* or bin.  Skipping."
+		return
+	fi
 
 	if use jemalloc ; then
 		LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" llvm-bolt ${args[@]} || die
