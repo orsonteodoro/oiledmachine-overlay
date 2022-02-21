@@ -1036,7 +1036,7 @@ src_install() {
 		_bolt_merge_profiles
 		# All binaries involved in building down the process tree should be added.
 		local f
-		for f in $(cat /var/db/pkg/sys-devel/${PN}-${SLOT}*/CONTENTS | cut -f 2 -d " ") ; do
+		for f in $(find "${ED}") ; do
 			f=$(readlink -f "${f}")
 			local is_exe=0
 			local is_so=0
