@@ -1326,25 +1326,22 @@ eerror "Missing BOLT profile required for a BOLT optimized LLVM."
 	local abis=($(multilib_get_enabled_abi_pairs))
 	local ABI
 	for ABI in ${abis[@]#*.} ; do
-		_bolt_optimize_file $(readlink -f /usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM.so)
-		if multilib_is_native_abi ; then
-			# All binaries involved in building down the process tree should be added.
-			local f
-			for f in $(cat /var/db/pkg/sys-devel/${PN}-${SLOT}*/CONTENTS | cut -f 2 -d " ") ; do
-				f=$(readlink -f "${f}")
-				local is_exe=0
-				local is_so=0
-				file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
-				file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
-				if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
-					if grep -q -e $(basename "${f}") "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile" ; then
-						_bolt_optimize_file "${f}"
-					else
-						einfo "Skipping "$(basename "${f}")" because it was not BOLT profiled."
-					fi
+		# All binaries involved in building down the process tree should be added.
+		local f
+		for f in $(cat /var/db/pkg/sys-devel/${PN}-${SLOT}*/CONTENTS | cut -f 2 -d " ") ; do
+			f=$(readlink -f "${f}")
+			local is_exe=0
+			local is_so=0
+			file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
+			file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
+			if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
+				if grep -q -e $(basename "${f}") "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile" ; then
+					_bolt_optimize_file "${f}"
+				else
+					einfo "Skipping "$(basename "${f}")" because it was not BOLT profiled."
 				fi
-			done
-		fi
+			fi
+		done
 	done
 	strip_package
 }
