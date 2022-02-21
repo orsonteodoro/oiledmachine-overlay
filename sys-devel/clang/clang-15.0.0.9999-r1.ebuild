@@ -1024,20 +1024,28 @@ src_install() {
 	if use bolt ; then
 		# Complete optimization
 		_bolt_merge_profiles
-		local f
-		for f in $(file "${D}") ; do
-			f=$(readlink -f "${f}")
-			local is_exe=0
-			local is_so=0
-			file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
-			file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
-			if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
-				if grep -q -e $(basename "${f}") "${T}/bolt-profile" ; then
-					_bolt_optimize_file "${f}"
-				else
-					einfo "Skipping "$(basename "${f}")" because it was not BOLT profiled."
+		local abis=($(multilib_get_enabled_abi_pairs))
+		local ABI
+		for ABI in ${abis[@]#*.} ; do
+			# All binaries involved in building down the process tree should be added.
+			local f
+			for f in $(cat /var/db/pkg/sys-devel/${PN}-${SLOT}*/CONTENTS | cut -f 2 -d " ") ; do
+				f=$(readlink -f "${f}")
+				local is_exe=0
+				local is_so=0
+
+				# Match the ABIs, otherwise, pass
+				multilib_is_native_abi && file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
+				[[ "${f}" =~ "/$(get_libdir)/" ]] && file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
+
+				if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
+					if grep -q -e $(basename "${f}") "${T}/bolt-profile" ; then
+						_bolt_optimize_file "${f}"
+					else
+						einfo "Skipping "$(basename "${f}")" because it was not BOLT profiled."
+					fi
 				fi
-			fi
+			done
 		done
 	fi
 
