@@ -203,7 +203,7 @@ eerror
 eerror
 eerror "You need hardware with LBR (Last Branch Record) support."
 eerror
-die
+			die
 		fi
 ewarn
 ewarn "Ebuild development indefinitely for the bolt USE flag."
