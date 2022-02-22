@@ -152,7 +152,7 @@ eerror "Testing with souper requires >=sys-devel/clang-${SLOT}:${SLOT}[${abi_pai
 	use souper && ewarn "The forward port of disable-peepholes-v07.diff is in testing."
 
 	if use bolt ; then
-		if perf record -e cpu-clock -j any -- ls \
+		if perf record -e cpu-clock -j any -o /dev/null -- ls \
 			| grep -q -e "PMU Hardware doesn't support sampling/overflow-interrupts" ; then
 eerror
 eerror "You need hardware with LBR (Last Branch Record) support."

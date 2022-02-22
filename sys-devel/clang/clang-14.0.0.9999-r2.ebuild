@@ -197,7 +197,7 @@ eerror
 	use bolt && ewarn "The bolt USE flag has not been tested and is in development in the ebuild level.  DO NOT USE."
 
 	if use bolt ; then
-		if perf record -e cpu-clock -j any -- ls \
+		if perf record -e cpu-clock -j any -o /dev/null -- ls \
 			| grep -q -e "PMU Hardware doesn't support sampling/overflow-interrupts" ; then
 eerror
 eerror "You need hardware with LBR (Last Branch Record) support."
