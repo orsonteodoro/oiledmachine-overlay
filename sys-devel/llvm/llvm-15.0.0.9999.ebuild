@@ -150,6 +150,20 @@ eerror "Testing with souper requires >=sys-devel/clang-${SLOT}:${SLOT}[${abi_pai
 	use pgo_trainer_build_self && ewarn "The pgo_trainer_build_self USE flag has not been tested."
 	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite USE flag has not been tested."
 	use souper && ewarn "The forward port of disable-peepholes-v07.diff is in testing."
+
+	if use bolt ; then
+		if perf record -e cpu-clock -j any -- ls \
+			| grep "PMU Hardware doesn't support sampling/overflow-interrupts" ; then
+eerror
+eerror "You need hardware with LBR (Last Branch Record) support."
+eerror
+			die
+		fi
+ewarn
+ewarn "Ebuild development indefinitely for the bolt USE flag."
+ewarn "No support will be given for the bolt USE flag on this ebuild fork due to a lack of hardware with LBR."
+ewarn
+	fi
 }
 
 python_check_deps() {
@@ -800,7 +814,6 @@ _configure() {
 			-DLLVM_PROFDATA_FILE="${T}/pgo-custom.profdata"
 			-DLLVM_USE_LINKER=lld
 		)
-	# llvm-bolt only does executables
 	elif [[ "${PGO_PHASE}" == "pg0" ]] ; then
 		if [[ "${CC}" =~ "clang" ]] ; then
 			mycmakeargs+=(

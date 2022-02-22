@@ -90,7 +90,8 @@
 	BOLT notes:
 
 	BOLT support requires commit 4c106cfdf7cf7eec861ad3983a3dd9a9e8f3a8ae or newer
-	circa Jan 11, 2022 and is only offered in LLVM 14 or newer.
+	circa Jan 11, 2022 and is only offered in LLVM 14 or newer.  In its current
+	form it requires LBR hardware support on the CPU.
 
 	BOLT users please see
 	https://github.com/llvm/llvm-project/blob/main/bolt/README.md#input-binary-requirements
@@ -106,10 +107,9 @@
 
 	Both clang must be built with the same ${SLOT} as llvm, but the llvm backend
 	should be the same version or commit as the one used to build with clang.  BOLT
-	profiling is done within the clang package which it will generate a prof.data.
-	This prof.data is then used in step 4 to generate an optimized libLLVM.so.
-	libLLVM.so contains the binary code (or brains) used as the optimization backend
-	for clang.
+	profiling is done within the clang package.  This profile(s) is then used in
+	step 4 to generate an optimized libLLVM.so.  libLLVM.so contains the binary
+	code (or brains) used as the optimization backend for clang.
 
 	BOLT profiling for the LLVM library is done in the clang package and not within
 	this package.  Some reasons why it is designed this way:
