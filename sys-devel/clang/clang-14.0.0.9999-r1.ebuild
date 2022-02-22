@@ -195,6 +195,19 @@ eerror
 	use pgo_trainer_build_self && ewarn "The pgo_trainer_build_self has not been tested or is in development."
 	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite has not been tested or is in development."
 	use bolt && ewarn "The bolt USE flag has not been tested and is in development in the ebuild level.  DO NOT USE."
+	if use bolt ; then
+		if perf record -e cpu-clock -j any -- ls \
+			| grep "PMU Hardware doesn't support sampling/overflow-interrupts" ; then
+eerror
+eerror "You need hardware with LBR (Last Branch Record) support."
+eerror
+die
+		fi
+ewarn
+ewarn "Ebuild development indefinitely for the bolt USE flag."
+ewarn "No support will be given for the bolt USE flag on this ebuild fork due to a lack of hardware with LBR."
+ewarn
+	fi
 }
 
 src_unpack() {
