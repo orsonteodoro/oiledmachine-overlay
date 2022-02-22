@@ -91,7 +91,7 @@
 
 	BOLT support requires commit 4c106cfdf7cf7eec861ad3983a3dd9a9e8f3a8ae or newer
 	circa Jan 11, 2022 and is only offered in LLVM 14 or newer.  In its current
-	form it requires LBR hardware support on the CPU.
+	form it requires LBR support for the CPU.
 
 	BOLT users please see
 	https://github.com/llvm/llvm-project/blob/main/bolt/README.md#input-binary-requirements

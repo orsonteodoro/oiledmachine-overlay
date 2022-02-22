@@ -100,7 +100,7 @@
 
     BOLT optimized builds notes:
 
-    BOLT optimized builds require CPU hardware with LBR support in its current
+    BOLT optimized builds require specific CPUs with LBR support in its current
     form.
 
 

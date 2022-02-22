@@ -197,13 +197,13 @@ eerror
 		if perf record -e cpu-clock -j any -o /dev/null -- ls \
 			| grep -q -e "PMU Hardware doesn't support sampling/overflow-interrupts" ; then
 eerror
-eerror "You need hardware with LBR (Last Branch Record) support."
+eerror "You need CPU support for hardware or software LBR (Last Branch Record)."
 eerror
 			die
 		fi
 ewarn
 ewarn "Ebuild development indefinitely for the bolt USE flag."
-ewarn "No support will be given for the bolt USE flag on this ebuild fork due to a lack of hardware with LBR."
+ewarn "No support will be given for the bolt USE flag on this ebuild fork due to a lack of LBR CPU support."
 ewarn
 	fi
 }
