@@ -1771,10 +1771,9 @@ ot-kernel_src_configure() {
 		local args=()
 		ot-kernel_setup_tc
 
-		# Now mod the config
 		local path_config="${BUILD_DIR}/.config"
 		if [[ -e "${config}" ]] ; then
-			einfo "Copying the config:  ${config} -> ${path_config}"
+			einfo "Copying the savedconfig:  ${config} -> ${path_config}"
 			cat "${config}" > "${path_config}" || die
 		fi
 
