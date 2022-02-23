@@ -1819,6 +1819,7 @@ ot-kernel_src_configure() {
 		fi
 
 		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "cfs" ]] ; then
+			einfo "Changed .config to use CFS (Completely Fair Scheduler)"
 			ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
 			ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 			ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
@@ -1826,32 +1827,38 @@ ot-kernel_src_configure() {
 		fi
 
 		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "muqss" ]] ; then
+			einfo "Changed .config to use MuQSS"
 			ot-kernel_y_configopt "CONFIG_SCHED_MUQSS"
 		fi
 
 		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc" ]] ; then
+			einfo "Changed .config to use Project C with BMQ"
 			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS" # fixme
 		fi
 
 		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc-bmq" ]] ; then
+			einfo "Changed .config to use Project C with BMQ"
 			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		fi
 
 		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc-pds" ]] ; then
+			einfo "Changed .config to use Project C with PDS"
 			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 			ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 			ot-kernel_y_configopt "CONFIG_SCHED_PDS"
 		fi
 
 		if has bmq ${IUSE_EFFECTIVE} && use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
+			einfo "Changed .config to use BMQ"
 			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 		fi
 
 		if has pds ${IUSE_EFFECTIVE} && use pds && [[ "${cpu_sched}" == "pds" ]] ; then
+			einfo "Changed .config to use PDS"
 			ot-kernel_y_configopt "CONFIG_SCHED_PDS"
 		fi
 
