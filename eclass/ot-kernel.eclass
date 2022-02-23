@@ -798,8 +798,8 @@ ewarn "The defaults use cfs (or the stock CPU scheduler) per build configuration
 ewarn "The build configuration scheme has changed.  Please see"
 ewarn "\`epkginfo -x ot-sources\` or the metadata.xml in how to customize"
 ewarn "the per environment build variable and patching process to build"
-ewarn "more secure and performant configurations and to override the scheduler"
-ewarn "default."
+ewarn "more secure and higher performant configurations and to override the"
+ewarn "scheduler default."
 ewarn
 	_report_eol
 	if use build ; then
