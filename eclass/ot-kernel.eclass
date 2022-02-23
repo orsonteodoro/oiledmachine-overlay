@@ -1617,6 +1617,27 @@ apply_all_patchsets() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_check_build_info_valid
+# @DESCRIPTION:
+# Checks if the buildinfo format has changed
+OT_KERNEL_BUILDCONFIGS_N_FIELDS=6
+ot-kernel_check_build_info_valid() {
+	local nfields=$(echo "${b}" | grep -o ":" | wc -l)
+	if (( ${nfields} != ${OT_KERNEL_BUILDCONFIGS_N_FIELDS} )) ; then
+# We can either have a version variable or this.
+eerror
+eerror "The current number of fields (aka columns) in the"
+eerror "OT_KERNEL_BUILDCONFIGS_X_Y has changed.  This may indicate that the"
+eerror "specification has been updated or a build config is incorrect"
+eerror
+eerror "Entry:  ${b}"
+eerror "Expected n-fields:  ${OT_KERNEL_BUILDCONFIGS_N_FIELDS}"
+eerror "Provided n-fields:  ${nfields}"
+eerror
+		die
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_prepare
 # @DESCRIPTION:
 # Patch the kernel a bit
@@ -1646,6 +1667,7 @@ ewarn
 
 	local b
 	for b in $(build_pairs) ; do
+		ot-kernel_check_build_info_valid
 		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		if [[ "${extraversion}" != "ot" ]] ; then
