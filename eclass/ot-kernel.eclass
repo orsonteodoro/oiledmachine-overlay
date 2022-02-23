@@ -1818,17 +1818,11 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_FUTEX2"
 		fi
 
-		if [[ "${cpu_sched}" == "cfs" ]] ; then
-			einfo "Changed .config to use CFS (Completely Fair Scheduler)"
-			ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
-			ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
-			ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
-			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
-		fi
-
+		local cpu_sched_config_applied=0
 		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "muqss" ]] ; then
 			einfo "Changed .config to use MuQSS"
 			ot-kernel_y_configopt "CONFIG_SCHED_MUQSS"
+			cpu_sched_config_applied=1
 		fi
 
 		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc" ]] ; then
@@ -1836,6 +1830,7 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS" # fixme
+			cpu_sched_config_applied=1
 		fi
 
 		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc-bmq" ]] ; then
@@ -1843,6 +1838,7 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
+			cpu_sched_config_applied=1
 		fi
 
 		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc-pds" ]] ; then
@@ -1850,16 +1846,34 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 			ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 			ot-kernel_y_configopt "CONFIG_SCHED_PDS"
+			cpu_sched_config_applied=1
 		fi
 
 		if has bmq ${IUSE_EFFECTIVE} && use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
 			einfo "Changed .config to use BMQ"
 			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
+			cpu_sched_config_applied=1
 		fi
 
 		if has pds ${IUSE_EFFECTIVE} && use pds && [[ "${cpu_sched}" == "pds" ]] ; then
 			einfo "Changed .config to use PDS"
 			ot-kernel_y_configopt "CONFIG_SCHED_PDS"
+			cpu_sched_config_applied=1
+		fi
+
+		if (( ${cpu_sched_config_applied} == 1 )) && [[ "${cpu_sched}" != "cfs" ]] ; then
+			ewarn
+			ewarn "The chosen cpu_sched ${cpu_sched} config was not applied"
+			ewarn "because the use flag was not enabled."
+			ewarn
+		fi
+
+		if [[ "${cpu_sched}" == "cfs" ]] || (( ${cpu_sched_config_applied} == 0 )) ; then
+			einfo "Changed .config to use CFS (Completely Fair Scheduler)"
+			ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
+			ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
+			ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
+			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		fi
 
 		local llvm_slot
