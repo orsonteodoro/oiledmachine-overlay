@@ -245,6 +245,21 @@
     /var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata -- The merged
       profdata PGO profile.  It is used when optimizing.
 
+    LLVM versions supported for Clang PGO:
+
+    * 15.0.0.9999 - with the latest commit
+    * 14.0.0.9999 - with the latest commit
+    * 14.0.0_rc1
+    * 13.0.1
+    * 13.0.0 
+    * 12.0.1 
+    * 11.1.0
+
+    Versions that are not *exactly* the ones listed above are not supported.
+    The PGO profraw format used is sensitive to point version changes and even
+    in the live ebuilds, and it's the reason why exact versions are only
+    supported up and including profraw version 8.
+
 
     Using gen_pgo.sh, aka the automated PGO trainer script
 
@@ -423,8 +438,7 @@ https://github.com/dolohow/uksm
       and not apply any third-party CPU scheduler.</flag>
     <flag name="clang">This is a stronger check for those prefer Clang over
       GCC and to make sure the prerequisites are met. </flag>
-    <flag name="clang-pgo">Adds experimental Clang PGO support.  Patch was on
-      hold due to compiler code generation problems.</flag>
+    <flag name="clang-pgo">Adds experimental Clang PGO support.</flag>
     <flag name="cve_hotfix">Applies patches to resolve CVEs (Common 
       Vulnerabilities and Exposures).  Not enabled by default.
 
@@ -548,6 +562,8 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       AES hardware accelerated AES-NI support.</flag>
     <flag name="tresor_i686">Patches the kernel with cold boot resistant
       AES using SSE for 32 bit systems.</flag>
+    <flag name="tresor_prompt">Enables the TRESOR prompt in the kernel
+      config.</flag>
     <flag name="tresor_sysfs">Builds the external key setting program.</flag>
     <flag name="tresor_x86_64">Patches the kernel with cold boot
       resistant AES using SSE for 64 bit systems.</flag>

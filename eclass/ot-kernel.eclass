@@ -1365,8 +1365,7 @@ apply_tresor() {
 		platform="i686"
 	fi
 
-	_fpatch \
-		"${DISTDIR}/tresor-patch-${PATCH_TRESOR_V}_${platform}"
+	_fpatch "${DISTDIR}/tresor-patch-${PATCH_TRESOR_V}_${platform}"
 	sed -i -E -e "s|[ ]?-tresor[0-9.]+||g" "${BUILD_DIR}/Makefile" || die
 }
 
@@ -1874,6 +1873,69 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 			ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
+		fi
+
+		if has tresor_i686 ${IUSE_EFFECTIVE} && use tresor_i686 && [[ "${arch}" == "x86" ]] ; then
+			einfo "Changed .config to use TRESOR (i686)"
+			ot-kernel_y_configopt "CONFIG_CRYPTO"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_AES"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ALGAPI"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
+			if use tresor_prompt ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
+				einfo "Disabling boot output for TRESOR early prompt."
+				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
+				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "2" # 4 is default
+				ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "2" # 4 is default
+			fi
+		fi
+
+		if has tresor_x86_64 ${IUSE_EFFECTIVE} && use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
+			einfo "Changed .config to use TRESOR (x86_64)"
+			ot-kernel_y_configopt "CONFIG_CRYPTO"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_AES"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ALGAPI"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
+			if use tresor_prompt ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
+				einfo "Disabling boot output for TRESOR early prompt."
+				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
+				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "2" # 4 is default
+				ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "2" # 4 is default
+			fi
+		fi
+
+		if has tresor_aesni ${IUSE_EFFECTIVE} && use tresor_aesni && [[ "${arch}" == "x86_64" ]] ; then
+			einfo "Changed .config to use TRESOR (AES-NI)"
+			ot-kernel_y_configopt "CONFIG_CRYPTO"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_ALGAPI"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
+			if use tresor_prompt ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
+				einfo "Disabling boot output for TRESOR early prompt."
+				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
+				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "2" # 4 is default
+				ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "2" # 4 is default
+			fi
+		fi
+
+		if has tresor_sysfs ${IUSE_EFFECTIVE} && use tresor_sysfs && [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
+			einfo "Changed .config to use the TRESOR sysfs interface"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_SYSFS"
+
+			ewarn "The sysfs interface for TRESOR is not compatible with suspend or"
+			ewarn "hibernation, so disabling both of these."
+			ot-kernel_n_configopt "CONFIG_SUSPEND"
+			ot-kernel_n_configopt "CONFIG_HIBERNATION"
 		fi
 
 		local llvm_slot=$(get_llvm_slot)

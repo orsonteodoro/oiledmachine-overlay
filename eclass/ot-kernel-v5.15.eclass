@@ -211,8 +211,8 @@ KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" build"
 IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex futex-proton
-+genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto
-+O3 prjc rt shadowcallstack tresor tresor_aesni tresor_i686 tresor_sysfs
++genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto +O3 prjc rt
+shadowcallstack tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
 tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-lru_gen zen-muqss
 zen-sauce zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
@@ -225,6 +225,7 @@ REQUIRED_USE+="
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
 	tresor_i686? ( tresor )
+	tresor_prompt? ( tresor )
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
