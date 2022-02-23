@@ -215,7 +215,17 @@
     When both the build and pgo USE flags are enabled, it will build an
     instrumented build ready for PGO training.  This requires a reboot.  After
     rebooting, you may use benchmarks or any program that reflects typical use
-    cases.
+    cases.  The PGO progression state can be reset by deleting the
+    /var/lib/ot-sources/${PV} folder.  The folder contains these files for
+    developer interest and transparency:
+
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}.pgophase -- The PGO
+      phase progression state file that contains the current step.
+      {PGI,PGT,PGO,DONE} are the states in the FSM.
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}.profraw -- The profraw
+      captured before conversion.
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata -- The merged
+      profdata PGO profile.  It is used when optimizing.
 
     The build USE flag was necessary to increase the security of the -rt patchset
     with a more customized limited config.
