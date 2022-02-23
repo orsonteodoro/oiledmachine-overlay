@@ -1861,7 +1861,7 @@ ot-kernel_src_configure() {
 			cpu_sched_config_applied=1
 		fi
 
-		if (( ${cpu_sched_config_applied} == 1 )) && [[ "${cpu_sched}" != "cfs" ]] ; then
+		if (( ${cpu_sched_config_applied} == 0 )) && [[ "${cpu_sched}" != "cfs" ]] ; then
 			ewarn
 			ewarn "The chosen cpu_sched ${cpu_sched} config was not applied"
 			ewarn "because the use flag was not enabled."
