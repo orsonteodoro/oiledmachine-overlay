@@ -1760,23 +1760,81 @@ ot-kernel_src_configure() {
 		fi
 
 #		if [[ -n "${OT_MENUCONFIG_PREFERENCE}" ]] ; then
+#			https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
+#			All menuconfig/xconfig/gconfig works outside of emerge but not when sandbox is completely disabled.
+#			The interactive support doesn't work as advertised but limited to just alphanumeric and no arrow keys in text only mode.
+#
 #			# Does not work
 #			einfo "make ${OT_MENUCONFIG_PREFERENCE} ${args[@]}"
 #			make ${OT_MENUCONFIG_PREFERENCE} "${args[@]}" || die
 #		fi
 
 		if [[ ! -e "${path_config}" ]] ; then
-			eerror
-			eerror "Missing the kernel config:  ${path_config}"
-			eerror
-			eerror "You need to save a kernel config to build (extraversion: ${extraversion})."
-			eerror
-			die
+			ewarn "Missing ${path_config} so generating a new default config."
+			make defconfig "${args[@]}" || die
 		fi
 
 		einfo
 		einfo "Changing config options for -${extraversion}"
 		einfo
+
+		if has bbrv2 ${IUSE_EFFECTIVE} && use bbrv2 ; then
+			einfo "Enabled bbrv2 in .config"
+			ot-kernel_y_configopt "CONFIG_TCP_CONG_BBR2"
+			ot-kernel_y_configopt "CONFIG_DEFAULT_BBR2"
+			ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "bbr2"
+		fi
+
+		if has futex ${IUSE_EFFECTIVE} && use futex ; then
+			einfo "Enabled futex in .config"
+			ot-kernel_y_configopt "CONFIG_EXPERT"
+			ot-kernel_y_configopt "CONFIG_FUTEX"
+		fi
+
+		if has futex2 ${IUSE_EFFECTIVE} && use futex2 ; then
+			einfo "Enabled futex2 in .config"
+			ot-kernel_y_configopt "CONFIG_EXPERT"
+			ot-kernel_y_configopt "CONFIG_FUTEX"
+			ot-kernel_y_configopt "CONFIG_FUTEX2"
+		fi
+
+		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "cfs" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
+			ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
+			ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
+			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
+		fi
+
+		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "muqss" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SCHED_MUQSS"
+		fi
+
+		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
+			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
+			ot-kernel_unset_configopt "CONFIG_SCHED_PDS" # fixme
+		fi
+
+		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc-bmq" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
+			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
+			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
+		fi
+
+		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc-pds" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
+			ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
+			ot-kernel_y_configopt "CONFIG_SCHED_PDS"
+		fi
+
+		if has prjc ${IUSE_EFFECTIVE} && use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
+		fi
+
+		if has prjc ${IUSE_EFFECTIVE} && use pds && [[ "${cpu_sched}" == "pds" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SCHED_PDS"
+		fi
+
 		local llvm_slot
 		for llvm_slot in $(seq ${LLVM_MAX_SLOT:-15} -1 ${LLVM_MIN_SLOT:-10}) ; do
 			if has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready ; then

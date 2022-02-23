@@ -286,9 +286,9 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     6. CPU scheduler -- can be one of the below depending on the kernel version.
 
 		4.14: cfs, muqss, pds
-		5.10: cfs, muqss, prjc
-		5.15: cfs, prjc
-		5.16: cfs, prjc
+		5.10: cfs, muqss, prjc, prjc-bmq, prjc-pds
+		5.15: cfs, prjc, prjc-bmq, prjc-pds
+		5.16: cfs, prjc, prjc-bmq, prjc-pds
 
 		The reason why for this flexibility is to allow for multiple
 		configurations that are not mutual exclusive, meaning you can
