@@ -1,4 +1,4 @@
-# Copyright 2020-2021 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2020-2022 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -13,6 +13,8 @@
 # The ot-kernel-v5.10 eclass defines specific applicable patching for the 5.10.x
 # linux kernel.
 
+LLVM_MAX_SLOT=15
+LLVM_MIN_SLOT=10
 DISABLE_DEBUG_V="1.1"
 EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
@@ -196,13 +198,13 @@ fe6b56a9c48b934d2ffaafd60eb89b9dae6e912d
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
+IUSE+=" build"
 IUSE+=" ${KCP_IUSE} bbrv2 +cfs clang disable_debug futex
 +genpatches -genpatches_1510 +kernel-compiler-patch muqss +O3 prjc rt tresor
 tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce zen-sauce-all
 -zen-tune"
 REQUIRED_USE+="
-	^^ ( cfs muqss prjc zen-muqss )
 	genpatches_1510? ( genpatches )
 	O3? ( zen-sauce )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
@@ -214,19 +216,10 @@ REQUIRED_USE+="
 	zen-sauce-all? ( zen-sauce )
 	zen-tune? ( zen-sauce )"
 
-if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
-REQUIRED_USE+="
-	muqss? ( !rt )
-	prjc? ( !rt )
-	zen-muqss? ( !rt )
-	rt? ( cfs !muqss !prjc !zen-muqss )
-"
-fi
-
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel \
-patchset, GraySky2's kernel_compiler_patch, MUQSS CPU Scheduler, \
+DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel
+patchset, GraySky2's kernel_compiler_patch, MUQSS CPU Scheduler,
 Project C CPU Scheduler, genpatches, CVE fixes, TRESOR"
 
 inherit ot-kernel
@@ -241,6 +234,7 @@ LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 gen_kcp_license() {
 	local out=""
+	local a
 	for a in ${KCP_MA[@]} ; do
 		out+=" kernel-compiler-patch-${a}? ( GPL-2 )"
 	done
@@ -284,40 +278,40 @@ gen_clang_llvm_pair() {
 }
 
 KCP_RDEPEND="
-	clang? ( || ( $(gen_clang_llvm_pair 10 14) ) )
+	clang? ( || ( $(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT}) ) )
 	|| (
 		(
 			>=sys-devel/gcc-6.5.0
 		)
-		$(gen_clang_llvm_pair 10 14)
+		$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
 	)
 "
 
 KCP_TC0="
-	clang? ( || ( $(gen_clang_llvm_pair 10 14) ) )
+	clang? ( || ( $(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT}) ) )
 	|| (
 		(
 			>=sys-devel/gcc-10.1
 		)
-		$(gen_clang_llvm_pair 10 14)
+		$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
 	)"
 
 KCP_TC1="
-	clang? ( || ( $(gen_clang_llvm_pair 10 14) ) )
+	clang? ( || ( $(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT}) ) )
 	|| (
 		(
 			>=sys-devel/gcc-10.3
 		)
-		$(gen_clang_llvm_pair 10 14)
+		$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
 	)"
 
 KCP_TC2="
-	clang? ( || ( $(gen_clang_llvm_pair 12 13) ) )
+	clang? ( || ( $(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT}) ) )
 	|| (
 		(
 			>=sys-devel/gcc-11.1
 		)
-		$(gen_clang_llvm_pair 12 13)
+		$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
 	)"
 
 KCP_MA_RDEPEND="
@@ -332,7 +326,7 @@ RDEPEND+=" ${KCP_MA_RDEPEND}
 	   kernel-compiler-patch? ( ${KCP_RDEPEND} )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
-	:;
+	:
 else
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:="cdn.kernel.org"}
 SRC_URI+="
@@ -344,6 +338,7 @@ fi
 # kernel-compiler-patch* USE flag usage
 gen_kcp_ma_uri() {
 	local out=""
+	local a
 	for a in ${KCP_MA[@]} ; do
 		[[ "${a}" =~ cortex-a72 ]] && continue
 		out+="
@@ -385,7 +380,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
-function ot-kernel_pkg_setup_cb() {
+ot-kernel_pkg_setup_cb() {
 	if has zen-tune ${IUSE_EFFECTIVE} ; then
 		if use zen-tune ; then
 ewarn
@@ -400,76 +395,88 @@ ewarn
 ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
 ewarn
 	fi
+
+	# Allow for multiple builds for different kernel configs (e.g. server, gaming-client etc),
+	# but it is really needed to isolate the -rt build.
+	if [[ -z "${OT_KERNEL_BUILDCONFIGS_5_4}" ]] ; then
+		OT_KERNEL_BUILDCONFIGS_5_4_="ot:build:/etc/kernels/kernel-config-${PV}-ot-$(uname -m):$(uname -m):${CHOST}:cfs"
+		if use rt ; then
+			# Split for security reasons
+			OT_KERNEL_BUILDCONFIGS_5_4_="${OT_KERNEL_BUILDCONFIGS_5_4_};rt:build:/etc/kernels/kernel-config-${PV}-rt-$(uname -m):$(uname -m):${CHOST}:cfs"
+		fi
+	else
+		export OT_KERNEL_BUILDCONFIGS_5_4_="${OT_KERNEL_BUILDCONFIGS_5_4}"
+	fi
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes
 # @DESCRIPTION:
 # Applies specific TRESOR fixes for this kernel major version
-function ot-kernel_apply_tresor_fixes() {
-	_dpatch "${PATCH_OPS}" \
+ot-kernel_apply_tresor_fixes() {
+	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-testmgr-ciphers-update.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" \
+		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-tresor_asm_64_v2.2.patch"
-		_dpatch "${PATCH_OPS}" \
+		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-tresor_key_64.patch"
 	fi
 
 	# for 5.x series uncomment below
-	_dpatch "${PATCH_OPS}" \
+	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
 
 	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
-        _dpatch "${PATCH_OPS} -F 3" "${FILESDIR}/tresor-testmgr-linux-5.1.patch"
+        _dpatch "${PATCH_OPTS} -F 3" "${FILESDIR}/tresor-testmgr-linux-5.1.patch"
 
-        _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
+        _dpatch "${PATCH_OPTS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS} -F 3" \
+		_dpatch "${PATCH_OPTS} -F 3" \
 "${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-i686.patch"
 	else
-		_dpatch "${PATCH_OPS} -F 3" \
+		_dpatch "${PATCH_OPTS} -F 3" \
 "${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-aesni.patch"
 	fi
-	_dpatch "${PATCH_OPS}" \
+	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-expose-aes-generic-tables-for-5.4.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" \
+		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-prompt-update-for-5.10-v4_i686.patch"
 	else
-		_dpatch "${PATCH_OPS}" \
+		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-prompt-update-for-5.10-v4_aesni.patch"
 	fi
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" \
+		_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.5.patch"
 	else
-		_dpatch "${PATCH_OPS}" \
+		_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.5.patch"
 	fi
 
-	_dpatch "${PATCH_OPS}" \
+	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c-for-5.10.patch"
 	if use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
-			_dpatch "${PATCH_OPS}" \
+			_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-256-bit-aes-support-i686-v3.1-for-5.10.patch"
 		fi
 	fi
 
 	if ! use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
-			_dpatch "${PATCH_OPS}" \
+			_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-testmgr-limit-modes-of-operation-to-128-bit-key-support-for-linux-5.10.patch"
 		else
-			_dpatch "${PATCH_OPS}" \
+			_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
 		fi
 	else
-		_dpatch "${PATCH_OPS}" \
+		_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
 	fi
 }
@@ -477,7 +484,7 @@ function ot-kernel_apply_tresor_fixes() {
 # @FUNCTION: ot-kernel_pkg_postinst_cb
 # @DESCRIPTION:
 # Show messages and avoid collision triggering
-function ot-kernel_pkg_postinst_cb() {
+ot-kernel_pkg_postinst_cb() {
 einfo
 einfo "You may require the genkernel 4.x series to build the ${K_MAJOR_MINOR}.x"
 einfo "kernel series."
@@ -487,8 +494,8 @@ einfo
 # @FUNCTION: ot-kernel_pkg_postinst_cb
 # @DESCRIPTION:
 # Show messages and avoid collision triggering
-function ot-kernel_pkg_postinst_cb() {
-	:;
+ot-kernel_pkg_postinst_cb() {
+	:
 }
 
 # @FUNCTION: ot-kernel_filter_genpatches_blacklist_cb
@@ -502,7 +509,7 @@ ot-kernel_filter_genpatches_blacklist_cb() {
 # @FUNCTION: ot-kernel_filter_patch_cb
 # @DESCRIPTION:
 # Filtered patch function
-function ot-kernel_filter_patch_cb() {
+ot-kernel_filter_patch_cb() {
 	local path="${1}"
 
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
@@ -510,27 +517,27 @@ function ot-kernel_filter_patch_cb() {
 	# Using patch with fuzz factor is disallowed with define parts or syscall_*.tbl of futex
 
 	if [[ "${path}" =~ "prjc_v5.10-r2.patch" ]] ; then
-		_dpatch "${PATCH_OPS}" "${path}"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
+		_dpatch "${PATCH_OPTS}" "${path}"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
-einfo "Already applied ${path} upstream"
+		einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
-einfo "Already applied ${path} upstream"
+		einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
-		_dpatch "${PATCH_OPS} -F 3" "${path}"
+		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
-		_dpatch "${PATCH_OPS}" "${path}"
+		_dpatch "${PATCH_OPTS}" "${path}"
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
-		_dpatch "${PATCH_OPS} -F ${fuzz_factor}" "${path}"
+		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "futex-5.10-e8d4d6d.patch" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/futex-e8d4d6d-2-hunk-fix-for-5.10.patch"
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-e8d4d6d-2-hunk-fix-for-5.10.patch"
 	else
-		_dpatch "${PATCH_OPS}" "${path}"
+		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
 }

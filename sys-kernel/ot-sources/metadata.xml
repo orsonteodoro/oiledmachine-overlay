@@ -90,7 +90,7 @@
     LTS series.
 
     Kernel series | Patchset | 			     | LTS [1,2]
-    4.14						Y
+    4.14 (LTS)						Y
 		    -ck / MuQSS				N
 		    -rt (RT_PREEMPT)			Y
 		    genpatches				Y
@@ -102,7 +102,7 @@
 		    TRESOR (x86-64) [3,6]		Y
 		    UKSM [5]				N
 
-    5.4							Y
+    5.4	(LTS)						Y
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
 		    BMQ					N
@@ -116,7 +116,7 @@
 		    zen-muqss				N
 		    zen-sauce				N
 
-    5.10						Y
+    5.10 (LTS)						Y
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
 		    BMQ					N
@@ -132,23 +132,40 @@
 		    zen-muqss				N
 		    zen-sauce				N
 
-    5.14						N
+    5.15 (LTS)						Y
 		    -rt	(RT_PREEMPT)			A
-		    Clang PGO				S (6/2021)
-		    futex (futex-wait-multiple)	[6]	A
-		    futex2 [6]				A
-		    kernel_compiler_patch		A
+		    Clang PGO				?
+		    futex (futex-wait-multiple)	[6]	?
+		    futex2				?
+		    kernel_compiler_patch		?
 		    genpatches				A
-		    lru_gen				N
+		    lru_gen				?
 		    Project C				A
-		    TCP BBR v2 [6]			A
-		    TRESOR (AES-NI) [6]			I
-		    TRESOR (x86) [6]			I
-		    TRESOR (x86-64) [6]			I
-		    UKSM [5]				N
-		    x86-cfi [6]				A
+		    TCP BBR v2 [6]			?
+		    TRESOR (AES-NI) [6]			D
+		    TRESOR (x86) [6]			D
+		    TRESOR (x86-64) [6]			D
+		    UKSM [5]				Y
+		    x86-cfi				?
+		    zen-lru_gen				N
+		    zen-sauce				N
+						
+    5.16 (Stable)					N
+		    -rt	(RT_PREEMPT)			A
+		    Clang PGO				?
+		    futex (futex-wait-multiple)	[6]	?
+		    futex2				?
+		    genpatches				A
+		    lru_gen				?
+		    kernel_compiler_patch		?
+		    Project C				D
+		    TCP BBR v2 [6]			?
+		    TRESOR (AES-NI) [6]			D
+		    TRESOR (x86) [6]			D
+		    TRESOR (x86-64) [6]			D
+		    UKSM [5]				D
+		    x86-cfi				?
 		    zen-lru_gen				A
-		    zen-muqss				A
 		    zen-sauce				A
 
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
@@ -167,6 +184,8 @@
         series.
 
     A - currently actively updatable
+    D - USE flag should be disabled since there is no release for this minor
+        version yet.
     N - under the Patchset LTS indicates that the patchset is EOL or likely
         EOL for that version which means that bug fixes and security updates
         will not be provided.  This indicates a feature freeze, but
@@ -185,6 +204,92 @@
     It's recommended to use the ot-sources-lts if you have binary only kernel
     modules.  For those without binary only modules, use ot-sources-stable
     package.
+
+    
+    Using the build USE flag
+
+    The build USE flag can be used to build the kernel.  It comes with extra
+    environment variables that can be placed in the make.conf or as a
+    per-package conf.
+
+    When both the build and pgo USE flags are enabled, it will build an
+    instrumented build ready for PGO training.  This requires a reboot.  After
+    rebooting, you may use benchmarks or any program that reflects typical use
+    cases.
+
+    The build USE flag was necessary to increase the security of the -rt patchset
+    with a more customized limited config.
+
+    It also speeds up deployment time to decrease the security update lag.
+
+
+    Using gen_pgo.sh
+
+    It becomes tedious or too repetitive to manually train the kernel.
+    This is why an automated trainer script gen_pgo.sh (also found in the modded
+    genkernel) is provided to automatically train the kernel.  You can of course
+    write your own automated script.  The script can be extended with
+    pgo_custom.sh in the same directory or modded directly.  Using pgo_custom.sh
+    is recommended to preserve changes between installs.  It should be ran only
+    as a non-root user.  It also has additional package requirements listed in
+    the pgo_trainer_* sections in the link below:
+
+https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4aff350c36fce8f4c85/sys-kernel/genkernel/genkernel-4.2.6-r2.ebuild#L279
+
+
+    Build environment variables
+   
+    OT_KERNEL_BUILDCONFIGS_X_Y -- list of build configs.  Once you define this,
+    it will override and erase the defaults for that particular major.minor version.
+
+    X is the major version, Y is the minor version.
+
+    Examples:
+
+    OT_MENUCONFIG_PREFERENCE="menuconfig"
+    OT_KERNEL_BUILDCONFIGS_5_4="ot:build:/etc/kernels/kernel-config-5.4.180-ot-x86_64:x86_64:x86_64-pc-linux-gnu:muqss"
+    OT_KERNEL_BUILDCONFIGS_5_16="ot:build:/etc/kernels/kernel-config-5.16.10-ot-x86_64:x86_64:x86_64-pc-linux-gnu:prjc;rt:build:/etc/kernels/kernel-config-5.16.10-rt-x86_64:x86_64:x86_64-pc-linux-gnu:cfs"
+
+    The format of the sublists in OT_KERNEL_BUILDCONFIGS_X_Y is described below:
+
+    Each build config is separated by a semicolon (;).
+
+    The colon (:) separated sublist is defined as follows:
+
+    All of the following are required to be defined from (left to right):
+
+    OT_KERNEL_BUILDCONFIGS_X_Y="1:2:3:4:5:6"			# Acceptable
+    OT_KERNEL_BUILDCONFIGS_X_Y="1:2:3:4:5:6;1:2:3:4:5:6"	# Acceptable
+
+    1. Extraversion -- initials or name of the kernel.  Using the rt extraversion will
+		apply the rt patchset to only that copy.
+    2. Build flag -- It be 0, 1, true, false, yes, no, nobuild, build, unset.  Most
+		are aliases, but it means to build or not build the kernel.
+    3. Config -- Points to the absolute path of the kernel config. (This can be unset
+		but then defaults to
+		/etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m))
+    4. Arch -- The native ABI of the kernel to build using one of the names of the
+		folders in /usr/src/linux/arch.
+    5. Target triple -- The target triple (CHOST) to use when cross-compiling.  Use the
+		expanded CHOST value.  (This can be unset but then defaults to ${CHOST})
+		If you put just CHOST or just CBUILD it will expand for each case.
+    6. CPU scheduler -- can be one of the below depending on the kernel version.
+
+		4.14: cfs, muqss, pds
+		5.10: cfs, muqss, prjc
+		5.15: cfs, prjc
+		5.16: cfs, prjc
+
+		The reason why for this flexibility is to allow for multiple
+		configurations that are not mutual exclusive, meaning you can
+		use the rt kernel with cfs but still choose muqss for a
+		gaming client kernel.
+
+		This field can be unset which would default to using cfs.
+
+		* cfs is preferred for server kernels and bug-less experience.
+		* muqss and prjc are better suited for audio production.
+		* The rt extraversion can only use the cfs scheduler.
 
     Please read the metadata.xml comments for more info.
   </longdescription>

@@ -1,0 +1,11 @@
+Based on 4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
+--- linux-5.4.180-ot/init/Kconfig.orig	2022-02-22 01:41:09.696371103 -0800
++++ linux-5.4.180-ot/init/Kconfig	2022-02-22 01:44:15.804715096 -0800
+@@ -1231,7 +1231,6 @@ config CC_OPTIMIZE_FOR_PERFORMANCE
+ 
+ config CC_OPTIMIZE_FOR_PERFORMANCE_O3
+ 	bool "Optimize more for performance (-O3)"
+-	depends on ARC
+ 	help
+ 	  Choosing this option will pass "-O3" to your compiler to optimize
+ 	  the kernel yet more for performance.

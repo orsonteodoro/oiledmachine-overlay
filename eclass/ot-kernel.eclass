@@ -1,5 +1,5 @@
-# Copyright 2019-2021 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 2019-2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: ot-kernel.eclass
@@ -138,15 +138,16 @@ OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:="MAJOR_MINOR"}
 KEYWORDS=${KEYWORDS:=\
 "~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"}
 SLOT=${SLOT:=${PV}}
-K_TAG="-ot"
-S="${WORKDIR}/linux-${PV}${K_TAG}"
+K_EXTRAVERSION="ot"
+S="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
+#PROPERTIES="interactive" # The menuconfig is broken because of emerge or sandbox.  All things were disabled but still doesn't work.
 
-inherit check-reqs ot-kernel-cve toolchain-funcs
+inherit check-reqs flag-o-matic ot-kernel-cve toolchain-funcs
 
 BDEPEND+=" dev-util/patchutils
 	   sys-apps/grep[pcre]"
 
-EXPORT_FUNCTIONS pkg_pretend pkg_setup src_unpack src_compile src_install \
+EXPORT_FUNCTIONS pkg_pretend pkg_setup src_unpack src_prepare src_configure src_compile src_install \
 		pkg_postinst
 
 # @FUNCTION: gen_kernel_seq
@@ -160,6 +161,7 @@ gen_kernel_seq()
 {
 	# 1-2 2-3 3-4, $1 >= 2
 	local s=""
+	local to
 	for ((to=2 ; to <= $1 ; to+=1)) ; do
 		s=" ${s} $((${to}-1))-${to}"
 	done
@@ -175,6 +177,7 @@ gen_zensauce_uris()
 	local commits=(${@})
 	local len="${#commits[@]}"
 	local s=""
+	local c
 	for (( c=0 ; c < ${len} ; c+=1 )) ; do
 		local id="${commits[c]}"
 		s=" ${s} ${ZENSAUCE_BASE_URI}${id}.patch -> zen-sauce-${K_MAJOR_MINOR}-${id:0:7}.patch"
@@ -190,6 +193,7 @@ BBRV2_BASE_URI=\
 "https://github.com/google/bbr/commit/"
 gen_bbrv2_uris() {
 	local s=""
+	local c
 	for c in ${BBR2_COMMITS[@]} ; do
 		s+=" ${BBRV2_BASE_URI}${c}.patch -> bbrv2-${BBR2_VERSION}-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
@@ -285,6 +289,7 @@ ZEN_MUQSS_BASE_URI=\
 
 is_zen_muquss_excluded() {
 	local wanted_commit="${1}"
+	local bad_commit
 	for bad_commit in ${ZEN_MUQSS_EXCLUDED_COMMITS[@]} ; do
 		[[ "${bad_commit}" == "${wanted_commit}" ]] && return 0
 	done
@@ -293,6 +298,7 @@ is_zen_muquss_excluded() {
 
 gen_zen_muqss_uris() {
 	local s=""
+	local c
 	for c in ${ZEN_MUQSS_COMMITS[@]} ; do
 		s+=" ${ZEN_MUQSS_BASE_URI}${c}.patch -> zen-muqss-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
@@ -304,6 +310,7 @@ CK_BASE_URI=\
 "https://github.com/torvalds/linux/commit/"
 gen_ck_uris() {
 	local s=""
+	local c
 	for c in ${CK_COMMITS[@]} ; do
 		s+=" ${CK_BASE_URI}${c}.patch -> ck-${MUQSS_VER}-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
@@ -315,6 +322,7 @@ CFI_X86_BASE_URI=\
 "https://github.com/torvalds/linux/commit/"
 gen_cfi_x86_uris() {
 	local s=""
+	local c
 	for c in ${CFI_X86_COMMITS[@]} ; do
 		s+=" ${CFI_X86_BASE_URI}${c}.patch -> cfi-x86-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
@@ -326,6 +334,7 @@ FUTEX_BASE_URI=\
 "https://gitlab.collabora.com/tonyk/linux/-/commit/"
 gen_futex_uris() {
 	local s=""
+	local c
 	for c in ${FUTEX_COMMITS[@]} ; do
 		s+=" ${FUTEX_BASE_URI}${c}.patch -> futex-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
@@ -337,6 +346,7 @@ FUTEX2_BASE_URI=\
 "https://gitlab.collabora.com/tonyk/linux/-/commit/"
 gen_futex2_uris() {
 	local s=""
+	local c
 	for c in ${FUTEX2_COMMITS[@]} ; do
 		s+=" ${FUTEX2_BASE_URI}${c}.patch -> futex2-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
@@ -425,7 +435,8 @@ else
 (patch-${K_MAJOR_MINOR}.1 ${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.})
 fi
 
-PATCH_OPS="--no-backup-if-mismatch -r - -p1"
+# Keep the sources clean upon install.
+PATCH_OPTS="--no-backup-if-mismatch -r - -p1"
 
 RESTRICT="mirror"
 
@@ -436,24 +447,24 @@ RESTRICT="mirror"
 # Parameters:
 # $1 - path of the patch
 # @CODE
-function _fpatch() {
+_fpatch() {
 	local path="${1}"
 	local msg_extra="${2}"
 	if declare -f ot-kernel_filter_patch_cb > /dev/null ; then
 		ot-kernel_filter_patch_cb "${path}"
 	else
-		_dpatch "${PATCH_OPS}" "${path}" "${msg_extra}"
+		_dpatch "${PATCH_OPTS}" "${path}" "${msg_extra}"
 	fi
 }
 
 # @FUNCTION: _dpatch
 # @DESCRIPTION:
 # Patch with die
-function _dpatch() {
+_dpatch() {
 	local opts="${1}"
 	local path="${2}"
 	local msg_extra="${3}"
-einfo "Applying ${path}${msg_extra}"
+	einfo "Applying ${path}${msg_extra}"
 	patch ${opts} -i "${path}" || die
 }
 
@@ -463,7 +474,7 @@ einfo "Applying ${path}${msg_extra}"
 # Refrain from using it though because it requires periodic revaluation in
 # larger patchsets that are not split which future FAILED hunks may not be
 # caught.
-function _tpatch() {
+_tpatch() {
 	local opts="${1}"
 	local path="${2}"
 	local failed_hunks_acceptable="${3}" # must be the same as n_failures (part 1)
@@ -479,6 +490,7 @@ einfo "These estimates may be far less than the actual."
 einfo
 
 	local n_failures=0
+	local x_i
 	for x_i in $(patch ${opts} --dry-run -i "${path}" \
 		| grep -E -e "hunks? FAILED" | cut -f 1 -d " ") ; do
 		n_failures=$((${n_failures}+${x_i}))
@@ -512,7 +524,7 @@ eerror
 # @FUNCTION: ot-kernel_pkg_pretend
 # @DESCRIPTION:
 # Perform checks and warnings before emerging
-function ot-kernel_pkg_pretend() {
+ot-kernel_pkg_pretend() {
 	if declare -f ot-kernel_pkg_pretend_cb > /dev/null ; then
 		ot-kernel_pkg_pretend_cb
 	fi
@@ -522,7 +534,7 @@ function ot-kernel_pkg_pretend() {
 # @DESCRIPTION:
 # Reports the estimated End Of Life (EOL).  Sourced from
 # https://www.kernel.org/category/releases.html
-function _report_eol() {
+_report_eol() {
 	if [[ "${K_MAJOR_MINOR}" == "5.10" ]] ; then
 einfo
 einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
@@ -575,6 +587,7 @@ check_zen_tune_deps() {
 	local zentune_commit="${1}"
 	local v="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
 	if ver_test ${K_MAJOR_MINOR} -ge 5.10 ; then
+		local p
 		for p in ${PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE[@]} ; do
 			local ztc=$(echo "${p}" | cut -f 1 -d ":")
 			local zsc=$(echo "${p}" | cut -f 2 -d ":")
@@ -591,8 +604,9 @@ eerror "zen-tune requires ${zsc} be added to ${v} and also the zen-sauce USE fla
 # @FUNCTION: zentune_setup
 # @DESCRIPTION:
 # Checks zen-tune's dependency on zen-sauce at pkg_setup
-function zentune_setup() {
+zentune_setup() {
 	if use zen-sauce ; then
+		local c
 		for c in ${PATCH_ZENTUNE_COMMITS[@]} ; do
 			check_zen_tune_deps "${c}"
 		done
@@ -602,7 +616,7 @@ function zentune_setup() {
 # @FUNCTION: zensauce_setup
 # @DESCRIPTION:
 # Checks the existance for the ZENSAUCE_WHITELIST_5_3 variable
-function zensauce_setup() {
+zensauce_setup() {
 	if use zen-sauce ; then
 		local v1="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
 		if [[ -n "${!v1}" ]] ; then
@@ -652,7 +666,7 @@ eerror
 # @FUNCTION: _check_network_sandbox
 # @DESCRIPTION:
 # Check if sandbox is more lax when downloading in unpack phase
-function _check_network_sandbox() {
+_check_network_sandbox() {
 	# justifications
 	# cve-hotfix - requires to download patch URI linked from NVD website
 	if has network-sandbox $FEATURES ; then
@@ -770,8 +784,20 @@ eerror
 # @FUNCTION: ot-kernel_pkg_setup
 # @DESCRIPTION:
 # Perform checks, warnings, and initialization before emerging
-function ot-kernel_pkg_setup() {
+ot-kernel_pkg_setup() {
+ewarn
+ewarn "The defaults use cfs (or the stock CPU scheduler) per build configuration."
+ewarn "The build configuration scheme has changed.  Please see"
+ewarn "\`epkginfo -x ot-sources\` or the metadata.xml in how to customize"
+ewarn "the per environment variable the build and patching process to build"
+ewarn "more secure configurations and override the scheduler default."
+ewarn
 	_report_eol
+	if use build ; then
+ewarn
+ewarn "The build USE flag is currently in development."
+ewarn
+	fi
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
 	fi
@@ -829,7 +855,7 @@ function ot-kernel_pkg_setup() {
 # @FUNCTION: get_current_tag_for_k_major_minor_branch
 # @DESCRIPTION:
 # Gets the tag name at HEAD
-function get_current_tag_for_k_major_minor_branch() {
+get_current_tag_for_k_major_minor_branch() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	d="${distdir}/ot-sources-src/linux"
 	pushd "${d}" 2>/dev/null 1>/dev/null || die
@@ -840,7 +866,7 @@ function get_current_tag_for_k_major_minor_branch() {
 # @FUNCTION: get_current_commit_for_k_major_minor_branch
 # @DESCRIPTION:
 # Gets the commit ID at HEAD
-function get_current_commit_for_k_major_minor_branch() {
+get_current_commit_for_k_major_minor_branch() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	d="${distdir}/ot-sources-src/linux"
 	pushd "${d}" 2>/dev/null 1>/dev/null || die
@@ -851,8 +877,8 @@ function get_current_commit_for_k_major_minor_branch() {
 # @FUNCTION: ot-kernel_fetch_linux_sources
 # @DESCRIPTION:
 # Fetches a local copy of the linux kernel repo.
-function ot-kernel_fetch_linux_sources() {
-einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
+ot-kernel_fetch_linux_sources() {
+	einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}" || die
 	d="${distdir}/ot-sources-src/linux"
@@ -865,7 +891,7 @@ einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
 		if ! ( git remote -v | grep -F -e "${LINUX_REPO_URI}" ) \
 			> /dev/null ; \
 		then
-einfo "Removing ${d}"
+			einfo "Removing ${d}"
 			rm -rf "${d}" || die
 		fi
 		popd
@@ -875,7 +901,7 @@ einfo "Removing ${d}"
 
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}" || die
-einfo "Cloning the vanilla Linux kernel project"
+		einfo "Cloning the vanilla Linux kernel project"
 		git clone "${LINUX_REPO_URI}" "${d}"
 		cd "${d}" || die
 		git checkout master
@@ -892,7 +918,7 @@ einfo "Cloning the vanilla Linux kernel project"
 		if (( ${#G} > 0 )) ; then
 die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
 		fi
-einfo "Updating the vanilla Linux kernel project"
+		einfo "Updating the vanilla Linux kernel project"
 		cd "${d}" || die
 		git clean -fdx
 		git reset --hard master
@@ -925,11 +951,12 @@ ot-kernel_unpack_tarball() {
 	unpack "${KERNEL_SERIES_TARBALL_FN}"
 }
 
-# @FUNCTION: ot-kernel_unpack_tarball
+# @FUNCTION: ot-kernel_unpack_point_releases
 # @DESCRIPTION:
 # Unpacks all point release tarballs
 ot-kernel_unpack_point_releases() {
 	cd "${T}" || die
+	local p
 	for p in ${KERNEL_PATCH_FNS_EXT[@]} ; do
 		unpack "${p}"
 	done
@@ -938,8 +965,8 @@ ot-kernel_unpack_point_releases() {
 # @FUNCTION: apply_rt
 # @DESCRIPTION:
 # Apply the PREEMPT_RT patches.
-function apply_rt() {
-einfo "Applying PREEMPT_RT patches"
+apply_rt() {
+	einfo "Applying PREEMPT_RT patches"
 	mkdir -p "${T}/rt" || die
 	pushd "${T}/rt" || die
 		if [[ -e "${DISTDIR}/${RT_FN}" ]] ; then
@@ -948,6 +975,7 @@ einfo "Applying PREEMPT_RT patches"
 			unpack "${DISTDIR}/${RT_ALT_FN}"
 		fi
 	popd
+	local p
 	for p in $(cat "${T}/rt/patches/series" | grep -E -e "^[^#]") ; do
 		_fpatch "${T}/rt/patches/${p}"
 	done
@@ -956,13 +984,14 @@ einfo "Applying PREEMPT_RT patches"
 # @FUNCTION: apply_zensauce
 # @DESCRIPTION:
 # Applies whitelisted zen sauce patches.
-function apply_zensauce() {
+apply_zensauce() {
 	local ZW="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
 	local ZB="ZENSAUCE_BLACKLIST_${K_MAJOR_MINOR/./_}"
 
 	local whitelisted=""
 	local blacklisted=""
 
+	local c
 	for c in ${!ZW} ; do
 		whitelisted+=" ${c:0:7}"
 	done
@@ -1002,6 +1031,7 @@ function apply_zensauce() {
 	einfo "Applying zen-sauce patches"
 	for c in ${PATCH_ZENSAUCE_COMMITS[@]} ; do
 		local is_whitelisted=0
+		local c_wl
 		for c_wl in ${whitelisted[@]} ; do
 			if [[ "${c:0:7}" == "${c_wl:0:7}" ]] ; then
 				is_whitelisted=1
@@ -1012,6 +1042,7 @@ function apply_zensauce() {
 
 		local is_blacklisted=0
 		if [[ -n "${#use_blacklisted}" ]] ; then
+			local c_bl
 			for c_bl in ${use_blacklisted} ; do
 				if [[ "${c:0:7}" == "${c_bl:0:7}" ]] ; then
 ewarn
@@ -1029,12 +1060,13 @@ ewarn
 
 		local is_blacklisted=0
 		if [[ -n "${#blacklisted}" ]] ; then
+			local c_bl
 			for c_bl in ${blacklisted} ; do
 				if [[ "${c:0:7}" == "${c_bl:0:7}" ]]
 				then
-einfo
-einfo "Skipping ${c}"
-einfo
+					einfo
+					einfo "Skipping ${c}"
+					einfo
 					is_blacklisted=1
 					break
 				fi
@@ -1049,7 +1081,8 @@ einfo
 # @FUNCTION: apply_cfi_x86
 # @DESCRIPTION:
 # Adds cfi protection for the x86-64 platform
-function apply_cfi_x86() {
+apply_cfi_x86() {
+	local c
 	for c in ${CFI_X86_COMMITS[@]} ; do
 		_fpatch "${DISTDIR}/cfi-x86-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
@@ -1059,11 +1092,13 @@ function apply_cfi_x86() {
 # @DESCRIPTION:
 # Adds a new syscall operation FUTEX_WAIT_MULTIPLE to the futex
 # syscall.  It may shave of < 5% CPU usage.
-function apply_futex() {
+apply_futex() {
+	local c
 	for c in ${FUTEX_COMMITS[@]} ; do
 		local blacklisted=0
 		if has futex-proton ${IUSE_EFFECTIVE} ; then
 			if ! use futex-proton ;then
+				local b
 				for b in ${FUTEX_PROTON_COMPAT[@]} ; do
 					if [[ "${b}" == "${c}" ]] ; then
 						blacklisted=1
@@ -1080,11 +1115,13 @@ function apply_futex() {
 # @FUNCTION: apply_futex2
 # @DESCRIPTION:
 # Adds a new futex2 syscalls.  It may shave of < 5% CPU usage.
-function apply_futex2() {
+apply_futex2() {
+	local c
 	for c in ${FUTEX2_COMMITS[@]} ; do
 		local blacklisted=0
 		if has futex2-proton ${IUSE_EFFECTIVE} ; then
 			if ! use futex2-proton ;then
+				local b
 				for b in ${FUTEX2_PROTON_COMPAT[@]} ; do
 					if [[ "${b}" == "${c}" ]] ; then
 						blacklisted=1
@@ -1105,7 +1142,8 @@ function apply_futex2() {
 # better than CUBIC.  BBRv1 will will still maintain ~ 38% throughput after
 # some packet loss 3% but CUBIC will have < 1% thoughput when there is a
 # few percent of packet loss.
-function apply_bbrv2() {
+apply_bbrv2() {
+	local c
 	for c in ${BBR2_COMMITS[@]} ; do
 		_fpatch "${DISTDIR}/bbrv2-${BBR2_VERSION}-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
@@ -1114,14 +1152,14 @@ function apply_bbrv2() {
 # @FUNCTION: apply_lru_gen
 # @DESCRIPTION:
 # Uses multigenerational LRU to improve page reclamation.
-function apply_lru_gen() {
+apply_lru_gen() {
 	_fpatch "${DISTDIR}/${LRU_GEN_FN}"
 }
 
 # @FUNCTION: apply_zen_lru_gen
 # @DESCRIPTION:
 # Uses zen's modified multigenerational LRU to improve page reclamation.
-function apply_zen_lru_gen() {
+apply_zen_lru_gen() {
 	_fpatch "${DISTDIR}/${ZEN_LRU_GEN_FN}"
 }
 
@@ -1134,7 +1172,7 @@ function apply_zen_lru_gen() {
 #
 # For example,
 # GENPATCHES_BLACKLIST="2500 2600"
-function _filter_genpatches() {
+_filter_genpatches() {
 	P_GENPATCHES_BLACKLIST=""
 	if ! use genpatches_1510 ; then
 		# Possibly locks up computer during OOM tests
@@ -1156,8 +1194,9 @@ function _filter_genpatches() {
 	fi
 
 	pushd "${d}" || die
+		local f
 		for f in $(ls -1) ; do
-#einfo "Processing ${f}"
+			#einfo "Processing ${f}"
 			if [[ "${f}" =~ \.patch$ ]] ; then
 				local l=$(echo "${f}" | cut -f 1 -d"_")
 				if (( ${l} < 1500 )) ; then
@@ -1167,6 +1206,7 @@ function _filter_genpatches() {
 				fi
 				local is_blacklisted
 				is_blacklisted=0
+				local x
 				for x in ${P_GENPATCHES_BLACKLIST} ; do
 					if [[ "${l}" == "${x}" ]] ; then
 						is_blacklisted=1
@@ -1174,7 +1214,7 @@ function _filter_genpatches() {
 					fi
 				done
 				if [[ "${is_blacklisted}" == "1" ]] ; then
-einfo "Skipping genpatches ${l}"
+					einfo "Skipping genpatches ${l}"
 					continue
 				fi
 
@@ -1186,11 +1226,11 @@ einfo "Skipping genpatches ${l}"
 					fi
 				done
 				if [[ "${is_blacklisted}" == "1" ]] ; then
-einfo "Skipping genpatches ${l}"
+					einfo "Skipping genpatches ${l}"
 					continue
 				fi
 
-				pushd "${S}" || die
+				pushd "${BUILD_DIR}" || die
 					_fpatch "${d}/${f}"
 				popd
 			fi
@@ -1201,18 +1241,20 @@ einfo "Skipping genpatches ${l}"
 # @FUNCTION: apply_bmq
 # @DESCRIPTION:
 # Apply the BMQ CPU scheduler patchset.
-function apply_bmq() {
-	cd "${S}" || die
-einfo "Applying bmq"
+apply_bmq() {
+	cd "${BUILD_DIR}" || die
+	einfo "Applying bmq"
 	_fpatch "${DISTDIR}/${BMQ_FN}"
 }
 
 # @FUNCTION: apply_ck
 # @DESCRIPTION:
 # applies the ck patchset
-function apply_ck() {
+apply_ck() {
+	local c
 	for c in ${CK_COMMITS[@]} ; do
 		local blacklisted=0
+		local b
 		for b in ${CK_COMMITS_BL[@]} ; do
 			if [[ "${c}" == "${b}" ]] ; then
 				blacklisted=1
@@ -1220,6 +1262,7 @@ function apply_ck() {
 			fi
 			if ver_test ${K_MAJOR_MINOR} -eq 4.14 ; then
 				if ! use bfq-mq ; then
+					local b2
 					for b2 in ${CK_BFQ_MQ[@]} ; do
 						if [[ "${c}" == "${b2}" ]] ; then
 							blacklisted=1
@@ -1238,18 +1281,17 @@ function apply_ck() {
 # @FUNCTION: apply_genpatches
 # @DESCRIPTION:
 # Apply the base genpatches patchset.
-function apply_genpatches() {
-einfo "Applying the genpatches"
-	local d
+apply_genpatches() {
+	einfo "Applying the genpatches"
 	local dn="${GENPATCHES_FN%.tar.bz2}"
-	d="${T}/${dn}"
-	mkdir "$d" || die
-	cd "$d" || die
-	unpack "${GENPATCHES_FN}"
+	local d="${T}/${dn}"
+	if [[ ! -d "${d}" ]] ; then
+		mkdir -p "${d}" || die
+		cd "${d}" || die
+		unpack "${GENPATCHES_FN}"
+	fi
 	d="${T}/${dn}/${dn}"
-
-	cd "${S}" || die
-
+	cd "${BUILD_DIR}" || die
 	_filter_genpatches
 }
 
@@ -1259,19 +1301,19 @@ einfo "Applying the genpatches"
 #
 # ot-kernel_apply_o3_fixes - callback for fix to O3 patches
 #
-function apply_o3() {
-	cd "${S}" || die
+apply_o3() {
+	cd "${BUILD_DIR}" || die
 	if ver_test "${K_MAJOR_MINOR}" -eq 4.14 ; then
 		# fix patch
 		sed -e 's|-1028,6 +1028,13|-1076,6 +1076,13|' \
 			"${DISTDIR}/${O3_CO_FN}" \
 			> "${T}/${O3_CO_FN}" || die
 
-einfo "Applying O3"
-einfo "Applying ${O3_CO_FN}"
+		einfo "Applying O3"
+		einfo "Applying ${O3_CO_FN}"
 		_fpatch "${T}/${O3_CO_FN}"
 
-einfo "Applying ${O3_RO_FN}"
+		einfo "Applying ${O3_RO_FN}"
 		mkdir -p drivers/gpu/drm/amd/display/dc/basics/
 		# trick patch for unattended patching
 		touch drivers/gpu/drm/amd/display/dc/basics/logger.c
@@ -1282,18 +1324,18 @@ einfo "Applying ${O3_RO_FN}"
 # @FUNCTION: apply_pds
 # @DESCRIPTION:
 # Apply the PDS CPU scheduler patchset.
-function apply_pds() {
-	cd "${S}" || die
-einfo "Applying PDS"
+apply_pds() {
+	cd "${BUILD_DIR}" || die
+	einfo "Applying PDS"
 	_fpatch "${DISTDIR}/${PDS_FN}"
 }
 
 # @FUNCTION: apply_prjc
 # @DESCRIPTION:
 # Apply the Project C CPU scheduler patchset.
-function apply_prjc() {
-	cd "${S}" || die
-einfo "Applying Project C"
+apply_prjc() {
+	cd "${BUILD_DIR}" || die
+	einfo "Applying Project C"
 	_fpatch "${DISTDIR}/${PRJC_FN}"
 }
 
@@ -1303,9 +1345,9 @@ einfo "Applying Project C"
 #
 # ot-kernel_apply_tresor_fixes - callback to apply tresor fixes
 #
-function apply_tresor() {
-	cd "${S}" || die
-einfo "Applying TRESOR"
+apply_tresor() {
+	cd "${BUILD_DIR}" || die
+	einfo "Applying TRESOR"
 	local platform
 	if use tresor_aesni ; then
 		platform="aesni"
@@ -1316,7 +1358,7 @@ einfo "Applying TRESOR"
 
 	_fpatch \
 		"${DISTDIR}/tresor-patch-${PATCH_TRESOR_V}_${platform}"
-	sed -i -E -e "s|[ ]?-tresor[0-9.]+||g" "${S}/Makefile" || die
+	sed -i -E -e "s|[ ]?-tresor[0-9.]+||g" "${BUILD_DIR}/Makefile" || die
 }
 
 # @FUNCTION: apply_uksm
@@ -1325,32 +1367,39 @@ einfo "Applying TRESOR"
 #
 # ot-kernel_uksm_fixes - callback to fix the patch
 #
-function apply_uksm() {
+apply_uksm() {
 	_fpatch "${DISTDIR}/${UKSM_FN}"
 }
 
 # @FUNCTION: apply_vanilla_point_releases
 # @DESCRIPTION:
 # Applies all the point releases
-function apply_vanilla_point_releases() {
+apply_vanilla_point_releases() {
 	if [[ -n "${KERNEL_NO_POINT_RELEASE}" \
 		&& "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; \
 		then
-		true
+		:
 	else
 		# genpatches places kernel incremental patches starting at 1000
+		local a
 		for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
 			local f="${T}/${a}"
 			cd "${T}" || die
 			unpack "$a.xz"
-			cd "${S}" || die
-			patch --dry-run ${PATCH_OPS} -N "${f}" \
-				| grep -F -e "FAILED at"
-			if [[ "$?" == "1" ]] ; then
-				# already patched or good
+			cd "${BUILD_DIR}" || die
+
+			local output=$(patch --dry-run ${PATCH_OPTS} -N -i "${f}")
+			echo "${output}" | grep -F -e "FAILED at"
+			if [[ "$?" == "1" ]]; then
+				# Already patched or good
 				_fpatch "${f}"
 			else
-eerror "Failed ${a}"
+				eerror "Failed ${a}"
+				eerror
+				eerror "Patch details:"
+				eerror
+				echo -e "${output}"
+				eerror
 				die
 			fi
 		done
@@ -1360,8 +1409,9 @@ eerror "Failed ${a}"
 # @FUNCTION: apply_zen_muqss
 # @DESCRIPTION:
 # Apply a fork of MuQSS maintained by the zen-kernel team.
-function apply_zen_muqss() {
-einfo "Applying some of the zen-kernel MuQSS patches"
+apply_zen_muqss() {
+	einfo "Applying some of the zen-kernel MuQSS patches"
+	local x
 	for x in ${ZEN_MUQSS_COMMITS[@]} ; do
 		local id="${x:0:7}"
 		is_zen_muquss_excluded "${x}" && continue
@@ -1380,7 +1430,7 @@ apply_clang_pgo() {
 # @FUNCTION: ot-kernel_src_unpack
 # @DESCRIPTION:
 # Applies patch sets in order.
-function ot-kernel_src_unpack() {
+ot-kernel_src_unpack() {
 	_PATCHES=()
 	if [[ "${IUSE}" =~ kernel-compiler-patch ]] ; then
 		local gcc_v=$(best_version "sys-devel/gcc" | sed -e "s|sys-devel/gcc-||")
@@ -1388,8 +1438,8 @@ function ot-kernel_src_unpack() {
 		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
 		#local cpu_family=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
 		#local cpu_model=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "model" | head -n 1 | grep -E -o "[0-9]+"))
-einfo "Best GCC version:  ${gcc_v}"
-einfo "Best Clang version:  ${clang_v}"
+		einfo "Best GCC version:  ${gcc_v}"
+		einfo "Best Clang version:  ${clang_v}"
 
 		if (  (				 $(ver_test ${gcc_v}   -ge 9.1) ) \
 		   || ( [[ -n "${clang_v}" ]] && $(ver_test ${clang_v} -ge 10.0) ) \
@@ -1422,31 +1472,32 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 	fi
 
 	ot-kernel_unpack_tarball
+	einfo "Done unpacking."
+
 	# unpacking point releases found in apply_vanilla_point_releases
 	cd "${WORKDIR}" || die
-	mv "linux-${K_MAJOR_MINOR}" "${S}" || die
+	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
+	mv "linux-${K_MAJOR_MINOR}" "${BUILD_DIR}" || die
+	cd "${BUILD_DIR}" || die
 
-	cd "${S}" || die
-
-	apply_vanilla_point_releases
-
-	# This should be done immediately after all the kernel point releases.
-	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
-		if use cve_hotfix ; then
-			fetch_tuxparoni
-			unpack_tuxparoni
-			fetch_cve_hotfixes
-			get_cve_report
-			test_cve_hotfixes
-			apply_cve_hotfixes
-ewarn
-ewarn "Applying custom patchsets on top of cve_hotfix USE flag may fail to"
-ewarn "patch or fail to compile."
-ewarn
+	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
+		if use tresor_sysfs ; then
+			cat "${DISTDIR}/tresor_sysfs.c" > "${BUILD_DIR}/tresor_sysfs.c"
 		fi
 	fi
 
-	if has rt ${IUSE_EFFECTIVE} ; then
+	if has pgo ${IUSE_EFFECTIVE} ; then
+		if use pgo ; then
+			cat "${FILESDIR}/gen_pgo.sh" > "${BUILD_DIR}/gen_pgo.sh"
+		fi
+	fi
+}
+
+# @FUNCTION: apply_all_patchsets
+# @DESCRIPTION:
+# Apply the patches conditionally based on extraversion or cpu_sched
+apply_all_patchsets() {
+	if has rt ${IUSE_EFFECTIVE} && [[ "${extraversion}" == "rt" ]] ; then
 		if use rt ; then
 			apply_rt
 		fi
@@ -1481,31 +1532,31 @@ ewarn
 	fi
 
 	if has bmq ${IUSE_EFFECTIVE} ; then
-		if use bmq ; then
+		if use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
 			apply_bmq
 		fi
 	fi
 
 	if has pds ${IUSE_EFFECTIVE} ; then
-		if use pds ; then
+		if use pds && [[ "${cpu_sched}" == "pds" ]] ; then
 			apply_pds
 		fi
 	fi
 
 	if has prjc ${IUSE_EFFECTIVE} ; then
-		if use prjc ; then
+		if use prjc && [[ "${cpu_sched}" == "prjc" ]] ; then
 			apply_prjc
 		fi
 	fi
 
 	if has muqss ${IUSE_EFFECTIVE} ; then
-		if use muqss ; then
+		if use muqss && [[ "${cpu_sched}" == "muqss" ]] ; then
 			apply_ck
 		fi
 	fi
 
 	if has zen-muqss ${IUSE_EFFECTIVE} ; then
-		if use zen-muqss ; then
+		if use zen-muqss && [[ "${cpu_sched}" == "zen-muqss" ]] ; then
 			apply_zen_muqss
 		fi
 	fi
@@ -1547,7 +1598,7 @@ ewarn
 	fi
 
 	if has cfi ${IUSE_EFFECTIVE} ; then
-		if use cfi && use amd64 ; then
+		if use cfi && use amd64 && [[ "${arch}" == "x86_64" ]] ; then
 			apply_cfi_x86
 		fi
 	fi
@@ -1557,27 +1608,568 @@ ewarn
 	fi
 }
 
-# @FUNCTION: ot-kernel_src_compile
+# @FUNCTION: ot-kernel_src_prepare
 # @DESCRIPTION:
-# Compiles the userland programs especially the TRESOR AES post-boot
-# program.
-function ot-kernel_src_compile() {
+# Patch the kernel a bit
+ot-kernel_src_prepare() {
+	einfo "Called ot-kernel_ot-kernel_src_prepare()"
+	export BUILD_DIR_MASTER="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
+	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
+	apply_vanilla_point_releases
+
+	eapply_user
+
+	# This should be done immediately after all the kernel point releases.
+	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
+		if use cve_hotfix ; then
+			fetch_tuxparoni
+			unpack_tuxparoni
+			fetch_cve_hotfixes
+			get_cve_report
+			test_cve_hotfixes
+			apply_cve_hotfixes
+ewarn
+ewarn "Applying custom patchsets on top of cve_hotfix USE flag may fail to"
+ewarn "patch or fail to compile."
+ewarn
+		fi
+	fi
+
+	local b
+	for b in $(build_pairs) ; do
+		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
+		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		if [[ "${extraversion}" != "ot" ]] ; then
+			einfo "Copying sources for -${extraversion}"
+			einfo "${BUILD_DIR_MASTER} -> ${BUILD_DIR}"
+			cp -a "${BUILD_DIR_MASTER}" "${BUILD_DIR}" || die
+		fi
+	done
+
+	for b in $(build_pairs) ; do
+		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
+		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
+		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
+		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
+		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
+		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		cd "${BUILD_DIR}" || die
+		einfo
+		einfo "Applying patchsets for -${extraversion}"
+		einfo
+		apply_all_patchsets
+		einfo "Setting the extra version for the -${extraversion} build"
+		sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
+			"${BUILD_DIR}/Makefile" || die
+	done
+}
+
+# Constant enums
+PGO_PHASE_UNK=-1 # Unset
+PGO_PHASE_PGI=0 # Instrumentation step
+PGO_PHASE_PGT=1 # Training step
+PGO_PHASE_PGO=2 # Optimization step
+PGO_PHASE_PG0=3 # No PGO
+PGO_PHASE_PG0=4 # DONE
+
+is_clang_ready() {
+	which clang-${llvm_slot} 2>/dev/null 1>/dev/null || return 1
+	if clang-${llvm_slot} --help | grep -q -F -e "symbol lookup error" ; then
+ewarn
+ewarn "Found missing symbols for clang and needs a rebuild for Clang +"
+ewarn "LLVM ${llvm_slot}.  This has reduced security implications if using the"
+ewarn "fallback gcc if relying on software security implementations."
+ewarn
+ewarn "You may skip this warning if a working Clang + LLVM was found."
+ewarn
+		return 1
+	fi
+	return 0
+}
+
+# @FUNCTION: ot-kernel_src_prepare
+# @DESCRIPTION:
+# Run menuconfig
+ot-kernel_src_configure() {
+	use build || return
+	einfo "Called ot-kernel_src_configure()"
+	local b
+	for b in $(build_pairs) ; do
+		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
+		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
+		local config=$(echo "${b}" | cut -f 3 -d ":")
+		[[ -z "${config}" ]] && config="/etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m)"
+		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
+		local target_triple=$(echo "${b}" | cut -f 5 -d ":")
+		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
+		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
+		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
+		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
+		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
+		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
+		[[ -z "${extraversion}" ]] && die "extraversion cannot be empty"
+		[[ -z "${build_flag}" ]] && die "build_flag cannot be empty"
+		[[ -z "${config}" ]] && die "config cannot be empty"
+		[[ -z "${arch}" ]] && die "arch cannot be empty"
+		[[ -z "${target_triple}" ]] && die "target_triple cannot be empty"
+		[[ -z "${cpu_sched}" ]] && die "cpu_sched cannot be empty"
+
+		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		cd "${BUILD_DIR}" || die
+
+		local args=()
+		ot-kernel_setup_tc
+
+		# Now mod the config
+		local path_config="${BUILD_DIR}/.config"
+		if [[ -e "${config}" ]] ; then
+			einfo "Copying the config:  ${config} -> ${path_config}"
+			cat "${config}" > "${path_config}" || die
+		fi
+
+#		if [[ -n "${OT_MENUCONFIG_PREFERENCE}" ]] ; then
+#			# Does not work
+#			einfo "make ${OT_MENUCONFIG_PREFERENCE} ${args[@]}"
+#			make ${OT_MENUCONFIG_PREFERENCE} "${args[@]}" || die
+#		fi
+
+		if [[ ! -e "${path_config}" ]] ; then
+			eerror
+			eerror "Missing the kernel config:  ${path_config}"
+			eerror
+			eerror "You need to save a kernel config to build (extraversion: ${extraversion})."
+			eerror
+			die
+		fi
+
+		einfo
+		einfo "Changing config options for -${extraversion}"
+		einfo
+		local llvm_slot
+		for llvm_slot in $(seq ${LLVM_MAX_SLOT:-15} -1 ${LLVM_MIN_SLOT:-10}) ; do
+			if has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready ; then
+				break
+			fi
+		done
+		if \
+			( \
+			   ( has cfi ${IUSE_EFFECTIVE} && use cfi ) \
+			|| ( has lto ${IUSE_EFFECTIVE} && use lto ) \
+			|| ( has pgo ${IUSE_EFFECTIVE} && use pgo ) \
+			) \
+			&& ! tc-is-cross-compiler \
+			&& is_clang_ready \
+		; then
+			einfo "Using Clang ${llvm_slot}"
+			has_version "sys-devel/llvm:${llvm_slot}" || die "sys-devel/llvm:${llvm_slot} is missing"
+			ot-kernel_y_configopt "CONFIG_AS_IS_LLVM"
+			ot-kernel_set_configopt "CONFIG_AS_VERSION" "${llvm_slot}0000"
+			ot-kernel_y_configopt "CONFIG_CC_IS_CLANG"
+			ot-kernel_set_configopt "CONFIG_CC_VERSION_TEXT" "clang version ${llvm_slot}.0.0"
+			ot-kernel_set_configopt "CONFIG_GCC_VERSION" "0"
+			ot-kernel_set_configopt "CONFIG_CLANG_VERSION" "${llvm_slot}0000"
+			ot-kernel_y_configopt "CONFIG_LD_IS_LLD"
+			ot-kernel_set_configopt "CONFIG_LD_VERSION" "0"
+			ot-kernel_set_configopt "CONFIG_LLD_VERSION" "${llvm_slot}0000"
+		else
+			einfo "Using GCC"
+			ot-kernel_unset_configopt "CONFIG_AS_IS_LLVM"
+			ot-kernel_unset_configopt "CONFIG_CC_IS_CLANG"
+			ot-kernel_unset_configopt "CONFIG_LD_IS_LLD"
+			local gcc_v=$(gcc --version | head -n 1 | cut -f 3 -d " ")
+			local gcc_major_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 1 -d "."))
+			local gcc_minor_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 1 -d "."))
+			ot-kernel_set_configopt "CONFIG_GCC_VERSION" "${gcc_major_v}${gcc_minor_v}00"
+		fi
+
+		if has lto ${IUSE_EFFECTIVE} && use lto ; then
+			(( ${llvm_slot} < 11 )) && die "LTO requires LLVM >= 11"
+			einfo "Enabling LTO"
+			ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_LTO_CLANG"
+			ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_LTO_CLANG_THIN"
+			ot-kernel_unset_configopt "CONFIG_FTRACE_MCOUNT_USE_RECORDMCOUNT"
+			ot-kernel_unset_configopt "CONFIG_GCOV_KERNEL"
+			ot-kernel_y_configopt "CONFIG_HAS_LTO_CLANG"
+			ot-kernel_y_configopt "CONFIG_KALLSYMS"
+			ot-kernel_unset_configopt "CONFIG_KASAN"
+			ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
+			ot-kernel_y_configopt "CONFIG_LTO"
+			ot-kernel_y_configopt "CONFIG_LTO_CLANG"
+			ot-kernel_unset_configopt "CONFIG_LTO_CLANG_FULL"
+			ot-kernel_y_configopt "CONFIG_LTO_CLANG_THIN"
+			ot-kernel_unset_configopt "CONFIG_LTO_NONE"
+		else
+			einfo "Disabling LTO"
+			ot-kernel_unset_configopt "CONFIG_HAS_LTO_CLANG"
+			ot-kernel_unset_configopt "CONFIG_LTO"
+			ot-kernel_unset_configopt "CONFIG_LTO_CLANG_FULL"
+			ot-kernel_unset_configopt "CONFIG_LTO_CLANG_THIN"
+			ot-kernel_y_configopt "CONFIG_LTO_NONE"
+		fi
+
+		if has shadowcallstack ${IUSE_EFFECTIVE} && use shadowcallstack && [[ "${arch}" == "arm64" ]] ; then
+			(( ${llvm_slot} < 10 )) && die "Shadow call stack (SCS) requires LLVM >= 10"
+			einfo "Enabling SCS support in the in the .config."
+			ot-kernel_y_configopt "CONFIG_CFI_CLANG_SHADOW"
+			ot-kernel_y_configopt "CONFIG_MODULES"
+		else
+			einfo "Disabling SCS support in the in the .config."
+			ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
+		fi
+
+		if has cfi ${IUSE_EFFECTIVE} && use cfi && [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
+			[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) && die "CFI requires LLVM >= 12 on arm64"
+			[[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 13 )) && die "CFI requires LLVM >= 13.0.1 on x86_64"
+			einfo "Enabling CFI support in the in the .config."
+			ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_CFI_CLANG"
+			ot-kernel_y_configopt "CONFIG_CFI_CLANG"
+			ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
+			ot-kernel_y_configopt "CONFIG_KALLSYMS"
+		else
+			einfo "Disabiling CFI support in the in the .config."
+			ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
+		fi
+
+		if has cfi ${IUSE_EFFECTIVE} && use cfi && [[ "${arch}" == "arm64" ]] ; then
+			# Need to recheck
+			ewarn "You must manually set arm64 CFI in the .config."
+		fi
+
+		local pgo_phase
+		addwrite "/var/lib/ot-sources/${PV}"
+		mkdir -p "/var/lib/ot-sources/${PV}" || die
+		touch "/var/lib/ot-sources/${PV}/.works"
+		local pgo_phase_statefile="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.pgophase"
+		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
+		local profraw_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profraw"
+		local profdata_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata"
+		if has pgo ${IUSE_EFFECTIVE} && use pgo ; then
+			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
+			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
+				einfo "Forcing PGI flags and config"
+				ot-kernel_y_configopt "CONFIG_CC_HAS_NO_PROFILE_FN_ATTR"
+				ot-kernel_y_configopt "CONFIG_CC_IS_CLANG"
+				ot-kernel_y_configopt "CONFIG_DEBUG_FS"
+				ot-kernel_y_configopt "CONFIG_PGO_CLANG"
+				ot-kernel_y_configopt "CONFIG_PGO_CLANG_LLVM_SELECT"
+				local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
+				local clang_v_maj=$(echo "${clang_v}" | cut -f 1 -d ".")
+				if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
+					ot-kernel_y_configopt "CONFIG_PROFRAW_V8_MAIN"
+				elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0.9999" ; then
+					ot-kernel_y_configopt "CONFIG_PROFRAW_V8_MAIN"
+				elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0_rc1" ; then
+					ot-kernel_y_configopt "CONFIG_PROFRAW_V6"
+				elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.1" ; then
+					ot-kernel_y_configopt "CONFIG_PROFRAW_V7_13_X"
+				elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.0" ; then
+					ot-kernel_y_configopt "CONFIG_PROFRAW_V7_13_X"
+				elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 12 )) && has_version "~sys-devel/clang-12.0.1" ; then
+					ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
+				elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 11 )) && has_version "~sys-devel/clang-11.1.0" ; then
+					ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
+				else
+eerror
+eerror "CFI is not supported for ${clang_v}.  Ask the ebuild maintainer to"
+eerror "update ot-kernel.eclass with the exact version to match the profraw"
+eerror "version, or update the patch for a newer profraw format. Currently only"
+eerror "profraw versions 5 to 8 are support."
+eerror
+					die
+				fi
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata" ]] ; then
+				einfo "Forcing PGO flags and config"
+				ot-kernel_n_configopt "CONFIG_DEBUG_FS"
+				ot-kernel_n_configopt "CONFIG_PGO_CLANG"
+			fi
+		fi
+
+		mkdir -p /etc/kernels
+		cp -a "${path_config}" /etc/kernels || die
+	done
+}
+
+# @FUNCTION: build_pairs
+# @DESCRIPTION:
+# Generate loop args for build sources
+build_pairs() {
+	local build_config_pairs=()
+	IFS=";"
+	local build_configs_pair
+	local ot_kernel_build_configs="OT_KERNEL_BUILDCONFIGS_${K_MAJOR_MINOR//./_}_"
+	for build_configs_pair in ${!ot_kernel_build_configs} ; do
+		[[ -z "${build_configs_pair}" ]] && continue
+		echo "${build_configs_pair}"
+	done
+	IFS=' \t\n'
+}
+
+# @FUNCTION: ot-kernel_set_configopt
+# @DESCRIPTION:
+# Sets the kernel option with a string value or single char option
+ot-kernel_set_configopt() {
+	local opt="${1}"
+	local val="${1}"
+	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
+		sed -i -e "s|# ${opt} is not set|${opt}=${val}|g" "${path_config}" || die
+	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
+		sed -i -r -e "s/${opt}=[y|m|n]/${opt}=${val}/g" "${path_config}" || die
+	else
+		echo "${opt}=${val}" >> "${path_config}" || die
+	fi
+}
+
+# @FUNCTION: ot-kernel_unset_configopt
+# @DESCRIPTION:
+# Unsets the kernel option
+ot-kernel_unset_configopt() {
+	local opt="${1}"
+	sed -r -i -e "s/${opt}=[m|y|n]/# ${opt} is not set/g" "${path_config}" || die
+}
+
+# @FUNCTION: ot-kernel_y_configopt
+# @DESCRIPTION:
+# Sets the kernel option to y
+ot-kernel_y_configopt() {
+	local opt="${1}"
+	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
+		sed -i -e "s|# ${opt} is not set|${opt}=y|g" "${path_config}" || die
+	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
+		sed -i -r -e "s/${opt}=[y|m|n]/${opt}=y/g" "${path_config}" || die
+	else
+		echo "${opt}=y" >> "${path_config}" || die
+	fi
+}
+
+# @FUNCTION: ot-kernel_n_configopt
+# @DESCRIPTION:
+# Unset kernel config option
+ot-kernel_n_configopt() {
+	local opt="${1}"
+	sed -i -e "s|${opt}=y|# ${opt} is not set|g" "${path_config}" || die
+}
+
+# @FUNCTION: ot-kernel_setup_tc
+# @DESCRIPTION:
+# Setup toolchain args to pass to make
+ot-kernel_setup_tc() {
+	# The make command likes to complain before the build when trying to make menuconfig.
+	einfo "Setting up the build toolchain"
+	args+=(
+		INSTALL_MOD_PATH="${ED}"
+		INSTALL_PATH="${ED}/boot"
+		${MAKEOPTS}
+		ARCH=${arch}
+	)
+	local llvm_slot
+	for llvm_slot in $(seq ${LLVM_MAX_SLOT:-15} -1 ${LLVM_MIN_SLOT:-10}) ; do
+		if has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready ; then
+			break
+		fi
+	done
+	if [[ -n "${cross_compile_target}" ]] ; then
+		args+=( CROSS_COMPILE=${target_triple}- )
+	fi
+	if \
+		( \
+		   ( has cfi ${IUSE_EFFECTIVE} && use cfi ) \
+		|| ( has lto ${IUSE_EFFECTIVE} && use lto ) \
+		|| ( has pgo ${IUSE_EFFECTIVE} && use pgo ) \
+		) \
+		&& ! tc-is-cross-compiler \
+		&& is_clang_ready \
+	; then
+		einfo "Using Clang ${llvm_slot}"
+		has_version "sys-devel/llvm:${llvm_slot}" || die "sys-devel/llvm:${llvm_slot} is missing"
+		# Assumes we are not cross-compiling or we are only building on CBUILD=CHOST.
+		args+=(
+			CC=${CHOST}-clang-${llvm_slot}
+			LD=ld.lld
+			AR=llvm-ar
+			NM=llvm-nm
+			STRIP=llvm-strip
+			OBJCOPY=llvm-objcopy
+			OBJDUMP=llvm-objdump
+			READELF=llvm-readelf
+			HOSTCC=clang-${llvm_slot}
+			HOSTCXX=clang++-${llvm_slot}
+			HOSTAR=llvm-ar
+			HOSTLD=ld.lld
+		)
+		# For flag-o-matic
+		CC=clang
+		CXX=clang++
+		LD=ld.lld
+	else
+		einfo "Using GCC"
+		args+=(
+			CC=${CHOST}-gcc
+			LD=${CHOST}-ld.bfd
+			AR=${CHOST}-ar
+			NM=${CHOST}-nm
+			STRIP=${CHOST}-strip
+			OBJCOPY=${CHOST}-objcopy
+			OBJDUMP=${CHOST}-objdump
+			READELF=${CHOST}-readelf
+			HOSTCC=${CBUILD}-gcc
+			HOSTCXX=${CBUILD}-g++
+			HOSTAR=${CBUILD}-ar
+			HOSTLD=${CBUILD}-ld.bfd
+		)
+		# For flag-o-matic
+		CC=gcc
+		CXX=g++
+		LD=ld.bfd
+	fi
+
+	#filter-flags '-march=*' '-mtune=*' '-flto*' '-fuse-ld=*' '-f*inline*'
+	strip-unsupported-flags
+	einfo "CFLAGS=${CFLAGS}"
+	einfo "CXXFLAGS=${CXXFLAGS}"
+	einfo "LDFLAGS=${LDFLAGS}"
+	if tc-is-cross-compiler ; then
+		args+=(
+			"HOSTCFLAGS=-O1 -pipe"
+			"HOSTLDFLAGS=-O1 -pipe"
+		)
+	else
+		args+=(
+			"HOSTCFLAGS=${CFLAGS}"
+			"HOSTLDFLAGS=${LDFLAGS}"
+		)
+	fi
+
+	if has tresor ${IUSE_EFFECTIVE} && use tresor ; then
+		args+=( LLVM_IAS=0 )
+	fi
+}
+
+# @FUNCTION: ot-kernel_build_tresor_sysfs
+# @DESCRIPTION:
+# Builds the tresor_sysfs program.
+ot-kernel_build_tresor_sysfs() {
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
-			cp -a "${DISTDIR}/tresor_sysfs.c" "${T}"
-			cd "${T}" || die
 einfo "Running:  $(tc-getCC) ${CFLAGS} -Wno-unused-result tresor_sysfs.c -o \
 tresor_sysfs"
 			$(tc-getCC) ${CFLAGS} -Wno-unused-result \
 				tresor_sysfs.c -o tresor_sysfs || die
+			chmod 0700 tresor_sysfs || die
 		fi
 	fi
+}
+
+# @FUNCTION: ot-kernel_src_compile
+# @DESCRIPTION:
+# Compiles the userland programs especially the TRESOR AES post-boot
+# program and the kernel itself.  The kernel is also built but the user is still
+# responsible for installing it on their boot device.
+ot-kernel_src_compile() {
+	einfo "Called ot-kernel_src_compile()"
+	local b
+	for b in $(build_pairs) ; do
+		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
+		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
+		local config=$(echo "${b}" | cut -f 3 -d ":")
+		[[ -z "${config}" ]] && config="/etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m)"
+		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
+		local target_triple=$(echo "${b}" | cut -f 5 -d ":")
+		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
+		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
+		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
+		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
+		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
+		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
+		[[ -z "${extraversion}" ]] && die "extraversion cannot be empty"
+		[[ -z "${build_flag}" ]] && die "build_flag cannot be empty"
+		[[ -z "${config}" ]] && die "config cannot be empty"
+		[[ -z "${arch}" ]] && die "arch cannot be empty"
+		[[ -z "${target_triple}" ]] && die "target_triple cannot be empty"
+		einfo
+		einfo "Compiling with the following:"
+		einfo
+		einfo "Build flag:  ${build_flag}"
+		einfo "EXTRAVERSION:  ${extraversion}"
+		einfo "Config ABSPATH:  ${config}"
+		einfo "ARCH:  ${arch}"
+		einfo "Target triple:  ${target_triple}"
+		einfo
+
+		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		cd "${BUILD_DIR}" || die
+
+		local args=(
+#			V=1 # verbose compiler noise
+		)
+		ot-kernel_setup_tc
+
+		ot-kernel_build_tresor_sysfs
+
+		local pgo_phase
+		addwrite "/var/lib/ot-sources/${PV}"
+		mkdir -p "/var/lib/ot-sources/${PV}" || die
+		touch "/var/lib/ot-sources/${PV}/.works"
+		local pgo_phase_statefile="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.pgophase"
+		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
+		local profraw_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profraw"
+		local profdata_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata"
+		local pgo_phase=${PGO_PHASE_UNK}
+		if has pgo ${IUSE_EFFECTIVE} && use pgo ; then
+			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
+			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
+				pgo_phase=${PGO_PHASE_PGI}
+			else
+				pgo_phase=$(cat "${pgo_phase_statefile}")
+			fi
+
+			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
+				einfo "Building PGI"
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_path}" ]] ; then
+				einfo "Merging PGT profiles"
+				cp -a "${profraw_spath}" "${profraw_dpath}" || die
+				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
+				llvm-profdata merge --output="${profraw_dpath}" \
+					"${profdata_dpath}" || die "PGO profile merging failed"
+				pgo_phase="${PGO_PHASE_PGO}"
+				echo "PGO" > "${pgo_phase_statefile}" || die
+				einfo "Building PGO"
+				args+=( KCFLAGS=-fprofile-use="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata" )
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata" ]] ; then
+				einfo "Building PGO"
+				args+=( KCFLAGS=-fprofile-use="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata" )
+			fi
+		fi
+
+		if use build && [[ \
+			   "${build_flag}"   == "1" \
+			|| "${build_flag,,}" == "true" \
+			|| "${build_flag,,}" == "yes" \
+			|| "${build_flag,,}" == "build" \
+		]] ; then
+			einfo "Running:  make ${args[@]}"
+			make all "${args[@]}" || die
+			einfo "Running:  make install ${args[@]}"
+			make install "${args[@]}" || die
+			einfo "Running:  make modules_install ${args[@]}"
+			make modules_install "${args[@]}" || die
+			if [[ "${arch}" =~ "arm" ]] ; then
+				make dtbs_install "${args[@]}" || die
+			fi
+			einfo "Running:  make mrproper" # Reverts everything back to before make menuconfig
+			make mrproper || die
+			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
+				echo "PGT" > "${pgo_phase_statefile}" || die
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
+				echo "DONE" > "${pgo_phase_statefile}" || die
+			fi
+		fi
+	done
 }
 
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
-function ot-kernel_src_install() {
+ot-kernel_src_install() {
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 			docinto /usr/share/${PF}
@@ -1585,9 +2177,26 @@ function ot-kernel_src_install() {
 			dodoc "${DISTDIR}/${TRESOR_PDF_FN}"
 		fi
 	fi
-	# usually we sanitize permissions but skip for now
-	dodir /usr/src
-	mv "${S}" "${ED}/usr/src" || die
+
+	# Sanitize file permissions
+	local b
+	for b in $(build_pairs) ; do
+		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
+		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		cd "${BUILD_DIR}" || die
+		insinto /usr/src
+		doins -r "${BUILD_DIR}"
+	done
+
+	einfo "Restoring +x bit"
+	for f in $("${ED}") ; do
+		local is_exe=0
+		file "${f}" | grep -q -F -e "executable" && is_exe=1
+		file "${f}" | grep -q -E -e "Linux kernel.*executable" && is_exe=0
+		if (( ${is_exe} )) ; then
+			chmod 0755 "${f}" || die
+		fi
+	done
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst
@@ -1596,7 +2205,7 @@ function ot-kernel_src_install() {
 #
 # ot-kernel_pkg_postinst_cb - callback if any to handle after emerge phase
 #
-function ot-kernel_pkg_postinst() {
+ot-kernel_pkg_postinst() {
 	if use disable_debug ; then
 einfo
 einfo "The disable debug scripts have been placed in your /usr/src folder."
@@ -1613,11 +2222,9 @@ einfo
 
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
-			# prevent merge conflicts
-			cd "${T}" || die
-			mv tresor_sysfs "${EROOT}/usr/bin" || die
-			chmod 700 "${EROOT}"/usr/bin/tresor_sysfs || die
-			# same hash for 5.1 and 5.0.13 for tresor_sysfs
+			# Avoid symlink collisons between multiple installs.
+			dosym /usr/src/linux-${PV}-${ot}/tresor_sysfs /usr/bin/tresor_sysfs
+			# It's the same hash for 5.1 and 5.0.13 for tresor_sysfs.
 einfo
 einfo "The /usr/bin/tresor_sysfs CLI command which uses /sys/kernel/tresor/key too"
 einfo "is provided to set your TRESOR key directly.  Your key should be a"
@@ -1759,7 +2366,7 @@ ewarn "Futher mitigation recommendations can be found at"
 ewarn
 ewarn "  https://en.wikipedia.org/wiki/Cold_boot_attack#Mitigation"
 ewarn
-	if has rt $FEATURES ; then
+	if has rt ${FEATURES} ; then
 		if use rt ; then
 einfo
 einfo "Don't forget to set CONFIG_PREEMPT_RT found at \"General setup\" in"
@@ -1777,8 +2384,9 @@ ewarn
 	# Remove genkernel problem with GK_FILENAME_CONFIG having spaces in EXTRAVERSION in file
 	local path="${EROOT}/usr/src/linux-${PV}-ot/include/config/kernel.release"
 	if [[ -f "${EROOT}/usr/src/linux-${PV}-ot/include/config/kernel.release" ]] ; then
-einfo
-einfo "Removed ${path} for genkernel"
+		einfo
+		einfo "Removed ${path} for genkernel"
+		einfo
 		rm -rf "${path}" || die
 	fi
 
@@ -1819,6 +2427,7 @@ einfo "Removed ${path} for genkernel"
 	)
 
 	has_newer_kcp_arch=0
+	local a
 	for a in ${kcp_arches[@]} ; do
 		if has ${a} ${IUSE_EFFECTIVE} ; then
 			if use ${a} ; then
@@ -1884,7 +2493,7 @@ einfo
 		fi
 	fi
 
-	if has futex ; then
+	if has futex ${IUSE_EFFECTIVE} ; then
 		if use futex ; then
 einfo
 einfo "Enable futex also in Configure standard kernel features (expert users) > Enable futex support"
@@ -1894,7 +2503,7 @@ einfo "wine code for details."
 einfo
 		fi
 	fi
-	if has futex2 ; then
+	if has futex2 ${IUSE_EFFECTIVE} ; then
 		if use futex2 ; then
 einfo
 einfo "Enable futex also in Configure standard kernel features (expert users) > Enable futex support"
@@ -1910,7 +2519,7 @@ einfo
 		fi
 	fi
 
-	if has tresor ; then
+	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 ewarn
 ewarn "TRESOR is currently not compatible with Integrated Assembler used by."
@@ -1919,6 +2528,51 @@ ewarn "-no-integrated-as to CLANG_FLAGS or CFLAGS or build only with the GCC"
 ewarn "toolchain only.  Compatibility with Integrated Assembler may be"
 ewarn "provided later."
 ewarn
+		fi
+	fi
+
+	if has pgo ${IUSE_EFFECTIVE} && use pgo && has build ${IUSE_EFFECTIVE} && use build ; then
+einfo
+einfo "PGO progression map:  start -> 1 initramfs/bootloader -> 2 (preparation [done]) -> 3 (reboot) -> 4 (training) -> 5 (rebuild) -> 6 (reboot) done"
+einfo
+einfo "The kernel(s) still needs to complete the following steps:"
+einfo
+einfo "    2.  Install kernel to the boot device with genkernel"
+einfo "    3.  Reboot with the PGIed kernel"
+einfo "    4.  Training the kernel with benchmarks or the typical uses"
+einfo "    5.  Re-emerging the package"
+einfo "    6.  Reboot with optimized kernel"
+einfo
+	elif has build ${IUSE_EFFECTIVE} && use build ; then
+einfo
+einfo "Progression map:  start -> 1 initramfs/bootloader -> 2 (reboot) -> done"
+einfo
+einfo "The kernel(s) still needs to complete the following steps:"
+einfo
+einfo "    2.  Install kernel to the boot device with genkernel"
+einfo "    3.  Reboot with the new kernel"
+einfo
+	fi
+	if has pgo ${IUSE_EFFECTIVE} ; then
+		if use pgo ; then
+einfo
+einfo "The gen_pgo.sh has been provided in the root directory of the kernel"
+einfo "sources for PGO training.  The script can be customized for automation."
+einfo "if modded keep it in /home/\${USER} or /etc/portage folder.  This"
+einfo "customization is used to capture typical use, but any non-typical use"
+einfo "can result in performance degration.  It should only be run as a"
+einfo "non-root user because it does PGO training on the network code as well."
+einfo
+einfo "You can add an additional pgo-custom.sh in the same directory as the"
+einfo "script to extend PGO training."
+einfo
+einfo "Additional packages are required to run this particular"
+einfo "automated trainer and can be found in"
+einfo
+einfo "  https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4aff350c36fce8f4c85/sys-kernel/genkernel/genkernel-4.2.6-r2.ebuild#L279"
+einfo
+einfo "You can use your own training scripts or test suites to perform PGO training."
+einfo
 		fi
 	fi
 }
