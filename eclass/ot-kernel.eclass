@@ -1876,12 +1876,7 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		fi
 
-		local llvm_slot
-		for llvm_slot in $(seq ${LLVM_MAX_SLOT:-15} -1 ${LLVM_MIN_SLOT:-10}) ; do
-			if has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready ; then
-				break
-			fi
-		done
+		local llvm_slot=$(get_llvm_slot)
 		if \
 			( \
 			   ( has cfi ${IUSE_EFFECTIVE} && use cfi ) \
@@ -2081,6 +2076,13 @@ ot-kernel_n_configopt() {
 	sed -i -e "s|${opt}=y|# ${opt} is not set|g" "${path_config}" || die
 }
 
+get_llvm_slot() {
+	for llvm_slot in $(seq ${LLVM_MAX_SLOT:-15} -1 ${LLVM_MIN_SLOT:-10}) ; do
+		has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready && break
+	done
+	echo "${llvm_slot}"
+}
+
 # @FUNCTION: ot-kernel_setup_tc
 # @DESCRIPTION:
 # Setup toolchain args to pass to make
@@ -2093,12 +2095,7 @@ ot-kernel_setup_tc() {
 		${MAKEOPTS}
 		ARCH=${arch}
 	)
-	local llvm_slot
-	for llvm_slot in $(seq ${LLVM_MAX_SLOT:-15} -1 ${LLVM_MIN_SLOT:-10}) ; do
-		if has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready ; then
-			break
-		fi
-	done
+	local llvm_slot=$(get_llvm_slot)
 	if [[ -n "${cross_compile_target}" ]] ; then
 		args+=( CROSS_COMPILE=${target_triple}- )
 	fi
@@ -2234,6 +2231,8 @@ ot-kernel_src_compile() {
 #			V=1 # verbose compiler noise
 		)
 		ot-kernel_setup_tc
+
+		local llvm_slot=$(get_llvm_slot)
 
 		ot-kernel_build_tresor_sysfs
 
