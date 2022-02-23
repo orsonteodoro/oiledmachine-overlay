@@ -535,7 +535,15 @@ ot-kernel_pkg_pretend() {
 # Reports the estimated End Of Life (EOL).  Sourced from
 # https://www.kernel.org/category/releases.html
 _report_eol() {
-	if [[ "${K_MAJOR_MINOR}" == "5.10" ]] ; then
+	if [[ "${K_MAJOR_MINOR}" == "5.15" ]] ; then
+einfo
+einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
+einfo "Oct 2023."
+einfo
+einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
+einfo "the same major.minor branch."
+einfo
+	elif [[ "${K_MAJOR_MINOR}" == "5.10" ]] ; then
 einfo
 einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
 einfo "Dec 2022."
