@@ -585,6 +585,8 @@ pkg_postinst() {
 	ewarn "See the metadata.xml next to this ebuild for additional environment"
 	ewarn "variables for PGO training."
 	ewarn
+	ewarn "You still need to manually set the profraw version in the kernel config."
+	ewarn
 	fi
 
 	ewarn

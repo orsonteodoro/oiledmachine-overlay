@@ -53,7 +53,8 @@
 
     (1) Emerge a source based kernel package >= 5.13 with applied PGO and profraw compat patches
         (See references section below for how to obtain and apply patches)
-    (2) Run genkernel --pgi all
+    (2) Run genkernel --pgi all (with menuconfig if you didn't set the profraw version)
+    (IMPORTANT:  if You still need to change the kernel config with the supported profraw version.)
     (3) Reboot
     (4) Run genkernel --pgt-all train
     (optional) Run genkernel --pgt-yt train in X as a normal user
