@@ -1827,11 +1827,11 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_SCHED_PDS"
 		fi
 
-		if has prjc ${IUSE_EFFECTIVE} && use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
+		if has bmq ${IUSE_EFFECTIVE} && use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 		fi
 
-		if has prjc ${IUSE_EFFECTIVE} && use pds && [[ "${cpu_sched}" == "pds" ]] ; then
+		if has pds ${IUSE_EFFECTIVE} && use pds && [[ "${cpu_sched}" == "pds" ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_PDS"
 		fi
 
