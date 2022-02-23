@@ -198,12 +198,15 @@ eerror
 			| grep -q -e "PMU Hardware doesn't support sampling/overflow-interrupts" ; then
 eerror
 eerror "You need CPU support for hardware or software LBR (Last Branch Record)."
+eerror "Please disable the bolt USE flag."
 eerror
 			die
 		fi
 ewarn
 ewarn "Ebuild development indefinitely for the bolt USE flag."
-ewarn "No support will be given for the bolt USE flag on this ebuild fork due to a lack of LBR CPU support."
+ewarn
+ewarn "No support will be given for the bolt USE flag on this ebuild fork due"
+ewarn "to a lack of LBR CPU support."
 ewarn
 	fi
 }

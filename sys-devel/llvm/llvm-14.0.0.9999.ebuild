@@ -150,13 +150,16 @@ eerror "Testing with souper requires >=sys-devel/clang-${SLOT}:${SLOT}[${abi_pai
 		if perf record -e cpu-clock -j any -o /dev/null -- ls \
 			| grep -q -e "PMU Hardware doesn't support sampling/overflow-interrupts" ; then
 eerror
-eerror "Your CPU needs LBR (Last Branch Record) support."
+eerror "Your CPU needs LBR (Last Branch Record) support.  Please disable the"
+eerror "bolt USE flag."
 eerror
 			die
 		fi
 ewarn
 ewarn "Ebuild development indefinitely for the bolt USE flag."
-ewarn "No support will be given for the bolt USE flag on this ebuild fork due to a lack of LBR support on the CPU."
+ewarn
+ewarn "No support will be given for the bolt USE flag on this ebuild fork due"
+ewarn "to a lack of LBR support on the CPU."
 ewarn
 	fi
 }
