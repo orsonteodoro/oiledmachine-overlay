@@ -38,11 +38,11 @@ The patch status will change once it is confirmed working.
  	depends on ARCH_SUPPORTS_PGO_CLANG
  	depends on CC_IS_CLANG
  	depends on !ARCH_WANTS_NO_INSTR || CC_HAS_NO_PROFILE_FN_ATTR
-+	depends on PROFRAW_V8_MAIN || PROFRAW_V7_13_X || PROFRAW_V6 || PROFRAW_V5
++	depends on PROFRAW_V8 || PROFRAW_V7 || PROFRAW_V6 || PROFRAW_V5
  	help
  	  This option enables clang's PGO (Profile Guided Optimization) based
  	  code profiling to better optimize the kernel.
-@@ -34,4 +35,45 @@ config PGO_CLANG
+@@ -34,4 +35,44 @@ config PGO_CLANG
  	  Note that the debugfs filesystem has to be mounted to access
  	  profiling data.
  
@@ -52,35 +52,34 @@ The patch status will change once it is confirmed working.
 +	  This matches the profdata data structure to a specific version
 +	  of LLVM since not enough metadata is provided.
 +
-+config PROFRAW_V8_MAIN
-+	bool "profraw v8 (main)"
++config PROFRAW_V8
++	bool "profraw v8 (main, 14.x, 15.x)"
 +	help
 +	  The following are compatible:
 +	    * LLVM main branch with the latest commit
++	    * LLVM 14.x branch with the latest commit
++	    * LLVM 14.0.0-rc1
 +
-+config PROFRAW_V7_13_X
++config PROFRAW_V7
 +	bool "profraw v7 (13.x)"
 +	help
 +	  The following are compatible:
 +	    * LLVM 13.x branch with the latest commit
++	    * LLVM 13.0.1
 +	    * LLVM 13.0.0
-+	    * LLVM 13 rc4
-+	    * LLVM 13 rc3
 +
 +config PROFRAW_V6
 +	bool "profraw v6"
 +	help
 +	  The following are compatible:
 +	    * LLVM 14 init
-+	    * LLVM 13 rc2
-+	    * LLVM 13 rc1
-+	    * LLVM 13.x branch with profraw v6 only
++	    * LLVM 13.x branch with profraw v6
 +
 +config PROFRAW_V5
-+	bool "profraw v5"
++	bool "profraw v5 (10.x, 11.x, 12.x)"
 +	help
 +	  The following are compatible:
-+	    * LLVM 13.x branch with profraw v5 only
++	    * LLVM 13.x branch with profraw v5
 +	    * LLVM 12
 +	    * LLVM 11
 +	    * LLVM 10
@@ -102,16 +101,16 @@ The patch status will change once it is confirmed working.
 +#  error "backport those commits."
 +#endif
 +
-+#if defined(CONFIG_PROFRAW_V8_MAIN)
++#if defined(CONFIG_PROFRAW_V8)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	8
-+#elif defined (CONFIG_PROFRAW_V7_13_X)
++#elif defined (CONFIG_PROFRAW_V7)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	7
 +#elif defined(CONFIG_PROFRAW_V6)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	6
 +#elif defined(CONFIG_PROFRAW_V5)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	5
 +#else
-+#  error "profraw versions < 5 or > 7 are not supported."
++#  error "profraw versions < 5 or > 8 are not supported."
 +#endif
 +
  #define LLVM_INSTR_PROF_DATA_ALIGNMENT		8

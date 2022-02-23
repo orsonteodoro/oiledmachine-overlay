@@ -2042,15 +2042,15 @@ ot-kernel_src_configure() {
 				local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
 				local clang_v_maj=$(echo "${clang_v}" | cut -f 1 -d ".")
 				if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
-					ot-kernel_y_configopt "CONFIG_PROFRAW_V8_MAIN"
+					ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 				elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0.9999" ; then
-					ot-kernel_y_configopt "CONFIG_PROFRAW_V8_MAIN"
+					ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 				elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0_rc1" ; then
 					ot-kernel_y_configopt "CONFIG_PROFRAW_V6"
 				elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.1" ; then
-					ot-kernel_y_configopt "CONFIG_PROFRAW_V7_13_X"
+					ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
 				elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.0" ; then
-					ot-kernel_y_configopt "CONFIG_PROFRAW_V7_13_X"
+					ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
 				elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 12 )) && has_version "~sys-devel/clang-12.0.1" ; then
 					ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
 				elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 11 )) && has_version "~sys-devel/clang-11.1.0" ; then
