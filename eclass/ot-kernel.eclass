@@ -1818,7 +1818,7 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_FUTEX2"
 		fi
 
-		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "cfs" ]] ; then
+		if [[ "${cpu_sched}" == "cfs" ]] ; then
 			einfo "Changed .config to use CFS (Completely Fair Scheduler)"
 			ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
 			ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
