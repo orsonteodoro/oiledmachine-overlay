@@ -1623,6 +1623,7 @@ apply_all_patchsets() {
 OT_KERNEL_BUILDCONFIGS_N_FIELDS=6
 ot-kernel_check_build_info_valid() {
 	local nfields=$(echo "${b}" | grep -o ":" | wc -l)
+	nfields=$((${nfields}+1))
 	if (( ${nfields} != ${OT_KERNEL_BUILDCONFIGS_N_FIELDS} )) ; then
 # We can either have a version variable or this.
 eerror
