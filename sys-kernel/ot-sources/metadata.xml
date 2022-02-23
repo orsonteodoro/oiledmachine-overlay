@@ -212,12 +212,30 @@
     environment variables that can be placed in the make.conf or as a
     per-package conf.
 
+    The build USE flag was necessary to increase the security of the -rt patchset
+    with a more customized limited config.
+
+    It also speeds up deployment time to decrease the security update lag.
+
+
+    PGO builds
+
+    The PGO (Profile Guided Optimization) state diagram:
+
+      start -&gt;  PGI -&gt; PGT -&gt; PGO -&gt; end
+
+    (&gt; is the greater than symbol in HTML)
+
+    PGI = Build as instrumented
+    PGT = Training
+    PGO = Build as optimize
+
     When both the build and pgo USE flags are enabled, it will build an
     instrumented build ready for PGO training.  This requires a reboot.  After
     rebooting, you may use benchmarks or any program that reflects typical use
     cases.  The PGO progression state can be reset by deleting the
-    /var/lib/ot-sources/${PV} folder.  The folder contains these files for
-    developer interest and transparency:
+    /var/lib/ot-sources/${PV} folder or the .pgophase file.  The folder
+    contains these files for developer interest and transparency:
 
     /var/lib/ot-sources/${PV}/${extraversion}-${arch}.pgophase -- The PGO
       phase progression state file that contains the current step.
@@ -227,13 +245,8 @@
     /var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata -- The merged
       profdata PGO profile.  It is used when optimizing.
 
-    The build USE flag was necessary to increase the security of the -rt patchset
-    with a more customized limited config.
 
-    It also speeds up deployment time to decrease the security update lag.
-
-
-    Using gen_pgo.sh
+    Using gen_pgo.sh, aka the automated PGO trainer script
 
     It becomes tedious or too repetitive to manually train the kernel.
     This is why an automated trainer script gen_pgo.sh (also found in the modded
@@ -393,7 +406,7 @@ https://github.com/dolohow/uksm
       improved goodput, which is the actual useful data over time alone, than
       its predecessor with around less than 5 percent retransmission comparable
       to Cubic but trading off ~5-10 MBps raw throughput, which includes data
-      retransmissions and overhead.
+      retransmissions and overhead.</flag>
     <flag name="bfq-mq">Update the BFQ IO scheduler from single queue to
       multi-queue in 4.14.x series only.  The multi-queue design was utilized
       in later kernels.  Updating may present IO related problems, or have
@@ -409,7 +422,7 @@ https://github.com/dolohow/uksm
     <flag name="cfs">Uses the CFS (Completely Fair Scheduling) CPU scheduler
       and not apply any third-party CPU scheduler.</flag>
     <flag name="clang">This is a stronger check for those prefer Clang over
-      GCC and to make sure the prerequisites are met. 
+      GCC and to make sure the prerequisites are met. </flag>
     <flag name="clang-pgo">Adds experimental Clang PGO support.  Patch was on
       hold due to compiler code generation problems.</flag>
     <flag name="cve_hotfix">Applies patches to resolve CVEs (Common 
@@ -518,10 +531,10 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
     <flag name="prjc">Applies the Project C CPU scheduler.</flag>
     <flag name="rt">Patches the kernel with the PREEMPT_RT patch which tries
       to minimize non-preemptible parts of the kernel.  It's experimental when
-      combined with other USE flags and patchsets.</flag>  Realtime
+      combined with other USE flags and patchsets.  Realtime
       is not recommended for desktop use but for dedicated and isolated
       setups.  Never give untrusted apps realtime access.  The rt patchset
-      is used by music producers that require low latency audio.
+      is used by music producers that require low latency audio.</flag>
     <flag name="shadowcallstack">Ensures that shadow call stack dependencies
       are installed.  Protects from ROP back edge attacks from arbitary
       code execution.</flag>
