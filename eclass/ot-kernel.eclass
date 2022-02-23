@@ -1704,6 +1704,9 @@ PGO_PHASE_PGO=2 # Optimization step
 PGO_PHASE_PG0=3 # No PGO
 PGO_PHASE_PG0=4 # DONE
 
+# @FUNCTION: is_clang_ready
+# @DESCRIPTION:
+# Checks if the compiler has no problems
 is_clang_ready() {
 	which clang-${llvm_slot} 2>/dev/null 1>/dev/null || return 1
 	if clang-${llvm_slot} --help | grep -q -F -e "symbol lookup error" ; then
@@ -1717,6 +1720,23 @@ ewarn
 		return 1
 	fi
 	return 0
+}
+
+# @FUNCTION: is_firmware_ready
+# @DESCRIPTION:
+# Checks if all firmware is installed to avoid build time failure
+is_firmware_ready() {
+	einfo
+	einfo "Performing a firmware roll call"
+	einfo
+	local fw_relpaths=(
+		$(grep "CONFIG_EXTRA_FIRMWARE" "${BUILD_DIR}/.config" | head -n 1 | cut -f 2 -d "\"")
+	)
+	local p
+	for p in ${fw_relpaths[@]} ; do
+		einfo "/lib/firmware/${p} is present"
+		[[ -e "/lib/firmware/${p}" ]] || die "Missing firmware file for /lib/firmware/${p}"
+	done
 }
 
 # @FUNCTION: ot-kernel_src_prepare
@@ -1976,6 +1996,7 @@ eerror
 
 		mkdir -p /etc/kernels
 		cp -a "${path_config}" /etc/kernels || die
+		is_firmware_ready
 	done
 }
 
