@@ -1495,8 +1495,8 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 		fi
 	fi
 
-	if has pgo ${IUSE_EFFECTIVE} ; then
-		if use pgo ; then
+	if has clang-pgo ${IUSE_EFFECTIVE} ; then
+		if use clang-pgo ; then
 			cat "${FILESDIR}/gen_pgo.sh" > "${BUILD_DIR}/gen_pgo.sh"
 		fi
 	fi
@@ -1886,7 +1886,7 @@ ot-kernel_src_configure() {
 			( \
 			   ( has cfi ${IUSE_EFFECTIVE} && use cfi ) \
 			|| ( has lto ${IUSE_EFFECTIVE} && use lto ) \
-			|| ( has pgo ${IUSE_EFFECTIVE} && use pgo ) \
+			|| ( has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ) \
 			) \
 			&& ! tc-is-cross-compiler \
 			&& is_clang_ready \
@@ -1974,7 +1974,7 @@ ot-kernel_src_configure() {
 		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
 		local profraw_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profraw"
 		local profdata_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata"
-		if has pgo ${IUSE_EFFECTIVE} && use pgo ; then
+		if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 				einfo "Forcing PGI flags and config"
@@ -2106,7 +2106,7 @@ ot-kernel_setup_tc() {
 		( \
 		   ( has cfi ${IUSE_EFFECTIVE} && use cfi ) \
 		|| ( has lto ${IUSE_EFFECTIVE} && use lto ) \
-		|| ( has pgo ${IUSE_EFFECTIVE} && use pgo ) \
+		|| ( has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
@@ -2246,7 +2246,7 @@ ot-kernel_src_compile() {
 		local profraw_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profraw"
 		local profdata_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata"
 		local pgo_phase=${PGO_PHASE_UNK}
-		if has pgo ${IUSE_EFFECTIVE} && use pgo ; then
+		if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
 				pgo_phase=${PGO_PHASE_PGI}
@@ -2663,7 +2663,7 @@ ewarn
 		fi
 	fi
 
-	if has pgo ${IUSE_EFFECTIVE} && use pgo && has build ${IUSE_EFFECTIVE} && use build ; then
+	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo && has build ${IUSE_EFFECTIVE} && use build ; then
 einfo
 einfo "PGO progression map:  start -> 1 initramfs/bootloader -> 2 (preparation [done]) -> 3 (reboot) -> 4 (training) -> 5 (rebuild) -> 6 (reboot) done"
 einfo
@@ -2685,8 +2685,8 @@ einfo "    2.  Install kernel to the boot device with genkernel"
 einfo "    3.  Reboot with the new kernel"
 einfo
 	fi
-	if has pgo ${IUSE_EFFECTIVE} ; then
-		if use pgo ; then
+	if has clang-pgo ${IUSE_EFFECTIVE} ; then
+		if use clang-pgo ; then
 einfo
 einfo "The gen_pgo.sh has been provided in the root directory of the kernel"
 einfo "sources for PGO training.  The script can be customized for automation."
