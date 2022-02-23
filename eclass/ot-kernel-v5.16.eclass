@@ -106,13 +106,6 @@ PATCH_ZENSAUCE_BL=(
 # Disabled 7d443dabec118b2c869461d8740e010bca976931 : ZEN: INTERACTIVE: Use BFQ as our elevator
 # Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
 
-# From 5.12, forwardported to 5.13
-# not present
-ZEN_MUQSS_COMMITS=(
-)
-ZEN_MUQSS_EXCLUDED_COMMITS=(
-)
-
 # Have to pull and apply one-by-one because of already applied commits
 CFI_X86_COMMITS=(
 1d7789c770ab3efc373250423e01e03889de1b39
@@ -201,7 +194,7 @@ IUSE+=" build"
 IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex futex-proton
 +genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto +O3 prjc rt
 shadowcallstack tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
-tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-lru_gen zen-muqss
+tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-lru_gen
 zen-sauce zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
 REQUIRED_USE+="
@@ -233,8 +226,13 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
+	!tresor
+	!tresor_aesni
+	!tresor_i686
+	!tresor_x86_64
+	!futex
+	!futex-proton
 	!uksm
-	!zen-muqss
 "
 fi
 
@@ -274,7 +272,6 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # all-rights-reserved applies to new files introduced and no defaults license
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
-LICENSE+=" zen-muqss? ( GPL-2 )"
 LICENSE+=" zen-tune? ( GPL-2 )"
 
 _seq() {
@@ -460,7 +457,6 @@ gen_kcp_ma_uri() {
 NOT_READY_YET="
 	   prjc? ( ${PRJC_SRC_URI} )
 	   uksm? ( ${UKSM_SRC_URI} )
-	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
 "
 
 SRC_URI+=" "$(gen_kcp_ma_uri)
