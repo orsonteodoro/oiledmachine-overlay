@@ -1,0 +1,44 @@
+--- a/include/linux/objtool.h.orig	2022-01-09 14:55:34.000000000 -0800
++++ b/include/linux/objtool.h	2022-02-23 20:43:43.314006408 -0800
+@@ -66,6 +66,11 @@ struct unwind_hint {
+ 	static void __used __section(".discard.func_stack_frame_non_standard") \
+ 		*__func_stack_frame_non_standard_##func = func
+ 
++#define ASM_STACK_FRAME_NON_STANDARD(func)				\
++	".pushsection .discard.func_stack_frame_non_standard, \"aw\"\n"	\
++	".long " __stringify(func) " - .\n"				\
++	".popsection\n"
++
+ /*
+  * STACK_FRAME_NON_STANDARD_FP() is a frame-pointer-specific function ignore
+  * for the case where a function is intentionally missing frame pointer setup,
+@@ -139,6 +144,7 @@ struct unwind_hint {
+ 	"\n\t"
+ #define STACK_FRAME_NON_STANDARD(func)
+ #define STACK_FRAME_NON_STANDARD_FP(func)
++#define ASM_STACK_FRAME_NON_STANDARD(func)
+ #else
+ #define ANNOTATE_INTRA_FUNCTION_CALL
+ .macro UNWIND_HINT sp_reg:req sp_offset=0 type:req end=0
+--- a/tools/include/linux/objtool.h.orig	2022-01-09 14:55:34.000000000 -0800
++++ b/tools/include/linux/objtool.h	2022-02-23 20:46:53.583261508 -0800
+@@ -66,6 +66,11 @@ struct unwind_hint {
+ 	static void __used __section(".discard.func_stack_frame_non_standard") \
+ 		*__func_stack_frame_non_standard_##func = func
+ 
++#define ASM_STACK_FRAME_NON_STANDARD(func)				\
++	".pushsection .discard.func_stack_frame_non_standard, \"aw\"\n"	\
++	".long " __stringify(func) " - .\n"				\
++	".popsection\n"
++
+ /*
+  * STACK_FRAME_NON_STANDARD_FP() is a frame-pointer-specific function ignore
+  * for the case where a function is intentionally missing frame pointer setup,
+@@ -139,6 +144,7 @@ struct unwind_hint {
+ 	"\n\t"
+ #define STACK_FRAME_NON_STANDARD(func)
+ #define STACK_FRAME_NON_STANDARD_FP(func)
++#define ASM_STACK_FRAME_NON_STANDARD(func)
+ #else
+ #define ANNOTATE_INTRA_FUNCTION_CALL
+ .macro UNWIND_HINT sp_reg:req sp_offset=0 type:req end=0
