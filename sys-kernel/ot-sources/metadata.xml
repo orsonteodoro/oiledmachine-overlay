@@ -512,7 +512,9 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       compatible with experimental-wine version 5.13 or above.  This will
       break compatibility.</flag>
     <flag name="kernel-compiler-patch">Patches the kernel for more CPU
-      microarchitectures that are released before 2020</flag>
+      microarchitectures.  If using cross-compiling or distcc, do not use the
+      native option but the microarchitecture kernel config option instead.
+      </flag>
     <flag name="kernel-compiler-patch-cortex-a72">Patches the kernel for the
       Cortex A72 used in the Raspberry Pi 4.</flag>
     <flag name="kernel-compiler-patch-zen3">Patches the kernel for the Zen 3
