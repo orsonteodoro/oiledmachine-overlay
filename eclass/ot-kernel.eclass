@@ -2313,8 +2313,8 @@ ot-kernel_setup_tc() {
 			OBJCOPY=llvm-objcopy
 			OBJDUMP=llvm-objdump
 			READELF=llvm-readelf
-			HOSTCC=clang-${llvm_slot}
-			HOSTCXX=clang++-${llvm_slot}
+			HOSTCC=${CBUILD}-clang-${llvm_slot}
+			HOSTCXX=${CBUILD}-clang++-${llvm_slot}
 			HOSTAR=llvm-ar
 			HOSTLD=ld.lld
 		)
