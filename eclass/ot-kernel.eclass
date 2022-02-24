@@ -2051,6 +2051,7 @@ ot-kernel_src_configure() {
 					# Reset to avoid ambiguous config
 					ot-kernel_unset_configopt "CONFIG_${m}"
 				done
+				ot-kernel_unset_configopt "CONFIG_GENERIC_CPU"
 				if grep -r -e "(MNATIVE_AMD|MNATIVE_INTEL)" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
 					einfo "Setting .config with -march=native"
 					if lscpu | grep -q -F -e "AMD" ; then
