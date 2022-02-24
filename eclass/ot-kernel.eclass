@@ -2052,13 +2052,11 @@ ot-kernel_src_configure() {
 					ot-kernel_unset_configopt "CONFIG_${m}"
 				done
 				ot-kernel_unset_configopt "CONFIG_GENERIC_CPU"
-				if grep -q -E -e "(MNATIVE_AMD|MNATIVE_INTEL)" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
+				if grep -q -E -e "MNATIVE_" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
 					einfo "Setting .config with -march=native"
-					if lscpu | grep -q -F -e "AMD" ; then
-						ot-kernel_y_configopt "CONFIG_MNATIVE_AMD"
-					elif lscpu | grep -q -F -e "GenuineIntel" ; then
-						ot-kernel_y_configopt "CONFIG_MNATIVE_INTEL"
-					fi
+					local mfg=$(lscpu | grep "Vendor ID" | cut -f 2 -d ":" | sed -r -e "s|[ ]+||g" | sed -r -e "s/(Authentic|Genuine)//g")
+					mfg=${mfg^^}
+					ot-kernel_y_configopt "CONFIG_MNATIVE_${mfg}"
 				elif grep -q -F -e "MNATIVE" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
 					einfo "Setting .config with -march=native"
 					ot-kernel_y_configopt "CONFIG_MNATIVE"
