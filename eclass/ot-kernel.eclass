@@ -2076,6 +2076,7 @@ ot-kernel_src_configure() {
 				# Cannot use -march=native if doing distcc.
 				if grep "^CONFIG_MNATIVE" "${path_config}" ; then
 					einfo "Detected cross-compiling.  Converting -march=native -> -mtune=generic"
+					einfo "In the future, change the setting to the microarchitecture instead."
 					ot-kernel_unset_configopt "CONFIG_MNATIVE_AMD"
 					ot-kernel_unset_configopt "CONFIG_MNATIVE_INTEL"
 					ot-kernel_unset_configopt "CONFIG_MNATIVE"
