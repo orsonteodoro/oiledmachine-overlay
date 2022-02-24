@@ -2040,17 +2040,7 @@ ot-kernel_src_configure() {
 			local microarches=(
 				$(grep -r -e "config M" "${BUILD_DIR}/arch/x86/Kconfig.cpu" | sed -e "s|config ||g")
 			)
-			if tc-is-cross-compiler ; then
-				if grep "^CONFIG_MNATIVE" "${path_config}" ; then
-					einfo "Detected cross-compiling.  Converting -march=native -> -mtune=generic"
-					ot-kernel_unset_configopt "CONFIG_MNATIVE_AMD"
-					ot-kernel_unset_configopt "CONFIG_MNATIVE_INTEL"
-					ot-kernel_unset_configopt "CONFIG_MNATIVE"
-					ot-kernel_y_configopt "CONFIG_GENERIC_CPU"
-				else
-					einfo "Detected cross-compiling.  Using previous generic or microarchitecture setting."
-				fi
-			elif (( ${default_config} == 1 )) ; then
+			if (( ${default_config} == 1 )) ; then
 				einfo
 				einfo "Detected a new default config.  Changing from -mtune=generic -> -march=native."
 				einfo
@@ -2078,6 +2068,21 @@ ot-kernel_src_configure() {
 				fi
 			else
 				einfo "Reusing the previous kernel_compiler_patch settings."
+			fi
+		fi
+
+		if [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
+			if tc-is-cross-compiler ; then
+				# Cannot use -march=native if doing distcc.
+				if grep "^CONFIG_MNATIVE" "${path_config}" ; then
+					einfo "Detected cross-compiling.  Converting -march=native -> -mtune=generic"
+					ot-kernel_unset_configopt "CONFIG_MNATIVE_AMD"
+					ot-kernel_unset_configopt "CONFIG_MNATIVE_INTEL"
+					ot-kernel_unset_configopt "CONFIG_MNATIVE"
+					ot-kernel_y_configopt "CONFIG_GENERIC_CPU"
+				else
+					einfo "Detected cross-compiling.  Using previous generic or microarchitecture setting."
+				fi
 			fi
 		fi
 
