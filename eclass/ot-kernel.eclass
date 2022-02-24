@@ -1728,13 +1728,22 @@ is_firmware_ready() {
 	einfo "Performing a firmware roll call"
 	einfo
 	local fw_relpaths=(
-		$(grep "CONFIG_EXTRA_FIRMWARE" "${BUILD_DIR}/.config" | head -n 1 | cut -f 2 -d "\"")
+		$(grep "CONFIG_EXTRA_FIRMWARE" "${BUILD_DIR}/.config" \
+			| head -n 1 | cut -f 2 -d "\"")
 	)
+	local found_missing=0
 	local p
 	for p in ${fw_relpaths[@]} ; do
-		einfo "/lib/firmware/${p} is present"
-		[[ -e "/lib/firmware/${p}" ]] || die "Missing firmware file for /lib/firmware/${p}"
+		if [[ ! -e "/lib/firmware/${p}" ]] ; then
+			eerror "Missing firmware file for /lib/firmware/${p}"
+			found_missing=1
+		else
+			einfo "/lib/firmware/${p} is present"
+		fi
 	done
+	if (( ${found_missing} == 1 )) ; then
+		die "Remove the entries from CONFIG_EXTRA_FIRMWARE in ${config}"
+	fi
 }
 
 # @FUNCTION: ot-kernel_src_prepare
