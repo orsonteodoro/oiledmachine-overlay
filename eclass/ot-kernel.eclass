@@ -1636,22 +1636,6 @@ eerror
 	fi
 }
 
-# @FUNCTION: ot-kernel_patch_install_sh
-# @DESCRIPTION:
-# Disable running /sbin/installkernel
-ot-kernel_patch_install_sh() {
-	einfo "Called ot-kernel_patch_install_sh()"
-	cd "${BUILD_DIR}" || die
-	einfo "HOME:  ${HOME}" # Prints to notify about sandbox changes
-	local a
-	for a in $(ls arch | xargs) ; do
-		[[ "${a}" == "Kconfig" ]] && continue
-		[[ ! -e "arch/${a}/boot/install.sh" ]] && continue
-		sed -i -e "\|/sbin/\${INSTALLKERNEL}|d" \
-			"arch/${a}/boot/install.sh" || die
-	done
-}
-
 # @FUNCTION: ot-kernel_copy_pgo_state
 # @DESCRIPTION:
 # Copy the PGO state file and all PGO profiles
@@ -1700,8 +1684,6 @@ ewarn
 		mkdir -p "${ED}/${OT_KERNEL_PGO_DATA_DIR}" || die
 		ot-kernel_copy_pgo_state
 	fi
-
-	ot-kernel_patch_install_sh
 
 	local b
 	for b in $(build_pairs) ; do
@@ -1796,9 +1778,9 @@ ot-kernel_src_configure() {
 		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
 		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		local config=$(echo "${b}" | cut -f 3 -d ":")
-		local default_config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-$(uname -m)"
-		[[ -z "${config}" ]] && config="${default_config}"
 		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
+		local default_config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-${arch}"
+		[[ -z "${config}" ]] && config="${default_config}"
 		local target_triple=$(echo "${b}" | cut -f 5 -d ":")
 		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
@@ -2381,6 +2363,28 @@ tresor_sysfs"
 	fi
 }
 
+# @FUNCTION: ot-kernel-make_install
+# @DESCRIPTION:
+# Replaces all the arch/*/install.sh
+ot-kernel-make_install() {
+	einfo "Called ot-kernel-make_install()"
+	mkdir -p "${ED}/boot" || die
+	local bzimage_spath=$(find "arch/${arch}" -type f -name "bzImage")
+	local bzimage_dpath="${ED}/boot/vmlinuz-${PV}-${extraversion}-${arch}"
+	local system_map_spath=$(find "arch/${arch}" -type f -name "System.map")
+	local system_map_dpath="${ED}/boot/System.map-${PV}-${extraversion}-${arch}"
+	local vmlinuz_spath=$(find "arch/${arch}" -type f -name "vmlinuz")
+	local vmlinuz_dpath="${ED}/boot/vmlinuz-${PV}-${extraversion}-${arch}"
+	cp -a "${system_map_spath}" "${system_map_dpath}" || die
+	if [[ -e "${bzimage_spath}" ]] ; then
+		einfo "Copying compressed kernel image for -${extraversion}"
+		cp -a "${bzimage_spath}" "${bzimage_dpath}" || die
+	elif [[ -e "${vmlinuz_spath}" ]] ; then
+		einfo "Copying uncompressed kernel image for -${extraversion}"
+		cp -a "${vmlinuz_spath}" "${vmlinuz_dpath}" || die
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_compile
 # @DESCRIPTION:
 # Compiles the userland programs especially the TRESOR AES post-boot
@@ -2393,8 +2397,9 @@ ot-kernel_src_compile() {
 		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
 		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		local config=$(echo "${b}" | cut -f 3 -d ":")
-		[[ -z "${config}" ]] && config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-$(uname -m)"
 		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
+		local default_config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-${arch}"
+		[[ -z "${config}" ]] && config="${default_config}"
 		local target_triple=$(echo "${b}" | cut -f 5 -d ":")
 		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
@@ -2407,6 +2412,7 @@ ot-kernel_src_compile() {
 		[[ -z "${config}" ]] && die "config cannot be empty"
 		[[ -z "${arch}" ]] && die "arch cannot be empty"
 		[[ -z "${target_triple}" ]] && die "target_triple cannot be empty"
+		[[ -z "${cpu_sched}" ]] && die "cpu_sched cannot be empty"
 		einfo
 		einfo "Compiling with the following:"
 		einfo
@@ -2470,9 +2476,9 @@ ot-kernel_src_compile() {
 			|| "${build_flag,,}" == "build" \
 		]] ; then
 			einfo "Running:  make all ${args[@]}"
+			mkdir -p "${ED}/boot" || die
 			make all "${args[@]}" || die
-			einfo "Running:  make install ${args[@]}"
-			make install "${args[@]}" || die
+			ot-kernel-make_install
 			einfo "Running:  make modules_install ${args[@]}"
 			make modules_install "${args[@]}" || die
 			if [[ "${arch}" =~ "arm" ]] ; then
