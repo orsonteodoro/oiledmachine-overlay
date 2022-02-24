@@ -109,7 +109,7 @@ PATCH_ZENSAUCE_BL=(
 # Have to pull and apply one-by-one because of already applied commits
 CFI_X86_COMMITS=(
 1d7789c770ab3efc373250423e01e03889de1b39
-#7fb10a9f0f9a8d8edf03f74af5ab02d570e997c2 # already applied
+7fb10a9f0f9a8d8edf03f74af5ab02d570e997c2 # already applied
 857e4865f1cede7d5c3f2a0992e01e3a66f21289
 b04cc291daa34371e4ec7c1f3333730c255f23ee
 a730ee8477502d71cfaec0feed69cff70e02951d
@@ -685,6 +685,8 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "kernel-locking-Use-a-pointer-in-ww_mutex_trylock.patch" ]] ; then
 		: # already applied
+	elif [[ "${path}" =~ "cfi-x86-5.16-7fb10a9.patch" ]] ; then
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-7fb10a9-rebase-for-5.16.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
