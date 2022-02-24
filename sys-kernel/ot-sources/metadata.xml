@@ -220,7 +220,7 @@
 
     PGO builds
 
-    The PGO (Profile Guided Optimization) state diagram:
+    The PGO (Profile Guided Optimization) progression diagram:
 
       start -&gt;  PGI -&gt; PGT -&gt; PGO -&gt; end
 
