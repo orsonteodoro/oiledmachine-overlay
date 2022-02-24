@@ -1775,6 +1775,9 @@ ot-kernel_src_configure() {
 		if [[ -e "${config}" ]] ; then
 			einfo "Copying the savedconfig:  ${config} -> ${path_config}"
 			cat "${config}" > "${path_config}" || die
+			einfo "Auto updating the .config"
+			einfo "Running:  make olddefconfig ${args[@]}"
+			make olddefconfig "${args[@]}" || die
 		fi
 
 #		if [[ -n "${OT_MENUCONFIG_PREFERENCE}" ]] ; then
@@ -1783,7 +1786,7 @@ ot-kernel_src_configure() {
 #			The interactive support doesn't work as advertised but limited to just alphanumeric and no arrow keys in text only mode.
 #
 #			# Does not work
-#			einfo "make ${OT_MENUCONFIG_PREFERENCE} ${args[@]}"
+#			einfo "Running:  make ${OT_MENUCONFIG_PREFERENCE} ${args[@]}"
 #			make ${OT_MENUCONFIG_PREFERENCE} "${args[@]}" || die
 #		fi
 
@@ -2032,38 +2035,50 @@ ot-kernel_src_configure() {
 		local profdata_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata"
 		if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
-			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
-				einfo "Forcing PGI flags and config"
-				ot-kernel_y_configopt "CONFIG_CC_HAS_NO_PROFILE_FN_ATTR"
-				ot-kernel_y_configopt "CONFIG_CC_IS_CLANG"
-				ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-				ot-kernel_y_configopt "CONFIG_PGO_CLANG"
-				ot-kernel_y_configopt "CONFIG_PGO_CLANG_LLVM_SELECT"
-				local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
-				local clang_v_maj=$(echo "${clang_v}" | cut -f 1 -d ".")
-				if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
-					ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-				elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0.9999" ; then
-					ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-				elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0_rc1" ; then
-					ot-kernel_y_configopt "CONFIG_PROFRAW_V6"
-				elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.1" ; then
-					ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
-				elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.0" ; then
-					ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
-				elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 12 )) && has_version "~sys-devel/clang-12.0.1" ; then
-					ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
-				elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 11 )) && has_version "~sys-devel/clang-11.1.0" ; then
-					ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
-				else
+			local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
+			local clang_v_maj=$(echo "${clang_v}" | cut -f 1 -d ".")
+			ot-kernel_y_configopt "CONFIG_PGO_CLANG_LLVM_SELECT"
+			ot-kernel_n_configopt "CONFIG_PROFRAW_V8" # Reset
+			ot-kernel_n_configopt "CONFIG_PROFRAW_V7"
+			ot-kernel_n_configopt "CONFIG_PROFRAW_V6"
+			ot-kernel_n_configopt "CONFIG_PROFRAW_V5"
+			if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
+				einfo "Using profraw v8 for >= LLVM 15"
+				ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
+			elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0.9999" ; then
+				einfo "Using profraw v8 for LLVM 14"
+				ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
+			elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0_rc1" ; then
+				einfo "Using profraw v6 for LLVM 14"
+				ot-kernel_y_configopt "CONFIG_PROFRAW_V6"
+			elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.1" ; then
+				einfo "Using profraw v7 for LLVM 13"
+				ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
+			elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.0" ; then
+				einfo "Using profraw v7 for LLVM 13"
+				ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
+			elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 12 )) && has_version "~sys-devel/clang-12.0.1" ; then
+				einfo "Using profraw v5 for LLVM 12"
+				ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
+			elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 11 )) && has_version "~sys-devel/clang-11.1.0" ; then
+				einfo "Using profraw v5 for LLVM 11"
+				ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
+			else
 eerror
 eerror "CFI is not supported for ${clang_v}.  Ask the ebuild maintainer to"
 eerror "update ot-kernel.eclass with the exact version to match the profraw"
 eerror "version, or update the patch for a newer profraw format. Currently only"
 eerror "profraw versions 5 to 8 are support."
 eerror
-					die
-				fi
+				die
+			fi
+
+			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
+				einfo "Forcing PGI flags and config"
+				ot-kernel_y_configopt "CONFIG_CC_HAS_NO_PROFILE_FN_ATTR"
+				ot-kernel_y_configopt "CONFIG_CC_IS_CLANG"
+				ot-kernel_y_configopt "CONFIG_DEBUG_FS"
+				ot-kernel_y_configopt "CONFIG_PGO_CLANG"
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata" ]] ; then
 				einfo "Forcing PGO flags and config"
 				ot-kernel_n_configopt "CONFIG_DEBUG_FS"
@@ -2072,7 +2087,7 @@ eerror
 		fi
 
 		mkdir -p /etc/kernels
-		cp -a "${path_config}" /etc/kernels || die
+		cp -a "${path_config}" "${config}" || die
 		is_firmware_ready
 	done
 }
