@@ -1790,15 +1790,18 @@ ot-kernel_src_configure() {
 #			make ${OT_MENUCONFIG_PREFERENCE} "${args[@]}" || die
 #		fi
 
+		local default_config=0
 		if [[ ! -e "${path_config}" ]] ; then
 			ewarn "Missing ${path_config} so generating a new default config."
 			make defconfig "${args[@]}" || die
+			default_config=1
 		fi
 
 		einfo
 		einfo "Changing config options for -${extraversion}"
 		einfo
 
+		# Every config check below may mod the default config.
 		if has bbrv2 ${IUSE_EFFECTIVE} && use bbrv2 ; then
 			einfo "Enabled bbrv2 in .config"
 			ot-kernel_y_configopt "CONFIG_TCP_CONG_BBR2"
@@ -2023,6 +2026,45 @@ ot-kernel_src_configure() {
 		if has cfi ${IUSE_EFFECTIVE} && use cfi && [[ "${arch}" == "arm64" ]] ; then
 			# Need to recheck
 			ewarn "You must manually set arm64 CFI in the .config."
+		fi
+
+		if has O3 ${IUSE_EFFECTIVE} && use O3 ; then
+			# Disable ambiguous mutually exclusive configs
+			ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
+			ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
+			einfo "Setting .config with -O3 CFLAGS"
+			ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
+		fi
+
+		if has kernel-compiler-patch ${IUSE_EFFECTIVE} && use kernel-compiler-patch && [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
+			local microarches=(
+				$(grep -r -e "config M" "${BUILD_DIR}/arch/x86/Kconfig.cpu" | sed -e "s|config ||g")
+			)
+			if (( ${default_config} == 1 )) ; then
+				einfo
+				einfo "Detected a new default config.  Changing from -mtune=generic -> -march=native."
+				einfo
+				einfo "Manually change the kernel config if you want a generic or a specific microarchitecture setting."
+				einfo
+				local m
+				for m in ${microarches[@]} ; do
+					# Reset to avoid ambiguous config
+					ot-kernel_unset_configopt "CONFIG_${m}"
+				done
+				if grep -r -e "(MNATIVE_AMD|MNATIVE_INTEL)" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
+					einfo "Setting .config with -march=native"
+					if lscpu | grep -q -F -e "AMD" ; then
+						ot-kernel_y_configopt "CONFIG_MNATIVE_AMD"
+					elif lscpu | grep -q -F -e "GenuineIntel" ; then
+						ot-kernel_y_configopt "CONFIG_MNATIVE_INTEL"
+					fi
+				elif grep -r -e "(MNATIVE)" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
+					einfo "Setting .config with -march=native"
+					ot-kernel_y_configopt "CONFIG_MNATIVE"
+				fi
+			else
+				einfo "Reusing the previous kernel_compiler_patch settings."
+			fi
 		fi
 
 		local pgo_phase
