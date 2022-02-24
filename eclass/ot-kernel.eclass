@@ -140,6 +140,7 @@ SLOT=${SLOT:=${PV}}
 K_EXTRAVERSION="ot"
 S="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 #PROPERTIES="interactive" # The menuconfig is broken because of emerge or sandbox.  All things were disabled but still doesn't work.
+OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
 
 inherit check-reqs flag-o-matic ot-kernel-cve toolchain-funcs
 
@@ -1493,10 +1494,8 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 		fi
 	fi
 
-	if has clang-pgo ${IUSE_EFFECTIVE} ; then
-		if use clang-pgo ; then
-			cat "${FILESDIR}/gen_pgo.sh" > "${BUILD_DIR}/gen_pgo.sh"
-		fi
+	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
+		cat "${FILESDIR}/gen_pgo.sh" > "${BUILD_DIR}/gen_pgo.sh"
 	fi
 }
 
@@ -1637,6 +1636,39 @@ eerror
 	fi
 }
 
+# @FUNCTION: ot-kernel_patch_install_sh
+# @DESCRIPTION:
+# Disable running /sbin/installkernel
+ot-kernel_patch_install_sh() {
+	einfo "Called ot-kernel_patch_install_sh()"
+	cd "${BUILD_DIR}" || die
+	einfo "HOME:  ${HOME}" # Prints to notify about sandbox changes
+	local a
+	for a in $(ls arch | xargs) ; do
+		[[ "${a}" == "Kconfig" ]] && continue
+		[[ ! -e "arch/${a}/boot/install.sh" ]] && continue
+		sed -i -e "\|/sbin/\${INSTALLKERNEL}|d" \
+			"arch/${a}/boot/install.sh" || die
+	done
+}
+
+# @FUNCTION: ot-kernel_copy_pgo_state
+# @DESCRIPTION:
+# Copy the PGO state file and all PGO profiles
+ot-kernel_copy_pgo_state() {
+	# This is workaround for a sandbox issue.
+	einfo "Copying PGO state file and profiles"
+	for f in $(find "${OT_KERNEL_PGO_DATA_DIR}" \
+		-name "*.pgophase" \
+		-o -name "*.profraw" \
+		-o -name "*.profdata" \
+		2>/dev/null \
+	) ; do
+		# Done this way because the folder can be empty.
+		cp -va "${f}" "${ED}/${OT_KERNEL_PGO_DATA_DIR}" || die
+	done
+}
+
 # @FUNCTION: ot-kernel_src_prepare
 # @DESCRIPTION:
 # Patch the kernel a bit
@@ -1663,6 +1695,13 @@ ewarn "patch or fail to compile."
 ewarn
 		fi
 	fi
+
+	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo; then
+		mkdir -p "${ED}/${OT_KERNEL_PGO_DATA_DIR}" || die
+		ot-kernel_copy_pgo_state
+	fi
+
+	ot-kernel_patch_install_sh
 
 	local b
 	for b in $(build_pairs) ; do
@@ -1746,7 +1785,7 @@ is_firmware_ready() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_src_prepare
+# @FUNCTION: ot-kernel_src_configure
 # @DESCRIPTION:
 # Run menuconfig
 ot-kernel_src_configure() {
@@ -1757,7 +1796,8 @@ ot-kernel_src_configure() {
 		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
 		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		local config=$(echo "${b}" | cut -f 3 -d ":")
-		[[ -z "${config}" ]] && config="/etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m)"
+		local default_config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-$(uname -m)"
+		[[ -z "${config}" ]] && config="${default_config}"
 		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
 		local target_triple=$(echo "${b}" | cut -f 5 -d ":")
 		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
@@ -1788,13 +1828,13 @@ ot-kernel_src_configure() {
 			make olddefconfig "${args[@]}" || die
 		fi
 
-#		if [[ -n "${OT_MENUCONFIG_PREFERENCE}" ]] ; then
+#		if [[ -n "${OT_KERNEL_MENUCONFIG}" ]] ; then
 #			https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
 #			All menuconfig/xconfig/gconfig works outside of emerge but not when sandbox is completely disabled.
 #			The interactive support doesn't work as advertised but limited to just alphanumeric and no arrow keys in text only mode.
 #
-#			# Does not work
-#			einfo "Running:  make ${OT_MENUCONFIG_PREFERENCE} ${args[@]}"
+#			# Does not work because the arrow keys are broken in interactive mode
+#			einfo "Running:  make ${OT_KERNEL_MENUCONFIG} ${args[@]}"
 #			make ${OT_MENUCONFIG_PREFERENCE} "${args[@]}" || die
 #		fi
 
@@ -2096,13 +2136,10 @@ ot-kernel_src_configure() {
 		fi
 
 		local pgo_phase
-		addwrite "/var/lib/ot-sources/${PV}"
-		mkdir -p "/var/lib/ot-sources/${PV}" || die
-		touch "/var/lib/ot-sources/${PV}/.works"
-		local pgo_phase_statefile="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.pgophase"
+		local pgo_phase_statefile="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
 		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
-		local profraw_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profraw"
-		local profdata_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata"
+		local profraw_dpath="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
+		local profdata_dpath="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
 		if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 			local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
@@ -2143,21 +2180,31 @@ eerror
 				die
 			fi
 
+			if [[ -e "${pgo_phase_statefile}" ]] ; then
+				pgo_phase=$(cat "${pgo_phase_statefile}")
+			else
+				pgo_phase=${PGO_PHASE_PGI}
+			fi
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 				einfo "Forcing PGI flags and config"
 				ot-kernel_y_configopt "CONFIG_CC_HAS_NO_PROFILE_FN_ATTR"
 				ot-kernel_y_configopt "CONFIG_CC_IS_CLANG"
 				ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 				ot-kernel_y_configopt "CONFIG_PGO_CLANG"
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata" ]] ; then
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
 				einfo "Forcing PGO flags and config"
 				ot-kernel_n_configopt "CONFIG_DEBUG_FS"
 				ot-kernel_n_configopt "CONFIG_PGO_CLANG"
 			fi
 		fi
 
-		mkdir -p /etc/kernels
-		cp -a "${path_config}" "${config}" || die
+		if (( ${default_config} == 1 )) ; then
+			einfo "Saving the new config for ${extraversion} to ${default_config}"
+			mkdir -p "${ED}/etc/kernels" || die
+			cat "${path_config}" > "${ED}/${default_config}" || die
+		else
+			einfo "Not overriding kernel config to avoid merge conflicts"
+		fi
 		is_firmware_ready
 	done
 }
@@ -2346,7 +2393,7 @@ ot-kernel_src_compile() {
 		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
 		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		local config=$(echo "${b}" | cut -f 3 -d ":")
-		[[ -z "${config}" ]] && config="/etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m)"
+		[[ -z "${config}" ]] && config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-$(uname -m)"
 		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
 		local target_triple=$(echo "${b}" | cut -f 5 -d ":")
 		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
@@ -2373,9 +2420,10 @@ ot-kernel_src_compile() {
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 
-		local args=(
-#			V=1 # verbose compiler noise
-		)
+		local args=()
+		if [[ -n "${OT_KERNEL_VERBOSITY}" ]] ; then
+			args+=( V=${OT_KERNEL_VERBOSITY} ) # 0=minimal, 1=compiler flags, 2=rebuild reasons
+		fi
 		ot-kernel_setup_tc
 
 		local llvm_slot=$(get_llvm_slot)
@@ -2383,13 +2431,10 @@ ot-kernel_src_compile() {
 		ot-kernel_build_tresor_sysfs
 
 		local pgo_phase
-		addwrite "/var/lib/ot-sources/${PV}"
-		mkdir -p "/var/lib/ot-sources/${PV}" || die
-		touch "/var/lib/ot-sources/${PV}/.works"
-		local pgo_phase_statefile="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.pgophase"
+		local pgo_phase_statefile="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
 		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
-		local profraw_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profraw"
-		local profdata_dpath="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata"
+		local profraw_dpath="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
+		local profdata_dpath="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
 		local pgo_phase=${PGO_PHASE_UNK}
 		if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
@@ -2403,17 +2448,18 @@ ot-kernel_src_compile() {
 				einfo "Building PGI"
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_path}" ]] ; then
 				einfo "Merging PGT profiles"
+				mkdir -p "${ED}/${}"
 				cp -a "${profraw_spath}" "${profraw_dpath}" || die
 				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
 				llvm-profdata merge --output="${profraw_dpath}" \
 					"${profdata_dpath}" || die "PGO profile merging failed"
 				pgo_phase="${PGO_PHASE_PGO}"
-				echo "PGO" > "${pgo_phase_statefile}" || die
+				echo "PGO" > "${ED}/${pgo_phase_statefile}" || die
 				einfo "Building PGO"
-				args+=( KCFLAGS=-fprofile-use="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata" )
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata" ]] ; then
+				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
 				einfo "Building PGO"
-				args+=( KCFLAGS=-fprofile-use="/var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata" )
+				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
 			fi
 		fi
 
@@ -2423,7 +2469,7 @@ ot-kernel_src_compile() {
 			|| "${build_flag,,}" == "yes" \
 			|| "${build_flag,,}" == "build" \
 		]] ; then
-			einfo "Running:  make ${args[@]}"
+			einfo "Running:  make all ${args[@]}"
 			make all "${args[@]}" || die
 			einfo "Running:  make install ${args[@]}"
 			make install "${args[@]}" || die
@@ -2435,9 +2481,9 @@ ot-kernel_src_compile() {
 			einfo "Running:  make mrproper" # Reverts everything back to before make menuconfig
 			make mrproper || die
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
-				echo "PGT" > "${pgo_phase_statefile}" || die
+				echo "PGT" > "${ED}/${pgo_phase_statefile}" || die
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
-				echo "DONE" > "${pgo_phase_statefile}" || die
+				echo "DONE" > "${ED}/${pgo_phase_statefile}" || die
 			fi
 		fi
 	done

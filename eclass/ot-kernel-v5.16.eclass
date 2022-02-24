@@ -535,10 +535,10 @@ ewarn
 	# Allow for multiple builds for different kernel configs (e.g. server, gaming-client etc),
 	# but it is really needed to isolate the -rt build.
 	if [[ -z "${OT_KERNEL_BUILDCONFIGS_5_16}" ]] ; then
-		OT_KERNEL_BUILDCONFIGS_5_16_="ot:build:/etc/kernels/kernel-config-${PV}-ot-$(uname -m):$(uname -m):${CHOST}:cfs"
+		OT_KERNEL_BUILDCONFIGS_5_16_="ot:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-ot-$(uname -m):$(uname -m):${CHOST}:cfs"
 		if use rt ; then
 			# Split for security reasons
-			OT_KERNEL_BUILDCONFIGS_5_16_="${OT_KERNEL_BUILDCONFIGS_5_16_};rt:build:/etc/kernels/kernel-config-${PV}-rt-$(uname -m):$(uname -m):${CHOST}:cfs"
+			OT_KERNEL_BUILDCONFIGS_5_16_="${OT_KERNEL_BUILDCONFIGS_5_16_};rt:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-rt-$(uname -m):$(uname -m):${CHOST}:cfs"
 		fi
 	else
 		export OT_KERNEL_BUILDCONFIGS_5_16_="${OT_KERNEL_BUILDCONFIGS_5_16}"

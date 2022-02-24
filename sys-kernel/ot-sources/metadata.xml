@@ -276,17 +276,22 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 
 
     Build environment variables
+
    
     OT_KERNEL_BUILDCONFIGS_X_Y -- list of build configs.  Once you define this,
     it will override and erase the defaults for that particular major.minor version.
-
     X is the major version, Y is the minor version.
+
+    OT_KERNEL_VERBOSITY=N -- presentation of compiler and build invocation
+    N is 0 for minimal output, 1 for showing compiler flags, 2 rebuild reasons.
+
 
     Examples:
 
-    OT_MENUCONFIG_PREFERENCE="menuconfig"
-    OT_KERNEL_BUILDCONFIGS_5_4="ot:build:/etc/kernels/kernel-config-5.4.180-ot-x86_64:x86_64:x86_64-pc-linux-gnu:muqss"
-    OT_KERNEL_BUILDCONFIGS_5_16="ot:build:/etc/kernels/kernel-config-5.16.10-ot-x86_64:x86_64:x86_64-pc-linux-gnu:prjc;rt:build:/etc/kernels/kernel-config-5.16.10-rt-x86_64:x86_64:x86_64-pc-linux-gnu:cfs"
+    OT_KERNEL_VERBOSITY=1
+    OT_KERNEL_MENUCONFIG="menuconfig" # Code is disabled but looking for solutions to make it work properly
+    OT_KERNEL_BUILDCONFIGS_5_4="ot:build:/etc/kernels/kernel-config-5.4-ot-x86_64:x86_64:x86_64-pc-linux-gnu:muqss"
+    OT_KERNEL_BUILDCONFIGS_5_16="ot:build:/etc/kernels/kernel-config-5.16-ot-x86_64:x86_64:x86_64-pc-linux-gnu:prjc;rt:build:/etc/kernels/kernel-config-5.16-rt-x86_64:x86_64:x86_64-pc-linux-gnu:cfs"
 
     The format of the sublists in OT_KERNEL_BUILDCONFIGS_X_Y is described below:
 
