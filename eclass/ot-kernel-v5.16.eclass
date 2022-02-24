@@ -36,7 +36,7 @@ PATCH_LRU_GEN_COMMIT_D="2be4e051f9381b6e7dd3270fb519fc9a638a5398" # descendant /
 PATCH_ZEN_LRU_GEN_COMMIT_A_PARENT="df0cc57e057f18e44dac8e6c18aba47ab53202f9"
 PATCH_ZEN_LRU_GEN_COMMIT_A="53ef88ecd9b684c40f1427827a86ad3b03daccf0" # ancestor / oldest
 PATCH_ZEN_LRU_GEN_COMMIT_D="0696726eaf6d68ec2d0d5c30ca7bc50e9b71a2c5" # descendant / newest
-# Corresponding to [5.15-rc1, x86-cfi-v3]
+# Corresponding to [5.15, cfi-5.15]
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \
@@ -107,22 +107,23 @@ PATCH_ZENSAUCE_BL=(
 # Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
 
 # Have to pull and apply one-by-one because of already applied commits
-CFI_X86_COMMITS=(
-1d7789c770ab3efc373250423e01e03889de1b39
-7fb10a9f0f9a8d8edf03f74af5ab02d570e997c2 # already applied
-857e4865f1cede7d5c3f2a0992e01e3a66f21289
-b04cc291daa34371e4ec7c1f3333730c255f23ee
-a730ee8477502d71cfaec0feed69cff70e02951d
-5e1147e7a4a29eb51707142b688ceca9125c96c1
-ab111b4a1d0df58200ec43ec48a04693a8604be0
-4259f7b1eda915b477e4aa3d54c86574f256343c
-fb191486eb8126b7f6aed0c5daad7c519f204e65
-7f62bb10e676dc80c0392afff66b489b871556e5
-68dad239efa204790b8f381af2d09d96a6148f59
-ff6a17bfb0455ed92e8aead7422e6dcc0aeff2db
-2aba9b859e6c6c4acaba3c31b5594ae59ca272fe
-a7e53b07af8df54620788b3b290660f8b1cbd2fa
-343e2895647f40a338010aeb13da7d142271446d
+CFI_COMMITS=(
+8dfd451f45dbb26f049083248bf80463a71bc5fd
+f5bff50472d56909b1cce5463d120a996a34b004
+ceb2e9c1636efe86ce835a78fd6783ab89e8f976
+bd6966b9d8eedce598371b3bfdbe0e03cee497a7
+4ae0924a08505cb9edd119d9eaadd03a80b65590
+8eda1c26606e71618cc99a6efa1680d287dfc4f7
+d879decba121257f1a120d10f277d8a382f96995
+3cb32c428616aa260553eb4c68b2a4f87971ae92
+e921a2782b9bb64b29516e186a9d841319f2a71c
+ca65ed990fe39aa0aa92ec3262208a41e6c1edf9
+227509670d08484176020753d998581e56ee496c
+5eef9c1387806fd8672d002432ef2a7fbde3c332
+c982d8b1bbcebb610f664841764cb1dbaed6c938
+6e7d1b0c4b9134f065ddad6db8325b4eeeae319b
+a09066b2a6f436ea4b8acc25dce279d5ecd3811d
+aa4fb87a71a95bef81d9742a772d1dc8eb4fceea
 )
 
 CFI_EXCLUDE_COMMITS=(
@@ -461,7 +462,7 @@ NOT_READY_YET="
 
 SRC_URI+=" "$(gen_kcp_ma_uri)
 SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
-	   cfi? ( amd64? ( ${CFI_X86_SRC_URIS} ) )
+	   cfi? ( amd64? ( ${CFI_SRC_URIS} ) )
 	   clang-pgo? ( ${CLANG_PGO_URI} )
 	   futex? ( ${FUTEX_SRC_URIS} )
 	   genpatches? (
@@ -673,7 +674,8 @@ ot-kernel_filter_patch_cb() {
 
 		# Add this to the end of the cfi commit list
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
-	elif [[ "${path}" =~ "cfi-x86-5.16-343e289.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-5.16-a09066b.patch" ]] ; then
+		# 343e289 is the same as a09066b
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
 	elif [[ "${path}" =~ "futex-5.15-b70e738.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
@@ -685,8 +687,13 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "kernel-locking-Use-a-pointer-in-ww_mutex_trylock.patch" ]] ; then
 		: # already applied
-	elif [[ "${path}" =~ "cfi-x86-5.16-7fb10a9.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-5.16-f5bff50.patch" ]] ; then
+		# f5bff50 is the same as 7fb10a9
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-7fb10a9-rebase-for-5.16.patch"
+	elif [[ "${path}" =~ "cfi-5.16-e921a27.patch" ]] ; then
+		_dpatch "${PATCH_OPTS} -F 3" "${path}"
+	elif [[ "${path}" =~ "cfi-5.16-aa4fb87.patch" ]] ; then
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-aa4fb87-for-5.16.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

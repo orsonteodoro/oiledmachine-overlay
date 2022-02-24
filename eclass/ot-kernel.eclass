@@ -77,9 +77,8 @@
 #   https://www1.informatik.uni-erlangen.de/tresor
 # UKSM:
 #   https://github.com/dolohow/uksm
-# x86-cfi-v3:
-#   https://github.com/torvalds/linux/compare/e4a7957^...samitolvanen:x86-cfi-v3 # for >= 5.15-rc1, e4a7957^ is the parent of the first commit of this patchset
-#   https://github.com/torvalds/linux/compare/1d7789c^...samitolvanen:x86-cfi-v5 # for >= 5.15-rc5, 1d7789c^ is the parent of the first commit of this patchset
+# cfi-5.15
+#   https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
 # zen-sauce, zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
@@ -318,17 +317,17 @@ gen_ck_uris() {
 }
 CK_SRC_URIS=" "$(gen_ck_uris)
 
-CFI_X86_BASE_URI=\
+CFI_BASE_URI=\
 "https://github.com/torvalds/linux/commit/"
-gen_cfi_x86_uris() {
+gen_cfi_uris() {
 	local s=""
 	local c
-	for c in ${CFI_X86_COMMITS[@]} ; do
-		s+=" ${CFI_X86_BASE_URI}${c}.patch -> cfi-x86-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	for c in ${CFI_COMMITS[@]} ; do
+		s+=" ${CFI_BASE_URI}${c}.patch -> cfi-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 	echo "${s}"
 }
-CFI_X86_SRC_URIS=" "$(gen_cfi_x86_uris)
+CFI_SRC_URIS=" "$(gen_cfi_uris)
 
 FUTEX_BASE_URI=\
 "https://gitlab.collabora.com/tonyk/linux/-/commit/"
@@ -1087,13 +1086,13 @@ ewarn
 	done
 }
 
-# @FUNCTION: apply_cfi_x86
+# @FUNCTION: apply_cfi
 # @DESCRIPTION:
 # Adds cfi protection for the x86-64 platform
-apply_cfi_x86() {
+apply_cfi() {
 	local c
-	for c in ${CFI_X86_COMMITS[@]} ; do
-		_fpatch "${DISTDIR}/cfi-x86-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	for c in ${CFI_COMMITS[@]} ; do
+		_fpatch "${DISTDIR}/cfi-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 }
 
@@ -1607,7 +1606,7 @@ apply_all_patchsets() {
 
 	if has cfi ${IUSE_EFFECTIVE} ; then
 		if use cfi && use amd64 && [[ "${arch}" == "x86_64" ]] ; then
-			apply_cfi_x86
+			apply_cfi
 		fi
 	fi
 

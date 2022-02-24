@@ -1,0 +1,67 @@
+From:  https://github.com/torvalds/linux/commit/aa4fb87a71a95bef81d9742a772d1dc8eb4fceea
+--- a/arch/x86/mm/extable.c.orig	2022-01-09 14:55:34.000000000 -0800
++++ b/arch/x86/mm/extable.c	2022-02-23 23:44:02.702945755 -0800
+@@ -15,6 +15,7 @@ ex_fixup_addr(const struct exception_tab
+ 	return (unsigned long)&x->fixup + x->fixup;
+ }
+ 
++__cficanonical
+ static bool ex_handler_default(const struct exception_table_entry *fixup,
+ 			       struct pt_regs *regs)
+ {
+@@ -22,6 +23,7 @@ static bool ex_handler_default(const str
+ 	return true;
+ }
+ 
++__cficanonical
+ static bool ex_handler_fault(const struct exception_table_entry *fixup,
+ 			     struct pt_regs *regs, int trapnr)
+ {
+@@ -39,6 +41,7 @@ static bool ex_handler_fault(const struc
+  * of vulnerability by restoring from the initial state (essentially, zeroing
+  * out all the FPU registers) if we can't restore from the task's FPU state.
+  */
++__cficanonical
+ static bool ex_handler_fprestore(const struct exception_table_entry *fixup,
+ 				 struct pt_regs *regs)
+ {
+@@ -51,6 +54,7 @@ static bool ex_handler_fprestore(const s
+ 	return true;
+ }
+ 
++__cficanonical
+ static bool ex_handler_uaccess(const struct exception_table_entry *fixup,
+ 			       struct pt_regs *regs, int trapnr)
+ {
+@@ -58,6 +62,7 @@ static bool ex_handler_uaccess(const str
+ 	return ex_handler_default(fixup, regs);
+ }
+ 
++__cficanonical
+ static bool ex_handler_copy(const struct exception_table_entry *fixup,
+ 			    struct pt_regs *regs, int trapnr)
+ {
+@@ -65,6 +70,7 @@ static bool ex_handler_copy(const struct
+ 	return ex_handler_fault(fixup, regs, trapnr);
+ }
+ 
++__cficanonical
+ static bool ex_handler_rdmsr_unsafe(const struct exception_table_entry *fixup,
+ 				    struct pt_regs *regs)
+ {
+@@ -78,6 +84,7 @@ static bool ex_handler_rdmsr_unsafe(cons
+ 	return ex_handler_default(fixup, regs);
+ }
+ 
++__cficanonical
+ static bool ex_handler_wrmsr_unsafe(const struct exception_table_entry *fixup,
+ 				    struct pt_regs *regs)
+ {
+@@ -90,6 +97,7 @@ static bool ex_handler_wrmsr_unsafe(cons
+ 	return ex_handler_default(fixup, regs);
+ }
+ 
++__cficanonical
+ static bool ex_handler_clear_fs(const struct exception_table_entry *fixup,
+ 				struct pt_regs *regs)
+ {
