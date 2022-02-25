@@ -297,13 +297,17 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     extraversion for tresor_sysfs USE flag.  If unset, it defaults to ot.
 
     OT_KERNEL_SIGN_MODULES (optional) -- signs kernel modules with sha256
-    Set to 1 to sign or set to 0 to use manual setting.
+    Set to 1 to sign or set to 0 to use manual setting (default).  When,
+    a new kernel config is generated, module signing is disabled; but it
+    can be signed by setting this to 1.
 
     OT_KERNEL_MODULES_COMPRESSOR_X_Y (optional) -- compresses the kernel
     modules.
     Acceptable values:  NONE, GZIP, XZ, ZSTD.  If unset, it will use the
     manual setting.  X is the major version, Y is the minor version.
-    NONE and ZSTD are only allowed with 5.15+.
+    NONE and ZSTD are only allowed with 5.15+.  When a new kernel config
+    is generated, module compression is disabled; but can be overrided
+    by explicitly setting it to one of the acceptable values.
 
     Examples:
 
