@@ -161,7 +161,7 @@ update_all_disable() {
 }
 
 update_all_oldconfig() {
-#	yes "" | make ARCH=${DD_FLAVOR} oldconfig
+	# Bring .config up to date before modifying .config.
 	make ARCH=${DD_FLAVOR} olddefconfig
 }
 
@@ -171,7 +171,7 @@ main() {
 	export DD_FLAVOR=$(grep -r -e "Kernel Configuration" "./.config" \
 		| cut -f 2 -d " " \
 		| cut -f 2 -d "/")
-	update_all_oldconfig
+	#update_all_oldconfig
 	update_all_disable
 }
 
