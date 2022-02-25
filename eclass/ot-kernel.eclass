@@ -2711,6 +2711,7 @@ ot-kernel_src_compile() {
 # @DESCRIPTION:
 # Removes patch cruft.
 ot-kernel_src_install() {
+	export STRIP="/bin/true" # See https://github.com/torvalds/linux/blob/v5.16/init/Kconfig#L2169
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 			docinto /usr/share/${PF}
