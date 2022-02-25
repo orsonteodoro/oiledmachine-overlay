@@ -118,7 +118,7 @@ strip_debug_from_config() {
 		CONFIG_AIC79XX_REG_PRETTY_PRINT \
 			; do
 		for l in $(grep -r -e "$c" "$targetconfig") ; do
-			echo "raw: $l"
+			#echo "raw: $l"
 			a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
 			b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
 			echo "modding $a"
