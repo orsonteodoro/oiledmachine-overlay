@@ -302,8 +302,8 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 
     All of the following are required to be defined from (left to right):
 
-    OT_KERNEL_BUILDCONFIGS_X_Y="1:2:3:4:5:6"			# Acceptable
-    OT_KERNEL_BUILDCONFIGS_X_Y="1:2:3:4:5:6;1:2:3:4:5:6"	# Acceptable
+    OT_KERNEL_BUILDCONFIGS_X_Y="1:2:3:4:5:6:7"			# Acceptable
+    OT_KERNEL_BUILDCONFIGS_X_Y="1:2:3:4:5:6;1:2:3:4:5:6:7"	# Acceptable
 
     1. Extraversion -- initials or name of the kernel.  Using the rt extraversion will
 		apply the rt patchset to only that copy.
