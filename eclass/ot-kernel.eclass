@@ -2220,7 +2220,7 @@ eerror
 
 		if use disable_debug ; then
 			einfo "Disabling all debug and shortening logging buffers"
-			./disable_debug || die
+			#./disable_debug || die # Breaks LTO.  Script needs fix.
 		fi
 
 		if has tresor_x86_64 ${IUSE_EFFECTIVE} && use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
