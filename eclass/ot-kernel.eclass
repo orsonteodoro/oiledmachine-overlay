@@ -2683,6 +2683,7 @@ ot-kernel_src_install() {
 	for b in $(build_pairs) ; do
 		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
 		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
+		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 		if use build && [[ \
@@ -2699,6 +2700,13 @@ ot-kernel_src_install() {
 			fi
 			einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
 			make mrproper ARCH=${arch} || die
+			local pgo_phase
+			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
+				pgo_phase=${PGO_PHASE_PGI}
+			else
+				pgo_phase=$(cat "${pgo_phase_statefile}")
+			fi
+			local pgo_phase_statefile="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 				echo "PGT" > "${pgo_phase_statefile}" || die
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
