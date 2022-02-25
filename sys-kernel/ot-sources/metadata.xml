@@ -335,7 +335,7 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 		* muqss and prjc are better suited for audio production.
 		* The rt extraversion can only use the cfs scheduler.
 
-    6. Init boot decompressor -- chooses the main init boot decompressor
+    6. Boot decompressor -- chooses the main boot decompressor
     for both kernel decompression and initramfs decompression.  If not chosen,
     it will choose either the previous manual setting, or if it is a new kernel
     config defaults which will choose gzip for the kernel and all decompressors

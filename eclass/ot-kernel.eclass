@@ -1783,20 +1783,20 @@ ot-kernel_src_configure() {
 		[[ -z "${config}" ]] && config="${default_config}"
 		local target_triple=$(echo "${b}" | cut -f 5 -d ":")
 		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
-		local init_decomp=$(echo "${b}" | cut -f 7 -d ":")
+		local boot_decomp=$(echo "${b}" | cut -f 7 -d ":")
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
 		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
-		[[ -z "${init_decomp}" ]] && init_decomp="manual"
+		[[ -z "${boot_decomp}" ]] && boot_decomp="manual"
 		[[ -z "${extraversion}" ]] && die "extraversion cannot be empty"
 		[[ -z "${build_flag}" ]] && die "build_flag cannot be empty"
 		[[ -z "${config}" ]] && die "config cannot be empty"
 		[[ -z "${arch}" ]] && die "arch cannot be empty"
 		[[ -z "${target_triple}" ]] && die "target_triple cannot be empty"
 		[[ -z "${cpu_sched}" ]] && die "cpu_sched cannot be empty"
-		[[ -z "${init_decomp}" ]] && die "cpu_sched cannot be empty"
+		[[ -z "${boot_decomp}" ]] && die "boot_decomp cannot be empty"
 
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
@@ -1828,7 +1828,7 @@ ot-kernel_src_configure() {
 			ewarn "Missing ${path_config} so generating a new default config."
 			make defconfig "${args[@]}" || die
 			default_config=1
-			init_decomp="default"
+			boot_decomp="default"
 		fi
 
 		einfo
@@ -1994,18 +1994,18 @@ ot-kernel_src_configure() {
 			ot-kernel_n_configopt "CONFIG_RD_${d}"
 			ot-kernel_n_configopt "CONFIG_DECOMPRESS_${d}"
 		done
-		if [[ "${init_decomp}" == "default" ]] ; then
-			einfo "Using default init decompressor settings"
+		if [[ "${boot_decomp}" == "default" ]] ; then
+			ewarn "Using the default init decompressor settings"
 			ot-kernel_y_configopt "CONFIG_KERNEL_GZIP"
 			for d in ${decompressors[@]} ; do
 				ot-kernel_y_configopt "CONFIG_RD_${d}"
 				ot-kernel_y_configopt "CONFIG_DECOMPRESS_${d}"
 			done
-		elif [[ "${init_decomp}" == "manual" ]] ; then
+		elif [[ "${boot_decomp}" == "manual" ]] ; then
 			einfo "Using the manually chosen init decompressor settings"
 		else
-			einfo "Using the ${init_decomp} init decompressor settings"
-			d="${init_decomp^^}"
+			einfo "Using the ${boot_decomp} init decompressor settings"
+			d="${boot_decomp^^}"
 			ot-kernel_y_configopt "CONFIG_KERNEL_${d}"
 			ot-kernel_y_configopt "CONFIG_RD_${d}"
 			ot-kernel_y_configopt "CONFIG_DECOMPRESS_${d}"
@@ -2467,6 +2467,33 @@ ot-kernel-make_install() {
 	cp -va "${kimage_spath}" "${kimage_dpath}" || die
 }
 
+# @FUNCTION: ot-kernel_get_boot_decompressor
+# @DESCRIPTION:
+# Reports the boot decompressor used for kernel image
+ot-kernel_get_boot_decompressor() {
+	local decompressors=(
+		BZIP2
+		GZIP
+		LZ4
+		LZMA
+		LZ4
+		LZO
+		XZ
+		ZSTD
+	)
+	local BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+	pushd "${BUILD_DIR}" || die
+		local d
+		for d in ${decompressors[@]} ; do
+			if grep -q -E -e "^CONFIG_KERNEL_${d}=y" ".config" ; then
+				echo "${d}"
+				return
+			fi
+		done
+	popd
+	echo ""
+}
+
 # @FUNCTION: ot-kernel_src_compile
 # @DESCRIPTION:
 # Compiles the userland programs especially the TRESOR AES post-boot
@@ -2484,6 +2511,7 @@ ot-kernel_src_compile() {
 		[[ -z "${config}" ]] && config="${default_config}"
 		local target_triple=$(echo "${b}" | cut -f 5 -d ":")
 		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
+		local boot_decomp=$(ot-kernel_get_boot_decompressor)
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
@@ -2495,18 +2523,20 @@ ot-kernel_src_compile() {
 		[[ -z "${arch}" ]] && die "arch cannot be empty"
 		[[ -z "${target_triple}" ]] && die "target_triple cannot be empty"
 		[[ -z "${cpu_sched}" ]] && die "cpu_sched cannot be empty"
-		einfo
-		einfo "Compiling with the following:"
-		einfo
-		einfo "Build flag:  ${build_flag}"
-		einfo "EXTRAVERSION:  ${extraversion}"
-		einfo "Config ABSPATH:  ${config}"
-		einfo "ARCH:  ${arch}"
-		einfo "Target triple:  ${target_triple}"
-		einfo
 
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
+
+		einfo
+		einfo "Compiling with the following:"
+		einfo
+		einfo "ARCH:  ${arch}"
+		einfo "Boot decompressor:  ${boot_decomp}"
+		einfo "Build flag:  ${build_flag}"
+		einfo "Config ABSPATH:  ${config}"
+		einfo "EXTRAVERSION:  ${extraversion}"
+		einfo "Target triple:  ${target_triple}"
+		einfo
 
 		local args=()
 		if [[ -n "${OT_KERNEL_VERBOSITY}" ]] ; then
