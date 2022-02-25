@@ -372,7 +372,8 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     which will choose gzip for the kernel and all decompressors for initramfs.
     Acceptable values:  GZIP, BZIP2, LZ4, LZO, LZMA, XZ, ZSTD, default, manual.
     It is recommended to use lz4 or zstd.  However, if you are using x32 ABI
-    bzip2 works but do not use lzma.  If empty, it will choose manual.
+    bzip2 works but do not use lzma.  If empty, it will choose manual.  ZSTD
+    is only allowed in 5.10+.
     
 
     Please read the metadata.xml comments for more info.

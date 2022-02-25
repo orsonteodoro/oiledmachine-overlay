@@ -1988,22 +1988,50 @@ ot-kernel_src_configure() {
 			LZMA
 			LZ4
 			LZO
+			UNCOMPRESSED
 			XZ
 			ZSTD
 		)
+		if ver_test ${K_MAJOR_MINOR} -lt 5.10 && [[ "${boot_decomp^^}" == "ZSTD" ]] ; then
+			eerror "ZSTD is only supported in 5.10+"
+			die
+		fi
 		local d
 		for d in ${decompressors[@]} ; do
+			# Reset settings
 			d="${d^^}"
 			ot-kernel_n_configopt "CONFIG_KERNEL_${d}"
-			ot-kernel_n_configopt "CONFIG_RD_${d}"
-			ot-kernel_n_configopt "CONFIG_DECOMPRESS_${d}"
+			if [[ "${d}" != "UNCOMPRESSED" ]] ; then
+				ot-kernel_n_configopt "CONFIG_RD_${d}"
+				# If another module needs a compressor, it really should
+				# not be disabled.
+				ot-kernel_n_configopt "CONFIG_DECOMPRESS_${d}"
+				if [[ "${d}" =~ ("LZ4"|"ZSTD") ]] ; then
+					:
+				#elif [[ "${d}" =~ ("XZ") ]] ; then
+				#	# Used by multiple drivers.
+				#	ot-kernel_n_configopt "CONFIG_XZ_DEC"
+				elif [[ "${d}" =~ ("GZIP") ]] ; then
+					ot-kernel_n_configopt "CONFIG_DECOMPRESS_GZIP"
+					ot-kernel_n_configopt "CONFIG_ZLIB_INFLATE"
+				fi
+			fi
 		done
 		if [[ "${boot_decomp}" == "default" ]] ; then
 			ewarn "Using the default init decompressor settings"
 			ot-kernel_y_configopt "CONFIG_KERNEL_GZIP"
 			for d in ${decompressors[@]} ; do
-				ot-kernel_y_configopt "CONFIG_RD_${d}"
-				ot-kernel_y_configopt "CONFIG_DECOMPRESS_${d}"
+				if [[ "${d}" != "UNCOMPRESSED" ]] ; then
+					ot-kernel_y_configopt "CONFIG_RD_${d}"
+					ot-kernel_y_configopt "CONFIG_DECOMPRESS_${d}"
+					if [[ "${d}" =~ ("LZ4"|"ZSTD") ]] ; then
+						:
+					elif [[ "${d}" =~ ("XZ") ]] ; then
+						ot-kernel_y_configopt "CONFIG_XZ_DEC"
+					elif [[ "${d}" =~ ("GZIP") ]] ; then
+						ot-kernel_y_configopt "CONFIG_ZLIB_INFLATE"
+					fi
+				fi
 			done
 		elif [[ "${boot_decomp}" == "manual" ]] ; then
 			einfo "Using the manually chosen init decompressor settings"
@@ -2011,8 +2039,17 @@ ot-kernel_src_configure() {
 			einfo "Using the ${boot_decomp} init decompressor settings"
 			d="${boot_decomp^^}"
 			ot-kernel_y_configopt "CONFIG_KERNEL_${d}"
-			ot-kernel_y_configopt "CONFIG_RD_${d}"
-			ot-kernel_y_configopt "CONFIG_DECOMPRESS_${d}"
+			if [[ "${d}" != "UNCOMPRESSED" ]] ; then
+				ot-kernel_y_configopt "CONFIG_RD_${d}"
+				ot-kernel_y_configopt "CONFIG_DECOMPRESS_${d}"
+				if [[ "${d}" =~ ("LZ4"|"ZSTD") ]] ; then
+					:
+				elif [[ "${d}" =~ ("XZ") ]] ; then
+					ot-kernel_y_configopt "CONFIG_XZ_DEC"
+				elif [[ "${d}" =~ ("GZIP") ]] ; then
+					ot-kernel_y_configopt "CONFIG_ZLIB_INFLATE"
+				fi
+			fi
 		fi
 
 		local llvm_slot=$(get_llvm_slot)
