@@ -2380,7 +2380,7 @@ ot-kernel-make_install() {
 		$(find "${BUILD_DIR}/arch/${arch_}/boot" \
 			"${BUILD_DIR}" \
 			-maxdepth 1 \
-			-o -name "Image.gz" \
+			-name "Image.gz" \
 			-o -name "bzImage" \
 			-o -name "zImage" \
 			-o -name "vmlinuz" \
@@ -2529,6 +2529,7 @@ ot-kernel_src_compile() {
 				make dtbs_install "${args[@]}" || die
 			fi
 			einfo "Running:  make mrproper" # Reverts everything back to before make menuconfig
+			cd "${BUILD_DIR}" || die
 			make mrproper || die
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 				echo "PGT" > "${ED}/${pgo_phase_statefile}" || die
@@ -2906,11 +2907,11 @@ ewarn
 
 	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo && has build ${IUSE_EFFECTIVE} && use build ; then
 einfo
-einfo "PGO progression map:  start -> 1 initramfs/bootloader -> 2 (preparation [done]) -> 3 (reboot) -> 4 (training) -> 5 (rebuild) -> 6 (reboot) done"
+einfo "PGO progression map:  start -> 1 build & installed PGI kernel [done] -> 2 update bootloader with new entry [done] -> 3 reboot -> 4 training -> 5 rebuild -> 6 reboot done"
 einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
-einfo "    2.  Install kernel to the boot device with genkernel"
+einfo "    2.  Update the bootloader with new kernel(s) entries (and install initramfs if not done yet)"
 einfo "    3.  Reboot with the PGIed kernel"
 einfo "    4.  Training the kernel with benchmarks or the typical uses"
 einfo "    5.  Re-emerging the package"
@@ -2922,7 +2923,7 @@ einfo "Progression map:  start -> 1 initramfs/bootloader -> 2 (reboot) -> done"
 einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
-einfo "    2.  Install kernel to the boot device with genkernel"
+einfo "    2.  Update the bootloader with the new entry (and install initramfs if not done yet)"
 einfo "    3.  Reboot with the new kernel"
 einfo
 	fi
