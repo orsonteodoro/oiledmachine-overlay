@@ -2658,7 +2658,7 @@ ot-kernel_src_install() {
 	done
 
 	einfo "Restoring +x bit"
-	for f in $("${ED}") ; do
+	for f in $(find "${ED}"/ -type -f -executable) ; do
 		local is_exe=0
 		file "${f}" | grep -q -F -e "executable" && is_exe=1
 		file "${f}" | grep -q -E -e "Linux kernel.*executable" && is_exe=0
