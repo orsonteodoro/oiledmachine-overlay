@@ -307,16 +307,21 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 
     1. Extraversion -- initials or name of the kernel.  Using the rt extraversion will
 		apply the rt patchset to only that copy.
+
     2. Build flag -- It be 0, 1, true, false, yes, no, nobuild, build, unset.  Most
 		are aliases, but it means to build or not build the kernel.
+
     3. Config -- Points to the absolute path of the kernel config. (This can be unset
 		but then defaults to
 		/etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m))
+
     4. Arch -- The native ABI of the kernel to build using one of the names of the
 		folders in /usr/src/linux/arch.
+
     5. Target triple -- The target triple (CHOST) to use when cross-compiling.  Use the
 		expanded CHOST value.  (This can be unset but then defaults to ${CHOST})
 		If you put just CHOST or just CBUILD it will expand for each case.
+
     6. CPU scheduler -- can be one of the below depending on the kernel version.
 
 		4.14: cfs, muqss, pds
@@ -335,15 +340,13 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 		* muqss and prjc are better suited for audio production.
 		* The rt extraversion can only use the cfs scheduler.
 
-    6. Boot decompressor -- chooses the main boot decompressor
-    for both kernel decompression and initramfs decompression.  If not chosen,
-    it will choose either the previous manual setting, or if it is a new kernel
-    config defaults which will choose gzip for the kernel and all decompressors
-    for initramfs.
+    6. Boot decompressor -- chooses the main boot decompressor for both kernel
+    decompression and initramfs decompression.  If not chosen, it will choose
+    either the previous manual setting, or if it is a new kernel config defaults
+    which will choose gzip for the kernel and all decompressors for initramfs.
     Acceptable values:  GZIP, BZIP2, LZ4, LZO, LZMA, XZ, ZSTD, default, manual.
     It is recommended to use lz4 or zstd.  However, if you are using x32 ABI
-    bzip2 works but do not use lzma.  When choosing a (de)compressor, consider
-    the licensing.  If empty, it will choose manual.
+    bzip2 works but do not use lzma.  If empty, it will choose manual.
     
 
     Please read the metadata.xml comments for more info.
