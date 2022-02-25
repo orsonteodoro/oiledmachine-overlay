@@ -2268,7 +2268,7 @@ build_pairs() {
 # Sets the kernel option with a string value or single char option
 ot-kernel_set_configopt() {
 	local opt="${1}"
-	local val="${1}"
+	local val="${2}"
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
 		sed -i -e "s|# ${opt} is not set|${opt}=${val}|g" "${path_config}" || die
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then

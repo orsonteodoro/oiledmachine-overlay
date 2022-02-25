@@ -41,7 +41,7 @@ strip_debug_from_config() {
 	echo -e "\nUnset all debug"
 	IFS=$'\n'
 	for l in $(grep -r -e "DEBUG" "$targetconfig") ; do
-		echo "raw: $l"
+		#echo "raw: $l"
 		echo "$l" | grep -E -e "=[0-9]+" > /dev/null
 		if [[ "$?" == "0" ]] ; then
 			echo "skipping $l"
@@ -55,7 +55,7 @@ strip_debug_from_config() {
 
 	echo -e "\nUnset all trace"
 	for l in $(grep -r -e "TRACE" "$targetconfig") ; do
-		echo "raw: $l"
+		#echo "raw: $l"
 		echo "$l" | grep -E -e "=[0-9]+" > /dev/null
 		if [[ "$?" == "0" ]] ; then
 			echo "skipping $l"
@@ -69,7 +69,7 @@ strip_debug_from_config() {
 
 	echo -e "\nUnset all verbose"
 	for l in $(grep -r -e "VERBOSE" "$targetconfig") ; do
-		echo "raw: $l"
+		#echo "raw: $l"
 		echo "$l" | grep -E -e "=[0-9]+" > /dev/null
 		if [[ "$?" == "0" ]] ; then
 			echo "skipping $l"
@@ -83,7 +83,7 @@ strip_debug_from_config() {
 
 	echo -e "\nUnset all asserts"
 	for l in $(grep -r -e "ASSERT" "$targetconfig") ; do
-		echo "raw: $l"
+		#echo "raw: $l"
 		echo "$l" | grep -E -e "=[0-9]+" > /dev/null
 		if [[ "$?" == "0" ]] ; then
 			echo "skipping $l"
