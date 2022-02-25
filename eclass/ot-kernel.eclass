@@ -1649,7 +1649,7 @@ ot-kernel_copy_pgo_state() {
 		2>/dev/null \
 	) ; do
 		# Done this way because the folder can be empty.
-		cp -va "${f}" "${ED}/${OT_KERNEL_PGO_DATA_DIR}" || die
+		cp -va "${f}" "${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}" || die
 	done
 }
 
@@ -1681,7 +1681,7 @@ ewarn
 	fi
 
 	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo; then
-		mkdir -p "${ED}/${OT_KERNEL_PGO_DATA_DIR}" || die
+		mkdir -p "${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}" || die
 		ot-kernel_copy_pgo_state
 	fi
 
@@ -2156,10 +2156,10 @@ ot-kernel_src_configure() {
 		fi
 
 		local pgo_phase
-		local pgo_phase_statefile="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
+		local pgo_phase_statefile="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
 		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
-		local profraw_dpath="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
-		local profdata_dpath="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
+		local profraw_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
+		local profdata_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
 		if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 			local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
@@ -2220,8 +2220,8 @@ eerror
 
 		if (( ${default_config} == 1 )) ; then
 			einfo "Saving the new config for ${extraversion} to ${default_config}"
-			mkdir -p "${ED}/etc/kernels" || die
-			cat "${path_config}" > "${ED}/${default_config}" || die
+			insinto /etc/kernels
+			newins "${path_config}" $(basename "${default_config}")
 		else
 			einfo "Not overriding kernel config to avoid merge conflicts"
 		fi
@@ -2406,7 +2406,7 @@ tresor_sysfs"
 # Replaces all the arch/*/install.sh
 ot-kernel-make_install() {
 	einfo "Called ot-kernel-make_install()"
-	mkdir -p "${ED}/boot" || die
+	dodir /boot
 
 	local arch_
 	if [[ "${arch}" == "x86_64" ]] ; then
@@ -2440,9 +2440,10 @@ ot-kernel-make_install() {
 		zimage_paths=(${image_paths[@]})
 	fi
 
+	insinto /boot
 	local system_map_spath="${BUILD_DIR}/System.map"
-	local system_map_dpath="${ED}/boot/System.map-${PV}-${extraversion}-${arch}"
-	cp -va "${system_map_spath}" "${system_map_dpath}" || die
+	local system_map_dpath="System.map-${PV}-${extraversion}-${arch}"
+	newins "${system_map_spath}" "${system_map_dpath}"
 
 	local kimage_spath
 	local kimage_dpath
@@ -2463,8 +2464,8 @@ ot-kernel-make_install() {
 		fi
 	done
 
-	local kimage_dpath="${ED}/boot/${name}-${PV}-${extraversion}-${arch}"
-	cp -va "${kimage_spath}" "${kimage_dpath}" || die
+	local kimage_dpath="${name}-${PV}-${extraversion}-${arch}"
+	newins "${kimage_spath}" "${kimage_dpath}"
 }
 
 # @FUNCTION: ot-kernel_get_boot_decompressor
@@ -2548,10 +2549,10 @@ ot-kernel_src_compile() {
 		ot-kernel_build_tresor_sysfs
 
 		local pgo_phase
-		local pgo_phase_statefile="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
+		local pgo_phase_statefile="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
 		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
-		local profraw_dpath="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
-		local profdata_dpath="${ED}/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
+		local profraw_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
+		local profdata_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
 		local pgo_phase=${PGO_PHASE_UNK}
 		if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
@@ -2565,13 +2566,13 @@ ot-kernel_src_compile() {
 				einfo "Building PGI"
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_path}" ]] ; then
 				einfo "Merging PGT profiles"
-				mkdir -p "${ED}/${}"
+				mkdir -p "${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}" || die
 				cp -a "${profraw_spath}" "${profraw_dpath}" || die
 				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
 				llvm-profdata merge --output="${profraw_dpath}" \
 					"${profdata_dpath}" || die "PGO profile merging failed"
 				pgo_phase="${PGO_PHASE_PGO}"
-				echo "PGO" > "${ED}/${pgo_phase_statefile}" || die
+				echo "PGO" > "${pgo_phase_statefile}" || die
 				einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
@@ -2587,21 +2588,8 @@ ot-kernel_src_compile() {
 			|| "${build_flag,,}" == "build" \
 		]] ; then
 			einfo "Running:  make all ${args[@]}"
-			mkdir -p "${ED}/boot" || die
+			dodir /boot
 			make all "${args[@]}" || die
-			ot-kernel-make_install
-			einfo "Running:  make modules_install ${args[@]}"
-			make modules_install "${args[@]}" || die
-			if [[ "${arch}" =~ "arm" ]] ; then
-				make dtbs_install "${args[@]}" || die
-			fi
-			einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
-			make mrproper ARCH=${arch} || die
-			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
-				echo "PGT" > "${ED}/${pgo_phase_statefile}" || die
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
-				echo "DONE" > "${ED}/${pgo_phase_statefile}" || die
-			fi
 		fi
 	done
 }
@@ -2624,6 +2612,27 @@ ot-kernel_src_install() {
 		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
+		if use build && [[ \
+			   "${build_flag}"   == "1" \
+			|| "${build_flag,,}" == "true" \
+			|| "${build_flag,,}" == "yes" \
+			|| "${build_flag,,}" == "build" \
+		]] ; then
+			ot-kernel-make_install
+			einfo "Running:  make modules_install ${args[@]}"
+			make modules_install "${args[@]}" || die
+			if [[ "${arch}" =~ "arm" ]] ; then
+				make dtbs_install "${args[@]}" || die
+			fi
+			einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
+			make mrproper ARCH=${arch} || die
+			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
+				echo "PGT" > "${pgo_phase_statefile}" || die
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
+				echo "DONE" > "${pgo_phase_statefile}" || die
+			fi
+		fi
+
 		insinto /usr/src
 		doins -r "${BUILD_DIR}"
 	done
@@ -2637,6 +2646,12 @@ ot-kernel_src_install() {
 			chmod 0755 "${f}" || die
 		fi
 	done
+
+	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
+		# Sanitize
+		insinto "${OT_KERNEL_PGO_DATA_DIR}"
+		doins -r "${WORKDIR}/pgodata/"*
+	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst
@@ -2652,12 +2667,13 @@ einfo "The disable debug scripts have been placed in your /usr/src folder."
 einfo "They disable debug paths, logging, output for a performance gain."
 einfo "You should run it like \`/usr/src/disable_debug x86_64 /usr/src/.config\`"
 einfo
-		cp "${FILESDIR}/_disable_debug_v${DISABLE_DEBUG_V}" \
-			"${EROOT}/usr/src/_disable_debug" || die
-		cp "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" \
-			"${EROOT}/usr/src/disable_debug" || die
-		chmod 700 "${EROOT}"/usr/src/_disable_debug || die
-		chmod 700 "${EROOT}"/usr/src/disable_debug || die
+		exeinto /usr/src
+		doexe "${FILESDIR}/_disable_debug_v${DISABLE_DEBUG_V}" \
+			"_disable_debug" || die
+		doexe "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" \
+			"disable_debug" || die
+		fperms 0700 /usr/src/_disable_debug
+		fperms 0700 /usr/src/disable_debug
 	fi
 
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
