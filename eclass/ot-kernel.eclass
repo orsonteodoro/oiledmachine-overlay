@@ -2028,6 +2028,8 @@ ot-kernel_src_configure() {
 						:
 					elif [[ "${d}" =~ ("XZ") ]] ; then
 						ot-kernel_y_configopt "CONFIG_XZ_DEC"
+						ot-kernel_y_configopt "CONFIG_CRC32"
+						ot-kernel_y_configopt "CONFIG_BITREVERSE"
 					elif [[ "${d}" =~ ("GZIP") ]] ; then
 						ot-kernel_y_configopt "CONFIG_ZLIB_INFLATE"
 					fi
@@ -2046,6 +2048,8 @@ ot-kernel_src_configure() {
 					:
 				elif [[ "${d}" =~ ("XZ") ]] ; then
 					ot-kernel_y_configopt "CONFIG_XZ_DEC"
+					ot-kernel_y_configopt "CONFIG_CRC32"
+					ot-kernel_y_configopt "CONFIG_BITREVERSE"
 				elif [[ "${d}" =~ ("GZIP") ]] ; then
 					ot-kernel_y_configopt "CONFIG_ZLIB_INFLATE"
 				fi
