@@ -653,7 +653,7 @@ eerror
 			fi
 
 eerror
-eerror "You must define a ZENSAUCE_WHITELIST_${K_MAJOR_MINOR//./_} in your"
+eerror "You must define a ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_} in your"
 eerror "/etc/make.conf or as a per-package env containing commits to accepted"
 eerror "from ${zensauce_uri}.  You may supply the envvar with a space as a"
 eerror "placeholder."
@@ -2256,7 +2256,7 @@ eerror
 		fi
 
 		# The default profile sets this to none by default.
-		local ot_kernel_modules_compressor="OT_KERNEL_MODULES_COMPRESSOR_${K_MAJOR_MINOR}"
+		local ot_kernel_modules_compressor="OT_KERNEL_MODULES_COMPRESSOR_${K_MAJOR_MINOR/./_}"
 		local ot_kernel_modules_compressor_="${!ot_kernel_modules_compressor}"
 		if [[ -n "${ot_kernel_modules_compressor_}" ]] ; then
 			local alg
@@ -2308,7 +2308,7 @@ build_pairs() {
 	local build_config_pairs=()
 	IFS=";"
 	local build_configs_pair
-	local ot_kernel_build_configs="OT_KERNEL_BUILDCONFIGS_${K_MAJOR_MINOR//./_}_"
+	local ot_kernel_build_configs="OT_KERNEL_BUILDCONFIGS_${K_MAJOR_MINOR/./_}_"
 	for build_configs_pair in ${!ot_kernel_build_configs} ; do
 		[[ -z "${build_configs_pair}" ]] && continue
 		echo "${build_configs_pair}"
