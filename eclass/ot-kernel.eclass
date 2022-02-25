@@ -1631,7 +1631,11 @@ ot-kernel_check_build_info_valid() {
 eerror
 eerror "The current number of fields (aka columns) in the"
 eerror "OT_KERNEL_BUILDCONFIGS_X_Y has changed.  This may indicate that the"
-eerror "specification has been updated or a build config is incorrect"
+eerror "specification has been updated or a build config is incorrect."
+eerror "Please review the metadata.xml or do"
+eerror "\`epkginfo -x ot-sources::oiledmachine-overlay\` to see what fields"
+eerror "(or columns) has been added and verify the correctness.  An"
+eerror "additional : may need to be added."
 eerror
 eerror "Entry:  ${b}"
 eerror "Expected n-fields:  ${OT_KERNEL_BUILDCONFIGS_N_FIELDS}"
@@ -2220,7 +2224,7 @@ eerror
 
 		if use disable_debug ; then
 			einfo "Disabling all debug and shortening logging buffers"
-			#./disable_debug || die # Breaks LTO.  Script needs fix.
+			./disable_debug || die
 		fi
 
 		if has tresor_x86_64 ${IUSE_EFFECTIVE} && use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
@@ -2268,7 +2272,7 @@ ot-kernel_set_configopt() {
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
 		sed -i -e "s|# ${opt} is not set|${opt}=${val}|g" "${path_config}" || die
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -i -r -e "s/${opt}=[\"0-9a-z]+/${opt}=${val}/g" "${path_config}" || die
+		sed -i -r -e "s/${opt}=.*/${opt}=${val}/g" "${path_config}" || die
 	else
 		echo "${opt}=${val}" >> "${path_config}" || die
 	fi
