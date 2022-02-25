@@ -1848,7 +1848,7 @@ ot-kernel_src_configure() {
 			einfo "Enabled bbrv2 in .config"
 			ot-kernel_y_configopt "CONFIG_TCP_CONG_BBR2"
 			ot-kernel_y_configopt "CONFIG_DEFAULT_BBR2"
-			ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "bbr2"
+			ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"bbr2\""
 		fi
 
 		if has futex ${IUSE_EFFECTIVE} && use futex ; then
@@ -1951,10 +1951,6 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
 			if use tresor_prompt ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
-				einfo "Disabling boot output for TRESOR early prompt."
-				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
-				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "2" # 4 is default
-				ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "2" # 4 is default
 			fi
 		fi
 
@@ -1968,10 +1964,6 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
 			if use tresor_prompt ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
-				einfo "Disabling boot output for TRESOR early prompt."
-				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
-				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "2" # 4 is default
-				ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "2" # 4 is default
 			fi
 		fi
 
@@ -2034,7 +2026,7 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_AS_IS_LLVM"
 			ot-kernel_set_configopt "CONFIG_AS_VERSION" "${llvm_slot}0000"
 			ot-kernel_y_configopt "CONFIG_CC_IS_CLANG"
-			ot-kernel_set_configopt "CONFIG_CC_VERSION_TEXT" "clang version ${llvm_slot}.0.0"
+			ot-kernel_set_configopt "CONFIG_CC_VERSION_TEXT" "\"clang version ${llvm_slot}.0.0\""
 			ot-kernel_set_configopt "CONFIG_GCC_VERSION" "0"
 			ot-kernel_set_configopt "CONFIG_CLANG_VERSION" "${llvm_slot}0000"
 			ot-kernel_y_configopt "CONFIG_LD_IS_LLD"
@@ -2231,6 +2223,15 @@ eerror
 			./disable_debug || die
 		fi
 
+		if has tresor_x86_64 ${IUSE_EFFECTIVE} && use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
+			if use tresor_prompt ; then
+				einfo "Disabling boot output for TRESOR early prompt."
+				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
+				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "2" # 4 is default
+				ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "2" # 4 is default
+			fi
+		fi
+
 		if (( ${default_config} == 1 )) ; then
 			einfo "Saving the new config for ${extraversion} to ${default_config}"
 			insinto /etc/kernels
@@ -2267,7 +2268,7 @@ ot-kernel_set_configopt() {
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
 		sed -i -e "s|# ${opt} is not set|${opt}=${val}|g" "${path_config}" || die
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -i -r -e "s/${opt}=[y|m|n]/${opt}=${val}/g" "${path_config}" || die
+		sed -i -r -e "s/${opt}=[\"0-9a-z]+/${opt}=${val}/g" "${path_config}" || die
 	else
 		echo "${opt}=${val}" >> "${path_config}" || die
 	fi
@@ -2278,7 +2279,7 @@ ot-kernel_set_configopt() {
 # Unsets the kernel option
 ot-kernel_unset_configopt() {
 	local opt="${1}"
-	sed -r -i -e "s/${opt}=[m|y|n]/# ${opt} is not set/g" "${path_config}" || die
+	sed -r -i -e "s/${opt}=[0-9a-zA-Z]+/# ${opt} is not set/g" "${path_config}" || die
 }
 
 # @FUNCTION: ot-kernel_y_configopt
@@ -2289,7 +2290,7 @@ ot-kernel_y_configopt() {
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
 		sed -i -e "s|# ${opt} is not set|${opt}=y|g" "${path_config}" || die
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -i -r -e "s/${opt}=[y|m|n]/${opt}=y/g" "${path_config}" || die
+		sed -i -r -e "s/${opt}=[y|n|m]/${opt}=y/g" "${path_config}" || die
 	else
 		echo "${opt}=y" >> "${path_config}" || die
 	fi
