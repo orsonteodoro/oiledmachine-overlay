@@ -2482,16 +2482,14 @@ ot-kernel_get_boot_decompressor() {
 		ZSTD
 	)
 	local BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
-	pushd "${BUILD_DIR}" || die
-		local d
-		for d in ${decompressors[@]} ; do
-			if grep -q -E -e "^CONFIG_KERNEL_${d}=y" ".config" ; then
-				echo "${d}"
-				return
-			fi
-		done
-	popd
-	echo ""
+	local d
+	for d in ${decompressors[@]} ; do
+		if grep -q -E -e "^CONFIG_KERNEL_${d}=y" "${BUILD_DIR}/.config" ; then
+			echo -n "${d}"
+			return
+		fi
+	done
+	echo -n ""
 }
 
 # @FUNCTION: ot-kernel_src_compile
@@ -2527,6 +2525,7 @@ ot-kernel_src_compile() {
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 
+		# Summary for this compile
 		einfo
 		einfo "Compiling with the following:"
 		einfo
