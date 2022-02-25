@@ -287,8 +287,10 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     flags, 2 for reasons for rebuild.
 
     OT_KERNEL_PRIMARY_EXTRAVERSION (optional) -- sets the primary extraversion
-    for the symlink and tresor_sysfs USE flags.
+    for the symlink USE flag.  If unset, it defaults to ot.
 
+    OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR (optional) -- sets the primary
+    extraversion for tresor_sysfs USE flag.  If unset, it defaults to ot.
 
     Examples:
 

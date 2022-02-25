@@ -2682,10 +2682,11 @@ ot-kernel_src_install() {
 #
 ot-kernel_pkg_postinst() {
 	local main_extraversion=${OT_KERNEL_PRIMARY_EXTRAVERSION:-ot}
+	local main_extraversion_with_tresor=${OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR:-ot}
 
 	local highest_pv=$(
-		$(echo $(best_version "sys-kernel/ot-sources" | sed -e "sys-kernel/ot-sources-") ${PV} \
-			| tr " " "\n" | sort -V | tail -n 1)
+		$(echo $(best_version "sys-kernel/ot-sources" \
+			| sed -e "sys-kernel/ot-sources-"))
 	)
 
 	if use symlink ; then
@@ -2701,8 +2702,19 @@ einfo
 
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
+			local highest_tresor_pv=$(
+				$(echo $(best_version "sys-kernel/ot-sources[tresor_sysfs]" \
+					| sed -e "sys-kernel/ot-sources-"))
+			)
+			local b
+			for b in $(build_pairs) ; do
+				local extraversion=$(echo "${b}" | cut -f 1 -d ":" \
+					| sed -r -e "s|^[-]+||g")
+			done
+
 			# Avoid symlink collisons between multiple installs.
-			dosym ../../../tresor_sysfs /usr/src/linux-${highest_pv}-${main_extraversion}/tresor_sysfs
+			dosym ../../../tresor_sysfs \
+/usr/src/linux-${highest_tresor_pv}-${main_extraversion_with_tresor}/tresor_sysfs
 			# It's the same hash for 5.1 and 5.0.13 for tresor_sysfs.
 einfo
 einfo "The /usr/bin/tresor_sysfs CLI command which uses /sys/kernel/tresor/key too"
