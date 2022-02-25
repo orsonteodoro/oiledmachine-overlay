@@ -2369,20 +2369,64 @@ tresor_sysfs"
 ot-kernel-make_install() {
 	einfo "Called ot-kernel-make_install()"
 	mkdir -p "${ED}/boot" || die
-	local bzimage_spath=$(find "arch/${arch}" -type f -name "bzImage")
-	local bzimage_dpath="${ED}/boot/vmlinuz-${PV}-${extraversion}-${arch}"
-	local system_map_spath=$(find "arch/${arch}" -type f -name "System.map")
-	local system_map_dpath="${ED}/boot/System.map-${PV}-${extraversion}-${arch}"
-	local vmlinuz_spath=$(find "arch/${arch}" -type f -name "vmlinuz")
-	local vmlinuz_dpath="${ED}/boot/vmlinuz-${PV}-${extraversion}-${arch}"
-	cp -a "${system_map_spath}" "${system_map_dpath}" || die
-	if [[ -e "${bzimage_spath}" ]] ; then
-		einfo "Copying compressed kernel image for -${extraversion}"
-		cp -a "${bzimage_spath}" "${bzimage_dpath}" || die
-	elif [[ -e "${vmlinuz_spath}" ]] ; then
-		einfo "Copying uncompressed kernel image for -${extraversion}"
-		cp -a "${vmlinuz_spath}" "${vmlinuz_dpath}" || die
+
+	local arch_
+	if [[ "${arch}" == "x86_64" ]] ; then
+		arch_="x86"
+	else
+		arch_="${arch}"
 	fi
+	local zimage_paths=(
+		$(find "${BUILD_DIR}/arch/${arch_}/boot" \
+			"${BUILD_DIR}" \
+			-maxdepth 1 \
+			-o -name "Image.gz" \
+			-o -name "bzImage" \
+			-o -name "zImage" \
+			-o -name "vmlinuz" \
+			-o -name "vmlinux.gz" \
+			-o -name "vmlinux.bz2" )
+	)
+	local image_paths=(
+		$(find "${BUILD_DIR}/arch/${arch_}/boot" \
+			"${BUILD_DIR}" \
+			-maxdepth 1 \
+			-name "Image" \
+			-o -name "vmImage" \
+			-o -name "vmlinux" \
+			-o -name "Image" \
+			-o -name "uImage")
+	)
+
+	if [[ "${arch}" == "nios2" ]] ; then
+		zimage_paths=(${image_paths[@]})
+	fi
+
+	local system_map_spath="${BUILD_DIR}/System.map"
+	local system_map_dpath="${ED}/boot/System.map-${PV}-${extraversion}-${arch}"
+	cp -va "${system_map_spath}" "${system_map_dpath}" || die
+
+	local kimage_spath
+	local kimage_dpath
+	local name
+	for f in ${zimage_paths[@]} ; do
+		if [[ -e "${f}" ]] ; then
+			kimage_spath="${f}"
+			name="vmlinuz"
+			image_paths=()
+			break
+		fi
+	done
+	for f in ${image_paths[@]} ; do
+		if [[ -e "${f}" ]] ; then
+			kimage_spath="${f}"
+			name="vmlinux"
+			break
+		fi
+	done
+
+	local kimage_dpath="${ED}/boot/${name}-${PV}-${extraversion}-${arch}"
+	cp -va "${kimage_spath}" "${kimage_dpath}" || die
 }
 
 # @FUNCTION: ot-kernel_src_compile
