@@ -299,7 +299,11 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     OT_KERNEL_SIGN_MODULES (optional) -- signs kernel modules with sha256
     Set to 1 to sign or set to 0 to use manual setting (default).  When,
     a new kernel config is generated, module signing is disabled; but it
-    can be signed by setting this to 1.
+    can be signed by setting this to 1.  If module signing is enabled,
+    it is recommended to sign external modules or these modules may no
+    longer work.  External module signing is especially important especially
+    for kernel graphics modules if module signing is enabled.  It is not
+    forced default on to prevent any unprepared disruption.
 
     OT_KERNEL_MODULES_COMPRESSOR_X_Y (optional) -- compresses the kernel
     modules.
