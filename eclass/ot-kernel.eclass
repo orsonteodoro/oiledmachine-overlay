@@ -141,6 +141,7 @@ K_EXTRAVERSION="ot"
 S="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 #PROPERTIES="interactive" # The menuconfig is broken because of emerge or sandbox.  All things were disabled but still doesn't work.
 OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
+OT_KERNEL_BUILDCONFIGS_N_FIELDS=7
 
 inherit check-reqs flag-o-matic ot-kernel-cve toolchain-funcs
 
@@ -1617,7 +1618,6 @@ apply_all_patchsets() {
 # @FUNCTION: ot-kernel_check_build_info_valid
 # @DESCRIPTION:
 # Checks if the buildinfo format has changed
-OT_KERNEL_BUILDCONFIGS_N_FIELDS=6
 ot-kernel_check_build_info_valid() {
 	local nfields=$(echo "${b}" | grep -o ":" | wc -l)
 	nfields=$((${nfields}+1))
@@ -1783,17 +1783,20 @@ ot-kernel_src_configure() {
 		[[ -z "${config}" ]] && config="${default_config}"
 		local target_triple=$(echo "${b}" | cut -f 5 -d ":")
 		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
+		local init_decomp=$(echo "${b}" | cut -f 7 -d ":")
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
 		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
+		[[ -z "${init_decomp}" ]] && init_decomp="manual"
 		[[ -z "${extraversion}" ]] && die "extraversion cannot be empty"
 		[[ -z "${build_flag}" ]] && die "build_flag cannot be empty"
 		[[ -z "${config}" ]] && die "config cannot be empty"
 		[[ -z "${arch}" ]] && die "arch cannot be empty"
 		[[ -z "${target_triple}" ]] && die "target_triple cannot be empty"
 		[[ -z "${cpu_sched}" ]] && die "cpu_sched cannot be empty"
+		[[ -z "${init_decomp}" ]] && die "cpu_sched cannot be empty"
 
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
@@ -1825,6 +1828,7 @@ ot-kernel_src_configure() {
 			ewarn "Missing ${path_config} so generating a new default config."
 			make defconfig "${args[@]}" || die
 			default_config=1
+			init_decomp="default"
 		fi
 
 		einfo
@@ -1973,25 +1977,35 @@ ot-kernel_src_configure() {
 			ot-kernel_n_configopt "CONFIG_HIBERNATION"
 		fi
 
-		if [[ -n "${OT_KERNEL_INIT_DECOMPRESSOR}" ]] ; then
-			local decompressors=(
-				BZIP2
-				GZIP
-				LZ4
-				LZMA
-				LZ4
-				LZO
-				XZ
-				ZSTD
-			)
-			local d
+		local decompressors=(
+			BZIP2
+			GZIP
+			LZ4
+			LZMA
+			LZ4
+			LZO
+			XZ
+			ZSTD
+		)
+		local d
+		for d in ${decompressors[@]} ; do
+			d="${d^^}"
+			ot-kernel_n_configopt "CONFIG_KERNEL_${d}"
+			ot-kernel_n_configopt "CONFIG_RD_${d}"
+			ot-kernel_n_configopt "CONFIG_DECOMPRESS_${d}"
+		done
+		if [[ "${init_decomp}" == "default" ]] ; then
+			einfo "Using default init decompressor settings"
+			ot-kernel_y_configopt "CONFIG_KERNEL_GZIP"
 			for d in ${decompressors[@]} ; do
-				d="${d^^}"
-				ot-kernel_n_configopt "CONFIG_KERNEL_${d}"
-				ot-kernel_n_configopt "CONFIG_RD_${d}"
-				ot-kernel_n_configopt "CONFIG_DECOMPRESS_${d}"
+				ot-kernel_y_configopt "CONFIG_RD_${d}"
+				ot-kernel_y_configopt "CONFIG_DECOMPRESS_${d}"
 			done
-			d="${OT_KERNEL_INIT_DECOMPRESSOR^^}"
+		elif [[ "${init_decomp}" == "manual" ]] ; then
+			einfo "Using the manually chosen init decompressor settings"
+		else
+			einfo "Using the ${init_decomp} init decompressor settings"
+			d="${init_decomp^^}"
 			ot-kernel_y_configopt "CONFIG_KERNEL_${d}"
 			ot-kernel_y_configopt "CONFIG_RD_${d}"
 			ot-kernel_y_configopt "CONFIG_DECOMPRESS_${d}"

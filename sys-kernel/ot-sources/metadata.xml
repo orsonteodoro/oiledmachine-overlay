@@ -286,21 +286,13 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     Acceptable values for N:  0 for minimal output, 1 for showing compiler
     flags, 2 for reasons for rebuild.
 
-    OT_KERNEL_INIT_DECOMPRESSOR (optional) -- chooses the main init decompressor
-    for both kernel decompression and initramfs decompression.  If not chosen,
-    it will choose either the previous set ones, or if it is a new kernel config
-    it will choose gzip for the kernel and all decompressors for initramfs.
-    Acceptable values:  GZIP, BZIP2, LZ4, LZO, LZMA, XZ, ZSTD.  It is
-    recommended to use lz4 or zstd.  However, if you are using x32 ABI use
-    bzip2.  When choosing a (de)compressor, consider the licensing.
-
 
     Examples:
 
     OT_KERNEL_VERBOSITY=1
     OT_KERNEL_MENUCONFIG="menuconfig" # Code is disabled but looking for solutions to make it work properly
-    OT_KERNEL_BUILDCONFIGS_5_4="ot:build:/etc/kernels/kernel-config-5.4-ot-x86_64:x86_64:x86_64-pc-linux-gnu:muqss"
-    OT_KERNEL_BUILDCONFIGS_5_16="ot:build:/etc/kernels/kernel-config-5.16-ot-x86_64:x86_64:x86_64-pc-linux-gnu:prjc;rt:build:/etc/kernels/kernel-config-5.16-rt-x86_64:x86_64:x86_64-pc-linux-gnu:cfs"
+    OT_KERNEL_BUILDCONFIGS_5_4="ot:build:/etc/kernels/kernel-config-5.4-ot-x86_64:x86_64:x86_64-pc-linux-gnu:muqss:lz4"
+    OT_KERNEL_BUILDCONFIGS_5_16="ot:build:/etc/kernels/kernel-config-5.16-ot-x86_64:x86_64:x86_64-pc-linux-gnu:prjc:zstd;rt:build:/etc/kernels/kernel-config-5.16-rt-x86_64:x86_64:x86_64-pc-linux-gnu:cfs:lz4"
 
     The format of the sublists in OT_KERNEL_BUILDCONFIGS_X_Y is described below:
 
@@ -342,6 +334,17 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 		* cfs is preferred for server kernels and bug-less experience.
 		* muqss and prjc are better suited for audio production.
 		* The rt extraversion can only use the cfs scheduler.
+
+    6. Init boot decompressor -- chooses the main init boot decompressor
+    for both kernel decompression and initramfs decompression.  If not chosen,
+    it will choose either the previous manual setting, or if it is a new kernel
+    config defaults which will choose gzip for the kernel and all decompressors
+    for initramfs.
+    Acceptable values:  GZIP, BZIP2, LZ4, LZO, LZMA, XZ, ZSTD, default, manual.
+    It is recommended to use lz4 or zstd.  However, if you are using x32 ABI
+    bzip2 works but do not use lzma.  When choosing a (de)compressor, consider
+    the licensing.  If empty, it will choose manual.
+    
 
     Please read the metadata.xml comments for more info.
   </longdescription>
