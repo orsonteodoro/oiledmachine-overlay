@@ -1495,6 +1495,11 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 		fi
 	fi
 
+	if use disable_debug ; then
+		cat "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" \
+			> "${BUILD_DIR}/disable_debug" || die
+	fi
+
 	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 		cat "${FILESDIR}/gen_pgo.sh" > "${BUILD_DIR}/gen_pgo.sh"
 	fi
@@ -1712,6 +1717,9 @@ ewarn
 		einfo "Setting the extra version for the -${extraversion} build"
 		sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
 			"${BUILD_DIR}/Makefile" || die
+		if use disable_debug ; then
+			chmod +x "${BUILD_DIR}/disable_debug" || die
+		fi
 	done
 }
 
@@ -2218,6 +2226,11 @@ eerror
 			fi
 		fi
 
+		if use disable_debug ; then
+			einfo "Disabling all debug and shortening logging buffers"
+			./disable_debug || die
+		fi
+
 		if (( ${default_config} == 1 )) ; then
 			einfo "Saving the new config for ${extraversion} to ${default_config}"
 			insinto /etc/kernels
@@ -2225,6 +2238,7 @@ eerror
 		else
 			einfo "Not overriding kernel config to avoid merge conflicts"
 		fi
+
 		is_firmware_ready
 	done
 }
@@ -2663,19 +2677,10 @@ ot-kernel_src_install() {
 ot-kernel_pkg_postinst() {
 	if use disable_debug ; then
 einfo
-einfo "The disable debug scripts have been placed in your /usr/src folder."
-einfo "They disable debug paths, logging, output for a performance gain."
-einfo "You should run it like \`/usr/src/disable_debug x86_64 /usr/src/.config\`"
+einfo "The disable debug scripts have been placed in the root folder of the"
+einfo "kernel folder."
 einfo
-		exeinto /usr/src
-		doexe "${FILESDIR}/_disable_debug_v${DISABLE_DEBUG_V}" \
-			"_disable_debug" || die
-		doexe "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" \
-			"disable_debug" || die
-		fperms 0700 /usr/src/_disable_debug
-		fperms 0700 /usr/src/disable_debug
 	fi
-
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			# Avoid symlink collisons between multiple installs.
