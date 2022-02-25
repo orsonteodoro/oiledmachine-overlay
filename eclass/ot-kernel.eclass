@@ -2236,6 +2236,59 @@ eerror
 			fi
 		fi
 
+		# The default profile does not have module signing default on.
+		if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" ]] ; then
+			einfo "Changing config to auto-signed modules with SHA256"
+			ot-kernel_y_configopt "CONFIG_MODULE_SIG"
+			ot-kernel_y_configopt "CONFIG_MODULE_SIG_ALL"
+			ot-kernel_y_configopt "CONFIG_MODULE_SIG_FORCE"
+			local sign_algs=(SHA1 SHA224 SHA256 SHA384 SHA512)
+			local alg
+			for alg in ${sign_algs[@]} ; do
+				ot-kernel_n_configopt "CONFIG_MODULE_SIG_${alg}" # Reset
+				ot-kernel_n_configopt "CONFIG_CRYPTO_${alg}" # Reset
+			done
+			ot-kernel_y_configopt "CONFIG_MODULE_SIG_SHA256"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256"
+			ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"${alg,,}\""
+		else
+			einfo "Using manual setting for auto-signed modules"
+		fi
+
+		# The default profile sets this to none by default.
+		local ot_kernel_modules_compressor="OT_KERNEL_MODULES_COMPRESSOR_${K_MAJOR_MINOR}"
+		local ot_kernel_modules_compressor_="${!ot_kernel_modules_compressor}"
+		if [[ -n "${ot_kernel_modules_compressor_}" ]] ; then
+			local alg
+			local mod_comp_algs=(
+				NONE
+				GZIP
+				XZ
+				ZSTD
+			)
+			for alg in ${mod_comp_algs[@]} ; do
+				ot-kernel_n_configopt "CONFIG_MODULE_COMPRESS_${alg}" # Reset
+			done
+			if ver_test ${K_MAJOR_MINOR} -le 5.10 ; then
+				if [[ "${ot_kernel_modules_compressor_^^}" == "ZSTD" ]] ; then
+					eerror "ZSTD is not supported for ${K_MAJOR_MINOR} series."
+					die
+				fi
+				einfo "Changing config to compress modules with ${ot_kernel_modules_compressor_}"
+				if [[ "${ot_kernel_modules_compressor_^^}" == "NONE" ]] ; then
+					ot-kernel_n_configopt "CONFIG_MODULE_COMPRESS"
+				else
+					ot-kernel_y_configopt "CONFIG_MODULE_COMPRESS"
+					ot-kernel_y_configopt "CONFIG_MODULE_COMPRESS_${ot_kernel_modules_compressor_^^}" # Reset
+				fi
+			else
+				einfo "Changing config to compress modules with ${ot_kernel_modules_compressor_}"
+				ot-kernel_y_configopt "CONFIG_MODULE_COMPRESS_${ot_kernel_modules_compressor_^^}" # Reset
+			fi
+		else
+			einfo "Using manual setting for compress modules"
+		fi
+
 		if (( ${default_config} == 1 )) ; then
 			einfo "Saving the new config for ${extraversion} to ${default_config}"
 			insinto /etc/kernels

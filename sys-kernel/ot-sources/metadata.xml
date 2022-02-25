@@ -277,6 +277,10 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 
     Build environment variables
 
+    The purpose of some of these environment variables is to change primarily
+    the default profile a little bit so that it skips the menuconfig step all
+    together in the build before install with the build USE flag.
+
     OT_KERNEL_BUILDCONFIGS_X_Y (required) -- list of build configs.  Once you
     define this, it will override and erase the defaults for that particular
     major.minor version.  X is the major version, Y is the minor version.
@@ -291,6 +295,15 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 
     OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR (optional) -- sets the primary
     extraversion for tresor_sysfs USE flag.  If unset, it defaults to ot.
+
+    OT_KERNEL_SIGN_MODULES (optional) -- signs kernel modules with sha256
+    Set to 1 to sign or set to 0 to use manual setting.
+
+    OT_KERNEL_MODULES_COMPRESSOR_X_Y (optional) -- compresses the kernel
+    modules.
+    Acceptable values:  NONE, GZIP, XZ, ZSTD.  If unset, it will use the
+    manual setting.  X is the major version, Y is the minor version.
+    NONE and ZSTD are only allowed with 5.15+.
 
     Examples:
 
