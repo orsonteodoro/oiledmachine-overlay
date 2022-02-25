@@ -2681,16 +2681,28 @@ ot-kernel_src_install() {
 # ot-kernel_pkg_postinst_cb - callback if any to handle after emerge phase
 #
 ot-kernel_pkg_postinst() {
+	local main_extraversion=${OT_KERNEL_PRIMARY_EXTRAVERSION:-ot}
+
+	local highest_pv=$(
+		$(echo $(best_version "sys-kernel/ot-sources" | sed -e "sys-kernel/ot-sources-") ${PV} \
+			| tr " " "\n" | sort -V | tail -n 1)
+	)
+
+	if use symlink ; then
+		dosym ../../linux /usr/src/linux-${highest_pv}-${main_extraversion}
+	fi
+
 	if use disable_debug ; then
 einfo
 einfo "The disable debug scripts have been placed in the root folder of the"
 einfo "kernel folder."
 einfo
 	fi
+
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			# Avoid symlink collisons between multiple installs.
-			dosym /usr/src/linux-${PV}-${ot}/tresor_sysfs /usr/bin/tresor_sysfs
+			dosym ../../../tresor_sysfs /usr/src/linux-${highest_pv}-${main_extraversion}/tresor_sysfs
 			# It's the same hash for 5.1 and 5.0.13 for tresor_sysfs.
 einfo
 einfo "The /usr/bin/tresor_sysfs CLI command which uses /sys/kernel/tresor/key too"

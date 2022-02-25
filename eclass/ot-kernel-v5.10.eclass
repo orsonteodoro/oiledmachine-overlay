@@ -198,7 +198,7 @@ fe6b56a9c48b934d2ffaafd60eb89b9dae6e912d
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
-IUSE+=" build"
+IUSE+=" build symlink"
 IUSE+=" ${KCP_IUSE} bbrv2 +cfs clang disable_debug futex
 +genpatches -genpatches_1510 +kernel-compiler-patch muqss +O3 prjc rt tresor
 tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64

@@ -286,6 +286,9 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     Acceptable values for N:  0 for minimal output, 1 for showing compiler
     flags, 2 for reasons for rebuild.
 
+    OT_KERNEL_PRIMARY_EXTRAVERSION (optional) -- sets the primary extraversion
+    for the symlink and tresor_sysfs USE flags.
+
 
     Examples:
 
