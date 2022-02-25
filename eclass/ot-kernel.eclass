@@ -1973,6 +1973,30 @@ ot-kernel_src_configure() {
 			ot-kernel_n_configopt "CONFIG_HIBERNATION"
 		fi
 
+		if [[ -n "${OT_KERNEL_INIT_DECOMPRESSOR}" ]] ; then
+			local decompressors=(
+				BZIP2
+				GZIP
+				LZ4
+				LZMA
+				LZ4
+				LZO
+				XZ
+				ZSTD
+			)
+			local d
+			for d in ${decompressors[@]} ; do
+				d="${d^^}"
+				ot-kernel_n_configopt "CONFIG_KERNEL_${d}"
+				ot-kernel_n_configopt "CONFIG_RD_${d}"
+				ot-kernel_n_configopt "CONFIG_DECOMPRESS_${d}"
+			done
+			d="${OT_KERNEL_INIT_DECOMPRESSOR^^}"
+			ot-kernel_y_configopt "CONFIG_KERNEL_${d}"
+			ot-kernel_y_configopt "CONFIG_RD_${d}"
+			ot-kernel_y_configopt "CONFIG_DECOMPRESS_${d}"
+		fi
+
 		local llvm_slot=$(get_llvm_slot)
 		if \
 			( \
@@ -2528,9 +2552,8 @@ ot-kernel_src_compile() {
 			if [[ "${arch}" =~ "arm" ]] ; then
 				make dtbs_install "${args[@]}" || die
 			fi
-			einfo "Running:  make mrproper" # Reverts everything back to before make menuconfig
-			cd "${BUILD_DIR}" || die
-			make mrproper || die
+			einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
+			make mrproper ARCH=${arch} || die
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 				echo "PGT" > "${ED}/${pgo_phase_statefile}" || die
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then

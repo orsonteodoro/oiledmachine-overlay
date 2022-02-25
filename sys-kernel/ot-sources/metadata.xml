@@ -277,13 +277,22 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 
     Build environment variables
 
-   
-    OT_KERNEL_BUILDCONFIGS_X_Y -- list of build configs.  Once you define this,
-    it will override and erase the defaults for that particular major.minor version.
-    X is the major version, Y is the minor version.
+    OT_KERNEL_BUILDCONFIGS_X_Y (required) -- list of build configs.  Once you
+    define this, it will override and erase the defaults for that particular
+    major.minor version.  X is the major version, Y is the minor version.
 
-    OT_KERNEL_VERBOSITY=N -- presentation of compiler and build invocation
-    N is 0 for minimal output, 1 for showing compiler flags, 2 rebuild reasons.
+    OT_KERNEL_VERBOSITY=N (optional) -- presentation of compiler and build
+    invocation.
+    Acceptable values for N:  0 for minimal output, 1 for showing compiler
+    flags, 2 for reasons for rebuild.
+
+    OT_KERNEL_INIT_DECOMPRESSOR (optional) -- chooses the main init decompressor
+    for both kernel decompression and initramfs decompression.  If not chosen,
+    it will choose either the previous set ones, or if it is a new kernel config
+    it will choose gzip for the kernel and all decompressors for initramfs.
+    Acceptable values:  GZIP, BZIP2, LZ4, LZO, LZMA, XZ, ZSTD.  It is
+    recommended to use lz4 or zstd.  However, if you are using x32 ABI use
+    bzip2.  When choosing a (de)compressor, consider the licensing.
 
 
     Examples:
