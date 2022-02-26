@@ -439,7 +439,7 @@ fi
 # Keep the sources clean upon install.
 PATCH_OPTS="--no-backup-if-mismatch -r - -p1"
 
-RESTRICT="mirror"
+RESTRICT="mirror strip" # See ot-kernel_src_install() for reasons why stripping is not allowed.
 
 # @FUNCTION: _fpatch
 # @DESCRIPTION:
@@ -1926,6 +1926,10 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		fi
 
+		# Cold boot attack mitigation
+		ot-kernel_unset_configopt "CONFIG_KGDB"
+		ot-kernel_unset_configopt "KGDB_KDB"
+
 		if has tresor_i686 ${IUSE_EFFECTIVE} && use tresor_i686 && [[ "${arch}" == "x86" ]] ; then
 			einfo "Changed .config to use TRESOR (i686)"
 			ot-kernel_y_configopt "CONFIG_CRYPTO"
@@ -2763,12 +2767,13 @@ ot-kernel_src_install() {
 			fi
 		fi
 
+		einfo "Installing the kernel sources"
 		insinto /usr/src
 		doins -r "${BUILD_DIR}"
 	done
 
 	einfo "Restoring +x bit"
-	for f in $(find "${ED}"/ -type -f -executable) ; do
+	for f in $(find "${ED}"/ -type f -executable) ; do
 		local is_exe=0
 		file "${f}" | grep -q -F -e "executable" && is_exe=1
 		file "${f}" | grep -q -E -e "Linux kernel.*executable" && is_exe=0
