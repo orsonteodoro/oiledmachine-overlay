@@ -1958,7 +1958,6 @@ ot-kernel_src_configure() {
 			ewarn "Hibernation is going to be disabled."
 			ot-kernel_unset_configopt "CONFIG_HIBERNATION"
 
-			# Sanitize memory
 			ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
