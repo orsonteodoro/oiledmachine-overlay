@@ -313,6 +313,16 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     is generated, module compression is disabled; but can be overrided
     by explicitly setting it to one of the acceptable values.
 
+    OT_KERNEL_COLD_BOOT_MITIGATIONS -- changes the kernel config to mitigate
+    against coldboot or DMA attacks.  By default, this is enabled in the
+    ebuild.  Acceptable values:  0 for do not apply any mitigations,
+    1 for level 1 mitigations, 2 for level 2 mitigations.
+
+    - Level 1 mitigations are changes balance the convenience and the security.
+    - Level 2 mitigations are changes that severely place security over
+    convenience which may take away ability to use certain hardware or have
+    severe performance degration.
+
     Examples:
 
     OT_KERNEL_VERBOSITY=1

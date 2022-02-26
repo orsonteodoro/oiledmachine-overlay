@@ -1927,8 +1927,53 @@ ot-kernel_src_configure() {
 		fi
 
 		# Cold boot attack mitigation
-		ot-kernel_unset_configopt "CONFIG_KGDB"
-		ot-kernel_unset_configopt "KGDB_KDB"
+		# This section is incomplete and a Work In Progress (WIP)
+		# The problem is common to many full disk encryption implementations.
+		local ot_kernel_cold_boot_mitigations=${OT_KERNEL_COLD_BOOT_MITIGATIONS:-1}
+		if [[ "${ot_kernel_cold_boot_mitigations}" == "1" ]] ; then
+			einfo "Hardening kernel against cold boot attacks."
+			ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+			# Don't use lscpu/cpuinfo autodetect if using distcc or
+			# cross-compile but use the config itself to guestimate.
+			if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${config}" ; then
+				einfo "Adding IOMMU support (VT-d)"
+				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+				ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
+			fi
+			if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${config}" ; then
+				einfo "Adding IOMMU support (AMD-Vi)"
+				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+				ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
+			fi
+			ot-kernel_y_configopt "CONFIG_SECURITY_DMESG_RESTRICT" # Only partial
+			ewarn "GDB/KGDB_KDB is going to be disabled."
+			ot-kernel_unset_configopt "CONFIG_KGDB"
+			ot-kernel_unset_configopt "CONFIG_KGDB_KDB"
+
+			# These two may need a separate option.  We assume desktop,
+			# but some users may use the kernel on laptop.  For now,
+			# every user must cold-boot in suspend times 1-15 minutes.
+			ewarn "Suspend is going to be disabled."
+			ot-kernel_unset_configopt "CONFIG_SUSPEND"
+			ewarn "Hibernation is going to be disabled."
+			ot-kernel_unset_configopt "CONFIG_HIBERNATION"
+
+			# [TODO / Review] Sanitize memory
+#			ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
+#			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+#			ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+#			ot-kernel_y_configopt "CONFIG_PAGE_POISONING"
+#			ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
+#			ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
+		fi
+		if [[ "${ot_kernel_cold_boot_mitigations}" == "2" ]] ; then
+			# TODO:  Disable all DMA devices and ports.
+			# This list is incomplete
+			ewarn "USB4 is going to be disabled."
+			ot-kernel_unset_configopt "CONFIG_USB4"
+			ewarn "XHCI USB3 is going to be disabled."
+			ot-kernel_unset_configopt "CONFIG_USB_XHCI_HCD"
+		fi
 
 		if has tresor_i686 ${IUSE_EFFECTIVE} && use tresor_i686 && [[ "${arch}" == "x86" ]] ; then
 			einfo "Changed .config to use TRESOR (i686)"
@@ -2170,6 +2215,8 @@ ot-kernel_src_configure() {
 				done
 				ot-kernel_unset_configopt "CONFIG_GENERIC_CPU"
 				if grep -q -E -e "MNATIVE_" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
+					# Don't use lscpu/cpuinfo autodetect if using distcc or
+					# cross-compile but use the config itself to guestimate.
 					einfo "Setting .config with -march=native"
 					local mfg=$(lscpu \
 						| grep -F -e "Vendor ID" \
