@@ -1958,13 +1958,15 @@ ot-kernel_src_configure() {
 			ewarn "Hibernation is going to be disabled."
 			ot-kernel_unset_configopt "CONFIG_HIBERNATION"
 
-			# [TODO / Review] Sanitize memory
-#			ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-#			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-#			ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-#			ot-kernel_y_configopt "CONFIG_PAGE_POISONING"
-#			ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
-#			ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
+			# Sanitize memory
+			ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
+			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+			ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+			ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
+			ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON" # The option's help does mention cold boot attacks.
+			# We don't use CONFIG_PAGE_POISONING because it is
+			# essentially the same as CONFIG_INIT_ON_FREE_DEFAULT_ON
+			# with fixed pattern but slower.
 		fi
 		if [[ "${ot_kernel_cold_boot_mitigations}" == "2" ]] ; then
 			# TODO:  Disable all DMA devices and ports.
@@ -2067,7 +2069,7 @@ ot-kernel_src_configure() {
 			fi
 		done
 		if [[ "${boot_decomp}" == "default" ]] ; then
-			ewarn "Using the default init decompressor settings"
+			ewarn "Using the default boot decompressor settings"
 			ot-kernel_y_configopt "CONFIG_KERNEL_GZIP"
 			for d in ${decompressors[@]} ; do
 				if [[ "${d}" != "UNCOMPRESSED" ]] ; then
@@ -2085,9 +2087,9 @@ ot-kernel_src_configure() {
 				fi
 			done
 		elif [[ "${boot_decomp}" == "manual" ]] ; then
-			einfo "Using the manually chosen init decompressor settings"
+			einfo "Using the manually chosen boot decompressor settings"
 		else
-			einfo "Using the ${boot_decomp} init decompressor settings"
+			einfo "Using the ${boot_decomp} boot decompressor settings"
 			d="${boot_decomp^^}"
 			ot-kernel_y_configopt "CONFIG_KERNEL_${d}"
 			if [[ "${d}" != "UNCOMPRESSED" ]] ; then
