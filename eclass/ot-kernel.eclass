@@ -2413,6 +2413,122 @@ eerror
 			einfo "Using manual setting for compress modules"
 		fi
 
+		# Allow to customize and trim LSMs without running the menuconfig in unattended install.
+		local ot_kernel_lsms_choice
+		if (( ${default_config} == 1 )) && [[ -z "${OT_KERNEL_LSMS}" ]] ; then
+			ot_kernel_lsms_choice="auto"
+		else
+			ot_kernel_lsms_choice="${OT_KERNEL_LSMS:-manual}"
+		fi
+		local ot_kernel_lsms=()
+		if [[ "${ot_kernel_lsms_choice}" == "manual" ]] ; then
+			einfo "Using the manual LSM settings"
+		elif [[ "${ot_kernel_lsms_choice}" == "default" ]] ; then
+			einfo "Using the default LSM settings"
+			OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
+			ot_kernel_lsms="integrity,selinux,bpf" # Equivalent upstream settings
+		elif [[ "${ot_kernel_lsms_choice}" == "auto" ]] ; then
+			einfo "Using the auto LSM settings"
+			OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
+			ot_kernel_lsms="integrity"
+			has_version "sys-apps/apparmor" && ot_kernel_lsms+=",apparmor"
+			has_version "sys-apps/tomoyo-tools" && ot_kernel_lsms+=",tomoyo"
+			has_version "sec-policy/selinux-base" && ot_kernel_lsms+=",selinux"
+			ot_kernel_lsms+=",bpf"
+		else
+			ot_kernel_lsms="${OT_KERNEL_LSMS}"
+			ot_kernel_lsms="${ot_kernel_lsms,,}"
+			ot_kernel_lsms="${ot_kernel_lsms// /}"
+			einfo "Using the custom LSM settings:  ${ot_kernel_lsms}"
+		fi
+
+		if [[ -n "${ot_kernel_lsms}" ]] ; then
+			unset LSM_MODULES
+			declare -A LSM_MODULES=(
+				[landlock]="LANDLOCK"
+				[lockdown]="LOCKDOWN_LSM"
+				[yama]="YAMA"
+				[loadpin]="LOADPIN"
+				[safesetid]="SAFESETID"
+				[integrity]="INTEGRITY"
+				[smack]="SMACK"
+				[bpf]="DAC"
+				[apparmor]="APPARMOR"
+				[tomoyo]="TOMOYO"
+				[selinux]="SELINUX"
+			)
+
+			unset LSM_LEGACY
+			declare -A LSM_LEGACY=(
+				[selinux]="SELINUX"
+				[smack]="SMACK"
+				[tomoyo]="TOMOYO"
+				[apparmor]="APPARMOR"
+				[bpf]="DAC"
+			)
+
+			ot-kernel_unset_configopt "CONFIG_LSM"
+
+			# Enable modules
+			local l
+			for l in ${LSM_MODULES[@]} ; do
+				ot-kernel_unset_configopt "SECURITY_SELINUX_${l^^}" # Reset
+			done
+			IFS=','
+			for l in ${ot_kernel_lsms[@]} ; do
+				local k="${LSM_MODULES[${l}]}"
+				ot-kernel_y_configopt "SECURITY_SELINUX_${l^^}" # Add requested
+			done
+			IFS=$' \n\t'
+
+			for l in ${LSM_LEGACY[@]} ; do
+				ot-kernel_unset_configopt "DEFAULT_SECURITY_${l}" # Reset
+			done
+
+			# Pick the default legacy
+			l=$(echo "${ot_kernel_lsms,,}" | sed -e "s| ||g" | grep -E -o -e "(selinux|smack|tomoyo|apparmor|bpf)" | head -n 1)
+			ot-kernel_unset_configopt "DEFAULT_SECURITY_${LSM_LEGACY[${l}]}" # Implied
+
+			local lsms=()
+			# This is the upstream order but allow user to customize it
+			[[ "${ot_kernel_lsms}" =~ "landlock" ]] && lsms+=( landlock )
+			[[ "${ot_kernel_lsms}" =~ "lockdown" ]] && lsms+=( lockdown )
+			[[ "${ot_kernel_lsms}" =~ "yama" ]] && lsms+=( yama )
+			[[ "${ot_kernel_lsms}" =~ "loadpin" ]] && lsms+=( loadpin )
+			[[ "${ot_kernel_lsms}" =~ "safesetid" ]] && lsms+=( safesetid )
+			[[ "${ot_kernel_lsms}" =~ "integrity" ]] && lsms+=( integrity )
+			if [[ "${ot_kernel_lsms}" =~ "smack" ]] ; then
+				lsms+=( smack )
+				[[ "${ot_kernel_lsms}" =~ "selinux" ]] && lsms+=( selinux )
+				[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( tomoyo )
+				[[ "${ot_kernel_lsms}" =~ "apparmor" ]] && lsms+=( apparmor )
+				lsms+=( bpf )
+			elif [[ "${ot_kernel_lsms}" =~ "apparmor" ]] ; then
+				lsms+=( apparmor )
+				[[ "${ot_kernel_lsms}" =~ "selinux" ]] && lsms+=( selinux )
+				[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( smack )
+				[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( tomoyo )
+				lsms+=( bpf )
+			elif [[ "${ot_kernel_lsms}" =~ "tomoyo" ]] ; then
+				lsms+=( tomoyo )
+				lsms+=( bpf )
+			elif [[ "${ot_kernel_lsms}" =~ "selinux" ]] ; then
+				lsms+=( selinux )
+				[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( smack )
+				[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( tomoyo )
+				[[ "${ot_kernel_lsms}" =~ "apparmor" ]] && lsms+=( apparmor )
+				lsms+=( bpf )
+			elif [[ "${ot_kernel_lsms}" =~ "bpf" ]] ; then
+				lsms+=( bpf )
+			fi
+
+			if [[ "${OT_KERNEL_USE_LSM_UPSTREAM_ORDER}" == "1" ]] ; then
+				ot-kernel_set_configopt "CONFIG_LSM" "\"${lsms[@]}\""
+			else
+				ot-kernel_set_configopt "CONFIG_LSM" "\"${ot_kernel_lsms}\""
+			fi
+		fi
+
 		if (( ${default_config} == 1 )) ; then
 			einfo "Saving the new config for ${extraversion} to ${default_config}"
 			insinto /etc/kernels
@@ -2829,7 +2945,6 @@ ot-kernel_src_install() {
 		fi
 	fi
 
-	# Sanitize file permissions
 	local b
 	for b in $(build_pairs) ; do
 		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
@@ -2881,7 +2996,7 @@ ot-kernel_src_install() {
 
 		einfo "Installing the kernel sources"
 		insinto /usr/src
-		doins -r "${BUILD_DIR}"
+		doins -r "${BUILD_DIR}" # Sanitize file permissions
 	done
 
 	einfo "Restoring +x bit"
@@ -2895,9 +3010,8 @@ ot-kernel_src_install() {
 	done
 
 	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
-		# Sanitize
 		insinto "${OT_KERNEL_PGO_DATA_DIR}"
-		doins -r "${WORKDIR}/pgodata/"*
+		doins -r "${WORKDIR}/pgodata/"* # Sanitize file permissions
 	fi
 }
 
@@ -2914,7 +3028,7 @@ ot-kernel_pkg_postinst() {
 		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
-		if [[ -e "${BUILD_DIR}/signing_key.pem" ]] ; then
+		if [[ -e "${BUILD_DIR}/certs/signing_key.pem" ]] ; then
 			einfo "Secure wiping the private key in build directory for ${extraversion}"
 			# Secure wipe the private keys if custom config bypassing envvars as well
 			shred -f "${BUILD_DIR}/signing_key.pem"
@@ -2924,9 +3038,9 @@ ot-kernel_pkg_postinst() {
 	local main_extraversion=${OT_KERNEL_PRIMARY_EXTRAVERSION:-ot}
 	local main_extraversion_with_tresor=${OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR:-ot}
 
-	local highest_pv=$(
+	local highest_pv=$( \
 		$(echo $(best_version "sys-kernel/ot-sources" \
-			| sed -e "s|sys-kernel/ot-sources-||"))
+			| sed -e "s|sys-kernel/ot-sources-||")) \
 	)
 
 	if use symlink ; then
@@ -2942,15 +3056,10 @@ einfo
 
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
-			local highest_tresor_pv=$(
+			local highest_tresor_pv=$( \
 				$(echo $(best_version "sys-kernel/ot-sources[tresor_sysfs]" \
-					| sed -e "s|sys-kernel/ot-sources-||"))
+					| sed -e "s|sys-kernel/ot-sources-||")) \
 			)
-			local b
-			for b in $(build_pairs) ; do
-				local extraversion=$(echo "${b}" | cut -f 1 -d ":" \
-					| sed -r -e "s|^[-]+||g")
-			done
 
 			# Avoid symlink collisons between multiple installs.
 			dosym ../../../tresor_sysfs \
@@ -3310,7 +3419,7 @@ einfo
 ewarn
 ewarn "The private key in the /usr/src/linux/certs folder should be kept in a"
 ewarn "safe space (e.g. by keychain encrypted storage or by steganography) or"
-ewarn "be destroyed."
+ewarn "be cryptographically securely destroyed."
 ewarn
 ewarn "Keep the private key if you have external modules that still need to be"
 ewarn "signed.  Any driver not signed will be rejected by the kernel."

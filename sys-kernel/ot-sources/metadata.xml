@@ -313,9 +313,9 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
       in the certs folder of the kernel sources.  These keys will be installed
       but the private key should be copied to a secure place such a encrypted
       store contained in a keychain or by steganography.  The installed
-      private key .pem file should be destroyed with shred (or any secure
-      delete program).  This is to prevent recovery and reuse of they private
-      key by an untrusted user.
+      private key .pem file should be cryptographically securely destroyed
+      with shred (or any secure delete program).  This is to prevent recovery
+      and reuse of they private key by an untrusted user.
     
     OT_KERNEL_MODULES_COMPRESSOR_X_Y (optional) -- compresses the kernel
     modules.
@@ -348,8 +348,39 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     OT_KERNEL_SHARED_KEY -- The absolute path to a .x509 shared key file
     used for module signing.
 
+    OT_KERNEL_LSMS -- Enable and set the order for LSM (Linux Security Modules)
+
+    Acceptable multi values: apparmor, bpf, integrity, landlock, loadpin, lockdown
+    safesetid, selinux, smack, tomoyo, yama.
+
+    Acceptable general values:  auto, default, manual
+      auto -- adds LSMs based on packages installed with default subsettings
+      default -- Uses "integrity,selinux,bpf" with default subsettings
+        equivalent to upstream defaults
+      manual -- Uses previously manually set settings
+
+    The "acceptable multi values" and "acceptable general values" are mutually
+    exclusive.  In acceptable multi values listing, the LSMs needs to be comma
+    separated and mutiple LSMs can be used.  In acceptable general values
+    only one value can be used which are associated with a precreated
+    listing.
+
+    For a newly generated kernel .config with unset OT_KERNEL_LSMS, it will
+    apply auto setting.  For previous installs with OT_KERNEL_LSMS is unset, it
+    will apply manual.
+
+
+    OT_KERNEL_USE_LSM_UPSTREAM_ORDER -- Use the upstream init order
+    for LSM modules.
+    Accepted values: 1 to use upstream order, 0 to use custom order.
+    The custom order (0) can optionally apply to "acceptable multi values"
+    configation and auto in acceptable general values.
+
     Examples:
 
+    OT_KERNEL_USE_LSM_UPSTREAM_ORDER=1
+    OT_KERNEL_LSMS="auto"
+    OT_KERNEL_LSMS="integrity,apparmor,selinux"
     OT_KERNEL_VERBOSITY=1
     OT_KERNEL_MENUCONFIG="menuconfig" # Code is disabled but looking for solutions to make it work properly
     OT_KERNEL_BUILDCONFIGS_5_4="ot:build:/etc/kernels/kernel-config-5.4-ot-x86_64:x86_64:x86_64-pc-linux-gnu:muqss:lz4"
