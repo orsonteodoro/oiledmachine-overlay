@@ -303,8 +303,20 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     it is recommended to sign external modules or these modules may no
     longer work.  External module signing is especially important especially
     for kernel graphics modules if module signing is enabled.  It is not
-    forced default on to prevent any unprepared disruption.
+    forced default on to prevent any unprepared disruption.  See
+    OT_KERNEL_PRIVATE_KEY section also.
 
+      IMPORTANT:
+
+      When OT_KERNEL_SIGN_MODULES is enabled, if the OT_KERNEL_PRIVATE_KEY and
+      OT_KERNEL_SHARED_KEY are not specified, the kernel will autogenerate keys
+      in the certs folder of the kernel sources.  These keys will be installed
+      but the private key should be copied to a secure place such a encrypted
+      store contained in a keychain or by steganography.  The installed
+      private key .pem file should be destroyed with shred (or any secure
+      delete program).  This is to prevent recovery and reuse of they private
+      key by an untrusted user.
+    
     OT_KERNEL_MODULES_COMPRESSOR_X_Y (optional) -- compresses the kernel
     modules.
     Acceptable values:  NONE, GZIP, XZ, ZSTD.  If unset, it will use the
@@ -322,6 +334,19 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     - Level 2 mitigations are changes that severely place security over
     convenience which may take away ability to use certain hardware or have
     severe performance degration.
+
+    OT_KERNEL_PRIVATE_KEY -- The absolute path to a .pem private key file
+    used for module signing.  This should only be set in the command line
+    not saved in any make.conf or not saved any per-package configuration
+    file.  When done the variable should be overritten a new string and
+    then unset.
+
+      Example:
+      OT_KERNEL_PRIVATE_KEY=$(dd if=/dev/urandom of=/dev/stdout bs=255 count=1 status=none | base64 | tr "\n" " " | sed -e "s| ||g")
+      unset OT_KERNEL_PRIVATE_KEY
+
+    OT_KERNEL_SHARED_KEY -- The absolute path to a .x509 shared key file
+    used for module signing.
 
     Examples:
 
@@ -384,7 +409,6 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     UNCOMPRESSED.  It is recommended to use lz4 or zstd.  However, if you are
     using x32 ABI bzip2 works but do not use lzma.  If empty, it will choose
     manual.  ZSTD is only allowed in 5.10+.
-    
 
     Please read the metadata.xml comments for more info.
   </longdescription>

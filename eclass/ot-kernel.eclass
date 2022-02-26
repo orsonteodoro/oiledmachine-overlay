@@ -1724,6 +1724,33 @@ ewarn
 		if use disable_debug ; then
 			chmod +x "${BUILD_DIR}/disable_debug" || die
 		fi
+		if [[ -n "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
+			[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing .pem private key"
+			[[ -e "${OT_KERNEL_SHARED_KEY}" ]] || die "Missing .x509 shared key"
+			einfo "Copying private/shared signing keys"
+			cp -a "${OT_KERNEL_PRIVATE_KEY}" "${BUILD_DIR}/certs/signing_key.pem" \
+				|| die "Cannot copy private key"
+			cp -a "${OT_KERNEL_SHARED_KEY}" "${BUILD_DIR}/certs/signing_key.x509" \
+				|| die "Cannot copy shared key"
+		fi
+	done
+	if [[ -n "${PEM_PATH}" ]] ; then
+		register_die_hook ot-kernel_clear_keys
+	fi
+}
+
+# @FUNCTION:  ot-kernel_clear_keys
+# @DESCRIPTION:
+# Wipe the keys upon build failure
+ot-kernel_clear_keys() {
+	ewarn "Wiping private keys"
+	local keys=(
+		find "${WORKDIR}" -name "signing_key.pem" -o -name "signing_key.x509"
+	)
+	ewarn "Securely wiping private keys"
+	for p in ${keys[@]} ; do
+		shred -f "${p}"
+		sync
 	done
 }
 
@@ -2760,6 +2787,8 @@ ot-kernel_src_compile() {
 	done
 }
 
+
+
 # @FUNCTION: ot-kernel_keep_keys
 # @DESCRIPTION:
 # Saves keys for external modules
@@ -2824,15 +2853,12 @@ ot-kernel_src_install() {
 			if [[ "${arch}" =~ "arm" ]] ; then
 				make dtbs_install "${args[@]}" || die
 			fi
-			[[ "${OT_KERNEL_SIGN_MODULES}" == "1" ]] && \
+			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
 				ot-kernel_keep_keys
+			fi
 			einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
 			make mrproper ARCH=${arch} || die
-			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" ]] ; then
-				ewarn
-				ewarn "The private key should be kept in a safe space (e.g. keychain encrypted storage) or destroyed."
-				ewarn "Keep the private key if you have external modules that still need to be signed."
-				ewarn
+			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
 				ot-kernel_restore_keys
 			fi
 			ewarn "Key signing"
@@ -2879,6 +2905,19 @@ ot-kernel_src_install() {
 # ot-kernel_pkg_postinst_cb - callback if any to handle after emerge phase
 #
 ot-kernel_pkg_postinst() {
+	local b
+	for b in $(build_pairs) ; do
+		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
+		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
+		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		cd "${BUILD_DIR}" || die
+		if [[ -e "${BUILD_DIR}/signing_key.pem" ]] ; then
+			einfo "Secure wiping the private key in build directory for ${extraversion}"
+			# Secure wipe the private keys if custom config bypassing envvars as well
+			shred -f "${BUILD_DIR}/signing_key.pem"
+		fi
+	done
+
 	local main_extraversion=${OT_KERNEL_PRIMARY_EXTRAVERSION:-ot}
 	local main_extraversion_with_tresor=${OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR:-ot}
 
@@ -3267,9 +3306,11 @@ einfo
 	if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" ]] ; then
 ewarn
 ewarn "The private key in the /usr/src/linux/certs folder should be kept in a"
-ewarn "safe space (e.g. keychain encrypted storage) or destroyed."
+ewarn "safe space (e.g. by keychain encrypted storage or by steganography) or"
+ewarn "be destroyed."
+ewarn
 ewarn "Keep the private key if you have external modules that still need to be"
-ewarn "signed."
+ewarn "signed.  Any driver not signed will be rejected by the kernel."
 ewarn
 	fi
 }
