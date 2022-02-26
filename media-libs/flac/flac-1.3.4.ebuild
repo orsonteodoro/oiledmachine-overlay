@@ -12,7 +12,7 @@ SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.xz"
 
 LICENSE="BSD FDL-1.2 GPL-2 LGPL-2.1"
 SLOT="0"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 IUSE="+cxx debug ogg cpu_flags_ppc_altivec cpu_flags_ppc_vsx cpu_flags_x86_sse static-libs"
 IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack"
 RDEPEND="ogg? ( >=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}] )"
@@ -123,12 +123,11 @@ BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14)
 BDEPEND+="
 	app-arch/xz-utils
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	sys-devel/gettext
 	abi_x86_32? ( dev-lang/nasm )
-	!elibc_uclibc? ( sys-devel/gettext )
 "
 
 PATCHES=(
-	"${FILESDIR}/${P}-fix-zero-first-byte-md5sum-check.patch"
 	"${FILESDIR}/${PN}-1.3.3-fPIC.patch"
 )
 S="${WORKDIR}/${P}"
