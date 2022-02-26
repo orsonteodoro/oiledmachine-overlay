@@ -1743,15 +1743,18 @@ ewarn
 # @DESCRIPTION:
 # Wipe the keys upon build failure
 ot-kernel_clear_keys() {
-	ewarn "Wiping private keys"
-	local keys=(
-		find "${WORKDIR}" -name "signing_key.pem" -o -name "signing_key.x509"
-	)
-	ewarn "Securely wiping private keys"
-	for p in ${keys[@]} ; do
-		shred -f "${p}"
-		sync
+	local keys=()
+	local b
+	for b in $(build_pairs) ; do
+		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
+		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		local p="${BUILD_DIR}/certs/signing_key.pem"
+		if [[ -e "${p}" ]] ; then
+			ewarn "Securely wiping private keys for ${extraversion}"
+			shred -f "${p}"
+		fi
 	done
+	sync
 }
 
 # Constant enums
