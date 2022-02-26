@@ -2822,7 +2822,7 @@ ot-kernel_src_install() {
 	done
 
 	einfo "Restoring +x bit"
-	for f in $(find "${ED}"/ -type f -executable) ; do
+	for f in $(find "${ED}"/ -type f) ; do
 		local is_exe=0
 		file "${f}" | grep -q -F -e "executable" && is_exe=1
 		file "${f}" | grep -q -E -e "Linux kernel.*executable" && is_exe=0
@@ -2850,7 +2850,7 @@ ot-kernel_pkg_postinst() {
 
 	local highest_pv=$(
 		$(echo $(best_version "sys-kernel/ot-sources" \
-			| sed -e "sys-kernel/ot-sources-"))
+			| sed -e "s|sys-kernel/ot-sources-||"))
 	)
 
 	if use symlink ; then
@@ -2868,7 +2868,7 @@ einfo
 		if use tresor_sysfs ; then
 			local highest_tresor_pv=$(
 				$(echo $(best_version "sys-kernel/ot-sources[tresor_sysfs]" \
-					| sed -e "sys-kernel/ot-sources-"))
+					| sed -e "s|sys-kernel/ot-sources-||"))
 			)
 			local b
 			for b in $(build_pairs) ; do
