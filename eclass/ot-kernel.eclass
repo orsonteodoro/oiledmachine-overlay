@@ -2734,6 +2734,13 @@ ot-kernel_src_install() {
 			|| "${build_flag,,}" == "yes" \
 			|| "${build_flag,,}" == "build" \
 		]] ; then
+			local args=(
+				INSTALL_MOD_PATH="${ED}"
+				INSTALL_PATH="${ED}/boot"
+				${MAKEOPTS}
+				ARCH=${arch}
+			)
+
 			ot-kernel-make_install
 			einfo "Running:  make modules_install ${args[@]}"
 			make modules_install "${args[@]}" || die
