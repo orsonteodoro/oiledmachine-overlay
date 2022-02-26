@@ -2760,6 +2760,30 @@ ot-kernel_src_compile() {
 	done
 }
 
+# @FUNCTION: ot-kernel_keep_keys
+# @DESCRIPTION:
+# Saves keys for external modules
+ot-kernel_keep_keys() {
+	local d="${T}/keys/${extraversion}-${arch}"
+	mkdir -p "${d}" || die
+	cp -a certs/signing_key.pem \		# private key
+		certs/signing_key.x509 \	# public key
+		certs/x509.genkey \		# key geneneration config file
+		"${d}" || die
+}
+
+# @FUNCTION: ot-kernel_restore_keys
+# @DESCRIPTION:
+# Restores keys in the certs folder
+ot-kernel_restore_keys() {
+	local s="${T}/keys/${extraversion}-${arch}"
+	cp -a "${s}/certs/signing_key.pem" \		# private key
+		"${s}/certs/signing_key.x509" \		# public key
+		"${s}/certs/x509.genkey" \		# key geneneration config file
+		"${BUILD_DIR}/certs" || die
+	chmod 0600 "${BUILD_DIR}/certs/signing_key.pem" || die
+}
+
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
@@ -2800,8 +2824,18 @@ ot-kernel_src_install() {
 			if [[ "${arch}" =~ "arm" ]] ; then
 				make dtbs_install "${args[@]}" || die
 			fi
+			[[ "${OT_KERNEL_SIGN_MODULES}" == "1" ]] && \
+				ot-kernel_keep_keys
 			einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
 			make mrproper ARCH=${arch} || die
+			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" ]] ; then
+				ewarn
+				ewarn "The private key should be kept in a safe space (e.g. keychain encrypted storage) or destroyed."
+				ewarn "Keep the private key if you have external modules that still need to be signed."
+				ewarn
+				ot-kernel_restore_keys
+			fi
+			ewarn "Key signing"
 			local pgo_phase
 			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
 				pgo_phase=${PGO_PHASE_PGI}
@@ -3229,5 +3263,13 @@ einfo
 einfo "You can use your own training scripts or test suites to perform PGO training."
 einfo
 		fi
+	fi
+	if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" ]] ; then
+ewarn
+ewarn "The private key in the /usr/src/linux/certs folder should be kept in a"
+ewarn "safe space (e.g. keychain encrypted storage) or destroyed."
+ewarn "Keep the private key if you have external modules that still need to be"
+ewarn "signed."
+ewarn
 	fi
 }
