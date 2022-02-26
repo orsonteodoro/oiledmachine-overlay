@@ -1946,7 +1946,7 @@ ot-kernel_src_configure() {
 				ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
 			fi
 			ot-kernel_y_configopt "CONFIG_SECURITY_DMESG_RESTRICT" # Only partial
-			ewarn "GDB/KGDB_KDB is going to be disabled."
+			ewarn "KDB/KGDB_KDB is going to be disabled."
 			ot-kernel_unset_configopt "CONFIG_KGDB"
 			ot-kernel_unset_configopt "CONFIG_KGDB_KDB"
 
@@ -1959,6 +1959,7 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_HIBERNATION"
 
 			# Sanitize memory
+			ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 			ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
