@@ -296,7 +296,7 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR (optional) -- sets the primary
     extraversion for tresor_sysfs USE flag.  If unset, it defaults to ot.
 
-    OT_KERNEL_SIGN_MODULES (optional) -- signs kernel modules with sha256.
+    OT_KERNEL_SIGN_MODULES (optional) -- signs kernel modules with sha384.
     Set to 1 to sign or set to 0 to use manual setting (default).  When,
     a new kernel config is generated, module signing is disabled; but it
     can be signed by setting this to 1.  If module signing is enabled,

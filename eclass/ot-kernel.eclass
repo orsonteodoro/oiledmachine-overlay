@@ -2333,18 +2333,18 @@ eerror
 		# The default profile does not have module signing default on.
 		if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" ]] ; then
 			einfo "Changing config to auto-signed modules with SHA256"
+			ot-kernel_y_configopt "CONFIG_MODULE_SIG_FORMAT"
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG"
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG_ALL"
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG_FORCE"
-			local sign_algs=(SHA1 SHA224 SHA256 SHA384 SHA512)
 			local alg
 			for alg in ${sign_algs[@]} ; do
 				ot-kernel_n_configopt "CONFIG_MODULE_SIG_${alg}" # Reset
 				ot-kernel_n_configopt "CONFIG_CRYPTO_${alg}" # Reset
 			done
-			ot-kernel_y_configopt "CONFIG_MODULE_SIG_SHA256"
-			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256"
-			ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"${alg,,}\""
+			ot-kernel_y_configopt "CONFIG_MODULE_SIG_SHA384"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA384"
+			ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"sha384\""
 		else
 			einfo "Using manual setting for auto-signed modules"
 		fi
