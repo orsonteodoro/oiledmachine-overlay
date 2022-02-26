@@ -1956,6 +1956,11 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		fi
 
+		# Boot loader protection
+		if has_version "sys-boot/tboot" ; then
+			ot-kernel_y_configopt "CONFIG_INTEL_TXT"
+		fi
+
 		# Cold boot attack mitigation
 		# This section is incomplete and a Work In Progress (WIP)
 		# The problem is common to many full disk encryption implementations.
