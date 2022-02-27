@@ -1831,14 +1831,14 @@ ot-kernel_src_configure() {
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
 		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
-		[[ -z "${boot_decomp}" ]] && boot_decomp="manual"
+		#[[ -z "${boot_decomp}" ]] && boot_decomp="manual"
 		[[ -z "${extraversion}" ]] && die "extraversion cannot be empty"
 		[[ -z "${build_flag}" ]] && die "build_flag cannot be empty"
 		[[ -z "${config}" ]] && die "config cannot be empty"
 		[[ -z "${arch}" ]] && die "arch cannot be empty"
 		[[ -z "${target_triple}" ]] && die "target_triple cannot be empty"
 		[[ -z "${cpu_sched}" ]] && die "cpu_sched cannot be empty"
-		[[ -z "${boot_decomp}" ]] && die "boot_decomp cannot be empty"
+		#[[ -z "${boot_decomp}" ]] && die "boot_decomp cannot be empty"
 
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
@@ -1865,12 +1865,14 @@ ot-kernel_src_configure() {
 #			make ${OT_MENUCONFIG_PREFERENCE} "${args[@]}" || die
 #		fi
 
-		local default_config=0
+		local is_default_config=0
 		if [[ ! -e "${path_config}" ]] ; then
 			ewarn "Missing ${path_config} so generating a new default config."
 			make defconfig "${args[@]}" || die
-			default_config=1
-			boot_decomp="default"
+			is_default_config=1
+			[[ -z "${boot_decomp}" ]] && boot_decomp="default" # Reason why is for compatibility issues.
+		else
+			[[ -z "${boot_decomp}" ]] && boot_decomp="manual" # Assumes it was tested and working.
 		fi
 
 		einfo
@@ -1971,12 +1973,12 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 			# Don't use lscpu/cpuinfo autodetect if using distcc or
 			# cross-compile but use the config itself to guestimate.
-			if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${config}" ; then
+			if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
 				einfo "Adding IOMMU support (VT-d)"
 				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 				ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
 			fi
-			if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${config}" ; then
+			if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
 				einfo "Adding IOMMU support (AMD-Vi)"
 				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 				ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
@@ -2240,7 +2242,7 @@ ot-kernel_src_configure() {
 			local microarches=(
 				$(grep -r -e "config M" "${BUILD_DIR}/arch/x86/Kconfig.cpu" | sed -e "s|config ||g")
 			)
-			if (( ${default_config} == 1 )) ; then
+			if (( ${is_default_config} == 1 )) ; then
 				einfo
 				einfo "Detected a new default config.  Changing from -mtune=generic -> -march=native."
 				einfo
@@ -2421,7 +2423,7 @@ eerror
 
 		# Allow to customize and trim LSMs without running the menuconfig in unattended install.
 		local ot_kernel_lsms_choice
-		if (( ${default_config} == 1 )) && [[ -z "${OT_KERNEL_LSMS}" ]] ; then
+		if (( ${is_default_config} == 1 )) && [[ -z "${OT_KERNEL_LSMS}" ]] ; then
 			ot_kernel_lsms_choice="auto"
 		else
 			ot_kernel_lsms_choice="${OT_KERNEL_LSMS:-manual}"
@@ -2429,6 +2431,7 @@ eerror
 		local ot_kernel_lsms=()
 		if [[ "${ot_kernel_lsms_choice}" == "manual" ]] ; then
 			einfo "Using the manual LSM settings"
+			einfo "LSMs:  "$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
 		elif [[ "${ot_kernel_lsms_choice}" == "default" ]] ; then
 			einfo "Using the default LSM settings"
 			OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
@@ -2478,12 +2481,12 @@ eerror
 			# Enable modules
 			local l
 			for l in ${LSM_MODULES[@]} ; do
-				ot-kernel_unset_configopt "SECURITY_${l^^}" # Reset
+				ot-kernel_unset_configopt "CONFIG_SECURITY_${l^^}" # Reset
 			done
 			IFS=','
 			for l in ${ot_kernel_lsms[@]} ; do
 				local k="${LSM_MODULES[${l}]}"
-				ot-kernel_y_configopt "SECURITY_${k^^}" # Add requested
+				ot-kernel_y_configopt "CONFIG_SECURITY_${k^^}" # Add requested
 			done
 			IFS=$' \n\t'
 
@@ -2493,7 +2496,10 @@ eerror
 
 			# Pick the default legacy
 			l=$(echo "${ot_kernel_lsms,,}" | sed -e "s| ||g" | grep -E -o -e "(selinux|smack|tomoyo|apparmor|bpf)" | head -n 1)
-			ot-kernel_unset_configopt "DEFAULT_SECURITY_${LSM_LEGACY[${l}]}" # Implied
+			einfo "ot_kernel_lsms=${ot_kernel_lsms,,}"
+			einfo "Default LSM: ${l}"
+			einfo "Default LSM: DEFAULT_SECURITY_${LSM_LEGACY[${l}]}"
+			ot-kernel_y_configopt "DEFAULT_SECURITY_${LSM_LEGACY[${l}]}" # Implied
 
 			local lsms=()
 			# This is the upstream order but allow user to customize it
@@ -2529,13 +2535,16 @@ eerror
 			fi
 
 			if [[ "${OT_KERNEL_USE_LSM_UPSTREAM_ORDER}" == "1" ]] ; then
-				ot-kernel_set_configopt "CONFIG_LSM" "\"${lsms[@]}\""
+				local arg=$(echo "${lsms[@]}" | tr " " ",")
+				ot-kernel_set_configopt "CONFIG_LSM" "\"${arg}\""
+				einfo "LSMs:  ${arg}"
 			else
 				ot-kernel_set_configopt "CONFIG_LSM" "\"${ot_kernel_lsms}\""
+				einfo "LSMs:  ${ot_kernel_lsms}"
 			fi
 		fi
 
-		if (( ${default_config} == 1 )) ; then
+		if (( ${is_default_config} == 1 )) ; then
 			einfo "Saving the new config for ${extraversion} to ${default_config}"
 			insinto /etc/kernels
 			newins "${path_config}" $(basename "${default_config}")
@@ -2552,14 +2561,14 @@ eerror
 # Generate loop args for build sources
 build_pairs() {
 	local build_config_pairs=()
-	IFS=";"
+	IFS=';'
 	local build_configs_pair
 	local ot_kernel_build_configs="OT_KERNEL_BUILDCONFIGS_${K_MAJOR_MINOR/./_}_"
 	for build_configs_pair in ${!ot_kernel_build_configs} ; do
 		[[ -z "${build_configs_pair}" ]] && continue
 		echo "${build_configs_pair}"
 	done
-	IFS=' \t\n'
+	IFS=$' \t\n'
 }
 
 # @FUNCTION: ot-kernel_set_configopt
@@ -2582,7 +2591,7 @@ ot-kernel_set_configopt() {
 # Unsets the kernel option
 ot-kernel_unset_configopt() {
 	local opt="${1}"
-	sed -r -i -e "s/${opt}=[0-9a-zA-Z]+/# ${opt} is not set/g" "${path_config}" || die
+	sed -r -i -e "s/^${opt}=.*/# ${opt} is not set/g" "${path_config}" || die
 }
 
 # @FUNCTION: ot-kernel_y_configopt
@@ -2604,7 +2613,7 @@ ot-kernel_y_configopt() {
 # Unset kernel config option
 ot-kernel_n_configopt() {
 	local opt="${1}"
-	sed -i -e "s|${opt}=y|# ${opt} is not set|g" "${path_config}" || die
+	sed -i -e "s|^${opt}=.*|# ${opt} is not set|g" "${path_config}" || die
 }
 
 get_llvm_slot() {
@@ -2890,6 +2899,7 @@ ot-kernel_src_compile() {
 		[[ -z "${target_triple}" ]] && die "target_triple cannot be empty"
 		[[ -z "${cpu_sched}" ]] && die "cpu_sched cannot be empty"
 
+		local path_config="${BUILD_DIR}/.config"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 
@@ -2900,7 +2910,7 @@ ot-kernel_src_compile() {
 		einfo "ARCH:  ${arch}"
 		einfo "Boot decompressor:  ${boot_decomp}"
 		einfo "Build flag:  ${build_flag}"
-		einfo "Config ABSPATH:  ${config}"
+		einfo "Config:  ${path_config}"
 		einfo "EXTRAVERSION:  ${extraversion}"
 		einfo "Target triple:  ${target_triple}"
 		einfo
