@@ -3010,8 +3010,9 @@ ot-kernel_src_install() {
 		doins -r "${BUILD_DIR}" # Sanitize file permissions
 	done
 
-	nforks=$(echo "${MAKEOPTS}" | grep -E -e "-j[ ]+[0-9]+" | grep -E -o "[0-9]")
+	local nforks=$(echo "${MAKEOPTS}" | grep -E -e "-j[ ]*[0-9]+" | grep -E -o "[0-9]")
 	[[ -z "${nforks}" ]] && nforks=1
+	einfo "nforks:  ${nforks}"
 	einfo "Restoring +x bit"
 	for f in $(find "${ED}"/ -type f) ; do
 		(
@@ -3023,7 +3024,7 @@ ot-kernel_src_install() {
 			fi
 		) &
 		local njobs=$(jobs -p | wc -l)
-		if (( ${njobs} > ${nforks} )) ; then
+		if (( ${njobs} >= ${nforks} )) ; then
 # Waits for next job to complete instead of waiting on all to finish in order
 # to continue to the next job
 			wait -n
