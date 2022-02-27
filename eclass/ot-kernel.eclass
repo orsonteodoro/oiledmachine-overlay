@@ -2483,7 +2483,7 @@ eerror
 			IFS=','
 			for l in ${ot_kernel_lsms[@]} ; do
 				local k="${LSM_MODULES[${l}]}"
-				ot-kernel_y_configopt "SECURITY_${l^^}" # Add requested
+				ot-kernel_y_configopt "SECURITY_${k^^}" # Add requested
 			done
 			IFS=$' \n\t'
 
