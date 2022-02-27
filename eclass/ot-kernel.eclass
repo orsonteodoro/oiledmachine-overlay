@@ -1876,6 +1876,7 @@ ot-kernel_src_configure() {
 		einfo
 		einfo "Changing config options for -${extraversion}"
 		einfo
+		[[ -e "${path_config}" ]] || die ".config is missing"
 
 		# Every config check below may mod the default config.
 		if has bbrv2 ${IUSE_EFFECTIVE} && use bbrv2 ; then
@@ -2802,12 +2803,61 @@ ot-kernel_get_boot_decompressor() {
 	local BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 	local d
 	for d in ${decompressors[@]} ; do
-		if grep -q -E -e "^CONFIG_KERNEL_${d}=y" "${BUILD_DIR}/.config" ; then
+		if grep -q -E -e "^CONFIG_KERNEL_${d}=y" "${BUILD_DIR}/.config" 2>/dev/null ; then
 			echo -n "${d}"
 			return
 		fi
 	done
 	echo -n ""
+}
+
+# @FUNCTION: ot-kernel_build_kernel
+ot-kernel_build_kernel() {
+	if use build && [[ \
+		   "${build_flag}"   == "1" \
+		|| "${build_flag,,}" == "true" \
+		|| "${build_flag,,}" == "yes" \
+		|| "${build_flag,,}" == "build" \
+	]] ; then
+		[[ "${BUILD_DIR}/.config" ]] || die "Missing .config to build the kernel"
+		local llvm_slot=$(get_llvm_slot)
+		local pgo_phase
+		local pgo_phase_statefile="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
+		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
+		local profraw_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
+		local profdata_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
+		local pgo_phase=${PGO_PHASE_UNK}
+		if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
+			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
+			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
+				pgo_phase=${PGO_PHASE_PGI}
+			else
+				pgo_phase=$(cat "${pgo_phase_statefile}")
+			fi
+
+			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
+				einfo "Building PGI"
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_path}" ]] ; then
+				einfo "Merging PGT profiles"
+				mkdir -p "${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}" || die
+				cp -a "${profraw_spath}" "${profraw_dpath}" || die
+				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
+				llvm-profdata merge --output="${profraw_dpath}" \
+					"${profdata_dpath}" || die "PGO profile merging failed"
+				pgo_phase="${PGO_PHASE_PGO}"
+				echo "PGO" > "${pgo_phase_statefile}" || die
+				einfo "Building PGO"
+				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
+				einfo "Building PGO"
+				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
+			fi
+		fi
+
+		einfo "Running:  make all ${args[@]}"
+		dodir /boot
+		make all "${args[@]}" || die
+	fi
 }
 
 # @FUNCTION: ot-kernel_src_compile
@@ -2861,53 +2911,8 @@ ot-kernel_src_compile() {
 		fi
 		ot-kernel_setup_tc
 
-		local llvm_slot=$(get_llvm_slot)
-
 		ot-kernel_build_tresor_sysfs
-
-		local pgo_phase
-		local pgo_phase_statefile="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
-		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
-		local profraw_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
-		local profdata_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
-		local pgo_phase=${PGO_PHASE_UNK}
-		if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
-			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
-			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
-				pgo_phase=${PGO_PHASE_PGI}
-			else
-				pgo_phase=$(cat "${pgo_phase_statefile}")
-			fi
-
-			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
-				einfo "Building PGI"
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_path}" ]] ; then
-				einfo "Merging PGT profiles"
-				mkdir -p "${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}" || die
-				cp -a "${profraw_spath}" "${profraw_dpath}" || die
-				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
-				llvm-profdata merge --output="${profraw_dpath}" \
-					"${profdata_dpath}" || die "PGO profile merging failed"
-				pgo_phase="${PGO_PHASE_PGO}"
-				echo "PGO" > "${pgo_phase_statefile}" || die
-				einfo "Building PGO"
-				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
-				einfo "Building PGO"
-				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
-			fi
-		fi
-
-		if use build && [[ \
-			   "${build_flag}"   == "1" \
-			|| "${build_flag,,}" == "true" \
-			|| "${build_flag,,}" == "yes" \
-			|| "${build_flag,,}" == "build" \
-		]] ; then
-			einfo "Running:  make all ${args[@]}"
-			dodir /boot
-			make all "${args[@]}" || die
-		fi
+		ot-kernel_build_kernel
 	done
 }
 
@@ -2941,6 +2946,7 @@ ot-kernel_restore_keys() {
 # @DESCRIPTION:
 # Removes patch cruft.
 ot-kernel_src_install() {
+	einfo "Called ot-kernel_src_install"
 	export STRIP="/bin/true" # See https://github.com/torvalds/linux/blob/v5.16/init/Kconfig#L2169
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
@@ -3004,13 +3010,23 @@ ot-kernel_src_install() {
 		doins -r "${BUILD_DIR}" # Sanitize file permissions
 	done
 
+	nforks=$(echo "${MAKEOPTS}" | grep -E -e "-j[ ]+[0-9]+" | grep -E -o "[0-9]")
+	[[ -z "${nforks}" ]] && nforks=1
 	einfo "Restoring +x bit"
 	for f in $(find "${ED}"/ -type f) ; do
-		local is_exe=0
-		file "${f}" | grep -q -F -e "executable" && is_exe=1
-		file "${f}" | grep -q -E -e "Linux kernel.*executable" && is_exe=0
-		if (( ${is_exe} )) ; then
-			chmod 0755 "${f}" || die
+		(
+			local is_exe=0
+			file "${f}" | grep -q -F -e "executable" && is_exe=1
+			file "${f}" | grep -q -E -e "Linux kernel.*executable" && is_exe=0
+			if (( ${is_exe} )) ; then
+				chmod 0755 "${f}" || die
+			fi
+		) &
+		local njobs=$(jobs -p | wc -l)
+		if (( ${njobs} > ${nforks} )) ; then
+# Waits for next job to complete instead of waiting on all to finish in order
+# to continue to the next job
+			wait -n
 		fi
 	done
 
@@ -3043,10 +3059,8 @@ ot-kernel_pkg_postinst() {
 	local main_extraversion=${OT_KERNEL_PRIMARY_EXTRAVERSION:-ot}
 	local main_extraversion_with_tresor=${OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR:-ot}
 
-	local highest_pv=$( \
-		$(echo $(best_version "sys-kernel/ot-sources" \
-			| sed -e "s|sys-kernel/ot-sources-||")) \
-	)
+	local highest_pv=$(best_version "sys-kernel/ot-sources" \
+			| sed -e "s|sys-kernel/ot-sources-||")
 
 	if use symlink ; then
 		dosym ../../linux /usr/src/linux-${highest_pv}-${main_extraversion}
@@ -3061,10 +3075,8 @@ einfo
 
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
-			local highest_tresor_pv=$( \
-				$(echo $(best_version "sys-kernel/ot-sources[tresor_sysfs]" \
-					| sed -e "s|sys-kernel/ot-sources-||")) \
-			)
+			local highest_tresor_pv=$(best_version "sys-kernel/ot-sources[tresor_sysfs]" \
+				| sed -e "s|sys-kernel/ot-sources-||")
 
 			# Avoid symlink collisons between multiple installs.
 			dosym ../../../tresor_sysfs \
