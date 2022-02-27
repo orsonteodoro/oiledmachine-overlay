@@ -2924,10 +2924,16 @@ ot-kernel_src_compile() {
 ot-kernel_keep_keys() {
 	local d="${T}/keys/${extraversion}-${arch}"
 	mkdir -p "${d}" || die
-	cp -a certs/signing_key.pem \		# private key
-		certs/signing_key.x509 \	# public key
-		certs/x509.genkey \		# key geneneration config file
+	local files=(
+		certs/signing_key.pem		# private key
+		certs/signing_key.x509		# public key
+		certs/x509.genkey		# key geneneration config file
+	)
+	cp -a ${files[@]} \
 		"${d}" || die
+	einfo "Wiping keys securely"
+	shred -f ${files[@]} || die
+	sync
 }
 
 # @FUNCTION: ot-kernel_restore_keys
@@ -2935,11 +2941,17 @@ ot-kernel_keep_keys() {
 # Restores keys in the certs folder
 ot-kernel_restore_keys() {
 	local s="${T}/keys/${extraversion}-${arch}"
-	cp -a "${s}/certs/signing_key.pem" \		# private key
-		"${s}/certs/signing_key.x509" \		# public key
-		"${s}/certs/x509.genkey" \		# key geneneration config file
+	local files=(
+		"${s}/certs/signing_key.pem"		# private key
+		"${s}/certs/signing_key.x509"		# public key
+		"${s}/certs/x509.genkey"		# key geneneration config file
+	)
+	cp -a ${files[@]} \
 		"${BUILD_DIR}/certs" || die
 	chmod 0600 "${BUILD_DIR}/certs/signing_key.pem" || die
+	einfo "Wiping keys securely"
+	shred -f ${files[@]} || die
+	sync
 }
 
 # @FUNCTION: ot-kernel_src_install
@@ -3053,7 +3065,7 @@ ot-kernel_pkg_postinst() {
 		if [[ -e "${BUILD_DIR}/certs/signing_key.pem" ]] ; then
 			einfo "Secure wiping the private key in build directory for ${extraversion}"
 			# Secure wipe the private keys if custom config bypassing envvars as well
-			shred -f "${BUILD_DIR}/signing_key.pem"
+			shred -f "${BUILD_DIR}/certs/signing_key.pem" || die
 		fi
 	done
 
