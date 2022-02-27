@@ -312,10 +312,10 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
       OT_KERNEL_SHARED_KEY are not specified, the kernel will autogenerate keys
       in the certs folder of the kernel sources.  These keys will be installed
       but the private key should be copied to a secure place such a encrypted
-      store contained in a keychain or by steganography.  The installed
-      private key .pem file should be cryptographically securely destroyed
-      with shred (or any secure delete program).  This is to prevent recovery
-      and reuse of they private key by an untrusted user.
+      store contained in a keychain or by steganography; and then the installed
+      private key .pem file in the certs folder should be cryptographically
+      securely destroyed with shred (or any secure delete program).  This is to
+      prevent recovery and reuse of they private key by an untrusted user.
     
     OT_KERNEL_MODULES_COMPRESSOR_X_Y (optional) -- compresses the kernel
     modules.

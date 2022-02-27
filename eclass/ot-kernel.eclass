@@ -3449,7 +3449,8 @@ einfo
 ewarn
 ewarn "The private key in the /usr/src/linux/certs folder should be kept in a"
 ewarn "safe space (e.g. by keychain encrypted storage or by steganography) or"
-ewarn "be cryptographically securely destroyed."
+ewarn "be cryptographically securely destroyed in the certs folder after"
+ewarn "being transfered into secure storage."
 ewarn
 ewarn "Keep the private key if you have external modules that still need to be"
 ewarn "signed.  Any driver not signed will be rejected by the kernel."
