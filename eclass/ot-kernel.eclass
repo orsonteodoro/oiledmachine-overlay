@@ -3469,4 +3469,14 @@ ewarn "Keep the private key if you have external modules that still need to be"
 ewarn "signed.  Any driver not signed will be rejected by the kernel."
 ewarn
 	fi
+
+	local private_keys=(
+		$(find /var/tmp/portage/sys-kernel/ot-sources*/work/*/certs/ -maxdepth 1 -name "*.pem")
+		$(find /var/tmp/portage/sys-kernel/ot-sources*/work/*/ -maxdepth 1 -name "*.pem")
+	)
+	if (( ${#private_keys[@]} > 0 )) ; then
+elog "Detected the following previous install or partial build of the ${PN}"
+elog "package with these private keys: ${private_keys[@]}"
+elog "Please run shred -f on every file listed as a precaution."
+	fi
 }
