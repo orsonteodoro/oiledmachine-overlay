@@ -1748,6 +1748,15 @@ ot-kernel_clear_keys() {
 	# 2:  ${T}/keys/${extraversion}-${arch}/certs/signing_key -- temporary moved here before calling `make mrproper`
 	# 3:  /usr/src/linux/certs/signing_key -- stored by install for signing external modules
 	# 4:  Secured storage -- secured from malicious user or forensics
+
+	# HOWEVER, it will not wipe all keys in a power outage.  One solution is storing
+	# the private key first in a temporary secured storage, but it is in the clear
+	# in unprotected unencrypted memory through the compilation process.  The
+	# solution has not been implemented but may require Makefile changes to mitigate
+	# plaintext private key extracted through forensics in blackout scenario.  This
+	# is necessary if the key is a user supplied one.
+	# TODO/FIXME:  Secure the private key on brownout
+
 	local keys=()
 	local b
 	for b in $(build_pairs) ; do
@@ -3004,7 +3013,6 @@ ot-kernel_src_install() {
 			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
 				ot-kernel_restore_keys
 			fi
-			ewarn "Key signing"
 			local pgo_phase
 			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
 				pgo_phase=${PGO_PHASE_PGI}
