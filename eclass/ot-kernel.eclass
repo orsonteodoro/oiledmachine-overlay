@@ -13,7 +13,7 @@
 # The ot-kernel eclass defines common patching steps for any linux
 # kernel version.
 
-# bbr2:
+# BBR v2:
 #   https://github.com/google/bbr/compare/2c85ebc...v2alpha-2021-07-07
 #   https://github.com/google/bbr/compare/f428e49...v2alpha-2021-08-21
 #   2c85ebc f428e49 - comes from /Makefile commit history in v2alpha branch
@@ -21,6 +21,8 @@
 # BMQ CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/BMQ
 #   https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
+# CFI:
+#   https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
 # futex (aka futex_wait_multiple):
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
 # futex2:
@@ -77,8 +79,6 @@
 #   https://www1.informatik.uni-erlangen.de/tresor
 # UKSM:
 #   https://github.com/dolohow/uksm
-# cfi-5.15
-#   https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
 # zen-sauce, zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
@@ -143,7 +143,7 @@ S="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
 OT_KERNEL_BUILDCONFIGS_N_FIELDS=7
 
-inherit check-reqs flag-o-matic ot-kernel-cve toolchain-funcs
+inherit check-reqs flag-o-matic ot-kernel-cve ot-kernel-pkgflags ot-kernel-kutils toolchain-funcs
 
 BDEPEND+=" dev-util/patchutils
 	   sys-apps/grep[pcre]"
@@ -1743,6 +1743,11 @@ ewarn
 # @DESCRIPTION:
 # Wipe the keys upon build failure
 ot-kernel_clear_keys() {
+	# The private Key is stored in and reasons:
+	# 1:  ${BUILD_DIR}/certs/signing_key -- by either auto generated, or user supplied
+	# 2:  ${T}/keys/${extraversion}-${arch}/certs/signing_key -- temporary moved here before calling `make mrproper`
+	# 3:  /usr/src/linux/certs/signing_key -- stored by install for signing external modules
+	# 4:  Secured storage -- secured from malicious user or forensics
 	local keys=()
 	local b
 	for b in $(build_pairs) ; do
@@ -1753,6 +1758,8 @@ ot-kernel_clear_keys() {
 			ewarn "Securely wiping private keys for ${extraversion}"
 			shred -f "${p}"
 		fi
+		local k="${T}/keys/${extraversion}-${arch}/certs/signing_key.pem"
+		[[ -e "${k}" ]] && shred -f "${k}"
 	done
 	sync
 }
@@ -1808,6 +1815,14 @@ is_firmware_ready() {
 		die "Remove the entries from CONFIG_EXTRA_FIRMWARE in ${config}"
 	fi
 }
+
+# @FUNCTION: ot-kernel_enable-app-flags
+# @DESCRIPTION:
+# Auto-enables kernel config flags for installed ebuild-packages.
+ot-kernel_enable-app-flags() {
+	:
+}
+
 
 # @FUNCTION: ot-kernel_src_configure
 # @DESCRIPTION:
@@ -1957,6 +1972,27 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 			ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
+		fi
+
+                # Apply flags to minimize the time cost of reconfigure and rebuild time
+                # from a generated new kernel config.
+		ot-kernel-pkgflags_apply # Placed before security flags
+
+		if has genpatches ${IUSE_EFFECTIVE} && use genpatches ; then
+			# Debug
+			ot-kernel_unset_configopt "CONFIG_GENTOO_PRINT_FIRMWARE_INFO"
+
+			if has_version "sys-apps/openrc" ; then
+				ot-kernel_y_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
+			else
+				ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
+			fi
+
+			if has_version "sys-apps/systemd" ; then
+				ot-kernel_y_configopt "CONFIG_GENTOO_LINUX_INIT_SYSTEMD"
+			else
+				ot-kernel_unset_configopt "CONFIG_GENTOO_LINUX_INIT_SYSTEMD"
+			fi
 		fi
 
 		# Boot loader protection
@@ -2377,8 +2413,9 @@ eerror
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG_FORCE"
 			local alg
 			for alg in ${sign_algs[@]} ; do
-				ot-kernel_n_configopt "CONFIG_MODULE_SIG_${alg}" # Reset
-				ot-kernel_n_configopt "CONFIG_CRYPTO_${alg}" # Reset
+				# Reset
+				ot-kernel_n_configopt "CONFIG_MODULE_SIG_${alg}"
+				#ot-kernel_n_configopt "CONFIG_CRYPTO_${alg}" # Disabled because it can interfere with other modules.
 			done
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG_SHA384"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA384"
@@ -2569,51 +2606,6 @@ build_pairs() {
 		echo "${build_configs_pair}"
 	done
 	IFS=$' \t\n'
-}
-
-# @FUNCTION: ot-kernel_set_configopt
-# @DESCRIPTION:
-# Sets the kernel option with a string value or single char option
-ot-kernel_set_configopt() {
-	local opt="${1}"
-	local val="${2}"
-	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
-		sed -i -e "s|# ${opt} is not set|${opt}=${val}|g" "${path_config}" || die
-	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -i -r -e "s/${opt}=.*/${opt}=${val}/g" "${path_config}" || die
-	else
-		echo "${opt}=${val}" >> "${path_config}" || die
-	fi
-}
-
-# @FUNCTION: ot-kernel_unset_configopt
-# @DESCRIPTION:
-# Unsets the kernel option
-ot-kernel_unset_configopt() {
-	local opt="${1}"
-	sed -r -i -e "s/^${opt}=.*/# ${opt} is not set/g" "${path_config}" || die
-}
-
-# @FUNCTION: ot-kernel_y_configopt
-# @DESCRIPTION:
-# Sets the kernel option to y
-ot-kernel_y_configopt() {
-	local opt="${1}"
-	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
-		sed -i -e "s|# ${opt} is not set|${opt}=y|g" "${path_config}" || die
-	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -i -r -e "s/${opt}=[y|n|m]/${opt}=y/g" "${path_config}" || die
-	else
-		echo "${opt}=y" >> "${path_config}" || die
-	fi
-}
-
-# @FUNCTION: ot-kernel_n_configopt
-# @DESCRIPTION:
-# Unset kernel config option
-ot-kernel_n_configopt() {
-	local opt="${1}"
-	sed -i -e "s|^${opt}=.*|# ${opt} is not set|g" "${path_config}" || die
 }
 
 get_llvm_slot() {
@@ -3086,7 +3078,8 @@ ot-kernel_pkg_postinst() {
 			| sed -e "s|sys-kernel/ot-sources-||")
 
 	if use symlink ; then
-		dosym ../../linux /usr/src/linux-${highest_pv}-${main_extraversion}
+		# dosym src_relpath_real dest_abspath_symlink
+		dosym linux-${highest_pv}-${main_extraversion} /usr/src/linux
 	fi
 
 	if use disable_debug ; then
@@ -3102,8 +3095,10 @@ einfo
 				| sed -e "s|sys-kernel/ot-sources-||")
 
 			# Avoid symlink collisons between multiple installs.
-			dosym ../../../tresor_sysfs \
-/usr/src/linux-${highest_tresor_pv}-${main_extraversion_with_tresor}/tresor_sysfs
+			# dosym src_relpath_real dest_abspath_symlink
+			dosym \
+../../usr/src/linux-${highest_tresor_pv}-${main_extraversion_with_tresor}/tresor_sysfs \
+				/usr/bin/tresor_sysfs
 			# It's the same hash for 5.1 and 5.0.13 for tresor_sysfs.
 einfo
 einfo "The /usr/bin/tresor_sysfs CLI command which uses /sys/kernel/tresor/key too"

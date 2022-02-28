@@ -376,6 +376,11 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     The custom order (0) can optionally apply to "acceptable multi values"
     configation and auto in acceptable general values.
 
+    OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS -- Auto edit the kernel .config
+    for installed packages.
+    Acceptable values:  1 to enable, 0 to disable.  By default, it is
+    disabled.
+
     Examples:
 
     OT_KERNEL_USE_LSM_UPSTREAM_ORDER=1
