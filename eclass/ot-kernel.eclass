@@ -1744,9 +1744,9 @@ ewarn
 # Wipe the keys upon build failure
 ot-kernel_clear_keys() {
 	# The private Key is stored in and reasons:
-	# 1:  ${BUILD_DIR}/certs/signing_key -- by either auto generated, or user supplied
-	# 2:  ${T}/keys/${extraversion}-${arch}/certs/signing_key -- temporary moved here before calling `make mrproper`
-	# 3:  /usr/src/linux/certs/signing_key -- stored by install for signing external modules
+	# 1:  ${BUILD_DIR}/certs/signing_key.pem -- by either auto generated, or user supplied
+	# 2:  ${T}/keys/${extraversion}-${arch}/certs/signing_key.pem -- temporary moved here before calling `make mrproper`
+	# 3:  /usr/src/linux/certs/signing_key.pem -- stored by install for signing external modules but should be removed in within 24 hours.
 	# 4:  Secured storage -- secured from malicious user or forensics
 
 	# HOWEVER, it will not wipe all keys in a power outage.  One solution is storing
@@ -3463,7 +3463,8 @@ ewarn
 ewarn "The private key in the /usr/src/linux/certs folder should be kept in a"
 ewarn "safe space (e.g. by keychain encrypted storage or by steganography) or"
 ewarn "be cryptographically securely destroyed in the certs folder after"
-ewarn "being transfered into secure storage."
+ewarn "being transfered into secure storage.  The key temporarily stored in"
+ewarn "the certs folder should be securely destroyed in within 24 hours."
 ewarn
 ewarn "Keep the private key if you have external modules that still need to be"
 ewarn "signed.  Any driver not signed will be rejected by the kernel."

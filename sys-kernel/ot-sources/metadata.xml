@@ -315,7 +315,9 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
       store contained in a keychain or by steganography; and then the installed
       private key .pem file in the certs folder should be cryptographically
       securely destroyed with shred (or any secure delete program).  This is to
-      prevent recovery and reuse of they private key by an untrusted user.
+      prevent recovery and reuse of they private key by an untrusted user.  The
+      private key temporarily stored in the certs folder should be destroyed
+      in within 24 hours.
     
     OT_KERNEL_MODULES_COMPRESSOR_X_Y (optional) -- compresses the kernel
     modules.
