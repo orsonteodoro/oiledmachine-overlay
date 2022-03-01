@@ -24,7 +24,7 @@ ot-kernel_set_configopt() {
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
 		sed -i -e "s|# ${opt} is not set|${opt}=${val}|g" "${path_config}" || die
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -i -r -e "s/${opt}=.*/${opt}=${val}/g" "${path_config}" || die
+		sed -i -r -e "s#${opt}=.*#${opt}=${val}#g" "${path_config}" || die
 	else
 		echo "${opt}=${val}" >> "${path_config}" || die
 	fi
@@ -46,7 +46,7 @@ ot-kernel_y_configopt() {
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
 		sed -i -e "s|# ${opt} is not set|${opt}=y|g" "${path_config}" || die
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
-		sed -i -r -e "s/${opt}=[y|n|m]/${opt}=y/g" "${path_config}" || die
+		sed -i -r -e "s#${opt}=[y|n|m]#${opt}=y#g" "${path_config}" || die
 	else
 		echo "${opt}=y" >> "${path_config}" || die
 	fi

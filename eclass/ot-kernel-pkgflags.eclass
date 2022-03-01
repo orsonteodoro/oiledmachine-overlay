@@ -370,10 +370,10 @@ ot-kernel-pkgflags_crda() { # DONE
 
 		einfo "Auto adding CRDA firmware."
 		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
-		firmware=$(echo "${firmware}" | tr " " "\n" | sed -r -e "s|regulatory.db(.p7s)?$||g" | tr "\n" " ") # dedupe
+		firmware=$(echo "${firmware}" | tr " " "\n" | sed -r -e 's|regulatory.db(.p7s)?$||g' | tr "\n" " ") # dedupe
 		firmware="${firmware} regulatory.db regulatory.db.p7s"
 		ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
-		firmware=$(echo "${firmware}" | tr " " "\n" | sed -r -e "s|regulatory.db(.p7s)?$||g") # dedupe
+		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
 		einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 	fi
 }
