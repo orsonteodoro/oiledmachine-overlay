@@ -1176,6 +1176,7 @@ ot-kernel-pkgflags_iwd() { # DONE
 
 		if has_version "net-wireless/iwd[crda]" ; then
 			: # See ot-kernel-pkgflags_crda
+			has_version "net-wireless/crda" || die "Install net-wireless/crda first"
 		fi
 
 		if [[ "${arch}" == "x86_64" ]] ; then
@@ -2097,6 +2098,7 @@ ot-kernel-pkgflags_wpa_supplicant() { # DONE
 	if has_version "net-wireless/wpa_supplicant[crda]" ; then
 		einfo "Applying kernel config flags for the wpa_supplicant package (id: e0a4d03)"
 		: # See ot-kernel-pkgflags_crda
+		has_version "net-wireless/crda" || die "Install net-wireless/crda first"
 	fi
 }
 
