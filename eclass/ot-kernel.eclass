@@ -1442,8 +1442,10 @@ apply_clang_pgo() {
 ot-kernel_src_unpack() {
 	_PATCHES=()
 	if [[ "${IUSE}" =~ kernel-compiler-patch ]] ; then
-		local gcc_v=$(best_version "sys-devel/gcc" | sed -e "s|sys-devel/gcc-||")
-		local clang_v=$(best_version "sys-devel/clang" | sed -e "s|sys-devel/clang-||")
+		local llvm_slot=$(get_llvm_slot)
+		local gcc_slot=$(get_gcc_slot)
+		local gcc_v=$(best_version "sys-devel/gcc:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|sys-devel/gcc-||" -e "s|-r[0-9]+||")
+		local clang_v=$(best_version "sys-devel/clang:${llvm_slot}" | sed -r -e "s|sys-devel/clang-||" -e "s|-r[0-9]+||")
 		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
 		#local cpu_family=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
 		#local cpu_model=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "model" | head -n 1 | grep -E -o "[0-9]+"))
@@ -1790,13 +1792,58 @@ PGO_PHASE_PG0=4 # DONE
 # Checks if the compiler has no problems
 is_clang_ready() {
 	which clang-${llvm_slot} 2>/dev/null 1>/dev/null || return 1
+	local has_error=0
 	if clang-${llvm_slot} --help | grep -q -F -e "symbol lookup error" ; then
+ewarn "Found clang error"
+		has_error=1
+	fi
+	if clang-${llvm_slot} --help | grep -q -F -e "undefined symbol:" ; then
+ewarn "Found library error"
+		has_error=1
+	fi
+	if CXX=clang-${llvm_slot} test-flags-CXX ${CXX_STD} 2>/dev/null 1>/dev/null ; then
+		:
+	else
+ewarn "Found unsupported ${CXX_STD} with clang++-${llvm_slot}"
+		has_error=1
+	fi
+	if (( ${has_error} == 1 )) ; then
 ewarn
 ewarn "Found missing symbols for clang and needs a rebuild for Clang +"
 ewarn "LLVM ${llvm_slot}.  This has reduced security implications if using the"
 ewarn "fallback gcc if relying on software security implementations."
 ewarn
 ewarn "You may skip this warning if a working Clang + LLVM was found."
+ewarn
+		return 1
+	fi
+	return 0
+}
+
+# @FUNCTION: is_gcc_ready
+# @DESCRIPTION:
+# Checks if the compiler has no problems
+is_gcc_ready() {
+	which gcc-${gcc_slot} 2>/dev/null 1>/dev/null || return 1
+	local has_error=0
+	if gcc-${gcc_slot} --help | grep -q -F -e "symbol lookup error" ; then
+ewarn "Found gcc error"
+		has_error=1
+	fi
+	if gcc-${gcc_slot} --help | grep -q -F -e "undefined symbol:" ; then
+ewarn "Found library error"
+		has_error=1
+	fi
+	if CXX=g++-${gcc_slot} test-flags-CXX ${CXX_STD} 2>/dev/null 1>/dev/null ; then
+		:
+	else
+ewarn "Found unsupported ${CXX_STD} with g++-${gcc_slot}"
+		has_error=1
+	fi
+	if (( ${has_error} == 1 )) ; then
+ewarn
+ewarn "Found missing symbols in either in gcc or one of the libraries it is using."
+ewarn "The library or gcc needs to be rebuild in order to properly continue."
 ewarn
 		return 1
 	fi
@@ -2195,6 +2242,8 @@ ot-kernel_src_configure() {
 		fi
 
 		local llvm_slot=$(get_llvm_slot)
+		local gcc_slot=$(get_gcc_slot)
+		einfo "gcc_slot = ${gcc_slot}"
 		if \
 			( \
 			   ( has cfi ${IUSE_EFFECTIVE} && use cfi ) \
@@ -2216,13 +2265,18 @@ ot-kernel_src_configure() {
 			ot-kernel_set_configopt "CONFIG_LD_VERSION" "0"
 			ot-kernel_set_configopt "CONFIG_LLD_VERSION" "${llvm_slot}0000"
 		else
-			einfo "Using GCC"
+			is_gcc_ready || die "Failed compiler sanity check"
+			einfo "Using GCC ${gcc_slot}"
 			ot-kernel_unset_configopt "CONFIG_AS_IS_LLVM"
 			ot-kernel_unset_configopt "CONFIG_CC_IS_CLANG"
 			ot-kernel_unset_configopt "CONFIG_LD_IS_LLD"
-			local gcc_v=$(gcc --version | head -n 1 | cut -f 3 -d " ")
+			local gcc_v=$(gcc --version \
+				| head -n 1 \
+				| grep -o -E -e " [0-9]+.[0-9]+.[0-9]+" \
+				| head -n 1 \
+				| sed -e "s|[ ]*||g")
 			local gcc_major_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 1 -d "."))
-			local gcc_minor_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 1 -d "."))
+			local gcc_minor_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 2 -d "."))
 			ot-kernel_set_configopt "CONFIG_GCC_VERSION" "${gcc_major_v}${gcc_minor_v}00"
 		fi
 
@@ -2270,7 +2324,7 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 			ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		else
-			einfo "Disabiling CFI support in the in the .config."
+			einfo "Disabling CFI support in the in the .config."
 			ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 		fi
 
@@ -2594,6 +2648,10 @@ eerror
 			fi
 		fi
 
+		einfo "Updating the .config for defaults for the newly enabled options."
+		einfo "Running:  make olddefconfig ${args[@]}"
+		make olddefconfig "${args[@]}" || die
+
 		if (( ${is_default_config} == 1 )) ; then
 			einfo "Saving the new config for ${extraversion} to ${default_config}"
 			insinto /etc/kernels
@@ -2621,11 +2679,30 @@ build_pairs() {
 	IFS=$' \t\n'
 }
 
+# @FUNCTION: get_llvm_slot
+# @DESCRIPTION:
+# Gets a ready to use clang compiler
 get_llvm_slot() {
+	local llvm_slot
 	for llvm_slot in $(seq ${LLVM_MAX_SLOT:-15} -1 ${LLVM_MIN_SLOT:-10}) ; do
 		has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready && break
 	done
 	echo "${llvm_slot}"
+}
+
+# @FUNCTION: get_llvm_slot
+# @DESCRIPTION:
+# Gets a ready to use gcc compiler
+get_gcc_slot() {
+	local gcc_slot
+	for gcc_slot in $(seq ${GCC_MAX_SLOT:-12} -1 ${GCC_MIN_SLOT:-6}) ; do
+		gcc_slot=$(best_version "sys-devel/gcc:${gcc_slot}")
+		[[ -z "${gcc_slot}" ]] && continue
+		gcc_slot=$(echo "${gcc_slot}" | sed -r -e "s|sys-devel/gcc-||" -e "s|-r[0-9]+||")
+		local gcc_slot_maj=$(ver_cut 1 ${gcc_slot})
+		has_version "sys-devel/gcc:${gcc_slot_maj}" && is_gcc_ready && break
+	done
+	echo "${gcc_slot}"
 }
 
 # @FUNCTION: ot-kernel_setup_tc
@@ -2641,6 +2718,7 @@ ot-kernel_setup_tc() {
 		ARCH=${arch}
 	)
 	local llvm_slot=$(get_llvm_slot)
+	local gcc_slot=$(get_gcc_slot)
 	if [[ -n "${cross_compile_target}" ]] ; then
 		args+=( CROSS_COMPILE=${target_triple}- )
 	fi
@@ -2658,6 +2736,7 @@ ot-kernel_setup_tc() {
 		# Assumes we are not cross-compiling or we are only building on CBUILD=CHOST.
 		args+=(
 			CC=${CHOST}-clang-${llvm_slot}
+			CXX=${CHOST}-clang++-${llvm_slot}
 			LD=ld.lld
 			AR=llvm-ar
 			NM=llvm-nm
@@ -2675,9 +2754,11 @@ ot-kernel_setup_tc() {
 		CXX=clang++
 		LD=ld.lld
 	else
-		einfo "Using GCC"
+		is_gcc_ready || die "Failed compiler sanity check"
+		einfo "Using GCC ${gcc_slot}"
 		args+=(
-			CC=${CHOST}-gcc
+			CC=${CHOST}-gcc-${gcc_slot}
+			CXX=${CHOST}-g++-${gcc_slot}
 			LD=${CHOST}-ld.bfd
 			AR=${CHOST}-ar
 			NM=${CHOST}-nm
@@ -2685,8 +2766,8 @@ ot-kernel_setup_tc() {
 			OBJCOPY=${CHOST}-objcopy
 			OBJDUMP=${CHOST}-objdump
 			READELF=${CHOST}-readelf
-			HOSTCC=${CBUILD}-gcc
-			HOSTCXX=${CBUILD}-g++
+			HOSTCC=${CBUILD}-gcc-${gcc_slot}
+			HOSTCXX=${CBUILD}-g++-${gcc_slot}
 			HOSTAR=${CBUILD}-ar
 			HOSTLD=${CBUILD}-ld.bfd
 		)
@@ -2713,7 +2794,7 @@ ot-kernel_setup_tc() {
 		)
 	fi
 
-	if has tresor ${IUSE_EFFECTIVE} && use tresor ; then
+	if has tresor ${IUSE_EFFECTIVE} && use tresor && tc-is-clang ; then
 		args+=( LLVM_IAS=0 )
 	fi
 }
@@ -3087,7 +3168,7 @@ ot-kernel_pkg_postinst() {
 	local main_extraversion_with_tresor=${OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR:-ot}
 
 	local highest_pv=$(best_version "sys-kernel/ot-sources" \
-			| sed -e "s|sys-kernel/ot-sources-||")
+			| sed -r -e "s|sys-kernel/ot-sources-||" -e "s|-r[0-9]+||")
 
 	if use symlink ; then
 		# dosym src_relpath_real dest_abspath_symlink
@@ -3104,7 +3185,7 @@ einfo
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			local highest_tresor_pv=$(best_version "sys-kernel/ot-sources[tresor_sysfs]" \
-				| sed -e "s|sys-kernel/ot-sources-||")
+				| sed -r -e "s|sys-kernel/ot-sources-||" -e "s|-r[0-9]+||")
 
 			# Avoid symlink collisons between multiple installs.
 			# dosym src_relpath_real dest_abspath_symlink

@@ -13,6 +13,7 @@
 # The ot-kernel-v5.4 eclass defines specific applicable patching for the 5.4.x
 # linux kernel.
 
+CXX_STD="-std=gnu++98"
 LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=10
 DISABLE_DEBUG_V="1.3.0"
