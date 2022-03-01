@@ -78,6 +78,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_bubblewrap
 	ot-kernel-pkgflags_clamfs
 	ot-kernel-pkgflags_conky
+	ot-kernel-pkgflags_crda
 	ot-kernel-pkgflags_cryfs
 	ot-kernel-pkgflags_cryptodev
 	ot-kernel-pkgflags_cryptsetup
@@ -354,6 +355,26 @@ ot-kernel-pkgflags_conky() { # DONE
 	if has_version "app-admin/conky" ; then
 		einfo "Applying kernel config flags for the conky package (id: 0a83d3b)"
 		ot-kernel_y_configopt "CONFIG_IPV6"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_crda
+# @DESCRIPTION:
+# Applies kernel config flags for the crda package
+ot-kernel-pkgflags_crda() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "42ac64d4" ]] && return
+	if has_version "net-wireless/crda" ; then
+		has_version "net-wireless/wireless-regdb" || die "Install the wireless-regdb package first"
+		einfo "Applying kernel config flags for the cryfs package (id: 2ac64d4)"
+		ot-kernel_y_configopt "CONFIG_CFG80211_CRDA_SUPPORT"
+
+		einfo "Auto adding CRDA firmware."
+		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
+		firmware=$(echo "${firmware}" | tr " " "\n" | sed -r -e "s|regulatory.db(.p7s)?$||g" | tr "\n" " ") # dedupe
+		firmware="${firmware} regulatory.db regulatory.db.p7s"
+		ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
+		firmware=$(echo "${firmware}" | tr " " "\n" | sed -r -e "s|regulatory.db(.p7s)?$||g") # dedupe
+		einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 	fi
 }
 
@@ -1154,7 +1175,7 @@ ot-kernel-pkgflags_iwd() { # DONE
 		ot-kernel_y_configopt "CONFIG_X509_CERTIFICATE_PARSER"
 
 		if has_version "net-wireless/iwd[crda]" ; then
-			ot-kernel_y_configopt "CONFIG_CFG80211_CRDA_SUPPORT"
+			: # See ot-kernel-pkgflags_crda
 		fi
 
 		if [[ "${arch}" == "x86_64" ]] ; then
@@ -1163,15 +1184,6 @@ ot-kernel-pkgflags_iwd() { # DONE
 		if ver_test ${K_MAJOR_MINOR} -ge 4.20 ; then
 			# Implied has_version "net-wireless/iwd[linux_kernel]"
 			ot-kernel_y_configopt "CONFIG_PKCS8_PRIVATE_KEY_PARSER"
-		fi
-		if has_version "net-wireless/wireless-regdb" && has_version "net-wireless/iwd[crda]" ; then
-			einfo "Auto adding CRDA firmware."
-			local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
-			firmware=$(echo "${firmware}" | tr " " "\n" | sed -r -e "s|regulatory.db(.p7s)?$||g" | tr "\n" " ") # dedupe
-			firmware="${firmware} regulatory.db regulatory.db.p7s"
-			ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
-			firmware=$(echo "${firmware}" | tr " " "\n" | sed -r -e "s|regulatory.db(.p7s)?$||g") # dedupe
-			einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 		fi
 	fi
 }
@@ -2084,7 +2096,7 @@ ot-kernel-pkgflags_wpa_supplicant() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "e0a4d03" ]] && return
 	if has_version "net-wireless/wpa_supplicant[crda]" ; then
 		einfo "Applying kernel config flags for the wpa_supplicant package (id: e0a4d03)"
-		ot-kernel_y_configopt "CONFIG_CFG80211_CRDA_SUPPORT"
+		: # See ot-kernel-pkgflags_crda
 	fi
 }
 
