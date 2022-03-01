@@ -13,7 +13,7 @@
 # The ot-kernel-v4.14 eclass defines specific applicable patching for the
 # 4.14.x linux kernel.
 
-DISABLE_DEBUG_V="1.2.1"
+DISABLE_DEBUG_V="1.3.0"
 EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})

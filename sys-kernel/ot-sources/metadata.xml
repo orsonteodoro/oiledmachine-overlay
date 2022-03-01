@@ -381,9 +381,38 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     configation and auto in acceptable general values.
 
     OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS -- Auto edit the kernel .config
-    for installed packages.
+    for installed packages.  What this means is that certain @world packages
+    have additional kernel .config requirements and sometimes too complex
+    or too long ago to remember to apply.  These missing or conflicting
+    flags will be added or removed so that the @world package works properly.
     Acceptable values:  1 to enable, 0 to disable.  By default, it is
-    disabled.
+    disabled meaning that manual editing is required or preferred.  For
+    some select security packages, this is environment variable is
+    unconditionally ignored implying to always apply the kernel changes.
+
+    OT_KERNEL_PKGFLAGS_SKIP -- is a list of auto apply-able kernel config
+    symbols to reject.  These sets of flags are identified (id) with a 7 digit
+    hash code and used to either skip the config and apply the config
+    manually or permit a disable_debug conflict to priorize disable_debug
+    removal of debug keyworded kernel config symbols. They should be listed as
+    space separated.
+
+    OT_KERNEL_PKGFLAGS_ACCEPT -- is a list of auto apply-able kernel
+    config symbols to accept per package-wise.  They should be listed as
+    space separated.
+
+    OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG -- force the applying disable debug
+    globally to remove config symbols containing the following keywords:
+
+      DEBUG, TRACE, VERBOSE, LOG, PRINT
+
+    Acceptable values:  1 to apply disable_debug, 0 to halt if there is a
+    conflict between a kernel flag set and disable_debug.
+
+    PERMIT_NETFILTER_SYMBOL_REMOVAL -- Remove extra symbols containing names
+    with those keywords.  Note, some of these symbols may be beneficial to
+    netfilter and not be related to debugging.  By default, this is disabled.
+    Acceptable values:  1 to remove symbols, 0 to not remove symbols.
 
     Examples:
 
@@ -394,6 +423,9 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     OT_KERNEL_MENUCONFIG="menuconfig" # Code is disabled but looking for solutions to make it work properly
     OT_KERNEL_BUILDCONFIGS_5_4="ot:build:/etc/kernels/kernel-config-5.4-ot-x86_64:x86_64:x86_64-pc-linux-gnu:muqss:lz4"
     OT_KERNEL_BUILDCONFIGS_5_16="ot:build:/etc/kernels/kernel-config-5.16-ot-x86_64:x86_64:x86_64-pc-linux-gnu:prjc:zstd;rt:build:/etc/kernels/kernel-config-5.16-rt-x86_64:x86_64:x86_64-pc-linux-gnu:cfs:lz4"
+    OT_KERNEL_PKGFLAGS_SKIP="1ee4e36"
+    OT_KERNEL_PKGFLAGS_SKIP="1ee4e36 155d9fc"
+    OT_KERNEL_PKGFLAGS_SKIP="1ee4e36 155d9fc 27ea6ce"
 
     The format of the sublists in OT_KERNEL_BUILDCONFIGS_X_Y is described below:
 
@@ -440,6 +472,18 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 		* cfs is preferred for server kernels and bug-less experience.
 		* muqss and prjc are better suited for audio production.
 		* The rt extraversion can only use the cfs scheduler.
+
+		The default timeslices:
+
+		bmq: 4 ms server/desktop, 2 ms with low latency desktop
+		cfs: variable length
+		muqss:  6 ms
+		pds: 6 ms
+		prjc-bmq: 4 ms
+		prjc-pds: 4 ms
+		zen-muqss: 4 ms with zen interactive, 6 ms without zen interactive
+
+		Some of these timeslice values be adjustable.
 
     6. Boot decompressor -- chooses the main boot decompressor for both kernel
     decompression and initramfs decompression.  If not chosen, it will choose

@@ -1671,6 +1671,10 @@ ot-kernel_src_prepare() {
 	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 	apply_vanilla_point_releases
 
+	# Patch for nv driver
+	sed -i -e "s|select FB_CMDLINE|select FB_CMDLINE\n\tselect DRM_KMS_HELPER|" \
+		"${BUILD_DIR}/drivers/gpu/drm/Kconfig" || die
+
 	eapply_user
 
 	# This should be done immediately after all the kernel point releases.
