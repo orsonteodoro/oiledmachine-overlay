@@ -94,7 +94,7 @@ ${CK_COMMITS_BL_RQSHARE_SPLIT[@]}
 LINUX_TIMESTAMP=1510512373
 
 IUSE+=" build symlink"
-IUSE="bfq-mq +cfs disable_debug +genpatches -genpatches_1510
+IUSE+=" bfq-mq +cfs disable_debug +genpatches -genpatches_1510
 +kernel-compiler-patch muqss pds +O3 rt tresor tresor_aesni tresor_i686
 tresor_prompt tresor_sysfs tresor_x86_64 uksm"
 REQUIRED_USE+="
