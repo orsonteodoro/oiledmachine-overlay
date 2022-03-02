@@ -18,6 +18,7 @@ IUSE+=" +alsa aja +browser -decklink fdk ftl imagemagick jack libaom +lua nvenc 
 +pipewire pulseaudio +python +speexdsp +ssl -test freetype qsv11 sndio v4l2 vaapi
 video_cards_amdgpu video_cards_intel video_cards_iris video_cards_i965 video_cards_r600
 video_cards_radeonsi vlc +vst +wayland"
+IUSE+=" kernel_FreeBSD"
 REQUIRED_USE+="
 	lua? ( ${LUA_REQUIRED_USE} )
 	python? ( ${PYTHON_REQUIRED_USE} )
