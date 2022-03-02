@@ -421,7 +421,10 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     difference between model and MODEL.  There is a possibility of driver
     writers adding and removing files without notice which is why simple
     keyword matching containing the model name and number without adding
-    specific ICs details is recommended.
+    specific ICs details is recommended.  Keeping this value unset is the
+    same as manually editing or reusing the previous value in the .config
+    file.  Using this environment variable has advantages of auto adding
+    and auto removing firmware references.
 
     The X in the environment variable name corresponds to the kernel *arch*
     in buildconfigs that is uppercase.  The kernel arch is not exactly the
