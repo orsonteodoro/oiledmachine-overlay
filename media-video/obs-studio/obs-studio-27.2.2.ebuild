@@ -14,8 +14,8 @@ LICENSE="GPL-2
 	 browser? ( BSD )"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0"
-IUSE+=" +alsa +browser -decklink fdk ftl imagemagick jack +lua nvenc oss
-+pipewire pulseaudio +python +speexdsp +ssl -test freetype sndio v4l2 vaapi
+IUSE+=" +alsa aja +browser -decklink fdk ftl imagemagick jack libaom +lua nvenc oss
++pipewire pulseaudio +python +speexdsp +ssl -test freetype qsv11 sndio v4l2 vaapi
 video_cards_amdgpu video_cards_intel video_cards_iris video_cards_i965 video_cards_r600
 video_cards_radeonsi vlc +vst +wayland"
 REQUIRED_USE+="
@@ -53,7 +53,9 @@ BDEPEND+="
 
 # CI uses U 18.04
 
-CEF_V="87" # See https://github.com/obsproject/obs-studio/blob/27.0.0/.github/workflows/main.yml#L20
+CEF_V="95" # See https://github.com/obsproject/obs-studio/blob/27.2.2/.github/workflows/main.yml#L20
+	   # See also https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
+	   #      https://bitbucket.org/chromiumembedded/cef/src/4638/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4638
 FFMPEG_V="3.4.2"
 LIBVA_V="2.1.0"
 LIBX11_V="1.6.4"
@@ -66,7 +68,7 @@ OBS_VST_COMMIT="0dc95ed584b3f14ca308706d0d0324252bd9700b"
 OBS_FTL_SDK_COMMIT="d0c8469f66806b5ea738d607f7d2b000af8b1129"
 
 DEPEND_FFMPEG="
-	>=media-video/ffmpeg-${FFMPEG_V}:=
+	>=media-video/ffmpeg-${FFMPEG_V}:=[libaom?]
 "
 
 DEPEND_LIBX11="
@@ -87,11 +89,16 @@ DEPEND_JANSSON="
 "
 
 DEPEND_WAYLAND="
-	dev-libs/wayland
+	>=dev-libs/wayland-1.14.0
+	>=x11-libs/libxkbcommon-0.8.0-
 "
 
 DEPEND_ZLIB="
 	>=sys-libs/zlib-1.2.11
+"
+
+DEPEND_PLUGINS_AJA="
+	aja? ( media-libs/ntv2 )
 "
 
 # See plugins/sndio/CMakeLists.txt
@@ -134,7 +141,7 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
         >=x11-libs/libXrandr-1.5.1
 	pipewire? (
 		dev-libs/glib:2
-		>=media-video/pipewire-0.3
+		>=media-video/pipewire-0.3.32
 		x11-libs/libdrm
 	)
 "
@@ -143,6 +150,7 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 # https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
 # No video_cards_nouveau x264 encode from inspection of the Mesa driver, but for decode yes.
 DEPEND_PLUGINS_OBS_FFMPEG="
+	>=sys-apps/pciutils-3.5.2
 	nvenc? (
 		|| (
 			<media-video/ffmpeg-4[nvenc]
@@ -215,6 +223,10 @@ DEPEND_PLUGINS_OBS_BROWSER="
 	)
 "
 
+DEPEND_PLUGINS_QSV11="
+	qsv11? ( >=media-libs/intel-mediasdk-21.1 )
+"
+
 # See
 # plugins/linux-alsa/CMakeLists.txt
 # plugins/linux-jack/CMakeLists.txt
@@ -231,6 +243,7 @@ DEPEND_PLUGINS_OBS_BROWSER="
 DEPEND_PLUGINS="
 	${DEPEND_DEPS_FILE_UPDATER}
 	${DEPEND_DEPS_MEDIA_PLAYBACK}
+	${DEPEND_PLUGINS_AJA}
 	${DEPEND_PLUGINS_DECKLINK}
 	${DEPEND_PLUGINS_DECKLINK_OUTPUT_UI}
 	${DEPEND_PLUGINS_FRONTEND_TOOLS}
@@ -239,6 +252,7 @@ DEPEND_PLUGINS="
 	${DEPEND_PLUGINS_OBS_FFMPEG}
 	${DEPEND_PLUGINS_OBS_OUTPUTS}
 	${DEPEND_PLUGINS_SNDIO}
+	${DEPEND_PLUGINS_QSV11}
 	${DEPEND_CURL}
 	${DEPEND_LIBOBS}
 	${DEPEND_LIBX264}
@@ -252,6 +266,7 @@ DEPEND_PLUGINS="
 		>=media-libs/freetype-2.8.1
 	)
 	v4l2? (
+		${DEPEND_FFMPEG}
 		>=media-libs/libv4l-1.14.2
 		virtual/udev
 	)
@@ -381,6 +396,7 @@ https://github.com/obsproject/obs-browser/commit/a499db21fe1475e75afcf7ce320ff75
 	-> obs-browser-pull-323-a499db2.patch
 "
 
+RESTRICT="mirror" # Speed up download of the latest release.
 MAKEOPTS="-j1"
 PATCHES=(
 	"${FILESDIR}/${PN}-26.1.2-python-3.8.patch" # https://github.com/obsproject/obs-studio/pull/3335
@@ -435,8 +451,7 @@ pkg_setup() {
 		if [[ "${ABI}" =~ "ppc" ]] ; then
 			if ! has_version "net-libs/cef" ; then
 				die \
-"There is no (Chromium Embedded Framework) for this platform.  Disable the \
-browser USE flag."
+"There is no CEF for this platform.  Disable the browser USE flag."
 			fi
 		fi
 	fi
@@ -453,14 +468,39 @@ ewarn "to access more vaapi accelerated encoders if driver support overlaps."
 ewarn
 	fi
 
+	if ! use browser || [[ -z "${RESTREAM_CLIENTID}" \
+		|| -z "${RESTREAM_HASH}" ]] ; then
+einfo
+einfo "Restream integration is disabled.  For details on how to enable it, see the"
+einfo "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
+einfo "The browser USE flag must be enabled."
+einfo
+	fi
+
+	if ! use browser || [[ -z "${TWITCH_CLIENTID}" \
+		|| -z "${TWITCH_HASH}" ]] ; then
+einfo
+einfo "Twitch integration is disabled.  For details on how to enable it, see the"
+einfo "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
+einfo "The browser USE flag must be enabled."
+einfo
+	fi
+
 	if [[ -z "${YOUTUBE_CLIENTID}" \
 		|| -z "${YOUTUBE_CLIENTID_HASH}" \
 		|| -z "${YOUTUBE_SECRET}" \
 		|| -z "${YOUTUBE_SECRET_HASH}" ]] ; then
-		einfo
-		einfo "YT support is disabled.  For details on how to enable it, see the metadata.xml."
-		einfo
+einfo
+einfo "YT integration is disabled.  For details on how to enable it, see the"
+einfo "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
+einfo
 	fi
+ewarn
+ewarn "SECURITY:  When building with streaming services integration, please"
+ewarn "read the metadata.xml or do `epkginfo -x obs-studio::oiledmachine-overlay`"
+ewarn "for information of securely wiping with the shred command or minimizing"
+ewarn "recovery of possibly sensitive data."
+ewarn
 }
 
 src_unpack() {
@@ -513,6 +553,7 @@ src_configure() {
 		-DBUILD_TESTS=$(usex test)
 		-DBUILD_VIRTUALCAM=OFF
 		-DBUILD_VST=$(usex vst)
+		-DDISABLE_AJA=$(usex !aja)
 		-DDISABLE_ALSA=$(usex !alsa)
 		-DDISABLE_DECKLINK=$(usex !decklink)
 		-DDISABLE_FREETYPE=$(usex !freetype)
@@ -526,6 +567,7 @@ src_configure() {
 		-DDISABLE_V4L2=$(usex !v4l2)
 		-DDISABLE_VLC=$(usex !vlc)
 		-DENABLE_PIPEWIRE=$(usex pipewire)
+		-DENABLE_QSV11=$(usex qsv11)
 		-DENABLE_V4L2=$(usex v4l2)
 		-DENABLE_WAYLAND=$(usex wayland)
 		-DLIBOBS_PREFER_IMAGEMAGICK=$(usex imagemagick)
@@ -676,6 +718,12 @@ pkg_postinst() {
 		einfo "FTL is currently being planned for removal (or deprecated).  It requires x264 video, opus audio, and for lowest latency bframes=0."
 		einfo "Edit plugins/rtmp-services/data/services.json and add a per-package patch for adding custom FTL servers."
 	fi
+ewarn
+ewarn "SECURITY:  When building with streaming services integration, please"
+ewarn "read the metadata.xml or do `epkginfo -x obs-studio::oiledmachine-overlay`"
+ewarn "for information of securely wiping with the shred command or minimizing"
+ewarn "recovery of possibly sensitive data."
+ewarn
 }
 
 pkg_postrm() {

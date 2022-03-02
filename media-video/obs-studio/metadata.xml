@@ -24,19 +24,33 @@
     https://nouveau.freedesktop.org/wiki/VideoAcceleration/
 
 
-    YT Environment Variables:
+    Environment Variables:
 
+    RESTREAM_CLIENTID
+    RESTREAM_HASH
+    TWITCH_CLIENTID
+    TWITCH_HASH
     YOUTUBE_CLIENTID
     YOUTUBE_CLIENTID_HASH
     YOUTUBE_SECRET
     YOUTUBE_SECRET_HASH
 
-    If all of the above are not defined, then support is disabled.  See
+    If all of the above are not defined, then streaming integration is disabled
+    for that service.
 
-    https://wiki.gentoo.org/wiki//etc/portage/package.env
-
-    for details in adding them.
-
+    SECURITY:  It recommended to provide a patch to UI/CMakeLists.txt to
+    embed the sensitive data.  This is to avoid the possible unsecured storage
+    of sensitive info in /var/db/pkg/${CATEGORY}/${P}/environment.bz2.  If you
+    have provided this information as a per-package file or via command line,
+    it should be securely wiped with shred as a precaution for the
+    environment.bz2 and the per-package env.  If this information is time
+    limited, a wipe may not be needed.  Furthermore, the contents of the
+    /var/tmp/portage/${CATEGORY}/${P} and other unfinished builds may need
+    to be recursively shredded as a precaution.  The information in
+    environment.bz2 should be shredded, but it may be unmergable.  To fix this,
+    you may overwrite the install without sensitive info or delete every
+    file in the /var/db/pkg/${CATEGORY}/${P}/CONTENTS folder or never
+    providing this information in the first place.
 
     Browser plugin:
 
@@ -47,6 +61,7 @@
     the browser is updated for security reasons.
   </longdescription>
   <use>
+    <flag name="aja">Add support for AJA capture hardware.</flag>
     <flag name="browser">Enable adding web pages as a source.</flag>
     <flag name="decklink">Enable support for DeckLink devices.</flag>
     <flag name="fdk">Enable libfdk support for AAC encoding.</flag>
@@ -55,6 +70,7 @@
     <flag name="imagemagick">Use ImageMagick for image loading instead of
       FFmpeg.</flag>
     <flag name="jack">Enable jack support.</flag>
+    <flag name="libaom">Add support for AV1 video encoding.</flag>
     <flag name="lua">Build support for scripting via Luajit.</flag>
     <flag name="nvenc">Enable NVENC encoding for nVidia video cards.</flag>
     <flag name="oss">Enable OSS support in FreeBSD.</flag>
@@ -66,6 +82,7 @@
     <flag name="ssl">Build support for TLS/SSL connections (RTMPS) via
       <pkg>net-libs/mbedtls</pkg>.</flag>
     <flag name="freetype">Builds the Freetype text plugin.</flag>
+    <flag name="qsv11">Enable use of the QSV11 hardware encoder.</flag>
     <flag name="sndio">Enable sndio support.</flag>
     <flag name="test">Build test parts.</flag>
     <flag name="v4l">Build v4l2 support.</flag>
