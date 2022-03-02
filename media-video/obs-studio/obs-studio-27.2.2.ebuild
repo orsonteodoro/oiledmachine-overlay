@@ -472,7 +472,7 @@ ewarn
 		|| -z "${RESTREAM_HASH}" ]] ; then
 ewarn
 ewarn "Restream integration is disabled.  For details on how to enable it, see the"
-ewarn "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
+ewarn "metadata.xml or \`epkginfo -x obs-studio::oiledmachine-overlay\`."
 ewarn "The browser USE flag must be enabled."
 ewarn
 	fi
@@ -481,7 +481,7 @@ ewarn
 		|| -z "${TWITCH_HASH}" ]] ; then
 ewarn
 ewarn "Twitch integration is disabled.  For details on how to enable it, see the"
-ewarn "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
+ewarn "metadata.xml or \`epkginfo -x obs-studio::oiledmachine-overlay\`."
 ewarn "The browser USE flag must be enabled."
 ewarn
 	fi
@@ -492,12 +492,12 @@ ewarn
 		|| -z "${YOUTUBE_SECRET_HASH}" ]] ; then
 ewarn
 ewarn "YT integration is disabled.  For details on how to enable it, see the"
-ewarn "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
+ewarn "metadata.xml or \`epkginfo -x obs-studio::oiledmachine-overlay\`."
 ewarn
 	fi
 ewarn
 ewarn "SECURITY:  When building with streaming services integration, please"
-ewarn "read the metadata.xml or do `epkginfo -x obs-studio::oiledmachine-overlay`"
+ewarn "read the metadata.xml or do \`epkginfo -x obs-studio::oiledmachine-overlay\`"
 ewarn "for information of securely wiping with the shred command or minimizing"
 ewarn "recovery of possibly sensitive data."
 ewarn
@@ -720,7 +720,7 @@ pkg_postinst() {
 	fi
 ewarn
 ewarn "SECURITY:  When building with streaming services integration, please"
-ewarn "read the metadata.xml or do `epkginfo -x obs-studio::oiledmachine-overlay`"
+ewarn "read the metadata.xml or do \`epkginfo -x obs-studio::oiledmachine-overlay\`"
 ewarn "for information of securely wiping with the shred command or minimizing"
 ewarn "recovery of possibly sensitive data."
 ewarn
