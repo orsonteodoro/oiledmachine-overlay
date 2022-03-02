@@ -76,6 +76,7 @@ ot-kernel-pkgflags_apply() {
 	#ot-kernel-pkgflags_boinc
 	ot-kernel-pkgflags_bolt
 	ot-kernel-pkgflags_bubblewrap
+	ot-kernel-pkgflags_clamav
 	ot-kernel-pkgflags_clamfs
 	ot-kernel-pkgflags_conky
 	ot-kernel-pkgflags_crda
@@ -92,6 +93,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_ecryptfs
 	ot-kernel-pkgflags_elogind
 	ot-kernel-pkgflags_embree
+	ot-kernel-pkgflags_encfs
 	ot-kernel-pkgflags_epcam
 	ot-kernel-pkgflags_epoch
 	ot-kernel-pkgflags_espeakup
@@ -336,6 +338,18 @@ ot-kernel-pkgflags_bubblewrap() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_clamav
+# @DESCRIPTION:
+# Applies kernel config flags for the clamav package
+ot-kernel-pkgflags_clamav() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "1545fdb" ]] && return
+	if has_version "app-antivirus/clamav" ; then
+		einfo "Applying kernel config flags for the clamav package (id: 1545fdb)"
+		ot-kernel_y_configopt "CONFIG_FANOTIFY"
+		ot-kernel_y_configopt "CONFIG_FANOTIFY_ACCESS_PERMISSIONS"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_clamfs
 # @DESCRIPTION:
 # Applies kernel config flags for the clamfs package
@@ -372,6 +386,10 @@ ot-kernel-pkgflags_crda() { # DONE
 		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
 		firmware=$(echo "${firmware}" | tr " " "\n" | sed -r -e 's|regulatory.db(.p7s)?$||g' | tr "\n" " ") # dedupe
 		firmware="${firmware} regulatory.db regulatory.db.p7s"
+		firmware=$(echo "${firmware}" \
+			| sed -r -e "s|[ ]+| |g" \
+				-e "s|^[ ]+||g" \
+				-e 's|[ ]+$||g') # Trim mid/left/right spaces
 		ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
 		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
 		einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
@@ -775,6 +793,17 @@ ot-kernel-pkgflags_embree() { # DONE
 	if has_version "media-libs/embree" ; then
 		einfo "Applying kernel config flags for the embree package (id: 121bc50)"
 		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_encfs
+# @DESCRIPTION:
+# Applies kernel config flags for the encfs package
+ot-kernel-pkgflags_encfs() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "3e70419" ]] && return
+	if has_version "sys-fs/encfs" ; then
+		einfo "Applying kernel config flags for the encfs package (id: 3e70419)"
+		ot-kernel_y_configopt "CONFIG_FUSE_FS"
 	fi
 }
 
@@ -1757,7 +1786,7 @@ ot-kernel-pkgflags_roct() { # DONE
 ot-kernel-pkgflags_runc() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "5c1dafb" ]] && return
 	if has_version "app-containers/runc" ; then
-		einfo "Applying kernel config flags for runc (id: 5c1dafb)"
+		einfo "Applying kernel config flags for the runc package (id: 5c1dafb)"
 		ot-kernel_y_configopt "CONFIG_USER_NS"
 	fi
 }

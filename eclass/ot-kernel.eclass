@@ -1876,13 +1876,42 @@ is_firmware_ready() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_enable-app-flags
+# @FUNCTION: ot-kernel_add_firmware
 # @DESCRIPTION:
-# Auto-enables kernel config flags for installed ebuild-packages.
-ot-kernel_enable-app-flags() {
-	:
-}
+# Adds firmware to the kernel config
+ot-kernel_add_firmware() {
+	# OT_KERNEL_FIRMWARE_X recognizes the wildcard patterns:
+	# 1. Add by wildcard.  file*.bin dir* d*r
+	# 2. Add by literal.  file.bin dir/file.bin
 
+	# When you use OT_KERNEL_FIRMWARE_X_Y envvar, it is implied it will wipe the
+	# previous setting.
+	#
+	# The X in OT_KERNEL_FIRMWARE_X_Y must be kernel arch in upper case.
+	# The Y in OT_KERNEL_FIRMWARE_X_Y must be the extraversion in upper case replacing - as _.
+
+	local ot_kernel_firmware_=$(echo "OT_KERNEL_FIRMWARE_${arch^^}_${extraversion^^}" | tr "[:punct:]" "_")
+	local ot_kernel_firmware="${!ot_kernel_firmware_}"
+	if [[ -n "${ot_kernel_firmware}" ]] ; then
+		local firmware=()
+		has_version "sys-kernel/linux-firmware" || ewarn "sys-kernel/linux-firmware should be installed first"
+		einfo "Adding firmware"
+		pushd /lib/firmware 2>/dev/null 1>/dev/null || die "Missing firmware"
+			for l in $(echo ${ot_kernel_firmware} | tr " " "\n") ; do
+				firmware+=( $(find . -path "*${l}*" | sed -e "s|^\./||g") )
+			done
+		popd 2>/dev/null 1>/dev/null
+		firmware=($(echo "${firmware[@]}" | tr " " "\n" | sort))
+		firmware="${firmware[@]}" # bash problems
+		firmware=$(echo "${firmware}" \
+			| sed -r -e "s|[ ]+| |g" \
+				-e "s|^[ ]+||g" \
+				-e 's|[ ]+$||g') # Trim mid/left/right spaces
+		ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
+		einfo "CONFIG_EXTRA_FIRMWARE:  "$(grep "CONFIG_EXTRA_FIRMWARE" \
+			"${BUILD_DIR}/.config" | head -n 1 | cut -f 2 -d "\"")
+	fi
+}
 
 # @FUNCTION: ot-kernel_src_configure
 # @DESCRIPTION:
@@ -2034,9 +2063,13 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		fi
 
+		ot-kernel_add_firmware
+
                 # Apply flags to minimize the time cost of reconfigure and rebuild time
                 # from a generated new kernel config.
 		ot-kernel-pkgflags_apply # Placed before security flags
+
+		is_firmware_ready
 
 		if has genpatches ${IUSE_EFFECTIVE} && use genpatches ; then
 			# Debug
@@ -2243,7 +2276,6 @@ ot-kernel_src_configure() {
 
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
-		einfo "gcc_slot = ${gcc_slot}"
 		if \
 			( \
 			   ( has cfi ${IUSE_EFFECTIVE} && use cfi ) \
@@ -2659,8 +2691,6 @@ eerror
 		else
 			einfo "Not overriding kernel config to avoid merge conflicts"
 		fi
-
-		is_firmware_ready
 	done
 }
 

@@ -414,8 +414,36 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     netfilter and not be related to debugging.  By default, this is disabled.
     Acceptable values:  1 to remove symbols, 0 to not remove symbols.
 
+    OT_KERNEL_FIRMWARE_X_Y -- a space separated list of keywords matching the
+    firmware relative to inside /lib/firmware.  Wildcards (denoted by "*") are
+    accepted as well as relative paths.  Wildcards are implied before and after
+    the pattern.  These patterns are case sensitive meaning there is a
+    difference between model and MODEL.  There is a possibility of driver
+    writers adding and removing files without notice which is why simple
+    keyword matching containing the model name and number without adding
+    specific ICs details is recommended.
+
+    The X in the environment variable name corresponds to the kernel *arch*
+    in buildconfigs that is uppercase.  The kernel arch is not exactly the
+    same as the distro arch.
+
+    The Y in the environment variable name corresponds to the extraversion
+    in buildconfigs that is uppercase.  Both the X and Y values make it
+    possible to not apply firmware to virtual machine guest kernels or for
+    specific to cross compile kernels.  Any hyphen (-) should be replaced
+    with the underscore character (_).
+
+    The following are recognized patterns:
+	1. Add by wildcard.  model*.bin model* dir* d*r
+	2. Add by literal.  model model123.bin dir/model dir1/dir2/model.bin
+
+    When you use OT_KERNEL_FIRMWARE_X_Y envvar, it is implied it will wipe the
+    previous setting.
+
+
     Examples:
 
+    OT_KERNEL_FIRMWARE_X86_64_OT="model1 model2 model3 dir1/model4 dir2/model5 dir3/dir4/model6"
     OT_KERNEL_USE_LSM_UPSTREAM_ORDER=1
     OT_KERNEL_LSMS="auto"
     OT_KERNEL_LSMS="integrity,apparmor,selinux"
