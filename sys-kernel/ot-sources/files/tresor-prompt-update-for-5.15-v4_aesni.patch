@@ -1,0 +1,271 @@
+Subject: TRESOR prompt update for 5.15 with wait panic fix.
+Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Date: 20210118 (Unix time: 1611026758)
+
+This patch leaves the set_fs removal commit
+(47058bb54b57962b3958a936ddbc59355e4c5504) with the 5 level page table
+changes and the ksys syscall changes.
+
+The wait fix addresses is_kthread_should_stop() boot time panic
+introduced by cb6538e740d7543cd989128625cf8cac4b471e0a
+with TRESOR prompt.
+
+This patch adds exceptions to the page fault avoidance when accessing vfs_open
+indirectly via filp_open, vfs_read, vfs_write.
+
+v4 Merged wait.patch fix without revert.
+v3 Fixes with tresor_prompt_begin adjustments.
+v2 Replaced revert patches with conditional exceptions and replaced ksys_
+   calls with vfs_ and filp_ functions.
+v1 Previous revert patches.
+
+----
+--- a/arch/x86/crypto/tresor_key.c.orig	2022-03-01 22:22:49.900687988 -0800
++++ b/arch/x86/crypto/tresor_key.c	2022-03-01 22:26:54.840209536 -0800
+@@ -40,7 +40,7 @@ asmlinkage void tresor_get_key(void *in_
+ #endif
+ 
+ #ifdef CONFIG_CRYPTO_TRESOR_PROMPT
+-static int term_fd;
++static struct file *term_file;
+ #endif
+ static char *cmdline_key;
+ static unsigned char key_hash[32];
+@@ -210,6 +210,8 @@ static inline int tresor_key_from_cpu0(v
+ /* Print to term_fd */
+ static int printf_(const char *fmt, ...)
+ {
++	ssize_t ret;
++	loff_t pos;
+ 	va_list args; int col = 80; char line[col];
+ 
+ 	va_start(args, fmt);
+@@ -217,7 +219,14 @@ static int printf_(const char *fmt, ...)
+ 	line[col-1] = 0;
+ 	va_end(args);
+ 
+-	return ksys_write(term_fd, line, strlen(line));
++	pos = term_file->f_pos;
++	tresor_prompt_begin();
++	ret = vfs_write(term_file, line, strlen(line), &pos);
++	tresor_prompt_end();
++	if (ret >= 0)
++		term_file->f_pos = pos;
++
++	return ret;
+ }
+ 
+ /* Erase line before printing (workaround for weird consoles) */
+@@ -233,15 +242,22 @@ static int printf(const char *fmt, ...)
+ 	return res;
+ }
+ 
+-/* Read from term_fd */
++/* Read from term_file */
+ static unsigned char getchar(void)
+ {
+ 	unsigned char c;
+-	ksys_read(term_fd, &c, 1);
++	loff_t pos;
++	ssize_t ret;
++	pos = term_file->f_pos;
++	tresor_prompt_begin();
++	ret = vfs_read(term_file, &c, 1, &pos);
++	tresor_prompt_end();
++	if (ret >= 0)
++		term_file->f_pos = pos;
+ 	return c;
+ }
+ 
+-/* Clear term_fd */
++/* Clear term_file */
+ static int cls(void)
+ {
+ 	int i;
+@@ -251,19 +267,19 @@ static int cls(void)
+ 	return i;
+ }
+ 
+-/* Disables the cursor of term_fd */
++/* Disables the cursor of term_file */
+ static void cursor_disable(void)
+ {
+ 	printf_("\x1B[?1c");
+ }
+ 
+-/* Enables the cursor of term_fd */
++/* Enables the cursor of term_file */
+ static void cursor_enable(void)
+ {
+ 	printf_("\x1B[?6c");
+ }
+ 
+-/* Resets the cursor of term_fd to default */
++/* Resets the cursor of term_file to default */
+ static void cursor_reset(void)
+ {
+ 	printf_("\x1B[?0c");
+@@ -279,22 +295,23 @@ int tresor_readkey(const char *terminal,
+ {
+ 	unsigned char password[54], key[32], key_hash_[32], answer[4], c;
+ 	struct termios termios;
+-	mm_segment_t ofs;
+ 	int i, j, progress;
+ 
+-	/* prepare to call systemcalls from kernelspace */
+-	ofs = get_fs();
+-	set_fs(KERNEL_DS);
++	/* allow use of kernel space to access user space pointers */
++	/* in ksys_open, ksys_write, ksys_read */
+ 	/* try to open terminal */
+-	term_fd = ksys_open(terminal, O_RDWR, 0);
+-	if (term_fd < 0) {
+-		set_fs(ofs);
+-		return term_fd;
++	tresor_prompt_begin();
++	term_file = filp_open((const char __user *) terminal, O_RDWR, 0);
++	tresor_prompt_end();
++	if (term_file < 0) {
++		return -EINVAL;
+ 	}
+ 	/* read single characters; no echo */
+-	ksys_ioctl(term_fd, TCGETS, (long)&termios);
++	tresor_prompt_begin();
++	vfs_ioctl(term_file, TCGETS, (long)&termios);
+ 	termios.c_lflag &= ~(ICANON | ECHO);
+-	ksys_ioctl(term_fd, TCSETSF, (long)&termios);
++	vfs_ioctl(term_file, TCSETSF, (long)&termios);
++	tresor_prompt_end();
+ 	/* initialize console */
+ 	cursor_enable();
+ 	cls();
+@@ -437,7 +454,9 @@ readkey:
+ 		printf("\n\n");
+ 
+ 	termios.c_lflag |= (ICANON | ECHO);
+-	ksys_ioctl(term_fd, TCSETSF, (long)&termios);
++	tresor_prompt_begin();
++	vfs_ioctl(term_file, TCSETSF, (long)&termios);
++	tresor_prompt_end();
+ 
+ 	if (resume)
+ 		cursor_disable();
+@@ -445,8 +464,7 @@ readkey:
+ 		cursor_reset();
+ 
+ 	/* clean up */
+-	ksys_close(term_fd);
+-	set_fs(ofs);
++	fput(term_file);
+ 	return 0;
+ }
+ #endif /* CONFIG_CRYPTO_TRESOR_PROMPT */
+--- a/arch/x86/include/asm/uaccess.h.orig	2022-03-01 22:22:33.132035336 -0800
++++ b/arch/x86/include/asm/uaccess.h	2022-03-01 22:26:54.841209575 -0800
+@@ -66,11 +66,20 @@ static inline bool pagefault_disabled(vo
+  * Return: true (nonzero) if the memory block may be valid, false (zero)
+  * if it is definitely invalid.
+  */
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++#define access_ok(addr, size)					\
++({								\
++	WARN_ON_IN_IRQ();					\
++	(likely(!__range_not_ok(addr, size, TASK_SIZE_MAX)) 	\
++		|| unlikely(tresor_prompt_active()));		\
++})
++#else
+ #define access_ok(addr, size)					\
+ ({									\
+ 	WARN_ON_IN_IRQ();						\
+ 	likely(!__range_not_ok(addr, size, TASK_SIZE_MAX));		\
+ })
++#endif
+ 
+ extern int __get_user_1(void);
+ extern int __get_user_2(void);
+--- a/include/linux/sched.h.orig	2022-03-01 22:22:49.630677480 -0800
++++ b/include/linux/sched.h	2022-03-01 22:27:24.486360519 -0800
+@@ -969,6 +969,11 @@ struct task_struct {
+ 	/* Canary value for the -fstack-protector GCC feature: */
+ 	unsigned long			stack_canary;
+ #endif
++
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++	unsigned long			tresor_reading_prompt;
++#endif
++
+ 	/*
+ 	 * Pointers to the (original) parent process, youngest child, younger sibling,
+ 	 * older sibling, respectively.  (p->father can be replaced with
+@@ -2315,6 +2320,27 @@ static inline void rseq_syscall(struct p
+ 
+ #endif
+ 
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++#define TRESOR_PROMPT_INACTIVE 0
++static inline void tresor_prompt_begin(void)
++{
++	current->tresor_reading_prompt++;
++	barrier();
++}
++
++static inline void tresor_prompt_end(void)
++{
++	barrier();
++	current->tresor_reading_prompt--;
++}
++
++/* non-zero is reading, zero is not reading */
++static inline int tresor_prompt_active(void)
++{
++	return current->tresor_reading_prompt;
++}
++#endif
++
+ const struct sched_avg *sched_trace_cfs_rq_avg(struct cfs_rq *cfs_rq);
+ char *sched_trace_cfs_rq_path(struct cfs_rq *cfs_rq, char *str, int len);
+ int sched_trace_cfs_rq_cpu(struct cfs_rq *cfs_rq);
+--- a/init/init_task.c.orig	2022-03-01 22:22:49.634677636 -0800
++++ b/init/init_task.c	2022-03-01 22:26:54.846209769 -0800
+@@ -232,6 +232,9 @@ struct task_struct init_task
+ #ifdef CONFIG_SECCOMP_FILTER
+ 	.seccomp	= { .filter_count = ATOMIC_INIT(0) },
+ #endif
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++	.tresor_reading_prompt = TRESOR_PROMPT_INACTIVE,
++#endif
+ };
+ EXPORT_SYMBOL(init_task);
+ 
+--- a/kernel/sched/wait.c.orig	2022-03-01 22:22:19.415501397 -0800
++++ b/kernel/sched/wait.c	2022-03-01 22:26:54.846209769 -0800
+@@ -424,7 +424,12 @@ EXPORT_SYMBOL(autoremove_wake_function);
+ 
+ static inline bool is_kthread_should_stop(void)
+ {
+-	return (current->flags & PF_KTHREAD) && kthread_should_stop();
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++	if (unlikely(tresor_prompt_active()))
++		return 0;
++	else
++#endif
++		return (current->flags & PF_KTHREAD) && kthread_should_stop();
+ }
+ 
+ /*
+--- a/lib/strncpy_from_user.c.orig	2021-10-31 13:53:10.000000000 -0700
++++ b/lib/strncpy_from_user.c	2022-03-01 22:26:54.847209808 -0800
+@@ -122,7 +122,12 @@ long strncpy_from_user(char *dst, const
+ 
+ 	max_addr = user_addr_max();
+ 	src_addr = (unsigned long)untagged_addr(src);
+-	if (likely(src_addr < max_addr)) {
++	if (
++		likely(src_addr < max_addr)
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++			|| unlikely(tresor_prompt_active())
++#endif
++	) {
+ 		unsigned long max = max_addr - src_addr;
+ 		long retval;
+ 
