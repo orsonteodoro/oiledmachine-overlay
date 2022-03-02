@@ -470,30 +470,30 @@ ewarn
 
 	if ! use browser || [[ -z "${RESTREAM_CLIENTID}" \
 		|| -z "${RESTREAM_HASH}" ]] ; then
-einfo
-einfo "Restream integration is disabled.  For details on how to enable it, see the"
-einfo "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
-einfo "The browser USE flag must be enabled."
-einfo
+ewarn
+ewarn "Restream integration is disabled.  For details on how to enable it, see the"
+ewarn "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
+ewarn "The browser USE flag must be enabled."
+ewarn
 	fi
 
 	if ! use browser || [[ -z "${TWITCH_CLIENTID}" \
 		|| -z "${TWITCH_HASH}" ]] ; then
-einfo
-einfo "Twitch integration is disabled.  For details on how to enable it, see the"
-einfo "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
-einfo "The browser USE flag must be enabled."
-einfo
+ewarn
+ewarn "Twitch integration is disabled.  For details on how to enable it, see the"
+ewarn "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
+ewarn "The browser USE flag must be enabled."
+ewarn
 	fi
 
 	if [[ -z "${YOUTUBE_CLIENTID}" \
 		|| -z "${YOUTUBE_CLIENTID_HASH}" \
 		|| -z "${YOUTUBE_SECRET}" \
 		|| -z "${YOUTUBE_SECRET_HASH}" ]] ; then
-einfo
-einfo "YT integration is disabled.  For details on how to enable it, see the"
-einfo "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
-einfo
+ewarn
+ewarn "YT integration is disabled.  For details on how to enable it, see the"
+ewarn "metadata.xml or `epkginfo -x obs-studio::oiledmachine-overlay`."
+ewarn
 	fi
 ewarn
 ewarn "SECURITY:  When building with streaming services integration, please"
