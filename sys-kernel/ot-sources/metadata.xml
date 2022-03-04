@@ -97,8 +97,8 @@
 		    kernel_compiler_patch 		N
 		    O3 [6]				N
 		    PDS					N
-		    TRESOR (AES-NI) [3,4,6]		y
-		    TRESOR (x86) [3,4,6]		y
+		    TRESOR (AES-NI) [3,4,6]		t
+		    TRESOR (x86) [3,4,6]		t
 		    TRESOR (x86-64) [3,6]		Y
 		    UKSM [5]				N
 
@@ -109,8 +109,8 @@
 		    futex (futex-wait-multiple) [6]	N
 		    genpatches				Y
 		    kernel_compiler_patch		N
-		    TRESOR (AES-NI) [6]			y
-		    TRESOR (x86) [6]			y
+		    TRESOR (AES-NI) [6]			t
+		    TRESOR (x86) [6]			t
 		    TRESOR (x86-64) [6]			Y
 		    UKSM [5]				N
 		    zen-muqss				N
@@ -125,8 +125,8 @@
 		    kernel_compiler_patch		N
 		    Project C				N
 		    TCP BBR v2				N
-		    TRESOR (AES-NI) [6]			y
-		    TRESOR (x86) [6]			y
+		    TRESOR (AES-NI) [6]			t
+		    TRESOR (x86) [6]			t
 		    TRESOR (x86-64) [6]			Y
 		    UKSM [5]				N
 		    zen-muqss				N
@@ -142,8 +142,8 @@
 		    lru_gen				?
 		    Project C				A
 		    TCP BBR v2 [6]			?
-		    TRESOR (AES-NI) [6]			y
-		    TRESOR (x86) [6]			y
+		    TRESOR (AES-NI) [6]			t
+		    TRESOR (x86) [6]			t
 		    TRESOR (x86-64) [6]			T
 		    UKSM [5]				Y
 		    x86-cfi				?
@@ -160,8 +160,8 @@
 		    kernel_compiler_patch		?
 		    Project C				D
 		    TCP BBR v2 [6]			?
-		    TRESOR (AES-NI) [6]			y
-		    TRESOR (x86) [6]			y
+		    TRESOR (AES-NI) [6]			t
+		    TRESOR (x86) [6]			t
 		    TRESOR (x86-64) [6]			T
 		    UKSM [5]				D
 		    x86-cfi				?
@@ -193,7 +193,7 @@
     I - inactive due to changing API, but future support depends on motivation
     S - upstream indicated support
     T - patch is undergoing testing
-    y - only patch/building testing but without correctness verification
+    t - only patch/building testing but without correctness verification
     ? - unknown status
 
     EOL (End Of Life) stable kernels get dropped next update cycle which is
