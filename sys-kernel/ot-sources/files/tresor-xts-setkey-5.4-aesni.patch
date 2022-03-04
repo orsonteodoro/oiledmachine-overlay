@@ -1,0 +1,20 @@
+Subject:  Set tweak key for 5.4 (aesni
+Path author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Fri Mar  4 01:11:26 AM PST 2022 (Unix time: 1646385086)
+--- a/arch/x86/crypto/tresor_glue.c.orig	2022-03-04 01:36:09.320737717 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2022-03-04 01:37:46.219420246 -0800
+@@ -457,9 +457,11 @@ static int xts_tresor_setkey(struct cryp
+ 	if (keylen != AES_KEYSIZE_128)
+ 		return -EINVAL;
+ 
+-	err = xts_verify_key(tfm, key, keylen*2);
+-	if (err)
+-		return err;
++	// Comparison can only be done in assembly
++	//err = xts_verify_key(tfm, key, keylen*2);
++	//if (err)
++	//	return err;
++	tresor_skcipher_setkey(key + keylen);
+ 
+ 	ctx->crypt_ctx.key_length = keylen;
+ 	ctx->tweak_ctx.key_length = keylen;

@@ -1,12 +1,9 @@
 Subject:  Remove glue_helper and update support for CBC/ECB/CTR/XTS (aesni) for 5.15 kernel
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Date:  Wed Mar  2 08:44:50 PM PST 2022 (Unix time: 1646282690)
-Patch status:  In development
-
-Missing XTS(tresor) setkey changes.
-
---- a/crypto/Kconfig.orig	2022-03-03 21:22:06.181889832 -0800
-+++ b/crypto/Kconfig	2022-03-03 21:24:55.614589434 -0800
+Patch status:  Testing
+--- a/crypto/Kconfig.orig	2022-03-04 00:40:16.547401358 -0800
++++ b/crypto/Kconfig	2022-03-04 00:43:32.530123965 -0800
 @@ -1160,6 +1160,7 @@ config CRYPTO_TRESOR
  	select CRYPTO_ALGAPI
  	select CRYPTO_MANAGER
@@ -24,8 +21,8 @@ Missing XTS(tresor) setkey changes.
  	  This implementation requires Intel's AES-NI instruction set,
  	  currently available to all Core i5/i7 and many i3.
  
---- a/arch/x86/crypto/tresor_glue.c.orig	2022-03-03 21:22:06.493902173 -0800
-+++ b/arch/x86/crypto/tresor_glue.c	2022-03-03 21:38:01.473594933 -0800
+--- a/arch/x86/crypto/tresor_glue.c.orig	2022-03-04 00:40:16.804411486 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2022-03-04 00:45:05.654793132 -0800
 @@ -5,11 +5,6 @@
   * Copyright (C) 2010	Tilo Mueller <tilo.mueller@informatik.uni-erlangen.de>
   * Copyright (C) 2012	Hans Spath <tresor@hans-spath.de>
@@ -292,7 +289,22 @@ Missing XTS(tresor) setkey changes.
  	/* decrypt using the cipher key */
  	__tresor_decrypt(AES_KEYSIZE_128, dst, src);
  }
-@@ -410,46 +286,216 @@ static int xts_tresor_setkey(struct cryp
+@@ -399,9 +275,11 @@ static int xts_tresor_setkey(struct cryp
+ 	if (keylen != AES_KEYSIZE_128)
+ 		return -EINVAL;
+ 
+-	err = xts_verify_key(tfm, key, keylen*2);
+-	if (err)
+-		return err;
++	// Comparison can only happen in assembly
++	//err = xts_verify_key(tfm, key, keylen*2);
++	//if (err)
++	//	return err;
++	tresor_setkey_xts_tweak(key + keylen);
+ 
+ 	ctx->crypt_ctx.key_length = keylen;
+ 	ctx->tweak_ctx.key_length = keylen;
+@@ -410,46 +288,216 @@ static int xts_tresor_setkey(struct cryp
  	return 0;
  }
  
@@ -534,7 +546,7 @@ Missing XTS(tresor) setkey changes.
  }
  
  static int xts_decrypt(struct skcipher_request *req)
-@@ -457,9 +503,10 @@ static int xts_decrypt(struct skcipher_r
+@@ -457,9 +505,10 @@ static int xts_decrypt(struct skcipher_r
  	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
  	struct tresor_xts_ctx *ctx = crypto_skcipher_ctx(tfm);
  
@@ -548,7 +560,7 @@ Missing XTS(tresor) setkey changes.
  }
  
  /*
-@@ -521,23 +568,6 @@ static struct skcipher_alg tresor_skciph
+@@ -521,23 +570,6 @@ static struct skcipher_alg tresor_skciph
  #ifdef CONFIG_X86_64
  	}, {
  		.base = {
@@ -572,8 +584,8 @@ Missing XTS(tresor) setkey changes.
  			.cra_name		= "__xts(tresor)",
  			.cra_driver_name	= "__xts-tresor-aesni",
  			.cra_priority		= 401,
---- a/arch/x86/crypto/tresor_key.c.orig	2022-03-03 21:22:06.517903122 -0800
-+++ b/arch/x86/crypto/tresor_key.c	2022-03-03 21:27:24.471472129 -0800
+--- a/arch/x86/crypto/tresor_key.c.orig	2022-03-04 00:40:16.835412708 -0800
++++ b/arch/x86/crypto/tresor_key.c	2022-03-04 00:43:32.531124004 -0800
 @@ -33,7 +33,6 @@
  #include <linux/syscalls.h>
  #include <linux/sysfs.h>
@@ -583,7 +595,7 @@ Missing XTS(tresor) setkey changes.
  #ifdef CONFIG_CRYPTO_TRESOR_KEY_VIA_CPU0
  asmlinkage void tresor_get_key(void *in_key);
 --- a/crypto/skcipher.c.orig	2021-10-31 13:53:10.000000000 -0700
-+++ b/crypto/skcipher.c	2022-03-03 21:27:08.646846897 -0800
++++ b/crypto/skcipher.c	2022-03-04 00:43:32.531124004 -0800
 @@ -491,6 +491,12 @@ int skcipher_walk_virt(struct skcipher_w
  }
  EXPORT_SYMBOL_GPL(skcipher_walk_virt);
@@ -598,7 +610,7 @@ Missing XTS(tresor) setkey changes.
  			struct skcipher_request *req)
  {
 --- a/include/crypto/internal/skcipher.h.orig	2021-10-31 13:53:10.000000000 -0700
-+++ b/include/crypto/internal/skcipher.h	2022-03-03 21:26:42.615818337 -0800
++++ b/include/crypto/internal/skcipher.h	2022-03-04 00:43:32.532124044 -0800
 @@ -133,6 +133,7 @@ int skcipher_walk_done(struct skcipher_w
  int skcipher_walk_virt(struct skcipher_walk *walk,
  		       struct skcipher_request *req,
@@ -607,8 +619,8 @@ Missing XTS(tresor) setkey changes.
  int skcipher_walk_async(struct skcipher_walk *walk,
  			struct skcipher_request *req);
  int skcipher_walk_aead_encrypt(struct skcipher_walk *walk,
---- a/arch/x86/crypto/tresor_asm.S.orig	2022-03-03 21:22:06.491902094 -0800
-+++ b/arch/x86/crypto/tresor_asm.S	2022-03-03 21:36:46.430654230 -0800
+--- a/arch/x86/crypto/tresor_asm.S.orig	2022-03-04 00:40:16.802411407 -0800
++++ b/arch/x86/crypto/tresor_asm.S	2022-03-04 00:43:32.532124044 -0800
 @@ -325,7 +325,7 @@
  	.globl	tresor_decblk_192
  	.globl	tresor_encblk_256

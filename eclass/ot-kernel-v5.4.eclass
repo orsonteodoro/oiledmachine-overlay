@@ -267,8 +267,7 @@ ewarn
 ewarn
 ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
 ewarn
-ewarn "DO NOT USE XTS with TRESOR until this notice is removed."
-ewarn "Please migrate your data outside the XTS partitions into a different"
+ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
 ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to a"
 ewarn "specific commit before upcoming XTS(tresor) key changes.  Checkout repo"
 ewarn "as head when you have migrated the data are ready to use the updated"
@@ -362,6 +361,13 @@ ot-kernel_apply_tresor_fixes() {
 	fi
 	_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-glue-helper-in-kconfig.patch"
+	if use tresor_x86_64 || use tresor_i686 ; then
+		_dpatch "${PATCH_OPTS}" \
+"${FILESDIR}/tresor-xts-setkey-5.4-i686.patch"
+	else
+		_dpatch "${PATCH_OPTS}" \
+"${FILESDIR}/tresor-xts-setkey-5.4-aesni.patch"
+	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

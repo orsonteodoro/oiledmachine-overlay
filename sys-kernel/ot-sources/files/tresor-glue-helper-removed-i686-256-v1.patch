@@ -1,12 +1,9 @@
 Subject:  Remove glue_helper and update support for CBC/ECB/CTR/XTS (i686/256 bit-keys) for 5.15 kernel
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Date:  Wed Mar  2 08:44:50 PM PST 2022 (Unix time: 1646282690)
-Patch status:  In development
-
-Missing XTS(tresor) setkey changes.
-
---- a/crypto/Kconfig.orig	2022-03-03 20:35:48.126965917 -0800
-+++ b/crypto/Kconfig	2022-03-03 20:39:50.402685075 -0800
+Patch status:  Testing
+--- a/crypto/Kconfig.orig	2022-03-04 00:06:45.137008799 -0800
++++ b/crypto/Kconfig	2022-03-04 00:16:19.014278082 -0800
 @@ -1155,12 +1155,13 @@ config CRYPTO_AES_PPC_SPE
  	  tables or 256 bytes S-boxes.
  
@@ -33,8 +30,8 @@ Missing XTS(tresor) setkey changes.
  
  	  If you have another CPU, say N. If unsure, say N.
  
---- a/arch/x86/crypto/tresor_glue.c.orig	2022-03-03 20:35:48.424977883 -0800
-+++ b/arch/x86/crypto/tresor_glue.c	2022-03-03 20:44:34.208048966 -0800
+--- a/arch/x86/crypto/tresor_glue.c.orig	2022-03-04 00:13:09.298912472 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2022-03-04 00:16:19.016278160 -0800
 @@ -5,11 +5,6 @@
   * Copyright (C) 2012	Hans Spath <tresor@hans-spath.de>
   * Copyright (C) 2012	Johannes Goetzfried <johannes@jgoetzfried.de>
@@ -268,7 +265,7 @@ Missing XTS(tresor) setkey changes.
  }
  
  #ifdef CONFIG_X86_64
-@@ -418,46 +294,216 @@ static int xts_tresor_setkey(struct cryp
+@@ -420,46 +296,216 @@ static int xts_tresor_setkey(struct cryp
  	return 0;
  }
  
@@ -510,7 +507,7 @@ Missing XTS(tresor) setkey changes.
  }
  
  static int xts_decrypt(struct skcipher_request *req)
-@@ -465,9 +511,10 @@ static int xts_decrypt(struct skcipher_r
+@@ -467,9 +513,10 @@ static int xts_decrypt(struct skcipher_r
  	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
  	struct tresor_xts_ctx *ctx = crypto_skcipher_ctx(tfm);
  
@@ -524,7 +521,7 @@ Missing XTS(tresor) setkey changes.
  }
  #endif
  
-@@ -542,23 +589,6 @@ static struct skcipher_alg tresor_skciph
+@@ -544,23 +591,6 @@ static struct skcipher_alg tresor_skciph
  #ifdef CONFIG_X86_64
  	}, {
  		.base = {
@@ -548,8 +545,8 @@ Missing XTS(tresor) setkey changes.
  			.cra_name		= "__xts(tresor)",
  			.cra_driver_name	= "__xts-tresor-sse2",
  			.cra_priority		= 401,
---- a/arch/x86/crypto/tresor_key.c.orig	2022-03-03 20:35:48.403977039 -0800
-+++ b/arch/x86/crypto/tresor_key.c	2022-03-03 20:38:32.784573213 -0800
+--- a/arch/x86/crypto/tresor_key.c.orig	2022-03-04 00:06:45.433020277 -0800
++++ b/arch/x86/crypto/tresor_key.c	2022-03-04 00:16:19.017278199 -0800
 @@ -32,7 +32,6 @@
  #include <linux/syscalls.h>
  #include <linux/sysfs.h>
@@ -559,7 +556,7 @@ Missing XTS(tresor) setkey changes.
  static struct file *term_file;
  static unsigned char key_hash[32];
 --- a/crypto/skcipher.c.orig	2021-10-31 13:53:10.000000000 -0700
-+++ b/crypto/skcipher.c	2022-03-03 20:38:25.681288342 -0800
++++ b/crypto/skcipher.c	2022-03-04 00:16:19.018278237 -0800
 @@ -491,6 +491,12 @@ int skcipher_walk_virt(struct skcipher_w
  }
  EXPORT_SYMBOL_GPL(skcipher_walk_virt);
@@ -574,7 +571,7 @@ Missing XTS(tresor) setkey changes.
  			struct skcipher_request *req)
  {
 --- a/include/crypto/internal/skcipher.h.orig	2021-10-31 13:53:10.000000000 -0700
-+++ b/include/crypto/internal/skcipher.h	2022-03-03 20:38:08.688606803 -0800
++++ b/include/crypto/internal/skcipher.h	2022-03-04 00:16:19.019278276 -0800
 @@ -133,6 +133,7 @@ int skcipher_walk_done(struct skcipher_w
  int skcipher_walk_virt(struct skcipher_walk *walk,
  		       struct skcipher_request *req,

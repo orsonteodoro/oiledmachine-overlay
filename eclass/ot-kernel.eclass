@@ -3586,9 +3586,15 @@ elog "package with these private keys: ${private_keys[@]}"
 elog "Please run shred -f on every file listed as a precaution."
 	fi
 ewarn
-ewarn "TRESOR with XTS will be patched again with tweak key changes."
-ewarn "Will fix in within next few commits or next point release."
-ewarn "This change will not be forward compatible and the data needs"
-ewarn "to be moved out."
+ewarn "Please migrate your data outside the XTS(tresor) partitions into a different"
+ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
+ewarn "20a1c90 before the XTS(tresor) key changes to backup and restore from"
+ewarn "it. Checkout repo as HEAD when you have migrated the data are ready to"
+ewarn "use the updated XTS(tresor) with setkey changes.  This new XTS setkey"
+ewarn "change will not be backwards compatible."
+ewarn
+ewarn "The ot-kernel is always considered experimental grade.  Always have a"
+ewarn "rescue/fallback kernel with possibly an older version or with another"
+ewarn "kernel package."
 ewarn
 }
