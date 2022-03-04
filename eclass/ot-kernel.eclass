@@ -3279,16 +3279,14 @@ ewarn
 ewarn "For 4.14, TRESOR with ECB and CBC are only available."
 ewarn "CBC is recommended for production in the 4.14 series."
 ewarn
-ewarn "For LTS and stable, TRESOR with ECB, CBC, CTR, XTS are only available."
-ewarn "CBC is currently recommended for production.  CTR and XTS are still in"
-ewarn "development and strongly not recommended.  The XTS and CTR"
-ewarn "implementations will be reworked if possible in assembly code and"
-ewarn "registers.  Currently, both CTS and CTR implementation allows copies of"
-ewarn "these infos into RAM memory and not philosophically in alignment TRESOR"
-ewarn "which keeps keys out of memory.  Further XTS support may require modding"
-ewarn "at the kernel source code level."
+ewarn "Modes of operation status with TRESOR:"
 ewarn
-ewarn "ECB is NOT recommended and should only be used for testing."
+ewarn "ECB:  stable (DO NOT USE, for testing purposes only)"
+ewarn "CBC:  stable (recommended for production, used upstream)"
+ewarn "CTR:  stable"
+ewarn "XTS:  experimental / broken.  (DO NOT USE; 256 XTS only with 128-bit key; 64-bit ABI only)"
+ewarn
+ewarn "Support for TRESOR may require modding in the kernel source code level."
 ewarn
 ewarn "The kernel may require modding the setkey portions to support different"
 ewarn "crypto systems whenever crypto_cipher_setkey or crypto_skcipher_setkey"
@@ -3299,14 +3297,7 @@ ewarn
 ewarn "Because it uses hardware breakpoint debug address registers, these"
 ewarn "debugging features are mutually exclusive when TRESOR is being used."
 ewarn
-ewarn "TRESOR-XTS is limited to 64-bit arches and 256-bit keys, but 128-bit key"
-ewarn "for the crypto key."
-ewarn
-ewarn "Using TRESOR with fscrypt is currently not supported.  The ebuild"
-ewarn "developer is currently working towards that goal.  Changing the key in"
-ewarn "the middle of writing may result in data loss, meaning half the data may"
-ewarn "be encrypted with two different keys.  The fscrypt with TRESOR support"
-ewarn "will address this problem."
+ewarn "Using TRESOR with fscrypt is currently not supported."
 ewarn
 		fi
 		if use tresor_aesni ; then
@@ -3519,11 +3510,8 @@ einfo
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 ewarn
-ewarn "TRESOR is currently not compatible with Integrated Assembler used by."
-ewarn "LLVM It is only compatible with GAS.  You may try to pass"
-ewarn "-no-integrated-as to CLANG_FLAGS or CFLAGS or build only with the GCC"
-ewarn "toolchain only.  Compatibility with Integrated Assembler may be"
-ewarn "provided later."
+ewarn "TRESOR is currently not compatible with Integrated Assembler used by Clang/LLVM."
+ewarn "Add LLVM_IAS=0 to make all to build it with Clang/LLVM."
 ewarn
 		fi
 	fi
@@ -3597,4 +3585,10 @@ elog "Detected the following previous install or partial build of the ${PN}"
 elog "package with these private keys: ${private_keys[@]}"
 elog "Please run shred -f on every file listed as a precaution."
 	fi
+ewarn
+ewarn "TRESOR with XTS will be patched again with tweak key changes."
+ewarn "Will fix in within next few commits or next point release."
+ewarn "This change will not be forward compatible and the data needs"
+ewarn "to be moved out."
+ewarn
 }

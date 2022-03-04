@@ -20,7 +20,7 @@
 inherit ot-kernel-kutils
 
 # These are discovered by doing one of the following:
-# 1: grep --exclude-dir=.git --exclude-dir=distfiles -r -e "CHECK=" ./
+# 1: grep --exclude-dir=.git --exclude-dir=distfiles -r -e "CONFIG_CHECK=" ./
 # 2: grep --exclude-dir=.git --exclude-dir=distfiles -r -e "linux_chkconfig_" ./
 
 X86_FLAGS=(aes avx avx2 sha sse2 ssse3)
@@ -76,6 +76,7 @@ ot-kernel-pkgflags_apply() {
 	#ot-kernel-pkgflags_boinc
 	ot-kernel-pkgflags_bolt
 	ot-kernel-pkgflags_bubblewrap
+	ot-kernel-pkgflags_catalyst
 	ot-kernel-pkgflags_clamav
 	ot-kernel-pkgflags_clamfs
 	ot-kernel-pkgflags_conky
@@ -146,6 +147,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_qemu
 	ot-kernel-pkgflags_roct
 	ot-kernel-pkgflags_runc
+	ot-kernel-pkgflags_simplevirt
 	ot-kernel-pkgflags_shorewall
 	ot-kernel-pkgflags_spacenavd
 	ot-kernel-pkgflags_spice_vdagent
@@ -154,6 +156,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_steam
 	ot-kernel-pkgflags_systemd
 	ot-kernel-pkgflags_tb_us
+	ot-kernel-pkgflags_thinkfinger
 	ot-kernel-pkgflags_udev
 	ot-kernel-pkgflags_udisks
 	ot-kernel-pkgflags_undervolt
@@ -335,6 +338,20 @@ ot-kernel-pkgflags_bubblewrap() { # DONE
 		ot-kernel_y_configopt "CONFIG_USER_NS"
 		ot-kernel_y_configopt "CONFIG_PID_NS"
 		ot-kernel_y_configopt "CONFIG_NET_NS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_catalyst
+# @DESCRIPTION:
+# Applies kernel config flags for the catalyst package
+ot-kernel-pkgflags_catalyst() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "14ce6b4" ]] && return
+	if has_version "dev-util/catalyst" ; then
+		einfo "Applying kernel config flags for the catalyst package (id: 14ce6b4)"
+		ot-kernel_y_configopt "CONFIG_UTS_NS"
+		ot-kernel_y_configopt "CONFIG_IPC_NS"
+		ot-kernel_y_configopt "CONFIG_SQUASHFS"
+		ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
 	fi
 }
 
@@ -1913,6 +1930,18 @@ ot-kernel-pkgflags_undervolt() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_simplevirt
+# @DESCRIPTION:
+# Applies kernel config flags for the simplevirt package
+ot-kernel-pkgflags_simplevirt() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "9dc3745" ]] && return
+	if has_version "app-emulation/simplevirt" ; then
+		einfo "Applying kernel config flags for the simplevirt package (id: 9dc3745)"
+		ot-kernel_y_configopt "CONFIG_TUN"
+		ot-kernel_y_configopt "CONFIG_BRIDGE"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_shorewall
 # @DESCRIPTION:
 # Applies kernel config flags for the shorewall package
@@ -2013,6 +2042,17 @@ ot-kernel-pkgflags_tb_us() { # DONE
 		einfo "Applying kernel config flags for tb-us (id: c800aa5)"
 		ot-kernel_y_configopt "CONFIG_THUNDERBOLT"
 		ot-kernel_y_configopt "CONFIG_HOTPLUG_PCI"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_thinkfinger
+# @DESCRIPTION:
+# Applies kernel config flags for the thinkfinger package
+ot-kernel-pkgflags_thinkfinger() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "f096b24" ]] && return
+	if has_version "sys-auth/thinkfinger[pam]" ; then
+		einfo "Applying kernel config flags for thinkfinger (id: f096b24)"
+		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
 	fi
 }
 

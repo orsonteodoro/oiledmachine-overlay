@@ -1,0 +1,14 @@
+Subject:  Add missing glue_helper to Kconfig for tresor
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Wed Mar  2 08:44:50 PM PST 2022 (Unix time: 1646282690)
+
+--- a/crypto/Kconfig.orig	2022-03-02 21:34:53.421170304 -0800
++++ b/crypto/Kconfig	2022-03-02 21:37:41.973703495 -0800
+@@ -1207,6 +1207,7 @@ config CRYPTO_TRESOR
+ 	select CRYPTO_ALGAPI
+ 	select CRYPTO_MANAGER
+ 	select CRYPTO_MANAGER2
++	select CRYPTO_GLUE_HELPER_X86 if 64BIT
+ 	default n
+ 	help
+ 	  TRESOR Runs Encryption Securely Outside RAM

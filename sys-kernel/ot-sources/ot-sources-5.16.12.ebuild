@@ -3,7 +3,7 @@
 
 EAPI="7"
 
-K_GENPATCHES_VER="12"
+K_GENPATCHES_VER="13"
 PATCH_PROJC_VER="5.15-r1" # For updates see https://gitlab.com/alfredchen/projectc/-/tree/master
 PATCH_RT_VER="5.16.2-rt19"
 

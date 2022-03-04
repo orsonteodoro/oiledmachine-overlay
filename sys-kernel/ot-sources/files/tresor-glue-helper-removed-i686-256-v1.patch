@@ -1,0 +1,581 @@
+Subject:  Remove glue_helper and update support for CBC/ECB/CTR/XTS (i686/256 bit-keys) for 5.15 kernel
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Wed Mar  2 08:44:50 PM PST 2022 (Unix time: 1646282690)
+--- a/crypto/Kconfig.orig	2022-03-03 20:35:48.126965917 -0800
++++ b/crypto/Kconfig	2022-03-03 20:39:50.402685075 -0800
+@@ -1155,12 +1155,13 @@ config CRYPTO_AES_PPC_SPE
+ 	  tables or 256 bytes S-boxes.
+ 
+ config CRYPTO_TRESOR
+-	bool "AES-128 cipher, cold boot resistant (TRESOR)"
++	bool "AES-128/192/256 cipher, cold boot resistant (TRESOR)"
+ 	depends on X86
+ 	select CRYPTO_AES
+ 	select CRYPTO_ALGAPI
+ 	select CRYPTO_MANAGER
+ 	select CRYPTO_MANAGER2
++	imply CRYPTO_CTR
+ 	default n
+ 	help
+ 	  TRESOR Runs Encryption Securely Outside RAM
+@@ -1177,7 +1178,9 @@ config CRYPTO_TRESOR
+ 	  software breakpoints only, no hardware breakpoints.
+ 
+ 	  The supported key size is 128 bits on 32-bit systems (no support
+-	  for AES-192 and AES-256).
++	  for AES-192 and AES-256).  For 64-bit systems, the supported
++	  key size is 128/192/256 for CBC/ECB/CTR except for XTS.  XTS
++	  is limited to 256 bit XTS with a 128 key.
+ 
+ 	  If you have another CPU, say N. If unsure, say N.
+ 
+--- a/arch/x86/crypto/tresor_glue.c.orig	2022-03-03 20:35:48.424977883 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2022-03-03 20:44:34.208048966 -0800
+@@ -5,11 +5,6 @@
+  * Copyright (C) 2012	Hans Spath <tresor@hans-spath.de>
+  * Copyright (C) 2012	Johannes Goetzfried <johannes@jgoetzfried.de>
+  *
+- * Portions use skcipher cbc_, ecb_, ctr_ code from crypto/cast5_avx_glue.c by:
+- *   Copyright (C) 2012 Johannes Goetzfried
+- *       <Johannes.Goetzfried@informatik.stud.uni-erlangen.de>
+- *   Copyright © 2013 Jussi Kivilinna <jussi.kivilinna@iki.fi>
+- *
+  * Portions use aesni_init and aesni_skciphers code from crypto/aesni-intel_glue.c by:
+  *   Copyright (C) 2008, Intel Corp.
+  *      Author: Huang Ying <ying.huang@intel.com>
+@@ -19,12 +14,6 @@
+  *       <Johannes.Goetzfried@informatik.stud.uni-erlangen.de>
+  *   Copyright © 2013 Jussi Kivilinna <jussi.kivilinna@iki.fi>
+  *
+- * CBC & ECB parts based on code (crypto/cbc.c,ecb.c) by:
+- *   Copyright (c) 2006 Herbert Xu <herbert@gondor.apana.org.au>
+- *
+- * CTR part based on code (crypto/ctr.c) by:
+- *   (C) Copyright IBM Corp. 2007 - Joy Latten <latten@us.ibm.com>
+- *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+  * version 2, as published by the Free Software Foundation.
+@@ -40,18 +29,32 @@
+  *
+  * Portions include skcipher updates by Eric Biggers <ebiggers@google.com> and
+  * Herbert Xu <herbert@gondor.apana.org.au>.
++ *
++ * Portions include glue parts from glue_helper.c:
++ *
++ * Shared glue code for 128bit block ciphers
++ *
++ * Copyright © 2012-2013 Jussi Kivilinna <jussi.kivilinna@iki.fi>
+  */
+ 
+-#include <asm/crypto/glue_helper.h>
+ #include <crypto/algapi.h>
+ #include <crypto/b128ops.h>
+ #include <crypto/internal/simd.h>
+ #include <crypto/tresor.h>
+-#include <crypto/xts.h>
+ #include <linux/module.h>
+ #include <crypto/aes.h>
+ #include <linux/smp.h>
+ 
++// Some from glue_helper.c
++#include <linux/module.h>
++#include <crypto/b128ops.h>
++#include <crypto/gf128mul.h>
++#include <crypto/internal/skcipher.h>
++#include <crypto/scatterwalk.h>
++#include <crypto/xts.h>
++// END From glue_helper.c
++
++#include "ecb_cbc_helpers.h"
+ 
+ /*
+  * Assembly functions implemented in tresor-intel_asm.S
+@@ -213,160 +216,33 @@ static int tresor_skcipher_setkey(struct
+ 	return 0;
+ }
+ 
+-static int ecb_crypt(struct skcipher_request *req, bool enc)
+-{
+-	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+-	struct tresor_ctx *ctx = crypto_skcipher_ctx(tfm);
+-	struct skcipher_walk walk;
+-	const unsigned int bsize = AES_BLOCK_SIZE;
+-	unsigned int nbytes;
+-	int err;
+-
+-	err = skcipher_walk_virt(&walk, req, true);
+-
+-	while ((nbytes = walk.nbytes)) {
+-		u8 *wsrc = walk.src.virt.addr;
+-		u8 *wdst = walk.dst.virt.addr;
+-
+-		/* Handle leftovers */
+-		do {
+-			if (enc)
+-				__tresor_encrypt(ctx->key_length, wdst, wsrc);
+-			else
+-				__tresor_decrypt(ctx->key_length, wdst, wsrc);
+-
+-			wsrc += bsize;
+-			wdst += bsize;
+-			nbytes -= bsize;
+-		} while (nbytes >= bsize);
+-
+-		err = skcipher_walk_done(&walk, nbytes);
+-	}
+-
+-	return err;
+-}
+-
+ static int ecb_encrypt(struct skcipher_request *req)
+ {
+-	return ecb_crypt(req, true);
++	ECB_WALK_START(req, AES_BLOCK_SIZE, -1);
++	ECB_BLOCK(1, tresor_encrypt);
++	ECB_WALK_END();
+ }
+ 
+ static int ecb_decrypt(struct skcipher_request *req)
+ {
+-	return ecb_crypt(req, false);
++	ECB_WALK_START(req, AES_BLOCK_SIZE, -1);
++	ECB_BLOCK(1, tresor_decrypt);
++	ECB_WALK_END();
+ }
+ 
+ 
+ static int cbc_encrypt(struct skcipher_request *req)
+ {
+-	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+-	struct tresor_ctx *ctx = crypto_skcipher_ctx(tfm);
+-	const unsigned int bsize = AES_BLOCK_SIZE;
+-	struct skcipher_walk walk;
+-	unsigned int nbytes;
+-	int err;
+-
+-	err = skcipher_walk_virt(&walk, req, false);
+-
+-	while ((nbytes = walk.nbytes)) {
+-		u128 *src = (u128 *)walk.src.virt.addr;
+-		u128 *dst = (u128 *)walk.dst.virt.addr;
+-		u128 *iv = (u128 *)walk.iv;
+-
+-		do {
+-			u128_xor(dst, src, iv);
+-			__tresor_encrypt(ctx->key_length, (u8 *)dst, (u8 *)dst);
+-			iv = dst;
+-			src++;
+-			dst++;
+-			nbytes -= bsize;
+-		} while (nbytes >= bsize);
+-
+-		*(u128 *)walk.iv = *iv;
+-		err = skcipher_walk_done(&walk, nbytes);
+-	}
+-
+-	return err;
+-}
+-
+-static unsigned int __cbc_decrypt(struct tresor_ctx *ctx,
+-				  struct skcipher_walk *walk)
+-{
+-	const unsigned int bsize = AES_BLOCK_SIZE;
+-	unsigned int nbytes = walk->nbytes;
+-	u128 *src = (u128 *)walk->src.virt.addr;
+-	u128 *dst = (u128 *)walk->dst.virt.addr;
+-	u128 last_iv;
+-
+-	/* Start of the last block. */
+-	src += nbytes / bsize - 1;
+-	dst += nbytes / bsize - 1;
+-
+-	last_iv = *src;
+-
+-	/* Handle leftovers */
+-	for (;;) {
+-		__tresor_decrypt(ctx->key_length, (u8 *)dst, (u8 *)src);
+-
+-		nbytes -= bsize;
+-		if (nbytes < bsize)
+-			break;
+-
+-		u128_xor(dst, dst, (src-1));
+-		src -= 1;
+-		dst -= 1;
+-	}
+-
+-	u128_xor(dst, dst, walk->iv);
+-	*(u128 *)walk->iv = last_iv;
+-
+-	return nbytes;
++	CBC_WALK_START(req, AES_BLOCK_SIZE, -1);
++	CBC_ENC_BLOCK(tresor_encrypt);
++	CBC_WALK_END();
+ }
+ 
+ static int cbc_decrypt(struct skcipher_request *req)
+ {
+-	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+-	struct tresor_ctx *ctx = crypto_skcipher_ctx(tfm);
+-	struct skcipher_walk walk;
+-	unsigned int nbytes;
+-	int err;
+-
+-	err = skcipher_walk_virt(&walk, req, false);
+-
+-	while ((nbytes = walk.nbytes)) {
+-		nbytes = __cbc_decrypt(ctx, &walk);
+-		err = skcipher_walk_done(&walk, nbytes);
+-	}
+-	return err;
+-}
+-
+-static void tresor_crypt_ctr(const void *ctx, u8 *d, const u8 *s, le128 *iv)
+-{
+-	be128 ctrblk;
+-	u128 *dst = (u128 *)d;
+-	const u128 *src = (const u128 *)s;
+-
+-	le128_to_be128(&ctrblk, iv);
+-	le128_inc(iv);
+-
+-	__tresor_encrypt(((struct tresor_ctx *)ctx)->key_length, (u8 *)&ctrblk, (u8 *)&ctrblk);
+-
+-	u128_xor((u128 *)dst, (u128 *)src, (u128 *)&ctrblk);
+-}
+-
+-static const struct common_glue_ctx tresor_ctr = {
+-	.num_funcs = 1,
+-	.fpu_blocks_limit = 1,
+-
+-	.funcs = { {
+-		.num_blocks = 1,
+-		.fn_u = { .ctr = tresor_crypt_ctr }
+-	} }
+-};
+-
+-static int ctr_crypt(struct skcipher_request *req)
+-{
+-	return glue_ctr_req_128bit(&tresor_ctr, req);
++	CBC_WALK_START(req, AES_BLOCK_SIZE, -1);
++	CBC_DEC_BLOCK(1, tresor_decrypt);
++	CBC_WALK_END();
+ }
+ 
+ #ifdef CONFIG_X86_64
+@@ -418,46 +294,216 @@ static int xts_tresor_setkey(struct cryp
+ 	return 0;
+ }
+ 
++static void tresor_xts_enc(const void *ctx, u8 *dst, const u8 *src, le128 *iv);
++static void tresor_xts_dec(const void *ctx, u8 *dst, const u8 *src, le128 *iv);
++
++// From glue_helper.h
++static inline bool glue_fpu_begin(unsigned int bsize, int fpu_blocks_limit,
++				  struct skcipher_walk *walk,
++				  bool fpu_enabled, unsigned int nbytes)
++{
++	if (likely(fpu_blocks_limit < 0))
++		return false;
++
++	if (fpu_enabled)
++		return true;
++
++	/*
++	 * Vector-registers are only used when chunk to be processed is large
++	 * enough, so do not enable FPU until it is necessary.
++	 */
++	if (nbytes < bsize * (unsigned int)fpu_blocks_limit)
++		return false;
++
++	/* prevent sleeping if FPU is in use */
++	skcipher_walk_atomise(walk);
++
++	kernel_fpu_begin();
++	return true;
++}
++
++static inline void glue_fpu_end(bool fpu_enabled)
++{
++	if (fpu_enabled)
++		kernel_fpu_end();
++}
++
++// From glue_helper.c with changes
++static unsigned int __glue_xts_req_128bit(void *ctx,
++					  struct skcipher_walk *walk,
++					  bool decrypt)
++{
++	const unsigned int bsize = 128 / 8;
++	unsigned int nbytes = walk->nbytes;
++	u128 *src = walk->src.virt.addr;
++	u128 *dst = walk->dst.virt.addr;
++	unsigned int func_bytes;
++
++	func_bytes = bsize;
++
++	if (nbytes >= func_bytes) {
++		do {
++			if (decrypt)
++				tresor_xts_enc(ctx, (u8 *)dst,
++							(const u8 *)src,
++							walk->iv);
++			else
++				tresor_xts_dec(ctx, (u8 *)dst,
++							(const u8 *)src,
++							walk->iv);
++
++			src += 1; /* num_blocks */
++			dst += 1; /* num_blocks */
++			nbytes -= func_bytes;
++		} while (nbytes >= func_bytes);
++
++		if (nbytes < bsize)
++			goto done;
++	}
++
++done:
++	return nbytes;
++}
++
++// From glue_helper.c with changes
++int glue_xts_req_128bit(struct skcipher_request *req,
++			void *tweak_ctx,
++			void *crypt_ctx, bool decrypt)
++{
++	const bool cts = (req->cryptlen % XTS_BLOCK_SIZE);
++	const unsigned int bsize = 128 / 8;
++	struct skcipher_request subreq;
++	struct skcipher_walk walk;
++	bool fpu_enabled = false;
++	unsigned int nbytes, tail;
++	int err;
++
++	if (req->cryptlen < XTS_BLOCK_SIZE)
++		return -EINVAL;
++
++	if (unlikely(cts)) {
++		struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
++
++		tail = req->cryptlen % XTS_BLOCK_SIZE + XTS_BLOCK_SIZE;
++
++		skcipher_request_set_tfm(&subreq, tfm);
++		skcipher_request_set_callback(&subreq,
++					      crypto_skcipher_get_flags(tfm),
++					      NULL, NULL);
++		skcipher_request_set_crypt(&subreq, req->src, req->dst,
++					   req->cryptlen - tail, req->iv);
++		req = &subreq;
++	}
++
++	err = skcipher_walk_virt(&walk, req, false);
++	nbytes = walk.nbytes;
++	if (err)
++		return err;
++
++	/* set minimum length to bsize, for tweak_fn */
++	fpu_enabled = glue_fpu_begin(bsize, 1 /* fpu_blocks_limit */,
++				     &walk, fpu_enabled,
++				     nbytes < bsize ? bsize : nbytes);
++
++	/* calculate first value of T */
++	__xts_tweak_tresor_encrypt(tweak_ctx, walk.iv, walk.iv);
++
++	while (nbytes) {
++		nbytes = __glue_xts_req_128bit(crypt_ctx, &walk, decrypt);
++
++		err = skcipher_walk_done(&walk, nbytes);
++		nbytes = walk.nbytes;
++	}
++
++	if (unlikely(cts)) {
++		u8 *next_tweak, *final_tweak = req->iv;
++		struct scatterlist *src, *dst;
++		struct scatterlist s[2], d[2];
++		le128 b[2];
++
++		dst = src = scatterwalk_ffwd(s, req->src, req->cryptlen);
++		if (req->dst != req->src)
++			dst = scatterwalk_ffwd(d, req->dst, req->cryptlen);
++
++		if (decrypt) {
++			next_tweak = memcpy(b, req->iv, XTS_BLOCK_SIZE);
++			gf128mul_x_ble(b, b);
++		} else {
++			next_tweak = req->iv;
++		}
++
++		skcipher_request_set_crypt(&subreq, src, dst, XTS_BLOCK_SIZE,
++					   next_tweak);
++
++		err = skcipher_walk_virt(&walk, req, false) ?:
++		      skcipher_walk_done(&walk,
++				__glue_xts_req_128bit(crypt_ctx, &walk, decrypt));
++		if (err)
++			goto out;
++
++		scatterwalk_map_and_copy(b, dst, 0, XTS_BLOCK_SIZE, 0);
++		memcpy(b + 1, b, tail - XTS_BLOCK_SIZE);
++		scatterwalk_map_and_copy(b, src, XTS_BLOCK_SIZE,
++					 tail - XTS_BLOCK_SIZE, 0);
++		scatterwalk_map_and_copy(b, dst, 0, tail, 1);
++
++		skcipher_request_set_crypt(&subreq, dst, dst, XTS_BLOCK_SIZE,
++					   final_tweak);
++
++		err = skcipher_walk_virt(&walk, req, false) ?:
++		      skcipher_walk_done(&walk,
++				__glue_xts_req_128bit(crypt_ctx, &walk, decrypt));
++	}
++
++out:
++	glue_fpu_end(fpu_enabled);
++
++	return err;
++}
++
++// From glue_helper.c with changes
++void glue_xts_crypt_128bit_one(const void *ctx, u8 *dst, const u8 *src,
++			       le128 *iv, bool decrypt)
++{
++	le128 ivblk = *iv;
++
++	/* generate next IV */
++	gf128mul_x_ble(iv, &ivblk);
++
++	/* CC <- T xor C */
++	u128_xor((u128 *)dst, (const u128 *)src, (u128 *)&ivblk);
++
++	/* PP <- D(Key2,CC) */
++	if (decrypt)
++		__xts_tresor_decrypt(ctx, dst, dst);
++	else
++		__xts_tresor_encrypt(ctx, dst, dst);
++
++	/* P <- T xor PP */
++	u128_xor((u128 *)dst, (u128 *)dst, (u128 *)&ivblk);
++}
++
+ static void tresor_xts_enc(const void *ctx, u8 *dst, const u8 *src, le128 *iv)
+ {
+ 	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
+-				  __xts_tresor_encrypt);
++				  false);
+ }
+ 
+ static void tresor_xts_dec(const void *ctx, u8 *dst, const u8 *src, le128 *iv)
+ {
+ 	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
+-				  __xts_tresor_decrypt);
++				  true);
+ }
+ 
+-static const struct common_glue_ctx tresor_enc_xts = {
+-	.num_funcs = 1,
+-	.fpu_blocks_limit = 1,
+-
+-	.funcs = { {
+-		.num_blocks = 1,
+-		.fn_u = { .xts = tresor_xts_enc }
+-	} }
+-};
+-
+-static const struct common_glue_ctx tresor_dec_xts = {
+-	.num_funcs = 1,
+-	.fpu_blocks_limit = 1,
+-
+-	.funcs = { {
+-		.num_blocks = 1,
+-		.fn_u = { .xts = tresor_xts_dec }
+-	} }
+-};
+-
+ static int xts_encrypt(struct skcipher_request *req)
+ {
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+ 	struct tresor_xts_ctx *ctx = crypto_skcipher_ctx(tfm);
+ 
+-	return glue_xts_req_128bit(&tresor_enc_xts, req,
+-				   __xts_tweak_tresor_encrypt,
+-				   &ctx->tweak_ctx, &ctx->crypt_ctx, false);
++	return glue_xts_req_128bit(req,
++				   &ctx->tweak_ctx,
++				   &ctx->crypt_ctx,
++				   false);
+ }
+ 
+ static int xts_decrypt(struct skcipher_request *req)
+@@ -465,9 +511,10 @@ static int xts_decrypt(struct skcipher_r
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+ 	struct tresor_xts_ctx *ctx = crypto_skcipher_ctx(tfm);
+ 
+-	return glue_xts_req_128bit(&tresor_dec_xts, req,
+-				   __xts_tweak_tresor_encrypt,
+-				   &ctx->tweak_ctx, &ctx->crypt_ctx, true);
++	return glue_xts_req_128bit(req,
++				   &ctx->tweak_ctx,
++				   &ctx->crypt_ctx,
++				   true);
+ }
+ #endif
+ 
+@@ -542,23 +589,6 @@ static struct skcipher_alg tresor_skciph
+ #ifdef CONFIG_X86_64
+ 	}, {
+ 		.base = {
+-			.cra_name		= "__ctr(tresor)",
+-			.cra_driver_name	= "__ctr-tresor-sse2",
+-			.cra_priority		= 400,
+-			.cra_flags		= CRYPTO_ALG_INTERNAL,
+-			.cra_blocksize		= 1,
+-			.cra_ctxsize		= sizeof(struct tresor_ctx),
+-			.cra_module		= THIS_MODULE,
+-		},
+-		.min_keysize	= AES_MIN_KEY_SIZE,
+-		.max_keysize	= AES_MAX_KEY_SIZE,
+-		.ivsize		= AES_BLOCK_SIZE,
+-		.chunksize	= AES_BLOCK_SIZE,
+-		.setkey		= tresor_skcipher_setkey,
+-		.encrypt	= ctr_crypt,
+-		.decrypt	= ctr_crypt,
+-	}, {
+-		.base = {
+ 			.cra_name		= "__xts(tresor)",
+ 			.cra_driver_name	= "__xts-tresor-sse2",
+ 			.cra_priority		= 401,
+--- a/arch/x86/crypto/tresor_key.c.orig	2022-03-03 20:35:48.403977039 -0800
++++ b/arch/x86/crypto/tresor_key.c	2022-03-03 20:38:32.784573213 -0800
+@@ -32,7 +32,6 @@
+ #include <linux/syscalls.h>
+ #include <linux/sysfs.h>
+ #include <linux/tty.h>
+-#include <stdarg.h>
+ 
+ static struct file *term_file;
+ static unsigned char key_hash[32];
+--- a/crypto/skcipher.c.orig	2021-10-31 13:53:10.000000000 -0700
++++ b/crypto/skcipher.c	2022-03-03 20:38:25.681288342 -0800
+@@ -491,6 +491,12 @@ int skcipher_walk_virt(struct skcipher_w
+ }
+ EXPORT_SYMBOL_GPL(skcipher_walk_virt);
+ 
++void skcipher_walk_atomise(struct skcipher_walk *walk)
++{
++	walk->flags &= ~SKCIPHER_WALK_SLEEP;
++}
++EXPORT_SYMBOL_GPL(skcipher_walk_atomise);
++
+ int skcipher_walk_async(struct skcipher_walk *walk,
+ 			struct skcipher_request *req)
+ {
+--- a/include/crypto/internal/skcipher.h.orig	2021-10-31 13:53:10.000000000 -0700
++++ b/include/crypto/internal/skcipher.h	2022-03-03 20:38:08.688606803 -0800
+@@ -133,6 +133,7 @@ int skcipher_walk_done(struct skcipher_w
+ int skcipher_walk_virt(struct skcipher_walk *walk,
+ 		       struct skcipher_request *req,
+ 		       bool atomic);
++void skcipher_walk_atomise(struct skcipher_walk *walk);
+ int skcipher_walk_async(struct skcipher_walk *walk,
+ 			struct skcipher_request *req);
+ int skcipher_walk_aead_encrypt(struct skcipher_walk *walk,

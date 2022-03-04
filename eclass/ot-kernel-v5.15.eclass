@@ -241,10 +241,6 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
-	!tresor
-	!tresor_aesni
-	!tresor_i686
-	!tresor_x86_64
 "
 fi
 
@@ -507,11 +503,17 @@ ot-kernel_pkg_setup_cb() {
 		if [[ -n "${OT_KERNEL_DEVELOPER}" && "${OT_KERNEL_DEVELOPER}" == "1" ]] ; then
 			:
 		else
-eerror
-eerror "Building for TRESOR is currently broken for ${PV}.  Use the older LTS"
-eerror "branches instead.  Disable the tresor USE flag for this series to"
-eerror "continue."
-eerror
+ewarn
+ewarn "TRESOR for ${K_MAJOR_MINOR} is in testing."
+ewarn
+ewarn "DO NOT USE XTS with TRESOR until this notice is removed."
+ewarn "Please migrate your data outside the XTS partitions into a different"
+ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to a"
+ewarn "specific commit before upcoming XTS(tresor) key changes.  Checkout repo"
+ewarn "as head when you have migrated the data are ready to use the updated"
+ewarn "XTS(tresor) with setkey changes.  This new XTS setkey change will not be"
+ewarn "backwards compatible."
+ewarn
 			die
 		fi
 	fi
@@ -591,10 +593,10 @@ ot-kernel_apply_tresor_fixes() {
 
 	if use tresor_x86_64 || use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-prompt-update-for-5.10-v4_i686.patch"
+			"${FILESDIR}/tresor-prompt-update-for-5.15-v4_i686.patch"
 	else
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-prompt-update-for-5.10-v4_aesni.patch"
+			"${FILESDIR}/tresor-prompt-update-for-5.15-v4_aesni.patch"
 	fi
 
 	if use tresor_x86_64 || use tresor_i686 ; then
@@ -625,6 +627,21 @@ ot-kernel_apply_tresor_fixes() {
 	else
 		_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
+	fi
+
+	if use tresor_x86_64-256-bit-key-support ; then
+		if use tresor_x86_64 || use tresor_i686 ; then
+			_dpatch "${PATCH_OPTS}" \
+"${FILESDIR}/tresor-glue-helper-removed-i686-256-v1.patch"
+		fi
+	else
+		if use tresor_aesni ; then
+			_dpatch "${PATCH_OPTS}" \
+"${FILESDIR}/tresor-glue-helper-removed-aesni-v1.patch"
+		elif use tresor_i686 ; then
+			_dpatch "${PATCH_OPTS}" \
+"${FILESDIR}/tresor-glue-helper-removed-i686-128-v1.patch"
+		fi
 	fi
 }
 

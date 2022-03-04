@@ -186,6 +186,14 @@ ewarn
 ewarn
 ewarn "TRESOR for ${PV} is stable.  See dmesg for details on correctness."
 ewarn
+ewarn "DO NOT USE XTS with TRESOR until this notice is removed."
+ewarn "Please migrate your data outside the XTS partitions into a different"
+ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to a"
+ewarn "specific commit before upcoming XTS(tresor) key changes.  Checkout repo"
+ewarn "as head when you have migrated the data are ready to use the updated"
+ewarn "XTS(tresor) with setkey changes.  This new XTS setkey change will not be"
+ewarn "backwards compatible."
+ewarn
 	fi
 
 	# Allow for multiple builds for different kernel configs (e.g. server, gaming-client etc),
@@ -248,6 +256,8 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-testmgr-show-passed-for-linux-4.14.patch"
 	fi
+	_dpatch "${PATCH_OPTS}" \
+"${FILESDIR}/tresor-glue-helper-in-kconfig.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
