@@ -142,9 +142,9 @@
 		    lru_gen				?
 		    Project C				A
 		    TCP BBR v2 [6]			?
-		    TRESOR (AES-NI) [6]			D
-		    TRESOR (x86) [6]			D
-		    TRESOR (x86-64) [6]			D
+		    TRESOR (AES-NI) [6]			y
+		    TRESOR (x86) [6]			y
+		    TRESOR (x86-64) [6]			T
 		    UKSM [5]				Y
 		    x86-cfi				?
 		    zen-lru_gen				N
@@ -160,9 +160,9 @@
 		    kernel_compiler_patch		?
 		    Project C				D
 		    TCP BBR v2 [6]			?
-		    TRESOR (AES-NI) [6]			D
-		    TRESOR (x86) [6]			D
-		    TRESOR (x86-64) [6]			D
+		    TRESOR (AES-NI) [6]			y
+		    TRESOR (x86) [6]			y
+		    TRESOR (x86-64) [6]			T
 		    UKSM [5]				D
 		    x86-cfi				?
 		    zen-lru_gen				A
@@ -192,7 +192,8 @@
         build time failures will be fixed by the ebuild maintainer.
     I - inactive due to changing API, but future support depends on motivation
     S - upstream indicated support
-    y - only partial LTS for building but without correctness verification
+    T - patch is undergoing testing
+    y - only patch/building testing but without correctness verification
     ? - unknown status
 
     EOL (End Of Life) stable kernels get dropped next update cycle which is
