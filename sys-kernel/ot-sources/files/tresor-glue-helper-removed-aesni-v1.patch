@@ -1,6 +1,10 @@
 Subject:  Remove glue_helper and update support for CBC/ECB/CTR/XTS (aesni) for 5.15 kernel
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Date:  Wed Mar  2 08:44:50 PM PST 2022 (Unix time: 1646282690)
+Patch status:  In development
+
+Missing XTS(tresor) setkey changes.
+
 --- a/crypto/Kconfig.orig	2022-03-03 21:22:06.181889832 -0800
 +++ b/crypto/Kconfig	2022-03-03 21:24:55.614589434 -0800
 @@ -1160,6 +1160,7 @@ config CRYPTO_TRESOR
