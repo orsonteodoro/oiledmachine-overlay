@@ -14,8 +14,10 @@
 # packages installed.  Each set are a "one size fits all" or a general
 # solution to get at least a functional working program with minimal
 # problems with minimal kernel configuration time cost.  Each kernel
-# rebuild can cost 4 hours on older machines.  Extra required flags
+# rebuild can cost 4-7 hours on older machines.  Extra required flags
 # should manually edit the .config instead of modifying this eclass.
+
+# This eclass is biased towards built in (=y) instead of modules (=m) for security reasons.
 
 inherit ot-kernel-kutils
 
@@ -69,23 +71,36 @@ eerror
 ot-kernel-pkgflags_apply() {
 	[[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && return
 	ot-kernel-pkgflags_actkbd
+	ot-kernel-pkgflags_audit
+	ot-kernel-pkgflags_atop
+	ot-kernel-pkgflags_autofs
 	ot-kernel-pkgflags_bcm_sta
 	ot-kernel-pkgflags_bees
 	ot-kernel-pkgflags_blueman
 	ot-kernel-pkgflags_bluez
 	#ot-kernel-pkgflags_boinc
 	ot-kernel-pkgflags_bolt
+	ot-kernel-pkgflags_bootchart2
 	ot-kernel-pkgflags_bubblewrap
+	ot-kernel-pkgflags_caja_dbox
 	ot-kernel-pkgflags_catalyst
+	ot-kernel-pkgflags_cifs_utils
 	ot-kernel-pkgflags_clamav
 	ot-kernel-pkgflags_clamfs
+	ot-kernel-pkgflags_clsync
+	ot-kernel-pkgflags_cni_plugins
 	ot-kernel-pkgflags_conky
+	ot-kernel-pkgflags_conntrack-tools
 	ot-kernel-pkgflags_crda
+	ot-kernel-pkgflags_criu
 	ot-kernel-pkgflags_cryfs
 	ot-kernel-pkgflags_cryptodev
+	ot-kernel-pkgflags_cryptmount
 	ot-kernel-pkgflags_cryptsetup
+	ot-kernel-pkgflags_cups
 	ot-kernel-pkgflags_db_numa
 	ot-kernel-pkgflags_dbus
+	ot-kernel-pkgflags_dccutil
 	ot-kernel-pkgflags_discord
 	ot-kernel-pkgflags_distrobuilder
 	ot-kernel-pkgflags_docker
@@ -105,21 +120,45 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_flatpak
 	ot-kernel-pkgflags_firejail
 	ot-kernel-pkgflags_fuse
+	ot-kernel-pkgflags_fwknop
+	ot-kernel-pkgflags_glances
 	ot-kernel-pkgflags_glib
+	ot-kernel-pkgflags_gnome_boxes
 	ot-kernel-pkgflags_gpm
 	ot-kernel-pkgflags_guestfs
+	ot-kernel-pkgflags_hamachi
 	ot-kernel-pkgflags_hd_idle
+	ot-kernel-pkgflags_hdapsd
+	ot-kernel-pkgflags_hplip
+	ot-kernel-pkgflags_htop
+	ot-kernel-pkgflags_i8kutils
+	ot-kernel-pkgflags_incron
+	ot-kernel-pkgflags_ipset
 	ot-kernel-pkgflags_iptables
+	ot-kernel-pkgflags_iodine
+	ot-kernel-pkgflags_iotop
 	ot-kernel-pkgflags_irqbalance
+	ot-kernel-pkgflags_isatapd
 	ot-kernel-pkgflags_iwd
 	ot-kernel-pkgflags_kexec_tools
-	ot-kernel-pkgflags_kpatch
 	ot-kernel-pkgflags_keyutils
+	ot-kernel-pkgflags_kio_fuse
+	ot-kernel-pkgflags_kodi
+	ot-kernel-pkgflags_kpatch
+	ot-kernel-pkgflags_latencytop
 	ot-kernel-pkgflags_libcec
 	ot-kernel-pkgflags_libcgroup
 	ot-kernel-pkgflags_libnetfilter_conntrack
+	ot-kernel-pkgflags_libnetfilter_cttimeout
+	ot-kernel-pkgflags_libnetfilter_log
+	ot-kernel-pkgflags_libnetfilter_queue
+	ot-kernel-pkgflags_libnfnetlink
+	ot-kernel-pkgflags_libsdl2
+	ot-kernel-pkgflags_libteam
 	ot-kernel-pkgflags_libv4l
 	ot-kernel-pkgflags_libvirt
+	ot-kernel-pkgflags_linux_smaps
+	ot-kernel-pkgflags_lirc
 	ot-kernel-pkgflags_lmsensors
 	ot-kernel-pkgflags_loopaes
 	ot-kernel-pkgflags_lvm2
@@ -130,22 +169,35 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_mono
 	ot-kernel-pkgflags_multipath_tools
 	ot-kernel-pkgflags_networkmanager
+	ot-kernel-pkgflags_nfs_utils
 	ot-kernel-pkgflags_nftables
 	ot-kernel-pkgflags_nilfs
 	ot-kernel-pkgflags_ntfs3g
+	ot-kernel-pkgflags_ntxd
+	ot-kernel-pkgflags_numad
 	ot-kernel-pkgflags_nv
+	ot-kernel-pkgflags_open_iscsi
+	ot-kernel-pkgflags_openfortivpn
 	ot-kernel-pkgflags_openssl
+	ot-kernel-pkgflags_openvpn
 	ot-kernel-pkgflags_oprofile
 	ot-kernel-pkgflags_pcmciautils
 	ot-kernel-pkgflags_perf
+	ot-kernel-pkgflags_ponyprog
 	ot-kernel-pkgflags_portage
 	ot-kernel-pkgflags_postgresql
 	ot-kernel-pkgflags_powernowd
 	ot-kernel-pkgflags_powertop
+	ot-kernel-pkgflags_ppp
 	ot-kernel-pkgflags_pulseaudio
 	ot-kernel-pkgflags_pqiv
 	ot-kernel-pkgflags_qemu
+	ot-kernel-pkgflags_r8152
+	ot-kernel-pkgflags_read_edid
 	ot-kernel-pkgflags_roct
+	ot-kernel-pkgflags_rsyslog
+	ot-kernel-pkgflags_rtirq
+	ot-kernel-pkgflags_rtsp_conntrack
 	ot-kernel-pkgflags_runc
 	ot-kernel-pkgflags_simplevirt
 	ot-kernel-pkgflags_shorewall
@@ -153,27 +205,52 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_spice_vdagent
 	ot-kernel-pkgflags_squid
 	ot-kernel-pkgflags_suid_sandbox
+	ot-kernel-pkgflags_sstp_client
 	ot-kernel-pkgflags_steam
+	ot-kernel-pkgflags_stress_ng
 	ot-kernel-pkgflags_systemd
+	ot-kernel-pkgflags_systemd_bootchart
 	ot-kernel-pkgflags_tb_us
 	ot-kernel-pkgflags_thinkfinger
+	ot-kernel-pkgflags_tp_smapi
+	ot-kernel-pkgflags_tpb
+	ot-kernel-pkgflags_tpm2_tss
+	ot-kernel-pkgflags_tracker
+	ot-kernel-pkgflags_trousers
+	ot-kernel-pkgflags_tvheadend
 	ot-kernel-pkgflags_udev
 	ot-kernel-pkgflags_udisks
+	ot-kernel-pkgflags_ufw
+	ot-kernel-pkgflags_uksmd
 	ot-kernel-pkgflags_undervolt
+	ot-kernel-pkgflags_usbtop
+	ot-kernel-pkgflags_usbview
 	ot-kernel-pkgflags_v4l2loopback
 	ot-kernel-pkgflags_vbox
 	ot-kernel-pkgflags_vhba
+	ot-kernel-pkgflags_vinagre
+	ot-kernel-pkgflags_vpnc
+	ot-kernel-pkgflags_vtun
+	ot-kernel-pkgflags_wacom
 	ot-kernel-pkgflags_wavemon
 	ot-kernel-pkgflags_wine
+	ot-kernel-pkgflags_wireguard_modules
+	ot-kernel-pkgflags_wireguard_tools
 	ot-kernel-pkgflags_wpa_supplicant
+	ot-kernel-pkgflags_xboxdrv
 	ot-kernel-pkgflags_xen
 	ot-kernel-pkgflags_xf86_input_evdev
 	ot-kernel-pkgflags_xf86_input_libinput
+	ot-kernel-pkgflags_xf86_input_synaptics
 	ot-kernel-pkgflags_xf86_video_ati
+	ot-kernel-pkgflags_xf86_video_intel
+	ot-kernel-pkgflags_xf86_video_vesa
 	ot-kernel-pkgflags_xfce4_battery_plugin
 	ot-kernel-pkgflags_xoscope
 	ot-kernel-pkgflags_xpra
+	ot-kernel-pkgflags_xtables_addons
 	ot-kernel-pkgflags_zfs
+	ot-kernel-pkgflags_zfs_kmod
 }
 
 # @FUNCTION: ot-kernel-pkgflags_actkbd
@@ -184,6 +261,42 @@ ot-kernel-pkgflags_actkbd() { # DONE
 	if has_version "app-misc/actkbd" ; then
 		einfo "Applying kernel config flags for actkbd (id: 1ee4e36)"
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_audit
+# @DESCRIPTION:
+# Applies kernel config flags for the audit
+ot-kernel-pkgflags_audit() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "0e477ba" ]] && return
+	if has_version "sys-process/audit" ; then
+		einfo "Applying kernel config flags for audit (id: 0e477ba)"
+		ot-kernel_y_configopt "CONFIG_AUDIT"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_atop
+# @DESCRIPTION:
+# Applies kernel config flags for the atop
+ot-kernel-pkgflags_atop() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "54e024f" ]] && return
+	if has_version "sys-process/atop" ; then
+		einfo "Applying kernel config flags for atop (id: 54e024f)"
+		ot-kernel_unset_configopt "CONFIG_BSD_PROCESS_ACCT"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_autofs
+# @DESCRIPTION:
+# Applies kernel config flags for the autofs
+ot-kernel-pkgflags_autofs() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "dc8ba5a" ]] && return
+	if has_version "net-fs/openafs" && ver_test ${K_MAJOR_MINOR} -lt 5.17 ; then
+		einfo "Applying kernel config flags for autofs (id: dc8ba5a)"
+		ot-kernel_unset_configopt "CONFIG_AFS_FS"
+		ot-kernel_y_configopt "CONFIG_KEYS"
+	elif has_version "net-fs/openafs" && ver_test ${K_MAJOR_MINOR} -ge 5.17 ; then
+		ewarn "Kernel ${K_MAJOR_MINOR}.x is not supported for autofs"
 	fi
 }
 
@@ -326,6 +439,20 @@ ot-kernel-pkgflags_bolt() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_bootchart2
+# @DESCRIPTION:
+# Applies kernel config flags for the bootchart2 package
+ot-kernel-pkgflags_bootchart2() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "c913230" ]] && return
+	if has_version "app-benchmarks/bootchart2" ; then
+		einfo "Applying kernel config flags for the bootchart2 package (id: c913230)"
+		ot-kernel_y_configopt "CONFIG_PROC_EVENTS"
+		ot-kernel_y_configopt "CONFIG_TASKSTATS"
+		ot-kernel_y_configopt "CONFIG_TASK_DELAY_ACCT"
+		ot-kernel_y_configopt "CONFIG_TMPFS"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_bubblewrap
 # @DESCRIPTION:
 # Applies kernel config flags for the bubblewrap package
@@ -342,6 +469,17 @@ ot-kernel-pkgflags_bubblewrap() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_caja_dbox
+# @DESCRIPTION:
+# Applies kernel config flags for caja_dbox
+ot-kernel-pkgflags_caja_dbox() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "57a6a4b" ]] && return
+	if has_version "mate-extra/caja-dropbox" ; then
+		einfo "Applying kernel config flags for caja_dbox (id: 57a6a4b)"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_catalyst
 # @DESCRIPTION:
 # Applies kernel config flags for the catalyst package
@@ -353,6 +491,17 @@ ot-kernel-pkgflags_catalyst() { # DONE
 		ot-kernel_y_configopt "CONFIG_IPC_NS"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_cifs_utils
+# @DESCRIPTION:
+# Applies kernel config flags for the cifs-utils package
+ot-kernel-pkgflags_cifs_utils() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "f8ae20a" ]] && return
+	if has_version "net-fs/cifs-utils" ; then
+		einfo "Applying kernel config flags for the cifs-utils package (id: f8ae20a)"
+		ot-kernel_y_configopt "CONFIG_CIFS"
 	fi
 }
 
@@ -379,6 +528,41 @@ ot-kernel-pkgflags_clamfs() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_clsync
+# @DESCRIPTION:
+# Applies kernel config flags for the clsync package
+ot-kernel-pkgflags_clsync() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "cbd5946" ]] && return
+	if has_version "app-admin/clsync[clsync]" ; then
+		einfo "Applying kernel config flags for the clsync package (id: cbd5946)"
+		if has_version "app-admin/clsync[inotify]" ; then
+			ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		fi
+		if has_version "app-admin/clsync[namespaces]" ; then
+			ot-kernel_y_configopt "CONFIG_NAMESPACES"
+			ot-kernel_y_configopt "CONFIG_UTS_NS"
+			ot-kernel_y_configopt "CONFIG_IPC_NS"
+			ot-kernel_y_configopt "CONFIG_USER_NS"
+			ot-kernel_y_configopt "CONFIG_PID_NS"
+			ot-kernel_y_configopt "CONFIG_NET_NS"
+		fi
+		if has_version "app-admin/clsync[seccomp]" ; then
+			ot-kernel_y_configopt "CONFIG_SECCOMP"
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_cni_plugins
+# @DESCRIPTION:
+# Applies kernel config flags for the cni-plugins package
+ot-kernel-pkgflags_cni_plugins() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "dec3486" ]] && return
+	if has_version "net-misc/cni-plugins" ; then
+		einfo "Applying kernel config flags for the cni-plugins package (id: dec3486)"
+		ot-kernel_y_configopt "CONFIG_BRIDGE_VLAN_FILTERING"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_conky
 # @DESCRIPTION:
 # Applies kernel config flags for the conky package
@@ -390,14 +574,41 @@ ot-kernel-pkgflags_conky() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_conntrack_tools
+# @DESCRIPTION:
+# Applies kernel config flags for the conntrack-tools package
+ot-kernel-pkgflags_conntrack_tools() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "f6a25e5" ]] && return
+	if has_version "net-firewall/conntrack-tools" ; then
+		einfo "Applying kernel config flags for the conntrack-tools package (id: f6a25e5)"
+		if ver_test ${PV} -lt 2.6.20 ; then
+			ot-kernel_y_configopt "CONFIG_IP_NF_CONNTRACK_NETLINK"
+		else
+			ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
+		fi
+		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK"
+		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_EVENTS"
+		if grep -q -E -e "^CONFIG_INET=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV4"
+		fi
+		if grep -q -E -e "^CONFIG_IPV6=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_INET"
+			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV6"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_crda
 # @DESCRIPTION:
 # Applies kernel config flags for the crda package
 ot-kernel-pkgflags_crda() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "42ac64d4" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "2ac64d4" ]] && return
 	if has_version "net-wireless/crda" ; then
 		has_version "net-wireless/wireless-regdb" || die "Install the wireless-regdb package first"
-		einfo "Applying kernel config flags for the cryfs package (id: 2ac64d4)"
+		einfo "Applying kernel config flags for the crda package (id: 2ac64d4)"
 		ot-kernel_y_configopt "CONFIG_CFG80211_CRDA_SUPPORT"
 
 		einfo "Auto adding CRDA firmware."
@@ -411,6 +622,33 @@ ot-kernel-pkgflags_crda() { # DONE
 		ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
 		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
 		einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_criu
+# @DESCRIPTION:
+# Applies kernel config flags for the criu package
+ot-kernel-pkgflags_criu() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "484c86a" ]] && return
+	if has_version "sys-process/criu" ; then
+		einfo "Applying kernel config flags for the criu package (id: 484c86a)"
+		ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
+		ot-kernel_y_configopt "CONFIG_NAMESPACES"
+		ot-kernel_y_configopt "CONFIG_PID_NS"
+		ot-kernel_y_configopt "CONFIG_FHANDLE"
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
+		ot-kernel_y_configopt "CONFIG_EPOLL"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+		ot-kernel_y_configopt "CONFIG_UNIX_DIAG"
+		ot-kernel_y_configopt "CONFIG_INET_DIAG"
+		ot-kernel_y_configopt "CONFIG_INET_UDP_DIAG"
+		ot-kernel_y_configopt "CONFIG_PACKET_DIAG"
+		ot-kernel_y_configopt "CONFIG_NETLINK_DIAG"
+		ot-kernel_y_configopt "CONFIG_TUN"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MARK"
+		if [[ "${arch}" == "x86_64" ]] ; then
+			ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
+		fi
 	fi
 }
 
@@ -439,6 +677,17 @@ ot-kernel-pkgflags_cryptodev() { # DONE
 		else
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SKCIPHER"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_cryptmount
+# @DESCRIPTION:
+# Applies kernel config flags for the cryptmount package
+ot-kernel-pkgflags_cryptmount() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "42b9891" ]] && return
+	if has_version "sys-fs/cryptmount" ; then
+		einfo "Applying kernel config flags for the cryptmount package (id: 42b9891)"
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
 	fi
 }
 
@@ -608,6 +857,18 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_cups
+# @DESCRIPTION:
+# Applies kernel config flags for the cups package
+ot-kernel-pkgflags_cups() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "dbb3834" ]] && return
+	if has_version "net-print/cups[-usb]" ; then
+		# Implied has_version "net-print/cups[linux_kernel]"
+		einfo "Applying kernel config flags for the cups package (id: dbb3834)"
+		ot-kernel_y_configopt "CONFIG_USB_PRINTER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_db_numa
 # @DESCRIPTION:
 # Applies kernel config flags for the db package with numa support
@@ -629,6 +890,21 @@ ot-kernel-pkgflags_dbus() { # DONE
 		# Implied has_version "sys-apps/dbus[linux_kernel]"
 		einfo "Applying kernel config flags for the dbus package (id: b9e31e7)"
 		ot-kernel_y_configopt "CONFIG_EPOLL"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_dccutil
+# @DESCRIPTION:
+# Applies kernel config flags for the dccutil package
+ot-kernel-pkgflags_dccutil() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "6805d71" ]] && return
+	if has_version "app-misc/ddcutil" ; then
+		einfo "Applying kernel config flags for the dccutil package (id: 6805d71)"
+		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+		if has_version "app-misc/ddcutil[usb-monitor]" ; then
+			ot-kernel_y_configopt "CONFIG_HIDRAW"
+			ot-kernel_y_configopt "CONFIG_USB_HIDDEV"
+		fi
 	fi
 }
 
@@ -674,6 +950,17 @@ ot-kernel-pkgflags_dracut() { # DONE
 		einfo "Applying kernel config flags for the dracut package (id: 494db6b)"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_INITRD"
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_latencytop
+# @DESCRIPTION:
+# Applies kernel config flags for the latencytop package
+ot-kernel-pkgflags_latencytop() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "1e47c47" ]] && return
+	if has_version "sys-process/latencytop" ; then
+		einfo "Applying kernel config flags for the latencytop package (id: 1e47c47)"
+		ot-kernel_y_configopt "CONFIG_LATENCYTOP"
 	fi
 }
 
@@ -901,8 +1188,10 @@ ot-kernel-pkgflags_eventd() { # DONE
 # Applies kernel config flags for the ff package
 ot-kernel-pkgflags_ff() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "b5b1507" ]] && return
-	if has_version "www-client/firefox" ; then
-		einfo "Applying kernel config flags for the ff package (id: b5b1507)"
+	if has_version "www-client/firefox" \
+		|| has_version "www-client/firefox-bin" \
+		|| has_version "www-client/torbrowser" ; then
+		einfo "Applying kernel config flags for ff and derivatives (id: b5b1507)"
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
 	fi
 }
@@ -1045,6 +1334,32 @@ ot-kernel-pkgflags_fuse() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_fwknop
+# @DESCRIPTION:
+# Applies kernel config flags for the fwknop package
+ot-kernel-pkgflags_fwknop() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "2f507ac" ]] && return
+	if has_version "net-firewall/fwknop" ; then
+		einfo "Applying kernel config flags for the fwknop package (id: 2f507ac)"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_COMMENT"
+		if has_version "net-firewall/fwknop[nfqueue]" ; then
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_NFQUEUE"
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_glances
+# @DESCRIPTION:
+# Applies kernel config flags for the glances package
+ot-kernel-pkgflags_glances() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "71ea7b8" ]] && return
+	if has_version "sys-process/glances" ; then
+		einfo "Applying kernel config flags for the glances package (id: 71ea7b8)"
+		ot-kernel_y_configopt "CONFIG_TASK_IO_ACCOUNTING"
+		ot-kernel_y_configopt "CONFIG_TASK_DELAY_ACCT"
+		ot-kernel_y_configopt "CONFIG_TASKSTATS"
+	fi
+}
 
 # @FUNCTION: ot-kernel-pkgflags_glib
 # @DESCRIPTION:
@@ -1056,6 +1371,23 @@ ot-kernel-pkgflags_glib() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		if has_version "dev-libs/glib[test]" ; then
 			ot-kernel_y_configopt "CONFIG_IPV6"
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_gnome_boxes
+# @DESCRIPTION:
+# Applies kernel config flags for the gnome-boxes package
+ot-kernel-pkgflags_gnome_boxes() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "768ed31" ]] && return
+	if has_version "gnome-extra/gnome-boxes" ; then
+		einfo "Applying kernel config flags for the gnome-boxes package (id: 768ed31)"
+		# Use .config hints to guestimate
+		if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_KVM_INTEL"
+		fi
+		if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_KVM_AMD"
 		fi
 	fi
 }
@@ -1084,6 +1416,17 @@ ot-kernel-pkgflags_guestfs() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_hamachi
+# @DESCRIPTION:
+# Applies kernel config flags for hamachi
+ot-kernel-pkgflags_hamachi() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "d871dfa" ]] && return
+	if has_version "net-vpn/logmein-hamachi" ; then
+		einfo "Applying kernel config flags for the hamachi package (id: d871dfa)"
+		ot-kernel_y_configopt "CONFIG_TUN"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_hd_idle
 # @DESCRIPTION:
 # Applies kernel config flags for the hd-idle package
@@ -1092,6 +1435,93 @@ ot-kernel-pkgflags_hd_idle() { # DONE
 	if has_version "sys-apps/hd-idle" ; then
 		einfo "Applying kernel config flags for the hd-idle package (id: c6f5c62)"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_hdapsd
+# @DESCRIPTION:
+# Applies kernel config flags for the hdapsd package
+ot-kernel-pkgflags_hdapsd() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "2458b68" ]] && return
+	if has_version "app-laptop/hdapsd" ; then
+		einfo "Applying kernel config flags for the hdapsd package (id: 2458b68)"
+		ot-kernel_y_configopt "CONFIG_SENSORS_HDAPS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_htop
+# @DESCRIPTION:
+# Applies kernel config flags for the htop package
+ot-kernel-pkgflags_htop() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "843cb8b" ]] && return
+	if has_version "sys-process/htop" ; then
+		einfo "Applying kernel config flags for the htop package (id: 843cb8b)"
+		ot-kernel_y_configopt "CONFIG_TASKSTATS"
+		ot-kernel_y_configopt "CONFIG_TASK_XACCT"
+		ot-kernel_y_configopt "CONFIG_TASK_IO_ACCOUNTING"
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_hplip
+# @DESCRIPTION:
+# Applies kernel config flags for the hplip package
+ot-kernel-pkgflags_hplip() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "45f5321" ]] && return
+	if has_version "net-print/hplip" ; then
+		einfo "Applying kernel config flags for the hplip package (id: 45f5321)"
+		ot-kernel_y_configopt "CONFIG_PARPORT"
+		ot-kernel_y_configopt "CONFIG_PPDEV"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_iodine
+# @DESCRIPTION:
+# Applies kernel config flags for the iodine package
+ot-kernel-pkgflags_iodine() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "031191b" ]] && return
+	if has_version "net-vpn/iodine" ; then
+		einfo "Applying kernel config flags for the iodine package (id: 031191b)"
+		ot-kernel_y_configopt "CONFIG_TUN"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_i8kutils
+# @DESCRIPTION:
+# Applies kernel config flags for the i8kutils package
+ot-kernel-pkgflags_i8kutils() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "ab2316b" ]] && return
+	if has_version "app-laptop/i8kutils" ; then
+		einfo "Applying kernel config flags for the i8kutils package (id: ab2316b)"
+		ot-kernel_y_configopt "CONFIG_I8K"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_incron
+# @DESCRIPTION:
+# Applies kernel config flags for the incron package
+ot-kernel-pkgflags_incron() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "2f90fde" ]] && return
+	if has_version "sys-process/incron" ; then
+		einfo "Applying kernel config flags for the incron package (id: 2f90fde)"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_ipset
+# @DESCRIPTION:
+# Applies kernel config flags for the ipset package
+ot-kernel-pkgflags_ipset() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "45b1cc4" ]] && return
+	if has_version "net-firewall/ipset" ; then
+		einfo "Applying kernel config flags for the ipset package (id: 45b1cc4)"
+		ot-kernel_y_configopt "CONFIG_NETFILTER"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK"
+		ot-kernel_unset_configopt "CONFIG_PAX_CONSTIFY_PLUGIN"
+		if has_version "net-firewall/ipset[modules]" ; then
+			ot-kernel_unset_configopt "CONFIG_IP_NF_SET"
+			ot-kernel_unset_configopt "CONFIG_IP_SET"
+		fi
 	fi
 }
 
@@ -1181,6 +1611,21 @@ ot-kernel-pkgflags_iptables() { # MOSTLY DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_iotop
+# @DESCRIPTION:
+# Applies kernel config flags for the iotop package
+ot-kernel-pkgflags_iotop() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "af7106d" ]] && return
+	if has_version "sys-process/iotop" \
+		|| has_version "sys-process/iotop-c" ; then
+		einfo "Applying kernel config flags for the iotop package (id: af7106d)"
+		ot-kernel_y_configopt "CONFIG_TASK_IO_ACCOUNTING"
+		ot-kernel_y_configopt "CONFIG_TASK_DELAY_ACCT"
+		ot-kernel_y_configopt "CONFIG_TASKSTATS"
+		ot-kernel_y_configopt "CONFIG_VM_EVENT_COUNTERS"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_irqbalance
 # @DESCRIPTION:
 # Applies kernel config flags for the irqbalance package
@@ -1189,6 +1634,17 @@ ot-kernel-pkgflags_irqbalance() { # DONE
 	if has_version "sys-apps/irqbalance" ; then
 		einfo "Applying kernel config flags for the irqbalance package (id: 115a3c8)"
 		ot-kernel_y_configopt "CONFIG_PCI_MSI"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_isatapd
+# @DESCRIPTION:
+# Applies kernel config flags for the isatapd package
+ot-kernel-pkgflags_isatapd() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "fa75afb" ]] && return
+	if has_version "net-vpn/isatapd" ; then
+		einfo "Applying kernel config flags for the isatapd package (id: fa75afb)"
+		ot-kernel_y_configopt "CONFIG_TUN"
 	fi
 }
 
@@ -1266,6 +1722,28 @@ ot-kernel-pkgflags_keyutils() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_kio_fuse
+# @DESCRIPTION:
+# Applies kernel config flags for the kio-fuse package
+ot-kernel-pkgflags_kio_fuse() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "70d6e85" ]] && return
+	if has_version "kde-misc/kio-fuse" ; then
+		einfo "Applying kernel config flags for the kio-fuse package (id: 70d6e85)"
+		ot-kernel_y_configopt "CONFIG_FUSE_FS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_kodi
+# @DESCRIPTION:
+# Applies kernel config flags for the kodi package
+ot-kernel-pkgflags_kodi() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "70fdec1" ]] && return
+	if has_version "media-tv/kodi" ; then
+		einfo "Applying kernel config flags for the kodi package (id: 70fdec1)"
+		ot-kernel_y_configopt "CONFIG_IP_MULTICAST"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_kpatch
 # @DESCRIPTION:
 # Applies kernel config flags for the kpatch package
@@ -1297,6 +1775,21 @@ ot-kernel-pkgflags_libcgroup() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_libnfnetlink
+# @DESCRIPTION:
+# Applies kernel config flags for the libnfnetlink package
+ot-kernel-pkgflags_libnfnetlink() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "731aa2e" ]] && return
+	if has_version "net-libs/libnfnetlink" ; then
+		einfo "Applying kernel config flags for the libnfnetlink package (id: 731aa2e)"
+		if ver_test ${PV} -lt 2.6.20 ; then
+			ot-kernel_y_configopt "CONFIG_IP_NF_CONNTRACK_NETLINK"
+		else
+			ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_libnetfilter_conntrack
 # @DESCRIPTION:
 # Applies kernel config flags for the libnetfilter_conntrack package
@@ -1309,6 +1802,68 @@ ot-kernel-pkgflags_libnetfilter_conntrack() { # DONE
 		else
 			ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_libnetfilter_cttimeout
+# @DESCRIPTION:
+# Applies kernel config flags for the libnetfilter_cttimeout package
+ot-kernel-pkgflags_libnetfilter_cttimeout() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "7cab068" ]] && return
+	if has_version "net-libs/libnetfilter_cttimeout" ; then
+		einfo "Applying kernel config flags for the libnetfilter_cttimeout package (id: 7cab068)"
+		ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK_TIMEOUT"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_libnetfilter_log
+# @DESCRIPTION:
+# Applies kernel config flags for the libnetfilter_log package
+ot-kernel-pkgflags_libnetfilter_log() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "0359211" ]] && return
+	if has_version "net-libs/libnetfilter_log" ; then
+		einfo "Applying kernel config flags for the libnetfilter_log package (id: 0359211)"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_LOG"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_libnetfilter_queue
+# @DESCRIPTION:
+# Applies kernel config flags for the libnetfilter_queue package
+ot-kernel-pkgflags_libnetfilter_queue() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "cd31a5e" ]] && return
+	if has_version "net-libs/libnetfilter_queue" ; then
+		einfo "Applying kernel config flags for the libnetfilter_queue package (id: cd31a5e)"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_QUEUE"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_libsdl2
+# @DESCRIPTION:
+# Applies kernel config flags for the libsdl2 package
+ot-kernel-pkgflags_libsdl2() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "6f67af3" ]] && return
+	if has_version "media-libs/libsdl2" \
+		|| has_version "dev-games/urho3d" ; then
+		einfo "Applying kernel config flags for the libsdl2 package (id: 6f67af3)"
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HIDRAW"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_libteam
+# @DESCRIPTION:
+# Applies kernel config flags for the libteam package
+ot-kernel-pkgflags_libteam() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "9bb3f42" ]] && return
+	if has_version "net-misc/libteam" ; then
+		einfo "Applying kernel config flags for the libteam package (id: 9bb3f42)"
+		ot-kernel_y_configopt "CONFIG_NET_TEAM"
+		ot-kernel_y_configopt "CONFIG_NET_TEAM_MODE_ROUNDROBIN"
+		ot-kernel_y_configopt "CONFIG_NET_TEAM_MODE_ACTIVEBACKUP"
+		ot-kernel_y_configopt "CONFIG_NET_TEAM_MODE_BROADCAST"
+		ot-kernel_y_configopt "CONFIG_NET_TEAM_MODE_RANDOM"
+		ot-kernel_y_configopt "CONFIG_NET_TEAM_MODE_LOADBALANCE"
 	fi
 }
 
@@ -1347,6 +1902,29 @@ ot-kernel-pkgflags_libvirt() { # DONE
 		ot-kernel_y_configopt "CONFIG_NET_SCH_HTB"
 		ot-kernel_y_configopt "CONFIG_NET_SCH_INGRESS"
 		ot-kernel_y_configopt "CONFIG_NET_SCH_SFQ"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_linux_smaps
+# @DESCRIPTION:
+# Applies kernel config flags for the Linux-Smaps package
+ot-kernel-pkgflags_linux_smaps() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "e76e66e" ]] && return
+	if has_version "dev-perl/Linux-Smaps" ; then
+		einfo "Applying kernel config flags for the Linux-Smaps package (id: e76e66e)"
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_PROC_PAGE_MONITOR"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_linux_lirc
+# @DESCRIPTION:
+# Applies kernel config flags for the lirc package
+ot-kernel-pkgflags_linux_lirc() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "1f8b392" ]] && return
+	if has_version "app-misc/lirc" ; then
+		einfo "Applying kernel config flags for the lirc package (id: 1f8b392)"
+		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
 	fi
 }
 
@@ -1523,6 +2101,19 @@ ot-kernel-pkgflags_networkmanager() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_nfs_utils
+# @DESCRIPTION:
+# Applies kernel config flags for the nfs-utils package
+ot-kernel-pkgflags_nfs_utils() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "a06f942" ]] && return
+	if has_version "net-fs/nfs-utils" ; then
+		einfo "Applying kernel config flags for the nfs-utils package (id: a06f942)"
+		if has_version "net-fs/nfs-utils[nfsv4,-nfsdcld]" ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_MD5"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_nftables
 # @DESCRIPTION:
 # Applies kernel config flags for the nftables package
@@ -1553,6 +2144,29 @@ ot-kernel-pkgflags_ntfs3g() { # DONE
 	if has_version "sys-fs/ntfs3g" ; then
 		einfo "Applying kernel config flags for the ntfs3g package (id: ed423cb)"
 		ot-kernel_y_configopt "CONFIG_FUSE_FS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_nstx
+# @DESCRIPTION:
+# Applies kernel config flags for the nstx package
+ot-kernel-pkgflags_nstx() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "5741385" ]] && return
+	if has_version "net-vpn/nstx" ; then
+		einfo "Applying kernel config flags for the nstx package (id: 5741385)"
+		ot-kernel_y_configopt "CONFIG_TUN"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_numad
+# @DESCRIPTION:
+# Applies kernel config flags for the numad package
+ot-kernel-pkgflags_numad() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "4113a11" ]] && return
+	if has_version "sys-process/numad" ; then
+		einfo "Applying kernel config flags for the numad package (id: 4113a11)"
+		ot-kernel_y_configopt "CONFIG_NUMA"
+		ot-kernel_y_configopt "CONFIG_CPUSETS"
 	fi
 }
 
@@ -1592,6 +2206,40 @@ ot-kernel-pkgflags_oprofile() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_open_iscsi
+# @DESCRIPTION:
+# Applies kernel config flags for the open-iscsi package
+ot-kernel-pkgflags_open_iscsi() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "636a064" ]] && return
+	if has_version "sys-block/open-iscsi" ; then
+		einfo "Applying kernel config flags for the open-iscsi package (id: 636a064)"
+		if has_version "sys-block/open-iscsi[tcp]" ; then
+			ot-kernel_y_configopt "CONFIG_SCSI_ISCSI_ATTRS"
+			ot-kernel_y_configopt "CONFIG_ISCSI_TCP"
+		fi
+		if has_version "sys-block/open-iscsi[infiniband]" ; then
+			ot-kernel_y_configopt "CONFIG_INFINIBAND_IPOIB"
+			ot-kernel_y_configopt "CONFIG_INIBAND_USER_MAD"
+			ot-kernel_y_configopt "CONFIG_INFINIBAND_USER_ACCESS"
+		fi
+		if has_version "sys-block/open-iscsi[rdma]" ; then
+			ot-kernel_y_configopt "CONFIG_INFINIBAND_ISER"
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_openfortivpn
+# @DESCRIPTION:
+# Applies kernel config flags for the openfortivpn package
+ot-kernel-pkgflags_openfortivpn() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "64cf079" ]] && return
+	if has_version "net-vpn/openfortivpn" ; then
+		einfo "Applying kernel config flags for the openfortivpn package (id: 64cf079)"
+		ot-kernel_y_configopt "CONFIG_PPP"
+		ot-kernel_y_configopt "CONFIG_PPP_ASYNC"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_openssl
 # @DESCRIPTION:
 # Applies kernel config flags for the openssl package
@@ -1601,6 +2249,17 @@ ot-kernel-pkgflags_openssl() { # DONE
 		einfo "Applying kernel config flags for the openssl package (id: 0dcc9b8)"
 		ot-kernel_y_configopt "CONFIG_TLS"
 		ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_openvpn
+# @DESCRIPTION:
+# Applies kernel config flags for the openvpn package
+ot-kernel-pkgflags_openvpn() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "d507034" ]] && return
+	if has_version "net-vpn/openvpn" ; then
+		einfo "Applying kernel config flags for the openvpn package (id: d507034)"
+		ot-kernel_y_configopt "CONFIG_TUN"
 	fi
 }
 
@@ -1698,6 +2357,21 @@ ot-kernel-pkgflags_perf() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_ponyprog
+# @DESCRIPTION:
+# Applies kernel config flags for the ponyprog package
+ot-kernel-pkgflags_ponyprog() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "dacf3ee" ]] && return
+	if has_version "dev-embedded/ponyprog" ; then
+		einfo "Applying kernel config flags for the ponyprog package (id: dacf3ee)"
+		ot-kernel_y_configopt "CONFIG_SERIO"
+		ot-kernel_y_configopt "CONFIG_SERIO_SERPORT"
+		ot-kernel_y_configopt "CONFIG_PARPORT"
+		ot-kernel_y_configopt "CONFIG_PARPORT_PC"
+		ot-kernel_y_configopt "CONFIG_PPDEV"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_pulseaudio
 # @DESCRIPTION:
 # Applies kernel config flags for the pulseaudio package
@@ -1706,7 +2380,7 @@ ot-kernel-pkgflags_pulseaudio() { # DONE
 	if has_version "media-sound/pulseaudio" ; then
 		einfo "Applying kernel config flags for the pulseaudio package (id: 40b66c8)"
 		ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
-		ot-kernel_set_configopt "CONFIG_CONFIG_SND_HDA_PREALLOC_SIZE" "2048"
+		ot-kernel_set_configopt "CONFIG_SND_HDA_PREALLOC_SIZE" "2048"
 	fi
 }
 
@@ -1740,6 +2414,30 @@ ot-kernel-pkgflags_powernowd() { # DONE
 	if has_version "sys-power/powernowd" ; then
 		einfo "Applying kernel config flags for the powernowd package (id: cceb5ce)"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_ppp
+# @DESCRIPTION:
+# Applies kernel config flags for the ppp package
+ot-kernel-pkgflags_ppp() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "4f2e9a1" ]] && return
+	if has_version "net-dialup/ppp" ; then
+		einfo "Applying kernel config flags for the ppp package (id: 4f2e9a1)"
+		ot-kernel_y_configopt "CONFIG_PPP"
+		ot-kernel_y_configopt "CONFIG_PPP_ASYNC"
+		ot-kernel_y_configopt "CONFIG_PPP_SYNC_TTY"
+		if has_version "net-dialup/ppp[activefilter]" ; then
+			ot-kernel_y_configopt "CONFIG_PPP_FILTER"
+		fi
+		ot-kernel_y_configopt "CONFIG_PPP_DEFLATE"
+		ot-kernel_y_configopt "CONFIG_PPP_BSDCOMP"
+		ot-kernel_y_configopt "CONFIG_PPP_MPPE"
+		ot-kernel_y_configopt "CONFIG_PPPOE"
+		ot-kernel_y_configopt "CONFIG_PACKET"
+		if has_version "net-dialup/ppp[atm]" ; then
+			ot-kernel_y_configopt "CONFIG_PPPOATM"
+		fi
 	fi
 }
 
@@ -1783,6 +2481,32 @@ ot-kernel-pkgflags_powertop() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_r8152
+# @DESCRIPTION:
+# Applies kernel config flags for r8152
+ot-kernel-pkgflags_r8152() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "5e191f3" ]] && return
+	if has_version "net-misc/realtek-r8152" ; then
+		einfo "Applying kernel config flags for r8152 (id: 5e191f3)"
+		ot-kernel_set_configopt "CONFIG_USB_USBNET" "m"
+		ot-kernel_set_configopt "CONFIG_USB_NET_CDC_NCM" "m"
+		ot-kernel_set_configopt "CONFIG_USB_NET_CDCETHER" "m"
+		ot-kernel_y_configopt "CONFIG_MII"
+		ot-kernel_unset_configopt "CONFIG_USB_RTL8152"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_read_edid
+# @DESCRIPTION:
+# Applies kernel config flags for read-edid
+ot-kernel-pkgflags_read_edid() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "ec45905" ]] && return
+	if has_version "x11-misc/read-edid" ; then
+		einfo "Applying kernel config flags for read-edid (id: ec45905)"
+		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_roct
 # @DESCRIPTION:
 # Applies kernel config flags for roct
@@ -1795,6 +2519,41 @@ ot-kernel-pkgflags_roct() { # DONE
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_USERPTR"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_rsyslog
+# @DESCRIPTION:
+# Applies kernel config flags for rsyslog
+ot-kernel-pkgflags_rsyslog() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "16bb03d" ]] && return
+	if has_version "dev-libs/rsyslog" ; then
+		einfo "Applying kernel config flags for the rsyslog package (id: 16bb03d)"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_rtirq
+# @DESCRIPTION:
+# Applies kernel config flags for rtirq
+ot-kernel-pkgflags_rtirq() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "7a6a27c" ]] && return
+	if has_version "sys-process/rtirq" ; then
+		einfo "Applying kernel config flags for rtirq (id: 7a6a27c)"
+		ot-kernel_y_configopt "CONFIG_PREEMPT_RT" # Chosen because it is easier
+		# or
+		# ot-kernel_y_configopt "CONFIG_IRQ_FORCED_THREADING" # must have threadirqs in kernel cmdline
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_rtsp_conntrack
+# @DESCRIPTION:
+# Applies kernel config flags for rtsp-conntrack package
+ot-kernel-pkgflags_rtsp_conntrack() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "682cf36" ]] && return
+	if has_version "net-firewall/rtsp-conntrack" ; then
+		einfo "Applying kernel config flags for the rtsp-conntrack package (id: 682cf36)"
+		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
 	fi
 }
 
@@ -1919,6 +2678,54 @@ ot-kernel-pkgflags_udisks() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_ufw
+# @DESCRIPTION:
+# Applies kernel config flags for the ufw package
+ot-kernel-pkgflags_ufw() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "18d6a56" ]] && return
+	if has_version "net-firewall/ufw" ; then
+		einfo "Applying kernel config flags for the ufw package (id: 18d6a56)"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_COMMENT"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_HL"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_LIMIT"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_MULTIPORT"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_RECENT"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_STATE"
+		if ver_test ${PV} -ge 2.6.39 ; then
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE"
+		else
+			ot-kernel_y_configopt "CONFIG_IP_NF_MATCH_ADDRTYPE"
+		fi
+		if ver_test ${PV} -ge 3.4 ; then
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_LOG"
+		else
+			ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_LOG"
+			if has_version "net-firewall/ufw[ipv6]" ; then
+				ot-kernel_y_configopt "CONFIG_IP6_NF_TARGET_LOG"
+			fi
+		fi
+		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_REJECT"
+		if has_version "net-firewall/ufw[ipv6]" ; then
+			ot-kernel_y_configopt "CONFIG_IP6_NF_TARGET_REJECT"
+		fi
+		ot-kernel_y_configopt "CONFIG_NF_NAT_FTP"
+		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_FTP"
+		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_NETBIOS_NS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_uksmd
+# @DESCRIPTION:
+# Applies kernel config flags for the uksmd package
+ot-kernel-pkgflags_uksmd() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "6b83c24" ]] && return
+	if has_version "sys-process/uksmd" ; then
+		einfo "Applying kernel config flags for the uksmd package (id: 6b83c24)"
+		ot-kernel_y_configopt "CONFIG_KSM"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_undervolt
 # @DESCRIPTION:
 # Applies kernel config flags for the undervolt package
@@ -1928,6 +2735,28 @@ ot-kernel-pkgflags_undervolt() { # DONE
 		einfo "Applying kernel config flags for the undervolt package (id: 4047b49)"
 		ot-kernel_y_configopt "CONFIG_INTEL_RAPL"
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_usbtop
+# @DESCRIPTION:
+# Applies kernel config flags for the usbtop package
+ot-kernel-pkgflags_usbtop() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "8091306" ]] && return
+	if has_version "sys-process/usbtop" ; then
+		einfo "Applying kernel config flags for the usbtop package (id: 8091306)"
+		ot-kernel_y_configopt "CONFIG_USB_MON"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_usbview
+# @DESCRIPTION:
+# Applies kernel config flags for the usbview package
+ot-kernel-pkgflags_usbview() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "3e735de" ]] && return
+	if has_version "app-admin/usbview" ; then
+		einfo "Applying kernel config flags for the usbview package (id: 3e735de)"
+		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 	fi
 }
 
@@ -1962,6 +2791,17 @@ ot-kernel-pkgflags_shorewall() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_sstp_client
+# @DESCRIPTION:
+# Applies kernel config flags for the sstp-client package
+ot-kernel-pkgflags_sstp_client() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "17dced4" ]] && return
+	if has_version "net-misc/sstp-client" ; then
+		einfo "Applying kernel config flags for the sstp-client package (id: 17dced4)"
+		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_steam
 # @DESCRIPTION:
 # Applies kernel config flags for the steam-meta package
@@ -1970,6 +2810,25 @@ ot-kernel-pkgflags_steam() { # DONE
 	if has_version "games-utils/steam-meta" ; then
 		einfo "Applying kernel config flags for the steam package (id: f2d2736)"
 		ot-kernel_y_configopt "CONFIG_COMPAT_32BIT_TIME"
+
+		# Device
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_STEAM"
+		ot-kernel_y_configopt "CONFIG_POWER_SUPPLY"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_stress_ng
+# @DESCRIPTION:
+# Applies kernel config flags for the stress-ng package
+ot-kernel-pkgflags_stress_ng() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "3af5aaa" ]] && return
+	if has_version "app-benchmarks/stress-ng[apparmor]" ; then
+		einfo "Applying kernel config flags for the stress-ng package (id: 3af5aaa)"
+		ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
 	fi
 }
 
@@ -2034,6 +2893,18 @@ ot-kernel-pkgflags_systemd() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_systemd_bootchart
+# @DESCRIPTION:
+# Applies kernel config flags for the systemd-bootchart package
+ot-kernel-pkgflags_systemd_bootchart() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "11dfb63" ]] && return
+	if has_version "sys-apps/systemd-bootchart" ; then
+		einfo "Applying kernel config flags for the systemd-bootchart package (id: 11dfb63)"
+		ot-kernel_y_configopt "CONFIG_SCHEDSTATS"
+		ot-kernel_y_configopt "CONFIG_SCHED_DEBUG"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_tb_us
 # @DESCRIPTION:
 # Applies kernel config flags for the systemd package
@@ -2054,6 +2925,73 @@ ot-kernel-pkgflags_thinkfinger() { # DONE
 	if has_version "sys-auth/thinkfinger[pam]" ; then
 		einfo "Applying kernel config flags for thinkfinger (id: f096b24)"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_tp_smapi
+# @DESCRIPTION:
+# Applies kernel config flags for the tp_smapi package
+ot-kernel-pkgflags_tp_smapi() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "fb3a3a0" ]] && return
+	if has_version "app-laptop/tp_smapi[hdaps]" ; then
+		einfo "Applying kernel config flags for tp_smapi (id: fb3a3a0)"
+		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+		ot-kernel_unset_configopt "CONFIG_SENSORS_HDAPS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_tpb
+# @DESCRIPTION:
+# Applies kernel config flags for the tpb package
+ot-kernel-pkgflags_tpb() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "1ee9ffd" ]] && return
+	if has_version "app-laptop/tpb" ; then
+		einfo "Applying kernel config flags for tpb (id: 1ee9ffd)"
+		ot-kernel_y_configopt "CONFIG_NVRAM"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_tpm2_tss
+# @DESCRIPTION:
+# Applies kernel config flags for the tpm2_tss package
+ot-kernel-pkgflags_tpm2_tss() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "de73f41" ]] && return
+	if has_version "app-crypt/tpm2-tss" ; then
+		einfo "Applying kernel config flags for tpm2-tss (id: de73f41)"
+		ot-kernel_y_configopt "CONFIG_TCG_TPM"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_tracker
+# @DESCRIPTION:
+# Applies kernel config flags for the tracker package
+ot-kernel-pkgflags_tracker() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "a6270fb" ]] && return
+	if has_version "app-misc/tracker" ; then
+		einfo "Applying kernel config flags for tracker (id: a6270fb)"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_trousers
+# @DESCRIPTION:
+# Applies kernel config flags for the trousers package
+ot-kernel-pkgflags_trousers() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "1041159" ]] && return
+	if has_version "app-crypt/trousers" ; then
+		einfo "Applying kernel config flags for trousers (id: 1041159)"
+		ot-kernel_y_configopt "CONFIG_TCG_TPM"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_tvheadend
+# @DESCRIPTION:
+# Applies kernel config flags for the tvheadend package
+ot-kernel-pkgflags_tvheadend() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "2a10779" ]] && return
+	if has_version "media-tv/tvheadend" ; then
+		einfo "Applying kernel config flags for tvheadhead (id: 2a10779)"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	fi
 }
 
@@ -2128,6 +3066,62 @@ ot-kernel-pkgflags_vhba() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_vinagre
+# @DESCRIPTION:
+# Applies kernel config flags for the vinagre package
+ot-kernel-pkgflags_vinagre() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "2356e75" ]] && return
+	if has_version "net-misc/vinagre" ; then
+		einfo "Applying kernel config flags for the vinagre package (id: 2356e75)"
+		ot-kernel_y_configopt "CONFIG_IPV6"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_vpnc
+# @DESCRIPTION:
+# Applies kernel config flags for the vpnc package
+ot-kernel-pkgflags_vpnc() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "ac51429" ]] && return
+	if has_version "net-vpn/vpnc" ; then
+		einfo "Applying kernel config flags for the vpnc package (id: ac51429)"
+		ot-kernel_y_configopt "CONFIG_TUN"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_vtun
+# @DESCRIPTION:
+# Applies kernel config flags for the vtun package
+ot-kernel-pkgflags_vtun() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "205c74a" ]] && return
+	if has_version "net-vpn/vtun" ; then
+		einfo "Applying kernel config flags for the vtun package (id: 205c74a)"
+		ot-kernel_y_configopt "CONFIG_TUN"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_wacom
+# @DESCRIPTION:
+# Applies kernel config flags for the wacom package
+ot-kernel-pkgflags_wacom() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "dc77e36" ]] && return
+	if has_version "x11-drivers/xf86-input-wacom" ; then
+		einfo "Applying kernel config flags for the wacom package (id: dc77e36)"
+		if ver_test ${K_MAJOR_MINOR} -lt 3.17 ; then
+			ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+			ot-kernel_y_configopt "CONFIG_INPUT_TABLET"
+			ot-kernel_y_configopt "CONFIG_USB_ARCH_HAS_HCD"
+			ot-kernel_y_configopt "CONFIG_USB"
+			ot-kernel_y_configopt "CONFIG_TABLET_USB_WACOM"
+		else
+			ot-kernel_y_configopt "CONFIG_USB"
+			ot-kernel_y_configopt "CONFIG_INPUT"
+			ot-kernel_y_configopt "CONFIG_USB_HID"
+			ot-kernel_y_configopt "CONFIG_HID"
+			ot-kernel_y_configopt "CONFIG_HID_WACOM"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_wavemon
 # @DESCRIPTION:
 # Applies kernel config flags for the wavemon package
@@ -2160,6 +3154,58 @@ ot-kernel-pkgflags_wine() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_wireguard_modules
+# @DESCRIPTION:
+# Applies kernel config flags for the wireguard-modules package
+ot-kernel-pkgflags_wireguard_modules() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "a2dab07" ]] && return
+	if has_version "net-vpn/wireguard-modules" ; then
+		einfo "Applying kernel config flags for the wireguard-modules package (id: a2dab07)"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_NET_UDP_TUNNEL"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_ALGAPI"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_wireguard_tools
+# @DESCRIPTION:
+# Applies kernel config flags for the wireguard-tools package
+ot-kernel-pkgflags_wireguard_tools() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "d0dd1be" ]] && return
+	if has_version "net-vpn/wireguard-tools[wg-quick]" ; then
+		einfo "Applying kernel config flags for the wireguard-tools package (id: d0dd1be)"
+		ot-kernel_y_configopt "CONFIG_IP_ADVANCED_ROUTER"
+		ot-kernel_y_configopt "CONFIG_IP_MULTIPLE_TABLES"
+		ot-kernel_y_configopt "CONFIG_IPV6_MULTIPLE_TABLES"
+		if has_version "net-firewall/nftables" ; then
+			ot-kernel_y_configopt "CONFIG_NF_TABLES"
+			ot-kernel_y_configopt "CONFIG_NF_TABLES_IPV4"
+			ot-kernel_y_configopt "CONFIG_NF_TABLES_IPV6"
+			ot-kernel_y_configopt "CONFIG_NFT_CT"
+			ot-kernel_y_configopt "CONFIG_NFT_FIB"
+			ot-kernel_y_configopt "CONFIG_NFT_FIB_IPV4"
+			ot-kernel_y_configopt "CONFIG_NFT_FIB_IPV6"
+			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_MARK"
+		elif has_version "net-firewall/nftables" ; then
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MARK"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_CONNMARK"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_COMMENT"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE"
+			ot-kernel_y_configopt "CONFIG_IP6_NF_RAW"
+			ot-kernel_y_configopt "CONFIG_IP_NF_RAW"
+			ot-kernel_y_configopt "CONFIG_IP6_NF_FILTER"
+			ot-kernel_y_configopt "CONFIG_IP_NF_FILTER"
+		fi
+	fi
+	if has_version "net-vpn/wireguard-tools" ; then
+		if ver_test ${K_MAJOR_MINOR} -ge 5.6 ; then
+			ot-kernel_y_configopt "CONFIG_WIREGUARD"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_wpa_supplicant
 # @DESCRIPTION:
 # Applies kernel config flags for the wpa_supplicant package
@@ -2169,6 +3215,20 @@ ot-kernel-pkgflags_wpa_supplicant() { # DONE
 		einfo "Applying kernel config flags for the wpa_supplicant package (id: e0a4d03)"
 		: # See ot-kernel-pkgflags_crda
 		has_version "net-wireless/crda" || die "Install net-wireless/crda first"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_xboxdrv
+# @DESCRIPTION:
+# Applies kernel config flags for the xboxdrv package
+ot-kernel-pkgflags_xboxdrv() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "e7ec6f5" ]] && return
+	if has_version "games-util/xboxdrv" ; then
+		einfo "Applying kernel config flags for the xboxdrv package (id: e7ec6f5)"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		ot-kernel_y_configopt "CONFIG_INPUT_JOYDEV"
+		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+		ot-kernel_unset_configopt "CONFIG_JOYSTICK_XPAD"
 	fi
 }
 
@@ -2260,6 +3320,17 @@ ot-kernel-pkgflags_xf86_input_libinput() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_xf86_input_synaptics
+# @DESCRIPTION:
+# Applies kernel config flags for the xf86-input-synaptics package
+ot-kernel-pkgflags_xf86_input_synaptics() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "c940a05" ]] && return
+	if has_version "x11-drivers/xf86-input-synaptics" ; then
+		einfo "Applying kernel config flags for the xf86-input-synaptics package (id: c940a05)"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_xf86_video_ati
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-video-ati package
@@ -2274,6 +3345,31 @@ ot-kernel-pkgflags_xf86_video_ati() { # DONE
 			ot-kernel_y_configopt "CONFIG_DRM_RADEON_KMS"
 			ot-kernel_unset_configopt "CONFIG_FB_RADEON"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_xf86_video_intel
+# @DESCRIPTION:
+# Applies kernel config flags for the xf86-video-intel package
+ot-kernel-pkgflags_xf86_video_intel() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "bc32011" ]] && return
+	if has_version "x11-drivers/xf86-video-intel" ; then
+		einfo "Applying kernel config flags for the xf86-video-intel package (id: bc32011)"
+		if ver_test ${K_MAJOR_MINOR} -lt 4.3 ; then
+			ot-kernel_unset_configopt "CONFIG_DRM_I915_KMS"
+			ot-kernel_unset_configopt "CONFIG_DRM_I915"
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_xf86_video_vesa
+# @DESCRIPTION:
+# Applies kernel config flags for the xf86-video-vesa package
+ot-kernel-pkgflags_xf86_video_vesa() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "1940044" ]] && return
+	if has_version "x11-drivers/xf86-video-vesa" ; then
+		einfo "Applying kernel config flags for the xf86-video-vesa package (id: 1940044)"
+		ot-kernel_unset_configopt "CONFIG_DEVMEM"
 	fi
 }
 
@@ -2313,6 +3409,19 @@ ot-kernel-pkgflags_xpra() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_xtables_addons
+# @DESCRIPTION:
+# Applies kernel config flags for the xtables-addons package
+ot-kernel-pkgflags_xtables_addons() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "2b5f5b4" ]] && return
+	if has_version "net-firewall/xtables-addons[modules]" ; then
+		einfo "Applying kernel config flags for the xtables-addons package (id: 2b5f5b4)"
+		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
+		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_MARK"
+		ot-kernel_y_configopt "CONFIG_CONNECTOR"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_zfs
 # @DESCRIPTION:
 # Applies kernel config flags for the zfs package
@@ -2321,5 +3430,34 @@ ot-kernel-pkgflags_zfs() { # DONE
 	if has_version "sys-fs/zfs[test-suite]" ; then
 		einfo "Applying kernel config flags for the zfs package (id: bdf10dc)"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_zfs_kmod
+# @DESCRIPTION:
+# Applies kernel config flags for the zfs-kmod package
+ot-kernel-pkgflags_zfs_kmod() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "c0bec20" ]] && return
+	if has_version "sys-fs/zfs-kmod" ; then
+		einfo "Applying kernel config flags for the zfs-kmod package (id: c0bec20)"
+		ot-kernel_unset_configopt "CONFIG_DEBUG_LOCK_ALLOC"
+		ot-kernel_y_configopt "CONFIG_EFI_PARTITION"
+		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_unset_configopt "CONFIG_PAX_KERNEXEC_PLUGIN_METHOD_OR"
+		ot-kernel_unset_configopt "CONFIG_TRIM_UNUSED_KSYMS"
+		ot-kernel_y_configopt "CONFIG_ZLIB_DEFLATE"
+		ot-kernel_y_configopt "CONFIG_ZLIB_INFLATE"
+		if has_version "sys-fs/zfs-kmod[debug]" ; then
+			ot-kernel_y_configopt "CONFIG_FRAME_POINTER"
+			ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
+			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
+		fi
+		if has_version "sys-fs/zfs-kmod[rootfs]" ; then
+			ot-kernel_y_configopt "CONFIG_BLK_DEV_INITRD"
+			ot-kernel_y_configopt "CONFIG_DEVTMPFS"
+		fi
+		if ver_test ${K_MAJOR_MINOR} -lt 5 ; then
+			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
+		fi
 	fi
 }
