@@ -171,6 +171,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_xf86_input_libinput
 	ot-kernel-pkgflags_xf86_video_ati
 	ot-kernel-pkgflags_xfce4_battery_plugin
+	ot-kernel-pkgflags_xoscope
 	ot-kernel-pkgflags_xpra
 	ot-kernel-pkgflags_zfs
 }
@@ -1529,7 +1530,7 @@ ot-kernel-pkgflags_nftables() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "70aa284" ]] && return
 	if has_version "net-firewall/nftables" && ver_test ${K_MAJOR_MINOR} -ge 3.13 ; then
 		einfo "Applying kernel config flags for the nftables package (id: 70aa284)"
-		ot-kernel_unset_configopt "CONFIG_NF_TABLES"
+		ot-kernel_y_configopt "CONFIG_NF_TABLES"
 	fi
 }
 
@@ -2007,7 +2008,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED_V2"
 
 		if has_version "sys-apps/systemd[acl]" ; then
-			ot-kernel_unset_configopt "CONFIG_TMPFS_POSIX_ACL"
+			ot-kernel_y_configopt "CONFIG_TMPFS_POSIX_ACL"
 		fi
 		if has_version "sys-apps/systemd[seccomp]" ; then
 			ot-kernel_y_configopt "CONFIG_SECCOMP"
@@ -2284,6 +2285,17 @@ ot-kernel-pkgflags_xfce4_battery_plugin() { # DONE
 	if has_version "xfce-extra/xfce4-battery-plugin" ; then
 		einfo "Applying kernel config flags for the xfce4-battery-plugin package (id: f54e65c)"
 		ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_xoscope
+# @DESCRIPTION:
+# Applies kernel config flags for the xoscope package
+ot-kernel-pkgflags_xoscope() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "6a3c3e1" ]] && return
+	if has_version "sci-electronics/xoscope" ; then
+		einfo "Applying kernel config flags for the xoscope package (id: 6a3c3e1)"
+		ot-kernel_y_configopt "SND_PCM_OSS"
 	fi
 }
 
