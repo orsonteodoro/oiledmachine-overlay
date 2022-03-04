@@ -3284,7 +3284,7 @@ ewarn
 ewarn "ECB:  stable (DO NOT USE, for testing purposes only)"
 ewarn "CBC:  stable (recommended for production, used upstream)"
 ewarn "CTR:  stable"
-ewarn "XTS:  experimental / broken.  (DO NOT USE; 256 XTS only with 128-bit key; 64-bit ABI only)"
+ewarn "XTS:  experimental (256 XTS only with 128-bit key; 64-bit ABI only)"
 ewarn
 ewarn "Support for TRESOR may require modding in the kernel source code level."
 ewarn
