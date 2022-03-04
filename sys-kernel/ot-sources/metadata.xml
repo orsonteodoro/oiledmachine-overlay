@@ -134,6 +134,7 @@
 
     5.15 (LTS)						Y
 		    -rt	(RT_PREEMPT)			A
+		    CFI					?
 		    Clang PGO				?
 		    futex (futex-wait-multiple)	[6]	?
 		    futex2				?
@@ -146,12 +147,12 @@
 		    TRESOR (x86) [6]			t
 		    TRESOR (x86-64) [6]			T
 		    UKSM [5]				Y
-		    x86-cfi				?
 		    zen-lru_gen				N
 		    zen-sauce				N
 						
     5.16 (Stable)					N
 		    -rt	(RT_PREEMPT)			A
+		    CFI					?
 		    Clang PGO				?
 		    futex (futex-wait-multiple)	[6]	?
 		    futex2				?
@@ -164,7 +165,6 @@
 		    TRESOR (x86) [6]			t
 		    TRESOR (x86-64) [6]			T
 		    UKSM [5]				D
-		    x86-cfi				?
 		    zen-lru_gen				A
 		    zen-sauce				A
 
