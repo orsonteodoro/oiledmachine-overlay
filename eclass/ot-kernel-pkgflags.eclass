@@ -918,6 +918,8 @@ ot-kernel-pkgflags_dccutil() { # DONE
 		einfo "Applying kernel config flags for the dccutil package (id: 6805d71)"
 		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 		if has_version "app-misc/ddcutil[usb-monitor]" ; then
+			ot-kernel_y_configopt "CONFIG_INPUT"
+			ot-kernel_y_configopt "CONFIG_HID"
 			ot-kernel_y_configopt "CONFIG_HIDRAW"
 			ot-kernel_y_configopt "CONFIG_USB_HIDDEV"
 		fi
@@ -1861,8 +1863,10 @@ ot-kernel-pkgflags_libnetfilter_queue() { # DONE
 ot-kernel-pkgflags_libsdl2() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "6f67af3" ]] && return
 	if has_version "media-libs/libsdl2" \
-		|| has_version "dev-games/urho3d" ; then
-		einfo "Applying kernel config flags for the libsdl2 package (id: 6f67af3)"
+		|| has_version "dev-games/urho3d" \
+		|| has_version "dev-libs/hidapi" ; then
+		einfo "Applying kernel config flags for the libsdl2 / hidapi package(s) (id: 6f67af3)"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_HID"
 		ot-kernel_y_configopt "CONFIG_HIDRAW"
 	fi
