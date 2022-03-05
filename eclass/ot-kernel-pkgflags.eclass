@@ -33,7 +33,11 @@ IUSE+=" ${X86_FLAGS[@]/#/cpu_flags_x86_}"
 # Makes disable_debug mutually exclusive with kernel pkgflags
 #
 # Any function that uses the following keywords (DEBUG, TRACE, VERBOSE, LOG,
-# PRINT) in kernel flags should be checked
+# PRINT) in kernel flags should be checked in addition to netfilter log
+# depending on if disable_debug is set to PERMIT_NETFILTER_SYMBOL_REMOVAL=1.
+#
+# Currently OT_KERNEL_PKGFLAGS_ACCEPT is used to override
+# PERMIT_NETFILTER_SYMBOL_REMOVAL and to prevent more code creep.
 #
 ban_disable_debug() {
 	local pkgid="${1}"
@@ -1835,6 +1839,7 @@ ot-kernel-pkgflags_libnetfilter_log() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "0359211" ]] && return
 	if has_version "net-libs/libnetfilter_log" ; then
 		einfo "Applying kernel config flags for the libnetfilter_log package (id: 0359211)"
+		ban_disable_debug "0359211"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_LOG"
 	fi
 }
@@ -2768,6 +2773,7 @@ ot-kernel-pkgflags_ufw() { # DONE
 			ot-kernel_y_configopt "CONFIG_IP_NF_MATCH_ADDRTYPE"
 		fi
 		if ver_test ${PV} -ge 3.4 ; then
+			ban_disable_debug "18d6a56"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_LOG"
 		else
 			ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_LOG"
@@ -2826,6 +2832,7 @@ ot-kernel-pkgflags_usbview() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "3e735de" ]] && return
 	if has_version "app-admin/usbview" ; then
 		einfo "Applying kernel config flags for the usbview package (id: 3e735de)"
+		ban_disable_debug "3e735de"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 	fi
 }
@@ -2982,6 +2989,7 @@ ot-kernel-pkgflags_systemd_bootchart() { # DONE
 	if has_version "sys-apps/systemd-bootchart" ; then
 		einfo "Applying kernel config flags for the systemd-bootchart package (id: 11dfb63)"
 		ot-kernel_y_configopt "CONFIG_SCHEDSTATS"
+		ban_disable_debug "11dfb63"
 		ot-kernel_y_configopt "CONFIG_SCHED_DEBUG"
 	fi
 }
@@ -3521,6 +3529,7 @@ ot-kernel-pkgflags_zfs_kmod() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "c0bec20" ]] && return
 	if has_version "sys-fs/zfs-kmod" ; then
 		einfo "Applying kernel config flags for the zfs-kmod package (id: c0bec20)"
+		ban_disable_debug "c0bec20"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_LOCK_ALLOC"
 		ot-kernel_y_configopt "CONFIG_EFI_PARTITION"
 		ot-kernel_y_configopt "CONFIG_MODULES"
