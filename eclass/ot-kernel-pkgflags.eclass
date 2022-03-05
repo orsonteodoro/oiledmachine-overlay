@@ -321,7 +321,7 @@ ot-kernel-pkgflags_atop() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "54e024f" ]] && return
 	if has_version "sys-process/atop" ; then
 		einfo "Applying kernel config flags for atop (id: 54e024f)"
-		ot-kernel_unset_configopt "CONFIG_BSD_PROCESS_ACCT"
+		ot-kernel_y_configopt "CONFIG_BSD_PROCESS_ACCT"
 	fi
 }
 
@@ -347,9 +347,9 @@ ot-kernel-pkgflags_avahi() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "1ea9c64" ]] && return
 	if has_version "net-dns/avahi" ; then
 		einfo "Applying kernel config flags for avahi (id: 1ea9c64)"
-		ot-kernel_unset_configopt "CONFIG_NET"
-		ot-kernel_unset_configopt "CONFIG_INET"
-		ot-kernel_unset_configopt "CONFIG_IP_MULTICAST"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_IP_MULTICAST"
 	fi
 }
 
@@ -2394,7 +2394,11 @@ ot-kernel-pkgflags_openafs() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "dc8ba5a" ]] && return
 	if has_version "net-fs/openafs" && ver_test ${K_MAJOR_MINOR} -lt 5.17 ; then
 		einfo "Applying kernel config flags for openafs (id: dc8ba5a)"
-		ot-kernel_unset_configopt "CONFIG_AFS_FS"
+		if has_version "net-fs/openafs[modules]" ; then
+			ot-kernel_unset_configopt "CONFIG_AFS_FS"
+		else
+			ot-kernel_y_configopt "CONFIG_AFS_FS"
+		fi
 		ot-kernel_y_configopt "CONFIG_KEYS"
 	elif has_version "net-fs/openafs" && ver_test ${K_MAJOR_MINOR} -ge 5.17 ; then
 		ewarn "Kernel ${K_MAJOR_MINOR}.x is not supported for autofs"
@@ -3574,8 +3578,8 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 	if has_version "x11-drivers/xf86-video-intel" ; then
 		einfo "Applying kernel config flags for the xf86-video-intel package (id: bc32011)"
 		if ver_test ${K_MAJOR_MINOR} -lt 4.3 ; then
-			ot-kernel_unset_configopt "CONFIG_DRM_I915_KMS"
-			ot-kernel_unset_configopt "CONFIG_DRM_I915"
+			ot-kernel_y_configopt "CONFIG_DRM_I915_KMS"
+			ot-kernel_y_configopt "CONFIG_DRM_I915"
 		fi
 	fi
 }
@@ -3587,7 +3591,7 @@ ot-kernel-pkgflags_xf86_video_vesa() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "1940044" ]] && return
 	if has_version "x11-drivers/xf86-video-vesa" ; then
 		einfo "Applying kernel config flags for the xf86-video-vesa package (id: 1940044)"
-		ot-kernel_unset_configopt "CONFIG_DEVMEM"
+		ot-kernel_y_configopt "CONFIG_DEVMEM"
 	fi
 }
 
