@@ -70,10 +70,11 @@ eerror
 # The main function to apply all kernel config flags for package.
 ot-kernel-pkgflags_apply() {
 	[[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && return
+	ot-kernel-pkgflags_acpi_call
+	ot-kernel-pkgflags_acpid
 	ot-kernel-pkgflags_actkbd
 	ot-kernel-pkgflags_audit
 	ot-kernel-pkgflags_atop
-	ot-kernel-pkgflags_autofs
 	ot-kernel-pkgflags_bcm_sta
 	ot-kernel-pkgflags_bees
 	ot-kernel-pkgflags_blueman
@@ -163,6 +164,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_loopaes
 	ot-kernel-pkgflags_lvm2
 	ot-kernel-pkgflags_lxc
+	ot-kernel-pkgflags_lxd
 	ot-kernel-pkgflags_mdadm
 	ot-kernel-pkgflags_mesa
 	ot-kernel-pkgflags_minijail
@@ -172,11 +174,12 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_nfs_utils
 	ot-kernel-pkgflags_nftables
 	ot-kernel-pkgflags_nilfs
+	ot-kernel-pkgflags_nstx
 	ot-kernel-pkgflags_ntfs3g
-	ot-kernel-pkgflags_ntxd
 	ot-kernel-pkgflags_numad
 	ot-kernel-pkgflags_nv
 	ot-kernel-pkgflags_open_iscsi
+	ot-kernel-pkgflags_openafs
 	ot-kernel-pkgflags_openfortivpn
 	ot-kernel-pkgflags_openssl
 	ot-kernel-pkgflags_openvpn
@@ -201,6 +204,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_runc
 	ot-kernel-pkgflags_simplevirt
 	ot-kernel-pkgflags_shorewall
+	ot-kernel-pkgflags_snapd
 	ot-kernel-pkgflags_spacenavd
 	ot-kernel-pkgflags_spice_vdagent
 	ot-kernel-pkgflags_squid
@@ -253,6 +257,28 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_zfs_kmod
 }
 
+# @FUNCTION: ot-kernel-pkgflags_acpi_call
+# @DESCRIPTION:
+# Applies kernel config flags for the acpi_call
+ot-kernel-pkgflags_acpi_call() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "2d5c2ed" ]] && return
+	if has_version "sys-power/acpi_call" ; then
+		einfo "Applying kernel config flags for acpi_call (id: 2d5c2ed)"
+		ot-kernel_y_configopt "CONFIG_ACPI"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_acpid
+# @DESCRIPTION:
+# Applies kernel config flags for the acpid
+ot-kernel-pkgflags_acpid() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "316efa6" ]] && return
+	if has_version "sys-power/acpid" ; then
+		einfo "Applying kernel config flags for acpid (id: 316efa6)"
+		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_actkbd
 # @DESCRIPTION:
 # Applies kernel config flags for the actkbd
@@ -283,20 +309,6 @@ ot-kernel-pkgflags_atop() { # DONE
 	if has_version "sys-process/atop" ; then
 		einfo "Applying kernel config flags for atop (id: 54e024f)"
 		ot-kernel_unset_configopt "CONFIG_BSD_PROCESS_ACCT"
-	fi
-}
-
-# @FUNCTION: ot-kernel-pkgflags_autofs
-# @DESCRIPTION:
-# Applies kernel config flags for the autofs
-ot-kernel-pkgflags_autofs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "dc8ba5a" ]] && return
-	if has_version "net-fs/openafs" && ver_test ${K_MAJOR_MINOR} -lt 5.17 ; then
-		einfo "Applying kernel config flags for autofs (id: dc8ba5a)"
-		ot-kernel_unset_configopt "CONFIG_AFS_FS"
-		ot-kernel_y_configopt "CONFIG_KEYS"
-	elif has_version "net-fs/openafs" && ver_test ${K_MAJOR_MINOR} -ge 5.17 ; then
-		ewarn "Kernel ${K_MAJOR_MINOR}.x is not supported for autofs"
 	fi
 }
 
@@ -1917,10 +1929,10 @@ ot-kernel-pkgflags_linux_smaps() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_linux_lirc
+# @FUNCTION: ot-kernel-pkgflags_lirc
 # @DESCRIPTION:
 # Applies kernel config flags for the lirc package
-ot-kernel-pkgflags_linux_lirc() { # DONE
+ot-kernel-pkgflags_lirc() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "1f8b392" ]] && return
 	if has_version "app-misc/lirc" ; then
 		einfo "Applying kernel config flags for the lirc package (id: 1f8b392)"
@@ -2001,6 +2013,26 @@ ot-kernel-pkgflags_lxc() { # DONE
 		ot-kernel_y_configopt "CONFIG_USER_NS"
 		ot-kernel_y_configopt "CONFIG_UTS_NS"
 		ot-kernel_y_configopt "CONFIG_VETH"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_lxd
+# @DESCRIPTION:
+# Applies kernel config flags for the lxd package
+ot-kernel-pkgflags_lxd() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "cf50245" ]] && return
+	if has_version "app-containers/lxd" ; then
+		einfo "Applying kernel config flags for the lxd package (id: cf50245)"
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
+		ot-kernel_y_configopt "CONFIG_IPC_NS"
+		ot-kernel_y_configopt "CONFIG_NET_NS"
+		ot-kernel_y_configopt "CONFIG_PID_NS"
+		ot-kernel_y_configopt "CONFIG_SECCOMP"
+		ot-kernel_y_configopt "CONFIG_USER_NS"
+		ot-kernel_y_configopt "CONFIG_UTS_NS"
+		ot-kernel_y_configopt "CONFIG_KVM"
+		ot-kernel_y_configopt "CONFIG_MACVTAP"
+		ot-kernel_y_configopt "CONFIG_VHOST_VSOCK"
 	fi
 }
 
@@ -2225,6 +2257,20 @@ ot-kernel-pkgflags_open_iscsi() { # DONE
 		if has_version "sys-block/open-iscsi[rdma]" ; then
 			ot-kernel_y_configopt "CONFIG_INFINIBAND_ISER"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_openafs
+# @DESCRIPTION:
+# Applies kernel config flags for the openafs
+ot-kernel-pkgflags_openafs() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "dc8ba5a" ]] && return
+	if has_version "net-fs/openafs" && ver_test ${K_MAJOR_MINOR} -lt 5.17 ; then
+		einfo "Applying kernel config flags for openafs (id: dc8ba5a)"
+		ot-kernel_unset_configopt "CONFIG_AFS_FS"
+		ot-kernel_y_configopt "CONFIG_KEYS"
+	elif has_version "net-fs/openafs" && ver_test ${K_MAJOR_MINOR} -ge 5.17 ; then
+		ewarn "Kernel ${K_MAJOR_MINOR}.x is not supported for autofs"
 	fi
 }
 
@@ -2568,6 +2614,30 @@ ot-kernel-pkgflags_runc() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_snapd
+# @DESCRIPTION:
+# Applies kernel config flags for the snapd package
+ot-kernel-pkgflags_snapd() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "487fece" ]] && return
+	if has_version "app-containers/snapd" ; then
+		einfo "Applying kernel config flags for the snapd package (id: 487fece)"
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
+		ot-kernel_y_configopt "CONFIG_CGROUP_DEVICE"
+		ot-kernel_y_configopt "CONFIG_CGROUP_FREEZER"
+		ot-kernel_y_configopt "CONFIG_NAMESPACES"
+		ot-kernel_y_configopt "CONFIG_SQUASHFS"
+		ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
+		ot-kernel_y_configopt "CONFIG_SQUASHFS_LZO"
+		ot-kernel_y_configopt "CONFIG_SQUASHFS_XZ"
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
+		ot-kernel_y_configopt "CONFIG_SECCOMP"
+		ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
+		if has_version "app-containers/snapd[apparmord]" ; then
+			ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_spacenavd
 # @DESCRIPTION:
 # Applies kernel config flags for the spacenavd package
@@ -2818,6 +2888,17 @@ ot-kernel-pkgflags_steam() { # DONE
 		ot-kernel_y_configopt "CONFIG_HID"
 		ot-kernel_y_configopt "CONFIG_HID_STEAM"
 		ot-kernel_y_configopt "CONFIG_POWER_SUPPLY"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_stress_ng
+# @DESCRIPTION:
+# Applies kernel config flags for the stress-ng package
+ot-kernel-pkgflags_stress_ng() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "3af5aaa" ]] && return
+	if has_version "app-benchmarks/stress-ng[apparmor]" ; then
+		einfo "Applying kernel config flags for the stress-ng package (id: 3af5aaa)"
+		ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
 	fi
 }
 
@@ -3101,11 +3182,11 @@ ot-kernel-pkgflags_vtun() { # DONE
 
 # @FUNCTION: ot-kernel-pkgflags_wacom
 # @DESCRIPTION:
-# Applies kernel config flags for the wacom package
+# Applies kernel config flags for the xf86-input-wacom package
 ot-kernel-pkgflags_wacom() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "dc77e36" ]] && return
 	if has_version "x11-drivers/xf86-input-wacom" ; then
-		einfo "Applying kernel config flags for the wacom package (id: dc77e36)"
+		einfo "Applying kernel config flags for the xf86-input-wacom package (id: dc77e36)"
 		if ver_test ${K_MAJOR_MINOR} -lt 3.17 ; then
 			ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
 			ot-kernel_y_configopt "CONFIG_INPUT_TABLET"
@@ -3187,7 +3268,7 @@ ot-kernel-pkgflags_wireguard_tools() { # DONE
 			ot-kernel_y_configopt "CONFIG_NFT_FIB_IPV4"
 			ot-kernel_y_configopt "CONFIG_NFT_FIB_IPV6"
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_MARK"
-		elif has_version "net-firewall/nftables" ; then
+		elif has_version "net-firewall/iptables" ; then
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MARK"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_CONNMARK"
