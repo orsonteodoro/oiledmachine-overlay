@@ -1345,7 +1345,7 @@ ot-kernel-pkgflags_ecryptfs() { # DONE
 ot-kernel-pkgflags_ell() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "07b5e1f" ]] && return
 	if has_version "dev-libs/ell" ; then
-		einfo "Applying kernel config flags for the elogind package (id: 07b5e1f)"
+		einfo "Applying kernel config flags for the ell package (id: 07b5e1f)"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API"
