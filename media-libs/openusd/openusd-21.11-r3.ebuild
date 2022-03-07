@@ -74,24 +74,24 @@ RDEPEND+="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			>=dev-libs/boost-1.70.0:=[python,${PYTHON_MULTI_USEDEP}]
+			>=dev-libs/boost-1.70.0:=[python,${PYTHON_USEDEP}]
 			usdview? (
 				(
 					(
 						dev-qt/qtquickcontrols2:5
-						>=dev-python/pyside2-2.0.0[${PYTHON_MULTI_USEDEP},quickcontrols2(+),script,scripttools]
+						>=dev-python/pyside2-2.0.0[${PYTHON_USEDEP},quickcontrols2(+),script,scripttools]
 					)
-					dev-python/shiboken2[${PYTHON_MULTI_USEDEP}]
+					dev-python/shiboken2[${PYTHON_USEDEP}]
 				)
-				dev-python/pyside2-tools[tools(+),${PYTHON_MULTI_USEDEP}]
-				opengl? ( >=dev-python/pyopengl-3.1.5[${PYTHON_MULTI_USEDEP}] )
+				dev-python/pyside2-tools[tools(+),${PYTHON_USEDEP}]
+				opengl? ( >=dev-python/pyopengl-3.1.5[${PYTHON_USEDEP}] )
 			)
 		')
 	)
         vulkan? ( >=dev-util/vulkan-headers-1.2.135.0 )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
-	$(python_gen_cond_dep '>=dev-python/jinja-2[${PYTHON_MULTI_USEDEP}]')
+	$(python_gen_cond_dep '>=dev-python/jinja-2[${PYTHON_USEDEP}]')
 	dev-cpp/argparse
 	>=dev-util/cmake-3.14.6
 	dev-util/patchelf
