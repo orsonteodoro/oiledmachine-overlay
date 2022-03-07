@@ -102,6 +102,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_acpi_call
 	ot-kernel-pkgflags_acpid
 	ot-kernel-pkgflags_actkbd
+	ot-kernel-pkgflags_alsa
 	ot-kernel-pkgflags_amt_check
 	ot-kernel-pkgflags_apcupsd
 	ot-kernel-pkgflags_aqtion
@@ -254,6 +255,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_mcproxy
 	ot-kernel-pkgflags_mdadm
 	ot-kernel-pkgflags_mesa
+	ot-kernel-pkgflags_midi
 	ot-kernel-pkgflags_minidlna
 	ot-kernel-pkgflags_minijail
 	ot-kernel-pkgflags_mono
@@ -285,6 +287,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_openvswitch
 	ot-kernel-pkgflags_oprofile
 	ot-kernel-pkgflags_osmo_fl2k
+	ot-kernel-pkgflags_oss
 	ot-kernel-pkgflags_pcmciautils
 	ot-kernel-pkgflags_perf
 	ot-kernel-pkgflags_pglinux
@@ -439,6 +442,22 @@ ot-kernel-pkgflags_actkbd() { # DONE
 	if has_version "app-misc/actkbd" ; then
 		einfo "Applying kernel config flags for the actkbd package (id: 1ee4e36)"
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_alsa
+# @DESCRIPTION:
+# Applies kernel config flags for the alsa package
+ot-kernel-pkgflags_alsa() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "542ac66" ]] && return
+	if has_version "media-libs/alsa-lib" ; then
+		einfo "Applying kernel config flags for alsa (id: 542ac66)"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_SND"
+
+		# USB sound
+		ot-kernel_y_configopt "CONFIG_SND_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
 	fi
 }
 
@@ -3049,6 +3068,64 @@ ot-kernel-pkgflags_mdadm() { # DONE
 	fi
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_has_midi
+# @DESCRIPTION:
+# Samples the midi USE flag or midi packages
+# True if user wants midi support
+_ot-kernel-pkgflags_has_midi() { # DONE
+	if \
+		has_version "media-libs/portmidi" \
+		|| has_version "media-libs/rtmidi" \
+		|| has_version "media-sound/fluidsynth" \
+		|| has_version "media-sound/timidity++" \
+		|| has_version "media-sound/wildmidi" \
+	; then
+		return 0
+	fi
+	return 1
+}
+
+# @FUNCTION: ot-kernel-pkgflags_midi
+# @DESCRIPTION:
+# Applies kernel config flags for midi support
+ot-kernel-pkgflags_midi() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "b184220" ]] && return
+	if \
+		[[ "${ALSA_MIDI}" == "1" ]] \
+		|| _ot-kernel-pkgflags_has_midi \
+	; then
+		einfo "Applying kernel config flags for midi support (id: b184220)"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_unset_configopt "CONFIG_UML"
+		ot-kernel_set_configopt "CONFIG_SND_SEQUENCER" "m"
+		ot-kernel_set_configopt "CONFIG_SND_SEQ_DUMMY" "m"
+		ot-kernel_y_configopt "CONFIG_SND_SEQ_HRTIMER_DEFAULT"
+		ot-kernel_y_configopt "CONFIG_SND_VIRMIDI"
+
+		# MIDI port
+		ot-kernel_y_configopt "CONFIG_SND_DRIVERS"
+		ot-kernel_y_configopt "CONFIG_SND_MPU401"
+
+		# USB audio/midi devices
+		ot-kernel_y_configopt "CONFIG_SND_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
+
+		if ver_test ${K_MAJOR_MINOR} -le 4.14 ; then
+			ot-kernel_y_configopt "CONFIG_SOUND_PRIME" # OSS support
+		fi
+
+		if [[ "${OSS_MIDI}" == "1" ]] \
+			|| has_version "media-sound/fluidsynth[oss]" \
+			|| has_version "media-sound/timidity++[oss]" \
+			|| has_version "media-sound/wildmidi[oss]" \
+		; then
+			ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
+			ot-kernel_y_configopt "CONFIG_SND_SEQUENCER_OSS"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_mesa
 # @DESCRIPTION:
 # Applies kernel config flags for the mesa package
@@ -3103,6 +3180,7 @@ ot-kernel-pkgflags_mono() { # DONE
 	if has_version "dev-lang/mono" ; then
 		einfo "Applying kernel config flags for the mono package (id: 8c7d25b)"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
+		ot-kernel_y_configopt "CONFIG_BINFMT_MISC" # Optional to run exe directly
 	fi
 }
 
@@ -3358,6 +3436,58 @@ ot-kernel-pkgflags_oprofile() { # DONE
 	if has_version "dev-util/oprofile" ; then
 		einfo "Applying kernel config flags for the oprofile package (id: 18e7433)"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
+	fi
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_has_oss_use
+# @DESCRIPTION:
+# Samples apps (or auto-detects) for oss support
+# True if popular packages contain oss USE flag
+_ot-kernel-pkgflags_has_oss_use() {
+	# >= 81 packages with oss USE flag
+	if \
+		has_version "app-emulation/wine-any[oss]" \
+		|| has_version "app-emulation/wine-d3d9[oss]" \
+		|| has_version "app-emulation/wine-lutris[oss]" \
+		|| has_version "app-emulation/wine-staging[oss]" \
+		|| has_version "app-emulation/wine-tkg[oss]" \
+		|| has_version "app-emulation/wine-vanilla[oss]" \
+		|| has_version "app-emulation/wine-wayland[oss]" \
+		|| has_version "media-libs/allegro[oss]" \
+		|| has_version "media-libs/libsdl[oss]" \
+		|| has_version "media-libs/libsdl2[oss]" \
+		|| has_version "media-libs/openal[oss]" \
+		|| has_version "media-plugins/alsa-plugins[oss]" \
+		|| has_version "media-sound/jack-audio-connection-kit[oss]" \
+		|| has_version "media-sound/oss" \
+		|| has_version "media-sound/pulseaudio[oss]" \
+		|| has_version "media-sound/sox[oss]" \
+		|| has_version "media-video/ffmpeg[oss]" \
+		|| has_version "media-video/mplayer[oss]" \
+	; then
+		return 0
+	fi
+	return 1
+}
+
+# @FUNCTION: ot-kernel-pkgflags_oss
+# @DESCRIPTION:
+# Applies kernel config flags for oss support
+ot-kernel-pkgflags_oss() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "" ]] && return
+	if [[ "${OSS}" == "1" ]] \
+		|| _ot-kernel-pkgflags_has_oss_use ; then
+		einfo "Applying kernel config flags for oss (id: )"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_SND"
+
+		ot-kernel_y_configopt "CONFIG_SND_MIXER_OSS" # /dev/mixer*
+		ot-kernel_y_configopt "CONFIG_SND_PCM_OSS" # /dev/dsp*
+
+		ot-kernel_y_configopt "CONFIG_SND_USB"
+		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
+
+		ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
 	fi
 }
 
@@ -4895,15 +5025,17 @@ ot-kernel-pkgflags_wavemon() { # DONE
 
 # @FUNCTION: ot-kernel-pkgflags_wine
 # @DESCRIPTION:
-# Applies kernel config flags for the wine package
+# Applies kernel config flags for the wine packages
 ot-kernel-pkgflags_wine() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "ab3aa13" ]] && return
 	if \
-		has_version "app-emulation/wine-staging" \
-		|| has_version "app-emulation/wine-mono" \
-		|| has_version "app-emulation/wine-vanilla" \
+		has_version "app-emulation/wine-any" \
 		|| has_version "app-emulation/wine-d3d9" \
-		|| has_version "app-emulation/wine-any" \
+		|| has_version "app-emulation/wine-lutris" \
+		|| has_version "app-emulation/wine-staging" \
+		|| has_version "app-emulation/wine-tkg" \
+		|| has_version "app-emulation/wine-vanilla" \
+		|| has_version "app-emulation/wine-wayland" \
 		; then
 		einfo "Applying kernel config flags for the wine package (id: ab3aa13)"
 		ot-kernel_y_configopt "CONFIG_COMPAT_32BIT_TIME"
