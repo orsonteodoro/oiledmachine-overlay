@@ -2253,7 +2253,7 @@ ot-kernel-pkgflags_ipset() { # DONE
 		einfo "Applying kernel config flags for the ipset package (id: 45b1cc4)"
 		ot-kernel_y_configopt "CONFIG_NETFILTER"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK"
-		ot-kernel_unset_configopt "CONFIG_PAX_CONSTIFY_PLUGIN"
+		ot-kernel_unset_configopt "CONFIG_PAX_CONSTIFY_PLUGIN" # old
 		if has_version "net-firewall/ipset[modules]" ; then
 			ot-kernel_unset_configopt "CONFIG_IP_NF_SET"
 			ot-kernel_unset_configopt "CONFIG_IP_SET"
@@ -5239,7 +5239,7 @@ ot-kernel-pkgflags_zfs_kmod() { # DONE
 		ot-kernel_unset_configopt "CONFIG_DEBUG_LOCK_ALLOC"
 		ot-kernel_y_configopt "CONFIG_EFI_PARTITION"
 		ot-kernel_y_configopt "CONFIG_MODULES"
-		ot-kernel_unset_configopt "CONFIG_PAX_KERNEXEC_PLUGIN_METHOD_OR"
+		ot-kernel_unset_configopt "CONFIG_PAX_KERNEXEC_PLUGIN_METHOD_OR" # old
 		ot-kernel_unset_configopt "CONFIG_TRIM_UNUSED_KSYMS"
 		ot-kernel_y_configopt "CONFIG_ZLIB_DEFLATE"
 		ot-kernel_y_configopt "CONFIG_ZLIB_INFLATE"
