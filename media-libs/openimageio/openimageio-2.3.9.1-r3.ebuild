@@ -102,13 +102,13 @@ RDEPEND+="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			dev-libs/boost:=[python,${PYTHON_MULTI_USEDEP}]
+			dev-libs/boost:=[python,${PYTHON_USEDEP}]
 		')
 		$(python_gen_cond_dep '
-			dev-python/numpy[${PYTHON_MULTI_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
 		')
 		$(python_gen_cond_dep '
-			>=dev-python/pybind11-2.4.2[${PYTHON_MULTI_USEDEP}]
+			>=dev-python/pybind11-2.4.2[${PYTHON_USEDEP}]
 		')
 	)
 	qt5? (
