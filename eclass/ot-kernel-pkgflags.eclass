@@ -475,6 +475,9 @@ ot-kernel-pkgflags_aqtion() { # DONE
 		ot-kernel_unset_configopt "CONFIG_AQTION"
 		ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK"
 		ot-kernel_y_configopt "CONFIG_CRC_ITU_T"
+		if has_version "net-misc/AQtion[lro]" ; then
+			ot-kernel_unset_configopt "CONFIG_CONFIG_BRIDGE"
+		fi
 	fi
 }
 
