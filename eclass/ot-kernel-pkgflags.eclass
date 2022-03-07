@@ -398,11 +398,11 @@ ot-kernel-pkgflags_apply() {
 
 # @FUNCTION: ot-kernel-pkgflags_accel_ppp
 # @DESCRIPTION:
-# Applies kernel config flags for the accel_ppp package
+# Applies kernel config flags for the accel-ppp package
 ot-kernel-pkgflags_accel_ppp() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "b80fb54" ]] && return
-	if has_version "sys-power/accel_ppp" ; then
-		einfo "Applying kernel config flags for the accel_ppp package (id: b80fb54)"
+	if has_version "net-dialup/accel-ppp" ; then
+		einfo "Applying kernel config flags for the accel-ppp package (id: b80fb54)"
 		ot-kernel_y_configopt "CONFIG_L2TP"
 		ot-kernel_y_configopt "CONFIG_PPPOE"
 		ot-kernel_y_configopt "CONFIG_PPTP"
