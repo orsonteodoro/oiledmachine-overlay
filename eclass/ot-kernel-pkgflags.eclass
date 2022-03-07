@@ -2994,7 +2994,7 @@ ot-kernel-pkgflags_madwimax() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "6f56e53" ]] && return
 	if has_version "net-wireless/madwimax" ; then
 		einfo "Applying kernel config flags for the madwimax package (id: 6f56e53)"
-		ot-kernel_unset_configopt "CONFIG_TUN"
+		ot-kernel_y_configopt "CONFIG_TUN"
 	fi
 }
 
@@ -3005,10 +3005,10 @@ ot-kernel-pkgflags_mcelog() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "3683419" ]] && return
 	if has_version "app-admin/mcelog" ; then
 		einfo "Applying kernel config flags for the mcelog package (id: 3683419)"
-		ot-kernel_unset_configopt "CONFIG_X86_MCE"
+		ot-kernel_y_configopt "CONFIG_X86_MCE"
 		if ver_test ${K_MAJOR_MINOR} -ge 4.12 ; then
 			ban_disable_debug "3683419"
-			ot-kernel_unset_configopt "CONFIG_X86_MCELOG_LEGACY"
+			ot-kernel_y_configopt "CONFIG_X86_MCELOG_LEGACY"
 		fi
 	fi
 }
@@ -3020,8 +3020,8 @@ ot-kernel-pkgflags_mcproxy() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "b648130" ]] && return
 	if has_version "net-misc/mcproxy" ; then
 		einfo "Applying kernel config flags for the mcproxy package (id: b648130)"
-		ot-kernel_unset_configopt "CONFIG_IP_MULTICAST"
-		ot-kernel_unset_configopt "CONFIG_IP_MROUTE"
+		ot-kernel_y_configopt "CONFIG_IP_MULTICAST"
+		ot-kernel_y_configopt "CONFIG_IP_MROUTE"
 	fi
 }
 
