@@ -30,7 +30,7 @@ DEPEND+=" ${PYTHON_DEPS}
 		sys-devel/clang:${YCMD_SLOT_43_LLVM_V_MAJ}
 		sys-devel/llvm:${YCMD_SLOT_43_LLVM_V_MAJ}
 	)
-	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_MULTI_USEDEP}]') )"
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]') )"
 RDEPEND+=" ${DEPEND}"
 SRC_URI="
 https://github.com/jakeanq/gycm/archive/${EGIT_COMMIT}.tar.gz
