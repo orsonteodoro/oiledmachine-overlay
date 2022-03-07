@@ -3474,10 +3474,10 @@ _ot-kernel-pkgflags_has_oss_use() {
 # @DESCRIPTION:
 # Applies kernel config flags for oss support
 ot-kernel-pkgflags_oss() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "" ]] && return
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "b360c7e" ]] && return
 	if [[ "${OSS}" == "1" ]] \
 		|| _ot-kernel-pkgflags_has_oss_use ; then
-		einfo "Applying kernel config flags for oss (id: )"
+		einfo "Applying kernel config flags for oss (id: b360c7e)"
 		ot-kernel_y_configopt "CONFIG_SOUND"
 		ot-kernel_y_configopt "CONFIG_SND"
 
