@@ -86,20 +86,20 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # >=dev-python/dnspython-1.16.0 added to avoid merge conflict between pycrypto
 # and pycryptodome.  It should not be here but resolved in dnspython.
 RDEPEND+="
-	$(python_gen_cond_dep '>=sys-apps/util-linux-2.19.0[${PYTHON_MULTI_USEDEP}]')
+	$(python_gen_cond_dep '>=sys-apps/util-linux-2.19.0[${PYTHON_USEDEP}]')
 	aac? (  media-libs/faad2[${MULTILIB_USEDEP}] )
 	alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
 	bash-completion? ( app-shells/bash )
 	boost? (
 		>=dev-libs/boost-1.54[${MULTILIB_USEDEP}]
-		$(python_gen_cond_dep '>=dev-libs/boost-1.54[python,${PYTHON_MULTI_USEDEP}]')
+		$(python_gen_cond_dep '>=dev-libs/boost-1.54[python,${PYTHON_USEDEP}]')
 	)
-	chromecast? ( || ( $(python_gen_cond_dep 'dev-python/PyChromecast[${PYTHON_MULTI_USEDEP}]')
-			    $(python_gen_cond_dep 'dev-python/pychromecast[${PYTHON_MULTI_USEDEP}]') ) )
+	chromecast? ( || ( $(python_gen_cond_dep 'dev-python/PyChromecast[${PYTHON_USEDEP}]')
+			    $(python_gen_cond_dep 'dev-python/pychromecast[${PYTHON_USEDEP}]') ) )
 	curl? ( >=net-misc/curl-7.18.0[${MULTILIB_USEDEP}] )
 	flac? ( >=media-libs/flac-1.3.0[${MULTILIB_USEDEP}] )
-	fuzzywuzzy? ( $(python_gen_cond_dep 'dev-python/fuzzywuzzy[${PYTHON_MULTI_USEDEP}]') )
-	google-music? ( $(python_gen_cond_dep 'dev-python/gmusicapi[${PYTHON_MULTI_USEDEP}]') )
+	fuzzywuzzy? ( $(python_gen_cond_dep 'dev-python/fuzzywuzzy[${PYTHON_USEDEP}]') )
+	google-music? ( $(python_gen_cond_dep 'dev-python/gmusicapi[${PYTHON_USEDEP}]') )
 	inproc-io? ( >=net-libs/zeromq-4.0.4[${MULTILIB_USEDEP}] )
 	lame? ( media-sound/lame[${MULTILIB_USEDEP}] )
 	ogg? ( >=media-libs/liboggz-1.1.1[${MULTILIB_USEDEP}] )
@@ -112,17 +112,17 @@ RDEPEND+="
 	opus? ( >=media-libs/opus-1.1[${MULTILIB_USEDEP}] )
 	player? ( >=media-libs/libmediainfo-0.7.65[${MULTILIB_USEDEP}]
 			>=media-libs/taglib-1.7.0:0[${MULTILIB_USEDEP}] )
-	plex? ( $(python_gen_cond_dep 'dev-python/python-plexapi[${PYTHON_MULTI_USEDEP}]') )
+	plex? ( $(python_gen_cond_dep 'dev-python/python-plexapi[${PYTHON_USEDEP}]') )
 	pulseaudio? ( >=media-sound/pulseaudio-1.1[${MULTILIB_USEDEP}] )
 	python? ( ${PYTHON_DEPS} )
 	sdl? ( media-libs/libsdl[${MULTILIB_USEDEP}] )
-	soundcloud? ( $(python_gen_cond_dep 'dev-python/soundcloud-python[${PYTHON_MULTI_USEDEP}]') )
+	soundcloud? ( $(python_gen_cond_dep 'dev-python/soundcloud-python[${PYTHON_USEDEP}]') )
 	spotify? ( >=dev-libs/libspotify-12.1.51[${MULTILIB_USEDEP}] )
 	test? ( dev-db/sqlite:3[${MULTILIB_USEDEP}] )
 	vorbis? ( media-libs/libfishsound[${MULTILIB_USEDEP}] )
 	vpx? ( media-libs/libvpx[${MULTILIB_USEDEP}] )
-	youtube? ( $(python_gen_cond_dep 'dev-python/pafy[${PYTHON_MULTI_USEDEP}]')
-		    $(python_gen_cond_dep 'net-misc/youtube-dl[${PYTHON_MULTI_USEDEP}]') )
+	youtube? ( $(python_gen_cond_dep 'dev-python/pafy[${PYTHON_USEDEP}]')
+		    $(python_gen_cond_dep 'net-misc/youtube-dl[${PYTHON_USEDEP}]') )
 	webm? ( media-libs/nestegg[${MULTILIB_USEDEP}] )
 	zsh-completion? ( app-shells/zsh )"
 DEPEND+=" ${RDEPEND}
