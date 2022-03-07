@@ -227,13 +227,13 @@ RDEPEND+="  ${PYTHON_DEPS}
 	>=dev-libs/wayland-protocols-1.21
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/certifi-2021.10.8[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/charset_normalizer-2.0.6[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/idna-3.2[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/numpy-1.21.2[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/requests-2.26.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/urllib3-1.26.7[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/zstandard-0.15.2[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/certifi-2021.10.8[${PYTHON_USEDEP}]
+		>=dev-python/charset_normalizer-2.0.6[${PYTHON_USEDEP}]
+		>=dev-python/idna-3.2[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.21.2[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
+		>=dev-python/urllib3-1.26.7[${PYTHON_USEDEP}]
+		>=dev-python/zstandard-0.15.2[${PYTHON_USEDEP}]
 	')
 	>=media-libs/freetype-2.10.2
 	>=media-libs/glew-1.13.0:*

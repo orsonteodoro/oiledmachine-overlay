@@ -226,12 +226,12 @@ RDEPEND+="  ${PYTHON_DEPS}
 	>=dev-lang/python-3.9.2
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/certifi-2020.4.5.2[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/chardet-3.0.4[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/idna-2.9[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/numpy-1.17.5[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/requests-2.23.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/urllib3-1.25.9[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/certifi-2020.4.5.2[${PYTHON_USEDEP}]
+		>=dev-python/chardet-3.0.4[${PYTHON_USEDEP}]
+		>=dev-python/idna-2.9[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.17.5[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.23.0[${PYTHON_USEDEP}]
+		>=dev-python/urllib3-1.25.9[${PYTHON_USEDEP}]
 	')
 	>=media-libs/freetype-2.10.2
 	>=media-libs/glew-1.13.0:*
