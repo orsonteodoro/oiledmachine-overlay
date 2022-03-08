@@ -114,6 +114,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_batctl
 	ot-kernel-pkgflags_bcc
 	ot-kernel-pkgflags_bcm_sta
+	ot-kernel-pkgflags_beep
 	ot-kernel-pkgflags_bees
 	ot-kernel-pkgflags_blink1
 	ot-kernel-pkgflags_blktrace
@@ -224,9 +225,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_libcec
 	ot-kernel-pkgflags_libcgroup
 	ot-kernel-pkgflags_libfido2
-	ot-kernel-pkgflags_linux-atm
-	ot-kernel-pkgflags_linuxptp
-	ot-kernel-pkgflags_lksctp_tools
+	ot-kernel-pkgflags_libmtp
 	ot-kernel-pkgflags_libnetfilter_acct
 	ot-kernel-pkgflags_libnetfilter_cthelper
 	ot-kernel-pkgflags_libnetfilter_conntrack
@@ -242,8 +241,11 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_libv4l
 	ot-kernel-pkgflags_libvirt
 	ot-kernel-pkgflags_likwid
+	ot-kernel-pkgflags_linux_atm
 	ot-kernel-pkgflags_linux_smaps
+	ot-kernel-pkgflags_linuxptp
 	ot-kernel-pkgflags_lirc
+	ot-kernel-pkgflags_lksctp_tools
 	ot-kernel-pkgflags_lmsensors
 	ot-kernel-pkgflags_longrun
 	ot-kernel-pkgflags_loopaes
@@ -461,6 +463,8 @@ ot-kernel-pkgflags_alsa() { # DONE
 		# USB sound
 		ot-kernel_y_configopt "CONFIG_SND_USB"
 		ot-kernel_y_configopt "CONFIG_SND_USB_AUDIO"
+
+		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 	fi
 }
 
@@ -654,6 +658,63 @@ ot-kernel-pkgflags_bcm_sta() { # DONE
 			_s1
 			ot-kernel_y_configopt "CONFIG_IEEE80211"
 			ot-kernel_y_configopt "CONFIG_IEEE80211_CRYPT_TKIP"
+		fi
+	fi
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_has_beep_udev_rules
+# @DESCRIPTION:
+# Checks if file permissions applied to beep referenced paths
+_ot-kernel-pkgflags_has_beep_udev_rules() {
+	# Check if upstream security restrictions applied
+	local f="/dev/input/by-path/platform-pcspkr-event-spkr"
+	[[ -e "${f}" ]] || return 1
+	if which getfacl "${f}" 2>/dev/null 1>/dev/null ; then
+		if ! getfacl "${f}" "group:beep:-w-" ; then
+			grep -q -e "^beep:" /etc/group > /dev/null || return 1
+			ls -lH "${f}" | grep -q -e " root beep " || return 1
+		fi
+	else
+		grep -q -e "^beep:" /etc/group > /dev/null || return 1
+		ls -lH "${f}" | grep -q -e " root beep " || return 1
+	fi
+	return 0
+}
+
+# @FUNCTION: ot-kernel-pkgflags_beep
+# @DESCRIPTION:
+# Applies kernel config flags for the beep package
+ot-kernel-pkgflags_beep() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "dbffbca" ]] && return
+	if has_version "app-misc/beep" ; then
+		einfo "Applying kernel config flags for the beep package (id: dbffbca)"
+		STD_PC_SPEAKER="${STD_PC_SPEAKER:-1}"
+		ALSA_PC_SPEAKER="${ALSA_PC_SPEAKER:-0}"
+		if [[ "${STD_PC_SPEAKER}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_INPUT"
+			ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+			# pcspkr.ko mentioned in package docs
+			ot-kernel_y_configopt "CONFIG_INPUT_PCSPKR"
+			ot-kernel_unset_configopt "CONFIG_SND_PCSP"
+		elif [[ "${ALSA_PC_SPEAKER}" == "1" ]] ; then
+			# Second to avoid sound card problems
+			ot-kernel_y_configopt "CONFIG_SOUND"
+			ot-kernel_unset_configopt "CONFIG_UML"
+			ot-kernel_y_configopt "CONFIG_SND"
+			ot-kernel_y_configopt "CONFIG_SND_DRIVERS"
+			ot-kernel_y_configopt "CONFIG_PCSPKR_PLATFORM"
+			ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
+			ot-kernel_y_configopt "CONFIG_INPUT"
+			ot-kernel_y_configopt "CONFIG_SND_PCSP"
+		fi
+
+		if has_version "virtual/libudev" \
+			&& _ot-kernel-pkgflags_has_beep_udev_rules ; then
+			ot-kernel_y_configopt "CONFIG_INPUT"
+			ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+		else
+			ot-kernel_y_configopt "CONFIG_TTY"
+			ot-kernel_y_configopt "CONFIG_VT"
 		fi
 	fi
 }
@@ -2645,6 +2706,17 @@ ot-kernel-pkgflags_libfido2() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_libmtp
+# @DESCRIPTION:
+# Applies kernel config flags for the libmtp package
+ot-kernel-pkgflags_libmtp() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "ca6ee71" ]] && return
+	if has_version "media-libs/libmtp" ; then
+		einfo "Applying kernel config flags for the libmtp package (id: ca6ee71)"
+		ot-kernel_y_configopt "CONFIG_FUSE_FS"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_libcgroup
 # @DESCRIPTION:
 # Applies kernel config flags for the libcgroup package
@@ -2660,10 +2732,10 @@ ot-kernel-pkgflags_libcgroup() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_linux-atm
+# @FUNCTION: ot-kernel-pkgflags_linux_atm
 # @DESCRIPTION:
 # Applies kernel config flags for the linux-atm package
-ot-kernel-pkgflags_linux-atm() { # DONE
+ot-kernel-pkgflags_linux_atm() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "6df59e4" ]] && return
 	if has_version "net-dialup/linux-atm" ; then
 		einfo "Applying kernel config flags for the linux-atm package (id: 6df59e4)"
