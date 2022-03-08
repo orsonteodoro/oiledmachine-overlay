@@ -180,6 +180,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_fuse
 	ot-kernel-pkgflags_fwknop
 	ot-kernel-pkgflags_g15daemon
+	ot-kernel-pkgflags_gerbera
 	ot-kernel-pkgflags_glances
 	ot-kernel-pkgflags_glib
 	ot-kernel-pkgflags_gnokii
@@ -379,6 +380,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_wine
 	ot-kernel-pkgflags_wireguard_modules
 	ot-kernel-pkgflags_wireguard_tools
+	ot-kernel-pkgflags_wireplumber
 	ot-kernel-pkgflags_wpa_supplicant
 	ot-kernel-pkgflags_xboxdrv
 	ot-kernel-pkgflags_xe_guest_utilities
@@ -1131,6 +1133,16 @@ _ot-kernel-pkgflags_aes() {
 		fi
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_AES"
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_des3_ede
+# @DESCRIPTION:
+# Wrapper for the Triple DES EDE option.
+_ot-kernel-pkgflags_des3_ede() {
+	if [[ "${arch}" == "x86_64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_DES3_EDE_X86_64"
+	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO_DES"
 }
 
 # @FUNCTION: _ot-kernel-pkgflags_sha1
@@ -1949,6 +1961,20 @@ ot-kernel-pkgflags_g15daemon() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_gerbera
+# @DESCRIPTION:
+# Applies kernel config flags for the gerbera package
+ot-kernel-pkgflags_gerbera() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "eca1a38" ]] && return
+	if has_version "net-misc/gerbera" ; then
+		einfo "Applying kernel config flags for the gerbera package (id: eca1a38)"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_IP_MROUTE"
+		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_glances
 # @DESCRIPTION:
 # Applies kernel config flags for the glances package
@@ -2468,13 +2494,18 @@ ot-kernel-pkgflags_iwd() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "c4eefdd" ]] && return
 	if has_version "net-wireless/iwd" ; then
 		einfo "Applying kernel config flags for the iwd package (id: c4eefdd)"
+		ot-kernel_y_configopt "CONFIG_KEYS"
 		ot-kernel_y_configopt "CONFIG_ASYMMETRIC_KEY_TYPE"
 		ot-kernel_y_configopt "CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE"
 		ot-kernel_y_configopt "CONFIG_CFG80211"
+		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		_ot-kernel-pkgflags_aes
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_ECB"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_DES"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_DH"
+		_ot-kernel-pkgflags_des3_ede
 		ot-kernel_y_configopt "CONFIG_CRYPTO_ECB"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_MD4"
@@ -2489,15 +2520,18 @@ ot-kernel-pkgflags_iwd() { # DONE
 		ot-kernel_y_configopt "CONFIG_PKCS7_MESSAGE_PARSER"
 		ot-kernel_y_configopt "CONFIG_RFKILL"
 		ot-kernel_y_configopt "CONFIG_X509_CERTIFICATE_PARSER"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_WIRELESS"
+		ot-kernel_set_configopt "CONFIG_CFG80211" "m"
+		ot-kernel_y_configopt "CONFIG_X509_CERTIFICATE_PARSER"
+		ot-kernel_y_configopt "CONFIG_PKCS7_MESSAGE_PARSER"
+		ot-kernel_set_configopt "CONFIG_PKCS8_PRIVATE_KEY_PARSER" "m"
 
 		if has_version "net-wireless/iwd[crda]" ; then
 			: # See ot-kernel-pkgflags_crda
 			has_version "net-wireless/crda" || die "Install net-wireless/crda first"
 		fi
 
-		if [[ "${arch}" == "x86_64" ]] ; then
-			ot-kernel_y_configopt "CONFIG_CRYPTO_DES3_EDE_X86_64"
-		fi
 		if ver_test ${K_MAJOR_MINOR} -ge 4.20 ; then
 			# Implied has_version "net-wireless/iwd[linux_kernel]"
 			ot-kernel_y_configopt "CONFIG_PKCS8_PRIVATE_KEY_PARSER"
@@ -3105,7 +3139,7 @@ ot-kernel-pkgflags_midi() { # DONE
 
 		# MIDI port
 		ot-kernel_y_configopt "CONFIG_SND_DRIVERS"
-		ot-kernel_y_configopt "CONFIG_SND_MPU401"
+		ot-kernel_set_configopt "CONFIG_SND_MPU401" "m"
 
 		# USB audio/midi devices
 		ot-kernel_y_configopt "CONFIG_SND_USB"
@@ -5095,6 +5129,22 @@ ot-kernel-pkgflags_wireguard_tools() { # DONE
 		if ver_test ${K_MAJOR_MINOR} -ge 5.6 ; then
 			ot-kernel_y_configopt "CONFIG_WIREGUARD"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_wireplumber
+# @DESCRIPTION:
+# Applies kernel config flags for the wireplumber package
+ot-kernel-pkgflags_wireplumber() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "f9df425" ]] && return
+	if has_version "media-video/wireplumber" ; then
+		einfo "Applying kernel config flags for the wireplumber package (id: f9df425)"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_unset_configopt "CONFIG_UML"
+		ot-kernel_y_configopt "CONFIG_SND_PROC_FS"
+		ban_disable_debug "f9df425"
+		ot-kernel_y_configopt "CONFIG_SND_VERBOSE_PROCFS"
 	fi
 }
 
