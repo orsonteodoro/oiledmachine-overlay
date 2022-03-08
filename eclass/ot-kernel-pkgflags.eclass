@@ -289,6 +289,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_oprofile
 	ot-kernel-pkgflags_osmo_fl2k
 	ot-kernel-pkgflags_oss
+	ot-kernel-pkgflags_pam_u2f
 	ot-kernel-pkgflags_pcmciautils
 	ot-kernel-pkgflags_perf
 	ot-kernel-pkgflags_pglinux
@@ -1905,6 +1906,9 @@ ot-kernel-pkgflags_flatpak() { # DONE
 		einfo "Applying kernel config flags for the flatpak package (id: 427345a)"
 		ot-kernel_y_configopt "CONFIG_NAMESPACES"
 		ot-kernel_y_configopt "CONFIG_USER_NS"
+		if -q -e "config USER_NS_UNPRIVILEGED" "${BUILD_DIR}/init/Kconfig" ; then
+			ot-kernel_y_configopt "CONFIG_USER_NS_UNPRIVILEGED"
+		fi
 	fi
 }
 
@@ -3673,6 +3677,34 @@ ot-kernel-pkgflags_openvswitch() { # DONE
 		ot-kernel_y_configopt "CONFIG_NET_ACT_POLICE"
 		ot-kernel_y_configopt "CONFIG_IPV6"
 		ot-kernel_y_configopt "CONFIG_TUN"
+	fi
+}
+
+
+# @FUNCTION: _ot-kernel-pkgflags_has_yubikey
+# @DESCRIPTION:
+# Autodetects yubikey by packages installed or USE flags requested
+_ot-kernel-pkgflags_has_yubikey() {
+	if has_version "app-admin/keepassxc[yubikey]" \
+		|| has_version "app-admin/passwordsafe[yubikey]" \
+		|| has_version "sys-auth/ykpers" ; then
+		return 0
+	fi
+	return 1
+}
+
+# @FUNCTION: ot-kernel-pkgflags_pam_u2f
+# @DESCRIPTION:
+# Applies kernel config flags for the pam_u2f package
+ot-kernel-pkgflags_pam_u2f() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "79bf4ef" ]] && return
+	if has_version "sys-auth/pam_u2f" \
+		&& ( _ot-kernel-pkgflags_has_yubikey || [[ "${YUBIKEY}" == "1" ]] ) ; then
+		einfo "Applying kernel config flags for pam_u2f (id: 79bf4ef)"
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_HIDDEV"
 	fi
 }
 
