@@ -297,6 +297,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_pglinux
 	ot-kernel-pkgflags_plocate
 	ot-kernel-pkgflags_ply
+	ot-kernel-pkgflags_plymouth
 	ot-kernel-pkgflags_pommed
 	ot-kernel-pkgflags_ponyprog
 	ot-kernel-pkgflags_portage
@@ -2610,8 +2611,38 @@ ot-kernel-pkgflags_iwd() { # DONE
 ot-kernel-pkgflags_kexec_tools() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "39aeb63" ]] && return
 	if has_version "sys-apps/kexec-tools" ; then
-		einfo "Applying kernel config flags for the kexec-tools package (id: 39aeb63)"
-		ot-kernel_y_configopt "CONFIG_KEXEC"
+		OT_KERNEL_SIGN="${OT_KERNEL_SIGN:-0}" # signing the kernel is not ready yet
+		if [[ "${OT_KERNEL_SIGN}" == "1" && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] ; then
+			einfo "Applying kernel config flags for the kexec-tools package for signed kernels (id: 39aeb63)"
+			[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key for kexec signing"
+			[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key for kexec signing"
+			ot-kernel_y_configopt "CONFIG_KEXEC_FILE"
+			if ver_test ${K_MAJOR_MINOR} -lt 5 ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO"
+				_ot-kernel-pkgflags_sha256
+			fi
+			if ver_test ${K_MAJOR_MINOR} -ge 5.4 ; then
+				ot-kernel_y_configopt "CONFIG_KEXEC_SIG"
+				ot-kernel_y_configopt "CONFIG_KEXEC_SIG_FORCE"
+			else
+				ot-kernel_y_configopt "CONFIG_VERIFY_SIG"
+			fi
+			KEXEC_EFI="${KEXEC_EFI:-0}"
+			if [[ "${KEXEC_EFI}" == "1" && "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_EFI"
+				ot-kernel_unset_configopt "CONFIG_X86_USE_3DNOW"
+				ot-kernel_y_configopt "CONFIG_EFI_STUB"
+
+				ot-kernel_y_configopt "CONFIG_ASYMMETRIC_KEY_TYPE"
+				ot-kernel_y_configopt "CONFIG_SIGNED_PE_FILE_VERIFICATION"
+				ot-kernel_y_configopt "CONFIG_PKCS7_MESSAGE_PARSER"
+				ot-kernel_y_configopt "CONFIG_SYSTEM_DATA_VERIFICATION"
+				ot-kernel_y_configopt "CONFIG_BZIMAGE_VERIFY_SIG"
+			fi
+		else
+			einfo "Applying kernel config flags for the kexec-tools package for unsigned kernels (id: 39aeb63)"
+			ot-kernel_y_configopt "CONFIG_KEXEC"
+		fi
 	fi
 }
 
@@ -3922,6 +3953,17 @@ ot-kernel-pkgflags_ply() { # DONE
 		ot-kernel_y_configopt "CONFIG_BPF_JIT"
 		ot-kernel_y_configopt "CONFIG_HAVE_BPF_JIT"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_plymouth
+# @DESCRIPTION:
+# Applies kernel config flags for the plymouth package
+ot-kernel-pkgflags_plymouth() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_SKIP}" =~ "17c3464" ]] && return
+	if has_version "sys-boot/plymouth" ; then
+		einfo "Applying kernel config flags for the plymouth package (id: 17c3464)"
+		ot-kernel_y_configopt "CONFIG_LOGO"
 	fi
 }
 

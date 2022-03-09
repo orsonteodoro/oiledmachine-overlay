@@ -2906,6 +2906,28 @@ ot-kernel-make_install() {
 		fi
 	done
 
+	# FIXME:  Complete signing kernel
+	if false && [[ -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" && "${KEXEC_EFI}" == "1" ]] \
+		&& grep -e "^CONFIG_EFI_STUB=y" "${BUILD_DIR}/.config" ; then
+		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
+		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
+		einfo "Signing and installing kernel for EFI"
+		cp -a "${kimage_spath}" "${kimage_spath}.efi" || die
+		newins "${kimage_spath}.efi" "${kimage_dpath}.efi"
+	elif false && [[ -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" && "${KEXEC_EFI}" != "1" ]] ; then
+		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
+		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
+		einfo "Signing and installing kernel for non-EFI"
+		cp -a "${kimage_spath}" "${kimage_spath}.signed" || die
+		"${BUILD_DIR}/sign-file" \
+			\
+			"${OT_KERNEL_PRIVATE_KEY}" \
+			"${OT_KERNEL_PUBLIC_KEY}" \
+			"${kimage_spath}.signed"
+		newins "${kimage_spath}.efi" "${kimage_dpath}.efi"
+	fi
+
+	einfo "Installing unsigned kernel"
 	local kimage_dpath="${name}-${PV}-${extraversion}-${arch}"
 	newins "${kimage_spath}" "${kimage_dpath}"
 }
