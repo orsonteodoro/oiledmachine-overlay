@@ -275,25 +275,34 @@
 
 https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4aff350c36fce8f4c85/sys-kernel/genkernel/genkernel-4.2.6-r2.ebuild#L279
 
+
     The config file-directory structure
 
-    /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
-    /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
+    The tree structure is as follows in abstract form:
 
-    K_MAJOR_MINOR will be expanded to either 4.14, 5.4, 5.10, 5.15, or 5.16
-    extraversion will be expanded to ot, rt, or any custom extra version
-    arch will be expanded to one of the arches in /usr/src/linux/arch.
+         /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
+         /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
+
+    K_MAJOR_MINOR will be expanded to either 4.14, 5.4, 5.10, 5.15, or 5.16.
+
+    extraversion will be expanded to ot, rt, or a custom name.
+
+    arch will expand to one of the folder names in the arches folder in
+    /usr/src/linux/arch.
 
     Example:
-    /etc/portage/ot-sources/5.16/ot/x86_64/env
+
+         /etc/portage/ot-sources/5.16/ot/x86_64/env
 
     Files:
-      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
-      Contains all environment variables for this buildconfig
+
+         /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
+         Contains all environment variables for this buildconfig.
 
     Directories (In planning):
-      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
-      Contains extra user patches to apply per buildconfig.
+
+         /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
+         Contains extra user patches to apply per buildconfig.
 
 
 
