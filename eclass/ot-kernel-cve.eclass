@@ -81,37 +81,37 @@ CVE_FIX_TRUST_DEFAULT=$(( \
 	| ${CVE_ALLOW_EBUILD_MAINTAINER_FILESDIR} \
 	| ${CVE_ALLOW_FOSS_CONTRIBUTOR} ))
 
-CVE_FIX_TRUST_LEVEL=${CVE_FIX_TRUST_LEVEL:=${CVE_FIX_TRUST_DEFAULT}}
+CVE_FIX_TRUST_LEVEL=${CVE_FIX_TRUST_LEVEL:-${CVE_FIX_TRUST_DEFAULT}}
 
 # rejects applying cve fixes for all CVEs marked with disputed flag
-CVE_FIX_REJECT_DISPUTED=${CVE_FIX_REJECT_DISPUTED:=0}
+CVE_FIX_REJECT_DISPUTED=${CVE_FIX_REJECT_DISPUTED:-0}
 
 # only applies to dangerous non trivial backports which might result
 # in data loss or data corruption, non functioning driver/device, or
 # irreversible damage.
-CVE_ALLOW_RISKY_BACKPORTS=${CVE_ALLOW_RISKY_BACKPORTS:=0}
+CVE_ALLOW_RISKY_BACKPORTS=${CVE_ALLOW_RISKY_BACKPORTS:-0}
 
-CVE_DELAY="${CVE_DELAY:=1}"
+CVE_DELAY="${CVE_DELAY:-1}"
 
-CVE_LANG="${CVE_LANG:=en}"	# You can define this in your make.conf.
+CVE_LANG="${CVE_LANG:-en}"	# You can define this in your make.conf.
 				# Currently en is only supported.
 
-CVE_MAX_BULK_CONNECTIONS=${CVE_MAX_BULK_CONNECTIONS:=5}
-CVE_MAX_PATCH_CONNECTIONS=${CVE_MAX_PATCH_CONNECTIONS:=100}
+CVE_MAX_BULK_CONNECTIONS=${CVE_MAX_BULK_CONNECTIONS:-5}
+CVE_MAX_PATCH_CONNECTIONS=${CVE_MAX_PATCH_CONNECTIONS:-100}
 
 # Additional commits not mentioned in NVD CVE report but added by vendor
 # of the same type.  NVD DB will report 1 memory leak then not mention several
 # ones following applied by driver maintainer.  Associated commits should likely
 # be added to CVE/NVD report but are not.
-CVE_ALLOW_CRASH_PREVENTION=${CVE_ALLOW_CRASH_PREVENTION:=1}
+CVE_ALLOW_CRASH_PREVENTION=${CVE_ALLOW_CRASH_PREVENTION:-1}
 
 # This will perform heuristic keyword analysis on the commit itself
 # for fix suitability and to avoid re-introducing flaws by security
 # researchers fully disclosing commits good or bad.
-CVE_ALLOW_UNTAGGED_PATCHES=${CVE_ALLOW_UNTAGGED_PATCHES:=1}
+CVE_ALLOW_UNTAGGED_PATCHES=${CVE_ALLOW_UNTAGGED_PATCHES:-1}
 
 # controls how much is downloaded and patch starting point
-CVE_MIN_YEAR=${CVE_MIN_YEAR:=1999}
+CVE_MIN_YEAR=${CVE_MIN_YEAR:-1999}
 
 TUXPARONI_A_FN="tuxparoni.tar.gz"
 TUXPARONI_SRC_URI="

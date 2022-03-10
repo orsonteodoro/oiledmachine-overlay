@@ -133,15 +133,14 @@ HOMEPAGE+="
 	  https://www1.informatik.uni-erlangen.de/tresor
 "
 
-OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:="MAJOR_MINOR"}
-KEYWORDS=${KEYWORDS:=\
+OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:-"MAJOR_MINOR"}
+KEYWORDS=${KEYWORDS:-\
 "~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"}
-SLOT=${SLOT:=${PV}}
+SLOT=${SLOT:-${PV}}
 K_EXTRAVERSION="ot"
 S="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 #PROPERTIES="interactive" # The menuconfig is broken because of emerge or sandbox.  All things were disabled but still doesn't work.
 OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
-OT_KERNEL_BUILDCONFIGS_N_FIELDS=7
 
 inherit check-reqs flag-o-matic ot-kernel-cve ot-kernel-pkgflags ot-kernel-kutils toolchain-funcs
 
@@ -186,7 +185,7 @@ gen_zensauce_uris()
 	echo "$s"
 }
 
-BMQ_FN="${BMQ_FN:=v${K_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
+BMQ_FN="${BMQ_FN:-v${K_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
 BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${K_MAJOR_MINOR}/"
 BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
 
@@ -215,7 +214,7 @@ GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
 
 KCP_COMMIT_SNAPSHOT="9c9c7e817dd2718566ec95f7742b162ab125316f" # 20211114
 
-KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:="cdn.kernel.org"}
+KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${K_MAJOR_MINOR}.tar.xz"
 KERNEL_INC_BASE_URI=\
 "https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/incr/"
@@ -594,7 +593,7 @@ einfo
 # Checks zen-tune's dependency on zen-sauce
 check_zen_tune_deps() {
 	local zentune_commit="${1}"
-	local v="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
+	local v="ZENSAUCE_WHITELIST"
 	if ver_test ${K_MAJOR_MINOR} -ge 5.10 ; then
 		local p
 		for p in ${PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE[@]} ; do
@@ -624,21 +623,11 @@ zentune_setup() {
 
 # @FUNCTION: zensauce_setup
 # @DESCRIPTION:
-# Checks the existance for the ZENSAUCE_WHITELIST_5_3 variable
+# Checks the existance for the ZENSAUCE_WHITELIST variable
 zensauce_setup() {
 	if use zen-sauce ; then
-		local v1="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
-		if [[ -n "${!v1}" ]] ; then
-eerror
-eerror "ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_} has been been renamed to"
-eerror "ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}.  Rename or remove this envvar"
-eerror "to continue"
-eerror
-			die
-		fi
-
-		local ZW="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
-		if [[ -z "${!ZW}" ]] ; then
+		local zw="ZENSAUCE_WHITELIST"
+		if [[ -z "${!zw}" ]] ; then
 			local zensauce_uri
 			local zensauce_cmprange=\
 "v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}"
@@ -651,23 +640,11 @@ eerror
 				zensauce_uri=\
 "${zensauce_cmpbase_uri}/misc"
 			fi
-
-eerror
-eerror "You must define a ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_} in your"
-eerror "/etc/make.conf or as a per-package env containing commits to accepted"
-eerror "from ${zensauce_uri}.  You may supply the envvar with a space as a"
-eerror "placeholder."
-eerror
-eerror "For example:"
-eerror
-eerror "  ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}=\"\
-214d031dbeef940efe1dbba274caf5ccc4ff2774 \
-83d7f482c60b6dfda030325394ec07baac7f5a30\""
-eerror "  ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}=\"214d031 83d7f48\""
-eerror "  ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}=\" \""
-eerror "Only 40 or 7 digit commit IDs are accepted."
-eerror
-			die
+ewarn
+ewarn "Detected empty ZENSAUCE_WHITELIST.  Some zen-sauce commits will not be added."
+ewarn
+ewarn "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
+ewarn
 		fi
 	fi
 }
@@ -860,6 +837,26 @@ ewarn
 			#verify_profraw_compatibility
 		fi
 	fi
+
+	if has_version "sys-boot/mokutil" ; then
+		if ! ( mokutil --test-key "${OT_KERNEL_PUBLIC_KEY}" | grep "is already enrolled" ) ; then
+			ewarn "Did not find key in MOK"
+			if [[ "${OT_KERNEL_ADD_KEY_TO_MOK}" ]] ; then
+				einfo "Auto adding key in MOK"
+				mokutil --root-pw -import "${OT_KERNEL_PUBLIC_KEY}" || die
+			fi
+		fi
+	fi
+
+	if (( $(find "/etc/portage/ot-sources/${K_MAJOR_MINOR}/" -type f -name "env" | wc -l) == 0 )) ; then
+eerror
+eerror "Missing per extraconfig env file."
+eerror "See the 'The config file-directory structure' section metadata.xml or"
+eerror "the \`epkginfo ${PN}::oiledmachine-overlay\` for instructions for"
+eerror "creating per extraconfig env files."
+eerror
+		die
+	fi
 }
 
 # @FUNCTION: get_current_tag_for_k_major_minor_branch
@@ -995,18 +992,18 @@ apply_rt() {
 # @DESCRIPTION:
 # Applies whitelisted zen sauce patches.
 apply_zensauce() {
-	local ZW="ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_}"
-	local ZB="ZENSAUCE_BLACKLIST_${K_MAJOR_MINOR/./_}"
+	local zw="ZENSAUCE_WHITELIST"
+	local zb="ZENSAUCE_BLACKLIST"
 
 	local whitelisted=""
 	local blacklisted=""
 
 	local c
-	for c in ${!ZW} ; do
+	for c in ${!zw} ; do
 		whitelisted+=" ${c:0:7}"
 	done
 
-	for c in ${!ZB} ; do
+	for c in ${!zb} ; do
 		blacklisted+=" ${c:0:7}"
 	done
 
@@ -1057,7 +1054,7 @@ apply_zensauce() {
 				if [[ "${c:0:7}" == "${c_bl:0:7}" ]] ; then
 ewarn
 ewarn "If ${c} is already applied via USE flag.  Please remove it from the"
-ewarn "ZENSAUCE_WHITELIST_${K_MAJOR_MINOR/./_} and use the USE flag instead."
+ewarn "ZENSAUCE_WHITELIST and use the USE flag instead."
 ewarn "This is to ensure the BDEPENDS/RDEPENDS/DEPENDs are met."
 ewarn "Skipping ${c} for now."
 ewarn
@@ -1622,31 +1619,6 @@ apply_all_patchsets() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_check_build_info_valid
-# @DESCRIPTION:
-# Checks if the buildinfo format has changed
-ot-kernel_check_build_info_valid() {
-	local nfields=$(echo "${b}" | grep -o ":" | wc -l)
-	nfields=$((${nfields}+1))
-	if (( ${nfields} != ${OT_KERNEL_BUILDCONFIGS_N_FIELDS} )) ; then
-# We can either have a version variable or this.
-eerror
-eerror "The current number of fields (aka columns) in the"
-eerror "OT_KERNEL_BUILDCONFIGS_X_Y has changed.  This may indicate that the"
-eerror "specification has been updated or a build config is incorrect."
-eerror "Please review the metadata.xml or do"
-eerror "\`epkginfo -x ot-sources::oiledmachine-overlay\` to see what fields"
-eerror "(or columns) has been added and verify the correctness.  An"
-eerror "additional : may need to be added."
-eerror
-eerror "Entry:  ${b}"
-eerror "Expected n-fields:  ${OT_KERNEL_BUILDCONFIGS_N_FIELDS}"
-eerror "Provided n-fields:  ${nfields}"
-eerror
-		die
-	fi
-}
-
 # @FUNCTION: ot-kernel_copy_pgo_state
 # @DESCRIPTION:
 # Copy the PGO state file and all PGO profiles
@@ -1700,10 +1672,11 @@ ewarn
 		ot-kernel_copy_pgo_state
 	fi
 
-	local b
-	for b in $(build_pairs) ; do
-		ot-kernel_check_build_info_valid
-		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
+	local env_path
+	for env_path in $(ot-kernel_get_envs) ; do
+		[[ -e "${env_path}" ]] || continue
+		ot-kernel_load_config
+		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		if [[ "${extraversion}" != "ot" ]] ; then
 			einfo "Copying sources for -${extraversion}"
@@ -1712,10 +1685,12 @@ ewarn
 		fi
 	done
 
-	for b in $(build_pairs) ; do
-		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
-		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
-		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
+	for env_path in $(ot-kernel_get_envs) ; do
+		[[ -e "${env_path}" ]] || continue
+		ot-kernel_load_config
+		local extraversion="${OT_KERNEL_EXTRAVERSION}"
+		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
+		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
 		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
@@ -1764,9 +1739,11 @@ ot-kernel_clear_keys() {
 	# TODO/FIXME:  Secure the private key on brownout
 
 	local keys=()
-	local b
-	for b in $(build_pairs) ; do
-		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
+	local env_path
+	for env_path in $(ot-kernel_get_envs) ; do
+		[[ -e "${env_path}" ]] || continue
+		ot-kernel_load_config
+		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		local p="${BUILD_DIR}/certs/signing_key.pem"
 		if [[ -e "${p}" ]] ; then
@@ -1880,18 +1857,15 @@ is_firmware_ready() {
 # @DESCRIPTION:
 # Adds firmware to the kernel config
 ot-kernel_add_firmware() {
-	# OT_KERNEL_FIRMWARE_X recognizes the wildcard patterns:
+	# OT_KERNEL_FIRMWARE recognizes the wildcard patterns:
 	# 1. Add by wildcard.  file*.bin dir* d*r
 	# 2. Add by literal.  file.bin dir/file.bin
 
-	# When you use OT_KERNEL_FIRMWARE_X_Y envvar, it is implied it will wipe the
+	# When you use OT_KERNEL_FIRMWARE envvar, it is implied it will wipe the
 	# previous setting.
 	#
-	# The X in OT_KERNEL_FIRMWARE_X_Y must be kernel arch in upper case.
-	# The Y in OT_KERNEL_FIRMWARE_X_Y must be the extraversion in upper case replacing - as _.
 
-	local ot_kernel_firmware_=$(echo "OT_KERNEL_FIRMWARE_${arch^^}_${extraversion^^}" | tr "[:punct:]" "_")
-	local ot_kernel_firmware="${!ot_kernel_firmware_}"
+	local ot_kernel_firmware="${OT_KERNEL_FIRMWARE}"
 	if [[ -n "${ot_kernel_firmware}" ]] ; then
 		local firmware=()
 		has_version "sys-kernel/linux-firmware" || ewarn "sys-kernel/linux-firmware should be installed first"
@@ -1913,23 +1887,102 @@ ot-kernel_add_firmware() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_get_envs
+# @DESCRIPTION:
+# Gets list of envs
+ot-kernel_get_envs() {
+	# The envs /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
+	find "/etc/portage/ot-sources/${K_MAJOR_MINOR}/" -type f -name "env"
+}
+
+# @FUNCTION: ot-kernel_clear_env
+# @DESCRIPTION:
+# Clears the configuration environment variables for the next
+# buildconfig being evaluated.
+ot-kernel_clear_env() {
+	# The OT_KERNEL_ prefix is to avoid naming collisions.
+	unset OT_KERNEL_ARCH
+	unset OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS
+	unset OT_KERNEL_BOOT_COMPRESSOR
+	unset OT_KERNEL_BUILD
+	unset OT_KERNEL_COLD_BOOT_MITIGATIONS
+	unset OT_KERNEL_CONFIG
+	unset OT_KERNEL_CPU_SCHED
+	unset OT_KERNEL_EXTRAVERSION
+	unset OT_KERNEL_FIRMWARE
+	unset OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG
+#	unset OT_KERNEL_HALT_ON_LOWERED_SECURITY		# global var
+	unset OT_KERNEL_LSMS
+	unset OT_KERNEL_MENUCONFIG_FRONTEND
+	unset OT_KERNEL_MODULES_COMPRESSOR
+	unset OT_KERNEL_PKGFLAGS_ACCEPT
+	unset OT_KERNEL_PKGFLAGS_REJECT
+#	unset OT_KERNEL_PRIMARY_EXTRAVERSION			# global var
+#	unset OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR	# global var
+	unset OT_KERNEL_PRIVATE_KEY
+	unset OT_KERNEL_SHARED_KEY
+	unset OT_KERNEL_SIGN_KERNEL
+	unset OT_KERNEL_SIGN_MODULES
+	unset OT_KERNEL_USE_LSM_UPSTREAM_ORDER
+	unset OT_KERNEL_TARGET_TRIPLE
+	unset OT_KERNEL_VERBOSITY
+	unset PERMIT_NETFILTER_SYMBOL_REMOVAL
+
+	# Unset ot-kernel-pkgflags.
+	# These fields toggle the building of additional sets of kernel configs.
+	unset ALSA_PC_SPEAKER
+	unset CRYPTSETUP_ADIANTUM
+	unset CRYPTSETUP_TCRYPT
+	unset HPLIP_PARPORT
+	unset HPLIP_USB
+	unset IPTABLES_CLIENT
+	unset IPTABLES_ROUTER
+	unset MDADM_RAID
+	unset NFS_CLIENT
+	unset NFS_SERVER
+	unset OSS
+	unset OSS_MIDI
+	unset SANE_SCSI
+	unset SANE_USB
+	unset STD_PC_SPEAKER
+	unset QEMU_GUEST_LINUX
+	unset VIRTUALBOX_GUEST_LINUX
+	unset VSYSCALL_MODE
+	unset XEN_PCI_PASSTHROUGH
+
+	unset GENPATCHES_BLACKLIST
+
+	unset ZENSAUCE_BLACKLIST
+	unset ZENSAUCE_WHITELIST
+}
+
+# @FUNCTION: ot-kernel_load_config
+# @DESCRIPTION:
+# Clear load config
+ot-kernel_load_config() {
+	ot-kernel_clear_env
+	source "${env_path}"
+}
+
 # @FUNCTION: ot-kernel_src_configure
 # @DESCRIPTION:
 # Run menuconfig
 ot-kernel_src_configure() {
 	use build || return
 	einfo "Called ot-kernel_src_configure()"
-	local b
-	for b in $(build_pairs) ; do
-		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
-		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
-		local config=$(echo "${b}" | cut -f 3 -d ":")
-		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
+	local env_path
+	for env_path in $(ot-kernel_get_envs) ; do
+		[[ -e "${env_path}" ]] || continue
+		ot-kernel_load_config
+
+		local extraversion="${OT_KERNEL_EXTRAVERSION}"
+		local config="${OT_KERNEL_CONFIG}"
+		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
 		local default_config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-${arch}"
 		[[ -z "${config}" ]] && config="${default_config}"
-		local target_triple=$(echo "${b}" | cut -f 5 -d ":")
-		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
-		local boot_decomp=$(echo "${b}" | cut -f 7 -d ":")
+		local target_triple="${OT_KERNEL_TARGET_TRIPLE}"
+		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
+		local boot_decomp="${OT_KERNEL_BOOT_DECOMP}"
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
@@ -1937,7 +1990,6 @@ ot-kernel_src_configure() {
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
 		#[[ -z "${boot_decomp}" ]] && boot_decomp="manual"
 		[[ -z "${extraversion}" ]] && die "extraversion cannot be empty"
-		[[ -z "${build_flag}" ]] && die "build_flag cannot be empty"
 		[[ -z "${config}" ]] && die "config cannot be empty"
 		[[ -z "${arch}" ]] && die "arch cannot be empty"
 		[[ -z "${target_triple}" ]] && die "target_triple cannot be empty"
@@ -1959,14 +2011,14 @@ ot-kernel_src_configure() {
 			make olddefconfig "${args[@]}" || die
 		fi
 
-#		if [[ -n "${OT_KERNEL_MENUCONFIG}" ]] ; then
+#		if [[ -n "${OT_KERNEL_MENUCONFIG_FRONTEND}" ]] ; then
 #			https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
 #			All menuconfig/xconfig/gconfig works outside of emerge but not when sandbox is completely disabled.
 #			The interactive support doesn't work as advertised but limited to just alphanumeric and no arrow keys in text only mode.
 #
 #			# Does not work because the arrow keys are broken in interactive mode
-#			einfo "Running:  make ${OT_KERNEL_MENUCONFIG} ${args[@]}"
-#			make ${OT_MENUCONFIG_PREFERENCE} "${args[@]}" || die
+#			einfo "Running:  make ${OT_KERNEL_MENUCONFIG_FRONTEND} ${args[@]}"
+#			make ${OT_KERNEL_MENUCONFIG_FRONTEND} "${args[@]}" || die
 #		fi
 
 		local is_default_config=0
@@ -2524,9 +2576,8 @@ eerror
 		fi
 
 		# The default profile sets this to none by default.
-		local ot_kernel_modules_compressor="OT_KERNEL_MODULES_COMPRESSOR_${K_MAJOR_MINOR/./_}"
-		local ot_kernel_modules_compressor_="${!ot_kernel_modules_compressor}"
-		if [[ -n "${ot_kernel_modules_compressor_}" ]] ; then
+		local ot_kernel_modules_compressor="${OT_KERNEL_MODULES_COMPRESSOR}"
+		if [[ -n "${ot_kernel_modules_compressor}" ]] ; then
 			local alg
 			local mod_comp_algs=(
 				NONE
@@ -2538,20 +2589,20 @@ eerror
 				ot-kernel_n_configopt "CONFIG_MODULE_COMPRESS_${alg}" # Reset
 			done
 			if ver_test ${K_MAJOR_MINOR} -le 5.10 ; then
-				if [[ "${ot_kernel_modules_compressor_^^}" == "ZSTD" ]] ; then
+				if [[ "${ot_kernel_modules_compressor^^}" == "ZSTD" ]] ; then
 					eerror "ZSTD is not supported for ${K_MAJOR_MINOR} series."
 					die
 				fi
-				einfo "Changing config to compress modules with ${ot_kernel_modules_compressor_}"
-				if [[ "${ot_kernel_modules_compressor_^^}" == "NONE" ]] ; then
+				einfo "Changing config to compress modules with ${ot_kernel_modules_compressor}"
+				if [[ "${ot_kernel_modules_compressor^^}" == "NONE" ]] ; then
 					ot-kernel_n_configopt "CONFIG_MODULE_COMPRESS"
 				else
 					ot-kernel_y_configopt "CONFIG_MODULE_COMPRESS"
-					ot-kernel_y_configopt "CONFIG_MODULE_COMPRESS_${ot_kernel_modules_compressor_^^}" # Reset
+					ot-kernel_y_configopt "CONFIG_MODULE_COMPRESS_${ot_kernel_modules_compressor^^}" # Reset
 				fi
 			else
-				einfo "Changing config to compress modules with ${ot_kernel_modules_compressor_}"
-				ot-kernel_y_configopt "CONFIG_MODULE_COMPRESS_${ot_kernel_modules_compressor_^^}" # Reset
+				einfo "Changing config to compress modules with ${ot_kernel_modules_compressor}"
+				ot-kernel_y_configopt "CONFIG_MODULE_COMPRESS_${ot_kernel_modules_compressor^^}" # Reset
 			fi
 		else
 			einfo "Using manual setting for compress modules"
@@ -2693,21 +2744,6 @@ eerror
 	done
 }
 
-# @FUNCTION: build_pairs
-# @DESCRIPTION:
-# Generate loop args for build sources
-build_pairs() {
-	local build_config_pairs=()
-	IFS=';'
-	local build_configs_pair
-	local ot_kernel_build_configs="OT_KERNEL_BUILDCONFIGS_${K_MAJOR_MINOR/./_}_"
-	for build_configs_pair in ${!ot_kernel_build_configs} ; do
-		[[ -z "${build_configs_pair}" ]] && continue
-		echo "${build_configs_pair}"
-	done
-	IFS=$' \t\n'
-}
-
 # @FUNCTION: get_llvm_slot
 # @DESCRIPTION:
 # Gets a ready to use clang compiler
@@ -2843,6 +2879,104 @@ tresor_sysfs"
 	fi
 }
 
+# @FUNCTION: ot-kernel_has_efi_prereqs
+# @DESCRIPTION:
+# Checks if user wants EFI boot indirectly.
+ot-kernel_has_efi_prereqs() {
+	if has_version "app-crypt/pesign" \
+		&& has_version "dev-libs/openssl" \
+		&& has_version "dev-libs/nss[utils]" \
+		&& has_version "sys-boot/mokutil" ; then
+		return 0
+	fi
+	return 1
+}
+
+# @FUNCTION: ot-kernel_has_uefi_prereqs
+# @DESCRIPTION:
+# Checks if user wants UEFI secure boot indirectly.
+ot-kernel_has_uefi_prereqs() {
+	if has_version "app-crypt/efitools" \
+		&& has_version "app-crypt/sbsigntools" \
+		&& has_version "dev-libs/openssl" \
+		; then
+		return 0
+	fi
+	return 1
+}
+
+# @FUNCTION: ot-kernel_has_uefi_sign_and_install
+# @DESCRIPTION:
+# Sign the kernel for UEFI systems
+ot-kernel_uefi_sign_and_install() {
+	# Both db.key and db.crt must be generated before emerging and kernel signing.
+	local dbkey="${OT_KERNEL_UEFI_DBKEY}" # folder containing db.key
+	local dbcrt="${OT_KERNEL_UEFI_DBCERT}" # folder containing db.crt
+	local skpath="${1}"
+	local dkpath="${2}"
+	einfo "Signing kernel"
+	sbsign --cert "${dbcert}" \
+		--key "${dbkey}" \
+		-o "${dkpath}.t" \
+		"${skpath}" || die
+	mv "${dkpath}.t" "${dkpath}" || die
+}
+
+# @FUNCTION: ot-kernel_efi_sign_and_install
+# @DESCRIPTION:
+# Signs the kernel for EFI systems
+ot-kernel_efi_sign_and_install() {
+	local skpath="${1}"
+	local dkpath="${1}.efi"
+	local signed_attrs="${1}.sattrs"
+	local signed_attrs_sig="${1}.sattrs.sig"
+	local certdb_path="${BUILD_DIR}/certs/certdb" # just the root folder
+	local certs_path="${BUILD_DIR}/certs" # just the root folder
+	has_version "app-crypt/pesign" || die "You must emerge app-crypt/pesign"
+	has_version "dev-libs/openssl" || die "You mst emerge dev-libs/openssl"
+	has_version "dev-libs/nss[utils]" || die "You must emerge dev-libs/nss[utils]"
+	[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
+	[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
+	einfo "Sign prepare:"
+	mkdir -p "${certdb_path}" || die
+	# Populate certdb using public key \
+	certutil \
+		-d "${certdb_path}" \
+		-A \
+			-i "${certs_path}/signing_key.x509" \
+			-n cert \
+			-t CT,CT,CT || die
+	# Extract signed attribs from kernel \
+	pesign -n "${certdb_path}" -i "${skpath}" -E "${signed_attr}" || die
+	openssl dgst -sha256 \
+		-sign "${OT_KERNEL_PRIVATE_KEY}" \
+		"${signed_attrs}" \
+		> "${signed_attrs_sig}" || die
+	einfo "Signing kernel:"
+	pesign -n "${certdb_path}" \
+		-c cert \
+		-i "${skpath}" \
+		-I "${signed_attrs}" \
+		-R "${signed_attrs_sig}" \
+		-o "${dkpath}" || die
+	einfo "Signatures:"
+	pesign -S \
+		-i "${dkpath}" || die
+}
+
+# @FUNCTION: ot-kernel_kexec_sign_and_install
+# @DESCRIPTION:
+# Signs the kernel for kexec
+ot-kernel_kexec_sign_and_install() {
+	local skpath="${1}"
+	local dkpath="${1}.signed"
+	"${BUILD_DIR}/sign-file" \
+		\
+		"${OT_KERNEL_PRIVATE_KEY}" \
+		"${OT_KERNEL_PUBLIC_KEY}" \
+		"${kimage_spath}.signed"
+}
+
 # @FUNCTION: ot-kernel-make_install
 # @DESCRIPTION:
 # Replaces all the arch/*/install.sh
@@ -2907,29 +3041,33 @@ ot-kernel-make_install() {
 	done
 
 	# FIXME:  Complete signing kernel
-	if false && [[ -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" && "${KEXEC_EFI}" == "1" ]] \
+	local kimage_dpath="${name}-${PV}-${extraversion}-${arch}"
+	if true ; then
+		einfo "Installing unsigned kernel"
+		newins "${kimage_spath}" "${kimage_dpath}"
+	elif [[ -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" && -n "${OT_KERNEL_UEFI_PARTITION}" ]] \
+		&& ot-kernel_has_uefi_prereqs \
+		&& grep -e "^CONFIG_EFI_STUB=y" "${BUILD_DIR}/.config" ; then
+		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
+		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
+		einfo "Signing and installing kernel for UEFI"
+		ot-kernel_uefi_sign_and_install
+	elif [[ -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] \
+		&& ot-kernel_has_efi_prereqs \
 		&& grep -e "^CONFIG_EFI_STUB=y" "${BUILD_DIR}/.config" ; then
 		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
 		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
 		einfo "Signing and installing kernel for EFI"
-		cp -a "${kimage_spath}" "${kimage_spath}.efi" || die
-		newins "${kimage_spath}.efi" "${kimage_dpath}.efi"
-	elif false && [[ -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" && "${KEXEC_EFI}" != "1" ]] ; then
+		ot-kernel_efi_sign_and_install
+	elif [[ -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] ; then
 		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
 		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
-		einfo "Signing and installing kernel for non-EFI"
-		cp -a "${kimage_spath}" "${kimage_spath}.signed" || die
-		"${BUILD_DIR}/sign-file" \
-			\
-			"${OT_KERNEL_PRIVATE_KEY}" \
-			"${OT_KERNEL_PUBLIC_KEY}" \
-			"${kimage_spath}.signed"
-		newins "${kimage_spath}.efi" "${kimage_dpath}.efi"
+		einfo "Signing and installing kernel for kexec"
+		ot-kernel_kexec_sign_and_install
+	else
+		einfo "Installing unsigned kernel"
+		newins "${kimage_spath}" "${kimage_dpath}"
 	fi
-
-	einfo "Installing unsigned kernel"
-	local kimage_dpath="${name}-${PV}-${extraversion}-${arch}"
-	newins "${kimage_spath}" "${kimage_dpath}"
 }
 
 # @FUNCTION: ot-kernel_get_boot_decompressor
@@ -3013,22 +3151,31 @@ ot-kernel_build_kernel() {
 # responsible for installing it on their boot device.
 ot-kernel_src_compile() {
 	einfo "Called ot-kernel_src_compile()"
-	local b
-	for b in $(build_pairs) ; do
-		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
-		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
-		local config=$(echo "${b}" | cut -f 3 -d ":")
-		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
+	local env_path
+	for env_path in $(ot-kernel_get_envs) ; do
+		[[ -e "${env_path}" ]] || continue
+		ot-kernel_load_config
+		local extraversion="${OT_KERNEL_EXTRAVERSION}"
+		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
+		local config="${OT_KERNEL_CONFIG}"
+		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
 		local default_config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-${arch}"
 		[[ -z "${config}" ]] && config="${default_config}"
-		local target_triple=$(echo "${b}" | cut -f 5 -d ":")
-		local cpu_sched=$(echo "${b}" | cut -f 6 -d ":")
+		local target_triple="${OT_KERNEL_TARGET_TRIPLE}"
+		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
 		local boot_decomp=$(ot-kernel_get_boot_decompressor)
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
 		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
+		if [[ -z "${build_config}" ]] ; then
+			if use build ; then
+				build_config="1"
+			else
+				build_config="0"
+			fi
+		fi
 		[[ -z "${extraversion}" ]] && die "extraversion cannot be empty"
 		[[ -z "${build_flag}" ]] && die "build_flag cannot be empty"
 		[[ -z "${config}" ]] && die "config cannot be empty"
@@ -3115,11 +3262,20 @@ ot-kernel_src_install() {
 		fi
 	fi
 
-	local b
-	for b in $(build_pairs) ; do
-		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
-		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
-		local arch=$(echo "${b}" | cut -f 4 -d ":") # Name of folders in /usr/src/linux/arch
+	local env_path
+	for env_path in $(ot-kernel_get_envs) ; do
+		[[ -e "${env_path}" ]] || continue
+		ot-kernel_load_config
+		local extraversion="${OT_KERNEL_EXTRAVERSION}"
+		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
+		if [[ -z "${build_config}" ]] ; then
+			if use build ; then
+				build_config="1"
+			else
+				build_config="0"
+			fi
+		fi
+		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 		if use build && [[ \
@@ -3202,13 +3358,14 @@ ot-kernel_src_install() {
 # ot-kernel_pkg_postinst_cb - callback if any to handle after emerge phase
 #
 ot-kernel_pkg_postinst() {
-	local b
-	for b in $(build_pairs) ; do
-		local extraversion=$(echo "${b}" | cut -f 1 -d ":" | sed -r -e "s|^[-]+||g")
-		local build_flag=$(echo "${b}" | cut -f 2 -d ":") # Can be 0, 1, true, false, yes, no, nobuild, build, unset
+	local env_path
+	for env_path in $(ot-kernel_get_envs) ; do
+		[[ -e "${env_path}" ]] || continue
+		ot-kernel_load_config
+		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
-		cd "${BUILD_DIR}" || die
 		if [[ -e "${BUILD_DIR}/certs/signing_key.pem" ]] ; then
+			cd "${BUILD_DIR}" || die
 			einfo "Secure wiping the private key in build directory for ${extraversion}"
 			# Secure wipe the private keys if custom config bypassing envvars as well
 			shred -f "${BUILD_DIR}/certs/signing_key.pem" || die

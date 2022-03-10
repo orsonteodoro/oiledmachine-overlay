@@ -275,27 +275,260 @@
 
 https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4aff350c36fce8f4c85/sys-kernel/genkernel/genkernel-4.2.6-r2.ebuild#L279
 
+    The config file-directory structure
 
-    Build environment variables
+    /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
+    /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
+
+    K_MAJOR_MINOR will be expanded to either 4.14, 5.4, 5.10, 5.15, or 5.16
+    extraversion will be expanded to ot, rt, or any custom extra version
+    arch will be expanded to one of the arches in /usr/src/linux/arch.
+
+    Example:
+    /etc/portage/ot-sources/5.16/ot/x86_64/env
+
+    Files:
+      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
+      Contains all environment variables for this buildconfig
+
+    Directories (In planning):
+      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
+      Contains extra user patches to apply per buildconfig.
+
+
+
+    An example env file located in /etc/portage/ot-sources/5.16/ot/x86_64/env:
+
+OT_KERNEL_ARCH="x86_64"
+OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
+OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
+OT_KERNEL_BUILD="1"
+OT_KERNEL_CONFIG="/etc/kernels/kernel-config-5.16-ot-x86_64"
+OT_KERNEL_CPU_SCHED="cfs"
+OT_KERNEL_EXTRAVERSION="ot"
+OT_KERNEL_FIRMWARE="regulatory"
+OT_KERNEL_LSMS="auto"
+OT_KERNEL_MENUCONFIG_FRONTEND="menuconfig"
+OT_KERNEL_PKGFLAGS_ACCEPT="05309e2 351365c"
+OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
+
+
+    Environment variables overview:
+
 
     The purpose of some of these environment variables is to change primarily
     the default profile a little bit so that it skips the menuconfig step all
     together in the build before install with the build USE flag.
 
-    OT_KERNEL_BUILDCONFIGS_X_Y (required) -- list of build configs.  Once you
-    define this, it will override and erase the defaults for that particular
-    major.minor version.  X is the major version, Y is the minor version.
 
-    OT_KERNEL_VERBOSITY=N (optional) -- presentation of compiler and build
-    invocation.
-    Acceptable values for N:  0 for minimal output, 1 for showing compiler
-    flags, 2 for reasons for rebuild.
+    Environment variables required:
+
+      OT_KERNEL_ARCH
+      OT_KERNEL_EXTRAVERSION
+
+    
+    Environment variables:
+
+
+    OT_KERNEL_ARCH -- The native ABI of the kernel to build using one of the names of the
+		folders in /usr/src/linux/arch.
+
+
+
+    OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS -- Auto edit the kernel .config
+    for installed packages.  What this means is that certain @world packages
+    have additional kernel .config requirements and sometimes too complex
+    or too long ago to remember to apply.  These missing or conflicting
+    flags will be added or removed so that the @world package works properly.
+    Acceptable values:  1 to enable, 0 to disable.  By default, it is
+    disabled meaning that manual editing is required or preferred.  For
+    some select security packages, this is environment variable is
+    unconditionally ignored implying to always apply the kernel changes.
+
+
+
+    OT_KERNEL_BUILD -- It be 0, 1, true, false, yes, no, nobuild, build, not set.  Most
+		are aliases, but it means to build or not build the kernel.  If not set
+		it will try to guestimate based on the build flag.
+
+
+
+    OT_KERNEL_BOOT_DECOMPRESSOR -- chooses the main boot decompressor for both kernel
+    decompression and initramfs decompression.  If not chosen, it will choose
+    either the previous manual setting, or if it is a new kernel config defaults
+    which will choose gzip for the kernel and all decompressors for initramfs.
+    Acceptable values:  GZIP, BZIP2, LZ4, LZO, LZMA, XZ, ZSTD, default, manual,
+    UNCOMPRESSED.  It is recommended to use lz4 or zstd.  However, if you are
+    using x32 ABI bzip2 works but do not use lzma.  If empty, it will choose
+    manual.  ZSTD is only allowed in 5.10+.
+
+
+
+    OT_KERNEL_COLD_BOOT_MITIGATIONS -- changes the kernel config to mitigate
+    against coldboot or DMA attacks.  By default, this is enabled in the
+    ebuild.  Acceptable values:  0 for do not apply any mitigations,
+    1 for level 1 mitigations, 2 for level 2 mitigations.
+
+    - Level 1 mitigations are changes balance the convenience and the security.
+    - Level 2 mitigations are changes that severely place security over
+    convenience which may take away ability to use certain hardware or have
+    severe performance degration.
+
+
+
+    OT_KERNEL_CONFIG -- Points to the absolute path of the kernel config. (This can be not set
+		but then defaults to
+		/etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m))
+
+
+
+    OT_KERNEL_CPU_SCHED -- can be one of the below depending on the kernel version.
+
+		4.14: cfs, muqss, pds
+		5.10: cfs, muqss, prjc, prjc-bmq, prjc-pds
+		5.15: cfs, prjc, prjc-bmq, prjc-pds
+		5.16: cfs, prjc, prjc-bmq, prjc-pds
+
+		The reason why for this flexibility is to allow for multiple
+		configurations that are not mutual exclusive, meaning you can
+		use the rt kernel with cfs but still choose muqss for a
+		gaming client kernel.
+
+		This field can be not set which would default to using cfs.
+
+		* cfs is preferred for server kernels and bug-less experience.
+		* muqss and prjc are better suited for audio production.
+		* The rt extraversion can only use the cfs scheduler.
+
+		The default timeslices:
+
+		bmq: 4 ms server/desktop, 2 ms with low latency desktop
+		cfs: variable length
+		muqss:  6 ms
+		pds: 6 ms
+		prjc-bmq: 4 ms
+		prjc-pds: 4 ms
+		zen-muqss: 4 ms with zen interactive, 6 ms without zen interactive
+
+		Some of these timeslice values be adjustable.
+
+
+
+    OT_KERNEL_EXTRAVERSION -- initials or name of the kernel.  Using the rt extraversion will
+		apply the rt patchset to only that copy.
+
+
+
+    OT_KERNEL_FIRMWARE -- a space separated list of keywords matching the
+    firmware relative to inside /lib/firmware.  Wildcards (denoted by "*") are
+    accepted as well as relative paths.  Wildcards are implied before and after
+    the pattern.  These patterns are case sensitive meaning there is a
+    difference between model and MODEL.  There is a possibility of driver
+    writers adding and removing files without notice which is why simple
+    keyword matching containing the model name and number without adding
+    specific ICs details is recommended.  Keeping this value not set is the
+    same as manually editing or reusing the previous value in the .config
+    file.  Using this environment variable has advantages of auto adding
+    and auto removing firmware references.
+
+    The X in the environment variable name corresponds to the kernel *arch*
+    in buildconfigs that is uppercase.  The kernel arch is not exactly the
+    same as the distro arch.
+
+    The Y in the environment variable name corresponds to the extraversion
+    in buildconfigs that is uppercase.  Both the X and Y values make it
+    possible to not apply firmware to virtual machine guest kernels or for
+    specific to cross compile kernels.  Any hyphen (-) should be replaced
+    with the underscore character (_).
+
+    The following are recognized patterns:
+	1. Add by wildcard.  model*.bin model* dir* d*r
+	2. Add by literal.  model model123.bin dir/model dir1/dir2/model.bin
+
+    When you use OT_KERNEL_FIRMWARE envvar, it is implied it will wipe the
+    previous setting.
+
+
+
+    OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG -- force the applying disable debug
+    globally to remove config symbols containing the following keywords:
+
+      DEBUG, TRACE, VERBOSE, LOG, PRINT
+
+    Acceptable values:  1 to apply disable_debug, 0 to halt if there is a
+    conflict between a kernel flag set and disable_debug.
+
+
+
+    OT_KERNEL_LSMS -- Enable and set the order for LSM (Linux Security Modules)
+
+    Acceptable multi values: apparmor, bpf, integrity, landlock, loadpin, lockdown
+    safesetid, selinux, smack, tomoyo, yama.
+
+    Acceptable general values:  auto, default, manual
+      auto -- adds LSMs based on packages installed with default subsettings
+      default -- Uses "integrity,selinux,bpf" with default subsettings
+        equivalent to upstream defaults
+      manual -- Uses previously manually set settings
+
+    The "acceptable multi values" and "acceptable general values" are mutually
+    exclusive.  In acceptable multi values listing, the LSMs needs to be comma
+    separated and mutiple LSMs can be used.  In acceptable general values
+    only one value can be used which are associated with a precreated
+    listing.
+
+    For a newly generated kernel .config with not set OT_KERNEL_LSMS, it will
+    apply auto setting.  For previous installs with OT_KERNEL_LSMS is not set, it
+    will apply manual.
+
+
+
+    OT_KERNEL_MODULES_COMPRESSOR (optional) -- compresses the kernel
+    modules.
+    Acceptable values:  NONE, GZIP, XZ, ZSTD.  If not set, it will use the
+    manual setting.  X is the major version, Y is the minor version.
+    NONE and ZSTD are only allowed with 5.15+.  When a new kernel config
+    is generated, module compression is disabled; but can be overrided
+    by explicitly setting it to one of the acceptable values.
+
+
+
+    OT_KERNEL_PKGFLAGS_ACCEPT -- is a list of auto apply-able kernel
+    config symbols to accept per package-wise.  They should be listed as
+    space separated.
+
+
+
+    OT_KERNEL_PKGFLAGS_REJECT -- is a list of auto apply-able kernel config
+    symbols to reject.  These sets of flags are identified (id) with a 7 digit
+    hash code and used to either skip the config and apply the config
+    manually or permit a disable_debug conflict to priorize disable_debug
+    removal of debug keyworded kernel config symbols. They should be listed as
+    space separated.
+
+
 
     OT_KERNEL_PRIMARY_EXTRAVERSION (optional) -- sets the primary extraversion
-    for the symlink USE flag.  If unset, it defaults to ot.
+    for the symlink USE flag.  If not set, it defaults to ot.
+
+
 
     OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR (optional) -- sets the primary
-    extraversion for tresor_sysfs USE flag.  If unset, it defaults to ot.
+    extraversion for tresor_sysfs USE flag.  If not set, it defaults to ot.
+
+
+
+    OT_KERNEL_PRIVATE_KEY -- The absolute path to a .pem private key file
+    used for module signing.  This should only be set in the command line
+    not saved in any make.conf or not saved any per-package configuration
+    file.  When done the variable should be overritten a new string and
+    then not set.
+
+      Example:
+      OT_KERNEL_PRIVATE_KEY=$(dd if=/dev/urandom of=/dev/stdout bs=255 count=1 status=none | base64 | tr "\n" " " | sed -e "s| ||g")
+      not set OT_KERNEL_PRIVATE_KEY
+
+
 
     OT_KERNEL_SIGN_MODULES (optional) -- signs kernel modules with sha384.
     Set to 1 to sign or set to 0 to use manual setting (default).  When,
@@ -321,58 +554,18 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
       in within 24 hours.  Each build configuration with have a unique
       private-shared keys if using autogenerated, so all keys need to be
       stored and properly labeled to prevent mixup.
-    
-    OT_KERNEL_MODULES_COMPRESSOR_X_Y (optional) -- compresses the kernel
-    modules.
-    Acceptable values:  NONE, GZIP, XZ, ZSTD.  If unset, it will use the
-    manual setting.  X is the major version, Y is the minor version.
-    NONE and ZSTD are only allowed with 5.15+.  When a new kernel config
-    is generated, module compression is disabled; but can be overrided
-    by explicitly setting it to one of the acceptable values.
 
-    OT_KERNEL_COLD_BOOT_MITIGATIONS -- changes the kernel config to mitigate
-    against coldboot or DMA attacks.  By default, this is enabled in the
-    ebuild.  Acceptable values:  0 for do not apply any mitigations,
-    1 for level 1 mitigations, 2 for level 2 mitigations.
 
-    - Level 1 mitigations are changes balance the convenience and the security.
-    - Level 2 mitigations are changes that severely place security over
-    convenience which may take away ability to use certain hardware or have
-    severe performance degration.
-
-    OT_KERNEL_PRIVATE_KEY -- The absolute path to a .pem private key file
-    used for module signing.  This should only be set in the command line
-    not saved in any make.conf or not saved any per-package configuration
-    file.  When done the variable should be overritten a new string and
-    then unset.
-
-      Example:
-      OT_KERNEL_PRIVATE_KEY=$(dd if=/dev/urandom of=/dev/stdout bs=255 count=1 status=none | base64 | tr "\n" " " | sed -e "s| ||g")
-      unset OT_KERNEL_PRIVATE_KEY
 
     OT_KERNEL_SHARED_KEY -- The absolute path to a .x509 shared key file
     used for module signing.
 
-    OT_KERNEL_LSMS -- Enable and set the order for LSM (Linux Security Modules)
 
-    Acceptable multi values: apparmor, bpf, integrity, landlock, loadpin, lockdown
-    safesetid, selinux, smack, tomoyo, yama.
 
-    Acceptable general values:  auto, default, manual
-      auto -- adds LSMs based on packages installed with default subsettings
-      default -- Uses "integrity,selinux,bpf" with default subsettings
-        equivalent to upstream defaults
-      manual -- Uses previously manually set settings
+    OT_KERNEL_TARGET_TRIPLE -- The target triple (CHOST) to use when cross-compiling.  Use the
+		expanded CHOST value.  (This can be not set but then defaults to ${CHOST})
+		If you put just CHOST or just CBUILD it will expand for each case.
 
-    The "acceptable multi values" and "acceptable general values" are mutually
-    exclusive.  In acceptable multi values listing, the LSMs needs to be comma
-    separated and mutiple LSMs can be used.  In acceptable general values
-    only one value can be used which are associated with a precreated
-    listing.
-
-    For a newly generated kernel .config with unset OT_KERNEL_LSMS, it will
-    apply auto setting.  For previous installs with OT_KERNEL_LSMS is unset, it
-    will apply manual.
 
 
     OT_KERNEL_USE_LSM_UPSTREAM_ORDER -- Use the upstream init order
@@ -381,150 +574,98 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     The custom order (0) can optionally apply to "acceptable multi values"
     configation and auto in acceptable general values.
 
-    OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS -- Auto edit the kernel .config
-    for installed packages.  What this means is that certain @world packages
-    have additional kernel .config requirements and sometimes too complex
-    or too long ago to remember to apply.  These missing or conflicting
-    flags will be added or removed so that the @world package works properly.
-    Acceptable values:  1 to enable, 0 to disable.  By default, it is
-    disabled meaning that manual editing is required or preferred.  For
-    some select security packages, this is environment variable is
-    unconditionally ignored implying to always apply the kernel changes.
 
-    OT_KERNEL_PKGFLAGS_SKIP -- is a list of auto apply-able kernel config
-    symbols to reject.  These sets of flags are identified (id) with a 7 digit
-    hash code and used to either skip the config and apply the config
-    manually or permit a disable_debug conflict to priorize disable_debug
-    removal of debug keyworded kernel config symbols. They should be listed as
-    space separated.
 
-    OT_KERNEL_PKGFLAGS_ACCEPT -- is a list of auto apply-able kernel
-    config symbols to accept per package-wise.  They should be listed as
-    space separated.
+    OT_KERNEL_VERBOSITY=N (optional) -- presentation of compiler and build
+    invocation.
+    Acceptable values for N:  0 for minimal output, 1 for showing compiler
+    flags, 2 for reasons for rebuild.
 
-    OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG -- force the applying disable debug
-    globally to remove config symbols containing the following keywords:
 
-      DEBUG, TRACE, VERBOSE, LOG, PRINT
+    Kernel pkgflags environment variables:
 
-    Acceptable values:  1 to apply disable_debug, 0 to halt if there is a
-    conflict between a kernel flag set and disable_debug.
+    The pkgflags come mostly from the ebuilds' themselves.  The current
+    trend is to decentralize these settings and have users to manually
+    edit the kernel.  This ebuild package will do the opposite by
+    centralizing these settings for purposes of a semi autoconfigured
+    kernel.
+
+    By default kernel pkgflags module is not enabled.  To enable it, set
+    OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1 in the per buildconfig env
+    file (ex. /etc/portage/ot-sources/4.16/ot/x86_64/env).
+
+    One may reject or accept kernel settings by setting
+    OT_KERNEL_PKGFLAGS_ACCEPT or OT_KERNEL_PKGFLAGS_REJECT with a space
+    separated 7 digit id.  One may use the reject to manually apply
+    settings for that package.
+
+         Examples:
+
+              OT_KERNEL_PKGFLAGS_REJECT="1ee4e36"
+              OT_KERNEL_PKGFLAGS_REJECT="1ee4e36 155d9fc"
+              OT_KERNEL_PKGFLAGS_REJECT="1ee4e36 155d9fc 27ea6ce"
+
+    Most variables below have values 0 for off and 1 for on.  Not set implies
+    the eclass defaults.
+
+    These should be specified in the per buildconfig env file.  These
+    environment variables are only valid if the package is installed.
+
+    ALSA_PC_SPEAKER --  Use the ALSA speaker driver as the PC speaker.  Valid values 0 (default), 1.
+    CRYPTSETUP_ADIANTUM --  Add the adiantum mode of operation.  Valid values 0, 1 (default).
+    CRYPTSETUP_TCRYPT --  Add support for tcrypt.  Valid values 0, 1 (default).
+    HPLIP_PARPORT --  Add support for the parallel port.  Valid values 0 (default), 1.
+    HPLIP_USB --  Add support for USB.  Valid values 0, 1 (default).
+    IPTABLES_CLIENT --  Add support for iptables client.  Valid values 0, 1 (default).
+    IPTABLES_ROUTER --  Add support for iptables router.  Valid values 0 (default), 1.
+    MDADM_RAID --  Add support for software RAID.  Valid values 0, 1 (default).
+    NFS_CLIENT --  Add support for nfs client.  Valid values 0, 1 (default).
+    NFS_SERVER --  Add support for nfs server.  Valid values 0, 1 (default).
+    OSS --  Force add support for OSS sound.  Valid values 0 (default), 1.
+    OSS_MIDI --  Force add support for OSS MIDI.  Valid values 0 (default), 1.
+    SANE_SCSI --  Add support for SCSI scanners.  Valid values 0 (default), 1.
+    SANE_USB --  Add support for USB scanners.  Valid values 0, 1 (default).
+    STD_PC_SPEAKER --  Add support for the PC speaker.  Valid values 0, 1 (default).
+    QEMU_GUEST_LINUX --  Add support for a QEMU Linux guests.  Valid values 0, 1 (default).
+    VIRTUALBOX_GUEST_LINUX --  Add support for VirtualBox Linux guests.  Valid values 0, 1 (default).
+    VSYSCALL_MODE --  Select vsyscall mode.  Valid values:  full, emulate (default).
+    XEN_PCI_PASSTHROUGH --  Add support for PCI passthrough.  Valid values 0 (default), 1.
+
+
+
+    disable_debug environment variables:
 
     PERMIT_NETFILTER_SYMBOL_REMOVAL -- Remove extra symbols containing names
     with those keywords.  Note, some of these symbols may be beneficial to
     netfilter and not be related to debugging.  By default, this is disabled.
     Acceptable values:  1 to remove symbols, 0 to not remove symbols.
 
-    OT_KERNEL_FIRMWARE_X_Y -- a space separated list of keywords matching the
-    firmware relative to inside /lib/firmware.  Wildcards (denoted by "*") are
-    accepted as well as relative paths.  Wildcards are implied before and after
-    the pattern.  These patterns are case sensitive meaning there is a
-    difference between model and MODEL.  There is a possibility of driver
-    writers adding and removing files without notice which is why simple
-    keyword matching containing the model name and number without adding
-    specific ICs details is recommended.  Keeping this value unset is the
-    same as manually editing or reusing the previous value in the .config
-    file.  Using this environment variable has advantages of auto adding
-    and auto removing firmware references.
-
-    The X in the environment variable name corresponds to the kernel *arch*
-    in buildconfigs that is uppercase.  The kernel arch is not exactly the
-    same as the distro arch.
-
-    The Y in the environment variable name corresponds to the extraversion
-    in buildconfigs that is uppercase.  Both the X and Y values make it
-    possible to not apply firmware to virtual machine guest kernels or for
-    specific to cross compile kernels.  Any hyphen (-) should be replaced
-    with the underscore character (_).
-
-    The following are recognized patterns:
-	1. Add by wildcard.  model*.bin model* dir* d*r
-	2. Add by literal.  model model123.bin dir/model dir1/dir2/model.bin
-
-    When you use OT_KERNEL_FIRMWARE_X_Y envvar, it is implied it will wipe the
-    previous setting.
 
 
-    Examples:
+    Environment variables for genpatches:
+    
+    GENPATCHES_BLACKLIST -- a space separated list of genpatches to ban.
+    See the genpatches website for the number to patch correspondance.
 
-    OT_KERNEL_FIRMWARE_X86_64_OT="model1 model2 model3 dir1/model4 dir2/model5 dir3/dir4/model6"
-    OT_KERNEL_USE_LSM_UPSTREAM_ORDER=1
-    OT_KERNEL_LSMS="auto"
-    OT_KERNEL_LSMS="integrity,apparmor,selinux"
-    OT_KERNEL_VERBOSITY=1
-    OT_KERNEL_MENUCONFIG="menuconfig" # Code is disabled but looking for solutions to make it work properly
-    OT_KERNEL_BUILDCONFIGS_5_4="ot:build:/etc/kernels/kernel-config-5.4-ot-x86_64:x86_64:x86_64-pc-linux-gnu:muqss:lz4"
-    OT_KERNEL_BUILDCONFIGS_5_16="ot:build:/etc/kernels/kernel-config-5.16-ot-x86_64:x86_64:x86_64-pc-linux-gnu:prjc:zstd;rt:build:/etc/kernels/kernel-config-5.16-rt-x86_64:x86_64:x86_64-pc-linux-gnu:cfs:lz4"
-    OT_KERNEL_PKGFLAGS_SKIP="1ee4e36"
-    OT_KERNEL_PKGFLAGS_SKIP="1ee4e36 155d9fc"
-    OT_KERNEL_PKGFLAGS_SKIP="1ee4e36 155d9fc 27ea6ce"
+         Examples:
 
-    The format of the sublists in OT_KERNEL_BUILDCONFIGS_X_Y is described below:
+              GENPATCHES_BLACKLIST="2500"
+              GENPATCHES_BLACKLIST="2500 2600"
 
-    Each build config is separated by a semicolon (;).
 
-    The colon (:) separated sublist is defined as follows:
+    Environment variables for zen-sauce:
 
-    All of the following are required to be defined from (left to right):
+    ZENSAUCE_BLACKLIST -- a space separated list of zen-sauce commit ids to ban.
+    ZENSAUCE_WHITELIST -- a space separated list of zen-sauce commit ids to apply.
 
-    OT_KERNEL_BUILDCONFIGS_X_Y="1:2:3:4:5:6:7"			# Acceptable
-    OT_KERNEL_BUILDCONFIGS_X_Y="1:2:3:4:5:6;1:2:3:4:5:6:7"	# Acceptable
+    Both 7 and 40 digit commit IDs are accepted.
 
-    1. Extraversion -- initials or name of the kernel.  Using the rt extraversion will
-		apply the rt patchset to only that copy.
+         Examples:
 
-    2. Build flag -- It be 0, 1, true, false, yes, no, nobuild, build, unset.  Most
-		are aliases, but it means to build or not build the kernel.
+              ZENSAUCE_BLACKLIST="19be35c 1baa02f"
+              ZENSAUCE_BLACKLIST="1baa02fbd7a419fdd0e484ba31ba82c90c7036cf ef12d902c1323bbbeacc3babc91aae15976474ca 56f6f4315aedbbcbef8ad61f187347c20a270e49"
+              ZENSAUCE_WHITELIST="4b03a1c 613d2ac"
 
-    3. Config -- Points to the absolute path of the kernel config. (This can be unset
-		but then defaults to
-		/etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m))
-
-    4. Arch -- The native ABI of the kernel to build using one of the names of the
-		folders in /usr/src/linux/arch.
-
-    5. Target triple -- The target triple (CHOST) to use when cross-compiling.  Use the
-		expanded CHOST value.  (This can be unset but then defaults to ${CHOST})
-		If you put just CHOST or just CBUILD it will expand for each case.
-
-    6. CPU scheduler -- can be one of the below depending on the kernel version.
-
-		4.14: cfs, muqss, pds
-		5.10: cfs, muqss, prjc, prjc-bmq, prjc-pds
-		5.15: cfs, prjc, prjc-bmq, prjc-pds
-		5.16: cfs, prjc, prjc-bmq, prjc-pds
-
-		The reason why for this flexibility is to allow for multiple
-		configurations that are not mutual exclusive, meaning you can
-		use the rt kernel with cfs but still choose muqss for a
-		gaming client kernel.
-
-		This field can be unset which would default to using cfs.
-
-		* cfs is preferred for server kernels and bug-less experience.
-		* muqss and prjc are better suited for audio production.
-		* The rt extraversion can only use the cfs scheduler.
-
-		The default timeslices:
-
-		bmq: 4 ms server/desktop, 2 ms with low latency desktop
-		cfs: variable length
-		muqss:  6 ms
-		pds: 6 ms
-		prjc-bmq: 4 ms
-		prjc-pds: 4 ms
-		zen-muqss: 4 ms with zen interactive, 6 ms without zen interactive
-
-		Some of these timeslice values be adjustable.
-
-    6. Boot decompressor -- chooses the main boot decompressor for both kernel
-    decompression and initramfs decompression.  If not chosen, it will choose
-    either the previous manual setting, or if it is a new kernel config defaults
-    which will choose gzip for the kernel and all decompressors for initramfs.
-    Acceptable values:  GZIP, BZIP2, LZ4, LZO, LZMA, XZ, ZSTD, default, manual,
-    UNCOMPRESSED.  It is recommended to use lz4 or zstd.  However, if you are
-    using x32 ABI bzip2 works but do not use lzma.  If empty, it will choose
-    manual.  ZSTD is only allowed in 5.10+.
 
     Please read the metadata.xml comments for more info.
   </longdescription>
