@@ -262,9 +262,7 @@ the metadata.xml.
 | media-libs/embree | For amd-radeon-prorender-blender plugin. |
 | media-libs/libmp4v2 | For multilib tizonia |
 | media-libs/liboggz | For multilib tizonia |
-| media-libs/libomxil-bellagio | This package is one of the backends required for `mesa[openmax]` support. |
 | media-libs/libyuv | For xpra compression |
-| media-libs/mesa | This package contains optional untested openmax support. |
 | media-libs/mozjpeg | A JPEG encoding library for higher visual quality and smaller file sizes.  It is a superset of libjpegturbo. |
 | media-libs/nestegg | TBA |
 | media-libs/openimageio | TBA |
