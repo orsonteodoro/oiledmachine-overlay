@@ -299,7 +299,9 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
     Files:
 
          /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
-         Contains all environment variables for this buildconfig.
+         Contains all environment variables for this buildconfig.  The
+         per package extraversion and per package buildconfig are synonymous
+         for this file.
 
     Directories (In planning):
 
@@ -644,25 +646,25 @@ unset OT_KERNEL_PRIVATE_KEY
     These should be specified in the per buildconfig env file.  These
     environment variables are only valid if the package is installed.
 
-    ALSA_PC_SPEAKER --  Use the ALSA speaker driver as the PC speaker.  Valid values 0 (default), 1.
-    CRYPTSETUP_ADIANTUM --  Add the adiantum mode of operation.  Valid values 0, 1 (default).
-    CRYPTSETUP_TCRYPT --  Add support for tcrypt.  Valid values 0, 1 (default).
-    HPLIP_PARPORT --  Add support for the parallel port.  Valid values 0 (default), 1.
-    HPLIP_USB --  Add support for USB.  Valid values 0, 1 (default).
-    IPTABLES_CLIENT --  Add support for iptables client.  Valid values 0, 1 (default).
-    IPTABLES_ROUTER --  Add support for iptables router.  Valid values 0 (default), 1.
-    MDADM_RAID --  Add support for software RAID.  Valid values 0, 1 (default).
-    NFS_CLIENT --  Add support for nfs client.  Valid values 0, 1 (default).
-    NFS_SERVER --  Add support for nfs server.  Valid values 0, 1 (default).
-    OSS --  Force add support for OSS sound.  Valid values 0 (default), 1.
-    OSS_MIDI --  Force add support for OSS MIDI.  Valid values 0 (default), 1.
-    SANE_SCSI --  Add support for SCSI scanners.  Valid values 0 (default), 1.
-    SANE_USB --  Add support for USB scanners.  Valid values 0, 1 (default).
-    STD_PC_SPEAKER --  Add support for the PC speaker.  Valid values 0, 1 (default).
-    QEMU_GUEST_LINUX --  Add support for a QEMU Linux guests.  Valid values 0, 1 (default).
-    VIRTUALBOX_GUEST_LINUX --  Add support for VirtualBox Linux guests.  Valid values 0, 1 (default).
-    VSYSCALL_MODE --  Select vsyscall mode.  Valid values:  full, emulate (default).
-    XEN_PCI_PASSTHROUGH --  Add support for PCI passthrough.  Valid values 0 (default), 1.
+    ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.  Valid values 0 (default), 1.
+    CRYPTSETUP_ADIANTUM - Add the adiantum mode of operation.  Valid values 0, 1 (default).
+    CRYPTSETUP_TCRYPT - Add support for tcrypt.  Valid values 0, 1 (default).
+    HPLIP_PARPORT - Add support for the parallel port.  Valid values 0 (default), 1.
+    HPLIP_USB - Add support for USB.  Valid values 0, 1 (default).
+    IPTABLES_CLIENT - Add support for iptables client.  Valid values 0, 1 (default).
+    IPTABLES_ROUTER - Add support for iptables router.  Valid values 0 (default), 1.
+    MDADM_RAID - Add support for software RAID.  Valid values 0, 1 (default).
+    NFS_CLIENT - Add support for nfs client.  Valid values 0, 1 (default).
+    NFS_SERVER - Add support for nfs server.  Valid values 0, 1 (default).
+    OSS - Force add support for OSS sound.  Valid values 0 (default), 1.
+    OSS_MIDI - Force add support for OSS MIDI.  Valid values 0 (default), 1.
+    SANE_SCSI - Add support for SCSI scanners.  Valid values 0 (default), 1.
+    SANE_USB - Add support for USB scanners.  Valid values 0, 1 (default).
+    STD_PC_SPEAKER - Add support for the PC speaker with the standard PC speaker driver.  Valid values 0, 1 (default).
+    QEMU_GUEST_LINUX - Add support for a QEMU Linux guests.  Valid values 0, 1 (default).
+    VIRTUALBOX_GUEST_LINUX - Add support for VirtualBox Linux guests.  Valid values 0, 1 (default).
+    VSYSCALL_MODE - Select vsyscall mode.  Valid values:  full, emulate (default).
+    XEN_PCI_PASSTHROUGH - Add support for PCI passthrough.  Valid values 0 (default), 1.
 
 
 
