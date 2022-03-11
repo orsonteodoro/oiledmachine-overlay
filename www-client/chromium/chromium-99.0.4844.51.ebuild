@@ -696,6 +696,8 @@ REQUIRED_USE+="
 	pgo? ( clang !pgo-full )
 	pgo-full? ( clang !pgo )
 	ppc64? ( !shadowcallstack )
+	pre-check-llvm? ( clang )
+	pre-check-vaapi? ( vaapi )
 	screencast? ( wayland )
 	shadowcallstack? ( clang )
 	system-libstdcxx? ( !cfi-cast )
