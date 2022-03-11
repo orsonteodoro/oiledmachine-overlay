@@ -2626,7 +2626,7 @@ ot-kernel-pkgflags_kexec_tools() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "39aeb63" ]] && return
 	if has_version "sys-apps/kexec-tools" ; then
 		OT_KERNEL_SIGN="${OT_KERNEL_SIGN_KERNEL:-0}" # signing the kernel is not ready yet
-		if [[ "${OT_KERNEL_SIGN_KERNEL}" == "1" && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] ; then
+		if [[ "${OT_KERNEL_SIGN_KERNEL}" =~ ("uefi"|"efi"|"kexec") && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] ; then
 			einfo "Applying kernel config flags for the kexec-tools package for signed kernels (id: 39aeb63)"
 			[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key for kexec signing"
 			[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key for kexec signing"

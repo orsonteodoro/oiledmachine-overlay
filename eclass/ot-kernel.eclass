@@ -3045,21 +3045,21 @@ ot-kernel-make_install() {
 	if true ; then
 		einfo "Installing unsigned kernel"
 		newins "${kimage_spath}" "${kimage_dpath}"
-	elif [[ -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" && -n "${OT_KERNEL_UEFI_PARTITION}" ]] \
+	elif [[ "${OT_KERNEL_SIGN_KERNEL}" =~ "uefi" && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" && -n "${OT_KERNEL_EFI_PARTITION}" ]] \
 		&& ot-kernel_has_uefi_prereqs \
 		&& grep -e "^CONFIG_EFI_STUB=y" "${BUILD_DIR}/.config" ; then
 		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
 		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
 		einfo "Signing and installing kernel for UEFI"
 		ot-kernel_uefi_sign_and_install
-	elif [[ -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] \
+	elif [[ "${OT_KERNEL_SIGN_KERNEL}" =~ "efi" && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] \
 		&& ot-kernel_has_efi_prereqs \
 		&& grep -e "^CONFIG_EFI_STUB=y" "${BUILD_DIR}/.config" ; then
 		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
 		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
 		einfo "Signing and installing kernel for EFI"
 		ot-kernel_efi_sign_and_install
-	elif [[ -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] ; then
+	elif [[ "${OT_KERNEL_SIGN_KERNEL}" =~ "kexec" && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] ; then
 		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
 		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
 		einfo "Signing and installing kernel for kexec"
