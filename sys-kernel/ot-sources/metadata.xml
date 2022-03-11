@@ -346,8 +346,8 @@ OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 
 
 
-    OT_KERNEL_ARCH -- The native ABI of the kernel to build using one of the names of the
-		folders in /usr/src/linux/arch.
+    OT_KERNEL_ARCH -- The native ABI of the kernel to build using one of the
+    names of the folders in /usr/src/linux/arch.
 
 
 
@@ -363,20 +363,21 @@ OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 
 
 
-    OT_KERNEL_BUILD -- It be 0, 1, true, false, yes, no, nobuild, build, not set.  Most
-		are aliases, but it means to build or not build the kernel.  If not set
-		it will try to guestimate based on the build flag.
-
-
-
-    OT_KERNEL_BOOT_DECOMPRESSOR -- chooses the main boot decompressor for both kernel
-    decompression and initramfs decompression.  If not chosen, it will choose
-    either the previous manual setting, or if it is a new kernel config defaults
-    which will choose gzip for the kernel and all decompressors for initramfs.
-    Acceptable values:  GZIP, BZIP2, LZ4, LZO, LZMA, XZ, ZSTD, default, manual,
+    OT_KERNEL_BOOT_DECOMPRESSOR -- chooses the main boot decompressor for both
+    kernel decompression and initramfs decompression.  If not chosen, it will
+    choose either the previous manual setting, or if it is a new kernel config
+    defaults which will choose gzip for the kernel and all decompressors for
+    initramfs.  Acceptable values:  GZIP, BZIP2, LZ4, LZO, LZMA, XZ, ZSTD,
+    default, manual,
     UNCOMPRESSED.  It is recommended to use lz4 or zstd.  However, if you are
     using x32 ABI bzip2 works but do not use lzma.  If empty, it will choose
     manual.  ZSTD is only allowed in 5.10+.
+
+
+
+    OT_KERNEL_BUILD -- It be 0, 1, true, false, yes, no, nobuild, build, not
+    set.  Most are aliases, but it means to build or not build the kernel.  If
+    not set it will try to guestimate based on the build flag.
 
 
 
@@ -392,9 +393,9 @@ OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 
 
 
-    OT_KERNEL_CONFIG -- Points to the absolute path of the kernel config. (This can be not set
-		but then defaults to
-		/etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m))
+    OT_KERNEL_CONFIG -- Points to the absolute path of the kernel config. (This
+    can be not set but then defaults to
+    /etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m))
 
 
 
@@ -430,8 +431,8 @@ OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 
 
 
-    OT_KERNEL_EXTRAVERSION -- initials or name of the kernel.  Using the rt extraversion will
-		apply the rt patchset to only that copy.
+    OT_KERNEL_EXTRAVERSION -- initials or name of the kernel.  Using the rt
+    extraversion will apply the rt patchset to only that copy.
 
 
 
@@ -478,8 +479,8 @@ OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 
     OT_KERNEL_LSMS -- Enable and set the order for LSM (Linux Security Modules)
 
-    Acceptable multi values: apparmor, bpf, integrity, landlock, loadpin, lockdown
-    safesetid, selinux, smack, tomoyo, yama.
+    Acceptable multi values: apparmor, bpf, integrity, landlock, loadpin,
+    lockdown safesetid, selinux, smack, tomoyo, yama.
 
     Acceptable general values:  auto, default, manual
       auto -- adds LSMs based on packages installed with default subsettings
@@ -494,8 +495,8 @@ OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
     listing.
 
     For a newly generated kernel .config with not set OT_KERNEL_LSMS, it will
-    apply auto setting.  For previous installs with OT_KERNEL_LSMS is not set, it
-    will apply manual.
+    apply auto setting.  For previous installs with OT_KERNEL_LSMS is not set,
+    it will apply manual.
 
 
 
@@ -544,7 +545,9 @@ OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
          Example:
 
 # Scramble path if possible: \
-OT_KERNEL_PRIVATE_KEY=$(dd if=/dev/urandom of=/dev/stdout bs=255 count=1 status=none | base64 | tr "\n" " " | sed -e "s| ||g")
+OT_KERNEL_PRIVATE_KEY=$(dd if=/dev/urandom of=/dev/stdout bs=255 count=1 \
+	status=none \
+	| base64 | tr "\n" " " | sed -e "s| ||g")
 
 # Remove the variable from memory: \
 unset OT_KERNEL_PRIVATE_KEY
@@ -561,20 +564,21 @@ unset OT_KERNEL_PRIVATE_KEY
     forced default on to prevent any unprepared disruption.  See
     OT_KERNEL_PRIVATE_KEY section also.
 
-      IMPORTANT:
+         IMPORTANT:
 
-      When OT_KERNEL_SIGN_MODULES is enabled, if the OT_KERNEL_PRIVATE_KEY and
-      OT_KERNEL_SHARED_KEY are not specified, the kernel will autogenerate keys
-      in the certs folder of the kernel sources.  These keys will be installed
-      but the private key should be copied to a secure place such a encrypted
-      store contained in a keychain or by steganography; and then the installed
-      private key .pem file in the certs folder should be cryptographically
-      securely destroyed with shred (or any secure delete program).  This is to
-      prevent recovery and reuse of they private key by an untrusted user.  The
-      private key temporarily stored in the certs folder should be destroyed
-      in within 24 hours.  Each build configuration with have a unique
-      private-shared keys if using autogenerated, so all keys need to be
-      stored and properly labeled to prevent mixup.
+         When OT_KERNEL_SIGN_MODULES is enabled, if the OT_KERNEL_PRIVATE_KEY
+         and OT_KERNEL_SHARED_KEY are not specified, the kernel will
+         autogenerate keys in the certs folder of the kernel sources.  These
+         keys will be installed but the private key should be copied to a
+         secure place such a encrypted store contained in a keychain or by
+         steganography; and then the installed private key .pem file in the
+         certs folder should be cryptographically securely destroyed with shred
+         (or any secure delete program).  This is to prevent recovery and reuse
+         of they private key by an untrusted user.  The private key temporarily
+         stored in the certs folder should be destroyed in within 24 hours.
+         Each build configuration with have a unique private-shared keys if
+         using autogenerated, so all keys need to be stored and properly labeled
+         to prevent mixup.
 
 
 
@@ -589,9 +593,10 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_TARGET_TRIPLE -- The target triple (CHOST) to use when cross-compiling.  Use the
-		expanded CHOST value.  (This can be not set but then defaults to ${CHOST})
-		If you put just CHOST or just CBUILD it will expand for each case.
+    OT_KERNEL_TARGET_TRIPLE -- The target triple (CHOST) to use when
+    cross-compiling.  Use the expanded CHOST value.  (This can be not set but
+    then defaults to ${CHOST}.)  If you put just CHOST or just CBUILD it will
+    expand for each case.
 
 
 
