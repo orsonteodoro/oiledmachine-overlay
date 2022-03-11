@@ -177,14 +177,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       preference.  This setting is only allowed for systemwide GCC LTO due
       to IR (Intermediate Representation) compatibility or disabled LTO
       systemwide.</flag>
-    <flag name="system-libcxx">
-      Build against the system's libc++ instead of the system default libstdc++.
-      This option is not recommended because there is no protections if you
-      use the ebuild from the distro's overlay.  Use the one in the
-      oiledmachine-overlay instead which allows to apply cfi-vcall, Full RELRO,
-      noexecstack, SSP.  This setting is only allowed for systemwide
-      Clang LTO or systemwide Clang CFI due to IR (Intermediate Representation)
-      compatibility or disabled LTO systemwide.</flag>
     <flag name="system-ffmpeg">Use system ffmpeg instead of the bundled
       one</flag>
     <flag name="system-icu">Use system icu instead of the bundled one</flag>
