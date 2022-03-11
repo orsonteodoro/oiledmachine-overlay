@@ -792,7 +792,7 @@ gen_bdepend_llvm() {
 	"
 }
 
-ACOMMON_X_DEPEND="
+COMMON_X_DEPEND="
 	x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
 	x11-libs/libXcomposite:=[${MULTILIB_USEDEP}]
 	x11-libs/libXcursor:=[${MULTILIB_USEDEP}]
@@ -806,20 +806,20 @@ ACOMMON_X_DEPEND="
 	virtual/opengl[${MULTILIB_USEDEP}]
 "
 
-ACOMMON_SNAPSHOT_DEPEND="
+COMMON_SNAPSHOT_DEPEND="
 	system-icu? ( >=dev-libs/icu-69.1:=[${MULTILIB_USEDEP}] )
-	>=dev-libs/libxml2-2.9.4-r3:=[icu,${PYTHON_USEDEP}]
+	>=dev-libs/libxml2-2.9.4-r3:=[icu,${MULTILIB_USEDEP}]
 	dev-libs/nspr:=[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.26:=[${MULTILIB_USEDEP}]
 	system-libstdcxx? ( >=dev-libs/re2-0.2019.08.01:=[${MULTILIB_USEDEP}] )
 	dev-libs/libxslt:=[${MULTILIB_USEDEP}]
 	media-libs/fontconfig:=[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.11.0-r1:=[${MULTILIB_USEDEP}]
-	system-harfbuzz? ( >=media-libs/harfbuzz-3:0=[icu(-),${PYTHON_USEDEP}] )
+	system-harfbuzz? ( >=media-libs/harfbuzz-3:0=[icu(-),${MULTILIB_USEDEP}] )
 	media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
-	system-png? ( media-libs/libpng:=[-apng,${PYTHON_USEDEP}] )
+	system-png? ( media-libs/libpng:=[-apng,${MULTILIB_USEDEP}] )
 	>=media-libs/libwebp-0.4.0:=[${MULTILIB_USEDEP}]
-	media-libs/mesa:=[gbm(+),${PYTHON_USEDEP}]
+	media-libs/mesa:=[gbm(+),${MULTILIB_USEDEP}]
 	proprietary-codecs? ( >=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}] )
 	sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	x11-libs/libdrm:=[${MULTILIB_USEDEP}]
@@ -828,7 +828,7 @@ ACOMMON_SNAPSHOT_DEPEND="
 		>=media-libs/alsa-lib-1.0.19:=[${MULTILIB_USEDEP}]
 		pulseaudio? ( media-sound/pulseaudio:=[${MULTILIB_USEDEP}] )
 		kerberos? ( virtual/krb5[${MULTILIB_USEDEP}] )
-		vaapi? ( >=x11-libs/libva-${LIBVA_V}:=[X,drm,${PYTHON_USEDEP}] )
+		vaapi? ( >=x11-libs/libva-${LIBVA_V}:=[X,drm,${MULTILIB_USEDEP}] )
 		x11-libs/libX11:=[${MULTILIB_USEDEP}]
 		x11-libs/libXext:=[${MULTILIB_USEDEP}]
 		x11-libs/libxcb:=[${MULTILIB_USEDEP}]
@@ -840,7 +840,7 @@ ACOMMON_SNAPSHOT_DEPEND="
 	)
 "
 
-ACOMMON_DEPEND="
+COMMON_DEPEND="
 	${COMMON_SNAPSHOT_DEPEND}
 	${LIBVA_DEPEND}
 	app-arch/bzip2:=[${MULTILIB_USEDEP}]
@@ -848,15 +848,15 @@ ACOMMON_DEPEND="
 	system-ffmpeg? (
 		>=media-video/ffmpeg-${FFMPEG_V}:=[${MULTILIB_USEDEP}]
 		|| (
-			>=media-video/ffmpeg-${FFMPEG_V}[-samba,${PYTHON_USEDEP}]
-			>=net-fs/samba-4.5.10-r1[-debug(-),${PYTHON_USEDEP}]
+			>=media-video/ffmpeg-${FFMPEG_V}[-samba,${MULTILIB_USEDEP}]
+			>=net-fs/samba-4.5.10-r1[-debug(-),${MULTILIB_USEDEP}]
 		)
 		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
 	)
-	net-misc/curl[ssl,${PYTHON_USEDEP}]
+	net-misc/curl[ssl,${MULTILIB_USEDEP}]
 	sys-apps/dbus:=[${MULTILIB_USEDEP}]
 	media-libs/flac:=[${MULTILIB_USEDEP}]
-	sys-libs/zlib:=[minizip,${PYTHON_USEDEP}]
+	sys-libs/zlib:=[minizip,${MULTILIB_USEDEP}]
 	!headless? (
 		${COMMON_X_DEPEND}
 		>=app-accessibility/at-spi2-atk-2.26:2[${MULTILIB_USEDEP}]
@@ -873,21 +873,21 @@ ACOMMON_DEPEND="
 		x11-libs/pango:=[${MULTILIB_USEDEP}]
 	)
 "
-ARDEPEND="${COMMON_DEPEND}
+RDEPEND="${COMMON_DEPEND}
 	!headless? (
 		|| (
-			x11-libs/gtk+:3[X,wayland?,${PYTHON_USEDEP}]
-			gui-libs/gtk:4[X,wayland?,${PYTHON_USEDEP}]
+			x11-libs/gtk+:3[X,wayland?,${MULTILIB_USEDEP}]
+			gui-libs/gtk:4[X,wayland?]
 		)
 	)
 	x11-misc/xdg-utils
 	virtual/ttf-fonts
 	selinux? ( sec-policy/selinux-chromium )
 "
-ADEPEND="${COMMON_DEPEND}
+DEPEND="${COMMON_DEPEND}
 	!headless? (
-		gtk4? ( gui-libs/gtk:4[X,wayland?,${PYTHON_USEDEP}] )
-		!gtk4? ( x11-libs/gtk+:3[X,wayland?,${PYTHON_USEDEP}] )
+		gtk4? ( gui-libs/gtk:4[X,wayland?,${MULTILIB_USEDEP}] )
+		!gtk4? ( x11-libs/gtk+:3[X,wayland?] )
 	)
 "
 BDEPEND="
