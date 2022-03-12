@@ -803,12 +803,14 @@ src_compile() {
 				PGO_PHASE="pg0" # N0 PGO
 				_configure
 				_compile
+				_install
 			fi
 			_cleanup
 		else
 			PGO_PHASE="pg0" # N0 PGO
 			_configure
 			_compile
+			_install
 		fi
 	}
 	multilib_foreach_abi compile_abi

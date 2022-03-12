@@ -67,11 +67,13 @@ PDEPEND="
 	default-libcxx? ( >=sys-libs/libcxx-${PV} )
 	default-lld? ( sys-devel/lld )"
 
-LLVM_COMPONENTS=( clang clang-tools-extra cmake )
+LLVM_COMPONENTS=(
+	clang clang-tools-extra cmake
+	llvm/lib/Transforms/Hello
+)
 LLVM_MANPAGES=build
 LLVM_TEST_COMPONENTS=(
 	llvm/lib/Testing/Support
-	llvm/lib/Transforms/Hello
 	llvm/utils/{lit,llvm-lit,unittest}
 	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
 )
@@ -1028,12 +1030,14 @@ src_compile() {
 				PGO_PHASE="pg0" # N0 PGO
 				_configure
 				_compile
+				_install
 			fi
 			_cleanup
 		else
 			PGO_PHASE="pg0" # N0 PGO
 			_configure
 			_compile
+			_install
 		fi
 	}
 	multilib_foreach_abi compile_abi
