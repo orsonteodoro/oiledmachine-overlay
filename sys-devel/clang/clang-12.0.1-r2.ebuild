@@ -119,9 +119,11 @@ eerror
 		die
 	fi
 	if tc-is-gcc ; then
-		local gcc_slot=$(best_version "sys-devel/gcc" | cut -f 3- -d "-")
+		local gcc_slot=$(best_version "sys-devel/gcc" \
+			| sed -e "s|sys-devel/gcc-||g")
 		gcc_slot=$(ver_cut 1-3 ${gcc_slot})
-		if (( $(ver_cut 1 ${gcc_slot}) != $(gcc-major-version) )) ; then
+		# gcc-major-version is broken with gcc hardened 11.2.1_p20220115
+		if (( $(ver_cut 1 ${gcc_slot}) != $(ver_cut 1 $(_gcc_fullversion)) )) ; then
 # Prevent: undefined reference to `std::__throw_bad_array_new_length()'
 ewarn
 ewarn "Detected not using latest gcc."
@@ -403,6 +405,10 @@ setup_clang() {
 
 src_configure() { :; }
 
+_gcc_fullversion() {
+	gcc --version | head -n 1 | grep -o -E -e "[0-9_p.]+" | head -n 1
+}
+
 _configure() {
 	einfo "Called _configure()"
 	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
@@ -413,7 +419,7 @@ _configure() {
 	# TODO:  Add GCC-10 and below checks to add exceptions to -O* flag downgrading.
 	# Leave a note if you know the commit that fixes the internal compiler error below.
 	if tc-is-gcc && ( \
-		( ver_test $(gcc-fullversion) -lt 11.2.1_p20220112 ) \
+		( ver_test $(_gcc_fullversion) -lt 11.2.1_p20220112 ) \
 	)
 	then
 		# Build time bug with gcc 10.3.0, 11.2.0:
