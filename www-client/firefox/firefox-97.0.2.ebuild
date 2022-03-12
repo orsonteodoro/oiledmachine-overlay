@@ -2,14 +2,14 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
-# with update sync updated with 96.0.2 ebuild.
+# with update sync updated with 97.0.2 ebuild.
 # Revisions may change in the oiledmachine-overlay.
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-97-patches-02j.tar.xz"
+FIREFOX_PATCHSET="firefox-97-patches-03j.tar.xz"
 
 LLVM_MAX_SLOT=13
 
@@ -603,19 +603,9 @@ pkg_setup() {
 			[[ -n ${version_lld} ]] && version_lld=$(ver_cut 1 "${version_lld}")
 			[[ -z ${version_lld} ]] && die "Failed to read ld.lld version!"
 
-			# temp fix for https://bugs.gentoo.org/768543
-			# we can assume that rust 1.{49,50}.0 always uses llvm 11
-			local version_rust=$(rustc -Vv 2>/dev/null | grep -F -- 'release:' | awk '{ print $2 }')
-			[[ -n ${version_rust} ]] && version_rust=$(ver_cut 1-2 "${version_rust}")
-			[[ -z ${version_rust} ]] && die "Failed to read version from rustc!"
-
-			if ver_test "${version_rust}" -ge "1.49" && ver_test "${version_rust}" -le "1.50" ; then
-				local version_llvm_rust="11"
-			else
-				local version_llvm_rust=$(rustc -Vv 2>/dev/null | grep -F -- 'LLVM version:' | awk '{ print $3 }')
-				[[ -n ${version_llvm_rust} ]] && version_llvm_rust=$(ver_cut 1 "${version_llvm_rust}")
-				[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
-			fi
+			local version_llvm_rust=$(rustc -Vv 2>/dev/null | grep -F -- 'LLVM version:' | awk '{ print $3 }')
+			[[ -n ${version_llvm_rust} ]] && version_llvm_rust=$(ver_cut 1 "${version_llvm_rust}")
+			[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
 
 			if ver_test "${version_lld}" -lt "${version_llvm_rust}" ; then
 				eerror "Rust is using LLVM version ${version_llvm_rust} but ld.lld version belongs to LLVM version ${version_lld}."
@@ -800,7 +790,6 @@ eerror
 
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Only partial patching was done because Gentoo doesn't support multilib
@@ -855,11 +844,11 @@ src_prepare() {
 
 	xdg_src_prepare
 
-	if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
+#	if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
 		pushd "${S}" || die
 		eapply "${FILESDIR}/multiabi/firefox-78.0.2-opus-fast-math.patch"
 		popd || die
-	fi
+#	fi
 
 	verify_license_fingerprint
 
@@ -1122,12 +1111,7 @@ multilib_src_configure() {
 		else
 			# ThinLTO is currently broken, see bmo#1644409
 			mozconfig_add_options_ac '+lto' --enable-lto=full
-			if tc-ld-is-gold; then
-				mozconfig_add_options_ac "linker is set to gold" --enable-linker=gold
-				export MOZ_FORCE_GOLD=1
-			else
-				mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
-			fi
+			mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
 		fi
 
 		if use pgo ; then
@@ -1144,12 +1128,7 @@ multilib_src_configure() {
 			# This is upstream's default
 			mozconfig_add_options_ac "forcing ld=lld due to USE=clang" --enable-linker=lld
 		else
-			if tc-ld-is-gold; then
-				mozconfig_add_options_ac "linker is set to gold" --enable-linker=gold
-				export MOZ_FORCE_GOLD=1
-			else
-				mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
-			fi
+			mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
 		fi
 	fi
 
@@ -1244,7 +1223,7 @@ multilib_src_configure() {
 			if use clang ; then
 				# Nothing to do
 				:;
-			elif tc-ld-is-gold || use lto ; then
+			elif use lto ; then
 				append-ldflags -Wl,--no-keep-memory
 			else
 				append-ldflags -Wl,--no-keep-memory -Wl,--reduce-memory-overheads

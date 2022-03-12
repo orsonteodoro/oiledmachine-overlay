@@ -1,18 +1,18 @@
---- firefox-97.0.ebuild.orig	2022-02-11 20:42:58.000000000 -0800
-+++ firefox-97.0.ebuild	2022-02-12 00:58:16.836287463 -0800
+--- firefox-97.0.2.ebuild.orig	2022-03-05 00:40:05.000000000 -0800
++++ firefox-97.0.2.ebuild	2022-03-11 15:56:57.426332353 -0800
 @@ -1,6 +1,12 @@
  # Copyright 1999-2022 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
  
 +# Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
-+# with update sync updated with 96.0.2 ebuild.
++# with update sync updated with 97.0.2 ebuild.
 +# Revisions may change in the oiledmachine-overlay.
 +
 +# Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
 +
  EAPI="7"
  
- FIREFOX_PATCHSET="firefox-97-patches-02j.tar.xz"
+ FIREFOX_PATCHSET="firefox-97-patches-03j.tar.xz"
 @@ -40,6 +46,7 @@ MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DIST
  inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info \
  	llvm multiprocessing pax-utils python-any-r1 toolchain-funcs \
@@ -417,16 +417,16 @@
  	if [[ ${MERGE_TYPE} != binary ]] ; then
  		if use pgo ; then
  			if ! has userpriv ${FEATURES} ; then
-@@ -467,7 +617,7 @@ pkg_setup() {
- 				[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
- 			fi
+@@ -457,7 +607,7 @@ pkg_setup() {
+ 			[[ -n ${version_llvm_rust} ]] && version_llvm_rust=$(ver_cut 1 "${version_llvm_rust}")
+ 			[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
  
 -			if ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
 +			if ver_test "${version_lld}" -lt "${version_llvm_rust}" ; then
  				eerror "Rust is using LLVM version ${version_llvm_rust} but ld.lld version belongs to LLVM version ${version_lld}."
  				eerror "You will be unable to link ${CATEGORY}/${PN}. To proceed you have the following options:"
  				eerror "  - Manually switch rust version using 'eselect rust' to match used LLVM version"
-@@ -559,6 +709,40 @@ pkg_setup() {
+@@ -549,6 +699,40 @@ pkg_setup() {
  	CONFIG_CHECK="~SECCOMP"
  	WARNING_SECCOMP="CONFIG_SECCOMP not set! This system will be unable to play DRM-protected content."
  	linux-info_pkg_setup
@@ -467,7 +467,7 @@
  }
  
  src_unpack() {
-@@ -573,15 +757,58 @@ src_unpack() {
+@@ -563,15 +747,57 @@ src_unpack() {
  		if [[ ${_src_file} == *.xpi ]]; then
  			cp "${DISTDIR}/${_src_file}" "${_lp_dir}" || die "Failed to copy '${_src_file}' to '${_lp_dir}'!"
  		else
@@ -514,7 +514,6 @@
 +
  src_prepare() {
  	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
-+
  	eapply "${WORKDIR}/firefox-patches"
  
 +	# Only partial patching was done because Gentoo doesn't support multilib
@@ -526,7 +525,7 @@
  	# Allow user to apply any additional patches without modifing ebuild
  	eapply_user
  
-@@ -600,11 +827,11 @@ src_prepare() {
+@@ -590,11 +816,11 @@ src_prepare() {
  		"${S}"/intl/icu_sources_data.py \
  		|| die "sed failed to set num_cores"
  
@@ -543,7 +542,7 @@
  
  	sed -i \
  		-e 's/ccache_stats = None/return None/' \
-@@ -617,9 +844,9 @@ src_prepare() {
+@@ -607,9 +833,9 @@ src_prepare() {
  	# Clearing checksums where we have applied patches
  	moz_clear_vendor_checksums target-lexicon-0.9.0
  
@@ -556,16 +555,16 @@
  
  	# Write API keys to disk
  	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
-@@ -627,9 +854,71 @@ src_prepare() {
+@@ -617,9 +843,71 @@ src_prepare() {
  	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
  
  	xdg_src_prepare
 +
-+	if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
++#	if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
 +		pushd "${S}" || die
 +		eapply "${FILESDIR}/multiabi/firefox-78.0.2-opus-fast-math.patch"
 +		popd || die
-+	fi
++#	fi
 +
 +	verify_license_fingerprint
 +
@@ -629,7 +628,7 @@
  	# Show flags set at the beginning
  	einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
  	einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
-@@ -637,14 +926,15 @@ src_configure() {
+@@ -627,14 +915,15 @@ src_configure() {
  	einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
  	einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
  
@@ -647,7 +646,7 @@
  		NM=llvm-nm
  		RANLIB=llvm-ranlib
  	elif ! use clang && ! tc-is-gcc ; then
-@@ -652,8 +942,8 @@ src_configure() {
+@@ -642,8 +931,8 @@ src_configure() {
  		have_switched_compiler=yes
  		einfo "Enforcing the use of gcc due to USE=-clang ..."
  		AR=gcc-ar
@@ -658,7 +657,7 @@
  		NM=gcc-nm
  		RANLIB=gcc-ranlib
  	fi
-@@ -668,14 +958,14 @@ src_configure() {
+@@ -658,14 +947,14 @@ src_configure() {
  	export HOST_CC="$(tc-getBUILD_CC)"
  	export HOST_CXX="$(tc-getBUILD_CXX)"
  	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
@@ -677,7 +676,7 @@
  
  	# python/mach/mach/mixin/process.py fails to detect SHELL
  	export SHELL="${EPREFIX}/bin/bash"
-@@ -683,8 +973,8 @@ src_configure() {
+@@ -673,8 +962,8 @@ src_configure() {
  	# Set state path
  	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
  
@@ -688,7 +687,7 @@
  
  	# Initialize MOZCONFIG
  	mozconfig_add_options_ac '' --enable-application=browser
-@@ -706,28 +996,34 @@ src_configure() {
+@@ -696,28 +985,34 @@ src_configure() {
  		--enable-release \
  		--enable-system-ffi \
  		--enable-system-pixman \
@@ -728,7 +727,7 @@
  		mozconfig_add_options_ac '' --enable-rust-simd
  	fi
  
-@@ -740,38 +1036,38 @@ src_configure() {
+@@ -730,38 +1025,38 @@ src_configure() {
  		mozconfig_add_options_ac '' --enable-sandbox
  	fi
  
@@ -776,7 +775,7 @@
  	else
  		einfo "Building without Mozilla API key ..."
  	fi
-@@ -907,13 +1203,13 @@ src_configure() {
+@@ -887,13 +1182,13 @@ src_configure() {
  		fi
  	fi
  
@@ -792,7 +791,7 @@
  				|| die
  		fi
  	fi
-@@ -984,7 +1280,18 @@ src_configure() {
+@@ -964,7 +1259,18 @@ src_configure() {
  	mozconfig_add_options_ac 'Gentoo default' "XARGS=${EPREFIX}/usr/bin/xargs"
  
  	# Set build dir
@@ -812,7 +811,7 @@
  
  	# Show flags we will use
  	einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
-@@ -1018,7 +1325,16 @@ src_configure() {
+@@ -998,7 +1304,16 @@ src_configure() {
  	./mach configure || die
  }
  
@@ -830,7 +829,7 @@
  	local virtx_cmd=
  
  	if use pgo ; then
-@@ -1036,12 +1352,179 @@ src_compile() {
+@@ -1016,12 +1331,179 @@ src_compile() {
  		|| die
  }
  
@@ -1014,7 +1013,7 @@
  
  	DESTDIR="${D}" ./mach install || die
  
-@@ -1104,15 +1587,15 @@ src_install() {
+@@ -1084,15 +1566,15 @@ src_install() {
  	# Install geckodriver
  	if use geckodriver ; then
  		einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
@@ -1033,7 +1032,7 @@
  	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
  
  	insinto /usr/share/icons/hicolor/symbolic/apps
-@@ -1131,10 +1614,10 @@ src_install() {
+@@ -1111,10 +1593,10 @@ src_install() {
  	done
  
  	# Install menu
@@ -1047,7 +1046,7 @@
  	local icon="${PN}"
  	local use_wayland="false"
  
-@@ -1157,16 +1640,19 @@ src_install() {
+@@ -1137,16 +1619,19 @@ src_install() {
  
  	# Install wrapper script
  	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
@@ -1069,7 +1068,7 @@
  }
  
  pkg_preinst() {
-@@ -1264,4 +1750,19 @@ pkg_postinst() {
+@@ -1244,4 +1729,19 @@ pkg_postinst() {
  		elog "If you still want to be able to select between running Mozilla ${PN^}"
  		elog "on X11 or Wayland, you have to re-create these shortcuts on your own."
  	fi
