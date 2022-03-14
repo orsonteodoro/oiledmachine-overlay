@@ -4,7 +4,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake llvm llvm.org multilib multilib-minimal \
 	prefix python-single-r1 toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils
@@ -13,7 +13,7 @@ DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
 
 # Keep in sync with sys-devel/llvm
-ALL_LLVM_EXPERIMENTAL_TARGETS=( ARC VE )
+ALL_LLVM_EXPERIMENTAL_TARGETS=( ARC CSKY VE )
 ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM AVR BPF Hexagon Lanai Mips MSP430
 	NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 XCore
 	"${ALL_LLVM_EXPERIMENTAL_TARGETS[@]}" )
@@ -23,12 +23,11 @@ ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 # sorttable.js: MIT
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
-SLOT_MAJ="$(ver_cut 1)"
-SLOT="${SLOT_MAJ}/$(ver_cut 1-2)"
-#KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~x64-macos"  # The hardened default ON patches are in testing.
+SLOT="$(ver_cut 1)"
+KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x64-macos"
 IUSE="debug default-compiler-rt default-libcxx default-lld
-	doc +static-analyzer test xml ${ALL_LLVM_TARGETS[*]}"
-IUSE+=" +bootstrap experimental hardened lto pgo pgo_trainer_build_self pgo_trainer_test_suite r3"
+	doc llvm-libunwind +static-analyzer test xml ${ALL_LLVM_TARGETS[*]}"
+IUSE+=" +bootstrap hardened lto pgo pgo_trainer_build_self pgo_trainer_test_suite r3"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+="
@@ -40,13 +39,13 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 
 RDEPEND="
-	~sys-devel/llvm-${PV}:${SLOT_MAJ}=[debug=,${MULTILIB_USEDEP}]
+	~sys-devel/llvm-${PV}:${SLOT}=[debug=,${MULTILIB_USEDEP}]
 	static-analyzer? ( dev-lang/perl:* )
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	${PYTHON_DEPS}"
 for x in "${ALL_LLVM_TARGETS[@]}"; do
 	RDEPEND+="
-		${x}? ( ~sys-devel/llvm-${PV}:${SLOT_MAJ}[${x}] )"
+		${x}? ( ~sys-devel/llvm-${PV}:${SLOT}[${x}] )"
 done
 unset x
 
@@ -61,7 +60,11 @@ BDEPEND="
 PDEPEND="
 	sys-devel/clang-common
 	~sys-devel/clang-runtime-${PV}
-	default-compiler-rt? ( =sys-libs/compiler-rt-${PV%_*}* )
+	default-compiler-rt? (
+		=sys-libs/compiler-rt-${PV%_*}*
+		llvm-libunwind? ( sys-libs/llvm-libunwind )
+		!llvm-libunwind? ( sys-libs/libunwind )
+	)
 	default-libcxx? ( >=sys-libs/libcxx-${PV} )
 	default-lld? ( sys-devel/lld )"
 
@@ -72,11 +75,11 @@ LLVM_TEST_COMPONENTS=(
 	llvm/utils/{lit,llvm-lit,unittest}
 	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
 )
-LLVM_PATCHSET=11.1.0-1
+LLVM_PATCHSET=12.0.1
 PATCHES_HARDENED=(
 	"${FILESDIR}/clang-12.0.1-enable-PIE-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
-	"${FILESDIR}/clang-11.1.0-change-SSP-buffer-size-to-4.patch"
+	"${FILESDIR}/clang-12.0.1-change-SSP-buffer-size-to-4.patch"
 	"${FILESDIR}/clang-14.0.0.9999-set-_FORTIFY_SOURCE-to-2-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-version-info.patch"
@@ -84,7 +87,7 @@ PATCHES_HARDENED=(
 llvm.org_set_globals
 #if [[ ${PV} == *.9999 ]] ; then
 EGIT_REPO_URI_LLVM_TEST_SUITE="https://github.com/llvm/llvm-test-suite.git"
-EGIT_BRANCH_LLVM_TEST_SUITE="release/${SLOT_MAJ}.x"
+EGIT_BRANCH_LLVM_TEST_SUITE="release/${SLOT}.x"
 EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-${EGIT_BRANCH_LLVM_TEST_SUITE}}"
 #else
 #SRC_URI+="
@@ -108,12 +111,12 @@ EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-${EGIT_BRANCH_LLVM_T
 # multilib clang* libraries (not runtime, not wrappers).
 
 pkg_setup() {
-	LLVM_MAX_SLOT=${SLOT_MAJ} llvm_pkg_setup
+	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
 	python-single-r1_pkg_setup
-	if ! use bootstrap && ! has_version "clang:${SLOT_MAJ}" ; then
+	if ! use bootstrap && ! has_version "clang:${SLOT}" ; then
 eerror
 eerror "Disabling the bootstrap USE flag requires a previous install of"
-eerror "clang:${SLOT_MAJ}.  Enable the bootstrap USE flag to fix this problem."
+eerror "clang:${SLOT}.  Enable the bootstrap USE flag to fix this problem."
 eerror
 		die
 	fi
@@ -166,7 +169,7 @@ ewarn "metadata.xml to see how to accomplish this."
 ewarn
 
 	if [[ "${CC}" == "clang" ]] ; then
-		local clang_path="clang-${SLOT_MAJ}"
+		local clang_path="clang-${SLOT}"
 		if which "${clang_path}" 2>/dev/null 1>/dev/null && "${clang_path}" --help \
 			| grep "symbol lookup error" ; then
 eerror
@@ -215,11 +218,7 @@ src_prepare() {
 	if use hardened ; then
 		ewarn "The hardened USE flag and associated patches are still in testing."
 		eapply ${PATCHES_HARDENED[@]}
-		if use experimental ; then
-			ewarn "The experimental USE flag may break your system."
-			ewarn "Patches are totally not recommended if you are not a developer or expert."
-			eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"
-		fi
+		eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
 		if use x86 || use amd64 ; then
 			eapply "${FILESDIR}/clang-12.0.1-enable-FCP-by-default.patch"
@@ -232,8 +231,6 @@ src_prepare() {
 		sed -i -e "s|__HARDENED_FEATURES__|${hardened_features}|g" \
 			lib/Driver/Driver.cpp || die
 	fi
-
-	mv ../clang-tools-extra tools/extra || die
 
 	# add Gentoo Portage Prefix for Darwin (see prefix-dirs.patch)
 	eprefixify \
@@ -399,8 +396,8 @@ setup_gcc() {
 }
 
 setup_clang() {
-	export CC=clang-${SLOT_MAJ}
-	export CXX=clang++-${SLOT_MAJ}
+	export CC=clang-${SLOT}
+	export CXX=clang++-${SLOT}
 	autofix_flags # translate retpoline, strip unsupported flags during switch
 }
 
@@ -507,10 +504,14 @@ _configure() {
 		# furthermore, it provides only syntax checking
 		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
 
+		# disable using CUDA to autodetect GPU, just build for all
+		-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
+
 		# override default stdlib and rtlib
 		-DCLANG_DEFAULT_CXX_STDLIB=$(usex default-libcxx libc++ "")
 		-DCLANG_DEFAULT_RTLIB=$(usex default-compiler-rt compiler-rt "")
 		-DCLANG_DEFAULT_LINKER=$(usex default-lld lld "")
+		-DCLANG_DEFAULT_UNWINDLIB=$(usex default-compiler-rt libunwind "")
 
 		-DCLANG_ENABLE_ARCMT=$(usex static-analyzer)
 		-DCLANG_ENABLE_STATIC_ANALYZER=$(usex static-analyzer)
@@ -535,8 +536,7 @@ _configure() {
 			)
 		fi
 		mycmakeargs+=(
-			# normally copied from LLVM_INCLUDE_DOCS but the latter
-			# is lacking value in stand-alone builds
+			-DLLVM_EXTERNAL_CLANG_TOOLS_EXTRA_SOURCE_DIR="${WORKDIR}"/clang-tools-extra
 			-DCLANG_INCLUDE_DOCS=${build_docs}
 			-DCLANG_TOOLS_EXTRA_INCLUDE_DOCS=${build_docs}
 		)
@@ -564,12 +564,12 @@ _configure() {
 	local slot=""
 	if use pgo ; then
 		if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
-			slot="${SLOT_MAJ}"
+			slot="${SLOT}"
 		else
 			slot="${PGO_PHASE}"
 		fi
 	else
-		slot="${SLOT_MAJ}"
+		slot="${SLOT}"
 	fi
 	mycmakeargs+=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${slot}"
@@ -846,7 +846,7 @@ src_install() {
 	# Move runtime headers to /usr/lib/clang, where they belong
 	mv "${ED}"/usr/include/clangrt "${ED}"/usr/lib/clang || die
 	# move (remaining) wrapped headers back
-	mv "${ED}"/usr/include "${ED}"/usr/lib/llvm/${SLOT_MAJ}/include || die
+	mv "${ED}"/usr/include "${ED}"/usr/lib/llvm/${SLOT}/include || die
 
 	# Apply CHOST and version suffix to clang tools
 	# note: we use two version components here (vs 3 in runtime path)
@@ -866,9 +866,9 @@ src_install() {
 	# - clang, clang++, clang-cl, clang-cpp -> clang*-X
 	# also in CHOST variant
 	for i in "${clang_tools[@]:1}"; do
-		rm "${ED}/usr/lib/llvm/${SLOT_MAJ}/bin/${i}" || die
-		dosym "clang-${clang_version}" "/usr/lib/llvm/${SLOT_MAJ}/bin/${i}-${clang_version}"
-		dosym "${i}-${clang_version}" "/usr/lib/llvm/${SLOT_MAJ}/bin/${i}"
+		rm "${ED}/usr/lib/llvm/${SLOT}/bin/${i}" || die
+		dosym "clang-${clang_version}" "/usr/lib/llvm/${SLOT}/bin/${i}-${clang_version}"
+		dosym "${i}-${clang_version}" "/usr/lib/llvm/${SLOT}/bin/${i}"
 	done
 
 	# now create target symlinks for all supported ABIs
@@ -876,9 +876,9 @@ src_install() {
 		local abi_chost=$(get_abi_CHOST "${abi}")
 		for i in "${clang_tools[@]}"; do
 			dosym "${i}-${clang_version}" \
-				"/usr/lib/llvm/${SLOT_MAJ}/bin/${abi_chost}-${i}-${clang_version}"
+				"/usr/lib/llvm/${SLOT}/bin/${abi_chost}-${i}-${clang_version}"
 			dosym "${abi_chost}-${i}-${clang_version}" \
-				"/usr/lib/llvm/${SLOT_MAJ}/bin/${abi_chost}-${i}"
+				"/usr/lib/llvm/${SLOT}/bin/${abi_chost}-${i}"
 		done
 	done
 
@@ -905,10 +905,10 @@ _install() {
 		slot="${PGO_PHASE}"
 	elif [[ "${PGO_PHASE}" =~ ("pgo") ]] ; then
 		einfo "Installing sandboxed image of ${EMESSAGE_INSTALL[${PGO_PHASE}]} for ${ABI}"
-		slot="${SLOT_MAJ}"
+		slot="${SLOT}"
 	else
 		einfo "Installing final image for ${ABI}"
-		slot="${SLOT_MAJ}"
+		slot="${SLOT}"
 	fi
 
 	# move headers to /usr/include for wrapping & ABI mismatch checks
@@ -925,15 +925,15 @@ multilib_src_install() {
 multilib_src_install_all() {
 	python_fix_shebang "${ED}"
 	if use static-analyzer; then
-		python_optimize "${ED}"/usr/lib/llvm/${SLOT_MAJ}/share/scan-view
+		python_optimize "${ED}"/usr/lib/llvm/${SLOT}/share/scan-view
 	fi
 
-	docompress "/usr/lib/llvm/${SLOT_MAJ}/share/man"
+	docompress "/usr/lib/llvm/${SLOT}/share/man"
 	llvm_install_manpages
 	# match 'html' non-compression
 	use doc && docompress -x "/usr/share/doc/${PF}/tools-extra"
 	# +x for some reason; TODO: investigate
-	use static-analyzer && fperms a-x "/usr/lib/llvm/${SLOT_MAJ}/share/man/man1/scan-build.1"
+	use static-analyzer && fperms a-x "/usr/lib/llvm/${SLOT}/share/man/man1/scan-build.1"
 }
 
 pkg_postinst() {
@@ -942,7 +942,7 @@ pkg_postinst() {
 	fi
 
 	elog "You can find additional utility scripts in:"
-	elog "  ${EROOT}/usr/lib/llvm/${SLOT_MAJ}/share/clang"
+	elog "  ${EROOT}/usr/lib/llvm/${SLOT}/share/clang"
 	elog "Some of them are vim integration scripts (with instructions inside)."
 	elog "The run-clang-tidy.py script requires the following additional package:"
 	elog "  dev-python/pyyaml"

@@ -17,10 +17,10 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
-#KEYWORDS=""  # The hardened default ON patches are in testing.
+KEYWORDS=""
 IUSE="debug default-compiler-rt default-libcxx default-lld
 	doc llvm-libunwind +static-analyzer test xml"
-IUSE+=" bolt +bootstrap experimental hardened jemalloc lto pgo pgo_trainer_build_self pgo_trainer_test_suite tcmalloc r4"
+IUSE+=" bolt +bootstrap hardened jemalloc lto pgo pgo_trainer_build_self pgo_trainer_test_suite tcmalloc r4"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
 	?? ( jemalloc tcmalloc )
@@ -115,11 +115,6 @@ EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-HEAD}"
 # multilib clang* libraries (not runtime, not wrappers).
 
 pkg_setup() {
-einfo
-einfo "This is the stable modded ebuild."
-einfo
-einfo "For the experimental modded ebuild with BOLT see =${PN}-${PV}-r1 instead."
-einfo
 	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
 	python-single-r1_pkg_setup
 	if ! use bootstrap && ! has_version "clang:${SLOT}" ; then
@@ -246,11 +241,7 @@ src_prepare() {
 	if use hardened ; then
 		ewarn "The hardened USE flag and associated patches are still in testing."
 		eapply ${PATCHES_HARDENED[@]}
-		if use experimental ; then
-			ewarn "The experimental USE flag may break your system."
-			ewarn "Patches are totally not recommended if you are not a developer or expert."
-			eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"
-		fi
+		eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
 		if use x86 || use amd64 ; then
 			eapply "${FILESDIR}/clang-12.0.1-enable-FCP-by-default.patch"

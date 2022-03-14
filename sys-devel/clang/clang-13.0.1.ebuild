@@ -17,10 +17,10 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
-#KEYWORDS="amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos" # The hardened default ON patches are in testing.
+KEYWORDS="amd64 arm arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos"
 IUSE="debug default-compiler-rt default-libcxx default-lld
 	doc llvm-libunwind +static-analyzer test xml"
-IUSE+=" +bootstrap experimental hardened lto pgo pgo_trainer_build_self pgo_trainer_test_suite r3"
+IUSE+=" +bootstrap hardened lto pgo pgo_trainer_build_self pgo_trainer_test_suite r3"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
 	hardened? ( !test )
@@ -206,11 +206,7 @@ src_prepare() {
 	if use hardened ; then
 		ewarn "The hardened USE flag and associated patches are still in testing."
 		eapply ${PATCHES_HARDENED[@]}
-		if use experimental ; then
-			ewarn "The experimental USE flag may break your system."
-			ewarn "Patches are totally not recommended if you are not a developer or expert."
-			eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"
-		fi
+		eapply "${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"
 		local hardened_features="PIE, SSP, _FORITIFY_SOURCE=2, Full RELRO"
 		if use x86 || use amd64 ; then
 			eapply "${FILESDIR}/clang-12.0.1-enable-FCP-by-default.patch"
