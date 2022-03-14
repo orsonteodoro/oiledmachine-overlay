@@ -13,7 +13,7 @@ HOMEPAGE="https://libcxx.llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
 KEYWORDS=""
-IUSE="elibc_glibc elibc_musl +libcxxabi +libunwind static-libs test"
+IUSE="+libcxxabi +libunwind static-libs test"
 IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack r9"
 REQUIRED_USE="libunwind? ( libcxxabi )"
 REQUIRED_USE+="
@@ -108,11 +108,9 @@ BDEPEND+="
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)"
 
-DOCS=( CREDITS.TXT )
 PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
-S="${WORKDIR}"
 
-LLVM_COMPONENTS=( libcxx{,abi} llvm/{cmake,utils/llvm-lit} cmake )
+LLVM_COMPONENTS=( runtimes libcxx{,abi} llvm/{cmake,utils/llvm-lit} cmake )
 LLVM_PATCHSET=9999-1
 llvm.org_set_globals
 
@@ -263,18 +261,26 @@ _configure_abi() {
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
-		-DLIBCXX_LIBDIR_SUFFIX=${libdir#lib}
+		-DPython3_EXECUTABLE="${PYTHON}"
+		-DLLVM_ENABLE_RUNTIMES=libcxx
+		-DLLVM_INCLUDE_TESTS=OFF
+		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
+
+		#
+		#
 		-DLIBCXX_CXX_ABI=${cxxabi}
 		-DLIBCXX_CXX_ABI_INCLUDE_PATHS=${cxxabi_incs}
 		# we're using our own mechanism for generating linker scripts
 		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
 		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
 		-DLIBCXX_HAS_GCC_S_LIB=${want_gcc_s}
+		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
 		-DLIBCXX_USE_COMPILER_RT=${want_compiler_rt}
 		-DLIBCXX_HAS_ATOMIC_LIB=${want_gcc_s}
 		-DLIBCXX_TARGET_TRIPLE="${CHOST}"
 		-DCMAKE_SHARED_LINKER_FLAGS="${extra_libs[*]} ${LDFLAGS}"
+
 		-DLTO=$(usex lto)
 		-DNOEXECSTACK=$(usex hardened)
 	)
