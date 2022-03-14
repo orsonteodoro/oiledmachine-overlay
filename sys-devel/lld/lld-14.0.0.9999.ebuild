@@ -11,7 +11,7 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA"
 SLOT="0"
-#KEYWORDS="" # Still testing Full RELRO default ON.
+KEYWORDS=""
 IUSE="debug test"
 IUSE+=" hardened"
 REQUIRED_USE+=" hardened? ( !test )"

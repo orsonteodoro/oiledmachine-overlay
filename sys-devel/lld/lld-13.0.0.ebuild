@@ -11,8 +11,8 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA"
 SLOT="0"
-#KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86" # Still testing Full RELRO default ON.
-IUSE="test"
+KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv x86"
+IUSE="debug test"
 IUSE+=" hardened"
 REQUIRED_USE+=" hardened? ( !test )"
 RESTRICT="!test? ( test )"
@@ -62,6 +62,11 @@ src_prepare() {
 }
 
 src_configure() {
+	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
+	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
+
+	use elibc_musl && append-ldflags -Wl,-z,stack-size=2097152
+
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 		-DLLVM_INCLUDE_TESTS=$(usex test)
