@@ -21,9 +21,8 @@ HOMEPAGE="https://llvm.org/"
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
 KEYWORDS=""
-IUSE="+binutils-plugin debug doc -dump exegesis libedit +libffi ncurses test xar xml
-	z3 kernel_Darwin"
-IUSE+=" bolt bolt-prepare +bootstrap jemalloc lto pgo pgo_trainer_build_self
+IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3"
+IUSE+=" bolt bolt-prepare +bootstrap -dump jemalloc lto pgo pgo_trainer_build_self
 pgo_trainer_test_suite souper tcmalloc r3"
 REQUIRED_USE="
 	bolt-prepare? ( bolt )
