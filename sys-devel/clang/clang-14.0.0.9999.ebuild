@@ -1073,8 +1073,6 @@ src_install() {
 		done
 	fi
 
-	rm -rf "${ED}"/usr/include || die
-	dodir /usr/include
 	multilib-minimal_src_install
 
 	# Move runtime headers to /usr/lib/clang, where they belong
@@ -1142,13 +1140,12 @@ _install() {
 
 	# move headers to /usr/include for wrapping & ABI mismatch checks
 	# (also drop the version suffix from runtime headers)
+	rm -rf "${ED}"/usr/include || die
 	if [[ -e "${ED}"/usr/lib/llvm/${slot}/include ]] ; then
-		cp -aT "${ED}"/usr/lib/llvm/${slot}/include "${ED}"/usr/include || die
-		rm -rf "${ED}"/usr/lib/llvm/${slot}/include || die
+		mv "${ED}"/usr/lib/llvm/${slot}/include "${ED}"/usr/include || die
 	fi
 	if [[ -e "${ED}"/usr/lib/llvm/${slot}/$(get_libdir)/clang ]] ; then
-		cp -aT "${ED}"/usr/lib/llvm/${slot}/$(get_libdir)/clang "${ED}"/usr/include/clangrt || die
-		rm -rf "${ED}"/usr/lib/llvm/${slot}/$(get_libdir)/clang || die
+		mv "${ED}"/usr/lib/llvm/${slot}/$(get_libdir)/clang "${ED}"/usr/include/clangrt || die
 	fi
 }
 
