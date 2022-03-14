@@ -207,10 +207,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	# create extra parent dir for relative CLANG_RESOURCE_DIR access
-	mkdir -p x/y || die
-	BUILD_DIR=${WORKDIR}/x/y/clang
-
 	llvm.org_src_prepare
 	if use hardened ; then
 		ewarn "The hardened USE flag and associated patches are still in testing."
@@ -377,16 +373,6 @@ is_late_stage() {
 	return 1
 }
 
-_cmake_clean() {
-	[[ ! -d "${BUILD_DIR}" ]] && return
-	cd "${BUILD_DIR}" || die
-	if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
-		[[ -e "build.ninja" ]] && eninja -t clean
-	else
-		[[ -e "Makefile" ]] && emake clean
-	fi
-}
-
 setup_gcc() {
 	# Force gcc to skip a LLVM rebuild without the disabled-peepholes patch.
 	export CC=gcc
@@ -409,7 +395,7 @@ _gcc_fullversion() {
 _configure() {
 	einfo "Called _configure()"
 	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
-	_cmake_clean
+	BUILD_DIR="${WORKDIR}/x/y/clang_${PGO_PHASE}_${ABI}"
 	local llvm_version=$(llvm-config --version) || die
 	local clang_version=$(ver_cut 1-3 "${llvm_version}")
 
@@ -675,7 +661,6 @@ _configure() {
 		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
 		mkdir -p "${BUILD_DIR}" || die
 		cd "${BUILD_DIR}" || die
-		[[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] && _cmake_clean
 		cmake_src_configure
 		CMAKE_USE_DIR="${WORKDIR}/llvm"
 		BUILD_DIR="${BUILD_DIR_BAK}"

@@ -232,10 +232,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	# create extra parent dir for relative CLANG_RESOURCE_DIR access
-#	mkdir -p x/y || die
-#	BUILD_DIR=${WORKDIR}/x/y/clang
-
 	llvm.org_src_prepare
 	use pgo && eapply "${FILESDIR}/clang-14.0.0.9999-add-include-path.patch"
 	if use hardened ; then
