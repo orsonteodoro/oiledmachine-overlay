@@ -1,0 +1,17 @@
+Subject:  Fix missing stddef.h
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Sat Mar 12 04:48:36 PM PST 2022 (Unix time: 1647132516)
+--- a/lib/Driver/ToolChains/Gnu.cpp.orig	2022-03-12 18:51:03.044538358 -0800
++++ b/lib/Driver/ToolChains/Gnu.cpp	2022-03-12 19:36:47.509264013 -0800
+@@ -2863,6 +2863,11 @@ void Generic_GCC::AddMultilibIncludeArgs
+   addSystemInclude(DriverArgs, CC1Args,
+                    Twine(LibPath) + "/../" + GCCTriple.str() + "/include");
+ 
++  // For stddef.h on Gentoo
++  StringRef InstallDir = GCCInstallation.getInstallPath();
++  addSystemInclude(DriverArgs, CC1Args,
++                   InstallDir.str() + "/include");
++
+   const auto &Callback = Multilibs.includeDirsCallback();
+   if (Callback) {
+     for (const auto &Path : Callback(GCCInstallation.getMultilib()))

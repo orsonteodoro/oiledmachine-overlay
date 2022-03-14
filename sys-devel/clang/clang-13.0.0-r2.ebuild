@@ -17,14 +17,16 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
-# KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos" # The hardened default ON patches are in testing.
+#KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x64-macos" # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
-	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD"
+	doc llvm-libunwind +static-analyzer test xml"
 IUSE+=" +bootstrap experimental hardened lto pgo pgo_trainer_build_self pgo_trainer_test_suite r3"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
 	hardened? ( !test )
 	pgo? ( || ( pgo_trainer_build_self pgo_trainer_test_suite ) )
+	pgo_trainer_build_self? ( pgo )
+	pgo_trainer_test_suite? ( pgo )
 "
 RESTRICT="!test? ( test )"
 
@@ -467,6 +469,7 @@ _configure() {
 	einfo "  CFLAGS=${CFLAGS}"
 	einfo "  CXXFLAGS=${CXXFLAGS}"
 	einfo "  LDFLAGS=${LDFLAGS}"
+	einfo "  PATH=${PATH}"
 	if tc-is-cross-compiler ; then
 		einfo "  IS_CROSS_COMPILE=True"
 	else
@@ -751,6 +754,30 @@ _compile() {
 	fi
 }
 
+# Modularize for variable scoping
+_pgo_train() {
+	local abis=($(multilib_get_enabled_abi_pairs))
+	local a
+	for a in ${abis[@]#*.} ; do
+		if use pgo_trainer_build_self && multilib_is_native_abi ; then
+			PGO_PHASE="pgt_build_self" # S2 upstream says without lto
+			_configure
+			_compile
+		fi
+		if use pgo_trainer_test_suite ; then
+			PGO_PHASE="pgt_test_suite_inst"
+			_configure
+			_compile
+			PGO_PHASE="pgt_test_suite_train"
+			_configure
+			_compile
+			PGO_PHASE="pgt_test_suite_opt"
+			_configure
+			_compile
+		fi
+	done
+}
+
 src_compile() {
 	export CFLAGS_BAK="${CFLAGS}"
 	export CXXFLAGS_BAK="${CXXFLAGS}"
@@ -768,26 +795,7 @@ src_compile() {
 				_configure
 				_compile
 				_install
-				local abis=($(multilib_get_enabled_abi_pairs))
-				local a
-				for a in ${abis[@]#*.} ; do
-					if use pgt_trainer_build_self && multilib_is_native_abi ; then
-						PGO_PHASE="pgt_build_self" # S2 upstream says without lto
-						_configure
-						_compile
-					fi
-					if use pgt_trainer_test_suite ; then
-						PGO_PHASE="pgt_test_suite_inst"
-						_configure
-						_compile
-						PGO_PHASE="pgt_test_suite_train"
-						_configure
-						_compile
-						PGO_PHASE="pgt_test_suite_opt"
-						_configure
-						_compile
-					fi
-				done
+				_pgo_train
 				PGO_PHASE="pgo" # S2 upstream says with lto
 				_configure
 				_compile

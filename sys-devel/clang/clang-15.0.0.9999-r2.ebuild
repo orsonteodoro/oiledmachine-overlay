@@ -19,7 +19,7 @@ LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT"
 SLOT="$(ver_cut 1)"
 #KEYWORDS=""  # The hardened default ON patches are in testing.
 IUSE="debug default-compiler-rt default-libcxx default-lld
-	doc llvm-libunwind +static-analyzer test xml kernel_FreeBSD"
+	doc llvm-libunwind +static-analyzer test xml"
 IUSE+=" bolt +bootstrap experimental hardened jemalloc lto pgo pgo_trainer_build_self pgo_trainer_test_suite tcmalloc r4"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 REQUIRED_USE+="
@@ -28,6 +28,8 @@ REQUIRED_USE+="
 	hardened? ( !test )
 	jemalloc? ( bolt )
 	pgo? ( || ( pgo_trainer_build_self pgo_trainer_test_suite ) )
+	pgo_trainer_build_self? ( pgo )
+	pgo_trainer_test_suite? ( pgo )
 	tcmalloc? ( bolt )
 "
 RESTRICT="!test? ( test )"
@@ -512,6 +514,7 @@ _configure() {
 	einfo "  CFLAGS=${CFLAGS}"
 	einfo "  CXXFLAGS=${CXXFLAGS}"
 	einfo "  LDFLAGS=${LDFLAGS}"
+	einfo "  PATH=${PATH}"
 	if tc-is-cross-compiler ; then
 		einfo "  IS_CROSS_COMPILE=True"
 	else
@@ -957,12 +960,12 @@ _pgo_train() {
 	local abis=($(multilib_get_enabled_abi_pairs))
 	local ABI
 	for ABI in ${abis[@]#*.} ; do
-		if use pgt_trainer_build_self && multilib_is_native_abi ; then
+		if use pgo_trainer_build_self && multilib_is_native_abi ; then
 			PGO_PHASE="pgt_build_self" # S2 upstream says without lto
 			_configure
 			_compile
 		fi
-		if use pgt_trainer_test_suite ; then
+		if use pgo_trainer_test_suite ; then
 			PGO_PHASE="pgt_test_suite_inst"
 			_configure
 			_compile
@@ -982,12 +985,12 @@ _bolt_train() {
 	if use bolt ; then
 		local ABI
 		for ABI in ${abis[@]#*.} ; do
-			if use pgt_trainer_build_self && multilib_is_native_abi ; then
+			if use pgo_trainer_build_self && multilib_is_native_abi ; then
 				PGO_PHASE="bolt_train_build_self" # S3
 				_configure
 				_compile
 			fi
-			if use pgt_trainer_test_suite ; then
+			if use pgo_trainer_test_suite ; then
 				PGO_PHASE="bolt_train_test_suite_inst"
 				_configure
 				_compile
