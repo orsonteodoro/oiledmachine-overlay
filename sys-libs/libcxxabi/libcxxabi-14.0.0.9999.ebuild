@@ -12,9 +12,9 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS="amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
-IUSE="+libunwind static-libs test elibc_musl"
-IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack"
+KEYWORDS=""
+IUSE="+libunwind static-libs test"
+IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack r8"
 REQUIRED_USE+="
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
@@ -31,7 +31,7 @@ RDEPEND="
 		)
 	)"
 DEPEND+=" ${RDEPEND}"
-PATCHES=( "${FILESDIR}/libcxxabi-13.0.0.9999-hardened.patch"
+PATCHES=( "${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
 	  "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 S="${WORKDIR}"
 # Don't strip CFI from .so files
@@ -113,8 +113,7 @@ BDEPEND+="
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)"
 
-# libcxx is needed uncondtionally for the headers
-LLVM_COMPONENTS=( libcxx{abi,} llvm/cmake/modules )
+LLVM_COMPONENTS=( libcxx{abi,} llvm/cmake cmake )
 llvm.org_set_globals
 
 python_check_deps() {
@@ -207,14 +206,32 @@ _configure_abi() {
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
-		-DLIBCXXABI_LIBDIR_SUFFIX=${libdir#lib}
-		-DLIBCXXABI_USE_LLVM_UNWINDER=$(usex libunwind)
+		-DPython3_EXECUTABLE="${PYTHON}"
+		-DLLVM_ENABLE_RUNTIMES="libcxxabi;libcxx"
+		-DLLVM_INCLUDE_TESTS=OFF
+		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
+		-DLIBCXXABI_ENABLE_SHARED=ON
+		-DLIBCXXABI_ENABLE_STATIC=$(usex static-libs)
 		-DLIBCXXABI_INCLUDE_TESTS=$(usex test)
+		-DLIBCXXABI_USE_LLVM_UNWINDER=$(usex libunwind)
 		-DLIBCXXABI_USE_COMPILER_RT=${want_compiler_rt}
-		-DLIBCXXABI_LIBCXX_INCLUDES="${WORKDIR}"/libcxx/include
+
 		# upstream is omitting standard search path for this
 		# probably because gcc & clang are bundling their own unwind.h
 		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}"/usr/include
+		-DLIBCXXABI_TARGET_TRIPLE="${CHOST}"
+
+		-DLIBCXX_LIBDIR_SUFFIX=
+		-DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=OFF
+		-DLIBCXX_CXX_ABI=libcxxabi
+		-DLIBCXX_CXX_ABI_INCLUDE_PATHS="${WORKDIR}"/libcxxabi/include
+		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
+		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
+		-DLIBCXX_HAS_GCC_S_LIB=OFF
+		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
+		-DLIBCXX_INCLUDE_TESTS=OFF
+		-DLIBCXX_TARGET_TRIPLE="${CHOST}"
+
 		-DLTO=$(usex lto)
 		-DNOEXECSTACK=$(usex hardened)
 	)
@@ -285,86 +302,12 @@ _configure_abi() {
 	cmake_src_configure
 }
 
-build_libcxx() {
-	local -x LDFLAGS="${LDFLAGS} -L${BUILD_DIR}/$(get_libdir)"
-	local CMAKE_USE_DIR=${WORKDIR}/libcxx
-	local BUILD_DIR=${BUILD_DIR}/libcxx
-	local mycmakeargs=(
-		-DLIBCXX_LIBDIR_SUFFIX=
-		-DLIBCXX_ENABLE_EXPERIMENTAL_LIBRARY=OFF
-		-DLIBCXX_CXX_ABI=libcxxabi
-		-DLIBCXX_CXX_ABI_INCLUDE_PATHS="${S}"/include
-		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
-		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
-		-DLIBCXX_HAS_GCC_S_LIB=OFF
-		-DLIBCXX_INCLUDE_TESTS=OFF
-		-DLTO=$(usex lto)
-		-DNOEXECSTACK=$(usex hardened)
-	)
-
-	set_cfi() {
-		if tc-is-clang && is_cfi_supported ; then
-			mycmakeargs+=(
-				-DCFI=$(usex cfi)
-				-DCFI_CAST=$(usex cfi-cast)
-				-DCFI_ICALL=OFF
-				-DCFI_VCALL=$(usex cfi-vcall)
-				-DCROSS_DSO_CFI=$(usex cfi-cross-dso)
-			)
-		fi
-		mycmakeargs+=(
-			-DSHADOW_CALL_STACK=$(usex shadowcallstack)
-		)
-	}
-
-	if is_hardened_gcc ; then
-		:;
-	elif is_hardened_clang ; then
-		set_cfi
-	else
-		set_cfi
-		if use hardened ; then
-			mycmakeargs+=(
-				-DFULL_RELRO=$(usex hardened)
-				-DSSP=$(usex hardened)
-			)
-			if [[ -n "${USE_HARDENED_PROFILE_DEFAULTS}" \
-				&& "${USE_HARDENED_PROFILE_DEFAULTS}" == "1" ]] ; then
-				mycmakeargs+=(
-					-DFORTIFY_SOURCE=2
-					-DSTACK_CLASH_PROTECTION=ON
-					-DSSP_LEVEL="strong"
-				)
-			else
-				mycmakeargs+=(
-					-DSSP_LEVEL="weak"
-				)
-			fi
-		fi
-	fi
-
-	if [[ "${build_type}" == "static-libs" ]] ; then
-		mycmakeargs+=(
-			-DLIBCXX_ENABLE_SHARED=OFF
-			-DLIBCXX_ENABLE_STATIC=ON
-		)
-	else
-		mycmakeargs+=(
-			-DLIBCXX_ENABLE_SHARED=ON
-			-DLIBCXX_ENABLE_STATIC=OFF
-		)
-	fi
-
-	cmake_src_configure
-	cmake_src_compile
-}
-
 src_compile() {
 	compile_abi() {
 		for build_type in $(get_build_types) ; do
 			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
 			cd "${BUILD_DIR}" || die
-			cmake_src_compile
+			cmake_build cxxabi
 		done
 	}
 	multilib_foreach_abi compile_abi
@@ -373,9 +316,8 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for build_type in $(get_build_types) ; do
-			# build a local copy of libc++ for testing to avoid circular dep
-			build_libcxx
-			mv "${BUILD_DIR}"/libcxx/lib/libc++* "${BUILD_DIR}/$(get_libdir)/" || die
+			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
+			cd "${BUILD_DIR}" || die
 			local -x LIT_PRESERVES_TMP=1
 			cmake_build check-cxxabi
 		done
@@ -388,14 +330,14 @@ src_install() {
 		for build_type in $(get_build_types) ; do
 			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
 			cd "${BUILD_DIR}" || die
-			cmake_src_install
+			DESTDIR="${D}" cmake_build install-cxxabi
 		done
 	}
 	multilib_foreach_abi install_abi
 
 	cd "${S}" || die
 	insinto /usr/include/libcxxabi
-	doins -r include/.
+	doins -r "${WORKDIR}"/libcxxabi/include/.
 }
 
 pkg_postinst() {

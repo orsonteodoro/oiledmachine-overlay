@@ -12,8 +12,8 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86 ~x64-macos"
-IUSE="+libunwind static-libs test elibc_musl"
+KEYWORDS="amd64 arm arm64 ~riscv ~x86 ~x64-macos"
+IUSE="+libunwind static-libs test"
 IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 REQUIRED_USE+="
 	cfi? ( clang lto )
@@ -378,6 +378,8 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for build_type in $(get_build_types) ; do
+			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
+			cd "${BUILD_DIR}" || die
 			wrap_libcxx cmake_src_compile
 			mv "${BUILD_DIR}"/libcxx/lib/libc++* "${BUILD_DIR}/$(get_libdir)/" || die
 			local -x LIT_PRESERVES_TMP=1

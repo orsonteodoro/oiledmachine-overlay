@@ -12,9 +12,9 @@ HOMEPAGE="https://libcxxabi.llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT )"
 SLOT="0"
-KEYWORDS=""
-IUSE="+libunwind static-libs test elibc_musl"
-IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack r8"
+KEYWORDS="amd64 arm arm64 ~riscv x86 ~x64-macos"
+IUSE="+libunwind static-libs test"
+IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack r7"
 REQUIRED_USE+="
 	cfi? ( clang lto )
 	cfi-cast? ( clang lto cfi-vcall )
@@ -31,7 +31,7 @@ RDEPEND="
 		)
 	)"
 DEPEND+=" ${RDEPEND}"
-PATCHES=( "${FILESDIR}/libcxxabi-15.0.0.9999-hardened.patch"
+PATCHES=( "${FILESDIR}/libcxxabi-13.0.0.9999-hardened.patch"
 	  "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 S="${WORKDIR}"
 # Don't strip CFI from .so files
@@ -113,7 +113,7 @@ BDEPEND+="
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)"
 
-LLVM_COMPONENTS=( libcxx{abi,} llvm/cmake cmake )
+LLVM_COMPONENTS=( libcxx{abi,} llvm/cmake )
 llvm.org_set_globals
 
 python_check_deps() {
@@ -218,9 +218,9 @@ _configure_abi() {
 		# upstream is omitting standard search path for this
 		# probably because gcc & clang are bundling their own unwind.h
 		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}"/usr/include
+		-DLIBCXXABI_TARGET_TRIPLE="${CHOST}"
 		-DLTO=$(usex lto)
 		-DNOEXECSTACK=$(usex hardened)
-		-DLIBCXXABI_TARGET_TRIPLE="${CHOST}"
 	)
 
 	set_cfi() {
@@ -378,6 +378,8 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for build_type in $(get_build_types) ; do
+			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
+			cd "${BUILD_DIR}" || die
 			wrap_libcxx cmake_src_compile
 			mv "${BUILD_DIR}"/libcxx/lib/libc++* "${BUILD_DIR}/$(get_libdir)/" || die
 			local -x LIT_PRESERVES_TMP=1
