@@ -210,6 +210,8 @@ src_unpack() {
 }
 
 src_prepare() {
+	mkdir -p "${WORKDIR}/x/y" || die
+	BUILD_DIR="${WORKDIR}/x/y/clang"
 	llvm.org_src_prepare
 	if use hardened ; then
 		ewarn "The hardened USE flag and associated patches are still in testing."
@@ -387,6 +389,34 @@ setup_clang() {
 	autofix_flags # translate retpoline, strip unsupported flags during switch
 }
 
+get_m_abi() {
+	local r
+	for r in ${_MULTILIB_FLAGS[@]} ; do
+		local m_abi=$"${r%:*}"
+		local m_flag="${r#*:}"
+		local a
+		OIFS="${IFS}"
+		IFS=','
+		for a in ${m_flag} ; do
+			if [[ "${a}" == "${ABI}" ]] ; then
+				echo "${m_abi}"
+				return
+			fi
+		done
+		IFS="${OIFS}"
+	done
+}
+
+_cmake_clean() {
+	[[ -e "${BUILD_DIR}" ]] || return
+	cd "${BUILD_DIR}" || die
+	if [[ -e "build.ninja" ]] ; then
+		eninja -t clean
+	else
+		emake clean
+	fi
+}
+
 src_configure() { :; }
 
 _gcc_fullversion() {
@@ -396,7 +426,8 @@ _gcc_fullversion() {
 _configure() {
 	einfo "Called _configure()"
 	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
-	BUILD_DIR="${WORKDIR}/x/y/clang_${PGO_PHASE}_${ABI}"
+	BUILD_DIR="${WORKDIR}/x/y/clang-$(get_m_abi).${ABI}"
+	_cmake_clean
 	local llvm_version=$(llvm-config --version) || die
 	local clang_version=$(ver_cut 1-3 "${llvm_version}")
 
@@ -563,6 +594,9 @@ _configure() {
 		-DLLVM_CMAKE_PATH="${EPREFIX}/usr/lib/llvm/${slot}/$(get_libdir)/cmake/llvm"
 	)
 
+	CMAKE_USE_DIR="${WORKDIR}/clang"
+	BUILD_DIR="${WORKDIR}/x/y/clang-$(get_m_abi).${ABI}"
+
 	if [[ "${PGO_PHASE}" == "pgv" ]] ; then
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER=gcc
@@ -601,6 +635,7 @@ _configure() {
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
 		)
+		BUILD_DIR="${WORKDIR}/x/y/clang-self-$(get_m_abi).${ABI}"
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
@@ -612,6 +647,11 @@ _configure() {
 			-DTEST_SUITE_PROFILE_GENERATE=ON
 			-DTEST_SUITE_RUN_TYPE=Train
 		)
+		CMAKE_USE_DIR="${WORKDIR}/test-suite"
+		BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-$(get_m_abi).${ABI}"
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/test-suite"
+		BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-$(get_m_abi).${ABI}"
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
@@ -623,6 +663,8 @@ _configure() {
 			-DTEST_SUITE_PROFILE_USE=ON
 			-DTEST_SUITE_RUN_TYPE=ref
 		)
+		CMAKE_USE_DIR="${WORKDIR}/test-suite"
+		BUILD_DIR="${WORKDIR}/x/y/test-suite-opt-$(get_m_abi).${ABI}"
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
 		if use bootstrap ; then
@@ -659,18 +701,9 @@ _configure() {
 		fi
 	fi
 
-	if [[ "${PGO_PHASE}" =~ "pgt_test_suite" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		mkdir -p "${BUILD_DIR}" || die
-		cd "${BUILD_DIR}" || die
-		cmake_src_configure
-		CMAKE_USE_DIR="${WORKDIR}/llvm"
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
-	fi
-
+	mkdir -p "${BUILD_DIR}" || die
+	cd "${BUILD_DIR}" || die
+	[[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] && return
 	cmake_src_configure
 
 	multilib_is_native_abi && check_distribution_components
@@ -706,34 +739,14 @@ _compile() {
 		use pgo && einfo "${EMESSAGE_COMPILE[${PGO_PHASE}]} for ${ABI}"
 	fi
 	if [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		cd "${BUILD_DIR}" || die
-		# Profile the PGI step
 		cmake_build
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		cd "${BUILD_DIR}" || die
 		cmake_build check-lit
-		"${BUILD_DIR_BAK}/bin/llvm-lit" .
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
+		bin/llvm-lit .
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		cd "${BUILD_DIR}" || die
-		# Profile the PGO step
 		cmake_build
 		cmake_build check-lit
-		"${BUILD_DIR_BAK}/bin/llvm-lit" -o result.json .
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
+		bin/llvm-lit -o result.json .
 	else
 		# Includes pgt_build_self
 		cmake_build distribution
@@ -908,6 +921,16 @@ _install() {
 }
 
 multilib_src_install() {
+	if use pgo ; then
+		if multilib_is_native_abi ; then
+			PGO_PHASE="pgo"
+		else
+			PGO_PHASE="pg0"
+		fi
+	else
+		PGO_PHASE="pg0"
+	fi
+	BUILD_DIR="${WORKDIR}/x/y/clang-$(get_m_abi).${ABI}"
 	_install
 }
 

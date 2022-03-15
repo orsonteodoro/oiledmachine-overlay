@@ -232,6 +232,8 @@ src_unpack() {
 }
 
 src_prepare() {
+	mkdir -p "${WORKDIR}/x/y" || die
+	BUILD_DIR="${WORKDIR}/x/y/clang"
 	llvm.org_src_prepare
 	use pgo && eapply "${FILESDIR}/clang-14.0.0.9999-add-include-path.patch"
 	if use hardened ; then
@@ -412,6 +414,34 @@ setup_clang() {
 	autofix_flags # translate retpoline, strip unsupported flags during switch
 }
 
+get_m_abi() {
+	local r
+	for r in ${_MULTILIB_FLAGS[@]} ; do
+		local m_abi=$"${r%:*}"
+		local m_flag="${r#*:}"
+		local a
+		OIFS="${IFS}"
+		IFS=','
+		for a in ${m_flag} ; do
+			if [[ "${a}" == "${ABI}" ]] ; then
+				echo "${m_abi}"
+				return
+			fi
+		done
+		IFS="${OIFS}"
+	done
+}
+
+_cmake_clean() {
+	[[ -e "${BUILD_DIR}" ]] || return
+	cd "${BUILD_DIR}" || die
+	if [[ -e "build.ninja" ]] ; then
+		eninja -t clean
+	else
+		emake clean
+	fi
+}
+
 src_configure() { :; }
 
 _gcc_fullversion() {
@@ -421,7 +451,8 @@ _gcc_fullversion() {
 _configure() {
 	einfo "Called _configure()"
 	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
-	BUILD_DIR="${WORKDIR}/x/y/clang_${PGO_PHASE}_${ABI}"
+	BUILD_DIR="${WORKDIR}/x/y/clang-$(get_m_abi).${ABI}"
+	_cmake_clean
 	local llvm_version=$(llvm-config --version) || die
 	local clang_version=$(ver_cut 1-3 "${llvm_version}")
 
@@ -603,6 +634,9 @@ _configure() {
 		unset CXX
 	fi
 
+	CMAKE_USE_DIR="${WORKDIR}/clang"
+	BUILD_DIR="${WORKDIR}/x/y/clang-$(get_m_abi).${ABI}"
+
 	if [[ "${PGO_PHASE}" == "pgv" ]] ; then
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER=gcc
@@ -641,17 +675,21 @@ _configure() {
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
 		)
+		BUILD_DIR="${WORKDIR}/x/y/clang-self-$(get_m_abi).${ABI}"
 	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_inst"|"bolt_train_test_suite_inst") ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		if [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
 			mycmakeargs+=(
 				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
 				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
 			)
+			BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-$(get_m_abi).${ABI}"
 		elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_inst" ]] ; then
 			mycmakeargs+=(
 				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang"
 				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang++"
 			)
+			BUILD_DIR="${WORKDIR}/x/y/test-suite-bolt-inst-$(get_m_abi).${ABI}"
 		fi
 		mycmakeargs+=(
 			-DLLVM_BUILD_INSTRUMENTED=OFF
@@ -661,17 +699,26 @@ _configure() {
 			-DTEST_SUITE_PROFILE_GENERATE=ON
 			-DTEST_SUITE_RUN_TYPE=Train
 		)
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/test-suite"
+		BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-$(get_m_abi).${ABI}"
+	elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_train" ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/test-suite"
+		BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-$(get_m_abi).${ABI}"
 	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_opt"|"bolt_train_test_suite_opt") ]] ; then
+		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		if [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
 			mycmakeargs+=(
 				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
 				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
 			)
+			BUILD_DIR="${WORKDIR}/x/y/test-suite-opt-$(get_m_abi).${ABI}"
 		elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_opt" ]] ; then
 			mycmakeargs+=(
 				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang"
 				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang++"
 			)
+			BUILD_DIR="${WORKDIR}/x/y/test-suite-bolt-opt-$(get_m_abi).${ABI}"
 		fi
 		mycmakeargs+=(
 			-DLLVM_BUILD_INSTRUMENTED=OFF
@@ -712,6 +759,7 @@ _configure() {
 			-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
 			-DLLVM_USE_LINKER=lld
 		)
+		BUILD_DIR="${WORKDIR}/x/y/clang-bolt-self-$(get_m_abi).${ABI}"
 	elif [[ "${PGO_PHASE}" == "pg0" ]] ; then
 		if [[ "${CC}" =~ "clang" ]] ; then
 			mycmakeargs+=(
@@ -725,25 +773,16 @@ _configure() {
 		fi
 	fi
 
-	if [[ "${PGO_PHASE}" =~ "pgt_test_suite" ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		mkdir -p "${BUILD_DIR}" || die
-		cd "${BUILD_DIR}" || die
-		cmake_src_configure
-		CMAKE_USE_DIR="${WORKDIR}/llvm"
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
-	fi
-
+	mkdir -p "${BUILD_DIR}" || die
+	cd "${BUILD_DIR}" || die
+	[[ "${PGO_PHASE}" =~ ("pgt_test_suite_train"|"bolt_train_test_suite_train") ]] && return
 	cmake_src_configure
 
 	multilib_is_native_abi && check_distribution_components
 }
 
-_bolt_train_build_self() {
-	einfo "Called _bolt_train_build_self()"
+_bolt_train_build_self_build() {
+	einfo "Called _bolt_train_build_self_build()"
 	# Use the package itself as the asset for training.
 	einfo "Running BOLT trainer to build self"
 	mkdir -p "${T}/bolt-profile" || die
@@ -760,8 +799,8 @@ _bolt_train_test_suite() {
 	perf record -e cycles:u -j any,u -o "${T}/bolt-profile/clang-${SLOT}_test_suite_${tag}.perfdata" -- ninja ${@} || die
 }
 
-_bolt_profile_generator_build_self() {
-	einfo "Called _bolt_profile_generator_build_self()"
+_bolt_train_build_self_profile_generator() {
+	einfo "Called _bolt_train_build_self_profile_generator()"
 	einfo "perf profile -> bolt profile"
 	perf2bolt "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}" \
 		-p "${T}/bolt-profile/clang-${SLOT}_build_self.perfdata" \
@@ -881,53 +920,30 @@ _compile() {
 	if [[ "${PGO_PHASE}" =~ ("pgv"|"pgi"|"pgt_"|"pgo"|"bolt") ]] ; then
 		use pgo && einfo "${EMESSAGE_COMPILE[${PGO_PHASE}]} for ${ABI}"
 	fi
-	if [[ "${PGO_PHASE}" == "bolt_train_build_self" ]] ; then
-		_bolt_train_build_self
-		_bolt_profile_generator_build_self
-	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_inst"|"bolt_train_test_suite_inst") ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		cd "${BUILD_DIR}" || die
-		# Profile the PGI step
-		if [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
-			cmake_build
-		else
-			_bolt_train_test_suite "bolt_train_test_suite_inst_${ABI}"
-		fi
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
-	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_train"|"bolt_train_test_suite_train") ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		cd "${BUILD_DIR}" || die
-		if [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
-			cmake_build check-lit
-			"${BUILD_DIR_BAK}/bin/llvm-lit" .
-		else
-			_bolt_train_test_suite "bolt_train_test_suite_train_${ABI}_check_lit" check_list
-			"${BUILD_DIR_BAK}/bin/llvm-lit" .
-		fi
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
-	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_opt"|"bolt_train_test_suite_opt") ]] ; then
-		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR_BAK="${BUILD_DIR}"
-		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
-		cd "${BUILD_DIR}" || die
-		# Profile the PGO step
-		if [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
-			cmake_build
-			cmake_build check-lit
-			"${BUILD_DIR_BAK}/bin/llvm-lit" -o result.json .
-		else
-			_bolt_train_test_suite "bolt_train_test_suite_opt_${ABI}"
-			_bolt_train_test_suite "bolt_train_test_suite_opt_${ABI}_check_lit" check_list
-			"${BUILD_DIR_BAK}/bin/llvm-lit" -o result.json .
-		fi
-		BUILD_DIR="${BUILD_DIR_BAK}"
-		cd "${BUILD_DIR}" || die
+
+	if [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
+		cmake_build
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
+		cmake_build check-lit
+		bin/llvm-lit .
+	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
+		cmake_build
+		cmake_build check-lit
+		bin/llvm-lit -o result.json .
+
+	elif [[ "${PGO_PHASE}" == "bolt_train_build_self" ]] ; then
+		_bolt_train_build_self_build
+		_bolt_train_build_self_profile_generator
+	elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_inst" ]] ; then
+		_bolt_train_test_suite "bolt_train_test_suite_inst_${ABI}"
+	elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_train" ]] ; then
+		_bolt_train_test_suite "bolt_train_test_suite_train_${ABI}_check_lit" check_list
+		bin/llvm-lit .
+	elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_opt" ]] ; then
+		_bolt_train_test_suite "bolt_train_test_suite_opt_${ABI}"
+		_bolt_train_test_suite "bolt_train_test_suite_opt_${ABI}_check_lit" check_list
+		bin/llvm-lit -o result.json .
+
 	else
 		# Includes pgt_build_self
 		cmake_build distribution
@@ -1146,6 +1162,16 @@ _install() {
 }
 
 multilib_src_install() {
+	if use pgo ; then
+		if multilib_is_native_abi ; then
+			PGO_PHASE="pgo"
+		else
+			PGO_PHASE="pg0"
+		fi
+	else
+		PGO_PHASE="pg0"
+	fi
+	BUILD_DIR="${WORKDIR}/x/y/clang-$(get_m_abi).${ABI}"
 	_install
 }
 
