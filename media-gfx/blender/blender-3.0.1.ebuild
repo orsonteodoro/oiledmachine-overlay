@@ -4,6 +4,8 @@
 EAPI=6
 inherit blender-v3.0
 
+# For current version, see https://download.blender.org/source/
+
 # See eclass below for implementation:
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender.eclass
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/blender-multibuild.eclass
