@@ -12,7 +12,8 @@ inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
 LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
-SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
+SRC_URI="https://github.com/nodejs/node/archive/refs/tags/v16.14.1.tar.gz
+	-> node-v${PV}.tar.gz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
@@ -82,20 +83,20 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 		system-ssl? ( ssl )
 		${PN}_pgo_trainers_module? ( inspector )
 "
-RESTRICT="!test? ( test )"
+RESTRICT="!test? ( test ) mirror"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Nov 25, 2021
+# Last deps commit date:  Feb 11, 2022
 NGHTTP2_V="1.45.1"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
-	>=dev-libs/libuv-1.42.0:=
+	>=dev-libs/libuv-1.43.0:=
 	>=net-dns/c-ares-1.18.1
 	>=net-libs/nghttp2-${NGHTTP2_V}
 	>=sys-libs/zlib-1.2.11
-	system-icu? ( >=dev-libs/icu-68:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1l:0= )"
+	system-icu? ( >=dev-libs/icu-70.1:= )
+	system-ssl? ( >=dev-libs/openssl-1.1.1m:0= )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	dev-util/ninja
@@ -108,11 +109,14 @@ BDEPEND+=" ${PYTHON_DEPS}
 PATCHES=( "${FILESDIR}"/${PN}-16.12.0-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
 	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch
-	  "${FILESDIR}"/${PN}-16.13.2-add-fno-strict-aliasing-libuv-3b8d8c2.patch
 	  "${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch
 	  "${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch )
+if [[ -d "${WORKDIR}/node-v${PV}" ]] ; then
 S="${WORKDIR}/node-v${PV}"
-NPM_V="8.1.2" # See https://github.com/nodejs/node/blob/v16.12.0/deps/npm/package.json
+else
+S="${WORKDIR}/node-${PV}"
+fi
+NPM_V="8.3.1" # See https://github.com/nodejs/node/blob/v16.14.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
