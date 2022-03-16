@@ -941,9 +941,9 @@ eerror
 	# B:  (wo=1, ph=0)
 	# C:  (wo=1, ph=1)
 	# A > A > B > A > C > A # Build transition between configuration sets as 1 based index
-	#   x_(i-1) builds x_i when i is even and i >= 2
+	#   x_i builds with non llvm default configuration when i is even and i >= 2
 	# else
-	#   vanilla_tc builds x_i when i is odd and i >= 1
+	#   x_i builds with vanilla toolchain and llvm default configuration when i is odd and i >= 1
 
 	wo=0
 	ph=0
