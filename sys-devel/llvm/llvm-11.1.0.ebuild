@@ -482,18 +482,24 @@ _configure() {
 		if use test ; then
 			(( ${s_idx} > 1 )) && _cmake_clean
 			if (( ${s_idx} == 7 )) ; then
-				rm -rf "${ED}"
+				rm -rf "${ED}" || true
 				export PATH="${PATH_ORIG}"
-			elif (( ${s_idx} % 2 == 1 )) ; then
-				rm -rf "${ED}"
-				export PATH="${PATH_ORIG}"
-				unset LD_LIBRARY_PATH # Use RUNPATH instead
+			else
+				# Use clang + previous llvm to build current llvm
+				local parity=$((${s_idx} % 2))
+				local prev_parity=$(((${s_idx} + 1) % 2))
+				rm -rf "${ED}/usr/lib/llvm/${parity}" || true # remove this
+				if [[ -e "${ED}/usr/lib/llvm/${prev_parity}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" ]] ; then
+					export PATH="${ED}/usr/lib/llvm/${prev_parity}/bin:${PATH_ORIG}"
+					export LD_LIBRARY_PATH="${ED}/usr/lib/llvm/${prev_parity}/$(get_libdir)"
+					export CCACHE_EXTRAFILES=\
+"${CCACHE_EXTRAFILES}:"$(readlink -f "${ED}/usr/lib/llvm/${prev_parity}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
+				fi
+			fi
+			if use bootstrap ; then
 				setup_gcc # Build with a reliable vanilla compiler.
-			elif (( ${s_idx} % 2 == 0 )) ; then
-				export PATH="${ED}/usr/lib/llvm/prev/bin:${PATH_ORIG}"
-				export LD_LIBRARY_PATH="${ED}/usr/lib/llvm/prev/$(get_libdir)"
-				export CCACHE_EXTRAFILES="${CCACHE_EXTRAFILES}:"$(readlink -f "${ED}/usr/lib/llvm/prev/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
-				setup_clang # Rebuild with the disable-peephole LLVM lib.
+			else
+				setup_clang # Rebuild with the (patched disable-peephole) LLVM lib.
 			fi
 		fi
 		einfo "CC=${CC}"
@@ -1063,10 +1069,18 @@ _test() {
 		#	0	1	? [guestimated fail for peephole tests]
 		#	1	0	fail on undefined behavior tests (souper default)
 		#	1	1	fail on peephole-like tests [and possibly undefined behavior tests]
+		# Did not observe ph test failures in llvm 12.x that were expected
 		cd "${BUILD_DIR}" || die
-		unset LD_LIBRARY_PATH # Use RUNPATH
+		unset LD_LIBRARY_PATH # Use the lit generated LD_LIBRARY_PATH.
 		local results_path="${T}/test_results_${s_idx}_${ABI}.txt"
 		"${CMAKE_MAKEFILE_GENERATOR}" check 2>&1 | tee "${results_path}" || true # non fatal because failures are expected
+
+		if (( ${s_idx} == 3 || ${s_idx} == 5 )) ; then
+			# Checks immediately after building
+			grep -q -e "Failed Tests" \
+				"${T}/test_results_${s_idx}_${ABI}.txt" \
+				|| die "At least one failure must be present (wo == 1 || ph == 1) (${ABI})"
+		fi
 
 		if (( ${s_idx} == 6 )) ; then
 			for i in $(seq 1 6) ; do
@@ -1077,16 +1091,27 @@ _test() {
 					einfo "Test PASSED in run ${i} (${ABI})"
 				fi
 			done
-			grep -q -e "Failed Tests" \
-				"${T}/test_results_2_${ABI}.txt" \
-				"${T}/test_results_4_${ABI}.txt" \
-				"${T}/test_results_6_${ABI}.txt" \
-			|| die "At least one failure must be present (wo == 1 || ph == 1) (${ABI})" # This may always be a pass.
+			if ! use bootstrap ; then
+				# Checks when clang utilizes the just built patched libLLVM.so library.
+				grep -q -e "Failed Tests" \
+					"${T}/test_results_2_${ABI}.txt" \
+					"${T}/test_results_4_${ABI}.txt" \
+					"${T}/test_results_6_${ABI}.txt" \
+					|| die "At least one failure must be present (prev_wo == 1 || prev_ph == 1) (${ABI})"
+				grep -q -e "Failed Tests" \
+					"${T}/test_results_4_${ABI}.txt" \
+					&& ewarn "The undefined behavior tests (s_idx=4, prev_wo=1, prev_ph=0) should have failed. (${ABI})"
+				grep -q -e "Failed Tests" \
+					"${T}/test_results_6_${ABI}.txt" \
+					&& ewarn "The undefined behavior and peephole tests (s_idx=6, prev_wo=1, prev_ph=1) should have failed. (${ABI})"
+			fi
 			local total_tests=$(grep -o -E -e "of [0-9]+)" "${results_path}" | uniq | grep -E -o "[0-9]+") # 42k in 12.x
 			[[ -z "${total_tests}" ]] && die "total_tests cannot be empty"
 			local n_failed=$(grep -o -E -e "Failed Tests.*" "${results_path}"  | grep -o -E -e "[0-9]+")
 			[[ -z "${n_failed}" ]] && n_failed=0
 			local one_percent=$(${EPYTHON} -c "print(${total_tests}*0.01)" | cut -f 1 -d ".")
+			# Test the llvm library with unpatched equivalent configuration.
+			# Out of 42169 tests
 			# 1% fail (or 421) is still a lot compared to the actual number of fails which is 3.
 			grep -q -e "Failed Tests" \
 				"${T}/test_results_2_${ABI}.txt" \
@@ -1094,12 +1119,6 @@ _test() {
 			# 42 is used because we didn't test all the features.  Ideally, this number is 0.
 			# Slack is given because in reality, unit tests can be broken.
 			# TODO:  Find tests that trigger UB FAIL and Peephole FAIL below
-			grep -q -e "Failed Tests" \
-				"${T}/test_results_4_${ABI}.txt" \
-				&& ewarn "The undefined behavior tests (s_idx=2, wo=1, ph=0) should have failed. (${ABI})"
-			grep -q -e "Failed Tests" \
-				"${T}/test_results_6_${ABI}.txt" \
-				&& ewarn "The undefined behavior and peephole tests (s_idx=2, wo=1, ph=1) should have failed. (${ABI})"
 		fi
 	else
 		cmake_build check
@@ -1133,10 +1152,9 @@ _install() {
 		if (( ${s_idx} == 7 )) ; then
 			mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
 			LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
-		elif (( ${s_idx} % 2 == 0 )) ; then
-			mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
 		else
-			mv "${ED}"/usr/lib/llvm/prev/include "${ED}"/usr/include || die
+			local parity=$((${s_idx} % 2))
+			mv "${ED}"/usr/lib/llvm/${parity}/include "${ED}"/usr/include || die
 		fi
 	else
 		mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
@@ -1145,6 +1163,7 @@ _install() {
 }
 
 multilib_src_install() {
+	use souper && s_idx=7
 	_install
 }
 
