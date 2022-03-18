@@ -85,7 +85,7 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Mar 12, 2022
+# Last deps commit date:  Mar 17, 2022
 NGHTTP2_V="1.47.0"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
