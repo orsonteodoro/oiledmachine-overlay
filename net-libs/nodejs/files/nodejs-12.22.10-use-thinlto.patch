@@ -32,7 +32,7 @@ diff -urp node-v12.22.10.orig/common.gypi node-v12.22.10/common.gypi
 +              '-fuse-ld=lld',
 +            ],
 +          }],
-+          ['OS=="linux" and (with_goldlto=="true" or node_section_ordering_info!="")', {
++          ['OS=="linux" and (with_goldlto=="true")', {
 +            'ldflags': [
 +              '-fuse-ld=gold',
 +            ],
@@ -49,13 +49,13 @@ diff -urp node-v12.22.10.orig/configure.py node-v12.22.10/configure.py
      dest='node_use_large_pages_script_lld',
      help='This option has no effect. --use-largepages is now a runtime option.')
  
-+parser.add_argument('--with-thinlto',
++parser.add_option('--with-thinlto',
 +    action='store_true',
 +    dest='with_thinlto',
 +    default=None,
 +    help='Use ThinLTO and LLD')
 +
-+parser.add_argument('--with-goldlto',
++parser.add_option('--with-goldlto',
 +    action='store_true',
 +    dest='with_goldlto',
 +    default=None,

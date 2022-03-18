@@ -12,7 +12,7 @@ inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
 LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
-SRC_URI="https://github.com/nodejs/node/archive/refs/tags/v16.14.1.tar.gz
+SRC_URI="https://github.com/nodejs/node/archive/refs/tags/v${PV}.tar.gz
 	-> node-v${PV}.tar.gz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
@@ -86,7 +86,7 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 RESTRICT="!test? ( test ) mirror"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Feb 11, 2022
+# Last deps commit date:  Mar 17, 2022
 NGHTTP2_V="1.45.1"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
@@ -96,7 +96,7 @@ RDEPEND+=" !net-libs/nodejs:0
 	>=net-libs/nghttp2-${NGHTTP2_V}
 	>=sys-libs/zlib-1.2.11
 	system-icu? ( >=dev-libs/icu-70.1:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1m:0= )"
+	system-ssl? ( >=dev-libs/openssl-1.1.1n:0= )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	dev-util/ninja
@@ -589,7 +589,7 @@ src_test() {
 }
 
 pkg_postinst() {
-	if has '>=net-libs/nodejs-${PV}' ; then
+	if has_version '>=net-libs/nodejs-${PV}' ; then
 		einfo \
 "Found higher slots, manually change the headers with \`eselect nodejs\`."
 	else

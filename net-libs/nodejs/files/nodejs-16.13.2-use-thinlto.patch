@@ -1,4 +1,4 @@
-Subject:  Control flto for ThinLTO and Gold when using Clang. (For 14.x to 17.x)
+Subject:  Control flto for ThinLTO and Gold when using Clang. (For 16.x to 17.x)
 Author:  Orson Teodoro <orsonteodoro@hotmail.com
 Date:  Fri Feb  4 10:41:12 PM PST 2022 (Unix time: 1644043272)
 Patch status:  Testing

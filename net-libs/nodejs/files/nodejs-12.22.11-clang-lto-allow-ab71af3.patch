@@ -1,9 +1,8 @@
 # Backport build: allow LTO with Clang 3.9.1+ to 12.x
 # From https://github.com/nodejs/node/commit/ab71af34533a43e4d8d788e8ed678bf572672458
-diff -urp node-v12.22.10.orig/common.gypi node-v12.22.10/common.gypi
---- node-v12.22.10.orig/common.gypi	2022-02-04 19:19:52.359733442 -0800
-+++ node-v12.22.10/common.gypi	2022-02-04 19:28:02.489526963 -0800
-@@ -188,16 +188,27 @@
+--- node-v12.22.11.orig/common.gypi	2022-03-17 05:54:13.000000000 -0700
++++ node-v12.22.11/common.gypi	2022-03-17 22:12:30.531044071 -0700
+@@ -188,17 +188,28 @@
            'v8_enable_handle_zapping': 0,
            'pgo_generate': ' -fprofile-generate ',
            'pgo_use': ' -fprofile-use -fprofile-correction ',
@@ -21,6 +20,7 @@ diff -urp node-v12.22.10.orig/common.gypi node-v12.22.10/common.gypi
 +            }],
            ],
          },
+         'cflags': [ '-O3' ],
          'conditions': [
 +          ['enable_lto=="true"', {
 +            'cflags': ['<(lto)'],
@@ -32,7 +32,7 @@ diff -urp node-v12.22.10.orig/common.gypi node-v12.22.10/common.gypi
            ['OS=="solaris"', {
              # pull in V8's postmortem metadata
              'ldflags': [ '-Wl,-z,allextract' ]
-@@ -215,10 +226,6 @@
+@@ -216,10 +227,6 @@
                  'cflags': ['<(pgo_use)'],
                  'ldflags': ['<(pgo_use)'],
                },],
@@ -43,9 +43,8 @@ diff -urp node-v12.22.10.orig/common.gypi node-v12.22.10/common.gypi
              ],
            },],
            ['OS == "android"', {
-diff -urp node-v12.22.10.orig/configure.py node-v12.22.10/configure.py
---- node-v12.22.10.orig/configure.py	2022-02-01 10:53:07.000000000 -0800
-+++ node-v12.22.10/configure.py	2022-02-04 19:21:04.853355294 -0800
+--- node-v12.22.11.orig/configure.py	2022-03-17 05:54:13.000000000 -0700
++++ node-v12.22.11/configure.py	2022-03-17 22:11:07.922685162 -0700
 @@ -154,7 +154,7 @@ parser.add_option("--enable-lto",
      action="store_true",
      dest="enable_lto",
