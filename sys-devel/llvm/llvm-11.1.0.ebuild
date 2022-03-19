@@ -609,32 +609,27 @@ _configure() {
 	)
 
 	local slot=""
-	if use souper ; then
-		if (( ${s_idx} == 7 )) ; then
-			if use pgo ; then
+	if use pgo ; then
+		if use souper ; then
+			if (( ${s_idx} == 7 )) ; then
 				if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
 					slot="${SLOT}"
 				else
 					slot="${PGO_PHASE}"
 				fi
 			else
-				slot="${SLOT}"
+				local parity=$((${s_idx} % 2))
+				slot="${parity}"
 			fi
-		elif (( ${s_idx} % 2 == 0 )) ; then
-			slot="${SLOT}"
 		else
-			slot="prev"
-		fi
-	else
-		if use pgo ; then
 			if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
 				slot="${SLOT}"
 			else
 				slot="${PGO_PHASE}"
 			fi
-		else
-			slot="${SLOT}"
 		fi
+	else
+		slot="${SLOT}"
 	fi
 	mycmakeargs+=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${slot}"
@@ -951,6 +946,9 @@ eerror
 }
 
 _build_final() {
+	wo=1
+	ph=0
+	s_idx=7
 	if use pgo ; then
 		if use bootstrap ; then
 			PGO_PHASE="pgv"
@@ -998,23 +996,13 @@ _build_final() {
 
 _build_abi() {
 	PATH_ORIG="${PATH}"
+	local wo
+	local ph
+	local s_idx
 	if use souper ; then
-		local wo
-		local ph
-		local s_idx
-
-		if use test ; then
-			_souper_test
-		fi
-
-		# Build with build_deps.sh settings
-		wo=1
-		ph=0
-		s_idx=7
-		_build_final
-	else
-		_build_final
+		use test && _souper_test
 	fi
+	_build_final
 }
 
 get_m_abi() {
