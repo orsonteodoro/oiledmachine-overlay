@@ -43,7 +43,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 	)
 	fuzz-matching? ( >=dev-python/python-levenshtein-0.16.0[${PYTHON_USEDEP}] )
 	musicbrainz? ( >=dev-python/python-musicbrainz-0.7.4-r1[${PYTHON_USEDEP}] )
-	pyacoustid? ( >=dev-python/pyacoustid-1.2.2 )
+	pyacoustid? ( >=dev-python/pyacoustid-1.2.2[${PYTHON_USEDEP}] )
 	quodlibet? ( >=media-sound/quodlibet-2.5[${PYTHON_USEDEP}] )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}"
