@@ -135,15 +135,6 @@ eerror
 			die
 		fi
 	fi
-	if use test ; then
-		if use souper && ! has_version ">=sys-devel/clang-${SLOT}:${SLOT}[${MULTILIB_USEDEP}]" ; then
-			local abi_pairs=($(multilib_get_enabled_abi_pairs))
-			abi_pairs=${abi_pairs[@]%.*}
-			abi_pairs=${abi_pairs// /,}
-eerror "Testing with souper requires >=sys-devel/clang-${SLOT}:${SLOT}[${abi_pairs}]"
-			die
-		fi
-	fi
 	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)"
 	use pgo_trainer_build_self && ewarn "The pgo_trainer_build_self USE flag has not been tested."
 	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite USE flag has not been tested."
