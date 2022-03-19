@@ -613,7 +613,7 @@ _configure() {
 		if use souper ; then
 			if (( ${s_idx} == 7 )) ; then
 				if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
-					slot="${SLOT}"
+					slot="${SLOT_MAJ}"
 				else
 					slot="${PGO_PHASE}"
 				fi
@@ -623,13 +623,22 @@ _configure() {
 			fi
 		else
 			if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
-				slot="${SLOT}"
+				slot="${SLOT_MAJ}"
 			else
 				slot="${PGO_PHASE}"
 			fi
 		fi
 	else
-		slot="${SLOT}"
+		if use souper ; then
+			if (( ${s_idx} == 7 )) ; then
+				slot="${SLOT_MAJ}"
+			else
+				local parity=$((${s_idx} % 2))
+				slot="${parity}"
+			fi
+		else
+			slot="${SLOT_MAJ}"
+		fi
 	fi
 	mycmakeargs+=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${slot}"
@@ -1138,15 +1147,15 @@ _install() {
 	rm -rf "${ED}"/usr/include || die
 	if use souper ; then
 		if (( ${s_idx} == 7 )) ; then
-			mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
-			LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
+			mv "${ED}"/usr/lib/llvm/${SLOT_MAJ}/include "${ED}"/usr/include || die
+			LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT_MAJ}/$(get_libdir)" )
 		else
 			local parity=$((${s_idx} % 2))
 			mv "${ED}"/usr/lib/llvm/${parity}/include "${ED}"/usr/include || die
 		fi
 	else
-		mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
-		LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
+		mv "${ED}"/usr/lib/llvm/${SLOT_MAJ}/include "${ED}"/usr/include || die
+		LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT_MAJ}/$(get_libdir)" )
 	fi
 }
 

@@ -673,7 +673,16 @@ _configure() {
 			fi
 		fi
 	else
-		slot="${SLOT}"
+		if use souper ; then
+			if (( ${s_idx} == 7 )) ; then
+				slot="${SLOT}"
+			else
+				local parity=$((${s_idx} % 2))
+				slot="${parity}"
+			fi
+		else
+			slot="${SLOT}"
+		fi
 	fi
 	mycmakeargs+=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${slot}"
