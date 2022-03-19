@@ -7,18 +7,13 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <maintainer status="inactive" type="person">
+    <!-- ebuild originator -->
     <email>billie@gentoo.org</email>
     <name>Daniel Pielmeier</name>
   </maintainer>
   <longdescription lang="en">
     Puddletag is a MP3 metatag editor.
   </longdescription>
-  <use>
-    <flag name="acoustid">Use <pkg>media-libs/chromaprint</pkg> for acoustic fingerprinting</flag>
-    <flag name="cover"> Enables editing of FLAC cover art</flag>
-    <flag name="musicbrainz"> Enables support for musicbrainz, needs <pkg>dev-python/python-musicbrainz</pkg></flag>
-    <flag name="quodlibet">Enables support for editing <pkg>media-sound/quodlibet</pkg> databases</flag>
-  </use>
   <upstream>
     <bugs-to>https://github.com/keithgg/puddletag/issues</bugs-to>
     <doc lang="en">http://docs.puddletag.net/docs.html</doc>
@@ -31,4 +26,20 @@
     <remote-id type="github">keithgg/puddletag</remote-id>
     <remote-id type="sourceforge">puddletag</remote-id>
   </upstream>
+  <use>
+    <flag name="amg">Support for the AMG service as a tag source</flag>
+    <flag name="acoustid">Use <pkg>media-libs/chromaprint</pkg> for acoustic
+      fingerprinting</flag>
+    <flag name="audioread">Use audioread as a acoustid fingerprinter</flag>
+    <flag name="acoustid">Use AcoustID for acoustic fingerprinting</flag>
+    <flag name="cover"> Enables editing of FLAC cover art</flag>
+    <flag name="fpcalc">Use fpcalc as a acoustid fingerprinter</flag>
+    <flag name="fuzz-matching">Add support for fuzz-matching with wildcard
+      asterisk(s)</flag>
+    <flag name="musicbrainz"> Enables support for musicbrainz, needs
+      <pkg>dev-python/python-musicbrainz</pkg></flag>
+    <flag name="pyacoustid">Use pyacoustid as a acoustid fingerprinter</flag>
+    <flag name="quodlibet">Enables support for editing
+      <pkg>media-sound/quodlibet</pkg> databases</flag>
+  </use>
 </pkgmetadata>
