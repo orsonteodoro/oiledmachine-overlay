@@ -26,7 +26,6 @@ IUSE+=" bolt bolt-prepare +bootstrap -dump jemalloc lto pgo pgo_trainer_build_se
 pgo_trainer_test_suite souper tcmalloc r3"
 REQUIRED_USE="
 	bolt-prepare? ( bolt )
-	bootstrap? ( !souper )
 	jemalloc? ( bolt )
 	pgo? ( || ( pgo_trainer_build_self pgo_trainer_test_suite ) )
 	pgo_trainer_build_self? ( pgo )

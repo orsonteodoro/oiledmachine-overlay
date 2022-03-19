@@ -33,7 +33,6 @@ IUSE="debug doc exegesis +gold libedit +libffi ncurses test xar xml z3 ${ALL_LLV
 IUSE+=" +bootstrap -dump lto pgo pgo_trainer_build_self pgo_trainer_test_suite souper r3"
 REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
 REQUIRED_USE+="
-	bootstrap? ( !souper )
 	pgo? ( || ( pgo_trainer_build_self pgo_trainer_test_suite ) )
 	pgo_trainer_build_self? ( pgo )
 	pgo_trainer_test_suite? ( pgo )
