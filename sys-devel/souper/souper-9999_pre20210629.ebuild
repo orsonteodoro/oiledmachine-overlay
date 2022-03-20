@@ -212,6 +212,7 @@ ewarn
 		-DCMAKE_INSTALL_PREFIX="/usr/lib/souper/${s}"
 		-DCMAKE_INSTALL_DOCS="/usr/share/doc/${P}"
 		-DCMAKE_INSTALL_RUNSTATEDIR="/var/run"
+		-DEXTERNAL_CACHE_SOCK_PATH="${EXTERNAL_CACHE_SOCK_PATH:-/run/redis.sock}"
 		-DFEATURE_EXTERNAL_CACHE=$(usex external-cache)
 		-DINSTALL_GDB_PRETTY_PRINT=$(usex gdb)
 		-DINSTALL_SUPPORT_TOOLS=$(usex support-tools)

@@ -40,7 +40,6 @@
       *  SOUPER_STATIC_PROFILE=1
       *  SOUPER_DYNAMIC_PROFILE=1
 
-
     Using souper with frontend wrappers via CC/CXX:
 
     The wrapper scripts simplify passing args to clang/clang++ without getting
@@ -77,6 +76,24 @@
     As an alternative, you can apply it individually with package.env
     configuration (.conf) to easily adjust these especially for packages that
     require older versions of Clang / LLVM.
+
+    When using the C{,XX}FLAGS, some c{,xx}flags may not be accepted more than
+    once.  A work around for this problem is not to specify it again as LDFLAGS.
+
+
+    The external cache:
+
+    The external cache uses Redis as a database backend.  By default, this is not
+    utilized but requires at least static or dynamic profiling to activate using the
+    external cache.  By default it will use TCP as communication, but you can use the
+    faster UNIX sockets with the SOUPER_CACHE_UNIX environment variable with
+    sclang/sclang++ wrappers or -mllvm -souper-external-cache-unix C{,XX}FLAGS.
+
+
+    Environment variables:
+
+      EXTERNAL_CACHE_SOCK_PATH -- path to redis .sock file used when using UNIX
+           sockets.
 
     References:
     [1] https://research.google/pubs/pub46467/

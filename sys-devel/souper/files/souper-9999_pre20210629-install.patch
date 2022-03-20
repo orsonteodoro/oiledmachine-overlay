@@ -3,8 +3,8 @@ Patch author:   Orson Teodoro <orsonteodoro@hotmail.com>
 Author:   Orson Teodoro <orsonteodoro@hotmail.com>
 Date:     Tue Feb  8 01:57:17 PM PST 2022 (Unix time: 1644357437)
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt
---- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt	2022-02-11 18:06:14.354741858 -0800
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt	2022-02-11 18:52:58.465774997 -0800
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt	2022-03-19 19:27:37.989147468 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt	2022-03-19 19:28:11.751484532 -0700
 @@ -477,9 +477,9 @@ string(REPLACE "-DNDEBUG" "" CMAKE_CXX_F
  add_library(profileRuntime STATIC
    runtime/souperPassProfile.c)
@@ -37,9 +37,46 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt so
 +if(INSTALL_GDB_PRETTY_PRINT)												# oteodoro:  added line
 +  install(FILES "${CMAKE_BINARY_DIR}/souper-check-gdb.py" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/souper/gdb)		# oteodoro:  added install
 +endif()															# oteodoro:  added line
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/KVStore/KVSocket.h.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/KVStore/KVSocket.h.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/include/souper/KVStore/KVSocket.h.in	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/include/souper/KVStore/KVSocket.h.in	2022-03-19 20:02:15.798181846 -0700
+@@ -20,8 +20,11 @@
+ 
+ namespace souper {
+ 
+-static constexpr const char *SocketPath = "@CMAKE_BINARY_DIR@/cache.sock";
+-static_assert(SocketPath[0] != 0 && SocketPath[0] != '@',
++static constexpr const char *SocketPathTest = "@CMAKE_BINARY_DIR@/cache.sock";				// oteodoro - changed line
++static constexpr const char *SocketPathProd = "@EXTERNAL_CACHE_SOCK_PATH@";		// oteodoro - added line
++static_assert(SocketPathTest[0] != 0 && SocketPathTest[0] != '@',					// oteodoro - changed line
++              "CMake does not seem to have rewritten the socket path correctly");
++static_assert(SocketPathProd[0] != 0 && SocketPathProd[0] != '@',					// oteodoro - added line
+               "CMake does not seem to have rewritten the socket path correctly");
+ 
+ }
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/KVStore/KVStore.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/KVStore/KVStore.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/KVStore/KVStore.cpp	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/KVStore/KVStore.cpp	2022-03-19 19:59:47.624346275 -0700
+@@ -48,7 +48,15 @@ void KVStore::KVImpl::connect() {
+   if (++retries > 5)
+     llvm::report_fatal_error("Too many Redis retries\n");
+   if (UnixSocket) {
+-    Ctx = redisConnectUnix(SocketPath);
++    if (getenv("SOUPER_UTILS_MODE") == NULL)		// oteodoro - added line
++      Ctx = redisConnectUnix(SocketPathProd);		// oteodoro - changed line
++    else {						// oteodoro - added line
++      char *e = getenv("SOUPER_UTILS_MODE");		// oteodoro - added line
++      if (e[0] == '0')					// oteodoro - added line
++        Ctx = redisConnectUnix(SocketPathProd);		// oteodoro - added line
++      else						// oteodoro - added line
++        Ctx = redisConnectUnix(SocketPathTest);		// oteodoro - added line
++    }
+     if (!Ctx)
+       llvm::report_fatal_error("Can't allocate redis context\n");
+     if (Ctx->err)
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dfa.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dfa.in
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dfa.in	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dfa.in	2022-02-11 18:06:44.559918201 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dfa.in	2022-03-19 19:28:11.752484572 -0700
 @@ -25,12 +25,34 @@ eval { require Sys::CPU; Sys::CPU->impor
  my $NPROCS = 4;
  $NPROCS = Sys::CPU::cpu_count() if defined(&Sys::CPU::cpu_count);
@@ -80,7 +117,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dfa.i
      my $cmd = shift;
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dump.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dump.in
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dump.in	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dump.in	2022-02-11 18:06:44.559918201 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dump.in	2022-03-19 19:28:11.752484572 -0700
 @@ -21,12 +21,31 @@ use Getopt::Long;
  use File::Temp;
  use Time::HiRes;
@@ -122,7 +159,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dump.
  if ($UNIX) {
 -    $r = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");
 +    if ($MODE eq $MODE_PRODUCTION) {								# oteodoro:  added line
-+        $r = Redis->new(sock => "@CMAKE_INSTALL_RUNSTATEDIR@/souper/cache.sock");		# oteodoro:  changed to production install location
++        $r = Redis->new(sock => "@EXTERNAL_CACHE_SOCK_PATH@");		# oteodoro:  changed to production install location
 +    } else {											# oteodoro:  added line
 +        $r = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");				# oteodoro:  indent
 +    }												# oteodoro:  added line
@@ -131,7 +168,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dump.
  }
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_import.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_import.in
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_import.in	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_import.in	2022-02-11 18:06:44.560918240 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_import.in	2022-03-19 19:28:11.753484611 -0700
 @@ -21,12 +21,31 @@ use Getopt::Long;
  use File::Temp;
  use Time::HiRes;
@@ -169,7 +206,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_impor
      (my $opt) = @_;
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_infer.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_infer.in
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_infer.in	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_infer.in	2022-02-11 18:06:44.560918240 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_infer.in	2022-03-19 19:28:11.753484611 -0700
 @@ -30,6 +30,13 @@ $NPROCS = Sys::CPU::cpu_count() if defin
  my $CPU_LIMIT = 15 * 60;
  my $RAM_LIMIT = 4 * 1024 * 1024 * 1024;
@@ -199,7 +236,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_infer
  if ($UNIX) {
 -    $r = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");
 +    if ($MODE eq $MODE_PRODUCTION) {										# oteodoro:  added line
-+        $r = Redis->new(sock => "@CMAKE_INSTALL_RUNSTATEDIR@/souper/cache.sock");				# oteodoro:  changed to production install location
++        $r = Redis->new(sock => "@EXTERNAL_CACHE_SOCK_PATH@");				# oteodoro:  changed to production install location
 +    } else {													# oteodoro:  added line
 +        $r = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");						# oteodoro:  changed to production install location
 +    }														# oteodoro:  added line
@@ -212,7 +249,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_infer
      if ($UNIX) {
 -	$red = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");
 +        if ($MODE eq $MODE_PRODUCTION) {									# oteodoro:  added line
-+	    $red = Redis->new(sock => "@CMAKE_INSTALL_RUNSTATEDIR@/souper/cache.sock");				# oteodoro:  changed to production install location
++	    $red = Redis->new(sock => "@EXTERNAL_CACHE_SOCK_PATH@");				# oteodoro:  changed to production install location
 +        } else {												# oteodoro:  added line
 +	    $red = Redis->new(sock => "@CMAKE_BINARY_DIR@/cache.sock");						# oteodoro:  reindent
 +        }													# oteodoro:  added line
@@ -221,18 +258,19 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_infer
      }
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/redis-unix-socket.conf.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/redis-unix-socket.conf.in
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/redis-unix-socket.conf.in	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/redis-unix-socket.conf.in	2022-02-11 19:02:17.880879509 -0800
-@@ -2,6 +2,6 @@
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/redis-unix-socket.conf.in	2022-03-19 19:28:11.753484611 -0700
+@@ -2,6 +2,7 @@
  # talk to it using UNIX domain sockets, instead of TCP
  
  port 0
 -unixsocket @CMAKE_BINARY_DIR@/cache.sock
-+unixsocket @CMAKE_INSTALL_RUNSTATEDIR@/souper/cache.sock	# oteodoro:  changed to production install location
++#unixsocket @CMAKE_BINARY_DIR@/cache.sock	# oteodoro:  changed line.  Uncomment for testing.
++unixsocket @EXTERNAL_CACHE_SOCK_PATH@		# oteodoro:  added line.  For production.
  unixsocketperm 700
  timeout 0
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/reduce.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/reduce.in
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/reduce.in	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/reduce.in	2022-02-11 18:06:44.560918240 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/reduce.in	2022-03-19 19:28:11.753484611 -0700
 @@ -18,7 +18,24 @@ use warnings;
  use strict;
  use File::Temp;
@@ -261,7 +299,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/reduce.in s
      (my $s) = @_;
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/sclang.in
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in	2021-06-09 12:16:44.000000000 -0700
-+++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/sclang.in	2022-02-11 18:06:44.561918279 -0800
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/sclang.in	2022-03-19 19:28:11.754484651 -0700
 @@ -18,6 +18,20 @@ use warnings;
  use strict;
  use File::Temp;
