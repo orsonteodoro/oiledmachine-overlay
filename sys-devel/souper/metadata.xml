@@ -116,7 +116,7 @@
 
     The following are required to per-package LDFLAGS:
 
-      LDFLAGS="-Wl,--no-as-needed -Wl,-lLLVM-12 -Wl,-rpath=/usr/lib/souper/12/lib64 -Wl,-rpath=/usr/lib/llvm/12/lib64"
+      LDFLAGS="${LDFLAGS} -Wl,--no-as-needed -Wl,-lLLVM-12 -Wl,-rpath=/usr/lib/souper/12/lib64 -Wl,-rpath=/usr/lib/llvm/12/lib64"
 
     You should only link with the same LLVM version or only one LLVM version.
     If a package has and is using a specific LLVM version, you can only link
