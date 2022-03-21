@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="project">
+	<!-- ebuild fork only on the oiledmachine-overlay -->
+	<email>orsonteodoro@hotmail.com</email>
+	<name>Orson Teodoro</name>
+</maintainer>
+<maintainer type="project">
+	<!-- ebuild originator -->
+	<email>base-system@gentoo.org</email>
+	<name>Gentoo Base System</name>
+</maintainer>
+<upstream>
+	<remote-id type="cpe">cpe:/a:gnu:libtool</remote-id>
+</upstream>
+<longdescription>
+This ebuild fork is to fix clang -Xclang -load and misinterpretation of -load as
+a library.
+</longdescription>
+</pkgmetadata>

@@ -1,0 +1,21 @@
+Subject:  Unbreak -load for clang
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Sun Mar 20 08:17:00 PM PDT 2022 (Unix time: 1647832620)
+
+Prevent the following error:
+ld.lld: error: unable to find library -load
+
+diff -urp libtool-2.4.6.orig/build-aux/ltmain.sh libtool-2.4.6/build-aux/ltmain.sh
+--- libtool-2.4.6.orig/build-aux/ltmain.sh	2022-03-20 20:12:05.023453847 -0700
++++ libtool-2.4.6/build-aux/ltmain.sh	2022-03-20 20:15:39.380842746 -0700
+@@ -7682,6 +7682,10 @@ func_mode_link ()
+ 	  fi
+ 	  continue
+ 	  ;;
++	-load)
++	  # For clang -Xclang -load
++	  continue
++	  ;;
+ 	-l*)
+ 	  if test lib != "$linkmode" && test prog != "$linkmode"; then
+ 	    func_warning "'-l' is ignored for archives/objects"
