@@ -121,7 +121,7 @@
     Instead of using these environment variables, one may wish to add the
     following to per-package LDFLAGS:
 
-      LDFLAGS="-Wl,-lLLVM-12 -Wl,-rpath=/usr/lib/souper/12/lib64 -Wl,/usr/lib/llvm/12/lib64"
+      LDFLAGS="-Wl,-lLLVM-12 -Wl,-rpath=/usr/lib/souper/12/lib64 -Wl,-rpath=/usr/lib/llvm/12/lib64"
 
     Setting the environment variable LD_PRELOAD and LD_LIBRARY_PATH has been
     tested and confirmed working, but the suggestion for LDFLAGS hasn't been
