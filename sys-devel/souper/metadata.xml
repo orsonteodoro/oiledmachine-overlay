@@ -112,24 +112,15 @@
 
     Only native ABI is currently supported.  The reason is because there is no
     support for multilib hooks or the wrappers need more modifications to be
-    more multiabi aware when referencing libraries.  To run a program that has
-    been Souper-ed, one should add additional environment variables with changes
-    to the LLVM slot from 12 to the desired if necessary.
+    more multiabi aware when referencing libraries.  
 
-    LD_PRELOAD="/usr/lib/llvm/12/lib64/libLLVM-12.so"
-    LD_LIBRARY_PATH="/usr/lib/souper/12/lib64:/usr/lib/llvm/12/lib64"
+    The following are required to per-package LDFLAGS:
 
-    Instead of using these environment variables, one may wish to add the
-    following to per-package LDFLAGS:
+      LDFLAGS="-Wl,--no-as-needed -Wl,-lLLVM-12 -Wl,-rpath=/usr/lib/souper/12/lib64 -Wl,-rpath=/usr/lib/llvm/12/lib64"
 
-      LDFLAGS="-Wl,-lLLVM-12 -Wl,-rpath=/usr/lib/souper/12/lib64 -Wl,-rpath=/usr/lib/llvm/12/lib64"
-
-    Setting the environment variable LD_PRELOAD and LD_LIBRARY_PATH has been
-    tested and confirmed working, but the suggestion for LDFLAGS hasn't been
-    tested yet.  The LDFLAGS suggestion should only be used in native ABI
-    only packages, changing the lib64 to the corresponding lib folder for
-    the ABI.
-
+    You should only link with the same LLVM version or only one LLVM version.
+    If a package has and is using a specific LLVM version, you can only link
+    Souper with the same LLVM version.
 
     Testing notes:
 
