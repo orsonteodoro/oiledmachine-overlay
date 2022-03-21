@@ -111,9 +111,10 @@
     Running Souper-ed packages:
 
     Only native ABI is currently supported.  The reason is because there is no
-    support for multilib hooks.  To run a program that has been Souper-ed, one
-    should add additional environment variables with changes to the LLVM slot
-    from 12 to the desired if necessary.
+    support for multilib hooks or the wrappers need more modifications to be
+    more multiabi aware when referencing libraries.  To run a program that has
+    been Souper-ed, one should add additional environment variables with changes
+    to the LLVM slot from 12 to the desired if necessary.
 
     LD_PRELOAD="/usr/lib/llvm/12/lib64/libLLVM-12.so"
     LD_LIBRARY_PATH="/usr/lib/souper/12/lib64:/usr/lib/llvm/12/lib64"

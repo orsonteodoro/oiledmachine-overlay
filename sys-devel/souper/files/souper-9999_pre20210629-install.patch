@@ -331,7 +331,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in s
      if ($souper) {
 -        push @ARGV, ("-Xclang", "@SOUPER_PASS_PROFILE_ALL@");
 +        if ($MODE eq $MODE_PRODUCTION) {										# oteodoro:  added line
-+            push @ARGV, ("-Xclang", "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/@SOUPER_PASS_PROFILE_ALL@");		# oteodoro:  indent line and change line
++            push @ARGV, ("-Xclang", "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/@SOUPER_PASS_PROFILE_ALL@");		# oteodoro:  indent line and change line
 +        } else {													# oteodoro:  added line
 +            push @ARGV, ("-Xclang", "@CMAKE_BINARY_DIR@/@SOUPER_PASS_PROFILE_ALL@");					# oteodoro:  indent line and change line
 +        }														# oteodoro:  added line
@@ -340,7 +340,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in s
      if ($souper) {
 -        push @ARGV, ("-Xclang", "@SOUPER_PASS@");
 +        if ($MODE eq $MODE_PRODUCTION) {										# oteodoro:  added line
-+            push @ARGV, ("-Xclang", "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/@SOUPER_PASS@");			# oteodoro:  indent line and change line
++            push @ARGV, ("-Xclang", "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/@SOUPER_PASS@");			# oteodoro:  indent line and change line
 +        } else {													# oteodoro:  added line
 +            push @ARGV, ("-Xclang", "@CMAKE_BINARY_DIR@/@SOUPER_PASS@");						# oteodoro:  indent line and change line
 +        }														# oteodoro:  added line
@@ -353,7 +353,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/sclang.in s
       getenv("SOUPER_DYNAMIC_PROFILE_ALL")) && linkp() && $souper) {
 -    push @ARGV, ("@PROFILE_LIBRARY@", "@HIREDIS_LIBRARY@");
 +    if ($MODE eq $MODE_PRODUCTION) {											# oteodoro:  added line
-+        push @ARGV, ("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@/@PROFILE_LIBRARY@", "@HIREDIS_LIBRARY@");		# oteodoro:  indent and change line
++        push @ARGV, ("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/@PROFILE_LIBRARY@", "@HIREDIS_LIBRARY@");		# oteodoro:  indent and change line
 +    } else {														# oteodoro:  added line
 +        push @ARGV, ("@CMAKE_BINARY_DIR@/@PROFILE_LIBRARY@", "@HIREDIS_LIBRARY@");					# oteodoro:  indent and change line
 +    }															# oteodoro:  added line
