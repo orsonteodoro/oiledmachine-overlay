@@ -300,6 +300,7 @@ pkg_postinst() {
 			local redis_v=$(/usr/sbin/redis-server --version | cut -f 3 -d " " | sed -e "s|v=||g")
 			local redis_db_v=$(/usr/sbin/redis-check-rdb /var/lib/souper/dump.rdb | grep "redis-ver" | cut -f 2 -d "'")
 			if ver_test ${redis_v} -ne ${redis_db_v} ; then
+				# TODO: put mutex around this because the possibility of parallel emerges.
 				ewarn "Removing incompatible /var/lib/souper/dump.rdb"
 				rm /var/lib/souper/dump.rdb || die
 			else
