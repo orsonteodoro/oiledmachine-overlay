@@ -125,7 +125,9 @@
 
     Setting the environment variable LD_PRELOAD and LD_LIBRARY_PATH has been
     tested and confirmed working, but the suggestion for LDFLAGS hasn't been
-    tested yet.
+    tested yet.  The LDFLAGS suggestion should only be used in native ABI
+    only packages, changing the lib64 to the corresponding lib folder for
+    the ABI.
 
 
     Testing notes:

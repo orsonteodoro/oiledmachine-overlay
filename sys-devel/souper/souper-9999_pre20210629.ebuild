@@ -305,6 +305,7 @@ pkg_postinst() {
 				rm /var/lib/souper/dump.rdb || die
 			else
 				ewarn "Reusing /var/lib/souper/dump.rdb"
+				chown portage:portage /var/lib/souper/dump.rdb || die
 			fi
 		fi
 ewarn
