@@ -8,8 +8,10 @@
   </maintainer>
   <longdescription>
     Souper is an LLVM IR optimizer pass that can reduce a binary by around 4.4%
-    but with a 2% runtime performance slowdown tradeoff.[1]  [The savings may
-    become substantial when storing GiBs or TiBs of compiled code.]
+    but with a 2% runtime performance slowdown tradeoff.  [The savings may
+    become substantial when storing GiBs or TiBs of compiled code.]  However,
+    an increase in binary size may happen, and longer than usual build times
+    may be observed.[1, 2, 3]
 
     It automatically generates random code sequences of optimized code
     sequences.  Because of this random code generation, two additional CFLAGS
@@ -83,20 +85,58 @@
 
     The external cache:
 
-    The external cache uses Redis as a database backend.  By default, this is not
-    utilized but requires at least static or dynamic profiling to activate using the
-    external cache.  By default it will use TCP as communication, but you can use the
-    faster UNIX sockets with the SOUPER_CACHE_UNIX environment variable with
-    sclang/sclang++ wrappers or -mllvm -souper-external-cache-unix C{,XX}FLAGS.
+    The external cache uses Redis as a database backend.  By default, this is
+    not utilized but requires at least static or dynamic profiling to activate
+    using the external cache.  It is recommended to use static profile to speed
+    up future lookups.  You can specify both static and dynamic together.  By
+    default it will use TCP communication as an IPC between Souper and Redis,
+    but you can use the faster UNIX sockets with the SOUPER_CACHE_UNIX
+    environment variable with sclang/sclang++ wrappers or
+    -mllvm -souper-external-cache-unix C{,XX}FLAGS.
+
+    Ebuild support for external cache is a Work In Progress (WIP).  Currently,
+    one needs to manually run Redis as follows:
+
+      sudo -u portage -g portage /usr/sbin/redis-server /usr/share/souper/redis-unix-socket.conf --daemonize no
+
+    An updated OpenRC script may be provided in a future to automate this.
 
 
     Environment variables:
 
-      EXTERNAL_CACHE_SOCK_PATH -- path to redis .sock file used when using UNIX
+      EXTERNAL_CACHE_SOCK_PATH -- path to Redis .sock file used when using UNIX
            sockets.
+
+
+    Running Souper-ed packages:
+
+    Only native ABI is currently supported.  The reason is because there is no
+    support for multilib hooks.  To run a program that has been Souper-ed, one
+    should add additional environment variables with changes to the LLVM slot
+    from 12 to the desired if necessary.
+
+    LD_PRELOAD="/usr/lib/llvm/12/lib64/libLLVM-12.so"
+    LD_LIBRARY_PATH="/usr/lib/souper/12/lib64:/usr/lib/llvm/12/lib64"
+
+    Instead of using these environment variables, one may wish to add the
+    following to per-package LDFLAGS:
+
+      LDFLAGS="-Wl,-lLLVM-12 -Wl,-rpath=/usr/lib/souper/12/lib64 -Wl,/usr/lib/llvm/12/lib64"
+
+    Setting the environment variable LD_PRELOAD and LD_LIBRARY_PATH has been
+    tested and confirmed working, but the suggestion for LDFLAGS hasn't been
+    tested yet.
+
+
+    Testing notes:
+
+    Only the UNIX socket with Redis and with the llvm-12 USE flag has been
+    tested with the built program at least working.
 
     References:
     [1] https://research.google/pubs/pub46467/
+    [2] page 2, par 1
+    [3] page 9, par 7
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/google/souper/issues</bugs-to>
@@ -121,9 +161,9 @@
 
       Note the use of an external cache can increase the cost of RAM in the
       order of 100s of MB but the time savings is amortized (meaning high
-      initial cost but decreased over time).  Without redis the time cost
-      could be 6.28-13x times larger in the initial compilation
-      relative to warm cache runs.
+      initial cost but decreased over time).  Without Redis the time cost could
+      be 5-25x times larger in the initial compilation relative to warm cache
+      runs.[2]
 
       It is recommended to hardmask newer versions of Redis in package.mask.
     </flag>

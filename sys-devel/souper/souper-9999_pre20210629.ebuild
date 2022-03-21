@@ -212,7 +212,7 @@ ewarn
 		-DCMAKE_INSTALL_PREFIX="/usr/lib/souper/${s}"
 		-DCMAKE_INSTALL_DOCS="/usr/share/doc/${P}"
 		-DCMAKE_INSTALL_RUNSTATEDIR="/var/run"
-		-DEXTERNAL_CACHE_SOCK_PATH="${EXTERNAL_CACHE_SOCK_PATH:-/run/redis.sock}"
+		-DEXTERNAL_CACHE_SOCK_PATH="${EXTERNAL_CACHE_SOCK_PATH:-/run/souper/redis.sock}"
 		-DFEATURE_EXTERNAL_CACHE=$(usex external-cache)
 		-DINSTALL_GDB_PRETTY_PRINT=$(usex gdb)
 		-DINSTALL_SUPPORT_TOOLS=$(usex support-tools)
@@ -279,6 +279,8 @@ src_install() {
 		doenvd "${T}"/50${P}-external-cache
 	fi
 	dodoc LICENSE
+	dodir /var/lib/souper
+	fowners portage:portage /var/lib/souper
 }
 
 src_test() {
@@ -294,11 +296,21 @@ src_test() {
 pkg_postinst() {
 	env-update
 	if use external-cache ; then
+		if [[ -e "/usr/sbin/redis-server" && -e "/var/lib/souper/dump.rdb" ]] ; then
+			local redis_v=$(/usr/sbin/redis-server --version | cut -f 3 -d " " | sed -e "s|v=||g")
+			local redis_db_v=$(/usr/sbin/redis-check-rdb /var/lib/souper/dump.rdb | grep "redis-ver" | cut -f 2 -d "'")
+			if ver_test ${redis_v} -ne ${redis_db_v} ; then
+				ewarn "Removing incompatible /var/lib/souper/dump.rdb"
+				rm /var/lib/souper/dump.rdb || die
+			else
+				ewarn "Reusing /var/lib/souper/dump.rdb"
+			fi
+		fi
 ewarn
-ewarn "The redis cache must stopped and dumped each time this package"
-ewarn "is bumped to a newer version or commit."
-ewarn
-ewarn "The redis server should be listening in port 6379."
+ewarn "The redis server should be listening in port 6379 if communicating with"
+ewarn "Redis through TCP but may be changed.  The TCP interface has not been"
+ewarn "tested but Redis communicating with UNIX sockets with Souper has been"
+ewarn "tested working."
 ewarn
 	fi
 einfo

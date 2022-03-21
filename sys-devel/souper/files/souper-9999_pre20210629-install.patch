@@ -259,13 +259,17 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_infer
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/redis-unix-socket.conf.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/redis-unix-socket.conf.in
 --- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/redis-unix-socket.conf.in	2021-06-09 12:16:44.000000000 -0700
 +++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/redis-unix-socket.conf.in	2022-03-19 19:28:11.753484611 -0700
-@@ -2,6 +2,7 @@
+@@ -2,6 +2,11 @@
  # talk to it using UNIX domain sockets, instead of TCP
  
  port 0
 -unixsocket @CMAKE_BINARY_DIR@/cache.sock
-+#unixsocket @CMAKE_BINARY_DIR@/cache.sock	# oteodoro:  changed line.  Uncomment for testing.
-+unixsocket @EXTERNAL_CACHE_SOCK_PATH@		# oteodoro:  added line.  For production.
++# oteodoro:  changed line below.  Uncomment line below for testing.
++#unixsocket @CMAKE_BINARY_DIR@/cache.sock
++# oteodoro:  added line below.  Line below is for production.
++unixsocket @EXTERNAL_CACHE_SOCK_PATH@
++# oteoodoro:  added line below for production.  For testing, comment out the line below.
++dir /var/lib/souper/
  unixsocketperm 700
  timeout 0
 diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/reduce.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/reduce.in
