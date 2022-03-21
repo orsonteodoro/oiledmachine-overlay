@@ -99,7 +99,9 @@
 
       sudo -u portage -g portage /usr/sbin/redis-server /usr/share/souper/redis-unix-socket.conf --daemonize no
 
-    An updated OpenRC script may be provided in a future to automate this.
+    An updated OpenRC script may be provided in a future to automate this.  Then,
+    you need add -mllvm -souper-external-cache-unix to per-package C{,XX}FLAGS
+    to utilize the UNIX domain sockets IPC.
 
 
     Environment variables:
