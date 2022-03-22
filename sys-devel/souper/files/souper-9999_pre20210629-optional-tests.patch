@@ -1,0 +1,123 @@
+Subject:  Make tests optional
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Tue Mar 22 01:49:42 AM PDT 2022 (Unix time: 1647938982)
+--- a/CMakeLists.txt.orig	2022-03-22 02:03:34.915087058 -0700
++++ b/CMakeLists.txt	2022-03-22 02:11:15.594551870 -0700
+@@ -400,33 +400,35 @@ add_executable(souper2llvm
+   tools/souper2llvm.cpp
+ )
+ 
+-add_executable(extractor_tests
+-  unittests/Extractor/ExtractorTests.cpp
+-)
+-
+-add_executable(inst_tests
+-  unittests/Inst/InstTests.cpp
+-)
+-
+-add_executable(parser_tests
+-  unittests/Parser/ParserTests.cpp
+-)
+-
+-add_executable(codegen_tests
+-  unittests/Codegen/CodegenTests.cpp
+-)
+-
+-add_executable(interpreter_tests
+-  unittests/Interpreter/InterpreterInfra.cpp
+-  unittests/Interpreter/InterpreterTests.cpp)
+-
+-set(LLVM_LDFLAGS "${LLVM_LDFLAGS}")
+-
+-add_executable(bulk_tests
+-  unittests/Interpreter/InterpreterInfra.cpp
+-  utils/gen-xfer-funcs/BulkTests.cpp
+-  utils/gen-xfer-funcs/Verification.cpp)
+-target_include_directories(bulk_tests PUBLIC "${CMAKE_SOURCE_DIR}/unittests/Interpreter")
++set(LLVM_LDFLAGS "${LLVM_LDFLAGS}")											# oteodoro:  moved line
++															# oteodoro:  moved line
++if(BUILD_TESTS)														# oteodoro:  added line
++  add_executable(extractor_tests											# oteodoro:  indent
++    unittests/Extractor/ExtractorTests.cpp										# oteodoro:  indent
++  )															# oteodoro:  indent
++
++  add_executable(inst_tests												# oteodoro:  indent
++    unittests/Inst/InstTests.cpp											# oteodoro:  indent
++  )															# oteodoro:  indent
++
++  add_executable(parser_tests												# oteodoro:  indent
++    unittests/Parser/ParserTests.cpp											# oteodoro:  indent
++  )															# oteodoro:  indent
++
++  add_executable(codegen_tests												# oteodoro:  indent
++    unittests/Codegen/CodegenTests.cpp											# oteodoro:  indent
++  )															# oteodoro:  indent
++
++  add_executable(interpreter_tests											# oteodoro:  indent
++    unittests/Interpreter/InterpreterInfra.cpp										# oteodoro:  indent
++    unittests/Interpreter/InterpreterTests.cpp)										# oteodoro:  indent
++
++  add_executable(bulk_tests												# oteodoro:  indent
++    unittests/Interpreter/InterpreterInfra.cpp										# oteodoro:  indent
++    utils/gen-xfer-funcs/BulkTests.cpp											# oteodoro:  indent
++    utils/gen-xfer-funcs/Verification.cpp)										# oteodoro:  indent
++  target_include_directories(bulk_tests PUBLIC "${CMAKE_SOURCE_DIR}/unittests/Interpreter")				# oteodoro:  indent
++endif()															# oteodoro:  added line
+ 
+ configure_file(
+   ${CMAKE_SOURCE_DIR}/utils/gen-xfer-funcs/run_n.pl.in
+@@ -475,10 +477,12 @@ foreach(target souperClangTool clang-sou
+   set_target_properties(${target} PROPERTIES COMPILE_FLAGS "${CLANG_CXXFLAGS} ${LLVM_CXXFLAGS}")
+   target_include_directories(${target} PRIVATE "${LLVM_INCLUDEDIR}" ${CLANG_INCLUDEDIR})
+ endforeach()
+-foreach(target extractor_tests inst_tests parser_tests interpreter_tests bulk_tests codegen_tests)
+-  set_target_properties(${target} PROPERTIES COMPILE_FLAGS "${GTEST_CXXFLAGS} ${LLVM_CXXFLAGS}")
+-  target_include_directories(${target} PRIVATE "${LLVM_INCLUDEDIR}" "${GTEST_INCLUDEDIR}")
+-endforeach()
++if(BUILD_TESTS)														# oteodoro:  added line
++  foreach(target extractor_tests inst_tests parser_tests interpreter_tests bulk_tests codegen_tests)			# oteodoro:  indent
++    set_target_properties(${target} PROPERTIES COMPILE_FLAGS "${GTEST_CXXFLAGS} ${LLVM_CXXFLAGS}")			# oteodoro:  indent
++    target_include_directories(${target} PRIVATE "${LLVM_INCLUDEDIR}" "${GTEST_INCLUDEDIR}")				# oteodoro:  indent
++  endforeach()														# oteodoro:  indent
++endif()															# oteodoro:  added line
+ 
+ # static
+ target_link_libraries(kleeExpr ${LLVM_LDFLAGS} ${LLVM_LIBS})								# oteodoro:  changed flags order
+@@ -509,12 +513,14 @@ target_link_libraries(souper-interpret s
+ target_link_libraries(clang-souper souperClangTool souperExtractor ${KVSTORE_LIB} souperParser souperSMTLIB2 souperTool kleeExpr ${LLVM_LDFLAGS} ${LLVM_LIBS} ${CLANG_LIBS} ${HIREDIS_LIBRARY} ${ALIVE_LIBRARY} ${Z3_LIBRARY})		# oteodoro:  changed line and flags order
+ target_link_libraries(count-insts souperParser)
+ target_link_libraries(souper2llvm souperParser souperCodegen)
+-target_link_libraries(extractor_tests souperExtractor souperParser ${GTEST_LIBS} ${ALIVE_LIBRARY})
+-target_link_libraries(inst_tests souperInfer souperPass souperInst souperExtractor ${GTEST_LIBS} ${ALIVE_LIBRARY})
+-target_link_libraries(parser_tests souperParser ${GTEST_LIBS} ${ALIVE_LIBRARY})
+-target_link_libraries(codegen_tests souperCodegen souperInst ${GTEST_LIBS} ${ALIVE_LIBRARY})
+-target_link_libraries(interpreter_tests souperInfer souperInst ${GTEST_LIBS} ${ALIVE_LIBRARY})
+-target_link_libraries(bulk_tests souperInfer souperInst ${GTEST_LIBS} ${ALIVE_LIBRARY} ${Z3_LIBRARY})
++if(BUILD_TESTS)														# oteodoro:  added line
++  target_link_libraries(extractor_tests souperExtractor souperParser ${GTEST_LIBS} ${ALIVE_LIBRARY})			# oteodoro:  indent
++  target_link_libraries(inst_tests souperInfer souperPass souperInst souperExtractor ${GTEST_LIBS} ${ALIVE_LIBRARY})	# oteodoro:  indent
++  target_link_libraries(parser_tests souperParser ${GTEST_LIBS} ${ALIVE_LIBRARY})					# oteodoro:  indent
++  target_link_libraries(codegen_tests souperCodegen souperInst ${GTEST_LIBS} ${ALIVE_LIBRARY})				# oteodoro:  indent
++  target_link_libraries(interpreter_tests souperInfer souperInst ${GTEST_LIBS} ${ALIVE_LIBRARY})			# oteodoro:  indent
++  target_link_libraries(bulk_tests souperInfer souperInst ${GTEST_LIBS} ${ALIVE_LIBRARY} ${Z3_LIBRARY})			# oteodoro:  indent
++endif()															# oteodoro:  added line
+ 
+ SET(BUILD_CLANG_TOOL 1 CACHE BOOL "Build the Souper Clang tool")
+ if (NOT BUILD_CLANG_TOOL)
+@@ -546,10 +552,12 @@ else()						# oteodoro:  add line
+   unset(PROFILERUNTIME_LIB)			# oteodoro:  add line
+ endif()						# oteodoro:  add line
+ 
+-add_custom_target(check
+-  COMMAND ${CMAKE_BINARY_DIR}/run_lit
+-  DEPENDS extractor_tests inst_tests parser-test parser_tests ${PROFILERUNTIME_LIB} souper souper-check souper-interpret souperPass souper2llvm souperPassProfileAll count-insts interpreter_tests bulk_tests codegen_tests		# oteodoro:  changed line
+-  USES_TERMINAL)
++if(BUILD_TESTS)														# oteodoro:  added line
++  add_custom_target(check												# oteodoro:  indent
++    COMMAND ${CMAKE_BINARY_DIR}/run_lit											# oteodoro:  indent
++    DEPENDS extractor_tests inst_tests parser-test parser_tests ${PROFILERUNTIME_LIB} souper souper-check souper-interpret souperPass souper2llvm souperPassProfileAll count-insts interpreter_tests bulk_tests codegen_tests		# oteodoro:  changed line
++    USES_TERMINAL)													# oteodoro:  indent
++endif()															# oteodoro:  added line
+ 
+ # we want assertions even in release mode!
+ string(FIND ${LLVM_CONFIG_H_DATA} "LLVM_ENABLE_DUMP A" LLVM_ENABLE_DUMP_RESULT)										# oteodoro:  added line

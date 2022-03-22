@@ -63,7 +63,7 @@ diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt so
  include_directories(${Z3_INCLUDE_DIR})
  
 -find_library(Z3_LIBRARY z3 PATHS "${CMAKE_SOURCE_DIR}/third_party/z3-install/lib" NO_DEFAULT_PATH)
-+find_library(Z3_LIBRARY z3 PATHS /usr/lib64 /usr/lib NO_DEFAULT_PATH)		# oteodoro:  use system package
++find_library(Z3_LIBRARY z3 PATHS ${SYSTEM_LIB_PATH} NO_DEFAULT_PATH)		# oteodoro:  use system package
  if (Z3_LIBRARY)
    message(STATUS "Z3 shared lib: ${Z3_LIBRARY}")
  else()

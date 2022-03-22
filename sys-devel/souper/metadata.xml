@@ -112,9 +112,9 @@
 
     Running Souper-ed packages:
 
-    Only native ABI is currently supported.  The reason is because there is no
-    support for multilib hooks or the wrappers need more modifications to be
-    more multiabi aware when referencing libraries.  
+    Only native ABI is currently supported, but the the wrappers (sclang{,++})
+    need more modifications to be  more multiabi aware when referencing
+    libraries.  Multiabi support is still undergoing development and testing.
 
     The following are required to per-package LDFLAGS:
 

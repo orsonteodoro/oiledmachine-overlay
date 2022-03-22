@@ -139,6 +139,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-9999_pre20210629-check-stdcxx20-flag.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-custom-docs-prefix.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-use-ccache.patch"
+	"${FILESDIR}/alive2-v2-change-saturate-operations.patch"
+	"${FILESDIR}/${PN}-9999_pre20210629-optional-tests.patch"
 )
 MIN_CXX="20"
 
@@ -179,17 +181,6 @@ src_prepare() {
 	_prepare_abi() {
 		for s in ${LLVM_SLOTS[@]} ; do
 			if use "llvm-${s}" ; then
-				# Build time failure.
-				# It looks like 32-bit abi won't be supported until a workaround is found.
-				# See also:  https://github.com/AliveToolkit/alive2/blob/master/util/compiler.cpp#L46
-# third_party/alive2/util/compiler.cpp:48:3: error: static_assert failed due to requirement 'sizeof (res) == sizeof(unsigned long long)'
-#  static_assert(sizeof(res) == sizeof(uint64_t));
-#  ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# third_party/alive2/util/compiler.cpp:54:3: error: static_assert failed due to requirement 'sizeof (res) == sizeof(unsigned long long)'
-#  static_assert(sizeof(res) == sizeof(uint64_t));
-#  ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#2 errors generated.
-				[[ $(get_libdir) =~ "lib64" ]] || die "ABI is not supported"
 				local souper_build_dir="${WORKDIR}/${P}_llvm${s}_${ABI}_build"
 				cp -a "${S}" "${souper_build_dir}" || die
 			fi
@@ -221,11 +212,11 @@ _configure_souper() {
 	if (( ${s} != 12 )) ; then
 ewarn
 ewarn "Compatibility with LLVM ${s} is experimental.  Use the llvm-12 USE flag"
-ewarn "to match the upstream supported LLVM version."
 ewarn
 	fi
 	local mycmakeargs=(
 		-DBUILD_DOCUMENTATION=$(usex doxygen)
+		-DBUILD_TESTS=$(usex test)
 		-DCLANG_INCLUDE_DIR="/usr/lib/llvm/${s}/include/clang"
 		-DCMAKE_INSTALL_BINDIR="bin"
 		-DCMAKE_INSTALL_DATAROOTDIR="/usr/share"
@@ -233,11 +224,12 @@ ewarn
 		-DCMAKE_INSTALL_PREFIX="/usr/lib/souper/${s}"
 		-DCMAKE_INSTALL_DOCS="/usr/share/doc/${P}"
 		-DCMAKE_INSTALL_RUNSTATEDIR="/var/run"
+		-DSYSTEM_LIB_PATH="/usr/$(get_libdir)"
 		-DEXTERNAL_CACHE_SOCK_PATH="${EXTERNAL_CACHE_SOCK_PATH:-/run/souper/redis.sock}"
 		-DFEATURE_EXTERNAL_CACHE=$(usex external-cache)
 		-DINSTALL_GDB_PRETTY_PRINT=$(usex gdb)
 		-DINSTALL_SUPPORT_TOOLS=$(usex support-tools)
-		-DLLVM_CONFIG_PATH="/usr/lib/llvm/${s}/bin/llvm-config"
+		-DLLVM_CONFIG_PATH="/usr/lib/llvm/${s}/bin/${CHOST}-llvm-config"
 		-DTEST_SYNTHESIS=$(usex test)
 	)
 	cmake_src_configure
@@ -283,8 +275,8 @@ src_compile() {
 }
 
 src_install() {
+	local s_max=0
 	_install_abi() {
-		local s_max=0
 		for s in ${LLVM_SLOTS[@]} ; do
 			if use "llvm-${s}" ; then
 				local souper_build_dir="${WORKDIR}/${P}_llvm${s}_${ABI}_build"
