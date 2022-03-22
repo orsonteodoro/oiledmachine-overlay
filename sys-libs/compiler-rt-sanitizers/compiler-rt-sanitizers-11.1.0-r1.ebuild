@@ -39,7 +39,7 @@ CLANG_SLOT=${SLOT%%.*}
 # llvm-6 for new lit options
 DEPEND="
 	>=sys-devel/llvm-6
-	virtual/libcrypt[abi_x86_32(-)?,abi_x86_64(-)?]"
+	virtual/libcrypt"
 BDEPEND="
 	>=dev-util/cmake-3.16
 	clang? ( sys-devel/clang )
