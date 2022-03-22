@@ -42,7 +42,7 @@ gen_iuse() {
 IUSE+=" $(gen_iuse)"
 # Both assertions (debug) and dump are default ON upstream,
 # but in the distro, both are OFF for the llvm package by default.
-IUSE+=" -debug -dump +external-cache r5"
+IUSE+=" -debug -dump +external-cache r6"
 REQUIRED_USE+="
 	|| ( $(gen_iuse) )
 	support-tools? ( external-cache )
@@ -155,6 +155,11 @@ pkg_setup()
 	fi
 	ewarn "This package with compatibility patches has not been unit tested yet."
 	python-any-r1_pkg_setup
+
+	# Prevent possible IR mixing between ABIs
+	# Possibly not enough isolation between IR generated between ABIs in the external-cache.
+	local n_abis=$(echo "${USE}" | tr " " "\n" | grep "abi_" | wc -l)
+	(( ${n_abis} > 1 )) && die "Only one ABI is supported."
 }
 
 src_unpack() {
