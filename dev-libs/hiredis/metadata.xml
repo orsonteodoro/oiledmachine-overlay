@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- ebuild only on the oiledmachine-overlay -->
+    <email>Orson Teodoro</email>
+    <name>orsonteodoro@hotmail.com</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- ebuild originator -->
+    <email>sam@gentoo.org</email>
+    <name>Sam James</name>
+  </maintainer>
+  <slots>
+    <subslots>Reflect ABI of libhiredis.so.</subslots>
+  </slots>
+  <upstream>
+    <remote-id type="github">redis/hiredis</remote-id>
+  </upstream>
+  <longdescription>
+    This is an ebuild fork for multilib support.
+  </longdescription>
+</pkgmetadata>
