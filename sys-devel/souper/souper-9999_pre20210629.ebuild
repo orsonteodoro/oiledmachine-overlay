@@ -158,8 +158,10 @@ pkg_setup()
 
 	# Prevent possible IR mixing between ABIs
 	# Possibly not enough isolation between IR generated between ABIs in the external-cache.
-	local n_abis=$(echo "${USE}" | tr " " "\n" | grep "abi_" | wc -l)
-	(( ${n_abis} > 1 )) && die "Only one ABI is supported."
+	if use external-cache ; then
+		local n_abis=$(echo "${USE}" | tr " " "\n" | grep "abi_" | wc -l)
+		(( ${n_abis} > 1 )) && die "Only one ABI is supported when the external-cache USE flag is enabled."
+	fi
 }
 
 src_unpack() {
