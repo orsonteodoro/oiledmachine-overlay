@@ -6,7 +6,7 @@ EAPI=7
 PYTHON_COMPAT=( python3_{8..10} )
 CMAKE_BUILD_TYPE=Release
 CMAKE_MAKEFILE_GENERATOR=ninja
-inherit cmake llvm python-any-r1
+inherit cmake llvm multilib-build python-any-r1
 
 DESCRIPTION="A superoptimizer for LLVM IR"
 HOMEPAGE="https://github.com/google/souper"
@@ -53,8 +53,8 @@ gen_rdepends() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
 			llvm-${s}? (
-				sys-devel/clang:${s}
-				sys-devel/llvm:${s}[debug?,dump?,souper]
+				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP},debug?,dump?,souper]
 				>=sys-devel/lld-${s}
 			)
 		"
@@ -64,15 +64,15 @@ gen_rdepends() {
 RDEPEND+="
 	|| ( $(gen_rdepends) )
 	>=dev-lang/perl-5.30.0
-	>=dev-libs/gmp-6.2.0
+	>=dev-libs/gmp-6.2.0[${MULTILIB_USEDEP}]
 	>=dev-util/re2c-1.3
-	>=sci-mathematics/z3-4.8.11.0
+	>=sci-mathematics/z3-4.8.11.0[${MULTILIB_USEDEP}]
 	gdb? (
 		${PYTHON_DEPS}
 		$(python_gen_any_dep 'sys-devel/gdb[${PYTHON_USEDEP}]')
 	)
 	external-cache? (
-		>=dev-libs/hiredis-1.0.1[static-libs]
+		>=dev-libs/hiredis-1.0.1[${MULTILIB_USEDEP},static-libs]
 		>=dev-db/redis-5.0.7
 	)
 "
@@ -96,7 +96,7 @@ BDEPEND+="
 	doxygen? ( >=app-doc/doxygen-1.8.17 )
 	test? (
 		${PYTHON_DEPS}
-		>=dev-cpp/gtest-1.10.0
+		>=dev-cpp/gtest-1.10.0[${MULTILIB_USEDEP}]
 		>=dev-lang/perl-5.30.0
 		>=dev-lang/python-3.8.2
 		>=dev-python/lit-10
@@ -116,7 +116,7 @@ https://github.com/google/souper/archive/${EGIT_COMMIT}.tar.gz
 https://github.com/klee/klee/archive/0ba95edbad26fe70c8132f0731778d94f9609874.tar.gz
 	-> klee-${EGIT_COMMIT_KLEE:0:7}.tar.gz
 https://github.com/manasij7479/alive2/archive/refs/tags/v${ALIVE2_PV}.tar.gz
-	-> alive2-v${ALIVE2_PV}.tar.gz
+	-> manasij7479-alive2-v${ALIVE2_PV}.tar.gz
 "
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
@@ -175,6 +175,27 @@ src_prepare() {
 		sed -i -e "s|USE_EXTERNAL_CACHE=1|USE_EXTERNAL_CACHE=0|g" \
 			"${S}/utils/sclang.in" || die
 	fi
+
+	_prepare_abi() {
+		for s in ${LLVM_SLOTS[@]} ; do
+			if use "llvm-${s}" ; then
+				# Build time failure.
+				# It looks like 32-bit abi won't be supported until a workaround is found.
+				# See also:  https://github.com/AliveToolkit/alive2/blob/master/util/compiler.cpp#L46
+# third_party/alive2/util/compiler.cpp:48:3: error: static_assert failed due to requirement 'sizeof (res) == sizeof(unsigned long long)'
+#  static_assert(sizeof(res) == sizeof(uint64_t));
+#  ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# third_party/alive2/util/compiler.cpp:54:3: error: static_assert failed due to requirement 'sizeof (res) == sizeof(unsigned long long)'
+#  static_assert(sizeof(res) == sizeof(uint64_t));
+#  ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#2 errors generated.
+				[[ $(get_libdir) =~ "lib64" ]] || die "ABI is not supported"
+				local souper_build_dir="${WORKDIR}/${P}_llvm${s}_${ABI}_build"
+				cp -a "${S}" "${souper_build_dir}" || die
+			fi
+		done
+	}
+	multilib_foreach_abi _prepare_abi
 }
 
 src_configure() { :; }
@@ -183,11 +204,11 @@ _configure_compiler() {
 	# Make sure the bitcode is the same or highest especially if LTOing.
 	local clang_v_maj=$(ver_cut 1 $(best_version "sys-devel/clang:${s}" | sed -e "s|sys-devel/clang-||"))
 	local lld_v_maj=$(ver_cut 1 $(best_version "sys-devel/lld" | sed -e "s|sys-devel/lld-||"))
-	export CC="clang-${s}"
-	export CXX="clang++-${s}"
+	export CC="clang-${s} $(get_abi_CFLAGS ${ABI})"
+	export CXX="clang++-${s} $(get_abi_CFLAGS ${ABI})"
 	einfo "CC=${CC}"
 	einfo "CXX=${CXX}"
-	"${CXX}" --version || die
+	has_version "sys-devel/clang:${s}" || die
 	v_major_lld=$(ver_cut 1 "${v_major_lld}")
 	PATH=$(echo "${PATH}" | tr ":" "\n" | sed -e "/llvm/d" | tr "\n" ":" | sed -e 's|:$||')
 	export PATH="${PATH}:$(get_llvm_prefix ${clang_v_maj})/bin:$(get_llvm_prefix ${lld_v_maj})/bin"
@@ -228,8 +249,8 @@ build_alive2() {
 		-DZ3_INCLUDE_DIR="/usr/include"
 		-DZ3_LIBRARIES="/usr/$(get_libdir)/libz3.so"
 	)
-	export CMAKE_USE_DIR="${S}/third_party/alive2"
-	export BUILD_DIR="${S}/third_party/alive2-build"
+	export CMAKE_USE_DIR="${souper_build_dir}/third_party/alive2"
+	export BUILD_DIR="${souper_build_dir}/third_party/alive2-build"
 	pushd "${CMAKE_USE_DIR}" || die
 		git init || die
 		touch dummy.txt || die
@@ -244,29 +265,38 @@ build_alive2() {
 }
 
 src_compile() {
-	for s in ${LLVM_SLOTS[@]} ; do
-		if use "llvm-${s}" ; then
-			_configure_compiler
-			build_alive2
-			export CMAKE_USE_DIR="${S}"
-			export BUILD_DIR="${WORKDIR}/${P}_llvm${s}_build"
-			_configure_souper
-			cmake_src_compile
-		fi
-	done
+	_compile_abi() {
+		for s in ${LLVM_SLOTS[@]} ; do
+			if use "llvm-${s}" ; then
+				local souper_build_dir="${WORKDIR}/${P}_llvm${s}_${ABI}_build"
+				einfo "LLVM ${s}, ${ABI}"
+				_configure_compiler
+				build_alive2
+				export CMAKE_USE_DIR="${souper_build_dir}"
+				export BUILD_DIR="${souper_build_dir}"
+				_configure_souper
+				cmake_src_compile
+			fi
+		done
+	}
+	multilib_foreach_abi _compile_abi
 }
 
 src_install() {
-	local s_max=0
-	for s in ${LLVM_SLOTS[@]} ; do
-		if use "llvm-${s}" ; then
-			export BUILD_DIR="${WORKDIR}/${P}_llvm${s}_build"
-			cmake_src_install
-			dosym /usr/lib/souper/${s}/bin/sclang /usr/bin/sclang-${s}
-			dosym /usr/lib/souper/${s}/bin/sclang++ /usr/bin/sclang++-${s}
-			(( ${s} > ${s_max} )) && s_max=${s}
-		fi
-	done
+	_install_abi() {
+		local s_max=0
+		for s in ${LLVM_SLOTS[@]} ; do
+			if use "llvm-${s}" ; then
+				local souper_build_dir="${WORKDIR}/${P}_llvm${s}_${ABI}_build"
+				export BUILD_DIR="${souper_build_dir}"
+				cmake_src_install
+				dosym /usr/lib/souper/${s}/bin/sclang /usr/bin/sclang-${s}
+				dosym /usr/lib/souper/${s}/bin/sclang++ /usr/bin/sclang++-${s}
+				(( ${s} > ${s_max} )) && s_max=${s}
+			fi
+		done
+	}
+	multilib_foreach_abi _install_abi
 
 	einfo "sclang defaults to highest slot LLVM ${s_max}"
 	dosym /usr/lib/souper/${s_max}/bin/sclang /usr/bin/sclang
@@ -285,9 +315,10 @@ src_install() {
 
 src_test() {
 	for s in ${LLVM_SLOTS[@]} ; do
+		local souper_build_dir="${WORKDIR}/${P}_llvm${s}_${ABI}_build"
 		einfo "Running tests for ${PN} linked to LLVM ${s}"
 		export SOUPER_UTILS_MODE=1 # Set to testing mode
-		export BUILD_DIR="${WORKDIR}/${P}_llvm${s}_build"
+		export BUILD_DIR="${souper_build_dir}"
 		cd "${BUILD_DIR}" || die
 		./run_lit || die
 	done
