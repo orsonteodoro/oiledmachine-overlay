@@ -95,13 +95,11 @@
     -mllvm -souper-external-cache-unix C{,XX}FLAGS.
 
     Ebuild support for external cache is a Work In Progress (WIP).  Currently,
-    one needs to manually run Redis as follows:
+    the TCP IPC only works, but the UNIX domain sockets will be complete sooner
+    or later.
 
-      sudo -u portage -g portage /usr/sbin/redis-server /usr/share/souper/redis-unix-socket.conf --daemonize no
-
-    An updated OpenRC script may be provided in a future to automate this.  Then,
-    you need add -mllvm -souper-external-cache-unix to per-package C{,XX}FLAGS
-    to utilize the UNIX domain sockets IPC.
+    Then, you need add -mllvm -souper-external-cache-unix to per-package
+    C{,XX}FLAGS to utilize the UNIX domain sockets IPC.
 
 
     Environment variables:
