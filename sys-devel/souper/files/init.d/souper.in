@@ -1,0 +1,97 @@
+#!/sbin/openrc-run
+
+: ${SOUPER_IPC_MODE:=___SOUPER_IPC_MODE___}
+: ${SOUPER_TCP_PORTS:="___SOUPER_TCP_PORTS___"}
+: ${SOUPER_USOCK_FILES:="___SOUPER_USOCK_FILES___"}
+: ${SOUPER_CONFIGS:="___SOUPER_CONFIGS___"}
+
+depend() {
+	use localmount logger
+	after keepalived
+}
+
+_get_db_config() {
+	local requested_abi="${1}"
+	for p in ${SOUPER_CONFIGS} ; do
+		local abi="${p%:*}"
+		local conf="${p#*:}"
+		if [[ "${abi}" == "${requested_abi}" ]] ; then
+			echo "${conf}"
+			return
+		fi
+	done
+	echo ""
+	return
+}
+
+_start_tcp_ipc() {
+	for p in ${SOUPER_TCP_PORTS} ; do
+		local abi="${p%:*}"
+		local port="${p#*:}"
+		local conf=$(_get_db_config "${abi}")
+		[[ -z "${conf}" ]] && die "Missing config for ${abi}"
+		[[ ! -e "${conf}" ]] && die "Missing ${conf} file for ${abi}"
+		if start-stop-daemon \
+			--background \
+			--make-pidfile \
+			--pidfile /run/souper-${abi}.pid.real \
+			--start \
+			--user portage:portage \
+			/usr/sbin/redis-server \
+			-- \
+			${conf} \
+			--daemonize no
+		then
+			einfo "Starting the Souper external cache for ${abi}:${port}"
+			nstarted=$((${nstarted}+1))
+		else
+			eerror "Failed starting the Souper external cache for ${abi}:${port}"
+		fi
+	done
+}
+
+_start_unix_sockets_ipc() {
+	for p in ${SOUPER_USOCK_FILES} ; do
+		local abi="${p%:*}"
+		local usocket_file="${p#*:}"
+		local conf=$(_get_db_config "${abi}")
+		if start-stop-daemon \
+			--background \
+			--make-pidfile \
+			--pidfile /run/souper-${abi}.pid.real \
+			--start \
+			--user portage:portage \
+			/usr/sbin/redis-server \
+			-- \
+			${conf} \
+			--daemonize no
+		then
+			einfo "Starting the Souper external cache for ${abi}:${usocket_file}"
+			nstarted=$((${nstarted}+1))
+		else
+			eerror "Failed starting the Souper external cache for ${abi}:${usocket_file}"
+		fi
+	done
+}
+
+start() {
+	local nstarted=0
+	[[ "${SOUPER_IPC_MODE^^}" == "TCP" ]] && _start_tcp_ipc
+	[[ "${SOUPER_IPC_MODE^^}" == "USOCKETS" ]] && _start_unix_sockets_ipc
+	if (( ${nstarted} >= 1 )) ; then
+		eend 0
+	else
+		eend 1
+	fi
+}
+
+stop() {
+	for p in ${SOUPER_TCP_PORTS} ${SOUPER_USOCK_FILES} ; do
+		local abi="${p%:*}"
+		einfo "Stopping the Souper external cache for ${abi}"
+		start-stop-daemon \
+			--stop \
+			--pidfile /run/souper-${abi}.pid.real
+	done
+	return 0
+}

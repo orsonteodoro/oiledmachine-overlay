@@ -42,9 +42,11 @@ gen_iuse() {
 IUSE+=" $(gen_iuse)"
 # Both assertions (debug) and dump are default ON upstream,
 # but in the distro, both are OFF for the llvm package by default.
-IUSE+=" -debug -dump +external-cache r6"
+IUSE+=" -debug -dump +external-cache openrc tcp usockets r6"
 REQUIRED_USE+="
 	|| ( $(gen_iuse) )
+	external-cache? ( ^^ ( tcp usockets ) openrc )
+	openrc? ( external-cache )
 	support-tools? ( external-cache )
 "
 gen_rdepends() {
@@ -158,10 +160,10 @@ pkg_setup()
 
 	# Prevent possible IR mixing between ABIs
 	# Possibly not enough isolation between IR generated between ABIs in the external-cache.
-	if use external-cache ; then
-		local n_abis=$(echo "${USE}" | tr " " "\n" | grep "abi_" | wc -l)
-		(( ${n_abis} > 1 )) && die "Only one ABI is supported when the external-cache USE flag is enabled."
-	fi
+#	if use external-cache ; then
+#		local n_abis=$(echo "${USE}" | tr " " "\n" | grep "abi_" | wc -l)
+#		(( ${n_abis} > 1 )) && die "Only one ABI is supported when the external-cache USE flag is enabled."
+#	fi
 }
 
 src_unpack() {
@@ -232,7 +234,7 @@ ewarn
 		-DCMAKE_INSTALL_DOCS="/usr/share/doc/${P}"
 		-DCMAKE_INSTALL_RUNSTATEDIR="/var/run"
 		-DSYSTEM_LIB_PATH="/usr/$(get_libdir)"
-		-DEXTERNAL_CACHE_SOCK_PATH="${EXTERNAL_CACHE_SOCK_PATH:-/run/souper/redis.sock}"
+		-DEXTERNAL_CACHE_SOCK_PATH="/run/${PN}-${ABI}.sock"
 		-DFEATURE_EXTERNAL_CACHE=$(usex external-cache)
 		-DINSTALL_GDB_PRETTY_PRINT=$(usex gdb)
 		-DINSTALL_SUPPORT_TOOLS=$(usex support-tools)
@@ -281,8 +283,94 @@ src_compile() {
 	multilib_foreach_abi _compile_abi
 }
 
+_gen_template_tcp() {
+	local fn="${PN}-tcp-${ABI}.conf"
+	cat <<EOF > "${T}/${fn}"
+port ${tcp_port}
+bind 127.0.0.1 -::1
+protected-mode yes
+dir /var/lib/${PN}/
+unixsocketperm 700
+timeout 0
+dbfilename ${PN}-${ABI}.rdb
+pidfile /run/${PN}-${ABI}.pid.dummy
+EOF
+	insinto /etc/souper
+	doins "${T}/${fn}"
+}
+
+_gen_template_usockets() {
+	local fn="${PN}-usockets-${ABI}.conf"
+	cat <<EOF > "${T}/${fn}"
+port 0
+unixsocket /run/${PN}-${ABI}.sock
+dir /var/lib/${PN}/
+unixsocketperm 700
+timeout 0
+dbfilename ${PN}-${ABI}.rdb
+pidfile /run/${PN}-${ABI}.pid.dummy
+EOF
+	insinto /etc/souper
+	doins "${T}/${fn}"
+}
+
+
+_gen_openrc_conf_d() {
+	local fn="${PN}"
+	cat <<EOF > "${T}/${fn}"
+# Extra options
+SOUPER_OPTS=""
+
+# For Redis bind in the .conf
+rc_need="net.lo"
+
+# Can be TCP or USOCKETS
+SOUPER_IPC_MODE="${SOUPER_IPC_MODE}"
+
+SOUPER_TCP_PORTS="
+${SOUPER_TCP_PORTS}
+"
+
+SOUPER_USOCK_FILES="
+${SOUPER_USOCK_FILES}
+"
+
+SOUPER_CONFIGS="
+${SOUPER_CONFIGS}
+"
+EOF
+	insinto /etc/conf.d
+	doins "${T}/${fn}"
+}
+
+_gen_openrc_init_d() {
+	local fn="${PN}"
+	mkdir -p "${T}/init.d" || die
+	cat "${FILESDIR}/init.d/${fn}.in" \
+		> "${T}/init.d/${fn}" || die
+	sed -i \
+		-e "s|___SOUPER_IPC_MODE___|${SOUPER_IPC_MODE}|" \
+		-e "s|___SOUPER_TCP_PORTS___|${SOUPER_TCP_PORTS}|" \
+		-e "s|___SOUPER_USOCK_FILES___|${SOUPER_USOCK_FILES}|" \
+		-e "s|___SOUPER_CONFIGS___|${SOUPER_CONFIGS}|" \
+		"${T}/init.d/${fn}" || die
+	exeinto /etc/init.d
+	doexe "${T}/init.d/${fn}"
+}
+
 src_install() {
 	local s_max=0
+	local socket_start="${SOCKET_START:-6379}"
+	local tcp_port=${socket_start}
+	SOUPER_TCP_PORTS=""
+	SOUPER_USOCK_FILES=""
+	SOUPER_CONFIGS=""
+	SOUPER_IPC_MODE=""
+	if use tcp ; then
+		SOUPER_IPC_MODE="TCP"
+	elif use usockets ; then
+		SOUPER_IPC_MODE="USOCKETS"
+	fi
 	_install_abi() {
 		for s in ${LLVM_SLOTS[@]} ; do
 			if use "llvm-${s}" ; then
@@ -292,6 +380,17 @@ src_install() {
 				dosym /usr/lib/souper/${s}/bin/sclang /usr/bin/sclang-${s}
 				dosym /usr/lib/souper/${s}/bin/sclang++ /usr/bin/sclang++-${s}
 				(( ${s} > ${s_max} )) && s_max=${s}
+
+				if use usockets ; then
+					_gen_template_usockets
+					SOUPER_USOCK_FILES+=" ${ABI}:/run/${PN}-${ABI}.sock"
+					SOUPER_CONFIGS+=" ${ABI}:/etc/${PN}/${PN}-usockets-${ABI}.conf"
+				elif use tcp ; then
+					_gen_template_tcp
+					SOUPER_TCP_PORTS+=" ${ABI}:${tcp_port}"
+					SOUPER_CONFIGS+=" ${ABI}:/etc/${PN}/${PN}-tcp-${ABI}.conf"
+					tcp_port=$((${tcp_port} + 1))
+				fi
 			fi
 		done
 	}
@@ -310,6 +409,12 @@ src_install() {
 	dodoc LICENSE
 	dodir /var/lib/souper
 	fowners portage:portage /var/lib/souper
+	fowners -R portage:portage /etc/souper
+
+	if use openrc ; then
+		_gen_openrc_conf_d
+		_gen_openrc_init_d
+	fi
 }
 
 src_test() {

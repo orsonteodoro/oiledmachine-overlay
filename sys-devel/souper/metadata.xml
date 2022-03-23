@@ -148,9 +148,6 @@
       Allow use of dump functions to increase verbosity of helpful debug
       information.  Only useful for developers or testers.
     </flag>
-    <flag name="support-tools">
-      Install extra tools designed for compiler developers
-    </flag>
     <flag name="external-cache">
       An external query cache to reduce time cost of looking up the most
       frequent encountered code sequences mapped to the to cheapest code
@@ -163,6 +160,18 @@
       runs.[2]
 
       It is recommended to hardmask newer versions of Redis in package.mask.
+    </flag>
+    <flag name="openrc">
+      Install OpenRC daemon scripts for the external-cache.
+    </flag>
+    <flag name="support-tools">
+      Install extra tools designed for compiler developers
+    </flag>
+    <flag name="usockets">
+      Use UNIX domain sockets as IPC communication between Redis and Souper.
+    </flag>
+    <flag name="tcp">
+      Use TCP as IPC communication Redis and Souper.
     </flag>
     <flag name="rN">FOR INTERNAL USE ONLY.  Revision bumps to preserve
       ccache paths for fast rebuilds.
