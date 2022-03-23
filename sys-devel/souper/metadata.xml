@@ -94,25 +94,26 @@
     environment variable with sclang/sclang++ wrappers or
     -mllvm -souper-external-cache-unix C{,XX}FLAGS.
 
-    Ebuild support for external cache is a Work In Progress (WIP).  Currently,
-    the TCP IPC only works, but the UNIX domain sockets will be complete sooner
-    or later.
-
     Then, you need add -mllvm -souper-external-cache-unix to per-package
     C{,XX}FLAGS to utilize the UNIX domain sockets IPC.
 
 
-    Environment variables:
+    Build environment variables:
 
-      EXTERNAL_CACHE_SOCK_PATH -- path to Redis .sock file used when using UNIX
-           sockets.
-
+      SOCKET_START -- The start TCP socket per ABI.  The default value is 6379.
+           For example, x86 ABI would be associated with TCP port 6379 and amd64
+           ABI would be associated with TCP port 6380.  If this gets changed,
+           you need to manually set the SOUPER_REDIS_PORT environment variable
+           if using wrapper or add (-mllvm -souper-redis-port=xxxx) cflags to
+           tell the shared library to use the same database corresponding to the
+           same ABI.  This starting value should change if db is being used
+           for other apps.
 
     Running Souper-ed packages:
 
-    Only native ABI is currently supported, but the the wrappers (sclang{,++})
-    need more modifications to be  more multiabi aware when referencing
-    libraries.  Multiabi support is still undergoing development and testing.
+    The wrappers (sclang/sclang++) need more modifications to be more multiabi
+    aware when referencing libraries.  Multiabi support is still undergoing
+    development and testing.
 
     The following are required to per-package LDFLAGS:
 

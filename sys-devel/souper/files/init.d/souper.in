@@ -34,7 +34,7 @@ _start_tcp_ipc() {
 		if start-stop-daemon \
 			--background \
 			--make-pidfile \
-			--pidfile /run/souper-${abi}.pid.real \
+			--pidfile /run/souper/souper-${abi}.pid.real \
 			--start \
 			--user portage:portage \
 			/usr/sbin/redis-server \
@@ -58,7 +58,7 @@ _start_unix_sockets_ipc() {
 		if start-stop-daemon \
 			--background \
 			--make-pidfile \
-			--pidfile /run/souper-${abi}.pid.real \
+			--pidfile /run/souper/souper-${abi}.pid.real \
 			--start \
 			--user portage:portage \
 			/usr/sbin/redis-server \
@@ -74,8 +74,31 @@ _start_unix_sockets_ipc() {
 	done
 }
 
+_remove_incompatible_db() {
+	for p in ${SOUPER_CONFIGS} ; do
+		local abi="${p%:*}"
+		local native_db_path="/var/lib/souper/souper-${abi}.rdb"
+		if [[ -e "/usr/sbin/redis-server" && -e "${native_db_path}" ]] ; then
+			local redis_v=$(/usr/sbin/redis-server --version | cut -f 3 -d " " | sed -e "s|v=||g")
+			local redis_db_v=$(/usr/sbin/redis-check-rdb "${native_db_path}" | grep "redis-ver" | cut -f 2 -d "'")
+			if [[ "${redis_v}" != "${redis_db_v}" ]] ; then
+				# TODO: put mutex around this because the possibility of parallel emerges.
+				ewarn "Removing incompatible external cache"
+				rm "${native_db_path}"
+			else
+				chown -R portage:portage "${native_db_path}"
+			fi
+		fi
+	done
+}
+
 start() {
 	local nstarted=0
+	mkdir -p /run/souper
+	chown -R portage:portage /run/souper
+	mkdir -p /var/lib/souper
+	chown portage:portage /var/lib/souper
+	_remove_incompatible_db
 	[[ "${SOUPER_IPC_MODE^^}" == "TCP" ]] && _start_tcp_ipc
 	[[ "${SOUPER_IPC_MODE^^}" == "USOCKETS" ]] && _start_unix_sockets_ipc
 	if (( ${nstarted} >= 1 )) ; then
@@ -91,7 +114,7 @@ stop() {
 		einfo "Stopping the Souper external cache for ${abi}"
 		start-stop-daemon \
 			--stop \
-			--pidfile /run/souper-${abi}.pid.real
+			--pidfile /run/souper/souper-${abi}.pid.real
 	done
 	return 0
 }

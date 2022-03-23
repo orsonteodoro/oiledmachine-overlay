@@ -6,7 +6,7 @@ EAPI=7
 PYTHON_COMPAT=( python3_{8..10} )
 CMAKE_BUILD_TYPE=Release
 CMAKE_MAKEFILE_GENERATOR=ninja
-inherit cmake llvm multilib-build python-any-r1
+inherit cmake linux-info llvm multilib-build python-any-r1
 
 DESCRIPTION="A superoptimizer for LLVM IR"
 HOMEPAGE="https://github.com/google/souper"
@@ -158,12 +158,14 @@ pkg_setup()
 	ewarn "This package with compatibility patches has not been unit tested yet."
 	python-any-r1_pkg_setup
 
-	# Prevent possible IR mixing between ABIs
-	# Possibly not enough isolation between IR generated between ABIs in the external-cache.
-#	if use external-cache ; then
-#		local n_abis=$(echo "${USE}" | tr " " "\n" | grep "abi_" | wc -l)
-#		(( ${n_abis} > 1 )) && die "Only one ABI is supported when the external-cache USE flag is enabled."
-#	fi
+	if use external-cache ; then
+		if use usockets ; then
+			CONFIG_CHECK="~NET ~UNIX"
+		else
+			CONFIG_CHECK="~NET ~INET"
+		fi
+		linux-info_pkg_setup
+	fi
 }
 
 src_unpack() {
@@ -234,7 +236,7 @@ ewarn
 		-DCMAKE_INSTALL_DOCS="/usr/share/doc/${P}"
 		-DCMAKE_INSTALL_RUNSTATEDIR="/var/run"
 		-DSYSTEM_LIB_PATH="/usr/$(get_libdir)"
-		-DEXTERNAL_CACHE_SOCK_PATH="/run/${PN}-${ABI}.sock"
+		-DEXTERNAL_CACHE_SOCK_PATH="/run/souper/${PN}-${ABI}.sock"
 		-DFEATURE_EXTERNAL_CACHE=$(usex external-cache)
 		-DINSTALL_GDB_PRETTY_PRINT=$(usex gdb)
 		-DINSTALL_SUPPORT_TOOLS=$(usex support-tools)
@@ -293,7 +295,7 @@ dir /var/lib/${PN}/
 unixsocketperm 700
 timeout 0
 dbfilename ${PN}-${ABI}.rdb
-pidfile /run/${PN}-${ABI}.pid.dummy
+pidfile /run/souper/${PN}-${ABI}.pid.dummy
 EOF
 	insinto /etc/souper
 	doins "${T}/${fn}"
@@ -303,12 +305,12 @@ _gen_template_usockets() {
 	local fn="${PN}-usockets-${ABI}.conf"
 	cat <<EOF > "${T}/${fn}"
 port 0
-unixsocket /run/${PN}-${ABI}.sock
+unixsocket /run/souper/${PN}-${ABI}.sock
 dir /var/lib/${PN}/
 unixsocketperm 700
 timeout 0
 dbfilename ${PN}-${ABI}.rdb
-pidfile /run/${PN}-${ABI}.pid.dummy
+pidfile /run/souper/${PN}-${ABI}.pid.dummy
 EOF
 	insinto /etc/souper
 	doins "${T}/${fn}"
@@ -383,7 +385,7 @@ src_install() {
 
 				if use usockets ; then
 					_gen_template_usockets
-					SOUPER_USOCK_FILES+=" ${ABI}:/run/${PN}-${ABI}.sock"
+					SOUPER_USOCK_FILES+=" ${ABI}:/run/souper/${PN}-${ABI}.sock"
 					SOUPER_CONFIGS+=" ${ABI}:/etc/${PN}/${PN}-usockets-${ABI}.conf"
 				elif use tcp ; then
 					_gen_template_tcp
@@ -409,12 +411,12 @@ src_install() {
 	dodoc LICENSE
 	dodir /var/lib/souper
 	fowners portage:portage /var/lib/souper
-	fowners -R portage:portage /etc/souper
 
 	if use openrc ; then
 		_gen_openrc_conf_d
 		_gen_openrc_init_d
 	fi
+	fowners -R portage:portage /etc/souper
 }
 
 src_test() {
@@ -431,18 +433,22 @@ src_test() {
 pkg_postinst() {
 	env-update
 	if use external-cache ; then
-		if [[ -e "/usr/sbin/redis-server" && -e "/var/lib/souper/dump.rdb" ]] ; then
-			local redis_v=$(/usr/sbin/redis-server --version | cut -f 3 -d " " | sed -e "s|v=||g")
-			local redis_db_v=$(/usr/sbin/redis-check-rdb /var/lib/souper/dump.rdb | grep "redis-ver" | cut -f 2 -d "'")
-			if ver_test ${redis_v} -ne ${redis_db_v} ; then
-				# TODO: put mutex around this because the possibility of parallel emerges.
-				ewarn "Removing incompatible /var/lib/souper/dump.rdb"
-				rm /var/lib/souper/dump.rdb || die
-			else
-				ewarn "Reusing /var/lib/souper/dump.rdb"
-				chown portage:portage /var/lib/souper/dump.rdb || die
+		for abi in ${MULTILIB_ABIS} ; do
+			local native_db_path="/var/lib/souper/souper-${abi}.rdb"
+			if [[ -e "/usr/sbin/redis-server" && -e "${native_db_path}" ]] ; then
+				local redis_v=$(/usr/sbin/redis-server --version | cut -f 3 -d " " | sed -e "s|v=||g")
+				local redis_db_v=$(/usr/sbin/redis-check-rdb ${native_db_path} | grep "redis-ver" | cut -f 2 -d "'")
+				if ver_test ${redis_v} -ne ${redis_db_v} ; then
+					# TODO: put mutex around this because the possibility of parallel emerges.
+					ewarn "Removing incompatible external cache"
+					rm "${native_db_path}" || die
+				else
+					ewarn "Reusing external cache for ${abi}"
+					chown portage:portage "${native_db_path}" || die
+				fi
 			fi
-		fi
+		done
+		chown portage:portage /var/lib/souper || die
 ewarn
 ewarn "The redis server should be listening in port 6379 if communicating with"
 ewarn "Redis through TCP but may be changed.  The TCP interface has not been"
