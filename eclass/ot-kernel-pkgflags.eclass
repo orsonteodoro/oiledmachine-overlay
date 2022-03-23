@@ -4423,6 +4423,7 @@ ot-kernel-pkgflags_souper() { # DONE
 		einfo "Applying kernel config flags for the souper package (id: cbbf7b0)"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_IPV6"
 	fi
 	if has_version "sys-devel/souper[external-cache,usockets]" ; then
 		einfo "Applying kernel config flags for the souper package (id: cbbf7b0)"
