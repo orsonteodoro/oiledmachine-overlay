@@ -162,7 +162,7 @@ pkg_setup()
 		if use usockets ; then
 			CONFIG_CHECK="~NET ~UNIX"
 		else
-			CONFIG_CHECK="~NET ~INET"
+			CONFIG_CHECK="~NET ~INET ~IPV6"
 		fi
 		linux-info_pkg_setup
 	fi
