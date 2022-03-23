@@ -77,6 +77,9 @@ RDEPEND+="
 		>=dev-libs/hiredis-1.0.1[${MULTILIB_USEDEP},static-libs]
 		>=dev-db/redis-5.0.7
 	)
+	openrc? (
+		sys-apps/openrc[bash]
+	)
 "
 DEPEND+="
 	${DEPEND}
