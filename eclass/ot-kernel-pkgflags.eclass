@@ -337,15 +337,16 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_sshuttle
 	ot-kernel-pkgflags_shorewall
 	ot-kernel-pkgflags_snapd
+	ot-kernel-pkgflags_souper
 	ot-kernel-pkgflags_spacenavd
 	ot-kernel-pkgflags_speedtouch_usb
 	ot-kernel-pkgflags_spice_vdagent
 	ot-kernel-pkgflags_squid
-	ot-kernel-pkgflags_suid_sandbox
 	ot-kernel-pkgflags_sssd
 	ot-kernel-pkgflags_sstp_client
 	ot-kernel-pkgflags_steam
 	ot-kernel-pkgflags_stress_ng
+	ot-kernel-pkgflags_suid_sandbox
 	ot-kernel-pkgflags_suricata
 	ot-kernel-pkgflags_sysdig_kmod
 	ot-kernel-pkgflags_systemd
@@ -4410,6 +4411,23 @@ ot-kernel-pkgflags_snapd() { # DONE
 		if has_version "app-containers/snapd[apparmord]" ; then
 			ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_souper
+# @DESCRIPTION:
+# Applies kernel config flags for the souper package
+ot-kernel-pkgflags_souper() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "cbbf7b0" ]] && return
+	if has_version "sys-devel/souper[external-cache,tcp]" ; then
+		einfo "Applying kernel config flags for the souper package (id: cbbf7b0)"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_INET"
+	fi
+	if has_version "sys-devel/souper[external-cache,usockets]" ; then
+		einfo "Applying kernel config flags for the souper package (id: cbbf7b0)"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_UNIX"
 	fi
 }
 
