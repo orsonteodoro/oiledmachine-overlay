@@ -1,0 +1,69 @@
+Subject:  Allow Redis default TCP port to be changed
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Wed Mar 23 03:00:26 PM PDT 2022 (Unix time:  1648072826)
+
+This is to allow the IR for 64-bit cache not to be mixed for the IR for 32-bit cache for multilib.
+
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/CMakeLists.txt	2022-03-23 14:43:49.993745677 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/CMakeLists.txt	2022-03-23 14:57:02.115476161 -0700
+@@ -164,6 +164,9 @@ add_library(kleeExpr STATIC
+   ${KLEE_EXPR_FILES}
+ )
+ 
++option(EXTERNAL_CACHE_TCP_PORT "Change the default exteranl cache TCP port" 6379)		# oteodoro:  added line
++add_definitions(-DEXTERNAL_CACHE_TCP_PORT=${EXTERNAL_CACHE_TCP_PORT})				# oteodoro:  added line
++												# oteodoro:  added line
+ option(FEATURE_EXTERNAL_CACHE "Use a external cache for caching to reduce time costs")		# oteodoro:  added line
+ if(FEATURE_EXTERNAL_CACHE)									# oteodoro:  reindent
+   find_path(HIREDIS_INCLUDE_DIR								# oteodoro:  reindent
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/KVStore/KVStore.cpp souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/KVStore/KVStore.cpp
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/lib/KVStore/KVStore.cpp	2022-03-23 14:43:49.251715939 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/lib/KVStore/KVStore.cpp	2022-03-23 14:56:06.067249413 -0700
+@@ -24,8 +24,8 @@
+ using namespace llvm;
+ using namespace souper;
+ 
+-static cl::opt<unsigned> RedisPort("souper-redis-port", cl::init(6379),
+-    cl::desc("Redis server port (default=6379)"));
++static cl::opt<unsigned> RedisPort("souper-redis-port", cl::init(EXTERNAL_CACHE_TCP_PORT),				// oteodoro:  changed line
++    cl::desc("Redis server port"));											// oteodoro:  changed line
+ static cl::opt<bool> UnixSocket("souper-external-cache-unix", cl::init(false),
+     cl::desc("Talk to the cache using UNIX domain sockets (default=false)"));
+ 
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/runtime/souperPassProfile.c souper-69536e134478ae1d44c912c90c3db96ad06437c1/runtime/souperPassProfile.c
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/runtime/souperPassProfile.c	2021-06-09 12:16:44.000000000 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/runtime/souperPassProfile.c	2022-03-23 14:56:04.660193006 -0700
+@@ -20,7 +20,7 @@
+ #include "hiredis.h"
+ 
+ static const char *hostname = "127.0.0.1";
+-static const int port = 6379;
++static const int port = EXTERNAL_CACHE_TCP_PORT;							// oteodoro:  changed line
+ 
+ static redisContext *connect(void)
+ {
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dump.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dump.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_dump.in	2022-03-23 14:43:48.965704477 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_dump.in	2022-03-23 14:56:06.932284091 -0700
+@@ -81,7 +81,7 @@ END
+ }
+ 
+ my $RAW = 0;
+-my $REDISPORT = 6379;
++my $REDISPORT = @EXTERNAL_CACHE_TCP_PORT@;						# oteodoro:  changed line
+ my $NOOPTS = 0;
+ my $SORT = "size";
+ my $REDUCE = 0;
+diff -urp souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_infer.in souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_infer.in
+--- souper-69536e134478ae1d44c912c90c3db96ad06437c1.orig/utils/cache_infer.in	2022-03-23 14:43:48.967704557 -0700
++++ souper-69536e134478ae1d44c912c90c3db96ad06437c1/utils/cache_infer.in	2022-03-23 14:56:07.860321295 -0700
+@@ -74,7 +74,7 @@ GetOptions(
+     "max-insns=i" => \$MAX_INSNS,
+     ) or usage();
+ 
+-my $REDISPORT = 6379;
++my $REDISPORT = @EXTERNAL_CACHE_TCP_PORT@;										# oteodoro:  changed line
+ 
+ my $OPTS = "";
+ 

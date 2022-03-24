@@ -146,6 +146,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-9999_pre20210629-use-ccache.patch"
 	"${FILESDIR}/alive2-v2-change-saturate-operations.patch"
 	"${FILESDIR}/${PN}-9999_pre20210629-optional-tests.patch"
+#	"${FILESDIR}/${PN}-9999_pre20210629-changable-default-tcp-port.patch"
 )
 MIN_CXX="20"
 
@@ -178,6 +179,8 @@ src_unpack() {
 	mv "${WORKDIR}/alive2-${ALIVE2_PV}" "${S}/third_party/alive2" || die
 }
 
+unset tcp_ports
+declare -Ax tcp_ports
 src_prepare() {
 	cmake_src_prepare
 	pushd "${S}/third_party/klee" || die
@@ -191,6 +194,13 @@ src_prepare() {
 		sed -i -e "s|USE_EXTERNAL_CACHE=1|USE_EXTERNAL_CACHE=0|g" \
 			"${S}/utils/sclang.in" || die
 	fi
+
+	local socket_start="${SOCKET_START:-6379}"
+	local tcp_port=${socket_start}
+	for abi in ${MULTILIB_ABIS} ; do
+		tcp_ports[${abi}]=${tcp_port}
+		tcp_port=$((${tcp_port}+1))
+	done
 
 	_prepare_abi() {
 		for s in ${LLVM_SLOTS[@]} ; do
@@ -238,14 +248,15 @@ ewarn
 		-DCMAKE_INSTALL_PREFIX="/usr/lib/souper/${s}"
 		-DCMAKE_INSTALL_DOCS="/usr/share/doc/${P}"
 		-DCMAKE_INSTALL_RUNSTATEDIR="/var/run"
-		-DSYSTEM_LIB_PATH="/usr/$(get_libdir)"
 		-DEXTERNAL_CACHE_SOCK_PATH="/run/souper/${PN}-${ABI}.sock"
 		-DFEATURE_EXTERNAL_CACHE=$(usex external-cache)
 		-DINSTALL_GDB_PRETTY_PRINT=$(usex gdb)
 		-DINSTALL_SUPPORT_TOOLS=$(usex support-tools)
 		-DLLVM_CONFIG_PATH="/usr/lib/llvm/${s}/bin/${CHOST}-llvm-config"
+		-DSYSTEM_LIB_PATH="/usr/$(get_libdir)"
 		-DTEST_SYNTHESIS=$(usex test)
 	)
+	use tcp && mycmakeargs+=( -DEXTERNAL_CACHE_TCP_PORT="${tcp_ports[${ABI}]}" )
 	cmake_src_configure
 }
 
@@ -276,6 +287,7 @@ src_compile() {
 			if use "llvm-${s}" ; then
 				local souper_build_dir="${WORKDIR}/${P}_llvm${s}_${ABI}_build"
 				einfo "LLVM ${s}, ${ABI}"
+				use tcp && einfo "TCP port:  ${tcp_ports[${ABI}]}"
 				_configure_compiler
 				build_alive2
 				export CMAKE_USE_DIR="${souper_build_dir}"
@@ -291,7 +303,7 @@ src_compile() {
 _gen_template_tcp() {
 	local fn="${PN}-tcp-${ABI}.conf"
 	cat <<EOF > "${T}/${fn}"
-port ${tcp_port}
+port ${tcp_ports[${ABI}]}
 bind 127.0.0.1 -::1
 protected-mode yes
 dir /var/lib/${PN}/
@@ -365,8 +377,6 @@ _gen_openrc_init_d() {
 
 src_install() {
 	local s_max=0
-	local socket_start="${SOCKET_START:-6379}"
-	local tcp_port=${socket_start}
 	SOUPER_TCP_PORTS=""
 	SOUPER_USOCK_FILES=""
 	SOUPER_CONFIGS=""
@@ -392,9 +402,8 @@ src_install() {
 					SOUPER_CONFIGS+=" ${ABI}:/etc/${PN}/${PN}-usockets-${ABI}.conf"
 				elif use tcp ; then
 					_gen_template_tcp
-					SOUPER_TCP_PORTS+=" ${ABI}:${tcp_port}"
+					SOUPER_TCP_PORTS+=" ${ABI}:${tcp_ports[${ABI}]}"
 					SOUPER_CONFIGS+=" ${ABI}:/etc/${PN}/${PN}-tcp-${ABI}.conf"
-					tcp_port=$((${tcp_port} + 1))
 				fi
 			fi
 		done

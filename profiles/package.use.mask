@@ -162,3 +162,6 @@ sys-devel/llvm -debug
 sys-libs/compiler-rt -debug
 sys-libs/compiler-rt-sanitizers -debug
 sys-libs/libomp -debug
+
+# Connect problem
+sys-devel/souper tcp
