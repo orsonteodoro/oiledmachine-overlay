@@ -105,6 +105,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_alsa
 	ot-kernel-pkgflags_amt_check
 	ot-kernel-pkgflags_apcupsd
+	ot-kernel-pkgflags_apptainer
 	ot-kernel-pkgflags_aqtion
 	ot-kernel-pkgflags_arcconf
 	ot-kernel-pkgflags_atop
@@ -137,6 +138,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_clamfs
 	ot-kernel-pkgflags_clsync
 	ot-kernel-pkgflags_cni_plugins
+	ot-kernel-pkgflags_collectd
 	ot-kernel-pkgflags_conky
 	ot-kernel-pkgflags_conntrack_tools
 	ot-kernel-pkgflags_corosync
@@ -214,6 +216,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_iscan_plugin
 	ot-kernel-pkgflags_iwd
 	ot-kernel-pkgflags_iwlmvm
+	ot-kernel-pkgflags_joycond
 	ot-kernel-pkgflags_k3s
 	ot-kernel-pkgflags_kexec_tools
 	ot-kernel-pkgflags_keyutils
@@ -246,6 +249,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_linux_smaps
 	ot-kernel-pkgflags_linuxptp
 	ot-kernel-pkgflags_lirc
+	ot-kernel-pkgflags_lkrg
 	ot-kernel-pkgflags_lksctp_tools
 	ot-kernel-pkgflags_lmsensors
 	ot-kernel-pkgflags_longrun
@@ -280,6 +284,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_ntfs3g
 	ot-kernel-pkgflags_numad
 	ot-kernel-pkgflags_nv
+	ot-kernel-pkgflags_opal_utils
 	ot-kernel-pkgflags_open_iscsi
 	ot-kernel-pkgflags_open_vm_tools
 	ot-kernel-pkgflags_openafs
@@ -493,6 +498,17 @@ ot-kernel-pkgflags_apcupsd() { # DONE
 		einfo "Applying kernel config flags for the apcupsd package (id: 491c232)"
 		ot-kernel_y_configopt "CONFIG_USB_HIDDEV"
 		ot-kernel_y_configopt "CONFIG_HIDRAW"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_apptainer
+# @DESCRIPTION:
+# Applies kernel config flags for the apptainer package
+ot-kernel-pkgflags_apptainer() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "183ad96" ]] && return
+	if has_version "app-containers/apptainer" ; then
+		einfo "Applying kernel config flags for the apptainer package (id: 183ad96)"
+		ot-kernel_y_configopt "CONFIG_SQUASHFS"
 	fi
 }
 
@@ -1046,6 +1062,44 @@ ot-kernel-pkgflags_cni_plugins() { # DONE
 	if has_version "net-misc/cni-plugins" ; then
 		einfo "Applying kernel config flags for the cni-plugins package (id: dec3486)"
 		ot-kernel_y_configopt "CONFIG_BRIDGE_VLAN_FILTERING"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_collectd
+# @DESCRIPTION:
+# Applies kernel config flags for the collectd package
+ot-kernel-pkgflags_collectd() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c086216" ]] && return
+	if has_version "app-metrics/collectd" ; then
+		einfo "Applying kernel config flags for the collectd package (id: c086216)"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		ot-kernel_y_configopt "CONFIG_SYSFS"
+		has_version "app-metrics/collectd[collectd_plugins_battery]" && ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+		has_version "app-metrics/collectd[collectd_plugins_cgroups]" && ot-kernel_y_configopt "CONFIG_CGROUPS"
+		if has_version "app-metrics/collectd[collectd_plugins_cpufreq]" ; then
+			ot-kernel_y_configopt "CONFIG_SYSFS"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_STAT"
+		fi
+		has_version "app-metrics/collectd[collectd_plugins_drbd]" && ot-kernel_y_configopt "CONFIG_BLK_DEV_DRBD"
+		has_version "app-metrics/collectd[collectd_plugins_conntrack]" && ot-kernel_y_configopt "CONFIG_NETFILTER"
+		has_version "app-metrics/collectd[collectd_plugins_fscache]" && ot-kernel_y_configopt "CONFIG_FSCACHE"
+		has_version "app-metrics/collectd[collectd_plugins_nfs]" && ot-kernel_y_configopt "CONFIG_NFS_COMMON"
+		has_version "app-metrics/collectd[collectd_plugins_serial]" && ot-kernel_y_configopt "CONFIG_SERIAL_CORE"
+		has_version "app-metrics/collectd[collectd_plugins_swap]" && ot-kernel_y_configopt "CONFIG_SWAP"
+		has_version "app-metrics/collectd[collectd_plugins_thermal]" && ot-kernel_y_configopt "CONFIG_ACPI_THERMAL"
+		has_version "app-metrics/collectd[collectd_plugins_turbostat]" && ot-kernel_y_configopt "CONFIG_X86_MSR"
+		has_version "app-metrics/collectd[collectd_plugins_vmem]" && ot-kernel_y_configopt "CONFIG_VM_EVENT_COUNTERS"
+		has_version "app-metrics/collectd[collectd_plugins_vserver]" && ot-kernel_y_configopt "CONFIG_VSERVER"
+		has_version "app-metrics/collectd[collectd_plugins_uuid]" && ot-kernel_y_configopt "CONFIG_SYSFS"
+		if has_version "app-metrics/collectd[collectd_plugins_wireless]" ; then
+			ot-kernel_y_configopt "CONFIG_WIRELESS"
+			ot-kernel_y_configopt "CONFIG_MAC80211"
+			ot-kernel_y_configopt "CONFIG_IEEE80211"
+		fi
+		if has_version "app-metrics/collectd[collectd_plugins_zfs_arc]" ; then
+			ot-kernel_y_configopt "CONFIG_SPL"
+			ot-kernel_y_configopt "CONFIG_ZFS"
+		fi
 	fi
 }
 
@@ -2336,6 +2390,26 @@ ot-kernel-pkgflags_incron() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_lkrg
+# @DESCRIPTION:
+# Applies kernel config flags for the lkrg package
+ot-kernel-pkgflags_lkrg() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "70df33c" ]] && return
+	if has_version "app-antivirus/lkrg" ; then
+		einfo "Applying kernel config flags for the lkrg package (id: 70df33c)"
+		ot-kernel_y_configopt "CONFIG_HAVE_KRETPROBES"
+		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
+		ot-kernel_y_configopt "CONFIG_KPROBES"
+		ot-kernel_y_configopt "CONFIG_JUMP_LABEL"
+		ot-kernel_y_configopt "CONFIG_MODULE_UNLOAD"
+		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+		if grep -q -e "CONFIG_PREEMPT_RT" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_PREEMPT" # fallback to second best
+		fi
+		ot-kernel_y_configopt "CONFIG_STACKTRACE"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_lksctp_tools
 # @DESCRIPTION:
 # Applies kernel config flags for the lksctp-tools package
@@ -2533,6 +2607,19 @@ ot-kernel-pkgflags_isatapd() { # DONE
 	if has_version "net-vpn/isatapd" ; then
 		einfo "Applying kernel config flags for the isatapd package (id: fa75afb)"
 		ot-kernel_y_configopt "CONFIG_TUN"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_joycond
+# @DESCRIPTION:
+# Applies kernel config flags for the joycond package
+ot-kernel-pkgflags_joycond() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5c83d42" ]] && return
+	if has_version "games-util/joycond" ; then
+		einfo "Applying kernel config flags for the joycond package (id: 5c83d42)"
+		ot-kernel_y_configopt "CONFIG_HID"
+		ot-kernel_y_configopt "CONFIG_HID_NINTENDO"
+		ot-kernel_y_configopt "CONFIG_HIDRAW"
 	fi
 }
 
@@ -3569,6 +3656,20 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 		# Workaround mentioned in the ebuild
 		# It's better to modify the Kconfig.
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_opal_utils
+# @DESCRIPTION:
+# Applies kernel config flags for the opal-utils package
+ot-kernel-pkgflags_opal_utils() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "de97c50" ]] && return
+	if has_version "sys-apps/opal-utils" ; then
+		einfo "Applying kernel config flags for the opal-utils package (id: de97c50)"
+		ot-kernel_y_configopt "CONFIG_MTD_POWERNV_FLASH"
+		ot-kernel_y_configopt "CONFIG_OPAL_PRD"
+		ot-kernel_y_configopt "CONFIG_PPC_DT_CPU_FTRS"
+		ot-kernel_y_configopt "CONFIG_SCOM_DEBUGFS"
 	fi
 }
 
@@ -4996,8 +5097,8 @@ ot-kernel-pkgflags_ufw() { # DONE
 		else
 			ot-kernel_y_configopt "CONFIG_IP_NF_MATCH_ADDRTYPE"
 		fi
+		ban_disable_debug "18d6a56" "NETFILTER"
 		if ver_test ${PV} -ge 3.4 ; then
-			ban_disable_debug "18d6a56" "NETFILTER"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_LOG"
 		else
 			ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_LOG"
