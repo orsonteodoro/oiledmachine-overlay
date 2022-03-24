@@ -23,7 +23,6 @@ EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-MUQSS_VER="0.210"
 PATCH_ALLOW_O3_COMMIT="3831287bf9e0e2302c8a6e95dfbe5e23d642ed51"
 PATCH_BBRV2_TAG_NAME="v2alpha-2021-08-21"
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
@@ -87,11 +86,9 @@ df189d7b3d6def4d3456528433dea747953125f0
 # LEFT_ZENTUNE:RIGHT_ZENSAUCE
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
 46d4fa35d24255d6c6a4abcf78e0dc62bd963b08:c3f87f928013ec084aa99cb9ddcc514dc4af0cf1
-)
-#ZEN: INTERACTIVE: Use BFQ as our elevator (c6d1cd) needs \
-#ZEN: Add CONFIG to rename the mq-deadline scheduler (39376e2)
-# fixup! ZEN: INTERACTIVE: Increase max number of tasks rebalanced at once (1cef339) needs
-# ZEN: Reduce up threshold for all non-muqss schedulers (5ad20a8)
+) # \
+#ZEN: INTERACTIVE: Use BFQ as our elevator (46d4fa3) needs \
+#ZEN: Add CONFIG to rename the mq-deadline scheduler (c3f87f9)
 
 # Message marked with INTERACTIVE:
 PATCH_ZENTUNE_COMMITS=(

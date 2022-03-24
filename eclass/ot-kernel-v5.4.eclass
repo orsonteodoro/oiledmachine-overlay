@@ -91,10 +91,9 @@ PATCH_ZENTUNE_COMMITS=\
 # LEFT_ZENTUNE:RIGHT_ZENSAUCE
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0:c9a8f36311f14311a3202501c88009f758683c0f
-)
+) # \
 # ZEN: Add CONFIG to rename the mq-deadline scheduler (c9a8f36) needs\
 # ZEN: Implement zen-tune v5.4 (3e05ad8)
-# zen-sauce(c9a8f36) requires zen-tune
 
 PATCH_ZENSAUCE_BL=(
 	${PATCH_ZENSAUCE_BRANDING}

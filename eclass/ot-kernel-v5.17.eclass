@@ -23,7 +23,6 @@ EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-MUQSS_VER="0.210"
 PATCH_ALLOW_O3_COMMIT="ed11352569944c2431029b07b1119e49de0f105d"
 PATCH_BBRV2_TAG_NAME="v2alpha-2021-08-21"
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
@@ -87,11 +86,9 @@ f980b6dce98252b2cf3bcfa4fd8d90acbbac8d2a
 # LEFT_ZENTUNE:RIGHT_ZENSAUCE
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
 301669c0b97b12b4eff306466cad00c8ecc85a77:2c890b4d9bd02a9b3681c0d002b2f8d3ad95e6bf
-)
-#ZEN: INTERACTIVE: Use BFQ as our elevator (c6d1cd) needs \
-#ZEN: Add CONFIG to rename the mq-deadline scheduler (39376e2)
-# fixup! ZEN: INTERACTIVE: Increase max number of tasks rebalanced at once (1cef339) needs
-# ZEN: Reduce up threshold for all non-muqss schedulers (5ad20a8)
+) # \
+#ZEN: INTERACTIVE: Use BFQ as our elevator (301669c) needs \
+#ZEN: Add CONFIG to rename the mq-deadline scheduler (2c890b4)
 
 # Message marked with INTERACTIVE:
 PATCH_ZENTUNE_COMMITS=(
@@ -213,7 +210,7 @@ fi
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package containing zen-kernel patchset,
-GraySky2's kernel_compiler_patch, MUQSS CPU Scheduler, genpatches, CVE fixes"
+GraySky2's kernel_compiler_patch, genpatches, CVE fixes"
 
 inherit ot-kernel
 

@@ -4,7 +4,6 @@
 EAPI="7"
 
 K_GENPATCHES_VER="1"
-PATCH_PROJC_VER="5.15-r1" # For updates see https://gitlab.com/alfredchen/projectc/-/tree/master
 PATCH_RT_VER="5.17-rt15"
 
 inherit ot-kernel-v5.17

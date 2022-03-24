@@ -103,8 +103,8 @@ dda238180bacda4c39f71dd16d754a48da38e676
 # LEFT_ZENTUNE:RIGHT_ZENSAUCE
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE="
 0cbcc41992693254e5e4c7952853c6aa7404f28e:513af58e2e4aa8267b1eebc1cd156e3e2a2a33e3
-"
-#ZEN: INTERACTIVE: Use BFQ as our elevator(0cbcc41) needs \
+" # \
+#ZEN: INTERACTIVE: Use BFQ as our elevator (0cbcc41) needs \
 #ZEN: Add CONFIG to rename the mq-deadline scheduler (513af58)
 
 # ancestor / oldest, descendant / newest

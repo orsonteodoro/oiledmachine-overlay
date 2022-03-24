@@ -33,25 +33,23 @@
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/tonyk/futex_waitv
 # genpatches:
 #   https://gitweb.gentoo.org/proj/linux-patches.git/
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.16
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.14
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.16
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.17
 # kernel_compiler_patch:
 #   https://github.com/graysky2/kernel_compiler_patch
-#   https://github.com/graysky2/kernel_gcc_patch
 # MUQSS CPU Scheduler (official, EOL 5.12):
 #   https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
 #   https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #   https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
-# MUQSS CPU Scheduler (zen):
-#   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/muqss
 # Multigenerational LRU:
-#   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/lru
-#   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/lru-v5
 #   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
 #   https://github.com/torvalds/linux/compare/v5.16...zen-kernel:5.16/lru
+#   https://github.com/torvalds/linux/compare/v5.16...zen-kernel:5.16/lru
+#   https://github.com/torvalds/linux/compare/v5.17...zen-kernel:5.17/mglru
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
 #   5.10 https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c
@@ -69,9 +67,9 @@
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.14/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.16/
+#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.17/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
 #   https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -82,9 +80,9 @@
 # zen-sauce, zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
-#   https://github.com/torvalds/linux/compare/v5.14...zen-kernel:5.14/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.16...zen-kernel:5.16/zen-sauce
+#   https://github.com/torvalds/linux/compare/v5.17...zen-kernel:5.17/zen-sauce
 
 case ${EAPI:-0} in
 	7) ;;
@@ -2055,6 +2053,12 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_EXPERT"
 			ot-kernel_y_configopt "CONFIG_FUTEX"
 			ot-kernel_y_configopt "CONFIG_FUTEX2"
+		fi
+
+		if ( has lru_gen ${IUSE_EFFECTIVE} && use lru_gen ) \
+			|| ( has zen-lru_gen ${IUSE_EFFECTIVE} && use zen-lru_gen ) ; then
+			ot-kernel_y_configopt "CONFIG_LRU_GEN"
+			ot-kernel_y_configopt "CONFIG_LRU_GEN_ENABLED"
 		fi
 
 		local cpu_sched_config_applied=0
