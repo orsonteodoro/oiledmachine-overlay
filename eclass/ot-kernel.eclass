@@ -212,7 +212,7 @@ GENPATCHES_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
 GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
 
-KCP_COMMIT_SNAPSHOT="9c9c7e817dd2718566ec95f7742b162ab125316f" # 20211114
+KCP_COMMIT_SNAPSHOT="bdef5292bba2493d46386840a8b5a824d534debc" # 20220315
 
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${K_MAJOR_MINOR}.tar.xz"
@@ -224,27 +224,18 @@ KERNEL_PATCH_0_TO_1_URI=\
 KCP_CORTEX_A72_BN=\
 "build-with-mcpu-for-cortex-a72"
 
-if ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+if ver_test ${K_MAJOR_MINOR} -ge 5.17 ; then
 KCP_9_1_BN=\
-"more-uarches-for-kernel-5.15+"
-KCP_8_1_BN=\
-"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
-KCP_4_9_BN=\
-"enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
+"more-uarches-for-kernel-5.17%2B"
+elif ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+KCP_9_1_BN=\
+"more-uarches-for-kernel-5.15-5.16"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.8 ; then
 KCP_9_1_BN=\
 "more-uarches-for-kernel-5.8-5.14"
-KCP_8_1_BN=\
-"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
-KCP_4_9_BN=\
-"enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.4 ; then
 KCP_9_1_BN=\
 "more-uarches-for-kernel-4.19-5.4"
-KCP_8_1_BN=\
-"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
-KCP_4_9_BN=\
-"enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 elif ver_test ${K_MAJOR_MINOR} -ge 4.13 ; then
 KCP_8_1_BN=\
 "enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
@@ -477,44 +468,46 @@ _dpatch() {
 _tpatch() {
 	local opts="${1}"
 	local path="${2}"
-	local failed_hunks_acceptable="${3}" # must be the same as n_failures (part 1)
-	local reversed_acceptable="${4}" # must be the same as n_reversed (part 2)
+	local n_failures_expected="${3}" # must be the same as n_failures_actual (Part 1)
+	local n_reversed_expected="${4}" # must be the same as n_reversed_actual (Part 2)
 	local msg_extra="${5}"
 einfo
 einfo "Applying ${path}${msg_extra}"
-einfo "  with ${failed_hunks_acceptable} hunk(s) failed and"
-einfo "  with ${reversed_acceptable} already patched warnings"
+einfo "  with ${n_failures_expected} expected hunk(s) failed and"
+einfo "  with ${n_reversed_expected} expected reversed / previous-patch detected"
 einfo "which will be resolved or patched immediately."
 einfo
 einfo "These estimates may be far less than the actual."
 einfo
 
-	local n_failures=0
+	# Part 1
+	local n_failures_actual=0
 	local x_i
 	for x_i in $(patch ${opts} --dry-run -i "${path}" \
 		| grep -E -e "hunks? FAILED" | cut -f 1 -d " ") ; do
-		n_failures=$((${n_failures}+${x_i}))
+		n_failures_actual=$((${n_failures_actual}+${x_i}))
 	done
-	if (( ${n_failures} != ${failed_hunks_acceptable} )) ; then
+	if (( ${n_failures_actual} != ${n_failures_expected} )) ; then
 eerror
-eerror "${path} needs a rebase. n_failures=${n_failures} \
-failed_hunks_acceptable=${failed_hunks_acceptable}"
+eerror "${path} needs a rebase. n_failures_actual=${n_failures_actual} \
+n_failures_expected=${n_failures_expected}"
 eerror
 		die
 	fi
 
-	local n_reversed=$(patch ${opts} --dry-run -i "${path}" \
+	# Part 2
+	local n_reversed_actual=$(patch ${opts} --dry-run -i "${path}" \
 			| grep -F -e "Reversed (or previously applied) patch detected!" \
 			| wc -l)
-	if (( ${n_reversed} != ${reversed_acceptable} )) ; then
+	if (( ${n_reversed_actual} != ${n_reversed_expected} )) ; then
 eerror
-eerror "${path} needs a rebase. n_reversed=${n_reversed} \
-reversed_acceptable=${reversed_acceptable}"
+eerror "${path} needs a rebase. n_reversed_actual=${n_reversed_actual} \
+n_reversed_expected=${n_reversed_expected}"
 eerror
 		die
 	fi
 
-	if (( ${reversed_acceptable} > 0 )) ; then
+	if (( ${n_reversed_expected} > 0 )) ; then
 		opts="-N ${opts}"
 	fi
 
@@ -1430,7 +1423,12 @@ apply_zen_muqss() {
 # Apply the PGO patch for use with clang
 apply_clang_pgo() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	_fpatch "${distdir}/${CLANG_PGO_FN}"
+	if declare -f ot-kernel_filter_clang_pgo_patch_cb > /dev/null ; then
+		# For fixes
+		ot-kernel_filter_clang_pgo_patch_cb "${distdir}/${CLANG_PGO_FN}"
+	else
+		_fpatch "${distdir}/${CLANG_PGO_FN}"
+	fi
 }
 
 # @FUNCTION: ot-kernel_src_unpack
@@ -1526,8 +1524,10 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if use uksm ; then
-		apply_uksm
+	if has uksm ${IUSE_EFFECTIVE} ; then
+		if use uksm ; then
+			apply_uksm
+		fi
 	fi
 
 	if has lru_gen ${IUSE_EFFECTIVE} ; then

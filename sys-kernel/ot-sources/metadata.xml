@@ -134,37 +134,47 @@
 
     5.15 (LTS)						Y
 		    -rt	(RT_PREEMPT)			A
-		    CFI					?
-		    Clang PGO				?
-		    futex (futex-wait-multiple)	[6]	?
-		    futex2				?
-		    kernel_compiler_patch		?
+		    CFI					A
+		    Clang PGO				E
+		    futex (futex-wait-multiple)	[6]	E
+		    futex2				E
+		    kernel_compiler_patch		A
 		    genpatches				A
-		    lru_gen				?
+		    lru_gen				N
 		    Project C				A
-		    TCP BBR v2 [6]			?
-		    TRESOR (AES-NI) [6]			t
-		    TRESOR (x86) [6]			t
-		    TRESOR (x86-64) [6]			T
+		    TCP BBR v2 [6]			E
+		    TRESOR (AES-NI) [6]			D
+		    TRESOR (x86) [6]			D
+		    TRESOR (x86-64) [6]			D
 		    UKSM [5]				Y
 		    zen-lru_gen				N
 		    zen-sauce				N
 						
     5.16 (Stable)					N
 		    -rt	(RT_PREEMPT)			A
-		    CFI					?
-		    Clang PGO				?
-		    futex (futex-wait-multiple)	[6]	?
-		    futex2				?
+		    CFI					E
+		    Clang PGO				E
 		    genpatches				A
-		    lru_gen				?
-		    kernel_compiler_patch		?
-		    Project C				D
-		    TCP BBR v2 [6]			?
-		    TRESOR (AES-NI) [6]			t
-		    TRESOR (x86) [6]			t
-		    TRESOR (x86-64) [6]			T
-		    UKSM [5]				D
+		    lru_gen				N
+		    kernel_compiler_patch		A
+		    TCP BBR v2 [6]			E
+		    TRESOR (AES-NI) [6]			D
+		    TRESOR (x86) [6]			D
+		    TRESOR (x86-64) [6]			D
+		    zen-lru_gen				N
+		    zen-sauce				N
+
+    5.17 (Mainline)					N
+		    -rt	(RT_PREEMPT)			A
+		    CFI					E
+		    Clang PGO				E
+		    genpatches				A
+		    lru_gen				A
+		    kernel_compiler_patch		A
+		    TCP BBR v2 [6]			E
+		    TRESOR (AES-NI) [6]			D
+		    TRESOR (x86) [6]			D
+		    TRESOR (x86-64) [6]			D
 		    zen-lru_gen				A
 		    zen-sauce				A
 
@@ -190,6 +200,8 @@
         EOL for that version which means that bug fixes and security updates
         will not be provided.  This indicates a feature freeze, but
         build time failures will be fixed by the ebuild maintainer.
+    E - No upstream release for this major minor version but maintained by
+        ebuild maintainer or third party
     I - inactive due to changing API, but future support depends on motivation
     S - upstream indicated support
     T - patch is undergoing testing

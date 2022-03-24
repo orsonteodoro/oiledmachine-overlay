@@ -137,34 +137,6 @@ aa4fb87a71a95bef81d9742a772d1dc8eb4fceea
 CFI_EXCLUDE_COMMITS=(
 )
 
-# For 5.13
-# This corresponds to the tonyk/futex_waitv branch.
-# Repo order is bottom oldest and top newest.
-# Used for fsync in proton
-FUTEX_WAIT_MULTIPLE_OPTCODE31=( # oldest
-b70e738f08403950aa3053c36b98c6b0eeb0eb90
-) # newest
-
-FUTEX_PROTON_COMPAT=(
-${FUTEX_WAIT_MULTIPLE_OPTCODE31[@]}
-)
-
-# The futex2-dev commits with fwm opcode31 commits codepaths follow as if futex_wait_multiple not futex2.
-
-# Corresponding to futex2-dev branch
-# for 5.15-rc1
-FUTEX_COMMITS=( # oldest
-6f9eb8a836b2620327c0d4ded960673dbd761179
-b6382cdf6ec279fe61e9242a6a89d6146c870404
-f5c1ee46eeb68a59e3a6781959d0d1c25f40f5df
-4f9c741df0a35f9bbfb6f2fea653ecd3e583d663
-2b0c72de17e96323ea9c71610364a1b44e0f10dc
-8067fd6dc22722b36915718603cb4dd513d64962
-b88c926ac58eee428e37663e7ba8061af2528c06
-d810c70ed7b8228349af3c277f8c3cc0d5fa0f7b
-${FUTEX_PROTON_COMPAT[@]}
-) # newest
-
 BBR2_VERSION="v2alpha-2021-08-21"
 BBR2_COMMITS=( # oldest
 1ca5498fa4c6d4d8d634b1245d41f1427482824f
@@ -200,15 +172,13 @@ KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" build symlink"
-IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex futex-proton
-+genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto +O3 prjc rt
+IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug
++genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto +O3 rt
 shadowcallstack tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
-tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-lru_gen
+tresor_x86_64 tresor_x86_64-256-bit-key-support zen-lru_gen
 zen-sauce zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
 REQUIRED_USE+="
-	!prjc
-	futex-proton? ( futex )
 	genpatches_1510? ( genpatches )
 	O3? ( zen-sauce )
 	lru_gen? ( !zen-lru_gen )
@@ -235,17 +205,13 @@ REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 REQUIRED_USE+="
-	!futex
-	!futex-proton
-	!uksm
 "
 fi
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel
-patchset, GraySky2's kernel_compiler_patch, MUQSS CPU Scheduler,
-Project C CPU Scheduler, genpatches, CVE fixes, TRESOR"
+DESCRIPTION="A customizeable kernel package containing zen-kernel patchset,
+GraySky2's kernel_compiler_patch, genpatches, CVE fixes"
 
 inherit ot-kernel
 
@@ -254,9 +220,6 @@ LICENSE+=" clang-pgo? ( GPL-2 )"
 # A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
-LICENSE+=" prjc? ( GPL-3 )" # see \
-  # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
-LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 gen_kcp_license() {
@@ -272,11 +235,6 @@ LICENSE+=" lru_gen? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
-LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
-  # GPL-2 applies to the files being patched \
-  # all-rights-reserved applies to new files introduced and no defaults license
-  #   found in the project.  (The implementation is based on an academic paper
-  #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
 
 _seq() {
@@ -460,15 +418,12 @@ gen_kcp_ma_uri() {
 
 # Not on the servers yet
 NOT_READY_YET="
-	   prjc? ( ${PRJC_SRC_URI} )
-	   uksm? ( ${UKSM_SRC_URI} )
 "
 
 SRC_URI+=" "$(gen_kcp_ma_uri)
 SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 	   cfi? ( amd64? ( ${CFI_SRC_URIS} ) )
 	   clang-pgo? ( ${CLANG_PGO_URI} )
-	   futex? ( ${FUTEX_SRC_URIS} )
 	   genpatches? (
 		${GENPATCHES_URI}
 	   )
@@ -501,7 +456,8 @@ ot-kernel_pkg_setup_cb() {
 			:
 		else
 ewarn
-ewarn "TRESOR for ${K_MAJOR_MINOR} is in testing."
+# Need to fix linking problem
+ewarn "TRESOR for ${K_MAJOR_MINOR} is in development."
 ewarn
 ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
 ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
@@ -681,8 +637,6 @@ ot-kernel_filter_patch_cb() {
 		einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${path}"
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
@@ -702,9 +656,6 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "cfi-5.16-a09066b.patch" ]] ; then
 		# 343e289 is the same as a09066b
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
-	elif [[ "${path}" =~ "futex-5.15-b70e738.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-b70e738-2-hunk-fix-for-5.15.patch"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.16-c6ef88b.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
@@ -718,7 +669,7 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "cfi-5.16-e921a27.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "cfi-5.16-aa4fb87.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-aa4fb87-for-5.16.patch"
+		: # Skip for now since missing EXPORT_SYMBOL*
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

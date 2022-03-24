@@ -2,15 +2,15 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v5.15.eclass
+# @ECLASS: ot-kernel-v5.17.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7
-# @BLURB: Eclass for patching the 5.15.x kernel
+# @BLURB: Eclass for patching the 5.17.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.15 eclass defines specific applicable patching for the 5.15.x
+# The ot-kernel-v5.17 eclass defines specific applicable patching for the 5.17.x
 # linux kernel.
 
 CXX_STD="-std=gnu++11"
@@ -24,7 +24,7 @@ K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.210"
-PATCH_ALLOW_O3_COMMIT="b67c5033547771052515687e96adf98858ea0de6"
+PATCH_ALLOW_O3_COMMIT="ed11352569944c2431029b07b1119e49de0f105d"
 PATCH_BBRV2_TAG_NAME="v2alpha-2021-08-21"
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor / oldest
@@ -32,13 +32,13 @@ PATCH_BBRV2_COMMIT_D="1a45fd4faf30229a3d3116de7bfe9d2f933d3562" # descendant / n
 PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
 PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
 PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant / newest
-PATCH_KCP_COMMIT="ff1381103099207c61c0e8426e82eabbb2808b04"
-PATCH_LRU_GEN_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
-PATCH_LRU_GEN_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor / oldest
-PATCH_LRU_GEN_COMMIT_D="87542b28c81281bd1a54969df035ccf5ce1853da" # descendant / newest
-PATCH_ZEN_LRU_GEN_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
-PATCH_ZEN_LRU_GEN_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor / oldest
-PATCH_ZEN_LRU_GEN_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # descendant / newest
+PATCH_KCP_COMMIT="fb84abfc8fdcf4a4cd7b6f7dd755e22b0ea9c176"
+PATCH_LRU_GEN_COMMIT_A_PARENT="f443e374ae131c168a065ea1748feac6b2e76613"
+PATCH_LRU_GEN_COMMIT_A="36b7598fdf238ddbfaaf1154f7e3af7586be7261" # ancestor / oldest
+PATCH_LRU_GEN_COMMIT_D="cb2fca3b3a3359f11549075e9ceae3bdb5bb7888" # descendant / newest
+PATCH_ZEN_LRU_GEN_COMMIT_A_PARENT="f443e374ae131c168a065ea1748feac6b2e76613"
+PATCH_ZEN_LRU_GEN_COMMIT_A="36b7598fdf238ddbfaaf1154f7e3af7586be7261" # ancestor / oldest
+PATCH_ZEN_LRU_GEN_COMMIT_D="4a3d23beb7cf00d624877a8f2eb4f7fb127211d6" # descendant / newest
 # Corresponding to [5.15, cfi-5.15]
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
@@ -49,50 +49,44 @@ PATCH_TRESOR_V="3.18.5"
 # the commits in order.
 
 PATCH_ZENSAUCE_COMMITS=(
-7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
-dcc1c5d635f155c7a9458cd93827899211224486
-aa864eded832387e4ace9652ca2edbeb8155d703
-ff1381103099207c61c0e8426e82eabbb2808b04
-b67c5033547771052515687e96adf98858ea0de6
-e5a3bbcb4908996f6034817704297979cbf2dc07
-4398d18270d5391b13d108a79b8ec235e0ffa10a
-fb7fb66f2c1f923dc039d99125ed94d54435bb9f
-05447263701b202e0086bb2cae098cf6d46c158e
-10a037e3ae47516141287fb489fb7ea0ae18fc0a
-f1030c5bd8cd8f67cef664c0b6b9841afbc49363
-e6e6ceba3e07be085b0249d7fc03e795d58dc577
-bd79567171b5faa0394ebdfcf46394864b60479f
-0d865e68797b90a0de0123adcbe8c77c4ea4ae22
-57a46dc390017363b2db52e70f4b07c9a71f76c6
-00e58bccf05365ce65f6e9694e1ca3b9ad30f345
-de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac
-3045edebf785deb5d687abd9898ac9702be5325c
-7bfc78d87614496288ad4e90f7d749a942a83718
-be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
-09955b8fd454ae284590fc4c9f47e7c96f3bad51
-16b72839cb862810bbf976e223f85ff4d1959ebd
-96c43bfad5c8dcb116ab2088e46228707aaeca9f
-ce769e35208203536d176326e72560548848b5ff
-35b5b825073000f04477651683c4aa11b98d12c8
-c793cc79debeafd0d1cee613dfc99d64c2cbcc94
-4218499052f1010e8b466db363b0ce4857756299
-81ba2917231b206b7b6b9b160e456c5452c4f62e
-e350f22a04b707a15d6af29d6d5a97e86445eacc
-776bded2cf3b004f783d7dc52d9d74aeab966cd3
-66ebd054e5444851a69974541525e0f651202aea
-6c274a0c3cd6e014d388022c54f2bf0dbe6a12a3
-05429691ac69cfe6704530bfed1d5911efb828bb
-2f3fee79abe0a75597d511cb0ccfb12db1688b69
+f980b6dce98252b2cf3bcfa4fd8d90acbbac8d2a
+0c981f379ae080dbc4ed449fbe34db40cc47d611
+e07938c6549a14ec8bc58fab9267f9db49ec5d60
+fb84abfc8fdcf4a4cd7b6f7dd755e22b0ea9c176
+ed11352569944c2431029b07b1119e49de0f105d
+9c7f76bfa35c43576581a0f156aefaa2aada4850
+95ae1ce2286082b5334984522c9773e8c0703665
+2121d3c4254023818bc87f520a5b64c8fb12d767
+d817d15fabd7765881d7e0361ac61ab3ebc8b88c
+2c890b4d9bd02a9b3681c0d002b2f8d3ad95e6bf
+b32e10116ad9c69dcf5e18ee47da51c599398dff
+733b70b1a0747215a152e88073b7f49330d09296
+7da78d29e9e6f84b4b0deb4f7eb0970c488763dd
+1e2c0d7256ff61665eece820476d0a7531f18d34
+1d761dc2e4ee3f75ae75ddfc29eb4b058391611e
+cb1db0f613c008fc17cb9f6515b7d0bc91543825
+1288fe50ddd7040d0efccda822715d419c107adc
+fea38dde1137553497824d10f52abdbdae56191f
+adcb64b872dbf4d9885dc454e5bc90fa569f5ec6
+48adb656278abd103087ba966f93be5316e1eaa6
+301669c0b97b12b4eff306466cad00c8ecc85a77
+7571584fc4aeefbed07df01d56c7b2cb20f29f83
+57e3bfb6727b3df24c1ac71be66cc9e308881f5d
+47b0012bb9f28f82cc8c12e69b2bf224547cbe03
+0cb9fe43e86e8583d6f992c8244afc66d4b5856f
+0b2ed5050891c996db97d18bc9d5740f1a58260c
+6ba312876f68e5f3357742ae599110ae155aab13
+f89eb7fa39549d2cf4c2a3f0fe139bf0af4ad85c
 )
 
 # Avoid merge conflict.
 PATCH_ZENSAUCE_BRANDING="
-7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
+f980b6dce98252b2cf3bcfa4fd8d90acbbac8d2a
 "
 
 # LEFT_ZENTUNE:RIGHT_ZENSAUCE
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
-de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac:05447263701b202e0086bb2cae098cf6d46c158e
+301669c0b97b12b4eff306466cad00c8ecc85a77:2c890b4d9bd02a9b3681c0d002b2f8d3ad95e6bf
 )
 #ZEN: INTERACTIVE: Use BFQ as our elevator (c6d1cd) needs \
 #ZEN: Add CONFIG to rename the mq-deadline scheduler (39376e2)
@@ -101,16 +95,17 @@ de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac:05447263701b202e0086bb2cae098cf6d46c158
 
 # Message marked with INTERACTIVE:
 PATCH_ZENTUNE_COMMITS=(
-7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
-de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac
-3045edebf785deb5d687abd9898ac9702be5325c
-7bfc78d87614496288ad4e90f7d749a942a83718
-be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
-09955b8fd454ae284590fc4c9f47e7c96f3bad51
-16b72839cb862810bbf976e223f85ff4d1959ebd
-96c43bfad5c8dcb116ab2088e46228707aaeca9f
+48adb656278abd103087ba966f93be5316e1eaa6
+301669c0b97b12b4eff306466cad00c8ecc85a77
+7571584fc4aeefbed07df01d56c7b2cb20f29f83
+57e3bfb6727b3df24c1ac71be66cc9e308881f5d
+47b0012bb9f28f82cc8c12e69b2bf224547cbe03
+0cb9fe43e86e8583d6f992c8244afc66d4b5856f
+0b2ed5050891c996db97d18bc9d5740f1a58260c
+6ba312876f68e5f3357742ae599110ae155aab13
+f89eb7fa39549d2cf4c2a3f0fe139bf0af4ad85c
 )
-PATCH_BFQ_DEFAULT="de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac"
+PATCH_BFQ_DEFAULT="301669c0b97b12b4eff306466cad00c8ecc85a77"
 PATCH_ZENSAUCE_BL=(
 	${PATCH_ZENSAUCE_BRANDING}
 	${PATCH_KCP_COMMIT}
@@ -144,39 +139,11 @@ aa4fb87a71a95bef81d9742a772d1dc8eb4fceea
 CFI_EXCLUDE_COMMITS=(
 )
 
-# For 5.13
-# This corresponds to the tonyk/futex_waitv branch.
-# Repo order is bottom oldest and top newest.
-# Used for fsync in proton
-FUTEX_WAIT_MULTIPLE_OPTCODE31=( # oldest
-b70e738f08403950aa3053c36b98c6b0eeb0eb90
-) # newest
-
-FUTEX_PROTON_COMPAT=(
-${FUTEX_WAIT_MULTIPLE_OPTCODE31[@]}
-)
-
-# The futex2-dev commits with fwm opcode31 commits codepaths follow as if futex_wait_multiple not futex2.
-
-# Corresponding to futex2-dev branch
-# for 5.15-rc1
-FUTEX_COMMITS=( # oldest
-6f9eb8a836b2620327c0d4ded960673dbd761179
-b6382cdf6ec279fe61e9242a6a89d6146c870404
-f5c1ee46eeb68a59e3a6781959d0d1c25f40f5df
-4f9c741df0a35f9bbfb6f2fea653ecd3e583d663
-2b0c72de17e96323ea9c71610364a1b44e0f10dc
-8067fd6dc22722b36915718603cb4dd513d64962
-b88c926ac58eee428e37663e7ba8061af2528c06
-d810c70ed7b8228349af3c277f8c3cc0d5fa0f7b
-${FUTEX_PROTON_COMPAT[@]}
-) # newest
-
 BBR2_VERSION="v2alpha-2021-08-21"
 BBR2_COMMITS=( # oldest
 1ca5498fa4c6d4d8d634b1245d41f1427482824f
-46ddceed8f8dad02a97e79c40893c385b859d1c8
-94af063d5a381af0e2063cfd97dcce9783ed25c6
+#46ddceed8f8dad02a97e79c40893c385b859d1c8 # already applied
+#94af063d5a381af0e2063cfd97dcce9783ed25c6 # already applied
 2bab755134b19856f11a2f693f4bc40f864b00f2
 50b614c0a65125d5c22fca6605fdcf88e0a9258a
 41ceaf5611bf5b9384e3f2aec5b591d5734126f9
@@ -207,14 +174,13 @@ KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" build symlink"
-IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex futex-proton
-+genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto +O3 prjc rt
+IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug
++genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto +O3 rt
 shadowcallstack tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
-tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-lru_gen
+tresor_x86_64 tresor_x86_64-256-bit-key-support zen-lru_gen
 zen-sauce zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
 REQUIRED_USE+="
-	futex-proton? ( futex )
 	genpatches_1510? ( genpatches )
 	O3? ( zen-sauce )
 	lru_gen? ( !zen-lru_gen )
@@ -246,9 +212,8 @@ fi
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel
-patchset, GraySky2's kernel_compiler_patch, Project C CPU Scheduler, genpatches,
-CVE fixes"
+DESCRIPTION="A customizeable kernel package containing zen-kernel patchset,
+GraySky2's kernel_compiler_patch, MUQSS CPU Scheduler, genpatches, CVE fixes"
 
 inherit ot-kernel
 
@@ -257,9 +222,6 @@ LICENSE+=" clang-pgo? ( GPL-2 )"
 # A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
-LICENSE+=" prjc? ( GPL-3 )" # see \
-  # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
-LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 gen_kcp_license() {
@@ -275,11 +237,6 @@ LICENSE+=" lru_gen? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
-LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
-  # GPL-2 applies to the files being patched \
-  # all-rights-reserved applies to new files introduced and no defaults license
-  #   found in the project.  (The implementation is based on an academic paper
-  #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
 
 _seq() {
@@ -469,7 +426,6 @@ SRC_URI+=" "$(gen_kcp_ma_uri)
 SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 	   cfi? ( amd64? ( ${CFI_SRC_URIS} ) )
 	   clang-pgo? ( ${CLANG_PGO_URI} )
-	   futex? ( ${FUTEX_SRC_URIS} )
 	   genpatches? (
 		${GENPATCHES_URI}
 	   )
@@ -482,7 +438,6 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
 	   lru_gen? ( ${LRU_GEN_SRC_URI} )
-	   prjc? ( ${PRJC_SRC_URI} )
 	   rt? ( ${RT_SRC_ALT_URI} )
 	   tresor? (
 		${TRESOR_AESNI_SRC_URI}
@@ -491,7 +446,6 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
 	   )
-	   uksm? ( ${UKSM_SRC_URI} )
 	   zen-lru_gen? ( ${ZEN_LRU_GEN_SRC_URI} )
 	   zen-sauce? ( ${ZENSAUCE_URIS} )"
 
@@ -547,14 +501,14 @@ ewarn
 
 	# Allow for multiple builds for different kernel configs (e.g. server, gaming-client etc),
 	# but it is really needed to isolate the -rt build.
-	if [[ -z "${OT_KERNEL_BUILDCONFIGS_5_15}" ]] ; then
-		OT_KERNEL_BUILDCONFIGS_5_15_="ot:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-ot-$(uname -m):$(uname -m):${CHOST}:cfs:manual"
+	if [[ -z "${OT_KERNEL_BUILDCONFIGS_5_16}" ]] ; then
+		OT_KERNEL_BUILDCONFIGS_5_16_="ot:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-ot-$(uname -m):$(uname -m):${CHOST}:cfs:manual"
 		if use rt ; then
 			# Split for security reasons
-			OT_KERNEL_BUILDCONFIGS_5_15_="${OT_KERNEL_BUILDCONFIGS_5_15_};rt:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-rt-$(uname -m):$(uname -m):${CHOST}:cfs:manual"
+			OT_KERNEL_BUILDCONFIGS_5_16_="${OT_KERNEL_BUILDCONFIGS_5_16_};rt:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-rt-$(uname -m):$(uname -m):${CHOST}:cfs:manual"
 		fi
 	else
-		export OT_KERNEL_BUILDCONFIGS_5_15_="${OT_KERNEL_BUILDCONFIGS_5_15}"
+		export OT_KERNEL_BUILDCONFIGS_5_16_="${OT_KERNEL_BUILDCONFIGS_5_16}"
 	fi
 }
 
@@ -685,8 +639,6 @@ ot-kernel_filter_patch_cb() {
 		einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
-		_dpatch "${PATCH_OPTS} -F 3" "${path}" # 1 hunk failure without fuzz
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
@@ -703,16 +655,33 @@ ot-kernel_filter_patch_cb() {
 
 		# Add this to the end of the cfi commit list
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
-	elif [[ "${path}" =~ "cfi-5.15-a09066b.patch" ]] ; then
-		# a09066b is the same as 343e289
+	elif [[ "${path}" =~ "cfi-5.17-a09066b.patch" ]] ; then
+		# 343e289 is the same as a09066b
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
-	elif [[ "${path}" =~ "futex-5.15-b70e738.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-b70e738-2-hunk-fix-for-5.15.patch"
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.15-c6ef88b.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.17-c6ef88b.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
+	elif [[ "${path}" =~ "cfi-x86-5.17-fb19148.patch" ]] ; then
+		_dpatch "${PATCH_OPTS} -F 3" "${path}"
+	elif [[ "${path}" =~ "kernel-locking-Use-a-pointer-in-ww_mutex_trylock.patch" ]] ; then
+		: # already applied
+	elif [[ "${path}" =~ "cfi-5.17-f5bff50.patch" ]] ; then
+		# f5bff50 is the same as 7fb10a9
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-7fb10a9-rebase-for-5.16.patch"
+	elif [[ "${path}" =~ "cfi-5.17-e921a27.patch" ]] ; then
+		_dpatch "${PATCH_OPTS} -F 3" "${path}"
+	elif [[ "${path}" =~ "cfi-5.17-aa4fb87.patch" ]] ; then
+		: # Skip for now since missing EXPORT_SYMBOL*
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
+}
+
+# @FUNCTION: ot-kernel_filter_clang_pgo_patch_cb
+# @DESCRIPTION:
+# Apply and fix to the Clang PGO patch
+ot-kernel_filter_clang_pgo_patch_cb() {
+	local path="${1}"
+	_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
+	_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-3bc6889-a15058e-fixes-for-5.17.patch"
 }
