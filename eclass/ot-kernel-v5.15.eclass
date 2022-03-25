@@ -32,13 +32,12 @@ PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
 PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
 PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant / newest
 PATCH_KCP_COMMIT="ff1381103099207c61c0e8426e82eabbb2808b04"
-PATCH_LRU_GEN_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
-PATCH_LRU_GEN_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor / oldest
-PATCH_LRU_GEN_COMMIT_D="87542b28c81281bd1a54969df035ccf5ce1853da" # descendant / newest
-PATCH_ZEN_LRU_GEN_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
-PATCH_ZEN_LRU_GEN_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor / oldest
-PATCH_ZEN_LRU_GEN_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # descendant / newest
-# Corresponding to [5.15, cfi-5.15]
+PATCH_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
+PATCH_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor / oldest
+PATCH_MULTIGEN_LRU_COMMIT_D="87542b28c81281bd1a54969df035ccf5ce1853da" # descendant / newest
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor / oldest
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # descendant / newest
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \
@@ -119,6 +118,7 @@ PATCH_ZENSAUCE_BL=(
 # Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
 
 # Have to pull and apply one-by-one because of already applied commits
+# Corresponding to [5.15, cfi-5.15]
 CFI_COMMITS=(
 8dfd451f45dbb26f049083248bf80463a71bc5fd
 f5bff50472d56909b1cce5463d120a996a34b004
@@ -205,16 +205,16 @@ KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" build symlink"
 IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug futex futex-proton
-+genpatches -genpatches_1510 +kernel-compiler-patch lru_gen lto +O3 prjc rt
++genpatches -genpatches_1510 +kernel-compiler-patch lto multigen_lru +O3 prjc rt
 shadowcallstack tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
-tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-lru_gen
-zen-sauce zen-sauce-all -zen-tune"
+tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-multigen_lru zen-sauce
+zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
 REQUIRED_USE+="
 	futex-proton? ( futex )
 	genpatches_1510? ( genpatches )
+	multigen_lru? ( !zen-multigen_lru )
 	O3? ( zen-sauce )
-	lru_gen? ( !zen-lru_gen )
 	shadowcallstack? ( cfi )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
@@ -223,7 +223,7 @@ REQUIRED_USE+="
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_x86_64? ( tresor )
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
-	zen-lru_gen? ( !lru_gen )
+	zen-multigen_lru? ( !multigen_lru )
 	zen-sauce-all? ( zen-sauce )
 	zen-tune? ( zen-sauce )"
 
@@ -268,7 +268,7 @@ gen_kcp_license() {
 	echo "${out}"
 }
 LICENSE+=" "$(gen_kcp_license)
-LICENSE+=" lru_gen? ( GPL-2 )"
+LICENSE+=" multigen_lru? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
@@ -478,7 +478,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 	   kernel-compiler-patch-cortex-a72? (
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
-	   lru_gen? ( ${LRU_GEN_SRC_URI} )
+	   multigen_lru? ( ${MULTIGEN_LRU_SRC_URI} )
 	   prjc? ( ${PRJC_SRC_URI} )
 	   rt? ( ${RT_SRC_ALT_URI} )
 	   tresor? (
@@ -489,7 +489,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 		${TRESOR_SYSFS_SRC_URI}
 	   )
 	   uksm? ( ${UKSM_SRC_URI} )
-	   zen-lru_gen? ( ${ZEN_LRU_GEN_SRC_URI} )
+	   zen-multigen_lru? ( ${ZEN_MULTIGEN_LRU_SRC_URI} )
 	   zen-sauce? ( ${ZENSAUCE_URIS} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb

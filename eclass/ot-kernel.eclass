@@ -253,25 +253,25 @@ KCP_SRC_9_1_URI="${KCP_URI_BASE}${KCP_9_1_BN}.patch -> ${KCP_9_1_BN}-${KCP_COMMI
 fi
 KCP_SRC_CORTEX_A72_URI="${KCP_URI_BASE}${KCP_CORTEX_A72_BN}.patch -> ${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch"
 
-LRU_GEN_COMMITS="${PATCH_LRU_GEN_COMMIT_A}^..${PATCH_LRU_GEN_COMMIT_D}" # [oldest,newest] [top,bottom]
-LRU_GEN_COMMITS_SHORT=\
-"${PATCH_LRU_GEN_COMMIT_A:0:7}-${PATCH_LRU_GEN_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
-LRU_GEN_BASE_URI=\
-"https://github.com/torvalds/linux/compare/${LRU_GEN_COMMITS}"
-LRU_GEN_FN=\
-"lru_gen-${K_MAJOR_MINOR}-${LRU_GEN_COMMITS_SHORT}.patch"
-LRU_GEN_SRC_URI=\
-"${LRU_GEN_BASE_URI}.patch -> ${LRU_GEN_FN}"
+MULTIGEN_LRU_COMMITS="${PATCH_MULTIGEN_LRU_COMMIT_A}^..${PATCH_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
+MULTIGEN_LRU_COMMITS_SHORT=\
+"${PATCH_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
+MULTIGEN_LRU_BASE_URI=\
+"https://github.com/torvalds/linux/compare/${MULTIGEN_LRU_COMMITS}"
+MULTIGEN_LRU_FN=\
+"multigen_lru-${K_MAJOR_MINOR}-${MULTIGEN_LRU_COMMITS_SHORT}.patch"
+MULTIGEN_LRU_SRC_URI=\
+"${MULTIGEN_LRU_BASE_URI}.patch -> ${MULTIGEN_LRU_FN}"
 
-ZEN_LRU_GEN_COMMITS="${PATCH_ZEN_LRU_GEN_COMMIT_A}^..${PATCH_ZEN_LRU_GEN_COMMIT_D}" # [oldest,newest] [top,bottom]
-ZEN_LRU_GEN_COMMITS_SHORT=\
-"${PATCH_ZEN_LRU_GEN_COMMIT_A:0:7}-${PATCH_ZEN_LRU_GEN_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
-ZEN_LRU_GEN_BASE_URI=\
-"https://github.com/torvalds/linux/compare/${ZEN_LRU_GEN_COMMITS}"
-ZEN_LRU_GEN_FN=\
-"zen-lru_gen-${K_MAJOR_MINOR}-${ZEN_LRU_GEN_COMMITS_SHORT}.patch"
-ZEN_LRU_GEN_SRC_URI=\
-"${ZEN_LRU_GEN_BASE_URI}.patch -> ${ZEN_LRU_GEN_FN}"
+ZEN_MULTIGEN_LRU_COMMITS="${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A}^..${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D}" # [oldest,newest] [top,bottom]
+ZEN_MULTIGEN_LRU_COMMITS_SHORT=\
+"${PATCH_ZEN_MULTIGEN_LRU_COMMIT_A:0:7}-${PATCH_ZEN_MULTIGEN_LRU_COMMIT_D:0:7}" # [oldest,newest] [top,bottom]
+ZEN_MULTIGEN_LRU_BASE_URI=\
+"https://github.com/torvalds/linux/compare/${ZEN_MULTIGEN_LRU_COMMITS}"
+ZEN_MULTIGEN_LRU_FN=\
+"zen-multigen_lru-${K_MAJOR_MINOR}-${ZEN_MULTIGEN_LRU_COMMITS_SHORT}.patch"
+ZEN_MULTIGEN_LRU_SRC_URI=\
+"${ZEN_MULTIGEN_LRU_BASE_URI}.patch -> ${ZEN_MULTIGEN_LRU_FN}"
 
 ZEN_MUQSS_BASE_URI=\
 "https://github.com/torvalds/linux/commit/"
@@ -1147,18 +1147,18 @@ apply_bbrv2() {
 	done
 }
 
-# @FUNCTION: apply_lru_gen
+# @FUNCTION: apply_multigen_lru
 # @DESCRIPTION:
 # Uses multigenerational LRU to improve page reclamation.
-apply_lru_gen() {
-	_fpatch "${DISTDIR}/${LRU_GEN_FN}"
+apply_multigen_lru() {
+	_fpatch "${DISTDIR}/${MULTIGEN_LRU_FN}"
 }
 
-# @FUNCTION: apply_zen_lru_gen
+# @FUNCTION: apply_zen_multigen_lru
 # @DESCRIPTION:
 # Uses zen's modified multigenerational LRU to improve page reclamation.
-apply_zen_lru_gen() {
-	_fpatch "${DISTDIR}/${ZEN_LRU_GEN_FN}"
+apply_zen_multigen_lru() {
+	_fpatch "${DISTDIR}/${ZEN_MULTIGEN_LRU_FN}"
 }
 
 # @FUNCTION: _filter_genpatches
@@ -1528,15 +1528,15 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has lru_gen ${IUSE_EFFECTIVE} ; then
-		if use lru_gen ; then
-			apply_lru_gen
+	if has multigen_lru ${IUSE_EFFECTIVE} ; then
+		if use multigen_lru ; then
+			apply_multigen_lru
 		fi
 	fi
 
-	if has zen-lru_gen ${IUSE_EFFECTIVE} ; then
-		if use zen-lru_gen ; then
-			apply_zen_lru_gen
+	if has zen-multigen_lru ${IUSE_EFFECTIVE} ; then
+		if use zen-multigen_lru ; then
+			apply_zen_multigen_lru
 		fi
 	fi
 
@@ -2055,10 +2055,17 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_FUTEX2"
 		fi
 
-		if ( has lru_gen ${IUSE_EFFECTIVE} && use lru_gen ) \
-			|| ( has zen-lru_gen ${IUSE_EFFECTIVE} && use zen-lru_gen ) ; then
+		if ( has multigen_lru ${IUSE_EFFECTIVE} && use multigen_lru ) \
+			|| ( has zen-multigen_lru ${IUSE_EFFECTIVE} && use zen-multigen_lru ) ; then
+			einfo "Changed .config to use Multi-Gen LRU"
 			ot-kernel_y_configopt "CONFIG_LRU_GEN"
 			ot-kernel_y_configopt "CONFIG_LRU_GEN_ENABLED"
+		fi
+
+		if has uksm ${IUSE_EFFECTIVE} && use uksm ; then
+			einfo "Changed .config to use UKSM"
+			ot-kernel_y_configopt "CONFIG_KSM"
+			ot-kernel_y_configopt "CONFIG_UKSM"
 		fi
 
 		local cpu_sched_config_applied=0
