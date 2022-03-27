@@ -3477,26 +3477,13 @@ ot-kernel_src_install() {
 		doins -r "${BUILD_DIR}" # Sanitize file permissions
 	done
 
-	local nforks=$(echo "${MAKEOPTS}" | grep -E -e "-j[ ]*[0-9]+" | grep -E -o "[0-9]")
-	[[ -z "${nforks}" ]] && nforks=1
-	einfo "nforks:  ${nforks}"
+	local nprocs=$(echo "${MAKEOPTS}" | grep -E -e "-j[ ]*[0-9]+" | grep -E -o "[0-9]")
+	[[ -z "${nprocs}" ]] && nprocs=1
+	einfo "nprocs:  ${nprocs}"
 	einfo "Restoring +x bit"
 	cd "${ED}" || die
-	find . -type f -print0 | xargs -0 -I '{}' -P ${nforks} bash -c "f='{}'; file '{}' | grep -q -F -e 'executable' && fperms +x \"\${f#.}\""
-	find boot -type f -print0 | xargs -0 -I '{}' -P ${nforks} bash -c "f='{}'; file '{}' | grep -q -E -e 'Linux kernel.*executable' && fperms -x \"/\${f}\""
-
-#	for f in $(find . -type f) ; do
-#		(
-#			file "${f}" | grep -q -F -e "executable" && fperms +x "${f#.}"
-#			file "${f}" | grep -q -E -e "Linux kernel.*executable" && fperms -x "${f#.}"
-#		) &
-#		local njobs=$(jobs -p | wc -l)
-#		if (( ${njobs} >= ${nforks} )) ; then
-# Waits for next job to complete instead of waiting on all to finish in order
-# to continue to the next job
-#			wait -n
-#		fi
-#	done
+	find . -type f -print0 | xargs -0 -I '{}' -P ${nprocs} bash -c "f='{}' ; file '{}' | grep -q -F -e 'executable' && fperms +x \"\${f#.}\""
+	find boot -type f -print0 | xargs -0 -I '{}' -P ${nprocs} bash -c "f='{}' ; file '{}' | grep -q -E -e 'Linux kernel.*executable' && fperms -x \"/\${f}\""
 
 	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 		insinto "${OT_KERNEL_PGO_DATA_DIR}"
