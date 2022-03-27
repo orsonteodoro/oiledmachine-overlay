@@ -73,7 +73,7 @@ ban_disable_debug() {
 		&& [[ -z "${PERMIT_NETFILTER_SYMBOL_REMOVAL}" \
 			|| "${PERMIT_NETFILTER_SYMBOL_REMOVAL}" == "0" ]] ; then
 		: # No feature conflict
-	elif use disable_debug ; then
+	elif ot-kernel_use disable_debug ; then
 eerror
 eerror "Using OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS with the disable_debug"
 eerror "USE flag are in conflict with a package with certain set of kernel"
@@ -174,6 +174,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_espeakup
 	ot-kernel-pkgflags_eudev
 	ot-kernel-pkgflags_eventd
+	ot-kernel-pkgflags_external_modules
 	ot-kernel-pkgflags_extfatprogs
 	ot-kernel-pkgflags_ff
 	ot-kernel-pkgflags_firecracker_bin
@@ -412,6 +413,8 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_xtables_addons
 	ot-kernel-pkgflags_zfs
 	ot-kernel-pkgflags_zfs_kmod
+
+	# out of source modules
 }
 
 # @FUNCTION: ot-kernel-pkgflags_accel_ppp
@@ -3735,6 +3738,123 @@ ot-kernel-pkgflags_oss() { # DONE
 		ot-kernel_y_configopt "CONFIG_SND_OSSEMUL"
 	fi
 }
+
+# @FUNCTION: ot-kernel-pkgflags_external_modules
+# @DESCRIPTION:
+# Applies kernel config flags for external kernel modules
+ot-kernel-pkgflags_external_modules() {
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d44ca7a" ]] && return
+	local external_module=0
+# Discovered with
+# out=$(mktemp) ; \
+# cd /var/lib/layman ; grep --exclude-dir=.git --exclude-dir=metadata -r -e "linux-mod" -e "sys-kernel/dkms" ./ | cut -f 3-4 -d "/" > "${out}" ; \
+# cd /usr/portage ; grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -l -r -e "linux-mod" ./ | cut -f 2-3 -d "/" >> "${out}" ; \
+# cat "${out}" | sort | uniq ; rm "${out}"
+	local PKGS=(
+app-admin/ryzen_smu
+app-antivirus/lkrg
+app-antivirus/tyton
+app-crypt/tpm-emulator
+app-emulation/vendor-reset
+app-emulation/virtualbox-guest-additions
+app-emulation/virtualbox-modules
+app-emulation/vmware-modules
+app-forensics/kjackal
+app-forensics/prochunter
+app-laptop/tp_smapi
+app-laptop/tuxedo-keyboard
+bluetooth-drivers/rtbth
+dev-util/lttng-modules
+dev-util/sysdig-kmod
+games-util/hid-nintendo
+games-util/xpadneo
+media-libs/svgalib
+media-sound/netcat-cpi
+media-tv/v4l-dvb-saa716x
+media-video/droidcam
+media-video/v4l2loopback
+net-analyzer/pkt-netflow
+net-dialup/accel-ppp
+net-firewall/ipset
+net-firewall/ipt_netflow
+net-firewall/ipt-ratelimit
+net-firewall/rtsp-conntrack
+net-firewall/xtables-addons
+net-firewall/xt_dns
+net-firewall/xt_nat
+net-fs/openafs
+net-misc/AQtion
+net-misc/dahdi
+net-misc/ena-driver
+net-misc/openvswitch
+net-misc/r8125
+net-misc/r8168
+net-misc/realtek-r8152
+net-vpn/wireguard-modules
+net-wireless/broadcom-sta
+net-wireless/broadcom-wl
+net-wireless/mt7610u_ulli-kroll
+net-wireless/rt3070
+net-wireless/rtl8192eu
+net-wireless/rtl8812au
+net-wireless/rtl8812au_aircrack-ng
+net-wireless/rtl8821ce
+net-wireless/rtl8821cu
+net-wireless/rtl8822bu
+sci-libs/linux-gpib-modules
+sec-policy/selinux-modemmanager
+sys-apps/openrazer
+sys-apps/smc-sum
+sys-cluster/knem
+sys-cluster/lustre
+sys-fs/exfat-nofuse
+sys-fs/loop-aes
+sys-fs/vhba
+sys-fs/zfs
+sys-fs/zfs-kmod
+sys-kernel/compat-drivers
+sys-kernel/cryptodev
+sys-kernel/fragattacks-drivers58
+sys-kernel/ft60x_driver
+sys-kernel/kpatch
+sys-kernel/pf_ring-kmod
+sys-kernel/rte_kni-kmod
+sys-kernel/tirdad
+sys-kernel/ummunotify
+sys-kernel/xpmem
+sys-kernel/zenpower3
+sys-libs/safeclib
+sys-power/acpi_call
+sys-power/bbswitch
+sys-power/phc-intel
+sys-power/tuxedo-cc-wmi
+sys-process/atop
+sys-process/falco-bin
+x11-drivers/nvidia-drivers
+x11-misc/openrazer
+	)
+
+	local p
+	for p in ${PKGS[@]} ; do
+		if has_version "${p}" ; then
+			einfo "Detected external kernel module: ${p}"
+			external_module=1
+		fi
+	done
+	has_version "sys-kernel/dkms" && external_module=1
+	[[ "${OT_KERNEL_EXTERNAL_MODULES}" ]] && external_module=1
+
+	if (( ${external_module} == 1 )) ; then
+		einfo "Applying kernel config flags for external kernel modules packages (id: d44ca7a)"
+		ot-kernel_unset_configopt "CONFIG_TRIM_UNUSED_KSYMS"
+		ot-kernel_y_configopt "CONFIG_MODULES"
+	elif grep -q -E -e "CONFIG_MODULES" "${path_config}" ; then
+		einfo "Trimming unused ksyms to improve LTO (id: d44ca7a)"
+		# Upstream claims that this improves LTO
+		ot-kernel_y_configopt "CONFIG_TRIM_UNUSED_KSYMS"
+	fi
+}
+
 
 # @FUNCTION: ot-kernel-pkgflags_osmo_fl2k
 # @DESCRIPTION:

@@ -758,6 +758,18 @@ eerror
 	fi
 }
 
+# @FUNCTION: ot-kernel_use
+# @DESCRIPTION:
+# Analog of use keyword but in the context of per build env
+ot-kernel_use() {
+	local u="${1}"
+	local u
+	for u in ${OT_KERNEL_USE} ; do
+		[[ "${1}" == "${u}" ]] && return 0
+	done
+	return 1
+}
+
 # @FUNCTION: ot-kernel_pkg_setup
 # @DESCRIPTION:
 # Perform checks, warnings, and initialization before emerging
@@ -999,13 +1011,13 @@ apply_zensauce() {
 	done
 
 	if has O3 ${IUSE_EFFECTIVE} ; then
-		if use O3 ; then
+		if ot-kernel_use O3 ; then
 			whitelisted+=" ${PATCH_ALLOW_O3_COMMIT:0:7}"
 		fi
 	fi
 
 	if has zen-tune ${IUSE_EFFECTIVE} ; then
-		if use zen-tune ; then
+		if ot-kernel_use zen-tune ; then
 			for c in ${PATCH_ZENTUNE_COMMITS[@]} ; do
 				whitelisted+=" ${c:0:7}"
 			done
@@ -1013,7 +1025,7 @@ apply_zensauce() {
 	fi
 
 	if has zen-sauce-all ${IUSE_EFFECTIVE} ; then
-		if use zen-sauce-all ; then
+		if ot-kernel_use zen-sauce-all ; then
 			for c in ${PATCH_ZENSAUCE_COMMITS[@]} ; do
 				whitelisted+=" ${c:0:7}"
 			done
@@ -1095,7 +1107,7 @@ apply_futex() {
 	for c in ${FUTEX_COMMITS[@]} ; do
 		local blacklisted=0
 		if has futex-proton ${IUSE_EFFECTIVE} ; then
-			if ! use futex-proton ;then
+			if ! ot-kernel_use futex-proton ;then
 				local b
 				for b in ${FUTEX_PROTON_COMPAT[@]} ; do
 					if [[ "${b}" == "${c}" ]] ; then
@@ -1118,7 +1130,7 @@ apply_futex2() {
 	for c in ${FUTEX2_COMMITS[@]} ; do
 		local blacklisted=0
 		if has futex2-proton ${IUSE_EFFECTIVE} ; then
-			if ! use futex2-proton ;then
+			if ! ot-kernel_use futex2-proton ;then
 				local b
 				for b in ${FUTEX2_PROTON_COMPAT[@]} ; do
 					if [[ "${b}" == "${c}" ]] ; then
@@ -1172,7 +1184,7 @@ apply_zen_multigen_lru() {
 # GENPATCHES_BLACKLIST="2500 2600"
 _filter_genpatches() {
 	P_GENPATCHES_BLACKLIST=""
-	if ! use genpatches_1510 ; then
+	if ! ot-kernel_use genpatches_1510 ; then
 		# Possibly locks up computer during OOM tests
 		P_GENPATCHES_BLACKLIST+=" 1510"
 	fi
@@ -1259,7 +1271,7 @@ apply_ck() {
 				break
 			fi
 			if ver_test ${K_MAJOR_MINOR} -eq 4.14 ; then
-				if ! use bfq-mq ; then
+				if ! ot-kernel_use bfq-mq ; then
 					local b2
 					for b2 in ${CK_BFQ_MQ[@]} ; do
 						if [[ "${c}" == "${b2}" ]] ; then
@@ -1347,10 +1359,10 @@ apply_tresor() {
 	cd "${BUILD_DIR}" || die
 	einfo "Applying TRESOR"
 	local platform
-	if use tresor_aesni ; then
+	if ot-kernel_use tresor_aesni ; then
 		platform="aesni"
 	fi
-	if use tresor_i686 || use tresor_x86_64 ; then
+	if ot-kernel_use tresor_i686 || ot-kernel_use tresor_x86_64 ; then
 		platform="i686"
 	fi
 
@@ -1505,109 +1517,109 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 # Apply the patches conditionally based on extraversion or cpu_sched
 apply_all_patchsets() {
 	if has rt ${IUSE_EFFECTIVE} && [[ "${extraversion}" == "rt" ]] ; then
-		if use rt ; then
+		if ot-kernel_use rt ; then
 			apply_rt
 		fi
 	fi
 
 	if has futex ${IUSE_EFFECTIVE} ; then
-		if use futex ; then
+		if ot-kernel_use futex ; then
 			apply_futex
 		fi
 	fi
 
 	if has futex2 ${IUSE_EFFECTIVE} ; then
-		if use futex2 ; then
+		if ot-kernel_use futex2 ; then
 			apply_futex2
 		fi
 	fi
 
 	if has uksm ${IUSE_EFFECTIVE} ; then
-		if use uksm ; then
+		if ot-kernel_use uksm ; then
 			apply_uksm
 		fi
 	fi
 
 	if has multigen_lru ${IUSE_EFFECTIVE} ; then
-		if use multigen_lru ; then
+		if ot-kernel_use multigen_lru ; then
 			apply_multigen_lru
 		fi
 	fi
 
 	if has zen-multigen_lru ${IUSE_EFFECTIVE} ; then
-		if use zen-multigen_lru ; then
+		if ot-kernel_use zen-multigen_lru ; then
 			apply_zen_multigen_lru
 		fi
 	fi
 
 	if has bmq ${IUSE_EFFECTIVE} ; then
-		if use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
+		if ot-kernel_use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
 			apply_bmq
 		fi
 	fi
 
 	if has pds ${IUSE_EFFECTIVE} ; then
-		if use pds && [[ "${cpu_sched}" == "pds" ]] ; then
+		if ot-kernel_use pds && [[ "${cpu_sched}" == "pds" ]] ; then
 			apply_pds
 		fi
 	fi
 
 	if has prjc ${IUSE_EFFECTIVE} ; then
-		if use prjc && [[ "${cpu_sched}" == "prjc" ]] ; then
+		if ot-kernel_use prjc && [[ "${cpu_sched}" == "prjc" ]] ; then
 			apply_prjc
 		fi
 	fi
 
 	if has muqss ${IUSE_EFFECTIVE} ; then
-		if use muqss && [[ "${cpu_sched}" == "muqss" ]] ; then
+		if ot-kernel_use muqss && [[ "${cpu_sched}" == "muqss" ]] ; then
 			apply_ck
 		fi
 	fi
 
 	if has zen-muqss ${IUSE_EFFECTIVE} ; then
-		if use zen-muqss && [[ "${cpu_sched}" == "zen-muqss" ]] ; then
+		if ot-kernel_use zen-muqss && [[ "${cpu_sched}" == "zen-muqss" ]] ; then
 			apply_zen_muqss
 		fi
 	fi
 
 	if has tresor ${IUSE_EFFECTIVE} ; then
-		if use tresor ; then
+		if ot-kernel_use tresor ; then
 			apply_tresor
 		fi
 	fi
 
 	if has genpatches ${IUSE_EFFECTIVE} ; then
-		if use genpatches ; then
+		if ot-kernel_use genpatches ; then
 			apply_genpatches
 		fi
 	fi
 
 	if has O3 ${IUSE_EFFECTIVE} ; then
-		if use O3 ; then
+		if ot-kernel_use O3 ; then
 			apply_o3
 		fi
 	fi
 
 	if has zen-sauce ${IUSE_EFFECTIVE} ; then
-		if use zen-sauce ; then
+		if ot-kernel_use zen-sauce ; then
 			apply_zensauce
 		fi
 	fi
 
 	if has bbrv2 ${IUSE_EFFECTIVE} ; then
-		if use bbrv2 ; then
+		if ot-kernel_use bbrv2 ; then
 			apply_bbrv2
 		fi
 	fi
 
 	if has clang-pgo ${IUSE_EFFECTIVE} ; then
-		if use clang-pgo ; then
+		if ot-kernel_use clang-pgo ; then
 			apply_clang_pgo
 		fi
 	fi
 
 	if has cfi ${IUSE_EFFECTIVE} ; then
-		if use cfi && use amd64 && [[ "${arch}" == "x86_64" ]] ; then
+		if ot-kernel_use cfi && [[ "${arch}" == "x86_64" ]] ; then
 			apply_cfi
 		fi
 	fi
@@ -1683,6 +1695,14 @@ ewarn
 		fi
 	done
 
+	if [[ -z "${OT_KERNEL_USE}" ]] ; then
+		export OT_KERNEL_USE="${IUSE}"
+	fi
+
+	if [[ -z "${OT_KERNEL_BUILD}" ]] && ( use build || ot-kernel_use build ) ; then
+		export OT_KERNEL_BUILD=1
+	fi
+
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_load_config
@@ -1700,7 +1720,7 @@ ewarn
 		einfo "Setting the extra version for the -${extraversion} build"
 		sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
 			"${BUILD_DIR}/Makefile" || die
-		if use disable_debug ; then
+		if ot-kernel_use disable_debug ; then
 			chmod +x "${BUILD_DIR}/disable_debug" || die
 		fi
 		if [[ -n "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
@@ -1901,7 +1921,7 @@ ot-kernel_clear_env() {
 	# The OT_KERNEL_ prefix is to avoid naming collisions.
 	unset OT_KERNEL_ARCH
 	unset OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS
-	unset OT_KERNEL_BOOT_COMPRESSOR
+	unset OT_KERNEL_BOOT_DECOMPRESSOR
 	unset OT_KERNEL_BUILD
 	unset OT_KERNEL_COLD_BOOT_MITIGATIONS
 	unset OT_KERNEL_CONFIG
@@ -1921,9 +1941,13 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_SHARED_KEY
 	unset OT_KERNEL_SIGN_KERNEL
 	unset OT_KERNEL_SIGN_MODULES
+	unset OT_KERNEL_SWAP_COMPRESSION
 	unset OT_KERNEL_USE_LSM_UPSTREAM_ORDER
 	unset OT_KERNEL_TARGET_TRIPLE
+	unset OT_KERNEL_USE
 	unset OT_KERNEL_VERBOSITY
+	unset OT_KERNEL_ZSWAP_ALLOCATOR
+	unset OT_KERNEL_ZSWAP_COMPRESSOR
 	unset PERMIT_NETFILTER_SYMBOL_REMOVAL
 
 	# Unset ot-kernel-pkgflags.
@@ -1962,11 +1986,22 @@ ot-kernel_load_config() {
 	source "${env_path}"
 }
 
+# @FUNCTION: ot-kernel_is_build
+# @DESCRIPTION:
+# Checks if build flag is set per build
+ot-kernel_is_build() {
+	[[ "${OT_KERNEL_BUILD}" == "1" ]] && return 0
+	[[ "${OT_KERNEL_BUILD,,}" == "yes" ]] && return 0
+	[[ "${OT_KERNEL_BUILD,,}" == "true" ]] && return 0
+	[[ "${OT_KERNEL_BUILD,,}" == "build" ]] && return 0
+	return 1
+}
+
 # @FUNCTION: ot-kernel_src_configure
 # @DESCRIPTION:
 # Run menuconfig
 ot-kernel_src_configure() {
-	use build || return
+	ot-kernel_is_build || return
 	einfo "Called ot-kernel_src_configure()"
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
@@ -1980,7 +2015,7 @@ ot-kernel_src_configure() {
 		[[ -z "${config}" ]] && config="${default_config}"
 		local target_triple="${OT_KERNEL_TARGET_TRIPLE}"
 		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
-		local boot_decomp="${OT_KERNEL_BOOT_DECOMP}"
+		local boot_decomp="${OT_KERNEL_BOOT_DECOMPRESSOR}"
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
@@ -2035,47 +2070,47 @@ ot-kernel_src_configure() {
 		[[ -e "${path_config}" ]] || die ".config is missing"
 
 		# Every config check below may mod the default config.
-		if has bbrv2 ${IUSE_EFFECTIVE} && use bbrv2 ; then
+		if has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 			einfo "Enabled bbrv2 in .config"
 			ot-kernel_y_configopt "CONFIG_TCP_CONG_BBR2"
 			ot-kernel_y_configopt "CONFIG_DEFAULT_BBR2"
 			ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"bbr2\""
 		fi
 
-		if has futex ${IUSE_EFFECTIVE} && use futex ; then
+		if has futex ${IUSE_EFFECTIVE} && ot-kernel_use futex ; then
 			einfo "Enabled futex in .config"
 			ot-kernel_y_configopt "CONFIG_EXPERT"
 			ot-kernel_y_configopt "CONFIG_FUTEX"
 		fi
 
-		if has futex2 ${IUSE_EFFECTIVE} && use futex2 ; then
+		if has futex2 ${IUSE_EFFECTIVE} && ot-kernel_use futex2 ; then
 			einfo "Enabled futex2 in .config"
 			ot-kernel_y_configopt "CONFIG_EXPERT"
 			ot-kernel_y_configopt "CONFIG_FUTEX"
 			ot-kernel_y_configopt "CONFIG_FUTEX2"
 		fi
 
-		if ( has multigen_lru ${IUSE_EFFECTIVE} && use multigen_lru ) \
-			|| ( has zen-multigen_lru ${IUSE_EFFECTIVE} && use zen-multigen_lru ) ; then
+		if ( has multigen_lru ${IUSE_EFFECTIVE} && ot-kernel_use multigen_lru ) \
+			|| ( has zen-multigen_lru ${IUSE_EFFECTIVE} && ot-kernel_use zen-multigen_lru ) ; then
 			einfo "Changed .config to use Multi-Gen LRU"
 			ot-kernel_y_configopt "CONFIG_LRU_GEN"
 			ot-kernel_y_configopt "CONFIG_LRU_GEN_ENABLED"
 		fi
 
-		if has uksm ${IUSE_EFFECTIVE} && use uksm ; then
+		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
 			einfo "Changed .config to use UKSM"
 			ot-kernel_y_configopt "CONFIG_KSM"
 			ot-kernel_y_configopt "CONFIG_UKSM"
 		fi
 
 		local cpu_sched_config_applied=0
-		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "muqss" ]] ; then
+		if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc && [[ "${cpu_sched}" == "muqss" ]] ; then
 			einfo "Changed .config to use MuQSS"
 			ot-kernel_y_configopt "CONFIG_SCHED_MUQSS"
 			cpu_sched_config_applied=1
 		fi
 
-		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc" ]] ; then
+		if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc && [[ "${cpu_sched}" == "prjc" ]] ; then
 			einfo "Changed .config to use Project C with BMQ"
 			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
@@ -2083,7 +2118,7 @@ ot-kernel_src_configure() {
 			cpu_sched_config_applied=1
 		fi
 
-		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc-bmq" ]] ; then
+		if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc && [[ "${cpu_sched}" == "prjc-bmq" ]] ; then
 			einfo "Changed .config to use Project C with BMQ"
 			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
@@ -2091,7 +2126,7 @@ ot-kernel_src_configure() {
 			cpu_sched_config_applied=1
 		fi
 
-		if has prjc ${IUSE_EFFECTIVE} && use prjc && [[ "${cpu_sched}" == "prjc-pds" ]] ; then
+		if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc && [[ "${cpu_sched}" == "prjc-pds" ]] ; then
 			einfo "Changed .config to use Project C with PDS"
 			ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 			ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
@@ -2099,13 +2134,13 @@ ot-kernel_src_configure() {
 			cpu_sched_config_applied=1
 		fi
 
-		if has bmq ${IUSE_EFFECTIVE} && use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
+		if has bmq ${IUSE_EFFECTIVE} && ot-kernel_use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
 			einfo "Changed .config to use BMQ"
 			ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 			cpu_sched_config_applied=1
 		fi
 
-		if has pds ${IUSE_EFFECTIVE} && use pds && [[ "${cpu_sched}" == "pds" ]] ; then
+		if has pds ${IUSE_EFFECTIVE} && ot-kernel_use pds && [[ "${cpu_sched}" == "pds" ]] ; then
 			einfo "Changed .config to use PDS"
 			ot-kernel_y_configopt "CONFIG_SCHED_PDS"
 			cpu_sched_config_applied=1
@@ -2134,7 +2169,7 @@ ot-kernel_src_configure() {
 
 		is_firmware_ready
 
-		if has genpatches ${IUSE_EFFECTIVE} && use genpatches ; then
+		if has genpatches ${IUSE_EFFECTIVE} && ot-kernel_use genpatches ; then
 			# Debug
 			ot-kernel_unset_configopt "CONFIG_GENTOO_PRINT_FIRMWARE_INFO"
 
@@ -2207,7 +2242,7 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_USB_XHCI_HCD"
 		fi
 
-		if has tresor_i686 ${IUSE_EFFECTIVE} && use tresor_i686 && [[ "${arch}" == "x86" ]] ; then
+		if has tresor_i686 ${IUSE_EFFECTIVE} && ot-kernel_use tresor_i686 && [[ "${arch}" == "x86" ]] ; then
 			einfo "Changed .config to use TRESOR (i686)"
 			ot-kernel_y_configopt "CONFIG_CRYPTO"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -2216,7 +2251,7 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ALGAPI"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
-			if use tresor_prompt ; then
+			if ot-kernel_use tresor_prompt ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
 				einfo "Disabling boot output for TRESOR early prompt."
 				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
@@ -2225,7 +2260,7 @@ ot-kernel_src_configure() {
 			fi
 		fi
 
-		if has tresor_x86_64 ${IUSE_EFFECTIVE} && use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
+		if has tresor_x86_64 ${IUSE_EFFECTIVE} && ot-kernel_use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
 			einfo "Changed .config to use TRESOR (x86_64)"
 			ot-kernel_y_configopt "CONFIG_CRYPTO"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -2234,12 +2269,12 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ALGAPI"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
-			if use tresor_prompt ; then
+			if ot-kernel_use tresor_prompt ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
 			fi
 		fi
 
-		if has tresor_aesni ${IUSE_EFFECTIVE} && use tresor_aesni && [[ "${arch}" == "x86_64" ]] ; then
+		if has tresor_aesni ${IUSE_EFFECTIVE} && ot-kernel_use tresor_aesni && [[ "${arch}" == "x86_64" ]] ; then
 			einfo "Changed .config to use TRESOR (AES-NI)"
 			ot-kernel_y_configopt "CONFIG_CRYPTO"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -2247,12 +2282,12 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ALGAPI"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER2"
-			if use tresor_prompt ; then
+			if ot-kernel_use tresor_prompt ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_PROMPT" # default on upstream
 			fi
 		fi
 
-		if has tresor_sysfs ${IUSE_EFFECTIVE} && use tresor_sysfs && [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
+		if has tresor_sysfs ${IUSE_EFFECTIVE} && ot-kernel_use tresor_sysfs && [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
 			einfo "Changed .config to use the TRESOR sysfs interface"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_SYSFS"
 
@@ -2341,9 +2376,9 @@ ot-kernel_src_configure() {
 		local gcc_slot=$(get_gcc_slot)
 		if \
 			( \
-			   ( has cfi ${IUSE_EFFECTIVE} && use cfi ) \
-			|| ( has lto ${IUSE_EFFECTIVE} && use lto ) \
-			|| ( has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ) \
+			   ( has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ) \
+			|| ( has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ) \
+			|| ( has clang-pgo ${IUSE_EFFECTIVE} && ot-kernel_use clang-pgo ) \
 			) \
 			&& ! tc-is-cross-compiler \
 			&& is_clang_ready \
@@ -2375,7 +2410,7 @@ ot-kernel_src_configure() {
 			ot-kernel_set_configopt "CONFIG_GCC_VERSION" "${gcc_major_v}${gcc_minor_v}00"
 		fi
 
-		if has lto ${IUSE_EFFECTIVE} && use lto ; then
+		if has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
 			(( ${llvm_slot} < 11 )) && die "LTO requires LLVM >= 11"
 			einfo "Enabling LTO"
 			ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_LTO_CLANG"
@@ -2400,7 +2435,7 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_LTO_NONE"
 		fi
 
-		if has shadowcallstack ${IUSE_EFFECTIVE} && use shadowcallstack && [[ "${arch}" == "arm64" ]] ; then
+		if has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "arm64" ]] ; then
 			(( ${llvm_slot} < 10 )) && die "Shadow call stack (SCS) requires LLVM >= 10"
 			einfo "Enabling SCS support in the in the .config."
 			ot-kernel_y_configopt "CONFIG_CFI_CLANG_SHADOW"
@@ -2410,7 +2445,7 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
 		fi
 
-		if has cfi ${IUSE_EFFECTIVE} && use cfi && [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
+		if has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi && [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
 			[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) && die "CFI requires LLVM >= 12 on arm64"
 			[[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 13 )) && die "CFI requires LLVM >= 13.0.1 on x86_64"
 			einfo "Enabling CFI support in the in the .config."
@@ -2423,12 +2458,12 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 		fi
 
-		if has cfi ${IUSE_EFFECTIVE} && use cfi && [[ "${arch}" == "arm64" ]] ; then
+		if has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi && [[ "${arch}" == "arm64" ]] ; then
 			# Need to recheck
 			ewarn "You must manually set arm64 CFI in the .config."
 		fi
 
-		if has O3 ${IUSE_EFFECTIVE} && use O3 ; then
+		if has O3 ${IUSE_EFFECTIVE} && ot-kernel_use O3 ; then
 			# Disable ambiguous mutually exclusive configs
 			ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 			ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
@@ -2436,7 +2471,7 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
 		fi
 
-		if has kernel-compiler-patch ${IUSE_EFFECTIVE} && use kernel-compiler-patch && [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
+		if has kernel-compiler-patch ${IUSE_EFFECTIVE} && ot-kernel_use kernel-compiler-patch && [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
 			local microarches=(
 				$(grep -r -e "config M" "${BUILD_DIR}/arch/x86/Kconfig.cpu" | sed -e "s|config ||g")
 			)
@@ -2494,7 +2529,7 @@ ot-kernel_src_configure() {
 		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
 		local profraw_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
 		local profdata_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
-		if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
+		if has clang-pgo ${IUSE_EFFECTIVE} && ot-kernel_use clang-pgo ; then
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 			local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
 			local clang_v_maj=$(echo "${clang_v}" | cut -f 1 -d ".")
@@ -2552,13 +2587,108 @@ eerror
 			fi
 		fi
 
-		if use disable_debug ; then
+		if ot-kernel_use disable_debug ; then
 			einfo "Disabling all debug and shortening logging buffers"
 			./disable_debug || die
 		fi
 
-		if has tresor_x86_64 ${IUSE_EFFECTIVE} && use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
-			if use tresor_prompt ; then
+		if [[ "${OT_KERNEL_SWAP}" == "1" || "${OT_KERNEL_SWAP^^}" == "Y" ]] ; then
+			einfo "Swap enabled"
+			ot-kernel_y_configopt "CONFIG_SWAP"
+		elif [[ "${OT_KERNEL_SWAP}" == "0" || "${OT_KERNEL_SWAP^^}" == "N" ]] ; then
+			einfo "Swap disabled"
+			ot-kernel_unset_configopt "CONFIG_SWAP"
+		else
+			einfo "Using manual swap settings"
+		fi
+
+		if [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "MANUAL" ]] ; then
+			einfo "Using manual zswap compressor"
+		elif [[ -n "${OT_KERNEL_ZSWAP_COMPRESSOR}" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_DEFLATE"
+			ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZO"
+			ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_842"
+			ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4"
+			ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4HC"
+			ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD"
+			if [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "DEFLATE" ]] ; then
+				einfo "Using deflate for zswap"
+				ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_DEFLATE"
+				ot-kernel_y_configopt "CONFIG_CRYPTO_DEFLATE"
+			elif [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "LZO" \
+				|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "auto" ]] ; then
+				einfo "Using lzo for zswap"
+				ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZO"
+				ot-kernel_y_configopt "CONFIG_CRYPTO_LZO"
+			elif [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "842" ]] ; then
+				einfo "Using 842 for zswap"
+				ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_842"
+				ot-kernel_y_configopt "CONFIG_CRYPTO_842"
+			elif [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "LZ4" ]] ; then
+				einfo "Using lz4 for zswap"
+				ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4"
+				ot-kernel_y_configopt "CONFIG_CRYPTO_LZ4"
+			elif [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "LZ4HC" ]] ; then
+				einfo "Using lz4hc for zswap"
+				ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4HC"
+				ot-kernel_y_configopt "CONFIG_CRYPTO_LZ4HC"
+			elif [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "ZSTD" ]] ; then
+				einfo "Using zstd for zswap"
+				ot-kernel_y_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD"
+				ot-kernel_y_configopt "CONFIG_CRYPTO_ZSTD"
+			fi
+
+			ot-kernel_y_configopt "CONFIG_SWAP"
+			ot-kernel_y_configopt "CONFIG_FRONTSWAP"
+			ot-kernel_y_configopt "CONFIG_CRYPTO"
+			ot-kernel_y_configopt "CONFIG_ZSWAP"
+			ot-kernel_y_configopt "CONFIG_ZSWAP_DEFAULT_ON"
+		else
+			einfo "Using manual zswap compressor"
+		fi
+
+		if [[ "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "MANUAL" ]] ; then
+			einfo "Using manual zswap allocator"
+		elif [[ -n "${OT_KERNEL_ZSWAP_ALLOCATOR}" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_ZPOOL"
+			ot-kernel_unset_configopt "CONFIG_ZSWAP"
+			ot-kernel_unset_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_Z3FOLD"
+			ot-kernel_unset_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_ZBUD"
+			ot-kernel_unset_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_ZSMALLOC"
+			ot-kernel_unset_configopt "CONFIG_ZBUD"
+			ot-kernel_unset_configopt "CONFIG_Z3FOLD"
+			if [[ "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "ZSMALLOC" \
+				|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "X1" ]] ; then
+				einfo "Using zsmalloc for zswap"
+				ot-kernel_y_configopt "CONFIG_MMU"
+				ot-kernel_y_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_ZSMALLOC"
+				ot-kernel_y_configopt "CONFIG_ZSMALLOC"
+			elif [[ "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "ZBUD" \
+				|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "X2" \
+				|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "auto" ]] ; then
+				einfo "Using zbud for zswap"
+				ot-kernel_y_configopt "CONFIG_ZPOOL"
+				ot-kernel_y_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_ZBUD"
+				ot-kernel_y_configopt "CONFIG_ZBUD"
+			elif [[ "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "Z3FOLD" \
+				|| "${OT_KERNEL_ZSWAP_ALLOCATOR^^}" == "X3" ]] ; then
+				einfo "Using z3fold for zswap"
+				ot-kernel_y_configopt "CONFIG_ZPOOL"
+				ot-kernel_y_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_Z3FOLD"
+				ot-kernel_y_configopt "CONFIG_Z3FOLD"
+			fi
+
+			ot-kernel_y_configopt "CONFIG_SWAP"
+			ot-kernel_y_configopt "CONFIG_FRONTSWAP"
+			ot-kernel_y_configopt "CONFIG_CRYPTO"
+			ot-kernel_y_configopt "CONFIG_ZSWAP"
+			ot-kernel_y_configopt "CONFIG_ZSWAP_DEFAULT_ON"
+		else
+			einfo "Using manual zswap allocator"
+		fi
+
+		if has tresor_x86_64 ${IUSE_EFFECTIVE} && ot-kernel_use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
+			if ot-kernel_use tresor_prompt ; then
 				einfo "Disabling boot output for TRESOR early prompt."
 				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
 				ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "2" # 4 is default
@@ -2567,23 +2697,44 @@ eerror
 		fi
 
 		# The default profile does not have module signing default on.
-		if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" ]] ; then
-			einfo "Changing config to auto-signed modules with SHA256"
+		if [[ "${OT_KERNEL_SIGN_MODULES}" == "0" ]] ; then
+			einfo "Disabling auto-signed modules"
+			ot-kernel_unset_configopt "CONFIG_MODULE_SIG"
+			ot-kernel_unset_configopt "CONFIG_MODULE_SIG_ALL"
+		elif [[ "${OT_KERNEL_SIGN_MODULES,,}" == "manual" ]] ; then
+			einfo "Using the manual setting for auto-signed modules"
+		elif [[ -n "${OT_KERNEL_SIGN_MODULES}" ]] ; then
+			if [[ "${OT_KERNEL_SIGN_MODULES,,}" == "sha512" ]] ; then
+				:
+			elif [[ "${OT_KERNEL_SIGN_MODULES,,}" == "sha384" ]] ; then
+				:
+			else
+				OT_KERNEL_SIGN_MODULES="sha384"
+			fi
+
+			einfo "Changing config to auto-signed modules with ${OT_KERNEL_SIGN_MODULES^^}"
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG_FORMAT"
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG"
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG_ALL"
 			ot-kernel_y_configopt "CONFIG_MODULE_SIG_FORCE"
 			local alg
+			local sign_algs=(
+				SHA1
+				SHA224
+				SHA256
+				SHA384
+				SHA512
+			)
 			for alg in ${sign_algs[@]} ; do
 				# Reset
 				ot-kernel_n_configopt "CONFIG_MODULE_SIG_${alg}"
 				#ot-kernel_n_configopt "CONFIG_CRYPTO_${alg}" # Disabled because it can interfere with other modules.
 			done
-			ot-kernel_y_configopt "CONFIG_MODULE_SIG_SHA384"
-			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA384"
-			ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"sha384\""
+			ot-kernel_y_configopt "CONFIG_MODULE_SIG_${OT_KERNEL_SIGN_MODULES^^}"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_${OT_KERNEL_SIGN_MODULES^^}"
+			ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"${OT_KERNEL_SIGN_MODULES,,}\""
 		else
-			einfo "Using manual setting for auto-signed modules"
+			einfo "Using the manual setting for auto-signed modules"
 		fi
 
 		# The default profile sets this to none by default.
@@ -2616,7 +2767,7 @@ eerror
 				ot-kernel_y_configopt "CONFIG_MODULE_COMPRESS_${ot_kernel_modules_compressor^^}" # Reset
 			fi
 		else
-			einfo "Using manual setting for compress modules"
+			einfo "Using manual setting for compressed modules"
 		fi
 
 		# Allow to customize and trim LSMs without running the menuconfig in unattended install.
@@ -2800,9 +2951,9 @@ ot-kernel_setup_tc() {
 	fi
 	if \
 		( \
-		   ( has cfi ${IUSE_EFFECTIVE} && use cfi ) \
-		|| ( has lto ${IUSE_EFFECTIVE} && use lto ) \
-		|| ( has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ) \
+		   ( has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ) \
+		|| ( has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ) \
+		|| ( has clang-pgo ${IUSE_EFFECTIVE} && ot-kernel_use clang-pgo ) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
@@ -2870,7 +3021,7 @@ ot-kernel_setup_tc() {
 		)
 	fi
 
-	if has tresor ${IUSE_EFFECTIVE} && use tresor && tc-is-clang ; then
+	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && tc-is-clang ; then
 		args+=( LLVM_IAS=0 )
 	fi
 }
@@ -2880,7 +3031,7 @@ ot-kernel_setup_tc() {
 # Builds the tresor_sysfs program.
 ot-kernel_build_tresor_sysfs() {
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
-		if use tresor_sysfs ; then
+		if ot-kernel_use tresor_sysfs ; then
 einfo "Running:  $(tc-getCC) ${CFLAGS} -Wno-unused-result tresor_sysfs.c -o \
 tresor_sysfs"
 			$(tc-getCC) ${CFLAGS} -Wno-unused-result \
@@ -3108,12 +3259,7 @@ ot-kernel_get_boot_decompressor() {
 
 # @FUNCTION: ot-kernel_build_kernel
 ot-kernel_build_kernel() {
-	if use build && [[ \
-		   "${build_flag}"   == "1" \
-		|| "${build_flag,,}" == "true" \
-		|| "${build_flag,,}" == "yes" \
-		|| "${build_flag,,}" == "build" \
-	]] ; then
+	if ot-kernel_is_build ; then
 		[[ "${BUILD_DIR}/.config" ]] || die "Missing .config to build the kernel"
 		local llvm_slot=$(get_llvm_slot)
 		local pgo_phase
@@ -3122,7 +3268,7 @@ ot-kernel_build_kernel() {
 		local profraw_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
 		local profdata_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
 		local pgo_phase=${PGO_PHASE_UNK}
-		if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
+		if has clang-pgo ${IUSE_EFFECTIVE} && ot-kernel_use clang-pgo ; then
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
 				pgo_phase=${PGO_PHASE_PGI}
@@ -3181,7 +3327,7 @@ ot-kernel_src_compile() {
 		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
 		if [[ -z "${build_config}" ]] ; then
-			if use build ; then
+			if ot-kernel_is_build ; then
 				build_config="1"
 			else
 				build_config="0"
@@ -3227,7 +3373,7 @@ ot-kernel_src_compile() {
 # @DESCRIPTION:
 # Saves keys for external modules
 ot-kernel_keep_keys() {
-	local d="${T}/keys/${extraversion}-${arch}"
+	local d="${T}/keys/${extraversion}-${arch}/certs"
 	mkdir -p "${d}" || die
 	local files=(
 		certs/signing_key.pem		# private key
@@ -3245,11 +3391,11 @@ ot-kernel_keep_keys() {
 # @DESCRIPTION:
 # Restores keys in the certs folder
 ot-kernel_restore_keys() {
-	local s="${T}/keys/${extraversion}-${arch}"
+	local s="${T}/keys/${extraversion}-${arch}/certs"
 	local files=(
-		"${s}/certs/signing_key.pem"		# private key
-		"${s}/certs/signing_key.x509"		# public key
-		"${s}/certs/x509.genkey"		# key geneneration config file
+		"${s}/signing_key.pem"		# private key
+		"${s}/signing_key.x509"		# public key
+		"${s}/x509.genkey"		# key geneneration config file
 	)
 	cp -a ${files[@]} \
 		"${BUILD_DIR}/certs" || die
@@ -3280,7 +3426,7 @@ ot-kernel_src_install() {
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		if [[ -z "${build_config}" ]] ; then
-			if use build ; then
+			if ot-kernel_is_build ; then
 				build_config="1"
 			else
 				build_config="0"
@@ -3289,12 +3435,7 @@ ot-kernel_src_install() {
 		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
-		if use build && [[ \
-			   "${build_flag}"   == "1" \
-			|| "${build_flag,,}" == "true" \
-			|| "${build_flag,,}" == "yes" \
-			|| "${build_flag,,}" == "build" \
-		]] ; then
+		if ot-kernel_is_build ; then
 			local args=(
 				INSTALL_MOD_PATH="${ED}"
 				INSTALL_PATH="${ED}/boot"
@@ -3323,6 +3464,7 @@ ot-kernel_src_install() {
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
+			mkdir -p $(dirname "${pgo_phase_statefile}")
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 				echo "PGT" > "${pgo_phase_statefile}" || die
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
@@ -3339,22 +3481,22 @@ ot-kernel_src_install() {
 	[[ -z "${nforks}" ]] && nforks=1
 	einfo "nforks:  ${nforks}"
 	einfo "Restoring +x bit"
-	for f in $(find "${ED}"/ -type f) ; do
-		(
-			local is_exe=0
-			file "${f}" | grep -q -F -e "executable" && is_exe=1
-			file "${f}" | grep -q -E -e "Linux kernel.*executable" && is_exe=0
-			if (( ${is_exe} )) ; then
-				chmod 0755 "${f}" || die
-			fi
-		) &
-		local njobs=$(jobs -p | wc -l)
-		if (( ${njobs} >= ${nforks} )) ; then
+	cd "${ED}" || die
+	find . -type f -print0 | xargs -0 -I '{}' -P ${nforks} bash -c "f='{}'; file '{}' | grep -q -F -e 'executable' && fperms +x \"\${f#.}\""
+	find boot -type f -print0 | xargs -0 -I '{}' -P ${nforks} bash -c "f='{}'; file '{}' | grep -q -E -e 'Linux kernel.*executable' && fperms -x \"/\${f}\""
+
+#	for f in $(find . -type f) ; do
+#		(
+#			file "${f}" | grep -q -F -e "executable" && fperms +x "${f#.}"
+#			file "${f}" | grep -q -E -e "Linux kernel.*executable" && fperms -x "${f#.}"
+#		) &
+#		local njobs=$(jobs -p | wc -l)
+#		if (( ${njobs} >= ${nforks} )) ; then
 # Waits for next job to complete instead of waiting on all to finish in order
 # to continue to the next job
-			wait -n
-		fi
-	done
+#			wait -n
+#		fi
+#	done
 
 	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 		insinto "${OT_KERNEL_PGO_DATA_DIR}"

@@ -427,7 +427,7 @@ ot-kernel_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-testmgr-ciphers-update.patch"
 
-	if use tresor_x86_64 || use tresor_i686 ; then
+	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-tresor_asm_64_v2.2.patch"
 		_dpatch "${PATCH_OPTS}" \
@@ -443,7 +443,7 @@ ot-kernel_apply_tresor_fixes() {
 
         _dpatch "${PATCH_OPTS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 
-	if use tresor_x86_64 || use tresor_i686 ; then
+	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS} -F 3" \
 "${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-i686.patch"
 	else
@@ -453,7 +453,7 @@ ot-kernel_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-expose-aes-generic-tables-for-5.4.patch"
 
-	if use tresor_x86_64 || use tresor_i686 ; then
+	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-prompt-update-for-5.10-v4_i686.patch"
 	else
@@ -461,7 +461,7 @@ ot-kernel_apply_tresor_fixes() {
 			"${FILESDIR}/tresor-prompt-update-for-5.10-v4_aesni.patch"
 	fi
 
-	if use tresor_x86_64 || use tresor_i686 ; then
+	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.5.patch"
 	else
@@ -471,15 +471,15 @@ ot-kernel_apply_tresor_fixes() {
 
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c-for-5.10.patch"
-	if use tresor_x86_64-256-bit-key-support ; then
-		if use tresor_x86_64 || use tresor_i686 ; then
+	if ot-kernel_use tresor_x86_64-256-bit-key-support ; then
+		if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 			_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-256-bit-aes-support-i686-v3.1-for-5.10.patch"
 		fi
 	fi
 
-	if ! use tresor_x86_64-256-bit-key-support ; then
-		if use tresor_x86_64 || use tresor_i686 ; then
+	if ! ot-kernel_use tresor_x86_64-256-bit-key-support ; then
+		if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 			_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-testmgr-limit-modes-of-operation-to-128-bit-key-support-for-linux-5.10.patch"
 		else
@@ -492,7 +492,7 @@ ot-kernel_apply_tresor_fixes() {
 	fi
 	_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-glue-helper-in-kconfig.patch"
-	if use tresor_x86_64 || use tresor_i686 ; then
+	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/tresor-xts-setkey-5.4-i686.patch"
 	else

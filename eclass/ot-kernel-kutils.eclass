@@ -32,7 +32,7 @@ ot-kernel_set_configopt() {
 
 # @FUNCTION: ot-kernel_unset_configopt
 # @DESCRIPTION:
-# Unsets the kernel option
+# Unsets the kernel option.  Unset means no or disable.
 ot-kernel_unset_configopt() {
 	local opt="${1}"
 	sed -r -i -e "s/^${opt}=.*/# ${opt} is not set/g" "${path_config}" || die

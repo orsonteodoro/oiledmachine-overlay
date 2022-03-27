@@ -165,3 +165,6 @@ sys-libs/libomp -debug
 
 # Connect problem
 sys-devel/souper tcp
+
+# Build time failures
+=sys-kernel/ot-sources-5.15* prjc

@@ -339,6 +339,7 @@ OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 
 
 
+
     Environment variables overview:
 
     The purpose of some of these environment variables is to change primarily
@@ -447,6 +448,13 @@ OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 
     OT_KERNEL_EXTRAVERSION -- initials or name of the kernel.  Using the rt
     extraversion will apply the rt patchset to only that copy.
+
+
+
+    OT_KERNEL_EXTERNAL_MODULES -- prepares the kernel for out-of-tree
+    modules.  The kernel needs to expose these for packages that build
+    kernel drivers outside this package.
+    Acceptable values:  1, unset.  Unset means auto detect.
 
 
 
@@ -568,9 +576,14 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SIGN_MODULES (optional) -- signs kernel modules with sha384.
-    Set to 1 to sign or set to 0 to use manual setting (default).  When,
-    a new kernel config is generated, module signing is disabled; but it
+    OT_KERNEL_SIGN_MODULES (optional) -- signs kernel modules with sha384
+    or sha512.
+    Acceptable values:  sha384, sha512, unset, 1, 0, manual.
+    If setting to 1, it will use sha384.  Setting to unset will assume manual.
+    Setting to 0 will disable module signing and disable module sign
+    verification.
+
+    When a new kernel config is generated, module signing is disabled; but it
     can be signed by setting this to 1.  If module signing is enabled,
     it is recommended to sign external modules or these modules may no
     longer work.  External module signing is especially important especially
@@ -607,10 +620,27 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
+    OT_KERNEL_SWAP -- Enable or disable use of swap.
+    Acceptable values:  0, 1, y, n, manual, unset
+    0 means disable and 1 means enable.  Unset is the same as manual.  It is
+    recommended to use swap if the peak memory exceeds the RAM.  Otherwise,
+    it should be disabled.  Peak memory is usually around 12 GB.
+
+
+
     OT_KERNEL_TARGET_TRIPLE -- The target triple (CHOST) to use when
     cross-compiling.  Use the expanded CHOST value.  (This can be not set but
     then defaults to ${CHOST}.)  If you put just CHOST or just CBUILD it will
     expand for each case.
+
+
+
+    OT_KERNEL_USE -- Per build env USE flags.  If not set, it will use the same
+    USE flags set.  The scope of OT_KERNEL_USE is partially in src_prepare,
+    src_configure, src_compile, partially in src_install.  The normal USE flags
+    are valid in global scope, fetching and unpacking, and in the remaining
+    phases.  This per build env gives more control over some patches applied and
+    configuration.
 
 
 
@@ -626,6 +656,25 @@ unset OT_KERNEL_PRIVATE_KEY
     invocation.
     Acceptable values for N:  0 for minimal output, 1 for showing compiler
     flags, 2 for reasons for rebuild.
+
+
+
+    OT_KERNEL_ZSWAP_ALLOCATOR -- chooses the swap allocator
+    Acceptable values: zsmalloc, zbud, z3fold, x1, x2, x3, unset, manual, auto
+    If unset, it assumes manual.  x1 is an alias for zsmalloc; x2 is a alias
+    for zbud; x3 is an alias for z3fold.  auto is an alias for zbud.  It is
+    recommended to use x3 for less than 12 GB of RAM.  For 12 GB and above, it
+    should be unset.  The 12 GB is arbitrary and based on worst case peak
+    memory.
+
+
+
+    OT_KERNEL_ZSWAP_COMPRESSOR -- chooses a swap page algorithm
+    Acceptable values: deflate, lzo, 842, lz4, lz4hc, zstd, unset, manual, auto
+    If unset, it assumes manual.  auto is an alias for lzo.  It is recommended
+    to use lz4 or zstd (or any algorithm that can achieve 2:1 compression
+    ratio) for less than 12 GB of ram.  For 12 GB and above, it should be unset.
+    The 12 GB is arbitrary and based on worst case peak memory.
 
 
 
