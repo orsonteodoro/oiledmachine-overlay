@@ -333,10 +333,12 @@ OT_KERNEL_CPU_SCHED="cfs"
 OT_KERNEL_EXTRAVERSION="ot"
 OT_KERNEL_FIRMWARE="regulatory"
 OT_KERNEL_LSMS="auto"
+OT_KERNEL_MODULES_COMPRESSOR="zstd"
 OT_KERNEL_MENUCONFIG_FRONTEND="menuconfig"
 OT_KERNEL_PKGFLAGS_ACCEPT="05309e2 351365c"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
-
+OT_KERNEL_ZSWAP_ALLOCATOR="z3fold"
+OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
@@ -659,7 +661,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_ZSWAP_ALLOCATOR -- chooses the swap allocator
+    OT_KERNEL_ZSWAP_ALLOCATOR -- chooses the swap allocator which tries to fit
+    the number of compressed pages while aiming to reduce fragmentation.
     Acceptable values: zsmalloc, zbud, z3fold, x1, x2, x3, unset, manual, auto
     If unset, it assumes manual.  x1 is an alias for zsmalloc; x2 is a alias
     for zbud; x3 is an alias for z3fold.  auto is an alias for zbud.  It is

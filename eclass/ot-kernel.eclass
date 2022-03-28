@@ -2372,6 +2372,38 @@ ot-kernel_src_configure() {
 			fi
 		fi
 
+		if grep -q -E -e "^CONFIG_MODULE_COMPRESS_GZIP=y" "${path_config}" ; then
+			has_version "sys-apps/kmod[zlib]" || die "Re-emerge sys-apps/kmod[zlib]"
+		fi
+		if grep -q -E -e "^CONFIG_MODULE_COMPRESS_XZ=y" "${path_config}" ; then
+			has_version "sys-apps/kmod[lzma]" || die "Re-emerge sys-apps/kmod[lzma]"
+		fi
+		if grep -q -E -e "^CONFIG_MODULE_COMPRESS_ZSTD=y" "${path_config}" ; then
+			has_version "sys-apps/kmod[zstd]" || die "Re-emerge sys-apps/kmod[zstd]"
+		fi
+
+		if grep -q -E -e "^CONFIG_RD_BZIP2=y" "${path_config}" ; then
+			has_version "app-arch/bzip2" || die "app-arch/bzip2 needs emerge"
+		fi
+		if grep -q -E -e "^CONFIG_RD_LZ4=y" "${path_config}" ; then
+			has_version "app-arch/lz4" || die "app-arch/lz4 needs emerge"
+		fi
+		if grep -q -E -e "^CONFIG_RD_LZMA=y" "${path_config}" ; then
+			has_version "app-arch/xz-utils" || die "app-arch/xz-utils needs emerge"
+		fi
+		if grep -q -E -e "^CONFIG_RD_LZO=y" "${path_config}" ; then
+			has_version "app-arch/lzop" || die "app-arch/lzop needs emerge"
+		fi
+		if grep -q -E -e "^(CONFIG_MODULE_COMPRESS_GZIP=y|CONFIG_RD_GZIP=y)" "${path_config}" ; then
+			has_version "app-arch/gzip" || die "app-arch/gzip needs emerge"
+		fi
+		if grep -q -E -e "^(CONFIG_MODULE_COMPRESS_ZSTD=y|CONFIG_RD_ZSTD=y)" "${path_config}" ; then
+			has_version "app-arch/zstd" || die "app-arch/zstd needs emerge"
+		fi
+		if grep -q -E -e "^(CONFIG_MODULE_COMPRESS_XZ=y|CONFIG_RD_XZ=y)" "${path_config}" ; then
+			has_version "app-arch/xz-utils" || die "app-arch/xz-utils needs emerge"
+		fi
+
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
 		if \
@@ -2895,14 +2927,6 @@ eerror
 		einfo "Updating the .config for defaults for the newly enabled options."
 		einfo "Running:  make olddefconfig ${args[@]}"
 		make olddefconfig "${args[@]}" || die
-
-		if (( ${is_default_config} == 1 )) ; then
-			einfo "Saving the new config for ${extraversion} to ${default_config}"
-			insinto /etc/kernels
-			newins "${path_config}" $(basename "${default_config}")
-		else
-			einfo "Not overriding kernel config to avoid merge conflicts"
-		fi
 	done
 }
 
@@ -3452,6 +3476,12 @@ ot-kernel_src_install() {
 			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
 				ot-kernel_keep_keys
 			fi
+
+			local default_config="/etc/kernels/kernel-config-${K_MAJOR_MINOR}-${extraversion}-${arch}"
+			einfo "Saving the config for ${extraversion} to ${default_config}"
+			insinto /etc/kernels
+			newins "${BUILD_DIR}/.config" $(basename "${default_config}")
+
 			einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
 			make mrproper ARCH=${arch} || die
 			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
@@ -3470,6 +3500,10 @@ ot-kernel_src_install() {
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
 				echo "DONE" > "${pgo_phase_statefile}" || die
 			fi
+			# Add for genkernel because mrproper erases it
+			mkdir -p "include/config" || die
+			echo "${PV}-${extraversion}-${arch}" \
+				> include/config/kernel.release || die
 		fi
 
 		einfo "Installing the kernel sources"
@@ -3686,15 +3720,6 @@ ewarn "activity after several months due to project funding problems."
 ewarn "Dated: Jun 16, 2021"
 ewarn
 		fi
-	fi
-
-	# Remove genkernel problem with GK_FILENAME_CONFIG having spaces in EXTRAVERSION in file
-	local path="${EROOT}/usr/src/linux-${PV}-ot/include/config/kernel.release"
-	if [[ -f "${EROOT}/usr/src/linux-${PV}-ot/include/config/kernel.release" ]] ; then
-		einfo
-		einfo "Removed ${path} for genkernel"
-		einfo
-		rm -rf "${path}" || die
 	fi
 
 	local has_cfi
@@ -3916,4 +3941,5 @@ ewarn "The ot-kernel is always considered experimental grade.  Always have a"
 ewarn "rescue/fallback kernel with possibly an older version or with another"
 ewarn "kernel package."
 ewarn
+
 }
