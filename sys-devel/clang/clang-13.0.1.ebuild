@@ -869,11 +869,6 @@ src_install() {
 				"/usr/lib/llvm/${SLOT}/bin/${abi_chost}-${i}"
 		done
 	done
-
-	# Remove unnecessary headers on FreeBSD, bug #417171
-	if use kernel_FreeBSD; then
-		rm "${ED}"/usr/lib/clang/${clang_full_version}/include/{std,float,iso,limits,tgmath,varargs}*.h || die
-	fi
 }
 
 declare -Ax EMESSAGE_INSTALL=(
