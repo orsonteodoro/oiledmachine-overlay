@@ -501,6 +501,20 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
+    OT_KERNEL_HARDENING_LEVEL -- sets the hardening level based on the level
+    of trust.
+    Acceptable values:  trust, untrusted, untrusted-distant, custom, manual, unset.
+    Meanings:
+    custom - customize hardening.  (same as manual and unset)
+    trust - no hardening applied.  Used for presentation, pure performance like
+         in house renderfarm setups.
+    untrusted - full hardening.  Used for multiuser computer not in locked room
+         such as on the road or traveling. 
+    untrusted-distant - some hardening except physical access mitigation.
+         Used for multiuser computer in locked room or www setups.
+
+
+
     OT_KERNEL_LSMS -- Enable and set the order for LSM (Linux Security Modules)
 
     Acceptable multi values: apparmor, bpf, integrity, landlock, loadpin,
@@ -546,7 +560,6 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     manually or permit a disable_debug conflict to priorize disable_debug
     removal of debug keyworded kernel config symbols. They should be listed as
     space separated.
-
 
 
 
@@ -658,6 +671,43 @@ unset OT_KERNEL_PRIVATE_KEY
     invocation.
     Acceptable values for N:  0 for minimal output, 1 for showing compiler
     flags, 2 for reasons for rebuild.
+
+
+
+    OT_SOURCES_WORK_PROFILE -- sets the power-performance profile while taking
+    in consideration productivity and latency requirements.  This value can
+    be unset which is equivalent to manual.
+    Acceptable values:
+
+      arcade
+      cryptocurrency-miner-dedicated
+      cryptocurrency-miner-workstation
+      casual-gaming-laptop
+      custom
+      digital-audio-workstation
+      distributed-computing-dedicated
+      distributed-computing-workstation
+      pro-gaming
+      casual-gaming
+      file-server
+      gamedev
+      gpu-gaming-laptop
+      lan-tournament
+      laptop
+      manual
+      multimedia-server
+      presentation
+      remote-tournament
+      renderfarm-dedicated
+      renderfarm-workstation
+      smartphone
+      solar-desktop
+      solar-gaming
+      tablet
+      video-smartphone
+      video-tablet
+      web-server
+      workstation
 
 
 

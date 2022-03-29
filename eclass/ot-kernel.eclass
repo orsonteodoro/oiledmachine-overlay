@@ -762,10 +762,10 @@ eerror
 # @DESCRIPTION:
 # Analog of use keyword but in the context of per build env
 ot-kernel_use() {
-	local u="${1}"
 	local u
 	for u in ${OT_KERNEL_USE} ; do
-		[[ "${1}" == "${u}" ]] && return 0
+		has ${u} ${IUSE_EFFECTIVE} || continue
+		use ${u} && [[ "${1}" == "${u}" ]] && return 0
 	done
 	return 1
 }
@@ -1997,6 +1997,179 @@ ot-kernel_is_build() {
 	return 1
 }
 
+# @FUNCTION: ot-kernel_init_work
+# @DESCRIPTION:
+# Initializes the work kernel config
+ot-kernel_init_work() {
+	local HZ=(
+		HZ_100
+		HZ_250
+		HZ_300
+		HZ_1000
+	)
+	local hz
+	for hz in ${HZ[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_${hz}"
+	done
+
+	local TIMERS=(
+		HZ_PERIODIC
+		NO_HZ_IDLE
+		NO_HZ_FULL
+	)
+
+	local timer
+	for timer in ${TIMERS[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_${timer}"
+	done
+
+	local CPU_FREQ_GOV_DEFAULTS=(
+		PERFORMANCE
+		POWERSAVE
+		USERSPACE
+		ONDEMAND
+		CONSERVATIVE
+		GOV_SCHEDUTIL
+	)
+	local s
+	for s in ${CPU_FREQ_GOV_DEFAULTS[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_${s}"
+	done
+
+	local PCI_ASPM=(
+		DEFAULT
+		POWERSAVE
+		POWER_SUPERSAVE
+		PERFORMANCE
+	)
+	if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_PCIEASPM"
+		for s in ${PCI_ASPM[@]} ; do
+			ot-kernel_unset_configopt "CONFIG_PCIEASPM_${s}"
+		done
+	fi
+
+	local PREEMPTION_MODELS=(
+		PREEMPT_NONE
+		PREEMPT_VOLUNTARY
+		PREEMPT
+	)
+
+	for s in ${PREEMPTION_MODELS[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_${s}"
+	done
+
+	ot-kernel_unset_configopt "CONFIG_SUSPEND"
+	ot-kernel_unset_configopt "CONFIG_HIBERNATION"
+	if grep -q -E -e "^CONFIG_SND_AC97_CODEC=(y|m)" "${path_config}" ; then
+		ot-kernel_unset_configopt "CONFIG_SND_AC97_POWER_SAVE"
+	fi
+	ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
+}
+
+# @FUNCTION: ot-kernel_set_hardening_level
+# @DESCRIPTION:
+# Sets the kernel config related to kernel hardening
+ot-kernel_set_hardening_level() {
+	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-${1}}"
+	einfo "Using ${hardening_level} hardening level"
+	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
+		:
+	elif [[ "${hardening_level}" == "trusted" ]] ; then
+		# Disable all hardening
+		# All randomization is disabled because it increases instruction latency or adds more noise to pipeline
+		ot-kernel_y_configopt "CONFIG_COMPAT_BRK"
+		ot-kernel_unset_configopt "CONFIG_FORTIFY_SOURCE"
+		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
+		ot-kernel_unset_configopt "CONFIG_HARDENED_USERCOPY"
+		ot-kernel_unset_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
+		ot-kernel_unset_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
+		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+		ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
+		ot-kernel_unset_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+		ot-kernel_unset_configopt "CONFIG_RANDOMIZE_BASE"
+		ot-kernel_unset_configopt "CONFIG_RANDOMIZE_MEMORY"
+		ot-kernel_unset_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
+		ot-kernel_unset_configopt "CONFIG_RETPOLINE"
+		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
+		ot-kernel_unset_configopt "CONFIG_SLAB_FREELIST_HARDENED"
+		ot-kernel_unset_configopt "CONFIG_SLAB_FREELIST_RANDOM"
+		ot-kernel_y_configopt "CONFIG_SLAB_MERGE_DEFAULT"
+		ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
+		ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
+		if tc-is-gcc ; then
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+			ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
+		fi
+	elif [[ "${hardening_level}" == "untrusted-distant" ]] ; then
+		# Some all hardening (All except physical attacks)
+		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
+		ot-kernel_y_configopt "CONFIG_FORTIFY_SOURCE"
+		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
+		ot-kernel_y_configopt "CONFIG_HARDENED_USERCOPY"
+		ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
+		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
+		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+		ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
+		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+		ot-kernel_y_configopt "CONFIG_RANDOMIZE_BASE"
+		ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
+		ot-kernel_y_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
+		ot-kernel_y_configopt "CONFIG_RELOCATABLE"
+		ot-kernel_y_configopt "CONFIG_RETPOLINE"
+		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
+		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_HARDENED"
+		ot-kernel_unset_configopt "CONFIG_SLAB_MERGE_DEFAULT"
+		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_RANDOM"
+		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR"
+		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR_STRONG"
+		if tc-is-gcc ; then
+			ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
+			ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
+		fi
+	elif [[ "${hardening_level}" == "untrusted" ]] ; then
+		# All hardening
+		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
+		ot-kernel_y_configopt "CONFIG_FORTIFY_SOURCE"
+		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
+		ot-kernel_y_configopt "CONFIG_HARDENED_USERCOPY"
+		ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
+		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
+		ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+		ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
+		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+		ot-kernel_y_configopt "CONFIG_RANDOMIZE_BASE"
+		ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
+		ot-kernel_y_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
+		ot-kernel_y_configopt "CONFIG_RELOCATABLE"
+		ot-kernel_y_configopt "CONFIG_RETPOLINE"
+		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
+		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_HARDENED"
+		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_RANDOM"
+		ot-kernel_unset_configopt "CONFIG_SLAB_MERGE_DEFAULT"
+		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR"
+		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR_STRONG"
+		if tc-is-gcc ; then
+			ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
+			ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
+			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure
 # @DESCRIPTION:
 # Run menuconfig
@@ -2161,6 +2334,261 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		fi
 
+		local work_profile="${OT_SOURCES_WORK_PROFILE:-manual}"
+		einfo "Using the ${work_profile} work profile"
+		if [[ -z "${work_profile}" ]] ; then
+			:
+		elif [[ "${work_profile}" =~ ("manual"|"custom") ]] ; then
+			:
+		else
+			einfo "Changed .config to use the ${work_profile} work profile"
+			ot-kernel_init_work
+		fi
+
+		if [[ -z "${work_profile}" ]] ; then
+			:
+		elif [[ "${work_profile}" =~ ("manual"|"custom") ]] ; then
+			:
+		elif [[ "${work_profile}" =~ ("smartphone"|"tablet") ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_300"
+			ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+			ot-kernel_y_configopt "CONFIG_SUSPEND"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+		elif [[ "${work_profile}" =~ ("video-smartphone"|"video-tablet") ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_300"
+			ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+		elif [[ "${work_profile}" =~ ("laptop"|"solar-desktop") ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_300"
+			ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+			ot-kernel_y_configopt "CONFIG_SUSPEND"
+			ot-kernel_y_configopt "CONFIG_HIBERNATION"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
+			fi
+			if grep -q -E -e "^CONFIG_SND_AC97_CODEC=(y|m)" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_SND_AC97_POWER_SAVE"
+			fi
+			if grep -q -E -e "^CONFIG_ARCH_SUPPORTS_ACPI=(y|m)" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_ACPI"
+				ot-kernel_y_configopt "CONFIG_INPUT"
+				ot-kernel_y_configopt "CONFIG_ACPI_BUTTON"
+				ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+				ot-kernel_y_configopt "CONFIG_ACPI_AC"
+			fi
+			if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+			if [[ "${work_profile}" == "laptop" ]] ; then
+				ot-kernel_y_configopt "CONFIG_VGA_SWITCHEROO"
+			fi
+		elif [[ "${work_profile}" =~ ("gpu-gaming-laptop"|"casual-gaming-laptop"|"solar-gaming") ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_1000"
+			ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_ARCH_SUPPORTS_ACPI=(y|m)" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_ACPI"
+				ot-kernel_y_configopt "CONFIG_INPUT"
+				ot-kernel_y_configopt "CONFIG_ACPI_BUTTON"
+				ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+				ot-kernel_y_configopt "CONFIG_ACPI_AC"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+			if [[ "${work_profile}" =~ "gpu-gaming-laptop" ]] ; then
+				ot-kernel_y_configopt "CONFIG_VGA_SWITCHEROO"
+			fi
+		elif [[ "${work_profile}" =~ ("casual-gaming") ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_1000"
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+		elif [[ "${work_profile}" =~ ("arcade"|"pro-gaming"|"tournament"|"presentation") ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_1000"
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+		elif [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_300"
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+		elif [[ "${work_profile}" == "workstation" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_300"
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+		elif [[ "${work_profile}" == "gamedev" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_1000"
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+		elif [[ "${work_profile}" == "renderfarm-dedicated" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_300"
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+		elif [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_300"
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+		elif [[ "${work_profile}" =~ ("file-server"|"web-server") ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_100"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+		elif [[ "${work_profile}" == "multimedia-server" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_300"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+		elif [[ "${work_profile}" == "cryptocurrency-miner-dedicated" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_100"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+		elif [[ "${work_profile}" == "cryptocurrency-miner-workstation" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_250"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+		elif [[ "${work_profile}" == "distributed-computing-dedicated" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_100"
+			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+		elif [[ "${work_profile}" == "distributed-computing-workstation" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_250"
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+		fi
+
+		ot-kernel_set_hardening_level "manual"
+
 		ot-kernel_add_firmware
 
                 # Apply flags to minimize the time cost of reconfigure and rebuild time
@@ -2295,6 +2723,13 @@ ot-kernel_src_configure() {
 			ewarn "hibernation, so disabling both of these."
 			ot-kernel_n_configopt "CONFIG_SUSPEND"
 			ot-kernel_n_configopt "CONFIG_HIBERNATION"
+		fi
+
+		if grep -q -E -e "^CRYPTO_CURVE25519=y" "${path_config}" ; then
+			if [[ "${arch}" =~ "x86_64" ]] ; then
+				einfo "Changed .config to use x86 accelerated Curve25519"
+				ot-kernel_y_configopt "CRYPTO_CURVE25519_X86"
+			fi
 		fi
 
 		local decompressors=(
@@ -2623,6 +3058,9 @@ eerror
 			einfo "Disabling all debug and shortening logging buffers"
 			./disable_debug || die
 		fi
+
+		# Don't break OpenRC / init
+		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
 
 		if [[ "${OT_KERNEL_SWAP}" == "1" || "${OT_KERNEL_SWAP^^}" == "Y" ]] ; then
 			einfo "Swap enabled"
@@ -3917,6 +4355,9 @@ ewarn "labeled to prevent mixup."
 ewarn
 ewarn "Keep the private key if you have external modules that still need to be"
 ewarn "signed.  Any driver not signed will be rejected by the kernel."
+ewarn
+ewarn "If using genkernel, you must add --no-strip since the modules are"
+ewarn "signed."
 ewarn
 	fi
 

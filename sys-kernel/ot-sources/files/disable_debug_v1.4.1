@@ -195,7 +195,7 @@ strip_debug_from_config() {
 		)
 	fi
 
-	echo -e "\nUnset some options"
+	echo -e "\nUnset some options to disable debug"
 	for c in \
 		${extra_syms[@]} \
 		CONFIG_AIC7XXX_REG_PRETTY_PRINT \
@@ -205,8 +205,8 @@ strip_debug_from_config() {
 		CONFIG_DM_LOG_USERSPACE \
 		CONFIG_DM_LOG_WRITES \
 		CONFIG_GENTOO_PRINT_FIRMWARE_INFO \
-		CONFIG_PRINTK_TIME \
 		CONFIG_PRINTK \
+		CONFIG_PRINTK_TIME \
 		CONFIG_PRINTK_NMI \
 		CONFIG_SFC_MCDI_LOGGING \
 		CONFIG_X86_CHECK_BIOS_CORRUPTION \
@@ -219,6 +219,11 @@ strip_debug_from_config() {
 			sed -i -r -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
 		done
 	done
+
+	echo -e "\nSetting some options to disable debug"
+	sed -i -E \
+		-e "s|# CRYPTO_MANAGER_DISABLE_TESTS is not set|CRYPTO_MANAGER_DISABLE_TESTS=y|g" \
+		"$targetconfig"
 
 	echo -e "\nReducing log levels and bits shifted"
 	sed -i -E -e "s|CONFIG_WIMAX_DEBUG_LEVEL=[0-9]+|CONFIG_WIMAX_DEBUG_LEVEL=0|g" \
