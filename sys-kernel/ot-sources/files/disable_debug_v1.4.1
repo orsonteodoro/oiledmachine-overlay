@@ -198,6 +198,7 @@ strip_debug_from_config() {
 	echo -e "\nUnset some options to disable debug"
 	for c in \
 		${extra_syms[@]} \
+		CONFIG_ALLOW_DEV_COREDUMP \
 		CONFIG_AIC7XXX_REG_PRETTY_PRINT \
 		CONFIG_AIC79XX_REG_PRETTY_PRINT \
 		CONFIG_COREDUMP \
@@ -205,7 +206,8 @@ strip_debug_from_config() {
 		CONFIG_DM_LOG_USERSPACE \
 		CONFIG_DM_LOG_WRITES \
 		CONFIG_GENTOO_PRINT_FIRMWARE_INFO \
-		CONFIG_PRINTK \
+		CONFIG_MAC80211_HWSIM \
+		CONFIG_NET_PKTGEN \
 		CONFIG_PRINTK_TIME \
 		CONFIG_PRINTK_NMI \
 		CONFIG_SFC_MCDI_LOGGING \
@@ -265,6 +267,8 @@ strip_debug_from_config() {
 
 	echo "Restoring defaults"
 	sed -i -E \
+		-e "s|# CONFIG_PRINTK is not set|CONFIG_PRINTK=y|g" \
+		-e "s|# CONFIG_EARLY_PRINTK is not set|CONFIG_EARLY_PRINTK=y|g" \
 		-e "s|# CONFIG_STRIP_ASM_SYMS is not set|CONFIG_STRIP_ASM_SYMS=y|g" \
 		-e "s|# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set|CONFIG_SECTION_MISMATCH_WARN_ONLY=y|g" \
 		"$targetconfig"

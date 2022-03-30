@@ -22,11 +22,13 @@
 inherit ot-kernel-kutils
 
 # These are discovered by doing one of the following:
-# 1: grep --exclude-dir=.git --exclude-dir=distfiles -r -e "CONFIG_CHECK=" ./
-# 2: grep --exclude-dir=.git --exclude-dir=distfiles -r -e "linux_chkconfig_" ./
+# 1: grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "CONFIG_CHECK=" ./
+# 2: grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "linux_chkconfig_" ./
 
 X86_FLAGS=(aes avx avx2 avx512vl sha sse2 ssse3)
+ARM_FLAGS=(neon)
 IUSE+=" ${X86_FLAGS[@]/#/cpu_flags_x86_}"
+IUSE+=" ${ARM_FLAGS[@]/#/cpu_flags_arm_}"
 
 # @FUNCTION: warn_lowered_security
 # @DESCRIPTION:
@@ -98,6 +100,7 @@ eerror
 # The main function to apply all kernel config flags for package.
 ot-kernel-pkgflags_apply() {
 	[[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && return
+	[[ "${arch}" =~ "arm" ]] && _ot-kernel-pkgflags_neon
 	ot-kernel-pkgflags_accel_ppp
 	ot-kernel-pkgflags_acpi_call
 	ot-kernel-pkgflags_acpid
@@ -394,6 +397,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_wine
 	ot-kernel-pkgflags_wireguard_modules
 	ot-kernel-pkgflags_wireguard_tools
+	ot-kernel-pkgflags_wireless_tools
 	ot-kernel-pkgflags_wireplumber
 	ot-kernel-pkgflags_wpa_supplicant
 	ot-kernel-pkgflags_xboxdrv
@@ -414,7 +418,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_zfs
 	ot-kernel-pkgflags_zfs_kmod
 
-	# out of source modules
+	# Out of source modules
 }
 
 # @FUNCTION: ot-kernel-pkgflags_accel_ppp
@@ -997,6 +1001,200 @@ ot-kernel-pkgflags_cifs_utils() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_has_kflag
+# @DESCRIPTION:
+ot-kernel-pkgflags_has_kflag() {
+	local kflag="${1}"
+	grep -q -E -e "^${kflag}=(y|m)" "${path_config}"
+}
+
+# @FUNCTION: ot-kernel-pkgflags_cipher_optional
+# @DESCRIPTION:
+# Applies optimized ciphers for kernel flags that apply additional flags after required flags.
+# This is to avoid the overhead of another pass with olddefconfig.
+ot-kernel-pkgflags_cipher_optional() {
+	if ot-kernel-pkgflags_has_kflag "CONFIG_AIRO_CS" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_BT" ; then
+		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_BLK_DEV_RBD" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_BTRFS_FS" ; then
+		_ot-kernel-pkgflags_blake2s
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_CEPH_FS" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_CEPH_LIB" ; then
+		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_CIFS" ; then
+		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_md5
+		_ot-kernel-pkgflags_sha256
+		_ot-kernel-pkgflags_sha512
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_CFG80211" \
+		&& ot-kernel-pkgflags_has_kflag "CONFIG_CFG80211_USE_KERNEL_REGDB_KEYS" ; then
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_CRYPTO_AEGIS128" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_CRYPTO_ANSI_CPRNG" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_CRYPTO_DRBG_CTR" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_CRYPTO_DRBG_HASH" ; then
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_CRYPTO_DRBG_HMAC" ; then
+		_ot-kernel-pkgflags_sha512
+	fi
+	# CONFIG_CRYPTO_DEV_* is ignored
+	if ot-kernel-pkgflags_has_kflag "CONFIG_ENCRYPTED_KEYS" ; then
+		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_EVM" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_FS_ENCRYPTION_ALGS" ; then
+		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_sha512
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_FS_VERITY" ; then
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_GENTOO_LINUX_INIT_SYSTEMD" ; then
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_IMA" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_IMA_DEFAULT_HASH_SHA1" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_IMA_DEFAULT_HASH_SHA256" ; then
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_IMA_DEFAULT_HASH_SHA512" ; then
+		_ot-kernel-pkgflags_sha512
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_IMA_DEFAULT_HASH_WP512" ; then
+		:
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_IMA_DEFAULT_HASH_SM3" ; then
+		:
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_IP_SCTP" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_IPV6_SEG6_HMAC" ; then
+		_ot-kernel-pkgflags_sha1
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_KEXEC_FILE" ; then
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_LIB80211_CRYPT_CCMP" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_MAC80211" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_MAC802154" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_MACSEC" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_MODULE_SIG_SHA1" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_MODULE_SIG_SHA224" ; then
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_MODULE_SIG_SHA384" ; then
+		_ot-kernel-pkgflags_sha512
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_MODULE_SIG_SHA512" ; then
+		_ot-kernel-pkgflags_sha512
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_NFSD_V4" ; then
+		_ot-kernel-pkgflags_md5
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_PPP_MPPE" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_RPCSEC_GSS_KRB5" ; then
+		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_des
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_RTL8192U" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_RTLLIB_CRYPTO_CCMP" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_SCTP_COOKIE_HMAC_SHA1" \
+		|| ot-kernel-pkgflags_has_kflag "SCTP_DEFAULT_COOKIE_HMAC_SHA1" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_SCTP_COOKIE_HMAC_MD5" \
+		|| ot-kernel-pkgflags_has_kflag "SCTP_DEFAULT_COOKIE_HMAC_MD5" ; then
+		_ot-kernel-pkgflags_md5
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_SIGNATURE" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_SECURITY_APPARMOR_HASH" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_TIPC_CRYPTO" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_TEE" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_TLS" ; then
+		_ot-kernel-pkgflags_aes
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_TRUSTED_KEYS" ; then
+		_ot-kernel-pkgflags_sha1
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_SMB_SERVER" ; then
+		_ot-kernel-pkgflags_md5
+		_ot-kernel-pkgflags_sha256
+		_ot-kernel-pkgflags_sha512
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_USB_RTL8152" ; then
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_X86_SGX" ; then
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_XFRM_AH" ; then
+		_ot-kernel-pkgflags_sha256
+	fi
+	if ot-kernel-pkgflags_has_kflag "CONFIG_XFRM_ESP" ; then
+		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_sha256
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_chroot_wrapper
 # @DESCRIPTION:
 # Applies kernel config flags for the chroot-wrapper package
@@ -1176,6 +1374,13 @@ ot-kernel-pkgflags_crda() { # DONE
 		ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
 		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
 		einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_WIRELESS"
+		ot-kernel_y_configopt "CONFIG_CFG80211"
+		ot-kernel_y_configopt "CONFIG_CFG80211_CERTIFICATION_ONUS"
+		ot-kernel_y_configopt "CONFIG_CFG80211_REQUIRE_SIGNED_REGDB"
+		ot-kernel_y_configopt "CONFIG_CFG80211_USE_KERNEL_REGDB_KEYS"
 	fi
 }
 
@@ -1245,28 +1450,123 @@ ot-kernel-pkgflags_cryptmount() { # DONE
 	fi
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_neon
+# @DESCRIPTION:
+# Adds neon kernel config flags
+_ot-kernel-pkgflags_neon() {
+	if ot-kernel_use cpu_flags_arm_neon ; then
+		ot-kernel_y_configopt "CONFIG_AEABI"
+		ot-kernel_y_configopt "CONFIG_NEON"
+		ot-kernel_y_configopt "CONFIG_KERNEL_MODE_NEON"
+	fi
+}
+
 # @FUNCTION: _ot-kernel-pkgflags_aes
 # @DESCRIPTION:
 # Wrapper for the aes option.  Adds the simd but implied the generic as well.
 _ot-kernel-pkgflags_aes() {
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if use cpu_flags_x86_aes ; then
+		if ot-kernel_use cpu_flags_x86_aes ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_NI_INTEL"
 		elif ver_test ${K_MAJOR_MINOR} -le 5.3 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_X86_64"
 		fi
 	fi
+	if [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM_BS"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM_CE"
+		fi
+	fi
+	if [[ "${arch}" == "arm64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_ARM64_CE"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_CE"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_CE_CCM"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_CE_BLK"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_NEON_BLK"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_BS"
+		fi
+	fi
+	if [[ "${arch}" == "powerpc" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_AES_PPC_SPE"
+	fi
+	if [[ "${arch}" == "sparc" ]] ; then
+		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_SPARC64"
+		fi
+	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_AES"
 }
 
-# @FUNCTION: _ot-kernel-pkgflags_des3_ede
+# @FUNCTION: _ot-kernel-pkgflags_blake2s
 # @DESCRIPTION:
-# Wrapper for the Triple DES EDE option.
-_ot-kernel-pkgflags_des3_ede() {
+# Wrapper for the blake2s option.
+_ot-kernel-pkgflags_blake2s() {
 	if [[ "${arch}" == "x86_64" ]] ; then
-		ot-kernel_y_configopt "CONFIG_CRYPTO_DES3_EDE_X86_64"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_BLAKE2S_X86"
+	fi
+	if [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_BLAKE2S_ARM"
+	fi
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_curve25519
+# @DESCRIPTION:
+# Wrapper for the Curve25519 option.
+_ot-kernel-pkgflags_curve25519() {
+	ot-kernel_y_configopt "CONFIG_CRYPTO_LIB_CURVE25519"
+	if [[ "${arch}" == "x86_64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519_X86"
+	fi
+	if [[ "${arch}" == "arm" ]] ; then
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_AEABI"
+			ot-kernel_y_configopt "CONFIG_NEON"
+			ot-kernel_y_configopt "CONFIG_KERNEL_MODE_NEON"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519_NEON"
+		fi
+	fi
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_des
+# @DESCRIPTION:
+# Wrapper for the DES option.
+_ot-kernel-pkgflags_des() {
+	if [[ "${arch}" == "s390" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_DES_S390"
+	fi
+	if [[ "${arch}" == "sparc" ]] ; then
+		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_DES_SPARC64"
+		fi
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_DES"
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_md5
+# @DESCRIPTION:
+# Wrapper for the md5 option.  Adds the simd but implied the generic as well.
+_ot-kernel-pkgflags_md5() {
+	if [[ "${arch}" == "mips" ]] ; then
+		if grep -q -E -e "^CONFIG_CPU_CAVIUM_OCTEON=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_MD5_OCTEON"
+		fi
+	fi
+	if [[ "${arch}" == "powerpc" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_MD5_PPC"
+	fi
+	if [[ "${arch}" == "sparc" ]] ; then
+		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_MD5_SPARC64"
+		fi
+	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO_MD5"
 }
 
 # @FUNCTION: _ot-kernel-pkgflags_sha1
@@ -1274,14 +1574,44 @@ _ot-kernel-pkgflags_des3_ede() {
 # Wrapper for the sha1 option.  Adds the simd but implied the generic as well.
 _ot-kernel-pkgflags_sha1() {
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if use cpu_flags_x86_sha ; then
+		if ot-kernel_use cpu_flags_x86_sha ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
-		elif use cpu_flags_x86_avx2 ; then
+		elif ot-kernel_use cpu_flags_x86_avx2 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
-		elif use cpu_flags_x86_avx ; then
+		elif ot-kernel_use cpu_flags_x86_avx ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
-		elif use cpu_flags_x86_ssse3 ; then
+		elif ot-kernel_use cpu_flags_x86_ssse3 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_SSSE3"
+		fi
+	fi
+	if [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_ARM"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_ARM_NEON"
+		fi
+	fi
+	if [[ "${arch}" == "arm64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_ARM64_CE"
+		fi
+	fi
+	if [[ "${arch}" == "mips" ]] ; then
+		if grep -q -E -e "^CONFIG_CPU_CAVIUM_OCTEON=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_OCTEON"
+		fi
+	fi
+	if [[ "${arch}" == "powerpc" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_PPC"
+		if grep -q -E -e "^CONFIG_SPE_POSSIBLE=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_SPE"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_PPC_SPE"
+		fi
+	fi
+	if [[ "${arch}" == "sparc" ]] ; then
+		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_SPARC64"
 		fi
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1"
@@ -1292,14 +1622,47 @@ _ot-kernel-pkgflags_sha1() {
 # Wrapper for the sha256 option.  Adds the simd but implied the generic as well.
 _ot-kernel-pkgflags_sha256() {
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if use cpu_flags_x86_sha ; then
+		if ot-kernel_use cpu_flags_x86_sha ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_SSSE3"
-		elif use cpu_flags_x86_avx2 ; then
+		elif ot-kernel_use cpu_flags_x86_avx2 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_SSSE3"
-		elif use cpu_flags_x86_avx ; then
+		elif ot-kernel_use cpu_flags_x86_avx ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_SSSE3"
-		elif use cpu_flags_x86_ssse3 ; then
+		elif ot-kernel_use cpu_flags_x86_ssse3 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_SSSE3"
+		fi
+	fi
+	if [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_ARM"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA2_ARM_CE"
+		fi
+	fi
+	if [[ "${arch}" == "arm64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_ARM64"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA2_ARM64_CE"
+		fi
+	fi
+	if [[ "${arch}" == "powerpc" ]] ; then
+		if grep -q -E -e "^CONFIG_SPE_POSSIBLE=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_SPE"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_PPC_SPE"
+		fi
+	fi
+	if [[ "${arch}" == "mips" ]] ; then
+		if grep -q -E -e "^CONFIG_CPU_CAVIUM_OCTEON=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_OCTEON"
+		fi
+	fi
+	if [[ "${arch}" == "s390" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_S390"
+	fi
+	if [[ "${arch}" == "sparc" ]] ; then
+		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_SPARC64"
 		fi
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256"
@@ -1310,12 +1673,35 @@ _ot-kernel-pkgflags_sha256() {
 # Wrapper for the sha512 option.  Adds the simd but implied the generic as well.
 _ot-kernel-pkgflags_sha512() {
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if use cpu_flags_x86_avx2 ; then
+		if ot-kernel_use cpu_flags_x86_avx2 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_SSSE3"
-		elif use cpu_flags_x86_avx2 ; then
+		elif ot-kernel_use cpu_flags_x86_avx2 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_SSSE3"
-		elif use cpu_flags_x86_ssse3 ; then
+		elif ot-kernel_use cpu_flags_x86_ssse3 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_SSSE3"
+		fi
+	fi
+	if [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_ARM"
+		fi
+	fi
+	if [[ "${arch}" == "arm64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_ARM64"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_ARM64_CE"
+		fi
+	fi
+	if [[ "${arch}" == "mips" ]] ; then
+		if grep -q -E -e "^CONFIG_CPU_CAVIUM_OCTEON=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_OCTEON"
+		fi
+	fi
+	if [[ "${arch}" == "sparc" ]] ; then
+		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_SPARC64"
 		fi
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512"
@@ -1326,11 +1712,11 @@ _ot-kernel-pkgflags_sha512() {
 # Wrapper for the serpent option.  Adds the simd but implied the generic as well.
 _ot-kernel-pkgflags_serpent() {
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if use cpu_flags_x86_avx2 ; then
+		if ot-kernel_use cpu_flags_x86_avx2 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_AVX2_X86_64"
-		elif use cpu_flags_x86_avx ; then
+		elif ot-kernel_use cpu_flags_x86_avx ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_AVX_X86_64"
-		elif use cpu_flags_x86_sse2 ; then
+		elif ot-kernel_use cpu_flags_x86_sse2 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_SSE2_X86_64"
 		fi
 	fi
@@ -1342,12 +1728,15 @@ _ot-kernel-pkgflags_serpent() {
 # Wrapper for the twofish option.  Adds the simd but implied the generic as well.
 _ot-kernel-pkgflags_twofish() {
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if use cpu_flags_x86_avx ; then
+		if ot-kernel_use cpu_flags_x86_avx ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_AVX_X86_64"
 		else
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_X86_64_3WAY"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_X86_64"
 		fi
+	fi
+	if [[ "${arch}" == "x86" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_586"
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH"
 }
@@ -1357,12 +1746,24 @@ _ot-kernel-pkgflags_twofish() {
 # Wrapper for the chacha20 option.  Adds the simd but implied the generic as well.
 _ot-kernel-pkgflags_chacha20() {
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if use cpu_flags_x86_avx512vl ; then
+		if ot-kernel_use cpu_flags_x86_avx512vl ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_X86_64"
-		elif use cpu_flags_x86_avx2 ; then
+		elif ot-kernel_use cpu_flags_x86_avx2 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_X86_64"
-		elif use cpu_flags_x86_ssse3 ; then
+		elif ot-kernel_use cpu_flags_x86_ssse3 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_X86_64"
+		fi
+	fi
+	if [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_NEON"
+		fi
+	fi
+	if [[ "${arch}" == "arm64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_NEON"
 		fi
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20"
@@ -1373,13 +1774,50 @@ _ot-kernel-pkgflags_chacha20() {
 # Wrapper for the nhpoly1305 option.  Adds the simd but implied the generic as well.
 _ot-kernel-pkgflags_nhpoly1305() {
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if use cpu_flags_x86_avx2 ; then
+		if ot-kernel_use cpu_flags_x86_avx2 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_NHPOLY1305_AVX2"
 		else
 			ot-kernel_y_configopt "CONFIG_CRYPTO_NHPOLY1305_SSE2"
 		fi
 	fi
+	if [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_NHPOLY1305_NEON"
+		fi
+	fi
+	if [[ "${arch}" == "arm64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_NHPOLY1305_NEON"
+		fi
+	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_NHPOLY1305"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_LIB_POLY1305_GENERIC"
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_poly1305
+# @DESCRIPTION:
+# Wrapper for the poly1305 option.  Adds the simd but implied the generic as well.
+_ot-kernel-pkgflags_poly1305() {
+	if [[ "${arch}" == "x86_64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_X86_64"
+	fi
+	if [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_ARM"
+	fi
+	if [[ "${arch}" == "arm64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_NEON"
+		fi
+	fi
+	if [[ "${arch}" == "mips" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305_MIPS"
+	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO_POLY1305"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_LIB_POLY1305_GENERIC"
 }
 
 # @FUNCTION: ot-kernel-pkgflags_cryptsetup
@@ -1415,7 +1853,6 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		CRYPTSETUP_ADIANTUM="${CRYPTSETUP_ADIANTUM:-1}"
 		if [[ "${CRYPTSETUP_ADIANTUM}" == "1" ]] ; then
 			_ot-kernel-pkgflags_chacha20
-			ot-kernel_y_configopt "CONFIG_CRYPTO_LIB_POLY1305_GENERIC"
 			_ot-kernel-pkgflags_nhpoly1305
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ADIANTUM"
@@ -1731,7 +2168,7 @@ ot-kernel-pkgflags_ell() { # DONE
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_MD5"
+		_ot-kernel-pkgflags_md5
 		_ot-kernel-pkgflags_sha1
 		ot-kernel_y_configopt "CONFIG_KEY_DH_OPERATIONS"
 	fi
@@ -2676,11 +3113,14 @@ ot-kernel-pkgflags_iwd() { # DONE
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_DH"
-		_ot-kernel-pkgflags_des3_ede
+		_ot-kernel-pkgflags_des
+		if [[ "${arch}" == "x86_64" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_DES3_EDE_X86_64"
+		fi
 		ot-kernel_y_configopt "CONFIG_CRYPTO_ECB"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_MD4"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_MD5"
+		_ot-kernel-pkgflags_md5
 		ot-kernel_y_configopt "CONFIG_CRYPTO_RSA"
 		_ot-kernel-pkgflags_sha1
 		_ot-kernel-pkgflags_sha256
@@ -3537,7 +3977,7 @@ ot-kernel-pkgflags_nfs_utils() { # DONE
 	if has_version "net-fs/nfs-utils" ; then
 		einfo "Applying kernel config flags for the nfs-utils package (id: a06f942)"
 		if has_version "net-fs/nfs-utils[nfsv4,-nfsdcld]" ; then
-			ot-kernel_y_configopt "CONFIG_CRYPTO_MD5"
+			_ot-kernel-pkgflags_md5
 		fi
 		NFS_CLIENT="${NFS_CLIENT:-1}"
 		if [[ "${NFS_CLIENT}" == "1" ]] ; then
@@ -5559,7 +5999,32 @@ ot-kernel-pkgflags_wireguard_tools() { # DONE
 	if has_version "net-vpn/wireguard-tools" ; then
 		if ver_test ${K_MAJOR_MINOR} -ge 5.6 ; then
 			ot-kernel_y_configopt "CONFIG_WIREGUARD"
+			ot-kernel_y_configopt "CONFIG_NET_UDP_TUNNEL"
+			ot-kernel_y_configopt "CONFIG_DST_CACHE"
+			# Re-optimize if CONFIG_WIREGUARD kernel flags depends already met
+			ot-kernel_y_configopt "CONFIG_CRYPTO_LIB_CHACHA20POLY1305"
+			_ot-kernel-pkgflags_curve25519
+			_ot-kernel-pkgflags_chacha20
+			_ot-kernel-pkgflags_poly1305
+			_ot-kernel-pkgflags_blake2s
+			if grep -q -E -e "^CPU_MIPS32_R2=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA_MIPS"
+			fi
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_wireless_tools
+# @DESCRIPTION:
+# Applies kernel config flags for the wireless-tools package
+ot-kernel-pkgflags_wireless_tools() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0861c19" ]] && return
+	if has_version "net-wireless/wireless-tools" ; then
+		einfo "Applying kernel config flags for the wireless-tools package (id: 0861c19)"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_WIRELESS"
+		ot-kernel_y_configopt "CONFIG_CFG80211"
+		ot-kernel_y_configopt "CONFIG_CFG80211_WEXT" # for iwlist scanning
 	fi
 }
 

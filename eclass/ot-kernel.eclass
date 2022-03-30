@@ -140,6 +140,7 @@ S="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 #PROPERTIES="interactive" # The menuconfig is broken because of emerge or sandbox.  All things were disabled but still doesn't work.
 OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
 
+IUSE+=" cpu_flags_arm_thumb"
 inherit check-reqs flag-o-matic ot-kernel-cve ot-kernel-pkgflags ot-kernel-kutils toolchain-funcs
 
 BDEPEND+=" dev-util/patchutils
@@ -1682,6 +1683,10 @@ ewarn
 		ot-kernel_copy_pgo_state
 	fi
 
+	#if [[ -e "/lib/firmware/regulatory.db.p7s" ]] ; then
+	#	cp -a "/lib/firmware/regulatory.db.p7s" "${BUILD_DIR}/"
+	#fi
+
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
@@ -1871,6 +1876,25 @@ is_firmware_ready() {
 	fi
 }
 
+# Remove blacklisted firmware relpath.
+_remove_blacklisted_firmware_paths() {
+	local ARG=$(</dev/stdin)
+	local BLACKLISTED
+	local BLACKLISTED=(
+		${OT_KERNEL_BLACKLIST_FIRMWARE_PATHS}
+	)
+	local x
+	for x in ${ARG} ; do
+		local blacklisted=0
+		local b
+		for b in ${BLACKLISTED[@]} ; do
+			[[ "${x#./}" == "${b}" ]] && blacklisted=1
+		done
+		(( ${blacklisted} == 1 )) && continue
+	        echo -e "${x}"
+	done
+}
+
 # @FUNCTION: ot-kernel_add_firmware
 # @DESCRIPTION:
 # Adds firmware to the kernel config
@@ -1890,7 +1914,7 @@ ot-kernel_add_firmware() {
 		einfo "Adding firmware"
 		pushd /lib/firmware 2>/dev/null 1>/dev/null || die "Missing firmware"
 			for l in $(echo ${ot_kernel_firmware} | tr " " "\n") ; do
-				firmware+=( $(find . -path "*${l}*" | sed -e "s|^\./||g") )
+				firmware+=( $(find . -path "*${l}*" | _remove_blacklisted_firmware_paths | sed -e "s|^\./||g") )
 			done
 		popd 2>/dev/null 1>/dev/null
 		firmware=($(echo "${firmware[@]}" | tr " " "\n" | sort))
@@ -1930,6 +1954,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_FIRMWARE
 	unset OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG
 #	unset OT_KERNEL_HALT_ON_LOWERED_SECURITY		# global var
+	unset OT_KERNEL_HARDENING_LEVEL
 	unset OT_KERNEL_LSMS
 	unset OT_KERNEL_MENUCONFIG_FRONTEND
 	unset OT_KERNEL_MODULES_COMPRESSOR
@@ -1946,6 +1971,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_TARGET_TRIPLE
 	unset OT_KERNEL_USE
 	unset OT_KERNEL_VERBOSITY
+	unset OT_KERNEL_WORK_PROFILE
 	unset OT_KERNEL_ZSWAP_ALLOCATOR
 	unset OT_KERNEL_ZSWAP_COMPRESSOR
 	unset PERMIT_NETFILTER_SYMBOL_REMOVAL
@@ -2078,6 +2104,7 @@ ot-kernel_set_hardening_level() {
 	elif [[ "${hardening_level}" == "trusted" ]] ; then
 		# Disable all hardening
 		# All randomization is disabled because it increases instruction latency or adds more noise to pipeline
+		# CFI and SCS handled later
 		ot-kernel_y_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_unset_configopt "CONFIG_FORTIFY_SOURCE"
 		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
@@ -2107,6 +2134,7 @@ ot-kernel_set_hardening_level() {
 		fi
 	elif [[ "${hardening_level}" == "untrusted-distant" ]] ; then
 		# Some all hardening (All except physical attacks)
+		# CFI and SCS handled later
 		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_y_configopt "CONFIG_FORTIFY_SOURCE"
 		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
@@ -2138,6 +2166,7 @@ ot-kernel_set_hardening_level() {
 		fi
 	elif [[ "${hardening_level}" == "untrusted" ]] ; then
 		# All hardening
+		# CFI and SCS handled later
 		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_y_configopt "CONFIG_FORTIFY_SOURCE"
 		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
@@ -2334,7 +2363,7 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		fi
 
-		local work_profile="${OT_SOURCES_WORK_PROFILE:-manual}"
+		local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 		einfo "Using the ${work_profile} work profile"
 		if [[ -z "${work_profile}" ]] ; then
 			:
@@ -2726,9 +2755,18 @@ ot-kernel_src_configure() {
 		fi
 
 		if grep -q -E -e "^CRYPTO_CURVE25519=y" "${path_config}" ; then
-			if [[ "${arch}" =~ "x86_64" ]] ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
 				einfo "Changed .config to use x86 accelerated Curve25519"
-				ot-kernel_y_configopt "CRYPTO_CURVE25519_X86"
+				ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519_X86"
+			fi
+			if [[ "${arch}" == "arm" ]] ; then
+				if ot-kernel_use cpu_flags_arm_neon ; then
+					einfo "Changed .config to use arm accelerated Curve25519"
+					ot-kernel_y_configopt "CONFIG_AEABI"
+					ot-kernel_y_configopt "CONFIG_NEON"
+					ot-kernel_y_configopt "CONFIG_KERNEL_MODE_NEON"
+					ot-kernel_y_configopt "CONFIG_CRYPTO_CURVE25519_NEON"
+				fi
 			fi
 		fi
 
@@ -2805,6 +2843,45 @@ ot-kernel_src_configure() {
 					ot-kernel_y_configopt "CONFIG_ZLIB_INFLATE"
 				fi
 			fi
+		fi
+
+		local XZ_DECS=(
+			ARM
+			ARMTHUMB
+			IA64
+			POWERPC
+			SPARC
+			X86
+		)
+
+		local x
+		for x in ${XZ_DECS[@]} ; do
+			ot-kernel_unset_configopt "CONFIG_XZ_DEC_${x}"
+		done
+
+		# The BCJ filters improves compression ratios.
+		if [[ "${arch}" =~ ("x86"|"x86_64") ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_XZ_DEC_X86"
+		fi
+
+		if [[ "${arch}" == "powerpc" ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_XZ_DEC_POWERPC"
+		fi
+
+		if [[ "${arch}" == "arm" ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_XZ_DEC_ARM"
+		fi
+
+		if [[ "${arch}" == "arm" ]] && ot-kernel_use cpu_flags_arm_thumb ; then
+			ot-kernel_y_configopt "CONFIG_XZ_DEC_ARMTHUMB"
+		fi
+
+		if [[ "${arch}" == "sparc" ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_XZ_DEC_SPARC"
+		fi
+
+		if [[ "${arch}" == "ia64" ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_XZ_DEC_IA64"
 		fi
 
 		if grep -q -E -e "^CONFIG_MODULE_COMPRESS_GZIP=y" "${path_config}" ; then
@@ -2902,7 +2979,11 @@ ot-kernel_src_configure() {
 			ot-kernel_y_configopt "CONFIG_LTO_NONE"
 		fi
 
-		if has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack && [[ "${arch}" == "arm64" ]] ; then
+		local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
+
+		if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant"|"manual"|"custom") ]] \
+			&& has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack \
+			&& [[ "${arch}" == "arm64" ]] ; then
 			(( ${llvm_slot} < 10 )) && die "Shadow call stack (SCS) requires LLVM >= 10"
 			einfo "Enabling SCS support in the in the .config."
 			ot-kernel_y_configopt "CONFIG_CFI_CLANG_SHADOW"
@@ -2912,7 +2993,9 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
 		fi
 
-		if has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi && [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
+		if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant"|"manual"|"custom") ]] \
+			&& has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
+			&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
 			[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) && die "CFI requires LLVM >= 12 on arm64"
 			[[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 13 )) && die "CFI requires LLVM >= 13.0.1 on x86_64"
 			einfo "Enabling CFI support in the in the .config."
@@ -2925,7 +3008,9 @@ ot-kernel_src_configure() {
 			ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 		fi
 
-		if has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi && [[ "${arch}" == "arm64" ]] ; then
+		if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant"|"manual"|"custom") ]] \
+			&& has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
+			&& [[ "${arch}" == "arm64" ]] ; then
 			# Need to recheck
 			ewarn "You must manually set arm64 CFI in the .config."
 		fi
@@ -3061,6 +3146,8 @@ eerror
 
 		# Don't break OpenRC / init
 		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+		# Fix init warnings
+		ot-kernel_y_configopt "CONFIG_PRINTK"
 
 		if [[ "${OT_KERNEL_SWAP}" == "1" || "${OT_KERNEL_SWAP^^}" == "Y" ]] ; then
 			einfo "Swap enabled"
@@ -3361,6 +3448,8 @@ eerror
 				einfo "LSMs:  ${ot_kernel_lsms}"
 			fi
 		fi
+
+		ot-kernel-pkgflags_cipher_optional
 
 		einfo "Updating the .config for defaults for the newly enabled options."
 		einfo "Running:  make olddefconfig ${args[@]}"
