@@ -2923,27 +2923,28 @@ ot-kernel_set_kconfig_processor_class() {
 		:
 	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "uniprocessor" \
 		|| "${OT_KERNEL_PROCESSOR_CLASS,,}" == "unicore" ]] ; then
-		ot-kernel_unset_configopt "CONFIG_SMP"
-		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_unset_configopt "CONFIG_NUMA"
+		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
+		ot-kernel_unset_configopt "CONFIG_SMP"
 	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "smp" \
 		|| "${OT_KERNEL_PROCESSOR_CLASS,,}" == "smp-unicore" \
 		|| "${OT_KERNEL_PROCESSOR_CLASS,,}" == "smp-legacy" ]] ; then
-		ot-kernel_y_configopt "CONFIG_SMP"
-		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_unset_configopt "CONFIG_NUMA"
-	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "multicore" ]] ; then
+		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
+	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "multicore" ]] ; then
+		ot-kernel_unset_configopt "CONFIG_NUMA"
 		ot-kernel_y_configopt "CONFIG_SCHED_MC"
+		ot-kernel_y_configopt "CONFIG_SMP"
+	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "numa-unicore" ]] ; then
+		ot-kernel_y_configopt "CONFIG_NUMA"
+		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
+		ot-kernel_y_configopt "CONFIG_SMP"
 	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "numa-multicore" \
 		|| "${OT_KERNEL_PROCESSOR_CLASS,,}" == "numa" ]] ; then
-		ot-kernel_y_configopt "CONFIG_SMP"
 		ot-kernel_y_configopt "CONFIG_NUMA"
 		ot-kernel_y_configopt "CONFIG_SCHED_MC"
-	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "numa-unicore" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SMP"
-		ot-kernel_y_configopt "CONFIG_NUMA"
-		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 	fi
 	einfo "Processor class is ${OT_KERNEL_PROCESSOR_CLASS,,}"
 }
