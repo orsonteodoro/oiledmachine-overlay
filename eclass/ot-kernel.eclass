@@ -2107,10 +2107,10 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 		ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 		ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
-		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON" # The option's help does mention cold boot attacks.
-		# We don't use CONFIG_PAGE_POISONING because it is
-		# essentially the same as CONFIG_INIT_ON_FREE_DEFAULT_ON
-		# with fixed pattern but slower.
+		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"	# Production symbol.  The option's help does mention cold boot attacks.
+		ot-kernel_unset_configopt "CONFIG_PAGE_POISONING"	# Test symbol.
+		# CONFIG_PAGE_POISONING uses a fixed pattern and slower compared
+		# to CONFIG_INIT_ON_FREE_DEFAULT_ON.
 	fi
 	if [[ "${ot_kernel_cold_boot_mitigations}" == "2" ]] ; then
 		# TODO:  Disable all DMA devices and ports.
