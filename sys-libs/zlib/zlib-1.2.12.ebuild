@@ -1,11 +1,13 @@
 # Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
+# Worth keeping an eye on 'develop' branch upstream for possible backports.
 AUTOTOOLS_AUTO_DEPEND="no"
-inherit autotools flag-o-matic multilib-minimal toolchain-funcs usr-ldscript
+VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}"/usr/share/openpgp-keys/madler.asc
+inherit autotools flag-o-matic multilib-minimal toolchain-funcs usr-ldscript verify-sig
 
 CYGWINPATCHES=(
 	"https://github.com/cygwinports/zlib/raw/22a3462cae33a82ad966ea0a7d6cbe8fc1368fec/1.2.11-gzopen_w.patch -> ${PN}-1.2.11-cygwin-gzopen_w.patch"
@@ -17,6 +19,7 @@ HOMEPAGE="https://zlib.net/"
 SRC_URI="https://zlib.net/${P}.tar.gz
 	http://www.gzip.org/zlib/${P}.tar.gz
 	http://www.zlib.net/current/beta/${P}.tar.gz
+	verify-sig? ( https://zlib.net/${P}.tar.gz.asc )
 	elibc_Cygwin? ( ${CYGWINPATCHES[*]} )"
 
 LICENSE="ZLIB"
@@ -24,7 +27,7 @@ LICENSE="ZLIB"
 # The FAQ does mention GPL-2 but the file is not there but a file with a
 # similar name exist but under different licensing.
 SLOT="0/1" # subslot = SONAME
-KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE="minizip minizip-utils static-libs"
 IUSE+=" cfi -cfi-cross-dso cfi-cast cfi-icall cfi-vcall clang hardened lto shadowcallstack"
 IUSE+="
@@ -203,7 +206,8 @@ PDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
 PDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 PDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
-BDEPEND+=" minizip? ( ${AUTOTOOLS_DEPEND} )"
+BDEPEND+=" minizip? ( ${AUTOTOOLS_DEPEND} )
+	verify-sig? ( sec-keys/openpgp-keys-madler )"
 # See #309623 for libxml2
 RDEPEND+="
 	!<dev-libs/libxml2-2.7.7
@@ -215,8 +219,21 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-1.2.11-fix-deflateParams-usage.patch
-	"${FILESDIR}"/${PN}-1.2.11-minizip-drop-crypt-header.patch #658536
+	# Don't install unexpected & unused crypt.h header (which would clash with other pkgs)
+	# Pending upstream. bug #658536
+	"${FILESDIR}"/${PN}-1.2.11-minizip-drop-crypt-header.patch
+
+	# Respect AR, RANLIB, NM during build. Pending upstream. bug #831628
+	"${FILESDIR}"/${PN}-1.2.11-configure-fix-AR-RANLIB-NM-detection.patch
+
+	# Respect LDFLAGS during configure tests. Pending upstream
+	"${FILESDIR}"/${PN}-1.2.12-use-LDFLAGS-in-configure.patch
+
+	# Fix broken CC logic
+	"${FILESDIR}"/${P}-fix-CC-logic-in-configure.patch
+
+	# Backport for Java (and others), bug #836370
+	"${FILESDIR}"/${P}-CRC-buggy-input.patch
 )
 
 get_build_types() {
