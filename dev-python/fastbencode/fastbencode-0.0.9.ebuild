@@ -21,5 +21,5 @@ EGIT_COMMIT="26d4e8715ece3c5a381c815e2e916f38d9515f3d"
 SRC_URI="
 https://github.com/breezy-team/fastbencode/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
-S="${WORKDIR}/${P}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
