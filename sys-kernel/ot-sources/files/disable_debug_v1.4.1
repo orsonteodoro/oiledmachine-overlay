@@ -74,8 +74,8 @@ strip_debug_from_config() {
 			a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
 			b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
 			[[ "${a}" =~ "CONFIG_" ]] || continue
-			echo "modding $a"
-			sed -i -r -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
+			#echo "modding $a"
+			#sed -i -r -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
 		done
 	done
 
@@ -205,9 +205,11 @@ strip_debug_from_config() {
 		CONFIG_CRASH_DUMP \
 		CONFIG_DM_LOG_USERSPACE \
 		CONFIG_DM_LOG_WRITES \
+		CONFIG_EARLY_PRINTK \
 		CONFIG_GENTOO_PRINT_FIRMWARE_INFO \
 		CONFIG_MAC80211_HWSIM \
 		CONFIG_NET_PKTGEN \
+		CONFIG_PRINTK \
 		CONFIG_PRINTK_TIME \
 		CONFIG_PRINTK_NMI \
 		CONFIG_SFC_MCDI_LOGGING \
@@ -266,9 +268,9 @@ strip_debug_from_config() {
 		"$targetconfig"
 
 	echo "Restoring defaults"
+#		-e "s|# CONFIG_PRINTK is not set|CONFIG_PRINTK=y|g" \
+#		-e "s|# CONFIG_EARLY_PRINTK is not set|CONFIG_EARLY_PRINTK=y|g" \
 	sed -i -E \
-		-e "s|# CONFIG_PRINTK is not set|CONFIG_PRINTK=y|g" \
-		-e "s|# CONFIG_EARLY_PRINTK is not set|CONFIG_EARLY_PRINTK=y|g" \
 		-e "s|# CONFIG_STRIP_ASM_SYMS is not set|CONFIG_STRIP_ASM_SYMS=y|g" \
 		-e "s|# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set|CONFIG_SECTION_MISMATCH_WARN_ONLY=y|g" \
 		"$targetconfig"

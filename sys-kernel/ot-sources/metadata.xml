@@ -600,6 +600,14 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
+    OT_KERNEL_PROCESSOR_CLASS -- sets the type of cpu class for used in this
+    kernel.  This will precisely will reduce the amount of latency.  Otherwise,
+    it will increase it.
+    Acceptable values:  uniprocessor, unicore, multicore, smp, smp-unicore,
+    smp-legacy, multicore, numa-multicore, numa-unicore, custom, manual, unset
+
+
+
     OT_KERNEL_SIGN_MODULES (optional) -- signs kernel modules with sha384
     or sha512.
     Acceptable values:  sha384, sha512, unset, 1, 0, manual.
@@ -659,6 +667,12 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
+    OT_KERNEL_USB_AUTOSUSPEND -- Set to -1 to disable, or set to a whole number
+    to set the delay.  Some OT_KERNEL_WORK_PROFILE will automatically set it
+    to -1 for gaming or digital-audio-workstations work profiles.
+    
+
+
     OT_KERNEL_USE -- Per build env USE flags.  If not set, it will use the same
     USE flags set.  The scope of OT_KERNEL_USE is partially in src_prepare,
     src_configure, src_compile, partially in src_install.  The normal USE flags
@@ -701,15 +715,19 @@ unset OT_KERNEL_PRIVATE_KEY
       file-server
       gamedev
       gpu-gaming-laptop
+      jukebox
       lan-tournament
       laptop
+      mainstream-desktop
       manual
+      media-player
       multimedia-server
       presentation
       remote-tournament
       renderfarm-dedicated
       renderfarm-workstation
       smartphone
+      streamer-desktop
       solar-desktop
       solar-gaming
       tablet
