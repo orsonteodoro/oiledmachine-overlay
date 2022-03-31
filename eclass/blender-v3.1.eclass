@@ -15,9 +15,9 @@
 # the multiple LLVM bug.
 
 CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
-PYTHON_COMPAT=( python3_{9,10} ) # For the max exclusive Python supported (and
+PYTHON_COMPAT=( python3_10 ) # <= 3.11. For the max exclusive Python supported (and
 # others), see \
-# https://github.com/blender/blender/blob/v3.1.0/build_files/build_environment/install_deps.sh#L382
+# https://github.com/blender/blender/blob/v3.1.1/build_files/build_environment/install_deps.sh#L382
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
@@ -44,7 +44,7 @@ gen_llvm_iuse()
 }
 IUSE+=" "$(gen_llvm_iuse) # same as Mesa and LLVM latest stable keyword \
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v3.1.0/build_files/build_environment/install_deps.sh#L488
+# https://github.com/blender/blender/blob/v3.1.1/build_files/build_environment/install_deps.sh#L488
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
@@ -131,12 +131,12 @@ REQUIRED_USE+="
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # no need to look past those dates.
 
-# Last change was Nov 10, 2021 for:
-# https://github.com/blender/blender/commits/v3.1.0/build_files/cmake/config/blender_release.cmake
+# Last change was Dec 13, 2021 for:
+# https://github.com/blender/blender/commits/v3.1.1/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was Feb 4, 2021 for:
-# https://github.com/blender/blender/commits/v3.1.0/build_files/build_environment/cmake/versions.cmake
+# Last change was Feb 4, 2022 for:
+# https://github.com/blender/blender/commits/v3.1.1/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
 # dependency version requirements see
@@ -646,7 +646,7 @@ _src_configure() {
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v3.1.0/build_files/cmake/config
+# https://github.com/blender/blender/tree/v3.1.1/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
