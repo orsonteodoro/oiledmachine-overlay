@@ -54,7 +54,7 @@ BDEPEND+="
 
 # CI uses U 18.04
 
-CEF_V="95" # See https://github.com/obsproject/obs-studio/blob/27.2.2/.github/workflows/main.yml#L20
+CEF_V="95" # See https://github.com/obsproject/obs-studio/blob/27.2.3/.github/workflows/main.yml#L20
 	   # See also https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 	   #      https://bitbucket.org/chromiumembedded/cef/src/4638/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4638
 FFMPEG_V="3.4.2"
