@@ -561,6 +561,36 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
+    OT_KERNEL_HAVE_CRYPTO_DEV_AES
+    OT_KERNEL_HAVE_CRYPTO_DEV_BLAKE2B
+    OT_KERNEL_HAVE_CRYPTO_DEV_BLAKE2S
+    OT_KERNEL_HAVE_CRYPTO_DEV_CHACHA20
+    OT_KERNEL_HAVE_CRYPTO_DEV_CRC32
+    OT_KERNEL_HAVE_CRYPTO_DEV_CRC32C
+    OT_KERNEL_HAVE_CRYPTO_DEV_CURVE25519
+    OT_KERNEL_HAVE_CRYPTO_DEV_DES
+    OT_KERNEL_HAVE_CRYPTO_DEV_DES3_EDE
+    OT_KERNEL_HAVE_CRYPTO_DEV_GCM
+    OT_KERNEL_HAVE_CRYPTO_DEV_MD5
+    OT_KERNEL_HAVE_CRYPTO_DEV_SHA1
+    OT_KERNEL_HAVE_CRYPTO_DEV_SHA256
+    OT_KERNEL_HAVE_CRYPTO_DEV_SHA512
+    OT_KERNEL_HAVE_CRYPTO_DEV_SERPENT
+    OT_KERNEL_HAVE_CRYPTO_DEV_TWOFISH
+    OT_KERNEL_HAVE_CRYPTO_DEV_NHPOLY1305
+    OT_KERNEL_HAVE_CRYPTO_DEV_POLY1305
+    Acceptable values:  1 for have, 0 do not have (optional), unset.  Unset is
+    equivalent to 0.
+    These will skip adding additional CPU optimized ciphers or hash algorithms
+    in preference for the hardware accelerated crypto device implementation.
+    While setting this flag, you still need to manually configure the kernel
+    config to use the accelerated crypto device.  These should be set to 1
+    if the accelerated crypto device supports the algorithm.  If not present,
+    it will fall back to the CPU optimized or the generic non-optimized
+    algorithm.
+
+
+
     OT_KERNEL_LSMS -- Enable and set the order for LSM (Linux Security Modules)
 
     Acceptable multi values: apparmor, bpf, integrity, landlock, loadpin,
