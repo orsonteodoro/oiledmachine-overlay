@@ -14,10 +14,12 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0"
 IUSE+=" cext doc fastimport git gpg sftp test workspace"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+# See also:  https://github.com/breezy-team/breezy/blob/upstream-3.2.1/setup.py#L60
 DEPEND=" ${PYTHON_DEPS}
 	$(python_gen_cond_dep 'dev-python/configobj[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/patiencediff[${PYTHON_USEDEP}]')
-	cext? ( $(python_gen_cond_dep 'dev-python/cython[${PYTHON_USEDEP}]') )
+	$(python_gen_cond_dep '>=dev-python/fastbencode-0.0.5[${PYTHON_USEDEP}]')
+	cext? ( $(python_gen_cond_dep '>=dev-python/cython-0.29[${PYTHON_USEDEP}]') )
 	fastimport? ( $(python_gen_cond_dep 'dev-python/fastimport[${PYTHON_USEDEP}]') )
 	git? ( $(python_gen_cond_dep '>=dev-python/dulwich-0.20.23[${PYTHON_USEDEP}]') )
 	gpg? (
@@ -30,6 +32,7 @@ DEPEND=" ${PYTHON_DEPS}
 	workspace? ( $(python_gen_cond_dep 'dev-python/pyinotify[${PYTHON_USEDEP}]') )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
+	$(python_gen_cond_dep 'dev-python/setuptools_rust[${PYTHON_USEDEP}]')
 	doc? (
 		$(python_gen_cond_dep 'dev-python/sphinx[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/sphinx-epytext[${PYTHON_USEDEP}]')
