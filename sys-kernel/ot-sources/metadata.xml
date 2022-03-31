@@ -220,7 +220,7 @@
 
 
     
-    Using the build USE flag
+    Using the build USE flag (without PGO)
 
     The build USE flag can be used to build the kernel.  It comes with extra
     environment variables that can be placed in the per extraversion env file.
@@ -230,9 +230,16 @@
 
     It also speeds up deployment time to decrease the security update lag.
 
+    The following steps need to be taken:
+
+      0. Mount the boot partition
+      1. Emerge with the build USE flag
+      2. Run etc-update
+      3. Build and install initramfs
+      4. Update the bootloader
+      5. Reboot
 
 
-    PGO builds
 
     The PGO (Profile Guided Optimization) progression diagram:
 
@@ -241,15 +248,34 @@
     (&gt; is the greater than symbol in HTML)
 
     PGI = Build as instrumented
-    PGT = Training
-    PGO = Build as optimize
+    PGT = Train with actual typical use, or simulation script that replays or mimics typical use, or benchmarks
+    PGO = Build as optimized
 
-    When both the build and pgo USE flags are enabled, it will build an
-    instrumented build ready for PGO training.  This requires a reboot.  After
-    rebooting, you may use benchmarks or any program that reflects typical use
-    cases.  The PGO progression state can be reset by deleting the
-    /var/lib/ot-sources/${PV} folder or the .pgophase file.  The folder
-    contains these files for developer interest and transparency:
+
+
+    Using the build USE flag with the pgo USE flag
+
+    The following steps need to be taken:
+
+      0. Mount the boot partition
+      1. Emerge with the build and pgo USE flags
+      2. Run etc-update
+      3. Build and install initramfs
+      4. Update the bootloader
+      5. Reboot
+      6. Train the kernel with the gen_pgo.sh script or your own simulation script
+      7. Re-emerge the package with the build and pgo USE flag for an optimized build
+
+
+
+    Resetting PGO
+
+    The PGO progression state can be reset by deleting the
+    /var/lib/ot-sources/${PV} folder or the .pgophase file.
+
+
+
+    PGO state files:
 
     /var/lib/ot-sources/${PV}/${extraversion}-${arch}.pgophase -- The PGO
       phase progression state file that contains the current step.
@@ -257,7 +283,9 @@
     /var/lib/ot-sources/${PV}/${extraversion}-${arch}.profraw -- The profraw
       captured before conversion.
     /var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata -- The merged
-      profdata PGO profile.  It is used when optimizing.
+      profdata PGO profile.  It is used when building an optimized build.
+
+
 
     LLVM versions supported for Clang PGO:
 
@@ -341,6 +369,7 @@ OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 OT_KERNEL_WORK_PROFILE="workstation"
 OT_KERNEL_ZSWAP_ALLOCATOR="z3fold"
 OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
+OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
@@ -360,6 +389,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     
     Environment variables:
+
+    DISABLE_DEBUG_EXCLUDES -- A space delimited list of kernel config symbols
+    to ignore.
 
     OT_KERNEL_ADD_KEY_TO_MOK -- Auto adds the provided key to MOK if not found.
 
@@ -384,6 +416,11 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     OT_KERNEL_BLACKLIST_FIRMWARE_PATHS -- A space separated list of firmware
     relative paths to not include in CONFIG_EXTRA_FIRMWARE.
+
+
+
+    OT_KERNEL_BOOT_ARGS -- Set and embed the kernel command line into the
+    kernel instead of the bootloader.
 
 
 

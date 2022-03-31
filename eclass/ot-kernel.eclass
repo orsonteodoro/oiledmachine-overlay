@@ -1945,6 +1945,7 @@ ot-kernel_clear_env() {
 	# The OT_KERNEL_ prefix is to avoid naming collisions.
 	unset OT_KERNEL_ARCH
 	unset OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS
+	unset OT_KERNEL_BOOT_ARGS
 	unset OT_KERNEL_BOOT_DECOMPRESSOR
 	unset OT_KERNEL_BUILD
 	unset OT_KERNEL_COLD_BOOT_MITIGATIONS
@@ -2035,6 +2036,20 @@ ot-kernel_set_kconfig_bbr2() {
 		ot-kernel_y_configopt "CONFIG_DEFAULT_BBR2"
 		ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"bbr2\""
 	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_boot_args
+# @DESCRIPTION:
+# Sets the kernel config for boot_args
+ot-kernel_set_kconfig_boot_args() {
+	local cmd
+	if [[ -n "${OT_KERNEL_BOOT_ARGS}" ]] ; then
+		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
+		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${OT_KERNEL_BOOT_ARGS}\""
+	fi
+	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+	einfo "BOOT_ARGS:  ${cmd}"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_cfi
@@ -2235,8 +2250,9 @@ ot-kernel_set_kconfig_compressors() {
 			#	# Used by multiple drivers.
 			#	ot-kernel_n_configopt "CONFIG_XZ_DEC"
 			elif [[ "${d}" =~ ("GZIP") ]] ; then
+			#	# Used by multiple drivers.
 				ot-kernel_n_configopt "CONFIG_DECOMPRESS_GZIP"
-				ot-kernel_n_configopt "CONFIG_ZLIB_INFLATE"
+			#	ot-kernel_n_configopt "CONFIG_ZLIB_INFLATE"
 			fi
 		fi
 	done
@@ -2366,7 +2382,7 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 		einfo "Changed .config to use Project C with BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
-		ot-kernel_unset_configopt "CONFIG_SCHED_PDS" # fixme
+		ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		cpu_sched_config_applied=1
 	fi
 
@@ -2831,17 +2847,25 @@ ot-kernel_set_kconfig_multigen_lru() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_o3
+# @FUNCTION: ot-kernel_set_kconfig_oflag
 # @DESCRIPTION:
-# Sets the kernel config for the -O3 compiler flag using more expensive compiler
-# optimizations
-ot-kernel_set_kconfig_o3() {
-	if has O3 ${IUSE_EFFECTIVE} && ot-kernel_use O3 ; then
-		# Disable ambiguous mutually exclusive configs
-		ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
-		ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
-		einfo "Setting .config with -O3 CFLAGS"
+# Sets the kernel config for the compiler flag based on CFLAGS.
+ot-kernel_set_kconfig_oflag() {
+	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
+	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
+	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
+	if [[ "${CFLAGS}" =~ "O3" ]] && has O3 ${IUSE_EFFECTIVE} && ot-kernel_use O3 ; then
+		einfo "Setting .config with -O3 from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
+	elif [[ "${CFLAGS}" =~ "O2" ]] ; then
+		einfo "Setting .config with -O2 from CFLAGS"
+		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
+	elif [[ "${CFLAGS}" =~ "Os" ]] ; then
+		einfo "Setting .config with -Os from CFLAGS"
+		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
+	else
+		einfo "Setting .config with -O2 from CFLAGS"
+		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	fi
 }
 
@@ -3260,6 +3284,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
+		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" =~ ("casual-gaming") ]] ; then
 		ot-kernel_y_configopt "CONFIG_HZ_1000"
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -3272,6 +3297,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
+		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" =~ ("arcade"|"pro-gaming"|"tournament"|"presentation") ]] ; then
 		ot-kernel_y_configopt "CONFIG_HZ_1000"
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -3289,6 +3315,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
+		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
 		ot-kernel_y_configopt "CONFIG_HZ_300"
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -3305,6 +3332,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
+		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" == "workstation" ]] ; then
 		ot-kernel_y_configopt "CONFIG_HZ_300"
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -3334,6 +3362,7 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
+		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" == "renderfarm-dedicated" ]] ; then
 		ot-kernel_y_configopt "CONFIG_HZ_300"
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -3643,11 +3672,12 @@ ot-kernel_src_configure() {
 		local gcc_slot=$(get_gcc_slot)
 		ot-kernel_set_kconfig_compiler_toolchain # llvm_slot, gcc_slot
 		ot-kernel_set_kconfig_kernel_compiler_patch
-		ot-kernel_set_kconfig_o3
+		ot-kernel_set_kconfig_oflag
 		ot-kernel_set_kconfig_lto # llvm_slot
 		ot-kernel_set_kconfig_pgo # llvm_slot
 
 		ot-kernel_set_kconfig_init_systems
+		ot-kernel_set_kconfig_boot_args
 		ot-kernel_set_kconfig_processor_class
 		ot-kernel_set_kconfig_futex
 		ot-kernel_set_kconfig_cpu_scheduler
@@ -3672,11 +3702,8 @@ ot-kernel_src_configure() {
 			einfo "Disabling all debug and shortening logging buffers"
 			./disable_debug || die
 		fi
-
-		# Don't break OpenRC / init
-		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
-		# Fix init warnings
 		ot-kernel_y_configopt "CONFIG_PRINTK"
+		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
 
 		local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 			ot-kernel_set_kconfig_hardening_level
@@ -4625,24 +4652,28 @@ ewarn
 
 	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo && has build ${IUSE_EFFECTIVE} && use build ; then
 einfo
-einfo "PGO progression map:  start -> 1 build & installed PGI kernel [done] -> 2 update bootloader with new entry [done] -> 3 reboot -> 4 training -> 5 rebuild -> 6 reboot done"
-einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
-einfo "    2.  Update the bootloader with new kernel(s) entries (and install initramfs if not done yet)"
-einfo "    3.  Reboot with the PGIed kernel"
-einfo "    4.  Training the kernel with benchmarks or the typical uses"
-einfo "    5.  Re-emerging the package"
-einfo "    6.  Reboot with optimized kernel"
+einfo "    1.  Run etc-update"
+einfo "    2.  Build and install the initramfs"
+einfo "    3.  Update the bootloader with a new entry"
+einfo "    4.  Reboot with the PGIed kernel"
+einfo "    5.  Train the kernel with benchmarks or the typical uses"
+einfo "    6.  Re-emerging the package"
+einfo "    7.  Reboot with optimized kernel"
+einfo
+einfo "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
 einfo
 	elif has build ${IUSE_EFFECTIVE} && use build ; then
 einfo
-einfo "Progression map:  start -> 1 initramfs/bootloader -> 2 (reboot) -> done"
-einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
-einfo "    2.  Update the bootloader with the new entry (and install initramfs if not done yet)"
-einfo "    3.  Reboot with the new kernel"
+einfo "    1.  Run etc-update"
+einfo "    2.  Build and install the initramfs"
+einfo "    3.  Update the bootloader with the new entry"
+einfo "    4.  Reboot with the new kernel"
+einfo
+einfo "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
 einfo
 	fi
 	if has clang-pgo ${IUSE_EFFECTIVE} ; then

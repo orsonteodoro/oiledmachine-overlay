@@ -22,6 +22,34 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+#
+# Environment variables
+#
+#   DISABLE_DEBUG_EXCLUDES -- Space delimited list of kernel configs to ignore.
+#
+#
+
+unset_kflags() {
+	IFS=$'\n'
+	for c in ${kflags[@]} ; do
+		local needs_skip=0
+		for s in ${skip[@]} ; do
+			[[ "${c}" =~ "${s}" ]] && needs_skip=1
+		done
+		(( ${needs_skip} == 1 )) && continue
+
+		for l in $(grep -r -e "$c" "$targetconfig") ; do
+			#echo "raw: $l"
+			a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
+			b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
+			[[ "${a}" =~ "CONFIG_" ]] || continue
+			echo "modding $a"
+			sed -i -r -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
+		done
+	done
+	IFS=$' \t\n'
+}
+
 strip_debug_from_config() {
 	# This script will disable all debugging for your .config file.
 	#
@@ -38,149 +66,13 @@ strip_debug_from_config() {
 
 	local targetconfig="${1}"
 
-	echo -e "\nUnset all debug"
-	IFS=$'\n'
-	for l in $(grep -r -e "CONFIG.*DEBUG" "$targetconfig") ; do
-		#echo "raw: $l"
-		echo "$l" | grep -E -e "=[0-9]+" > /dev/null
-		if [[ "$?" == "0" ]] ; then
-			echo "skipping $l"
-			continue
-		fi
-		a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
-		b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
-		echo "modding $a"
-		sed -i -E -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
-	done
-	for c in $(grep -r -e "^config " $(find . -name "Kconfig.debug") | cut -f 2 -d ":" | cut -f 2 -d " " | sort) ; do
-		local skip=(
-			CONSOLE_LOGLEVEL_DEFAULT
-			CONSOLE_LOGLEVEL_QUIET
-			MESSAGE_LOGLEVEL_DEFAULT
-			FRAME_WARN
-			PANIC_TIMEOUT
-			RCU_CPU_STALL_TIMEOUT
-			IO_DELAY
-			UNWINDER
-		)
-		local needs_skip=0
-		for s in ${skip[@]} ; do
-			[[ "${c}" =~ "${s}" ]] && needs_skip=1
-		done
-		(( ${needs_skip} == 1 )) && continue
+	echo -e "\nUnsetting options to disable debug"
+	local kflags=()
+	local skip=()
 
-		for l in $(grep -r -e "$c" "$targetconfig") ; do
-			#echo "raw: $l"
-			a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
-			b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
-			[[ "${a}" =~ "CONFIG_" ]] || continue
-			#echo "modding $a"
-			#sed -i -r -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
-		done
-	done
-
-	echo -e "\nUnset all trace"
-	for l in $(grep -r -e "TRACE" "$targetconfig") ; do
-		#echo "raw: $l"
-		echo "$l" | grep -E -e "=[0-9]+" > /dev/null
-		if [[ "$?" == "0" ]] ; then
-			echo "skipping $l"
-			continue
-		fi
-		a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
-		b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
-		echo "modding $a"
-		sed -i -E -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
-	done
-	for c in $(grep -r -e "^config " $(find kernel/trace/ -name "Kconfig") | cut -f 2 -d ":" | cut -f 2 -d " " | sort) ; do
-		for l in $(grep -r -e "$c" "$targetconfig") ; do
-			#echo "raw: $l"
-			a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
-			b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
-			echo "modding $a"
-			sed -i -r -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
-		done
-	done
-
-	echo -e "\nUnset all debugger"
-	for l in $(grep -r -e "KGDB" "$targetconfig") ; do
-		#echo "raw: $l"
-		echo "$l" | grep -E -e "=[0-9]+" > /dev/null
-		if [[ "$?" == "0" ]] ; then
-			echo "skipping $l"
-			continue
-		fi
-		a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
-		b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
-		echo "modding $a"
-		sed -i -E -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
-	done
-
-	echo -e "\nUnset all verbose"
-	for l in $(grep -r -e "VERBOSE" "$targetconfig") ; do
-		#echo "raw: $l"
-		echo "$l" | grep -E -e "=[0-9]+" > /dev/null
-		if [[ "$?" == "0" ]] ; then
-			echo "skipping $l"
-			continue
-		fi
-		a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
-		b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
-		echo "modding $a"
-		sed -i -E -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
-	done
-
-	echo -e "\nUnset all asserts"
-	for l in $(grep -r -e "ASSERT" "$targetconfig") ; do
-		#echo "raw: $l"
-		echo "$l" | grep -E -e "=[0-9]+" > /dev/null
-		if [[ "$?" == "0" ]] ; then
-			echo "skipping $l"
-			continue
-		fi
-		a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
-		b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
-		echo "modding $a"
-		sed -i -E -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
-	done
-
-	echo -e "\nUnset all tests"
-	for l in $(grep -r -e "CONFIG.*TEST" "$targetconfig") \
-		$(grep -r -e "CONFIG.*KUNIT" "$targetconfig") ; do
-		#echo "raw: $l"
-		echo "$l" | grep -E -e "=[0-9]+" > /dev/null
-		if [[ "$?" == "0" ]] ; then
-			echo "skipping $l"
-			continue
-		fi
-		a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
-		b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
-		echo "modding $a"
-		sed -i -E -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
-	done
-
-	echo -e "\nUnset all debugging sanitizers"
-	for l in \
-		$(grep -r -e "CONFIG.*KASAN" "$targetconfig") \
-		$(grep -r -e "CONFIG.*KCSAN" "$targetconfig") \
-		$(grep -r -e "CONFIG.*KFENCE" "$targetconfig") \
-		$(grep -r -e "CONFIG.*UBSAN" "$targetconfig") \
-			; do
-		#echo "raw: $l"
-		echo "$l" | grep -E -e "=[0-9]+" > /dev/null
-		if [[ "$?" == "0" ]] ; then
-			echo "skipping $l"
-			continue
-		fi
-		a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
-		b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
-		echo "modding $a"
-		sed -i -E -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
-	done
-
-	local extra_syms=()
+	local netfilter_syms=()
 	if [[ "${PERMIT_NETFILTER_SYMBOL_REMOVAL}" == "1" ]] ; then
-		extra_syms=(
+		nf_syms=(
 			CONFIG_BRIDGE_EBT_LOG
 			CONFIG_NETFILTER_NETLINK_LOG
 			CONFIG_NETFILTER_XT_TARGET_LOG
@@ -195,36 +87,58 @@ strip_debug_from_config() {
 		)
 	fi
 
-	echo -e "\nUnset some options to disable debug"
-	for c in \
-		${extra_syms[@]} \
-		CONFIG_ALLOW_DEV_COREDUMP \
-		CONFIG_AIC7XXX_REG_PRETTY_PRINT \
-		CONFIG_AIC79XX_REG_PRETTY_PRINT \
-		CONFIG_COREDUMP \
-		CONFIG_CRASH_DUMP \
-		CONFIG_DM_LOG_USERSPACE \
-		CONFIG_DM_LOG_WRITES \
-		CONFIG_EARLY_PRINTK \
-		CONFIG_GENTOO_PRINT_FIRMWARE_INFO \
-		CONFIG_MAC80211_HWSIM \
-		CONFIG_NET_PKTGEN \
-		CONFIG_PRINTK \
-		CONFIG_PRINTK_TIME \
-		CONFIG_PRINTK_NMI \
-		CONFIG_SFC_MCDI_LOGGING \
-		CONFIG_X86_CHECK_BIOS_CORRUPTION \
-			; do
-		for l in $(grep -r -e "$c" "$targetconfig") ; do
-			#echo "raw: $l"
-			a=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g")
-			b=$(echo "$l" | sed -r -e "s|# ||g" -e "s| is not set||g" -e "s|=[0-9ynm]+||g")
-			echo "modding $a"
-			sed -i -r -e "s|[ ]*${a}\$|# $b is not set|g" "$targetconfig"
-		done
-	done
+	kflags=(
+		$(grep -r -e "CONFIG.*ASSERT" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*DEBUG" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*KASAN" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*KCSAN" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*KFENCE" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*KGDB" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*UBSAN" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*KUNIT" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*TEST" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*TRACE" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*VERBOSE" "$targetconfig" | grep "^CONFIG_")
 
-	echo -e "\nSetting some options to disable debug"
+		$(grep -r -e "^config " $(find . -name "Kconfig.debug") | cut -f 2 -d ":" | cut -f 2 -d " " | sort)
+		$(grep -r -e "^config " $(find kernel/trace/ -name "Kconfig") | cut -f 2 -d ":" | cut -f 2 -d " " | sort | sed -e "s|^|CONFIG_|g")
+
+		${netfilter_syms[@]}
+		CONFIG_ALLOW_DEV_COREDUMP
+		CONFIG_AIC7XXX_REG_PRETTY_PRINT
+		CONFIG_AIC79XX_REG_PRETTY_PRINT
+		CONFIG_COREDUMP
+		CONFIG_CRASH_DUMP
+		CONFIG_DM_LOG_USERSPACE
+		CONFIG_DM_LOG_WRITES
+		CONFIG_EARLY_PRINTK
+		CONFIG_GENTOO_PRINT_FIRMWARE_INFO
+		CONFIG_MAC80211_HWSIM
+		CONFIG_NET_PKTGEN
+		CONFIG_PRINTK
+		CONFIG_PRINTK_TIME
+		CONFIG_PRINTK_NMI
+		CONFIG_SFC_MCDI_LOGGING
+		CONFIG_X86_CHECK_BIOS_CORRUPTION
+	)
+	skip=(
+		${DISABLE_DEBUG_EXCLUDES}
+		CMDLINE
+		CMDLINE_BOOL
+		CMDLINE_OVERRIDE
+		CONSOLE_LOGLEVEL_DEFAULT
+		CONSOLE_LOGLEVEL_QUIET
+		FRAME_WARN
+		IO_DELAY
+		MESSAGE_LOGLEVEL_DEFAULT
+		PANIC_TIMEOUT
+		RCU_CPU_STALL_TIMEOUT
+		TASKS_TRACE_RCU_READ_MB
+		UNWINDER
+	)
+	unset_kflags
+
+	echo -e "\nSetting options to disable debug"
 	sed -i -E \
 		-e "s|# CRYPTO_MANAGER_DISABLE_TESTS is not set|CRYPTO_MANAGER_DISABLE_TESTS=y|g" \
 		"$targetconfig"
@@ -268,8 +182,6 @@ strip_debug_from_config() {
 		"$targetconfig"
 
 	echo "Restoring defaults"
-#		-e "s|# CONFIG_PRINTK is not set|CONFIG_PRINTK=y|g" \
-#		-e "s|# CONFIG_EARLY_PRINTK is not set|CONFIG_EARLY_PRINTK=y|g" \
 	sed -i -E \
 		-e "s|# CONFIG_STRIP_ASM_SYMS is not set|CONFIG_STRIP_ASM_SYMS=y|g" \
 		-e "s|# CONFIG_SECTION_MISMATCH_WARN_ONLY is not set|CONFIG_SECTION_MISMATCH_WARN_ONLY=y|g" \
