@@ -15,7 +15,7 @@ DOCS=( changelog NEWS THANKS TODO )
 RESTRICT="mirror"
 SLOT="0"
 # version string contained in puddletag/source/puddlestuff/__init__.py
-SRC_URI="https://github.com/puddletag/puddletag/archive/refs/tags/${PV}.tar.gz -> ${PV}.tar.gz"
+SRC_URI="https://github.com/puddletag/puddletag/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
 IUSE+=" acoustid amg audioread cover fpcalc fuzz-matching musicbrainz pyacoustid quodlibet"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	acoustid? ( ^^ ( audioread fpcalc pyacoustid ) )
