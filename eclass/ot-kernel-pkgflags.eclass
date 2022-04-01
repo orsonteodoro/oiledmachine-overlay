@@ -1017,17 +1017,17 @@ ot-kernel-pkgflags_has_kflag() {
 # This is to avoid the additional cost of another pass with olddefconfig.
 ot-kernel-pkgflags_cipher_optional() {
 	if ot-kernel-pkgflags_has_kflag "CONFIG_AIRO_CS" ; then
-		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_aes CTR
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_ASYMMETRIC_TPM_KEY_SUBTYPE" ; then
 		_ot-kernel-pkgflags_sha1
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_BT" ; then
-		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_aes ECB
 		_ot-kernel-pkgflags_sha256
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_BLK_DEV_RBD" ; then
-		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_aes CBC GCM # See CONFIG_CEPH_LIB below
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_BTRFS_FS" ; then
 		_ot-kernel-pkgflags_blake2b
@@ -1035,10 +1035,10 @@ ot-kernel-pkgflags_cipher_optional() {
 		_ot-kernel-pkgflags_sha256
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_CEPH_FS" ; then
-		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_aes CBC GCM # See CONFIG_CEPH_LIB below
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_CEPH_LIB" ; then
-		_ot-kernel-pkgflags_aes GCM
+		_ot-kernel-pkgflags_aes CBC GCM
 		_ot-kernel-pkgflags_gcm
 		_ot-kernel-pkgflags_sha256
 	fi
@@ -1060,7 +1060,7 @@ ot-kernel-pkgflags_cipher_optional() {
 		_ot-kernel-pkgflags_aes
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_CRYPTO_DRBG_CTR" ; then
-		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_aes CTR
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_CRYPTO_DRBG_HASH" ; then
 		_ot-kernel-pkgflags_sha256
@@ -1070,7 +1070,7 @@ ot-kernel-pkgflags_cipher_optional() {
 	fi
 	# CONFIG_CRYPTO_DEV_* is ignored
 	if ot-kernel-pkgflags_has_kflag "CONFIG_ENCRYPTED_KEYS" ; then
-		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_aes CBC
 		_ot-kernel-pkgflags_sha256
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_EVM" ; then
@@ -1080,7 +1080,7 @@ ot-kernel-pkgflags_cipher_optional() {
 		_ot-kernel-pkgflags_crc
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_FS_ENCRYPTION_ALGS" ; then
-		_ot-kernel-pkgflags_aes
+		_ot-kernel-pkgflags_aes CBC CTS ECB XTS
 		_ot-kernel-pkgflags_sha512
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_FS_VERITY" ; then
@@ -1173,8 +1173,8 @@ ot-kernel-pkgflags_cipher_optional() {
 		_ot-kernel-pkgflags_sha1
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_RPCSEC_GSS_KRB5" ; then
-		_ot-kernel-pkgflags_aes
-		_ot-kernel-pkgflags_des
+		_ot-kernel-pkgflags_aes CBC CTS ECB
+		_ot-kernel-pkgflags_des CBC CTS ECB
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_RTL8192U" ; then
 		_ot-kernel-pkgflags_aes CCM
@@ -1226,7 +1226,7 @@ ot-kernel-pkgflags_cipher_optional() {
 		_ot-kernel-pkgflags_sha256
 	fi
 	if ot-kernel-pkgflags_has_kflag "CONFIG_XFRM_ESP" ; then
-		_ot-kernel-pkgflags_aes GCM
+		_ot-kernel-pkgflags_aes CBC GCM
 		_ot-kernel-pkgflags_gcm
 		_ot-kernel-pkgflags_sha256
 	fi
@@ -1504,12 +1504,15 @@ _ot-kernel-pkgflags_neon() {
 _ot-kernel-pkgflags_aes() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_AES}" == "1" ]] && continue
 	local modes="${@}"
+	[[ -z "${modes}" ]] && modes="ECB CBC"
 	if [[ "${arch}" == "arm" ]] ; then
 		ot-kernel_y_configopt "CONFIG_ARM_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM"
 		if ot-kernel_use cpu_flags_arm_neon ; then
-			if [[ "${modes}" =~ ("CBC"|"CTR"|"XTS") ]] ; then
+			if [[ "${modes}" =~ ("CBC"|"CTR"|"CTS"|"ECB"|"XTS") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM_BS"
+			fi
+			if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM_CE"
 			fi
 			if [[ "${modes}" =~ "GCM" ]] ; then
@@ -1521,11 +1524,13 @@ _ot-kernel-pkgflags_aes() {
 		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64"
 		if ot-kernel_use cpu_flags_arm_neon ; then
-			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_CE"
-			if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
+			if [[ "${modes}" =~ ("CBC"|"CTR"|"CTS"|"ECB"|"XTS") ]] ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_CE"
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_CE_BLK"
-				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_NEON_BLK"
+			fi
+			if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_BS"
+				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_ARM64_NEON_BLK"
 			fi
 			if [[ "${modes}" =~ "GCM" ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_ARM64_CE"
@@ -1538,17 +1543,31 @@ _ot-kernel-pkgflags_aes() {
 	if [[ "${arch}" == "powerpc" ]] ; then
 		if grep -q -E -e "^CONFIG_SPE_POSSIBLE=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_SPE"
-			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_PPC_SPE"
+			if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_PPC_SPE"
+			fi
+		fi
+	fi
+	if [[ "${arch}" == "s390" ]] ; then
+		if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_S390"
+			ot-kernel_y_configopt "CONFIG_ZCRYPT"
+			ot-kernel_y_configopt "CONFIG_PKEY"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_PAES_S390"
 		fi
 	fi
 	if [[ "${arch}" == "sparc" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_SPARC64"
+			if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB") ]] ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_SPARC64"
+			fi
 		fi
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
 		if ot-kernel_use cpu_flags_x86_aes ; then
-			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_NI_INTEL"
+			if [[ "${modes}" =~ ("CBC"|"GCM"|"CTR"|"CTS"|"ECB"|"XTS") ]] ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_NI_INTEL"
+			fi
 		elif ver_test ${K_MAJOR_MINOR} -le 5.3 ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_AES_X86_64"
 		fi
@@ -1559,6 +1578,14 @@ _ot-kernel-pkgflags_aes() {
 		ot-kernel_set_configopt "CONFIG_CRYPTO_AES_TI" "m"
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_AES"
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_anubis
+# @DESCRIPTION:
+# Wrapper for the anubis option.
+_ot-kernel-pkgflags_anubis() {
+	ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_ENABLE_OBSOLETE"
+	ot-kernel_y_configopt "CONFIG_CRYPTO_ANUBIS"
 }
 
 # @FUNCTION: _ot-kernel-pkgflags_blake2b
@@ -1589,6 +1616,49 @@ _ot-kernel-pkgflags_blake2s() {
 	ot-kernel_y_configopt "CONFIG_CRYPTO_BLAKE2S"
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_camellia
+# @DESCRIPTION:
+# Wrapper for the camellia option.  Adds the simd but implied the generic as well.
+_ot-kernel-pkgflags_camellia() {
+	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_CAMELLIA}" == "1" ]] && continue
+	local modes="${@}"
+	[[ -z "${modes}" ]] && modes="ECB CBC"
+	if [[ "${arch}" == "x86_64" ]] ; then
+		if ot-kernel_use cpu_flags_x86_avx2 && ot-kernel_use cpu_flags_x86_aesni && [[ "${modes}" =~ ("CBC"|"ECB"|"XTS") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX2_X86_64"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
+		elif ot-kernel_use cpu_flags_x86_avx && ot-kernel_use cpu_flags_x86_aesni && [[ "${modes}" =~ ("CBC"|"ECB"|"XTS") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
+		elif [[ "${modes}" =~ ("CBC"|"CTR"|"ECB") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_X86_64"
+		fi
+	fi
+	if [[ "${arch}" == "sparc" ]] ; then
+		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
+			if [[ "${modes}" =~ ("CBC"|"ECB") ]] ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_SPARC64"
+			fi
+		fi
+	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA"
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_cast6
+# @DESCRIPTION:
+# Wrapper for the cast6 option.
+_ot-kernel-pkgflags_cast6() {
+	local modes="${@}"
+	[[ -z "${modes}" ]] && modes="ECB CBC"
+	if [[ "${arch}" == "x86_64" ]] ; then
+		if ot-kernel_use cpu_flags_x86_avx ; then
+			if [[ "${modes}" =~ ("CBC"|"ECB"|"CTR"|"XTS") ]] ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_CAST6_AVX_X86_64"
+			fi
+		fi
+	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO_CAST6"
+}
+
 # @FUNCTION: _ot-kernel-pkgflags_chacha20
 # @DESCRIPTION:
 # Wrapper for the chacha20 option.  Adds the simd but implied the generic as well.
@@ -1604,6 +1674,12 @@ _ot-kernel-pkgflags_chacha20() {
 		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
 		if ot-kernel_use cpu_flags_arm_neon ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20_NEON"
+		fi
+	fi
+	if [[ "${arch}" == "mips" ]] ; then
+		if grep -q -E -e "^SYS_HAS_CPU_MIPS32_R2=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CPU_MIPS32_R2"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA_MIPS"
 		fi
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
@@ -1707,13 +1783,19 @@ _ot-kernel-pkgflags_curve25519() {
 # @DESCRIPTION:
 # Wrapper for the DES option.
 _ot-kernel-pkgflags_des() {
+	local modes="${@}"
+	[[ -z "${modes}" ]] && modes="ECB CBC"
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_DES}" == "1" ]] && continue
 	if [[ "${arch}" == "s390" ]] ; then
-		ot-kernel_y_configopt "CONFIG_CRYPTO_DES_S390"
+		if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_DES_S390"
+		fi
 	fi
 	if [[ "${arch}" == "sparc" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_CRYPTO_DES_SPARC64"
+			if [[ "${modes}" =~ ("CBC"|"ECB") ]] ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_DES_SPARC64"
+			fi
 		fi
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_DES"
@@ -1723,9 +1805,25 @@ _ot-kernel-pkgflags_des() {
 # @DESCRIPTION:
 # Wrapper for the DES3 EDE option.
 _ot-kernel-pkgflags_des3_ede() {
+	local modes="${@}"
+	[[ -z "${modes}" ]] && modes="ECB CBC"
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_DES3_EDE}" == "1" ]] && continue
+	if [[ "${arch}" == "s390" ]] ; then
+		if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_DES_S390"
+		fi
+	fi
+	if [[ "${arch}" == "sparc" ]] ; then
+		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
+			if [[ "${modes}" =~ ("CBC"|"ECB") ]] ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_DES_SPARC64"
+			fi
+		fi
+	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		ot-kernel_y_configopt "CONFIG_CRYPTO_DES3_EDE_X86_64"
+		if [[ "${modes}" =~ ("CBC"|"ECB"|"CTR") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_DES3_EDE_X86_64"
+		fi
 	fi
 }
 
@@ -1736,7 +1834,7 @@ _ot-kernel-pkgflags_gcm() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_GCM}" == "1" ]] && continue
 	if [[ "${arch}" == "arm" ]] ; then
 		if ot-kernel_use cpu_flags_arm_neon ; then
-			ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_ARM_CE"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH_ARM_CE" # ghash only
 		fi
 	fi
 	if [[ "${arch}" == "arm64" ]] ; then
@@ -1806,6 +1904,9 @@ _ot-kernel-pkgflags_sha1() {
 			ot-kernel_y_configopt "CONFIG_SPE"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_PPC_SPE"
 		fi
+	fi
+	if [[ "${arch}" == "s390" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_S390"
 	fi
 	if [[ "${arch}" == "sparc" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
@@ -1901,6 +2002,9 @@ _ot-kernel-pkgflags_sha512() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_OCTEON"
 		fi
 	fi
+	if [[ "${arch}" == "s390" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_S390"
+	fi
 	if [[ "${arch}" == "sparc" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_SPARC64"
@@ -1923,21 +2027,48 @@ _ot-kernel-pkgflags_sha512() {
 # Wrapper for the serpent option.  Adds the simd but implied the generic as well.
 _ot-kernel-pkgflags_serpent() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_SERPENT}" == "1" ]] && continue
+	local modes="${@}"
+	[[ -z "${modes}" ]] && modes="ECB CBC"
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx2 ; then
+		if ot-kernel_use cpu_flags_x86_avx2 && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_AVX2_X86_64"
-		elif ot-kernel_use cpu_flags_x86_avx ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_AVX_X86_64"
-		elif ot-kernel_use cpu_flags_x86_sse2 ; then
+		elif ot-kernel_use cpu_flags_x86_avx && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_AVX_X86_64"
+		elif ot-kernel_use cpu_flags_x86_sse2 && [[ "${modes}" =~ ("CBC"|"ECB"|"CTR") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_SSE2_X86_64"
 		fi
 	fi
 	if [[ "${arch}" == "x86" ]] ; then
-		if ot-kernel_use cpu_flags_x86_sse2 ; then
+		if ot-kernel_use cpu_flags_x86_sse2 && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT_SSE2_586"
 		fi
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT"
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_sm4
+# @DESCRIPTION:
+# Wrapper for the sm4 option.  Adds the simd but implied the generic as well.
+_ot-kernel-pkgflags_sm4() {
+	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_SM4}" == "1" ]] && continue
+	local modes="${@}"
+	[[ -z "${modes}" ]] && modes="ECB CBC"
+	if [[ "${arch}" == "x86_64" ]] ; then
+		if ot-kernel_use cpu_flags_x86_avx2 && [[ "${modes}" =~ ("CBC"|"CFB"|"CTR"|"ECB") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX2_X86_64"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
+		elif ot-kernel_use cpu_flags_x86_avx && [[ "${modes}" =~ ("CBC"|"CFB"|"CTR"|"ECB") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
+		fi
+	fi
+	if [[ "${arch}" == "arm64" ]] ; then
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_ARM64_CE"
+		fi
+	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO_SM4"
 }
 
 # @FUNCTION: _ot-kernel-pkgflags_twofish
@@ -1945,13 +2076,19 @@ _ot-kernel-pkgflags_serpent() {
 # Wrapper for the twofish option.  Adds the simd but implied the generic as well.
 _ot-kernel-pkgflags_twofish() {
 	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_TWOFISH}" == "1" ]] && continue
+	local modes="${@}"
+	[[ -z "${modes}" ]] && modes="ECB CBC"
 	if [[ "${arch}" == "x86" ]] ; then
-		ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_586"
+		if [[ "${modes}" =~ ("CTR") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_586"
+		fi
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx ; then
+		if ot-kernel_use cpu_flags_x86_avx && [[ "${modes}" =~ ("CBC"|"CTR"|"ECB"|"XTS") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_AVX_X86_64"
-		else
+			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_X86_64_3WAY"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_X86_64"
+		elif [[ "${modes}" =~ ("CBC"|"CTR"|"ECB") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_X86_64_3WAY"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_TWOFISH_X86_64"
 		fi
@@ -2024,15 +2161,71 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
 		ot-kernel_y_configopt "CONFIG_DM_CRYPT"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
-		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"	# From ebuild
-		ot-kernel_y_configopt "CONFIG_CRYPTO_ESSIV"	# For compatibility, do not use for newer deployments
-		ot-kernel_y_configopt "CONFIG_CRYPTO_XTS"
-		_ot-kernel-pkgflags_sha256
-		_ot-kernel-pkgflags_aes CBC XTS
-		# Auto detection (cpuinfo) is not performing because of cross compiling.
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_SKCIPHER"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_INITRD"
+		# Defaults are in configure.ac of cryptsetup
+		local cryptsetup_ciphers=""
+		if [[ -z "${cryptsetup_ciphers}" ]] ; then
+			cryptsetup_ciphers="aes"
+			# aes is default for plain
+			# aes is default for luks1
+			# aes is default for adiantum
+		else
+			cryptsetup_ciphers="${CRYPTSETUP_CIPHERS,,}"
+		fi
+		local cryptsetup_hash=""
+		if [[ -z "${cryptsetup_hash}" ]] ; then
+			cryptsetup_hash="rmd160 sha256"
+			# rmd160 is default for plain, but requires sha256 for essiv defaults
+			# sha256 is default for luks1
+		else
+			cryptsetup_hash="${CRYPTSETUP_HASH,,}"
+		fi
+		local cryptsetup_ivs=""
+		if [[ -z "${cryptsetup_ivs}" ]] ; then
+			cryptsetup_ivs="essiv plain64"
+			# essiv:sha256 is default for plain
+			# plain64 is default for luks2
+		else
+			cryptsetup_ivs="${CRYPTSETUP_IVS,,}"
+		fi
+		local cryptsetup_modes=""
+		if [[ -z "${cryptsetup_modes}" ]] ; then
+			cryptsetup_modes="adiantum cbc xts"
+			# cbc is default for plain
+			# xts is default for luks
+			# adiantum is for mobile fits all
+		else
+			cryptsetup_modes="${CRYPTSETUP_MODES,,}"
+		fi
+
+		[[ "${cryptsetup_ciphers}" =~ "aes" ]] && _ot-kernel-pkgflags_aes ${cryptsetup_modes}
+		[[ "${cryptsetup_ciphers}" =~ "anubis" ]] && _ot-kernel-pkgflags_anubis ${cryptsetup_modes}
+		[[ "${cryptsetup_ciphers}" =~ "camellia" ]] && _ot-kernel-pkgflags_camellia ${cryptsetup_modes}
+		[[ "${cryptsetup_ciphers}" =~ "cast6" ]] && _ot-kernel-pkgflags_cast6 ${cryptsetup_modes}
+		[[ "${cryptsetup_ciphers}" =~ "serpent" ]] && _ot-kernel-pkgflags_serpent ${cryptsetup_modes}
+		[[ "${cryptsetup_ciphers}" =~ "sm4" ]] && _ot-kernel-pkgflags_sm4 ${cryptsetup_modes}
+		[[ "${cryptsetup_ciphers}" =~ "twofish" ]] && _ot-kernel-pkgflags_twofish ${cryptsetup_modes}
+
+		[[ "${cryptsetup_hash}" =~ "blake2b" ]] && _ot-kernel-pkgflags_blake2b
+		[[ "${cryptsetup_hash}" =~ "blake2s" ]] && _ot-kernel-pkgflags_blake2s
+		[[ "${cryptsetup_hash}" =~ "rmd160" ]] && ot-kernel_y_configopt "CRYPTO_RMD160"
+		[[ "${cryptsetup_hash}" =~ "sha256" ]] && _ot-kernel-pkgflags_sha256
+		[[ "${cryptsetup_hash}" =~ "sha512" ]] && _ot-kernel-pkgflags_sha512
+		[[ "${cryptsetup_hash}" =~ "sha3" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3"
+		[[ "${cryptsetup_hash}" =~ "sm3" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_SM3"
+		[[ "${cryptsetup_hash}" =~ "wp512" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_WP512"
+
+		[[ "${cryptsetup_iv}" =~ "essiv" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_ESSIV"	# For compatibility, do not use for newer deployments
+
+		[[ "${cryptsetup_modes}" =~ "cbc" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"	# From ebuild
+		[[ "${cryptsetup_modes}" =~ "cfb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CFB"
+		[[ "${cryptsetup_modes}" =~ "ctr" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
+		[[ "${cryptsetup_modes}" =~ "cts" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CTS"
+		[[ "${cryptsetup_modes}" =~ "ofb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_OFB"
+		[[ "${cryptsetup_modes}" =~ "xts" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_XTS"
+
 		CRYPTSETUP_TCRYPT="${CRYPTSETUP_TCRYPT:-1}"
 		if [[ "${CRYPTSETUP_TCRYPT}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_HASH"
@@ -2040,13 +2233,21 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 			_ot-kernel-pkgflags_sha512
 			ot-kernel_y_configopt "CONFIG_CRYPTO_WP512"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_LRW"	# Block mode
-			_ot-kernel-pkgflags_serpent
-			_ot-kernel-pkgflags_twofish
+			_ot-kernel-pkgflags_serpent ${cryptsetup_modes}
+			_ot-kernel-pkgflags_twofish ${cryptsetup_modes}
 		fi
-		CRYPTSETUP_ADIANTUM="${CRYPTSETUP_ADIANTUM:-1}"
-		if [[ "${CRYPTSETUP_ADIANTUM}" == "1" ]] ; then
-			_ot-kernel-pkgflags_chacha20
-			_ot-kernel-pkgflags_nhpoly1305
+		if [[ "${cryptsetup_modes}" =~ "adiantum" ]] ; then
+			_ot-kernel-pkgflags_chacha20 # Uses actually XChaCha12 for stream cipher
+			_ot-kernel-pkgflags_nhpoly1305 # A hash function from this module
+			# AES already added above.
+			# AES is as the block cipher is used upstream, but any 16 byte block size with 256 bit key
+			# Possibly compatible blockciphers:
+			#   aes (belgian)
+			#   anubis (belgian - brazilian)
+			#   cast6 (canadian)
+			#   serpent (canadian - israeli - danish)
+			#   sm4 (chinese)
+			#   twofish (american)
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MANAGER"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_ADIANTUM"
 		fi
@@ -3316,8 +3517,8 @@ ot-kernel-pkgflags_iwd() { # DONE
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CTR"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_DH"
-		_ot-kernel-pkgflags_des
-		_ot-kernel-pkgflags_des3_ede
+		_ot-kernel-pkgflags_des CBC CTR ECB
+		_ot-kernel-pkgflags_des3_ede CBC CTR ECB
 		ot-kernel_y_configopt "CONFIG_CRYPTO_ECB"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_MD4"

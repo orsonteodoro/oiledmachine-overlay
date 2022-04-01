@@ -352,6 +352,8 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 
     An example env file located in /etc/portage/ot-sources/5.16/ot/x86_64/env:
 
+CRYPTSETUP_CIPHERS="aes anubis camellia cast6 essiv twofish serpent"
+CRYPTSETUP_MODES="adiantum cbc ctr ofb xts"
 OT_KERNEL_ARCH="x86_64"
 OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
@@ -855,7 +857,10 @@ unset OT_KERNEL_PRIVATE_KEY
     environment variables are only valid if the package is installed.
 
     ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.  Valid values 0 (default), 1.
-    CRYPTSETUP_ADIANTUM - Add the adiantum mode of operation.  Valid values 0, 1 (default).
+    CRYPTSETUP_CIPHERS - Space separated list block ciphers.  Valid values:  aes, anubis, camellia, cast6, serpent, sm4, twofish.  If unset, it adds aes.
+    CRYPTSETUP_IVS - Space separated list for IV generation.  Valid values:  essiv, plain64.  If unset, it adds essiv, plain64.
+    CRYPTSETUP_MODES - Space separated list for cipher modes of operation.  Valid values:  adiantum, cbc, cfb, ctr, cts, ofb, xts.  If unset, it adds adiantum, cbc, xts.
+    CRYPTSETUP_HASH - Space separated list for password pseudorandomness.  Valid values:  blake2b, blake2s, rmd160, sha256, sha512, sha3, sm3, wp512.  If unset, it adds rmd160, sha256.
     CRYPTSETUP_TCRYPT - Add support for tcrypt.  Valid values 0, 1 (default).
     HPLIP_PARPORT - Add support for the parallel port.  Valid values 0 (default), 1.
     HPLIP_USB - Add support for USB.  Valid values 0, 1 (default).

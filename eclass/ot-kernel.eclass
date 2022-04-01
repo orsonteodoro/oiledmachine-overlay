@@ -1981,7 +1981,8 @@ ot-kernel_clear_env() {
 	# Unset ot-kernel-pkgflags.
 	# These fields toggle the building of additional sets of kernel configs.
 	unset ALSA_PC_SPEAKER
-	unset CRYPTSETUP_ADIANTUM
+	unset CRYPTSETUP_CIPHERS
+	unset CRYPTSETUP_MODES
 	unset CRYPTSETUP_TCRYPT
 	unset HPLIP_PARPORT
 	unset HPLIP_USB
