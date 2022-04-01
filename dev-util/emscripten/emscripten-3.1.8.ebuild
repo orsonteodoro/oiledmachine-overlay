@@ -82,7 +82,7 @@ closure-compiler? (
 #   musl - all-rights-reserved MIT
 #   libcxx, libcxxabi, libunwind - MIT UoI-NCSA
 #
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~x86" # See tests/clang_native.py for supported arches
 SLOT_MAJOR=$(ver_cut 1-2 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 CLOSURE_COMPILER_SLOT="0"
