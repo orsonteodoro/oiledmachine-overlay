@@ -2049,30 +2049,6 @@ _ot-kernel-pkgflags_serpent() {
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT"
 }
 
-# @FUNCTION: _ot-kernel-pkgflags_sm4
-# @DESCRIPTION:
-# Wrapper for the sm4 option.  Adds the simd but implied the generic as well.
-_ot-kernel-pkgflags_sm4() {
-	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_SM4}" == "1" ]] && continue
-	local modes="${@}"
-	[[ -z "${modes}" ]] && modes="ECB CBC"
-	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx2 && [[ "${modes}" =~ ("CBC"|"CFB"|"CTR"|"ECB") ]] ; then
-			ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX2_X86_64"
-			ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
-		elif ot-kernel_use cpu_flags_x86_avx && [[ "${modes}" =~ ("CBC"|"CFB"|"CTR"|"ECB") ]] ; then
-			ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
-		fi
-	fi
-	if [[ "${arch}" == "arm64" ]] ; then
-		if ot-kernel_use cpu_flags_arm_neon ; then
-			ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
-			ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_ARM64_CE"
-		fi
-	fi
-	ot-kernel_y_configopt "CONFIG_CRYPTO_SM4"
-}
-
 # @FUNCTION: _ot-kernel-pkgflags_twofish
 # @DESCRIPTION:
 # Wrapper for the twofish option.  Adds the simd but implied the generic as well.
@@ -2176,13 +2152,13 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		else
 			cryptsetup_ciphers="${CRYPTSETUP_CIPHERS,,}"
 		fi
-		local cryptsetup_hashs=""
-		if [[ -z "${cryptsetup_hashs}" ]] ; then
-			cryptsetup_hashs="rmd160 sha256"
+		local cryptsetup_hashes=""
+		if [[ -z "${cryptsetup_hashes}" ]] ; then
+			cryptsetup_hashes="rmd160 sha256"
 			# rmd160 is default for plain, but requires sha256 for essiv defaults
 			# sha256 is default for luks1
 		else
-			cryptsetup_hashs="${CRYPTSETUP_HASHES,,}"
+			cryptsetup_hashes="${CRYPTSETUP_HASHES,,}"
 		fi
 		local cryptsetup_integrities=""
 		if [[ -z "${cryptsetup_integrities}" ]] ; then
@@ -2213,17 +2189,16 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		[[ "${cryptsetup_ciphers}" =~ "camellia" ]] && _ot-kernel-pkgflags_camellia ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "cast6" ]] && _ot-kernel-pkgflags_cast6 ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "serpent" ]] && _ot-kernel-pkgflags_serpent ${cryptsetup_modes}
-		[[ "${cryptsetup_ciphers}" =~ "sm4" ]] && _ot-kernel-pkgflags_sm4 ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "twofish" ]] && _ot-kernel-pkgflags_twofish ${cryptsetup_modes}
 
-		[[ "${cryptsetup_hash}" =~ "blake2b" ]] && _ot-kernel-pkgflags_blake2b
-		[[ "${cryptsetup_hash}" =~ "blake2s" ]] && _ot-kernel-pkgflags_blake2s
-		[[ "${cryptsetup_hash}" =~ "rmd160" ]] && ot-kernel_y_configopt "CRYPTO_RMD160"
-		[[ "${cryptsetup_hash}" =~ "sha256" ]] && _ot-kernel-pkgflags_sha256
-		[[ "${cryptsetup_hash}" =~ "sha512" ]] && _ot-kernel-pkgflags_sha512
-		[[ "${cryptsetup_hash}" =~ "sha3" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3"
-		[[ "${cryptsetup_hash}" =~ "sm3" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_SM3"
-		[[ "${cryptsetup_hash}" =~ "wp512" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_WP512"
+		[[ "${cryptsetup_hashes}" =~ "blake2b" ]] && _ot-kernel-pkgflags_blake2b
+		[[ "${cryptsetup_hashes}" =~ "blake2s" ]] && _ot-kernel-pkgflags_blake2s
+		[[ "${cryptsetup_hashes}" =~ "rmd160" ]] && ot-kernel_y_configopt "CRYPTO_RMD160"
+		[[ "${cryptsetup_hashes}" =~ "sha256" ]] && _ot-kernel-pkgflags_sha256
+		[[ "${cryptsetup_hashes}" =~ "sha512" ]] && _ot-kernel-pkgflags_sha512
+		[[ "${cryptsetup_hashes}" =~ "sha3" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3"
+		[[ "${cryptsetup_hashes}" =~ "sm3" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_SM3"
+		[[ "${cryptsetup_hashes}" =~ "wp512" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_WP512"
 
 		[[ "${cryptsetup_iv}" =~ "essiv" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_ESSIV"	# For compatibility, do not use for newer deployments
 
