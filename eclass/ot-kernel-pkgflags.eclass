@@ -1981,6 +1981,24 @@ _ot-kernel-pkgflags_sha256() {
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256"
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_sha3
+# @DESCRIPTION:
+# Wrapper for the sha3 option.  Adds the simd but implied the generic as well.
+_ot-kernel-pkgflags_sha3() {
+	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_SHA3}" == "1" ]] && continue
+	if [[ "${arch}" == "arm64" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM64_CRYPTO"
+		if ot-kernel_use cpu_flags_arm_neon ; then
+			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3_ARM64"
+		fi
+	fi
+	if [[ "${arch}" == "s390" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3_256_S390"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3_512_S390"
+	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3"
+}
+
 # @FUNCTION: _ot-kernel-pkgflags_sha512
 # @DESCRIPTION:
 # Wrapper for the sha512 option.  Adds the simd but implied the generic as well.
@@ -2196,7 +2214,7 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		[[ "${cryptsetup_hashes}" =~ "rmd160" ]] && ot-kernel_y_configopt "CRYPTO_RMD160"
 		[[ "${cryptsetup_hashes}" =~ "sha256" ]] && _ot-kernel-pkgflags_sha256
 		[[ "${cryptsetup_hashes}" =~ "sha512" ]] && _ot-kernel-pkgflags_sha512
-		[[ "${cryptsetup_hashes}" =~ "sha3" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_SHA3"
+		[[ "${cryptsetup_hashes}" =~ "sha3" ]] && _ot-kernel-pkgflags_sha3
 		[[ "${cryptsetup_hashes}" =~ "sm3" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_SM3"
 		[[ "${cryptsetup_hashes}" =~ "wp512" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_WP512"
 
