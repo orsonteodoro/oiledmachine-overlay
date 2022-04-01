@@ -10,7 +10,7 @@ SRC_URI=""
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
+KEYWORDS="~amd64 ~arm64 ~x86 ~amd64-linux"
 IUSE=""
 RESTRICT="fetch"
 
