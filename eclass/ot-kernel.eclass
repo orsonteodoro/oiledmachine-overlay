@@ -3394,22 +3394,17 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
-	elif [[ "${work_profile}" =~ ("file-server"|"web-server") ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_100"
+	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server") ]] ; then
+		if [[ "${work_profile}" =~ "media-server" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_300"
+		else
+			ot-kernel_y_configopt "CONFIG_HZ_100"
+		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
-		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
-	elif [[ "${work_profile}" == "multimedia-server" ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_300"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 	elif [[ "${work_profile}" == "streamer-desktop" ]] ; then

@@ -796,7 +796,7 @@ unset OT_KERNEL_PRIVATE_KEY
       mainstream-desktop
       manual
       media-player
-      multimedia-server
+      media-server
       presentation
       remote-tournament
       renderfarm-dedicated
