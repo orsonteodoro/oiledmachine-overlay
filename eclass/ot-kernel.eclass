@@ -1982,6 +1982,8 @@ ot-kernel_clear_env() {
 	# These fields toggle the building of additional sets of kernel configs.
 	unset ALSA_PC_SPEAKER
 	unset CRYPTSETUP_CIPHERS
+	unset CRYPTSETUP_INTEGRITIES
+	unset CRYPTSETUP_HASHES
 	unset CRYPTSETUP_MODES
 	unset CRYPTSETUP_TCRYPT
 	unset HPLIP_PARPORT

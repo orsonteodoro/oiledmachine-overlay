@@ -1584,6 +1584,7 @@ _ot-kernel-pkgflags_aes() {
 # @DESCRIPTION:
 # Wrapper for the anubis option.
 _ot-kernel-pkgflags_anubis() {
+	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_ANUBIS}" == "1" ]] && continue
 	ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_ENABLE_OBSOLETE"
 	ot-kernel_y_configopt "CONFIG_CRYPTO_ANUBIS"
 }
@@ -1647,6 +1648,7 @@ _ot-kernel-pkgflags_camellia() {
 # @DESCRIPTION:
 # Wrapper for the cast6 option.
 _ot-kernel-pkgflags_cast6() {
+	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_CAST6}" == "1" ]] && continue
 	local modes="${@}"
 	[[ -z "${modes}" ]] && modes="ECB CBC"
 	if [[ "${arch}" == "x86_64" ]] ; then
@@ -2174,13 +2176,19 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		else
 			cryptsetup_ciphers="${CRYPTSETUP_CIPHERS,,}"
 		fi
-		local cryptsetup_hash=""
-		if [[ -z "${cryptsetup_hash}" ]] ; then
-			cryptsetup_hash="rmd160 sha256"
+		local cryptsetup_hashs=""
+		if [[ -z "${cryptsetup_hashs}" ]] ; then
+			cryptsetup_hashs="rmd160 sha256"
 			# rmd160 is default for plain, but requires sha256 for essiv defaults
 			# sha256 is default for luks1
 		else
-			cryptsetup_hash="${CRYPTSETUP_HASH,,}"
+			cryptsetup_hashs="${CRYPTSETUP_HASHES,,}"
+		fi
+		local cryptsetup_integrities=""
+		if [[ -z "${cryptsetup_integrities}" ]] ; then
+			cryptsetup_integrities=""
+		else
+			cryptsetup_integrities="${CRYPTSETUP_INTEGRITIES,,}"
 		fi
 		local cryptsetup_ivs=""
 		if [[ -z "${cryptsetup_ivs}" ]] ; then
@@ -2225,6 +2233,23 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		[[ "${cryptsetup_modes}" =~ "cts" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CTS"
 		[[ "${cryptsetup_modes}" =~ "ofb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_OFB"
 		[[ "${cryptsetup_modes}" =~ "xts" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_XTS"
+
+		[[ "${cryptsetup_integrities}" =~ "aead" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_AEAD"
+		[[ "${cryptsetup_integrities}" =~ "poly1305" ]] && _ot-kernel-pkgflags_poly1305
+		[[ "${cryptsetup_integrities}" =~ "hmac-sha256" ]] && _ot-kernel-pkgflags_sha256
+		[[ "${cryptsetup_integrities}" =~ "hmac-sha512" ]] && _ot-kernel-pkgflags_sha512
+		#[[ "${cryptsetup_integrities}" =~ "cmac-aes" ]] && _ot-kernel-pkgflags_aes			# undocumented combo
+
+		[[ "${cryptsetup_integrities}" =~ "hmac" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
+		#[[ "${cryptsetup_integrities}" =~ "cmac" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"	# undocumented combo
+
+		if [[ -n "${cryptsetup_integrity}" ]] ; then
+			ewarn "AEAD cryptsetup support is experimental"
+			# CONFIG_BLK_DEV_DM is Added above
+			ot-kernel_y_configopt "CONFIG_DM_INTEGRITY"
+			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_AEAD"
+		fi
 
 		CRYPTSETUP_TCRYPT="${CRYPTSETUP_TCRYPT:-1}"
 		if [[ "${CRYPTSETUP_TCRYPT}" == "1" ]] ; then
