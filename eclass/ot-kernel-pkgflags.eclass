@@ -2227,14 +2227,14 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		[[ "${cryptsetup_modes}" =~ "ofb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_OFB"
 		[[ "${cryptsetup_modes}" =~ "xts" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_XTS"
 
-		[[ "${cryptsetup_integrities}" =~ "aead" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_AEAD"
-		[[ "${cryptsetup_integrities}" =~ "poly1305" ]] && _ot-kernel-pkgflags_poly1305
-		[[ "${cryptsetup_integrities}" =~ "hmac-sha256" ]] && _ot-kernel-pkgflags_sha256
-		[[ "${cryptsetup_integrities}" =~ "hmac-sha512" ]] && _ot-kernel-pkgflags_sha512
-		#[[ "${cryptsetup_integrities}" =~ "cmac-aes" ]] && _ot-kernel-pkgflags_aes			# undocumented combo
+		#[[ "${cryptsetup_integrities}" =~ "aead" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_AEAD"	# use only with aes-gcm-random
+		[[ "${cryptsetup_integrities}" =~ "poly1305" ]] && _ot-kernel-pkgflags_poly1305			# use only with chacha20
+		[[ "${cryptsetup_integrities}" =~ "hmac-sha256" ]] && _ot-kernel-pkgflags_sha256		# use only with aes-xts-plain64
+		[[ "${cryptsetup_integrities}" =~ "hmac-sha512" ]] && _ot-kernel-pkgflags_sha512		# use only with aes-xts-plain64
+		#[[ "${cryptsetup_integrities}" =~ "cmac-aes" ]] && _ot-kernel-pkgflags_aes			# undocumented combo, missing block cipher for AEAD
 
 		[[ "${cryptsetup_integrities}" =~ "hmac" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
-		#[[ "${cryptsetup_integrities}" =~ "cmac" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"	# undocumented combo
+		#[[ "${cryptsetup_integrities}" =~ "cmac" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"	# undocumented combo, missing block cipher for AEAD
 
 		if [[ -n "${cryptsetup_integrity}" ]] ; then
 			ewarn "AEAD cryptsetup support is experimental"

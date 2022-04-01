@@ -876,13 +876,12 @@ unset OT_KERNEL_PRIVATE_KEY
 
     CRYPTSETUP_INTEGRITIES - Space separated of AEAD ciphers used for
     additional encryption with data integrity.  Only for LUKS2.
-    Valid values:  aead, poly1305, hmac-sha256, hmac-sha512.  Unset by
-    default.  See
-https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/docs/v2.0.0-ReleaseNotes
-    for limited set of settings allowed and weaknesses.  See
+    Valid values:  poly1305, hmac-sha256, hmac-sha512.  Unset by
+    default.  (Restricted pairings: chacha20 with poly1305,
+    aes-xts-plain64 with hmac-sha256 or hmac-sha512.)  For weaknesses, see
+https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/docs/v2.0.0-ReleaseNotes#L261
+    For consequences of compromised integrity or data corruption, see
 https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.html
-    for info and consequences if integrity is compromised or data corruption
-    is encountered.
 
     CRYPTSETUP_IVS - Space separated list for IV generation.
     Valid values:  essiv, random, plain64.  If unset, it adds essiv, plain64.
