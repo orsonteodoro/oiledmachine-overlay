@@ -2215,7 +2215,6 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		[[ "${cryptsetup_hashes}" =~ "sha256" ]] && _ot-kernel-pkgflags_sha256
 		[[ "${cryptsetup_hashes}" =~ "sha512" ]] && _ot-kernel-pkgflags_sha512
 		[[ "${cryptsetup_hashes}" =~ "sha3" ]] && _ot-kernel-pkgflags_sha3
-		[[ "${cryptsetup_hashes}" =~ "sm3" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_SM3"
 		[[ "${cryptsetup_hashes}" =~ "wp512" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_WP512"
 
 		[[ "${cryptsetup_iv}" =~ "essiv" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_ESSIV"	# For compatibility, do not use for newer deployments

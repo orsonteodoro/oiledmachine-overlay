@@ -891,7 +891,7 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     adiantum, cbc, xts.
 
     CRYPTSETUP_HASHES - Space separated list for password pseudorandomness.
-    Valid values:  blake2b, blake2s, rmd160, sha256, sha512, sha3, sm3, wp512.
+    Valid values:  blake2b, blake2s, rmd160, sha256, sha512, sha3, wp512.
     If unset, it adds rmd160, sha256.
 
     CRYPTSETUP_TCRYPT - Add support for tcrypt.
