@@ -3170,6 +3170,14 @@ ot-kernel_set_kconfig_work_profile_init() {
 	ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_x32abi
+# @DESCRIPTION:
+# Adds support for x32abi
+ot-kernel_set_kconfig_x32abi() {
+	[[ -d "/usr/lib/libx32" || "${OT_KERNEL_SUPPORT_X32ABI}" == "1" ]] \
+		&& ot-kernel_y_configopt "CONFIG_X86_X32"
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
 # @DESCRIPTION:
 # Configures the default power policies and latencies for the kernel.
@@ -3673,6 +3681,7 @@ ot-kernel_src_configure() {
 		ot-kernel_set_kconfig_oflag
 		ot-kernel_set_kconfig_lto # llvm_slot
 		ot-kernel_set_kconfig_pgo # llvm_slot
+		ot-kernel_set_kconfig_x32abi
 
 		ot-kernel_set_kconfig_init_systems
 		ot-kernel_set_kconfig_boot_args

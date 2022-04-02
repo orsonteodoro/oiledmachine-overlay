@@ -14,7 +14,7 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0"
 IUSE+=" cext doc fastimport git gpg sftp test workspace"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-# See also:  https://github.com/breezy-team/breezy/blob/upstream-3.2.1/setup.py#L60
+# See also:  https://github.com/breezy-team/breezy/blob/upstream-3.2.2/setup.py#L60
 DEPEND=" ${PYTHON_DEPS}
 	$(python_gen_cond_dep 'dev-python/configobj[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/patiencediff[${PYTHON_USEDEP}]')
