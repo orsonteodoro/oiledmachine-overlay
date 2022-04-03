@@ -3220,11 +3220,50 @@ ot-kernel_set_kconfig_set_default_timer_hz() {
 
 # @FUNCTION: ot-kernel_set_kconfig_set_timer_hz
 # @DESCRIPTION:
-# Wrapper
+# Wrapper for setting the HZ
 ot-kernel_set_kconfig_set_timer_hz() {
 	local v="${1}"
 	ot-kernel_set_configopt "CONFIG_HZ_${v}"
 	ot-kernel_y_configopt "CONFIG_HZ" "${v}"
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_timer_hz
+# @DESCRIPTION:
+# Fits the HZ based on FPS
+ot-kernel_set_kconfig_set_video_timer_hz() {
+	if [[ "${OT_KERNEL_FPS}" == "30" ]] ; then
+		echo "300"
+	elif [[ "${OT_KERNEL_FPS}" == "25" ]] ; then
+		echo "250"
+	else
+		if [[ "${arch}" == "mips" ]] ; then
+			echo "250"
+		else
+			echo "300"
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_highest_timer_hz
+# @DESCRIPTION:
+# Fits the HZ to maximum
+ot-kernel_set_kconfig_set_highest_timer_hz() {
+	if [[ "${arch}" == "mips" ]] ; then
+		echo "1024"
+	else
+		echo "1000"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_lowest_timer_hz
+# @DESCRIPTION:
+# Fits the HZ to maximum
+ot-kernel_set_kconfig_set_lowest_timer_hz() {
+	if [[ "${arch}" == "mips" ]] ; then
+		echo "24"
+	else
+		echo "100"
+	fi
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_work_profile_init
@@ -3333,6 +3372,22 @@ ot-kernel_get_lib_bitness() {
 		echo "64" # elf64-.*{alpha,hppa,ia64,mips,powerpc,riscv,sparc}.*
 	elif objdump -f "${path}" | grep -q -e "file format elf32.*" ; then
 		echo "32" # elf32-.*{m68k,hppa,mips,powerpc,riscv,sparc}.*
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_mid_power_governor
+# @DESCRIPTION:
+# Chooses the best middle governor.  Some middle of the road
+# governors underperform depending on the CPU.
+ot-kernel_set_kconfig_mid_power_governor() {
+	local pgov="${OT_KERNEL_MID_POWER_GOVERNOR,,}"
+	if [[ "${OT_KERNEL_MID_POWER_GOVERNOR}" == "schedutil" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+
+	else
+		ot-kernel_y_configopt ""
+		ot-kernel_y_configopt ""
 	fi
 }
 
@@ -3533,9 +3588,7 @@ ot-kernel_set_kconfig_work_profile() {
 	elif [[ "${work_profile}" =~ ("manual"|"custom") ]] ; then
 		:
 	elif [[ "${work_profile}" =~ ("smartphone"|"tablet") ]] ; then
-		if [[ "${arch}" =~ ("arm"|"arm64"|"x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "300"
-		fi
+		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -3550,9 +3603,7 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
 		fi
 	elif [[ "${work_profile}" =~ ("video-smartphone"|"video-tablet") ]] ; then
-		if [[ "${arch}" =~ ("arm"|"arm64"|"x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "300"
-		fi
+		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -3567,9 +3618,7 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
 		fi
 	elif [[ "${work_profile}" =~ ("laptop"|"solar-desktop") ]] ; then
-		if [[ "${arch}" =~ ("arm"|"arm64"|"x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "300"
-		fi
+		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_HIBERNATION"
@@ -3608,9 +3657,7 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
 		fi
 	elif [[ "${work_profile}" =~ ("gpu-gaming-laptop"|"casual-gaming-laptop"|"solar-gaming") ]] ; then
-		if [[ "${arch}" =~ ("arm"|"arm64"|"x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "1000"
-		fi
+		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
@@ -3641,9 +3688,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" =~ ("casual-gaming") ]] ; then
 		# Assumes on desktop
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "1000"
-		fi
+		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3656,9 +3701,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" =~ ("arcade"|"pro-gaming"|"tournament"|"presentation") ]] ; then
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "1000"
-		fi
+		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
@@ -3676,9 +3719,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "300"
-		fi
+		ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3695,9 +3736,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" == "workstation" ]] ; then
-		if [[ "${arch}" =~ ("parisc"|"x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "300"
-		fi
+		ot-kernel_set_kconfig_set_video_timer_hz # For video production
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3711,9 +3750,7 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 	elif [[ "${work_profile}" == "gamedev" ]] ; then
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "300"
-		fi
+		ot-kernel_set_kconfig_set_highest_timer_hz # For input
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3729,9 +3766,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" == "renderfarm-dedicated" ]] ; then
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "300"
-		fi
+		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3745,9 +3780,7 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 	elif [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "300"
-		fi
+		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3761,12 +3794,10 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server") ]] ; then
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			if [[ "${work_profile}" =~ "media-server" ]] ; then
-				ot-kernel_set_kconfig_set_timer_hz "300"
-			else
-				ot-kernel_set_kconfig_set_timer_hz "100"
-			fi
+		if [[ "${work_profile}" =~ "media-server" ]] ; then
+			ot-kernel_set_kconfig_set_video_timer_hz
+		else
+			ot-kernel_set_kconfig_set_lowest_timer_hz
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
@@ -3776,9 +3807,7 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 	elif [[ "${work_profile}" == "streamer-desktop" ]] ; then
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "300"
-		fi
+		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
@@ -3793,9 +3822,9 @@ ot-kernel_set_kconfig_work_profile() {
 	elif [[ "${work_profile}" =~ ("jukebox"|"dvr"|"mainsteam-desktop") ]] ; then
 		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
 			[[ "${work_profile}" =~ ("dvr"|"mainstream-desktop") ]] \
-				&& ot-kernel_set_kconfig_set_timer_hz "300"
+				&& ot-kernel_set_kconfig_set_video_timer_hz # Minimize dropped frames
 			[[ "${work_profile}" == "jukebox" ]] \
-				&& ot-kernel_set_kconfig_set_timer_hz "250"
+				&& ot-kernel_set_kconfig_set_highest_timer_hz # Reduce studder
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
@@ -3807,9 +3836,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_PM"
 	elif [[ "${work_profile}" == "cryptocurrency-miner-dedicated" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "100"
-		fi
+		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize OS overhead and energy cost, maximize app time
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE"
@@ -3830,9 +3857,7 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 	elif [[ "${work_profile}" == "cryptocurrency-miner-workstation" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "250"
-		fi
+		ot-kernel_set_kconfig_set_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
@@ -3852,13 +3877,15 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_RCU_EXPERT"
 			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
 		fi
-	elif [[ "${work_profile}" == "distributed-computing-dedicated" ]] ; then
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "100"
-		fi
+	elif [[ "${work_profile}" =~ ("distributed-computing-dedicated"|"hpc") ]] ; then
+		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel overhead, maximize computation time
+		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
@@ -3867,32 +3894,11 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 	elif [[ "${work_profile}" == "distributed-computing-workstation" ]] ; then
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			ot-kernel_set_kconfig_set_timer_hz "250"
-		fi
+		ot-kernel_set_kconfig_set_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
-		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
-	elif [[ "${work_profile}" == "hpc" ]] ; then
-		if [[ "${arch}" =~ ("alpha"|"mips"|"hppa"|"ia64"|"powerpc"|"sparc"|"x86_64") ]] ; then
-			:
-			#ot-kernel_set_kconfig_set_timer_hz "100"
-		fi
-		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
