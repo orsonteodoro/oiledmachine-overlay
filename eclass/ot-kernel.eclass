@@ -3122,12 +3122,12 @@ ot-kernel_set_kconfig_usb_autosuspend() {
 # Initializes the hz kernel config
 ot-kernel_set_kconfig_reset_timer_hz_alpha() {
 	local HZ=(
-		HZ_100
-		HZ_200
-		HZ_250
-		HZ_300
-		HZ_500
-		HZ_1000
+		HZ_32
+		HZ_64
+		HZ_128
+		HZ_256
+		HZ_1024
+		HZ_1200
 	)
 	local hz
 	for hz in ${HZ[@]} ; do
