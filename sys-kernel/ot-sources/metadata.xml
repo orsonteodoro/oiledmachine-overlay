@@ -579,8 +579,10 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
     OT_KERNEL_FPS -- Set to the frames per second based on recording standard.
-    It can be 30 (corresponding to 300 HZ), 25 (corresponding to 250 HZ).  This
-    matters because some archs cannot use 300 HZ.  See
+    It can be 30 or 60 (corresponding to 300 HZ), 25 or 50 (corresponding to
+    250 HZ).  This matters because some archs cannot use 300 HZ.  This may help
+    reduce the number of frames dropped in older processors if set properly.
+    See
     https://en.wikipedia.org/wiki/List_of_broadcast_video_formats
     https://en.wikipedia.org/wiki/PAL#/media/File:PAL-NTSC-SECAM.svg
 

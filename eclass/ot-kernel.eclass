@@ -3231,9 +3231,9 @@ ot-kernel_set_kconfig_set_timer_hz() {
 # @DESCRIPTION:
 # Fits the HZ based on FPS
 ot-kernel_set_kconfig_set_video_timer_hz() {
-	if [[ "${OT_KERNEL_FPS}" == "30" ]] ; then
+	if [[ "${OT_KERNEL_FPS}" =~ ("30"|"60") ]] ; then
 		echo "300"
-	elif [[ "${OT_KERNEL_FPS}" == "25" ]] ; then
+	elif [[ "${OT_KERNEL_FPS}" =~ ("25"|"50") ]] ; then
 		echo "250"
 	else
 		if [[ "${arch}" == "mips" ]] ; then
