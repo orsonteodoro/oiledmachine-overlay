@@ -1974,6 +1974,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_USE
 	unset OT_KERNEL_VERBOSITY
 	unset OT_KERNEL_WORK_PROFILE
+	unset OT_KERNEL_ABIS
 	unset OT_KERNEL_ZSWAP_ALLOCATOR
 	unset OT_KERNEL_ZSWAP_COMPRESSOR
 	unset PERMIT_NETFILTER_SYMBOL_REMOVAL
@@ -2138,7 +2139,7 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 		ewarn "XHCI USB3 is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_USB_XHCI_HCD"
 		ewarn "USB Type-C is going to be disabled."
-		ot-kernel_unset_configopt "CONFIG_CONFIG_TYPEC"
+		ot-kernel_unset_configopt "CONFIG_TYPEC"
 	fi
 }
 
@@ -2475,6 +2476,10 @@ ot-kernel_set_kconfig_hardening_level() {
 		ot-kernel_unset_configopt "CONFIG_RANDOMIZE_MEMORY"
 		ot-kernel_unset_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
 		ot-kernel_unset_configopt "CONFIG_RETPOLINE"
+		ot-kernel_unset_configopt "CONFIG_EXPOLINE"
+		ot-kernel_y_configopt "CONFIG_EXPOLINE_OFF"
+		ot-kernel_unset_configopt "CONFIG_EXPOLINE_AUTO"
+		ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
 		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
 		ot-kernel_unset_configopt "CONFIG_SLAB_FREELIST_HARDENED"
 		ot-kernel_unset_configopt "CONFIG_SLAB_FREELIST_RANDOM"
@@ -2506,7 +2511,14 @@ ot-kernel_set_kconfig_hardening_level() {
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
 		ot-kernel_y_configopt "CONFIG_RELOCATABLE"
-		ot-kernel_y_configopt "CONFIG_RETPOLINE"
+		if [[ "${arch}" == "s390" ]] ; then
+			ot-kernel_y_configopt "CONFIG_EXPOLINE"
+			ot-kernel_unset_configopt "CONFIG_EXPOLINE_OFF"
+			ot-kernel_y_configopt "CONFIG_EXPOLINE_AUTO"
+			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
+		elif [[ "${arch}" == "x86" ]] ; then
+			ot-kernel_y_configopt "CONFIG_RETPOLINE"
+		fi
 		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
 		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_HARDENED"
 		ot-kernel_unset_configopt "CONFIG_SLAB_MERGE_DEFAULT"
@@ -2538,7 +2550,14 @@ ot-kernel_set_kconfig_hardening_level() {
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
 		ot-kernel_y_configopt "CONFIG_RELOCATABLE"
-		ot-kernel_y_configopt "CONFIG_RETPOLINE"
+		if [[ "${arch}" == "s390" ]] ; then
+			ot-kernel_y_configopt "CONFIG_EXPOLINE"
+			ot-kernel_unset_configopt "CONFIG_EXPOLINE_OFF"
+			ot-kernel_y_configopt "CONFIG_EXPOLINE_AUTO"
+			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
+		elif [[ "${arch}" == "x86" ]] ; then
+			ot-kernel_y_configopt "CONFIG_RETPOLINE"
+		fi
 		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
 		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_HARDENED"
 		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_RANDOM"
@@ -3098,10 +3117,66 @@ ot-kernel_set_kconfig_usb_autosuspend() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_work_profile_init
+# @FUNCTION: ot-kernel_set_kconfig_reset_timer_hz_alpha
 # @DESCRIPTION:
-# Initializes the work kernel config
-ot-kernel_set_kconfig_work_profile_init() {
+# Initializes the hz kernel config
+ot-kernel_set_kconfig_reset_timer_hz_alpha() {
+	local HZ=(
+		HZ_100
+		HZ_200
+		HZ_250
+		HZ_300
+		HZ_500
+		HZ_1000
+	)
+	local hz
+	for hz in ${HZ[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_${hz}"
+	done
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_reset_timer_hz_arm
+# @DESCRIPTION:
+# Initializes the hz kernel config
+ot-kernel_set_kconfig_reset_timer_hz_arm() {
+	local HZ=(
+		HZ_100
+		HZ_200
+		HZ_250
+		HZ_300
+		HZ_350
+		HZ_1000
+	)
+	local hz
+	for hz in ${HZ[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_${hz}"
+	done
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_reset_timer_hz_mips
+# @DESCRIPTION:
+# Initializes the hz kernel config
+ot-kernel_set_kconfig_reset_timer_hz_mips() {
+	local HZ=(
+		HZ_24
+		HZ_48
+		HZ_100
+		HZ_128
+		HZ_250
+		HZ_256
+		HZ_1000
+		HZ_1024
+	)
+	local hz
+	for hz in ${HZ[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_${hz}"
+	done
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_reset_timer_hz
+# @DESCRIPTION:
+# Initializes the hz kernel config
+ot-kernel_set_kconfig_reset_timer_hz() {
 	local HZ=(
 		HZ_100
 		HZ_250
@@ -3112,6 +3187,59 @@ ot-kernel_set_kconfig_work_profile_init() {
 	for hz in ${HZ[@]} ; do
 		ot-kernel_unset_configopt "CONFIG_${hz}"
 	done
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_default_timer_hz
+# @DESCRIPTION:
+# Initializes the hz to the default
+ot-kernel_set_kconfig_set_default_timer_hz() {
+	if [[ "${arch}" == "alpha" ]] ; then
+		if grep -q -E -e "^CONFIG_ALPHA_QEMU=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_HZ_128"
+			ot-kernel_set_configopt "CONFIG_HZ" "128"
+		elif grep -q -E -e "^CONFIG_HZ_1200=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_HZ_1200"
+			ot-kernel_set_configopt "CONFIG_HZ" "1200"
+		else
+			ot-kernel_y_configopt "CONFIG_HZ_1024"
+			ot-kernel_set_configopt "CONFIG_HZ" "1024"
+		fi
+	elif [[ "${arch}" == "arm" ]] ; then
+		if grep -q -E -e "^CONFIG_SOC_AT91RM9200=y" "${path_config}" ; then
+			ot-kernel_set_configopt "CONFIG_HZ_FIXED" "128"
+			ot-kernel_y_configopt "CONFIG_HZ" "128"
+		else
+			ot-kernel_set_configopt "CONFIG_HZ_250"
+			ot-kernel_y_configopt "CONFIG_HZ" "100"
+		fi
+	else
+		ot-kernel_set_configopt "CONFIG_HZ_250"
+		ot-kernel_y_configopt "CONFIG_HZ" "250"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_timer_hz
+# @DESCRIPTION:
+# Wrapper
+ot-kernel_set_kconfig_set_timer_hz() {
+	local v="${1}"
+	ot-kernel_set_configopt "CONFIG_HZ_${v}"
+	ot-kernel_y_configopt "CONFIG_HZ" "${v}"
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_work_profile_init
+# @DESCRIPTION:
+# Initializes the work kernel config
+ot-kernel_set_kconfig_work_profile_init() {
+	if [[ "${arch}" == "alpha" ]] ; then
+		ot-kernel_set_kconfig_reset_timer_hz_alpha
+	elif [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_set_kconfig_reset_timer_hz_arm
+	elif [[ "${arch}" == "mips" ]] ; then
+		ot-kernel_set_kconfig_reset_timer_hz_mips
+	elif [[ "${arch}" =~ ("arm64"|"csky"|"hexagon"|"ia64"|"microblaze"|"nds32"|"nios2"|"openrisc"|"parisc"|"powerpc"|"riscv"|"s390"|"sh"|"sparc"|"x86") ]] ; then
+		ot-kernel_set_kconfig_reset_timer_hz
+	fi
 
 	local TIMERS=(
 		HZ_PERIODIC
@@ -3170,12 +3298,219 @@ ot-kernel_set_kconfig_work_profile_init() {
 	ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_x32abi
+# @FUNCTION: ot-kernel_set_kconfig_endianess
 # @DESCRIPTION:
-# Adds support for x32abi
-ot-kernel_set_kconfig_x32abi() {
-	[[ -d "/usr/lib/libx32" || "${OT_KERNEL_SUPPORT_X32ABI}" == "1" ]] \
-		&& ot-kernel_y_configopt "CONFIG_X86_X32"
+# Sets the endianess (aka byte order) based on CHOST
+ot-kernel_set_kconfig_endianess() {
+	local endianess=$(tc-endian)
+	if [[ "${endianess}" == "big" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CPU_BIG_ENDIAN"
+		ot-kernel_n_configopt "CONFIG_CPU_LITTLE_ENDIAN"
+	elif [[ "${endianess}" == "little" ]] ; then
+		ot-kernel_n_configopt "CONFIG_CPU_BIG_ENDIAN"
+		ot-kernel_y_configopt "CONFIG_CPU_LITTLE_ENDIAN"
+	fi
+	einfo "Using ${endianess} endian"
+}
+
+# @FUNCTION: ot-kernel_get_lib_bitness
+# @DESCRIPTION:
+# Attempt to get the bitness of the parent arch.  If x32abi, it returns 64
+# so that it can enable both 64bit and x32 compatibility.  Similar
+# expectations with those that have the compat flag.
+ot-kernel_get_lib_bitness() {
+	local path="${1}"
+	# See binutils/testsuite/binutils-all/objdump.exp in binutils package
+	if objdump -f "${path}" | grep -q -e "file format .*x86-64" ; then
+		echo "64"
+	elif objdump -f "${path}" | grep -q -e "file format .*i386" ; then
+		echo "32"
+	elif objdump -f "${path}" | grep -q -e "file format .*aarch64" ; then
+		echo "64"
+	elif objdump -f "${path}" | grep -q -e "file format .*arm" ; then
+		echo "32"
+	elif objdump -f "${path}" | grep -q -e "file format elf64.*" ; then
+		echo "64" # elf64-.*{alpha,hppa,ia64,mips,powerpc,riscv,sparc}.*
+	elif objdump -f "${path}" | grep -q -e "file format elf32.*" ; then
+		echo "32" # elf32-.*{m68k,hppa,mips,powerpc,riscv,sparc}.*
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_abis
+# @DESCRIPTION:
+# Adds support for ABIs
+ot-kernel_set_kconfig_abis() {
+	[[ "${OT_KERNEL_ABIS,,}" =~ "manual" ]] && return
+	[[ -z "${OT_KERNEL_ABIS}" ]] && OT_KERNEL_ABIS="auto"
+	local lib_bitness=""
+	# Assumes stage3 tarball installed
+	[[ -e "/usr/lib/libbz2.so" ]] && lib_bitness=$(ot-kernel_get_lib_bitness $(readlink -f /usr/lib/libbz2.so))
+	if [[ "${arch}" =~ "alpha" ]] ; then
+		einfo "Added support for alpha"
+		ot-kernel_n_configopt "CONFIG_64BIT"
+	fi
+	if [[ "${arch}" =~ "arm" ]] ; then
+		if [[ "${OT_KERNEL_ABIS,,}" == "arm64" \
+			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "64" ) \
+			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64" ) ]] ; then
+			einfo "Added support for arm64"
+			ot-kernel_y_configopt "CONFIG_64BIT"
+			if [[ "${OT_KERNEL_ABIS,,}" =~ ("arm "|"arm"$) ]] ; then
+				einfo "Added support for arm"
+				ot-kernel_y_configopt "CONFIG_COMPAT"
+			fi
+		else
+			einfo "Added support for arm"
+			ot-kernel_n_configopt "CONFIG_64BIT"
+		fi
+		ot-kernel_set_kconfig_endianess
+	fi
+	if [[ "${arch}" =~ "ia64" ]] ; then
+		einfo "Added support for ia64"
+		ot-kernel_n_configopt "CONFIG_64BIT"
+	fi
+	if [[ "${arch}" =~ "m68k" ]] ; then
+		einfo "Added support for m68k"
+		ot-kernel_unset_configopt "CONFIG_64BIT"
+		ot-kernel_n_configopt "CONFIG_CPU_BIG_ENDIAN"
+	fi
+	if [[ "${arch}" == "mips" ]] ; then
+		if [[ "${OT_KERNEL_ABIS,,}" =~ ("n32"|"n64")  \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "64" ) \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64" ) ]] ; then
+			ot-kernel_n_configopt "CONFIG_32BIT"
+			ot-kernel_y_configopt "CONFIG_64BIT"
+			if [[ "${OT_KERNEL_ABIS,,}" =~ "o32" \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" ) ]] ; then
+				einfo "Added support for o32"
+				ot-kernel_n_configopt "CONFIG_MIPS32_O32"
+			fi
+			if [[ "${OT_KERNEL_ABIS,,}" =~ "n32" \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib32" ) ]] ; then
+				einfo "Added support for n32"
+				ot-kernel_n_configopt "CONFIG_MIPS32_N32"
+			fi
+			if [[ "${OT_KERNEL_ABIS,,}" =~ "n64" \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64" ) ]] ; then
+				einfo "Added support for n64"
+			fi
+		else
+			ot-kernel_y_configopt "CONFIG_32BIT"
+			ot-kernel_n_configopt "CONFIG_64BIT"
+		fi
+		ot-kernel_set_kconfig_endianess
+	fi
+	if [[ "${arch}" =~ "parisc" ]] ; then
+		einfo "Added support for hppa"
+		ot-kernel_n_configopt "CONFIG_64BIT"
+
+	fi
+	if [[ "${arch}" == "powerpc" ]] ; then
+		if [[ "${OT_KERNEL_ABIS,,}" =~ "ppc64" \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "64" ) \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64" ) ]] ; then
+			einfo "Added support for ppc64"
+			ot-kernel_y_configopt "CONFIG_64BIT"
+			if [[ "${OT_KERNEL_ABIS,,}" =~ "ppc" \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "32" ) \
+				]] ; then
+				einfo "Added support for ppc"
+				ot-kernel_y_configopt "CONFIG_COMPAT"
+			fi
+		else
+			ot-kernel_n_configopt "CONFIG_64BIT"
+		fi
+		ot-kernel_set_kconfig_endianess
+	fi
+	if [[ "${arch}" == "riscv" ]] ; then
+		if [[ "${OT_KERNEL_ABIS,,}" =~ "lp64d" \
+				|| "${OT_KERNEL_ABIS,,}" =~ "lp64" \
+                                || ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64/lp64d" ) \
+                                || ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64/lp64" ) \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64" ) \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "64" ) \
+			]] ; then
+			ot-kernel_y_configopt "CONFIG_ARCH_RV64I"
+			ot-kernel_n_configopt "CONFIG_ARCH_RV32I"
+			if [[ "${OT_KERNEL_ABIS,,}" =~ "lp64d" \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64/lp64d" ) ]] ; then
+				einfo "Added support for lp64d"
+				ot-kernel_y_configopt "CONFIG_FPU"
+			fi
+			if [[ "${OT_KERNEL_ABIS,,}" =~ "lp64" \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64/lp64" ) ]] ; then
+				einfo "Added support for lp64"
+				:
+			fi
+			if [[ "${OT_KERNEL_ABIS,,}" =~ "ilp32d" \
+					|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib32/ilp32d" ) ]] ; then
+				einfo "Added support for ilp32d"
+				ot-kernel_y_configopt "CONFIG_FPU"
+			fi
+			if [[ "${OT_KERNEL_ABIS,,}" =~ "ilp32" \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib32/ilp32" ) ]] ; then
+				einfo "Added support for ilp32"
+				:
+			fi
+		else
+			ot-kernel_n_configopt "CONFIG_ARCH_RV64I"
+			ot-kernel_y_configopt "CONFIG_ARCH_RV32I"
+			if [[ "${OT_KERNEL_ABIS,,}" =~ "ilp32d" \
+				|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib32/ilp32d" ) ]] ; then
+				einfo "Added support for ilp32d"
+				ot-kernel_y_configopt "CONFIG_FPU"
+			fi
+		fi
+	fi
+	if [[ "${arch}" == "s390" ]] ; then
+		einfo "Added support for s390x"
+		ot-kernel_y_configopt "CONFIG_64BIT"
+		if [[ "${OT_KERNEL_ABIS,,}" =~ ("s390"$|"s390 ") \
+			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "32" ) \
+			]] ; then
+			einfo "Added support for s390"
+			ot-kernel_y_configopt "CONFIG_COMPAT"
+		fi
+		ot-kernel_y_configopt "CONFIG_CPU_BIG_ENDIAN"
+		ot-kernel_unset_configopt "CONFIG_CPU_LITTLE_ENDIAN"
+	fi
+	if [[ "${arch}" == "sparc" ]] ; then
+		if [[ "${OT_KERNEL_ABIS,,}" =~ "sparc64" \
+			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "64" ) \
+			]] ; then
+			einfo "Added support for sparc64"
+			ot-kernel_y_configopt "CONFIG_64BIT"
+		else
+			einfo "Added support for sparc32"
+			ot-kernel_n_configopt "CONFIG_64BIT"
+		fi
+		ot-kernel_y_configopt "CONFIG_CPU_BIG_ENDIAN"
+		ot-kernel_unset_configopt "CONFIG_CPU_LITTLE_ENDIAN"
+	fi
+	if [[ "${arch}" == "x86_64" ]] ; then
+		einfo "Added support for x86_64"
+		ot-kernel_y_configopt "CONFIG_64BIT"
+		ot-kernel_y_configopt "CONFIG_X86_32"
+		ot-kernel_unset_configopt "CONFIG_X86_64"
+		if [[ "${OT_KERNEL_ABIS,,}" =~ "x32" \
+			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/libx32" ) ]] ; then
+			einfo "Added support for x32"
+			ot-kernel_y_configopt "CONFIG_X86_X32"
+		fi
+		if [[ "${OT_KERNEL_ABIS,,}" =~ "x86" \
+			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -e "/usr/lib32" ) \
+			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "32" ) \
+			]] ; then
+			einfo "Added support for x86"
+			ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
+		fi
+	fi
+	if [[ "${arch}" == "x86" ]] ; then
+		einfo "Added support for x86"
+		ot-kernel_unset_configopt "CONFIG_64BIT"
+		ot-kernel_y_configopt "CONFIG_X86_32"
+		ot-kernel_unset_configopt "CONFIG_X86_64"
+	fi
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
@@ -3198,7 +3533,9 @@ ot-kernel_set_kconfig_work_profile() {
 	elif [[ "${work_profile}" =~ ("manual"|"custom") ]] ; then
 		:
 	elif [[ "${work_profile}" =~ ("smartphone"|"tablet") ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_300"
+		if [[ "${arch}" =~ ("arm"|"arm64"|"x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "300"
+		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -3213,7 +3550,9 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
 		fi
 	elif [[ "${work_profile}" =~ ("video-smartphone"|"video-tablet") ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_300"
+		if [[ "${arch}" =~ ("arm"|"arm64"|"x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "300"
+		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -3228,7 +3567,9 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
 		fi
 	elif [[ "${work_profile}" =~ ("laptop"|"solar-desktop") ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_300"
+		if [[ "${arch}" =~ ("arm"|"arm64"|"x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "300"
+		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_HIBERNATION"
@@ -3267,7 +3608,9 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
 		fi
 	elif [[ "${work_profile}" =~ ("gpu-gaming-laptop"|"casual-gaming-laptop"|"solar-gaming") ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_1000"
+		if [[ "${arch}" =~ ("arm"|"arm64"|"x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "1000"
+		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
@@ -3297,7 +3640,10 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" =~ ("casual-gaming") ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_1000"
+		# Assumes on desktop
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "1000"
+		fi
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3310,7 +3656,9 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" =~ ("arcade"|"pro-gaming"|"tournament"|"presentation") ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_1000"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "1000"
+		fi
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
@@ -3328,7 +3676,9 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_300"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "300"
+		fi
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3345,7 +3695,9 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" == "workstation" ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_300"
+		if [[ "${arch}" =~ ("parisc"|"x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "300"
+		fi
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3359,7 +3711,9 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 	elif [[ "${work_profile}" == "gamedev" ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_1000"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "300"
+		fi
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3375,7 +3729,9 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 	elif [[ "${work_profile}" == "renderfarm-dedicated" ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_300"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "300"
+		fi
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3389,7 +3745,9 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 	elif [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_300"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "300"
+		fi
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -3403,10 +3761,12 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server") ]] ; then
-		if [[ "${work_profile}" =~ "media-server" ]] ; then
-			ot-kernel_y_configopt "CONFIG_HZ_300"
-		else
-			ot-kernel_y_configopt "CONFIG_HZ_100"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			if [[ "${work_profile}" =~ "media-server" ]] ; then
+				ot-kernel_set_kconfig_set_timer_hz "300"
+			else
+				ot-kernel_set_kconfig_set_timer_hz "100"
+			fi
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
@@ -3416,7 +3776,9 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 	elif [[ "${work_profile}" == "streamer-desktop" ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_300"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "300"
+		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
@@ -3429,10 +3791,12 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
 	elif [[ "${work_profile}" =~ ("jukebox"|"dvr"|"mainsteam-desktop") ]] ; then
-		[[ "${work_profile}" =~ ("dvr"|"mainstream-desktop") ]] \
-			&& ot-kernel_y_configopt "CONFIG_HZ_300"
-		[[ "${work_profile}" == "jukebox" ]] \
-			&& ot-kernel_y_configopt "CONFIG_HZ_250"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			[[ "${work_profile}" =~ ("dvr"|"mainstream-desktop") ]] \
+				&& ot-kernel_set_kconfig_set_timer_hz "300"
+			[[ "${work_profile}" == "jukebox" ]] \
+				&& ot-kernel_set_kconfig_set_timer_hz "250"
+		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
@@ -3440,10 +3804,12 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
-		ot-kernel_y_configopt "CONFIG_CONFIG_PM"
+		ot-kernel_y_configopt "CONFIG_PM"
 	elif [[ "${work_profile}" == "cryptocurrency-miner-dedicated" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
-		ot-kernel_y_configopt "CONFIG_HZ_100"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "100"
+		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE"
@@ -3464,7 +3830,9 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 	elif [[ "${work_profile}" == "cryptocurrency-miner-workstation" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
-		ot-kernel_y_configopt "CONFIG_HZ_250"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "250"
+		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
@@ -3485,7 +3853,9 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
 		fi
 	elif [[ "${work_profile}" == "distributed-computing-dedicated" ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_100"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "100"
+		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
@@ -3497,11 +3867,32 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 	elif [[ "${work_profile}" == "distributed-computing-workstation" ]] ; then
-		ot-kernel_y_configopt "CONFIG_HZ_250"
+		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
+			ot-kernel_set_kconfig_set_timer_hz "250"
+		fi
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+		fi
+		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+		fi
+		ot-kernel_y_configopt "CONFIG_PREEMPT"
+	elif [[ "${work_profile}" == "hpc" ]] ; then
+		if [[ "${arch}" =~ ("alpha"|"mips"|"hppa"|"ia64"|"powerpc"|"sparc"|"x86_64") ]] ; then
+			:
+			#ot-kernel_set_kconfig_set_timer_hz "100"
+		fi
+		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
@@ -3681,7 +4072,7 @@ ot-kernel_src_configure() {
 		ot-kernel_set_kconfig_oflag
 		ot-kernel_set_kconfig_lto # llvm_slot
 		ot-kernel_set_kconfig_pgo # llvm_slot
-		ot-kernel_set_kconfig_x32abi
+		ot-kernel_set_kconfig_abis
 
 		ot-kernel_set_kconfig_init_systems
 		ot-kernel_set_kconfig_boot_args

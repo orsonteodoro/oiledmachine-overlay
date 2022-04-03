@@ -397,12 +397,41 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
+    OT_KERNEL_ABIS -- Adds support for ABIS especially cross compiling but only
+    if the kernel arch supports it.  You many only choose one kernel arch per
+    buildconfig env.  If unset, it will use auto settings.  Users are still
+    responsible for editing the kernel config for details such as the
+    microarchiecture, integrated circuits (ICs), or details relating to abi.
+    For endianess, you must control set the CHOST variable in the per build env
+    file.  (EXPERIMENTAL)
+
+    Acceptable values:
+
+      auto,					; Autodetect and auto-enable ABIs
+      manual,					; Previous settings
+      arm,					; For the arm
+      arm64,					; For the arm64
+      o32, n32, n64				; For the mips
+      ppc, ppc64				; For the powerpc
+      lp64d, lp64, ilp32d, ilp32		; For the risc
+      s390, s390x				; For the s390
+      sparc32, sparc64				; For the sparc
+      x86, amd64, x32,				; For the x86_64
+
+
+
     OT_KERNEL_ADD_KEY_TO_MOK -- Auto adds the provided key to MOK if not found.
 
 
 
     OT_KERNEL_ARCH -- The native ABI of the kernel to build using one of the
-    names of the folders in /usr/src/linux/arch.
+    names of the folders in /usr/src/linux/arch.  This package assumes that both
+    x86_64 and arm64 are recognized as 64 with possibly 32 compatibility, but
+    x86 and arm are recognized as strictly 32-bit.
+    Both the folder path (${arch} in
+    /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env) and
+    the OT_KERNEL_ARCH need to be the same.
+    Acceptable values:  arm, arm64, mips, powerpc, riscv, s390, sparc, x86
 
 
 
