@@ -1,0 +1,25 @@
+# Copyright 2019-2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# License:  MIT
+
+# This is used to convert all kernel modules as kernel built in whenever possible.
+
+convert_tristate() {
+	cp -a "${orig}" "${bak}"
+	local symbols=(
+		$(grep -E -e "^CONFIG_[0-9A-Z_]+=(y|m|n)" "${orig}" | sed -E -e "s/=(y|n|m)//g")
+	)
+	echo -e "\nChanging .config from CONFIG...=y to CONFIG...=m"
+	for s in ${symbols[@]} ; do
+		sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}"
+	done
+}
+
+main() {
+	local orig=".config"
+	local bak=".config.orig"
+	echo "Kernel config backup: $(pwd)/.config.orig"
+	echo "Kernel config: $(pwd)/.config"
+	convert_tristate
+}
+
+main

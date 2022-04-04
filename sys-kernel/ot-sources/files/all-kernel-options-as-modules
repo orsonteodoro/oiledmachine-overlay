@@ -1,0 +1,74 @@
+# Copyright 2019-2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# License:  MIT
+
+# This is used to convert all kernel options as kernel modules whenever possible.
+# You may supply OT_KERNEL_BOOT_KOPTIONS to override and add custom CONFIG_ options.
+# You may supply OT_KERNEL_BOOT_KOPTIONS_APPEND to add more options after auto
+# inclusion based on subsystem auto inclusion.
+
+# Example:
+# OT_KERNEL_BOOT_KOPTIONS_APPEND="CONFIG_KEYBOARD_ATKBD CONFIG_USB_EHCI_HCD CONFIG_USB_STORAGE" ./all-kernel-options-as-modules
+
+
+convert_tristate() {
+	cp -a "${orig}" "${bak}"
+	make allmodconfig
+	cp -a "${orig}" "${conv}"
+	cp -a "${bak}" "${orig}"
+	local symbols=(
+		$(grep -E -e "^CONFIG_[0-9A-Z_]+=(y|m|n)" "${orig}" | sed -E -e "s/=(y|n|m)//g")
+	)
+	echo -e "\nChanging .config from CONFIG...=y to CONFIG...=m"
+	for s in ${symbols[@]} ; do
+		if grep -q -e "^${s}=m" "${conv}" && grep -q -e "^${s}=y" "${bak}" ; then
+			echo "${s}=m"
+			sed -r -i -e "s/${s}=[ymn]/${s}=m/g" "${orig}"
+		fi
+	done
+}
+
+fix_config_for_boot() {
+	local symbols
+	local subsystems=(
+		# All related to boot initalization and logins
+		crypto
+		drivers/ata
+		drivers/md
+		drivers/scsi
+		drivers/usb
+		drivers/input/keyboard
+		fs
+		${OT_KERNEL_BOOT_KOPTIONS_APPEND}
+	)
+
+	if [[ -n "${OT_KERNEL_BOOT_KOPTIONS}" ]] ; then
+		symbols=( "${OT_KERNEL_BOOT_KOPTIONS}" )
+	else
+		symbols=(
+			$(grep -E -e "^config [0-9A-Za-z_]+" $(find ${subsystems[@]} -name "Kconfig*") \
+				| cut -f 2 -d ":" \
+				| sed -e "s|config ||g" \
+				| sed -e "s|^|CONFIG_|g")
+		)
+	fi
+	echo -e "\nFixing config for boot"
+	for s in ${symbols[@]} ; do
+		if grep -q -e "^${s}=m" "${conv}" && grep -q -e "^${s}=m" "${bak}" ; then
+			echo "${s}=y"
+			sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}"
+		fi
+	done
+}
+
+main() {
+	local orig=".config"
+	local bak=".config.orig"
+	local conv=".config.conv"
+	echo "Kernel config backup: $(pwd)/.config.orig"
+	echo "Kernel config: $(pwd)/.config"
+	convert_tristate
+	fix_config_for_boot
+	rm "${conv}"
+}
+
+main

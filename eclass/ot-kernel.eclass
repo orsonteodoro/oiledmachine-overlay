@@ -1508,6 +1508,11 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 			> "${BUILD_DIR}/disable_debug" || die
 	fi
 
+	cat "${FILESDIR}/all-kernel-options-as-modules" \
+		> "${BUILD_DIR}/all-kernel-options-as-modules" || die
+	cat "${FILESDIR}/all-kernel-options-as-yes" \
+		> "${BUILD_DIR}/all-kernel-options-as-yes" || die
+
 	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 		cat "${FILESDIR}/gen_pgo.sh" > "${BUILD_DIR}/gen_pgo.sh"
 	fi
@@ -1947,7 +1952,10 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS
 	unset OT_KERNEL_BOOT_ARGS
 	unset OT_KERNEL_BOOT_DECOMPRESSOR
+	unset OT_KERNEL_BOOT_KOPTIONS
+	unset OT_KERNEL_BOOT_KOPTIONS_APPEND
 	unset OT_KERNEL_BUILD
+	unset OT_KERNEL_BUILD_ALL_MODULES_AS
 	unset OT_KERNEL_COLD_BOOT_MITIGATIONS
 	unset OT_KERNEL_CONFIG
 	unset OT_KERNEL_CPU_SCHED
@@ -1959,6 +1967,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_HARDENING_LEVEL
 	unset OT_KERNEL_LSMS
 	unset OT_KERNEL_MENUCONFIG_FRONTEND
+	unset OT_KERNEL_MODULE_SUPPORT
 	unset OT_KERNEL_MODULES_COMPRESSOR
 	unset OT_KERNEL_PKGFLAGS_ACCEPT
 	unset OT_KERNEL_PKGFLAGS_REJECT
@@ -2815,6 +2824,7 @@ ot-kernel_set_kconfig_lto() {
 # @DESCRIPTION:
 # Sets the kernel config for signed kernel modules
 ot-kernel_set_kconfig_module_signing() {
+	grep -q -e "^CONFIG_MODULES=y" "${BUILD_DIR}/.config" || return
 	# The default profile does not have module signing default on.
 	if [[ "${OT_KERNEL_SIGN_MODULES}" == "0" ]] ; then
 		einfo "Disabling auto-signed modules"
@@ -2854,6 +2864,24 @@ ot-kernel_set_kconfig_module_signing() {
 		ot-kernel_set_configopt "CONFIG_MODULE_SIG_HASH" "\"${OT_KERNEL_SIGN_MODULES,,}\""
 	else
 		einfo "Using the manual setting for auto-signed modules"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_module_support
+# @DESCRIPTION:
+# Sets module support
+ot-kernel_set_kconfig_module_support() {
+	if [[ -z "${OT_KERNEL_MODULES_SUPPORT}" ]] ; then
+		einfo "Using manual settings for modules support"
+	elif [[ "${OT_KERNEL_MODULES_SUPPORT}" =~ ("y"|"1") ]] \
+		&& grep -q -e "^.*=m" "${BUILD_DIR}/.config" ; then
+		einfo "Modules support enabled"
+		ot-kernel_y_configopt "CONFIG_MODULES"
+	else
+		einfo "Modules support disabled"
+		ot-kernel_unset_configopt "CONFIG_MODULES"
+		ot-kernel_unset_configopt "CONFIG_MODULE_FORCE_LOAD"
+		ot-kernel_unset_configopt "CONFIG_MODULE_UNLOAD"
 	fi
 }
 
@@ -3372,22 +3400,6 @@ ot-kernel_get_lib_bitness() {
 		echo "64" # elf64-.*{alpha,hppa,ia64,mips,powerpc,riscv,sparc}.*
 	elif objdump -f "${path}" | grep -q -e "file format elf32.*" ; then
 		echo "32" # elf32-.*{m68k,hppa,mips,powerpc,riscv,sparc}.*
-	fi
-}
-
-# @FUNCTION: ot-kernel_set_kconfig_mid_power_governor
-# @DESCRIPTION:
-# Chooses the best middle governor.  Some middle of the road
-# governors underperform depending on the CPU.
-ot-kernel_set_kconfig_mid_power_governor() {
-	local pgov="${OT_KERNEL_MID_POWER_GOVERNOR,,}"
-	if [[ "${OT_KERNEL_MID_POWER_GOVERNOR}" == "schedutil" ]] ; then
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
-
-	else
-		ot-kernel_y_configopt ""
-		ot-kernel_y_configopt ""
 	fi
 }
 
@@ -3999,6 +4011,98 @@ ot-kernel_set_kconfig_zswap() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_convert_tristate_m
+# @DESCRIPTION:
+# Converts CONFIG_[0-9A-Z_]=y to CONFIG_[0-9A-Z_]=m
+ot-kernel_convert_tristate_m() {
+	cp -a "${orig}" "${bak}" || die
+	make allmodconfig
+	cp -a "${orig}" "${conv}" || die
+	cp -a "${bak}" "${orig}" || die
+	local symbols=(
+		$(grep -E -e "^CONFIG_[0-9A-Z_]+=(y|m|n)" "${orig}" | sed -E -e "s/=(y|n|m)//g")
+	)
+	einfo "Changing .config from CONFIG...=y to CONFIG...=m"
+	for s in ${symbols[@]} ; do
+		if grep -q -e "^${s}=m" "${conv}" && grep -q -e "^${s}=y" "${bak}" ; then
+			einfo "${s}=m"
+			sed -r -i -e "s/${s}=[ymn]/${s}=m/g" "${orig}" || die
+		fi
+	done
+}
+
+# @FUNCTION: ot-kernel_convert_tristate_y
+# @DESCRIPTION:
+# Sets all CONFIG...=m to CONFIG...=y
+ot-kernel_convert_tristate_y() {
+	local symbols=(
+		$(grep -E -e "^CONFIG_[0-9A-Z_]+=(y|m|n)" "${orig}" | sed -E -e "s/=(y|n|m)//g")
+	)
+	einfo "Changing .config from CONFIG...=m to CONFIG...=y"
+	for s in ${symbols[@]} ; do
+		sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}" || die
+	done
+}
+
+# @FUNCTION: ot-kernel_fix_config_for_boot
+# @DESCRIPTION:
+# Sets some to CONFIG...=y required for initramfs or logins boot process to work properly
+# You may supply a space separated OT_KERNEL_BOOT_OPTIONS containing all modules CONFIG_... to
+# be converted.  Setting this will override the auto additions for more control.
+ot-kernel_fix_config_for_boot() {
+	local symbols
+	local subsystems=(
+		# All related to boot initalization and logins
+		crypto
+		drivers/ata
+		drivers/md
+		drivers/scsi
+		drivers/usb
+		drivers/input/keyboard
+		fs
+	)
+
+	if [[ -n "${OT_KERNEL_BOOT_KOPTIONS}" ]] ; then
+		symbols=( "${OT_KERNEL_BOOT_KOPTIONS}" )
+	else
+		symbols=(
+			$(grep -E -e "^config [0-9A-Za-z_]+" $(find ${subsystems[@]} -name "Kconfig*") \
+				| cut -f 2 -d ":" \
+				| sed -e "s|config ||g" \
+				| sed -e "s|^|CONFIG_|g")
+		)
+	fi
+	einfo "Fixing config for boot"
+	for s in ${symbols[@]} ; do
+		if grep -q -e "^${s}=m" "${conv}" && grep -q -e "^${s}=m" "${bak}" ; then
+			einfo "${s}=y"
+			sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}" || die
+		fi
+	done
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_build_all_modules_as
+# @DESCRIPTION:
+# Converts all options as modules (m) or built-in (y).
+ot-kernel_set_kconfig_build_all_modules_as() {
+	local orig=".config"
+	local bak=".config.orig"
+	local conv=".config.conv"
+	if ! grep -q -e "^CONFIG_MODULES=y" "${BUILD_DIR}/.config" ; then
+		einfo "Detected modules support disabled"
+		ot-kernel_convert_tristate_y
+		return
+	fi
+	if [[ "${OT_KERNEL_BUILD_ALL_MODULES_AS}" == "m" ]] ; then
+		ot-kernel_convert_tristate_m
+		ot-kernel_fix_config_for_boot
+	elif [[ "${OT_KERNEL_BUILD_ALL_MODULES_AS}" == "y" ]] ; then
+		ot-kernel_convert_tristate_y
+	else
+		einfo "Building all kernel options as manual"
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure
 # @DESCRIPTION:
 # Run menuconfig
@@ -4117,6 +4221,9 @@ ot-kernel_src_configure() {
 		ot-kernel_set_kconfig_cold_boot_mitigation
 		ot-kernel_set_kconfig_tresor
 		ot-kernel_set_kconfig_lsms
+
+		ot-kernel_set_kconfig_module_support
+		ot-kernel_set_kconfig_build_all_modules_as
 		ot-kernel_set_kconfig_module_signing
 
 		einfo "Updating the .config for defaults for the newly enabled options."
@@ -4428,14 +4535,14 @@ ot-kernel-make_install() {
 		newins "${kimage_spath}" "${kimage_dpath}"
 	elif [[ "${OT_KERNEL_SIGN_KERNEL}" =~ "uefi" && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" && -n "${OT_KERNEL_EFI_PARTITION}" ]] \
 		&& ot-kernel_has_uefi_prereqs \
-		&& grep -e "^CONFIG_EFI_STUB=y" "${BUILD_DIR}/.config" ; then
+		&& grep -q -e "^CONFIG_EFI_STUB=y" "${BUILD_DIR}/.config" ; then
 		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
 		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
 		einfo "Signing and installing kernel for UEFI"
 		ot-kernel_uefi_sign_and_install
 	elif [[ "${OT_KERNEL_SIGN_KERNEL}" =~ "efi" && -n "${OT_KERNEL_PRIVATE_KEY}" && -n "${OT_KERNEL_PUBLIC_KEY}" ]] \
 		&& ot-kernel_has_efi_prereqs \
-		&& grep -e "^CONFIG_EFI_STUB=y" "${BUILD_DIR}/.config" ; then
+		&& grep -q -e "^CONFIG_EFI_STUB=y" "${BUILD_DIR}/.config" ; then
 		[[ -e "${OT_KERNEL_PRIVATE_KEY}" ]] || die "Missing private key"
 		[[ -e "${OT_KERNEL_PUBLIC_KEY}" ]] || die "Missing public key"
 		einfo "Signing and installing kernel for EFI"
