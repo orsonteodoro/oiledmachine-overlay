@@ -1,4 +1,5 @@
-# Copyright 2019-2022 Orson Teodoro <orsonteodoro@hotmail.com>
+#!/bin/bash
+# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
 # License:  MIT
 
 # This is used to convert all kernel modules as kernel built in whenever possible.
