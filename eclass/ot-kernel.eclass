@@ -2744,7 +2744,7 @@ ot-kernel_set_kconfig_lsms() {
 		l=$(echo "${ot_kernel_lsms,,}" | sed -e "s| ||g" | grep -E -o -e "(selinux|smack|tomoyo|apparmor|bpf)" | head -n 1)
 		einfo "ot_kernel_lsms=${ot_kernel_lsms,,}"
 		einfo "Default LSM: ${l}"
-		ot-kernel_y_configopt "DEFAULT_SECURITY_${LSM_LEGACY[${l}]}" # Implied
+		ot-kernel_y_configopt "CONFIG_DEFAULT_SECURITY_${LSM_LEGACY[${l}]}" # Implied
 
 		local lsms=()
 		# This is the upstream order but allow user to customize it
