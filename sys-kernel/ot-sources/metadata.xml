@@ -696,7 +696,7 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     OT_KERNEL_MODULES_SUPPORT -- Enables or disable modules support.
     For unsigned kernel modules, this will prevent loading hacked modules.
-    If a option is still a module and modules support is diable, it will
+    If a option is still a module and modules support is disable, it will
     convert all modules into built-ins.
     Acceptable values: 1, 0, y, n, unset.  Unset is equivalent to maunal or
     previous settings if using previous config, or default config if new
