@@ -2737,7 +2737,7 @@ ot-kernel_set_kconfig_lsms() {
 		IFS=$' \n\t'
 
 		for l in ${LSM_LEGACY[@]} ; do
-			ot-kernel_unset_configopt "DEFAULT_SECURITY_${l}" # Reset
+			ot-kernel_unset_configopt "CONFIG_DEFAULT_SECURITY_${l}" # Reset
 		done
 
 		# Pick the default legacy

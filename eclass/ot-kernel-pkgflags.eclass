@@ -2211,7 +2211,7 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 
 		[[ "${cryptsetup_hashes}" =~ "blake2b" ]] && _ot-kernel-pkgflags_blake2b
 		[[ "${cryptsetup_hashes}" =~ "blake2s" ]] && _ot-kernel-pkgflags_blake2s
-		[[ "${cryptsetup_hashes}" =~ "rmd160" ]] && ot-kernel_y_configopt "CRYPTO_RMD160"
+		[[ "${cryptsetup_hashes}" =~ "rmd160" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_RMD160"
 		[[ "${cryptsetup_hashes}" =~ "sha256" ]] && _ot-kernel-pkgflags_sha256
 		[[ "${cryptsetup_hashes}" =~ "sha512" ]] && _ot-kernel-pkgflags_sha512
 		[[ "${cryptsetup_hashes}" =~ "sha3" ]] && _ot-kernel-pkgflags_sha3
