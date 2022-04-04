@@ -4016,7 +4016,7 @@ ot-kernel_set_kconfig_zswap() {
 # Converts CONFIG_[0-9A-Z_]=y to CONFIG_[0-9A-Z_]=m
 ot-kernel_convert_tristate_m() {
 	cp -a "${orig}" "${bak}" || die
-	make allmodconfig
+	make allmodconfig "${args[@]}" || die
 	cp -a "${orig}" "${conv}" || die
 	cp -a "${bak}" "${orig}" || die
 	local symbols=(

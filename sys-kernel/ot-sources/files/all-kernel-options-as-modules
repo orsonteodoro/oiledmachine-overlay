@@ -10,9 +10,9 @@
 # Example:
 # OT_KERNEL_BOOT_KOPTIONS_APPEND="CONFIG_KEYBOARD_ATKBD CONFIG_USB_EHCI_HCD CONFIG_USB_STORAGE" ./all-kernel-options-as-modules
 
-
 convert_tristate() {
 	cp -a "${orig}" "${bak}"
+	echo "You may need edit this script to add additional args below to the make command if using an alternative toolchain."
 	make allmodconfig
 	cp -a "${orig}" "${conv}"
 	cp -a "${bak}" "${orig}"
