@@ -17,6 +17,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 DEPEND+="
 	${PYTHON_DEPS}
 	>=dev-libs/inih-52
+	dev-libs/boost[${PYTHON_USEDEP},python]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pypam[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},cuda?,contribhdf,python]
@@ -30,8 +31,10 @@ DEPEND+="
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
-	>=sys-devel/gcc-5
-	dev-libs/boost[${PYTHON_USEDEP},python]
+	|| (
+		>=sys-devel/gcc-5
+		>=sys-devel/clang-3.4
+	)
 	dev-util/meson
 "
 PATCHES=(
