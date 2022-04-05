@@ -20,12 +20,12 @@ DEPEND+="
 	dev-libs/boost[${PYTHON_USEDEP},python]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pypam[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},cuda?,contribhdf,python]
+	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python]
 	sys-libs/pam
-	>=sci-libs/dlib-19.16[${PYTHON_USEDEP}]
+	>=sci-libs/dlib-19.16[${PYTHON_USEDEP},cuda?]
 	cuda? ( >=dev-util/nvidia-cuda-toolkit-7.5 )
 	gtk? (
-		dev-python/elevate
+		dev-python/elevate[${PYTHON_USEDEP}]
 		x11-libs/gtk+:3[introspection]
 	)
 "

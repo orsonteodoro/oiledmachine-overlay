@@ -12,4 +12,8 @@
     <bugs-to>https://github.com/boltgolt/howdy/issues</bugs-to>
     <remote-id type="github">boltgolt/howdy</remote-id>
   </upstream>
+  <use>
+    <flag name="cuda">Used for improved face detection in various angles.</flag>
+    <flag name="gtk">Used for sticky floating window authentication.</flag>
+  </use>
 </pkgmetadata>
