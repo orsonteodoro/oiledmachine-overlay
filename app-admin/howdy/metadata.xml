@@ -7,13 +7,38 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
+    You need an IR camera for this product to work properly.
+
+    For faster face detection, the dlib ebuild needs to be patched for atlas
+    or use the mkl USE flag.[1]
+
+    Only one capture source can be used.  Priority is given based on highest
+    to lowest -- FFmpeg, pyv4l2, OpenCV.
+
+    Handy also supports gesture authentication called rubber stamp.[2]
+
+    Handy is an addition to n-factor authentication and should not be used
+    alone.
+
+    References:
+    [1] https://github.com/boltgolt/howdy/issues/99
+    [2] https://github.com/boltgolt/howdy/wiki/Rubber-Stamp-Guide
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/boltgolt/howdy/issues</bugs-to>
+    <changelog>
+      https://github.com/boltgolt/howdy/blob/beta/howdy/debian/changelog
+      https://github.com/boltgolt/howdy/blob/beta/howdy-gtk/debian/changelog
+    </changelog>
+    <doc>https://github.com/boltgolt/howdy/wiki</doc>
     <remote-id type="github">boltgolt/howdy</remote-id>
   </upstream>
   <use>
     <flag name="cuda">Used for improved face detection in various angles.</flag>
+    <flag name="ffmpeg">Uses FFmpeg as a capture source.  Otherwise, use OpenCV.
+      If grayscale issues occur with OpenCV, use the ffmpeg USE flag instead.
+      </flag>
     <flag name="gtk">Used for sticky floating window authentication.</flag>
+    <flag name="pyv4l2">Uses pyv4l2 as a capture source.</flag>
   </use>
 </pkgmetadata>
