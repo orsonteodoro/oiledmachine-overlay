@@ -1,0 +1,21 @@
+--- a/howdy/src/pam/meson.build.orig	2022-01-31 04:42:16.000000000 -0800
++++ b/howdy/src/pam/meson.build	2022-04-04 22:46:27.094495127 -0700
+@@ -1,9 +1,14 @@
+ project('pam_howdy', 'cpp', version: '0.1.0', default_options: ['cpp_std=c++14'])
+ 
+-inih = subproject('inih')
+-inih_cpp = inih.get_variable('INIReader_dep')
++inih = dependency('inih', required : false)
++inireader = dependency('INIReader', required : true)
+ 
+-libpam = meson.get_compiler('c').find_library('pam')
++if not inih.found()
++  inih = subproject('inih')
++  inihreader = inih.get_variable('INIReader_dep')
++endif
++
++libpam = meson.get_compiler('cpp').find_library('pam')
+ boost = dependency('boost', modules: ['locale'])
+ threads = dependency('threads')
+-shared_library('pam_howdy', 'main.cc', dependencies: [boost, libpam, inih_cpp, threads], install: true, install_dir: '/lib/security/')
++shared_library('pam_howdy', 'main.cc', dependencies: [boost, libpam, inireader, threads], install: true, install_dir: '/lib/security/')
