@@ -20,7 +20,7 @@ DEPEND+="
 	dev-libs/boost[${PYTHON_USEDEP},python]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pypam[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python]
+	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
 	sys-libs/pam
 	>=sci-libs/dlib-19.16[${PYTHON_USEDEP},cuda?]
 	cuda? ( >=dev-util/nvidia-cuda-toolkit-7.5 )
