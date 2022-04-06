@@ -980,12 +980,6 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     CRYPTSETUP_TCRYPT - Add support for tcrypt.
     Valid values 0, 1 (default).
 
-    HPLIP_PARPORT - Add support for the parallel port.
-    Valid values 0 (default), 1.
-
-    HPLIP_USB - Add support for USB.
-    Valid values 0, 1 (default).
-
     IPTABLES_CLIENT - Add support for iptables client.
     Valid values 0, 1 (default).
 

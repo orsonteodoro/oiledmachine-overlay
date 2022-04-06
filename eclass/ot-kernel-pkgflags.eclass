@@ -310,6 +310,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_plocate
 	ot-kernel-pkgflags_ply
 	ot-kernel-pkgflags_plymouth
+	ot-kernel-pkgflags_polkit
 	ot-kernel-pkgflags_pommed
 	ot-kernel-pkgflags_ponyprog
 	ot-kernel-pkgflags_portage
@@ -3161,14 +3162,11 @@ ot-kernel-pkgflags_hplip() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "45f5321" ]] && return
 	if has_version "net-print/hplip" ; then
 		einfo "Applying kernel config flags for the hplip package (id: 45f5321)"
-		HPLIP_USB="${HPLIP_USB:-1}"
-		if [[ "${HPLIP_USB}" == "1" ]] ; then
-			ot-kernel_y_configopt "CONFIG_USB"
-			ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
-			ot-kernel_y_configopt "CONFIG_USB_PRINTER"
-		fi
-		HPLIP_PARPORT="${HPLIP_PARPORT:-0}"
-		if [[ "${HPLIP_PARPORT}" == "1" ]] ; then
+		# The ebuild pulls in virtual/libusb unconditionally
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_PRINTER"
+		if has_version "net-print/hplip[parport]" ; then
 			ot-kernel_y_configopt "CONFIG_PARPORT"
 			ot-kernel_y_configopt "CONFIG_PPDEV"
 			ot-kernel_y_configopt "CONFIG_PARPORT_1284"
@@ -5066,6 +5064,17 @@ ot-kernel-pkgflags_plymouth() { # DONE
 	if has_version "sys-boot/plymouth" ; then
 		einfo "Applying kernel config flags for the plymouth package (id: 17c3464)"
 		ot-kernel_y_configopt "CONFIG_LOGO"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_polkit
+# @DESCRIPTION:
+# Applies kernel config flags for the polkit package
+ot-kernel-pkgflags_polkit() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ce79cdd" ]] && return
+	if has_version "sys-auth/polkit" ; then
+		einfo "Applying kernel config flags for the polkit package (id: ce79cdd)"
+		ot-kernel_y_configopt "CONFIG_FUTEX" # For better performance
 	fi
 }
 
