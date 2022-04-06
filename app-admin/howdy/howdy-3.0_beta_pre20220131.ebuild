@@ -118,11 +118,6 @@ src_configure() {
 		fi
 		sed -i -e "s|/lib/security/howdy/config.ini|/$(get_libdir)/security/howdy/config.ini|g" \
 			"pam/main.cc" || die
-		# Mitigation and privacy
-		sed -i -e "s|capture_failed = true|capture_failed = false|g" \
-			config.ini || die
-		sed -i -e "s|capture_successful = true|capture_successful = false|g" \
-			config.ini || die
 	popd
 	pushd "${WORKDIR}/${PN}-${EGIT_COMMIT}/howdy/src/pam" || die
 		export EMESON_SOURCE="${WORKDIR}/${PN}-${EGIT_COMMIT}/howdy/src/pam"
