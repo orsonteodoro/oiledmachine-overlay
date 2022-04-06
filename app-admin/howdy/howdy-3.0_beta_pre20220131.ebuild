@@ -107,12 +107,14 @@ src_prepare() {
 
 src_configure() {
 	pushd "${WORKDIR}/${PN}-${EGIT_COMMIT}/howdy/src" || die
-		if [[ -e "/dev/video1" ]] ; then
-			einfo "Auto setting device_path = /dev/video1"
-			sed -i -e "s|device_path = none|device_path = /dev/video1|g" config.ini || die
-		fi
 		if use cuda ; then
 			sed -i -e "s|use_cnn = false|use_cnn = true|g" config.ini || die
+		fi
+		if use ffmpeg ; then
+			sed -i -e "s|recording_plugin = opencv|recording_plugin = ffmpeg|g" config.ini || die
+		fi
+		if use pyv4l2 ; then
+			sed -i -e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" config.ini || die
 		fi
 		sed -i -e "s|/lib/security/howdy/config.ini|/$(get_libdir)/security/howdy/config.ini|g" \
 			"pam/main.cc" || die
@@ -168,7 +170,6 @@ pkg_postinst() {
 	einfo
 	einfo "You need an IR camera for this to work properly."
 	einfo
-	if [[ ! -e "/dev/video1" ]] ; then
 	einfo
 	einfo "The following need to be edited in /lib/security/howdy/config.ini:"
 	einfo
@@ -176,7 +177,6 @@ pkg_postinst() {
 	einfo
 	einfo "to path of the IR camera (e.g. /dev/video1)."
 	einfo
-	fi
 	einfo
 	einfo "The pam configuration can be found in /usr/share/howdy/pam-config."
 	einfo
