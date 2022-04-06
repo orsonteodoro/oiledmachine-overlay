@@ -1,0 +1,25 @@
+--- a/setup.py.orig	2019-05-15 20:12:01.000000000 -0700
++++ b/setup.py	2022-04-05 18:17:15.254839051 -0700
+@@ -1,6 +1,7 @@
+ #!/usr/bin/env python3
+ 
+ import sys
++import os
+ 
+ from glob import glob
+ from setuptools import setup, find_packages
+@@ -10,10 +11,12 @@ from pyv4l2 import __version__
+ 
+ 
+ try:
+-    sys.argv.remove('--use-cython')
+-    USE_CYTHON = True
++    USE_CYTHON = bool(os.environ['EUSE_CYTHON'])
++except KeyError as e:
++    USE_CYTHON = False
+ except ValueError:
+     USE_CYTHON = False
++print("USE_CYTHON=" + str(USE_CYTHON))
+ 
+ 
+ extension_name = 'pyx' if USE_CYTHON else 'c'
