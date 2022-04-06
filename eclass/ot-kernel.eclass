@@ -1977,6 +1977,8 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_SHARED_KEY
 	unset OT_KERNEL_SIGN_KERNEL
 	unset OT_KERNEL_SIGN_MODULES
+	unset OT_KERNEL_BOOT_SUBSYSTEMS
+	unset OT_KERNEL_BOOT_SUBSYSTEMS_APPEND
 	unset OT_KERNEL_SWAP_COMPRESSION
 	unset OT_KERNEL_USE_LSM_UPSTREAM_ORDER
 	unset OT_KERNEL_TARGET_TRIPLE
@@ -4051,16 +4053,24 @@ ot-kernel_convert_tristate_y() {
 # be converted.  Setting this will override the auto additions for more control.
 ot-kernel_fix_config_for_boot() {
 	local symbols
-	local subsystems=(
-		# All related to boot initalization and logins
-		crypto
-		drivers/ata
-		drivers/md
-		drivers/scsi
-		drivers/usb
-		drivers/input/keyboard
-		fs
-	)
+	local subsystem
+	if [[ -n "${OT_KERNEL_BOOT_SUBSYSTEMS}" ]] ; then
+		subsystems=( ${OT_KERNEL_BOOT_SUBSYSTEMS} )
+	else
+		subsystems=(
+			# All related to boot initalization and logins
+			crypto
+			drivers/ata
+			drivers/block
+			drivers/hid
+			drivers/md
+			drivers/scsi
+			drivers/usb
+			drivers/input/keyboard
+			fs
+			${OT_KERNEL_BOOT_SUBSYSTEMS_APPEND}
+		)
+	fi
 
 	if [[ -n "${OT_KERNEL_BOOT_KOPTIONS}" ]] ; then
 		symbols=( "${OT_KERNEL_BOOT_KOPTIONS}" )
@@ -4074,7 +4084,7 @@ ot-kernel_fix_config_for_boot() {
 	fi
 	einfo "Fixing config for boot"
 	for s in ${symbols[@]} ; do
-		if grep -q -e "^${s}=m" "${conv}" && grep -q -e "^${s}=m" "${bak}" ; then
+		if grep -q -e "^${s}=m" "${orig}" ; then
 			einfo "${s}=y"
 			sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}" || die
 		fi

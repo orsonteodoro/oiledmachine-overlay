@@ -322,10 +322,10 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 
     The tree structure is as follows in abstract form:
 
-         /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
-         /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
+      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
+      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
 
-    K_MAJOR_MINOR will be expanded to either 4.14, 5.4, 5.10, 5.15, or 5.16.
+    K_MAJOR_MINOR will be expanded to either 4.14, 5.4, 5.10, 5.15, 5.16, 5.17.
 
     extraversion will be expanded to ot, rt, or a custom name.
 
@@ -334,19 +334,19 @@ https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4
 
     Example:
 
-         /etc/portage/ot-sources/5.16/ot/x86_64/env
+      /etc/portage/ot-sources/5.16/ot/x86_64/env
 
     Files:
 
-         /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
-         Contains all environment variables for this buildconfig.  The
-         per package extraversion and per package buildconfig are synonymous
-         for this file.
+      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env
+      Contains all environment variables for this buildconfig.  The
+      per package extraversion and per package buildconfig are synonymous
+      for this file.
 
     Directories (In planning):
 
-         /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
-         Contains extra user patches to apply per buildconfig.
+      /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/patches
+      Contains extra user patches to apply per buildconfig.
 
 
 
@@ -434,7 +434,10 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     Both the folder path (${arch} in
     /etc/portage/ot-sources/${K_MAJOR_MINOR}/${extraversion}/${arch}/env) and
     the OT_KERNEL_ARCH need to be the same.
-    Acceptable values:  arm, arm64, mips, powerpc, riscv, s390, sparc, x86
+
+    Acceptable values:
+
+      arm, arm64, mips, powerpc, riscv, s390, sparc, x86
 
 
 
@@ -443,10 +446,14 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     have additional kernel .config requirements and sometimes too complex
     or too long ago to remember to apply.  These missing or conflicting
     flags will be added or removed so that the @world package works properly.
-    Acceptable values:  1 to enable, 0 to disable.  By default, it is
-    disabled meaning that manual editing is required or preferred.  For
-    some select security packages, this is environment variable is
-    unconditionally ignored implying to always apply the kernel changes.
+
+    Acceptable values:
+
+      1 to enable, 0 to disable
+
+    By default, it is disabled meaning that manual editing is required or
+    preferred.  For some select security packages, this is environment variable
+    is unconditionally ignored implying to always apply the kernel changes.
 
 
 
@@ -464,9 +471,13 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     kernel decompression and initramfs decompression.  If not chosen, it will
     choose either the previous manual setting, or if it is a new kernel config
     defaults which will choose gzip for the kernel and all decompressors for
-    initramfs.  Acceptable values:  GZIP, BZIP2, LZ4, LZO, LZMA, XZ, ZSTD,
-    default, manual,
-    UNCOMPRESSED.  It is recommended to use lz4 or zstd.  However, if you are
+    initramfs.
+
+    Acceptable values:
+
+      GZIP, BZIP2, LZ4, LZO, LZMA, XZ, ZSTD, default, manual, UNCOMPRESSED
+
+    It is recommended to use lz4 or zstd.  However, if you are
     using x32 ABI bzip2 works but do not use lzma.  If empty, it will choose
     manual.  ZSTD is only allowed in 5.10+.
 
@@ -484,8 +495,17 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     everything as built in to prevent loading of hacked drivers.  One may
     also choose as modules to load drivers on demand.  This option depends
     on OT_KERNEL_MODULES_SUPPORT=y.  (EXPERIMENTAL, TESTING)
-    Acceptable values: m, y, manual.  Unset is equivalent to manual.
-    See also OT_KERNEL_BOOT_KOPTIONS_APPEND, OT_KERNEL_MODULES_SUPPORT.
+
+    Acceptable values:
+
+      m, y, manual
+
+    Unset is equivalent to manual.
+
+    See also:
+
+      OT_KERNEL_BOOT_KOPTIONS_APPEND, OT_KERNEL_MODULES_SUPPORT,
+      OT_KERNEL_BOOT_SUBSYSTEMS, OT_KERNEL_BOOT_SUBSYSTEMS_APPEND.
 
 
 
@@ -494,9 +514,51 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     override the automatic =y based on input/block/crypto subsystems required
     to login or boot a proper working initramfs.  This one is designed for
     those that want more control or minimalism.  This option depends on
-    OT_KERNEL_BUILD_ALL_MODULES_AS="m"
+    OT_KERNEL_BUILD_ALL_MODULES_AS="m".  This option focuses on specific
+    devices.  This information can be found in help "defined at" section
+    in "make menuconfig".
+
     Example:
-    OT_KERNEL_BOOT_KOPTIONS="CONFIG_KEYBOARD_ATKBD CONFIG_USB_EHCI_HCD CONFIG_USB_STORAGE"
+
+      OT_KERNEL_BOOT_KOPTIONS="CONFIG_KEYBOARD_ATKBD CONFIG_USB_EHCI_HCD CONFIG_USB_STORAGE"
+
+    See also:
+
+      OT_KERNEL_BOOT_KOPTIONS_APPEND, OT_KERNEL_BOOT_SUBSYSTEMS, 
+      OT_KERNEL_BOOT_SUBSYSTEMS_APPEND
+
+
+
+    OT_KERNEL_BOOT_SUBSYSTEMS -- A space separated list of subsystems required
+    to boot used to replace the defaults.  Provided for those that require
+    more minimalism.  This will insure that options are built-in instead
+    of being a module.   This option focuses on broad categories.  This
+    information can be found in the help "defined at" section in in
+    "make menuconfig".
+
+    Example:
+
+      OT_KERNEL_BOOT_SUBSYSTEMS="drivers/input/keyboard drivers/hid drivers/ata fs drivers/scsi drivers/block"
+
+    See also:
+
+      OT_KERNEL_BOOT_KOPTIONS, OT_KERNEL_BOOT_SUBSYSTEMS_APPEND,
+      OT_KERNEL_BOOT_KOPTIONS_APPEND
+
+
+
+    OT_KERNEL_BOOT_SUBSYSTEMS_APPEND -- An additional space separated list of
+    subsystems required to boot appended to the default set of boot
+    required subsystems.
+
+    Example:
+
+      OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/spi drivers/mmc drivers/gpu"
+
+    See also:
+
+      OT_KERNEL_BOOT_KOPTIONS, OT_KERNEL_BOOT_SUBSYSTEMS, 
+      OT_KERNEL_BOOT_KOPTIONS_APPEND
 
 
 
@@ -505,12 +567,21 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     This one is more designed for convenience.  This option depends on
     OT_KERNEL_BUILD_ALL_MODULES_AS="m"
 
+    See also:
+
+      OT_KERNEL_BOOT_KOPTIONS, OT_KERNEL_BOOT_SUBSYSTEMS,
+      OT_KERNEL_BOOT_SUBSYSTEMS_APPEND
+
 
 
     OT_KERNEL_COLD_BOOT_MITIGATIONS -- changes the kernel config to mitigate
     against coldboot or DMA attacks.  By default, this is enabled in the
-    ebuild.  Acceptable values:  0 for do not apply any mitigations,
-    1 for level 1 mitigations, 2 for level 2 mitigations.
+    ebuild.
+
+    Acceptable values:
+
+      0 for do not apply any mitigations, 1 for level 1 mitigations,
+      2 for level 2 mitigations.
 
     - Level 1 mitigations are changes balance the convenience and the security.
     - Level 2 mitigations are changes that severely place security over
@@ -527,33 +598,33 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     OT_KERNEL_CPU_SCHED -- can be one of the below depending on the kernel version.
 
-		4.14: cfs, muqss, pds
-		5.10: cfs, muqss, prjc, prjc-bmq, prjc-pds
-		5.15: cfs, prjc, prjc-bmq, prjc-pds
-		5.16: cfs, prjc, prjc-bmq, prjc-pds
+      4.14: cfs, muqss, pds
+      5.10: cfs, muqss, prjc, prjc-bmq, prjc-pds
+      5.15: cfs, prjc, prjc-bmq, prjc-pds
+      5.16: cfs, prjc, prjc-bmq, prjc-pds
 
-		The reason why for this flexibility is to allow for multiple
-		configurations that are not mutual exclusive, meaning you can
-		use the rt kernel with cfs but still choose muqss for a
-		gaming client kernel.
+      The reason why for this flexibility is to allow for multiple
+      configurations that are not mutual exclusive, meaning you can
+      use the rt kernel with cfs but still choose muqss for a
+      gaming client kernel.
 
-		This field can be not set which would default to using cfs.
+      This field can be not set which would default to using cfs.
 
-		* cfs is preferred for server kernels and bug-less experience.
-		* muqss and prjc are better suited for audio production.
-		* The rt extraversion can only use the cfs scheduler.
+      * cfs is preferred for server kernels and bug-less experience.
+      * muqss and prjc are better suited for audio production.
+      * The rt extraversion can only use the cfs scheduler.
 
-		The default timeslices:
+     The default timeslices:
 
-		bmq: 4 ms server/desktop, 2 ms with low latency desktop
-		cfs: variable length
-		muqss:  6 ms
-		pds: 6 ms
-		prjc-bmq: 4 ms
-		prjc-pds: 4 ms
-		zen-muqss: 4 ms with zen interactive, 6 ms without zen interactive
+     bmq: 4 ms server/desktop, 2 ms with low latency desktop
+     cfs: variable length
+     muqss:  6 ms
+     pds: 6 ms
+     prjc-bmq: 4 ms
+     prjc-pds: 4 ms
+     zen-muqss: 4 ms with zen interactive, 6 ms without zen interactive
 
-		Some of these timeslice values be adjustable.
+     Some of these timeslice values may be adjustable.
 
 
 
@@ -565,7 +636,10 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     OT_KERNEL_EXTERNAL_MODULES -- prepares the kernel for out-of-tree
     modules.  The kernel needs to expose these for packages that build
     kernel drivers outside this package.
-    Acceptable values:  1, unset.  Unset means auto detect.
+
+    Acceptable values:
+
+      1, unset.  Unset means auto detect.
 
 
 
@@ -592,8 +666,9 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     with the underscore character (_).
 
     The following are recognized patterns:
-	1. Add by wildcard.  model*.bin model* dir* d*r
-	2. Add by literal.  model model123.bin dir/model dir1/dir2/model.bin
+
+      1. Add by wildcard.  model*.bin model* dir* d*r
+      2. Add by literal.  model model123.bin dir/model dir1/dir2/model.bin
 
     When you use OT_KERNEL_FIRMWARE envvar, it is implied it will wipe the
     previous setting.
@@ -605,8 +680,14 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
       DEBUG, TRACE, VERBOSE, LOG, PRINT
 
-    Acceptable values:  1 to apply disable_debug, 0 to halt if there is a
-    conflict between a kernel flag set and disable_debug.
+    Acceptable values:
+
+      1 to apply disable_debug, 0 to halt if there is a conflict between a
+      kernel flag set and disable_debug.
+
+    See also:
+
+      DISABLE_DEBUG_EXCLUDES
 
 
 
@@ -625,15 +706,23 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     of trust.  In these ebuilds and eclasses, both CFI and ShadowCallStack (SCS)
     are determined by the hardening level.  In other words, if a user chooses to
     use the trust level, CFI or SCS would be disabled.
-    Acceptable values:  trust, untrusted, untrusted-distant, custom, manual, unset.
+
+    Acceptable values:
+
+      trust, untrusted, untrusted-distant, custom, manual, unset.
+
     Meanings:
-    custom - customize hardening.  (same as manual and unset)
-    trusted - no hardening applied.  Used for single user presentation,
-         LAN tournaments, pure performance like in house renderfarm setups.
-    untrusted - full hardening.  Used for multiuser computer not in locked room
-         such as on the road or traveling. 
-    untrusted-distant - some hardening except physical access mitigation.
-         Used for multiuser computer in locked room or www setups.
+
+      custom - customize hardening.  (same as manual and unset)
+
+      trusted - no hardening applied.  Used for single user presentation,
+        LAN tournaments, pure performance like in house renderfarm setups.
+
+      untrusted - full hardening.  Used for multiuser computer not in locked room
+        such as on the road or traveling. 
+
+      untrusted-distant - some hardening except physical access mitigation.
+        Used for multiuser computer in locked room or www setups.
 
 
 
@@ -659,8 +748,11 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     OT_KERNEL_HAVE_CRYPTO_DEV_SHA512
     OT_KERNEL_HAVE_CRYPTO_DEV_SERPENT
     OT_KERNEL_HAVE_CRYPTO_DEV_TWOFISH
-    Acceptable values:  1 for have, 0 do not have (optional), unset.  Unset is
-    equivalent to 0.
+
+    Acceptable values:
+
+      1 for have, 0 do not have (optional), unset.  Unset is equivalent to 0.
+
     These will skip adding additional CPU optimized ciphers or hash algorithms
     in preference for the hardware accelerated crypto device implementation.
     While setting this flag, you still need to manually configure the kernel
@@ -677,10 +769,11 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     lockdown safesetid, selinux, smack, tomoyo, yama.
 
     Acceptable general values:  auto, default, manual
-      auto -- adds LSMs based on packages installed with default subsettings
-      default -- Uses "integrity,selinux,bpf" with default subsettings
-        equivalent to upstream defaults
-      manual -- Uses previously manually set settings
+
+    * auto -- adds LSMs based on packages installed with default subsettings
+    * default -- Uses "integrity,selinux,bpf" with default subsettings
+      equivalent to upstream defaults
+    * manual -- Uses previously manually set settings
 
     The "acceptable multi values" and "acceptable general values" are mutually
     exclusive.  In acceptable multi values listing, the LSMs needs to be comma
@@ -698,19 +791,27 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     For unsigned kernel modules, this will prevent loading hacked modules.
     If a option is still a module and modules support is disable, it will
     convert all modules into built-ins.
-    Acceptable values: 1, 0, y, n, unset.  Unset is equivalent to maunal or
-    previous settings if using previous config, or default config if new
-    config.
+
+    Acceptable values:
+
+      1, 0, y, n, unset
+
+    Unset is equivalent to maunal or previous settings if using previous config,
+    or default config if new config.
 
 
 
     OT_KERNEL_MODULES_COMPRESSOR (optional) -- compresses the kernel
     modules.
-    Acceptable values:  NONE, GZIP, XZ, ZSTD.  If not set, it will use the
-    manual setting.
-    NONE and ZSTD are only allowed with 5.15+.  When a new kernel config
-    is generated, module compression is disabled; but can be overrided
-    by explicitly setting it to one of the acceptable values.
+
+    Acceptable values:
+
+      NONE, GZIP, XZ, ZSTD
+
+    If not set, it will use the manual setting.  NONE and ZSTD are only allowed
+    with 5.15+.  When a new kernel config is generated, module compression is
+    disabled; but can be overrided by explicitly setting it to one of the
+    acceptable values.
 
 
 
@@ -745,7 +846,7 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     env.  When done the variable should be overritten a new string and
     then not set.
 
-         Example:
+    * Example:
 
 # Scramble path if possible: \
 OT_KERNEL_PRIVATE_KEY=$(dd if=/dev/urandom of=/dev/stdout bs=255 count=1 \
@@ -760,14 +861,21 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_PROCESSOR_CLASS -- sets the type of cpu class for used in this
     kernel.  This will precisely will reduce the amount of latency.  Otherwise,
     it will increase it.
-    Acceptable values:  uniprocessor, unicore, multicore, smp, smp-unicore,
-    smp-legacy, multicore, numa-multicore, numa-unicore, custom, manual, unset
+
+    Acceptable values:
+
+      uniprocessor, unicore, multicore, smp, smp-unicore, smp-legacy, multicore,
+      numa-multicore, numa-unicore, custom, manual, unset
 
 
 
     OT_KERNEL_SIGN_MODULES (optional) -- signs kernel modules with sha384
     or sha512.  This option is dependent on OT_KERNEL_MODULES_SUPPORT=y.
-    Acceptable values:  sha384, sha512, unset, 1, 0, manual.
+
+    Acceptable values:
+
+      sha384, sha512, unset, 1, 0, manual
+
     If setting to 1, it will use sha384.  Setting to unset will assume manual.
     Setting to 0 will disable module signing and disable module sign
     verification.
@@ -780,27 +888,30 @@ unset OT_KERNEL_PRIVATE_KEY
     forced default on to prevent any unprepared disruption.  See
     OT_KERNEL_PRIVATE_KEY section also.
 
-         IMPORTANT:
+    IMPORTANT:
 
-         When OT_KERNEL_SIGN_MODULES is enabled, if the OT_KERNEL_PRIVATE_KEY
-         and OT_KERNEL_SHARED_KEY are not specified, the kernel will
-         autogenerate keys in the certs folder of the kernel sources.  These
-         keys will be installed but the private key should be copied to a
-         secure place such a encrypted store contained in a keychain or by
-         steganography; and then the installed private key .pem file in the
-         certs folder should be cryptographically securely destroyed with shred
-         (or any secure delete program).  This is to prevent recovery and reuse
-         of the private key by an untrusted user.  The private key temporarily
-         stored in the certs folder should be destroyed in within 24 hours.
-         Each build configuration with have a unique private-shared keys if
-         using autogenerated, so all keys need to be stored and properly labeled
-         to prevent mixup.
+      When OT_KERNEL_SIGN_MODULES is enabled, if the OT_KERNEL_PRIVATE_KEY
+      and OT_KERNEL_SHARED_KEY are not specified, the kernel will
+      autogenerate keys in the certs folder of the kernel sources.  These
+      keys will be installed but the private key should be copied to a
+      secure place such a encrypted store contained in a keychain or by
+      steganography; and then the installed private key .pem file in the
+      certs folder should be cryptographically securely destroyed with shred
+      (or any secure delete program).  This is to prevent recovery and reuse
+      of the private key by an untrusted user.  The private key temporarily
+      stored in the certs folder should be destroyed in within 24 hours.
+      Each build configuration with have a unique private-shared keys if
+      using autogenerated, so all keys need to be stored and properly labeled
+      to prevent mixup.
 
 
 
     OT_KERNEL_SIGN_KERNEL (WIP) -- Cryptographically sign the kernel for the
     type of system and install the kernel to the EFI partition if possible.
-    Acceptable values: uefi, efi, kexec, none, not set.
+
+    Acceptable values:
+
+      uefi, efi, kexec, none, not set
 
 
 
@@ -810,7 +921,11 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
     OT_KERNEL_SWAP -- Enable or disable use of swap.
-    Acceptable values:  0, 1, y, n, manual, unset
+
+    Acceptable values:
+
+      0, 1, y, n, manual, unset
+
     0 means disable and 1 means enable.  Unset is the same as manual.  It is
     recommended to use swap if the peak memory exceeds the RAM.  Otherwise,
     it should be disabled.  Peak memory is usually around 12 GB.
@@ -849,14 +964,18 @@ unset OT_KERNEL_PRIVATE_KEY
 
     OT_KERNEL_VERBOSITY=N (optional) -- presentation of compiler and build
     invocation.
-    Acceptable values for N:  0 for minimal output, 1 for showing compiler
-    flags, 2 for reasons for rebuild.
+
+    Acceptable values for N:
+
+      0 for minimal output, 1 for showing compiler flags, 2 for reasons for
+      rebuild.
 
 
 
     OT_KERNEL_WORK_PROFILE -- sets the power-performance profile while taking
     in consideration productivity and latency requirements.  This value can
     be unset which is equivalent to manual.
+
     Acceptable values:
 
       arcade
@@ -898,7 +1017,11 @@ unset OT_KERNEL_PRIVATE_KEY
 
     OT_KERNEL_ZSWAP_ALLOCATOR -- chooses the swap allocator which tries to fit
     the number of compressed pages while aiming to reduce fragmentation.
-    Acceptable values: zsmalloc, zbud, z3fold, x1, x2, x3, unset, manual, auto
+
+    Acceptable values:
+
+      zsmalloc, zbud, z3fold, x1, x2, x3, unset, manual, auto
+
     If unset, it assumes manual.  x1 is an alias for zsmalloc; x2 is a alias
     for zbud; x3 is an alias for z3fold.  auto is an alias for zbud.  It is
     recommended to use x3 for less than 12 GB of RAM.  For 12 GB and above, it
@@ -908,7 +1031,11 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
     OT_KERNEL_ZSWAP_COMPRESSOR -- chooses a swap page algorithm
-    Acceptable values: deflate, lzo, 842, lz4, lz4hc, zstd, unset, manual, auto
+
+    Acceptable values:
+
+      deflate, lzo, 842, lz4, lz4hc, zstd, unset, manual, auto
+
     If unset, it assumes manual.  auto is an alias for lzo.  It is recommended
     to use lz4 or zstd (or any algorithm that can achieve 2:1 compression
     ratio) for less than 12 GB of ram.  For 12 GB and above, it should be unset.
@@ -933,11 +1060,11 @@ unset OT_KERNEL_PRIVATE_KEY
     separated 7 digit id.  One may use the reject to manually apply
     settings for that package.
 
-         Examples:
+    Examples:
 
-              OT_KERNEL_PKGFLAGS_REJECT="1ee4e36"
-              OT_KERNEL_PKGFLAGS_REJECT="1ee4e36 155d9fc"
-              OT_KERNEL_PKGFLAGS_REJECT="1ee4e36 155d9fc 27ea6ce"
+      OT_KERNEL_PKGFLAGS_REJECT="1ee4e36"
+      OT_KERNEL_PKGFLAGS_REJECT="1ee4e36 155d9fc"
+      OT_KERNEL_PKGFLAGS_REJECT="1ee4e36 155d9fc 27ea6ce"
 
     Most variables below have values 0 for off and 1 for on.  Not set implies
     the eclass defaults.
@@ -951,16 +1078,27 @@ unset OT_KERNEL_PRIVATE_KEY
     0 means off and 1 means on.
 
     ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.
-    Valid values 0 (default), 1.
+
+    Valid values:
+
+      0 (default), 1
 
     CRYPTSETUP_CIPHERS - Space separated list block ciphers.
-    Valid values:  aes, anubis, camellia, cast6, serpent, twofish.  If
-    unset, it adds aes.
+
+    Valid values:
+
+      aes, anubis, camellia, cast6, serpent, twofish.
+
+    If unset, it adds aes.
 
     CRYPTSETUP_INTEGRITIES - Space separated of AEAD ciphers used for
     additional encryption with data integrity.  Only for LUKS2.
-    Valid values:  poly1305, hmac-sha256, hmac-sha512.  Unset by
-    default.  (Restricted pairings: chacha20 with poly1305,
+
+    Valid values:
+
+      poly1305, hmac-sha256, hmac-sha512
+
+    Unset by default.  (Restricted pairings: chacha20 with poly1305,
     aes-xts-plain64 with hmac-sha256 or hmac-sha512.)  For weaknesses, see
 https://gitlab.com/cryptsetup/cryptsetup/-/blob/main/docs/v2.0.0-ReleaseNotes#L261
     For consequences of compromised integrity or data corruption, see
@@ -978,49 +1116,50 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     If unset, it adds rmd160, sha256.
 
     CRYPTSETUP_TCRYPT - Add support for tcrypt.
-    Valid values 0, 1 (default).
+    Valid values:  0, 1 (default).
 
     IPTABLES_CLIENT - Add support for iptables client.
-    Valid values 0, 1 (default).
+    Valid values:  0, 1 (default).
 
     IPTABLES_ROUTER - Add support for iptables router.
-    Valid values 0 (default), 1.
+    Valid values:  0 (default), 1.
 
     MDADM_RAID - Add support for software RAID.
-    Valid values 0, 1 (default).
+    Valid values:  0, 1 (default).
 
     NFS_CLIENT - Add support for nfs client.
-    Valid values 0, 1 (default).
+    Valid values:  0, 1 (default).
 
     NFS_SERVER - Add support for nfs server.
-    Valid values 0, 1 (default).
+    Valid values:  0, 1 (default).
 
     OSS - Force add support for OSS sound.
-    Valid values 0 (default), 1.
+    Valid values:  0 (default), 1.
 
     OSS_MIDI - Force add support for OSS MIDI.
-    Valid values 0 (default), 1.
+    Valid values:  0 (default), 1.
 
     SANE_SCSI - Add support for SCSI scanners.
-    Valid values 0 (default), 1.
+    Valid values:  0 (default), 1.
 
     SANE_USB - Add support for USB scanners.
-    Valid values 0, 1 (default).
+    Valid values:  0, 1 (default).
 
     STD_PC_SPEAKER - Add support for the PC speaker with the standard PC speaker
-    driver.  Valid values 0, 1 (default).
+    driver.
+    Valid values:  0, 1 (default).
 
     QEMU_GUEST_LINUX - Add support for a QEMU Linux guests.
-    Valid values 0, 1 (default).
+    Valid values:  0, 1 (default).
 
     VIRTUALBOX_GUEST_LINUX - Add support for VirtualBox Linux guests.
-    Valid values 0, 1 (default).
+    Valid values:  0, 1 (default).
 
     VSYSCALL_MODE - Select vsyscall mode.
     Valid values:  full, emulate (default).
 
     XEN_PCI_PASSTHROUGH - Add support for PCI passthrough.
-    Valid values 0 (default), 1.
+    Valid values:  0 (default), 1.
 
 
 
@@ -1029,7 +1168,10 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     PERMIT_NETFILTER_SYMBOL_REMOVAL -- Remove extra symbols containing names
     with those keywords.  Note, some of these symbols may be beneficial to
     netfilter and not be related to debugging.  By default, this is disabled.
-    Acceptable values:  1 to remove symbols, 0 to not remove symbols.
+
+    Acceptable values:
+
+      1 to remove symbols, 0 to not remove symbols.
 
 
 
@@ -1038,10 +1180,10 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     GENPATCHES_BLACKLIST -- a space separated list of genpatches to ban.
     See the genpatches website for the number to patch correspondance.
 
-         Examples:
+    Examples:
 
-              GENPATCHES_BLACKLIST="2500"
-              GENPATCHES_BLACKLIST="2500 2600"
+      GENPATCHES_BLACKLIST="2500"
+      GENPATCHES_BLACKLIST="2500 2600"
 
 
 
@@ -1052,11 +1194,11 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
 
     Both 7 and 40 digit commit IDs are accepted.
 
-         Examples:
+    Examples:
 
-              ZENSAUCE_BLACKLIST="19be35c 1baa02f"
-              ZENSAUCE_BLACKLIST="1baa02fbd7a419fdd0e484ba31ba82c90c7036cf ef12d902c1323bbbeacc3babc91aae15976474ca 56f6f4315aedbbcbef8ad61f187347c20a270e49"
-              ZENSAUCE_WHITELIST="4b03a1c 613d2ac"
+      ZENSAUCE_BLACKLIST="19be35c 1baa02f"
+      ZENSAUCE_BLACKLIST="1baa02fbd7a419fdd0e484ba31ba82c90c7036cf ef12d902c1323bbbeacc3babc91aae15976474ca 56f6f4315aedbbcbef8ad61f187347c20a270e49"
+      ZENSAUCE_WHITELIST="4b03a1c 613d2ac"
 
     For a full list of commits, see the commit history.
 
@@ -1118,12 +1260,12 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
 
     See the ot-kernel-cve eclass for details.
 
-         Examples:
+    Examples:
 
-              CVE_FIX_TRUST_LEVEL=0x00050000 # Same as 0x00010000 | 0x00040000
-              CVE_BLACKLIST_FIXES="CVE-2019-14814 CVE-2019-14895"
-              CVE_DELAY=0
-              CVE_ALLOW_RISKY_BACKPORTS=1
+      CVE_FIX_TRUST_LEVEL=0x00050000 # Same as 0x00010000 | 0x00040000
+      CVE_BLACKLIST_FIXES="CVE-2019-14814 CVE-2019-14895"
+      CVE_DELAY=0
+      CVE_ALLOW_RISKY_BACKPORTS=1
 
 
     Please read the metadata.xml comments for more info.

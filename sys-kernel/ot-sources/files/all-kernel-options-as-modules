@@ -34,6 +34,8 @@ fix_config_for_boot() {
 		# All related to boot initalization and logins
 		crypto
 		drivers/ata
+		drivers/block
+		drivers/hid
 		drivers/md
 		drivers/scsi
 		drivers/usb
@@ -54,7 +56,7 @@ fix_config_for_boot() {
 	fi
 	echo -e "\nFixing config for boot"
 	for s in ${symbols[@]} ; do
-		if grep -q -e "^${s}=m" "${conv}" && grep -q -e "^${s}=m" "${bak}" ; then
+		if grep -q -e "^${s}=m" "${orig}" ; then
 			echo "${s}=y"
 			sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}"
 		fi
