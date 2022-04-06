@@ -2236,7 +2236,7 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		[[ "${cryptsetup_integrities}" =~ "hmac" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
 		#[[ "${cryptsetup_integrities}" =~ "cmac" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"	# undocumented combo, missing block cipher for AEAD
 
-		if [[ -n "${cryptsetup_integrity}" ]] ; then
+		if [[ -n "${cryptsetup_integrities}" ]] ; then
 			ewarn "AEAD cryptsetup support is experimental"
 			# CONFIG_BLK_DEV_DM is Added above
 			ot-kernel_y_configopt "CONFIG_DM_INTEGRITY"
