@@ -357,9 +357,9 @@ CRYPTSETUP_MODES="adiantum cbc ctr ofb xts"
 OT_KERNEL_ARCH="x86_64"
 OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
-OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu"		# For early KMS.  Disable line if using external kernel driver package.
+OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu drivers/video"	# For early KMS.  Disable line if using external kernel driver package.
 OT_KERNEL_BUILD="1"
-OT_KERNEL_BUILD_ALL_MODULES_AS="y"					# Environment variable in testing
+OT_KERNEL_BUILD_ALL_MODULES_AS="y"						# Environment variable in testing
 OT_KERNEL_CONFIG="/etc/kernels/kernel-config-5.16-ot-x86_64"
 OT_KERNEL_CPU_SCHED="cfs"
 OT_KERNEL_EXTRAVERSION="ot"
@@ -545,8 +545,8 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     OT_KERNEL_BOOT_SUBSYSTEMS -- A space separated list of subsystems required
     to boot as builtins instead of modules used to replace the defaults.
     This information can be found in the help "defined at"
-    section in in "make menuconfig".  Early KMS requires drivers/char/agp
-    and drivers/gpu to be added.
+    section in in "make menuconfig".  Early KMS requires drivers/char/agp,
+    drivers/gpu, and drivers/video to be added.
 
     Example:
 
@@ -567,7 +567,7 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     Example:
 
-      OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/spi drivers/mmc drivers/char/agp drivers/gpu drivers/char/tpm"
+      OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/spi drivers/mmc drivers/char/agp drivers/gpu drivers/video drivers/char/tpm"
 
     See also:
 
