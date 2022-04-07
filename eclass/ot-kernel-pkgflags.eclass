@@ -6689,6 +6689,8 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_SND_PCI"
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI"
+		ot-kernel_m_configopt "CONFIG_SND_HDA_CODEC_VIA"
+		ot-kernel_m_configopt "CONFIG_SND_HDA_CODEC_HDMI"
 		ot-kernel_set_configopt "CONFIG_SND_HDA_PREALLOC_SIZE" "2048"
 	fi
 }
