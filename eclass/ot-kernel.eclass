@@ -2051,6 +2051,7 @@ ot-kernel_set_kconfig_bbr2() {
 		ot-kernel_y_configopt "CONFIG_DEFAULT_BBR2"
 		ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"bbr2\""
 	fi
+	rm config.gce 2>/dev/null # included in bbr2 patch
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_boot_args
@@ -2736,7 +2737,7 @@ ot-kernel_set_kconfig_lsms() {
 			local k="${LSM_MODULES[${l}]}"
 			ot-kernel_y_configopt "CONFIG_SECURITY_${k^^}" # Add requested
 		done
-		IFS=$' \n\t'
+		IFS=$' \t\n'
 
 		for l in ${LSM_LEGACY[@]} ; do
 			ot-kernel_unset_configopt "CONFIG_DEFAULT_SECURITY_${l}" # Reset
@@ -4040,6 +4041,7 @@ ot-kernel_convert_tristate_y() {
 	local symbols=(
 		$(grep -E -e "^CONFIG_[0-9A-Z_]+=(y|m|n)" "${orig}" | sed -E -e "s/=(y|n|m)//g")
 	)
+	symbols=($(echo "${symbols[@]}" | tr " " "\n" | sort))
 	einfo "Changing .config from CONFIG...=m to CONFIG...=y"
 	for s in ${symbols[@]} ; do
 		sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}" || die
@@ -4071,17 +4073,26 @@ ot-kernel_fix_config_for_boot() {
 			${OT_KERNEL_BOOT_SUBSYSTEMS_APPEND}
 		)
 	fi
+	subsystems=($(echo "${subsystems[@]}" | tr " " "\n" | sort))
+
+	if [[ "${subsystems[@]}" =~ "drivers/char/agp" \
+		&& "${subsystems[@]}" =~ "drivers/gpu" ]] ; then
+ewarn "Detected Early KMS is disabled.  For early KMS, add"
+ewarn "drivers/char/agp drivers/gpu to OT_KERNEL_BOOT_SUBSYSTEMS_APPEND"
+ewarn "or similar."
+	fi
 
 	if [[ -n "${OT_KERNEL_BOOT_KOPTIONS}" ]] ; then
 		symbols=( "${OT_KERNEL_BOOT_KOPTIONS}" )
 	else
 		symbols=(
-			$(grep -E -e "^config [0-9A-Za-z_]+" $(find ${subsystems[@]} -name "Kconfig*") \
+			$(grep -E -e "^(config|menuconfig) [0-9A-Za-z_]+" $(find ${subsystems[@]} -name "Kconfig*") \
 				| cut -f 2 -d ":" \
-				| sed -e "s|config ||g" \
+				| sed -r -e "s/^(config|menuconfig) //g" \
 				| sed -e "s|^|CONFIG_|g")
 		)
 	fi
+	symbols=($(echo "${symbols[@]}" | tr " " "\n" | sort))
 	einfo "Fixing config for boot"
 	for s in ${symbols[@]} ; do
 		if grep -q -e "^${s}=m" "${orig}" ; then
@@ -4093,11 +4104,11 @@ ot-kernel_fix_config_for_boot() {
 
 # @FUNCTION: ot-kernel_set_kconfig_build_all_modules_as
 # @DESCRIPTION:
-# Converts all options as modules (m) or built-in (y).
+# Converts all options as modules (m) or builtins (y).
 ot-kernel_set_kconfig_build_all_modules_as() {
-	local orig=".config"
-	local bak=".config.orig"
-	local conv=".config.conv"
+	local orig="${BUILD_DIR}/.config"
+	local bak="${BUILD_DIR}/.config.orig"
+	local conv="${BUILD_DIR}/.config.conv"
 	if ! grep -q -e "^CONFIG_MODULES=y" "${BUILD_DIR}/.config" ; then
 		einfo "Detected modules support disabled"
 		ot-kernel_convert_tristate_y
@@ -4111,6 +4122,7 @@ ot-kernel_set_kconfig_build_all_modules_as() {
 	else
 		einfo "Building all kernel options as manual"
 	fi
+	rm "${bak}" "${conv}" 2>/dev/null
 }
 
 # @FUNCTION: ot-kernel_src_configure
@@ -4219,6 +4231,7 @@ ot-kernel_src_configure() {
 		if ot-kernel_use disable_debug ; then
 			einfo "Disabling all debug and shortening logging buffers"
 			./disable_debug || die
+			rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
 		fi
 		ot-kernel_y_configopt "CONFIG_PRINTK"
 		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"

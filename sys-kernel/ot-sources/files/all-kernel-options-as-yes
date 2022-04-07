@@ -9,6 +9,7 @@ convert_tristate() {
 	local symbols=(
 		$(grep -E -e "^CONFIG_[0-9A-Z_]+=(y|m|n)" "${orig}" | sed -E -e "s/=(y|n|m)//g")
 	)
+	symbols=($(echo "${symbols[@]}" | tr " " "\n" | sort))
 	echo -e "\nChanging .config from CONFIG...=y to CONFIG...=m"
 	for s in ${symbols[@]} ; do
 		sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}"

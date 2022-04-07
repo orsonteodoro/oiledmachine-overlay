@@ -357,8 +357,9 @@ CRYPTSETUP_MODES="adiantum cbc ctr ofb xts"
 OT_KERNEL_ARCH="x86_64"
 OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
+OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu"		# For early KMS.  Disable line if using external kernel driver package.
 OT_KERNEL_BUILD="1"
-OT_KERNEL_BUILD_ALL_MODULES_AS="y"	# Environment variable in testing
+OT_KERNEL_BUILD_ALL_MODULES_AS="y"					# Environment variable in testing
 OT_KERNEL_CONFIG="/etc/kernels/kernel-config-5.16-ot-x86_64"
 OT_KERNEL_CPU_SCHED="cfs"
 OT_KERNEL_EXTRAVERSION="ot"
@@ -491,8 +492,8 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     OT_KERNEL_BUILD_ALL_MODULES_AS -- Choose how to build options capable of
     being built as modules.  You can choose to convert all kernel config
-    candidates as modules (m) or built-in (y).  One may choose to build
-    everything as built in to prevent loading of hacked drivers.  One may
+    candidates as modules (m) or builtins (y).  One may choose to build
+    everything as builtins to prevent loading of hacked drivers.  One may
     also choose as modules to load drivers on demand.  This option depends
     on OT_KERNEL_MODULES_SUPPORT=y.  (EXPERIMENTAL, TESTING)
 
@@ -504,19 +505,18 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     See also:
 
-      OT_KERNEL_BOOT_KOPTIONS_APPEND, OT_KERNEL_MODULES_SUPPORT,
-      OT_KERNEL_BOOT_SUBSYSTEMS, OT_KERNEL_BOOT_SUBSYSTEMS_APPEND.
+      OT_KERNEL_BOOT_KOPTIONS_APPEND
+      OT_KERNEL_BOOT_SUBSYSTEMS
+      OT_KERNEL_BOOT_SUBSYSTEMS_APPEND
+      OT_KERNEL_MODULES_SUPPORT
 
 
 
     OT_KERNEL_BOOT_KOPTIONS -- A space separated list of CONFIG_... options to
-    be forced as built-in.  This setting is optional.  Setting this will
-    override the automatic =y based on input/block/crypto subsystems required
-    to login or boot a proper working initramfs.  This one is designed for
-    those that want more control or minimalism.  This option depends on
-    OT_KERNEL_BUILD_ALL_MODULES_AS="m".  This option focuses on specific
-    devices.  This information can be found in help "defined at" section
-    in "make menuconfig".
+    be built as builtins instead as modules.  This setting is optional.  This
+    option depends on OT_KERNEL_BUILD_ALL_MODULES_AS="m".  This option focuses
+    on specific devices.  This information can be found in help "defined at"
+    section in "make menuconfig".
 
     Example:
 
@@ -524,17 +524,29 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     See also:
 
-      OT_KERNEL_BOOT_KOPTIONS_APPEND, OT_KERNEL_BOOT_SUBSYSTEMS, 
+      OT_KERNEL_BOOT_KOPTIONS_APPEND
+      OT_KERNEL_BOOT_SUBSYSTEMS
+      OT_KERNEL_BOOT_SUBSYSTEMS_APPEND
+
+
+
+    OT_KERNEL_BOOT_KOPTIONS_APPEND -- A space separated list of CONFIG_...
+    options to be built as builtins instead of modules added after auto boot
+    option discovery.  This option depends on OT_KERNEL_BUILD_ALL_MODULES_AS="m"
+
+    See also:
+
+      OT_KERNEL_BOOT_KOPTIONS
+      OT_KERNEL_BOOT_SUBSYSTEMS
       OT_KERNEL_BOOT_SUBSYSTEMS_APPEND
 
 
 
     OT_KERNEL_BOOT_SUBSYSTEMS -- A space separated list of subsystems required
-    to boot used to replace the defaults.  Provided for those that require
-    more minimalism.  This will insure that options are built-in instead
-    of being a module.   This option focuses on broad categories.  This
-    information can be found in the help "defined at" section in in
-    "make menuconfig".
+    to boot as builtins instead of modules used to replace the defaults.
+    This information can be found in the help "defined at"
+    section in in "make menuconfig".  Early KMS requires drivers/char/agp
+    and drivers/gpu to be added.
 
     Example:
 
@@ -542,35 +554,26 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     See also:
 
-      OT_KERNEL_BOOT_KOPTIONS, OT_KERNEL_BOOT_SUBSYSTEMS_APPEND,
+      OT_KERNEL_BOOT_KOPTIONS
       OT_KERNEL_BOOT_KOPTIONS_APPEND
+      OT_KERNEL_BOOT_SUBSYSTEMS_APPEND
 
 
 
     OT_KERNEL_BOOT_SUBSYSTEMS_APPEND -- An additional space separated list of
-    subsystems required to boot appended to the default set of boot
-    required subsystems.
+    subsystems required to boot as builtins appended to the default set of boot
+    required subsystems.  Early KMS requires drivers/char/agp
+    and drivers/gpu to be added.
 
     Example:
 
-      OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/spi drivers/mmc drivers/gpu"
+      OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/spi drivers/mmc drivers/char/agp drivers/gpu drivers/char/tpm"
 
     See also:
 
-      OT_KERNEL_BOOT_KOPTIONS, OT_KERNEL_BOOT_SUBSYSTEMS, 
+      OT_KERNEL_BOOT_KOPTIONS
       OT_KERNEL_BOOT_KOPTIONS_APPEND
-
-
-
-    OT_KERNEL_BOOT_KOPTIONS_APPEND -- A space separated list of CONFIG_...
-    options to be forced as built-in added after auto boot option discovery.
-    This one is more designed for convenience.  This option depends on
-    OT_KERNEL_BUILD_ALL_MODULES_AS="m"
-
-    See also:
-
-      OT_KERNEL_BOOT_KOPTIONS, OT_KERNEL_BOOT_SUBSYSTEMS,
-      OT_KERNEL_BOOT_SUBSYSTEMS_APPEND
+      OT_KERNEL_BOOT_SUBSYSTEMS
 
 
 
@@ -790,7 +793,7 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     OT_KERNEL_MODULES_SUPPORT -- Enables or disable modules support.
     For unsigned kernel modules, this will prevent loading hacked modules.
     If a option is still a module and modules support is disable, it will
-    convert all modules into built-ins.
+    convert all modules into builtins.
 
     Acceptable values:
 

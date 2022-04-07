@@ -43,17 +43,19 @@ fix_config_for_boot() {
 		fs
 		${OT_KERNEL_BOOT_KOPTIONS_APPEND}
 	)
+	subsystems=($(echo "${subsystems[@]}" | tr " " "\n" | sort))
 
 	if [[ -n "${OT_KERNEL_BOOT_KOPTIONS}" ]] ; then
 		symbols=( "${OT_KERNEL_BOOT_KOPTIONS}" )
 	else
 		symbols=(
-			$(grep -E -e "^config [0-9A-Za-z_]+" $(find ${subsystems[@]} -name "Kconfig*") \
+			$(grep -E -e "^(config|menuconfig) [0-9A-Za-z_]+" $(find ${subsystems[@]} -name "Kconfig*") \
 				| cut -f 2 -d ":" \
-				| sed -e "s|config ||g" \
+				| sed -r -e "s/(config|menuconfig) //g" \
 				| sed -e "s|^|CONFIG_|g")
 		)
 	fi
+	symbols=($(echo "${symbols[@]}" | tr " " "\n" | sort))
 	echo -e "\nFixing config for boot"
 	for s in ${symbols[@]} ; do
 		if grep -q -e "^${s}=m" "${orig}" ; then
