@@ -1960,6 +1960,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_CONFIG
 	unset OT_KERNEL_CPU_SCHED
 	unset OT_KERNEL_DISABLE_USB_AUTOSUSPEND
+	unset OT_KERNEL_EARLY_KMS
 	unset OT_KERNEL_EXTRAVERSION
 	unset OT_KERNEL_FIRMWARE
 	unset OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG
@@ -4072,13 +4073,20 @@ ot-kernel_fix_config_for_boot() {
 			fs
 			${OT_KERNEL_BOOT_SUBSYSTEMS_APPEND}
 		)
+		if [[ "${OT_KERNEL_EARLY_KMS:-1}" == "1" ]] ; then
+			subsystems+=(
+				drivers/char/agp
+				drivers/gpu
+				drivers/video
+			)
+		fi
 	fi
 	subsystems=($(echo "${subsystems[@]}" | tr " " "\n" | sort))
 
 	if [[ "${subsystems[@]}" =~ "drivers/char/agp" \
 		&& "${subsystems[@]}" =~ "drivers/gpu" ]] ; then
 ewarn "Detected Early KMS is disabled.  For early KMS, add"
-ewarn "drivers/char/agp drivers/gpu to OT_KERNEL_BOOT_SUBSYSTEMS_APPEND"
+ewarn "drivers/char/agp, drivers/gpu, drivers/video, to OT_KERNEL_BOOT_SUBSYSTEMS_APPEND"
 ewarn "or similar."
 	fi
 

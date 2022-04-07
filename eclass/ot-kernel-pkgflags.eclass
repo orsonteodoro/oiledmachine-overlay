@@ -410,8 +410,10 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_xf86_input_evdev
 	ot-kernel-pkgflags_xf86_input_libinput
 	ot-kernel-pkgflags_xf86_input_synaptics
+	ot-kernel-pkgflags_xf86_video_amdgpu
 	ot-kernel-pkgflags_xf86_video_ati
 	ot-kernel-pkgflags_xf86_video_intel
+	ot-kernel-pkgflags_xf86_video_nouveau
 	ot-kernel-pkgflags_xf86_video_vesa
 	ot-kernel-pkgflags_x86info
 	ot-kernel-pkgflags_xfce4_battery_plugin
@@ -6635,6 +6637,62 @@ ot-kernel-pkgflags_xf86_input_synaptics() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_xf86_video_amdgpu
+# @DESCRIPTION:
+# Applies kernel config flags for the xf86-video-amdgpu package
+ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "affcbb4" ]] && return
+	if has_version "x11-drivers/xf86-video-amdgpu" ; then
+		einfo "Applying kernel config flags for the xf86-video-amdgpu package (id: affcbb4)"
+		ot-kernel_y_configopt "CONFIG_MTRR"
+		ot-kernel_y_configopt "CONFIG_MEMORY_HOTPLUG"
+		ot-kernel_y_configopt "CONFIG_MEMORY_HOTREMOVE"
+		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
+		ot-kernel_y_configopt "CONFIG_DEVICE_PRIVATE"
+		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		ot-kernel_y_configopt "CONFIG_AGP"
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
+		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_SI"
+		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_CIK"
+		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_USERPTR"
+		ot-kernel_y_configopt "CONFIG_DRM_AMD_DC"
+		if ver_test ${K_MAJOR_MINOR} -ge 4.15 ; then
+			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN1_0"
+                fi
+		if ver_test ${K_MAJOR_MINOR} -ge 4.15 \
+		        && ver_test ${K_MAJOR_MINOR} -le 4.17 ; then
+			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_PRE_VEGA"
+		fi
+		if ver_test ${K_MAJOR_MINOR} -ge 4.17 \
+                        && ver_test ${K_MAJOR_MINOR} -le 4.18 ; then
+			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_FBC"
+                fi
+		if ver_test ${K_MAJOR_MINOR} -ge 5.5 \
+			&& ver_test ${K_MAJOR_MINOR} -le 5.3 ; then
+			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN2_0"
+			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN"
+		fi
+		if ver_test ${K_MAJOR_MINOR} -ge 5.9 \
+			&& ver_test ${K_MAJOR_MINOR} -le 5.10 ; then
+			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN"
+			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN3_0"
+		fi
+		ot-kernel_y_configopt "CONFIG_DRM_AMD_ACP"
+		ot-kernel_y_configopt "CONFIG_HSA_AMD"
+		ot-kernel_y_configopt "CONFIG_SND_HDA"
+		ot-kernel_y_configopt "CONFIG_SND_HDA_PATCH_LOADER"
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SND_PCI"
+		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
+		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI"
+		ot-kernel_set_configopt "CONFIG_SND_HDA_PREALLOC_SIZE" "2048"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_xf86_video_ati
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-video-ati package
@@ -6659,10 +6717,51 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "bc32011" ]] && return
 	if has_version "x11-drivers/xf86-video-intel" ; then
 		einfo "Applying kernel config flags for the xf86-video-intel package (id: bc32011)"
+		ot-kernel_y_configopt "CONFIG_MTRR"
+		ot-kernel_y_configopt "CONFIG_AGP"
+		ot-kernel_y_configopt "CONFIG_AGP_INTEL"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_DRM_I915"
 		if ver_test ${K_MAJOR_MINOR} -lt 4.3 ; then
 			ot-kernel_y_configopt "CONFIG_DRM_I915_KMS"
-			ot-kernel_y_configopt "CONFIG_DRM_I915"
+			ot-kernel_y_configopt "CONFIG_DRM_I915_FBDEV"
 		fi
+		if ver_test ${K_MAJOR_MINOR} -ge 4.3 ; then
+			ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		fi
+		if ver_test ${K_MAJOR_MINOR} -ge 4.6 ; then
+			ot-kernel_y_configopt "CONFIG_DRM_I915_USERPTR"
+		fi
+		if ver_test ${K_MAJOR_MINOR} -ge 4.10 ; then
+			ot-kernel_y_configopt "CONFIG_DRM_I915_CAPTURE_ERROR"
+			ot-kernel_y_configopt "CONFIG_DRM_I915_COMPRESS_ERROR"
+		fi
+		if ver_test ${K_MAJOR_MINOR} -ge 4.14 \
+			&& ver_test ${K_MAJOR_MINOR} -lt 4.19 ; then
+			ot-kernel_y_configopt "CONFIG_DRM_I915_ALPHA_SUPPORT"
+		fi
+		# For vaapi
+		ot-kernel_y_configopt "CONFIG_ACPI"
+		ot-kernel_y_configopt "CONFIG_PCI_MSI"
+		ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
+		ot-kernel_y_configopt "CONFIG_INTEL_IOMMU_DEFAULT_ON"
+		ot-kernel_y_configopt "CONFIG_INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON" # Default on
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_xf86_video_nouveau
+# @DESCRIPTION:
+# Applies kernel config flags for the xf86-video-nouveau package
+ot-kernel-pkgflags_xf86_video_intel() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "411e952" ]] && return
+	if has_version "x11-drivers/xf86-video-nouveau" ; then
+		einfo "Applying kernel config flags for the xf86-video-nouveau package (id: 411e952)"
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_FB"
+		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
+		ot-kernel_y_configopt "CONFIG_DRM_NOUVEAU"
 	fi
 }
 

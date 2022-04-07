@@ -617,17 +617,30 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
       * muqss and prjc are better suited for audio production.
       * The rt extraversion can only use the cfs scheduler.
 
-     The default timeslices:
+      The default timeslices:
 
-     bmq: 4 ms server/desktop, 2 ms with low latency desktop
-     cfs: variable length
-     muqss:  6 ms
-     pds: 6 ms
-     prjc-bmq: 4 ms
-     prjc-pds: 4 ms
-     zen-muqss: 4 ms with zen interactive, 6 ms without zen interactive
+      bmq: 4 ms server/desktop, 2 ms with low latency desktop
+      cfs: variable length
+      muqss:  6 ms
+      pds: 6 ms
+      prjc-bmq: 4 ms
+      prjc-pds: 4 ms
+      zen-muqss: 4 ms with zen interactive, 6 ms without zen interactive
 
-     Some of these timeslice values may be adjustable.
+      Some of these timeslice values may be adjustable.
+
+
+
+    OT_KERNEL_EARLY_KMS -- enable early KMS for graphics improvement.
+    This setting fixes early kms problem with OT_KERNEL_BOOT_SUBSYSTEMS="m".
+    For out-of-tree (Direct Rendering Manager) DKMS drivers, this should be
+    0 to load these drivers as modules.
+
+    Acceptable values:
+
+      1, 0, y, n, unset
+
+    Unset is equivalent to 1.
 
 
 
