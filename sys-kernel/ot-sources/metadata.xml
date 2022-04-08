@@ -1266,6 +1266,9 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     IPTABLES_ROUTER - Add support for iptables router.
     Valid values:  0 (default), 1.
 
+    OT_KERNEL_LM_SENSORS_MODULES - Add modules for lm-sensors.
+    Valid values:  0 (default), 1.
+
     MDADM_RAID - Add support for software RAID.
     Valid values:  0, 1 (default).
 

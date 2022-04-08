@@ -4199,6 +4199,14 @@ ewarn "or similar."
 				| sed -e "s|^|CONFIG_|g")
 		)
 	fi
+
+	if has bbrv2 ${IUSE_EFFECTIVE} ; then
+		if ot-kernel_use bbrv2 ; then
+			# For setting as default
+			symbols+=( CONFIG_TCP_CONG_BBR2 )
+		fi
+	fi
+
 	symbols=($(echo "${symbols[@]}" | tr " " "\n" | sort))
 	einfo "Fixing config for boot"
 	for s in ${symbols[@]} ; do

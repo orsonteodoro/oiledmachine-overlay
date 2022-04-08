@@ -4012,6 +4012,7 @@ ot-kernel-pkgflags_lm_sensors() { # DONE
 		ot-kernel_y_configopt "CONFIG_HWMON"
 		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_SMBUS"
 
 		# Checked by sensors-detect
 		if [[ "${arch}" =~ "x86" ]] ; then
@@ -4019,6 +4020,75 @@ ot-kernel-pkgflags_lm_sensors() { # DONE
 		fi
 		if grep -q -E -e "^CONFIG_(PCI|ISA)=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_DEVPORT"
+		fi
+
+		if [[ "${OT_KERNEL_LM_SENSORS_MODULES:-0}" == "1" ]] ; then
+			einfo "Adding referenced modules for the lm-sensors package."
+			# Slice sections of the file and extract options
+			local sidx1=$(grep -n "PC SMBus host controller drivers" drivers/i2c/busses/Kconfig | cut -f 1 -d ":")
+			local eidx1=$(grep -n "if ACPI" drivers/i2c/busses/Kconfig | cut -f 1 -d ":")
+			local sidx2=$(grep -n "Other I2C/SMBus bus drivers" drivers/i2c/busses/Kconfig | cut -f 1 -d ":")
+			local eidx2=$(wc -l drivers/i2c/busses/Kconfig | cut -f 1 -d " ")
+			# Module options for sensors, i2c, smbus
+			local OPTS=(
+				$(sed -n ${sidx1},${eidx1}p drivers/i2c/busses/Kconfig \
+					| grep "config " \
+					| cut -f 2 -d " " \
+					| sed -e "s|^|CONFIG_|g")
+				$(sed -n ${sidx2},${eidx2}p drivers/i2c/busses/Kconfig \
+					| grep "config " \
+					| cut -f 2 -d " " \
+					| sed -e "s|^|CONFIG_|g")
+				$(grep -r -e "config SENSORS" drivers/hwmon/Kconfig \
+					| cut -f 2 -d " " \
+					| sed -e "s|^|CONFIG_|g")
+			)
+			local o
+			for o in ${OPTS[@]} ; do
+				ot-kernel_set_configopt "${o}" "m"
+			done
+
+			# Not tristate
+			local DEPS_Y=(
+				CONFIG_ACPI
+				CONFIG_MAILBOX
+				CONFIG_SENSORS_BT1_PVT_ALARMS
+				CONFIG_SENSORS_LTQ_CPUTEMP
+				CONFIG_SENSORS_S3C_RAW
+				CONFIG_SENSORS_W83795_FANCTRL
+				CONFIG_INTEL_SOC_PMIC_CHTWC
+				CONFIG_ISA
+			)
+
+			# Option dependencies
+			local DEPS=(
+				$(sed -n ${sidx1},${eidx1}p drivers/i2c/busses/Kconfig \
+					| grep "depends " \
+					| sed -E -e "s|.*depends on ||g" -e "s/(\|\||&&)//g" -e "s|[ ]+| |" \
+					| tr " " "\n" \
+					| sort \
+					| uniq \
+					| sed -e "\|^X86$|d" -e "\|^ARCH_|d" \
+					| sed -e "s|^|CONFIG_|g" \
+					| sed -e "\|^$|d")
+				$(sed -n ${sidx2},${eidx2}p drivers/i2c/busses/Kconfig \
+					| grep "depends " \
+					| sed -E -e "s|.*depends on ||g" -e "s/(\|\||&&)//g" -e "s|[ ]+| |" \
+					| tr " " "\n" \
+					| sort \
+					| uniq \
+					| sed -e "\|^X86$|d" -e "\|^ARCH_|d" -e "\|^HAS_|d" -e "\|BROKEN_ON_SMP|d" \
+					| sed -e "s|^|CONFIG_|g" \
+					| sed -e "\|^$|d")
+			)
+			local d
+			for d in ${DEPS[@]} ; do
+				if [[ "${DEPS_Y[@]}" =~ "${d}" ]] ; then
+					ot-kernel_y_configopt "${d}"
+				else
+					ot-kernel_set_configopt "${d}" "m"
+				fi
+			done
 		fi
 
 		local O=$(grep -E -e "config SENSORS_.*" $(find drivers/hwmon -name "Kconfig*") \
