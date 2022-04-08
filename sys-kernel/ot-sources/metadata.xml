@@ -1029,7 +1029,7 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_BOOT_ARGS to have all kernel args that would be normally
     specified in the bootline to be builtin.  It will automatically add
     mem_encrypt=on and the kernel commandline provided by the bootloader
-    is ignored to mitigate against evil maid attack.
+    is ignored to mitigate against an evil maid attack.
 
     Acceptable values:
 
