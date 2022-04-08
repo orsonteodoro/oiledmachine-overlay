@@ -206,6 +206,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_hplip
 	ot-kernel-pkgflags_htbinit
 	ot-kernel-pkgflags_htop
+	ot-kernel-pkgflags_i2c_tools
 	ot-kernel-pkgflags_i8kutils
 	ot-kernel-pkgflags_ifenslave
 	ot-kernel-pkgflags_igmpproxy
@@ -256,7 +257,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_lirc
 	ot-kernel-pkgflags_lkrg
 	ot-kernel-pkgflags_lksctp_tools
-	ot-kernel-pkgflags_lmsensors
+	ot-kernel-pkgflags_lm_sensors
 	ot-kernel-pkgflags_longrun
 	ot-kernel-pkgflags_loopaes
 	ot-kernel-pkgflags_lttng_modules
@@ -3180,6 +3181,33 @@ ewarn "Re-emerge net-print/cups[zerconf] and ${PN} for network printing."
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_i2c_tools
+# @DESCRIPTION:
+# Applies kernel config flags for the i2c-tools package
+ot-kernel-pkgflags_i2c_tools() {
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "8fa85cb" ]] && return
+	if has_version "sys-apps/i2c-tools" ; then
+		einfo "Applying kernel config flags for the i8kutils package (id: 8fa85cb)"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+		ot-kernel_y_configopt "CONFIG_I2C_HELPER_AUTO"
+
+		local O=$(grep -E -e "config I2C_.*" $(find drivers/i2c/busses -name "Kconfig*") \
+			| cut -f 2 -d ":" \
+			| sed -e "s|config ||g" \
+			| sed -e "s|^|CONFIG_|g")
+		local found=0
+		for o in ${O[@]} ; do
+			if grep -q -e "^${o}=" "${path_config}" ; then
+				found=1
+				break
+			fi
+		done
+		(( ${found} == 0 )) \
+			&& ewarn "You may need to have at least one CONFIG_I2C_... for i2c-tools."
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_i8kutils
 # @DESCRIPTION:
 # Applies kernel config flags for the i8kutils package
@@ -3974,16 +4002,38 @@ ot-kernel-pkgflags_lirc() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_lmsensors
+# @FUNCTION: ot-kernel-pkgflags_lm_sensors
 # @DESCRIPTION:
 # Applies kernel config flags for the lm-sensors package
-ot-kernel-pkgflags_lmsensors() { # DONE
+ot-kernel-pkgflags_lm_sensors() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "aef80f1" ]] && return
 	if has_version "sys-apps/lm-sensors" ; then
 		einfo "Applying kernel config flags for the lm-sensors package (id: aef80f1)"
 		ot-kernel_y_configopt "CONFIG_HWMON"
 		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 		ot-kernel_y_configopt "CONFIG_I2C"
+
+		# Checked by sensors-detect
+		if [[ "${arch}" =~ "x86" ]] ; then
+			ot-kernel_y_configopt "CONFIG_X86_CPUID"
+		fi
+		if grep -q -E -e "^CONFIG_(PCI|ISA)=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_DEVPORT"
+		fi
+
+		local O=$(grep -E -e "config SENSORS_.*" $(find drivers/hwmon -name "Kconfig*") \
+			| cut -f 2 -d ":" \
+			| sed -e "s|config ||g" \
+			| sed -e "s|^|CONFIG_|g")
+		local found=0
+		for o in ${O[@]} ; do
+			if grep -q -e "^${o}=" "${path_config}" ; then
+				found=1
+				break
+			fi
+		done
+		(( ${found} == 0 )) \
+			&& ewarn "You may need to have at least one CONFIG_SENSOR_... for lm-sensors."
 	fi
 }
 
@@ -6689,8 +6739,8 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_SND_PCI"
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI"
-		ot-kernel_m_configopt "CONFIG_SND_HDA_CODEC_VIA"
-		ot-kernel_m_configopt "CONFIG_SND_HDA_CODEC_HDMI"
+		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_VIA" "m"
+		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_HDMI" "m"
 		ot-kernel_set_configopt "CONFIG_SND_HDA_PREALLOC_SIZE" "2048"
 	fi
 }
