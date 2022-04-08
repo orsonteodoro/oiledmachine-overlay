@@ -4182,6 +4182,8 @@ ot-kernel_fix_config_for_boot() {
 
 	if [[ "${subsystems[@]}" =~ "drivers/char/agp" \
 		&& "${subsystems[@]}" =~ "drivers/gpu" ]] ; then
+einfo "Early KMS is enabled"
+	else
 ewarn "Detected Early KMS is disabled.  For early KMS, add"
 ewarn "drivers/char/agp, drivers/gpu, drivers/video, to OT_KERNEL_BOOT_SUBSYSTEMS_APPEND"
 ewarn "or similar."
