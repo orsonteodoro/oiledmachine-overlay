@@ -1979,7 +1979,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_PRIVATE_KEY
 	unset OT_KERNEL_SGX
 	unset OT_KERNEL_SME
-	unset OT_KERNEL_SME_FOR_LIFE
+	unset OT_KERNEL_SME_DEFAULT_ON
 	unset OT_KERNEL_SHARED_KEY
 	unset OT_KERNEL_SIGN_KERNEL
 	unset OT_KERNEL_SIGN_MODULES
@@ -2866,6 +2866,8 @@ ot-kernel_set_kconfig_memory_protection() {
 				ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} mem_encrypt=on\""
 				cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
 				einfo "BOOT_ARGS:  ${cmd}"
+			else
+				ewarn "Set OT_KERNEL_SME_DEFAULT_ON=1 when testing is successful."
 			fi
 		else
 			einfo "Disallowing SME"
@@ -5377,7 +5379,7 @@ ewarn "The ot-kernel is always considered experimental grade.  Always have a"
 ewarn "rescue/fallback kernel with possibly an older version or with another"
 ewarn "kernel package."
 ewarn
-	if [[ "${OT_KERNEL_SME}" == "1" ]] ; then
+	if [[ "${OT_KERNEL_SME}" == "1" && "${OT_KERNEL_SME_DEFAULT_ON}" != "1" ]] ; then
 ewarn
 ewarn "SME is allowed but requires testing before permanent setting on."
 ewarn "See metadata.xml for details or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
