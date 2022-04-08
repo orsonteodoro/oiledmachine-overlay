@@ -383,7 +383,8 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     The purpose of some of these environment variables is to change primarily
     the default profile a little bit so that it skips the menuconfig step all
-    together in the build before install with the build USE flag.
+    together in the build before install with the build USE flag.  1 means yes.
+    0 means no.  Auto assumes native build.
 
 
 
@@ -398,6 +399,16 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     DISABLE_DEBUG_EXCLUDES -- A space delimited list of kernel config symbols
     to ignore.
+
+
+
+    OT_KERNEL_5_LEVEL_PAGING -- set 5 level paging for supercomputers
+
+    Acceptable values:
+
+      1, 0, auto, unset
+
+    Unset implies manual setting or previous setting.
 
 
 
@@ -803,6 +814,10 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
+    OT_KERNEL_N_CPUS -- Sets the max number of CPUs.
+
+
+
     OT_KERNEL_MODULES_SUPPORT -- Enables or disable modules support.
     For unsigned kernel modules, this will prevent loading hacked modules.
     If a option is still a module and modules support is disable, it will
@@ -831,6 +846,43 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
+    OT_KERNEL_PA_BITS -- the address space of the dynamic memory (e.g. RAM).
+    PA_BITS correspond to N in the 2^N physical address space.
+
+    Acceptable values:
+
+      a number (e.g. 32, 48, etc.), auto, unset, max
+
+    max uses the max size.  auto will auto configure but requires obtaining
+    data from full built so two rebuilts.  unset is the same as manual.
+
+    See also:
+
+      OT_KERNEL_PAGE_SIZE
+      OT_KERNEL_VA_BITS
+
+
+
+    OT_KERNEL_PAGE_SIZE -- memory block transferred between hard drive and
+    physical memory.  All transfers must be page sized.  The page size
+    is architecture dependent.  Small page sizes store memory in physical more
+    efficiently.  Large page sizes reduce page faults (fetching from storage).
+
+    Acceptable values:
+
+      a number (e.g. 4, 16, 64, etc.) in KiB, auto, unset, max, min, mid
+
+    max uses the maximum page size.  min uses minimum page size,  mid uses
+    the middle value.  auto will auto configure but requires obtaining data
+    from full built so two rebuilds.  Unset is the same as upstream defaults.
+
+    See also:
+
+      OT_KERNEL_PA_BITS
+      OT_KERNEL_VA_BITS
+
+
+
     OT_KERNEL_PKGFLAGS_ACCEPT -- is a list of auto apply-able kernel
     config symbols to accept per package-wise.  They should be listed as
     space separated.
@@ -843,6 +895,17 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     manually or permit a disable_debug conflict to priorize disable_debug
     removal of debug keyworded kernel config symbols. They should be listed as
     space separated.
+
+
+
+    OT_KERNEL_PKU -- enables PKU (Memory Protection Keys) for supported
+    hardware.
+
+    Acceptable values:
+
+      1, 0, auto, unset
+
+    Unset is the same as auto.
 
 
 
@@ -875,13 +938,25 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
     OT_KERNEL_PROCESSOR_CLASS -- sets the type of cpu class for used in this
-    kernel.  This will precisely will reduce the amount of latency.  Otherwise,
-    it will increase it.
+    kernel.  This will reduce or increase latency.
 
     Acceptable values:
 
       uniprocessor, unicore, multicore, smp, smp-unicore, smp-legacy, multicore,
-      numa-multicore, numa-unicore, custom, manual, unset
+      numa-multicore, numa-unicore, auto, custom, manual, unset
+
+    Unset is equivalent to manual.
+
+
+
+    OT_KERNEL_SGX -- sets SGX (Software Guard eXtensions) support for supported
+    hardware.
+
+    Acceptable values:
+
+      1, 0, auto, unset
+
+    Unset is the same as auto.
 
 
 
@@ -936,6 +1011,39 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
+    OT_KERNEL_SME -- allow support for Secure Memory Encryption for
+    supported hardware.  This feature is not enabled by default due to
+    possible boot failure.  To test, set OT_KERNEL_SME to 1 and bootloader
+    with mem_encrypt=on.  If it works after testing, you must set
+    OT_KERNEL_SME_DEFAULT_ON=1 to complete protection.
+
+    Acceptable values:
+
+      1, 0, auto, unset
+
+    Unset is the same as auto.
+
+
+
+    OT_KERNEL_SME_DEFAULT_ON -- sets SME ON at boot.  This requires
+    OT_KERNEL_BOOT_ARGS to have all kernel args that would be normally
+    specified in the bootline to be builtin.  It will automatically add
+    mem_encrypt=on and the kernel commandline provided by the bootloader
+    is ignored to mitigate against evil maid attack.
+
+    Acceptable values:
+
+      1, 0, unset
+
+    Unset means 0 meaning SME is off unless mem_encrypt=on in the kernel
+    command line.
+
+    See also:
+
+      OT_KERNEL_BOOT_ARGS
+
+
+
     OT_KERNEL_SWAP -- Enable or disable use of swap.
 
     Acceptable values:
@@ -975,6 +1083,23 @@ unset OT_KERNEL_PRIVATE_KEY
     Accepted values: 1 to use upstream order, 0 to use custom order.
     The custom order (0) can optionally apply to "acceptable multi values"
     configation and auto in acceptable general values.
+
+
+
+    OT_KERNEL_VA_BITS -- the address space of the virtual memory (which includes
+    RAM + SWAP).  PB_BITS correspond to N in the 2^N virtual address space.
+
+    Acceptable values:
+
+      a number (e.g. 32, 48, etc.), auto, unset, max
+
+    full uses the max size.  auto will auto configure but requires obtaining
+    data from full built.  unset is the same as manual.
+
+    See also:
+
+      OT_KERNEL_PA_BITS
+      OT_KERNEL_PAGE_SIZE
 
 
 

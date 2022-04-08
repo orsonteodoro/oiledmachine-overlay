@@ -1948,6 +1948,7 @@ ot-kernel_get_envs() {
 # buildconfig being evaluated.
 ot-kernel_clear_env() {
 	# The OT_KERNEL_ prefix is to avoid naming collisions.
+	unset OT_KERNEL_PHYS_MEM_TOTAL_GIB
 	unset OT_KERNEL_ARCH
 	unset OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS
 	unset OT_KERNEL_BOOT_ARGS
@@ -1972,9 +1973,13 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_MODULES_COMPRESSOR
 	unset OT_KERNEL_PKGFLAGS_ACCEPT
 	unset OT_KERNEL_PKGFLAGS_REJECT
+	unset OT_KERNEL_PKU
 #	unset OT_KERNEL_PRIMARY_EXTRAVERSION			# global var
 #	unset OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR	# global var
 	unset OT_KERNEL_PRIVATE_KEY
+	unset OT_KERNEL_SGX
+	unset OT_KERNEL_SME
+	unset OT_KERNEL_SME_FOR_LIFE
 	unset OT_KERNEL_SHARED_KEY
 	unset OT_KERNEL_SIGN_KERNEL
 	unset OT_KERNEL_SIGN_MODULES
@@ -2041,6 +2046,8 @@ ot-kernel_is_build() {
 	return 1
 }
 
+# ot-kernel_set_kconfig_mem need rework
+
 # @FUNCTION: ot-kernel_set_kconfig_bbr2
 # @DESCRIPTION:
 # Sets the kernel config for bbr2
@@ -2061,7 +2068,6 @@ ot-kernel_set_kconfig_bbr2() {
 ot-kernel_set_kconfig_boot_args() {
 	local cmd
 	if [[ -n "${OT_KERNEL_BOOT_ARGS}" ]] ; then
-		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${OT_KERNEL_BOOT_ARGS}\""
 	fi
@@ -2106,7 +2112,7 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 	# This section is incomplete and a Work In Progress (WIP)
 	# The problem is common to many full disk encryption implementations.
 	local ot_kernel_cold_boot_mitigations=${OT_KERNEL_COLD_BOOT_MITIGATIONS:-1}
-	if [[ "${ot_kernel_cold_boot_mitigations}" == "1" ]] ; then
+	if (( "${ot_kernel_cold_boot_mitigations}" >= 1 )) ; then
 		einfo "Hardening kernel against cold boot attacks."
 		ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 		# Don't use lscpu/cpuinfo autodetect if using distcc or
@@ -2144,7 +2150,7 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 		# CONFIG_PAGE_POISONING uses a fixed pattern and slower compared
 		# to CONFIG_INIT_ON_FREE_DEFAULT_ON.
 	fi
-	if [[ "${ot_kernel_cold_boot_mitigations}" == "2" ]] ; then
+	if (( "${ot_kernel_cold_boot_mitigations}" >= 2 )) ; then
 		# TODO:  Disable all DMA devices and ports.
 		# This list is incomplete
 		ewarn "USB4 is going to be disabled."
@@ -2824,6 +2830,63 @@ ot-kernel_set_kconfig_lto() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_memory_protection
+# @DESCRIPTION:
+# Sets the memory protection for mitigation against cold boot attacks
+# or for required access to DRM (premium content).
+ot-kernel_set_kconfig_memory_protection() {
+	if [[ "${arch}" == "x86_64" ]] ; then
+		local has_sgx=0
+		if [[ "${OT_KERNEL_SGX:-auto}" == "auto" ]] ; then
+			if grep -q -e " sgx " "/proc/cpuinfo" ; then
+				has_sgx=1
+			fi
+		fi
+		if [[ "${OT_KERNEL_SGX}" == "1" || "${has_sgx}" == "1" ]] ; then
+			einfo "Enabling SGX"
+			ot-kernel_y_configopt "CONFIG_X86_SGX"
+		else
+			einfo "Disabling SGX"
+			ot-kernel_unset_configopt "CONFIG_X86_SGX"
+		fi
+		ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT"
+		local has_sme=0
+		if [[ "${OT_KERNEL_SME:-auto}" == "auto" ]] ; then
+			if grep -q -e " sme " "/proc/cpuinfo" ; then
+				has_sme=1
+			fi
+		fi
+		if [[ "${OT_KERNEL_SME}" == "1" || "${has_sme}" == "1" ]] ; then
+			einfo "Allowing SME"
+			ot-kernel_y_configopt "CONFIG_AMD_MEM_ENCRYPT"
+			if [[ "${OT_KERNEL_SME_DEFAULT_ON}" == "1" ]] ; then
+				local cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+				ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
+				ot-kernel_y_configopt "CONFIG_CMDLINE_OVERRIDE" # Disallow changing
+				ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} mem_encrypt=on\""
+				cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+				einfo "BOOT_ARGS:  ${cmd}"
+			fi
+		else
+			einfo "Disallowing SME"
+			ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT"
+		fi
+		local has_pku=0
+		if [[ "${OT_KERNEL_PKU:-auto}" == "auto" ]] ; then
+			if grep -q -e " pku " "/proc/cpuinfo" ; then
+				has_pku=1
+			fi
+		fi
+		if [[ "${OT_KERNEL_PKU}" == "1" || "${has_pku}" == "1" ]] ; then
+			einfo "Enabling PKU"
+			ot-kernel_y_configopt "CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS"
+		else
+			einfo "Disabling PKU"
+			ot-kernel_unset_configopt "CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_module_signing
 # @DESCRIPTION:
 # Sets the kernel config for signed kernel modules
@@ -2995,36 +3058,68 @@ eerror
 # @DESCRIPTION:
 # Sets the kernel config for the processor_class
 ot-kernel_set_kconfig_processor_class() {
-	if [[ -z "${OT_KERNEL_PROCESSOR_CLASS}" ]] ; then
+	local processor_class="${OT_KERNEL_PROCESSOR_CLASS,,}"
+	if [[ -z "${processor_class}" ]] ; then
 		:
-	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" =~ ("manual"|"custom") ]] ; then
+	elif [[ "${processor_class}" =~ ("manual"|"custom") ]] ; then
 		:
-	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "uniprocessor" \
-		|| "${OT_KERNEL_PROCESSOR_CLASS,,}" == "unicore" ]] ; then
+	elif [[ "${processor_class}" == "auto" ]] ; then
+		local ncpus=$(lscpu | grep "CPU(s):" | head -n 1 | grep -o -E -e "[0-9]+") # ncores * nsockets * tpc
+		local ncores=$(lscpu | grep "Core(s) per socket:" | head -n 1 | grep -o -E -e "[0-9]+")
+		local nsockets=$(lscpu | grep "Socket(s):" | head -n 1 | grep -o -E -e "[0-9]+")
+		local tpc=$(lscpu | grep "Thread(s) per core:" | head -n 1 | grep -o -E -e "[0-9]+")
+		local n_numa_nodes=$(lscpu | grep "NUMA node(s):" | head -n 1 | grep -o -E -e "[0-9]+")
+		if (( ${ncpus} > 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_SMP"
+		else
+			ot-kernel_unset_configopt "CONFIG_SMP"
+		fi
+		if (( ${ncores} > 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_SCHED_MC"
+		fi
+		if (( ${nsockets} > 1 )) ; then
+			ot-kernel_y_configopt "CONFIG_NUMA"
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_X86_64_ACPI_NUMA"
+			fi
+			ot-kernel_set_configopt "CONFIG_NODES_SHIFT" $(python -c "import math; print(math.ceil(math.log(${nsockets})/math.log(2)))")
+		fi
+	elif [[ "${processor_class}" == "uniprocessor" \
+		|| "${processor_class}" == "unicore" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_NUMA"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_unset_configopt "CONFIG_SMP"
-	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "smp" \
-		|| "${OT_KERNEL_PROCESSOR_CLASS,,}" == "smp-unicore" \
-		|| "${OT_KERNEL_PROCESSOR_CLASS,,}" == "smp-legacy" ]] ; then
+	elif [[ "${processor_class}" == "smp" \
+		|| "${processor_class}" == "smp-unicore" \
+		|| "${processor_class}" == "smp-legacy" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_NUMA"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
-	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "multicore" ]] ; then
+	elif [[ "${processor_class}" == "multicore" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_NUMA"
 		ot-kernel_y_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
-	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "numa-unicore" ]] ; then
+	elif [[ "${processor_class}" == "numa-unicore" ]] ; then
 		ot-kernel_y_configopt "CONFIG_NUMA"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
-	elif [[ "${OT_KERNEL_PROCESSOR_CLASS,,}" == "numa-multicore" \
-		|| "${OT_KERNEL_PROCESSOR_CLASS,,}" == "numa" ]] ; then
+	elif [[ "${processor_class}" == "numa-multicore" \
+		|| "${processor_class}" == "numa" ]] ; then
 		ot-kernel_y_configopt "CONFIG_NUMA"
 		ot-kernel_y_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
 	fi
-	einfo "Processor class is ${OT_KERNEL_PROCESSOR_CLASS,,}"
+	[[ -z "${processor_class}" ]] && processor_class="not set (manual)"
+	einfo "Processor class is ${processor_class}"
+	local ncpus="${OT_KERNEL_N_CPUS}"
+	if [[ "${ncpus}" == "auto" ]] ; then
+		ncpus=$(lscpu | grep "CPU(s):" | head -n 1 | grep -o -E -e "[0-9]+")
+		ot-kernel_set_configopt "CONFIG_NR_CPUS" "${ncpus}"
+	elif [[ -n "${ncpus}" ]] ; then
+		ot-kernel_set_configopt "CONFIG_NR_CPUS" "${ncpus}"
+	fi
+	ncpus=$(grep -r -e "CONFIG_NR_CPUS=" "${BUILD_DIR}/.config" | grep -o -E -e "[0-9]+")
+	einfo "Processor count maximum:  ${ncpus}"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_scs
@@ -4213,6 +4308,7 @@ ot-kernel_src_configure() {
 		ot-kernel_set_kconfig_lto # llvm_slot
 		ot-kernel_set_kconfig_pgo # llvm_slot
 		ot-kernel_set_kconfig_abis
+		#ot-kernel_set_kconfig_mem
 
 		ot-kernel_set_kconfig_init_systems
 		ot-kernel_set_kconfig_boot_args
@@ -4250,6 +4346,7 @@ ot-kernel_src_configure() {
 			ot-kernel_set_kconfig_cfi # llvm_slot
 		ot-kernel-pkgflags_cipher_optional
 		ot-kernel_set_kconfig_cold_boot_mitigation
+		ot-kernel_set_kconfig_memory_protection
 		ot-kernel_set_kconfig_tresor
 		ot-kernel_set_kconfig_lsms
 
@@ -5280,5 +5377,10 @@ ewarn "The ot-kernel is always considered experimental grade.  Always have a"
 ewarn "rescue/fallback kernel with possibly an older version or with another"
 ewarn "kernel package."
 ewarn
-
+	if [[ "${OT_KERNEL_SME}" == "1" ]] ; then
+ewarn
+ewarn "SME is allowed but requires testing before permanent setting on."
+ewarn "See metadata.xml for details or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
+ewarn
+	fi
 }
