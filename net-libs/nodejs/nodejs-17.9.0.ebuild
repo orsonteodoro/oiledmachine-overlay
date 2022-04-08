@@ -85,7 +85,7 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Mar 17, 2022
+# Last deps commit date:  Apr 6, 2022
 NGHTTP2_V="1.47.0"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
@@ -111,7 +111,7 @@ PATCHES=( "${FILESDIR}"/${PN}-17.0.0-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch
 	  "${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="8.5.3" # See https://github.com/nodejs/node/blob/v17.3.0/deps/npm/package.json
+NPM_V="8.5.5" # See https://github.com/nodejs/node/blob/v17.3.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
