@@ -2221,7 +2221,7 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		[[ "${cryptsetup_hashes}" =~ "sha3" ]] && _ot-kernel-pkgflags_sha3
 		[[ "${cryptsetup_hashes}" =~ "wp512" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_WP512"
 
-		[[ "${cryptsetup_iv}" =~ "essiv" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_ESSIV"	# For compatibility, do not use for newer deployments
+		[[ "${cryptsetup_ivs}" =~ "essiv" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_ESSIV"	# For compatibility, do not use for newer deployments
 
 		[[ "${cryptsetup_modes}" =~ "cbc" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"	# From ebuild
 		[[ "${cryptsetup_modes}" =~ "cfb" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CFB"
