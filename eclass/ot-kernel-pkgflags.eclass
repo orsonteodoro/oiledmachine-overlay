@@ -4048,48 +4048,19 @@ ot-kernel-pkgflags_lm_sensors() { # DONE
 				ot-kernel_set_configopt "${o}" "m"
 			done
 
-			# Not tristate
-			local DEPS_Y=(
-				CONFIG_ACPI
-				CONFIG_MAILBOX
+			local NOT_TRISTATE=(
+				CONFIG_SENSORS_W83795_FANCTRL
 				CONFIG_SENSORS_BT1_PVT_ALARMS
 				CONFIG_SENSORS_LTQ_CPUTEMP
 				CONFIG_SENSORS_S3C_RAW
-				CONFIG_SENSORS_W83795_FANCTRL
-				CONFIG_INTEL_SOC_PMIC_CHTWC
-				CONFIG_ISA
 			)
 
-			# Option dependencies
-			local DEPS=(
-				$(sed -n ${sidx1},${eidx1}p drivers/i2c/busses/Kconfig \
-					| grep "depends " \
-					| sed -E -e "s|.*depends on ||g" -e "s/(\|\||&&)//g" -e "s|[ ]+| |" \
-					| tr " " "\n" \
-					| sort \
-					| uniq \
-					| sed -e "\|^X86$|d" -e "\|^ARCH_|d" \
-					| sed -e "s|^|CONFIG_|g" \
-					| sed -e "\|^$|d")
-				$(sed -n ${sidx2},${eidx2}p drivers/i2c/busses/Kconfig \
-					| grep "depends " \
-					| sed -E -e "s|.*depends on ||g" -e "s/(\|\||&&)//g" -e "s|[ ]+| |" \
-					| tr " " "\n" \
-					| sort \
-					| uniq \
-					| sed -e "\|^X86$|d" -e "\|^ARCH_|d" -e "\|^HAS_|d" -e "\|BROKEN_ON_SMP|d" \
-					| sed -e "s|^|CONFIG_|g" \
-					| sed -e "\|^$|d")
-			)
-			local d
-			for d in ${DEPS[@]} ; do
-				if [[ "${DEPS_Y[@]}" =~ "${d}" ]] ; then
-					ot-kernel_y_configopt "${d}"
-				else
-					ot-kernel_set_configopt "${d}" "m"
-				fi
+			local o
+			for o in ${NOT_TRISTATE[@]} ; do
+				ot-kernel_y_configopt "${o}"
 			done
 		fi
+
 
 		local O=$(grep -E -e "config SENSORS_.*" $(find drivers/hwmon -name "Kconfig*") \
 			| cut -f 2 -d ":" \
@@ -6876,7 +6847,7 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 # @FUNCTION: ot-kernel-pkgflags_xf86_video_nouveau
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-video-nouveau package
-ot-kernel-pkgflags_xf86_video_intel() { # DONE
+ot-kernel-pkgflags_xf86_video_nouveau() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "411e952" ]] && return
 	if has_version "x11-drivers/xf86-video-nouveau" ; then
 		einfo "Applying kernel config flags for the xf86-video-nouveau package (id: 411e952)"
