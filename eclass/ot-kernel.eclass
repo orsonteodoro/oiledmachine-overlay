@@ -3240,7 +3240,8 @@ ot-kernel_set_kconfig_uksm() {
 # @DESCRIPTION:
 # Sets the kernel config for USB autosuspend
 ot-kernel_set_kconfig_usb_autosuspend() {
-	if (( "${OT_KERNEL_USB_AUTOSUSPEND}" > -1 )) ; then
+	[[ -z "${OT_KERNEL_USB_AUTOSUSPEND}" ]] && return
+	if (( "${OT_KERNEL_USB_AUTOSUSPEND:-2}" > -1 )) ; then
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "${OT_KERNEL_USB_AUTOSUSPEND}"
 	fi

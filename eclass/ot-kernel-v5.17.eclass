@@ -172,9 +172,9 @@ KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" build symlink"
 IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug
-+genpatches -genpatches_1510 +kernel-compiler-patch lto multigen_lru +O3 rt
++genpatches -genpatches_1510 +kernel-compiler-patch lto multigen_lru +O3 prjc rt
 shadowcallstack tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
-tresor_x86_64 tresor_x86_64-256-bit-key-support zen-multigen_lru zen-sauce
+tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-multigen_lru zen-sauce
 zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
 REQUIRED_USE+="
@@ -209,8 +209,8 @@ fi
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizeable kernel package containing zen-kernel patchset,
-GraySky2's kernel_compiler_patch, genpatches, CVE fixes"
+DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel patchset,
+GraySky2's kernel_compiler_patch, Project C CPU Scheduler, genpatches, CVE fixes"
 
 inherit ot-kernel
 
@@ -219,6 +219,8 @@ LICENSE+=" clang-pgo? ( GPL-2 )"
 # A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
+LICENSE+=" prjc? ( GPL-3 )" # see \
+  # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 gen_kcp_license() {
@@ -234,6 +236,11 @@ LICENSE+=" multigen_lru? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
+LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
+  # GPL-2 applies to the files being patched \
+  # all-rights-reserved applies to new files introduced and no defaults license
+  #   found in the project.  (The implementation is based on an academic paper
+  #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
 
 _seq() {
@@ -435,6 +442,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 		${KCP_SRC_CORTEX_A72_URI}
 	   )
 	   multigen_lru? ( ${MULTIGEN_LRU_SRC_URI} )
+	   prjc? ( ${PRJC_SRC_URI} )
 	   rt? ( ${RT_SRC_ALT_URI} )
 	   tresor? (
 		${TRESOR_AESNI_SRC_URI}
@@ -443,6 +451,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
 	   )
+	   uksm? ( ${UKSM_SRC_URI} )
 	   zen-multigen_lru? ( ${ZEN_MULTIGEN_LRU_SRC_URI} )
 	   zen-sauce? ( ${ZENSAUCE_URIS} )"
 

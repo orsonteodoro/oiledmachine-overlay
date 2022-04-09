@@ -157,10 +157,12 @@
 		    genpatches				A
 		    kernel_compiler_patch		A
 		    multigen_lru			N
+		    Project C				A
 		    TCP BBR v2 [6]			E
 		    TRESOR (AES-NI) [6]			D
 		    TRESOR (x86) [6]			D
 		    TRESOR (x86-64) [6]			D
+		    UKSM				A
 		    zen-multigen_lru			N
 		    zen-sauce				N
 
@@ -171,10 +173,12 @@
 		    genpatches				A
 		    kernel_compiler_patch		A
 		    multigen_lru			A
+		    Project C				A
 		    TCP BBR v2 [6]			E
 		    TRESOR (AES-NI) [6]			D
 		    TRESOR (x86) [6]			D
 		    TRESOR (x86-64) [6]			D
+		    UKSM				A
 		    zen-multigen_lru			A
 		    zen-sauce				A
 
