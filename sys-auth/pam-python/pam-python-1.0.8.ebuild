@@ -74,8 +74,6 @@ src_compile() {
 		emake doc
 	fi
 	emake lib
-	cd src/build/lib.linux-$(uname -m)-${EPYTHON/python} || die
-	cp -a pam_python*.so pam_python.so || die
 }
 
 src_test() {

@@ -1,0 +1,21 @@
+--- a/src/Makefile.orig	2020-11-10 01:58:10.000000000 -0800
++++ b/src/Makefile	2022-04-10 00:54:52.592486469 -0700
+@@ -4,6 +4,8 @@ WARNINGS=-Wall -Wextra -Wundef -Wshadow
+ #WARNINGS=-Wunreachable-code 	# Gcc 4.1 .. 4.4 are too buggy to make this useful
+ 
+ LIBDIR ?= /lib/security
++PYV=$(shell python --version | cut -f 2 -d " " | cut -f 1-2 -d ".")
++ARCH=$(shell uname -m)
+ 
+ pam_python.so: pam_python.c setup.py Makefile
+ 	@rm -f "$@"
+@@ -11,7 +13,8 @@ pam_python.so: pam_python.c setup.py Mak
+ 	CFLAGS="$(CFLAGS) $(WARNINGS) -I/usr/local/lib/ " ./setup.py build --debug
+ 	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" ./setup.py build --debug
+ 	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" Py_DEBUG=1 ./setup.py build --debug
+-	ln -sf build/lib.*/$@ .
++	cp -a build/lib.linux-$(ARCH)-${PYV}/pam_python.cpython* build/lib.linux-$(ARCH)-${PYV}/$@
++	ln -sf build/lib.linux-$(ARCH)-${PYV}/$@ .
+ 
+ .PHONY: install install-lib
+ install: install-lib
