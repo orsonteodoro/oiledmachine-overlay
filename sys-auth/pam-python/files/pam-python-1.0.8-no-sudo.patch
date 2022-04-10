@@ -1,0 +1,32 @@
+diff -urp pam-python-1.0.8.orig/src/Makefile pam-python-1.0.8/src/Makefile
+--- pam-python-1.0.8.orig/src/Makefile	2020-11-10 01:58:10.000000000 -0800
++++ pam-python-1.0.8/src/Makefile	2022-04-09 14:05:50.860748928 -0700
+@@ -22,8 +22,8 @@ install-lib:
+ .PHONY: clean
+ clean:
+ 	rm -rf build ctest pam_python.so test-pam_python.pam test.pyc core
+-	[ ! -e /etc/pam.d/test-pam_python.pam ] || { s=$$([ $$(id -u) = 0 ] || echo sudo); $$s rm -f /etc/pam.d/test-pam_python.pam; }
+-	[ ! -e /etc/pam.d/test-pam_python-installed.pam ] || { s=$$([ $$(id -u) = 0 ] || echo sudo); $$s rm -f /etc/pam.d/test-pam_python-installed.pam; }
++	rm -f /etc/pam.d/test-pam_python.pam
++	rm -f /etc/pam.d/test-pam_python-installed.pam
+ 
+ .PHONY: ctest
+ ctest:	ctest.c Makefile
+@@ -34,7 +34,7 @@ test-pam_python.pam: test-pam_python.pam
+ 	mv $@.tmp $@
+ 
+ /etc/pam.d/test-pam_python.pam: test-pam_python.pam
+-	s=$$([ $$(id -u) = 0 ] || echo sudo); $$s ln -sf $$(pwd)/test-pam_python.pam /etc/pam.d
++	ln -sf $$(pwd)/test-pam_python.pam /etc/pam.d/test-pam_python.pam
+ 
+ .PHONY: test
+ test: pam_python.so ctest /etc/pam.d/test-pam_python.pam
+@@ -46,7 +46,7 @@ test-pam_python-installed.pam: test-pam_
+ 	mv $@.tmp $@
+ 
+ /etc/pam.d/test-pam_python-installed.pam: test-pam_python-installed.pam
+-	s=$$([ $$(id -u) = 0 ] || echo sudo); $$s ln -sf $$(pwd)/test-pam_python-installed.pam /etc/pam.d
++	ln -sf $$(pwd)/test-pam_python-installed.pam /etc/pam.d/test-pam_python-installed.pam
+ 
+ .PHONY: installed-test
+ installed-test: ctest /etc/pam.d/test-pam_python-installed.pam

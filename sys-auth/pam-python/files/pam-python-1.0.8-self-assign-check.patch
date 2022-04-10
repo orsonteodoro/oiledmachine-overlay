@@ -1,0 +1,21 @@
+diff -urp pam-python-1.0.8.orig/src/pam_python.c pam-python-1.0.8/src/pam_python.c
+--- pam-python-1.0.8.orig/src/pam_python.c	2022-04-09 20:39:30.684444652 -0700
++++ pam-python-1.0.8/src/pam_python.c	2022-04-09 20:40:42.647182020 -0700
+@@ -1580,7 +1580,7 @@ static PyObject* PamHandle_get_XAUTHDATA
+   int			pam_result;
+   struct pam_xauth_data* xauth_data = 0;
+ 
+-  closure = closure;
++  closure = (void*)(void*)closure;
+   pam_result = pam_get_item(
+       pamHandle->pamh, PAM_XAUTHDATA, (const void**)&xauth_data);
+   if (check_pam_result(pamHandle, pam_result) == -1)
+@@ -1620,7 +1620,7 @@ static int PamHandle_set_XAUTHDATA(
+   int			pam_result;
+   struct pam_xauth_data	xauth_data;
+ 
+-  closure = closure;
++  closure = (void*)(void*)closure;
+   xauth_data.name = 0;
+   xauth_data.data = 0;
+   /*

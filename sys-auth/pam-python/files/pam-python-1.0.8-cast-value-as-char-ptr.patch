@@ -1,0 +1,11 @@
+--- a/src/pam_python.c.orig	2022-04-09 17:38:04.232261682 -0700
++++ b/src/pam_python.c	2022-04-09 18:00:32.972922587 -0700
+@@ -876,7 +876,7 @@ static int PamHandle_set_item(
+     value = 0;
+   else
+   {
+-    value = Py23_String_AsString(pyValue);
++    value = (char*) Py23_String_AsString(pyValue);
+     if (value == 0)
+     {
+       snprintf(

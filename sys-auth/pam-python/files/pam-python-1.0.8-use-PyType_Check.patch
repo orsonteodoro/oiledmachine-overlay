@@ -1,0 +1,11 @@
+--- a/src/pam_python.c.orig	2020-11-10 01:58:10.000000000 -0800
++++ b/src/pam_python.c	2022-04-09 17:31:53.094502533 -0700
+@@ -434,7 +434,7 @@ static int syslog_path_exception(const c
+    * Just print the exception in some recognisable form, hopefully.
+    */
+   syslog_open(module_path);
+-  if (PyClass_Check(ptype))
++  if (PyType_Check(ptype))
+     stype = PyObject_GetAttrString(ptype, "__name__");
+   else
+   {

@@ -1,0 +1,12 @@
+diff -urp pam-python-1.0.8.orig/src/pam_python.c pam-python-1.0.8/src/pam_python.c
+--- pam-python-1.0.8.orig/src/pam_python.c	2022-04-09 20:41:44.667542189 -0700
++++ pam-python-1.0.8/src/pam_python.c	2022-04-09 21:02:24.089091939 -0700
+@@ -104,7 +104,7 @@ typedef int Py_ssize_t;
+ #define	Py23_String_FromStringAndSize PyUnicode_FromStringAndSize
+ #define	Py23_String_GET_SIZE	PyUnicode_GET_LENGTH
+ #define	Py23_String_Parse_Char	"U"
+-#define	Py23_String_Size	PyUnicode_Size
++#define	Py23_String_Size	PyBytes_Size
+ #define	Py23_String_Type	PyUnicode_Type
+ #define	Py23_TYPE(p)		Py_TYPE(p)
+ #endif

@@ -1,0 +1,21 @@
+diff -urp pam-python-1.0.8.orig/src/pam_python.c pam-python-1.0.8/src/pam_python.c
+--- pam-python-1.0.8.orig/src/pam_python.c	2022-04-09 17:33:44.731941697 -0700
++++ pam-python-1.0.8/src/pam_python.c	2022-04-09 17:36:07.028600446 -0700
+@@ -578,7 +578,7 @@ static int syslog_path_traceback(
+       "OOOOO", ptype, pvalue, ptraceback, Py_None, pamHandle->syslogFile);
+   if (args != 0)
+   {
+-    py_resultobj = PyEval_CallObject(pamHandle->print_exception, args);
++    py_resultobj = PyObject_Call(pamHandle->print_exception, args, NULL);
+     if (py_resultobj != 0)
+       SyslogFile_flush(pamHandle->syslogFile);
+   }
+@@ -2802,7 +2802,7 @@ static int call_python_handler(
+   /*
+    * Call the Python handler function.
+    */
+-  py_resultobj = PyEval_CallObject(handler_function, handler_args);
++  py_resultobj = PyObject_Call(handler_function, handler_args, NULL);
+   /*
+    * Did it throw an exception?
+    */

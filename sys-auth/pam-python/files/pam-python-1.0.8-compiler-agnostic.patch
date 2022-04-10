@@ -1,0 +1,11 @@
+--- a/src/Makefile.orig	2022-04-09 15:10:56.126764012 -0700
++++ b/src/Makefile	2022-04-09 15:17:15.034588038 -0700
+@@ -27,7 +27,7 @@ clean:
+ 
+ .PHONY: ctest
+ ctest:	ctest.c Makefile
+-	gcc -O0 $(WARNINGS) -g -o $@ ctest.c -lpam
++	$(CC) -O0 $(WARNINGS) -g -o $@ ctest.c -lpam
+ 
+ test-pam_python.pam: test-pam_python.pam.in Makefile
+ 	sed "s,\\\$$PWD,$$(pwd),g" "$@.in" >"$@.tmp" 
