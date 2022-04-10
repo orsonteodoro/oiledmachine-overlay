@@ -87,6 +87,12 @@ src_test() {
 	addwrite /etc/pam.d
 	addwrite /etc/pam.d/test-pam_python.pam
 	addwrite /etc/pam.d/test-pam_python-installed.pam
+	ewarn
+	ewarn "If the test fail, the following need to be manually removed:"
+	ewarn
+	ewarn "  /etc/pam.d/test-pam_python.pam"
+	ewarn "  /etc/pam.d/test-pam_python-installed.pam"
+	ewarn
 	emake test
 }
 
