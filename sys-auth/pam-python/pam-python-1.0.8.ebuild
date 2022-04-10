@@ -12,7 +12,7 @@ LICENSE="AGPL-3+"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Still needs testing
 SLOT="0/${PV}"
 IUSE+=" doc"
-#IUSE+=" test"
+IUSE+=" test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -27,13 +27,13 @@ BDEPEND+=" ${PYTHON_DEPS}
 	doc? (
 		$(python_gen_cond_dep 'dev-python/sphinx[${PYTHON_USEDEP}]')
 	)
-"
-BDEPEND_DISABLED+="
 	test? (
+		$(python_gen_cond_dep 'dev-python/pypam[${PYTHON_USEDEP}]')
 		dev-util/cmake
 		sys-devel/gcc
 	)
-" # test modifies ${BROOT}/etc/pam.d
+"
+# The test modifies ${BROOT}/etc/pam.d.
 SRC_URI=" mirror://sourceforge/${PN}/${P}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
@@ -52,6 +52,12 @@ PATCHES=(
 
 pkg_setup() {
 	python-single-r1_pkg_setup
+	if use test ; then
+		if [[ "${FEATURES}" =~ "sandbox" ]] ; then
+eerror "FEATURES require per-package -sandbox and -usersandbox for testing"
+			die
+		fi
+	fi
 }
 
 src_prepare() {
@@ -85,11 +91,14 @@ src_test() {
 }
 
 src_install() {
-#	These should be immediately removed on build error.
-#	if use test ; then
-#		[[ -e "/etc/pam.d/test-pam_python.pam" ]] && rm "/etc/pam.d/test-pam_python.pam"
-#		[[ -e "/etc/pam.d/test-pam_python-installed.pam" ]] && rm "/etc/pam.d/test-pam_python-installed.pam"
-#	fi
+	if use test ; then
+		if [[ -e "/etc/pam.d/test-pam_python.pam" ]] ; then
+			rm "/etc/pam.d/test-pam_python.pam" || die
+		fi
+		if [[ -e "/etc/pam.d/test-pam_python-installed.pam" ]] ; then
+			rm "/etc/pam.d/test-pam_python-installed.pam" || die
+		fi
+	fi
 	if use doc ; then
 		emake install-doc \
 			DESTDIR="${D}" \
