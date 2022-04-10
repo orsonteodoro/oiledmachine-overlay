@@ -47,6 +47,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.8-use-PyUnicode_GET_LENGTH.patch"
 	"${FILESDIR}/${PN}-1.0.8-self-assign-check.patch"
 	"${FILESDIR}/${PN}-1.0.8-use-PyBytes_Size.patch"
+	"${FILESDIR}/${PN}-1.0.8-fix-build-dir.patch"
 )
 
 pkg_setup() {
