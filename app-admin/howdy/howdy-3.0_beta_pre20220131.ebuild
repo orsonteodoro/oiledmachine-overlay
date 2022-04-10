@@ -20,8 +20,8 @@ DEPEND+="
 	>=dev-libs/inih-52
 	dev-libs/boost[${PYTHON_USEDEP},python]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/pypam[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
+	sys-auth/pam-python[${PYTHON_USEDEP}]
 	sys-libs/pam
 	>=sci-libs/dlib-19.16[${PYTHON_USEDEP},cuda?]
 	cuda? ( >=dev-util/nvidia-cuda-toolkit-7.5 )
@@ -47,7 +47,8 @@ BDEPEND+="
 	dev-util/meson
 "
 PATCHES=(
-	"${FILESDIR}/howdy-3.0_beta_pre20220131-pam_howdy-meson-build-fixes.patch"
+	"${FILESDIR}/${PN}-3.0_beta_pre20220131-pam_howdy-meson-build-fixes.patch"
+	"${FILESDIR}/${PN}-3.0_beta_pre20220131-use-py3-pythonparser.patch"
 )
 EGIT_COMMIT="96767fe58ee381ba20cbddc88646335eb719ec8c"
 EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
@@ -142,16 +143,31 @@ src_install() {
 		doins "${WORKDIR}/dlib_face_recognition_resnet_model_v1.dat"
 		doins "${WORKDIR}/mmod_human_face_detector.dat"
 		doins "${WORKDIR}/shape_predictor_5_face_landmarks.dat"
-		fperms -R 0600 "/$(get_libdir)/security/${PN}"
+		pushd "${ED}" || die
+			local x
+			for x in $(find "$(get_libdir)/security/${PN}" -type d) ; do
+				x="/${x}"
+				einfo "DIR: fperms 0744 ${x}"
+				fperms -R 0744 "/${x}"
+			done
+			for x in $(find "$(get_libdir)/security/${PN}" -type f) ; do
+				x="/${x}"
+				einfo "FILE: fperms 0644 ${x}"
+				fperms -R 0644 "/${x}"
+			done
+			x="/$(get_libdir)/security/${PN}"
+			einfo "DIR: fperms 0755 ${x}"
+			fperms 0755 "${x}"
+		popd
 		exeinto /usr/bin
 		dosym ../../$(get_libdir)/security/${PN}/cli.py /usr/bin/${PN}
-		fperms 0775 /$(get_libdir)/security/${PN}/cli.py
+		fperms 0755 /$(get_libdir)/security/${PN}/cli.py
 		insinto /usr/share/bash-completion/completions
 		doins src/autocomplete/howdy
 		exeinto /$(get_libdir)/security
 		doexe "${BUILD_DIR}/libpam_howdy.so"
 		dodir /usr/share/howdy
-		mv "${ED}/$(get_libdir)/security/howdy/pam-config" "${ED}/usr/share/howdy/" || die
+		rm -rf "${ED}/$(get_libdir)/security/howdy/pam-config"
 	popd || die
 	if use gtk ; then
 		pushd ${PN}-gtk || die
@@ -173,7 +189,11 @@ pkg_postinst() {
 	einfo "to path of the IR camera (e.g. /dev/video1)."
 	einfo
 	einfo
-	einfo "The pam configuration can be found in /usr/share/howdy/pam-config."
+	einfo "The pam configuration can be found in"
+	einfo
+	einfo "  https://github.com/boltgolt/howdy/wiki/Only-using-howdy-for-specific-authentication-types"
+	einfo
+	einfo "It may be possible to apply these changes beyond sudo."
 	einfo
 	if ! use ffmpeg ; then
 	ewarn

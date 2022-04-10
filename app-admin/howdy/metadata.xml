@@ -15,14 +15,18 @@
     Only one capture source can be used.  Priority is given based on highest
     to lowest -- FFmpeg, pyv4l2, OpenCV.
 
-    Handy also supports gesture authentication called rubber stamp.[2]
+    Howdy also supports gesture authentication called rubber stamp.[2]
 
-    Handy is an addition to n-factor authentication and should not be used
+    Howdy is an addition to n-factor authentication and should not be used
     alone.
+
+    To setup Howdy with pam, see [3].  It may be possible to apply
+    these changes to beyond sudo.
 
     References:
     [1] https://github.com/boltgolt/howdy/issues/99
     [2] https://github.com/boltgolt/howdy/wiki/Rubber-Stamp-Guide
+    [3] https://github.com/boltgolt/howdy/wiki/Only-using-howdy-for-specific-authentication-types
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/boltgolt/howdy/issues</bugs-to>

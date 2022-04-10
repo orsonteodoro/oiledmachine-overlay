@@ -1,0 +1,22 @@
+diff -urp howdy-96767fe58ee381ba20cbddc88646335eb719ec8c.orig/howdy/src/pam.py howdy-96767fe58ee381ba20cbddc88646335eb719ec8c/howdy/src/pam.py
+--- howdy-96767fe58ee381ba20cbddc88646335eb719ec8c.orig/howdy/src/pam.py	2022-01-31 04:42:16.000000000 -0800
++++ howdy-96767fe58ee381ba20cbddc88646335eb719ec8c/howdy/src/pam.py	2022-04-09 11:11:02.541689066 -0700
+@@ -1,3 +1,4 @@
++#!/usr/bin/env python3
+ # PAM interface in python, launches compare.py
+ 
+ # Import required modules
+@@ -6,11 +7,10 @@ import os
+ import glob
+ import syslog
+ 
+-# pam-python is running python 2, so we use the old module here
+-import ConfigParser
++import configparser
+ 
+ # Read config from disk
+-config = ConfigParser.ConfigParser()
++config = configparser.ConfigParser()
+ config.read(os.path.dirname(os.path.abspath(__file__)) + "/config.ini")
+ 
+ 
