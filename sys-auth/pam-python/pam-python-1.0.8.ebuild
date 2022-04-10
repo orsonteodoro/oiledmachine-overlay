@@ -38,7 +38,6 @@ SRC_URI=" mirror://sourceforge/${PN}/${P}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( agpl-3.0.txt ChangeLog.txt README.txt )
-# See also https://github.com/castlabs/pam-python/commits/master/src/pam_python.c
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0.8-no-sudo.patch"
 	"${FILESDIR}/${PN}-1.0.8-compiler-agnostic.patch"
@@ -83,7 +82,10 @@ src_compile() {
 }
 
 src_test() {
-	# Does not work outside emerge.  Also the forked 1.0.7 testing doesn't work.
+	# Does not work outside emerge.  Also, the forked 1.0.7 (with python 3.9 support)
+	# in the link below doesn't work.  The fork below segfaults in addition
+	# to this ebuild.
+	# https://github.com/castlabs/pam-python/commits/master/src/pam_python.c
 	addwrite /etc/pam.d
 	addwrite /etc/pam.d/test-pam_python.pam
 	addwrite /etc/pam.d/test-pam_python-installed.pam
