@@ -77,6 +77,7 @@ src_compile() {
 }
 
 src_test() {
+	# Does not work outside emerge.  Also the forked 1.0.7 testing doesn't work.
 	addwrite /etc/pam.d
 	addwrite /etc/pam.d/test-pam_python.pam
 	addwrite /etc/pam.d/test-pam_python-installed.pam
