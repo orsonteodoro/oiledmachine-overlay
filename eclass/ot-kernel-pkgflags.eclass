@@ -4980,6 +4980,7 @@ ot-kernel-pkgflags_pam_u2f() { # DONE
 		einfo "Applying kernel config flags for pam_u2f (id: 79bf4ef)"
 		ot-kernel_y_configopt "CONFIG_HID"
 		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_HIDRAW"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_USB_HIDDEV"
 	fi
