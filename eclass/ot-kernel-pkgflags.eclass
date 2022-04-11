@@ -6817,10 +6817,10 @@ ot-kernel-pkgflags_xen() { # DONE
 			ot-kernel_y_configopt "CONFIG_XEN_ACPI_PROCESSOR"
 			ban_disable_debug "c729ba1"
 			ot-kernel_y_configopt "CONFIG_XEN_MCE_LOG"
-
-			ot-kernel_y_configopt "CONFIG_DEVTMPFS"
-			ot-kernel_y_configopt "CONFIG_DEVTMPFS_MOUNT"
 		fi
+
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS"
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS_MOUNT"
 
 		if [[ "${ZEN_DOM0}" == "1" && "${ZEN_DOMU}" == "1" ]] ; then
 			eerror "Both ZEN_DOM0 or ZEN_DOMU cannot be enabled at the same time."
