@@ -100,4 +100,15 @@
     <flag name="yarr-jit">Enables JIT regex support.  Otherwise, it falls back
       to interpretive</flag>
   </use>
+  <slots>
+    <slot name="4.0">
+      Built with GTK+3 and libsoup2.  This corresponds to upstream's API 4.0.
+    </slot>
+    <slot name="4.1">
+      Built with GTK+3 and libsoup3.  This corresponds to upstream's API 4.1.
+    </slot>
+    <slot name="5.0">
+      Built with GTK 4.  This corresponds to upstream's API 5.0.
+    </slot>
+  </slots>
 </pkgmetadata>
