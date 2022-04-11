@@ -18,6 +18,12 @@
     possible for security reasons and expose more options related to
     performance or next generation of web standards.
 
+    Revision correspondence:
+
+    -r50000 -- GTK 4
+    -r41000 -- GTK+3 with libsoup3
+            -- GTK+3 with libsoup2
+
     For PGO trainers, see contents of
     https://github.com/WebKit/WebKit/tree/main/PerformanceTests
     for description for what they do.
