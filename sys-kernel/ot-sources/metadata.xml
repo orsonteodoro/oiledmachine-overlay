@@ -1298,6 +1298,9 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     driver.
     Valid values:  0, 1 (default).
 
+    TPM - Force added support for TPM (Trusted Platform Module).
+    Valid values:  0 (default), 1.
+
     QEMU_GUEST_LINUX - Add support for a QEMU Linux guests.
     Valid values:  0, 1 (default).
 
@@ -1310,9 +1313,16 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     YUBIKEY - Force added support for YubiKey.
     Valid values: 0 (default), 1
 
+    ZEN_DOM0 - Use the Domain 0 (privileged, backend, host) kernel config.  Both
+    ZEN_DOM0 and ZEN_DOMU are mutually exclusive.
+    Valid values: 0, 1 (default)
+
+    ZEN_DOMU - Use the Domain U (unprivileged, frontend, guest) kernel config.
+    Both ZEN_DOM0 and ZEN_DOMU are mutually exclusive.
+    Valid values: 0 (default), 1
+
     XEN_PCI_PASSTHROUGH - Add support for PCI passthrough.
     Valid values:  0 (default), 1.
-
 
 
     disable_debug environment variables:

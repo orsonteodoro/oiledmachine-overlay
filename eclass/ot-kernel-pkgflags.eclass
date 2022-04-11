@@ -210,6 +210,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_i8kutils
 	ot-kernel-pkgflags_ifenslave
 	ot-kernel-pkgflags_igmpproxy
+	ot-kernel-pkgflags_ima_evm_utils
 	ot-kernel-pkgflags_incron
 	ot-kernel-pkgflags_iodine
 	ot-kernel-pkgflags_iotop
@@ -3258,6 +3259,42 @@ ot-kernel-pkgflags_igmpproxy() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_ima_evm_utils
+# @DESCRIPTION:
+ot-kernel-pkgflags_ima_evm_utils() {
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "e993bff" ]] && return
+	if has_version "app-crypt/ima-evm-utils" ; then
+		einfo "Applying kernel config flags for the ima-evm-utils package (id: e993bff)"
+		if [[ "${EVM:-1}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_KEYS"
+			ot-kernel_y_configopt "CONFIG_TRUSTED_KEYS"
+			ot-kernel_y_configopt "CONFIG_ENCRYPTED_KEYS"
+			ot-kernel_y_configopt "CONFIG_SECURITY"
+			ot-kernel_y_configopt "CONFIG_INTEGRITY"
+			ot-kernel_y_configopt "CONFIG_INTEGRITY_SIGNATURE"
+			ot-kernel_y_configopt "CONFIG_EVM"
+			if has_version "dev-crypt/tpm-utils" \
+				has_version "app-crypt/tpm-tools" \
+				has_version "app-crypt/tpm2-tools" \
+				|| [[ "${TPM:-0}" == "1" ]] ; then
+				ot-kernel_y_configopt "CONFIG_TCG_TPM"
+			fi
+		fi
+		if [[ "${IMA:-1}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SECURITY"
+			ot-kernel_y_configopt "CONFIG_INTEGRITY"
+			ot-kernel_y_configopt "CONFIG_IMA"
+			ot-kernel_set_configopt "CONFIG_IMA_MEASURE_PCR_IDX" "10"
+			ot-kernel_y_configopt "CONFIG_IMA_LSM_RULES"
+			ot-kernel_y_configopt "CONFIG_INTEGRITY_SIGNATURE"
+			ot-kernel_y_configopt "CONFIG_IMA_APPRAISE"
+			ot-kernel_y_configopt "CONFIG_IMA_APPRAISE_BOOTPARAM"
+			# TODO:  add kernel command line
+			ewarn "You still need to set the kernel command line for IMA"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_incron
 # @DESCRIPTION:
 # Applies kernel config flags for the incron package
@@ -3285,6 +3322,7 @@ ot-kernel-pkgflags_lkrg() { # DONE
 		if grep -q -e "CONFIG_PREEMPT_RT" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PREEMPT" # fallback to second best
 		fi
+		ban_disable_debug "70df33c"
 		ot-kernel_y_configopt "CONFIG_STACKTRACE"
 	fi
 }
@@ -4450,6 +4488,7 @@ ot-kernel-pkgflags_nbfc() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0ff68ed" ]] && return
 	if has_version "sys-power/nbfc-linux" ; then
 		einfo "Applying kernel config flags for the nbfc package (id: 0ff68ed)"
+		ban_disable_debug "0ff68ed"
 		ot-kernel_y_configopt "CONFIG_ACPI_EC_DEBUGFS"
 		ot-kernel_y_configopt "CONFIG_HWMON"
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
@@ -4622,6 +4661,7 @@ ot-kernel-pkgflags_opal_utils() { # DONE
 		ot-kernel_y_configopt "CONFIG_MTD_POWERNV_FLASH"
 		ot-kernel_y_configopt "CONFIG_OPAL_PRD"
 		ot-kernel_y_configopt "CONFIG_PPC_DT_CPU_FTRS"
+		ban_disable_debug "de97c50"
 		ot-kernel_y_configopt "CONFIG_SCOM_DEBUGFS"
 	fi
 }
@@ -5294,17 +5334,30 @@ ot-kernel-pkgflags_powertop() { # DONE
 	if has_version "sys-power/powertop" ; then
 		einfo "Applying kernel config flags for the powertop package (id: 87ebe78)"
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
-		ban_disable_debug "87ebe78"
+		ban_disable_debug "87ebe78" # Applies to DEBUG, FTRACE, TRACING, TRACEPOINTS keywords in this function
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
-		ban_disable_debug "87ebe78"
+
+		ot-kernel_y_configopt "CONFIG_TRACING"
 		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
 		ot-kernel_y_configopt "CONFIG_HPET_TIMER"
+
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_STAT"
+		if ver_test ${K_MAJOR_MINOR} -le 4.10 ; then
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_STAT_DETAILS"
+		fi
+
+		ot-kernel_y_configopt "CONFIG_PM"
+		ot-kernel_y_configopt "CONFIG_PM_DEBUG"
+		ot-kernel_y_configopt "CONFIG_PM_ADVANCED_DEBUG"
+
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_FTRACE"
+		ot-kernel_y_configopt "CONFIG_SYSFS"
+		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_IO_TRACE"
 		ot-kernel_y_configopt "CONFIG_TRACING"
 
@@ -5322,8 +5375,12 @@ ot-kernel-pkgflags_powertop() { # DONE
 			ot-kernel_y_configopt "CONFIG_PM"
 		fi
 		if ver_test ${K_MAJOR_MINOR} -lt 4.11 ; then
+			ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
+			ot-kernel_y_configopt "CONFIG_PROC_FS"
 			ot-kernel_y_configopt "CONFIG_TIMER_STATS"
 		fi
+
+		_ot-kernel-pkgflags_rapl
 	fi
 }
 
@@ -6228,6 +6285,17 @@ ot-kernel-pkgflags_uksmd() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_rapl
+# @DESCRIPTION:
+# Applies kernel config for RAPL
+_ot-kernel-pkgflags_rapl() {
+	if grep -q -E -e "^CONFIG_X86=y" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_POWERCAP"
+		ot-kernel_y_configopt "CONFIG_IOSF_MBI"
+		ot-kernel_y_configopt "CONFIG_INTEL_RAPL"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_undervolt
 # @DESCRIPTION:
 # Applies kernel config flags for the undervolt package
@@ -6235,7 +6303,7 @@ ot-kernel-pkgflags_undervolt() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4047b49" ]] && return
 	if has_version "sys-power/intel-undervolt" ; then
 		einfo "Applying kernel config flags for the undervolt package (id: 4047b49)"
-		ot-kernel_y_configopt "CONFIG_INTEL_RAPL"
+		_ot-kernel-pkgflags_rapl
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
 	fi
 }
@@ -6645,62 +6713,116 @@ ot-kernel-pkgflags_xen() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c729ba1" ]] && return
 	if has_version "app-emulation/xen" ; then
 		einfo "Applying kernel config flags for the xen package (id: c729ba1)"
-		ot-kernel_y_configopt "CONFIG_HYPERVISOR_GUEST"
-		ot-kernel_y_configopt "CONFIG_PARAVIRT"
-		ot-kernel_y_configopt "CONFIG_XEN"
-		ot-kernel_y_configopt "CONFIG_XEN_PVH"
+		if [[ "${ZEN_DOM0:-1}" == "1" ]] ; then # priveleged, backend, host
+			ot-kernel_y_configopt "CONFIG_HYPERVISOR_GUEST"
+			ot-kernel_y_configopt "CONFIG_PARAVIRT"
+			ot-kernel_y_configopt "CONFIG_XEN"
+			ot-kernel_y_configopt "CONFIG_XEN_PVH"
 
-		ot-kernel_y_configopt "CONFIG_TTY"
-		ot-kernel_y_configopt "CONFIG_HVC_XEN"
-		ot-kernel_y_configopt "CONFIG_HVC_XEN_FRONTEND"
+			ot-kernel_y_configopt "CONFIG_TTY"
+			ot-kernel_y_configopt "CONFIG_HVC_XEN"
+			ot-kernel_y_configopt "CONFIG_HVC_XEN_FRONTEND"
 
-		ot-kernel_y_configopt "CONFIG_BLK_DEV"
-		ot-kernel_y_configopt "CONFIG_XEN_BLKDEV_FRONTEND"
+			ot-kernel_y_configopt "CONFIG_BLK_DEV"
+			ot-kernel_y_configopt "CONFIG_XEN_BLKDEV_FRONTEND"
 
-		ot-kernel_y_configopt "CONFIG_NETDEVICES"
-		ot-kernel_y_configopt "CONFIG_XEN_NETDEV_FRONTEND"
-		XEN_PCI_PASSTHROUGH="${XEN_PCI_PASSTHROUGH:-0}" # Default off for security reasons but overridable.
-		if [[ "${XEN_PCI_PASSTHROUGH}" == "1" ]] ; then
-			ot-kernel_y_configopt "CONFIG_PCI"
-			ot-kernel_y_configopt "CONFIG_XEN_PCIDEV_FRONTEND"
+			ot-kernel_y_configopt "CONFIG_NETDEVICES"
+			ot-kernel_y_configopt "CONFIG_XEN_NETDEV_FRONTEND"
+			XEN_PCI_PASSTHROUGH="${XEN_PCI_PASSTHROUGH:-0}" # Default off for security reasons but overridable.
+			if [[ "${XEN_PCI_PASSTHROUGH}" == "1" ]] ; then
+				ot-kernel_y_configopt "CONFIG_PCI"
+				ot-kernel_y_configopt "CONFIG_XEN_PCIDEV_FRONTEND"
+			fi
+
+			ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+			ot-kernel_y_configopt "CONFIG_INPUT_XEN_KBDDEV_FRONTEND"
+			ot-kernel_y_configopt "CONFIG_FB"
+			ot-kernel_y_configopt "CONFIG_XEN_FBDEV_FRONTEND"
+
+			ot-kernel_y_configopt "CONFIG_ACPI"
+
+			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_BRIDGE"
+			ot-kernel_y_configopt "CONFIG_NETFILTER"
+			ot-kernel_y_configopt "CONFIG_NETFILTER_ADVANCED"
+			ot-kernel_y_configopt "CONFIG_BRIDGE_NETFILTER"
+
+			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_NETDEVICES"
+			ot-kernel_y_configopt "CONFIG_NET_CORE"
+			ot-kernel_y_configopt "CONFIG_INET"
+			ot-kernel_y_configopt "CONFIG_TUN"
+
+			ot-kernel_y_configopt "CONFIG_BLK_DEV"
+			ot-kernel_y_configopt "CONFIG_XEN_BLKDEV_BACKEND"
+
+			ot-kernel_y_configopt "CONFIG_NETDEVICES"
+			ot-kernel_y_configopt "CONFIG_XEN_NETDEV_BACKEND"
+
+			ot-kernel_y_configopt "CONFIG_XEN_BALLOON"
+			ot-kernel_y_configopt "CONFIG_XEN_SCRUB_PAGES_DEFAULT"
+			ot-kernel_y_configopt "CONFIG_XEN_DEV_EVTCHN"
+			ot-kernel_y_configopt "CONFIG_XEN_BACKEND"
+			ot-kernel_y_configopt "CONFIG_XENFS"
+			ot-kernel_y_configopt "CONFIG_XEN_COMPAT_XENFS"
+			ot-kernel_y_configopt "CONFIG_XEN_SYS_HYPERVISOR"
+			ot-kernel_y_configopt "CONFIG_XEN_GNTDEV"
+			ot-kernel_y_configopt "CONFIG_XEN_GRANT_DEV_ALLOC"
+			ot-kernel_set_configopt "CONFIG_XEN_PCIDEV_BACKEND" "m"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_XEN_PV_DOM0"
+			ot-kernel_y_configopt "CONFIG_XEN_ACPI_PROCESSOR"
+			ot-kernel_y_configopt "CONFIG_XEN_SYMS"
+			ban_disable_debug "c729ba1"
+			ot-kernel_y_configopt "CONFIG_XEN_MCE_LOG"
+		fi
+		if [[ "${ZEN_DOMU:-0}" == "1" ]] ; then # unpriveleged, frontend, guest
+			ot-kernel_y_configopt "CONFIG_HYPERVISOR_GUEST"
+			ot-kernel_y_configopt "CONFIG_PARAVIRT"
+			ot-kernel_y_configopt "CONFIG_XEN"
+			ot-kernel_y_configopt "CONFIG_PVH"
+			ot-kernel_y_configopt "CONFIG_SMP"
+			ot-kernel_y_configopt "CONFIG_PARAVIRT_SPINLOCKS"
+
+			ot-kernel_y_configopt "CONFIG_BLK_DEV"
+			ot-kernel_y_configopt "CONFIG_XEN_BLKDEV_FRONTEND"
+
+			ot-kernel_y_configopt "CONFIG_NET"
+			ot-kernel_y_configopt "CONFIG_NETDEVICES"
+			ot-kernel_y_configopt "CONFIG_XEN_NETDEV_FRONTEND"
+
+			if [[ "${XEN_PCI_PASSTHROUGH}" == "1" ]] ; then
+				ot-kernel_y_configopt "CONFIG_PCI"
+				ot-kernel_y_configopt "CONFIG_XEN_PV"
+				ot-kernel_y_configopt "CONFIG_XEN_PCIDEV_FRONTEND"
+			fi
+
+			ot-kernel_y_configopt "CONFIG_INPUT"
+			ot-kernel_y_configopt "CONFIG_INPUT_MISC"
+			ot-kernel_y_configopt "CONFIG_INPUT_XEN_KBDDEV_FRONTEND"
+
+			ot-kernel_y_configopt "CONFIG_FB"
+			ot-kernel_y_configopt "CONFIG_XEN_FBDEV_FRONTEND"
+
+			ot-kernel_y_configopt "CONFIG_XEN_BALLOON"
+			ot-kernel_y_configopt "CONFIG_XEN_SCRUB_PAGES_DEFAULT"
+			ot-kernel_y_configopt "CONFIG_XEN_DEV_EVTCHN"
+			ot-kernel_y_configopt "CONFIG_XENFS"
+			ot-kernel_y_configopt "CONFIG_XEN_COMPAT_XENFS"
+			ot-kernel_y_configopt "CONFIG_XEN_SYS_HYPERVISOR"
+			ot-kernel_y_configopt "CONFIG_XEN_GNTDEV"
+			ot-kernel_y_configopt "CONFIG_XEN_GRANT_DEV_ALLOC"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_XEN_PV_DOM0"
+			ot-kernel_y_configopt "CONFIG_XEN_ACPI_PROCESSOR"
+			ban_disable_debug "c729ba1"
+			ot-kernel_y_configopt "CONFIG_XEN_MCE_LOG"
 		fi
 
-		ot-kernel_y_configopt "CONFIG_INPUT_MISC"
-		ot-kernel_y_configopt "CONFIG_INPUT_XEN_KBDDEV_FRONTEND"
-		ot-kernel_y_configopt "CONFIG_FB"
-		ot-kernel_y_configopt "CONFIG_XEN_FBDEV_FRONTEND"
-
-		ot-kernel_y_configopt "CONFIG_ACPI"
-
-		ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_BRIDGE"
-		ot-kernel_y_configopt "CONFIG_NETFILTER"
-		ot-kernel_y_configopt "CONFIG_NETFILTER_ADVANCED"
-		ot-kernel_y_configopt "CONFIG_BRIDGE_NETFILTER"
-
-		ot-kernel_y_configopt "CONFIG_NETDEVICES"
-		ot-kernel_y_configopt "CONFIG_NET_CORE"
-		ot-kernel_y_configopt "CONFIG_INET"
-		ot-kernel_y_configopt "CONFIG_TUN"
-
-		ot-kernel_y_configopt "CONFIG_BLK_DEV"
-		ot-kernel_y_configopt "CONFIG_XEN_BLKDEV_BACKEND"
-
-		ot-kernel_y_configopt "CONFIG_NETDEVICES"
-		ot-kernel_y_configopt "CONFIG_XEN_NETDEV_BACKEND"
-
-		ot-kernel_y_configopt "CONFIG_XEN_BALLOON"
-		ot-kernel_y_configopt "CONFIG_XEN_SCRUB_PAGES_DEFAULT"
-		ot-kernel_y_configopt "CONFIG_XEN_DEV_EVTCHN"
-		ot-kernel_y_configopt "CONFIG_XEN_BACKEND"
-		ot-kernel_y_configopt "CONFIG_XENFS"
-		ot-kernel_y_configopt "CONFIG_XEN_COMPAT_XENFS"
-		ot-kernel_y_configopt "CONFIG_XEN_SYS_HYPERVISOR"
-		ot-kernel_y_configopt "CONFIG_XEN_GNTDEV"
-		ot-kernel_y_configopt "CONFIG_XEN_GRANT_DEV_ALLOC"
-		ot-kernel_set_configopt "CONFIG_XEN_PCIDEV_BACKEND" "m"
-		ot-kernel_y_configopt "CONFIG_XEN_ACPI_PROCESSOR"
-		ot-kernel_y_configopt "CONFIG_XEN_SYMS"
+		if [[ "${ZEN_DOM0}" == "1" && "${ZEN_DOMU}" == "1" ]] ; then
+			eerror "Both ZEN_DOM0 or ZEN_DOMU cannot be enabled at the same time."
+			die
+		fi
 	fi
 }
 

@@ -2020,6 +2020,7 @@ ot-kernel_clear_env() {
 	unset VIRTUALBOX_GUEST_LINUX
 	unset VSYSCALL_MODE
 	unset XEN_PCI_PASSTHROUGH
+	unset YUBIKEY
 
 	unset GENPATCHES_BLACKLIST
 

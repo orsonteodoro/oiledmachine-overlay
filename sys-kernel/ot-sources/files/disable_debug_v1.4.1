@@ -98,6 +98,7 @@ strip_debug_from_config() {
 		$(grep -r -e "CONFIG.*KUNIT" "$targetconfig" | grep "^CONFIG_")
 		$(grep -r -e "CONFIG.*TEST" "$targetconfig" | grep "^CONFIG_")
 		$(grep -r -e "CONFIG.*TRACE" "$targetconfig" | grep "^CONFIG_")
+		$(grep -r -e "CONFIG.*TRACING" "$targetconfig" | grep "^CONFIG_")
 		$(grep -r -e "CONFIG.*VERBOSE" "$targetconfig" | grep "^CONFIG_")
 
 		$(grep -r -e "^config " $(find . -name "Kconfig.debug") | cut -f 2 -d ":" | cut -f 2 -d " " | sort)
