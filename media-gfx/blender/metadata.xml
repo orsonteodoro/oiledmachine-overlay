@@ -25,6 +25,9 @@
     Blender, the open source software for 3D modeling, animation,
     rendering, post-production, interactive creation and playback.
 
+    2.93.x -- LTS (Long Term Support)
+    3.x -- Stable
+
     Information about Cycles network rendering can be found at:
     https://wiki.blender.org/wiki/Source/Render/Cycles/Network_Render
     https://developer.blender.org/D2808
