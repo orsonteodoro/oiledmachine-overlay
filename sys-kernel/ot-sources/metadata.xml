@@ -1307,7 +1307,7 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     VSYSCALL_MODE - Select vsyscall mode.
     Valid values:  full, emulate (default).
 
-    YUBIKEY -- Force added support for YubiKey.
+    YUBIKEY - Force added support for YubiKey.
     Valid values: 0 (default), 1
 
     XEN_PCI_PASSTHROUGH - Add support for PCI passthrough.
