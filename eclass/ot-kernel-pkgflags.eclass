@@ -1683,7 +1683,7 @@ _ot-kernel-pkgflags_chacha20() {
 		fi
 	fi
 	if [[ "${arch}" == "mips" ]] ; then
-		if grep -q -E -e "^SYS_HAS_CPU_MIPS32_R2=y" "${path_config}" ; then
+		if grep -q -E -e "^CONFIG_SYS_HAS_CPU_MIPS32_R2=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CPU_MIPS32_R2"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA_MIPS"
 		fi
@@ -1712,7 +1712,7 @@ _ot-kernel-pkgflags_crc32() {
 		fi
 	fi
 	if [[ "${arch}" == "mips" ]] ; then
-		if grep -q -E -e "^MIPS_CRC_SUPPORT=y" "${path_config}" ; then
+		if grep -q -E -e "^CONFIG_MIPS_CRC_SUPPORT=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32_MIPS"
 		fi
 	fi
@@ -1739,12 +1739,12 @@ _ot-kernel-pkgflags_crc32c() {
 		fi
 	fi
 	if [[ "${arch}" == "mips" ]] ; then
-		if grep -q -E -e "^MIPS_CRC_SUPPORT=y" "${path_config}" ; then
+		if grep -q -E -e "^CONFIG_MIPS_CRC_SUPPORT=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32_MIPS"
 		fi
 	fi
 	if [[ "${arch}" == "powerpc" ]] ; then
-		if grep -q -E -e "^PPC64=y" "${path_config}" \
+		if grep -q -E -e "^CONFIG_PPC64=y" "${path_config}" \
 			&& ot-kernel_use cpu_flags_ppc_altivec ; then
 			ot-kernel_y_configopt "CONFIG_ALTIVEC"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32C_VPMSUM"
@@ -5157,7 +5157,15 @@ ot-kernel-pkgflags_plymouth() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "17c3464" ]] && return
 	if has_version "sys-boot/plymouth" ; then
 		einfo "Applying kernel config flags for the plymouth package (id: 17c3464)"
-		ot-kernel_y_configopt "CONFIG_LOGO"
+		ot-kernel_unset_configopt "CONFIG_LOGO"
+		if grep -q -E -e "^CONFIG_DRM_I915=(y|m)" "${path_config}" \
+			&& ver_test ${K_MAJOR_MINOR} -le 4.2  ; then
+			ot-kernel_y_configopt "CONFIG_DRM_I915_KMS"
+		fi
+		if grep -q -E -e "^CONFIG_DRM_RADEON=(y|m)" "${path_config}" \
+			&& ver_test ${K_MAJOR_MINOR} -le 3.8  ; then
+			ot-kernel_y_configopt "CONFIG_DRM_RADEON_KMS"
+		fi
 	fi
 }
 
@@ -5301,7 +5309,7 @@ ot-kernel-pkgflags_powertop() { # DONE
 		ot-kernel_y_configopt "CONFIG_TRACING"
 
 		if ver_test ${K_MAJOR_MINOR} -lt 3.7 ; then
-			if grep -q -E -e "^SND_HDA_INTEL=(y|m)" "${path_config}" ; then
+			if grep -q -E -e "^CONFIG_SND_HDA_INTEL=(y|m)" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_SND_HDA_POWER_SAVE"
 			fi
 		fi
