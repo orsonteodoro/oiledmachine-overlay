@@ -73,7 +73,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       CFI ldflags - https://clang.llvm.org/docs/ControlFlowIntegrity.html
       PartitionAlloc - https://chromium.googlesource.com/chromium/src/+/refs/heads/main/base/allocator/partition_allocator/PartitionAlloc.md
       PGO - https://blog.chromium.org/2020/08/chrome-just-got-faster-with-profile.html
-      TCMalloc (circa 2007) - https://gperftools.github.io/gperftools/tcmalloc.html
       https://github.com/chromium/chromium/blob/master/build/config/sanitizers/BUILD.gn#L204
       [1] https://github.com/chromium/chromium/tree/master/tools/perf/benchmarks
       [2] https://chromium.googlesource.com/catapult/+/HEAD/telemetry/README.md
@@ -138,10 +137,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Disables use of third party ebuilds (without CFI and PGO) and uses the
       internal bundled hardened and PGOed version of those libraries with
       static linkage.</flag>
-    <flag name="partitionalloc">Use PartitionAlloc as the default allocator and
-      replacement to TCMalloc.  It's designed for security and lower latency,
-      and benefits the most from memory use effiency.  It is actively being
-      improved which may present newer bugs.  It's the default in 92 and later.
+    <flag name="partitionalloc">Use PartitionAlloc as the default allocator.
+      It's designed for security and lower latency, and benefits the most from
+      memory use effiency.  It is actively being improved which may present
+      newer bugs.  It's the default in 92 and later.
       </flag>
     <flag name="pic">Disable optimized assembly code that is not PIC friendly
       </flag>
@@ -180,8 +179,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="system-ffmpeg">Use system ffmpeg instead of the bundled
       one</flag>
     <flag name="system-icu">Use system icu instead of the bundled one</flag>
-    <flag name="tcmalloc">Use TCMalloc designed for optimizing memory use and
-      reuse.  Default in 91.</flag>
     <flag name="vaapi">Add support for hardware accelerated JPEG image decoding,
       and video decoding playback, and hardware accelerated video encoding for
       WebRTC</flag>
