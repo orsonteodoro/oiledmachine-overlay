@@ -5,13 +5,13 @@ EAPI=7
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.1)
+# ab = WEBKITGTK_API_VERSION version (4.0)
 # c = reserved
 # de = ebuild revision
 
 # This release corresponds to
-# WebKit 613.1.1 ; See Source/WebKit/Configurations/Version.xcconfig
-# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/WebKit/Configurations/Version.xcconfig
+# WebKit 614.1.6 ; See Source/WebKit/Configurations/Version.xcconfig
+# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/WebKit/Configurations/Version.xcconfig
 
 LLVM_MAX_SLOT=13 # This should not be more than Mesa's package LLVM_MAX_SLOT
 
@@ -22,7 +22,7 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine (GTK+3 with libsoup3)"
+DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
@@ -425,14 +425,14 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
-API_VERSION="4.1"
+API_VERSION="4.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-CURRENT="0"
-AGE="0"
+# WEBKITGTK_API_VERSION is 4.0
+CURRENT="93"
+AGE="56"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
@@ -598,19 +598,19 @@ REQUIRED_USE+="
 #
 # This means also you cannot use the geolocation feature.
 
-# Prev rev: 289434
-# Curr rev: 290020
+# Prev rev: 290020
+# Curr rev: 291557
 # For dependencies, see:
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/CMakeLists.txt?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/BubblewrapSandboxChecks.cmake?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/FindGStreamer.cmake?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/GStreamerChecks.cmake?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/OptionsGTK.cmake?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/WebKitCommon.cmake?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Tools/gtk/install-dependencies?rev=290020
-#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=290020
-#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Tools/gstreamer/jhbuild.modules?rev=290020
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/CMakeLists.txt?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/BubblewrapSandboxChecks.cmake?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/FindGStreamer.cmake?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/GStreamerChecks.cmake?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/OptionsGTK.cmake?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/WebKitCommon.cmake?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Tools/gtk/install-dependencies?rev=291557
+#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=291557
+#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Tools/gstreamer/jhbuild.modules?rev=291557
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
@@ -642,7 +642,7 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6?rev=290020
+# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0?rev=291557
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 RDEPEND+="
@@ -662,7 +662,7 @@ RDEPEND+="
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.99.9:3.0[introspection?,${MULTILIB_USEDEP}]
+	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
@@ -753,7 +753,7 @@ BDEPEND+="
 		)
 	)
 	|| ( >=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
-	     >=sys-devel/gcc-7.3.0 )
+	     >=sys-devel/gcc-8.3.0 )
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
 	>=dev-util/cmake-3.12
 	>=dev-util/glib-utils-${GLIB_V}
@@ -786,7 +786,7 @@ BDEPEND+="
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
 EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="290020"
+ESVN_REVISION="291557"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -812,8 +812,9 @@ einfo
 			check-reqs_pkg_pretend
 		fi
 
-		if ! test-flag-CXX -std=c++17 ; then
-die "You need at least GCC 7.3.x or Clang >= 6 for C++17-specific compiler flags"
+		if ! test-flag-CXX -std=c++20 ; then
+# See https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/OptionsCommon.cmake?rev=291557
+die "You need at least GCC 8.3.x or Clang >= 6 for C++20-specific compiler flags"
 		fi
 	fi
 
@@ -1194,7 +1195,7 @@ _config_pgx() {
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=OFF
+		-DUSE_SOUP2=ON
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \

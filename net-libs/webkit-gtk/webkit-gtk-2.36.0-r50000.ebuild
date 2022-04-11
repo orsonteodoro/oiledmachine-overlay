@@ -5,13 +5,13 @@ EAPI=7
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.0)
+# ab = WEBKITGTK_API_VERSION version (5.0)
 # c = reserved
 # de = ebuild revision
 
 # This release corresponds to
-# WebKit 613.1.1 ; See Source/WebKit/Configurations/Version.xcconfig
-# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/WebKit/Configurations/Version.xcconfig
+# WebKit 614.1.6 ; See Source/WebKit/Configurations/Version.xcconfig
+# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/WebKit/Configurations/Version.xcconfig
 
 LLVM_MAX_SLOT=13 # This should not be more than Mesa's package LLVM_MAX_SLOT
 
@@ -22,7 +22,7 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
+DESCRIPTION="Open source web browser engine (GTK 4)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
@@ -425,14 +425,14 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
-API_VERSION="4.0"
+API_VERSION="5.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.0
-CURRENT="92"
-AGE="55"
+# WEBKITGTK_API_VERSION is 5.0
+CURRENT="0"
+AGE="0"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
@@ -461,9 +461,9 @@ IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
 dav1d +dfg-jit +egl -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring
 +gstreamer -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
 +libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp pgo
-+pulseaudio -seccomp -spell -systemd test thunder variation-fonts +v4l wayland
-+webassembly +webassembly-b3-jit +webcrypto +webgl webm-eme -webrtc webvtt
--webxr +X +yarr-jit"
++pulseaudio -seccomp -libsoup3 -spell -systemd test thunder variation-fonts
++v4l wayland +webassembly +webassembly-b3-jit +webcrypto +webgl webm-eme -webrtc
+webvtt -webxr +X +yarr-jit"
 
 PGO_PLANS=(
 	ares6
@@ -598,19 +598,19 @@ REQUIRED_USE+="
 #
 # This means also you cannot use the geolocation feature.
 
-# Prev rev: 289434
-# Curr rev: 290020
+# Prev rev: 290020
+# Curr rev: 291557
 # For dependencies, see:
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/CMakeLists.txt?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/BubblewrapSandboxChecks.cmake?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/FindGStreamer.cmake?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/GStreamerChecks.cmake?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/OptionsGTK.cmake?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Source/cmake/WebKitCommon.cmake?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Tools/gtk/install-dependencies?rev=290020
-#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=290020
-#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=290020
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6/Tools/gstreamer/jhbuild.modules?rev=290020
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/CMakeLists.txt?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/BubblewrapSandboxChecks.cmake?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/FindGStreamer.cmake?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/GStreamerChecks.cmake?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/OptionsGTK.cmake?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/WebKitCommon.cmake?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Tools/gtk/install-dependencies?rev=291557
+#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=291557
+#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Tools/gstreamer/jhbuild.modules?rev=291557
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
@@ -642,7 +642,7 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.34.6?rev=290020
+# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0?rev=291557
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 RDEPEND+="
@@ -655,6 +655,7 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
+	>=gui-libs/gtk-3.98.5:4[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
@@ -662,11 +663,9 @@ RDEPEND+="
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
-	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	egl? ( >=media-libs/mesa-${MESA_V}[egl,${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
@@ -690,6 +689,12 @@ RDEPEND+="
 	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
 	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
+	!libsoup3? (
+		>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
+	)
+	libsoup3? (
+		>=net-libs/libsoup-2.99.9:3.0[introspection?,${MULTILIB_USEDEP}]
+	)
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
 	seccomp? (
@@ -753,7 +758,7 @@ BDEPEND+="
 		)
 	)
 	|| ( >=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
-	     >=sys-devel/gcc-7.3.0 )
+	     >=sys-devel/gcc-8.3.0 )
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
 	>=dev-util/cmake-3.12
 	>=dev-util/glib-utils-${GLIB_V}
@@ -786,7 +791,7 @@ BDEPEND+="
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
 EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="290020"
+ESVN_REVISION="291557"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -812,8 +817,9 @@ einfo
 			check-reqs_pkg_pretend
 		fi
 
-		if ! test-flag-CXX -std=c++17 ; then
-die "You need at least GCC 7.3.x or Clang >= 6 for C++17-specific compiler flags"
+		if ! test-flag-CXX -std=c++20 ; then
+# See https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/OptionsCommon.cmake?rev=291557
+die "You need at least GCC 8.3.x or Clang >= 6 for C++20-specific compiler flags"
 		fi
 	fi
 
@@ -846,6 +852,8 @@ ewarn
 
 NABIS=0
 pkg_setup() {
+	ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
+	ewarn "It is currently not recommended due to rendering bug(s)."
 	einfo "This is the stable branch."
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
@@ -1187,14 +1195,14 @@ _config_pgx() {
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
 		-DUSE_AVIF=$(usex avif)
-		-DUSE_GTK4=OFF
+		-DUSE_GTK4=ON
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=ON
+		-DUSE_SOUP2=$(usex libsoup3 OFF ON)
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
