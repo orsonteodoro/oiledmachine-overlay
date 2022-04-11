@@ -1285,7 +1285,7 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     OSS - Force add support for OSS sound.
     Valid values:  0 (default), 1.
 
-    OSS_MIDI - Force add support for OSS MIDI.
+    OSS_MIDI - Force added support for OSS MIDI.
     Valid values:  0 (default), 1.
 
     SANE_SCSI - Add support for SCSI scanners.
@@ -1306,6 +1306,9 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
 
     VSYSCALL_MODE - Select vsyscall mode.
     Valid values:  full, emulate (default).
+
+    YUBIKEY -- Force added support for YubiKey.
+    Valid values: 0 (default), 1
 
     XEN_PCI_PASSTHROUGH - Add support for PCI passthrough.
     Valid values:  0 (default), 1.
