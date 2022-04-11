@@ -423,7 +423,7 @@ LICENSE="
 # unicode Source/WTF/icu/LICENSE
 # * The public-domain is not presented in LICENSE variable to not give
 #   the wrong impression that the entire package is released in the public domain.
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~riscv ~x86"
 
 API_VERSION="5.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
