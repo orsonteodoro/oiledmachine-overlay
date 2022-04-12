@@ -611,8 +611,7 @@ ot-kernel-pkgflags_avahi() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "1ea9c64" ]] && return
 	if has_version "net-dns/avahi" ; then
 		einfo "Applying kernel config flags for the avahi package (id: 1ea9c64)"
-		ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_INET"
+		_ot-kernel-pkgflags_tcpip
 		ot-kernel_y_configopt "CONFIG_IP_MULTICAST"
 	fi
 }
@@ -1004,7 +1003,7 @@ ot-kernel-pkgflags_cifs_utils() { # DONE
 	if has_version "net-fs/cifs-utils" ; then
 		einfo "Applying kernel config flags for the cifs-utils package (id: f8ae20a)"
 		ot-kernel_y_configopt "CONFIG_NETWORK_FILESYSTEMS"
-		ot-kernel_y_configopt "CONFIG_INET"
+		_ot-kernel-pkgflags_tcpip
 		ot-kernel_y_configopt "CONFIG_CIFS"
 	fi
 }
@@ -1353,7 +1352,8 @@ ot-kernel-pkgflags_conky() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0a83d3b" ]] && return
 	if has_version "app-admin/conky" ; then
 		einfo "Applying kernel config flags for the conky package (id: 0a83d3b)"
-		ot-kernel_y_configopt "CONFIG_IPV6"
+	        _ot-kernel-pkgflags_tcpip
+	        ot-kernel_y_configopt "CONFIG_IPV6"
 	fi
 }
 
@@ -1373,12 +1373,12 @@ ot-kernel-pkgflags_conntrack_tools() { # DONE
 		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK"
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_EVENTS"
 		if grep -q -E -e "^CONFIG_INET=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_NET"
+			_ot-kernel-pkgflags_tcpip
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV4"
 		fi
 		if grep -q -E -e "^CONFIG_IPV6=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_NET"
-			ot-kernel_y_configopt "CONFIG_INET"
+		        _ot-kernel-pkgflags_tcpip
+		        ot-kernel_y_configopt "CONFIG_IPV6"
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV6"
 		fi
 	fi
@@ -1445,7 +1445,7 @@ ot-kernel-pkgflags_criu() { # DONE
 		ot-kernel_y_configopt "CONFIG_INET_UDP_DIAG"
 		ot-kernel_y_configopt "CONFIG_PACKET_DIAG"
 		ot-kernel_y_configopt "CONFIG_NETLINK_DIAG"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MARK"
 		if [[ "${arch}" == "x86_64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
@@ -2705,9 +2705,8 @@ ot-kernel-pkgflags_eventd() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "9baffe9" ]] && return
 	if has_version "net-misc/eventd[ipv6]" ; then
 		einfo "Applying kernel config flags for the eventd package (id: 9baffe9)"
-		ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_INET"
-		ot-kernel_y_configopt "CONFIG_IPV6"
+	        _ot-kernel-pkgflags_tcpip
+	        ot-kernel_y_configopt "CONFIG_IPV6"
 	fi
 }
 
@@ -2743,19 +2742,9 @@ ot-kernel-pkgflags_firecracker_bin() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "16d1550" ]] && return
 	if has_version "app-emulation/firecracker-bin" ; then
 		einfo "Applying kernel config flags for the firecracker_bin package (id: 16d1550)"
-		ot-kernel_y_configopt "CONFIG_KVM"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		ot-kernel-pkgflags_kvm_host_required
+		_ot-kernel-pkgflags_tun
 		ot-kernel_y_configopt "CONFIG_BRIDGE"
-		if [[ "${arch}" == "x86_64" ]] ; then
-			# Don't use lscpu/cpuinfo autodetect if using distcc or
-			# cross-compile but use the config itself to guestimate.
-			if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_KVM_INTEL"
-			fi
-			if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_KVM_AMD"
-			fi
-		fi
 	fi
 }
 
@@ -2959,8 +2948,7 @@ ot-kernel-pkgflags_gerbera() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "eca1a38" ]] && return
 	if has_version "net-misc/gerbera" ; then
 		einfo "Applying kernel config flags for the gerbera package (id: eca1a38)"
-		ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_INET"
+		_ot-kernel-pkgflags_tcpip
 		ot-kernel_y_configopt "CONFIG_IP_MROUTE"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	fi
@@ -2988,7 +2976,8 @@ ot-kernel-pkgflags_glib() { # DONE
 		einfo "Applying kernel config flags for the glib package (id: 8210745)"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		if has_version "dev-libs/glib[test]" ; then
-			ot-kernel_y_configopt "CONFIG_IPV6"
+		        _ot-kernel-pkgflags_tcpip
+		        ot-kernel_y_configopt "CONFIG_IPV6"
 		fi
 	fi
 }
@@ -3011,13 +3000,7 @@ ot-kernel-pkgflags_gnome_boxes() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "768ed31" ]] && return
 	if has_version "gnome-extra/gnome-boxes" ; then
 		einfo "Applying kernel config flags for the gnome-boxes package (id: 768ed31)"
-		# Use .config hints to guestimate
-		if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_KVM_INTEL"
-		fi
-		if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_KVM_AMD"
-		fi
+		: # See ot-kernel-pkgflags_qemu
 	fi
 }
 
@@ -3051,8 +3034,8 @@ ot-kernel-pkgflags_guestfs() { # DONE
 	if has_version "app-emulation/libguestfs" \
 		|| has_version "app-emulation/guestfs-tools" ; then
 		einfo "Applying kernel config flags for the guestfs package(s) (id: 59d09c6)"
-		ot-kernel_y_configopt "CONFIG_KVM"
-		ot-kernel_y_configopt "CONFIG_VIRTIO"
+		: # See ot-kernel-pkgflags_qemu
+		ot-kernel_y_configopt "CONFIG_VIRTIO" # For guest
 	fi
 }
 
@@ -3075,7 +3058,7 @@ ot-kernel-pkgflags_hamachi() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d871dfa" ]] && return
 	if has_version "net-vpn/logmein-hamachi" ; then
 		einfo "Applying kernel config flags for the hamachi package (id: d871dfa)"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -3345,7 +3328,7 @@ ot-kernel-pkgflags_iodine() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "031191b" ]] && return
 	if has_version "net-vpn/iodine" ; then
 		einfo "Applying kernel config flags for the iodine package (id: 031191b)"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -3412,14 +3395,14 @@ ot-kernel-pkgflags_iptables() { # MOSTLY DONE
 		einfo "Applying kernel config flags for the iptables package (id: 351365c)"
 		IPTABLES_CLIENT="${IPTABLES_CLIENT:-1}"
 		if [[ "${IPTABLES_CLIENT}" == "1" ]] ; then # DONE
-			ot-kernel_y_configopt "CONFIG_NET"
+		        _ot-kernel-pkgflags_tcpip
+		        ot-kernel_y_configopt "CONFIG_IPV6"
 			ot-kernel_y_configopt "CONFIG_NET_IPVTI"
 			if ver_test ${K_MAJOR_MINOR} -le 5.1 ; then
 				ot-kernel_y_configopt "CONFIG_INET_XFRM_MODE_TRANSPORT"
 				ot-kernel_y_configopt "CONFIG_INET_XFRM_MODE_TUNNEL"
 			fi
 			ot-kernel_y_configopt "CONFIG_INET_DIAG"
-			ot-kernel_y_configopt "CONFIG_IPV6"
 			ot-kernel_y_configopt "CONFIG_NETFILTER"
 			ban_disable_debug "351365c" "NETFILTER"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_LOG"
@@ -3439,8 +3422,8 @@ ot-kernel-pkgflags_iptables() { # MOSTLY DONE
 		fi
 		IPTABLES_ROUTER="${IPTABLES_ROUTER:-0}"
 		if [[ "${IPTABLES_ROUTER}" == "1" ]] ; then # MAYBE DONE
-			ot-kernel_y_configopt "CONFIG_NET"
-			ot-kernel_y_configopt "CONFIG_INET"
+		        _ot-kernel-pkgflags_tcpip
+		        ot-kernel_y_configopt "CONFIG_IPV6"
 			ot-kernel_set_configopt "CONFIG_INET_AH" "m"
 			ot-kernel_set_configopt "CONFIG_INET_ESP" "m"
 			ot-kernel_set_configopt "CONFIG_INET_IPCOMP" "m"
@@ -3457,8 +3440,6 @@ ot-kernel-pkgflags_iptables() { # MOSTLY DONE
 
 			ot-kernel_y_configopt "CONFIG_INET_DIAG"
 			ot-kernel_set_configopt "CONFIG_INET_UDP_DIAG" "m"
-
-			ot-kernel_set_configopt "CONFIG_IPV6" "m"
 
 			ot-kernel_y_configopt "CONFIG_NETFILTER"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_ADVANCED"
@@ -3533,7 +3514,7 @@ ot-kernel-pkgflags_isatapd() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "fa75afb" ]] && return
 	if has_version "net-vpn/isatapd" ; then
 		einfo "Applying kernel config flags for the isatapd package (id: fa75afb)"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -4225,7 +4206,7 @@ ot-kernel-pkgflags_lxd() { # DONE
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
 		ot-kernel_y_configopt "CONFIG_USER_NS"
 		ot-kernel_y_configopt "CONFIG_UTS_NS"
-		ot-kernel_y_configopt "CONFIG_KVM"
+		ot-kernel-pkgflags_kvm_host_required
 		ot-kernel_y_configopt "CONFIG_MACVTAP"
 		ot-kernel_y_configopt "CONFIG_VHOST_VSOCK"
 	fi
@@ -4238,7 +4219,7 @@ ot-kernel-pkgflags_madwimax() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6f56e53" ]] && return
 	if has_version "net-wireless/madwimax" ; then
 		einfo "Applying kernel config flags for the madwimax package (id: 6f56e53)"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -4609,7 +4590,7 @@ ot-kernel-pkgflags_nstx() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "5741385" ]] && return
 	if has_version "net-vpn/nstx" ; then
 		einfo "Applying kernel config flags for the nstx package (id: 5741385)"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -4931,7 +4912,7 @@ ot-kernel-pkgflags_openconnect() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "98e7109" ]] && return
 	if has_version "net-vpn/openconnect" ; then
 		einfo "Applying kernel config flags for the openconnect package (id: 98e7109)"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -4977,7 +4958,7 @@ ot-kernel-pkgflags_openvpn() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "d507034" ]] && return
 	if has_version "net-vpn/openvpn" ; then
 		einfo "Applying kernel config flags for the openvpn package (id: d507034)"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -4992,8 +4973,9 @@ ot-kernel-pkgflags_openvswitch() { # DONE
 		ot-kernel_y_configopt "CONFIG_NET_CLS_U32"
 		ot-kernel_y_configopt "CONFIG_NET_SCH_INGRESS"
 		ot-kernel_y_configopt "CONFIG_NET_ACT_POLICE"
-		ot-kernel_y_configopt "CONFIG_IPV6"
-		ot-kernel_y_configopt "CONFIG_TUN"
+	        _ot-kernel-pkgflags_tcpip
+	        ot-kernel_y_configopt "CONFIG_IPV6"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -5038,39 +5020,123 @@ ot-kernel-pkgflags_qdmr() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_qemu
+# @FUNCTION: ot-kernel-pkgflags_kvm_host_required
 # @DESCRIPTION:
-# Applies kernel config flags for the qemu package
-ot-kernel-pkgflags_qemu() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "00f70b8" ]] && return
-	if has_version "app-emulation/qemu" ; then
-		einfo "Applying kernel config flags for the qemu package (id: 00f70b8)"
-		ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
-		ot-kernel_y_configopt "CONFIG_VIRTUALIZATION"
-		ot-kernel_y_configopt "CONFIG_KVM"
-		# Don't use lscpu/cpuinfo autodetect if using distcc or
-		# cross-compile but use the config itself to guestimate.
+# Adds required frags for the KVM host.
+ot-kernel-pkgflags_kvm_host_required() {
+	ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
+	ot-kernel_y_configopt "CONFIG_VIRTUALIZATION"
+	ot-kernel_y_configopt "CONFIG_KVM"
+	# Don't use lscpu/cpuinfo autodetect if using distcc or
+	# cross-compile but use the config itself to guestimate.
+	if [[ "${arch}" == "x86_64" ]] ; then
 		if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_KVM_INTEL"
 		fi
 		if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_KVM_AMD"
 		fi
-		ot-kernel_y_configopt "CONFIG_EVENTFD"
-		ot-kernel_y_configopt "CONFIG_VHOST_MENU"
-		ot-kernel_y_configopt "CONFIG_VHOST_NET"
-		ot-kernel_y_configopt "CONFIG_NETDEVICES"
-		ot-kernel_y_configopt "CONFIG_NET_CORE"
-		ot-kernel_y_configopt "CONFIG_TUN"
-		ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_INET"
-		ot-kernel_y_configopt "CONFIG_IPV6"
-		ot-kernel_y_configopt "CONFIG_BRIDGE"
-		QEMU_GUEST_LINUX="${QEMU_GUEST_LINUX:-1}"
-		if [[ "${QEMU_GUEST_LINUX}" == "1" ]] ; then
-			ot-kernel_y_configopt "CONFIG_HYPERVISOR_GUEST"
-			ot-kernel_y_configopt "CONFIG_PARAVIRT"
-			ot-kernel_y_configopt "CONFIG_KVM_GUEST"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_kvm_guest_required
+# @DESCRIPTION:
+# Adds required frags for the KVM guest.
+ot-kernel-pkgflags_kvm_guest_required() {
+	ot-kernel_y_configopt "CONFIG_HYPERVISOR_GUEST"
+	ot-kernel_y_configopt "CONFIG_PARAVIRT"
+	ot-kernel_y_configopt "CONFIG_KVM_GUEST"
+}
+
+# @FUNCTION: ot-kernel-pkgflags_kvm_host_extras
+# @DESCRIPTION:
+# Adds extra frags for the KVM host.
+ot-kernel-pkgflags_kvm_host_extras() {
+	if [[ "${KVMGT:-0}" == "1" ]] \
+		&& grep -q -E -e "^CONFIG_KVM=(y|m)" "${path_config}" ; then
+		# For hosts only
+		ot-kernel_y_configopt "CONFIG_VFIO"
+		ot-kernel_y_configopt "CONFIG_CONFIG_VFIO_MDEV"
+		if [[ "${arch}" == "x86_64" ]] ; then
+			ot-kernel_y_configopt "CONFIG_DRM_I915"
+			ot-kernel_y_configopt "CONFIG_DRM_I915_GVT"
+			ot-kernel_y_configopt "CONFIG_DRM_I915_GVT_KVMGT"
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_kvm_guest_extras
+# @DESCRIPTION:
+# Adds extra frags for the KVM guest.
+ot-kernel-pkgflags_kvm_guest_extras() {
+	if [[ "${KVM_GUEST_MEM_HOTPLUG:-0}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MEMORY_HOTPLUG"
+		ot-kernel_y_configopt "CONFIG_MEMORY_HOTREMOVE"
+		ot-kernel_y_configopt "CONFIG_MIGRATION"
+	fi
+	if [[ "${KVM_GUEST_PCI_HOTPLUG:-0}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_SYSFS"
+		ot-kernel_y_configopt "CONFIG_HOTPLUG_PCI"
+		ot-kernel_y_configopt "CONFIG_HOTPLUG_PCI_ACPI"
+	fi
+	if [[ "${KVM_GUEST_VIRTIO_BALLOON:-0}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_VIRTIO_BALLOON"
+	fi
+	if [[ "${KVM_GUEST_VIRTIO_CONSOLE:-0}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_VIRTIO_CONSOLE"
+	fi
+	if [[ "${KVM_GUEST_VIRTIO_MEM:-1}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_MEMORY_HOTPLUG_SPARSE"
+		ot-kernel_y_configopt "CONFIG_MEMORY_HOTREMOVE"
+		ot-kernel_y_configopt "CONFIG_CONTIG_ALLOC"
+		ot-kernel_y_configopt "CONFIG_VIRTIO_MEM"
+	fi
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_tun
+# @DESCRIPTION:
+# Adds support for TUN/TAP.
+_ot-kernel-pkgflags_tun() {
+	ot-kernel_y_configopt "CONFIG_NETDEVICES"
+	ot-kernel_y_configopt "CONFIG_NET_CORE"
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_INET"
+	ot-kernel_y_configopt "CONFIG_TUN"
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_tcpip
+# @DESCRIPTION:
+# Adds support for TCP/IP
+_ot-kernel-pkgflags_tcpip() {
+	ot-kernel_y_configopt "CONFIG_NET"
+	ot-kernel_y_configopt "CONFIG_INET"
+}
+
+# @FUNCTION: ot-kernel-pkgflags_qemu
+# @DESCRIPTION:
+# Applies kernel config flags for the QEMU package.
+ot-kernel-pkgflags_qemu() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "00f70b8" ]] && return
+	if has_version "app-emulation/qemu" ; then
+		einfo "Applying kernel config flags for the qemu package (id: 00f70b8)"
+		if [[ "${QEMU_HOST:-1}" == "1" ]] ; then
+			ot-kernel-pkgflags_kvm_host_required
+			ot-kernel-pkgflags_kvm_host_extras
+		fi
+		if has_version "app-emulation/qemu[vhost-net]" ; then
+			ot-kernel_y_configopt "CONFIG_EVENTFD"
+			ot-kernel_y_configopt "CONFIG_VHOST_MENU"
+			ot-kernel_y_configopt "CONFIG_VHOST_NET"
+			_ot-kernel-pkgflags_tun
+		fi
+		if [[ "${QEMU_ETHERNET_BRIDGING:-1}" == "1" ]] ; then
+		        _ot-kernel-pkgflags_tcpip
+		        ot-kernel_y_configopt "CONFIG_IPV6"
+			ot-kernel_y_configopt "CONFIG_BRIDGE"
+		fi
+		if [[ "${QEMU_GUEST_LINUX:-0}" == "1" ]] ; then
+			ot-kernel-pkgflags_kvm_guest_required
 			ot-kernel_y_configopt "CONFIG_VIRTIO_MENU"
 			ot-kernel_y_configopt "CONFIG_VIRTIO_PCI"
 			ot-kernel_y_configopt "CONFIG_VIRTIO"
@@ -5079,31 +5145,12 @@ ot-kernel-pkgflags_qemu() { # DONE
 			ot-kernel_y_configopt "CONFIG_SCSI"
 			ot-kernel_y_configopt "CONFIG_SCSI_LOWLEVEL"
 			ot-kernel_y_configopt "CONFIG_SCSI_VIRTIO"
+			ot-kernel_y_configopt "CONFIG_NETDEVICES"
+			ot-kernel_y_configopt "CONFIG_NET_CORE"
+			ot-kernel_y_configopt "CONFIG_VIRTIO_NET"
 			ot-kernel_y_configopt "CONFIG_HW_RANDOM"
 			ot-kernel_y_configopt "CONFIG_HW_RANDOM_VIRTIO"
-
-			# Extras
-			if [[ "${QEMU_GUEST_BALLOON:-1}" == "1" ]] ; then
-				ot-kernel_y_configopt "CONFIG_VIRTIO_BALLOON"
-			fi
-			if [[ "${QEMU_GUEST_CONSOLE_DEVICE:-0}" == "1" ]] ; then
-				ot-kernel_y_configopt "CONFIG_VIRTIO_CONSOLE"
-			fi
-			if [[ "${QEMU_GUEST_PCI_HOTPLUG:-0}" == "1" ]] ; then
-				ot-kernel_y_configopt "CONFIG_PCI"
-				ot-kernel_y_configopt "CONFIG_SYSFS"
-				ot-kernel_y_configopt "CONFIG_HOTPLUG_PCI"
-				ot-kernel_y_configopt "CONFIG_HOTPLUG_PCI_ACPI"
-			fi
-		fi
-		if [[ "${QEMU_KVMGT:-0}" == "1" ]] ; then
-			ot-kernel_y_configopt "CONFIG_VFIO"
-			ot-kernel_y_configopt "CONFIG_CONFIG_VFIO_MDEV"
-			if [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_DRM_I915"
-				ot-kernel_y_configopt "CONFIG_DRM_I915_GVT"
-				ot-kernel_y_configopt "CONFIG_DRM_I915_GVT_KVMGT"
-			fi
+			ot-kernel-pkgflags_kvm_guest_extras
 		fi
 		if has_version "app-emulation/qemu[python]" ; then
 			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
@@ -5698,9 +5745,8 @@ ot-kernel-pkgflags_souper() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "cbbf7b0" ]] && return
 	if has_version "sys-devel/souper[external-cache,tcp]" ; then
 		einfo "Applying kernel config flags for the souper package (id: cbbf7b0)"
-		ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_INET"
-		ot-kernel_y_configopt "CONFIG_IPV6"
+	        _ot-kernel-pkgflags_tcpip
+	        ot-kernel_y_configopt "CONFIG_IPV6"
 	fi
 	if has_version "sys-devel/souper[external-cache,usockets]" ; then
 		einfo "Applying kernel config flags for the souper package (id: cbbf7b0)"
@@ -5792,7 +5838,7 @@ ot-kernel-pkgflags_simplevirt() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "9dc3745" ]] && return
 	if has_version "app-emulation/simplevirt" ; then
 		einfo "Applying kernel config flags for the simplevirt package (id: 9dc3745)"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 		ot-kernel_y_configopt "CONFIG_BRIDGE"
 	fi
 }
@@ -5856,9 +5902,12 @@ ot-kernel-pkgflags_shorewall() { # DONE
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
 		if ver_test ${K_MAJOR_MINOR} 4.19 ; then
 			if has_version "net-firewall/shorewall[ipv4]" ; then
+				_ot-kernel-pkgflags_tcpip
 				ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV4"
 			fi
 			if has_version "net-firewall/shorewall[ipv6]" ; then
+			        _ot-kernel-pkgflags_tcpip
+			        ot-kernel_y_configopt "CONFIG_IPV6"
 				ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV6"
 			fi
 		fi
@@ -5979,8 +6028,8 @@ ot-kernel-pkgflags_systemd() { # DONE
 		ot-kernel_y_configopt "CONFIG_FANOTIFY"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_IPV6"
-		ot-kernel_y_configopt "CONFIG_NET"
+	        _ot-kernel-pkgflags_tcpip
+	        ot-kernel_y_configopt "CONFIG_IPV6"
 		ot-kernel_y_configopt "CONFIG_NET_NS"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
@@ -6521,7 +6570,8 @@ ot-kernel-pkgflags_vinagre() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "2356e75" ]] && return
 	if has_version "net-misc/vinagre" ; then
 		einfo "Applying kernel config flags for the vinagre package (id: 2356e75)"
-		ot-kernel_y_configopt "CONFIG_IPV6"
+	        _ot-kernel-pkgflags_tcpip
+	        ot-kernel_y_configopt "CONFIG_IPV6"
 	fi
 }
 
@@ -6532,7 +6582,7 @@ ot-kernel-pkgflags_vpnc() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "ac51429" ]] && return
 	if has_version "net-vpn/vpnc" ; then
 		einfo "Applying kernel config flags for the vpnc package (id: ac51429)"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -6543,7 +6593,7 @@ ot-kernel-pkgflags_vtun() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "205c74a" ]] && return
 	if has_version "net-vpn/vtun" ; then
 		einfo "Applying kernel config flags for the vtun package (id: 205c74a)"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -6611,8 +6661,7 @@ ot-kernel-pkgflags_wireguard_modules() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "a2dab07" ]] && return
 	if has_version "net-vpn/wireguard-modules" ; then
 		einfo "Applying kernel config flags for the wireguard-modules package (id: a2dab07)"
-		ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_INET"
+		_ot-kernel-pkgflags_tcpip
 		ot-kernel_y_configopt "CONFIG_NET_UDP_TUNNEL"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_ALGAPI"
 	fi
@@ -6776,11 +6825,7 @@ ot-kernel-pkgflags_xen() { # DONE
 			ot-kernel_y_configopt "CONFIG_NETFILTER_ADVANCED"
 			ot-kernel_y_configopt "CONFIG_BRIDGE_NETFILTER"
 
-			ot-kernel_y_configopt "CONFIG_NET"
-			ot-kernel_y_configopt "CONFIG_NETDEVICES"
-			ot-kernel_y_configopt "CONFIG_NET_CORE"
-			ot-kernel_y_configopt "CONFIG_INET"
-			ot-kernel_y_configopt "CONFIG_TUN"
+			_ot-kernel-pkgflags_tun
 
 			ot-kernel_y_configopt "CONFIG_BLK_DEV"
 			ot-kernel_y_configopt "CONFIG_XEN_BLKDEV_BACKEND"

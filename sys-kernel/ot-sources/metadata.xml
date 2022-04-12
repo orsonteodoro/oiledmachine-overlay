@@ -1270,6 +1270,27 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     IPTABLES_ROUTER - Add support for iptables router.
     Valid values:  0 (default), 1.
 
+    KVM_GUEST_MEM_HOTPLUG - Add support for hotplugging dynamic memory.
+    Valid values:  0 (default), 1.
+
+    KVM_GUEST_PCI_HOTPLUG - Add support to dynamically remove a PCI device
+    and / or a disk.  Hot plugging disks with this option is not a mistake.
+    Valid values:  0 (default), 1.
+
+    KVM_GUEST_VIRTIO_BALLOON - Add support to dynamic adjustment of the dynamic memory
+    of the guest.
+    Valid values:  0 (default), 1.
+
+    KVM_GUEST_VIRTIO_CONSOLE - Add support for piping data between guest and host.
+    Valid values:  0 (default), 1.
+
+    KVM_GUEST_VIRTIO_MEM - Add support for virtio-mem.  This is more secure than
+    the other kernel virtio memory hotplug drivers.
+    Valid values:  0, 1 (default).
+
+    KVMGT - Add support for KVMGT with GVT-g.
+    Valid values:  0 (default), 1.
+
     LM_SENSORS_MODULES - Add modules for lm-sensors.
     Valid values:  0 (default), 1.
 
@@ -1301,21 +1322,13 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     TPM - Force added support for TPM (Trusted Platform Module).
     Valid values:  0 (default), 1.
 
-    QEMU_GUEST_BALLOON - Add support to dynamic adjustment of the dynamic memory
-    of the guest.
+    QEMU_HOST - Add support for QEMU Linux host.
     Valid values:  0, 1 (default).
 
-    QEMU_GUEST_CONSOLE_DEVICE - Add support for piping data between guest and host
+    QEMU_GUEST_LINUX - Add support for QEMU Linux guests.
     Valid values:  0 (default), 1.
 
-    QEMU_GUEST_LINUX - Add support for a QEMU Linux guests.
-    Valid values:  0, 1 (default).
-
-    QEMU_GUEST_PCI_HOTPLUG - Add support to dynamically remove a PCI device
-    and / or a disk.
-    Valid values:  0 (default), 1.
-
-    QEMU_KVMGT - Add support for KVMGT with GVT-g.
+    QEMU_ETHERNET_BRIDGING - Add support for ethernet bridging.
     Valid values:  0 (default), 1.
 
     VIRTUALBOX_GUEST_LINUX - Add support for VirtualBox Linux guests.
