@@ -4060,7 +4060,7 @@ ot-kernel-pkgflags_lm_sensors() { # DONE
 			ot-kernel_y_configopt "CONFIG_DEVPORT"
 		fi
 
-		if [[ "${OT_KERNEL_LM_SENSORS_MODULES:-0}" == "1" ]] ; then
+		if [[ "${LM_SENSORS_MODULES:-0}" == "1" ]] ; then
 			einfo "Adding referenced modules for the lm-sensors package."
 			# Slice sections of the file and extract options
 			local sidx1=$(grep -n "PC SMBus host controller drivers" drivers/i2c/busses/Kconfig | cut -f 1 -d ":")
@@ -5045,6 +5045,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "00f70b8" ]] && return
 	if has_version "app-emulation/qemu" ; then
 		einfo "Applying kernel config flags for the qemu package (id: 00f70b8)"
+		ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
 		ot-kernel_y_configopt "CONFIG_VIRTUALIZATION"
 		ot-kernel_y_configopt "CONFIG_KVM"
 		# Don't use lscpu/cpuinfo autodetect if using distcc or
@@ -5055,6 +5056,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 		if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_KVM_AMD"
 		fi
+		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_VHOST_MENU"
 		ot-kernel_y_configopt "CONFIG_VHOST_NET"
 		ot-kernel_y_configopt "CONFIG_NETDEVICES"
@@ -5071,6 +5073,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 			ot-kernel_y_configopt "CONFIG_KVM_GUEST"
 			ot-kernel_y_configopt "CONFIG_VIRTIO_MENU"
 			ot-kernel_y_configopt "CONFIG_VIRTIO_PCI"
+			ot-kernel_y_configopt "CONFIG_VIRTIO"
 			ot-kernel_y_configopt "CONFIG_BLK_DEV"
 			ot-kernel_y_configopt "CONFIG_VIRTIO_BLK"
 			ot-kernel_y_configopt "CONFIG_SCSI"
@@ -5078,6 +5081,32 @@ ot-kernel-pkgflags_qemu() { # DONE
 			ot-kernel_y_configopt "CONFIG_SCSI_VIRTIO"
 			ot-kernel_y_configopt "CONFIG_HW_RANDOM"
 			ot-kernel_y_configopt "CONFIG_HW_RANDOM_VIRTIO"
+
+			# Extras
+			if [[ "${QEMU_GUEST_BALLOON:-1}" == "1" ]] ; then
+				ot-kernel_y_configopt "CONFIG_VIRTIO_BALLOON"
+			fi
+			if [[ "${QEMU_GUEST_CONSOLE_DEVICE:-0}" == "1" ]] ; then
+				ot-kernel_y_configopt "CONFIG_VIRTIO_CONSOLE"
+			fi
+			if [[ "${QEMU_GUEST_PCI_HOTPLUG:-0}" == "1" ]] ; then
+				ot-kernel_y_configopt "CONFIG_PCI"
+				ot-kernel_y_configopt "CONFIG_SYSFS"
+				ot-kernel_y_configopt "CONFIG_HOTPLUG_PCI"
+				ot-kernel_y_configopt "CONFIG_HOTPLUG_PCI_ACPI"
+			fi
+		fi
+		if [[ "${QEMU_KVMGT:-0}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_VFIO"
+			ot-kernel_y_configopt "CONFIG_CONFIG_VFIO_MDEV"
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_DRM_I915"
+				ot-kernel_y_configopt "CONFIG_DRM_I915_GVT"
+				ot-kernel_y_configopt "CONFIG_DRM_I915_GVT_KVMGT"
+			fi
+		fi
+		if has_version "app-emulation/qemu[python]" ; then
+			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		fi
 	fi
 }

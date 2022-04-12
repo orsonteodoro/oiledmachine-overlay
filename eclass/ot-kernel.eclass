@@ -2008,6 +2008,7 @@ ot-kernel_clear_env() {
 	unset HPLIP_USB
 	unset IPTABLES_CLIENT
 	unset IPTABLES_ROUTER
+	unset LM_SENSORS_MODULES
 	unset MDADM_RAID
 	unset NFS_CLIENT
 	unset NFS_SERVER
@@ -2016,11 +2017,17 @@ ot-kernel_clear_env() {
 	unset SANE_SCSI
 	unset SANE_USB
 	unset STD_PC_SPEAKER
+	unset QEMU_GUEST_BALLOON
+	unset QEMU_GUEST_CONSOLE_DEVICE
 	unset QEMU_GUEST_LINUX
+	unset QEMU_GUEST_PCI_HOTPLUG
+	unset QEMU_KVMGT
 	unset VIRTUALBOX_GUEST_LINUX
 	unset VSYSCALL_MODE
 	unset XEN_PCI_PASSTHROUGH
 	unset YUBIKEY
+	unset ZEN_DOM0
+	unset ZEN_DOMU
 
 	unset GENPATCHES_BLACKLIST
 
