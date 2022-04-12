@@ -41,14 +41,14 @@ EGIT_COMMIT_DEMOS_SNAPSHOT="53ea602c07c1ed3ff6896578bde7d7b05cb78cb6"
 # latest release
 EGIT_COMMIT_DEMOS_STABLE="f9333dce014fff363c0f6fed364cfbfcce434527"
 
-# Commit dated 20210930
-EGIT_COMMIT_GODOT_CPP_SNAPSHOT="5c28d4675e8a12fb3fe5fe280470f69b6266095c"
+# Commit dated 20220224
+EGIT_COMMIT_GODOT_CPP_SNAPSHOT="8b01d969c68096ec1ca73fd6eb71d226abdf1eca"
 
-# Commit dated 20210706
+# Commit date is GMB_V
 EGIT_COMMIT_GMB_STABLE="c3a9d311bcb49ccb498a722f451ac6845b52c97e"
 
-GMB_MONO_V="6.12.0.147"
-GMB_V="9999_p20210706"
+GMB_MONO_V="6.12.0.174"
+GMB_V="9999_p20220331"
 
 FN_SRC="${PV}-stable.tar.gz"
 FN_DEST="${P}.tar.gz"
@@ -68,6 +68,21 @@ URI_PROJECT="${URI_ORG}/godot"
 URI_PROJECT_DEMO="${URI_ORG}/godot-demo-projects"
 URI_DL="${URI_PROJECT}/releases"
 URI_A="${URI_PROJECT}/archive/${PV}-stable.tar.gz"
+if [[ "0" == "1" ]] ; then
+# Used to generate hashes and download all assets.
+SRC_URI="${URI_PROJECT}/archive/${FN_SRC} -> ${FN_DEST}
+  ${URI_PROJECT_DEMO}/archive/${FN_SRC_ESN} \
+	-> ${FN_DEST_ESN}
+  ${URI_PROJECT_DEMO}/archive/${FN_SRC_EST} \
+		-> ${FN_DEST_EST}
+  ${URI_ORG}/godot-cpp/archive/${FN_SRC_CPP} \
+		-> ${FN_DEST_CPP}
+  ${URI_ORG}/godot-mono-builds/archive/${FN_SRC_GMB} \
+		-> ${FN_DEST_GMB}
+  ${URI_MONO_PRJ}/archive/${FN_SRC_MONO} \
+		-> ${FN_DEST_MONO}
+"
+else
 SRC_URI="${URI_PROJECT}/archive/${FN_SRC} -> ${FN_DEST}
 examples-snapshot? (
   ${URI_PROJECT_DEMO}/archive/${FN_SRC_ESN} \
@@ -87,6 +102,8 @@ mono? (
   ${URI_MONO_PRJ}/archive/${FN_SRC_MONO} \
 		-> ${FN_DEST_MONO}
 )"
+RESTRICT="fetch mirror"
+fi
 SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
 
@@ -538,7 +555,6 @@ BDEPEND+=" ${CDEPEND}
 S="${WORKDIR}/godot-${PV}-stable"
 S_GMB="${WORKDIR}/godot-mono-builds-release-${EGIT_COMMIT_GMB_STABLE:0:7}"
 S_MONO="${WORKDIR}/mono-mono-${GMB_MONO_V}"
-RESTRICT="fetch mirror"
 #GEN_DL_MANIFEST=1
 # 20b171c - used for ccache
 PATCHES=(
