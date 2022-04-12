@@ -511,10 +511,10 @@ DEPEND+=" ${PYTHON_DEPS}
 	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
 	!portable? (
 		ca-certs-relax? (
-			app-misc/ca-certificates
+			app-misc/ca-certificates[cacert]
 		)
 		!ca-certs-relax? (
-			>=app-misc/ca-certificates-20211101
+			>=app-misc/ca-certificates-20211101[cacert]
 		)
 	)
         gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )

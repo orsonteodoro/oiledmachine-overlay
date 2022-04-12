@@ -508,7 +508,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	x11-libs/libX11[${MULTILIB_USEDEP}]
 	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
-	!portable? ( >=app-misc/ca-certificates-20210705 )
+	!portable? ( >=app-misc/ca-certificates-20210705[cacert] )
         gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
 	gdnative? ( dev-util/scons
 		     || ( ${CDEPEND_CLANG}
