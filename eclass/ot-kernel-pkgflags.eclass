@@ -3483,12 +3483,11 @@ ot-kernel-pkgflags_iotop() { # DONE
 		ot-kernel_y_configopt "CONFIG_TASK_DELAY_ACCT"
 		ot-kernel_y_configopt "CONFIG_TASKSTATS"
 		ot-kernel_y_configopt "CONFIG_VM_EVENT_COUNTERS"
+		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 		if grep -q -E -e "# CONFIG_CMDLINE_BOOL is not set" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"delayacct\""
 		else
 			local cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g" | sed -e "s|delayacct||g")
-			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} delayacct\""
 		fi
 		local cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
@@ -5052,6 +5051,7 @@ ot-kernel-pkgflags_kvm_guest_required() {
 # @DESCRIPTION:
 # Adds extra frags for the KVM host.
 ot-kernel-pkgflags_kvm_host_extras() {
+	local cmd
 	if [[ "${KVMGT:-0}" == "1" ]] \
 		&& grep -q -E -e "^CONFIG_KVM=(y|m)" "${path_config}" ; then
 		# For hosts only
@@ -5061,7 +5061,30 @@ ot-kernel-pkgflags_kvm_host_extras() {
 			ot-kernel_y_configopt "CONFIG_DRM_I915"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_GVT"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_GVT_KVMGT"
+			einfo "Adding i915.enable_gvt=1 to kernel command line"
+			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
+			if grep -q -E -e "# CONFIG_CMDLINE_BOOL is not set" "${path_config}" ; then
+				ot-kernel_set_configopt "CONFIG_CMDLINE" "\"i915.enable_gvt=1\""
+			else
+				cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g" | sed -e "s|i915.enable_gvt=1||g")
+				ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} i915.enable_gvt=1\""
+			fi
+			cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+			einfo "BOOT_ARGS:  ${cmd}"
 		fi
+	fi
+
+	if [[ "${KVM_ADD_IGNORE_MSRS_EQ_1:-1}" == "1" ]] ; then
+		einfo "Adding kvm.ignore_msrs=1 to kernel command line"
+		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
+		if grep -q -E -e "# CONFIG_CMDLINE_BOOL is not set" "${path_config}" ; then
+			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"kvm.ignore_msrs=1\""
+		else
+			cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g" | sed -e "s|kvm.ignore_msrs=1||g")
+			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} kvm.ignore_msrs=1\""
+		fi
+		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+		einfo "BOOT_ARGS:  ${cmd}"
 	fi
 }
 

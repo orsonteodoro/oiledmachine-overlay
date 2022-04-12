@@ -481,6 +481,14 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     OT_KERNEL_BOOT_ARGS -- Set and embed the kernel command line into the
     kernel instead of the bootloader.
 
+    iotop users:  You may remove delayacct from the kernel command line if you
+    decide not to keep the app.
+
+    See also
+
+      KVM_ADD_IGNORE_MSRS_EQ_1
+      KVMGT
+
 
 
     OT_KERNEL_BOOT_DECOMPRESSOR -- chooses the main boot decompressor for both
@@ -1270,6 +1278,12 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     IPTABLES_ROUTER - Add support for iptables router.
     Valid values:  0 (default), 1.
 
+    KVM_ADD_IGNORE_MSRS_EQ_1 - Adds the kvm.ignore_msrs=1 to the kernel command
+    line to fix virtual machine crashes as a result of accessing unsupported
+    MSR registers.  You must may remove kvm.ignore_msrs=1 from the kernel
+    config if you decide to disable it.
+    Valid values:  0 (default), 1.
+
     KVM_GUEST_MEM_HOTPLUG - Add support for hotplugging dynamic memory.
     Valid values:  0 (default), 1.
 
@@ -1288,8 +1302,10 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     the other kernel virtio memory hotplug drivers.
     Valid values:  0, 1 (default).
 
-    KVMGT - Add support for KVMGT with GVT-g.
+    KVMGT - Add support for KVMGT with GVT-g.  You may manually remove i915.enable_gvt=1
+    from the kernel kernel config if you decide to disable it.
     Valid values:  0 (default), 1.
+    See also: KVM_ADD_IGNORE_MSRS_EQ_1
 
     LM_SENSORS_MODULES - Add modules for lm-sensors.
     Valid values:  0 (default), 1.
@@ -1350,6 +1366,7 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
 
     XEN_PCI_PASSTHROUGH - Add support for PCI passthrough.
     Valid values:  0 (default), 1.
+
 
 
     disable_debug environment variables:
