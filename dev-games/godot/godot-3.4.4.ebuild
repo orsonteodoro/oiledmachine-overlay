@@ -112,6 +112,7 @@ IUSE+=" +3d +advanced-gui camera clang +dds debug +denoise docs
 examples-snapshot examples-stable examples-live jit +lightmapper_cpu +linux lld
 lto +neon +optimize-speed +opensimplex optimize-size portable +raycast server
 server_dedicated server_headless webxr"
+IUSE+=" ca-certs-relax"
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
 +theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
 
@@ -508,7 +509,14 @@ DEPEND+=" ${PYTHON_DEPS}
 	x11-libs/libX11[${MULTILIB_USEDEP}]
 	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
-	!portable? ( >=app-misc/ca-certificates-20211101 )
+	!portable? (
+		ca-certs-relax? (
+			app-misc/ca-certificates
+		)
+		!ca-certs-relax? (
+			>=app-misc/ca-certificates-20211101
+		)
+	)
         gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
 	gdnative? ( dev-util/scons
 		     || ( ${CDEPEND_CLANG}

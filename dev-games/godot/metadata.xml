@@ -177,6 +177,8 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="bullet">Enables support for the Bullet 3D physics engine.</flag>
     <flag name="bmp">Enables support for bitmap images.</flag>
     <flag name="camera">Enables camera support on non-native platforms.</flag>
+    <flag name="ca-certs-relax">Remove version restriction for ca-certificates
+      because of slow distro release.</flag>
     <flag name="clang">Compiles the software using clang and LLVM.</flag>
     <flag name="closure-compiler">Enables minifying JavaScript code</flag>
     <flag name="csg">Enables use of Constructive Solid Geometry used to produce
