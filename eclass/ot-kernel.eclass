@@ -3968,17 +3968,13 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
-	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server"|"cloud-datacenter") ]] ; then
+	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server") ]] ; then
 		if [[ "${work_profile}" =~ "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
 		else
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 		fi
-		if [[ "${work_profile}" =~ "cloud-datacenter" ]] ; then
-			ot-kernel_set_kconfig_no_hz_full
-		else
-			ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
-		fi
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
