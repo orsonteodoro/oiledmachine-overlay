@@ -1959,6 +1959,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_BUILD_ALL_MODULES_AS
 	unset OT_KERNEL_COLD_BOOT_MITIGATIONS
 	unset OT_KERNEL_CONFIG
+	unset OT_KERNEL_CPU_MICROCODE
 	unset OT_KERNEL_CPU_SCHED
 	unset OT_KERNEL_DISABLE_USB_AUTOSUSPEND
 	unset OT_KERNEL_EARLY_KMS
@@ -1967,6 +1968,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG
 #	unset OT_KERNEL_HALT_ON_LOWERED_SECURITY		# global var
 	unset OT_KERNEL_HARDENING_LEVEL
+	unset OT_KERNEL_IOMMU
 	unset OT_KERNEL_LSMS
 	unset OT_KERNEL_MENUCONFIG_FRONTEND
 	unset OT_KERNEL_MODULE_SUPPORT
@@ -2015,6 +2017,8 @@ ot-kernel_clear_env() {
 	unset KVM_GUEST_VIRTIO_MEM
 	unset LM_SENSORS_MODULES
 	unset MDADM_RAID
+	unset MICROCODE_SIGNATURES
+	unset MICROCODE_BLACKLIST
 	unset NFS_CLIENT
 	unset NFS_SERVER
 	unset OSS
@@ -2601,6 +2605,34 @@ ot-kernel_set_kconfig_hardening_level() {
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_iommu_domain_type
+# @DESCRIPTION:
+# Sets the default IOMMU domain_type
+ot-kernel_set_kconfig_iommu_domain_type() {
+	local iommu="${OT_KERNEL_IOMMU}"
+	if [[ "${iommu}" =~ ("custom"|"manual") ]] ; then
+		:
+	elif [[ "${iommu}" == "disable" ]] ; then
+		ot-kernel_unset_configopt "CONFIG_IOMMU_SUPPORT"
+	elif [[ "${iommu}" == "pt" ]] ; then
+		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_STRICT"
+		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_LAZY"
+		ot-kernel_y_configopt "CONFIG_IOMMU_DEFAULT_PASSTHROUGH"
+	elif [[ "${iommu}" == "lazy" ]] ; then
+		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_STRICT"
+		ot-kernel_y_configopt "CONFIG_IOMMU_DEFAULT_DMA_LAZY"
+		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_PASSTHROUGH"
+	elif [[ "${iommu}" == "strict" ]] ; then
+		ot-kernel_y_configopt "CONFIG_IOMMU_DEFAULT_DMA_STRICT"
+		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_LAZY"
+		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_PASSTHROUGH"
+	fi
+	if [[ "${iommu}" =~ ("pt"|"lazy"|"strict") ]] ; then
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 	fi
 }
 
@@ -4368,6 +4400,7 @@ ot-kernel_src_configure() {
 			ot-kernel_set_kconfig_hardening_level
 			ot-kernel_set_kconfig_scs # llvm_slot
 			ot-kernel_set_kconfig_cfi # llvm_slot
+		ot-kernel_set_kconfig_iommu_domain_type
 		ot-kernel-pkgflags_cipher_optional
 		ot-kernel_set_kconfig_cold_boot_mitigation
 		ot-kernel_set_kconfig_memory_protection

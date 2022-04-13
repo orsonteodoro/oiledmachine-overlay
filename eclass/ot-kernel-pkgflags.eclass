@@ -102,6 +102,11 @@ eerror
 ot-kernel-pkgflags_apply() {
 	[[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && return
 	[[ "${arch}" =~ "arm" ]] && _ot-kernel-pkgflags_neon
+
+	# Hint below packages whenever possible
+	ot-kernel-pkgflags_iucode
+	ot-kernel-pkgflags_linux_firmware
+
 	ot-kernel-pkgflags_accel_ppp
 	ot-kernel-pkgflags_acpi_call
 	ot-kernel-pkgflags_acpid
@@ -1407,8 +1412,11 @@ ot-kernel-pkgflags_crda() { # DONE
 
 		einfo "Auto adding wireless-regdb firmware."
 		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
-		firmware=$(echo "${firmware}" | tr " " "\n" | sed -r -e 's|regulatory.db(.p7s)?$||g' | tr "\n" " ") # dedupe
-		firmware="${firmware} regulatory.db regulatory.db.p7s"
+		firmware=$(echo "${firmware}" \
+			| tr " " "\n" \
+			| sed -r -e 's|regulatory.db(.p7s)?$||g' \
+			| tr "\n" " ") # dedupe
+		firmware="${firmware} regulatory.db regulatory.db.p7s" # Dump firmware relpaths
 		firmware=$(echo "${firmware}" \
 			| sed -r -e "s|[ ]+| |g" \
 				-e "s|^[ ]+||g" \
@@ -3289,6 +3297,82 @@ ot-kernel-pkgflags_incron() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_iucode
+# @DESCRIPTION:
+# Applies kernel config flags for the intel-microcode package
+ot-kernel-pkgflags_iucode() {
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c9acc57" ]] && return
+	if has_version "sys-firmware/intel-microcode" ; then
+		if [[ "${OT_KERNEL_CPU_MICROCODE}" == "1" || -e "${OT_KERNEL_CPU_MICROCODE}" ]] ; then
+			einfo "Applying kernel config flags for the intel-microcode package (id: c9acc57)"
+
+			unset bucket
+			declare -A bucket
+
+			local args
+			if [[ -n "${MICROCODE_SIGNATURES}" || -n "${MICROCODE_BLACKLIST}" ]] ; then
+				args=(
+					${MICROCODE_SIGNATURES}
+					${MICROCODE_BLACKLIST}
+				)
+			else
+				args=(
+					--scan-system=exact
+				)
+			fi
+
+			if ! which iucode_tool 2>/dev/null 1>/dev/null ; then
+				ewarn "Missing iucode_tool"
+			elif iucode_tool ${args[@]} -l /lib/firmware/intel-ucode/* ; then
+				local signatures=( $(iucode_tool ${args[@]} -l /lib/firmware/intel-ucode/* | grep -o -E -e "0x[0-9a-f]+") )
+				for signature in ${signatures[@]} ; do
+					#    ee     # initials hi
+					#    fm fms # initials lo
+					#0123456789 # bash string index
+					#0x000306c3 # processor signature
+					local ef=${signature:4:1}
+					local f=${signature:7:1}
+					local em=${signature:5:1}
+					local m=${signature:8:1}
+					local s=${signature:9:1}
+					local fn="${ef}${f}-${em}${m}-${s}"
+					[[ -e "/lib/firmware/intel-ucode/${fn}" ]] \
+						|| eerror "/lib/firmware/intel-ucode/${fn} is missing"
+					bucket["${fn}"]="intel-ucode/${fn}"
+				done
+				(( ${#signatures[@]} == 0 )) && ewarn "Found no CPU signatures"
+			else
+				ewarn "Problem encountered with the iucode_tool."
+				return
+			fi
+
+			if [[ -n "${bucket[@]}" ]] ; then
+				local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
+				firmware=$(echo "${firmware}" \
+					| tr " " "\n" \
+					| sed -r -e 's|intel-ucode/.*$||g' \
+					| tr "\n" " ") # dedupe
+				firmware="${firmware} ${bucket[@]}" # Dump microcode relpaths
+				firmware=$(echo "${firmware}" \
+					| sed -r -e "s|[ ]+| |g" \
+						-e "s|^[ ]+||g" \
+						-e 's|[ ]+$||g') # Trim mid/left/right spaces
+				ot-kernel_y_configopt "CONFIG_MICROCODE"
+				ot-kernel_y_configopt "CONFIG_MICROCODE_INTEL"
+				ot-kernel_y_configopt "CONFIG_FW_LOADER"
+				if [[ "${arch}" == "x86_64" ]] ; then
+					# Embed in kernel for EFI
+					ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
+					local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
+					einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
+				else
+					ewarn "Firmware needs to be loaded through initramfs instead."
+				fi
+			fi
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_lkrg
 # @DESCRIPTION:
 # Applies kernel config flags for the lkrg package
@@ -3483,10 +3567,11 @@ ot-kernel-pkgflags_iotop() { # DONE
 		ot-kernel_y_configopt "CONFIG_TASK_DELAY_ACCT"
 		ot-kernel_y_configopt "CONFIG_TASKSTATS"
 		ot-kernel_y_configopt "CONFIG_VM_EVENT_COUNTERS"
-		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 		if grep -q -E -e "# CONFIG_CMDLINE_BOOL is not set" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"delayacct\""
 		else
+			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 			local cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g" | sed -e "s|delayacct||g")
 			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} delayacct\""
 		fi
@@ -3769,6 +3854,75 @@ ot-kernel-pkgflags_linux_atm() { # DONE
 	if has_version "net-dialup/linux-atm" ; then
 		einfo "Applying kernel config flags for the linux-atm package (id: 6df59e4)"
 		ot-kernel_y_configopt "CONFIG_ATM"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_linux_firmware
+# @DESCRIPTION:
+# Applies kernel config flags for the linux-firmware package
+ot-kernel-pkgflags_linux_firmware() {
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4e8e0af" ]] && return
+	if has_version "sys-kernel/linux-firmware" ; then
+		if [[ "${OT_KERNEL_CPU_MICROCODE}" == "1" || -e "${OT_KERNEL_CPU_MICROCODE}" ]] ; then
+			einfo "Applying kernel config flags for the linux-firmware package (id: 4e8e0af)"
+			unset bucket
+			declare -A bucket
+			IFS=";" ;
+			local path
+			if [[ -e "${OT_KERNEL_CPU_MICROCODE}" ]] ; then
+				path="${OT_KERNEL_CPU_MICROCODE}"
+			else
+				path="/proc/cpuinfo"
+			fi
+			for o in $(cat "${path}" | sed -e "s|^$|;|") ; do
+				# Support multiple sockets / NUMA
+				echo "${o}" | grep -q -e "AuthenticAMD" || continue
+				local cpu_family=$(echo "${o}" | grep "cpu family" | grep -o -E -e "[0-9]+")
+				local cpu_model_name=$(echo "${o}" | grep "model name" | cut -f 2 -d ":" | sed -e "s|^ ||g")
+				if [[ "${cpu_family}" =~ (16|17|18|20) ]] ; then
+					bucket["${cpu_family}:${cpu_model_name}"]="amd-ucode/microcode_amd.bin"
+				elif [[ "${cpu_family}" =~ 21 ]] ; then
+					bucket["${cpu_family}:${cpu_model_name}"]="amd-ucode/microcode_amd_fam15h.bin"
+				elif [[ "${cpu_family}" =~ 22 ]] ; then
+					bucket["${cpu_family}:${cpu_model_name}"]="amd-ucode/microcode_amd_fam16h.bin"
+				elif [[ "${cpu_family}" =~ 23 && "${cpu_model_name}" =~ "zen" ]] ; then
+					bucket["${cpu_family}:${cpu_model_name}"]="amd-ucode/microcode_amd_fam17h.bin"
+				elif [[ "${cpu_family}" =~ "EPYC 7"..1 ]] ; then
+					bucket["${cpu_family}:${cpu_model_name}"]="amd/amd_sev_fam17h_model0xh.sbin"
+				elif [[ "${cpu_family}" =~ "EPYC 7"..2 ]] ; then
+					bucket["${cpu_family}:${cpu_model_name}"]="amd/amd_sev_fam17h_model3xh.sbin"
+				elif [[ "${cpu_family}" =~ 25 && "${cpu_model_name}" =~ "zen" ]] ; then
+					bucket["${cpu_family}:${cpu_model_name}"]="amd-ucode/microcode_amd_fam19h.bin"
+				elif [[ "${cpu_family}" =~ "EPYC 7"..3 ]] ; then
+					bucket["${cpu_family}:${cpu_model_name}"]="amd/amd_sev_fam19h_model0xh.sbin"
+				fi
+			done
+			IFS=$' \t\n'
+			if [[ -n "${bucket[@]}" ]] ; then
+				local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
+				firmware=$(echo "${firmware}" \
+					| tr " " "\n" \
+					| sed -r -e 's|amd-ucode/microcode.*$||g' \
+						-e 's|amd/amd_sev_fam..h_model.xh.sbin$||g' \
+					| tr "\n" " ") # dedupe
+				firmware="${firmware} ${bucket[@]}" # Dump microcode relpaths
+				firmware=$(echo "${firmware}" \
+					| sed -r -e "s|[ ]+| |g" \
+						-e "s|^[ ]+||g" \
+						-e 's|[ ]+$||g') # Trim mid/left/right spaces
+				ot-kernel_y_configopt "CONFIG_MICROCODE"
+				ot-kernel_y_configopt "CONFIG_MICROCODE_AMD"
+				ot-kernel_y_configopt "CONFIG_FW_LOADER"
+				if [[ "${arch}" == "x86_64" ]] ; then
+					# Embed in kernel for EFI
+					ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
+					local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
+					einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
+				else
+					ewarn "Firmware needs to be loaded through initramfs instead."
+				fi
+			fi
+		fi
 	fi
 }
 
@@ -5062,10 +5216,11 @@ ot-kernel-pkgflags_kvm_host_extras() {
 			ot-kernel_y_configopt "CONFIG_DRM_I915_GVT"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_GVT_KVMGT"
 			einfo "Adding i915.enable_gvt=1 to kernel command line"
-			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 			if grep -q -E -e "# CONFIG_CMDLINE_BOOL is not set" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 				ot-kernel_set_configopt "CONFIG_CMDLINE" "\"i915.enable_gvt=1\""
 			else
+				ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 				cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g" | sed -e "s|i915.enable_gvt=1||g")
 				ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} i915.enable_gvt=1\""
 			fi
@@ -5076,10 +5231,11 @@ ot-kernel-pkgflags_kvm_host_extras() {
 
 	if [[ "${KVM_ADD_IGNORE_MSRS_EQ_1:-1}" == "1" ]] ; then
 		einfo "Adding kvm.ignore_msrs=1 to kernel command line"
-		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 		if grep -q -E -e "# CONFIG_CMDLINE_BOOL is not set" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"kvm.ignore_msrs=1\""
 		else
+			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 			cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g" | sed -e "s|kvm.ignore_msrs=1||g")
 			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} kvm.ignore_msrs=1\""
 		fi
