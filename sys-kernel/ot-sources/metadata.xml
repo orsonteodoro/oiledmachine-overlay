@@ -656,9 +656,13 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
-
     OT_KERNEL_CPU_MICROCODE - Auto includes CPU firmware to fix CPU bugs
-      and mitigate against some security vulnerabilities.
+    and mitigate against some security vulnerabilities.
+
+    There is a risk when updating CPU microcode.  Some well known sites and
+    distros have measured or reported performance penalties [in some cases
+    single digit frames per second loss] with past microcode updates.
+
     This option depends on OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1.
     The firmware or microcode packages must be installed first.
 
