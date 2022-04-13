@@ -1963,6 +1963,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_CPU_SCHED
 	unset OT_KERNEL_DISABLE_USB_AUTOSUSPEND
 	unset OT_KERNEL_EARLY_KMS
+	unset OT_KERNEL_EFI_PARTITION
 	unset OT_KERNEL_EXTRAVERSION
 	unset OT_KERNEL_FIRMWARE
 	unset OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG
@@ -1979,6 +1980,7 @@ ot-kernel_clear_env() {
 #	unset OT_KERNEL_PRIMARY_EXTRAVERSION			# global var
 #	unset OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR	# global var
 	unset OT_KERNEL_PRIVATE_KEY
+	unset OT_KERNEL_PUBLIC_KEY
 	unset OT_KERNEL_SGX
 	unset OT_KERNEL_SME
 	unset OT_KERNEL_SME_DEFAULT_ON
@@ -3976,7 +3978,7 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
-	elif [[ "${work_profile}" =~ ("jukebox"|"dvr"|"mainsteam-desktop") ]] ; then
+	elif [[ "${work_profile}" =~ ("jukebox"|"dvr"|"mainstream-desktop") ]] ; then
 		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
 			[[ "${work_profile}" =~ ("dvr"|"mainstream-desktop") ]] \
 				&& ot-kernel_set_kconfig_set_video_timer_hz # Minimize dropped frames
