@@ -1,6 +1,7 @@
-# Copyright 2021 Orson Teodoro
+# Copyright 2021-2022 Orson Teodoro
 # Distributed under the terms of the GNU General Public License v2
 
+1password - Installs the 1password plugin.
 adb - Installs the adb plugin.
 ag - Installs the ag plugin.
 alias-finder - Installs the alias-finder plugin.
@@ -33,6 +34,7 @@ cargo - Installs the cargo plugin.
 cask - Installs the cask plugin.
 catimg - Installs the catimg plugin.
 celery - Installs the celery plugin.
+charm - Installs the charm plugin.
 chruby - Installs the chruby plugin.
 chucknorris - Installs the chucknorris plugin.
 cloudfoundry - Installs the cloudfoundry plugin.
@@ -48,6 +50,7 @@ composer - Installs the composer plugin.
 copybuffer - Installs the copybuffer plugin.
 copydir - Installs the copydir plugin.
 copyfile - Installs the copyfile plugin.
+copypath - Installs the copypath plugin.
 cp - Installs the cp plugin.
 cpanm - Installs the cpanm plugin.
 dash - Installs the dash plugin.
@@ -57,7 +60,6 @@ dircycle - Installs the dircycle plugin.
 direnv - Installs the direnv plugin.
 dirhistory - Installs the dirhistory plugin.
 dirpersist - Installs the dirpersist plugin.
-django - Installs the django plugin.
 dnf - Installs the dnf plugin.
 dnote - Installs the dnote plugin.
 docker - Installs the docker plugin.
@@ -82,6 +84,7 @@ fasd - Installs the fasd plugin.
 fastfile - Installs the fastfile plugin.
 fbterm - Installs the fbterm plugin.
 fd - Installs the fd plugin.
+fig - Installs the fig plugin.
 firewalld - Installs the firewalld plugin.
 flutter - Installs the flutter plugin.
 fnm - Installs the fnm plugin.
@@ -132,6 +135,7 @@ invoke - Installs the invoke plugin.
 ionic - Installs the ionic plugin.
 ipfs - Installs the ipfs plugin.
 isodate - Installs the isodate plugin.
+istioctl - Installs the istioctl plugin.
 iterm2 - Installs the iterm2 plugin.
 jake-node - Installs the jake-node plugin.
 jenv - Installs the jenv plugin.
@@ -160,6 +164,7 @@ last-working-dir - Installs the last-working-dir plugin.
 lein - Installs the lein plugin.
 lighthouse - Installs the lighthouse plugin.
 lol - Installs the lol plugin.
+lpass - Installs the lpass plugin.
 lxd - Installs the lxd plugin.
 macos - Installs the macos plugin.
 macports - Installs the macports plugin.
@@ -174,6 +179,7 @@ mix - Installs the mix plugin.
 mix-fast - Installs the mix-fast plugin.
 mongocli - Installs the mongocli plugin.
 mosh - Installs the mosh plugin.
+multipass - Installs the multipass plugin.
 mvn - Installs the mvn plugin.
 mysql-macports - Installs the mysql-macports plugin.
 n98-magerun - Installs the n98-magerun plugin.
@@ -187,6 +193,7 @@ npx - Installs the npx plugin.
 nvm - Installs the nvm plugin.
 oc - Installs the oc plugin.
 octozen - Installs the octozen plugin.
+operator-sdk - Installs the operator-sdk plugin.
 osx - Installs the osx plugin.
 otp - Installs the otp plugin.
 pass - Installs the pass plugin.
@@ -203,6 +210,7 @@ pj - Installs the pj plugin.
 please - Installs the please plugin.
 pm2 - Installs the pm2 plugin.
 pod - Installs the pod plugin.
+poetry - Installs the poetry plugin.
 postgres - Installs the postgres plugin.
 pow - Installs the pow plugin.
 powder - Installs the powder plugin.
@@ -217,6 +225,7 @@ rake-fast - Installs the rake-fast plugin.
 rand-quote - Installs the rand-quote plugin.
 rbenv - Installs the rbenv plugin.
 rbfu - Installs the rbfu plugin.
+rbw - Installs the rbw plugin.
 react-native - Installs the react-native plugin.
 rebar - Installs the rebar plugin.
 redis-cli - Installs the redis-cli plugin.
@@ -273,6 +282,7 @@ timer - Installs the timer plugin.
 tmux - Installs the tmux plugin.
 tmux-cssh - Installs the tmux-cssh plugin.
 tmuxinator - Installs the tmuxinator plugin.
+toolbox - Installs the toolbox plugin.
 torrent - Installs the torrent plugin.
 transfer - Installs the transfer plugin.
 tugboat - Installs the tugboat plugin.
@@ -287,6 +297,7 @@ vi-mode - Installs the vi-mode plugin.
 vim-interaction - Installs the vim-interaction plugin.
 virtualenv - Installs the virtualenv plugin.
 virtualenvwrapper - Installs the virtualenvwrapper plugin.
+volta - Installs the volta plugin.
 vscode - Installs the vscode plugin.
 vundle - Installs the vundle plugin.
 wakeonlan - Installs the wakeonlan plugin.
@@ -304,5 +315,3 @@ zeus - Installs the zeus plugin.
 zoxide - Installs the zoxide plugin.
 zsh-interactive-cd - Installs the zsh-interactive-cd plugin.
 zsh-navigation-tools - Installs the zsh-navigation-tools plugin.
-zsh_reload - Installs the zsh_reload plugin.
-
