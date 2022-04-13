@@ -1,9 +1,9 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=7
 
-inherit eutils flag-o-matic multilib multilib-minimal portability toolchain-funcs versionator
+inherit eutils flag-o-matic multilib multilib-minimal portability toolchain-funcs
 
 DESCRIPTION="A powerful light-weight programming language designed for extending applications"
 HOMEPAGE="http://www.lua.org/"
@@ -25,7 +25,7 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 
 src_prepare() {
-	local PATCH_PV=$(get_version_component_range 1-2)
+	local PATCH_PV=$(ver_cut 1-2)
 
 	epatch "${FILESDIR}/${P}-fix_vararg_calls.patch"
 
