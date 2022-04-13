@@ -296,6 +296,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_ntfs3g
 	ot-kernel-pkgflags_numad
 	ot-kernel-pkgflags_nv
+	ot-kernel-pkgflags_oomd
 	ot-kernel-pkgflags_opal_utils
 	ot-kernel-pkgflags_open_iscsi
 	ot-kernel-pkgflags_open_vm_tools
@@ -4782,6 +4783,22 @@ ot-kernel-pkgflags_nv() { # DONE
 		fi
 		# Workaround mentioned in the ebuild
 		# It's better to modify the Kconfig.
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_oomd
+# @DESCRIPTION:
+# Applies kernel config flags for the oomd package
+ot-kernel-pkgflags_oomd() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "05187fc" ]] && return
+	if has_version "sys-apps/oomd" ; then
+		einfo "Applying kernel config flags for the oomd package (id: 05187fc)"
+		if ${K_MAJOR_MINOR} -ge 4.20 ; then
+			ot-kernel_y_configopt "CONFIG_PSI=y"
+		fi
+		ot-kernel_y_configopt "CONFIG_CGROUPS=y"
+		ot-kernel_y_configopt "CONFIG_PROC_FS=y"
+		ot-kernel_y_configopt "CONFIG_SWAP=y"
 	fi
 }
 
