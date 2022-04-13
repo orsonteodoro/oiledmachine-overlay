@@ -421,22 +421,22 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     if the kernel arch supports it.  You many only choose one kernel arch per
     buildconfig env.  If unset, it will use auto settings.  Users are still
     responsible for editing the kernel config for details such as the
-    microarchiecture, integrated circuits (ICs), or details relating to abi.
-    For endianess, you must control set the CHOST variable in the per build env
+    microarchiecture, integrated circuits (ICs), or details relating to ABI.
+    For endianess, you must set the CHOST variable in the per build env
     file.  (EXPERIMENTAL)
 
     Acceptable values:
 
-      auto,					; Autodetect and auto-enable ABIs
-      manual,					; Previous settings
-      arm,					; For the arm
-      arm64,					; For the arm64
+      auto					; Autodetect and auto-enable ABIs
+      manual					; Previous settings
+      arm					; For the arm
+      arm64					; For the arm64
       o32, n32, n64				; For the mips
       ppc, ppc64				; For the powerpc
       lp64d, lp64, ilp32d, ilp32		; For the risc
       s390, s390x				; For the s390
       sparc32, sparc64				; For the sparc
-      x86, amd64, x32,				; For the x86_64
+      x86, amd64, x32				; For the x86_64
 
 
 
