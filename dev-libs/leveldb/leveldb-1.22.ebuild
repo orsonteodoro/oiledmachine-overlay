@@ -1,14 +1,14 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit cmake-utils eutils multilib-minimal static-libs toolchain-funcs versionator
+inherit cmake-utils eutils multilib-minimal static-libs toolchain-funcs
 
 DESCRIPTION="a fast key-value storage library written at Google"
 HOMEPAGE="http://leveldb.org/ https://github.com/google/leveldb"
 LICENSE="BSD"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86 ~amd64-fbsd ~amd64-linux \
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86 ~amd64-fbsd ~amd64-linux
 ~x86-linux"
 SRC_URI="https://github.com/google/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="0/${PV}"
