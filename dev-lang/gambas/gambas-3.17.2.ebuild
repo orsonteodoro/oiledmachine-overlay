@@ -38,11 +38,13 @@ lto +sge smtp +webkit"
 # The USE flags below have no config options but are removed manually.
 IUSE+=" remove_deprecated +remove_not_finished remove_stable_not_finished
 +remove_unstable"
+# For depends see also:
+# https://gitlab.com/gambas/gambas/-/blob/3.16.3/.gitlab-ci.yml
 DEPEND+=" bzip2? ( app-arch/bzip2 )
 	cairo? ( >=x11-libs/cairo-1.6 )
 	crypt? ( dev-libs/libgcrypt )
 	curl? ( >=net-misc/curl-7.13 )
-	dbus? ( sys-apps/dbus )
+	dbus? ( >=sys-apps/dbus-1 )
 	dev-libs/libffi
 	gmp? ( dev-libs/gmp )
 	gnome-keyring? ( gnome-base/gnome-keyring )
@@ -164,13 +166,13 @@ declare -Ax USE_FLAG_TO_MODULE_NAME=( \
 
 pkg_setup() {
 	if [[ "$(tc-getCC)" == "clang" || "$(tc-getCXX)" == "clang++" ]]; then
-		ewarn \
-"Gambas does not support clang/clang++ as the primary compiler.  Clang\n\
-doesn't support nested functions.  Forcing GCC..."
+ewarn
+ewarn "Gambas does not support clang/clang++ as the primary compiler.  Clang"
+ewarn "doesn't support nested functions.  Forcing GCC..."
+ewarn
 		export CC="gcc"
 		export CXX="g++"
 	fi
-
 
 	if use qt5 ; then
 		einfo "Checking Qt versions"

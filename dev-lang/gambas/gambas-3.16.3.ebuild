@@ -15,7 +15,7 @@ LICENSE="GPL-2"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 GAMBAS_MODULES=(bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer
-gtk3 httpd imlib2 jit mime mixer mysql ncurses network odbc openal
+gtk3 htmlview httpd imlib2 jit mime mixer mysql ncurses network odbc openal
 opengl openssl pcre pdf pixbuf postgresql qt5 sdl sdl2 sqlite v4l
 X xml xslt zlib zstd)
 QT_MIN_PV="5.3"
@@ -44,7 +44,7 @@ DEPEND+=" bzip2? ( app-arch/bzip2 )
 	cairo? ( >=x11-libs/cairo-1.6 )
 	crypt? ( dev-libs/libgcrypt )
 	curl? ( >=net-misc/curl-7.13 )
-	dbus? ( sys-apps/dbus )
+	dbus? ( >=sys-apps/dbus-1 )
 	dev-libs/libffi
 	gmp? ( dev-libs/gmp )
 	gnome-keyring? ( gnome-base/gnome-keyring )
@@ -166,13 +166,13 @@ declare -Ax USE_FLAG_TO_MODULE_NAME=( \
 
 pkg_setup() {
 	if [[ "$(tc-getCC)" == "clang" || "$(tc-getCXX)" == "clang++" ]]; then
-		ewarn \
-"Gambas does not support clang/clang++ as the primary compiler.  Clang\n\
-doesn't support nested functions.  Forcing GCC..."
+ewarn
+ewarn "Gambas does not support clang/clang++ as the primary compiler.  Clang"
+ewarn "doesn't support nested functions.  Forcing GCC..."
+ewarn
 		export CC="gcc"
 		export CXX="g++"
 	fi
-
 
 	if use qt5 ; then
 		einfo "Checking Qt versions"
@@ -297,6 +297,7 @@ src_configure() {
 		$(use_enable gnome-keyring gb_desktop_gnome_keyring) \
 		$(use_enable gstreamer media) \
 		$(use_enable gtk3) \
+		$(use_enable htmlview) \
 		$(use_enable httpd) \
 		$(use_enable imlib2 image_imlib) \
 		$(use_enable imlib2 imageimlib) \
