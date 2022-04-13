@@ -204,13 +204,13 @@ BDEPEND+="  ${CDEPEND_NOT_LISTED}
 	>=dev-util/cmake-3.11
 	dev-vcs/git"
 RIF_V="1.7.2"
-RPRSDK_V="2.2.10_p20211216"
+RPRSDK_V="2.2.12"
 RPRSC_V="9999_p20201109"
 # Commits based on left side.  The commit associated with the message (right) differs
 # with the commit associated with the folder (left) on the GitHub website.
 EGIT_COMMIT_RIF="76068b7ca29aa8a7f29f65475f334981f0dd5e53"
 EGIT_COMMIT_RPRSC="41d2e5fb8631ef2bfa60fa27f5dbf7c4a8e2e4aa"
-EGIT_COMMIT_RPRSDK="dc0c547d94effad9ea14d02a537f411ac474b783"
+EGIT_COMMIT_RPRSDK="e284dfac04ee3a142603ba955a2bf8d11a78d945"
 RIF_DF="RadeonImageFilter-${RIF_V}-${EGIT_COMMIT_RIF:0:7}.tar.gz"
 RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_V}-${EGIT_COMMIT_RPRSDK:0:7}.tar.gz"
 RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_V}-${EGIT_COMMIT_RPRSC:0:7}.tar.gz"
@@ -303,7 +303,7 @@ src_unpack() {
 src_prepare() {
 	ewarn "This is the weekly development build."
 	default
-	eapply "${FILESDIR}/rpr-3.1.16-more-generic-call-python3.patch"
+	eapply "${FILESDIR}/rpr-3.3.29-more-generic-call-python3.patch"
 	eapply "${FILESDIR}/rpr-${PV}-bump-version.patch"
 	git init || die
 	touch dummy || die
