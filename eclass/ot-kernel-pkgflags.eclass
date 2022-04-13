@@ -3366,7 +3366,7 @@ ot-kernel-pkgflags_iucode() {
 					local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
 					einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 				else
-					ewarn "Firmware needs to be loaded through initramfs instead."
+					ewarn "The CPU microcode needs to be loaded through initramfs instead."
 				fi
 			fi
 		fi
@@ -3919,7 +3919,7 @@ ot-kernel-pkgflags_linux_firmware() {
 					local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
 					einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 				else
-					ewarn "Firmware needs to be loaded through initramfs instead."
+					ewarn "The CPU microcode needs to be loaded through initramfs instead."
 				fi
 			fi
 		fi
