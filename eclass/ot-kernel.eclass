@@ -3727,6 +3727,18 @@ ot-kernel_set_kconfig_abis() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_no_hz_full
+# @DESCRIPTION:
+# Sets the kernel command line to enable CONFIG_NO_HZ_FULL properly
+ot-kernel_set_kconfig_no_hz_full() {
+	ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+	local cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g" | sed -e "s|nohz_full=all||g")
+	ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
+	ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} nohz_full=all\""
+	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+	einfo "BOOT_ARGS:  ${cmd}"
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
 # @DESCRIPTION:
 # Configures the default power policies and latencies for the kernel.
@@ -3748,7 +3760,7 @@ ot-kernel_set_kconfig_work_profile() {
 		:
 	elif [[ "${work_profile}" =~ ("smartphone"|"tablet") ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
-		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
@@ -3763,7 +3775,7 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 	elif [[ "${work_profile}" =~ ("video-smartphone"|"video-tablet") ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
-		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
@@ -3778,7 +3790,7 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 	elif [[ "${work_profile}" =~ ("laptop"|"solar-desktop") ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
-		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_HIBERNATION"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -3816,8 +3828,9 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
 		fi
 	elif [[ "${work_profile}" =~ ("gpu-gaming-laptop"|"casual-gaming-laptop"|"solar-gaming") ]] ; then
+		# It is assumed that the other laptop/solar-desktop profile is built also.
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
-		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
@@ -3848,7 +3861,7 @@ ot-kernel_set_kconfig_work_profile() {
 	elif [[ "${work_profile}" =~ ("casual-gaming") ]] ; then
 		# Assumes on desktop
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
@@ -3958,6 +3971,7 @@ ot-kernel_set_kconfig_work_profile() {
 		else
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 		fi
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
@@ -3967,6 +3981,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 	elif [[ "${work_profile}" == "streamer-desktop" ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz
+		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
@@ -3985,6 +4000,7 @@ ot-kernel_set_kconfig_work_profile() {
 			[[ "${work_profile}" == "jukebox" ]] \
 				&& ot-kernel_set_kconfig_set_highest_timer_hz # Reduce studder
 		fi
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
@@ -3996,7 +4012,7 @@ ot-kernel_set_kconfig_work_profile() {
 	elif [[ "${work_profile}" == "cryptocurrency-miner-dedicated" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize OS overhead and energy cost, maximize app time
-		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
@@ -4017,7 +4033,7 @@ ot-kernel_set_kconfig_work_profile() {
 	elif [[ "${work_profile}" == "cryptocurrency-miner-workstation" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_timer_hz # For balance
-		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
@@ -4038,7 +4054,11 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 	elif [[ "${work_profile}" =~ ("distributed-computing-dedicated"|"hpc") ]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel overhead, maximize computation time
-		ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
+		if [[ "${work_profile}" == "hpc" ]] ; then
+			ot-kernel_set_kconfig_no_hz_full
+		else
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
