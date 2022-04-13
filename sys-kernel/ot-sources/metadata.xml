@@ -680,8 +680,8 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     OT_KERNEL_EARLY_KMS -- enable early KMS for graphics improvement.
     This setting fixes early kms problem with OT_KERNEL_BOOT_SUBSYSTEMS="m".
-    For out-of-tree (Direct Rendering Manager) DKMS drivers, this should be
-    0 to load these drivers as modules.
+    For out-of-tree Direct Rendering Manager DKMS graphics drivers, this should
+    be 0 to load these drivers as modules.
 
     Acceptable values:
 
