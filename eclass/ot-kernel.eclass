@@ -3872,6 +3872,9 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
+	elif [[ "${work_profile}" =~ ("gaming-guest-vm"|"desktop-guest-vm") ]] ; then
+		ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
+		ot-kernel_y_configopt "CONFIG_PREEMPT"
 	elif [[ "${work_profile}" =~ ("arcade"|"pro-gaming"|"tournament"|"presentation") ]] ; then
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -3965,13 +3968,17 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
-	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server") ]] ; then
+	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server"|"cloud-datacenter") ]] ; then
 		if [[ "${work_profile}" =~ "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
 		else
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 		fi
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
+		if [[ "${work_profile}" =~ "cloud-datacenter" ]] ; then
+			ot-kernel_set_kconfig_no_hz_full
+		else
+			ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
+		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"

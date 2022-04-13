@@ -1189,15 +1189,18 @@ unset OT_KERNEL_PRIVATE_KEY
       cryptocurrency-miner-dedicated
       cryptocurrency-miner-workstation
       casual-gaming-laptop
+      cloud-datacenter
       custom
       digital-audio-workstation
       distributed-computing-dedicated
       distributed-computing-workstation
+      desktop-guest-vm
       dvr
       pro-gaming
       casual-gaming
       file-server
       gamedev
+      gaming-guest-vm
       gpu-gaming-laptop
       hpc
       jukebox
