@@ -603,7 +603,7 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
     OT_KERNEL_COLD_BOOT_MITIGATIONS -- changes the kernel config to mitigate
-    against coldboot or DMA attacks.  By default, this is enabled in the
+    against cold boot or DMA attacks.  By default, this is enabled in the
     ebuild.
 
     Acceptable values:

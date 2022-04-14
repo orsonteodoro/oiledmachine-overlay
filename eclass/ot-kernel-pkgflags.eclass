@@ -50,6 +50,26 @@ ewarn "details."
 	fi
 }
 
+# @FUNCTION: ban_dma_attack
+# @DESCRIPTION:
+# Warn of the use of kernel options that may used for DMA attacks.
+ban_dma_attack() {
+	local pkgid="${1}"
+	local kopt="${2}"
+	local ot_kernel_cold_boot_mitigations=${OT_KERNEL_COLD_BOOT_MITIGATIONS:-1}
+	[[ -n "${ot_kernel_cold_boot_mitigations}" ]] \
+		&& (( ${ot_kernel_cold_boot_mitigations} == 0 )) \
+		&& return
+eerror
+eerror "The ${kopt} kernel option may be used as a possible prerequisite for"
+eerror "DMA side-channel attacks."
+eerror
+eerror "Set OT_KERNEL_COLD_BOOT_MITIGATIONS=0 to continue or"
+eerror "append ${pkgid} to OT_KERNEL_PKGFLAGS_REJECT."
+eerror
+	die
+}
+
 # @FUNCTION: ban_disable_debug
 # @DESCRIPTION:
 # Makes disable_debug mutually exclusive with kernel pkgflags
@@ -649,6 +669,9 @@ ot-kernel-pkgflags_bcc() { # DONE
 		ban_disable_debug "9e67059"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
+		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
+		ban_dma_attack "9e67059" "CONFIG_KALLSYMS"
+		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 	fi
@@ -3382,6 +3405,9 @@ ot-kernel-pkgflags_lkrg() { # DONE
 	if has_version "app-antivirus/lkrg" ; then
 		einfo "Applying kernel config flags for the lkrg package (id: 70df33c)"
 		ot-kernel_y_configopt "CONFIG_HAVE_KRETPROBES"
+		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
+		ban_dma_attack "70df33c" "CONFIG_KALLSYMS"
+		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_JUMP_LABEL"
@@ -3794,6 +3820,9 @@ ot-kernel-pkgflags_kpatch() { # DONE
 		ot-kernel_y_configopt "CONFIG_HAVE_FENTRY"
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_SYSFS"
+		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
+		ban_dma_attack "d26d135" "CONFIG_KALLSYMS"
+		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
 	fi
 }
@@ -4282,6 +4311,7 @@ ot-kernel-pkgflags_lttng_modules() { # DONE
 	if has_version "dev-util/lttng-modules" ; then
 		einfo "Applying kernel config flags for the lttng-modules package (id: 18dd1d9)"
 		ot-kernel_y_configopt "CONFIG_MODULES"
+		ban_dma_attack "18dd1d9" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
 		ban_disable_debug "18dd1d9"
@@ -5406,6 +5436,7 @@ ot-kernel-pkgflags_perf() { # DONE
 	if has_version "dev-util/perf" ; then
 		einfo "Applying kernel config flags for the perf package (id: ef529b7)"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
+		ban_dma_attack "ef529b7" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 	fi
 }
@@ -6742,6 +6773,7 @@ ot-kernel-pkgflags_vendor_reset() { # DONE
 		ot-kernel_y_configopt "CONFIG_FTRACE"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_PCI_QUIRKS"
+		ban_dma_attack "3bae162" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
 	fi

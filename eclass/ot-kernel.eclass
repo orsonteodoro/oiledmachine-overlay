@@ -2105,6 +2105,7 @@ ot-kernel_set_kconfig_cfi() {
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_CFI_CLANG"
 		ot-kernel_y_configopt "CONFIG_CFI_CLANG"
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
+		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 	else
 		einfo "Disabling CFI support in the in the .config."
@@ -2130,24 +2131,7 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 	# The problem is common to many full disk encryption implementations.
 	local ot_kernel_cold_boot_mitigations=${OT_KERNEL_COLD_BOOT_MITIGATIONS:-1}
 	if (( "${ot_kernel_cold_boot_mitigations}" >= 1 )) ; then
-		einfo "Hardening kernel against cold boot attacks."
-		ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
-		# Don't use lscpu/cpuinfo autodetect if using distcc or
-		# cross-compile but use the config itself to guestimate.
-		if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
-			einfo "Adding IOMMU support (VT-d)"
-			ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
-			ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
-		fi
-		if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
-			einfo "Adding IOMMU support (AMD-Vi)"
-			ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
-			ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
-		fi
-		ot-kernel_y_configopt "CONFIG_SECURITY_DMESG_RESTRICT" # Only partial
-		ewarn "KDB/KGDB_KDB is going to be disabled."
-		ot-kernel_unset_configopt "CONFIG_KGDB"
-		ot-kernel_unset_configopt "CONFIG_KGDB_KDB"
+		einfo "Hardening kernel against cold boot attacks. (EXPERIMENTAL / WORK IN PROGRESS)"
 
 		# These two may need a separate option.  We assume desktop,
 		# but some users may use the kernel on laptop.  For now,
@@ -2166,6 +2150,10 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 		ot-kernel_unset_configopt "CONFIG_PAGE_POISONING"	# Test symbol.
 		# CONFIG_PAGE_POISONING uses a fixed pattern and slower compared
 		# to CONFIG_INIT_ON_FREE_DEFAULT_ON.
+
+		einfo "Mitigating against DMA attacks (EXPERIMENTAL / WORK IN PROGRESS)"
+		ot-kernel_unset_configopt "CONFIG_KALLSYMS"
+
 		if grep -q -E -e "(CONFIG_IOMMU_DEFAULT_DMA_STRICT=y|CONFIG_IOMMU_DEFAULT_DMA_LAZY=y)" "${path_config}" ; then
 			:
 		else
@@ -2174,6 +2162,26 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 			ot-kernel_y_configopt "CONFIG_IOMMU_DEFAULT_DMA_LAZY"
 			ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_STRICT"
 		fi
+
+		ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+		# Don't use lscpu/cpuinfo autodetect if using distcc or
+		# cross-compile but use the config itself to guestimate.
+		if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
+			einfo "Adding IOMMU support (VT-d)"
+			ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+			ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
+		fi
+		if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
+			einfo "Adding IOMMU support (AMD-Vi)"
+			ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+			ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
+		fi
+
+		ewarn "KDB/KGDB_KDB is going to be disabled."
+		ot-kernel_unset_configopt "CONFIG_KGDB"
+		ot-kernel_unset_configopt "CONFIG_KGDB_KDB"
+
+		ot-kernel_y_configopt "CONFIG_SECURITY_DMESG_RESTRICT" # Only partial
 	fi
 	if python -c "import sys; sys.exit(0) if (${ot_kernel_cold_boot_mitigations}>=1.5) else sys.exit(1)" ; then
 		einfo "Using strict as the default IOMMU domain type for mitigation against DMA attack."
@@ -2859,6 +2867,25 @@ ot-kernel_set_kconfig_lsms() {
 	fi
 }
 
+# @FUNCTION: ban_dma_attack_use
+# @DESCRIPTION:
+# Warn of the use of kernel options that may used for DMA attacks.
+ban_dma_attack_use() {
+	local u="${1}"
+	local kopt="${2}"
+	[[ -n "${OT_KERNEL_COLD_BOOT_MITIGATIONS}" ]] \
+		&& (( ${OT_KERNEL_COLD_BOOT_MITIGATIONS} == 0 )) \
+		&& return
+eerror
+eerror "The ${kopt} kernel option may be used as a possible prerequisite for"
+eerror "DMA side-channel attacks."
+eerror
+eerror "Set OT_KERNEL_COLD_BOOT_MITIGATIONS=0 to continue or disable the"
+eerror "${u} USE flag."
+eerror
+	die
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_lto
 # @DESCRIPTION:
 # Sets the kernel config for Link Time Optimization (LTO)
@@ -2871,6 +2898,7 @@ ot-kernel_set_kconfig_lto() {
 		ot-kernel_unset_configopt "CONFIG_FTRACE_MCOUNT_USE_RECORDMCOUNT"
 		ot-kernel_unset_configopt "CONFIG_GCOV_KERNEL"
 		ot-kernel_y_configopt "CONFIG_HAS_LTO_CLANG"
+		ban_dma_attack_use "lto" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_unset_configopt "CONFIG_KASAN"
 		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
