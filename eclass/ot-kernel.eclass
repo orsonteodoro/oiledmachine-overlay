@@ -2166,6 +2166,20 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 		ot-kernel_unset_configopt "CONFIG_PAGE_POISONING"	# Test symbol.
 		# CONFIG_PAGE_POISONING uses a fixed pattern and slower compared
 		# to CONFIG_INIT_ON_FREE_DEFAULT_ON.
+		if grep -q -E -e "(CONFIG_IOMMU_DEFAULT_DMA_STRICT=y|CONFIG_IOMMU_DEFAULT_DMA_LAZY=y)" "${path_config}" ; then
+			:
+		else
+			einfo "Using lazy as the default IOMMU domain type for mitigation against DMA attack."
+			ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_PASSTHROUGH"
+			ot-kernel_y_configopt "CONFIG_IOMMU_DEFAULT_DMA_LAZY"
+			ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_STRICT"
+		fi
+	fi
+	if python -c "import sys; sys.exit(0) if (${ot_kernel_cold_boot_mitigations}>=1.5) else sys.exit(1)" ; then
+		einfo "Using strict as the default IOMMU domain type for mitigation against DMA attack."
+		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_PASSTHROUGH"
+		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_LAZY"
+		ot-kernel_y_configopt "CONFIG_IOMMU_DEFAULT_DMA_STRICT"
 	fi
 	if (( "${ot_kernel_cold_boot_mitigations}" >= 2 )) ; then
 		# TODO:  Disable all DMA devices and ports.

@@ -608,10 +608,14 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     Acceptable values:
 
-      0 for do not apply any mitigations, 1 for level 1 mitigations,
-      2 for level 2 mitigations.
+      0 for do not apply any mitigations
+      1 for level 1 mitigations
+      1.5 for level 1.5 mitigations
+      2 for level 2 mitigations
 
     - Level 1 mitigations are changes balance the convenience and the security.
+    - Level 1.5 mitigations are changes increase mitigation without disabling
+      of use of hardware with additional performance penalty.
     - Level 2 mitigations are changes that severely place security over
     convenience which may take away ability to use certain hardware or have
     severe performance degration.
@@ -836,6 +840,9 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     OT_KERNEL_IOMMU -- Sets the default IOMMU domain type upon initalization.
     Setting this has implications with security and performance tradeoff.
+
+    The OT_KERNEL_COLD_BOOT_MITIGATIONS have higher precedence when this
+    option is used which allow only for lazy or strict.
 
     Acceptable values:
 
