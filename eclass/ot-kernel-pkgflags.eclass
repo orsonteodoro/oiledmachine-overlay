@@ -3289,8 +3289,8 @@ ot-kernel-pkgflags_ima_evm_utils() {
 			ot-kernel_y_configopt "CONFIG_INTEGRITY_SIGNATURE"
 			ot-kernel_y_configopt "CONFIG_EVM"
 			if has_version "dev-crypt/tpm-utils" \
-				has_version "app-crypt/tpm-tools" \
-				has_version "app-crypt/tpm2-tools" \
+				|| has_version "app-crypt/tpm-tools" \
+				|| has_version "app-crypt/tpm2-tools" \
 				|| [[ "${TPM:-0}" == "1" ]] ; then
 				ot-kernel_y_configopt "CONFIG_TCG_TPM"
 			fi
