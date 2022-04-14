@@ -1705,6 +1705,14 @@ ewarn
 		fi
 	done
 
+	if [[ "${OT_KERNEL_SIGN_KERNEL}" =~ ("uefi"|"efi"|"kexec") ]] ; then
+		eerror
+		eerror "OT_KERNEL_SIGN_KERNEL=${OT_KERNEL_SIGN_KERNEL} is incomplete."
+		eerror "Fork or submit patch."
+		eerror
+		die
+	fi
+
 	if [[ -z "${OT_KERNEL_USE}" ]] ; then
 		export OT_KERNEL_USE="${IUSE}"
 	fi
