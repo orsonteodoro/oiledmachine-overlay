@@ -1516,6 +1516,21 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
 		cat "${FILESDIR}/gen_pgo.sh" > "${BUILD_DIR}/gen_pgo.sh"
 	fi
+
+	if [[ "${OT_KERNEL_EP800}" == "1" ]] ; then
+		cat "${FILESDIR}/ep800/ep800.c" \
+			> drivers/media/usb/gspca/ep800.c || die
+		cat "${FILESDIR}/ep800/ep800.h" \
+			> drivers/media/usb/gspca/ep800.h || die
+	fi
+}
+
+# @FUNCTION: apply_ep800
+# @DESCRIPTION:
+# Change build files for support for the ep800 driver
+apply_ep800() {
+	[[ "${OT_KERNEL_EP800}" == "1" ]] || return
+	eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
 }
 
 # @FUNCTION: apply_all_patchsets
@@ -1629,6 +1644,8 @@ apply_all_patchsets() {
 			apply_cfi
 		fi
 	fi
+
+	apply_ep800
 
 	if (( ${#_PATCHES[@]} > 0 )) ; then
 		eapply ${_PATCHES[@]}
@@ -1973,6 +1990,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_DISABLE_USB_AUTOSUSPEND
 	unset OT_KERNEL_EARLY_KMS
 	unset OT_KERNEL_EFI_PARTITION
+	unset OT_KERNEL_EP800
 	unset OT_KERNEL_EXTRAVERSION
 	unset OT_KERNEL_FIRMWARE
 	unset OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG
@@ -2532,6 +2550,26 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
 		ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_ep800
+# @DESCRIPTION:
+# Sets the kernel config for the ep800 driver
+ot-kernel_set_kconfig_ep800() {
+	[[ -e "drivers/media/usb/gspca/ep800.c" ]] || return
+	if [[ "${OT_KERNEL_EP800}" == "1" ]] ; then
+		# Added driver to test driver across all LTS versions
+		einfo "Enabled the ep800 driver"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2"
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA"
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_EP800"
+	else
+		ot-kernel_unset_configopt "CONFIG_USB_GSPCA_EP800"
 	fi
 }
 
@@ -4578,6 +4616,7 @@ ot-kernel_src_configure() {
                 # Apply flags to minimize the time cost of reconfigure and rebuild time
                 # from a generated new kernel config.
 		ot-kernel-pkgflags_apply # Placed before security flags
+		ot-kernel_set_kconfig_ep800 # For testing build time breakage
 
 		is_firmware_ready
 

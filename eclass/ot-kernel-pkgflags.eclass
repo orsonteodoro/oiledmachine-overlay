@@ -2694,10 +2694,13 @@ ot-kernel-pkgflags_epcam() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6922e7a" ]] && return
 	if has_version "media-video/epcam" ; then
 		einfo "Applying kernel config flags for the epcam package (id: 6922e7a)"
+		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2"
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA"
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA_EP800"
 	fi
 }
 

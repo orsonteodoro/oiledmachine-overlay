@@ -717,6 +717,17 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
+    OT_KERNEL_EP800 -- adds and enables the ep800 webcam driver.
+
+    It is used for testing driver breakage between LTS versions and stable for
+    the media-video/epcam package.
+
+    Acceptable values:
+
+      1, 0, unset
+
+
+
     OT_KERNEL_EXTRAVERSION -- initials or name of the kernel.  Using the rt
     extraversion will apply the rt patchset to only that copy.
 

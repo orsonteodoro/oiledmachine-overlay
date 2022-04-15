@@ -83,8 +83,9 @@ ot-kernel_set_kconfig_kernel_cmdline() {
 			${cmd}
 			$@
 		)
+		local outargs_="${outargs[@]}" # Cannot expand right directly
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
-		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${outargs[@]}\""
+		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${outargs_}\""
 	fi
 	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
 	einfo "BOOT_ARGS:  ${cmd}"
@@ -113,8 +114,9 @@ ot-kernel_unset_pat_kconfig_kernel_cmdline() {
 			${cmd}
 			$@
 		)
+		local outargs_="${outargs[@]}" # Cannot expand right directly
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
-		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${outargs[@]}\""
+		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${outargs_}\""
 	fi
 	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
 	einfo "BOOT_ARGS:  ${cmd}"
