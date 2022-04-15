@@ -11,7 +11,7 @@ KEYWORDS=\
 IUSE="4_14 5_4 5_10 5_15"
 RDEPEND="
 	4_14? ( ~sys-kernel/ot-sources-4.14.275 )
-	5_4? ( ~sys-kernel/ot-sources-5.4.188 )
+	5_4? ( ~sys-kernel/ot-sources-5.4.189 )
 	5_10? ( ~sys-kernel/ot-sources-5.10.111 )
 	5_15? ( ~sys-kernel/ot-sources-5.15.34 )
 "
