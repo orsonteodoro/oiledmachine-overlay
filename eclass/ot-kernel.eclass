@@ -3762,7 +3762,7 @@ ot-kernel_set_kconfig_abis() {
 	[[ -e "/usr/lib/libbz2.so" ]] && lib_bitness=$(ot-kernel_get_lib_bitness $(readlink -f /usr/lib/libbz2.so))
 	if [[ "${arch}" =~ "alpha" ]] ; then
 		einfo "Added support for alpha"
-		ot-kernel_n_configopt "CONFIG_64BIT"
+		ot-kernel_y_configopt "CONFIG_64BIT"
 	fi
 	if [[ "${arch}" =~ "arm" ]] ; then
 		if [[ "${OT_KERNEL_ABIS,,}" == "arm64" \
@@ -3782,7 +3782,7 @@ ot-kernel_set_kconfig_abis() {
 	fi
 	if [[ "${arch}" =~ "ia64" ]] ; then
 		einfo "Added support for ia64"
-		ot-kernel_n_configopt "CONFIG_64BIT"
+		ot-kernel_y_configopt "CONFIG_64BIT"
 	fi
 	if [[ "${arch}" =~ "m68k" ]] ; then
 		einfo "Added support for m68k"
@@ -3817,8 +3817,10 @@ ot-kernel_set_kconfig_abis() {
 	fi
 	if [[ "${arch}" =~ "parisc" ]] ; then
 		einfo "Added support for hppa"
-		ot-kernel_n_configopt "CONFIG_64BIT"
-
+		if [[ "${lib_bitness}" == "64" ]] ; then
+			ot-kernel_y_configopt "CONFIG_PA8X00"
+			ot-kernel_y_configopt "CONFIG_64BIT"
+		fi
 	fi
 	if [[ "${arch}" == "powerpc" ]] ; then
 		if [[ "${OT_KERNEL_ABIS,,}" =~ "ppc64" \
