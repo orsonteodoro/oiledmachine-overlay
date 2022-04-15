@@ -2551,6 +2551,7 @@ ot-kernel_set_kconfig_ep800() {
 	if [[ "${OT_KERNEL_EP800}" == "1" ]] ; then
 		# Added driver to test driver across all LTS versions
 		einfo "Enabled the ep800 driver"
+		ot-kernel_y_configopt "CONFIG_INPUT"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"

@@ -199,7 +199,6 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_embree
 	ot-kernel-pkgflags_ena_driver
 	ot-kernel-pkgflags_encfs
-	ot-kernel-pkgflags_epcam
 	ot-kernel-pkgflags_epoch
 	ot-kernel-pkgflags_espeakup
 	ot-kernel-pkgflags_eudev
@@ -222,6 +221,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_gnome_boxes
 	ot-kernel-pkgflags_gpm
 	ot-kernel-pkgflags_grs
+	ot-kernel-pkgflags_gspca_ep800
 	ot-kernel-pkgflags_guestfs
 	ot-kernel-pkgflags_gvrpcd
 	ot-kernel-pkgflags_hamachi
@@ -2687,22 +2687,6 @@ ot-kernel-pkgflags_encfs() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_epcam
-# @DESCRIPTION:
-# Applies kernel config flags for the epcam package
-ot-kernel-pkgflags_epcam() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "6922e7a" ]] && return
-	if has_version "media-video/epcam" ; then
-		einfo "Applying kernel config flags for the epcam package (id: 6922e7a)"
-		ot-kernel_y_configopt "CONFIG_USB"
-		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
-		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2"
-		ot-kernel_y_configopt "CONFIG_USB_GSPCA"
-	fi
-}
-
 # @FUNCTION: ot-kernel-pkgflags_epoch
 # @DESCRIPTION:
 # Applies kernel config flags for the epoch package
@@ -3072,6 +3056,23 @@ ot-kernel-pkgflags_grs() { # DONE
 	if has_version "app-portage/grs" ; then
 		einfo "Applying kernel config flags for the grs package (id: 5cf3aa9)"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_gspca_ep800
+# @DESCRIPTION:
+# Applies kernel config flags for the gspca_ep800 package
+ot-kernel-pkgflags_gspca_ep800() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "3302dae" ]] && return
+	if has_version "media-video/gspca_ep800" ; then
+		einfo "Applying kernel config flags for the gspca_ep800 package (id: 3302dae)"
+		ot-kernel_y_configopt "CONFIG_INPUT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2"
+		ot-kernel_y_configopt "CONFIG_USB_GSPCA"
 	fi
 }
 
