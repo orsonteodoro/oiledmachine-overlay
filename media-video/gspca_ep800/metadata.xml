@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Only for this ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/orsonteodoro/gspca_ep800/issues</bugs-to>
+    <remote-id type="github">orsonteodoro/gspca_ep800</remote-id>
+  </upstream>
+</pkgmetadata>
