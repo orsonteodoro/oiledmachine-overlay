@@ -2688,6 +2688,7 @@ ot-kernel_set_kconfig_ima() {
 	done
 	ot-kernel_y_configopt "CONFIG_INTEGRITY"
 	ot-kernel_y_configopt "CONFIG_IMA"
+	ot-kernel_y_configopt "CONFIG_IMA_APPRAISE"
 	local hash_alg="${OT_KERNEL_IMA_HASH_ALG^^}"
 	if [[ -n "${hash_alg}" ]] ; then
 		einfo "Using ${hash_alg,,} for IMA hashing"
