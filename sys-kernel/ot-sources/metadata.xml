@@ -489,7 +489,20 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
       KVM_ADD_IGNORE_MSRS_EQ_1
       KVMGT
-      OT_KERNEL_IMA
+
+
+
+    OT_KERNEL_BOOT_ARGS_LOCKDOWN -- Prevent bootloader from overriding
+    the internal kernel cmdline.
+
+    Certain security options may auto enable this if they happen to use
+    the kernel command line.
+
+    Acceptable values:
+
+      1 - enable
+      0 - disable
+      unset - manual settings
 
 
 
@@ -923,7 +936,7 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     OT_KERNEL_LSMS -- Enable and set the order for LSM (Linux Security Modules)
 
     Acceptable multi values: apparmor, bpf, integrity, landlock, loadpin,
-    lockdown safesetid, selinux, smack, tomoyo, yama.
+    lockdown, safesetid, selinux, smack, tomoyo, yama.
 
     Acceptable general values:  auto, default, manual
 

@@ -1960,6 +1960,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_ARCH
 	unset OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS
 	unset OT_KERNEL_BOOT_ARGS
+	unset OT_KERNEL_BOOT_ARGS_LOCKDOWN
 	unset OT_KERNEL_BOOT_DECOMPRESSOR
 	unset OT_KERNEL_BOOT_KOPTIONS
 	unset OT_KERNEL_BOOT_KOPTIONS_APPEND
@@ -2097,6 +2098,11 @@ ot-kernel_set_kconfig_boot_args() {
 	local cmd
 	if [[ -n "${OT_KERNEL_BOOT_ARGS}" ]] ; then
 		ot-kernel_set_kconfig_kernel_cmdline "${OT_KERNEL_BOOT_ARGS}"
+	fi
+	if [[ "${OT_KERNEL_BOOT_ARGS_LOCKDOWN}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_CMDLINE_OVERRIDE"
+	else
+		ot-kernel_unset_configopt "CONFIG_CMDLINE_OVERRIDE"
 	fi
 }
 

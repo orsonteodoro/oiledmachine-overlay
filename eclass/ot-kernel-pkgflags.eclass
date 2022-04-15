@@ -5916,7 +5916,7 @@ ot-kernel-pkgflags_sbsigntools() { # DONE
 		ot-kernel_y_configopt "CONFIG_EFI_STUB"
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
 		ot-kernel_set_kconfig_kernel_cmdline "" # FIXME
-		ot-kernel_y_configopt "CONFIG_CONFIG_CMDLINE_OVERRIDE"
+		ot-kernel_y_configopt "CONFIG_CMDLINE_OVERRIDE"
 		ot-kernel_unset_configopt "CONFIG_DRM_SIMPLEDRM"
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_y_configopt "CONFIG_FB_SIMPLE"
