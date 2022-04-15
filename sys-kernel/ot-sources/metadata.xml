@@ -853,7 +853,7 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     Simplified progression diagram:
 
-      start ➡️  fix ➡️  reboot ➡️  rebuild kernel with enforce ➡️  reboot ➡️  end
+      start ➡️  rebuild with fix ➡️  reboot ➡️  rebuild with enforce ➡️  reboot ➡️  end
 
     (➡️  is the right emoji symbol)
 
