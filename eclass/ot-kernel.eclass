@@ -2101,7 +2101,7 @@ ot-kernel_set_kconfig_boot_args() {
 	fi
 	if [[ "${OT_KERNEL_BOOT_ARGS_LOCKDOWN}" == "1" ]] ; then
 		ot-kernel_y_configopt "CONFIG_CMDLINE_OVERRIDE"
-	else
+	elif [[ "${OT_KERNEL_BOOT_ARGS_LOCKDOWN}" == "0" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_CMDLINE_OVERRIDE"
 	fi
 }
