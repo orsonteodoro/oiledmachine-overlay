@@ -190,6 +190,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_drbd_utils
 	ot-kernel-pkgflags_droidcam
 	ot-kernel-pkgflags_dropwatch
+	ot-kernel-pkgflags_e2fsprogs
 	ot-kernel-pkgflags_ecryptfs
 	ot-kernel-pkgflags_efibootmgr
 	ot-kernel-pkgflags_ekeyd
@@ -2570,6 +2571,20 @@ ot-kernel-pkgflags_docker() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_e2fsprogs
+# @DESCRIPTION:
+# Applies kernel config flags for the e2fsprogs package
+ot-kernel-pkgflags_e2fsprogs() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "0d4e223" ]] && return
+	if has_version "sys-fs/e2fsprogs" ; then
+		einfo "Applying kernel config flags for the e2fsprogs package (id: 0d4e223)"
+		if [[ "${EXT4_ENCRYPTION:-1}" == "1" ]] ; then
+			ot-kernel_y_configopt "CONFIG_EXT4_FS"
+			ot-kernel_y_configopt "CONFIG_FS_ENCRYPTION"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_ecryptfs
 # @DESCRIPTION:
 # Applies kernel config flags for the ecryptfs package
@@ -3594,16 +3609,7 @@ ot-kernel-pkgflags_iotop() { # DONE
 		ot-kernel_y_configopt "CONFIG_TASK_DELAY_ACCT"
 		ot-kernel_y_configopt "CONFIG_TASKSTATS"
 		ot-kernel_y_configopt "CONFIG_VM_EVENT_COUNTERS"
-		if grep -q -E -e "# CONFIG_CMDLINE_BOOL is not set" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
-			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"delayacct\""
-		else
-			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
-			local cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g" | sed -e "s|delayacct||g")
-			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} delayacct\""
-		fi
-		local cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
-		einfo "BOOT_ARGS:  ${cmd}"
+		ot-kernel_set_kconfig_kernel_cmdline "delayacct"
 	fi
 }
 
@@ -5263,31 +5269,13 @@ ot-kernel-pkgflags_kvm_host_extras() {
 			ot-kernel_y_configopt "CONFIG_DRM_I915_GVT"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_GVT_KVMGT"
 			einfo "Adding i915.enable_gvt=1 to kernel command line"
-			if grep -q -E -e "# CONFIG_CMDLINE_BOOL is not set" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
-				ot-kernel_set_configopt "CONFIG_CMDLINE" "\"i915.enable_gvt=1\""
-			else
-				ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
-				cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g" | sed -e "s|i915.enable_gvt=1||g")
-				ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} i915.enable_gvt=1\""
-			fi
-			cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
-			einfo "BOOT_ARGS:  ${cmd}"
+			ot-kernel_set_kconfig_kernel_cmdline "i915.enable_gvt=1"
 		fi
 	fi
 
 	if [[ "${KVM_ADD_IGNORE_MSRS_EQ_1:-1}" == "1" ]] ; then
 		einfo "Adding kvm.ignore_msrs=1 to kernel command line"
-		if grep -q -E -e "# CONFIG_CMDLINE_BOOL is not set" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
-			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"kvm.ignore_msrs=1\""
-		else
-			ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
-			cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g" | sed -e "s|kvm.ignore_msrs=1||g")
-			ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} kvm.ignore_msrs=1\""
-		fi
-		cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
-		einfo "BOOT_ARGS:  ${cmd}"
+		ot-kernel_set_kconfig_kernel_cmdline "kvm.ignore_msrs=1"
 	fi
 }
 
@@ -5927,7 +5915,7 @@ ot-kernel-pkgflags_sbsigntools() { # DONE
 		ot-kernel_unset_configopt "CONFIG_X86_USE_3DNOW"
 		ot-kernel_y_configopt "CONFIG_EFI_STUB"
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
-		ot-kernel_set_configopt "CONFIG_CMDLINE" ""
+		ot-kernel_set_kconfig_kernel_cmdline "" # FIXME
 		ot-kernel_y_configopt "CONFIG_CONFIG_CMDLINE_OVERRIDE"
 		ot-kernel_unset_configopt "CONFIG_DRM_SIMPLEDRM"
 		ot-kernel_y_configopt "CONFIG_FB"

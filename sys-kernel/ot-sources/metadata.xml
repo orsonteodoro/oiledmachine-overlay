@@ -59,7 +59,7 @@
 
     The TRESOR patch provides increased mitigation from cold boot resistant
     attacks.  TRESOR is vulnerable to a DMA attack side-channel attack.  All
-    older hardware that does not have IOMMU VT-d / AMD-Vi and not using it is
+    older hardware that does not have IOMMU VT-d / Vi and not using it is
     vulnerable.  DMA attack is used to extract keys.  See
     https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware
     for a list of hardware supporting IOMMU.
@@ -247,9 +247,7 @@
 
     The PGO (Profile Guided Optimization) progression diagram:
 
-      start -&gt;  PGI -&gt; PGT -&gt; PGO -&gt; end
-
-    (&gt; is the greater than symbol in HTML)
+      start ➡️  PGI ➡️  PGT ➡️  PGO ➡️  end
 
     PGI = Build as instrumented
     PGT = Train with actual typical use, or simulation script that replays or mimics typical use, or benchmarks
@@ -489,6 +487,7 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
       KVM_ADD_IGNORE_MSRS_EQ_1
       KVMGT
+      OT_KERNEL_IMA
 
 
 
@@ -619,6 +618,10 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     - Level 2 mitigations are changes that severely place security over
     convenience which may take away ability to use certain hardware or have
     severe performance degration.
+
+    See also
+
+      OT_KERNEL_IMA
 
 
 
@@ -835,6 +838,56 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     if the accelerated crypto device supports the algorithm.  If not present,
     it will fall back to the CPU optimized or the generic non-optimized
     algorithm.
+
+
+
+    OT_KERNEL_IMA -- Sets the mode for IMA.  IMA will essentially ensure
+    system integrity with the use of hashing and filesystem metadata.
+    IMA requires 2 steps -- measurement and appraisal.  Measurement
+    is done by hashing files.  Appraisal is done by comparing hashes.
+
+    These kernel configs will be built in so the kernel needs to be rebuilt
+    whenever it changes.
+
+    Simplified progression diagram:
+
+      start ➡️  fix ➡️  reboot ➡️  rebuild kernel with enforce ➡️  reboot ➡️  end
+
+    Acceptable values:
+
+      fix - update the IMA hashes
+      enforce - protect
+      off - disables IMA
+      unset - manual
+
+
+
+    OT_KERNEL_IMA_HASH_ALG -- Sets the default hashing algorithm
+
+    Acceptable values:
+
+      sha1, sha256, sha512, wp512, unset
+
+    sha1 is the default.  If unset, it will choose sha1.
+
+
+
+    OT_KERNEL_IMA_POLICY -- Sets the IMA policy.
+
+    Acceptable values:
+
+      critical_data - hash kernel critical data
+      fail_securely - force signature failure on untrusted filesystems
+      tcb - default hash of opened root files, modules, firmware, policy
+      tcb_appraise - default apprasial of tcb set
+      secure_boot - check module, firmware, policy, and signed kexec kernels
+      unset - use manual setting
+
+    Examples:
+
+      OT_KERNEL_IMA_POLICY="tcb"
+      OT_KERNEL_IMA_POLICY="tcb tcb_appraise"
+      OT_KERNEL_IMA_POLICY="tcb tcb_appraise secure_boot"
 
 
 
@@ -1333,6 +1386,9 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     If unset, it adds rmd160, sha256.
 
     CRYPTSETUP_TCRYPT - Add support for tcrypt.
+    Valid values:  0, 1 (default).
+
+    EXT4_ENCRYPTION - Add support for ext4 encryption
     Valid values:  0, 1 (default).
 
     IPTABLES_CLIENT - Add support for iptables client.

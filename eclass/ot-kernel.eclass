@@ -1977,6 +1977,9 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG
 #	unset OT_KERNEL_HALT_ON_LOWERED_SECURITY		# global var
 	unset OT_KERNEL_HARDENING_LEVEL
+	unset OT_KERNEL_IMA
+	unset OT_KERNEL_IMA_HASH_ALG
+	unset OT_KERNEL_IMA_POLICY
 	unset OT_KERNEL_IOMMU
 	unset OT_KERNEL_LSMS
 	unset OT_KERNEL_MENUCONFIG_FRONTEND
@@ -2093,11 +2096,8 @@ ot-kernel_set_kconfig_bbr2() {
 ot-kernel_set_kconfig_boot_args() {
 	local cmd
 	if [[ -n "${OT_KERNEL_BOOT_ARGS}" ]] ; then
-		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
-		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${OT_KERNEL_BOOT_ARGS}\""
+		ot-kernel_set_kconfig_kernel_cmdline "${OT_KERNEL_BOOT_ARGS}"
 	fi
-	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
-	einfo "BOOT_ARGS:  ${cmd}"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_cfi
@@ -2171,19 +2171,48 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 			ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_STRICT"
 		fi
 
-		ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 		# Don't use lscpu/cpuinfo autodetect if using distcc or
-		# cross-compile but use the config itself to guestimate.
-		if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
-			einfo "Adding IOMMU support (VT-d)"
-			ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
-			ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
+		# Cross-compile but use the config itself to guestimate.
+		if [[ "${arch}" =~ "x86" ]] ; then
+			local found=0
+			if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
+				einfo "Adding IOMMU support (VT-d)"
+				ot-kernel_y_configopt "CONFIG_MMU"
+				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+				ot-kernel_y_configopt "CONFIG_ACPI"
+				ot-kernel_y_configopt "CONFIG_PCI"
+				ot-kernel_y_configopt "CONFIG_PCI_MSI"
+				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+				ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
+				found=1
+			fi
+			if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
+				einfo "Adding IOMMU support (Vi)"
+				ot-kernel_y_configopt "CONFIG_MMU"
+				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+				ot-kernel_y_configopt "CONFIG_ACPI"
+				ot-kernel_y_configopt "CONFIG_PCI"
+				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+				ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
+				found=1
+			fi
+			if (( ${found} == 0 )) ; then
+				eerror
+				eerror "Failed to set IOMMU for DMA mitigation.  Choose either top or bottom solution."
+				eerror
+				eerror "OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1 needs to be set."
+				eerror "OT_KERNEL_CPU_MICROCODE=1 needs to be set installing microcode packages"
+				eerror "for autodetected IOMMU."
+				eerror
+				eerror "  or"
+				eerror
+				eerror "Set the kernel config manually to either CONFIG_INTEL_IOMMU=y or CONFIG_AMD_IOMMU=y."
+				eerror
+				die
+			fi
 		fi
-		if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
-			einfo "Adding IOMMU support (AMD-Vi)"
-			ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
-			ot-kernel_y_configopt "CONFIG_AMD_IOMMU"
-		fi
+		ewarn "Coredump is going to be disabled"
+		ot-kernel_unset_configopt "CONFIG_COREDUMP"
 
 		ewarn "KDB/KGDB_KDB is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_KGDB"
@@ -2640,6 +2669,71 @@ ot-kernel_set_kconfig_hardening_level() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_ima
+# @DESCRIPTION:
+# Configures IMA (Integrity Measurement Architecture) used to protect
+# root and boot files and customized setups
+ot-kernel_set_kconfig_ima() {
+	[[ -z "${OT_KERNEL_IMA}" ]] && return
+	einfo "Configuring IMA"
+	local algs=(
+		sha1
+		sha256
+		sha512
+		wp512
+	)
+	local a
+	for a in ${algs[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_IMA_DEFAULT_HASH_${a^^}"
+	done
+	ot-kernel_y_configopt "CONFIG_INTEGRITY"
+	ot-kernel_y_configopt "CONFIG_IMA"
+	local hash_alg="${OT_KERNEL_IMA_HASH_ALG^^}"
+	if [[ -n "${hash_alg}" ]] ; then
+		einfo "Using ${hash_alg,,} for IMA hashing"
+		ot-kernel_y_configopt "CONFIG_IMA_DEFAULT_HASH_${hash_alg}"
+		ot-kernel_y_configopt "CONFIG_${hash_alg}"
+		if [[ "${hash_alg}" != "SHA1" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_IMA_TEMPLATE"
+		fi
+	else
+		einfo "Using sha1 for IMA hashing"
+		ot-kernel_y_configopt "CONFIG_IMA_DEFAULT_HASH_SHA1"
+		ot-kernel_y_configopt "CONFIG_SHA1"
+	fi
+	if [[ "${OT_KERNEL_IMA}" == "fix" ]] ; then
+		einfo "Using fix for IMA mode"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "ima_appraise=(fix|enforce|off)"
+		ot-kernel_set_kconfig_kernel_cmdline "ima_appraise=fix"
+		export _OT_KERNEL_IMA_USED=1
+	elif [[ "${OT_KERNEL_IMA}" == "enforce" ]] ; then
+		einfo "Using enforce for IMA mode"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "ima_appraise=(fix|enforce|off)"
+		ot-kernel_set_kconfig_kernel_cmdline "ima_appraise=enforce"
+		export _OT_KERNEL_IMA_USED=1
+	elif [[ "${OT_KERNEL_IMA}" == "off" ]] ; then
+		einfo "Disabling IMA"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "ima_appraise=(fix|enforce|off)"
+		ot-kernel_set_kconfig_kernel_cmdline "ima_appraise=off"
+	fi
+	if [[ "${OT_KERNEL_IMA_POLICY}" == "appraise_tcb" ]] ; then
+		einfo "Using appraise_tcb IMA policy"
+		ot-kernel_set_kconfig_kernel_cmdline "ima_policy=appraise_tcb"
+	fi
+	if [[ "${OT_KERNEL_IMA_POLICY}" == "critical_data" ]] ; then
+		einfo "Using critical_data IMA policy"
+		ot-kernel_set_kconfig_kernel_cmdline "ima_policy=critical_data"
+	fi
+	if [[ "${OT_KERNEL_IMA_POLICY}" == "secure_boot" ]] ; then
+		einfo "Using secure_boot IMA policy"
+		ot-kernel_set_kconfig_kernel_cmdline "ima_policy=secure_boot"
+	fi
+	if [[ "${OT_KERNEL_IMA_POLICY}" == "tcb" ]] ; then
+		einfo "Using tcb IMA policy"
+		ot-kernel_set_kconfig_kernel_cmdline "ima_policy=tcb"
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_iommu_domain_type
 # @DESCRIPTION:
 # Sets the default IOMMU domain_type
@@ -2665,6 +2759,15 @@ ot-kernel_set_kconfig_iommu_domain_type() {
 	if [[ "${iommu}" =~ ("pt"|"lazy"|"strict") ]] ; then
 		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+		if [[ "${arch}" == "x86_64" ]] ; then
+			ot-kernel_y_configopt "CONFIG_MMU"
+			ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
+			ot-kernel_y_configopt "CONFIG_PCI_MSI"
+			ot-kernel_y_configopt "CONFIG_ACPI"
+			ot-kernel_y_configopt "CONFIG_"
+
+			ot-kernel_y_configopt "CONFIG_CONFIG_IRQ_REMAP"
+		fi
 	fi
 }
 
@@ -2873,6 +2976,18 @@ ot-kernel_set_kconfig_lsms() {
 			einfo "LSMs:  ${ot_kernel_lsms}"
 		fi
 	fi
+
+	if [[ "${OT_KERNEL_IMA}" =~ ("fix"|"enforce") ]] ; then
+		local lsms_=$(grep -r -e "CONFIG_LSM=" "${path_config}" | cut -f 2 -d "\"")
+		if [[ "${lsms_}" =~ "integrity" ]] ; then
+			:
+		else
+			eerror
+			eerror "integrity must be added to OT_KERNEL_LSMS or CONFIG_LSM"
+			eerror
+			die
+		fi
+	fi
 }
 
 # @FUNCTION: ban_dma_attack_use
@@ -2955,12 +3070,8 @@ ot-kernel_set_kconfig_memory_protection() {
 			einfo "Allowing SME"
 			ot-kernel_y_configopt "CONFIG_AMD_MEM_ENCRYPT"
 			if [[ "${OT_KERNEL_SME_DEFAULT_ON}" == "1" ]] ; then
-				local cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
-				ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
+				ot-kernel_set_kconfig_kernel_cmdline "mem_encrypt=on"
 				ot-kernel_y_configopt "CONFIG_CMDLINE_OVERRIDE" # Disallow changing
-				ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} mem_encrypt=on\""
-				cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
-				einfo "BOOT_ARGS:  ${cmd}"
 			else
 				ewarn "Set OT_KERNEL_SME_DEFAULT_ON=1 when testing is successful."
 			fi
@@ -3782,11 +3893,7 @@ ot-kernel_set_kconfig_abis() {
 # Sets the kernel command line to enable CONFIG_NO_HZ_FULL properly
 ot-kernel_set_kconfig_no_hz_full() {
 	ot-kernel_y_configopt "CONFIG_NO_HZ_FULL"
-	local cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g" | sed -e "s|nohz_full=all||g")
-	ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
-	ot-kernel_set_configopt "CONFIG_CMDLINE" "\"${cmd} nohz_full=all\""
-	cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
-	einfo "BOOT_ARGS:  ${cmd}"
+	ot-kernel_set_kconfig_kernel_cmdline "nohz_full=all"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
@@ -4480,6 +4587,7 @@ ot-kernel_src_configure() {
 		ot-kernel_set_kconfig_cold_boot_mitigation
 		ot-kernel_set_kconfig_memory_protection
 		ot-kernel_set_kconfig_tresor
+		ot-kernel_set_kconfig_ima
 		ot-kernel_set_kconfig_lsms
 
 		ot-kernel_set_kconfig_module_support
@@ -5243,7 +5351,7 @@ einfo
 	# https://link.springer.com/article/10.1186/s13173-017-0066-7#Fn1
 ewarn
 ewarn "Please upgrade both the motherboard and CPU with support with either"
-ewarn "VT-d or AMD-Vi to mitigate from cold-boot attack if using full disk"
+ewarn "VT-d or Vi to mitigate from cold-boot attack if using full disk"
 ewarn "encryption.  Ensure that that IOMMU is being used.  Do not disable IOMMU"
 ewarn "or use passthrough (pt).  See"
 ewarn
@@ -5514,5 +5622,10 @@ ewarn
 ewarn "SME is allowed but requires testing before permanent setting on."
 ewarn "See metadata.xml for details or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
 ewarn
+	fi
+	if [[ "${_OT_KERNEL_IMA_USED}" == "1" ]] ; then
+einfo
+einfo "To optimize IMA hashing add iversion to fstab mount option for / (aka root)."
+einfo
 	fi
 }
