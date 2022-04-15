@@ -891,7 +891,7 @@ static void sd_isoc_irq(struct urb *urb)
 	int length = 0;
 
 	//pr_info("sd_isoc_irq called\n");
-	PDEBUG(D_PACK, "sd isoc irq");
+	//PDEBUG(D_PACK, "sd isoc irq");
 	if (!gspca_dev->streaming)
 	{
 		pr_info("it stopped streaming");

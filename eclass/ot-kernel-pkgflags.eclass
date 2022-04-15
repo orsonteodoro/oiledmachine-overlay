@@ -2700,7 +2700,6 @@ ot-kernel-pkgflags_epcam() { # DONE
 		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_VIDEO_V4L2"
 		ot-kernel_y_configopt "CONFIG_USB_GSPCA"
-		ot-kernel_y_configopt "CONFIG_USB_GSPCA_EP800"
 	fi
 }
 

@@ -1517,20 +1517,10 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 		cat "${FILESDIR}/gen_pgo.sh" > "${BUILD_DIR}/gen_pgo.sh"
 	fi
 
-	if [[ "${OT_KERNEL_EP800}" == "1" ]] ; then
-		cat "${FILESDIR}/ep800/ep800.c" \
-			> drivers/media/usb/gspca/ep800.c || die
-		cat "${FILESDIR}/ep800/ep800.h" \
-			> drivers/media/usb/gspca/ep800.h || die
-	fi
-}
-
-# @FUNCTION: apply_ep800
-# @DESCRIPTION:
-# Change build files for support for the ep800 driver
-apply_ep800() {
-	[[ "${OT_KERNEL_EP800}" == "1" ]] || return
-	eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
+	cat "${FILESDIR}/ep800/ep800.c" \
+		> "${BUILD_DIR}/drivers/media/usb/gspca/ep800.c" || die
+	cat "${FILESDIR}/ep800/ep800.h" \
+		> "${BUILD_DIR}/drivers/media/usb/gspca/ep800.h" || die
 }
 
 # @FUNCTION: apply_all_patchsets
@@ -1645,8 +1635,6 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	apply_ep800
-
 	if (( ${#_PATCHES[@]} > 0 )) ; then
 		eapply ${_PATCHES[@]}
 	fi
@@ -1708,6 +1696,8 @@ ewarn
 	#if [[ -e "/lib/firmware/regulatory.db.p7s" ]] ; then
 	#	cp -a "/lib/firmware/regulatory.db.p7s" "${BUILD_DIR}/"
 	#fi
+
+	eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
 
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
@@ -2557,7 +2547,7 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 # @DESCRIPTION:
 # Sets the kernel config for the ep800 driver
 ot-kernel_set_kconfig_ep800() {
-	[[ -e "drivers/media/usb/gspca/ep800.c" ]] || return
+	[[ -e "${BUILD_DIR}/drivers/media/usb/gspca/ep800.c" ]] || return
 	if [[ "${OT_KERNEL_EP800}" == "1" ]] ; then
 		# Added driver to test driver across all LTS versions
 		einfo "Enabled the ep800 driver"
