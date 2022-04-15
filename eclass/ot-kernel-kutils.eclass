@@ -112,7 +112,6 @@ ot-kernel_unset_pat_kconfig_kernel_cmdline() {
 		ot-kernel_set_configopt "CONFIG_CMDLINE" "\"\""
 		local outargs=(
 			${cmd}
-			$@
 		)
 		local outargs_="${outargs[@]}" # Cannot expand right directly
 		ot-kernel_y_configopt "CONFIG_CMDLINE_BOOL"
