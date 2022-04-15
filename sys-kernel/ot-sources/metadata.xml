@@ -249,6 +249,8 @@
 
       start ➡️  PGI ➡️  PGT ➡️  PGO ➡️  end
 
+    (➡️  is the right emoji symbol)
+
     PGI = Build as instrumented
     PGT = Train with actual typical use, or simulation script that replays or mimics typical use, or benchmarks
     PGO = Build as optimized
@@ -852,6 +854,8 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     Simplified progression diagram:
 
       start ➡️  fix ➡️  reboot ➡️  rebuild kernel with enforce ➡️  reboot ➡️  end
+
+    (➡️  is the right emoji symbol)
 
     Acceptable values:
 
