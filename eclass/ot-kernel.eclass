@@ -2696,7 +2696,13 @@ ot-kernel_set_kconfig_ima() {
 	ot-kernel_y_configopt "CONFIG_IMA"
 	ot-kernel_y_configopt "CONFIG_IMA_APPRAISE"
 	local hash_alg="${OT_KERNEL_IMA_HASH_ALG^^}"
-	if [[ -n "${hash_alg}" ]] ; then
+	if [[ "${hash_alg}" == "default" ]] ; then
+		einfo "Using sha1 for IMA hashing"
+		ot-kernel_y_configopt "CONFIG_IMA_DEFAULT_HASH_SHA1"
+		ot-kernel_y_configopt "CONFIG_SHA1"
+	elif [[ "${hash_alg}" == "manual" ]] ; then
+		einfo "Using manual for IMA hashing"
+	elif [[ -n "${hash_alg}" ]] ; then
 		einfo "Using ${hash_alg,,} for IMA hashing"
 		ot-kernel_y_configopt "CONFIG_IMA_DEFAULT_HASH_${hash_alg}"
 		ot-kernel_y_configopt "CONFIG_${hash_alg}"
@@ -2704,9 +2710,7 @@ ot-kernel_set_kconfig_ima() {
 			ot-kernel_unset_configopt "CONFIG_IMA_TEMPLATE"
 		fi
 	else
-		einfo "Using sha1 for IMA hashing"
-		ot-kernel_y_configopt "CONFIG_IMA_DEFAULT_HASH_SHA1"
-		ot-kernel_y_configopt "CONFIG_SHA1"
+		einfo "Using manual for IMA hashing"
 	fi
 	if [[ "${OT_KERNEL_IMA}" == "fix" ]] ; then
 		einfo "Using fix for IMA mode"

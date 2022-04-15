@@ -883,9 +883,9 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     Acceptable values:
 
-      sha1, sha256, sha512, wp512, unset
+      sha1, sha256, sha512, wp512, default, manual, unset
 
-    sha1 is the default.  If unset, it will choose sha1.
+    sha1 is the default.  If unset, it will choose manual.
 
 
 
