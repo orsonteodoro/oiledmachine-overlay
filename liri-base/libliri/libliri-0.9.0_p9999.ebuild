@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils
+inherit cmake-utils git-r3 eutils
 
 DESCRIPTION="Library for Liri apps"
 HOMEPAGE="https://github.com/lirios/libliri"
@@ -23,13 +23,12 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-2.0.0:0/2.0.0
+	~liri-base/cmake-shared-2.0.0_p9999
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
-EGIT_COMMIT="94b02829f7f9d2f5feab1c3c7fb66a332f4ea333"
-SRC_URI="
-https://github.com/lirios/libliri/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+SRC_URI=""
+EGIT_BRANCH="develop"
+EGIT_REPO_URI="https://github.com/lirios/libliri.git"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
 pkg_setup() {
@@ -51,6 +50,27 @@ pkg_setup() {
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTXML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Xml"
+	fi
+}
+
+src_unpack() {
+	git-r3_fetch
+	git-r3_checkout
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_expected=$(ver_cut 1-3 ${PV})
+	if ver_test ${v_expected} -ne ${v_live} ; then
+		eerror
+		eerror "Version bump required."
+		eerror
+		eerror "v_expected=${v_expected}"
+		eerror "v_live=${v_live}"
+		eerror
+		die
+	else
+		einfo
+		einfo "v_expected=${v_expected}"
+		einfo "v_live=${v_live}"
+		einfo
 	fi
 }
 
