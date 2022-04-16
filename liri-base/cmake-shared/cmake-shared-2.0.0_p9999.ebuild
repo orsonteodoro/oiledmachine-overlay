@@ -21,6 +21,7 @@ PATCHES=( "${FILESDIR}/${PN}-1.1.0_p20200511-pkgconfig-lib-basename.patch" )
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/cmake-shared.git"
 S="${WORKDIR}/${P}"
+PROPERTIES="live"
 
 src_unpack() {
 	git-r3_fetch
