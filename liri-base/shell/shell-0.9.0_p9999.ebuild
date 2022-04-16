@@ -26,10 +26,10 @@ DEPEND+=" >=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
 	  kde-frameworks/solid
 	  liri-base/eglfs
-	>=liri-base/fluid-1.0.0
-	  liri-base/libliri
-	>=liri-base/qtaccountsservice-1.3.0
-	>=liri-base/qtgsettings-1.1.0
+	~liri-base/fluid-1.0.0_p9999
+	~liri-base/libliri-0.9.0_p9999
+	~liri-base/qtaccountsservice-1.3.0_p9999
+	~liri-base/qtgsettings-1.1.0_p9999
 	  liri-base/wayland
 	  media-fonts/droid
 	  media-fonts/noto
