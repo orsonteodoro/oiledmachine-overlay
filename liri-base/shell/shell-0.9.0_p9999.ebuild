@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils
+inherit cmake-utils git-r3 eutils
 
 DESCRIPTION="QtQuick and Wayland shell for convergence"
 HOMEPAGE="https://github.com/lirios/shell"
@@ -44,13 +44,13 @@ BDEPEND+=" || (
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  virtual/pkgconfig
-	>=liri-base/cmake-shared-1.0.0:0/1.1.0"
-EGIT_COMMIT="ded359509328211e74346cdbfc6d67470b0fd872"
-SRC_URI="
-https://github.com/lirios/shell/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+	~liri-base/cmake-shared-2.0.0_p9999"
+SRC_URI=""
+EGIT_BRANCH="develop"
+EGIT_REPO_URI="https://github.com/lirios/shell.git"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+PROPERTIES="live"
 
 pkg_setup() {
 	QTCONCURRENT_PV=$(pkg-config --modversion Qt5Concurrent)
@@ -90,6 +90,27 @@ pkg_setup() {
 "If you emerged ${PN} directly, please start from the liri-meta package instead."
 }
 
+src_unpack() {
+	git-r3_fetch
+	git-r3_checkout
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_expected=$(ver_cut 1-3 ${PV})
+	if ver_test ${v_expected} -ne ${v_live} ; then
+		eerror
+		eerror "Version bump required."
+		eerror
+		eerror "v_expected=${v_expected}"
+		eerror "v_live=${v_live}"
+		eerror
+		die
+	else
+		einfo
+		einfo "v_expected=${v_expected}"
+		einfo "v_live=${v_live}"
+		einfo
+	fi
+}
+
 src_configure() {
 	local mycmakeargs=(
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
@@ -107,22 +128,18 @@ pkg_postinst() {
 	# https://github.com/lirios/shell/issues/63
 	glib-compile-schemas /usr/share/glib-2.0/schemas
 	xdg_pkg_postinst
-	ewarn \
-"\n"\
-"If you have installed the Pro OpenGL drivers from the AMDGPU-PRO package, \n"\
-"please switch to the Mesa GL driver instead.\n"\
-"\n"\
-"Failure to do so can cause the following:\n"\
-"  -The cursor and wallpaper will not show properly if you ran\n"\
-"   \`liri-session -- -platform xcb\`.\n"\
-"  -The -platform eglfs mode may not work at all.\n"\
-"\n"
-	ewarn
-	einfo \
-"To run Liri in X run:\n"\
-"  liri-session -- -platform xcb\n"\
-"\n"\
-"To run Liri in KMS from a VT run:\n"\
-"  liri-session -- -platform eglfs\n"\
-"\n"
+ewarn
+ewarn "Please switch use the Mesa GL driver.  Do not use the proprietary driver."
+ewarn
+ewarn "Failure to do so can cause the following:"
+ewarn "  -The cursor and wallpaper will not show properly if you ran"
+ewarn "   \`liri-session -- -platform xcb\`"
+ewarn "  -The -platform eglfs mode may not work at all."
+ewarn
+einfo "To run Liri in X run:"
+einfo "  liri-session -- -platform xcb"
+einfo
+einfo "To run Liri in KMS from a VT run:"
+einfo "  liri-session -- -platform eglfs"
+einfo
 }
