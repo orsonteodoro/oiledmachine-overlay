@@ -99,7 +99,7 @@ src_configure() {
 pkg_postinst() {
 	xdg_pkg_postinst
 ewarn
-ewarn "Please switch use the Mesa GL driver.  Do not use the proprietary driver."
+ewarn "Please switch to the Mesa GL driver.  Do not use the proprietary driver."
 ewarn
 ewarn "Failure to do so can cause the following:"
 ewarn "  -The cursor and wallpaper will not show properly if you ran"
