@@ -30,6 +30,7 @@ EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/libliri.git"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+PROPERTIES="live"
 
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
