@@ -11,7 +11,7 @@ LICENSE="LGPL-2.1+ FDL-1.3"
 
 # Live/snapshot do not get KEYWORDed.
 
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+=" examples test"
 QT_MIN_PV=5.8
 DEPEND+="
@@ -22,7 +22,7 @@ DEPEND+="
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-util/cmake-3.10.0
-	>=liri-base/cmake-shared-2.0.0_p9999
+	 ~liri-base/cmake-shared-2.0.0_p9999
 	  virtual/pkgconfig
 	  test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 SRC_URI=""

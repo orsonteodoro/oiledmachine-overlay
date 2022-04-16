@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils git-r3 eutils
+inherit cmake-utils eutils git-r3
 
 DESCRIPTION="Shared CMake functions and macros"
 HOMEPAGE="https://github.com/lirios/cmake-shared"
@@ -16,12 +16,12 @@ DEPEND+=" >=kde-frameworks/extra-cmake-modules-5.48.0"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0"
 SRC_URI=""
-RESTRICT="fetch mirror"
-PATCHES=( "${FILESDIR}/${PN}-1.1.0_p20200511-pkgconfig-lib-basename.patch" )
 EGIT_BRANCH="develop"
-EGIT_REPO_URI="https://github.com/lirios/cmake-shared.git"
+EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
 S="${WORKDIR}/${P}"
+PATCHES=( "${FILESDIR}/${PN}-1.1.0_p20200511-pkgconfig-lib-basename.patch" )
 PROPERTIES="live"
+RESTRICT="fetch mirror"
 
 src_unpack() {
 	git-r3_fetch

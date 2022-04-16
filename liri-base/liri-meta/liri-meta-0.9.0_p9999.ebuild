@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Meta package for liri"
 HOMEPAGE="https://liri.io/"
-SLOT="0/${PV}" # based on liri-base/liri-shell
+SLOT="0/$(ver_cut 1-3 ${PV})" # based on liri-base/liri-shell
 IUSE+=" appcenter browser calculator +files flatpak music
 networkmanager player power-manager pulseaudio qtintegration
 screencast screenshot +settings systemd +terminal text themes wallpaper

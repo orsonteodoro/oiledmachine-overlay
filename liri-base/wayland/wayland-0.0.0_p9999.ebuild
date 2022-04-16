@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils git-r3 eutils
+inherit cmake-utils eutils git-r3
 
 DESCRIPTION="Wayland client and server extensions "
 HOMEPAGE="https://github.com/lirios/wayland"
@@ -11,7 +11,7 @@ LICENSE="LGPL-3+"
 
 # Live/snapshots ebuilds do not get KEYWORDS
 
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+=" test"
 QT_MIN_PV=5.12
 DEPEND+="

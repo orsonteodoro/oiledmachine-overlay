@@ -11,7 +11,7 @@ LICENSE="BSD MPL-2.0 FDL-1.3+"
 
 # live ebuilds do not get KEYWORDed
 
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+=" doc test"
 QT_MIN_PV=5.10
 DEPEND+="

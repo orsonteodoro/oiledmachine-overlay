@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit eutils cmake-utils git-r3 xdg
+inherit cmake-utils eutils git-r3 xdg
 
 DESCRIPTION="Session manager"
 HOMEPAGE="https://github.com/lirios/session"
@@ -11,7 +11,7 @@ LICENSE="GPL-3+ LGPL-3+"
 
 # Live/snapshots do not get KEYWORDed.
 
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-3 ${PV})"
 IUSE+=" systemd"
 QT_MIN_PV=5.10
 DEPEND+="
@@ -19,7 +19,7 @@ DEPEND+="
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	 ~liri-base/libliri-0.9.0_p9999
-	 ~liri-base/qtgsettings-1.1.0_p9999
+	 ~liri-base/qtgsettings-1.3.0_p9999
 	  systemd? ( sys-apps/systemd )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="

@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit eutils
+inherit eutils git-r3
 
 DESCRIPTION="Shared imports and modules for projects using the qbs build system"
 HOMEPAGE="https://github.com/lirios/qbs-shared"
@@ -11,17 +11,17 @@ LICENSE="BSD"
 
 # Live/snapshots do not get KEYWORDed
 
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-3 ${PV})"
 # Upstream requires qbs 1.11 in README, but qbs file requires 1.10
 # If building qbs fails with 1.12, try with 1.15 which works.
 BDEPEND+=" >=dev-util/qbs-1.11"
-EGIT_COMMIT="c176452261a562a8f319fe068bd635adbdce141b"
-SRC_URI="
-https://github.com/lirios/qbs-shared/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+SRC_URI=""
+EGIT_BRANCH="develop"
+EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 QBS_CONFIG=( --settings-dir "${S}/qbs-config" )
+PROPERTIES="live"
 
 # Based on https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=liri-qbs-shared-git
 
@@ -29,6 +29,27 @@ pkg_setup() {
 	"${EROOT}/usr/bin/qbs" list-products 2>&1 | grep -q -F -e "Cannot mix incompatible"
 	if [[ "$?" == "0" ]] ; then
 		die "Re-emerge dev-util/qbs"
+	fi
+}
+
+src_unpack() {
+	git-r3_fetch
+	git-r3_checkout
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_expected=$(ver_cut 1-3 ${PV})
+	if ver_test ${v_expected} -ne ${v_live} ; then
+		eerror
+		eerror "Version bump required."
+		eerror
+		eerror "v_expected=${v_expected}"
+		eerror "v_live=${v_live}"
+		eerror
+		die
+	else
+		einfo
+		einfo "v_expected=${v_expected}"
+		einfo "v_live=${v_live}"
+		einfo
 	fi
 }
 

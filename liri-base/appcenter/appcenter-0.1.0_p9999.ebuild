@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils git-r3 eutils
+inherit cmake-utils eutils git-r3
 
 DESCRIPTION="This is the App Center for Liri OS for installing, updating, and managing applications built using Flatpak"
 HOMEPAGE="https://github.com/lirios/appcenter"
@@ -11,7 +11,7 @@ LICENSE="GPL-3+"
 
 # Live/snapshots do not get KEYWORDS.
 
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-3 ${PV})"
 QT_MIN_PV=5.10
 DEPEND+=" dev-libs/appstream[qt5]
 	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
@@ -21,15 +21,17 @@ DEPEND+=" dev-libs/appstream[qt5]
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	>=dev-qt/qtnetwork-${QT_MIN_PV}:5=
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
-	~liri-base/fluid-1.0.0_p9999
-	~liri-base/libliri-0.9.0_p9999
-	>=liri-base/qtaccountsservice-1.2.0
+	 ~liri-base/fluid-1.2.0_p9999
+	 ~liri-base/libliri-0.9.0_p9999
+	 ~liri-base/qtaccountsservice-1.3.0_p9999
 	  sys-apps/flatpak"
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
+BDEPEND+="
+	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
+	 ~liri-base/cmake-shared-2.0.0_p9999
 	  virtual/pkgconfig
-	~liri-base/cmake-shared-2.0.0_p9999"
+"
 SRC_URI=""
 EGIT_BRANCH="develop"
 EGIT_REPO_URI="https://github.com/lirios/${PN}.git"

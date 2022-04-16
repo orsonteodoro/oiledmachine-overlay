@@ -11,7 +11,7 @@ LICENSE="GPL-3+ LGPL-2.1+"
 
 # Live/snapshot ebuilds do not get KEYWORDed
 
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-3 ${PV})"
 QT_MIN_PV=5.10
 DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=

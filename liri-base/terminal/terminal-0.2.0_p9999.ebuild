@@ -3,60 +3,50 @@
 
 EAPI=7
 
-inherit cmake-utils eutils xdg
+inherit cmake-utils eutils git-r3 xdg
 
-DESCRIPTION="Settings application and modules for Liri OS"
-HOMEPAGE="https://github.com/lirios/settings"
-LICENSE="GPL-3+"
+DESCRIPTION="Terminal - A Material Design terminal"
+HOMEPAGE="https://github.com/lirios/terminal"
+LICENSE="LGPL-3+ MIT"
 
-# Live/snapshots do not get KEYWORDs.
+# Live/snapshot do not get KEYWORDs
 
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-3 ${PV})"
 QT_MIN_PV=5.10
-DEPEND+=" >=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
+DEPEND+="
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
-	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtnetwork-${QT_MIN_PV}:5=
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
-	>=dev-qt/qtxml-${QT_MIN_PV}:5=
-	>=liri-base/fluid-1.0.0
-	  liri-base/libliri
-	>=liri-base/qtaccountsservice-1.2.0
-	>=liri-base/qtgsettings-1.1.0
-	  liri-base/wayland
-	  sys-auth/polkit
-	  x11-misc/xkeyboard-config"
+	 ~liri-base/fluid-1.2.0_p9999
+	 ~liri-base/qtgsettings-1.3.0_p9999"
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
+BDEPEND+="
 	>=dev-util/cmake-3.10.0
-	  virtual/pkgconfig
-	>=liri-base/cmake-shared-1.0.0:0/1.1.0"
-EGIT_COMMIT="d1a6c3181ff2936d0105470d931e1c0951f122a7"
-SRC_URI="
-https://github.com/lirios/settings/archive/${EGIT_COMMIT}.tar.gz
-	-> ${CATEGORY}-${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
+	 ~liri-base/cmake-shared-2.0.0_p9999
+	  virtual/pkgconfig"
+SRC_URI=""
+EGIT_BRANCH="develop"
+EGIT_REPO_URI="https://github.com/lirios/${PN}.git"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+PROPERTIES="live"
 
 pkg_setup() {
-	QTCONCURRENT_PV=$(pkg-config --modversion Qt5Concurrent)
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
-	QTDBUS_PV=$(pkg-config --modversion Qt5DBus)
 	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+	QTNETWORK_PV=$(pkg-config --modversion Qt5Network)
 	QTQML_PV=$(pkg-config --modversion Qt5Qml)
 	QTQUICKCONTROLS2_PV=$(pkg-config --modversion Qt5QuickControls2)
 	QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
-	QTXML_PV=$(pkg-config --modversion Qt5Xml)
-	if ver_test ${QTCORE_PV} -ne ${QTCONCURRENT_PV} ; then
-		die "Qt5Core is not the same version as Qt5Concurrent"
-	fi
-	if ver_test ${QTCORE_PV} -ne ${QTDBUS_PV} ; then
-		die "Qt5Core is not the same version as Qt5DBus"
-	fi
 	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
 		die "Qt5Core is not the same version as Qt5Gui"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTNETWORK_PV} ; then
+		die "Qt5Core is not the same version as Qt5Network"
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
@@ -67,8 +57,26 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTWIDGETS_PV} ; then
 		die "Qt5Core is not the same version as Qt5Widgets"
 	fi
-	if ver_test ${QTCORE_PV} -ne ${QTXML_PV} ; then
-		die "Qt5Core is not the same version as Qt5Xml"
+}
+
+src_unpack() {
+	git-r3_fetch
+	git-r3_checkout
+	local v_live=$(grep -r -e "VERSION \"" "${S}/CMakeLists.txt" | head -n 1 | cut -f 2 -d "\"")
+	local v_expected=$(ver_cut 1-3 ${PV})
+	if ver_test ${v_expected} -ne ${v_live} ; then
+		eerror
+		eerror "Version bump required."
+		eerror
+		eerror "v_expected=${v_expected}"
+		eerror "v_live=${v_live}"
+		eerror
+		die
+	else
+		einfo
+		einfo "v_expected=${v_expected}"
+		einfo "v_live=${v_live}"
+		einfo
 	fi
 }
 
