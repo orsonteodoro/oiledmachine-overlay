@@ -3634,14 +3634,14 @@ ot-kernel_set_kconfig_set_timer_hz() {
 # Fits the HZ based on FPS
 ot-kernel_set_kconfig_set_video_timer_hz() {
 	if [[ "${OT_KERNEL_FPS}" =~ ("30"|"60"|"90"|"120"|"150"|"180"|"210"|"240"|"300") ]] ; then
-		echo "300"
+		ot-kernel_set_kconfig_set_timer_hz "300"
 	elif [[ "${OT_KERNEL_FPS}" =~ ("25"|"50"|"100"|"200"|"250") ]] ; then
-		echo "250"
+		ot-kernel_set_kconfig_set_timer_hz "250"
 	else
 		if [[ "${arch}" == "mips" ]] ; then
-			echo "250"
+			ot-kernel_set_kconfig_set_timer_hz "250"
 		else
-			echo "300"
+			ot-kernel_set_kconfig_set_timer_hz "300"
 		fi
 	fi
 }
@@ -3651,9 +3651,9 @@ ot-kernel_set_kconfig_set_video_timer_hz() {
 # Fits the HZ to maximum
 ot-kernel_set_kconfig_set_highest_timer_hz() {
 	if [[ "${arch}" == "mips" ]] ; then
-		echo "1024"
+		ot-kernel_set_kconfig_set_timer_hz "1024"
 	else
-		echo "1000"
+		ot-kernel_set_kconfig_set_timer_hz "1000"
 	fi
 }
 
@@ -3662,9 +3662,9 @@ ot-kernel_set_kconfig_set_highest_timer_hz() {
 # Fits the HZ to maximum
 ot-kernel_set_kconfig_set_lowest_timer_hz() {
 	if [[ "${arch}" == "mips" ]] ; then
-		echo "24"
+		ot-kernel_set_kconfig_set_timer_hz "24"
 	else
-		echo "100"
+		ot-kernel_set_kconfig_set_timer_hz "100"
 	fi
 }
 
@@ -4273,7 +4273,7 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 	elif [[ "${work_profile}" == "cryptocurrency-miner-workstation" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
-		ot-kernel_set_kconfig_set_timer_hz # For balance
+		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
@@ -4315,7 +4315,7 @@ ot-kernel_set_kconfig_work_profile() {
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 	elif [[ "${work_profile}" == "distributed-computing-workstation" ]] ; then
-		ot-kernel_set_kconfig_set_timer_hz # For balance
+		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
