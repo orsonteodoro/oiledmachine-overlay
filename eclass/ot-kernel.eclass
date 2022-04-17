@@ -3968,7 +3968,9 @@ ot-kernel_set_kconfig_no_hz_full() {
 # @DESCRIPTION:
 # Optimizes TCP connections for satellite.
 ot-kernel_set_kconfig_satellite_internet() {
-	ot-kernel_set_kconfig_set_tcp_cong_ctrl "hybla" # Optimize satellite internet for throughput
+	if [[ "${OT_KERNEL_SATELLITE_INTERNET}" == "1" ]] ; then
+		ot-kernel_set_kconfig_set_tcp_cong_ctrl "hybla" # Optimize satellite internet for throughput
+	fi
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
