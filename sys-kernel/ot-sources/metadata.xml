@@ -1037,9 +1037,9 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
-    OT_KERNEL_PCIE_MPS -- sets the maximum paylond size and max read request
-    size.  This setting may improve performance by reducing overhead
-    and packets transferred.
+    OT_KERNEL_PCIE_MPS -- sets the Maximum Paylond Size (MPS) and Max Read
+    Request Size (MRRS).  This setting may improve performance by reducing
+    overhead and packets transferred.
 
     Acceptable values:
 
