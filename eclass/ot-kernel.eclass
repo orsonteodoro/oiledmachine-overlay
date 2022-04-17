@@ -3609,14 +3609,14 @@ ot-kernel_set_kconfig_set_default_timer_hz() {
 	elif [[ "${arch}" == "arm" ]] ; then
 		if grep -q -E -e "^CONFIG_SOC_AT91RM9200=y" "${path_config}" ; then
 			ot-kernel_set_configopt "CONFIG_HZ_FIXED" "128"
-			ot-kernel_y_configopt "CONFIG_HZ" "128"
+			ot-kernel_set_configopt "CONFIG_HZ" "128"
 		else
-			ot-kernel_set_configopt "CONFIG_HZ_250"
-			ot-kernel_y_configopt "CONFIG_HZ" "100"
+			ot-kernel_y_configopt "CONFIG_HZ_250"
+			ot-kernel_set_configopt "CONFIG_HZ" "100"
 		fi
 	else
-		ot-kernel_set_configopt "CONFIG_HZ_250"
-		ot-kernel_y_configopt "CONFIG_HZ" "250"
+		ot-kernel_y_configopt "CONFIG_HZ_250"
+		ot-kernel_set_configopt "CONFIG_HZ" "250"
 	fi
 }
 
@@ -3625,9 +3625,10 @@ ot-kernel_set_kconfig_set_default_timer_hz() {
 # Wrapper for setting the HZ
 ot-kernel_set_kconfig_set_timer_hz() {
 	local v="${1}"
-	ot-kernel_set_configopt "CONFIG_HZ_${v}"
-	ot-kernel_y_configopt "CONFIG_HZ" "${v}"
-	einfo "Timer frequency is ${v} Hz"
+	ot-kernel_y_configopt "CONFIG_HZ_${v}"
+	ot-kernel_set_configopt "CONFIG_HZ" "${v}"
+	local x=$(grep -r -e "CONFIG_HZ=" "${BUILD_DIR}/.config" | cut -f 2 -d "=")
+	einfo "Timer frequency is ${x} Hz"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_set_timer_hz
