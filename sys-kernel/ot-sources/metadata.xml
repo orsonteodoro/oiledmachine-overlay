@@ -1037,6 +1037,23 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
+    OT_KERNEL_PCIE_MPS -- sets the maximum paylond size and max read request
+    size.  This setting may improve performance by reducing overhead
+    and packets transferred.
+
+    Acceptable values:
+
+      bios - use bios defaults
+      default - use PCIe bridge value, or optimimal hotplug MPS
+      hotplug - MPS lowered for compatibility to prevent hotplug fail
+      p2p - MPS lowered for compatibility in pcie-to-pcie to prevent fail
+      pcie-to-pcie - alias for p2p
+      performance - use max parent MPS and increase MRRS to no more than MPS
+      safe - max MPS common to all devices at boot
+      unset - use manual settings
+
+
+
     OT_KERNEL_PKGFLAGS_ACCEPT -- is a list of auto apply-able kernel
     config symbols to accept per package-wise.  They should be listed as
     space separated.

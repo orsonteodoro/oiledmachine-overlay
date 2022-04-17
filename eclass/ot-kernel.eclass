@@ -1995,6 +1995,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_MENUCONFIG_FRONTEND
 	unset OT_KERNEL_MODULE_SUPPORT
 	unset OT_KERNEL_MODULES_COMPRESSOR
+	unset OT_KERNEL_PCIE_MPS
 	unset OT_KERNEL_PKGFLAGS_ACCEPT
 	unset OT_KERNEL_PKGFLAGS_REJECT
 	unset OT_KERNEL_PKU
@@ -2830,7 +2831,7 @@ ot-kernel_set_kconfig_iommu_domain_type() {
 			ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 			ot-kernel_y_configopt "CONFIG_PCI_MSI"
 			ot-kernel_y_configopt "CONFIG_ACPI"
-			ot-kernel_y_configopt "CONFIG_"
+			#ot-kernel_y_configopt "CONFIG_" # TODO: reinspect if incomplete work
 
 			ot-kernel_y_configopt "CONFIG_CONFIG_IRQ_REMAP"
 		fi
@@ -3257,6 +3258,24 @@ ot-kernel_set_kconfig_oflag() {
 	else
 		einfo "Setting .config with -O2 from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_pcie_mps
+# @DESCRIPTION:
+# Sets the kernel config for MPS (Max Payload Size) for performance or stability
+ot-kernel_set_kconfig_pcie_mps() {
+	grep -q -E -e "^CONFIG_PCI=y" "${path_config}" || return
+	if [[ "${OT_KERNEL_PCIE_MPS}" =~ ("p2p"|"hotplug"|"pcie-to-pcie") ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCIE_BUS_PEER2PEER"
+	elif [[ "${OT_KERNEL_PCIE_MPS}" == "performance" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
+	elif [[ "${OT_KERNEL_PCIE_MPS}" == "safe" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCIE_BUS_SAFE"
+	elif [[ "${OT_KERNEL_PCIE_MPS}" == "default" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCIE_BUS_DEFAULT"
+	elif [[ "${OT_KERNEL_PCIE_MPS}" == "bios" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PCIE_BUS_TUNE_OFF"
 	fi
 }
 
@@ -3722,6 +3741,21 @@ ot-kernel_set_kconfig_work_profile_init() {
 		done
 	fi
 
+	local PCI_HEIR_OPT=(
+		TUNE_OFF
+		DEFAULT
+		SAFE
+		PERFORMANCE
+		PEER2PEER
+	)
+
+	if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		for s in ${PCI_HEIR_OPT[@]} ; do
+			ot-kernel_unset_configopt "CONFIG_PCIE_BUS_${s}"
+		done
+	fi
+
 	local PREEMPTION_MODELS=(
 		PREEMPT_NONE
 		PREEMPT_VOLUNTARY
@@ -4081,9 +4115,6 @@ ot-kernel_set_kconfig_work_profile() {
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
-		fi
 		if grep -q -E -e "^CONFIG_ARCH_SUPPORTS_ACPI=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_ACPI"
 			ot-kernel_y_configopt "CONFIG_INPUT"
@@ -4127,9 +4158,6 @@ ot-kernel_set_kconfig_work_profile() {
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
-		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
@@ -4143,9 +4171,6 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
@@ -4161,9 +4186,6 @@ ot-kernel_set_kconfig_work_profile() {
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
-		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 	elif [[ "${work_profile}" == "gamedev" ]] ; then
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input
@@ -4174,9 +4196,6 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
@@ -4191,9 +4210,6 @@ ot-kernel_set_kconfig_work_profile() {
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
-		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 	elif [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz
@@ -4204,9 +4220,6 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server") ]] ; then
@@ -4232,9 +4245,6 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
 	elif [[ "${work_profile}" =~ ("jukebox"|"dvr"|"mainstream-desktop") ]] ; then
@@ -4264,9 +4274,6 @@ ot-kernel_set_kconfig_work_profile() {
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
-		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 		ot-kernel_y_configopt "CONFIG_PM"
 		if grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
@@ -4285,9 +4292,6 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_PM"
@@ -4313,9 +4317,6 @@ ot-kernel_set_kconfig_work_profile() {
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
-		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 	elif [[ "${work_profile}" == "distributed-computing-workstation" ]] ; then
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
@@ -4325,9 +4326,6 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
-		if grep -q -E -e "^CONFIG_PCI=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 	fi
@@ -4637,6 +4635,7 @@ ot-kernel_src_configure() {
 		ot-kernel_set_kconfig_zswap
 		ot-kernel_set_kconfig_uksm
 		ot-kernel_set_kconfig_work_profile
+		ot-kernel_set_kconfig_pcie_mps
 		ot-kernel_set_kconfig_satellite_internet
 		ot-kernel_set_kconfig_usb_autosuspend
 
