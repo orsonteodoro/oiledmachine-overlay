@@ -2122,7 +2122,7 @@ ot-kernel_set_kconfig_set_tcp_cong_ctrl() {
 	done
 	einfo "Using ${picked_alg} for TCP congestion control"
 	ot-kernel_y_configopt "CONFIG_TCP_CONG_${picked_alg}"
-	ot-kernel_set_configopt "DEFAULT_TCP_CONG" "\"${picked_alg,,}\""
+	ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"${picked_alg,,}\""
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_boot_args
