@@ -1103,6 +1103,16 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
+    OT_KERNEL_SATELLITE_INTERNET -- Set this to optimize satellite internet.
+
+    Acceptable values:
+
+      1, 0, unset
+
+    Unset is equivalent to manual.
+
+
+
     OT_KERNEL_SGX -- sets SGX (Software Guard eXtensions) support for supported
     hardware.
 

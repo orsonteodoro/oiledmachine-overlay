@@ -1157,6 +1157,7 @@ apply_bbrv2() {
 	local c
 	for c in ${BBR2_COMMITS[@]} ; do
 		_fpatch "${DISTDIR}/bbrv2-${BBR2_VERSION}-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		rm config.gce 2>/dev/null # included in bbr2 patch
 	done
 }
 
@@ -2085,18 +2086,43 @@ ot-kernel_is_build() {
 
 # ot-kernel_set_kconfig_mem need rework
 
-# @FUNCTION: ot-kernel_set_kconfig_bbr2
+# @FUNCTION: ot-kernel_set_kconfig_set_tcp_cong_ctrl_bbr
 # @DESCRIPTION:
-# Sets the kernel config for bbr2
-ot-kernel_set_kconfig_bbr2() {
-	# Every config check below may mod the default config.
-	if has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
-		einfo "Enabled bbrv2 in .config"
-		ot-kernel_y_configopt "CONFIG_TCP_CONG_BBR2"
-		ot-kernel_y_configopt "CONFIG_DEFAULT_BBR2"
-		ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"bbr2\""
+# Sets the kernel config for the TCP congestion control to BBR.
+ot-kernel_set_kconfig_set_tcp_cong_ctrl_bbr() {
+	if has bbrv2 ${IUSE_EFFECTIVE} \
+		&& ot-kernel_use bbrv2 ; then
+		ot-kernel_set_kconfig_set_tcp_cong_ctrl "bbr2"
+	else
+		ot-kernel_set_kconfig_set_tcp_cong_ctrl "bbr"
 	fi
-	rm config.gce 2>/dev/null # included in bbr2 patch
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_tcp_cong_ctrl
+# @DESCRIPTION:
+# Sets the kernel config for the TCP congestion control.
+ot-kernel_set_kconfig_set_tcp_cong_ctrl() {
+	local picked_alg="${1^^}"
+	local ALG=(
+		BIC
+		CUBIC
+		HTCP
+		HYBLA
+		VEGAS
+		VENO
+		WESTWOOD
+		DCTCP
+		CDG
+		BBR
+		BBR2
+		RENO
+	)
+	for alg in ${ALG[@]} ; do
+		ot-kernel_unset_configopt "CONFIG_DEFAULT_${alg}"
+	done
+	einfo "Using ${picked_alg} for TCP congestion control"
+	ot-kernel_y_configopt "CONFIG_TCP_CONG_${picked_alg}"
+	ot-kernel_set_configopt "DEFAULT_TCP_CONG" "\"${picked_alg,,}\""
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_boot_args
@@ -3938,6 +3964,13 @@ ot-kernel_set_kconfig_no_hz_full() {
 	ot-kernel_set_kconfig_kernel_cmdline "nohz_full=all"
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_satellite_internet
+# @DESCRIPTION:
+# Optimizes TCP connections for satellite.
+ot-kernel_set_kconfig_satellite_internet() {
+	ot-kernel_set_kconfig_set_tcp_cong_ctrl "hybla" # Optimize satellite internet for throughput
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
 # @DESCRIPTION:
 # Configures the default power policies and latencies for the kernel.
@@ -3953,9 +3986,13 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_set_kconfig_work_profile_init
 	fi
 
-	if [[ -z "${work_profile}" ]] ; then
+	if [[ -z "${work_profile}" || "${work_profile}" =~ ("manual"|"custom") ]] ; then
 		:
-	elif [[ "${work_profile}" =~ ("manual"|"custom") ]] ; then
+	else
+		ot-kernel_set_kconfig_set_tcp_cong_ctrl_bbr
+	fi
+
+	if [[ -z "${work_profile}" || "${work_profile}" =~ ("manual"|"custom") ]] ; then
 		:
 	elif [[ "${work_profile}" =~ ("smartphone"|"tablet") ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
@@ -4468,13 +4505,6 @@ ewarn "or similar."
 		)
 	fi
 
-	if has bbrv2 ${IUSE_EFFECTIVE} ; then
-		if ot-kernel_use bbrv2 ; then
-			# For setting as default
-			symbols+=( CONFIG_TCP_CONG_BBR2 )
-		fi
-	fi
-
 	symbols=($(echo "${symbols[@]}" | tr " " "\n" | sort))
 	einfo "Fixing config for boot"
 	for s in ${symbols[@]} ; do
@@ -4601,8 +4631,8 @@ ot-kernel_src_configure() {
 		ot-kernel_set_kconfig_zswap
 		ot-kernel_set_kconfig_uksm
 		ot-kernel_set_kconfig_work_profile
+		ot-kernel_set_kconfig_satellite_internet
 		ot-kernel_set_kconfig_usb_autosuspend
-		ot-kernel_set_kconfig_bbr2
 
 		ot-kernel_set_kconfig_firmware
 
