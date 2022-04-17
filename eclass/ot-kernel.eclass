@@ -3609,9 +3609,10 @@ ot-kernel_set_kconfig_set_default_timer_hz() {
 	elif [[ "${arch}" == "arm" ]] ; then
 		if grep -q -E -e "^CONFIG_SOC_AT91RM9200=y" "${path_config}" ; then
 			ot-kernel_set_configopt "CONFIG_HZ_FIXED" "128"
+			ot-kernel_y_configopt "CONFIG_HZ_128"
 			ot-kernel_set_configopt "CONFIG_HZ" "128"
 		else
-			ot-kernel_y_configopt "CONFIG_HZ_250"
+			ot-kernel_y_configopt "CONFIG_HZ_100"
 			ot-kernel_set_configopt "CONFIG_HZ" "100"
 		fi
 	else
