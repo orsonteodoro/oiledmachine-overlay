@@ -4295,6 +4295,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel overhead, maximize computation time
 		if [[ "${work_profile}" == "hpc" ]] ; then
 			ot-kernel_set_kconfig_no_hz_full
+			ot-kernel_set_kconfig_set_tcp_cong_ctrl "dctcp"
 		else
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		fi
