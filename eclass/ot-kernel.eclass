@@ -3627,6 +3627,7 @@ ot-kernel_set_kconfig_set_timer_hz() {
 	local v="${1}"
 	ot-kernel_set_configopt "CONFIG_HZ_${v}"
 	ot-kernel_y_configopt "CONFIG_HZ" "${v}"
+	einfo "Timer frequency is ${v}"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_set_timer_hz
