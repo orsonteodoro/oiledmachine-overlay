@@ -1044,10 +1044,10 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     Acceptable values:
 
       bios - use bios defaults
-      default - use PCIe bridge value, or optimimal hotplug MPS
-      hotplug - MPS lowered for compatibility to prevent hotplug fail
-      p2p - MPS lowered for compatibility in pcie-to-pcie to prevent fail
-      pcie-to-pcie - alias for p2p
+      default - use PCIe bridge value
+      hotplug-optimal - alias for default
+      hotplug-safe - MPS lowered for compatibility to prevent hotplug fail
+      p2p-safe - MPS lowered for compatibility in pcie-to-pcie to prevent fail
       performance - use max parent MPS and increase MRRS to no more than MPS
       safe - max MPS common to all devices at boot
       unset - use manual settings

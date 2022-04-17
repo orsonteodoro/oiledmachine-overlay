@@ -3266,13 +3266,13 @@ ot-kernel_set_kconfig_oflag() {
 # Sets the kernel config for MPS (Max Payload Size) for performance or stability
 ot-kernel_set_kconfig_pcie_mps() {
 	grep -q -E -e "^CONFIG_PCI=y" "${path_config}" || return
-	if [[ "${OT_KERNEL_PCIE_MPS}" =~ ("p2p"|"hotplug"|"pcie-to-pcie") ]] ; then
+	if [[ "${OT_KERNEL_PCIE_MPS}" =~ ("p2p-safe"|"hotplug-safe") ]] ; then
 		ot-kernel_y_configopt "CONFIG_PCIE_BUS_PEER2PEER"
 	elif [[ "${OT_KERNEL_PCIE_MPS}" == "performance" ]] ; then
 		ot-kernel_y_configopt "CONFIG_PCIE_BUS_PERFORMANCE"
 	elif [[ "${OT_KERNEL_PCIE_MPS}" == "safe" ]] ; then
 		ot-kernel_y_configopt "CONFIG_PCIE_BUS_SAFE"
-	elif [[ "${OT_KERNEL_PCIE_MPS}" == "default" ]] ; then
+	elif [[ "${OT_KERNEL_PCIE_MPS}" =~ ("default"|"hotplug-optimal") ]] ; then
 		ot-kernel_y_configopt "CONFIG_PCIE_BUS_DEFAULT"
 	elif [[ "${OT_KERNEL_PCIE_MPS}" == "bios" ]] ; then
 		ot-kernel_y_configopt "CONFIG_PCIE_BUS_TUNE_OFF"
