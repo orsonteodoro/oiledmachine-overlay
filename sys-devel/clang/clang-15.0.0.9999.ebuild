@@ -80,6 +80,8 @@ LLVM_TEST_COMPONENTS=(
 	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
 )
 LLVM_PATCHSET=9999-r3
+LLVM_USE_TARGETS=llvm
+llvm.org_set_globals
 PATCHES_HARDENED=(
 	"${FILESDIR}/clang-12.0.1-enable-SSP-by-default.patch"
 	"${FILESDIR}/clang-13.0.0_rc2-change-SSP-buffer-size-to-4.patch"
@@ -87,8 +89,6 @@ PATCHES_HARDENED=(
 	"${FILESDIR}/clang-12.0.1-enable-full-relro-by-default.patch"
 	"${FILESDIR}/clang-12.0.1-version-info.patch"
 )
-LLVM_USE_TARGETS=llvm
-llvm.org_set_globals
 #if [[ ${PV} == *.9999 ]] ; then
 EGIT_REPO_URI_LLVM_TEST_SUITE="https://github.com/llvm/llvm-test-suite.git"
 EGIT_BRANCH_LLVM_TEST_SUITE="release/${SLOT}.x"
@@ -363,6 +363,7 @@ get_distribution_components() {
 			clang-query
 			clang-reorder-fields
 			clang-tidy
+			clang-tidy-headers
 			clangd
 			find-all-symbols
 			modularize
@@ -560,13 +561,13 @@ _configure() {
 		-DCLANG_DEFAULT_CXX_STDLIB=$(usex default-libcxx libc++ "")
 		-DCLANG_DEFAULT_RTLIB=$(usex default-compiler-rt compiler-rt "")
 		-DCLANG_DEFAULT_LINKER=$(usex default-lld lld "")
+		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex hardened)
 		-DCLANG_DEFAULT_UNWINDLIB=$(usex default-compiler-rt libunwind "")
 
 		-DCLANG_ENABLE_ARCMT=$(usex static-analyzer)
 		-DCLANG_ENABLE_STATIC_ANALYZER=$(usex static-analyzer)
 
 		-DPython3_EXECUTABLE="${PYTHON}"
-		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex hardened)
 	)
 	use test && mycmakeargs+=(
 		-DLLVM_MAIN_SRC_DIR="${WORKDIR}/llvm"
@@ -1152,6 +1153,11 @@ _install() {
 	fi
 	if [[ -e "${ED}"/usr/lib/llvm/${slot}/$(get_libdir)/clang ]] ; then
 		mv "${ED}"/usr/lib/llvm/${slot}/$(get_libdir)/clang "${ED}"/usr/include/clangrt || die
+	fi
+	if multilib_is_native_abi && [[ -e "${ED}"/usr/include/clang-tidy ]] ; then
+		# don't wrap clang-tidy headers, the list is too long
+		# (they're fine for non-native ABI but enabling the targets is problematic)
+		mv "${ED}"/usr/include/clang-tidy "${T}/" || die
 	fi
 }
 
