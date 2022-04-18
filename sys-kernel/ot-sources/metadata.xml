@@ -941,6 +941,19 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     See also:
 
       XEN_PCI_PASSTHROUGH
+      OT_KERNEL_IRQ_REMAP
+
+
+
+    OT_KERNEL_IRQ_REMAP -- Sets IRQ remapping for virtual machine hypervisors
+    or hosts to prevent malicious MSIs.  This option enables use of x2APIC
+    mode.
+
+    Acceptable values:
+
+      1 (default when iommu is pt, lazy, or strict), 0, unset
+
+    Unset is the same as manual.
 
 
 

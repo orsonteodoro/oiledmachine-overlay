@@ -2828,15 +2828,16 @@ ot-kernel_set_kconfig_iommu_domain_type() {
 	if [[ "${iommu}" =~ ("pt"|"lazy"|"strict") ]] ; then
 		ot-kernel_y_configopt "CONFIG_MMU"
 		ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
-		if [[ "${arch}" == "x86_64" ]] ; then
+		if [[ "${arch}" == "x86_64" && "${OT_KERNEL_IRQ_REMAP:-1}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_MMU"
 			ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
 			ot-kernel_y_configopt "CONFIG_PCI_MSI"
 			ot-kernel_y_configopt "CONFIG_ACPI"
-			#ot-kernel_y_configopt "CONFIG_" # TODO: reinspect if incomplete work
-
-			ot-kernel_y_configopt "CONFIG_CONFIG_IRQ_REMAP"
+			ot-kernel_y_configopt "CONFIG_IRQ_REMAP"
 		fi
+	fi
+	if [[ "${OT_KERNEL_IRQ_REMAP}" == "0" ]] ; then
+		ot-kernel_unset_configopt "CONFIG_IRQ_REMAP"
 	fi
 }
 
