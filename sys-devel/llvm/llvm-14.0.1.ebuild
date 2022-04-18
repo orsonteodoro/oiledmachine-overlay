@@ -20,7 +20,7 @@ HOMEPAGE="https://llvm.org/"
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3"
 IUSE+=" bolt bolt-prepare +bootstrap -dump jemalloc lto pgo pgo_trainer_build_self
 pgo_trainer_test_suite souper tcmalloc r3"
@@ -89,8 +89,8 @@ PATCHES=(
 )
 
 LLVM_COMPONENTS=( llvm bolt cmake third-party )
-LLVM_MANPAGES=build
-LLVM_PATCHSET=9999-r3
+LLVM_MANPAGES=pregenerated
+LLVM_PATCHSET=14.0.1
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
 #if [[ ${PV} == *.9999 ]] ; then
