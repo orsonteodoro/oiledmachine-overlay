@@ -99,23 +99,25 @@ gen_lto_bdepend() {
 	done
 }
 
-BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
-BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
-BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
+BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 15) ) )"
+BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 15) ) )"
+BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 15) ) )"
+BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 15) ) )"
+BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 15) ) )"
+BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 15) ) ) )"
+BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 15) ) ) )"
 
 BDEPEND+="
 	test? ( >=sys-devel/clang-3.9.0
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)"
 
-LLVM_COMPONENTS=( libcxx{abi,} llvm/cmake cmake )
+LLVM_COMPONENTS=( runtimes libcxx{abi,} llvm/cmake cmake )
+LLVM_TEST_COMPONENTS=( llvm/utils/llvm-lit )
 llvm.org_set_globals
 
 python_check_deps() {
+	use test || return 0
 	has_version "dev-python/lit[${PYTHON_USEDEP}]"
 }
 
@@ -125,7 +127,7 @@ pkg_setup() {
 	if [[ ${CHOST} != *-darwin* ]] || has_version dev-lang/llvm; then
 		llvm_pkg_setup
 	fi
-	use test && python-any-r1_pkg_setup
+	python-any-r1_pkg_setup
 }
 
 get_build_types() {
