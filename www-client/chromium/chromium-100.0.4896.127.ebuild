@@ -1557,7 +1557,15 @@ get_llvm_profdata_version_info()
 	local v
 	local ver
 	# The live versions can have different profdata versions over time.
-	for v in "11.1.0" "12.0.1" "13.0.0" "14.0.0_rc1" "14.0.0.9999" "15.0.0.9999" ; do
+	for v in \
+		"11.1.0" \
+		"12.0.1" \
+		"13.0.0" \
+		"13.0.1" \
+		"14.0.0" \
+		"14.0.1" \
+		"15.0.0.9999" \
+	; do
 		(( $(ver_cut 1 "${v}") != ${LLVM_SLOT} )) && continue
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
 		local llvm_version
