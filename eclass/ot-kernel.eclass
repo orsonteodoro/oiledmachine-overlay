@@ -664,10 +664,12 @@ NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463" # Mon Jun 21 06:34:23 PM UTC 2021
 
 verify_clang_compiler_updated() {
 	local p
-	for p in "sys-devel/clang-13.0.1" \
-		"sys-devel/clang-14.0.0_rc1" \
-		"sys-devel/clang-runtime-14.0.0.9999" \
-		"sys-devel/clang-runtime-15.0.0.9999" \
+	for p in \
+		"sys-devel/clang-13.0.0" \
+		"sys-devel/clang-13.0.1" \
+		"sys-devel/clang-14.0.0" \
+		"sys-devel/clang-14.0.1" \
+		"sys-devel/clang-15.0.0.9999" \
 	; do
 		einfo "Verifying prereqs for PGO for ${p}"
 		if has_version "=${p}" ; then
@@ -711,8 +713,8 @@ verify_profraw_compatibility() {
 		"12.0.1" \
 		"13.0.0" \
 		"13.0.1" \
-		"14.0.0_rc1" \
-		"14.0.0.9999" \
+		"14.0.0" \
+		"14.0.1" \
 		"15.0.0.9999" \
 	; do
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
