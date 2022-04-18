@@ -91,13 +91,13 @@ gen_lto_bdepend() {
 	done
 }
 
-BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 14) ) )"
-BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
-BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
-BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
+BDEPEND+=" cfi? ( || ( $(gen_cfi_bdepend 12 15) ) )"
+BDEPEND+=" cfi-cast? ( || ( $(gen_cfi_bdepend 12 15) ) )"
+BDEPEND+=" cfi-icall? ( || ( $(gen_cfi_bdepend 12 15) ) )"
+BDEPEND+=" cfi-vcall? ( || ( $(gen_cfi_bdepend 12 15) ) )"
+BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 15) ) )"
+BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 15) ) ) )"
+BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 15) ) ) )"
 
 BDEPEND+="
 	test? (
