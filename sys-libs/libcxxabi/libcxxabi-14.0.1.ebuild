@@ -211,8 +211,8 @@ _configure_abi() {
 		-DLLVM_ENABLE_RUNTIMES="libcxxabi;libcxx"
 		-DLLVM_INCLUDE_TESTS=OFF
 		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
-		-DLIBCXXABI_ENABLE_SHARED=ON
-		-DLIBCXXABI_ENABLE_STATIC=$(usex static-libs)
+		#
+		#
 		-DLIBCXXABI_INCLUDE_TESTS=$(usex test)
 		-DLIBCXXABI_USE_LLVM_UNWINDER=$(usex libunwind)
 		-DLIBCXXABI_USE_COMPILER_RT=${want_compiler_rt}
