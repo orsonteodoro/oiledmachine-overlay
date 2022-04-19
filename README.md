@@ -285,7 +285,6 @@ the metadata.xml.
 | net-libs/cef-bin | Chromium Embedded Framework with prebuilt chromium.  Used in obs-studio. |
 | net-libs/nodejs | This is a multslot ebuild fork of Node.js.  Tracks all latest LTS releases. |
 | net-libs/webkit-gtk | This ebuild has multi-ABI support meaning it can build 32-bit webkit-gtk on a 64-bit machine and both 64-bit and 32-bit builds can be present.  You may also choose to build just one ABI.  This ebuild mod also allows you to build the MiniBrowser frontend. |
-| net-misc/googler | This is a Google command line client. |
 | net-misc/rainbowstream | This is a Twitter command line client. |
 | sci-geosciences/google-earth-pro | This is a working ebuild of Google Earth Pro.  The Gentoo overlay had abandoned the old Google Earth ebuild. |
 | sci-physics/bullet | This library is a dependency for BulletSharpPInvoke.  It combines all modules, which were originally seperate dlls, into one shared object/dll. |
