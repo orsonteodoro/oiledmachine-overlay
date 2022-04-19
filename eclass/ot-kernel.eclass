@@ -2615,6 +2615,7 @@ ot-kernel_set_kconfig_futex() {
 # Sets the kernel config related to kernel hardening
 ot-kernel_set_kconfig_hardening_level() {
 	einfo "Using ${hardening_level} hardening level"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
 	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
 		:
 	elif [[ "${hardening_level}" == "trusted" ]] ; then
@@ -3303,12 +3304,12 @@ ot-kernel_set_kconfig_pgo() {
 		if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
 			einfo "Using profraw v8 for >= LLVM 15"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0.9999" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.1" ; then
 			einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0_rc1" ; then
-			einfo "Using profraw v6 for LLVM 14"
-			ot-kernel_y_configopt "CONFIG_PROFRAW_V6"
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0" ; then
+			einfo "Using profraw v8 for LLVM 14"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.1" ; then
 			einfo "Using profraw v7 for LLVM 13"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
@@ -3432,6 +3433,47 @@ ot-kernel_set_kconfig_scs() {
 	else
 		einfo "Disabling SCS support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_slab_allocator
+# @DESCRIPTION:
+# Sets the kernel config for a slab allocator
+ot-kernel_set_kconfig_slab_allocator() {
+	local alloc_name="${1^^}"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_unset_configopt "CONFIG_SLUB_CPU_PARTIAL"
+	ot-kernel_unset_configopt "CONFIG_SLAB" # For cache benefits, < ~2% CPU usage and >= ~10% network throughput compared to slub
+	ot-kernel_unset_configopt "CONFIG_SLUB" # For mainframes
+	ot-kernel_unset_configopt "CONFIG_SLOB" # For embedded
+	ot-kernel_y_configopt "CONFIG_${alloc_name}"
+	einfo "Using ${alloc_name}"
+	if [[ "${alloc_name}" == "SLUB" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SLUB_CPU_PARTIAL"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_auto_set_slab_allocator
+# @DESCRIPTION:
+# Auto sets the slab allocator
+ot-kernel_set_kconfig_auto_set_slab_allocator() {
+	local slab_allocator="${OT_KERNEL_SLAB_ALLOCATOR:-auto}"
+	if [[ "${slab_allocator}" =~ ("custom"|"manual") ]] ; then
+		local x=$(grep -E -e "CONFIG_(SLAB|SLOB|SLUB)=y" "${BUILD_DIR}/.config" \
+			| cut -f 2 -d "_" \
+			| cut -f "1" -d "=")
+		einfo "Using ${x}"
+	elif [[ "${slab_allocator}" == "auto" ]] ; then
+		if grep -q -E -e "^CONFIG_EMBEDDED=y" "${path_config}" ; then
+			ot-kernel_set_kconfig_slab_allocator "slob"
+		elif grep -q -E -e "^CONFIG_NUMA=y" "${path_config}" \
+			|| [[ "${processor_class}" =~ "numa" ]] ; then
+			ot-kernel_set_kconfig_slab_allocator "slub"
+		else
+			ot-kernel_set_kconfig_slab_allocator "slab"
+		fi
+	elif [[ "${slab_allocator}" =~ ("slab"|"slob"|"slub") ]] ; then
+		ot-kernel_set_kconfig_slab_allocator "${slab_allocator}"
 	fi
 }
 
@@ -4308,6 +4350,7 @@ ot-kernel_set_kconfig_work_profile() {
 		if [[ "${work_profile}" == "hpc" ]] ; then
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_kconfig_set_tcp_cong_ctrl "dctcp"
+			ot-kernel_set_kconfig_slab_allocator "slub"
 		else
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		fi
@@ -4631,6 +4674,7 @@ ot-kernel_src_configure() {
 		ot-kernel_set_kconfig_boot_args
 		ot-kernel_set_kconfig_processor_class
 		ot-kernel_set_kconfig_futex
+		ot-kernel_set_kconfig_auto_set_slab_allocator
 		ot-kernel_set_kconfig_cpu_scheduler
 		ot-kernel_set_kconfig_multigen_lru
 		ot-kernel_set_kconfig_compressors

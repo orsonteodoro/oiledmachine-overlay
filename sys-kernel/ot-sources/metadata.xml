@@ -1121,8 +1121,11 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_PROCESSOR_CLASS -- sets the type of cpu class for used in this
-    kernel.  This will reduce or increase latency.
+    OT_KERNEL_PROCESSOR_CLASS -- sets the type of CPU class for used in this
+    kernel.  This will reduce or increase latency.  If you do not see separate
+    memory banks per socket, it probably means it is not designed for NUMA.
+    Setting this may change the memory allocator which may affect the network
+    throughput.
 
     Acceptable values:
 
@@ -1130,6 +1133,10 @@ unset OT_KERNEL_PRIVATE_KEY
       numa-multicore, numa-unicore, auto, custom, manual, unset
 
     Unset is equivalent to manual.
+
+    See also:
+
+      OT_KERNEL_SLAB_ALLOCATOR
 
 
 
@@ -1140,6 +1147,26 @@ unset OT_KERNEL_PRIVATE_KEY
       1, 0, unset
 
     Unset is equivalent to manual.
+
+
+
+    OT_KERNEL_SLAB_ALLOCATOR -- Set the slab allocator
+
+    Acceptable values:
+      auto - Auto detect based on kernel config
+      custom - Use previous settings.
+      manual - Use previous settings.
+      slab - Use old allocator.  Recommended for networked computers for ~10%
+        more network throughput and systems with lower CPU usage (power).
+      slob - Use allocator for embedded (e.g. gadgets, mp3 players).
+      slub - Use allocator for super computers and upstream default with SMP
+        systems.  It has lower GiB overhead compared to slab in many processor
+        systems.
+      unset - It uses auto
+
+    See also:
+
+      OT_KERNEL_PROCESSOR_CLASS
 
 
 
