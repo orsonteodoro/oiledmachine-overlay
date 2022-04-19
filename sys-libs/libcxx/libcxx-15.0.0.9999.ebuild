@@ -107,7 +107,7 @@ BDEPEND+="
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)"
 
-PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
+PATCHES=( "${FILESDIR}/libcxx-15.0.0.9999-hardened.patch" )
 
 LLVM_COMPONENTS=( runtimes libcxx{,abi} llvm/{cmake,utils/llvm-lit} cmake )
 LLVM_PATCHSET=9999-1
