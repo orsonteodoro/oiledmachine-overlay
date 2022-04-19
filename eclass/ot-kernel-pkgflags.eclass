@@ -565,7 +565,7 @@ ot-kernel-pkgflags_aqtion() { # DONE
 		ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK"
 		ot-kernel_y_configopt "CONFIG_CRC_ITU_T"
 		if has_version "net-misc/AQtion[lro]" ; then
-			ot-kernel_unset_configopt "CONFIG_CONFIG_BRIDGE"
+			ot-kernel_unset_configopt "CONFIG_BRIDGE"
 		fi
 	fi
 }
@@ -5266,7 +5266,7 @@ ot-kernel-pkgflags_kvm_host_extras() {
 		&& grep -q -E -e "^CONFIG_KVM=(y|m)" "${path_config}" ; then
 		# For hosts only
 		ot-kernel_y_configopt "CONFIG_VFIO"
-		ot-kernel_y_configopt "CONFIG_CONFIG_VFIO_MDEV"
+		ot-kernel_y_configopt "CONFIG_VFIO_MDEV"
 		if [[ "${arch}" == "x86_64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_DRM_I915"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_GVT"
