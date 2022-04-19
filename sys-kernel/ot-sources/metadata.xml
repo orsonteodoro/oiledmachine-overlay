@@ -1160,7 +1160,7 @@ unset OT_KERNEL_PRIVATE_KEY
         more network throughput and systems with lower CPU usage (power).
       slob - Use allocator for embedded (e.g. gadgets, mp3 players).
       slub - Use allocator for super computers and upstream default with SMP
-        systems.  It has lower GiB overhead compared to slab in many processor
+        systems.  It has lower GiB overhead compared to slab in 1000+ processor
         systems.
       unset - It uses auto
 
