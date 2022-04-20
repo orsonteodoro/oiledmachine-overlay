@@ -85,7 +85,7 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Mar 20, 2022
+# Last deps commit date:  Apr 14, 2022
 NGHTTP2_V="1.47.0"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
@@ -94,7 +94,7 @@ RDEPEND+=" !net-libs/nodejs:0
 	>=net-dns/c-ares-1.18.1
 	>=net-libs/nghttp2-${NGHTTP2_V}
 	>=sys-libs/zlib-1.2.11
-	system-icu? ( >=dev-libs/icu-70.1:= )
+	system-icu? ( >=dev-libs/icu-71.1:= )
 	system-ssl? ( >=dev-libs/openssl-3.0.2:0= )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
@@ -105,13 +105,12 @@ BDEPEND+=" ${PYTHON_DEPS}
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
 	pax-kernel? ( sys-apps/elfix )"
-PATCHES=( "${FILESDIR}"/${PN}-17.0.0-jinja_collections_abc.patch
-	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
+PATCHES=( "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
 	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch
 	  "${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch
 	  "${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="8.5.5" # See https://github.com/nodejs/node/blob/v17.3.0/deps/npm/package.json
+NPM_V="8.6.0" # See https://github.com/nodejs/node/blob/v18.0.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -592,7 +591,7 @@ pkg_postinst() {
 	else
 		eselect nodejs set node${SLOT_MAJOR}
 	fi
-	cp "${FILESDIR}/node-multiplexer-v4" "${EROOT}/usr/bin/node" || die
+	cp "${FILESDIR}/node-multiplexer-v5" "${EROOT}/usr/bin/node" || die
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die
 	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."

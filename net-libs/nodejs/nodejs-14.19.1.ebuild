@@ -114,7 +114,7 @@ PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
 	  "${FILESDIR}"/${PN}-14.19.1-use-thinlto.patch
 	  "${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.16" # See https://github.com/nodejs/node/blob/v14.17.6/deps/npm/package.json
+NPM_V="6.14.16" # See https://github.com/nodejs/node/blob/v14.19.1/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -598,7 +598,7 @@ pkg_postinst() {
 	else
 		eselect nodejs set node${SLOT_MAJOR}
 	fi
-	cp "${FILESDIR}/node-multiplexer-v4" "${EROOT}/usr/bin/node" || die
+	cp "${FILESDIR}/node-multiplexer-v5" "${EROOT}/usr/bin/node" || die
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die
 	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."

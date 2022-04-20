@@ -116,7 +116,7 @@ S="${WORKDIR}/node-v${PV}"
 else
 S="${WORKDIR}/node-${PV}"
 fi
-NPM_V="8.3.1" # See https://github.com/nodejs/node/blob/v16.14.0/deps/npm/package.json
+NPM_V="8.3.1" # See https://github.com/nodejs/node/blob/v16.14.2/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -595,7 +595,7 @@ pkg_postinst() {
 	else
 		eselect nodejs set node${SLOT_MAJOR}
 	fi
-	cp "${FILESDIR}/node-multiplexer-v4" "${EROOT}/usr/bin/node" || die
+	cp "${FILESDIR}/node-multiplexer-v5" "${EROOT}/usr/bin/node" || die
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die
 	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."
