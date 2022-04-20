@@ -161,6 +161,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_bubblewrap
 	ot-kernel-pkgflags_caja_dbox
 	ot-kernel-pkgflags_catalyst
+	ot-kernel-pkgflags_cdrom
 	ot-kernel-pkgflags_cifs_utils
 	ot-kernel-pkgflags_chroot_wrapper
 	ot-kernel-pkgflags_clamav
@@ -190,6 +191,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_drbd_utils
 	ot-kernel-pkgflags_droidcam
 	ot-kernel-pkgflags_dropwatch
+	ot-kernel-pkgflags_dvd
 	ot-kernel-pkgflags_e2fsprogs
 	ot-kernel-pkgflags_ecryptfs
 	ot-kernel-pkgflags_efibootmgr
@@ -1023,6 +1025,46 @@ ot-kernel-pkgflags_catalyst() { # DONE
 		ot-kernel_y_configopt "CONFIG_SQUASHFS"
 		ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
 	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_cdrom
+# @DESCRIPTION:
+# Applies kernel config flags for the CD-ROM packages
+ot-kernel-pkgflags_cdrom() { #
+	[[ "${CDROM:-1}" == "1" ]] || return
+	# Simplified code without autodetection
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "c3a2b46" ]] && return
+	einfo "Applying kernel config flags for CD-ROM packages(s) (id: c3a2b46)"
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_ISO9660_FS"
+	ot-kernel_y_configopt "CONFIG_JOLIET"
+	if [[ "${CDROM_FS_ZISOFS:-0}" ]] ; then
+		ot-kernel_y_configopt "CONFIG_ZISOFS"
+	fi
+	if [[ "${CDROM_FS_UDF:-0}" ]] ; then
+		ot-kernel_y_configopt "CONFIG_UDF_FS"
+	fi
+
+	ot-kernel_y_configopt "CONFIG_ACPI"
+	ot-kernel_y_configopt "CONFIG_ATA"
+	ot-kernel_y_configopt "CONFIG_ATA_ACPI"
+	ot-kernel_y_configopt "CONFIG_SATA_HOST"
+	ot-kernel_y_configopt "CONFIG_SATA_PMP"
+
+	ot-kernel_y_configopt "CONFIG_PCI"
+	ot-kernel_y_configopt "CONFIG_SATA_AHCI"
+
+	ot-kernel_y_configopt "CONFIG_ATA_SFF"
+	ot-kernel_y_configopt "CONFIG_ATA_BMDMA"
+
+	ot-kernel_y_configopt "CONFIG_ATA_PIIX"
+
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV"
+	ot-kernel_y_configopt "CONFIG_BLK_DEV_SR"
+
+	ot-kernel_y_configopt "CONFIG_CHR_DEV_SG"
 }
 
 # @FUNCTION: ot-kernel-pkgflags_cifs_utils
@@ -2436,6 +2478,18 @@ ot-kernel-pkgflags_droidcam() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_dracut
+# @DESCRIPTION:
+# Applies kernel config flags for the dracut package
+ot-kernel-pkgflags_dracut() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "494db6b" ]] && return
+	if has_version "sys-kernel/dracut" ; then
+		einfo "Applying kernel config flags for the dracut package (id: 494db6b)"
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_INITRD"
+		ot-kernel_y_configopt "CONFIG_DEVTMPFS"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_dropwatch
 # @DESCRIPTION:
 # Applies kernel config flags for the dropwatch package
@@ -2447,16 +2501,16 @@ ot-kernel-pkgflags_dropwatch() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_dracut
+# @FUNCTION: ot-kernel-pkgflags_dvd
 # @DESCRIPTION:
-# Applies kernel config flags for the dracut package
-ot-kernel-pkgflags_dracut() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "494db6b" ]] && return
-	if has_version "sys-kernel/dracut" ; then
-		einfo "Applying kernel config flags for the dracut package (id: 494db6b)"
-		ot-kernel_y_configopt "CONFIG_BLK_DEV_INITRD"
-		ot-kernel_y_configopt "CONFIG_DEVTMPFS"
-	fi
+# Applies kernel config flags for the DVD packages
+ot-kernel-pkgflags_dvd() { #
+	[[ "${DVD:-1}" == "1" ]] || return
+	# Simplified code without autodetection
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "080b6ff" ]] && return
+	einfo "Applying kernel config flags for DVD package(s) (id: 080b6ff)"
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_UDF_FS"
 }
 
 # @FUNCTION: ot-kernel-pkgflags_latencytop

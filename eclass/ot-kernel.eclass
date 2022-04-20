@@ -2056,6 +2056,10 @@ ot-kernel_clear_env() {
 	unset QEMU_GUEST_LINUX
 	unset QEMU_HOST
 	unset QEMU_KVMGT
+	unset USB_FLASH_EXT2
+	unset USB_FLASH_EXT4
+	unset USB_FLASH_UDF
+	unset USB_FLASH_EXFAT
 	unset VIRTUALBOX_GUEST_LINUX
 	unset VSYSCALL_MODE
 	unset XEN_PCI_PASSTHROUGH
@@ -3584,6 +3588,45 @@ ot-kernel_set_kconfig_usb_autosuspend() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_usb_flash_disk
+# @DESCRIPTION:
+# Sets kernel config the USB flash disks
+ot-kernel_set_kconfig_usb_flash_disk() {
+	local usb_flash=0
+	if [[ "${USB_FLASH_EXT2:-0}" == "1" ]] ; then
+		usb_flash=1
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_EXT2_FS"
+	fi
+	if [[ "${USB_FLASH_EXT4:-0}" == "1" ]] ; then
+		usb_flash=1
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_EXT4_FS"
+	fi
+	if [[ "${USB_FLASH_UDF:-0}" == "1" ]] ; then
+		usb_flash=1
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_UDF_FS"
+	fi
+	if [[ "${USB_FLASH_EXFAT:-1}" == "1" ]] ; then
+		usb_flash=1
+		if ver_test ${K_MAJOR_MINOR} -ge 5.7 ; then
+			ot-kernel_y_configopt "CONFIG_BLOCK"
+			ot-kernel_y_configopt "CONFIG_EXFAT_FS"
+		else
+			ot-kernel_y_configopt "CONFIG_FUSE_FS"
+		fi
+	fi
+
+	if [[ "${usb_flash}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SCSI"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_STORAGE"
+		ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_reset_timer_hz_alpha
 # @DESCRIPTION:
 # Initializes the hz kernel config
@@ -4686,6 +4729,7 @@ ot-kernel_src_configure() {
 		ot-kernel_set_kconfig_pcie_mps
 		ot-kernel_set_kconfig_satellite_internet
 		ot-kernel_set_kconfig_usb_autosuspend
+		ot-kernel_set_kconfig_usb_flash_disk
 
 		ot-kernel_set_kconfig_firmware
 
