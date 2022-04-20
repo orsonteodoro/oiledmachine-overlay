@@ -2062,6 +2062,7 @@ ot-kernel_clear_env() {
 	unset QEMU_KVMGT
 	unset USB_FLASH_EXT2
 	unset USB_FLASH_EXT4
+	unset USB_FLASH_F2FS
 	unset USB_FLASH_UDF
 	unset USB_MASS_STORAGE
 	unset VIRTUALBOX_GUEST_LINUX
@@ -3678,6 +3679,16 @@ ot-kernel_set_kconfig_usb_flash_disk() {
 		usb_flash=1
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_EXT4_FS"
+	fi
+	if [[ "${USB_FLASH_F2FS:-0}" == "1" ]] ; then
+		einfo "Adding F2FS support"
+		usb_flash=1
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_F2FS_FS"
+		ot-kernel_y_configopt "CONFIG_F2FS_FS_XATTR"
+		ot-kernel_y_configopt "CONFIG_F2FS_FS_POSIX_ACL"
+		ot-kernel_y_configopt "CONFIG_F2FS_FS_SECURITY"
+
 	fi
 	if [[ "${USB_FLASH_UDF:-0}" == "1" ]] ; then
 		einfo "Adding UDF support"

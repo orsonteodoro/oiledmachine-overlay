@@ -206,6 +206,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_eudev
 	ot-kernel-pkgflags_eventd
 	ot-kernel-pkgflags_external_modules
+	ot-kernel-pkgflags_f2fs_tools
 	ot-kernel-pkgflags_ff
 	ot-kernel-pkgflags_firecracker_bin
 	ot-kernel-pkgflags_firehol
@@ -2793,6 +2794,21 @@ ot-kernel-pkgflags_eventd() { # DONE
 		einfo "Applying kernel config flags for the eventd package (id: 9baffe9)"
 	        _ot-kernel-pkgflags_tcpip
 	        ot-kernel_y_configopt "CONFIG_IPV6"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_f2fs_tools
+# @DESCRIPTION:
+# Applies kernel config flags for the f2fs-tools package
+ot-kernel-pkgflags_f2fs_tools() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "3a3a096" ]] && return
+	if has_version "sys-fs/f2fs-tools" ; then
+		einfo "Applying kernel config flags for the f2fs-tools package (id: 3a3a096)"
+		ot-kernel_y_configopt "CONFIG_BLOCK"
+		ot-kernel_y_configopt "CONFIG_F2FS_FS"
+		ot-kernel_y_configopt "CONFIG_F2FS_FS_XATTR"
+		ot-kernel_y_configopt "CONFIG_F2FS_FS_POSIX_ACL"
+		ot-kernel_y_configopt "CONFIG_F2FS_FS_SECURITY"
 	fi
 }
 
