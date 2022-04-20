@@ -2059,7 +2059,6 @@ ot-kernel_clear_env() {
 	unset USB_FLASH_EXT2
 	unset USB_FLASH_EXT4
 	unset USB_FLASH_UDF
-	unset USB_FLASH_EXFAT
 	unset VIRTUALBOX_GUEST_LINUX
 	unset VSYSCALL_MODE
 	unset XEN_PCI_PASSTHROUGH
@@ -3598,7 +3597,7 @@ ot-kernel_set_kconfig_usb_flash_disk() {
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_EXT2_FS"
 	fi
-	if [[ "${USB_FLASH_EXT4:-0}" == "1" ]] ; then
+	if [[ "${USB_FLASH_EXT4:-1}" == "1" ]] ; then
 		usb_flash=1
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_EXT4_FS"
@@ -3607,15 +3606,6 @@ ot-kernel_set_kconfig_usb_flash_disk() {
 		usb_flash=1
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_UDF_FS"
-	fi
-	if [[ "${USB_FLASH_EXFAT:-1}" == "1" ]] ; then
-		usb_flash=1
-		if ver_test ${K_MAJOR_MINOR} -ge 5.7 ; then
-			ot-kernel_y_configopt "CONFIG_BLOCK"
-			ot-kernel_y_configopt "CONFIG_EXFAT_FS"
-		else
-			ot-kernel_y_configopt "CONFIG_FUSE_FS"
-		fi
 	fi
 
 	if [[ "${usb_flash}" == "1" ]] ; then

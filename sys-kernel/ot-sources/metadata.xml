@@ -1598,13 +1598,10 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     Valid values:  0 (default), 1.
 
     USB_FLASH_EXT4 - Add support for ext4 USB flash disks
-    Valid values:  0 (default), 1.
+    Valid values:  1 (default).
 
     USB_FLASH_UDF - Add support for UDF USB flash disks
     Valid values:  0 (default), 1.
-
-    USB_FLASH_EXFAT - Add support for exFAT USB flash disks
-    Valid values:  0, 1 (default).
 
     VIRTUALBOX_GUEST_LINUX - Add support for VirtualBox Linux guests.
     Valid values:  0, 1 (default).
