@@ -206,7 +206,6 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_eudev
 	ot-kernel-pkgflags_eventd
 	ot-kernel-pkgflags_external_modules
-	ot-kernel-pkgflags_extfatprogs
 	ot-kernel-pkgflags_ff
 	ot-kernel-pkgflags_firecracker_bin
 	ot-kernel-pkgflags_firehol
@@ -2794,18 +2793,6 @@ ot-kernel-pkgflags_eventd() { # DONE
 		einfo "Applying kernel config flags for the eventd package (id: 9baffe9)"
 	        _ot-kernel-pkgflags_tcpip
 	        ot-kernel_y_configopt "CONFIG_IPV6"
-	fi
-}
-
-# @FUNCTION: ot-kernel-pkgflags_extfatprogs
-# @DESCRIPTION:
-# Applies kernel config flags for the extfatprogs package
-ot-kernel-pkgflags_extfatprogs() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "93be18b" ]] && return
-	if has_version "sys-fs/exfatprogs" ; then
-		einfo "Applying kernel config flags for the extfatprogs package (id: 93be18b)"
-		ot-kernel_y_configopt "CONFIG_BLOCK"
-		ot-kernel_y_configopt "CONFIG_EXFAT_FS"
 	fi
 }
 
