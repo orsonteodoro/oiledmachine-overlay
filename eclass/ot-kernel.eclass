@@ -2043,6 +2043,10 @@ ot-kernel_clear_env() {
 	unset KVM_GUEST_VIRTIO_CONSOLE_DEVICE
 	unset KVM_GUEST_VIRTIO_MEM
 	unset LM_SENSORS_MODULES
+	unset MEMCARD_MMC
+	unset MEMCARD_SDIO
+	unset MEMCARD_SD
+	unset MEMSTICK
 	unset MDADM_RAID
 	unset MICROCODE_SIGNATURES
 	unset MICROCODE_BLACKLIST
@@ -2059,6 +2063,7 @@ ot-kernel_clear_env() {
 	unset USB_FLASH_EXT2
 	unset USB_FLASH_EXT4
 	unset USB_FLASH_UDF
+	unset USB_MASS_STORAGE
 	unset VIRTUALBOX_GUEST_LINUX
 	unset VSYSCALL_MODE
 	unset XEN_PCI_PASSTHROUGH
@@ -3170,6 +3175,76 @@ ot-kernel_set_kconfig_memory_protection() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_memstick
+# @DESCRIPTION:
+# Add mem stick support
+ot-kernel_set_kconfig_memstick() {
+	[[ "${MEMSTICK:-0}" == "1" ]] || return
+	einfo "Adding Memory Stick support"
+	local hosts=(
+		$(grep -r "config " drivers/memstick/host/Kconfig \
+			| cut -f 2 -d " ")
+	)
+	local x
+	ot-kernel_m_configopt "CONFIG_MEMSTICK"
+	ot-kernel_y_configopt "CONFIG_BLOCK"
+	ot-kernel_y_configopt "CONFIG_MS_BLOCK"
+	ot-kernel_y_configopt "CONFIG_MSPRO_BLOCK"
+	for x in ${hosts[@]} ; do
+		ot-kernel_m_configopt "CONFIG_${x}"
+	done
+	ot-kernel_unset_configopt "CONFIG_MEMSTICK_UNSAFE_RESUME"
+
+	# Depends
+	ot-kernel_y_configopt "CONFIG_PCI"
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_mmc_sd_sdio
+# @DESCRIPTION:
+# Add support for MMC/SD/SDIO support
+ot-kernel_set_kconfig_mmc_sd_sdio() {
+	[[ "${MEMCARD_MMC:-0}" == "1" || "${MEMCARD_SD:-0}" == "1" || "${MEMCARD_SDIO:-0}" == "1" ]] || return
+	[[ "${MEMCARD_MMC}" == "1" ]] && einfo "Adding MMC support"
+	[[ "${MEMCARD_SD}" == "1" ]] && einfo "Adding SD support"
+	[[ "${MEMCARD_SDIO}" == "1" ]] && einfo "Adding SDIO support"
+	local hosts=(
+		$(grep -r "config " drivers/mmc/host/Kconfig \
+			| cut -f 2 -d " ")
+	)
+	local x
+	ot-kernel_m_configopt "CONFIG_MMC"
+	for x in ${hosts[@]} ; do
+		ot-kernel_m_configopt "CONFIG_${x}"
+	done
+
+	# Depends
+	local deps=(
+		$(grep -r -e "depends on"  drivers/mmc/host/Kconfig \
+			| sed -e "s|depends on|;|g" \
+			| cut -f 2 -d " " \
+			| sort \
+			| uniq \
+			| sed -e "s#[\(\|\)]##g")
+	)
+	local skippable=(
+		ARCH_
+		ARC
+		ARM
+		ARM64
+		PPC
+		MIPS
+	)
+	for x in ${deps[@]} ; do
+		local skip=0
+		for y in ${skippable[@]} ; do
+			[[ "${x}" == "${y}" ]] && skip=1
+			[[ "${x}" == "ARCH_" ]] && skip=1
+		done
+		(( ${skip} )) && continue
+		ot-kernel_y_configopt "CONFIG_${x}"
+	done
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_module_signing
 # @DESCRIPTION:
 # Sets the kernel config for signed kernel modules
@@ -3593,28 +3668,59 @@ ot-kernel_set_kconfig_usb_autosuspend() {
 ot-kernel_set_kconfig_usb_flash_disk() {
 	local usb_flash=0
 	if [[ "${USB_FLASH_EXT2:-0}" == "1" ]] ; then
+		einfo "Adding EXT2 support"
 		usb_flash=1
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_EXT2_FS"
 	fi
 	if [[ "${USB_FLASH_EXT4:-1}" == "1" ]] ; then
+		einfo "Adding EXT4 support"
 		usb_flash=1
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_EXT4_FS"
 	fi
 	if [[ "${USB_FLASH_UDF:-0}" == "1" ]] ; then
+		einfo "Adding UDF support"
 		usb_flash=1
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_UDF_FS"
 	fi
 
 	if [[ "${usb_flash}" == "1" ]] ; then
+		einfo "Adding USB thumb drive support"
 		ot-kernel_y_configopt "CONFIG_SCSI"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB_STORAGE"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_SD"
 	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_usb_mass_storage
+# @DESCRIPTION:
+# Add support for USB mass storage
+ot-kernel_set_kconfig_usb_mass_storage() {
+	[[ "${USB_MASS_STORAGE:-0}" == "1" ]] || return
+	einfo "Adding USB mass storage support"
+	local hosts=( $(grep -r "config "  | cut -f 2 -d " ") )
+	local not_tristate=(
+		REALTEK_AUTOPM
+		USB_STORAGE_DEBUG
+	)
+	ot-kernel_y_configopt "CONFIG_USB"
+	ot-kernel_y_configopt "CONFIG_USB_STORAGE"
+
+	for x in ${hosts[@]} ; do
+		local tristate=1
+		for y in ${not_tristate[@]} ; do
+			[[ "${x}" == "${y}" ]] && tristate=0
+		done
+		(( ${tristate} )) && ot-kernel_m_configopt "CONFIG_${x}"
+	done
+
+	# Depends
+	ot-kernel_y_configopt "CONFIG_SCSI"
+	ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_reset_timer_hz_alpha
@@ -4720,6 +4826,10 @@ ot-kernel_src_configure() {
 		ot-kernel_set_kconfig_satellite_internet
 		ot-kernel_set_kconfig_usb_autosuspend
 		ot-kernel_set_kconfig_usb_flash_disk
+
+		ot-kernel_set_kconfig_usb_mass_storage
+		ot-kernel_set_kconfig_mmc_sd_sdio
+		ot-kernel_set_kconfig_memstick
 
 		ot-kernel_set_kconfig_firmware
 
