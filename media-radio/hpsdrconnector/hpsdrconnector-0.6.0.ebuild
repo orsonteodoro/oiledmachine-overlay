@@ -42,7 +42,6 @@ src_compile() {
 	export GO111MODULE=auto
 	rm "go.mod" || die
 	export GOPATH="${S}:${GOMODCACHE}"
-	#unset GOPATH
 	go build -v -o ${PN} || die
 }
 
