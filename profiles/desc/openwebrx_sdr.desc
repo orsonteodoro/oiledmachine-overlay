@@ -1,0 +1,20 @@
+# This file is part of the openwebrx ebuild
+
+openwebrx_sdr_rtl_sdr - Adds support for RTL SDR devices
+openwebrx_sdr_rtl_sdr_soapy - Adds support for RTL SDR devices with SoapySDR
+openwebrx_sdr_rtl_tcp - Adds support for RTL SDL devices via rtl_tcp
+openwebrx_sdr_sdrplay - Adds support for SDRplay devices
+openwebrx_sdr_hackrf - Adds support for HackRF SDR devices
+openwebrx_sdr_perseussdr - Adds support for Perseus SDR devices
+openwebrx_sdr_airspy - Adds support for Airspy R2, Mini SDR devices
+openwebrx_sdr_airspyhf - Adds support for Airspy HF+ and Discovery SDR devices
+openwebrx_sdr_lime_sdr - Adds support for LimeSDR devices
+openwebrx_sdr_fifi_sdr - Adds support for FiFi SDR devices
+openwebrx_sdr_pluto_sdr - Adds support for PlutoSDR devices
+openwebrx_sdr_soapy_remote - Adds support for SoapyRemote SDR devices
+openwebrx_sdr_uhd - Adds support for USRP SDR devices
+openwebrx_sdr_radioberry - Adds support for RadioBerry SDR devices
+openwebrx_sdr_fcdpp - Adds support for FunCube Dongle Pro+ SDR devices
+openwebrx_sdr_sddc - Adds support for BBRF103 / RX666 / RX888 (libsdcc) devices
+openwebrx_sdr_hpsdr - Adds support for HPSDR (Hermes / Hermes Lite 2 / Red Pitaya) SDR devices
+openwebrx_sdr_runds - Adds support for R&S SDR devices using the EB200 or Ammos protocols

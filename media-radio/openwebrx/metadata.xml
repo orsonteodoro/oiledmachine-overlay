@@ -17,31 +17,13 @@
     <remote-id type="github">jketterl/openwebrx</remote-id>
   </upstream>
   <use>
-    <flag name="dream">Adds support for DRM (Digital Radio Mondiale) broadcasts</flag>
-    <flag name="digital_voice_digiham">Adds support for using digital voice modes</flag>
-    <flag name="digital_voice_freedv">Adds support for demodulating FreeDV digital voice transmissions</flag>
-    <flag name="digital_voice_m17">Adds support for demodulating M17 digital voice signals</flag>
-    <flag name="js8">Adds support for decoding JS8</flag>
-    <flag name="openwebrx_sdr_rtl_sdr">Adds support for RTL SDR device(s)</flag>
-    <flag name="openwebrx_sdr_rtl_sdr_soapy">Adds support for RTL SDR soapy device(s)</flag>
-    <flag name="openwebrx_sdr_rtl_tcp">Adds support for RTL TCP SDR device(s)</flag>
-    <flag name="openwebrx_sdr_sdrplay">Adds support for sdrplay SDR device(s)</flag>
-    <flag name="openwebrx_sdr_hackrf">Adds support for HackRF SDR device(s)</flag>
-    <flag name="openwebrx_sdr_perseussdr">Adds support for perseussdr SDR device(s)</flag>
-    <flag name="openwebrx_sdr_airspy">Adds support for Airspy SDR device(s)</flag>
-    <flag name="openwebrx_sdr_airspyhf">Adds support for Airspy HF SDR device(s)</flag>
-    <flag name="openwebrx_sdr_lime_sdr">Adds support for lime_sdr SDR device(s)</flag>
-    <flag name="openwebrx_sdr_fifi_sdr">Adds support for FiFi SDR device(s)</flag>
-    <flag name="openwebrx_sdr_pluto_sdr">Adds support for pluto_sdr SDR device(s)</flag>
-    <flag name="openwebrx_sdr_soapy_remote">Adds support for soapy_remote SDR device(s)</flag>
-    <flag name="openwebrx_sdr_uhd">Adds support for uhd SDR device(s)</flag>
-    <flag name="openwebrx_sdr_radioberry">Adds support for Radioberry SDR device(s)</flag>
-    <flag name="openwebrx_sdr_fcdpp">Adds support for fcdpp SDR device(s)</flag>
-    <flag name="openwebrx_sdr_sddc">Adds support for sddc SDR device(s)</flag>
-    <flag name="openwebrx_sdr_hpsdr">Adds support for HPSDR SDR device(s)</flag>
-    <flag name="openwebrx_sdr_runds">Adds support for R&S SDR device(s)</flag>
-    <flag name="packet">Adds support for APRS and packet radio</flag>
-    <flag name="pocsag">Adds support for the POCSAG protocol</flag>
-    <flag name="wsjtx">Adds support for WSJT-X modes (FT8, FT4, WSPR, JT65, JT9, FST4, FST4W, Q65)</flag>
+Adds support for DRM (Digital Radio Mondiale) broadcasts
+Adds support for using digital voice modes
+Adds support for demodulating FreeDV digital voice transmissions
+Adds support for demodulating M17 digital voice signals
+Adds support for decoding JS8
+Adds support for APRS and packet radio
+Adds support for the POCSAG protocol
+Adds support for WSJT-X modes (FT8, FT4, WSPR, JT65, JT9, FST4, FST4W, Q65)
   </use>
 </pkgmetadata>
