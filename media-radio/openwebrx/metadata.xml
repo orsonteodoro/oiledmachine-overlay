@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer status="active" type="person">
+    <!-- only in the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription lang="en">
+    Hardware support is listed in
+
+      https://github.com/jketterl/openwebrx/wiki/Supported-Hardware
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/jketterl/openwebrx/issues</bugs-to>
+    <doc lang="en">https://github.com/jketterl/openwebrx/wiki</doc>
+    <remote-id type="github">jketterl/openwebrx</remote-id>
+  </upstream>
+  <use>
+    <flag name=""></flag>
+  </use>
+</pkgmetadata>
