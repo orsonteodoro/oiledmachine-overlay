@@ -13,17 +13,18 @@
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/jketterl/openwebrx/issues</bugs-to>
+    <changelog lang="en">https://www.openwebrx.de/news.php</changelog>
     <doc lang="en">https://github.com/jketterl/openwebrx/wiki</doc>
     <remote-id type="github">jketterl/openwebrx</remote-id>
   </upstream>
   <use>
-Adds support for DRM (Digital Radio Mondiale) broadcasts
-Adds support for using digital voice modes
-Adds support for demodulating FreeDV digital voice transmissions
-Adds support for demodulating M17 digital voice signals
-Adds support for decoding JS8
-Adds support for APRS and packet radio
-Adds support for the POCSAG protocol
-Adds support for WSJT-X modes (FT8, FT4, WSPR, JT65, JT9, FST4, FST4W, Q65)
+    <flag name="dream">Adds support for DRM (Digital Radio Mondiale) broadcasts</flag>
+    <flag name="digital_voice_digiham">Adds support for using digital voice modes</flag>
+    <flag name="digital_voice_freedv">Adds support for demodulating FreeDV digital voice transmissions</flag>
+    <flag name="digital_voice_m17">Adds support for demodulating M17 digital voice signals</flag>
+    <flag name="js8">Adds support for decoding JS8</flag>
+    <flag name="packet">Adds support for APRS and packet radio</flag>
+    <flag name="pocsag">Adds support for the POCSAG protocol</flag>
+    <flag name="wsjtx">Adds support for WSJT-X modes (FT8, FT4, WSPR, JT65, JT9, FST4, FST4W, Q65)</flag>
   </use>
 </pkgmetadata>
