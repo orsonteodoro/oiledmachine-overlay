@@ -221,19 +221,19 @@ S="${WORKDIR}/${P}"
 
 pkg_setup() {
 	ewarn "This ebuild is in development"
-	enewuser openwebrx
-	enewgroup openwebrx
-	esetgroups openwebrx openwebrx
+	enewuser ${PN}
+	enewgroup ${PN}
+	esetgroups ${PN} ${PN}
 }
 
 src_install() {
 	distutils-r1_src_install
 	cd "${S}" || die
-	insinto /etc/openwebrx
-	doins bands.json openwebrx.conf
+	insinto /etc/${PN}
+	doins bands.json ${PN}.conf
 	if use systemd ; then
 		insinto /lib/systemd/system
-		doins systemd/openwebrx.service
+		doins systemd/${PN}.service
 	fi
 
 	if use openrc ; then
@@ -241,28 +241,30 @@ src_install() {
 		doexe "${FILESDIR}/init.d/${PN}"
 	fi
 
-	insinto /var/lib/openwebrx
+	insinto /var/lib/${PN}
 
 	echo "[]" > "${T}/users.json"
 	doins "${T}/users.json"
-	fowners openwebrx /var/lib/openwebrx/users.json
-	fperms 0600 /var/lib/openwebrx/users.json
+	fowners ${PN} /var/lib/${PN}/users.json
+	fperms 0600 /var/lib/${PN}/users.json
 
 	echo "{}" > "${T}/settings.json"
 	doins "${T}/settings.json"
-	fowners openwebrx /var/lib/openwebrx/settings.json
+	fowners ${PN} /var/lib/${PN}/settings.json
 
 	touch "${T}/bookmarks.json"
 	doins "${T}/bookmarks.json"
-	fowners openwebrx /var/lib/openwebrx/bookmarks.json
+	fowners ${PN} /var/lib/${PN}/bookmarks.json
+
+	fowners ${PN}:${PN} /var/lib/${PN}
 
 	einstalldocs
 }
 
 pkg_postinst() {
-	if ! openwebrx admin --silent hasuser admin; then
+	if ! ${PN} admin --silent hasuser admin; then
 		einfo "Admin user created but the default password should be changed"
-		openwebrx admin --noninteractive adduser admin
+		${PN} admin --noninteractive adduser admin
 	fi
 	einfo
 	einfo "The init script must be started before accessing the web based interface."
