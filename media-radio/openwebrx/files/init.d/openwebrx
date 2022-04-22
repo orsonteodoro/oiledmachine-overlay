@@ -1,0 +1,31 @@
+#!/sbin/openrc-run
+
+description="Runs the OpenWebRX receiver."
+
+depend() {
+	need localmount
+}
+
+start()
+{
+	einfo "Starting OpenWebRX receiver"
+	if start-stop-daemon \
+		--background \
+		--make-pidfile \
+		--pidfile /run/openwebrx.pid \
+		--start \
+		--user openwebrx:openwebrx \
+		/usr/bin/openwebrx
+	then
+		eend 0
+	else
+		eend 1
+	fi
+}
+
+stop() {
+	start-stop-daemon \
+		--stop \
+		--pidfile /run/openwebrx.pid
+	eend 0
+}

@@ -14,7 +14,7 @@ LICENSE="AGPL-3"
 DOCS=( CHANGELOG.md LICENSE.txt README.md )
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" systemd"
+IUSE+=" openrc systemd"
 DEVICES=(
 	rtl_sdr
 	rtl_sdr_soapy
@@ -221,6 +221,8 @@ S="${WORKDIR}/${P}"
 pkg_setup() {
 	ewarn "This ebuild is in development"
 	enewuser openwebrx
+	enewgroup openwebrx
+	esetgroups openwebrx openwebrx
 }
 
 src_install() {
@@ -231,6 +233,11 @@ src_install() {
 	if use systemd ; then
 		insinto /lib/systemd/system
 		doins systemd/openwebrx.service
+	fi
+
+	if use openrc ; then
+		exeinto /etc/init.d
+		doexe "${FILESDIR}/init.d/${PN}"
 	fi
 
 	insinto /var/lib/openwebrx
