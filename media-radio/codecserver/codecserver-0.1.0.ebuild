@@ -34,6 +34,7 @@ pkg_setup() {
 	enewuser codecserver
 	enewgroup codecserver
 	esetgroups codecserver dialout
+	esetgroups codecserver codecserver
 }
 
 src_install() {
