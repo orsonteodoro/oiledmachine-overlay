@@ -268,6 +268,6 @@ pkg_postinst() {
 	fi
 	einfo
 	einfo "The init script must be started before accessing the web based interface."
-	einfo "To access the web based interface put https://localhost:8073"
+	einfo "To access the web based interface put http://localhost:8073"
 	einfo
 }
