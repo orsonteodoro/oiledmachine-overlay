@@ -226,6 +226,24 @@ pkg_setup() {
 	esetgroups ${PN} ${PN}
 }
 
+python_install() {
+	distutils-r1_python_install
+	local d_src="$(python_get_sitedir)/htdocs"
+	local d_dest="/usr/share/${PN}/htdocs"
+	dodir "${d_dest}"
+	cp -aT "${ED}${d_src}" "${ED}${d_dest}" || die
+	rm -rf "${ED}/${d_src}" || die
+	cd "${ED}${d_dest}" || die
+	local f
+	for f in $(find . -type f) ; do
+		f="${d_dest}/${f/\.\/}"
+		einfo "Changing permissions for ${f}"
+		fperms 0644 "${f}"
+	done
+	sed -i -e "4 a sys.path.insert(1, \"/usr/share/${PN}\")"\
+		"${ED}/usr/lib/python-exec/${EPYTHON}/openwebrx" || die
+}
+
 src_install() {
 	distutils-r1_src_install
 	cd "${S}" || die
