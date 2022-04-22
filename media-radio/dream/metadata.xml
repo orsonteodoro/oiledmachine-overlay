@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild only from the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="sourceforge">drm</remote-id>
+    <bugs-to>https://sourceforge.net/p/drm/tickets/</bugs-to>
+  </upstream>
+  <use>
+    <flag name="alsa">Add support for ALSA sound support</flag>
+    <flag name="faad">Add support for AAC, DRM, HE-AAC, HE-AACv2 decoding</flag>
+    <flag name="faac">Add support for FAAC encoder</flag>
+    <flag name="fdk">Add support for fdk-aac decoder</flag>
+    <flag name="gps">Add support for GPS for mobile logging</flag>
+    <flag name="gui">Build with a graphical user interface.  Otherwise, build the console version.</flag>
+    <flag name="hamlib">Build with Hamlib for frontend remote control support</flag>
+    <flag name="jack">Add support for JACK</flag>
+    <flag name="opus">Add support for broadcasting and reception with royalty free Opus</flag>
+    <flag name="pulseaudio">Add PulseAudio support</flag>
+    <flag name="portaudio">Add PortAudio support</flag>
+    <flag name="qtmultimedia">Build with Qt Multimedia for sound on non Linux prefixes</flag>
+    <flag name="sound">Build with sound support</flag>
+    <flag name="sndfile">Build with libsndfile support for audio formats support</flag>
+    <flag name="speexdsp">Adds the SpeexDSP resampler and noise reduction</flag>
+    <flag name="webengine">Adds support for MOT slideshows for advertising, promos, photos, covers</flag>
+  </use>
+</pkgmetadata>

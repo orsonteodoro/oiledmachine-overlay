@@ -1,0 +1,69 @@
+--- a/src/MDI/MDITagItems.cpp.orig	2019-05-08 11:54:56.950199981 -0700
++++ b/src/MDI/MDITagItems.cpp	2022-04-21 22:45:30.330007854 -0700
+@@ -1010,7 +1010,7 @@ CTagItemGeneratorGPS::GenTag(bool bIsVal
+ 		uint32_t source = 0xff; // GPS_SOURCE_NOT_AVAILABLE
+ 		PrepareTag(26 * SIZEOF__BYTE);
+ 		if(gps_data.set&STATUS_SET) {
+-			switch(gps_data.status) {
++			switch(gps_data.fix.status) {
+ 			case 0: source = 3; break; // manual
+ 			case 1: source = 1; break; // gps
+ 			case 2: source = 2; break; // differential
+@@ -1104,9 +1104,9 @@ CTagItemGeneratorGPS::GenTag(bool bIsVal
+ 
+ 		if (gps_data.set&TIME_SET)
+ 		{
+-			time_t time = (time_t)gps_data.fix.time;
++			timespec_t time = (timespec_t)gps_data.fix.time;
+ 			struct tm * ptm;
+-			ptm = gmtime ( &time );
++			ptm = gmtime ( &time.tv_sec );
+ 			Enqueue((uint32_t) ptm->tm_hour, SIZEOF__BYTE);
+ 			Enqueue((uint32_t) ptm->tm_min, SIZEOF__BYTE);
+ 			Enqueue((uint32_t) ptm->tm_sec, SIZEOF__BYTE);
+--- a/src/MDI/RSCITagItemDecoders.cpp.orig	2019-05-08 11:54:57.007019614 -0700
++++ b/src/MDI/RSCITagItemDecoders.cpp	2022-04-21 23:02:36.166633765 -0700
+@@ -172,19 +172,19 @@ void CTagItemDecoderRgps::DecodeTag(CVec
+         break;
+     case 1:
+         gps_data.set=STATUS_SET;
+-        gps_data.status=1;
++        gps_data.fix.status=1;
+         break;
+     case 2:
+         gps_data.set=STATUS_SET;
+-        gps_data.status=2;
++        gps_data.fix.status=2;
+         break;
+     case 3:
+         gps_data.set=STATUS_SET;
+-        gps_data.status=0;
++        gps_data.fix.status=0;
+         break;
+     case 0xff:
+         gps_data.set=0;
+-        gps_data.status=0;
++        gps_data.fix.status=0;
+         break;
+     default:
+         cerr << "error decoding rgps" << endl;
+@@ -255,7 +255,7 @@ void CTagItemDecoderRgps::DecodeTag(CVec
+         else
+             unsetenv("TZ");
+ #endif
+-        gps_data.fix.time = t;
++        gps_data.fix.time.tv_sec = t;
+         gps_data.set |= TIME_SET;
+     }
+ 
+--- a/src/Parameter.cpp.orig	2019-05-08 11:54:58.322554815 -0700
++++ b/src/Parameter.cpp	2022-04-21 23:08:08.592873416 -0700
+@@ -143,7 +143,7 @@ CParameter::CParameter():
+     GenerateRandomSerialNumber();
+     CellMappingTable.MakeTable(eRobustnessMode, eSpectOccup, iSigSampleRate);
+     gps_data.set=0;
+-    gps_data.status=0;
++    gps_data.fix.status=0;
+ #ifdef HAVE_LIBGPS
+     gps_data.gps_fd = -1;
+ #endif
