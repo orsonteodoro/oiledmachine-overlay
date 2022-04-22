@@ -3,13 +3,13 @@
 
 EAPI="7"
 
-K_GENPATCHES_VER="193"
-PATCH_BMQ_VER="5.4-r2"
+K_GENPATCHES_VER="120"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
-PATCH_RT_VER="5.4.188-rt73"
+PATCH_PROJC_VER="5.10-r2"
+PATCH_RT_VER="5.10.109-rt65"
 
-inherit ot-kernel-v5.4
+inherit ot-kernel-v5.10
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v5.4.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v5.10.eclass
