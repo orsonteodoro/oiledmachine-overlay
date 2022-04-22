@@ -48,6 +48,7 @@ OPTIONAL_FEATURES=(
 )
 IUSE+=" ${DEVICES[@]/#/openwebrx_sdr_}"
 IUSE+=" ${OPTIONAL_FEATURES[@]}"
+REQUIRED_USE="^^ ( openrc systemd )"
 SRC_URI="
 https://github.com/jketterl/openwebrx/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz"
@@ -263,4 +264,8 @@ pkg_postinst() {
 		einfo "Admin user created but the default password should be changed"
 		openwebrx admin --noninteractive adduser admin
 	fi
+	einfo
+	einfo "The init script must be started before accessing the web based interface."
+	einfo "To access the web based interface put https://localhost:8073"
+	einfo
 }
