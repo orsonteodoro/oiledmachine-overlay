@@ -269,5 +269,7 @@ pkg_postinst() {
 	einfo
 	einfo "The init script must be started before accessing the web based interface."
 	einfo "To access the web based interface put http://localhost:8073"
+	einfo "To access the web admin panel put http://localhost:8073/settings"
+	einfo "To change the password do:  openwebrx admin resetpassword admin"
 	einfo
 }

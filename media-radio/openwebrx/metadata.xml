@@ -10,6 +10,14 @@
     Hardware support is listed in
 
       https://github.com/jketterl/openwebrx/wiki/Supported-Hardware
+
+    To access the web based interface put http://localhost:8073
+    To access the web admin panel put http://localhost:8073/settings
+
+    To change the password do:
+
+      openwebrx admin resetpassword admin
+
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/jketterl/openwebrx/issues</bugs-to>
