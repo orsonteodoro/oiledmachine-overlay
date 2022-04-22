@@ -11,7 +11,7 @@ LICENSE="GPL-3"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
 IUSE+=" openrc systemd"
-REQUIRED_USE="^^ ( openrc systemd )"
+REQUIRED_USE="|| ( openrc systemd )"
 DEPEND+="
 	acct-group/dialout
 	>=dev-libs/protobuf-3.0

@@ -48,7 +48,7 @@ OPTIONAL_FEATURES=(
 )
 IUSE+=" ${DEVICES[@]/#/openwebrx_sdr_}"
 IUSE+=" ${OPTIONAL_FEATURES[@]}"
-REQUIRED_USE="^^ ( openrc systemd )"
+REQUIRED_USE="|| ( openrc systemd )"
 SRC_URI="
 https://github.com/jketterl/openwebrx/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz"
