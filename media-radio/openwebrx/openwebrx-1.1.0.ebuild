@@ -10,7 +10,7 @@ inherit distutils-r1 user
 DESCRIPTION="Open source, multi-user SDR receiver software with a web interface"
 HOMEPAGE="https://www.openwebrx.de/"
 LICENSE="AGPL-3"
-#KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 DOCS=( CHANGELOG.md LICENSE.txt README.md )
 RESTRICT="mirror"
 SLOT="0"
@@ -251,7 +251,7 @@ src_install() {
 	doins "${T}/settings.json"
 	fowners openwebrx /var/lib/openwebrx/settings.json
 
-	touch bookmarks.json
+	touch "${T}/bookmarks.json"
 	doins "${T}/bookmarks.json"
 	fowners openwebrx /var/lib/openwebrx/bookmarks.json
 
@@ -260,8 +260,7 @@ src_install() {
 
 pkg_postinst() {
 	if ! openwebrx admin --silent hasuser admin; then
-		einfo "Admin user created"
+		einfo "Admin user created but the default password should be changed"
 		openwebrx admin --noninteractive adduser admin
-		ewarn "A ${PN} password may be assigned to this user"
 	fi
 }
