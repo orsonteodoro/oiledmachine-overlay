@@ -5,10 +5,10 @@
 # https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
 # For the closure-compiler-npm version see:
-# https://github.com/emscripten-core/emscripten/blob/3.1.8/package.json
+# https://github.com/emscripten-core/emscripten/blob/3.1.9/package.json
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/3.1.8/tools/config_template.py
+# https://github.com/emscripten-core/emscripten/blob/3.1.9/tools/config_template.py
 
 EAPI=7
 
@@ -98,13 +98,13 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 			closure_compiler_nodejs )
 	)"
 # See also .circleci/config.yml
-# See also https://github.com/emscripten-core/emscripten/blob/3.1.8/tools/building.py EXPECTED_BINARYEN_VERSION
+# See also https://github.com/emscripten-core/emscripten/blob/3.1.9/tools/building.py EXPECTED_BINARYEN_VERSION
 JAVA_V="11" # See https://github.com/google/closure-compiler/blob/v20220104/.github/workflows/ci.yaml#L43
 # See https://github.com/google/closure-compiler-npm/blob/v20220104.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
-# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.8/package.json
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.8/tools/shared.py#L50
-# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.8/tools/shared.py#L43
+# For the required closure-compiler, see https://github.com/emscripten-core/emscripten/blob/3.1.9/package.json
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/3.1.9/tools/shared.py#L50
+# For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.9/tools/shared.py#L43
 BINARYEN_V="105"
 JDK_DEPEND="
 || (
@@ -300,7 +300,7 @@ src_prepare() {
 	einfo "PYTHON_EXE_ABSPATH=${PYTHON_EXE_ABSPATH}"
 	eapply ${_PATCHES[@]}
 
-	eapply -R "${FILESDIR}/emscripten-3.1.3-30e3c87.patch" # reverted - reason: Breaks 'Running sanity checks'. # \
+	#eapply -R "${FILESDIR}/emscripten-3.1.3-30e3c87.patch" # reverted - reason: Breaks 'Running sanity checks'. # \
 	# emcc: error: unexpected metadata key received from wasm-emscripten-finalize: tableSize
 
 	eapply_user
