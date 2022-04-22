@@ -49,3 +49,9 @@ src_install() {
 		rm -rf "${ED}/lib/systemd" || die
 	fi
 }
+
+pkg_postinst() {
+	einfo
+	einfo "The init script still needs to be started."
+	einfo
+}
