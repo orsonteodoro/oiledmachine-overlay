@@ -2,8 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-inherit check-reqs cmake-utils desktop electron-app eutils user toolchain-funcs \
-	xdg
+inherit check-reqs cmake-utils desktop electron-app eutils user \
+	toolchain-funcs xdg
 
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed
 to be used by everyone."
@@ -13,7 +13,7 @@ LICENSE="GDevelop MIT"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" electron +extensions openrc"
-# See https://github.com/4ian/GDevelop/blob/v5.0.127/ExtLibs/installDeps.sh
+# See https://github.com/4ian/GDevelop/blob/v5.0.131/ExtLibs/installDeps.sh
 # See raw log of https://app.travis-ci.com/github/4ian/GDevelop
 # U 16.04
 # Dependencies in native are not installed in CI
@@ -39,12 +39,12 @@ DEPEND+="
 "
 RDEPEND+=" ${DEPEND}"
 EMSCRIPTEN_MIN_V="1.39.6" # Based on CI
-NODEJS_V="16.13.2" # Based on CI
+NODEJS_V="16.14.2" # Based on CI
 # >=dev-vcs/git-2.35.0 is used by CI but relaxed
 BDEPEND+="
 	>=dev-util/cmake-3.12.4
 	>=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[wasm(+)]
-	  dev-vcs/git
+	>=dev-vcs/git-2.35.1
 	>=media-gfx/imagemagick-6.8.9[png]
 	>=sys-devel/clang-7
 	>=sys-devel/gcc-5.4
@@ -52,13 +52,13 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_V}[npm]
 "
 ELECTRON_APP_ELECTRON_V="8.2.5" # See \
-# https://github.com/4ian/GDevelop/blob/v5.0.127/newIDE/electron-app/package.json
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.131/newIDE/electron-app/package-lock.json
 ELECTRON_APP_REACT_V="16.8.6" # See \
-# https://github.com/4ian/GDevelop/blob/v5.0.127/newIDE/app/package.json
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.131/newIDE/app/package-lock.json
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
 # For the SFML version, see \
-# https://github.com/4ian/GDevelop/blob/v5.0.127/ExtLibs/CMakeLists.txt
+# https://github.com/4ian/GDevelop/blob/v5.0.131/ExtLibs/CMakeLists.txt
 SFML_V="2.4.1"
 SRC_URI="
 https://github.com/4ian/GDevelop/archive/v${MY_PV}.tar.gz
