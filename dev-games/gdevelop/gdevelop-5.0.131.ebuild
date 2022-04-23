@@ -392,11 +392,6 @@ src_install() {
 			"${T}/${PN}-server" || die
 		exeinto /etc/init.d
 		doexe "${T}/${PN}-server"
-	else
-ewarn
-ewarn "You must write an init script to start the server or launch the server"
-ewarn "manually."
-ewarn
 	fi
 
 	fowners gdevelop:gdevelop \
@@ -419,9 +414,12 @@ pkg_postinst() {
 	xdg_pkg_postinst
 einfo
 	if use openrc ; then
-einfo "The OpenRC init script is called gdevelop-server."
+einfo "The OpenRC init script is called gdevelop-server.  The gdevelop-server"
+einfo "must be started before running the gdevelop wrapper."
+	else
+ewarn "You must write an init script to start the server or launch the server"
+ewarn "manually."
 	fi
-einfo "The gdevelop-server must be started before running the gdevelop wrapper."
 einfo
 einfo "Do not add users to ${PN} group.  It is for server use only."
 einfo
