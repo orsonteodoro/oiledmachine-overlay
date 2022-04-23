@@ -349,7 +349,9 @@ einfo
 }
 
 src_install() {
-	eapply "${FILESDIR}/gdevelop-5.0.0_beta97-wrapper-file-signal.patch"
+	if use openrc ; then
+		eapply "${FILESDIR}/gdevelop-5.0.0_beta97-wrapper-file-signal.patch"
+	fi
 	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT_MAJOR}"
 	#
 	# We can't use .ico because of XDG icon standards.  .ico is not
