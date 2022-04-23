@@ -13,9 +13,6 @@ LICENSE="GDevelop MIT"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" electron +extensions openrc"
-REQUIRED_USE+="
-	openrc
-"
 # See https://github.com/4ian/GDevelop/blob/v5.0.127/ExtLibs/installDeps.sh
 # See raw log of https://app.travis-ci.com/github/4ian/GDevelop
 # U 16.04
@@ -387,13 +384,20 @@ src_install() {
 	exeinto /usr/bin
 	doexe "${T}/${PN}"
 
-	cp "${FILESDIR}/${PN}-server-openrc" "${T}/${PN}-server" || die
-	sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
-		-e "s|\${PN}|${PN}|g" \
-		-e "s|\${SLOT_MAJOR}|${SLOT_MAJOR}|g" \
-		"${T}/${PN}-server" || die
-	exeinto /etc/init.d
-	doexe "${T}/${PN}-server"
+	if use openrc ; then
+		cp "${FILESDIR}/${PN}-server-openrc" "${T}/${PN}-server" || die
+		sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
+			-e "s|\${PN}|${PN}|g" \
+			-e "s|\${SLOT_MAJOR}|${SLOT_MAJOR}|g" \
+			"${T}/${PN}-server" || die
+		exeinto /etc/init.d
+		doexe "${T}/${PN}-server"
+	else
+ewarn
+ewarn "You must write an init script to start the server or launch the server"
+ewarn "manually."
+ewarn
+	fi
 
 	fowners gdevelop:gdevelop \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules" \
@@ -414,8 +418,10 @@ pkg_postinst() {
 	electron-app_pkg_postinst
 	xdg_pkg_postinst
 einfo
-einfo "Currently OpenRC is supported.  The init script is called gdevelop-server."
-einfo "It must be started before running the gdevelop wrapper."
+	if use openrc ; then
+einfo "The OpenRC init script is called gdevelop-server."
+	fi
+einfo "The gdevelop-server must be started before running the gdevelop wrapper."
 einfo
 einfo "Do not add users to ${PN} group.  It is for server use only."
 einfo
