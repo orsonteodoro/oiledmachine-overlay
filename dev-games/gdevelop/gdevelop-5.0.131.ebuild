@@ -2,9 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-
-inherit check-reqs cmake-utils desktop electron-app eutils user \
-toolchain-funcs xdg
+inherit check-reqs cmake-utils desktop electron-app eutils user toolchain-funcs \
+	xdg
 
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed
 to be used by everyone."
@@ -13,10 +12,8 @@ LICENSE="GDevelop MIT"
 #KEYWORDS="~amd64" # ebuild still in development
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" doc electron +extensions +html5 minimal native openrc web-browser"
+IUSE+=" electron +extensions openrc"
 REQUIRED_USE+="
-	^^ ( html5 native )
-	|| ( electron web-browser )
 	openrc
 "
 # See https://github.com/4ian/GDevelop/blob/v5.0.127/ExtLibs/installDeps.sh
@@ -25,7 +22,11 @@ REQUIRED_USE+="
 # Dependencies in native are not installed in CI
 UDEV_V="229"
 DEPEND+="
-	virtual/opengl
+	|| (
+		>=sys-fs/udev-${UDEV_V}
+		>=sys-fs/eudev-3.1.5
+		>=sys-apps/systemd-${UDEV_V}
+	)
 	>=app-arch/p7zip-9.20.1
 	>=media-libs/freetype-2.6.1
 	>=media-libs/glew-1.13
@@ -33,21 +34,11 @@ DEPEND+="
 	>=media-libs/mesa-18.0.5
 	>=media-libs/openal-1.16.0
 	>=virtual/jpeg-80
-	(
-		virtual/udev
-		|| (
-			>=sys-fs/udev-${UDEV_V}
-			>=sys-fs/eudev-3.1.5
-			>=sys-apps/systemd-${UDEV_V}
-		)
-	)
+	  virtual/opengl
+	  virtual/udev
 	>=x11-apps/xrandr-1.5.0
-	native? (
-		>=net-libs/webkit-gtk-2.4.11
-		>=x11-libs/gtk+-3.22.30:3
-	)
-	openrc? ( sys-apps/openrc[bash] )
-	web-browser? ( x11-misc/xdg-utils )
+	!electron? ( x11-misc/xdg-utils )
+	 openrc? ( sys-apps/openrc[bash] )
 "
 RDEPEND+=" ${DEPEND}"
 EMSCRIPTEN_MIN_V="1.39.6" # Based on CI
@@ -55,15 +46,13 @@ NODEJS_V="16.13.2" # Based on CI
 # >=dev-vcs/git-2.35.0 is used by CI but relaxed
 BDEPEND+="
 	>=dev-util/cmake-3.12.4
-	dev-vcs/git
+	>=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[wasm(+)]
+	  dev-vcs/git
 	>=media-gfx/imagemagick-6.8.9[png]
 	>=sys-devel/clang-7
 	>=sys-devel/gcc-5.4
-	html5? (
-		>=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[wasm(+)]
-		>=net-libs/nodejs-${NODEJS_V}:${NODEJS_V%%.*}
-		>=net-libs/nodejs-${NODEJS_V}[npm]
-	)
+	>=net-libs/nodejs-${NODEJS_V}:${NODEJS_V%%.*}
+	>=net-libs/nodejs-${NODEJS_V}[npm]
 "
 ELECTRON_APP_ELECTRON_V="8.2.5" # See \
 # https://github.com/4ian/GDevelop/blob/v5.0.127/newIDE/electron-app/package.json
@@ -85,18 +74,12 @@ https://github.com/SFML/SFML/archive/${SFML_V}.tar.gz
 S="${WORKDIR}/${MY_PN}-${MY_PV}"
 S_BAK="${WORKDIR}/${MY_PN}-${MY_PV}"
 RESTRICT="mirror"
+CHECKREQS_DISK_BUILD="2752M"
+CHECKREQS_DISK_USR="2736M"
 CMAKE_BUILD_TYPE=Release
 EMBUILD_DIR="${WORKDIR}/build"
 
-_set_check_reqs_requirements() {
-	if use html5 ; then
-		CHECKREQS_DISK_BUILD="2752M"
-		CHECKREQS_DISK_USR="2736M"
-	fi
-}
-
 pkg_pretend() {
-	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 }
 
@@ -213,19 +196,9 @@ eerror
 }
 
 pkg_setup() {
-	if use html5 ; then
-		pkg_setup_html5
-		_set_check_reqs_requirements
-		check-reqs_pkg_setup
-		check_lld
-	fi
-
-	if use native ; then
-ewarn
-ewarn "The native USE flag has not been developed in the ebuild level and is"
-ewarn "not used in GDevelop 5.  Use gdevelop:4 instead."
-ewarn
-	fi
+	pkg_setup_html5
+	check-reqs_pkg_setup
+	check_lld
 
 	enewgroup ${PN}
 	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
@@ -254,7 +227,14 @@ eerror
 	fi
 }
 
-_patch() {
+src_unpack() {
+	unpack ${A}
+	cd "${S}" || die
+	rm -rf ExtLibs/SFML || die
+	ln -s "${WORKDIR}/SFML-${SFML_V}" ExtLibs/SFML || die
+	cat "${DISTDIR}/${PV}-SFML-mesa-ge-20180525-compat.patch" \
+		> ExtLibs/SFML-patches/${PV}-SFML-mesa-ge-20180525-compat.patch \
+		|| die
 	eapply \
 "${FILESDIR}/${PN}-5.0.0_beta97-use-emscripten-envvar-for-webidl_binder_py.patch"
 	eapply \
@@ -265,104 +245,72 @@ _patch() {
 "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-00.patch"
 	eapply \
 "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-01.patch"
-}
 
-src_unpack() {
-	unpack ${A}
-	cd "${S}" || die
-	rm -rf ExtLibs/SFML || die
-	ln -s "${WORKDIR}/SFML-${SFML_V}" ExtLibs/SFML || die
-	cat "${DISTDIR}/${PV}-SFML-mesa-ge-20180525-compat.patch" \
-		> ExtLibs/SFML-patches/${PV}-SFML-mesa-ge-20180525-compat.patch \
-		|| die
-	_patch
-	if use html5 ; then
-		einfo "ELECTRON_APP_ELECTRON_V=${ELECTRON_APP_ELECTRON_V}"
-		einfo "EMSCRIPTEN=${EMSCRIPTEN}"
-		addpredict "${EMSCRIPTEN}"
-		export TEMP_DIR='/tmp'
-		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
-		export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
-		mkdir -p "${EMBUILD_DIR}" || die
-		cp "${EM_CONFIG}" \
-			"${EMBUILD_DIR}/emscripten.config" || die
-#		export EMMAKEN_CFLAGS='-std=gnu++11'
-#		export EMCC_CFLAGS='-std=gnu++11'
-		export CC=emcc
-		export CXX=em++
-		strip-unsupported-flags
-#		export CC=gcc
-#		export CXX=g++
-		export NODE_VERSION=${ACTIVE_VERSION}
-		export EM_CACHE="${T}/emscripten/cache"
-		emconfig_path=$(cat ${EM_CONFIG})
-		BINARYEN_LIB_PATH=$(echo \
-			-e "${emconfig_path}\nprint (BINARYEN_ROOT)" \
-			| python3)"/lib"
-		export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
-		einfo "CC=${CC}"
-		einfo "CXX=${CXX}"
-		einfo "CFLAGS=${CFLAGS}"
-		einfo "CXXFLAGS=${CXXFLAGS}"
-		einfo "LDFLAGS=${LDFLAGS}"
-		einfo "NODE_VERSION=${NODE_VERSION}"
+	einfo "ELECTRON_APP_ELECTRON_V=${ELECTRON_APP_ELECTRON_V}"
+	einfo "EMSCRIPTEN=${EMSCRIPTEN}"
+	addpredict "${EMSCRIPTEN}"
+	export TEMP_DIR='/tmp'
+	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
+	mkdir -p "${EMBUILD_DIR}" || die
+	cp "${EM_CONFIG}" \
+		"${EMBUILD_DIR}/emscripten.config" || die
+#	export EMMAKEN_CFLAGS='-std=gnu++11'
+#	export EMCC_CFLAGS='-std=gnu++11'
+	export CC=emcc
+	export CXX=em++
+	strip-unsupported-flags
+#	export CC=gcc
+#	export CXX=g++
+	export NODE_VERSION=${ACTIVE_VERSION}
+	export EM_CACHE="${T}/emscripten/cache"
+	emconfig_path=$(cat ${EM_CONFIG})
+	BINARYEN_LIB_PATH=$(echo \
+		-e "${emconfig_path}\nprint (BINARYEN_ROOT)" \
+		| python3)"/lib"
+	export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
+einfo "CC=${CC}"
+einfo "CXX=${CXX}"
+einfo "CFLAGS=${CFLAGS}"
+einfo "CXXFLAGS=${CXXFLAGS}"
+einfo "LDFLAGS=${LDFLAGS}"
+einfo "NODE_VERSION=${NODE_VERSION}"
 
 einfo
 einfo "Building GDevelop.js"
 einfo
-		export STEP="BUILDING_GDEVELOPJS"
-		S="${WORKDIR}/${MY_PN}-${MY_PV}/GDevelop.js" \
-		electron-app_src_unpack
+	export STEP="BUILDING_GDEVELOPJS"
+	S="${WORKDIR}/${MY_PN}-${MY_PV}/GDevelop.js" \
+	electron-app_src_unpack
 
 einfo
 einfo "Building GDevelop IDE"
 einfo
-		export STEP="BUILDING_GDEVELOP_IDE"
-		S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app" \
-		electron-app_src_unpack
+	export STEP="BUILDING_GDEVELOP_IDE"
+	S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app" \
+	electron-app_src_unpack
 
-		if use electron ; then
+	if use electron ; then
 einfo
 einfo "Building GDevelop$(ver_cut 1 ${PV}) on the Electron runtime"
 einfo
-			export STEP="BUILDING_GDEVELOP_IDE_ELECTRON"
-			S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/electron-app" \
-			electron-app_src_unpack
-		fi
+		export STEP="BUILDING_GDEVELOP_IDE_ELECTRON"
+		S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/electron-app" \
+		electron-app_src_unpack
 	fi
 	xdg_src_prepare
 }
 
 src_prepare() {
-	if use native ; then
-		cmake-utils_src_prepare
-	else
-		# Patches have already have been applied.
-		# You need to fork to apply custom changes instead.
-		touch "${T}/.portage_user_patches_applied"
-		touch "${PORTAGE_BUILDDIR}/.user_patches_applied"
-		export _CMAKE_UTILS_SRC_PREPARE_HAS_RUN=1
-	fi
+	# Patches have already have been applied.
+	# You need to fork to apply custom changes instead.
+	touch "${T}/.portage_user_patches_applied"
+	touch "${PORTAGE_BUILDDIR}/.user_patches_applied"
+	export _CMAKE_UTILS_SRC_PREPARE_HAS_RUN=1
 }
 
-src_configure() {
-	if use native ; then
-		local mycmakeargs=(
-			-DBUILD_GDCPP=$(usex native)
-			-DBUILD_GDJS=OFF
-			-DBUILD_EXTENSIONS=$(usex extensions)
-			-DBUILD_TESTS=FALSE
-			-DGD_INSTALL_PREFIX=/usr/$(get_libdir)/gdevelop
-		)
-		cmake-utils_src_configure
-	fi
-}
-
-src_compile() {
-	if use native ; then
-		cmake-utils_src_compile
-	fi
-}
+src_configure() { :; }
+src_compile() { :; }
 
 electron-app_src_compile() {
 	if [[ "${STEP}" == "BUILDING_GDEVELOPJS" ]] ; then
@@ -371,104 +319,45 @@ electron-app_src_compile() {
 		einfo
 # In https://github.com/4ian/GDevelop/blob/v5.0.0-beta98/GDevelop.js/Gruntfile.js#L88
 		npm run build -- --force --dev || die
-		if [[ ! \
--f "${S_BAK}/Binaries/embuild/GDevelop.js/libGD.wasm" \
-		]] ; then
+		if [[ ! -f "${S_BAK}/Binaries/embuild/GDevelop.js/libGD.wasm" ]]
+		then
 eerror
 eerror "Missing libGD.wasm from ${S_BAK}/Binaries/embuild/GDevelop.js"
 eerror
 			die
 		fi
 
-		if [[ ! \
--f "${S_BAK}/Binaries/embuild/GDevelop.js/libGD.js" \
-		]] ; then
+		if [[ ! -f "${S_BAK}/Binaries/embuild/GDevelop.js/libGD.js" ]]
+		then
 eerror
 eerror "Missing libGD.js from ${S_BAK}/Binaries/embuild/GDevelop.js"
 eerror
 			die
 		fi
 	elif [[ "${STEP}" == "BUILDING_GDEVELOP_IDE" ]] ; then
-		einfo
-		einfo "Compiling app"
-		einfo
+einfo
+einfo "Compiling app"
+einfo
 		#PATH="${S}/node_modules/.bin:${PATH}" \
 		S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app" \
 		electron-app_src_compile_default
 	elif [[ "${STEP}" == "BUILDING_GDEVELOP_IDE_ELECTRON" ]] ; then
-		einfo
-		einfo "Compiling electron-app"
-		einfo
+einfo
+einfo "Compiling electron-app"
+einfo
 		#PATH="${S}/node_modules/.bin:${PATH}" \
 		S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/electron-app" \
 		electron-app_src_compile_default
 	fi
 }
 
-src_install_html5() {
+src_install() {
 	eapply "${FILESDIR}/gdevelop-5.0.0_beta97-wrapper-file-signal.patch"
 	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT_MAJOR}"
-
-	if ! use electron ; then
-		rm -rf "${ED}/${ELECTRON_APP_INSTALL_PATH}/electron-app" || die
-	#else
-	#	keep Binaries, GDJS/Binaries, scripts, Core/GDCore, Extensions
-	#	keep GDJS/Runtime
-	fi
-	if ! use native ; then
-		# todo
-		rm -rf "GDCpp" || die
-	fi
-	if use minimal ; then
-		rm -rf ".circleci" \
-			".clang_complete" \
-			".clang_format" \
-			".eslintrc" \
-			".github" \
-			".gitignore" \
-			".travis.yml" \
-			".vscode" || die
-	fi
-
-	find GDJS -maxdepth 1 \
-		 \( \
-			     -not -name "GDJS" \
-			-and -not -path "GDJS/Binaries" \
-			-and -not -path "GDJS/Runtime" \
-			-and -not -path "GDJS/docs" \
-			-and -not -name "README.md" \
-			-and -not -name "Runtime" \
-			-and -not -name "package.json" \
-			-and -not -name "package-lock.json" \
-		\) \
-                -exec rm -vrf "{}" \;
-
-	find Core -maxdepth 1 \
-		\( \
-			     -not -path "Core" \
-			-and -not -path "Core/GDCore" \
-			-and -not -path "Core/docs/images/glogo.png" \
-			-and -not -name "README.md" \
-			-and -not -name "license.txt" \
-			-and -not -name "docs" \
-		\) \
-			-exec rm -vrf "{}" \;
-	if [[ ! -d "GDJS/Runtime" ]] ; then
-		eerror
-		eerror "Missing GDJS/Runtime"
-		eerror
-		die
-	fi
-	if [[ ! -d "Core/GDCore" ]] ; then
-		eerror
-		eerror "Missing Core/GDCore"
-		eerror
-		die
-	fi
-	# appimaged is still in testing
 	#
-	# We can't use .ico (image/vnd.microsoft.icon) because of XDG icon
-	# standards.  Not interoperable with Linux desktop.
+	# We can't use .ico because of XDG icon standards.  .ico is not
+	# interoperable with the Linux desktop.
+	#
 	pushd "${S}/newIDE/electron-app/build/" || die
 		convert icon.ico[0] icon-256x256.png
 		convert icon.ico[1] icon-128x128.png
@@ -483,21 +372,13 @@ src_install_html5() {
 		newicon -s 32 icon-32x32.png ${PN}.png
 		newicon -s 16 icon-16x16.png ${PN}.png
 	popd
-	electron-app_desktop_install "*" "newIDE/electron-app/build/icon-256x256.png" \
+	electron-app_desktop_install \
+		"*" \
+		"newIDE/electron-app/build/icon-256x256.png" \
 		"${MY_PN} $(ver_cut 1 ${PV})" "Development;IDE" \
 		"/usr/bin/gdevelop"
-	if use doc ; then
-		npm-utils_install_readmes
-		# Dedupe.  The newIDE folder has already been copied
-		rm -rf "${ED}"/usr/share/doc/${PF}/readmes/newIDE || die
-		# False positive
-		rm -rf $(find "${ED}/usr/share/" -name "docNoticeRole.js*") || die
-	fi
-	npm-utils_install_licenses
-	# Dedupe.  The newIDE folder has already been copied
-	rm -rf "${ED}"/usr/share/doc/${PF}/licenses/newIDE || die
 
-	rm "${ED}/usr/bin/gdevelop" || die # replace wrapper with the one below
+	rm "${ED}/usr/bin/gdevelop" || die # Replace wrapper with the one below
 	cp "${FILESDIR}/${PN}" "${T}/${PN}" || die
 	sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
 		-e "s|\${PN}|${PN}|g" \
@@ -506,9 +387,7 @@ src_install_html5() {
 	exeinto /usr/bin
 	doexe "${T}/${PN}"
 
-	# We just daemonize it.
-	cp "${FILESDIR}/${PN}-server-openrc" \
-		"${T}/${PN}-server" || die
+	cp "${FILESDIR}/${PN}-server-openrc" "${T}/${PN}-server" || die
 	sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
 		-e "s|\${PN}|${PN}|g" \
 		-e "s|\${SLOT_MAJOR}|${SLOT_MAJOR}|g" \
@@ -529,15 +408,6 @@ src_install_html5() {
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/external"
-}
-
-src_install() {
-	if use native ; then
-		cmake-utils_src_install
-	fi
-	if use html5 ; then
-		src_install_html5
-	fi
 }
 
 pkg_postinst() {
