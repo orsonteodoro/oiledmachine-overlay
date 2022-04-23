@@ -34,7 +34,6 @@ check_prereqs() {
 start_server() {
 	mkdir -p "$(dirname ${SERVER_PID_FILE})"
 	touch "${SERVER_PID_FILE}"
-	chown gdevelop:gdevelop "$(dirname ${SERVER_PID_FILE})" "${SERVER_PID_FILE}"
 
 	cd "${PROJECT_ROOT}/newIDE/app"
 	start-stop-daemon \
