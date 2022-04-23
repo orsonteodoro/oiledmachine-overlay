@@ -11,7 +11,7 @@ EAPI=7
 
 # This release corresponds to
 # WebKit 614.1.6 ; See Source/WebKit/Configurations/Version.xcconfig
-# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/WebKit/Configurations/Version.xcconfig
+# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.1/Source/WebKit/Configurations/Version.xcconfig
 
 LLVM_MAX_SLOT=13 # This should not be more than Mesa's package LLVM_MAX_SLOT
 
@@ -598,19 +598,19 @@ REQUIRED_USE+="
 #
 # This means also you cannot use the geolocation feature.
 
-# Prev rev: 290020
-# Curr rev: 291557
+# Prev rev: 291557
+# Curr rev: 293166
 # For dependencies, see:
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/CMakeLists.txt?rev=291557
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/BubblewrapSandboxChecks.cmake?rev=291557
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/FindGStreamer.cmake?rev=291557
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/GStreamerChecks.cmake?rev=291557
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/OptionsGTK.cmake?rev=291557
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/WebKitCommon.cmake?rev=291557
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Tools/gtk/install-dependencies?rev=291557
-#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=291557
-#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=291557
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Tools/gstreamer/jhbuild.modules?rev=291557
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.1/CMakeLists.txt?rev=293166
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.1/Source/cmake/BubblewrapSandboxChecks.cmake?rev=293166
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.1/Source/cmake/FindGStreamer.cmake?rev=293166
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.1/Source/cmake/GStreamerChecks.cmake?rev=293166
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.1/Source/cmake/OptionsGTK.cmake?rev=293166
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.1/Source/cmake/WebKitCommon.cmake?rev=293166
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.1/Tools/gtk/install-dependencies?rev=293166
+#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=293166
+#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=293166
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.1/Tools/gstreamer/jhbuild.modules?rev=293166
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
@@ -642,7 +642,7 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0?rev=291557
+# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.1?rev=293166
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 RDEPEND+="
@@ -786,7 +786,7 @@ BDEPEND+="
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
 EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="291557"
+ESVN_REVISION="293166"
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -813,7 +813,7 @@ einfo
 		fi
 
 		if ! test-flag-CXX -std=c++20 ; then
-# See https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.0/Source/cmake/OptionsCommon.cmake?rev=291557
+# See https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.1/Source/cmake/OptionsCommon.cmake?rev=293166
 die "You need at least GCC 8.3.x or Clang >= 6 for C++20-specific compiler flags"
 		fi
 	fi
@@ -1075,15 +1075,10 @@ Source/ThirdParty/libwebrtc
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/2.34.3-non-jumbo-fix.patch"
-	eapply "${FILESDIR}/2.34.3-jumbo-fix.patch" # bug 830638
-	if use webrtc ; then
-		eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
-	fi
+	use webrtc && eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
 	cmake_src_prepare
 	gnome2_src_prepare
-	(( ${NABIS} > 1 )) \
-		&& multilib_copy_sources
+	(( ${NABIS} > 1 )) && multilib_copy_sources
 }
 
 _config_pgx() {
