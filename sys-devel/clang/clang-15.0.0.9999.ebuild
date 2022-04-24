@@ -1157,7 +1157,9 @@ _install() {
 	if multilib_is_native_abi && [[ -e "${ED}"/usr/include/clang-tidy ]] ; then
 		# don't wrap clang-tidy headers, the list is too long
 		# (they're fine for non-native ABI but enabling the targets is problematic)
-		mv "${ED}"/usr/include/clang-tidy "${T}/" || die
+		mkdir -p "${T}/clang-tidy" || die
+		cp -aT "${ED}"/usr/include/clang-tidy "${T}/" || die
+		rm -rf "${ED}"/usr/include/clang-tidy || die
 	fi
 }
 
