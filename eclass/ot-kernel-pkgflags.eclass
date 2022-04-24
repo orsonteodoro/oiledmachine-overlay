@@ -5551,7 +5551,7 @@ _ot-kernel-pkgflags_cpu_pmu_events_perf() {
 			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_AMD_POWER"
 			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_AMD_UNCORE"
 		fi
-		if grep -q -E -e "^CPU_SUP_INTEL=(y|m)" "${path_config}" ; then
+		if grep -q -E -e "^CONFIG_CPU_SUP_INTEL=(y|m)" "${path_config}" ; then
 			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_UNCORE"
 			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL"
 			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_CSTATE"
