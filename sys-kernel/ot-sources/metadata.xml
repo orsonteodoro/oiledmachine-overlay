@@ -1500,6 +1500,10 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     Valid values:  0, 1 (default)
     See also:  CDROM
 
+    E300C3 - Add support for PMU performance counters for e300c3.
+    E300C4 - Add support for PMU performance counters for e300c4.
+    Valid values:  0 (default), 1
+
     EXT4_ENCRYPTION - Add support for ext4 encryption
     Valid values:  0, 1 (default).
 

@@ -4921,6 +4921,7 @@ ot-kernel-pkgflags_oprofile() { # DONE
 	if has_version "dev-util/oprofile" ; then
 		einfo "Applying kernel config flags for the oprofile package (id: 18e7433)"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
+		_ot-kernel-pkgflags_cpu_pmu_events_oprofile
 	fi
 }
 
@@ -5476,6 +5477,91 @@ ot-kernel-pkgflags_pesign() { # DONE
 	fi
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_cpu_pmu_events_oprofile
+# @DESCRIPTION:
+# Auto enables extra CPU PMU performance events for oprofile
+_ot-kernel-pkgflags_cpu_pmu_events_oprofile() {
+	if ver_test ${K_MAJOR_MINOR} -le 5.11 ; then
+		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
+		if [[ "${arch}" =~ ("arm") ]] ; then
+			ot-kernel_y_configopt "CONFIG_ARM_PMU"
+			ot-kernel_y_configopt "CONFIG_HW_PERF_EVENTS"
+		fi
+		if [[ "${arch}" == "sh" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HW_PERF_EVENTS"
+		fi
+	fi
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_cpu_pmu_events_perf
+# @DESCRIPTION:
+# Auto enables extra CPU PMU performance events for perf
+_ot-kernel-pkgflags_cpu_pmu_events_perf() {
+	ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
+	if [[ "${arch}" =~ ("arm") ]] ; then
+		ot-kernel_y_configopt "CONFIG_ARM_PMU"
+		ot-kernel_y_configopt "CONFIG_HW_PERF_EVENTS"
+	fi
+	if [[ "${arch}" == "arm" ]] ; then
+		if grep -q -E -e "^CACHE_L2X0=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CACHE_L2X0_PMU"
+		fi
+	fi
+	if [[ "${arch}" == "sh" ]] ; then
+		ot-kernel_y_configopt "CONFIG_HW_PERF_EVENTS"
+	fi
+	if [[ "${arch}" == "powerpc" ]] ; then
+		if \
+			   grep -q -E -e "^CONFIG_PPC_HAVE_PMU_SUPPORT=y" "${path_config}" \
+			&& grep -q -E -e "FSL_EMB_PERF_EVENT is not set" "${path_config}"
+		then
+			ot-kernel_y_configopt "CONFIG_PPC_PERF_CTRS"
+		fi
+		if grep -q -E -e "^CONFIG_E500=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_FSL_EMB_PERFMON"
+			ot-kernel_y_configopt "CONFIG_FSL_EMB_PERF_EVENT"
+			ot-kernel_y_configopt "CONFIG_FSL_EMB_PERF_EVENT_E500"
+		fi
+		if [[ "${E300C3:-0}" == "1" || "${E300C4:-0}" == "1" ]] \
+			|| (
+				   grep -q -E -e "^CONFIG_PPC_83xx=y" "${path_config}" \
+				&& grep -q -E -e "FSL_EMB_PERF_EVENT is not set" "${path_config}" \
+				&& ( cat /proc/cpuinfo | grep -E -q -e "(e300c3|e300c4)" ) \
+			)
+		then
+			ot-kernel_y_configopt "CONFIG_PPC_8xx_PERF_EVENT"
+			ot-kernel_y_configopt "CONFIG_FSL_EMB_PERFMON"
+			ot-kernel_y_configopt "CONFIG_FSL_EMB_PERF_EVENT"
+		fi
+	fi
+	if [[ "${arch}" == "riscv" ]] ; then
+		ot-kernel_m_configopt "CONFIG_RISCV_BASE_PMU"
+	fi
+	if [[ "${arch}" =~ ("x86") ]] ; then
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		# Guess based on hints from kconfig
+		if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CPU_SUP_INTEL"
+		fi
+		if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
+		fi
+		if grep -q -E -e "^CONFIG_CPU_SUP_AMD=(y|m)" "${path_config}" ; then
+			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL"
+			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_AMD_POWER"
+			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_AMD_UNCORE"
+		fi
+		if grep -q -E -e "^CPU_SUP_INTEL=(y|m)" "${path_config}" ; then
+			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_UNCORE"
+			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL"
+			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_CSTATE"
+		fi
+
+		# Dependencies
+		ot-kernel_y_configopt "CONFIG_PCI"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_perf
 # @DESCRIPTION:
 # Applies kernel config flags for the perf package
@@ -5484,8 +5570,13 @@ ot-kernel-pkgflags_perf() { # DONE
 	if has_version "dev-util/perf" ; then
 		einfo "Applying kernel config flags for the perf package (id: ef529b7)"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
+		_ot-kernel-pkgflags_cpu_pmu_events_perf
 		ban_dma_attack "ef529b7" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
+
+		if [[ "${arch}" =~ ("arm"|"sh"|"mips") ]] ; then
+			ot-kernel_y_configopt "CONFIG_KALLSYMS"
+		fi
 	fi
 }
 
