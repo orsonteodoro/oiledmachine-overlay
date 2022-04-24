@@ -32,7 +32,7 @@ G_LONG_SCAN=${G_LONG_SCAN:="0"}
 G_NPM_APPS="/var/lib/portage/npm-packages" # location of registered npm packages
 G_PACKAGE_LOCK_DIR="/dev/shm"
 G_VERBOSE=${G_VERBOSE:="0"} # can only be 0 for silent, or 1 for more output
-G_VERSION="2022.01.30"
+G_VERSION="2022.04.24"
 G_DATA_CACHE_DIR="/var/cache/npm-secaudit"
 G_DATA_VERSION_DATA_PATH="${G_DATA_CACHE_DIR}/lite.json"
 G_USE_ELECTRON=${G_USE_ELECTRON:="1"}
@@ -42,24 +42,33 @@ G_USE_ELECTRON=${G_USE_ELECTRON:="1"}
 G_BLACKLIST="/etc/portage/npm-secaudit-blacklist"
 
 # Stable versions list https://www.electronjs.org/docs/latest/tutorial/support#currently-supported-versions
+# See also:  https://raw.githubusercontent.com/electron/releases/master/lite.json
+
+# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=18
+G_CVE_PATCHED_ELECTRON_20="20.0.0-nightly.20220421" #
+
+# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=18
+G_CVE_PATCHED_ELECTRON_19="19.0.0-nightly.20220329" #
+
+# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=18
+G_CVE_PATCHED_ELECTRON_18="18.1.0" #
+
+# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=17
+G_CVE_PATCHED_ELECTRON_17="17.4.1" #
 
 # Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=16
-G_CVE_PATCHED_ELECTRON_16="16.0.6" # with latest non vulnerable chromium 96.x
+G_CVE_PATCHED_ELECTRON_16="16.2.3" #
 
 # Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=15
-G_CVE_PATCHED_ELECTRON_15="15.3.5"
-
-# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=14
-G_CVE_PATCHED_ELECTRON_14="14.2.4"
-
-# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=13
-G_CVE_PATCHED_ELECTRON_13="13.6.7"
+G_CVE_PATCHED_ELECTRON_15="15.5.2"
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
-G_CVE_PATCHED_NODE_16="16.13.2" # E16, E15
-
-# Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V14.md
-G_CVE_PATCHED_NODE_14="14.18.3" # E14-E13
+G_CVE_PATCHED_NODE_16_E20="16.14.2" # latest, has CVE fix
+G_CVE_PATCHED_NODE_16_E19="16.14.2" # latest, has CVE fixes
+G_CVE_PATCHED_NODE_16_E18="16.13.2" # ; old, has CVE fixes
+G_CVE_PATCHED_NODE_16_E17="16.13.0" # ; old
+G_CVE_PATCHED_NODE_16_E16="16.9.1" # ; old
+G_CVE_PATCHED_NODE_16_E15="16.5.0" # ; old
 
 # These Chromium desktop versions listed are non vulnerable versions:
 # Reason why is to minimize vulnerability checks in this eclass.
@@ -71,7 +80,12 @@ G_CVE_PATCHED_NODE_14="14.18.3" # E14-E13
 
 # Stable channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-G_LATEST_CHROMIUM_97="97.0.4692.99" #
+G_LATEST_CHROMIUM_102="102.0.4989.0" # E20 ; dev
+G_LATEST_CHROMIUM_102="102.0.4962.3" # E19 ; dev
+G_LATEST_CHROMIUM_100="100.0.4896.127" # E18 ; latest stable
+G_LATEST_CHROMIUM_98="98.0.4758.141" # E17 ; EOL
+G_LATEST_CHROMIUM_96="96.0.4664.174" # E16 ; EOL
+G_LATEST_CHROMIUM_94="94.0.4606.81" # E15 ; EOL
 
 H_INFO="\
 $(basename $BASH_SOURCE) ${G_VERSION}
@@ -315,14 +329,31 @@ function electron_version_audit() {
 
 	local is_vulnerable=0
 	# Check Electron
-	if is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-ge" 17 ; then
-		# E17 Beta
-		# E18 Nightly
+	if is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-ge" 19 ; then
+		# E19 Nightly
+		# E19 Nightly
 		:; # Auto pass since no vulnerabilites reported for beta and nightly but only on stable releases
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 18 \
+		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_18} ; then
+		:; # Patched / Passed
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 18 \
+		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_18} ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} is not receiving proper security updates."
+		is_vulnerable=1
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 17 \
+		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_17} ; then
+		:; # Patched / Passed
+	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 17 \
+		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_17} ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} is not receiving proper security updates."
+		is_vulnerable=1
 	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 16 \
 		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_16} ; then
-		# Patched
-		:; # Auto pass
+		:; # Patched / Passed
 	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 16 \
 		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_16} ; then
 		# Unpatched
@@ -331,30 +362,9 @@ function electron_version_audit() {
 		is_vulnerable=1
 	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 15 \
 		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_15} ; then
-		# Patched
-		:; # Passed
+		:; # Patched / Passed
 	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 15 \
 		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_15} ; then
-		# Unpatched
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} is not receiving proper security updates."
-		is_vulnerable=1
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 14 \
-		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_14} ; then
-		# Patched
-		:; # Passed
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 14 \
-		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_14} ; then
-		# Unpatched
-		[[ "${G_VERBOSE}" == "1" ]] && einfo \
-"Electron ${ELECTRON_V} is not receiving proper security updates."
-		is_vulnerable=1
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 13 \
-		&& is_x_op_y ${ELECTRON_V} "-ge" ${G_CVE_PATCHED_ELECTRON_13} ; then
-		# Patched
-		:; # Passed
-	elif is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 13 \
-		&& is_x_op_y ${ELECTRON_V} "-lt" ${G_CVE_PATCHED_ELECTRON_13} ; then
 		# Unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
@@ -367,27 +377,84 @@ function electron_version_audit() {
 
 	# Check Node.js EOL
 	if is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
-		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16} ; then
+		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16_E20} \
+		&& is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 20 ; then
 		# Patched
 		:; # Passed
 	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
-		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_16} ; then
+		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_16_E20} \
+		is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 20 ; then
 		# Unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
 security updates."
 		is_vulnerable=1
-	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 14 \
-		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_14} ; then
-		# Patched
-		:; # Passed
-	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 14 \
-		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_14} ; then
+
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16_E19} \
+		&& is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 19 ; then
+		:; # Passed / Patched
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_16_E19} \
+		is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 19 ; then
 		# Unpatched
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
 security updates."
 		is_vulnerable=1
+
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16_E18} \
+		&& is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 18 ; then
+		:; # Passed / Patched
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_16_E18} \
+		is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 18 ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+		is_vulnerable=1
+
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16_E17} \
+		&& is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 17 ; then
+		:; # Passed / Patched
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_16_E17} \
+		is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 17 ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+		is_vulnerable=1
+
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16_E16} \
+		&& is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 16 ; then
+		:; # Passed / Patched
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_16_E16} \
+		is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 16 ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+		is_vulnerable=1
+
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-ge" ${G_CVE_PATCHED_NODE_16_E15} \
+		&& is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 15 ; then
+		:; # Passed / Patched
+	elif is_x_op_y $(echo ${NODE_V} | cut -f 1 -d ".") "-eq" 16 \
+		&& is_x_op_y ${NODE_V} "-lt" ${G_CVE_PATCHED_NODE_16_E15} \
+		is_x_op_y $(echo ${ELECTRON_V} | cut -f 1 -d ".") "-eq" 15 ; then
+		# Unpatched
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+		is_vulnerable=1
+
 	else
 		# Check Node.js EOL
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
@@ -397,10 +464,10 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-ge" 98 ; then
+	if is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-ge" 102 ; then
 		:; # Auto-pass because vulnerabilities are not announced in beta and dev channels
-	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 97 \
-		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_LATEST_CHROMIUM_97} ; then
+	elif is_x_op_y $(echo ${CHROMIUM_V} | cut -f 1 -d ".") "-eq" 100 \
+		&& is_x_op_y ${CHROMIUM_V} "-lt" ${G_LATEST_CHROMIUM_100} ; then
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
 proper security updates."
