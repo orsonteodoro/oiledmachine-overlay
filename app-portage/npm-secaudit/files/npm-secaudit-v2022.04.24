@@ -44,20 +44,20 @@ G_BLACKLIST="/etc/portage/npm-secaudit-blacklist"
 # Stable versions list https://www.electronjs.org/docs/latest/tutorial/support#currently-supported-versions
 # See also:  https://raw.githubusercontent.com/electron/releases/master/lite.json
 
-# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=18
-G_CVE_PATCHED_ELECTRON_20="20.0.0-nightly.20220421" #
+# Track "Security:" or "CVE" in https://www.electronjs.org/releases/nightly?version=20
+G_CVE_PATCHED_ELECTRON_20="20.0.0-nightly.20220421"
+
+# Track "Security:" or "CVE" in https://www.electronjs.org/releases/nightly?version=19
+G_CVE_PATCHED_ELECTRON_19="19.0.0-nightly.20220329"
 
 # Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=18
-G_CVE_PATCHED_ELECTRON_19="19.0.0-nightly.20220329" #
-
-# Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=18
-G_CVE_PATCHED_ELECTRON_18="18.1.0" #
+G_CVE_PATCHED_ELECTRON_18="18.1.0"
 
 # Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=17
-G_CVE_PATCHED_ELECTRON_17="17.4.1" #
+G_CVE_PATCHED_ELECTRON_17="17.4.1"
 
 # Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=16
-G_CVE_PATCHED_ELECTRON_16="16.2.3" #
+G_CVE_PATCHED_ELECTRON_16="16.2.3"
 
 # Track "Security:" or "CVE" in https://www.electronjs.org/releases/stable?version=15
 G_CVE_PATCHED_ELECTRON_15="15.5.2"
