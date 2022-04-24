@@ -119,23 +119,34 @@ ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
 # IMPORTANT: Update section [A] below
 
+# See also:  https://raw.githubusercontent.com/electron/releases/master/lite.json
+
+# Track "Security:" in https://www.electronjs.org/releases/nightly?version=20
+CVE_PATCHED_ELECTRON_20="20.0.0-nightly.20220421"
+
+# Track "Security:" in https://www.electronjs.org/releases/nightly?version=19
+CVE_PATCHED_ELECTRON_19="19.0.0-nightly.20220329"
+
+# Track "Security:" in https://www.electronjs.org/releases/stable?version=18
+CVE_PATCHED_ELECTRON_18="18.1.0"
+
+# Track "Security:" in https://www.electronjs.org/releases/stable?version=17
+CVE_PATCHED_ELECTRON_17="17.4.1"
+
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=16
-CVE_PATCHED_ELECTRON_16="16.0.6"
+CVE_PATCHED_ELECTRON_16="16.2.3"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=15
-CVE_PATCHED_ELECTRON_15="15.3.5"
+CVE_PATCHED_ELECTRON_15="15.5.2"
 
-# Track "Security:" in https://www.electronjs.org/releases/stable?version=14
-CVE_PATCHED_ELECTRON_14="14.2.4"
-
-# Track "Security:" in https://www.electronjs.org/releases/stable?version=13
-CVE_PATCHED_ELECTRON_13="13.6.7"
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
-CVE_PATCHED_NODE_16="16.13.2" # Electron 16, Electron 15
-
-# Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V14.md
-CVE_PATCHED_NODE_14="14.18.3" # Electron 14, Electron 13
+CVE_PATCHED_NODE_16_E20="16.14.2" # latest, has CVE fix
+CVE_PATCHED_NODE_16_E19="16.14.2" # latest, has CVE fix
+CVE_PATCHED_NODE_16_E18="16.13.2" # old, has CVE fixes
+CVE_PATCHED_NODE_16_E17="16.13.0" # old
+CVE_PATCHED_NODE_16_E16="16.9.1" # old
+CVE_PATCHED_NODE_16_E15="16.5.0" # old
 
 # These Chromium desktop versions listed are non vulnerable versions:
 # Reason why is to minimize vulnerability checks in this eclass.
@@ -147,7 +158,12 @@ CVE_PATCHED_NODE_14="14.18.3" # Electron 14, Electron 13
 
 # Beta channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-LATEST_CHROMIUM_97="97.0.4692.99" #
+LATEST_CHROMIUM_102="102.0.4989.0" # E20 ; dev
+LATEST_CHROMIUM_102="102.0.4962.3" # E19 ; dev
+LATEST_CHROMIUM_100="100.0.4896.127" # E18 ; latest stable
+LATEST_CHROMIUM_98="98.0.4758.141" # E17 ; EOL
+LATEST_CHROMIUM_96="96.0.4664.174" # E16 ; EOL
+LATEST_CHROMIUM_94="94.0.4606.81" # E15 ; EOL
 
 # Electron 15 uses EOL Cr94
 # Electron 14 uses EOL Cr93
@@ -963,42 +979,38 @@ critical vulnerabilities in the internal Chromium."
 	# ##### Vulnerability and End Of Life (EOL) Tests ######################
 
 	# Check Electron
-	if ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 17 ; then
-		# E18 Nightly
-		# E17 Beta
+	if ver_test $(ver_cut 1 ${ELECTRON_V}) -ge 19 ; then
+		# E20 Nightly
+		# E19 Nightly
 		:; # Auto pass since vulnerabilies only announced on stable releases
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 16 \
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 18 \
 		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_16} ; then
-		# Patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 16 \
+		:; # Patched / Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 18 \
 		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_16} ; then
 		# Unpatched
 		adie \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 \
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 17 \
 		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_15} ; then
-		# Patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 \
+		:; # Patched / Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 17 \
 		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_15} ; then
 		# Unpatched
 		adie \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 14 \
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 16 \
 		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_14} ; then
-		# Patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 14 \
+		:; # Patched / Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 16 \
 		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_14} ; then
 		# Unpatched
 		adie \
 "Electron ${ELECTRON_V} is not receiving proper security updates."
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 \
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 \
 		&& ver_test ${ELECTRON_V} -ge ${CVE_PATCHED_ELECTRON_13} ; then
-		# Patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 13 \
+		:; # Patched / Passed
+	elif ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 \
 		&& ver_test ${ELECTRON_V} -lt ${CVE_PATCHED_ELECTRON_13} ; then
 		# Unpatched
 		adie \
@@ -1010,25 +1022,77 @@ critical vulnerabilities in the internal Chromium."
 
 	# Check Node.js EOL
 	if ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
-		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_16} ; then
-		# Patched
-		:; # Passed
+		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_16_E20} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 20 ; then
+		:; # Patched / Passed
 	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
-		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_16} ; then
+		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_16_E20} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 20 ; then
 		# Unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
 security updates."
-	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 14 \
-		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_14} ; then
-		# Patched
-		:; # Passed
-	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 14 \
-		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_14} ; then
+
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_16_E19} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 19 ; then
+		:; # Patched / Passed
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_16_E19} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 19 ; then
 		# Unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
 security updates."
+
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_16_E18} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 18 ; then
+		:; # Patched / Passed
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_16_E18} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 18 ; then
+		# Unpatched
+		adie \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_16_E17} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 17 ; then
+		:; # Patched / Passed
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_16_E17} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 17 ; then
+		# Unpatched
+		adie \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_16_E16} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 16 ; then
+		:; # Patched / Passed
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_16_E16} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 16 ; then
+		# Unpatched
+		adie \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -ge ${CVE_PATCHED_NODE_16_E15} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 ; then
+		:; # Patched / Passed
+	elif ver_test $(ver_cut 1 ${NODE_V}) -eq 16 \
+		&& ver_test ${NODE_V} -lt ${CVE_PATCHED_NODE_16_E15} \
+		&& ver_test $(ver_cut 1 ${ELECTRON_V}) -eq 15 ; then
+		# Unpatched
+		adie \
+"Electron ${ELECTRON_V} uses Node.js ${NODE_V} which is not receiving\n\
+security updates."
+
 	else
 		# Check Node.js EOL
 		adie \
@@ -1037,10 +1101,10 @@ security updates."
 
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
-	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -ge 98 ; then
+	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -ge 102 ; then
 		:; # Auto passed because vulnerabilites are typically not announced for beta and dev channels
-	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 97 \
-		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_97} ; then
+	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 100 \
+		&& ver_test ${CHROMIUM_V} -lt ${LATEST_CHROMIUM_100} ; then
 		# Beta unpatched
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\

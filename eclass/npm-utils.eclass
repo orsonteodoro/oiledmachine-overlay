@@ -61,7 +61,7 @@ NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
 # https://omahaproxy.appspot.com/
 # https://www.chromestatus.com/features
 # https://en.wikipedia.org/wiki/Google_Chrome_version_history
-CHROMIUM_STABLE_V="97"
+CHROMIUM_STABLE_V="100"
 
 # ##################  END Per-package environmental variables ##################
 
