@@ -4827,6 +4827,17 @@ eerror
 		einfo
 		[[ -e "${path_config}" ]] || die ".config is missing"
 
+		if [[ "${arch}" =~ "x86" ]] ; then
+			local mfg=$(ot-kernel_get_cpu_mfg_id)
+# It is wrong when CBUILD != CHOST/CTARGET.
+einfo
+einfo "The CPU vendor is set to ${mfg}.  If it is wrong, please manually change"
+einfo "it with the CPU_MFG envvar."
+einfo
+einfo "For more info, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
+einfo
+		fi
+
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
 		ot-kernel_set_kconfig_compiler_toolchain # llvm_slot, gcc_slot

@@ -133,14 +133,6 @@ ot-kernel_get_cpu_mfg_id() {
 		echo "${CPU_MFG,,}" | cut -c 1
 		return
 	fi
-	# Autodetect by kernel config if previously set
-	mfg=$(grep -E -e "CONFIG_MICROCODE_([A-Z]+)=y" "${config}" \
-		| head -n 1 \
-		| sed -e "s|CONFIG_MICROCODE_||g" -e "s|=y||g")
-	if [[ -n "${mfg}" ]] ; then
-		echo "${mfg,,}" | cut -c 1
-		return
-	fi
 	# Autodetect by /proc/cpuinfo
 	# Least portable since CBUILD is not always equal to CHOST/CTARGET.
 	mfg=$(cat /proc/cpuinfo \
