@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
-# with update sync updated with 97.0.2 ebuild.
+# with update sync updated to this version of the ebuild.
 # Revisions may change in the oiledmachine-overlay.
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
@@ -11,7 +11,7 @@ EAPI="7"
 
 FIREFOX_PATCHSET="firefox-99-patches-01j.tar.xz"
 
-LLVM_MAX_SLOT=13
+LLVM_MAX_SLOT=14
 
 PYTHON_COMPAT=( python3_{8..10} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -229,7 +229,7 @@ REQUIRED_USE="debug? ( !system-av1 )
 # Firefox-only REQUIRED_USE flags
 REQUIRED_USE+=" screencast? ( wayland )"
 
-LLVM_SLOTS=(13 12 11)
+LLVM_SLOTS=(14 13 12 11)
 
 gen_llvm_bdepends() {
 	local o=""
@@ -579,6 +579,7 @@ pkg_pretend() {
 
 NABIS=0
 pkg_setup() {
+	einfo "This is the rapid release."
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use pgo ; then
 			if ! has userpriv ${FEATURES} ; then
@@ -976,11 +977,9 @@ multilib_src_configure() {
 		--disable-cargo-incremental \
 		--disable-crashreporter \
 		--disable-install-strip \
-		--disable-minify \
 		--disable-parental-controls \
 		--disable-strip \
 		--disable-updater \
-		--enable-dom-streams \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
 		--enable-official-branding \
