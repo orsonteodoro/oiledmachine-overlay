@@ -134,6 +134,9 @@ COMMON_DEPEND+=" =net-libs/nodejs-15*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 16 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-16*"
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 17 ; then
+COMMON_DEPEND+=" =net-libs/nodejs-17*"
 fi
 
 DEPEND+=" ${COMMON_DEPEND}"

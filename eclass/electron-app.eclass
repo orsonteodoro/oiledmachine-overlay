@@ -470,9 +470,15 @@ COMMON_DEPEND+="
 "
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_V}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -ge 0.64 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_V}") -le 9999 ) ; then
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_V}") -le 0.67 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-12
+"
+elif [[ -n "${ELECTRON_APP_REACT_NATIVE_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -ge 0.68 \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_V}") -le 9999 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-14
 "
 fi
 
@@ -519,6 +525,9 @@ COMMON_DEPEND+=" =net-libs/nodejs-15*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_V}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_V}") -eq 16 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-16*"
+elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_V}" ]] \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_V}") -eq 17 ; then
+COMMON_DEPEND+=" =net-libs/nodejs-17*"
 fi
 
 if [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
