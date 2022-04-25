@@ -90,7 +90,8 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   <slot name="esr">
     Major updates every 42 weeks with security and crash fixes every 4 weeks
     designed to meet the needs of organizations, businesses, educational
-    institutions and to meed compatibility requirements.
+    institutions and to meet compatibility requirements with this
+    Extended Support Release (ESR).
   </slot>
 </slots>
 </pkgmetadata>
