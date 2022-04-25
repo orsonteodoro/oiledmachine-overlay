@@ -137,6 +137,7 @@ ot-kernel_get_cpu_mfg_id() {
 	# Least portable since CBUILD is not always equal to CHOST/CTARGET.
 	mfg=$(cat /proc/cpuinfo \
 		| grep "vendor_id" \
+		| head -n 1 \
 		| cut -f 2 -d ":" \
 		| sed -e "s| ||g")
 	if [[ "${mfg}" =~ ("Authentic"|"Genuine") ]] ; then

@@ -373,7 +373,9 @@ OT_KERNEL_HARDENING_LEVEL="untrusted"
 OT_KERNEL_LSMS="auto"
 OT_KERNEL_MODULES_SUPPORT="1"
 OT_KERNEL_MODULES_COMPRESSOR="zstd"
-OT_KERNEL_MENUCONFIG_FRONTEND="menuconfig"
+OT_KERNEL_MENUCONFIG_EXTRAVERSION="ot"
+OT_KERNEL_MENUCONFIG_RUN_AT="pre"
+OT_KERNEL_MENUCONFIG_UI="disabled"
 OT_KERNEL_PKGFLAGS_ACCEPT="05309e2 351365c"
 OT_KERNEL_SIGN_MODULES="1"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
@@ -985,33 +987,54 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
-    OT_KERNEL_MENUCONFIG_FRONTEND -- Select the menu to use when running the
-    wrapper.  When this value is set, the emerge will prematurely quit to
-    allow to configure it using a wrapper script.  You are responsible to
-    copying the .config from the build directory into /etc/kernels/....
-    Due to bugs, this workaround is used.
-
-    Valid values:
-
-      config - Use prompt frontend
-      menuconfig - Use menu frontend
-      nconfig - Use ncurses frontend
-      xconfig - Use Qt5 frontend
-      gconfig - Use GTK+2 frontend
-
-    For the full list, see
-    https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
-
-
-
-    OT_KERNEL_MENUCONFIG_COLORS -- Sets colors for menuconfig
+    OT_KERNEL_MENUCONFIG_COLORS -- Sets the colors for menuconfig.
 
     Acceptable values:
 
       mono - black and white
       blackbg - black with colored borders
       classic - similiar to default but with yellow text
-      bluetitle - default with black text
+      bluetitle - default colored with black text designed for LCDs
+
+
+
+    OT_KERNEL_MENUCONFIG_EXTRAVERSION -- Tells the ebuild scripts to
+    halt when this extraversion config is being configured.  If unset,
+    it sets it to the current extraversion.
+
+
+
+    OT_KERNEL_MENUCONFIG_RUN_AT -- Sets the location to run the menuconfig
+    wrapper.
+
+    Acceptable values:
+
+      pre - Allow the user to run menuconfig wrapper before ebuild changes.
+        This is suitable for enabling just drivers and minor edits.
+      post - Allow the user to run menuconfig wrapper after ebuild changes.
+        This is suitable for manual edits or mistakes by the ebuild itself.
+
+
+
+    OT_KERNEL_MENUCONFIG_UI -- Select the menu to use when running the
+    wrapper.  When this value is set to a UI, the emerge will prematurely quit
+    to allow to configure it using a wrapper script.  Due to interactive bugs,
+    this workaround is used instead.
+
+    Valid values:
+
+      config - Use line-by-line prompt frontend
+      menuconfig - Use lxdialog menu with frontend using ncurses
+      nconfig - Use ncurses frontend
+      gconfig - Use GTK+2 frontend
+      xconfig - Use Qt5 frontend
+      disable - disables menuconfig
+      none - disables menuconfig
+
+    If unset, it assumes disabled.
+
+    For the full list, see
+    https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
 
 
 

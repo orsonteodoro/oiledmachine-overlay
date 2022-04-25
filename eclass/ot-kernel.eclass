@@ -1994,8 +1994,10 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_IMA_POLICY
 	unset OT_KERNEL_IOMMU
 	unset OT_KERNEL_LSMS
-	unset OT_KERNEL_MENUCONFIG_FRONTEND
 	unset OT_KERNEL_MENUCONFIG_COLORS
+	unset OT_KERNEL_MENUCONFIG_EXTRAVERSION
+	unset OT_KERNEL_MENUCONFIG_RUN_AT
+	unset OT_KERNEL_MENUCONFIG_UI
 	unset OT_KERNEL_MODULE_SUPPORT
 	unset OT_KERNEL_MODULES_COMPRESSOR
 	unset OT_KERNEL_PCIE_MPS
@@ -4735,6 +4737,59 @@ ot-kernel_set_kconfig_build_all_modules_as() {
 	rm "${bak}" "${conv}" 2>/dev/null
 }
 
+# @FUNCTION: ot-kernel_menuconfig
+# @DESCRIPTION:
+# Sets up wrappers for menuconfig and halts for kernel config edits if requested.
+ot-kernel_menuconfig() {
+	local run_at="${1}"
+	local user_run_at="${OT_KERNEL_MENUCONFIG_RUN_AT:-post}"
+	if [[ "${run_at}" == "${user_run_at}" ]] ; then
+		local menuconfig_ui="${OT_KERNEL_MENUCONFIG_UI:-disabled}"
+		menuconfig_ui="${menuconfig_ui,,}"
+		local menuconfig_extraversion="${OT_KERNEL_MENUCONFIG_EXTRAVERSION}"
+		if [[ -z "${menuconfig_extraversion}" ]] ; then
+			menuconfig_extraversion="${extraversion}"
+		fi
+		if [[ "${menuconfig_ui}" =~ ("none"|"disable") ]] ; then
+			:
+		elif [[ -n "${menuconfig_ui}" && "${menuconfig_extraversion}" == "${extraversion}" ]] ; then
+#			https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
+#			All menuconfig/xconfig/gconfig works outside of emerge but not when sandbox is completely disabled.
+#			The interactive support doesn't work as advertised but limited to just alphanumeric and no arrow keys in text only mode.
+#
+#			# Does not work because the arrow keys are broken in interactive mode
+			local menuconfig_colors
+			if [[ -n "${menuconfig_ui}" ]] ; then
+				menuconfig_colors="MENUCONFIG_COLOR=${OT_KERNEL_MENUCONFIG_COLORS}"
+			fi
+			einfo "Running:  ARCH=${arch} make ${menuconfig_ui} ${menuconfig_colors} ${args[@]}"
+			cat <<EOF > "${BUILD_DIR}/menuconfig.sh" || die
+#!/bin/bash
+cd "${BUILD_DIR}"
+ARCH=${arch} make ${menuconfig_ui} ${menuconfig_colors} ${args[@]}
+echo "Update settings to ${config}? (Y/N)"
+read answer
+if [[ "\${answer^^}" =~ ("Y"|"yes") ]] ; then
+	echo "Copying ${BUILD_DIR}/.config -> ${config}"
+	cp "${BUILD_DIR}/.config" "${config}"
+fi
+EOF
+eerror
+eerror "A wrapper script is provided to edit the config.  This menuconfig"
+eerror "wrapper is to ensure to access compiler specific features."
+eerror
+eerror "Set OT_KERNEL_MENUCONFIG_UI=\"disabled\" when done."
+eerror
+eerror "To use the menu run:  ${BUILD_DIR}/menuconfig.sh"
+eerror
+eerror "For more info, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
+eerror
+			chmod +x "${BUILD_DIR}/menuconfig.sh"
+			die
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure
 # @DESCRIPTION:
 # Run menuconfig
@@ -4782,36 +4837,6 @@ ot-kernel_src_configure() {
 			make olddefconfig "${args[@]}" || die
 		fi
 
-		if [[ -n "${OT_KERNEL_MENUCONFIG_FRONTEND}" ]] ; then
-#			https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
-#			All menuconfig/xconfig/gconfig works outside of emerge but not when sandbox is completely disabled.
-#			The interactive support doesn't work as advertised but limited to just alphanumeric and no arrow keys in text only mode.
-#
-#			# Does not work because the arrow keys are broken in interactive mode
-			einfo "Running:  make ${OT_KERNEL_MENUCONFIG_FRONTEND} ${args[@]}"
-			local menuconfig_colors
-			if [[ -n "${OT_KERNEL_MENUCONFIG_COLORS}" ]] ; then
-				menuconfig_colors="MENUCONFIG_COLOR=${OT_KERNEL_MENUCONFIG_COLORS}"
-			fi
-			cat <<EOF > "${BUILD_DIR}/menuconfig.sh" || die
-#!/bin/bash
-cd "${BUILD_DIR}"
-make ${OT_KERNEL_MENUCONFIG_FRONTEND} ${menuconfig_colors} ${args[@]}
-EOF
-eerror
-eerror "A wrapper script is provided to edit the config.  This menuconfig"
-eerror "wrapper is to ensure to access compiler specific features."
-eerror
-eerror "Comment out OT_KERNEL_MENUCONFIG_FRONTEND when done."
-eerror
-eerror "To use the menu run:  ${BUILD_DIR}/menuconfig.sh"
-eerror
-eerror "For more info, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
-eerror
-			chmod +x "${BUILD_DIR}/menuconfig.sh"
-			die
-		fi
-
 		local is_default_config=0
 		if [[ ! -e "${path_config}" ]] ; then
 			ewarn "Missing ${path_config} so generating a new default config."
@@ -4841,6 +4866,7 @@ einfo
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
 		ot-kernel_set_kconfig_compiler_toolchain # llvm_slot, gcc_slot
+		ot-kernel_menuconfig "pre"
 		ot-kernel_set_kconfig_march
 		ot-kernel_set_kconfig_oflag
 		ot-kernel_set_kconfig_lto # llvm_slot
@@ -4905,6 +4931,8 @@ einfo
 		einfo "Updating the .config for defaults for the newly enabled options."
 		einfo "Running:  make olddefconfig ${args[@]}"
 		make olddefconfig "${args[@]}" || die
+
+		ot-kernel_menuconfig "post"
 	done
 }
 
