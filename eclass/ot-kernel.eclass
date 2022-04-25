@@ -4796,7 +4796,7 @@ ot-kernel_src_configure() {
 			cat <<EOF > "${BUILD_DIR}/menuconfig.sh" || die
 #!/bin/bash
 cd "${BUILD_DIR}"
-make ${OT_KERNEL_MENUCONFIG_FRONTEND} ${menuconfig_colors} ${args[@]} || die
+make ${OT_KERNEL_MENUCONFIG_FRONTEND} ${menuconfig_colors} ${args[@]}
 EOF
 eerror
 eerror "A wrapper script is provided to edit the config.  This menuconfig"
