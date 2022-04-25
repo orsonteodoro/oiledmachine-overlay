@@ -1995,6 +1995,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_IOMMU
 	unset OT_KERNEL_LSMS
 	unset OT_KERNEL_MENUCONFIG_FRONTEND
+	unset OT_KERNEL_MENUCONFIG_COLORS
 	unset OT_KERNEL_MODULE_SUPPORT
 	unset OT_KERNEL_MODULES_COMPRESSOR
 	unset OT_KERNEL_PCIE_MPS
@@ -2069,6 +2070,7 @@ ot-kernel_clear_env() {
 	unset VSYSCALL_MODE
 	unset XEN_PCI_PASSTHROUGH
 	unset YUBIKEY
+	unset X86_MICROARCH_OVERRIDE
 	unset ZEN_DOM0
 	unset ZEN_DOMU
 
@@ -2228,7 +2230,7 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 		# Cross-compile but use the config itself to guestimate.
 		if [[ "${arch}" =~ "x86" ]] ; then
 			local found=0
-			if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 				einfo "Adding IOMMU support (VT-d)"
 				ot-kernel_y_configopt "CONFIG_MMU"
 				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
@@ -2239,7 +2241,7 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 				ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
 				found=1
 			fi
-			if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 				einfo "Adding IOMMU support (Vi)"
 				ot-kernel_y_configopt "CONFIG_MMU"
 				ot-kernel_y_configopt "CONFIG_IOMMU_SUPPORT"
@@ -2251,15 +2253,8 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 			fi
 			if (( ${found} == 0 )) ; then
 				eerror
-				eerror "Failed to set IOMMU for DMA mitigation.  Choose either top or bottom solution."
-				eerror
-				eerror "OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1 needs to be set."
-				eerror "OT_KERNEL_CPU_MICROCODE=1 needs to be set installing microcode packages"
-				eerror "for autodetected IOMMU."
-				eerror
-				eerror "  or"
-				eerror
-				eerror "Set the kernel config manually to either CONFIG_INTEL_IOMMU=y or CONFIG_AMD_IOMMU=y."
+				eerror "Failed to set IOMMU for DMA mitigation.  Set CPU_MFG environment variable."
+				eerror "See metadata.xml or or \`epkginfo -x ${PN}::oiledmachine-overlay\` for details."
 				eerror
 				die
 			fi
@@ -2852,14 +2847,12 @@ ot-kernel_set_kconfig_iommu_domain_type() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_kernel_compiler_patch
+# @FUNCTION: ot-kernel_set_kconfig_march
 # @DESCRIPTION:
-# Sets the kernel config for the kernel_compiler_patch associated with
-# the -march compiler flags
-ot-kernel_set_kconfig_kernel_compiler_patch() {
-	if has kernel-compiler-patch ${IUSE_EFFECTIVE} \
-		&& ot-kernel_use kernel-compiler-patch \
-		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
+# Sets the kernel config for the -march associated with the microarchitecture.
+# Takes in consideration the kernel_compiler_patch.
+ot-kernel_set_kconfig_march() {
+	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
 		local microarches=(
 			$(grep -r -e "config M" "${BUILD_DIR}/arch/x86/Kconfig.cpu" | sed -e "s|config ||g")
 		)
@@ -2875,28 +2868,31 @@ ot-kernel_set_kconfig_kernel_compiler_patch() {
 				ot-kernel_unset_configopt "CONFIG_${m}"
 			done
 			ot-kernel_unset_configopt "CONFIG_GENERIC_CPU"
-			if grep -q -E -e "MNATIVE_" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
-				# Don't use lscpu/cpuinfo autodetect if using distcc or
-				# cross-compile but use the config itself to guestimate.
-				einfo "Setting .config with -march=native"
-				local mfg=$(lscpu \
-					| grep -F -e "Vendor ID" \
-					| head -n 1 \
-					| cut -f 2 -d ":" \
-					| sed -r -e "s|[ ]+||g" \
-					| sed -r -e "s/(Authentic|Genuine)//g")
+			if [[ -n "${X86_MICROARCH_OVERRIDE}" ]] ; then
+				einfo "Setting .config with CONFIG_${X86_MICROARCH_OVERRIDE}=y"
+				ot-kernel_y_configopt "CONFIG_${KCP_MICROARCH_OVERRIDE}"
+			elif grep -q -E -e "MNATIVE_" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
+				local mfg=$(ot-kernel_get_cpu_mfg_id)
 				mfg=${mfg^^}
 				ot-kernel_y_configopt "CONFIG_MNATIVE_${mfg}"
 			elif grep -q -F -e "MNATIVE" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
 				einfo "Setting .config with -march=native"
 				ot-kernel_y_configopt "CONFIG_MNATIVE"
+			elif grep -q -F -e "GENERIC_CPU" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
+				ewarn
+				ewarn "Setting .config with -march=generic"
+				ewarn
+				ewarn "See X86_MICROARCH_OVERRIDE in metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
+				ewarn "to optimize."
+				ewarn
+				ot-kernel_y_configopt "CONFIG_GENERIC_CPU"
 			fi
 		else
 			einfo "Reusing the previous kernel_compiler_patch settings."
 		fi
 	fi
 
-	if [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
+	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
 		if tc-is-cross-compiler ; then
 			# Cannot use -march=native if doing distcc.
 			if grep "^CONFIG_MNATIVE" "${path_config}" ; then
@@ -4786,15 +4782,35 @@ ot-kernel_src_configure() {
 			make olddefconfig "${args[@]}" || die
 		fi
 
-#		if [[ -n "${OT_KERNEL_MENUCONFIG_FRONTEND}" ]] ; then
+		if [[ -n "${OT_KERNEL_MENUCONFIG_FRONTEND}" ]] ; then
 #			https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
 #			All menuconfig/xconfig/gconfig works outside of emerge but not when sandbox is completely disabled.
 #			The interactive support doesn't work as advertised but limited to just alphanumeric and no arrow keys in text only mode.
 #
 #			# Does not work because the arrow keys are broken in interactive mode
-#			einfo "Running:  make ${OT_KERNEL_MENUCONFIG_FRONTEND} ${args[@]}"
-#			make ${OT_KERNEL_MENUCONFIG_FRONTEND} "${args[@]}" || die
-#		fi
+			einfo "Running:  make ${OT_KERNEL_MENUCONFIG_FRONTEND} ${args[@]}"
+			local menuconfig_colors
+			if [[ -n "${OT_KERNEL_MENUCONFIG_COLORS}" ]] ; then
+				menuconfig_colors="MENUCONFIG_COLOR=${OT_KERNEL_MENUCONFIG_COLORS}"
+			fi
+			cat <<EOF > "${BUILD_DIR}/menuconfig.sh" || die
+#!/bin/bash
+cd "${BUILD_DIR}"
+make ${OT_KERNEL_MENUCONFIG_FRONTEND} ${menuconfig_colors} ${args[@]} || die
+EOF
+eerror
+eerror "A wrapper script is provided to edit the config.  This menuconfig"
+eerror "wrapper is to ensure to access compiler specific features."
+eerror
+eerror "Comment out OT_KERNEL_MENUCONFIG_FRONTEND when done."
+eerror
+eerror "To use the menu run:  ${BUILD_DIR}/menuconfig.sh"
+eerror
+eerror "For more info, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
+eerror
+			chmod +x "${BUILD_DIR}/menuconfig.sh"
+			die
+		fi
 
 		local is_default_config=0
 		if [[ ! -e "${path_config}" ]] ; then
@@ -4814,7 +4830,7 @@ ot-kernel_src_configure() {
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
 		ot-kernel_set_kconfig_compiler_toolchain # llvm_slot, gcc_slot
-		ot-kernel_set_kconfig_kernel_compiler_patch
+		ot-kernel_set_kconfig_march
 		ot-kernel_set_kconfig_oflag
 		ot-kernel_set_kconfig_lto # llvm_slot
 		ot-kernel_set_kconfig_pgo # llvm_slot
@@ -4986,13 +5002,13 @@ ot-kernel_setup_tc() {
 	einfo "LDFLAGS=${LDFLAGS}"
 	if tc-is-cross-compiler ; then
 		args+=(
-			"HOSTCFLAGS=-O1 -pipe"
-			"HOSTLDFLAGS=-O1 -pipe"
+			"'HOSTCFLAGS=-O1 -pipe'"
+			"'HOSTLDFLAGS=-O1 -pipe'"
 		)
 	else
 		args+=(
-			"HOSTCFLAGS=${CFLAGS}"
-			"HOSTLDFLAGS=${LDFLAGS}"
+			"'HOSTCFLAGS=${CFLAGS}'"
+			"'HOSTLDFLAGS=${LDFLAGS}'"
 		)
 	fi
 

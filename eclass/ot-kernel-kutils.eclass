@@ -122,5 +122,37 @@ ot-kernel_unset_pat_kconfig_kernel_cmdline() {
 
 }
 
+# @FUNCTION: ot-kernel_get_cpu_mfg_id
+# @DESCRIPTION:
+# Gets the mfg name for proper config.  CPU_MFG can be used to override.
+# Otherwise, autodetect starting with the most portable way.
+ot-kernel_get_cpu_mfg_id() {
+	local mfg
+	# Set by environment variable
+	if [[ -n "${CPU_MFG}" ]] ; then
+		echo "${CPU_MFG,,}" | cut -c 1
+		return
+	fi
+	# Autodetect by kernel config if previously set
+	mfg=$(grep -E -e "CONFIG_MICROCODE_([A-Z]+)=y" "${config}" \
+		| head -n 1 \
+		| sed -e "s|CONFIG_MICROCODE_||g" -e "s|=y||g")
+	if [[ -n "${mfg}" ]] ; then
+		echo "${mfg,,}" | cut -c 1
+		return
+	fi
+	# Autodetect by /proc/cpuinfo
+	# Least portable since CBUILD is not always equal to CHOST/CTARGET.
+	mfg=$(cat /proc/cpuinfo \
+		| grep "vendor_id" \
+		| head -n 1 \
+		| sed -E -e "s#(Authentic|Genuine)#;#g" \
+		| cut -f 2 -d ";")
+	if [[ -n "${mfg}" ]] ; then
+		echo "${mfg,,}" | cut -c 1
+		return
+	fi
+}
+
 OT_KERNEL_KUTILS_ECLASS="1"
 fi

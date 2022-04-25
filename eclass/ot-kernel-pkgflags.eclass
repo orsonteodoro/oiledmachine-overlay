@@ -327,6 +327,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_openconnect
 	ot-kernel-pkgflags_openfortivpn
 	ot-kernel-pkgflags_openl2tp
+	ot-kernel-pkgflags_openrgb
 	ot-kernel-pkgflags_openssl
 	ot-kernel-pkgflags_openvpn
 	ot-kernel-pkgflags_openvswitch
@@ -5206,6 +5207,30 @@ ot-kernel-pkgflags_openfortivpn() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_openrgb
+# @DESCRIPTION:
+# Applies kernel config flags for the openrgb package
+ot-kernel-pkgflags_openrgb() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4b52b16" ]] && return
+	if has_version "app-misc/openrgb" ; then
+		einfo "Applying kernel config flags for the openssl package (id: 4b52b16)"
+		ot-kernel_y_configopt "CONFIG_I2C"
+		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			ot-kernel_y_configopt "CONFIG_PCI"
+			ot-kernel_y_configopt "CONFIG_I2C_I801"
+			ot-kernel_y_configopt "CONFIG_I2C_NCT6775"
+		fi
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			ot-kernel_y_configopt "CONFIG_PCI"
+			ot-kernel_y_configopt "CONFIG_I2C_PIIX4"
+		fi
+		if [[ "${OPENRGB_RESOLVE_ACPI_SMBUS_CONFLICT:-0}" == "1" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "acpi_enforce_resources=lax"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_openssl
 # @DESCRIPTION:
 # Applies kernel config flags for the openssl package
@@ -5297,10 +5322,10 @@ ot-kernel-pkgflags_kvm_host_required() {
 	# Don't use lscpu/cpuinfo autodetect if using distcc or
 	# cross-compile but use the config itself to guestimate.
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_KVM_INTEL"
 		fi
-		if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_KVM_AMD"
 		fi
 	fi
@@ -5540,21 +5565,17 @@ _ot-kernel-pkgflags_cpu_pmu_events_perf() {
 	if [[ "${arch}" =~ ("x86") ]] ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		# Guess based on hints from kconfig
-		if grep -q -E -e "(CONFIG_MICROCODE_INTEL=y|CONFIG_INTEL_IOMMU=y)" "${path_config}" ; then
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CPU_SUP_INTEL"
-		fi
-		if grep -q -E -e "(CONFIG_MICROCODE_AMD=y|CONFIG_AMD_IOMMU=y)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
-		fi
-		if grep -q -E -e "^CONFIG_CPU_SUP_AMD=(y|m)" "${path_config}" ; then
-			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL"
-			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_AMD_POWER"
-			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_AMD_UNCORE"
-		fi
-		if grep -q -E -e "^CONFIG_CPU_SUP_INTEL=(y|m)" "${path_config}" ; then
 			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_UNCORE"
 			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL"
 			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_CSTATE"
+		fi
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
+			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL"
+			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_AMD_POWER"
+			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_AMD_UNCORE"
 		fi
 
 		# Dependencies
