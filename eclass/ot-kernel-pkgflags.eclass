@@ -5213,7 +5213,7 @@ ot-kernel-pkgflags_openfortivpn() { # DONE
 ot-kernel-pkgflags_openrgb() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4b52b16" ]] && return
 	if has_version "app-misc/openrgb" ; then
-		einfo "Applying kernel config flags for the openssl package (id: 4b52b16)"
+		einfo "Applying kernel config flags for the OpenRGB package (id: 4b52b16)"
 		ot-kernel_y_configopt "CONFIG_I2C"
 		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
 		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
