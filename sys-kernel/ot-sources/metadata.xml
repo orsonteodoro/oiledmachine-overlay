@@ -1722,6 +1722,8 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     march equivalent.  The MNATIVE* name changes depending if you are using
     the 4.14 series.
 
+    The custom or manual value is provided to use previously set values.
+
     The availability of some options or spelling below may depend on
     the version of the compiler and the version of the kernel_compiler_patch.
     See arch/x86/Kconfig.cpu for details.  It is not necessary to use the
@@ -1732,6 +1734,7 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
 
       X86_MICROARCH_OVERRIDE="GENERIC_CPU"
       X86_MICROARCH_OVERRIDE="MATOM"
+      X86_MICROARCH_OVERRIDE="manual"
 
     ZEN_DOM0 - Use the Domain 0 (privileged, backend, host) kernel config.  Both
     ZEN_DOM0 and ZEN_DOMU are mutually exclusive.

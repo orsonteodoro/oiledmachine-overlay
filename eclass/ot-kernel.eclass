@@ -2870,7 +2870,9 @@ ot-kernel_set_kconfig_march() {
 				ot-kernel_unset_configopt "CONFIG_${m}"
 			done
 			ot-kernel_unset_configopt "CONFIG_GENERIC_CPU"
-			if [[ -n "${X86_MICROARCH_OVERRIDE}" ]] ; then
+			if [[ "${X86_MICROARCH_OVERRIDE}" =~ ("manual"|"custom") ]] ; then
+				einfo "Setting .config with ${X86_MICROARCH_OVERRIDE} march setting"
+			elif [[ -n "${X86_MICROARCH_OVERRIDE}" ]] ; then
 				einfo "Setting .config with CONFIG_${X86_MICROARCH_OVERRIDE}=y"
 				ot-kernel_y_configopt "CONFIG_${KCP_MICROARCH_OVERRIDE}"
 			elif grep -q -E -e "MNATIVE_" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
