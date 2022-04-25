@@ -1686,18 +1686,18 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     YUBIKEY - Force added support for YubiKey.
     Valid values: 0 (default), 1
 
-    X86_MICROARCH_OVERRIDE - Override the -march=native or -march=generic.
-    With the help of the kernel_compiler_patch, more march values are
-    exposed based on compiler support.  Setting to a specific
-    microarchitecture is useful for prebuilt kernel packages.  For
-    greatest portablility use GENERIC_CPU.  For autodetection use
-    MNATIVE*.  However, this works only well when the builder machine
-    (CBUILD) is the same as the target or host machine (CTARGET/CHOST)
-    to run the kernel.
-    Environment variable only valid in x86 and x86_64.
+    X86_MICROARCH_OVERRIDE - Override the -march=native or -march=generic.  With
+    the help of the kernel_compiler_patch, more march values are exposed based
+    on compiler support.  Setting to a specific microarchitecture is useful for
+    prebuilt kernel packages.  For the greatest portablility, use GENERIC_CPU.
+    For autodetection, use an MNATIVE* option.  However, the MNATIVE* option
+    only works when the builder machine (CBUILD) is the same as the target
+    or host machine (CTARGET/CHOST) to run the kernel.  The environment variable
+    only valid in x86 and x86_64.
 
     If unset, it will use a MNATIVE* or GENERIC_CPU matching the
-    march equivalent.
+    march equivalent.  The MNATIVE* name changes depending if you are using
+    the 4.14 series.
 
     The availability of some options or spelling below may depend on
     the version of the compiler and the version of the kernel_compiler_patch.
