@@ -130,7 +130,7 @@ ot-kernel_get_cpu_mfg_id() {
 	local mfg
 	# Set by environment variable
 	if [[ -n "${CPU_MFG}" ]] ; then
-		echo "${CPU_MFG,,}" | cut -c 1
+		echo "${CPU_MFG,,}"
 		return
 	fi
 	# Autodetect by /proc/cpuinfo
@@ -141,7 +141,7 @@ ot-kernel_get_cpu_mfg_id() {
 		| sed -E -e "s#(Authentic|Genuine)#;#g" \
 		| cut -f 2 -d ";")
 	if [[ -n "${mfg}" ]] ; then
-		echo "${mfg,,}" | cut -c 1
+		echo "${mfg,,}"
 		return
 	fi
 }
