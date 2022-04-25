@@ -214,7 +214,7 @@ _configure_abi() {
 		#
 		#
 		-DLIBCXXABI_INCLUDE_TESTS=$(usex test)
-		-DLIBCXXABI_USE_LLVM_UNWINDER=$(usex libunwind)
+		#
 		-DLIBCXXABI_USE_COMPILER_RT=${want_compiler_rt}
 
 		# upstream is omitting standard search path for this
@@ -284,6 +284,7 @@ _configure_abi() {
 		mycmakeargs+=(
 			-DLIBCXXABI_ENABLE_SHARED=OFF
 			-DLIBCXXABI_ENABLE_STATIC=ON
+			-DLIBCXXABI_USE_LLVM_UNWINDER=OFF
 			-DLIBCXX_ENABLE_SHARED=OFF
 			-DLIBCXX_ENABLE_STATIC=ON
 		)
@@ -291,6 +292,7 @@ _configure_abi() {
 		mycmakeargs+=(
 			-DLIBCXXABI_ENABLE_SHARED=ON
 			-DLIBCXXABI_ENABLE_STATIC=OFF
+			-DLIBCXXABI_USE_LLVM_UNWINDER=$(usex libunwind)
 			-DLIBCXX_ENABLE_SHARED=ON
 			-DLIBCXX_ENABLE_STATIC=OFF
 		)
