@@ -27,7 +27,7 @@ SLOT="${SLOT_MAJ}/20.142" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSIO
 # third_party last update: 20211103
 RDEPEND+="
 	~dev-cpp/abseil-cpp-20210324.2:=[${MULTILIB_USEDEP},cxx17(+)]
-	>=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}]
+	>=dev-libs/openssl-1.1.1:0=[-bindist(-),${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-3.18.1:=[${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2021.09.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
