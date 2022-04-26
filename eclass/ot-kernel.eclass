@@ -3263,6 +3263,18 @@ ot-kernel_set_kconfig_mmc_sd_sdio() {
 	done
 }
 
+# @FUNCTION: ot-kernel_check_libcrypto
+# @DESCRIPTION:
+# Checks for the libcrypto
+ot-kernel_check_libcrypto() {
+	local msg="${1}"
+	if has_version "virtual/pkgconfig" && ( has_version "dev-libs/openssl" || has_version "dev-libs/libressl" ) ; then
+		:
+	else
+		die "You need libcrypto from OpenSSL or LibreSSL ${msg}."
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_module_signing
 # @DESCRIPTION:
 # Sets the kernel config for signed kernel modules
@@ -4772,6 +4784,23 @@ ot-kernel_menuconfig() {
 		if [[ "${menuconfig_ui}" =~ ("none"|"disable") ]] ; then
 			:
 		elif [[ -n "${menuconfig_ui}" && "${menuconfig_extraversion}" == "${extraversion}" ]] ; then
+			if [[ "${menuconfig_ui}" == "gconfig" ]] ; then
+				has_version "virtual/pkgconfig" || die "Please install this package"
+				has_version "x11-libs/gtk+:2" || die "Please install this package"
+				has_version "gnome-base/libglade:2.0" || die "Please install this package"
+				has_version "dev-libs/glib:2" || die "Please install this package"
+			elif [[ "${menuconfig_ui}" == "menuconfig" ]] ; then
+				has_version "virtual/pkgconfig" || die "Please install this package"
+				has_version "sys-libs/ncurses" || die "Please install this package"
+			elif [[ "${menuconfig_ui}" == "nconfig" ]] ; then
+				has_version "virtual/pkgconfig" || die "Please install this package"
+				has_version "sys-libs/ncurses" || die "Please install this package"
+			elif [[ "${menuconfig_ui}" == "xconfig" ]] ; then
+				has_version "virtual/pkgconfig" || die "Please install this package"
+				has_version "dev-qt/qtcore:5" || die "Please install this package"
+				has_version "dev-qt/qtgui:5" || die "Please install this package"
+				has_version "dev-qt/qtwidgets:5" || die "Please install this package"
+			fi
 #			https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
 #			All menuconfig/xconfig/gconfig works outside of emerge but not when sandbox is completely disabled.
 #			The interactive support doesn't work as advertised but limited to just alphanumeric and no arrow keys in text only mode.
@@ -4807,6 +4836,18 @@ eerror
 			chmod +x "${BUILD_DIR}/menuconfig.sh"
 			die
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel_check_kernel_signing_prereqs
+# @DESCRIPTION:
+# Check kernel signing prereqs
+ot-kernel_check_kernel_signing_prereqs() {
+	if [[ "${OT_KERNEL_SIGN_MODULES}" != "0" && -n "${OT_KERNEL_SIGN_MODULES}" ]] ; then
+		ot-kernel_check_libcrypto "for module signing"
+	fi
+	if [[ "${OT_KERNEL_SIGN_KERNEL}" =~ ("uefi"|"efi"|"kexec") ]] ; then
+		ot-kernel_check_libcrypto "for kernel signing"
 	fi
 }
 
@@ -4945,6 +4986,7 @@ einfo
 
 		ot-kernel_set_kconfig_module_support
 		ot-kernel_set_kconfig_build_all_modules_as
+		ot-kernel_check_kernel_signing_prereqs
 		ot-kernel_set_kconfig_module_signing
 
 		einfo "Updating the .config for defaults for the newly enabled options."
