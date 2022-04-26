@@ -116,7 +116,7 @@ LICENSE+=" BSD-2" # See include/linux/firmware/broadcom/tee_bnxt_fw.h
 LICENSE+=" BSD" # See include/linux/packing.h, ...
 LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
 LICENSE+=" Apache-2.0" # See drivers/staging/wfx/hif_api_cmd.h
-IUSE+=" exfat"
+IUSE+=" -exfat"
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 
 HOMEPAGE+="
