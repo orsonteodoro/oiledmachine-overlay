@@ -51,18 +51,22 @@ pkg_setup()
 	if ( use menu-only || use httpd ) \
 	&& [[ -z "${XPRA_HTML5_BROWSER}" && -z "${XPRA_HTML5_PROTO}" \
 		&& -z "${XPRA_HTML5_SERVER}" && -z "${XPRA_HTML5_PORT}" ]] ; then
-		die \
-"You must set XPRA_HTML5_BROWSER, XPRA_HTML5_PROTO, XPRA_HTML5_SERVER, \
-XPRA_HTML5_PORT to able to be able to set the browser path for a desktop menu \
-entry.  See \`epkginfo -x www-apps/xpra-html5\` for details."
+eerror
+eerror "You must set XPRA_HTML5_BROWSER, XPRA_HTML5_PROTO, XPRA_HTML5_SERVER,"
+eerror "XPRA_HTML5_PORT to able to be able to set the browser path for a"
+eerror "desktop menu entry.  See \`epkginfo -x www-apps/xpra-html5\` for"
+eerror "details."
+eerror
+		die
 	fi
 
 	if use local \
 	[[ -z "${XPRA_HTML5_BROWSER}" ]] ; then
-		ewarn \
-"Setting XPRA_HTML5_BROWSER as a per-package \
-environmental variable containing the browser path is recommended for a \
-desktop menu entry.  See \`epkginfo -x www-apps/xpra-html5\` for details."
+ewarn
+ewarn "Setting XPRA_HTML5_BROWSER as a per-package environmental variable"
+ewarn "containing the browser path is recommended for a desktop menu entry."
+ewarn "See \`epkginfo -x www-apps/xpra-html5\` for details."
+ewarn
 	fi
 }
 
@@ -98,9 +102,11 @@ src_install() {
 			iconp=""
 		fi
 
-		einfo \
-"Adding menu for ${PN} using ${XPRA_HTML5_BROWSER} with \
-http://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
+einfo
+einfo "Adding menu for ${PN} using ${XPRA_HTML5_BROWSER} with"
+einfo "http://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
+einfo
+
 		make_desktop_entry \
 			"${XPRA_HTML5_BROWSER} ${XPRA_HTML5_PROTO}://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}" \
 			"${PN}" \
@@ -118,16 +124,21 @@ http://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
 
 pkg_postinst() {
 	xdg_pkg_postinst
-	einfo "${PN} requires xpra to be installed."
-	einfo
-	einfo "To configure, see:"
-	einfo "See https://github.com/Xpra-org/xpra-html5/tree/v4.1.2#configuration"
-	einfo
+einfo
+einfo "${PN} requires xpra to be installed."
+einfo
+einfo "To configure, see:"
+einfo "See https://github.com/Xpra-org/xpra-html5/tree/v4.1.2#configuration"
+einfo
 	if use httpd || use menu-only ; then
-		einfo "To use the browser only client, you enter for the URI:"
-		einfo "${XPRA_HTML5_PROTO}://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
+einfo
+einfo "To use the browser only client, you enter for the URI:"
+einfo "${XPRA_HTML5_PROTO}://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
+einfo
 	elif use local ; then
-		einfo "To use the browser only client, you enter for the URI:"
-		einfo "${LOCAL_INSTALL_URI}"
+einfo
+einfo "To use the browser only client, you enter for the URI:"
+einfo "${LOCAL_INSTALL_URI}"
+einfo
 	fi
 }
