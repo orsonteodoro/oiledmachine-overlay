@@ -116,6 +116,8 @@ LICENSE+=" BSD-2" # See include/linux/firmware/broadcom/tee_bnxt_fw.h
 LICENSE+=" BSD" # See include/linux/packing.h, ...
 LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
 LICENSE+=" Apache-2.0" # See drivers/staging/wfx/hif_api_cmd.h
+IUSE+=" exfat"
+LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 
 HOMEPAGE+="
           https://algo.ing.unimo.it/people/paolo/disk_sched/
@@ -1721,6 +1723,16 @@ ot-kernel_src_prepare() {
 	# Patch for nv driver
 	sed -i -e "s|select FB_CMDLINE|select FB_CMDLINE\n\tselect DRM_KMS_HELPER|" \
 		"${BUILD_DIR}/drivers/gpu/drm/Kconfig" || die
+
+	if ver_test ${K_MAJOR_MINOR} -ge 5.7 ; then
+		if ! use exfat ; then
+			einfo "Removing exFAT"
+			sed -i -e "\|fs/exfat/Kconfig|d" "${BUILD_DIR}/fs/Kconfig" || die
+			sed -i -e "\|CONFIG_EXFAT_FS|d" "${BUILD_DIR}/fs/Makefile" || die
+			sed -i -e "s|/EXFAT/|/|g" "${BUILD_DIR}/fs/Kconfig" || die
+			rm -rf "${BUILD_DIR}/fs/exfat" || die
+		fi
+	fi
 
 	eapply_user
 
@@ -6050,6 +6062,15 @@ ewarn
 	if [[ "${_OT_KERNEL_IMA_USED}" == "1" ]] ; then
 einfo
 einfo "To optimize IMA hashing add iversion to fstab mount option for / (aka root)."
+einfo
+	fi
+	if use exfat ; then
+einfo
+einfo "ExFAT users:  You must be a member of OIN and agree to the OIN license"
+einfo "for patent legal protections and royalty free benefits."
+einfo
+einfo "An overview of the legal status of exFAT can be found at"
+einfo "https://en.wikipedia.org/wiki/ExFAT#Legal_status"
 einfo
 	fi
 }

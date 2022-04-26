@@ -1992,6 +1992,7 @@ https://github.com/dolohow/uksm
       </flag>
     <flag name="disable_debug">Installs scripts to disable debugging, tracing,
       verbose output or related code paths.</flag>
+    <flag name="exfat">Keeps or removes exFAT</flag>
     <flag name="genpatches">Applies the genkernel patch set.</flag>
     <flag name="genpatches_1510">Applies the genkernel patch 1510 for
       protected hardlinks and symlinks during early boot.  Disabled because it
