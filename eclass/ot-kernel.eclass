@@ -148,7 +148,6 @@ CDEPEND="
 	app-arch/cpio
 	app-shells/bash
 	dev-lang/perl
-	dev-util/patchutils
 	dev-util/pkgconf
 	sys-apps/grep[pcre]
 	sys-devel/bison
