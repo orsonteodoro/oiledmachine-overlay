@@ -193,7 +193,6 @@ RDEPEND+="
 BDEPEND+="
 	build? ( ${CDEPEND} )
 	dev-util/patchutils
-	sys-apps/grep[pcre]
 "
 
 EXPORT_FUNCTIONS pkg_pretend pkg_setup src_unpack src_prepare src_configure src_compile src_install \
