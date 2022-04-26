@@ -116,8 +116,6 @@ LICENSE+=" BSD-2" # See include/linux/firmware/broadcom/tee_bnxt_fw.h
 LICENSE+=" BSD" # See include/linux/packing.h, ...
 LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
 LICENSE+=" Apache-2.0" # See drivers/staging/wfx/hif_api_cmd.h
-IUSE+=" -exfat"
-LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 
 HOMEPAGE+="
           https://algo.ing.unimo.it/people/paolo/disk_sched/
@@ -2685,6 +2683,17 @@ ot-kernel_set_kconfig_ep800() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_exfat
+# @DESCRIPTION:
+# Sets the kernel config for the exfat driver
+ot-kernel_set_kconfig_exfat() {
+	if has exfat ${IUSE_EFFECTIVE} && ot-kernel_use exfat ; then
+		ot-kernel_y_configopt "CONFIG_EXFAT_FS"
+	else
+		ot-kernel_unset_configopt "CONFIG_EXFAT_FS"
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_futex
 # @DESCRIPTION:
 # Sets the kernel config for futex and futex2
@@ -4994,6 +5003,7 @@ einfo
 		ot-kernel_set_kconfig_usb_mass_storage
 		ot-kernel_set_kconfig_mmc_sd_sdio
 		ot-kernel_set_kconfig_memstick
+		ot-kernel_set_kconfig_exfat
 
 		ot-kernel_set_kconfig_firmware
 
@@ -6064,7 +6074,7 @@ einfo
 einfo "To optimize IMA hashing add iversion to fstab mount option for / (aka root)."
 einfo
 	fi
-	if use exfat ; then
+	if has exfat ${IUSE_EFFECTIVE} && use exfat ; then
 einfo
 einfo "exFAT users:  You must be a member of OIN and agree to the OIN license"
 einfo "for patent legal protections and royalty free benefits."

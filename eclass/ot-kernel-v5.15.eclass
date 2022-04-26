@@ -210,6 +210,7 @@ shadowcallstack tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
 tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-multigen_lru zen-sauce
 zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
+IUSE+=" -exfat"
 REQUIRED_USE+="
 	futex-proton? ( futex )
 	genpatches_1510? ( genpatches )
@@ -254,6 +255,7 @@ LICENSE+=" clang-pgo? ( GPL-2 )"
 # A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
+LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" prjc? ( GPL-3 )" # see \
   # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file

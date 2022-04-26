@@ -207,6 +207,7 @@ IUSE+=" ${KCP_IUSE} bbrv2 +cfs clang disable_debug futex
 tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce zen-sauce-all
 -zen-tune"
+IUSE+=" -exfat"
 REQUIRED_USE+="
 	genpatches_1510? ( genpatches )
 	O3? ( zen-sauce )
@@ -233,6 +234,7 @@ LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" prjc? ( GPL-3 )" # see \
   # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
+LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
