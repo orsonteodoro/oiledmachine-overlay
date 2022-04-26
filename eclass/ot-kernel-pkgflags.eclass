@@ -6184,7 +6184,7 @@ ot-kernel-pkgflags_squid() { # DONE
 ot-kernel-pkgflags_suid_sandbox() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4aa6a9f" ]] && return
 	if has_version "www-client/chromium[suid]" \
-		|| [[ "${USE_SUID_SANDBOX}" == "1" ]] ; then
+		|| [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
 		einfo "Applying kernel config flags for the suid sandbox (id: 4aa6a9f)"
 		ot-kernel_y_configopt "CONFIG_PID_NS"
 		ot-kernel_y_configopt "CONFIG_NET_NS"

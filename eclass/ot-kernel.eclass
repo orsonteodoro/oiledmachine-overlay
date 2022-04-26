@@ -1981,6 +1981,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_CPU_MICROCODE
 	unset OT_KERNEL_CPU_SCHED
 	unset OT_KERNEL_DISABLE_USB_AUTOSUSPEND
+	unset OT_KERNEL_DMESG
 	unset OT_KERNEL_EARLY_KMS
 	unset OT_KERNEL_EFI_PARTITION
 	unset OT_KERNEL_EP800
@@ -2068,6 +2069,7 @@ ot-kernel_clear_env() {
 	unset USB_FLASH_F2FS
 	unset USB_FLASH_UDF
 	unset USB_MASS_STORAGE
+	unset USE_SUID_SANDBOX
 	unset VIRTUALBOX_GUEST_LINUX
 	unset VSYSCALL_MODE
 	unset XEN_PCI_PASSTHROUGH
@@ -2267,6 +2269,8 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 		ewarn "KDB/KGDB_KDB is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_KGDB"
 		ot-kernel_unset_configopt "CONFIG_KGDB_KDB"
+
+		ot-kernel_set_kconfig_dmesg "0"
 
 		ot-kernel_y_configopt "CONFIG_SECURITY_DMESG_RESTRICT" # Only partial
 	fi
@@ -2576,6 +2580,26 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
 		ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_dmesg
+# @DESCRIPTION:
+# Shows or hides early printk or dmesg
+ot-kernel_set_kconfig_dmesg() {
+	local dmesg
+	local override="${1}"
+	if [[ -n "${override}" ]] ; then
+		dmesg="${override}"
+	else
+		dmesg="${OT_KERNEL_DMESG:-0}"
+	fi
+	if [[ "${dmesg}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PRINTK"
+		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+	elif [[ "${dmesg}" == "0" ]] ; then
+		ot-kernel_unset_configopt "CONFIG_PRINTK"
+		ot-kernel_unset_configopt "CONFIG_EARLY_PRINTK"
 	fi
 }
 
@@ -4766,6 +4790,7 @@ echo "Update settings to ${config}? (Y/N)"
 read answer
 if [[ "\${answer^^}" =~ ("Y"|"yes") ]] ; then
 	echo "Copying ${BUILD_DIR}/.config -> ${config}"
+	mkdir -p $(dirname "${config}")
 	cp "${BUILD_DIR}/.config" "${config}"
 fi
 EOF
@@ -4904,8 +4929,7 @@ einfo
 			./disable_debug || die
 			rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
 		fi
-		ot-kernel_y_configopt "CONFIG_PRINTK"
-		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+		ot-kernel_set_kconfig_dmesg ""
 
 		local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 			ot-kernel_set_kconfig_hardening_level

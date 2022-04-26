@@ -706,6 +706,18 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
+    OT_KERNEL_DMESG -- Allow the use of early printk and dmesg.  Setting this
+    may affect features that may depend on it.  Setting it off may also help
+    increase security.
+
+    Acceptable values:
+
+      1, 0, unset
+
+    Unset will use manual or previous settings.
+
+
+
     OT_KERNEL_EARLY_KMS -- enable early KMS for graphics improvement.
     This setting fixes early kms problem with OT_KERNEL_BOOT_SUBSYSTEMS="m".
     For out-of-tree Direct Rendering Manager DKMS graphics drivers, this should
@@ -1024,7 +1036,7 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     Valid values:
 
       config - Use line-by-line prompt frontend
-      menuconfig - Use lxdialog menu with frontend using ncurses
+      menuconfig - Use lxdialog menu frontend using ncurses
       nconfig - Use ncurses frontend
       gconfig - Use GTK+2 frontend
       xconfig - Use Qt5 frontend
@@ -1699,6 +1711,9 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     SmartMedia support
     Valid values:  0 (default), 1.
     See also:  MEMCARD_MMC, MEMCARD_SD, MEMCARD_SDIO
+
+    USE_SUID_SANDBOX - Force adding suid sandbox support for browsers.
+    Valid values:  0 (default), 1.
 
     VIRTUALBOX_GUEST_LINUX - Add support for VirtualBox Linux guests.
     Valid values:  0, 1 (default).
