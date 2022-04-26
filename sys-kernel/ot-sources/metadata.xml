@@ -1966,6 +1966,7 @@ https://github.com/dolohow/uksm
     <flag name="bmq">Patches the kernel to use BMQ CPU scheduler, a more
       simple scheduler.</flag>
     <flag name="bmq-quick-fix">Patches the kernel with fixes to BMQ.</flag>
+    <flag name="bzip2">Add support for bzip compression</flag>
     <flag name="cfi">Ensures that the toolchain is ready for CFI support
       (for arm64 in production, and for x86_64 in development).  Control
       Flow Integrity (CFI) is mitigation against forward edge attacks and
@@ -1998,6 +1999,8 @@ https://github.com/dolohow/uksm
       cause failures in different software during runtime.  Enabling it reverts
 https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd415
     </flag>
+    <flag name="gtk">Add support for gconfig, the GTK+2 kernel config editor</flag>
+    <flag name="gzip">Add support for gzip compression</flag>
     <flag name="futex">Patches the kernel with FUTEX_WAIT_MULTIPLE futex syscall
       option which may be used in the proton, proton-wine, experimental-wine
       version 5 or above packages.  It may reduce CPU usage by less than
@@ -2035,15 +2038,23 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       Alder Lake microarchitecture and ensures the toolchain requirements
       are in place.</flag>
     <flag name="lto">Fulfills the ThinLTO requirements.</flag>
+    <flag name="lz4">Add support for lz4 compression</flag>
+    <flag name="lzma">Add support for lzma compression</flag>
+    <flag name="lzo">Add support for lzo compression</flag>
     <flag name="multigen_lru">Applies the vanilla Multi-Gen LRU patch for
       improved page reclamation.</flag>
     <flag name="muqss">Patches the kernel with Con Kolivas patchset and
       includes his skiplist based MuQSS CPU scheduler.</flag>
+    <flag name="ncurses">Add support for nconfig and menuconfig, the ncurses
+      kernel config editors</flag>
     <flag name="O3">Patches the kernel with more experimental O3
       compiler optimizations and adds them to the zen-sauce white list.</flag>
+    <flag name="openssl">Add support for signing modules and kernels</flag>
     <flag name="pds">Patches the kernel with an alternative skiplist
       based scheduler.</flag>
     <flag name="prjc">Applies the Project C CPU scheduler.</flag>
+    <flag name="qt5">Add support for xconfig, the Qt5 kernel config
+      editor</flag>
     <flag name="rt">Patches the kernel with the PREEMPT_RT patch which tries
       to minimize non-preemptible parts of the kernel.  It's experimental when
       combined with other USE flags and patchsets.  Realtime
@@ -2075,6 +2086,7 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
 
       Using it may be insecure.  For details, see
       https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks</flag>
+    <flag name="xz">Add support for xz compression</flag>
     <flag name="zen-multigen_lru">Enables and sets default time interval between
       0.1 to 1 second [based on the timer frequency selected] for preventing
       certain working sets from being OOM-killed via the zen-kernel patchset.
@@ -2091,5 +2103,6 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
     <flag name="zen-tune">Patches the kernel with some Zen Interactive
       Tuning, particularly those marked INTERACTIVE.
     </flag>
+    <flag name="zstd">Add support for zstd compression</flag>
   </use>
 </pkgmetadata>

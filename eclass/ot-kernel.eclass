@@ -141,10 +141,61 @@ S="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
 
 IUSE+=" cpu_flags_arm_thumb"
+IUSE+=" gtk +ncurses openssl qt5"
+IUSE+=" bzip2 gzip lz4 lzma lzo xz zstd"
 inherit check-reqs flag-o-matic ot-kernel-cve ot-kernel-pkgflags ot-kernel-kutils toolchain-funcs
+CDEPEND="
+	app-arch/cpio
+	app-shells/bash
+	dev-lang/perl
+	dev-util/patchutils
+	dev-util/pkgconf
+	sys-apps/grep[pcre]
+	sys-devel/bison
+	sys-devel/flex
+	sys-devel/make
+	virtual/libelf
+	virtual/pkgconfig
+	bzip2? ( app-arch/bzip2 )
+	gtk? (
+		dev-libs/glib:2
+		gnome-base/libglade:2.0
+		x11-libs/gtk+:2
+	)
+	gzip? (
+		app-arch/gzip
+		sys-apps/kmod[zlib]
+	)
+	lz4? ( app-arch/lz4 )
+	lzma? ( app-arch/xz-utils )
+	lzo? ( app-arch/lzop )
+	ncurses? (
+		sys-libs/ncurses
+	)
+	openssl? ( dev-libs/openssl )
+	qt5? (
+		dev-qt/qtcore:5
+		dev-qt/qtgui:5
+		dev-qt/qtwidgets:5
+	)
+	xz? (
+		app-arch/xz-utils
+		sys-apps/kmod[lzma]
+	)
+	zstd? (
+		app-arch/zstd
+		sys-apps/kmod[zstd]
+	)
+"
 
-BDEPEND+=" dev-util/patchutils
-	   sys-apps/grep[pcre]"
+RDEPEND+="
+	!build? ( ${CDEPEND} )
+"
+BDEPEND+="
+	build? ( ${CDEPEND} )
+	dev-util/patchutils
+	sys-apps/grep[pcre]
+"
 
 EXPORT_FUNCTIONS pkg_pretend pkg_setup src_unpack src_prepare src_configure src_compile src_install \
 		pkg_postinst
@@ -2488,35 +2539,35 @@ ot-kernel_set_kconfig_compressors() {
 	fi
 
 	if grep -q -E -e "^CONFIG_MODULE_COMPRESS_GZIP=y" "${path_config}" ; then
-		has_version "sys-apps/kmod[zlib]" || die "Re-emerge sys-apps/kmod[zlib]"
+		use gzip || die "Add the gzip USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_MODULE_COMPRESS_XZ=y" "${path_config}" ; then
-		has_version "sys-apps/kmod[lzma]" || die "Re-emerge sys-apps/kmod[lzma]"
+		use xz || die "Add the xz USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_MODULE_COMPRESS_ZSTD=y" "${path_config}" ; then
-		has_version "sys-apps/kmod[zstd]" || die "Re-emerge sys-apps/kmod[zstd]"
+		use zstd || die "Add the zstd USE flag"
 	fi
 
 	if grep -q -E -e "^CONFIG_RD_BZIP2=y" "${path_config}" ; then
-		has_version "app-arch/bzip2" || die "app-arch/bzip2 needs emerge"
+		use bzip2 || die "Add the bzip2 USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_RD_LZ4=y" "${path_config}" ; then
-		has_version "app-arch/lz4" || die "app-arch/lz4 needs emerge"
+		use lz4 || die "Add the lz4 USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_RD_LZMA=y" "${path_config}" ; then
-		has_version "app-arch/xz-utils" || die "app-arch/xz-utils needs emerge"
+		use lzma || die "Add the lzma USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_RD_LZO=y" "${path_config}" ; then
-		has_version "app-arch/lzop" || die "app-arch/lzop needs emerge"
+		use lzo || die "Add the lzo USE flag"
 	fi
-	if grep -q -E -e "^(CONFIG_MODULE_COMPRESS_GZIP=y|CONFIG_RD_GZIP=y)" "${path_config}" ; then
-		has_version "app-arch/gzip" || die "app-arch/gzip needs emerge"
+	if grep -q -E -e "^CONFIG_RD_GZIP=y" "${path_config}" ; then
+		use gzip || die "Add the gzip USE flag"
 	fi
-	if grep -q -E -e "^(CONFIG_MODULE_COMPRESS_ZSTD=y|CONFIG_RD_ZSTD=y)" "${path_config}" ; then
-		has_version "app-arch/zstd" || die "app-arch/zstd needs emerge"
+	if grep -q -E -e "^CONFIG_RD_ZSTD=y" "${path_config}" ; then
+		use zstd || die "Add the zstd USE flag"
 	fi
-	if grep -q -E -e "^(CONFIG_MODULE_COMPRESS_XZ=y|CONFIG_RD_XZ=y)" "${path_config}" ; then
-		has_version "app-arch/xz-utils" || die "app-arch/xz-utils needs emerge"
+	if grep -q -E -e "^CONFIG_RD_XZ=y" "${path_config}" ; then
+		use xz || die "Add the xz USE flag"
 	fi
 }
 
@@ -3261,18 +3312,6 @@ ot-kernel_set_kconfig_mmc_sd_sdio() {
 		(( ${skip} )) && continue
 		ot-kernel_y_configopt "CONFIG_${x}"
 	done
-}
-
-# @FUNCTION: ot-kernel_check_libcrypto
-# @DESCRIPTION:
-# Checks for the libcrypto
-ot-kernel_check_libcrypto() {
-	local msg="${1}"
-	if has_version "virtual/pkgconfig" && ( has_version "dev-libs/openssl" || has_version "dev-libs/libressl" ) ; then
-		:
-	else
-		die "You need libcrypto from OpenSSL or LibreSSL ${msg}."
-	fi
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_module_signing
@@ -4784,22 +4823,12 @@ ot-kernel_menuconfig() {
 		if [[ "${menuconfig_ui}" =~ ("none"|"disable") ]] ; then
 			:
 		elif [[ -n "${menuconfig_ui}" && "${menuconfig_extraversion}" == "${extraversion}" ]] ; then
-			if [[ "${menuconfig_ui}" == "gconfig" ]] ; then
-				has_version "virtual/pkgconfig" || die "Please install this package"
-				has_version "x11-libs/gtk+:2" || die "Please install this package"
-				has_version "gnome-base/libglade:2.0" || die "Please install this package"
-				has_version "dev-libs/glib:2" || die "Please install this package"
-			elif [[ "${menuconfig_ui}" == "menuconfig" ]] ; then
-				has_version "virtual/pkgconfig" || die "Please install this package"
-				has_version "sys-libs/ncurses" || die "Please install this package"
-			elif [[ "${menuconfig_ui}" == "nconfig" ]] ; then
-				has_version "virtual/pkgconfig" || die "Please install this package"
-				has_version "sys-libs/ncurses" || die "Please install this package"
+			if [[ "${menuconfig_ui}" =~ ("menuconfig"|"nconfig") ]] ; then
+				use ncurses || die "Add the ncurses USE flag for nconfig or menuconfig support"
+			elif [[ "${menuconfig_ui}" == "gconfig" ]] ; then
+				use gtk || die "Add the gtk USE flag for gconfig support"
 			elif [[ "${menuconfig_ui}" == "xconfig" ]] ; then
-				has_version "virtual/pkgconfig" || die "Please install this package"
-				has_version "dev-qt/qtcore:5" || die "Please install this package"
-				has_version "dev-qt/qtgui:5" || die "Please install this package"
-				has_version "dev-qt/qtwidgets:5" || die "Please install this package"
+				use qt5 || die "Add the qt5 USE flag for xconfig support"
 			fi
 #			https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
 #			All menuconfig/xconfig/gconfig works outside of emerge but not when sandbox is completely disabled.
@@ -4844,10 +4873,10 @@ eerror
 # Check kernel signing prereqs
 ot-kernel_check_kernel_signing_prereqs() {
 	if [[ "${OT_KERNEL_SIGN_MODULES}" != "0" && -n "${OT_KERNEL_SIGN_MODULES}" ]] ; then
-		ot-kernel_check_libcrypto "for module signing"
+		use openssl || die "Add the openssl USE flag for module signing"
 	fi
 	if [[ "${OT_KERNEL_SIGN_KERNEL}" =~ ("uefi"|"efi"|"kexec") ]] ; then
-		ot-kernel_check_libcrypto "for kernel signing"
+		use openssl || die "Add the openssl USE flag for kernel signing"
 	fi
 }
 
