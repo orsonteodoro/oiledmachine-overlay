@@ -6066,11 +6066,14 @@ einfo
 	fi
 	if use exfat ; then
 einfo
-einfo "ExFAT users:  You must be a member of OIN and agree to the OIN license"
+einfo "exFAT users:  You must be a member of OIN and agree to the OIN license"
 einfo "for patent legal protections and royalty free benefits."
 einfo
 einfo "An overview of the legal status of exFAT can be found at"
 einfo "https://en.wikipedia.org/wiki/ExFAT#Legal_status"
+einfo
+einfo "An exFAT patent license can also be obtained from"
+einfo "https://www.microsoft.com/en-us/legal/intellectualproperty/mtl/exfat-licensing.aspx"
 einfo
 	fi
 }
