@@ -6077,7 +6077,7 @@ einfo
 	if has exfat ${IUSE_EFFECTIVE} && use exfat ; then
 einfo
 einfo "exFAT users:  You must be a member of OIN and agree to the OIN license"
-einfo "for patent legal protections and royalty free benefits."
+einfo "for patent use legal protections and royalty free benefits."
 einfo
 einfo "An overview of the legal status of exFAT can be found at"
 einfo "https://en.wikipedia.org/wiki/ExFAT#Legal_status"
