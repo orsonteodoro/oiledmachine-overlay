@@ -17,6 +17,8 @@
     </bugs-to>
   </upstream>
   <use>
+    <flag name="ahead">Build a plugin to display text buffers ahead of
+      time</flag>
     <flag name="audiofx">Build the Rust AudioFx Plugin to apply
       audio effects (echo, reverb, noise removal, normalization)</flag>
     <flag name="cdg">Build the CD+G Plugin for parsing and rendering
@@ -24,34 +26,43 @@
     <flag name="claxon">Build the Claxon FLAC Decoder Plugin</flag>
     <flag name="closedcaption">Build the Rust Closed Caption Plugin
       supporting MCC, SCC, EIA-608, CEA-608</flag>
-    <flag name="csound">Build the Audio filter plugin using Csound</flag>
+    <flag name="csound">Build the audio effects plugin using Csound</flag>
     <flag name="dav1d">Build the Dav1d Plugin for decoding AV1 video</flag>
     <flag name="fallbackswitch">Build the Fallback Switcher Plugin
       for falling back to sync pad after timeout</flag>
     <flag name="file">Build the Rust File Plugin for filesink and filesrc</flag>
+    <flag name="ffv1">Build the FFV1 decoder</flag>
     <flag name="flavors">Build the FLV demuxer plugin</flag>
+    <flag name="fmp4">Build the fragmented MP4 plugin</flag>
     <flag name="gif">Build the GStreamer GIF encoder plugin</flag>
-    <flag name="hsv">Build the HSV manipulation elements, written in Rust</flag>
+    <flag name="gtk4">Build the GTK 4 plugin to render video and pictures</flag>
+    <flag name="hlssink3">Build the HLS sink plugin</flag>
+    <flag name="hsv">Build the HSV (hue, saturation, value) manipulation
+      of video elements</flag>
     <flag name="json">Build the Rust JSON Plugin</flag>
     <flag name="lewton">Build the lewton Vorbis decoder plugin</flag>
     <flag name="rav1e">Build the rav1e AV1 encoder plugin</flag>
     <flag name="regex">Build the Rust regular expression plugin</flag>
-    <flag name="reqwest">Build the HTTP source element Plugin</flag>
+    <flag name="reqwest">Build the HTTP source element plugin</flag>
     <flag name="rspng">Build the PNG encoder/decoder written in pure Rust</flag>
-    <flag name="rusoto">Build the Amazon Web Services source and sink plugin</flag>
+    <flag name="rusoto">Build the Amazon Web Services source and sink
+      plugin</flag>
     <flag name="sodium">Build the libsodium-based file encryption and
       decryption</flag>
+    <flag name="spotify">Build a plugin to read content from Spotify</flag>
     <flag name="test">Build and run tests</flag>
-    <flag name="textwrap">Build the Rust Text Wrap plugin</flag>
+    <flag name="textwrap">Build the text hypenation wrap plugin</flag>
     <flag name="threadshare">Build the Threadshare plugin for
       reimplemented popular thread elements using common thread sharing
       infrastructure</flag>
     <flag name="togglerecord">Build the toggle record plugin to stop and start
-      streams together</flag>
+      multiple streams together</flag>
     <flag name="tutorial">Build the Rust tutorial plugin</flag>
+    <flag name="uriplaylistbin">Build a playlist plugin</flag>
+    <flag name="videofx">Build the video effects plugin</flag>
     <flag name="version-helper">Build the build.rs helper function for GStreamer
       plugin metadata</flag>
-    <flag name="webp">Build the WebP plugin</flag>
+    <flag name="webp">Build the WebP decoder plugin</flag>
   </use>
   <upstream>
     <remote-id type="gitlab">gstreamer/gst-plugins-rs</remote-id>

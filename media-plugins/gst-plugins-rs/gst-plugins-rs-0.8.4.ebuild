@@ -20,6 +20,7 @@ Unlicense
 unicode
 ZLIB"
 LICENSE="Apache-2.0 MIT LGPL-2.1+
+	MPL-2.0
 	${CARGO_THIRD_PARTY_PACKAGES}"
 # Apache-2.0 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-channel-0.3.15/LICENSE-APACHE
 # 0BSD ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/adler-0.2.2/LICENSE-0BSD
@@ -40,6 +41,7 @@ LICENSE="Apache-2.0 MIT LGPL-2.1+
 
 SLOT="1.0/${PV}"
 MODULES=(
+	ahead
 	audiofx
 	cdg
 	claxon
@@ -47,9 +49,13 @@ MODULES=(
 	csound
 	dav1d
 	fallbackswitch
+	ffv1
 	file
 	flavors
+	fmp4
 	gif
+	gtk4
+	hlssink3
 	hsv
 	json
 	lewton
@@ -58,62 +64,77 @@ MODULES=(
 	reqwest
 	rspng
 	rusoto
+	spotify
 	sodium
 	test
 	textwrap
 	threadshare
 	togglerecord
+	uriplaylistbin
+	videofx
 	webp
 )
 IUSE+=" ${MODULES[@]}"
 REQUIRED_USE+=" || ( ${MODULES[@]} )"
-RUST_V="1.52.1"
+RUST_V="1.52"
 CARGO_V="1.40"
+# grep -e "requires_private" "${WORKDIR}" for external dependencies
+# See "Run-time dependency" in CI
+# Assumes D11
+GST_V="1.14" # upstream uses in CI 1.21.0.1
 RDEPEND+="
-	>=media-libs/gstreamer-1.0:1.0[${MULTILIB_USEDEP}]
-	>=media-libs/gst-plugins-base-1.0:1.0[${MULTILIB_USEDEP}]
-	closedcaption? ( x11-libs/pango[${MULTILIB_USEDEP}] )
-	csound? ( media-sound/csound[${MULTILIB_USEDEP}] )
-	dav1d? ( >=media-libs/dav1d-0.8.2[${MULTILIB_USEDEP}] )
-	sodium? ( dev-libs/libsodium[${MULTILIB_USEDEP}] )"
+	  dev-libs/glib:2[${MULTILIB_USEDEP}]
+	>=media-plugins/gst-plugins-meta-${GST_V}:1.0[${MULTILIB_USEDEP}]
+	closedcaption? (
+		>=x11-libs/pango-1.46.2[${MULTILIB_USEDEP}]
+	)
+	csound? ( >=media-sound/csound-6.14[${MULTILIB_USEDEP}] )
+	dav1d? ( >=media-libs/dav1d-0.9.2[${MULTILIB_USEDEP}] )
+	gtk4? (
+		>=gui-libs/gtk-4.6.2:4[gstreamer]
+	)
+	rusoto? ( >=dev-libs/openssl-1.1.1n[${MULTILIB_USEDEP}] )
+	videofx? ( >=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}] )
+	sodium? ( >=dev-libs/libsodium-1.0.18[${MULTILIB_USEDEP}] )"
 DEPEND+=" ${RDEPEND}"
 # Update while keeping track of versions of virtual/rust.
 # Expanded here because the virtual system is broken for multilib.
+LLVM_SLOTS=(13 12 11) # For clang-sys
+gen_llvm_bdepend() {
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+			)
+		"
+	done
+}
 BDEPEND+=" ${BDEPEND}
-	${RUST_DEPEND}
-	>=virtual/rust-${RUST_V}
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	|| (
-		(
-			sys-devel/llvm:11[${MULTILIB_USEDEP}]
-			sys-devel/clang:11[${MULTILIB_USEDEP}]
-		)
-		(
-			sys-devel/llvm:12[${MULTILIB_USEDEP}]
-			sys-devel/clang:12[${MULTILIB_USEDEP}]
-		)
-		(
-			sys-devel/llvm:13[${MULTILIB_USEDEP}]
-			sys-devel/clang:13[${MULTILIB_USEDEP}]
-		)
-	)
-	>=dev-util/cargo-c-0.7
-	>=dev-util/meson-0.56"
+	|| ( $(gen_llvm_bdepend) )
+	>=dev-util/cargo-c-0.9.3
+	>=dev-util/meson-0.56
+	>=dev-util/pkgconf-0.29.2[${MULTILIB_USEDEP},pkg-config(+)]
+	>=sys-devel/gcc-11
+	>=virtual/rust-${RUST_V}[${MULTILIB_USEDEP}]
+"
 SRC_URI="
 https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs/-/archive/${PV}/gst-plugins-rs-${PV}.tar.bz2
 	-> ${P}.tar.bz2"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 PATCHES=(
-	"${FILESDIR}/gst-plugins-rs-0.7.2-modular-build.patch"
+	"${FILESDIR}/gst-plugins-rs-0.8.4-modular-build.patch"
 	"${FILESDIR}/gst-plugins-rs-0.6.0_p20210607-rename-csound-ref.patch"
 )
 
 pkg_setup() {
 	if has network-sandbox $FEATURES ; then
-			die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
-download the internal dependencies."
+eerror
+eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
+eerror "to download the internal dependencies."
+eerror
+		die
 	fi
 
 	# The file name version does not match the --version.
@@ -144,38 +165,20 @@ multilib_src_configure() {
 		LLVM_MAX_SLOT=11
 		llvm_pkg_setup
 	else
-		die \
-"The LLVM/clang version is not supported.  Send a issue request to update the \
-ebuild maintainer."
+eerror
+eerror "The LLVM/clang version is not supported.  Send a issue request to"
+eerror "update the ebuild maintainer."
+eerror
+		die
 	fi
 	einfo "LLVM=${LLVM_MAX_SLOT}"
 
 	export CSOUND_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)"
-	emesonargs+=(
-		$(meson_feature audiofx)
-		$(meson_feature cdg)
-		$(meson_feature claxon)
-		$(meson_feature closedcaption)
-		$(meson_feature csound)
-		$(meson_feature dav1d)
-		$(meson_feature fallbackswitch)
-		$(meson_feature file)
-		$(meson_feature flavors)
-		$(meson_feature gif)
-		$(meson_feature hsv)
-		$(meson_feature json)
-		$(meson_feature lewton)
-		$(meson_feature rav1e)
-		$(meson_feature regex)
-		$(meson_feature reqwest)
-		$(meson_feature rspng)
-		$(meson_feature rusoto)
-		$(meson_feature sodium)
-		$(meson_feature threadshare)
-		$(meson_feature togglerecord)
-		$(meson_feature webp)
-		$(meson_feature textwrap)
-	)
+
+	for m in ${MODULES[@]} ; do
+		[[ "${m}" == "test" ]] && continue
+		emesonargs+=( $(meson_feature ${m}) )
+	done
 
 	pushd "${S}" || die
 #	if ! use tutorial ; then
@@ -184,151 +187,36 @@ ebuild maintainer."
 			Cargo.toml || die
 #	fi
 
-	if ! use audiofx ; then
-		sed -i -e "/audiofx/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use cdg ; then
-		sed -i -e "/cdg/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use claxon ; then
-		sed -i -e "/claxon/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use closedcaption ; then
-		sed -i -e "/closedcaption/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use csound ; then
-		sed -i -e "/csound/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use dav1d ; then
-		sed -i -e "/dav1d/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use fallbackswitch ; then
-		sed -i -e "/fallbackswitch/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use file ; then
-		sed -i -e "/generic\/file/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use flavors ; then
-		sed -i -e "/flavors/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use gif ; then
-		sed -i -e "/gif/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use hsv ; then
-		sed -i -e "/hsv/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use json ; then
-		sed -i -e "/json/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use lewton ; then
-		sed -i -e "/lewton/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use rav1e ; then
-		sed -i -e "/rav1e/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use regex ; then
-		sed -i -e "/regex/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use reqwest ; then
-		sed -i -e "/reqwest/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use rspng ; then
-		sed -i -e "/rspng/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use rusoto ; then
-		sed -i -e "/rusoto/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use textwrap ; then
-		sed -i -e "/wrap/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use threadshare ; then
-		sed -i -e "/threadshare/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use togglerecord ; then
-		sed -i -e "/togglerecord/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use sodium ; then
-		sed -i -e "/sodium/d" \
-			Cargo.toml || die
-	fi
+	local keep=0
+	for m in ${MODULES[@]} ; do
+		[[ "${m}" == "test" ]] && continue
+		if ! use "${m}" ; then
+			einfo "Removed ${m}"
+			if [[ "${m}" == "textwrap" ]] ; then
+				# Ambigious lines
+				sed -i -e "/text\/wrap/d" \
+					Cargo.toml || die
+			elif [[ "${m}" == "file" ]] ; then
+				# Ambigious lines
+				sed -i -e "/generic\/file/d" \
+					Cargo.toml || die
+			else
+				sed -i -e "/${m}/d" \
+					Cargo.toml || die
+			fi
+		else
+			einfo "Kept ${m}"
+			keep=1
+		fi
+	done
 
 	# A dependency for those listed below
-	if \
-		   use audiofx \
-		|| use cdg \
-		|| use claxon \
-		|| use closedcaption \
-		|| use csound \
-		|| use dav1d \
-		|| use fallbackswitch \
-		|| use file \
-		|| use flavors \
-		|| use gif \
-		|| use hsv \
-		|| use json \
-		|| use lewton \
-		|| use rav1e \
-		|| use reqwest \
-		|| use rspng \
-		|| use rusoto \
-		|| use sodium \
-		|| use textwrap \
-		|| use threadshare \
-		|| use togglerecord \
-		|| use webp \
-		; then
+	if (( ${keep} == 1 )) ; then
 		# also tutorial plugin in || conditional
 		einfo "Using version-helper"
 	else
 		einfo "Pruning version-helper"
 		sed -i -e "/version-helper/d" \
-			Cargo.toml || die
-	fi
-
-	if ! use webp ; then
-		sed -i -e "/webp/d" \
 			Cargo.toml || die
 	fi
 

@@ -1,0 +1,216 @@
+diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson.build gst-plugins-rs-0.8.4/meson.build
+--- gst-plugins-rs-0.8.4.orig/meson.build	2022-04-26 04:20:02.000000000 -0700
++++ gst-plugins-rs-0.8.4/meson.build	2022-04-26 18:57:37.019991523 -0700
+@@ -33,38 +33,120 @@ endif
+ 
+ # workspace name -> lib name
+ plugins = {
+-  'gst-plugin-audiofx': 'libgstrsaudiofx',
+-  'gst-plugin-cdg': 'libgstcdg',
+-  'gst-plugin-claxon': 'libgstclaxon',
+-  'gst-plugin-fallbackswitch': 'libgstfallbackswitch',
+-  'gst-plugin-ffv1': 'libgstffv1',
+-  'gst-plugin-file': 'libgstrsfile',
+-  'gst-plugin-flavors': 'libgstrsflv',
+-  'gst-plugin-gif': 'libgstgif',
+-  'gst-plugin-lewton': 'libgstlewton',
+-  'gst-plugin-rav1e': 'libgstrav1e',
+-  'gst-plugin-reqwest': 'libgstreqwest',
+-  'gst-plugin-hlssink3': 'libgsthlssink3',
+-  'gst-plugin-rspng': 'libgstrspng',
+-  'gst-plugin-rusoto': 'libgstrusoto',
+-  'gst-plugin-textwrap': 'libgstrstextwrap',
+-  'gst-plugin-fmp4': 'libgstfmp4',
+-  'gst-plugin-threadshare': 'libgstthreadshare',
+-  'gst-plugin-togglerecord': 'libgsttogglerecord',
+-  'gst-plugin-hsv': 'libgsthsv',
+-  'gst-plugin-json': 'libgstrsjson',
+-  'gst-plugin-regex': 'libgstrsregex',
+   # FIXME: libwebp-sys2 will build its bundled version on msvc and apple platforms
+   # https://github.com/qnighy/libwebp-sys2-rs/issues/4
+-  'gst-plugin-webp': 'libgstrswebp',
+-  'gst-plugin-videofx': 'libgstvideofx',
+-  'gst-plugin-uriplaylistbin': 'libgsturiplaylistbin',
+-  'gst-plugin-spotify': 'libgstspotify',
+-  'gst-plugin-textahead': 'libgsttextahead',
+ }
+ 
+ extra_env = {}
+ 
++if get_option('ahead').enabled()
++  plugins += {'gst-plugin-ahead' : 'libgsttextahead'}
++endif
++
++if get_option('audiofx').enabled()
++  plugins += {'gst-plugin-audiofx' : 'libgstrsaudiofx'}
++endif
++
++if get_option('cdg').enabled()
++  plugins += {'gst-plugin-cdg' : 'libgstcdg'}
++endif
++
++if get_option('claxon').enabled()
++  plugins += {'gst-plugin-claxon' : 'libgstclaxon'}
++endif
++
++if get_option('fallbackswitch').enabled()
++  plugins += {'gst-plugin-fallbackswitch' : 'libgstfallbackswitch'}
++endif
++
++if get_option('ffv1').enabled()
++  plugins += {'gst-plugin-ffv1' : 'libgstffv1'}
++endif
++
++if get_option('file').enabled()
++  plugins += {'gst-plugin-file' : 'libgstrsfile'}
++endif
++
++if get_option('flavors').enabled()
++  plugins += {'gst-plugin-flavors' : 'libgstrsflv'}
++endif
++
++if get_option('fmp4').enabled()
++  plugins += {'gst-plugin-fmp4' : 'libgstfmp4'}
++endif
++
++if get_option('gif').enabled()
++  plugins += {'gst-plugin-gif' : 'libgstgif'}
++endif
++
++if get_option('gtk4').enabled()
++  plugins += {'gst-plugin-gtk4' : 'libgstgtk4'}
++endif
++
++if get_option('hlssink3').enabled()
++  plugins += {'gst-plugin-hlssink3' : 'libgsthlssink3'}
++endif
++
++if get_option('lewton').enabled()
++  plugins += {'gst-plugin-lewton' : 'libgstlewton'}
++endif
++
++if get_option('rav1e').enabled()
++  plugins += {'gst-plugin-rav1e' : 'libgstrav1e'}
++endif
++
++if get_option('reqwest').enabled()
++  plugins += {'gst-plugin-reqwest' : 'libgstreqwest'}
++endif
++
++if get_option('rspng').enabled()
++  plugins += {'gst-plugin-rspng' : 'libgstrspng'}
++endif
++
++if get_option('rusoto').enabled()
++  plugins += {'gst-plugin-rusoto' : 'libgstrusoto'}
++endif
++
++if get_option('spotify').enabled()
++  plugins += {'gst-plugin-spotify' : 'libgstspotify'}
++endif
++
++if get_option('textwrap').enabled()
++  plugins += {'gst-plugin-textwrap' : 'libgstrstextwrap'}
++endif
++
++if get_option('threadshare').enabled()
++  plugins += {'gst-plugin-threadshare' : 'libgstthreadshare'}
++endif
++
++if get_option('togglerecord').enabled()
++  plugins += {'gst-plugin-togglerecord' : 'libgsttogglerecord'}
++endif
++
++if get_option('hsv').enabled()
++  plugins += {'gst-plugin-hsv' : 'libgsthsv'}
++endif
++
++if get_option('json').enabled()
++  plugins += {'gst-plugin-json' : 'libgstrsjson'}
++endif
++
++if get_option('regex').enabled()
++  plugins += {'gst-plugin-regex' : 'libgstrsregex'}
++endif
++
++if get_option('uriplaylistbin').enabled()
++  plugins += {'gst-plugin-uriplaylistbin' : 'libgsturiplaylistbin'}
++endif
++
++if get_option('videofx').enabled()
++  plugins += {'gst-plugin-videofx' : 'libgstvideofx'}
++endif
++
++if get_option('webp').enabled()
++  plugins += {'gst-plugin-webp' : 'libgstrswebp'}
++endif
++
+ if dependency('pangocairo', required : get_option('closedcaption')).found()
+   plugins += {'gst-plugin-closedcaption' : 'libgstrsclosedcaption',}
+ endif
+@@ -73,13 +155,15 @@ if dependency('dav1d', required : get_op
+   plugins += {'gst-plugin-dav1d' : 'libgstrsdav1d'}
+ endif
+ 
+-sodium = get_option ('sodium')
+-if sodium == 'system'
+-  dependency('libsodium')
+-  plugins += {'gst-plugin-sodium': 'libgstsodium'}
+-  extra_env += {'SODIUM_USE_PKG_CONFIG': '1'}
+-elif sodium == 'built-in'
+-  plugins += {'gst-plugin-sodium': 'libgstsodium'}
++sodium = get_option ('sodium').enabled()
++if get_option ('sodium').enabled()
++  if get_option ('sodium-built-in').enabled()
++    plugins += {'gst-plugin-sodium': 'libgstsodium'}
++  else
++    dependency('libsodium')
++    plugins += {'gst-plugin-sodium': 'libgstsodium'}
++    extra_env += {'SODIUM_USE_PKG_CONFIG': '1'}
++  endif
+ endif
+ 
+ cc = meson.get_compiler('c')
+diff -x '*.rej' -x '*.orig' -urp gst-plugins-rs-0.8.4.orig/meson_options.txt gst-plugins-rs-0.8.4/meson_options.txt
+--- gst-plugins-rs-0.8.4.orig/meson_options.txt	2022-04-26 04:20:02.000000000 -0700
++++ gst-plugins-rs-0.8.4/meson_options.txt	2022-04-26 18:30:52.121565971 -0700
+@@ -1,7 +1,36 @@
+ option('closedcaption', type : 'feature', value : 'auto', description : 'Build closedcaption plugin')
+ option('dav1d', type : 'feature', value : 'auto', description : 'Build dav1d plugin')
+-option('sodium', type : 'combo',
+-    choices : ['system', 'built-in', 'disabled'], value : 'built-in',
+-    description : 'Weither to use libsodium from the system or the built-in version from the sodiumoxide crate')
++option('sodium', type : 'feature', value : 'auto', description : 'Build sodium plugin')
++option('sodium-built-in', type : 'feature', value : 'disabled', description : 'Weither to use libsodium from the system or the built-in version from the sodiumoxide crate')
+ option('csound', type : 'feature', value : 'auto', description : 'Build csound plugin')
++
++option('ahead', type: 'feature', value : 'auto', description : 'Build the ahead plugin')
++option('audiofx', type: 'feature', value : 'auto', description : 'Build the audiofx plugin')
++option('cdg', type: 'feature', value : 'auto', description : 'Build the cdg plugin')
++option('claxon', type: 'feature', value : 'auto', description : 'Build the claxon plugin')
++option('closedcaption', type: 'feature', value : 'auto', description : 'Build the closedcaption plugin')
++option('fallbackswitch', type: 'feature', value : 'auto', description : 'Build the fallbackswitch plugin')
++option('ffv1', type: 'feature', value : 'auto', description : 'Build the ffv1 plugin')
++option('file', type: 'feature', value : 'auto', description : 'Build the file plugin')
++option('flavors', type: 'feature', value : 'auto', description : 'Build the flavors plugin')
++option('fmp4', type: 'feature', value : 'auto', description : 'Build the fmp4 plugin')
++option('gif', type: 'feature', value : 'auto', description : 'Build the gif plugin')
++option('gtk4', type: 'feature', value : 'auto', description : 'Build the gtk4 plugin')
++option('hlssink3', type: 'feature', value : 'auto', description : 'Build the hlssink3 plugin')
++option('lewton', type: 'feature', value : 'auto', description : 'Build the lewton plugin')
++option('rav1e', type: 'feature', value : 'auto', description : 'Build the rav1e plugin')
++option('reqwest', type: 'feature', value : 'auto', description : 'Build the reqwest plugin')
++option('rspng', type: 'feature', value : 'auto', description : 'Build the rspng plugin')
++option('rusoto', type: 'feature', value : 'auto', description : 'Build the rusoto plugin')
++option('textwrap', type: 'feature', value : 'auto', description : 'Build the textwrap plugin')
++option('threadshare', type: 'feature', value : 'auto', description : 'Build the threadshare plugin')
++option('togglerecord', type: 'feature', value : 'auto', description : 'Build the togglerecord plugin')
++option('spotify', type: 'feature', value : 'auto', description : 'Build the spotify plugin')
++option('uriplaylistbin', type: 'feature', value : 'auto', description : 'Build the uriplaylistbin plugin')
++option('hsv', type: 'feature', value : 'auto', description : 'Build the hsv plugin')
++option('json', type: 'feature', value : 'auto', description : 'Build the json plugin')
++option('regex', type: 'feature', value : 'auto', description : 'Build the regex plugin')
++option('videofx', type: 'feature', value : 'auto', description : 'Build the videofx plugin')
++option('webp', type: 'feature', value : 'auto', description : 'Build the webp plugin')
++
+ option('gtk4', type : 'feature', value : 'auto', description : 'Build GTK4 plugin')
