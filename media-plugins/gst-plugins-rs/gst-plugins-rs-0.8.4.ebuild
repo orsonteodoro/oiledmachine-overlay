@@ -84,6 +84,8 @@ CARGO_V="1.40"
 GST_V="1.14" # upstream uses in CI 1.21.0.1
 RDEPEND+="
 	  dev-libs/glib:2[${MULTILIB_USEDEP}]
+	!=dev-libs/libgit2-1.4*
+	 =dev-libs/libgit2-1.3*
 	>=media-plugins/gst-plugins-meta-${GST_V}:1.0[${MULTILIB_USEDEP}]
 	closedcaption? (
 		>=x11-libs/pango-1.46.2[${MULTILIB_USEDEP}]
@@ -129,6 +131,14 @@ PATCHES=(
 )
 
 pkg_setup() {
+	if ldd /usr/bin/cargo-cbuild | grep -q -e "libgit2.so.1.4" ; then
+# Segfaults
+eerror
+eerror "dev-util/cargo-c must not be built against =dev-libs/libgit2-1.4*."
+eerror "Re-emerge =dev-libs/libgit2-1.3* and dev-util/cargo-c."
+eerror
+		die
+	fi
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
