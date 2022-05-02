@@ -30,7 +30,7 @@ CIPD_V="8e9b0c80860d00dfe951f7ea37d74e210d376c13" # in \
 MTD_V="${PV}"
 CTDM_V="${PV}"
 # a4de986 - ozone/x11: fix VA-API.
-SRC_URI="
+_SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
 	pgo-full? (
@@ -342,7 +342,7 @@ LICENSE="BSD
 #   give the wrong impression that the entire software was released in public
 #   domain.
 SLOT="0/stable"
-KEYWORDS="amd64 arm64 ~x86"
+#KEYWORDS="amd64 arm64 ~x86" # Waiting for server to upload tarball
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/101.0.4951.54/media/gpu/args.gni#L24
 # Using the system-ffmpeg or system-icu breaks cfi-icall or cfi-cast which is
