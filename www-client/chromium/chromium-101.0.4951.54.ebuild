@@ -15,9 +15,9 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
 	sv sw ta te th tr uk vi zh-CN zh-TW"
 
 LLVM_MAX_SLOT=15
-LLVM_MIN_SLOT=13
+LLVM_MIN_SLOT=15 # The pregenerated PGO profile needs profdata version 8
 CR_CLANG_SLOT_OFFICIAL=15
-LLVM_SLOTS=(${LLVM_MAX_SLOT} 14 ${LLVM_MIN_SLOT}) # [inclusive, inclusive] high to low
+LLVM_SLOTS=(${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
 inherit llvm multilib multilib-minimal
 
@@ -30,7 +30,7 @@ CIPD_V="8e9b0c80860d00dfe951f7ea37d74e210d376c13" # in \
 MTD_V="${PV}"
 CTDM_V="${PV}"
 # a4de986 - ozone/x11: fix VA-API.
-_SRC_URI="
+SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
 	pgo-full? (
@@ -58,7 +58,7 @@ _SRC_URI="
 #   ${PN}-${MTD_V}-media-test-data.tar.gz
 # but shouldn't be necessary to use the USE flag.
 
-# RESTRICT="mirror"
+RESTRICT="mirror"
 #PROPERTIES="interactive" # For interactive login in social networks for PGO profile generation. \
 # See _init_cr_pgo_trainers_rasterize_and_record_micro_top_25() function below. \
 # Disabled until the inner workings is understood.
@@ -180,10 +180,10 @@ LICENSE_BENCHMARK_WEBSITES="
 # GEN_ABOUT_CREDITS=1 # Uncomment to generate about_credits.html including bundled.
 # SHA512 about_credits.html fingerprint:
 LICENSE_FINGERPRINT="\
-ef868096a01f120aa61d10c1ad6b0f136f72bb8c107f64db55bbe90f3b2492c6\
-10fbbf60bc9b3025c292af2909c902d04b9e41bd74ce711d8c9755ed2b371e8a"
+ecd15ed34165813bf0f89a4b2835efd834de6018341714d2d7437c1b8c7c3131\
+1fd757dee272609f9fb562fe519c22a575e57464973e2aea3d237f7bc362c605"
 LICENSE="BSD
-	chromium-10.0.4896.x
+	chromium-101.0.4951.54
 	APSL-2
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -342,7 +342,7 @@ LICENSE="BSD
 #   give the wrong impression that the entire software was released in public
 #   domain.
 SLOT="0/stable"
-#KEYWORDS="amd64 arm64 ~x86" # Waiting for server to upload tarball
+KEYWORDS="amd64 arm64 ~x86" # Waiting for server to upload tarball
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/101.0.4951.54/media/gpu/args.gni#L24
 # Using the system-ffmpeg or system-icu breaks cfi-icall or cfi-cast which is
@@ -827,6 +827,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/glib:2[${MULTILIB_USEDEP}]
 		>=media-libs/alsa-lib-1.0.19:=[${MULTILIB_USEDEP}]
 		pulseaudio? ( media-sound/pulseaudio:=[${MULTILIB_USEDEP}] )
+		sys-apps/pciutils:=[${MULTILIB_USEDEP}]
 		kerberos? ( virtual/krb5[${MULTILIB_USEDEP}] )
 		vaapi? ( >=x11-libs/libva-${LIBVA_V}:=[X,drm,${MULTILIB_USEDEP}] )
 		x11-libs/libX11:=[${MULTILIB_USEDEP}]
@@ -863,7 +864,6 @@ COMMON_DEPEND="
 		>=app-accessibility/at-spi2-core-2.26:2[${MULTILIB_USEDEP}]
 		>=dev-libs/atk-2.26[${MULTILIB_USEDEP}]
 		cups? ( >=net-print/cups-1.3.11:=[${MULTILIB_USEDEP}] )
-		sys-apps/pciutils:=[${MULTILIB_USEDEP}]
 		|| (
 			>=sys-fs/udev-217[${MULTILIB_USEDEP}]
 			>=sys-fs/eudev-2.1.1[${MULTILIB_USEDEP}]
@@ -886,8 +886,8 @@ RDEPEND="${COMMON_DEPEND}
 "
 DEPEND="${COMMON_DEPEND}
 	!headless? (
-		gtk4? ( gui-libs/gtk:4[X,wayland?,${MULTILIB_USEDEP}] )
-		!gtk4? ( x11-libs/gtk+:3[X,wayland?] )
+		gtk4? ( gui-libs/gtk:4[X,wayland?] )
+		!gtk4? ( x11-libs/gtk+:3[X,wayland?,${MULTILIB_USEDEP}] )
 	)
 "
 BDEPEND="
@@ -919,22 +919,22 @@ BDEPEND="
 			weston? ( dev-libs/weston )
 		)
 		cr_pgo_trainers_memory_desktop? (
-			media-video/ffmpeg[encode]
+			media-video/ffmpeg[encode,${MULTILIB_USEDEP}]
 		)
 		cr_pgo_trainers_media_desktop? (
 			proprietary-codecs? (
-				media-video/ffmpeg[encode,openh264]
-				media-video/ffmpeg[encode,mp3]
+				media-video/ffmpeg[encode,openh264,${MULTILIB_USEDEP}]
+				media-video/ffmpeg[encode,mp3,${MULTILIB_USEDEP}]
 			)
-			media-video/ffmpeg[encode,libaom]
-			media-video/ffmpeg[opus,vorbis,vpx]
+			media-video/ffmpeg[encode,libaom,${MULTILIB_USEDEP}]
+			media-video/ffmpeg[opus,vorbis,vpx,${MULTILIB_USEDEP}]
 		)
 		cr_pgo_trainers_media_mobile? (
 			proprietary-codecs? (
-				media-video/ffmpeg[encode,openh264]
-				media-video/ffmpeg[encode,mp3]
+				media-video/ffmpeg[encode,openh264,${MULTILIB_USEDEP}]
+				media-video/ffmpeg[encode,mp3,${MULTILIB_USEDEP}]
 			)
-			media-video/ffmpeg[opus,vorbis,vpx]
+			media-video/ffmpeg[opus,vorbis,vpx,${MULTILIB_USEDEP}]
 		)
 	)
 	vaapi? ( media-video/libva-utils )
@@ -1035,7 +1035,7 @@ pre_build_checks() {
 	# https://github.com/chromium/chromium/blob/101.0.4951.54/docs/linux/build_instructions.md#system-requirements
 	# Check build requirements, bug #541816 and bug #471810 .
 	CHECKREQS_MEMORY="4G"
-	CHECKREQS_DISK_BUILD="9G"
+	CHECKREQS_DISK_BUILD="10G"
 	tc-is-cross-compiler && CHECKREQS_DISK_BUILD="12G"
 	if ( shopt -s extglob; is-flagq '-g?(gdb)?([1-9])' ) ; then
 		if use custom-cflags || use component-build ; then
@@ -1114,21 +1114,16 @@ pkg_pretend() {
 # The answer to the profdata compatibility is answered in
 # https://clang.llvm.org/docs/SourceBasedCodeCoverage.html#format-compatibility-guarantees
 
-# The profdata (aka indexed profile) version is 7 corresponding from >= llvm 12
+# The profdata (aka indexed profile) version is 8 corresponding from >= llvm 15
 # up to main branch (llvm 15) and is after the magic (lprofi - i for index) in the
 # profdata file located in chrome/build/pgo_profiles/*.profdata.
 
 # PGO version compatibility
 
 # Profdata versioning:
-# https://github.com/llvm/llvm-project/blob/5bec1ea7a74895895e7831fd951dd8130d4f3d01/llvm/include/llvm/ProfileData/InstrProf.h#L991
+# https://github.com/llvm/llvm-project/blob/8133778d3c8d481891143e21e0c5081a02a9889d/llvm/include/llvm/ProfileData/InstrProf.h#L991
 # LLVM version:
-# https://github.com/llvm/llvm-project/blob/5bec1ea7a74895895e7831fd951dd8130d4f3d01/llvm/CMakeLists.txt#L14
-# The 37fbf238 is from the CR_CLANG_USED below.
-
-# Breaks PGO with non Linux platforms
-CF_CLANG_USED_13="98033fdc50e61273b1d5c77ba5f0f75afe3965c1" # LLVM 13 / 93.X
-CR_CLANG_USED_UNIX_TIMESTAMP_13="1626129557"
+# https://github.com/llvm/llvm-project/blob/8133778d3c8d481891143e21e0c5081a02a9889d/llvm/CMakeLists.txt#L14
 
 # LLVM 15
 CR_CLANG_USED="8133778d3c8d481891143e21e0c5081a02a9889d" # Obtained from \
@@ -1362,8 +1357,6 @@ verify_llvm_toolchain() {
 
 	if use official ; then
 		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP}
-	elif (( ${llvm_slot} == 13 )) ; then
-		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP_13}
 	else
 		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP}
 	fi
@@ -1546,7 +1539,7 @@ eerror
 get_pregenerated_profdata_version()
 {
 	test -e "${S}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" || die
-	echo $(od -An -j 8 -N 1 -t d1 "${S}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" | grep -E -o -e "[0-7]+")
+	echo $(od -An -j 8 -N 1 -t d1 "${S}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" | grep -E -o -e "[0-9]+")
 }
 
 get_llvm_profdata_version_info()
@@ -1702,7 +1695,7 @@ libz.so.1
 	einfo "represent your configuration.  Some libraries listed"
 	einfo "may not be be able to be CFI Cross-DSOed."
 	einfo
-	einfo "An estimated >= 43% (30/69) of the libraries listed should be"
+	einfo "An estimated >= 37.7% (26/69) of the libraries listed should be"
 	einfo "marked CFI protected."
 	einfo
 }
@@ -3566,9 +3559,11 @@ ewarn
 			export CXX="${CBUILD}-clang++ -target ${CHOST} --sysroot ${ESYSROOT}"
 			export BUILD_CC=${CBUILD}-clang
 			export BUILD_CXX=${CBUILD}-clang++
-		elif [[ -n ${FORCE_LLVM_SLOT} ]] ; then
-			export CC="clang-${FORCE_LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
-			export CXX="clang++-${FORCE_LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+		elif tc-is-cross-compiler && [[ -n ${FORCE_LLVM_SLOT} ]] ; then
+			export CC="${CBUILD}-clang-${FORCE_LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export CXX="${CBUILD}-clang++-${FORCE_LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
+			export BUILD_CC=${CBUILD}-clang-${FORCE_LLVM_SLOT}
+			export BUILD_CXX=${CBUILD}-clang++${FORCE_LLVM_SLOT}
 		else
 			export CC="clang-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
 			export CXX="clang++-${LLVM_SLOT} $(get_abi_CFLAGS ${ABI})"
@@ -3743,9 +3738,9 @@ ewarn
 	#myconf_gn+=" disable_fieldtrial_testing_config=true"
 
 	# Never use bundled gold binary. Disable gold linker flags for now.
-	myconf_gn+=" use_gold=false use_sysroot=false"
 	# Do not use bundled clang.
 	# Trying to use gold results in linker crash.
+	myconf_gn+=" use_gold=false use_sysroot=false"
 	if use official && ( use cfi-cast || use cfi-icall || use cfi-vcall ) || use bundled-libcxx ; then
 		# If you didn't do systemwide CFI Cross-DSO, it must be static.
 		myconf_gn+=" use_custom_libcxx=true"
