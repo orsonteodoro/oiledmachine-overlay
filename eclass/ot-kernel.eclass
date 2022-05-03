@@ -3475,6 +3475,10 @@ ot-kernel_set_kconfig_pgo() {
 		if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
 			einfo "Using profraw v8 for >= LLVM 15"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
+		# The versioning is messed up because of inconsistency in profraw v7.
+		# The head data structure is same but behavior different.
+		# https://github.com/llvm/llvm-project/blob/llvmorg-14.0.0/compiler-rt/include/profile/InstrProfData.inc#L139
+		# https://github.com/llvm/llvm-project/blob/llvmorg-13.0.1/compiler-rt/include/profile/InstrProfData.inc#L138
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.3" ; then
 			einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
