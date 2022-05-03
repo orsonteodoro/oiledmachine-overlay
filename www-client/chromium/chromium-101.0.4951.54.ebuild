@@ -183,7 +183,7 @@ LICENSE_FINGERPRINT="\
 ecd15ed34165813bf0f89a4b2835efd834de6018341714d2d7437c1b8c7c3131\
 1fd757dee272609f9fb562fe519c22a575e57464973e2aea3d237f7bc362c605"
 LICENSE="BSD
-	chromium-101.0.4951.54
+	chromium-101.0.4951.x
 	APSL-2
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -1967,15 +1967,42 @@ _is_vaapi_allowed() {
 DRM_RENDER_NODE=
 find_vaapi() {
 	use pre-check-vaapi || return
-	if use vaapi && [[ -n "${CR_DRM_RENDER_NODE}" ]] ; then
+	use vaapi || return
+	if [[ -n "${CR_DRM_RENDER_NODE}" ]] ; then
 		einfo "User VA-API override"
 		# Per-package envvar overridable
 		DRM_RENDER_NODE=${CR_DRM_RENDER_NODE}
-	elif use vaapi ; then
+	else
 		einfo "Autodetecting VA-API device"
 		unset LIBVA_DRIVERS_PATH
 		unset LIBVA_DRIVER_NAME
 		unset DRM_RENDER_NODE
+		# weight is based on microarchitecture age or on throughput
+		LIBVA_DRIVERS=(
+			# path:name:weight
+			/usr/lib/dri:iHD:30
+			/usr/lib/dri:i965:20
+
+			/opt/amdgpu/lib64/dri:radeonsi:31
+			/opt/amdgpu/lib/x86_64-linux-gnu/dri:radeonsi:31
+			/usr/lib/dri:radeonsi:30
+
+			/opt/amdgpu/lib64/dri:r600:21
+			/opt/amdgpu/lib/x86_64-linux-gnu/dri:r600:21
+			/usr/lib/dri:r600:20
+
+			/opt/amdgpu/lib64/dri:r300:11
+			/opt/amdgpu/lib/x86_64-linux-gnu/dri:r300:11
+			/usr/lib/dri:r300:10
+
+			/usr/lib64/dri/:nvidia:30
+			/usr/lib/dri:vdpau:27
+			/usr/lib/dri:nvidia:25
+			/usr/lib/dri:nouveau:9
+		)
+		local max_weight=0 # pick the highest weight based on highest performance
+		local FLIBVA_DRIVERS_PATH
+		local FLIBVA_DRIVER_NAME
 		for d in $(find /dev/dri -name "render*") ; do
 			# Permute
 			for v in $(seq 0 2) ; do # 2 GPU and 1 APU scenario
@@ -1983,99 +2010,28 @@ find_vaapi() {
 				# See xrandr --listproviders for mapping, could be 1=dGPU, 0=APU/IGP
 				if vainfo 2>/dev/null 1>/dev/null ; then
 					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
-					LIBVA_DRIVER_NAME="iHD" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
-					export LIBVA_DRIVER_NAME="iHD"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
-					LIBVA_DRIVER_NAME="i965" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
-					export LIBVA_DRIVER_NAME="i965"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
-					LIBVA_DRIVER_NAME="radeonsi" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
-					export LIBVA_DRIVER_NAME="radeonsi"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
-					LIBVA_DRIVER_NAME="r600" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
-					export LIBVA_DRIVER_NAME="r600"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
-					LIBVA_DRIVER_NAME="r300" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
-					export LIBVA_DRIVER_NAME="r300"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri" \
-					LIBVA_DRIVER_NAME="radeonsi" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri"
-					export LIBVA_DRIVER_NAME="radeonsi"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri" \
-					LIBVA_DRIVER_NAME="r600" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri"
-					export LIBVA_DRIVER_NAME="r600"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri" \
-					LIBVA_DRIVER_NAME="r300" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib64/dri"
-					export LIBVA_DRIVER_NAME="r300"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri" \
-					LIBVA_DRIVER_NAME="radeonsi" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri"
-					export LIBVA_DRIVER_NAME="radeonsi"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri" \
-					LIBVA_DRIVER_NAME="r600" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri"
-					export LIBVA_DRIVER_NAME="r600"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri" \
-					LIBVA_DRIVER_NAME="r300" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/opt/amdgpu/lib/x86_64-linux-gnu/dri"
-					export LIBVA_DRIVER_NAME="r300"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/usr/lib64/dri/" \
-					LIBVA_DRIVER_NAME="nvidia" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/usr/lib64/dri/"
-					export LIBVA_DRIVER_NAME="nvidia"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
-					LIBVA_DRIVER_NAME="nvidia" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
-					export LIBVA_DRIVER_NAME="nvidia"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
-					LIBVA_DRIVER_NAME="vdpau" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
-					export LIBVA_DRIVER_NAME="vdpau"
-					export DRM_RENDER_NODE="${d}"
-				elif LIBVA_DRIVERS_PATH="/usr/lib/dri" \
-					LIBVA_DRIVER_NAME="nouveau" \
-					vainfo 2>/dev/null 1>/dev/null ; then
-					export LIBVA_DRIVERS_PATH="/usr/lib/dri"
-					export LIBVA_DRIVER_NAME="nouveau"
-					export DRM_RENDER_NODE="${d}"
+					break
+				else
+					local r
+					for r in ${LIBVA_DRIVERS[@]} ; do
+						local path=$(echo "${r}" | cut -f 1 -d ":")
+						local name=$(echo "${r}" | cut -f 2 -d ":")
+						local weight=$(echo "${r}" | cut -f 3 -d ":")
+						export LIBVA_DRIVERS_PATH="${path}"
+						export LIBVA_DRIVER_NAME="${name}"
+						if vainfo 2>/dev/null 1>/dev/null \
+							&& (( ${weight} > ${max_weight} )) ; then
+							export FLIBVA_DRIVERS_PATH="${path}"
+							export FLIBVA_DRIVER_NAME="${name}"
+							export DRM_RENDER_NODE="${d}"
+							max_weight=${weight}
+						fi
+					done
 				fi
 			done
 		done
+		export LIBVA_DRIVERS_PATH="${FLIBVA_DRIVERS_PATH}"
+		export LIBVA_DRIVER_NAME="${FLIBVA_DRIVER_NAME}"
 	fi
 	vaapi_autodetect_failed_msg() {
 eerror
@@ -2090,15 +2046,15 @@ eerror "You may also disable the vaapi USE flag if there is difficulty"
 eerror "installing or configuring the driver."
 eerror
 	}
-	if use vaapi && [[ -n "${CR_DRM_RENDER_NODE}" ]] \
+	if [[ -n "${CR_DRM_RENDER_NODE}" ]] \
 		&& ! vainfo --display drm --device "${DRM_RENDER_NODE}" ; then
 		eerror "VA-API test failure"
 		vaapi_autodetect_failed_msg
 		die
-	elif use vaapi && [[ -z "${DRM_RENDER_NODE}" ]] ; then
+	elif [[ -z "${DRM_RENDER_NODE}" ]] ; then
 		vaapi_autodetect_failed_msg
 		die
-	elif use vaapi ; then
+	else
 		einfo "Using VA-API device with DRM render node ${DRM_RENDER_NODE}"
 		[[ -n "${LIBVA_DRIVER_NAME}" ]] \
 			&& einfo " LIBVA_DRIVER_NAME=${LIBVA_DRIVER_NAME}"
