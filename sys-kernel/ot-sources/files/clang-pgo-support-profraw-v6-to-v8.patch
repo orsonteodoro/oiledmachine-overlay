@@ -42,7 +42,7 @@ The patch status will change once it is confirmed working.
  	help
  	  This option enables clang's PGO (Profile Guided Optimization) based
  	  code profiling to better optimize the kernel.
-@@ -34,4 +35,44 @@ config PGO_CLANG
+@@ -34,4 +35,47 @@ config PGO_CLANG
  	  Note that the debugfs filesystem has to be mounted to access
  	  profiling data.
  
@@ -53,17 +53,20 @@ The patch status will change once it is confirmed working.
 +	  of LLVM since not enough metadata is provided.
 +
 +config PROFRAW_V8
-+	bool "profraw v8 (main, 14.x, 15.x)"
++	bool "profraw v8 (main, 15.x)"
 +	help
 +	  The following are compatible:
 +	    * LLVM main branch with the latest commit
-+	    * LLVM 14.x branch with the latest commit
-+	    * LLVM 14.0.0-rc1
 +
 +config PROFRAW_V7
 +	bool "profraw v7 (13.x)"
 +	help
 +	  The following are compatible:
++	    * LLVM 14.x branch with the latest commit
++	    * LLVM 14.0.3
++	    * LLVM 14.0.2
++	    * LLVM 14.0.1
++	    * LLVM 14.0.0
 +	    * LLVM 13.x branch with the latest commit
 +	    * LLVM 13.0.1
 +	    * LLVM 13.0.0

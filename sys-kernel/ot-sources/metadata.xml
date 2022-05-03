@@ -1417,6 +1417,7 @@ unset OT_KERNEL_PRIVATE_KEY
       arcade
       cryptocurrency-miner-dedicated
       cryptocurrency-miner-workstation
+      casual-gaming
       casual-gaming-laptop
       custom
       digital-audio-workstation
@@ -1424,8 +1425,6 @@ unset OT_KERNEL_PRIVATE_KEY
       distributed-computing-workstation
       desktop-guest-vm
       dvr
-      pro-gaming
-      casual-gaming
       file-server
       gamedev
       gaming-guest-vm
@@ -1439,6 +1438,7 @@ unset OT_KERNEL_PRIVATE_KEY
       media-player
       media-server
       presentation
+      pro-gaming
       remote-tournament
       renderfarm-dedicated
       renderfarm-workstation

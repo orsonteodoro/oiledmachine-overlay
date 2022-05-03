@@ -718,6 +718,8 @@ verify_clang_compiler_updated() {
 		"sys-devel/clang-13.0.1" \
 		"sys-devel/clang-14.0.0" \
 		"sys-devel/clang-14.0.1" \
+		"sys-devel/clang-14.0.2" \
+		"sys-devel/clang-14.0.3" \
 		"sys-devel/clang-15.0.0.9999" \
 	; do
 		einfo "Verifying prereqs for PGO for ${p}"
@@ -764,6 +766,8 @@ verify_profraw_compatibility() {
 		"13.0.1" \
 		"14.0.0" \
 		"14.0.1" \
+		"14.0.2" \
+		"14.0.3" \
 		"15.0.0.9999" \
 	; do
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
@@ -3471,12 +3475,18 @@ ot-kernel_set_kconfig_pgo() {
 		if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
 			einfo "Using profraw v8 for >= LLVM 15"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.3" ; then
+			einfo "Using profraw v8 for LLVM 14"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.2" ; then
+			einfo "Using profraw v8 for LLVM 14"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.1" ; then
 			einfo "Using profraw v8 for LLVM 14"
-			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0" ; then
 			einfo "Using profraw v8 for LLVM 14"
-			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
 		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.1" ; then
 			einfo "Using profraw v7 for LLVM 13"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
@@ -5596,6 +5606,8 @@ ot-kernel_src_install() {
 			einfo "Saving the config for ${extraversion} to ${default_config}"
 			insinto /etc/kernels
 			newins "${BUILD_DIR}/.config" $(basename "${default_config}")
+			# dosym src_relpath_real dest_abspath_symlink
+			dosym $(basename "${default_config}") $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${PV})-${extraversion}-${arch}
 
 			einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
 			make mrproper ARCH=${arch} || die
