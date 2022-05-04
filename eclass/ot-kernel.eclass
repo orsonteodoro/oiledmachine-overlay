@@ -3467,9 +3467,10 @@ ot-kernel_set_kconfig_pgo() {
 		(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 		local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
 		local clang_v_maj=$(echo "${clang_v}" | cut -f 1 -d ".")
-		ot-kernel_y_configopt "CONFIG_PGO_CLANG_LLVM_SELECT"
+		#ot-kernel_y_configopt "CONFIG_PGO_CLANG_LLVM_SELECT"
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V8" # Reset
-		ot-kernel_n_configopt "CONFIG_PROFRAW_V7"
+		ot-kernel_n_configopt "CONFIG_PROFRAW_V7_LLVM14"
+		ot-kernel_n_configopt "CONFIG_PROFRAW_V7_LLVM13"
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V6"
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V5"
 		if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
@@ -3512,7 +3513,7 @@ eerror
 		if [[ -e "${pgo_phase_statefile}" ]] ; then
 			pgo_phase=$(cat "${pgo_phase_statefile}")
 		else
-			pgo_phase=${PGO_PHASE_PGI}
+			pgo_phase="${PGO_PHASE_PGI}"
 		fi
 		if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 			einfo "Forcing PGI flags and config"
@@ -3520,7 +3521,7 @@ eerror
 			ot-kernel_y_configopt "CONFIG_CC_IS_CLANG"
 			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 			ot-kernel_y_configopt "CONFIG_PGO_CLANG"
-		elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
+		elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}") && -e "${profdata_dpath}" ]] ; then
 			einfo "Forcing PGO flags and config"
 			ot-kernel_n_configopt "CONFIG_DEBUG_FS"
 			ot-kernel_n_configopt "CONFIG_PGO_CLANG"
@@ -4871,6 +4872,7 @@ ot-kernel_menuconfig() {
 			einfo "Running:  ARCH=${arch} make ${menuconfig_ui} ${menuconfig_colors} ${args[@]}"
 			cat <<EOF > "${BUILD_DIR}/menuconfig.sh" || die
 #!/bin/bash
+export PATH="/usr/lib/llvm/${llvm_slot}/bin:\${PATH}"
 cd "${BUILD_DIR}"
 ARCH=${arch} make ${menuconfig_ui} ${menuconfig_colors} ${args[@]}
 echo "Update settings to ${config}? (Y/N)"
@@ -4985,7 +4987,7 @@ einfo
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
 		ot-kernel_set_kconfig_compiler_toolchain # llvm_slot, gcc_slot
-		ot-kernel_menuconfig "pre"
+		ot-kernel_menuconfig "pre" # llvm_slot
 		ot-kernel_set_kconfig_march
 		ot-kernel_set_kconfig_oflag
 		ot-kernel_set_kconfig_lto # llvm_slot
@@ -5052,7 +5054,7 @@ einfo
 		einfo "Running:  make olddefconfig ${args[@]}"
 		make olddefconfig "${args[@]}" || die
 
-		ot-kernel_menuconfig "post"
+		ot-kernel_menuconfig "post" # llvm_slot
 	done
 }
 
@@ -5419,11 +5421,11 @@ ot-kernel_build_kernel() {
 		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
 		local profraw_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
 		local profdata_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
-		local pgo_phase=${PGO_PHASE_UNK}
+		local pgo_phase="${PGO_PHASE_UNK}"
 		if has clang-pgo ${IUSE_EFFECTIVE} && ot-kernel_use clang-pgo ; then
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
-				pgo_phase=${PGO_PHASE_PGI}
+				pgo_phase="${PGO_PHASE_PGI}"
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
@@ -5442,6 +5444,10 @@ ot-kernel_build_kernel() {
 				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
 				einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && ! -e "${profraw_spath}" ]] ; then
+				eerror "Missing ${profraw_spath}.  Delete the ${OT_KERNEL_PGO_DATA_DIR} folder"
+				eerror "to restart PGO."
+				die
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
 				einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
@@ -5617,7 +5623,7 @@ ot-kernel_src_install() {
 			fi
 			local pgo_phase
 			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
-				pgo_phase=${PGO_PHASE_PGI}
+				pgo_phase="${PGO_PHASE_PGI}"
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
