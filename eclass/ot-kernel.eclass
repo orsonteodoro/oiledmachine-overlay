@@ -5030,6 +5030,9 @@ einfo
 			einfo "Disabling all debug and shortening logging buffers"
 			./disable_debug || die
 			rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
+			if has clang-pgo ${IUSE_EFFECTIVE} && ot-kernel_use clang-pgo ; then
+				ot-kernel_y_configopt "CONFIG_DEBUG_FS"
+			fi
 		fi
 		ot-kernel_set_kconfig_dmesg ""
 
