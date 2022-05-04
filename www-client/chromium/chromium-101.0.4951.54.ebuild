@@ -1983,9 +1983,9 @@ find_vaapi() {
 			/usr/lib/dri:iHD:30
 			/usr/lib/dri:i965:20
 
-			/opt/amdgpu/lib64/dri:radeonsi:31
-			/opt/amdgpu/lib/x86_64-linux-gnu/dri:radeonsi:31
-			/usr/lib/dri:radeonsi:30
+			/opt/amdgpu/lib64/dri:radeonsi:30
+			/opt/amdgpu/lib/x86_64-linux-gnu/dri:radeonsi:30
+			/usr/lib/dri:radeonsi:29
 
 			/opt/amdgpu/lib64/dri:r600:21
 			/opt/amdgpu/lib/x86_64-linux-gnu/dri:r600:21
