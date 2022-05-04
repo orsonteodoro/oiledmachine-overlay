@@ -722,8 +722,8 @@ verify_clang_compiler_updated() {
 		"sys-devel/clang-14.0.3" \
 		"sys-devel/clang-15.0.0.9999" \
 	; do
-		einfo "Verifying prereqs for PGO for ${p}"
 		if has_version "=${p}" ; then
+			einfo "Verifying prereqs for PGO for ${p}"
 			local emerged_llvm_commit=$(bzless \
 				"${ESYSROOT}/var/db/pkg/${p/_/-}/environment.bz2" \
 				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
@@ -1866,12 +1866,12 @@ ot-kernel_clear_keys() {
 }
 
 # Constant enums
-PGO_PHASE_UNK=-1 # Unset
-PGO_PHASE_PGI=0 # Instrumentation step
-PGO_PHASE_PGT=1 # Training step
-PGO_PHASE_PGO=2 # Optimization step
-PGO_PHASE_PG0=3 # No PGO
-PGO_PHASE_PG0=4 # DONE
+PGO_PHASE_UNK="UNK" # Unset
+PGO_PHASE_PGI="PGI" # Instrumentation step
+PGO_PHASE_PGT="PGT" # Training step
+PGO_PHASE_PGO="PGO" # Optimization step
+PGO_PHASE_PG0="PG0" # No PGO
+PGO_PHASE_DONE="DONE" # DONE
 
 # @FUNCTION: is_clang_ready
 # @DESCRIPTION:
@@ -3476,7 +3476,7 @@ ot-kernel_set_kconfig_pgo() {
 			einfo "Using profraw v8 for >= LLVM 15"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.3" ; then
-			einfo "Using profraw v8 for LLVM 14"
+			einfo "Using profraw v7 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_LLVM14"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.2" ; then
 			einfo "Using profraw v7 for LLVM 14"
@@ -5438,7 +5438,7 @@ ot-kernel_build_kernel() {
 				llvm-profdata merge --output="${profraw_dpath}" \
 					"${profdata_dpath}" || die "PGO profile merging failed"
 				pgo_phase="${PGO_PHASE_PGO}"
-				echo "PGO" > "${pgo_phase_statefile}" || die
+				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
 				einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
@@ -5623,9 +5623,9 @@ ot-kernel_src_install() {
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
 			mkdir -p $(dirname "${pgo_phase_statefile}")
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
-				echo "PGT" > "${pgo_phase_statefile}" || die
+				echo "${PGO_PHASE_PGT}" > "${pgo_phase_statefile}" || die
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
-				echo "DONE" > "${pgo_phase_statefile}" || die
+				echo "${PGO_PHASE_DONE}" > "${pgo_phase_statefile}" || die
 			fi
 			# Add for genkernel because mrproper erases it
 			mkdir -p "include/config" || die
