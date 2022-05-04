@@ -2551,35 +2551,35 @@ ot-kernel_set_kconfig_compressors() {
 	fi
 
 	if grep -q -E -e "^CONFIG_MODULE_COMPRESS_GZIP=y" "${path_config}" ; then
-		use gzip || die "Add the gzip USE flag"
+		use gzip || die "Enable the gzip USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_MODULE_COMPRESS_XZ=y" "${path_config}" ; then
-		use xz || die "Add the xz USE flag"
+		use xz || die "Enable the xz USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_MODULE_COMPRESS_ZSTD=y" "${path_config}" ; then
-		use zstd || die "Add the zstd USE flag"
+		use zstd || die "Enable the zstd USE flag"
 	fi
 
 	if grep -q -E -e "^CONFIG_RD_BZIP2=y" "${path_config}" ; then
-		use bzip2 || die "Add the bzip2 USE flag"
+		use bzip2 || die "Enable the bzip2 USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_RD_LZ4=y" "${path_config}" ; then
-		use lz4 || die "Add the lz4 USE flag"
+		use lz4 || die "Enable the lz4 USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_RD_LZMA=y" "${path_config}" ; then
-		use lzma || die "Add the lzma USE flag"
+		use lzma || die "Enable the lzma USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_RD_LZO=y" "${path_config}" ; then
-		use lzo || die "Add the lzo USE flag"
+		use lzo || die "Enable the lzo USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_RD_GZIP=y" "${path_config}" ; then
-		use gzip || die "Add the gzip USE flag"
+		use gzip || die "Enable the gzip USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_RD_ZSTD=y" "${path_config}" ; then
-		use zstd || die "Add the zstd USE flag"
+		use zstd || die "Enable the zstd USE flag"
 	fi
 	if grep -q -E -e "^CONFIG_RD_XZ=y" "${path_config}" ; then
-		use xz || die "Add the xz USE flag"
+		use xz || die "Enable the xz USE flag"
 	fi
 }
 
@@ -4853,11 +4853,11 @@ ot-kernel_menuconfig() {
 			:
 		elif [[ -n "${menuconfig_ui}" && "${menuconfig_extraversion}" == "${extraversion}" ]] ; then
 			if [[ "${menuconfig_ui}" =~ ("menuconfig"|"nconfig") ]] ; then
-				use ncurses || die "Add the ncurses USE flag for nconfig or menuconfig support"
+				use ncurses || die "Enable the ncurses USE flag for nconfig or menuconfig support"
 			elif [[ "${menuconfig_ui}" == "gconfig" ]] ; then
-				use gtk || die "Add the gtk USE flag for gconfig support"
+				use gtk || die "Enable the gtk USE flag for gconfig support"
 			elif [[ "${menuconfig_ui}" == "xconfig" ]] ; then
-				use qt5 || die "Add the qt5 USE flag for xconfig support"
+				use qt5 || die "Enable the qt5 USE flag for xconfig support"
 			fi
 #			https://github.com/torvalds/linux/blob/master/scripts/kconfig/Makefile#L118
 #			All menuconfig/xconfig/gconfig works outside of emerge but not when sandbox is completely disabled.
@@ -4902,10 +4902,10 @@ eerror
 # Check kernel signing prereqs
 ot-kernel_check_kernel_signing_prereqs() {
 	if [[ "${OT_KERNEL_SIGN_MODULES}" != "0" && -n "${OT_KERNEL_SIGN_MODULES}" ]] ; then
-		use openssl || die "Add the openssl USE flag for module signing"
+		use openssl || die "Enable the openssl USE flag for module signing"
 	fi
 	if [[ "${OT_KERNEL_SIGN_KERNEL}" =~ ("uefi"|"efi"|"kexec") ]] ; then
-		use openssl || die "Add the openssl USE flag for kernel signing"
+		use openssl || die "Enable the openssl USE flag for kernel signing"
 	fi
 }
 
