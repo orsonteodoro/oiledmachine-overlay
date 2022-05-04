@@ -5444,13 +5444,13 @@ ot-kernel_build_kernel() {
 				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
 				einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
+				einfo "Building PGO"
+				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && ! -e "${profraw_spath}" ]] ; then
 				eerror "Missing ${profraw_spath}.  Delete the ${OT_KERNEL_PGO_DATA_DIR} folder"
 				eerror "to restart PGO."
 				die
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
-				einfo "Building PGO"
-				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
 			fi
 		fi
 
