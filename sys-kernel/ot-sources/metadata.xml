@@ -1231,7 +1231,8 @@ unset OT_KERNEL_PRIVATE_KEY
       manual - Use previous settings.
       slab - Use old allocator.  Recommended for networked computers for ~10%
         more network TPS (throughput) and systems with ~2 % lower CPU usage
-        (and energy consumed).
+        (and energy consumed).  However, this may slow down the emerge unpack
+        phase.
       slob - Use allocator for embedded (e.g. gadgets, mp3 players).
       slub - Use allocator for super computers and upstream default with SMP
         systems.  It has lower GiB overhead compared to slab in 1000+ processor
