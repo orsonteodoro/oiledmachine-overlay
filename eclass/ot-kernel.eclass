@@ -722,10 +722,10 @@ verify_clang_compiler_updated() {
 		"sys-devel/clang-14.0.3" \
 		"sys-devel/clang-15.0.0.9999" \
 	; do
-		if has_version "=${p}" ; then
+		if has_version "=${p}*" ; then
 			einfo "Verifying prereqs for PGO for ${p}"
 			local emerged_llvm_commit=$(bzless \
-				"${ESYSROOT}/var/db/pkg/${p/_/-}/environment.bz2" \
+				"${ESYSROOT}/var/db/pkg/${p/_/-}"*"/environment.bz2" \
 				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
 			local emerged_llvm_time_desc=$(wget -q -O - \
 				https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch \
