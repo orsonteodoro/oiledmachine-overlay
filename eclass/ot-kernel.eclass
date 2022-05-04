@@ -3647,7 +3647,7 @@ ot-kernel_set_kconfig_auto_set_slab_allocator() {
 			|| [[ "${processor_class}" =~ "numa" ]] ; then
 			ot-kernel_set_kconfig_slab_allocator "slub"
 		else
-			ot-kernel_set_kconfig_slab_allocator "slab"
+			ot-kernel_set_kconfig_slab_allocator "slub"
 		fi
 	elif [[ "${slab_allocator}" =~ ("slab"|"slob"|"slub") ]] ; then
 		ot-kernel_set_kconfig_slab_allocator "${slab_allocator}"
