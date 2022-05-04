@@ -1,9 +1,68 @@
 #!/bin/bash
-# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
 # License GPL-2+ or MIT, your choice
 
 # For additional package requirements see the pgo_trainer_* in the link below:
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4aff350c36fce8f4c85/sys-kernel/genkernel/genkernel-4.2.6-r2.ebuild#L279
+
+print_help() {
+	echo "gen_pgo.sh -- standalone script for PGO training"
+	echo "Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>"
+	echo "License:  GPL-2+ or MIT"
+	echo "--help - Print this help"
+	echo "--2d - Train with 2D graphics trainers"
+	echo "--3d - Train with 3D OGL1.3 graphics trainers"
+	echo "--all - Run all trainers"
+	echo "--crypto-std - Train with standard hashes/ciphers"
+	echo "--crypto-kor - Train with Korean hashes/ciphers"
+	echo "--crypto-chn - Train with Chinese hashes/ciphers"
+	echo "--crypto-rus - Train with Russian hashes/ciphers"
+	echo "--crypto-common - Train with common hashes/ciphers"
+	echo "--crypto-less-common - Train with less common hashes/ciphers"
+	echo "--crypto-deprecated - Train with deprecated hashes/ciphers"
+	echo "--custom - Train with a custom trainer script"
+	echo "--emerge1 - Train by compiling xorg-server"
+	echo "--emerge2 - Train by compiling with a resource hungry package (UNIMPLEMENTED)"
+	echo "--filesystem - Train the filesystem"
+	echo "--memory - Train with the OOM trainer"
+	echo "--network - Train the network subsystem"
+	echo "--webcam - Train the webcam codepaths"
+	exit 0
+}
+
+ARGV=(${@})
+
+process_args() {
+	for x in ${ARGV[@]} ; do
+		case ${x} in
+			--help)
+				print_help
+				;;
+			--2d) TRAINER_2D=1 ;;
+			--3d) TRAINER_3D=1 ;;
+			--all) TRAINER_ALL=1 ;;
+			--crypto-std) TRAINER_CRYPTO_STD=1 ;;
+			--crypto-kor) TRAINER_CRYPTO_KOR=1 ;;
+			--crypto-chn) TRAINER_CRYPTO_CHN=1 ;;
+			--crypto-rus) TRAINER_CRYPTO_RUS=1 ;;
+			--crypto-common) TRAINER_CRYPTO_COMMON=1 ;;
+			--crypto-less-common) TRAINER_CRYPTO_LESS_COMMON=1 ;;
+			--crypto-deprecated) TRAINER_CRYPTO_DEPRECATED=1 ;;
+			--custom) TRAINER_CUSTOM=1 ;;
+			--emerge1) TRAINER_EMERGE1=1 ;;
+			--emerge2) TRAINER_EMERGE2=1 ;;
+			--filesystem) TRAINER_FILESYSTEM=1 ;;
+			--memory) TRAINER_MEMORY=1 ;;
+			--network) TRAINER_NETWORK=1 ;;
+			--webcam) TRAINER_WEBCAM=1 ;;
+		esac
+	done
+
+	if (( "${#ARGV}" == 0 )) ; then
+		print_help
+		return
+	fi
+}
 
 PGO_SAMPLE_SIZE=30 # statistics rule of 30
 PGO_SAMPLE_SIZE_MEMORY=3 # Cut short due to length of time per run
@@ -154,6 +213,10 @@ is_oom() {
 }
 
 pgo_trainer_memory() {
+	echo "[warn] This triggers an an OOM (Out Of Memory) as intended but buggy"
+	echo "[warn] patched kernels may result in data loss or lost work.  You have 30 seconds"
+	echo "[warn] seconds to stop.  To stop press Ctrl+C."
+	sleep 30
 	local m0=0 # Is swapping code paths profiled?
 	local m1=0 # Is OOM code paths profiled?
 	local trained=0
@@ -1054,8 +1117,28 @@ check_pgo_requirements() {
 
 if ! is_genkernel ; then
 main() {
+	process_args
 	[[ -n "${CHECK_REQUIREMENTS}" && "${CHECK_REQUIREMENTS}" == "1" ]] && check_pgo_requirements
-	pgo_trainer_all
+	if [[ "${TRAINER_ALL}" == "1" ]] ; then
+		pgo_trainer_all
+	else
+		[[ "${TRAINER_2D}" == "1" ]] && pgo_trainer_2d_draw
+		[[ "${TRAINER_3D}" == "1" ]] && pgo_trainer_3d_ogl1_3
+		[[ "${TRAINER_CRYPTO_STD}" == "1" ]] && pgo_trainer_crypto_std
+		[[ "${TRAINER_CRYPTO_KOR}" == "1" ]] && pgo_trainer_crypto_kor
+		[[ "${TRAINER_CRYPTO_CHN}" == "1" ]] && pgo_trainer_crypto_chn
+		[[ "${TRAINER_CRYPTO_RUS}" == "1" ]] && pgo_trainer_crypto_rus
+		[[ "${TRAINER_CRYPTO_COMMON}" == "1" ]] && pgo_trainer_crypto_common
+		[[ "${TRAINER_CRYPTO_LESS_COMMON}" == "1" ]] && pgo_trainer_crypto_less_common
+		[[ "${TRAINER_CRYPTO_DEPRECATED}" == "1" ]] && pgo_trainer_crypto_deprecated
+		[[ "${TRAINER_EMERGE1}" == "1" ]] && pgo_trainer_emerge1
+		[[ "${TRAINER_EMERGE2}" == "1" ]] && pgo_trainer_emerge2
+		[[ "${TRAINER_FILESYSTEM}" == "1" ]] && pgo_trainer_filesystem
+		[[ "${TRAINER_MEMORY}" == "1" ]] && pgo_trainer_memory
+		[[ "${TRAINER_NETWORK}" == "1" ]] && pgo_trainer_network
+		[[ "${TRAINER_WEBCAM}" == "1" ]] && pgo_trainer_webcam
+		[[ "${TRAINER_CUSTOM}" == "1" ]] && pgo_trainer_custom
+	fi
 }
 main
 fi
