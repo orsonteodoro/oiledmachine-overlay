@@ -19,7 +19,7 @@ PGO_DISTRO="standalone" # \
 # KERNEL_OUTPUTDIR envvar should be set to the kernel sources if not using gentoo
 # KERNEL_DIR envvar should be set to the kernel sources if not using gentoo
 
-if [[ "${PGO_DISTRO}" == "linux" ]] ; then
+if [[ "${PGO_DISTRO}" =~ ("linux"|"standalone") ]] ; then
 print_info() {
 	local error_code="${1}"
 	local msg="${2}"
@@ -73,7 +73,7 @@ is_pgt() {
 }
 
 is_genkernel() {
-	if (( "${PGO_DISTRO}" == "gentoo" )) ; then
+	if [[ "${PGO_DISTRO}" == "gentoo" ]] ; then
 		return 0
 	else
 		return 1
