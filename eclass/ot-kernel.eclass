@@ -5428,9 +5428,10 @@ ot-kernel_build_kernel() {
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
 
+			einfo ">>> PGO phase: ${pgo_phase}"
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 				einfo "Building PGI"
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_path}" ]] ; then
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_spath}" ]] ; then
 				einfo "Merging PGT profiles"
 				mkdir -p "${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}" || die
 				cp -a "${profraw_spath}" "${profraw_dpath}" || die
