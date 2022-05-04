@@ -3477,22 +3477,22 @@ ot-kernel_set_kconfig_pgo() {
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.3" ; then
 			einfo "Using profraw v8 for LLVM 14"
-			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_4_X"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_LLVM14"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.2" ; then
 			einfo "Using profraw v7 for LLVM 14"
-			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_4_X"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_LLVM14"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.1" ; then
 			einfo "Using profraw v7 for LLVM 14"
-			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_4_X"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_LLVM14"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.0" ; then
 			einfo "Using profraw v7 for LLVM 14"
-			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_4_X"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_LLVM14"
 		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.1" ; then
 			einfo "Using profraw v7 for LLVM 13"
-			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_3_X"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_LLVM13"
 		elif (( ${llvm_slot} == 13 && ${clang_v_maj} == 13 )) && has_version "~sys-devel/clang-13.0.0" ; then
 			einfo "Using profraw v7 for LLVM 13"
-			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_3_X"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V7_LLVM13"
 		elif (( ${llvm_slot} <= 12 && ${clang_v_maj} == 12 )) && has_version "~sys-devel/clang-12.0.1" ; then
 			einfo "Using profraw v5 for LLVM 12"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V5"

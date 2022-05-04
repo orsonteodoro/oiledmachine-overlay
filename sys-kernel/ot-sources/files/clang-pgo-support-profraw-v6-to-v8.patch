@@ -19,7 +19,7 @@ The patch status will change once it is confirmed working.
  	header->counters_size = prf_cnts_count();
  	header->padding_bytes_after_counters = 0;
  	header->names_size = prf_names_count();
-+#if defined(CONFIG_PROFRAW_V7_4_X) || LLVM_INSTR_PROF_RAW_VERSION >= 8
++#if defined(CONFIG_PROFRAW_V7_LLVM14) || LLVM_INSTR_PROF_RAW_VERSION >= 8
 +	header->counters_delta = (u64)__llvm_prf_cnts_start - (u64)__llvm_prf_data_start;
 +#else
  	header->counters_delta = (u64)__llvm_prf_cnts_start;
@@ -38,7 +38,7 @@ The patch status will change once it is confirmed working.
  	depends on ARCH_SUPPORTS_PGO_CLANG
  	depends on CC_IS_CLANG
  	depends on !ARCH_WANTS_NO_INSTR || CC_HAS_NO_PROFILE_FN_ATTR
-+	depends on PROFRAW_V8 || PROFRAW_V7_4_X || PROFRAW_V7_3_X || PROFRAW_V6 || PROFRAW_V5
++	depends on PROFRAW_V8 || PROFRAW_V7_LLVM14 || PROFRAW_V7_LLVM13 || PROFRAW_V6 || PROFRAW_V5
  	help
  	  This option enables clang's PGO (Profile Guided Optimization) based
  	  code profiling to better optimize the kernel.
@@ -58,7 +58,7 @@ The patch status will change once it is confirmed working.
 +	  The following are compatible:
 +	    * LLVM main branch with the latest commit
 +
-+config PROFRAW_V7_4_X
++config PROFRAW_V7_LLVM14
 +	bool "profraw v7 (14.x)"
 +	help
 +	    * LLVM 14.x branch with the latest commit
@@ -67,7 +67,7 @@ The patch status will change once it is confirmed working.
 +	    * LLVM 14.0.1
 +	    * LLVM 14.0.0
 +
-+config PROFRAW_V7_3_X
++config PROFRAW_V7_LLVM13
 +	bool "profraw v7 (13.x)"
 +	help
 +	  The following are compatible:
@@ -110,9 +110,9 @@ The patch status will change once it is confirmed working.
 +
 +#if defined(CONFIG_PROFRAW_V8)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	8
-+#elif defined (CONFIG_PROFRAW_V7_4_X)
++#elif defined (CONFIG_PROFRAW_V7_LLVM14)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	7
-+#elif defined (CONFIG_PROFRAW_V7_3_X)
++#elif defined (CONFIG_PROFRAW_V7_LLVM13)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	7
 +#elif defined(CONFIG_PROFRAW_V6)
 +#  define LLVM_INSTR_PROF_RAW_VERSION	6
