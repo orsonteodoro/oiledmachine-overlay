@@ -144,7 +144,8 @@ IUSE+=" cpu_flags_arm_thumb"
 IUSE+=" gtk +ncurses openssl qt5"
 IUSE+=" bzip2 gzip lz4 lzma lzo xz zstd"
 NEEDS_DEBUGFS=0
-inherit check-reqs flag-o-matic ot-kernel-cve ot-kernel-pkgflags ot-kernel-kutils toolchain-funcs
+PYTHON_COMPAT=( python3_{8..10} )
+inherit check-reqs flag-o-matic python-r1 ot-kernel-cve ot-kernel-pkgflags ot-kernel-kutils toolchain-funcs
 CDEPEND="
 	app-arch/cpio
 	app-shells/bash
@@ -194,7 +195,124 @@ RDEPEND+="
 BDEPEND+="
 	build? ( ${CDEPEND} )
 	dev-util/patchutils
+	sys-apps/findutils
 "
+
+if [[ "${HAVE_CLANG_PGO}" == "1" ]] ; then
+PGT_CRYPTO_DEPEND="
+	sys-fs/cryptsetup
+"
+PGT_TRAINERS=(
+	2d
+	3d
+	crypto_std
+	crypto_kor
+	crypto_chn
+	crypto_rus
+	crypto_common
+	crypto_less_common
+	crypto_deprecated
+	custom
+	emerge1
+	emerge2
+	filesystem
+	memory
+	network
+	p2p
+	video
+	webcam
+)
+IUSE+=" ${PGT_TRAINERS[@]/#/ot_kernel_pgt_trainer_} "
+REQUIRED_USE+="
+	ot_kernel_pgt_trainer_2d? ( clang-pgo )
+	ot_kernel_pgt_trainer_3d? ( clang-pgo )
+	ot_kernel_pgt_trainer_crypto_std? ( clang-pgo )
+	ot_kernel_pgt_trainer_crypto_kor? ( clang-pgo )
+	ot_kernel_pgt_trainer_crypto_chn? ( clang-pgo )
+	ot_kernel_pgt_trainer_crypto_rus? ( clang-pgo )
+	ot_kernel_pgt_trainer_crypto_common? ( clang-pgo )
+	ot_kernel_pgt_trainer_crypto_less_common? ( clang-pgo )
+	ot_kernel_pgt_trainer_crypto_deprecated? ( clang-pgo )
+	ot_kernel_pgt_trainer_custom? ( clang-pgo )
+	ot_kernel_pgt_trainer_emerge1? ( clang-pgo )
+	ot_kernel_pgt_trainer_emerge2? ( clang-pgo )
+	ot_kernel_pgt_trainer_filesystem? ( clang-pgo )
+	ot_kernel_pgt_trainer_memory? ( clang-pgo )
+	ot_kernel_pgt_trainer_network? ( clang-pgo )
+	ot_kernel_pgt_trainer_p2p? ( clang-pgo )
+	ot_kernel_pgt_trainer_video? ( clang-pgo )
+	ot_kernel_pgt_trainer_webcam? ( clang-pgo )
+"
+PDEPEND+="
+	sys-apps/coreutils
+	sys-apps/grep[pcre]
+	ot_kernel_pgt_trainer_2d? (
+		sys-apps/findutils
+		sys-process/procps
+		x11-misc/xscreensaver[X]
+	)
+	ot_kernel_pgt_trainer_3d? (
+		sys-apps/findutils
+		virtual/opengl
+		sys-process/procps
+		x11-misc/xscreensaver[X,opengl]
+	)
+	ot_kernel_pgt_trainer_crypto_std? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_trainer_crypto_kor? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_trainer_crypto_chn? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_trainer_crypto_rus? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_trainer_crypto_common? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_trainer_crypto_less_common? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_trainer_crypto_deprecated? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_trainer_emerge1? (
+		sys-apps/findutils
+	)
+	ot_kernel_pgt_trainer_filesystem? (
+		sys-apps/findutils
+	)
+	ot_kernel_pgt_trainer_memory? (
+		${PYTHON_DEPS}
+		sys-apps/util-linux
+		sys-process/procps
+	)
+	ot_kernel_pgt_trainer_network? (
+		net-analyzer/traceroute
+		net-misc/curl
+		net-misc/iputils
+	)
+	ot_kernel_pgt_trainer_p2p? (
+		net-p2p/ctorrent
+		sys-apps/util-linux
+		sys-process/procps
+	)
+	ot_kernel_pgt_trainer_webcam? (
+		media-tv/v4l-utils
+		media-video/ffmpeg[encode,v4l]
+	)
+	ot_kernel_pgt_trainer_video? (
+		${PYTHON_DEPS}
+		|| (
+			www-client/chromium
+			www-client/firefox
+		)
+		$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
+	)
+"
+fi
 
 EXPORT_FUNCTIONS pkg_pretend pkg_setup src_unpack src_prepare src_configure src_compile src_install \
 		pkg_postinst

@@ -1,35 +1,51 @@
 #!/bin/bash
 # Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# License GPL-2+ or MIT, your choice
+# License:  GPL-2+ or MIT, your choice
 
 # For additional package requirements see the pgo_trainer_* in the link below:
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4aff350c36fce8f4c85/sys-kernel/genkernel/genkernel-4.2.6-r2.ebuild#L279
 
 print_help() {
-	echo "gen_pgo.sh -- standalone script for PGO training"
+	echo
+	echo "gen_pgo.sh -- A standalone script for kernel PGO training"
+	echo
 	echo "Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>"
 	echo "License:  GPL-2+ or MIT"
-	echo "--help - Print this help"
-	echo "--2d - Train with 2D graphics trainers"
-	echo "--3d - Train with 3D OGL1.3 graphics trainers"
-	echo "--all - Run all trainers"
-	echo "--all-non-root - Run only non-root trainers"
-	echo "--crypto-std - Train with standard hashes/ciphers"
-	echo "--crypto-kor - Train with Korean hashes/ciphers"
-	echo "--crypto-chn - Train with Chinese hashes/ciphers"
-	echo "--crypto-rus - Train with Russian hashes/ciphers"
-	echo "--crypto-common - Train with common hashes/ciphers"
-	echo "--crypto-less-common - Train with less common hashes/ciphers"
-	echo "--crypto-deprecated - Train with deprecated hashes/ciphers"
-	echo "--custom - Train with a custom trainer script"
-	echo "--emerge1 - Train by compiling xorg-server"
-	echo "--emerge2 - Train by compiling with a resource hungry package (UNIMPLEMENTED)"
-	echo "--filesystem - Train the filesystem"
-	echo "--memory - Train with the OOM trainer"
-	echo "--network - Train the network subsystem"
-	echo "--p2p - Train with p2p networking (RUN AS NON ROOT ONLY)"
-	echo "--video - Train with internet video streaming (RUN AS NON ROOT ONLY)"
-	echo "--webcam - Train the webcam codepaths"
+	echo
+	echo "Options:"
+	echo
+	echo "  --help - Print this help"
+	echo "  --2d - Train with 2D graphics trainers"
+	echo "  --3d - Train with 3D OGL1.3 graphics trainers"
+	echo "  --all - Run all trainers"
+	echo "  --all-non-root - Run only non-root trainers"
+	echo "  --crypto-std - Train with industry standard hashes/ciphers"
+	echo "  --crypto-kor - Train with Korean hashes/ciphers"
+	echo "  --crypto-chn - Train with Chinese hashes/ciphers"
+	echo "  --crypto-rus - Train with Russian hashes/ciphers"
+	echo "  --crypto-common - Train with common hashes/ciphers"
+	echo "  --crypto-less-common - Train with less common hashes/ciphers"
+	echo "  --crypto-deprecated - Train with deprecated hashes/ciphers"
+	echo "  --custom - Train with a custom trainer script"
+	echo "  --emerge1 - Train by compiling xorg-server"
+	echo "  --emerge2 - Train by compiling with a resource hungry package (UNIMPLEMENTED)"
+	echo "  --filesystem - Train the filesystem"
+	echo "  --memory - Train with the OOM trainer"
+	echo "  --network - Train the network subsystem"
+	echo "  --p2p - Train with p2p networking (RUN AS NON ROOT ONLY)"
+	echo "  --webcam - Train the webcam codepaths"
+	echo "  --yt - Train with Internet video streaming (RUN AS NON ROOT ONLY)"
+	echo
+	echo
+	echo "Environment variables:"
+	echo
+	echo "  ALLOW_SUDO - Set to 1 or 0 (default) to enable sudo for root only tests"
+	echo "  PAGE_SIZE - Override the page size in bytes"
+	echo "  PGO_P2P_URI - Override the open source torrent URI"
+	echo "  PGO_TRAINER_NETWORK_TCP_CONGESTIONS - Override the space delmited tcp"
+	echo "    congestions to train (See /proc/sys/net/ipv4/tcp_congestion_control)"
+	echo "  PGO_TRAINER_YT_URI - Override the video URI"
+	echo
 	exit 0
 }
 
@@ -59,7 +75,7 @@ process_args() {
 			--memory) TRAINER_MEMORY=1 ;;
 			--network) TRAINER_NETWORK=1 ;;
 			--p2p) TRAINER_P2P=1 ;;
-			--video) TRAINER_VIDEO=1 ;;
+			--yt) TRAINER_YT=1 ;;
 			--webcam) TRAINER_WEBCAM=1 ;;
 		esac
 	done
@@ -74,10 +90,10 @@ PGO_SAMPLE_SIZE=30 # statistics rule of 30
 PGO_SAMPLE_SIZE_MEMORY=3 # Cut short due to length of time per run
 PGO_MAX_FILESIZE_DEFAULT=26214400 # 25 MB
 CHECK_REQUIREMENTS=0 # 1 or 0 or unset, for standalone mode only
-ALLOW_SUDO_=${ALLOW_SUDO:=0} # 1 or 0
-PAGE_SIZE_=${PAGE_SIZE:=$(getconf PAGESIZE)}
+ALLOW_SUDO_=${ALLOW_SUDO:-0} # 1 or 0
+PAGE_SIZE_=${PAGE_SIZE:-$(getconf PAGESIZE)}
 K_PAGE_SIZE_=$(( ${PAGE_SIZE} / 1024 ))
-PGO_TRAINER_YT_URI_=${PGO_TRAINER_YT_URI:=https://www.youtube.com/watch?v=UlbyOeMCL0g}
+PGO_TRAINER_YT_URI_=${PGO_TRAINER_YT_URI:-https://www.youtube.com/watch?v=UlbyOeMCL0g}
 
 PGO_DISTRO="standalone" # \
 # If set to gentoo, script integrates with genkernel otherwise run in standalone mode.
@@ -540,7 +556,7 @@ _pgo_trainer_filesystem_random_reads_single_page() {
 		[ -L "${f}" ] && continue
 		# File must be >=2 pages
 		local filesize=$(stat -c "%s" "${f}")
-		if (( ${filesize} > 8192 && ${filesize} < ${PGO_MAX_FILESIZE:=26214400} )) ; then # 25 MiB
+		if (( ${filesize} > 8192 && ${filesize} < ${PGO_MAX_FILESIZE:-26214400} )) ; then # 25 MiB
 			sample_set+=( "${f}" )
 			c=$((${c} + 1))
 			(( ${c} > 500 )) && break
@@ -610,7 +626,7 @@ _pgo_trainer_filesystem_grep() {
 	for f in $(find "${mount_point}/usr/bin" -type f| shuf) ; do
 		[ -L "${f}" ] && continue
 		filesize=$(stat -c "%s" "${f}")
-		if (( ${filesize} < ${PGO_MAX_FILESIZE:=${PGO_MAX_FILESIZE_DEFAULT}} )) ; then
+		if (( ${filesize} < ${PGO_MAX_FILESIZE:-${PGO_MAX_FILESIZE_DEFAULT}} )) ; then
 			# Don't read terabytes
 			sample_set+=( "${f}" )
 			c=$((${c} + 1))
@@ -706,7 +722,7 @@ pgo_trainer_network() {
 		print_info 1 "$(get_indent 1)>> TCP congestion control is $(cat /proc/sys/net/ipv4/tcp_congestion_control)."
 		print_info 1 "$(get_indent 1)>> To train multiple particular TCP congestion control set PGO_TRAINER_NETWORK_TCP_CONGESTIONS as a string in /etc/genkernel.conf."
 		local tcp_congestion=$(cat /proc/sys/net/ipv4/tcp_congestion_control)
-		tcp_congestions=${PGO_TRAINER_NETWORK_TCP_CONGESTIONS:=${tcp_congestion}}
+		tcp_congestions=${PGO_TRAINER_NETWORK_TCP_CONGESTIONS:-${tcp_congestion}}
 	else
 		tcp_congestions="unknown"
 	fi
@@ -773,7 +789,7 @@ get_cmd_pid() {
 
 pgo_trainer_p2p() {
 	local trained=0
-	local url=${PGO_P2P_URI:="https://download.documentfoundation.org/libreoffice/stable/7.1.6/win/x86_64/LibreOffice_7.1.6_Win_x64.msi.torrent"}
+	local url=${PGO_P2P_URI:-"https://download.documentfoundation.org/libreoffice/stable/7.1.6/win/x86_64/LibreOffice_7.1.6_Win_x64.msi.torrent"}
 	local sandbox_dir=$(mktemp -d)
 	[[ "$?" != "0" ]] \
 		&& print_info 1 "$(get_indent 1)>> Failed to create sandbox dir.  Skipping test." \
@@ -1145,7 +1161,7 @@ main() {
 		[[ "${TRAINER_MEMORY}" == "1" ]] && pgo_trainer_memory
 		[[ "${TRAINER_NETWORK}" == "1" ]] && pgo_trainer_network
 		[[ "${TRAINER_P2P}" == "1" ]] && pgo_trainer_p2p
-		[[ "${TRAINER_VIDEO}" == "1" ]] && pgo_trainer_yt
+		[[ "${TRAINER_YT}" == "1" ]] && pgo_trainer_yt
 		[[ "${TRAINER_CUSTOM}" == "1" ]] && pgo_trainer_custom
 	fi
 }

@@ -167,6 +167,7 @@ d29d596279f9ce7a33c7cc68277886e49381ea05
 1a45fd4faf30229a3d3116de7bfe9d2f933d3562
 ) # newest
 
+HAVE_CLANG_PGO=1
 KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
 KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 

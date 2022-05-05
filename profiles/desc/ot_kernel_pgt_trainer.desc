@@ -1,0 +1,20 @@
+# This file is part of sys-kernel/ot-sources ebuild
+
+2d - Add dependencies for 2D PGO trainer
+3d - Add dependencies for 3D PGO trainer
+crypto_std - Add dependencies for industry standard hashes/ciphers PGO trainer
+crypto_kor - Add dependencies for Korean hashes/ciphers PGO trainer
+crypto_chn - Add dependencies for Chinese hashes/ciphers PGO trainer
+crypto_rus - Add dependencies for Russian hashes/ciphers PGO trainer
+crypto_common - Add dependencies for common hashes/ciphers PGO trainer
+crypto_less_common - Add dependencies for less common hashes/ciphers PGO trainer
+crypto_deprecated - Add dependencies for deprecated hashes/ciphers PGO trainer
+custom - Add dependencies for custom trainer
+emerge1 - Add dependencies for emerge PGO trainer 1
+emerge2 - Add dependencies for emerge PGO trainer 2
+filesystem - Add dependencies for the filesystem PGO trainer
+memory - Add dependencies for the memory PGO trainer
+network - Add dependencies for the network PGO trainer
+p2p - Add dependencies for p2p PGO trainer
+video - Add dependencies for video streaming PGO trainer
+webcam - Add dependencies for webcam PGO trainer
