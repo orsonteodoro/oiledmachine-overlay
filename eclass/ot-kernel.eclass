@@ -222,88 +222,88 @@ PGT_TRAINERS=(
 	video
 	webcam
 )
-IUSE+=" ${PGT_TRAINERS[@]/#/ot_kernel_pgt_trainer_} "
+IUSE+=" ${PGT_TRAINERS[@]/#/ot_kernel_pgt_} "
 REQUIRED_USE+="
-	ot_kernel_pgt_trainer_2d? ( clang-pgo )
-	ot_kernel_pgt_trainer_3d? ( clang-pgo )
-	ot_kernel_pgt_trainer_crypto_std? ( clang-pgo )
-	ot_kernel_pgt_trainer_crypto_kor? ( clang-pgo )
-	ot_kernel_pgt_trainer_crypto_chn? ( clang-pgo )
-	ot_kernel_pgt_trainer_crypto_rus? ( clang-pgo )
-	ot_kernel_pgt_trainer_crypto_common? ( clang-pgo )
-	ot_kernel_pgt_trainer_crypto_less_common? ( clang-pgo )
-	ot_kernel_pgt_trainer_crypto_deprecated? ( clang-pgo )
-	ot_kernel_pgt_trainer_custom? ( clang-pgo )
-	ot_kernel_pgt_trainer_emerge1? ( clang-pgo )
-	ot_kernel_pgt_trainer_emerge2? ( clang-pgo )
-	ot_kernel_pgt_trainer_filesystem? ( clang-pgo )
-	ot_kernel_pgt_trainer_memory? ( clang-pgo )
-	ot_kernel_pgt_trainer_network? ( clang-pgo )
-	ot_kernel_pgt_trainer_p2p? ( clang-pgo )
-	ot_kernel_pgt_trainer_video? ( clang-pgo )
-	ot_kernel_pgt_trainer_webcam? ( clang-pgo )
+	ot_kernel_pgt_2d? ( clang-pgo )
+	ot_kernel_pgt_3d? ( clang-pgo )
+	ot_kernel_pgt_crypto_std? ( clang-pgo )
+	ot_kernel_pgt_crypto_kor? ( clang-pgo )
+	ot_kernel_pgt_crypto_chn? ( clang-pgo )
+	ot_kernel_pgt_crypto_rus? ( clang-pgo )
+	ot_kernel_pgt_crypto_common? ( clang-pgo )
+	ot_kernel_pgt_crypto_less_common? ( clang-pgo )
+	ot_kernel_pgt_crypto_deprecated? ( clang-pgo )
+	ot_kernel_pgt_custom? ( clang-pgo )
+	ot_kernel_pgt_emerge1? ( clang-pgo )
+	ot_kernel_pgt_emerge2? ( clang-pgo )
+	ot_kernel_pgt_filesystem? ( clang-pgo )
+	ot_kernel_pgt_memory? ( clang-pgo )
+	ot_kernel_pgt_network? ( clang-pgo )
+	ot_kernel_pgt_p2p? ( clang-pgo )
+	ot_kernel_pgt_video? ( clang-pgo )
+	ot_kernel_pgt_webcam? ( clang-pgo )
 "
 PDEPEND+="
 	sys-apps/coreutils
 	sys-apps/grep[pcre]
-	ot_kernel_pgt_trainer_2d? (
+	ot_kernel_pgt_2d? (
 		sys-apps/findutils
 		sys-process/procps
 		x11-misc/xscreensaver[X]
 	)
-	ot_kernel_pgt_trainer_3d? (
+	ot_kernel_pgt_3d? (
 		sys-apps/findutils
 		virtual/opengl
 		sys-process/procps
 		x11-misc/xscreensaver[X,opengl]
 	)
-	ot_kernel_pgt_trainer_crypto_std? (
+	ot_kernel_pgt_crypto_std? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_trainer_crypto_kor? (
+	ot_kernel_pgt_crypto_kor? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_trainer_crypto_chn? (
+	ot_kernel_pgt_crypto_chn? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_trainer_crypto_rus? (
+	ot_kernel_pgt_crypto_rus? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_trainer_crypto_common? (
+	ot_kernel_pgt_crypto_common? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_trainer_crypto_less_common? (
+	ot_kernel_pgt_crypto_less_common? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_trainer_crypto_deprecated? (
+	ot_kernel_pgt_crypto_deprecated? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_trainer_emerge1? (
+	ot_kernel_pgt_emerge1? (
 		sys-apps/findutils
 	)
-	ot_kernel_pgt_trainer_filesystem? (
+	ot_kernel_pgt_filesystem? (
 		sys-apps/findutils
 	)
-	ot_kernel_pgt_trainer_memory? (
+	ot_kernel_pgt_memory? (
 		${PYTHON_DEPS}
 		sys-apps/util-linux
 		sys-process/procps
 	)
-	ot_kernel_pgt_trainer_network? (
+	ot_kernel_pgt_network? (
 		net-analyzer/traceroute
 		net-misc/curl
 		net-misc/iputils
 	)
-	ot_kernel_pgt_trainer_p2p? (
+	ot_kernel_pgt_p2p? (
 		net-p2p/ctorrent
 		sys-apps/util-linux
 		sys-process/procps
 	)
-	ot_kernel_pgt_trainer_webcam? (
+	ot_kernel_pgt_webcam? (
 		media-tv/v4l-utils
 		media-video/ffmpeg[encode,v4l]
 	)
-	ot_kernel_pgt_trainer_video? (
+	ot_kernel_pgt_video? (
 		${PYTHON_DEPS}
 		|| (
 			www-client/chromium
