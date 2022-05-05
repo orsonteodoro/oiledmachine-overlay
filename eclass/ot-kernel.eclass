@@ -5603,7 +5603,9 @@ ot-kernel_build_kernel() {
 				einfo "Merging PGT profiles"
 				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
 				local used_profraw_v=$(od -An -j 8 -N 1 -t d1 "${profraw_dpath}" | grep -E -o -e "[0-9]+")
-				local expected_profraw_v=$(grep -r -e "INSTR_PROF_RAW_VERSION" "/usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc")
+				local expected_profraw_v=$(grep -r -e "INSTR_PROF_RAW_VERSION" "/usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc" \
+					| head -n 1 | cut -f 3 -d " ")
+				[[ -z "${expected_profraw_v}" ]] && die "Missing INSTR_PROF_RAW_VERSION"
 				if (( ${used_profraw_v} != ${expected_profraw_v} )) ; then
 eerror
 eerror "Detected a profraw version inconsistency.  Please remove the"
