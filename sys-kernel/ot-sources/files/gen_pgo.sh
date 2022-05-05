@@ -13,6 +13,7 @@ print_help() {
 	echo "--2d - Train with 2D graphics trainers"
 	echo "--3d - Train with 3D OGL1.3 graphics trainers"
 	echo "--all - Run all trainers"
+	echo "--all-non-root - Run only non-root trainers"
 	echo "--crypto-std - Train with standard hashes/ciphers"
 	echo "--crypto-kor - Train with Korean hashes/ciphers"
 	echo "--crypto-chn - Train with Chinese hashes/ciphers"
@@ -26,6 +27,8 @@ print_help() {
 	echo "--filesystem - Train the filesystem"
 	echo "--memory - Train with the OOM trainer"
 	echo "--network - Train the network subsystem"
+	echo "--p2p - Train with p2p networking (RUN AS NON ROOT ONLY)"
+	echo "--video - Train with internet video streaming (RUN AS NON ROOT ONLY)"
 	echo "--webcam - Train the webcam codepaths"
 	exit 0
 }
@@ -41,6 +44,7 @@ process_args() {
 			--2d) TRAINER_2D=1 ;;
 			--3d) TRAINER_3D=1 ;;
 			--all) TRAINER_ALL=1 ;;
+			--all-non-root) TRAINER_ALL_NON_ROOT=1 ;;
 			--crypto-std) TRAINER_CRYPTO_STD=1 ;;
 			--crypto-kor) TRAINER_CRYPTO_KOR=1 ;;
 			--crypto-chn) TRAINER_CRYPTO_CHN=1 ;;
@@ -54,6 +58,8 @@ process_args() {
 			--filesystem) TRAINER_FILESYSTEM=1 ;;
 			--memory) TRAINER_MEMORY=1 ;;
 			--network) TRAINER_NETWORK=1 ;;
+			--p2p) TRAINER_P2P=1 ;;
+			--video) TRAINER_VIDEO=1 ;;
 			--webcam) TRAINER_WEBCAM=1 ;;
 		esac
 	done
@@ -1121,6 +1127,8 @@ main() {
 	[[ -n "${CHECK_REQUIREMENTS}" && "${CHECK_REQUIREMENTS}" == "1" ]] && check_pgo_requirements
 	if [[ "${TRAINER_ALL}" == "1" ]] ; then
 		pgo_trainer_all
+	elif [[ "${TRAINER_ALL_NON_ROOT}" == "1" ]] ; then
+		pgo_trainer_all_non_root
 	else
 		[[ "${TRAINER_2D}" == "1" ]] && pgo_trainer_2d_draw
 		[[ "${TRAINER_3D}" == "1" ]] && pgo_trainer_3d_ogl1_3
@@ -1136,7 +1144,8 @@ main() {
 		[[ "${TRAINER_FILESYSTEM}" == "1" ]] && pgo_trainer_filesystem
 		[[ "${TRAINER_MEMORY}" == "1" ]] && pgo_trainer_memory
 		[[ "${TRAINER_NETWORK}" == "1" ]] && pgo_trainer_network
-		[[ "${TRAINER_WEBCAM}" == "1" ]] && pgo_trainer_webcam
+		[[ "${TRAINER_P2P}" == "1" ]] && pgo_trainer_p2p
+		[[ "${TRAINER_VIDEO}" == "1" ]] && pgo_trainer_yt
 		[[ "${TRAINER_CUSTOM}" == "1" ]] && pgo_trainer_custom
 	fi
 }
