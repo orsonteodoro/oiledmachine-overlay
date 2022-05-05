@@ -710,14 +710,25 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
     OT_KERNEL_DMESG -- Allow the use of early printk and dmesg.  Setting this
-    may affect features that may depend on it.  Setting it off may also help
-    increase security.
+    may affect features that may depend on it.  Setting it off may increase
+    security.
 
     Acceptable values:
 
-      1, 0, unset
+      1 - Turn on
+      0 - Turn off
+      default - Turn on with default buffer sizes
+      unset - Unset will use manual or previous settings.
 
-    Unset will use manual or previous settings.
+    The ebuild will override the user choice in order for certain features to
+    work properly.  The following are overrides with top most overrides
+    higher priority.
+
+    For the PGI (profile guided instrumentation) step, it is default
+      temporarily.
+    For enabled OT_KERNEL_COLD_BOOT_MITIGATIONS, it is disabled.
+    For userland Clang CFI development, it is recommended to use default temporarily
+      if performing tests for segfault detection, but disable it ASAP.
 
 
 

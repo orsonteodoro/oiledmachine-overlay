@@ -2805,6 +2805,12 @@ ot-kernel_set_kconfig_dmesg() {
 	elif [[ "${dmesg}" == "0" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_PRINTK"
 		ot-kernel_unset_configopt "CONFIG_EARLY_PRINTK"
+	elif [[ "${dmesg}" == "default" ]] ; then
+		ot-kernel_y_configopt "CONFIG_PRINTK"
+		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
+		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "7"
+		ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "4"
+		ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "4"
 	fi
 }
 
@@ -3670,6 +3676,10 @@ ewarn "attacks.  It may be disabled in the PGO step if no dependency on this"
 ewarn "kernel option."
 # About one CVE per year related to debugfs.
 ewarn
+
+		# For ot_kernel_pgt_memory
+		ot-kernel_set_kconfig_dmesg "default"
+
 		elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}") && -e "${profdata_dpath}" ]] ; then
 			einfo "Forcing PGO flags and config"
 
@@ -5186,8 +5196,8 @@ einfo
 			./disable_debug || die
 			rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
 		fi
-		ot-kernel_set_kconfig_pgo # llvm_slot
 		ot-kernel_set_kconfig_dmesg ""
+		ot-kernel_set_kconfig_pgo # llvm_slot
 
 		local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 			ot-kernel_set_kconfig_hardening_level

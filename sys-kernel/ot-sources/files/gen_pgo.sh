@@ -896,6 +896,7 @@ pgo_trainer_webcam() {
 
 pgo_trainer_2d_draw() {
 	local trained=0
+	local ran_test=0
 	if [[ -n "${DISPLAY}" || (-n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "x11") ]] ; then
 		local cpus=$(lscpu | grep -E -e "CPU\(s\):" | head -n 1 | grep -E -o -e "[0-9]+")
 		local tpc=$(lscpu | grep -E -e "Thread\(s\) per core:" | head -n 1 | grep -E -o -e "[0-9]+")
@@ -925,6 +926,7 @@ pgo_trainer_2d_draw() {
 
 pgo_trainer_3d_ogl1_3() {
 	local trained=0
+	local ran_test=0
 	if [[ -n "${DISPLAY}" || (-n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "x11") ]] ; then
 		local cpus=$(lscpu | grep -E -e "CPU\(s\):" | head -n 1 | grep -E -o -e "[0-9]+")
 		local tpc=$(lscpu | grep -E -e "Thread\(s\) per core:" | head -n 1 | grep -E -o -e "[0-9]+")
