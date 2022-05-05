@@ -219,8 +219,8 @@ PGT_TRAINERS=(
 	memory
 	network
 	p2p
-	video
 	webcam
+	yt
 )
 IUSE+=" ${PGT_TRAINERS[@]/#/ot_kernel_pgt_} "
 REQUIRED_USE+="
@@ -240,8 +240,8 @@ REQUIRED_USE+="
 	ot_kernel_pgt_memory? ( clang-pgo )
 	ot_kernel_pgt_network? ( clang-pgo )
 	ot_kernel_pgt_p2p? ( clang-pgo )
-	ot_kernel_pgt_video? ( clang-pgo )
 	ot_kernel_pgt_webcam? ( clang-pgo )
+	ot_kernel_pgt_yt? ( clang-pgo )
 "
 PDEPEND+="
 	sys-apps/coreutils
@@ -303,7 +303,7 @@ PDEPEND+="
 		media-tv/v4l-utils
 		media-video/ffmpeg[encode,v4l]
 	)
-	ot_kernel_pgt_video? (
+	ot_kernel_pgt_yt? (
 		${PYTHON_DEPS}
 		|| (
 			www-client/chromium

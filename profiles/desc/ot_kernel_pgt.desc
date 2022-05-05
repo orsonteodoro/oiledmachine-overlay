@@ -16,5 +16,5 @@ filesystem - Add dependencies for the filesystem PGO trainer
 memory - Add dependencies for the memory PGO trainer
 network - Add dependencies for the network PGO trainer
 p2p - Add dependencies for p2p PGO trainer
-video - Add dependencies for video streaming PGO trainer
 webcam - Add dependencies for webcam PGO trainer
+yt - Add dependencies for the video streaming PGO trainer
