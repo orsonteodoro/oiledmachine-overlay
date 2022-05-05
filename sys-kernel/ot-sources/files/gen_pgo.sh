@@ -788,6 +788,10 @@ get_cmd_pid() {
 }
 
 pgo_trainer_p2p() {
+	if [[ "${USER}" == "root" ]] ; then
+		print_info 1 "$(get_indent 1)>> You must be a non-root user to run the p2p test"
+		return
+	fi
 	local trained=0
 	local url=${PGO_P2P_URI:-"https://download.documentfoundation.org/libreoffice/stable/7.1.6/win/x86_64/LibreOffice_7.1.6_Win_x64.msi.torrent"}
 	local sandbox_dir=$(mktemp -d)
