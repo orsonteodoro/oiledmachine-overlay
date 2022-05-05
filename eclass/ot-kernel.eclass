@@ -5473,6 +5473,20 @@ ot-kernel_build_kernel() {
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_dpath}" ]] ; then
 				einfo "Merging PGT profiles"
 				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
+				local used_profraw_v=$(od -An -j 8 -N 1 -t d1 "${profraw_dpath}" | grep -E -o -e "[0-9]+")
+				local expected_profraw_v=$(grep -r -e "INSTR_PROF_RAW_VERSION" "/usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc")
+				if (( ${used_profraw_v} != ${expected_profraw_v} )) ; then
+eerror
+eerror "Detected a profraw version inconsistency.  Please remove the"
+eerror "${OT_KERNEL_PGO_DATA_DIR} folder and restart the PGO process again."
+eerror "Make sure that the CHOST/CTARGETs are using the same LLVM version"
+eerror "as the builder machine (CBUILD)."
+eerror
+eerror "used_profraw_v:  ${used_profraw_v}"
+eerror "expected_profraw_v:  ${expected_profraw_v}"
+eerror
+					die
+				fi
 				llvm-profdata merge --output="${profdata_dpath}" \
 					"${profraw_dpath}" || die "PGO profile merging failed"
 				pgo_phase="${PGO_PHASE_PGO}"
