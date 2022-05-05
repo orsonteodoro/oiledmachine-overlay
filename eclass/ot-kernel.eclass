@@ -745,7 +745,7 @@ verify_clang_compiler_updated() {
 
 IPD_RAW_V=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_V_MIN=6
-IPD_RAW_V_MAX=7
+IPD_RAW_V_MAX=8
 verify_profraw_compatibility() {
 	einfo "Verifying profraw version compatibility"
 	# The profiling data format is very version sensitive.

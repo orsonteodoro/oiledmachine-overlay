@@ -289,6 +289,9 @@
     /var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata -- The merged
       profdata PGO profile.  It is used when building an optimized build.
 
+    Important:  If a change to the PGO patch has been made, the
+    /var/lib/ot-sources/${PV} folder and the files in it should be manually
+    removed to restart the PGO process.
 
 
     LLVM versions supported for Clang PGO:
