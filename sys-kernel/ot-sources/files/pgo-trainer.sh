@@ -7,7 +7,7 @@
 
 print_help() {
 	echo
-	echo "gen_pgo.sh -- A standalone script for kernel PGO training"
+	echo "pgo-trainer.sh -- A standalone script for kernel PGO training"
 	echo
 	echo "Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>"
 	echo "License:  GPL-2+ or MIT"

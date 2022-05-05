@@ -314,15 +314,13 @@
     Using gen_pgo.sh, aka the automated PGO trainer script
 
     It becomes tedious or too repetitive to manually train the kernel.
-    This is why an automated trainer script gen_pgo.sh (also found in the modded
+    This is why an automated trainer script pgo-trainer.sh (also found in the modded
     genkernel) is provided to automatically train the kernel.  You can of course
     write your own automated script.  The script can be extended with
     pgo_custom.sh in the same directory or modded directly.  Using pgo_custom.sh
     is recommended to preserve changes between installs.  It should be ran only
-    as a non-root user.  It also has additional package requirements listed in
-    the pgo_trainer_* sections in the link below:
+    as a non-root user.
 
-https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4aff350c36fce8f4c85/sys-kernel/genkernel/genkernel-4.2.6-r2.ebuild#L279
 
 
     The config file-directory structure

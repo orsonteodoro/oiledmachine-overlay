@@ -1712,7 +1712,7 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 		> "${BUILD_DIR}/all-kernel-options-as-yes" || die
 
 	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
-		cat "${FILESDIR}/gen_pgo.sh" > "${BUILD_DIR}/gen_pgo.sh"
+		cat "${FILESDIR}/pgo-trainer.sh" > "${BUILD_DIR}/pgo-trainer.sh"
 	fi
 
 	cat "${FILESDIR}/ep800/ep800.c" \
@@ -6205,7 +6205,7 @@ einfo
 	if has clang-pgo ${IUSE_EFFECTIVE} ; then
 		if use clang-pgo ; then
 einfo
-einfo "The gen_pgo.sh has been provided in the root directory of the kernel"
+einfo "The pgo-trainer.sh has been provided in the root directory of the kernel"
 einfo "sources for PGO training.  The script can be customized for automation."
 einfo "if modded keep it in /home/\${USER} or /etc/portage folder.  This"
 einfo "customization is used to capture typical use, but any non-typical use"
