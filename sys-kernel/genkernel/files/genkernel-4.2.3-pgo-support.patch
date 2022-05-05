@@ -734,7 +734,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
 +++ genkernel-4.2.3/gen_pgo.sh	2021-09-19 20:31:57.999492424 -0700
-@@ -0,0 +1,1062 @@
+@@ -0,0 +1,1064 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
@@ -1545,6 +1545,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +
 +pgo_trainer_2d_draw() {
 +	local trained=0
++	local ran_test=0
 +	if [[ -n "${DISPLAY}" || (-n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "x11") ]] ; then
 +		local cpus=$(lscpu | grep -E -e "CPU\(s\):" | head -n 1 | grep -E -o -e "[0-9]+")
 +		local tpc=$(lscpu | grep -E -e "Thread\(s\) per core:" | head -n 1 | grep -E -o -e "[0-9]+")
@@ -1574,6 +1575,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +
 +pgo_trainer_3d_ogl1_3() {
 +	local trained=0
++	local ran_test=0
 +	if [[ -n "${DISPLAY}" || (-n "${XDG_SESSION_TYPE}" && "${XDG_SESSION_TYPE}" == "x11") ]] ; then
 +		local cpus=$(lscpu | grep -E -e "CPU\(s\):" | head -n 1 | grep -E -o -e "[0-9]+")
 +		local tpc=$(lscpu | grep -E -e "Thread\(s\) per core:" | head -n 1 | grep -E -o -e "[0-9]+")
