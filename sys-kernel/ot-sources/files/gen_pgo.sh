@@ -92,7 +92,7 @@ PGO_MAX_FILESIZE_DEFAULT=26214400 # 25 MB
 CHECK_REQUIREMENTS=0 # 1 or 0 or unset, for standalone mode only
 ALLOW_SUDO_=${ALLOW_SUDO:-0} # 1 or 0
 PAGE_SIZE_=${PAGE_SIZE:-$(getconf PAGESIZE)}
-K_PAGE_SIZE_=$(( ${PAGE_SIZE} / 1024 ))
+K_PAGE_SIZE_=$(( ${PAGE_SIZE_} / 1024 ))
 PGO_TRAINER_YT_URI_=${PGO_TRAINER_YT_URI:-https://www.youtube.com/watch?v=UlbyOeMCL0g}
 
 PGO_DISTRO="standalone" # \
