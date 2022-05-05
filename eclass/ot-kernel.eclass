@@ -5197,7 +5197,6 @@ einfo
 			rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
 		fi
 		ot-kernel_set_kconfig_dmesg ""
-		ot-kernel_set_kconfig_pgo # llvm_slot
 
 		local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 			ot-kernel_set_kconfig_hardening_level
@@ -5210,6 +5209,8 @@ einfo
 		ot-kernel_set_kconfig_tresor
 		ot-kernel_set_kconfig_ima
 		ot-kernel_set_kconfig_lsms
+
+		ot-kernel_set_kconfig_pgo # llvm_slot
 
 		ot-kernel_set_kconfig_module_support
 		ot-kernel_set_kconfig_build_all_modules_as
