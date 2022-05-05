@@ -143,6 +143,7 @@ OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
 IUSE+=" cpu_flags_arm_thumb"
 IUSE+=" gtk +ncurses openssl qt5"
 IUSE+=" bzip2 gzip lz4 lzma lzo xz zstd"
+NEEDS_DEBUGFS=0
 inherit check-reqs flag-o-matic ot-kernel-cve ot-kernel-pkgflags ot-kernel-kutils toolchain-funcs
 CDEPEND="
 	app-arch/cpio
@@ -915,6 +916,29 @@ eerror "the \`epkginfo ${PN}::oiledmachine-overlay\` for instructions for"
 eerror "creating per extraconfig env files."
 eerror
 		die
+	fi
+
+	dump_profraw
+}
+
+# @FUNCTION: dump_profraw
+# @DESCRIPTION:
+# Copies the profraw for PGO
+# It has to be done outside the sandbox
+dump_profraw() {
+	local extraversion=$(cat /proc/version | cut -f 3 -d " " | cut -f 2 -d "-")
+	local arch=$(cat /proc/version | cut -f 3 -d " " | cut -f 3 -d "-")
+	local profraw_dpath="${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
+	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}" || die
+	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
+	cat "${profraw_spath}" > "${profraw_dpath}" || true
+	if [[ -e "${profraw_spath}" && ! -e "${profraw_dpath}" ]] ; then
+		einfo "Copying ${profraw_spath}"
+		cat "${profraw_spath}" > "${profraw_dpath}" || die
+		chmod 0644 "${profraw_dpath}" || die
+		#rm "${OT_KERNEL_PGO_DATA_DIR}/vmlinux.profraw" || true # It appears because of some bug.
+	else
+		[[ -e "${profraw_dpath}" ]] && einfo "Using cached ${profraw_dpath}.  Delete it if stale."
 	fi
 }
 
@@ -1709,7 +1733,7 @@ ot-kernel_copy_pgo_state() {
 		2>/dev/null \
 	) ; do
 		# Done this way because the folder can be empty.
-		cp -va "${f}" "${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}" || die
+		cp -va "${f}" "${WORKDIR}/pgodata" || die
 	done
 }
 
@@ -1755,7 +1779,7 @@ ewarn
 	fi
 
 	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo; then
-		mkdir -p "${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}" || die
+		mkdir -p "${WORKDIR}/pgodata" || die
 		ot-kernel_copy_pgo_state
 	fi
 
@@ -3459,10 +3483,9 @@ ot-kernel_set_kconfig_pcie_mps() {
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
 ot-kernel_set_kconfig_pgo() {
 	local pgo_phase
-	local pgo_phase_statefile="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
-	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
-	local profraw_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
-	local profdata_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
+	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}.pgophase"
+	local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}.profraw"
+	local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}.profdata"
 	if has clang-pgo ${IUSE_EFFECTIVE} && ot-kernel_use clang-pgo ; then
 		(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 		local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
@@ -3521,9 +3544,23 @@ eerror
 			ot-kernel_y_configopt "CONFIG_CC_IS_CLANG"
 			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 			ot-kernel_y_configopt "CONFIG_PGO_CLANG"
+ewarn
+ewarn "The pgo USE flag uses debugfs and is a developer only config option.  It"
+ewarn "should be disabled to prevent abuse and a possible prerequisite for"
+ewarn "attacks.  It may be disabled in the PGO step if no dependency on this"
+ewarn "kernel option."
+# About one CVE per year related to debugfs.
+ewarn
 		elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}") && -e "${profdata_dpath}" ]] ; then
 			einfo "Forcing PGO flags and config"
-			ot-kernel_n_configopt "CONFIG_DEBUG_FS"
+
+			if [[ "${NEEDS_DEBUGFS}" == "1" ]] ; then
+ewarn "debugfs disabled failed.  Unfortunately, a package still requires it."
+			else
+einfo "debugfs disabled success"
+				ot-kernel_n_configopt "CONFIG_DEBUG_FS"
+			fi
+
 			ot-kernel_n_configopt "CONFIG_PGO_CLANG"
 		fi
 	fi
@@ -4991,7 +5028,6 @@ einfo
 		ot-kernel_set_kconfig_march
 		ot-kernel_set_kconfig_oflag
 		ot-kernel_set_kconfig_lto # llvm_slot
-		ot-kernel_set_kconfig_pgo # llvm_slot
 		ot-kernel_set_kconfig_abis
 		#ot-kernel_set_kconfig_mem
 
@@ -5030,10 +5066,8 @@ einfo
 			einfo "Disabling all debug and shortening logging buffers"
 			./disable_debug || die
 			rm "${BUILD_DIR}/.config.dd_backup" 2>/dev/null
-			if has clang-pgo ${IUSE_EFFECTIVE} && ot-kernel_use clang-pgo ; then
-				ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-			fi
 		fi
+		ot-kernel_set_kconfig_pgo # llvm_slot
 		ot-kernel_set_kconfig_dmesg ""
 
 		local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
@@ -5420,10 +5454,9 @@ ot-kernel_build_kernel() {
 		[[ "${BUILD_DIR}/.config" ]] || die "Missing .config to build the kernel"
 		local llvm_slot=$(get_llvm_slot)
 		local pgo_phase
-		local pgo_phase_statefile="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
-		local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
-		local profraw_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
-		local profdata_dpath="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profdata"
+		local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}.pgophase"
+		local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}.profraw"
+		local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}.profdata"
 		local pgo_phase="${PGO_PHASE_UNK}"
 		if has clang-pgo ${IUSE_EFFECTIVE} && ot-kernel_use clang-pgo ; then
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
@@ -5436,13 +5469,11 @@ ot-kernel_build_kernel() {
 			einfo ">>> PGO phase: ${pgo_phase}"
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 				einfo "Building PGI"
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_spath}" ]] ; then
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_dpath}" ]] ; then
 				einfo "Merging PGT profiles"
-				mkdir -p "${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}" || die
-				cp -a "${profraw_spath}" "${profraw_dpath}" || die
 				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
-				llvm-profdata merge --output="${profraw_dpath}" \
-					"${profdata_dpath}" || die "PGO profile merging failed"
+				llvm-profdata merge --output="${profdata_dpath}" \
+					"${profraw_dpath}" || die "PGO profile merging failed"
 				pgo_phase="${PGO_PHASE_PGO}"
 				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
 				einfo "Building PGO"
@@ -5450,10 +5481,12 @@ ot-kernel_build_kernel() {
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
 				einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && ! -e "${profraw_spath}" ]] ; then
-				eerror "Missing ${profraw_spath}.  Delete the ${OT_KERNEL_PGO_DATA_DIR} folder"
-				eerror "to restart PGO."
-				die
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && ! -e "${profraw_dpath}" ]] ; then
+				ewarn
+				ewarn "Missing ${profraw_spath}.  Delete the ${OT_KERNEL_PGO_DATA_DIR} folder"
+				ewarn "to restart PGO or copy the profdata file into ${OT_KERNEL_PGO_DATA_DIR}."
+				ewarn "Assuming builder machine, continuing to build without PGO."
+				ewarn
 			fi
 		fi
 
@@ -5630,7 +5663,7 @@ ot-kernel_src_install() {
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
-			local pgo_phase_statefile="${WORKDIR}/pgodata/${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.pgophase"
+			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}.pgophase"
 			mkdir -p $(dirname "${pgo_phase_statefile}")
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 				echo "${PGO_PHASE_PGT}" > "${pgo_phase_statefile}" || die

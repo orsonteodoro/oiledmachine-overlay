@@ -31,6 +31,24 @@ IUSE+=" ${X86_FLAGS[@]/#/cpu_flags_x86_}"
 IUSE+=" ${ARM_FLAGS[@]/#/cpu_flags_arm_}"
 IUSE+=" cpu_flags_ppc_altivec"
 
+# @FUNCTION: needs_debugfs
+# @DESCRIPTION:
+# Put warning that debugfs is used as a potential vulnerability dependency.
+needs_debugfs() {
+	local pkgname="${1}"
+	local id="${2}"
+ewarn
+ewarn "${pkgname} uses debugfs and is a developer only config option.  It"
+ewarn "should be disabled to prevent abuse and a possible prerequisite for"
+ewarn "attacks."
+ewarn
+ewarn "To remove this warning disable the relevant USE flag or add ${id}"
+ewarn "to OT_KERNEL_PKGFLAGS_REJECT.  In addition, edit the CONFIG_DEBUG_FS"
+ewarn "to unset or use the disable_debug USE flag."
+ewarn
+	export NEED_DEBUGFS=1
+}
+
 # @FUNCTION: warn_lowered_security
 # @DESCRIPTION:
 # Shows a warning or halts if security is lowered.
@@ -3561,6 +3579,7 @@ ot-kernel-pkgflags_ipt_netflow() { # DONE
 		if has_version "net-firewall/ipt_netflow[debug]" ; then
 			ban_disable_debug "2544e60"
 			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
+			needs_debugfs "net-firewall/ipt_netflow[debug]" "2544e60"
 		fi
 		if has_version "net-firewall/ipt_netflow[natevents]" ; then
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_EVENTS"
@@ -5454,6 +5473,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 		fi
 		if has_version "app-emulation/qemu[python]" ; then
 			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
+			needs_debugfs "app-emulation/qemu[python]" "00f70b8"
 		fi
 	fi
 }
@@ -5799,6 +5819,7 @@ ot-kernel-pkgflags_powertop() { # DONE
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
 		ban_disable_debug "87ebe78" # Applies to DEBUG, FTRACE, TRACING, TRACEPOINTS keywords in this function
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
+		needs_debugfs "sys-power/powertop" "87ebe78"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 
 		ot-kernel_y_configopt "CONFIG_TRACING"
@@ -6485,6 +6506,7 @@ ot-kernel-pkgflags_systemtap() { # DONE
 		ot-kernel_y_configopt "CONFIG_RELAY"
 		ban_disable_debug "78ae7b9"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
+		needs_debugfs "dev-util/systemtap" "78ae7b9"
 	fi
 }
 
@@ -6832,6 +6854,7 @@ ot-kernel-pkgflags_usbview() { # DONE
 		einfo "Applying kernel config flags for the usbview package (id: 3e735de)"
 		ban_disable_debug "3e735de"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
+		needs_debugfs "app-admin/usbview" "3e735de"
 	fi
 }
 
