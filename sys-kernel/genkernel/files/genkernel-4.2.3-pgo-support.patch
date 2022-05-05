@@ -734,7 +734,7 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/genkernel.8 genkernel-4.2
 diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.3/gen_pgo.sh
 --- genkernel-4.2.3.orig/gen_pgo.sh	1969-12-31 16:00:00.000000000 -0800
 +++ genkernel-4.2.3/gen_pgo.sh	2021-09-19 20:31:57.999492424 -0700
-@@ -0,0 +1,1058 @@
+@@ -0,0 +1,1062 @@
 +#!/bin/bash
 +# Copyright 2021 Orson Teodoro <orsonteodoro@hotmail.com>
 +# License GPL-2+ or MIT, your choice
@@ -1437,6 +1437,10 @@ diff -x '*.rej' -x '*.orig' -urpN genkernel-4.2.3.orig/gen_pgo.sh genkernel-4.2.
 +}
 +
 +pgo_trainer_p2p() {
++	if [[ "${USER}" == "root" ]] ; then
++		print_info 1 "$(get_indent 1)>> You must be a non-root user to run the p2p test"
++		return
++	fi
 +	local trained=0
 +	local url=${PGO_P2P_URI:="https://download.documentfoundation.org/libreoffice/stable/7.1.6/win/x86_64/LibreOffice_7.1.6_Win_x64.msi.torrent"}
 +	local sandbox_dir=$(mktemp -d)
