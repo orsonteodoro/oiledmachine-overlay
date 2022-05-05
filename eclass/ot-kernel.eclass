@@ -3680,7 +3680,7 @@ ewarn
 		# For ot_kernel_pgt_memory
 		ot-kernel_set_kconfig_dmesg "default"
 
-		elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}") && -e "${profdata_dpath}" ]] ; then
+		elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 			einfo "Forcing PGO flags and config"
 
 			if [[ "${NEEDS_DEBUGFS}" == "1" ]] ; then
@@ -5596,7 +5596,6 @@ ot-kernel_build_kernel() {
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
 
-			einfo ">>> PGO phase: ${pgo_phase}"
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 				einfo "Building PGI"
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_dpath}" ]] ; then
@@ -5624,7 +5623,7 @@ eerror
 				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
 				einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" && -e "${profdata_dpath}" ]] ; then
+			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 				einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && ! -e "${profraw_dpath}" ]] ; then
