@@ -9,7 +9,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-99-patches-03j.tar.xz"
+FIREFOX_PATCHSET="firefox-100-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -71,11 +71,11 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 LICENSE_FINGERPRINT="\
-6568aac5155a44f7ae083c8b216c2903315babe25c273e41edcef72970924487\
-c4fd96271412a79816bb920b78fac4f57a4113d1cd7c9b3eb760992e9167caa1" # SHA512
+ecdc82791f083e8c560a31606e47814ee63693ee230bf91fcd249ac838c565c7\
+5d3d78c5b6b16d0268637f46f0a790da8f85688aebcc164bc476759e51ff9f4f" # SHA512
 # FF-96.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
 # Update the license version also.
-LICENSE+=" FF-99.0-THIRD-PARTY-LICENSES"
+LICENSE+=" FF-100.0-THIRD-PARTY-LICENSES"
 LICENSE+="
 	( BSD-2
 		BSD
@@ -201,7 +201,7 @@ LICENSE+="
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel
 	jack libproxy lto +openh264 pgo pulseaudio sndio selinux
 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
-	+system-libvpx system-png +system-webp
+	+system-libvpx system-png system-python-libs +system-webp
 	wayland wifi"
 _ABIS="abi_x86_32
 	abi_x86_64
@@ -292,7 +292,7 @@ CDEPEND="
 		dev-libs/dbus-glib[${MULTILIB_USEDEP}]
 	)
 	libproxy? ( net-libs/libproxy[${MULTILIB_USEDEP}] )
-	screencast? ( media-video/pipewire:0/0.3[${MULTILIB_USEDEP}] )
+	screencast? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
 	system-av1? (
 		>=media-libs/dav1d-0.9.3:=[${MULTILIB_USEDEP}]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
@@ -570,7 +570,7 @@ pkg_pretend() {
 		if use pgo || use lto || use debug ; then
 			CHECKREQS_DISK_BUILD="13500M"
 		else
-			CHECKREQS_DISK_BUILD="6500M"
+			CHECKREQS_DISK_BUILD="6600M"
 		fi
 
 		check-reqs_pkg_pretend
@@ -613,6 +613,8 @@ pkg_setup() {
 				eerror "  - Manually switch rust version using 'eselect rust' to match used LLVM version"
 				eerror "  - Switch to dev-lang/rust[system-llvm] which will guarantee matching version"
 				eerror "  - Build ${CATEGORY}/${PN} without USE=lto"
+				eerror "  - Rebuild lld with llvm that was used to build rust (may need to rebuild the whole "
+				eerror "    llvm/clang/lld/rust chain depending on your @world updates)"
 				die "LLVM version used by Rust (${version_llvm_rust}) does not match with ld.lld version (${version_lld})!"
 			fi
 		fi
@@ -1084,15 +1086,13 @@ multilib_src_configure() {
 		append-ldflags "-Wl,-z,relro -Wl,-z,now"
 	fi
 
-	mozconfig_use_enable jack
+	local myaudiobackends=""
+	use jack && myaudiobackends+="jack,"
+	use sndio && myaudiobackends+="sndio,"
+	use pulseaudio && myaudiobackends+="pulseaudio,"
+	! use pulseaudio && myaudiobackends+="alsa,"
 
-	mozconfig_use_enable pulseaudio
-	# force the deprecated alsa sound code if pulseaudio is disabled
-	if use kernel_linux && ! use pulseaudio ; then
-		mozconfig_add_options_ac '-pulseaudio' --enable-alsa
-	fi
-
-	mozconfig_use_enable sndio
+	mozconfig_add_options_ac '--enable-audio-backends' --enable-audio-backends="${myaudiobackends::-1}"
 
 	mozconfig_use_enable wifi necko-wifi
 
@@ -1247,10 +1247,13 @@ multilib_src_configure() {
 	export MOZ_MAKE_FLAGS="${MAKEOPTS}"
 
 	# Use system's Python environment
-	export MACH_USE_SYSTEM_PYTHON=1
-	export MACH_SYSTEM_ASSERTED_COMPATIBLE_WITH_MACH_SITE=1
-	export MACH_SYSTEM_ASSERTED_COMPATIBLE_WITH_BUILD_SITE=1
-	export PIP_NO_CACHE_DIR=off
+	PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS=mach
+
+	if use system-python-libs; then
+		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="system"
+	else
+		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"
+	fi
 
 	# Disable notification when build system has finished
 	export MOZ_NOSPAM=1

@@ -11,7 +11,7 @@ EAPI="7"
 
 FIREFOX_PATCHSET="firefox-91esr-patches-06j.tar.xz"
 
-LLVM_MAX_SLOT=13
+LLVM_MAX_SLOT=14
 
 PYTHON_COMPAT=( python3_{8..10} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -73,9 +73,9 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 LICENSE_FINGERPRINT="\
 20eb3b10bf7c7cba8e42edbc8d8ad58a3a753e214b8751fb60eddb827ebff067\
 456f77f36e7abe6d06861b1be52011303fa08db8a981937e38733f961c4a39d9" # SHA512
-# FF-96.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
+# FF-91.9-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
 # Update the license version also.
-LICENSE+=" FF-91.8-THIRD-PARTY-LICENSES"
+LICENSE+=" FF-91.9-THIRD-PARTY-LICENSES"
 LICENSE+="
 	( BSD-2
 		BSD
@@ -228,7 +228,7 @@ REQUIRED_USE="debug? ( !system-av1 )
 # Firefox-only REQUIRED_USE flags
 REQUIRED_USE+=" screencast? ( wayland )"
 
-LLVM_SLOTS=(13 12 11)
+LLVM_SLOTS=(14 13 12 11)
 
 gen_llvm_bdepends() {
 	local o=""
@@ -254,9 +254,9 @@ BDEPEND+=" ${PYTHON_DEPS}
 	>=dev-util/cbindgen-0.19.0
 	>=net-libs/nodejs-10.23.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=virtual/rust-1.57.0[${MULTILIB_USEDEP}]
-	amd64? ( >=dev-lang/nasm-2.14 )
-	x86? ( >=dev-lang/nasm-2.14 )"
+	>=virtual/rust-1.51.0[${MULTILIB_USEDEP}]
+	amd64? ( >=dev-lang/nasm-2.13 )
+	x86? ( >=dev-lang/nasm-2.13 )"
 
 CDEPEND="
 	>=dev-libs/nss-3.68[${MULTILIB_USEDEP}]
@@ -289,7 +289,7 @@ CDEPEND="
 		sys-apps/dbus[${MULTILIB_USEDEP}]
 		dev-libs/dbus-glib[${MULTILIB_USEDEP}]
 	)
-	screencast? ( media-video/pipewire:0/0.3[${MULTILIB_USEDEP}] )
+	screencast? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
 	system-av1? (
 		>=media-libs/dav1d-0.8.1:=[${MULTILIB_USEDEP}]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
@@ -610,6 +610,8 @@ pkg_setup() {
 				eerror "  - Manually switch rust version using 'eselect rust' to match used LLVM version"
 				eerror "  - Switch to dev-lang/rust[system-llvm] which will guarantee matching version"
 				eerror "  - Build ${CATEGORY}/${PN} without USE=lto"
+				eerror "  - Rebuild lld with llvm that was used to build rust (may need to rebuild the whole "
+				eerror "    llvm/clang/lld/rust chain depending on your @world updates)"
 				die "LLVM version used by Rust (${version_llvm_rust}) does not match with ld.lld version (${version_lld})!"
 			fi
 		fi
