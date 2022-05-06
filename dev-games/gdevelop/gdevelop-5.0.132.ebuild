@@ -14,7 +14,7 @@ SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" electron +extensions openrc"
 # See https://github.com/4ian/GDevelop/blob/v5.0.131/ExtLibs/installDeps.sh
-# See raw log of https://app.travis-ci.com/github/4ian/GDevelop
+# See *raw log* of https://app.travis-ci.com/github/4ian/GDevelop
 # U 16.04
 # Dependencies in native are not installed in CI
 UDEV_V="229"
@@ -39,7 +39,7 @@ DEPEND+="
 "
 RDEPEND+=" ${DEPEND}"
 EMSCRIPTEN_MIN_V="1.39.6" # Based on CI
-NODEJS_V="16.14.2" # Based on CI
+NODEJS_V="16.15.0" # Based on CI
 # >=dev-vcs/git-2.35.0 is used by CI but relaxed
 BDEPEND+="
 	>=dev-util/cmake-3.12.4
