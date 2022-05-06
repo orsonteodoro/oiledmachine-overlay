@@ -216,7 +216,7 @@ the metadata.xml.
 | dev-games/mojoshader | Used to allow for compatible usage for Direct3D shaders on non-Windows platforms to produce post-production special effects. |
 | dev-games/recastnavigation | This is a AI pathfinding library for C++.  Use this if you want your AI to walk around walls and obstacles. |
 | dev-games/urho3d | Urho3D is another game engine.  Android and Raspberry PI support on the ebuild level is incomplete but left for Gentoo community to help finish.  The system libraries are preferred because the internal libraries are several years old.  There may be quirks when using the system libraries.  If you see any that bother you, then use the internal dependency instead. |
-| dev-lang/gambas | Gambas is based on the BASIC programming language dialect.  It is basically a Visual Basic clone.  Version 3.8.4 is in this overlay.  Use the `ide` USE flag to build the IDE.  You can make games with it and has support for OpenGL. |
+| dev-lang/gambas | Gambas is based on the BASIC programming language dialect and Visual Basic clone.  Use the `ide` USE flag to build the IDE.  You can make games with it and has support for OpenGL. |
 | dev-lang/lua | This is a lua library with Urho3D changes necessary for coroutines |
 | dev-lang/luajit | This is a luajit library with Urho3D changes necessary for coroutines |
 | dev-lang/typescript | TBA |
