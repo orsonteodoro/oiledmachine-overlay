@@ -3,7 +3,7 @@
 
 EAPI=7
 
-ELECTRON_APP_ELECTRON_V="17.1.2"
+ELECTRON_APP_ELECTRON_V="17.4.1"
 ELECTRON_APP_MODE="npm"
 inherit eutils desktop electron-app npm-utils
 
