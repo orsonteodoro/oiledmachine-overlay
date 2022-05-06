@@ -41,10 +41,35 @@ print_help() {
 	echo
 	echo "  ALLOW_SUDO - Set to 1 or 0 (default) to enable sudo for root only tests"
 	echo "  PAGE_SIZE - Override the page size in bytes"
-	echo "  PGO_P2P_URI - Override the open source torrent URI"
-	echo "  PGO_TRAINER_NETWORK_TCP_CONGESTIONS - Override the space delmited tcp"
+	echo "  PGO_FILESYSTEMS_LIST - a string separated list of selected"
+        echo "    quintuples in this format to PGO train:"
+	echo
+	echo "    ioscheduler_name&fs_name&dev_name&mount_point&test_dir"
+	echo
+	echo "    * io_scheduler_name must be one of the names listed in"
+	echo '      `cat $(find /sys/devices/ -path "*sda*scheduler")`, where sda is'
+	echo "      replaced with the block device of interest.  It will be used to switch"
+	echo "      to that scheduler."
+	echo "    * fs_name must match the driver name.  These are listed in"
+	echo '      ${KERNEL_DIR}/fs as one the subdirectories.'
+	echo "    * dev_name must the basename to the corresponding path listed in"
+	echo '      find /sys/ -name "scheduler".'
+	echo "    * mount_point must be abspath to the mount point.  It must not contain"
+	echo "      a space in the abspath."
+	echo "    * test_dir must be a decent size folder like similar to /usr/bin that"
+	echo "      is used for grep tests and sequential read tests.  It also is"
+	echo "      an abspath relative to mount_point.  Read only tests are only"
+	echo "      performed in this directory."
+	echo
+	echo "    Example:"
+	echo '      PGO_FILESYSTEMS_LIST="bfq&ext4&sda&/&/usr/bin kyber&bfs&sdb&/mnt/foo&/data mq-deadline&ext4&sda&/&/usr/bin"'
+	echo "        If it is not set, it will default to the following:"
+	echo
+	echo "  PGO_P2P_URI - Override the open source torrent URI.  For security"
+	echo "    reasons, only use well known open source projects."
+	echo "  PGO_TRAINER_NETWORK_TCP_CONGESTIONS - Override the space delmited TCP"
 	echo "    congestions to train (See /proc/sys/net/ipv4/tcp_congestion_control)"
-	echo "  PGO_TRAINER_YT_URI - Override the video URI"
+	echo "  PGO_TRAINER_YT_URI - Override the video URI."
 	echo
 	exit 0
 }
