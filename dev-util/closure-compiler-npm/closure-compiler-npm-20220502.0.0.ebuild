@@ -22,7 +22,7 @@ PV_CC=$(ver_cut 1 ${PV})
 SLOT="0/${PV}"
 NODE_SLOT="0"
 MY_PN="closure-compiler"
-JAVA_V="11"
+JAVA_V="17"
 IUSE+="	closure_compiler_java
 	closure_compiler_js
 	closure_compiler_native
@@ -35,10 +35,10 @@ REQUIRED_USE+="
 		closure_compiler_native
 		closure_compiler_nodejs	)"
 # For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/v20220104.0.0/packages/google-closure-compiler/package.json
+# https://github.com/google/closure-compiler-npm/blob/v20220502.0.0/packages/google-closure-compiler/package.json
 # For dependencies, see
-# https://github.com/google/closure-compiler-npm/blob/v20220104.0.0/.github/workflows/build.yml
-NODE_V="14" # Upstream uses 14 on linux but others 10, 12
+# https://github.com/google/closure-compiler-npm/blob/v20220502.0.0/.github/workflows/build.yml
+NODE_V="14" # Upstream uses 14 on linux but others 16, 18
 CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_V} )"
 JDK_DEPEND="
 || (
