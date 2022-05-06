@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # For requirements, see
-# https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/building_from_source/toolchain_what_is_needed.rst
+# https://github.com/emscripten-core/emscripten/blob/2.0.26/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
 # For the closure-compiler-npm version see:
 # https://github.com/emscripten-core/emscripten/blob/2.0.26/package.json
