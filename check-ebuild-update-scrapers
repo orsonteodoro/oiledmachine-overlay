@@ -1024,287 +1024,169 @@ repo_latest_version_get_libzen_pv() {
 https://github.com/MediaArea/ZenLib.git)
 }
 
+_liri_pv() {
+	local p="${1}"
+	wget -q -O - "https://raw.githubusercontent.com/${p}/develop/CMakeLists.txt" | grep -F -e " VERSION" | cut -f 2 -d '"' | head -n 1
+}
+
 repo_latest_version_get_liri-base-appcenter_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/appcenter.git)
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/appcenter" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/appcenter")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-cmake-shared_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/cmake-shared.git)
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/cmake-shared" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/cmake-shared")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-eglfs_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/eglfs/develop/CMakeLists.txt \
-			| grep -F -e " VERSION \"" \
-			| head -n 1 \
-			| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" "lirios/eglfs" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/eglfs")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-files_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/files.git)
-	local suffix=$(get_head_suffix "github.com" "lirios/files" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/files")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-fluid_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/fluid.git)
-	local suffix=$(get_head_suffix "github.com" "lirios/fluid" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/fluid")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-libliri_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/libliri/develop/CMakeLists.txt \
-			| grep -F -e " VERSION \"" \
-			| head -n 1 \
-			| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" "lirios/libliri" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/libliri")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-materialdecoration_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/materialdecoration/develop/CMakeLists.txt \
-			| grep -F -e " VERSION \"" \
-			| head -n 1 \
-			| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/materialdecoration" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/materialdecoration")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-platformtheme_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/platformtheme.git)
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/platformtheme" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/platformtheme")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-pulseaudio_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/pulseaudio/develop/CMakeLists.txt \
-			| grep -F -e " VERSION \"" \
-			| head -n 1 \
-			| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/pulseaudio" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/pulseaudio")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-qbs-shared_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/qbs-shared.git)
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/qbs-shared" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/qbs-shared")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-qml-xwayland_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/qml-xwayland.git)
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/qml-xwayland" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/qml-xwayland")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-qtaccountsservice_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/qtaccountsservice.git)
-	echo "${pv}"
+	local pv=$(_liri_pv "lirios/qtaccountsservice")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-qtgsettings_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/qtudev.git)
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/qtgsettings" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/qtudev")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-qtudev_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/qtudev.git)
-	local suffix=$(get_head_suffix "github.com" "lirios/qtudev" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/qtudev")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-session_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/session/develop/CMakeLists.txt \
-		| grep -F -e " VERSION \"" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" "lirios/session" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/session")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-settings_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/settings.git)
-	local suffix=$(get_head_suffix "github.com" "lirios/settings" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/settings")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-shell_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/shell.git)
-	local suffix=$(get_head_suffix "github.com" "lirios/shell" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/shell")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-terminal_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/terminal.git)
-	local suffix=$(get_head_suffix "github.com" "lirios/terminal" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/terminal")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-themes_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/themes.git)
-	local suffix=$(get_head_suffix "github.com" "lirios/themes" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/themes")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-wallpapers_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/wallpapers.git)
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/wallpapers" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/wallpapers")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-wayland_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/wayland/develop/CMakeLists.txt \
-		| grep -F -e " VERSION \"" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" "lirios/wayland" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/wayland")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-base-xdg-desktop-portal-liri_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/xdg-desktop-portal-liri/develop/CMakeLists.txt \
-		| grep -F -e " VERSION \"" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/xdg-desktop-portal-liri" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/xdg-desktop-portal-liri")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-extra-browser_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/browser/develop/CMakeLists.txt \
-		| grep -F -e " VERSION \"" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" "lirios/browser" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/browser")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-extra-calculator_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/calculator.git)
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/calculator" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/calculator")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-extra-music_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/music/master/CMakeLists.txt \
-		| grep -F -e " VERSION \"" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" "lirios/music" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/music")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-extra-networkmanager_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/networkmanager/develop/CMakeLists.txt \
-		| grep -F -e " VERSION \"" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/networkmanager" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/networkmanager")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-extra-player_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/player/develop/CMakeLists.txt \
-		| grep -F -e " VERSION \"" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" "lirios/player" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/player")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-extra-power-manager_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/power-manager/develop/CMakeLists.txt \
-		| grep -F -e " VERSION \"" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/power-manager" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/power-manager")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-extra-samtal_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/samtal/develop/CMakeLists.txt \
-		| grep -F -e " VERSION \"" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" "lirios/samtal" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/samtal")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-extra-screencast_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/screencast/develop/CMakeLists.txt \
-		| grep -F -e " VERSION \"" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/screencast" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/screencast")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-extra-screenshot_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/screenshot/develop/CMakeLists.txt \
-		| grep -F -e " VERSION \"" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "github.com" \
-			"lirios/screenshot" "develop")
-	echo "${pv}_pre${suffix}"
+	local pv=$(_liri_pv "lirios/screenshot")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_liri-extra-text_pv() {
-	local pv=$(get_newest_pv \
-https://github.com/lirios/text.git)
-	local suffix=$(get_head_suffix "github.com" "lirios/text" "develop")
-	echo "${pv}_p${suffix}"
+	local pv=$(_liri_pv "lirios/text")
+	echo "${pv}_p9999"
 }
 
 repo_latest_version_get_lepton_pv() {
