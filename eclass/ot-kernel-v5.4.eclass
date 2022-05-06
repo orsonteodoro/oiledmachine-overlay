@@ -157,9 +157,18 @@ REQUIRED_USE+="
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizeable kernel package UKSM, zen-kernel patchset,
-GraySky2's kernel_compiler_patch, MUQSS CPU Scheduler, BMQ CPU Scheduler,
-genpatches, CVE fixes, TRESOR"
+DESCRIPTION="A customizable kernel package with \
+BMQ, \
+CVE fixes, \
+FUTEX_WAIT_MULTIPLE, \
+genpatches, \
+kernel_compiler_patch, \
+MUQSS, \
+TRESOR, \
+UKSM, \
+zen-muqss, \
+zen-sauce, \
+zen-tune."
 
 inherit ot-kernel
 

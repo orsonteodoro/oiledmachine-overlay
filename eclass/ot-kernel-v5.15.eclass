@@ -245,9 +245,20 @@ fi
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel
-patchset, GraySky2's kernel_compiler_patch, Project C CPU Scheduler, genpatches,
-CVE fixes"
+DESCRIPTION="A customizable kernel package with \
+BBRv2, \
+CFI, \
+CVE fixes, \
+FUTEX_WAIT_MULTIPLE, \
+genpatches, \
+kernel_compiler_patch, \
+multigen_lru, \
+Project C (BMQ, PDS-mq), \
+RT_PREEMPT (-rt), \
+UKSM, \
+zen-multigen_lru, \
+zen-sauce, \
+zen-tune."
 
 inherit ot-kernel
 
