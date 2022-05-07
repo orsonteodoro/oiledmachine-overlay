@@ -773,6 +773,11 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     OT_KERNEL_EXTRAVERSION -- initials or name of the kernel.  Using the rt
     extraversion will apply the rt patchset to only that copy.
 
+    See also:
+
+      OT_KERNEL_PRIMARY_EXTRAVERSION
+      OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR
+
 
 
     OT_KERNEL_EXTERNAL_MODULES -- prepares the kernel for out-of-tree
