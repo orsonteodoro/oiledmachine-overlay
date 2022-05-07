@@ -2194,6 +2194,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_CPU_MICROCODE
 	unset OT_KERNEL_CPU_SCHED
 	unset OT_KERNEL_DISABLE_USB_AUTOSUSPEND
+	unset OT_KERNEL_DMA_ATTACK_MITIGATIONS
 	unset OT_KERNEL_DMESG
 	unset OT_KERNEL_EARLY_KMS
 	unset OT_KERNEL_EFI_PARTITION
@@ -2400,37 +2401,14 @@ ot-kernel_set_kconfig_cfi() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_cold_boot_mitigation
+# @FUNCTION: ot-kernel_set_kconfig_dma_attack_mitigation
 # @DESCRIPTION:
-# Sets the kernel config to mitigate cold boot attacks or DMA attacks
-ot-kernel_set_kconfig_cold_boot_mitigation() {
-	# See also ot-kernel-pkgflags_tboot in ot-kernel-pkgflags
-
-	# Cold boot attack mitigation
-	# This section is incomplete and a Work In Progress (WIP)
-	# The problem is common to many full disk encryption implementations.
-	local ot_kernel_cold_boot_mitigations=${OT_KERNEL_COLD_BOOT_MITIGATIONS:-1}
-	if (( "${ot_kernel_cold_boot_mitigations}" >= 1 )) ; then
-		einfo "Hardening kernel against cold boot attacks. (EXPERIMENTAL / WORK IN PROGRESS)"
-
-		# These two may need a separate option.  We assume desktop,
-		# but some users may use the kernel on laptop.  For now,
-		# every user must cold-boot in suspend times 1-15 minutes.
-		ewarn "Suspend is going to be disabled."
-		ot-kernel_unset_configopt "CONFIG_SUSPEND"
-		ewarn "Hibernation is going to be disabled."
-		ot-kernel_unset_configopt "CONFIG_HIBERNATION"
-
-		ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys"
-		ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-		ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-		ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
-		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"	# Production symbol.  The option's help does mention cold boot attacks.
-		ot-kernel_unset_configopt "CONFIG_PAGE_POISONING"	# Test symbol.
-		# CONFIG_PAGE_POISONING uses a fixed pattern and slower compared
-		# to CONFIG_INIT_ON_FREE_DEFAULT_ON.
-
+# Sets the kernel config to mitigate against DMA attacks.
+OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED=0
+ot-kernel_set_kconfig_dma_attack_mitigation() {
+	local ot_kernel_dma_attack_mitigations=${OT_KERNEL_DMA_ATTACK_MITIGATIONS:-1}
+	if (( "${ot_kernel_dma_attack_mitigations}" >= 1 )) ; then
+		export OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED=1
 		einfo "Mitigating against DMA attacks (EXPERIMENTAL / WORK IN PROGRESS)"
 		ot-kernel_unset_configopt "CONFIG_KALLSYMS"
 
@@ -2487,13 +2465,17 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 
 		ot-kernel_y_configopt "CONFIG_SECURITY_DMESG_RESTRICT" # Only partial
 	fi
-	if python -c "import sys; sys.exit(0) if (${ot_kernel_cold_boot_mitigations}>=1.5) else sys.exit(1)" ; then
+	if python -c "import sys; sys.exit(0) if (${ot_kernel_dma_attack_mitigations}>=1.5) else sys.exit(1)" ; then
 		einfo "Using strict as the default IOMMU domain type for mitigation against DMA attack."
 		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_PASSTHROUGH"
 		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_LAZY"
 		ot-kernel_y_configopt "CONFIG_IOMMU_DEFAULT_DMA_STRICT"
 	fi
-	if (( "${ot_kernel_cold_boot_mitigations}" >= 2 )) ; then
+	if (( "${ot_kernel_dma_attack_mitigations}" >= 2 )) ; then
+		# This level is a preventative measure, but some attacks do not require these
+		# settings below as a prerequisite or maybe assume they are automatically enabled
+		# and active.
+
 		# TODO:  Disable all DMA devices and ports.
 		# This list is incomplete
 		ewarn "USB4 is going to be disabled."
@@ -2502,6 +2484,39 @@ ot-kernel_set_kconfig_cold_boot_mitigation() {
 		ot-kernel_unset_configopt "CONFIG_USB_XHCI_HCD"
 		ewarn "USB Type-C is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_TYPEC"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_cold_boot_mitigation
+# @DESCRIPTION:
+# Sets the kernel config to mitigate against cold boot attacks
+ot-kernel_set_kconfig_cold_boot_mitigation() {
+	# See also ot-kernel-pkgflags_tboot in ot-kernel-pkgflags
+
+	# Cold boot attack mitigation
+	# This section is incomplete and a Work In Progress (WIP)
+	# The problem is common to many full disk encryption implementations.
+	local ot_kernel_cold_boot_mitigations=${OT_KERNEL_COLD_BOOT_MITIGATIONS:-1}
+	if (( "${ot_kernel_cold_boot_mitigations}" >= 1 )) ; then
+		einfo "Hardening kernel against cold boot attacks. (EXPERIMENTAL / WORK IN PROGRESS)"
+
+		# These two may need a separate option.  We assume desktop,
+		# but some users may use the kernel on laptop.  For now,
+		# every user must cold-boot in suspend times 1-15 minutes.
+		ewarn "Suspend is going to be disabled."
+		ot-kernel_unset_configopt "CONFIG_SUSPEND"
+		ewarn "Hibernation is going to be disabled."
+		ot-kernel_unset_configopt "CONFIG_HIBERNATION"
+
+		ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys"
+		ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
+		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
+		ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
+		ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
+		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"	# Production symbol.  The option's help does mention cold boot attacks.
+		ot-kernel_unset_configopt "CONFIG_PAGE_POISONING"	# Test symbol.
+		# CONFIG_PAGE_POISONING uses a fixed pattern and slower compared
+		# to CONFIG_INIT_ON_FREE_DEFAULT_ON.
 	fi
 }
 
@@ -3324,14 +3339,14 @@ ot-kernel_set_kconfig_lsms() {
 ban_dma_attack_use() {
 	local u="${1}"
 	local kopt="${2}"
-	[[ -n "${OT_KERNEL_COLD_BOOT_MITIGATIONS}" ]] \
-		&& (( ${OT_KERNEL_COLD_BOOT_MITIGATIONS} == 0 )) \
+	[[ -n "${OT_KERNEL_DMA_ATTACK_MITIGATIONS}" ]] \
+		&& (( ${OT_KERNEL_DMA_ATTACK_MITIGATIONS} == 0 )) \
 		&& return
 eerror
 eerror "The ${kopt} kernel option may be used as a possible prerequisite for"
 eerror "DMA side-channel attacks."
 eerror
-eerror "Set OT_KERNEL_COLD_BOOT_MITIGATIONS=0 to continue or disable the"
+eerror "Set OT_KERNEL_DMA_ATTACK_MITIGATIONS=0 to continue or disable the"
 eerror "${u} USE flag."
 eerror
 	die
@@ -5213,6 +5228,7 @@ einfo
 		ot-kernel_set_kconfig_iommu_domain_type
 		ot-kernel-pkgflags_cipher_optional
 		ot-kernel_set_kconfig_cold_boot_mitigation
+		ot-kernel_set_kconfig_dma_attack_mitigation
 		ot-kernel_set_kconfig_memory_protection
 		ot-kernel_set_kconfig_tresor
 		ot-kernel_set_kconfig_ima
@@ -6001,24 +6017,6 @@ einfo
 		ot-kernel_pkg_postinst_cb
 	fi
 
-	# For possible impractical passthough (pt) DMA attack, see
-	# https://link.springer.com/article/10.1186/s13173-017-0066-7#Fn1
-ewarn
-ewarn "Please upgrade both the motherboard and CPU with support with either"
-ewarn "VT-d or Vi to mitigate from cold-boot attack if using full disk"
-ewarn "encryption.  Ensure that that IOMMU is being used.  Do not disable IOMMU"
-ewarn "or use passthrough (pt).  See"
-ewarn
-ewarn "  https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware"
-ewarn
-ewarn "for IOMMU supported hardware.  For details about the DMA side-channel"
-ewarn "attack, see"
-ewarn
-ewarn "  https://en.wikipedia.org/wiki/DMA_attack"
-ewarn
-ewarn "If you cannot afford the hardware, you may consider removing DMA based"
-ewarn "ports, soldering connections, hardware based encrypted RAM, and"
-ewarn "disabling DMA to mitigate against a DMA attack."
 ewarn
 ewarn "Any crypto algorithm or password store that stores keys in memory or"
 ewarn "registers are vulnerable.  This includes TRESOR as well."
@@ -6293,5 +6291,35 @@ einfo
 einfo "An exFAT patent license can also be obtained from"
 einfo "https://www.microsoft.com/en-us/legal/intellectualproperty/mtl/exfat-licensing.aspx"
 einfo
+	fi
+	if [[ "${OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED}" == "1" ]] ; then
+	# For possible impractical passthough (pt) DMA attack, see
+	# https://link.springer.com/article/10.1186/s13173-017-0066-7#Fn1
+ewarn
+ewarn "Please upgrade both the motherboard and CPU with support with either"
+ewarn "VT-d or Vi to mitigate against a DMA attack.  Ensure that that"
+ewarn "IOMMU is being used.  Do not disable IOMMU or use passthrough (pt)."
+ewarn "See"
+ewarn
+ewarn "  https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware"
+ewarn
+ewarn "for IOMMU supported hardware.  For details about the DMA side-channel"
+ewarn "attack, see"
+ewarn
+ewarn "  https://en.wikipedia.org/wiki/DMA_attack"
+ewarn
+ewarn "If you cannot afford the hardware, you may consider removing DMA based"
+ewarn "ports, soldering connections, hardware based encrypted RAM, and"
+ewarn "disabling DMA to mitigate against a DMA attack."
+ewarn
+ewarn "You must enable the BIOS password to mitigate against DMA attacks"
+ewarn "and prevent the disablement of IOMMU.  Also, VT-d/Vi must be enabled in"
+ewarn "the BIOS."
+ewarn
+	else
+ewarn
+ewarn "You have disabled DMA attack mitigation.  It is not recommended if"
+ewarn "you use full disk encryption."
+ewarn
 	fi
 }

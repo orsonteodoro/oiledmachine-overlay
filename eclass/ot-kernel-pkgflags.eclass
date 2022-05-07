@@ -74,15 +74,15 @@ ewarn "details."
 ban_dma_attack() {
 	local pkgid="${1}"
 	local kopt="${2}"
-	local ot_kernel_cold_boot_mitigations=${OT_KERNEL_COLD_BOOT_MITIGATIONS:-1}
-	[[ -n "${ot_kernel_cold_boot_mitigations}" ]] \
-		&& (( ${ot_kernel_cold_boot_mitigations} == 0 )) \
+	local ot_kernel_dma_attack_mitigations=${OT_KERNEL_DMA_ATTACK_MITIGATIONS:-1}
+	[[ -n "${ot_kernel_dma_attack_mitigations}" ]] \
+		&& (( ${ot_kernel_dma_attack_mitigations} == 0 )) \
 		&& return
 eerror
 eerror "The ${kopt} kernel option may be used as a possible prerequisite for"
 eerror "DMA side-channel attacks."
 eerror
-eerror "Set OT_KERNEL_COLD_BOOT_MITIGATIONS=0 to continue or"
+eerror "Set OT_KERNEL_DMA_ATTACK_MITIGATIONS=0 to continue or"
 eerror "append ${pkgid} to OT_KERNEL_PKGFLAGS_REJECT."
 eerror
 	die

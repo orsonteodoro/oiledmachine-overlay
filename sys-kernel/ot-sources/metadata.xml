@@ -620,26 +620,17 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
     OT_KERNEL_COLD_BOOT_MITIGATIONS -- changes the kernel config to mitigate
-    against cold boot or DMA attacks.  By default, this is enabled in the
-    ebuild.
+    against cold boot attacks.
 
     Acceptable values:
 
       0 for do not apply any mitigations
-      1 for level 1 mitigations
-      1.5 for level 1.5 mitigations
-      2 for level 2 mitigations
-
-    - Level 1 mitigations are changes balance the convenience and the security.
-    - Level 1.5 mitigations are changes increase mitigation without disabling
-      of use of hardware with additional performance penalty.
-    - Level 2 mitigations are changes that severely place security over
-    convenience which may take away ability to use certain hardware or have
-    severe performance degration.
+      1 for applying mitigations
 
     See also
 
       OT_KERNEL_IMA
+      OT_KERNEL_DMA_ATTACK_MITIGATIONS
 
 
 
@@ -704,6 +695,30 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     See also:
       MICROCODE_SIGNATURES
       MICROCODE_BLACKLIST
+
+
+
+    OT_KERNEL_DMA_ATTACK_MITIGATIONS - changes the kernel config to mitigate
+    against DMA attacks.  By default, this is enabled in the ebuild.
+
+    Acceptable values:
+
+      0 for do not apply any mitigations
+      1 for level 1 mitigations
+      1.5 for level 1.5 mitigations
+      2 for level 2 mitigations
+
+    - Level 1 mitigations are changes balance the convenience and the security.
+    - Level 1.5 mitigations are changes increase mitigation without disabling
+      of use of hardware with additional performance penalty.
+    - Level 2 mitigations are changes that severely place security over
+    convenience which may take away ability to use certain hardware or have
+    severe performance degration.
+
+    See also
+
+      OT_KERNEL_IMA
+      OT_KERNEL_COLD_BOOT_MITIGATIONS
 
 
 
