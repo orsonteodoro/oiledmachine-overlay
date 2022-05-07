@@ -40,13 +40,35 @@ DEPEND+="
 RDEPEND+=" ${DEPEND}"
 EMSCRIPTEN_MIN_V="1.39.6" # Based on CI
 NODEJS_V="16.15.0" # Based on CI
+MAX_NODEJS_V="16.15.0" # Based on CI, For building SFML
+MIN_NODEJS_V="14.18.2" # Based on CI, For building GDevelop.js
+#
+# The package actually uses two nodejs, but the current multislot nodejs
+# package cannot switch in the middle of emerge.  From experience, the
+# highest nodejs works.
+#
 # >=dev-vcs/git-2.35.0 is used by CI but relaxed
+LLVM_SLOTS=(15 14 13 12 11 10 9 8 7)
+MIN_LLVM="7"
+
+gen_llvm_depends() {
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+		(
+			sys-devel/llvm:${s}
+			sys-devel/clang:${s}
+			=sys-devel/lld-${s}*
+		)
+		"
+	done
+}
+
 BDEPEND+="
+	|| ( $(gen_llvm_depends) )
 	>=dev-util/cmake-3.12.4
 	>=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[wasm(+)]
 	>=dev-vcs/git-2.35.1
 	>=media-gfx/imagemagick-6.8.9[png]
-	>=sys-devel/clang-7
 	>=sys-devel/gcc-5.4
 	>=net-libs/nodejs-${NODEJS_V}:${NODEJS_V%%.*}
 	>=net-libs/nodejs-${NODEJS_V}[npm]
@@ -104,7 +126,7 @@ eerror
 	else
 eerror
 eerror "You need to set your >=emscripten-${EMSCRIPTEN_MIN_V} and"
-eerror ">=sys-devel/llvm-10.  See \`eselect emscripten\` for details.  (1)"
+eerror ">=sys-devel/llvm-${MIN_LLVM}.  See \`eselect emscripten\` for details.  (1)"
 eerror
 		die
 	fi
@@ -119,14 +141,14 @@ eerror
 		| grep -E -o -e "llvm-[0-9.]+" \
 		| sed -e "s|llvm-||")
 
-	if ver_test ${em_v} -ge "${EMSCRIPTEN_MIN_V}" \
-		&& ver_test ${llvm_v} -ge 10 ; then
+	if ver_test ${em_v}   -ge ${EMSCRIPTEN_MIN_V} \
+	&& ver_test ${llvm_v} -ge ${MIN_LLVM} ; then
 einfo
-einfo "Using emscripten-${em_v} and llvm-${llvm_v}"
+einfo "Using emscripten-${em_v} and >=llvm-${llvm_v}"
 einfo
 	else
 eerror
-eerror "You need to set your >=emscripten-${EMSCRIPTEN_MIN_V} and >=llvm-10."
+eerror "You need to set your >=emscripten-${EMSCRIPTEN_MIN_V} and >=llvm-${MIN_LLVM}."
 eerror "See \`eselect emscripten\` for details.  (2)"
 eerror
 		die
@@ -151,45 +173,28 @@ eerror
 	fi
 }
 
+get_lld_slot() {
+	echo $(ver_cut 1 $(wasm-ld --version | sed -e "s|LLD ||"))
+}
+
 check_lld() {
-	export HIGHEST_LLVM_SLOT=$(basename $(find \
-		"${EROOT}/usr/lib/llvm" \
-		-maxdepth 1 \
-		-regextype 'posix-extended' -regex ".*[0-9]+.*" \
-		| sort -V \
-		| tail -n 1))
-	for llvm_slot in $(seq $(ver_cut 1 ${LLVM_V}) ${HIGHEST_LLVM_SLOT}) ; do
-		if has_version "sys-devel/clang:${llvm_slot}[llvm_targets_WebAssembly]" \
-		&& has_version "sys-devel/llvm:${llvm_slot}[llvm_targets_WebAssembly]" ; then
-			export LLVM_SLOT="${llvm_slot}"
-			export CXX="clang++-${LLVM_SLOT}"
-			einfo "CXX=${CXX}"
-			if [[ ! -f "${CXX}" ]] ; then
-eerror
-eerror "CXX path is wrong and doesn't exist"
-eerror
-				die
-			fi
-			local lld_slot=$(ver_cut 1 $(wasm-ld --version \
-					| sed -e "s|LLD ||"))
-# The lld slotting is broken.  See https://bugs.gentoo.org/691900
-# ldd lld shows that libLLVM-10.so => /usr/lib64/llvm/10/lib64/libLLVM-10.so but
-# but slot 10 doesn't have wasm and one of the other >=${LLVM_V} do have it and
-# tricking the RDEPENDs.  We need to make sure that =lld-${lld_slot}*
-# with =llvm-${lld_slot}*[llvm_targets_WebAssembly].
-			if ! has_version "sys-devel/clang:${lld_slot}[llvm_targets_WebAssembly]" \
-			|| ! has_version "sys-devel/llvm:${lld_slot}[llvm_targets_WebAssembly]" ; then
+	local found=0
+
+	export LLVM_SLOT=$(get_lld_slot)
+	export CXX="clang++-${LLVM_SLOT}"
+	einfo "CXX=${CXX}"
+	if has_version "sys-devel/clang:${LLVM_SLOT}[llvm_targets_WebAssembly]" &&
+	   has_version "sys-devel/llvm:${LLVM_SLOT}[llvm_targets_WebAssembly]" ; then
+		echo "Passed same slot test for lld, clang, llvm."
+	else
 eerror
 eerror "LLD's corresponding version to Clang and LLVM versions must have"
 eerror "llvm_targets_WebAssembly.  Either upgrade LLD to version ${LLVM_SLOT}"
-eerror "or rebuild with sys-devel/llvm:${lld_slot}[llvm_targets_WebAssembly] and"
-eerror "sys-devel/clang:${lld_slot}[llvm_targets_WebAssembly]"
+eerror "or rebuild with sys-devel/llvm:${LLVM_SLOT}[llvm_targets_WebAssembly] and"
+eerror "sys-devel/clang:${LLVM_SLOT}[llvm_targets_WebAssembly]"
 eerror
-				die
-			fi
-			break
-		fi
-	done
+		die
+	fi
 }
 
 pkg_setup() {
