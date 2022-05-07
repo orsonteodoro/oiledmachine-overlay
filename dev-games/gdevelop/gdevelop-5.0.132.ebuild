@@ -178,8 +178,6 @@ get_lld_slot() {
 }
 
 check_lld() {
-	local found=0
-
 	export LLVM_SLOT=$(get_lld_slot)
 	export CXX="clang++-${LLVM_SLOT}"
 	einfo "CXX=${CXX}"
