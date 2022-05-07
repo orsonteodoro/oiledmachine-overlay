@@ -306,8 +306,16 @@ PDEPEND+="
 	ot_kernel_pgt_yt? (
 		${PYTHON_DEPS}
 		|| (
-			www-client/chromium
-			www-client/firefox
+			(
+				www-client/chromium
+			)
+			(
+				www-client/google-chrome
+				www-apps/chromedriver-bin
+			)
+			(
+				www-client/firefox[geckodriver]
+			)
 		)
 		$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
 	)
