@@ -608,7 +608,7 @@ src_test() {
 }
 
 pkg_postinst() {
-	if has_version '>=net-libs/nodejs-${PV}' ; then
+	if has_version ">=net-libs/nodejs-${PV}" ; then
 		einfo \
 "Found higher slots, manually change the headers with \`eselect nodejs\`."
 	else

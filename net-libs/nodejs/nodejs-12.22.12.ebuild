@@ -592,7 +592,7 @@ pkg_postinst() {
 	elog "avoid having to download extras by doing the following:"
 	elog "$ node-gyp --nodedir /usr/include/node <command>"
 
-	if has_version '>=net-libs/nodejs-${PV}' ; then
+	if has_version ">=net-libs/nodejs-${PV}" ; then
 		einfo \
 "Found higher slots, manually change the headers with \`eselect nodejs\`."
 	else
