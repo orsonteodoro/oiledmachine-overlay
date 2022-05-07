@@ -40,7 +40,7 @@ DEPEND+="
 RDEPEND+=" ${DEPEND}"
 EMSCRIPTEN_MIN_V="1.39.6" # Based on CI
 NODEJS_V="16.15.0" # Based on CI
-MAX_NODEJS_V="16.15.0" # Based on CI, For building SFML
+MAX_NODEJS_V="16.15.0" # Based on CI, For building SFML/GDCore
 MIN_NODEJS_V="14.18.2" # Based on CI, For building GDevelop.js
 #
 # The package actually uses two nodejs, but the current multislot nodejs
