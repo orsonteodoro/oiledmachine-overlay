@@ -586,7 +586,7 @@ src_install() {
 		rm "${ED}/usr/share/systemtap/tapset/node.stp" || die
 	fi
 
-	if use corepack ; then
+	if ! use corepack ; then
 		# Prevent collisions
 		rm -rf "${ED}/usr/$(get_libdir)/node_modules/corepack" || die
 		rm -rf "${ED}/usr/bin/corepack" || die
