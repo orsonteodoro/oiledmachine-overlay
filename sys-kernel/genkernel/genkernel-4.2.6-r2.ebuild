@@ -299,8 +299,16 @@ RDEPEND+="
 	)
 	pgo_trainer_yt? (
 		|| (
-			www-client/chromium
-			www-client/firefox
+			(
+				www-client/chromium
+			)
+			(
+				www-client/google-chrome
+				www-apps/chromedriver-bin
+			)
+			(
+				www-client/firefox[geckodriver]
+			)
 		)
 		$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
 	)
