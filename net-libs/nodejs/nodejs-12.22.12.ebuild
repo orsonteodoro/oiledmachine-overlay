@@ -132,16 +132,19 @@ pkg_setup() {
 	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2022-04-30."
 
 	# For man page reasons
-	for v in 14 16 17 ; do
-		if use npm && has_version "net-libs/nodejs:${v}[npm]" ; then
-			die \
-"You need to disable npm on net-libs/nodejs:${v}[npm].  Only enable\n\
-npm on the highest slot."
+	for s in 14 16 18 ; do
+		if use npm && has_version "net-libs/nodejs:${s}[npm]" ; then
+eerror
+eerror "You need to disable npm on net-libs/nodejs:${s}[npm].  Only enable"
+eerror "npm on the highest slot."
+eerror
+			die
 		fi
-		if use man && has_version "net-libs/nodejs:${v}[man]" ; then
-			die \
-"You need to disable npm on net-libs/nodejs:${v}[man].  Only enable\n\
-man on the highest slot."
+		if use man && has_version "net-libs/nodejs:${s}[man]" ; then
+eerror
+eerror "You need to disable npm on net-libs/nodejs:${s}[man].  Only enable"
+eerror "man on the highest slot."
+eerror
 		fi
 	done
 

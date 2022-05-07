@@ -16,7 +16,7 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE+=" cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector lto npm
+IUSE+=" corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector lto npm
 pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man pgo"
 
@@ -132,16 +132,26 @@ pkg_setup() {
 	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-04-30."
 
 	# For man page reasons
-	for v in 12 16 17 ; do
-		if use npm && has_version "net-libs/nodejs:${v}[npm]" ; then
-			die \
-"You need to disable npm on net-libs/nodejs:${v}[npm].  Only enable\n\
-npm on the highest slot."
+	for s in 12 16 18 ; do
+		if use corepack && has_version "net-libs/nodejs:${s}[corepack]" ; then
+eerror
+eerror "You need to disable corepack on net-libs/nodejs:${s}[corepack].  Only enable"
+eerror "corepack on the highest slot."
+eerror
+			die
 		fi
-		if use man && has_version "net-libs/nodejs:${v}[man]" ; then
-			die \
-"You need to disable npm on net-libs/nodejs:${v}[man].  Only enable\n\
-man on the highest slot."
+		if use npm && has_version "net-libs/nodejs:${s}[npm]" ; then
+eerror
+eerror "You need to disable npm on net-libs/nodejs:${s}[npm].  Only enable"
+eerror "npm on the highest slot."
+eerror
+			die
+		fi
+		if use man && has_version "net-libs/nodejs:${s}[man]" ; then
+eerror
+eerror "You need to disable npm on net-libs/nodejs:${s}[man].  Only enable"
+eerror "man on the highest slot."
+eerror
 		fi
 	done
 
@@ -577,6 +587,12 @@ src_install() {
 		mv "${ED}/usr/share/systemtap/tapset/"node${,${SLOT_MAJOR}}.stp || die
 	else
 		rm "${ED}/usr/share/systemtap/tapset/node.stp" || die
+	fi
+
+	if use corepack ; then
+		# Prevent collisions
+		rm -rf "${ED}/usr/$(get_libdir)/node_modules/corepack" || die
+		rm -rf "${ED}/usr/bin/corepack" || die
 	fi
 }
 
