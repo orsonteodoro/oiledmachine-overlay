@@ -48,8 +48,10 @@ MIN_NODEJS_V="14.18.2" # Based on CI, For building GDevelop.js
 # highest nodejs works.
 #
 # >=dev-vcs/git-2.35.0 is used by CI but relaxed
-LLVM_SLOTS=(15 14 13 12 11 10 9 8 7)
-MIN_LLVM="7"
+LLVM_SLOTS=(15 14 13 12 11 10) # Deleted 9 8 7 because asm.js support was dropped.
+# The CI uses Clang 7.
+# Emscripten expects either LLVM 10 for wasm, or LLVM 6 for asm.js.
+MIN_LLVM="10"
 
 gen_llvm_depends() {
 	for s in ${LLVM_SLOTS[@]} ; do
