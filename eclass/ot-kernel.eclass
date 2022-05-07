@@ -2410,7 +2410,6 @@ ot-kernel_set_kconfig_dma_attack_mitigation() {
 	if (( "${ot_kernel_dma_attack_mitigations}" >= 1 )) ; then
 		export OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED=1
 		einfo "Mitigating against DMA attacks (EXPERIMENTAL / WORK IN PROGRESS)"
-		ot-kernel_unset_configopt "CONFIG_KALLSYMS"
 
 		if grep -q -E -e "(CONFIG_IOMMU_DEFAULT_DMA_STRICT=y|CONFIG_IOMMU_DEFAULT_DMA_LAZY=y)" "${path_config}" ; then
 			:
@@ -2454,6 +2453,10 @@ ot-kernel_set_kconfig_dma_attack_mitigation() {
 				die
 			fi
 		fi
+
+		# The set below block bootstrapping shellcode or necessary prereq details for the attack.
+		ot-kernel_unset_configopt "CONFIG_KALLSYMS"
+
 		ewarn "Coredump is going to be disabled"
 		ot-kernel_unset_configopt "CONFIG_COREDUMP"
 
@@ -2461,9 +2464,9 @@ ot-kernel_set_kconfig_dma_attack_mitigation() {
 		ot-kernel_unset_configopt "CONFIG_KGDB"
 		ot-kernel_unset_configopt "CONFIG_KGDB_KDB"
 
+		# Prevent obtaining addresses
 		ot-kernel_set_kconfig_dmesg "0"
-
-		ot-kernel_y_configopt "CONFIG_SECURITY_DMESG_RESTRICT" # Only partial
+		ot-kernel_y_configopt "CONFIG_SECURITY_DMESG_RESTRICT"
 	fi
 	if python -c "import sys; sys.exit(0) if (${ot_kernel_dma_attack_mitigations}>=1.5) else sys.exit(1)" ; then
 		einfo "Using strict as the default IOMMU domain type for mitigation against DMA attack."
