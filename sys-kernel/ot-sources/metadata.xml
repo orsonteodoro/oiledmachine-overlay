@@ -629,8 +629,8 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     See also
 
-      OT_KERNEL_IMA
       OT_KERNEL_DMA_ATTACK_MITIGATIONS
+      OT_KERNEL_IMA
 
 
 
@@ -693,8 +693,8 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
       OT_KERNEL_CPU_MICROCODE="/etc/portage/ot-sources/5.15/ot/x86_64/cpu_info"
 
     See also:
-      MICROCODE_SIGNATURES
       MICROCODE_BLACKLIST
+      MICROCODE_SIGNATURES
 
 
 
@@ -717,8 +717,9 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     See also
 
-      OT_KERNEL_IMA
       OT_KERNEL_COLD_BOOT_MITIGATIONS
+      OT_KERNEL_IMA
+      OT_KERNEL_KEXEC
 
 
 
@@ -981,8 +982,8 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     See also:
 
-      XEN_PCI_PASSTHROUGH
       OT_KERNEL_IRQ_REMAP
+      XEN_PCI_PASSTHROUGH
 
 
 
@@ -995,6 +996,27 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
       1 (default when iommu is pt, lazy, or strict), 0, unset
 
     Unset is the same as manual.
+
+
+
+    OT_KERNEL_KEXEC -- Sets kexec config to allow to reboot into a new kernel
+    instantly.  Booting into a poorly configured destination kernel can lead to
+    severe security holes.  It is not recommended to use this feature unless the
+    destination kernels are signed and updated daily.
+
+    The OT_KERNEL_DMA_ATTACK_MITIGATIONS has higher priority and may
+    override this choice.
+
+    Acceptable values:
+
+      1 - Enables kexec support
+      0 - Disables kexec support
+      unset - Use manual settings
+
+    See also:
+
+      OT_KERNEL_IMA
+      OT_KERNEL_IMA_POLICIES
 
 
 
