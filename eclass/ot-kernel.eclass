@@ -3116,6 +3116,10 @@ ot-kernel_set_kconfig_ima() {
 		einfo "Using critical_data IMA policy"
 		ima_policies+=" ima_policy=critical_data"
 	fi
+	if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "fail_securely" ]] ; then
+		einfo "Using fail_securely IMA policy"
+		ima_policies+=" ima_policy=fail_securely"
+	fi
 	if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "secure_boot" ]] ; then
 		einfo "Using secure_boot IMA policy"
 		ima_policies+=" ima_policy=secure_boot"
