@@ -2206,7 +2206,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_HARDENING_LEVEL
 	unset OT_KERNEL_IMA
 	unset OT_KERNEL_IMA_HASH_ALG
-	unset OT_KERNEL_IMA_POLICY
+	unset OT_KERNEL_IMA_POLICIES
 	unset OT_KERNEL_IOMMU
 	unset OT_KERNEL_LSMS
 	unset OT_KERNEL_MENUCONFIG_COLORS
@@ -2401,10 +2401,30 @@ ot-kernel_set_kconfig_cfi() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_show_kexec_mitigation_warning
+# @DESCRIPTION:
+# Show a warning about the possibility of disabled DMA via kexec
+ot-kernel_show_kexec_mitigation_warning() {
+ewarn
+ewarn "Detected the possibility of booting an unsigned hacked kernel with"
+ewarn "disabled DMA attack mitigation.  This can be prevented by doing one of"
+ewarn "the following:"
+ewarn
+ewarn "  1.  Disable kexec in the kernel config."
+ewarn "  2.  Enable IMA with the secure_boot IMA policy allowing to only"
+ewarn "      to kexec into signed kernels with same DMA protections."
+ewarn "  3.  Remove kexec-tools and disable kexec in the kernel config."
+ewarn "  4.  Enable UEFI with secure boot."
+ewarn
+ewarn "This issue will not be autofixed."
+ewarn
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_dma_attack_mitigation
 # @DESCRIPTION:
 # Sets the kernel config to mitigate against DMA attacks.
 OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED=0
+OT_KERNEL_SHOWED_KEXEC_MITIGATION_WARNING=0
 ot-kernel_set_kconfig_dma_attack_mitigation() {
 	local ot_kernel_dma_attack_mitigations=${OT_KERNEL_DMA_ATTACK_MITIGATIONS:-1}
 	if (( "${ot_kernel_dma_attack_mitigations}" >= 1 )) ; then
@@ -2467,6 +2487,14 @@ ot-kernel_set_kconfig_dma_attack_mitigation() {
 		# Prevent obtaining addresses
 		ot-kernel_set_kconfig_dmesg "0"
 		ot-kernel_y_configopt "CONFIG_SECURITY_DMESG_RESTRICT"
+
+		if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "secure_boot" ]] ; then
+			:
+		elif grep -q -E -e "^CONFIG_KEXEC=y" "${path_config}" \
+			|| [[ ! ( "${OT_KERNEL_IMA_POLICIES}" =~ "secure_boot" ) ]] ; then
+			OT_KERNEL_SHOWED_KEXEC_MITIGATION_WARNING=1
+			ot-kernel_show_kexec_mitigation_warning
+		fi
 	fi
 	if python -c "import sys; sys.exit(0) if (${ot_kernel_dma_attack_mitigations}>=1.5) else sys.exit(1)" ; then
 		einfo "Using strict as the default IOMMU domain type for mitigation against DMA attack."
@@ -3065,21 +3093,29 @@ ot-kernel_set_kconfig_ima() {
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "ima_appraise=(fix|enforce|off)"
 		ot-kernel_set_kconfig_kernel_cmdline "ima_appraise=off"
 	fi
-	if [[ "${OT_KERNEL_IMA_POLICY}" == "appraise_tcb" ]] ; then
+	ot-kernel_unset_pat_kconfig_kernel_cmdline "appraise_tcb" # Reset
+	ot-kernel_unset_pat_kconfig_kernel_cmdline "critical_data"
+	ot-kernel_unset_pat_kconfig_kernel_cmdline "secure_boot"
+	ot-kernel_unset_pat_kconfig_kernel_cmdline "tcb"
+	local ima_policies=""
+	if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "appraise_tcb" ]] ; then
 		einfo "Using appraise_tcb IMA policy"
-		ot-kernel_set_kconfig_kernel_cmdline "ima_policy=appraise_tcb"
+		ima_policies+=" ima_policy=appraise_tcb"
 	fi
-	if [[ "${OT_KERNEL_IMA_POLICY}" == "critical_data" ]] ; then
+	if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "critical_data" ]] ; then
 		einfo "Using critical_data IMA policy"
-		ot-kernel_set_kconfig_kernel_cmdline "ima_policy=critical_data"
+		ima_policies+=" ima_policy=critical_data"
 	fi
-	if [[ "${OT_KERNEL_IMA_POLICY}" == "secure_boot" ]] ; then
+	if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "secure_boot" ]] ; then
 		einfo "Using secure_boot IMA policy"
-		ot-kernel_set_kconfig_kernel_cmdline "ima_policy=secure_boot"
+		ima_policies+=" ima_policy=secure_boot"
 	fi
-	if [[ "${OT_KERNEL_IMA_POLICY}" == "tcb" ]] ; then
+	if [[ "${OT_KERNEL_IMA_POLICIES}" =~ "tcb" ]] ; then
 		einfo "Using tcb IMA policy"
-		ot-kernel_set_kconfig_kernel_cmdline "ima_policy=tcb"
+		ima_policies+=" ima_policy=tcb"
+	fi
+	if [[ -n "${OT_KERNEL_IMA_POLICIES}" ]] ; then
+		ot-kernel_set_kconfig_kernel_cmdline "${ima_policies}"
 	fi
 }
 
@@ -6324,5 +6360,8 @@ ewarn
 ewarn "You have disabled DMA attack mitigation.  It is not recommended if"
 ewarn "you use full disk encryption."
 ewarn
+	fi
+	if [[ "${OT_KERNEL_SHOWED_KEXEC_MITIGATION_WARNING}" == "1" ]] ; then
+		ot-kernel_show_kexec_mitigation_warning
 	fi
 }

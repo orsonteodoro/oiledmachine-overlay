@@ -941,7 +941,7 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
-    OT_KERNEL_IMA_POLICY -- Sets the IMA policy.
+    OT_KERNEL_IMA_POLICIES -- A space separated list of IMA policies.
 
     Acceptable values:
 
@@ -954,9 +954,9 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     Examples:
 
-      OT_KERNEL_IMA_POLICY="tcb"
-      OT_KERNEL_IMA_POLICY="tcb tcb_appraise"
-      OT_KERNEL_IMA_POLICY="tcb tcb_appraise secure_boot"
+      OT_KERNEL_IMA_POLICIES="tcb"
+      OT_KERNEL_IMA_POLICIES="tcb tcb_appraise"
+      OT_KERNEL_IMA_POLICIES="tcb tcb_appraise secure_boot"
 
 
 
