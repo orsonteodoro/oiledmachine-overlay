@@ -164,6 +164,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_bcm_sta
 	ot-kernel-pkgflags_beep
 	ot-kernel-pkgflags_bees
+	ot-kernel-pkgflags_blink_suid_sandbox
 	ot-kernel-pkgflags_blink1
 	ot-kernel-pkgflags_blktrace
 	ot-kernel-pkgflags_blueman
@@ -407,7 +408,6 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_sstp_client
 	ot-kernel-pkgflags_steam
 	ot-kernel-pkgflags_stress_ng
-	ot-kernel-pkgflags_suid_sandbox
 	ot-kernel-pkgflags_suricata
 	ot-kernel-pkgflags_sysdig_kmod
 	ot-kernel-pkgflags_systemd
@@ -811,6 +811,96 @@ ot-kernel-pkgflags_beep() { # DONE
 ot-kernel-pkgflags_bees() { # DONE
 	# See ot-kernel-pkgflags_btrfs_progs
 	:
+}
+
+# @FUNCTION: _ot-kernel-pkgflags_blink_suid_sandbox_settings
+# @DESCRIPTION:
+# Add config settings
+_ot-kernel-pkgflags_blink_suid_sandbox_settings() { # DONE
+	einfo "Applying kernel config flags for blink suid sandbox support (id: 4aa6a9f)"
+	ot-kernel_y_configopt "CONFIG_PID_NS"
+	ot-kernel_y_configopt "CONFIG_NET_NS"
+	ot-kernel_y_configopt "CONFIG_USER_NS"
+	ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
+	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+	ot-kernel_unset_configopt "CONFIG_COMPAT_VDSO"
+	if grep -q -e "^CONFIG_GRKERNSEC=y" "${path_config}" ; then
+		# Still added because user may add patch via /etc/patches
+eerror
+eerror "Lowered security detected:"
+eerror "The CONFIG_GRKERNSEC flag will break the suid sandbox."
+eerror "Either add 4aa6a9f to OT_KERNEL_PKGFLAGS_REJECT or disable CONFIG_GRKERNSEC."
+eerror
+		die
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_blink_suid_sandbox
+# @DESCRIPTION:
+# Applies kernel config flags for the Blink suid sandbox
+ot-kernel-pkgflags_blink_suid_sandbox() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4aa6a9f" ]] && return
+	local pkgs=(
+# Obtained from
+# From /usr/portage \
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chromium_suid_sandbox_check_kernel_config" ./ | cut -f 2-3 -d "/" | sort | uniq
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 2-3 -d "/" | sort | uniq
+# From /var/lib/layman \
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 3-4 -d "/" | sort | uniq
+app-admin/bitwarden-desktop-bin
+app-editors/vscode
+app-editors/vscodium
+app-office/drawio-desktop-bin
+dev-db/dbgate-bin
+dev-util/arctype
+dev-util/beekeeper-studio-bin
+dev-util/clion
+dev-util/insomnia-bin
+dev-util/postman
+dev-util/pycharm-community
+dev-util/pycharm-professional
+dev-util/testmace
+media-gfx/evoluspencil
+media-gfx/WebPlotDigitizer-bin
+media-sound/nuclear-bin
+media-sound/plexamp
+media-sound/teamspeak-client
+media-video/obs-studio
+net-im/discord-bin
+net-im/discord-canary-bin
+net-im/discord-ptb-bin
+net-im/element-desktop-bin
+net-im/guilded-bin
+net-im/signal-desktop-bin
+net-im/skypeforlinux
+net-im/slack
+net-im/teams
+net-libs/cef
+net-libs/cef-bin
+net-proxy/insomnia-bin
+www-client/chromium
+www-client/chromium-bin
+www-client/google-chrome
+www-client/google-chrome-beta
+www-client/google-chrome-unstable
+www-client/microsoft-edge
+www-client/microsoft-edge-beta
+www-client/microsoft-edge-dev
+www-client/opera
+www-client/opera-beta
+www-client/opera-developer
+	)
+	if [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
+		_ot-kernel-pkgflags_blink_suid_sandbox_settings
+		return
+	fi
+	local p
+	for p in ${pkgs[@]} ; do
+		if has_version "${p}" ; then
+			_ot-kernel-pkgflags_blink_suid_sandbox_settings
+			return
+		fi
+	done
 }
 
 # @FUNCTION: ot-kernel-pkgflags_blink1
@@ -6197,62 +6287,6 @@ ot-kernel-pkgflags_squid() { # DONE
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_SOCKET"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_TPROXY"
 	fi
-}
-
-# @FUNCTION: _ot-kernel-pkgflags_suid_sandbox_settings
-# @DESCRIPTION:
-# Add config settings
-_ot-kernel-pkgflags_suid_sandbox_settings() { # DONE
-	einfo "Applying kernel config flags for suid sandbox support (id: 4aa6a9f)"
-	ot-kernel_y_configopt "CONFIG_PID_NS"
-	ot-kernel_y_configopt "CONFIG_NET_NS"
-	ot-kernel_y_configopt "CONFIG_USER_NS"
-	ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
-	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
-	ot-kernel_unset_configopt "CONFIG_COMPAT_VDSO"
-	if grep -q -e "^CONFIG_GRKERNSEC=y" "${path_config}" ; then
-		# Still added because user may add patch via /etc/patches
-eerror
-eerror "Lowered security detected:"
-eerror "The CONFIG_GRKERNSEC flag will break the suid sandbox."
-eerror "Either add 4aa6a9f to OT_KERNEL_PKGFLAGS_REJECT or disable CONFIG_GRKERNSEC."
-eerror
-		die
-	fi
-}
-
-# @FUNCTION: ot-kernel-pkgflags_suid_sandbox
-# @DESCRIPTION:
-# Applies kernel config flags for the suid sandbox
-ot-kernel-pkgflags_suid_sandbox() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4aa6a9f" ]] && return
-	local pkgs=(
-# Obtained from grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chromium_suid_sandbox_check_kernel_config" ./ | cut -f 2-3 -d "/" | sort | uniq
-net-im/skypeforlinux
-net-im/teams
-www-client/chromium
-www-client/chromium-bin
-www-client/google-chrome
-www-client/google-chrome-beta
-www-client/google-chrome-unstable
-www-client/microsoft-edge
-www-client/microsoft-edge-beta
-www-client/microsoft-edge-dev
-www-client/opera
-www-client/opera-beta
-www-client/opera-developer
-	)
-	if [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
-		_ot-kernel-pkgflags_suid_sandbox_settings
-		return
-	fi
-	local p
-	for p in ${pkgs[@]} ; do
-		if has_version "${p}" ; then
-			_ot-kernel-pkgflags_suid_sandbox_settings
-			return
-		fi
-	done
 }
 
 # @FUNCTION: ot-kernel-pkgflags_sc_controller
