@@ -7,7 +7,7 @@
 EAPI=7
 
 VIRTUALX_REQUIRED="manual"
-inherit cmake-utils flag-o-matic multilib-minimal virtualx
+inherit chromium-2 cmake-utils flag-o-matic multilib-minimal virtualx
 
 DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for embedding Chromium-based browsers in other applications."
 LICENSE="BSD"
@@ -157,6 +157,7 @@ append_all() {
 }
 
 pkg_setup() {
+	chromium_suid_sandbox_check_kernel_config
 	if use test ; then
 		if [[ "${FEATURES}" =~ sandbox ]] ; then
 eerror
