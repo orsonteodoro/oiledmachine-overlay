@@ -845,9 +845,11 @@ ot-kernel-pkgflags_blink_suid_sandbox() { # DONE
 # From /usr/portage \
 # grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chromium_suid_sandbox_check_kernel_config" ./ | cut -f 2-3 -d "/" | sort | uniq
 # grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 2-3 -d "/" | sort | uniq
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron" ./ | grep ".ebuild:" | cut -f 2-3 -d "/"			# Requires manual inspection
 # From /var/lib/layman \
 # grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 3-4 -d "/" | sort | uniq
-# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron-app" ./ | cut -f 2-3 -d "/" | sort | uniq | grep -v "eclass/" | grep -v "README.md"
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron-app" ./ | grep ".ebuild:" | cut -f 2-3 -d "/" | sort | uniq
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron" ./ | grep ".ebuild:" | cut -f 3-4 -d "/" | sort | uniq	# Requires manual inspection
 app-admin/bitwarden-desktop-bin
 app-editors/epic-journal
 app-editors/vscode
@@ -860,6 +862,8 @@ dev-util/beekeeper-studio-bin
 dev-util/clion
 dev-util/devhub
 dev-util/eclipse-theia
+dev-util/electron-bin
+dev-util/electron-packager
 dev-util/insomnia-bin
 dev-util/lepton
 dev-util/postman
@@ -884,9 +888,11 @@ net-im/signal-desktop-bin
 net-im/skypeforlinux
 net-im/slack
 net-im/teams
+net-im/whatsapp-desktop-bin
 net-libs/cef
 net-libs/cef-bin
 net-proxy/insomnia-bin
+www-apps/BloodHound
 www-client/chromium
 www-client/chromium-bin
 www-client/google-chrome
