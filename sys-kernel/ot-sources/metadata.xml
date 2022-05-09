@@ -1767,7 +1767,8 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     Valid values:  0 (default), 1.
     See also:  MEMCARD_MMC, MEMCARD_SD, MEMCARD_SDIO
 
-    USE_SUID_SANDBOX - Force adding suid sandbox support for browsers.
+    USE_SUID_SANDBOX - Force adding SUID sandbox support for Blink based apps
+    or web browsers.
     Valid values:  0 (default), 1.
 
     VIRTUALBOX_GUEST_LINUX - Add support for VirtualBox Linux guests.
