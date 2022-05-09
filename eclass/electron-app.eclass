@@ -29,7 +29,7 @@ case "${EAPI:-0}" in
 esac
 
 
-inherit desktop eutils npm-utils
+inherit chromium-2 desktop eutils npm-utils
 
 # ############## START Per-package environmental variables #####################
 
@@ -717,6 +717,8 @@ electron-app_audit_fix() {
 # Initializes globals
 electron-app_pkg_setup() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	chromium_suid_sandbox_check_kernel_config
 
 	if has network-sandbox $FEATURES ; then
 		die \
