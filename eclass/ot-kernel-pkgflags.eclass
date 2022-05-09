@@ -6199,33 +6199,60 @@ ot-kernel-pkgflags_squid() { # DONE
 	fi
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_suid_sandbox_settings
+# @DESCRIPTION:
+# Add config settings
+_ot-kernel-pkgflags_suid_sandbox_settings() { # DONE
+	einfo "Applying kernel config flags for suid sandbox support (id: 4aa6a9f)"
+	ot-kernel_y_configopt "CONFIG_PID_NS"
+	ot-kernel_y_configopt "CONFIG_NET_NS"
+	ot-kernel_y_configopt "CONFIG_USER_NS"
+	ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
+	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+	ot-kernel_unset_configopt "CONFIG_COMPAT_VDSO"
+	if grep -q -e "^CONFIG_GRKERNSEC=y" "${path_config}" ; then
+		# Still added because user may add patch via /etc/patches
+eerror
+eerror "Lowered security detected:"
+eerror "The CONFIG_GRKERNSEC flag will break the suid sandbox."
+eerror "Either add 4aa6a9f to OT_KERNEL_PKGFLAGS_REJECT or disable CONFIG_GRKERNSEC."
+eerror
+		die
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_suid_sandbox
 # @DESCRIPTION:
 # Applies kernel config flags for the suid sandbox
 ot-kernel-pkgflags_suid_sandbox() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT}" =~ "4aa6a9f" ]] && return
-	if has_version "www-client/chromium[suid]" \
-		|| [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
-		einfo "Applying kernel config flags for the suid sandbox (id: 4aa6a9f)"
-		ot-kernel_y_configopt "CONFIG_PID_NS"
-		ot-kernel_y_configopt "CONFIG_NET_NS"
-		ot-kernel_y_configopt "CONFIG_USER_NS"
-		ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
-		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
-		if grep -q -e "^CONFIG_COMPAT_VDSO=y" "${path_config}" ; then
-eerror
-eerror "The suid sandbox will break with the CONFIG_COMPAT_VDSO kernel config."
-eerror
-			die
-		fi
-		if grep -q -e "^CONFIG_GRKERNSEC=y" "${path_config}" ; then
-			# Still added because may add patch via /etc/patches
-eerror
-eerror "The CONFIG_GRKERNSEC flag will break the suid sandbox."
-eerror
-			die
-		fi
+	local pkgs=(
+# Obtained from grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chromium_suid_sandbox_check_kernel_config" ./ | cut -f 2-3 -d "/" | sort | uniq
+net-im/skypeforlinux
+net-im/teams
+www-client/chromium
+www-client/chromium-bin
+www-client/google-chrome
+www-client/google-chrome-beta
+www-client/google-chrome-unstable
+www-client/microsoft-edge
+www-client/microsoft-edge-beta
+www-client/microsoft-edge-dev
+www-client/opera
+www-client/opera-beta
+www-client/opera-developer
+	)
+	if [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
+		_ot-kernel-pkgflags_suid_sandbox_settings
+		return
 	fi
+	local p
+	for p in ${pkgs[@]} ; do
+		if has_version "${p}" ; then
+			_ot-kernel-pkgflags_suid_sandbox_settings
+			return
+		fi
+	done
 }
 
 # @FUNCTION: ot-kernel-pkgflags_sc_controller
