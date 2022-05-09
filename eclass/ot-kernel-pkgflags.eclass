@@ -847,25 +847,34 @@ ot-kernel-pkgflags_blink_suid_sandbox() { # DONE
 # grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 2-3 -d "/" | sort | uniq
 # From /var/lib/layman \
 # grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "chrome-sandbox" ./ | cut -f 3-4 -d "/" | sort | uniq
+# grep --exclude-dir=metadata --exclude-dir=.git --exclude-dir=distfiles -r -e "electron-app" ./ | cut -f 2-3 -d "/" | sort | uniq | grep -v "eclass/" | grep -v "README.md"
 app-admin/bitwarden-desktop-bin
+app-editors/epic-journal
 app-editors/vscode
 app-editors/vscodium
 app-office/drawio-desktop-bin
 dev-db/dbgate-bin
+dev-games/gdevelop
 dev-util/arctype
 dev-util/beekeeper-studio-bin
 dev-util/clion
+dev-util/devhub
+dev-util/eclipse-theia
 dev-util/insomnia-bin
+dev-util/lepton
 dev-util/postman
 dev-util/pycharm-community
 dev-util/pycharm-professional
 dev-util/testmace
+media-gfx/blockbench
 media-gfx/evoluspencil
+media-gfx/texturelab
 media-gfx/WebPlotDigitizer-bin
 media-sound/nuclear-bin
 media-sound/plexamp
 media-sound/teamspeak-client
 media-video/obs-studio
+net-im/caprine
 net-im/discord-bin
 net-im/discord-canary-bin
 net-im/discord-ptb-bin
@@ -889,6 +898,7 @@ www-client/microsoft-edge-dev
 www-client/opera
 www-client/opera-beta
 www-client/opera-developer
+www-misc/instatron
 	)
 	if [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
 		_ot-kernel-pkgflags_blink_suid_sandbox_settings
