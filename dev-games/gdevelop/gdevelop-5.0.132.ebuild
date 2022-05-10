@@ -364,7 +364,7 @@ ewarn "been tested in recent point releases."
 ewarn
 ewarn "Add SKIP_WRAPPER_FILE_SIGNAL=1 to bypass and manually patch if it fails."
 ewarn
-		if [[ "${Add SKIP_WRAPPER_FILE_SIGNAL}" == "1" ]] ; then
+		if [[ "${SKIP_WRAPPER_FILE_SIGNAL}" == "1" ]] ; then
 			:
 		else
 			eapply "${FILESDIR}/gdevelop-5.0.0_beta97-wrapper-file-signal.patch"
