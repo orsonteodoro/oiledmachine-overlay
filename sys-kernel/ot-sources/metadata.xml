@@ -1203,6 +1203,12 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     removal of debug keyworded kernel config symbols. They should be listed as
     space separated.
 
+    Currently, this does not unset the kernel config flags but means that it
+    will not apply the set of kernel configs.  One must manually unset these
+    options.  The reason why it is not so easy to automate unsetting is
+    because some of these settings may have multiple dependence on a kernel
+    config.
+    
     See also:
 
       Kernel pkgflags environment variables
