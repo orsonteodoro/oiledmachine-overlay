@@ -825,7 +825,7 @@ _ot-kernel-pkgflags_blink_suid_sandbox_settings() { # DONE
 	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 	ot-kernel_unset_configopt "CONFIG_COMPAT_VDSO"
 	if grep -q -e "^CONFIG_GRKERNSEC=y" "${path_config}" ; then
-		# Still added because user may add patch via /etc/patches
+		# Still added because user may add patch via /etc/portage/patches
 eerror
 eerror "Lowered security detected:"
 eerror "The CONFIG_GRKERNSEC flag will break the suid sandbox."
