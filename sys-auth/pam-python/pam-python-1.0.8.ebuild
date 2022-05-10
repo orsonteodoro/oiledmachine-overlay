@@ -11,8 +11,7 @@ HOMEPAGE="http://pam-python.sourceforge.net/"
 LICENSE="AGPL-3+"
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Still needs testing
 SLOT="0/${PV}"
-IUSE+=" doc"
-IUSE+=" test"
+IUSE+=" doc test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -53,8 +52,9 @@ PATCHES=(
 pkg_setup() {
 	python-single-r1_pkg_setup
 	if use test ; then
-		if [[ "${FEATURES}" =~ "sandbox" ]] ; then
+		if [[ "${FEATURES}" =~ (^| |"user")"sandbox" ]] ; then
 eerror "FEATURES require per-package -sandbox and -usersandbox for testing"
+eerror "FEATURES:  ${FEATURES}"
 			die
 		fi
 	fi
@@ -100,14 +100,6 @@ src_test() {
 }
 
 src_install() {
-	if use test ; then
-		if [[ -e "/etc/pam.d/test-pam_python.pam" ]] ; then
-			rm "/etc/pam.d/test-pam_python.pam" || die
-		fi
-		if [[ -e "/etc/pam.d/test-pam_python-installed.pam" ]] ; then
-			rm "/etc/pam.d/test-pam_python-installed.pam" || die
-		fi
-	fi
 	if use doc ; then
 		emake install-doc \
 			DESTDIR="${D}" \
@@ -117,4 +109,15 @@ src_install() {
 		DESTDIR="${D}" \
 		LIBDIR="${EPREFIX}/$(get_libdir)/security"
 	einstalldocs
+}
+
+pkg_postinst() {
+	if use test ; then
+		if [[ -e "/etc/pam.d/test-pam_python.pam" ]] ; then
+			rm "/etc/pam.d/test-pam_python.pam" || die
+		fi
+		if [[ -e "/etc/pam.d/test-pam_python-installed.pam" ]] ; then
+			rm "/etc/pam.d/test-pam_python-installed.pam" || die
+		fi
+	fi
 }

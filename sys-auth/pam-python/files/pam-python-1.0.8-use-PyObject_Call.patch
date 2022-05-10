@@ -6,7 +6,7 @@ diff -urp pam-python-1.0.8.orig/src/pam_python.c pam-python-1.0.8/src/pam_python
    if (args != 0)
    {
 -    py_resultobj = PyEval_CallObject(pamHandle->print_exception, args);
-+    py_resultobj = PyObject_Call(pamHandle->print_exception, args, NULL);
++    py_resultobj = PyObject_CallObject(pamHandle->print_exception, args);
      if (py_resultobj != 0)
        SyslogFile_flush(pamHandle->syslogFile);
    }
@@ -15,7 +15,7 @@ diff -urp pam-python-1.0.8.orig/src/pam_python.c pam-python-1.0.8/src/pam_python
     * Call the Python handler function.
     */
 -  py_resultobj = PyEval_CallObject(handler_function, handler_args);
-+  py_resultobj = PyObject_Call(handler_function, handler_args, NULL);
++  py_resultobj = PyObject_CallObject(handler_function, handler_args);
    /*
     * Did it throw an exception?
     */
