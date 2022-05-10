@@ -185,7 +185,7 @@ check_lld() {
 	einfo "CXX=${CXX}"
 	if has_version "sys-devel/clang:${LLVM_SLOT}[llvm_targets_WebAssembly]" &&
 	   has_version "sys-devel/llvm:${LLVM_SLOT}[llvm_targets_WebAssembly]" ; then
-		echo "Passed same slot test for lld, clang, llvm."
+		einfo "Passed same slot test for lld, clang, llvm."
 	else
 eerror
 eerror "LLD's corresponding version to Clang and LLVM versions must have"
