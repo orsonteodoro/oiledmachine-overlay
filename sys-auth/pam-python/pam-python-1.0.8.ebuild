@@ -74,7 +74,7 @@ src_prepare() {
 }
 
 src_configure() {
-	sed -i -e "s|-O0|-O1|g" "src/Makefile" || die
+#	sed -i -e "s|-O0|-O1|g" "src/Makefile" || die
 	export CC=$(tc-getCC)
 }
 
@@ -87,7 +87,7 @@ src_compile() {
 
 src_test() {
 	ewarn "Tests only work with python2.7 and must be ran outside of emerge."
-	ewarn "Run test with \`make test\`."
+	ewarn "Run test with \`EPYTHON=python2.7 make test\`."
 	ewarn "After completion, \`make clean\` to remove symlinks."
 	ewarn
 	ewarn "If the test fail, the following need to be manually removed:"
