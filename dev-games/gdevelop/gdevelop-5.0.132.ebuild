@@ -17,7 +17,6 @@ IUSE+=" +electron +extensions openrc"
 # See *raw log* of https://app.travis-ci.com/github/4ian/GDevelop
 # U 16.04
 # Dependencies in native are not installed in CI
-REQUIRED_USE+=" electron"
 UDEV_V="229"
 DEPEND+="
 	|| (
@@ -354,6 +353,61 @@ einfo
 	fi
 }
 
+# @FUNCTION: install_program
+# @DESCRIPTION:
+# Installs program only.  Resets permissions and ownership.
+# Additional change of ownership and permissions should be done after running
+# this.
+install_program() {
+	use unpacked || return
+	_electron-app_check_missing_install_path
+	local rel_src_path="$1"
+	local d="${ELECTRON_APP_INSTALL_PATH}"
+	local ed="${ED}/${d}"
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			local old_dotglob=$(shopt dotglob | cut -f 2)
+			shopt -s dotglob # copy hidden files
+
+			insinto "${d}"
+			doins -r ${rel_src_path}
+
+			# Mark .bin scripts executable
+			for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
+				for f in $(find "${dir_path}" ) ; do
+					chmod 0755 $(realpath "${f}") || die
+				done
+			done
+
+			# Mark libraries executable
+			for f in $(find "${ed}" \
+					-name "*.so" -type f \
+					-o -name "*.so.*" -type f) ; do
+				chmod 0755 $(realpath "${f}") || die
+			done
+
+			# Mark electron executable
+			for f in $(find "${ed}" -path "*dist/electron" -type f) ; do
+				chmod 0755 "${f}" || die
+			done
+
+			# Mark chrome parts executable
+			for f in $(find "${ed}" -name "chrome-sandbox" -type f) ; do
+				chmod 0755 "${f}" || die
+			done
+
+			if [[ "${old_dotglob}" == "on" ]] ; then
+				shopt -s dotglob
+			else
+				shopt -u dotglob
+			fi
+			;;
+		*)
+			die "Unsupported package system"
+			;;
+	esac
+}
+
 src_install() {
 	if use openrc ; then
 # Cannot finish emerge or testing if micropackage servers are flaky and unreliable.
@@ -373,29 +427,34 @@ ewarn
 	fi
 	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT_MAJOR}"
 
-	#
-	# We can't use .ico because of XDG icon standards.  .ico is not
-	# interoperable with the Linux desktop.
-	#
-	pushd "${S}/newIDE/electron-app/build/" || die
-		convert icon.ico[0] icon-256x256.png
-		convert icon.ico[1] icon-128x128.png
-		convert icon.ico[2] icon-64x64.png
-		convert icon.ico[3] icon-48x48.png
-		convert icon.ico[4] icon-32x32.png
-		convert icon.ico[5] icon-16x16.png
-		newicon -s 256 icon-256x256.png ${PN}.png
-		newicon -s 128 icon-128x128.png ${PN}.png
-		newicon -s 64 icon-64x64.png ${PN}.png
-		newicon -s 48 icon-48x48.png ${PN}.png
-		newicon -s 32 icon-32x32.png ${PN}.png
-		newicon -s 16 icon-16x16.png ${PN}.png
-	popd
-	electron-app_desktop_install \
-		"*" \
-		"newIDE/electron-app/build/icon-256x256.png" \
-		"${MY_PN} $(ver_cut 1 ${PV})" "Development;IDE" \
-		"/usr/bin/gdevelop"
+	if use electron ; then
+		#
+		# We can't use .ico because of XDG icon standards.  .ico is not
+		# interoperable with the Linux desktop.
+		#
+		pushd "${S}/newIDE/electron-app/build/" || die
+			convert icon.ico[0] icon-256x256.png
+			convert icon.ico[1] icon-128x128.png
+			convert icon.ico[2] icon-64x64.png
+			convert icon.ico[3] icon-48x48.png
+			convert icon.ico[4] icon-32x32.png
+			convert icon.ico[5] icon-16x16.png
+			newicon -s 256 icon-256x256.png ${PN}.png
+			newicon -s 128 icon-128x128.png ${PN}.png
+			newicon -s 64 icon-64x64.png ${PN}.png
+			newicon -s 48 icon-48x48.png ${PN}.png
+			newicon -s 32 icon-32x32.png ${PN}.png
+			newicon -s 16 icon-16x16.png ${PN}.png
+		popd
+		electron-app_desktop_install \
+			"*" \
+			"newIDE/electron-app/build/icon-256x256.png" \
+			"${MY_PN} $(ver_cut 1 ${PV})" "Development;IDE" \
+			"/usr/bin/gdevelop"
+	else
+		rm -rf "${S}/newIDE/electron-app" || die
+		electron-app_desktop_install_program "*"
+	fi
 
 	rm "${ED}/usr/bin/gdevelop" || die # Replace wrapper with the one below
 	cp "${FILESDIR}/${PN}" "${T}/${PN}" || die
