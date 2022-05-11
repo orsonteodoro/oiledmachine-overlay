@@ -12,7 +12,7 @@ LICENSE="GDevelop MIT"
 #KEYWORDS="~amd64" # ebuild still in development
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" electron +extensions openrc"
+IUSE+=" +electron +extensions openrc"
 # See https://github.com/4ian/GDevelop/blob/v5.0.131/ExtLibs/installDeps.sh
 # See *raw log* of https://app.travis-ci.com/github/4ian/GDevelop
 # U 16.04
@@ -371,29 +371,34 @@ ewarn
 		fi
 	fi
 	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT_MAJOR}"
-	#
-	# We can't use .ico because of XDG icon standards.  .ico is not
-	# interoperable with the Linux desktop.
-	#
-	pushd "${S}/newIDE/electron-app/build/" || die
-		convert icon.ico[0] icon-256x256.png
-		convert icon.ico[1] icon-128x128.png
-		convert icon.ico[2] icon-64x64.png
-		convert icon.ico[3] icon-48x48.png
-		convert icon.ico[4] icon-32x32.png
-		convert icon.ico[5] icon-16x16.png
-		newicon -s 256 icon-256x256.png ${PN}.png
-		newicon -s 128 icon-128x128.png ${PN}.png
-		newicon -s 64 icon-64x64.png ${PN}.png
-		newicon -s 48 icon-48x48.png ${PN}.png
-		newicon -s 32 icon-32x32.png ${PN}.png
-		newicon -s 16 icon-16x16.png ${PN}.png
-	popd
-	electron-app_desktop_install \
-		"*" \
-		"newIDE/electron-app/build/icon-256x256.png" \
-		"${MY_PN} $(ver_cut 1 ${PV})" "Development;IDE" \
-		"/usr/bin/gdevelop"
+
+	if use electron ; then
+		rm -rf "${ED}/${ELECTRON_APP_INSTALL_PATH}/newIDE/electron-app" || die
+	else
+		#
+		# We can't use .ico because of XDG icon standards.  .ico is not
+		# interoperable with the Linux desktop.
+		#
+		pushd "${S}/newIDE/electron-app/build/" || die
+			convert icon.ico[0] icon-256x256.png
+			convert icon.ico[1] icon-128x128.png
+			convert icon.ico[2] icon-64x64.png
+			convert icon.ico[3] icon-48x48.png
+			convert icon.ico[4] icon-32x32.png
+			convert icon.ico[5] icon-16x16.png
+			newicon -s 256 icon-256x256.png ${PN}.png
+			newicon -s 128 icon-128x128.png ${PN}.png
+			newicon -s 64 icon-64x64.png ${PN}.png
+			newicon -s 48 icon-48x48.png ${PN}.png
+			newicon -s 32 icon-32x32.png ${PN}.png
+			newicon -s 16 icon-16x16.png ${PN}.png
+		popd
+		electron-app_desktop_install \
+			"*" \
+			"newIDE/electron-app/build/icon-256x256.png" \
+			"${MY_PN} $(ver_cut 1 ${PV})" "Development;IDE" \
+			"/usr/bin/gdevelop"
+	fi
 
 	rm "${ED}/usr/bin/gdevelop" || die # Replace wrapper with the one below
 	cp "${FILESDIR}/${PN}" "${T}/${PN}" || die
