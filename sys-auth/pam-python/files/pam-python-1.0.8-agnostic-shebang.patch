@@ -1,0 +1,18 @@
+diff -urp pam-python-1.0.8.orig/src/setup.py pam-python-1.0.8/src/setup.py
+--- pam-python-1.0.8.orig/src/setup.py	2020-11-10 01:58:10.000000000 -0800
++++ pam-python-1.0.8/src/setup.py	2022-05-10 15:39:40.798176924 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python2 -W default
++#!/usr/bin/python -W default
+ import warnings; warnings.simplefilter('default')
+ 
+ import distutils.sysconfig
+diff -urp pam-python-1.0.8.orig/src/test.py pam-python-1.0.8/src/test.py
+--- pam-python-1.0.8.orig/src/test.py	2020-11-10 01:58:10.000000000 -0800
++++ pam-python-1.0.8/src/test.py	2022-05-10 15:39:38.331413463 -0700
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python2 -W default
++#!/usr/bin/python -W default
+ #
+ # This is the test script for libpython-pam.  There aren't many stones
+ # left unturned.

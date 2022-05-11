@@ -47,6 +47,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.8-self-assign-check.patch"
 	"${FILESDIR}/${PN}-1.0.8-use-PyBytes_Size.patch"
 	"${FILESDIR}/${PN}-1.0.8-fix-build-dir.patch"
+	"${FILESDIR}/${PN}-1.0.8-agnostic-shebang.patch"
 )
 
 pkg_setup() {
@@ -62,12 +63,9 @@ eerror "FEATURES:  ${FEATURES}"
 
 src_prepare() {
 	default
-	for x in $(grep -r -l -F -e '#!/usr/bin/python2' "${S}") ; do
-		einfo "Editing ${x}"
-		sed -i -e "s|/usr/bin/python2|/usr/bin/python3|g" "${x}" || die
-	done
-	einfo "Futurizing py2 -> py3"
-	futurize -0 -w . || die
+	# Breaks with python2.7
+#	einfo "Futurizing py2 -> py3"
+#	futurize -0 -w . || die
 }
 
 src_configure() {

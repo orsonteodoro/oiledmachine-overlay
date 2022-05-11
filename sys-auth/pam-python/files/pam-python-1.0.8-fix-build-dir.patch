@@ -14,7 +14,7 @@
  	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" ./setup.py build --debug
  	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" Py_DEBUG=1 ./setup.py build --debug
 -	ln -sf build/lib.*/$@ .
-+	ln -sf $(shell realpath build/lib.linux-$(ARCH)-cpython-${PYV}/*.so) $@
++	ln -sf $(shell realpath build/lib.linux-$(ARCH)-cpython-$(PYV)/*.so) $@
  
  .PHONY: install install-lib
  install: install-lib
