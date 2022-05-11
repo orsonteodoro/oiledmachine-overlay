@@ -37,20 +37,25 @@ SRC_URI=" mirror://sourceforge/${PN}/${P}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( agpl-3.0.txt ChangeLog.txt README.txt )
+
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0.8-no-sudo.patch"
 	"${FILESDIR}/${PN}-1.0.8-compiler-agnostic.patch"
-	"${FILESDIR}/${PN}-1.0.8-use-PyType_Check.patch"
-	"${FILESDIR}/${PN}-1.0.8-use-PyObject_Call.patch"
+	"${FILESDIR}/${PN}-1.0.8-agnostic-shebang.patch"
+	"${FILESDIR}/${PN}-1.0.8-fix-build-dir.patch"
+	"${FILESDIR}/${PN}-1.0.8-Makefile-EPYTHON.patch"
+
+	# python3.8 compat
 	"${FILESDIR}/${PN}-1.0.8-cast-value-as-char-ptr.patch"
 	"${FILESDIR}/${PN}-1.0.8-use-PyUnicode_GET_LENGTH.patch"
-	"${FILESDIR}/${PN}-1.0.8-self-assign-check.patch"
-	"${FILESDIR}/${PN}-1.0.8-use-PyBytes_Size.patch"
-	"${FILESDIR}/${PN}-1.0.8-fix-build-dir.patch"
-	"${FILESDIR}/${PN}-1.0.8-agnostic-shebang.patch"
+	"${FILESDIR}/${PN}-1.0.8-use-PyType_Check.patch"
+
+	# python3.9 compat
+	"${FILESDIR}/${PN}-1.0.8-use-PyObject_Call.patch"
 )
 
 pkg_setup() {
+	addwrite /etc/pam.d
 	python-single-r1_pkg_setup
 	if use test ; then
 		if [[ "${FEATURES}" =~ (^| |"user")"sandbox" ]] ; then
@@ -81,13 +86,9 @@ src_compile() {
 }
 
 src_test() {
-	# Does not work outside emerge.  Also, the forked 1.0.7 (with python 3.9 support)
-	# in the link below doesn't work.  The fork below segfaults in addition
-	# to this ebuild.
-	# https://github.com/castlabs/pam-python/commits/master/src/pam_python.c
-	addwrite /etc/pam.d
-	addwrite /etc/pam.d/test-pam_python.pam
-	addwrite /etc/pam.d/test-pam_python-installed.pam
+	ewarn "Tests only work with python2.7 and must be ran outside of emerge."
+	ewarn "Run test with \`make test\`."
+	ewarn "After completion, \`make clean\` to remove symlinks."
 	ewarn
 	ewarn "If the test fail, the following need to be manually removed:"
 	ewarn
@@ -107,15 +108,4 @@ src_install() {
 		DESTDIR="${D}" \
 		LIBDIR="${EPREFIX}/$(get_libdir)/security"
 	einstalldocs
-}
-
-pkg_postinst() {
-	if use test ; then
-		if [[ -e "/etc/pam.d/test-pam_python.pam" ]] ; then
-			rm "/etc/pam.d/test-pam_python.pam" || die
-		fi
-		if [[ -e "/etc/pam.d/test-pam_python-installed.pam" ]] ; then
-			rm "/etc/pam.d/test-pam_python-installed.pam" || die
-		fi
-	fi
 }

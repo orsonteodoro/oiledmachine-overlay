@@ -1,0 +1,39 @@
+diff -urp pam-python-1.0.8.orig/src/Makefile pam-python-1.0.8/src/Makefile
+--- pam-python-1.0.8.orig/src/Makefile	2022-05-10 20:02:40.392852041 -0700
++++ pam-python-1.0.8/src/Makefile	2022-05-10 20:06:15.661240844 -0700
+@@ -4,15 +4,15 @@ WARNINGS=-Wall -Wextra -Wundef -Wshadow
+ #WARNINGS=-Wunreachable-code 	# Gcc 4.1 .. 4.4 are too buggy to make this useful
+ 
+ LIBDIR ?= /lib/security
+-PYV=$(shell python --version | cut -f 2 -d " " | cut -f 1-2 -d "." | sed -e "s|\.||g")
++PYV=$(shell $(EPYTHON) --version | cut -f 2 -d " " | cut -f 1-2 -d "." | sed -e "s|\.||g")
+ ARCH=$(shell uname -m)
+ 
+ pam_python.so: pam_python.c setup.py Makefile
+ 	@rm -f "$@"
+ 	@[ ! -e build -o build/lib.*/$@ -nt setup.py -a build/lib.*/$@ -nt Makefile ] || rm -r build
+-	CFLAGS="$(CFLAGS) $(WARNINGS) -I/usr/local/lib/ " ./setup.py build --debug
+-	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" ./setup.py build --debug
+-	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" Py_DEBUG=1 ./setup.py build --debug
++	CFLAGS="$(CFLAGS) $(WARNINGS) -I/usr/local/lib/ " $(EPYTHON) ./setup.py build --debug
++	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" $(EPYTHON) ./setup.py build --debug
++	@#CFLAGS="$(CFLAGS) -Og $(WARNINGS)" Py_DEBUG=1 $(EPYTHON) ./setup.py build --debug
+ 	ln -sf $(shell realpath build/lib.linux-$(ARCH)-cpython-$(PYV)/*.so) $@
+ 
+ .PHONY: install install-lib
+@@ -40,7 +40,7 @@ test-pam_python.pam: test-pam_python.pam
+ 
+ .PHONY: test
+ test: pam_python.so ctest /etc/pam.d/test-pam_python.pam
+-	python test.py
++	$(EPYTHON) test.py
+ 	./ctest python
+ 
+ test-pam_python-installed.pam: test-pam_python.pam.in Makefile
+@@ -52,5 +52,5 @@ test-pam_python-installed.pam: test-pam_
+ 
+ .PHONY: installed-test
+ installed-test: ctest /etc/pam.d/test-pam_python-installed.pam
+-	python test.py
++	$(EPYTHON) test.py
+ 	./ctest python

@@ -168,3 +168,6 @@ sys-devel/souper tcp
 
 # Build time failures
 =sys-kernel/ot-sources-5.15* prjc
+
+# Tests requires python2.7 but packaged pypam is only python3
+sys-auth/pam-python test
