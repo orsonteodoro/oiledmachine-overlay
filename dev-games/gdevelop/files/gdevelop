@@ -1,5 +1,5 @@
 #!/bin/bash
-SETTINGS=$(realpath ~/)"/.config/gdevelop/gdevelop.conf"
+SETTINGS=$(realpath ~/)"/.config/${PN}/${PN}.conf"
 if [[ -f "${SETTINGS}" ]] ; then
 	gperms=$(stat -c '%a' "${SETTINGS}" | cut -c 2)
 	operms=$(stat -c '%a' "${SETTINGS}" | cut -c 3)
@@ -10,12 +10,12 @@ if [[ -f "${SETTINGS}" ]] ; then
 		source "${SETTINGS}"
 	else
 		echo "${SETTINGS} must have chown ${USER}:${USER} and chmod go-w."
-		echo "Make sure that the contents of gdevelop.conf is clean."
+		echo "Make sure that the contents of ${PN}.conf is clean."
 		echo "Prevented possible injection execution.  Exiting."
 		exit 1
 	fi
 fi
-ROOT="/usr/$(get_libdir)/node/${PN}/${SLOT_MAJOR}"
+ROOT="/opt/${PN}/${SLOT_MAJOR}"
 IDE_MODE=${IDE_MODE:="Electron"} # can be either Electron or Web_Browser
 
 pushd "${ROOT}/newIDE/electron-app"

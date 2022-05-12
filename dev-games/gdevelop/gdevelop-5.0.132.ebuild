@@ -5,6 +5,7 @@ EAPI=7
 inherit check-reqs cmake-utils desktop electron-app eutils user \
 	toolchain-funcs xdg
 
+MY_PN="GDevelop"
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed
 to be used by everyone."
 HOMEPAGE="https://gdevelop-app.com/"
@@ -13,7 +14,7 @@ LICENSE="GDevelop MIT"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" +electron +extensions openrc"
-# See https://github.com/4ian/GDevelop/blob/v5.0.131/ExtLibs/installDeps.sh
+# See https://github.com/4ian/GDevelop/blob/v5.0.132/ExtLibs/installDeps.sh
 # See *raw log* of https://app.travis-ci.com/github/4ian/GDevelop
 # U 16.04
 # Dependencies in native are not installed in CI
@@ -76,16 +77,15 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_V}[npm]
 "
 ELECTRON_APP_ELECTRON_V="8.2.5" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.131/newIDE/electron-app/package-lock.json
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.132/newIDE/electron-app/package-lock.json
 ELECTRON_APP_REACT_V="16.8.6" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.131/newIDE/app/package-lock.json
-MY_PN="GDevelop"
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.132/newIDE/app/package-lock.json
 MY_PV="${PV//_/-}"
 # For the SFML version, see \
-# https://github.com/4ian/GDevelop/blob/v5.0.131/ExtLibs/CMakeLists.txt
+# https://github.com/4ian/GDevelop/blob/v5.0.132/ExtLibs/CMakeLists.txt
 SFML_V="2.4.1"
 SRC_URI="
-https://github.com/4ian/GDevelop/archive/v${MY_PV}.tar.gz
+https://github.com/4ian/${MY_PN}/archive/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/SFML/SFML/commit/87aaa9e145659d6a8fc193ab8540cf847d4d0def.patch
 	-> ${PV}-SFML-mesa-ge-20180525-compat.patch
@@ -279,14 +279,14 @@ einfo "LDFLAGS=${LDFLAGS}"
 einfo "NODE_VERSION=${NODE_VERSION}"
 
 einfo
-einfo "Building GDevelop.js"
+einfo "Building ${MY_PN}.js"
 einfo
-	export STEP="BUILDING_GDEVELOPJS"
-	S="${WORKDIR}/${MY_PN}-${MY_PV}/GDevelop.js" \
+	export STEP="BUILDING_GDEVELOP_JS"
+	S="${WORKDIR}/${MY_PN}-${MY_PV}/${MY_PN}.js" \
 	electron-app_src_unpack
 
 einfo
-einfo "Building GDevelop IDE"
+einfo "Building ${MY_PN} IDE"
 einfo
 	export STEP="BUILDING_GDEVELOP_IDE"
 	S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app" \
@@ -294,7 +294,7 @@ einfo
 
 	if use electron ; then
 einfo
-einfo "Building GDevelop$(ver_cut 1 ${PV}) on the Electron runtime"
+einfo "Building ${MY_PN} $(ver_cut 1 ${PV}) on the Electron runtime"
 einfo
 		export STEP="BUILDING_GDEVELOP_IDE_ELECTRON"
 		S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/electron-app" \
@@ -315,24 +315,24 @@ src_configure() { :; }
 src_compile() { :; }
 
 electron-app_src_compile() {
-	if [[ "${STEP}" == "BUILDING_GDEVELOPJS" ]] ; then
+	if [[ "${STEP}" == "BUILDING_GDEVELOP_JS" ]] ; then
 		einfo
-		einfo "Compiling GDevelop.js"
+		einfo "Compiling ${MY_PN}.js"
 		einfo
 # In https://github.com/4ian/GDevelop/blob/v5.0.0-beta98/GDevelop.js/Gruntfile.js#L88
 		npm run build -- --force --dev || die
-		if [[ ! -f "${S_BAK}/Binaries/embuild/GDevelop.js/libGD.wasm" ]]
+		if [[ ! -f "${S_BAK}/Binaries/embuild/${MY_PN}.js/libGD.wasm" ]]
 		then
 eerror
-eerror "Missing libGD.wasm from ${S_BAK}/Binaries/embuild/GDevelop.js"
+eerror "Missing libGD.wasm from ${S_BAK}/Binaries/embuild/${MY_PN}.js"
 eerror
 			die
 		fi
 
-		if [[ ! -f "${S_BAK}/Binaries/embuild/GDevelop.js/libGD.js" ]]
+		if [[ ! -f "${S_BAK}/Binaries/embuild/${MY_PN}.js/libGD.js" ]]
 		then
 eerror
-eerror "Missing libGD.js from ${S_BAK}/Binaries/embuild/GDevelop.js"
+eerror "Missing libGD.js from ${S_BAK}/Binaries/embuild/${MY_PN}.js"
 eerror
 			die
 		fi
@@ -408,13 +408,31 @@ install_program() {
 	esac
 }
 
+shrink_install() {
+	local paths=(
+		"GDCpp"
+		".circleci"
+		".clang_complete"
+		".clang_format"
+		".eslintrc"
+		".github"
+		".gitignore"
+		".travis.yml"
+		".vscode"
+	)
+	local p
+	for p in ${paths[@]} ; do
+		rm -rfv "${p}" || true
+	done
+}
+
 src_install() {
 	if use openrc ; then
 # Cannot finish emerge or testing if micropackage servers are flaky and unreliable.
-# The patch just sets the PID file of the gdevelop-server, so it is easier to
+# The patch just sets the PID file of the ${PN}-server, so it is easier to
 # shut down.
 ewarn
-ewarn "The ${FILESDIR}/gdevelop-5.0.0_beta97-wrapper-file-signal.patch has not"
+ewarn "The ${FILESDIR}/${PN}-5.0.0_beta97-wrapper-file-signal.patch has not"
 ewarn "been tested in recent point releases."
 ewarn
 ewarn "Add SKIP_WRAPPER_FILE_SIGNAL=1 to bypass and manually patch if it fails."
@@ -422,10 +440,12 @@ ewarn
 		if [[ "${SKIP_WRAPPER_FILE_SIGNAL}" == "1" ]] ; then
 			:
 		else
-			eapply "${FILESDIR}/gdevelop-5.0.0_beta97-wrapper-file-signal.patch"
+			eapply "${FILESDIR}/${PN}-5.0.0_beta97-wrapper-file-signal.patch"
 		fi
 	fi
-	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT_MAJOR}"
+	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
+
+	shrink_install
 
 	if use electron ; then
 		#
@@ -450,16 +470,17 @@ ewarn
 			"*" \
 			"newIDE/electron-app/build/icon-256x256.png" \
 			"${MY_PN} $(ver_cut 1 ${PV})" "Development;IDE" \
-			"/usr/bin/gdevelop"
+			"/usr/bin/${PN}"
 	else
 		rm -rf "${S}/newIDE/electron-app" || die
 		electron-app_desktop_install_program "*"
 	fi
 
-	rm "${ED}/usr/bin/gdevelop" || die # Replace wrapper with the one below
+	rm "${ED}/usr/bin/${PN}" || die # Replace wrapper with the one below
 	cp "${FILESDIR}/${PN}" "${T}/${PN}" || die
 	sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
 		-e "s|\${PN}|${PN}|g" \
+		-e "s|\${MY_PN}|${MY_PN}|g" \
 		-e "s|\${SLOT_MAJOR}|${SLOT_MAJOR}|g" \
 		"${T}/${PN}" || die
 	exeinto /usr/bin
@@ -475,7 +496,7 @@ ewarn
 		doexe "${T}/${PN}-server"
 	fi
 
-	fowners gdevelop:gdevelop \
+	fowners ${PN}:${PN} \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/libGD.js-for-tests-only/index.js" \
@@ -484,10 +505,14 @@ ewarn
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/libGD.js" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/libGD.wasm" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/src/Version/VersionMetadata.js"
-        fowners -R gdevelop:gdevelop \
+        fowners -R ${PN}:${PN} \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime" \
+		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/node_modules/GDJS-for-web-app-only/Runtime-sources" \
+		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/external" \
+		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/resources/GDJS" \
 		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime" \
-		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/public/external"
+		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/resources/GDJS/Runtime-sources" \
+		"${ELECTRON_APP_INSTALL_PATH}/newIDE/app/src/UI/Theme/"
 }
 
 pkg_postinst() {
@@ -495,8 +520,8 @@ pkg_postinst() {
 	xdg_pkg_postinst
 einfo
 	if use openrc ; then
-einfo "The OpenRC init script is called gdevelop-server.  The gdevelop-server"
-einfo "must be started before running the gdevelop wrapper."
+einfo "The OpenRC init script is called ${PN}-server.  The ${PN}-server"
+einfo "must be started before running the ${PN} wrapper."
 	else
 ewarn "You must write an init script to start the server or launch the server"
 ewarn "manually."
@@ -506,26 +531,26 @@ einfo "Do not add users to ${PN} group.  It is for server use only."
 einfo
 einfo "Your projects are saved in"
 einfo
-einfo "  \"\$(xdg-user-dir DOCUMENTS)/GDevelop projects\""
+einfo "  \"\$(xdg-user-dir DOCUMENTS)/${MY_PN} projects\""
 einfo
 einfo "if using the Electron version."
 einfo
 einfo "You can set the IDE_MODE by either Electron or Web_Browser before running"
-einfo "gdevelop."
+einfo "${PN}."
 einfo
 einfo "Example:"
 einfo
-einfo "  IDE_MODE=\"Web_Browser\" gdevelop"
+einfo "  IDE_MODE=\"Web_Browser\" ${PN}"
 einfo
-einfo "Or, you can set it in ~/.config/gdevelop/gdevelop.conf.  The contents of"
-einfo "gdevelop.conf are as follows:"
+einfo "Or, you can set it in ~/.config/${PN}/${PN}.conf.  The contents of"
+einfo "${PN}.conf are as follows:"
 einfo
 einfo "  IDE_MODE=\"Web_Browser\""
 einfo
-einfo "After saving IDE_MODE in gdevelop.conf, make sure that you:"
+einfo "After saving IDE_MODE in ${PN}.conf, make sure that you:"
 einfo
-einfo "  chown \${USER}:\${USER} ~/.config/gdevelop/gdevelop.conf"
-einfo "  chmod go-w ~/.config/gdevelop/gdevelop.conf"
+einfo "  chown \${USER}:\${USER} ~/.config/${PN}/${PN}.conf"
+einfo "  chmod go-w ~/.config/${PN}/${PN}.conf"
 ewarn
 ewarn
 ewarn "Games may send anonymous statistics.  See the following commits for details:"
