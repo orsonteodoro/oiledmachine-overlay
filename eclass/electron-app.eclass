@@ -160,7 +160,7 @@ CVE_PATCHED_NODE_16_E15="16.5.0" # old
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
 LATEST_CHROMIUM_102="102.0.4962.3" # E19 ; dev
 LATEST_CHROMIUM_102="102.0.4999.0" # E20 ; dev
-LATEST_CHROMIUM_100="100.0.4896.143" # E18 ; latest stable
+LATEST_CHROMIUM_100="100.0.4896.143" # E18 ; EOL
 LATEST_CHROMIUM_98="98.0.4758.141" # E17 ; EOL
 LATEST_CHROMIUM_96="96.0.4664.174" # E16 ; EOL
 LATEST_CHROMIUM_94="94.0.4606.81" # E15 ; EOL
