@@ -428,18 +428,14 @@ shrink_install() {
 
 src_install() {
 	if use openrc ; then
-# Cannot finish emerge or testing if micropackage servers are flaky and unreliable.
-# The patch just sets the PID file of the ${PN}-server, so it is easier to
-# shut down.
-ewarn
-ewarn "The ${FILESDIR}/${PN}-5.0.0_beta97-wrapper-file-signal.patch has not"
-ewarn "been tested in recent point releases."
-ewarn
-ewarn "Add SKIP_WRAPPER_FILE_SIGNAL=1 to bypass and manually patch if it fails."
-ewarn
 		if [[ "${SKIP_WRAPPER_FILE_SIGNAL}" == "1" ]] ; then
 			:
 		else
+# The patch just sets the PID file of the ${PN}-server, so it is easier to
+# shut down.
+ewarn
+ewarn "Add SKIP_WRAPPER_FILE_SIGNAL=1 to bypass and manually patch if it fails."
+ewarn
 			eapply "${FILESDIR}/${PN}-5.0.0_beta97-wrapper-file-signal.patch"
 		fi
 	fi
