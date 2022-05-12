@@ -122,22 +122,22 @@ ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 # See also:  https://raw.githubusercontent.com/electron/releases/master/lite.json
 
 # Track "Security:" in https://www.electronjs.org/releases/nightly?version=20
-CVE_PATCHED_ELECTRON_20="20.0.0-nightly.20220421"
+CVE_PATCHED_ELECTRON_20="20.0.0-nightly.20220506"
 
 # Track "Security:" in https://www.electronjs.org/releases/nightly?version=19
 CVE_PATCHED_ELECTRON_19="19.0.0-nightly.20220329"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=18
-CVE_PATCHED_ELECTRON_18="18.1.0"
+CVE_PATCHED_ELECTRON_18="18.2.1"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=17
-CVE_PATCHED_ELECTRON_17="17.4.1"
+CVE_PATCHED_ELECTRON_17="17.4.3"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=16
-CVE_PATCHED_ELECTRON_16="16.2.3"
+CVE_PATCHED_ELECTRON_16="16.2.5"
 
 # Track "Security:" in https://www.electronjs.org/releases/stable?version=15
-CVE_PATCHED_ELECTRON_15="15.5.2"
+CVE_PATCHED_ELECTRON_15="15.5.4"
 
 
 # Track "Vulnerabilities fixed" in https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
@@ -158,9 +158,9 @@ CVE_PATCHED_NODE_16_E15="16.5.0" # old
 
 # Beta channel
 # Track "security updates" in https://chromereleases.googleblog.com/search/label/Stable%20updates
-LATEST_CHROMIUM_102="102.0.4989.0" # E20 ; dev
 LATEST_CHROMIUM_102="102.0.4962.3" # E19 ; dev
-LATEST_CHROMIUM_100="100.0.4896.127" # E18 ; latest stable
+LATEST_CHROMIUM_102="102.0.4999.0" # E20 ; dev
+LATEST_CHROMIUM_100="100.0.4896.143" # E18 ; latest stable
 LATEST_CHROMIUM_98="98.0.4758.141" # E17 ; EOL
 LATEST_CHROMIUM_96="96.0.4664.174" # E16 ; EOL
 LATEST_CHROMIUM_94="94.0.4606.81" # E15 ; EOL
