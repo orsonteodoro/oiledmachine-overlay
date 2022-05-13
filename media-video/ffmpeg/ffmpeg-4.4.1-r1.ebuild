@@ -130,6 +130,7 @@ IUSE+="
 	lgpl3_to_gpl3
 	lgpl3x_to_gpl3
 "
+IUSE+=" r2"
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
 # You can't go backwards if you relicense.  This is why it is mutex.
@@ -622,6 +623,8 @@ S_orig="${WORKDIR}/${P/_/-}"
 
 PATCHES=(
 	"${FILESDIR}"/chromium-r1.patch
+	"${FILESDIR}"/${PN}-5.0-backport-ranlib-build-fix.patch
+	"${FILESDIR}"/${PN}-9999-g729_parser-Check-channels.patch
 )
 
 MULTILIB_WRAPPED_HEADERS=(

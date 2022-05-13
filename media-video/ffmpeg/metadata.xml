@@ -311,6 +311,7 @@
 	<flag name="zeromq">Enables <pkg>net-libs/zeromq</pkg> support with the zmq/azmq filters.</flag>
 	<flag name="zimg">Enables <pkg>media-libs/zimg</pkg> based scale filter.</flag>
 	<flag name="zvbi">Enables <pkg>media-libs/zvbi</pkg> based teletext decoder.</flag>
+	<flag name="rN">(FOR INTERNAL USE ONLY) Ebuild fork revision.</flag>
 </use>
 <slots>
 	<slot name="0">For building against. This is the only slot that provides
