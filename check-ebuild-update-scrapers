@@ -1026,7 +1026,12 @@ https://github.com/MediaArea/ZenLib.git)
 
 _liri_pv() {
 	local p="${1}"
-	wget -q -O - "https://raw.githubusercontent.com/${p}/develop/CMakeLists.txt" | grep -F -e " VERSION" | cut -f 2 -d '"' | head -n 1
+	local branch="{2}"
+	if [[ -n "${branch}" ]] ; then
+		wget -q -O - "https://raw.githubusercontent.com/${p}/${branch}/CMakeLists.txt" | grep -F -e " VERSION" | cut -f 2 -d '"' | head -n 1
+	else
+		wget -q -O - "https://raw.githubusercontent.com/${p}/develop/CMakeLists.txt" | grep -F -e " VERSION" | cut -f 2 -d '"' | head -n 1
+	fi
 }
 
 repo_latest_version_get_liri-base-appcenter_pv() {
@@ -1150,7 +1155,7 @@ repo_latest_version_get_liri-extra-calculator_pv() {
 }
 
 repo_latest_version_get_liri-extra-music_pv() {
-	local pv=$(_liri_pv "lirios/music")
+	local pv=$(_liri_pv "lirios/music" "master")
 	echo "${pv}_p9999"
 }
 
