@@ -241,7 +241,7 @@ COMMON_DEPEND="
 	media-libs/harfbuzz[icu(-)]
 	media-libs/libepoxy
 	media-libs/libpng
-	media-libs/mesa[egl,gbm]
+	media-libs/mesa[egl(+),gbm(+)]
 	media-video/ffmpeg
 	net-dns/libidn2
 	net-libs/gnutls
