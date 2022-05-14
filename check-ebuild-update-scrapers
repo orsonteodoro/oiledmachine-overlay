@@ -1026,7 +1026,7 @@ https://github.com/MediaArea/ZenLib.git)
 
 _liri_pv() {
 	local p="${1}"
-	local branch="${2}"
+	local branch="${2:-}"
 	if [[ -n "${branch}" ]] ; then
 		wget -q -O - "https://raw.githubusercontent.com/${p}/${branch}/CMakeLists.txt" | grep -F -e " VERSION" | cut -f 2 -d '"' | head -n 1
 	else
