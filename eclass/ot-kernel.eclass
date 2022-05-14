@@ -2855,6 +2855,7 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 # @FUNCTION: ot-kernel_set_kconfig_dmesg
 # @DESCRIPTION:
 # Shows or hides early printk or dmesg
+_OT_KERNEL_PRINK_DISABLED=0
 ot-kernel_set_kconfig_dmesg() {
 	local dmesg
 	local override="${1}"
@@ -2869,6 +2870,7 @@ ot-kernel_set_kconfig_dmesg() {
 	elif [[ "${dmesg}" == "0" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_PRINTK"
 		ot-kernel_unset_configopt "CONFIG_EARLY_PRINTK"
+		_OT_KERNEL_PRINK_DISABLED=1
 	elif [[ "${dmesg}" == "default" ]] ; then
 		ot-kernel_y_configopt "CONFIG_PRINTK"
 		ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
@@ -6374,6 +6376,14 @@ ewarn
 ewarn
 ewarn "You have disabled DMA attack mitigation.  It is not recommended if"
 ewarn "you use full disk encryption."
+ewarn
+	fi
+	if [[ "${_OT_KERNEL_PRINK_DISABLED}" == "1" ]] ; then
+ewarn
+ewarn "All the /var/log/dmesg* files need to be shred (or other cryptographic"
+ewarn "erase tool) to prevent obtaining details for a possible DMA attack or"
+ewarn "vulnerability scans.  This is to be done after booting into a kernel"
+ewarn "with dmesg disabled."
 ewarn
 	fi
 }
