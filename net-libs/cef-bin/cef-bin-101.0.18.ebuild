@@ -15,7 +15,7 @@ HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
 KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 # The download page can be found at https://cef-builds.spotifycdn.com/index.html
 
-CEF_VERSION_RAW="05/03/2022 - 101.0.15+gca159c5+chromium-101.0.4951.54 / Chromium 101.0.4951.54"
+CEF_VERSION_RAW="05/14/2022 - 101.0.18+g367b4a0+chromium-101.0.4951.67 / Chromium 101.0.4951.67"
 CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/4e5ba66/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4844
 CEF_COMMIT="${CEF_VERSION_RAW#*\+}" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 CEF_COMMIT="${CEF_COMMIT%\+*}"
@@ -49,8 +49,8 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/101.0.4951.54/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/101.0.4951.54/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/101.0.4951.67/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/101.0.4951.67/build/install-build-deps.sh#L151
 # TODO: app-accessibility/speech-dispatcher needs multilib
 GLIB_V="2.48"
 XI_V="1.7.6"
