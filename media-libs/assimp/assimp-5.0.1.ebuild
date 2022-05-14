@@ -12,7 +12,7 @@ doc? ( https://github.com/${PN}/${PN}/releases/download/v${PV}/${PN}-docs-${PV}.
 
 LICENSE="BSD"
 SLOT="0/${PV}"
-KEYWORDS="amd64 ~arm arm64 x86"
+KEYWORDS="amd64 ~arm arm64 ~riscv x86"
 IUSE="doc samples static-libs test"
 
 RESTRICT="!test? ( test )"
@@ -48,9 +48,9 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DASSIMP_BUILD_STATIC_LIB=$(usex static-libs)
 		-DCMAKE_DEBUG_POSTFIX=""
 		-DASSIMP_BUILD_SAMPLES=$(usex samples)
+		-DASSIMP_BUILD_STATIC_LIB=$(usex static-libs)
 		-DASSIMP_BUILD_TESTS=$(usex test)
 	)
 

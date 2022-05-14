@@ -1,0 +1,65 @@
+# Copyright 1999-2022 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+inherit cmake-multilib
+
+DESCRIPTION="Importer library to import assets from 3D files"
+HOMEPAGE="https://github.com/assimp/assimp"
+SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+
+LICENSE="BSD"
+SLOT="0/${PV}"
+KEYWORDS="amd64 ~arm arm64 ~riscv ~x86"
+IUSE="samples static-libs test"
+
+RESTRICT="!test? ( test )"
+
+RDEPEND="
+	dev-libs/boost:=[${MULTILIB_USEDEP}]
+	sys-libs/zlib[${MULTILIB_USEDEP},minizip]
+	samples? (
+		media-libs/freeglut[${MULTILIB_USEDEP}]
+		virtual/opengl[${MULTILIB_USEDEP}]
+		x11-libs/libX11[${MULTILIB_USEDEP}]
+	)
+"
+DEPEND="${RDEPEND}"
+BDEPEND="
+	test? ( dev-cpp/gtest )
+"
+
+PATCHES=(
+	"${FILESDIR}"/${P}-fix-usage-of-incompatible-minizip-data-structure.patch
+	"${FILESDIR}"/${P}-disable-failing-tests.patch
+)
+
+src_prepare() {
+	cmake-utils_src_prepare
+	multilib_copy_sources
+}
+
+src_configure() {
+	local mycmakeargs=(
+		-DASSIMP_ASAN=OFF
+		-DASSIMP_BUILD_DOCS=OFF
+		-DASSIMP_BUILD_SAMPLES=$(usex samples)
+		-DASSIMP_BUILD_STATIC_LIB=$(usex static-libs)
+		-DASSIMP_BUILD_TESTS=$(usex test)
+		-DASSIMP_ERROR_MAX=ON
+		-DASSIMP_INJECT_DEBUG_POSTFIX=OFF
+		-DASSIMP_IGNORE_GIT_HASH=ON
+		-DASSIMP_UBSAN=OFF
+	)
+
+	if use samples; then
+		mycmakeargs+=( -DOpenGL_GL_PREFERENCE="GLVND" )
+	fi
+
+	cmake-multilib_src_configure
+}
+
+src_test() {
+	"${BUILD_DIR}/bin/unit" || die
+}

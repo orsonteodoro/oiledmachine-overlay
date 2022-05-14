@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<!-- maintainer-needed -->
+	<maintainer type="person">
+		<!-- only for this ebuild fork on the oildedmachine-overlay -->
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
+	</maintainer>
+	<maintainer type="person" proxied="yes">
+		<!-- original ebuild maintainers -->
+		<email>waebbl-gentoo@posteo.net</email>
+		<name>Bernd Waibel</name>
+	</maintainer>
+	<maintainer type="project" proxied="proxy">
+		<!-- original ebuild maintainers -->
+		<email>proxy-maint@gentoo.org</email>
+		<name>Gentoo Proxy Maintainers</name>
+	</maintainer>
 	<use>
 		<flag name="samples">Build viewer library</flag>
 	</use>
@@ -9,4 +23,7 @@
 		<remote-id type="sourceforge">assimp</remote-id>
 		<remote-id type="github">assimp/assimp</remote-id>
 	</upstream>
+	<longdescription>
+		This ebuild fork is for multilib and static-libs support.
+	</longdescription>
 </pkgmetadata>
