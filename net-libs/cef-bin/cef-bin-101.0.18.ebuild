@@ -159,7 +159,7 @@ append_all() {
 pkg_setup() {
 	chromium_suid_sandbox_check_kernel_config
 	if use test ; then
-		if [[ "${FEATURES}" =~ sandbox ]] ; then
+		if [[ "${FEATURES}" =~ (^| )"sandbox" ]] ; then
 eerror
 eerror "-sandbox must be added to FEATURES to use the test USE flag."
 eerror
