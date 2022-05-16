@@ -310,6 +310,7 @@ https://github.com/llvm/llvm-project.git \
 		| sed -e "s|-|_|g" \
 		| grep -G -e "^"$(echo "${oiledmachine_pv}" \
 			| cut -f 1 -d ".") \
+		| sed -e "s|_init|.0.0_init|g" \
 		| esort \
 		| tr " " "\n" \
 		| tail -n 1)

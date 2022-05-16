@@ -226,13 +226,17 @@ get_tags() {
 # You need to call `| tr " " "\n"` immediately afterwards.
 demote_prereleases() {
       	ARG=$(</dev/stdin)
-        echo -e $(echo -e "${ARG}" | sed -r -e "s#_(rc|beta|alpha|pre|p)#z\1#")
+        echo -e $(echo -e "${ARG}" \
+		| sed -r -e 's#([0-9]+)$#\1___#g' \
+		| sed -r -e "s#_(rc|beta|alpha|pre|p)#z\1#")
 }
 
 # strip hinter
 strip_hinter() {
       	ARG=$(</dev/stdin)
-        echo -e $(echo -e "${ARG}" | sed -r -e "s#z(rc|beta|alpha|pre|p)#_\1#")
+        echo -e $(echo -e "${ARG}" \
+		| sed -r -e 's#([0-9]+)___$#\1#g' \
+		| sed -r -e "s#z(rc|beta|alpha|pre|p)#_\1#")
 }
 
 # You need to call `| tr " " "\n"` immediately afterwards.
