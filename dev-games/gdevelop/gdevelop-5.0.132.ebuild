@@ -472,7 +472,9 @@ ewarn
 		electron-app_desktop_install_program "*"
 	fi
 
-	rm "${ED}/usr/bin/${PN}" || die # Replace wrapper with the one below
+	if [[ -e "${ED}/usr/bin/${PN}" ]] ; then
+		rm "${ED}/usr/bin/${PN}" || die # Replace wrapper with the one below
+	fi
 	cp "${FILESDIR}/${PN}" "${T}/${PN}" || die
 	sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
 		-e "s|\${PN}|${PN}|g" \
