@@ -14,6 +14,7 @@ LICENSE="GDevelop MIT"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" +electron +extensions minimal openrc"
+REQUIRED_USE+=" electron"
 # See https://github.com/4ian/GDevelop/blob/v5.0.132/ExtLibs/installDeps.sh
 # See *raw log* of https://app.travis-ci.com/github/4ian/GDevelop
 # U 16.04
