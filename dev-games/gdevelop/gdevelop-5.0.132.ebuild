@@ -429,6 +429,7 @@ shrink_install() {
 				-and -not -path "GDJS/Binaries" \
 				-and -not -path "GDJS/docs" \
 				-and -not -path "GDJS/Runtime" \
+				-and -not -path "GDJS/scripts" \
 				-and -not -name "license.txt" \
 				-and -not -name "README.md" \
 				-and -not -name "Runtime" \
