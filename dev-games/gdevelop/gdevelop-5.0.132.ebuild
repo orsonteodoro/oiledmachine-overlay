@@ -13,7 +13,7 @@ LICENSE="GDevelop MIT"
 #KEYWORDS="~amd64" # ebuild still in development
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" +electron +extensions openrc"
+IUSE+=" +electron +extensions minimal openrc"
 # See https://github.com/4ian/GDevelop/blob/v5.0.132/ExtLibs/installDeps.sh
 # See *raw log* of https://app.travis-ci.com/github/4ian/GDevelop
 # U 16.04
@@ -410,7 +410,6 @@ install_program() {
 
 shrink_install() {
 	local paths=(
-		"GDCpp"
 		".circleci"
 		".clang_complete"
 		".clang_format"
@@ -419,7 +418,33 @@ shrink_install() {
 		".gitignore"
 		".travis.yml"
 		".vscode"
+		"GDCpp"
 	)
+	if use minimal ; then
+		paths+=(
+			$(find GDJS -maxdepth 1 \
+			 \( \
+				     -not -name "GDJS" \
+				-and -not -path "GDJS/Binaries" \
+				-and -not -path "GDJS/docs" \
+				-and -not -path "GDJS/Runtime" \
+				-and -not -name "license.txt" \
+				-and -not -name "README.md" \
+				-and -not -name "Runtime" \
+				-and -not -name "package.json" \
+				-and -not -name "package-lock.json" \
+			\))
+			$(find Core -maxdepth 1 \
+			\( \
+				     -not -path "Core" \
+				-and -not -path "Core/GDCore" \
+				-and -not -path "Core/docs/images/glogo.png" \
+				-and -not -name "docs" \
+				-and -not -name "license.txt" \
+				-and -not -name "README.md" \
+			\))
+		)
+	fi
 	local p
 	for p in ${paths[@]} ; do
 		rm -rfv "${p}" || true
