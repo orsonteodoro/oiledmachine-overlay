@@ -466,8 +466,12 @@ ewarn
 	fi
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 
-	# Copy the licenses from the node_modules folders.
-	npm-utils_install_licenses
+	if use minimal ; then
+		# Copy the licenses from the node_modules folders.
+		npm-utils_install_licenses
+	# else
+	#	Licenses will be installed.
+	fi
 	# Dedupe.  The newIDE folder has those licenses already
 	rm -rf "${ED}"/usr/share/doc/${PF}/licenses/newIDE || die
 
@@ -502,8 +506,10 @@ ewarn
 		electron-app_desktop_install_program "*"
 	fi
 
-	# Dedupe.  The newIDE folder has already been copied
-	rm -rf "${ED}"/usr/share/doc/${PF}/licenses/newIDE || die
+	if use minimal ; then
+		# The newIDE folder has already been copied with licenses intact.
+		rm -rf "${ED}"/usr/share/doc/${PF}/licenses/newIDE || die
+	fi
 
 	if [[ -e "${ED}/usr/bin/${PN}" ]] ; then
 		rm "${ED}/usr/bin/${PN}" || die # Replace wrapper with the one below
