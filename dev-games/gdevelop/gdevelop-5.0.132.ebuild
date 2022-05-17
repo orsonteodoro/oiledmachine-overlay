@@ -466,6 +466,7 @@ ewarn
 	fi
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 
+	npm-utils_install_licenses
 	shrink_install
 
 	if use electron ; then
@@ -496,6 +497,9 @@ ewarn
 		rm -rf "${S}/newIDE/electron-app" || die
 		electron-app_desktop_install_program "*"
 	fi
+
+	# Dedupe.  The newIDE folder has already been copied
+	rm -rf "${ED}"/usr/share/doc/${PF}/licenses/newIDE || die
 
 	if [[ -e "${ED}/usr/bin/${PN}" ]] ; then
 		rm "${ED}/usr/bin/${PN}" || die # Replace wrapper with the one below
