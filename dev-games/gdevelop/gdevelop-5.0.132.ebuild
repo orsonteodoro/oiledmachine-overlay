@@ -466,7 +466,11 @@ ewarn
 	fi
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 
+	# Copy the licenses from the node_modules folders.
 	npm-utils_install_licenses
+	# Dedupe.  The newIDE folder has those licenses already
+	rm -rf "${ED}"/usr/share/doc/${PF}/licenses/newIDE || die
+
 	shrink_install
 
 	if use electron ; then
