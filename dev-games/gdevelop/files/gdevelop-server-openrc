@@ -3,6 +3,8 @@
 # but not root.  Must create a user called ${PN} that to not be used
 # by normal users but only the server.
 
+MY_PN="__MY_PN__"
+PN="__PN__"
 PROJECT_ROOT="/opt/${PN}/${SLOT_MAJOR}"
 SERVER_PID_FILE="/var/run/${PN}/${PN}-server.pid"
 LOGFILE="/var/log/${PN}-server.log"

@@ -21,17 +21,7 @@
     <doc lang="en">https://docs.gdevelop-app.com/GDCore%20Documentation/</doc>
   </upstream>
   <use>
-    <flag name="asmjs">Builds as asm.js.  (Does not work)</flag>
-    <flag name="doc">Installs additional documentation</flag>
-    <flag name="electron">Builds the Electron frontend</flag>
     <flag name="extensions">Builds additional extensions</flag>
-    <flag name="html5">Builds the IDE used in either for Electron or web
-      browser</flag>
-    <flag name="minimal">Reduces the size of the installation as much as
-      possible</flag>
-    <flag name="native">Builds the native OS version.  (Incomplete)</flag>
-    <flag name="wasm">Builds as WebAssembly</flag>
-    <flag name="web-browser">Builds the IDE for the web browser and checks for
-      additional tools.</flag>
+    <flag name="openrc">Installs script to load the server</flag>
   </use>
 </pkgmetadata>

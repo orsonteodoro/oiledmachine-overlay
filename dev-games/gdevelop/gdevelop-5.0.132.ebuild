@@ -13,12 +13,11 @@ LICENSE="GDevelop MIT"
 #KEYWORDS="~amd64" # ebuild still in development
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" +electron +extensions minimal openrc"
-REQUIRED_USE+=" electron"
+IUSE+=" +extensions openrc"
 # See https://github.com/4ian/GDevelop/blob/v5.0.132/ExtLibs/installDeps.sh
 # See *raw log* of https://app.travis-ci.com/github/4ian/GDevelop
 # U 16.04
-# Dependencies in native are not installed in CI
+# Dependencies for the native build are not installed in CI
 UDEV_V="229"
 DEPEND+="
 	|| (
@@ -36,7 +35,7 @@ DEPEND+="
 	  virtual/opengl
 	  virtual/udev
 	>=x11-apps/xrandr-1.5.0
-	!electron? ( x11-misc/xdg-utils )
+	x11-misc/xdg-utils
 	 openrc? ( sys-apps/openrc[bash] )
 "
 RDEPEND+=" ${DEPEND}"
@@ -205,7 +204,6 @@ pkg_setup() {
 
 	enewgroup ${PN}
 	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
-	if use electron ; then
 ewarn
 ewarn "Consider using the web-browser only version instead which the browser"
 ewarn "itself which is updated frequently and consistently.  It is more secure"
@@ -221,7 +219,6 @@ ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=ove
 ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=v8%20chrome&search_type=all"
 ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=node.js&search_type=all"
 ewarn
-	fi
 	if [[ "${NPM_UTILS_ALLOW_AUDIT}" != "0" ]] ; then
 eerror
 eerror "NPM_UTILS_ALLOW_AUDIT=0 needs to be added as a per-package envvar"
@@ -293,14 +290,12 @@ einfo
 	S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app" \
 	electron-app_src_unpack
 
-	if use electron ; then
 einfo
 einfo "Building ${MY_PN} $(ver_cut 1 ${PV}) on the Electron runtime"
 einfo
-		export STEP="BUILDING_GDEVELOP_IDE_ELECTRON"
-		S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/electron-app" \
-		electron-app_src_unpack
-	fi
+	export STEP="BUILDING_GDEVELOP_IDE_ELECTRON"
+	S="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/electron-app" \
+	electron-app_src_unpack
 	xdg_src_prepare
 }
 
@@ -409,50 +404,6 @@ install_program() {
 	esac
 }
 
-shrink_install() {
-	local paths=(
-		".circleci"
-		".clang_complete"
-		".clang_format"
-		".eslintrc"
-		".github"
-		".gitignore"
-		".travis.yml"
-		".vscode"
-		"GDCpp"
-	)
-	if use minimal ; then
-		paths+=(
-			$(find GDJS -maxdepth 1 \
-			 \( \
-				     -not -name "GDJS" \
-				-and -not -path "GDJS/Binaries" \
-				-and -not -path "GDJS/docs" \
-				-and -not -path "GDJS/Runtime" \
-				-and -not -path "GDJS/scripts" \
-				-and -not -name "license.txt" \
-				-and -not -name "README.md" \
-				-and -not -name "Runtime" \
-				-and -not -name "package.json" \
-				-and -not -name "package-lock.json" \
-			\))
-			$(find Core -maxdepth 1 \
-			\( \
-				     -not -path "Core" \
-				-and -not -path "Core/GDCore" \
-				-and -not -path "Core/docs/images/glogo.png" \
-				-and -not -name "docs" \
-				-and -not -name "license.txt" \
-				-and -not -name "README.md" \
-			\))
-		)
-	fi
-	local p
-	for p in ${paths[@]} ; do
-		rm -rfv "${p}" || true
-	done
-}
-
 src_install() {
 	if use openrc ; then
 		if [[ "${SKIP_WRAPPER_FILE_SIGNAL}" == "1" ]] ; then
@@ -468,58 +419,37 @@ ewarn
 	fi
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 
-	if use minimal ; then
-		# Copy the licenses from the node_modules folders.
-		npm-utils_install_licenses
-	# else
-	#	Licenses will be installed.
-	fi
-	# Dedupe.  The newIDE folder has those licenses already
-	rm -rf "${ED}"/usr/share/doc/${PF}/licenses/newIDE || die
-
-	shrink_install
-
-	if use electron ; then
-		#
-		# We can't use .ico because of XDG icon standards.  .ico is not
-		# interoperable with the Linux desktop.
-		#
-		pushd "${S}/newIDE/electron-app/build/" || die
-			convert icon.ico[0] icon-256x256.png
-			convert icon.ico[1] icon-128x128.png
-			convert icon.ico[2] icon-64x64.png
-			convert icon.ico[3] icon-48x48.png
-			convert icon.ico[4] icon-32x32.png
-			convert icon.ico[5] icon-16x16.png
-			newicon -s 256 icon-256x256.png ${PN}.png
-			newicon -s 128 icon-128x128.png ${PN}.png
-			newicon -s 64 icon-64x64.png ${PN}.png
-			newicon -s 48 icon-48x48.png ${PN}.png
-			newicon -s 32 icon-32x32.png ${PN}.png
-			newicon -s 16 icon-16x16.png ${PN}.png
-		popd
-		electron-app_desktop_install \
-			"*" \
-			"newIDE/electron-app/build/icon-256x256.png" \
-			"${MY_PN} $(ver_cut 1 ${PV})" "Development;IDE" \
-			"/usr/bin/${PN}"
-	else
-		rm -rf "${S}/newIDE/electron-app" || die
-		electron-app_desktop_install_program "*"
-	fi
-
-	if use minimal ; then
-		# The newIDE folder has already been copied with licenses intact.
-		rm -rf "${ED}"/usr/share/doc/${PF}/licenses/newIDE || die
-	fi
+	#
+	# We can't use .ico because of XDG icon standards.  .ico is not
+	# interoperable with the Linux desktop.
+	#
+	pushd "${S}/newIDE/electron-app/build/" || die
+		convert icon.ico[0] icon-256x256.png
+		convert icon.ico[1] icon-128x128.png
+		convert icon.ico[2] icon-64x64.png
+		convert icon.ico[3] icon-48x48.png
+		convert icon.ico[4] icon-32x32.png
+		convert icon.ico[5] icon-16x16.png
+		newicon -s 256 icon-256x256.png ${PN}.png
+		newicon -s 128 icon-128x128.png ${PN}.png
+		newicon -s 64 icon-64x64.png ${PN}.png
+		newicon -s 48 icon-48x48.png ${PN}.png
+		newicon -s 32 icon-32x32.png ${PN}.png
+		newicon -s 16 icon-16x16.png ${PN}.png
+	popd
+	electron-app_desktop_install \
+		"*" \
+		"newIDE/electron-app/build/icon-256x256.png" \
+		"${MY_PN} $(ver_cut 1 ${PV})" "Development;IDE" \
+		"/usr/bin/${PN}"
 
 	if [[ -e "${ED}/usr/bin/${PN}" ]] ; then
 		rm "${ED}/usr/bin/${PN}" || die # Replace wrapper with the one below
 	fi
 	cp "${FILESDIR}/${PN}" "${T}/${PN}" || die
 	sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
-		-e "s|\${PN}|${PN}|g" \
-		-e "s|\${MY_PN}|${MY_PN}|g" \
+		-e "s|__MY_PN__|${MY_PN}|g" \
+		-e "s|__PN__|${PN}|g" \
 		-e "s|\${SLOT_MAJOR}|${SLOT_MAJOR}|g" \
 		"${T}/${PN}" || die
 	exeinto /usr/bin
@@ -529,6 +459,7 @@ ewarn
 		cp "${FILESDIR}/${PN}-server-openrc" "${T}/${PN}-server" || die
 		sed -i  -e "s|\$(get_libdir)|$(get_libdir)|g" \
 			-e "s|\${PN}|${PN}|g" \
+			-e "s|\${MY_PN}|${MY_PN}|g" \
 			-e "s|\${SLOT_MAJOR}|${SLOT_MAJOR}|g" \
 			"${T}/${PN}-server" || die
 		exeinto /etc/init.d
