@@ -9,7 +9,10 @@ PROJECT_ROOT="/opt/${PN}/${SLOT_MAJOR}"
 SERVER_PID_FILE="/var/run/${PN}/${PN}-server.pid"
 LOGFILE="/var/log/${PN}-server.log"
 ENABLE_LOGGING=${ENABLE_LOGGING:="1"} # can set this in /etc/conf.d/${PN}-server
-WAIT_TIME="180000" # It took 2:46.03 to start it up.
+WAIT_TIME="1080000" # 13 min + 5 min slack
+#	real	12m41.475s
+#	user	0m12.462s
+#	sys	0m1.796s
 
 logmsg() {
 	local msg="${1}"
@@ -35,6 +38,7 @@ check_prereqs() {
 
 start_server() {
 	mkdir -p "$(dirname ${SERVER_PID_FILE})"
+	chown ${PN}:${PN} "$(dirname ${SERVER_PID_FILE})"
 	touch "${SERVER_PID_FILE}"
 
 	cd "${PROJECT_ROOT}/newIDE/app"

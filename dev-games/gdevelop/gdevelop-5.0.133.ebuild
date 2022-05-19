@@ -14,7 +14,7 @@ LICENSE="GDevelop MIT"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" +extensions openrc"
-# See https://github.com/4ian/GDevelop/blob/v5.0.132/ExtLibs/installDeps.sh
+# See https://github.com/4ian/GDevelop/blob/v5.0.133/ExtLibs/installDeps.sh
 # See *raw log* of https://app.travis-ci.com/github/4ian/GDevelop
 # U 16.04
 # Dependencies for the native build are not installed in CI
@@ -36,7 +36,7 @@ DEPEND+="
 	  virtual/udev
 	>=x11-apps/xrandr-1.5.0
 	x11-misc/xdg-utils
-	 openrc? ( sys-apps/openrc[bash] )
+	openrc? ( sys-apps/openrc[bash] )
 "
 RDEPEND+=" ${DEPEND}"
 EMSCRIPTEN_MIN_V="1.39.6" # Based on CI
@@ -48,7 +48,6 @@ MIN_NODEJS_V="14.18.2" # Based on CI, For building GDevelop.js
 # package cannot switch in the middle of emerge.  From experience, the
 # highest nodejs works.
 #
-# >=dev-vcs/git-2.35.0 is used by CI but relaxed
 LLVM_SLOTS=(15 14 13 12 11 10) # Deleted 9 8 7 because asm.js support was dropped.
 # The CI uses Clang 7.
 # Emscripten expects either LLVM 10 for wasm, or LLVM 6 for asm.js.
@@ -77,12 +76,12 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_V}[npm]
 "
 ELECTRON_APP_ELECTRON_V="8.2.5" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.132/newIDE/electron-app/package-lock.json
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.133/newIDE/electron-app/package-lock.json
 ELECTRON_APP_REACT_V="16.8.6" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.132/newIDE/app/package-lock.json
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.133/newIDE/app/package-lock.json
 MY_PV="${PV//_/-}"
 # For the SFML version, see \
-# https://github.com/4ian/GDevelop/blob/v5.0.132/ExtLibs/CMakeLists.txt
+# https://github.com/4ian/GDevelop/blob/v5.0.133/ExtLibs/CMakeLists.txt
 SFML_V="2.4.1"
 SRC_URI="
 https://github.com/4ian/${MY_PN}/archive/v${MY_PV}.tar.gz
@@ -349,61 +348,6 @@ einfo
 	fi
 }
 
-# @FUNCTION: install_program
-# @DESCRIPTION:
-# Installs program only.  Resets permissions and ownership.
-# Additional change of ownership and permissions should be done after running
-# this.
-install_program() {
-	use unpacked || return
-	_electron-app_check_missing_install_path
-	local rel_src_path="$1"
-	local d="${ELECTRON_APP_INSTALL_PATH}"
-	local ed="${ED}/${d}"
-	case "$ELECTRON_APP_MODE" in
-		npm)
-			local old_dotglob=$(shopt dotglob | cut -f 2)
-			shopt -s dotglob # copy hidden files
-
-			insinto "${d}"
-			doins -r ${rel_src_path}
-
-			# Mark .bin scripts executable
-			for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
-				for f in $(find "${dir_path}" ) ; do
-					chmod 0755 $(realpath "${f}") || die
-				done
-			done
-
-			# Mark libraries executable
-			for f in $(find "${ed}" \
-					-name "*.so" -type f \
-					-o -name "*.so.*" -type f) ; do
-				chmod 0755 $(realpath "${f}") || die
-			done
-
-			# Mark electron executable
-			for f in $(find "${ed}" -path "*dist/electron" -type f) ; do
-				chmod 0755 "${f}" || die
-			done
-
-			# Mark chrome parts executable
-			for f in $(find "${ed}" -name "chrome-sandbox" -type f) ; do
-				chmod 0755 "${f}" || die
-			done
-
-			if [[ "${old_dotglob}" == "on" ]] ; then
-				shopt -s dotglob
-			else
-				shopt -u dotglob
-			fi
-			;;
-		*)
-			die "Unsupported package system"
-			;;
-	esac
-}
-
 src_install() {
 	if use openrc ; then
 		if [[ "${SKIP_WRAPPER_FILE_SIGNAL}" == "1" ]] ; then
@@ -454,6 +398,8 @@ ewarn
 		"${T}/${PN}" || die
 	exeinto /usr/bin
 	doexe "${T}/${PN}"
+
+	fperms 0755 "/opt/${PN}/${SLOT_MAJOR}/GDJS/node_modules/esbuild-linux-64/bin/esbuild"
 
 	if use openrc ; then
 		cp "${FILESDIR}/${PN}-server-openrc" "${T}/${PN}-server" || die
