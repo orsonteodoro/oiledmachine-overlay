@@ -80,16 +80,9 @@ ELECTRON_APP_ELECTRON_V="8.2.5" # See \
 ELECTRON_APP_REACT_V="16.8.6" # See \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.0.133/newIDE/app/package-lock.json
 MY_PV="${PV//_/-}"
-# For the SFML version, see \
-# https://github.com/4ian/GDevelop/blob/v5.0.133/ExtLibs/CMakeLists.txt
-SFML_V="2.4.1"
 SRC_URI="
 https://github.com/4ian/${MY_PN}/archive/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/SFML/SFML/commit/87aaa9e145659d6a8fc193ab8540cf847d4d0def.patch
-	-> ${PV}-SFML-mesa-ge-20180525-compat.patch
-https://github.com/SFML/SFML/archive/${SFML_V}.tar.gz
-	-> SFML-${SFML_V}.tar.gz
 "
 S="${WORKDIR}/${MY_PN}-${MY_PV}"
 S_BAK="${WORKDIR}/${MY_PN}-${MY_PV}"
@@ -229,11 +222,6 @@ eerror
 src_unpack() {
 	unpack ${A}
 	cd "${S}" || die
-	rm -rf ExtLibs/SFML || die
-	ln -s "${WORKDIR}/SFML-${SFML_V}" ExtLibs/SFML || die
-	cat "${DISTDIR}/${PV}-SFML-mesa-ge-20180525-compat.patch" \
-		> ExtLibs/SFML-patches/${PV}-SFML-mesa-ge-20180525-compat.patch \
-		|| die
 	eapply \
 "${FILESDIR}/${PN}-5.0.0_beta97-use-emscripten-envvar-for-webidl_binder_py.patch"
 	eapply \
