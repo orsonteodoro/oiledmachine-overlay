@@ -14,7 +14,7 @@ else
 	SRC_URI="https://storage.googleapis.com/aom-releases/${P}.tar.gz"
 	S="${WORKDIR}/${P}"
 	S_orig="${WORKDIR}/${P}"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~riscv ~sparc ~x86"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ppc ppc64 ~riscv ~sparc x86"
 fi
 
 DESCRIPTION="Alliance for Open Media AV1 Codec SDK"
@@ -239,12 +239,6 @@ eerror "the proper codec is supported for that file in ffmpeg."
 eerror
 		fi
 	fi
-}
-
-src_unpack() {
-	mkdir -p "${WORKDIR}/${P}" || die
-	cd "${WORKDIR}/${P}" || die
-	unpack "${A}"
 }
 
 get_build_types() {
