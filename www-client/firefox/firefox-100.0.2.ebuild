@@ -5,11 +5,12 @@
 # with update sync updated to this version of the ebuild.
 # Revisions may change in the oiledmachine-overlay.
 
-# Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates it will have an esr suffix.
+# Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
+# For security advisories, see https://www.mozilla.org/en-US/security/advisories/
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-91esr-patches-06j.tar.xz"
+FIREFOX_PATCHSET="firefox-100-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -20,7 +21,7 @@ WANT_AUTOCONF="2.1"
 
 VIRTUALX_REQUIRED="pgo"
 
-MOZ_ESR=yes
+MOZ_ESR=
 
 MOZ_PV=${PV}
 MOZ_PV_SUFFIX=
@@ -55,7 +56,7 @@ if [[ ${PV} == *_rc* ]] ; then
 fi
 
 PATCH_URIS=(
-	https://dev.gentoo.org/~{juippis,polynomial-c,whissi}/mozilla/patchsets/${FIREFOX_PATCHSET}
+	https://dev.gentoo.org/~{juippis,polynomial-c,whissi,slashbeast}/mozilla/patchsets/${FIREFOX_PATCHSET}
 )
 
 SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
@@ -66,16 +67,16 @@ HOMEPAGE="https://www.mozilla.com/firefox"
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
-SLOT="esr"
+SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 LICENSE_FINGERPRINT="\
-20eb3b10bf7c7cba8e42edbc8d8ad58a3a753e214b8751fb60eddb827ebff067\
-456f77f36e7abe6d06861b1be52011303fa08db8a981937e38733f961c4a39d9" # SHA512
-# FF-91.9-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
+ecdc82791f083e8c560a31606e47814ee63693ee230bf91fcd249ac838c565c7\
+5d3d78c5b6b16d0268637f46f0a790da8f85688aebcc164bc476759e51ff9f4f" # SHA512
+# FF-96.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
 # Update the license version also.
-LICENSE+=" FF-91.9-THIRD-PARTY-LICENSES"
+LICENSE+=" FF-100.0-THIRD-PARTY-LICENSES"
 LICENSE+="
 	( BSD-2
 		BSD
@@ -199,9 +200,9 @@ LICENSE+="
 #   the vanilla ZLIB lib license doesn't contain all rights reserved
 
 IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel
-	jack lto +openh264 pgo pulseaudio sndio selinux
+	jack libproxy lto +openh264 pgo pulseaudio sndio selinux
 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
-	+system-libvpx system-png +system-webp
+	+system-libvpx system-png system-python-libs +system-webp
 	wayland wifi"
 _ABIS="abi_x86_32
 	abi_x86_64
@@ -223,6 +224,7 @@ IUSE+=" screencast"
 
 REQUIRED_USE="debug? ( !system-av1 )
 	pgo? ( lto )
+	wayland? ( dbus )
 	wifi? ( dbus )"
 
 # Firefox-only REQUIRED_USE flags
@@ -254,51 +256,53 @@ BDEPEND+=" ${PYTHON_DEPS}
 	>=dev-util/cbindgen-0.19.0
 	>=net-libs/nodejs-10.23.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=virtual/rust-1.51.0[${MULTILIB_USEDEP}]
-	amd64? ( >=dev-lang/nasm-2.13 )
-	x86? ( >=dev-lang/nasm-2.13 )"
+	>=virtual/rust-1.57.0[${MULTILIB_USEDEP}]
+	amd64? ( >=dev-lang/nasm-2.14 )
+	x86? ( >=dev-lang/nasm-2.14 )"
 
 CDEPEND="
-	>=dev-libs/nss-3.68[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.76[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.32[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
-	>=x11-libs/cairo-1.10[X,${MULTILIB_USEDEP}]
-	>=x11-libs/gtk+-3.4.0:3[X,${MULTILIB_USEDEP}]
-	x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
-	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
+	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	>=media-libs/mesa-10.2:*[${MULTILIB_USEDEP}]
 	media-libs/fontconfig[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.4.10[${MULTILIB_USEDEP}]
-	kernel_linux? ( !pulseaudio? ( media-libs/alsa-lib ) )
+	>=media-libs/freetype-2.9[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
 	>=x11-libs/pixman-0.19.2[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.26:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.3[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-3.0.10:=[${MULTILIB_USEDEP}]
 	media-video/ffmpeg[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-1.10[X,${MULTILIB_USEDEP}]
+	>=x11-libs/gtk+-3.4.0:3[X,${MULTILIB_USEDEP}]
+	x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
 	x11-libs/libX11[${MULTILIB_USEDEP}]
-	x11-libs/libxcb:=[${MULTILIB_USEDEP}]
 	x11-libs/libXcomposite[${MULTILIB_USEDEP}]
 	x11-libs/libXdamage[${MULTILIB_USEDEP}]
 	x11-libs/libXext[${MULTILIB_USEDEP}]
 	x11-libs/libXfixes[${MULTILIB_USEDEP}]
+	x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	x11-libs/libXrender[${MULTILIB_USEDEP}]
 	x11-libs/libXtst[${MULTILIB_USEDEP}]
+	x11-libs/libxcb:=[${MULTILIB_USEDEP}]
+	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	dbus? (
 		sys-apps/dbus[${MULTILIB_USEDEP}]
 		dev-libs/dbus-glib[${MULTILIB_USEDEP}]
 	)
+	libproxy? ( net-libs/libproxy[${MULTILIB_USEDEP}] )
 	screencast? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
 	system-av1? (
-		>=media-libs/dav1d-0.8.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-0.9.3:=[${MULTILIB_USEDEP}]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
 		>=media-libs/harfbuzz-2.8.1:0=[${MULTILIB_USEDEP}]
 		>=media-gfx/graphite2-1.3.13[${MULTILIB_USEDEP}]
 	)
-	system-icu? ( >=dev-libs/icu-69.1:=[${MULTILIB_USEDEP}] )
+	system-icu? ( >=dev-libs/icu-70.1:=[${MULTILIB_USEDEP}] )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}] )
 	system-libevent? ( >=dev-libs/libevent-2.0:0=[threads,${MULTILIB_USEDEP}] )
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc,${MULTILIB_USEDEP}] )
@@ -317,7 +321,7 @@ CDEPEND="
 
 RDEPEND="${CDEPEND}
 	!www-client/firefox:0
-	!www-client/firefox:rapid
+	!www-client/firefox:esr
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	openh264? ( media-libs/openh264:*[plugin,${MULTILIB_USEDEP}] )
 	pulseaudio? (
@@ -567,7 +571,7 @@ pkg_pretend() {
 		if use pgo || use lto || use debug ; then
 			CHECKREQS_DISK_BUILD="13500M"
 		else
-			CHECKREQS_DISK_BUILD="6500M"
+			CHECKREQS_DISK_BUILD="6600M"
 		fi
 
 		check-reqs_pkg_pretend
@@ -576,7 +580,7 @@ pkg_pretend() {
 
 NABIS=0
 pkg_setup() {
-	einfo "This is the ESR release."
+	einfo "This is the rapid release."
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use pgo ; then
 			if ! has userpriv ${FEATURES} ; then
@@ -788,18 +792,7 @@ eerror
 }
 
 src_prepare() {
-	if use lto; then
-		rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch || die
-	fi
-
-	if use system-av1 && has_version "<media-libs/dav1d-1.0.0"; then
-		rm -v "${WORKDIR}"/firefox-patches/0033-bgo-835788-dav1d-1.0.0-support.patch || die
-		elog "<media-libs/dav1d-1.0.0 detected, removing 1.0.0 compat patch."
-	elif ! use system-av1; then
-		rm -v "${WORKDIR}"/firefox-patches/0033-bgo-835788-dav1d-1.0.0-support.patch || die
-		elog "-system-av1 USE flag detected, removing 1.0.0 compat patch."
-	fi
-
+	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
 
 	# Only partial patching was done because Gentoo doesn't support multilib
@@ -987,8 +980,11 @@ multilib_src_configure() {
 		--disable-cargo-incremental \
 		--disable-crashreporter \
 		--disable-install-strip \
+		--disable-parental-controls \
 		--disable-strip \
 		--disable-updater \
+		--enable-negotiateauth \
+		--enable-new-pass-manager \
 		--enable-official-branding \
 		--enable-release \
 		--enable-system-ffi \
@@ -998,6 +994,7 @@ multilib_src_configure() {
 		--prefix="${EPREFIX}/usr" \
 		--target="${chost}" \
 		--without-ccache \
+		--without-wasm-sandboxed-libraries \
 		--with-intl-api \
 		\
 		--with-system-nspr \
@@ -1021,6 +1018,15 @@ multilib_src_configure() {
 
 	if ! use x86 && [[ ${cbuild} != armv*h* ]] ; then
 		mozconfig_add_options_ac '' --enable-rust-simd
+	fi
+
+	# For future keywording: This is currently (97.0) only supported on:
+	# amd64, arm, arm64 & x86.
+	# Might want to flip the logic around if Firefox is to support more arches.
+	if use ppc64; then
+		mozconfig_add_options_ac '' --disable-sandbox
+	else
+		mozconfig_add_options_ac '' --enable-sandbox
 	fi
 
 	if [[ -s "${BUILD_DIR}/api-google.key" ]] ; then
@@ -1064,12 +1070,13 @@ multilib_src_configure() {
 	mozconfig_use_with system-harfbuzz system-graphite2
 	mozconfig_use_with system-icu
 	mozconfig_use_with system-jpeg
-	mozconfig_use_with system-libevent system-libevent "${SYSROOT}${EPREFIX}/usr"
+	mozconfig_use_with system-libevent
 	mozconfig_use_with system-libvpx
 	mozconfig_use_with system-png
 	mozconfig_use_with system-webp
 
 	mozconfig_use_enable dbus
+	mozconfig_use_enable libproxy
 
 	use eme-free && mozconfig_add_options_ac '+eme-free' --disable-eme
 
@@ -1080,15 +1087,13 @@ multilib_src_configure() {
 		append-ldflags "-Wl,-z,relro -Wl,-z,now"
 	fi
 
-	mozconfig_use_enable jack
+	local myaudiobackends=""
+	use jack && myaudiobackends+="jack,"
+	use sndio && myaudiobackends+="sndio,"
+	use pulseaudio && myaudiobackends+="pulseaudio,"
+	! use pulseaudio && myaudiobackends+="alsa,"
 
-	mozconfig_use_enable pulseaudio
-	# force the deprecated alsa sound code if pulseaudio is disabled
-	if use kernel_linux && ! use pulseaudio ; then
-		mozconfig_add_options_ac '-pulseaudio' --enable-alsa
-	fi
-
-	mozconfig_use_enable sndio
+	mozconfig_add_options_ac '--enable-audio-backends' --enable-audio-backends="${myaudiobackends::-1}"
 
 	mozconfig_use_enable wifi necko-wifi
 
@@ -1104,10 +1109,8 @@ multilib_src_configure() {
 			mozconfig_add_options_ac "forcing ld=lld due to USE=clang and USE=lto" --enable-linker=lld
 
 			mozconfig_add_options_ac '+lto' --enable-lto=cross
-		else
-			# ld.gold is known to fail:
-			# /usr/lib/gcc/x86_64-pc-linux-gnu/11.2.1/../../../../x86_64-pc-linux-gnu/bin/ld.gold: internal error in set_xindex, at /var/tmp/portage/sys-devel/binutils-2.37_p1-r1/work/binutils-2.37/gold/object.h:1050
 
+		else
 			# ThinLTO is currently broken, see bmo#1644409
 			mozconfig_add_options_ac '+lto' --enable-lto=full
 			mozconfig_add_options_ac "linker is set to bfd" --enable-linker=bfd
@@ -1222,7 +1225,7 @@ multilib_src_configure() {
 			if use clang ; then
 				# Nothing to do
 				:;
-			elif tc-ld-is-gold || use lto ; then
+			elif use lto ; then
 				append-ldflags -Wl,--no-keep-memory
 			else
 				append-ldflags -Wl,--no-keep-memory -Wl,--reduce-memory-overheads
@@ -1245,8 +1248,13 @@ multilib_src_configure() {
 	export MOZ_MAKE_FLAGS="${MAKEOPTS}"
 
 	# Use system's Python environment
-	export MACH_USE_SYSTEM_PYTHON=1
-	export PIP_NO_CACHE_DIR=off
+	PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS=mach
+
+	if use system-python-libs; then
+		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="system"
+	else
+		export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"
+	fi
 
 	# Disable notification when build system has finished
 	export MOZ_NOSPAM=1
@@ -1532,7 +1540,7 @@ multilib_src_install() {
 
 	# Force hwaccel prefs if USE=hwaccel is enabled
 	if use hwaccel ; then
-		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js \
+		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js-r1 \
 		>>"${GENTOO_PREFS}" \
 		|| die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
 	fi
