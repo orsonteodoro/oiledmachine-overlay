@@ -7,9 +7,10 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20220401"
+VERSION="20220522"
 PN="emscripten"
 
+# 3.1.11 llvm 15 ; node 4.1.1 ; binaryen 108
 # 3.1.8 llvm 15 ; node 4.1.1 ; binaryen 105
 # 3.1.4 llvm 15 ; node 4.1.1 ; binaryen 104
 # 3.1.2 llvm 14 ; node 4.1.1 ; binaryen 104
@@ -309,7 +310,13 @@ set_config() {
         __EMSDK_CLOSURE_COMPILER__=
     fi
 
-    if grep -q -F -e "python_single_target_python3_8" "${use_path}" ; then
+    if grep -q -F -e "python_single_target_python3_11" "${use_path}" ; then
+        PYTHON_EXE_ABSPATH=/usr/bin/python3.11
+    elif grep -q -F -e "python_single_target_python3_10" "${use_path}" ; then
+        PYTHON_EXE_ABSPATH=/usr/bin/python3.10
+    elif grep -q -F -e "python_single_target_python3_9" "${use_path}" ; then
+        PYTHON_EXE_ABSPATH=/usr/bin/python3.9
+    elif grep -q -F -e "python_single_target_python3_8" "${use_path}" ; then
         PYTHON_EXE_ABSPATH=/usr/bin/python3.8
     elif grep -q -F -e "python_single_target_python3_7" "${use_path}" ; then
         PYTHON_EXE_ABSPATH=/usr/bin/python3.7
@@ -323,7 +330,10 @@ set_config() {
         __EMSDK_NODE_VERSION_MIN__="0.8.0"
     fi
 
-    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.8" ; then
+    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.11" ; then
+        __EMSDK_BINARYEN_VERSION__="108"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.11" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.8" ; then
         __EMSDK_BINARYEN_VERSION__="105"
     elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.8" \
         && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.2" ; then
@@ -359,9 +369,12 @@ set_config() {
         __EMSDK_BINARYEN_VERSION__="90"
     fi
 
-    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.27" ; then
+    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "3.1.4" ; then
+        __EMSDK_LLVM_VERSION__="15"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "3.1.4" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.27" ; then
         __EMSDK_LLVM_VERSION__="14"
-    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.26" \
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.27" \
         && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" ; then
         __EMSDK_LLVM_VERSION__="13"
     elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.13" \
