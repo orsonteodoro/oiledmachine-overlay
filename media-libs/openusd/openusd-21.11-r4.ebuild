@@ -34,6 +34,20 @@ REQUIRED_USE+="
 # TBB 2021 not ready yet.  tbb::task, tbb::empty_task references are the major hurdles
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
+
+OPENEXR_V2="2.5.7 2.5.8"
+gen_openexr_pairs() {
+	local v
+	for v in ${OPENEXR_V2} ; do
+		echo "
+			(
+				~media-libs/openexr-${v}:=
+				~media-libs/ilmbase-${v}:=
+			)
+		"
+	done
+}
+
 RDEPEND+="
 	experimental? (
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
@@ -54,7 +68,7 @@ RDEPEND+="
 	)
 	jemalloc? ( dev-libs/jemalloc-usd )
 	opencolorio? ( >=media-libs/opencolorio-1.0.9 )
-	openexr? ( >=media-libs/openexr-2.3.0 )
+	openexr? ( || ( $(gen_openexr_pairs) ) )
 	opengl? ( >=media-libs/glew-2.0.0 )
 	openimageio? (
 		>=media-libs/libpng-1.6.29
