@@ -40,7 +40,7 @@ REQUIRED_USE="
 	python? ( ${PYTHON_REQUIRED_USE} )
 	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )
 	rav1e? ( avif )"
-# See https://github.com/OpenImageIO/oiio/blob/Release-2.3.9.1/INSTALL.md for requirements
+# See https://github.com/OpenImageIO/oiio/blob/v2.3.9.1/INSTALL.md
 QT_V="5.6"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
@@ -56,15 +56,25 @@ gen_openvdb_depends() {
 	done
 	echo "${o}"
 }
+OPENEXR_VERS=( 3.1.4 3.1.5 )
+gen_imath_openexr_pairs() {
+	for x in ${OPENEXR_VERS[@]} ; do
+		echo "
+			(
+				~media-libs/openexr-${x}:=
+				~dev-libs/imath-${x}:=
+			)
+		"
+	done
+}
 RDEPEND+="
+	|| ( $(gen_imath_openexr_pairs) )
 	>=dev-cpp/robin-map-0.6.2
 	>=dev-libs/boost-1.53:=
 	>=dev-libs/libfmt-7.1.3:=
 	  dev-libs/pugixml:=
-	>=media-libs/ilmbase-2.2.0-r1:=
 	  media-libs/libpng:0=
 	>=media-libs/libwebp-0.6.1:=
-	>=media-libs/openexr-2.0:0=
 	>=media-libs/tiff-3.9:0=
 	sys-libs/zlib:=
 	virtual/jpeg:0
