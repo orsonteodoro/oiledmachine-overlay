@@ -15,7 +15,7 @@
 # the multiple LLVM bug.
 
 CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
-PYTHON_COMPAT=( python3_10 ) # <= 3.11. For the max exclusive Python supported (and
+PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11. For the max exclusive Python supported (and
 # others), see \
 # https://github.com/blender/blender/blob/v3.1.1/build_files/build_environment/install_deps.sh#L382
 
