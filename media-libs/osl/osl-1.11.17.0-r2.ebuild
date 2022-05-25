@@ -73,7 +73,6 @@ RDEPEND+="
 	dev-libs/libfmt[${MULTILIB_USEDEP}]
 	dev-libs/pugixml[${MULTILIB_USEDEP}]
 	>=media-libs/openexr-2:=
-	>=media-libs/ilmbase-2:=[${MULTILIB_USEDEP}]
 	$(python_gen_any_dep '>=media-libs/openimageio-2:=[${PYTHON_SINGLE_USEDEP}]')
 	sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	optix? (
