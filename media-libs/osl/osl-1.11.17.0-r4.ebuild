@@ -66,13 +66,36 @@ gen_llvm_bdepend() {
 	echo "${o}"
 }
 
+OPENEXR_V2="2.5.7 2.5.8"
+OPENEXR_V3="3.1.4 3.1.5"
+gen_openexr_pairs() {
+	local v
+	local o
+	for v in ${OPENEXR_V2} ; do
+		echo "
+			(
+				~media-libs/openexr-${v}:=
+				~media-libs/ilmbase-${v}:=[${MULTILIB_USEDEP}]
+			)
+		"
+	done
+	for v in ${OPENEXR_V3} ; do
+		echo "
+			(
+				~media-libs/openexr-${v}:=
+				~dev-libs/imath-${v}:=
+			)
+		"
+	done
+}
+
 # Multilib requires openexr built as multilib.
 RDEPEND+=" "$(gen_llvm_depend)
 RDEPEND+="
+	|| ( $(gen_openexr_pairs) )
 	>=dev-libs/boost-1.55:=[${MULTILIB_USEDEP}]
 	dev-libs/libfmt[${MULTILIB_USEDEP}]
 	dev-libs/pugixml[${MULTILIB_USEDEP}]
-	>=media-libs/openexr-2:=
 	$(python_gen_any_dep '>=media-libs/openimageio-2:=[${PYTHON_SINGLE_USEDEP}]')
 	sys-libs/zlib:=[${MULTILIB_USEDEP}]
 	optix? (
