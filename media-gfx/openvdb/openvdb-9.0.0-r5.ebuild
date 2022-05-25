@@ -36,7 +36,44 @@ REQUIRED_USE+="
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/ci/install.sh
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
+
+OPENEXR_V2="2.5.7 2.5.8"
+OPENEXR_V3="3.1.4 3.1.5"
+gen_openexr_pairs() {
+	local v
+	local o
+	for v in ${OPENEXR_V2} ; do
+		echo "
+			(
+				~media-libs/openexr-${v}:=
+				~media-libs/ilmbase-${v}:=
+			)
+		"
+	done
+	for v in ${OPENEXR_V3} ; do
+		echo "
+			(
+				~media-libs/openexr-${v}:=
+				~dev-libs/imath-${v}:=
+			)
+		"
+	done
+}
+
+gen_openexr3_pairs() {
+	local v
+	for v in ${OPENEXR_V3} ; do
+		echo "
+			(
+				~media-libs/openexr-${v}:=
+				~dev-libs/imath-${v}:=
+			)
+		"
+	done
+}
+
 DEPEND+="
+	|| ( $(gen_openexr_pairs) )
 	|| (
 		(
 			>=dev-cpp/tbb-2018.0:${LEGACY_TBB_SLOT}=
@@ -48,9 +85,11 @@ DEPEND+="
 		)
 	)
 	>=dev-libs/boost-1.66:=
-	>=media-libs/ilmbase-2.2:=
 	>=sys-libs/zlib-1.2.7:=
 	blosc? ( >=dev-libs/c-blosc-1.5:= )
+	imath-half? (
+		|| ( $(gen_openexr3_pairs) )
+	)
 	jemalloc? ( dev-libs/jemalloc:= )
 	log4cplus? ( >=dev-libs/log4cplus-1.1.2:= )
 	python? (
@@ -59,9 +98,6 @@ DEPEND+="
 			>=dev-libs/boost-1.68:=[numpy?,python?,${PYTHON_USEDEP}]
 			numpy? ( >=dev-python/numpy-1.14[${PYTHON_USEDEP}] )
 		')
-	)
-	imath-half? (
-		>=media-libs/openexr-2.2:=
 	)
 	vdb_view? (
 		media-libs/glu
