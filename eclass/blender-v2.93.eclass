@@ -218,6 +218,19 @@ gen_osl_depends()
 	echo "${o}"
 }
 
+OPENEXR_V2="2.5.7 2.5.8"
+gen_openexr_pairs() {
+	local v
+	for v in ${OPENEXR_V2} ; do
+		echo "
+			(
+				~media-libs/openexr-${v}:=
+				~media-libs/ilmbase-${v}:=
+			)
+		"
+	done
+}
+
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 OSL_V="1.11.10.0"
@@ -311,8 +324,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 		${PUGIXML_DEPEND}
 	)
 	openexr? (
-		>=media-libs/ilmbase-2.5.5:=
-		>=media-libs/openexr-2.5.5:=
+		|| ( $(gen_openexr_pairs) )
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=] )
 	openvdb? (
