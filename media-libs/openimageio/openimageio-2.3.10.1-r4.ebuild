@@ -56,19 +56,31 @@ gen_openvdb_depends() {
 	done
 	echo "${o}"
 }
-OPENEXR_VERS=( 3.1.4 3.1.5 )
-gen_imath_openexr_pairs() {
-	for x in ${OPENEXR_VERS[@]} ; do
+
+OPENEXR_V2="2.5.7 2.5.8"
+OPENEXR_V3="3.1.4 3.1.5"
+gen_openexr_pairs() {
+	local v
+	for v in ${OPENEXR_V2} ; do
 		echo "
 			(
-				~media-libs/openexr-${x}:=
-				~dev-libs/imath-${x}:=
+				~media-libs/openexr-${v}:=
+				~media-libs/ilmbase-${v}:=
+			)
+		"
+	done
+	for v in ${OPENEXR_V3} ; do
+		echo "
+			(
+				~media-libs/openexr-${v}:=
+				~dev-libs/imath-${v}:=
 			)
 		"
 	done
 }
+
 RDEPEND+="
-	|| ( $(gen_imath_openexr_pairs) )
+	|| ( $(gen_openexr_pairs) )
 	>=dev-cpp/robin-map-0.6.2
 	>=dev-libs/boost-1.53:=
 	>=dev-libs/libfmt-7.1.3:=
