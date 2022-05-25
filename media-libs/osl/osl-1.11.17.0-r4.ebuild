@@ -70,7 +70,6 @@ OPENEXR_V2="2.5.7 2.5.8"
 OPENEXR_V3="3.1.4 3.1.5"
 gen_openexr_pairs() {
 	local v
-	local o
 	for v in ${OPENEXR_V2} ; do
 		echo "
 			(
