@@ -30,6 +30,11 @@
 # taoframework may be pruned
 # msbuild prune?
 
+repo_latest_version_get_alembic_pv() {
+	echo $(get_newest_pv \
+https://github.com/alembic/alembic.git)
+}
+
 repo_latest_version_get_alice_pv() {
 	echo $(wget -q -O - \
 https://www.alice.org/get-alice/alice-$(echo "${oiledmachine_pv}" \
@@ -1627,11 +1632,6 @@ https://github.com/nunit/nunit.git \
 		| tail -n 1)
 }
 
-repo_latest_version_get_nvidia-texture-tools_pv() {
-	echo $(get_newest_pv \
-https://github.com/castano/nvidia-texture-tools.git)
-}
-
 repo_latest_version_get_nvorbis_pv() {
 	echo $(get_newest_pv \
 https://github.com/NVorbis/NVorbis.git)
@@ -1691,6 +1691,11 @@ repo_latest_version_get_oh-my-zsh_pv() {
 	local pv="9999"
 	local suffix=$(get_head_suffix "github.com" "ohmyzsh/ohmyzsh" "master")
 	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_opencolorio_pv() {
+	echo $(get_newest_pv \
+https://github.com/AcademySoftwareFoundation/OpenColorIO.git)
 }
 
 repo_latest_version_get_openimageio_pv() {
