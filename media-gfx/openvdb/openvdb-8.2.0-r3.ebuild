@@ -30,7 +30,7 @@ REQUIRED_USE+="
 	jemalloc? ( || ( test ${VDB_UTILS} ) )
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
-	vdb_render? ( imath-half )"
+"
 # See
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/doc/dependencies.txt
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/ci/install.sh
@@ -86,9 +86,6 @@ DEPEND+="
 	>=dev-libs/boost-1.66:=
 	>=sys-libs/zlib-1.2.7:=
 	blosc? ( >=dev-libs/c-blosc-1.5:= )
-	imath-half? (
-		|| ( $(gen_openexr3_pairs) )
-	)
 	jemalloc? ( dev-libs/jemalloc:= )
 	log4cplus? ( >=dev-libs/log4cplus-1.1.2:= )
 	python? (
@@ -97,6 +94,9 @@ DEPEND+="
 			>=dev-libs/boost-1.68:=[numpy?,python?,${PYTHON_USEDEP}]
 			numpy? ( >=dev-python/numpy-1.14[${PYTHON_USEDEP}] )
 		')
+	)
+	vdb_render? (
+		|| ( $(gen_openexr3_pairs) )
 	)
 	vdb_view? (
 		media-libs/glu
@@ -194,6 +194,14 @@ src_configure() {
 		-DUSE_IMATH_HALF=$(usex imath-half)
 		-DUSE_LOG4CPLUS=$(usex log4cplus)
 	)
+
+	if use imath-half ; then
+		if has_version "dev-libs/imath" ; then
+			mycmakeargs+=( -DUSE_EXR=OFF )
+		else
+			mycmakeargs+=( -DUSE_EXR=ON )
+		fi
+	fi
 
 	if use python; then
 		mycmakeargs+=(
