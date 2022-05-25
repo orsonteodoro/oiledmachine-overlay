@@ -333,6 +333,7 @@ RDEPEND+="  ${PYTHON_DEPS}
 	)
 	openexr? (
 		|| ( $(gen_openexr_pairs) )
+		!>=media-libs/openexr-3
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=] )
 	openvdb? (
