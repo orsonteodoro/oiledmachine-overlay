@@ -11,19 +11,19 @@ inherit cmake flag-o-matic python-single-r1
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
-#KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86" # Build time problems
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 SLOT="0"
-OPENVDB_ABIS=( 6 7 8 9 10 )
+OPENVDB_ABIS=( 6 7 8 )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 X86_CPU_FLAGS=( avx sse4_2 )
 IUSE+=" ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}"
 IUSE+=" ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat"
 IUSE+=" +blosc doc egl -imath-half +jemalloc -log4cplus -numpy -python
-+static-libs -tbbmalloc -no-concurrent-malloc test -vdb_lod +vdb_print
++static-libs -tbbmalloc -no-concurrent-malloc -openexr test -vdb_lod +vdb_print
 -vdb_render -vdb_view"
 VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
-# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/CMakeLists.txt#L256
+# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/CMakeLists.txt#L205
 REQUIRED_USE+="
 	^^ ( ${OPENVDB_ABIS_[@]} )
 	^^ ( jemalloc tbbmalloc no-concurrent-malloc )
@@ -32,8 +32,8 @@ REQUIRED_USE+="
 	python? ( ${PYTHON_REQUIRED_USE} )
 "
 # See
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/ci/install.sh
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/ci/install.sh
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 
@@ -44,28 +44,16 @@ gen_openexr_pairs() {
 	for v in ${OPENEXR_V2} ; do
 		echo "
 			(
-				~media-libs/openexr-${v}:=
-				~media-libs/ilmbase-${v}:=
+				openexr? ( ~media-libs/openexr-${v}:= )
+				imath-half? ( ~media-libs/ilmbase-${v}:= )
 			)
 		"
 	done
 	for v in ${OPENEXR_V3} ; do
 		echo "
 			(
-				~media-libs/openexr-${v}:=
-				~dev-libs/imath-${v}:=
-			)
-		"
-	done
-}
-
-gen_openexr3_pairs() {
-	local v
-	for v in ${OPENEXR_V3} ; do
-		echo "
-			(
-				~media-libs/openexr-${v}:=
-				~dev-libs/imath-${v}:=
+				openexr? ( ~media-libs/openexr-${v}:= )
+				imath-half? ( ~dev-libs/imath-${v}:= )
 			)
 		"
 	done
@@ -94,9 +82,6 @@ DEPEND+="
 			>=dev-libs/boost-1.68:=[numpy?,python?,${PYTHON_USEDEP}]
 			numpy? ( >=dev-python/numpy-1.14[${PYTHON_USEDEP}] )
 		')
-	)
-	vdb_render? (
-		|| ( $(gen_openexr3_pairs) )
 	)
 	vdb_view? (
 		media-libs/glu
@@ -135,16 +120,13 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-util/cppunit-1.10
-		>=dev-cpp/gtest-1.10
+		>=dev-cpp/gtest-1.8
 	)"
 SRC_URI="
 https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 PATCHES=(
 	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
-	"${FILESDIR}/${PN}-8.1.0-glfw-libdir.patch"
-	"${FILESDIR}/${PN}-9.0.0-numpy.patch"
-	"${FILESDIR}/${PN}-9.0.0-unconditionally-search-Python-interpreter.patch"
 )
 RESTRICT="!test? ( test )"
 
@@ -194,17 +176,10 @@ src_configure() {
 		-DUSE_BLOSC=$(usex blosc)
 		-DUSE_CCACHE=OFF
 		-DUSE_COLORED_OUTPUT=ON
+		-DUSE_EXR=$(usex openexr)
 		-DUSE_IMATH_HALF=$(usex imath-half)
 		-DUSE_LOG4CPLUS=$(usex log4cplus)
 	)
-
-	if use imath-half ; then
-		if has_version "dev-libs/imath" ; then
-			mycmakeargs+=( -DUSE_EXR=OFF )
-		else
-			mycmakeargs+=( -DUSE_EXR=ON )
-		fi
-	fi
 
 	if use python; then
 		mycmakeargs+=(
