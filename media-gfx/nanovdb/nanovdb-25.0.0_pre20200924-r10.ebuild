@@ -40,7 +40,6 @@ DEPEND_GTEST=" >=dev-cpp/gtest-1.10"
 OPENEXR_V2="2.5.7 2.5.8"
 gen_openexr_pairs() {
 	local v
-	local o
 	for v in ${OPENEXR_V2} ; do
 		echo "
 			(
