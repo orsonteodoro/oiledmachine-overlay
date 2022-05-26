@@ -47,18 +47,6 @@ gen_half_pairs() {
 	done
 }
 
-gen_imath3_pairs() {
-	local v
-	for v in ${OPENEXR_V3} ; do
-		echo "
-			(
-				~media-libs/openexr-${v}:=
-				~dev-libs/imath-${v}:=
-			)
-		"
-	done
-}
-
 RDEPEND="
 	|| ( $(gen_half_pairs) )
 	dev-cpp/pystring
