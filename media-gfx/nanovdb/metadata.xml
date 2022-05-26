@@ -46,6 +46,9 @@
     <flag name="interactive-renderer">
       Builds the interactive renderer tool
     </flag>
+    <flag name="log4cplus">
+      Adds log4cplus support
+    </flag>
     <flag name="native-file-dialog">
       Adds support for a GTK3 based native file dialog for the interacitve
       renderer tool to open vdb/nvdb assets.  You may still open assets
