@@ -20,11 +20,11 @@ IUSE+=" +benchmark +blosc cuda -doc -egl +examples -imgui +interactive-renderer
 -log4cplus -native-file-dialog +opencl optix +opengl -openexr +openvdb
 system-glfw +tbb +test test-renderer +tools +zlib"
 REQUIRED_USE+="
-	interactive-renderer? ( tools )
-	native-file-dialog? ( imgui tools )
 	benchmark? ( openvdb )
 	blosc? ( openvdb )
+	interactive-renderer? ( tools )
 	log4cplus? ( openvdb )
+	native-file-dialog? ( imgui tools )
 	openexr? ( openvdb )
 	openvdb? ( tbb zlib )
 	test? ( openvdb tbb )
