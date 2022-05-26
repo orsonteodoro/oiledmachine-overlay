@@ -60,7 +60,10 @@ gen_openexr_pairs() {
 }
 
 DEPEND+="
-	|| ( $(gen_openexr_pairs) )
+	|| (
+                $(gen_openexr_pairs)
+                !openexr? ( !imath-half? ( virtual/libc ) )
+        )
 	|| (
 		(
 			>=dev-cpp/tbb-2018.0:${LEGACY_TBB_SLOT}=
