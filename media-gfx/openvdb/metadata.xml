@@ -58,7 +58,9 @@
       Adds OpenEXR support
     </flag>
     <flag name="imath-half">
-      Support for 16-bit half float type (FP16).
+      Uses an implementation of the 16-bit half float type (FP16) with optimized
+      float-to-half conversion instead of the internal non-optimized
+      implementation.
     </flag>
     <flag name="jemalloc">
       Uses jemalloc as the concurrent memory allocator for binaries (that use
