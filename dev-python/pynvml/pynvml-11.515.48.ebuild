@@ -17,7 +17,7 @@ IUSE+=" sdk +runtime"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 # See https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html
 RDEPEND+=" ${PYTHON_DEPS}
-	sdk? ( >=dev-util/nvidia-cuda-toolkit-11.4 )
+	sdk? ( >=dev-util/nvidia-cuda-toolkit-11.7 )
 	runtime? ( >=x11-drivers/nvidia-drivers-$(ver_cut 2 ${PV}) )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}"
