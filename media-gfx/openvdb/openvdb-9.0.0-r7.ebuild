@@ -191,6 +191,7 @@ src_configure() {
 		mycmakeargs+=(
 			-DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)"
 			-DPython_EXECUTABLE="${PYTHON}"
+			-DPython_INCLUDE_DIR="$(python_get_includedir)"
 			-DUSE_NUMPY=$(usex numpy)
 		)
 	fi
