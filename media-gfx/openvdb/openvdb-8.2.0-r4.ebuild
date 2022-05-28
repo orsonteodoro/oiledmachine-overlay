@@ -130,6 +130,10 @@ https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 PATCHES=(
 	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
+	"${FILESDIR}/${PN}-8.0.1-add-consistency-for-NumPy-find_package-call.patch"
+	"${FILESDIR}/${PN}-8.1.0-glfw-libdir.patch"
+	"${FILESDIR}/${PN}-8.2.0-fix-finding-ilmbase-if-imath-and-ilmbase-are-installed.patch"
+	"${FILESDIR}/${PN}-8.2.0-unconditionally-search-Python-interpreter.patch"
 )
 RESTRICT="!test? ( test )"
 
