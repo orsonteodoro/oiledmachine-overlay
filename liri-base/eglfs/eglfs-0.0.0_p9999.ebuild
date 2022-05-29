@@ -20,7 +20,7 @@ DEPEND+=" dev-libs/libinput
 	 ~liri-base/libliri-0.9.0_p9999
 	 ~liri-base/qtudev-1.1.0_p9999
 	  media-libs/fontconfig
-	  media-libs/mesa[egl,gbm]
+	  media-libs/mesa[egl(+),gbm(+)]
 	  x11-libs/libdrm
 	  x11-libs/libxkbcommon"
 RDEPEND+=" ${DEPEND}"
