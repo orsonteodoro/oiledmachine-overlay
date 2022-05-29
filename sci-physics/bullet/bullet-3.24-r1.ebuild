@@ -172,7 +172,7 @@ DEPEND+=" ${CDEPEND}
 	media-libs/freeglut[${MULTILIB_USEDEP}]
 	virtual/opengl[${MULTILIB_USEDEP}]
 	demos? (
-		media-libs/mesa[${MULTILIB_USEDEP},egl]
+		media-libs/mesa[${MULTILIB_USEDEP},egl(+)]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
 	)
 	tbb? (
