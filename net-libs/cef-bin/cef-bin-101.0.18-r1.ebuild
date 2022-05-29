@@ -87,7 +87,7 @@ UNLISTED_RDEPEND="
 	media-gfx/graphite2[${MULTILIB_USEDEP}]
 	media-libs/harfbuzz[${MULTILIB_USEDEP}]
 	media-libs/libglvnd[${MULTILIB_USEDEP}]
-	>=media-libs/mesa-11.2.0[egl,${MULTILIB_USEDEP}]
+	>=media-libs/mesa-11.2.0[egl(+),${MULTILIB_USEDEP}]
 	>=x11-libs/libxkbcommon-0.5.0[${MULTILIB_USEDEP}]"
 OPTIONAL_RDEPEND="
 	>=gnome-base/libgnome-keyring-3.12[${MULTILIB_USEDEP}]
