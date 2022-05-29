@@ -1391,8 +1391,13 @@ https://github.com/LuaJIT/LuaJIT.git)
 }
 
 repo_latest_version_get_m17-cxx-demod_pv() {
-	echo $(get_newest_pv \
-https://github.com/mobilinkd/m17-cxx-demod.git)
+	echo $(get_tags \
+https://github.com/mobilinkd/m17-cxx-demod.git \
+		| sed -r -e "s#kalman-##g" \
+		| grep -E -o -e "^[0-9\.]+" \
+		| esort \
+		| tr " " "\n" \
+		| tail -n 1)
 }
 
 repo_latest_version_get_mesa_pv() {
