@@ -322,7 +322,7 @@ DEPEND_MESA="
 
 # See deps/glad/CMakeLists.txt
 DEPEND_GLAD="
-	>=media-libs/mesa-${MESA_V}[egl]
+	>=media-libs/mesa-${MESA_V}[egl(+)]
 	${DEPEND_MESA}
 	${DEPEND_LIBX11}
 "
