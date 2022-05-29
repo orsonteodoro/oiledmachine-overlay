@@ -21,7 +21,7 @@ SRC_URI="
 ${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
 	-> ${P}.tar.gz"
 NV_DRIVER_VERSION_VULKAN="390.132"
-IUSE+=" doc egl gles2 +system-jsoncpp video_cards_amdgpu
+IUSE+=" doc gles2 +system-jsoncpp video_cards_amdgpu
 video_cards_i965 video_cards_iris
 video_cards_nvidia video_cards_radeonsi wayland xcb +xlib"
 REQUIRED_USE+=" ^^ ( xlib xcb wayland )"
@@ -46,7 +46,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	x11-base/xorg-drivers[video_cards_radeonsi]
 		)
 	)
-	media-libs/mesa[egl?,gles2?,libglvnd(+)]
+	media-libs/mesa[egl(+),gles2?,libglvnd(+)]
 	media-libs/vulkan-loader
 	system-jsoncpp? ( dev-libs/jsoncpp )
 	virtual/libc
@@ -62,7 +62,7 @@ DEPEND+=" ${PYTHON_DEPS}
 	wayland? (
 		dev-libs/wayland
 		dev-libs/wayland-protocols
-		media-libs/mesa[egl]
+		media-libs/mesa[egl(+)]
 	)"
 #	x11-libs/libXrandr
 #	x11-libs/libXxf86vm
