@@ -67,6 +67,7 @@ gen_llvm_depends() {
 
 BDEPEND+="
 	|| ( $(gen_llvm_depends) )
+	>=dev-node/acorn-8.4.1
 	>=dev-util/cmake-3.12.4
 	>=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[wasm(+)]
 	>=dev-vcs/git-2.35.1
