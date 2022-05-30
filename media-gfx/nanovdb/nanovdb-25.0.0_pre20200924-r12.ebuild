@@ -144,6 +144,10 @@ PATCHES_=(
 	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-header-destdir.patch"
 )
 
+is_crosscompile() {
+	[[ ${CHOST} != ${CTARGET} ]]
+}
+
 pkg_setup()
 {
 	if use cuda ; then
@@ -186,6 +190,19 @@ pkg_setup()
 			else
 				einfo 'Passed: FEATURES="-usersandbox"'
 			fi
+		fi
+	fi
+
+	if ! is_crosscompile \
+		&& which vdb_print ; then
+		if ! timeout 1 vdb_print -version \
+			| grep -q -e "OpenVDB library version:" ; then
+# Possible CFI problems
+eerror
+eerror "Detected vdb_print stall.  Re-emerge jemalloc and openvdb packages."
+eerror "or emerge openvdb with the no-concurrent-malloc USE flag."
+eerror
+			die
 		fi
 	fi
 }
