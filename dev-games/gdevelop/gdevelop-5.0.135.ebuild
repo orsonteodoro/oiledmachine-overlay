@@ -266,6 +266,10 @@ einfo "CFLAGS=${CFLAGS}"
 einfo "CXXFLAGS=${CXXFLAGS}"
 einfo "LDFLAGS=${LDFLAGS}"
 einfo "NODE_VERSION=${NODE_VERSION}"
+	export PATH="/usr/$(get_libdir)/node_modules/acorn/bin:${PATH}"
+	export NODE_PATH="/usr/$(get_libdir)/node_modules:${NODE_PATH}"
+einfo "NODE_PATH=${NODE_PATH}"
+einfo "PATH=${PATH}"
 
 einfo
 einfo "Building ${MY_PN}.js"
