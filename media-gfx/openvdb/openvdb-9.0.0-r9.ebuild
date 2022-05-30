@@ -11,9 +11,9 @@ inherit cmake flag-o-matic python-single-r1
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
+#KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86" # Build time problems
 SLOT="0"
-OPENVDB_ABIS=( 6 7 8 )
+OPENVDB_ABIS=( 6 7 8 9 10 )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
 OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 X86_CPU_FLAGS=( avx sse4_2 )
@@ -23,7 +23,7 @@ IUSE+=" +blosc doc -imath-half +jemalloc -log4cplus -numpy -python
 +static-libs -tbbmalloc -no-concurrent-malloc -openexr test -vdb_lod +vdb_print
 -vdb_render -vdb_view"
 VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
-# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/CMakeLists.txt#L205
+# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/CMakeLists.txt#L256
 REQUIRED_USE+="
 	^^ ( ${OPENVDB_ABIS_[@]} )
 	^^ ( jemalloc tbbmalloc no-concurrent-malloc )
@@ -32,8 +32,8 @@ REQUIRED_USE+="
 	python? ( ${PYTHON_REQUIRED_USE} )
 "
 # See
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/ci/install.sh
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/ci/install.sh
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 
@@ -121,22 +121,30 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-util/cppunit-1.10
-		>=dev-cpp/gtest-1.8
+		>=dev-cpp/gtest-1.10
 	)"
 SRC_URI="
 https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 PATCHES=(
-	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
-	"${FILESDIR}/${PN}-8.0.1-add-consistency-for-NumPy-find_package-call.patch"
 	"${FILESDIR}/${PN}-8.1.0-glfw-libdir.patch"
-	"${FILESDIR}/${PN}-8.2.0-fix-finding-ilmbase-if-imath-and-ilmbase-are-installed.patch"
-	"${FILESDIR}/${PN}-8.2.0-unconditionally-search-Python-interpreter.patch"
+	"${FILESDIR}/${PN}-9.0.0-fix-atomic.patch"
+	"${FILESDIR}/${PN}-9.0.0-numpy.patch"
+	"${FILESDIR}/${PN}-9.0.0-unconditionally-search-Python-interpreter.patch"
 )
 RESTRICT="!test? ( test )"
 
+is_crosscompile() {
+	[[ ${CHOST} != ${CTARGET} ]]
+}
+
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
+	if ! is_crosscompile && which jemalloc-confg ; then
+		if jemalloc-config --cflags | grep -q -e "cfi" ; then
+			ewarn "jemalloc may need rebuild if vdb_print -version stalls."
+		fi
+	fi
 }
 
 src_prepare() {
@@ -240,5 +248,18 @@ src_install()
 					"${f}" || die
 			fi
 		done
+	fi
+
+	if ! is_crosscompile \
+		&& which "${ED}/usr/bin/vdb_print" ; then
+		if ! timeout 1 "${ED}/usr/bin/vdb_print" -version \
+			| grep -q -e "OpenVDB library version:" ; then
+# Possible CFI problems
+eerror
+eerror "Detected vdb_print stall.  Re-emerge jemalloc and openvdb packages."
+eerror "or emerge openvdb with the no-concurrent-malloc USE flag."
+eerror
+			die
+		fi
 	fi
 }
