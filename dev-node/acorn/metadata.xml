@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- ebuild fork only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+  <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription lang="en">
+  </longdescription>
+  <use>
+    <flag name=""></flag>
+  </use>
+  <upstream>
+    <remote-id type="github">acornjs/acorn</remote-id>
+  </upstream>
+</pkgmetadata>
