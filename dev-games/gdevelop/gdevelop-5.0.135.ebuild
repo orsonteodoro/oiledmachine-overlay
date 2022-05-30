@@ -14,7 +14,7 @@ LICENSE="GDevelop MIT"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+=" +extensions openrc"
-# See https://github.com/4ian/GDevelop/blob/v5.0.133/ExtLibs/installDeps.sh
+# See https://github.com/4ian/GDevelop/blob/v5.0.135/ExtLibs/installDeps.sh
 # See *raw log* of https://app.travis-ci.com/github/4ian/GDevelop
 # U 16.04
 # Dependencies for the native build are not installed in CI
@@ -75,10 +75,10 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODEJS_V}:${NODEJS_V%%.*}
 	>=net-libs/nodejs-${NODEJS_V}[npm]
 "
-ELECTRON_APP_ELECTRON_V="8.2.5" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.133/newIDE/electron-app/package-lock.json
-ELECTRON_APP_REACT_V="16.8.6" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.133/newIDE/app/package-lock.json
+ELECTRON_APP_ELECTRON_V="18.2.2" # See \
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.135/newIDE/electron-app/package-lock.json
+ELECTRON_APP_REACT_V="16.14.0" # See \
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.0.135/newIDE/app/package-lock.json
 MY_PV="${PV//_/-}"
 SRC_URI="
 https://github.com/4ian/${MY_PN}/archive/v${MY_PV}.tar.gz
