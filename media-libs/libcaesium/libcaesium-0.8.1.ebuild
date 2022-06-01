@@ -169,7 +169,7 @@ DOCS=( README.md )
 _install_licenses() {
 	OIFS="${IFS}"
 	export IFS=$'\n'
-	for f in $(find "${S}" \
+	for f in $(find "${WORKDIR}" \
 	  -iname "*licen*" -type f \
 	  -o -iname "*copyright*" \
 	  -o -iname "*copying*" \
