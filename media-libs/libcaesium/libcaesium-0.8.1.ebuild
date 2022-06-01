@@ -182,12 +182,12 @@ _install_licenses() {
 		-e "copyright" \
 		-e "licen" \
 		-e "warrant" \
-		$(find "${S}" -iname "*readme*")) ; \
+		$(find "${WORKDIR}" -iname "*readme*")) ; \
 	do
 		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -e "s|^${S}||")
+			d=$(dirname "${f}" | sed -e "s|^${WORKDIR}||")
 		else
-			d=$(echo "${f}" | sed -e "s|^${S}||")
+			d=$(echo "${f}" | sed -e "s|^${WORKDIR}||")
 		fi
 		docinto "licenses/${d}"
 		dodoc -r "${f}"
@@ -199,4 +199,7 @@ src_install() {
 	dolib.so target/release/${PN}.so
 	einstalldocs
 	_install_licenses
+
+	# False positives
+	find "${ED}" -name "*winapi_oemlicense.a*" -delete || die
 }
