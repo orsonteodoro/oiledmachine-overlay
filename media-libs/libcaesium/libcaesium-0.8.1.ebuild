@@ -146,6 +146,7 @@ DESCRIPTION="The Caesium compression library written in Rust"
 HOMEPAGE="https://github.com/Lymphatus/libcaesium"
 LICENSE="
 	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
 	0BSD
 	AGPL-3
 	BSD
