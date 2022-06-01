@@ -17,7 +17,7 @@ LICENSE="Apache-2.0 Unlicense BSD-2"
 EGIT_REPO_URI="https://github.com/Lymphatus/caesium-clt.git"
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="r1"
 RDEPEND=">=media-libs/libcaesium-0.6.0"
 DEPEND="${RDEPEND}"
 RESTRICT="fetch mirror"
@@ -45,4 +45,12 @@ eerror "Found PV:  ${v}"
 eerror
 		die
 	fi
+	cmake-utils_src_prepare
+}
+
+src_configure() {
+	local mycmakeargs=(
+		-DLIBCAESIUM_PATH=/usr/$(get_libdir)
+	)
+	cmake-utils_src_configure
 }
