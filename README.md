@@ -259,7 +259,6 @@ the metadata.xml.
 | media-libs/libmp4v2 | For multilib tizonia |
 | media-libs/liboggz | For multilib tizonia |
 | media-libs/libyuv | For xpra compression |
-| media-libs/mozjpeg | A JPEG encoding library for higher visual quality and smaller file sizes.  It is a superset of libjpegturbo. |
 | media-libs/nestegg | TBA |
 | media-libs/openimageio | TBA |
 | media-libs/opusfile | TBA |

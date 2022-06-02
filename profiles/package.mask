@@ -85,7 +85,6 @@ media-libs/liboggz
 media-libs/libomxil-bellagio
 media-libs/libsfml
 media-libs/libyuv
-media-libs/mozjpeg
 media-libs/nestegg
 media-libs/openimageio
 media-libs/opusfile

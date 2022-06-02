@@ -283,15 +283,6 @@ repo_latest_version_get_bullet_pv() {
 https://github.com/bulletphysics/bullet3.git)
 }
 
-repo_latest_version_get_caesium-clt_pv() {
-	echo $(get_tags \
-https://github.com/Lymphatus/caesium-clt.git \
-		| sed -r -e "s|^v\.||g" -e "s|\.beta|_beta|g" \
-		| esort \
-		| tr " " "\n" \
-		| tail -n 1)
-}
-
 repo_latest_version_get_caprine_pv() {
 	echo $(get_newest_pv \
 https://github.com/sindresorhus/caprine.git)
@@ -979,11 +970,6 @@ repo_latest_version_get_libappimage_pv() {
 https://github.com/AppImage/libappimage.git)
 }
 
-repo_latest_version_get_libcaesium_pv() {
-	echo $(get_newest_pv \
-https://github.com/Lymphatus/libcaesium.git)
-}
-
 repo_latest_version_get_libcaca_pv() {
 	echo $(get_tags \
 https://github.com/cacalabs/libcaca.git \
@@ -1457,15 +1443,6 @@ https://github.com/MonoGame/MonoGame.git \
 repo_latest_version_get_monogame-extended_pv() {
 	echo $(get_newest_pv \
 https://github.com/craftworkgames/MonoGame.Extended.git)
-}
-
-repo_latest_version_get_mozjpeg_pv() {
-	echo $(get_tags \
-https://github.com/mozilla/mozjpeg.git \
-		| grep -v -F -e "jpeg" \
-		| esort \
-		| tr " " "\n" \
-		| tail -n 1)
 }
 
 repo_latest_version_get_mrab-regex_pv() {
