@@ -411,6 +411,23 @@ src_configure_nasm-rs() {
 	fi
 }
 
+src_configure_oxipng() {
+	local features=(
+		binary
+		filetime
+		libdeflater
+		zopfli
+	)
+
+	if use threads ; then
+		features+=( parallel )
+	fi
+
+	if [[ -n "${features[@]}" ]] ; then
+		set_cargo_features "oxipng" "5.0.1" "${features[@]}"
+	fi
+}
+
 src_configure() {
 	src_configure_bytemuck
 	src_configure_cloudflare-zlib
@@ -422,6 +439,7 @@ src_configure() {
 	src_configure_mozjpeg
 	src_configure_mozjpeg-sys
 	src_configure_nasm-rs
+	src_configure_oxipng
 	cargo_src_configure
 }
 
