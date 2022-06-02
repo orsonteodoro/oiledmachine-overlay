@@ -220,12 +220,6 @@ ewarn "missing cargo packages."
 ewarn
 }
 
-src_prepare() {
-	default
-	einfo "Changing to resolver v2"
-	sed -i -r -e "s|^version = \"([\.0-9]+)\"|version = \"\1\"\nresolver = \"2\"|g" "Cargo.toml" || die
-}
-
 # The --feature arg is broken
 set_cargo_features() {
 	local pn="${1}"
