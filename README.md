@@ -251,11 +251,9 @@ the metadata.xml.
 | media-fonts/noto-color-emoji-config | This package will apply fontconfig fixes to firefox, google chrome, etc systemwide.  You can use Gentoo's noto-emoji package instead of the one on this overlay. |
 | media-gfx/blender | This ebuild was fork and was designed to be multislotted and comprehensive to match the feature enablement upstream.  Use the `virtual/blender-lts` or `virtual/blender-stable` to choose the update path. |
 | media-gfx/blockbench | This is an Electron based boxy 3D modeler and animator program used in games |
-| media-gfx/caesiumclt | This is a command line image compressor for PNG and JPEG files. |
 | media-gfx/texturelab | This is an Electron based GPU accelerated texture maker. |
 | media-libs/glfw | TBA |
 | media-libs/libcaca | This library contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated GIFs, and Facebook videos to try to better render skin color.  I still think Termpic colors rendering is better. |
-| media-libs/libcaesium | For caesium image compression. |
 | media-libs/libfishsound | For multilib tizonia. |
 | media-libs/embree | For amd-radeon-prorender-blender plugin. |
 | media-libs/libmp4v2 | For multilib tizonia |
@@ -265,7 +263,6 @@ the metadata.xml.
 | media-libs/nestegg | TBA |
 | media-libs/openimageio | TBA |
 | media-libs/opusfile | TBA |
-| media-libs/mozjpeg | This is a dependency for CaesiumCLT. |
 | media-libs/libspng | This is another alternative png library that has been fuzzed to eliminate security holes. |
 | media-libs/theorafile | This is a system library for the dotnet package. |
 | media-libs/theoraplay | This needs testing. |
