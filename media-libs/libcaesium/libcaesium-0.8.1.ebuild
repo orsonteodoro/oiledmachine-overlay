@@ -21,8 +21,14 @@ winapi-util-0.1.5
 winapi-x86_64-pc-windows-gnu-0.4.0
 "
 
+MISSING_CRATES_EXTRA="
+simd-adler32-0.3.4
+"
+
+
 CRATES="
 ${MISSING_CRATES}
+${MISSING_CRATES_EXTRA}
 adler-1.0.2
 adler32-1.2.0
 ahash-0.7.6
@@ -150,8 +156,10 @@ LICENSE="
 	0BSD
 	AGPL-3
 	BSD
+	BSD-2
 	CC-BY-3.0
 	CC0-1.0
+	IJG
 	load_image-2.16.x
 	MIT
 	ZLIB
@@ -165,6 +173,13 @@ SRC_URI+=" $(cargo_crate_uris)"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 DOCS=( README.md )
+
+X86_FLAGS=(avx2 sse4_1)
+ARM_FLAGS=(neon crc32)
+IUSE+=" ${X86_FLAGS[@]/#/cpu_flags_x86_}"
+IUSE+=" ${ARM_FLAGS[@]/#/cpu_flags_arm_}"
+IUSE+=" +gif +jpeg +png +webp"
+IUSE+=" simd +threads +exceptions"
 
 _install_licenses() {
 	OIFS="${IFS}"
@@ -193,6 +208,221 @@ _install_licenses() {
 		dodoc -r "${f}"
 	done
 	export IFS="${OIFS}"
+}
+
+pkg_setup() {
+ewarn
+ewarn "Some arch and USE flags may need additional crates due to default only"
+ewarn "testing."
+ewarn
+ewarn "Fork the ebuild as a local copy and make corrections if you encounter"
+ewarn "missing cargo packages."
+ewarn
+}
+
+src_prepare() {
+	default
+	einfo "Changing to resolver v2"
+	sed -i -r -e "s|^version = \"([\.0-9]+)\"|version = \"\1\"\nresolver = \"2\"|g" "Cargo.toml" || die
+}
+
+# The --feature arg is broken
+set_cargo_features() {
+	local pn="${1}"
+	shift
+	local pv="${1}"
+	shift
+	local features="${@}"
+	local p="${WORKDIR}/cargo_home/gentoo/${pn}-${pv}"
+	if [[ -d "${p}" ]] ; then
+		p="${p}/Cargo.toml"
+
+		local x
+		for x in ${features} ; do
+			grep -q -e "^${x} =" "${p}" || ewarn "Missing ${x} feature in ${p}"
+		done
+
+		einfo "Editing ${p} with new default features"
+		sed -i -e "\|^default = |d" "${p}" || die
+		local o=""
+		for f in ${features} ; do
+			o+="\"${f}\","
+		done
+		o=$(echo "${o}" | sed -e "s|\",$|\"|g")
+		sed -i -e "s|\[features\]|[features]\ndefault = [${o}]|g" "${p}" || die
+	else
+eerror
+eerror "Missing folder:  cargo_home/gentoo/${pn}-${pv} (Bump version?)"
+eerror
+		die
+	fi
+}
+
+src_configure_bytemuck() {
+	local features=()
+	if use simd ; then
+		if use amd64 || use arm64 || use x86 ; then
+			:;
+		else
+			features+=( nightly_portable_simd )
+		fi
+		if use arm64 ; then
+			features+=( aarch64_simd )
+		fi
+	fi
+	if [[ -n "${features[@]}" ]] ; then
+		set_cargo_features "bytemuck" "1.9.1" "${features[@]}"
+	fi
+}
+
+src_configure_cloudflare-zlib() {
+	local features=()
+	if use cpu_flags_arm_neon && use cpu_flags_arm_crc32 ; then
+		features+=( arm-always )
+	fi
+	if [[ -n "${features[@]}" ]] ; then
+		set_cargo_features "cloudflare-zlib" "0.2.9" "${features[@]}"
+	fi
+}
+
+src_configure_dssim() {
+	local features=()
+	if use threads ; then
+		features+=( threads )
+	fi
+	if [[ -n "${features[@]}" ]] ; then
+		set_cargo_features "dssim" "3.2.0" "${features[@]}"
+	fi
+}
+
+src_configure_image() {
+	local features=()
+	for x in gif jpeg png webp ; do
+		if use ${x} ; then
+			features+=( ${x} )
+		fi
+	done
+	if use jpeg ; then
+		if use threads ; then
+			features+=( jpeg_rayon )
+		fi
+	fi
+	if [[ -n "${features[@]}" ]] ; then
+		set_cargo_features "image" "0.23.14" "${features[@]}"
+		set_cargo_features "image" "0.24.1" "${features[@]}"
+	fi
+}
+
+src_configure_jpeg-decoder() {
+	local features=()
+	if use jpeg ; then
+		if use threads ; then
+			features+=( rayon )
+		fi
+	fi
+	if [[ -n "${features[@]}" ]] ; then
+		set_cargo_features "jpeg-decoder" "0.2.4" "${features[@]}"
+	fi
+}
+
+src_configure_mozjpeg() {
+	local features=()
+	if use simd ; then
+		if use amd64 || use x86 ; then
+			features+=( nasm_simd )
+		fi
+		if use arm || use arm64 || use mips ; then
+			features+=( with_simd )
+		fi
+	fi
+	if [[ -n "${features[@]}" ]] ; then
+		set_cargo_features "mozjpeg" "0.9.2" "${features[@]}"
+	fi
+	local _march=$(echo "${CFLAGS}" | grep -E -o -e "-march=[a-z0-9_-]+" | sed -e "s|-march=||g")
+	if [[ -n "${_march}" ]] ; then
+		export TARGET_CPU="${_march}"
+	fi
+}
+
+src_configure_mozjpeg-sys() {
+	local features=()
+	if use exceptions ; then
+		features+=( unwinding )
+	fi
+	if use jpeg ; then
+	        local nprocs=$(get_nprocs)
+		einfo "nprocs:  ${nprocs}"
+		if use simd && (( ${nprocs} > 1 )) ; then
+			features+=( nasm_simd_parallel_build )
+		elif use simd && ( use amd64 || use x86 ) ; then
+			features+=( nasm_simd )
+		elif use simd && ( use arm || use arm64 || use mips6 ) ; then
+			features+=( with_simd )
+		fi
+	fi
+	if [[ -n "${features[@]}" ]] ; then
+		set_cargo_features "mozjpeg-sys" "1.0.1" "${features[@]}"
+	fi
+}
+
+src_configure_miniz_oxide() {
+	local features=()
+	if use simd ; then
+		if use amd64 || use arm || use arm64 || use x86 ; then
+			features+=( simd )
+		fi
+	fi
+	set_cargo_features "miniz_oxide" "0.5.1" "${features[@]}"
+}
+
+src_configure_libwebp-sys() {
+	local features=()
+	if use cpu_flags_x86_avx2 ; then
+		features+=( avx2 )
+	fi
+	if use cpu_flags_x86_sse4_1 ; then
+		features+=( sse41 )
+	fi
+	if use cpu_flags_arm_neon ; then
+		features+=( neon )
+	fi
+	if [[ -n "${features[@]}" ]] ; then
+		set_cargo_features "libwebp-sys" "0.4.2" "${features[@]}"
+	fi
+}
+
+get_nprocs() {
+        local nprocs=$(echo "${MAKEOPTS}" \
+		| grep -E -e "-j[ ]*[0-9]+" \
+		| grep -E -o -e "[0-9]+")
+        [[ -z "${nprocs}" ]] && nprocs=1
+	echo "${nprocs}"
+}
+
+src_configure_nasm-rs() {
+	local features=()
+	local nprocs=$(get_nprocs)
+	einfo "nprocs:  ${nprocs}"
+	if (( ${nprocs} > 1 )) ; then
+		features+=( parallel )
+	fi
+	if [[ -n "${features[@]}" ]] ; then
+		set_cargo_features "nasm-rs" "0.2.4" "${features[@]}"
+	fi
+}
+
+src_configure() {
+	src_configure_bytemuck
+	src_configure_cloudflare-zlib
+	src_configure_dssim
+	src_configure_image
+	src_configure_jpeg-decoder
+	src_configure_libwebp-sys
+	src_configure_miniz_oxide
+	src_configure_mozjpeg
+	src_configure_mozjpeg-sys
+	src_configure_nasm-rs
+	cargo_src_configure
 }
 
 src_install() {
