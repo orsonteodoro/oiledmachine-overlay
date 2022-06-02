@@ -5906,7 +5906,7 @@ ot-kernel_src_install() {
 		doins -r "${BUILD_DIR}" # Sanitize file permissions
 	done
 
-	local nprocs=$(echo "${MAKEOPTS}" | grep -E -e "-j[ ]*[0-9]+" | grep -E -o "[0-9]")
+	local nprocs=$(echo "${MAKEOPTS}" | grep -E -e "-j[ ]*[0-9]+" | grep -E -o -e "[0-9]+")
 	[[ -z "${nprocs}" ]] && nprocs=1
 	einfo "nprocs:  ${nprocs}"
 	einfo "Restoring +x bit"
