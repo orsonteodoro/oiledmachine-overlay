@@ -166,7 +166,7 @@ LICENSE="
 "
 # Apache-2.0 is this project the rest are dependencies
 
-KEYWORDS="~amd64 ~x86"
+# KEYWORDS="~amd64 ~x86"  # Low quality release.  High memory usage, loading converted images takes too long compared to original.
 SLOT="0/$(ver_cut 1-3 ${PV})"
 SRC_URI="https://github.com/Lymphatus/libcaesium/archive/${PV}.tar.gz -> ${P}.tar.gz"
 SRC_URI+=" $(cargo_crate_uris)"

@@ -16,7 +16,7 @@ LICENSE="Apache-2.0 Unlicense BSD-2"
 # README.md, package - all-rights-reserved (The vanilla Apache-2.0 doesn't have all rights reserved)
 EGIT_REPO_URI="https://github.com/Lymphatus/caesium-clt.git"
 SLOT="0/${PV}"
-KEYWORDS="~amd64 ~x86"
+# KEYWORDS="~amd64 ~x86" # Low quality release.  High memory usage, loading converted images takes too long compared to original.
 IUSE="r1"
 RDEPEND=">=media-libs/libcaesium-0.6.0"
 DEPEND="${RDEPEND}"
