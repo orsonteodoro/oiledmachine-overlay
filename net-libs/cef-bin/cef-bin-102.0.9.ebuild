@@ -12,21 +12,17 @@ inherit chromium-2 cmake-utils flag-o-matic multilib-minimal virtualx
 DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for embedding Chromium-based browsers in other applications."
 LICENSE="BSD"
 HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
-KEYWORDS="~arm ~arm64 ~amd64 ~x86"
+KEYWORDS="~arm ~arm64 ~amd64"
 # The download page can be found at https://cef-builds.spotifycdn.com/index.html
 
-CEF_VERSION_RAW="05/14/2022 - 101.0.18+g367b4a0+chromium-101.0.4951.67 / Chromium 101.0.4951.67"
-CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/4e5ba66/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4844
+CEF_VERSION_RAW="05/28/2022 - 102.0.9+g1c5e658+chromium-102.0.5005.63 / Chromium 102.0.5005.63"
+CHROMIUM_V="${CEF_VERSION_RAW##* }" # same as https://bitbucket.org/chromiumembedded/cef/src/1c5e658/CHROMIUM_BUILD_COMPATIBILITY.txt?at=4844
 CEF_COMMIT="${CEF_VERSION_RAW#*\+}" # same as https://bitbucket.org/chromiumembedded/cef/commits/
 CEF_COMMIT="${CEF_COMMIT%\+*}"
 CEF_COMMIT="${CEF_COMMIT:1:7}"
 
 TARBALL_SUFFIX="" # can be _beta or "" (stable)
 SRC_URI="
-	x86? (
-		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32${TARBALL_SUFFIX}_minimal.tar.bz2 )
-		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32${TARBALL_SUFFIX}.tar.bz2 )
-	)
 	amd64? (
 		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}_minimal.tar.bz2 )
 		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}.tar.bz2 )
@@ -49,8 +45,8 @@ REQUIRED_USE+="
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/101.0.4951.67/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/101.0.4951.67/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/102.0.5005.63/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/102.0.5005.63/build/install-build-deps.sh#L151
 # TODO: app-accessibility/speech-dispatcher needs multilib
 GLIB_V="2.48"
 XI_V="1.7.6"
