@@ -1513,6 +1513,10 @@ unset OT_KERNEL_PRIVATE_KEY
       web-server
       workstation
 
+    See also:
+
+      OT_KERNEL_HARDENING_LEVEL
+
 
 
     OT_KERNEL_ZSWAP_ALLOCATOR -- chooses the swap allocator which tries to fit
