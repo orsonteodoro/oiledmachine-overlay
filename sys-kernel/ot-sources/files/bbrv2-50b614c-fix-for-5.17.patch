@@ -1,0 +1,10 @@
+--- a/net/ipv4/tcp_rate.c.orig2	2022-06-06 18:43:00.273228613 -0700
++++ b/net/ipv4/tcp_rate.c	2022-06-06 18:45:19.382233197 -0700
+@@ -109,6 +109,7 @@ void tcp_rate_skb_delivered(struct sock
+ 		rs->prior_mstamp     = scb->tx.delivered_mstamp;
+ 		rs->is_app_limited   = scb->tx.is_app_limited;
+ 		rs->is_retrans	     = scb->sacked & TCPCB_RETRANS;
++		rs->tx_in_flight     = scb->tx.in_flight;
+ 		rs->last_end_seq     = scb->end_seq;
+ 
+ 		/* Record send time of most recently ACKed packet: */
