@@ -860,7 +860,7 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
     Acceptable values:
 
-      trust, untrusted, untrusted-distant, custom, manual, unset.
+      trusted, untrusted, untrusted-distant, custom, manual, unset.
 
     Meanings:
 
