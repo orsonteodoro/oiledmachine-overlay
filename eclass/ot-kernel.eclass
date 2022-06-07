@@ -37,8 +37,8 @@
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.16
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.17
+#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.18
 # kernel_compiler_patch:
 #   https://github.com/graysky2/kernel_compiler_patch
 # MUQSS CPU Scheduler (official, EOL 5.12):
@@ -48,8 +48,8 @@
 # Multigenerational LRU:
 #   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
 #   https://github.com/torvalds/linux/compare/v5.16...zen-kernel:5.16/lru
-#   https://github.com/torvalds/linux/compare/v5.16...zen-kernel:5.16/lru
 #   https://github.com/torvalds/linux/compare/v5.17...zen-kernel:5.17/mglru
+#   https://github.com/torvalds/linux/compare/v5.18...zen-kernel:5.17/mglru
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
 #   5.10 https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c
@@ -68,8 +68,8 @@
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.16/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.17/
+#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.18/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
 #   https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -81,8 +81,8 @@
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
-#   https://github.com/torvalds/linux/compare/v5.16...zen-kernel:5.16/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.17...zen-kernel:5.17/zen-sauce
+#   https://github.com/torvalds/linux/compare/v5.18...zen-kernel:5.18/zen-sauce
 
 case ${EAPI:-0} in
 	7) ;;

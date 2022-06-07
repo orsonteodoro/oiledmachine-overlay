@@ -3,12 +3,11 @@
 
 EAPI="7"
 
-K_GENPATCHES_VER="16"
-PATCH_PROJC_VER="5.17-r2"
-PATCH_RT_VER="5.17.1-rt17"
+K_GENPATCHES_VER="293"
+PATCH_RT_VER="4.14.278-rt133"
 
-inherit ot-kernel-v5.17
+inherit ot-kernel-v4.14
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v5.17.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v4.14.eclass
