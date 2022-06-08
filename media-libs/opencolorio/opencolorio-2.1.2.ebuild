@@ -95,7 +95,7 @@ RESTRICT="test"
 CMAKE_BUILD_TYPE=RelWithDebInfo
 
 PATCHES=(
-	"${FILESDIR}"/${P}-gcc12.patch
+	"${FILESDIR}"/${PN}-2.1.1-gcc12.patch
 )
 
 pkg_setup() {
