@@ -694,6 +694,12 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "cfi-5.17-aa4fb87.patch" ]] ; then
 		: # Skip for now since missing EXPORT_SYMBOL*
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.17-50b614c.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-50b614c-fix-for-5.17.patch"
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.17-41ceaf5.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-41ceaf5-fix-for-5.17.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
