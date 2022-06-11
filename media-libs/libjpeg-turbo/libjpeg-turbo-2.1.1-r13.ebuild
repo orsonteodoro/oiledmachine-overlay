@@ -208,7 +208,7 @@ is_pgo_ready() {
 	if [[ ! -d "${distdir}/pgo/assets/jpeg" ]] ; then
 		return 1
 	fi
-	if (( $(find "${distdir}/pgo/assets/jpeg" -iname "*.jpg" -o -iname "*.jpeg" | wc -l) == 0 )); then
+	if (( $(find "${distdir}/pgo/assets/jpeg" \( -iname "*.jpg" -o -iname "*.jpeg" \) | wc -l) == 0 )); then
 		return 1
 	fi
 	return 0
@@ -487,7 +487,7 @@ _run_trainers() {
 	local sandbox_path="${T}/sandbox"
 	mkdir -p "${sandbox_path}" || die
 	local p
-	for p in $(find "${distdir}/pgo/assets/jpeg" -iname "*.jpg" -o -iname "*.jpeg") ; do
+	for p in $(find "${distdir}/pgo/assets/jpeg" \( -iname "*.jpg" -o -iname "*.jpeg" \)) ; do
 		local bn=$(basename "${p}")
 		local bn_bmp=$(basename "${p}" \
                                 | sed -r -e "s|\.jpg|.bmp$|g" -e "s|\.jpeg|.bmp$|"
