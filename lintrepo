@@ -175,7 +175,7 @@ done
 fi
 
 einfo "Checking files with > 80 characters for GitHub code reviewers or for packagers"
-for f in $(find $(pwd) -name "*.ebuild" -o -name "metadata.xml") ; do
+for f in $(find $(pwd) \( -name "*.ebuild" -o -name "metadata.xml" \)) ; do
 	if pcregrep ${GREP_ARGS} -M '^.{80}.+\n' "${f}" ; then
 		einfo "Found ${f}"
 	fi
