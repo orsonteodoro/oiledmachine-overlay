@@ -95,24 +95,24 @@
 		    -rt (RT_PREEMPT)			Y
 		    genpatches				Y
 		    kernel_compiler_patch 		N
-		    O3 [6]				N
+		    O3 [5]				N
 		    PDS					N
-		    TRESOR (AES-NI) [3,4,6]		t
-		    TRESOR (x86) [3,4,6]		t
-		    TRESOR (x86-64) [3,6]		Y
-		    UKSM [5]				N
+		    TRESOR (AES-NI) [3,4,5]		t
+		    TRESOR (x86) [3,4,5]		t
+		    TRESOR (x86-64) [3,5]		Y
+		    UKSM				R
 
     5.4	(LTS)						Y
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
 		    BMQ					N
-		    futex (futex-wait-multiple) [6]	N
+		    futex (futex-wait-multiple) [5]	N
 		    genpatches				Y
 		    kernel_compiler_patch		N
-		    TRESOR (AES-NI) [6]			t
-		    TRESOR (x86) [6]			t
-		    TRESOR (x86-64) [6]			Y
-		    UKSM [5]				N
+		    TRESOR (AES-NI) [5]			t
+		    TRESOR (x86) [5]			t
+		    TRESOR (x86-64) [5]			Y
+		    UKSM				R
 		    zen-muqss				N
 		    zen-sauce				N
 
@@ -120,15 +120,15 @@
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
 		    BMQ					N
-		    futex (futex-wait-multiple) [6]	N
+		    futex (futex-wait-multiple) [5]	N
 		    genpatches				Y
 		    kernel_compiler_patch		N
 		    Project C				N
 		    TCP BBR v2				N
-		    TRESOR (AES-NI) [6]			t
-		    TRESOR (x86) [6]			t
-		    TRESOR (x86-64) [6]			Y
-		    UKSM [5]				N
+		    TRESOR (AES-NI) [5]			t
+		    TRESOR (x86) [5]			t
+		    TRESOR (x86-64) [5]			Y
+		    UKSM				R
 		    zen-muqss				N
 		    zen-sauce				N
 
@@ -136,36 +136,20 @@
 		    -rt	(RT_PREEMPT)			A
 		    CFI					A
 		    Clang PGO				E
-		    futex (futex-wait-multiple)	[6]	E
+		    futex (futex-wait-multiple)	[5]	E
 		    futex2				E
 		    kernel_compiler_patch		A
 		    genpatches				A
 		    multigen_lru			N
-		    Project C				A
-		    TCP BBR v2 [6]			E
-		    TRESOR (AES-NI) [6]			D
-		    TRESOR (x86) [6]			D
-		    TRESOR (x86-64) [6]			D
-		    UKSM [5]				Y
+		    Project C				N
+		    TCP BBR v2 [5]			E
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    UKSM				R
 		    zen-multigen_lru			N
 		    zen-sauce				N
 						
-    5.16 (Stable)					N
-		    -rt	(RT_PREEMPT)			A
-		    CFI					E
-		    Clang PGO				E
-		    genpatches				A
-		    kernel_compiler_patch		A
-		    multigen_lru			N
-		    Project C				A
-		    TCP BBR v2 [6]			E
-		    TRESOR (AES-NI) [6]			D
-		    TRESOR (x86) [6]			D
-		    TRESOR (x86-64) [6]			D
-		    UKSM				A
-		    zen-multigen_lru			N
-		    zen-sauce				N
-
     5.17 (Mainline)					N
 		    -rt	(RT_PREEMPT)			A
 		    CFI					E
@@ -174,11 +158,28 @@
 		    kernel_compiler_patch		A
 		    multigen_lru			A
 		    Project C				A
-		    TCP BBR v2 [6]			E
-		    TRESOR (AES-NI) [6]			D
-		    TRESOR (x86) [6]			D
-		    TRESOR (x86-64) [6]			D
-		    UKSM				A
+		    TCP BBR v2 [5]			E
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    UKSM				R
+		    zen-multigen_lru			A
+		    zen-sauce				A
+
+    5.18 (Mainline)					N
+		    -rt	(RT_PREEMPT)			A
+		    CFI					E
+		    Clang PGO				E
+		    genpatches				A
+		    KCFI				R
+		    kernel_compiler_patch		A
+		    multigen_lru			A
+		    Project C				A
+		    TCP BBR v2 [5]			E
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    UKSM				?
 		    zen-multigen_lru			A
 		    zen-sauce				A
 
@@ -189,28 +190,27 @@
     [4] without correctness verification, due to lack of hardware or
         configuration.  Correctness and build fixes extends only to device
         agnostic independent code.
-    [5] updates usually only once, which may indicate bugs or lack of
-        sufficient testing.  No versioning system between patch fixes.
-    [6] backported or forwardported, but not intended for this series, but build
+    [5] backported or forwardported, but not intended for this series, but build
         time fixes are provided by the ebuild maintainer
-    [7] backported or forwardported, but not intended for this series, but build
+    [6] backported or forwardported, but not intended for this series, but build
         time fixes are provided by others if it is a recent new kernel
         series.
 
-    A - currently actively updatable
+    A - Currently actively updatable
+    R - Released only for major.minor usually no futher updates for patch versions
     D - USE flag should be disabled since there is no release for this minor
         version yet.
-    N - under the Patchset LTS indicates that the patchset is EOL or likely
+    N - Under the Patchset LTS indicates that the patchset is EOL or likely
         EOL for that version which means that bug fixes and security updates
         will not be provided.  This indicates a feature freeze, but
         build time failures will be fixed by the ebuild maintainer.
     E - No upstream release for this major minor version but maintained by
         ebuild maintainer or third party
-    I - inactive due to changing API, but future support depends on motivation
-    S - upstream indicated support
-    T - patch is undergoing testing
-    t - only patch/building testing but without correctness verification
-    ? - unknown status
+    I - Inactive due to changing API, but future support depends on motivation
+    S - Upstream indicated support
+    T - Patch is undergoing testing
+    t - Only patch/building testing but without correctness verification
+    ? - Unknown status
 
     EOL (End Of Life) stable kernels get dropped next update cycle which is
     typically a week.  The virtual/ot-sources-stable ebuild-package
