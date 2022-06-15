@@ -1676,10 +1676,12 @@ apply_clang_pgo() {
 ot-kernel_compiler_not_found() {
 	local msg="${1}"
 eerror
-eerror "Required slot ranges for kernel-compiler-patch"
+eerror "Required slot ranges for kernel-compiler-patch.  Either..."
 eerror
 eerror "GCC_MIN_SLOT: ${GCC_MIN_SLOT}"
 eerror "GCC_MAX_SLOT: ${GCC_MAX_SLOT}"
+eerror
+eerror "  or"
 eerror
 eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
 eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
