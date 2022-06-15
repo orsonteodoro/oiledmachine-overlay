@@ -330,8 +330,8 @@ gen_kcfi_rdepend() {
 	for v in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${v}[kcfi]
-			sys-devel/llvm:${v}[kcfi]
+			sys-devel/clang:${v}
+			sys-devel/llvm:${v}
 		)
 		     "
 	done

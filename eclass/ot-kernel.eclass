@@ -2471,12 +2471,21 @@ ot-kernel_set_kconfig_cfi() {
 # @FUNCTION: ot-kernel_set_kconfig_kcfi
 # @DESCRIPTION:
 # Sets the kernel config for Control Flow Integrity (CFI)
-ot-kernel_set_kconfig_cfi() {
+ot-kernel_set_kconfig_kcfi() {
 	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant"|"manual"|"custom") ]] \
 		&& has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
 		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
 		[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) && die "CFI requires LLVM >= 15 on arm64"
 		[[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 15 )) && die "CFI requires LLVM >= 15 on x86_64"
+		if ! test-flags -fsanitize=kcfi ; then
+eerror
+eerror "Both sys-devel/clang and sys-devel/llvm must be patched for"
+eerror "-fsanitize=kcfi support."
+eerror
+eerror "See https://reviews.llvm.org/D119296 for details."
+eerror
+			die
+		fi
 		einfo "Enabling CFI support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_CFI_CLANG"
 		ot-kernel_y_configopt "CONFIG_CFI_CLANG"
