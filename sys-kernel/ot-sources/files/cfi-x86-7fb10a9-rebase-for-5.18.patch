@@ -1,0 +1,46 @@
+Subject:  Apply 7fb10a9 to 5.18
+Original from:  https://github.com/torvalds/linux/commit/7fb10a9f0f9a8d8edf03f74af5ab02d570e997c2
+--- a/include/linux/objtool.h.orig	2022-05-22 12:52:31.000000000 -0700
++++ b/include/linux/objtool.h	2022-06-14 23:03:11.040171090 -0700
+@@ -66,6 +66,11 @@ struct unwind_hint {
+ 	static void __used __section(".discard.func_stack_frame_non_standard") \
+ 		*__func_stack_frame_non_standard_##func = func
+ 
++#define ASM_STACK_FRAME_NON_STANDARD(func)				\
++	".pushsection .discard.func_stack_frame_non_standard, \"aw\"\n"	\
++	".long " __stringify(func) " - .\n"				\
++	".popsection\n"
++
+ /*
+  * STACK_FRAME_NON_STANDARD_FP() is a frame-pointer-specific function ignore
+  * for the case where a function is intentionally missing frame pointer setup,
+@@ -165,6 +170,7 @@ struct unwind_hint {
+ 	"\n\t"
+ #define STACK_FRAME_NON_STANDARD(func)
+ #define STACK_FRAME_NON_STANDARD_FP(func)
++#define ASM_STACK_FRAME_NON_STANDARD(func)
+ #define ANNOTATE_NOENDBR
+ #define ASM_REACHABLE
+ #else
+--- a/tools/include/linux/objtool.h.orig	2022-05-22 12:52:31.000000000 -0700
++++ b/tools/include/linux/objtool.h	2022-06-14 23:03:08.496071059 -0700
+@@ -66,6 +66,11 @@ struct unwind_hint {
+ 	static void __used __section(".discard.func_stack_frame_non_standard") \
+ 		*__func_stack_frame_non_standard_##func = func
+ 
++#define ASM_STACK_FRAME_NON_STANDARD(func)				\
++	".pushsection .discard.func_stack_frame_non_standard, \"aw\"\n"	\
++	".long " __stringify(func) " - .\n"				\
++	".popsection\n"
++
+ /*
+  * STACK_FRAME_NON_STANDARD_FP() is a frame-pointer-specific function ignore
+  * for the case where a function is intentionally missing frame pointer setup,
+@@ -165,6 +170,7 @@ struct unwind_hint {
+ 	"\n\t"
+ #define STACK_FRAME_NON_STANDARD(func)
+ #define STACK_FRAME_NON_STANDARD_FP(func)
++#define ASM_STACK_FRAME_NON_STANDARD(func)
+ #define ANNOTATE_NOENDBR
+ #define ASM_REACHABLE
+ #else

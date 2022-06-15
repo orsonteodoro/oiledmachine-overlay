@@ -14,7 +14,8 @@
 # 4.14.x linux kernel.
 
 CXX_STD="-std=gnu++98"
-GCC_MAX_SLOT=10
+GCC_MAX_SLOT_ALT=13 # Without kernel-compiler-patch
+GCC_MAX_SLOT=10 # With kernel-compiler-patch
 GCC_MIN_SLOT=6
 DISABLE_DEBUG_V="1.4.1"
 EXTRAVERSION="-ot"
@@ -22,7 +23,6 @@ K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.162"
-PATCH_KCP_COMMIT="c53ae690ee282d129fae7e6e10a4c00e5030d588" # GraySky2's kernel_compiler_patch
 PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
 PATCH_PDS_V="${PATCH_PDS_V:-098i}"

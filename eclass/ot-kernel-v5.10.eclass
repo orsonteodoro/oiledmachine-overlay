@@ -14,7 +14,7 @@
 # linux kernel.
 
 CXX_STD="-std=gnu++98"
-GCC_MAX_SLOT=12
+GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
 LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=10
@@ -24,12 +24,12 @@ K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.205"
-PATCH_ALLOW_O3_COMMIT="228e792a116fd4cce8856ea73f2958ec8a241c0c"
+PATCH_ALLOW_O3_COMMIT="228e792a116fd4cce8856ea73f2958ec8a241c0c" # from zen repo
 PATCH_BBRV2_TAG_NAME="v2alpha-2021-07-07"
 PATCH_BBRV2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442" # 5.10
 PATCH_BBRV2_COMMIT_A="c13e23b9782c9a7f4bcc409bfde157e44a080e82" # ancestor / oldest
 PATCH_BBRV2_COMMIT_D="3d76056b85feab3aade8007eb560c3451e7d3433" # descendant / newest
-PATCH_KCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8"
+PATCH_KCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8" # from zen repo
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A..D.patch \

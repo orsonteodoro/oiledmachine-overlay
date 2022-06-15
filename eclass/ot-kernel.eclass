@@ -714,7 +714,7 @@ einfo
 	elif [[ "${K_MAJOR_MINOR}" == "5.10" ]] ; then
 einfo
 einfo "The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is"
-einfo "Dec 2022."
+einfo "Dec 2026."
 einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
 einfo "the same major.minor branch."
@@ -847,6 +847,8 @@ verify_clang_compiler_updated() {
 		"sys-devel/clang-14.0.1" \
 		"sys-devel/clang-14.0.2" \
 		"sys-devel/clang-14.0.3" \
+		"sys-devel/clang-14.0.4" \
+		"sys-devel/clang-14.0.5" \
 		"sys-devel/clang-15.0.0.9999" \
 	; do
 		if has_version "=${p}*" ; then
@@ -895,6 +897,8 @@ verify_profraw_compatibility() {
 		"14.0.1" \
 		"14.0.2" \
 		"14.0.3" \
+		"14.0.4" \
+		"14.0.5" \
 		"15.0.0.9999" \
 	; do
 		(! has_version "~sys-devel/llvm-${v}" ) && continue
@@ -1057,7 +1061,7 @@ dump_profraw() {
 	local profraw_dpath="${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}" || die
 	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
-	cat "${profraw_spath}" > "${profraw_dpath}" || true
+	cat "${profraw_spath}" > "${profraw_dpath}" 2>/dev/null || true
 	if [[ -e "${profraw_spath}" && ! -e "${profraw_dpath}" ]] ; then
 		einfo "Copying ${profraw_spath}"
 		cat "${profraw_spath}" > "${profraw_dpath}" || die
@@ -1072,8 +1076,7 @@ dump_profraw() {
 # @DESCRIPTION:
 # Gets the tag name at HEAD
 get_current_tag_for_k_major_minor_branch() {
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	d="${distdir}/ot-sources-src/linux"
+	d="${EDISTDIR}/ot-sources-src/linux"
 	pushd "${d}" 2>/dev/null 1>/dev/null || die
 		echo $(git --no-pager tag --points-at HEAD)
 	popd 2>/dev/null 1>/dev/null
@@ -1083,8 +1086,7 @@ get_current_tag_for_k_major_minor_branch() {
 # @DESCRIPTION:
 # Gets the commit ID at HEAD
 get_current_commit_for_k_major_minor_branch() {
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	d="${distdir}/ot-sources-src/linux"
+	d="${EDISTDIR}/ot-sources-src/linux"
 	pushd "${d}" 2>/dev/null 1>/dev/null || die
 		echo $(git rev-parse HEAD)
 	popd 2>/dev/null 1>/dev/null
@@ -1095,10 +1097,9 @@ get_current_commit_for_k_major_minor_branch() {
 # Fetches a local copy of the linux kernel repo.
 ot-kernel_fetch_linux_sources() {
 	einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	cd "${DISTDIR}" || die
-	d="${distdir}/ot-sources-src/linux"
-	b="${distdir}/ot-sources-src"
+	cd "${EDISTDIR}" || die
+	d="${EDISTDIR}/ot-sources-src/linux"
+	b="${EDISTDIR}/ot-sources-src"
 	addwrite "${b}"
 	cd "${b}" || die
 
@@ -1185,10 +1186,10 @@ apply_rt() {
 	einfo "Applying PREEMPT_RT patches"
 	mkdir -p "${T}/rt" || die
 	pushd "${T}/rt" || die
-		if [[ -e "${DISTDIR}/${RT_FN}" ]] ; then
-			unpack "${DISTDIR}/${RT_FN}"
-		elif [[ -e "${DISTDIR}/${RT_ALT_FN}" ]] ; then
-			unpack "${DISTDIR}/${RT_ALT_FN}"
+		if [[ -e "${EDISTDIR}/${RT_FN}" ]] ; then
+			unpack "${EDISTDIR}/${RT_FN}"
+		elif [[ -e "${EDISTDIR}/${RT_ALT_FN}" ]] ; then
+			unpack "${EDISTDIR}/${RT_ALT_FN}"
 		fi
 	popd
 	local p
@@ -1290,7 +1291,7 @@ ewarn
 		fi
 		(( ${is_blacklisted} == 1 )) && continue
 
-		_fpatch "${DISTDIR}/zen-sauce-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/zen-sauce-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 }
 
@@ -1300,7 +1301,7 @@ ewarn
 apply_cfi() {
 	local c
 	for c in ${CFI_COMMITS[@]} ; do
-		_fpatch "${DISTDIR}/cfi-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/cfi-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 }
 
@@ -1324,7 +1325,7 @@ apply_futex() {
 			fi
 			(( ${blacklisted} == 1 )) && continue
 		fi
-		_fpatch "${DISTDIR}/futex-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/futex-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 }
 
@@ -1347,7 +1348,7 @@ apply_futex2() {
 			fi
 			(( ${blacklisted} == 1 )) && continue
 		fi
-		_fpatch "${DISTDIR}/futex2-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/futex2-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 }
 
@@ -1361,7 +1362,7 @@ apply_futex2() {
 apply_bbrv2() {
 	local c
 	for c in ${BBR2_COMMITS[@]} ; do
-		_fpatch "${DISTDIR}/bbrv2-${BBR2_VERSION}-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/bbrv2-${BBR2_VERSION}-${K_MAJOR_MINOR}-${c:0:7}.patch"
 		rm config.gce 2>/dev/null # included in bbr2 patch
 	done
 }
@@ -1370,14 +1371,14 @@ apply_bbrv2() {
 # @DESCRIPTION:
 # Uses multigenerational LRU to improve page reclamation.
 apply_multigen_lru() {
-	_fpatch "${DISTDIR}/${MULTIGEN_LRU_FN}"
+	_fpatch "${EDISTDIR}/${MULTIGEN_LRU_FN}"
 }
 
 # @FUNCTION: apply_zen_multigen_lru
 # @DESCRIPTION:
 # Uses zen's modified multigenerational LRU to improve page reclamation.
 apply_zen_multigen_lru() {
-	_fpatch "${DISTDIR}/${ZEN_MULTIGEN_LRU_FN}"
+	_fpatch "${EDISTDIR}/${ZEN_MULTIGEN_LRU_FN}"
 }
 
 # @FUNCTION: _filter_genpatches
@@ -1461,7 +1462,7 @@ _filter_genpatches() {
 apply_bmq() {
 	cd "${BUILD_DIR}" || die
 	einfo "Applying bmq"
-	_fpatch "${DISTDIR}/${BMQ_FN}"
+	_fpatch "${EDISTDIR}/${BMQ_FN}"
 }
 
 # @FUNCTION: apply_ck
@@ -1491,7 +1492,7 @@ apply_ck() {
 			(( ${blacklisted} == 1 )) && break
 		done
 		(( ${blacklisted} == 1 )) && continue
-		_fpatch "${DISTDIR}/ck-${MUQSS_VER}-${K_MAJOR_MINOR}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/ck-${MUQSS_VER}-${K_MAJOR_MINOR}-${c:0:7}.patch"
 	done
 }
 
@@ -1523,7 +1524,7 @@ apply_o3() {
 	if ver_test "${K_MAJOR_MINOR}" -eq 4.14 ; then
 		# fix patch
 		sed -e 's|-1028,6 +1028,13|-1076,6 +1076,13|' \
-			"${DISTDIR}/${O3_CO_FN}" \
+			"${EDISTDIR}/${O3_CO_FN}" \
 			> "${T}/${O3_CO_FN}" || die
 
 		einfo "Applying O3"
@@ -1534,7 +1535,7 @@ apply_o3() {
 		mkdir -p drivers/gpu/drm/amd/display/dc/basics/
 		# trick patch for unattended patching
 		touch drivers/gpu/drm/amd/display/dc/basics/logger.c
-		_fpatch "${DISTDIR}/${O3_RO_FN}"
+		_fpatch "${EDISTDIR}/${O3_RO_FN}"
 	fi
 }
 
@@ -1544,7 +1545,7 @@ apply_o3() {
 apply_pds() {
 	cd "${BUILD_DIR}" || die
 	einfo "Applying PDS"
-	_fpatch "${DISTDIR}/${PDS_FN}"
+	_fpatch "${EDISTDIR}/${PDS_FN}"
 }
 
 # @FUNCTION: apply_prjc
@@ -1553,7 +1554,7 @@ apply_pds() {
 apply_prjc() {
 	cd "${BUILD_DIR}" || die
 	einfo "Applying Project C"
-	_fpatch "${DISTDIR}/${PRJC_FN}"
+	_fpatch "${EDISTDIR}/${PRJC_FN}"
 }
 
 # @FUNCTION: apply_tresor
@@ -1573,7 +1574,7 @@ apply_tresor() {
 		platform="i686"
 	fi
 
-	_fpatch "${DISTDIR}/tresor-patch-${PATCH_TRESOR_V}_${platform}"
+	_fpatch "${EDISTDIR}/tresor-patch-${PATCH_TRESOR_V}_${platform}"
 	sed -i -E -e "s|[ ]?-tresor[0-9.]+||g" "${BUILD_DIR}/Makefile" || die
 }
 
@@ -1584,7 +1585,7 @@ apply_tresor() {
 # ot-kernel_uksm_fixes - callback to fix the patch
 #
 apply_uksm() {
-	_fpatch "${DISTDIR}/${UKSM_FN}"
+	_fpatch "${EDISTDIR}/${UKSM_FN}"
 }
 
 # @FUNCTION: apply_vanilla_point_releases
@@ -1631,7 +1632,7 @@ apply_zen_muqss() {
 	for x in ${ZEN_MUQSS_COMMITS[@]} ; do
 		local id="${x:0:7}"
 		is_zen_muquss_excluded "${x}" && continue
-		_fpatch "${DISTDIR}/zen-muqss-${K_MAJOR_MINOR}-${id}.patch"
+		_fpatch "${EDISTDIR}/zen-muqss-${K_MAJOR_MINOR}-${id}.patch"
 	done
 }
 
@@ -1639,23 +1640,48 @@ apply_zen_muqss() {
 # @DESCRIPTION:
 # Apply the PGO patch for use with clang
 apply_clang_pgo() {
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	if declare -f ot-kernel_filter_clang_pgo_patch_cb > /dev/null ; then
 		# For fixes
-		ot-kernel_filter_clang_pgo_patch_cb "${distdir}/${CLANG_PGO_FN}"
+		ot-kernel_filter_clang_pgo_patch_cb "${EDISTDIR}/${CLANG_PGO_FN}"
 	else
-		_fpatch "${distdir}/${CLANG_PGO_FN}"
+		_fpatch "${EDISTDIR}/${CLANG_PGO_FN}"
 	fi
+}
+
+# @FUNCTION: ot-kernel_compiler_not_found
+# @DESCRIPTION:
+# Show compiler is not found message
+ot-kernel_compiler_not_found() {
+	local msg="${1}"
+eerror
+eerror "Required slot ranges for kernel-compiler-patch"
+eerror
+eerror "GCC_MIN_SLOT: ${GCC_MIN_SLOT}"
+eerror "GCC_MAX_SLOT: ${GCC_MAX_SLOT}"
+eerror
+eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
+eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
+eerror
+eerror "Disable the kernel-compiler-patch USE flag to continue or re-emerge the"
+eerror "allowed compiler slot."
+eerror
+eerror "Reason:  ${msg}"
+eerror
+			die
 }
 
 # @FUNCTION: ot-kernel_src_unpack
 # @DESCRIPTION:
 # Applies patch sets in order.
 ot-kernel_src_unpack() {
+	einfo "Called ot-kernel_src_unpack()"
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	_PATCHES=()
-	if [[ "${IUSE}" =~ kernel-compiler-patch ]] ; then
+	if [[ "${USE}" =~ kernel-compiler-patch ]] ; then
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
+		einfo "llvm_slot=${llvm_slot}"
+		einfo "gcc_slot=${gcc_slot}"
 		local gcc_v=$(best_version "sys-devel/gcc:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|sys-devel/gcc-||" -e "s|-r[0-9]+||")
 		local clang_v=$(best_version "sys-devel/clang:${llvm_slot}" | sed -r -e "s|sys-devel/clang-||" -e "s|-r[0-9]+||")
 		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
@@ -1663,34 +1689,41 @@ ot-kernel_src_unpack() {
 		#local cpu_model=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "model" | head -n 1 | grep -E -o "[0-9]+"))
 		einfo "Best GCC version:  ${gcc_v}"
 		einfo "Best Clang version:  ${clang_v}"
+		if [[ -z "${gcc_v}" && -z "${clang_v}" ]] ; then
+			ot-kernel_compiler_not_found "Empty compiler versions found"
+		fi
 
 		if (  (				 $(ver_test ${gcc_v}   -ge 9.1) ) \
 		   || ( [[ -n "${clang_v}" ]] && $(ver_test ${clang_v} -ge 10.0) ) \
 		   ) \
-			&& test -f "${DISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
+			&& test -f "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 9.1 or clang >= 10.0."
-			_PATCHES+=( "${DISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
+			_PATCHES+=( "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
 		elif ( tc-is-gcc && $(ver_test ${gcc_v} -ge 8.1) ) \
-			&& test -f "${DISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
+			&& test -f "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 8.1"
-			_PATCHES+=( "${DISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
+			_PATCHES+=( "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		elif ( tc-is-gcc && $(ver_test ${gcc_v} -ge 4.9) ) \
-			&& test -f "${DISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
+			&& test -f "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 4.9"
-			_PATCHES+=( "${DISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
+			_PATCHES+=( "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		else
 ewarn "Cannot find a compatible kernel_compiler_patch for gcc_v = ${gcc_v}"
 ewarn "and kernel ${K_MAJOR_MINOR}.  Skipping the kernel_compiler_patch."
+		fi
+	else
+		if [[ -n "${GCC_MAX_SLOT_ALT}" ]] ; then
+			export GCC_MAX_SLOT="${GCC_MAX_SLOT_ALT}"
 		fi
 	fi
 
 	if has kernel-compiler-patch-cortex-a72 ${IUSE_EFFECTIVE} ; then
 		if use kernel-compiler-patch-cortex-a72 ; then
 einfo "Queuing the kernel_compiler_patch for the Cortex A72"
-			_PATCHES+=( "${DISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
+			_PATCHES+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		fi
 	fi
 
@@ -1705,7 +1738,7 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
-			cat "${DISTDIR}/tresor_sysfs.c" > "${BUILD_DIR}/tresor_sysfs.c"
+			cat "${EDISTDIR}/tresor_sysfs.c" > "${BUILD_DIR}/tresor_sysfs.c"
 		fi
 	fi
 
@@ -1867,7 +1900,8 @@ ot-kernel_copy_pgo_state() {
 # @DESCRIPTION:
 # Patch the kernel a bit
 ot-kernel_src_prepare() {
-	einfo "Called ot-kernel_ot-kernel_src_prepare()"
+	einfo "Called ot-kernel_src_prepare()"
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export BUILD_DIR_MASTER="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 	apply_vanilla_point_releases
@@ -1913,7 +1947,11 @@ ewarn
 	#	cp -a "/lib/firmware/regulatory.db.p7s" "${BUILD_DIR}/"
 	#fi
 
-	eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
+	if ver_test ${K_MAJOR_MINOR} -ge 5.18 ; then
+		eapply "${FILESDIR}/ep800/add-ep800-to-build-for-5.18.patch"
+	else
+		eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
+	fi
 
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
@@ -2586,7 +2624,7 @@ ot-kernel_set_kconfig_compiler_toolchain() {
 		ot-kernel_set_configopt "CONFIG_LD_VERSION" "0"
 		ot-kernel_set_configopt "CONFIG_LLD_VERSION" "${llvm_slot}0000"
 	else
-		is_gcc_ready || die "Failed compiler sanity check"
+		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check"
 		einfo "Using GCC ${gcc_slot}"
 		ot-kernel_unset_configopt "CONFIG_AS_IS_LLVM"
 		ot-kernel_unset_configopt "CONFIG_CC_IS_CLANG"
@@ -3407,12 +3445,34 @@ eerror
 	die
 }
 
+# @FUNCTION: ot-kernel_show_llvm_requirement
+# @DESCRIPTION:
+# Show LLVM toolchain requirements and quit
+ot-kernel_show_llvm_requirement() {
+	local msg="${1}"
+	eerror
+	eerror "Make sure the following valid slots is installed:"
+	eerror
+	eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
+	eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
+	eerror
+	eerror "Reason:  ${msg}"
+	eerror
+#	die
+}
+
+
 # @FUNCTION: ot-kernel_set_kconfig_lto
 # @DESCRIPTION:
 # Sets the kernel config for Link Time Optimization (LTO)
 ot-kernel_set_kconfig_lto() {
 	if has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
-		(( ${llvm_slot} < 11 )) && die "LTO requires LLVM >= 11"
+		if (( ${llvm_slot} < 11 )) ; then
+			if [[ ! -e "/usr/lib/llvm/${slot}/bin/clang" ]] ; then
+				ot-kernel_show_llvm_requirement "Missing clang"
+			fi
+			ot-kernel_show_llvm_requirement "LTO requires clang:\${SLOT} == llvm:\${SLOT} and \${SLOT} >= 11"
+		fi
 		einfo "Enabling LTO"
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_LTO_CLANG"
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_LTO_CLANG_THIN"
@@ -3701,6 +3761,12 @@ ot-kernel_set_kconfig_pgo() {
 		# See grep -r -e "INSTR_PROF_RAW_VERSION" /usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc
 		if (( ${llvm_slot} >= 15 && ${clang_v_maj} >= 15 )) ; then
 			einfo "Using profraw v8 for >= LLVM 15"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.5" ; then
+			einfo "Using profraw v8 for LLVM 14"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
+		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.4" ; then
+			einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_v_maj} == 14 )) && has_version "~sys-devel/clang-14.0.3" ; then
 			einfo "Using profraw v8 for LLVM 14"
@@ -5159,8 +5225,8 @@ ot-kernel_check_kernel_signing_prereqs() {
 # @DESCRIPTION:
 # Run menuconfig
 ot-kernel_src_configure() {
-	ot-kernel_is_build || return
 	einfo "Called ot-kernel_src_configure()"
+	ot-kernel_is_build || return
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
@@ -5321,7 +5387,7 @@ get_llvm_slot() {
 # Gets a ready to use gcc compiler
 get_gcc_slot() {
 	local gcc_slot
-	for gcc_slot in $(seq ${GCC_MAX_SLOT:-12} -1 ${GCC_MIN_SLOT:-6}) ; do
+	for gcc_slot in $(seq ${GCC_MAX_SLOT:-13} -1 ${GCC_MIN_SLOT:-6}) ; do
 		gcc_slot=$(best_version "sys-devel/gcc:${gcc_slot}")
 		[[ -z "${gcc_slot}" ]] && continue
 		gcc_slot=$(echo "${gcc_slot}" | sed -r -e "s|sys-devel/gcc-||" -e "s|-r[0-9]+||")
@@ -5380,7 +5446,7 @@ ot-kernel_setup_tc() {
 		CXX=clang++
 		LD=ld.lld
 	else
-		is_gcc_ready || die "Failed compiler sanity check"
+		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check"
 		einfo "Using GCC ${gcc_slot}"
 		args+=(
 			CC=${CHOST}-gcc-${gcc_slot}
@@ -5826,13 +5892,14 @@ ot-kernel_restore_keys() {
 # @DESCRIPTION:
 # Removes patch cruft.
 ot-kernel_src_install() {
-	einfo "Called ot-kernel_src_install"
+	einfo "Called ot-kernel_src_install()"
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export STRIP="/bin/true" # See https://github.com/torvalds/linux/blob/v5.16/init/Kconfig#L2169
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 			docinto /usr/share/${PF}
-			dodoc "${DISTDIR}/${TRESOR_README_FN}"
-			dodoc "${DISTDIR}/${TRESOR_PDF_FN}"
+			dodoc "${EDISTDIR}/${TRESOR_README_FN}"
+			dodoc "${EDISTDIR}/${TRESOR_PDF_FN}"
 		fi
 	fi
 

@@ -1,0 +1,12 @@
+--- a/include/linux/cfi.h.orig	2022-06-14 23:23:30.059082913 -0700
++++ b/include/linux/cfi.h	2022-06-14 23:30:40.758959038 -0700
+@@ -52,6 +52,9 @@ static inline void cfi_module_remove(str
+ 
+ #endif /* CONFIG_X86_KERNEL_IBT */
+ 
++#define DEFINE_CFI_IMMEDIATE_RETURN_STUB(fn) \
++	void fn(void) { return; }
++
+ #endif /* CONFIG_CFI_CLANG */
+ 
+ #ifndef __CFI_ADDRESSABLE

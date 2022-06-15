@@ -148,8 +148,7 @@ ewarn "The cve_hotfix USE flag is still experimental and unstable and may not"
 ewarn "work at random times."
 ewarn
 	pushd "${WORKDIR}/tuxparoni-master" || die
-		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-		local b="${distdir}/ot-sources-src"
+		local b="${EDISTDIR}/ot-sources-src"
 		local d="${b}/tuxparoni"
 		addwrite "${b}"
 		mkdir -p "${d}"
@@ -180,8 +179,7 @@ test_cve_hotfixes() {
 	[[ "${CVE_MIN_YEAR}" ]] \
 		&& min_year="-mn ${CVE_MIN_YEAR}"
 	pushd "${WORKDIR}/tuxparoni-master" || die
-		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-		local b="${distdir}/ot-sources-src"
+		local b="${EDISTDIR}/ot-sources-src"
 		local d="${b}/tuxparoni"
 einfo "Dry testing"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-dry-test -t "${T}" \
@@ -194,8 +192,7 @@ get_cve_report() {
 	[[ "${CVE_MIN_YEAR}" ]] \
 		&& min_year="-mn ${CVE_MIN_YEAR}"
 	pushd "${WORKDIR}/tuxparoni-master" || die
-		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-		local b="${distdir}/ot-sources-src"
+		local b="${EDISTDIR}/ot-sources-src"
 		local d="${b}/tuxparoni"
 einfo "Generating Report"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-report -t "${T}" \
@@ -208,8 +205,7 @@ apply_cve_hotfixes() {
 	[[ "${CVE_MIN_YEAR}" ]] \
 		&& min_year="-mn ${CVE_MIN_YEAR}"
 	pushd "${WORKDIR}/tuxparoni-master" || die
-		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-		local b="${distdir}/ot-sources-src"
+		local b="${EDISTDIR}/ot-sources-src"
 		local d="${b}/tuxparoni"
 einfo "Applying cve hotfixes"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-apply -t "${T}" \

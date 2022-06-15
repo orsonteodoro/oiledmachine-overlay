@@ -2,15 +2,15 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v5.17.eclass
+# @ECLASS: ot-kernel-v5.18.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7
-# @BLURB: Eclass for patching the 5.17.x kernel
+# @BLURB: Eclass for patching the 5.18.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.17 eclass defines specific applicable patching for the 5.17.x
+# The ot-kernel-v5.18 eclass defines specific applicable patching for the 5.18.x
 # linux kernel.
 
 CXX_STD="-std=gnu++11"
@@ -23,7 +23,7 @@ EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-PATCH_ALLOW_O3_COMMIT="ed11352569944c2431029b07b1119e49de0f105d" # from zen repo
+PATCH_ALLOW_O3_COMMIT="9f2a43f24a978e33f6cbbf6a9e9fef2b8b434278" # from zen repo
 PATCH_BBRV2_TAG_NAME="v2alpha-2021-08-21"
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor / oldest
@@ -31,13 +31,13 @@ PATCH_BBRV2_COMMIT_D="1a45fd4faf30229a3d3116de7bfe9d2f933d3562" # descendant / n
 PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
 PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
 PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant / newest
-PATCH_KCP_COMMIT="fb84abfc8fdcf4a4cd7b6f7dd755e22b0ea9c176" # from zen repo
-PATCH_MULTIGEN_LRU_COMMIT_A_PARENT="f443e374ae131c168a065ea1748feac6b2e76613"
-PATCH_MULTIGEN_LRU_COMMIT_A="36b7598fdf238ddbfaaf1154f7e3af7586be7261" # ancestor / oldest
-PATCH_MULTIGEN_LRU_COMMIT_D="cb2fca3b3a3359f11549075e9ceae3bdb5bb7888" # descendant / newest
-PATCH_ZEN_MULTIGEN_LRU_COMMIT_A_PARENT="f443e374ae131c168a065ea1748feac6b2e76613"
-PATCH_ZEN_MULTIGEN_LRU_COMMIT_A="36b7598fdf238ddbfaaf1154f7e3af7586be7261" # ancestor / oldest
-PATCH_ZEN_MULTIGEN_LRU_COMMIT_D="4a3d23beb7cf00d624877a8f2eb4f7fb127211d6" # descendant / newest
+PATCH_KCP_COMMIT="21d0707cf05cabf4df165f8e65b95ae8cfd473a5" # from zen repo
+PATCH_MULTIGEN_LRU_COMMIT_A_PARENT="4b0986a3613c92f4ec1bdc7f60ec66fea135991f"
+PATCH_MULTIGEN_LRU_COMMIT_A="2382afbecfe3806bdd7c8062e33c4f1fca77e8d8" # ancestor / oldest
+PATCH_MULTIGEN_LRU_COMMIT_D="400d2d9622c0b7bea7079d64d77236bd5c8174b0" # descendant / newest
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_A_PARENT="4b0986a3613c92f4ec1bdc7f60ec66fea135991f"
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_A="2382afbecfe3806bdd7c8062e33c4f1fca77e8d8" # ancestor / oldest
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_D="6f1ecc2810b66850ee15266d1223a4c26434a0cc" # descendant / newest
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \
@@ -47,63 +47,63 @@ PATCH_TRESOR_V="3.18.5"
 # the commits in order.
 
 PATCH_ZENSAUCE_COMMITS=(
-f980b6dce98252b2cf3bcfa4fd8d90acbbac8d2a
-0c981f379ae080dbc4ed449fbe34db40cc47d611
-e07938c6549a14ec8bc58fab9267f9db49ec5d60
-fb84abfc8fdcf4a4cd7b6f7dd755e22b0ea9c176
-ed11352569944c2431029b07b1119e49de0f105d
-9c7f76bfa35c43576581a0f156aefaa2aada4850
-95ae1ce2286082b5334984522c9773e8c0703665
-2121d3c4254023818bc87f520a5b64c8fb12d767
-d817d15fabd7765881d7e0361ac61ab3ebc8b88c
-2c890b4d9bd02a9b3681c0d002b2f8d3ad95e6bf
-b32e10116ad9c69dcf5e18ee47da51c599398dff
-733b70b1a0747215a152e88073b7f49330d09296
-7da78d29e9e6f84b4b0deb4f7eb0970c488763dd
-1e2c0d7256ff61665eece820476d0a7531f18d34
-1d761dc2e4ee3f75ae75ddfc29eb4b058391611e
-cb1db0f613c008fc17cb9f6515b7d0bc91543825
-1288fe50ddd7040d0efccda822715d419c107adc
-fea38dde1137553497824d10f52abdbdae56191f
-adcb64b872dbf4d9885dc454e5bc90fa569f5ec6
-48adb656278abd103087ba966f93be5316e1eaa6
-301669c0b97b12b4eff306466cad00c8ecc85a77
-7571584fc4aeefbed07df01d56c7b2cb20f29f83
-57e3bfb6727b3df24c1ac71be66cc9e308881f5d
-47b0012bb9f28f82cc8c12e69b2bf224547cbe03
-0cb9fe43e86e8583d6f992c8244afc66d4b5856f
-0b2ed5050891c996db97d18bc9d5740f1a58260c
-6ba312876f68e5f3357742ae599110ae155aab13
-f89eb7fa39549d2cf4c2a3f0fe139bf0af4ad85c
-77b2712110e2c9bde2c59e58f50c3dfe9a7e5f1e
-9e4c25bd1fddc391094b2dbd7141afd57d5cfc4d
+4f7b3eec44a54d8d18594cf4f83cd714e9bdab60
+87a80e231779a2bd7df07de71e520eedfad911f7
+dba00166b172c07e207cb8489ca0b4d6c9017746
+21d0707cf05cabf4df165f8e65b95ae8cfd473a5
+9f2a43f24a978e33f6cbbf6a9e9fef2b8b434278
+a5bfcc1ec76bb25fd33354766c19ab09eb78c06e
+d5933d5eed4f892b0ffedb84c92beac6662c8adc
+68ab7aed71734a0bcf859bb4e5c940b80663ac31
+90ada3c9b3619edbf8baf13735a6ade5468a8557
+7e0e26dd9d8967fd08ed64f3b87899e5bcb50466
+38340ce3e7354f61213653ffd78fc7ab3f924f9d
+105a4e9780e6cc204abc2d0a6e77b5436b5bf05d
+f70b127df5ec259064b84fa42fe323c72b914823
+bc968c130425528fba6d2372d6433d9db0998a5f
+cf71bd32dc443c2bc6512f1d630edf251c6d2f65
+7816ca3920e05b0973e242b8d8168a61b5f95dd5
+bf7ba01972771466d28c411d99ed0931e25728ef
+4eb5a0e7624644ea27b2f34d9ada5f82cc977f20
+e9fdb59fd84f30601fcf1ad9767144281abefe60
+98f47fb21a241c726c515539d2071787f1af9fc5
+1ddedc551af44f312f493eed0347077c23dd6afc
+d64f442da0142ba83a7c4c214245c6f2f3c4b0a3
+6a23e14830cbf72f2cd5b3614780473abf3562fe
+c515e5a47e968c51390e0ce3ca9bc2c970dc1baf
+2351e39547f11e15ea1f4288f1ff13495102ac28
+0752dcbbc5076205c12d19c3735d70fad9773ba0
+2ccae2ed2e9ae055950412f4254becd2b020d00d
+1be7d9f22c113fda29716fa4c2110ff4f80f5e90
+8f51fb6ecfdf0ee39643d9b9c95a0204a03d3a94
+0f72f7556637e7b1da2c040ab29116f0ceea10c0
 )
 
 # Avoid merge conflict.
 PATCH_ZENSAUCE_BRANDING="
-f980b6dce98252b2cf3bcfa4fd8d90acbbac8d2a
+4f7b3eec44a54d8d18594cf4f83cd714e9bdab60
 "
 
 # LEFT_ZENTUNE:RIGHT_ZENSAUCE
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
-301669c0b97b12b4eff306466cad00c8ecc85a77:2c890b4d9bd02a9b3681c0d002b2f8d3ad95e6bf
+1ddedc551af44f312f493eed0347077c23dd6afc:7e0e26dd9d8967fd08ed64f3b87899e5bcb50466
 ) # \
-#ZEN: INTERACTIVE: Use BFQ as our elevator (301669c) needs \
-#ZEN: Add CONFIG to rename the mq-deadline scheduler (2c890b4)
+#ZEN: INTERACTIVE: Use BFQ as our elevator (1ddedc5) needs \
+#ZEN: Add CONFIG to rename the mq-deadline scheduler (7e0e26d)
 
 # Message marked with INTERACTIVE:
 PATCH_ZENTUNE_COMMITS=(
-48adb656278abd103087ba966f93be5316e1eaa6
-301669c0b97b12b4eff306466cad00c8ecc85a77
-7571584fc4aeefbed07df01d56c7b2cb20f29f83
-57e3bfb6727b3df24c1ac71be66cc9e308881f5d
-47b0012bb9f28f82cc8c12e69b2bf224547cbe03
-0cb9fe43e86e8583d6f992c8244afc66d4b5856f
-0b2ed5050891c996db97d18bc9d5740f1a58260c
-6ba312876f68e5f3357742ae599110ae155aab13
-f89eb7fa39549d2cf4c2a3f0fe139bf0af4ad85c
+98f47fb21a241c726c515539d2071787f1af9fc5
+1ddedc551af44f312f493eed0347077c23dd6afc
+d64f442da0142ba83a7c4c214245c6f2f3c4b0a3
+6a23e14830cbf72f2cd5b3614780473abf3562fe
+c515e5a47e968c51390e0ce3ca9bc2c970dc1baf
+2351e39547f11e15ea1f4288f1ff13495102ac28
+0752dcbbc5076205c12d19c3735d70fad9773ba0
+2ccae2ed2e9ae055950412f4254becd2b020d00d
+1be7d9f22c113fda29716fa4c2110ff4f80f5e90
 )
-PATCH_BFQ_DEFAULT="301669c0b97b12b4eff306466cad00c8ecc85a77"
+PATCH_BFQ_DEFAULT="1ddedc551af44f312f493eed0347077c23dd6afc"
 PATCH_ZENSAUCE_BL=(
 	${PATCH_ZENSAUCE_BRANDING}
 	${PATCH_KCP_COMMIT}
@@ -181,6 +181,13 @@ tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-multigen_lru zen-sauce
 zen-sauce-all -zen-tune"
 IUSE+=" clang-pgo"
 IUSE+=" -exfat"
+
+# Not ready yet
+REQUIRED_USE+="
+	!uksm
+	!cfi
+"
+
 REQUIRED_USE+="
 	genpatches_1510? ( genpatches )
 	multigen_lru? ( !zen-multigen_lru )
@@ -222,10 +229,12 @@ kernel_compiler_patch, \
 multigen_lru, \
 Project C (BMQ, PDS-mq), \
 RT_PREEMPT (-rt), \
-UKSM, \
 zen-multigen_lru, \
 zen-sauce, \
 zen-tune."
+
+# Not ready yet
+#UKSM, \
 
 inherit ot-kernel
 
@@ -467,9 +476,11 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
 	   )
-	   uksm? ( ${UKSM_SRC_URI} )
 	   zen-multigen_lru? ( ${ZEN_MULTIGEN_LRU_SRC_URI} )
 	   zen-sauce? ( ${ZENSAUCE_URIS} )"
+
+# Not ready yet
+#	   uksm? ( ${UKSM_SRC_URI} )
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -680,26 +691,32 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "cfi-5.17-a09066b.patch" ]] ; then
 		# 343e289 is the same as a09066b
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.17-c6ef88b.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.18-c6ef88b.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
 	elif [[ "${path}" =~ "cfi-x86-5.17-fb19148.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "kernel-locking-Use-a-pointer-in-ww_mutex_trylock.patch" ]] ; then
 		: # already applied
-	elif [[ "${path}" =~ "cfi-5.17-f5bff50.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-5.18-f5bff50.patch" ]] ; then
 		# f5bff50 is the same as 7fb10a9
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-7fb10a9-rebase-for-5.16.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-7fb10a9-rebase-for-5.18.patch"
 	elif [[ "${path}" =~ "cfi-5.17-e921a27.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "cfi-5.17-aa4fb87.patch" ]] ; then
 		: # Skip for now since missing EXPORT_SYMBOL*
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.17-50b614c.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.18-50b614c.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-50b614c-fix-for-5.17.patch"
-	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.17-41ceaf5.patch" ]] ; then
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.18-41ceaf5.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-41ceaf5-fix-for-5.17.patch"
+	elif [[ "${path}" =~ "cfi-5.18-bd6966b.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-bd6966b-fix-for-5.18.patch"
+	elif [[ "${path}" =~ "cfi-5.18-3cb32c4.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-3cb32c4-fix-for-5.18.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
