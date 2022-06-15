@@ -265,6 +265,7 @@ inherit ot-kernel
 LICENSE+=" bbrv2? ( || ( GPL-2 BSD ) )" # https://github.com/google/bbr/tree/v2alpha#license
 LICENSE+=" clang-pgo? ( GPL-2 )"
 # A gcc pgo patch in 2014 exists but not listed for license reasons.
+LICENSE+=" cfi? ( GPL-2 )"
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status

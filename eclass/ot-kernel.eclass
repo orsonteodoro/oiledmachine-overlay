@@ -23,6 +23,8 @@
 #   https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 # CFI:
 #   https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
+# KCFI:
+#   https://github.com/torvalds/linux/compare/v5.18...samitolvanen:kcfi-rfc-v2
 # futex (aka futex_wait_multiple):
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
 # futex2:
@@ -495,6 +497,16 @@ gen_cfi_uris() {
 	echo "${s}"
 }
 CFI_SRC_URIS=" "$(gen_cfi_uris)
+
+gen_kcfi_uris() {
+	local s=""
+	local c
+	for c in ${KCFI_COMMITS[@]} ; do
+		s+=" ${CFI_BASE_URI}${c}.patch -> kcfi-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
+	echo "${s}"
+}
+KCFI_SRC_URIS=" "$(gen_kcfi_uris)
 
 FUTEX_BASE_URI=\
 "https://gitlab.collabora.com/tonyk/linux/-/commit/"
@@ -1305,6 +1317,16 @@ apply_cfi() {
 	done
 }
 
+# @FUNCTION: apply_kcfi
+# @DESCRIPTION:
+# Adds kcfi protection for the x86-64 platform
+apply_kcfi() {
+	local c
+	for c in ${KCFI_COMMITS[@]} ; do
+		_fpatch "${EDISTDIR}/kcfi-${K_MAJOR_MINOR}-${c:0:7}.patch"
+	done
+}
+
 # @FUNCTION: apply_futex
 # @DESCRIPTION:
 # Adds a new syscall operation FUTEX_WAIT_MULTIPLE to the futex
@@ -1874,6 +1896,12 @@ apply_all_patchsets() {
 		fi
 	fi
 
+	if has kcfi ${IUSE_EFFECTIVE} ; then
+		if ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
+			apply_kcfi
+		fi
+	fi
+
 	if (( ${#_PATCHES[@]} > 0 )) ; then
 		eapply ${_PATCHES[@]}
 	fi
@@ -2440,6 +2468,34 @@ ot-kernel_set_kconfig_cfi() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_kcfi
+# @DESCRIPTION:
+# Sets the kernel config for Control Flow Integrity (CFI)
+ot-kernel_set_kconfig_cfi() {
+	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant"|"manual"|"custom") ]] \
+		&& has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
+		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
+		[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) && die "CFI requires LLVM >= 15 on arm64"
+		[[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 15 )) && die "CFI requires LLVM >= 15 on x86_64"
+		einfo "Enabling CFI support in the in the .config."
+		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_CFI_CLANG"
+		ot-kernel_y_configopt "CONFIG_CFI_CLANG"
+		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
+		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
+		ot-kernel_y_configopt "CONFIG_KALLSYMS"
+	else
+		einfo "Disabling CFI support in the in the .config."
+		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
+	fi
+
+	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant"|"manual"|"custom") ]] \
+		&& has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
+		&& [[ "${arch}" == "arm64" ]] ; then
+		# Need to recheck
+		ewarn "You must manually set arm64 CFI in the .config."
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_kexec
 # @DESCRIPTION:
 # Sets kexec in the kernel
@@ -2606,6 +2662,7 @@ ot-kernel_set_kconfig_compiler_toolchain() {
 	if \
 		( \
 		   ( has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ) \
+		|| ( has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ) \
 		|| ( has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ) \
 		|| ( has clang-pgo ${IUSE_EFFECTIVE} && ot-kernel_use clang-pgo ) \
 		) \
@@ -3794,7 +3851,7 @@ ot-kernel_set_kconfig_pgo() {
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
 		else
 eerror
-eerror "CFI is not supported for ${clang_v}.  Ask the ebuild maintainer to"
+eerror "PGO is not supported for ${clang_v}.  Ask the ebuild maintainer to"
 eerror "update ot-kernel.eclass with the exact version to match the profraw"
 eerror "version, or update the patch for a newer profraw format. Currently only"
 eerror "profraw versions 5 to 8 are support."
@@ -5347,6 +5404,7 @@ einfo
 			ot-kernel_set_kconfig_hardening_level
 			ot-kernel_set_kconfig_scs # llvm_slot
 			ot-kernel_set_kconfig_cfi # llvm_slot
+			ot-kernel_set_kconfig_kcfi # llvm_slot
 		ot-kernel_set_kconfig_iommu_domain_type
 		ot-kernel-pkgflags_cipher_optional
 		ot-kernel_set_kconfig_cold_boot_mitigation
@@ -5417,6 +5475,7 @@ ot-kernel_setup_tc() {
 	if \
 		( \
 		   ( has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ) \
+		|| ( has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ) \
 		|| ( has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ) \
 		|| ( has clang-pgo ${IUSE_EFFECTIVE} && ot-kernel_use clang-pgo ) \
 		) \
@@ -6166,11 +6225,10 @@ ewarn
 		fi
 	fi
 
-	local has_cfi
-
 	local has_llvm=0
 	local llvm_v_maj=12 # set to highest kcp arch requirement
 	local wants_cfi=0
+	local wants_kcfi=0
 	local wants_lto=0
 	local gcc_v=$(best_version "sys-devel/gcc" \
 		| sed -r -e "s|sys-devel/gcc-||g" \
@@ -6185,6 +6243,11 @@ ewarn
 	if has cfi ${IUSE_EFFECTIVE} ; then
 		if use cfi ; then
 			wants_cfi=1
+		fi
+	fi
+	if has kcfi ${IUSE_EFFECTIVE} ; then
+		if use cfi ; then
+			wants_kcfi=1
 		fi
 	fi
 	if has lto ${IUSE_EFFECTIVE} ; then
@@ -6212,12 +6275,12 @@ ewarn
 		fi
 	done
 
-	if (( ${wants_lto} == 1 || ${wants_cfi} == 1 )) ; then
+	if (( ${wants_lto} == 1 || ${wants_cfi} == 1 || ${wants_kcfi} == 1 )) ; then
 einfo
 einfo "It's recommend to use sys-devel/genpatches[llvm]::oiledmachine-overlay"
-einfo "when building with LTO and/or CFI with the --llvm passed to genkernel."
+einfo "when building with LTO and/or (K)CFI with the --llvm passed to genkernel."
 einfo
-einfo "To present the CFI/LTO options, you must:"
+einfo "To present the (K)CFI/LTO options, you must:"
 einfo
 einfo "  \`make menuconfig \
 AR=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-ar \
@@ -6226,11 +6289,11 @@ CC=clang-${llvm_v_maj} \
 LD=/usr/bin/ld.lld \
 NM=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-nm"
 einfo
-einfo "CFI or LTO requires that the menuconfig settings are changed to:"
+einfo "(K)CFI or LTO requires that the menuconfig settings are changed to:"
 einfo
 einfo "  General architecture-dependent options > Link Time Optimization (LTO) > Clang ThinLTO (EXPERIMENTAL)"
 einfo
-einfo "For CFI, the menuconfig item is found at:"
+einfo "For (K)CFI, the menuconfig item is found at:"
 einfo
 einfo "  General architecture-dependent options > Use Clang's Control Flow Integrity (CFI)"
 einfo

@@ -138,6 +138,30 @@ aa4fb87a71a95bef81d9742a772d1dc8eb4fceea
 CFI_EXCLUDE_COMMITS=(
 )
 
+KCFI_COMMITS=(
+e1749571a4ac901ce63019355b810f7e4ae14102
+292b04ae2fbf9ce27e819704f871241475d25119
+f6a4502872c5a655f9556f1c40afb614d88f445b
+9cbeaba01642bc60c47cec203984564563740d89
+3ff83bb75c00e600f286ae03944b5c4c74c53723
+3d06a336cd9e4b2e5e5ef4043ebf2257ac7b897e
+0a5a7bf55b0bd049e88f0c9cfa106ab71cfc17cd
+771a6f1b3e18821c0056da93132cf50d2daa5806
+9f669297d5dfc111e78a5f478c70991efd461d1f
+31314c69f3b21743bd55c7ff6d77a41e937640ea
+eb76ebfbbe91e472a9677632ced6d6a02aa013e1
+cd3d3642a29d595844f3e7644500655680819d29
+35e07e641c5abfa6a23351b0d832196d37c37f36
+5b6fc3dae46094177fae9e01a2228f296c31ab6e
+c7a94b997eb4367bf9dadf0575ac6068fbc2db33
+061549081adee4bdfa4525d124cf4cd39ca0d83c
+8e3b0905742c0b3dc6e8e1d0b1eb81abb6e2f2a3
+fcc54bb0ce4626ddabc34839ba000f63ffc4e703
+273159fc481e0b781f169ccc9ba22acebd51ee44
+c3ca7485a0b88e4f78cbde97c8659a1e8e770385
+137e2cd4661f1d384be21283af602f952ba29524
+)
+
 BBR2_VERSION="v2alpha-2021-08-21"
 BBR2_COMMITS=( # oldest
 1ca5498fa4c6d4d8d634b1245d41f1427482824f
@@ -175,7 +199,7 @@ KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
 
 IUSE+=" build symlink"
 IUSE+=" ${KCP_IUSE} bbrv2 cfi +cfs clang disable_debug
-+genpatches -genpatches_1510 +kernel-compiler-patch lto multigen_lru +O3 prjc rt
++genpatches -genpatches_1510 kcfi +kernel-compiler-patch lto multigen_lru +O3 prjc rt
 shadowcallstack tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
 tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-multigen_lru zen-sauce
 zen-sauce-all -zen-tune"
@@ -185,11 +209,12 @@ IUSE+=" -exfat"
 # Not ready yet
 REQUIRED_USE+="
 	!uksm
-	!cfi
 "
 
 REQUIRED_USE+="
 	genpatches_1510? ( genpatches )
+	kcfi? ( !cfi !shadowcallstack )
+	cfi? ( !kcfi )
 	multigen_lru? ( !zen-multigen_lru )
 	O3? ( zen-sauce )
 	shadowcallstack? ( cfi )
@@ -241,9 +266,11 @@ inherit ot-kernel
 LICENSE+=" bbrv2? ( || ( GPL-2 BSD ) )" # https://github.com/google/bbr/tree/v2alpha#license
 LICENSE+=" clang-pgo? ( GPL-2 )"
 # A gcc pgo patch in 2014 exists but not listed for license reasons.
+LICENSE+=" cfi? ( GPL-2 )"
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
+LICENSE+=" kcfi? ( GPL-2 )"
 LICENSE+=" prjc? ( GPL-3 )" # see \
   # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
@@ -291,6 +318,20 @@ gen_cfi_rdepend() {
 			>=sys-devel/lld-${v}
 			=sys-libs/compiler-rt-${v}*
 			=sys-libs/compiler-rt-sanitizers-${v}*[cfi]
+		)
+		     "
+	done
+}
+
+gen_kcfi_rdepend() {
+	local min=${1}
+	local max=${2}
+	local v
+	for v in $(_seq ${min} ${max}) ; do
+		echo "
+		(
+			sys-devel/clang:${v}[kcfi]
+			sys-devel/llvm:${v}[kcfi]
 		)
 		     "
 	done
@@ -354,6 +395,18 @@ RDEPEND+=" cfi? (
 		)
 	)
 "
+
+# KCFI requires https://reviews.llvm.org/D119296 patch
+RDEPEND+=" kcfi? (
+		arm64? (
+			|| ( $(gen_kcfi_rdepend 15 ${LLVM_MAX_SLOT}) )
+		)
+		amd64? (
+			|| ( $(gen_kcfi_rdepend 15 ${LLVM_MAX_SLOT}) )
+		)
+	)
+"
+
 RDEPEND+=" clang-pgo? (
 		|| ( $(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT}) )
 		sys-kernel/genkernel[clang-pgo]
@@ -458,6 +511,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
 	   genpatches? (
 		${GENPATCHES_URI}
 	   )
+	   kcfi? ( amd64? ( ${KCFI_SRC_URIS} ) )
 	   kernel-compiler-patch? (
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -529,6 +583,12 @@ ewarn
 ewarn
 ewarn "The CFI patch for x86-64 is in development and originally for the"
 ewarn "5.15 series."
+ewarn
+	fi
+
+	if use kcfi ; then
+ewarn
+ewarn "KCFI is still under code review and considered experimental."
 ewarn
 	fi
 
@@ -688,7 +748,7 @@ ot-kernel_filter_patch_cb() {
 
 		# Add this to the end of the cfi commit list
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
-	elif [[ "${path}" =~ "cfi-5.17-a09066b.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-5.18-a09066b.patch" ]] ; then
 		# 343e289 is the same as a09066b
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-343e289-fix-for-5.15.patch"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.18-c6ef88b.patch" ]] ; then
@@ -701,9 +761,10 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "cfi-5.18-f5bff50.patch" ]] ; then
 		# f5bff50 is the same as 7fb10a9
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-7fb10a9-rebase-for-5.18.patch"
-	elif [[ "${path}" =~ "cfi-5.17-e921a27.patch" ]] ; then
-		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "cfi-5.17-aa4fb87.patch" ]] ; then
+	elif [[ "${path}" =~ "cfi-5.18-e921a27.patch" ]] ; then
+		_tpatch "${PATCH_OPTS} -F 3" "${path}" 3 0 ""
+		# Skipped paravirt_types.h, paravirt.c changes with missing paravirt_iret
+	elif [[ "${path}" =~ "cfi-5.18-aa4fb87.patch" ]] ; then
 		: # Skip for now since missing EXPORT_SYMBOL*
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-08-21-5.18-50b614c.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
