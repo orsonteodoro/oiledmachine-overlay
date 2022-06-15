@@ -150,7 +150,7 @@
 		    zen-multigen_lru			N
 		    zen-sauce				N
 						
-    5.17 (Mainline)					N
+    5.17 (Stable)					N
 		    -rt	(RT_PREEMPT)			A
 		    CFI					E
 		    Clang PGO				E
@@ -166,7 +166,7 @@
 		    zen-multigen_lru			A
 		    zen-sauce				A
 
-    5.18 (Mainline)					N
+    5.18 (Stable)					N
 		    -rt	(RT_PREEMPT)			A
 		    CFI					E
 		    Clang PGO				E
