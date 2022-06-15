@@ -1878,11 +1878,11 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     For 5.15, see:
     https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
 
-    For 5.16, see:
-    https://github.com/torvalds/linux/compare/v5.16...zen-kernel:5.16/zen-sauce
-
     For 5.17, see:
     https://github.com/torvalds/linux/compare/v5.17...zen-kernel:5.17/zen-sauce
+
+    For 5.18, see:
+    https://github.com/torvalds/linux/compare/v5.18...zen-kernel:5.18/zen-sauce
 
     Use the O3, zen-sauce, kernel-compiler-patch USE flags instead of passing their
     Zen commit IDs equivalents.

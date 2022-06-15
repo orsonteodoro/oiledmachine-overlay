@@ -49,9 +49,8 @@
 #   https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
 # Multigenerational LRU:
 #   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
-#   https://github.com/torvalds/linux/compare/v5.16...zen-kernel:5.16/lru
 #   https://github.com/torvalds/linux/compare/v5.17...zen-kernel:5.17/mglru
-#   https://github.com/torvalds/linux/compare/v5.18...zen-kernel:5.17/mglru
+#   https://github.com/torvalds/linux/compare/v5.18...zen-kernel:5.18/mglru
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
 #   5.10 https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c
@@ -59,6 +58,7 @@
 #   4.9 (O3) https://github.com/torvalds/linux/commit/7d0295dc49233d9ddff5d63d5bdc24f1e80da722
 #   circa 2018 (infiniband O3 read overflow fix) \
 #     https://github.com/torvalds/linux/commit/562a14babcd56efc2f51c772cb2327973d8f90ad
+#   Patch for >= 5.4 can be found on zen-sauce
 # PDS CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/PDS
 #   https://gitlab.com/alfredchen/PDS-mq/-/tree/master
