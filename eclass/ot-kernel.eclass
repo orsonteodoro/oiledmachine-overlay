@@ -2479,10 +2479,11 @@ ot-kernel_set_kconfig_kcfi() {
 		[[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 15 )) && die "CFI requires LLVM >= 15 on x86_64"
 		if ! test-flags -fsanitize=kcfi ; then
 eerror
-eerror "Both sys-devel/clang and sys-devel/llvm must be patched for"
+eerror "Both >=sys-devel/clang-15 and >=sys-devel/llvm-15 must be patched for"
 eerror "-fsanitize=kcfi support."
 eerror
 eerror "See https://reviews.llvm.org/D119296 for details."
+eerror "See also https://wiki.gentoo.org/wiki//etc/portage/patches"
 eerror
 			die
 		fi

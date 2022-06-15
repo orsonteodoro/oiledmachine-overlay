@@ -2084,8 +2084,11 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       Apply KCFI sanitization for forward edge control flow integrity but
       limited to only indirect calls.
 
-      It requires the KCFI sanitizer patch (D119296) applied to both Clang and
-      LLVM which is still under code review.
+      It requires the KCFI sanitizer patch (D119296) applied to both
+      sys-devel/clang-15 or newer and sys-devel/llvm-15+ or newer.  The kcfi
+      feature is still under code review.
+
+      See also https://wiki.gentoo.org/wiki//etc/portage/patches
       </flag>
     <flag name="kernel-compiler-patch">Patches the kernel for more CPU
       microarchitectures.  If using cross-compiling or distcc, do not use the
