@@ -75,7 +75,7 @@ fi
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
 NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
-NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
+NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="14"
 
 # See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
 if [[ -n "${NPM_SECAUDIT_TYPESCRIPT_V}" ]] && ( \
