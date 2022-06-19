@@ -10,7 +10,10 @@ HOMEPAGE="https://github.com/jketterl/csdr"
 LICENSE="BSD GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
-DEPEND+=" >=sci-libs/fftw-3.3:="
+DEPEND+="
+	>=sci-libs/fftw-3.3:=
+	>=media-libs/libsamplerate-0.1.8
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" "
 SRC_URI="
