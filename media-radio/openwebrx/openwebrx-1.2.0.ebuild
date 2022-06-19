@@ -57,9 +57,6 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 OWRX_CONNECTOR_DEPEND="
 	>=media-radio/owrx_connector-0.5
 "
-SOX_DEPEND="
-	media-sound/sox
-"
 SOAPY_DEVICES=(
 	rtl_sdr_soapy
 	sdrplay
@@ -134,31 +131,26 @@ RDEPEND_UNPACKAGED+="
 "
 RDEPEND+=" ${RDEPEND_UNPACKAGED}" # Package it yourself
 RDEPEND+=" ${PYTHON_DEPS}
-	>=media-radio/csdr-0.17
+	>=dev-python/pycsdr-0.18[${PYTHON_USEDEP}]
 	|| (
 		net-analyzer/netcat
 		net-analyzer/openbsd-netcat
 	)
 	digital_voice_digiham? (
-		${SOX_DEPEND}
-		>=media-radio/codecserver-0.1
-		>=media-radio/digiham-0.5
+		>=media-radio/codecserver-0.2
+		>=media-radio/digiham-0.6
 	)
 	digital_voice_freedv? (
-		${SOX_DEPEND}
 		media-libs/codec2
 	)
 	digital_voice_m17? (
-		${SOX_DEPEND}
 		>=media-radio/digiham-0.5
-		  media-radio/m17-cxx-demod
+		>=media-radio/m17-cxx-demod-2.3
 	)
 	dream? (
-		${SOX_DEPEND}
 		media-radio/dream
 	)
 	js8? (
-		${SOX_DEPEND}
 		dev-python/js8py[${PYTHON_USEDEP}]
 		media-radio/js8call
 	)
@@ -176,7 +168,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 		media-sound/alsa-utils
 	)
 	openwebrx_sdr_hpsdr? (
-		media-radio/hpsdrconnector
+		>=media-radio/hpsdrconnector-0.6
 	)
 	openwebrx_sdr_lime_sdr? (
 		net-wireless/limesuite
@@ -185,7 +177,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 		virtual/libusb
 	)
 	openwebrx_sdr_runds? (
-		media-radio/runds_connector
+		>=media-radio/runds_connector-0.2.1
 	)
 	openwebrx_sdr_sddc? (
 		media-radio/sddc_connector
@@ -197,20 +189,17 @@ RDEPEND+=" ${PYTHON_DEPS}
 		net-wireless/soapyremote
 	)
 	packet? (
-		${SOX_DEPEND}
 		  media-radio/aprs-symbols
 		>=media-radio/direwolf-1.4
 	)
 	pocsag? (
-		${SOX_DEPEND}
 		>=media-radio/digiham-0.5
 	)
 	systemd? (
 		sys-apps/systemd
 	)
 	wsjtx? (
-		${SOX_DEPEND}
-		media-radio/wsjtx
+		>=media-radio/wsjtx-2.5.4
 	)
 "
 DEPEND+=" ${RDEPEND}"
