@@ -14,7 +14,8 @@ IUSE+=" openrc systemd"
 REQUIRED_USE="|| ( openrc systemd )"
 DEPEND+="
 	acct-group/dialout
-	>=dev-libs/protobuf-3.0
+	>=dev-libs/protobuf-3.12.4
+	virtual/udev
 	openrc? ( sys-apps/openrc )
 	systemd? ( sys-apps/systemd )
 "
