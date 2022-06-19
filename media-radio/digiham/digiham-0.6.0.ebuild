@@ -12,6 +12,8 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
 DEPEND+="
 	>=media-radio/codecserver-0.1.0
+	>=media-radio/csdr-0.18
+	>=dev-libs/icu-57
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.0"
