@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit autotools
+inherit autotools cmake
 
 DESCRIPTION="A simple DSP library and command-line tool for Software Defined Radio."
 HOMEPAGE="https://github.com/jketterl/csdr"
@@ -22,8 +22,3 @@ https://github.com/jketterl/csdr/archive/refs/tags/${PV}.tar.gz
 "
 RESTRICT="mirror"
 DOCS=( README.md )
-
-src_prepare() {
-	default
-	eautoreconf
-}
