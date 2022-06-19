@@ -12,6 +12,7 @@ LICENSE="GPL-3 LGPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
 DEPEND+="
+	>=media-radio/csdr-0.18
 	net-wireless/rtl-sdr
 	net-wireless/soapysdr
 "
