@@ -17,7 +17,7 @@ LICENSE="
 	MIT
 	MPL-2.0
 	NPL-1.1"
-KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~amd64-linux ~arm64"
 PV_CC=$(ver_cut 1 ${PV})
 SLOT="0/${PV}"
 NODE_SLOT="0"
@@ -29,15 +29,16 @@ IUSE+="	closure_compiler_java
 	closure_compiler_nodejs
 	doc"
 REQUIRED_USE+="
-	closure_compiler_nodejs? ( closure_compiler_java )
 	|| (	closure_compiler_java
 		closure_compiler_js
 		closure_compiler_native
-		closure_compiler_nodejs	)"
+		closure_compiler_nodejs	)
+	closure_compiler_nodejs? ( closure_compiler_java )
+"
 # For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/v20220502.0.0/packages/google-closure-compiler/package.json
+# https://github.com/google/closure-compiler-npm/blob/v20220601.0.0/packages/google-closure-compiler/package.json
 # For dependencies, see
-# https://github.com/google/closure-compiler-npm/blob/v20220502.0.0/.github/workflows/build.yml
+# https://github.com/google/closure-compiler-npm/blob/v20220601.0.0/.github/workflows/build.yml
 NODE_V="14" # Upstream uses 14 on linux but others 16, 18
 CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_V} )"
 JDK_DEPEND="
@@ -66,16 +67,32 @@ DEPEND+=" ${RDEPEND}
 BDEPEND+=" ${CDEPEND}
 	${JDK_DEPEND}
 	dev-java/maven-bin
-	>=dev-util/bazel-4.2.2
 	dev-vcs/git
 	sys-apps/yarn"
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="closure-compiler-${PV}.tar.gz"
+BAZELISK_PV="1.12.0"
+BAZELISK_ABIS="
+	amd64
+	arm64
+"
+gen_bazelisk_src_uris() {
+	for abi in ${BAZELISK_ABIS} ; do
+		echo "
+	${abi}? (
+https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelisk-linux-${abi}
+	-> bazelisk-linux-${abi}-${BAZELISK_PV}
+	)
+		"
+	done
+}
 SRC_URI="
 https://github.com/google/closure-compiler-npm/archive/v${PV}.tar.gz
 	-> ${FN_DEST}
 https://github.com/google/closure-compiler/archive/v${PV_CC}.tar.gz
-	-> ${FN_DEST2}"
+	-> ${FN_DEST2}
+"
+SRC_URI+=" $(gen_bazelisk_src_uris)"
 S="${WORKDIR}/${PN}-${PV}"
 S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${PV_CC}"
 RESTRICT="mirror"
@@ -151,6 +168,13 @@ eerror
 	ewarn "Re-emerge if it randomly fails with message: cb() never called!"
 	ewarn "Re-emerge if exitCode: 18 when downloading graal image for google-closure-compiler-linux."
 	ewarn
+
+	if [[ ! -e "/usr/include/node/node_version.h" ]] ; then
+eerror
+eerror "Use eselect nodejs to fix missing header location."
+eerror
+		die
+	fi
 }
 
 src_unpack() {
@@ -180,6 +204,16 @@ src_unpack() {
 	rm -rf "${S}/packages/google-closure-compiler-windows" || die
 	# Fetches and builds the closure compiler here.
 	cd "${S}" || die
+
+	for abi in ${BAZELISK_ABIS} ; do
+		mkdir -p "${WORKDIR}/bazelisk" || die
+		if use ${abi} ; then
+			cp $(realpath "${DISTDIR}/bazelisk-linux-${abi}-${BAZELISK_PV}") \
+				"${WORKDIR}/bazelisk/bazelisk" || die
+			chmod +x "${WORKDIR}/bazelisk/bazelisk" || die
+		fi
+	done
+	export PATH="${WORKDIR}/bazelisk:${PATH}"
 
 	# Prevent error
 	einfo "Adding .git folder"
