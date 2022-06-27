@@ -82,7 +82,7 @@ closure-compiler? (
 #   musl - all-rights-reserved MIT
 #   libcxx, libcxxabi, libunwind - MIT UoI-NCSA
 #
-#KEYWORDS="~amd64 ~arm64 ~x86" # See tests/clang_native.py for supported arches
+KEYWORDS="~amd64 ~arm64 ~x86" # See tests/clang_native.py for supported arches
 SLOT_MAJOR=$(ver_cut 1-2 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 CLOSURE_COMPILER_SLOT="0"
@@ -164,7 +164,7 @@ TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
-#	"${FILESDIR}/emscripten-2.0.31-set-wrappers-path.patch"
+	"${FILESDIR}/emscripten-3.1.14-set-wrappers-path.patch"
 	"${FILESDIR}/emscripten-2.0.14-gentoo-wasm-ld-path.patch"
 )
 CMAKE_BUILD_TYPE=Release
@@ -198,7 +198,7 @@ setup_openjdk() {
 }
 
 pkg_setup() {
-	if false && use closure-compiler ; then
+	if use closure-compiler ; then
 		if ! use closure_compiler_native ; then
 			setup_openjdk
 			einfo "JAVA_HOME=${JAVA_HOME}"
