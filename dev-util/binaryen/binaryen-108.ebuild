@@ -70,6 +70,7 @@ src_configure() {
 		-DCMAKE_INSTALL_BINDIR=/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/bin
 		-DCMAKE_INSTALL_INCLUDEDIR=/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/include
 		-DBUILD_STATIC_LIB=OFF
+		-DBUILD_TESTS=OFF
 		-DENABLE_WERROR=OFF
 	)
 	cmake-utils_src_configure
