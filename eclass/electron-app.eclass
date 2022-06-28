@@ -264,12 +264,15 @@ COMMON_DEPEND="
 	x11-libs/pixman"
 
 # [A] Supported versions (LTS) are listed in
-# https://www.electronjs.org/docs/tutorial/support#currently-supported-versions
+# https://www.electronjs.org/docs/latest/tutorial/electron-timelines
+ELECTRON_APP_ELECTRON_V_SUPPORTED="17.0"
 if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
-&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 18.0 ; then
-:; # E18, E19, #E20 supported upstream
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge ${ELECTRON_APP_ELECTRON_V_SUPPORTED} ; then
+:; # E17, E18, E19, E20 supported upstream
 else
 if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
+eerror "Found:  ${ELECTRON_APP_ELECTRON_V}"
+eerror "Supported:  >=${ELECTRON_APP_ELECTRON_V_SUPPORTED}"
 eerror "Electron should be updated to one of the latest Long Term Support (LTS)"
 eerror "series versions or else it likely contains critical CVE security"
 eerror "advisories."
