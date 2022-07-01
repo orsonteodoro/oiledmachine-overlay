@@ -1,24 +1,16 @@
 # Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{7..9} )
+PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 \
 	toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils
 
 DESCRIPTION="Low Level Virtual Machine"
 HOMEPAGE="https://llvm.org/"
-
-# Those are in lib/Targets, without explicit CMakeLists.txt mention
-ALL_LLVM_EXPERIMENTAL_TARGETS=( ARC VE )
-# Keep in sync with CMakeLists.txt
-ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM AVR BPF Hexagon Lanai Mips MSP430
-	NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 XCore
-	"${ALL_LLVM_EXPERIMENTAL_TARGETS[@]}" )
-ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 
 # Additional licenses:
 # 1. OpenBSD regex: Henry Spencer's license ('rc' in Gentoo) + BSD.
@@ -28,11 +20,13 @@ ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 
 LICENSE="Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD public-domain rc"
 SLOT="$(ver_cut 1)"
-KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos"
-IUSE="debug doc exegesis +gold libedit +libffi ncurses test xar xml z3 ${ALL_LLVM_TARGETS[*]}"
-IUSE+=" +bootstrap -dump lto pgo pgo_trainer_build_self pgo_trainer_test_suite souper r3"
-REQUIRED_USE="|| ( ${ALL_LLVM_TARGETS[*]} )"
-REQUIRED_USE+="
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
+IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3"
+IUSE+=" bolt bolt-prepare +bootstrap -dump jemalloc lto pgo pgo_trainer_build_self
+pgo_trainer_test_suite souper tcmalloc r3"
+REQUIRED_USE="
+	bolt-prepare? ( bolt )
+	jemalloc? ( bolt )
 	pgo? ( || ( pgo_trainer_build_self pgo_trainer_test_suite ) )
 	pgo_trainer_build_self? ( pgo )
 	pgo_trainer_test_suite? ( pgo )
@@ -40,13 +34,15 @@ REQUIRED_USE+="
 		!z3
 		test? ( debug )
 	)
+	tcmalloc? ( bolt )
 "
 RESTRICT="!test? ( test )"
 
 RDEPEND="
 	sys-libs/zlib:0=[${MULTILIB_USEDEP}]
+	binutils-plugin? ( >=sys-devel/binutils-2.31.1-r4:*[plugins] )
+	bolt? ( >=dev-util/perf-4.5 )
 	exegesis? ( dev-libs/libpfm:= )
-	gold? ( >=sys-devel/binutils-2.31.1-r4:*[plugins] )
 	libedit? ( dev-libs/libedit:0=[${MULTILIB_USEDEP}] )
 	libffi? ( >=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}] )
 	ncurses? ( >=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}] )
@@ -54,11 +50,20 @@ RDEPEND="
 	xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	z3? ( >=sci-mathematics/z3-4.7.1:0=[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
-	gold? ( sys-libs/binutils-libs )"
+	binutils-plugin? ( sys-libs/binutils-libs )
+	bolt? (
+		jemalloc? ( dev-libs/jemalloc )
+		tcmalloc? ( dev-util/google-perftools )
+	)
+"
 BDEPEND="
 	dev-lang/perl
 	>=dev-util/cmake-3.16
 	sys-devel/gnuconfig
+	bolt? (
+		>=dev-util/perf-4.5
+		sys-devel/lld
+	)
 	kernel_Darwin? (
 		<sys-libs/libcxx-$(ver_cut 1-3).9999
 		>=sys-devel/binutils-apple-5.1
@@ -76,21 +81,22 @@ BDEPEND="
 RDEPEND="${RDEPEND}
 	!sys-devel/llvm:0"
 PDEPEND="sys-devel/llvm-common
-	gold? ( >=sys-devel/llvmgold-${SLOT} )
+	binutils-plugin? ( >=sys-devel/llvmgold-${SLOT} )
+	souper? ( sys-devel/souper[llvm-${SLOT}] )
 "
-#	souper? ( sys-devel/souper[llvm-${SLOT}] )
 PATCHES=(
-	"${FILESDIR}/llvm-12.0.1-stop-triple-spam.patch"
+	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"
 )
 
-LLVM_COMPONENTS=( llvm )
+LLVM_COMPONENTS=( llvm bolt cmake third-party )
 LLVM_MANPAGES=pregenerated
-LLVM_PATCHSET=11.1.0-1
+LLVM_PATCHSET=${PV}
+LLVM_USE_TARGETS=provide
 llvm.org_set_globals
 #if [[ ${PV} == *.9999 ]] ; then
 EGIT_REPO_URI_LLVM_TEST_SUITE="https://github.com/llvm/llvm-test-suite.git"
 EGIT_BRANCH_LLVM_TEST_SUITE="release/${SLOT}.x"
-EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-llvmorg-${PV/_/-}}"
+EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-HEAD}"
 #else
 #SRC_URI+="
 #pgo_trainer_test_suite? (
@@ -127,6 +133,24 @@ eerror
 	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)"
 	use pgo_trainer_build_self && ewarn "The pgo_trainer_build_self USE flag has not been tested."
 	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite USE flag has not been tested."
+	use souper && ewarn "The forward port of disable-peepholes-v07.diff is in testing."
+
+	if use bolt ; then
+		if perf record -e cpu-clock -j any -o /dev/null -- ls \
+			| grep -q -e "PMU Hardware doesn't support sampling/overflow-interrupts" ; then
+eerror
+eerror "Your CPU needs LBR (Last Branch Record) support.  Please disable the"
+eerror "bolt USE flag."
+eerror
+			die
+		fi
+ewarn
+ewarn "Ebuild development indefinitely for the bolt USE flag."
+ewarn
+ewarn "No support will be given for the bolt USE flag on this ebuild fork due"
+ewarn "to a lack of LBR support on the CPU."
+ewarn
+	fi
 }
 
 python_check_deps() {
@@ -151,8 +175,6 @@ check_live_ebuild() {
 	for i in "${all_targets[@]}"; do
 		has "${i}" "${prod_targets[@]}" || exp_targets+=( "${i}" )
 	done
-	# reorder
-	all_targets=( "${prod_targets[@]}" "${exp_targets[@]}" )
 
 	if [[ ${exp_targets[*]} != ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]} ]]; then
 		eqawarn "ALL_LLVM_EXPERIMENTAL_TARGETS is outdated!"
@@ -161,10 +183,10 @@ check_live_ebuild() {
 		eqawarn
 	fi
 
-	if [[ ${all_targets[*]} != ${ALL_LLVM_TARGETS[*]#llvm_targets_} ]]; then
-		eqawarn "ALL_LLVM_TARGETS is outdated!"
-		eqawarn "    Have: ${ALL_LLVM_TARGETS[*]#llvm_targets_}"
-		eqawarn "Expected: ${all_targets[*]}"
+	if [[ ${prod_targets[*]} != ${ALL_LLVM_PRODUCTION_TARGETS[*]} ]]; then
+		eqawarn "ALL_LLVM_PRODUCTION_TARGETS is outdated!"
+		eqawarn "    Have: ${ALL_LLVM_PRODUCTION_TARGETS[*]}"
+		eqawarn "Expected: ${prod_targets[*]}"
 	fi
 }
 
@@ -258,7 +280,10 @@ src_prepare() {
 
 	if use souper ; then
 		cd "${WORKDIR}" || die
-		eapply "${FILESDIR}/llvm-11.1.0-disable-peepholes-v03.diff"
+		eapply "${FILESDIR}/llvm-14.0.0.9999-disable-peepholes-v07.diff"
+		if use test ; then
+			eapply "${FILESDIR}/disable-peepholes-v07-tests.diff"
+		fi
 	fi
 
 	export CFLAGS_BAK="${CFLAGS}"
@@ -320,6 +345,7 @@ get_distribution_components() {
 			llvm-ar
 			llvm-as
 			llvm-bcanalyzer
+			llvm-bitcode-strip
 			llvm-c-test
 			llvm-cat
 			llvm-cfi-verify
@@ -329,19 +355,21 @@ get_distribution_components() {
 			llvm-cxxdump
 			llvm-cxxfilt
 			llvm-cxxmap
+			llvm-debuginfod-find
 			llvm-diff
 			llvm-dis
 			llvm-dlltool
 			llvm-dwarfdump
 			llvm-dwp
-			llvm-elfabi
 			llvm-exegesis
 			llvm-extract
 			llvm-gsymutil
 			llvm-ifs
 			llvm-install-name-tool
 			llvm-jitlink
+			llvm-jitlink-executor
 			llvm-lib
+			llvm-libtool-darwin
 			llvm-link
 			llvm-lipo
 			llvm-lto
@@ -355,26 +383,33 @@ get_distribution_components() {
 			llvm-objcopy
 			llvm-objdump
 			llvm-opt-report
+			llvm-otool
 			llvm-pdbutil
 			llvm-profdata
+			llvm-profgen
 			llvm-ranlib
 			llvm-rc
 			llvm-readelf
 			llvm-readobj
 			llvm-reduce
 			llvm-rtdyld
+			llvm-sim
 			llvm-size
 			llvm-split
 			llvm-stress
 			llvm-strings
 			llvm-strip
 			llvm-symbolizer
+			llvm-tapi-diff
+			llvm-tli-checker
 			llvm-undname
+			llvm-windres
 			llvm-xray
 			obj2yaml
 			opt
 			sancov
 			sanstats
+			split-file
 			verify-uselistorder
 			yaml2obj
 
@@ -394,7 +429,7 @@ get_distribution_components() {
 			docs-llvm-html
 		)
 
-		use gold && out+=(
+		use binutils-plugin && out+=(
 			LLVMgold
 		)
 	fi
@@ -512,8 +547,11 @@ _configure() {
 	fi
 
 	filter-flags \
+		'-f*reorder-blocks-and-partition' \
 		'-flto*' \
-		'-fuse-ld*'
+		'-fuse-ld*' \
+		'-Wl,--emit-relocs' \
+		'-Wl,-q'
 
 	if use souper && (( ${s_idx} != 7 )) ; then
 		:;
@@ -529,6 +567,12 @@ _configure() {
 		setup_gcc
 	elif [[ "${PGO_PHASE}" =~ ("pgi"|"pgt"|"pgo") ]] ; then
 		setup_clang
+	fi
+
+	if use bolt-prepare ; then
+		append-flags -fno-reorder-blocks-and-partition
+		append-ldflags -fno-reorder-blocks-and-partition
+		append-ldflags -Wl,--emit-relocs
 	fi
 
 	# workaround BMI bug in gcc-7 (fixed in 7.4)
@@ -590,7 +634,7 @@ _configure() {
 		-DFFI_INCLUDE_DIR="${ffi_cflags#-I}"
 		-DFFI_LIBRARY_DIR="${ffi_ldflags#-L}"
 		# used only for llvm-objdump tool
-		-DHAVE_LIBXAR=$(multilib_native_usex xar 1 0)
+		-DLLVM_HAVE_LIBXAR=$(multilib_native_usex xar 1 0)
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 
@@ -603,7 +647,7 @@ _configure() {
 		if use souper ; then
 			if (( ${s_idx} == 7 )) ; then
 				if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
-					slot="${SLOT_MAJ}"
+					slot="${SLOT}"
 				else
 					slot="${PGO_PHASE}"
 				fi
@@ -613,7 +657,7 @@ _configure() {
 			fi
 		else
 			if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
-				slot="${SLOT_MAJ}"
+				slot="${SLOT}"
 			else
 				slot="${PGO_PHASE}"
 			fi
@@ -621,13 +665,13 @@ _configure() {
 	else
 		if use souper ; then
 			if (( ${s_idx} == 7 )) ; then
-				slot="${SLOT_MAJ}"
+				slot="${SLOT}"
 			else
 				local parity=$((${s_idx} % 2))
 				slot="${parity}"
 			fi
 		else
-			slot="${SLOT_MAJ}"
+			slot="${SLOT}"
 		fi
 	fi
 	mycmakeargs+=(
@@ -651,6 +695,10 @@ _configure() {
 			-DGO_EXECUTABLE=GO_EXECUTABLE-NOTFOUND
 		)
 #	fi
+
+	use bolt && mycmakeargs+=(
+		-DLLVM_ENABLE_PROJECTS="bolt"
+	)
 
 	if use souper ; then
 		filter-flags \
@@ -687,7 +735,7 @@ _configure() {
 			-DLLVM_ENABLE_DOXYGEN=OFF
 			-DLLVM_INSTALL_UTILS=ON
 		)
-		use gold && mycmakeargs+=(
+		use binutils-plugin && mycmakeargs+=(
 			-DLLVM_BINUTILS_INCDIR="${EPREFIX}"/usr/include
 		)
 	fi
@@ -755,7 +803,6 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
 		"/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
-		append-ldflags -Wl,--emit-relocs
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
 			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
@@ -792,6 +839,9 @@ _configure() {
 
 	cmake_src_configure
 
+	grep -q -E "^CMAKE_PROJECT_VERSION_MAJOR(:.*)?=$(ver_cut 1)$" \
+			CMakeCache.txt ||
+		die "Incorrect version, did you update _LLVM_MASTER_MAJOR?"
 	multilib_is_native_abi && check_distribution_components
 }
 
@@ -1113,6 +1163,11 @@ _test() {
 }
 
 src_install() {
+	if use bolt-prepare ; then
+		# For BOLT requirements, see
+# https://github.com/llvm/llvm-project/tree/main/bolt#input-binary-requirements
+		export STRIP="/bin/true"
+	fi
 	local MULTILIB_CHOST_TOOLS=(
 		/usr/lib/llvm/${SLOT}/bin/llvm-config
 	)
@@ -1137,15 +1192,15 @@ _install() {
 	rm -rf "${ED}"/usr/include || die
 	if use souper ; then
 		if (( ${s_idx} == 7 )) ; then
-			mv "${ED}"/usr/lib/llvm/${SLOT_MAJ}/include "${ED}"/usr/include || die
-			LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT_MAJ}/$(get_libdir)" )
+			mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
+			LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
 		else
 			local parity=$((${s_idx} % 2))
 			mv "${ED}"/usr/lib/llvm/${parity}/include "${ED}"/usr/include || die
 		fi
 	else
-		mv "${ED}"/usr/lib/llvm/${SLOT_MAJ}/include "${ED}"/usr/include || die
-		LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT_MAJ}/$(get_libdir)" )
+		mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
+		LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
 	fi
 }
 
@@ -1175,4 +1230,164 @@ pkg_postinst() {
 	elog "packages:"
 	elog "  dev-python/pygments (for opt-viewer)"
 	elog "  dev-python/pyyaml (for all of them)"
+	if use bolt-prepare ; then
+		einfo
+		einfo "Run \`emerge --config =${P}\` to bolt optimize after emerging a bolt"
+		einfo "optimized clang."
+		einfo
+		einfo "See the metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
+		einfo "for instructions on a BOLT optimized ${PN} library."
+		einfo
+	fi
+}
+
+_bolt_optimize_file() {
+	# From the unit test and issue 279, it should be possible to BOLT optimize .so files.
+	local f="${1}"
+	einfo "BOLTing ${f}"
+	local args=(
+		"${f}"
+		-o "${f}.bolt"
+		-reorder-blocks=cache+
+		-reorder-functions=hfsort+
+		-split-functions=3
+		-split-all-cold
+		-dyno-stats
+		-icf=1
+		-use-gnu-stack
+	)
+
+	# Find the ABI.
+	local ABI=""
+	if [[ "${f}" == "/bin/" ]] ; then
+		ABI="${DEFAULT_ABI}"
+	else
+		local abis=($(multilib_get_enabled_abi_pairs))
+		local found_abi=
+		for ABI in ${abis[@]#*.} ; do
+			[[ "${f}" =~ "/${SLOT}/$(get_libdir)/" ]] && break
+		done
+	fi
+
+	[[ -z "${ABI}" ]] && return
+
+	if [[ "${f}" =~ "/${SLOT}/$(get_libdir ${ABI})/" ]] ; then
+		# For libs
+		args+=(
+			-data="${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/clang-${SLOT}-merged-${ABI}.fdata"
+		)
+	elif [[ "${f}" =~ "/bin/" ]] ; then
+		# For exes
+		# It is maybe -all or -${ABI} but the exe is the DEFAULT_ABI.
+		args+=(
+			-data="${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/clang-${SLOT}-merged-all.fdata"
+		)
+	else
+		ewarn "${f} is skipped.  Not in lib* or bin"
+		return
+	fi
+
+	if use jemalloc ; then
+		LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" llvm-bolt ${args[@]} || die
+	elif use tcmalloc ; then
+		if [[ -e "/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" ]] ; then
+			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" llvm-bolt ${args[@]} || die
+		else
+			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" llvm-bolt ${args[@]} || die
+		fi
+	else
+		llvm-bolt ${args[@]} || true
+	fi
+
+	[[ -e "${f}.bolt" ]] && mv "${f}{.bolt,}" || die
+}
+
+strip_package() {
+	if readelf -S "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM.so" 2>/dev/null \
+		| grep -F -e ".comment" ; then
+		einfo "${PN} is already stripped"
+		return
+	fi
+	# Remove debug symbols
+	local STRIP
+	local RANDLIB
+	if [[ "${CC}" == "clang" ]] ; then
+		STRIP="llvm-strip"
+		RANDLIB="llvm-ranlib"
+	else
+		STRIP="strip"
+		RANDLIB="ranlib"
+	fi
+	# Keep in sync with:
+	# https://github.com/gentoo/portage/blob/master/bin/estrip#L133
+	local strip_args=(
+		--strip-unneeded
+		-N __gentoo_check_ldflags__
+		-R .comment
+		-R .GCC.command.line
+		-R .note.gnu.gold-version
+	)
+
+	einfo "Stripping package.  Please wait."
+	local f
+	for f in $(cat /var/db/pkg/${CATEGORY}/${P}/CONTENTS | cut -f 2 -d " ") ; do
+		f=$(readlink -f "${f}")
+		local is_exe=0
+		local is_so=0
+		local is_a=0
+		local is_o=0
+		local is_writeable=0 # for prefix
+		[[ ! -w "${f}" ]] && is_writeable=1 && chmod u+w "${f}"
+		# Keep in sync with:
+		# https://github.com/gentoo/portage/blob/master/bin/estrip#L471
+		file "${f}" 2>/dev/null | grep -q -E -e "ELF.*relocatable" && is_o=1
+		file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
+		file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
+		file "${f}" 2>/dev/null | grep -q -E -e "ar archive" && is_a=1
+		if (( ${is_o} == 1 )) ; then
+			ewarn "Found .o file:  ${f}"
+		fi
+		if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
+			"${STRIP}" ${strip_args[@]} "${f}"
+		fi
+		if (( ${is_a} == 1 )) ; then
+			"${STRIP}" -g "${f}" && "${RANDLIB}" "${f}"
+		fi
+		(( ${is_writeable} == 1 )) && chmod u-w "${f}"
+	done
+}
+
+pkg_config() {
+	use bolt-prepare || return
+	local llvm_used_commit
+	if [[ ${PV} == *.9999 ]] ; then
+		llvm_used_commit=$(cat "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-commit")
+	fi
+	if [[ "${EGIT_VERSION}" != "${llvm_used_commit}" ]] ; then
+		ewarn
+		ewarn "Expected EGIT_VERSION:  ${llvm_used_commit}"
+		ewarn "Actual EGIT_VERSION:    ${EGIT_VERSION}"
+		ewarn
+	fi
+	if [[ ! -d "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile" ]] ; then
+eerror "Missing BOLT profile required for a BOLT optimized LLVM."
+		die
+	fi
+	# All binaries involved in building down the process tree should be added.
+	local f
+	for f in $(cat /var/db/pkg/sys-devel/${PN}-${SLOT}*/CONTENTS | cut -f 2 -d " ") ; do
+		f=$(readlink -f "${f}")
+		local is_exe=0
+		local is_so=0
+		file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
+		file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
+		if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
+			if grep -q -e $(basename "${f}") "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile" ; then
+				_bolt_optimize_file "${f}"
+			else
+				einfo "Skipping "$(basename "${f}")" because it was not BOLT profiled."
+			fi
+		fi
+	done
+	strip_package
 }
