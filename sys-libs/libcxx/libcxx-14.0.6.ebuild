@@ -110,7 +110,7 @@ BDEPEND+="
 PATCHES=( "${FILESDIR}/libcxx-13.0.0.9999-hardened.patch" )
 
 LLVM_COMPONENTS=( runtimes libcxx{,abi} llvm/{cmake,utils/llvm-lit} cmake )
-LLVM_PATCHSET=9999-1
+LLVM_PATCHSET=${PV}
 llvm.org_set_globals
 
 python_check_deps() {
