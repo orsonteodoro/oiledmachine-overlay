@@ -79,7 +79,7 @@ LLVM_TEST_COMPONENTS=(
 	llvm/utils/{lit,llvm-lit,unittest}
 	llvm/utils/{UpdateTestChecks,update_cc_test_checks.py}
 )
-LLVM_PATCHSET=14.0.1-r1
+LLVM_PATCHSET=${PV}
 LLVM_USE_TARGETS=llvm
 llvm.org_set_globals
 PATCHES_HARDENED=(
@@ -117,7 +117,7 @@ EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-HEAD}"
 pkg_setup() {
 	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
 	python-single-r1_pkg_setup
-	if ! use bootstrap && ! has_version "clang:${SLOT}" ; then
+	if ! use bootstrap && ! has_version "sys-devel/clang:${SLOT}" ; then
 eerror
 eerror "Disabling the bootstrap USE flag requires a previous install of"
 eerror "clang:${SLOT}.  Enable the bootstrap USE flag to fix this problem."
@@ -274,10 +274,6 @@ check_distribution_components() {
 					clang-libraries|distribution)
 						continue
 						;;
-					# headers for clang-tidy static library
-					clang-tidy-headers)
-						continue
-						;;
 					# tools
 					clang|clangd|clang-*)
 						;;
@@ -293,7 +289,7 @@ check_distribution_components() {
 
 				all_targets+=( "${l}" )
 			fi
-		done < <(ninja -t targets all)
+		done < <(${NINJA} -t targets all)
 
 		while read -r l; do
 			my_targets+=( "${l}" )

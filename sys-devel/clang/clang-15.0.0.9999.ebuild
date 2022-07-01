@@ -117,7 +117,7 @@ EGIT_COMMIT_LLVM_TEST_SUITE="${EGIT_COMMIT_LLVM_TEST_SUITE:-HEAD}"
 pkg_setup() {
 	LLVM_MAX_SLOT=${SLOT} llvm_pkg_setup
 	python-single-r1_pkg_setup
-	if ! use bootstrap && ! has_version "clang:${SLOT}" ; then
+	if ! use bootstrap && ! has_version "sys-devel/clang:${SLOT}" ; then
 eerror
 eerror "Disabling the bootstrap USE flag requires a previous install of"
 eerror "clang:${SLOT}.  Enable the bootstrap USE flag to fix this problem."
