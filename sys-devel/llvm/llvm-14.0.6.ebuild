@@ -90,7 +90,7 @@ PATCHES=(
 
 LLVM_COMPONENTS=( llvm bolt cmake third-party )
 LLVM_MANPAGES=pregenerated
-LLVM_PATCHSET=14.0.1
+LLVM_PATCHSET=${PV}
 LLVM_USE_TARGETS=provide
 llvm.org_set_globals
 #if [[ ${PV} == *.9999 ]] ; then
@@ -223,7 +223,7 @@ check_distribution_components() {
 
 				all_targets+=( "${l}" )
 			fi
-		done < <(ninja -t targets all)
+		done < <(${NINJA} -t targets all)
 
 		while read -r l; do
 			my_targets+=( "${l}" )
