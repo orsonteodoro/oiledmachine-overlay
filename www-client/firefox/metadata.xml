@@ -28,6 +28,10 @@
 www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
 	----- CUT ABOVE HERE -----
 
+	Due to constraints in the package manager spec if both ESR and rapid
+	have the same version numbers, the _pre in this overlay is refers to
+	ESR.
+
 	References:
 
 	https://support.mozilla.org/en-US/kb/choosing-firefox-update-channel

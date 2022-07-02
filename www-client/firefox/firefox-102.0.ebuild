@@ -8,9 +8,12 @@
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
 # For security advisories, see https://www.mozilla.org/en-US/security/advisories/
 
+# The latest can be found with:
+# curl -l http://ftp.mozilla.org/pub/firefox/releases/ | cut -f 3 -d ">" | cut -f 1 -d "<" | grep -v "esr" | grep -v "b" | sed -e "s|/||g" | grep "^[0-9]" | sort -V | tail -n 1
+
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-101-patches-01j.tar.xz"
+FIREFOX_PATCHSET="firefox-102-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
@@ -74,9 +77,11 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 LICENSE_FINGERPRINT="\
 43af3d4fd2b3fa834f0b37e9cd3d866d20820a2ba13f51c1aab1bcf23714b6ce\
 7508e8e4f7d4e010c91ea3c9341ab9623b7ac7dc455c70680eb913a7550d09ac" # SHA512
-# FF-96.0-THIRD-PARTY-LICENSES should be updated per new feature or if the fingerprint changes.
+# FF-XX.YY-THIRD-PARTY-LICENSES should be updated per new feature or if the \
+# fingerprint changes.
 # Update the license version also.
-LICENSE+=" FF-101.0-THIRD-PARTY-LICENSES"
+LICENSE_FILE_NAME="FF-$(ver_cut 1-2)-THIRD-PARTY-LICENSES"
+LICENSE+=" ${LICENSE_FILE_NAME}"
 LICENSE+="
 	( BSD-2
 		BSD
@@ -218,9 +223,7 @@ IUSE+=" ${_ABIS}"
 IUSE+=" -jemalloc"
 
 # Firefox-only IUSE
-IUSE+=" geckodriver"
-IUSE+=" +gmp-autoupdate"
-IUSE+=" screencast"
+IUSE+=" geckodriver +gmp-autoupdate screencast +X"
 
 REQUIRED_USE="debug? ( !system-av1 )
 	pgo? ( lto )
@@ -228,6 +231,8 @@ REQUIRED_USE="debug? ( !system-av1 )
 	wifi? ( dbus )"
 
 # Firefox-only REQUIRED_USE flags
+REQUIRED_USE+=" || ( X wayland )"
+REQUIRED_USE+=" pgo? ( X )"
 REQUIRED_USE+=" screencast? ( wayland )"
 
 LLVM_SLOTS=(14 13 12 11)
@@ -253,7 +258,7 @@ BDEPEND+=" || ( $(gen_llvm_bdepends) )"
 BDEPEND+=" ${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
-	>=dev-util/cbindgen-0.23.0
+	>=dev-util/cbindgen-0.24.0
 	>=net-libs/nodejs-10.23.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=virtual/rust-1.59.0[${MULTILIB_USEDEP}]
@@ -265,8 +270,8 @@ CDEPEND="
 	dev-libs/expat[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	dev-libs/libffi:=[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.76[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.32[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.79[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.34[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/fontconfig[${MULTILIB_USEDEP}]
 	media-libs/freetype[${MULTILIB_USEDEP}]
@@ -274,29 +279,19 @@ CDEPEND="
 	media-video/ffmpeg[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP}]
 	virtual/freedesktop-icon-theme
-	x11-libs/cairo[X,${MULTILIB_USEDEP}]
+	x11-libs/cairo[${MULTILIB_USEDEP}]
 	x11-libs/gdk-pixbuf[${MULTILIB_USEDEP}]
-	x11-libs/gtk+:3[X,${MULTILIB_USEDEP}]
-	x11-libs/libX11[${MULTILIB_USEDEP}]
-	x11-libs/libXcomposite[${MULTILIB_USEDEP}]
-	x11-libs/libXdamage[${MULTILIB_USEDEP}]
-	x11-libs/libXext[${MULTILIB_USEDEP}]
-	x11-libs/libXfixes[${MULTILIB_USEDEP}]
-	x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	x11-libs/libXrender[${MULTILIB_USEDEP}]
-	x11-libs/libXtst[${MULTILIB_USEDEP}]
-	x11-libs/libxcb:=[${MULTILIB_USEDEP}]
 	x11-libs/pango[${MULTILIB_USEDEP}]
 	x11-libs/pixman[${MULTILIB_USEDEP}]
 	dbus? (
-		sys-apps/dbus[${MULTILIB_USEDEP}]
 		dev-libs/dbus-glib[${MULTILIB_USEDEP}]
+		sys-apps/dbus[${MULTILIB_USEDEP}]
 	)
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	libproxy? ( net-libs/libproxy[${MULTILIB_USEDEP}] )
-	screencast? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
 	selinux? ( sec-policy/selinux-mozilla )
-	sndio? ( media-sound/sndio[${MULTILIB_USEDEP}] )
+	sndio? ( >=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}] )
+	screencast? ( media-video/pipewire:=[${MULTILIB_USEDEP}] )
 	system-av1? (
 		>=media-libs/dav1d-0.9.3:=[${MULTILIB_USEDEP}]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
@@ -311,13 +306,34 @@ CDEPEND="
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc,${MULTILIB_USEDEP}] )
 	system-png? ( >=media-libs/libpng-1.6.35:0=[apng,${MULTILIB_USEDEP}] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0=[${MULTILIB_USEDEP}] )
+	wayland? (
+		>=media-libs/libepoxy-1.5.10-r1[${MULTILIB_USEDEP}]
+		x11-libs/gtk+:3[wayland,${MULTILIB_USEDEP}]
+		x11-libs/libdrm[${MULTILIB_USEDEP}]
+		x11-libs/libxkbcommon[wayland,${MULTILIB_USEDEP}]
+	)
 	wifi? (
 		kernel_linux? (
 			dev-libs/dbus-glib[${MULTILIB_USEDEP}]
 			net-misc/networkmanager[${MULTILIB_USEDEP}]
 			sys-apps/dbus[${MULTILIB_USEDEP}]
 		)
-	)"
+	)
+	X? (
+		virtual/opengl[${MULTILIB_USEDEP}]
+		x11-libs/cairo[X,${MULTILIB_USEDEP}]
+		x11-libs/gtk+:3[X,${MULTILIB_USEDEP}]
+		x11-libs/libX11[${MULTILIB_USEDEP}]
+		x11-libs/libXcomposite[${MULTILIB_USEDEP}]
+		x11-libs/libXdamage[${MULTILIB_USEDEP}]
+		x11-libs/libXext[${MULTILIB_USEDEP}]
+		x11-libs/libXfixes[${MULTILIB_USEDEP}]
+		x11-libs/libxkbcommon[X,${MULTILIB_USEDEP}]
+		x11-libs/libXrandr[${MULTILIB_USEDEP}]
+		x11-libs/libXtst[${MULTILIB_USEDEP}]
+		x11-libs/libxcb:=[${MULTILIB_USEDEP}]
+	)
+"
 
 RDEPEND="${CDEPEND}
 	!www-client/firefox:0
@@ -333,17 +349,16 @@ RDEPEND="${CDEPEND}
 	selinux? ( sec-policy/selinux-mozilla )"
 
 DEPEND="${CDEPEND}
-	x11-libs/libICE[${MULTILIB_USEDEP}]
-	x11-libs/libSM[${MULTILIB_USEDEP}]
 	pulseaudio? (
 		|| (
 			media-sound/pulseaudio[${MULTILIB_USEDEP}]
 			>=media-sound/apulse-0.1.12-r4[sdk,${MULTILIB_USEDEP}]
 		)
 	)
-	wayland? ( >=x11-libs/gtk+-3.11:3[wayland,${MULTILIB_USEDEP}] )
-	amd64? ( virtual/opengl[${MULTILIB_USEDEP}] )
-	x86? ( virtual/opengl[${MULTILIB_USEDEP}] )"
+	X? (
+		x11-libs/libICE[${MULTILIB_USEDEP}]
+		x11-libs/libSM[${MULTILIB_USEDEP}]
+	)"
 RESTRICT="mirror"
 
 S="${WORKDIR}/${PN}-${PV%_*}"
@@ -750,9 +765,6 @@ src_unpack() {
 		if [[ ${_src_file} == *.xpi ]]; then
 			cp "${DISTDIR}/${_src_file}" "${_lp_dir}" || die "Failed to copy '${_src_file}' to '${_lp_dir}'!"
 		else
-			# TODO:  Add files with all-rights-reserved or crazy
-			# licensing to the exclusion list if possible to
-			# simpify LICENSE variable.
 			unpack ${_src_file}
 		fi
 	done
@@ -764,9 +776,8 @@ einfo "Verifying about:license fingerprint"
 		| cut -f 1 -d " ")
 	# Check even between patched versions and/or new features.
 	if [[ -n "${FF_EBUILD_MAINTAINER}" ]] ; then
-		local license_file_name="FF-$(ver_cut 1-2)-THIRD-PARTY-LICENSES"
-		if [[ ! ( "${LICENSE}" =~ "${license_file_name}" ) \
-			|| ! -f "${MY_OVERLAY_DIR}/licenses/${license_file_name}" \
+		if [[ ! ( "${LICENSE}" =~ "${LICENSE_FILE_NAME}" ) \
+			|| ! -f "${MY_OVERLAY_DIR}/licenses/${LICENSE_FILE_NAME}" \
 			|| "${x_license_fingerprint}" != "${LICENSE_FINGERPRINT}" \
 		]] ; then
 eerror
@@ -774,9 +785,7 @@ eerror "A change in the license was detected.  Please change"
 eerror "LICENSE_FINGERPRINT=${x_license_fingerprint} and do a"
 eerror
 eerror "  \`cp -a ${S}/toolkit/content/license.html \
-${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
-eerror
-eerror "and update the license variable with the correct version."
+${MY_OVERLAY_DIR}/licenses/${LICENSE_FILE_NAME}\`"
 eerror
 			die
 		fi
@@ -1003,8 +1012,8 @@ multilib_src_configure() {
 		--with-system-zlib \
 		--with-toolchain-prefix="${chost}-" \
 		--with-unsigned-addon-scopes=app,system \
-		--x-includes="${SYSROOT}${EPREFIX}/usr/include" \
-		--x-libraries="${SYSROOT}${EPREFIX}/usr/$(get_libdir)"
+		--x-includes="${ESYSROOT}/usr/include" \
+		--x-libraries="${ESYSROOT}/usr/$(get_libdir)"
 
 	# mozconfig_add_options_ac '' --with-libclang-path="$(${chost}-llvm-config --libdir)"
 	#   disabled because Gentoo doesn't support multilib python, so full cross-compile is not supported.
@@ -1098,10 +1107,12 @@ multilib_src_configure() {
 
 	mozconfig_use_enable wifi necko-wifi
 
-	if use wayland ; then
-		mozconfig_add_options_ac '+wayland' --enable-default-toolkit=cairo-gtk3-wayland
+	if use X && use wayland ; then
+		mozconfig_add_options_ac '+x11+wayland' --enable-default-toolkit=cairo-gtk3-x11-wayland
+	elif ! use X && use wayland ; then
+		mozconfig_add_options_ac '+wayland' --enable-default-toolkit=cairo-gtk3-wayland-only
 	else
-		mozconfig_add_options_ac '' --enable-default-toolkit=cairo-gtk3
+		mozconfig_add_options_ac '+x11' --enable-default-toolkit=cairo-gtk3
 	fi
 
 	if use lto ; then
@@ -1331,7 +1342,11 @@ multilib_src_compile() {
 		addpredict /root
 	fi
 
-	local -x GDK_BACKEND=x11
+	if ! use X && use wayland; then
+		local -x GDK_BACKEND=wayland
+	else
+		local -x GDK_BACKEND=x11
+	fi
 
 	${virtx_cmd} ./mach build --verbose \
 		|| die
@@ -1541,9 +1556,19 @@ multilib_src_install() {
 
 	# Force hwaccel prefs if USE=hwaccel is enabled
 	if use hwaccel ; then
-		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js-r1 \
+		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js-r2 \
 		>>"${GENTOO_PREFS}" \
 		|| die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
+
+		if use wayland; then
+			cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set hwaccel wayland prefs"
+			pref("gfx.x11-egl.force-enabled",          false);
+			EOF
+		else
+			cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set hwaccel x11 prefs"
+			pref("gfx.x11-egl.force-enabled",          true);
+			EOF
+		fi
 	fi
 
 	if ! use gmp-autoupdate ; then
@@ -1744,6 +1769,14 @@ pkg_postinst() {
 		ewarn "explained in https://bugs.gentoo.org/835078#c5 if Firefox crashes."
 	fi
 
+	elog
+	elog "Unfortunately Firefox-100.0 breaks compatibility with some sites using "
+	elog "useragent checks. To temporarily fix this, enter about:config and modify "
+	elog "network.http.useragent.forceVersion preference to \"99\"."
+	elog "Or install an addon to change your useragent."
+	elog "See: https://support.mozilla.org/en-US/kb/difficulties-opening-or-using-website-firefox-100"
+	elog
+
 einfo
 einfo "By default, the /usr/bin/firefox symlink is set to the last ABI"
 einfo "installed.  You must change it manually if you want to run on a"
@@ -1758,4 +1791,5 @@ einfo
 einfo "WebGL performance is suboptimal and runs at ~40 FPS.  There is currently"
 einfo "no fix for this."
 einfo
+
 }
