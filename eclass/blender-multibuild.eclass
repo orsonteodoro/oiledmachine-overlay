@@ -8,16 +8,17 @@
 # @DESCRIPTION:
 # The blender-multibuild.eclass helps build multiple configurations of blender.
 
-inherit multibuild
-
 # @ECLASS-VARIABLE: _BLENDER_IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the blender-multibuild context
 _BLENDER_IMPLS="build_creator build_headless"
 if [[ -n "${HAS_PLAYER}" && "${HAS_PLAYER}" == 1 ]] ; then
 	_BLENDER_IMPLS+=" build_portable"
 fi
-IUSE+=" ${_BLENDER_IMPLS/build_creator/+build_creator}"
-REQUIRED_USE+=" || ( ${IMPLS} )"
+
+inherit multibuild
+
+IUSE+=" ${_BLENDER_IMPLS}"
+REQUIRED_USE+=" || ( ${_BLENDER_IMPLS} )"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation

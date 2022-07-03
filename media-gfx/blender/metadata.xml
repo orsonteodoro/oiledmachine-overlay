@@ -226,6 +226,9 @@
       Build cycles renderer (requires <pkg>media-libs/openimageio</pkg> and
       <pkg>dev-libs/boost</pkg>).
     </flag>
+    <flag name="cycles-device-oneapi">
+      Support for newer GPUs (EXPERIMENTAL/IN DEVELOPMENT)
+    </flag
     <flag name="cycles-network">
       Enable experimental peer-to-peer LAN networking support for Cycles.
     </flag>

@@ -45,12 +45,14 @@ gen_llvm_iuse()
 IUSE+=" "$(gen_llvm_iuse) # same as Mesa and LLVM latest stable keyword \
 # For max and min package versions see link below. \
 # https://github.com/blender/blender/blob/v2.93.6/build_files/build_environment/install_deps.sh#L488
-FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
+FFMPEG_IUSE+=" +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +x264 +xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
 CLANG_MIN="8.0"
 GCC_MIN="9.3"
 inherit blender
+
+SRC_URI+=" https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${PN}-3.0.1-ffmpeg-5.0.patch.bz2"
 
 # See the blender.eclass for the LICENSE variable.
 LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
@@ -146,19 +148,13 @@ REQUIRED_USE+="
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 # Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
 #
-# Mentioned in versions.cmake but missing in (R)DEPENDS freeglut, alembic,
-# glfw, clew, cuew, webp, xml2, tinyxml, yaml, lcms, flexbison,
-# bzip2 libffi, lzma, openssl, sqlite, usd, mesa, nasm, ispc,
+# Mentioned in versions.cmake but missing in (R)DEPENDS freeglut,
+# glfw, clew, cuew, webp, xml2, tinyxml, yaml, flexbison (flex and bison for osl),
+# bzip2, libffi, lzma, openssl, sqlite, nasm, ispc for oidn,
 # faad (added in 0.6 ffmpeg but removed in 0.7+)
 #
-# Already processed as ffmpeg dependency: lame, ogg, vorbis, theora,
-# vpx, opus, x264, vidcore
-#
-# The actual llvm version requested by Blender upstream
-#	llvm? ( >=sys-devel/llvm-9.0.1:=
-#		 <sys-devel/llvm-10 )
-# It should match mesa's linked llvm version to avoid multiple version problem.
-# if using system's mesa.
+# The LLVM linked to Blender should match mesa's linked llvm version to avoid
+# multiple version problem if using system's mesa.
 
 gen_llvm_depends()
 {
@@ -192,13 +188,13 @@ gen_openvdb_depends() {
 		if (( ${s} == 8 )) ; then
 			o+="
 				abi${s}-compat? (
-					>=media-gfx/openvdb-8.0.1[${PYTHON_SINGLE_USEDEP},abi${s}-compat]
+					>=media-gfx/openvdb-8.0.1[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc]
 				)
 			"
 		else
 			o+="
 				abi${s}-compat? (
-					>=media-gfx/openvdb-${s}[${PYTHON_SINGLE_USEDEP},abi${s}-compat]
+					>=media-gfx/openvdb-${s}[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc]
 				)
 			"
 		fi
@@ -233,9 +229,34 @@ gen_openexr_pairs() {
 
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
+
+BOOST_V="1.73"
+LIBOGG_V="1.3.4"
+LIBSNDFILE_V="1.0.28"
 OSL_V="1.11.10.0"
-PUGIXML_DEPEND=">=dev-libs/pugixml-1.10"
-RDEPEND+="  ${PYTHON_DEPS}
+PUGIXML_V="1.10"
+THEORA_V="1.1.1"
+# the ffplay contradicts in
+# build_files/build_environment/cmake/ffmpeg.cmake : --enable-ffplay
+# build_files/build_environment/install_deps.sh : --disable-ffplay
+CODECS="
+	mp3? ( >=media-sound/lame-3.100 )
+	opus? ( >=media-libs/opus-1.3.1 )
+	theora? (
+		>=media-libs/libogg-${LIBOGG_V}
+		>=media-libs/libtheora-${THEORA_V}
+		vorbis? ( >=media-libs/libtheora-${THEORA_V}[encode] )
+	)
+	vorbis? (
+		>=media-libs/libogg-${LIBOGG_V}
+		>=media-libs/libvorbis-1.3.6
+	)
+	vpx? ( >=media-libs/libvpx-1.8.2 )
+	xvid? ( >=media-libs/xvid-1.3.7 )
+"
+RDEPEND+="
+	${CODECS}
+	${PYTHON_DEPS}
 	>=dev-lang/python-3.9.2
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
@@ -275,8 +296,8 @@ RDEPEND+="  ${PYTHON_DEPS}
 	media-libs/libglvnd
 	alembic? ( >=media-gfx/alembic-1.7.16[boost(+),hdf(+)] )
 	boost? (
-		!usd? ( >=dev-libs/boost-1.73:=[nls?,threads(+)] )
-		usd? ( >=dev-libs/boost-1.73:=[nls?,threads(+),python] )
+		>=dev-libs/boost-${BOOST_V}:=[nls?,threads(+)]
+		usd? ( >=dev-libs/boost-${BOOST_V}:=[nls?,threads(+),python] )
 	)
 	collada? (
 		dev-libs/libpcre:=[static-libs]
@@ -291,12 +312,13 @@ RDEPEND+="  ${PYTHON_DEPS}
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
 	cycles? (
-		osl? ( ${PUGIXML_DEPEND} )
+		osl? ( >=dev-libs/pugixml-${PUGIXML_V} )
 	)
 	embree? ( >=media-libs/embree-3.10.0:=\
 [cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,raymask,static-libs] )
 	ffmpeg? ( >=media-video/ffmpeg-4.2.3:=\
-[encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
+[encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
+	)
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
 	flac? ( >=media-libs/flac-1.3.3 )
 	gmp? ( >=dev-libs/gmp-6.2 )
@@ -321,16 +343,16 @@ RDEPEND+="  ${PYTHON_DEPS}
 	)
 	openimageio? (
 		$(gen_oiio_depends)
-		${PUGIXML_DEPEND}
+		>=dev-libs/pugixml-${PUGIXML_V}
 	)
 	openexr? (
 		|| ( $(gen_openexr_pairs) )
 		!>=media-libs/openexr-3
 	)
-	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=] )
+	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=,tbb?] )
 	openvdb? (
 		$(gen_openvdb_depends)
-		>=dev-libs/c-blosc-1.5.0
+		>=dev-libs/c-blosc-1.5.0[zlib]
 		nanovdb? ( >=media-gfx/nanovdb-25.0.0_pre20200924:0= )
 	)
 	openxr? ( >=media-libs/openxr-1.0.14 )
@@ -340,7 +362,10 @@ RDEPEND+="  ${PYTHON_DEPS}
 	potrace? ( >=media-gfx/potrace-1.16 )
 	pulseaudio? ( media-sound/pulseaudio )
 	sdl? ( >=media-libs/libsdl2-2.0.12[sound] )
-	sndfile? ( >=media-libs/libsndfile-1.0.28 )
+	sndfile? (
+		>=media-libs/libsndfile-${LIBSNDFILE_V}
+		flac? ( >=media-libs/libsndfile-${LIBSNDFILE_V}[-minimal] )
+	)
 	tbb? (
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}
 		usd? (
@@ -355,7 +380,9 @@ RDEPEND+="  ${PYTHON_DEPS}
 		x11-libs/libX11
 		x11-libs/libXi
 		x11-libs/libXxf86vm
-	)"
+	)
+	x264? ( >=media-libs/x264-0.0.20200409 )
+"
 DEPEND+=" ${RDEPEND}
 	>=dev-cpp/eigen-3.3.7:3=
 "
@@ -515,6 +542,10 @@ _src_prepare_patches() {
 		ewarn "and <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} are both installed."
 		ewarn
 		ewarn "Install both if build fails."
+	fi
+
+	if has_version ">=media-video/ffmpeg-5" ; then
+		eapply "${WORKDIR}"/${PN}-3.0.1-ffmpeg-5.0.patch
 	fi
 }
 
