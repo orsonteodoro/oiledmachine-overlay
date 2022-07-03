@@ -1,12 +1,12 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 LUA_COMPAT=( lua5-{1..2} )
 PYTHON_COMPAT=( python3_{8..10} )
 
-inherit fcaps flag-o-matic lua-single python-any-r1 qmake-utils xdg-utils cmake
+inherit fcaps flag-o-matic lua-single python-any-r1 qmake-utils xdg cmake
 
 DESCRIPTION="A network protocol analyzer formerly known as ethereal"
 HOMEPAGE="https://www.wireshark.org/"
@@ -87,8 +87,10 @@ BDEPEND="${PYTHON_DEPS}
 		dev-qt/linguist-tools:5
 	)
 	test? (
-		dev-python/pytest
-		dev-python/pytest-xdist
+		$(python_gen_any_dep '
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+		')
 	)"
 RDEPEND="${RDEPEND}
 	qt5? ( virtual/freedesktop-icon-theme )
@@ -99,8 +101,17 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-3.4.2-cmake-lua-version.patch
 )
 
+python_check_deps() {
+	use test || return 0
+
+	python_has_version -b "dev-python/pytest[${PYTHON_USEDEP}]" &&
+		 python_has_version -b "dev-python/pytest-xdist[${PYTHON_USEDEP}]"
+}
+
 pkg_setup() {
 	use lua && lua-single_pkg_setup
+
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {
@@ -162,7 +173,7 @@ src_configure() {
 		-DBUILD_tshark=$(usex tshark)
 		-DBUILD_udpdump=$(usex udpdump)
 		-DBUILD_wireshark=$(usex qt5)
-		-DDISABLE_WERROR=yes
+		-DDISABLE_WERROR=ON
 		-DENABLE_BCG729=$(usex bcg729)
 		-DENABLE_BROTLI=$(usex brotli)
 		-DENABLE_CAP=$(usex filecaps caps)
@@ -194,18 +205,11 @@ src_configure() {
 src_test() {
 	cmake_build test-programs
 
-	myctestargs=(
-		--disable-capture
-		--skip-missing-programs=all
-		--verbose
-
-		# Skip known failing tests
-		# extcaps needs a bunch of external programs
-		-E "(suite_extcaps)"
-		#-E "(suite_decryption|suite_extcaps|suite_nameres)"
-	)
-
-	cmake_src_test
+	# https://www.wireshark.org/docs/wsdg_html_chunked/ChTestsRunPytest.html
+	epytest \
+		--disable-capture \
+		--skip-missing-programs=all \
+		--program-path "${BUILD_DIR}"/run
 }
 
 src_install() {
@@ -257,9 +261,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	xdg_desktop_database_update
-	xdg_icon_cache_update
-	xdg_mimeinfo_database_update
+	xdg_pkg_postinst
 
 	# Add group for users allowed to sniff.
 	chgrp pcap "${EROOT}"/usr/bin/dumpcap
@@ -273,10 +275,4 @@ pkg_postinst() {
 	ewarn "NOTE: To capture traffic with wireshark as normal user you have to"
 	ewarn "add yourself to the pcap group. This security measure ensures"
 	ewarn "that only trusted users are allowed to sniff your traffic."
-}
-
-pkg_postrm() {
-	xdg_desktop_database_update
-	xdg_icon_cache_update
-	xdg_mimeinfo_database_update
 }
