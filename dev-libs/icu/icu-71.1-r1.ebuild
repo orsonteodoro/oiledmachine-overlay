@@ -1,21 +1,27 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
+
+# Please bump with dev-libs/icu-layoutex
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit autotools flag-o-matic llvm multilib-minimal python-any-r1 toolchain-funcs
+VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}"/usr/share/openpgp-keys/icu.asc
+inherit autotools flag-o-matic multilib-minimal python-any-r1 toolchain-funcs verify-sig
+inherit llvm
 
 DESCRIPTION="International Components for Unicode"
 HOMEPAGE="https://icu.unicode.org/"
 SRC_URI="https://github.com/unicode-org/icu/releases/download/release-${PV//./-}/icu4c-${PV//./_}-src.tgz"
+SRC_URI+=" verify-sig? ( https://github.com/unicode-org/icu/releases/download/release-${PV//./-}/icu4c-${PV//./_}-src.tgz.asc )"
 S="${WORKDIR}/${PN}/source"
 
 LICENSE="BSD"
 SLOT="0/${PV}"
-KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
-IUSE="debug doc examples static-libs"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
+IUSE="debug doc examples static-libs test"
 IUSE+=" cfi cfi-cross-dso cfi-cast cfi-icall cfi-vcall clang hardened libcxx lto shadowcallstack"
+RESTRICT="!test? ( test )"
 # Link the examples and utilties with cfi-cross-dso or basic-cfi
 REQUIRED_USE="
 	!cfi-cross-dso? (
@@ -119,6 +125,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 	sys-devel/autoconf-archive
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	doc? ( app-doc/doxygen[dot] )
+	verify-sig? ( sec-keys/openpgp-keys-icu )
 "
 
 S="${WORKDIR}/${PN}/source"
@@ -132,11 +139,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-65.1-remove-bashisms.patch"
 	"${FILESDIR}/${PN}-64.2-darwin.patch"
 	"${FILESDIR}/${PN}-68.1-nonunicode.patch"
-	# Should both be in the next release, but check
-	# https://bugs.gentoo.org/788112
-	"${FILESDIR}/${PN}-69.1-fix-ub-units.patch"
-	"${FILESDIR}/${PN}-70.1-fix-ucptrietest.patch"
-	"${FILESDIR}/${PN}-69.1-extra-so-flags.patch"
+	"${FILESDIR}/${P}-CVE-2022-1638.patch" # bug 843731
+	"${FILESDIR}/extra/${PN}-69.1-extra-so-flags.patch" # oiledmachine-overlay added
 )
 
 get_build_types() {
@@ -147,9 +151,8 @@ get_build_types() {
 src_prepare() {
 	default
 
-	local variable
-
-	# Disable renaming as it is stupid thing to do
+	# Disable renaming as it assumes stable ABI and that consumers
+	# won't use unofficial APIs. We need this despite the configure argument.
 	sed -i \
 		-e "s/#define U_DISABLE_RENAMING 0/#define U_DISABLE_RENAMING 1/" \
 		common/unicode/uconfig.h || die
@@ -161,17 +164,17 @@ src_prepare() {
 
 	# Append doxygen configuration to configure
 	sed -i \
-		-e 's:icudefs.mk :icudefs.mk Doxyfile :' \
+		-e 's:icudefs.mk:icudefs.mk Doxyfile:' \
 		configure.ac || die
 
 	if is_hardened_clang || is_hardened_gcc ; then
 		:; # Already applied by default
 	elif use hardened ; then
-		eapply "${FILESDIR}/icu-69.1-pie.patch"
+		eapply "${FILESDIR}/extra/icu-69.1-pie.patch" # added by oiledmachine-overlay
 	fi
 
 	if [[ "${USE}" =~ "cfi" ]] && ! use cfi-cross-dso ; then
-		eapply "${FILESDIR}/icu-69.1-static-build.patch"
+		eapply "${FILESDIR}/extra/icu-69.1-static-build.patch" # added by oiledmachine-overlay
 	fi
 
 	eautoreconf
@@ -220,6 +223,9 @@ is_hardened_gcc() {
 }
 
 src_configure() {
+	# ICU tries to append -std=c++11 without this, so as of 71.1,
+	# despite GCC 9+ using c++14 (or gnu++14) and GCC 11+ using gnu++17,
+	# we still need this.
 	append-cxxflags -std=c++14
 
 	if tc-is-cross-compiler; then
@@ -425,18 +431,18 @@ _configure_abi() {
 		--with-cross-build="${WORKDIR}"/host
 	)
 
-	# work around cross-endian testing failures with LTO #757681
+	# Work around cross-endian testing failures with LTO #757681
 	if tc-is-cross-compiler && is-flagq '-flto*' ; then
 		myeconfargs+=( --disable-strict )
 	fi
 
-	# icu tries to use clang by default
+	# ICU tries to use clang by default
 	tc-export CC CXX
 
-	# make sure we configure with the same shell as we run icu-config
+	# Make sure we configure with the same shell as we run icu-config
 	# with, or ECHO_N, ECHO_T and ECHO_C will be wrongly defined
 	export CONFIG_SHELL="${EPREFIX}/bin/sh"
-	# probably have no /bin/sh in prefix-chain
+	# Probably have no /bin/sh in prefix-chain
 	[[ -x ${CONFIG_SHELL} ]] || CONFIG_SHELL="${BASH}"
 
 	ECONF_SOURCE="${S}" econf "${myeconfargs[@]}"
