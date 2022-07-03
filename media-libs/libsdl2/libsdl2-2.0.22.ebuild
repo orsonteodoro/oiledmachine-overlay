@@ -79,6 +79,9 @@ REQUIRED_USE="
 	wayland? ( gles2 )
 	xinerama? ( X )
 	xscreensaver? ( X )"
+# See https://github.com/libsdl-org/SDL/blob/release-2.0.22/.github/workflows/main.yml#L38
+# https://github.com/libsdl-org/SDL/blob/release-2.0.22/docs/README-linux.md
+# U 20.04
 CDEPEND="
 	alsa? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] )
 	dbus? ( >=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}] )
@@ -86,13 +89,13 @@ CDEPEND="
 	gles1? ( media-libs/mesa[${MULTILIB_USEDEP},gles1] )
 	gles2? ( >=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},gles2] )
 	hidapi-libusb? ( >=dev-libs/libusb-1.0.9 )
-	ibus? ( app-i18n/ibus )
+	ibus? ( >=app-i18n/ibus-1.5.22 )
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	kms? (
 		>=x11-libs/libdrm-2.4.82[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-9.0.0[${MULTILIB_USEDEP},gbm(+)]
 	)
-	libdecor? ( gui-libs/libdecor )
+	libdecor? ( >=gui-libs/libdecor-0.1.0 )
 	libsamplerate? ( media-libs/libsamplerate[${MULTILIB_USEDEP}] )
 	nas? (
 		>=media-libs/nas-1.9.4[${MULTILIB_USEDEP}]

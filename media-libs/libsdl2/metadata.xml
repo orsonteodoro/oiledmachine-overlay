@@ -47,6 +47,7 @@
       gamepad support for PS4, PS5, Switch, Xbox 360, Xbox One, GameCube</flag>
     <flag name="hidapi-libusb">Enable HID USB joystick support</flag>
     <flag name="ibus">Enable support for <pkg>app-i18n/ibus</pkg></flag>
+    <flag name="libdecor">Enable support Wayland decorations</flag>
     <flag name="joystick">Control joystick support (disable at your own risk)
       </flag>
     <flag name="kms">Build the KMSDRM video driver</flag>
