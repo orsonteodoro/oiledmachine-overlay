@@ -38,8 +38,8 @@ REQUIRED_USE="
 	$(gen_abi_compat_required_use)
 	!clang
 	hdf5? ( field3d )
+	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) tbb )
 	python? ( ${PYTHON_REQUIRED_USE} )
-	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )
 	tbb? ( openvdb )
 "
 # See https://github.com/OpenImageIO/oiio/blob/Release-2.2.9.0/INSTALL.md for requirements

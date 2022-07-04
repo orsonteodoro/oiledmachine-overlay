@@ -38,7 +38,7 @@ REQUIRED_USE="
 	$(gen_abi_compat_required_use)
 	aom? ( avif )
 	avif? ( || ( aom rav1e ) )
-	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )
+	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) tbb )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	rav1e? ( avif )
 	tbb? ( openvdb )

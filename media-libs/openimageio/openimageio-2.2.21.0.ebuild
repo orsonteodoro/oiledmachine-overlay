@@ -39,7 +39,7 @@ REQUIRED_USE="
 	aom? ( avif )
 	avif? ( || ( aom rav1e ) )
 	hdf5? ( field3d )
-	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )
+	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) tbb )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	rav1e? ( avif )
 	tbb? ( openvdb )
