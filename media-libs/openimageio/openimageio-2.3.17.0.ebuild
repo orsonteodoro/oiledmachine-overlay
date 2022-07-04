@@ -3,7 +3,8 @@
 
 EAPI=7
 
-LLVM_MAX_SLOT=13
+CXX_STD_MIN="14"
+LLVM_MAX_SLOT=14
 FONT_PN=OpenImageIO
 PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake font llvm python-single-r1
@@ -12,7 +13,7 @@ DESCRIPTION="A library for reading and writing images"
 HOMEPAGE="https://sites.google.com/site/openimageio/ https://github.com/OpenImageIO"
 LICENSE="BSD"
 SLOT="0/${PV}"
-KEYWORDS="amd64 ~ppc64 x86"
+KEYWORDS="~amd64 ~ppc64 ~x86"
 X86_CPU_FEATURES=(
 	sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4.1 sse4_2:sse4.2
 	avx:avx avx2:avx2 avx512f:avx512f f16c:f16c )
@@ -23,8 +24,8 @@ OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 # font install is enabled upstream
 # building test enabled upstream
 IUSE+=" ${CPU_FEATURES[@]%:*} ${OPENVDB_APIS_[@]}
-aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc jpeg2k
-libressl opencv opengl openvdb ptex +python +qt5 raw rav1e ssl +truetype"
+aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
+jpeg2k opencv opengl openvdb png ptex +python +qt5 raw rav1e tbb +truetype webp"
 gen_abi_compat_required_use() {
 	local o
 	local s
@@ -37,10 +38,12 @@ REQUIRED_USE="
 	$(gen_abi_compat_required_use)
 	aom? ( avif )
 	avif? ( || ( aom rav1e ) )
-	python? ( ${PYTHON_REQUIRED_USE} )
 	openvdb? ( ^^ ( ${OPENVDB_APIS_[@]} ) )
-	rav1e? ( avif )"
-# See https://github.com/OpenImageIO/oiio/blob/v2.3.10.1/INSTALL.md
+	python? ( ${PYTHON_REQUIRED_USE} )
+	rav1e? ( avif )
+	tbb? ( openvdb )
+"
+# See https://github.com/OpenImageIO/oiio/blob/v2.3.17.0/INSTALL.md
 QT_V="5.6"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
@@ -57,7 +60,7 @@ gen_openvdb_depends() {
 	echo "${o}"
 }
 
-OPENEXR_V2="2.5.7 2.5.8"
+OPENEXR_V2="2.5.8"
 OPENEXR_V3="3.1.4 3.1.5"
 gen_openexr_pairs() {
 	local v
@@ -83,10 +86,8 @@ RDEPEND+="
 	|| ( $(gen_openexr_pairs) )
 	>=dev-cpp/robin-map-0.6.2
 	>=dev-libs/boost-1.53:=
-	>=dev-libs/libfmt-7.1.3:=
-	  dev-libs/pugixml:=
-	  media-libs/libpng:0=
-	>=media-libs/libwebp-0.6.1:=
+	>=dev-libs/libfmt-8.0.0:=
+	>=dev-libs/pugixml-1.8:=
 	>=media-libs/tiff-3.9:0=
 	sys-libs/zlib:=
 	virtual/jpeg:0
@@ -108,18 +109,21 @@ RDEPEND+="
 		virtual/opengl
 	)
 	openvdb? (
-		|| (
-			(
-				>=dev-cpp/tbb-2018:${LEGACY_TBB_SLOT}=
-				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
-				!<dev-cpp/tbb-2021:0=
-			)
-			(
-				>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+		tbb? (
+			|| (
+				(
+					>=dev-cpp/tbb-2018:${LEGACY_TBB_SLOT}=
+					 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+					!<dev-cpp/tbb-2021:0=
+				)
+				(
+					>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+				)
 			)
 		)
 		$(gen_openvdb_depends)
 	)
+	png? ( media-libs/libpng:0= )
 	ptex? ( >=media-libs/ptex-2.3.1:= )
 	python? (
 		${PYTHON_DEPS}
@@ -142,13 +146,11 @@ RDEPEND+="
 	raw? ( !cxx17? ( >=media-libs/libraw-0.15:=
 			  <media-libs/libraw-0.20:= )
 		cxx17? ( >=media-libs/libraw-0.20:= ) )
-	ssl? (
-		!libressl? ( dev-libs/openssl:0= )
-		libressl? ( dev-libs/libressl:0= )
-	)
-	truetype? ( media-libs/freetype:2= )"
+	truetype? ( media-libs/freetype:2= )
+	webp? ( >=media-libs/libwebp-0.6.1:= )
+"
 DEPEND+=" ${RDEPEND}"
-LLVM_SLOTS=(13 12 11 10)
+LLVM_SLOTS=(13 12)
 gen_bdepend_clang() {
 	local o=""
 	local s
@@ -194,6 +196,15 @@ RESTRICT+=" mirror"
 S="${WORKDIR}/oiio-${PV}"
 
 pkg_setup() {
+	if use clang && [[ -z "${CC}" || -z "${CXX}" ]] ; then
+		export CC="clang"
+		export CXX="clang++"
+	fi
+	if test-flags-CXX -std=c++${CXX_STD_MIN} 2>/dev/null 1>/dev/null ; then
+		:;
+	else
+		die "Found unsupported -std=c++${CXX_STD_MIN}"
+	fi
 	use python && python-single-r1_pkg_setup
 
 	if use icc ; then
@@ -235,6 +246,26 @@ src_configure() {
 		-DUSE_PYTHON=$(usex python)
 		-DUSE_SIMD=$(local IFS=','; echo "${mysimd[*]}")
 		-DUSE_QT=$(usex qt5)
+
+		# No option() but uses custom enablement.
+		-DUSE_DCMTK=$(usex dicom)
+		-DUSE_JPEGTURBO=ON
+		-DUSE_FIELD3D=$(usex field3d)
+		-DUSE_FFMPEG=$(usex ffmpeg)
+		-DUSE_FREETYPE=$(usex truetype)
+		-DUSE_GIF=$(usex gif)
+		-DUSE_LIBRAW=$(usex raw)
+		-DUSE_LIBSQUISH=$(usex dds)
+		-DUSE_NUKE=OFF # not in Gentoo
+		-DUSE_OPENJPEG=$(usex jpeg2k)
+		-DUSE_OPENCV=$(usex opencv)
+		-DUSE_OPENGL=$(usex opengl)
+		-DUSE_OPENVDB=$(usex openvdb)
+		-DUSE_PNG=$(usex png)
+		-DUSE_PTEX=$(usex ptex)
+		-DUSE_PYTHON=$(usex python)
+		-DUSE_TBB=$(usex tbb)
+		-DUSE_WEBP=$(usex webp)
 	)
 
 	local set_cxx17=0
@@ -265,7 +296,9 @@ src_configure() {
 		)
 	fi
 
-	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+	if ! use tbb ; then
+		:;
+	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
 			-DTBB_INCLUDE_DIR=/usr/include
 			-DTBB_LIBRARY=/usr/$(get_libdir)
@@ -295,7 +328,9 @@ src_install() {
 	for dir in "${FONT_S[@]}"; do
 		doins "${dir}"/*.ttf
 	done
-	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+	if ! use tbb ; then
+		:;
+	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		:;
 	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do

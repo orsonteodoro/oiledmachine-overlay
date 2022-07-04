@@ -56,7 +56,15 @@ inherit blender
 # See the blender.eclass for the LICENSE variable.
 LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
 
-# The release USE flag depends on platform defaults.
+# The below are hardcoded enabled in the dependency builder but no explicit option
+IMPLIED_RELEASE_BUILD_REQUIRED_USE="
+	mp3
+	opus
+	theora
+	vorbis
+	vpx
+	xvid
+"
 REQUIRED_USE+="
 	!cycles-device-oneapi
 	^^ ( ${LLVM_SLOTS[@]/#/llvm-} )
@@ -176,7 +184,8 @@ gen_oiio_depends() {
 	for s in ${OPENVDB_ABIS[@]} ; do
 		o+="
 			${s}? (
-				>=media-libs/openimageio-2.3.13.0[${s},color-management?,jpeg2k?]
+				>=media-libs/openimageio-2.3.13.0[${s},color-management?,jpeg2k?,png,webp?]
+				<media-libs/openimageio-2.4
 				>=dev-libs/libfmt-8
 				>=dev-cpp/robin-map-0.6.2
 			)
@@ -251,6 +260,7 @@ CODECS="
 		>=media-libs/libvorbis-1.3.7
 	)
 	vpx? ( >=media-libs/libvpx-1.11 )
+	x264? ( >=media-libs/x264-0.0.20220221 )
 	xvid? ( >=media-libs/xvid-1.3.7 )
 "
 
@@ -394,7 +404,6 @@ RDEPEND+="
 		x11-libs/libXi
 		x11-libs/libXxf86vm
 	)
-	x264? ( >=media-libs/x264-0.0.20220221 )
 "
 DEPEND+=" ${RDEPEND}
 	>=dev-cpp/eigen-3.3.7:3=

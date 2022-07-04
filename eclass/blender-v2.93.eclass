@@ -30,7 +30,7 @@ IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada +color-management
 +embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm -man +nanovdb
 +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise +openimageio
 +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace +pulseaudio
-release +sdl +sndfile +tbb test +tiff +usd -valgrind r1"
+release +sdl +sndfile +tbb test +tiff +usd -valgrind -webp r1"
 LLVM_MAX_UPSTREAM="11" # (inclusive)
 LLVM_SLOTS=(13 12 11)
 gen_llvm_iuse()
@@ -57,7 +57,15 @@ SRC_URI+=" https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${PN}-3.0.1-f
 # See the blender.eclass for the LICENSE variable.
 LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
 
-# The release USE flag depends on platform defaults.
+# The below are hardcoded enabled in the dependency builder but no explicit option
+IMPLIED_RELEASE_BUILD_REQUIRED_USE="
+	mp3
+	opus
+	theora
+	vorbis
+	vpx
+	xvid
+"
 REQUIRED_USE+="
 	^^ ( ${LLVM_SLOTS[@]/#/llvm-} )
 	^^ ( ${OPENVDB_ABIS[@]} )
@@ -174,7 +182,8 @@ gen_oiio_depends() {
 	for s in ${OPENVDB_ABIS[@]} ; do
 		o+="
 			${s}? (
-				>=media-libs/openimageio-2.1.15.0[${s},color-management?,jpeg2k?]
+				>=media-libs/openimageio-2.1.15.0[${s},color-management?,jpeg2k?,png,webp?]
+				<media-libs/openimageio-2.2.10.0
 			)
 		"
 	done
@@ -252,6 +261,7 @@ CODECS="
 		>=media-libs/libvorbis-1.3.6
 	)
 	vpx? ( >=media-libs/libvpx-1.8.2 )
+	x264? ( >=media-libs/x264-0.0.20200409 )
 	xvid? ( >=media-libs/xvid-1.3.7 )
 "
 RDEPEND+="
@@ -373,15 +383,15 @@ RDEPEND+="
 			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 		)
 	)
-	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
+	tiff? ( >=media-libs/tiff-4.1.0:0[webp?,zlib] )
 	usd? ( >=media-libs/openusd-21.11[monolithic] )
 	valgrind? ( dev-util/valgrind )
+	webp? ( >=media-libs/libwebp-0.6.1 )
 	X? (
 		x11-libs/libX11
 		x11-libs/libXi
 		x11-libs/libXxf86vm
 	)
-	x264? ( >=media-libs/x264-0.0.20200409 )
 "
 DEPEND+=" ${RDEPEND}
 	>=dev-cpp/eigen-3.3.7:3=
