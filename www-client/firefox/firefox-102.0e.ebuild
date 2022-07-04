@@ -27,7 +27,7 @@ VIRTUALX_REQUIRED="pgo"
 
 MOZ_ESR=yes
 
-MOZ_PV=${PV/_pre}
+MOZ_PV=${PV/e}
 MOZ_PV_SUFFIX=
 if [[ ${PV} =~ (_(alpha|beta|rc).*)$ ]] ; then
 	MOZ_PV_SUFFIX=${BASH_REMATCH[1]}
@@ -56,10 +56,10 @@ inherit multilib-minimal rust-toolchain
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
 if [[ ${PV} == *_rc* ]] ; then
-	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*_rc}"
+	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*e}"
 fi
 
-if [[ ${PV} == *_pre* ]] ; then
+if [[ ${PV} == *e* ]] ; then
 	MOZ_SRC_BASE_URI="http://ftp.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 fi
 
