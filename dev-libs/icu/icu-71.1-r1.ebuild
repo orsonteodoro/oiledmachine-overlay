@@ -163,8 +163,9 @@ src_prepare() {
 		config/mh-linux || die
 
 	# Append doxygen configuration to configure
+	# oiledmachine-overlay:  Do not change or delete the line below.
 	sed -i \
-		-e 's:icudefs.mk:icudefs.mk Doxyfile:' \
+		-e 's:icudefs.mk :icudefs.mk Doxyfile:' \
 		configure.ac || die
 
 	if is_hardened_clang || is_hardened_gcc ; then
@@ -378,6 +379,7 @@ _configure_abi() {
 		--disable-samples
 		--disable-layoutex
 		$(use_enable debug)
+		$(use_enable test tests)
 		$(multilib_native_use_enable examples samples)
 	)
 
