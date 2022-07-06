@@ -6,7 +6,7 @@
 # #1 identify and find all the nodes (aka points)
 # #2 connect the edges via conditional dependency
 
-ETC_FOLDER="/var/tmp/portage/sys-apps/firejail-0.9.68/work/firejail-0.9.68/etc"
+ETC_FOLDER="/var/tmp/portage/sys-apps/firejail-0.9.70/work/firejail-0.9.70/etc"
 
 unset nodes
 nodes=()
