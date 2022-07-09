@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
-# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V14.md
+# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
 
 EAPI=7
 PYTHON_COMPAT=( python3_{8..10} )
@@ -12,10 +12,11 @@ inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
 LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
-SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
+SRC_URI="https://github.com/nodejs/node/archive/refs/tags/v${PV}.tar.gz
+	-> node-v${PV}.tar.gz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
 IUSE+=" corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector lto npm
 pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man pgo"
@@ -82,39 +83,40 @@ REQUIRED_USE+=" inspector? ( icu ssl )
 		system-ssl? ( ssl )
 		${PN}_pgo_trainers_module? ( inspector )
 "
-RESTRICT="!test? ( test )"
+RESTRICT="!test? ( test ) mirror"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  May 11, 2022
-NGHTTP2_V="1.42.0"
+# Last deps commit date:  Jul 6, 2022
+NGHTTP2_V="1.47.0"
 RDEPEND+=" !net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
-	>=dev-libs/libuv-1.42.0:=
+	>=dev-libs/libuv-1.43.0:=
 	>=net-dns/c-ares-1.18.1
 	>=net-libs/nghttp2-${NGHTTP2_V}
 	>=sys-libs/zlib-1.2.11
 	system-icu? ( >=dev-libs/icu-70.1:= )
-	system-ssl? (
-		>=dev-libs/openssl-1.1.1o:0=
-		<dev-libs/openssl-3.0.0_beta1:0=
-	)"
+	system-ssl? ( >=dev-libs/openssl-1.1.1q:0= )"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
 	dev-util/ninja
 	sys-apps/coreutils
+	virtual/pkgconfig
 	pgo? ( ${PN}_pgo_trainers_http2? ( >=net-libs/nghttp2-${NGHTTP2_V}[utils] ) )
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
 	pax-kernel? ( sys-apps/elfix )"
-PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
-	  "${FILESDIR}"/${PN}-14.18.2-jinja_collections_abc.patch
+PATCHES=( "${FILESDIR}"/${PN}-16.12.0-jinja_collections_abc.patch
 	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	  "${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch
-	  "${FILESDIR}"/${PN}-14.19.1-use-thinlto.patch
+	  "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch
+	  "${FILESDIR}"/${PN}-16.13.2-use-thinlto.patch
 	  "${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch )
+if [[ -d "${WORKDIR}/node-v${PV}" ]] ; then
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.17" # See https://github.com/nodejs/node/blob/v14.19.2/deps/npm/package.json
+else
+S="${WORKDIR}/node-${PV}"
+fi
+NPM_V="8.11.0" # See https://github.com/nodejs/node/blob/v16.16.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"
@@ -123,16 +125,16 @@ WRK_V="1.2.1"
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
 		die "Your CPU doesn't support the required SSE2 instruction."
-	# Does not need 6ca785b
+	# Already applied 6ca785b
 }
 
 pkg_setup() {
 	python-any-r1_pkg_setup
 
-	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-04-30."
+	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-09-11."
 
 	# For man page reasons
-	for s in 12 16 18 ; do
+	for s in 12 14 18 ; do
 		if use corepack && has_version "net-libs/nodejs:${s}[corepack]" ; then
 eerror
 eerror "You need to disable corepack on net-libs/nodejs:${s}[corepack].  Only enable"
@@ -537,17 +539,12 @@ src_install() {
 	fi
 
 	if use npm; then
-		dodir /etc/npm
+		keepdir /etc/npm
 
 		# Install bash completion for `npm`
-		# We need to temporarily replace default config path since
-		# npm otherwise tries to write outside of the sandbox
-		local npm_config="${REL_D_BASE}/node_modules/npm/lib/config/core.js"
-		sed -i -e "s|'/etc'|'${ED}/etc'|g" "${ED}/${npm_config}" || die
 		local tmp_npm_completion_file="$(TMPDIR="${T}" mktemp -t npm.XXXXXXXXXX)"
 		"${ED}/usr/bin/npm" completion > "${tmp_npm_completion_file}"
 		newbashcomp "${tmp_npm_completion_file}" npm
-		sed -i -e "s|'${ED}/etc'|'/etc'|g" "${ED}/${npm_config}" || die
 
 		if use man ; then
 			# Move man pages
