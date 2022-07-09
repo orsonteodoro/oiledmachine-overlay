@@ -125,7 +125,8 @@ CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
 PV_MAJ=$(ver_cut 1 ${PV})
 # Missing rust-analyzer (aka rust-analyzer-preview) from rust packages because
 # it is only available on nightly.  Forced nightly.
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
 	!system-rust
 	c? ( || ( clangd libclang ) cxx )
 	clangd? ( || ( c cxx objc objcxx ) )
@@ -142,7 +143,8 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	system-libclang? ( || ( c cxx objc objcxx ) libclang )
 	system-rust? ( rust )
 	system-tern? ( javascript )
-	test? ( system-requests )"
+	test? ( system-requests )
+"
 
 # gopls is 0.4.1
 # See build.py for dependency versions.
@@ -184,7 +186,8 @@ WATCHDOG_V="2.0.1"
 
 RDEPEND_NODEJS="net-libs/nodejs"
 BDEPEND_NODEJS="net-libs/nodejs[npm]"
-DEPEND+=" ${PYTHON_DEPS}
+DEPEND+="
+	${PYTHON_DEPS}
 	csharp? (
 		system-mono? (
 			netfx? ( >=dev-lang/mono-6.10.0 )
@@ -212,9 +215,11 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-tern? ( >=dev-nodejs/tern-0.21.0 )
 	system-typescript? ( >=dev-lang/typescript-4.1.5 )
 	system-watchdog? ( >=dev-python/watchdog-${WATCHDOG_V} )
-	typescript? ( ${RDEPEND_NODEJS} )"
-RDEPEND+="  ${DEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
+	typescript? ( ${RDEPEND_NODEJS} )
+"
+RDEPEND+=" ${DEPEND}"
+BDEPEND+="
+	${PYTHON_DEPS}
 	|| (
 		>=sys-devel/gcc-8
 		>=sys-devel/clang-7
@@ -235,7 +240,8 @@ BDEPEND+=" ${PYTHON_DEPS}
 		dev-python/requests[${PYTHON_USEDEP}]
 		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}]
 	)
-	typescript? ( ${BDEPEND_NODEJS} )"
+	typescript? ( ${BDEPEND_NODEJS} )
+"
 # Speed up downloads for rebuilds.  Precache outside of sandbox so we don't keep
 #   redownloading.
 # libclang archives are listed in cpp/ycm/CMakeLists.txt
@@ -471,8 +477,11 @@ eerror
 	# No standard ebuild yet.
 	if use system-jdtls ; then
 		if [[ -z "${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}" ]] ; then
-			die \
-"You need to define EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH as a per-package envvar."
+eerror
+eerror "You need to define EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH as a"
+eerror "per-package envvar."
+eerror
+			die
 		fi
 	fi
 
@@ -481,14 +490,22 @@ eerror
 	if use javascript ; then
 		# prevent unpack problem with clangd or incomplete build
 		if ! node --version 2> /dev/null 1>/dev/null ; then
-			die "Either install Node.js, fix node installation, or disable the javascript USE flag."
+eerror
+eerror "Either install Node.js, fix node installation, or disable the"
+eerror "javascript USE flag."
+eerror
+			die
 		fi
 	fi
 
 	if use typescript ; then
 		# prevent unpack problem with clangd or incomplete build
 		if ! node --version 2> /dev/null 1>/dev/null ; then
-			die "Either install Node.js, fix node installation, or disable the typescript USE flag."
+eerror
+eerror "Either install Node.js, fix node installation, or disable the"
+eerror "typescript USE flag."
+eerror
+			die
 		fi
 	fi
 }
@@ -1538,37 +1555,36 @@ src_install() {
 }
 
 pkg_postinst() {
-	local m=\
-"Examples of the .json files can be found at:\n\
-\n\
-/usr/$(get_libdir)/python*/site-packages/${BD_REL}/ycmd/default_settings.json\n"
-
+einfo "Examples of the .json files can be found at:"
+einfo
+einfo "/usr/$(get_libdir)/python*/site-packages/${BD_REL}/ycmd/default_settings.json"
+einfo
 	if use c || use cxx || use objc || use objcxx ; then
-		m+="\
-\n\
-Consider emerging ycm-generator to properly generate a .ycm_extra_conf.py\n\
-which is mandatory for the c/c++/objc/objc++ completer.\n\
-\n\
-After generating it, it may need to be slightly modified.\n"
+einfo
+einfo "Consider emerging ycm-generator to properly generate a"
+einfo ".ycm_extra_conf.py which is mandatory for the c/c++/objc/objc++"
+einfo "completer."
+einfo
+einfo "After generating it, it may need to be slightly modified."
+einfo
 	fi
 
 	if use csharp ; then
-		m+="\
-\n\
-You need a .sln file in your project for C# support\n"
+einfo
+einfo "You need a .sln file in your project for C# support\n"
+einfo
 	fi
 
 	if use javascript ; then
-		m+="\
-\n\
-You need a .tern-project in your project for javascript support.\n"
+einfo
+einfo "You need a .tern-project in your project for javascript support."
+einfo
 	fi
 
 	if use system-rust ; then
-		m+="\
-\n\
-You need to download the rust source code manually and tell YCMD to locate it
-in the default_settings.json file.\n"
+einfo
+einfo "You need to download the rust source code manually and tell ${PN^^} to"
+einfo "locate it in the default_settings.json file."
+einfo
 	fi
-	einfo "${m}"
 }
