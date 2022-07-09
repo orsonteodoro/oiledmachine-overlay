@@ -3,6 +3,10 @@
 
 EAPI=7
 
+ELECTRON_APP_ELECTRON_V="13.1.4"
+ELECTRON_APP_VUE_V="2.6.11"
+ELECTRON_APP_MODE="yarn"
+
 inherit eutils desktop electron-app npm-utils
 
 DESCRIPTION="Free, Cross-Platform, GPU-Accelerated Procedural Texture Generator"
@@ -18,15 +22,13 @@ BDEPEND+="
 	)
 	net-libs/nodejs[npm]
 "
-ELECTRON_APP_ELECTRON_V="13.1.4"
-ELECTRON_APP_VUE_V="2.6.11"
-ELECTRON_APP_MODE="yarn"
 ASSETS_COMMIT="eed449f3f9abe8f17ae354ab4cb9932272c7811b"
 SRC_URI="
 https://github.com/njbrown/texturelab/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz
 https://github.com/njbrown/texturelabdata/archive/${ASSETS_COMMIT}.tar.gz
-	-> ${PN}-assets-${ASSETS_COMMIT:0:7}.tar.gz"
+	-> ${PN}-assets-${ASSETS_COMMIT:0:7}.tar.gz
+"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 MY_PN="TextureLab"
