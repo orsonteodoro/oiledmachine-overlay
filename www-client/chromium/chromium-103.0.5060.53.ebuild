@@ -1729,8 +1729,9 @@ ewarn "it is ready."
 ewarn
 		if has network-sandbox $FEATURES ; then
 eerror
-eerror "The pgo-full USE flag requires FEATURES=\"-network-sandbox\" to be able to"
-eerror "use vpython and other dependencies in order to generate PGO profiles."
+eerror "The pgo-full USE flag requires FEATURES=\"\${FEATURES} -network-sandbox\""
+eerror "to be able to use vpython and other dependencies in order to generate"
+eerror "PGO profiles."
 eerror
 			die
 		fi
