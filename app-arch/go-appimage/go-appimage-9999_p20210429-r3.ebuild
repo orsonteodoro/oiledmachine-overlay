@@ -3,9 +3,10 @@
 
 EAPI=7
 
+MY_PV="v0.0.0-20210430065939-1d57e84e82e8"
 inherit linux-info user
 
-DESCRIPTION="Purely experimental playground for Go implementation of AppImage\
+DESCRIPTION="Purely experimental playground for Go implementation of AppImage
 tools"
 HOMEPAGE="https://github.com/probonopd/go-appimage"
 LICENSE="MIT" # go-appimage project's default license
@@ -31,9 +32,9 @@ IUSE+=" -appimaged -appimagetool disable_watching_desktop_folder
 disable_watching_downloads_folder firejail gnome kde openrc overlayfs
 +system-binaries systemd travis-ci"
 RDEPEND+="
+	  sys-apps/dbus
 	>=sys-fs/squashfs-tools-4.4:=
-	sys-apps/dbus
-	sys-fs/udisks[daemon]
+	  sys-fs/udisks[daemon]
 	appimaged? ( !app-arch/appimaged )
 	appimagetool? ( app-arch/AppImageKit[-appimagetool] )
 	firejail? ( sys-apps/firejail )
@@ -51,14 +52,16 @@ RDEPEND+="
 	travis-ci? (
 		dev-libs/openssl
 		dev-vcs/git
-	)"
+	)
+"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" >=dev-lang/go-1.13.4:="
 REQUIRED_USE+="
 	|| ( appimaged appimagetool )
 	|| ( gnome kde )
 	openrc? ( appimaged )
-	systemd? ( appimaged )"
+	systemd? ( appimaged )
+"
 SLOT="0/${PV}"
 
 gen_go_dl_gh_url()
@@ -74,11 +77,13 @@ gen_go_dl_gh_url()
 	if [[ -n "${tag_commit}" ]] ; then
 		echo "
 https://codeload.github.com/${uri_frag}/tar.gz/${tag_commit}
-	-> ${dest_name}.tar.gz"
+	-> ${dest_name}.tar.gz
+		"
 	else
 		echo "
 https://github.com/${uri_frag}/archive/refs/tags/${tag//+incompatible}.tar.gz
-	-> ${dest_name}.tar.gz"
+	-> ${dest_name}.tar.gz
+		"
 	fi
 
 }
@@ -113,7 +118,7 @@ SRC_URI+=" "$(gen_go_dl_gh_url github.com/miekg/dns miekg/dns v1.1.27)
 SRC_URI+=" "$(gen_go_dl_gh_url github.com/mitchellh/go-homedir mitchellh/go-homedir v1.1.0)
 SRC_URI+=" "$(gen_go_dl_gh_url github.com/otiai10/copy otiai10/copy v1.4.1)
 SRC_URI+=" "$(gen_go_dl_gh_url github.com/pierrec/lz4/v4 pierrec/lz4 v4.1.3)
-SRC_URI+=" "$(gen_go_dl_gh_url github.com/probonopd/go-appimage probonopd/go-appimage v0.0.0-20210430065939-1d57e84e82e8)
+SRC_URI+=" "$(gen_go_dl_gh_url github.com/probonopd/go-appimage probonopd/go-appimage ${MY_PV})
 SRC_URI+=" "$(gen_go_dl_gh_url github.com/probonopd/go-zsyncmake probonopd/go-zsyncmake v0.0.0-20181008012426-5db478ac2be7)
 SRC_URI+=" "$(gen_go_dl_gh_url github.com/prometheus/procfs prometheus/procfs v0.2.0)
 SRC_URI+=" "$(gen_go_dl_gh_url github.com/rjeczalik/notify rjeczalik/notify v0.9.2)
@@ -169,7 +174,8 @@ https://github.com/probonopd/static-tools/releases/download/continuous/bsdtar-${
 https://github.com/probonopd/static-tools/releases/download/continuous/unsquashfs-${arch}
 	-> unsquashfs-${arch}-${COMMIT_STATIC_TOOLS:0:7}
 	)
-)"
+)
+	"
 }
 
 SRC_URI+=" "$(gen_static_tools_uris amd64 x86_64)
@@ -178,7 +184,8 @@ SRC_URI+=" "$(gen_static_tools_uris arm armhf)
 SRC_URI+=" "$(gen_static_tools_uris amd64 aarch64)
 SRC_URI+="
 https://raw.githubusercontent.com/probonopd/uploadtool/${COMMIT_UPLOADTOOL}/upload.sh
-	-> probonopd-upload.sh-${COMMIT_UPLOADTOOL:0:7}"
+	-> probonopd-upload.sh-${COMMIT_UPLOADTOOL:0:7}
+"
 
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
@@ -189,97 +196,114 @@ PATCHES=( "${FILESDIR}/${PN}-${PV}-gentooize.patch" )
 pkg_setup() {
 	# Re-enable if you need the dependency graph
 #	if has network-sandbox $FEATURES ; then
-#		die \
-#"${PN} requires network-sandbox to be disabled in FEATURES in order to download\n\
-#micropackages."
+#eerror
+#eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
+#eerror "download micropackages."
+#eerror
+#		die
 #	fi
 	linux-info_pkg_setup
 	linux_config_exists
 	if ! linux_chkconfig_builtin INOTIFY_USER ; then
-		die \
-"You need to change your kernel .config to CONFIG_INOTIFY_USER=y"
+eerror
+eerror "You need to change your kernel .config to CONFIG_INOTIFY_USER=y"
+eerror
+		die
 	fi
 	if ! linux_chkconfig_builtin BINFMT_MISC \
 		&& ! linux_chkconfig_module BINFMT_MISC ; then
-		die \
-"You need to change your kernel .config to CONFIG_BINFMT_MISC=y or \
-CONFIG_BINFMT_MISC=m"
+eerror
+eerror "You need to change your kernel .config to CONFIG_BINFMT_MISC=y or"
+eerror "CONFIG_BINFMT_MISC=m"
+eerror
+		die
 	fi
 
 	if ! linux_chkconfig_builtin SQUASHFS \
 		&& ! linux_chkconfig_module SQUASHFS ; then
-		die \
-"You need to change your kernel .config to CONFIG_SQUASHFS=y or \
-CONFIG_SQUASHFS=m"
+eerror
+eerror "You need to change your kernel .config to CONFIG_SQUASHFS=y or"
+eerror "CONFIG_SQUASHFS=m"
+eerror
+		die
 	fi
 
 	local found_appimage_type=0
 	if [[ -f "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ]] \
-		&& grep -F -e "enabled" \
-			"${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ; then
+	&& grep -F -e "enabled" "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ; then
 		found_appimage_type=1
-		eerror \
-"You need to:  echo \"-1\" > /proc/sys/fs/binfmt_misc/appimage-type1"
+eerror
+eerror "You need to:  echo \"-1\" > /proc/sys/fs/binfmt_misc/appimage-type1"
+eerror
 		die
 	fi
 	if [[ -f "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type2" ]] \
-		&& grep -F -e "enabled" \
-			"${EROOT}/proc/sys/fs/binfmt_misc/appimage-type2" ; then
-		eerror \
-"You need to:  echo \"-1\" > /proc/sys/fs/binfmt_misc/appimage-type2"
+	&& grep -F -e "enabled" "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type2" ; then
+eerror
+eerror "You need to:  echo \"-1\" > /proc/sys/fs/binfmt_misc/appimage-type2"
+eerror
 		die
 	fi
 
 	if [[ "${found_appimage_type}" == "1" ]] ; then
-		eerror \
-"See issue: https://github.com/probonopd/go-appimage/issues/7"
-		eerror
-		eerror "See also:"
-		eerror \
-"https://github.com/probonopd/go-appimage/blob/\
+eerror
+eerror "See issue: https://github.com/probonopd/go-appimage/issues/7"
+eerror
+eerror "See also:"
+eerror
+eerror "https://github.com/probonopd/go-appimage/blob/\
 4ac0e102e05507f43c82beef558d0eedba0e50ae/src/appimaged/prerequisites.go#L216"
-		eerror \
-"https://www.kernel.org/doc/Documentation/admin-guide/binfmt-misc.rst"
+eerror "https://www.kernel.org/doc/Documentation/admin-guide/binfmt-misc.rst"
+eerror
 		die
 	fi
 
 	if [[ -f "${EROOT}/usr/bin/AppImageLauncher" ]] ; then
-		die \
-"AppImageLauncher is not compatible and needs to be uninstalled."
+eerror
+eerror "AppImageLauncher is not compatible and needs to be uninstalled."
+eerror
+		die
 	fi
 	if use firejail ; then
 		if ! linux_chkconfig_builtin BLK_DEV_LOOP \
 			&& ! linux_chkconfig_module BLK_DEV_LOOP ; then
-			die \
-"You need to change your kernel .config to CONFIG_BLK_DEV_LOOP=y or \
-CONFIG_BLK_DEV_LOOP=m"
+ewarn
+ewarn "You need to change your kernel .config to CONFIG_BLK_DEV_LOOP=y or"
+ewarn "CONFIG_BLK_DEV_LOOP=m"
+ewarn
+			die
 		fi
 		if use overlayfs && ! linux_chkconfig_builtin OVERLAY_FS \
 			&& ! linux_chkconfig_module OVERLAY_FS ; then
-			die \
-"You need to change your kernel .config to CONFIG_OVERLAY_FS=y or \
-CONFIG_OVERLAY_FS=m"
+ewarn
+ewarn "You need to change your kernel .config to CONFIG_OVERLAY_FS=y or"
+ewarn "CONFIG_OVERLAY_FS=m"
+ewarn
+			die
 		fi
 	fi
-	ewarn \
-"This package is a Work In Progress (WIP) upstream."
+ewarn
+ewarn "This package is a Work In Progress (WIP) upstream."
+ewarn
 	if use appimaged ; then
-		ewarn \
-"The appimaged in this package is not production quality and may random quit \
-at random times.  An auto-restart for this daemon has not been implemented.  \
-Use the appimaged package instead."
+ewarn
+ewarn "The appimaged in this package is not production quality and may random"
+ewarn "quit at random times.  An auto-restart for this daemon has not been"
+ewarn "implemented.  Use the appimaged package instead."
+ewarn
 	fi
 	# server only
 	enewgroup appimaged
 	enewuser appimaged -1 -1 /var/lib/appimaged appimaged
 
 	if ! use system-binaries ; then
-		ewarn "This ebuild may fail when checking checksums since"
-		ewarn "there is no way to download a specific version/commit"
-		ewarn "or cached older server builds."
-		ewarn
-		ewarn "It is recommended to use the system-binaries USE flag if downloading"
-		ewarn "is a problem."
+ewarn
+ewarn "This ebuild may fail when checking checksums since there is no way to"
+ewarn "download a specific version/commit or cached older server builds."
+ewarn
+ewarn "It is recommended to use the system-binaries USE flag if downloading"
+ewarn "is a problem."
+ewarn
 	fi
 }
 
@@ -325,7 +349,7 @@ unpack_go()
 	unpack_go_pkg github.com/mitchellh/go-homedir mitchellh/go-homedir v1.1.0
 	unpack_go_pkg github.com/otiai10/copy otiai10/copy v1.4.1
 	unpack_go_pkg github.com/pierrec/lz4/v4 pierrec/lz4 v4.1.3
-	unpack_go_pkg github.com/probonopd/go-appimage probonopd/go-appimage v0.0.0-20210430065939-1d57e84e82e8
+	unpack_go_pkg github.com/probonopd/go-appimage probonopd/go-appimage ${MY_PV}
 	unpack_go_pkg github.com/probonopd/go-zsyncmake probonopd/go-zsyncmake v0.0.0-20181008012426-5db478ac2be7
 	unpack_go_pkg github.com/prometheus/procfs prometheus/procfs v0.2.0
 	unpack_go_pkg github.com/rjeczalik/notify rjeczalik/notify v0.9.2
@@ -357,28 +381,18 @@ unpack_go()
 
 get_arch()
 {
-	if use amd64 ; then
-		echo "x86_64"
-	elif use x86 ; then
-		echo "x86"
-	elif use arm ; then
-		echo "armhf"
-	elif use arm64 ; then
-		echo "aarch64"
-	fi
+	use amd64 && echo "x86_64"
+	use x86 && echo "x86"
+	use arm && echo "armhf"
+	use arm64 && echo "aarch64"
 }
 
 get_arch2()
 {
-	if use amd64 ; then
-		echo "amd64"
-	elif use x86 ; then
-		echo "x86"
-	elif use arm ; then
-		echo "arm"
-	elif use arm64 ; then
-		echo "arm64"
-	fi
+	use amd64 && echo "amd64"
+	use x86 && echo "x86"
+	use arm && echo "arm"
+	use arm64 && echo "arm64"
 }
 
 src_unpack() {
@@ -418,8 +432,11 @@ src_unpack() {
 			"${WORKDIR}/go_build/src/appimagetool.AppDir/usr/bin/" || die
 		cp -a "${ESYSROOT}/usr/bin/patchelf" \
 			"${WORKDIR}/go_build/src/appimagetool.AppDir/usr/bin/" || die
-		einfo "Copying ${ESYSROOT}/usr/$(get_libdir)/AppImageKit/runtime-"$(get_arch2)" to ${WORKDIR}/go_build/src/appimagetool.AppDir/usr/bin/"
-		cp -a "${ESYSROOT}/usr/$(get_libdir)/AppImageKit/runtime-"$(get_arch2) \
+einfo
+einfo "Copying ${ESYSROOT}/usr/$(get_libdir)/AppImageKit/runtime-$(get_arch2)"
+einfo "to ${WORKDIR}/go_build/src/appimagetool.AppDir/usr/bin/"
+einfo
+		cp -a "${ESYSROOT}/usr/$(get_libdir)/AppImageKit/runtime-$(get_arch2)" \
 			"${WORKDIR}/go_build/src/appimagetool.AppDir/usr/bin/" || die
 		cp -a "${ESYSROOT}/usr/bin/bsdtar" \
 			"${WORKDIR}/go_build/src/appimaged.AppDir/usr/bin/" || die
@@ -461,7 +478,6 @@ src_unpack() {
 	export EGIT_COMMIT
 	export TAG_AIK
 	export TRAVIS_BUILD_DIR="${S}"
-
 }
 
 src_prepare() {
@@ -504,7 +520,7 @@ src_compile() {
 	use x86 && export GARCH="x86"
 	use arm64 && export GARCH="arm64"
 	use arm && export GARCH="arm"
-	export GO_APPIMAGE_V="v0.0.0-20210430065939-1d57e84e82e8"
+	export GO_APPIMAGE_V="${MY_PV}"
 	"${S}/scripts/build.sh" || die # move to src_unpack if you need the dependency graph
 }
 
@@ -582,38 +598,37 @@ src_install() {
 
 pkg_postinst() {
 	if use openrc ; then
-		einfo \
-"\n\
-OpenRC support is experimental.  It may or not work for encrypted home.\n\
-Do \`rc-update add appimaged\` to run the service on boot.\n\
-\n\
-You can \`/etc/init.d/${PN} start\` to start it now.\n\
-\n"
+einfo
+einfo "OpenRC support is experimental.  It may or not work for encrypted home."
+einfo "Do \`rc-update add appimaged\` to run the service on boot."
+einfo
+einfo "You can \`/etc/init.d/${PN} start\` to start it now."
+einfo
 	fi
 	if use systemd ; then
-		einfo \
-"\n\
-You must run appimaged as non-root to generate the systemd service files in\n\
-~/.\n\
-\n\
-You must \`systemctl --user enable appimaged\` inside the user account to add\n\
-the service on login.\n\
-\n\
-You can \`systemctl --user start appimaged\` to start it now.\n\
-\n"
+einfo
+einfo "You must run appimaged as non-root to generate the systemd service files"
+einfo "in ~/."
+einfo
+einfo "You must \`systemctl --user enable appimaged\` inside the user account"
+einfo "to add the service on login."
+einfo
+einfo "You can \`systemctl --user start appimaged\` to start it now."
+einfo
 	fi
-	einfo
-	einfo "The appimaged daemon will randomly quit when watching files"
-	einfo "and needs to be restarted."
-	einfo
-	einfo "The user may need to be added to the \"disk\" group in order"
-	einfo "for firejail rules to work."
-	einfo
-	einfo "Security:  Do not download AppImages from untrusted sites."
-	einfo
-	einfo "AppImageHub, a portal site for AppImage downloads mentioned in"
-	einfo "appimagetool, can be found at https://appimage.github.io/"
-	einfo
-	einfo "Old appimages may have vulnerabilities.  Make sure you use"
-	einfo "an up-to-date version or a well maintained alternative."
+einfo
+einfo "The appimaged daemon will randomly quit when watching files and needs to"
+einfo "be restarted."
+einfo
+einfo "The user may need to be added to the \"disk\" group in order for"
+einfo "firejail rules to work."
+einfo
+einfo "Security:  Do not download AppImages from untrusted sites."
+einfo
+einfo "AppImageHub, a portal site for AppImage downloads mentioned in"
+einfo "appimagetool, can be found at https://appimage.github.io/"
+einfo
+einfo "Old appimages may have vulnerabilities.  Make sure you use an up-to-date"
+einfo "version or a well maintained alternative."
+einfo
 }
