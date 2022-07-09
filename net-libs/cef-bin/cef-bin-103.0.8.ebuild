@@ -86,7 +86,7 @@ UNLISTED_RDEPEND="
 	>=media-libs/mesa-11.2.0[egl(+),${MULTILIB_USEDEP}]
 	>=x11-libs/libxkbcommon-0.5.0[${MULTILIB_USEDEP}]"
 OPTIONAL_RDEPEND="
-	>=gnome-base/libgnome-keyring-3.12[${MULTILIB_USEDEP}]
+	>=gnome-base/gnome-keyring-3.12[${MULTILIB_USEDEP}]
 	>=media-libs/vulkan-loader-1.0.8.0[${MULTILIB_USEDEP}]"
 CHROMIUM_RDEPEND="
 	${CHROMIUM_CDEPEND}
