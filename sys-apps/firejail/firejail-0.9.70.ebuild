@@ -215,14 +215,18 @@ IUSE+=" ${FIREJAIL_PROFILES_IUSE[@]} X apparmor +chroot contrib +dbusproxy
 +file-transfer +globalcfg +network +private-home selinux +suid test-profiles
 test-x11 +userns +whitelist xpra"
 IUSE+=" +firejail_profiles_default +firejail_profiles_server"
-RDEPEND+=" !sys-apps/firejail-lts
+RDEPEND+="
+	!sys-apps/firejail-lts
 	apparmor? ( >=sys-libs/libapparmor-2.13.3 )
 	contrib? ( ${PYTHON_DEPS} )
 	dbusproxy? ( >=sys-apps/xdg-dbus-proxy-0.1.2 )
 	selinux? ( >=sys-libs/libselinux-8.1.0 )
-	xpra? ( >=x11-wm/xpra-3.0.6[firejail] )"
-DEPEND+=" ${RDEPEND}
-	>=sys-libs/libseccomp-2.4.3"
+	xpra? ( >=x11-wm/xpra-3.0.6[firejail] )
+"
+DEPEND+="
+	${RDEPEND}
+	>=sys-libs/libseccomp-2.4.3
+"
 BDEPEND+="
 	|| (
 		>=sys-devel/gcc-11
@@ -242,12 +246,14 @@ BDEPEND+="
 	test? (
 		>=dev-tcltk/expect-5.45.4
 		>=app-arch/xz-utils-5.2.4
-	)"
+	)
+"
 REQUIRED_USE+="
 	!test
 	contrib? ( ${PYTHON_REQUIRED_USE} )
 	test-x11? ( test )
-	test-profiles? ( test )"
+	test-profiles? ( test )
+"
 
 #	Not required until uncommented
 #	firejail_profiles_chromium-common? ( firejail_profiles_chromium-common-hardened.inc )
@@ -816,13 +822,16 @@ EFIREJAIL_MAX_ENVS=${EFIREJAIL_MAX_ENVS:=512}
 pkg_setup() {
 	python-single-r1_pkg_setup
 	CONFIG_CHECK="~SQUASHFS"
-	local WARNING_SQUASHFS="CONFIG_SQUASHFS: required for firejail --appimage mode"
+	local WARNING_SQUASHFS=\
+"CONFIG_SQUASHFS: required for firejail --appimage mode"
 	check_extra_config
 	if use test ; then
 		if has userpriv $FEATURES ; then
-			die \
-"You need to add FEATURES=-userpriv to complete testing in your per-package\n\
-envvars"
+eerror
+eerror "You need to add FEATURES=-userpriv to complete testing in your"
+eerror "per-package envvars"
+eerror
+			die
 		fi
 	fi
 }
@@ -1232,7 +1241,8 @@ eerror
 	export SANDBOX_ON=1
 
 	einfo "FIXME:  Error results:"
-	grep -o -E -r -e "TESTING ERROR [0-9.]+" "${T}/test-all.log" \
+	grep -o -E -r \
+		-e "TESTING ERROR [0-9.]+" "${T}/test-all.log" \
 		-e "TESTING ERROR - grsecurity detection" \
 		| sort \
 		| uniq -c
@@ -1307,7 +1317,6 @@ _src_install() {
 
 	mkdir -p "${T}/profiles_processed" || die
 
-
 	for pf in ${FIREJAIL_PROFILES_IUSE} ; do
 		local u="${pf/firejail_profiles_/}"
 		local src
@@ -1336,11 +1345,14 @@ _src_install() {
 		local u=$(basename "${pf}" | sed -e "s|.profile||g")
 		ewarn "Q/A: Missing ${u} in IUSE flags."
 	done
-	(( $(find "${T}/profiles" | sed -e "1d" | wc -l) != 0 )) && die "${T}/profiles is not empty"
+	(( $(find "${T}/profiles" | sed -e "1d" | wc -l) != 0 )) \
+		&& die "${T}/profiles is not empty"
 
 	einfo "Verifying release build"
-	grep -r -e "/image/" "${ED}/usr/bin" && die "Detected test binaries"
-	grep -r -e "/image/" "${ED}/usr/$(get_libdir)" && die "Detected test libraries"
+	grep -r -e "/image/" "${ED}/usr/bin" \
+		&& die "Detected test binaries"
+	grep -r -e "/image/" "${ED}/usr/$(get_libdir)" \
+		&& die "Detected test libraries"
 }
 
 src_install() {
@@ -1349,47 +1361,51 @@ src_install() {
 
 pkg_postinst() {
 	if use xpra ; then
-		einfo
-		einfo "A new custom args have been added to improve performance."
-		einfo "To lessen shuddering/skipping some apps may benefit by"
-		einfo "disabiling sound sound input and output forwarding."
-		einfo
-		einfo
-		einfo "New args (must be placed before --x11=xpra)"
-		einfo "  --xpra-speaker=0  # disables sound forwarding for xpra"
-		einfo "  --xpra-speaker=1  # enables sound forwarding for xpra"
-		einfo
-		einfo
-		einfo "Profile additions"
-		einfo
-		einfo "  xpra_speaker_off  # disables sound forwarding for xpra"
-		einfo "  xpra_speaker_on  # enables sound forwarding for xpra"
-		einfo
+einfo
+einfo "A new custom args have been added to improve performance.  To lessen"
+einfo "shuddering/skipping some apps may benefit by disabiling sound sound"
+einfo "input and output forwarding."
+einfo
+einfo
+einfo "New args (must be placed before --x11=xpra)"
+einfo
+einfo "  --xpra-speaker=0  # disables sound forwarding for xpra"
+einfo "  --xpra-speaker=1  # enables sound forwarding for xpra"
+einfo
+einfo
+einfo "Profile additions"
+einfo
+einfo "  xpra_speaker_off  # disables sound forwarding for xpra"
+einfo "  xpra_speaker_on  # enables sound forwarding for xpra"
+einfo
 	fi
-	ewarn "Files marked chmod uo+r permissions and filenames containing"
-	ewarn "sensitive info contained in the root directory are exposed."
-	ewarn "to an attacker in the sandbox.  They should be moved in"
-	ewarn "either another disk, or in folder with parent folder and"
-	ewarn "descendants with uo-r chmod permissions or explicitly added"
-	ewarn "as a blacklist rule in /etc/firejail/globals.local."
-	ewarn
-	ewarn "Always check your sandbox profile in the shell to see if it"
-	ewarn "meets your privacy requirements."
-
-	einfo
-	einfo "Note to ricers and optimization fanatics:"
-	einfo "You may need to update /etc/firejail/globals.local to add"
-	einfo "private-lib gcc/*/*/libgomp.so.*"
-
-	einfo
-	einfo "The following optional USE flags are required if the disabled included profiles are uncommented inside:"
-	einfo "  firejail_profiles_chromium-common? ( firejail_profiles_chromium-common-hardened.inc )"
-	einfo "  firejail_profiles_electron? ( firejail_profiles_chromium-common-hardened.inc )"
-	einfo "  firejail_profiles_feh? ( firejail_profiles_feh-network.inc )"
-	einfo "  firejail_profiles_firefox-common? ( firejail_profiles_firefox-common-addons )"
-	einfo "  firejail_profiles_rtv? ( firejail_profiles_rtv-addons )"
-
+ewarn
+ewarn "Files marked chmod uo+r permissions and filenames containing sensitive"
+ewarn "info contained in the root directory are exposed to an attacker in the"
+ewarn "sandbox.  They should be moved in either another disk, or in folder with"
+ewarn "parent folder and descendants with uo-r chmod permissions or explicitly"
+ewarn "added as a blacklist rule in /etc/firejail/globals.local."
+ewarn
+ewarn "Always check your sandbox profile in the shell to see if it meets your"
+ewarn "privacy requirements."
+einfo
+einfo "Note to ricers and optimization fanatics:"
+einfo
+einfo "You may need to update /etc/firejail/globals.local to add"
+einfo "private-lib gcc/*/*/libgomp.so.*"
+einfo
+einfo "The following optional USE flags are required if the disabled included"
+einfo "profiles are uncommented inside:"
+einfo
+einfo "  firejail_profiles_chromium-common? ( firejail_profiles_chromium-common-hardened.inc )"
+einfo "  firejail_profiles_electron? ( firejail_profiles_chromium-common-hardened.inc )"
+einfo "  firejail_profiles_feh? ( firejail_profiles_feh-network.inc )"
+einfo "  firejail_profiles_firefox-common? ( firejail_profiles_firefox-common-addons )"
+einfo "  firejail_profiles_rtv? ( firejail_profiles_rtv-addons )"
+einfo
 	if ! use firejail_profiles_server ; then
-		ewarn "Disabling firejail_profiles_server disables default sandboxing for the root user"
+ewarn
+ewarn "Disabling firejail_profiles_server disables default sandboxing for the root user"
+ewarn
 	fi
 }
