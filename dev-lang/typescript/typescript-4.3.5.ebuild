@@ -10,10 +10,10 @@ NPM_SECAUDIT_AT_TYPES_NODE_V="15.0.2"
 NPM_SECAUDIT_TYPESCRIPT_V="${PV}"
 inherit eutils npm-secaudit npm-utils
 
-DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean \
+DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean
 JavaScript output"
 HOMEPAGE="https://www.typescriptlang.org/"
-LICENSE="Apache-2.0 all-rights-reserved BSD BSD-2 CC0-1.0 CC-BY-3.0 CC-BY-4.0 \
+LICENSE="Apache-2.0 all-rights-reserved BSD BSD-2 CC0-1.0 CC-BY-3.0 CC-BY-4.0
 CC-BY-SA-4.0 MIT unicode W3C W3C-CLA WTFPL"
 # Apache-2.0 is the main
 # Rest of the licenses are third party licenses
@@ -22,19 +22,23 @@ KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="$(ver_cut 1-2 ${PV})/${PV}"
 MIN_NODE_VERSION=$(ver_cut 1 ${NPM_SECAUDIT_AT_TYPES_NODE_V})
 CDEPEND=" >=net-libs/nodejs-${MIN_NODE_VERSION}[npm]"
-RDEPEND+=" ${CDEPEND}
-	 app-eselect/eselect-typescript"
-DEPEND+=" ${CDEPEND}
-	media-libs/vips"
-BDEPEND+=" ${CDEPEND}"
+RDEPEND+="
+	app-eselect/eselect-typescript
+"
+DEPEND+="
+	media-libs/vips
+"
 MY_PN="TypeScript"
 FN_SRC="v${PV}.tar.gz"
 FN_DEST="${PN}-${PV}.tar.gz"
 SRC_URI="
 https://github.com/Microsoft/${MY_PN}/archive/v${PV}.tar.gz
-	-> ${FN_DEST}"
+	-> ${FN_DEST}
+"
 S="${WORKDIR}/${MY_PN}-${PV}"
+if [[ "${UPDATE_MANIFEST}" != "1" ]] ; then
 RESTRICT="fetch mirror"
+fi
 GITHUB_HOMEPAGE="https://github.com/microsoft/TypeScript"
 
 pkg_nofetch() {
