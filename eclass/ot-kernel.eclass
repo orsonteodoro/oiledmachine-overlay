@@ -837,8 +837,8 @@ _check_network_sandbox() {
 	# cve-hotfix - requires to download patch URI linked from NVD website
 	if has network-sandbox $FEATURES ; then
 eerror
-eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
-eerror "to use live patches."
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to use live patches."
 eerror
 		die
 	fi
