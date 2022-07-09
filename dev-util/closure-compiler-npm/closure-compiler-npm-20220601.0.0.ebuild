@@ -154,8 +154,8 @@ eerror
 
 	if has network-sandbox $FEATURES ; then
 eerror
-eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
-eerror "to download micropackages."
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download micropackages."
 eerror
 		die
 	fi
