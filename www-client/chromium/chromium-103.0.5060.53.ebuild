@@ -2969,9 +2969,9 @@ gen_full_pgo_external_access_uris() {
 				# tab_switching_typical_25
 				# wasmpspdfkit
 eerror
-eerror "The ${u} USE flag requires FEATURES=\"-network-sandbox\" to be added as"
-eerror "a per-package envvar to allowed Internet access to a website in order to"
-eerror "perform benchmarks in the src_compile() phase."
+eerror "The ${u} USE flag requires FEATURES=\"${FEATURES} -network-sandbox\" to"
+eerror "be added as a per-package envvar to allowed Internet access to a"
+eerror "website in order to perform benchmarks in the src_compile() phase."
 eerror
 				die
 			fi
