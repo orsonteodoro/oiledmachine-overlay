@@ -32,7 +32,7 @@ DEPEND=" ${PYTHON_DEPS}
 	workspace? ( $(python_gen_cond_dep 'dev-python/pyinotify[${PYTHON_USEDEP}]') )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}
-	$(python_gen_cond_dep 'dev-python/setuptools_rust[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/setuptools-rust[${PYTHON_USEDEP}]')
 	doc? (
 		$(python_gen_cond_dep 'dev-python/sphinx[${PYTHON_USEDEP}]')
 		$(python_gen_cond_dep 'dev-python/sphinx-epytext[${PYTHON_USEDEP}]')
