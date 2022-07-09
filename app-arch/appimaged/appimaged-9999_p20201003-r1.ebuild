@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="appimaged is a daemon that monitors the system and integrates \
+DESCRIPTION="appimaged is a daemon that monitors the system and integrates
 AppImages."
 HOMEPAGE="https://github.com/AppImage/appimaged"
 LICENSE="MIT" # appimaged project's default license
@@ -10,31 +10,32 @@ LICENSE+=" all-rights-reserved" # src/main.c ; \
 # The vanilla MIT license doesn't have all-rights-reserved
 KEYWORDS="~amd64 ~x86"
 inherit cmake-utils linux-info user xdg
-IUSE+=" disable_watching_user_downloads_folder disable_watching_opt_folder \
+IUSE+=" disable_watching_user_downloads_folder disable_watching_opt_folder
 firejail openrc +systemd system-inotify-tools"
 RDEPEND="${RDEPEND}
 	app-arch/go-appimage[-appimaged]
 	dev-libs/glib:=[static-libs]
 	dev-libs/libappimage:=[static-libs]
 	dev-libs/xdg-utils-cxx:=[static-libs]
+	sys-fs/squashfuse:=[libsquashfuse-appimage,static-libs]
+	sys-libs/glibc:=
+	x11-libs/cairo:=[static-libs]
 	firejail? ( sys-apps/firejail )
 	openrc? (
 		sys-apps/openrc[bash]
 		sys-apps/grep[pcre]
 	)
 	systemd? ( sys-apps/systemd )
-	sys-fs/squashfuse:=[libsquashfuse-appimage,static-libs]
-	sys-libs/glibc:=
 	system-inotify-tools? ( sys-fs/inotify-tools:=[static-libs] )
-	x11-libs/cairo:=[static-libs]"
-DEPEND="${DEPEND}
-	${RDEPEND}"
+"
+DEPEND+=" ${RDEPEND}"
 REQUIRED_USE="|| ( openrc systemd )"
 SLOT="0/${PV}"
 EGIT_COMMIT="11b249848d7d0d9b3b7154ae5fca0328afa167d4"
-SRC_URI=\
-"https://github.com/AppImage/appimaged/archive/${EGIT_COMMIT}.tar.gz
-	 -> ${P}.tar.gz"
+SRC_URI="
+https://github.com/AppImage/appimaged/archive/${EGIT_COMMIT}.tar.gz
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 _PATCHES=(
@@ -51,24 +52,30 @@ _PATCHES=(
 pkg_setup() {
 	if ! use system-inotify-tools ; then
 		if has network-sandbox $FEATURES ; then
-			die \
-"${PN} requires network-sandbox to be disabled in FEATURES in order to\n\
-download internal dependencies."
+eerror
+eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
+eerror "download internal dependencies."
+eerror
+			die
 		fi
 	fi
 
 	linux-info_pkg_setup
 	linux_config_exists
 	if ! linux_chkconfig_builtin INOTIFY_USER ; then
-		die \
-"You need to change your kernel .config to CONFIG_INOTIFY_USER=y"
+eerror
+eerror "You need to change your kernel .config to CONFIG_INOTIFY_USER=y"
+eerror
+		die
 	fi
 	if use firejail ; then
 		if ! linux_chkconfig_builtin BLK_DEV_LOOP \
 			&& ! linux_chkconfig_module BLK_DEV_LOOP ; then
-			die \
-"You need to change your kernel .config to CONFIG_BLK_DEV_LOOP=y or \
-CONFIG_BLK_DEV_LOOP=m"
+eerror
+eerror "You need to change your kernel .config to CONFIG_BLK_DEV_LOOP=y or"
+eerror "CONFIG_BLK_DEV_LOOP=m"
+eerror
+			die
 		fi
 	fi
 	# server only
@@ -103,8 +110,7 @@ src_install() {
 	docinto readmes
 	dodoc README.md
 	if use openrc ; then
-		cp "${FILESDIR}/${PN}-openrc" \
-			"${T}/${PN}" || die
+		cp "${FILESDIR}/${PN}-openrc" "${T}/${PN}" || die
 		exeinto /etc/init.d
 		doexe "${T}/${PN}"
 	fi
@@ -112,29 +118,33 @@ src_install() {
 
 pkg_postinst() {
 	if use openrc ; then
-		einfo \
-"\n\
-OpenRC support is experimental.  It may or not work for encrypted home.\n\
-\n\
-Do \`rc-update add appimaged\` to run the service on boot.\n\
-You can \`/etc/init.d/${PN} start\` to start it now."
+eerror
+eerror "OpenRC support is experimental.  It may or not work for encrypted home."
+eerror
+eerror "Do \`rc-update add appimaged\` to run the service on boot."
+eerror
+eerror "You can \`/etc/init.d/${PN} start\` to start it now."
+eerror
 	fi
 	if use systemd ; then
-		einfo \
-"\n\
-You must \`systemctl --user enable appimaged\` inside the user account to\n\
-add the service on login.  You can \`systemctl --user start appimaged\` to\n\
-start it now."
+einfo
+einfo "You must \`systemctl --user enable appimaged\` inside the user account"
+einfo "to add the service on login.  You can"
+einfo
+einfo "  \`systemctl --user start appimaged\`"
+einfo
+einfo "to start it now."
+einfo
 	fi
-	einfo \
-"The user may need to be added to the \"disk\" group in order for firejail\n\
-rules to work.\n\
-This can be done with \`gpasswd -a USER disk\`\n\
-\n\
-Security:  Please only download .AppImages only from a trusted distribution\n\
-site.  Old .AppImages may likely pose a security risk.\n\
-\n\
-The AppImageHub (https://appimage.github.io/apps/) was recommended\n\
-from the README.md.   More can be found in the \"Home\" link."
+einfo
+einfo "The user may need to be added to the \"disk\" group in order for"
+einfo "firejail rules to work.  This can be done with \`gpasswd -a USER disk\`"
+einfo
+einfo "Security:  Please only download .AppImages only from a trusted"
+einfo "distribution site.  Old .AppImages may likely pose a security risk."
+einfo
+einfo "The AppImageHub (https://appimage.github.io/apps/) was recommended"
+einfo "from the README.md.   More can be found in the \"Home\" link."
+einfo
 	xdg_pkg_postinst
 }
