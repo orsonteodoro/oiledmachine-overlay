@@ -3,6 +3,9 @@
 
 EAPI=7
 
+ELECTRON_APP_ELECTRON_V="3.1.13" # todo, update version
+ELECTRON_APP_VUE_V="2.5.16"
+
 inherit desktop electron-app eutils
 
 DESCRIPTION="A clean and modern encrypted journal/diary app"
@@ -17,14 +20,14 @@ BDEPEND+="
 		<net-libs/nodejs-14[npm]
 		>=net-libs/nodejs-12[npm]
 	)
-	net-libs/nodejs[npm]"
-ELECTRON_APP_ELECTRON_V="3.1.13" # todo, update version
-ELECTRON_APP_VUE_V="2.5.16"
+	net-libs/nodejs[npm]
+"
 MY_PN="Epic Journal"
 EGIT_COMMIT="12ea7afc17c405df67ca83965747614c9f240f4d"
-SRC_URI=\
-"https://github.com/alangrainger/epic-journal/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz"
+SRC_URI="
+https://github.com/alangrainger/epic-journal/archive/${EGIT_COMMIT}.tar.gz
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
