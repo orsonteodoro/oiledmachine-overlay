@@ -94,8 +94,11 @@ YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
 _ELECTRON_APP_REG_PATH=${_ELECTRON_APP_REG_PATH:=""} # private set only within the eclass
 
 if [[ -n "${ELECTRON_APP_REG_PATH}" ]] ; then
-die "ELECTRON_APP_REG_PATH has been removed and replaced with\n\
-ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
+eerror
+eerror "ELECTRON_APP_REG_PATH has been removed and replaced with"
+eerror "ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
+eerror
+	die
 fi
 
 # The recurrance interval between critical vulnerabilities in chrome is 10-14
@@ -113,7 +116,8 @@ ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
 # ##################  START End of Life or patched versions ####################
 
-# Also bump if for unpublished vulnerabilities published as bugs, weakened security, or Chromium security updates.
+# Also bump if for unpublished vulnerabilities published as bugs, weakened
+# security, or Chromium security updates.
 
 # Stable versions list https://www.electronjs.org/docs/latest/tutorial/support#currently-supported-versions
 
@@ -165,7 +169,8 @@ LATEST_CHROMIUM_102="102.0.5005.63" # E19 ; Dev vulnerable
 # ebuild.
 
 # The chromium version can be found in the table:
-# https://github.com/electron/electron/blob/12-x-y/DEPS#L17 ,  replacing 12 with one of the stable versions
+# https://github.com/electron/electron/blob/12-x-y/DEPS#L17 , replacing 12 with
+# one of the stable versions
 
 # See https://www.electronjs.org/docs/development/build-instructions-linux
 # For Electron <ver>, see https://github.com/chromium/chromium/blob/<cr_version>/build/install-build-deps.sh#L242
@@ -634,16 +639,18 @@ _electron-app-flakey-check() {
 	local l=$(find "${S}" -name "package.json")
 	grep -q -F -e "electron-builder" $l
 	if [[ "$?" == "0" ]] ; then
-		ewarn \
-"This ebuild may fail when building with electron-builder.  Re-emerge if it\n\
-fails."
+ewarn
+ewarn "This ebuild may fail when building with electron-builder.  Re-emerge if"
+ewarn "it fails."
+ewarn
 	fi
 
 	grep -q -F -e "\"electron\":" $l
 	if [[ "$?" == "0" ]] ; then
-		ewarn \
-"This ebuild may fail when downloading Electron as a dependency.  Re-emerge\n\
-if it fails."
+ewarn
+ewarn "This ebuild may fail when downloading Electron as a dependency."
+ewarn "Re-emerge if it fails."
+ewarn
 	fi
 }
 
@@ -870,11 +877,12 @@ electron-app_fetch_deps_yarn() {
 		echo "offline-cache-mirror \"${YARN_STORE_DIR}/offline\"" \
 			>> "${S}/.yarnrc" || die
 
-		mkdir -p "${S}/.yarn"
-		einfo \
-"yarn prefix: $(yarn config get prefix)\n\
-yarn global-folder: $(yarn config get global-folder)\n\
-yarn offline-cache-mirror: $(yarn config get offline-cache-mirror)"
+		mkdir -p "${S}/.yarn" || die
+einfo
+einfo "yarn prefix: $(yarn config get prefix)"
+einfo "yarn global-folder: $(yarn config get global-folder)"
+einfo "yarn offline-cache-mirror: $(yarn config get offline-cache-mirror)"
+einfo
 
 		yarn install --network-concurrency ${ELECTRON_APP_MAXSOCKETS} \
 				--verbose || die
@@ -926,14 +934,16 @@ adie() {
 # @DESCRIPTION:
 # Audits json logs for vulnerable versions and min requirements
 electron-app_audit_versions() {
-	einfo \
-"Inspecting package versions for vulnerabilities and minimum version\n\
-requirements"
+einfo
+einfo "Inspecting package versions for vulnerabilities and minimum version"
+einfo "requirements"
+einfo
 
 	if [[ "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" == "1" ]] ; then
-		elog \
-"It's strongly recommended re-emerge the app weekly to mitigate against\n\
-critical vulnerabilities in the internal Chromium."
+elog
+elog "It's strongly recommended re-emerge the app weekly to mitigate against"
+elog "critical vulnerabilities in the internal Chromium."
+elog
 	fi
 
 	local ELECTRON_V
@@ -1085,7 +1095,11 @@ security updates."
 	# Check Chromium
 	# Chromium versioning:  MAJOR.MINOR.BUILD.PATCH
 	if ver_test $(ver_cut 1 ${CHROMIUM_V}) -ge 103 ; then
-		:; # Auto passed because vulnerabilites are typically not announced for beta and dev channels
+#
+# Auto passed because vulnerabilites are typically not announced for beta and
+# dev channels
+#
+		:;
 	elif ver_test $(ver_cut 1 ${CHROMIUM_V}) -eq 102 ; then
 		adie \
 "Electron ${ELECTRON_V} uses Chromium ${CHROMIUM_V} which is not receiving\n\
@@ -1104,30 +1118,33 @@ proper security updates."
 	# It's actually BoringSSL not OpenSSL in Chromium.
 	# Commented out because Chromium checks
 	if ! has_version ">=net-libs/nodejs-${NODE_V}" ; then
-		ewarn \
-"Electron ${ELECTRON_V} requires at least >=net-libs/nodejs-${NODE_V}"
+ewarn
+ewarn "Electron ${ELECTRON_V} requires at least >=net-libs/nodejs-${NODE_V}"
+ewarn
 	fi
 	if ! has_version ">=sys-libs/zlib-${ZLIB_V}" ; then
 		adie \
 "Electron ${ELECTRON_V} requires at least >=sys-libs/zlib-${ZLIB_V}"
 	fi
 	npm-utils_check_chromium_eol ${CHROMIUM_V}
-	einfo
-	einfo "Electron version report with internal/external dependencies:"
-	einfo
-	einfo "ELECTRON_V=${ELECTRON_V}"
-	einfo "CHROMIUM_V=${CHROMIUM_V}"
-	einfo "LIBUV_V=${LIBUV_V}"
-	einfo "NODE_V=${NODE_V}"
-	einfo "V8_V=${V8_V}"
-	einfo "ZLIB_V=${ZLIB_V}"
-	einfo
+einfo
+einfo "Electron version report with internal/external dependencies:"
+einfo
+einfo "ELECTRON_V=${ELECTRON_V}"
+einfo "CHROMIUM_V=${CHROMIUM_V}"
+einfo "LIBUV_V=${LIBUV_V}"
+einfo "NODE_V=${NODE_V}"
+einfo "V8_V=${V8_V}"
+einfo "ZLIB_V=${ZLIB_V}"
+einfo
 
 	local node_v=$(node --version | sed -e "s|v||")
 	if ver_test $(ver_cut 1 ${NODE_V}) -ne $(ver_cut 1 ${node_v}) ; then
-		ewarn \
-"Detected mismatch between node_v=${NODE_V} bundled with Electron and \
-active_node_v=${node_v}.  Build failures may occur if deviation is too much."
+ewarn
+ewarn "Detected mismatch between node_v=${NODE_V} bundled with Electron and"
+ewarn "active_node_v=${node_v}.  Build failures may occur if deviation is too"
+ewarn "much."
+ewarn
 	fi
 }
 
@@ -1303,23 +1320,29 @@ electron-app_audit_dev() {
 "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
 					&& "${is_critical}" == "1" ]] ; then
 					cat "${audit_file}"
-					die \
-"Detected critical vulnerability in a package."
+eerror
+eerror "Detected critical vulnerability in a package."
+eerror
+					die
 				elif [[ \
 "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
 					&& ( "${is_high}" == "1" \
 					|| "${is_critical}" == "1" ) ]] ; then
 					cat "${audit_file}"
-					die \
-"Detected high vulnerability in a package."
+eerror
+eerror "Detected high vulnerability in a package."
+eerror
+					die
 				elif [[ \
 "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
 					&& ( "${is_moderate}" == "1" \
 					|| "${is_critical}" == "1" \
 					|| "${is_high}" == "1" ) ]] ; then
 					cat "${audit_file}"
-					die \
-"Detected moderate vulnerability in a package."
+eerror
+eerror "Detected moderate vulnerability in a package."
+eerror
+					die
 				elif [[ \
 "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
 					&& ( "${is_low}" == "1" \
@@ -1327,8 +1350,10 @@ electron-app_audit_dev() {
 					|| "${is_high}" == "1" \
 					|| "${is_moderate}" == "1" ) ]] ; then
 					cat "${audit_file}"
-					die \
-"Detected low vulnerability in a package."
+eerror
+eerror "Detected low vulnerability in a package."
+eerror
+					die
 				fi
 			fi
 		popd
@@ -1377,7 +1402,7 @@ electron-app_audit_prod() {
 # @DESCRIPTION:
 # Dummy function
 electron-app_src_preinst_default() {
-	true
+	:;
 }
 
 # @FUNCTION: electron-app_desktop_install_program_raw
@@ -1395,8 +1420,8 @@ electron-app_desktop_install_program_raw() {
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 
-			mkdir -p "${ed}"
-			cp -a ${rel_src_path} "${ed}"
+			mkdir -p "${ed}" || die
+			cp -a ${rel_src_path} "${ed}" || die
 
 			if [[ "${old_dotglob}" == "on" ]] ; then
 				shopt -s dotglob
@@ -1408,8 +1433,8 @@ electron-app_desktop_install_program_raw() {
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 
-			mkdir -p "${ed}"
-			cp -a ${rel_src_path} "${ed}"
+			mkdir -p "${ed}" || die
+			cp -a ${rel_src_path} "${ed}" || die
 
 			if [[ "${old_dotglob}" == "on" ]] ; then
 				shopt -s dotglob
@@ -1425,9 +1450,8 @@ electron-app_desktop_install_program_raw() {
 
 # @FUNCTION: electron-app_desktop_install_program
 # @DESCRIPTION:
-# Installs program only.  Resets permissions and ownership.
-# Additional change of ownership and permissions should be done after running
-# this.
+# Installs program only.  Resets permissions and ownership.  Additional change
+# of ownership and permissions should be done after running this.
 electron-app_desktop_install_program() {
 	use unpacked || return
 	_electron-app_check_missing_install_path
@@ -1514,9 +1538,11 @@ electron-app_desktop_install_program() {
 # Checks to see if ELECTRON_APP_INSTALL_PATH has been defined.
 _electron-app_check_missing_install_path() {
 	if [[ -z "${ELECTRON_APP_INSTALL_PATH}" ]] ; then
-		die \
-"You must specify ELECTRON_APP_INSTALL_PATH.  Usually same location as\n\
-/usr/\$(get_libdir)/node/\${PN}/\${SLOT} without \$ED"
+eerror
+eerror "You must specify ELECTRON_APP_INSTALL_PATH.  Usually same location as"
+eerror "/usr/\$(get_libdir)/node/\${PN}/\${SLOT} without \$ED"
+eerror
+		die
 	fi
 }
 
@@ -1552,15 +1578,19 @@ electron-app_desktop_install() {
 	local cmd="$5"
 
 	if [[ -z "${rel_icon_path}" ]] ; then
-		die \
-"You must provide 2nd arg to electron-app_desktop_install containing the\n\
-relative icon path"
+eerror
+eerror "You must provide 2nd arg to electron-app_desktop_install containing the"
+eerror "relative icon path"
+eerror
+		die
 	fi
 
 	if [[ -z "${cmd}" ]] ; then
-		die \
-"You must provide 5th arg to electron-app_desktop_install containing the\n\
-command to execute in the wrapper script"
+eerror
+eerror "You must provide 5th arg to electron-app_desktop_install containing the"
+eerror "command to execute in the wrapper script"
+eerror
+		die
 	fi
 
 	if use unpacked ; then
@@ -1584,8 +1614,10 @@ command to execute in the wrapper script"
 			newicon "${rel_icon_path}" "${icon}.xpm"
 		else
 # See https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
-			ewarn \
-"Only png, svg, xpm accepted as icons for the XDG desktop icon theme spec.  Skipping."
+ewarn
+ewarn "Only png, svg, xpm accepted as icons for the XDG desktop icon theme"
+ewarn "spec.  Skipping."
+ewarn
 		fi
 	fi
 	if has appimage ${IUSE_EFFECTIVE} ; then
@@ -1650,10 +1682,11 @@ electron-app-register-x() {
 			rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 			break
 		else
-			einfo \
-"Waiting for mutex to be released for electron-app's pkg_db.  If it takes too\n\
-long (15 min), cancel all emerges and remove\n\
-${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
+einfo
+einfo "Waiting for mutex to be released for electron-app's pkg_db.  If it takes"
+einfo "too long (15 min), cancel all emerges and remove"
+einfo "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
+einfo
 			sleep 15
 		fi
 	done
@@ -1699,10 +1732,9 @@ electron-app_pkg_preinst() {
 
 # @FUNCTION: electron-app_pkg_postinst
 # @DESCRIPTION:
-# Automatically registers an electron app package.
-# Set _ELECTRON_APP_REG_PATH global to relative path (NOT starting with /)
-# or absolute path (starting with /) to scan for vulnerabilities containing
-# node_modules.
+# Automatically registers an electron app package.  Set _ELECTRON_APP_REG_PATH
+# global to relative path (NOT starting with /) or absolute path (starting with
+# /) to scan for vulnerabilities containing node_modules.
 electron-app_pkg_postinst() {
         debug-print-function ${FUNCNAME} "${@}"
 
@@ -1758,10 +1790,11 @@ electron-app_pkg_postrm() {
 					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					break
 				else
-					einfo \
-"Waiting for mutex to be released for electron-app's pkg_db for npm.  If it\n\
-takes too long (15 min), cancel all emerges and remove\n\
-${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
+einfo
+einfo "Waiting for mutex to be released for electron-app's pkg_db for npm.  If"
+einfo "it takes too long (15 min), cancel all emerges and remove"
+einfo "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
+einfo
 					sleep 15
 				fi
 			done
@@ -1774,10 +1807,11 @@ ${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 					break
 				else
-					einfo \
-"Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If it\n\
-takes too long (15 min), cancel all emerges and remove\n\
-${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
+einfo
+einfo "Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If"
+einfo "it takes too long (15 min), cancel all emerges and remove"
+einfo "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
+einfo
 					sleep 15
 				fi
 			done
@@ -1791,10 +1825,11 @@ ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					break
 				else
-					einfo \
-"Waiting for mutex to be released for electron-app's pkg_db for yarn.  If it\n\
-takes too long (15 min), cancel all emerges and remove\n\
-${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
+einfo
+einfo "Waiting for mutex to be released for electron-app's pkg_db for yarn.  If"
+einfo "it takes too long (15 min), cancel all emerges and remove"
+einfo "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
+einfo
 					sleep 15
 				fi
 			done
@@ -2047,7 +2082,7 @@ electron-app_get_node_version()
 {
 	local node_version="${1}"
 	wget -O "${T}/DEPS" \
-		"https://raw.githubusercontent.com/electron/electron/v${node_version}/DEPS" || die
+"https://raw.githubusercontent.com/electron/electron/v${node_version}/DEPS" || die
 	if ver_test ${node_version} -ge 6.0 ; then
 		echo $(cat "${T}/DEPS" | tr "\r\n" "\n" \
 			| sed -e "s| = |=|g" \
@@ -2069,7 +2104,7 @@ electron-app_get_node_version()
 			| jq ".node_version" \
 			| sed -e "s|\"||g")
 		wget -O "${T}/node_version.h" \
-			"https://raw.githubusercontent.com/electron/node/${commit}/src/node_version.h" || die
+"https://raw.githubusercontent.com/electron/node/${commit}/src/node_version.h" || die
 		local v_major=$(grep -r -e "NODE_MAJOR_VERSION" \
 			"${T}/node_version.h" | head -n 1 | cut -f 3 -d " ")
 		local v_minor=$(grep -r -e "NODE_MINOR_VERSION" \
