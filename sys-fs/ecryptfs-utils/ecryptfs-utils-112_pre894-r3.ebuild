@@ -63,9 +63,11 @@ pkg_setup() {
 	CONFIG_CHECK="~ECRYPT_FS"
 	linux-info_pkg_setup
 	if has network-sandbox $FEATURES ; then
-		die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
-download from a live source."
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download from a live source."
+eerror
+		die
 	fi
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	addwrite "${distdir}"
@@ -75,9 +77,11 @@ download from a live source."
 	chown portage:portage "${distdir}/ecryptfs-utils-src" || die
 	if use test ; then
 		if [[ ! "${FEATURES}" =~ test ]] ; then
-			die \
-"The test USE flag requires the environmental variable test to be added to\n\
-FEATURES"
+eerror
+eerror "The test USE flag requires the environmental variable test to be added"
+eerror "to FEATURES"
+eerror
+			die
 		fi
 	fi
 }
@@ -134,8 +138,8 @@ src_test() {
 		pushd "tests" || die
 			./run_tests.sh -U -c safe || die
 			if use python ; then
-	PYTHONPATH="${S}/src/libecryptfs-swig:${PYTHONPATH}" \
-	LD_LIBRARY_PATH="${S}/src/libecryptfs-swig/.libs:${LD_LIBRARY_PATH}" \
+PYTHONPATH="${S}/src/libecryptfs-swig:${PYTHONPATH}" \
+LD_LIBRARY_PATH="${S}/src/libecryptfs-swig/.libs:${LD_LIBRARY_PATH}" \
 				${EPYTHON} -c "import libecryptfs" || die
 			fi
 		popd
@@ -174,10 +178,10 @@ src_install() {
 
 pkg_postinst() {
 	if use suid; then
-		ewarn \
-"\n\
-You have chosen to install ${PN} with the binary setuid root. This\n\
-means that if there are any undetected vulnerabilities in the binary,\n\
-then local users may be able to gain root access on your machine.\n"
+ewarn
+ewarn "You have chosen to install ${PN} with the binary setuid root. This means"
+ewarn "that if there are any undetected vulnerabilities in the binary, then"
+ewarn "local users may be able to gain root access on your machine."
+ewarn
 	fi
 }
