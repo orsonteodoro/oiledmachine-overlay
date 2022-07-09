@@ -26,27 +26,35 @@ DEPEND_LATERALGM=" virtual/jre:${JAVA_V}"
 BDEPEND_LATERALGM=" virtual/jdk:${JAVA_V}"
 DEPEND_LIBMAKER=" virtual/jre:${JAVA_V}"
 BDEPEND_LIBMAKER=" virtual/jdk:${JAVA_V}"
-DEPEND_LGMPLUGIN=" dev-java/jna[nio-buffers]
-		virtual/jre:${JAVA_V}"
+DEPEND_LGMPLUGIN="
+	dev-java/jna[nio-buffers]
+	virtual/jre:${JAVA_V}
+"
 BDEPEND_LGMPLUGIN=" virtual/jdk:${JAVA_V}"
-LDEPEND=" ${DEPEND_LATERALGM}
+LDEPEND="
+	${DEPEND_LATERALGM}
 	${DEPEND_LGMPLUGIN}
-	libmaker? ( ${DEPEND_LIBMAKER} )"
+	libmaker? ( ${DEPEND_LIBMAKER} )
+"
 DEPEND+=" ${LDEPEND}
-	virtual/jdk:${JAVA_V}"
+	virtual/jdk:${JAVA_V}
+"
 RDEPEND+=" ${LDEPEND}
-	dev-games/enigma[android?,vanilla?,linux?,wine?,${MULTILIB_USEDEP}]"
-BDEPEND+=" ${BDEPEND_LATERALGM}
+	dev-games/enigma[android?,vanilla?,linux?,wine?,${MULTILIB_USEDEP}]
+"
+BDEPEND+="
+	${BDEPEND_LATERALGM}
 	${BDEPEND_LGMPLUGIN}
-	libmaker? ( ${BDEPEND_LIBMAKER} )"
+	libmaker? ( ${BDEPEND_LIBMAKER} )
+"
 
 EGIT_COMMIT_LIBMAKER="072e3eda2f0c4495838f94ad3cd5a376b1fc7ff5"
 EGIT_COMMIT_JE_LATERALGM="487ddbe470032124dcb50ebee01a24b600ae900e"
-EGIT_COMMIT_JE_LIBMAKER="5844d7f047eac15408f7ccf8a9183d2015b962e0"
-  # dated 20120417, this is required because of namespace changes, KeywordSet
-  # changes, fails to build
-LGMPLUGIN_V="1.8.227r2"
-# lgmplugin updates can be found at:
+EGIT_COMMIT_JE_LIBMAKER="5844d7f047eac15408f7ccf8a9183d2015b962e0" # \
+# dated 20120417, this is required because of namespace changes, KeywordSet \
+# changes, fails to build
+LGMPLUGIN_V="1.8.227r2" # \
+# lgmplugin updates can be found at: \
 # https://github.com/enigma-dev/lgmplugin/tags
 
 MY_PN_LATERALGM="LateralGM"
@@ -65,21 +73,25 @@ SRC_URI_LATERALGM="
 ${BASE_URI_IA}/${MY_PN_LATERALGM}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
 ${BASE_URI_JD}/JoshEdit/archive/${EGIT_COMMIT_JE_LATERALGM}.tar.gz
-	-> ${JE_LATERALGM_FN}"
+	-> ${JE_LATERALGM_FN}
+"
 SRC_URI_LIBMAKER="
 ${BASE_URI_IA}/${MY_PN_LIBMAKER}/archive/${EGIT_COMMIT_LIBMAKER}.tar.gz
 	-> ${LIBMAKER_FN}
 ${BASE_URI_JD}/${JE_PN}/archive/${EGIT_COMMIT_JE_LIBMAKER}.tar.gz
-	-> ${JE_LIBMAKER_FN}"
+	-> ${JE_LIBMAKER_FN}
+"
 
 SRC_URI_LGMPLUGIN="
 ${BASE_URI_ED}/lgmplugin/archive/refs/tags/v${LGMPLUGIN_V}.tar.gz
-	-> ${LGMPLUGIN_FN}"
+	-> ${LGMPLUGIN_FN}
+"
 
 SRC_URI="
 	${SRC_URI_LATERALGM}
 	${SRC_URI_LGMPLUGIN}
-	libmaker? ( ${SRC_URI_LIBMAKER} )"
+	libmaker? ( ${SRC_URI_LIBMAKER} )
+"
 RESTRICT="mirror"
 S_LATERALGM="${WORKDIR}/${MY_PN_LATERALGM}-${PV}"
 S_LIBMAKER="${WORKDIR}/${MY_PN_LIBMAKER}-${EGIT_COMMIT_LIBMAKER}"
@@ -89,16 +101,20 @@ S="${S_LATERALGM}"
 pkg_setup()
 {
 	java-pkg_init
-	if [[ -n "${JAVA_HOME}" \
-		&& -f "${JAVA_HOME}/bin/java" ]] ; then
+	if [[	-n "${JAVA_HOME}" && \
+		-f "${JAVA_HOME}/bin/java" ]] ; then
 		export JAVA="${JAVA_HOME}/bin/java"
 	elif [[ -z "${JAVA_HOME}" ]] ; then
-		die \
-"JAVA_HOME is not set.  Use \`eselect java-vm\` to set this up."
+eerror
+eerror "JAVA_HOME is not set.  Use \`eselect java-vm\` to set this up."
+eerror
+		die
 	else
-		die \
-"JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java.\n\
-Use \`eselect java-vm\` to set this up."
+eerror
+eerror "JAVA_HOME is set to ${JAVA_HOME} but cannot locate"
+eerror "${JAVA_HOME}/bin/java.  Use \`eselect java-vm\` to set this up."
+eerror
+		die
 	fi
 	java-pkg_ensure-vm-version-ge ${JAVA_V}
 	export JVM_V=$(java-pkg_get-target)
@@ -300,8 +316,11 @@ src_install_libmaker()
 	doexe "${T}/${MY_PN_LIBMAKER,,}"
 	doicon \
 "${S_LIBMAKER}/org/lateralgm/${MY_PN_LIBMAKER,,}/icons/lgl-128.png"
-	make_desktop_entry "/usr/bin/${MY_PN_LIBMAKER,,}" "${MY_PN_LIBMAKER}" \
-		"/usr/share/pixmaps/lgl-128.png" "Utility;FileTools"
+	make_desktop_entry \
+		"/usr/bin/${MY_PN_LIBMAKER,,}" \
+		"${MY_PN_LIBMAKER}" \
+		"/usr/share/pixmaps/lgl-128.png" \
+		"Utility;FileTools"
 	docinto licenses/libmaker
 	dodoc COPYING LICENSE README
 }
@@ -337,15 +356,16 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo \
-"When you run it the first time, it will compile the \n\
-/usr/$(get_libdir)/ENIGMAsystem/SHELL files.  What this means is that the\n\
-Run, Debug, and Compile buttons on LateralGM will not be available until\n\
-ENIGMA is done.  You need to wait."
-	einfo \
-"If you are using dwm or non-parenting window manager or a non-responsive\n\
-title bar menus, you need to:\n\
-  emerge wmname\n\
-  wmname LG3D\n\
-Run 'wmname LG3D' before you run 'lateralgm' or 'libmaker'"
+einfo
+einfo "When you run it the first time, it will compile the"
+einfo "/usr/$(get_libdir)/ENIGMAsystem/SHELL files.  What this means is the"
+einfo "Run, Debug, and Compile buttons won't appear until it completes."
+einfo
+einfo "If you are using dwm or non-parenting window manager or a non-responsive"
+einfo "title bar menus, you need to:"
+einfo "  emerge wmname"
+einfo "  wmname LG3D"
+einfo
+einfo "Run 'wmname LG3D' before you run 'lateralgm' or 'libmaker'"
+einfo
 }
