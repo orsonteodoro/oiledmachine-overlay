@@ -482,9 +482,11 @@ pkg_setup() {
 	if ( ! use system-tern && use javascript ) \
 	|| ( ! use system-typescript && use typescript ) ; then
 		if has network-sandbox $FEATURES ; then
-			die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
-download the internal dependencies."
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
+eerror "to be able to download the internal dependencies."
+eerror
+			die
 		fi
 		:;
 	fi
