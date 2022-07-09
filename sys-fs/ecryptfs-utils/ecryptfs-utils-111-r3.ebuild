@@ -145,6 +145,17 @@ LD_LIBRARY_PATH="${S}/src/libecryptfs-swig/.libs:${LD_LIBRARY_PATH}" \
 	fi
 }
 
+_install_specific_locales() {
+	[[ ! -d "${ED}/usr/share/locale/" ]] && return
+	mkdir -p "${T}/langs" || die
+	mv "${ED}/usr/share/locale/"* "${T}/langs" || die
+	insinto /usr/share/locale
+	for l in ${L10N} ; do
+		einfo "Installing language ${l}"
+		doins -r "${T}/langs/${l}"
+	done
+}
+
 src_install() {
 	emake DESTDIR="${D}" install
 	if use python; then
@@ -166,13 +177,7 @@ src_install() {
 		dodoc AUTHORS ChangeLog CONTRIBUTING THANKS
 	fi
 
-	mkdir -p "${T}/langs" || die
-	mv "${ED}/usr/share/locale/"* "${T}/langs" || die
-	insinto /usr/share/locale
-	for l in ${L10N} ; do
-		einfo "Installing language ${l}"
-		doins -r "${T}/langs/${l}"
-	done
+	_install_specific_locales
 }
 
 pkg_postinst() {
