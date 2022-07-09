@@ -42,16 +42,21 @@ PATCHES=( "${FILESDIR}/${PN}-1.3_p20191206-support-core-version-44.patch" )
 
 pkg_setup() {
 	if has network-sandbox $FEATURES ; then
-		die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to download\n\
-the internal dependencies."
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download the internal dependencies."
+eerror
+		die
 	fi
 
 	# No standard ebuild yet.
 	if use system-jdtls ; then
 		if [[ -z "${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}" ]] ; then
-			die \
-"You need to define EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH as a per-package envvar."
+eerror
+eerror "You need to define EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH as a"
+eerror "per-package envvar."
+eerror
+			die
 		fi
 	fi
 
