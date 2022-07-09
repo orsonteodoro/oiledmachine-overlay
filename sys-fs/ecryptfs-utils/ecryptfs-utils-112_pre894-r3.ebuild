@@ -88,6 +88,7 @@ eerror
 
 src_unpack() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+        einfo "Remove ${distdir}/ecryptfs-utils-src if it fails."
 	addwrite "${distdir}/ecryptfs-utils-src"
 	cd "${distdir}/ecryptfs-utils-src" || die
 	if [[ ! -f "${distdir}/ecryptfs-utils-src/configure.ac" ]] ; then
