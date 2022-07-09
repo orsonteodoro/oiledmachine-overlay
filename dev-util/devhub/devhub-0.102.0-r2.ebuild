@@ -3,6 +3,10 @@
 
 EAPI=7
 
+ELECTRON_APP_MODE=yarn
+ELECTRON_APP_ELECTRON_V="11.0.3"
+ELECTRON_APP_REACT_NATIVE_V="0.64.0_rc1"
+
 inherit desktop electron-app eutils npm-utils
 
 DESCRIPTION="GitHub Notifications Manager & Activity Watcher - Web, Mobile & \
@@ -11,14 +15,14 @@ HOMEPAGE="https://devhubapp.com"
 LICENSE="AGPL-3"
 KEYWORDS="~amd64"
 SLOT="0"
-BDEPEND+=" >=net-libs/nodejs-12[npm]
-	>=sys-apps/yarn-1.13.0"
-ELECTRON_APP_MODE=yarn
-ELECTRON_APP_ELECTRON_V="11.0.3"
-ELECTRON_APP_REACT_NATIVE_V="0.64.0_rc1"
-SRC_URI="\
-https://github.com/devhubapp/devhub/archive/v${PV}.tar.gz \
-	-> ${P}.tar.gz"
+BDEPEND+="
+	>=net-libs/nodejs-12[npm]
+	>=sys-apps/yarn-1.13.0
+"
+SRC_URI="
+https://github.com/devhubapp/devhub/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
@@ -35,7 +39,7 @@ electron-app_src_compile() {
 src_install() {
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}"
 	electron-app_desktop_install_program \
-"packages/desktop/build/linux-unpacked/*"
+		"packages/desktop/build/linux-unpacked/*"
 	electron-app_store_jsons_for_security_audit
 	npm-utils_install_licenses
 
