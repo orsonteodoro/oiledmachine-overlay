@@ -326,17 +326,21 @@ done
 
 _dotnet_sandbox_disabled_check() {
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
-		die \
-"${PN} require sandbox and usersandbox to be disabled in FEATURES on a \
-per-package basis."
+eerror
+eerror "${PN} require sandbox and usersandbox to be disabled in FEATURES on a"
+eerror "per-package basis."
+eerror
+		die
 	fi
 }
 
 _dotnet_sandbox_network_disabled_check() {
 	if has network-sandbox $FEATURES ; then
-		die \
-"${PN} require network-sandbox to be disabled in FEATURES on a per-package \
-basis."
+eerror
+eerror "${PN} require network-sandbox to be disabled in FEATURES on a"
+eerror "per-package basis."
+eerror
+		die
 	fi
 }
 
