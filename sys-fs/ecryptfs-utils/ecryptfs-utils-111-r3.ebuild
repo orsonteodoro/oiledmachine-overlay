@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI="7"
 
 PYTHON_COMPAT=( python3_{8..10} ) # fork ebuild and add for python2_7 support
 inherit autotools flag-o-matic linux-info pam python-single-r1

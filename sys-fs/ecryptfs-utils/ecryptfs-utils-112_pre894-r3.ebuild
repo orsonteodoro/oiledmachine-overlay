@@ -3,7 +3,7 @@
 
 # This ebuild uses the exact revision in 111_p20170609.
 
-EAPI="6"
+EAPI="7"
 
 PYTHON_COMPAT=( python3_{8..10} ) # fork ebuild and add for python2_7 support
 inherit autotools flag-o-matic linux-info pam python-single-r1
@@ -40,7 +40,7 @@ RDEPEND+="
 	)
 	tpm? ( app-crypt/trousers )"
 DEPEND+=" ${RDEPEND}"
-BDEPEND+=">=dev-util/intltool-0.41.0
+BDEPEND+=" >=dev-util/intltool-0.41.0
 	dev-vcs/breezy
 	sys-devel/gettext
 	virtual/pkgconfig
