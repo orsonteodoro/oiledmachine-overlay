@@ -3,6 +3,10 @@
 
 EAPI=7
 
+ELECTRON_APP_ELECTRON_V="10.4.7"
+ELECTRON_APP_TYPESCRIPT_V="4.4.4"
+ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
+
 inherit desktop electron-app eutils
 
 DESCRIPTION="Elegant Facebook Messenger desktop app"
@@ -11,12 +15,10 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND+=" >=net-libs/nodejs-14[npm]" # based on their CI
-ELECTRON_APP_ELECTRON_V="10.4.7"
-ELECTRON_APP_TYPESCRIPT_V="4.4.4"
-ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
-SRC_URI=\
-"https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz \
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI="
+https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz
+	-> ${PN}-${PV}.tar.gz
+"
 RESTRICT="mirror"
 
 electron-app_src_compile() {
@@ -40,8 +42,12 @@ src_install() {
 
 pkg_postinst() {
 	electron-app_pkg_postinst
-	einfo \
-"If you see \"Config schema violation: vibrancy should be string; vibrancy \
-should be equal to one of the allowed values,\" then"
-	einfo "you may need to run \`rm -rf ~/.config/Caprine\`"
+einfo
+einfo "If you see"
+einfo
+einfo "  \"Config schema violation: vibrancy should be string; \
+vibrancy should be equal to one of the allowed values,\""
+einfo
+einfo "then you may need to run \`rm -rf ~/.config/Caprine\`"
+einfo
 }
