@@ -18,10 +18,10 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 DEPEND=" ${PYTHON_DEPS}
 	$(python_gen_cond_dep 'dev-python/configobj[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/patiencediff[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep '>=dev-python/dulwich-0.20.23[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep '>=dev-python/fastbencode-0.0.5[${PYTHON_USEDEP}]')
 	cext? ( $(python_gen_cond_dep '>=dev-python/cython-0.29[${PYTHON_USEDEP}]') )
 	fastimport? ( $(python_gen_cond_dep 'dev-python/fastimport[${PYTHON_USEDEP}]') )
-	git? ( $(python_gen_cond_dep '>=dev-python/dulwich-0.20.23[${PYTHON_USEDEP}]') )
 	gpg? (
 		$(python_gen_cond_dep 'app-crypt/gpgme[${PYTHON_USEDEP}]')
 	)
