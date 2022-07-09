@@ -3,6 +3,9 @@
 
 EAPI=7
 
+ELECTRON_APP_ELECTRON_V="13.0.0"
+ELECTRON_APP_REACT_V="17.0.0"
+
 inherit desktop electron-app eutils npm-utils
 
 DESCRIPTION="Democratizing Snippet Management (macOS/Win/Linux)"
@@ -13,24 +16,24 @@ SLOT="0"
 DEPEND+=" dev-libs/libsass"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" net-libs/nodejs[npm]"
-SRC_URI="\
+SRC_URI="
 https://github.com/hackjutsu/Lepton/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
-ELECTRON_APP_ELECTRON_V="13.0.0"
-ELECTRON_APP_REACT_V="17.0.0"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN^}-${PV}"
 RESTRICT="mirror"
 LIBSASS_EXT="auto"
 
 pkg_setup() {
 	if [[ -z "$LEPTON_CLIENT_ID" || -z "$LEPTON_CLIENT_ID" ]] ; then
-		eerror \
-"You must define LEPTON_CLIENT_ID and LEPTON_CLIENT_SECRET in your\n\
-package.env. See:
-\n\
-https://github.com/hackjutsu/Lepton#client-idsecret\n\
-https://wiki.gentoo.org/wiki//etc/portage/package.env\n\
-https://github.com/hackjutsu/Lepton/issues/265"
+eerror
+eerror "You must define LEPTON_CLIENT_ID and LEPTON_CLIENT_SECRET in your"
+eerror "package.env. See:"
+eerror
+eerror "https://github.com/hackjutsu/Lepton#client-idsecret"
+eerror "https://wiki.gentoo.org/wiki//etc/portage/package.env"
+eerror "https://github.com/hackjutsu/Lepton/issues/265"
+eerror
 		die
 	fi
 	electron-app_pkg_setup
