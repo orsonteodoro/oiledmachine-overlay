@@ -294,19 +294,19 @@ eerror
 eerror "PGO requires a pgo system account in the video group with a password."
 eerror "Increase timestamp_timeout if frequent password request annoys you."
 eerror
-die
+			die
 		fi
 		if [[ $(id pgo) =~ "(video)" ]] ; then
 eerror
 eerror "The pgo system account must be in the video group."
 eerror
-die
+			die
 		fi
 		if [[ $(passwd --status pgo | cut -f 2 -d " ") != "P" ]] ; then
 eerror
 eerror "The pgo system account must have a password."
 eerror
-die
+			die
 		fi
 	fi
 
@@ -960,7 +960,7 @@ blender_configure_nvcc() {
 	if use nvcc ; then
 		if [[ -x "${EROOT}/opt/cuda/bin/nvcc" ]] ; then
 			mycmakeargs+=(
-		-DCUDA_NVCC_EXECUTABLE="${EROOT}/opt/cuda/bin/nvcc"
+	-DCUDA_NVCC_EXECUTABLE="${EROOT}/opt/cuda/bin/nvcc"
 			)
 		elif [[ -n "${BLENDER_NVCC_PATH}" \
 		&& -x "${EROOT}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
@@ -968,18 +968,18 @@ blender_configure_nvcc() {
 	-DCUDA_NVCC_EXECUTABLE="${EROOT}/${BLENDER_NVCC_PATH}/nvcc"
 			)
 		elif [[ -n "${BLENDER_NVCC_PATH}" \
-	&& ! -x "${EROOT}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
-			die \
-"\n\
-nvcc is unreachable from BLENDER_NVCC_PATH.  It should be an absolute path\n\
-like /opt/cuda/bin/nvcc.\n\
-\n"
+		&& ! -x "${EROOT}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
+eerror
+eerror "nvcc is unreachable from BLENDER_NVCC_PATH.  It should be an absolute"
+eerror "path like /opt/cuda/bin/nvcc."
+eerror
+			die
 		else
-			die \
-"\n\
-You need to define BLENDER_NVCC_PATH as a per-package environmental variable\n\
-containing the absolute path to nvcc e.g. /opt/cuda/bin/nvcc.\n\
-\n"
+eerror
+eerror "You need to define BLENDER_NVCC_PATH as a per-package environmental"
+eerror "variable containing the absolute path to nvcc e.g. /opt/cuda/bin/nvcc."
+eerror
+			die
 		fi
 	fi
 }
@@ -988,7 +988,7 @@ blender_configure_nvrtc() {
 	if use nvrtc ; then
 		if [[ -f "${EROOT}/opt/cuda/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
 			mycmakeargs+=(
-			-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/opt/cuda"
+	-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/opt/cuda"
 			)
 		elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
 && -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
@@ -997,14 +997,17 @@ blender_configure_nvrtc() {
 			)
 		elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
 && ! -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
-			die \
-"Cannot reach \$BLENDER_CUDA_TOOLKIT_ROOT_DIR/$(get_libdir)/libnvrtc-builtins.so"
+eerror
+eerror "Cannot reach \$BLENDER_CUDA_TOOLKIT_ROOT_DIR/$(get_libdir)/libnvrtc-builtins.so"
+eerror
+			die
 		else
-			die \
-"\n
-libnvrtc-builtins.so is unreachable.  Define BLENDER_CUDA_TOOLKIT_ROOT_DIR\n\
-as a per-package environmental variable (e.g. /opt/cuda).\n
-\n"
+eerror
+eerror "libnvrtc-builtins.so is unreachable.  Define"
+eerror "BLENDER_CUDA_TOOLKIT_ROOT_DIR as a per-package environmental variable"
+eerror "(e.g. /opt/cuda)."
+eerror
+			die
 		fi
 	fi
 }
@@ -1012,30 +1015,31 @@ as a per-package environmental variable (e.g. /opt/cuda).\n
 blender_configure_optix() {
 	if use optix ; then
 		if [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
-	&& -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+&& -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
 			mycmakeargs+=(
 		-DOPTIX_ROOT_DIR="${EROOT}/${BLENDER_OPTIX_ROOT_DIR}"
 			)
 		elif [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
-	&& ! -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-			die \
-"\n\
-Cannot reach \$BLENDER_OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
-\n"
+&& ! -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+eerror
+eerror "Cannot reach \$BLENDER_OPTIX_ROOT_DIR/include/optix.h.  Fix it?"
+eerror
+			die
 		elif [[ -n "${OPTIX_ROOT_DIR}" \
-	&& -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+&& -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
 			:;
 		elif [[ -n "${OPTIX_ROOT_DIR}" \
-	&& ! -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-"\n\
-Cannot reach \$OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
-\n"
+&& ! -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+eerror
+eerror "Cannot reach \$OPTIX_ROOT_DIR/include/optix.h.  Fix it?"
+eerror
+			die
 		else
-			die \
-"\n\
-You need to define BLENDER_OPTIX_ROOT_DIR to point to the Optix SDK folder.\n\
-The build scripts expect BLENDER_OPTIX_ROOT_DIR/include/optix.h.\n\
-\n"
+eerror
+eerror "You need to define BLENDER_OPTIX_ROOT_DIR to point to the Optix SDK"
+eerror "folder.  The build scripts expect BLENDER_OPTIX_ROOT_DIR/include/optix.h."
+eerror
+			die
 		fi
 	fi
 }
@@ -1385,17 +1389,18 @@ _src_install() {
 			"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
 		if declare -f blender_set_wrapper_deps > /dev/null ; then
 			sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
-				-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}:\${LD_LIBRARY_PATH}\"|g" \
-				-e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
-				-e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|g" \
-				-e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|g" \
-				-e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
-				-e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
+-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}:\${LD_LIBRARY_PATH}\"|g" \
+-e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
+-e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|g" \
+-e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|g" \
+-e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
+-e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
 				"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
 		else
-			sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
-				-e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
-				-e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
+			sed -i \
+-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+-e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
+-e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
 				"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
 		fi
 		exeinto /usr/bin
@@ -1405,18 +1410,20 @@ _src_install() {
 			cp "${FILESDIR}/blender-wrapper" \
 				"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
 			if declare -f blender_set_wrapper_deps > /dev/null ; then
-				sed -i -e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \
-					-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}:\${LD_LIBRARY_PATH}\"|g" \
-					-e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
-					-e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|g" \
-					-e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|g" \
-					-e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
-					-e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
+				sed -i \
+-e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \
+-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}:\${LD_LIBRARY_PATH}\"|g" \
+-e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
+-e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|g" \
+-e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|g" \
+-e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
+-e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
 					"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
 			else
-				sed -i -e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \
-					-e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
-					-e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
+				sed -i \
+-e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \
+-e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
+-e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
 					"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
 			fi
 			doexe "${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}"
