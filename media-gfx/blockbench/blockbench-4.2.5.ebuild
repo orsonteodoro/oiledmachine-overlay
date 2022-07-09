@@ -15,7 +15,8 @@ SLOT="0"
 BDEPEND+=" net-libs/nodejs[npm]"
 SRC_URI="
 https://github.com/JannisX11/blockbench/archive/v${PV}.tar.gz
-	-> ${PN}-${PV}.tar.gz"
+	-> ${PN}-${PV}.tar.gz
+"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
@@ -31,8 +32,12 @@ electron-app_src_compile() {
 
 src_install() {
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}/"
-	electron-app_desktop_install "dist/linux-unpacked/*" "icon.png" "${PN^}" \
-	"Graphics;3DGraphics" "${ELECTRON_APP_INSTALL_PATH}/blockbench \"\$@\""
+	electron-app_desktop_install \
+		"dist/linux-unpacked/*" \
+		"icon.png" \
+		"${PN^}" \
+		"Graphics;3DGraphics" \
+		"${ELECTRON_APP_INSTALL_PATH}/blockbench \"\$@\""
 	fperms 0755 ${ELECTRON_APP_INSTALL_PATH}/blockbench
 	npm-utils_install_licenses
 }
