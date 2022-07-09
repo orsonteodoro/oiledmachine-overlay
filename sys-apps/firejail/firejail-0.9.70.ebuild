@@ -828,8 +828,8 @@ pkg_setup() {
 	if use test ; then
 		if has userpriv $FEATURES ; then
 eerror
-eerror "You need to add FEATURES=-userpriv to complete testing in your"
-eerror "per-package envvars"
+eerror "You need to add FEATURES=\"\${FEATURES} -userpriv\" to complete testing"
+eerror "in your per-package envvars"
 eerror
 			die
 		fi
