@@ -410,33 +410,51 @@ pkg_setup() {
 	if use hidapi-hidraw ; then
 		linux-info_pkg_setup
 		if ! linux_config_src_exists ; then
-			ewarn "Missing kernel .config file.  Do \`make menuconfig\` and save it to fix this."
+ewarn
+ewarn "Missing kernel .config file.  Do \`make menuconfig\` and save it to fix this."
+ewarn
 		fi
 		if ! linux_chkconfig_present HIDRAW ; then
-			ewarn "You must have CONFIG_HIDRAW enabled in the kernel for hidraw joystick/controller support."
+ewarn
+ewarn "You must have CONFIG_HIDRAW enabled in the kernel for hidraw joystick/controller support."
+ewarn
 		fi
 	fi
 
 	if use android ; then
 		if [[ -z "${URHO3D_TARGET_ANDROID_SDK_VERSION}" ]] ; then
-			ewarn "URHO3D_TARGET_ANDROID_SDK_VERSION needs to be set as a per-package environmental variable"
+ewarn
+ewarn "URHO3D_TARGET_ANDROID_SDK_VERSION needs to be set as a per-package"
+ewarn "environmental variable"
+ewarn
 		fi
 		if [[ -z "${URHO3D_ANDROID_CONFIG}" ]] ; then
-			ewarn "URHO3D_ANDROID_CONFIG needs to be set as a per-package environmental variable"
+ewarn
+ewarn "URHO3D_ANDROID_CONFIG needs to be set as a per-package environmental"
+ewarn "variable"
+ewarn
 		fi
-		ewarn "The android USE flag has not been tested."
+ewarn
+ewarn "The android USE flag has not been tested."
+ewarn
 	fi
 	if use rpi ; then
 		if [[ -z "${URHO3D_RPI_CONFIG}" ]] ; then
-			ewarn "URHO3D_RPI_CONFIG needs to be set as a per-package environmental variable"
+ewarn
+ewarn "URHO3D_RPI_CONFIG needs to be set as a per-package environmental variable"
+ewarn
 		fi
-		ewarn "The rpi USE flag has not been tested."
+ewarn
+ewarn "The rpi USE flag has not been tested."
+ewarn
 	fi
 	if use native ; then
 	        if use debug; then
 	                if [[ ! ( ${FEATURES} =~ "nostrip" ) ]]; then
-	                        die \
-"Emerge again with FEATURES=\"nostrip\" or remove the debug use flag"
+eerror
+eerror "Emerge again with FEATURES=\"nostrip\" or remove the debug use flag"
+eerror
+				die
 	                fi
 	        fi
 
@@ -444,18 +462,26 @@ pkg_setup() {
 			if use check-pedantic-requirements ; then
 				glxinfo | grep  EXT_framebuffer_object &>/dev/null
 				if [[ "$?" != "0" ]]; then
-					die \
-"Video card not supported.  Your machine does not meet the minimum requirements."
+eerror
+eerror "Video card not supported.  Your machine does not meet the minimum"
+eerror "requirements."
+eerror
+					die
 				fi
 				glxinfo | grep EXT_packed_depth_stencil &>/dev/null
 				if [[ "$?" != "0" ]]; then
-					die \
-"Video card not supported.  Your machine does not meet the minimum requirements."
+eerror
+eerror "Video card not supported.  Your machine does not meet the minimum"
+eerror "requirements."
+eerror
+					die
 				fi
 				cat /proc/cpuinfo | grep sse &>/dev/null
 				if [[ "$?" != "0" ]]; then
-					die \
-"CPU not supported.  Your machine does not meet the minimum requirements."
+eerror
+eerror "CPU not supported.  Your machine does not meet the minimum requirements."
+eerror
+					die
 				fi
 			fi
 		fi
@@ -464,9 +490,11 @@ pkg_setup() {
 		if [[ -n "${EMCC_WASM_BACKEND}" && "${EMCC_WASM_BACKEND}" == "1" ]] ; then
 			:;
 		else
-			die \
-"You must switch your emscripten to wasm then do \`source /etc/profile\`.\n\
-See \`eselect emscripten\` for details."
+eerror
+eerror "You must switch your emscripten to wasm then do \`source /etc/profile\`."
+eerror "See \`eselect emscripten\` for details."
+eerror
+			die
 		fi
 
 		if eselect emscripten 2>/dev/null 1>/dev/null ; then
@@ -474,9 +502,11 @@ See \`eselect emscripten\` for details."
 				| grep -q -F -e "llvm" ; then
 				:;
 			else
-				die \
-"You must switch your emscripten to wasm then do \`source /etc/profile\`.\n\
-See \`eselect emscripten\` for details."
+eerror
+eerror "You must switch your emscripten to wasm then do \`source /etc/profile\`."
+eerror "See \`eselect emscripten\` for details."
+eerror
+				die
 			fi
 		fi
 		if [[ -z "${EMSCRIPTEN}" ]] ; then
@@ -486,7 +516,11 @@ See \`eselect emscripten\` for details."
 		local emcc_v=$(emcc --version | head -n 1 | grep -E -o -e "[0-9.]+")
 		local emscripten_v=$(echo "${EMSCRIPTEN}" | cut -f 2 -d "-")
 		if [[ "${emcc_v}" != "${emscripten_v}" ]] ; then
-			die "EMCC_V=${emcc_v} != EMSCRIPTEN_V=${emscripten_v}.  A \`eselect emscripten set <#>\` followed by \`source /etc/profile\` are required."
+eerror
+eerror "EMCC_V=${emcc_v} != EMSCRIPTEN_V=${emscripten_v}."
+eerror "A \`eselect emscripten set <#>\` followed by \`source /etc/profile\` are required."
+eerror
+			die
 		fi
 	fi
 }
@@ -546,16 +580,16 @@ _prepare_common() {
 			|| die
 
 		for f in ${files_box2d_lines[@]} ; do
-				sed -i -e "/BOX2D_2_3/d" \
-					-e "s| //BOX2D_2_4||g" \
-					${f} || die
-			done
+			sed -i -e "/BOX2D_2_3/d" \
+				-e "s| //BOX2D_2_4||g" \
+				"${f}" || die
+		done
 	else
 		for f in ${files_box2d_lines[@]} ; do
-				sed -i -e "/BOX2D_2_4/d" \
-					-e "s| //BOX2D_2_3||g" \
-					${f} || die
-			done
+			sed -i -e "/BOX2D_2_4/d" \
+				-e "s| //BOX2D_2_3||g" \
+				"${f}" || die
+		done
 	fi
 
 	local files_system_box2d_lines=(
@@ -566,14 +600,12 @@ _prepare_common() {
 	if use system-box2d && [[ "${EPLATFORM}" != "web" ]] ; then
 		rm -rf Source/ThirdParty/Box2D || die
 		for f in ${files_system_box2d_lines[@]} ; do
-				sed -i -e "/URHO3D_SYSTEM_BOX2D/d" \
-					${f} || die
-			done
+			sed -i -e "/URHO3D_SYSTEM_BOX2D/d" "${f}" || die
+		done
 	else
 		for f in ${files_system_box2d_lines[@]} ; do
-				sed -i -e "s| //\!URHO3D_SYSTEM_BOX2D||" \
-					${f} || die
-			done
+			sed -i -e "s| //\!URHO3D_SYSTEM_BOX2D||" "${f}" || die
+		done
 	fi
 }
 
@@ -596,13 +628,18 @@ src_prepare() {
 			static-libs_prepare() {
 				einfo "In static-libs_prepare"
 				cd "${BUILD_DIR}" || die
-				if [[ "${EPLATFORM}" == "android" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				if [[ "${EPLATFORM}" == "android" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					prepare_common
-				elif [[ "${EPLATFORM}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "native" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					prepare_common
-				elif [[ "${EPLATFORM}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "rpi" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					prepare_common
-				elif [[ "${EPLATFORM}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+				elif [[ "${EPLATFORM}" == "web" && ( \
+					"${ESTSH_LIB_TYPE}" == "module" || \
+					"${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					prepare_common
 				fi
 			}
@@ -634,7 +671,10 @@ _cmake-utils_src_configure() {
 		if [[ ${EAPI} != [56] ]]; then
 			die "FATAL: cmake-utils_src_prepare has not been run"
 		else
-			eqawarn "cmake-utils_src_prepare has not been run, please open a bug on https://bugs.gentoo.org/"
+eqawarn
+eqawarn "cmake-utils_src_prepare has not been run, please open a bug on"
+eqawarn "https://bugs.gentoo.org/"
+eqawarn
 		fi
 	fi
 
@@ -658,12 +698,12 @@ _cmake-utils_src_configure() {
 	local build_rules=${BUILD_DIR}/gentoo_rules.cmake
 
 	cat > "${build_rules}" <<- _EOF_ || die
-		SET (CMAKE_ASM_COMPILE_OBJECT "<CMAKE_ASM_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "ASM compile command" FORCE)
-		SET (CMAKE_ASM-ATT_COMPILE_OBJECT "<CMAKE_ASM-ATT_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c -x assembler <SOURCE>" CACHE STRING "ASM-ATT compile command" FORCE)
-		SET (CMAKE_ASM-ATT_LINK_FLAGS "-nostdlib" CACHE STRING "ASM-ATT link flags" FORCE)
-		SET (CMAKE_C_COMPILE_OBJECT "<CMAKE_C_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "C compile command" FORCE)
-		SET (CMAKE_CXX_COMPILE_OBJECT "<CMAKE_CXX_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "C++ compile command" FORCE)
-		SET (CMAKE_Fortran_COMPILE_OBJECT "<CMAKE_Fortran_COMPILER> <DEFINES> <INCLUDES> ${FCFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "Fortran compile command" FORCE)
+SET (CMAKE_ASM_COMPILE_OBJECT "<CMAKE_ASM_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "ASM compile command" FORCE)
+SET (CMAKE_ASM-ATT_COMPILE_OBJECT "<CMAKE_ASM-ATT_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c -x assembler <SOURCE>" CACHE STRING "ASM-ATT compile command" FORCE)
+SET (CMAKE_ASM-ATT_LINK_FLAGS "-nostdlib" CACHE STRING "ASM-ATT link flags" FORCE)
+SET (CMAKE_C_COMPILE_OBJECT "<CMAKE_C_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "C compile command" FORCE)
+SET (CMAKE_CXX_COMPILE_OBJECT "<CMAKE_CXX_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "C++ compile command" FORCE)
+SET (CMAKE_Fortran_COMPILE_OBJECT "<CMAKE_Fortran_COMPILER> <DEFINES> <INCLUDES> ${FCFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "Fortran compile command" FORCE)
 	_EOF_
 
 	local myCC=$(tc-getCC) myCXX=$(tc-getCXX) myFC=$(tc-getFC)
@@ -675,14 +715,14 @@ _cmake-utils_src_configure() {
 	# space separated.
 	local toolchain_file=${BUILD_DIR}/gentoo_toolchain.cmake
 	cat > ${toolchain_file} <<- _EOF_ || die
-		SET (CMAKE_ASM_COMPILER "${myCC/ /;}")
-		SET (CMAKE_ASM-ATT_COMPILER "${myCC/ /;}")
-		SET (CMAKE_C_COMPILER "${myCC/ /;}")
-		SET (CMAKE_CXX_COMPILER "${myCXX/ /;}")
-		SET (CMAKE_Fortran_COMPILER "${myFC/ /;}")
-		SET (CMAKE_AR $(type -P $(tc-getAR)) CACHE FILEPATH "Archive manager" FORCE)
-		SET (CMAKE_RANLIB $(type -P $(tc-getRANLIB)) CACHE FILEPATH "Archive index generator" FORCE)
-		SET (CMAKE_SYSTEM_PROCESSOR "${CHOST%%-*}")
+SET (CMAKE_ASM_COMPILER "${myCC/ /;}")
+SET (CMAKE_ASM-ATT_COMPILER "${myCC/ /;}")
+SET (CMAKE_C_COMPILER "${myCC/ /;}")
+SET (CMAKE_CXX_COMPILER "${myCXX/ /;}")
+SET (CMAKE_Fortran_COMPILER "${myFC/ /;}")
+SET (CMAKE_AR $(type -P $(tc-getAR)) CACHE FILEPATH "Archive manager" FORCE)
+SET (CMAKE_RANLIB $(type -P $(tc-getRANLIB)) CACHE FILEPATH "Archive index generator" FORCE)
+SET (CMAKE_SYSTEM_PROCESSOR "${CHOST%%-*}")
 	_EOF_
 
 	# We are using the C compiler for assembly by default.
@@ -712,32 +752,33 @@ _cmake-utils_src_configure() {
 			# When cross-compiling with a sysroot (e.g. with crossdev's emerge wrappers)
 			# we need to tell cmake to use libs/headers from the sysroot but programs from / only.
 			cat >> "${toolchain_file}" <<- _EOF_ || die
-				SET (CMAKE_FIND_ROOT_PATH "${SYSROOT}")
-				SET (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-				SET (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-				SET (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+SET (CMAKE_FIND_ROOT_PATH "${SYSROOT}")
+SET (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+SET (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+SET (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 			_EOF_
 		fi
 	fi
 
 	if use prefix-guest; then
 		cat >> "${build_rules}" <<- _EOF_ || die
-			# in Prefix we need rpath and must ensure cmake gets our default linker path
-			# right ... except for Darwin hosts
-			IF (NOT APPLE)
-			SET (CMAKE_SKIP_RPATH OFF CACHE BOOL "" FORCE)
-			SET (CMAKE_PLATFORM_REQUIRED_RUNTIME_PATH "${EPREFIX}/usr/${CHOST}/lib/gcc;${EPREFIX}/usr/${CHOST}/lib;${EPREFIX}/usr/$(get_libdir);${EPREFIX}/$(get_libdir)"
-			CACHE STRING "" FORCE)
+# in Prefix we need rpath and must ensure cmake gets our default linker path
+# right ... except for Darwin hosts
+IF (NOT APPLE)
 
-			ELSE ()
+SET (CMAKE_SKIP_RPATH OFF CACHE BOOL "" FORCE)
+SET (CMAKE_PLATFORM_REQUIRED_RUNTIME_PATH "${EPREFIX}/usr/${CHOST}/lib/gcc;${EPREFIX}/usr/${CHOST}/lib;${EPREFIX}/usr/$(get_libdir);${EPREFIX}/$(get_libdir)"
+CACHE STRING "" FORCE)
 
-			SET (CMAKE_PREFIX_PATH "${EPREFIX}/usr" CACHE STRING "" FORCE)
-			SET (CMAKE_MACOSX_RPATH ON CACHE BOOL "" FORCE)
-			SET (CMAKE_SKIP_BUILD_RPATH OFF CACHE BOOL "" FORCE)
-			SET (CMAKE_SKIP_RPATH OFF CACHE BOOL "" FORCE)
-			SET (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE BOOL "" FORCE)
+ELSE ()
 
-			ENDIF (NOT APPLE)
+SET (CMAKE_PREFIX_PATH "${EPREFIX}/usr" CACHE STRING "" FORCE)
+SET (CMAKE_MACOSX_RPATH ON CACHE BOOL "" FORCE)
+SET (CMAKE_SKIP_BUILD_RPATH OFF CACHE BOOL "" FORCE)
+SET (CMAKE_SKIP_RPATH OFF CACHE BOOL "" FORCE)
+SET (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE BOOL "" FORCE)
+
+ENDIF (NOT APPLE)
 		_EOF_
 	fi
 
@@ -745,12 +786,12 @@ _cmake-utils_src_configure() {
 	local common_config=${BUILD_DIR}/gentoo_common_config.cmake
 	local libdir=$(get_libdir)
 	cat > "${common_config}" <<- _EOF_ || die
-		SET (CMAKE_GENTOO_BUILD ON CACHE BOOL "Indicate Gentoo package build")
-		SET (LIB_SUFFIX ${libdir/lib} CACHE STRING "library path suffix" FORCE)
-		SET (CMAKE_INSTALL_LIBDIR ${libdir} CACHE PATH "Output directory for libraries")
-		SET (CMAKE_INSTALL_INFODIR "${EPREFIX}/usr/share/info" CACHE PATH "")
-		SET (CMAKE_INSTALL_MANDIR "${EPREFIX}/usr/share/man" CACHE PATH "")
-		SET (CMAKE_USER_MAKE_RULES_OVERRIDE "${build_rules}" CACHE FILEPATH "Gentoo override rules")
+SET (CMAKE_GENTOO_BUILD ON CACHE BOOL "Indicate Gentoo package build")
+SET (LIB_SUFFIX ${libdir/lib} CACHE STRING "library path suffix" FORCE)
+SET (CMAKE_INSTALL_LIBDIR ${libdir} CACHE PATH "Output directory for libraries")
+SET (CMAKE_INSTALL_INFODIR "${EPREFIX}/usr/share/info" CACHE PATH "")
+SET (CMAKE_INSTALL_MANDIR "${EPREFIX}/usr/share/man" CACHE PATH "")
+SET (CMAKE_USER_MAKE_RULES_OVERRIDE "${build_rules}" CACHE FILEPATH "Gentoo override rules")
 	_EOF_
 
 	# See bug 689410
@@ -762,23 +803,23 @@ _cmake-utils_src_configure() {
 
 	if [[ ${EAPI} != [56] ]]; then
 		cat >> "${common_config}" <<- _EOF_ || die
-			SET (CMAKE_INSTALL_DOCDIR "${EPREFIX}/usr/share/doc/${PF}" CACHE PATH "")
-			SET (BUILD_SHARED_LIBS ON CACHE BOOL "")
+SET (CMAKE_INSTALL_DOCDIR "${EPREFIX}/usr/share/doc/${PF}" CACHE PATH "")
+SET (BUILD_SHARED_LIBS ON CACHE BOOL "")
 		_EOF_
 	fi
 
 	# Wipe the default optimization flags out of CMake
 	if [[ ${CMAKE_BUILD_TYPE} != Gentoo && ${EAPI} != 5 ]]; then
 		cat >> ${common_config} <<- _EOF_ || die
-			SET (CMAKE_ASM_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
-			SET (CMAKE_ASM-ATT_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
-			SET (CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
-			SET (CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
-			SET (CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
-			SET (CMAKE_EXE_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
-			SET (CMAKE_MODULE_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
-			SET (CMAKE_SHARED_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
-			SET (CMAKE_STATIC_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+SET (CMAKE_ASM_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+SET (CMAKE_ASM-ATT_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+SET (CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+SET (CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+SET (CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+SET (CMAKE_EXE_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+SET (CMAKE_MODULE_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+SET (CMAKE_SHARED_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+SET (CMAKE_STATIC_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
 		_EOF_
 	fi
 
@@ -789,9 +830,16 @@ _cmake-utils_src_configure() {
 	if [[ "${mycmakeargstype}" != "declare -a mycmakeargs="* ]]; then
 		if [[ -n "${mycmakeargstype}" ]] ; then
 			if [[ ${EAPI} == 5 ]]; then
-				eqawarn "Declaring mycmakeargs as a variable is deprecated. Please use an array instead."
+eqawarn
+eqawarn "Declaring mycmakeargs as a variable is deprecated. Please use an array"
+eqawarn "instead."
+eqawarn
 			else
-				die "Declaring mycmakeargs as a variable is banned in EAPI=${EAPI}. Please use an array instead."
+eerror
+eerror "Declaring mycmakeargs as a variable is banned in EAPI=${EAPI}. Please"
+eerror "use an array instead."
+eerror
+				die
 			fi
 		fi
 		local mycmakeargs_local=(${mycmakeargs})
@@ -806,7 +854,8 @@ _cmake-utils_src_configure() {
 	fi
 
 	# Common configure parameters (overridable)
-	# NOTE CMAKE_BUILD_TYPE can be only overridden via CMAKE_BUILD_TYPE eclass variable
+	# NOTE CMAKE_BUILD_TYPE can be only overridden via CMAKE_BUILD_TYPE \
+	#   eclass variable
 	# No -DCMAKE_BUILD_TYPE=xxx definitions will be in effect.
 	local cmakeargs=(
 		${warn_unused_cli}
@@ -825,9 +874,9 @@ _cmake-utils_src_configure() {
 	fi
 
 	pushd "${BUILD_DIR}" > /dev/null || die
-	debug-print "${LINENO} ${ECLASS} ${FUNCNAME}: mycmakeargs is ${mycmakeargs_local[*]}"
-	echo "${CMAKE_BINARY}" "${cmakeargs[@]}" "${CMAKE_USE_DIR}"
-	"${CMAKE_BINARY}" "${cmakeargs[@]}" "${CMAKE_USE_DIR}" || die "cmake failed"
+		debug-print "${LINENO} ${ECLASS} ${FUNCNAME}: mycmakeargs is ${mycmakeargs_local[*]}"
+		einfo "${CMAKE_BINARY}" "${cmakeargs[@]}" "${CMAKE_USE_DIR}"
+		"${CMAKE_BINARY}" "${cmakeargs[@]}" "${CMAKE_USE_DIR}" || die "cmake failed"
 	popd > /dev/null || die
 }
 
@@ -866,7 +915,9 @@ configure_sdl() {
 
 	if [[ "${EPLATFORM}" == "android" ]] ; then
 		mycmakeargs+=(
-			-DHIDAPI=$(usex joystick $(usex hidapi-hidraw ON OFF) OFF)
+			-DHIDAPI=$(usex joystick \
+					$(usex hidapi-hidraw ON OFF) \
+					OFF)
 		)
 	elif [[ "${EPLATFORM}" == "web" ]] ; then
 		mycmakeargs+=(
@@ -874,7 +925,10 @@ configure_sdl() {
 		)
 	else
 		mycmakeargs+=(
-			-DHIDAPI=$(usex joystick $(usex hidapi-hidraw ON $(usex hidapi-libusb ON OFF)) OFF)
+			-DHIDAPI=$(usex joystick \
+					$(usex hidapi-hidraw ON \
+						$(usex hidapi-libusb ON OFF) ) \
+					OFF)
 		)
 	fi
 
@@ -939,9 +993,35 @@ configure_sdl() {
 			-DPTHREADS_SEM=$(usex threads)
 			-DPULSEAUDIO=$(usex pulseaudio)
 			-DPULSEAUDIO_SHARED=$(usex pulseaudio)
-			-DSDL_AUDIO=$(usex alsa ON $(usex esd ON $(usex jack ON $(usex nas ON $(usex oss ON $(usex pulseaudio ON $(usex sndio ON $(usex sdl_audio_disk ON OFF))))))))
+			-DSDL_AUDIO=$(usex alsa ON \
+					$(usex esd ON \
+						$(usex jack ON \
+							$(usex nas ON \
+								$(usex oss ON \
+									$(usex pulseaudio ON \
+										$(usex sndio ON \
+											$(usex sdl_audio_disk ON OFF) \
+										)\
+									)\
+								)\
+							)\
+						)\
+					)\
+				)
 			-DSDL_THREADS=$(usex threads)
-			-DSDL_VIDEO=$(usex kms ON $(usex opengl ON $(usex gles2 ON $(usex video_cards_vivante ON $(usex vulkan ON $(usex wayland ON $(usex X ON OFF)))))))
+			-DSDL_VIDEO=$(usex kms ON \
+					$(usex opengl ON \
+						$(usex gles2 ON \
+							$(usex video_cards_vivante ON \
+								$(usex vulkan ON \
+									$(usex wayland ON \
+										$(usex X ON OFF) \
+									)\
+								)\
+							)\
+						)\
+					)\
+				)
 			-DSNDIO=$(usex sndio)
 			-DVIDEO_KMSDRM=$(usex kms)
 			-DVIDEO_OPENGL=$(usex opengl)
@@ -1034,13 +1114,20 @@ configure_android() {
 
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
-			ewarn "Box2D 2.4+ breaks ABI compatibility and scripts.  Use Box2D 2.3 to maximize compatibility."
+ewarn
+ewarn "Box2D 2.4+ breaks ABI compatibility and scripts.  Use Box2D 2.3 to"
+ewarn "maximize compatibility."
+ewarn
 			mycmakeargs+=( -DBOX2D_2_4=1 )
 		elif use box2d_2_3 ; then
-			einfo "Using Box2D 2.3"
+einfo
+einfo "Using Box2D 2.3"
+einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		else
-			einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
+einfo
+einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
+einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
 	fi
@@ -1129,13 +1216,20 @@ configure_arm() {
 
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
-			ewarn "Box2D 2.4+ breaks ABI compatibility and scripts.  Use Box2D 2.3 to maximize compatibility."
+ewarn
+ewarn "Box2D 2.4+ breaks ABI compatibility and scripts.  Use Box2D 2.3 to"
+ewarn "maximize compatibility."
+ewarn
 			mycmakeargs+=( -DBOX2D_2_4=1 )
 		elif use box2d_2_3 ; then
-			einfo "Using Box2D 2.3"
+einfo
+einfo "Using Box2D 2.3"
+einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		else
-			einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
+einfo
+einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
+einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
 	fi
@@ -1228,13 +1322,20 @@ configure_native() {
 
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
-			ewarn "Using Box2D 2.4 for ${EPLATFORM} while breaking ABI compatibility and scripts.  Use Box2D 2.3 to maximize compatibility."
+ewarn
+ewarn "Using Box2D 2.4 for ${EPLATFORM} while breaking ABI compatibility and"
+ewarn "scripts.  Use Box2D 2.3 to maximize compatibility."
+ewarn
 			mycmakeargs+=( -DBOX2D_2_4=1 )
 		elif use box2d_2_3 ; then
-			einfo "Using Box2D 2.3 for ${EPLATFORM}"
+einfo
+einfo "Using Box2D 2.3 for ${EPLATFORM}"
+einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		else
-			einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
+einfo
+einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
+einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
 	fi
@@ -1341,7 +1442,10 @@ configure_rpi() {
 
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
-			ewarn "Using Box2D 2.4 for ${EPLATFORM} while breaking ABI compatibility and scripts.  Use Box2D 2.3 to maximize compatibility."
+ewarn
+ewarn "Using Box2D 2.4 for ${EPLATFORM} while breaking ABI compatibility and"
+ewarn "scripts.  Use Box2D 2.3 to maximize compatibility."
+ewarn
 			mycmakeargs+=( -DBOX2D_2_4=1 )
 		elif use box2d_2_3 ; then
 			einfo "Using Box2D 2.3 for ${EPLATFORM}"
@@ -1470,21 +1574,28 @@ src_configure() {
 			static-libs_configure() {
 				cd "${BUILD_DIR}" || die
 
-				if ( use bindings || use clang-tools ) && [[ "${EPLATFORM}" != "web" ]] ; then
+				if ( use bindings || use clang-tools ) \
+					&& [[ "${EPLATFORM}" != "web" ]] ; then
 					local chost=$(get_abi_CHOST ${ABI})
 					export CC=${chost}-clang-${LLVM_SLOT}
 					export CXX=${chost}-clang++-${LLVM_SLOT}
 				fi
 
-				if [[ "${EPLATFORM}" == "android" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				if [[	"${EPLATFORM}" == "android" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_android
-				elif [[ "${EPLATFORM}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "arm" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_arm
-				elif [[ "${EPLATFORM}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "native" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_native
-				elif [[ "${EPLATFORM}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "rpi" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_rpi
-				elif [[ "${EPLATFORM}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+				elif [[ "${EPLATFORM}" == "web" && ( \
+					"${ESTSH_LIB_TYPE}" == "module" || \
+					"${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					configure_web
 				fi
 			}
@@ -1512,22 +1623,33 @@ src_compile() {
 			static-libs_compile() {
 				cd "${BUILD_DIR}" || die
 				if [[ "${EPLATFORM}" == "android" ]] ; then
-					ewarn "src_compile for android has not been tested.  Send back fixes to ebuild maintainer."
+ewarn
+ewarn "src_compile for android has not been tested.  Send back fixes to ebuild"
+ewarn "maintainer."
+ewarn
 					if [[ -n "${URHO3D_TARGET_ANDROID_SDK_VERSION}" ]] ; then
-						android update project -p . -t ${URHO3D_TARGET_ANDROID_SDK_VERSION}
+						android update project -p . -t ${URHO3D_TARGET_ANDROID_SDK_VERSION} || die
 					else
-						android update project -p .
+						android update project -p . || die
 					fi
-					make -j 1
-					ant debug
-				elif [[ "${EPLATFORM}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+					make -j 1 || die
+					ant debug || due
+				elif [[ "${EPLATFORM}" == "arm" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					compile_common
-				elif [[ "${EPLATFORM}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "native" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					compile_common
-				elif [[ "${EPLATFORM}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
-					ewarn "src_compile for rpi has not been tested.  Send back fixes to ebuild maintainer."
+				elif [[ "${EPLATFORM}" == "rpi" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+ewarn
+ewarn "src_compile for rpi has not been tested.  Send back fixes to ebuild"
+ewarn "maintainer."
+ewarn
 					compile_common
-				elif [[ "${EPLATFORM}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+				elif [[ "${EPLATFORM}" == "web" && ( \
+					"${ESTSH_LIB_TYPE}" == "module" || \
+					"${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					compile_common
 				fi
 			}
@@ -1555,16 +1677,27 @@ src_install() {
 			static-libs_install() {
 				cd "${BUILD_DIR}" || die
 				if [[ "${EPLATFORM}" == "android" ]] ; then
-					ewarn "src_install for android has not been tested.  Send back fixes to ebuild maintainer."
+ewarn
+ewarn "src_install for android has not been tested.  Send back fixes to ebuild"
+ewarn "maintainer."
+ewarn
 					install_common
-				elif [[ "${EPLATFORM}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "arm" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					install_common
-				elif [[ "${EPLATFORM}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "native" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					install_common
-				elif [[ "${EPLATFORM}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
-					ewarn "src_install for rpi has not been tested.  Send back fixes to ebuild maintainer."
+				elif [[ "${EPLATFORM}" == "rpi" && \
+					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+ewarn
+ewarn "src_install for rpi has not been tested.  Send back fixes to ebuild"
+ewarn "maintainer."
+ewarn
 					install_common
-				elif [[ "${EPLATFORM}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+				elif [[ "${EPLATFORM}" == "web" && ( \
+					"${ESTSH_LIB_TYPE}" == "module" || \
+					"${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					install_common
 				fi
 			}
@@ -1590,7 +1723,6 @@ src_install() {
 		docinto licenses/ThirdParty/Bullet
 		dodoc Source/ThirdParty/Bullet/LICENSE.txt
 	fi
-
 
 	if use recastnavigation ; then
 		docinto licenses/ThirdParty/Detour
@@ -1712,7 +1844,7 @@ src_install() {
 		docinto licenses/ThirdParty/SQLite
 		head -n 11 \
 			Source/ThirdParty/SQLite/src/sqlite3.h \
-			> "${T}/LICENSE"
+			> "${T}/LICENSE" || die
 		dodoc "${T}/LICENSE"
 	fi
 
@@ -1722,7 +1854,7 @@ src_install() {
 	docinto licenses/ThirdParty/STB
 	tail -n 41 \
 		Source/ThirdParty/STB/stb_image.h \
-		> "${T}/LICENSE"
+		> "${T}/LICENSE" || die
 	dodoc "${T}/LICENSE"
 
 	if use lua || use luajit ; then
@@ -1760,21 +1892,21 @@ src_install() {
 
 pkg_postinst() {
 	if use native ; then
-		einfo \
-"If it segfaults, try run to the program with -gl2.  glVertexAttribDivisorARB \
-may be bugged for gl3."
+einfo
+einfo "If it segfaults, try run to the program with -gl2."
+einfo "glVertexAttribDivisorARB may be bugged for gl3."
+einfo
 	fi
 	if use web ; then
-		einfo
-		einfo \
-"You need to use emrun if testing samples.  For details see\n\
-https://emscripten.org/docs/compiling/Running-html-files-with-emrun.html"
-		einfo
-		einfo \
-"The message:\n\
-\n\
-localhost:xxxx has control of your pointer.  Press Esc to take back control.\n\
-\n\
-can be avoided using \`emrun --browser chrome <path>\`"
+einfo
+einfo "You need to use emrun if testing samples.  For details see"
+einfo "https://emscripten.org/docs/compiling/Running-html-files-with-emrun.html"
+einfo
+einfo "The message:"
+einfo
+einfo "  localhost:xxxx has control of your pointer.  Press Esc to take back control."
+einfo
+einfo "can be avoided using \`emrun --browser chrome <path>\`"
+einfo
 	fi
 }
