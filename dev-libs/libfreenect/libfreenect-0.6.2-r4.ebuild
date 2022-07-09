@@ -43,9 +43,11 @@ DOCS=( README.md )
 pkg_setup() {
 	if ! use bindist ; then
 		if has network-sandbox $FEATURES ; then
-			die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to download\n\
-the audio firmware."
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download the audio firmware."
+eerror
+			die
 		fi
 	fi
 	use python && python-single-r1_pkg_setup
