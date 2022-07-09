@@ -700,9 +700,12 @@ electron-app_pkg_setup() {
 	chromium_suid_sandbox_check_kernel_config
 
 	if has network-sandbox $FEATURES ; then
-		die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
-download micropackages and obtain version releases information."
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
+eerror "to be able to download micropackages and obtain version releases"
+eerror "information."
+eerror
+		die
 	fi
 
 	#export ELECTRON_VER=$(strings /usr/bin/electron \
