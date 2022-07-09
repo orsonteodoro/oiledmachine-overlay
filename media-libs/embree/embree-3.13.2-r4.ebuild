@@ -17,57 +17,54 @@ SLOT="${SLOT_MAJ}/${PV}"
 X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2
 avx512skx:avx512skx )
 ARM_CPU_FLAGS=( neon:neon )
-CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
-	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_} )
-IUSE+=" clang custom-cflags debug doc doc-docfiles doc-html doc-images doc-man gcc icc ispc
+CPU_FLAGS=(
+	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
+	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}
+)
+IUSE+=" clang custom-cflags debug doc doc-docfiles doc-html doc-images doc-man gcc ispc
 raymask -ssp static-libs +tbb tutorials ${CPU_FLAGS[@]%:*}"
-REQUIRED_USE+=" ^^ ( clang gcc icc )"
+REQUIRED_USE+=" ^^ ( clang gcc )"
 MIN_CLANG_V="3.3" # for c++11
 MIN_CLANG_V_AVX512SKX="3.6" # for -march=skx
 MIN_GCC_V="4.8.1" # for c++11
 MIN_GCC_V_AVX512SKX="5.1.0" # for -mavx512vl
-MIN_ICC_V="15.0" # for c++11
-MIN_ICC_V_AVX512SKX="15.0.1" # for -xCORE-AVX512
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 # 15.0.1 -xCOMMON-AVX512
-BDEPEND+=" >=dev-util/cmake-3.1.0
-	 ispc? ( >=dev-lang/ispc-1.16.1 )
-	 virtual/pkgconfig
-	 clang? (
+BDEPEND+="
+	>=dev-util/cmake-3.1.0
+	ispc? ( >=dev-lang/ispc-1.16.1 )
+	virtual/pkgconfig
+	clang? (
 		>=sys-devel/clang-${MIN_CLANG_V}
 		cpu_flags_x86_avx512skx? (
 			>=sys-devel/clang-${MIN_CLANG_V_AVX512SKX}
 		)
-	 )
-	 doc? (
+	)
+	doc? (
 		app-text/pandoc
 		dev-texlive/texlive-xetex
-	 )
-	 doc-html? (
+	)
+	doc-html? (
 		app-text/pandoc
 		media-gfx/imagemagick[jpeg]
-	 )
-	 doc-images? (
+	)
+	doc-images? (
 		media-gfx/imagemagick[jpeg]
 		media-gfx/xfig
-	 )
-	 gcc? (
+	)
+	gcc? (
 		>=sys-devel/gcc-${MIN_GCC_V}
 		cpu_flags_x86_avx512skx? (
 			>=sys-devel/gcc-${MIN_GCC_V_AVX512SKX}
 		)
-	 )
-	 icc? (
-		>=sys-devel/icc-${MIN_ICC_V}
-		cpu_flags_x86_avx512skx? (
-			>=sys-devel/icc-${MIN_ICC_V_AVX512SKX}
-		)
-	 )"
+	)
+"
 # See .gitlab-ci.yml (track: release-linux-x64-Release)
-DEPEND+=" media-libs/glfw
-	 virtual/opengl
-	 tbb? (
+DEPEND+="
+	media-libs/glfw
+	virtual/opengl
+	tbb? (
 		|| (
 			>=dev-cpp/tbb-2021.3.0:${ONETBB_SLOT}=
 			(
@@ -75,10 +72,13 @@ DEPEND+=" media-libs/glfw
 				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 			)
 		)
-	 )
-	 tutorials? ( media-libs/libpng:0=
-		     media-libs/openimageio
-		     virtual/jpeg:0 )"
+	)
+	tutorials? (
+		media-libs/libpng:0=
+		media-libs/openimageio
+		virtual/jpeg:0
+	)
+"
 RDEPEND+=" ${DEPEND}"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
@@ -90,16 +90,18 @@ PATCHES_=(
 )
 
 chcxx() {
-	die \
-"You need to switch your ${1} compiler to at least ${2} or higher \n\
-for ${3} support."
+eerror
+eerror "You need to switch your ${1} compiler to at least ${2} or higher for"
+eerror "${3} support."
+eerror
+	die
 }
 
 pkg_setup() {
 	export CMAKE_BUILD_TYPE=$(usex debug "RelWithDebInfo" "Release")
 	CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
 	WARNING_TRANSPARENT_HUGEPAGE=\
-"Not enabling Transparent Hugepages (CONFIG_TRANSPARENT_HUGEPAGE) will \n\
+"Not enabling Transparent Hugepages (CONFIG_TRANSPARENT_HUGEPAGE) will \
 impact rendering performance."
 	linux-info_pkg_setup
 
@@ -118,17 +120,6 @@ impact rendering performance."
 		if ver_test ${cc_v} -lt ${MIN_CLANG_V_AVX512SKX} \
 			&& use cpu_flags_x86_avx512skx ; then
 			chcxx "Clang" "${MIN_CLANG_V_AVX512SKX}" "AVX512-SKX"
-		fi
-	elif use icc ; then
-		export CC=icc
-		export CXX=icpc
-		local cc_v=$(icpc --version | head -n 1 | cut -f 3 -d " ")
-		if ver_test ${cc_v} -lt ${MIN_ICC_V} ; then
-			chcxx "icc" "${MIN_ICC_V}" "c++11"
-		fi
-		if ver_test ${cc_v} -lt ${MIN_ICC_V_AVX512SKX} \
-			&& use cpu_flags_x86_avx512skx ; then
-			chcxx "icc" "${MIN_ICC_V_AVX512SKX}" "AVX512-SKX"
 		fi
 	else
 		export CC=${CC_ALT:-gcc}
@@ -151,13 +142,16 @@ impact rendering performance."
 
 	if use doc-html ; then
 		if has network-sandbox $FEATURES ; then
-			die \
-"${PN} requires network-sandbox to be disabled in FEATURES to be able to use\n\
-MathJax for math rendering."
+eerror
+eerror "${PN} requires network-sandbox to be disabled in FEATURES to be able to"
+eerror "use MathJax for math rendering."
+eerror
+			die
 		fi
-		ewarn \
-"Building package may exhibit random failures with doc-html USE flag.  Emerge\n\
-and try again."
+ewarn
+ewarn "Building package may exhibit random failures with doc-html USE flag."
+ewarn "Emerge and try again."
+ewarn
 	fi
 }
 
@@ -235,7 +229,8 @@ src_configure() {
 		-DEMBREE_STATIC_LIB=$(usex static-libs)
 		-DEMBREE_STAT_COUNTERS=OFF
 		-DEMBREE_TASKING_SYSTEM:STRING=$(usex tbb "TBB" "INTERNAL")
-		-DEMBREE_TUTORIALS=$(usex tutorials) )
+		-DEMBREE_TUTORIALS=$(usex tutorials)
+	)
 
 	if use tutorials; then
 		use ispc && \
@@ -243,7 +238,8 @@ src_configure() {
 		mycmakeargs+=(
 			-DEMBREE_TUTORIALS_LIBJPEG=ON
 			-DEMBREE_TUTORIALS_LIBPNG=ON
-			-DEMBREE_TUTORIALS_OPENIMAGEIO=ON )
+			-DEMBREE_TUTORIALS_OPENIMAGEIO=ON
+		)
 	fi
 
 	if use cpu_flags_arm_neon ; then
@@ -262,13 +258,15 @@ src_configure() {
 		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="NONE" )
 	fi
 
-	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+	if ! use tbb ; then
+		:;
+	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
 			-DTBB_INCLUDE_DIR=/usr/include
 			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)
 			-DTBB_SOVER=$(echo $(basename $(realpath /usr/$(get_libdir)/libtbb.so)) | cut -f 3 -d ".")
 		)
-	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		mycmakeargs+=(
 			-DTBB_INCLUDE_DIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
 			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
@@ -332,9 +330,11 @@ src_install() {
 	docinto licenses
 	dodoc LICENSE.txt third-party-programs-TBB.txt \
 		third-party-programs.txt
-	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+	if ! use tbb ; then
 		:;
-	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+		:;
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then
@@ -350,7 +350,8 @@ src_install() {
 
 pkg_postinst() {
 	if use tutorials ; then
-		einfo \
-"The tutorial sources have been installed at /usr/share/${PN}/tutorials"
+einfo
+einfo "The tutorial sources have been installed at /usr/share/${PN}/tutorials"
+einfo
 	fi
 }

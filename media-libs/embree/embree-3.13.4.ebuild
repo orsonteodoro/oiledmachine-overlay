@@ -33,9 +33,7 @@ LEGACY_TBB_SLOT="2"
 # 15.0.1 -xCOMMON-AVX512
 BDEPEND+="
 	>=dev-util/cmake-3.1.0
-	ispc? (
-		>=dev-lang/ispc-1.17.0
-	)
+	ispc? ( >=dev-lang/ispc-1.17.0 )
 	virtual/pkgconfig
 	clang? (
 		>=sys-devel/clang-${MIN_CLANG_V}
