@@ -197,7 +197,6 @@ CHROMIUM_DEPEND="
 	libsecret? ( app-crypt/libsecret )
 	gnome-keyring? (
 		gnome-base/gnome-keyring[pam]
-		gnome-base/libgnome-keyring
 	)
 	pulseaudio? ( media-sound/pulseaudio )"
 # Electron only
