@@ -158,8 +158,8 @@ eerror
 	for u in ${PN}_pgo_trainers_http ${PN}_pgo_trainers_https ; do
                 if use "${u}" && has network-sandbox $FEATURES ; then
 eerror
-eerror "The ${u} USE flag requires FEATURES=\"-network-sandbox\" to be able to"
-eerror "download wrk to generate PGO profiles for that USE flag."
+eerror "The ${u} USE flag requires FEATURES=\"\${FEATURES} -network-sandbox\""
+eerror "to be able to download to generate PGO profiles for that USE flag."
 eerror
                         die
                 fi
