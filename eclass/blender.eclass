@@ -10,7 +10,6 @@
 
 PGO_SAMPLE_SIZE_=${PGO_SAMPLE_SIZE:=30}
 
-inherit eapi7-ver
 inherit blender-multibuild check-reqs cmake-utils flag-o-matic llvm pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
