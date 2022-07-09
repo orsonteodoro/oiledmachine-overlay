@@ -53,14 +53,14 @@ pkg_setup() {
 	fi
 	if use texinfo ; then
 ewarn
-ewarn "The texinfo USE flags may need FEATURES=\"-network-sandbox\" as a"
-ewarn "per-package environmental setting for doc generation completeness."
+ewarn "The texinfo USE flags may need FEATURES=\"\${FEATURES} -network-sandbox\""
+ewarn "as a per-package environmental setting for doc generation completeness."
 ewarn
 	fi
 	if use pdf ; then
 ewarn
-ewarn "The pdf USE flags may need FEATURES=\"-network-sandbox\" as a"
-ewarn "per-package environmental setting for doc generation completeness."
+ewarn "The pdf USE flags may need FEATURES=\"\${FEATURES} -network-sandbox\" as"
+ewarn "a per-package environmental setting for doc generation completeness."
 ewarn
 	fi
 	if use html || use man || use pdf || use singlehtml || use texinfo ; then
