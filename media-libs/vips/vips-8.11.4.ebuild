@@ -24,7 +24,8 @@ rav1e +ppm spng static-libs svg test tiff webp x265 zlib"
 REQUIRED_USE="
 	imagequant? ( png )
 	poppler? ( cairo )
-	svg? ( cairo )"
+	svg? ( cairo )
+"
 # Assumed U 20.04
 # See also https://github.com/libvips/libvips/blob/v8.11.0/.github/workflows/ci.yml
 # libnifti missing
@@ -68,7 +69,8 @@ RDEPEND+="
 	svg? ( >=gnome-base/librsvg-2.48.2[${MULTILIB_USEDEP}] )
 	tiff? ( >=media-libs/tiff-4.1.0:0=[${MULTILIB_USEDEP}] )
 	webp? ( >=media-libs/libwebp-0.6.1[${MULTILIB_USEDEP}] )
-	zlib? ( >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}] )"
+	zlib? ( >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}] )
+"
 
 LLVM_SLOTS=(14 13 12)
 
@@ -127,19 +129,24 @@ BDEPEND+="
 		$(python_gen_any_dep '>=dev-python/setuptools-45.2.0[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep '>=dev-python/wheel-0.34.2[${PYTHON_USEDEP}]')
 		|| ( $(gen_llvm_test_bdepend) )
-	)"
+	)
+"
 PDEPEND+=" python? ( dev-python/pyvips )"
 RESTRICT="mirror"
-SRC_URI="https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="
+https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz
+"
 S="${WORKDIR}/libvips-${PV}"
 DOCS=( AUTHORS ChangeLog NEWS README.md THANKS )
 
 pkg_setup() {
 	use test && python-any-r1_pkg_setup
 	if use test ; then
-		ewarn \
-"The test USE flag may find \"LeakSanitizer: detected memory leaks\" for\n\
-dependencies but not directly to prevent tests from passing successfully."
+ewarn
+ewarn "The test USE flag may find \"LeakSanitizer: detected memory leaks\" for"
+ewarn "dependencies but not directly to prevent tests from passing"
+ewarn "successfully."
+ewarn
 	fi
 
 	export CC=$(tc-getCC)
@@ -147,19 +154,26 @@ dependencies but not directly to prevent tests from passing successfully."
 
 	if [[ "${CXX}" =~ 'g++' ]] ; then
 		if ver_test $(gcc-version) -lt 9 ; then
-			ewarn \
-"Upstream tests with GCC >= 10 only.  Switch to version >= 10 if it breaks."
+ewarn
+ewarn "Upstream tests with GCC >= 10 only.  Switch to version >= 10 if it"
+ewarn "breaks."
+ewarn
 		fi
 	elif [[ "${CXX}" =~ 'clang++' ]] ; then
 		if ver_test $(clang-version) -lt 10 ; then
-			ewarn \
-"Upstream tests with clang++ >= 12 only.  Switch to version >= 12 if it breaks."
+ewarn
+ewarn "Upstream tests with clang++ >= 12 only.  Switch to version >= 12 if it"
+ewarn "breaks."
+ewarn
 		fi
 	fi
 
 	if use jpeg \
 	&& has_version "<media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}" ; then
-		die "Update to >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}"
+eerror
+eerror "Update to >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}"
+eerror
+		die
 	fi
 
 	local abis=( $(multilib_get_enabled_abis) )
@@ -168,17 +182,26 @@ dependencies but not directly to prevent tests from passing successfully."
 			if [[ "${p}" =~ "${a}" ]] ; then
 				local u=$(echo "${p}" | cut -f 1 -d ":")
 				if ! use ${u} ; then
-					einfo "Skipped sys-devel/clang[${u}]"
+einfo
+einfo "Skipped sys-devel/clang[${u}]"
+einfo
 					continue
 				fi
-				einfo "Checking sys-devel/clang[${u}]"
+einfo
+einfo "Checking sys-devel/clang[${u}]"
+einfo
 				# `emerge -1 vips` is not good enough to make
 				# the fuzzer test happy.
 				if has_version "sys-devel/clang[${u}]" ; then
-					einfo "sys-devel/clang[${u}] found"
+einfo
+einfo "sys-devel/clang[${u}] found"
+einfo
 				else
-					die \
-"Inconsistency with sys-devel/clang[${u}].  Run emerge with --deep or -D."
+eerror
+eerror "Inconsistency with sys-devel/clang[${u}].  Run emerge with --deep or"
+eerror "-D."
+eerror
+					die
 				fi
 			fi
 		done
@@ -232,11 +255,16 @@ _apply_env()
 	if [[ "${EMTR}" == "release" ]] ; then
 		:;
 	elif [[ "${EMTR}" == "test" ]] ; then
-		export ASAN_OPTIONS="suppressions=${S}/suppressions/asan.supp:detect_leaks=${detect_leaks}"
-		export ASAN_SYMBOLIZER_PATH="$(get_llvm_prefix)/bin/llvm-symbolizer"
-		export LDSHARED="${CC} -shared"
-		export LSAN_OPTIONS="suppressions=${S}/suppressions/lsan.supp"
-		export TSAN_OPTIONS="suppressions=${S}/suppressions/tsan.supp"
+		export ASAN_OPTIONS=\
+"suppressions=${S}/suppressions/asan.supp:detect_leaks=${detect_leaks}"
+		export ASAN_SYMBOLIZER_PATH=\
+"$(get_llvm_prefix)/bin/llvm-symbolizer"
+		export LDSHARED=\
+"${CC} -shared"
+		export LSAN_OPTIONS=\
+"suppressions=${S}/suppressions/lsan.supp"
+		export TSAN_OPTIONS=\
+"suppressions=${S}/suppressions/tsan.supp"
 		export UBSAN_OPTIONS=\
 "suppressions=${S}/suppressions/ubsan.supp:print_stacktrace=1"
 		export LD_LIBRARY_PATH=\
@@ -299,11 +327,13 @@ src_configure_abi() {
 
 		LLVM_MAX_SLOT=
 		for s in ${LLVM_SLOTS[@]} ; do
-			if has_version "sys-devel/clang:${s}" \
-				&& has_version "=sys-devel/clang-runtime-${s}*" \
-				&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*" \
+			if has_version  "sys-devel/clang:${s}" \
+			&& has_version "=sys-devel/clang-runtime-${s}*" \
+			&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*" \
 				; then
-				einfo "Using clang:${s}"
+einfo
+einfo "Using clang:${s}"
+einfo
 				LLVM_MAX_SLOT=${s}
 				llvm_pkg_setup
 				break
@@ -326,7 +356,10 @@ eerror
 		local chost=$(get_abi_CHOST ${DEFAULT_ABI})
 		local ctarget=$(get_abi_CTARGET)
 		if use test && [[ -n "${ctarget}" ]] ; then
-			die "Testing with the test USE flag can only be preformed on BDEPEND (CHOST or compat)."
+eerror
+eerror "Testing with the test USE flag can only be preformed on BDEPEND (CHOST"
+eerror "or compat)."
+eerror
 		fi
 		[[ -z "${ctarget}" ]] && ctarget=$(get_abi_CHOST ${ABI})
 		einfo "chost=${chost}"
@@ -408,34 +441,44 @@ preload_libsan() {
 	if use test ; then
 		case ${ABI} in
 			amd64)
-		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-x86_64.so))
+		export ASAN_DSO=$(realpath \
+			$(${CC} -print-file-name=libclang_rt.asan-x86_64.so))
 				;;
 			x86)
-		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-i386.so))
+		export ASAN_DSO=$(realpath \
+			$(${CC} -print-file-name=libclang_rt.asan-i386.so))
 				;;
 			arm64)
-		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-aarch64.so))
+		export ASAN_DSO=$(realpath \
+			$(${CC} -print-file-name=libclang_rt.asan-aarch64.so))
 				;;
 			arm)
-		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-arm.so))
+		export ASAN_DSO=$(realpath \
+			$(${CC} -print-file-name=libclang_rt.asan-arm.so))
 				;;
 			*)
-			ewarn "Guessing ABI for libclang_rt.asan-${ABI}.so, may likely fail."
-		export ASAN_DSO=$(realpath $(${CC} -print-file-name=libclang_rt.asan-${ABI}.so))
+ewarn
+ewarn "Guessing ABI for libclang_rt.asan-${ABI}.so, may likely fail."
+ewarn
+		export ASAN_DSO=$(realpath \
+			$(${CC} -print-file-name=libclang_rt.asan-${ABI}.so))
 				;;
 		esac
 		if [[ ! -f "${ASAN_DSO}" ]] ; then
 			# This may be OS dependent
-			die \
-"Report to ebuild maintainer about the correct libclang_rt.asan-\${ABI}.so to use."
+eerror
+eerror "Report to ebuild maintainer about the correct"
+eerror "libclang_rt.asan-\${ABI}.so to use."
+eerror
+			die
 		fi
 		export DLCLOSE_PRELOAD="${BUILD_DIR}/dlclose.so"
 		export LD_PRELOAD="${ASAN_DSO} ${DLCLOSE_PRELOAD}"
 		export SANDBOX_ON=0 # \
 		# Restated from the toolchain.eclass:
 		# libsandbox.so wants to be loaded first in LD_PRELOAD but so
-		# does libasan.  We must disable the sandbox in order to
-		# preform asan tests.
+		# does libasan.  We must disable the sandbox in order to preform
+		# asan tests.
 	fi
 }
 
