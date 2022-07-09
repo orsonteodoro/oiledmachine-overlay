@@ -18,9 +18,12 @@ IUSE+=" debug system-clangd system-gocode system-godef system-libclang
 system-racerd ycmd-43"
 YCMD_SLOT_43_LLVM_V=10.0
 YCMD_SLOT_43_LLVM_V_MAJ=$(ver_cut 1 ${YCMD_SLOT_43_LLVM_V})
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
-	^^ ( ycmd-43 )"
-DEPEND+=" ${PYTHON_DEPS}
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+	^^ ( ycmd-43 )
+"
+DEPEND+="
+	${PYTHON_DEPS}
         dev-libs/jsoncpp
         dev-libs/openssl
 	dev-util/geany
@@ -30,11 +33,13 @@ DEPEND+=" ${PYTHON_DEPS}
 		sys-devel/clang:${YCMD_SLOT_43_LLVM_V_MAJ}
 		sys-devel/llvm:${YCMD_SLOT_43_LLVM_V_MAJ}
 	)
-	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]') )"
+	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]') )
+"
 RDEPEND+=" ${DEPEND}"
 SRC_URI="
 https://github.com/jakeanq/gycm/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
@@ -113,26 +118,28 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo \
-"You need two files .ycm_extra_conf.py and ycmd.json.\n\
-\n\
-A .ycm_extra_conf.py template is copied to your /usr/share/${PN} and should\n\
-be modified per project.  This file needs to be copied to your project's
-root containing your main configure script.\n\
-\n\
-A copy of ycmd.json can be found as /usr/share/gycm/ycmd.json and should be\n\
-copied to /home/<user>/.config/geany/plugins/gycm/ycmd.json.\n\
-C/C++/Objective C/Objective C++ users need to define\n\
-/home/<user>/.config/geany/plugins/gycm/ycmd.json which the\n\
-global_ycm_extra_conf property should be the full path pointing to your\n\
-project's .ycm_extra_conf.py.\n\
-\n\
-Consider emerging ycm-generator to generate a .ycm_extra_conf.py for your\n\
-project.  This generated .ycm_extra_conf.py may need to be sligtly modified.\n\
-\n\
-It may also crash Geany on startup if there is an undeclared variable.  Fix\n\
-the errors first.\n\
-\n\
-Geany may need to be restarted in order for completion to work after enabling\n\
-the plugin."
+einfo
+einfo "You need two files .ycm_extra_conf.py and ycmd.json."
+einfo
+einfo "A .ycm_extra_conf.py template is copied to your /usr/share/${PN} and"
+einfo "should be modified per project.  This file needs to be copied to your"
+einfo "project's root containing your main configure script."
+einfo
+einfo "A copy of ycmd.json can be found as /usr/share/gycm/ycmd.json and should"
+einfo "be copied to /home/<user>/.config/geany/plugins/gycm/ycmd.json."
+einfo "C/C++/Objective C/Objective C++ users need to define"
+einfo "/home/<user>/.config/geany/plugins/gycm/ycmd.json which the"
+einfo "global_ycm_extra_conf property should be the full path pointing to your"
+einfo "project's .ycm_extra_conf.py."
+einfo
+einfo "Consider emerging ycm-generator to generate a .ycm_extra_conf.py for"
+einfo "your project.  This generated .ycm_extra_conf.py may need to be sligtly"
+einfo "modified."
+einfo
+einfo "It may also crash Geany on startup if there is an undeclared variable."
+einfo "Fix the errors first."
+einfo
+einfo "Geany may need to be restarted in order for completion to work after"
+einfo "enabling the plugin."
+einfo
 }
