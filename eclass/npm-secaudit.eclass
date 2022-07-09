@@ -155,9 +155,11 @@ npm-secaudit_pkg_setup() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	if has network-sandbox $FEATURES ; then
-		die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
-download micropackages."
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download micropackages."
+eerror
+		die
 	fi
 
 	# For @electron/get caches used by electron-packager and electron-builder, see
