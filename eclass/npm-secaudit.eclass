@@ -69,8 +69,11 @@ ${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL:="Critical"}
 
 _NPM_SECAUDIT_REG_PATH=${_NPM_SECAUDIT_REG_PATH:=""} # private set only within in the eclass
 if [[ -n "${NPM_SECAUDIT_REG_PATH}" ]] ; then
-die "NPM_SECAUDIT_REG_PATH has been removed and replaced with\n\
-NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
+eerror
+eerror "NPM_SECAUDIT_REG_PATH has been removed and replaced with"
+eerror "NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
+eerror
+	die
 fi
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
@@ -162,7 +165,8 @@ eerror
 		die
 	fi
 
-	# For @electron/get caches used by electron-packager and electron-builder, see
+	# For @electron/get caches used by electron-packager and
+	# electron-builder, see
 # https://github.com/electron/get#using-environment-variables-for-mirror-options
 	# export ELECTRON_CUSTOM_DIR="${ELECTRON_APP_DATA_DIR}/at-electron-get"
 	# mkdir -p ${ELECTRON_CUSTOM_DIR} || die
@@ -185,9 +189,10 @@ eerror
 	fi
 
 	if has_version "<net-libs/nodejs-${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}" ; then
-		ewarn \
-"You have a nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} which\n\
-is End Of Life (EOL) and has vulnerabilities."
+ewarn
+ewarn "You have a nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}"
+ewarn "which is End Of Life (EOL) and has vulnerabilities."
+ewarn
 	fi
 
 	npm-utils_is_nodejs_header_exe_same
@@ -209,7 +214,8 @@ is End Of Life (EOL) and has vulnerabilities."
 npm-secaudit_fetch_deps() {
 	pushd "${S}" || die
 		local install_args=()
-		# Avoid adding fsevent (a MacOS dependency) which may require older node
+		# Avoid adding fsevent (a MacOS dependency) which may require
+		# older node
 		if [[ -e "yarn.lock" ]] ; then
 			grep -q -F -e "chokidar" "yarn.lock" \
 				&& install_args+=( --no-optional )
@@ -225,7 +231,9 @@ npm-secaudit_fetch_deps() {
 		fi
 		npm_update_package_locks_recursive ./
 		rm "${HOME}/npm/_logs"/* 2>/dev/null
-		einfo "Running npm install ${install_args[@]} inside npm-secaudit_fetch_deps"
+einfo
+einfo "Running npm install ${install_args[@]} inside npm-secaudit_fetch_deps"
+einfo
 		npm install ${install_args[@]} || die
 		npm_check_npm_error
 	popd
@@ -243,9 +251,9 @@ npm-secaudit_src_unpack() {
 		default_src_unpack
 	fi
 
-	# all the phase hooks get run in unpack because of download restrictions
+	# All the phase hooks get run in unpack because of download restrictions
 
-	cd "${S}"
+	cd "${S}" || die
 	if declare -f npm-secaudit_src_preprepare > /dev/null ; then
 		npm-secaudit_src_preprepare
 	fi
@@ -253,17 +261,17 @@ npm-secaudit_src_unpack() {
 	# Inspect before downloading
 	npm-secaudit_audit_dev
 
-	cd "${S}"
+	cd "${S}" || die
 	if declare -f npm-secaudit_src_prepare > /dev/null ; then
 		npm-secaudit_src_prepare
 	else
 		npm-secaudit_src_prepare_default
 	fi
 
-	cd "${S}"
+	cd "${S}" || die
 	npm-secaudit_audit_fix
 
-	cd "${S}"
+	cd "${S}" || die
 	if declare -f npm-secaudit_src_postprepare > /dev/null ; then
 		npm-secaudit_src_postprepare
 	fi
@@ -273,7 +281,7 @@ npm-secaudit_src_unpack() {
 	# generates vulnerable code.
 	npm-secaudit_audit_dev
 
-	cd "${S}"
+	cd "${S}" || die
 	if declare -f npm-secaudit_src_compile > /dev/null ; then
 		npm-secaudit_src_compile
 	else
@@ -371,8 +379,11 @@ npm-secaudit_src_compile_default() {
 # This function MUST be called in post_inst.
 npm-secaudit-register() {
 	if [[ -n "${NPM_SECAUDIT_REG_PATH}" ]] ; then
-	die "NPM_SECAUDIT_REG_PATH has been removed and replaced with\n\
-	NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
+ewarn
+ewarn "NPM_SECAUDIT_REG_PATH has been removed and replaced with"
+ewarn "NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
+ewarn
+		die
 	fi
 	[[ -z "${NPM_SECAUDIT_INSTALL_PATH}" ]] && die "NPM_SECAUDIT_INSTALL_PATH must be defined"
 	while true ; do
@@ -405,10 +416,11 @@ npm-secaudit-register() {
 			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
 			break
 		else
-			einfo \
-"Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes too\n\
-long (15 min), cancel all emerges and remove\n\
-${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
+einfo
+einfo "Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes"
+einfo "too long (15 min), cancel all emerges and remove"
+einfo "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
+einfo
 			sleep 15
 		fi
 	done
@@ -538,9 +550,11 @@ npm-secaudit_src_preinst_default() {
 # Checks if NPM_SECAUDIT_INSTALL_PATH has been defined.
 _npm-secaudit_check_missing_install_path() {
 	if [[ -z "${NPM_SECAUDIT_INSTALL_PATH}" ]] ; then
-		die \
-"You must specify NPM_SECAUDIT_INSTALL_PATH.  Usually same location as\n\
-/usr/\$(get_libdir)/node/\${PN}/\${SLOT} without \$ED."
+eerror
+eerror "You must specify NPM_SECAUDIT_INSTALL_PATH.  Usually same location as"
+eerror "/usr/\$(get_libdir)/node/\${PN}/\${SLOT} without \$ED."
+eerror
+		die
 	fi
 }
 
@@ -630,10 +644,11 @@ npm-secaudit_pkg_postrm() {
 			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
 			break
 		else
-			einfo \
-"Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes too\n\
-long (15 min), cancel all emerges and remove\n\
-${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
+einfo
+einfo "Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes"
+einfo "too long (15 min), cancel all emerges and remove"
+einfo "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
+einfo
 			sleep 15
 		fi
 	done
@@ -646,10 +661,11 @@ ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
 			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 			break
 		else
-			einfo \
-"Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If it\n\
-takes too long (15 min), cancel all emerges and remove\n\
-${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
+einfo
+einfo "Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If"
+einfo "it takes too long (15 min), cancel all emerges and remove"
+einfo "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
+einfo
 			sleep 15
 		fi
 	done
@@ -658,7 +674,9 @@ ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 # @FUNCTION: npm-secaudit_store_package_jsons
 # @DESCRIPTION: Saves the package-lock.json to T for auditing
 npm-secaudit_store_package_jsons() {
-	einfo "Saving package-lock.json and npm-shrinkwrap.json for future audits"
+einfo
+einfo "Saving package-lock.json and npm-shrinkwrap.json for future audits"
+einfo
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
@@ -691,7 +709,9 @@ npm-secaudit_store_package_jsons() {
 # @DESCRIPTION: Restores the package-lock.json to T for auditing
 npm-secaudit_restore_package_jsons() {
 	local dest="${1}"
-	einfo "Restoring package-lock.json and npm-shrinkwrap.json to ${dest}"
+einfo
+einfo "Restoring package-lock.json and npm-shrinkwrap.json to ${dest}"
+einfo
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
