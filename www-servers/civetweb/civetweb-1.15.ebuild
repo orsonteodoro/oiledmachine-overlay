@@ -4,7 +4,7 @@
 EAPI=7
 
 LUA_COMPAT=( lua5-{1..4} ) # building with 5.1 is broken
-inherit cmake-utils lua multilib-minimal static-libs
+inherit cmake-utils eutils flag-o-matic lua multilib-minimal static-libs
 
 DESCRIPTION="CivetWeb is an embedded C++ web server"
 HOMEPAGE="https://github.com/civetweb"
@@ -23,7 +23,8 @@ REQUIRED_USE+="
 	lua_targets_lua5-4? ( lua )
 	ssl? ( ^^ ( ssl_1_0 ssl_1_1 ) )
 	^^ ( c11 c89 c99 gnu17 )
-	^^ ( c++98 c++11 c++14 )"
+	^^ ( c++98 c++11 c++14 )
+"
 # CMakeLists.txt lists versions
 # See https://github.com/civetweb/civetweb/tree/v1.15/src/third_party
 LUA_5_1_MIN="5.1.5"
@@ -31,29 +32,28 @@ LUA_5_2_MIN="5.2.4"
 LUA_5_3_MIN="5.3.6"
 LUA_5_4_MIN="5.4.3"
 # CI uses U 14.04
-DEPEND+=" >=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
+LUA_IMPLS=(5.1 5.2 5.3 5.4)
+LUA_PV_SUPPORTED=( 5.1.5 5.2.4 5.3.5 5.4.0 ) # Upstream supported specifically
+gen_lua_targets() {
+	for x in ${LUA_IMPLS[@]} ; do
+		local v="LUA_${x/./_}_MIN"
+		echo "
+		lua_targets_lua${x/./-}? (
+			>=dev-lang/lua-${!v}:${x}=[${MULTILIB_USEDEP}]
+			>=dev-lang/lua-extra-headers-${!v}:${x}=
+		)
+		"
+	done
+}
+DEPEND+="
+	>=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
 	virtual/libc
 	lua? (
+		$(gen_lua_targets)
 		${LUA_DEPS}
 		>=dev-lua/luafilesystem-1.6.3[${MULTILIB_USEDEP},${LUA_USEDEP}]
 		>=dev-lua/luasqlite3-0.9.3[${MULTILIB_USEDEP},${LUA_USEDEP}]
 		>=dev-lua/luaxml-1.8[${LUA_USEDEP}]
-		lua_targets_lua5-1? (
-		>=dev-lang/lua-${LUA_5_1_MIN}:5.1=[${MULTILIB_USEDEP}]
-		>=dev-lang/lua-extra-headers-${LUA_5_1_MIN}:5.1=
-		)
-		lua_targets_lua5-2? (
-		>=dev-lang/lua-${LUA_5_2_MIN}:5.2=[${MULTILIB_USEDEP}]
-		>=dev-lang/lua-extra-headers-${LUA_5_2_MIN}:5.2=
-		)
-		lua_targets_lua5-3? (
-		>=dev-lang/lua-${LUA_5_3_MIN}:5.3=[${MULTILIB_USEDEP}]
-		>=dev-lang/lua-extra-headers-${LUA_5_3_MIN}:5.3=
-		)
-		lua_targets_lua5-4? (
-		>=dev-lang/lua-${LUA_5_4_MIN}:5.4=[${MULTILIB_USEDEP}]
-		>=dev-lang/lua-extra-headers-${LUA_5_4_MIN}:5.4=
-		)
 	)
 	ssl? (
 		ssl_1_1? ( =dev-libs/openssl-1.1*[${MULTILIB_USEDEP}] )
@@ -64,16 +64,22 @@ DEPEND+=" >=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
 			)
 		)
 	)
-	zlib? ( sys-libs/zlib[${MULTILIB_USEDEP}] )"
+	zlib? ( sys-libs/zlib[${MULTILIB_USEDEP}] )
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.3.0"
 SRC_URI="
 https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz \
-	-> ${P}.tar.gz"
-inherit eutils flag-o-matic
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/civetweb-${PV}"
-DOCS=( docs/Embedding.md docs/OpenSSL.md README.md RELEASE_NOTES.md \
-docs/UserManual.md )
+DOCS=(
+	docs/Embedding.md
+	docs/OpenSSL.md
+	docs/UserManual.md
+	README.md
+	RELEASE_NOTES.md
+)
 _PATCHES=(
 	"${FILESDIR}/civetweb-1.13-disable-pedantic-errors.patch"
 	"${FILESDIR}/civetweb-1.13-change-cmake-for-lua-dependencies-v2.patch"
@@ -82,33 +88,44 @@ _PATCHES=(
 
 pkg_setup() {
 	if use lua_targets_lua5-3 || use lua_targets_lua5-4 ; then
-		ewarn "Lua >=5.3 support is for testing only"
+ewarn
+ewarn "Lua >=5.3 support is for testing only."
+ewarn
 	fi
 	if use test ; then
-		ewarn "The test USE flag has not been tested yet."
+ewarn
+ewarn "The test USE flag has not been tested yet."
+ewarn
 		if has network-sandbox $FEATURES ; then
-			die \
-"${PN} requires network-sandbox to be disabled in FEATURES in order to\n\
-download test dependencies."
+eerror
+eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
+eerror "download test dependencies."
+eerror
+			die
 		fi
 	fi
 
-	V_SLOT=( 5.1.5 5.2.4 5.3.5 5.4.0 )
-	for s in ${V_SLOT[@]} ; do
+	for s in ${LUA_PV_SUPPORTED[@]} ; do
 		if has_version "dev-lang/lua:$(ver_cut 1-2 ${s})" ; then
 			best_v=$(best_version "dev-lang/lua:$(ver_cut 1-2 ${s})")
 			best_v=$(echo "${best_v}" | cut -f 3- -d '-')
 			best_v=$(ver_cut 1-3 ${best_v})
 			if ver_test ${best_v} -ne ${s} ; then
-				die \
-"The system's Lua is not ${s}.  Disable the lua dep or emerge with same point \
-release."
+eerror
+eerror "The system's Lua is not ${s}.  Disable the lua dep or emerge with same"
+eerror "point release."
+eerror
+				die
 			fi
 		fi
 	done
 
 	if [[ -f /usr/include/lua.h ]] ; then
-		die "/usr/include/lua.h must be removed.  Switch lua implementation to alternative and back again via eselect."
+eerror
+eerror "/usr/include/lua.h must be removed.  Switch lua implementation to"
+eerror "alternative and back again via eselect."
+eerror
+		die
 	fi
 }
 
@@ -173,12 +190,17 @@ _configure() {
 		-DCIVETWEB_BUILD_TESTING=$(usex test)
 		-DCIVETWEB_C_STANDARD=$(usex gnu17 gnu17 \
 			$(usex c11 c11 \
-			$(usex c99 c99 \
-			$(usex c89 c89 auto))))
+				$(usex c99 c99 \
+					$(usex c89 c89 auto) \
+				) \
+			) \
+		)
 		-DCIVETWEB_CXX_ENABLE_LTO=$(usex lto)
 		-DCIVETWEB_CXX_STANDARD=$(usex c++14 c++14 \
 						$(usex c++11 c++11 \
-						$(usex c++98 c++11 auto)))
+							$(usex c++98 c++11 auto) \
+						) \
+					)
 		-DCIVETWEB_ENABLE_SERVER_EXECUTABLE=$(usex server_executable)
 		-DCIVETWEB_DISABLE_CACHING=$(usex caching "OFF" "ON")
 		-DCIVETWEB_DISABLE_CGI=$(usex cgi "OFF" "ON")
