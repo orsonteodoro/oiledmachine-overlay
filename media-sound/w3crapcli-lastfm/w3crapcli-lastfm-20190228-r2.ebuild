@@ -2,29 +2,46 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit eutils
+
 DESCRIPTION="w3crapcli/last.fm provides a command line interface for the
 last.fm web service"
-HOMEPAGE="https://github.com/l29ah/w3crapcli"
 LICENSE="WTFPL-2"
+HOMEPAGE="https://github.com/l29ah/w3crapcli"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
-IUSE="doc download-tracks gettracks glistfm grab-lastfm-userpic lastfmpost \
+IUSE+=" doc download-tracks gettracks glistfm grab-lastfm-userpic lastfmpost
 mpv mplayerfm savedconfig"
-DEPEND="download-tracks? ( app-shells/zsh
-			   app-text/tidy-html5
-			   dev-haskell/haxml
-			   net-misc/curl
-			   net-misc/wget )
-	gettracks? ( dev-lang/ghc
-			net-misc/curl )
+REQUIRED_USE+=" !savedconfig" # \
+# Potential security problem.  Portage doesn't encrypt environment.bz2
+# especially security sensitive variables.
+# Some setups may have unencrypted root but encrypted home.
+DEPEND+="
+	download-tracks? (
+		app-shells/zsh
+		app-text/tidy-html5
+		dev-haskell/haxml
+		net-misc/curl
+		net-misc/wget
+	)
+	gettracks? (
+		dev-lang/ghc
+		net-misc/curl
+	)
 	glistfm? ( net-misc/curl )
 	grab-lastfm-userpic? ( net-misc/wget )
 	lastfmpost? ( net-misc/wget )
-	mplayerfm? ( media-sound/scrobbler
-		     media-libs/mutagen )
-	mpv? ( dev-lang/lua
+	mplayerfm? (
 		media-sound/scrobbler
-		media-video/mpv[lua] )"
+		media-libs/mutagen
+	)
+	mpv? (
+		dev-lang/lua
+		media-sound/scrobbler
+		media-video/mpv[lua]
+	)
+"
 # use media-sound/scrobbler from booboo overlay
 EGIT_COMMIT="77265c0e94cc86d705fdc5ec47beffcea899a933"
 FN_PREFIX="w3crapcli-last.fm-${EGIT_COMMIT}-"
@@ -49,11 +66,13 @@ url_generator() {
 	done
 	echo ${s}
 }
-SRC_URI=\
-"$(url_generator)
-https://github.com/l29ah/w3crapcli/blob/${EGIT_COMMIT}/LICENSE -> w3crapcli-${EGIT_COMMIT}-LICENSE
-https://github.com/l29ah/w3crapcli/blob/${EGIT_COMMIT}/README.md -> w3crapcli-${EGIT_COMMIT}-README.md"
-inherit eutils
+SRC_URI="
+$(url_generator)
+https://github.com/l29ah/w3crapcli/blob/${EGIT_COMMIT}/LICENSE
+	-> w3crapcli-${EGIT_COMMIT}-LICENSE
+https://github.com/l29ah/w3crapcli/blob/${EGIT_COMMIT}/README.md
+	-> w3crapcli-${EGIT_COMMIT}-README.md
+"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 DOCS=( README.md )
@@ -74,10 +93,12 @@ APP_API_KEY="myappapikey"
 APP_SHARED_SECRET="myappsharedsecret"
 ------------------ CUT ABOVE -------------------------------
 EOF
-		die \
-"You must fill out your own savedconfig before preceeding.  Copy and edit the\n\
-into /etc/portage/savedconfig/media-sound/${PN}-${PV} and try again.  Make\n\
-sure the permission is 700."
+eerror
+eerror "You must fill out your own savedconfig before preceeding.  Copy and"
+eerror "edit the into /etc/portage/savedconfig/media-sound/${PN}-${PV} and try"
+eerror "again.  Make sure the permission is 700."
+eerror
+			die
 		fi
 	fi
 }
@@ -125,7 +146,7 @@ cpown() {
 	chown -R ${USEROWNER}:${USERGROUP} \
 		"${d}/${src_basename}" || die
 	einfo "Copied ${src_basename} to ${dest}"
-	chown 0700 "${d}/${src_basename}"
+	chown 0700 "${d}/${src_basename}" || die
 }
 
 _set_settings() {
@@ -169,12 +190,15 @@ _set_settings() {
 }
 
 pkg_postinst() {
-	einfo \
-"Obtain an API key from http://www.last.fm/api/accounts .  You need to add\n\
-the user home directory to the PATH environmental variable in ~/.bashrc ."
+einfo
+einfo "Obtain an API key from http://www.last.fm/api/accounts .  You need to"
+einfo "add the user home directory to the PATH environmental variable in"
+einfo "~/.bashrc ."
+einfo
 	if ! use savedconfig ; then
-		einfo \
-"Do a \`emerge ${PN} --config\` to manually complete the installation."
+einfo
+einfo "Do a \`emerge ${PN} --config\` to manually complete the installation."
+einfo
 	else
 		source "/etc/portage/savedconfig/media-sound/${PN}-${PV}"
 		_set_settings
