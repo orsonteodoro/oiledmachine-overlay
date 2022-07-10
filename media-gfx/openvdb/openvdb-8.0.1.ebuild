@@ -9,8 +9,8 @@ PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake flag-o-matic python-single-r1
 
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
-HOMEPAGE="https://www.openvdb.org"
 LICENSE="MPL-2.0"
+HOMEPAGE="https://www.openvdb.org"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 SLOT="0"
 OPENVDB_ABIS=( 6 7 8 )
@@ -19,11 +19,11 @@ OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 X86_CPU_FLAGS=( avx sse4_2 )
 IUSE+=" ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}"
 IUSE+=" ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat"
-IUSE+=" +blosc doc -imath-half +jemalloc -log4cplus -numpy -python
-+static-libs -tbbmalloc -no-concurrent-malloc -openexr test -vdb_lod +vdb_print
--vdb_render -vdb_view"
+IUSE+=" +blosc doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
+-tbbmalloc -no-concurrent-malloc -openexr test -vdb_lod +vdb_print -vdb_render
+-vdb_view"
 VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
-# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/CMakeLists.txt#L205
+# For abi versions, see https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/CMakeLists.txt#L205
 REQUIRED_USE+="
 	^^ ( ${OPENVDB_ABIS_[@]} )
 	^^ ( jemalloc tbbmalloc no-concurrent-malloc )
@@ -32,8 +32,8 @@ REQUIRED_USE+="
 	python? ( ${PYTHON_REQUIRED_USE} )
 "
 # See
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/doc/dependencies.txt
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.1.0/ci/install.sh
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/doc/dependencies.txt
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/ci/install.sh
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 
@@ -98,7 +98,8 @@ DEPEND+="
 		x11-libs/libXxf86vm
 		>=media-libs/glfw-3.3
 		media-libs/mesa[egl(+)]
-	)"
+	)
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	|| (
@@ -122,16 +123,16 @@ BDEPEND+="
 	test? (
 		>=dev-util/cppunit-1.10
 		>=dev-cpp/gtest-1.8
-	)"
+	)
+"
 SRC_URI="
 https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 PATCHES=(
 	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
 	"${FILESDIR}/${PN}-8.0.1-add-consistency-for-NumPy-find_package-call.patch"
 	"${FILESDIR}/${PN}-8.1.0-glfw-libdir.patch"
-	"${FILESDIR}/${PN}-8.2.0-fix-finding-ilmbase-if-imath-and-ilmbase-are-installed.patch"
-	"${FILESDIR}/${PN}-8.2.0-unconditionally-search-Python-interpreter.patch"
 )
 RESTRICT="!test? ( test )"
 
@@ -153,8 +154,8 @@ src_prepare() {
 	sed -i -e "s|lib/cmake|$(get_libdir)/cmake|g" \
 		cmake/OpenVDBGLFW3Setup.cmake || die
 	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		eapply "${FILESDIR}/openvdb-8.1.0-findtbb-more-debug-messages.patch"
-		eapply "${FILESDIR}/openvdb-8.1.0-prioritize-onetbb.patch"
+		eapply "${FILESDIR}/openvdb-8.0.1-findtbb-more-debug-messages.patch"
+		eapply "${FILESDIR}/openvdb-8.0.1-prioritize-onetbb.patch"
 	fi
 }
 
@@ -173,10 +174,15 @@ src_configure() {
 		-DCHOST="${CHOST}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}/"
 		-DCONCURRENT_MALLOC=$(usex jemalloc "Jemalloc" \
-			$(usex tbbmalloc "Tbbmalloc" "None"))
+					$(usex tbbmalloc "Tbbmalloc" "None")\
+				     )
 		-DOPENVDB_ABI_VERSION_NUMBER="${version}"
-		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON $(usex vdb_print ON \
-			$(usex vdb_render ON $(usex vdb_view ON OFF))))
+		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON \
+						$(usex vdb_print ON \
+							$(usex vdb_render ON \
+								$(usex vdb_view ON OFF)) \
+						)\
+					)
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
 		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
@@ -251,8 +257,7 @@ src_install()
 		done
 	fi
 
-	if ! is_crosscompile \
-		&& which "${ED}/usr/bin/vdb_print" ; then
+	if ! is_crosscompile && which "${ED}/usr/bin/vdb_print" ; then
 		if ! timeout 1 "${ED}/usr/bin/vdb_print" -version \
 			| grep -q -e "OpenVDB library version:" ; then
 # Possible CFI problems
