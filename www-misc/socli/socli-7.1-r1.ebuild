@@ -6,7 +6,7 @@ EAPI=7
 PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1 eutils
 
-DESCRIPTION="Stack overflow command line client. Search and browse stack \
+DESCRIPTION="Stack overflow command line client. Search and browse stack
 overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
 LICENSE="BSD"
@@ -14,20 +14,23 @@ KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
 IUSE+=" man"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 SLOT="0"
-DEPEND+=" ${PYTHON_DEPS}
+DEPEND+="
+	${PYTHON_DEPS}
 	  dev-python/argcomplete[${PYTHON_USEDEP}]
 	>=dev-python/beautifulsoup4-4.9.1[${PYTHON_USEDEP}]
 	>=dev-python/colorama-0.4.3[${PYTHON_USEDEP}]
 	>=dev-python/py-stackexchange-2.2.007[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.24.0[${PYTHON_USEDEP}]
 	>=dev-python/urwid-2.1.1[${PYTHON_USEDEP}]
-	>=dev-python/sentry-sdk-0.18.0[${PYTHON_USEDEP}]"
+	>=dev-python/sentry-sdk-0.18.0[${PYTHON_USEDEP}]
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}"
 EGIT_COMMIT="57c60e01981111d2559cb6339640ab377e752485"
 SRC_URI="
 https://github.com/gautamkrishnar/socli/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
@@ -55,13 +58,15 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo \
-"\n\
-You may need to enter your StackOverflow API key with \`socli --api\` for\n\
-this program to work.  See\n\n\
-  ${HOMEPAGE}\n
-for details on additional information in configuring ${PN}.  API keys can\n\
-be obtained from\n\n\
-  http://stackapps.com/apps/oauth/register\n\
-\n"
+einfo
+einfo "You may need to enter your StackOverflow API key with \`socli --api\`"
+einfo "for this program to work.  See"
+einfo
+einfo "  ${HOMEPAGE}"
+einfo
+einfo "for details on additional information in configuring ${PN}.  API keys"
+einfo "can be obtained from"
+einfo
+einfo "  http://stackapps.com/apps/oauth/register"
+einfo
 }
