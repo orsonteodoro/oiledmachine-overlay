@@ -21,8 +21,8 @@ PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11. For the max exclusive Python suppor
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-OPENVDB_ABIS_MAJOR_VERS=( 9 )
-OPENVDB_ABIS=( ${OPENVDB_ABIS_MAJOR_VERS[@]/#/abi} )
+OPENVDB_ABIS_MAJOR_VERS=9
+OPENVDB_ABIS=( ${OPENVDB_ABIS_MAJOR_VERS/#/abi} )
 OPENVDB_ABIS=( ${OPENVDB_ABIS[@]/%/-compat} )
 IUSE+=" ${OPENVDB_ABIS[@]}"
 IUSE+=" X +abi9-compat +alembic -asan +boost +bullet +collada -cycles-hip
@@ -138,7 +138,8 @@ REQUIRED_USE+="
 	vpx? ( ffmpeg )
 	webm? ( ffmpeg opus vpx )
 	x264? ( ffmpeg )
-	xvid? ( ffmpeg )"
+	xvid? ( ffmpeg )
+"
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # no need to look past those dates.
@@ -196,14 +197,12 @@ gen_oiio_depends() {
 
 gen_openvdb_depends() {
 	local o
-	local s
-	for s in ${OPENVDB_ABIS_MAJOR_VERS[@]} ; do
-		o+="
-			abi${s}-compat? (
-				>=media-gfx/openvdb-${s}[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc]
-			)
-		"
-	done
+	local s=${OPENVDB_ABIS_MAJOR_VERS}
+	o+="
+		abi${s}-compat? (
+			=media-gfx/openvdb-${s}*[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc]
+		)
+	"
 	echo "${o}"
 }
 
@@ -430,7 +429,8 @@ BDEPEND+="
 	)
 	>=dev-util/cmake-3.10
 	virtual/pkgconfig
-	asan? ( || (
+	asan? (
+		|| (
 			$(gen_asan_bdepend)
 			(
 				>=sys-devel/gcc-${GCC_MIN}[sanitizer]
@@ -438,10 +438,12 @@ BDEPEND+="
 		)
 	)
 	cycles? (
-		x86? ( || (
-			>=sys-devel/clang-${CLANG_MIN}
-			dev-lang/icc
-		) )
+		x86? (
+			|| (
+				>=sys-devel/clang-${CLANG_MIN}
+				dev-lang/icc
+			)
+		)
 	)
 	doc? (
 		app-doc/doxygen[dot]
@@ -481,9 +483,11 @@ check_multiple_llvm_versions_in_native_libs() {
 		local llvm_ret=$(ldd "${EROOT}"/usr/$(get_libdir)/dri/*.so \
 			| grep -q -e "LLVM-${llvm_slot}")
 		if [[ "${llvm_ret}" != "0" ]] ; then
-			die \
-"You need link media-libs/mesa with LLVM ${llvm_slot}.  See media-libs/mesa \
-ebuilds for compatibility details."
+eerror
+eerror "You need link media-libs/mesa with LLVM ${llvm_slot}.  See"
+eerror "media-libs/mesa ebuilds for compatibility details."
+eerror
+			die
 		fi
 	fi
 
@@ -502,7 +506,10 @@ ebuilds for compatibility details."
 		fi
 		if [[ -n "${osl_llvm}" ]] \
 			&& ver_test "${osl_llvm}" -ne "${llvm_slot}" ; then
-			die "media-libs/osl must be linked to LLVM ${llvm_slot}"
+eerror
+eerror "media-libs/osl must be linked to LLVM ${llvm_slot}"
+eerror
+			die
 		fi
 	fi
 }
@@ -511,10 +518,10 @@ _blender_pkg_setup() {
 	# TODO: ldd oiio for webp and warn user if missing
 	# Needs OpenCL 1.2 (GCN 2)
 	check_multiple_llvm_versions_in_native_libs
-	ewarn
-	ewarn "This version is not a Long Term Support (LTS) version."
-	ewarn "Consider using 2.93.x series instead."
-	ewarn
+ewarn
+ewarn "This version is not a Long Term Support (LTS) version."
+ewarn "Consider using 2.93.x series instead."
+ewarn
 
 	local found=0
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -537,33 +544,45 @@ ewarn
 }
 
 show_tbb_error() {
-	eerror
-	eerror "You can only choose one adventure:"
-	eerror
-	eerror "  (1) disable the usd USE flag"
-	eerror "  (2) use the tbb:${LEGACY_TBB_SLOT} from the oiledmachine-overlay"
-	eerror "  (3) use the <tbb-2021:0::gentoo and hardmask tbb >= 2021"
-	eerror
-	eerror "Any downgrade or upgrade may require a rebuild of those packages"
-	eerror "depending on them."
-	eerror
+eerror
+eerror "You can only choose one adventure:"
+eerror
+eerror "  (1) disable the usd USE flag"
+eerror "  (2) use the tbb:${LEGACY_TBB_SLOT} from the oiledmachine-overlay"
+eerror "  (3) use the <tbb-2021:0::gentoo and hardmask tbb >= 2021"
+eerror
+eerror "Any downgrade or upgrade may require a rebuild of those packages"
+eerror "depending on them."
+eerror
 	die
 }
 
 _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-3.2.0-parent-datafiles-dir-change.patch"
-	if ( has_version "<dev-cpp/tbb-2021:0" || has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ) && use usd ; then
+	if ( has_version "<dev-cpp/tbb-2021:0" \
+		|| \
+	     has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" \
+	   ) \
+		&& \
+	     use usd ; then
 		:;
-	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && ! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && use usd ; then
+	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
+	   ! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
+	     use usd ; then
 		show_tbb_error
 	fi
-	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && use usd ; then
+	if   has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
+	     has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
+	     use usd ; then
 		eapply "${FILESDIR}/blender-3.0.0-link-usd-to-legacy-tbb.patch"
 	elif use usd ;then
-		ewarn "Untested tbb configuration.  It is assumed >=dev-cpp/tbb-2021:${ONETBB_SLOT}"
-		ewarn "and <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} are both installed."
-		ewarn
-		ewarn "Install both if build fails."
+ewarn
+ewarn "Untested tbb configuration.  It is assumed"
+ewarn ">=dev-cpp/tbb-2021:${ONETBB_SLOT} and"
+ewarn "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} are both installed."
+ewarn
+ewarn "Install both if build fails."
+ewarn
 	fi
 }
 
@@ -571,7 +590,9 @@ _src_configure() {
 	filter-flags '-fprofile*'
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
 		&& has_pgo_requirement ; then
-		einfo "Setting up PGI"
+einfo
+einfo "Setting up PGI"
+einfo
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${T}/pgo-${ABI}"
 		else
@@ -579,7 +600,9 @@ _src_configure() {
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
 		&& has_pgo_requirement ; then
-		einfo "Setting up PGO"
+einfo
+einfo "Setting up PGO"
+einfo
 		if tc-is-clang ; then
 			llvm-profdata merge -output="${T}/pgo-${ABI}/pgo-custom.profdata" \
 				"${T}/pgo-${ABI}" || die
@@ -594,11 +617,10 @@ _src_configure() {
 	append-flags -funsigned-char
 	append-lfs-flags
 
-	for s in ${OPENVDB_ABIS_MAJOR_VERS[@]} ; do
-		if use abi${s}-compat ; then
-			append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=${s}
-		fi
-	done
+	local s=${OPENVDB_ABIS_MAJOR_VERS}
+	if use abi${s}-compat ; then
+		append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=${s}
+	fi
 
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
@@ -735,7 +757,7 @@ _src_configure() {
 	fi
 
 	if [[ "${EBLENDER}" == "build_headless" ]] ; then
-		# for render farms
+		# For render farms
 		mycmakeargs+=(
 			-DWITH_AUDASPACE=OFF
 			-DWITH_CODEC_FFMPEG=OFF

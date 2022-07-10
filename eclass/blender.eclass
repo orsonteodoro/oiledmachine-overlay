@@ -217,60 +217,86 @@ check_embree() {
 		# The default for EMBREE_FILTER_FUNCTION is ON in embree.
 		if grep -q -F -e "EMBREE_FILTER_FUNCTION=OFF" \
 			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild 2>/dev/null ; then
-			ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
+ewarn
+ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
+ewarn
 		else
 			if has_version 'media-libs/embree[-filter_function]' || \
-				has_version 'media-libs/embree[-filter-function]' || \
-				has_version 'media-libs/embree[-filterfunction]' ; then
-				ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
+			   has_version 'media-libs/embree[-filter-function]' || \
+			   has_version 'media-libs/embree[-filterfunction]' ; then
+ewarn
+ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
+ewarn
 			fi
 		fi
 
 		# The default for EMBREE_BACKFACE_CULLING is OFF in embree.
 		if grep -q -F -e "EMBREE_BACKFACE_CULLING=ON" \
 			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild 2>/dev/null ; then
-			ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
+ewarn
+ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
+ewarn
 		else
 			if has_version 'media-libs/embree[backface_culling]' || \
-				has_version 'media-libs/embree[backface-culling]' || \
-				has_version 'media-libs/embree[backfaceculling]' ; then
-				ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
+			   has_version 'media-libs/embree[backface-culling]' || \
+			   has_version 'media-libs/embree[backfaceculling]' ; then
+ewarn
+ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
+ewarn
 			fi
 		fi
 
 		# The default for EMBREE_RAY_MASK is OFF in embree.
 		if grep -q -F -e "EMBREE_RAY_MASK=OFF" \
 			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild 2>/dev/null ; then
-			ewarn "EMBREE_RAY_MASK should be set to ON for embree."
+ewarn
+ewarn "EMBREE_RAY_MASK should be set to ON for embree."
+ewarn
 		else
-			if has_version 'media-libs/embree[-ray_mask]' || \
-				has_version 'media-libs/embree[-ray-mask]' || \
-				has_version 'media-libs/embree[-raymask]' ; then
-				ewarn "EMBREE_RAY_MASK should be set to ON for embree."
+			if   has_version 'media-libs/embree[-ray_mask]' || \
+			     has_version 'media-libs/embree[-ray-mask]' || \
+			     has_version 'media-libs/embree[-raymask]' ; then
+ewarn
+ewarn "EMBREE_RAY_MASK should be set to ON for embree."
+ewarn
 			elif has_version 'media-libs/embree[ray_mask]' || \
-				has_version 'media-libs/embree[ray-mask]' || \
-				has_version 'media-libs/embree[raymask]' ; then
+			     has_version 'media-libs/embree[ray-mask]' || \
+			     has_version 'media-libs/embree[raymask]' ; then
 				:;
 			elif has_version 'media-libs/embree' ; then
-				ewarn "EMBREE_RAY_MASK should be set to ON for embree."
+ewarn
+ewarn "EMBREE_RAY_MASK should be set to ON for embree."
+ewarn
 			fi
 		fi
 	fi
 }
 
 check_compiler() {
-	test-flags-CXX "-std=c++${CXXABI_V}" 2>/dev/null 1>/dev/null \
-		|| die "Switch to a c++${CXXABI_V} compatible compiler."
+	if ! test-flags-CXX "-std=c++${CXXABI_V}" 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "Switch to a c++${CXXABI_V} compatible compiler."
+eerror
+	fi
 	if tc-is-gcc ; then
 		if ver_test $(gcc-fullversion) -lt ${GCC_MIN} ; then
-			die "${PN} requires GCC >= ${GCC_MIN}"
+eerror
+eerror "${PN} requires GCC >= ${GCC_MIN}"
+eerror
+			die
 		fi
 	elif tc-is-clang ; then
 		if ver_test $(clang-version) -lt ${CLANG_MIN} ; then
-			die "${PN} requires Clang >= ${CLANG_MIN}"
+eerror
+eerror "${PN} requires Clang >= ${CLANG_MIN}"
+eerror
+			die
 		fi
 	else
-		die "Compiler is not supported"
+eerror
+eerror "Compiler is not supported"
+eerror
+		die
 	fi
 }
 
@@ -340,16 +366,24 @@ check_portable_dependencies() {
 	if has build_portable ${IUSE_EFFECTIVE} ; then
 		if use build_portable ; then
 			if [[ "${ABI}" == "x86" ]] ; then
-				[[ "${CXXFLAGS}" =~ "march=x86-64" ]] \
-					|| ewarn \
-"The CXXFLAGs doesn't contain -march=x86-64.  It will not be portable unless \
-you change it."
+				if [[ "${CXXFLAGS}" =~ "march=x86-64" ]] ; then
+					:;
+				else
+ewarn
+ewarn "The CXXFLAGs doesn't contain -march=x86-64.  It will not be portable"
+ewarn "unless you change it."
+ewarn
+				fi
 			fi
 			if [[ "${ABI}" == "x86" ]] ; then
-				[[ "${CXXFLAGS}" =~ "march=i686" ]] \
-					|| ewarn \
-"The CXXFLAGs doesn't contain -march=i686.  It will not be portable unless \
-you change it."
+				if [[ "${CXXFLAGS}" =~ "march=i686" ]] ; then
+					:;
+				else
+ewarn
+ewarn "The CXXFLAGs doesn't contain -march=i686.  It will not be portable"
+ewarn "unless you change it."
+ewarn
+				fi
 			fi
 			# These are .a libraries listed from the linking phase
 			# of build_portable
@@ -373,18 +407,22 @@ you change it."
 				if ls "${EROOT}"/var/db/pkg/${p}-*/C{,XX}FLAGS \
 					2>/dev/null 1>/dev/null ; then
 					if [[ "${ABI}" == "amd64" ]] ; then
-						grep -q -F -e "march=x86-64" \
-							"${EROOT}"/var/db/pkg/${p}-*/C{,XX}FLAGS \
-							|| ewarn \
-"${p} is not compiled with -march=x86-64.  It is not portable.  Recompile the \
-dependency."
+						if ! grep -q -F -e "march=x86-64" \
+							"${EROOT}"/var/db/pkg/${p}-*/C{,XX}FLAGS ; then
+ewarn
+ewarn "${p} is not compiled with -march=x86-64.  It is not portable.  Recompile"
+ewarn "the dependency."
+ewarn
+						fi
 					fi
 					if [[ "${ABI}" == "x86" ]] ; then
-						grep -q -F -e "march=i686" \
-							"${EROOT}"/var/db/pkg/${p}-*/C{,XX}FLAGS \
-							|| ewarn \
-"${p} is not compiled with -march=i686.  It is not portable.  Recompile the \
-dependency"
+						if ! grep -q -F -e "march=i686" \
+							"${EROOT}"/var/db/pkg/${p}-*/C{,XX}FLAGS ; then
+ewarn
+ewarn "${p} is not compiled with -march=i686.  It is not portable.  Recompile"
+ewarn "the dependency"
+ewarn
+						fi
 					fi
 				fi
 			done
@@ -394,7 +432,9 @@ dependency"
 
 check_cpu() {
 	if [[ ! -e "/proc/cpuinfo" ]] ; then
-		ewarn "Skipping cpu checks.  The compiled program may exhibit runtime failure."
+ewarn
+ewarn "Skipping cpu checks.  The compiled program may exhibit runtime failure."
+ewarn
 		return
 	fi
 
@@ -438,116 +478,110 @@ check_cpu() {
 	# We cancel building to prevent runtime errors with dependencies
 	# that may not do sufficient runtime checks for cpu types like eigen.
 
+	cpuflag_die() {
+		local flag="${1}"
+eerror
+eerror "${flag} may not be supported on your CPU and was enabled via the"
+eerror "cpu_flags_x86_${flag}"
+eerror
+		die
+	}
+
+	for x in mmx
 	if use cpu_flags_x86_mmx ; then
 		if [[ "${has_mmx}" != "0" ]] ; then
-			die \
-"mmx may not be supported on your CPU and was enabled via cpu_flags_x86_mmx"
+			cpuflag_die "mmx"
 		fi
 	fi
 
 	if use cpu_flags_x86_sse ; then
 		if [[ "${has_sse}" != "0" ]] ; then
-			die \
-"sse may not be supported on your CPU and was enabled via cpu_flags_x86_sse"
+			cpuflag_die "sse"
 		fi
 	fi
 
 	if use cpu_flags_x86_sse2 ; then
 		if [[ "${has_sse2}" != "0" ]] ; then
-			die \
-"sse2 may not be supported on your CPU and was enabled via cpu_flags_x86_sse2"
+			cpuflag_die "sse2"
 		fi
 	fi
 
 	if use cpu_flags_x86_sse3 ; then
 		if [[ "${has_sse3}" != "0" && "${has_pni}" != "0" ]] ; then
-			die \
-"sse3 may not be supported on your CPU and was enabled via cpu_flags_x86_sse3"
+			cpuflag_die "sse3"
 		fi
 	fi
 
 	if use cpu_flags_x86_ssse3 ; then
 		if [[ "${has_ssse3}" != "0" ]] ; then
-			die \
-"ssse3 may not be supported on your CPU and was enabled via cpu_flags_x86_ssse3"
+			cpuflag_die "ssse3"
 		fi
 	fi
 
 	if use cpu_flags_x86_lzcnt ; then
 		if [[ "${has_bmi1}" != "0" && "${has_abm}" != "0" ]] ; then
-			die \
-"lzcnt may not be supported on your CPU and was enabled via cpu_flags_x86_lzcnt"
+			cpuflag_die "lzcnt"
 		fi
 	fi
 
 	if use cpu_flags_x86_sse4_1 ; then
 		if [[ "${has_sse4_1}" != "0" ]] ; then
-			die \
-"sse4_1 may not be supported on your CPU and was enabled via cpu_flags_x86_sse4_1"
+			cpuflag_die "sse4_1"
 		fi
 	fi
 
 	if use cpu_flags_x86_sse4_2 ; then
 		if [[ "${has_sse4_2}" != "0" ]] ; then
-			die \
-"sse4_2 may not be supported on your CPU and was enabled via cpu_flags_x86_sse4_2"
+			cpuflag_die "sse4_2"
 		fi
 	fi
 
 	if use cpu_flags_x86_avx ; then
 		if [[ "${has_avx}" != "0" ]] ; then
-			die \
-"avx may not be supported on your CPU and was enabled via cpu_flags_x86_avx"
+			cpuflag_die "avx"
 		fi
 	fi
 
 	if use cpu_flags_x86_f16c ; then
 		if [[ "${has_f16c}" != "0" ]] ; then
-			die \
-"f16c may not be supported on your CPU and was enabled via cpu_flags_x86_f16c"
+			cpuflag_die "f16c"
 		fi
 	fi
 
 	if use cpu_flags_x86_fma ; then
 		if [[ "${has_fma}" != "0" ]] ; then
-			die \
-"fma may not be supported on your CPU and was enabled via cpu_flags_x86_fma"
+			cpuflag_die "fma"
 		fi
 	fi
 
 	# For tzcnt
 	if use cpu_flags_x86_bmi ; then
 		if [[ "${has_bmi1}" != "0" ]] ; then
-			die \
-"bmi may not be supported on your CPU and was enabled via cpu_flags_x86_bmi"
+			cpuflag_die "bmi"
 		fi
 	fi
 
 	if use cpu_flags_x86_avx2 ; then
 		if [[ "${has_avx2}" != "0" ]] ; then
-			die \
-"avx2 may not be supported on your CPU and was enabled via cpu_flags_x86_avx2"
+			cpuflag_die "avx2"
 		fi
 	fi
 
 	if use cpu_flags_x86_avx512f ; then
 		if [[ "${has_avx512f}" != "0" ]] ; then
-			die \
-"avx512f may not be supported on your CPU and was enabled via cpu_flags_x86_avx512f"
+			cpuflag_die "avx512f"
 		fi
 	fi
 
 	if use cpu_flags_x86_avx512er ; then
 		if [[ "${has_avx512er}" != "0" ]] ; then
-			die \
-"avx512er may not be supported on your CPU and was enabled via cpu_flags_x86_avx512er"
+			cpuflag_die "avx512er"
 		fi
 	fi
 
 	if use cpu_flags_x86_avx512dq ; then
 		if [[ "${has_avx512dq}" != "0" ]] ; then
-			die \
-"avx512dq may not be supported on your CPU and was enabled via cpu_flags_x86_avx512dq"
+			cpuflag_die "avx512q"
 		fi
 	fi
 }
@@ -579,8 +613,10 @@ check_optimal_compiler_for_cycles_x86() {
 		fi
 	fi
 
-	einfo "CC=${CC}"
-	einfo "CXX=${CXX}"
+einfo
+einfo "CC=${CC}"
+einfo "CXX=${CXX}"
+einfo
 }
 
 _src_prepare() {
@@ -598,7 +634,9 @@ _src_prepare() {
 		local file
 		while IFS="" read -d $'\0' -r file ; do
 			if grep -q -F -e "-DGLEW_STATIC" "${file}" ; then
-				einfo "Removing -DGLEW_STATIC from ${file}"
+einfo
+einfo "Removing -DGLEW_STATIC from ${file}"
+einfo
 				sed -i -e '/-DGLEW_STATIC/d' "${file}"
 			fi
 		done < <(find . -type f -name "CMakeLists.txt" -print0)
@@ -915,12 +953,18 @@ blender_configure_mesa_match_llvm() {
 	if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
 		mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
 	else
-		die "Install media-libs/libglvnd."
+eerror
+eerror "Install media-libs/libglvnd."
+eerror
+		die
 	fi
 	if [[ -e "${EROOT}/usr/$(get_libdir)/libOpenGL.so" ]] ; then
 		mycmakeargs+=( -DOPENGL_opengl_LIBRARY="${EROOT}/usr/$(get_libdir)/libOpenGL.so" )
 	else
-		die "Install media-libs/libglvnd."
+eerror
+eerror "Install media-libs/libglvnd."
+eerror
+		die
 	fi
 	if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
 		mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
@@ -936,12 +980,18 @@ blender_configure_mesa_match_system_llvm() {
 	if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
 		mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
 	else
-		die "Install media-libs/libglvnd."
+eerror
+eerror "Install media-libs/libglvnd."
+eerror
+		die
 	fi
 	if [[ -e "${EROOT}/usr/$(get_libdir)/libOpenGL.so" ]] ; then
 		mycmakeargs+=( -DOPENGL_opengl_LIBRARY="${EROOT}/usr/$(get_libdir)/libOpenGL.so" )
 	else
-		die "Install media-libs/libglvnd."
+eerror
+eerror "Install media-libs/libglvnd."
+eerror
+		die
 	fi
 	if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
 		mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
@@ -1051,11 +1101,15 @@ blender_src_configure() {
 _src_compile() {
 	if [[ -n "${_LD_LIBRARY_PATHS[${EBLENDER}]}" ]] ; then
 		export LD_LIBRARY_PATH="${_LD_LIBRARY_PATHS[${EBLENDER}]}"
-		einfo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
+einfo
+einfo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
+einfo
 	fi
 	if [[ -n "${_PATHS[${EBLENDER}]}" ]] ; then
 		export PATH="${_PATHS[${EBLENDER}]}:${PATH}"
-		einfo "PATH=${PATH}"
+einfo
+einfo "PATH=${PATH}"
+einfo
 	fi
 
 	S="${BUILD_DIR}" \
@@ -1071,29 +1125,50 @@ _src_compile_docs() {
 		addpredict /dev/dri
 		addpredict /dev/nvidiactl
 
-		einfo "Generating Blender C/C++ API docs ..."
+einfo
+einfo "Generating Blender C/C++ API docs ..."
+einfo
 		cd "${CMAKE_USE_DIR}"/doc/doxygen || die
 		doxygen -u Doxyfile || die
-		doxygen || die "doxygen failed to build API docs."
+		if ! doxygen ; then
+eerror
+eerror "doxygen failed to build API docs."
+eerror
+			die
+		fi
 
 		cd "${CMAKE_USE_DIR}" || die
-		einfo "Generating (BPY) Blender Python API docs ..."
-		"${BUILD_DIR}"/bin/blender --background \
-			--python doc/python_api/sphinx_doc_gen.py -noaudio \
-			|| die "sphinx failed."
+einfo
+einfo "Generating (BPY) Blender Python API docs ..."
+einfo
+		if ! "${BUILD_DIR}"/bin/blender --background \
+			--python doc/python_api/sphinx_doc_gen.py -noaudio ; then
+eerror
+eerror "sphinx failed."
+eerror
+		fi
 
 		cd "${CMAKE_USE_DIR}"/doc/python_api || die
-		sphinx-build sphinx-in BPY_API || die "sphinx failed."
+		if ! sphinx-build sphinx-in BPY_API ; then
+eerror
+eerror "sphinx failed."
+eerror
+			die
+		fi
 	fi
 }
 
 _install_pgx() {
-	einfo "Installing sandboxed copy"
+einfo
+einfo "Installing sandboxed copy"
+einfo
 	_src_install
 }
 
 _clean_pgx() {
-	einfo "Wiping sandboxed install"
+einfo
+einfo "Wiping sandboxed install"
+einfo
 	cd "${S}" || die
 	rm -rf "${D}" || die
 }
@@ -1146,18 +1221,24 @@ _run_trainer() {
 			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
 			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_CYCLES_ASSETS} ) ]] && continue
 
-			einfo "Obtaining start and end frame data"
+einfo
+einfo "Obtaining start and end frame data"
+einfo
 			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
 			local start=$(echo "${O}" | cut -f 1 -d " ")
 			local end=$(echo "${O}" | cut -f 2 -d " ")
 
 			local cmd
-			einfo "Running PGO trainer for ${asset} as still image using ${renderer_name}"
+einfo
+einfo "Running PGO trainer for ${asset} as still image using ${renderer_name}"
+einfo
 			for i in $(seq ${PGO_SAMPLE_SIZE}) ; do
 				local rand=$((${RANDOM} % $((${end}-${start}+1)) + ${start} ))
 				cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E CYCLES -f ${rand} -o /dev/null"
-				einfo "Note:  sudo may ask you for password"
-				einfo "sudo -u pgo bash -c \"${cmd}\""
+einfo
+einfo "Note:  sudo may ask you for password"
+einfo "sudo -u pgo bash -c \"${cmd}\""
+einfo
 				sudo -u pgo bash -c "${cmd}"
 			done
 		done
@@ -1168,15 +1249,21 @@ _run_trainer() {
 			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
 			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_CYCLES_ASSETS} ) ]] && continue
 
-			einfo "Obtaining start and end frame data"
+einfo
+einfo "Obtaining start and end frame data"
+einfo
 			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
 			local start=$(echo "${O}" | cut -f 1 -d " ")
 			local end=$(echo "${O}" | cut -f 2 -d " ")
 
-			einfo "Running PGO trainer for ${asset} as an animation using ${renderer_name}"
+einfo
+einfo "Running PGO trainer for ${asset} as an animation using ${renderer_name}"
+einfo
 			cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E BLENDER_EEVEE -s ${start} -e ${end} -o /dev/null"
-			einfo "Note:  sudo may ask you for password"
-			einfo "sudo -u pgo bash -c \"${cmd}\""
+einfo
+einfo "Note:  sudo may ask you for password"
+einfo "sudo -u pgo bash -c \"${cmd}\""
+einfo
 			sudo -u pgo bash -c "${cmd}"
 		done
 	fi
@@ -1186,18 +1273,24 @@ _run_trainer() {
 			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
 			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_EEVEE_ASSETS} ) ]] && continue
 
-			einfo "Obtaining start and end frame data"
+einfo
+einfo "Obtaining start and end frame data"
+einfo
 			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
 			local start=$(echo "${O}" | cut -f 1 -d " ")
 			local end=$(echo "${O}" | cut -f 2 -d " ")
 
 			local cmd
-			einfo "Running PGO trainer for ${asset} as a still image using ${renderer_name}"
+einfo
+einfo "Running PGO trainer for ${asset} as a still image using ${renderer_name}"
+einfo
 			for i in $(seq ${PGO_SAMPLE_SIZE}) ; do
 				local rand=$((${RANDOM} % $((${end}-${start}+1)) + ${start} ))
 				cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E BLENDER_EEVEE -f ${rand} -o /dev/null"
-				einfo "Note:  sudo may ask you for password"
-				einfo "sudo -u pgo bash -c \"${cmd}\""
+einfo
+einfo "Note:  sudo may ask you for password"
+einfo "sudo -u pgo bash -c \"${cmd}\""
+einfo
 				sudo -u pgo bash -c "${cmd}"
 			done
 		done
@@ -1208,16 +1301,22 @@ _run_trainer() {
 			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
 			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_EEVEE_ASSETS} ) ]] && continue
 
-			einfo "Obtaining start and end frame data"
+einfo
+einfo "Obtaining start and end frame data"
+einfo
 			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
 			local start=$(echo "${O}" | cut -f 1 -d " ")
 			local end=$(echo "${O}" | cut -f 2 -d " ")
 
 			local cmd
-			einfo "Running PGO trainer for ${asset} as an animation using ${renderer_name}"
+einfo
+einfo "Running PGO trainer for ${asset} as an animation using ${renderer_name}"
+einfo
 			cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E BLENDER_EEVEE -s ${start} -e ${end} -o /dev/null"
-			einfo "Note:  sudo may ask you for password"
-			einfo "sudo -u pgo bash -c \"${cmd}\""
+einfo
+einfo "Note:  sudo may ask you for password"
+einfo "sudo -u pgo bash -c \"${cmd}\""
+einfo
 			sudo -u pgo bash -c "${cmd}"
 		done
 	fi
@@ -1225,7 +1324,9 @@ _run_trainer() {
 
 _src_test() {
 	if use test; then
-		einfo "Running Blender Unit Tests for ${EBLENDER} ..."
+einfo
+einfo "Running Blender Unit Tests for ${EBLENDER} ..."
+einfo
 		cd "${BUILD_DIR}"/bin/tests || die
 		local f
 		for f in *_test; do
@@ -1439,8 +1540,12 @@ fecho1 "# libraries and need to be present on the other computer or distributed"
 fecho1 "# with blenderplayer with licenses or built without such dependencies."
 fecho1 "# The dependency of those direct shared dependencies may also be required."
 fecho1
-		[[ ! -e "${T}/build-build_portable.log" ]] \
-			&& die "Missing build log"
+		if [[ ! -e "${T}/build-build_portable.log" ]] ; then
+eerror
+eerror "Missing build log."
+eerror
+			die
+		fi
 
 		# List direct dependencies
 fecho1
@@ -1520,46 +1625,46 @@ blender_src_install() {
 }
 
 blender_pkg_postinst() {
-	elog
-	elog "Blender uses python integration. As such, may have some"
-	elog "inherit risks with running unknown python scripts."
-	elog
-	elog "It is recommended to change your blender temp directory"
-	elog "from /tmp to /home/user/tmp or another tmp file under your"
-	elog "home directory. This can be done by starting blender, then"
-	elog "dragging the main menu down do display all paths."
-	elog
-	ewarn
-	ewarn "This ebuild does not unbundle the massive amount of 3rd party"
-	ewarn "libraries which are shipped with blender. Note that"
-	ewarn "these have caused security issues in the past."
-	ewarn "If you are concerned about security, file a bug upstream:"
-	ewarn "  https://developer.blender.org/"
-	ewarn
+elog
+elog "Blender uses python integration. As such, may have some"
+elog "inherit risks with running unknown python scripts."
+elog
+elog "It is recommended to change your blender temp directory"
+elog "from /tmp to /home/user/tmp or another tmp file under your"
+elog "home directory. This can be done by starting blender, then"
+elog "dragging the main menu down do display all paths."
+elog
+ewarn
+ewarn "This ebuild does not unbundle the massive amount of 3rd party"
+ewarn "libraries which are shipped with blender. Note that"
+ewarn "these have caused security issues in the past."
+ewarn "If you are concerned about security, file a bug upstream:"
+ewarn "  https://developer.blender.org/"
+ewarn
 	if has cycles-network ${IUSE_EFFECTIVE} \
 		&& use cycles-network ; then
-		einfo
-		ewarn "The Cycles Networking support is experimental and"
-		ewarn "incomplete."
-		einfo
-		einfo "To make a OpenCL GPU available do:"
-		einfo "cycles_server --device OPENCL"
-		einfo
-		einfo "To make a CUDA GPU available do:"
-		einfo "cycles_server --device CUDA"
-		einfo
-		einfo "To make a CPU available do:"
-		einfo "cycles_server --device CPU"
-		einfo
-		einfo "Only one instance of a cycles_server can be used on a host."
-		einfo
-		einfo "You may want to run cycles_server on the client too, but"
-		einfo "it is not necessary."
-		einfo
-		einfo "Clients need to set the Rendering Engine to Cycles and"
-		einfo "Device to Networked Device.  Finding the server is done"
-		einfo "automatically."
-		einfo
+einfo
+ewarn "The Cycles Networking support is experimental and"
+ewarn "incomplete."
+einfo
+einfo "To make a OpenCL GPU available do:"
+einfo "cycles_server --device OPENCL"
+einfo
+einfo "To make a CUDA GPU available do:"
+einfo "cycles_server --device CUDA"
+einfo
+einfo "To make a CPU available do:"
+einfo "cycles_server --device CPU"
+einfo
+einfo "Only one instance of a cycles_server can be used on a host."
+einfo
+einfo "You may want to run cycles_server on the client too, but"
+einfo "it is not necessary."
+einfo
+einfo "Clients need to set the Rendering Engine to Cycles and"
+einfo "Device to Networked Device.  Finding the server is done"
+einfo "automatically."
+einfo
 	fi
 	xdg_pkg_postinst
 	local d_src="${EROOT}/usr/$(get_libdir)/${PN}"
@@ -1603,11 +1708,11 @@ blender_pkg_postinst() {
 blender_pkg_postrm() {
 	xdg_pkg_postrm
 
-	ewarn ""
-	ewarn "You may want to remove the following directory."
-	ewarn "~/.config/${PN}/${SLOT_MAJ}/cache/"
-	ewarn "It may contain extra render kernels not tracked by portage"
-	ewarn ""
+ewarn
+ewarn "You may want to remove the following directory."
+ewarn "~/.config/${PN}/${SLOT_MAJ}/cache/"
+ewarn "It may contain extra render kernels not tracked by portage"
+ewarn
 	if [[ ! -d "${EROOT}/usr/bin/.blender" ]] ; then
 		if [[ -e "${EROOT}/usr/bin/blender" ]] ; then
 			rm -rf "${EROOT}/usr/bin/blender" || die
