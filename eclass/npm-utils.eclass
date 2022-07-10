@@ -854,18 +854,22 @@ npm-utils_check_nodejs() {
 	if [[ "${has_min_ge}" == "0" ]] ; then
 		if (( ${node_exe_v} < ${min_v} ||
 			${node_header_v} < ${min_v} )) ; then
-			die \
-"Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be \
->= ${min_v}"
+eerror
+eerror "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be"
+eerror ">= ${min_v}"
+eerror
+			die
 		fi
 	fi
 
 	if [[ "${has_min_gt}" == "0" ]] ; then
 		if (( ${node_exe_v} <= ${min_v} ||
 			${node_header_v} <= ${min_v} )) ; then
-			die \
-"Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be \
-> ${min_v}"
+eerror
+eerror "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be"
+eerror "> ${min_v}"
+eerror
+			die
 		fi
 	fi
 
@@ -873,18 +877,22 @@ npm-utils_check_nodejs() {
 	if [[ "${has_max_le}" == "0" ]] ; then
 		if (( ${node_exe_v} > ${max_v} ||
 			${node_header_v} > ${max_v} )) ; then
-			die \
-"Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be \
-<= ${max_v}"
+eerror
+eerror "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be"
+eerror "<= ${max_v}"
+eerror
+			die
 		fi
 	fi
 
 	if [[ "${has_max_lt}" == "0" ]] ; then
 		if (( ${node_exe_v} >= ${max_v} ||
 			${node_header_v} >= ${max_v} )) ; then
-			die \
-"Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be \
-< ${max_v}"
+eerror
+eerror "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be"
+eerror "< ${max_v}"
+eerror
+			die
 		fi
 	fi
 }
