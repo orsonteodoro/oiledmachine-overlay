@@ -185,7 +185,10 @@ eerror
 	addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
 	if [[ ! -d "/dev/shm" ]] ; then
-		die "Missing /dev/shm.  Check the kernel config?"
+eerror
+eerror "Missing /dev/shm.  Check the kernel config?"
+eerror
+		die
 	fi
 
 	if has_version "<net-libs/nodejs-${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}" ; then
@@ -385,7 +388,12 @@ ewarn "NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
 ewarn
 		die
 	fi
-	[[ -z "${NPM_SECAUDIT_INSTALL_PATH}" ]] && die "NPM_SECAUDIT_INSTALL_PATH must be defined"
+	if [[ -z "${NPM_SECAUDIT_INSTALL_PATH}" ]] ; then
+eerror
+eerror "NPM_SECAUDIT_INSTALL_PATH must be defined"
+eerror
+		die
+	fi
 	while true ; do
 		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
@@ -436,9 +444,13 @@ npm-secaudit_audit_fix() {
 		return
 	fi
 
-	einfo "Performing recursive package-lock.json audit fix"
+einfo
+einfo "Performing recursive package-lock.json audit fix"
+einfo
 	npm_update_package_locks_recursive ./ # calls npm_pre_audit
-	einfo "Audit fix done"
+einfo
+einfo "Audit fix done"
+einfo
 }
 
 # @FUNCTION: npm-secaudit_audit_dev
@@ -456,7 +468,12 @@ npm-secaudit_audit_dev() {
 	fi
 
 	local nodie="${1}"
-	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
+	if [ ! -e package-lock.json ] ; then
+eerror
+eerror "Missing package-lock.json in implied root $(pwd)"
+eerror
+		die
+	fi
 
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
@@ -477,25 +494,37 @@ npm-secaudit_audit_dev() {
 	if [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
 					&& "${is_critical}" == "1" ]] ; then
 					cat "${audit_file}"
-					die "Detected critical vulnerability in a package."
+eerror
+eerror "Detected critical vulnerability in a package."
+eerror
+					die
 	elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
 					&& ( "${is_high}" == "1" \
 					|| "${is_critical}" == "1" ) ]] ; then
 					cat "${audit_file}"
-					die "Detected high vulnerability in a package."
+eerror
+eerror "Detected high vulnerability in a package."
+eerror
+					die
 	elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
 					&& ( "${is_moderate}" == "1" \
 					|| "${is_critical}" == "1" \
 					|| "${is_high}" == "1" ) ]] ; then
 					cat "${audit_file}"
-					die "Detected moderate vulnerability in a package."
+eerror
+eerror "Detected moderate vulnerability in a package."
+eerror
+					die
 	elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
 					&& ( "${is_low}" == "1" \
 					|| "${is_critical}" == "1" \
 					|| "${is_high}" == "1" \
 					|| "${is_moderate}" == "1" ) ]] ; then
 					cat "${audit_file}"
-					die "Detected low vulnerability in a package."
+eerror
+eerror "Detected low vulnerability in a package."
+eerror
+					die
 				fi
 			fi
 		popd
@@ -513,7 +542,12 @@ npm-secaudit_audit_prod() {
 		return
 	fi
 
-	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
+	if [ ! -e package-lock.json ] ; then
+eerror
+eerror "Missing package-lock.json in implied root $(pwd)"
+eerror
+		die
+	fi
 
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
@@ -526,12 +560,18 @@ npm-secaudit_audit_prod() {
 				cat "${audit_file}" | grep -q -F -e "npm audit fix"
 				local result_found2="$?"
 				if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
-					die "package is still vulnerable at $(pwd)$l"
+eerror
+eerror "Package is still vulnerable at $(pwd)$l"
+eerror
+					die
 				fi
 			else
 				if cat "${audit_file}" | grep -q -F -e "npm ERR!" ; then
 					cat "${audit_file}"
-					die "Uncaught error"
+eerror
+eerror "Uncaught error"
+eerror
+					die
 				fi
 			fi
 		popd
@@ -694,7 +734,9 @@ einfo
 		rd=$(dirname $(echo "${f}" | sed -e "s|${ROOTDIR}||"))
 		local temp_dest=$(realpath --canonicalize-missing "${td}/${rd}")
 		mkdir -p "${temp_dest}"
-		einfo "Copying ${f} to ${temp_dest}"
+einfo
+einfo "Copying ${f} to ${temp_dest}"
+einfo
 		cp -a "${f}" "${temp_dest}" || die
 	done
 
