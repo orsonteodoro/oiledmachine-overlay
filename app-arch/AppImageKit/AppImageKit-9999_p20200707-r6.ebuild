@@ -8,6 +8,9 @@
 # AppImageKit is the set of utils and assets used for appimagetool.
 
 EAPI=7
+
+inherit cmake-utils
+
 DESCRIPTION="appimagetool -- Generate, extract, and inspect AppImages"
 HOMEPAGE="https://github.com/AppImage/AppImageKit"
 LICENSE="MIT" # project's default license
@@ -24,18 +27,20 @@ RDEPEND+=" additional-tools? ( dev-libs/openssl )
 	net-misc/zsync2:=
 	sys-fs/squashfuse:=
 	sys-fs/squashfs-tools:=
-	dev-libs/libappimage:=[static-libs]"
+	dev-libs/libappimage:=[static-libs]
+"
 DEPEND+=" ${RDEPEND}
 	dev-util/sanitizers-cmake
-	sys-devel/binutils"
+	sys-devel/binutils
+"
 SLOT="0/${PV}"
 EGIT_COMMIT="08800854de05f4f6f7c1f3901dc165b8518822e1"
 SRC_URI="
 https://github.com/AppImage/AppImageKit/archive/${EGIT_COMMIT}.tar.gz
-	 -> ${P}.tar.gz"
+	 -> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror strip"
-inherit cmake-utils
 PATCHES=(
 	"${FILESDIR}/${PN}-9999_p20200707-set-commit.patch"
 	"${FILESDIR}/${PN}-9999_p20200707-use-system-libs-and-headers.patch"
@@ -46,9 +51,11 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 
 pkg_setup() {
 	if has network-sandbox $FEATURES ; then
-		die \
-"${PN} requires network-sandbox to be disabled in FEATURES in order to download\n\
-internal dependencies."
+eerror
+eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
+eerror "download internal dependencies."
+eerror
+		die
 	fi
 }
 
