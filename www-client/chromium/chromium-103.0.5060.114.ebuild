@@ -176,7 +176,7 @@ LICENSE_BENCHMARK_WEBSITES="
 	)
 " # emerge does not understand ^^ in the LICENSE variable and have been replaced
 # with ||.  You should choose at most one at some instances.
-GEN_ABOUT_CREDITS=1 # Uncomment to generate about_credits.html including bundled.
+# GEN_ABOUT_CREDITS=1 # Uncomment to generate about_credits.html including bundled.
 # SHA512 about_credits.html fingerprint:
 LICENSE_FINGERPRINT="\
 b707687bcd996a2435b300e4c4a2553499725c411224cb6def2ff4c06371fb87\
