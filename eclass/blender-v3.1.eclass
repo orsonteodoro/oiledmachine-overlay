@@ -193,11 +193,8 @@ gen_openvdb_depends() {
 	local s=${OPENVDB_ABIS_MAJOR_VERS}
 	o+="
 		abi${s}-compat? (
-			=media-gfx/openvdb-${s}*[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc]
-		)
-		abi8-compat? (
-			>=media-gfx/openvdb-8.0.1
-			<media-gfx/openvdb-8.1
+			=media-gfx/openvdb-${s}.0*[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc]
+			>=media-gfx/openvdb-${s}.0.1
 		)
 	"
 	echo "${o}"
