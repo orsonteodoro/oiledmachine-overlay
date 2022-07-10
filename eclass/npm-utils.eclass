@@ -72,12 +72,16 @@ CHROMIUM_STABLE_V="102"
 npm_check_npm_error()
 {
 	if find "${HOME}/npm/_logs/"* 2>/dev/null 1>/dev/null ; then
+ewarn
 ewarn "Detected some potential download failure(s).  Logs can be found in"
 ewarn "${HOME}/npm/_logs .  Retry if the build fails."
+ewarn
 	fi
 	if grep -q -E -r -e "(ERR_SOCKET_TIMEOUT|FETCH_ERROR)" "${HOME}/npm/_logs" ; then
+eerror
 eerror "Detected some download failure(s).  Logs can be found in"
 eerror "${HOME}/npm/_logs .  Re-emerge the package."
+eerror
 		die
 	fi
 }
@@ -94,7 +98,9 @@ eerror "${HOME}/npm/_logs .  Re-emerge the package."
 npm_install_sub() {
 	local dir="${1}"
 	shift
-	einfo "npm_install_sub: dir=$(pwd)/${dir}"
+einfo
+einfo "npm_install_sub: dir=$(pwd)/${dir}"
+einfo
 	pushd "${dir}" || die
 		npm install ${@} || die
 		npm_check_npm_error
@@ -113,7 +119,9 @@ npm_install_sub() {
 # $2 ... $n - additional args to pass to npm install (optional)
 # @CODE
 npm_install_prod() {
-	einfo "npm_install_prod:  npm install ${@} --save-prod"
+einfo
+einfo "npm_install_prod:  npm install ${@} --save-prod"
+einfo
 	npm install ${@} --save-prod || die
 	npm_check_npm_error
 	if [ -e package-lock.json ] ; then
@@ -130,7 +138,9 @@ npm_install_prod() {
 # $2 ... $n - additional args to pass to npm install (optional)
 # @CODE
 npm_install_dev() {
-	einfo "npm_install_dev:  npm install ${@} --save-dev"
+einfo
+einfo "npm_install_dev:  npm install ${@} --save-dev"
+einfo
 	npm install ${@} --save-dev || die
 	npm_check_npm_error
 	if [ -e package-lock.json ] ; then
@@ -147,7 +157,9 @@ npm_install_dev() {
 # $2 ... $n - additional args to pass to npm uninstall (optional)
 # @CODE
 npm_uninstall() {
-	einfo "npm_uninstall:  npm uninstall ${@}"
+einfo
+einfo "npm_uninstall:  npm uninstall ${@}"
+einfo
 	npm uninstall ${@} || die
 }
 
@@ -160,7 +172,9 @@ npm_uninstall() {
 # $2 ... $n - additional args to pass to npm install (optional)
 # @CODE
 npm_install_no_save() {
-	einfo "npm_install_no_save:  npm install ${@} --no-save"
+einfo
+einfo "npm_install_no_save:  npm install ${@} --no-save"
+einfo
 	npm install ${@} --no-save || die
 	npm_check_npm_error
 	if [ -e package-lock.json ] ; then
@@ -177,16 +191,23 @@ npm_install_no_save() {
 # @CODE
 npm_package_lock_update() {
 	local dir="${1}"
-	einfo "npm_package_lock_update: dir=$(pwd)/${dir}"
+einfo
+einfo "npm_package_lock_update: dir=$(pwd)/${dir}"
+einfo
 	pushd "${dir}" || die
 		if [ -e package-lock.json ] ; then
 			rm package-lock.json
 		else
-			ewarn "package-lock.json was not found as expected"
+ewarn
+ewarn "package-lock.json was not found as expected"
+ewarn
 		fi
 		npm i --package-lock-only || die
-		[ ! -e package-lock.json ] \
-		&& ewarn "package-lock.json was not created in ${dir}"
+		if [ ! -e package-lock.json ] ; then
+ewarn
+ewarn "package-lock.json was not created in ${dir}"
+ewarn
+		fi
 	popd
 }
 
@@ -225,21 +246,24 @@ npm_auto_fix() {
 	cat "${audit_file}" | grep -q -F -e "Invalid Version:" \
 		&& is_invalid_version=1
 	if [[ "${is_auto_fix}" == "1" ]] ; then
-		einfo \
-"Found auto fixes.  Running \`npm audit fix\`.  is_auto_fix=1"
+einfo
+einfo "Found auto fixes.  Running \`npm audit fix\`.  is_auto_fix=1"
+einfo
 		npm audit fix || die
 		#L=$(cat "${audit_file}" \
 #| grep -E -e "to resolve [0-9]+ vulnerabilit(y|ies)" \
 #| sed -e "s|# Run  ||" -e "s#  to resolve [0-9]+ vulnerabilit(y|ies)##g")
 		#while read -r line ; do
-		#	einfo "Auto running fix: ${line}"
+#einfo
+#einfo "Auto running fix: ${line}"
+#einfo
 		#	eval "${line}"
 		#done <<< ${L}
 		return 1
 	elif [[ "${is_trivial}" == "1" ]] ; then
-		einfo \
-"Found trivial fixes.  Running \`npm audit fix\`.\n\
-is_trivial=1"
+einfo
+einfo "Found trivial fixes.  Running \`npm audit fix\`. is_trivial=1"
+einfo
 		npm audit fix || die
 		return 1
 		# npm audit 2>&1 > "${audit_file}" || die
@@ -247,29 +271,36 @@ is_trivial=1"
 		#	|| die "not fixed"
 	elif [[ "${is_manual_review}" == "1" ]] ; then
 		cat "${audit_file}" || die
-		ewarn \
-"You still have a vulnerable package.  It requires hand editing.\n\
-Fix immediately.  is_manual_review=1.  Reported from: $(pwd)"
+ewarn
+ewarn "You still have a vulnerable package.  It requires hand editing.  Fix"
+ewarn "immediately.  is_manual_review=1.  Reported from: $(pwd)"
+ewarn
 		# assumes that fixing operations occur immediately
 		return 2
 	elif [[ "${is_missing}" == "1" ]] ; then
-		einfo "Lockfile is bad.  is_missing=1"
+einfo
+einfo "Lockfile is bad.  is_missing=1"
+einfo
 		cat "${audit_file}" || die
 	elif [[ "${is_invalid_version}" == "1" ]] ; then
-		einfo "Invalid file case.  Fix lock?  is_invalid_version=1"
+einfo
+einfo "Invalid file case.  Fix lock?  is_invalid_version=1"
+einfo
 		rm package-lock.json
 		npm i --package-lock-only 2>&1 > "${audit_file}"
 		if cat "${audit_file}" | grep -q -F -e "Invalid Version:" ; then
 			cat "${audit_file}" || die
-			einfo "Still broken.  Requires manual editing."
+einfo
+einfo "Still broken.  Requires manual editing."
+einfo
 		fi
 		is_clean=0
-		cat "${audit_file}" \
-			| grep -q -F -e "found 0 vulnerabilities" \
+		cat "${audit_file}" | grep -q -F -e "found 0 vulnerabilities" \
 			&& is_clean=1
 		if [[ "${is_clean}" == 0 ]] ; then
-			einfo \
-			"Running \`npm audit fix\` anyway."
+einfo
+einfo "Running \`npm audit fix\` anyway."
+einfo
 			npm audit fix || die
 		fi
 		npm audit 2>&1 > "${audit_file}" || die
@@ -277,16 +308,25 @@ Fix immediately.  is_manual_review=1.  Reported from: $(pwd)"
 			|| return 2
 		return 1
 	elif [[ "${is_clean}" == "1" ]] ; then
-		einfo "Audit was clean.  is_clean=1"
+einfo
+einfo "Audit was clean.  is_clean=1"
+einfo
 	elif [[ "${is_clean}" == "0" ]] ; then
-		einfo "Audit is not clean.  Going to fix.  is_clean=0"
+einfo
+einfo "Audit is not clean.  Going to fix.  is_clean=0"
+einfo
 		cat "${audit_file}" || die
-		einfo "Running \`npm audit fix\`."
+einfo
+einfo "Running \`npm audit fix\`."
+einfo
 		npm audit fix || die
 		return 1
 	else
 		cat "${audit_file}" || die
-		die "Uncaught error"
+eerror
+eerror "Uncaught error"
+eerror
+		die
 	fi
 	return 0
 }
@@ -297,14 +337,15 @@ Fix immediately.  is_manual_review=1.  Reported from: $(pwd)"
 __missing_requires_manual_intervention_message() {
 	if grep -q -F -e "Missing:" "${audit_file}" ; then
 		cat "${audit_file}" || die
-		ewarn \
-"Install missing packages.  Do a \`npm ls <package_name>\` of each of the\n\
-above packages.  Add them if they are missing"
-		ewarn
-		ewarn "The package lock dir: ${dir}"
-		ewarn "The package.json: ${dir}/package.json"
-		ewarn "The package-lock.json: ${dir}/package-lock.json"
-		# assumes that fixing operations occur immediately
+ewarn
+ewarn "Install missing packages.  Do a \`npm ls <package_name>\` of each of the"
+ewarn "above packages.  Add them if they are missing"
+ewarn
+ewarn "The package lock dir: ${dir}"
+ewarn "The package.json: ${dir}/package.json"
+ewarn "The package-lock.json: ${dir}/package-lock.json"
+ewarn
+# It assumes that fixing operations occur immediately.
 	fi
 }
 
@@ -314,11 +355,13 @@ __replace_package_lock() {
 	__missing_requires_manual_intervention_message
 	if [ ! -e package-lock.json ] ; then
 		if [[ "${NPM_UTILS_ALLOW_I_PACKAGE_LOCK}" == "1" ]] ; then
-			ewarn \
-"Could not safely restore package-lock.json with --package-lock-only.\n\
-Forcing 'npm i --package-lock' which may pull vulnerabilities.  dir=$(pwd)"
+ewarn
+ewarn "Could not safely restore package-lock.json with --package-lock-only."
+ewarn "Forcing 'npm i --package-lock' which may pull vulnerabilities."
+ewarn "dir=$(pwd)"
+ewarn
 
-			# warning: can pull vulnerability
+			# Warning:  It can pull vulnerability
 			npm i --package-lock 2>&1 > "${audit_file}"
 
 			__missing_requires_manual_intervention_message
@@ -355,23 +398,34 @@ npm_pre_audit() {
 		elif grep -q -F -e "does not satisfy" "${audit_file}" ; then
 			__replace_package_lock
 		elif [ ! -e package-lock.json ] ; then
-			die \
-"Missing package-lock.json required for audit.  Fixme:  unknown case."
+eerror
+eerror "Missing package-lock.json required for audit.  Fixme:  unknown case."
+eerror
+			die
 		else
 			if cat "${audit_file}" | grep -q -F -e "npm ERR!" ; then
 				cat "${audit_file}"
-				die "Uncaught error"
+eerror
+eerror "Uncaught error"
+eerror
+				die
 			fi
 		fi
 	else
-		die "Using npm_pre_audit requires a package-lock.json"
+eerror
+eerror "Using npm_pre_audit requires a package-lock.json"
+eerror
+		die
 	fi
 
 	if [ -e package-lock.json ] ; then
 		# fix trivial vulnerabilities
 		npm_auto_fix
 	else
-		die "npm_pre_audit didn't create a package-lock.json"
+eerror
+eerror "npm_pre_audit didn't create a package-lock.json"
+eerror
+		die
 	fi
 }
 
@@ -397,7 +451,9 @@ npm_audit_fix() {
 	fi
 
 	local dir="${1}"
-	einfo "npm_audit_fix: dir=$(pwd)/${dir}"
+einfo
+einfo "npm_audit_fix: dir=$(pwd)/${dir}"
+einfo
 	pushd "${dir}" || die
 		npm_pre_audit
 	popd
@@ -424,7 +480,9 @@ npm_audit_fix_recursive_and_converging() {
 		n_repairs=0
 		L=$(find "${dir}" -type f -name "package-lock.json")
 		for l in ${L} ; do
-			einfo "npm_audit_fix_recursive_and_converging: dir=${l} (pass #${i})"
+einfo
+einfo "npm_audit_fix_recursive_and_converging: dir=${l} (pass #${i})"
+einfo
 			pushd $(dirname "${l}") || die
 				npm_auto_fix
 				if (( $? == 1 )) ; then
@@ -434,28 +492,39 @@ npm_audit_fix_recursive_and_converging() {
 		done
 
 		if [[ "${n_repairs}" == "0" ]] ; then
-			einfo "n_repairs is 0"
+einfo
+einfo "n_repairs is 0"
+einfo
 			break
 		fi
 
 		if (( ${previous_n_repairs} != -1 )) ; then
 			if (( ${n_repairs} > ${previous_n_repairs} )) ; then
-				die "Repair rate explosion.  Unfixable."
+eerror
+eerror "Repair rate explosion.  Unfixable."
+eerror
+				die
 			elif (( ${n_repairs} < ${previous_n_repairs} )) ; then
-				einfo "Repair rate is converging toward zero"
+einfo
+einfo "Repair rate is converging toward zero"
+einfo
 			elif (( ${n_repairs} == ${previous_n_repairs} )) ; then
 				tries=$((${tries}+1))
 				if (( ${tries} >= 3 )) ; then
-					einfo \
-"Repair rate tries is used up."
+einfo
+einfo "Repair rate tries is used up."
+einfo
 					break
 				else
-					einfo \
-"Repair rate is a coincidental constant?  tries=${tries}"
+einfo
+einfo "Repair rate is a coincidental constant?  tries=${tries}"
+einfo
 				fi
 			fi
 		fi
-		einfo "Convergence rate: n_repairs=${n_repairs}"
+einfo
+einfo "Convergence rate: n_repairs=${n_repairs}"
+einfo
 		previous_n_repairs=${n_repairs}
 		i=$((${i}+1))
 	done
@@ -495,23 +564,26 @@ npm_update_package_locks_recursive() {
 	local n_constant=0
 	local audit_file="${T}/npm-audit-result"
 	while true ; do
-		einfo \
-"npm_update_package_locks_recursive (pre audit): preforming pass #${i}\n\
-dir=$(realpath ${base}/${dir})"
+einfo
+einfo "npm_update_package_locks_recursive (pre audit): preforming pass"
+einfo "dir=$(realpath ${base}/${dir})"
+einfo
 		L=$(find "${dir}" -type f -name "package-lock.json")
 		for l in ${L} ; do
 			if [ -e "${l}" ] ; then
 				pushd "$(dirname ${l})" || die
-
-					einfo "Processing: $(realpath ${base}/${l})"
+einfo
+einfo "Processing: $(realpath ${base}/${l})"
+einfo
 					npm_pre_audit
 				popd
 			fi
 		done
 
 		current_broken_lock_count=0
-		einfo \
-"npm_update_package_locks_recursive (locks update): preforming pass #${i}"
+einfo
+einfo "npm_update_package_locks_recursive (locks update): preforming pass #${i}"
+einfo
 		L=$(find "${dir}" -type f -name "package-lock.json")
 		for l in ${L} ; do
 			if [ -e "${l}" ] ; then
@@ -523,21 +595,29 @@ dir=$(realpath ${base}/${dir})"
 					else
 						if cat "${audit_file}" | grep -q -F -e "npm ERR!" ; then
 							cat "${audit_file}"
-							die "Uncaught error"
+eerror
+eerror "Uncaught error"
+eerror
+							die
 						fi
 					fi
 				popd
 			fi
 		done
 		if (( ${current_broken_lock_count} == 0 )) ; then
-			einfo "No broken locks encountered"
+einfo
+einfo "No broken locks encountered"
+einfo
 			break
 		fi
 		if (( ${previous_broken_lock_count} != -1 )) ; then
 			# the broken locks should converge towards zero
 			if (( ${current_broken_lock_count} > ${previous_broken_lock_count} )) ; then
 				# if the rate of broken locks should never increase over time
-				die "Intractable lock fix algorithm.  Fix the algorithm."
+eerror
+eerror "Intractable lock fix algorithm.  Fix the algorithm."
+eerror
+				die
 			fi
 
 			if (( ${current_broken_lock_count} == ${previous_broken_lock_count} )) ; then
@@ -545,23 +625,32 @@ dir=$(realpath ${base}/${dir})"
 				# 0 == 0 is the perfect scenario
 				n_constant=$((${n_constant}+1))
 				if (( ${n_constant} >= 3 )) ; then
-					einfo "Constant rate encountered.  n_constant=${n_constant}"
+einfo
+einfo "Constant rate encountered.  n_constant=${n_constant}"
+einfo
 					# this case means 3 samples, coincindental constant rate
 					break
 				fi
 			else
-				einfo "Rates are converging toward 0."
+einfo
+einfo "Rates are converging toward 0."
+einfo
 				n_constant=0
 			fi
 		fi
-		einfo \
-"Convergence rates: current_broken_lock_count=${current_broken_lock_count}\n\
-previous_broken_lock_count=${previous_broken_lock_count}"
+einfo
+einfo "Convergence rates:"
+einfo
+einfo "current_broken_lock_count=${current_broken_lock_count}"
+einfo "previous_broken_lock_count=${previous_broken_lock_count}"
+einfo
 		previous_broken_lock_count=${current_broken_lock_count}
 		i=$((${i}+1))
 	done
 
-	einfo "npm_update_package_locks_recursive: done"
+einfo
+einfo "npm_update_package_locks_recursive: done"
+einfo
 }
 
 # @FUNCTION: npm-utils_install_header_license
@@ -682,13 +771,16 @@ npm-utils_is_nodejs_header_exe_same() {
 	local node_patch=$(grep -r -e "NODE_PATCH_VERSION" \
 		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
 	if ver_test ${node_major}.${node_minor} -ne $(ver_cut 1-2 ${node_v}) ; then
-		die \
-"Inconsistency between node header and active executable version.\n\
-Switch your headers via \`eselect nodejs\`"
+eerror
+eerror "Inconsistency between node header and active executable version."
+eerror "Switch your headers via \`eselect nodejs\`"
+eerror
+		die
 	else
-		einfo \
-"Node.js header version: ${node_major}.${node_minor}.${node_minor}\n\
-Node.js exe version: ${node_v}"
+einfo
+einfo "Node.js header version: ${node_major}.${node_minor}.${node_minor}"
+einfo "Node.js exe version: ${node_v}"
+einfo
 	fi
 }
 
@@ -811,15 +903,20 @@ npm-utils_check_chromium_eol() {
 				|| ( -n "${ELECTRON_APP_NO_DIE_ON_AUDIT}" \
 					&& "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ) \
 			]] ; then
-				ewarn \
-"The package contains chromium_v=${chromium_v} which is End Of Life (EOL)"
+ewarn
+ewarn "The package contains chromium_v=${chromium_v} which is End Of Life (EOL)"
+ewarn
 			else
-				die \
-"The package contains chromium_v=${chromium_v} which is End Of Life (EOL)"
+eerror
+eerror "The package contains chromium_v=${chromium_v} which is End Of Life"
+eerror "(EOL)"
+eerror
+				die
 			fi
 		else
-			einfo \
-"chromium_v=${chromium_v} >= chromium_v_stable=${CHROMIUM_STABLE_V}"
+einfo
+einfo "chromium_v=${chromium_v} >= chromium_v_stable=${CHROMIUM_STABLE_V}"
+einfo
 		fi
 	fi
 
@@ -835,15 +932,19 @@ npm-utils_check_chromium_eol() {
 		| grep -E -e "^[0-9]+\.[0-9]\.[0-9]{3,4}\.[0-9]+$" | head -n 1)
 			if ver_test $(ver_cut 1 ${chromium_v}) -lt ${CHROMIUM_STABLE_V} ; then
 				if [[ "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" ]] ; then
-					ewarn \
-"The package contains chromium_exe_v=${chromium_v} which is End Of Life (EOL)"
+ewarn
+ewarn "The package contains chromium_exe_v=${chromium_v} which is End Of Life (EOL)"
+ewarn
 				else
-					die \
-"The package contains chromium_exe_v=${chromium_v} which is End Of Life (EOL)"
+eerror
+eerror "The package contains chromium_exe_v=${chromium_v} which is End Of Life (EOL)"
+eerror
+					die
 				fi
 			else
-				einfo \
-"chromium_exe_v=${chromium_v} >= chromium_exe_v_stable=${CHROMIUM_STABLE_V}"
+einfo
+einfo "chromium_exe_v=${chromium_v} >= chromium_exe_v_stable=${CHROMIUM_STABLE_V}"
+einfo
 			fi
 		done
 	fi
