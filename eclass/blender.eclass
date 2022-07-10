@@ -1430,25 +1430,30 @@ _src_install() {
 		fi
 	fi
 	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		echo -e \
-"# The following libraries were linked to blenderplayer as shared libraries and\n\
-# need to be present on the other computer or distributed with blenderplayer\n\
-# with licenses or built without such dependencies.  The dependency of those\n\
-# direct shared dependencies may also be required.\n\n" \
-			> "${ED}${d_dest}/README.3rdparty_deps"
+		fecho1() {
+			echo "${@}" > "${ED}${d_dest}/README.3rdparty_deps" || die
+		}
+fecho1
+fecho1 "# The following libraries were linked to blenderplayer as shared"
+fecho1 "# libraries and need to be present on the other computer or distributed"
+fecho1 "# with blenderplayer with licenses or built without such dependencies."
+fecho1 "# The dependency of those direct shared dependencies may also be required."
+fecho1
 		[[ ! -e "${T}/build-build_portable.log" ]] \
 			&& die "Missing build log"
 
 		# List direct dependencies
-		echo -e "# Direct shared dependencies:\n" \
-			>> "${ED}${d_dest}/README.3rdparty_deps" || die
+fecho1
+fecho1 "# Direct shared dependencies:"
+fecho1
 		grep -E -e "-o .*blenderplayer " \
 			"${T}"/build-build_portable.log \
 			| grep -o -E -e "[^ ]+\.so(.[0-9]+)?" | sort | uniq \
 			| sed -e "/^$/d" \
 			>> "${ED}${d_dest}/README.3rdparty_deps" || die
-		echo -e "\n\n# Dependency of direct shared dependencies:\n" \
-			>> "${ED}${d_dest}/README.3rdparty_deps" || die
+fecho1
+fecho1 "# Dependency of direct shared dependencies:"
+fecho1
 
 		# List dependency of those direct dependencies
 		echo -e $(for f in $(cat "${ED}/${d_dest}/README.3rdparty_deps" \
@@ -1463,13 +1468,18 @@ _src_install() {
 			| sed -E -e "/(statically|linked|linux-vdso.so.1)/d" \
 			| sed -e "/^$/d" \
 			>> "${ED}${d_dest}/README.3rdparty_deps" || die
-		echo -e \
-"\n\nPlace the shared libraries in the lib folder containing blenderplayer\n\
-along with licenses.  A \`gamelaunch.sh\` launcher wrapper script has been\n\
-provided.  Edit the file and set the name of my_game_project.blend file.\n\
-Blender adds mesa libs to their binary distribution.  You may need to do\n\
-the same especially to avoid the multiple LLVM versions being loaded bug." \
-			>> "${ED}${d_dest}/README.3rdparty_deps" || die
+fecho1
+fecho1
+fecho1 "Place the shared libraries in the lib folder containing blenderplayer"
+fecho1 "along with licenses."
+fecho1
+fecho1 "A \`gamelaunch.sh\` launcher wrapper script has been provided.  Edit"
+fecho1 "the file and set the name of my_game_project.blend file."
+fecho1
+fecho1 "Blender adds mesa libs to their binary distribution.  You may need to"
+fecho1 "do the same especially to avoid the multiple LLVM versions being loaded"
+fecho1 "bug."
+fecho1
 		dodir "${d_dest}/lib/dri"
 		exeinto "${d_dest}"
 		doexe "${FILESDIR}/gamelaunch.sh"
