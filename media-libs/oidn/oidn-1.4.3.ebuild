@@ -17,33 +17,35 @@ MKL_DNN_COMMIT="f53274c9fef211396655fc4340cb838452334089"
 OIDN_WEIGHTS_COMMIT="a34b7641349c5a79e46a617d61709c35df5d6c28"
 ORG_GH="https://github.com/OpenImageDenoise"
 SLOT="0/${PV}"
-IUSE+=" +apps +built-in-weights custom-tc doc disable-sse41-check gcc icc openimageio"
-IUSE+=" +clang gcc icc"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
-	^^ ( clang gcc icc )
+IUSE+=" +apps +built-in-weights custom-tc doc disable-sse41-check gcc openimageio"
+IUSE+=" +clang gcc"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+	^^ ( clang gcc )
 "
 # Clang is more smoother multitask-wise
 # c++11 minimal
 MIN_CLANG_V="3.3"
 MIN_GCC_V="4.8.1"
-MIN_ICC_V="17.0" # 15.0 has c++11 support, but project only supports 17
 # SSE4.1 hardware release in 2008
 # See scripts/build.py for release versioning
 CDEPEND=" ${PYTHON_DEPS}"
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
-DEPEND+=" ${CDEPEND}
+DEPEND+="
+	${CDEPEND}
 	|| (
 		(
 			<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 			!<dev-cpp/tbb-2021:0=
 		)
-		>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}=
 	)
 	virtual/libc
-	openimageio? ( media-libs/openimageio )"
+	openimageio? ( media-libs/openimageio )
+"
 RDEPEND+=" ${DEPEND}"
-LLVM_SLOTS=(14 13 12 11 10)
+LLVM_SLOTS=(15 14 13 12 11 10)
 gen_depends() {
 	local o
 	local s
@@ -60,7 +62,8 @@ gen_depends() {
 	echo "${o}"
 }
 CLANG_DEPENDS=$(gen_depends)
-BDEPEND+=" ${CDEPEND}
+BDEPEND+="
+	${CDEPEND}
 	|| (
 		clang? (
 			|| (
@@ -68,10 +71,10 @@ BDEPEND+=" ${CDEPEND}
 			)
 		)
 		gcc? ( >=sys-devel/gcc-${MIN_GCC_V} )
-		icc? ( >=dev-lang/icc-${MIN_ICC_V} )
 	)
-	>=dev-lang/ispc-1.15.0
-	>=dev-util/cmake-3.1"
+	>=dev-lang/ispc-1.17.0
+	>=dev-util/cmake-3.1
+"
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="${ORG_GH}/oidn.git"
@@ -141,17 +144,16 @@ src_configure() {
 		export CXX="clang++"
 		test-flags-CXX "-std=c++11" 2>/dev/null 1>/dev/null \
 	                || die "Switch to a c++11 compatible compiler."
-	elif use icc ; then
-		export CC=icc
-		export CXX=icpc
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 	fi
 
-	einfo "CC=${CC}"
-	einfo "CXX=${CXX}"
-	einfo "CHOST=${CHOST}"
+einfo
+einfo "CC=${CC}"
+einfo "CXX=${CXX}"
+einfo "CHOST=${CHOST}"
+einfo
 
 	mycmakeargs+=(
 		-DCMAKE_CXX_COMPILER="${CXX}"

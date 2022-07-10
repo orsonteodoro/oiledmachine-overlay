@@ -362,6 +362,7 @@ RDEPEND+="
 	opencl? ( virtual/opencl )
 	openimagedenoise? (
 		>=media-libs/oidn-1.4.3
+		<media-libs/oidn-1.5
 	)
 	openimageio? (
 		$(gen_oiio_depends)
