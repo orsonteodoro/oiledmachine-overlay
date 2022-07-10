@@ -9,10 +9,6 @@ EAPI=7
 # c = reserved
 # de = ebuild revision
 
-# This release corresponds to
-# WebKit 614.1.6 ; See Source/WebKit/Configurations/Version.xcconfig
-# or https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.3/Source/WebKit/Configurations/Version.xcconfig
-
 LLVM_MAX_SLOT=14 # This should not be more than Mesa's package LLVM_MAX_SLOT
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
@@ -33,7 +29,8 @@ LICENSE_DROMAEO="
 	( MIT BSD GPL )
 	BSD
 	BSD-2
-	LGPL-2.1"
+	LGPL-2.1
+"
 # The default webkit license is LGPL-2 BSD-2.
 LICENSE="
 	all-rights-reserved
@@ -256,7 +253,8 @@ LICENSE="
 		openssl
 		QU-fft
 		sigslot
-	)" # \
+	)
+" # \
 # emerge does not understand ^^ when applied to licenses, but you should only \
 #   pick one when || is presented
 
@@ -589,7 +587,8 @@ REQUIRED_USE+="
 	webrtc? ( mediastream )
 	webvtt? ( gstreamer )
 	webxr? ( webgl )
-	yarr-jit? ( jit )"
+	yarr-jit? ( jit )
+"
 
 # cannot use introspection for 32 webkit on 64 bit because it requires 32 bit
 # libs/build for python from gobject-introspection.  It produces this error:
@@ -599,19 +598,19 @@ REQUIRED_USE+="
 #
 # This means also you cannot use the geolocation feature.
 
-# Prev rev: 293166
-# Curr rev: 294992
+# Prev rev: 294992
+# Curr rev: 
 # For dependencies, see:
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.3/CMakeLists.txt?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.3/Source/cmake/BubblewrapSandboxChecks.cmake?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.3/Source/cmake/FindGStreamer.cmake?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.3/Source/cmake/GStreamerChecks.cmake?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.3/Source/cmake/OptionsGTK.cmake?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.3/Source/cmake/WebKitCommon.cmake?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.3/Tools/gtk/install-dependencies?rev=294992
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/CMakeLists.txt?rev=294992
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/BubblewrapSandboxChecks.cmake?rev=294992
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/FindGStreamer.cmake?rev=294992
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/GStreamerChecks.cmake?rev=294992
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/OptionsGTK.cmake?rev=294992
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/WebKitCommon.cmake?rev=294992
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Tools/gtk/install-dependencies?rev=294992
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=294992
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.3/Tools/gstreamer/jhbuild.modules?rev=294992
+#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Tools/gstreamer/jhbuild.modules?rev=294992
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
@@ -629,7 +628,8 @@ REQUIRED_USE+="
 # gstreamer requires >=libwpe-1.9.0 but gtk wpe renderer requires >=1.3.0
 WPE_DEPEND="
 	>=gui-libs/libwpe-1.9.0:1.0[${MULTILIB_USEDEP}]
-	>=gui-libs/wpebackend-fdo-1.6.0:1.0[${MULTILIB_USEDEP}]"
+	>=gui-libs/wpebackend-fdo-1.6.0:1.0[${MULTILIB_USEDEP}]
+"
 # TODO: gst-plugins-base[X] is only needed when build configuration ends up with
 #   GLX set, but that's a bit automagic too to fix
 # Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].
@@ -643,7 +643,7 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.3?rev=294992
+# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4?rev=294992
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 RDEPEND+="
@@ -728,7 +728,8 @@ RDEPEND+="
 		>=x11-libs/libXcomposite-0.4.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXdamage-1.1.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXrender-0.9.10[${MULTILIB_USEDEP}]
-		>=x11-libs/libXt-1.1.5[${MULTILIB_USEDEP}] )"
+		>=x11-libs/libXt-1.1.5[${MULTILIB_USEDEP}] )
+"
 # For ${OCDM_WV}, \
 #   You need a license, the proprietary SDK, and OCDM plugin.
 # see https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L97
@@ -772,7 +773,8 @@ BDEPEND+="
 	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
 	pgo? ( dev-vcs/subversion )
 	thunder? ( net-libs/thunder )
-	webrtc? ( dev-vcs/subversion )"
+	webrtc? ( dev-vcs/subversion )
+"
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
 #		>=x11-themes/hicolor-icon-theme-0.17
@@ -814,8 +816,12 @@ einfo
 		fi
 
 		if ! test-flag-CXX -std=c++20 ; then
-# See https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.3/Source/cmake/OptionsCommon.cmake?rev=294992
-die "You need at least GCC 8.3.x or Clang >= 6 for C++20-specific compiler flags"
+# See https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/OptionsCommon.cmake?rev=294992
+eerror
+eerror "You need at least GCC 8.3.x or Clang >= 6 for C++20-specific compiler"
+eerror "flags"
+eerror
+			die
 		fi
 	fi
 
@@ -848,7 +854,9 @@ ewarn
 
 NABIS=0
 pkg_setup() {
-	einfo "This is the stable branch."
+einfo
+einfo "This is the stable branch."
+einfo
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
@@ -873,11 +881,17 @@ ewarn "flag."
 ewarn
 			fi
 		else
-die "64k pages is not supported.  Remove the 64k-pages USE flag."
+eerror
+eerror "64k pages is not supported.  Remove the 64k-pages USE flag."
+eerror
+			die
 		fi
 
 		if ! linux_config_exists ; then
-die "Missing .config for kernel."
+eerror
+eerror "Missing .config for kernel."
+eerror
+			die
 		fi
 
 		if [[ "${ABI}" == "arm64" ]] ; then
@@ -952,7 +966,9 @@ eerror
 	check_geolocation
 
 	if ( use arm || use arm64 ) && ! use gles2 ; then
-		ewarn "gles2 is the default on upstream."
+ewarn
+ewarn "gles2 is the default on upstream."
+ewarn
 	fi
 
 	if use openmp ; then
@@ -972,7 +988,9 @@ ewarn
 	if use v4l ; then
 		local gst_plugins_v4l2_repo=\
 $(cat "${ESYSROOT}/var/db/pkg/media-plugins/gst-plugins-v4l2-"*"/repository")
-		einfo "gst-plugins-v4l2 repo:  ${gst_plugins_v4l2_repo}"
+einfo
+einfo "gst-plugins-v4l2 repo:  ${gst_plugins_v4l2_repo}"
+einfo
 		if [[ "${gst_plugins_v4l2_repo}" != "oiledmachine-overlay" ]] ; then
 ewarn
 ewarn "Please only use the media-plugins/gst-plugins-v4l2::oiledmachine-overlay"
@@ -985,7 +1003,9 @@ ewarn
 	fi
 
 	if use webrtc ; then
+ewarn
 ewarn "WebRTC support is currently in development and feature incomplete."
+ewarn
 	fi
 
 	for a in $(multilib_get_enabled_abis) ; do
@@ -1060,7 +1080,10 @@ PerformanceTests/${f}
 src_unpack() {
 	unpack ${A}
 	if use pgo ; then
-		ewarn "The PGO use flag is a Work In Progress (WIP) and is not production ready."
+ewarn
+ewarn "The PGO use flag is a Work In Progress (WIP) and is not production"
+ewarn "ready."
+ewarn
 		unpack_pgo_trainers
 		# TODO: Add all-rights-reserved to exclusion for Tools/Scripts
 		# if possible
@@ -1129,7 +1152,12 @@ _config_pgx() {
 	done
 	# This will rarely occur. Only a couple of corner cases could lead us to
 	# that failure. See bug 513888
-	[[ -z $ruby_interpreter ]] && die "No suitable ruby interpreter found"
+	if [[ -z $ruby_interpreter ]] ; then
+eerror
+eerror "No suitable ruby interpreter found"
+eerror
+		die
+	fi
 
 	# TODO: Check Web Audio support
 	# should somehow let user select between them?
@@ -1204,7 +1232,9 @@ _config_pgx() {
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
 	if use 64k-pages ; then
-		einfo "Disabling JIT for ${ABI} with 64kb pages"
+einfo
+einfo "Disabling JIT for ${ABI} with 64kb pages"
+einfo
 		mycmakeargs+=(
 			-DENABLE_JIT=OFF
 			-DENABLE_DFG_JIT=OFF
@@ -1257,7 +1287,9 @@ _config_pgx() {
 			-DUSE_SYSTEM_MALLOC=$(usex jit OFF $(usex !bmalloc))
 		)
 	else
-		einfo "Disabling JIT for ${ABI}"
+einfo
+einfo "Disabling JIT for ${ABI}"
+einfo
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=ON
 			-DENABLE_JIT=OFF
@@ -1273,18 +1305,26 @@ _config_pgx() {
 	# Arches without JIT support also need this to really disable it in all
 	# places
 	if [[ "${jit_enabled}" == "0" ]] ; then
-		einfo "Disabled YARR (regex) JIT"
+einfo
+einfo "Disabled YARR (regex) JIT"
+einfo
 		append-cppflags -DENABLE_JIT=0 -DENABLE_YARR_JIT=0 \
 			-DENABLE_ASSEMBLER=0
 	else
 		if use yarr-jit ; then
-			einfo "Enabled YARR (regex) JIT" # default
+einfo
+einfo "Enabled YARR (regex) JIT" # default
+einfo
 		else
-			einfo "Disabled YARR (regex) JIT"
+einfo
+einfo "Disabled YARR (regex) JIT"
+einfo
 			append-cppflags -DENABLE_YARR_JIT=0
 		fi
 	fi
-	einfo "CPPFLAGS=${CPPFLAGS}"
+einfo
+einfo "CPPFLAGS=${CPPFLAGS}"
+einfo
 
 	if use eme ; then
 		sed -i -e "s|ENABLE_ENCRYPTED_MEDIA PRIVATE|ENABLE_ENCRYPTED_MEDIA PUBLIC|g" \
@@ -1296,9 +1336,11 @@ _config_pgx() {
 			| grep "LLVM_MAX_SLOT" \
 			| head -n 1 \
 			| cut -f 2 -d "\"")
-		einfo "MESA LLVM: ${MESA_LLVM_V}"
 		local llvmp=$(get_llvm_prefix ${MESA_LLVM_V})
-		einfo "LLVM path: ${llvmp}"
+einfo
+einfo "MESA LLVM: ${MESA_LLVM_V}"
+einfo "LLVM path: ${llvmp}"
+einfo
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${llvmp}/bin/${ctarget}-clang"
 			-DCMAKE_CXX_COMPILER="${llvmp}/bin/${ctarget}-clang++"
@@ -1352,13 +1394,21 @@ _config_pgx() {
 		elif tc-is-gcc ; then
 			append-flags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
 		else
-			die "Only GCC and Clang are supported for PGO."
+eerror
+eerror "Only GCC and Clang are supported for PGO."
+eerror
+			die
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		if tc-is-clang ; then
-			einfo "Merging PGO data to generate a PGO profile"
+einfo
+einfo "Merging PGO data to generate a PGO profile"
+einfo
 			if ! ls "${BUILD_DIR}/"*.profraw 2>/dev/null 1>/dev/null ; then
-				die "Missing *.profraw files"
+eerror
+eerror "Missing *.profraw files"
+eerror
+				die
 			fi
 			llvm-profdata merge -output="${T}/pgo-${ABI}/custom-pgo.profdata" \
 				"${T}/pgo-${ABI}" || die
@@ -1373,7 +1423,10 @@ _config_pgx() {
 
 _build_pgx() {
 	if [[ ! -f build.ninja ]] ; then
-		die "Missing build.ninja"
+eerror
+eerror "Missing build.ninja"
+eerror
+		die
 	fi
 	cmake_src_compile
 }
@@ -1400,7 +1453,10 @@ _get_local_perf_path() {
 			echo "${S}/PerformanceTests/Speedometer"
 			;;
 		wk_pgo_trainers_speedometer)
-			die "Missing local copy speedometer"
+eerror
+eerror "Missing local copy speedometer"
+eerror
+			die
 			;;
 		*)
 			local found=0
@@ -1413,7 +1469,10 @@ _get_local_perf_path() {
 				fi
 			done
 			if (( ${found} == 0 )) ; then
-				die "Missing local copy for ${u/wk_pgo_trainers_/}"
+eerror
+eerror "Missing local copy for ${u/wk_pgo_trainers_/}"
+eerror
+				die
 			fi
 			;;
 	esac
@@ -1432,7 +1491,10 @@ _get_benchmark_plan() {
 
 _run_trainer() {
 	if [[ ! -f "${BUILD_DIR}/minibrowser-gtk" ]] ; then
-		die "Missing ${BUILD_DIR}/minibrowser-gtk"
+eerror
+eerror "Missing ${BUILD_DIR}/minibrowser-gtk"
+eerror
+		die
 	fi
 	local train_with=()
 	for p in ${PGO_USE_NORMALIZED[@]} ; do
@@ -1443,8 +1505,10 @@ _run_trainer() {
 	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # \
 	  # Prevent a sandbox violation and isolate between parallel running emerges.
 	for t in ${train_with[@]} ; do
-		einfo "Training with ${t/wk_pgo_trainers_/}"
-		# See https://github.com/WebKit/WebKit/tree/9467df8e0134156fa95c4e654e956d8166a54a13/Tools/Scripts/webkitpy/benchmark_runner
+einfo
+einfo "Training with ${t/wk_pgo_trainers_/}"
+einfo
+# See https://github.com/WebKit/WebKit/tree/9467df8e0134156fa95c4e654e956d8166a54a13/Tools/Scripts/webkitpy/benchmark_runner
 		virtx ${EPYTHON} Tools/Scripts/webkitpy/benchmark_runner/run_benchmark.py \
 			--build-directory "${BUILD_DIR}" \
 			$(_get_benchmark_plan ${t}) \
@@ -1520,7 +1584,9 @@ _install_header_license_mid() {
 _install_licenses() {
 	[[ -f "${T}/.copied_licenses" ]] && return
 
-	einfo "Copying third party licenses and copyright notices"
+einfo
+einfo "Copying third party licenses and copyright notices"
+einfo
 	export IFS=$'\n'
 	for f in $(find "${S}" \
 	  -iname "*licens*" -type f \
@@ -1570,7 +1636,8 @@ multilib_src_install() {
 		make_desktop_entry \
 			/usr/$(get_libdir)/misc/webkit2gtk-4.0/MiniBrowser \
 			"MiniBrowser (${ABI}, API: ${API_VERSION})" \
-			"" "Network;WebBrowser"
+			"" \
+			"Network;WebBrowser"
 	fi
 	mkdir -p "${T}/langs" || die
 	cp -a "${ED}/usr/share/locale/"* "${T}/langs" || die
