@@ -2,8 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils linux-info
+
 DESCRIPTION="Implements functionality for dealing with AppImage files"
-HOMEPAGE="https://github.com/AppImage/libappimage"
 LICENSE="MIT" # project default license
 LICENSE+=" all-rights-reserved" # src/libappimage/libappimage.c ; The vanilla MIT license doesn't have all-rights-reserved
 # The below licenses apply to static linking and third-party packages.
@@ -12,6 +14,7 @@ LICENSE+=" !system-boost? ( Boost-1.0 )" # copied from the boost ebuild
 LICENSE+=" !system-libarchive? ( BSD BSD-2 BSD-4 public-domain )" # copied from the libarchive ebuild
 LICENSE+=" !system-xdgutils? ( MIT BSD )" # copied from the dev-libs/xdg-utils-cxx ebuild
 LICENSE+=" !system-xz? ( public-domain LGPL-2.1+ GPL-2+ )" # copied from the app-arch/xz-utils ebuild
+HOMEPAGE="https://github.com/AppImage/libappimage"
 KEYWORDS="~amd64 ~x86"
 IUSE="static-libs system-boost system-libarchive system-squashfuse system-xdgutils system-xz"
 RDEPEND="
@@ -23,26 +26,28 @@ RDEPEND="
 	system-squashfuse? ( sys-fs/squashfuse:=[libsquashfuse-appimage,static-libs] )
 	system-xdgutils? ( dev-libs/xdg-utils-cxx:=[static-libs] )
 	system-xz? ( app-arch/xz-utils:=[static-libs] )
-	x11-libs/cairo"
+	x11-libs/cairo
+"
 DEPEND="${RDEPEND}"
 BDEPEND="
 	>=dev-util/cmake-3.4
 	dev-util/desktop-file-utils
 	dev-util/xxd
-	dev-vcs/git"
+	dev-vcs/git
+"
 SLOT="0/${PV}"
 EGIT_COMMIT="3682efb71847391f75ce6999e94b01b8b8434748" # keep in sync with PV
 GOOGLETEST_COMMIT="ec44c6c1675c25b9827aacd08c02433cccde7780"
-SRC_URI=\
-"https://github.com/AppImage/libappimage/archive/v${PV}.tar.gz \
-	 -> ${P}.tar.gz
-https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT}.tar.gz \
-	-> ${P}-googletest.tar.gz"
+SRC_URI="
+https://github.com/AppImage/libappimage/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT}.tar.gz
+	-> ${P}-googletest.tar.gz
+"
 S="${WORKDIR}/${PN}-${PV}"
 S_BAK="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 CMAKE_MAKEFILE_GENERATOR="emake" # required for downloading in compile phase
-inherit cmake-utils linux-info
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0.2-use-squashfuse_appimage-for-pkgconfig.patch"
 	"${FILESDIR}/${PN}-1.0.2-same-files-static-build.patch"
@@ -53,22 +58,32 @@ PATCHES=(
 pkg_setup() {
 	# forced on because we need sources for squashfuse
 	if has network-sandbox $FEATURES ; then
-		die \
-"${PN} requires network-sandbox to be disabled in FEATURES in order to download\n\
-internal dependencies."
+eerror
+eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
+eerror "download internal dependencies."
+eerror
+		die
 	fi
 
 	linux-info_pkg_setup
 	linux_config_exists
 	if ! linux_chkconfig_builtin INOTIFY_USER ; then
-		die "You need to change your kernel .config to CONFIG_INOTIFY_USER=y"
+eerror
+eerror "You need to change your kernel .config to CONFIG_INOTIFY_USER=y"
+eerror
+		die
 	fi
 	if ! use system-boost ; then
-		ewarn "Using the internal boost will have build time failures."
+ewarn
+ewarn "Using the internal boost will have build time failures."
+ewarn
 	fi
 	if use system-squashfuse ; then
 		if [[ ! -d "${EROOT}/usr/lib64/squashfuse_appimage" ]] ; then
-			die "You need the squashfuse package from the oiledmachine-overlay."
+eerror
+eerror "You need the squashfuse package from the oiledmachine-overlay."
+eerror
+			die
 		fi
 	fi
 }
