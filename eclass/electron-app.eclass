@@ -203,7 +203,8 @@ CHROMIUM_DEPEND="
 	gnome-keyring? (
 		gnome-base/gnome-keyring[pam]
 	)
-	pulseaudio? ( media-sound/pulseaudio )"
+	pulseaudio? ( media-sound/pulseaudio )
+"
 # Electron only
 # Assumes U 18.04 builder but allows for older U LTS if libs present.
 COMMON_DEPEND="
@@ -265,7 +266,8 @@ COMMON_DEPEND="
 	x11-libs/libxcb
 	x11-libs/libxshmfence
 	x11-libs/pango
-	x11-libs/pixman"
+	x11-libs/pixman
+"
 
 # [A] Supported versions (LTS) are listed in
 # https://www.electronjs.org/docs/latest/tutorial/electron-timelines
@@ -606,10 +608,12 @@ _ELECTRON_APP_PACKAGING_METHODS+=( unpacked )
 if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" && "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
 IUSE+=" appimage"
 _ELECTRON_APP_PACKAGING_METHODS+=( appimage )
-RDEPEND+=" appimage? ( || (
+RDEPEND+="
+	appimage? ( || (
 		app-arch/appimaged
 		app-arch/go-appimage[appimaged]
-		    )    )"
+	) )
+"
 # emerge will dump the .AppImage in that folder.
 ELECTRON_APP_APPIMAGE_INSTALL_DIR=\
 ${ELECTRON_APP_APPIMAGE_INSTALL_DIR:="/opt/AppImage/${PN}"}
@@ -666,9 +670,13 @@ electron-app_audit_fix_npm() {
 		return
 	fi
 
-	einfo "Performing recursive package-lock.json audit fix"
+einfo
+einfo "Performing recursive package-lock.json audit fix"
+einfo
 	npm_update_package_locks_recursive ./ # calls npm_pre_audit
-	einfo "Audit fix done"
+einfo
+einfo "Audit fix done"
+einfo
 }
 
 # @FUNCTION: electron-app_audit_fix
@@ -688,8 +696,9 @@ electron-app_audit_fix() {
 			;;
 		yarn)
 			# use npm audit anyway?
-			ewarn \
-"No audit fix implemented in yarn.  Package may be likely vulnerable."
+ewarn
+ewarn "No audit fix implemented in yarn.  Package may be likely vulnerable."
+ewarn
 			;;
 		*)
 			;;
@@ -738,7 +747,9 @@ eerror
 			# It is okay to emerge package outside of X without
 			# problems.
 			export npm_config_cache="${NPM_STORE_DIR}"
-			#einfo "Electron version: ${ELECTRON_VER}"
+#einfo
+#einfo "Electron version: ${ELECTRON_VER}"
+#einfo
 			#if [[ -z "${ELECTRON_VER}" ]] ; then
 			#	echo "Some ebuilds may break.  Restart and run in X."
 			#fi
@@ -754,7 +765,9 @@ eerror
 			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${YARN_STORE_DIR}}
 			;;
 		yarn)
-			ewarn "Using yarn mode which has no audit fix yet."
+ewarn
+ewarn "Using yarn mode which has no audit fix yet."
+ewarn
 
 			# Some npm package.json use yarn.
 			addwrite ${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -763,12 +776,18 @@ eerror
 			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${YARN_STORE_DIR}}
 			;;
 		*)
-			die "Unsupported package system"
+eerror
+eerror "Unsupported package system"
+eerror
+			die
 			;;
 	esac
 
 	if [[ ! -d "/dev/shm" ]] ; then
-		die "Missing /dev/shm.  Check the kernel config?"
+eerror
+eerror "Missing /dev/shm.  Check the kernel config?"
+eerror
+		die
 	fi
 
 	local prev_update
@@ -783,38 +802,56 @@ eerror
 		mkdir -p "${ELECTRON_APP_DATA_DIR}" || die
 	fi
 	if (( $((${prev_update} + ${next_update_seconds})) < ${now} )) ; then
-		einfo "Updating Electron release data"
+einfo
+einfo "Updating Electron release data"
+einfo
 		rm -rf "${ELECTRON_APP_VERSION_DATA_PATH}" || true
 		wget -O "${ELECTRON_APP_VERSION_DATA_PATH}" \
 		"https://raw.githubusercontent.com/electron/releases/master/lite.json" || die
 	else
-		einfo "Using cached Electron release data"
+einfo
+einfo "Using cached Electron release data"
+einfo
 	fi
 
 	if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" \
 		&& "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
 		if [[ -z "${ELECTRON_APP_APPIMAGE_PATH}" ]] ; then
-			die "ELECTRON_APP_APPIMAGE_PATH must be defined relative to \${BUILD_DIR}"
+eerror
+eerror "ELECTRON_APP_APPIMAGE_PATH must be defined relative to \${BUILD_DIR}"
+eerror
+			die
 		fi
 	fi
 
 	if [[ -n "${ELECTRON_APP_SNAPABLE}" \
 		&& "${ELECTRON_APP_SNAPABLE}" == 1 ]] ; then
 		if [[ -z "${ELECTRON_APP_SNAP_PATH_BASENAME}" ]] ; then
-			die \
-"ELECTRON_APP_SNAP_PATH_BASENAME must be defined relative to \
-ELECTRON_APP_SNAP_INSTALL_DIR"
+eerror
+eerror "ELECTRON_APP_SNAP_PATH_BASENAME must be defined relative to"
+eerror "ELECTRON_APP_SNAP_INSTALL_DIR"
+eerror
+			die
 		fi
 		if [[ -z "${ELECTRON_APP_SNAP_PATH}" ]] ; then
-			die "ELECTRON_APP_SNAP_PATH must be defined relative to \${BUILD_DIR}"
+eerror
+eerror "ELECTRON_APP_SNAP_PATH must be defined relative to \${BUILD_DIR}"
+eerror
+			die
 		fi
 		if [[ -n "${ELECTRON_APP_SNAP_ASSERT_PATH}" \
 			&& -z "${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}" ]] ; then
-			die "ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME must be defined."
+eerror
+eerror "ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME must be defined."
+eerror
+			die
 		fi
 		if [[ -n "${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}" \
 			&& -z "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
-			die "ELECTRON_APP_SNAP_ASSERT_PATH must be defined."
+eerror
+eerror "ELECTRON_APP_SNAP_ASSERT_PATH must be defined."
+eerror
+			die
 		fi
 	fi
 
@@ -855,7 +892,9 @@ electron-app_fetch_deps_npm() {
 		fi
 		npm_update_package_locks_recursive ./
 		rm "${HOME}/npm/_logs"/* 2>/dev/null
-		einfo "Running npm install ${install_args[@]} inside electron-app_fetch_deps_npm"
+einfo
+einfo "Running npm install ${install_args[@]} inside electron-app_fetch_deps_npm"
+einfo
 		npm install ${install_args[@]} || die
 		npm_check_npm_error
 	popd
@@ -907,7 +946,10 @@ electron-app_fetch_deps() {
 			electron-app_fetch_deps_yarn
 			;;
 		*)
-			die "Unsupported package system"
+eerror
+eerror "Unsupported package system"
+eerror
+			die
 			;;
 	esac
 }
@@ -1236,7 +1278,11 @@ electron-app_src_install_default() {
 
 	cd "${S}"
 
-	die "currently uninplemented.  must override"
+eerror
+eerror "electron-app_src_install_default is currently unimplemented.  You must"
+eerror "use an override."
+eerror
+	die
 # todo electron-app_src_install_default
 }
 
@@ -1271,7 +1317,10 @@ electron-app_src_compile_default() {
 			electron-app-build-yarn
 			;;
 		*)
-			die "Unsupported package system"
+eerror
+eerror "Unsupported package system"
+eerror
+			die
 			;;
 	esac
 }
@@ -1292,8 +1341,12 @@ electron-app_audit_dev() {
 	fi
 
 	local nodie="${1}"
-	[ ! -e package-lock.json ] \
-		&& die "Missing package-lock.json in implied root $(pwd)"
+	if [ ! -e package-lock.json ] ; then
+eerror
+eerror "Missing package-lock.json in implied root $(pwd)"
+eerror
+		die
+	fi
 
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
@@ -1373,8 +1426,12 @@ electron-app_audit_prod() {
 		return
 	fi
 
-	[ ! -e package-lock.json ] \
-		&& die "Missing package-lock.json in implied root $(pwd)"
+	if [ ! -e package-lock.json ] ; then
+eerror
+eerror "Missing package-lock.json in implied root $(pwd)"
+eerror
+		die
+	fi
 
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
@@ -1391,7 +1448,10 @@ electron-app_audit_prod() {
 			local result_found2="$?"
 			if [[ "${result_found1}" == "0" \
 				|| "${result_found2}" == "0" ]] ; then
-				die "package is still vulnerable at $(pwd)$l"
+eerror
+eerror "package is still vulnerable at $(pwd)$l"
+eerror
+				die
 			fi
 		fi
 		popd
@@ -1443,7 +1503,10 @@ electron-app_desktop_install_program_raw() {
 			fi
 			;;
 		*)
-			die "Unsupported package system"
+eerror
+eerror "Unsupported package system"
+eerror
+			die
 			;;
 	esac
 }
@@ -1528,7 +1591,10 @@ electron-app_desktop_install_program() {
 			fi
 			;;
 		*)
-			die "Unsupported package system"
+eerror
+eerror "Unsupported package system"
+eerror
+			die
 			;;
 	esac
 }
@@ -1647,10 +1713,18 @@ ewarn
 # This function MUST be called in pkg_postinst.
 electron-app-register-x() {
 	if [[ -n "${ELECTRON_APP_REG_PATH}" ]] ; then
-	die "ELECTRON_APP_REG_PATH has been removed and replaced with\n\
-	ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
+eerror
+eerror "ELECTRON_APP_REG_PATH has been removed and replaced with"
+eerror "ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
+eerror
+		die
 	fi
-	[[ -z "${ELECTRON_APP_INSTALL_PATH}" ]] && die "ELECTRON_APP_INSTALL_PATH must be defined"
+	if [[ -z "${ELECTRON_APP_INSTALL_PATH}" ]] ; then
+eerror
+eerror "ELECTRON_APP_INSTALL_PATH must be defined."
+eerror
+		die
+	fi
 	while true ; do
 		if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 			trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
@@ -1740,10 +1814,12 @@ electron-app_pkg_postinst() {
 
 	if has snap ${IUSE_EFFECTIVE} ; then
 		if use snap ; then
-			ewarn "snap support untested"
-			ewarn \
-"Remember do not update the snap manually through the \`snap\` tool.  Allow \
-the emerge system to update it."
+ewarn
+ewarn "snap support is untested"
+ewarn
+ewarn "Remember do not update the snap manually through the \`snap\` tool."
+ewarn "Allow the emerge system to update it."
+ewarn
 			# I don't know if snap will sanitize the files for
 			# system-wide installation.
 			local has_assertion_file="--dangerous"
@@ -1752,8 +1828,9 @@ the emerge system to update it."
 "${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}"
 				has_assertion_file=""
 			else
-				ewarn \
-"Missing assertion file for snap.  Installing with --dangerous."
+ewarn
+ewarn "Missing assertion file for snap.  Installing with --dangerous."
+ewarn
 			fi
 			# This will add the desktop links to the snap.
 			snap install ${has_assertion_file} \
@@ -1769,7 +1846,10 @@ the emerge system to update it."
 			electron-app-register-yarn "${_ELECTRON_APP_REG_PATH}"
 			;;
 		*)
-			die "Unsupported package system"
+eerror
+eerror "Unsupported package system"
+eerror
+			die
 			;;
 	esac
 }
@@ -1837,7 +1917,10 @@ einfo
 
 			;;
 		*)
-			die "Unsupported package system"
+eerror
+eerror "Unsupported package system"
+eerror
+			die
 			;;
 	esac
 }
@@ -1845,7 +1928,9 @@ einfo
 # @FUNCTION: electron-app_store_package_jsons
 # @DESCRIPTION: Saves the package-lock.json to T for auditing
 electron-app_store_package_jsons() {
-	einfo "Saving package-lock.json and npm-shrinkwrap.json for future audits"
+einfo
+einfo "Saving package-lock.json and npm-shrinkwrap.json for future audits"
+einfo
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
@@ -1863,7 +1948,9 @@ electron-app_store_package_jsons() {
 		rd=$(dirname $(echo "${f}" | sed -e "s|${ROOTDIR}||"))
 		local temp_dest=$(realpath --canonicalize-missing "${td}/${rd}")
 		mkdir -p "${temp_dest}"
-		einfo "Copying ${f} to ${temp_dest}"
+einfo
+einfo "Copying ${f} to ${temp_dest}"
+einfo
 		cp -a "${f}" "${temp_dest}" || die
 	done
 
@@ -1878,7 +1965,9 @@ electron-app_store_package_jsons() {
 # @DESCRIPTION: Restores the package-lock.json to T for auditing
 electron-app_restore_package_jsons() {
 	local dest="${1}"
-	einfo "Restoring package-lock.json and npm-shrinkwrap.json to ${dest}"
+einfo
+einfo "Restoring package-lock.json and npm-shrinkwrap.json to ${dest}"
+einfo
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
@@ -1908,46 +1997,38 @@ electron-app_get_arch() {
 		if [[ "${CHOST}" =~ armv7* ]] ; then
 	                echo "armv7l"
 		else
-			die "${CHOST} is not supported"
+eerror
+eerror "${CHOST} is not supported"
+eerror
+			die
 		fi
         elif [[ "${ARCH}" == "n64" ]] ; then
                 echo "mips64el"
 	else
-		die "${ARCH} not supported"
+eerror
+eerror "${ARCH} not supported"
+eerror
+		die
         fi
 }
 
 # @FUNCTION: electron-app_get_arch_suffix_snap
 # @DESCRIPTION: Gets the arch suffix found at the end of the archive
 electron-app_get_arch_suffix_snap() {
-	if [[ "${ARCH}" == "amd64" ]] ; then
-                echo "amd64"
-        elif [[ "${ARCH}" == "x86" ]] ; then
-                echo "i386"
-        elif [[ "${ARCH}" == "arm64" ]] ; then
-                echo "arm64"
-        elif [[ "${ARCH}" == "arm" ]] ; then
-		if [[ "${CHOST}" =~ armv7* ]] ; then
-	                echo "armhf"
-		fi
-        fi
+	[[ "${ARCH}" == "amd64" ]] && echo "amd64"
+	[[ "${ARCH}" == "x86" ]] && echo "i386"
+	[[ "${ARCH}" == "arm64" ]] && echo "arm64"
+	[[ "${ARCH}" == "arm" && "${CHOST}" =~ armv7* ]] && echo "armhf"
 	echo "${CHOST%%-*}"
 }
 
 # @FUNCTION: electron-app_get_arch_suffix_appimage
 # @DESCRIPTION: Gets the arch suffix found at the end of the archive
 electron-app_get_arch_suffix_appimage() {
-	if [[ "${ARCH}" == "amd64" ]] ; then
-                echo "x86_64"
-        elif [[ "${ARCH}" == "x86" ]] ; then
-                echo "i386"
-        elif [[ "${ARCH}" == "arm64" ]] ; then
-                echo "arm64"
-        elif [[ "${ARCH}" == "arm" ]] ; then
-		if [[ "${CHOST}" =~ armv7* ]] ; then
-	                echo "armhf"
-		fi
-        fi
+	[[ "${ARCH}" == "amd64" ]] && echo "x86_64"
+	[[ "${ARCH}" == "x86" ]] && echo "i386"
+	[[ "${ARCH}" == "arm64" ]] && echo "arm64"
+	[[ "${ARCH}" == "arm" && "${CHOST}" =~ armv7* ]] && echo "armhf"
 	echo "${CHOST%%-*}"
 }
 
