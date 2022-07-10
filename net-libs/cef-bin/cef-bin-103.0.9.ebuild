@@ -34,13 +34,15 @@ SRC_URI="
 	arm64? (
 		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}_minimal.tar.bz2 )
 		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}.tar.bz2 )
-	)"
+	)
+"
 SLOT="0/${PV}"
 IUSE+=" cefclient cefsimple debug minimal test"
 REQUIRED_USE+="
 	cefclient? ( !minimal )
 	cefsimple? ( !minimal )
-	test? ( !minimal )"
+	test? ( !minimal )
+"
 # *DEPENDs based on install-build-deps.sh
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
@@ -58,21 +60,21 @@ CHROMIUM_CDEPEND="
 	>=dev-libs/libappindicator-12.10[${MULTILIB_USEDEP}]
 	>=dev-libs/libevdev-1.4.6[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-3.2.1[${MULTILIB_USEDEP}]
+	>=media-libs/alsa-lib-1.1.0[${MULTILIB_USEDEP}]
+	>=media-libs/mesa-11.2.0[gbm,${MULTILIB_USEDEP}]
 	>=net-print/cups-2.1.3[${MULTILIB_USEDEP}]
 	>=sys-apps/pciutils-3.3.1[${MULTILIB_USEDEP}]
 	>=sys-libs/libcap-2.24[${MULTILIB_USEDEP}]
 	>=sys-libs/pam-1.1.8[${MULTILIB_USEDEP}]
-	>=media-libs/alsa-lib-1.1.0[${MULTILIB_USEDEP}]
-	>=media-libs/mesa-11.2.0[gbm,${MULTILIB_USEDEP}]
 	>=sys-apps/util-linux-2.27.1[${MULTILIB_USEDEP}]
 	>=sys-libs/glibc-2.23
 	>=x11-libs/cairo-1.14.6[${MULTILIB_USEDEP}]
 	>=x11-libs/gtk+-3.18.9:3[${MULTILIB_USEDEP}]
 	>=x11-libs/libXtst-1.2.2[${MULTILIB_USEDEP}]
-	>=x11-libs/libdrm-2.4.67[${MULTILIB_USEDEP}]"
+	>=x11-libs/libdrm-2.4.67[${MULTILIB_USEDEP}]
+"
 # Unlisted based on ldd inspection not found in common_lib_list
 UNLISTED_RDEPEND="
-	net-dns/libidn[${MULTILIB_USEDEP}]
 	dev-libs/fribidi[${MULTILIB_USEDEP}]
 	dev-libs/gmp[${MULTILIB_USEDEP}]
 	dev-libs/libbsd[${MULTILIB_USEDEP}]
@@ -84,25 +86,29 @@ UNLISTED_RDEPEND="
 	media-libs/harfbuzz[${MULTILIB_USEDEP}]
 	media-libs/libglvnd[${MULTILIB_USEDEP}]
 	>=media-libs/mesa-11.2.0[egl(+),${MULTILIB_USEDEP}]
-	>=x11-libs/libxkbcommon-0.5.0[${MULTILIB_USEDEP}]"
+	net-dns/libidn[${MULTILIB_USEDEP}]
+	>=x11-libs/libxkbcommon-0.5.0[${MULTILIB_USEDEP}]
+"
 OPTIONAL_RDEPEND="
 	>=gnome-base/gnome-keyring-3.36[${MULTILIB_USEDEP},pam]
-	>=media-libs/vulkan-loader-1.0.8.0[${MULTILIB_USEDEP}]"
+	>=media-libs/vulkan-loader-1.0.8.0[${MULTILIB_USEDEP}]
+"
 CHROMIUM_RDEPEND="
 	${CHROMIUM_CDEPEND}
 	${UNLISTED_RDEPEND}
 	${OPTIONAL_RDEPEND}
-	>=sys-devel/gcc-5.4.0[cxx(+)]
 	>=dev-libs/atk-2.18.0[${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.1.0[${MULTILIB_USEDEP}]
 	>=dev-libs/libpcre-8.38[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.11[${MULTILIB_USEDEP}]
-	dev-libs/wayland[${MULTILIB_USEDEP}]
+	  dev-libs/wayland[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.11.94[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.6.1[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.20[${MULTILIB_USEDEP}]
+	>=sys-devel/gcc-5.4.0[cxx(+)]
 	>=x11-libs/libX11-1.6.3[${MULTILIB_USEDEP}]
 	>=x11-libs/libXau-1.0.8[${MULTILIB_USEDEP}]
+	>=x11-libs/libxcb-1.6.3[${MULTILIB_USEDEP}]
 	>=x11-libs/libXcomposite-0.4.4[${MULTILIB_USEDEP}]
 	>=x11-libs/libXcursor-1.1.14[${MULTILIB_USEDEP}]
 	>=x11-libs/libXdamage-1.1.4[${MULTILIB_USEDEP}]
@@ -113,25 +119,29 @@ CHROMIUM_RDEPEND="
 	>=x11-libs/libXinerama-1.1.3[${MULTILIB_USEDEP}]
 	>=x11-libs/libXrandr-1.5.0[${MULTILIB_USEDEP}]
 	>=x11-libs/libXrender-0.9.9[${MULTILIB_USEDEP}]
-	>=x11-libs/libxcb-1.6.3[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.38.1[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.33.6[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]"
+	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]
+"
 # libcef alone uses aura not gtk
-RDEPEND+=" ${CHROMIUM_RDEPEND}
+RDEPEND+="
+	${CHROMIUM_RDEPEND}
 	cefclient? (
 		>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
 		>=x11-libs/gtk+-3:3[${MULTILIB_USEDEP}]
 		>=x11-libs/gtkglext-1.2.0[${MULTILIB_USEDEP}]
 		>=x11-libs/libXi-${XI_V}[${MULTILIB_USEDEP}]
-	)"
+	)
+"
 DEPEND+="
 	test? (
 		>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
-	)"
+	)
+"
 BDEPEND+="
+	>=dev-util/cmake-3.10.2
 	test? ( ${VIRTUALX_DEPEND} )
-	>=dev-util/cmake-3.10.2"
+"
 RESTRICT="mirror"
 
 S="${WORKDIR}"
@@ -161,9 +171,10 @@ eerror "-sandbox must be added to FEATURES to use the test USE flag."
 eerror
 			die
 		fi
-		ewarn \
-"The test is expected to fail.  To install, add test-fail-continue to\n\
-FEATURES as a per package envvar."
+ewarn
+ewarn "The test is expected to fail.  To install, add test-fail-continue to"
+ewarn "FEATURES as a per package envvar."
+ewarn
 	fi
 }
 
@@ -209,6 +220,7 @@ src_configure() {
 ewarn
 ewarn "Adding sandbox exceptions for the GPU."
 ewarn
+		local d
 		for d in /dev/dri/card*; do
 			einfo "addwrite ${d}"
 			addwrite "${d}"
@@ -231,7 +243,7 @@ src_compile() {
 			$(usex cefsimple cefsimple "") \
 			$(usex test ceftests "")
 		if [[ -f "${S}/tests/ceftests/Release/chrome-sandbox" ]] && use test ; then
-			chmod 4755 "${S}/tests/ceftests/Release/chrome-sandbox"
+			chmod 4755 "${S}/tests/ceftests/Release/chrome-sandbox" || die
 		fi
 	}
 	multilib_foreach_abi compile_abi
