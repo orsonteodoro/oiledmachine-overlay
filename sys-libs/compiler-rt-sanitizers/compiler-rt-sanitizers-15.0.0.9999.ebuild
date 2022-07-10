@@ -29,7 +29,8 @@ REQUIRED_USE="
 	test? (
 		cfi? ( ubsan )
 		gwp-asan? ( scudo )
-	)"
+	)
+"
 RESTRICT="!test? ( test ) !clang? ( test )"
 PATCHES=(
 	"${FILESDIR}/compiler-rt-sanitizers-13.0.0-disable-cfi-assert-for-autoconf.patch"
@@ -39,20 +40,22 @@ CLANG_SLOT=${SLOT%%.*}
 # llvm-6 for new lit options
 DEPEND="
 	>=sys-devel/llvm-6
-	virtual/libcrypt[abi_x86_32(-)?,abi_x86_64(-)?]"
+	virtual/libcrypt[abi_x86_32(-)?,abi_x86_64(-)?]
+"
 BDEPEND="
 	>=dev-util/cmake-3.16
 	clang? ( sys-devel/clang )
 	elibc_glibc? ( net-libs/libtirpc )
 	test? (
 		!<sys-apps/sandbox-2.13
-		$(python_gen_any_dep ">=dev-python/lit-5[\${PYTHON_USEDEP}]")
+		$(python_gen_any_dep ">=dev-python/lit-15[\${PYTHON_USEDEP}]")
 		=sys-devel/clang-${PV%_*}*:${CLANG_SLOT}
 		sys-libs/compiler-rt:${SLOT}
 	)
 	!test? (
 		${PYTHON_DEPS}
-	)"
+	)
+"
 
 LLVM_COMPONENTS=( compiler-rt cmake )
 LLVM_TEST_COMPONENTS=( llvm/lib/Testing/Support llvm/utils/unittest )
