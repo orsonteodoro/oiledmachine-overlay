@@ -11,7 +11,7 @@ HOMEPAGE=\
 "https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb"
 LICENSE="MPL-2.0"
 # For versioning, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/nanovdb/nanovdb/NanoVDB.h#L68
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/dc37d8a631922e7bef46712947dc19b755f3e841/nanovdb/nanovdb/NanoVDB.h#L68
 SLOT="0/${PV}"
 # Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
@@ -31,8 +31,7 @@ REQUIRED_USE+="
 	test-renderer? ( test )
 "
 # For dependencies, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/doc/dependencies.txt
-# openvdb should be 7.1.1 but downgraded to minor.  No 7.1.1 release either.
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/dc37d8a631922e7bef46712947dc19b755f3e841/doc/dependencies.txt
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
 GTEST_V="1.10.0"
@@ -68,7 +67,7 @@ DEPEND+="
 	openvdb? (
 		|| ( $(gen_openexr_pairs) )
 		>=dev-libs/boost-1.68
-		>=media-gfx/openvdb-7.1
+		>=media-gfx/openvdb-8
 	)
 	optix? (
 		>=dev-libs/optix-7
@@ -114,10 +113,10 @@ BDEPEND+="
 	)
 "
 GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
-EGIT_COMMIT="e62f7a0bf1e27397223c61ddeaaf57edf111b77f"
+EGIT_COMMIT="dc37d8a631922e7bef46712947dc19b755f3e841"
 EGIT_COMMIT_NFD="67345b80ebb429ecc2aeda94c478b3bcc5f7888e" # 20190930
 GLFW_V="3.3"
-IMGUI_V="1.78"
+IMGUI_V="1.79"
 
 GLFW_DFN="glfw-${GLFW_V}.tar.gz"
 GTEST_DFN="gtest-${GTEST_V}.tar.gz"
@@ -143,7 +142,7 @@ S_GTEST="${WORKDIR}/googletest-${GTEST_V}"
 RESTRICT="mirror"
 CMAKE_BUILD_TYPE=Release
 PATCHES_=(
-	"${FILESDIR}/${PN}-25.0.0_pre20200924-cmake-use-tarballs.patch"
+	"${FILESDIR}/${PN}-32.3.3_pre20211001-cmake-use-tarballs.patch"
 	"${FILESDIR}/${PN}-25.0.0_pre20200924-opencl-version-120.patch"
 	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-examples-destdir.patch"
 	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-header-destdir.patch"
@@ -218,7 +217,6 @@ src_prepare()
 	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-findtbb-onetbb-changes.patch"
 		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-onetbb-split-header-location.patch"
-		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-replace-ttb-atomic-with-std-atomic.patch"
 		sed -i -e "s|__NANOVDB_USE_ONETBB__|1|g" "${S}/nanovdb/util/Range.h" || die
 	fi
 	cmake_src_prepare

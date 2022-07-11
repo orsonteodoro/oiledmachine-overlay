@@ -5,38 +5,37 @@ EAPI=7
 
 inherit cmake eutils flag-o-matic
 
-DESCRIPTION="A lightweight GPU friendly version of VDB initially targeting \
+DESCRIPTION="A lightweight GPU friendly version of VDB initially targeting
 rendering applications."
 HOMEPAGE=\
 "https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb"
 LICENSE="MPL-2.0"
 # For versioning, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/7ac9bcdab236026a020528f860a7df02829ad433/nanovdb/nanovdb/nanovdb/NanoVDB.h#L104
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803/nanovdb/nanovdb/NanoVDB.h#L104
 SLOT="0/${PV}"
 # Live ebuilds do not get keyworded.
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
 # are disabled
-IUSE+=" +benchmark +blosc cuda -doc +examples -imgui +interactive-renderer
--log4cplus -native-file-dialog +opencl optix +opengl -openexr +openvdb
+IUSE+=" +benchmark +blosc cuda -doc +examples +interactive-renderer
+-log4cplus -magicavoxel +opencl optix +opengl -openexr +openvdb
 system-glfw +tbb +test test-renderer +tools +zlib"
 REQUIRED_USE+="
 	benchmark? ( openvdb )
 	blosc? ( openvdb )
 	interactive-renderer? ( tools )
 	log4cplus? ( openvdb )
-	native-file-dialog? ( imgui tools )
+	magicavoxel? ( examples )
 	openexr? ( openvdb )
 	openvdb? ( tbb zlib )
 	test? ( openvdb tbb )
-	test-renderer? ( test )"
+	test-renderer? ( test )
+"
 # For dependencies, see
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/7ac9bcdab236026a020528f860a7df02829ad433/doc/dependencies.txt
-# openvdb should be 8.1.1 but downgraded to minor.  No 8.1.1 release either.
-# 8.1.1 reference
-# https://github.com/AcademySoftwareFoundation/openvdb/blob/feature/nanovdb/CMakeLists.txt#L55
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803/doc/dependencies.txt
 ONETBB_SLOT="0"
 LEGACY_TBB_SLOT="2"
-DEPEND_GTEST=" >=dev-cpp/gtest-1.10"
+GTEST_V="1.11.0"
+DEPEND_GTEST=" >=dev-cpp/gtest-${GTEST_V}"
 # media-gfx/openvdb-8.1[abi8-compat] # Placed here because the constraint has be relaxed.
 
 OPENEXR_V2="2.5.7 2.5.8"
@@ -54,7 +53,7 @@ gen_openexr_pairs() {
 
 DEPEND+="
 	benchmark? ( ${DEPEND_GTEST} )
-	blosc? ( >=dev-libs/c-blosc-1.5 )
+	blosc? ( >=dev-libs/c-blosc-1.17 )
 	cuda? (
 		>=x11-drivers/nvidia-drivers-352.31
 		>=dev-util/nvidia-cuda-toolkit-7.5:=
@@ -67,7 +66,7 @@ DEPEND+="
 	)
 	openvdb? (
 		|| ( $(gen_openexr_pairs) )
-		>=dev-libs/boost-1.66
+		>=dev-libs/boost-1.68
 		>=media-gfx/openvdb-8.1
 	)
 	optix? (
@@ -90,12 +89,10 @@ DEPEND+="
 		>=media-libs/glfw-3.3
 		interactive-renderer? (
 			system-glfw? ( >=media-libs/glfw-3.1 )
-			native-file-dialog? (
-				>=x11-libs/gtk+-3:3
-			)
 		)
 	)
-	zlib? ( >=sys-libs/zlib-1.2.7 )"
+	zlib? ( >=sys-libs/zlib-1.2.7 )
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	|| (
@@ -103,47 +100,35 @@ BDEPEND+="
 		>=sys-devel/gcc-6.3.1
 		>=dev-lang/icc-17
 	)
-	>=dev-util/cmake-3.12
+	>=dev-util/cmake-3.15
 	doc? ( >=app-doc/doxygen-1.8.8 )
 	test? (
 		${DEPEND_GTEST}
 		test-renderer? (
 			media-gfx/imagemagick[png]
 		)
-	)"
+	)
+"
 GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
-EGIT_COMMIT="7ac9bcdab236026a020528f860a7df02829ad433"
-EGIT_COMMIT_IMGUI="dc8c3618e8f8e2dada23daa1aa237626af341fd8" # 20211110
-EGIT_COMMIT_NFD="67345b80ebb429ecc2aeda94c478b3bcc5f7888e" # 20190930
-GLFW_V="3.3"
-GTEST_V="1.10.0"
-GLFW_DFN="glfw-${GLFW_V}.tar.gz"
-NFD_DFN="nativefiledialog-${EGIT_COMMIT_NFD:0:7}.tar.gz"
-IMGUI_DFN="imgui-${EGIT_COMMIT_IMGUI:0:7}.tar.gz"
-GTEST_DFN="release-${GTEST_V}.tar.gz"
+EGIT_COMMIT="0ed0f19ea4fbb0d8bf64d3dca07abab3c7429803"
+OGT_COMMIT="e1743d37cf7a8128568769cf71cf598166c2cd30"
+
+OGT_DFN="ogt-${OGT_COMMIT:0:7}.tar.gz"
 SRC_URI="
 ${GH_ORG_URI}/openvdb/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz
-https://github.com/glfw/glfw/archive/refs/tags/${GLFW_V}.tar.gz
-	-> ${GLFW_DFN}
-https://github.com/ocornut/imgui/archive/${EGIT_COMMIT_IMGUI}.tar.gz
-	-> ${IMGUI_DFN}
-https://github.com/mlabbe/nativefiledialog/archive/${EGIT_COMMIT_NFD}.tar.gz
-	-> ${NFD_DFN}
-https://github.com/google/googletest/archive/refs/tags/release-${GTEST_V}.tar.gz
-	-> ${GTEST_DFN}"
+https://github.com/jpaver/opengametools/archive/${OGT_COMMIT}.tar.gz
+	-> ${OGT_DFN}
+"
 S="${WORKDIR}/openvdb-${EGIT_COMMIT}/${PN}/${PN}"
-S_IMGUI="${WORKDIR}/imgui-${EGIT_COMMIT_IMGUI}"
-S_GLFW="${WORKDIR}/glfw-${GLFW_V}"
-S_NFD="${WORKDIR}/nativefiledialog-${EGIT_COMMIT_NFD}"
-S_GTEST="${WORKDIR}/googletest-${GTEST_V}"
+S_OGT="${WORKDIR}/ogt-${OGT_COMMIT}"
 RESTRICT="mirror"
 CMAKE_BUILD_TYPE=Release
 PATCHES_=(
-	"${FILESDIR}/${PN}-32.3.3_pre20211001-cmake-use-tarballs.patch"
-	"${FILESDIR}/${PN}-25.0.0_pre20200924-opencl-version-120.patch"
-	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-examples-destdir.patch"
-	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-header-destdir.patch"
+	"${FILESDIR}/${PN}-32.3.3_p20211029-cmake-use-tarballs.patch"
+#	"${FILESDIR}/${PN}-25.0.0_pre20200924-opencl-version-120.patch"
+#	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-examples-destdir.patch"
+#	"${FILESDIR}/${PN}-25.0.0_pre20200924-change-header-destdir.patch"
 )
 
 is_crosscompile() {
@@ -213,8 +198,8 @@ src_prepare()
 {
 	eapply ${PATCHES_[@]}
 	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-findtbb-onetbb-changes.patch"
-		eapply "${FILESDIR}/${PN}-32.3.3_pre20211001-onetbb-split-header-location.patch"
+#		eapply "${FILESDIR}/${PN}-25.0.0_pre20200924-findtbb-onetbb-changes.patch"
+		eapply "${FILESDIR}/${PN}-32.3.3_p20211029-onetbb-split-header-location.patch"
 		sed -i -e "s|__NANOVDB_USE_ONETBB__|1|g" "${S}/nanovdb/util/Range.h" || die
 	fi
 	cmake_src_prepare
@@ -239,7 +224,7 @@ src_configure()
 		-DNANOVDB_GTEST=$(usex test)
 		-DNANOVDB_USE_BLOSC=$(usex blosc)
 		-DNANOVDB_USE_CUDA=$(usex cuda)
-		-DNANOVDB_USE_MAGICAVOXEL=OFF # on hold until dependency exists or issue request made
+		-DNANOVDB_USE_MAGICAVOXEL=$(use magicavoxel)
 		-DNANOVDB_USE_OPENCL=$(usex opencl)
 		-DNANOVDB_USE_OPENGL=$(usex opengl)
 		-DNANOVDB_USE_OPENVDB=$(usex openvdb)
@@ -251,35 +236,20 @@ src_configure()
 		-DUSE_LOG4CPLUS=$(usex log4cplus)
 	)
 
-	if use tools ; then
+	if use magicavoxel ; then
 		mycmakeargs+=(
-	-DEGLFW_SOURCE_DIR="${S_GLFW}"
-	-DEGLFW_BINARY_DIR="${WORKDIR}/glfw-${GLFW_V}_${ABI}_build"
-	-DEIMGUI_SOURCE_DIR="${S_IMGUI}"
-	-DENFD_SOURCE_DIR="${S_NFD}"
-
-	-DNANOVDB_BUILD_INTERACTIVE_RENDERER=$(usex interactive-renderer)
-	-DNANOVDB_USE_IMGUI=$(usex imgui)
-	-DNANOVDB_USE_INTERNAL_GLFW=$(usex !system-glfw)
-	-DNANOVDB_USE_EGL=ON
-	-DNANOVDB_USE_NATIVEFILEDIALOG=$(usex native-file-dialog)
+	-DEOGT_SOURCE_DIR="${S_OGT}"
 		)
 	fi
 
-	if use benchmark || use test ; then
-		mycmakeargs+=(
-	-DEGOOGLETEST_SOURCE_DIR="${S_GTEST}"
-	-DEGOOGLETEST_BINARY_DIR="${WORKDIR}/googletest-${GTEST_V}-${ABI}_build"
-	-DNANOVDB_USE_INTERNAL_GTEST=NO
-		)
-	fi
-
-	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+	if ! use tbb ; then
+		:;
+	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
 			-DTBB_INCLUDEDIR=/usr/include
 			-DTBB_LIBRARYDIR=/usr/$(get_libdir)
 		)
-	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		mycmakeargs+=(
 			-DTBB_INCLUDEDIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
 			-DTBB_LIBRARYDIR=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
@@ -374,9 +344,11 @@ src_install()
 	cd "${S}/../.." || die
 	docinto licenses
 	dodoc LICENSE
-	if use tbb && has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+	if ! use tbb ; then
 		:;
-	elif use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+		:;
+	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
 			if ldd "${f}" 2>/dev/null | grep -q -F -e "libtbb" ; then

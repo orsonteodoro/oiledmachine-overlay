@@ -361,7 +361,7 @@ RDEPEND+="
 	openvdb? (
 		$(gen_openvdb_depends)
 		>=dev-libs/c-blosc-1.5.0[zlib]
-		nanovdb? ( >=media-gfx/nanovdb-29.3.0_pre20201218:0= )
+		nanovdb? ( ~media-gfx/nanovdb-29.3.0_pre20201218:0= )
 	)
 	openxr? ( >=media-libs/openxr-1.0.17 )
 	optix? ( >=dev-libs/optix-7 )

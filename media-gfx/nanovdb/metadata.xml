@@ -54,6 +54,9 @@
       renderer tool to open vdb/nvdb assets.  You may still open assets
       in the command line.  See --help for details.
     </flag>
+    <flag name="magicavoxel">
+      Adds MagicaVoxel support for examples
+    </flag>
     <flag name="opencl">
       Adds OpenCL support
     </flag>
