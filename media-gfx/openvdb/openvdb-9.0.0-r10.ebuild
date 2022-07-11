@@ -76,7 +76,7 @@ DEPEND+="
 	)
 	>=dev-libs/boost-1.66:=
 	>=sys-libs/zlib-1.2.7:=
-	blosc? ( >=dev-libs/c-blosc-1.5:= )
+	blosc? ( >=dev-libs/c-blosc-1.17:= )
 	jemalloc? ( dev-libs/jemalloc:= )
 	log4cplus? ( >=dev-libs/log4cplus-1.1.2:= )
 	python? (
