@@ -396,7 +396,10 @@ RDEPEND+="
 		)
 	)
 	tiff? ( >=media-libs/tiff-4.3.0:0[webp?,zlib] )
-	usd? ( >=media-libs/openusd-22.03[monolithic] )
+	usd? (
+		>=media-libs/openusd-22.03[monolithic]
+		<media-libs/openusd-23[monolithic]
+	)
 	valgrind? ( dev-util/valgrind )
 	webp? ( >=media-libs/libwebp-1.2.2 )
 	X? (
