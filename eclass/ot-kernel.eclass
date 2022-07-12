@@ -255,9 +255,9 @@ PDEPEND+="
 	)
 	ot_kernel_pgt_3d? (
 		sys-apps/findutils
-		virtual/opengl
 		sys-process/procps
 		x11-misc/xscreensaver[X,opengl]
+		virtual/opengl
 	)
 	ot_kernel_pgt_crypto_std? (
 		${PGT_CRYPTO_DEPEND}
@@ -1229,10 +1229,8 @@ apply_zensauce() {
 		blacklisted+=" ${c:0:7}"
 	done
 
-	if has O3 ${IUSE_EFFECTIVE} ; then
-		if ot-kernel_use O3 ; then
-			whitelisted+=" ${PATCH_ALLOW_O3_COMMIT:0:7}"
-		fi
+	if [[ "${CFLAGS}" =~ "-O3" ]] ; then
+		whitelisted+=" ${PATCH_ALLOW_O3_COMMIT:0:7}"
 	fi
 
 	if has zen-tune ${IUSE_EFFECTIVE} ; then
@@ -1676,7 +1674,7 @@ apply_clang_pgo() {
 ot-kernel_compiler_not_found() {
 	local msg="${1}"
 eerror
-eerror "Required slot ranges for kernel-compiler-patch.  Either..."
+eerror "These are the required slot ranges.  Either choose..."
 eerror
 eerror "GCC_MIN_SLOT: ${GCC_MIN_SLOT}"
 eerror "GCC_MAX_SLOT: ${GCC_MAX_SLOT}"
@@ -1686,8 +1684,7 @@ eerror
 eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
 eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
 eerror
-eerror "Disable the kernel-compiler-patch USE flag to continue or re-emerge the"
-eerror "allowed compiler slot."
+eerror "You should re-emerge the one of the allowed compiler slots."
 eerror
 eerror "Reason:  ${msg}"
 eerror
@@ -1701,7 +1698,7 @@ ot-kernel_src_unpack() {
 	einfo "Called ot-kernel_src_unpack()"
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	_PATCHES=()
-	if [[ "${USE}" =~ kernel-compiler-patch ]] ; then
+	if [[ "${CFLAGS}" =~ ("-march"|"-mcpu") ]] ; then
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
 		einfo "llvm_slot=${llvm_slot}"
@@ -1722,21 +1719,29 @@ ot-kernel_src_unpack() {
 		   ) \
 			&& test -f "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
+einfo
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 9.1 or clang >= 10.0."
+einfo
 			_PATCHES+=( "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
 		elif ( tc-is-gcc && $(ver_test ${gcc_v} -ge 8.1) ) \
 			&& test -f "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
+einfo
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 8.1"
+einfo
 			_PATCHES+=( "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		elif ( tc-is-gcc && $(ver_test ${gcc_v} -ge 4.9) ) \
 			&& test -f "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
+einfo
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 4.9"
+einfo
 			_PATCHES+=( "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		else
+ewarn
 ewarn "Cannot find a compatible kernel_compiler_patch for gcc_v = ${gcc_v}"
 ewarn "and kernel ${K_MAJOR_MINOR}.  Skipping the kernel_compiler_patch."
+ewarn
 		fi
 	else
 		if [[ -n "${GCC_MAX_SLOT_ALT}" ]] ; then
@@ -1744,11 +1749,11 @@ ewarn "and kernel ${K_MAJOR_MINOR}.  Skipping the kernel_compiler_patch."
 		fi
 	fi
 
-	if has kernel-compiler-patch-cortex-a72 ${IUSE_EFFECTIVE} ; then
-		if use kernel-compiler-patch-cortex-a72 ; then
+	if [[ "${CFLAGS}" =~ "-mcpu=cortex-a72" ]] ; then
+einfo
 einfo "Queuing the kernel_compiler_patch for the Cortex A72"
-			_PATCHES+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
-		fi
+einfo
+		_PATCHES+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 	fi
 
 	ot-kernel_unpack_tarball
@@ -1790,7 +1795,7 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 # @DESCRIPTION:
 # Apply the patches conditionally based on extraversion or cpu_sched
 apply_all_patchsets() {
-	if has rt ${IUSE_EFFECTIVE} && [[ "${extraversion}" == "rt" ]] ; then
+	if has rt ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use rt ; then
 			apply_rt
 		fi
@@ -1868,10 +1873,8 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has O3 ${IUSE_EFFECTIVE} ; then
-		if ot-kernel_use O3 ; then
-			apply_o3
-		fi
+	if [[ "${CFLAGS}" =~ "-O3" ]] ; then
+		apply_o3
 	fi
 
 	if has zen-sauce ${IUSE_EFFECTIVE} ; then
@@ -1987,9 +1990,10 @@ ewarn
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_load_config
+		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
-		if [[ "${extraversion}" != "ot" ]] ; then
+		if [[ "${extraversion}" != "${K_EXTRAVERSION}" ]] ; then
 			einfo "Copying sources for -${extraversion}"
 			einfo "${BUILD_DIR_MASTER} -> ${BUILD_DIR}"
 			cp -a "${BUILD_DIR_MASTER}" "${BUILD_DIR}" || die
@@ -2004,22 +2008,15 @@ ewarn
 		die
 	fi
 
-	if [[ -z "${OT_KERNEL_USE}" ]] ; then
-		export OT_KERNEL_USE="${IUSE}"
-	fi
-
-	if [[ -z "${OT_KERNEL_BUILD}" ]] && ( use build || ot-kernel_use build ) ; then
-		export OT_KERNEL_BUILD=1
-	fi
-
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_load_config
+		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
 		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
-		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
+		ot-kernel_use rt && cpu_sched="cfs"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 		einfo
@@ -2070,6 +2067,7 @@ ot-kernel_clear_keys() {
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
 		ot-kernel_load_config
+		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		local p="${BUILD_DIR}/certs/signing_key.pem"
@@ -2247,7 +2245,6 @@ ot-kernel_get_envs() {
 # buildconfig being evaluated.
 ot-kernel_clear_env() {
 	# The OT_KERNEL_ prefix is to avoid naming collisions.
-	unset OT_KERNEL_PHYS_MEM_TOTAL_GIB
 	unset OT_KERNEL_ARCH
 	unset OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS
 	unset OT_KERNEL_BOOT_ARGS
@@ -2257,10 +2254,12 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_BOOT_KOPTIONS_APPEND
 	unset OT_KERNEL_BUILD
 	unset OT_KERNEL_BUILD_ALL_MODULES_AS
+	unset OT_KERNEL_BUILD_CHECK_MOUNTED
 	unset OT_KERNEL_COLD_BOOT_MITIGATIONS
 	unset OT_KERNEL_CONFIG
 	unset OT_KERNEL_CPU_MICROCODE
 	unset OT_KERNEL_CPU_SCHED
+	unset OT_KERNEL_DISABLE
 	unset OT_KERNEL_DISABLE_USB_AUTOSUSPEND
 	unset OT_KERNEL_DMA_ATTACK_MITIGATIONS
 	unset OT_KERNEL_DMESG
@@ -2276,6 +2275,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_IMA_HASH_ALG
 	unset OT_KERNEL_IMA_POLICIES
 	unset OT_KERNEL_IOMMU
+	unset OT_KERNEL_KERNEL_DIR
 	unset OT_KERNEL_KEXEC
 	unset OT_KERNEL_LSMS
 	unset OT_KERNEL_MENUCONFIG_COLORS
@@ -2285,6 +2285,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_MODULE_SUPPORT
 	unset OT_KERNEL_MODULES_COMPRESSOR
 	unset OT_KERNEL_PCIE_MPS
+	unset OT_KERNEL_PHYS_MEM_TOTAL_GIB
 	unset OT_KERNEL_PKGFLAGS_ACCEPT
 	unset OT_KERNEL_PKGFLAGS_REJECT
 	unset OT_KERNEL_PKU
@@ -2373,6 +2374,14 @@ ot-kernel_clear_env() {
 ot-kernel_load_config() {
 	ot-kernel_clear_env
 	source "${env_path}"
+
+	if [[ -z "${OT_KERNEL_USE}" ]] ; then
+		export OT_KERNEL_USE="${IUSE}"
+	fi
+
+	if [[ -z "${OT_KERNEL_BUILD}" ]] && ( use build || ot-kernel_use build ) ; then
+		export OT_KERNEL_BUILD=1
+	fi
 }
 
 # @FUNCTION: ot-kernel_is_build
@@ -3297,17 +3306,19 @@ ot-kernel_set_kconfig_march() {
 				# Reset to avoid ambiguous config
 				ot-kernel_unset_configopt "CONFIG_${m}"
 			done
-			ot-kernel_unset_configopt "CONFIG_GENERIC_CPU"
+			local march_flags=()
+			local kflag="CONFIG_GENERIC_CPU"
+			ot-kernel_unset_configopt "${kflag}"
 			if [[ -n "${X86_MICROARCH_OVERRIDE}" ]] ; then
 				einfo "Setting .config with CONFIG_${X86_MICROARCH_OVERRIDE}=y"
-				ot-kernel_y_configopt "CONFIG_${KCP_MICROARCH_OVERRIDE}"
+				kflag="CONFIG_${KCP_MICROARCH_OVERRIDE}"
 			elif grep -q -E -e "MNATIVE_" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
 				local mfg=$(ot-kernel_get_cpu_mfg_id)
 				mfg=${mfg^^}
-				ot-kernel_y_configopt "CONFIG_MNATIVE_${mfg}"
+				kflag="CONFIG_MNATIVE_${mfg}"
 			elif grep -q -F -e "MNATIVE" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
 				einfo "Setting .config with -march=native"
-				ot-kernel_y_configopt "CONFIG_MNATIVE"
+				kflag="CONFIG_MNATIVE"
 			elif grep -q -F -e "GENERIC_CPU" "${BUILD_DIR}/arch/x86/Kconfig.cpu" ; then
 				ewarn
 				ewarn "Setting .config with -march=generic"
@@ -3315,8 +3326,34 @@ ot-kernel_set_kconfig_march() {
 				ewarn "See X86_MICROARCH_OVERRIDE in metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
 				ewarn "to optimize."
 				ewarn
-				ot-kernel_y_configopt "CONFIG_GENERIC_CPU"
+				kflag="CONFIG_GENERIC_CPU"
+			else
+				ewarn
+				ewarn "Falling back to ${kflag}"
+				ewarn
 			fi
+			ot-kernel_y_configopt "${kflag}"
+
+			local march_flags=($(cat arch/x86/Makefile{,_32.cpu} \
+				| sed -e "s|call tune,|-mtune=|g" \
+				| grep -E  -e "CONFIG.*(march|mtune)=" \
+				| grep -E -e "(march|mtune)" \
+				| grep -e "${kflag}" \
+				| grep -E -o -e "(-march=|-mtune=)[a-z0-9_.-]+"))
+			for x in ${march_flags[@]} ; do
+				if ! test-flags "${x}" ; then
+					# This test is for kernel_compiler_patch.
+eerror
+eerror "Failed compiler flag test for ${x}."
+eerror
+eerror "You need to make sure the compiler for that any slot install does"
+eerror "support the failed compiler flag."
+eerror
+					die
+				else
+einfo "Passed check for ${x}"
+				fi
+			done
 		fi
 	fi
 
@@ -3776,7 +3813,7 @@ ot-kernel_set_kconfig_oflag() {
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
-	if [[ "${CFLAGS}" =~ "O3" ]] && has O3 ${IUSE_EFFECTIVE} && ot-kernel_use O3 ; then
+	if [[ "${CFLAGS}" =~ "O3" ]] ; then
 		einfo "Setting .config with -O3 from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
 	elif [[ "${CFLAGS}" =~ "O2" ]] ; then
@@ -4683,6 +4720,17 @@ ot-kernel_set_kconfig_satellite_internet() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_rcu_powersave
+# @DESCRIPTION:
+# Saves more power at the expense of latency
+ot-kernel_set_rcu_powersave() {
+	if grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_NO_HZ_COMMON"
+		ot-kernel_y_configopt "CONFIG_RCU_EXPERT"
+		ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
 # @DESCRIPTION:
 # Configures the default power policies and latencies for the kernel.
@@ -4691,22 +4739,47 @@ ot-kernel_set_kconfig_work_profile() {
 	einfo "Using the ${work_profile} work profile"
 	if [[ -z "${work_profile}" ]] ; then
 		:
-	elif [[ "${work_profile}" =~ ("manual"|"custom") ]] ; then
+	elif [[ "${work_profile}" =~ ("custom"|"manual") ]] ; then
 		:
 	else
 		einfo "Changed .config to use the ${work_profile} work profile"
 		ot-kernel_set_kconfig_work_profile_init
 	fi
 
-	if [[ -z "${work_profile}" || "${work_profile}" =~ ("manual"|"custom") ]] ; then
+	if [[ -z "${work_profile}" || "${work_profile}" =~ ("custom"|"manual") ]] ; then
 		:
 	else
 		ot-kernel_set_kconfig_set_tcp_cong_ctrl_bbr
 	fi
 
-	if [[ -z "${work_profile}" || "${work_profile}" =~ ("manual"|"custom") ]] ; then
+	if [[ "${work_profile}" =~ "greenest" \
+		|| "${work_profile}" =~ "solar" ]] \
+		&& [[ "${CFLAGS}" == "-O3" ]] ; then
+ewarn
+ewarn "OT_KERNEL_WORK_PROFILE=${OT_KERNEL_WORK_PROFILE} should use USE=O3"
+ewarn "and OT_KERNEL_USE=O3 to improve energy reduction."
+ewarn
+	elif [[ "${work_profile}" =~ "green" \
+		&& "${CFLAGS}" =~ "-Os" ]] ; then
+ewarn
+ewarn "OT_KERNEL_WORK_PROFILE=${OT_KERNEL_WORK_PROFILE} should use CFLAGS=-O2"
+ewarn "or 'CFLAGS=-O3 and USE=O3 and OT_KERNEL_USE=O3' to improve energy"
+ewarn "reduction."
+ewarn
+	fi
+
+	if [[ "${work_profile}" =~ "green" \
+		|| "${work_profile}" =~ "solar" ]] \
+		&& ! use disable_debug ; then
+ewarn
+ewarn "OT_KERNEL_WORK_PROFILE=${OT_KERNEL_WORK_PROFILE} should use"
+ewarn "USE=disable_debug to improve energy reduction."
+ewarn
+	fi
+
+	if [[ -z "${work_profile}" || "${work_profile}" =~ ("custom"|"manual") ]] ; then
 		:
-	elif [[ "${work_profile}" =~ ("smartphone"|"tablet") ]] ; then
+	elif [[ "${work_profile}" =~ ("sbc"|"smartphone"|"tablet"|"video-smartphone"|"video-tablet") ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
@@ -4714,43 +4787,36 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
+		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
+		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_PM"
-		if grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_NO_HZ_COMMON"
-			ot-kernel_y_configopt "CONFIG_RCU_EXPERT"
-			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
-		fi
-	elif [[ "${work_profile}" =~ ("video-smartphone"|"video-tablet") ]] ; then
-		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
-		ot-kernel_y_configopt "CONFIG_SUSPEND"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
-		ot-kernel_y_configopt "CONFIG_PM"
-		if grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_NO_HZ_COMMON"
-			ot-kernel_y_configopt "CONFIG_RCU_EXPERT"
-			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
-		fi
-	elif [[ "${work_profile}" =~ ("laptop"|"solar-desktop") ]] ; then
+		ot-kernel_set_rcu_powersave
+	elif [[ "${work_profile}" =~ ("laptop"|"green-pc"|"greenest-pc"|"touchscreen-laptop"|"solar-desktop") ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_HIBERNATION"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+		if [[ "${work_profile}" =~ ("touchscreen-laptop") ]] ; then
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
+		else
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
+		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
+		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
+		fi
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			[[ "${work_profile}" == "laptop" ]] \
-				&& ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
-			[[ "${work_profile}" == "solar-desktop" ]] \
-				&& ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
+			if [[ "${work_profile}" == "solar-desktop" \
+				|| "${work_profile}" == "greenest-pc" ]] ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
+			else
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
+			fi
 		fi
 		if grep -q -E -e "^CONFIG_SND_AC97_CODEC=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_SND_AC97_POWER_SAVE"
@@ -4762,20 +4828,13 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
 			ot-kernel_y_configopt "CONFIG_ACPI_AC"
 		fi
-		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
-		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
-		if [[ "${work_profile}" == "laptop" ]] ; then
+		if [[ "${work_profile}" =~ "laptop" ]] ; then
 			ot-kernel_y_configopt "CONFIG_VGA_SWITCHEROO"
 		fi
 		ot-kernel_y_configopt "CONFIG_PM"
-		if grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_NO_HZ_COMMON"
-			ot-kernel_y_configopt "CONFIG_RCU_EXPERT"
-			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
-		fi
-	elif [[ "${work_profile}" =~ ("gpu-gaming-laptop"|"casual-gaming-laptop"|"solar-gaming") ]] ; then
+		ot-kernel_set_rcu_powersave
+	elif [[ "${work_profile}" =~ ("casual-gaming-laptop"|"gpu-gaming-laptop"|"solar-gaming") ]] ; then
 		# It is assumed that the other laptop/solar-desktop profile is built also.
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -4785,6 +4844,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
+		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
@@ -4810,6 +4870,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
@@ -4817,7 +4878,7 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-	elif [[ "${work_profile}" =~ ("gaming-guest-vm"|"desktop-guest-vm") ]] ; then
+	elif [[ "${work_profile}" =~ ("desktop-guest-vm"|"gaming-guest-vm") ]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 	elif [[ "${work_profile}" =~ ("arcade"|"pro-gaming"|"tournament"|"presentation") ]] ; then
@@ -4831,12 +4892,19 @@ ot-kernel_set_kconfig_work_profile() {
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
+		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-	elif [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
-		ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering
+	elif [[ "${work_profile}" == "digital-audio-workstation" \
+		|| "${work_profile}" == "gamedev" \
+		|| "${work_profile}" == "workstation" ]] ; then
+		[[ "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "gamedev" ]] \
+			&& ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering, reduce skippy input
+		[[ "${work_profile}" == "workstation" ]] \
+			&& ot-kernel_set_kconfig_set_video_timer_hz # For video production
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -4846,34 +4914,29 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
-		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
+		[[ "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "gamedev" ]] \
+			&& ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-	elif [[ "${work_profile}" == "workstation" ]] ; then
-		ot-kernel_set_kconfig_set_video_timer_hz # For video production
+	elif [[ "${work_profile}" =~ ("builder-dedicated"|"builder-interactive") ]] ; then
+		if [[ "${work_profile}" =~ ("builder-dedicated") ]] ; then
+			ot-kernel_set_kconfig_set_lowest_timer_hz
+			ot-kernel_y_configopt "CONFIG_NONE"
+		else
+			ot-kernel_set_kconfig_set_default_timer_hz
+			ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
+		fi
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
-	elif [[ "${work_profile}" == "gamedev" ]] ; then
-		ot-kernel_set_kconfig_set_highest_timer_hz # For input
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
-		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-	elif [[ "${work_profile}" == "renderfarm-dedicated" ]] ; then
+	elif [[ "${work_profile}" == "renderfarm-dedicated" \
+		|| "${work_profile}" == "renderfarm-workstation" ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -4883,18 +4946,11 @@ ot-kernel_set_kconfig_work_profile() {
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
-	elif [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
-		ot-kernel_set_kconfig_set_video_timer_hz
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+		if [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
+			ot-kernel_y_configopt "CONFIG_PREEMPT"
+		else
+			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
 	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server") ]] ; then
 		if [[ "${work_profile}" =~ "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
@@ -4920,13 +4976,11 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
-	elif [[ "${work_profile}" =~ ("jukebox"|"dvr"|"mainstream-desktop") ]] ; then
-		if [[ "${arch}" =~ ("x86"|"x86-64") ]] ; then
-			[[ "${work_profile}" =~ ("dvr"|"mainstream-desktop") ]] \
-				&& ot-kernel_set_kconfig_set_video_timer_hz # Minimize dropped frames
-			[[ "${work_profile}" == "jukebox" ]] \
-				&& ot-kernel_set_kconfig_set_highest_timer_hz # Reduce studder
-		fi
+	elif [[ "${work_profile}" =~ ("dvr"|"jukebox"|"mainstream-desktop") ]] ; then
+		[[ "${work_profile}" =~ ("dvr"|"mainstream-desktop") ]] \
+			&& ot-kernel_set_kconfig_set_video_timer_hz # Minimize dropped frames
+		[[ "${work_profile}" == "jukebox" ]] \
+			&& ot-kernel_set_kconfig_set_highest_timer_hz # Reduce studder
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
@@ -4944,16 +4998,15 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
+		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
+		fi
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 		ot-kernel_y_configopt "CONFIG_PM"
-		if grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_NO_HZ_COMMON"
-			ot-kernel_y_configopt "CONFIG_RCU_EXPERT"
-			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
-		fi
+		ot-kernel_set_rcu_powersave
 	elif [[ "${work_profile}" == "cryptocurrency-miner-workstation" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
@@ -4963,19 +5016,18 @@ ot-kernel_set_kconfig_work_profile() {
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
+		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
+		fi
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_PM"
-		if grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_NO_HZ_COMMON"
-			ot-kernel_y_configopt "CONFIG_RCU_EXPERT"
-			ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
-		fi
-	elif [[ "${work_profile}" =~ ("distributed-computing-dedicated"|"hpc") ]] ; then
+		ot-kernel_set_rcu_powersave
+	elif [[ "${work_profile}" =~ ("distributed-computing-dedicated"|"hpc"|"green-hpc"|"greenest-hpc") ]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel overhead, maximize computation time
-		if [[ "${work_profile}" == "hpc" ]] ; then
+		if [[ "${work_profile}" =~ "hpc" ]] ; then
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_kconfig_set_tcp_cong_ctrl "dctcp"
 			ot-kernel_set_kconfig_slab_allocator "slub"
@@ -4983,15 +5035,34 @@ ot-kernel_set_kconfig_work_profile() {
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+		if [[ "${work_profile}" == "greenest-hpc" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
+			fi
+		elif [[ "${work_profile}" == "green-hpc" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
+			fi
+		else
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
-		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+		if [[ "${work_profile}" == "green-hpc" \
+			|| "${work_profile}" == "greenest-hpc" ]] ; then
+			ot-kernel_y_configopt "CONFIG_PM"
+			ot-kernel_set_rcu_powersave
+		else
+			ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
+		fi
 	elif [[ "${work_profile}" == "distributed-computing-workstation" ]] ; then
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -5309,10 +5380,12 @@ ot-kernel_src_configure() {
 		local target_triple="${OT_KERNEL_TARGET_TRIPLE}"
 		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
 		local boot_decomp="${OT_KERNEL_BOOT_DECOMPRESSOR}"
+		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
+		local check_mounted="${OT_KERNEL_BUILD_CHECK_MOUNTED:-1}"
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
-		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
+		ot-kernel_use rt && cpu_sched="cfs"
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
 		#[[ -z "${boot_decomp}" ]] && boot_decomp="manual"
 		[[ -z "${extraversion}" ]] && die "extraversion cannot be empty"
@@ -5321,6 +5394,20 @@ ot-kernel_src_configure() {
 		[[ -z "${target_triple}" ]] && die "target_triple cannot be empty"
 		[[ -z "${cpu_sched}" ]] && die "cpu_sched cannot be empty"
 		#[[ -z "${boot_decomp}" ]] && die "boot_decomp cannot be empty"
+		[[ -z "${kernel_dir}" ]] && die "OT_KERNEL_KERNEL_DIR cannot be empty"
+		if [[ "${OT_KERNEL_BUILD_CHECK_MOUNTED}" == "1" && "${OT_KERNEL_BUILD}" == "1" ]] ; then
+			if mount | grep "${kernel_dir}" ; then
+				:;
+			else
+eerror
+eerror "OT_KERNEL_KERNEL_DIR=${OT_KERNEL_KERNEL_DIR}"
+eerror "Directory is not mounted."
+eerror
+eerror "To disable this check, set OT_KERNEL_BUILD_CHECK_MOUNTED=0"
+eerror
+				die
+			fi
+		fi
 
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
@@ -5475,7 +5562,7 @@ ot-kernel_setup_tc() {
 	einfo "Setting up the build toolchain"
 	args+=(
 		INSTALL_MOD_PATH="${ED}"
-		INSTALL_PATH="${ED}/boot"
+		INSTALL_PATH="${ED}${kernel_dir}"
 		${MAKEOPTS}
 		ARCH=${arch}
 	)
@@ -5560,6 +5647,23 @@ ot-kernel_setup_tc() {
 	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && tc-is-clang ; then
 		args+=( LLVM_IAS=0 )
 	fi
+
+	local march_flags=($(echo "${CFLAGS}" \
+		| grep -E -e "(-march=[^[:space:]]+|-mcpu=[^[:space:]]+)"))
+	for x in ${march_flags[@]} ; do
+		if ! test-flags "${x}" ; then
+			# This test is for kernel_compiler_patch.
+eerror
+eerror "Failed compiler flag test for ${x}."
+eerror
+eerror "You need to make sure the compiler for that any slot install does"
+eerror "support the failed compiler flag."
+eerror
+			die
+		else
+einfo "Passed check for ${x}"
+		fi
+	done
 }
 
 # @FUNCTION: ot-kernel_build_tresor_sysfs
@@ -5680,7 +5784,8 @@ ot-kernel_kexec_sign_and_install() {
 # Replaces all the arch/*/install.sh
 ot-kernel-make_install() {
 	einfo "Called ot-kernel-make_install()"
-	dodir /boot
+	dodir "${kernel_dir}"
+	[[ -z "${kernel_dir}" ]] && die "OT_KERNEL_KERNEL_DIR cannot be empty"
 
 	local arch_
 	if [[ "${arch}" == "x86_64" ]] ; then
@@ -5689,7 +5794,7 @@ ot-kernel-make_install() {
 		arch_="${arch}"
 	fi
 	local zimage_paths=(
-		$(find "${BUILD_DIR}/arch/${arch_}/boot" \
+		$(find "${BUILD_DIR}/arch/${arch_}${kernel_dir}" \
 			"${BUILD_DIR}" \
 			-maxdepth 1 \
 			-name "Image.gz" \
@@ -5700,7 +5805,7 @@ ot-kernel-make_install() {
 			-o -name "vmlinux.bz2" )
 	)
 	local image_paths=(
-		$(find "${BUILD_DIR}/arch/${arch_}/boot" \
+		$(find "${BUILD_DIR}/arch/${arch_}${kernel_dir}" \
 			"${BUILD_DIR}" \
 			-maxdepth 1 \
 			-name "Image" \
@@ -5714,7 +5819,7 @@ ot-kernel-make_install() {
 		zimage_paths=(${image_paths[@]})
 	fi
 
-	insinto /boot
+	insinto "${kernel_dir}"
 	local system_map_spath="${BUILD_DIR}/System.map"
 	local system_map_dpath="System.map-${PV}-${extraversion}-${arch}"
 	newins "${system_map_spath}" "${system_map_dpath}"
@@ -5853,7 +5958,7 @@ eerror
 		fi
 
 		einfo "Running:  make all ${args[@]}"
-		dodir /boot
+		dodir "${kernel_dir}"
 		make all "${args[@]}" || die
 	fi
 }
@@ -5876,10 +5981,11 @@ ot-kernel_src_compile() {
 		local target_triple="${OT_KERNEL_TARGET_TRIPLE}"
 		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
 		local boot_decomp=$(ot-kernel_get_boot_decompressor)
+		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
 		[[ "${target_triple}" == "CHOST" ]] && target_triple="${CHOST}"
 		[[ "${target_triple}" == "CBUILD" ]] && target_triple="${CBUILD}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
-		[[ "${extraversion}" == "rt" ]] && cpu_sched="cfs"
+		ot-kernel_use rt && cpu_sched="cfs"
 		[[ -z "${target_triple}" ]] && target_triple="${CHOST}"
 		if [[ -z "${build_config}" ]] ; then
 			if ot-kernel_is_build ; then
@@ -5980,6 +6086,7 @@ ot-kernel_src_install() {
 		ot-kernel_load_config
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
+		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
 		if [[ -z "${build_config}" ]] ; then
 			if ot-kernel_is_build ; then
 				build_config="1"
@@ -5993,7 +6100,7 @@ ot-kernel_src_install() {
 		if ot-kernel_is_build ; then
 			local args=(
 				INSTALL_MOD_PATH="${ED}"
-				INSTALL_PATH="${ED}/boot"
+				INSTALL_PATH="${ED}${kernel_dir}"
 				${MAKEOPTS}
 				ARCH=${arch}
 			)
@@ -6268,25 +6375,6 @@ ewarn
 		fi
 	fi
 
-	local kcp_arches=(
-		kernel-compiler-patch-zen3
-		kernel-compiler-patch-cooper_lake
-		kernel-compiler-patch-tiger_lake
-		kernel-compiler-patch-sapphire_rapids
-		kernel-compiler-patch-rocket_lake
-		kernel-compiler-patch-alder_lake
-	)
-
-	has_newer_kcp_arch=0
-	local a
-	for a in ${kcp_arches[@]} ; do
-		if has ${a} ${IUSE_EFFECTIVE} ; then
-			if use ${a} ; then
-				has_newer_kcp_arch=1
-			fi
-		fi
-	done
-
 	if (( ${wants_lto} == 1 || ${wants_cfi} == 1 || ${wants_kcfi} == 1 )) ; then
 einfo
 einfo "It's recommend to use sys-devel/genpatches[llvm]::oiledmachine-overlay"
@@ -6313,22 +6401,20 @@ einfo "For ShadowCallStack, the menuconfig item is found at:"
 einfo
 einfo "  General architecture-dependent options > Clang Shadow Call Stack"
 einfo
-	elif (( ${has_newer_kcp_arch} == 1 )) ; then
+	fi
+
 einfo
 einfo "The kernel_compiler patch requires that you either add"
 einfo
-einfo "  --kernel-cc=/usr/bin/${CHOST}-gcc-${gcc_v}"
-		if [[ -n "${has_llvm}" ]] ; then
+einfo "  --kernel-cc=/usr/bin/\${CHOST}-gcc-\${gcc_v}"
 einfo
 einfo "    or"
 einfo
 einfo "  use the sys-devel/genpatches[llvm]::oiledmachine-overlay package"
 einfo "  with the --llvm argument passed to genkernel"
-		fi
 einfo
 einfo "to optimize for newer microarchitectures."
 einfo
-	fi
 
 	if has bbrv2 ${IUSE_EFFECTIVE} ; then
 		if use bbrv2 ; then

@@ -1,3 +1,10 @@
+# This is a fix for the 5.17 series.
+# Original commit:  50b614c0a65125d5c22fca6605fdcf88e0a9258a
+# URL:  https://github.com/google/bbr/commit/50b614c0a65125d5c22fca6605fdcf88e0a9258a
+
+net/ipv4/tcp_rate.c:
+// SPDX-License-Identifier: GPL-2.0-only
+
 --- a/net/ipv4/tcp_rate.c.orig2	2022-06-06 18:43:00.273228613 -0700
 +++ b/net/ipv4/tcp_rate.c	2022-06-06 18:45:19.382233197 -0700
 @@ -109,6 +109,7 @@ void tcp_rate_skb_delivered(struct sock

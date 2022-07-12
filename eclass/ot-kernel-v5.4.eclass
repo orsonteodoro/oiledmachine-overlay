@@ -140,7 +140,7 @@ e8d4d6ded8544b5716c66d326aa290db8501518c
 
 IUSE+=" build symlink"
 IUSE+=" bmq +cfs clang disable_debug +genpatches -genpatches_1510
-+kernel-compiler-patch muqss +O3 futex tresor rt tresor_aesni
+muqss futex tresor rt tresor_aesni
 tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
 zen-sauce-all -zen-tune"
@@ -153,34 +153,35 @@ REQUIRED_USE+="
 	tresor_x86_64? ( tresor )
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
 	zen-sauce-all? ( zen-sauce )
-	zen-tune? ( zen-sauce )"
+	zen-tune? ( zen-sauce )
+"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizable kernel package with \
-BMQ, \
-CVE fixes, \
-FUTEX_WAIT_MULTIPLE, \
-genpatches, \
-kernel_compiler_patch, \
-MUQSS, \
-TRESOR, \
-UKSM, \
-zen-muqss, \
-zen-sauce, \
+DESCRIPTION="A customizable kernel package with
+BMQ,
+CVE fixes,
+FUTEX_WAIT_MULTIPLE,
+genpatches,
+kernel_compiler_patch,
+MUQSS,
+TRESOR,
+UKSM,
+zen-muqss,
+zen-sauce,
 zen-tune."
 
 inherit ot-kernel
 
+LICENSE+=" GPL-2" # kernel_compiler_patch
+LICENSE+=" GPL-2" # -O3 patch
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" bmq? ( GPL-3 )" # see \
   # https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
-LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 LICENSE+=" muqss? ( GPL-2 )"
-LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
@@ -222,8 +223,7 @@ KCP_RDEPEND="
 		$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
 	)
 "
-
-RDEPEND+=" kernel-compiler-patch? ( ${KCP_RDEPEND} )"
+RDEPEND+=" ${KCP_RDEPEND}"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:
@@ -231,32 +231,33 @@ else
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 SRC_URI+="
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
-	   ${KERNEL_PATCH_URIS[@]}"
+	   ${KERNEL_PATCH_URIS[@]}
+"
 fi
 
-SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
-	   futex? ( ${FUTEX_SRC_URIS} )
-	   genpatches? (
+SRC_URI+="
+	${O3_ALLOW_SRC_URI}
+	${KCP_SRC_4_9_URI}
+	${KCP_SRC_8_1_URI}
+	${KCP_SRC_9_1_URI}
+	bmq? ( ${BMQ_SRC_URI} )
+	futex? ( ${FUTEX_SRC_URIS} )
+	genpatches? (
 		${GENPATCHES_URI}
-	   )
-	   kernel-compiler-patch? (
-		${KCP_SRC_4_9_URI}
-		${KCP_SRC_8_1_URI}
-		${KCP_SRC_9_1_URI}
-	   )
-	   muqss? ( ${CK_SRC_URIS} )
-	   O3? ( ${O3_ALLOW_SRC_URI} )
-	   rt? ( ${RT_SRC_URI} )
-	   tresor? (
+	)
+	muqss? ( ${CK_SRC_URIS} )
+	rt? ( ${RT_SRC_URI} )
+	tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
 		${TRESOR_README_SRC_URI}
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
-	   )
-	   uksm? ( ${UKSM_SRC_URI} )
-	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
-	   zen-sauce? ( ${ZENSAUCE_URIS} )"
+	)
+	uksm? ( ${UKSM_SRC_URI} )
+	zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
+	zen-sauce? ( ${ZENSAUCE_URIS} )
+"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -282,18 +283,6 @@ ewarn "as head when you have migrated the data are ready to use the updated"
 ewarn "XTS(tresor) with setkey changes.  This new XTS setkey change will not be"
 ewarn "backwards compatible."
 ewarn
-	fi
-
-	# Allow for multiple builds for different kernel configs (e.g. server, gaming-client etc),
-	# but it is really needed to isolate the -rt build.
-	if [[ -z "${OT_KERNEL_BUILDCONFIGS_5_4}" ]] ; then
-		OT_KERNEL_BUILDCONFIGS_5_4_="ot:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-ot-$(uname -m):$(uname -m):${CHOST}:cfs:manual"
-		if use rt ; then
-			# Split for security reasons
-			OT_KERNEL_BUILDCONFIGS_5_4_="${OT_KERNEL_BUILDCONFIGS_5_4_};rt:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-rt-$(uname -m):$(uname -m):${CHOST}:cfs:manual"
-		fi
-	else
-		export OT_KERNEL_BUILDCONFIGS_5_4_="${OT_KERNEL_BUILDCONFIGS_5_4}"
 	fi
 }
 

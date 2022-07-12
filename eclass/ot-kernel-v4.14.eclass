@@ -98,7 +98,7 @@ LINUX_TIMESTAMP=1510512373
 
 IUSE+=" build symlink"
 IUSE+=" bfq-mq +cfs disable_debug +genpatches -genpatches_1510
-+kernel-compiler-patch muqss pds +O3 rt tresor tresor_aesni tresor_i686
+muqss pds rt tresor tresor_aesni tresor_i686
 tresor_prompt tresor_sysfs tresor_x86_64 uksm"
 REQUIRED_USE+="
 	bfq-mq? ( muqss )
@@ -108,28 +108,29 @@ REQUIRED_USE+="
 	tresor_aesni? ( tresor )
 	tresor_i686? ( tresor )
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-	tresor_x86_64? ( tresor )"
+	tresor_x86_64? ( tresor )
+"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizable kernel package with \
-BFQ-mq updates, \
-genpatches, \
-kernel_compiler_patch, \
-MuQSS, \
-PDS, \
-RT_PREEMPT (-rt), \
-TRESOR, \
+DESCRIPTION="A customizable kernel package with
+BFQ-mq updates,
+genpatches,
+kernel_compiler_patch,
+MuQSS,
+PDS,
+RT_PREEMPT (-rt),
+TRESOR,
 UKSM."
 
 inherit ot-kernel
 
+LICENSE+=" GPL-2" # kernel_compiler_patch
+LICENSE+=" GPL-2" # -O3 patches
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
-LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
-LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" pds? ( GPL-3 )" # \
   # See https://gitlab.com/alfredchen/PDS-mq/-/blob/master/LICENSE
@@ -142,38 +143,37 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
 
 KCP_RDEPEND=" >=sys-devel/gcc-6.5.0"
 
-RDEPEND+=" kernel-compiler-patch? ( || ( ${KCP_RDEPEND} ) )"
+RDEPEND+=" ${KCP_RDEPEND}"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:
 else
 SRC_URI+="
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
-	   ${KERNEL_PATCH_URIS[@]}"
+	   ${KERNEL_PATCH_URIS[@]}
+"
 fi
 
-SRC_URI+=" genpatches? (
+SRC_URI+="
+	${O3_CO_SRC_URI}
+	${O3_RO_SRC_URI}
+	${KCP_SRC_4_9_URI}
+	${KCP_SRC_8_1_URI}
+	genpatches? (
 		${GENPATCHES_URI}
-	   )
-	   kernel-compiler-patch? (
-		${KCP_SRC_4_9_URI}
-		${KCP_SRC_8_1_URI}
-	   )
-	   muqss? ( ${CK_SRC_URIS} )
-	   O3? (
-		${O3_CO_SRC_URI}
-		${O3_RO_SRC_URI}
-	   )
-	   rt? ( ${RT_SRC_URI} )
-	   pds? ( ${PDS_SRC_URI} )
-	   tresor? (
+	)
+	muqss? ( ${CK_SRC_URIS} )
+	rt? ( ${RT_SRC_URI} )
+	pds? ( ${PDS_SRC_URI} )
+	tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
 		${TRESOR_README_SRC_URI}
 		${TRESOR_RESEARCH_PDF_SRC_URI}
-	   )
-	   uksm? ( ${UKSM_SRC_URI} )"
+	)
+	uksm? ( ${UKSM_SRC_URI} )
+"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -192,18 +192,6 @@ ewarn
 ewarn
 ewarn "TRESOR for ${PV} is stable.  See dmesg for details on correctness."
 ewarn
-	fi
-
-	# Allow for multiple builds for different kernel configs (e.g. server, gaming-client etc),
-	# but it is really needed to isolate the -rt build.
-	if [[ -z "${OT_KERNEL_BUILDCONFIGS_4_14}" ]] ; then
-		OT_KERNEL_BUILDCONFIGS_4_14_="ot:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-ot-$(uname -m):$(uname -m):${CHOST}:cfs:manual"
-		if use rt ; then
-			# Split for security reasons
-			OT_KERNEL_BUILDCONFIGS_4_14_="${OT_KERNEL_BUILDCONFIGS_4_14_};rt:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-rt-$(uname -m):$(uname -m):${CHOST}:cfs:manual"
-		fi
-	else
-		export OT_KERNEL_BUILDCONFIGS_4_14_="${OT_KERNEL_BUILDCONFIGS_4_14}"
 	fi
 }
 

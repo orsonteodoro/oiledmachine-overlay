@@ -198,19 +198,15 @@ fe6b56a9c48b934d2ffaafd60eb89b9dae6e912d
 3d76056b85feab3aade8007eb560c3451e7d3433
 ) # newest
 
-KCP_MA=(cortex-a72 zen3 cooper_lake tiger_lake sapphire_rapids rocket_lake alder_lake)
-KCP_IUSE=" ${KCP_MA[@]/#/kernel-compiler-patch-}"
-
 IUSE+=" build symlink"
-IUSE+=" ${KCP_IUSE} bbrv2 +cfs clang disable_debug futex
-+genpatches -genpatches_1510 +kernel-compiler-patch muqss +O3 prjc rt tresor
+IUSE+=" bbrv2 +cfs clang disable_debug futex
++genpatches -genpatches_1510 muqss prjc rt tresor
 tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce zen-sauce-all
 -zen-tune"
 IUSE+=" -exfat"
 REQUIRED_USE+="
 	genpatches_1510? ( genpatches )
-	O3? ( zen-sauce )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
 	tresor_i686? ( tresor )
@@ -219,27 +215,30 @@ REQUIRED_USE+="
 	tresor_x86_64? ( tresor )
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
 	zen-sauce-all? ( zen-sauce )
-	zen-tune? ( zen-sauce )"
+	zen-tune? ( zen-sauce )
+"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizable kernel package with \
-BBRv2, \
-CVE fixes, \
-FUTEX_WAIT_MULTIPLE, \
-genpatches, \
-kernel_compiler_patch, \
-MuQSS, \
-Project C (BMQ, PDS-mq), \
-RT_PREEMPT (-rt), \
-TRESOR, \
-UKSM, \
-zen-muqss, \
-zen-sauce, \
+DESCRIPTION="A customizable kernel package with
+BBRv2,
+CVE fixes,
+FUTEX_WAIT_MULTIPLE,
+genpatches,
+kernel_compiler_patch,
+MuQSS,
+Project C (BMQ, PDS-mq),
+RT_PREEMPT (-rt),
+TRESOR,
+UKSM,
+zen-muqss,
+zen-sauce,
 zen-tune."
 
 inherit ot-kernel
 
+LICENSE+=" GPL-2" # kernel_compiler_patch
+LICENSE+=" GPL-2" # -O3 patch
 LICENSE+=" bbrv2? ( || ( GPL-2 BSD ) )" # https://github.com/google/bbr/tree/v2alpha#license
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
@@ -248,18 +247,7 @@ LICENSE+=" prjc? ( GPL-3 )" # see \
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
-LICENSE+=" kernel-compiler-patch? ( GPL-2 )"
-gen_kcp_license() {
-	local out=""
-	local a
-	for a in ${KCP_MA[@]} ; do
-		out+=" kernel-compiler-patch-${a}? ( GPL-2 )"
-	done
-	echo "${out}"
-}
-LICENSE+=" "$(gen_kcp_license)
 LICENSE+=" muqss? ( GPL-2 )"
-LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
@@ -295,52 +283,14 @@ gen_clang_llvm_pair() {
 }
 
 KCP_RDEPEND="
-	clang? ( || ( $(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT}) ) )
-	|| (
-		(
-			>=sys-devel/gcc-6.5.0
-		)
-		$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
-	)
-"
-
-KCP_TC0="
-	clang? ( || ( $(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT}) ) )
-	|| (
-		(
-			>=sys-devel/gcc-10.1
-		)
-		$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
-	)"
-
-KCP_TC1="
-	clang? ( || ( $(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT}) ) )
-	|| (
-		(
-			>=sys-devel/gcc-10.3
-		)
-		$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
-	)"
-
-KCP_TC2="
 	clang? ( || ( $(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT}) ) )
 	|| (
 		(
 			>=sys-devel/gcc-11.1
 		)
 		$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
-	)"
-
-KCP_MA_RDEPEND="
-	kernel-compiler-patch-zen3? ( ${KCP_TC1} )
-	kernel-compiler-patch-cooper_lake? ( ${KCP_TC0} )
-	kernel-compiler-patch-tiger_lake? ( ${KCP_TC0} )
-	kernel-compiler-patch-sapphire_rapids? ( ${KCP_TC2} )
-	kernel-compiler-patch-rocket_lake? ( ${KCP_TC2} )
-	kernel-compiler-patch-alder_lake? ( ${KCP_TC2} )"
-
-RDEPEND+=" ${KCP_MA_RDEPEND}
-	   kernel-compiler-patch? ( ${KCP_RDEPEND} )"
+	)
+"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:
@@ -348,51 +298,34 @@ else
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 SRC_URI+="
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
-	   ${KERNEL_PATCH_URIS[@]}"
+	   ${KERNEL_PATCH_URIS[@]}
+"
 fi
 
-# For CPU microarchitectures >= year 2020, assumes mutually exclusive
-# kernel-compiler-patch* USE flag usage
-gen_kcp_ma_uri() {
-	local out=""
-	local a
-	for a in ${KCP_MA[@]} ; do
-		[[ "${a}" =~ cortex-a72 ]] && continue
-		out+="
-	   kernel-compiler-patch-${a}? (
-		${KCP_SRC_9_1_URI}
-	   )"
-	done
-	echo "${out}"
-}
-
-SRC_URI+=" "$(gen_kcp_ma_uri)
-SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URIS} )
-	   futex? ( ${FUTEX_SRC_URIS} )
-	   genpatches? (
+SRC_URI+="
+	${KCP_SRC_4_9_URI}
+	${KCP_SRC_8_1_URI}
+	${KCP_SRC_9_1_URI}
+	${KCP_SRC_CORTEX_A72_URI}
+	bbrv2? ( ${BBRV2_SRC_URIS} )
+	futex? ( ${FUTEX_SRC_URIS} )
+	genpatches? (
 		${GENPATCHES_URI}
-	   )
-	   kernel-compiler-patch? (
-		${KCP_SRC_4_9_URI}
-		${KCP_SRC_8_1_URI}
-		${KCP_SRC_9_1_URI}
-	   )
-	   kernel-compiler-patch-cortex-a72? (
-		${KCP_SRC_CORTEX_A72_URI}
-	   )
-	   muqss? ( ${CK_SRC_URIS} )
-	   prjc? ( ${PRJC_SRC_URI} )
-	   rt? ( ${RT_SRC_URI} )
-	   tresor? (
+	)
+	muqss? ( ${CK_SRC_URIS} )
+	prjc? ( ${PRJC_SRC_URI} )
+	rt? ( ${RT_SRC_URI} )
+	tresor? (
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
 		${TRESOR_README_SRC_URI}
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
-	   )
-	   uksm? ( ${UKSM_SRC_URI} )
-	   zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
-	   zen-sauce? ( ${ZENSAUCE_URIS} )"
+	)
+	uksm? ( ${UKSM_SRC_URI} )
+	zen-muqss? ( ${ZEN_MUQSS_SRC_URIS} )
+	zen-sauce? ( ${ZENSAUCE_URIS} )
+"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -418,18 +351,6 @@ ewarn "it. Checkout repo as HEAD when you have migrated the data are ready to"
 ewarn "use the updated XTS(tresor) with setkey changes.  This new XTS setkey"
 ewarn "change will not be backwards compatible."
 ewarn
-	fi
-
-	# Allow for multiple builds for different kernel configs (e.g. server, gaming-client etc),
-	# but it is really needed to isolate the -rt build.
-	if [[ -z "${OT_KERNEL_BUILDCONFIGS_5_10}" ]] ; then
-		OT_KERNEL_BUILDCONFIGS_5_10_="ot:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-ot-$(uname -m):$(uname -m):${CHOST}:cfs:manual"
-		if use rt ; then
-			# Split for security reasons
-			OT_KERNEL_BUILDCONFIGS_5_10_="${OT_KERNEL_BUILDCONFIGS_5_10_};rt:build:/etc/kernels/kernel-config-${K_MAJOR_MINOR}-rt-$(uname -m):$(uname -m):${CHOST}:cfs:manual"
-		fi
-	else
-		export OT_KERNEL_BUILDCONFIGS_5_10_="${OT_KERNEL_BUILDCONFIGS_5_10}"
 	fi
 }
 
@@ -570,6 +491,12 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "futex-5.10-e8d4d6d.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-e8d4d6d-2-hunk-fix-for-5.10.patch"
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-07-07-5.10-f6da35c.patch" ]] ; then
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-f6da35c-rebase-for-5.10.129.patch"
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-07-07-5.10-f85b140.patch" ]] ; then
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-f85b140-rebase-for-5.10.129.patch"
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-07-07-5.10-cd58ed7.patch" ]] ; then
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cd58ed7-rebase-for-5.10.129.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

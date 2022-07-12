@@ -1,4 +1,10 @@
-Forward port c6ef88ba01cc47ac4c6a2cfe51e15eaa4d833476 for the 5.14 series
+# Forward port fix c6ef88ba01cc47ac4c6a2cfe51e15eaa4d833476 for the 5.14 series.
+# Original commit:  c6ef88ba01cc47ac4c6a2cfe51e15eaa4d833476
+# Original patch:  https://github.com/google/bbr/commit/c6ef88ba01cc47ac4c6a2cfe51e15eaa4d833476
+
+include/net/inet_connection_sock.h:
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
 --- a/include/net/inet_connection_sock.h.orig	2021-08-29 15:04:50.000000000 -0700
 +++ b/include/net/inet_connection_sock.h	2021-09-20 15:19:51.125722417 -0700
 @@ -134,8 +134,8 @@ struct inet_connection_sock {

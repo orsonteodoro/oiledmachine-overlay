@@ -65,10 +65,12 @@
     for a list of hardware supporting IOMMU.
 
     Compiler based optimizations are provided by GraySky2's
-    kernel_compiler_patch.
+    kernel_compiler_patch.  If using cross-compiling or distcc, do not use the
+    native option but the microarchitecture kernel config option instead.
 
     The O3 patch allows for O3 compiler optimiation is provided by the
-    zen kernel.
+    zen kernel.  Using it requires adding CFLAGS="${CFLAGS} -O3"
+    equivalent to per-package USE flags.
 
     Older point releases are removed to eliminate some of the previously
     announced 0-day exploits.
@@ -361,6 +363,7 @@ CRYPTSETUP_CIPHERS="aes anubis camellia cast6 twofish serpent"
 CRYPTSETUP_MODES="adiantum cbc ctr ofb xts"
 OT_KERNEL_ARCH="x86_64"
 OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS="1"
+OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
 OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu drivers/video"	# For early KMS.  Disable line if using external kernel driver package.
 OT_KERNEL_BUILD="1"
@@ -368,6 +371,7 @@ OT_KERNEL_BUILD_ALL_MODULES_AS="y"
 OT_KERNEL_CONFIG="/etc/kernels/kernel-config-5.16-ot-x86_64"
 OT_KERNEL_CPU_MICROCODE="1"
 OT_KERNEL_CPU_SCHED="cfs"
+OT_KERNEL_DISABLE="0"
 OT_KERNEL_EXTRAVERSION="ot"
 OT_KERNEL_FIRMWARE="regulatory"
 OT_KERNEL_HARDENING_LEVEL="untrusted"
@@ -383,7 +387,6 @@ OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
 OT_KERNEL_WORK_PROFILE="workstation"
 OT_KERNEL_ZSWAP_ALLOCATOR="z3fold"
 OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
-OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
 
 
 
@@ -393,6 +396,18 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     the default profile a little bit so that it skips the menuconfig step all
     together in the build before install with the build USE flag.  1 means yes.
     0 means no.  Auto assumes native build.
+
+
+
+    USE flags versus OT_KERNEL_USE:
+
+    The USE flags control downloading patches but the OT_KERNEL_USE allow
+    controlling per profile details.  The USE flags will be used as a
+    fallback if OT_KERNEL_USE is not utilized.
+
+    See also:
+
+      OT_KERNEL_USE
 
 
 
@@ -528,6 +543,26 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     OT_KERNEL_BUILD -- It be 0, 1, true, false, yes, no, nobuild, build, not
     set.  Most are aliases, but it means to build or not build the kernel.  If
     not set it will try to guestimate based on the build flag.
+
+    See also:
+
+      OT_KERNEL_BUILD_CHECK_MOUNTED
+      OT_KERNEL_KERNEL_DIR
+
+
+
+    OT_KERNEL_BUILD_CHECK_MOUNTED -- Check if the boot directory referenced
+    by OT_KERNEL_KERNEL_DIR is mounted.
+
+    Acceptable values:
+
+      1 - check
+      0 - don't check
+      unset - check
+
+    See also:
+
+      OT_KERNEL_KERNEL_DIR
 
 
 
@@ -695,6 +730,16 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
     See also:
       MICROCODE_BLACKLIST
       MICROCODE_SIGNATURES
+
+
+
+    OT_KERNEL_DISABLE - Disable processing this extraversion or profile.
+
+    Acceptable values:
+
+      0 - Do not disable this extraversion.
+      1 - Disable this extraversion.
+      unset - Do not disable this extraversion.
 
 
 
@@ -1001,6 +1046,15 @@ OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
       1 (default when iommu is pt, lazy, or strict), 0, unset
 
     Unset is the same as manual.
+
+
+
+    OT_KERNEL_KERNEL_DIR -- Sets and overrides the install location to install
+    the kernel.
+
+    Acceptable values:
+      path - It must be an absolute path.
+      unset - Sets to /boot
 
 
 
@@ -1429,8 +1483,9 @@ unset OT_KERNEL_PRIVATE_KEY
     USE flags set.  The scope of OT_KERNEL_USE is partially in src_prepare,
     src_configure, src_compile, partially in src_install.  The normal USE flags
     are valid in global scope, fetching and unpacking, and in the remaining
-    phases.  This per build env gives more control over some patches applied and
-    configuration.
+    phases.  This per build env gives more control over some patches applied,
+    features allowed, reducing the attack surface of unfuzzed patchsets by
+    not applying them.
 
 
 
@@ -1476,6 +1531,8 @@ unset OT_KERNEL_PRIVATE_KEY
     Acceptable values:
 
       arcade
+      builder-dedicated
+      builder-interactive
       cryptocurrency-miner-dedicated
       cryptocurrency-miner-workstation
       casual-gaming
@@ -1490,6 +1547,10 @@ unset OT_KERNEL_PRIVATE_KEY
       gamedev
       gaming-guest-vm
       gpu-gaming-laptop
+      green-hpc
+      green-pc
+      greenest-hpc
+      greenest-pc
       hpc
       jukebox
       lan-tournament
@@ -1503,15 +1564,45 @@ unset OT_KERNEL_PRIVATE_KEY
       remote-tournament
       renderfarm-dedicated
       renderfarm-workstation
+      sbc
       smartphone
       streamer-desktop
       solar-desktop
       solar-gaming
       tablet
+      touchscreen-laptop
       video-smartphone
       video-tablet
       web-server
       workstation
+
+    Notes:
+
+      Some profiles are conveniently aliases.
+      builder* are used for emerging.
+
+      The OT_KERNEL_WORK_PROFILE is disjoint from OT_KERNEL_HARDENING_LEVEL to
+      provide flexibility.
+
+      You can only use one OT_KERNEL_WORK_PROFILE per profile/extraversion.
+
+      It's recommended to have a separate profile/extraversion per profile.
+
+      Examples:
+
+      # For gaming without user generated content
+      /etc/portage/ot-sources/5.16/gaming/x86_64/env:
+      OT_KERNEL_EXTRAVERSION="gaming"
+      OT_KERNEL_WORK_PROFILE="pro-gaming"
+      OT_KERNEL_HARDENING_LEVEL="trusted"
+      ...
+
+      # For general use or web browsing
+      /etc/portage/ot-sources/5.16/web/x86_64/env:
+      OT_KERNEL_EXTRAVERSION="web"
+      OT_KERNEL_WORK_PROFILE="mainstream-desktop"
+      OT_KERNEL_HARDENING_LEVEL="untrusted"
+      ...
 
     See also:
 
@@ -1884,8 +1975,8 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     For 5.18, see:
     https://github.com/torvalds/linux/compare/v5.18...zen-kernel:5.18/zen-sauce
 
-    Use the O3, zen-sauce, kernel-compiler-patch USE flags instead of passing their
-    Zen commit IDs equivalents.
+    Use the zen-sauce USE flags instead of passing their Zen commit IDs
+    equivalents.
 
 
 
@@ -2090,30 +2181,6 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
 
       See also https://wiki.gentoo.org/wiki//etc/portage/patches
       </flag>
-    <flag name="kernel-compiler-patch">Patches the kernel for more CPU
-      microarchitectures.  If using cross-compiling or distcc, do not use the
-      native option but the microarchitecture kernel config option instead.
-      </flag>
-    <flag name="kernel-compiler-patch-cortex-a72">Patches the kernel for the
-      Cortex A72 used in the Raspberry Pi 4.</flag>
-    <flag name="kernel-compiler-patch-zen3">Patches the kernel for the Zen 3
-      microarchitecture and ensures the toolchain requirements are in
-      place.</flag>
-    <flag name="kernel-compiler-patch-cooper_lake">Patches the kernel for the
-      Cooper Lake microarchitecture and ensures the toolchain requirements are
-      in place.</flag>
-    <flag name="kernel-compiler-patch-tiger_lake">Patches the kernel for the
-      Tiger Lake microarchitecture and ensures the toolchain requirements are
-      in place.</flag>
-    <flag name="kernel-compiler-patch-sapphire_rapids">Patches the kernel for the
-      Sapphire Rapids microarchitecture and ensures the toolchain requirements
-      are in place.</flag>
-    <flag name="kernel-compiler-patch-rocket_lake">Patches the kernel for the
-      Rocket Lake microarchitecture and ensures the toolchain requirements
-      are in place.</flag>
-    <flag name="kernel-compiler-patch-alder_lake">Patches the kernel for the
-      Alder Lake microarchitecture and ensures the toolchain requirements
-      are in place.</flag>
     <flag name="lto">Fulfills the ThinLTO requirements.</flag>
     <flag name="lz4">Add support for lz4 compression</flag>
     <flag name="lzma">Add support for lzma compression</flag>
@@ -2124,8 +2191,6 @@ https://github.com/torvalds/linux/commit/561ec64ae67ef25cac8d72bb9c4bfc955edfd41
       includes his skiplist based MuQSS CPU scheduler.</flag>
     <flag name="ncurses">Add support for nconfig and menuconfig, the ncurses
       kernel config editors</flag>
-    <flag name="O3">Patches the kernel with more experimental O3
-      compiler optimizations and adds them to the zen-sauce white list.</flag>
     <flag name="openssl">Add support for signing modules and kernels</flag>
     <flag name="pds">Patches the kernel with an alternative skiplist
       based scheduler.</flag>
