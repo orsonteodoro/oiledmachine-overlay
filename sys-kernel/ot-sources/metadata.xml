@@ -228,9 +228,9 @@
     
     CFLAGS and HOSTCFLAGS
 
-    CFLAGS, CXXFLAGS, LDFLAGS are applied to the kernel.
+    CFLAGS, CXXFLAGS, LDFLAGS are applied to the kernel CHOST or target machine.
 
-    HOSTCFLAGS, HOSTCXXFLAGS, HOSTLDFLAGS are applied to host programs.
+    HOSTCFLAGS, HOSTCXXFLAGS, HOSTLDFLAGS are applied to CBUILD programs.
 
     If HOSTCFLAGS is not set, it uses CFLAGS.  Same is true with the other
     pairs.
