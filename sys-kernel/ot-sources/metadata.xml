@@ -226,6 +226,26 @@
 
 
     
+    CFLAGS and HOSTCFLAGS
+
+    CFLAGS, CXXFLAGS, LDFLAGS are applied to the kernel.
+
+    HOSTCFLAGS, HOSTCXXFLAGS, HOSTLDFLAGS are applied to host programs.
+
+    If HOSTCFLAGS is not set, it uses CFLAGS.  Same is true with the other
+    pairs.
+
+    The above CFLAGS should be added to the per build profile.  If not added,
+    it will use the *FLAGS provided by /etc/portage/make.conf.
+
+    Currently X86_MICROARCH_OVERRIDE will override the -march or -mcpu for
+    CFLAGS.  Consideration for simplification of -march and
+    X86_MICROARCH_OVERRIDE is open at this time with likely the removal of the
+    latter envvar.  So both should be set at this time to the same
+    -march/-mcpu to avoid confusion.
+
+
+
     Using the build USE flag (without PGO)
 
     The build USE flag can be used to build the kernel.  It comes with extra
@@ -1888,7 +1908,8 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     For autodetection, use a MNATIVE* option.  However, the MNATIVE* option
     only works when the builder machine (CBUILD) is the same as the target
     or host machine (CTARGET/CHOST) to run the kernel.  The environment variable
-    only valid in x86 and x86_64.
+    only valid in x86 and x86_64.  STATUS:  This setting may be removed in the
+    future.
 
     If unset, it will use a MNATIVE* or GENERIC_CPU matching the
     march equivalent.  The MNATIVE* name changes depending if you are using

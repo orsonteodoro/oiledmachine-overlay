@@ -5629,9 +5629,19 @@ ot-kernel_setup_tc() {
 
 	#filter-flags '-march=*' '-mtune=*' '-flto*' '-fuse-ld=*' '-f*inline*'
 	strip-unsupported-flags
+	einfo "Kernel CFLAGS:"
 	einfo "CFLAGS=${CFLAGS}"
 	einfo "CXXFLAGS=${CXXFLAGS}"
 	einfo "LDFLAGS=${LDFLAGS}"
+
+	if [[ -z "${HOSTCFLAGS}" ]] ; then
+		HOSTCFLAGS="${CFLAGS}"
+		HOSTLDFLAGS="${LDFLAGS}"
+	fi
+
+	einfo "Host programs CFLAGS:"
+	einfo "HOSTCFLAGS=${HOSTCFLAGS}"
+	einfo "HOSTLDFLAGS=${HOSTLDFLAGS}"
 	if tc-is-cross-compiler ; then
 		args+=(
 			"'HOSTCFLAGS=-O1 -pipe'"
@@ -5639,8 +5649,8 @@ ot-kernel_setup_tc() {
 		)
 	else
 		args+=(
-			"'HOSTCFLAGS=${CFLAGS}'"
-			"'HOSTLDFLAGS=${LDFLAGS}'"
+			"'HOSTCFLAGS=${HOSTCFLAGS}'"
+			"'HOSTLDFLAGS=${HOSTLDFLAGS}'"
 		)
 	fi
 
