@@ -492,11 +492,14 @@ ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-e8d4d6d-2-hunk-fix-for-5.10.patch"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-07-07-5.10-f6da35c.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-f6da35c-rebase-for-5.10.129.patch"
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-f6da35c-fix-for-5.10.129.patch"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-07-07-5.10-f85b140.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-f85b140-rebase-for-5.10.129.patch"
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-f85b140-fix-for-5.10.129.patch"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2021-07-07-5.10-cd58ed7.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cd58ed7-rebase-for-5.10.129.patch"
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cd58ed7-fix-for-5.10.129.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

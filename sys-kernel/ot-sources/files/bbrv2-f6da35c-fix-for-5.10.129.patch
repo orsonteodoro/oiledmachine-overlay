@@ -1,0 +1,18 @@
+# This is a rebase for the 5.10.129 release.
+# Original commit:  f6da35cbef6549b1141a4a5631b91748d2ed0922
+# URL:  https://github.com/google/bbr/commit/f6da35cbef6549b1141a4a5631b91748d2ed0922
+# Fix mispatch from fuzz factor
+
+net/ipv4/tcp_rate.c:
+// SPDX-License-Identifier: GPL-2.0-only
+
+--- a/net/ipv4/tcp_rate.c.orig2	2022-07-12 15:36:01.782190481 -0700
++++ b/net/ipv4/tcp_rate.c	2022-07-12 15:36:43.474862596 -0700
+@@ -91,6 +91,7 @@ void tcp_rate_skb_delivered(struct sock
+ 	if (!rs->prior_delivered ||
+ 	    tcp_skb_sent_after(tx_tstamp, tp->first_tx_mstamp,
+ 			       scb->end_seq, rs->last_end_seq)) {
++		rs->prior_delivered_ce  = scb->tx.delivered_ce;
+ 		rs->prior_delivered  = scb->tx.delivered;
+ 		rs->prior_mstamp     = scb->tx.delivered_mstamp;
+ 		rs->is_app_limited   = scb->tx.is_app_limited;

@@ -1,0 +1,16 @@
+# Fix patch/hunk
+# Original commit:  40bc6063796ec77b6073861f9a1993be20d5befd
+# URI:  https://github.com/torvalds/linux/commit/40bc6063796ec77b6073861f9a1993be20d5befd
+#net/ipv4/tcp_rate.c
+// SPDX-License-Identifier: GPL-2.0-only
+
+--- a/net/ipv4/tcp_rate.c.orig2	2022-07-12 01:37:19.153864794 -0700
++++ b/net/ipv4/tcp_rate.c	2022-07-12 01:38:37.832825108 -0700
+@@ -91,6 +91,7 @@ void tcp_rate_skb_delivered(struct sock
+ 	if (!rs->prior_delivered ||
+ 	    tcp_skb_sent_after(tx_tstamp, tp->first_tx_mstamp,
+ 			       scb->end_seq, rs->last_end_seq)) {
++		rs->prior_delivered_ce  = scb->tx.delivered_ce;
+ 		rs->prior_delivered  = scb->tx.delivered;
+ 		rs->prior_mstamp     = scb->tx.delivered_mstamp;
+ 		rs->is_app_limited   = scb->tx.is_app_limited;

@@ -1,12 +1,12 @@
-# This is a hunk fix for the 5.17 series.
-# Original commit:  50b614c0a65125d5c22fca6605fdcf88e0a9258a
-# URL:  https://github.com/google/bbr/commit/50b614c0a65125d5c22fca6605fdcf88e0a9258a
+# This is a rebase for the 5.10.129 release.
+# Original commit:  f85b140f08ad704091af612e6abdc2d32def89b9
+# URL:  https://github.com/google/bbr/commit/f85b140f08ad704091af612e6abdc2d32def89b9
 
 net/ipv4/tcp_rate.c:
 // SPDX-License-Identifier: GPL-2.0-only
 
---- a/net/ipv4/tcp_rate.c.orig2	2022-06-06 18:43:00.273228613 -0700
-+++ b/net/ipv4/tcp_rate.c	2022-06-06 18:45:19.382233197 -0700
+--- a/net/ipv4/tcp_rate.c.orig2	2022-07-12 15:54:56.654462717 -0700
++++ b/net/ipv4/tcp_rate.c	2022-07-12 15:55:34.514955713 -0700
 @@ -109,6 +109,7 @@ void tcp_rate_skb_delivered(struct sock
  		rs->prior_mstamp     = scb->tx.delivered_mstamp;
  		rs->is_app_limited   = scb->tx.is_app_limited;

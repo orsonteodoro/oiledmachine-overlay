@@ -1,12 +1,9 @@
-# This is a hunk fix for the 5.17 series.
+# Hunk fix for 5.15.53
 # Original commit:  50b614c0a65125d5c22fca6605fdcf88e0a9258a
-# URL:  https://github.com/google/bbr/commit/50b614c0a65125d5c22fca6605fdcf88e0a9258a
-
-net/ipv4/tcp_rate.c:
+# URI:  https://github.com/google/bbr/commit/50b614c0a65125d5c22fca6605fdcf88e0a9258a
 // SPDX-License-Identifier: GPL-2.0-only
-
---- a/net/ipv4/tcp_rate.c.orig2	2022-06-06 18:43:00.273228613 -0700
-+++ b/net/ipv4/tcp_rate.c	2022-06-06 18:45:19.382233197 -0700
+--- a/net/ipv4/tcp_rate.c.orig2	2022-07-12 12:02:44.297650830 -0700
++++ b/net/ipv4/tcp_rate.c	2022-07-12 12:03:40.229853194 -0700
 @@ -109,6 +109,7 @@ void tcp_rate_skb_delivered(struct sock
  		rs->prior_mstamp     = scb->tx.delivered_mstamp;
  		rs->is_app_limited   = scb->tx.is_app_limited;
