@@ -1986,20 +1986,7 @@ ewarn
 		eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
 	fi
 
-	local nprofiles=0
-	for env_path in $(ot-kernel_get_envs) ; do
-		[[ -e "${env_path}" ]] || continue
-		ot-kernel_load_config
-		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
-		nprofiles=$((${nprofiles}+1))
-	done
-
-	if (( ${nprofiles} == 0 )) ; then
-		eerror
-		eerror "You need at least one build profile enabled."
-		eerror
-		die
-	fi
+	local moved=0
 
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
@@ -2008,11 +1995,13 @@ ewarn
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
-		if (( ${nprofiles} == 1 )) && [[ "${extraversion}" != "${K_EXTRAVERSION}" ]] ; then
+		if (( ${moved} == 0 )) ; then
 			einfo "Renaming for -${extraversion}"
 			mv "${BUILD_DIR_MASTER}" "${BUILD_DIR}" || die
-			mkdir -p "${BUILD_DIR_MASTER}" || die # Dummy dir for portage... Do not remove.
-		elif [[ "${extraversion}" != "${K_EXTRAVERSION}" ]] ; then
+			mkdir -p "${S}" || die # Dummy dir for portage... Do not remove.
+			export BUILD_DIR_MASTER="${WORKDIR}/linux-${PV}-${extraversion}"
+			moved=1
+		else
 			einfo "Copying sources for -${extraversion}"
 			einfo "${BUILD_DIR_MASTER} -> ${BUILD_DIR}"
 			cp -a "${BUILD_DIR_MASTER}" "${BUILD_DIR}" || die
