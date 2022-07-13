@@ -4918,6 +4918,20 @@ ewarn
 	elif [[ "${work_profile}" =~ ("desktop-guest-vm"|"gaming-guest-vm") ]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
+
+		# noop for guest vm to eliminate overhead.
+		# Let the host handle IO scheduling.
+		ot-kernel_unset_configopt "CONFIG_MQ_IOSCHED_DEADLINE"
+		ot-kernel_unset_configopt "CONFIG_MQ_IOSCHED_KYBER"
+		ot-kernel_unset_configopt "CONFIG_IOSCHED_BFQ"
+		ot-kernel_unset_configopt "CONFIG_BFQ_GROUP_IOSCHED"
+		if ver_test "${K_MAJOR_MINOR}" -lt 5 ; then
+			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
+			ot-kernel_unset_configopt "CONFIG_IOSCHED_DEADLINE"
+			ot-kernel_unset_configopt "CONFIG_IOSCHED_CFQ"
+			ot-kernel_unset_configopt "CONFIG_CFQ_GROUP_IOSCHED"
+			ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"noop\""
+		fi
 	elif [[ "${work_profile}" =~ ("arcade"|"pro-gaming"|"tournament"|"presentation") ]] ; then
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
