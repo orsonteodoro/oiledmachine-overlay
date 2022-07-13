@@ -2008,6 +2008,8 @@ ewarn
 		fi
 	done
 
+	(( ${moved} == 0 )) && die "You need to enable a profile"
+
 	if [[ "${OT_KERNEL_SIGN_KERNEL}" =~ ("uefi"|"efi"|"kexec") ]] ; then
 		eerror
 		eerror "OT_KERNEL_SIGN_KERNEL=${OT_KERNEL_SIGN_KERNEL} is incomplete."
