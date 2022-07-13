@@ -65,8 +65,10 @@
     for a list of hardware supporting IOMMU.
 
     Compiler based optimizations are provided by GraySky2's
-    kernel_compiler_patch.  If using cross-compiling or distcc, do not use the
-    native option but the microarchitecture kernel config option instead.
+    kernel_compiler_patch.  If you would like to apply this patch, simply add
+    -march=native or -march=SUBARCH or -mcpu=SUBARCH.  If using cross-compiling
+    or distcc, do not use the native option but the microarchitecture kernel
+    config option instead.
 
     The O3 patch allows for O3 compiler optimiation is provided by the
     zen kernel.  Using it requires adding CFLAGS="${CFLAGS} -O3"

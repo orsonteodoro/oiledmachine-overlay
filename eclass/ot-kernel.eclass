@@ -1698,7 +1698,30 @@ ot-kernel_src_unpack() {
 	einfo "Called ot-kernel_src_unpack()"
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	_PATCHES=()
-	if [[ "${CFLAGS}" =~ ("-march"|"-mcpu") ]] ; then
+
+	local wants_kcp=0
+	local wants_kcp_rpi=0
+
+	local env_path
+	for env_path in $(ot-kernel_get_envs) ; do
+		[[ -e "${env_path}" ]] || continue
+		ot-kernel_load_config
+		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
+
+		if [[ "${CFLAGS}" =~ ("-march") ]] ; then
+			wants_kcp=1
+		fi
+		if [[ -n "${X86_MICROARCH_OVERRIDE}" ]] ; then
+			wants_kcp=1
+		fi
+		if [[ "${CFLAGS}" =~ "-mcpu=cortex-a72" ]] ; then
+			wants_kcp_rpi=1
+		fi
+	done
+
+	# Verify Toolchain (TC) requirement for kernel_compiler_patch (KCP)
+	# because of multislot TC.
+	if (( ${wants_kcp} == 1 || ${wants_kcp_rpi} == 1 )) ; then
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
 		einfo "llvm_slot=${llvm_slot}"
@@ -1713,7 +1736,10 @@ ot-kernel_src_unpack() {
 		if [[ -z "${gcc_v}" && -z "${clang_v}" ]] ; then
 			ot-kernel_compiler_not_found "Empty compiler versions found"
 		fi
+	fi
 
+	# KCP is applied globally
+	if (( ${wants_kcp} == 1 )) ; then
 		if (  (				 $(ver_test ${gcc_v}   -ge 9.1) ) \
 		   || ( [[ -n "${clang_v}" ]] && $(ver_test ${clang_v} -ge 10.0) ) \
 		   ) \
@@ -1749,7 +1775,8 @@ ewarn
 		fi
 	fi
 
-	if [[ "${CFLAGS}" =~ "-mcpu=cortex-a72" ]] ; then
+	# KCP-RPI is applied globally
+	if (( ${wants_kcp_rpi} == 1 )) ; then
 einfo
 einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 einfo
