@@ -21,11 +21,14 @@ https://github.com/jemalloc/jemalloc/releases/download/${PV}/${MY_PN}-${PV}.tar.
 
 LICENSE="BSD"
 SLOT="0/2"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris"
+#KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~ppc ~ppc64 ~riscv ~s390 ~x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris"
+KEYWORDS="~loong ~sparc"
 IUSE="debug lazy-lock prof static-libs stats xmalloc"
 HTML_DOCS=( doc/jemalloc.html )
 PATCHES=(
-	"${FILESDIR}/${MY_PN}-5.2.0-gentoo-fixups.patch"
+)
+PATCHES=(
+	"${FILESDIR}/${MY_PN}-5.3.0-gentoo-fixups.patch"
 	"${FILESDIR}/${MY_PN}-5.2.1-mtls-dialect-gnu2-7036e64.patch"
 )
 S="${WORKDIR}/${MY_PN}-${PV}"
