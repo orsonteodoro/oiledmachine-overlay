@@ -14,10 +14,10 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
 IUSE+=" doc test"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-# For test requirements, see https://github.com/svenevs/exhale/blob/v0.3.4/tox.ini
+# For test requirements, see https://github.com/svenevs/exhale/blob/v0.3.5/tox.ini
 # For requirements, see
-# https://github.com/svenevs/exhale/blob/v0.3.4/docs/requirements.txt
-# https://github.com/svenevs/exhale/blob/v0.3.4/setup.cfg#L38
+# https://github.com/svenevs/exhale/blob/v0.3.5/docs/requirements.txt
+# https://github.com/svenevs/exhale/blob/v0.3.5/setup.cfg#L38
 RDEPEND+=" ${PYTHON_DEPS}
 	  dev-python/beautifulsoup:4[${PYTHON_USEDEP}]
 	>=dev-python/breathe-4.32[${PYTHON_USEDEP}]
