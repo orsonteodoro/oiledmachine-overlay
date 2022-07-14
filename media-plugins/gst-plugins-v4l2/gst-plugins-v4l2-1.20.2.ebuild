@@ -1,13 +1,13 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 GST_ORG_MODULE=gst-plugins-good
 
-inherit gstreamer
+inherit gstreamer-meson
 
 DESCRIPION="V4L2 source/sink plugin for GStreamer"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~sparc x86"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~sparc x86"
 IUSE="udev"
 
 RDEPEND="
@@ -19,12 +19,14 @@ DEPEND="${RDEPEND}
 	virtual/os-headers
 "
 
-GST_PLUGINS_BUILD="gst_v4l2"
+GST_PLUGINS_ENABLED="v4l2"
 
 multilib_src_configure() {
-	gstreamer_multilib_src_configure \
-		--with-libv4l2 \
-		$(use_with udev gudev)
+	local emesonargs=(
+		-Dv4l2-gudev=$(usex udev enabled disabled)
+	)
+
+	gstreamer_multilib_src_configure
 }
 
 multilib_src_install_all() {
@@ -36,6 +38,11 @@ multilib_src_install_all() {
 }
 
 pkg_postinst() {
+	# Buried in https://github.com/GStreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2src.c#L41
+	cat <<-EOF > "${T}"/99${PN}
+		GST_V4L2_USE_LIBV4L2=1
+	EOF
+	doenvd "${T}"/99${PN}
 einfo
 einfo "You must restart your computer for changes to take affect."
 einfo
