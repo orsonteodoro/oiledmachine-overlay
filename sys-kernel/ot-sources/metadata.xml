@@ -981,6 +981,21 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
+    OT_KERNEL_HDD -- Set if HDD drive is present for this kernel build.
+
+    Acceptable values:
+
+      1 - yes, a rotational hard drive is present
+      0 - no HHD exists
+      auto - autodetect via sysfs (default)
+      unset - auto
+
+    See also:
+
+      OT_KERNEL_SSD
+
+
+
     OT_KERNEL_IMA -- Sets the mode for IMA.  IMA will essentially ensure
     system integrity with the use of hashing and filesystem metadata.
     IMA requires 2 steps -- measurement and appraisal.  Measurement
@@ -1473,6 +1488,21 @@ unset OT_KERNEL_PRIVATE_KEY
     See also:
 
       OT_KERNEL_BOOT_ARGS
+
+
+
+    OT_KERNEL_SSD -- Set if SSD drive is present for this kernel build.
+
+    Acceptable values:
+
+      1 - yes, a non-rotational hard drive is present
+      0 - no SSD exists
+      auto - autodetect via sysfs (default)
+      unset - auto
+
+    See also:
+
+      OT_KERNEL_HHD
 
 
 

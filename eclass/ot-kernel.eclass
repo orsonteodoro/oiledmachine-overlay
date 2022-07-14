@@ -2308,6 +2308,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG
 #	unset OT_KERNEL_HALT_ON_LOWERED_SECURITY		# global var
 	unset OT_KERNEL_HARDENING_LEVEL
+	unset OT_KERNEL_HDD
 	unset OT_KERNEL_IMA
 	unset OT_KERNEL_IMA_HASH_ALG
 	unset OT_KERNEL_IMA_POLICIES
@@ -2337,6 +2338,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_SHARED_KEY
 	unset OT_KERNEL_SIGN_KERNEL
 	unset OT_KERNEL_SIGN_MODULES
+	unset OT_KERNEL_SSD
 	unset OT_KERNEL_BOOT_SUBSYSTEMS
 	unset OT_KERNEL_BOOT_SUBSYSTEMS_APPEND
 	unset OT_KERNEL_SWAP_COMPRESSION
@@ -4768,6 +4770,98 @@ ot-kernel_set_rcu_powersave() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_have_ssd
+# @DESCRIPTION:
+# Checks if ssd (non-rotational) is in system
+ot-kernel_have_ssd() {
+	if [[ "${OT_KERNEL_SSD}" == "1" ]] ; then
+		return 0
+	elif [[ "${OT_KERNEL_SSD}" == "auto" ]] ; then
+		grep -q "0" /sys/block/*/queue/rotational && return 0
+	fi
+	return 1
+}
+
+# @FUNCTION: ot-kernel_have_hdd
+# @DESCRIPTION:
+# Checks if hdd (rotational) is in system
+ot-kernel_have_hdd() {
+	if [[ "${OT_KERNEL_HDD}" == "1" ]] ; then
+		return 0
+	elif [[ "${OT_KERNEL_HDD}" == "auto" ]] ; then
+		grep -q "1" /sys/block/*/queue/rotational && return 0
+	fi
+	return 1
+}
+
+# @FUNCTION: ot-kernel_set_ioscheds
+# @DESCRIPTION:
+# Sets the I/O scheds(s) with the first one as the default.
+ot-kernel_set_ioscheds() {
+	# WIP
+	return
+	local scheds=(${@})
+	# noop for guest vm to eliminate overhead.
+	# Let the host handle IO scheduling.
+	ot-kernel_unset_configopt "CONFIG_MQ_IOSCHED_DEADLINE"
+	ot-kernel_unset_configopt "CONFIG_MQ_IOSCHED_KYBER"
+	ot-kernel_unset_configopt "CONFIG_IOSCHED_BFQ"
+	ot-kernel_unset_configopt "CONFIG_BFQ_GROUP_IOSCHED"
+	if ver_test "${K_MAJOR_MINOR}" -lt 5 ; then
+		ot-kernel_unset_configopt "CONFIG_IOSCHED_NOOP"
+		ot-kernel_unset_configopt "CONFIG_IOSCHED_DEADLINE"
+		ot-kernel_unset_configopt "CONFIG_IOSCHED_CFQ"
+		ot-kernel_unset_configopt "CONFIG_CFQ_GROUP_IOSCHED"
+		ot-kernel_unset_configopt "CONFIG_DEFAULT_IOSCHED"
+	fi
+
+	local s_first=""
+	local s
+	for s in ${scheds[@]} ; do
+		s="${s,,}"
+
+		if [[ "${s}" == "bfq-low-latency" || "${s}" == "bfq" ]] ; then
+			ot-kernel_y_configopt "CONFIG_IOSCHED_BFQ"
+			sed -i -e "s|low_latency = false|low_latency = true|g" \
+				"${BUILD_DIR}/block/bfq-iosched.c" || die
+			s="bfq"
+		elif [[ "${s}" == "bfq-throughput" ]] ; then
+			ot-kernel_y_configopt "CONFIG_IOSCHED_BFQ"
+			sed -i -e "s|low_latency = true|low_latency = false|g" \
+				"${BUILD_DIR}/block/bfq-iosched.c" || die
+			s="bfq"
+		elif [[ "${s}" == "deadline" || "${s}" == "mq-deadline" ]] ; then
+			ot-kernel_y_configopt "CONFIG_MQ_IOSCHED_DEADLINE"
+			if ver_test "${K_MAJOR_MINOR}" -lt 5 ; then
+				ot-kernel_y_configopt "CONFIG_IOSCHED_DEADLINE"
+			fi
+			s="mq-deadline"
+		elif [[ "${s}" =~ "cfq" ]] && ver_test ${K_MAJOR_MINOR} -lt 5 ; then
+			ot-kernel_y_configopt "CONFIG_IOSCHED_CFQ"
+		elif [[ "${s}" =~ "kyber" ]] ; then
+			ot-kernel_y_configopt "CONFIG_MQ_IOSCHED_KYBER"
+		elif [[ "${s}" =~ "noop" ]] ; then
+			if ver_test "${K_MAJOR_MINOR}" -lt 5 ; then
+				ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
+			fi
+		else
+			ewarn "${s} is an invalid scheduler name"
+			# invalid
+			continue
+		fi
+		# validity pass
+		[[ -z "${s_first}" ]] && s_first="${s}"
+		einfo "Enabled ${s} as an I/O scheduler"
+	done
+	if ver_test "${K_MAJOR_MINOR}" -lt 5 && [[ -n "${s}" ]] ; then
+		einfo "${s} is set as the default I/O scheduler"
+		ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"${s}\""
+	else
+		sed -e "s#\"(bfq|cfq|deadline|kyber|mq-deadline|noop)\"#\"${s}\"#g" \
+			"${BUILD_DIR}/block/elevator.c" || die
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
 # @DESCRIPTION:
 # Configures the default power policies and latencies for the kernel.
@@ -4830,6 +4924,7 @@ ewarn
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
+		ot-kernel_set_ioscheds "noop"
 	elif [[ "${work_profile}" =~ ("laptop"|"green-pc"|"greenest-pc"|"touchscreen-laptop"|"solar-desktop") ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
@@ -4871,6 +4966,7 @@ ewarn
 		fi
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
+		ot-kernel_set_ioscheds "noop"
 	elif [[ "${work_profile}" =~ ("casual-gaming-laptop"|"gpu-gaming-laptop"|"solar-gaming") ]] ; then
 		# It is assumed that the other laptop/solar-desktop profile is built also.
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
@@ -4918,20 +5014,7 @@ ewarn
 	elif [[ "${work_profile}" =~ ("desktop-guest-vm"|"gaming-guest-vm") ]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
-
-		# noop for guest vm to eliminate overhead.
-		# Let the host handle IO scheduling.
-		ot-kernel_unset_configopt "CONFIG_MQ_IOSCHED_DEADLINE"
-		ot-kernel_unset_configopt "CONFIG_MQ_IOSCHED_KYBER"
-		ot-kernel_unset_configopt "CONFIG_IOSCHED_BFQ"
-		ot-kernel_unset_configopt "CONFIG_BFQ_GROUP_IOSCHED"
-		if ver_test "${K_MAJOR_MINOR}" -lt 5 ; then
-			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
-			ot-kernel_unset_configopt "CONFIG_IOSCHED_DEADLINE"
-			ot-kernel_unset_configopt "CONFIG_IOSCHED_CFQ"
-			ot-kernel_unset_configopt "CONFIG_CFQ_GROUP_IOSCHED"
-			ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"noop\""
-		fi
+		ot-kernel_set_ioscheds "noop"
 	elif [[ "${work_profile}" =~ ("arcade"|"pro-gaming"|"tournament"|"presentation") ]] ; then
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -5003,6 +5086,9 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 		fi
 	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server") ]] ; then
+		if [[ "${work_profile}" == "web-server" ]] ; then
+			ot-kernel_set_ioscheds "noop"
+		fi
 		if [[ "${work_profile}" =~ "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
 		else
@@ -5041,6 +5127,19 @@ ewarn
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_y_configopt "CONFIG_PM"
+		if ot-kernel_have_ssd && ot-kernel_have_hdd \
+			&& [[ "${work_profile}" == "mainstream-desktop" ]] ; then
+			ot-kernel_set_ioscheds "noop" "bfq"
+		elif ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+			ot-kernel_set_ioscheds "noop" "mq-deadline"
+		elif ot-kernel_have_ssd ; then
+			ot-kernel_set_ioscheds "noop"
+		elif ot-kernel_have_hdd \
+			&& [[ "${work_profile}" == "mainstream-desktop" ]] ; then
+			ot-kernel_set_ioscheds "bfq"
+		else
+			ot-kernel_set_ioscheds "noop"
+		fi
 	elif [[ "${work_profile}" == "cryptocurrency-miner-dedicated" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize OS overhead and energy cost, maximize app time
