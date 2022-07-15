@@ -6449,7 +6449,7 @@ start()
 					fi
 					[[ "\${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
 					[[ -z "\${ioschedc}" ]] && continue
-					grep -q -e "\${ioschedc}" "/sys/block/\${x}/queue/scheduler" || continue
+					grep -q -E -e "(\[| |^)\${ioschedc}(\]| |$)" "/sys/block/\${x}/queue/scheduler" || continue
 					einfo "Setting \${ioschedr} override for \${x}"
 					echo "\${ioschedc}" > "/sys/block/\${x}/queue/scheduler"
 					if [[ "\${ioschedc}" == "bfq-throughput" ]] ; then
