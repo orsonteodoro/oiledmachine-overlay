@@ -1058,8 +1058,10 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_IOSCHED_OPENRC - Generate the OpenRC init script to
-    autoset the kernel I/O scheduler per device.
+    OT_KERNEL_IOSCHED_OPENRC - Generate the OpenRC init script(s) to
+    autoset the kernel I/O scheduler per device.  If you do not generate
+    and enable it, you are responsible to manually setting the I/O
+    scheduler.
 
     Acceptable values
 
