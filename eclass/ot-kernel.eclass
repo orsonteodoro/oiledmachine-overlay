@@ -4986,10 +4986,7 @@ ot-kernel_iosched_default() {
 # @DESCRIPTION:
 # Configures the I/O scheduler for the lowest power consumption
 ot-kernel_iosched_lowest_power() {
-	# For hdd the ones that support sector merging should do better.
-	# It turns out that merging is already done by the hardware
-	# via NCQ.
-
+	# NCQ does reordering
 	# This assumes that the device has NCQ.
 	ot-kernel_set_iosched "none" "none"
 }
