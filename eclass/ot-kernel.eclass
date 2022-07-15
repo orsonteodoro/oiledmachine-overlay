@@ -6394,32 +6394,34 @@ start()
 		for x in \$(ls "/sys/block/") ; do
 			[[ "\${x}" =~ "dm-"[0-9]+ ]] && continue
 			[[ "\${x}" =~ "loop"[0-9]+ ]] && continue
+			if grep -q -e "1" "/sys/block/\${x}/queue/rotational" ; then
+				# HDD
+				if [[ -e "/sys/block/\${x}/queue/scheduler" ]] ; then
+					ioschedr="${hdd_iosched}" # raw
+					ioschedc="${hdd_iosched}" # to be canonicalized
+					[[ "\${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
+					einfo "Setting \${ioschedr} for \${x}"
+					echo "\${ioschedc}" > "/sys/block/\${x}/queue/scheduler"
+					if [[ "\${ioschedr}" == "bfq-throughput" ]] ; then
+						echo "0" > "/sys/block/\${x}/queue/iosched/low_latency"
+					elif [[ "\${ioschedr}" == "bfq-low-latency" ]] ; then
+						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
+					fi
+				fi
+			fi
 			if grep -q -e "0" "/sys/block/\${x}/queue/rotational" || realpath "/sys/block/\${x}/device" | grep -q "usb" ; then
 				# SSD
 				# USB flash reported as rotational.
 				if [[ -e "/sys/block/\${x}/queue/scheduler" ]] ; then
-					if [[ "${ssd_iosched}" == "bfq-throughput" ]] ; then
-						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
+					ioschedr="${ssd_iosched}" # raw
+					ioschedc="${ssd_iosched}" # to be canonicalized
+					[[ "\${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
+					einfo "Setting \${ioschedr} for \${x}"
+					echo "\${ioschedc}" > "/sys/block/\${x}/queue/scheduler"
+					if [[ "\${ioschedr}" == "bfq-throughput" ]] ; then
 						echo "0" > "/sys/block/\${x}/queue/iosched/low_latency"
-					elif [[ "${ssd_iosched}" == "bfq-low-latency" ]] ; then
-						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
+					elif [[ "\${ioschedr}" == "bfq-low-latency" ]] ; then
 						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
-					else
-						echo "${ssd_iosched}" > "/sys/block/\${x}/queue/scheduler"
-					fi
-				fi
-			fi
-			if grep -q -e "1" "/sys/block/\${x}/queue/rotational" ; then
-				# HDD
-				if [[ -e "/sys/block/\${x}/queue/scheduler" ]] ; then
-					if [[ "${hdd_iosched}" == "bfq-throughput" ]] ; then
-						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
-						echo "0" > "/sys/block/\${x}/queue/iosched/low_latency"
-					elif [[ "${hdd_iosched}" == "bfq-low-latency" ]] ; then
-						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
-						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
-					else
-						echo "${hdd_iosched}" > "/sys/block/\${x}/queue/scheduler"
 					fi
 				fi
 			fi
@@ -6429,23 +6431,25 @@ start()
 			id="\${x%:*}"
 			iosched="\${x#*:}"
 			if [[ -e "/dev/disk/by-id/\${id}" ]] ; then
-				p=$(realpath "/dev/disk/by-id/\${id}")
-				x=$(basename "\${p}")
+				p=\$(realpath "/dev/disk/by-id/\${id}")
+				x=\$(basename "\${p}")
 				if [[ -e "/sys/block/\${x}/queue/scheduler" ]] ; then
-					local
-					local
-					if [[ "\${iosched}" == "hdd" || "\${iosched}" == "rotational" ]] ; then
-						echo "${hdd_iosched}" > "/sys/block/\${x}/queue/scheduler"
-					elif [[ "\${iosched}" == "ssd" || "\${iosched}" == "flash" ]] ; then
-						echo "${ssd_iosched}" > "/sys/block/\${x}/queue/scheduler"
-					elif [[ "\${iosched}" == "bfq-throughput" ]] ; then
-						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
+					ioschedr="\${iosched}" # raw
+					ioschedc="\${iosched}" # to be canonicalized
+					if [[ "\${ioschedr}" == "hdd" || "\${ioschedr}" == "rotational" ]] ; then
+						[[ "${hdd_iosched}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
+						[[ "${hdd_iosched}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
+					elif [[ "\${ioschedr}" == "ssd" || "\${ioschedr}" == "flash" ]] ; then
+						[[ "${ssd_iosched}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
+						[[ "${ssd_iosched}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
+					fi
+					[[ "\${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
+					einfo "Setting \${ioschedr} override for \${x}"
+					echo "\${ioschedc}" > "/sys/block/\${x}/queue/scheduler"
+					if [[ "\${ioschedc}" == "bfq-throughput" ]] ; then
 						echo "0" > "/sys/block/\${x}/queue/iosched/low_latency"
-					elif [[ "\${iosched}" == "bfq-low-latency" ]] ; then
-						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
+					elif [[ "\${ioschedc}" == "bfq-low-latency" ]] ; then
 						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
-					else
-						echo "\${iosched}" > "/sys/block/\${x}/queue/scheduler"
 					fi
 				fi
 			fi
