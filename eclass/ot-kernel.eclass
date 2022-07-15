@@ -6369,8 +6369,10 @@ eerror
 	mkdir -p "${T}/conf.d"
 ################################################################################
 	cat <<EOF > "${T}/conf.d/iosched-${extraversion}" || die
-# See metadata.xml or epkginfo -x ${PN}::oiledmachine-overlay
+# See metadata.xml or epkginfo -x ${PN}::oiledmachine-overlay for details
 IOSCHED_OVERRIDES="${OT_KERNEL_IOSCHED_OVERRIDE}"
+IOSCHED_HDD="${hdd_iosched}" # Do not change
+IOSCHED_SSD="${ssd_iosched}" # Do not change
 EOF
 	mkdir -p "${T}/openrc"
 ################################################################################
@@ -6397,8 +6399,8 @@ start()
 			if grep -q -e "1" "/sys/block/\${x}/queue/rotational" ; then
 				# HDD
 				if [[ -e "/sys/block/\${x}/queue/scheduler" ]] ; then
-					ioschedr="${hdd_iosched}" # raw
-					ioschedc="${hdd_iosched}" # to be canonicalized
+					ioschedr="\${IOSCHED_HDD}" # raw
+					ioschedc="\${IOSCHED_HDD}" # to be canonicalized
 					[[ "\${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
 					einfo "Setting \${ioschedr} for \${x}"
 					echo "\${ioschedc}" > "/sys/block/\${x}/queue/scheduler"
@@ -6413,8 +6415,8 @@ start()
 				# SSD
 				# USB flash reported as rotational.
 				if [[ -e "/sys/block/\${x}/queue/scheduler" ]] ; then
-					ioschedr="${ssd_iosched}" # raw
-					ioschedc="${ssd_iosched}" # to be canonicalized
+					ioschedr="\${IOSCHED_SSD}" # raw
+					ioschedc="\${IOSCHED_SSD}" # to be canonicalized
 					[[ "\${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
 					einfo "Setting \${ioschedr} for \${x}"
 					echo "\${ioschedc}" > "/sys/block/\${x}/queue/scheduler"
@@ -6437,11 +6439,11 @@ start()
 					ioschedr="\${iosched}" # raw
 					ioschedc="\${iosched}" # to be canonicalized
 					if [[ "\${ioschedr}" == "hdd" || "\${ioschedr}" == "rotational" ]] ; then
-						[[ "${hdd_iosched}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
-						[[ "${hdd_iosched}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
+						[[ "\${IOSCHED_HDD}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
+						[[ "\${IOSCHED_HDD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
 					elif [[ "\${ioschedr}" == "ssd" || "\${ioschedr}" == "flash" ]] ; then
-						[[ "${ssd_iosched}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
-						[[ "${ssd_iosched}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
+						[[ "\${IOSCHED_SSD}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
+						[[ "\${IOSCHED_SSD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
 					fi
 					[[ "\${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
 					einfo "Setting \${ioschedr} override for \${x}"
