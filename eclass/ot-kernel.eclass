@@ -4919,21 +4919,6 @@ ot-kernel_iosched_custom() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_iosched_low_latency
-# @DESCRIPTION:
-# Configures the I/O scheduler for low latency
-ot-kernel_iosched_low_latency() {
-	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
-		ot-kernel_set_iosched "none" "bfq-low-latency"
-	elif ot-kernel_have_ssd ; then
-		ot-kernel_set_iosched "" "none"
-	elif ot-kernel_have_hdd ; then
-		ot-kernel_set_iosched "bfq-low-latency" ""
-	else
-		ot-kernel_set_iosched "none" "none"
-	fi
-}
-
 # @FUNCTION: ot-kernel_iosched_max_throughput
 # @DESCRIPTION:
 # Configures the I/O scheduler for high throughput
@@ -4944,6 +4929,36 @@ ot-kernel_iosched_max_throughput() {
 		ot-kernel_set_iosched "none" ""
 	elif ot-kernel_have_hdd ; then
 		ot-kernel_set_iosched "" "bfq-throughput"
+	else
+		ot-kernel_set_iosched "none" "none"
+	fi
+}
+
+# @FUNCTION: ot-kernel_iosched_builder_throughput
+# @DESCRIPTION:
+# Configures the I/O scheduler for high throughput when compiling or emerging
+ot-kernel_iosched_builder_throughput() {
+	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "mq-deadline"
+	elif ot-kernel_have_ssd ; then
+		ot-kernel_set_iosched "none" ""
+	elif ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "" "mq-deadline"
+	else
+		ot-kernel_set_iosched "none" "none"
+	fi
+}
+
+# @FUNCTION: ot-kernel_iosched_interactive
+# @DESCRIPTION:
+# Configures the I/O scheduler for saturated heavy I/O prioritizing web browsing I/O
+ot-kernel_iosched_interactive() {
+	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "bfq-low-latency"
+	elif ot-kernel_have_ssd ; then
+		ot-kernel_set_iosched "none" ""
+	elif ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "" "bfq-low-latency"
 	else
 		ot-kernel_set_iosched "none" "none"
 	fi
@@ -4973,6 +4988,7 @@ ot-kernel_iosched_default() {
 ot-kernel_iosched_lowest_power() {
 	# This is actually unknown.
 	# For ssd this may be true but for hdd it may not be the case.
+	# For hdd the ones that support merging should do better.
 	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
 		ot-kernel_set_iosched "none" "mq-deadline"
 	elif ot-kernel_have_ssd ; then
@@ -5118,7 +5134,7 @@ ewarn
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-		ot-kernel_iosched_low_latency
+		ot-kernel_iosched_interactive
 	elif [[ "${work_profile}" =~ ("casual-gaming") ]] ; then
 		# Assumes on desktop
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
@@ -5134,7 +5150,7 @@ ewarn
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-		ot-kernel_iosched_low_latency
+		ot-kernel_iosched_interactive
 	elif [[ "${work_profile}" =~ ("desktop-guest-vm"|"gaming-guest-vm") ]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
@@ -5155,7 +5171,7 @@ ewarn
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-		ot-kernel_iosched_low_latency
+		ot-kernel_iosched_interactive
 	elif [[ "${work_profile}" == "digital-audio-workstation" \
 		|| "${work_profile}" == "gamedev" \
 		|| "${work_profile}" == "workstation" ]] ; then
@@ -5178,11 +5194,7 @@ ewarn
 			&& ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
-			ot-kernel_iosched_low_latency
-		else
-			ot-kernel_iosched_max_throughput
-		fi
+		ot-kernel_iosched_interactive
 	elif [[ "${work_profile}" =~ ("builder-dedicated"|"builder-interactive") ]] ; then
 		if [[ "${work_profile}" =~ ("builder-dedicated") ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz
@@ -5199,7 +5211,11 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-		ot-kernel_iosched_max_throughput
+		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
+			ot-kernel_iosched_builder_throughput
+		else
+			ot-kernel_iosched_interactive
+		fi
 	elif [[ "${work_profile}" == "renderfarm-dedicated" \
 		|| "${work_profile}" == "renderfarm-workstation" ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz
@@ -5216,7 +5232,11 @@ ewarn
 		else
 			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 		fi
-		ot-kernel_iosched_max_throughput
+		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
+			ot-kernel_iosched_max_throughput
+		else
+			ot-kernel_iosched_interactive
+		fi
 	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server") ]] ; then
 		if [[ "${work_profile}" =~ "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
@@ -5236,9 +5256,8 @@ ewarn
 		elif [[ "${work_profile}" == "file-server" ]] ; then
 			ot-kernel_iosched_max_throughput
 		else
-			ot-kernel_iosched_low_latency
+			ot-kernel_iosched_interactive
 		fi
-		ot-kernel_iosched_max_throughput
 	elif [[ "${work_profile}" == "streamer-desktop" ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -5250,7 +5269,7 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
-		ot-kernel_iosched_max_throughput
+		ot-kernel_iosched_interactive
 	elif [[ "${work_profile}" =~ ("dvr"|"jukebox"|"mainstream-desktop") ]] ; then
 		[[ "${work_profile}" =~ ("dvr"|"mainstream-desktop") ]] \
 			&& ot-kernel_set_kconfig_set_video_timer_hz # Minimize dropped frames
@@ -5265,7 +5284,7 @@ ewarn
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_y_configopt "CONFIG_PM"
-		ot-kernel_iosched_max_throughput
+		ot-kernel_iosched_interactive
 	elif [[ "${work_profile}" == "cryptocurrency-miner-dedicated" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize OS overhead and energy cost, maximize app time
@@ -5338,10 +5357,11 @@ ewarn
 			|| "${work_profile}" == "greenest-hpc" ]] ; then
 			ot-kernel_y_configopt "CONFIG_PM"
 			ot-kernel_set_rcu_powersave
+			ot-kernel_iosched_lowest_power
 		else
 			ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
+			ot-kernel_iosched_max_throughput
 		fi
-		ot-kernel_iosched_max_throughput
 	elif [[ "${work_profile}" == "distributed-computing-workstation" ]] ; then
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
