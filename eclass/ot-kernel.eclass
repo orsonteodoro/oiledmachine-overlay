@@ -6430,11 +6430,13 @@ start()
 		done
 
 		for x in \${IOSCHED_OVERRIDES} ; do
+			[[ "\${x}" =~ ";" ]] || continue
 			id="\${x%;*}"
 			iosched="\${x#*;}"
 			if [[ -e "/dev/disk/by-id/\${id}" ]] ; then
 				p=\$(realpath "/dev/disk/by-id/\${id}")
 				x=\$(basename "\${p}")
+				[[ -z "\${x}" ]] && continue
 				if [[ -e "/sys/block/\${x}/queue/scheduler" ]] ; then
 					ioschedr="\${iosched}" # raw
 					ioschedc="\${iosched}" # to be canonicalized
@@ -6446,6 +6448,8 @@ start()
 						[[ "\${IOSCHED_SSD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
 					fi
 					[[ "\${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
+					[[ -z "\${ioschedc}" ]] && continue
+					grep -q -e "\${ioschedc}" "/sys/block/\${x}/queue/scheduler" || continue
 					einfo "Setting \${ioschedr} override for \${x}"
 					echo "\${ioschedc}" > "/sys/block/\${x}/queue/scheduler"
 					if [[ "\${ioschedc}" == "bfq-throughput" ]] ; then
