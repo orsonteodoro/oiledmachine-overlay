@@ -7011,4 +7011,17 @@ ewarn "vulnerability scans.  This is to be done after booting into a kernel"
 ewarn "with dmesg disabled."
 ewarn
 	fi
+
+ewarn
+ewarn "/etc/init.d/iosched-* scripts are in testing.  Do not use at this time."
+ewarn
+	if [[ "${OT_KERNEL_IOSCHED_OPENRC}" == "1" ]] ; then
+#ewarn
+#ewarn "You need to etc-update to update the /etc/init.d and /etc/conf.d for the"
+#ewarn "per-kernel iosched profiles."
+#ewarn
+#ewarn "You need to enable /etc/init.d/iosched-"
+#ewarn
+		:;
+	fi
 }
