@@ -1094,7 +1094,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
       bfq-throughput - Variation to maximize MB/s
 
-      cfq - Round robin fairness (4.14 only)
+      cfq - Round robin fairness with timeslices (4.14 only)
 
       kyber - Ensures that the queues meets latency goals
 
@@ -1102,7 +1102,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
       none - Disables I/O scheduling
 
-      noop - FIFO I/O scheduling with merging and sorting (4.14 only)
+      noop - FIFO I/O scheduling with request merging (4.14 only)
 
     See also:
 

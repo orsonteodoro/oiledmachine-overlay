@@ -4986,18 +4986,12 @@ ot-kernel_iosched_default() {
 # @DESCRIPTION:
 # Configures the I/O scheduler for the lowest power consumption
 ot-kernel_iosched_lowest_power() {
-	# This is actually unknown.
-	# For ssd this may be true but for hdd it may not be the case.
-	# For hdd the ones that support merging should do better.
-	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
-		ot-kernel_set_iosched "none" "mq-deadline"
-	elif ot-kernel_have_ssd ; then
-		ot-kernel_set_iosched "none" ""
-	elif ot-kernel_have_hdd ; then
-		ot-kernel_set_iosched "" "mq-deadline"
-	else
-		ot-kernel_set_iosched "none" "none"
-	fi
+	# For hdd the ones that support sector merging should do better.
+	# It turns out that merging is already done by the hardware
+	# via NCQ.
+
+	# This assumes that the device has NCQ.
+	ot-kernel_set_iosched "none" "none"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
