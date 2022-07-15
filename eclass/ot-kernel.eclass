@@ -6430,8 +6430,8 @@ start()
 		done
 
 		for x in \${IOSCHED_OVERRIDES} ; do
-			id="\${x%:*}"
-			iosched="\${x#*:}"
+			id="\${x%;*}"
+			iosched="\${x#*;}"
 			if [[ -e "/dev/disk/by-id/\${id}" ]] ; then
 				p=\$(realpath "/dev/disk/by-id/\${id}")
 				x=\$(basename "\${p}")

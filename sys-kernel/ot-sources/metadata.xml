@@ -1110,7 +1110,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_IOSCHED_OVERRIDE - A space delimited list of id:iosched.  The id
+    OT_KERNEL_IOSCHED_OVERRIDE - A space delimited list of id;iosched.  The id
     is obtained from the basename in "ls -l /dev/disk/by-id".  The id should
     be the device itself not a partition.  The reason for this is that
     the kernel may mistakenly flag USB flash disks as rotational.  This also
@@ -1120,10 +1120,10 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Examples:
 
-      OT_KERNEL_IOSCHED_OVERRIDE="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX:bfq-low-latency"
-      OT_KERNEL_IOSCHED_OVERRIDE="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX:bfq-throughput usb-XXXXXXXX_XXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXX-0:0:none"
-      OT_KERNEL_IOSCHED_OVERRIDE="usb-YYYYYYYY_YYYY_YYYY_YYYYYYYYYYYYYYYYYYYYYYYY-0:0:hdd usb-XXXXXXXX_XXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXX-0:0:flash"
-      OT_KERNEL_IOSCHED_OVERRIDE="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX:rotational"
+      OT_KERNEL_IOSCHED_OVERRIDE="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX;bfq-low-latency"
+      OT_KERNEL_IOSCHED_OVERRIDE="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX;bfq-throughput usb-XXXXXXXX_XXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXX-0:0;none"
+      OT_KERNEL_IOSCHED_OVERRIDE="usb-YYYYYYYY_YYYY_YYYY_YYYYYYYYYYYYYYYYYYYYYYYY-0:0;hdd usb-XXXXXXXX_XXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXX-0:0;flash"
+      OT_KERNEL_IOSCHED_OVERRIDE="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX;rotational"
 
     Acceptable values for iosched
 
