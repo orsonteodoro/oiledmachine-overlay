@@ -154,22 +154,6 @@
 		    zen-multigen_lru			N
 		    zen-sauce				N
 						
-    5.17 (Stable)					N
-		    -rt	(RT_PREEMPT)			A
-		    CFI					E
-		    Clang PGO				E
-		    genpatches				A
-		    kernel_compiler_patch		A
-		    multigen_lru			A
-		    Project C				A
-		    TCP BBR v2 [5]			E
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
-		    UKSM				R
-		    zen-multigen_lru			A
-		    zen-sauce				A
-
     5.18 (Stable)					N
 		    -rt	(RT_PREEMPT)			A
 		    CFI					E
@@ -1071,6 +1055,86 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
       OT_KERNEL_IRQ_REMAP
       XEN_PCI_PASSTHROUGH
+
+
+
+    OT_KERNEL_IOSCHED_OPENRC - Generate the OpenRC init script to
+    autoset the kernel I/O scheduler per device.
+
+    Acceptable values
+
+      1 - generate
+      0 - don't generate
+      unset - generate
+
+
+
+    OT_KERNEL_IOSCHED - A I/O scheduler list for the custom work profile
+    (either OT_KERNEL_WORK_PROFILE="custom" or OT_KERNEL_WORK_PROFILE="manual").
+    The first I/O scheduler corresponds to the I/O scheduler to apply to SSDs.
+    The second I/O scheduler corresponds to the I/O scheduler to apply to HDDs.
+
+    Examples:
+
+      OT_KERNEL_IOSCHED="none none"
+      OT_KERNEL_IOSCHED="noop mq-deadline"
+      OT_KERNEL_IOSCHED="noop mq-deadline"
+      OT_KERNEL_IOSCHED="kyber bfq-throughput"
+    
+    Acceptable values:
+
+      bfq - Alias for bfq-low-latency.  Virtual latency guarantees for
+      interactive and soft-real-time (SRT) and weighted proportional throughput.  By
+      default, more weight is given to interactive/SRT and sequential I/O requests.
+
+      bfq-low-latency - Variation optimized for interactive or soft-real-time I/O
+      such as seeking for media players.  Has observed benefits in startup time.
+
+      bfq-throughput - Variation to maximize MB/s
+
+      cfq - Round robin fairness (4.14 only)
+
+      kyber - Ensures that the queues meets latency goals
+
+      mq-deadline - Sorted I/O with grouped deployment
+
+      none - Disables I/O scheduling
+
+      noop - FIFO I/O scheduling with merging and sorting (4.14 only)
+
+    See also:
+
+      OT_KERNEL_IOSCHED_OVERRIDE
+
+
+
+    OT_KERNEL_IOSCHED_OVERRIDE - A space delimited list of id:iosched.  The id
+    is obtained from the basename in "ls -l /dev/disk/by-id".  The id should
+    be the device itself not a partition.  The reason for this is that
+    the kernel may mistakenly flag USB flash disks as rotational.  This also
+    allows for USB rotational and USB flash to be precisely given the proper
+    scheduler or to override the auto applied values if you need latency
+    guarantees.
+
+    Examples:
+
+      OT_KERNEL_IOSCHED_OVERRIDE="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX:bfq-low-latency"
+      OT_KERNEL_IOSCHED_OVERRIDE="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX:bfq-throughput usb-XXXXXXXX_XXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXX-0:0:none"
+      OT_KERNEL_IOSCHED_OVERRIDE="usb-YYYYYYYY_YYYY_YYYY_YYYYYYYYYYYYYYYYYYYYYYYY-0:0:hdd usb-XXXXXXXX_XXXX_XXXX_XXXXXXXXXXXXXXXXXXXXXXXX-0:0:flash"
+      OT_KERNEL_IOSCHED_OVERRIDE="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX:rotational"
+
+    Acceptable values for iosched
+
+      All acceptable values listed in OT_KERNEL_IOSCHEDS
+
+      hdd - Large mechanical platter type
+      ssd - Large NAND memory storage 
+      flash - NAND memory storage for use by USB or cameras (alias for ssd)
+      rotational - alias for HDD
+
+    See also:
+
+      OT_KERNEL_IOSCHED
 
 
 

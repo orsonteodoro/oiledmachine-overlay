@@ -2313,6 +2313,9 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_IMA_HASH_ALG
 	unset OT_KERNEL_IMA_POLICIES
 	unset OT_KERNEL_IOMMU
+	unset OT_KERNEL_IOSCHED
+	unset OT_KERNEL_IOSCHED_OPENRC
+	unset OT_KERNEL_IOSCHED_OVERRIDE
 	unset OT_KERNEL_KERNEL_DIR
 	unset OT_KERNEL_KEXEC
 	unset OT_KERNEL_LSMS
@@ -4774,9 +4777,10 @@ ot-kernel_set_rcu_powersave() {
 # @DESCRIPTION:
 # Checks if ssd (non-rotational) is in system
 ot-kernel_have_ssd() {
-	if [[ "${OT_KERNEL_SSD}" == "1" ]] ; then
+	local option="${OT_KERNEL_SSD:-auto}"
+	if [[ "${option}" == "1" ]] ; then
 		return 0
-	elif [[ "${OT_KERNEL_SSD}" == "auto" ]] ; then
+	elif [[ "${option}" == "auto" ]] ; then
 		grep -q "0" /sys/block/*/queue/rotational && return 0
 	fi
 	return 1
@@ -4786,21 +4790,31 @@ ot-kernel_have_ssd() {
 # @DESCRIPTION:
 # Checks if hdd (rotational) is in system
 ot-kernel_have_hdd() {
-	if [[ "${OT_KERNEL_HDD}" == "1" ]] ; then
+	local option="${OT_KERNEL_HDD:-auto}"
+	if [[ "${option}" == "1" ]] ; then
 		return 0
-	elif [[ "${OT_KERNEL_HDD}" == "auto" ]] ; then
+	elif [[ "${option}" == "auto" ]] ; then
 		grep -q "1" /sys/block/*/queue/rotational && return 0
 	fi
 	return 1
 }
 
-# @FUNCTION: ot-kernel_set_ioscheds
+ot-kernel_get_iosched_override_values() {
+	local x
+	for x in ${OT_KERNEL_IOSCHED_OVERRIDE} ; do
+		local id="${x%:*}"
+		local iosched="${x#*:}"
+		echo "${iosched}"
+	done
+}
+
+# @FUNCTION: ot-kernel_set_iosched
 # @DESCRIPTION:
-# Sets the I/O scheds(s) with the first one as the default.
-ot-kernel_set_ioscheds() {
-	# WIP
-	return
-	local scheds=(${@})
+# Sets the I/O scheds(s).
+# @USAGE: [ssd_iosched] [hdd_iosched]
+ot-kernel_set_iosched() {
+	local ssd_iosched="${1}"
+	local hdd_iosched="${2}"
 	# noop for guest vm to eliminate overhead.
 	# Let the host handle IO scheduling.
 	ot-kernel_unset_configopt "CONFIG_MQ_IOSCHED_DEADLINE"
@@ -4815,50 +4829,158 @@ ot-kernel_set_ioscheds() {
 		ot-kernel_unset_configopt "CONFIG_DEFAULT_IOSCHED"
 	fi
 
+	# Translate.  eclass simplifies to 5.x iosched
+	if ver_test ${K_MAJOR_MINOR} -ge 5 ; then
+		[[ "${ssd_iosched}" == "noop" ]] && ssd_iosched="none"
+		[[ "${hdd_iosched}" == "noop" ]] && hdd_iosched="none"
+	fi
+
+	# Translate to 4.x iosched
+	if ver_test ${K_MAJOR_MINOR} -lt 5 ; then
+		[[ "${ssd_iosched}" == "none" ]] && ssd_iosched="noop"
+		[[ "${hdd_iosched}" == "none" ]] && hdd_iosched="noop"
+	fi
+
+	[[ -z "${hdd_iosched}" ]] && hdd_iosched="${ssd_iosched}"
+	[[ -z "${ssd_iosched}" ]] && ssd_iosched="${hdd_iosched}"
+
 	local s_first=""
 	local s
-	for s in ${scheds[@]} ; do
+	for s in ${ssd_iosched} ${hdd_iosched} $(ot-kernel_get_iosched_override_values) ; do
 		s="${s,,}"
+
+		# Translate:
+		[[ "${s}" == "rotational" ]] && s="${hdd_iosched}"
+		[[ "${s}" == "flash" ]] && s="${ssd_iosched}"
+		[[ "${s}" == "hdd" ]] && s="${hdd_iosched}"
+		[[ "${s}" == "ssd" ]] && s="${ssd_iosched}"
+
+		[[ -z "${s}" ]] && continue
 
 		if [[ "${s}" == "bfq-low-latency" || "${s}" == "bfq" ]] ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_BFQ"
-			sed -i -e "s|low_latency = false|low_latency = true|g" \
-				"${BUILD_DIR}/block/bfq-iosched.c" || die
 			s="bfq"
 		elif [[ "${s}" == "bfq-throughput" ]] ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_BFQ"
-			sed -i -e "s|low_latency = true|low_latency = false|g" \
-				"${BUILD_DIR}/block/bfq-iosched.c" || die
 			s="bfq"
-		elif [[ "${s}" == "deadline" || "${s}" == "mq-deadline" ]] ; then
+		elif [[ "${s}" == "deadline" ]] && ver_test ${K_MAJOR_MINOR} -lt 5  ; then
+			ot-kernel_y_configopt "CONFIG_IOSCHED_DEADLINE"
+		elif [[ "${s}" == "mq-deadline" ]] ; then
 			ot-kernel_y_configopt "CONFIG_MQ_IOSCHED_DEADLINE"
-			if ver_test "${K_MAJOR_MINOR}" -lt 5 ; then
-				ot-kernel_y_configopt "CONFIG_IOSCHED_DEADLINE"
-			fi
-			s="mq-deadline"
-		elif [[ "${s}" =~ "cfq" ]] && ver_test ${K_MAJOR_MINOR} -lt 5 ; then
+		elif [[ "${s}" == "cfq" ]] && ver_test ${K_MAJOR_MINOR} -lt 5 ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_CFQ"
-		elif [[ "${s}" =~ "kyber" ]] ; then
+		elif [[ "${s}" == "kyber" ]] ; then
 			ot-kernel_y_configopt "CONFIG_MQ_IOSCHED_KYBER"
-		elif [[ "${s}" =~ "noop" ]] ; then
-			if ver_test "${K_MAJOR_MINOR}" -lt 5 ; then
-				ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
-			fi
+		elif [[ "${s}" == "noop" ]] && ver_test ${K_MAJOR_MINOR} -lt 5 ; then
+			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
+		elif [[ "${s}" == "none" ]] && ver_test ${K_MAJOR_MINOR} -ge 5 ; then
+			:;
 		else
-			ewarn "${s} is an invalid scheduler name"
-			# invalid
 			continue
 		fi
-		# validity pass
-		[[ -z "${s_first}" ]] && s_first="${s}"
+		if ver_test "${K_MAJOR_MINOR}" -lt 5 \
+			&& [[ -z "${s_first}" ]] \
+			&& [[ "${s}" =~ ("cfq"|"deadline"|"noop") ]] ; then
+			s_first="${s}"
+		fi
 		einfo "Enabled ${s} as an I/O scheduler"
 	done
-	if ver_test "${K_MAJOR_MINOR}" -lt 5 && [[ -n "${s}" ]] ; then
-		einfo "${s} is set as the default I/O scheduler"
-		ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"${s}\""
+	if ver_test "${K_MAJOR_MINOR}" -lt 5 && [[ -n "${s_first}" ]] ; then
+		einfo "${s_first} is set as the default I/O scheduler"
+		ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"${s_first}\""
+	elif ver_test "${K_MAJOR_MINOR}" -lt 5 && [[ -z "${s_first}" ]] ; then
+		#
+		# We need either cfq, deadline, noop or it may result in a null
+		# pointer dereference.
+		#
+		if ot-kernel_have_ssd ; then
+			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
+			s_first="noop"
+		else
+			ot-kernel_y_configopt "CONFIG_IOSCHED_CFQ"
+			s_first="cfq"
+		fi
+		einfo "${s_first} is set as the default I/O scheduler"
+		ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"${s_first}\""
+	fi
+
+	ot-kernel_gen_iosched_openrc
+}
+
+# @FUNCTION: ot-kernel_iosched_custom
+# @DESCRIPTION:
+# Configures the I/O scheduler for custom work profile
+ot-kernel_iosched_custom() {
+	if [[ -n "${OT_KERNEL_IOSCHED}" ]] ; then
+		local scheds=(${OT_KERNEL_IOSCHED})
+		local ssd_iosched=$(echo "${OT_KERNEL_IOSCHED[0]}")
+		local hdd_iosched=$(echo "${OT_KERNEL_IOSCHED[1]}")
+		ot-kernel_set_iosched "${ssd_iosched}" "${hdd_iosched}"
+	fi
+}
+
+# @FUNCTION: ot-kernel_iosched_low_latency
+# @DESCRIPTION:
+# Configures the I/O scheduler for low latency
+ot-kernel_iosched_low_latency() {
+	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "bfq-low-latency"
+	elif ot-kernel_have_ssd ; then
+		ot-kernel_set_iosched "" "none"
+	elif ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "bfq-low-latency" ""
 	else
-		sed -e "s#\"(bfq|cfq|deadline|kyber|mq-deadline|noop)\"#\"${s}\"#g" \
-			"${BUILD_DIR}/block/elevator.c" || die
+		ot-kernel_set_iosched "none" "none"
+	fi
+}
+
+# @FUNCTION: ot-kernel_iosched_max_throughput
+# @DESCRIPTION:
+# Configures the I/O scheduler for high throughput
+ot-kernel_iosched_max_throughput() {
+	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "bfq-throughput"
+	elif ot-kernel_have_ssd ; then
+		ot-kernel_set_iosched "none" ""
+	elif ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "" "bfq-throughput"
+	else
+		ot-kernel_set_iosched "none" "none"
+	fi
+}
+
+# @FUNCTION: ot-kernel_iosched_max_tps
+# @DESCRIPTION:
+# Configures the I/O scheduler for maximium transactions per second
+ot-kernel_iosched_max_tps() {
+	ot-kernel_set_iosched "none" "none"
+}
+
+# @FUNCTION: ot-kernel_iosched_default
+# @DESCRIPTION:
+# Configures the I/O scheduler with the upstream default
+ot-kernel_iosched_default() {
+	if ver_test ${K_MAJOR_MINOR} -lt 5 ; then
+		ot-kernel_set_iosched "cfq" "cfq"
+	else
+		ot-kernel_set_iosched "mq-deadline" "mq-deadline"
+	fi
+}
+
+# @FUNCTION: ot-kernel_iosched_lowest_power
+# @DESCRIPTION:
+# Configures the I/O scheduler for the lowest power consumption
+ot-kernel_iosched_lowest_power() {
+	# This is actually unknown.
+	# For ssd this may be true but for hdd it may not be the case.
+	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "mq-deadline"
+	elif ot-kernel_have_ssd ; then
+		ot-kernel_set_iosched "none" ""
+	elif ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "" "mq-deadline"
+	else
+		ot-kernel_set_iosched "none" "none"
 	fi
 }
 
@@ -4909,7 +5031,7 @@ ewarn
 	fi
 
 	if [[ -z "${work_profile}" || "${work_profile}" =~ ("custom"|"manual") ]] ; then
-		:
+		ot-kernel_iosched_custom
 	elif [[ "${work_profile}" =~ ("sbc"|"smartphone"|"tablet"|"video-smartphone"|"video-tablet") ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
@@ -4924,7 +5046,7 @@ ewarn
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
-		ot-kernel_set_ioscheds "noop"
+		ot-kernel_iosched_lowest_power
 	elif [[ "${work_profile}" =~ ("laptop"|"green-pc"|"greenest-pc"|"touchscreen-laptop"|"solar-desktop") ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
@@ -4966,7 +5088,7 @@ ewarn
 		fi
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
-		ot-kernel_set_ioscheds "noop"
+		ot-kernel_iosched_lowest_power
 	elif [[ "${work_profile}" =~ ("casual-gaming-laptop"|"gpu-gaming-laptop"|"solar-gaming") ]] ; then
 		# It is assumed that the other laptop/solar-desktop profile is built also.
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
@@ -4996,6 +5118,7 @@ ewarn
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
+		ot-kernel_iosched_low_latency
 	elif [[ "${work_profile}" =~ ("casual-gaming") ]] ; then
 		# Assumes on desktop
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
@@ -5011,10 +5134,11 @@ ewarn
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
+		ot-kernel_iosched_low_latency
 	elif [[ "${work_profile}" =~ ("desktop-guest-vm"|"gaming-guest-vm") ]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
-		ot-kernel_set_ioscheds "noop"
+		ot-kernel_set_iosched "none" "none"
 	elif [[ "${work_profile}" =~ ("arcade"|"pro-gaming"|"tournament"|"presentation") ]] ; then
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -5031,6 +5155,7 @@ ewarn
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
+		ot-kernel_iosched_low_latency
 	elif [[ "${work_profile}" == "digital-audio-workstation" \
 		|| "${work_profile}" == "gamedev" \
 		|| "${work_profile}" == "workstation" ]] ; then
@@ -5053,6 +5178,11 @@ ewarn
 			&& ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
+		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+			ot-kernel_iosched_low_latency
+		else
+			ot-kernel_iosched_max_throughput
+		fi
 	elif [[ "${work_profile}" =~ ("builder-dedicated"|"builder-interactive") ]] ; then
 		if [[ "${work_profile}" =~ ("builder-dedicated") ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz
@@ -5069,6 +5199,7 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
+		ot-kernel_iosched_max_throughput
 	elif [[ "${work_profile}" == "renderfarm-dedicated" \
 		|| "${work_profile}" == "renderfarm-workstation" ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz
@@ -5085,10 +5216,8 @@ ewarn
 		else
 			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 		fi
+		ot-kernel_iosched_max_throughput
 	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server") ]] ; then
-		if [[ "${work_profile}" == "web-server" ]] ; then
-			ot-kernel_set_ioscheds "noop"
-		fi
 		if [[ "${work_profile}" =~ "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
 		else
@@ -5102,6 +5231,14 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+		if [[ "${work_profile}" == "web-server" ]] ; then
+			ot-kernel_iosched_max_tps
+		elif [[ "${work_profile}" == "file-server" ]] ; then
+			ot-kernel_iosched_max_throughput
+		else
+			ot-kernel_iosched_low_latency
+		fi
+		ot-kernel_iosched_max_throughput
 	elif [[ "${work_profile}" == "streamer-desktop" ]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -5113,6 +5250,7 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
+		ot-kernel_iosched_max_throughput
 	elif [[ "${work_profile}" =~ ("dvr"|"jukebox"|"mainstream-desktop") ]] ; then
 		[[ "${work_profile}" =~ ("dvr"|"mainstream-desktop") ]] \
 			&& ot-kernel_set_kconfig_set_video_timer_hz # Minimize dropped frames
@@ -5127,19 +5265,7 @@ ewarn
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_y_configopt "CONFIG_PM"
-		if ot-kernel_have_ssd && ot-kernel_have_hdd \
-			&& [[ "${work_profile}" == "mainstream-desktop" ]] ; then
-			ot-kernel_set_ioscheds "noop" "bfq"
-		elif ot-kernel_have_ssd && ot-kernel_have_hdd ; then
-			ot-kernel_set_ioscheds "noop" "mq-deadline"
-		elif ot-kernel_have_ssd ; then
-			ot-kernel_set_ioscheds "noop"
-		elif ot-kernel_have_hdd \
-			&& [[ "${work_profile}" == "mainstream-desktop" ]] ; then
-			ot-kernel_set_ioscheds "bfq"
-		else
-			ot-kernel_set_ioscheds "noop"
-		fi
+		ot-kernel_iosched_max_throughput
 	elif [[ "${work_profile}" == "cryptocurrency-miner-dedicated" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize OS overhead and energy cost, maximize app time
@@ -5157,6 +5283,7 @@ ewarn
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
+		ot-kernel_iosched_lowest_power
 	elif [[ "${work_profile}" == "cryptocurrency-miner-workstation" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
@@ -5175,6 +5302,7 @@ ewarn
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
+		ot-kernel_iosched_lowest_power
 	elif [[ "${work_profile}" =~ ("distributed-computing-dedicated"|"hpc"|"green-hpc"|"greenest-hpc") ]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel overhead, maximize computation time
 		if [[ "${work_profile}" =~ "hpc" ]] ; then
@@ -5213,6 +5341,7 @@ ewarn
 		else
 			ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		fi
+		ot-kernel_iosched_max_throughput
 	elif [[ "${work_profile}" == "distributed-computing-workstation" ]] ; then
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -5223,6 +5352,7 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
+		ot-kernel_iosched_max_throughput
 	fi
 }
 
@@ -6225,6 +6355,104 @@ ot-kernel_restore_keys() {
 	sync
 }
 
+# @FUNCTION: ot-kernel_gen_iosched_openrc
+# @DESCRIPTION:
+# Generates an OpenRC script for the iosched
+ot-kernel_gen_iosched_openrc() {
+	[[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] || return
+	if ! has_version "sys-apps/openrc[bash]" ; then
+eerror
+eerror "Re-emerge sys-apps/openrc[bash]"
+eerror
+		die
+	fi
+	mkdir -p "${T}/conf.d"
+################################################################################
+	cat <<EOF > "${T}/conf.d/iosched-${extraversion}" || die
+# See metadata.xml or epkginfo -x ${PN}::oiledmachine-overlay
+IOSCHED_OVERRIDES="${OT_KERNEL_IOSCHED_OVERRIDE}"
+EOF
+	mkdir -p "${T}/openrc"
+################################################################################
+
+einfo "Generating an iosched-${extraversion} for OpenRC"
+################################################################################
+	cat <<EOF > "${T}/openrc/iosched-${extraversion}" || die
+#!/sbin/openrc-run
+
+description="Sets IO scheduler of the drive for the -${extraversion} kernel."
+
+depend()
+{
+        need localmount
+}
+
+start()
+{
+	if cat /proc/version | grep -q -E -e " [0-9.]+-${extraversion}-" ; then
+		for x in \$(ls "/sys/block/") ; do
+			if grep -q -e "0" "/sys/block/\${x}/queue/rotational" || realpath "/sys/block/\${x}/device" | grep -q "usb" ; then
+				# SSD
+				# USB flash reported as rotational.
+				if [[ -e "/sys/block/\${x}/queue/scheduler" ]] ; then
+					if [[ "${ssd_iosched}" == "bfq-throughput" ]] ; then
+						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
+						echo "0" > "/sys/block/\${x}/queue/iosched/low_latency"
+					elif [[ "${ssd_iosched}" == "bfq-low-latency" ]] ; then
+						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
+						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
+					else
+						echo "${ssd_iosched}" > "/sys/block/\${x}/queue/scheduler"
+					fi
+				fi
+			fi
+			if grep -q -e "1" "/sys/block/\${x}/queue/rotational" ; then
+				# HDD
+				if [[ -e "/sys/block/\${x}/queue/scheduler" ]] ; then
+					if [[ "${hdd_iosched}" == "bfq-throughput" ]] ; then
+						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
+						echo "0" > "/sys/block/\${x}/queue/iosched/low_latency"
+					elif [[ "${hdd_iosched}" == "bfq-low-latency" ]] ; then
+						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
+						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
+					else
+						echo "${hdd_iosched}" > "/sys/block/\${x}/queue/scheduler"
+					fi
+				fi
+			fi
+		done
+
+		for x in \${IOSCHED_OVERRIDES} ; do
+			id="\${x%:*}"
+			iosched="\${x#*:}"
+			if [[ -e "/dev/disk/by-id/\${id}" ]] ; then
+				p=$(realpath "/dev/disk/by-id/\${id}")
+				x=$(basename "\${p}")
+				if [[ -e "/sys/block/\${x}/queue/scheduler" ]] ; then
+					local
+					local
+					if [[ "\${iosched}" == "hdd" || "\${iosched}" == "rotational" ]] ; then
+						echo "${hdd_iosched}" > "/sys/block/\${x}/queue/scheduler"
+					elif [[ "\${iosched}" == "ssd" || "\${iosched}" == "flash" ]] ; then
+						echo "${ssd_iosched}" > "/sys/block/\${x}/queue/scheduler"
+					elif [[ "\${iosched}" == "bfq-throughput" ]] ; then
+						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
+						echo "0" > "/sys/block/\${x}/queue/iosched/low_latency"
+					elif [[ "\${iosched}" == "bfq-low-latency" ]] ; then
+						echo "bfq" > "/sys/block/\${x}/queue/scheduler"
+						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
+					else
+						echo "\${iosched}" > "/sys/block/\${x}/queue/scheduler"
+					fi
+				fi
+			fi
+		done
+	fi
+}
+EOF
+################################################################################
+}
+
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
@@ -6309,6 +6537,14 @@ ot-kernel_src_install() {
 		einfo "Installing the kernel sources"
 		insinto /usr/src
 		doins -r "${BUILD_DIR}" # Sanitize file permissions
+
+		if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
+			einfo "Installing OpenRC iosched script"
+			exeinto "/etc/init.d"
+			doexe "${T}/openrc/iosched-${extraversion}"
+			insinto "/etc/conf.d"
+			doins "${T}/conf.d/iosched-${extraversion}"
+		fi
 	done
 
 	local nprocs=$(echo "${MAKEOPTS}" | grep -E -e "-j[ ]*[0-9]+" | grep -E -o -e "[0-9]+")
