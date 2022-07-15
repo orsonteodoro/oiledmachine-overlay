@@ -4822,7 +4822,7 @@ ot-kernel_set_iosched() {
 	ot-kernel_unset_configopt "CONFIG_IOSCHED_BFQ"
 	ot-kernel_unset_configopt "CONFIG_BFQ_GROUP_IOSCHED"
 	if ver_test "${K_MAJOR_MINOR}" -lt 5 ; then
-		ot-kernel_unset_configopt "CONFIG_IOSCHED_NOOP"
+		ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
 		ot-kernel_unset_configopt "CONFIG_IOSCHED_DEADLINE"
 		ot-kernel_unset_configopt "CONFIG_IOSCHED_CFQ"
 		ot-kernel_unset_configopt "CONFIG_CFQ_GROUP_IOSCHED"
