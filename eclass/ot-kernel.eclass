@@ -6392,6 +6392,8 @@ start()
 {
 	if cat /proc/version | grep -q -E -e " [0-9.]+-${extraversion}-" ; then
 		for x in \$(ls "/sys/block/") ; do
+			[[ "\${x}" =~ "dm-"[0-9]+ ]] && continue
+			[[ "\${x}" =~ "loop"[0-9]+ ]] && continue
 			if grep -q -e "0" "/sys/block/\${x}/queue/rotational" || realpath "/sys/block/\${x}/device" | grep -q "usb" ; then
 				# SSD
 				# USB flash reported as rotational.
