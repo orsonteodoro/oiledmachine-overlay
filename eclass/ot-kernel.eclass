@@ -5237,7 +5237,7 @@ ewarn
 		else
 			ot-kernel_iosched_interactive
 		fi
-	elif [[ "${work_profile}" =~ ("file-server"|"media-server"|"web-server") ]] ; then
+	elif [[ "${work_profile}" =~ ("distributed-computing-server"|"file-server"|"media-server"|"web-server") ]] ; then
 		if [[ "${work_profile}" =~ "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
 		else
@@ -5251,7 +5251,8 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
-		if [[ "${work_profile}" == "web-server" ]] ; then
+		if [[ "${work_profile}" == "web-server" \
+			|| "${work_profile}" == "distributed-computing-server" ]] ; then
 			ot-kernel_iosched_max_tps
 		elif [[ "${work_profile}" == "file-server" ]] ; then
 			ot-kernel_iosched_max_throughput
@@ -5322,7 +5323,7 @@ ewarn
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
-	elif [[ "${work_profile}" =~ ("distributed-computing-dedicated"|"hpc"|"green-hpc"|"greenest-hpc") ]] ; then
+	elif [[ "${work_profile}" =~ ("hpc"|"green-hpc"|"greenest-hpc") ]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel overhead, maximize computation time
 		if [[ "${work_profile}" =~ "hpc" ]] ; then
 			ot-kernel_set_kconfig_no_hz_full
@@ -5362,7 +5363,8 @@ ewarn
 			ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 			ot-kernel_iosched_max_throughput
 		fi
-	elif [[ "${work_profile}" == "distributed-computing-workstation" ]] ; then
+	elif [[ "${work_profile}" == "distributed-computing-client" ]] ; then
+		# Example: BOINC
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -5372,7 +5374,7 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT"
-		ot-kernel_iosched_max_throughput
+		ot-kernel_iosched_interactive
 	fi
 }
 
