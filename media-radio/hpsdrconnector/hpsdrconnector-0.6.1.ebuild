@@ -18,9 +18,9 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
 RESTRICT="mirror"
 SRC_URI="
+${EGO_SUM_SRC_URI}
 https://github.com/jancona/hpsdrconnector/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-${EGO_SUM_SRC_URI}
 "
 DOCS=( LICENSE NOTICE README.md )
 S="${WORKDIR}/${P}"
