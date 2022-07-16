@@ -18,31 +18,37 @@ IUSE+=" -boost_convert doxygen +debug html +examples -handle_nodata_bug
 +libcxx man pdf -unicode -static-libs singlehtml texinfo"
 REQUIRED_USE+=" !libcxx"
 #building with USE libcxx is broken?
-DEPEND+=" dev-libs/boost:=[${MULTILIB_USEDEP},nls,static-libs?]
-	 dev-db/unixODBC[${MULTILIB_USEDEP}]
-	 libcxx? ( sys-libs/libcxx[${MULTILIB_USEDEP}] )"
+DEPEND+="
+	dev-libs/boost:=[${MULTILIB_USEDEP},nls,static-libs?]
+	dev-db/unixODBC[${MULTILIB_USEDEP}]
+	libcxx? ( sys-libs/libcxx[${MULTILIB_USEDEP}] )
+"
 RDEPEND+=" ${DEPEND}"
 DEPEND_SPHINX="
 	${PYTHON_DEPS}
 	$(python_gen_any_dep 'dev-python/rstcheck[${PYTHON_USEDEP}]')
 	$(python_gen_any_dep 'dev-python/sphinx[${PYTHON_USEDEP}]')
 	$(python_gen_any_dep 'dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '<dev-python/breathe-4.29.1[${PYTHON_USEDEP}]')"
+	$(python_gen_any_dep '<dev-python/breathe-4.29.1[${PYTHON_USEDEP}]')
+"
 BDEPEND+="
 	>=dev-util/cmake-2.6
 	doxygen? ( app-doc/doxygen )
 	html? ( ${DEPEND_SPHINX} )
 	man? ( ${DEPEND_SPHINX} )
-	pdf? ( ${DEPEND_SPHINX}
+	pdf? (
+		${DEPEND_SPHINX}
 		$(python_gen_any_dep 'dev-python/sphinx[${PYTHON_USEDEP},latex]')
-		dev-tex/latexmk )
+		dev-tex/latexmk
+	)
 	singlehtml? ( ${DEPEND_SPHINX} )
-	texinfo? ( ${DEPEND_SPHINX} )"
-EGIT_COMMIT="308329c4985eff77e27f1e3428068e28af1e9e06"
+	texinfo? ( ${DEPEND_SPHINX} )
+"
 SRC_URI="
-https://github.com/nanodbc/${PN}/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz"
-S="${WORKDIR}/nanodbc-${EGIT_COMMIT}"
+https://github.com/nanodbc/${PN}/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
 pkg_setup() {
@@ -78,8 +84,8 @@ src_prepare() {
 			sed -i -e "s|lib/cmake/nanodbc|\${CMAKE_INSTALL_LIBDIR}/cmake/nanodbc|" CMakeLists.txt || die
 			#sed -i -e 's|check_cxx_compiler_flag("-stdlib=libc++" CXX_SUPPORTS_STDLIB)|set(CXX_SUPPORTS_STDLIB ON)|' \
 			# CMakeLists.txt || die
-			#eapply "${FILESDIR}"/nanodbc-2.11.3-boost-test.patch || die p6
-			eapply "${FILESDIR}"/nanodbc-2.13.0-disable-tests.patch || die p7
+			#eapply "${FILESDIR}/nanodbc-2.11.3-boost-test.patch" || die p6
+			eapply "${FILESDIR}/nanodbc-2.13.0-disable-tests.patch" || die p7
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_prepare
 		}
