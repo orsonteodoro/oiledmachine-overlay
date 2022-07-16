@@ -34,6 +34,7 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
+PROPERTIES="live"
 PATCHES=( "${FILESDIR}/${PN}-1.3.7-no-user-env.patch" )
 
 EXPECTED_PV="${PV%_*}"
