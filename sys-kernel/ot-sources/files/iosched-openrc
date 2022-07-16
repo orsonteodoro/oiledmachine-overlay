@@ -10,7 +10,7 @@ depend()
 
 set_iosched() {
 	arg="${1}"
-	[[ -z "${x}" ]] && continue
+	[[ -z "${x}" ]] && return
 	if [[ -e "/sys/block/${x}/queue/scheduler" ]] ; then
 		t_sched="${arg}"
 		if (( "${k_major}" < 5 )) ; then
@@ -30,8 +30,8 @@ set_iosched() {
 			[[ "${IOSCHED_SSD}" == "bfq-streaming" ]] && ioschedr="bfq-streaming"
 		fi
 		[[ "${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
-		[[ -z "${ioschedc}" ]] && continue
-		grep -q -E -e "(\[| |^)${ioschedc}(\]| |$)" "/sys/block/${x}/queue/scheduler" || continue
+		[[ -z "${ioschedc}" ]] && return
+		grep -q -E -e "(\[| |^)${ioschedc}(\]| |$)" "/sys/block/${x}/queue/scheduler" || return
 		einfo "Setting ${ioschedr} for ${x}"
 		echo "${ioschedc}" > "/sys/block/${x}/queue/scheduler"
 		if [[ "${ioschedc}" == "bfq-throughput" ]] ; then
