@@ -14,7 +14,7 @@ else
 	SRC_URI="https://storage.googleapis.com/aom-releases/${P}.tar.gz"
 	S="${WORKDIR}/${P}"
 	S_orig="${WORKDIR}/${P}"
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ppc ppc64 ~riscv ~sparc x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 fi
 
 DESCRIPTION="Alliance for Open Media AV1 Codec SDK"
@@ -22,7 +22,7 @@ HOMEPAGE="https://aomedia.org"
 
 LICENSE="BSD-2"
 SLOT="0/3"
-IUSE="doc examples"
+IUSE="doc examples test"
 IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
 IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
 IUSE="${IUSE} cpu_flags_arm_neon"
@@ -151,7 +151,9 @@ BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
 BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
-BDEPEND+=" abi_x86_32? ( dev-lang/yasm )
+BDEPEND+="
+	>=dev-util/cmake-3.7
+	abi_x86_32? ( dev-lang/yasm )
 	abi_x86_64? ( dev-lang/yasm )
 	abi_x86_x32? ( dev-lang/yasm )
 	chromium? ( >=dev-lang/nasm-2.14 )
@@ -172,6 +174,8 @@ PATCHES=(
 DOCS=( PATENTS )
 # Don't strip CFI
 RESTRICT="strip"
+# Tests need more wiring up
+RESTRICT+=" !test? ( test ) test"
 
 pkg_setup() {
 	if use chromium ; then
@@ -441,7 +445,7 @@ configure_pgx() {
 	fi
 	local mycmakeargs=(
 		-DENABLE_DOCS=$(multilib_native_usex doc ON OFF)
-		-DENABLE_TESTS=OFF
+		-DENABLE_TESTS=$(usex test)
 		-DENABLE_TOOLS=ON
 		-DENABLE_WERROR=OFF
 
@@ -987,6 +991,18 @@ src_compile() {
 		done
 	}
 	multilib_foreach_abi compile_abi
+}
+
+src_test() {
+	test_abi() {
+		for build_type in $(get_build_types) ; do
+			export S="${S_orig}.${ABI}_${build_type/-*}"
+			export BUILD_DIR="${S}_build"
+			cd "${BUILD_DIR}" || die
+			"${BUILD_DIR}"/test_libaom || die
+		done
+	}
+	multilib_foreach_abi test_abi
 }
 
 src_install() {
