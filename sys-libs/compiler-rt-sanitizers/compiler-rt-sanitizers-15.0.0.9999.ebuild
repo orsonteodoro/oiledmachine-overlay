@@ -31,6 +31,7 @@ REQUIRED_USE="
 		gwp-asan? ( scudo )
 	)
 "
+PROPERTIES="live"
 RESTRICT="!test? ( test ) !clang? ( test )"
 PATCHES=(
 	"${FILESDIR}/compiler-rt-sanitizers-13.0.0-disable-cfi-assert-for-autoconf.patch"
