@@ -6413,7 +6413,7 @@ IOSCHED_HDD="${hdd_iosched}" # Do not change
 IOSCHED_SSD="${ssd_iosched}" # Do not change
 EXTRAVERSION="${extraversion}"
 
-HW_RAID="${OT_KERNEL_HWRAID}"
+HW_RAID="${OT_KERNEL_HWRAID:-0}"
 EOF
 	mkdir -p "${T}/openrc"
 ################################################################################
@@ -6980,16 +6980,12 @@ ewarn "with dmesg disabled."
 ewarn
 	fi
 
-ewarn
-ewarn "/etc/init.d/iosched-* scripts are in testing.  Do not use at this time."
-ewarn
 	if [[ "${OT_KERNEL_IOSCHED_OPENRC}" == "1" ]] ; then
-#ewarn
-#ewarn "You need to etc-update to update the /etc/init.d and /etc/conf.d for the"
-#ewarn "per-kernel iosched profiles."
-#ewarn
-#ewarn "You need to enable /etc/init.d/iosched-"
-#ewarn
-		:;
+ewarn
+ewarn "You need to etc-update to update the /etc/init.d and /etc/conf.d for the"
+ewarn "per-kernel iosched profiles."
+ewarn
+ewarn "You need to enable /etc/init.d/iosched-"
+ewarn
 	fi
 }
