@@ -15,6 +15,7 @@ KEYWORDS=""
 IUSE="debug test"
 IUSE+=" hardened"
 REQUIRED_USE+=" hardened? ( !test )"
+PROPERTIES="live"
 RESTRICT="!test? ( test )"
 
 RDEPEND="~sys-devel/llvm-${PV}"
