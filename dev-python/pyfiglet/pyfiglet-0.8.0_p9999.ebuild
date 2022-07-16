@@ -21,6 +21,7 @@ BDEPEND+="
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/pwaller/pyfiglet.git"
 SRC_URI=""
+PROPERTIES="live"
 RESTRICT="mirror test" # Unpacked dependency
 MY_PV="0.8.post1"
 
