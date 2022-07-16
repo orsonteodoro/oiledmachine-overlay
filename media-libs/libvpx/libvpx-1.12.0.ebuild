@@ -12,18 +12,20 @@ inherit flag-o-matic llvm toolchain-funcs multilib-minimal
 # 5. make testdata
 # 6. tar -caf libvpx-testdata-${MY_PV}.tar.xz libvpx-testdata
 
-LIBVPX_TESTDATA_VER=1.9.0
+LIBVPX_TESTDATA_VER=1.12.0
 
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
-SRC_URI="https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
-	test? ( https://dev.gentoo.org/~whissi/dist/libvpx/${PN}-testdata-${LIBVPX_TESTDATA_VER}.tar.xz )"
+SRC_URI="
+	https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
+	test? ( https://dev.gentoo.org/~whissi/dist/libvpx/${PN}-testdata-${LIBVPX_TESTDATA_VER}.tar.xz )
+"
 
 LICENSE="BSD"
-SLOT="0/6"
-KEYWORDS="amd64 arm arm64 ~ia64 ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux"
-IUSE="doc +highbitdepth postproc static-libs svc test +threads"
-IUSE+=" +examples"
+SLOT="0/7"
+KEYWORDS="~amd64 ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux"
+IUSE="cpu_flags_ppc_vsx3 doc +highbitdepth postproc static-libs test +threads"
+IUSE+=" svc +examples"
 IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang chromium hardened libcxx lto shadowcallstack"
 IUSE+=" pgo
 	pgo-custom
@@ -154,7 +156,9 @@ BDEPEND+=" libcxx? ( || ( $(gen_libcxx_depend 10 14) ) )"
 BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
-BDEPEND="abi_x86_32? ( dev-lang/yasm )
+BDEPEND="
+	dev-lang/perl
+	abi_x86_32? ( dev-lang/yasm )
 	abi_x86_64? ( dev-lang/yasm )
 	abi_x86_x32? ( dev-lang/yasm )
 	chromium? (
@@ -545,8 +549,26 @@ configure_pgx() {
 		x86_64*) export AS=yasm;;
 	esac
 
+	# libvpx is fragile: both for tests at runtime.
+	# We force using the generic target unless we know things work to
+	# avoid runtime breakage on exotic arches.
+	if [[ ${ABI} == amd64 ]] ; then
+		myconfargs+=( --force-target=x86_64-linux-gcc )
+	elif [[ ${ABI} == x86 ]] ; then
+		myconfargs+=( --force-target=x86-linux-gcc )
+	elif [[ ${ABI} == arm64 ]] ; then
+		myconfargs+=( --force-target=arm64-linux-gcc )
+	elif [[ ${ABI} == arm ]] && [[ ${CHOST} == *armv7* ]] ; then
+		myconfargs+=( --force-target=armv7-linux-gcc )
+	elif [[ ${ABI} == ppc64 ]] && [[ $(tc-endian) != big ]] && use cpu_flags_ppc_vsx3; then
+		# only enable this target for at least power9 CPU running little-endian
+		myconfargs+=( --force-target=ppc64le-linux-gcc )
+	else
+		myconfargs+=( --force-target=generic-gnu )
+	fi
+
 	# powerpc toolchain is not recognized anymore, #694368
-	[[ ${CHOST} == powerpc-* ]] && myconfargs+=( --force-target=generic-gnu )
+	#[[ ${CHOST} == powerpc-* ]] && myconfargs+=( --force-target=generic-gnu )
 
 	# Build with correct toolchain.
 	tc-export CC CXX AR NM
