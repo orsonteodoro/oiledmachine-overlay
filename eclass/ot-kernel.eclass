@@ -2309,6 +2309,7 @@ ot-kernel_clear_env() {
 #	unset OT_KERNEL_HALT_ON_LOWERED_SECURITY		# global var
 	unset OT_KERNEL_HARDENING_LEVEL
 	unset OT_KERNEL_HDD
+	unset OT_KERNEL_HWRAID
 	unset OT_KERNEL_IMA
 	unset OT_KERNEL_IMA_HASH_ALG
 	unset OT_KERNEL_IMA_POLICIES
@@ -4964,6 +4965,21 @@ ot-kernel_iosched_interactive() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_iosched_streaming
+# @DESCRIPTION:
+# Configures the I/O scheduler for dropped frames avoidance
+ot-kernel_iosched_streaming() {
+	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "bfq-streaming"
+	elif ot-kernel_have_ssd ; then
+		ot-kernel_set_iosched "none" ""
+	elif ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "" "bfq-streaming"
+	else
+		ot-kernel_set_iosched "none" "none"
+	fi
+}
+
 # @FUNCTION: ot-kernel_iosched_max_tps
 # @DESCRIPTION:
 # Configures the I/O scheduler for maximium transactions per second
@@ -5276,7 +5292,7 @@ ewarn
 		fi
 		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_y_configopt "CONFIG_PM"
-		ot-kernel_iosched_interactive
+		ot-kernel_iosched_streaming
 	elif [[ "${work_profile}" == "cryptocurrency-miner-dedicated" ]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize OS overhead and energy cost, maximize app time
@@ -6360,6 +6376,7 @@ ot-kernel_restore_keys() {
 		"${s}/signing_key.x509"		# public key
 		"${s}/x509.genkey"		# key geneneration config file
 	)
+	local d="${}"
 	cp -a ${files[@]} \
 		"${BUILD_DIR}/certs" || die
 	chmod 0600 "${BUILD_DIR}/certs/signing_key.pem" || die
@@ -6380,12 +6397,15 @@ eerror
 		die
 	fi
 	mkdir -p "${T}/conf.d"
+
 ################################################################################
 	cat <<EOF > "${T}/conf.d/iosched-${extraversion}" || die
 # See metadata.xml or epkginfo -x ${PN}::oiledmachine-overlay for details
 IOSCHED_OVERRIDES="${OT_KERNEL_IOSCHED_OVERRIDE}"
 IOSCHED_HDD="${hdd_iosched}" # Do not change
 IOSCHED_SSD="${ssd_iosched}" # Do not change
+
+HW_RAID="${OT_KERNEL_HWRAID}"
 EOF
 	mkdir -p "${T}/openrc"
 ################################################################################
@@ -6419,8 +6439,13 @@ start()
 					echo "\${ioschedc}" > "/sys/block/\${x}/queue/scheduler"
 					if [[ "\${ioschedr}" == "bfq-throughput" ]] ; then
 						echo "0" > "/sys/block/\${x}/queue/iosched/low_latency"
+						[[ "\${RAID}" == "1" ]] && echo "0" > "/sys/block/\${x}/queue/iosched/slice_idle_us" # Default 8000
 					elif [[ "\${ioschedr}" == "bfq-low-latency" ]] ; then
+						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency" # Default 1
+					elif [[ "\${ioschedr}" == "bfq-streaming" ]] ; then
 						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
+						# Low video drop rates according to documentation
+						echo "1" > "/sys/block/sdb/queue/iosched/strict_guarantees"
 					fi
 				fi
 			fi
@@ -6435,8 +6460,12 @@ start()
 					echo "\${ioschedc}" > "/sys/block/\${x}/queue/scheduler"
 					if [[ "\${ioschedr}" == "bfq-throughput" ]] ; then
 						echo "0" > "/sys/block/\${x}/queue/iosched/low_latency"
+						echo "0" > "/sys/block/\${x}/queue/iosched/slice_idle_us"
 					elif [[ "\${ioschedr}" == "bfq-low-latency" ]] ; then
 						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
+					elif [[ "\${ioschedr}" == "bfq-streaming" ]] ; then
+						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
+						echo "1" > "/sys/block/sdb/queue/iosched/strict_guarantees"
 					fi
 				fi
 			fi
@@ -6456,9 +6485,11 @@ start()
 					if [[ "\${ioschedr}" == "hdd" || "\${ioschedr}" == "rotational" ]] ; then
 						[[ "\${IOSCHED_HDD}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
 						[[ "\${IOSCHED_HDD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
+						[[ "\${IOSCHED_HDD}" == "bfq-streaming" ]] && ioschedr="bfq-streaming"
 					elif [[ "\${ioschedr}" == "ssd" || "\${ioschedr}" == "flash" ]] ; then
 						[[ "\${IOSCHED_SSD}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
 						[[ "\${IOSCHED_SSD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
+						[[ "\${IOSCHED_SSD}" == "bfq-streaming" ]] && ioschedr="bfq-streaming"
 					fi
 					[[ "\${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
 					[[ -z "\${ioschedc}" ]] && continue
@@ -6467,8 +6498,17 @@ start()
 					echo "\${ioschedc}" > "/sys/block/\${x}/queue/scheduler"
 					if [[ "\${ioschedc}" == "bfq-throughput" ]] ; then
 						echo "0" > "/sys/block/\${x}/queue/iosched/low_latency"
+						if grep -q -e "0" "/sys/block/\${x}/queue/rotational" ; then
+							# SSD
+							echo "0" > "/sys/block/\${x}/queue/iosched/slice_idle_us"
+						elif [[ "\${RAID}" == "1" ]] ; then
+							echo "0" > "/sys/block/\${x}/queue/iosched/slice_idle_us"
+						fi
 					elif [[ "\${ioschedc}" == "bfq-low-latency" ]] ; then
 						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
+					elif [[ "\${ioschedc}" == "bfq-streaming" ]] ; then
+						echo "1" > "/sys/block/\${x}/queue/iosched/low_latency"
+						echo "1" > "/sys/block/sdb/queue/iosched/strict_guarantees"
 					fi
 				fi
 			fi

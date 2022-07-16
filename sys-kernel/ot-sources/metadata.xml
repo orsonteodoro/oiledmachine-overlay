@@ -980,6 +980,17 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
+    OT_KERNEL_HWRAID -- Set if SATA hardware raid is being used.  This may
+    improve the throughput with the BFQ I/O scheduler.
+
+    Acceptable values:
+
+      1 - have hardware raid
+      0 - no hardware raid
+      unset - no hardware raid
+
+
+
     OT_KERNEL_IMA -- Sets the mode for IMA.  IMA will essentially ensure
     system integrity with the use of hashing and filesystem metadata.
     IMA requires 2 steps -- measurement and appraisal.  Measurement
@@ -1069,6 +1080,10 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       0 - don't generate
       unset - generate
 
+    See also:
+
+      OT_KERNEL_HWRAID
+
 
 
     OT_KERNEL_IOSCHED - A I/O scheduler list for the custom work profile
@@ -1092,6 +1107,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       bfq-low-latency - Variation optimized for interactive or soft-real-time I/O
       such as seeking for media players.  Has observed benefits in startup time.
 
+      bfq-streaming - Same as bfq-low-latency but designed to prevent dropped
+      video frames at the expense of throughput.
+
       bfq-throughput - Variation to maximize MB/s
 
       cfq - Round robin fairness with timeslices (4.14 only)
@@ -1107,6 +1125,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     See also:
 
       OT_KERNEL_IOSCHED_OVERRIDE
+      OT_KERNEL_HWRAID
 
 
 
