@@ -10,6 +10,8 @@ depend()
 
 start()
 {
+	kv=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${EXTRAVERSION}-.*||g")
+	k_major=${kv%%.*}
 	if cat /proc/version | grep -q -E -e " [0-9.]+-${EXTRAVERSION}-" ; then
 		einfo "Setting I/O schedulers for the -${EXTRAVERSION} kernel"
 		for x in $(ls "/sys/block/") ; do
@@ -18,8 +20,14 @@ start()
 			if grep -q -e "1" "/sys/block/${x}/queue/rotational" ; then
 				# HDD
 				if [[ -e "/sys/block/${x}/queue/scheduler" ]] ; then
-					ioschedr="${IOSCHED_HDD}" # raw
-					ioschedc="${IOSCHED_HDD}" # to be canonicalized
+					t_sched="${IOSCHED_HDD}"
+					if (( "${k_major}" < 5 )) ; then
+						[[ "${t_sched}" == "none" ]] && t_sched="noop"
+					else
+						[[ "${t_sched}" == "noop" ]] && t_sched="none"
+					fi
+					ioschedr="${t_sched}" # raw
+					ioschedc="${t_sched}" # to be canonicalized
 					[[ "${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
 					einfo "Setting ${ioschedr} for ${x}"
 					echo "${ioschedc}" > "/sys/block/${x}/queue/scheduler"
@@ -39,8 +47,14 @@ start()
 				# SSD
 				# USB flash reported as rotational.
 				if [[ -e "/sys/block/${x}/queue/scheduler" ]] ; then
-					ioschedr="${IOSCHED_SSD}" # raw
-					ioschedc="${IOSCHED_SSD}" # to be canonicalized
+					t_sched="${IOSCHED_SSD}"
+					if (( "${k_major}" < 5 )) ; then
+						[[ "${t_sched}" == "none" ]] && t_sched="noop"
+					else
+						[[ "${t_sched}" == "noop" ]] && t_sched="none"
+					fi
+					ioschedr="${t_sched}" # raw
+					ioschedc="${t_sched}" # to be canonicalized
 					[[ "${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
 					einfo "Setting ${ioschedr} for ${x}"
 					echo "${ioschedc}" > "/sys/block/${x}/queue/scheduler"
@@ -66,8 +80,14 @@ start()
 				x=$(basename "${p}")
 				[[ -z "${x}" ]] && continue
 				if [[ -e "/sys/block/${x}/queue/scheduler" ]] ; then
-					ioschedr="${iosched}" # raw
-					ioschedc="${iosched}" # to be canonicalized
+					t_sched="${iosched}"
+					if (( "${k_major}" < 5 )) ; then
+						[[ "${t_sched}" == "none" ]] && t_sched="noop"
+					else
+						[[ "${t_sched}" == "noop" ]] && t_sched="none"
+					fi
+					ioschedr="${t_sched}" # raw
+					ioschedc="${t_sched}" # to be canonicalized
 					if [[ "${ioschedr}" == "hdd" || "${ioschedr}" == "rotational" ]] ; then
 						[[ "${IOSCHED_HDD}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
 						[[ "${IOSCHED_HDD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
