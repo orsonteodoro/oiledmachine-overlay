@@ -6410,6 +6410,13 @@ eerror
 	cat <<EOF > "${T}/conf.d/iosched-${extraversion}" || die
 # See metadata.xml or epkginfo -x ${PN}::oiledmachine-overlay for details
 IOSCHED_OVERRIDES="${OT_KERNEL_IOSCHED_OVERRIDE}"
+
+# Produced from:
+# t="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX" ; echo "\${t}" | sha256sum | cut -f 1 -d " "
+# sha256sum, sha384sum, sha512sum supported
+# "echo \${t}" and "echo -n \${t}" supported
+IOSCHED_ANON_OVERRIDES=""
+
 IOSCHED_HDD="${hdd_iosched}" # Do not change
 IOSCHED_SSD="${ssd_iosched}" # Do not change
 EXTRAVERSION="${extraversion}"

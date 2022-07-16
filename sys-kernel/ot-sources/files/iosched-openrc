@@ -51,6 +51,34 @@ set_iosched() {
 	fi
 }
 
+get_id() {
+	local x
+	local h
+	local arg="${1}"
+
+	local ALGS=(
+		"sha256sum"
+		"sha384sum"
+		"sha512sum"
+	)
+
+	for x in $(ls "/dev/disk/by-id") ; do
+		for a in ${ALGS[@]} ; do
+			which "${a}" 2>/dev/null 1>/dev/null || continue
+			h=$(echo "${x}" | "${a}" | cut -f 1 -d " ")
+			if [[ "${h}" == "${arg}" ]] ; then
+				echo "${x}"
+				return
+			fi
+			h=$(echo -n "${x}" | "${a}" | cut -f 1 -d " ")
+			if [[ "${h}" == "${arg}" ]] ; then
+				echo "${x}"
+				return
+			fi
+		done
+	done
+}
+
 start()
 {
 	kv=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${EXTRAVERSION}-.*||g")
@@ -75,6 +103,20 @@ start()
 			[[ "${x}" =~ ";" ]] || continue
 			id="${x%;*}"
 			iosched="${x#*;}"
+			if [[ -e "/dev/disk/by-id/${id}" ]] ; then
+				p=$(realpath "/dev/disk/by-id/${id}")
+				x=$(basename "${p}")
+				set_iosched "${iosched}"
+			fi
+		done
+
+		for x in ${IOSCHED_ANON_OVERRIDES} ; do
+			[[ "${x}" =~ ";" ]] || continue
+			hash="${x%;*}"
+			iosched="${x#*;}"
+
+			id=$(get_id "${hash}")
+
 			if [[ -e "/dev/disk/by-id/${id}" ]] ; then
 				p=$(realpath "/dev/disk/by-id/${id}")
 				x=$(basename "${p}")
