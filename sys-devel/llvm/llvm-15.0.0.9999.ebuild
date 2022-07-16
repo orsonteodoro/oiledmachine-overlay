@@ -36,6 +36,7 @@ REQUIRED_USE="
 	)
 	tcmalloc? ( bolt )
 "
+PROPERTIES="live"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
