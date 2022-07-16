@@ -3,8 +3,10 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{8..10} )
-inherit distutils-r1 eutils
+EGIT_BRANCH="master"
+EGIT_REPO_URI="https://github.com/orakaro/rainbowstream.git"
+PYTHON_COMPAT=( python3_{8..10} ) # Upstream list only up to 3.7
+inherit distutils-r1 eutils git-r3
 
 DESCRIPTION="A smart and nice Twitter client on terminal written in Python."
 HOMEPAGE="http://www.rainbowstream.org/"
@@ -22,18 +24,34 @@ DEPEND+="
 	dev-python/PySocks[${PYTHON_USEDEP}]
 	dev-python/python-dateutil[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
+	dev-python/resize-image[${PYTHON_USEDEP}]
 	dev-python/twitter[${PYTHON_USEDEP}]
+	media-libs/libsixel[${PYTHON_USEDEP}]
 "
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${PYTHON_DPES}"
-EGIT_COMMIT="96141fac10675e0775d703f65a59c4477a48c57e"
-SRC_URI="
-https://github.com/orakaro/rainbowstream/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
-"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+BDEPEND+=" ${PYTHON_DEPS}"
+S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/${PN}-1.3.7-no-user-env.patch" )
+
+EXPECTED_PV="${PV%_*}"
+
+src_unpack() {
+	git-r3_fetch
+	git-r3_checkout
+	local pv=$(grep "version = " "${S}/setup.py" | cut -f 3 -d " " | sed -e "s|'||g")
+#einfo "pv:  ${pv}"
+	if ver_test "${pv}" -ne "${EXPECTED_PV}" ; then
+eerror
+eerror "Old version detected:  pv != EXPECTED_PV"
+eerror "EXPECTED_PV:  ${EXPECTED_PV}"
+eerror "pv:  ${pv}"
+eerror
+eerror "Bump EXPECTED_PV, check dependencies, check patches"
+eerror
+		die
+	fi
+}
 
 python_compile() {
 	distutils-r1_python_compile
