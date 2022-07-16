@@ -487,7 +487,6 @@ eerror
 		die
 	}
 
-	for x in mmx
 	if use cpu_flags_x86_mmx ; then
 		if [[ "${has_mmx}" != "0" ]] ; then
 			cpuflag_die "mmx"
