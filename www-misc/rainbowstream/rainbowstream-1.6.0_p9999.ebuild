@@ -13,7 +13,7 @@ HOMEPAGE="http://www.rainbowstream.org/"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
-IUSE+=" jpeg"
+IUSE+=" jpeg sixel"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 DEPEND+="
 	${PYTHON_DEPS}
@@ -24,9 +24,11 @@ DEPEND+="
 	dev-python/PySocks[${PYTHON_USEDEP}]
 	dev-python/python-dateutil[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
-	dev-python/resize-image[${PYTHON_USEDEP}]
 	dev-python/twitter[${PYTHON_USEDEP}]
-	media-libs/libsixel[${PYTHON_USEDEP}]
+	sixel? (
+		media-libs/libsixel[${PYTHON_USEDEP}]
+		dev-python/python-resize-image[${PYTHON_USEDEP}]
+	)
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}"
