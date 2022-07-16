@@ -8,6 +8,49 @@ depend()
         need localmount
 }
 
+set_iosched() {
+	arg="${1}"
+	[[ -z "${x}" ]] && continue
+	if [[ -e "/sys/block/${x}/queue/scheduler" ]] ; then
+		t_sched="${arg}"
+		if (( "${k_major}" < 5 )) ; then
+			[[ "${t_sched}" == "none" ]] && t_sched="noop"
+		else
+			[[ "${t_sched}" == "noop" ]] && t_sched="none"
+		fi
+		ioschedr="${t_sched}" # raw
+		ioschedc="${t_sched}" # to be canonicalized
+		if [[ "${ioschedr}" == "hdd" || "${ioschedr}" == "rotational" ]] ; then
+			[[ "${IOSCHED_HDD}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
+			[[ "${IOSCHED_HDD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
+			[[ "${IOSCHED_HDD}" == "bfq-streaming" ]] && ioschedr="bfq-streaming"
+		elif [[ "${ioschedr}" == "ssd" || "${ioschedr}" == "flash" ]] ; then
+			[[ "${IOSCHED_SSD}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
+			[[ "${IOSCHED_SSD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
+			[[ "${IOSCHED_SSD}" == "bfq-streaming" ]] && ioschedr="bfq-streaming"
+		fi
+		[[ "${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
+		[[ -z "${ioschedc}" ]] && continue
+		grep -q -E -e "(\[| |^)${ioschedc}(\]| |$)" "/sys/block/${x}/queue/scheduler" || continue
+		einfo "Setting ${ioschedr} for ${x}"
+		echo "${ioschedc}" > "/sys/block/${x}/queue/scheduler"
+		if [[ "${ioschedc}" == "bfq-throughput" ]] ; then
+			echo "0" > "/sys/block/${x}/queue/iosched/low_latency"
+			if grep -q -e "0" "/sys/block/${x}/queue/rotational" ; then
+				# SSD
+				echo "0" > "/sys/block/${x}/queue/iosched/slice_idle_us"
+			elif [[ "${HW_RAID}" == "1" ]] ; then
+				echo "0" > "/sys/block/${x}/queue/iosched/slice_idle_us"
+			fi
+		elif [[ "${ioschedc}" == "bfq-low-latency" ]] ; then
+			echo "1" > "/sys/block/${x}/queue/iosched/low_latency"
+		elif [[ "${ioschedc}" == "bfq-streaming" ]] ; then
+			echo "1" > "/sys/block/${x}/queue/iosched/low_latency"
+			echo "1" > "/sys/block/sdb/queue/iosched/strict_guarantees"
+		fi
+	fi
+}
+
 start()
 {
 	kv=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${EXTRAVERSION}-.*||g")
@@ -19,55 +62,12 @@ start()
 			[[ "${x}" =~ "loop"[0-9]+ ]] && continue
 			if grep -q -e "1" "/sys/block/${x}/queue/rotational" ; then
 				# HDD
-				if [[ -e "/sys/block/${x}/queue/scheduler" ]] ; then
-					t_sched="${IOSCHED_HDD}"
-					if (( "${k_major}" < 5 )) ; then
-						[[ "${t_sched}" == "none" ]] && t_sched="noop"
-					else
-						[[ "${t_sched}" == "noop" ]] && t_sched="none"
-					fi
-					ioschedr="${t_sched}" # raw
-					ioschedc="${t_sched}" # to be canonicalized
-					[[ "${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
-					einfo "Setting ${ioschedr} for ${x}"
-					echo "${ioschedc}" > "/sys/block/${x}/queue/scheduler"
-					if [[ "${ioschedr}" == "bfq-throughput" ]] ; then
-						echo "0" > "/sys/block/${x}/queue/iosched/low_latency"
-						[[ "${HW_RAID}" == "1" ]] && echo "0" > "/sys/block/${x}/queue/iosched/slice_idle_us" # Default 8000
-					elif [[ "${ioschedr}" == "bfq-low-latency" ]] ; then
-						echo "1" > "/sys/block/${x}/queue/iosched/low_latency" # Default 1
-					elif [[ "${ioschedr}" == "bfq-streaming" ]] ; then
-						echo "1" > "/sys/block/${x}/queue/iosched/low_latency"
-						# Low video drop rates according to documentation
-						echo "1" > "/sys/block/sdb/queue/iosched/strict_guarantees"
-					fi
-				fi
+				set_iosched "${IOSCHED_HDD}"
 			fi
 			if grep -q -e "0" "/sys/block/${x}/queue/rotational" || realpath "/sys/block/${x}/device" | grep -q "usb" ; then
 				# SSD
 				# USB flash reported as rotational.
-				if [[ -e "/sys/block/${x}/queue/scheduler" ]] ; then
-					t_sched="${IOSCHED_SSD}"
-					if (( "${k_major}" < 5 )) ; then
-						[[ "${t_sched}" == "none" ]] && t_sched="noop"
-					else
-						[[ "${t_sched}" == "noop" ]] && t_sched="none"
-					fi
-					ioschedr="${t_sched}" # raw
-					ioschedc="${t_sched}" # to be canonicalized
-					[[ "${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
-					einfo "Setting ${ioschedr} for ${x}"
-					echo "${ioschedc}" > "/sys/block/${x}/queue/scheduler"
-					if [[ "${ioschedr}" == "bfq-throughput" ]] ; then
-						echo "0" > "/sys/block/${x}/queue/iosched/low_latency"
-						echo "0" > "/sys/block/${x}/queue/iosched/slice_idle_us"
-					elif [[ "${ioschedr}" == "bfq-low-latency" ]] ; then
-						echo "1" > "/sys/block/${x}/queue/iosched/low_latency"
-					elif [[ "${ioschedr}" == "bfq-streaming" ]] ; then
-						echo "1" > "/sys/block/${x}/queue/iosched/low_latency"
-						echo "1" > "/sys/block/sdb/queue/iosched/strict_guarantees"
-					fi
-				fi
+				set_iosched "${IOSCHED_SSD}"
 			fi
 		done
 
@@ -78,45 +78,7 @@ start()
 			if [[ -e "/dev/disk/by-id/${id}" ]] ; then
 				p=$(realpath "/dev/disk/by-id/${id}")
 				x=$(basename "${p}")
-				[[ -z "${x}" ]] && continue
-				if [[ -e "/sys/block/${x}/queue/scheduler" ]] ; then
-					t_sched="${iosched}"
-					if (( "${k_major}" < 5 )) ; then
-						[[ "${t_sched}" == "none" ]] && t_sched="noop"
-					else
-						[[ "${t_sched}" == "noop" ]] && t_sched="none"
-					fi
-					ioschedr="${t_sched}" # raw
-					ioschedc="${t_sched}" # to be canonicalized
-					if [[ "${ioschedr}" == "hdd" || "${ioschedr}" == "rotational" ]] ; then
-						[[ "${IOSCHED_HDD}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
-						[[ "${IOSCHED_HDD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
-						[[ "${IOSCHED_HDD}" == "bfq-streaming" ]] && ioschedr="bfq-streaming"
-					elif [[ "${ioschedr}" == "ssd" || "${ioschedr}" == "flash" ]] ; then
-						[[ "${IOSCHED_SSD}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
-						[[ "${IOSCHED_SSD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
-						[[ "${IOSCHED_SSD}" == "bfq-streaming" ]] && ioschedr="bfq-streaming"
-					fi
-					[[ "${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
-					[[ -z "${ioschedc}" ]] && continue
-					grep -q -E -e "(\[| |^)${ioschedc}(\]| |$)" "/sys/block/${x}/queue/scheduler" || continue
-					einfo "Setting ${ioschedr} override for ${x}"
-					echo "${ioschedc}" > "/sys/block/${x}/queue/scheduler"
-					if [[ "${ioschedc}" == "bfq-throughput" ]] ; then
-						echo "0" > "/sys/block/${x}/queue/iosched/low_latency"
-						if grep -q -e "0" "/sys/block/${x}/queue/rotational" ; then
-							# SSD
-							echo "0" > "/sys/block/${x}/queue/iosched/slice_idle_us"
-						elif [[ "${HW_RAID}" == "1" ]] ; then
-							echo "0" > "/sys/block/${x}/queue/iosched/slice_idle_us"
-						fi
-					elif [[ "${ioschedc}" == "bfq-low-latency" ]] ; then
-						echo "1" > "/sys/block/${x}/queue/iosched/low_latency"
-					elif [[ "${ioschedc}" == "bfq-streaming" ]] ; then
-						echo "1" > "/sys/block/${x}/queue/iosched/low_latency"
-						echo "1" > "/sys/block/sdb/queue/iosched/strict_guarantees"
-					fi
-				fi
+				set_iosched "${iosched}"
 			fi
 		done
 	fi
