@@ -1,15 +1,20 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit linux-info meson toolchain-funcs
+EGIT_BRANCH="main"
+EGIT_REPO_URI="https://github.com/facebookincubator/oomd.git"
+
+inherit git-r3 linux-info meson toolchain-funcs
 
 DESCRIPTION="oomd is userspace Out-Of-Memory (OOM) killer for linux systems."
-HOMEPAGE="https://github.com/facebookincubator/oomd"
-LICENSE="GPL-2
-	test? ( all-rights-reserved )"
+LICENSE="
+	GPL-2
+	test? ( all-rights-reserved )
+"
 # src/oomd/util/FixtureTest.cpp contains all-rights-reserved
+HOMEPAGE="https://github.com/facebookincubator/oomd"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 PLUGINS_CORE=(
 	BaseKillPlugin
@@ -40,8 +45,8 @@ PLUGINS_SYSTEMD=(
 )
 # OpenRC is the default init system on Gentoo so diverge from upstream default
 # of systemd.
-IUSE+=" +boost_realtime doc examples +man +openrc plugins savedconfig
-+setup_check_hard -systemd test ${PLUGINS_CORE[@]/#/plugin_}
+IUSE+=" +boost_realtime doc examples +man +openrc plugins savedconfig \
++setup-check-hard -systemd test ${PLUGINS_CORE[@]/#/plugin_} \
 ${PLUGINS_SYSTEMD[@]/#/plugin_}"
 PLUGINS_CORE_RU=("${PLUGINS_CORE[@]/#/plugin_}")
 PLUGINS_CORE_RU=("${PLUGINS_CORE_RU[@]/%/? ( plugins )}")
@@ -60,11 +65,13 @@ REQUIRED_USE+="
 		plugin_PressureAbove
 		plugin_DumpCgroupOverview
 	)
-	plugins? ( || (
-		${PLUGINS_CORE[@]/#/plugin_}
-		${PLUGINS_SYSTEMD[@]/#/plugin_}
-		savedconfig
-		)     )
+	plugins? (
+		|| (
+			${PLUGINS_CORE[@]/#/plugin_}
+			${PLUGINS_SYSTEMD[@]/#/plugin_}
+			savedconfig
+		)
+	)
 	plugin_BaseKillPlugin? (
 		plugin_DumpKillInfoNoOp
 	)
@@ -107,7 +114,8 @@ REQUIRED_USE+="
 	)
 	plugin_SystemdRestart? (
 		plugin_BaseSystemdPlugin
-	)"
+	)
+"
 RDEPEND+=" dev-libs/jsoncpp
 	openrc? (
 		sys-apps/openrc[bash]
@@ -118,7 +126,8 @@ RDEPEND+=" dev-libs/jsoncpp
 			sys-process/schedtool
 		)
 	)
-	systemd? ( sys-apps/systemd )"
+	systemd? ( sys-apps/systemd )
+"
 DEPEND+=" test? ( dev-cpp/gtest )"
 GCC_V_MIN="8" # for c++17
 CLANG_V_MIN="6" # for c++17
@@ -126,126 +135,194 @@ BDEPEND+="
 	|| ( >=sys-devel/gcc-${GCC_V_MIN}[cxx]
 	     >=sys-devel/clang-${CLANG_V_MIN} )
 	>=dev-util/meson-0.45
-	virtual/pkgconfig"
+	virtual/pkgconfig
+"
 SLOT="0/${PV}"
-SRC_URI="
-https://github.com/facebookincubator/oomd/archive/v${PV}.tar.gz
-	-> ${PN}-${PV}.tar.gz"
+SRC_URI=""
 S="${WORKDIR}/${P}"
+PROPERTIES="live"
 RESTRICT="mirror"
 DOCS=( "${S}/CODE_OF_CONDUCT.md" "${S}/CONTRIBUTING.md" "${S}/README.md"
 	"${S}/docs" )
 PATCHES=( "${FILESDIR}/oomd-0.5.0-savedconfig.patch" )
 CGROUP_V2_MOUNT_POINT="${CGROUP_V2_MOUNT_POINT:=/sys/fs/cgroup}"
 
-# Conditional die
-cdie() {
-	if use setup_check_hard ; then
-		die "${1}"
+# Conditional message
+cmsg() {
+	if use setup-check-hard ; then
+		eerror "${1}"
 	else
 		ewarn "${1}"
+	fi
+}
+
+# Conditional die
+cdie() {
+	if use setup-check-hard ; then
+		die
 	fi
 }
 
 pkg_setup() {
 	linux-info_pkg_setup
 	if ! linux_config_exists ; then
-		cdie "Missing a .config in the kernel sources"
+cmsg
+cmsg "Missing a .config in the kernel sources"
+cmsg
+		cdie
 	fi
 	local kv="${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}" # Avoid $(EXTRAVERSION) bug
 	if ver_test ${kv} -lt 4.20 ; then
-		cdie \
-"You need a currently running kernel of >=4.20 for PSI (Pressure stall \
-information tracking) support"
+cmsg
+cmsg "You need a currently running kernel of >=4.20 for PSI (Pressure stall"
+cmsg "information tracking) support"
+cmsg
+		cdie
 	fi
 	if ! linux_chkconfig_present PSI ; then
-		cdie \
-"${PN} requires CONFIG_PSI=y in the kernel .config.  It can be found in: \
-General setup > CPU/Task time and stats accounting \
-> Pressure stall information tracking"
+cmsg
+cmsg "${PN} requires CONFIG_PSI=y in the kernel .config.  It can be found in:"
+cmsg "General setup > CPU/Task time and stats accounting >"
+cmsg "  Pressure stall information tracking"
+cmsg
+		cdie
 	fi
 	if ! linux_chkconfig_present CGROUPS ; then
-		cdie \
-"${PN} requires CONFIG_CGROUPS=y in the kernel .config.  It can be found in: \
-General setup > Control Group support"
+cmsg
+cmsg "${PN} requires CONFIG_CGROUPS=y in the kernel .config.  It can be found"
+cmsg "in General setup > Control Group support"
+cmsg
+		cdie
 	fi
 	if use systemd ; then
-		if ! grep -F -q \
-			-e 'systemd.unified_cgroup_hierarchy=1' \
-			/proc/cmdline ; then
-			cdie \
-"You must add systemd.unified_cgroup_hierarchy=1 to the kernel parameters of \
-the bootloader."
+		if ! grep -F -q -e 'systemd.unified_cgroup_hierarchy=1' \
+			/proc/cmdline
+		then
+cmsg
+cmsg "You must add systemd.unified_cgroup_hierarchy=1 to the kernel parameters"
+cmsg "of the bootloader."
+cmsg
+			cdie
 		fi
 	fi
 	if use openrc ; then
 		if grep -q -E -e '^rc_cgroup_mode="unified"' /etc/rc.conf ; then
-			einfo "Found cgroups v2 in OpenRC's /etc/rc.conf."
+einfo
+einfo "Found cgroups v2 in OpenRC's /etc/rc.conf."
+einfo
 		else
-			cdie \
-"Did not find cgroups v2 in OpenRC's /etc/rc.conf set exactly as \
-rc_cgroup_mode=\"unified\" and reboot."
+cmsg
+cmsg "Did not find cgroups v2 in OpenRC's /etc/rc.conf set exactly as"
+cmsg "rc_cgroup_mode=\"unified\" and reboot."
+cmsg
+			cdie
 		fi
 	fi
 	if [[ -d "${CGROUP_V2_MOUNT_POINT}/pids" ]] ; then
-		cdie \
-"Detected cgroup v1.  You must use non-hybrid cgroups v2 only monuted on \
-${CGROUP_V2_MOUNT_POINT}.  Set /etc/rc.conf to rc_cgroup_mode=\"unified\" and \
-reboot."
+cmsg
+cmsg "Detected cgroup v1.  You must use non-hybrid cgroups v2 only monuted on"
+cmsg "${CGROUP_V2_MOUNT_POINT}.  Set /etc/rc.conf to rc_cgroup_mode=\"unified\""
+cmsg "and reboot."
+cmsg
+		cdie
 	fi
 	if [[ ! -e "${CGROUP_V2_MOUNT_POINT}/cgroup.controllers" ]] ; then
-		cdie \
-"Could not detect non-hybrid cgroups v2 mounted on ${CGROUP_V2_MOUNT_POINT}.  \
-Set /etc/rc.conf to rc_cgroup_mode=\"unified\" and reboot."
+cmsg
+cmsg "Could not detect non-hybrid cgroups v2 mounted on"
+cmsg "${CGROUP_V2_MOUNT_POINT}.  Set /etc/rc.conf to rc_cgroup_mode=\"unified\""
+cmsg "and reboot."
+cmsg
+		cdie
 	fi
 	if ! linux_chkconfig_present PROC_FS ; then
-		cdie \
-"${PN} requires CONFIG_PROC_FS=y in the kernel .config.  It can be found in: \
-File systems > Pseudo filesystems > /proc file system support"
+cmsg
+cmsg "${PN} requires CONFIG_PROC_FS=y in the kernel .config.  It can be found"
+cmsg "in: File systems > Pseudo filesystems > /proc file system support"
+cmsg
+		cdie
 	fi
 	if ! linux_chkconfig_present SWAP ; then
 # Swap is used to delay livelock a little bit longer, see link for details
 # https://github.com/facebookincubator/oomd/blob/master/docs/production_setup.md#swap
-		cdie \
-"${PN} requires CONFIG_SWAP=y in the kernel .config.  It can be found in: \
-General setup > Support for paging of anonymous memory (swap)"
+cmsg
+cmsg "${PN} requires CONFIG_SWAP=y in the kernel .config.  It can be found in:"
+cmsg "General setup > Support for paging of anonymous memory (swap)"
+cmsg
+		cdie
 	fi
 	local mem_size=$(free -b | grep "Mem:" | sed -r -e "s|[ \t]+|\t|g" \
 		| cut -f 2 -d $'\t')
 	local swap_size=$(free -b | grep "Swap:" | sed -r -e "s|[ \t]+|\t|g" \
 		| cut -f 2 -d $'\t')
 	if (( ${swap_size} >= ${mem_size} )) ; then
-		einfo \
-"Passed swap requirements ${swap_size} bytes (swap) >= ${mem_size} bytes (physmem)"
+einfo
+einfo "Passed swap requirements ${swap_size} bytes (swap) >= ${mem_size} bytes"
+einfo "(physmem)"
+einfo
 	else
-		cdie "Upstream recommends swap be >=1x of physical memory"
+cmsg
+cmsg "Upstream recommends swap be >=1x of physical memory"
+cmsg
+		cdie
 	fi
 	CXX=$(tc-getCXX)
 	CC=$(tc-getCC)
 	if tc-is-gcc ; then
 		gcc_v=$(gcc-fullversion)
 		if ! ver_test ${gcc_v} -ge ${GCC_V_MIN} ; then
-			die \
-"Switch the GCC compiler to >=${GCC_V_MIN}.  Detected ${gcc_v} instead."
+eerror
+eerror "Switch the GCC compiler to >=${GCC_V_MIN}.  Detected ${gcc_v} instead."
+eerror
+			die
 		fi
 	elif tc-is-clang ; then
 		clang_v=$(clang-fullversion)
 		if ! ver_test ${clang_v} -ge ${CLANG_V_MIN} ; then
-			die \
-"Switch the Clang compiler to >=${CLANG_V_MIN}.  Detected ${clang_v} instead."
+eerror
+eerror "Switch the Clang compiler to >=${CLANG_V_MIN}.  Detected ${clang_v}"
+eerror "instead."
+eerror
+			die
 		fi
 	else
-		die \
-"Compiler is not supported.  Switch to GCC or Clang with c++17 support."
+eerror
+eerror "Compiler is not supported.  Switch to GCC or Clang with c++17 support."
+eerror
+		die
 	fi
 	if use openrc && ! use boost_realtime ; then
-		ewarn \
-"boost_realtime USE flag is strongly recommended when using the openrc USE \
-flag."
+ewarn
+ewarn "boost_realtime USE flag is strongly recommended when using the openrc"
+ewarn "USE flag."
+ewarn
 	fi
 	if ! use openrc && ! use systemd ; then
-		ewarn \
-"You are responsible for writing your own init system script for this daemon."
+ewarn
+ewarn "You are responsible for writing your own init system script for this"
+ewarn "daemon."
+ewarn
+	fi
+}
+
+src_unpack() {
+	git-r3_fetch
+	git-r3_checkout
+	cd "${S}" || die
+	local pv=$(grep -e "  version : " "${S}/meson.build" | cut -f 2 -d "'" | sed -e "s|v||g")
+	EXPECTED_PV="${PV%_*}"
+	if [[ "${pv}" != "${EXPECTED_PV}" ]] ; then
+eerror
+eerror "EXPECTED_PV:  ${EXPECTED_PV}"
+eerror "pv:  ${pv}"
+eerror
+eerror "Version mismatch detected.  Tell the ebuild maintainer bump the version."
+eerror
+eerror "  or"
+eerror
+eerror "Fork a local copy of the ebuild and bump the version, update the"
+eerror "*DEPENDS and patches."
+eerror
+		die
 	fi
 }
 
@@ -256,9 +333,7 @@ src_configure() {
 		local found=0
 		for y in ${req_plugins} ; do
 			y=${y/plugin_/}
-			if [[ ${y} == ${x} ]] ; then
-				found=1
-			fi
+			[[ ${y} == ${x} ]] && found=1
 		done
 		if (( ${found} == 0 )) ; then
 			rej_plugins+=( ${x} )
@@ -283,9 +358,7 @@ src_configure() {
 		for y in ${plugins} ; do
 			local found_new=1
 			for x in ${PLUGINS_CORE[@]} ${PLUGINS_SYSTEMD[@]} ; do
-				if [[ ${x}.cpp =~ ${y} ]] ; then
-					found_new=0
-				fi
+				[[ ${x}.cpp =~ ${y} ]] && found_new=0
 			done
 			if (( ${found_new} == 1 )) ; then
 				custom_plugins+=( ${y} )
@@ -319,11 +392,9 @@ src_install() {
 	cd "${BUILD_DIR}" || die
 	meson_src_install
 	cd "${S}" || die
-	if use doc ; then
-		einstalldocs
-	fi
+	use doc && einstalldocs
 	dodoc LICENSE
-	if use man ; then
+	if ! use man ; then
 		rm -rf "${ED}/usr/share/man" || die
 	fi
 	if ! use systemd ; then
@@ -349,28 +420,41 @@ src_install() {
 
 pkg_postinst() {
 	if use examples ; then
-		einfo \
-"The basic configuration example has been moved to \
-/usr/share/doc/oomd-${PV}/${PN}/oomd.json.bz2. Make sure you \
-\`mkdir -p /etc/oomd ; bzcat /usr/share/doc/oomd-${PV}/oomd.json.bz2 \
-> /etc/oomd/oomd.json\` if you want copy and hand edit the example."
+einfo
+einfo "The basic configuration example has been moved to"
+einfo "/usr/share/doc/oomd-${PV}/${PN}/oomd.json.bz2."
+einfo
+einfo "Make sure you"
+einfo
+einfo "  mkdir -p /etc/oomd"
+einfo "  bzcat /usr/share/doc/oomd-${PV}/oomd.json.bz2 > /etc/oomd/oomd.json"
+einfo
+einfo "if you want copy and hand edit the example."
+einfo
 	else
-		einfo \
-"By default your configuration should be stored in /etc/${PN}/oomd.json"
+einfo
+einfo "By default your configuration should be stored in /etc/${PN}/oomd.json"
+einfo
 	fi
 	if use openrc ; then
-		einfo "You need to \`rc-update add ${PN}\` to auto-start on boot."
-		einfo "If you want to run now, do \`rc-update restart ${PN}\`."
+einfo
+einfo "You need to \`rc-update add ${PN}\` to auto-start on boot."
+einfo "If you want to run now, do \`rc-update restart ${PN}\`."
+einfo
 	fi
 	if use systemd ; then
-		einfo "systemd users may need to do the following:"
-		einfo "systemctl stop ${PN} # for stoping the old installed instance"
-		einfo "systemctl enable ${PN} # for auto-starting on boot."
-		einfo "systemctl start ${PN} # for running now"
+einfo
+einfo "systemd users may need to do the following:"
+einfo
+einfo "  systemctl stop ${PN} # for stoping the old installed instance"
+einfo "  systemctl enable ${PN} # for auto-starting on boot."
+einfo "  systemctl start ${PN} # for running now"
+einfo
 	fi
 	if use boost_realtime ; then
-		ewarn \
-"Due to a potential lockup with realtime boosting ${PN}, make sure you have a \
-rescue CD or USB before you auto-start the services."
+ewarn
+ewarn "Due to a potential lockup with realtime boosting ${PN}, make sure you"
+ewarn "have a rescue CD or USB before you auto-start the services."
+ewarn
 	fi
 }
