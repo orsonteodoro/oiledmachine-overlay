@@ -22,6 +22,7 @@ REQUIRED_USE+="
 	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
 	cfi-icall? ( clang lto cfi-vcall )
 	cfi-vcall? ( clang lto )"
+PROPERTIES="live"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
