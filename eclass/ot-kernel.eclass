@@ -5085,6 +5085,7 @@ ewarn
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		if [[ "${work_profile}" =~ ("touchscreen-laptop") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
 		else
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
 		fi
