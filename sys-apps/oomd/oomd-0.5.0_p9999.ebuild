@@ -45,8 +45,8 @@ PLUGINS_SYSTEMD=(
 )
 # OpenRC is the default init system on Gentoo so diverge from upstream default
 # of systemd.
-IUSE+=" +boost_realtime doc examples +man +openrc plugins savedconfig \
-+setup-check-hard -systemd test ${PLUGINS_CORE[@]/#/plugin_} \
+IUSE+=" +boost_realtime doc examples +man +openrc plugins savedconfig
++setup-check-hard -systemd test ${PLUGINS_CORE[@]/#/plugin_}
 ${PLUGINS_SYSTEMD[@]/#/plugin_}"
 PLUGINS_CORE_RU=("${PLUGINS_CORE[@]/#/plugin_}")
 PLUGINS_CORE_RU=("${PLUGINS_CORE_RU[@]/%/? ( plugins )}")
@@ -132,8 +132,10 @@ DEPEND+=" test? ( dev-cpp/gtest )"
 GCC_V_MIN="8" # for c++17
 CLANG_V_MIN="6" # for c++17
 BDEPEND+="
-	|| ( >=sys-devel/gcc-${GCC_V_MIN}[cxx]
-	     >=sys-devel/clang-${CLANG_V_MIN} )
+	|| (
+		>=sys-devel/gcc-${GCC_V_MIN}[cxx]
+		>=sys-devel/clang-${CLANG_V_MIN}
+	)
 	>=dev-util/meson-0.45
 	virtual/pkgconfig
 "
@@ -142,8 +144,12 @@ SRC_URI=""
 S="${WORKDIR}/${P}"
 PROPERTIES="live"
 RESTRICT="mirror"
-DOCS=( "${S}/CODE_OF_CONDUCT.md" "${S}/CONTRIBUTING.md" "${S}/README.md"
-	"${S}/docs" )
+DOCS=(
+	"${S}/CODE_OF_CONDUCT.md"
+	"${S}/CONTRIBUTING.md"
+	"${S}/docs"
+	"${S}/README.md"
+)
 PATCHES=( "${FILESDIR}/oomd-0.5.0-savedconfig.patch" )
 CGROUP_V2_MOUNT_POINT="${CGROUP_V2_MOUNT_POINT:=/sys/fs/cgroup}"
 
