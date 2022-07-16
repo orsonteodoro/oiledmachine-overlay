@@ -1,7 +1,7 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 CMAKE_ECLASS=cmake
 inherit cmake-multilib java-pkg-opt-2
@@ -9,13 +9,15 @@ inherit flag-o-matic
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
 HOMEPAGE="https://libjpeg-turbo.org/ https://sourceforge.net/projects/libjpeg-turbo/"
-SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz
-	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz"
+SRC_URI="
+	mirror://sourceforge/${PN}/${P}.tar.gz
+	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz
+"
 
 LICENSE="BSD IJG ZLIB"
 SLOT="0/0.2"
 if [[ "$(ver_cut 3)" -lt 90 ]] ; then
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris ~x86-solaris"
 fi
 IUSE="+asm cpu_flags_arm_neon java static-libs"
 IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang hardened lto shadowcallstack"
@@ -178,27 +180,28 @@ BDEPEND+=" clang? ( || ( $(gen_lto_bdepend 10 14) ) )"
 BDEPEND+=" lto? ( clang? ( || ( $(gen_lto_bdepend 11 14) ) ) )"
 BDEPEND+=" shadowcallstack? ( arm64? ( || ( $(gen_shadowcallstack_bdepend 10 14) ) ) )"
 
-BDEPEND+=" >=dev-util/cmake-3.16.5
+BDEPEND+="
+	>=dev-util/cmake-3.16.5
 	amd64? ( ${ASM_DEPEND} )
-	x86? ( ${ASM_DEPEND} )
 	amd64-linux? ( ${ASM_DEPEND} )
+	x86? ( ${ASM_DEPEND} )
 	x86-linux? ( ${ASM_DEPEND} )
+	x64-cygwin? ( ${ASM_DEPEND} )
 	x64-macos? ( ${ASM_DEPEND} )
-	x64-cygwin? ( ${ASM_DEPEND} )"
+"
 
-DEPEND="${COMMON_DEPEND}
-	java? ( >=virtual/jdk-1.8:*[-headless-awt] )"
+DEPEND="
+	${COMMON_DEPEND}
+	java? ( >=virtual/jdk-1.8:*[-headless-awt] )
+"
 
-RDEPEND="${COMMON_DEPEND}
-	java? ( >=virtual/jre-1.8:* )"
+RDEPEND="
+	${COMMON_DEPEND}
+	java? ( >=virtual/jre-1.8:* )
+"
 PDEPEND=" pgo? ( media-video/mpv )"
 
 MULTILIB_WRAPPED_HEADERS=( /usr/include/jconfig.h )
-
-PATCHES=(
-	# Upstream patch
-	"${FILESDIR}"/${P}-arm64-relro.patch
-)
 
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -243,18 +246,6 @@ src_prepare() {
 		cat >> CMakeLists.txt <<EOF || die
 add_executable(${FILE%.c} ${FILE})
 install(TARGETS ${FILE%.c})
-EOF
-	done
-
-	for FILE in ../debian/extra/exifautotran; do
-		cat >> CMakeLists.txt <<EOF || die
-install(FILES \${CMAKE_CURRENT_SOURCE_DIR}/${FILE} DESTINATION \${CMAKE_INSTALL_BINDIR})
-EOF
-	done
-
-	for FILE in ../debian/extra/*.[0-9]*; do
-		cat >> CMakeLists.txt <<EOF || die
-install(FILES \${CMAKE_CURRENT_SOURCE_DIR}/${FILE} DESTINATION \${CMAKE_INSTALL_MANDIR}/man${FILE##*.})
 EOF
 	done
 
@@ -466,6 +457,15 @@ _configure_pgx() {
 		)
 	fi
 
+	# We should tell the test suite which floating-point flavor we are
+	# expecting: https://github.com/libjpeg-turbo/libjpeg-turbo/issues/597
+	# For now, mark loong as fp-contract.
+	if use loong; then
+		mycmakeargs+=(
+			-DFLOATTEST=fp-contract
+		)
+	fi
+
 	# mostly for Prefix, ensure that we use our yasm if installed and
 	# not pick up host-provided nasm
 	if has_version -b dev-lang/yasm && ! has_version -b dev-lang/nasm; then
@@ -654,6 +654,8 @@ _install_once() {
 	einstalldocs
 
 	newdoc "${WORKDIR}"/debian/changelog changelog.debian
+	dobin "${WORKDIR}"/debian/extra/exifautotran
+	doman "${WORKDIR}"/debian/extra/*.[0-9]*
 
 	docinto html
 	dodoc -r "${S}"/doc/html/.
