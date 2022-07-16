@@ -32,6 +32,7 @@ REQUIRED_USE+="
 	pgo_trainer_test_suite? ( pgo )
 	tcmalloc? ( bolt )
 "
+PROPERTIES="live"
 RESTRICT="!test? ( test )"
 
 RDEPEND="
