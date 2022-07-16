@@ -11,9 +11,9 @@ KEYWORDS=\
 IUSE="4_14 5_4 5_10 5_15"
 RDEPEND="
 	4_14? ( ~sys-kernel/ot-sources-4.14.288 )
-	5_4? ( ~sys-kernel/ot-sources-5.4.205 )
-	5_10? ( ~sys-kernel/ot-sources-5.10.130 )
-	5_15? ( ~sys-kernel/ot-sources-5.15.54 )
+	5_4? ( ~sys-kernel/ot-sources-5.4.206 )
+	5_10? ( ~sys-kernel/ot-sources-5.10.131 )
+	5_15? ( ~sys-kernel/ot-sources-5.15.55 )
 "
 REQUIRED_USE=""
 SLOT="0/${PV}"
