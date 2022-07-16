@@ -65,12 +65,12 @@ get_id() {
 	for x in $(ls "/dev/disk/by-id") ; do
 		for a in ${ALGS[@]} ; do
 			which "${a}" 2>/dev/null 1>/dev/null || continue
-			h=$(echo "${x}" | "${a}" | cut -f 1 -d " ")
+			h=$(echo "${x};${SALT}" | "${a}" | cut -f 1 -d " ")
 			if [[ "${h}" == "${arg}" ]] ; then
 				echo "${x}"
 				return
 			fi
-			h=$(echo -n "${x}" | "${a}" | cut -f 1 -d " ")
+			h=$(echo -n "${x};${SALT}" | "${a}" | cut -f 1 -d " ")
 			if [[ "${h}" == "${arg}" ]] ; then
 				echo "${x}"
 				return
