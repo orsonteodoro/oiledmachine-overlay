@@ -40,7 +40,6 @@ BDEPEND+="
 	>=dev-util/cmake-3.5.1
 	test? (
 		>=dev-cpp/benchmark-1.5.2
-		>=dev-cpp/gflags-2.2.0[${MULTILIB_USEDEP}]
 	)
 "
 RESTRICT="test"
@@ -93,7 +92,6 @@ src_configure() {
 			-DgRPC_ZLIB_PROVIDER=package
 			-DgRPC_BUILD_TESTS=$(usex test)
 			-DCMAKE_CXX_STANDARD=17
-			$(usex test '-DgRPC_GFLAGS_PROVIDER=package' '')
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
 		CMAKE_USE_DIR="${BUILD_DIR}" \
