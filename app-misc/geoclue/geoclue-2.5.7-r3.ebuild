@@ -12,9 +12,9 @@ DESCRIPTION="A location information D-Bus service"
 HOMEPAGE="https://gitlab.freedesktop.org/geoclue/geoclue/wikis/home"
 SRC_URI="https://gitlab.freedesktop.org/geoclue/${PN}/-/archive/${PV}/${P}.tar.bz2
 fix-regression-142? (
-https://gitlab.freedesktop.org/geoclue/geoclue/-/commit/194529c7e7123b06d41eb8025cd4375aba271068
+https://gitlab.freedesktop.org/geoclue/geoclue/-/commit/194529c7e7123b06d41eb8025cd4375aba271068.patch
 	-> geoclue-194529c.patch
-https://gitlab.freedesktop.org/geoclue/geoclue/-/commit/715cfbf5bec8002fb1e9759b6c34bc070f977807
+https://gitlab.freedesktop.org/geoclue/geoclue/-/commit/715cfbf5bec8002fb1e9759b6c34bc070f977807.patch
 	-> geoclue-715cfbf.patch
 )
 "
@@ -22,7 +22,8 @@ https://gitlab.freedesktop.org/geoclue/geoclue/-/commit/715cfbf5bec8002fb1e9759b
 LICENSE="LGPL-2.1+ GPL-2+"
 SLOT="2.0"
 KEYWORDS="~alpha amd64 arm arm64 ~ia64 ~mips ppc ppc64 ~riscv ~sparc x86"
-IUSE="+fix-regression-142 +introspection gtk-doc modemmanager test vala zeroconf"
+IUSE=" +introspection gtk-doc modemmanager vala zeroconf"
+IUSE+=" +fix-regression-142 test"
 REQUIRED_USE="vala? ( introspection )"
 
 DEPEND="
@@ -96,8 +97,10 @@ src_prepare() {
 		einfo "Reverting 194529c and 715cfbf to resolve the following:"
 		einfo "Failed to create query: No WiFi devices available"
 		einfo
-		eapply -R "${DISTDIR}/geoclue-194529c.patch"
-		eapply -R "${DISTDIR}/geoclue-715cfbf.patch"
+		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+		die
+		eapply -R "${EDISTDIR}/geoclue-194529c.patch"
+		eapply -R "${EDISTDIR}/geoclue-715cfbf.patch"
 	fi
 }
 
