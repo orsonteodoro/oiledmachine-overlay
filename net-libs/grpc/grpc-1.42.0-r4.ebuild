@@ -7,13 +7,15 @@ inherit cmake-utils multilib-minimal
 
 DESCRIPTION="Modern open source high performance RPC framework"
 HOMEPAGE="https://www.grpc.io"
-LICENSE="Apache-2.0
+LICENSE="
+	Apache-2.0
 	BSD
 	BSD-2 GPL-2+
 	GPL-2
 	MIT
 	MPL-2.0
-	Unlicense"
+	Unlicense
+"
 # BSD third_party/address_sorting/LICENSE
 # BSD third_party/upb/LICENSE
 # GPL-2 third_party/xxhash/tests/bench/LICENSE
@@ -26,21 +28,28 @@ SLOT_MAJ="0"
 SLOT="${SLOT_MAJ}/20.142" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
 # third_party last update: 20211103
 RDEPEND+="
-	~dev-cpp/abseil-cpp-20210324.2:=[${MULTILIB_USEDEP},cxx17(+)]
+	 ~dev-cpp/abseil-cpp-20210324.2:=[${MULTILIB_USEDEP},cxx17(+)]
 	>=dev-libs/openssl-1.1.1:0=[-bindist(-),${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-3.18.1:=[${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2021.09.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]"
-DEPEND+=" ${RDEPEND}
+	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]
+"
+DEPEND+=" ${RDEPEND}"
+BDEPEND+="
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	>=dev-util/cmake-3.5.1
 	test? (
 		>=dev-cpp/benchmark-1.6.0
 		>=dev-cpp/gflags-2.2.0[${MULTILIB_USEDEP}]
-	)"
-BDEPEND+=" >=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
+	)
+"
 RESTRICT="test"
 MY_PV="${PV//_pre/-pre}"
-SRC_URI="https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="
+https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz
+	-> ${P}.tar.gz
+"
 S="${WORKDIR}/${PN}-${MY_PV}"
 DOCS=( AUTHORS CONCEPTS.md README.md TROUBLESHOOTING.md doc/. )
 

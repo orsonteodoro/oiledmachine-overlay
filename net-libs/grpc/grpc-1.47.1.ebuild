@@ -25,15 +25,15 @@ LICENSE="
 KEYWORDS="~amd64 ~ppc64 ~x86"
 IUSE+=" doc examples test"
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/21.143" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
-# third_party last update: 20211103
+SLOT="${SLOT_MAJ}/25.147" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+# third_party last update: 20220615
 RDEPEND+="
-	 ~dev-cpp/abseil-cpp-20211102.0:=[${MULTILIB_USEDEP},cxx17(+)]
+	 ~dev-cpp/abseil-cpp-20220623.0:=[${MULTILIB_USEDEP},cxx17(+)]
 	>=dev-libs/openssl-1.1.1:0=[-bindist(-),${MULTILIB_USEDEP}]
-	>=dev-libs/protobuf-3.18.1:=[${MULTILIB_USEDEP}]
+	>=dev-libs/protobuf-3.19.4:=[${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2021.09.01:=[${MULTILIB_USEDEP}]
-	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.11:=[${MULTILIB_USEDEP}]
+	>=net-dns/c-ares-1.17.2:=[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.2.12:=[${MULTILIB_USEDEP}]
 "
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
