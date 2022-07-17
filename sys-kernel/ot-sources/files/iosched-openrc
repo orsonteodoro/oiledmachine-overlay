@@ -23,12 +23,12 @@ set_iosched() {
 		if [[ "${ioschedr}" == "hdd" || "${ioschedr}" == "rotational" ]] ; then
 			[[ "${IOSCHED_HDD}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
 			[[ "${IOSCHED_HDD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
-			[[ "${IOSCHED_HDD}" == "bfq-ionice-interactive" ]] && ioschedr="bfq-ionice-interactive"
+			[[ "${IOSCHED_HDD}" == "bfq-custom-interactive" ]] && ioschedr="bfq-custom-interactive"
 			[[ "${IOSCHED_HDD}" == "bfq-streaming" ]] && ioschedr="bfq-streaming"
 		elif [[ "${ioschedr}" == "ssd" || "${ioschedr}" == "flash" ]] ; then
 			[[ "${IOSCHED_SSD}" == "bfq-throughput" ]] && ioschedr="bfq-throughput"
 			[[ "${IOSCHED_SSD}" == "bfq-low-latency" ]] && ioschedr="bfq-low-latency"
-			[[ "${IOSCHED_SSD}" == "bfq-ionice-interactive" ]] && ioschedr="bfq-ionice-interactive"
+			[[ "${IOSCHED_SSD}" == "bfq-custom-interactive" ]] && ioschedr="bfq-custom-interactive"
 			[[ "${IOSCHED_SSD}" == "bfq-streaming" ]] && ioschedr="bfq-streaming"
 		fi
 		[[ "${ioschedr}" =~ "bfq" ]] && ioschedc="bfq"
@@ -47,8 +47,9 @@ set_iosched() {
 		elif [[ "${ioschedc}" == "bfq-low-latency" ]] ; then
 			# Use automatic weight adjustments
 			echo "1" > "/sys/block/${x}/queue/iosched/low_latency"
-		elif [[ "${ioschedc}" == "bfq-ionice-interactive" ]] ; then
+		elif [[ "${ioschedc}" == "bfq-custom-interactive" ]] ; then
 			# Use manual weight adjustments via ionice
+			# https://docs.kernel.org/block/bfq-iosched.html#per-process-ioprio-and-weight
 			echo "0" > "/sys/block/${x}/queue/iosched/low_latency"
 			echo "1" > "/sys/block/sdb/queue/iosched/strict_guarantees"
 		elif [[ "${ioschedc}" == "bfq-streaming" ]] ; then

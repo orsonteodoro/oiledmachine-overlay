@@ -4864,7 +4864,7 @@ ot-kernel_set_iosched() {
 		elif [[ "${s}" == "bfq-throughput" ]] ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_BFQ"
 			s="bfq"
-		elif [[ "${s}" == "bfq-ionice-interactive" ]] ; then
+		elif [[ "${s}" == "bfq-custom-interactive" ]] ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_BFQ"
 			s="bfq"
 		elif [[ "${s}" == "deadline" ]] && ver_test ${K_MAJOR_MINOR} -lt 5  ; then
@@ -4968,17 +4968,17 @@ ot-kernel_iosched_interactive() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_iosched_ionice_interactive
+# @FUNCTION: ot-kernel_iosched_custom_interactive
 # @DESCRIPTION:
 # Configures the I/O scheduler for manual interactivity adjustments via
 # ionice.
-ot-kernel_iosched_ionice_interactive() {
+ot-kernel_iosched_custom_interactive() {
 	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
-		ot-kernel_set_iosched "none" "bfq-ionice-interactive"
+		ot-kernel_set_iosched "none" "bfq-custom-interactive"
 	elif ot-kernel_have_ssd ; then
 		ot-kernel_set_iosched "none" ""
 	elif ot-kernel_have_hdd ; then
-		ot-kernel_set_iosched "" "bfq-ionice-interactive"
+		ot-kernel_set_iosched "" "bfq-custom-interactive"
 	else
 		ot-kernel_set_iosched "none" "none"
 	fi
@@ -5248,7 +5248,7 @@ ewarn
 		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
 			ot-kernel_iosched_builder_throughput
 		else
-			ot-kernel_iosched_ionice_interactive
+			ot-kernel_iosched_custom_interactive
 		fi
 	elif [[ "${work_profile}" == "renderfarm-dedicated" \
 		|| "${work_profile}" == "renderfarm-workstation" ]] ; then

@@ -1109,7 +1109,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       This option does automatic weight adjustments, but can still be inferior in
       some scenarios.
 
-      bfq-ionice-interactive - Variation optimized for precise interactivity
+      bfq-custom-interactive - Variation optimized for precise interactivity
       under high I/O.  This option requires the use of ionice to manually adjust
       the weights manipulating the priority class (-c in ionice) and the class
       data (-n in ionice).  Work profiles notorious for high I/O such as
