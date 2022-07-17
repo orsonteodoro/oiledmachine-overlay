@@ -4864,6 +4864,9 @@ ot-kernel_set_iosched() {
 		elif [[ "${s}" == "bfq-throughput" ]] ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_BFQ"
 			s="bfq"
+		elif [[ "${s}" == "bfq-ionice-interactive" ]] ; then
+			ot-kernel_y_configopt "CONFIG_IOSCHED_BFQ"
+			s="bfq"
 		elif [[ "${s}" == "deadline" ]] && ver_test ${K_MAJOR_MINOR} -lt 5  ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_DEADLINE"
 		elif [[ "${s}" == "mq-deadline" ]] ; then
@@ -4960,6 +4963,22 @@ ot-kernel_iosched_interactive() {
 		ot-kernel_set_iosched "none" ""
 	elif ot-kernel_have_hdd ; then
 		ot-kernel_set_iosched "" "bfq-low-latency"
+	else
+		ot-kernel_set_iosched "none" "none"
+	fi
+}
+
+# @FUNCTION: ot-kernel_iosched_ionice_interactive
+# @DESCRIPTION:
+# Configures the I/O scheduler for manual interactivity adjustments via
+# ionice.
+ot-kernel_iosched_ionice_interactive() {
+	if ot-kernel_have_ssd && ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "none" "bfq-ionice-interactive"
+	elif ot-kernel_have_ssd ; then
+		ot-kernel_set_iosched "none" ""
+	elif ot-kernel_have_hdd ; then
+		ot-kernel_set_iosched "" "bfq-ionice-interactive"
 	else
 		ot-kernel_set_iosched "none" "none"
 	fi
@@ -5229,7 +5248,7 @@ ewarn
 		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
 			ot-kernel_iosched_builder_throughput
 		else
-			ot-kernel_iosched_interactive
+			ot-kernel_iosched_ionice_interactive
 		fi
 	elif [[ "${work_profile}" == "renderfarm-dedicated" \
 		|| "${work_profile}" == "renderfarm-workstation" ]] ; then
@@ -6406,16 +6425,23 @@ eerror
 	fi
 	mkdir -p "${T}/conf.d"
 
+	local salt=$(dd if=/dev/random bs=40 count=1 2>/dev/null | sha256sum | cut -f 1 -d " ")
+
 ################################################################################
 	cat <<EOF > "${T}/conf.d/iosched-${extraversion}" || die
 # See metadata.xml or epkginfo -x ${PN}::oiledmachine-overlay for details
 IOSCHED_OVERRIDES="${OT_KERNEL_IOSCHED_OVERRIDE}"
 
 # Produced from:
-# t="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX" ; echo "\${t}" | sha256sum | cut -f 1 -d " "
+# SALT="..." ; t="ata-XXX_XXXXXXXX-XXXXXXX_XX-XXXXXXXXXXXX;\${SALT}" ; echo "\${t}" | sha256sum | cut -f 1 -d " "
 # sha256sum, sha384sum, sha512sum supported
 # "echo \${t}" and "echo -n \${t}" supported
 IOSCHED_ANON_OVERRIDES=""
+
+# Changing this means to redo all anon ids in IOSCHED_ANON_OVERRIDES so don't
+# change it if already set.  This value prevents from brute force dictionary
+# lookup.
+SALT="${salt}"
 
 IOSCHED_HDD="${hdd_iosched}" # Do not change
 IOSCHED_SSD="${ssd_iosched}" # Do not change
