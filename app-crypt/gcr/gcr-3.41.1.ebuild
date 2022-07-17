@@ -1,48 +1,53 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 VALA_USE_DEPEND="vapigen"
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{10..11} )
 
 inherit gnome.org gnome2-utils meson python-any-r1 vala xdg
 inherit multilib-minimal
 
 DESCRIPTION="Libraries for cryptographic UIs and accessing PKCS#11 modules"
-HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"
 LICENSE="GPL-2+ LGPL-2+"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris"
+HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"
 SLOT="0/1" # subslot = suffix of libgcr-base-3 and co
-IUSE+=" gtk gtk-doc +introspection +vala"
+IUSE+=" gtk gtk-doc +introspection systemd +vala"
 REQUIRED_USE+=" vala? ( introspection )"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 \
-~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris"
 # For dependencies see: gcr-3.40.0/meson.build
 # Upstream says GPG is optional to avoid circular dependency
 DEPEND+="
+	>=app-crypt/gnupg-2.3.6
+	>=app-crypt/libsecret-0.20[${MULTILIB_USEDEP}]
 	>=app-crypt/p11-kit-0.19.0[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.44.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.2.2:0=[${MULTILIB_USEDEP}]
 	>=sys-apps/dbus-1[${MULTILIB_USEDEP}]
-	app-crypt/gnupg
 	gtk? ( >=x11-libs/gtk+-3.22:3[X,introspection?,${MULTILIB_USEDEP}] )
-	introspection? ( >=dev-libs/gobject-introspection-1.58:= )"
+	introspection? ( >=dev-libs/gobject-introspection-1.58:= )
+	systemd? ( sys-apps/systemd:=[${MULTILIB_USEDEP}] )
+"
 RDEPEND+=" ${DEPEND}
-	app-crypt/gnupg"
+	app-crypt/gnupg
+"
 BDEPEND+="
 	${PYTHON_DEPS}
-	gtk? ( dev-libs/libxml2:2[${MULTILIB_USEDEP}] )
 	dev-util/gdbus-codegen
 	dev-util/glib-utils
-	gtk-doc? ( >=dev-util/gtk-doc-1.9
-		app-text/docbook-xml-dtd:4.1.2 )
+	gtk? ( dev-libs/libxml2:2[${MULTILIB_USEDEP}] )
+	gtk-doc? (
+		>=dev-util/gtk-doc-1.9
+		>=dev-util/gi-docgen-2022.1
+	)
 	>=sys-devel/gettext-0.19.8[${MULTILIB_USEDEP}]
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	vala? ( $(vala_depend) )"
+	vala? ( $(vala_depend) )
+"
 
 PATCHES=(
-	"${FILESDIR}"/3.36.0-optional-vapi.patch
-	"${FILESDIR}"/3.36.0-meson-fix-gtk-doc-without-ui.patch
-	"${FILESDIR}"/3.36.0-add-multiabi-suffix.patch
+	"${FILESDIR}"/3.38.0-optional-vapi.patch
+	"${FILESDIR}"/3.36.0-add-multiabi-suffix.patch # oiledmachine overlay added
 )
 
 pkg_setup() {
@@ -50,8 +55,8 @@ pkg_setup() {
 }
 
 src_prepare() {
+	default
 	use vala && vala_src_prepare
-	xdg_src_prepare
 	multilib_copy_sources
 }
 

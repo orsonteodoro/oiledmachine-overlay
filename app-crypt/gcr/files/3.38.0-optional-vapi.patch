@@ -1,7 +1,7 @@
-From 525f5c7dbfdff6c1b24510a22eeffa804836e1bf Mon Sep 17 00:00:00 2001
+From 6d61774b8556eb4acfa5e7613ee25893d2a7e565 Mon Sep 17 00:00:00 2001
 From: Mart Raudsepp <leio@gentoo.org>
 Date: Tue, 18 Aug 2020 09:36:19 +0300
-Subject: [PATCH 5/6] build: Make vapi optional
+Subject: [PATCH 2/2] build: Make vapi optional
 
 ---
  gck/meson.build   | 2 ++
@@ -84,5 +84,5 @@ index 477412d..0b89b24 100644
  # gcr-viewer
  gcr_viewer = executable('gcr-viewer',
 -- 
-2.20.1
+2.26.2
 
