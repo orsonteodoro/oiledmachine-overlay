@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- only in the oiledmachine-overlay for this fork-->
   <maintainer type="person">
+    <!-- only in the oiledmachine-overlay for this ebuild fork -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -10,9 +10,6 @@
     Bear is a tool that generates a compilation database for clang tooling.
   </longdescription>
   <upstream>
-    <maintainer status="active">
-      <name>László Nagy</name>
-    </maintainer>
     <bugs-to>https://github.com/rizsotto/Bear/issues</bugs-to>
     <remote-id type="github">rizsotto/Bear</remote-id>
   </upstream>
