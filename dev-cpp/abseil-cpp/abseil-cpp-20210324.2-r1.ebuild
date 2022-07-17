@@ -7,16 +7,19 @@ PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-multilib python-any-r1 toolchain-funcs
 
 DESCRIPTION="Abseil Common Libraries (C++), LTS Branch"
-LICENSE="Apache-2.0
-	 test? ( BSD )"
+LICENSE="
+	Apache-2.0
+	test? ( BSD )
+"
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0/${PV}"
 IUSE+=" cxx17 test"
-BDEPEND+=" ${PYTHON_DEPS}
-	   test? ( sys-libs/timezone-data )"
-# yes, it needs SOURCE, not just installed one
-# Uses master, see
+BDEPEND+="
+	${PYTHON_DEPS}
+	test? ( sys-libs/timezone-data )
+"
+# It uses the master branch source code, see
 # https://github.com/abseil/abseil-cpp/blob/20210324.2/CMake/Googletest/CMakeLists.txt.in
 GTEST_COMMIT="e2239ee6043f73722e7aa812a459f54a28552929" # Up to tag date version
 GTEST_FILE="gtest-1.11.0.tar.gz"
@@ -24,7 +27,8 @@ SRC_URI="
 https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/google/googletest/archive/${GTEST_COMMIT}.tar.gz
-	-> ${GTEST_FILE}"
+	-> ${GTEST_FILE}
+"
 RESTRICT="!test? ( test ) mirror"
 
 PATCHES=(
@@ -33,19 +37,19 @@ PATCHES=(
 
 src_prepare() {
 	cmake-utils_src_prepare
-	# un-hardcode abseil compiler flags
+	# Un-hardcode abseil compiler flags
 	sed -i \
 		-e '/"-maes",/d' \
 		-e '/"-msse4.1",/d' \
 		-e '/"-mfpu=neon"/d' \
 		-e '/"-march=armv8-a+crypto"/d' \
 		absl/copts/copts.py || die
-	# now generate cmake files
+	# Now generate cmake files
 	python_fix_shebang absl/copts/generate_copts.py
 	absl/copts/generate_copts.py || die
 	if use test ; then
 		sed -i 's/-Werror//g' \
-"${WORKDIR}/googletest-${GTEST_COMMIT}"/googletest/cmake/internal_utils.cmake \
+"${WORKDIR}/googletest-${GTEST_COMMIT}/googletest/cmake/internal_utils.cmake" \
 			|| die
 	fi
 	multilib_copy_sources
@@ -63,8 +67,8 @@ src_configure() {
 	local mycmakeargs=(
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_LOCAL_GOOGLETEST_DIR="${WORKDIR}/googletest-${GTEST_COMMIT}"
-		$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '') # it has to be a useflag for some consumers
-		$(usex test -DBUILD_TESTING=ON '') #intentional usex
+		$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '')
+		$(usex test -DBUILD_TESTING=ON '')
 	)
 	cmake-multilib_src_configure
 }
