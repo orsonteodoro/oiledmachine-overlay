@@ -158,7 +158,6 @@ pkg_postinst()
 	einfo
 	einfo "Packages that depend on ${CATEGORY}/${PN}:${SLOT_MAJOR} must"
 	einfo "either set the RPATH or add a LD_LIBRARY_PATH wrapper to use"
-	einfo "${MY_PN} instead of legacy TBB.  You must verify that the"
-	einfo "linking is proper via ldd."
+	einfo "this slot.  You must verify that the linking is proper via ldd."
 	einfo
 }
