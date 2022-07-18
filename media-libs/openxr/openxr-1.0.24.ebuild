@@ -7,43 +7,56 @@ PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-utils eutils flag-o-matic python-any-r1 toolchain-funcs
 
 DESCRIPTION="Generated headers and sources for OpenXR loader."
-HOMEPAGE="https://khronos.org/openxr"
-LICENSE="Apache-2.0
+LICENSE="
+	Apache-2.0
 	BSD
 	CC-BY-4.0
-	MIT"
+	MIT
+"
 # See also https://github.com/KhronosGroup/OpenXR-SDK-Source/blob/release-1.0.18/.reuse/dep5
 KEYWORDS="~amd64"
+HOMEPAGE="https://khronos.org/openxr"
 ORG_GH="https://github.com/KhronosGroup"
 SLOT="0/${PV}"
 MY_PN="OpenXR-SDK-Source"
 SRC_URI="
 ${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 NV_DRIVER_VERSION_VULKAN="390.132"
 IUSE+=" doc gles2 +system-jsoncpp video_cards_amdgpu
 video_cards_i965 video_cards_iris
 video_cards_nvidia video_cards_radeonsi wayland xcb +xlib"
-REQUIRED_USE+=" ^^ ( xlib xcb wayland )"
-DEPEND+=" ${PYTHON_DEPS}
+REQUIRED_USE+="
+	^^ ( xlib xcb wayland )
+	|| (
+		video_cards_amdgpu
+		video_cards_i965
+		video_cards_iris
+		video_cards_nvidia
+		video_cards_radeonsi
+	)
+"
+DEPEND+="
+	${PYTHON_DEPS}
 	|| (
 		video_cards_amdgpu? (
-	media-libs/mesa[video_cards_radeonsi,vulkan]
-	x11-base/xorg-drivers[video_cards_amdgpu]
+			media-libs/mesa[video_cards_radeonsi,vulkan]
+			x11-base/xorg-drivers[video_cards_amdgpu]
 		)
 		video_cards_i965? (
-	media-libs/mesa[video_cards_i965,vulkan]
-	x11-base/xorg-drivers[video_cards_i965]
+			media-libs/mesa[video_cards_i965,vulkan]
+			x11-base/xorg-drivers[video_cards_i965]
 		)
 		video_cards_iris? (
-	media-libs/mesa[video_cards_iris,vulkan]
+			media-libs/mesa[video_cards_iris,vulkan]
 		)
 		video_cards_nvidia? (
-	>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
+			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
 		)
 		video_cards_radeonsi? (
-	media-libs/mesa[video_cards_radeonsi,vulkan]
-	x11-base/xorg-drivers[video_cards_radeonsi]
+			media-libs/mesa[video_cards_radeonsi,vulkan]
+			x11-base/xorg-drivers[video_cards_radeonsi]
 		)
 	)
 	media-libs/mesa[egl(+),gles2?,libglvnd(+)]
@@ -56,21 +69,24 @@ DEPEND+=" ${PYTHON_DEPS}
 		x11-libs/xcb-util-wm
 	)
 	xlib? (
-		x11-libs/libX11
 		x11-base/xorg-proto
+		x11-libs/libX11
 	)
 	wayland? (
 		dev-libs/wayland
 		dev-libs/wayland-protocols
 		media-libs/mesa[egl(+)]
-	)"
+	)
+"
 #	x11-libs/libXrandr
 #	x11-libs/libXxf86vm
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
+BDEPEND+="
+	${PYTHON_DEPS}
 	$(python_gen_any_dep '>=dev-python/jinja-2[${PYTHON_USEDEP}]')
 	>=dev-util/cmake-3.0
-	sys-devel/clang"
+	sys-devel/clang
+"
 CMAKE_BUILD_TYPE=Release
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-release-${PV}"
