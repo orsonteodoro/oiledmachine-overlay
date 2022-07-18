@@ -10,4 +10,7 @@
     <remote-id type="github">maxbachmann/RapidFuzz</remote-id>
     <bugs-to>https://github.com/maxbachmann/RapidFuzz/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="cpp">Build as optimized</flag>
+  </use>
 </pkgmetadata>
