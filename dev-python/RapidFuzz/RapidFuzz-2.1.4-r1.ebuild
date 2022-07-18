@@ -3,6 +3,8 @@
 
 EAPI=8
 
+MY_PN="${PN,,}"
+
 PYTHON_COMPAT=( python3_{8..10} )
 inherit distutils-r1
 
@@ -22,8 +24,6 @@ DEPEND+="
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${PYTHON_DEPS}"
-SRC_URI="
-https://github.com/maxbachmann/${PN}/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
-S="${WORKDIR}/${P}"
+SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
+S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
