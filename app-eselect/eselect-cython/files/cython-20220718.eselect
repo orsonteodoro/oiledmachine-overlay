@@ -115,10 +115,20 @@ describe_show() {
 
 do_show() {
     write_list_start "Current Cython symlinks:"
-    if [[ -L /usr/bin/cython ]]; then
-        local k_node_src="/usr/bin/cython"
-        local k_node_dest=$(canonicalise "/usr/bin/cython")
-        write_kv_list_entry "${k_node_src%/} ->" "${k_node_dest%/}"
+
+    local pyimpls=($(find /usr/lib/python-exec -maxdepth 1 -name "python2*" -type d -o -name "python3*" -type d -o -name "pypy" -type d | sed -e "s|/usr/lib/python-exec/||g"))
+
+    local k_cython_src=""
+    for epython in ${pyimpls[@]} ; do
+        if [[ -L /usr/lib/python-exec/${epython}/cython ]] ; then
+            k_cython_src="/usr/lib/python-exec/${epython}/cython"
+            break
+        fi
+    done
+
+    if [[ -n "${k_cython_src}" ]]; then
+        local k_cython_dest=$(canonicalise "${k_cython_src}")
+        write_kv_list_entry "${k_cython_src%/} ->" "${k_cython_dest%/}"
     else
         write_kv_list_entry "(unset)" ""
     fi
