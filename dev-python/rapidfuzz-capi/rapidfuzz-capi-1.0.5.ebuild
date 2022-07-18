@@ -21,7 +21,7 @@ DEPEND+=" ${PYTHON_DEPS}"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	${PYTHON_DEPS}
-	dev-python/setuptools[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-58.1.0[${PYTHON_USEDEP}]
 "
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
 S="${WORKDIR}/${MY_PN}-${PV}"
