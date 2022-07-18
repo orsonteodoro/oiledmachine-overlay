@@ -18,7 +18,21 @@ IUSE+=" "
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 DEPEND+=" ${PYTHON_DEPS}"
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}"
+BDEPEND+="
+	${PYTHON_DEPS}
+	>=dev-python/cython-3.0.0_alpha10[${PYTHON_USEDEP}]
+	>=dev-python/distro-1.7.0[${PYTHON_USEDEP}]
+	>=dev-python/packaging-21.3[${PYTHON_USEDEP}]
+	>=dev-python/pyparsing-3.0.9[${PYTHON_USEDEP}]
+	>=dev-python/rapidfuzz_capi-1.0.5[${PYTHON_USEDEP}]
+	>=dev-python/scikit-build-0.15.0[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-63.1.0[${PYTHON_USEDEP}]
+	>=dev-python/rapidfuzz_capi-1.0.5[${PYTHON_USEDEP}]
+	>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
+	  dev-util/cmake
+	  dev-util/ninja
+	>=sys-devel/gcc-10.2.1
+"
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
