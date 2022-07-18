@@ -25,14 +25,18 @@ DEPEND+="
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	${PYTHON_DEPS}
+	>=dev-python/setuptools-63.2.0[${PYTHON_USEDEP}]
 	cpp? (
 		>=dev-python/cython-3.0.0_alpha10[${PYTHON_USEDEP}]
-		>=dev-python/rapidfuzz-capi-1.05[${PYTHON_USEDEP}]
-		>=dev-python/setuptools-42[${PYTHON_USEDEP}]
-		  dev-python/scikit-build[${PYTHON_USEDEP}]
-		  dev-python/typing-extensions
-		  dev-util/cmake
-		  dev-util/ninja
+		>=dev-python/distro-1.7.0[${PYTHON_USEDEP}]
+		>=dev-python/packaging-21.3[${PYTHON_USEDEP}]
+		>=dev-python/pyparsing-3.0.9[${PYTHON_USEDEP}]
+		>=dev-python/rapidfuzz-capi-1.0.5[${PYTHON_USEDEP}]
+		>=dev-python/scikit-build-0.15.0[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.3.0[${PYTHON_USEDEP}]
+		>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
+		>=dev-util/cmake-3.22.5
+		>=dev-util/ninja-1.10.2.3
 	)
 "
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
