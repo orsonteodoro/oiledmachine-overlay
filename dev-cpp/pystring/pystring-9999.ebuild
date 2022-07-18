@@ -1,21 +1,25 @@
 # Copyright 2020-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit flag-o-matic
+EGIT_BRANCH="master"
+EGIT_REPO_URI="https://github.com/imageworks/pystring.git"
+inherit flag-o-matic git-r3
 
-DESCRIPTION="C++ functions matching the interface and behavior of python string methods"
-HOMEPAGE="https://github.com/imageworks/pystring"
+DESCRIPTION="C++ functions matching the interface and behavior of python string
+methods"
 LICENSE="BSD"
-KEYWORDS="~amd64"
+# Live ebuild snapshots do not get keyworded
+HOMEPAGE="https://github.com/imageworks/pystring"
 SLOT="0/${PV}"
 IUSE+=" custom-cflags doc test"
 RDEPEND+="
 	|| (
 		sys-devel/gcc[cxx]
 		sys-libs/libcxx
-	)"
+	)
+"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
 	|| (
@@ -23,11 +27,10 @@ BDEPEND+="
 		sys-devel/clang
 	)
 	sys-apps/grep
-	sys-devel/libtool"
-SRC_URI="
-https://github.com/imageworks/pystring/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+	sys-devel/libtool
+"
 RESTRICT="mirror"
+S="${WORKDIR}/${P}"
 DOCS=( README )
 
 pkg_setup() {
@@ -35,15 +38,28 @@ pkg_setup() {
 		if [[ ${FEATURES} =~ test ]] ; then
 			:;
 		else
-			die \
-"You need to add FEATURES=test before running emerge/ebuild to run tests."
+eerror
+eerror "You need to add FEATURES=test before running emerge/ebuild to run"
+eerror "tests."
+eerror
+			die
 		fi
 	fi
-	if libtool --config | grep -q -e "linux-gnu/10.3.0" ; then
-		einfo "Libtool & GCC compatibility:  Pass"
+	local gcc_pv=$(\
+		gcc --version \
+		| head -n 1 \
+		| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+" \
+		| head -n 1)
+	if libtool --config | grep -q -e "linux-gnu/${gcc_pv}" ; then
+einfo
+einfo "Libtool & GCC compatibility:  Pass"
+einfo
 	else
-		eerror "Libtool & GCC compatibility:  Fail"
-		die "You need to \`emerge -1 libtool\` everytime GCC is updated."
+eerror
+eerror "Libtool & GCC compatibility:  Fail"
+eerror "You need to \`emerge -1 libtool\` everytime GCC is updated."
+eerror
+		die
 	fi
 }
 
@@ -56,7 +72,7 @@ src_configure() {
 	sed -i -e "s|/usr/lib|/usr/$(get_libdir)|g" Makefile || die
 	if use custom-cflags ; then
 		sed -i -e "s|-O3|${CXXFLAGS}|g" \
-			-e "s|CXXFLAGS =|CXXFLAGS = ${CXXFLAGS}|g" Makefile || die
+		-e "s|CXXFLAGS =|CXXFLAGS = ${CXXFLAGS}|g" Makefile || die
 	else
 		strip-flags
 		filter-flags -O*
