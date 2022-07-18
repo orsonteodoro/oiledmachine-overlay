@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer>
+		<!-- ebuild fork only on the oiledmachine-overlay -->
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
+	</maintainer>
+	<maintainer type="project">
+		<!-- ebuild originators -->
+		<email>python@gentoo.org</email>
+		<name>Python</name>
+	</maintainer>
+	<longdescription lang="en">
+		Cython is a language that makes writing C extensions for the Python
+		language as easy as Python itself. It's based on Pyrex, but supports
+		more cutting edge functionality and optimizations.
+
+		This is an ebuild fork for multislot Cython.
+
+		You must unemerge the distro version and use only the ebuilds
+		from the oiledmachine-overlay for multislot Cython.
+	</longdescription>
+	<upstream>
+		<remote-id type="pypi">Cython</remote-id>
+		<remote-id type="github">cython/cython</remote-id>
+	</upstream>
+
+	<slots>
+		<slot name="0">
+			For the 0.x series
+		</slot>
+		<slot name="3">
+			For the 3.x series
+		</slot>
+	</slots>
+</pkgmetadata>
