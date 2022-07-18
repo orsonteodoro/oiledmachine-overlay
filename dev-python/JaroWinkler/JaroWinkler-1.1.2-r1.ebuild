@@ -14,7 +14,7 @@ LICENSE=""
 HOMEPAGE="https://github.com/maxbachmann/JaroWinkler"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
-IUSE+=" "
+IUSE+=" cpp"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 DEPEND+=" ${PYTHON_DEPS}"
 RDEPEND+=" ${DEPEND}"
@@ -29,13 +29,19 @@ BDEPEND+="
 	>=dev-python/setuptools-63.1.0[${PYTHON_USEDEP}]
 	>=dev-python/rapidfuzz_capi-1.0.5[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
-	  dev-util/cmake
-	  dev-util/ninja
-	>=sys-devel/gcc-10.2.1
+	cpp? (
+		dev-util/cmake
+		dev-util/ninja
+		>=sys-devel/gcc-10.2.1
+	)
 "
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
+
+PATCHES=(
+	"${FILESDIR}/test.patch"
+)
 
 src_configure() {
 	local cython_pv=$(cython --version 2>&1 | cut -f 3 -d " " | sed -e "s|a|_alpha|g")
@@ -43,5 +49,6 @@ src_configure() {
 		eerror "Switch cython to >= 3.0.0_alpha10 via eselect-cython"
 		die
 	fi
+	export JAROWINKLER_IMPLEMENTATION=$(usex cpp "cpp" "python")
 	distutils-r1_src_configure
 }
