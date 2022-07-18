@@ -10,7 +10,7 @@ DESCRIPTION="The Levenshtein Python C extension module contains functions for
 fast computation of Levenshtein distance and string similarity"
 LICENSE="GPL-2+"
 HOMEPAGE="https://github.com/maxbachmann/Levenshtein"
-# KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Distro repo missing cython 3.0_a10
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
 IUSE+=" "
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
