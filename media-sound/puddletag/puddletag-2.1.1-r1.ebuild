@@ -10,7 +10,7 @@ inherit distutils-r1 xdg
 DESCRIPTION="Audio tag editor"
 HOMEPAGE="http://docs.puddletag.net/"
 LICENSE="GPL-2 GPL-3"
-# KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86" # Missing >=PyQT-5.15.7 in distro repo
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 DOCS=( changelog NEWS THANKS TODO )
 RESTRICT="mirror"
 SLOT="0"
@@ -24,14 +24,14 @@ RDEPEND+=" ${PYTHON_DEPS}
 	$(python_gen_cond_dep 'dev-python/wheel[${PYTHON_USEDEP}]')
 	>=dev-python/configobj-5.0.6[${PYTHON_USEDEP}]
 	>=dev-python/markdown-3.1.1[${PYTHON_USEDEP}]
-	>=dev-python/PyQt5-5.15.7[${PYTHON_USEDEP},svg,gui,widgets]
-	>=dev-python/PyQt5-sip-12.11.0[${PYTHON_USEDEP}]
+	>=dev-python/PyQt5-5.15.6[${PYTHON_USEDEP},svg,gui,widgets]
+	>=dev-python/PyQt5-sip-12.9.0[${PYTHON_USEDEP}]
 	>=dev-python/PyRSS2Gen-1.1[${PYTHON_USEDEP}]
-	>=dev-python/pyparsing-3.0.9[${PYTHON_USEDEP}]
+	>=dev-python/pyparsing-3.0.7[${PYTHON_USEDEP}]
 	>=dev-python/sphinx-bootstrap-theme-0.4.13[${PYTHON_USEDEP}]
 	>=dev-python/sphinx-1.4.8[${PYTHON_USEDEP}]
 	>=media-libs/mutagen-1.45.1[${PYTHON_USEDEP}]
-	amg? ( >=dev-python/lxml-4.9.1[${PYTHON_USEDEP}] )
+	amg? ( >=dev-python/lxml-4.7.1[${PYTHON_USEDEP}] )
 	audioread? (
 		>=dev-python/audioread-2.1.9[${PYTHON_USEDEP},gstreamer]
 		  dev-python/gst-python:1.0[${PYTHON_USEDEP}]
@@ -42,8 +42,8 @@ RDEPEND+=" ${PYTHON_DEPS}
 		>=media-libs/chromaprint-0.6[tools]
 	)
 	fuzz-matching? (
-		>=dev-python/Levenshtein-0.18.0[${PYTHON_USEDEP}]
-		>=dev-python/RapidFuzz-2.0.2[${PYTHON_USEDEP}]
+		>=dev-python/Levenshtein-0.16.0[${PYTHON_USEDEP}]
+		>=dev-python/RapidFuzz-1.8.3[${PYTHON_USEDEP}]
 	)
 	musicbrainz? ( >=dev-python/python-musicbrainz-0.7.4-r1[${PYTHON_USEDEP}] )
 	pyacoustid? ( >=dev-python/pyacoustid-1.2.2[${PYTHON_USEDEP}] )
