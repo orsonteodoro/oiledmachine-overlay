@@ -225,7 +225,7 @@ gen_openexr_pairs() {
 		echo "
 			(
 				~media-libs/openexr-${v}:=
-				~media-libs/imath-${v}:=
+				~dev-libs/imath-${v}:=
 			)
 		"
 	done
