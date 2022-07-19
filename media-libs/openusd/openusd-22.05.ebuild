@@ -256,7 +256,9 @@ src_install() {
 			fi
 		done
 
-		mv "${ED}/usr/$(get_libdir)/${PN}/"{bin,.bin} || die
+		if [[ -d "${ED}/usr/$(get_libdir)/${PN}/bin" ]] ; then
+			mv "${ED}/usr/$(get_libdir)/${PN}/"{bin,.bin} || die
+		fi
 
 		UTILS_LIST=(
 			sdffilter
@@ -280,12 +282,14 @@ src_install() {
 		# Setting LD_PRELOAD for jemalloc is still required or you may get a segfault
 		exeinto /usr/lib64/openusd/bin
 		for u in ${UTILS_LIST[@]} ; do
-			einfo "Creating wrapper for ${u}"
-			cat << EOF > "${T}/${u}"
+			if [[ -e "${ED}/usr/$(get_libdir)/${PN}/.bin/${u}" ]] ; then
+				einfo "Creating wrapper for ${u}"
+				cat << EOF > "${T}/${u}"
 #!/bin/bash
-LD_PRELOAD="/usr/$(get_libdir)/openusd/$(get_libdir)/libjemalloc.so" /usr/$(get_libdir)/${PN}/.bin/${u} "\$@"
+LD_PRELOAD="/usr/$(get_libdir)/openusd/$(get_libdir)/libjemalloc.so" "/usr/$(get_libdir)/${PN}/.bin/${u}" "\$@"
 EOF
-			doexe "${T}/${u}"
+				doexe "${T}/${u}"
+			fi
 		done
 
 
