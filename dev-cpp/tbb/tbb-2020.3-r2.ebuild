@@ -10,20 +10,18 @@ PV2="$(ver_cut 2)"
 MY_PV="${PV1}_U${PV2}"
 
 DESCRIPTION="High level abstract threading library"
-HOMEPAGE="https://www.threadingbuildingblocks.org"
-SRC_URI="https://github.com/intel/${PN}/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="Apache-2.0"
+KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv ~sparc x86
+~amd64-linux ~x86-linux"
+HOMEPAGE="https://www.threadingbuildingblocks.org"
 SLOT_MAJOR="2"
 SLOT="${SLOT_MAJOR}/${PV}"
-KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x86-linux"
 IUSE="debug examples"
-
 DEPEND="!<dev-cpp/tbb-2021:0"
 RDEPEND="${DEPEND}"
+SRC_URI="https://github.com/intel/${PN}/archive/${MY_PV}.tar.gz -> ${P}.tar.gz"
 S="${WORKDIR}/oneTBB-${MY_PV}"
-
 DOCS=( CHANGES README README.md doc/Release_Notes.txt )
-
 PATCHES=( "${FILESDIR}"/${PN}-2020.1-makefile-debug.patch )
 
 src_prepare() {
@@ -32,7 +30,9 @@ src_prepare() {
 	find include -name \*.html -delete || die
 
 	# Give it a soname on FreeBSD
-	echo 'LIB_LINK_FLAGS += -Wl,-soname=$(BUILDING_LIBRARY)' >>	build/FreeBSD.gcc.inc
+	echo 'LIB_LINK_FLAGS += -Wl,-soname=$(BUILDING_LIBRARY)' \
+		>> build/FreeBSD.gcc.inc
+
 	# Set proper versionning on FreeBSD
 	sed -i -e '/.DLL =/s/$/.1/' build/FreeBSD.inc || die
 
@@ -40,34 +40,41 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	# pc files are for debian and fedora compatibility
-	# some deps use them
-	cat <<-EOF > ${PN}.pc.template
-		prefix=${EPREFIX}/usr
-		libdir=\${prefix}/$(get_libdir)/${PN}/${SLOT_MAJOR}
-		includedir=\${prefix}/include/${PN}/${SLOT_MAJOR}
-		Name: ${PN}
-		Description: ${DESCRIPTION}
-		Version: ${PV}
-		URL: ${HOMEPAGE}
-		Cflags: -I\${includedir}
-	EOF
+	# The pc files are for debian and fedora compatibility.
+	# Some dependencies use them.
+
+cat <<-EOF > ${PN}.pc.template
+prefix=${EPREFIX}/usr
+libdir=\${prefix}/$(get_libdir)/${PN}/${SLOT_MAJOR}
+includedir=\${prefix}/include/${PN}/${SLOT_MAJOR}
+Name: ${PN}
+Description: ${DESCRIPTION}
+Version: ${PV}
+URL: ${HOMEPAGE}
+Cflags: -I\${includedir}
+EOF
+
 	cp ${PN}.pc.template ${PN}-${SLOT_MAJOR}.pc || die
-	cat <<-EOF >> ${PN}-${SLOT_MAJOR}.pc
-		Libs: -L\${libdir} -ltbb
-		Libs.private: -lm -lrt
-	EOF
+
+cat <<-EOF >> ${PN}-${SLOT_MAJOR}.pc
+Libs: -L\${libdir} -ltbb
+Libs.private: -lm -lrt
+EOF
 	cp ${PN}.pc.template ${PN}malloc-${SLOT_MAJOR}.pc || die
-	cat <<-EOF >> ${PN}malloc-${SLOT_MAJOR}.pc
-		Libs: -L\${libdir} -ltbbmalloc
-		Libs.private: -lm -lrt
-	EOF
+
+cat <<-EOF >> ${PN}malloc-${SLOT_MAJOR}.pc
+Libs: -L\${libdir} -ltbbmalloc
+Libs.private: -lm -lrt
+EOF
+
 	cp ${PN}.pc.template ${PN}malloc_proxy-${SLOT_MAJOR}.pc || die
-	cat <<-EOF >> ${PN}malloc_proxy-${SLOT_MAJOR}.pc
-		Libs: -L\${libdir} -ltbbmalloc_proxy
-		Libs.private: -lrt
-		Requires: tbbmalloc
-	EOF
+
+cat <<-EOF >> ${PN}malloc_proxy-${SLOT_MAJOR}.pc
+Libs: -L\${libdir} -ltbbmalloc_proxy
+Libs.private: -lrt
+Requires: tbbmalloc
+EOF
+
 }
 
 local_src_compile() {

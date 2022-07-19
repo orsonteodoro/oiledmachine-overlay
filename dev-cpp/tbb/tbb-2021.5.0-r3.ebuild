@@ -3,13 +3,25 @@
 
 EAPI=7
 
+MY_PN="oneTBB"
+PV1="$(ver_cut 1)"
+PV2="$(ver_cut 2)"
+MY_PV="${PV1}_U${PV2}"
+
 PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-utils flag-o-matic multilib-minimal python-r1 toolchain-funcs
 
 DESCRIPTION="oneAPI Threading Building Blocks (oneTBB)"
+LICENSE="Apache-2.0"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86
+~amd64-linux ~x86-linux"
 HOMEPAGE="https://www.threadingbuildingblocks.org"
-# Clear distinction is made to prevent wrong hashing
+
+#
+# Distinct archive filenames are required prevent wrong hashing.
+#
 VER_SCH="semver" # valid values (left column):
+#
 # marketing ~ YYYY_Un
 # semver ~ YYYY.m.p
 # live-snapshot ~ YYYY.m.p_pYYYYMMDD
@@ -18,34 +30,36 @@ VER_SCH="semver" # valid values (left column):
 #
 # Details on versioning can be found in:
 # https://github.com/oneapi-src/oneTBB/issues/143
-MY_PN="oneTBB"
+#
+
 if [[ "${VER_SCH}" == "marketing" ]] ; then
-PV1="$(ver_cut 1)"
-PV2="$(ver_cut 2)"
-MY_PV="${PV1}_U${PV2}"
-SRC_URI="
+	SRC_URI="
 https://github.com/oneapi-src/${MY_PN}/archive/refs/tags/${MY_PV}.tar.gz
-	-> ${PN}-$(ver_cut 1-2 ${PV}).tar.gz"
+	-> ${PN}-$(ver_cut 1-2 ${PV}).tar.gz
+	"
 elif [[ "${VER_SCH}" == "semver" ]] ; then
-# always 3 periods in ${PV}
-SRC_URI="
+	SRC_URI="
 https://github.com/oneapi-src/${MY_PN}/archive/refs/tags/v${PV}.tar.gz
-	-> ${PN}-${PV}.tar.gz"
+	-> ${PN}-${PV}.tar.gz
+	"
 elif [[ "${VER_SCH}" == "live-snapshot" ]] ; then
-SRC_URI="
+	SRC_URI="
 https://github.com/oneapi-src/${MY_PN}/archive/refs/heads/${EGIT_COMMIT}.tar.gz
-	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz"
+	-> ${PN}-${PV}-${EGIT_COMMIT:0:7}.tar.gz
+	"
 fi
-LICENSE="Apache-2.0"
+
 SLOT_MAJOR="0"
 SLOT="${SLOT_MAJOR}/${PV}"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86
-~amd64-linux ~x86-linux"
+
 # Upstream enables tests by default.
 IUSE+=" -X debug doc -examples -python +tbbmalloc -test"
+
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
-	X? ( examples )"
+	X? ( examples )
+"
+
 RDEPEND+="
 	sys-apps/hwloc:=
 	examples? (
@@ -55,26 +69,32 @@ RDEPEND+="
 			x11-libs/libXext[${MULTILIB_USEDEP}]
 		)
 	)
-	python? ( ${PYTHON_DEPS} )"
+	python? ( ${PYTHON_DEPS} )
+"
+
 DEPEND+=" ${RDEPEND}"
+
 BDEPEND+="
 	>=dev-util/cmake-3.1
 	dev-util/patchelf
 	doc? ( app-doc/doxygen[dot] )
-	python? ( ${PYTHON_DEPS} )"
+	python? ( ${PYTHON_DEPS} )
+"
+
 if [[ "${VER_SCH}" == "marketing" ]] ; then
-S="${WORKDIR}/${MY_PN}-${MY_PV}"
+	S="${WORKDIR}/${MY_PN}-${MY_PV}"
 elif [[ "${VER_SCH}" == "semver" ]] ; then
-S="${WORKDIR}/${MY_PN}-${PV}"
+	S="${WORKDIR}/${MY_PN}-${PV}"
 elif [[ "${VER_SCH}" == "live-snapshot" ]] ; then
-S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
+	S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 fi
+
 DOCS=( README.md )
 RESTRICT="mirror"
 PATCHES=(
-	# should be in.. 2022?
+	# Should be in.. 2022?
 	"${FILESDIR}"/${PN}-2021.5.0-musl-deepbind.patch
-	# need to verify this is in master
+	# Need to verify this is in master
 	"${FILESDIR}"/${PN}-2021.5.0-musl-mallinfo.patch
 )
 
@@ -111,12 +131,8 @@ src_prepare()
 	multilib_foreach_abi src_prepare_abi
 }
 
-_src_configure() {
-	cd "${BUILD_DIR}" || die
-
-	sed -i -e "s|@CMAKE_CURRENT_SOURCE_DIR@|${S}|g" \
-		"${S}/doc/Doxyfile.in" || die
-
+_gen_doc_conf() {
+	use doc || return
 	pushd "${S}/doc" || die
 		doxygen -g Doxyfile-dev.in || die
 		sed -i -e "s|My Project|${MY_PN}|g" \
@@ -135,6 +151,15 @@ INCLUDE_PATH           =|\
 INCLUDE_PATH           = ${S}/include/oneapi ${S}/include/tbb|g" \
 			Doxyfile-dev.in || die
 	popd
+}
+
+_src_configure() {
+	cd "${BUILD_DIR}" || die
+
+	sed -i -e "s|@CMAKE_CURRENT_SOURCE_DIR@|${S}|g" \
+		"${S}/doc/Doxyfile.in" || die
+
+	_gen_doc_conf
 
 	local comp arch
 
@@ -197,34 +222,43 @@ src_configure()
 gen_pkg_config() {
 	local c="${1}"
 	local v="${SLOT_MAJOR}"
-	# pc files are for debian and fedora compatibility
-	# some deps use them
-	cat <<-EOF > ${PN}.pc.template
-		prefix=${EPREFIX}/usr
-		libdir=\${prefix}/$(get_libdir)
-		includedir=\${prefix}/include
-		Name: ${MY_PN}
-		Description: ${DESCRIPTION}
-		Version: ${PV}
-		URL: ${HOMEPAGE}
-		Cflags: -I\${includedir}
-	EOF
+
+	# The pc files are for debian and fedora compatibility.
+	# Some dependencies use them.
+
+cat <<-EOF > ${PN}.pc.template
+prefix=${EPREFIX}/usr
+libdir=\${prefix}/$(get_libdir)
+includedir=\${prefix}/include
+Name: ${MY_PN}
+Description: ${DESCRIPTION}
+Version: ${PV}
+URL: ${HOMEPAGE}
+Cflags: -I\${includedir}
+EOF
+
 	cp ${PN}.pc.template ${PN}${c}.pc || die
-	cat <<-EOF >> ${PN}${c}.pc
-		Libs: -L\${libdir} -ltbb${c}
-		Libs.private: -lm -lrt
-	EOF
+
+cat <<-EOF >> ${PN}${c}.pc
+Libs: -L\${libdir} -ltbb${c}
+Libs.private: -lm -lrt
+EOF
+
 	cp ${PN}.pc.template ${PN}malloc${c}.pc || die
-	cat <<-EOF >> ${PN}malloc${c}.pc
-		Libs: -L\${libdir} -ltbbmalloc${c}
-		Libs.private: -lm -lrt
-	EOF
+
+cat <<-EOF >> ${PN}malloc${c}.pc
+Libs: -L\${libdir} -ltbbmalloc${c}
+Libs.private: -lm -lrt
+EOF
+
 	cp ${PN}.pc.template ${PN}malloc_proxy${c}.pc || die
-	cat <<-EOF >> ${PN}malloc_proxy${c}.pc
-		Libs: -L\${libdir} -ltbbmalloc_proxy${c}
-		Libs.private: -lrt
-		Requires: tbbmalloc${c}
-	EOF
+
+cat <<-EOF >> ${PN}malloc_proxy${c}.pc
+Libs: -L\${libdir} -ltbbmalloc_proxy${c}
+Libs.private: -lrt
+Requires: tbbmalloc${c}
+EOF
+
 }
 
 src_compile_pkg_config()
