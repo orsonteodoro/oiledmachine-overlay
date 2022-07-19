@@ -109,7 +109,12 @@ local_src_compile() {
 		AS="$(tc-getAS)" \
 		arch=${arch} \
 		CPLUS_FLAGS="${CXXFLAGS}" \
-		emake compiler=${comp} work_dir="${BUILD_DIR}" tbb_root="${S}" cfg=${bt} $@
+		emake \
+			compiler=${comp} \
+			work_dir="${BUILD_DIR}" \
+			tbb_root="${S}" \
+			cfg=${bt} \
+			$@
 	done
 }
 
@@ -136,7 +141,8 @@ multilib_src_install() {
 		for l in $(find . -name lib\*$(get_libname \*)); do
 			doexe ${l}
 			local bl=$(basename ${l})
-			dosym ${bl} /usr/$(get_libdir)/${PN}/${SLOT_MAJOR}/${bl%%.*}$(get_libname)
+			dosym ${bl} \
+/usr/$(get_libdir)/${PN}/${SLOT_MAJOR}/${bl%%.*}$(get_libname)
 		done
 	done
 
@@ -162,9 +168,9 @@ multilib_src_install_all() {
 
 pkg_postinst()
 {
-	einfo
-	einfo "Packages that depend on ${CATEGORY}/${PN}:${SLOT_MAJOR} must"
-	einfo "either set the RPATH or add a LD_LIBRARY_PATH wrapper to use"
-	einfo "this slot.  You must verify that the linking is proper via ldd."
-	einfo
+einfo
+einfo "Packages that depend on ${CATEGORY}/${PN}:${SLOT_MAJOR} must"
+einfo "either set the RPATH or add a LD_LIBRARY_PATH wrapper to use"
+einfo "this slot.  You must verify that the linking is proper via ldd."
+einfo
 }

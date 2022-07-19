@@ -285,9 +285,7 @@ _src_compile() {
 	if use doc ; then
 		pushd "${S}/doc" || die
 			einfo "Generating documentation"
-			if use test ; then
-				doxygen Doxyfile.in || die
-			fi
+			use test && doxygen Doxyfile.in || die
 			doxygen Doxyfile-dev.in || die
 		popd
 	fi
@@ -373,62 +371,66 @@ src_install_pkgconfig()
 	[[ -f tbb-${SLOT_MAJOR}.pc ]] && doins *.pc
 }
 
+_install_examples() {
+	local examples_exe=(
+		binpack
+		cholesky
+		convex_hull_bench
+		convex_hull_sample
+		count_strings
+		dining_philosophers
+		fgbzip2
+		fibonacci
+		fractal
+		game_of_life
+		logic_sim
+		parallel_preorder
+		polygon_overlay
+		primes
+		seismic
+		shortpath
+		som
+		square
+		sub_string_finder_extended
+		sub_string_finder_pretty
+		sub_string_finder_simple
+		sudoku
+		tachyon
+	)
+	exeinto /usr/share/${PF}/examples/build
+	built_demo_dir=$(find "${BUILD_DIR}" -name "*gentoo" \
+		-type d)
+	pushd "${built_demo_dir}" || die
+		doexe ${examples_exe[@]}
+		if [[ -f cholesky ]] ; then
+			doexe cholesky
+		fi
+	popd
+	insinto /usr/share/doc/${PF}
+	doins -r examples
+	find "${ED}/usr/share/doc/${PF}/examples/" -name "*.o" -delete || die
+	docompress -x "/usr/share/doc/${PF}/examples"
+}
+
+_install_docs() {
+	pushd "${S}" || die
+		einstalldocs
+		insinto /usr/share/${P}
+		if use test ; then
+			doins -r doc/test_spec
+		fi
+		doins -r doc/html
+	popd
+}
+
 _src_install() {
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	cmake-utils_src_install
 	src_install_pkgconfig
 	if multilib_is_native_abi ; then
-		if use doc ; then
-			pushd "${S}" || die
-				einstalldocs
-				insinto /usr/share/${P}
-				if use test ; then
-					doins -r doc/test_spec
-				fi
-				doins -r doc/html
-			popd
-		fi
-		if use examples ; then
-			local examples_exe=(
-				binpack
-				cholesky
-				convex_hull_bench
-				convex_hull_sample
-				count_strings
-				dining_philosophers
-				fgbzip2
-				fibonacci
-				fractal
-				game_of_life
-				logic_sim
-				parallel_preorder
-				polygon_overlay
-				primes
-				seismic
-				shortpath
-				som
-				square
-				sub_string_finder_extended
-				sub_string_finder_pretty
-				sub_string_finder_simple
-				sudoku
-				tachyon
-			)
-			exeinto /usr/share/${PF}/examples/build
-			built_demo_dir=$(find "${BUILD_DIR}" -name "*gentoo" \
-				-type d)
-			pushd "${built_demo_dir}" || die
-				doexe ${examples_exe[@]}
-				if [[ -f cholesky ]] ; then
-					doexe cholesky
-				fi
-			popd
-			insinto /usr/share/doc/${PF}
-			doins -r examples
-			find "${ED}/usr/share/doc/${PF}/examples/" -name "*.o" -delete || die
-			docompress -x "/usr/share/doc/${PF}/examples"
-		fi
+		use doc && _install_docs
+		use examples && _install_examples
 	fi
 }
 
@@ -449,4 +451,13 @@ src_install()
 		fi
 	}
 	multilib_foreach_abi src_install_abi
+}
+
+pkg_postinst()
+{
+einfo
+einfo "Packages that depend on ${CATEGORY}/${PN}:${SLOT_MAJOR} must"
+einfo "either set the RPATH or add a LD_LIBRARY_PATH wrapper to use"
+einfo "this slot.  You must verify that the linking is proper via ldd."
+einfo
 }
