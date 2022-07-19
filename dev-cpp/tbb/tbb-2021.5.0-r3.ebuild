@@ -102,9 +102,13 @@ pkg_setup()
 {
 	if use test ; then
 		if [[ ${FEATURES} =~ test ]] ; then
-			einfo "Testing enabled."
+einfo
+einfo "Testing enabled."
+einfo
 		else
-			ewarn "Testing disabled.  Add FEATURES=test before ebuild."
+ewarn
+ewarn "Testing disabled.  Add FEATURES=test before ebuild."
+ewarn
 		fi
 	fi
 
