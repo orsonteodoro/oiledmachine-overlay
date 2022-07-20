@@ -29,7 +29,13 @@ H2_EXPECTED="\
 7bdb2256a0c54413313eabf7b44d0ad2e7ed39f1a663a755bdbe28e202494193\
 "
 
-DEPENDS_FINGERPRINT="5f085da2480c8f666890b0997357735fe48ce6dd8356e998d1fba23539d2ca2a92f244e30a25763f006901a164b1f2ab27b9df2926302a945ea8a70c7d412428"
+H3_EXPECTED="\
+aba553d213834071ba6722e33d2ae67e94c874b5ef4d26be3697c839a6c5f98e\
+b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
+"
+
+# TODO: Fingerprint exported/public function signatures for EGM, Protocols, ENIGMAShared instead.
+DEPENDS_FINGERPRINT="1ca931f9dac25efde335c9ecdeea0f0eeac12e31a27464bb9be46c4d2f33469637a062fc2add4418bd8e39123d35e49ed440157fb91e575b02af6b9f30037026"
 SLOT="0/${DEPENDS_FINGERPRINT}"
 IUSE+=" android box2d bullet clang curl doc gles gles2 gles3 gme gnome gtk2 kde
 linux minimal +openal +opengl opengl1 +opengl3 radialgm sdl2 test +vanilla +X"
@@ -53,10 +59,12 @@ REQUIRED_USE+="
 # media-libs/libvorbis[${MULTILIB_USEDEP}] # line to be placed in openal RDEPEND
 #
 # See CI for *DEPENDs
+# U 20.04
 CLANG_PV="10.0.0"
 GCC_PV="10.2.0"
 BOOST_PV="1.71"
 GLM_PV="0.9.9.7"
+LIBX11_PV="1.6.9"
 MESA_PV="20.2.6"
 ZLIB_PV="1.2.11"
 CDEPEND="
@@ -69,14 +77,14 @@ DEPEND+="
 	dev-cpp/abseil-cpp[${MULTILIB_USEDEP}]
 	>=dev-cpp/yaml-cpp-0.6.2[${MULTILIB_USEDEP}]
 	>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]
-	dev-libs/double-conversion[${MULTILIB_USEDEP}]
-	dev-libs/libffi[${MULTILIB_USEDEP}]
-	dev-libs/libpcre2[${MULTILIB_USEDEP},pcre16]
+	>=dev-libs/double-conversion-3.1.5[${MULTILIB_USEDEP}]
+	>=dev-libs/libffi-3.3[${MULTILIB_USEDEP}]
+	>=dev-libs/libpcre2-10.34[${MULTILIB_USEDEP},pcre16]
 	>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
 	>=dev-libs/pugixml-1.10[${MULTILIB_USEDEP}]
 	>=dev-libs/rapidjson-1.1.0
-	media-libs/freetype[${MULTILIB_USEDEP}]
-	media-libs/harfbuzz[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.10.1[${MULTILIB_USEDEP}]
+	>=media-libs/harfbuzz-2.6.4[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.37[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	virtual/jpeg[${MULTILIB_USEDEP}]
@@ -91,21 +99,21 @@ DEPEND+="
 			<games-engines/box2d-2.4:2.3.0[${MULTILIB_USEDEP}]
 		)
 	)
-	bullet? ( sci-physics/bullet[${MULTILIB_USEDEP}] )
+	bullet? ( >=sci-physics/bullet-2.88[${MULTILIB_USEDEP}] )
 	curl? ( >=net-misc/curl-7.68[${MULTILIB_USEDEP}] )
 	gles? (
 		>=media-libs/glm-${GLM_PV}
 		>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
 	)
-	gme? ( media-libs/game-music-emu[${MULTILIB_USEDEP}] )
-	gnome? ( gnome-extra/zenity )
+	gme? ( >=media-libs/game-music-emu-0.6.2[${MULTILIB_USEDEP}] )
+	gnome? ( >=gnome-extra/zenity-3.32.0 )
 	gtk2? ( x11-libs/gtk+:2[${MULTILIB_USEDEP}] )
-	kde? ( kde-apps/kdialog )
+	kde? ( >=kde-apps/kdialog-19.12.3 )
 	openal? (
-		media-libs/alure[${MULTILIB_USEDEP}]
-		media-libs/dumb[${MULTILIB_USEDEP}]
-		media-libs/openal[${MULTILIB_USEDEP}]
+		>=media-libs/alure-1.2[${MULTILIB_USEDEP}]
+		>=media-libs/dumb-0.9.3[${MULTILIB_USEDEP}]
+		>=media-libs/openal-1.19.1[${MULTILIB_USEDEP}]
 	)
 	opengl? (
 		>=media-libs/glew-2.1.0[${MULTILIB_USEDEP}]
@@ -119,7 +127,7 @@ DEPEND+="
 		virtual/wine
 	)
 	X? (
-		x11-libs/libX11[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	)
 "
@@ -139,17 +147,18 @@ gen_clang_deps() {
 	done
 }
 
-BDEPEND+=" ${CDEPEND}
+BDEPEND+="
+	${CDEPEND}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-util/cmake-3.16.8
 	clang? ( || ( $(gen_clang_deps) ) )
 	test? (
-		dev-cpp/gtest[${MULTILIB_USEDEP}]
+		>=dev-cpp/gtest-1.10.0[${MULTILIB_USEDEP}]
 		>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]
-		x11-libs/libX11[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 	)
 "
-S="${WORKDIR}/enigma-dev-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( Readme.md )
 
@@ -184,12 +193,12 @@ eerror "Switch the compiler."
 eerror
 		die
 	fi
-	local dfp=$(echo "${RDEPEND}:${DEPEND}:${BDEPEND}" | sha512sum | cut -f 1 -d " ")
+	local dfp=$(echo "${RDEPEND}:${DEPEND}:${BDEPEND}" | tr "\n" " " | sed -e "s|[ ]+| |g" | sha512sum | cut -f 1 -d " ")
 	if [[ "${dfp}" != "${DEPENDS_FINGERPRINT}" ]] ; then
 		# No versioning.
 eerror
-eerror "CURRENT_DEPENDS_FINGERPRINT:	${dfp}"
-eerror "EXPECTED_DEPENDS_FINGERPRINT:	${DEPENDS_FINGERPRINT}"
+eerror "CURRENT_DEPENDS_FINGERPRINT:   ${dfp}"
+eerror "EXPECTED_DEPENDS_FINGERPRINT:  ${DEPENDS_FINGERPRINT}"
 eerror
 eerror "Update the DEPENDS_FINGERPRINT."
 eerror
@@ -228,7 +237,10 @@ src_unpack() {
 	cd "${S}" || die
 	h1=$(sha512sum "CI/install_emake_deps.sh" | cut -f 1 -d " ")
 	h2=$(sha512sum "CI/solve_engine_deps.sh" | cut -f 1 -d " ")
-	if [[ "${h1}" != "${H1_EXPECTED}" && "${h2}" != "${H2_EXPECTED}" ]] ; then
+	h3=$(sha512sum "azure-pipelines.yml" | cut -f 1 -d " ") # NDK
+	if [[ "${h1}" != "${H1_EXPECTED}" \
+		&& "${h2}" != "${H2_EXPECTED}" \
+		&& "${h3}" != "${H3_EXPECTED}" ]] ; then
 eerror
 eerror "The dependencies have changed.  Notify ebuild maintainer."
 eerror
