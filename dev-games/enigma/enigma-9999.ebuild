@@ -34,8 +34,8 @@ aba553d213834071ba6722e33d2ae67e94c874b5ef4d26be3697c839a6c5f98e\
 b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
-# TODO: Fingerprint exported/public function signatures for EGM, Protocols, ENIGMAShared instead.
-DEPENDS_FINGERPRINT="1ca931f9dac25efde335c9ecdeea0f0eeac12e31a27464bb9be46c4d2f33469637a062fc2add4418bd8e39123d35e49ed440157fb91e575b02af6b9f30037026"
+# TODO: Fingerprint exported/public function signatures for EGM, Protocols, ENIGMAShared libraries instead for ABI compatibility.
+DEPENDS_FINGERPRINT="412835db01d655a62ca55b6da7a1c79873818018634ee01399c310a73207a274043b7c8fb0c5378785c0548a1e4e2aabe64e003438dc8df5052109075db58f23"
 SLOT="0/${DEPENDS_FINGERPRINT}"
 IUSE+=" android box2d bullet clang curl doc gles gles2 gles3 gme gnome gtk2 kde
 linux minimal +openal +opengl opengl1 +opengl3 radialgm sdl2 test +vanilla +X"
@@ -193,7 +193,7 @@ eerror "Switch the compiler."
 eerror
 		die
 	fi
-	local dfp=$(echo "${RDEPEND}:${DEPEND}:${BDEPEND}" | tr "\n" " " | sed -e "s|[ ]+| |g" | sha512sum | cut -f 1 -d " ")
+	local dfp=$(echo "${RDEPEND}:${DEPEND}:${BDEPEND}" | tr "\n" " " | sed -E -e "s|[[:space:]]+| |g" | sha512sum | cut -f 1 -d " ")
 	if [[ "${dfp}" != "${DEPENDS_FINGERPRINT}" ]] ; then
 		# No versioning.
 eerror
