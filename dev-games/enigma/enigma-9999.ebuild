@@ -33,12 +33,12 @@ aba553d213834071ba6722e33d2ae67e94c874b5ef4d26be3697c839a6c5f98e\
 b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
-ABI_FINGERPRINT="659be0bac6a71559360812876f8a6936f4ee06fde93d4ff53a000068a4593ae7"
-DEPENDS_FINGERPRINT="5ccd11a8b45da0aef7af55fc78daa10eaab6cc1eeae08d56dee907d98050b3df"
+ABI_FINGERPRINT="eb4b9f49adbb454e86c10d9d1526ea6cdce3dd2f4b5f951f776024e0d460fbb1"
+DEPENDS_FINGERPRINT="75d6a02780083805ac667a20bb187720b9f54391f28d0ae14d4368979234eabd"
 SLOT="0/${ABI_FINGERPRINT}"
 IUSE+=" android box2d bullet clang doc externalfuncs freetype gles gles2
 gles3 gme gnome gtk2 gtest kde linux minimal network +openal +opengl opengl1
-+opengl3 osx png radialgm sdl2 test wine +X"
++opengl3 osx png radialgm sdl2 test wine wine32 wine64 +X"
 REQUIRED_USE+="
 	gles? ( sdl2 )
 	gles2? ( gles opengl )
@@ -47,6 +47,8 @@ REQUIRED_USE+="
 	opengl1? ( opengl )
 	opengl3? ( opengl )
 	sdl2? ( wine )
+	wine32? ( wine )
+	wine64? ( wine )
 "
 #
 # For some list of dependencies, see
@@ -163,7 +165,8 @@ DEPEND+="
 	)
 	wine? (
 		sys-devel/crossdev
-		virtual/wine
+		wine32? ( virtual/wine[abi_x86_32] )
+		wine64? ( virtual/wine[abi_x86_64] )
 	)
 	X? (
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
@@ -658,16 +661,10 @@ eerror
 		die
 	fi
 	_calculate_depends_fingerprint
-	if use wine ; then
-		check_cross_mingw64
-		check_cross_mingw32
-	fi
-	if use android ; then
-		check_cross_android
-	fi
-	if use osx ; then
-		check_cross_osx
-	fi
+	use wine32 && check_cross_mingw32
+	use wine64 && check_cross_mingw64
+	use android && check_cross_android
+	use osx && check_cross_osx
 }
 
 src_prepare() {
