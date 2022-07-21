@@ -30,7 +30,9 @@
     https://enigma-dev.org/docs/Wiki/Mac_OS_X
 
     All cross compiled library packages and cross toolchains must be
-    built and available in order to build for the target platform.
+    built and available in order to build for the target platform.  All
+    dependencies must have matching ABI (all 32-bit or all 64-bit) in
+    the crossdev image(s).
 
     The main program resides on Linux.
     Each target platform has built all dependencies.
