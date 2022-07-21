@@ -278,7 +278,9 @@ crossdev_has_pkg_nf() {
 }
 
 check_mingw64() {
-	ewarn "MINGW64 support is incomplete/untested"
+ewarn
+ewarn "MINGW64 support is incomplete/untested"
+ewarn
 	if [[ -z "${MINGW64_SYSROOT}" ]] ; then
 eerror
 eerror "MINGW64_SYSROOT needs to point to the crossdev image."
@@ -367,7 +369,9 @@ eerror
 }
 
 check_mingw32() {
-	ewarn "MINGW32 support is incomplete/untested"
+ewarn
+ewarn "MINGW32 support is incomplete/untested"
+ewarn
 	if [[ -z "${MINGW32_SYSROOT}" ]] ; then
 eerror
 eerror "MINGW32_SYSROOT needs to point to the crossdev image."
@@ -463,7 +467,9 @@ eerror
 }
 
 check_cross_android() {
-	ewarn "Android support is incomplete/untested"
+ewarn
+ewarn "Android support is incomplete/untested"
+ewarn
 	if [[ -z "${ANDROID_SYSROOT}" ]] ; then
 eerror
 eerror "ANDROID_SYSROOT needs to point to the crossdev image."
@@ -546,7 +552,9 @@ eerror
 MACOS_SDK_PV_MIN="10.4"
 MACOS_SDK_PV_MAX="13.0"
 check_cross_macos() {
-	ewarn "MACOS support is incomplete/untested"
+ewarn
+ewarn "macOS support is incomplete/untested"
+ewarn
 	if [[ -z "${MACOS_SYSROOT}" ]] ; then
 eerror
 eerror "MACOS_SYSROOT needs to point to the crossdev image."
@@ -714,22 +722,6 @@ src_prepare() {
 		einfo "Editing $f"
 		sed -i -e "s|-Wl,-rpath,./||g" "${f}" || die
 	done
-	if use android ; then
-ewarn
-ewarn "Android support is experimental."
-ewarn
-	fi
-	if use wine ; then
-ewarn
-ewarn "WINE support is experimental and may not work and be feature complete."
-ewarn
-		if [[ -z "${MINGW64_SYSROOT}" ]] ; then
-			check_mingw64
-		fi
-		if [[ -z "${MINGW32_SYSROOT}" ]] ; then
-			check_mingw32
-		fi
-	fi
 
 	# Typo?
 	sed -i -e "s|ANDROIS_LDLIBS|ANDROID_LDLIBS|g" \
