@@ -64,14 +64,14 @@ REQUIRED_USE+="
 # See CI for *DEPENDs
 ALURE_PV="1.2"
 CLANG_PV="10.0.0"
-CURL_PV="7.68"
 BOOST_PV="1.79"
 BULLET_PV="3.24"
+CURL_PV="7.68"
 FLAC_PV="1.3.4"
 FREETYPE_PV="2.12.1"
 GCC_PV="10.3.0" # Upstream uses 12.1.0 for Linux.  This has been relaxed in this ebuild.
-GLM_PV="0.9.9.7"
 GLEW_PV="2.2.0"
+GLM_PV="0.9.9.7"
 GME_PV="0.6.3"
 GTEST_PV="1.10.0"
 LIBFFI_PV="3.4.2"
@@ -317,13 +317,13 @@ eerror
 		crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
 	fi
 	if use openal ; then
-		crossdev_has_pkg "media-libs/openal" "${OPENAL_PV}"
 		crossdev_has_pkg "media-libs/alure" "${ALURE_PV}"
+		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
 		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
 		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
+		crossdev_has_pkg "media-libs/openal" "${OPENAL_PV}"
 		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
 		crossdev_has_pkg "media-sound/pulseaudio" "${PULSEAUDIO_PV}"
 	fi
@@ -336,13 +336,13 @@ eerror
 		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	fi
 	if use sdl2 ; then
-		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
-		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
 		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
 		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
 		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
@@ -415,13 +415,13 @@ eerror
 		crossdev_has_pkg "net-misc/curl" "${CURL_PV}"
 	fi
 	if use openal ; then
-		crossdev_has_pkg "media-libs/openal" "${OPENAL_PV}"
 		crossdev_has_pkg "media-libs/alure" "${ALURE_PV}"
+		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
 		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
 		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
+		crossdev_has_pkg "media-libs/openal" "${OPENAL_PV}"
 		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
 		crossdev_has_pkg "media-sound/pulseaudio" "${PULSEAUDIO_PV}"
 	fi
@@ -434,13 +434,13 @@ eerror
 		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	fi
 	if use sdl2 ; then
-		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
-		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
 		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
 		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
 		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
@@ -517,14 +517,14 @@ eerror
 		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	fi
 	if use sdl2 ; then
-		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
-		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "static-libs"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
 		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
+		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
 		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
 		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
 	fi
@@ -644,13 +644,13 @@ eerror
 		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	fi
 	if use sdl2 ; then
-		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
-		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
 		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
 		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
 		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
