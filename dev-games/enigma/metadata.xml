@@ -2,20 +2,34 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Only for this ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    This ENIGMA package is both the backend and engine to the LateralGM frontend
-    GUI.  ENIGMA is a developer environment/toolchain used to compile Game Maker
-    games, GML (Game Maker Language) scripts, and EDL (Enigma Development
-    Language) scripts that have syntax between GML and C++.
-
-    The ENIGMA engine is the API and the game state mangement offerings and
-    management.
+    This ENIGMA package is both the backend and engine to the LateralGM and
+    RadialGM frontends.  ENIGMA is a developer environment/toolchain is used
+    to compile Game Maker games, GML (Game Maker Language) scripts, and
+    EDL (Enigma Development Language) scripts that have syntax between GML
+    and C++.
 
     WINE support requires MinGW.  For details see:
     https://wiki.gentoo.org/wiki/Mingw
+
+    For wine64 support set MINGW64_SYSROOT, MINGW64_CTARGET as environment variables.
+    For wine32 support set MINGW32_SYSROOT, MINGW32_CTARGET as environment variables.
+    For android support set ANDROID_SYSROOT, ANDROID_CTARGET as environment variables.
+
+    Ebuild status:
+
+    Android - Incomplete / Untested
+    WINE - Incomplete / Untested
+
+    All cross compiled library packages and cross toolchains must be
+    built and available in order to build for the target platform.
+
+    The main program resides on Linux.
+    Each target platform has built all dependencies.
 
     You need to add the following in /etc/portage/profile/package.use.force
     in order to use experimental support.
@@ -32,22 +46,16 @@ games-misc/enigma -wine
     <doc lang="es">https://enigma-dev.org/docs/Wiki/Main_Page/es</doc>
     <doc lang="fr">https://enigma-dev.org/docs/Wiki/Main_Page/fr</doc>
     <doc lang="it">https://enigma-dev.org/docs/Wiki/Main_Page/it</doc>
-    <maintainer status="active" type="person">
-      <name>Robert Colton</name>
-    </maintainer>
-    <maintainer status="active" type="person">
-      <name>Josh Ventura</name>
-    </maintainer>
     <remote-id type="github">enigma-dev/enigma-dev</remote-id>
   </upstream>
   <use>
-    <flag name="android">Adds support to porting games to Android, 
-      Adds the android only toolchain.  Bypasses
-      rebuilding the toolchain when building the game.</flag>
+    <flag name="android">Adds support to porting games to Android</flag>
     <flag name="box2">Adds Box2D support for 2D physics support.</flag>
     <flag name="bullet">Adds Box2D support for 3D physics support.</flag>
     <flag name="curl">Adds cURL support for multiplayer support.</flag>
     <flag name="doc">Installs documents.</flag>
+    <flag name="externalfuncs">Add support for GM ExternalFuncs to call DLL
+      functions.</flag>
     <flag name="gles">Installs and adds general OpenGL ES support.</flag>
     <flag name="gles1">Installs and adds OpenGL ES 1.x support.</flag>
     <flag name="gles2">Installs and adds OpenGL ES 2.x support.</flag>
@@ -60,10 +68,6 @@ games-misc/enigma -wine
       input dialogs, and color picker.</flag>
     <flag name="kde">Uses KDialog as the default widget engine if running
       KDE for alerts, user prompts, file dialogs, color picker.</flag>
-    <flag name="linux">Adds the linux only toolchain.  Bypasses
-      rebuilding the toolchain when building the game.</flag>
-    <flag name="minimal">Shrinks installation.  It will break support
-      for porting games to Wine or Windows.</flag>
     <flag name="openal">Installs and makes OpenAL the default audio
       system.</flag>
     <flag name="opengl">Enables general OpenGL support.</flag>
@@ -74,10 +78,7 @@ games-misc/enigma -wine
       platform independent way.</flag>
     <flag name="sfml">Adds sound support via SFML.</flag>
     <flag name="test">Tests the code.</flag>
-    <flag name="vanilla">Adds the default fits all toolchain.  The
-      entire toolchain needs to rebuild everytime you build the
-      game or change platforms and ABI.</flag>
-    <flag name="wine">Adds WINE support.  Incomplete at the ebuild level.</flag>
+    <flag name="wine">Adds WINE support.</flag>
     <flag name="X">Add window and input support through X11 in a platform
       dependent way.</flag>
   </use>

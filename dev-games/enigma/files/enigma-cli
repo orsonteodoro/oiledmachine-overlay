@@ -1,4 +1,9 @@
 #!/bin/bash
-cd /usr/lib64/enigma/PLATFORM
-OUTPUTNAME=game WORKDIR="$HOME/.enigma" CXXFLAGS=" -I$HOME/.enigma" CFLAGS="-I$HOME/.enigma" \
-LD_LIBRARY_PATH="/usr/lib64/enigma/PLATFORM:${LD_LIBRARY_PATH}" java -Djna.nosys=true -jar /usr/lib64/enigma/PLATFORM/plugins/enigma.jar $*
+export ROOT="/usr/LIBDIR/enigma"
+cd "${ROOT}"
+export OUTPUTNAME=game
+export WORKDIR="${HOME}/.enigma"
+export CXXFLAGS=" -I${HOME}/.enigma"
+export CFLAGS="-I${HOME}/.enigma"
+export LD_LIBRARY_PATH="${ROOT}:${LD_LIBRARY_PATH}"
+java -Djna.nosys=true -jar "${ROOT}/plugins/enigma.jar" "${@}"

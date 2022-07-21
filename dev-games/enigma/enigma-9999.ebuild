@@ -7,8 +7,7 @@ CXX_STANDARD="-std=c++17"
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
 
-EPLATFORMS="vanilla android linux wine"
-inherit desktop eutils flag-o-matic git-r3 multilib-minimal platforms \
+inherit desktop eutils flag-o-matic git-r3 multilib-minimal \
 toolchain-funcs
 
 DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation,
@@ -34,11 +33,12 @@ aba553d213834071ba6722e33d2ae67e94c874b5ef4d26be3697c839a6c5f98e\
 b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
-# TODO: Fingerprint exported/public function signatures for EGM, Protocols, ENIGMAShared libraries instead for ABI compatibility.
-DEPENDS_FINGERPRINT="412835db01d655a62ca55b6da7a1c79873818018634ee01399c310a73207a274043b7c8fb0c5378785c0548a1e4e2aabe64e003438dc8df5052109075db58f23"
-SLOT="0/${DEPENDS_FINGERPRINT}"
-IUSE+=" android box2d bullet clang curl doc gles gles2 gles3 gme gnome gtk2 kde
-linux minimal +openal +opengl opengl1 +opengl3 radialgm sdl2 test +vanilla +X"
+ABI_FINGERPRINT="2d6953b857ef0e53849aacced8a0ea734959f5d5f5d3209dd8bb2f3bf1e5c52f"
+DEPENDS_FINGERPRINT="89abeb8828719244ed3cc60721a6d56cb85040e67ecff1d2e5472aee2bef0894"
+SLOT="0/${ABI_FINGERPRINT}"
+IUSE+=" android box2d bullet clang curl doc externalfuncs gles gles2 gles3 gme
+gnome gtk2 gtest kde linux minimal +openal +opengl opengl1 +opengl3 png radialgm
+sdl2 test wine +X"
 REQUIRED_USE+="
 	gles? ( sdl2 )
 	gles2? ( gles opengl )
@@ -46,6 +46,7 @@ REQUIRED_USE+="
 	opengl? ( || ( sdl2 X ) )
 	opengl1? ( opengl )
 	opengl3? ( opengl )
+	sdl2? ( wine )
 "
 #
 # For some list of dependencies, see
@@ -59,39 +60,55 @@ REQUIRED_USE+="
 # media-libs/libvorbis[${MULTILIB_USEDEP}] # line to be placed in openal RDEPEND
 #
 # See CI for *DEPENDs
-# U 20.04
+ALURE_PV="1.2"
 CLANG_PV="10.0.0"
-GCC_PV="10.2.0"
-BOOST_PV="1.71"
+GCC_PV="10.3.0" # Upstream uses 12.1.0 for Linux.  This has been relaxed in this ebuild.
+BOOST_PV="1.79"
+FLAC_PV="1.3.4"
+FREETYPE_PV="2.12.1"
 GLM_PV="0.9.9.7"
-LIBX11_PV="1.6.9"
-MESA_PV="20.2.6"
-ZLIB_PV="1.2.11"
+GTEST_PV="1.10.0"
+LIBOGG_PV="1.3.5"
+LIBPNG_PV="1.6.37"
+LIBSDL2_PV="2.0.22"
+LIBSNDFILE_PV="1.1.0"
+LIBVORBIS_PV="1.3.7"
+LIBX11_PV="1.8.1"
+MESA_PV="22.1.2"
+MODPLUG_PV="0.8.9.0"
+MPG123_PV="1.25.13"
+OPENAL_PV="1.22.2"
+OPUS_PV="1.3.1"
+PULSEAUDIO_PV="16.1"
+SDL2_MIXER_PV="2.6.1"
+VIRTUAL_WINE_PV="0"
+WINE_PV="7.13"
+WINE_STAGING_PV="${WINE_PV}"
+WINE_VANILLA_PV="${WINE_PV}"
+ZLIB_PV="1.2.12"
 CDEPEND="
-	>=dev-libs/protobuf-3.6.1.3[${MULTILIB_USEDEP}]
+	>=dev-libs/protobuf-3.21.1[${MULTILIB_USEDEP}]
 	>=sys-devel/gcc-${GCC_PV}
-	radialgm? ( >=net-libs/grpc-1.16.1[${MULTILIB_USEDEP}] )
+	radialgm? ( >=net-libs/grpc-1.47.0[${MULTILIB_USEDEP}] )
 "
 DEPEND+="
 	${CDEPEND}
-	dev-cpp/abseil-cpp[${MULTILIB_USEDEP}]
-	>=dev-cpp/yaml-cpp-0.6.2[${MULTILIB_USEDEP}]
+	>=dev-cpp/abseil-cpp-20211102.0[${MULTILIB_USEDEP}]
+	>=dev-cpp/yaml-cpp-0.7.0[${MULTILIB_USEDEP}]
 	>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]
-	>=dev-libs/double-conversion-3.1.5[${MULTILIB_USEDEP}]
-	>=dev-libs/libffi-3.3[${MULTILIB_USEDEP}]
-	>=dev-libs/libpcre2-10.34[${MULTILIB_USEDEP},pcre16]
-	>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
-	>=dev-libs/pugixml-1.10[${MULTILIB_USEDEP}]
+	>=dev-libs/double-conversion-3.2.0[${MULTILIB_USEDEP}]
+	>=dev-libs/libpcre2-10.40[${MULTILIB_USEDEP},pcre16]
+	>=dev-libs/openssl-1.1.1p[${MULTILIB_USEDEP}]
+	>=dev-libs/pugixml-1.12.1[${MULTILIB_USEDEP}]
 	>=dev-libs/rapidjson-1.1.0
-	>=media-libs/freetype-2.10.1[${MULTILIB_USEDEP}]
-	>=media-libs/harfbuzz-2.6.4[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.6.37[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-${FREETYPE_PV}[${MULTILIB_USEDEP},static-libs]
+	>=media-libs/harfbuzz-4.4.1[${MULTILIB_USEDEP}]
 	virtual/jpeg[${MULTILIB_USEDEP}]
 	virtual/libc
 	android? (
 		>=dev-util/android-ndk-23
 		dev-util/android-sdk-update-manager
+		sys-devel/crossdev
 	)
 	box2d? (
 		|| (
@@ -99,29 +116,45 @@ DEPEND+="
 			<games-engines/box2d-2.4:2.3.0[${MULTILIB_USEDEP}]
 		)
 	)
-	bullet? ( >=sci-physics/bullet-2.88[${MULTILIB_USEDEP}] )
+	bullet? ( >=sci-physics/bullet-3.24[${MULTILIB_USEDEP}] )
 	curl? ( >=net-misc/curl-7.68[${MULTILIB_USEDEP}] )
+	externalfuncs? (
+		>=dev-libs/libffi-3.4.2[${MULTILIB_USEDEP}]
+	)
 	gles? (
 		>=media-libs/glm-${GLM_PV}
 		>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
 	)
-	gme? ( >=media-libs/game-music-emu-0.6.2[${MULTILIB_USEDEP}] )
-	gnome? ( >=gnome-extra/zenity-3.32.0 )
-	gtk2? ( x11-libs/gtk+:2[${MULTILIB_USEDEP}] )
+	gme? ( >=media-libs/game-music-emu-0.6.3[${MULTILIB_USEDEP}] )
+	gnome? ( >=gnome-extra/zenity-3.43.0 )
+	gtk2? ( >=x11-libs/gtk+-2.24.33:2[${MULTILIB_USEDEP}] )
+	gtest? (
+		>=dev-cpp/gtest-${GTEST_PV}[${MULTILIB_USEDEP}]
+	)
 	kde? ( >=kde-apps/kdialog-19.12.3 )
 	openal? (
-		>=media-libs/alure-1.2[${MULTILIB_USEDEP}]
-		>=media-libs/dumb-0.9.3[${MULTILIB_USEDEP}]
-		>=media-libs/openal-1.19.1[${MULTILIB_USEDEP}]
+		>=media-libs/alure-${ALURE_PV}[${MULTILIB_USEDEP}]
+		>=media-libs/dumb-2.0.3[${MULTILIB_USEDEP}]
+		>=media-libs/openal-${OPENAL_PV}[${MULTILIB_USEDEP}]
+
+		>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		>=media-libs/glew-2.1.0[${MULTILIB_USEDEP}]
+		>=media-libs/glew-2.2.0[${MULTILIB_USEDEP}]
 		>=media-libs/glm-${GLM_PV}
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
 	)
-	radialgm? ( >=net-dns/c-ares-1.15[${MULTILIB_USEDEP}] )
-	sdl2? ( >=media-libs/libsdl2-2.0.10[${MULTILIB_USEDEP},gles2?] )
+	png? (
+		>=media-libs/libpng-${LIBPNG_PV}[${MULTILIB_USEDEP}]
+		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
+	)
+	radialgm? ( >=net-dns/c-ares-1.18.1[${MULTILIB_USEDEP}] )
+	sdl2? (
+		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},gles2?]
+		>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[${MULTILIB_USEDEP}]
+
+	)
 	wine? (
 		sys-devel/crossdev
 		virtual/wine
@@ -129,6 +162,7 @@ DEPEND+="
 	X? (
 		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
+		>=sys-process/procps-3.3.17[${MULTILIB_USEDEP}]
 	)
 "
 
@@ -141,7 +175,10 @@ gen_clang_deps() {
 		(
 			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			>=sys-libs/libcxx-${s}[${MULTILIB_USEDEP}]
+			>=sys-libs/libcxxabi-${s}[${MULTILIB_USEDEP}]
 			>=sys-devel/lld-${s}
+			test? ( >=dev-util/lldb-${s} )
 		)
 		"
 	done
@@ -149,18 +186,282 @@ gen_clang_deps() {
 
 BDEPEND+="
 	${CDEPEND}
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=dev-util/cmake-3.16.8
+	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
+	>=dev-util/cmake-3.23.2
 	clang? ( || ( $(gen_clang_deps) ) )
 	test? (
-		>=dev-cpp/gtest-1.10.0[${MULTILIB_USEDEP}]
 		>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]
 		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 	)
 "
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
-DOCS=( Readme.md )
+DOCS=( "" "Readme.md" )
+
+_calculate_depends_fingerprint() {
+	local dfp=$(echo "${RDEPEND}:${DEPEND}:${BDEPEND}" \
+		| tr "\n" " " \
+		| sed -E -e "s|[[:space:]]+| |g" \
+		| sha256sum \
+		| cut -f 1 -d " ")
+	if [[ "${dfp}" != "${DEPENDS_FINGERPRINT}" ]] ; then
+		# No versioning.
+eerror
+eerror "CURRENT_DEPENDS_FINGERPRINT:   ${dfp}"
+eerror "EXPECTED_DEPENDS_FINGERPRINT:  ${DEPENDS_FINGERPRINT}"
+eerror
+eerror "Update the DEPENDS_FINGERPRINT."
+eerror
+		die
+	fi
+}
+
+crossdev_has_pkg_use() {
+	local p="${1}"
+	local pv="${2}"
+	local u="${3}"
+	local path=$(realpath "${CROSSDEV_SYSROOT}/var/db/pkg/${p}"*)
+
+	crossdev_has_pkg "${p}" "${pv}"
+
+	if grep -q "${u}" "${CROSSDEV_SYSROOT}/var/db/pkg/${p}"*"/USE" ]] ; then
+		return 0
+	fi
+eerror
+eerror "Missing ${p} with USE=${u}"
+eerror
+eerror "Use \`${CROSSDEV_CTARGET}-emerge ${p}[${u}]\` to build it"
+eerror
+}
+
+crossdev_has_pkg() {
+	local p="${1}"
+	local pv="${2}"
+	local path=$(realpath "${CROSSDEV_SYSROOT}/var/db/pkg/${p}"*)
+	if [[ -e "${path}" ]] ; then
+		local x_pv=$(basename "${path}" | sed -e "s|${p}-||g")
+		ver_test ${x_pv} -ge ${pv} && return 0
+	fi
+eerror
+eerror "Missing or out of date ${p}"
+eerror "Requires:  >=${p}-${pv}"
+eerror
+eerror "Use \`${CROSSDEV_CTARGET}-emerge ${p}\` to build it"
+eerror
+}
+
+# Non-fatal test
+crossdev_has_pkg_nf() {
+	local p="${1}"
+	local pv="${2}"
+	local path=$(realpath "${CROSSDEV_SYSROOT}/var/db/pkg/${p}"*)
+	if [[ -e "${path}" ]] ; then
+		local x_pv=$(basename "${path}" | sed -e "s|${p}-||g")
+		ver_test ${x_pv} -ge ${pv} && return 0
+	fi
+	return 1
+}
+
+check_mingw64() {
+	ewarn "MINGW64 support is incomplete/untested"
+	if [[ -z "${MINGW64_SYSROOT}" ]] ; then
+eerror
+eerror "MINGW64_SYSROOT needs to point to the crossdev image."
+eerror
+		die
+	fi
+	if [[ -z "${MINGW64_CTARGET}" ]] ; then
+eerror
+eerror "MINGW64_CTARGET needs to be defined used to build this target"
+eerror "(eg. x86_64-w64-mingw32)."
+eerror
+		die
+	fi
+	export CROSSDEV_CTARGET="${MINGW64_CTARGET}"
+	export CROSSDEV_SYSROOT="${MINGW64_SYSROOT}"
+	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
+
+	# We ALWAYS do this because emerge is orders of magnitude slow.
+	crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
+	if use gtest ; then
+		crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
+	fi
+	if use openal ; then
+		crossdev_has_pkg "media-libs/openal" "${OPENAL_PV}"
+		crossdev_has_pkg "media-libs/alure" "${ALURE_PV}"
+		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
+		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
+		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
+		crossdev_has_pkg "media-sound/pulseaudio" "${PULSEAUDIO_PV}"
+	fi
+	if use png ; then
+		crossdev_has_pkg "media-libs/libpng" "${LIBPNG_PV}"
+		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
+	fi
+	if use sdl2 ; then
+		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
+		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
+		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
+		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
+		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
+		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
+		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
+	fi
+	if use wine ; then
+		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
+		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" \
+			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" ; then
+			:;
+		else
+eerror
+eerror "Missing wine package"
+eerror
+eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-staging\`"
+eerror
+eerror "  or"
+eerror
+eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-vanilla\`"
+eerror
+
+			die
+		fi
+	fi
+}
+
+check_mingw32() {
+	ewarn "MINGW32 support is incomplete/untested"
+	if [[ -z "${MINGW32_SYSROOT}" ]] ; then
+eerror
+eerror "MINGW32_SYSROOT needs to point to the crossdev image."
+eerror
+		die
+	fi
+	if [[ -z "${MINGW64_CTARGET}" ]] ; then
+eerror
+eerror "MINGW32_CTARGET needs to be defined used to build this target"
+eerror "(eg. i686-w64-mingw32)."
+eerror
+		die
+	fi
+	export CROSSDEV_CTARGET="${MINGW32_CTARGET}"
+	export CROSSDEV_SYSROOT="${MINGW32_SYSROOT}"
+	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
+
+	# We ALWAYS do this because emerge is orders of magnitude slow.
+	crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
+	if use gtest ; then
+		crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
+	fi
+	if use openal ; then
+		crossdev_has_pkg "media-libs/openal" "${OPENAL_PV}"
+		crossdev_has_pkg "media-libs/alure" "${ALURE_PV}"
+		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
+		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
+		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
+		crossdev_has_pkg "media-sound/pulseaudio" "${PULSEAUDIO_PV}"
+	fi
+	if use png ; then
+		crossdev_has_pkg "media-libs/libpng" "${LIBPNG_PV}"
+		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
+	fi
+	if use sdl2 ; then
+		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
+		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
+		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
+		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
+		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
+		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
+		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
+	fi
+	if use wine ; then
+		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
+		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" \
+			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" ; then
+			:;
+		else
+eerror
+eerror "Missing wine package"
+eerror
+eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-staging\`"
+eerror
+eerror "  or"
+eerror
+eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-vanilla\`"
+eerror
+
+			die
+		fi
+	fi
+}
+
+check_cross_android() {
+	ewarn "Android support is incomplete/untested"
+	if [[ -z "${ANDROID_SYSROOT}" ]] ; then
+eerror
+eerror "ANDROID_SYSROOT needs to point to the crossdev image."
+eerror
+		die
+	fi
+	if [[ -z "${ANDROID_CTARGET}" ]] ; then
+eerror
+eerror "ANDROID_CTARGET needs to be defined used to build this target"
+eerror "(eg. armv7a-hardfloat-linux-gnueabi)."
+eerror
+		die
+	fi
+	export CROSSDEV_CTARGET="${ANDROID_CTARGET}"
+	export CROSSDEV_SYSROOT="${ANDROID_SYSROOT}"
+	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
+	# We ALWAYS do this because emerge is orders of magnitude slow.
+	crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
+	crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
+	if use png ; then
+		crossdev_has_pkg "media-libs/libpng" "${LIBPNG_PV}"
+		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
+	fi
+	if use sdl2 ; then
+		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
+		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
+		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
+		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "static-libs"
+		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
+		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
+		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
+	fi
+	if use wine ; then
+		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
+		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" \
+			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" ; then
+			:;
+		else
+eerror
+eerror "Missing wine package"
+eerror
+eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-staging\`"
+eerror
+eerror "  or"
+eerror
+eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-vanilla\`"
+eerror
+			die
+		fi
+	fi
+}
 
 pkg_setup() {
 	export CC=$(tc-getCC)
@@ -193,32 +494,24 @@ eerror "Switch the compiler."
 eerror
 		die
 	fi
-	local dfp=$(echo "${RDEPEND}:${DEPEND}:${BDEPEND}" | tr "\n" " " | sed -E -e "s|[[:space:]]+| |g" | sha512sum | cut -f 1 -d " ")
-	if [[ "${dfp}" != "${DEPENDS_FINGERPRINT}" ]] ; then
-		# No versioning.
-eerror
-eerror "CURRENT_DEPENDS_FINGERPRINT:   ${dfp}"
-eerror "EXPECTED_DEPENDS_FINGERPRINT:  ${DEPENDS_FINGERPRINT}"
-eerror
-eerror "Update the DEPENDS_FINGERPRINT."
-eerror
-		die
+	_calculate_depends_fingerprint
+	if use wine ; then
+		check_cross_mingw64
+		check_cross_mingw32
+	fi
+	if use android ; then
+		check_cross_android
 	fi
 }
 
 src_prepare() {
 	default
+	_calculate_abi_fingerprint
 	F=( Makefile CommandLine/emake/Makefile CompilerSource/Makefile )
 	for f in ${F[@]} ; do
 		einfo "Editing $f"
 		sed -i -e "s|-Wl,-rpath,./||g" "${f}" || die
 	done
-	platforms_copy_sources
-	platform_prepare() {
-		cd "${BUILD_DIR}" || die
-		multilib_copy_sources
-	}
-	platforms_foreach_impl platform_prepare
 	if use android ; then
 ewarn
 ewarn "Android support is experimental."
@@ -228,6 +521,74 @@ ewarn
 ewarn
 ewarn "WINE support is experimental and may not work and be feature complete."
 ewarn
+		if [[ -z "${MINGW64_SYSROOT}" ]] ; then
+			check_mingw64
+		fi
+		if [[ -z "${MINGW32_SYSROOT}" ]] ; then
+			check_mingw32
+		fi
+	fi
+}
+
+_calculate_abi_fingerprint() {
+	#
+	# Generate fingerprint for ABI compatibility checks and subslot.
+	#
+	# libEGM -> EGM
+	# shared -> ENIGMAShared
+	# shared/protos -> Protocols
+	#
+	# The calculation for the ABI may change depending on the dependencies.
+	#
+	local H=()
+	local x
+
+	# Library ABI compatibility
+	for x in $(find \
+		"${S}/CommandLine/libEGM" \
+		"${S}/shared" \
+		-name "*.h" | sort) ; do
+		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
+	done
+	for x in $(find "${S}/shared/protos/" -name "*.proto" | sort) ; do
+		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
+	done
+
+	# Drag and drop actions
+	for x in $(find "${S}" -name "*.ey") ; do
+		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
+	done
+
+	# File formats
+	local FFP=($(grep -E -l -r -e  "(Write|Load)Project\(" "${S}" \
+		| grep -e ".cpp" \
+		| grep -e "libEGM" \
+		| grep -v -e "file-format.cpp"))
+	for x in ${FFP} ; do
+		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
+	done
+
+	# Command line option changes
+	H+=( $(sha256sum "${S}/CommandLine/emake/OptionsParser.cpp" | cut -f 1 -d " ") )
+
+	# Sometimes the minor versions of dependencies bump the project minor version.
+	H+=( ${DEPENDS_FINGERPRINT} )
+
+	# No SOVER, no semver
+	local abi_fingerprint=$(echo "${H[@]}" \
+		| tr " " "\n" \
+		| sort \
+		| uniq \
+		| sha256sum \
+		| cut -f 1 -d " ")
+	if [[ "${abi_fingerprint}" != "${ABI_FINGERPRINT}" ]] ; then
+eerror
+eerror "CURRENT_ABI_FINGERPRINT:   ${abi_fingerprint}"
+eerror "EXPECTED_ABI_FINGERPRINT:  ${ABI_FINGERPRINT}"
+eerror
+eerror "Notify the ebuild maintainer to update the ABI_FINGERPRINT."
+eerror
+		die
 	fi
 }
 
@@ -246,310 +607,73 @@ eerror "The dependencies have changed.  Notify ebuild maintainer."
 eerror
 		die
 	fi
-	local p="${FILESDIR}/enigma-9999_p20200906-makefile-stripped-for-production.patch"
-	if ! patch --dry-run "${p}" ; then
-eerror
-eerror "Patch dry-run failed.  Please update ${p}"
-eerror
-		die
-	fi
 }
 
-src_configure() {
-	platform_configure() {
-		cd "${BUILD_DIR}" || die
-		ml_configure_abi() {
-			cd "${BUILD_DIR}" || die
-			if [[ "${EPLATFORM}" == "android" ]] ; then
-				sed -i \
-				-e "s|AUDIO \?= OpenAL|AUDIO ?= androidAudio|" \
-					ENIGMAsystem/SHELL/Makefile || die
-				sed -i \
-				-e "s|PLATFORM := xlib|PLATFORM ?= Android|" \
-					ENIGMAsystem/SHELL/Makefile || die
-				# todo see Compilers/MacOSX/Android.ey
-				# depends on if we are using autotools or
-				# ndk-build?
-				#sed -i -e "s|make: make|make: |g" \
-				#	Compilers/Linux/Android.ey
-				#sed -i -e "s|make: make|make: |g" \
-				#	Compilers/Linux/AndroidSym.ey
-			fi
-
-			if use openal ; then
-				sed -i \
-				-e "s|AUDIO \?= OpenAL|AUDIO ?= OpenAL|" \
-					ENIGMAsystem/SHELL/Makefile || die
-			fi
-
-			if use curl ; then
-				sed -i \
-		-e "s|NETWORKING \?= None|NETWORKING ?= BerkeleySockets|" \
-					ENIGMAsystem/SHELL/Makefile || die
-			fi
-
-			if use sdl2 ; then
-				sed -i \
-				-e "s|PLATFORM := xlib|PLATFORM ?= SDL|" \
-					ENIGMAsystem/SHELL/Makefile || die
-			elif use X ; then
-				sed -i \
-				-e "s|PLATFORM := xlib|PLATFORM ?= xlib|" \
-					ENIGMAsystem/SHELL/Makefile || die
-			fi
-
-			if use gtk2 ; then
-				sed -i \
-				-e "s|WIDGETS \?= None|WIDGETS ?= GTK+|" \
-					ENIGMAsystem/SHELL/Makefile || die
-			elif use kde || use gnome ; then
-				sed -i \
-				-e "s|WIDGETS \?= None|WIDGETS ?= xlib|" \
-					ENIGMAsystem/SHELL/Makefile || die
-			fi
-		}
-		multilib_foreach_abi ml_configure_abi
-	}
-	platforms_foreach_impl platform_configure
-}
+src_configure() { :; }
 
 src_compile() {
-	platform_compile () {
-		cd "${BUILD_DIR}" || die
-		ml_compile_abi() {
-			cd "${BUILD_DIR}" || die
-			# libpng-util lacks a main()
-			use radialgm && export CLI_ENABLE_SERVER=TRUE
-			local targets=(
-				ENIGMA
-				emake
-				gm2egm
-				libProtocols
-				libEGM
-				gm2egm
-			)
-			use test && targets+=( emake-tests test-runner )
-			targets+=( .FORCE )
-			emake ${targets[@]}
-			use radialgm && unset CLI_ENABLE_SERVER
-		}
-		multilib_foreach_abi ml_compile_abi
-	}
-	platforms_foreach_impl platform_compile
-}
-
-shrink_install() {
-	rm -rf Compilers/{MacOSX,Windows} || die
-	rm -rf Compilers/Linux/AppleCross64.ey || die
-	rm -rf ENIGMAsystem/SHELL/Audio_Systems/{FMODAudio,iOSOpenAL} || die
-	rm -rf \
-ENIGMAsystem/SHELL/Bridges/{Cocoa-OpenGL,Cocoa-OpenGL1,Cocoa-OpenGL3,\
-iPhone-OpenGLES,SDL-Direct3D,SDL-Direct3D11,SDL-Direct3D9,SDL-Win32} || die
-	rm -rf ENIGMAsystem/SHELL/Makefiles/MacOSX || die
-	rm -rf ENIGMAsystem/SHELL/Platforms/{Cocoa,iPhone} || die
-	rm -rf ENIGMAsystem/SHELL/Widget_Systems/Cocoa || die
-
-	if [[ "${EPLATFORM}" == "wine" ]] ; then
-		:;
-	else
-		if ! use wine ; then
-			rm -rf Compilers/Linux/{MinGW32.ey,MinGW64.ey} || die
-			rm -rf \
-ENIGMAsystem/SHELL/Audio_Systems/{DirectSound,XAudio2} || die
-			rm -rf \
-ENIGMAsystem/SHELL/Bridges/{Win32,Win32-Direct3D11,Win32-Direct3D9,\
-Win32-OpenGL,Win32-OpenGL1,Win32-OpenGL3} || die
-			rm -rf \
-ENIGMAsystem/SHELL/Graphics_Systems/{Direct3D11,Direct3D9} || die
-			rm -rf \
-ENIGMAsystem/SHELL/Networking_Systems/DirectPlay || die
-			rm -rf ENIGMAsystem/SHELL/Platforms/Win32 || die
-			rm -rf ENIGMAsystem/SHELL/Widget_Systems/Win32 || die
-		fi
-	fi
-
-	if [[ "${EPLATFORM}" == "linux" ]] ; then
-		if [[ "${ABI}" == amd64 ]] ; then
-			rm -rf Compilers/Linux/{clang32.ey,gcc32.ey} || die
-		elif [[ "${ABI}" == x86 ]] ; then
-			rm -rf Compilers/Linux/{clang.ey,gcc.ey} || die
-		fi
-	elif [[ "${EPLATFORM}" == "android" ]] ; then
-		rm -rf Compilers/Linux/{clang32.ey,gcc32.ey} || die
-		rm -rf Compilers/Linux/{clang.ey,gcc.ey} || die
-	fi
-
-	if [[ "${EPLATFORM}" == "android" ]] ; then
-		:;
-	else
-		if ! use android ; then
-			rm -rf Compilers/Linux/{Android.ey,AndroidSym.ey} || die
-			rm -rf ENIGMAsystem/SHELL/Audio_Systems/androidAudio \
-				|| die
-			rm -rf ENIGMAsystem/SHELL/Platforms/Android || die
-		fi
-	fi
-
-	if ! use gles ; then
-		rm -rf ENIGMAsystem/SHELL/Bridges/OpenGLES || die
-		rm -rf ENIGMAsystem/SHELL/Graphics_Systems/OpenGLES || die
-	fi
-
-	if ! use gles2 ; then
-		rm -rf ENIGMAsystem/SHELL/Graphics_Systems/OpenGLES2 || die
-	fi
-
-	if ! use gles3 ; then
-		rm -rf ENIGMAsystem/SHELL/Graphics_Systems/OpenGLES3 || die
-	fi
-
-	if ! use gtk2 ; then
-		rm -rf ENIGMAsystem/SHELL/Widget_Systems/GTK+ || die
-	fi
-
-	if ! use openal ; then
-		rm -rf ENIGMAsystem/SHELL/Audio_Systems/OpenAL || die
-	fi
-
-	if ! use opengl ; then
-		rm -rf ENIGMAsystem/SHELL/Bridges/OpenGL || die
-		rm -rf \
-ENIGMAsystem/SHELL/Graphics_Systems/{OpenGL-Debug,OpenGL-Desktop} || die
-	fi
-
-	if ! use opengl1 ; then
-		rm -rf ENIGMAsystem/SHELL/Graphics_Systems/OpenGL1 || die
-	fi
-
-	if ! use opengl3 ; then
-		rm -rf ENIGMAsystem/SHELL/Graphics_Systems/OpenGL3 || die
-	fi
-
-	if ! use sdl2 ; then
-		rm -rf ENIGMAsystem/SHELL/Bridges/SDL-OpenGL || die
-		rm -rf ENIGMAsystem/SHELL/Bridges/SDL-OpenGL1 || die
-		rm -rf ENIGMAsystem/SHELL/Bridges/SDL-OpenGL3 || die
-		rm -rf ENIGMAsystem/SHELL/Bridges/SDL-OpenGLES2 || die
-		rm -rf ENIGMAsystem/SHELL/Bridges/SDL-OpenGLES3 || die
-		rm -rf ENIGMAsystem/SHELL/Platforms/SDL || die
-	else
-		if ! use opengl ; then
-			rm -rf ENIGMAsystem/SHELL/Bridges/SDL-OpenGL || die
-		fi
-		if ! use opengl1 ; then
-			rm -rf ENIGMAsystem/SHELL/Bridges/SDL-OpenGL1 || die
-		fi
-		if ! use opengl3 ; then
-			rm -rf ENIGMAsystem/SHELL/Bridges/SDL-OpenGL3 || die
-		fi
-		if ! use gles2 ; then
-			rm -rf ENIGMAsystem/SHELL/Bridges/SDL-OpenGLES2 || die
-		fi
-		if ! use gles3 ; then
-			rm -rf ENIGMAsystem/SHELL/Bridges/SDL-OpenGLES3 || die
-		fi
-	fi
-
-	if ! use test ; then
-		rm -rf Compilers/Linux/TestHarness.ey || die
-	fi
-
-	if ! use X ; then
-		rm -rf ENIGMAsystem/SHELL/Bridges/xlib-OpenGL || die
-		rm -rf ENIGMAsystem/SHELL/Bridges/xlib-OpenGL1 || die
-		rm -rf ENIGMAsystem/SHELL/Bridges/xlib-OpenGL3 || die
-		rm -rf ENIGMAsystem/SHELL/Platforms/xlib || die
-		rm -rf ENIGMAsystem/SHELL/Widget_Systems/xlib || die
-	else
-		if ! use opengl ; then
-			rm -rf ENIGMAsystem/SHELL/Bridges/xlib-OpenGL || die
-		fi
-		if ! use opengl1 ; then
-			rm -rf ENIGMAsystem/SHELL/Bridges/xlib-OpenGL1 || die
-		fi
-		if ! use opengl3 ; then
-			rm -rf ENIGMAsystem/SHELL/Bridges/xlib-OpenGL3 || die
-		fi
-		if ! use gnome && ! use kde ; then
-			rm -rf ENIGMAsystem/SHELL/Widget_Systems/xlib || die
-		fi
-	fi
-}
-
-ml_install_abi() {
 	cd "${BUILD_DIR}" || die
-	if [[ "${EPLATFORM}" == "vanilla" ]] \
-		&& ! multilib_is_native_abi; then
-		return
-	fi
-
-	cd "${BUILD_DIR}" || die
-	local suffix=""
-	local descriptor_suffix=""
-	if [[ "${EPLATFORM}" == "linux" ]] ; then
-		suffix="-${ABI}"
-		descriptor_suffix=" (${ABI})"
-	fi
-	insinto "/usr/$(get_libdir)/enigma/${EPLATFORM}${suffix}"
-	exeinto "/usr/$(get_libdir)/enigma/${EPLATFORM}${suffix}"
-	if [[ "${EPLATFORM}" == "vanilla" ]] ; then
-		doins -r CompilerSource CommandLine shared
-	else
-		if use minimal ; then
-			shrink_install
-		fi
-		eapply \
-"${FILESDIR}/enigma-9999_p20200906-makefile-stripped-for-production.patch"
-	fi
-	if use radialgm ; then
-		doexe emake
-	fi
-	doexe libcompileEGMf.so libEGM.so libENIGMAShared.so \
-		libProtocols.so gm2egm
-	doins -r ENIGMAsystem Compilers settings.ey events.ey \
-		Config.mk Makefile
-	if use radialgm ; then
-		insinto \
-"/usr/$(get_libdir)/enigma/${EPLATFORM}${suffix}/CommandLine"
-		doins -r CommandLine/libEGM
-	fi
-	exeinto /usr/bin
-	cp "${FILESDIR}/enigma" "${FILESDIR}/enigma-cli" "${T}"
-	sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
-		"${T}"/enigma || die
-	sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
-		"${T}"/enigma-cli || die
-	sed -i -e "s|PLATFORM|${EPLATFORM}${suffix}|g" \
-		"${T}"/enigma || die
-	sed -i -e "s|PLATFORM|${EPLATFORM}${suffix}|g" \
-		"${T}"/enigma-cli || die
-	mv "${T}/enigma"{,-${EPLATFORM}${suffix}}
-	mv "${T}/enigma-cli"{,-${EPLATFORM}${suffix}}
-	doexe "${T}/enigma-${EPLATFORM}${suffix}" \
-		"${T}/enigma-cli-${EPLATFORM}${suffix}"
-	sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
-		"${D}/usr/bin/enigma-${EPLATFORM}${suffix}" || die
-	sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
-		"${D}/usr/bin/enigma-cli-${EPLATFORM}${suffix}" \
-		|| die
-	newicon Resources/logo.png enigma.png
-	make_desktop_entry \
-		"/usr/bin/enigma-${EPLATFORM}${suffix}" \
-		"ENIGMA${descriptor_suffix}" \
-		"/usr/share/pixmaps/enigma.png" \
-		"Development;IDE"
+	use radialgm && export CLI_ENABLE_SERVER=TRUE
+	local targets=(
+		"ENIGMA"
+		"emake"
+		"gm2egm"
+		"libProtocols"
+		"libEGM"
+		"gm2egm"
+	)
+	use test && targets+=( "emake-tests" "test-runner" )
+	targets+=( ".FORCE" )
+	emake ${targets[@]}
+	use radialgm && unset CLI_ENABLE_SERVER
 }
 
 src_install() {
-	platform_install() {
-		cd "${BUILD_DIR}" || die
-		multilib_foreach_abi ml_install_abi
-	}
-	platforms_foreach_impl platform_install
-
-	cat ENIGMAsystem/SHELL/Universal_System/random.cpp | head -n 86 \
-		> "${T}/license.random_cpp" || die
-	dodoc "${T}/license.random_cpp"
+	cd "${BUILD_DIR}" || die
+	insinto "/usr/$(get_libdir)/enigma"
+	exeinto "/usr/$(get_libdir)/enigma"
+	if use radialgm ; then
+		doexe emake
+	fi
+	BINS=(
+		"libcompileEGMf.so"
+		"libEGM.so"
+		"libENIGMAShared.so"
+		"libProtocols.so"
+		"gm2egm"
+	)
+	doexe ${BINS[@]}
+	REGULARS=(
+		"CommandLine"
+		"CompilerSource"
+		"Compilers"
+		"Config.mk"
+		"Default.mk"
+		"ENIGMAsystem"
+		"events.ey"
+		"Makefile"
+		"shared"
+		"settings.ey"
+	)
+	doins -r "${REGULARS[@]}"
+	if use radialgm ; then
+		insinto "/usr/$(get_libdir)/${PN}/CommandLine"
+		doins -r "CommandLine/libEGM"
+	fi
+	exeinto "/usr/bin"
+	local x
+	for x in "${PN}" "${PN}-cli" ; do
+		cat "${FILESDIR}/${x}" > "${T}/${x}" || die
+		sed -i -e "s|LIBDIR|$(get_libdir)|g" \
+			"${T}/${PN}" || die
+		doexe "${T}/${x}"
+	done
+	newicon "Resources/logo.png" "enigma.png"
+	make_desktop_entry \
+		"/usr/bin/${PN}" \
+		"${PN^^}" \
+		"/usr/share/pixmaps/${PN}.png" \
+		"Development;IDE"
 }
 
 pkg_postinst()
