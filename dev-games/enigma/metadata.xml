@@ -13,17 +13,21 @@
     EDL (Enigma Development Language) scripts that have syntax between GML
     and C++.
 
-    WINE support requires MinGW.  For details see:
-    https://wiki.gentoo.org/wiki/Mingw
-
-    For wine64 support set MINGW64_SYSROOT, MINGW64_CTARGET as environment variables.
-    For wine32 support set MINGW32_SYSROOT, MINGW32_CTARGET as environment variables.
-    For android support set ANDROID_SYSROOT, ANDROID_CTARGET as environment variables.
-
-    Ebuild status:
+    Cross build support status:
 
     Android - Incomplete / Untested
+    OSX - Incomplete / Untested
     WINE - Incomplete / Untested
+
+    For android support set ANDROID_SYSROOT, ANDROID_CTARGET as environment variables.
+    For osx support set OSX_SYSROOT, OSX_CTARGET as environment variables.
+    For wine32 support set MINGW32_SYSROOT, MINGW32_CTARGET as environment variables.
+    For wine64 support set MINGW64_SYSROOT, MINGW64_CTARGET as environment variables.
+
+    Additional cross build documentation:
+    https://wiki.gentoo.org/wiki/Mingw
+    https://enigma-dev.org/docs/Wiki/Install:Android
+    https://enigma-dev.org/docs/Wiki/Mac_OS_X
 
     All cross compiled library packages and cross toolchains must be
     built and available in order to build for the target platform.
@@ -73,6 +77,7 @@ games-misc/enigma -wine
     <flag name="opengl">Enables general OpenGL support.</flag>
     <flag name="opengl1">Installs OpenGL 1.x support.</flag>
     <flag name="opengl3">Installs OpenGL 3.x support.</flag>
+    <flag name="osx">Changes for support for cross compiling for OSX.</flag>
     <flag name="radialgm">Adds RadialGM support.</flag>
     <flag name="sdl2">Adds window creation and input support via SDL2 in a
       platform independent way.</flag>

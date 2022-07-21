@@ -33,12 +33,12 @@ aba553d213834071ba6722e33d2ae67e94c874b5ef4d26be3697c839a6c5f98e\
 b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
-ABI_FINGERPRINT="2d6953b857ef0e53849aacced8a0ea734959f5d5f5d3209dd8bb2f3bf1e5c52f"
-DEPENDS_FINGERPRINT="89abeb8828719244ed3cc60721a6d56cb85040e67ecff1d2e5472aee2bef0894"
+ABI_FINGERPRINT="659be0bac6a71559360812876f8a6936f4ee06fde93d4ff53a000068a4593ae7"
+DEPENDS_FINGERPRINT="5ccd11a8b45da0aef7af55fc78daa10eaab6cc1eeae08d56dee907d98050b3df"
 SLOT="0/${ABI_FINGERPRINT}"
-IUSE+=" android box2d bullet clang curl doc externalfuncs gles gles2 gles3 gme
-gnome gtk2 gtest kde linux minimal +openal +opengl opengl1 +opengl3 png radialgm
-sdl2 test wine +X"
+IUSE+=" android box2d bullet clang doc externalfuncs freetype gles gles2
+gles3 gme gnome gtk2 gtest kde linux minimal network +openal +opengl opengl1
++opengl3 osx png radialgm sdl2 test wine +X"
 REQUIRED_USE+="
 	gles? ( sdl2 )
 	gles2? ( gles opengl )
@@ -62,12 +62,17 @@ REQUIRED_USE+="
 # See CI for *DEPENDs
 ALURE_PV="1.2"
 CLANG_PV="10.0.0"
-GCC_PV="10.3.0" # Upstream uses 12.1.0 for Linux.  This has been relaxed in this ebuild.
+CURL_PV="7.68"
 BOOST_PV="1.79"
+BULLET_PV="3.24"
 FLAC_PV="1.3.4"
 FREETYPE_PV="2.12.1"
+GCC_PV="10.3.0" # Upstream uses 12.1.0 for Linux.  This has been relaxed in this ebuild.
 GLM_PV="0.9.9.7"
+GLEW_PV="2.2.0"
+GME_PV="0.6.3"
 GTEST_PV="1.10.0"
+LIBFFI_PV="3.4.2"
 LIBOGG_PV="1.3.5"
 LIBPNG_PV="1.6.37"
 LIBSDL2_PV="2.0.22"
@@ -101,8 +106,8 @@ DEPEND+="
 	>=dev-libs/openssl-1.1.1p[${MULTILIB_USEDEP}]
 	>=dev-libs/pugixml-1.12.1[${MULTILIB_USEDEP}]
 	>=dev-libs/rapidjson-1.1.0
-	>=media-libs/freetype-${FREETYPE_PV}[${MULTILIB_USEDEP},static-libs]
 	>=media-libs/harfbuzz-4.4.1[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	virtual/jpeg[${MULTILIB_USEDEP}]
 	virtual/libc
 	android? (
@@ -116,23 +121,24 @@ DEPEND+="
 			<games-engines/box2d-2.4:2.3.0[${MULTILIB_USEDEP}]
 		)
 	)
-	bullet? ( >=sci-physics/bullet-3.24[${MULTILIB_USEDEP}] )
-	curl? ( >=net-misc/curl-7.68[${MULTILIB_USEDEP}] )
+	bullet? ( >=sci-physics/bullet-${BULLET_PV}[${MULTILIB_USEDEP}] )
 	externalfuncs? (
-		>=dev-libs/libffi-3.4.2[${MULTILIB_USEDEP}]
+		>=dev-libs/libffi-${LIBFFI_PV}[${MULTILIB_USEDEP}]
 	)
+	freetype? ( >=media-libs/freetype-${FREETYPE_PV}[${MULTILIB_USEDEP},static-libs] )
 	gles? (
 		>=media-libs/glm-${GLM_PV}
 		>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
 	)
-	gme? ( >=media-libs/game-music-emu-0.6.3[${MULTILIB_USEDEP}] )
+	gme? ( >=media-libs/game-music-emu-${GME_PV}[${MULTILIB_USEDEP}] )
 	gnome? ( >=gnome-extra/zenity-3.43.0 )
 	gtk2? ( >=x11-libs/gtk+-2.24.33:2[${MULTILIB_USEDEP}] )
 	gtest? (
 		>=dev-cpp/gtest-${GTEST_PV}[${MULTILIB_USEDEP}]
 	)
 	kde? ( >=kde-apps/kdialog-19.12.3 )
+	network? ( >=net-misc/curl-${CURL_PV}[${MULTILIB_USEDEP}] )
 	openal? (
 		>=media-libs/alure-${ALURE_PV}[${MULTILIB_USEDEP}]
 		>=media-libs/dumb-2.0.3[${MULTILIB_USEDEP}]
@@ -141,7 +147,7 @@ DEPEND+="
 		>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		>=media-libs/glew-2.2.0[${MULTILIB_USEDEP}]
+		>=media-libs/glew-${GLEW_PV}[${MULTILIB_USEDEP}]
 		>=media-libs/glm-${GLM_PV}
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
 	)
@@ -160,9 +166,12 @@ DEPEND+="
 		virtual/wine
 	)
 	X? (
-		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 		>=sys-process/procps-3.3.17[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
+		>=x11-libs/libXinerama-1.1.4[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrandr-1.5.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libXtst-1.2.3[${MULTILIB_USEDEP}]
 	)
 "
 
@@ -230,7 +239,8 @@ crossdev_has_pkg_use() {
 eerror
 eerror "Missing ${p} with USE=${u}"
 eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge ${p}[${u}]\` to build it"
+eerror "Use \`${CROSSDEV_CTARGET}-emerge ${p}[${u}]\` to build it."
+eerror "See ebuild for full list in ${FUNC}."
 eerror
 }
 
@@ -247,6 +257,7 @@ eerror "Missing or out of date ${p}"
 eerror "Requires:  >=${p}-${pv}"
 eerror
 eerror "Use \`${CROSSDEV_CTARGET}-emerge ${p}\` to build it"
+eerror "See ebuild for full list in ${FUNC}."
 eerror
 }
 
@@ -279,10 +290,23 @@ eerror
 	fi
 	export CROSSDEV_CTARGET="${MINGW64_CTARGET}"
 	export CROSSDEV_SYSROOT="${MINGW64_SYSROOT}"
+	export FUNC="check_mingw64()"
 	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
 
 	# We ALWAYS do this because emerge is orders of magnitude slow.
-	crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
+	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
+	if use box2d ; then
+		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
+	fi
+	if use bullet ; then
+		crossdev_has_pkg "sci-physics/bullet" "${BULLET_PV}"
+	fi
+	if use freetype ; then
+		crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
+	fi
+	if use gme ; then
+		crossdev_has_pkg "media-libs/game-music-emu" "${GME_PV}"
+	fi
 	if use gtest ; then
 		crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
 	fi
@@ -296,6 +320,10 @@ eerror
 		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
 		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
 		crossdev_has_pkg "media-sound/pulseaudio" "${PULSEAUDIO_PV}"
+	fi
+	if use opengl ; then
+		crossdev_has_pkg "media-libs/glew" "${GLEW_PV}"
+		crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
 	fi
 	if use png ; then
 		crossdev_has_pkg "media-libs/libpng" "${LIBPNG_PV}"
@@ -351,12 +379,32 @@ eerror
 	fi
 	export CROSSDEV_CTARGET="${MINGW32_CTARGET}"
 	export CROSSDEV_SYSROOT="${MINGW32_SYSROOT}"
+	export FUNC="check_mingw32()"
 	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
 
 	# We ALWAYS do this because emerge is orders of magnitude slow.
-	crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
+	crossdev_has_pkg "dev-libs/libffi" "${LIBFFI_PV}"
+	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
+	if use box2d ; then
+		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
+	fi
+	if use bullet ; then
+		crossdev_has_pkg "sci-physics/bullet" "${BULLET_PV}"
+	fi
+	if use freetype ; then
+		crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
+	fi
+	if use gme ; then
+		crossdev_has_pkg "media-libs/game-music-emu" "${GME_PV}"
+	fi
 	if use gtest ; then
 		crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
+	fi
+	if use gtk2 ; then
+		crossdev_has_pkg "x11-libs/gtk+" "${GTK2_PV}"
+	fi
+	if use network ; then
+		crossdev_has_pkg "net-misc/curl" "${CURL_PV}"
 	fi
 	if use openal ; then
 		crossdev_has_pkg "media-libs/openal" "${OPENAL_PV}"
@@ -368,6 +416,10 @@ eerror
 		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
 		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
 		crossdev_has_pkg "media-sound/pulseaudio" "${PULSEAUDIO_PV}"
+	fi
+	if use opengl ; then
+		crossdev_has_pkg "media-libs/glew" "${GLEW_PV}"
+		crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
 	fi
 	if use png ; then
 		crossdev_has_pkg "media-libs/libpng" "${LIBPNG_PV}"
@@ -423,10 +475,33 @@ eerror
 	fi
 	export CROSSDEV_CTARGET="${ANDROID_CTARGET}"
 	export CROSSDEV_SYSROOT="${ANDROID_SYSROOT}"
+	export FUNC="check_cross_android()"
 	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
 	# We ALWAYS do this because emerge is orders of magnitude slow.
 	crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
-	crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
+	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
+	if use box2d ; then
+		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
+	fi
+	if use bullet ; then
+		crossdev_has_pkg "sci-physics/bullet" "${BULLET_PV}"
+	fi
+	if use freetype ; then
+		crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
+	fi
+	if use gme ; then
+		crossdev_has_pkg "media-libs/game-music-emu" "${GME_PV}"
+	fi
+	if use gtest ; then
+		crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
+	fi
+	if use network ; then
+		crossdev_has_pkg "net-misc/curl" "${CURL_PV}"
+	fi
+	if use opengl ; then
+		crossdev_has_pkg "media-libs/glew" "${GLEW_PV}"
+		crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
+	fi
 	if use png ; then
 		crossdev_has_pkg "media-libs/libpng" "${LIBPNG_PV}"
 		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
@@ -458,6 +533,94 @@ eerror "  or"
 eerror
 eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-vanilla\`"
 eerror
+
+			die
+		fi
+	fi
+}
+
+check_cross_osx() {
+	ewarn "OSX support is incomplete/untested"
+	if [[ -z "${ANDROID_SYSROOT}" ]] ; then
+eerror
+eerror "OSX_SYSROOT needs to point to the crossdev image."
+eerror
+		die
+	fi
+	if [[ -z "${ANDROID_CTARGET}" ]] ; then
+eerror
+eerror "OSX_CTARGET needs to be defined used to build this target"
+eerror "(eg. x86_64-apple-darwin13)."
+eerror
+		die
+	fi
+	export CROSSDEV_CTARGET="${OSX_CTARGET}"
+	export CROSSDEV_SYSROOT="${OSX_SYSROOT}"
+	export FUNC="check_cross_osx()"
+	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
+	# We ALWAYS do this because emerge is orders of magnitude slow.
+	crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
+	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
+	if use box2d ; then
+		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
+	fi
+	if use bullet ; then
+		crossdev_has_pkg "sci-physics/bullet" "${BULLET_PV}"
+	fi
+	if use freetype ; then
+		crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
+	fi
+	if use gme ; then
+		crossdev_has_pkg "media-libs/game-music-emu" "${GME_PV}"
+	fi
+	if use gtk2 ; then
+		crossdev_has_pkg "x11-libs/gtk+" "${GTK2_PV}"
+	fi
+	if use gtest ; then
+		crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
+	fi
+	if use network ; then
+		crossdev_has_pkg "net-misc/curl" "${CURL_PV}"
+	fi
+	if use openal ; then
+		crossdev_has_pkg "media-libs/openal" "${OPENAL_PV}"
+	fi
+	if use opengl ; then
+		crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
+		crossdev_has_pkg "media-libs/glew" "${GLEW_PV}"
+	fi
+	if use png ; then
+		crossdev_has_pkg "media-libs/libpng" "${LIBPNG_PV}"
+		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
+	fi
+	if use sdl2 ; then
+		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
+		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
+		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
+		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
+		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
+		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
+		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
+	fi
+	if use wine ; then
+		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
+		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" \
+			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" ; then
+			:;
+		else
+eerror
+eerror "Missing wine package"
+eerror
+eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-staging\`"
+eerror
+eerror "  or"
+eerror
+eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-vanilla\`"
+eerror
+
 			die
 		fi
 	fi
@@ -502,6 +665,9 @@ eerror
 	if use android ; then
 		check_cross_android
 	fi
+	if use osx ; then
+		check_cross_osx
+	fi
 }
 
 src_prepare() {
@@ -528,6 +694,10 @@ ewarn
 			check_mingw32
 		fi
 	fi
+
+	# Typo?
+	sed -i -e "s|ANDROIS_LDLIBS|ANDROID_LDLIBS|g" \
+		ENIGMAsystem/SHELL/Makefile || die
 }
 
 _calculate_abi_fingerprint() {
@@ -609,7 +779,26 @@ eerror
 	fi
 }
 
-src_configure() { :; }
+src_configure() {
+	cd "${BUILD_DIR}" || die
+	if [[ -n "${ANDROID_CTARGET}" ]] ; then
+		sed -i -e "s|gcc|${ANDROID_CTARGET}-gcc|g" \
+			-e "s|g\+\+|${ANDROID_CTARGET}-g++|g"
+			"Compilers/Linux/Android.ey" || die
+	fi
+	if [[ -n "${MINGW32_CTARGET}" ]] ; then
+		sed -i -e "s|i686-w64-mingw32|${MINGW32_CTARGET}|g" \
+			"Compilers/Linux/MinGW32.ey" || die
+	fi
+	if [[ -n "${MINGW64_CTARGET}" ]] ; then
+		sed -i -e "s|x86_64-w64-mingw32|${MINGW64_CTARGET}|g" \
+			"Compilers/Linux/MinGW64.ey" || die
+	fi
+	if [[ -n "${OSX_CTARGET}" ]] ; then
+		sed -i -e "s|x86_64-apple-darwin13|${OSX_CTARGET}|g" \
+			"Compilers/Linux/AppleCross64.ey" || die
+	fi
+}
 
 src_compile() {
 	cd "${BUILD_DIR}" || die
