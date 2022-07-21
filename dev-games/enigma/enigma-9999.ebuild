@@ -599,7 +599,7 @@ eerror
 	if ver_test ${MACOS_SDK_PV} -gt ${MACOS_SDK_PV_MAX} ; then
 eerror
 eerror "${MACOS_SDK_PV} is not supported."
-eerror "Requires 10.4 to ${MACOS_SDK_PV_MAX}"
+eerror "Requires ${MACOS_SDK_PV_MIN} to ${MACOS_SDK_PV_MAX}"
 eerror
 	fi
 	crossdev_has_pkg "sys-devel/clang" "13.0.0"
