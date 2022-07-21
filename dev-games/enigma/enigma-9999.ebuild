@@ -242,7 +242,7 @@ crossdev_has_pkg_use() {
 eerror
 eerror "Missing ${p} with USE=${u}"
 eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge ${p}[${u}]\` to build it."
+eerror "Use \`${CROSSDEV_CTARGET}-emerge \">=${p}-${pv}[${u}]\"\` to build it."
 eerror "See ebuild for full list in ${FUNC}."
 eerror
 }
@@ -259,7 +259,7 @@ eerror
 eerror "Missing or out of date ${p}"
 eerror "Requires:  >=${p}-${pv}"
 eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge ${p}\` to build it"
+eerror "Use \`${CROSSDEV_CTARGET}-emerge \">=${p}-${pv}\"\` to build it"
 eerror "See ebuild for full list in ${FUNC}."
 eerror
 }
