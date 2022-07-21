@@ -16,11 +16,11 @@
     Cross build support status:
 
     Android - Incomplete / Untested
-    OSX - Incomplete / Untested
+    MACOS - Incomplete / Untested
     WINE - Incomplete / Untested
 
     For android support set ANDROID_SYSROOT, ANDROID_CTARGET as environment variables.
-    For osx support set OSX_SYSROOT, OSX_CTARGET as environment variables.
+    For macos support set MACOS_SYSROOT, MACOS_CTARGET as environment variables.
     For wine32 support set MINGW32_SYSROOT, MINGW32_CTARGET as environment variables.
     For wine64 support set MINGW64_SYSROOT, MINGW64_CTARGET as environment variables.
 
@@ -74,12 +74,12 @@ games-misc/enigma -wine
       input dialogs, and color picker.</flag>
     <flag name="kde">Uses KDialog as the default widget engine if running
       KDE for alerts, user prompts, file dialogs, color picker.</flag>
+    <flag name="macos">Changes for support for cross compiling for macOS.</flag>
     <flag name="openal">Installs and makes OpenAL the default audio
       system.</flag>
     <flag name="opengl">Enables general OpenGL support.</flag>
     <flag name="opengl1">Installs OpenGL 1.x support.</flag>
     <flag name="opengl3">Installs OpenGL 3.x support.</flag>
-    <flag name="osx">Changes for support for cross compiling for OSX.</flag>
     <flag name="radialgm">Adds RadialGM support.</flag>
     <flag name="sdl2">Adds window creation and input support via SDL2 in a
       platform independent way.</flag>

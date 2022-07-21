@@ -37,8 +37,8 @@ ABI_FINGERPRINT="eb4b9f49adbb454e86c10d9d1526ea6cdce3dd2f4b5f951f776024e0d460fbb
 DEPENDS_FINGERPRINT="75d6a02780083805ac667a20bb187720b9f54391f28d0ae14d4368979234eabd"
 SLOT="0/${ABI_FINGERPRINT}"
 IUSE+=" android box2d bullet clang doc externalfuncs freetype gles gles2
-gles3 gme gnome gtk2 gtest kde linux minimal network +openal +opengl opengl1
-+opengl3 osx png radialgm sdl2 test wine wine32 wine64 +X"
+gles3 gme gnome gtk2 gtest kde macos minimal network +openal +opengl opengl1
++opengl3 png radialgm sdl2 test wine wine32 wine64 +X"
 REQUIRED_USE+="
 	gles? ( sdl2 )
 	gles2? ( gles opengl )
@@ -268,10 +268,11 @@ eerror
 crossdev_has_pkg_nf() {
 	local p="${1}"
 	local pv="${2}"
+	local op="${3}"
 	local path=$(realpath "${CROSSDEV_SYSROOT}/var/db/pkg/${p}"*)
 	if [[ -e "${path}" ]] ; then
 		local x_pv=$(basename "${path}" | sed -e "s|${p}-||g")
-		ver_test ${x_pv} -ge ${pv} && return 0
+		ver_test ${x_pv} ${op} ${pv} && return 0
 	fi
 	return 1
 }
@@ -346,8 +347,8 @@ eerror
 	fi
 	if use wine ; then
 		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
-		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" \
-			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" ; then
+		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" "-ge" \
+			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" "-ge" ; then
 			:;
 		else
 eerror
@@ -442,8 +443,8 @@ eerror
 	fi
 	if use wine ; then
 		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
-		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" \
-			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" ; then
+		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" "-ge" \
+			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" "-ge" ; then
 			:;
 		else
 eerror
@@ -523,8 +524,8 @@ eerror
 	fi
 	if use wine ; then
 		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
-		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" \
-			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" ; then
+		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" "-ge" \
+			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" "-ge" ; then
 			:;
 		else
 eerror
@@ -542,28 +543,66 @@ eerror
 	fi
 }
 
-check_cross_osx() {
-	ewarn "OSX support is incomplete/untested"
-	if [[ -z "${ANDROID_SYSROOT}" ]] ; then
+MACOS_SDK_PV_MIN="10.4"
+MACOS_SDK_PV_MAX="13.0"
+check_cross_macos() {
+	ewarn "MACOS support is incomplete/untested"
+	if [[ -z "${MACOS_SYSROOT}" ]] ; then
 eerror
-eerror "OSX_SYSROOT needs to point to the crossdev image."
+eerror "MACOS_SYSROOT needs to point to the crossdev image."
 eerror
 		die
 	fi
-	if [[ -z "${ANDROID_CTARGET}" ]] ; then
+	if [[ -z "${MACOS_CTARGET}" ]] ; then
 eerror
-eerror "OSX_CTARGET needs to be defined used to build this target"
+eerror "MACOS_CTARGET needs to be defined used to build this target"
 eerror "(eg. x86_64-apple-darwin13)."
 eerror
 		die
 	fi
-	export CROSSDEV_CTARGET="${OSX_CTARGET}"
-	export CROSSDEV_SYSROOT="${OSX_SYSROOT}"
-	export FUNC="check_cross_osx()"
+	if [[ -z "${MACOS_SDK_PV}" ]] ; then
+eerror
+eerror "MACOS_SDK_PV needs to be defined"
+eerror
+		die
+	fi
+	if ver_test ${MACOS_SDK_PV} < ${MACOS_SDK_PV_MIN} ; then
+		# CI uses 12.1 but it is relaxed in this ebuild for
+		# compatibility reasons.
+eerror
+eerror "Detected ${MACOS_SDK_PV}."
+eerror "Requires >= ${MACOS_SDK_PV_MIN}."
+eerror
+eerror "You will need to download a newer version of the SDK."
+eerror
+		die
+	fi
+	export CROSSDEV_CTARGET="${MACOS_CTARGET}"
+	export CROSSDEV_SYSROOT="${MACOS_SYSROOT}"
+	export FUNC="check_cross_macos()"
 	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
 	# We ALWAYS do this because emerge is orders of magnitude slow.
 	crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
 	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
+	if ver_test ${MACOS_SDK_PV} -lt 10.5 && crossdev_has_pkg_nf "sys-devel/osxcross" "1.1" ; then
+		:;
+	elif ver_test ${MACOS_SDK_PV} -ge 10.5 && crossdev_has_pkg_nf "sys-devel/osxcross" "1.4" ; then
+		:;
+	else
+		# There is only 1 ebuild in the distro and too outdated.
+eerror
+eerror "You need =sys-devel/osxcross-1.1 for 10.4, 10.5."
+eerror "You need =sys-devel/osxcross-1.4 for >= 10.6."
+eerror
+		die
+	fi
+	if ver_test ${MACOS_SDK_PV} -gt ${MACOS_SDK_PV_MAX} ; then
+eerror
+eerror "${MACOS_SDK_PV} is not supported."
+eerror "Requires 10.4 to ${MACOS_SDK_PV_MAX}"
+eerror
+	fi
+	crossdev_has_pkg "sys-devel/clang" "13.0.0"
 	if use box2d ; then
 		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
 	fi
@@ -610,8 +649,8 @@ eerror
 	fi
 	if use wine ; then
 		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
-		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" \
-			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" ; then
+		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" "-ge" \
+			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" "-ge" ; then
 			:;
 		else
 eerror
@@ -664,7 +703,7 @@ eerror
 	use wine32 && check_cross_mingw32
 	use wine64 && check_cross_mingw64
 	use android && check_cross_android
-	use osx && check_cross_osx
+	use macos && check_cross_macos
 }
 
 src_prepare() {
@@ -791,8 +830,8 @@ src_configure() {
 		sed -i -e "s|x86_64-w64-mingw32|${MINGW64_CTARGET}|g" \
 			"Compilers/Linux/MinGW64.ey" || die
 	fi
-	if [[ -n "${OSX_CTARGET}" ]] ; then
-		sed -i -e "s|x86_64-apple-darwin13|${OSX_CTARGET}|g" \
+	if [[ -n "${MACOS_CTARGET}" ]] ; then
+		sed -i -e "s|x86_64-apple-darwin13|${MACOS_CTARGET}|g" \
 			"Compilers/Linux/AppleCross64.ey" || die
 	fi
 }
