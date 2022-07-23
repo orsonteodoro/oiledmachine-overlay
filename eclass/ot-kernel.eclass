@@ -2968,6 +2968,11 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 		ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		cpu_sched_config_applied=1
+		ewarn
+		ewarn "Changed .config to disable SCHED_CORE on Project C (unsupported by project)"
+		ewarn "Lowers security in SMT/HT"
+		ewarn
+		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 	fi
 
 	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
@@ -2977,6 +2982,11 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 		ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		cpu_sched_config_applied=1
+		ewarn
+		ewarn "Changed .config to disable SCHED_CORE on Project C (unsupported by project)"
+		ewarn "Lowers security in SMT/HT"
+		ewarn
+		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 	fi
 
 	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
@@ -2986,6 +2996,11 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_PDS"
 		cpu_sched_config_applied=1
+		ewarn
+		ewarn "Changed .config to disable SCHED_CORE on Project C (unsupported by project)"
+		ewarn "Lowers security in SMT/HT"
+		ewarn
+		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 	fi
 
 	if has bmq ${IUSE_EFFECTIVE} && ot-kernel_use bmq \
@@ -3000,6 +3015,11 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 		einfo "Changed .config to use PDS"
 		ot-kernel_y_configopt "CONFIG_SCHED_PDS"
 		cpu_sched_config_applied=1
+	fi
+
+	if [[ "${cpu_sched}" =~ ("muqss"|"prjc"|"bmq"|"pds") ]] ; then
+		einfo "Changed .config to disable autogroup"
+		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
 	fi
 
 	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs \
