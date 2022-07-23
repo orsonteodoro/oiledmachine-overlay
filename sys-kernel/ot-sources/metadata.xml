@@ -369,7 +369,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     The purpose of some of these environment variables is to change primarily
     the default profile a little bit so that it skips the menuconfig step all
     together in the build before install with the build USE flag.  1 means yes.
-    0 means no.  Auto assumes native build.
+    0 means no.  Auto assumes native build.  Due to the possibly of dependent
+    options, 0 may also mean custom or previous settings.
 
 
 
@@ -925,6 +926,12 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
         (*19) 
         (*20) left is performance, right is security
 
+    See also
+
+      HT
+
+
+
     OT_KERNEL_CPU_MICROCODE - Auto includes CPU firmware to fix CPU bugs
     and mitigate against some security vulnerabilities.
 
@@ -1136,6 +1143,10 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
       untrusted-distant - some hardening except physical access mitigation.
         Used for multiuser computer in locked room or www setups.
+
+    See also:
+
+      HT
 
 
 
@@ -2110,6 +2121,16 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
 
     EXT4_ENCRYPTION - Add support for ext4 encryption
     Valid values:  0, 1 (default).
+
+    HT - Add mitigations against HT (for building cross kernels).
+    Valid values: 0, 1, 2, unset.
+    0 - manual setting
+    1 - weak mitigations
+    2 - strongest available mitigations (HT off; not implemented in the eclass
+        yet)
+    Unset means custom.
+    (Auto detection would be nice, but may be counter productive if hardware
+    already fixed or feature disabled.  This is why it is a manual setting.)
 
     IPTABLES_CLIENT - Add support for iptables client.
     Valid values:  0, 1 (default).

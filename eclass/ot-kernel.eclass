@@ -3229,7 +3229,7 @@ ot-kernel_set_kconfig_hardening_level() {
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
-		if [[ "${cpu_sched}" =~ "cfs" ]] ; then
+		if [[ "${cpu_sched}" =~ "cfs" && "${HT}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
 		fi
 	elif [[ "${hardening_level}" == "untrusted" ]] ; then
@@ -3271,7 +3271,7 @@ ot-kernel_set_kconfig_hardening_level() {
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
-		if [[ "${cpu_sched}" =~ "cfs" ]] ; then
+		if [[ "${cpu_sched}" =~ "cfs" && "${HT}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
 		fi
 	fi
