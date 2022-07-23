@@ -4,6 +4,7 @@
 EAPI=7
 
 CXX_STANDARD="-std=c++17"
+EGIT_COMMIT="2ddad078c6cd355dcaa45996cf9f3a49df020102"
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
 
@@ -33,7 +34,7 @@ aba553d213834071ba6722e33d2ae67e94c874b5ef4d26be3697c839a6c5f98e\
 b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
-ABI_FINGERPRINT="4742c621d202c5d84b6a87efa7a371eaadc142fdb904b976f3fcbbc2517bb0b5"
+ABI_FINGERPRINT="3660f4e5cab9d7d7db6fd8b5c4b6f7089b923e283daef5eb7c41094626b90001"
 DEPENDS_FINGERPRINT="1dabf3604c40ec089f29053f82649fa297bf24df43c6ece1ea8026390d055442"
 SLOT="0/${ABI_FINGERPRINT}"
 IUSE+=" android box2d bullet clang doc externalfuncs freetype gles gles2
