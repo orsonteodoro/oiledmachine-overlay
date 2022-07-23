@@ -1068,8 +1068,9 @@ eerror
 # Copies the profraw for PGO
 # It has to be done outside the sandbox
 dump_profraw() {
-	local extraversion=$(cat /proc/version | cut -f 3 -d " " | cut -f 2 -d "-")
-	local arch=$(cat /proc/version | cut -f 3 -d " " | cut -f 3 -d "-")
+	local arch=$(cat /proc/version | cut -f 3 -d " ")
+	arch="${arch##*-}"
+	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
 	local profraw_dpath="${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}" || die
 	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
@@ -2953,13 +2954,15 @@ ot-kernel_set_kconfig_compressors() {
 # Sets the CPU scheduler kernel config
 ot-kernel_set_kconfig_cpu_scheduler() {
 	local cpu_sched_config_applied=0
-	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc && [[ "${cpu_sched}" == "muqss" ]] ; then
+	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
+		&& [[ "${cpu_sched}" == "muqss" ]] ; then
 		einfo "Changed .config to use MuQSS"
 		ot-kernel_y_configopt "CONFIG_SCHED_MUQSS"
 		cpu_sched_config_applied=1
 	fi
 
-	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc && [[ "${cpu_sched}" == "prjc" ]] ; then
+	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
+		&& [[ "${cpu_sched}" == "prjc" ]] ; then
 		einfo "Changed .config to use Project C with BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
@@ -2967,7 +2970,8 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 		cpu_sched_config_applied=1
 	fi
 
-	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc && [[ "${cpu_sched}" == "prjc-bmq" ]] ; then
+	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
+		&& [[ "${cpu_sched}" == "prjc-bmq" ]] ; then
 		einfo "Changed .config to use Project C with BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
@@ -2975,7 +2979,8 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 		cpu_sched_config_applied=1
 	fi
 
-	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc && [[ "${cpu_sched}" == "prjc-pds" ]] ; then
+	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
+		&& [[ "${cpu_sched}" == "prjc-pds" ]] ; then
 		einfo "Changed .config to use Project C with PDS"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
@@ -2983,19 +2988,52 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 		cpu_sched_config_applied=1
 	fi
 
-	if has bmq ${IUSE_EFFECTIVE} && ot-kernel_use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
+	if has bmq ${IUSE_EFFECTIVE} && ot-kernel_use bmq \
+		&& [[ "${cpu_sched}" == "bmq" ]] ; then
 		einfo "Changed .config to use BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 		cpu_sched_config_applied=1
 	fi
 
-	if has pds ${IUSE_EFFECTIVE} && ot-kernel_use pds && [[ "${cpu_sched}" == "pds" ]] ; then
+	if has pds ${IUSE_EFFECTIVE} && ot-kernel_use pds \
+		&& [[ "${cpu_sched}" == "pds" ]] ; then
 		einfo "Changed .config to use PDS"
 		ot-kernel_y_configopt "CONFIG_SCHED_PDS"
 		cpu_sched_config_applied=1
 	fi
 
-	if (( ${cpu_sched_config_applied} == 0 )) && [[ "${cpu_sched}" != "cfs" ]] ; then
+	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs \
+		&& [[ "${cpu_sched}" =~ "cfs" ]] ; then
+		if [[ "${cpu_sched}" =~ ("cfs-throughput"|"cfs-interactive"|"cfs-interactive") ]] ; then
+			:;
+		else
+			einfo "Changed .config to use CFS with autogroup manually set."
+		fi
+		ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
+		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
+		ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
+		ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
+	fi
+
+	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs \
+		&& [[ "${cpu_sched}" == "cfs-throughput" ]] ; then
+		einfo "Changed .config to use CFS with disabled autogroup"
+		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
+		cpu_sched_config_applied=1
+	fi
+
+	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs \
+		&& [[ "${cpu_sched}" =~ ("cfs-interactive"|"cfs-autogroup") ]] ; then
+		einfo "Changed .config to use CFS with autogroup"
+		ot-kernel_y_configopt "CONFIG_SCHED_AUTOGROUP"
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
+		ot-kernel_y_configopt "CONFIG_CGROUP_SCHED"
+		ot-kernel_y_configopt "CONFIG_FAIR_GROUP_SCHED"
+		cpu_sched_config_applied=1
+	fi
+
+	if (( ${cpu_sched_config_applied} == 0 )) \
+		&& [[ "${cpu_sched}" != "cfs" ]] ; then
 		ewarn
 		ewarn "The chosen cpu_sched ${cpu_sched} config was not applied"
 		ewarn "because the use flag was not enabled."
