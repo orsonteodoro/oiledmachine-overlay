@@ -51,13 +51,10 @@ BDEPEND+="
 	>=dev-util/cmake-3.23.2
 	media-gfx/imagemagick[png]
 "
-S="${WORKDIR}/${MY_PN}-${PV}"
+S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( README.md )
 CMAKE_BUILD_TYPE="Release"
-_PATCHES=(
-	"${FILESDIR}/radialgm-9999_p20211115-re-enable-grpc-block.patch"
-)
 
 pkg_setup() {
 	export ENIGMA_INSTALL_DIR="/usr/$(get_libdir)/enigma"
@@ -65,7 +62,7 @@ pkg_setup() {
 
 S_ENIGMA="${S}/Submodules/enigma-dev"
 
-_calculate_enigma_abi_fingerprint() {
+_verify_enigma_abi_fingerprint() {
 	#
 	# Generate fingerprint for ABI compatibility checks and subslot.
 	#
@@ -83,6 +80,10 @@ _calculate_enigma_abi_fingerprint() {
 		"${S_ENIGMA}/CommandLine/libEGM" \
 		"${S_ENIGMA}/shared" \
 		-name "*.h" | sort) ; do
+
+		# It doesn't respect .gitignore
+		[[ "${x}" =~ ".eobjs" ]] && continue
+
 		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
 	done
 	for x in $(find "${S_ENIGMA}/shared/protos/" -name "*.proto" | sort) ; do
@@ -106,27 +107,16 @@ _calculate_enigma_abi_fingerprint() {
 	# Command line option changes
 	H+=( $(sha256sum "${S_ENIGMA}/CommandLine/emake/OptionsParser.cpp" | cut -f 1 -d " ") )
 
+	# Sometimes the minor versions of dependencies bump the project minor version.
+	#H+=( ${DEPENDS_FINGERPRINT} )
+
 	# No SOVER, no semver
-	local abi_fingerprint=$(echo "${H[@]}" \
+	local submodule_enigma_abi_fingerprint=$(echo "${H[@]}" \
 		| tr " " "\n" \
 		| sort \
 		| uniq \
 		| sha256sum \
 		| cut -f 1 -d " ")
-	echo "${abi_fingerprint}"
-}
-
-src_prepare() {
-	cmake-utils_src_prepare
-	xdg_src_prepare
-	rm -rf "${S}/Submodules/enigma-dev" || die
-	cp -a "${ENIGMA_INSTALL_DIR}" "${S}/Submodules" || die
-	mv "${S}/Submodules/vanilla" "${S}/Submodules/enigma-dev" || die
-	eapply "${_PATCHES[@]}"
-}
-
-src_configure() {
-	local submodule_enigma_abi_fingerprint=$(_calculate_enigma_abi_fingerprint)
 	if [[ "${submodule_enigma_abi_fingerprint}" != "${ENIGMA_ABI_FINGERPRINT}" ]] ; then
 eerror
 eerror "SUBMODULE_ABI_FINGERPRINT:   ${submodule_enigma_abi_fingerprint}"
@@ -137,7 +127,18 @@ eerror "for ${PN}."
 eerror
 		die
 	fi
+}
 
+src_prepare() {
+	cmake-utils_src_prepare
+	xdg_src_prepare
+	rm -rf "${S}/Submodules/enigma-dev" || die
+	cp -a "${ENIGMA_INSTALL_DIR}" "${S}/Submodules" || die
+	mv "${S}/Submodules/enigma" "${S}/Submodules/enigma-dev" || die
+	_verify_enigma_abi_fingerprint
+}
+
+src_configure() {
 	pushd "${ENIGMA_INSTALL_DIR}" 2>/dev/null 1>/dev/null || die
 	LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help \
 		| grep -q -F -e "--server"
