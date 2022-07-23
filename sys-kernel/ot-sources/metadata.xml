@@ -2122,7 +2122,8 @@ https://www.kernel.org/doc/html/latest/admin-guide/device-mapper/dm-integrity.ht
     EXT4_ENCRYPTION - Add support for ext4 encryption
     Valid values:  0, 1 (default).
 
-    HT - Add mitigations against HT (for building cross kernels).
+    HT - Add mitigations against HT (for building cross kernels) side-channel
+    attacks.
     Valid values: 0, 1, 2, unset.
     0 - manual setting
     1 - weak mitigations
