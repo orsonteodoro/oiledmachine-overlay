@@ -3189,6 +3189,7 @@ ot-kernel_set_kconfig_hardening_level() {
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 			ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
+		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 	elif [[ "${hardening_level}" == "untrusted-distant" ]] ; then
 		# Some all hardening (All except physical attacks)
 		# CFI and SCS handled later
@@ -3228,6 +3229,9 @@ ot-kernel_set_kconfig_hardening_level() {
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
+		if [[ "${cpu_sched}" =~ "cfs" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
+		fi
 	elif [[ "${hardening_level}" == "untrusted" ]] ; then
 		# All hardening
 		# CFI and SCS handled later
@@ -3266,6 +3270,9 @@ ot-kernel_set_kconfig_hardening_level() {
 			ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
+		fi
+		if [[ "${cpu_sched}" =~ "cfs" ]] ; then
+			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
 		fi
 	fi
 }
@@ -7080,4 +7087,18 @@ ewarn
 ewarn "You need to enable /etc/init.d/iosched-"
 ewarn
 	fi
+
+ewarn
+ewarn "For full L1TF mitigation for HT processors, read the Wikipedia article."
+ewarn "https://en.wikipedia.org/wiki/Foreshadow"
+ewarn "https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/core-scheduling.html"
+ewarn
+ewarn "Partial mitgation is enabled for OT_KERNEL_HARDENING_LEVEL=untrusted"
+ewarn "OT_KERNEL_HARDENING_LEVEL=untrusted-distant"
+ewarn
+
+ewarn
+ewarn "For mitigations of side-channels because of hardware flaws, see also"
+ewarn "https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/index.html"
+ewarn
 }
