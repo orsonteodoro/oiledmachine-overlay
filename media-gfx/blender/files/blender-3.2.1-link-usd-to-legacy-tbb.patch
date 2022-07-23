@@ -1,0 +1,114 @@
+diff -Nurp -x '*.rej' -x '*.orig' blender-3.2.1.orig/build_files/cmake/Modules/FindTBB.cmake blender-3.2.1/build_files/cmake/Modules/FindTBB.cmake
+--- blender-3.2.1.orig/build_files/cmake/Modules/FindTBB.cmake	2022-05-02 06:58:14.000000000 -0700
++++ blender-3.2.1/build_files/cmake/Modules/FindTBB.cmake	2022-07-23 03:54:56.446749045 -0700
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright 2016 Blender Foundation.
+ 
+-# - Find TBB library
++# - Find TBB library >= 2021 (.so.12)
+ # Find the native TBB includes and library
+ # This module defines
+ #  TBB_INCLUDE_DIRS, where to find tbb.h, Set when
+diff -Nurp -x '*.rej' -x '*.orig' blender-3.2.1.orig/build_files/cmake/Modules/FindTBB2.cmake blender-3.2.1/build_files/cmake/Modules/FindTBB2.cmake
+--- blender-3.2.1.orig/build_files/cmake/Modules/FindTBB2.cmake	1969-12-31 16:00:00.000000000 -0800
++++ blender-3.2.1/build_files/cmake/Modules/FindTBB2.cmake	2022-07-23 03:53:56.764397147 -0700
+@@ -0,0 +1,55 @@
++# - Find TBB library < 2021 (.so.2)
++# Find the native TBB includes and library
++# This module defines
++#  TBB_INCLUDE_DIRS, where to find tbb.h, Set when
++#                    TBB is found.
++#  TBB_LIBRARIES, libraries to link against to use TBB.
++#  TBB_ROOT_DIR, The base directory to search for TBB.
++#                This can also be an environment variable.
++#  TBB_FOUND, If false, do not try to use TBB.
++#
++# also defined, but not for general use are
++#  TBB_LIBRARY, where to find the TBB library.
++
++#=============================================================================
++# Copyright 2016 Blender Foundation.
++#
++# Distributed under the OSI-approved BSD 3-Clause License,
++# see accompanying file BSD-3-Clause-license.txt for details.
++#=============================================================================
++
++FIND_PATH(TBB2_INCLUDE_DIR
++  NAMES
++    tbb/tbb.h
++  HINTS
++    /usr/include/tbb/2
++  PATH_SUFFIXES
++    include
++)
++
++FIND_LIBRARY(TBB2_LIBRARY
++  NAMES
++    tbb
++  HINTS
++    /usr
++  PATH_SUFFIXES
++    lib64/tbb/2 lib/tbb/2
++  )
++
++# handle the QUIETLY and REQUIRED arguments and set TBB_FOUND to TRUE if
++# all listed variables are TRUE
++INCLUDE(FindPackageHandleStandardArgs)
++FIND_PACKAGE_HANDLE_STANDARD_ARGS(TBB2 DEFAULT_MSG
++    TBB2_LIBRARY TBB2_INCLUDE_DIR)
++
++IF(TBB2_FOUND)
++  SET(TBB2_LIBRARIES ${TBB2_LIBRARY})
++  SET(TBB2_INCLUDE_DIRS ${TBB2_INCLUDE_DIR})
++ELSE()
++  SET(TBB2_TBB_FOUND FALSE)
++ENDIF()
++
++MARK_AS_ADVANCED(
++  TBB2_INCLUDE_DIR
++  TBB2_LIBRARY
++)
+diff -Nurp -x '*.rej' -x '*.orig' blender-3.2.1.orig/build_files/cmake/platform/platform_unix.cmake blender-3.2.1/build_files/cmake/platform/platform_unix.cmake
+--- blender-3.2.1.orig/build_files/cmake/platform/platform_unix.cmake	2022-07-23 03:49:15.817330639 -0700
++++ blender-3.2.1/build_files/cmake/platform/platform_unix.cmake	2022-07-23 03:53:56.792398250 -0700
+@@ -312,6 +312,12 @@ if(WITH_USD)
+   if(NOT USD_FOUND)
+     set(WITH_USD OFF)
+   endif()
++
++  find_package_wrapper(TBB2)
++  if(NOT TBB2_FOUND)
++    message(WARNING "TBB2 not found, disabling WITH_USD")
++    set(WITH_USD OFF)
++  endif()
+ endif()
+ 
+ if(WITH_BOOST)
+diff -Nurp -x '*.rej' -x '*.orig' blender-3.2.1.orig/source/blender/io/usd/CMakeLists.txt blender-3.2.1/source/blender/io/usd/CMakeLists.txt
+--- blender-3.2.1.orig/source/blender/io/usd/CMakeLists.txt	2022-07-23 03:49:15.737327488 -0700
++++ blender-3.2.1/source/blender/io/usd/CMakeLists.txt	2022-07-23 03:53:56.804398724 -0700
+@@ -54,7 +54,7 @@ set(INC
+ set(INC_SYS
+   ${USD_INCLUDE_DIRS}
+   ${BOOST_INCLUDE_DIR}
+-  ${TBB_INCLUDE_DIR}
++  ${TBB2_INCLUDE_DIR}
+   ${PYTHON_INCLUDE_DIRS}
+ )
+ 
+@@ -142,12 +142,12 @@ if(WIN32)
+ elseif(APPLE)
+   target_link_libraries(bf_usd INTERFACE -Wl,-force_load ${USD_LIBRARIES})
+ elseif(UNIX)
+-  target_link_libraries(bf_usd INTERFACE "-Wl,--whole-archive ${USD_LIBRARIES} -Wl,--no-whole-archive ${TBB_LIBRARIES}")
++  target_link_libraries(bf_usd INTERFACE "-Wl,--whole-archive ${USD_LIBRARIES} -Wl,--no-whole-archive ${TBB2_LIBRARIES}")
+ else()
+   message(FATAL_ERROR "Unknown how to link USD with your compiler ${CMAKE_CXX_COMPILER_ID}")
+ endif()
+ 
+-target_link_libraries(bf_usd INTERFACE ${TBB_LIBRARIES})
++target_link_libraries(bf_usd INTERFACE ${TBB2_LIBRARIES})
+ 
+ if(WITH_GTESTS)
+   set(TEST_SRC
