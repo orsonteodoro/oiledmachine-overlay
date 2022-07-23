@@ -45,10 +45,14 @@ BDEPEND+="
 "
 RESTRICT="test"
 MY_PV="${PV//_pre/-pre}"
+OPENCENSUS_PROTO_PV="0.3.0"
 SRC_URI="
 https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/census-instrumentation/opencensus-proto/archive/v${OPENCENSUS_PROTO_PV}.tar.gz
+	-> opencensus-proto-${OPENCENSUS_PROTO_PV}.tar.gz
 "
+S_OPENCENSUS_PROTO="${WORKDIR}/opencensus-proto-0.3.0"
 S="${WORKDIR}/${PN}-${MY_PV}"
 DOCS=( AUTHORS CONCEPTS.md README.md TROUBLESHOOTING.md doc/. )
 
@@ -60,6 +64,11 @@ soversion_check() {
 	local new_slot="${SLOT_MAJ}/${f1}.${f2}"
 	[[ "${SLOT}" != "${new_slot}" ]] \
 		&& die "Ebuild Q/A: Update SLOT=\"\${SLOT_MAJ}/${f1}.${f2}\""
+}
+
+src_unpack() {
+	unpack ${A}
+	mv "${S_OPENCENSUS_PROTO}" "${S}/third_party/opencensus-proto/src" || die
 }
 
 src_prepare() {
