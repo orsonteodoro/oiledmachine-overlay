@@ -171,7 +171,7 @@ src_compile() {
 src_install() {
 	cmake-utils_src_install
 	cat "${FILESDIR}/${MY_PN}" > "${T}/${MY_PN}" || die
-	sed -i -e "s|lib64|$(get_libdir)|g" "${T}/${MY_PN}" || die
+	sed -i -e "s|LIBDIR|$(get_libdir)|g" "${T}/${MY_PN}" || die
 	exeinto /usr/bin
 	doexe "${T}/${MY_PN}"
 	pushd Images || die
