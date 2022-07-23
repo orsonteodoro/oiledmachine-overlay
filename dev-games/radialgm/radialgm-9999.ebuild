@@ -25,6 +25,7 @@ CDEPEND="
 	>=sys-devel/gcc-10.3.0
 "
 QT_PV="5.15.5"
+# Upstream uses qscintilla 2.13.3.  Downgraded because no ebuild available yet.
 DEPEND+="
 	${CDEPEND}
 	>=dev-cpp/yaml-cpp-0.7.0
@@ -42,7 +43,7 @@ DEPEND+="
 	>=media-libs/freetype-2.12.1
 	>=media-libs/harfbuzz-4.4.1
 	>=net-dns/c-ares-1.18.1
-	>=x11-libs/qscintilla-2.13.3
+	>=x11-libs/qscintilla-2.13
 	virtual/jpeg
 "
 RDEPEND+=" ${DEPEND}"
