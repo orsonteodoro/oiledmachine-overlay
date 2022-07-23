@@ -4,6 +4,6 @@ R_WMNAME="$?"
 pidof dwm > /dev/null
 R_DWM="$?"
 if [[ "$R_DWM" == "0" && "$R_WMNAME" == "0" ]] ; then
-  wmname LG3D &
+	wmname LG3D &
 fi
-java -jar /usr/share/libmaker/lib/libmaker.jar $*
+java -jar "/usr/share/libmaker/lib/libmaker.jar" "${@}"

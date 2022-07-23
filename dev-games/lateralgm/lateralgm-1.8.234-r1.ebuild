@@ -3,17 +3,18 @@
 
 EAPI=7
 
-EPLATFORMS="vanilla android linux wine libmaker lgmplugin"
-inherit desktop eutils java-utils-2 multilib-build platforms
+inherit desktop eutils java-utils-2
 
-DESCRIPTION="A free Game Maker source file editor"
-HOMEPAGE="http://lateralgm.org/"
-LICENSE="GPL-3+
+DESCRIPTION="A free game maker source file editor"
+LICENSE="
+	GPL-3+
 	libmaker? ( GPL-3+ )
-	lgmplugin? ( GPL-3+ )"
+	lgmplugin? ( GPL-3+ )
+"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+HOMEPAGE="http://lateralgm.org/"
 SLOT="0"
-IUSE+=" +lgmplugin +vanilla"
+IUSE+=" libmaker +lgmplugin +vanilla"
 REQUIRED_USE+=" lgmplugin"
 
 JAVA_SRC_V="1.7"
@@ -23,25 +24,27 @@ JVM_V="1.8"
 # Merged libmaker and lgmplugin to let others find them easier.
 
 DEPEND_LATERALGM=" virtual/jre:${JAVA_V}"
-BDEPEND_LATERALGM=" virtual/jdk:${JAVA_V}"
-DEPEND_LIBMAKER=" virtual/jre:${JAVA_V}"
-BDEPEND_LIBMAKER=" virtual/jdk:${JAVA_V}"
 DEPEND_LGMPLUGIN="
 	dev-java/jna[nio-buffers]
 	virtual/jre:${JAVA_V}
 "
-BDEPEND_LGMPLUGIN=" virtual/jdk:${JAVA_V}"
-LDEPEND="
+DEPEND_LIBMAKER=" virtual/jre:${JAVA_V}"
+CDEPEND="
 	${DEPEND_LATERALGM}
 	${DEPEND_LGMPLUGIN}
 	libmaker? ( ${DEPEND_LIBMAKER} )
 "
-DEPEND+=" ${LDEPEND}
+DEPEND+="
+	${CDEPEND}
 	virtual/jdk:${JAVA_V}
 "
-RDEPEND+=" ${LDEPEND}
-	dev-games/enigma[android?,vanilla?,linux?,wine?,${MULTILIB_USEDEP}]
+RDEPEND+="
+	${CDEPEND}
+	dev-games/enigma
 "
+BDEPEND_LATERALGM=" virtual/jdk:${JAVA_V}"
+BDEPEND_LGMPLUGIN=" virtual/jdk:${JAVA_V}"
+BDEPEND_LIBMAKER=" virtual/jdk:${JAVA_V}"
 BDEPEND+="
 	${BDEPEND_LATERALGM}
 	${BDEPEND_LGMPLUGIN}
@@ -119,7 +122,6 @@ eerror
 	java-pkg_ensure-vm-version-ge ${JAVA_V}
 	export JVM_V=$(java-pkg_get-target)
 
-
 	# Fixes:
 #./org/lateralgm/main/LGM.java:105: error: cannot access ProjectFile
 #import org.lateralgm.file.ProjectFile;
@@ -189,10 +191,6 @@ src_prepare() {
 		src_prepare_libmaker
 	fi
 	src_prepare_lgmplugin
-
-	for a in $(multilib_get_enabled_abis) ; do
-		cp -a "${S_LGMPLUGIN}" "${S_LGMPLUGIN}_${a}" || die
-	done
 }
 
 src_compile_lateralgm()
@@ -212,9 +210,9 @@ src_compile_libmaker()
 	einfo "Compiling ${MY_PN_LIBMAKER}"
 	MAKEOPTS="-j1" \
 	$(java-pkg_get-javac) \
-		-bootclasspath ${JAVA_HOME}/jre/lib/rt.jar \
+		-bootclasspath "${JAVA_HOME}/jre/lib/rt.jar" \
 		-source ${JAVA_SRC_V} -target ${JVM_V} -nowarn -cp . -cp \
-		${S_LATERALGM}/lateralgm.jar\
+		"${S_LATERALGM}/lateralgm.jar" \
 		$(find . -name "*.java")
 	jar cmvf META-INF/MANIFEST.MF ${PN}.jar \
 		$(find . -name '*.class') \
@@ -226,93 +224,70 @@ src_compile_libmaker()
 }
 
 src_compile() {
-	platform_compile() {
-		if [[ "${EPLATFORM}" == "android" \
-			|| "${EPLATFORM}" == "linux" \
-			|| "${EPLATFORM}" == "vanilla" \
-			|| "${EPLATFORM}" == "wine" \
-			]] ; then
-			S="${S_LATERALGM}"
-			BUILD_DIR="${S}"
-			cd "${BUILD_DIR}" || die
-			if [[ ! -f .compiled ]] ; then
-				src_compile_lateralgm
-				touch .compiled || die
-			fi
-		elif [[ "${EPLATFORM}" == "lgmplugin" ]] ; then
-			for a in $(multilib_get_enabled_abis) ; do
-				S="${S_LGMPLUGIN}_${a}"
-				BUILD_DIR="${S}"
-				cd "${BUILD_DIR}" || die
-				src_compile_lgmplugin
-			done
-		elif [[ "${EPLATFORM}" == "libmaker" ]] ; then
-			S="${S_LIBMAKER}"
-			BUILD_DIR="${S}"
-			cd "${BUILD_DIR}" || die
-			src_compile_libmaker
-		fi
-	}
-	platforms_foreach_impl platform_compile
+	S="${S_LATERALGM}"
+	BUILD_DIR="${S}"
+	cd "${BUILD_DIR}" || die
+	if [[ ! -f .compiled ]] ; then
+		src_compile_lateralgm
+		touch .compiled || die
+	fi
 
+	if use libmaker ; then
+		S="${S_LIBMAKER}"
+		BUILD_DIR="${S}"
+		cd "${BUILD_DIR}" || die
+		src_compile_libmaker
+	fi
+
+	S="${S_LGMPLUGIN}"
+	BUILD_DIR="${S}"
+	cd "${BUILD_DIR}" || die
+	src_compile_lgmplugin
 }
 
 src_install_lateralgm()
 {
-	einfo "Installing ${MY_PN_LATERALGM} for ${EPLATFORM}"
-	# use same .jars but distribute based on lateral-EPLATFORM
-	local suffix=""
-	local descriptor_suffix=""
-	if [[ "${EPLATFORM}" == "linux" ]] ; then
-		suffix="-${ABI}"
-		descriptor_suffix=" (${ABI})"
-	fi
-	insinto /usr/$(get_libdir)/enigma/${EPLATFORM}${suffix}
+	einfo "Installing ${MY_PN_LATERALGM}"
+	insinto "/usr/$(get_libdir)/enigma"
 	doins lateralgm.jar
 	exeinto /usr/bin
 	cp "${FILESDIR}/lateralgm" \
-		"${T}/lateralgm-${EPLATFORM}${suffix}" || die
-	sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
-		"${T}/lateralgm-${EPLATFORM}${suffix}" || die
-	sed -i -e "s|PLATFORM|${EPLATFORM}${suffix}|g" \
-		"${T}/lateralgm-${EPLATFORM}${suffix}" || die
-	doexe "${T}/lateralgm-${EPLATFORM}${suffix}"
+		"${T}/lateralgm" || die
+	sed -i -e "s|LIBDIR|$(get_libdir)|g" \
+		"${T}/lateralgm" || die
+	doexe "${T}/lateralgm"
 	doicon org/lateralgm/main/lgm-logo.ico
 	make_desktop_entry \
-		"/usr/bin/lateralgm-${EPLATFORM}${suffix}" \
-		"${MY_PN_LATERALGM}${descriptor_suffix}" \
-		"/usr/share/pixmap/lgm-logo.ico" "Development;IDE"
-	docinto licenses/lateralgm
-	dodoc COPYING LICENSE README.md
-	docinto licenses/fonts/Calico
-	dodoc org/lateralgm/icons/Calico/LICENSE
+		"/usr/bin/lateralgm" \
+		"${MY_PN_LATERALGM}" \
+		"/usr/share/pixmap/lgm-logo.ico" \
+		"Development;IDE"
+	docinto "licenses/lateralgm"
+	dodoc "COPYING" "LICENSE" "README.md"
+	docinto "licenses/fonts/Calico"
+	dodoc "org/lateralgm/icons/Calico/LICENSE"
 }
 
 src_install_lgmplugin()
 {
 	einfo "Installing ${MY_PN_LGMPLUGIN}"
-	local suffix=""
-	local descriptor_suffix=""
-	if [[ "${EPLATFORM}" == "linux" ]] ; then
-		suffix="-${ABI}"
-		descriptor_suffix=" (${ABI})"
-	fi
-	insinto "/usr/$(get_libdir)/enigma/${EPLATFORM}${suffix}/plugins"
-	doins enigma.jar
+	insinto "/usr/$(get_libdir)/enigma/plugins"
+	doins "enigma.jar"
 	cd "${S_LATERALGM}" || die
-	docinto licenses/lgmplugin
-	dodoc COPYING LICENSE README.md
-	docinto licenses/fonts/calico
-	dodoc org/lateralgm/icons/Calico/LICENSE
+	docinto "licenses/lgmplugin"
+	dodoc "COPYING" "LICENSE" "README.md"
+	docinto "licenses/fonts/calico"
+	dodoc "org/lateralgm/icons/Calico/LICENSE"
 }
 
 src_install_libmaker()
 {
 	einfo "Installing ${MY_PN_LIBMAKER}"
-	insinto /usr/share/${PN}/lib
-	doins ${PN}.jar
-	exeinto /usr/bin
-	cp -a "${FILESDIR}/${MY_PN_LIBMAKER,,}" "${T}" || die
+	insinto "/usr/share/${PN}/lib"
+	doins "${PN}.jar"
+	exeinto "/usr/bin"
+	cat "${FILESDIR}/${MY_PN_LIBMAKER,,}" \
+		> "${T}/${MY_PN_LIBMAKER,,}" || die
 	doexe "${T}/${MY_PN_LIBMAKER,,}"
 	doicon \
 "${S_LIBMAKER}/org/lateralgm/${MY_PN_LIBMAKER,,}/icons/lgl-128.png"
@@ -321,38 +296,27 @@ src_install_libmaker()
 		"${MY_PN_LIBMAKER}" \
 		"/usr/share/pixmaps/lgl-128.png" \
 		"Utility;FileTools"
-	docinto licenses/libmaker
-	dodoc COPYING LICENSE README
+	docinto "licenses/libmaker"
+	dodoc "COPYING" "LICENSE" "README"
 }
 
 src_install() {
-	platform_install() {
-		if [[ "${EPLATFORM}" == "android" \
-			|| "${EPLATFORM}" == "linux" \
-			|| "${EPLATFORM}" == "vanilla" \
-			|| "${EPLATFORM}" == "wine" \
-			]] ; then
-			S="${S_LATERALGM}"
-			BUILD_DIR="${S}"
-			cd "${BUILD_DIR}" || die
-			src_install_lateralgm
-		elif [[ "${EPLATFORM}" == "lgmplugin" ]] ; then
-			ml_install_lgmplugin_abi()
-			{
-				S="${S_LGMPLUGIN}_${ABI}"
-				BUILD_DIR="${S}"
-				cd "${BUILD_DIR}" || die
-				src_install_lgmplugin
-			}
-			multilib_foreach_abi ml_install_lgmplugin_abi
-		elif [[ "${EPLATFORM}" == "libmaker" ]] ; then
-			S="${S_LIBMAKER}"
-			BUILD_DIR="${S}"
-			cd "${BUILD_DIR}" || die
-			src_install_libmaker
-		fi
-	}
-	platforms_foreach_impl platform_install
+	S="${S_LATERALGM}"
+	BUILD_DIR="${S}"
+	cd "${BUILD_DIR}" || die
+	src_install_lateralgm
+
+	if use libmaker ; then
+		S="${S_LIBMAKER}"
+		BUILD_DIR="${S}"
+		cd "${BUILD_DIR}" || die
+		src_install_libmaker
+	fi
+
+	S="${S_LGMPLUGIN}"
+	BUILD_DIR="${S}"
+	cd "${BUILD_DIR}" || die
+	src_install_lgmplugin
 }
 
 pkg_postinst() {
