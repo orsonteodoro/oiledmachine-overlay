@@ -168,6 +168,11 @@ ewarn "See \`epkginfo -x sys-devel/clang::oiledmachine-overlay\` or the"
 ewarn "metadata.xml to see how to accomplish this."
 ewarn
 
+ewarn
+ewarn "To avoid long linking delays, close programs that produce unexpectedly"
+ewarn "high disk activity (web browsers) and possibly switch to -j1."
+ewarn
+
 	if [[ "${CC}" == "clang" ]] ; then
 		local clang_path="clang-${SLOT}"
 		if which "${clang_path}" 2>/dev/null 1>/dev/null && "${clang_path}" --help \

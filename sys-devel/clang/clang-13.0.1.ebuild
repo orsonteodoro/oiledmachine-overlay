@@ -156,6 +156,11 @@ ewarn "See \`epkginfo -x sys-devel/clang::oiledmachine-overlay\` or the"
 ewarn "metadata.xml to see how to accomplish this."
 ewarn
 
+ewarn
+ewarn "To avoid long linking delays, close programs that produce unexpectedly"
+ewarn "high disk activity (web browsers) and possibly switch to -j1."
+ewarn
+
 	if [[ "${CC}" == "clang" ]] ; then
 		local clang_path="clang-${SLOT}"
 		if which "${clang_path}" 2>/dev/null 1>/dev/null && "${clang_path}" --help \
@@ -179,6 +184,11 @@ eerror
 	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)"
 	use pgo_trainer_build_self && ewarn "The pgo_trainer_build_self has not been tested or is in development."
 	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite has not been tested or is in development."
+
+ewarn
+ewarn "To avoid long linking delays, close programs that produce unexpectedly"
+ewarn "high disk activity (web browsers) and possibly switch to -j1."
+ewarn
 }
 
 src_unpack() {

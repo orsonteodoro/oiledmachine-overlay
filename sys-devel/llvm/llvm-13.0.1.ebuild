@@ -120,6 +120,11 @@ eerror
 	use pgo_trainer_build_self && ewarn "The pgo_trainer_build_self USE flag has not been tested."
 	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite USE flag has not been tested."
 	use souper && ewarn "The forward port of disable-peepholes-v07.diff is in testing."
+
+ewarn
+ewarn "To avoid long linking delays, close programs that produce unexpectedly"
+ewarn "high disk activity (web browsers) and possibly switch to -j1."
+ewarn
 }
 
 python_check_deps() {

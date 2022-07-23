@@ -151,6 +151,11 @@ ewarn "No support will be given for the bolt USE flag on this ebuild fork due"
 ewarn "to a lack of LBR support on the CPU."
 ewarn
 	fi
+
+ewarn
+ewarn "To avoid long linking delays, close programs that produce unexpectedly"
+ewarn "high disk activity (web browsers) and possibly switch to -j1."
+ewarn
 }
 
 python_check_deps() {
