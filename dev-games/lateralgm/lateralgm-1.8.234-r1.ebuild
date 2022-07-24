@@ -9,13 +9,11 @@ DESCRIPTION="A free game maker source file editor"
 LICENSE="
 	GPL-3+
 	libmaker? ( GPL-3+ )
-	lgmplugin? ( GPL-3+ )
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 HOMEPAGE="http://lateralgm.org/"
 SLOT="0"
-IUSE+=" libmaker +lgmplugin +vanilla"
-REQUIRED_USE+=" lgmplugin"
+IUSE+=" libmaker"
 
 JAVA_SRC_V="1.7"
 JAVA_V="1.8"
