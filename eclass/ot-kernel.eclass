@@ -3152,6 +3152,26 @@ ot-kernel_set_kconfig_futex() {
 ot-kernel_set_kconfig_hardening_level() {
 	einfo "Using ${hardening_level} hardening level"
 	ot-kernel_y_configopt "CONFIG_EXPERT"
+
+	local gcc_major_v
+	local gcc_minor_v
+	local clang_major_v
+	local clang_minor_v
+	if tc-is-gcc ; then
+		local gcc_v=$(gcc --version \
+			| head -n 1 \
+			| grep -o -E -e " [0-9]+.[0-9]+.[0-9]+" \
+			| head -n 1 \
+			| sed -e "s|[ ]*||g")
+		gcc_major_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 1 -d "."))
+		gcc_minor_v=$(printf "%02d" $(echo ${gcc_v} | cut -f 2 -d "."))
+	fi
+	if tc-is-clang ; then
+		local clang_v=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
+		clang_major_v=$(echo "${clang_v}" | cut -f 1 -d ".")
+		clang_minor_v=$(echo "${clang_v}" | cut -f 2 -d ".")
+	fi
+
 	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
 		:
 	elif [[ "${hardening_level}" == "trusted" ]] ; then
@@ -3190,6 +3210,18 @@ ot-kernel_set_kconfig_hardening_level() {
 			ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
+		if ver_test ${K_MAJOR_MINOR} -ge 5.19 ; then
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|unret)"
+			ot-kernel_set_kconfig_kernel_cmdline "retbleed=off"
+		fi
+		if ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+			ot-kernel_unset_configopt "CONFIG_SPECULATION_MITIGATIONS"
+			ot-kernel_unset_configopt "CONFIG_CPU_IBPB_ENTRY"
+			ot-kernel_unset_configopt "CONFIG_CPU_IBRS_ENTRY"
+			ot-kernel_unset_configopt "CONFIG_CPU_UNRET_ENTRY"
+			ot-kernel_unset_configopt "CONFIG_RETHUNK"
+			ot-kernel_unset_configopt "CONFIG_SLS"
+		fi
 	elif [[ "${hardening_level}" == "untrusted-distant" ]] ; then
 		# Some all hardening (All except physical attacks)
 		# CFI and SCS handled later
@@ -3203,7 +3235,9 @@ ot-kernel_set_kconfig_hardening_level() {
 		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 		ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
-		ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+		if [[ "${arch}" == "x86" ]] ; then
+			ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+		fi
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_BASE"
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
@@ -3215,6 +3249,18 @@ ot-kernel_set_kconfig_hardening_level() {
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
 		elif [[ "${arch}" == "x86" ]] ; then
 			ot-kernel_y_configopt "CONFIG_RETPOLINE"
+			local ready=0
+			if tc-is-gcc && ver_test ${gcc_major_v}.${gcc_minor_v} -ge 8.1 ; then
+				ready=1
+			elif tc-is-clang && ver_test ${gcc_major_v}.${gcc_minor_v} -ge 7 ; then
+				ready=1
+			fi
+			if (( ${ready} == 0 )) ; then
+eerror
+eerror "Switch to >=gcc-8.1 or >=clang-7 for retpoline support"
+eerror
+				die
+			fi
 		fi
 		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
 		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_HARDENED"
@@ -3231,6 +3277,32 @@ ot-kernel_set_kconfig_hardening_level() {
 		fi
 		if [[ "${cpu_sched}" =~ "cfs" && "${HT}" =~ ("1"|"2") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
+		fi
+		if ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+			ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
+			ot-kernel_y_configopt "CONFIG_RETHUNK"
+			if ! test-flags "-mfunction-return=thunk-extern" ; then
+				# For rethunk
+eerror
+eerror "Please rebuild =clang-15.0.0.9999 or switch to >= gcc-8.1"
+eerror
+				die
+			fi
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				ot-kernel_y_configopt "CONFIG_CPU_IBPB_ENTRY"
+				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
+			elif [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_y_configopt "CONFIG_CPU_IBRS_ENTRY"
+			elif [[ $(ot-kernel_get_cpu_mfg_id) == "hygon" ]] ; then
+				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
+			fi
+			if [[ "${arch}" == "x86" ]] ; then
+				ot-kernel_y_configopt "CONFIG_SLS"
+			fi
+		fi
+		if ver_test ${K_MAJOR_MINOR} -ge 5.19 ; then
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|unret)"
+			ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 		fi
 	elif [[ "${hardening_level}" == "untrusted" ]] ; then
 		# All hardening
@@ -3245,7 +3317,9 @@ ot-kernel_set_kconfig_hardening_level() {
 		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 		ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
-		ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+		if [[ "${arch}" == "x86" ]] ; then
+			ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+		fi
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_BASE"
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
@@ -3257,6 +3331,18 @@ ot-kernel_set_kconfig_hardening_level() {
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
 		elif [[ "${arch}" == "x86" ]] ; then
 			ot-kernel_y_configopt "CONFIG_RETPOLINE"
+			local ready=0
+			if tc-is-gcc && ver_test ${gcc_major_v}.${gcc_minor_v} -ge 8.1 ; then
+				ready=1
+			elif tc-is-clang && ver_test ${gcc_major_v}.${gcc_minor_v} -ge 7 ; then
+				ready=1
+			fi
+			if (( ${ready} == 0 )) ; then
+eerror
+eerror "Switch to >=gcc-8.1 or >=clang-7 for retpoline support"
+eerror
+				die
+			fi
 		fi
 		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
 		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_HARDENED"
@@ -3273,6 +3359,32 @@ ot-kernel_set_kconfig_hardening_level() {
 		fi
 		if [[ "${cpu_sched}" =~ "cfs" && "${HT}" =~ ("1"|"2") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
+		fi
+		if ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+			ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
+			ot-kernel_y_configopt "CONFIG_RETHUNK"
+			if ! test-flags "-mfunction-return=thunk-extern" ; then
+				# For rethunk
+eerror
+eerror "Please rebuild =clang-15.0.0.9999 or switch to >= gcc-8.1"
+eerror
+				die
+			fi
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+				ot-kernel_y_configopt "CONFIG_CPU_IBPB_ENTRY"
+				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
+			elif [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_y_configopt "CONFIG_CPU_IBRS_ENTRY"
+			elif [[ $(ot-kernel_get_cpu_mfg_id) == "hygon" ]] ; then
+				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
+			fi
+			if [[ "${arch}" == "x86" ]] ; then
+				ot-kernel_y_configopt "CONFIG_SLS"
+			fi
+		fi
+		if ver_test ${K_MAJOR_MINOR} -ge 5.19 ; then
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|unret)"
+			ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 		fi
 	fi
 }

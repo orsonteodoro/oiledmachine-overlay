@@ -13,7 +13,7 @@ RDEPEND="
 	4_14? ( ~sys-kernel/ot-sources-4.14.289 )
 	5_4? ( ~sys-kernel/ot-sources-5.4.207 )
 	5_10? ( ~sys-kernel/ot-sources-5.10.132 )
-	5_15? ( ~sys-kernel/ot-sources-5.15.56 )
+	5_15? ( ~sys-kernel/ot-sources-5.15.57 )
 "
 REQUIRED_USE=""
 SLOT="0/${PV}"
