@@ -748,14 +748,17 @@ _calculate_abi_fingerprint() {
 		"${S}/shared" \
 		-name "*.h" | sort) ; do
 		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
+		sha256sum "${x}"
 	done
 	for x in $(find "${S}/shared/protos/" -name "*.proto" | sort) ; do
 		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
+		sha256sum "${x}"
 	done
 
 	# Drag and drop actions
 	for x in $(find "${S}" -name "*.ey") ; do
 		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
+		sha256sum "${x}"
 	done
 
 	# File formats
@@ -765,10 +768,12 @@ _calculate_abi_fingerprint() {
 		| grep -v -e "file-format.cpp"))
 	for x in ${FFP} ; do
 		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
+		sha256sum "${x}"
 	done
 
 	# Command line option changes
 	H+=( $(sha256sum "${S}/CommandLine/emake/OptionsParser.cpp" | cut -f 1 -d " ") )
+	sha256sum "${S}/CommandLine/emake/OptionsParser.cpp"
 
 	# Sometimes the minor versions of dependencies bump the project minor version.
 	#H+=( ${DEPENDS_FINGERPRINT} )
