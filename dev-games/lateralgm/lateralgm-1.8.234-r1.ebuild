@@ -23,7 +23,7 @@ JVM_V="1.8"
 
 DEPEND_LATERALGM=" virtual/jre:${JAVA_V}"
 DEPEND_LGMPLUGIN="
-	dev-java/jna[nio-buffers]
+	dev-java/jna[nio-buffers(+)]
 	virtual/jre:${JAVA_V}
 "
 DEPEND_LIBMAKER=" virtual/jre:${JAVA_V}"
@@ -169,17 +169,19 @@ src_prepare_lgmplugin() {
 	einfo "Preparing ${MY_PN_LGMPLUGIN}"
 	cd "${S_LGMPLUGIN}" || die
 	local bcp="-bootclasspath ${JAVA_HOME}/jre/lib/rt.jar"
+	local jna_path="/usr/share/jna-4/lib/jna.jar"
+	[[ -e "${jna_path}" ]] || die
 	sed -i -e "s|JFLAGS =|JFLAGS = ${bcp}|" \
 		-e "s|-source 1.7|-source ${JAVA_SRC_V}|g" \
 		-e "s|-target 1.7|-target ${JVM_V}|g" \
-		-e "s|jna.jar|/usr/share/jna/lib/jna.jar|" \
-		Makefile || die
+		-e "s|jna.jar|${jna_path}|" \
+		"Makefile" || die
 	ln -s "${S_LATERALGM}" "${WORKDIR}/LateralGM" || die
 
 	# Found in same JoshEdit used by LibMaker but not the same as
 	# LateralGM's JoshEdit.
 	sed -i -e "/CodeTextArea.updateKeywords/d" \
-		org/enigma/frames/EnigmaSettingsHandler.java || die
+		"org/enigma/frames/EnigmaSettingsHandler.java" || die
 }
 
 src_prepare() {
@@ -211,8 +213,9 @@ src_compile_libmaker()
 		-bootclasspath "${JAVA_HOME}/jre/lib/rt.jar" \
 		-source ${JAVA_SRC_V} -target ${JVM_V} -nowarn -cp . -cp \
 		"${S_LATERALGM}/lateralgm.jar" \
-		$(find . -name "*.java")
-	jar cmvf META-INF/MANIFEST.MF ${PN}.jar \
+		$(find . -name "*.java") \
+		|| die
+	jar cmvf "META-INF/MANIFEST.MF" "${PN}.jar" \
 		$(find . -name '*.class') \
 		$(find . -name '*.png') \
 		$(find . -name '*.properties') \
@@ -254,7 +257,7 @@ src_install_lateralgm()
 	sed -i -e "s|LIBDIR|$(get_libdir)|g" \
 		"${T}/lateralgm" || die
 	doexe "${T}/lateralgm"
-	doicon org/lateralgm/main/lgm-logo.ico
+	doicon "org/lateralgm/main/lgm-logo.ico"
 	make_desktop_entry \
 		"/usr/bin/lateralgm" \
 		"${MY_PN_LATERALGM}" \
