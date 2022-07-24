@@ -35,10 +35,10 @@ DEPEND+="
 	>=dev-libs/pugixml-1.12.1
 	>=dev-libs/rapidjson-1.1.0
 	>=dev-qt/qtcore-${QT_PV}:5
-	>=dev-qt/qtgui-${QT_PV}:5
+	>=dev-qt/qtgui-${QT_PV}:5[png]
 	>=dev-qt/qtmultimedia-${QT_PV}:5
 	>=dev-qt/qtprintsupport-${QT_PV}:5
-	>=dev-qt/qtwidgets-${QT_PV}:5
+	>=dev-qt/qtwidgets-${QT_PV}:5[png]
 	dev-games/enigma:0/${ENIGMA_ABI_FINGERPRINT}
 	>=media-libs/freetype-2.12.1
 	>=media-libs/harfbuzz-4.4.1
