@@ -1,9 +1,0 @@
-#!/bin/bash
-export ROOT="/usr/LIBDIR/enigma"
-cd "${ROOT}"
-export OUTPUTNAME=game
-export WORKDIR="${HOME}/.enigma"
-export CXXFLAGS=" -I${HOME}/.enigma"
-export CFLAGS="-I${HOME}/.enigma"
-export LD_LIBRARY_PATH="${ROOT}:${LD_LIBRARY_PATH}"
-java -Djna.nosys=true -jar "${ROOT}/plugins/enigma.jar" "${@}"

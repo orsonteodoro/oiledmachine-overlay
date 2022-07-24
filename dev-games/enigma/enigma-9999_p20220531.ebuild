@@ -880,13 +880,6 @@ src_install() {
 	insinto "/usr/$(get_libdir)/${PN}/CommandLine"
 	doins -r "CommandLine/libEGM"
 	exeinto "/usr/bin"
-	local x
-	for x in "${PN}" "${PN}-cli" ; do
-		cat "${FILESDIR}/${x}" > "${T}/${x}" || die
-		sed -i -e "s|LIBDIR|$(get_libdir)|g" \
-			"${T}/${PN}" || die
-		doexe "${T}/${x}"
-	done
 	newicon "Resources/logo.png" "enigma.png"
 	make_desktop_entry \
 		"/usr/bin/${PN}" \
