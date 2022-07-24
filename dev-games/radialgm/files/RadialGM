@@ -1,7 +1,5 @@
 #!/bin/bash
 ROOT="/usr/LIBDIR/RadialGM"
 ENIGMA_DIR="/usr/LIBDIR/enigma"
-export PATH="${ROOT}:${PATH}"
-pushd "${ROOT}"
-	LD_LIBRARY_PATH="${ENIGMA_DIR}:${ROOT}:${LD_LIBRARY_PATH}" ./RadialGM "${@}"
-popd
+export PATH="${ROOT}:${ENIGMA_DIR}:${PATH}"
+"${ROOT}/RadialGM" "${@}"
