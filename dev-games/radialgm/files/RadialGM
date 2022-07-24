@@ -2,4 +2,6 @@
 ROOT="/usr/LIBDIR/RadialGM"
 ENIGMA_DIR="/usr/LIBDIR/enigma"
 export PATH="${ROOT}:${ENIGMA_DIR}:${PATH}"
-"${ROOT}/RadialGM" "${@}"
+pushd "${ROOT}" # Do not remove
+	"${ROOT}/RadialGM" "${@}"
+popd
