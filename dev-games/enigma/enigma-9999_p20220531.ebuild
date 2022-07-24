@@ -35,7 +35,7 @@ b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
 ABI_FINGERPRINT="3660f4e5cab9d7d7db6fd8b5c4b6f7089b923e283daef5eb7c41094626b90001"
-DEPENDS_FINGERPRINT="1dabf3604c40ec089f29053f82649fa297bf24df43c6ece1ea8026390d055442"
+DEPENDS_FINGERPRINT="571e11479530cfad0e1599ae70ea9dcf5d992e7b55d39da7648b1cb48d1aeb28"
 SLOT="0/${ABI_FINGERPRINT}"
 IUSE+=" android box2d bullet clang doc externalfuncs freetype gles gles2
 gles3 gme gnome gtk2 gtest kde macos network +openal +opengl opengl1
@@ -201,6 +201,7 @@ BDEPEND+="
 	${CDEPEND}
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-util/cmake-3.23.2
+	dev-util/patchelf
 	clang? ( || ( $(gen_clang_deps) ) )
 	test? (
 		>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]
@@ -748,17 +749,14 @@ _calculate_abi_fingerprint() {
 		"${S}/shared" \
 		-name "*.h" | sort) ; do
 		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-		sha256sum "${x}"
 	done
 	for x in $(find "${S}/shared/protos/" -name "*.proto" | sort) ; do
 		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-		sha256sum "${x}"
 	done
 
 	# Drag and drop actions
 	for x in $(find "${S}" -name "*.ey") ; do
 		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-		sha256sum "${x}"
 	done
 
 	# File formats
@@ -768,12 +766,10 @@ _calculate_abi_fingerprint() {
 		| grep -v -e "file-format.cpp"))
 	for x in ${FFP} ; do
 		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-		sha256sum "${x}"
 	done
 
 	# Command line option changes
 	H+=( $(sha256sum "${S}/CommandLine/emake/OptionsParser.cpp" | cut -f 1 -d " ") )
-	sha256sum "${S}/CommandLine/emake/OptionsParser.cpp"
 
 	# Sometimes the minor versions of dependencies bump the project minor version.
 	#H+=( ${DEPENDS_FINGERPRINT} )
@@ -863,6 +859,10 @@ src_install() {
 		"libProtocols.so"
 		"gm2egm"
 	)
+	local x
+	for x in ${BINS[@]} ; do
+		patchelf --set-rpath '$ORIGIN' "${x}" || die
+	done
 	doexe ${BINS[@]}
 	REGULARS=(
 		"CommandLine"
