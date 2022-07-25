@@ -11,7 +11,7 @@ LICENSE="
 	libmaker? ( GPL-3+ )
 "
 # lgmplugin is GPL-3+
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+# KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86" # Broken during load
 HOMEPAGE="http://lateralgm.org/"
 SLOT="0"
 IUSE+=" libmaker"
