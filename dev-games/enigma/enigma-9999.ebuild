@@ -840,8 +840,7 @@ src_install() {
 	export STRIP="true"
 	local install_dir="/usr/$(get_libdir)/enigma"
 	find "${S}" \
-		   -name '*.o' \
-		-o -name '.eobjs' \
+		-name '*.o' \
 		| xargs rm -vrf '{}' \; || die
 	insinto "${install_dir}"
 	exeinto "${install_dir}"
