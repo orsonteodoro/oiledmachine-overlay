@@ -27,7 +27,6 @@ BDEPEND+="
 	>=dev-python/rapidfuzz-capi-1.0.5[${PYTHON_USEDEP}]
 	>=dev-python/scikit-build-0.15.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-63.1.0[${PYTHON_USEDEP}]
-	>=dev-python/rapidfuzz_capi-1.0.5[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
 	cpp? (
 		dev-util/cmake
