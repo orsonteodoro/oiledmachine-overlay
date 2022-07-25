@@ -7213,4 +7213,16 @@ ewarn
 ewarn "For mitigations of side-channels because of hardware flaws, see also"
 ewarn "https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/index.html"
 ewarn
+
+	if ver_test ${K_MAJOR_MINOR} -lt 5.15 ; then
+ewarn
+ewarn "Currently no backport for Retbleed in the ${K_MAJOR_MINOR} series"
+ewarn "Use >= 5.15 above for retbleed mitigation for ARCH=x86."
+ewarn
+	fi
+ewarn
+ewarn "Retbleed mitigation is WIP (Work In Progress) in other processors."
+ewarn "For an overview about Retbleed and affected processors, see"
+ewarn "https://en.wikipedia.org/wiki/Retbleed"
+ewarn
 }
