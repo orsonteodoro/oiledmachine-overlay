@@ -718,12 +718,6 @@ eerror
 src_prepare() {
 	default
 	_calculate_abi_fingerprint
-	F=( Makefile CommandLine/emake/Makefile CompilerSource/Makefile )
-	for f in ${F[@]} ; do
-		einfo "Editing $f"
-		sed -i -e "s|-Wl,-rpath,./||g" "${f}" || die
-	done
-
 	# Typo?
 	sed -i -e "s|ANDROIS_LDLIBS|ANDROID_LDLIBS|g" \
 		ENIGMAsystem/SHELL/Makefile || die
@@ -809,7 +803,6 @@ eerror
 }
 
 src_configure() {
-	cd "${BUILD_DIR}" || die
 	if [[ -n "${ANDROID_CTARGET}" ]] ; then
 		sed -i -e "s|gcc|${ANDROID_CTARGET}-gcc|g" \
 			-e "s|g\+\+|${ANDROID_CTARGET}-g++|g"
@@ -830,7 +823,6 @@ src_configure() {
 }
 
 src_compile() {
-	cd "${BUILD_DIR}" || die
 	local targets=(
 		"ENIGMA"
 		"emake"
@@ -845,23 +837,24 @@ src_compile() {
 }
 
 src_install() {
-	cd "${BUILD_DIR}" || die
-	insinto "/usr/$(get_libdir)/enigma"
-	exeinto "/usr/$(get_libdir)/enigma"
-	doexe emake
-	echo "${ABI_FINGERPRINT}" > "${T}/abi_fingerprint"
+	export STRIP="true"
+	local install_dir="/usr/$(get_libdir)/enigma"
+	find "${S}" \
+		   -name '*.o' \
+		-o -name '.eobjs' \
+		| xargs rm -vrf '{}' \; || die
+	insinto "${install_dir}"
+	exeinto "${install_dir}"
+	echo "${ABI_FINGERPRINT}" > "${T}/abi_fingerprint" || die
 	doins "${T}/abi_fingerprint"
 	BINS=(
 		"libcompileEGMf.so"
 		"libEGM.so"
 		"libENIGMAShared.so"
 		"libProtocols.so"
+		"emake"
 		"gm2egm"
 	)
-	local x
-	for x in ${BINS[@]} ; do
-		patchelf --set-rpath '$ORIGIN' "${x}" || die
-	done
 	doexe ${BINS[@]}
 	REGULARS=(
 		"CommandLine"
@@ -885,6 +878,13 @@ src_install() {
 		"${PN^^}" \
 		"/usr/share/pixmaps/${PN}.png" \
 		"Development;IDE"
+
+	local f
+	for f in "${BINS[@]}" ; do
+		local p="${ED}${install_dir}/${f}"
+		patchelf --remove-rpath "${p}" || die
+		patchelf --set-rpath "\$ORIGIN" "${p}" || die
+	done
 }
 
 pkg_postinst()
