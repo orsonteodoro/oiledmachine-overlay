@@ -1,14 +1,14 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 MY_PN="RadialGM"
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/enigma-dev/RadialGM.git"
 # enigma is downloaded twice to verify ABI compatibility.
 
-inherit cmake-utils desktop eutils git-r3 toolchain-funcs xdg
+inherit cmake desktop git-r3 toolchain-funcs xdg
 
 DESCRIPTION="A native IDE for ENIGMA written in C++ using the Qt Framework."
 LICENSE="GPL-3+"
@@ -50,12 +50,16 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	${CDEPEND}
 	>=dev-util/cmake-3.23.2
+	dev-util/patchelf
 	media-gfx/imagemagick[png]
 "
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( README.md )
 CMAKE_BUILD_TYPE="Release"
+PATCHES=(
+	"${FILESDIR}/${PN}-9999-external-enigma.patch"
+)
 
 pkg_setup() {
 	export ENIGMA_INSTALL_DIR="/usr/$(get_libdir)/enigma"
@@ -131,8 +135,7 @@ eerror
 }
 
 src_prepare() {
-	cmake-utils_src_prepare
-	xdg_src_prepare
+	cmake_src_prepare
 	rm -rf "${S}/Submodules/enigma-dev" || die
 	cp -a "${ENIGMA_INSTALL_DIR}" "${S}/Submodules" || die
 	mv "${S}/Submodules/enigma" "${S}/Submodules/enigma-dev" || die
@@ -157,19 +160,22 @@ eerror
 		| xargs -0 dirname \
 		| tr "\n" ":")
 	local mycmakeargs=(
-		-DRGM_BUILD_EMAKE=OFF
 		-DCMAKE_INSTALL_PREFIX="/usr/$(get_libdir)/${MY_PN}"
+		-DEXTERNAL_ENIGMA=ON
+		-DCMAKE_LIBRARY_PATH="${dirs}"
+		-DRGM_BUILD_EMAKE=OFF
 	)
-	CMAKE_LIBRARY_PATH=\"${dirs}\" \
-	cmake-utils_src_configure
+	cmake_src_configure
+#	CMAKE_LIBRARY_PATH=\"${dirs}\" \
 }
 
 src_compile() {
-	cmake-utils_src_compile
+	cmake_src_compile
 }
 
 src_install() {
-	cmake-utils_src_install
+	export STRIP="true"
+	cmake_src_install
 	cat "${FILESDIR}/${MY_PN}" > "${T}/${MY_PN}" || die
 	sed -i -e "s|LIBDIR|$(get_libdir)|g" "${T}/${MY_PN}" || die
 	exeinto /usr/bin
@@ -183,4 +189,7 @@ src_install() {
 	make_desktop_entry "/usr/$(get_libdir)/${MY_PN}" "Development;IDE"
 	dosym "${ENIGMA_INSTALL_DIR}" \
 		"/usr/$(get_libdir)/${MY_PN}/enigma-dev"
+	patchelf --remove-rpath "${ED}/usr/$(get_libdir)/RadialGM"
+	patchelf --set-rpath "/usr/$(get_libdir)/enigma" \
+		"${ED}/usr/$(get_libdir)/RadialGM" || die
 }

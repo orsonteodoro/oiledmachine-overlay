@@ -1,7 +1,7 @@
 #!/bin/bash
 ROOT="/usr/LIBDIR/RadialGM"
 ENIGMA_DIR="/usr/LIBDIR/enigma"
-export PATH="${ROOT}:${ENIGMA_DIR}:${PATH}"
-pushd "${ROOT}" # Do not remove
+export PATH="${ENIGMA_DIR}:${ROOT}:${PATH}"
+pushd "${ENIGMA_DIR}" # Do not remove.  It will break emake if removed.
 	"${ROOT}/RadialGM" "${@}"
 popd

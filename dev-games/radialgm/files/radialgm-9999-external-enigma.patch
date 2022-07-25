@@ -1,0 +1,88 @@
+diff -urp radialgm-9999.orig/CMakeLists.txt radialgm-9999/CMakeLists.txt
+--- radialgm-9999.orig/CMakeLists.txt	2022-07-24 21:39:25.055516784 -0700
++++ radialgm-9999/CMakeLists.txt	2022-07-24 21:55:56.774947358 -0700
+@@ -196,6 +196,21 @@ endif()
+  set(RGM_SOURCES ${RGM_SOURCES} Plugins/ServerPlugin.cpp)
+  set(RGM_HEADERS ${RGM_HEADERS} Plugins/ServerPlugin.h)
+ 
++option(EXTERNAL_ENIGMA "Use external enigma" ON)
++set(ENIGMA_PATHS "")
++if (EXTERNAL_ENIGMA)
++    set(_ENIGMA_PATHS
++        /usr/lib64/enigma
++        /usr/lib32/enigma
++    )
++    foreach(ENIGMA_PATH ${_ENIGMA_PATHS})
++        if(EXISTS ${ENIGMA_PATH})
++            list(APPEND ENIGMA_PATHS "${ENIGMA_PATH}")
++        endif()
++    endforeach()
++    link_directories(${ENIGMA_PATHS})
++endif()
++
+ # Tell CMake to create the RadialGM executable
+ add_executable(${EXE} WIN32 ${RGM_UI} ${RGM_HEADERS} ${RGM_SOURCES} ${EDITOR_SOURCES} ${RGM_RC})
+ 
+@@ -259,10 +274,46 @@ find_package(Qt5 COMPONENTS Core Widgets
+ target_link_libraries(${EXE} PRIVATE Qt5::Core Qt5::Widgets Qt5::Gui Qt5::PrintSupport Qt5::Multimedia)
+ 
+ # LibProto
+-add_subdirectory(Submodules/enigma-dev/shared)
+-add_subdirectory(Submodules/enigma-dev/shared/protos)
+-add_subdirectory(Submodules/enigma-dev/CommandLine/libEGM)
+-add_dependencies(${EXE} "EGM")
++if (EXTERNAL_ENIGMA)
++    find_library(LIBPROTOCOLS
++        NAME
++            Protocols
++        PATHS
++            ${ENIGMA_PATHS}
++        REQUIRED
++    )
++    find_library(LIBENIGMASHARED
++        NAME
++            ENIGMAShared
++        PATHS
++            ${ENIGMA_PATHS}
++        REQUIRED
++    )
++    find_library(LIBEGM
++        NAME
++            EGM
++        PATHS
++            ${ENIGMA_PATHS}
++        REQUIRED
++    )
++    set(_PROTO_INCLUDES
++        "/usr/lib64/enigma/shared/protos/.eobjs"
++        "/usr/lib32/enigma/shared/protos/.eobjs"
++    )
++    foreach(PROTO_INCLUDE in ${_PROTO_INCLUDES})
++        if(EXISTS ${PROTO_INCLUDE})
++            list(APPEND PROTO_INCLUDES "${PROTO_INCLUDE}")
++        endif()
++    endforeach()
++
++    include_directories(${PROTO_INCLUDES})
++else()
++    add_subdirectory(Submodules/enigma-dev/shared)
++    add_subdirectory(Submodules/enigma-dev/shared/protos)
++    add_subdirectory(Submodules/enigma-dev/CommandLine/libEGM)
++    add_dependencies(${EXE} "EGM")
++endif(EXTERNAL_ENIGMA)
++
+ target_link_libraries(${EXE} PRIVATE "EGM" "Protocols" "ENIGMAShared")
+ 
+ # Find FreeType
+diff -urp radialgm-9999.orig/cmake-package/CMakeLists.txt radialgm-9999/cmake-package/CMakeLists.txt
+--- radialgm-9999.orig/cmake-package/CMakeLists.txt	2022-07-24 21:39:25.131519795 -0700
++++ radialgm-9999/cmake-package/CMakeLists.txt	2022-07-24 21:39:58.772852214 -0700
+@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.11)
+ 
+ project(RadialGM-Package)
+ 
+-install(DIRECTORY "${CMAKE_SOURCE_DIR}/../Submodules/enigma-dev" DESTINATION .)
++#install(DIRECTORY "${CMAKE_SOURCE_DIR}/../Submodules/enigma-dev" DESTINATION .)
+ install(FILES "${CMAKE_SOURCE_DIR}/../LICENSE.txt" DESTINATION .)
+ install(DIRECTORY ${CMAKE_SOURCE_DIR}/ DESTINATION .)
+ 
