@@ -7216,8 +7216,8 @@ ewarn
 
 	if ver_test ${K_MAJOR_MINOR} -lt 5.15 ; then
 ewarn
-ewarn "Currently no backport for RETBleed in the ${K_MAJOR_MINOR} series"
-ewarn "Use >= 5.15 above for RETBleed mitigation for ARCH=x86."
+ewarn "There's currently no backport for RETBleed in the ${K_MAJOR_MINOR}"
+ewarn "series.  Use >= 5.15 for RETBleed mitigation for ARCH=x86."
 ewarn
 	fi
 ewarn
