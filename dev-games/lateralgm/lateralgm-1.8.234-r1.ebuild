@@ -10,6 +10,7 @@ LICENSE="
 	GPL-3+
 	libmaker? ( GPL-3+ )
 "
+# lgmplugin is GPL-3+
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 HOMEPAGE="http://lateralgm.org/"
 SLOT="0"
@@ -23,7 +24,7 @@ JVM_V="1.8"
 
 DEPEND_LATERALGM=" virtual/jre:${JAVA_V}"
 DEPEND_LGMPLUGIN="
-	dev-java/jna[nio-buffers(+)]
+	>=dev-java/jna-5.8[nio-buffers(+)]
 	virtual/jre:${JAVA_V}
 "
 DEPEND_LIBMAKER=" virtual/jre:${JAVA_V}"
@@ -54,7 +55,7 @@ EGIT_COMMIT_JE_LATERALGM="487ddbe470032124dcb50ebee01a24b600ae900e"
 EGIT_COMMIT_JE_LIBMAKER="5844d7f047eac15408f7ccf8a9183d2015b962e0" # \
 # dated 20120417, this is required because of namespace changes, KeywordSet \
 # changes, fails to build
-LGMPLUGIN_V="1.8.227r2" # \
+LGMPLUGIN_V="1.8.227r3" # \
 # lgmplugin updates can be found at: \
 # https://github.com/enigma-dev/lgmplugin/tags
 
@@ -98,6 +99,7 @@ S_LATERALGM="${WORKDIR}/${MY_PN_LATERALGM}-${PV}"
 S_LIBMAKER="${WORKDIR}/${MY_PN_LIBMAKER}-${EGIT_COMMIT_LIBMAKER}"
 S_LGMPLUGIN="${WORKDIR}/lgmplugin-${LGMPLUGIN_V}"
 S="${S_LATERALGM}"
+JNA_PATH="/usr/share/jna-4/lib/jna.jar"
 
 pkg_setup()
 {
@@ -117,7 +119,7 @@ eerror "${JAVA_HOME}/bin/java.  Use \`eselect java-vm\` to set this up."
 eerror
 		die
 	fi
-	java-pkg_ensure-vm-version-ge ${JAVA_V}
+	java-pkg_ensure-vm-version-eq ${JAVA_V}
 	export JVM_V=$(java-pkg_get-target)
 
 	# Fixes:
@@ -130,6 +132,21 @@ eerror
 #make: *** [Makefile:6: org/lateralgm/ui/swing/propertylink/DocumentLink.class] Error 1
 #make: *** Waiting for unfinished jobs....
 	export MAKEOPTS="-j1"
+	local cbuild_jna_pv=$(unzip -p "/usr/share/jna-4/lib/jna.jar" META-INF/MANIFEST.MF \
+		| grep "Created-By:" \
+		| cut -f 2 -d " " \
+		| cut -f 1-2 -d ".")
+	if false && [[ "${JAVA_V}" != "${cbuild_jna_pv}" ]] ; then
+eerror
+eerror "jna version mismatch:"
+eerror
+eerror "Expected:  ${JAVA_V}"
+eerror "Actual:    ${cbuild_jna_pv}"
+eerror
+eerror "Build jna with Java ${JAVA_V}"
+eerror
+	fi
+#	[[ -e "${JNA_PATH}" ]] || die "Missing lib or in wrong path."
 }
 
 src_unpack_lateralgm()
@@ -147,13 +164,13 @@ src_unpack() {
 src_prepare_lateralgm() {
 	einfo "Preparing ${MY_PN_LATERALGM}"
 	cd "${S_LATERALGM}" || die
+	einfo "JAVA_HOME:  ${JAVA_HOME}"
 	local bcp="-bootclasspath ${JAVA_HOME}/jre/lib/rt.jar"
-	sed -i -e "s|JFLAGS =|JFLAGS = ${bcp}|" \
+#		-e "s|JFLAGS =|JFLAGS = ${bcp}|" \
+	sed -i \
 		-e "s|-source 1.7|-source ${JAVA_SRC_V}|g" \
-		-e "s|-target 1.7|-target ${JVM_V}|g" Makefile || die
-	# no need to call enigma_copy_sources
-	# it will complain about cd (change directory) failure in src_install
-	# phase
+		-e "s|-target 1.7|-target ${JVM_V}|g" \
+		"Makefile" || die
 	eapply "${FILESDIR}/lateralgm-1.8.227-cast-GMXFileReader.patch"
 }
 
@@ -169,12 +186,11 @@ src_prepare_lgmplugin() {
 	einfo "Preparing ${MY_PN_LGMPLUGIN}"
 	cd "${S_LGMPLUGIN}" || die
 	local bcp="-bootclasspath ${JAVA_HOME}/jre/lib/rt.jar"
-	local jna_path="/usr/share/jna-4/lib/jna.jar"
-	[[ -e "${jna_path}" ]] || die
-	sed -i -e "s|JFLAGS =|JFLAGS = ${bcp}|" \
+#		-e "s|JFLAGS =|JFLAGS = ${bcp}|" \
+	sed -i \
 		-e "s|-source 1.7|-source ${JAVA_SRC_V}|g" \
 		-e "s|-target 1.7|-target ${JVM_V}|g" \
-		-e "s|jna.jar|${jna_path}|" \
+		-e "s|jna.jar|${JNA_PATH}|" \
 		"Makefile" || die
 	ln -s "${S_LATERALGM}" "${WORKDIR}/LateralGM" || die
 
@@ -182,6 +198,9 @@ src_prepare_lgmplugin() {
 	# LateralGM's JoshEdit.
 	sed -i -e "/CodeTextArea.updateKeywords/d" \
 		"org/enigma/frames/EnigmaSettingsHandler.java" || die
+
+	sed -i -e "s|../../projects/enigma-dev/plugins/shared/jna.jar|jna.jar|g" \
+		".classpath" || die
 }
 
 src_prepare() {
@@ -212,10 +231,10 @@ src_compile_libmaker()
 	$(java-pkg_get-javac) \
 		-bootclasspath "${JAVA_HOME}/jre/lib/rt.jar" \
 		-source ${JAVA_SRC_V} -target ${JVM_V} -nowarn -cp . -cp \
-		"${S_LATERALGM}/lateralgm.jar" \
+		"${S_LIBMAKER}/${MY_PN_LIBMAKER,,}.jar" \
 		$(find . -name "*.java") \
 		|| die
-	jar cmvf "META-INF/MANIFEST.MF" "${PN}.jar" \
+	jar cmvf "META-INF/MANIFEST.MF" "${MY_PN_LIBMAKER,,}.jar" \
 		$(find . -name '*.class') \
 		$(find . -name '*.png') \
 		$(find . -name '*.properties') \
@@ -255,6 +274,7 @@ src_install_lateralgm()
 	cp "${FILESDIR}/lateralgm" \
 		"${T}/lateralgm" || die
 	sed -i -e "s|LIBDIR|$(get_libdir)|g" \
+		-e "s|JNA_CLASSPATH|${JNA_PATH}|" \
 		"${T}/lateralgm" || die
 	doexe "${T}/lateralgm"
 	doicon "org/lateralgm/main/lgm-logo.ico"
@@ -284,11 +304,14 @@ src_install_lgmplugin()
 src_install_libmaker()
 {
 	einfo "Installing ${MY_PN_LIBMAKER}"
-	insinto "/usr/share/${PN}/lib"
-	doins "${PN}.jar"
+	insinto "/usr/$(get_libdir)/enigma"
+	doins "${MY_PN_LIBMAKER,,}.jar"
 	exeinto "/usr/bin"
 	cat "${FILESDIR}/${MY_PN_LIBMAKER,,}" \
 		> "${T}/${MY_PN_LIBMAKER,,}" || die
+	sed -i -e "s|LIBDIR|$(get_libdir)|g" \
+		-e "s|JNA_CLASSPATH|${JNA_PATH}|" \
+		"${T}/${MY_PN_LIBMAKER,,}" || die
 	doexe "${T}/${MY_PN_LIBMAKER,,}"
 	doicon \
 "${S_LIBMAKER}/org/lateralgm/${MY_PN_LIBMAKER,,}/icons/lgl-128.png"
@@ -302,6 +325,7 @@ src_install_libmaker()
 }
 
 src_install() {
+	JNA_PATH="/usr/$(get_libdir)/enigma/jna.jar"
 	S="${S_LATERALGM}"
 	BUILD_DIR="${S}"
 	cd "${BUILD_DIR}" || die

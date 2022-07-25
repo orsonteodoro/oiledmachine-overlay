@@ -1,9 +1,7 @@
 #!/bin/bash
-which wmname
-R_WMNAME="$?"
-pidof dwm > /dev/null
-R_DWM="$?"
-if [[ "$R_DWM" == "0" && "$R_WMNAME" == "0" ]] ; then
-	wmname LG3D &
-fi
-java -jar "/usr/share/libmaker/lib/libmaker.jar" "${@}"
+which wmname && pidof dwm && ( wmname LG3D & )
+ROOT="/usr/LIBDIR/enigma"
+cd "${ROOT}"
+export CLASSPATH="JNA_CLASSPATH:${CLASSPATH}"
+export LD_LIBRARY_PATH="${ROOT}:${LD_LIBRARY_PATH}"
+java -jar "${ROOT}/libmaker.jar" "${@}"
