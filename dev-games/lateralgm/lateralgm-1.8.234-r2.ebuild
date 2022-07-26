@@ -11,7 +11,7 @@ LICENSE="
 	libmaker? ( GPL-3+ )
 "
 # lgmplugin is GPL-3+
-# KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86" # Broken during load
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 HOMEPAGE="http://lateralgm.org/"
 SLOT="0"
 IUSE+=" libmaker"
@@ -22,9 +22,10 @@ JVM_V="1.8"
 
 # Merged libmaker and lgmplugin to let others find them easier.
 
+JNA_SLOT="4"
 DEPEND_LATERALGM=" virtual/jre:${JAVA_V}"
 DEPEND_LGMPLUGIN="
-	>=dev-java/jna-5.8[nio-buffers(+)]
+	>=dev-java/jna-5.8:4=[nio-buffers(+)]
 	virtual/jre:${JAVA_V}
 "
 DEPEND_LIBMAKER=" virtual/jre:${JAVA_V}"
@@ -41,9 +42,16 @@ RDEPEND+="
 	${CDEPEND}
 	dev-games/enigma
 "
-BDEPEND_LATERALGM=" virtual/jdk:${JAVA_V}"
-BDEPEND_LGMPLUGIN=" virtual/jdk:${JAVA_V}"
-BDEPEND_LIBMAKER=" virtual/jdk:${JAVA_V}"
+BDEPEND_LATERALGM="
+	virtual/jdk:${JAVA_V}
+	dev-java/maven-bin
+"
+BDEPEND_LGMPLUGIN="
+	virtual/jdk:${JAVA_V}
+"
+BDEPEND_LIBMAKER="
+	virtual/jdk:${JAVA_V}
+"
 BDEPEND+="
 	${BDEPEND_LATERALGM}
 	${BDEPEND_LGMPLUGIN}
@@ -62,14 +70,14 @@ LGMPLUGIN_V="1.8.227r3" # \
 MY_PN_LATERALGM="LateralGM"
 MY_PN_LIBMAKER="LibMaker"
 MY_PN_LGMPLUGIN="LateralGM Plugin"
-JE_PN="JoshEdit"
-JE_LATERALGM_FN="${JE_PN}-${EGIT_COMMIT_JE_LATERALGM:0:7}.tar.gz"
-LIBMAKER_FN="${MY_PN_LIBMAKER}-${EGIT_COMMIT_LIBMAKER:0:7}.tar.gz"
-JE_LIBMAKER_FN="${MY_PN_LIBMAKER}-${EGIT_COMMIT_JE_LIBMAKER:0:7}.tar.gz"
+MY_PN_JOSHEDIT="JoshEdit"
+JE_LATERALGM_FN="${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LATERALGM:0:7}.tar.gz"
+JE_LIBMAKER_FN="${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LIBMAKER:0:7}.tar.gz"
 LGMPLUGIN_FN="lgmplugin-${LGMPLUGIN_V}.tar.gz"
+LIBMAKER_FN="${MY_PN_LIBMAKER}-${EGIT_COMMIT_LIBMAKER:0:7}.tar.gz"
+BASE_URI_ED="https://github.com/enigma-dev"
 BASE_URI_IA="https://github.com/IsmAvatar"
 BASE_URI_JD="https://github.com/JoshDreamland"
-BASE_URI_ED="https://github.com/enigma-dev"
 
 SRC_URI_LATERALGM="
 ${BASE_URI_IA}/${MY_PN_LATERALGM}/archive/v${PV}.tar.gz
@@ -80,7 +88,7 @@ ${BASE_URI_JD}/JoshEdit/archive/${EGIT_COMMIT_JE_LATERALGM}.tar.gz
 SRC_URI_LIBMAKER="
 ${BASE_URI_IA}/${MY_PN_LIBMAKER}/archive/${EGIT_COMMIT_LIBMAKER}.tar.gz
 	-> ${LIBMAKER_FN}
-${BASE_URI_JD}/${JE_PN}/archive/${EGIT_COMMIT_JE_LIBMAKER}.tar.gz
+${BASE_URI_JD}/${MY_PN_JOSHEDIT}/archive/${EGIT_COMMIT_JE_LIBMAKER}.tar.gz
 	-> ${JE_LIBMAKER_FN}
 "
 
@@ -98,8 +106,10 @@ RESTRICT="mirror"
 S_LATERALGM="${WORKDIR}/${MY_PN_LATERALGM}-${PV}"
 S_LIBMAKER="${WORKDIR}/${MY_PN_LIBMAKER}-${EGIT_COMMIT_LIBMAKER}"
 S_LGMPLUGIN="${WORKDIR}/lgmplugin-${LGMPLUGIN_V}"
+S_JOSHEDIT_FOR_LIBMAKER="${WORKDIR}/${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LIBMAKER}"
+S_JOSHEDIT_FOR_LATERALGM="${WORKDIR}/${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LATERALGM}"
 S="${S_LATERALGM}"
-JNA_PATH="/usr/share/jna-4/lib/jna.jar"
+JNA_PATH="/usr/share/jna-${JNA_SLOT}/lib/jna.jar"
 
 pkg_setup()
 {
@@ -132,33 +142,84 @@ eerror
 #make: *** [Makefile:6: org/lateralgm/ui/swing/propertylink/DocumentLink.class] Error 1
 #make: *** Waiting for unfinished jobs....
 	export MAKEOPTS="-j1"
-	local cbuild_jna_pv=$(unzip -p "/usr/share/jna-4/lib/jna.jar" META-INF/MANIFEST.MF \
-		| grep "Created-By:" \
-		| cut -f 2 -d " " \
-		| cut -f 1-2 -d ".")
-	if false && [[ "${JAVA_V}" != "${cbuild_jna_pv}" ]] ; then
-eerror
-eerror "jna version mismatch:"
-eerror
-eerror "Expected:  ${JAVA_V}"
-eerror "Actual:    ${cbuild_jna_pv}"
-eerror
-eerror "Build jna with Java ${JAVA_V}"
-eerror
-	fi
-#	[[ -e "${JNA_PATH}" ]] || die "Missing lib or in wrong path."
+	[[ -e "${JNA_PATH}" ]] || die "Missing lib or in wrong path."
 }
 
 src_unpack_lateralgm()
 {
 	rm -rf "${S_LATERALGM}/modules/joshedit" || die
-	mv "${WORKDIR}/${JE_PN}-${EGIT_COMMIT_JE_LATERALGM}" \
+}
+
+src_unpack_joshedit_for_lateralgm() {
+	mv "${S_JOSHEDIT_FOR_LATERALGM}" \
 		"${S_LATERALGM}/modules/joshedit" || die
+	export S_JOSHEDIT_FOR_LATERALGM="${S_LATERALGM}/modules/joshedit/src/main"
+}
+
+src_unpack_joshedit_for_libmaker() {
+	cp -aT "${S_JOSHEDIT_FOR_LIBMAKER}" \
+		"${S_LIBMAKER}" || die
+	export S_JOSHEDIT_FOR_LIBMAKER="${S_LIBMAKER}"
 }
 
 src_unpack() {
 	unpack ${A}
 	src_unpack_lateralgm
+	src_unpack_joshedit_for_lateralgm
+	src_unpack_joshedit_for_libmaker
+	cp -a "${JNA_PATH}" \
+		"${WORKDIR}/jna.jar" || die
+}
+
+src_prepare_jna() {
+	# See https://github.com/java-native-access/jna/blob/master/build.xml#L506
+	local d=""
+	if [[ "${CHOST}" =~ "aarch64" ]] ; then
+		d="com/sun/jna/linux-aarch64"
+#	elif [[ "${CHOST}" =~ "arm_le" ]] ; then
+		# QA: redo
+#		d="com/sun/jna/linux-armle"
+	elif [[ "${CHOST}" =~ "arm" ]] ; then
+		d="com/sun/jna/linux-arm"
+#	elif [[ "${CHOST}" =~ "armel" ]] ; then
+		# QA: redo
+#		d="com/sun/jna/linux-armel"
+	elif [[ "${CHOST}" =~ "ia64" ]] ; then
+		d="com/sun/jna/linux-ia64"
+	elif [[ "${CHOST}" =~ "mips64el" ]] ; then
+		d="com/sun/jna/linux-mips64el"
+	elif [[ "${CHOST}" =~ "powerpc64le" ]] ; then
+		d="com/sun/jna/linux-ppc64le"
+	elif [[ "${CHOST}" =~ "powerpc64" ]] ; then
+		d="com/sun/jna/linux-ppc64"
+	elif [[ "${CHOST}" =~ "powerpc" ]] ; then
+		d="com/sun/jna/linux-ppc"
+	elif [[ "${CHOST}" =~ "riscv64" ]] ; then
+		d="com/sun/jna/linux-riscv64"
+	elif [[ "${CHOST}" =~ "s390x" ]] ; then
+		d="com/sun/jna/linux-s390x"
+	elif [[ "${CHOST}" =~ "sparcv9" ]] ; then
+		d="com/sun/jna/linux-sparcv9"
+	elif [[ "${CHOST}" =~ "loongarch64" ]] ; then
+		d="com/sun/jna/linux-loongarch64"
+	elif [[ "${CHOST}" =~ "x86_64" ]] ; then
+		d="com/sun/jna/linux-x86-64"
+	elif [[ "${CHOST}" =~ "x86" ]] ; then
+		d="com/sun/jna/linux-x86"
+	fi
+	[[ -z "${d}" ]] && die "${CHOST} my not be supported"
+	local f="libjnidispatch.so"
+	# The distro package one doesn't work as expected.
+	# This project will package it correctly
+	local dest="${WORKDIR}/jna.jar"
+	mkdir -p "${WORKDIR}/jna-temp/${d}"
+	pushd "${WORKDIR}/jna-temp/" || die
+		cp -a /usr/$(get_libdir)/jna-${JNA_SLOT}/libjnidispatch.so \
+			"${WORKDIR}/jna-temp/${d}" || die
+		jar uvf "${dest}" \
+			$(find .) \
+			|| die
+	popd
 }
 
 src_prepare_lateralgm() {
@@ -166,50 +227,86 @@ src_prepare_lateralgm() {
 	cd "${S_LATERALGM}" || die
 	einfo "JAVA_HOME:  ${JAVA_HOME}"
 	local bcp="-bootclasspath ${JAVA_HOME}/jre/lib/rt.jar"
-#		-e "s|JFLAGS =|JFLAGS = ${bcp}|" \
 	sed -i \
-		-e "s|-source 1.7|-source ${JAVA_SRC_V}|g" \
-		-e "s|-target 1.7|-target ${JVM_V}|g" \
+		-e "s|JFLAGS =|JFLAGS = ${bcp} |" \
+		-e "s|JFLAGS =|JFLAGS = -Xlint:deprecation -Xlint:unchecked |" \
 		"Makefile" || die
 	eapply "${FILESDIR}/lateralgm-1.8.227-cast-GMXFileReader.patch"
+	ln -s "${S_LATERALGM}" "${WORKDIR}/LateralGM" || die
 }
 
 src_prepare_libmaker()
 {
 	einfo "Preparing ${MY_PN_LIBMAKER}"
 	cd "${S_LIBMAKER}" || die
-	cp -r "${WORKDIR}/${JE_PN}-${EGIT_COMMIT_JE_LIBMAKER}/org/" ./ \
-		|| die
 }
 
 src_prepare_lgmplugin() {
 	einfo "Preparing ${MY_PN_LGMPLUGIN}"
 	cd "${S_LGMPLUGIN}" || die
 	local bcp="-bootclasspath ${JAVA_HOME}/jre/lib/rt.jar"
-#		-e "s|JFLAGS =|JFLAGS = ${bcp}|" \
 	sed -i \
-		-e "s|-source 1.7|-source ${JAVA_SRC_V}|g" \
-		-e "s|-target 1.7|-target ${JVM_V}|g" \
-		-e "s|jna.jar|${JNA_PATH}|" \
+		-e "s|JFLAGS =|JFLAGS = ${bcp} -Xlint:deprecation |" \
+		-e "s|JFLAGS =|JFLAGS = -Xlint:deprecation -Xlint:unchecked |" \
+		-e "s|jna.jar|${JNA_BPATH}|" \
 		"Makefile" || die
-	ln -s "${S_LATERALGM}" "${WORKDIR}/LateralGM" || die
-
-	# Found in same JoshEdit used by LibMaker but not the same as
-	# LateralGM's JoshEdit.
-	sed -i -e "/CodeTextArea.updateKeywords/d" \
-		"org/enigma/frames/EnigmaSettingsHandler.java" || die
-
-	sed -i -e "s|../../projects/enigma-dev/plugins/shared/jna.jar|jna.jar|g" \
-		".classpath" || die
+	eapply "${FILESDIR}/lgmplugin-1.8.227r3-use-native-load.patch"
 }
 
 src_prepare() {
+	export JNA_BPATH="${JNA_PATH}"
 	default
 	src_prepare_lateralgm
-	if use libmaker ; then
-		src_prepare_libmaker
-	fi
+	use libmaker && src_prepare_libmaker
 	src_prepare_lgmplugin
+}
+
+src_compile_joshedit_for_lateralgm() {
+	local dest_fn
+	# We cannot use the mvn thing because of sandbox violations.
+	einfo "Compiling ${MY_PN_JOSHEDIT} for ${MY_PN_LATERALGM}"
+	local dest="${S_LATERALGM}/${PN}.jar"
+	pushd "${S_JOSHEDIT_FOR_LATERALGM}" || die
+		$(java-pkg_get-javac) \
+			-bootclasspath "${JAVA_HOME}/jre/lib/rt.jar" \
+			-source 1.7 -target 1.7 \
+			-Xlint:deprecation -Xlint:unchecked \
+			-nowarn \
+			-cp . \
+			$(find . -name "*.java") \
+			|| die
+	popd
+	pushd "${S_JOSHEDIT_FOR_LATERALGM}/java" || die
+		jar uvf "${dest}" \
+			$(find "org" -not -name '*.java') \
+			|| die
+	popd
+	pushd "${S_JOSHEDIT_FOR_LATERALGM}/resources/" || die
+		jar uvf "${dest}" \
+			$(find "org") \
+			|| die
+	popd
+}
+
+src_compile_joshedit_for_libmaker() {
+	local dest_fn
+	einfo "Compiling ${MY_PN_JOSHEDIT} for ${MY_PN_LIBMAKER}"
+	local dest="${S_LIBMAKER}/${MY_PN_LIBMAKER,,}.jar"
+	pushd "${S_JOSHEDIT_FOR_LIBMAKER}/org/lateralgm/joshedit" || die
+		$(java-pkg_get-javac) \
+			-bootclasspath "${JAVA_HOME}/jre/lib/rt.jar" \
+			-source 1.7 -target 1.7 \
+			-Xlint:deprecation -Xlint:unchecked \
+			-nowarn \
+			-cp . \
+			$(find . -name "*.java") \
+			|| die
+	popd
+	pushd "${S_JOSHEDIT_FOR_LIBMAKER}" || die
+		jar uvf "${dest}" \
+			$(find "org" -not -name '*.java') \
+			|| die
+	popd
 }
 
 src_compile_lateralgm()
@@ -220,6 +317,7 @@ src_compile_lateralgm()
 
 src_compile_lgmplugin()
 {
+	# This needs to be integrated because of security of unsigned jars.
 	einfo "Compiling ${MY_PN_LGMPLUGIN}"
 	emake
 }
@@ -227,19 +325,17 @@ src_compile_lgmplugin()
 src_compile_libmaker()
 {
 	einfo "Compiling ${MY_PN_LIBMAKER}"
+#		-source ${JAVA_SRC_V} -target ${JVM_V} -nowarn \
 	MAKEOPTS="-j1" \
 	$(java-pkg_get-javac) \
 		-bootclasspath "${JAVA_HOME}/jre/lib/rt.jar" \
-		-source ${JAVA_SRC_V} -target ${JVM_V} -nowarn -cp . -cp \
-		"${S_LIBMAKER}/${MY_PN_LIBMAKER,,}.jar" \
+		-source 1.7 -target 1.7 \
+		-nowarn \
+		-cp ".:" \
 		$(find . -name "*.java") \
 		|| die
 	jar cmvf "META-INF/MANIFEST.MF" "${MY_PN_LIBMAKER,,}.jar" \
-		$(find . -name '*.class') \
-		$(find . -name '*.png') \
-		$(find . -name '*.properties') \
-		$(find . -name "*.svg") \
-		$(find . -name '*.txt') \
+		$(find . -not -name '*.java') \
 		|| die
 }
 
@@ -247,16 +343,17 @@ src_compile() {
 	S="${S_LATERALGM}"
 	BUILD_DIR="${S}"
 	cd "${BUILD_DIR}" || die
-	if [[ ! -f .compiled ]] ; then
-		src_compile_lateralgm
-		touch .compiled || die
-	fi
+	src_prepare_jna
+	src_compile_lateralgm
+	src_compile_joshedit_for_lateralgm
+	touch .compiled || die
 
 	if use libmaker ; then
 		S="${S_LIBMAKER}"
 		BUILD_DIR="${S}"
 		cd "${BUILD_DIR}" || die
 		src_compile_libmaker
+		src_compile_joshedit_for_libmaker
 	fi
 
 	S="${S_LGMPLUGIN}"
@@ -269,17 +366,17 @@ src_install_lateralgm()
 {
 	einfo "Installing ${MY_PN_LATERALGM}"
 	insinto "/usr/$(get_libdir)/enigma"
-	doins lateralgm.jar
-	exeinto /usr/bin
-	cp "${FILESDIR}/lateralgm" \
-		"${T}/lateralgm" || die
+	doins "${PN}.jar"
+	exeinto "/usr/bin"
+	cp "${FILESDIR}/${PN}" \
+		"${T}/${PN}" || die
 	sed -i -e "s|LIBDIR|$(get_libdir)|g" \
-		-e "s|JNA_CLASSPATH|${JNA_PATH}|" \
-		"${T}/lateralgm" || die
-	doexe "${T}/lateralgm"
+		-e "s|JNA_PATH|${JNA_IPATH}|" \
+		"${T}/${PN}" || die
+	doexe "${T}/${PN}"
 	doicon "org/lateralgm/main/lgm-logo.ico"
 	make_desktop_entry \
-		"/usr/bin/lateralgm" \
+		"/usr/bin/${PN}" \
 		"${MY_PN_LATERALGM}" \
 		"/usr/share/pixmap/lgm-logo.ico" \
 		"Development;IDE"
@@ -299,6 +396,8 @@ src_install_lgmplugin()
 	dodoc "COPYING" "LICENSE" "README.md"
 	docinto "licenses/fonts/calico"
 	dodoc "org/lateralgm/icons/Calico/LICENSE"
+	insinto "/usr/$(get_libdir)/enigma/plugins/shared"
+	doins "${WORKDIR}/jna.jar"
 }
 
 src_install_libmaker()
@@ -310,7 +409,7 @@ src_install_libmaker()
 	cat "${FILESDIR}/${MY_PN_LIBMAKER,,}" \
 		> "${T}/${MY_PN_LIBMAKER,,}" || die
 	sed -i -e "s|LIBDIR|$(get_libdir)|g" \
-		-e "s|JNA_CLASSPATH|${JNA_PATH}|" \
+		-e "s|JNA_PATH|${JNA_IPATH}|" \
 		"${T}/${MY_PN_LIBMAKER,,}" || die
 	doexe "${T}/${MY_PN_LIBMAKER,,}"
 	doicon \
@@ -325,7 +424,7 @@ src_install_libmaker()
 }
 
 src_install() {
-	JNA_PATH="/usr/$(get_libdir)/enigma/jna.jar"
+	export JNA_IPATH="/usr/$(get_libdir)/enigma/plugins/shared/jna.jar"
 	S="${S_LATERALGM}"
 	BUILD_DIR="${S}"
 	cd "${BUILD_DIR}" || die

@@ -1,7 +1,11 @@
 #!/bin/bash
 which wmname && pidof dwm && ( wmname LG3D & )
 ROOT="/usr/LIBDIR/enigma"
+JNA_JAR="JNA_PATH"
 cd "${ROOT}"
-export CLASSPATH="JNA_CLASSPATH:${CLASSPATH}"
 export LD_LIBRARY_PATH="${ROOT}:${LD_LIBRARY_PATH}"
-java -jar "${ROOT}/libmaker.jar" "${@}"
+java \
+	-noverify \
+	-cp .:${JNA_JAR} \
+	-jar "${ROOT}/libmaker.jar" \
+	"${@}"

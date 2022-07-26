@@ -1,0 +1,24 @@
+diff -urp lgmplugin-1.8.227r3.orig/org/enigma/EnigmaCli.java lgmplugin-1.8.227r3/org/enigma/EnigmaCli.java
+--- lgmplugin-1.8.227r3.orig/org/enigma/EnigmaCli.java	2021-08-05 18:11:26.000000000 -0700
++++ lgmplugin-1.8.227r3/org/enigma/EnigmaCli.java	2022-07-25 14:31:24.497976193 -0700
+@@ -420,7 +420,7 @@ public final class EnigmaCli
+ 			String lib = "compileEGMf"; //$NON-NLS-1$
+ 			NativeLibrary.addSearchPath(lib,"."); //$NON-NLS-1$
+ 			NativeLibrary.addSearchPath(lib,LGM.workDir.getParent());
+-			DRIVER = (EnigmaDriver) Native.loadLibrary(lib,EnigmaDriver.class);
++			DRIVER = (EnigmaDriver) Native.load(lib,EnigmaDriver.class);
+ 			return null;
+ 			}
+ 		catch (UnsatisfiedLinkError e)
+diff -urp lgmplugin-1.8.227r3.orig/org/enigma/EnigmaRunner.java lgmplugin-1.8.227r3/org/enigma/EnigmaRunner.java
+--- lgmplugin-1.8.227r3.orig/org/enigma/EnigmaRunner.java	2021-08-05 18:11:26.000000000 -0700
++++ lgmplugin-1.8.227r3/org/enigma/EnigmaRunner.java	2022-07-25 14:31:26.482053656 -0700
+@@ -248,7 +248,7 @@ public class EnigmaRunner implements Act
+ 			NativeLibrary.addSearchPath(lib,".."); //$NON-NLS-1$
+ 			NativeLibrary.addSearchPath(lib,LGM.workDir.getParent());
+ 			NativeLibrary.addSearchPath(lib,LGM.workDir.getPath());
+-			DRIVER = (EnigmaDriver) Native.loadLibrary(lib,EnigmaDriver.class);
++			DRIVER = (EnigmaDriver) Native.load(lib,EnigmaDriver.class);
+ 		} catch (UnsatisfiedLinkError e) {
+ 			EnigmaRunner.showDefaultExceptionHandler(e);
+ 			return e;
