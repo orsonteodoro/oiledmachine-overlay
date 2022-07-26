@@ -923,10 +923,16 @@ einfo
 einfo "You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"
 einfo
 	fi
-einfo
-einfo "You must be part of the ${MY_GROUP} to use this package."
-einfo "Allow at most one user to use this group."
-einfo "Files with permissions changes must sanitized (or re-installed)"
-einfo "when handed over to another user."
-einfo
+# TODO: make per account copies instead
+ewarn
+ewarn "SECURITY NOTICE:"
+ewarn
+ewarn "You must be part of the ${MY_GROUP} to use this package.  Allow at most"
+ewarn "one user to use this group.  DO NOT run any program linked to this"
+ewarn "package as root or a wheel account if ${MY_GROUP} group is assigned to"
+ewarn "not root or not wheel."
+ewarn
+ewarn "The package must re-installed to sanitize all libraries when handing"
+ewarn "over the ${MY_GROUP} to another user."
+ewarn
 }
