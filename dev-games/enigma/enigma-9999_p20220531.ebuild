@@ -7,9 +7,10 @@ CXX_STANDARD="-std=c++17"
 EGIT_COMMIT="2ddad078c6cd355dcaa45996cf9f3a49df020102"
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
+MY_GROUP="enigma-dev"
 
 inherit desktop eutils flag-o-matic git-r3 multilib-minimal \
-toolchain-funcs
+toolchain-funcs user
 
 DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation,
 is an open source cross-platform game development environment."
@@ -714,6 +715,8 @@ eerror
 	use wine64 && check_cross_mingw64
 	use android && check_cross_android
 	use macos && check_cross_macos
+
+	enewgroup ${MY_GROUP}
 }
 
 src_prepare() {
@@ -840,9 +843,9 @@ src_compile() {
 src_install() {
 	export STRIP="true"
 	local install_dir="/usr/$(get_libdir)/enigma"
-	find "${S}" \
-		-name '*.o' \
-		| xargs rm -vrf '{}' \; || die
+#	find "${S}" \
+#		-name '*.o' \
+#		| xargs rm -vrf '{}' \; || die
 	insinto "${install_dir}"
 	exeinto "${install_dir}"
 	echo "${ABI_FINGERPRINT}" > "${T}/abi_fingerprint" || die
@@ -885,6 +888,32 @@ src_install() {
 		patchelf --remove-rpath "${p}" || die
 		patchelf --set-rpath "\$ORIGIN" "${p}" || die
 	done
+
+	local p
+	local bd
+	bd="/usr/$(get_libdir)/enigma/"
+	for p in $(find "${bd}" -name "*.o" -o -name "*.d") ; do
+		[[ -e "${p}" ]] || continue
+		p=$(echo -n "${p}" | sed -e "s|^${ED}||g")
+		if [[ "${p}" =~ ".eobjs" ]] ; then
+			einfo "Changing owner to root:${MY_GROUP} for ${p}"
+			fowners root:${MY_GROUP} "${p}"
+			einfo "Changing perms to 0644 for ${p}"
+			fperms 0664 "${p}"
+		fi
+	done
+
+	bd="/usr/$(get_libdir)/enigma/"
+	for p in $(find "${bd}" -maxdepth 1 -name "*.so") ; do
+		[[ -e "${p}" ]] || continue
+		p=$(echo -n "${p}" | sed -e "s|^${ED}||g")
+		if [[ "${p}" =~ ".eobjs" ]] ; then
+			einfo "Changing owner to root:${MY_GROUP} for ${p}"
+			fowners root:${MY_GROUP} "${p}"
+			einfo "Changing perms to 0775 for ${p}"
+			fperms 0775 "${p}"
+		fi
+	done
 }
 
 pkg_postinst()
@@ -894,4 +923,10 @@ einfo
 einfo "You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"
 einfo
 	fi
+einfo
+einfo "You must be part of the ${PN} to use this package."
+einfo "Allow at most one user to use this group."
+einfo "Files with permissions changes must sanitized (or re-installed)"
+einfo "when handed over to another user."
+einfo
 }
