@@ -35,7 +35,7 @@ b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
 ABI_FINGERPRINT="4742c621d202c5d84b6a87efa7a371eaadc142fdb904b976f3fcbbc2517bb0b5"
-DEPENDS_FINGERPRINT="2ebc4b20964f5773e76f57ce8c25ac514a8d0a6f192e5d5b4194289875c74a1f"
+DEPENDS_FINGERPRINT="60c2107c0ea2efd2261adbbd3a8b292f1a39c801aa659ef435e2ea609ea7c17f"
 SLOT="0/${ABI_FINGERPRINT}"
 IUSE+=" android box2d bullet clang d3d ds doc externalfuncs freetype gles2
 gles3 gme gnome gtk2 gtest headless kde macos mingw32 mingw64 network
@@ -184,9 +184,8 @@ DEPEND+="
 	openal? (
 		>=media-libs/alure-${ALURE_PV}[${MULTILIB_USEDEP}]
 		>=media-libs/dumb-2.0.3[${MULTILIB_USEDEP}]
-		>=media-libs/openal-${OPENAL_PV}[${MULTILIB_USEDEP}]
-
 		>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
+		>=media-libs/openal-${OPENAL_PV}[${MULTILIB_USEDEP}]
 	)
 	opengl? ( ${OPENGL_DEPEND} )
 	png? (
@@ -195,7 +194,7 @@ DEPEND+="
 	)
 	sdl2? (
 		X? ( >=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},opengl?] )
-		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP}]
+		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},sound?]
 		>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[${MULTILIB_USEDEP}]
 
 	)
@@ -380,6 +379,8 @@ eerror
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
 		use opengl && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
+		use sound && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
 		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
 		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
@@ -481,6 +482,8 @@ eerror
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
 		use opengl && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
+		use sound && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
 		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
 		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
@@ -569,6 +572,8 @@ eerror
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "gles1"
 		use gles2 && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "gles2"
+		use sound && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
 		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
 		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
