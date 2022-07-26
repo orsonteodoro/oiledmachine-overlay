@@ -924,7 +924,7 @@ einfo "You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"
 einfo
 	fi
 einfo
-einfo "You must be part of the ${PN} to use this package."
+einfo "You must be part of the ${MY_GROUP} to use this package."
 einfo "Allow at most one user to use this group."
 einfo "Files with permissions changes must sanitized (or re-installed)"
 einfo "when handed over to another user."
