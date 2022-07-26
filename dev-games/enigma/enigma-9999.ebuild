@@ -35,7 +35,7 @@ b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
 ABI_FINGERPRINT="4742c621d202c5d84b6a87efa7a371eaadc142fdb904b976f3fcbbc2517bb0b5"
-DEPENDS_FINGERPRINT="571e11479530cfad0e1599ae70ea9dcf5d992e7b55d39da7648b1cb48d1aeb28"
+DEPENDS_FINGERPRINT="0676227f7d7ffa0fe52470d62668233056e45e586ef02d21fa39aa982db64fd8"
 SLOT="0/${ABI_FINGERPRINT}"
 IUSE+=" android box2d bullet clang doc externalfuncs freetype gles gles2
 gles3 gme gnome gtk2 gtest kde macos network +openal +opengl opengl1
@@ -109,6 +109,7 @@ DEPEND+="
 	>=dev-libs/openssl-1.1.1p[${MULTILIB_USEDEP}]
 	>=dev-libs/pugixml-1.12.1[${MULTILIB_USEDEP}]
 	>=dev-libs/rapidjson-1.1.0
+	>=media-libs/glm-${GLM_PV}
 	>=media-libs/harfbuzz-4.4.1[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.18.1[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
@@ -302,6 +303,7 @@ eerror
 	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
 
 	# We ALWAYS do this because emerge is orders of magnitude slow.
+	crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
 	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	if use box2d ; then
 		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
@@ -394,6 +396,7 @@ eerror
 
 	# We ALWAYS do this because emerge is orders of magnitude slow.
 	crossdev_has_pkg "dev-libs/libffi" "${LIBFFI_PV}"
+	crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
 	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	if use box2d ; then
 		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
@@ -491,6 +494,7 @@ eerror
 	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
 	# We ALWAYS do this because emerge is orders of magnitude slow.
 	crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
+	crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
 	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	if use box2d ; then
 		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
@@ -593,6 +597,7 @@ eerror
 	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
 	# We ALWAYS do this because emerge is orders of magnitude slow.
 	crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
+	crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
 	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	if ver_test ${MACOS_SDK_PV} -lt 10.5 && crossdev_has_pkg_nf "sys-devel/osxcross" "1.1" ; then
 		:;
