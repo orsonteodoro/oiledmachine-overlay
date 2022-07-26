@@ -36,21 +36,45 @@ b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
 ABI_FINGERPRINT="3660f4e5cab9d7d7db6fd8b5c4b6f7089b923e283daef5eb7c41094626b90001"
-DEPENDS_FINGERPRINT="0676227f7d7ffa0fe52470d62668233056e45e586ef02d21fa39aa982db64fd8"
+DEPENDS_FINGERPRINT="2ebc4b20964f5773e76f57ce8c25ac514a8d0a6f192e5d5b4194289875c74a1f"
 SLOT="0/${ABI_FINGERPRINT}"
-IUSE+=" android box2d bullet clang doc externalfuncs freetype gles gles2
-gles3 gme gnome gtk2 gtest kde macos network +openal +opengl opengl1
-+opengl3 png sdl2 test wine wine32 wine64 +X"
+IUSE+=" android box2d bullet clang d3d ds doc externalfuncs freetype gles2
+gles3 gme gnome gtk2 gtest headless kde macos mingw32 mingw64 network
++openal +opengl png sdl2 sound test widgets wine +X xrandr xtest"
+REQUIRED_USE_PLATFORMS="
+	|| ( android headless macos sdl2 X )
+"
 REQUIRED_USE+="
-	gles? ( sdl2 )
-	gles2? ( gles opengl )
-	gles3? ( gles opengl )
+	${REQUIRED_USE_PLATFORMS}
+	android? (
+		|| ( gles2 gles3 )
+		sdl2
+	)
+	ds? ( wine )
+	gles2? ( sdl2 )
+	gles3? ( sdl2 )
+	gnome? ( widgets )
+	gtk2? ( widgets )
+	kde? ( widgets )
+	macos? ( sdl2 opengl )
+	mingw32? ( wine )
+	mingw64? ( wine )
 	opengl? ( || ( sdl2 X ) )
-	opengl1? ( opengl )
-	opengl3? ( opengl )
-	sdl2? ( wine )
-	wine32? ( wine )
-	wine64? ( wine )
+	sdl2? ( || ( d3d gles2 gles3 opengl ) )
+	sound? (
+		|| ( ds openal sdl2 )
+		android? ( sdl2 )
+		macos? ( openal )
+	)
+	widgets? ( || ( gnome gtk2 kde ) )
+	wine? ( || ( d3d opengl ) )
+	X? (
+		opengl
+		widgets? ( || ( gnome kde ) )
+		xrandr
+	)
+	xrandr? ( X )
+	xtest? ( X )
 "
 #
 # For some list of dependencies, see
@@ -100,6 +124,16 @@ CDEPEND="
 	>=sys-devel/gcc-${GCC_PV}
 	>=net-libs/grpc-1.47.0[${MULTILIB_USEDEP}]
 "
+GLES_DEPEND="
+	>=media-libs/glm-${GLM_PV}
+	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
+	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
+"
+OPENGL_DEPEND="
+	>=media-libs/glew-${GLEW_PV}[${MULTILIB_USEDEP}]
+	>=media-libs/glm-${GLM_PV}
+	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
+"
 DEPEND+="
 	${CDEPEND}
 	>=dev-cpp/abseil-cpp-20211102.0[${MULTILIB_USEDEP}]
@@ -132,10 +166,13 @@ DEPEND+="
 		>=dev-libs/libffi-${LIBFFI_PV}[${MULTILIB_USEDEP}]
 	)
 	freetype? ( >=media-libs/freetype-${FREETYPE_PV}[${MULTILIB_USEDEP},static-libs] )
-	gles? (
-		>=media-libs/glm-${GLM_PV}
-		>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
+	gles2? (
+		${GLES_DEPEND}
+		${OPENGL_DEPEND}
+	)
+	gles3? (
+		${GLES_DEPEND}
+		${OPENGL_DEPEND}
 	)
 	gme? ( >=media-libs/game-music-emu-${GME_PV}[${MULTILIB_USEDEP}] )
 	gnome? ( >=gnome-extra/zenity-3.43.0 )
@@ -152,32 +189,29 @@ DEPEND+="
 
 		>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
 	)
-	opengl? (
-		>=media-libs/glew-${GLEW_PV}[${MULTILIB_USEDEP}]
-		>=media-libs/glm-${GLM_PV}
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
-	)
+	opengl? ( ${OPENGL_DEPEND} )
 	png? (
 		>=media-libs/libpng-${LIBPNG_PV}[${MULTILIB_USEDEP}]
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	)
 	sdl2? (
-		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},gles2?]
+		X? ( >=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},opengl?] )
+		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP}]
 		>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[${MULTILIB_USEDEP}]
 
 	)
 	wine? (
 		sys-devel/crossdev
-		wine32? ( virtual/wine[abi_x86_32] )
-		wine64? ( virtual/wine[abi_x86_64] )
+		mingw32? ( virtual/wine[abi_x86_32] )
+		mingw64? ( virtual/wine[abi_x86_64] )
 	)
 	X? (
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 		>=sys-process/procps-3.3.17[${MULTILIB_USEDEP}]
 		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 		>=x11-libs/libXinerama-1.1.4[${MULTILIB_USEDEP}]
-		>=x11-libs/libXrandr-1.5.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXtst-1.2.3[${MULTILIB_USEDEP}]
+		xrandr? ( >=x11-libs/libXrandr-1.5.2[${MULTILIB_USEDEP}] )
+		xtest? ( >=x11-libs/libXtst-1.2.3[${MULTILIB_USEDEP}] )
 	)
 "
 
@@ -345,6 +379,8 @@ eerror
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
 		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
+		use opengl && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
 		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
 		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
@@ -444,6 +480,8 @@ eerror
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
 		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
+		use opengl && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
 		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
 		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
@@ -528,6 +566,10 @@ eerror
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
 		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "static-libs"
+		use gles1 && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "gles1"
+		use gles2 && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "gles2"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
 		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
 		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
@@ -652,35 +694,10 @@ eerror
 		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	fi
 	if use sdl2 ; then
-		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
-		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
-		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
-		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
-		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
-		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
-		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
-		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
-	fi
-	if use wine ; then
-		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
-		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" "-ge" \
-			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" "-ge" ; then
-			:;
-		else
-eerror
-eerror "Missing wine package"
-eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-staging\`"
-eerror
-eerror "  or"
-eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-vanilla\`"
-eerror
-
-			die
-		fi
+		use opengl && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "aqua"
 	fi
 }
 
@@ -716,10 +733,10 @@ eerror
 		die
 	fi
 	_calculate_depends_fingerprint
-	use wine32 && check_cross_mingw32
-	use wine64 && check_cross_mingw64
 	use android && check_cross_android
 	use macos && check_cross_macos
+	use mingw32 && check_cross_mingw32
+	use mingw64 && check_cross_mingw64
 
 	enewgroup ${MY_GROUP}
 }
