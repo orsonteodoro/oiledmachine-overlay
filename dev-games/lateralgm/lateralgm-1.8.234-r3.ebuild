@@ -251,6 +251,7 @@ src_prepare_lgmplugin() {
 		-e "s|jna.jar|${JNA_BPATH}|" \
 		"Makefile" || die
 	eapply "${FILESDIR}/lgmplugin-1.8.227r3-use-native-load.patch"
+	eapply "${FILESDIR}/lgmplugin-1.8.227r3-disable-compiler-check.patch"
 }
 
 src_prepare() {
@@ -445,9 +446,14 @@ src_install() {
 
 pkg_postinst() {
 einfo
-einfo "When you run it the first time, it will compile the"
-einfo "/usr/$(get_libdir)/ENIGMAsystem/SHELL files.  What this means is the"
-einfo "Run, Debug, and Compile buttons won't appear until it completes."
+einfo "A build failure may happen in simple hello world test if the appropriate"
+einfo "subsystem USE flag in the enigma ebuild was disabled when building the"
+einfo "package or dependency is not available, but the game settings are the"
+einfo "opposite.  Both the USE flag and the Game Setting and/or extensions must"
+einfo "match."
+einfo
+einfo "You must carefully enable/disable the Game Settings > ENIGMA > API"
+einfo "section and extensions in Settings > ENIGMA > Extensions in LateralGM."
 einfo
 einfo "If you are using dwm or non-parenting window manager or a non-responsive"
 einfo "title bar menus, you need to:"

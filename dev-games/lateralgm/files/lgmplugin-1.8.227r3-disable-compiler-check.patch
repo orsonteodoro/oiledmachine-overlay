@@ -1,0 +1,19 @@
+diff -urp lgmplugin-1.8.227r3.orig/org/enigma/EnigmaRunner.java lgmplugin-1.8.227r3/org/enigma/EnigmaRunner.java
+--- lgmplugin-1.8.227r3.orig/org/enigma/EnigmaRunner.java	2021-08-05 18:11:26.000000000 -0700
++++ lgmplugin-1.8.227r3/org/enigma/EnigmaRunner.java	2022-07-26 16:32:22.476032062 -0700
+@@ -303,6 +303,7 @@ public class EnigmaRunner implements Act
+ 			return false;
+ 			}
+ 
++		/*
+ 		//run make
+ 		Process p = null;
+ 		String cmd = make + " eTCpath=\"" + tcpath + "\""; //$NON-NLS-1$
+@@ -338,6 +339,7 @@ public class EnigmaRunner implements Act
+ 			e.printStackTrace();
+ 			}
+ 		ef.close();
++		*/
+ 		return true;
+ 		}
+ 
