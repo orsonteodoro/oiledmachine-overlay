@@ -938,7 +938,7 @@ src_install() {
 			einfo "Changing owner to root:${MY_GROUP} for ${p}"
 			fowners root:${MY_GROUP} "${p}"
 			einfo "Changing perms to 0775 for ${p}"
-			fperms 0775 "${p}"
+			fperms 0775 "${p}" # [A]
 		fi
 	done
 }
@@ -951,13 +951,19 @@ einfo "You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"
 einfo
 	fi
 # TODO: make per account copies instead
+#
+# As above [A], the libraries is writable and replaceable which present a
+# security risk.  During running LateralGM it needs to rebuild the .so files
+# for some reason to keep them up to date.  It is preferred that never happens"
+# after emerge.
+#
 ewarn
 ewarn "SECURITY NOTICE:"
 ewarn
-ewarn "You must be part of the ${MY_GROUP} to use this package.  Allow at most"
-ewarn "one user to use this group.  DO NOT run any program linked to this"
-ewarn "package as root or a wheel account if ${MY_GROUP} group is assigned to"
-ewarn "not root or not wheel."
+ewarn "You must be part of the ${MY_GROUP} group to use this package.  Allow at"
+ewarn "most one user to use this group.  DO NOT run any program that depends on"
+ewarn "this package as root or a wheel account if ${MY_GROUP} group is assigned"
+ewarn "to not root or not wheel."
 ewarn
 ewarn "The package must re-installed to sanitize all libraries when handing"
 ewarn "over the ${MY_GROUP} to another user."
