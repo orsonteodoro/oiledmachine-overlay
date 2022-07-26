@@ -7,7 +7,6 @@ CXX_STANDARD="-std=c++17"
 EGIT_COMMIT="2ddad078c6cd355dcaa45996cf9f3a49df020102"
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
-MY_GROUP="enigma-dev"
 
 inherit desktop eutils flag-o-matic git-r3 multilib-minimal \
 toolchain-funcs user
@@ -742,8 +741,6 @@ eerror
 	use macos && check_cross_macos
 	use mingw32 && check_cross_mingw32
 	use mingw64 && check_cross_mingw64
-
-	enewgroup ${MY_GROUP}
 }
 
 src_prepare() {
@@ -915,32 +912,6 @@ src_install() {
 		patchelf --remove-rpath "${p}" || die
 		patchelf --set-rpath "\$ORIGIN" "${p}" || die
 	done
-
-	local p
-	local bd
-	bd="/usr/$(get_libdir)/enigma/"
-	for p in $(find "${bd}" -name "*.o" -o -name "*.d") ; do
-		[[ -e "${p}" ]] || continue
-		p=$(echo -n "${p}" | sed -e "s|^${ED}||g")
-		if [[ "${p}" =~ ".eobjs" ]] ; then
-			einfo "Changing owner to root:${MY_GROUP} for ${p}"
-			fowners root:${MY_GROUP} "${p}"
-			einfo "Changing perms to 0644 for ${p}"
-			fperms 0664 "${p}"
-		fi
-	done
-
-	bd="/usr/$(get_libdir)/enigma/"
-	for p in $(find "${bd}" -maxdepth 1 -name "*.so") ; do
-		[[ -e "${p}" ]] || continue
-		p=$(echo -n "${p}" | sed -e "s|^${ED}||g")
-		if [[ "${p}" =~ ".eobjs" ]] ; then
-			einfo "Changing owner to root:${MY_GROUP} for ${p}"
-			fowners root:${MY_GROUP} "${p}"
-			einfo "Changing perms to 0775 for ${p}"
-			fperms 0775 "${p}" # [A]
-		fi
-	done
 }
 
 pkg_postinst()
@@ -950,25 +921,6 @@ einfo
 einfo "You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"
 einfo
 	fi
-# TODO: make per account copies instead
-#
-# As above [A], the libraries is writable and replaceable which present a
-# security risk.  During running LateralGM it needs to rebuild the .so files
-# for some reason to keep them up to date.  It is preferred that never happens"
-# after emerge.
-#
-ewarn
-ewarn "SECURITY NOTICE:"
-ewarn
-ewarn "You must be part of the ${MY_GROUP} group to use this package.  Allow at"
-ewarn "most one user to use this group.  DO NOT run any program that depends on"
-ewarn "this package as root or a wheel account if ${MY_GROUP} group is assigned"
-ewarn "to not root or not wheel."
-ewarn
-ewarn "The package must re-installed to sanitize all libraries when handing"
-ewarn "over the ${MY_GROUP} to another user."
-ewarn
-
 einfo
 einfo "A build failure may happen in simple hello world test if the appropriate"
 einfo "subsystem USE flag was disabled with building this package or dependency"
