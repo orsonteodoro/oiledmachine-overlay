@@ -3214,7 +3214,7 @@ ot-kernel_set_kconfig_hardening_level() {
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|unret)"
 			ot-kernel_set_kconfig_kernel_cmdline "retbleed=off"
 		fi
-		if ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+		if ver_test ${K_MAJOR_MINOR} -ge 5.10 ; then
 			ot-kernel_unset_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			ot-kernel_unset_configopt "CONFIG_CPU_IBPB_ENTRY"
 			ot-kernel_unset_configopt "CONFIG_CPU_IBRS_ENTRY"
@@ -3278,7 +3278,7 @@ eerror
 		if [[ "${cpu_sched}" =~ "cfs" && "${HT}" =~ ("1"|"2") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
 		fi
-		if ver_test ${K_MAJOR_MINOR} -ge 5.15 ; then
+		if ver_test ${K_MAJOR_MINOR} -ge 5.10 ; then
 			ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
 			if ! test-flags "-mfunction-return=thunk-extern" ; then
@@ -7214,10 +7214,10 @@ ewarn "For mitigations of side-channels because of hardware flaws, see also"
 ewarn "https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/index.html"
 ewarn
 
-	if ver_test ${K_MAJOR_MINOR} -lt 5.15 ; then
+	if ver_test ${K_MAJOR_MINOR} -lt 5.10 ; then
 ewarn
 ewarn "There's currently no backport for RETBleed in the ${K_MAJOR_MINOR}"
-ewarn "series.  Use >= 5.15 for RETBleed mitigation for ARCH=x86."
+ewarn "series.  Use >= 5.10 for RETBleed mitigation for ARCH=x86."
 ewarn
 	fi
 ewarn
