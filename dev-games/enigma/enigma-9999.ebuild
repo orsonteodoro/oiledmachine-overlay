@@ -934,4 +934,19 @@ ewarn
 ewarn "The package must re-installed to sanitize all libraries when handing"
 ewarn "over the ${MY_GROUP} to another user."
 ewarn
+
+einfo
+einfo "A build failure may happen in simple hello world test if the appropriate"
+einfo "subsystem USE flag was disabled with building this package or dependency"
+einfo "is not available, but the game settings are the opposite.  Both the USE"
+einfo "flag and the Game Setting must match."
+einfo
+einfo "You must carefully enable/disable the Game Settings > ENIGMA > API"
+einfo "section in LateralGM."
+einfo
+einfo "or"
+einfo
+einfo "You must carefully enable/disable the Build > Change Game Settings >"
+einfo "Edit Configuration in RadialGM."
+einfo
 }
