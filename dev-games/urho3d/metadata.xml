@@ -23,6 +23,18 @@
     Examples:
       URHO3D_RPI_CONFIG="-DRPI_ABI=armeabi-v7a"
       URHO3D_ANDROID_CONFIG="-DANDROID_ABI=armeabi-v7a"
+
+    Cross compile status on ebuild level:
+
+    Android - incomplete / untested
+    Emscripten - working
+    RPI - incomplete / untested
+
+    Notes:
+
+    Emscripten can be built on native but Android and RPI
+    should be built in crossdev environment.
+
   </longdescription>
   <upstream>
     <doc lang="en">https://urho3d.github.io/documentation/1.7/index.html</doc>
@@ -38,8 +50,7 @@
     <flag name="abi_x86_64">Builds for 64-bit x86 ABI</flag>
     <flag name="alsa">Builds against ALSA</flag>
     <flag name="altivec">Builds with altivec optimizations</flag>
-    <flag name="android">Adds android support (EXPERIMENTAL /
-      EBUILD-INCOMPLETE)</flag>
+    <flag name="android">Adds android support</flag>
     <flag name="angelscript">Adds scripting support for the AngelScript
       scripting language</flag>
     <flag name="bindings">Enables bindings documentation generation.</flag>
@@ -50,8 +61,6 @@
       series for a smoother less gitchy experience but trades off
       compatibility</flag>
     <flag name="bullet">Adds realistic 3D physics support</flag>
-    <flag name="check-pedantic-requirements">Adds more compile time
-      checks</flag>
     <flag name="clang-tools">Used to ensure the minimal feature set matches
       upstream binding defaults.</flag>
     <flag name="cpu_flags_x86_3dnow">Use 3DNow CPU optimizations (for 32-bit
@@ -104,8 +113,7 @@
       SDL</flag>
     <flag name="recastnavigation">Adds pathfinding support for intelligent AI
       movement and mesh generation</flag>
-    <flag name="rpi">Add raspberry-pi support (EXPERIMENTAL /
-      EBUILD-INCOMPLETE)</flag>
+    <flag name="rpi">Add raspberry-pi support</flag>
     <flag name="samples">Installs example scripts with feature demos</flag>
     <flag name="sdl_audio_disk">Adds driver to output audio to disk
       through SDL</flag>
@@ -130,6 +138,8 @@
     <flag name="sqlite">Adds SQL database support in the small scale</flag>
     <flag name="sound">Adds sound support through SDL</flag>
     <flag name="static-libs">Builds as a static library</flag>
+    <flag name="strict-requirements">Adds more compile time
+      checks</flag>
     <flag name="system-angelscript">Uses the system's version</flag>
     <flag name="system-assimp">Uses the system's version</flag>
     <flag name="system-boost">Uses the system's version</flag>

@@ -43,7 +43,8 @@ LICENSE+=" OFL-1.1"
 
 # Applies to the internal SDL
 LICENSE_HIDAPI="|| ( BSD HIDAPI )"
-LICENSE+="  !system-sdl? (
+LICENSE+="
+	!system-sdl? (
 		ZLIB
 		BSD
 		BrownUn_UnCalifornia_ErikCorry
@@ -51,7 +52,11 @@ LICENSE+="  !system-sdl? (
 		SunPro
 		hidapi-hidraw? ( ${LICENSE_HIDAPI} )
 		hidapi-libusb? ( ${LICENSE_HIDAPI} )
-		native? ( X? ( MIT all-rights-reserved ) ) )"
+		native? (
+			X? ( MIT all-rights-reserved )
+		)
+	)
+"
 # project default license is ZLIB
 # yuv2rgb is BSD
 # Some assets are public domain but not mentioned in the LICENSE variable
@@ -71,7 +76,8 @@ KEYWORDS="~amd64 ~ppc ~ppc64 ~x86 ~arm ~arm64"
 SLOT="0/${PV}"
 X86_CPU_FEATURES_RAW=( 3dnow mmx sse sse2 )
 X86_CPU_FEATURES=( ${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_} )
-IUSE+=" ${X86_CPU_FEATURES[@]%:*}
+IUSE+="
+	${X86_CPU_FEATURES[@]%:*}
 	 X
 	 abi_mips_n64
 	 alsa
@@ -83,7 +89,6 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	+box2d_2_3
 	 box2d_2_4
 	+bullet
-	-check-pedantic-requirements
 	-clang-tools
 	 dbus
 	 debug
@@ -130,6 +135,7 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	 sqlite
 	 sound
 	 static-libs
+	-strict-requirements
 	 system-angelscript
 	 system-assimp
 	 system-boost
@@ -162,7 +168,8 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	 wayland
 	+webp
 	 xinerama
-	 xscreensaver"
+	 xscreensaver
+"
 
 # Partly from the libsdl2-2.0.12-r2.ebuild
 SDL2_REQUIRED_USE="
@@ -172,17 +179,32 @@ SDL2_REQUIRED_USE="
 	rpi? ( sound? ( threads alsa ) )
 	wayland? ( gles2 )
 	xinerama? ( X )
-	xscreensaver? ( X )"
+	xscreensaver? ( X )
+"
 
 #	native
 REQUIRED_USE+="
 	${SDL2_REQUIRED_USE}
+	^^ ( android arm native )
+	web? ( native )
 	alsa? ( sound threads )
 	bindings? ( !pch )
 	box2d? ( ^^ ( box2d_2_3 box2d_2_4 ) )
-        clang-tools? ( !pch
-		angelscript bullet filewatcher ik logging lua profiling network recastnavigation sqlite
-		!test !luajit !odbc
+        clang-tools? (
+		!luajit
+		!odbc
+		!pch
+		!test
+		angelscript
+		bullet
+		filewatcher
+		ik
+		logging
+		lua
+		profiling
+		network
+		recastnavigation
+		sqlite
 	)
 	cpu_flags_x86_3dnow? ( !cpu_flags_x86_sse !cpu_flags_x86_mmx )
 	cpu_flags_x86_mmx? ( !cpu_flags_x86_3dnow !cpu_flags_x86_sse )
@@ -207,7 +229,8 @@ REQUIRED_USE+="
 	sqlite? ( !odbc )
 	!system-slikenet
 	 system-box2d? ( ^^ ( box2d_2_3 box2d_2_4 ) )
-	!system-box2d? ( box2d_2_3 !box2d_2_4 )"
+	!system-box2d? ( box2d_2_3 !box2d_2_4 )
+"
 
 BOOST_VER="1.64"
 CIVETWEB_VER="1.7"
@@ -220,19 +243,31 @@ SDL_VER="2.0.10"
 # Copied from the libsdl2-2.0.12-r2.ebuild with changes
 # Removed fcitx4 row
 SDL2_CDEPEND="
-	alsa? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] )
-	dbus? ( >=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}] )
-	gles2? ( >=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},gles2] )
-	ibus? ( app-i18n/ibus )
+	alsa? (
+		>=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}]
+	)
+	dbus? (
+		>=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}]
+	)
+	gles2? (
+		>=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},gles2]
+	)
+	ibus? (
+		app-i18n/ibus
+	)
 	joystick? (
 		hidapi-libusb? ( dev-libs/libusb )
 	)
-	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
+	jack? (
+		virtual/jack[${MULTILIB_USEDEP}]
+	)
 	kms? (
 		>=x11-libs/libdrm-2.4.46[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-9.0.0[${MULTILIB_USEDEP},gbm]
 	)
-	libsamplerate? ( media-libs/libsamplerate[${MULTILIB_USEDEP}] )
+	libsamplerate? (
+		media-libs/libsamplerate[${MULTILIB_USEDEP}]
+	)
 	nas? (
 		>=media-libs/nas-1.9.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXt-1.1.4[${MULTILIB_USEDEP}]
@@ -241,10 +276,18 @@ SDL2_CDEPEND="
 		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
 		>=virtual/glu-9.0-r1[${MULTILIB_USEDEP}]
 	)
-	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP}] )
-	sndio? ( media-sound/sndio[${MULTILIB_USEDEP}] )
-	tslib? ( >=x11-libs/tslib-1.0-r3[${MULTILIB_USEDEP}] )
-	udev? ( >=virtual/libudev-208:=[${MULTILIB_USEDEP}] )
+	pulseaudio? (
+		>=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP}]
+	)
+	sndio? (
+		media-sound/sndio[${MULTILIB_USEDEP}]
+	)
+	tslib? (
+		>=x11-libs/tslib-1.0-r3[${MULTILIB_USEDEP}]
+	)
+	udev? (
+		>=virtual/libudev-208:=[${MULTILIB_USEDEP}]
+	)
 	wayland? (
 		>=dev-libs/wayland-1.0.6[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},egl(+),gles2,wayland]
@@ -257,33 +300,54 @@ SDL2_CDEPEND="
 		>=x11-libs/libXi-1.7.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libXrandr-1.4.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libXxf86vm-1.1.3[${MULTILIB_USEDEP}]
-		xinerama? ( >=x11-libs/libXinerama-1.1.3[${MULTILIB_USEDEP}] )
-		xscreensaver? ( >=x11-libs/libXScrnSaver-1.2.2-r1[${MULTILIB_USEDEP}] )
-	)"
-SDL2_RDEPEND="${SDL2_CDEPEND}
-	vulkan? ( media-libs/vulkan-loader )"
-SDL2_DEPEND="${SDL2_CDEPEND}
+		xinerama? (
+			>=x11-libs/libXinerama-1.1.3[${MULTILIB_USEDEP}]
+		)
+		xscreensaver? (
+			>=x11-libs/libXScrnSaver-1.2.2-r1[${MULTILIB_USEDEP}]
+		)
+	)
+"
+SDL2_RDEPEND="
+	${SDL2_CDEPEND}
+	vulkan? ( media-libs/vulkan-loader )
+"
+SDL2_DEPEND="
+	${SDL2_CDEPEND}
 	vulkan? ( dev-util/vulkan-headers )
-	X? ( x11-base/xorg-proto )"
+	X? ( x11-base/xorg-proto )
+"
 DEPEND_COMMON="
 	angelscript? (
 		system-angelscript? (
 			>=dev-libs/angelscript-2.33:=[${MULTILIB_USEDEP},static-libs?]
 		)
 	)
-	box2d? ( system-box2d? (
-		box2d_2_4? (
-			|| ( >=dev-games/box2d-2.4.1:2.4=[${MULTILIB_USEDEP},static-libs?]
-			     >=games-engines/box2d-2.4.1:2.4.0[${MULTILIB_USEDEP}] )
+	box2d? (
+		system-box2d? (
+			box2d_2_4? (
+				|| (
+		>=dev-games/box2d-2.4.1:2.4=[${MULTILIB_USEDEP},static-libs?]
+		>=games-engines/box2d-2.4.1:2.4.0[${MULTILIB_USEDEP}]
+				)
+			)
+			box2d_2_3? (
+				|| (
+		>=dev-games/box2d-2.3.1:2.3=[${MULTILIB_USEDEP},static-libs?]
+		>=games-engines/box2d-2.3.1:2.3.0[${MULTILIB_USEDEP}]
+				)
+			)
 		)
-		box2d_2_3? (
-			|| ( >=dev-games/box2d-2.3.1:2.3=[${MULTILIB_USEDEP},static-libs?]
-			     >=games-engines/box2d-2.3.1:2.3.0[${MULTILIB_USEDEP}] )
+	)
+	bullet? (
+		system-bullet? (
+			>=sci-physics/bullet-2.86.1[${MULTILIB_USEDEP}]
 		)
-	) )
-	bullet? ( system-bullet? ( >=sci-physics/bullet-2.86.1[${MULTILIB_USEDEP}] ) )
+	)
 	lua? (
-		 system-lua? ( >=dev-lang/lua-5.1:${LUA_VER}=[${MULTILIB_USEDEP},urho3d] )
+		system-lua? (
+			>=dev-lang/lua-5.1:${LUA_VER}=[${MULTILIB_USEDEP},urho3d]
+		)
 	)
 	recastnavigation? (
 		system-recastnavigation? (
@@ -295,112 +359,279 @@ DEPEND_COMMON="
 			>=dev-db/sqlite-3.20.1:=[${MULTILIB_USEDEP},static-libs?]
 		)
 	)
-	system-freetype? ( >=media-libs/freetype-2.8:=[${MULTILIB_USEDEP},static-libs?] )
-	system-lz4? ( >=app-arch/lz4-1.7.5[${MULTILIB_USEDEP}] )
-	system-pugixml? ( >=dev-libs/pugixml-1.7:=[${MULTILIB_USEDEP},static-libs?] )
-	system-rapidjson? ( >=dev-libs/rapidjson-1.1 )
-	system-sdl? ( >=media-libs/libsdl2-${SDL_VER}:=[${MULTILIB_USEDEP},X?,\
-alsa?,cpu_flags_x86_3dnow?,cpu_flags_x86_mmx?,cpu_flags_x86_sse?,\
-cpu_flags_x86_sse2?,dbus?,gles2?,haptic?,hidapi-hidraw?,hidapi-libusb?,ibus?,\
-joystick?,kms?,libsamplerate?,nas?,opengl?,oss?,pulseaudio?,sound?,threads?,\
-tslib?,static-libs?,video,vulkan?,wayland?,xinerama?,xscreensaver?] )
+	system-freetype? (
+		>=media-libs/freetype-2.8:=[${MULTILIB_USEDEP},static-libs?]
+	)
+	system-lz4? (
+		>=app-arch/lz4-1.7.5[${MULTILIB_USEDEP}]
+	)
+	system-pugixml? (
+		>=dev-libs/pugixml-1.7:=[${MULTILIB_USEDEP},static-libs?]
+	)
+	system-rapidjson? (
+		>=dev-libs/rapidjson-1.1
+	)
+	system-sdl? (
+>=media-libs/libsdl2-${SDL_VER}:=[\
+${MULTILIB_USEDEP},X?,alsa?,cpu_flags_x86_3dnow?,cpu_flags_x86_mmx?,\
+cpu_flags_x86_sse?,cpu_flags_x86_sse2?,dbus?,gles2?,haptic?,hidapi-hidraw?,\
+hidapi-libusb?,ibus?,joystick?,kms?,libsamplerate?,nas?,opengl?,oss?,\
+pulseaudio?,sound?,threads?,tslib?,static-libs?,video,vulkan?,wayland?,\
+xinerama?,xscreensaver?\
+]
+	)
 	!system-sdl? ( ${SDL2_DEPEND} )
-	system-webp? ( >=media-libs/libwebp-0.6:=[static-libs?] )"
+	system-webp? (
+		>=media-libs/libwebp-0.6:=[static-libs?]
+	)
+"
 DEPEND_ANDROID="
-	android? (
-		dev-java/gradle-bin
-		dev-util/android-ndk
-		lua? (
-			 system-luajit? ( luajit? ( >=dev-lang/luajit-2.1:2[static-libs,urho3d] ) )
+	dev-java/gradle-bin
+	dev-util/android-ndk
+	lua? (
+		system-luajit? (
+			luajit? (
+				>=dev-lang/luajit-2.1:2[static-libs,urho3d]
+			)
 		)
-		network? (
-			system-civetweb? ( >=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1] )
-			system-slikenet? (   net-libs/slikenet[${MULTILIB_USEDEP}] )
+	)
+	network? (
+		system-civetweb? (
+			>=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1]
 		)
-		system-boost? ( >=dev-libs/boost-${BOOST_VER} )
-	)"
+		system-slikenet? (
+			net-libs/slikenet[${MULTILIB_USEDEP}]
+		)
+	)
+	system-boost? ( >=dev-libs/boost-${BOOST_VER} )
+"
 DEPEND_WEB="
-	web? (
-	      >=dev-util/emscripten-1.36.10[wasm(+)]
-	      >=sys-devel/llvm-3.9.0:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-		system-boost? ( >=dev-libs/boost-${BOOST_VER} )
-	)"
+      >=dev-util/emscripten-1.36.10[wasm(+)]
+      >=sys-devel/llvm-3.9.0:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+	system-boost? ( >=dev-libs/boost-${BOOST_VER} )
+"
 DEPEND_NATIVE="
-	native? (
-		lua? (
-			 system-luajit? ( luajit? ( >=dev-lang/luajit-2.1:2[static-libs,urho3d] ) )
-		)
-		network? (
-			system-civetweb? ( >=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1] )
-			system-slikenet? (   net-libs/slikenet[${MULTILIB_USEDEP}] )
-		)
-		odbc? (
-			system-nanodbc? (
-				>=dev-db/nanodbc-2.12.4:=[${MULTILIB_USEDEP},\
--libcxx,boost_convert,static-libs?,-unicode]
-				  dev-db/unixODBC[${MULTILIB_USEDEP}]
+	lua? (
+		system-luajit? (
+			luajit? (
+				>=dev-lang/luajit-2.1:2[static-libs,urho3d]
 			)
 		)
-		opengl? (
-			system-glew? ( >=media-libs/glew-1.13:=[${MULTILIB_USEDEP},static-libs?] )
-			system-libcpuid? ( >=sys-libs/libcpuid-0.4[${MULTILIB_USEDEP}] )
+	)
+	network? (
+		system-civetweb? (
+			>=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1]
 		)
-		!opengl? (
-			system-mojoshader? ( media-libs/mojoshader:=[static-libs?] )
-			system-libcpuid? ( >=sys-libs/libcpuid-0.4[${MULTILIB_USEDEP}] )
+		system-slikenet? (
+			net-libs/slikenet[${MULTILIB_USEDEP}]
 		)
-		tools? (
-			system-assimp? (
-				>=media-libs/assimp-4.1:=[${MULTILIB_USEDEP},static-libs?]
-			)
+	)
+	odbc? (
+		system-nanodbc? (
+>=dev-db/nanodbc-2.12.4:=[${MULTILIB_USEDEP},-libcxx,boost_convert,static-libs?,-unicode]
+			  dev-db/unixODBC[${MULTILIB_USEDEP}]
 		)
-	)"
+	)
+	opengl? (
+		system-glew? (
+			>=media-libs/glew-1.13:=[${MULTILIB_USEDEP},static-libs?]
+		)
+		system-libcpuid? (
+			>=sys-libs/libcpuid-0.4[${MULTILIB_USEDEP}]
+		)
+	)
+	!opengl? (
+		system-mojoshader? (
+			media-libs/mojoshader:=[static-libs?]
+		)
+		system-libcpuid? (
+			>=sys-libs/libcpuid-0.4[${MULTILIB_USEDEP}]
+		)
+	)
+	tools? (
+		system-assimp? (
+			>=media-libs/assimp-4.1:=[${MULTILIB_USEDEP},static-libs?]
+		)
+	)
+"
 DEPEND_RPI="
-	rpi? (  lua? (
-			 system-luajit? ( luajit? ( >=dev-lang/luajit-2.1:2[static-libs,urho3d] ) )
-		)
-		network? (
-			system-civetweb? ( >=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1] )
-			system-slikenet? (   net-libs/slikenet[${MULTILIB_USEDEP}] )
-		)
-		opengl? (
-			system-glew? ( >=media-libs/glew-1.13:=[${MULTILIB_USEDEP},static-libs?] )
-			system-libcpuid? ( >=sys-libs/libcpuid-0.4[${MULTILIB_USEDEP}] )
-		)
-		!opengl? (
-			system-mojoshader? ( media-libs/mojoshader:=[static-libs?] )
-			system-libcpuid? ( >=sys-libs/libcpuid-0.4[${MULTILIB_USEDEP}] )
-		)
-		system-boost? ( >=dev-libs/boost-${BOOST_VER} )
-		tools? (
-			system-assimp? (
-				>=media-libs/assimp-4.1:=[${MULTILIB_USEDEP},static-libs?]
+	lua? (
+		system-luajit? (
+			luajit? (
+				>=dev-lang/luajit-2.1:2[static-libs,urho3d]
 			)
 		)
-	)"
-DEPEND+=" ${DEPEND_COMMON}
-	${DEPEND_RPI}
-	${DEPEND_ANDROID}
-	${DEPEND_NATIVE}
-	${DEPEND_WEB}
-	bindings? ( sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}] )
-	clang-tools? ( sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}] )"
-RDEPEND+=" ${DEPEND_COMMON}
-	${DEPEND_RPI}
-	${DEPEND_ANDROID}
-	${DEPEND_NATIVE}
-	${DEPEND_WEB}
+	)
+	network? (
+		system-civetweb? (
+			>=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1]
+		)
+		system-slikenet? (
+			net-libs/slikenet[${MULTILIB_USEDEP}]
+		)
+	)
+	opengl? (
+		system-glew? (
+			>=media-libs/glew-1.13:=[${MULTILIB_USEDEP},static-libs?]
+		)
+		system-libcpuid? (
+			>=sys-libs/libcpuid-0.4[${MULTILIB_USEDEP}]
+		)
+	)
+	!opengl? (
+		system-mojoshader? (
+			media-libs/mojoshader:=[static-libs?]
+		)
+		system-libcpuid? (
+			>=sys-libs/libcpuid-0.4[${MULTILIB_USEDEP}]
+		)
+	)
+	system-boost? ( >=dev-libs/boost-${BOOST_VER} )
+	tools? (
+		system-assimp? (
+			>=media-libs/assimp-4.1:=[${MULTILIB_USEDEP},static-libs?]
+		)
+	)
+"
+DEPEND+="
+	${DEPEND_COMMON}
+	rpi? ( ${DEPEND_RPI} )
+	android? ( ${DEPEND_ANDROID} )
+	native? ( ${DEPEND_NATIVE} )
+	web? ( ${DEPEND_WEB} )
+	bindings? (
+		sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+	)
+	clang-tools? (
+		sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+	)
+"
+RDEPEND+="
+	${DEPEND_COMMON}
+	rpi? ( ${DEPEND_RPI} )
+	android? ( ${DEPEND_ANDROID} )
+	native? ( ${DEPEND_NATIVE} )
+	web? ( ${DEPEND_WEB} )
 	!system-sdl? ( ${SDL2_RDEPEND} )
-	bindings? ( sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}] )
-	clang-tools? ( sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}] )"
+	bindings? (
+		sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+	)
+	clang-tools? (
+		sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+	)
+"
 BDEPEND+=" >=dev-util/cmake-3.2.3"
 RESTRICT="mirror"
 EGIT_COMMIT="d34dda158ecd7694fcfd55684caade7e131b8a45"
-SRC_URI=\
-"https://github.com/urho3d/Urho3D/archive/${EGIT_COMMIT}.tar.gz \
+SRC_URI="
+https://github.com/urho3d/Urho3D/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/Urho3D-${EGIT_COMMIT}"
 EPATCH_OPTS="--binary -p1"
+
+_check_native() {
+        if use debug; then
+                if [[ ! ( ${FEATURES} =~ "nostrip" ) ]]; then
+eerror
+eerror "Emerge again with FEATURES=\"nostrip\" or remove the debug use flag"
+eerror
+			die
+                fi
+        fi
+
+	if use strict-requirements ; then
+		glxinfo | grep  EXT_framebuffer_object &>/dev/null
+		if [[ "$?" != "0" ]]; then
+eerror
+eerror "Video card not supported.  Your machine does not meet the minimum"
+eerror "requirements."
+eerror
+			die
+		fi
+		glxinfo | grep EXT_packed_depth_stencil &>/dev/null
+		if [[ "$?" != "0" ]]; then
+eerror
+eerror "Video card not supported.  Your machine does not meet the minimum"
+eerror "requirements."
+eerror
+			die
+		fi
+		cat /proc/cpuinfo | grep sse &>/dev/null
+		if [[ "$?" != "0" ]]; then
+eerror
+eerror "CPU not supported.  Your machine does not meet the minimum requirements."
+eerror
+			die
+		fi
+	fi
+}
+
+_check_android() {
+	if [[ -z "${URHO3D_TARGET_ANDROID_SDK_VERSION}" ]] ; then
+ewarn
+ewarn "URHO3D_TARGET_ANDROID_SDK_VERSION needs to be set as a per-package"
+ewarn "environmental variable"
+ewarn
+	fi
+	if [[ -z "${URHO3D_ANDROID_CONFIG}" ]] ; then
+ewarn
+ewarn "URHO3D_ANDROID_CONFIG needs to be set as a per-package environmental"
+ewarn "variable"
+ewarn
+	fi
+ewarn
+ewarn "The android USE flag has not been tested."
+ewarn
+}
+
+_check_rpi() {
+	if [[ -z "${URHO3D_RPI_CONFIG}" ]] ; then
+ewarn
+ewarn "URHO3D_RPI_CONFIG needs to be set as a per-package environmental variable"
+ewarn
+	fi
+ewarn
+ewarn "The rpi USE flag has not been tested."
+ewarn
+}
+
+_check_web() {
+	if [[ -n "${EMCC_WASM_BACKEND}" && "${EMCC_WASM_BACKEND}" == "1" ]] ; then
+		:;
+	else
+eerror
+eerror "You must switch your emscripten to wasm then do \`source /etc/profile\`."
+eerror "See \`eselect emscripten\` for details."
+eerror
+		die
+	fi
+
+	if eselect emscripten 2>/dev/null 1>/dev/null ; then
+		if eselect emscripten list | grep -F -e "*" \
+			| grep -q -F -e "llvm" ; then
+			:;
+		else
+eerror
+eerror "You must switch your emscripten to wasm then do \`source /etc/profile\`."
+eerror "See \`eselect emscripten\` for details."
+eerror
+			die
+		fi
+	fi
+	if [[ -z "${EMSCRIPTEN}" ]] ; then
+		die "EMSCRIPTEN environmental variable must be set"
+	fi
+
+	local emcc_v=$(emcc --version | head -n 1 | grep -E -o -e "[0-9.]+")
+	local emscripten_v=$(echo "${EMSCRIPTEN}" | cut -f 2 -d "-")
+	if [[ "${emcc_v}" != "${emscripten_v}" ]] ; then
+eerror
+eerror "EMCC_V=${emcc_v} != EMSCRIPTEN_V=${emscripten_v}."
+eerror "A \`eselect emscripten set <#>\` followed by \`source /etc/profile\` are required."
+eerror
+		die
+	fi
+}
 
 pkg_setup() {
 	if use clang-tools || use bindings ; then
@@ -411,118 +642,22 @@ pkg_setup() {
 		linux-info_pkg_setup
 		if ! linux_config_src_exists ; then
 ewarn
-ewarn "Missing kernel .config file.  Do \`make menuconfig\` and save it to fix this."
+ewarn "Missing kernel .config file.  Do \`make menuconfig\` and save it to fix"
+ewarn "this."
 ewarn
 		fi
 		if ! linux_chkconfig_present HIDRAW ; then
 ewarn
-ewarn "You must have CONFIG_HIDRAW enabled in the kernel for hidraw joystick/controller support."
+ewarn "You must have CONFIG_HIDRAW enabled in the kernel for hidraw"
+ewarn "joystick/controller support."
 ewarn
 		fi
 	fi
 
-	if use android ; then
-		if [[ -z "${URHO3D_TARGET_ANDROID_SDK_VERSION}" ]] ; then
-ewarn
-ewarn "URHO3D_TARGET_ANDROID_SDK_VERSION needs to be set as a per-package"
-ewarn "environmental variable"
-ewarn
-		fi
-		if [[ -z "${URHO3D_ANDROID_CONFIG}" ]] ; then
-ewarn
-ewarn "URHO3D_ANDROID_CONFIG needs to be set as a per-package environmental"
-ewarn "variable"
-ewarn
-		fi
-ewarn
-ewarn "The android USE flag has not been tested."
-ewarn
-	fi
-	if use rpi ; then
-		if [[ -z "${URHO3D_RPI_CONFIG}" ]] ; then
-ewarn
-ewarn "URHO3D_RPI_CONFIG needs to be set as a per-package environmental variable"
-ewarn
-		fi
-ewarn
-ewarn "The rpi USE flag has not been tested."
-ewarn
-	fi
-	if use native ; then
-	        if use debug; then
-	                if [[ ! ( ${FEATURES} =~ "nostrip" ) ]]; then
-eerror
-eerror "Emerge again with FEATURES=\"nostrip\" or remove the debug use flag"
-eerror
-				die
-	                fi
-	        fi
-
-		if use native; then
-			if use check-pedantic-requirements ; then
-				glxinfo | grep  EXT_framebuffer_object &>/dev/null
-				if [[ "$?" != "0" ]]; then
-eerror
-eerror "Video card not supported.  Your machine does not meet the minimum"
-eerror "requirements."
-eerror
-					die
-				fi
-				glxinfo | grep EXT_packed_depth_stencil &>/dev/null
-				if [[ "$?" != "0" ]]; then
-eerror
-eerror "Video card not supported.  Your machine does not meet the minimum"
-eerror "requirements."
-eerror
-					die
-				fi
-				cat /proc/cpuinfo | grep sse &>/dev/null
-				if [[ "$?" != "0" ]]; then
-eerror
-eerror "CPU not supported.  Your machine does not meet the minimum requirements."
-eerror
-					die
-				fi
-			fi
-		fi
-	fi
-	if use web ; then
-		if [[ -n "${EMCC_WASM_BACKEND}" && "${EMCC_WASM_BACKEND}" == "1" ]] ; then
-			:;
-		else
-eerror
-eerror "You must switch your emscripten to wasm then do \`source /etc/profile\`."
-eerror "See \`eselect emscripten\` for details."
-eerror
-			die
-		fi
-
-		if eselect emscripten 2>/dev/null 1>/dev/null ; then
-			if eselect emscripten list | grep -F -e "*" \
-				| grep -q -F -e "llvm" ; then
-				:;
-			else
-eerror
-eerror "You must switch your emscripten to wasm then do \`source /etc/profile\`."
-eerror "See \`eselect emscripten\` for details."
-eerror
-				die
-			fi
-		fi
-		if [[ -z "${EMSCRIPTEN}" ]] ; then
-			die "EMSCRIPTEN environmental variable must be set"
-		fi
-
-		local emcc_v=$(emcc --version | head -n 1 | grep -E -o -e "[0-9.]+")
-		local emscripten_v=$(echo "${EMSCRIPTEN}" | cut -f 2 -d "-")
-		if [[ "${emcc_v}" != "${emscripten_v}" ]] ; then
-eerror
-eerror "EMCC_V=${emcc_v} != EMSCRIPTEN_V=${emscripten_v}."
-eerror "A \`eselect emscripten set <#>\` followed by \`source /etc/profile\` are required."
-eerror
-			die
-		fi
-	fi
+	use android && _check_android
+	use rpi && _check_rpi
+	use native && _check_native
+	use web && _check_web
 }
 
 _prepare_common() {
@@ -799,7 +934,8 @@ SET (CMAKE_USER_MAKE_RULES_OVERRIDE "${build_rules}" CACHE FILEPATH "Gentoo over
 		echo 'SET (CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX '"${libdir#lib}"' CACHE STRING "library search suffix" FORCE)' >> "${common_config}" || die
 	fi
 
-	[[ "${NOCOLOR}" = true || "${NOCOLOR}" = yes ]] && echo 'SET (CMAKE_COLOR_MAKEFILE OFF CACHE BOOL "pretty colors during make" FORCE)' >> "${common_config}"
+	[[ "${NOCOLOR}" = true || "${NOCOLOR}" = yes ]] \
+		&& echo 'SET (CMAKE_COLOR_MAKEFILE OFF CACHE BOOL "pretty colors during make" FORCE)' >> "${common_config}"
 
 	if [[ ${EAPI} != [56] ]]; then
 		cat >> "${common_config}" <<- _EOF_ || die
@@ -1044,7 +1180,6 @@ configure_sdl() {
 
 configure_android() {
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/android
 		-DANDROID=ON
 		-DARM=OFF
 		-DRPI=OFF
@@ -1105,11 +1240,15 @@ configure_android() {
 	)
 
 	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
-		mycmakeargs+=( -DURHO3D_LIB_TYPE=SHARED
-			       -DURHO3D_SAMPLES=$(usex samples) )
+		mycmakeargs+=(
+			-DURHO3D_LIB_TYPE=SHARED
+			-DURHO3D_SAMPLES=$(usex samples)
+		)
 	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
-		mycmakeargs+=( -DURHO3D_LIB_TYPE=STATIC
-			       -DURHO3D_SAMPLES=OFF )
+		mycmakeargs+=(
+			-DURHO3D_LIB_TYPE=STATIC
+			-DURHO3D_SAMPLES=OFF
+		)
 	fi
 
 	if use system-box2d ; then
@@ -1144,7 +1283,6 @@ configure_arm() {
 	ewarn "configure_arm is incomplete"
 	URHO3D_ANDROID_CONFIG=(${URHO3D_ANDROID_CONFIG})
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/arm
 		-DANDROID=OFF
 		-DARM=ON
 		-DRPI=OFF
@@ -1205,13 +1343,15 @@ configure_arm() {
 	)
 
 	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
-		-DURHO3D_SAMPLES=$(usex samples)
-		mycmakeargs+=( -DURHO3D_LIB_TYPE=SHARED
-			       -DURHO3D_SAMPLES=$(usex samples) )
+		mycmakeargs+=(
+			-DURHO3D_LIB_TYPE=SHARED
+			-DURHO3D_SAMPLES=$(usex samples)
+		)
 	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
-		-DURHO3D_SAMPLES=OFF
-		mycmakeargs+=( -DURHO3D_LIB_TYPE=STATIC
-			       -DURHO3D_SAMPLES=OFF )
+		mycmakeargs+=(
+			-DURHO3D_LIB_TYPE=STATIC
+			-DURHO3D_SAMPLES=OFF
+		)
 	fi
 
 	if use system-box2d ; then
@@ -1313,11 +1453,15 @@ configure_native() {
         )
 
 	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
-		mycmakeargs+=( -DURHO3D_LIB_TYPE=SHARED
-			       -DURHO3D_SAMPLES=$(usex samples) )
+		mycmakeargs+=(
+			-DURHO3D_LIB_TYPE=SHARED
+			-DURHO3D_SAMPLES=$(usex samples)
+		)
 	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
-		mycmakeargs+=( -DURHO3D_LIB_TYPE=STATIC
-			       -DURHO3D_SAMPLES=OFF )
+		mycmakeargs+=(
+			-DURHO3D_LIB_TYPE=STATIC
+			-DURHO3D_SAMPLES=OFF
+		)
 	fi
 
 	if use system-box2d ; then
@@ -1372,7 +1516,6 @@ einfo
 configure_rpi() {
 	URHO3D_RPI_CONFIG=(${URHO3D_RPI_CONFIG})
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/rpi
 		-DANDROID=OFF
 		-DARM=OFF
 		-DRPI=ON
@@ -1433,11 +1576,15 @@ configure_rpi() {
 	)
 
 	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
-		mycmakeargs+=( -DURHO3D_LIB_TYPE=SHARED
-			       -DURHO3D_SAMPLES=$(usex samples) )
+		mycmakeargs+=(
+			-DURHO3D_LIB_TYPE=SHARED
+			-DURHO3D_SAMPLES=$(usex samples)
+		)
 	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
-		mycmakeargs+=( -DURHO3D_LIB_TYPE=STATIC
-			       -DURHO3D_SAMPLES=OFF )
+		mycmakeargs+=(
+			-DURHO3D_LIB_TYPE=STATIC
+			-DURHO3D_SAMPLES=OFF
+		)
 	fi
 
 	if use system-box2d ; then
@@ -1548,11 +1695,15 @@ configure_web() {
 	)
 
 	if [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
-		mycmakeargs+=( -DURHO3D_LIB_TYPE=STATIC
-			       -DURHO3D_SAMPLES=$(usex samples) )
+		mycmakeargs+=(
+			-DURHO3D_LIB_TYPE=STATIC
+			-DURHO3D_SAMPLES=$(usex samples)
+		)
 	elif [[ "${ESTSH_LIB_TYPE}" == "module" ]] ; then
-		mycmakeargs+=( -DURHO3D_LIB_TYPE=MODULE
-			       -DURHO3D_SAMPLES=OFF )
+		mycmakeargs+=(
+			-DURHO3D_LIB_TYPE=MODULE
+			-DURHO3D_SAMPLES=OFF
+		)
 	fi
 
 	configure_sdl
