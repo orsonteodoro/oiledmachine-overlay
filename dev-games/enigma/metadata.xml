@@ -26,16 +26,16 @@
 
     Asset formats supported:
 
-      (Some formats may no be supported by dialog filters, unlinked libraries,
+      (Some formats may not be supported by dialog filters, unlinked libraries,
        missing support, etc.)
 
       3D models:  obj (d3d only)
       Audio:  flac, mod, mp3, ogg
         via dumb (669, amf, dsm, it, mod, mtm, okt, pit, psm, riffs3m, stm, xm),
         via game-music-emu (ay, gbs, gym, hes, kss, nsf, nsfe, sap, spc, vgm),
-        via libsndfile (aiff, au, avr, caf, flac, htk, iff, mat, mpc, m1a, oga,
-                        paf, pvf, raw, rf64, sd2, sds, sf, voc, w64, wav, wve,
-                        x8)
+        via libsndfile (aiff, au, avr, caf, flac, htk, iff, m1a, mat, mp1, mp2,
+                        mp3, mpc, oga, opus, ogg, paf, pvf, raw, rf64, sd2, sds,
+                        sf, voc, w64, wav, vox, wve, x8)
       Images (2D sprites):  bmp, gif, png
       Shaders:  glsl, hlsl9, hlsl11
       Project save:  egm, sog
