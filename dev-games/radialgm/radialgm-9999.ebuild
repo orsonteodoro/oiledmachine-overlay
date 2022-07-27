@@ -189,13 +189,13 @@ src_install() {
 	make_desktop_entry "/usr/$(get_libdir)/${MY_PN}" "Development;IDE"
 	dosym "${ENIGMA_INSTALL_DIR}" \
 		"/usr/$(get_libdir)/${MY_PN}/enigma-dev"
-	patchelf --remove-rpath "${ED}/usr/$(get_libdir)/RadialGM"
+	patchelf --remove-rpath "${ED}/usr/$(get_libdir)/${MY_PN}/${MY_PN}" || die
 	patchelf --set-rpath "/usr/$(get_libdir)/enigma" \
-		"${ED}/usr/$(get_libdir)/RadialGM" || die
+		"${ED}/usr/$(get_libdir)/${MY_PN}/${MY_PN}" || die
 }
 
 pkg_postinst() {
-	pkg_postinst
+	xdg_pkg_postinst
 einfo
 einfo "A build failure may happen in a simple hello world test if the"
 einfo "appropriate subsystem USE flag in enigma was disabled when building it"
