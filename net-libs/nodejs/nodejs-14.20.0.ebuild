@@ -10,12 +10,11 @@ PYTHON_REQ_USE="threads(+)"
 inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
 	toolchain-funcs xdg-utils
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
-HOMEPAGE="https://nodejs.org/"
 LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
-SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
+HOMEPAGE="https://nodejs.org/"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
 IUSE+=" corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector lto npm
 pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man pgo"
@@ -75,7 +74,6 @@ gen_required_use_pgo() {
 }
 REQUIRED_USE+=" "$(gen_required_use_pgo)
 REQUIRED_USE+=" pgo? ( || ( $(gen_iuse_pgo) ) )"
-
 REQUIRED_USE+=" inspector? ( icu ssl )
 		npm? ( ssl )
 		system-icu? ( icu )
@@ -87,7 +85,8 @@ RESTRICT="!test? ( test )"
 # nodejs uses Chromium's zlib not vanilla zlib
 # Last deps commit date:  Jul 6, 2022
 NGHTTP2_V="1.42.0"
-RDEPEND+=" !net-libs/nodejs:0
+RDEPEND+="
+	!net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
 	>=dev-libs/libuv-1.42.0:=
@@ -98,21 +97,31 @@ RDEPEND+=" !net-libs/nodejs:0
 	system-ssl? (
 		>=dev-libs/openssl-1.1.1q:0=
 		<dev-libs/openssl-3.0.0_beta1:0=
-	)"
+	)
+"
 DEPEND+=" ${RDEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
+BDEPEND+="
+	${PYTHON_DEPS}
 	dev-util/ninja
 	sys-apps/coreutils
-	pgo? ( ${PN}_pgo_trainers_http2? ( >=net-libs/nghttp2-${NGHTTP2_V}[utils] ) )
+	pgo? (
+		${PN}_pgo_trainers_http2? (
+			>=net-libs/nghttp2-${NGHTTP2_V}[utils]
+		)
+	)
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
-	pax-kernel? ( sys-apps/elfix )"
-PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
-	  "${FILESDIR}"/${PN}-14.18.2-jinja_collections_abc.patch
-	  "${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
-	  "${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch
-	  "${FILESDIR}"/${PN}-14.19.1-use-thinlto.patch
-	  "${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch )
+	pax-kernel? ( sys-apps/elfix )
+"
+SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
+PATCHES=(
+	"${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
+	"${FILESDIR}"/${PN}-14.18.2-jinja_collections_abc.patch
+	"${FILESDIR}"/${PN}-12.22.5-shared_c-ares_nameser_h.patch
+	"${FILESDIR}"/${PN}-14.15.0-fix_ppc64_crashes.patch
+	"${FILESDIR}"/${PN}-14.19.1-use-thinlto.patch
+	"${FILESDIR}"/${PN}-16.13.2-support-clang-pgo.patch
+)
 S="${WORKDIR}/node-v${PV}"
 NPM_V="6.14.17" # See https://github.com/nodejs/node/blob/v14.20.0/deps/npm/package.json
 
@@ -166,7 +175,8 @@ eerror
 	done
 
 	if use ${PN}_pgo_trainers_string_decoder \
-		&& [[ ! ( "${NODEJS_EXCLUDED_BENCHMARKS}" =~ "benchmark/string_decoder/string-decoder.js" ) ]] ; then
+		&& [[ ! ( "${NODEJS_EXCLUDED_BENCHMARKS}" =~ \
+			"benchmark/string_decoder/string-decoder.js" ) ]] ; then
 ewarn
 ewarn "The benchmark/string_decoder/string-decoder.js may take hours to"
 ewarn "complete.  Consider adding it to the NODEJS_EXCLUDED_BENCHMARKS"
@@ -247,10 +257,13 @@ src_prepare() {
 	rm -f test/parallel/test-release-npm.js
 
 	if [[ "${NM}" == "llvm-nm" ]] ; then
-		# llvm-nm: error: : --format value should be one of: bsd, posix, sysv, darwin, just-symbols
+		# llvm-nm: error: : --format value should be one of
+		# bsd, posix, sysv, darwin, just-symbols
 		einfo "Detected llvm-nm: -f p -> -f posix"
-		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" "deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py" || die
-		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" "tools/gyp/pylib/gyp/generator/ninja.py" || die
+		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" \
+			"deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py" || die
+		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" \
+			"tools/gyp/pylib/gyp/generator/ninja.py" || die
 	fi
 
 	# Save before using filter-flag
@@ -281,7 +294,8 @@ configure_pgx() {
 	use lto && myconf+=( --enable-lto )
 	if use lto && [[ "${LTO_TYPE}" =~ "thin" ]] ; then
 		myconf+=( --with-thinlto )
-	elif use lto && [[ "${LTO_TYPE}" =~ "full" ]] && has_version "sys-devel/binutils[gold,plugins]" ; then
+	elif use lto && [[ "${LTO_TYPE}" =~ "full" ]] \
+		&& has_version "sys-devel/binutils[gold,plugins]" ; then
 		myconf+=( --with-goldlto )
 	fi
 
@@ -359,8 +373,10 @@ configure_pgx() {
 #/usr/bin/*-ld: failed to set dynamic section sizes: nonrepresentable section on output
 	if [[ -e "${S}/out/Release/obj/test_crypto_engine.ninja" ]] ; then
 		einfo "Removing CFI Cross-DSO from test_crypto_engine"
-		sed -i -e "s|-fsanitize-cfi-cross-dso||g" "${S}/out/Release/obj/test_crypto_engine.ninja" || die
-		sed -i -e "s|-fsanitize-cfi-cross-dso||g" "${S}/out/Debug/obj/test_crypto_engine.ninja" || die
+		sed -i -e "s|-fsanitize-cfi-cross-dso||g" \
+			"${S}/out/Release/obj/test_crypto_engine.ninja" || die
+		sed -i -e "s|-fsanitize-cfi-cross-dso||g" \
+			"${S}/out/Debug/obj/test_crypto_engine.ninja" || die
 	fi
 }
 
@@ -406,11 +422,23 @@ run_trainers() {
 
 	[[ ! -e "${S}/out/Release/node" ]] && die "Missing node"
 
-	export NODE_PATH="${S}/node_modules/wrk:${ED}/usr/$(get_libdir)/node_modules"
-	export PATH="${ED}/usr/bin:${ED}/usr/$(get_libdir)/node_modules/npm/bin:${S}/node_modules/.bin:${PATH}"
-	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/http/_chunky_http_client.js" # This needs additional args.
-	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/http2/write.js" # Unhandled exception error node:events:371
-	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/net/net-pipe.js" # benchmark/common.js:238 throw new Error('called end() with operation count <= 0');
+	NODE_PATH="${S}/node_modules/wrk"
+	NODE_PATH+=":${ED}/usr/$(get_libdir)/node_modules"
+	export NODE_PATH
+	PATH="${ED}/usr/bin"
+	PATH+=":${ED}/usr/$(get_libdir)/node_modules/npm/bin"
+	PATH+=":${S}/node_modules/.bin:${PATH}"
+	export PATH
+
+	# This needs additional args.
+	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/http/_chunky_http_client.js"
+
+	# Unhandled exception error node:events:371
+	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/http2/write.js"
+
+	# benchmark/common.js:238 throw new Error('called end() with operation count <= 0');
+	NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/net/net-pipe.js"
+
 	use ${PN}_pgo_trainers_module \
 		|| NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/module/module-loader.js"
 	einfo "NODEJS_EXCLUDED_BENCHMARKS=${NODEJS_EXCLUDED_BENCHMARKS}"
@@ -599,12 +627,19 @@ src_install() {
 src_test() {
 	if has usersandbox ${FEATURES}; then
 		rm -f "${S}"/test/parallel/test-fs-mkdir.js
-		ewarn "You are emerging ${PN} with 'usersandbox' enabled. Excluding tests known to fail in this mode." \
-			"For full test coverage, emerge =${CATEGORY}/${PF} with 'FEATURES=-usersandbox'."
+ewarn
+ewarn "You are emerging ${PN} with 'usersandbox' enabled. Excluding tests known"
+ewarn "to fail in this mode.  For full test coverage, emerge =${CATEGORY}/${PF}"
+ewarn "with 'FEATURES=-usersandbox'."
+ewarn
 	fi
 
 	out/${BUILDTYPE}/cctest || die
-	"${EPYTHON}" tools/test.py --mode=${BUILDTYPE,,} --flaky-tests=dontcare -J message parallel sequential || die
+	"${EPYTHON}" tools/test.py \
+		--mode=${BUILDTYPE,,} \
+		--flaky-tests=dontcare \
+		-J \
+		message parallel sequential || die
 }
 
 pkg_postinst() {
@@ -618,10 +653,10 @@ pkg_postinst() {
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die
 	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."
-	einfo
-	einfo "When compiling with nodejs multislot, you to switch via"
-	einfo "\`eselect nodejs\` in order to compile against the headers"
-	einfo "matching the corresponding SLOT.  This means that you cannot"
-	einfo "compile with different SLOTS simultaneously."
-	einfo
+einfo
+einfo "When compiling with nodejs multislot, you to switch via"
+einfo "\`eselect nodejs\` in order to compile against the headers matching the"
+einfo "corresponding SLOT.  This means that you cannot compile with different"
+einfo "SLOTS simultaneously."
+einfo
 }
