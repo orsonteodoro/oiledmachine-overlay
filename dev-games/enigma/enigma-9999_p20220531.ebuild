@@ -90,10 +90,6 @@ REQUIRED_USE+="
 # https://github.com/enigma-dev/enigma-dev/blob/master/CI/build_sdl.sh
 # grep -r -F -e "find_library(" -e "find_package("
 #
-# No code references but only on build files: libvorbis3, vorbisfile,
-# pulseaudio, libpulse
-# media-libs/libvorbis[${MULTILIB_USEDEP}] # line to be placed in openal RDEPEND
-#
 # See CI for *DEPENDs
 ALURE_PV="1.2"
 CLANG_PV="10.0.0"
