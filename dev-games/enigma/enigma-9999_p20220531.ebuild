@@ -93,6 +93,7 @@ REQUIRED_USE+="
 #
 # See CI for *DEPENDs
 ALURE_PV="1.2"
+BOX2D_PV_EMAX="2.4"
 CLANG_PV="10.0.0"
 BOOST_PV="1.79"
 BULLET_PV="3.24"
@@ -104,7 +105,9 @@ GLEW_PV="2.2.0"
 GLM_PV="0.9.9.7"
 GME_PV="0.6.3"
 GTEST_PV="1.10.0"
+GTK2_PV="2.24.33"
 LIBFFI_PV="3.4.2"
+LIBMODPLUG_PV="0.8.9.0"
 LIBOGG_PV="1.3.5"
 LIBPNG_PV="1.6.37"
 LIBSDL2_PV="2.0.22"
@@ -112,7 +115,6 @@ LIBSNDFILE_PV="1.1.0"
 LIBVORBIS_PV="1.3.7"
 LIBX11_PV="1.8.1"
 MESA_PV="22.1.2"
-MODPLUG_PV="0.8.9.0"
 MPG123_PV="1.25.13"
 OPENAL_PV="1.22.2"
 OPUS_PV="1.3.1"
@@ -342,92 +344,21 @@ eerror
 	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
 
 	# We ALWAYS do this because emerge is orders of magnitude slow.
-	crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
-	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
-	if use box2d ; then
-		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
-	fi
-	if use bullet ; then
-		crossdev_has_pkg "sci-physics/bullet" "${BULLET_PV}"
-	fi
-	if use freetype ; then
-		crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
-	fi
-	if use gme ; then
-		crossdev_has_pkg "media-libs/game-music-emu" "${GME_PV}"
-	fi
-	if use gtest ; then
-		crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
-	fi
-	if use openal ; then
-		crossdev_has_pkg "media-libs/alure" "${ALURE_PV}"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "dumb"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "flac"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "mp3"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "sndfile"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "static-libs"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "vorbis"
-		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
-		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
-		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
-		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
-		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/openal" "${OPENAL_PV}"
-		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
-		crossdev_has_pkg "media-sound/pulseaudio" "${PULSEAUDIO_PV}"
-	fi
-	if use opengl ; then
-		crossdev_has_pkg "media-libs/glew" "${GLEW_PV}"
-		crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
-	fi
-	if use png ; then
-		crossdev_has_pkg "media-libs/libpng" "${LIBPNG_PV}"
-		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
-	fi
-	if use sdl2 ; then
-		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
-		use joystick && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "joystick"
-		use opengl && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
-		use threads && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "threads"
-		if use sound ; then
-			crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
-			crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
-			crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
-			crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
-			crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
-			crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-			crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
-			crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
-			crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
-			crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
-		fi
-	fi
-	if use wine ; then
-		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
-		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" "-ge" \
-			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" "-ge" ; then
-			:;
-		else
-eerror
-eerror "Missing wine package"
-eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-staging\`"
-eerror
-eerror "  or"
-eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-vanilla\`"
-eerror
-
-			die
-		fi
-	fi
+	crossdev_has_pkg "dev-games/enigma-mingw64" "0"
+	use box2d && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "box2d"
+	use bullet && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "bullet"
+	use freetype && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "freetype"
+	use gme && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "gme"
+	use gtest && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "gtest"
+	use gtk2 && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "gtk2"
+	use joystick && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "joystick"
+	use network && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "network"
+	use openal && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "openal"
+	use opengl && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "opengl"
+	use png && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "png"
+	use sdl2 && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "sdl2"
+	use sound && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "sound"
+	use threads && crossdev_has_pkg_use "dev-games/enigma-mingw64" "0" "threads"
 }
 
 check_mingw32() {
@@ -453,100 +384,21 @@ eerror
 	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
 
 	# We ALWAYS do this because emerge is orders of magnitude slow.
-	crossdev_has_pkg "dev-libs/libffi" "${LIBFFI_PV}"
-	crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
-	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
-	if use box2d ; then
-		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
-	fi
-	if use bullet ; then
-		crossdev_has_pkg "sci-physics/bullet" "${BULLET_PV}"
-	fi
-	if use freetype ; then
-		crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
-	fi
-	if use gme ; then
-		crossdev_has_pkg "media-libs/game-music-emu" "${GME_PV}"
-	fi
-	if use gtest ; then
-		crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
-	fi
-	if use gtk2 ; then
-		crossdev_has_pkg "x11-libs/gtk+" "${GTK2_PV}"
-	fi
-	if use network ; then
-		crossdev_has_pkg "net-misc/curl" "${CURL_PV}"
-	fi
-	if use openal ; then
-		crossdev_has_pkg "media-libs/alure" "${ALURE_PV}"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "dumb"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "flac"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "mp3"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "sndfile"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "static-libs"
-		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "vorbis"
-		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
-		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
-		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
-		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
-		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/openal" "${OPENAL_PV}"
-		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
-		crossdev_has_pkg "media-sound/pulseaudio" "${PULSEAUDIO_PV}"
-	fi
-	if use opengl ; then
-		crossdev_has_pkg "media-libs/glew" "${GLEW_PV}"
-		crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
-	fi
-	if use png ; then
-		crossdev_has_pkg "media-libs/libpng" "${LIBPNG_PV}"
-		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
-	fi
-	if use sdl2 ; then
-		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
-		use joystick && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "joystick"
-		use opengl && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
-		use sound && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
-		use threads && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "threads"
-		if use sound ; then
-			crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
-			crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
-			crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
-			crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
-			crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-			crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
-			crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
-			crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
-			crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
-		fi
-	fi
-	if use wine ; then
-		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
-		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" "-ge" \
-			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" "-ge" ; then
-			:;
-		else
-eerror
-eerror "Missing wine package"
-eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-staging\`"
-eerror
-eerror "  or"
-eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-vanilla\`"
-eerror
-
-			die
-		fi
-	fi
+	crossdev_has_pkg "dev-games/enigma-mingw32" "0"
+	use box2d && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "box2d"
+	use bullet && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "bullet"
+	use freetype && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "freetype"
+	use gme && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "gme"
+	use gtest && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "gtest"
+	use gtk2 && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "gtk2"
+	use joystick && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "joystick"
+	use network && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "network"
+	use openal && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "openal"
+	use opengl && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "opengl"
+	use png && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "png"
+	use sdl2 && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "sdl2"
+	use sound && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "sound"
+	use threads && crossdev_has_pkg_use "dev-games/enigma-mingw32" "0" "threads"
 }
 
 check_cross_android() {
@@ -571,81 +423,21 @@ eerror
 	export FUNC="check_cross_android()"
 	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
 	# We ALWAYS do this because emerge is orders of magnitude slow.
-	crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
-	crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
-	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
-	if use box2d ; then
-		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
-	fi
-	if use bullet ; then
-		crossdev_has_pkg "sci-physics/bullet" "${BULLET_PV}"
-	fi
-	if use freetype ; then
-		crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
-	fi
-	if use gme ; then
-		crossdev_has_pkg "media-libs/game-music-emu" "${GME_PV}"
-	fi
-	if use gtest ; then
-		crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
-	fi
-	if use network ; then
-		crossdev_has_pkg "net-misc/curl" "${CURL_PV}"
-	fi
-	if use opengl ; then
-		crossdev_has_pkg "media-libs/glew" "${GLEW_PV}"
-		crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
-	fi
-	if use png ; then
-		crossdev_has_pkg "media-libs/libpng" "${LIBPNG_PV}"
-		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
-	fi
-	if use sdl2 ; then
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "static-libs"
-		use gles1 && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "gles1"
-		use gles2 && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "gles2"
-		use joystick && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "joystick"
-		use threads && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "threads"
-		if use sound ; then
-			crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
-			crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
-			crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
-			crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
-			crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
-			crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-			crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
-			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
-			crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
-			crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
-			crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
-		fi
-	fi
-	if use wine ; then
-		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
-		if crossdev_has_pkg_nf "app-emulation/wine-staging" "${WINE_STAGING_PV}" "-ge" \
-			|| crossdev_has_pkg_nf "app-emulation/wine-vanilla" "${WINE_VANILLA_PV}" "-ge" ; then
-			:;
-		else
-eerror
-eerror "Missing wine package"
-eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-staging\`"
-eerror
-eerror "  or"
-eerror
-eerror "Use \`${CROSSDEV_CTARGET}-emerge app-emulation/wine-vanilla\`"
-eerror
-
-			die
-		fi
-	fi
+	crossdev_has_pkg "dev-games/enigma-android" "0"
+	use box2d && crossdev_has_pkg_use "dev-games/enigma-android" "0" "box2d"
+	use bullet && crossdev_has_pkg_use "dev-games/enigma-android" "0" "bullet"
+	use freetype && crossdev_has_pkg_use "dev-games/enigma-android" "0" "freetype"
+	use gles1 && crossdev_has_pkg_use "dev-games/enigma-android" "0" "gles1"
+	use gles2 && crossdev_has_pkg_use "dev-games/enigma-android" "0" "gles2"
+	use gme && crossdev_has_pkg_use "dev-games/enigma-android" "0" "gme"
+	use gtest && crossdev_has_pkg_use "dev-games/enigma-android" "0" "gtest"
+	use joystick && crossdev_has_pkg_use "dev-games/enigma-android" "0" "joystick"
+	use network && crossdev_has_pkg_use "dev-games/enigma-android" "0" "network"
+	use opengl && crossdev_has_pkg_use "dev-games/enigma-android" "0" "opengl"
+	use png && crossdev_has_pkg_use "dev-games/enigma-android" "0" "png"
+	use sdl2 && crossdev_has_pkg_use "dev-games/enigma-android" "0" "sdl2"
+	use sound && crossdev_has_pkg_use "dev-games/enigma-android" "0" "sound"
+	use threads && crossdev_has_pkg_use "dev-games/enigma-android" "0" "threads"
 }
 
 MACOS_SDK_PV_MIN="10.4"
@@ -689,70 +481,23 @@ eerror
 	export FUNC="check_cross_macos()"
 	[[ -n "${CROSSDEV_SYSROOT}" ]] || return
 	# We ALWAYS do this because emerge is orders of magnitude slow.
-	crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
-	crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
-	crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
-	if ver_test ${MACOS_SDK_PV} -lt 10.5 && crossdev_has_pkg_nf "sys-devel/osxcross" "1.1" ; then
-		:;
-	elif ver_test ${MACOS_SDK_PV} -ge 10.5 && crossdev_has_pkg_nf "sys-devel/osxcross" "1.4" ; then
-		:;
-	else
-		# There is only 1 ebuild in the distro and too outdated.
-eerror
-eerror "You need =sys-devel/osxcross-1.1 for 10.4, 10.5."
-eerror "You need =sys-devel/osxcross-1.4 for >= 10.6."
-eerror
-		die
-	fi
-	if ver_test ${MACOS_SDK_PV} -gt ${MACOS_SDK_PV_MAX} ; then
-eerror
-eerror "${MACOS_SDK_PV} is not supported."
-eerror "Requires ${MACOS_SDK_PV_MIN} to ${MACOS_SDK_PV_MAX}"
-eerror
-	fi
-	crossdev_has_pkg "sys-devel/clang" "13.0.0"
-	if use box2d ; then
-		crossdev_has_pkg "dev-games/box2d" "${BOX2D_PV}"
-	fi
-	if use bullet ; then
-		crossdev_has_pkg "sci-physics/bullet" "${BULLET_PV}"
-	fi
-	if use freetype ; then
-		crossdev_has_pkg_use "media-libs/freetype" "${FREETYPE_PV}" "static-libs"
-	fi
-	if use gme ; then
-		crossdev_has_pkg "media-libs/game-music-emu" "${GME_PV}"
-	fi
-	if use gtk2 ; then
-		crossdev_has_pkg "x11-libs/gtk+" "${GTK2_PV}"
-	fi
-	if use gtest ; then
-		crossdev_has_pkg "dev-cpp/gtest" "${GTEST_PV}"
-	fi
-	if use network ; then
-		crossdev_has_pkg "net-misc/curl" "${CURL_PV}"
-	fi
-	if use openal ; then
-		crossdev_has_pkg "media-libs/openal" "${OPENAL_PV}"
-	fi
-	if use opengl ; then
-		crossdev_has_pkg "media-libs/glm" "${GLM_PV}"
-		crossdev_has_pkg "media-libs/glew" "${GLEW_PV}"
-	fi
-	if use png ; then
-		crossdev_has_pkg "media-libs/libpng" "${LIBPNG_PV}"
-		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
-	fi
-	if use sdl2 ; then
-		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
-		use joystick && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "joystick"
-		use opengl && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
-		use threads && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "threads"
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "aqua"
-	fi
+	crossdev_has_pkg "dev-games/enigma-macos" "0"
+	use box2d && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "box2d"
+	use bullet && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "bullet"
+	use freetype && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "freetype"
+	use gles1 && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "gles1"
+	use gles2 && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "gles2"
+	use gme && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "gme"
+	use gtest && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "gtest"
+	use gtk2 && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "gtk2"
+	use joystick && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "joystick"
+	use network && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "network"
+	use openal && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "openal"
+	use opengl && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "opengl"
+	use png && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "png"
+	use sdl2 && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "sdl2"
+	use sound && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "sound"
+	use threads && crossdev_has_pkg_use "dev-games/enigma-macos" "0" "threads"
 }
 
 pkg_setup() {

@@ -24,6 +24,14 @@
     For wine32 support set MINGW32_SYSROOT, MINGW32_CTARGET as environment variables.
     For wine64 support set MINGW64_SYSROOT, MINGW64_CTARGET as environment variables.
 
+    Cross-compilers should emerge the following in the crossdev context/image NOT
+    in the native build context.
+
+      dev-games/enigma-android
+      dev-games/enigma-macos
+      dev-games/enigma-mingw32
+      dev-games/enigma-mingw64
+
     Asset formats supported:
 
       (Some formats may not be supported by dialog filters, unlinked libraries,
