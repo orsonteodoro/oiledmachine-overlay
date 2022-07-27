@@ -446,14 +446,15 @@ src_install() {
 
 pkg_postinst() {
 einfo
-einfo "A build failure may happen in simple hello world test if the appropriate"
-einfo "subsystem USE flag in the enigma ebuild was disabled when building the"
-einfo "package or dependency is not available, but the game settings are the"
-einfo "opposite.  Both the USE flag and the Game Setting and/or extensions must"
-einfo "match."
+einfo "A build failure may happen in a simple hello world test if the"
+einfo "appropriate subsystem USE flag in the enigma ebuild was disabled when"
+einfo "building it or a dependency is not available, but the game settings are"
+einfo "the opposite.  Both the USE flag and the Game Setting and/or extensions"
+einfo "must match."
 einfo
 einfo "You must carefully enable/disable the Game Settings > ENIGMA > API"
 einfo "section and extensions in Settings > ENIGMA > Extensions in LateralGM."
+einfo "to fix inconsistencies to prevent game build failures."
 einfo
 einfo "If you are using dwm or non-parenting window manager or a non-responsive"
 einfo "title bar menus, you need to:"
