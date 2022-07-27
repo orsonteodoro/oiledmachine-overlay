@@ -985,7 +985,7 @@ einfo "for SYSROOT, -I, -L changes.  They should point/reference CTARGET not"
 einfo "CBUILD."
 einfo
 	fi
-	if use mingw74 ; then
+	if use mingw64 ; then
 einfo
 einfo "You need to modify /usr/$(get_libdir)/Compilers/MinGW64.ey manually"
 einfo "for SYSROOT, -I, -L changes.  They should point/reference CTARGET not"
@@ -993,17 +993,18 @@ einfo "CBUILD."
 einfo
 	fi
 einfo
-einfo "A build failure may happen in simple hello world test if the appropriate"
-einfo "subsystem USE flag was disabled with building this package or dependency"
-einfo "is not available, but the game settings are the opposite.  Both the USE"
-einfo "flag and the Game Setting and/or extensions must match."
+einfo "A build failure may happen in a simple hello world test if the"
+einfo "appropriate subsystem USE flag was disabled with building this package"
+einfo "or dependency is not available, but the game settings are the opposite."
+einfo "Both the USE flag and the Game Setting and/or extensions must match."
 einfo
 einfo "You must carefully enable/disable the Game Settings > ENIGMA > API"
 einfo "section and extensions in Settings > ENIGMA > Extensions in LateralGM."
 einfo
 einfo "or"
 einfo
-einfo "You must carefully enable/disable the Build > Change Game Settings >"
-einfo "Edit Configuration in RadialGM."
+einfo "You must carefully enable/disable the Resources > Create Settings >"
+einfo "(double click) setting 0 > API and extensions in (double click)"
+einfo "setting 0 > Extensions in RadialGM."
 einfo
 }
