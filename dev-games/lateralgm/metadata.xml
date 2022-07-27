@@ -8,6 +8,15 @@
   <longdescription>
     LateralGM is a cross platform Game Maker editor and IDE.  It allows game
     designers to rearrange the scene and levels.
+
+    Due to dialog filters, only the following asset formats are supported
+
+      Images:  apng, bmp, gif, ico, jpeg, wbmp
+      Sounds:  it, flac, gfs, mid, minigfs, mod, mp3, nfs, ogg, s3m, wav, xm
+      Shaders:  gles, glsles, hlsl9, hlsl11
+      Project save:  gm6, gm81, gmk, project.gmx, 
+      Project load:  project.gmx, gb1, ..., gb7, gm6, gm8, gm81 gmd, gmk, 
+
   </longdescription>
   <upstream>
     <doc lang="en">http://enigma-dev.org/docs/Wiki/LateralGM</doc>
