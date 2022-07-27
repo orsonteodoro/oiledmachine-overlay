@@ -12,7 +12,7 @@ inherit cmake desktop git-r3 toolchain-funcs xdg
 
 DESCRIPTION="A native IDE for ENIGMA written in C++ using the Qt Framework."
 LICENSE="GPL-3+"
-KEYWORDS="~amd64 ~x86"
+#KEYWORDS="~amd64 ~x86" # Cannot build simple hello world
 HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/${PV}"
 IUSE="doc"
@@ -208,4 +208,14 @@ einfo "(double click) setting 0 > API and extensions in (double click)"
 einfo "setting 0 > Extensions in RadialGM to fix inconsistencies to"
 einfo "prevent game build failures."
 einfo
+ewarn
+ewarn "This ebuild or project is WIP (Work In Progress) and will not build a"
+ewarn "simple hello world game.  Do not use until KEYWORDS is enabled.  This"
+ewarn "ebuild left for developers for fix and develop.  Use LateralGM for"
+ewarn "now for production."
+ewarn
+ewarn "FIXMEs/broken:"
+ewarn "Setting object to sprite."
+ewarn "Setting extension game settings."
+ewarn
 }
