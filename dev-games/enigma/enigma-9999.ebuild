@@ -999,12 +999,15 @@ einfo "or dependency is not available, but the game settings are the opposite."
 einfo "Both the USE flag and the Game Setting and/or extensions must match."
 einfo
 einfo "You must carefully enable/disable the Game Settings > ENIGMA > API"
-einfo "section and extensions in Settings > ENIGMA > Extensions in LateralGM."
+einfo "section and extensions in Settings > ENIGMA > Extensions in LateralGM"
 einfo
 einfo "or"
 einfo
 einfo "You must carefully enable/disable the Resources > Create Settings >"
 einfo "(double click) setting 0 > API and extensions in (double click)"
 einfo "setting 0 > Extensions in RadialGM."
+einfo
+einfo "These extra checks and matching settings are to fix inconsistencies to"
+einfo "prevent game build failures."
 einfo
 }

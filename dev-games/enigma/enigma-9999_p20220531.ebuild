@@ -1008,4 +1008,7 @@ einfo "You must carefully enable/disable the Resources > Create Settings >"
 einfo "(double click) setting 0 > API and extensions in (double click)"
 einfo "setting 0 > Extensions in RadialGM."
 einfo
+einfo "These extra checks and matching settings are to fix inconsistencies to"
+einfo "prevent game build failures."
+einfo
 }
