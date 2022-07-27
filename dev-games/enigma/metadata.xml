@@ -29,14 +29,18 @@
       (Some formats may no be supported by dialog filters, unlinked libraries,
        missing support, etc.)
 
-      audio:  flac, mod, mp3, ogg
-        dumb (it, xm, mod, stm, s3m, 669, amf, dsm, mtm, okt, psm, pit, riff),
-        gme (ay, gbs, gym, hes, kss, nsf, nsfe, sap, spc, vgm),
-        sndfile (aiff, au, avr, caf, flac, htk, iff, mat, mpc, m1a, oga, paf,
-                 pvf, raw, rf64, sd2, sds, sf, voc, w64, wav, wve, x8)
-      images (2D sprites):  bmp, gif, png
       3D models:  obj (d3d only)
-      shaders:  glsl, hlsl9, hlsl11
+      Audio:  flac, mod, mp3, ogg
+        via dumb (669, amf, dsm, it, mod, mtm, okt, pit, psm, riffs3m, stm, xm),
+        via game-music-emu (ay, gbs, gym, hes, kss, nsf, nsfe, sap, spc, vgm),
+        via libsndfile (aiff, au, avr, caf, flac, htk, iff, mat, mpc, m1a, oga,
+                        paf, pvf, raw, rf64, sd2, sds, sf, voc, w64, wav, wve,
+                        x8)
+      Images (2D sprites):  bmp, gif, png
+      Shaders:  glsl, hlsl9, hlsl11
+      Project save:  egm, sog
+      Project load:  egm, gm6, gm81, gmd, gmk, gmx, sog, yyp
+
 
     Additional cross build documentation:
     https://wiki.gentoo.org/wiki/Mingw
