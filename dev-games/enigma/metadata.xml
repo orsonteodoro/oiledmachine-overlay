@@ -13,7 +13,7 @@
     EDL (Enigma Development Language) scripts that have syntax between GML
     and C++.
 
-    Cross build support status:
+    Cross build ebuild level support status:
 
       Android - Incomplete / Untested
       macOS - Incomplete / Untested
