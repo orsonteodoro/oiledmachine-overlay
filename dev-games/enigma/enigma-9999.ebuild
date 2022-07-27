@@ -28,6 +28,7 @@ H2_EXPECTED="\
 7bdb2256a0c54413313eabf7b44d0ad2e7ed39f1a663a755bdbe28e202494193\
 "
 
+# a*-pipelines.yml
 H3_EXPECTED="\
 aba553d213834071ba6722e33d2ae67e94c874b5ef4d26be3697c839a6c5f98e\
 b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
@@ -999,7 +1000,7 @@ einfo "or dependency is not available, but the game settings are the opposite."
 einfo "Both the USE flag and the Game Setting and/or extensions must match."
 einfo
 einfo "You must carefully enable/disable the Game Settings > ENIGMA > API"
-einfo "section and extensions in Settings > ENIGMA > Extensions in LateralGM"
+einfo "section and extensions in Settings > ENIGMA > Extensions in LateralGM."
 einfo
 einfo "or"
 einfo
