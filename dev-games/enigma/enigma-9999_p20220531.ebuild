@@ -35,7 +35,7 @@ b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
 ABI_FINGERPRINT="3660f4e5cab9d7d7db6fd8b5c4b6f7089b923e283daef5eb7c41094626b90001"
-DEPENDS_FINGERPRINT="ca6084da62d9dfa0ab20c1e12125575bae04a4c14ab20d4fb72557eaca8473ee"
+DEPENDS_FINGERPRINT="0ec94f2f56757425c83281360d9d1f8266766b589747d553e143a88cb621760b"
 SLOT="0/${ABI_FINGERPRINT}"
 IUSE+=" android box2d bullet clang d3d ds doc externalfuncs +freetype gles2
 gles3 gme gnome gtk2 gtest headless joystick kde macos mingw32 mingw64 network
@@ -203,7 +203,9 @@ DEPEND+="
 	sdl2? (
 		X? ( >=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},opengl?] )
 		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},joystick?,sound?,threads?]
-		>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[${MULTILIB_USEDEP},flac,mod,mp3,vorbis]
+		sound? (
+			>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[${MULTILIB_USEDEP},flac,mod,mp3,vorbis]
+		)
 	)
 	wine? (
 		sys-devel/crossdev
@@ -386,28 +388,29 @@ eerror
 		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	fi
 	if use sdl2 ; then
-		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
-		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
-		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
 		use joystick && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "joystick"
 		use opengl && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
-		use sound && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
 		use threads && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "threads"
-		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
-		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
-		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
-		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
-		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
+		if use sound ; then
+			crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
+			crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
+			crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+			crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
+			crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+			crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+			crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
+			crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
+			crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
+			crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
+		fi
 	fi
 	if use wine ; then
 		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
@@ -503,9 +506,6 @@ eerror
 		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	fi
 	if use sdl2 ; then
-		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
-		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
-		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
 		use joystick && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "joystick"
@@ -515,16 +515,21 @@ eerror
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
 		use threads && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "threads"
-		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
-		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
-		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
-		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
-		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
+		if use sound ; then
+			crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
+			crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+			crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
+			crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+			crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+			crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
+			crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
+			crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
+			crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
+		fi
 	fi
 	if use wine ; then
 		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
@@ -599,9 +604,6 @@ eerror
 		crossdev_has_pkg "sys-libs/zlib" "${ZLIB_PV}"
 	fi
 	if use sdl2 ; then
-		crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
-		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
-		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "static-libs"
 		use gles1 && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "gles1"
@@ -609,20 +611,24 @@ eerror
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "gles2"
 		use joystick && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "joystick"
-		use sound && \
-		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
 		use threads && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "threads"
-		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
-		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
-		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
-		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
-		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
-		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
-		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
+		if use sound ; then
+			crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
+			crossdev_has_pkg "media-libs/flac" "${LIBFLAC_PV}"
+			crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
+			crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
+			crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
+			crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+			crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
+			crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
+			crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
+			crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
+			crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
+		fi
 	fi
 	if use wine ; then
 		crossdev_has_pkg "virtual/wine" "${VIRTUAL_WINE_PV}"
