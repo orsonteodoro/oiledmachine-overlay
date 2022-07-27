@@ -133,7 +133,7 @@ eerror
 	export CROSSDEV_CTARGET="${MACOS_CTARGET}"
 	export CROSSDEV_SYSROOT="${MACOS_SYSROOT}"
 	if ver_test ${MACOS_SDK_PV} -lt 10.5 \
-		&& has_version "<=sys-devel/osxcross-1.1" ; then
+		&& has_version "<sys-devel/osxcross-1.2" ; then
 		:;
 	elif ver_test ${MACOS_SDK_PV} -ge 10.5 \
 		&& has_version ">=sys-devel/osxcross-1.4" ; then
