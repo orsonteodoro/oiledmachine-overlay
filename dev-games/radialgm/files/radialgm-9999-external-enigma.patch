@@ -2,8 +2,8 @@ Subject:  Link against external enigma
 Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Date:  Sun Jul 24 22:24:06 PDT 2022
 diff -urp radialgm-9999.orig/CMakeLists.txt radialgm-9999/CMakeLists.txt
---- radialgm-9999.orig/CMakeLists.txt	2022-07-24 21:39:25.055516784 -0700
-+++ radialgm-9999/CMakeLists.txt	2022-07-24 21:55:56.774947358 -0700
+--- radialgm-9999.orig/CMakeLists.txt	2022-07-27 01:13:03.999089410 -0700
++++ radialgm-9999/CMakeLists.txt	2022-07-27 01:16:48.935887675 -0700
 @@ -196,6 +196,21 @@ endif()
   set(RGM_SOURCES ${RGM_SOURCES} Plugins/ServerPlugin.cpp)
   set(RGM_HEADERS ${RGM_HEADERS} Plugins/ServerPlugin.h)
@@ -78,8 +78,8 @@ diff -urp radialgm-9999.orig/CMakeLists.txt radialgm-9999/CMakeLists.txt
  
  # Find FreeType
 diff -urp radialgm-9999.orig/cmake-package/CMakeLists.txt radialgm-9999/cmake-package/CMakeLists.txt
---- radialgm-9999.orig/cmake-package/CMakeLists.txt	2022-07-24 21:39:25.131519795 -0700
-+++ radialgm-9999/cmake-package/CMakeLists.txt	2022-07-24 21:39:58.772852214 -0700
+--- radialgm-9999.orig/cmake-package/CMakeLists.txt	2022-07-27 01:13:04.059091757 -0700
++++ radialgm-9999/cmake-package/CMakeLists.txt	2022-07-27 01:19:22.597900086 -0700
 @@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.11)
  
  project(RadialGM-Package)
@@ -89,3 +89,5 @@ diff -urp radialgm-9999.orig/cmake-package/CMakeLists.txt radialgm-9999/cmake-pa
  install(FILES "${CMAKE_SOURCE_DIR}/../LICENSE.txt" DESTINATION .)
  install(DIRECTORY ${CMAKE_SOURCE_DIR}/ DESTINATION .)
  
+Only in radialgm-9999/cmake-package: CMakeLists.txt.orig
+Only in radialgm-9999/cmake-package: CMakeLists.txt.rej
