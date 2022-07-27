@@ -52,6 +52,7 @@ ZLIB_PV="1.2.12"
 RDEPEND="
 	>=dev-libs/libffi-${LIBFFI_PV}
 	>=media-libs/glm-${GLM_PV}
+	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/zlib-${ZLIB_PV}
 	box2d? (
 		|| (
@@ -142,5 +143,6 @@ eerror
 	fi
 	export CROSSDEV_CTARGET="${MINGW32_CTARGET}"
 	export CROSSDEV_SYSROOT="${MINGW32_SYSROOT}"
-	which ${CROSSDEV_CTARGET}-gcc || die
+	which ${CROSSDEV_CTARGET}-gcc \
+		|| die "Compiler is missing.  Fix MINGW32_CTARGET."
 }

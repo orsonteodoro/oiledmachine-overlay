@@ -50,8 +50,8 @@ RDEPEND="
 	>=dev-cpp/gtest-${GTEST_PV}
 	>=media-libs/glm-${GLM_PV}
 	>=sys-libs/zlib-${ZLIB_PV}
-	sys-devel/osxcross
 	>=sys-devel/clang-13.0.0
+	  sys-devel/osxcross
 	box2d? (
 		|| (
 			<dev-games/box2d-${BOX2D_PV_EMAX}:2.3
@@ -152,5 +152,6 @@ eerror "${MACOS_SDK_PV} is not supported."
 eerror "Requires ${MACOS_SDK_PV_MIN} to ${MACOS_SDK_PV_MAX}"
 eerror
 	fi
-	which ${CROSSDEV_CTARGET}-clang || die
+	which ${CROSSDEV_CTARGET}-clang \
+		|| die "Compiler is missing.  Fix MACOS_CTARGET"
 }

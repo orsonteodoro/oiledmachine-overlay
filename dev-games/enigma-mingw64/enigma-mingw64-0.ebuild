@@ -51,6 +51,7 @@ ZLIB_PV="1.2.12"
 # FIXME: alures[modplug] is missing
 RDEPEND="
 	>=media-libs/glm-${GLM_PV}
+	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/zlib-${ZLIB_PV}
 	box2d? (
 		|| (
@@ -135,5 +136,6 @@ eerror
 	fi
 	export CROSSDEV_CTARGET="${MINGW64_CTARGET}"
 	export CROSSDEV_SYSROOT="${MINGW64_SYSROOT}"
-	which ${CROSSDEV_CTARGET}-gcc || die
+	which ${CROSSDEV_CTARGET}-gcc \
+		|| die "Compiler is missing.  Fix MINGW64_TARGET."
 }

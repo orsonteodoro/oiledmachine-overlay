@@ -51,6 +51,7 @@ ZLIB_PV="1.2.12"
 RDEPEND="
 	>=dev-cpp/gtest-${GTEST_PV}
 	>=media-libs/glm-${GLM_PV}
+	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/zlib-${ZLIB_PV}
 	box2d? (
 		|| (
@@ -127,5 +128,6 @@ eerror
 	fi
 	export CROSSDEV_CTARGET="${ANDROID_CTARGET}"
 	export CROSSDEV_SYSROOT="${ANDROID_SYSROOT}"
-	which ${CROSSDEV_CTARGET}-gcc || die
+	which ${CROSSDEV_CTARGET}-gcc \
+		|| die "Compiler is missing.  Fix ANDROID_CTARGET."
 }
