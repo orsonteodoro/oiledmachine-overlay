@@ -997,7 +997,7 @@ einfo
 einfo "A build failure may happen in a simple hello world test if the"
 einfo "appropriate subsystem USE flag was disabled with building this package"
 einfo "or dependency is not available, but the game settings are the opposite."
-einfo "Both the USE flag and the Game Setting and/or extensions must match."
+einfo "Both the USE flag and the game setting and/or extensions must match."
 einfo
 einfo "You must carefully enable/disable the Game Settings > ENIGMA > API"
 einfo "section and extensions in Settings > ENIGMA > Extensions in LateralGM."

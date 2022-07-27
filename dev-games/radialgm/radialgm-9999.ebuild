@@ -198,9 +198,9 @@ pkg_postinst() {
 	pkg_postinst
 einfo
 einfo "A build failure may happen in a simple hello world test if the"
-einfo "appropriate subsystem USE flag in enigma was disabled with building it"
+einfo "appropriate subsystem USE flag in enigma was disabled when building it"
 einfo "or a dependency is not available, but the game settings are the"
-einfo "opposite.  Both the USE flag and the Game Setting and/or extensions must"
+einfo "opposite.  Both the USE flag and the game setting and/or extensions must"
 einfo "match."
 einfo
 einfo "You must carefully enable/disable the Resources > Create Settings >"
