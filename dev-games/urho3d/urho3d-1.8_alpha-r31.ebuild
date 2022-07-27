@@ -7,6 +7,8 @@ EPLATFORMS="android arm native rpi web"
 STATIC_LIBS_CUSTOM_LIB_TYPE_IMPL="module"
 STATIC_LIBS_CUSTOM_LIB_TYPE_IUSE="+module"
 CMAKE_MAKEFILE_GENERATOR=emake
+#LLVM_SLOTS=(15 14 13 12 11 10 9)
+LLVM_SLOTS=(9)
 LLVM_MAX_SLOT=9
 
 inherit cmake-utils eutils flag-o-matic linux-info llvm multilib-minimal platforms static-libs
@@ -405,9 +407,20 @@ DEPEND_ANDROID="
 	)
 	system-boost? ( >=dev-libs/boost-${BOOST_VER} )
 "
+gen_clang_web_depend() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+	(
+	      >=sys-devel/llvm-3.9.0:${s}[${MULTILIB_USEDEP}]
+	      >=sys-devel/clang-3.9.0:${s}[${MULTILIB_USEDEP}]
+	)
+		"
+	done
+}
 DEPEND_WEB="
+	$(gen_clang_web_depend)
       >=dev-util/emscripten-1.36.10[wasm(+)]
-      >=sys-devel/llvm-3.9.0:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 	system-boost? ( >=dev-libs/boost-${BOOST_VER} )
 "
 DEPEND_NATIVE="
@@ -493,33 +506,32 @@ DEPEND_RPI="
 		)
 	)
 "
-DEPEND+="
-	${DEPEND_COMMON}
-	rpi? ( ${DEPEND_RPI} )
-	android? ( ${DEPEND_ANDROID} )
-	native? ( ${DEPEND_NATIVE} )
-	web? ( ${DEPEND_WEB} )
+
+gen_clang_depends() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
 	bindings? (
-		sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+		sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 	)
 	clang-tools? (
-		sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+		sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 	)
-"
-RDEPEND+="
+
+		"
+	done
+}
+
+DEPEND+="
+	$(gen_clang_depends)
 	${DEPEND_COMMON}
-	rpi? ( ${DEPEND_RPI} )
 	android? ( ${DEPEND_ANDROID} )
 	native? ( ${DEPEND_NATIVE} )
+	rpi? ( ${DEPEND_RPI} )
 	web? ( ${DEPEND_WEB} )
 	!system-sdl? ( ${SDL2_RDEPEND} )
-	bindings? (
-		sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-	)
-	clang-tools? (
-		sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-	)
 "
+RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.2.3"
 RESTRICT="mirror"
 EGIT_COMMIT="d34dda158ecd7694fcfd55684caade7e131b8a45"
@@ -584,13 +596,13 @@ ewarn "The android USE flag has not been tested."
 ewarn
 	[[ -z "${CTARGET}" ]] || export CTARGET="${CHOST}"
 	einfo "CTARGET=${CTARGET}"
-	which ${CTARGET}-gcc || die "Did not detect ${CTARGET}-gcc"
+	which ${CTARGET}-gcc || die "Did not detect ${CTARGET}-gcc.  Fix CTARGET"
 }
 
 _check_arm() {
 	[[ -z "${CTARGET}" ]] || export CTARGET="${CHOST}"
 	einfo "CTARGET=${CTARGET}"
-	which ${CTARGET}-gcc || die "Did not detect ${CTARGET}-gcc"
+	which ${CTARGET}-gcc || die "Did not detect ${CTARGET}-gcc.  Fix CTARGET"
 }
 
 _check_rpi() {
@@ -604,7 +616,7 @@ ewarn "The rpi USE flag has not been tested."
 ewarn
 	[[ -z "${CTARGET}" ]] || export CTARGET="${CHOST}"
 	einfo "CTARGET=${CTARGET}"
-	which ${CTARGET}-gcc || die "Did not detect ${CTARGET}-gcc"
+	which ${CTARGET}-gcc || die "Did not detect ${CTARGET}-gcc.  Fix CTARGET"
 }
 
 _check_web() {
@@ -646,8 +658,11 @@ eerror
 }
 
 pkg_setup() {
-	if use clang-tools || use bindings ; then
+	if use clang-tools || use bindings || use web ; then
 		llvm_pkg_setup
+einfo
+einfo "LLVM_SLOT=${LLVM_SLOT}"
+einfo
 	fi
 
 	if use hidapi-hidraw ; then
@@ -1738,34 +1753,42 @@ src_configure() {
 			static-libs_configure() {
 				cd "${BUILD_DIR}" || die
 
-				if ( use bindings || use clang-tools ) \
-					&& [[ "${EPLATFORM}" != "web" ]] ; then
-					local chost=$(get_abi_CHOST ${ABI})
-					export CC=${chost}-clang-${LLVM_SLOT}
-					export CXX=${chost}-clang++-${LLVM_SLOT}
+				local ctarget
+				if [[ -n "${CTARGET}" ]] ; then
+					ctarget="${CTARGET:-${CHOST}}"
+				elif has_multilib_profile ; then
+					ctarget=$(get_abi_HOST ${ABI})
+				else
+					ctarget="${CHOST}"
+				fi
+				if use bindings || use clang-tools ; then
+					export CC=${ctarget}-clang-${LLVM_SLOT}
+					export CXX=${ctarget}-clang++-${LLVM_SLOT}
+				elif tc-is-clang ; then
+					export CC=${ctarget}-clang-${LLVM_SLOT}
+					export CXX=${ctarget}-clang-${LLVM_SLOT}
+				elif tc-is-gcc ; then
+					export CC=${ctarget}-gcc
+					export CXX=${ctarget}-g++
 				fi
 
 				if [[	"${EPLATFORM}" == "android" && \
 					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
-					export CC=${CTARGET}-gcc
-					export CXX=${CTARGET}-g++
 					configure_android
 				elif [[ "${EPLATFORM}" == "arm" && \
 					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
-					export CC=${CTARGET}-gcc
-					export CXX=${CTARGET}-g++
 					configure_arm
 				elif [[ "${EPLATFORM}" == "native" && \
 					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_native
 				elif [[ "${EPLATFORM}" == "rpi" && \
 					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
-					export CC=${CTARGET}-gcc
-					export CXX=${CTARGET}-g++
 					configure_rpi
 				elif [[ "${EPLATFORM}" == "web" && ( \
 					"${ESTSH_LIB_TYPE}" == "module" || \
 					"${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+					export CC=clang-${LLVM_SLOT}
+					export CXX=clang++-${LLVM_SLOT}
 					configure_web
 				fi
 			}
