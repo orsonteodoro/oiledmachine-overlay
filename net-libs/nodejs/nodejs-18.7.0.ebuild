@@ -8,16 +8,13 @@ EAPI=7
 PYTHON_COMPAT=( python3_{8..10} )
 PYTHON_REQ_USE="threads(+)"
 inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
-	toolchain-funcs xdg-utils
+toolchain-funcs xdg-utils
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
 HOMEPAGE="https://nodejs.org/"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector lto
-+npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test"
-IUSE+=" man pgo"
 
 BENCHMARK_TYPES=(
 	assert
@@ -61,24 +58,33 @@ BENCHMARK_TYPES=(
 )
 
 gen_iuse_pgo() {
+	local t
 	for t in ${BENCHMARK_TYPES[@]} ; do
 		echo " ${PN}_pgo_trainers_${t}"
 	done
 }
-IUSE+=" "$(gen_iuse_pgo)
+
+IUSE+=" +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu
+inspector lto +npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap
+test
+
+$(gen_iuse_pgo)
+man pgo
+"
 
 gen_required_use_pgo() {
 	for t in ${BENCHMARK_TYPES[@]} ; do
 		echo " ${PN}_pgo_trainers_${t}? ( pgo )"
 	done
 }
-REQUIRED_USE+=" "$(gen_required_use_pgo)
-REQUIRED_USE+=" pgo? ( || ( $(gen_iuse_pgo) ) )"
-REQUIRED_USE+=" inspector? ( icu ssl )
-		npm? ( ssl )
-		system-icu? ( icu )
-		system-ssl? ( ssl )
-		${PN}_pgo_trainers_module? ( inspector )
+REQUIRED_USE+="
+	$(gen_required_use_pgo)
+	${PN}_pgo_trainers_module? ( inspector )
+	inspector? ( icu ssl )
+	npm? ( ssl )
+	system-icu? ( icu )
+	system-ssl? ( ssl )
+	${PN}_pgo_trainers_module? ( inspector )
 "
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
@@ -102,6 +108,7 @@ BDEPEND+="
 	dev-util/ninja
 	sys-apps/coreutils
 	virtual/pkgconfig
+	pax-kernel? ( sys-apps/elfix )
 	pgo? (
 		${PN}_pgo_trainers_http2? (
 			>=net-libs/nghttp2-${NGHTTP2_V}[utils]
@@ -109,7 +116,6 @@ BDEPEND+="
 	)
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
-	pax-kernel? ( sys-apps/elfix )
 "
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
@@ -134,25 +140,30 @@ pkg_pretend() {
 pkg_setup() {
 	python-any-r1_pkg_setup
 
-	einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
+einfo
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
+einfo
 
 	# For man page reasons
 	for s in 12 14 16 ; do
-		if use corepack && has_version "net-libs/nodejs:${s}[corepack]" ; then
+		if use corepack && has_version "net-libs/nodejs:${s}[corepack]"
+		then
 eerror
-eerror "You need to disable corepack on net-libs/nodejs:${s}[corepack].  Only enable"
-eerror "corepack on the highest slot."
+eerror "You need to disable corepack on net-libs/nodejs:${s}[corepack].  Only"
+eerror "enable corepack on the highest slot."
 eerror
 			die
 		fi
-		if use npm && has_version "net-libs/nodejs:${s}[npm]" ; then
+		if use npm && has_version "net-libs/nodejs:${s}[npm]"
+		then
 eerror
 eerror "You need to disable npm on net-libs/nodejs:${s}[npm].  Only enable"
 eerror "npm on the highest slot."
 eerror
 			die
 		fi
-		if use man && has_version "net-libs/nodejs:${s}[man]" ; then
+		if use man && has_version "net-libs/nodejs:${s}[man]"
+		then
 eerror
 eerror "You need to disable npm on net-libs/nodejs:${s}[man].  Only enable"
 eerror "man on the highest slot."
@@ -313,15 +324,20 @@ configure_pgx() {
 	use npm || myconf+=( --without-npm )
 	if use pgo ; then
 		if [[ "${CC}" =~ "clang" ]] ; then
-			ewarn "PGO clang support is experimental"
+ewarn
+ewarn "PGO clang support is experimental"
+ewarn
 		fi
 		export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
 		export PGO_PROFILE_PROFDATA="${T}/pgo-${ABI}/pgo-custom.profdata"
 		mkdir -p "${PGO_PROFILE_DIR}" || die
 		if [[ "${PGO_PHASE}" == "pgo" && "${CC}" =~ "clang" ]] ; then
-			# The "counter overflow" is either a discared result or a saturated max value.
-			einfo "Converting .profraw -> .profdata"
-			llvm-profdata merge -output="${T}/pgo-${ABI}/pgo-custom.profdata" \
+# The "counter overflow" is either a discared result or a saturated max value.
+einfo
+einfo "Converting .profraw -> .profdata"
+einfo
+			llvm-profdata merge \
+				-output="${T}/pgo-${ABI}/pgo-custom.profdata" \
 				"${T}/pgo-${ABI}" || die
 		fi
 		if [[ "${PGO_PHASE}" == "pgi" ]] ; then
@@ -335,9 +351,8 @@ configure_pgx() {
 
 	use snapshot || myconf+=( --without-node-snapshot )
 	if use ssl; then
-		if use system-ssl ; then
-			myconf+=( --shared-openssl --openssl-use-def-ca-store )
-		fi
+		use system-ssl && \
+		myconf+=( --shared-openssl --openssl-use-def-ca-store )
 	else
 		myconf+=( --without-ssl )
 	fi
@@ -363,12 +378,12 @@ configure_pgx() {
 		"${myconf[@]}" || die
 
 	# Prevent double build on install.
-	sed -i -e "s|^install: all|install: |g" \
-		Makefile || die
+	sed -i -e "s|^install: all|install: |g" Makefile || die
 
 	# Prevent build failure
-#/usr/bin/*-ld: /usr/lib/llvm/14/bin/../../../../lib/clang/14.0.0/lib/linux/libclang_rt.cfi-*.a(cfi.cpp.o): .preinit_array section is not allowed in DSO
-#/usr/bin/*-ld: failed to set dynamic section sizes: nonrepresentable section on output
+#/usr/bin/*-ld:
+# libclang_rt.cfi-*.a(cfi.cpp.o): .preinit_array section is not allowed in DSO
+# failed to set dynamic section sizes: nonrepresentable section on output
 	if [[ -e "${S}/out/Release/obj/test_crypto_engine.ninja" ]] ; then
 		einfo "Removing CFI Cross-DSO from test_crypto_engine"
 		sed -i -e "s|-fsanitize-cfi-cross-dso||g" \
@@ -492,12 +507,13 @@ eerror
 		./pgo-custom-trainer.sh || die
 	fi
 
-	if [[ -z "${CC}" || "${CC}" =~ "gcc" ]] \
-		&& (( $(find "${S}/out" -name "*.gcda" | wc -l) == 0 )) ; then
+	local nlines
+	nlines=$(find "${S}/out" -name "*.gcda" | wc -l)
+	if [[ -z "${CC}" || "${CC}" =~ "gcc" ]] && (( ${nlines} == 0 )) ; then
 		die "No PGO data produced."
 	fi
-	if [[ "${CC}" =~ "clang" ]] \
-		&& (( $(find "${T}/pgo-${ABI}" -name "*.profraw" | wc -l) == 0 )) ; then
+	nlines=$(find "${T}/pgo-${ABI}" -name "*.profraw" | wc -l)
+	if [[ "${CC}" =~ "clang" ]] && (( ${nlines} == 0 )) ; then
 		die "No PGO data produced."
 	fi
 }
@@ -628,17 +644,22 @@ ewarn
 	fi
 
 	out/${BUILDTYPE}/cctest || die
-	"${EPYTHON}" tools/test.py \
+	"${EPYTHON}" \
+		tools/test.py \
 		--mode=${BUILDTYPE,,} \
 		--flaky-tests=dontcare \
 		-J \
-		message parallel sequential || die
+		message \
+		parallel \
+		sequential \
+		|| die
 }
 
 pkg_postinst() {
 	if has_version ">=net-libs/nodejs-${PV}" ; then
-		einfo \
-"Found higher slots, manually change the headers with \`eselect nodejs\`."
+einfo
+einfo "Found higher slots, manually change the headers with \`eselect nodejs\`."
+einfo
 	else
 		eselect nodejs set node${SLOT_MAJOR}
 	fi
