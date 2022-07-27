@@ -152,6 +152,7 @@ eerror "${MACOS_SDK_PV} is not supported."
 eerror "Requires ${MACOS_SDK_PV_MIN} to ${MACOS_SDK_PV_MAX}"
 eerror
 	fi
-	which ${CROSSDEV_CTARGET}-clang \
-		|| die "Compiler is missing.  Fix MACOS_CTARGET"
+	if ls /usr/lib/llvm/*/bin/${CROSSDEV_CTARGET}-clang 2>/dev/null 1>/dev/null ; then
+		die "Compiler is missing.  Fix MACOS_CTARGET"
+	fi
 }
