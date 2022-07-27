@@ -582,6 +582,15 @@ ewarn
 ewarn
 ewarn "The android USE flag has not been tested."
 ewarn
+	[[ -z "${CTARGET}" ]] || export CTARGET="${CHOST}"
+	einfo "CTARGET=${CTARGET}"
+	which ${CTARGET}-gcc || die "Did not detect ${CTARGET}-gcc"
+}
+
+_check_arm() {
+	[[ -z "${CTARGET}" ]] || export CTARGET="${CHOST}"
+	einfo "CTARGET=${CTARGET}"
+	which ${CTARGET}-gcc || die "Did not detect ${CTARGET}-gcc"
 }
 
 _check_rpi() {
@@ -593,6 +602,9 @@ ewarn
 ewarn
 ewarn "The rpi USE flag has not been tested."
 ewarn
+	[[ -z "${CTARGET}" ]] || export CTARGET="${CHOST}"
+	einfo "CTARGET=${CTARGET}"
+	which ${CTARGET}-gcc || die "Did not detect ${CTARGET}-gcc"
 }
 
 _check_web() {
@@ -655,6 +667,7 @@ ewarn
 	fi
 
 	use android && _check_android
+	use arm && _check_arm
 	use rpi && _check_rpi
 	use native && _check_native
 	use web && _check_web
@@ -1734,15 +1747,21 @@ src_configure() {
 
 				if [[	"${EPLATFORM}" == "android" && \
 					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+					export CC=${CTARGET}-gcc
+					export CXX=${CTARGET}-g++
 					configure_android
 				elif [[ "${EPLATFORM}" == "arm" && \
 					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+					export CC=${CTARGET}-gcc
+					export CXX=${CTARGET}-g++
 					configure_arm
 				elif [[ "${EPLATFORM}" == "native" && \
 					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_native
 				elif [[ "${EPLATFORM}" == "rpi" && \
 					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+					export CC=${CTARGET}-gcc
+					export CXX=${CTARGET}-g++
 					configure_rpi
 				elif [[ "${EPLATFORM}" == "web" && ( \
 					"${ESTSH_LIB_TYPE}" == "module" || \
