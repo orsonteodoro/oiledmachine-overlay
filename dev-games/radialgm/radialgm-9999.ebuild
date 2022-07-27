@@ -193,3 +193,19 @@ src_install() {
 	patchelf --set-rpath "/usr/$(get_libdir)/enigma" \
 		"${ED}/usr/$(get_libdir)/RadialGM" || die
 }
+
+pkg_postinst() {
+	pkg_postinst
+einfo
+einfo "A build failure may happen in a simple hello world test if the"
+einfo "appropriate subsystem USE flag in enigma was disabled with building it"
+einfo "or a dependency is not available, but the game settings are the"
+einfo "opposite.  Both the USE flag and the Game Setting and/or extensions must"
+einfo "match."
+einfo
+einfo "You must carefully enable/disable the Resources > Create Settings >"
+einfo "(double click) setting 0 > API and extensions in (double click)"
+einfo "setting 0 > Extensions in RadialGM to fix inconsistencies to"
+einfo "prevent game build failures."
+einfo
+}

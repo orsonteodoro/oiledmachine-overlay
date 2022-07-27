@@ -1,3 +1,6 @@
+Subject:  Link against external enigma
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Sun Jul 24 22:24:06 PDT 2022
 diff -urp radialgm-9999.orig/CMakeLists.txt radialgm-9999/CMakeLists.txt
 --- radialgm-9999.orig/CMakeLists.txt	2022-07-24 21:39:25.055516784 -0700
 +++ radialgm-9999/CMakeLists.txt	2022-07-24 21:55:56.774947358 -0700
