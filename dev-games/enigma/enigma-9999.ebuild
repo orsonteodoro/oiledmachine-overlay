@@ -967,6 +967,29 @@ pkg_postinst()
 	if use android ; then
 einfo
 einfo "You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"
+einfo "for SYSROOT, -I, -L changes.  They should point/reference CTARGET not"
+einfo "CBUILD."
+einfo
+	fi
+	if use macos ; then
+einfo
+einfo "You need to modify /usr/$(get_libdir)/Compilers/AppleCross64.ey manually"
+einfo "for SYSROOT, -I, -L changes.  They should point/reference CTARGET not"
+einfo "CBUILD."
+einfo
+	fi
+	if use mingw32 ; then
+einfo
+einfo "You need to modify /usr/$(get_libdir)/Compilers/MinGW32.ey manually"
+einfo "for SYSROOT, -I, -L changes.  They should point/reference CTARGET not"
+einfo "CBUILD."
+einfo
+	fi
+	if use mingw74 ; then
+einfo
+einfo "You need to modify /usr/$(get_libdir)/Compilers/MinGW64.ey manually"
+einfo "for SYSROOT, -I, -L changes.  They should point/reference CTARGET not"
+einfo "CBUILD."
 einfo
 	fi
 einfo
