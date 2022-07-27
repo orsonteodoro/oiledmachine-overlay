@@ -34,15 +34,23 @@ b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
 ABI_FINGERPRINT="4742c621d202c5d84b6a87efa7a371eaadc142fdb904b976f3fcbbc2517bb0b5"
-DEPENDS_FINGERPRINT="60c2107c0ea2efd2261adbbd3a8b292f1a39c801aa659ef435e2ea609ea7c17f"
+DEPENDS_FINGERPRINT="ca6084da62d9dfa0ab20c1e12125575bae04a4c14ab20d4fb72557eaca8473ee"
 SLOT="0/${ABI_FINGERPRINT}"
-IUSE+=" android box2d bullet clang d3d ds doc externalfuncs freetype gles2
-gles3 gme gnome gtk2 gtest headless kde macos mingw32 mingw64 network
-+openal +opengl png sdl2 sound test widgets wine +X xrandr xtest"
+IUSE+=" android box2d bullet clang d3d ds doc externalfuncs +freetype gles2
+gles3 gme gnome gtk2 gtest headless joystick kde macos mingw32 mingw64 network
++openal +opengl +png sdl2 sound test threads widgets wine +X xrandr xtest"
 REQUIRED_USE_PLATFORMS="
 	|| ( android headless macos sdl2 X )
 "
+
+# Required to build but sometimes not required as an extension
+REQUIRED_BUILD="
+	freetype
+	png
+"
+
 REQUIRED_USE+="
+	${REQUIRED_BUILD}
 	${REQUIRED_USE_PLATFORMS}
 	android? (
 		|| ( gles2 gles3 )
@@ -181,7 +189,7 @@ DEPEND+="
 	kde? ( >=kde-apps/kdialog-19.12.3 )
 	network? ( >=net-misc/curl-${CURL_PV}[${MULTILIB_USEDEP}] )
 	openal? (
-		>=media-libs/alure-${ALURE_PV}[${MULTILIB_USEDEP}]
+		>=media-libs/alure-${ALURE_PV}[${MULTILIB_USEDEP},dumb,vorbis]
 		>=media-libs/dumb-2.0.3[${MULTILIB_USEDEP}]
 		>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
 		>=media-libs/openal-${OPENAL_PV}[${MULTILIB_USEDEP}]
@@ -193,9 +201,8 @@ DEPEND+="
 	)
 	sdl2? (
 		X? ( >=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},opengl?] )
-		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},sound?]
-		>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[${MULTILIB_USEDEP}]
-
+		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},joystick?,sound?,threads?]
+		>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[${MULTILIB_USEDEP},flac,mod,mp3,vorbis]
 	)
 	wine? (
 		sys-devel/crossdev
@@ -354,7 +361,14 @@ eerror
 	fi
 	if use openal ; then
 		crossdev_has_pkg "media-libs/alure" "${ALURE_PV}"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "dumb"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "flac"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "mp3"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "sndfile"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "static-libs"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "vorbis"
 		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
+		crossdev_has_pkg_use "media-libs/flac" "${FLAC_PV}" "flac"
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
 		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
@@ -376,14 +390,22 @@ eerror
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
 		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
+		use joystick && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "joystick"
 		use opengl && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
 		use sound && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
+		use threads && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "threads"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
 		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
 		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
 		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
 		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
 		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
 	fi
@@ -457,6 +479,12 @@ eerror
 	fi
 	if use openal ; then
 		crossdev_has_pkg "media-libs/alure" "${ALURE_PV}"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "dumb"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "flac"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "mp3"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "sndfile"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "static-libs"
+		crossdev_has_pkg_use "media-libs/alure" "${ALURE_PV}" "vorbis"
 		crossdev_has_pkg "media-libs/flac" "${FLAC_PV}"
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
 		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
@@ -479,12 +507,20 @@ eerror
 		crossdev_has_pkg "media-libs/libmodplug" "${LIBMODPLUG_PV}"
 		crossdev_has_pkg "media-libs/libogg" "${LIBOGG_PV}"
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
+		use joystick && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "joystick"
 		use opengl && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
 		use sound && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
+		use threads && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "threads"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
 		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
 		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
 		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
 		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
@@ -571,11 +607,19 @@ eerror
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "gles1"
 		use gles2 && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "gles2"
+		use joystick && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "joystick"
 		use sound && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "sound"
+		use threads && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "threads"
 		crossdev_has_pkg "media-libs/libsndfile" "${LIBSNDFILE_PV}"
 		crossdev_has_pkg "media-libs/libvorbis" "${LIBVORBIS_PV}"
 		crossdev_has_pkg "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "flac"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mod"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "mp3"
+		crossdev_has_pkg_use "media-libs/sdl2-mixer" "${SDL2_MIXER_PV}" "vorbis"
 		crossdev_has_pkg "media-libs/opus" "${OPUS_PV}"
 		crossdev_has_pkg "media-sound/mpg123" "${MPG123_PV}"
 		crossdev_has_pkg "sys-devel/gcc" "${GCC_PV}" # for -lssp
@@ -698,8 +742,12 @@ eerror
 	fi
 	if use sdl2 ; then
 		crossdev_has_pkg "media-libs/libsdl2" "${LIBSDL2_PV}"
+		use joystick && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "joystick"
 		use opengl && \
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "opengl"
+		use threads && \
+		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "threads"
 		crossdev_has_pkg_use "media-libs/libsdl2" "${LIBSDL2_PV}" "aqua"
 	fi
 }

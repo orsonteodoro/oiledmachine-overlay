@@ -15,14 +15,28 @@
 
     Cross build support status:
 
-    Android - Incomplete / Untested
-    macOS - Incomplete / Untested
-    WINE - Incomplete / Untested
+      Android - Incomplete / Untested
+      macOS - Incomplete / Untested
+      WINE - Incomplete / Untested
 
     For android support set ANDROID_SYSROOT, ANDROID_CTARGET as environment variables.
     For macos support set MACOS_SYSROOT, MACOS_CTARGET as environment variables.
     For wine32 support set MINGW32_SYSROOT, MINGW32_CTARGET as environment variables.
     For wine64 support set MINGW64_SYSROOT, MINGW64_CTARGET as environment variables.
+
+    Asset formats supported:
+
+      (Some formats may no be supported by dialog filters, unlinked libraries,
+       missing support, etc.)
+
+      audio:  flac, mod, mp3, ogg
+        dumb (it, xm, mod, stm, s3m, 669, amf, dsm, mtm, okt, psm, pit, riff),
+        gme (ay, gbs, gym, hes, kss, nsf, nsfe, sap, spc, vgm),
+        sndfile (aiff, au, avr, caf, flac, htk, iff, mat, mpc, m1a, oga, paf,
+                 pvf, raw, rf64, sd2, sds, sf, voc, w64, wav, wve, x8)
+      images (2D sprites):  bmp, gif, png
+      3D models:  obj (d3d only)
+      shaders:  glsl, hlsl9, hlsl11
 
     Additional cross build documentation:
     https://wiki.gentoo.org/wiki/Mingw
@@ -33,17 +47,6 @@
     built and available in order to build for the target platform.  All
     dependencies must have matching ABI (all 32-bit or all 64-bit) in
     the crossdev image(s).
-
-    The main program resides on Linux.
-    Each target platform has built all dependencies.
-
-    You need to add the following in /etc/portage/profile/package.use.force
-    in order to use experimental support.
-
-	----- CUT BELOW HERE -----
-games-misc/enigma -android
-games-misc/enigma -wine
-	----- CUT ABOVE HERE -----
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/enigma-dev/enigma-dev/issues</bugs-to>
@@ -74,18 +77,23 @@ games-misc/enigma -wine
       input dialogs, and color picker.</flag>
     <flag name="gtest">Adds support for gtest.</flag>
     <flag name="headless">Run as headless for building servers.</flag>
+    <flag name="joystick">Add support for gamepads and joysticks.</flag>
+    <flag name="jpeg">For linking only.  It likely does nothing.</flag>
     <flag name="kde">Uses KDialog as the default widget engine if running
       KDE for alerts, user prompts, file dialogs, color picker.</flag>
     <flag name="macos">Apply changes for support for cross compiling for
       macOS.</flag>
     <flag name="mingw32">Adds dependencies implied with mingw32 and wine.</flag>
     <flag name="mingw64">Adds dependencies implied with mingw64 and wine.</flag>
+    <flag name="network">Adds dependencies for network support.</flag>
     <flag name="openal">Installs and makes OpenAL the default audio
       system.</flag>
     <flag name="opengl">Adds OpenGL support.</flag>
+    <flag name="png">Adds support for sprites that use PNG images.</flag>
     <flag name="sdl2">Adds window creation and input support via SDL2 in a
       platform independent way.</flag>
     <flag name="test">Tests the code.</flag>
+    <flag name="threads">Adds thread support.</flag>
     <flag name="widgets">Adds widgets support for dialogs.</flag>
     <flag name="win64">Adds WINE64 support.</flag>
     <flag name="X">Add window and input support through X11 in a platform
