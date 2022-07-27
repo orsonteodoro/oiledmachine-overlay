@@ -7,9 +7,8 @@ EPLATFORMS="android arm native rpi web"
 STATIC_LIBS_CUSTOM_LIB_TYPE_IMPL="module"
 STATIC_LIBS_CUSTOM_LIB_TYPE_IUSE="+module"
 CMAKE_MAKEFILE_GENERATOR=emake
-#LLVM_SLOTS=(15 14 13 12 11 10 9)
-LLVM_SLOTS=(9)
-LLVM_MAX_SLOT=9
+LLVM_SLOTS=(15 14 13) # Previously tested with 9
+LLVM_MAX_SLOT=15 # It needs testing.  It can break with different LLVM.
 
 inherit cmake-utils eutils flag-o-matic linux-info llvm multilib-minimal platforms static-libs
 
