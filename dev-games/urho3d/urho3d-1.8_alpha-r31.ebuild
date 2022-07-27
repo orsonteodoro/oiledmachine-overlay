@@ -398,7 +398,7 @@ DEPEND_ANDROID="
 	)
 	network? (
 		system-civetweb? (
-			>=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1]
+>=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1]
 		)
 		system-slikenet? (
 			net-libs/slikenet[${MULTILIB_USEDEP}]
@@ -432,7 +432,7 @@ DEPEND_NATIVE="
 	)
 	network? (
 		system-civetweb? (
-			>=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1]
+>=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1]
 		)
 		system-slikenet? (
 			net-libs/slikenet[${MULTILIB_USEDEP}]
@@ -476,7 +476,7 @@ DEPEND_RPI="
 	)
 	network? (
 		system-civetweb? (
-			>=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1]
+>=www-servers/civetweb-${CIVETWEB_VER}:=[static-libs?,lua,lua_targets_lua5-1]
 		)
 		system-slikenet? (
 			net-libs/slikenet[${MULTILIB_USEDEP}]
