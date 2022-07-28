@@ -6,13 +6,18 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <longdescription>
+    Use this package within a crossdev image.
+
+    The 32-bit crossdev image is assumed monolib not multilib.
+  </longdescription>
   <use>
     <flag name="box2">Adds Box2D support for 2D physics support.</flag>
     <flag name="bullet">Adds Bullet support for 3D physics support.</flag>
     <flag name="curl">Adds cURL support for multiplayer support.</flag>
     <flag name="doc">Installs documents.</flag>
-    <flag name="ds">Adds sound support from WINE.</flag>
-    <flag name="d3d">Adds 3D support from WINE.</flag>
+    <flag name="ds">Adds sound support from Wine.</flag>
+    <flag name="d3d">Adds 3D support from Wine.</flag>
     <flag name="externalfuncs">Add support for GM ExternalFuncs to call DLL
       functions.</flag>
     <flag name="gles1">Installs and adds OpenGL ES 1.x support.</flag>
@@ -41,7 +46,7 @@
     <flag name="test">Tests the code.</flag>
     <flag name="threads">Adds thread support.</flag>
     <flag name="widgets">Adds widgets support for dialogs.</flag>
-    <flag name="win64">Adds WINE64 support.</flag>
+    <flag name="wine">Adds Wine32 support.</flag>
     <flag name="X">Add window and input support through X11 in a platform
       dependent way.</flag>
     <flag name="xtest">Adds support for keyboard_key_release function

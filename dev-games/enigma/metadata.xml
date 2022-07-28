@@ -17,7 +17,7 @@
 
       Android - Incomplete / Untested
       macOS - Incomplete / Untested
-      WINE - Incomplete / Untested
+      Wine - Incomplete / Untested
 
     For android support set ANDROID_SYSROOT, ANDROID_CTARGET as environment variables.
     For macos support set MACOS_SYSROOT, MACOS_CTARGET as environment variables.
@@ -31,6 +31,9 @@
       dev-games/enigma-macos
       dev-games/enigma-mingw32
       dev-games/enigma-mingw64
+
+    Both enigma-mingw32 and enigma-mingw64 should be in separate monolib crossdev
+    images.
 
     Asset formats supported:
 
@@ -75,8 +78,8 @@
     <flag name="bullet">Adds Bullet support for 3D physics support.</flag>
     <flag name="curl">Adds cURL support for multiplayer support.</flag>
     <flag name="doc">Installs documents.</flag>
-    <flag name="ds">Adds sound support from WINE.</flag>
-    <flag name="d3d">Adds 3D support from WINE.</flag>
+    <flag name="ds">Adds sound support from Wine.</flag>
+    <flag name="d3d">Adds 3D support from Wine.</flag>
     <flag name="externalfuncs">Add support for GM ExternalFuncs to call DLL
       functions.</flag>
     <flag name="gles1">Installs and adds OpenGL ES 1.x support.</flag>
@@ -95,8 +98,10 @@
       KDE for alerts, user prompts, file dialogs, color picker.</flag>
     <flag name="macos">Apply changes for support for cross compiling for
       macOS.</flag>
-    <flag name="mingw32">Adds dependencies implied with mingw32 and wine.</flag>
-    <flag name="mingw64">Adds dependencies implied with mingw64 and wine.</flag>
+    <flag name="mingw32">Adds dependencies implied with MinGW32-w64 (32-bit) and
+      Wine.</flag>
+    <flag name="mingw64">Adds dependencies implied with MinGW64-w64 (64-bit) and
+      Wine.</flag>
     <flag name="network">Adds dependencies for network support.</flag>
     <flag name="openal">Installs and makes OpenAL the default audio
       system.</flag>
@@ -107,7 +112,7 @@
     <flag name="test">Tests the code.</flag>
     <flag name="threads">Adds thread support.</flag>
     <flag name="widgets">Adds widgets support for dialogs.</flag>
-    <flag name="win64">Adds WINE64 support.</flag>
+    <flag name="wine">Adds Wine support.</flag>
     <flag name="X">Add window and input support through X11 in a platform
       dependent way.</flag>
     <flag name="xtest">Adds support for keyboard_key_release function

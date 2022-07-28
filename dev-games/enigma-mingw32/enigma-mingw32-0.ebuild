@@ -2,8 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-DESCRIPTION="A package for cross building with the MinGW32 toolchain and WINE32
-for the Enigma game engine"
+DESCRIPTION="A package for cross building with the MinGW-w64 (32-bit) toolchain
+and Wine32 for the Enigma game engine"
 REVISION=0
 SLOT="0/${REVISION}"
 IUSE="box2d bullet freetype gme gtest gtk2 joystick network openal opengl png
@@ -51,6 +51,7 @@ ZLIB_PV="1.2.12"
 # FIXME: alures[modplug] is missing
 RDEPEND="
 	>=dev-libs/libffi-${LIBFFI_PV}
+	>=dev-util/mingw64-runtime-10
 	>=media-libs/glm-${GLM_PV}
 	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/zlib-${ZLIB_PV}
