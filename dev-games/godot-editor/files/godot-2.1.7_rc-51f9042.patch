@@ -1,0 +1,59 @@
+From 51f9042a5b9d5a11e0a4b54a1a277d63e43a316e Mon Sep 17 00:00:00 2001
+From: Michele Valente <valentactive@gmail.com>
+Date: Wed, 24 Apr 2019 15:50:48 +0200
+Subject: [PATCH] add option to use ThinLTO
+
+This adds ThinLTO support when using Clang and the LLD Linker, it's
+turned off by
+default.
+For now only support for Linux added as ThinLTO support on other
+platforms may still be buggy.
+---
+
+Backported to 2.1.7_rc
+Modified by Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Jun 1, 2021
+
+diff -urp godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/x11/detect.py godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/x11/detect.py
+--- godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/x11/detect.py	2021-06-01 11:58:05.125248531 -0700
++++ godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/x11/detect.py	2021-06-01 12:01:33.673536916 -0700
+@@ -53,6 +53,7 @@ def get_opts():
+     return [
+         ('use_llvm', 'Use llvm compiler', 'no'),
+         ('use_lld', 'Use the LLD linker', 'no'),
++        ('use_thinlto', 'Use ThinLTO', 'no'),
+         ('use_static_cpp', 'Link libgcc and libstdc++ statically for better portability', 'no'),
+         ('use_sanitizer', 'Use llvm compiler sanitize address', 'no'),
+         ('use_leak_sanitizer', 'Use llvm compiler sanitize memory leaks', 'no'),
+@@ -114,11 +115,17 @@ def configure(env):
+     #	env['LIBSUFFIX'] = ".nt"+env['LIBSUFFIX']
+ 
+     if (env["use_lto"] == "yes"):
+-        env.Append(CCFLAGS=['-flto'])
+         if (env['use_llvm'] == "no" and env.GetOption("num_jobs") > 1):
++            env.Append(CCFLAGS=['-flto'])
+             env.Append(LINKFLAGS=['-flto=' + str(env.GetOption("num_jobs"))])
+         else:
+-            env.Append(LINKFLAGS=['-flto'])
++            if env['use_lld'] and env['use_thinlto']:
++                env.Append(CCFLAGS=['-flto=thin'])
++                env.Append(LINKFLAGS=['-flto=thin'])
++            else:
++                env.Append(CCFLAGS=['-flto'])
++                env.Append(LINKFLAGS=['-flto'])
++
+         if (env["use_llvm"] == "no"):
+             env['RANLIB'] = 'gcc-ranlib'
+             env['AR'] = 'gcc-ar'
+@@ -126,6 +133,9 @@ def configure(env):
+     if (env['use_lld'] == "yes"):
+         if (env['use_llvm'] == "yes"):
+             env.Append(LINKFLAGS=['-fuse-ld=lld'])
++            if env['use_thinlto']:
++                # A convenience so you don't need to write use_lto too when using SCons
++                env['use_lto'] = True
+         else:
+             print("Using LLD with GCC is not supported yet, try compiling with 'use_llvm=yes'.")
+             sys.exit(255)
+Only in godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/x11: detect.py.orig
+Only in godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/x11: detect.py.rej

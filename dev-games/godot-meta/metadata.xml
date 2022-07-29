@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- For this ebuild only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    This is a meta package for installing Godot on this distro.
+
+
+    Cross-compile notes:
+
+      * Packages with godot-cross-* need to be emerged in crossdev context.
+      * Packages with godot-template-* need to be emerge in native context.
+      * See also metadata.xml in each package for details.
+
+  </longdescription>
+    <flag name="android">Adds the export template for Android</flag>
+    <flag name="dedicated-server">Adds a dedicated gaming Linux server</flag>
+    <flag name="demos">Installs demos</flag>
+    <flag name="headless-server">Adds a headless Linux server for editing and
+      testing</flag>
+    <flag name="ios">Adds the export template for iOS</flag>
+    <flag name="javascript">Adds the export template for WASM HTML5</flag>
+    <flag name="linux32">Adds the export template for 32-bit Linux</flag>
+    <flag name="linux64">Adds the export template for 64-bit Linux</flag>
+    <flag name="linux-minimal">Adds the export template for minimal native
+      Linux</flag>
+    <flag name="linux-no-mono">Adds the export template for native Linux
+      without Mono</flag>
+    <flag name="macos">Adds the export template for macOS</flag>
+    <flag name="mingw32">Adds the export template for MinGW-w64 (32-bit)
+      for Wine32</flag>
+    <flag name="mingw32">Adds the export template for MinGW-w64 (64-bit)
+      for Wine64</flag>
+  </use>
+  <slots>
+    <slot name="2">
+      For backwards compatibility with version 2 projects.
+    </slot>
+    <slot name="3">
+      For compatibility with version 3 projects only.
+    </slot>
+  </slots>
+</pkgmetadata>

@@ -104,8 +104,8 @@ mono? (
 )"
 RESTRICT="fetch mirror"
 fi
-SLOT_MAJ="3"
-SLOT="${SLOT_MAJ}/${PV}"
+SLOT_MAJ="$(ver_cut 1 ${PV})"
+SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
 # webxr, camera is enabled upstream by default
 IUSE+=" +3d +advanced-gui camera clang +dds debug +denoise docs
@@ -959,6 +959,11 @@ eerror
 }
 
 pkg_setup() {
+ewarn
+ewarn "Deprecated ebuild.  Use godot-meta instead."
+ewarn
+	sleep 15
+
 ewarn
 ewarn "This ebuild is still a Work In Progress (WIP) as of 2021"
 ewarn

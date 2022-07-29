@@ -1,0 +1,37 @@
+diff -urp godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/server/detect.py godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/server/detect.py
+--- godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/server/detect.py	2020-10-01 10:50:39.000000000 -0700
++++ godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/server/detect.py	2021-06-01 13:22:12.613244285 -0700
+@@ -24,6 +24,9 @@ def get_opts():
+     return [
+         ('use_llvm', 'Use llvm compiler', 'no'),
+-        ('force_32_bits', 'Force 32 bits binary', 'no')
++        ('force_32_bits', 'Force 32 bits binary', 'no'),
++        ('use_lld', 'Use the LLD linker', 'no'),
++        ('use_lto', 'Use LTO', 'no'),
++        ('use_thinlto', 'Use ThinLTO', 'no')
+     ]
+ 
+ 
+@@ -118,3 +121,22 @@ def configure(env):
+         env.Append(CPPFLAGS=['-DTYPED_METHOD_BIND'])
+         env["CC"] = "clang"
+         env["LD"] = "clang++"
++
++    if (env['use_lld'] == "yes"):
++        if (env['use_llvm'] == "yes"):
++            env.Append(LINKFLAGS=['-fuse-ld=lld'])
++
++    if (env['use_lto'] == "yes"):
++        if (env['use_llvm'] == "no" and env.GetOption("num_jobs") > 1):
++            env.Append(CCFLAGS=['-flto'])
++            env.Append(LINKFLAGS=['-flto=' + str(env.GetOption("num_jobs"))])
++        else:
++            if (env['use_thinlto'] == "yes"):
++                env.Append(CCFLAGS=['-flto=thin'])
++                env.Append(LINKFLAGS=['-flto=thin'])
++            else:
++                env.Append(CCFLAGS=['-flto'])
++                env.Append(LINKFLAGS=['-flto'])
++        if (env['use_llvm'] == "no"):
++            env['RANLIB'] = 'gcc-ranlib'
++            env['AR'] = 'gcc-ar'

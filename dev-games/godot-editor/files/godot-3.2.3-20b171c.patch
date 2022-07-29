@@ -1,0 +1,25 @@
+Subject:  ccache fix
+Backport to 3.2.3 of 20b171cc5ae2482896ca6612d1db21e45b21576c
+
+URI:
+https://github.com/godotengine/godot/commit/20b171cc5ae2482896ca6612d1db21e45b21576c
+https://github.com/godotengine/godot/commit/5d217a94414117438d92b094956baead8ec942fb
+
+----
+diff -urp godot-3.2.3-stable.orig/SConstruct godot-3.2.3-stable/SConstruct
+--- godot-3.2.3-stable.orig/SConstruct	2020-09-16 08:12:35.000000000 -0700
++++ godot-3.2.3-stable/SConstruct	2021-03-29 19:15:29.057595923 -0700
+@@ -61,11 +61,8 @@ elif platform_arg == "javascript":
+     # Use generic POSIX build toolchain for Emscripten.
+     custom_tools = ["cc", "c++", "ar", "link", "textfile", "zip"]
+ 
+-env_base = Environment(tools=custom_tools)
+-if "TERM" in os.environ:
+-    env_base["ENV"]["TERM"] = os.environ["TERM"]
+-env_base.AppendENVPath("PATH", os.getenv("PATH"))
+-env_base.AppendENVPath("PKG_CONFIG_PATH", os.getenv("PKG_CONFIG_PATH"))
++# Construct the environment using the user's host env variables.
++env_base = Environment(ENV=os.environ, tools=custom_tools)
+ env_base.disabled_modules = []
+ env_base.use_ptrcall = False
+ env_base.module_version_string = ""

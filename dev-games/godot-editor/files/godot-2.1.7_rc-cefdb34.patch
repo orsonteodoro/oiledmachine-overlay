@@ -1,0 +1,41 @@
+Apply partial cefdb34
+Changes to applied 50868df
+
+Changes by Orson Teodoro <orsonteodoro@hotmail.com>
+Date Jun 1, 2021
+
+diff -urp godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/iphone/detect.py godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/iphone/detect.py
+--- godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/platform/iphone/detect.py	2020-10-01 10:50:39.000000000 -0700
++++ godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/platform/iphone/detect.py	2021-06-01 17:01:30.776688345 -0700
+@@ -159,9 +159,6 @@ def configure(env):
+         env.Append(CPPFLAGS=['-DNDEBUG', '-DNS_BLOCK_ASSERTIONS=1'])
+         env.Append(CPPFLAGS=['-O2', '-ftree-vectorize', '-fomit-frame-pointer', '-ffast-math', '-funsafe-math-optimizations'])
+         env.Append(LINKFLAGS=['-O2'])
+-        if env['use_lto'] == 'yes':
+-            env.Append(CPPFLAGS=['-flto'])
+-            env.Append(LINKFLAGS=['-flto'])
+ 
+         if env["target"] == "release_debug":
+             env.Append(CPPFLAGS=['-DDEBUG_ENABLED'])
+@@ -171,6 +168,10 @@ def configure(env):
+         env.Append(CPPFLAGS=['-D_DEBUG', '-DDEBUG=1', '-gdwarf-2', '-O0', '-DDEBUG_ENABLED'])
+         env.Append(CPPFLAGS=['-DDEBUG_MEMORY_ENABLED'])
+ 
++    if env['use_lto'] == 'yes':
++        env.Append(CPPFLAGS=['-flto'])
++        env.Append(LINKFLAGS=['-flto'])
++
+     if (env["ios_sim"] == "yes"):  # TODO: Check if needed?
+         env['ENV']['MACOSX_DEPLOYMENT_TARGET'] = '10.6'
+     env['ENV']['CODESIGN_ALLOCATE'] = '/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate'
+diff -urp godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/SConstruct godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/SConstruct
+--- godot-89e531d223ef189219e266cc61ea79a7dd2d5f54.orig/SConstruct	2020-10-01 10:50:39.000000000 -0700
++++ godot-89e531d223ef189219e266cc61ea79a7dd2d5f54/SConstruct	2021-06-01 16:56:53.975685736 -0700
+@@ -144,6 +144,7 @@ opts.Add('p', "Platform (alias for 'plat
+ opts.Add('platform', "Target platform: any in " + str(platform_list), '')
+ opts.Add('target', "Compilation target (debug/release_debug/release)", 'debug')
+ opts.Add('tools', "Build the tools a.k.a. the Godot editor (yes/no)", 'yes')
++opts.Add('use_lto', "Use linking time optimization", 'no')
+ 
+ # Components
+ opts.Add('deprecated', "Enable deprecated features (yes/no)", 'yes')

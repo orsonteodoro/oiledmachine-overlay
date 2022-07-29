@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- For this ebuild only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    Emerge this package only within the crossdev context.
+
+
+    Required environment variables
+
+      EGODOT_MACOS_SYSROOT - The crossdev install of the macOS cross toolchain
+      EGODOT_MACOS_SDK_VERSION - The macOS SDK version
+
+
+    These are to be defined in the per-package environment.  Details to set this
+    up can be found on:
+
+      https://wiki.gentoo.org/wiki//etc/portage/package.env
+
+
+    See also:
+
+      https://github.com/tpoechtrager/osxcross/blob/master/build.sh#L32
+
+  </longdescription>
+  <use>
+    <flag name="sdk_10_5_or_less">
+      Compatibility for macOS SDK 10.5 or less
+    </flag>
+    <flag name="sdk_10_6_or_newer">
+      Compatibility for macOS SDK 10.6 or newer
+    </flag>
+  <use>
+</pkgmetadata>
