@@ -96,11 +96,6 @@ IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
 IUSE+=" -gamepad +touch" # for input
 IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
-IUSE+=" system-bullet system-embree system-enet system-freetype system-libogg
-system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp
-system-libwebsockets system-mbedtls system-miniupnpc system-opus system-pcre2
-system-recast system-squish system-wslay system-xatlas
-system-zlib system-zstd"
 SANITIZERS=" asan lsan tsan ubsan"
 IUSE+=" ${SANITIZERS}"
 # media-libs/xatlas is a placeholder
@@ -120,26 +115,6 @@ REQUIRED_USE+="
 	optimize-speed? ( !optimize-size )
 	portable? (
 		!asan
-		!system-bullet
-		!system-embree
-		!system-enet
-		!system-freetype
-		!system-libogg
-		!system-libpng
-		!system-libtheora
-		!system-libvorbis
-		!system-libvpx
-		!system-libwebp
-		!system-libwebsockets
-		!system-mbedtls
-		!system-miniupnpc
-		!system-opus
-		!system-pcre2
-		!system-recast
-		!system-squish
-		!system-xatlas
-		!system-zlib
-		!system-zstd
 		!tsan
 	)
 "
@@ -262,29 +237,6 @@ DISABLED_DEPEND+="
 		)
 	)
         gamepad? ( virtual/libudev )
-	system-bullet? ( >=sci-physics/bullet-3.17 )
-	system-enet? ( >=net-libs/enet-1.3.17 )
-	system-embree? ( >=media-libs/embree-3.13.0 )
-	system-freetype? ( >=media-libs/freetype-${FREETYPE_V} )
-	system-libogg? ( >=media-libs/libogg-${LIBOGG_V} )
-	system-libpng? ( >=media-libs/libpng-1.6.37 )
-	system-libtheora? ( >=media-libs/libtheora-1.1.1 )
-	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V} )
-	system-libvpx? ( >=media-libs/libvpx-1.6.0 )
-	system-libwebp? ( >=media-libs/libwebp-1.1.0 )
-	system-mbedtls? ( >=net-libs/mbedtls-2.16.12 )
-	system-miniupnpc? ( >=net-libs/miniupnpc-2.2.2 )
-	system-opus? (
-		>=media-libs/opus-1.1.5
-		>=media-libs/opusfile-0.8
-	)
-	system-pcre2? ( >=dev-libs/libpcre2-10.36[jit?] )
-	system-recast? ( dev-games/recastnavigation )
-	system-squish? ( >=media-libs/libsquish-1.15 )
-	system-wslay? ( >=net-libs/wslay-1.1.1 )
-	system-xatlas? ( media-libs/xatlas )
-	system-zlib? ( >=sys-libs/zlib-${ZLIB_V} )
-	system-zstd? ( >=app-arch/zstd-1.4.8 )
 "
 DISABLED_RDEPEND+=" ${DEPEND}"
 DISABLED_BDEPEND+="
@@ -543,34 +495,6 @@ src_compile() {
 		use_asan=$(usex asan)
 		use_tsan=$(usex tsan)
 		use_ubsan=$(usex ubsan)
-	)
-	local options_modules_shared=(
-		builtin_bullet=$(usex !system-bullet)
-		builtin_embree=$(usex !system-embree)
-		builtin_enet=$(usex !system-enet)
-		builtin_freetype=$(usex !system-freetype)
-		builtin_libogg=$(usex !system-libogg)
-		builtin_libpng=$(usex !system-libpng)
-		builtin_libtheora=$(usex !system-libtheora)
-		builtin_libvorbis=$(usex !system-libvorbis)
-		builtin_libvpx=$(usex !system-libvpx)
-		builtin_libwebp=$(usex !system-libwebp)
-		builtin_libwebsockets=$(usex !system-libwebsockets)
-		builtin_mbedtls=$(usex !system-mbedtls)
-		builtin_miniupnpc=$(usex !system-miniupnpc)
-		builtin_pcre2=$(usex !system-pcre2)
-		builtin_opus=$(usex !system-opus)
-		builtin_recast=$(usex !system-recast)
-		builtin_squish=$(usex !system-squish)
-		builtin_wslay=$(usex !system-wslay)
-		builtin_xatlas=$(usex !system-xatlas)
-		builtin_zlib=$(usex !system-zlib)
-		builtin_zstd=$(usex !system-zstd)
-		pulseaudio=$(usex pulseaudio)
-		use_static_cpp=$(usex portable)
-		builtin_certs=$(usex portable)
-		$(usex portable "" \
-"system_certs_path=/etc/ssl/certs/ca-certificates.crt")
 	)
 	local options_modules_static=(
 		builtin_bullet=True

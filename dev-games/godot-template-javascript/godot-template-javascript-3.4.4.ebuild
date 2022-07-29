@@ -180,7 +180,6 @@ DEPEND=" ${CDEPEND}"
 BDEPEND="
 	${CDEPEND}
 	${PYTHON_DEPS}
-	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
 	dev-util/scons
 	webm-simd? (
 		dev-lang/yasm
@@ -299,22 +298,13 @@ src_configure() {
 src_compile_web()
 {
 	unset CCACHE
-	local options_modules_
-	if [[ -n "${EGODOT_JAVASCRIPT_CONFIG}" ]] ; then
-		einfo "Using config override for Web"
-		einfo "${EGODOT_JAVASCRIPT_CONFIG}"
-		options_modules_=(${EGODOT_JAVASCRIPT_CONFIG})
-	else
-		options_modules_=(${options_modules[@]})
-	fi
-	einfo "Creating export templates for the Web with WebAssembly (WASM)"
+	einfo "Creating export templates"
 	_configure_emscripten
 
 	for c in release release_debug ; do
 		scons ${options_javascript[@]} \
-			${options_modules_[@]} \
-			$([[ -z "${EGODOT_JAVASCRIPT_CONFIG}" ]] \
-				&& echo ${options_modules_static[@]}) \
+			${options_modules[@]} \
+			${options_modules_static[@]} \
 			target=${c} \
 			tools=no \
 			|| die
