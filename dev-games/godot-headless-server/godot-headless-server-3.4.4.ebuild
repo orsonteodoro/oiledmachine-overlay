@@ -46,7 +46,7 @@ LICENSE="
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
-KEYWORDS="~amd64 ~x86 ~riscv"
+KEYWORDS="~amd64 ~riscv ~x86"
 
 FN_SRC="${PV}-stable.tar.gz"
 FN_DEST="${MY_P}.tar.gz"

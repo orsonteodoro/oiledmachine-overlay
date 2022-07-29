@@ -4,7 +4,7 @@
 EAPI=8
 
 DESCRIPTION="Godot metapackage"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~riscv ~x86"
 IUSE_EXPORT_TEMPLATES="android dedicated-server headless-server ios javascript
 linux32 +linux64 linux-mono linux-server macos mingw32 mingw64"
 IUSE="${IUSE_EXPORT_TEMPLATES} +demos -export-templates"
