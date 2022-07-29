@@ -24,6 +24,9 @@ https://github.com/godotengine/${PN}/archive/refs/tags/3.4-${EGIT_COMMIT_DEMOS_S
 "
 
 S="${WORKDIR}/${PN}-${EGIT_COMMIT_DEMOS_STABLE}"
+RDEPEND="
+	!dev-games/godot
+"
 
 src_configure() { :; }
 src_compile() { :; }

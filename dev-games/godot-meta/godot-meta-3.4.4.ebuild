@@ -11,6 +11,7 @@ IUSE="${IUSE_EXPORT_TEMPLATES} +demos -export-templates"
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 RDEPEND="
+	!dev-games/godot
 	dev-games/godot-editor:${SLOT}
 	android? (
 		dev-games/godot-template-android:${SLOT}

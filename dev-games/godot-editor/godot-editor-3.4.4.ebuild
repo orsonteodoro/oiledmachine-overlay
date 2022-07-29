@@ -197,6 +197,7 @@ CDEPEND_SANITIZER="
 "
 CDEPEND+="
 	${CDEPEND_SANITIZER}
+	!dev-games/godot
 "
 CDEPEND_CLANG="
 	clang? (
