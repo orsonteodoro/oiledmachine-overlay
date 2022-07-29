@@ -544,12 +544,3 @@ _install_linux_editor() {
 src_install() {
 	_install_linux_editor
 }
-
-pkg_postinst() {
-einfo
-einfo "You need to copy the ${p} templates from"
-einfo "/usr/share/godot/${SLOT_MAJ}/templates to"
-einfo "~/.local/share/godot/templates/${PV}.${STATUS} or"
-einfo "\${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
-einfo
-}

@@ -445,12 +445,12 @@ _get_arch() {
 _install_export_templates()
 {
 	einfo "Installing export templates"
+	insinto /usr/share/godot/${SLOT_MAJ}/android/templates
 
 	local x
 	for x in $(find bin -type f) ; do
 		local bitness=$(_get_bitness "${x}")
 		local c=$(_get_configuration "${x}")
-		insinto /usr/share/godot/${SLOT_MAJ}/android/templates
 		newins "${x}" "android_${c}.apk"
 	done
 }
@@ -461,9 +461,10 @@ src_install() {
 
 pkg_postinst() {
 einfo
-einfo "You need to copy the ${p} templates from"
-einfo "/usr/share/godot/${SLOT_MAJ}/android/templates to"
-einfo "~/.local/share/godot/templates/${PV}.${STATUS} or"
-einfo "\${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
+einfo "The following still must be done:"
+einfo
+einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}"
+einfo "  echo \"${PV}.${STATUS}\" > ~/.local/share/godot/templates/${PV}.${STATUS}"
+einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/android/templates ~/.local/share/godot/templates/${PV}.${STATUS}"
 einfo
 }

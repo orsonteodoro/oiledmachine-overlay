@@ -631,12 +631,10 @@ src_install() {
 
 pkg_postinst() {
 einfo
-einfo "You need to copy the ${p} templates from"
-einfo "/usr/share/godot/${SLOT_MAJ}/macos/templates to"
-einfo "~/.local/share/godot/templates/${PV}.${STATUS} or"
-einfo "\${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
+einfo "The following still must be done:"
 einfo
-einfo "Only one export template of an macOS arch can be"
-einfo "installed at a time."
+einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}"
+einfo "  echo \"${PV}.${STATUS}\" > ~/.local/share/godot/templates/${PV}.${STATUS}"
+einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/macos/templates ~/.local/share/godot/templates/${PV}.${STATUS}"
 einfo
 }
