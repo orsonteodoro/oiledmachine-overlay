@@ -153,7 +153,14 @@ S="${WORKDIR}/godot-${PV}-stable"
 check_android_native()
 {
 	export ANDROID_NDK_ROOT="/opt/android-ndk"
-	export ANDROID_HOME="${ANDROID_NDK_ROOT}" # dummy skip
+#	export ANDROID_HOME="${EPREFIX}${ANDROID_SDK_DIR}" # already set by dev-util/android-sdk-update-manager env.d
+	if [[ -z "${ANDROID_HOME}" ]] ; then
+eerror
+eerror "Missing ANDROID_HOME set by dev-util/android-sdk-update-manager."
+eerror "Do \`env-update ; source /etc/profile\` to fix it."
+eerror
+		die
+	fi
 	if [[ -z "${EGODOT_ANDROID_API_LEVEL}" ]] ; then
 		EGODOT_ANDROID_API_LEVEL="android-19"
 	fi
