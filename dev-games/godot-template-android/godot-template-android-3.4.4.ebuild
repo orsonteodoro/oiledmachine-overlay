@@ -443,8 +443,7 @@ _install_export_templates()
 	for x in $(find bin -type f) ; do
 		local bitness=$(_get_bitness "${x}")
 		local c=$(_get_configuration "${x}")
-		local a=$(_get_arch "${x}")
-		insinto /usr/share/godot/${SLOT_MAJ}/android/templates/${a}
+		insinto /usr/share/godot/${SLOT_MAJ}/android/templates
 		newins "${x}" "android_${c}.apk"
 	done
 }
@@ -459,8 +458,5 @@ einfo "You need to copy the ${p} templates from"
 einfo "/usr/share/godot/${SLOT_MAJ}/android/templates to"
 einfo "~/.local/share/godot/templates/${PV}.${STATUS} or"
 einfo "\${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
-einfo
-einfo "Only one export template of an Android arch can be"
-einfo "installed at a time."
 einfo
 }
