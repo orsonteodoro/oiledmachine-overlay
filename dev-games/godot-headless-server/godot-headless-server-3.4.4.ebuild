@@ -91,12 +91,11 @@ IUSE+=" ${GODOT_LINUX}"
 IUSE+=" -gdscript gdscript_lsp +mono +visual-script" # for scripting languages
 IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
-IUSE+=" -gamepad +touch" # for input
-IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
+IUSE+=" +cvtt +freetype +pcre2" # for libraries
 IUSE+=" system-bullet system-embree system-enet system-freetype system-libogg
 system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp
 system-libwebsockets system-mbedtls system-miniupnpc system-opus system-pcre2
-system-recast system-squish system-wslay system-xatlas
+system-squish system-wslay
 system-zlib system-zstd"
 SANITIZERS=" asan lsan msan tsan ubsan"
 IUSE+=" ${SANITIZERS}"
@@ -134,9 +133,7 @@ REQUIRED_USE+="
 		!system-miniupnpc
 		!system-opus
 		!system-pcre2
-		!system-recast
 		!system-squish
-		!system-xatlas
 		!system-zlib
 		!system-zstd
 		!tsan
@@ -224,7 +221,6 @@ DEPEND+="
 	media-libs/libpng[${MULTILIB_USEDEP}]
 	media-libs/libsndfile[${MULTILIB_USEDEP}]
 	>=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}]
-        media-sound/pulseaudio[${MULTILIB_USEDEP}]
 	net-libs/libasyncns[${MULTILIB_USEDEP}]
 	sys-apps/tcp-wrappers[${MULTILIB_USEDEP}]
 	sys-apps/util-linux[${MULTILIB_USEDEP}]
@@ -241,7 +237,6 @@ DEPEND+="
 			>=app-misc/ca-certificates-20211101[cacert]
 		)
 	)
-        gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
 	system-bullet? ( >=sci-physics/bullet-3.17[${MULTILIB_USEDEP}] )
 	system-enet? ( >=net-libs/enet-1.3.17[${MULTILIB_USEDEP}] )
 	system-embree? ( >=media-libs/embree-3.13.0[${MULTILIB_USEDEP}] )
@@ -259,10 +254,8 @@ DEPEND+="
 		>=media-libs/opusfile-0.8[${MULTILIB_USEDEP}]
 	)
 	system-pcre2? ( >=dev-libs/libpcre2-10.36[${MULTILIB_USEDEP},jit?] )
-	system-recast? ( dev-games/recastnavigation[${MULTILIB_USEDEP}] )
 	system-squish? ( >=media-libs/libsquish-1.15[${MULTILIB_USEDEP}] )
 	system-wslay? ( >=net-libs/wslay-1.1.1[${MULTILIB_USEDEP}] )
-	system-xatlas? ( media-libs/xatlas[${MULTILIB_USEDEP}] )
 	system-zlib? ( >=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}] )
 	system-zstd? ( >=app-arch/zstd-1.4.8[${MULTILIB_USEDEP}] )
 "
@@ -401,18 +394,17 @@ src_compile() {
 		builtin_libvorbis=$(usex !system-libvorbis)
 		builtin_libvpx=$(usex !system-libvpx)
 		builtin_libwebp=$(usex !system-libwebp)
-		builtin_libwebsockets=$(usex !system-libwebsockets)
 		builtin_mbedtls=$(usex !system-mbedtls)
 		builtin_miniupnpc=$(usex !system-miniupnpc)
 		builtin_pcre2=$(usex !system-pcre2)
 		builtin_opus=$(usex !system-opus)
-		builtin_recast=$(usex !system-recast)
+		builtin_recast=True
 		builtin_squish=$(usex !system-squish)
 		builtin_wslay=$(usex !system-wslay)
-		builtin_xatlas=$(usex !system-xatlas)
+		builtin_xatlas=True
 		builtin_zlib=$(usex !system-zlib)
 		builtin_zstd=$(usex !system-zstd)
-		pulseaudio=$(usex pulseaudio)
+		pulseaudio=False
 		use_static_cpp=$(usex portable)
 		builtin_certs=$(usex portable)
 		$(usex portable "" \
@@ -429,7 +421,6 @@ src_compile() {
 		builtin_libvorbis=True
 		builtin_libvpx=True
 		builtin_libwebp=True
-		builtin_libwebsockets=True
 		builtin_mbedtls=True
 		builtin_miniupnpc=True
 		builtin_pcre2=True
@@ -500,7 +491,6 @@ src_compile() {
 		module_webrtc_enabled=$(usex webrtc)
 		module_webxr_enabled=False
 		module_xatlas_enabled=$(usex xatlas)
-		${EGODOT_ADDITIONAL_CONFIG}
 	)
 
 	src_compile_server

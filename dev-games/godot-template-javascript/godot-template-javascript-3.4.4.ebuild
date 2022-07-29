@@ -70,12 +70,11 @@ SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
 # webxr, camera is enabled upstream by default
 IUSE+=" +3d +advanced-gui camera +dds debug +denoise
-jit +lightmapper_cpu
++lightmapper_cpu
 +neon +optimize-speed +opensimplex optimize-size +portable +raycast
 webxr"
-IUSE+=" ca-certs-relax"
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
-+theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
++theora +tga +vorbis +webm +webp" # encoding/container formats
 
 GODOT_JAVASCRIPT_=(wasm32)
 
@@ -93,8 +92,7 @@ IUSE+=" ${GODOT_JAVASCRIPT}"
 IUSE+=" -closure-compiler -gdscript gdscript_lsp +javascript_eval
 -javascript_threads +visual-script" # for scripting languages
 IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
-IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
-IUSE+=" -gamepad +touch" # for input
+IUSE+=" +enet +jsonrpc +upnp +webrtc +websocket" # for connections
 IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
 # in master, sanitizers also applies to javascript
 SANITIZERS=" asan lsan msan tsan ubsan"
@@ -118,11 +116,6 @@ REQUIRED_USE+="
 	)
 "
 EMSCRIPTEN_V="2.0.10"
-FREETYPE_V="2.10.4"
-LIBOGG_V="1.3.5"
-LIBVORBIS_V="1.3.7"
-NDK_V="21"
-ZLIB_V="1.2.11"
 
 LLVM_SLOTS=(13) # See https://github.com/godotengine/godot/blob/3.4-stable/misc/hooks/pre-commit-clang-format#L79
 gen_cdepend_llvm() {
@@ -329,7 +322,6 @@ src_compile() {
 		builtin_libvorbis=True
 		builtin_libvpx=True
 		builtin_libwebp=True
-		builtin_libwebsockets=True
 		builtin_mbedtls=True
 		builtin_miniupnpc=True
 		builtin_pcre2=True
@@ -355,7 +347,7 @@ src_compile() {
 		disable_3d=$(usex !3d)
 		disable_advanced_gui=$(usex !advanced-gui)
 		minizip=$(usex minizip)
-		builtin_pcre2_with_jit=$(usex jit)
+		builtin_pcre2_with_jit=False
 		module_bmp_enabled=$(usex bmp)
 		module_bullet_enabled=$(usex bullet)
 		module_camera_enabled=$(usex camera)
@@ -374,7 +366,7 @@ src_compile() {
 		module_jpg_enabled=$(usex jpeg)
 		module_jsonrpc_enabled=$(usex jsonrpc)
 		module_lightmapper_cpu_enabled=$(usex lightmapper_cpu)
-		module_mbedtls_enabled=$(usex mbedtls)
+		module_mbedtls_enabled=False
 		module_minimp3_enabled=$(usex mp3)
 		module_mobile_vr_enabled=$(usex mobile-vr)
 		module_ogg_enabled=$(usex ogg)
@@ -400,7 +392,6 @@ src_compile() {
 		module_webrtc_enabled=$(usex webrtc)
 		module_webxr_enabled=$(usex webxr)
 		module_xatlas_enabled=$(usex xatlas)
-		${EGODOT_ADDITIONAL_CONFIG}
 	)
 
 	src_compile_web

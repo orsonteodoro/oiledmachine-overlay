@@ -128,7 +128,6 @@ REQUIRED_USE+="
 FREETYPE_V="2.10.4"
 LIBOGG_V="1.3.5"
 LIBVORBIS_V="1.3.7"
-NDK_V="21"
 ZLIB_V="1.2.11"
 
 LLVM_SLOTS=(12 13) # See https://github.com/godotengine/godot/blob/3.4-stable/misc/hooks/pre-commit-clang-format#L79
@@ -197,7 +196,7 @@ CDEPEND_GCC="
 	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )
 "
 # All dependencies are in the project.
-DISABLED_DEPEND+="
+DEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
 	app-arch/bzip2[${MULTILIB_USEDEP}]
@@ -267,8 +266,8 @@ DISABLED_DEPEND+="
 	system-zlib? ( >=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}] )
 	system-zstd? ( >=app-arch/zstd-1.4.8[${MULTILIB_USEDEP}] )
 "
-DISABLED_RDEPEND+=" ${DEPEND}"
-DISABLED_BDEPEND+="
+RDEPEND+=" ${DEPEND}"
+BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -409,7 +408,6 @@ src_compile() {
 		builtin_libvorbis=$(usex !system-libvorbis)
 		builtin_libvpx=$(usex !system-libvpx)
 		builtin_libwebp=$(usex !system-libwebp)
-		builtin_libwebsockets=$(usex !system-libwebsockets)
 		builtin_mbedtls=$(usex !system-mbedtls)
 		builtin_miniupnpc=$(usex !system-miniupnpc)
 		builtin_pcre2=$(usex !system-pcre2)
@@ -437,7 +435,6 @@ src_compile() {
 		builtin_libvorbis=True
 		builtin_libvpx=True
 		builtin_libwebp=True
-		builtin_libwebsockets=True
 		builtin_mbedtls=True
 		builtin_miniupnpc=True
 		builtin_pcre2=True
@@ -508,7 +505,6 @@ src_compile() {
 		module_webrtc_enabled=$(usex webrtc)
 		module_webxr_enabled=False
 		module_xatlas_enabled=$(usex xatlas)
-		${EGODOT_ADDITIONAL_CONFIG}
 	)
 
 	src_compile_linux

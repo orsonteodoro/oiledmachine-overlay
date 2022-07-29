@@ -70,10 +70,9 @@ fi
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
-IUSE+=" +3d +advanced-gui camera clang +dds debug +denoise
-jit +lightmapper_cpu lld
-lto +neon +optimize-speed +opensimplex optimize-size +portable +raycast"
-IUSE+=" ca-certs-relax"
+IUSE+=" +3d +advanced-gui camera +dds debug +denoise
+jit +lightmapper_cpu
++neon +optimize-speed +opensimplex optimize-size +portable +raycast"
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
 +theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
 
@@ -85,7 +84,6 @@ IUSE+=" ${GODOT_ANDROID}"
 IUSE+=" -gdscript gdscript_lsp +visual-script" # for scripting languages
 IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
-IUSE+=" -gamepad +touch" # for input
 IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
 SANITIZERS=" asan lsan msan tsan ubsan"
 IUSE+=" ${SANITIZERS}"
@@ -99,7 +97,6 @@ REQUIRED_USE+="
 	denoise? ( lightmapper_cpu )
 	gdscript_lsp? ( jsonrpc websocket )
 	|| ( ${GODOT_ANDROID} )
-	lld? ( clang )
 	lsan? ( asan )
 	optimize-size? ( !optimize-speed )
 	optimize-speed? ( !optimize-size )
@@ -330,7 +327,6 @@ src_compile() {
 		builtin_libvorbis=True
 		builtin_libvpx=True
 		builtin_libwebp=True
-		builtin_libwebsockets=True
 		builtin_mbedtls=True
 		builtin_miniupnpc=True
 		builtin_pcre2=True
@@ -401,7 +397,6 @@ src_compile() {
 		module_webrtc_enabled=$(usex webrtc)
 		module_webxr_enabled=False
 		module_xatlas_enabled=$(usex xatlas)
-		${EGODOT_ADDITIONAL_CONFIG}
 	)
 
 	src_compile_android

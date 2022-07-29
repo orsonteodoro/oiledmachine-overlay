@@ -13,7 +13,7 @@ MY_P="${MY_PN}-${PV}"
 STATUS="stable"
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit desktop eutils flag-o-matic llvm multilib-build python-any-r1 scons-utils
+inherit desktop eutils flag-o-matic multilib-build python-any-r1 scons-utils
 
 DESCRIPTION="Godot export template for iOS"
 HOMEPAGE="http://godotengine.org"
@@ -70,11 +70,10 @@ fi
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
-IUSE+=" +3d +advanced-gui camera clang +dds debug +denoise
-jit +lightmapper_cpu lld
+IUSE+=" +3d +advanced-gui camera +dds debug +denoise
+jit +lightmapper_cpu
 lto +neon +optimize-speed +opensimplex optimize-size +portable +raycast
 "
-IUSE+=" ca-certs-relax"
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
 +theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
 
@@ -94,7 +93,6 @@ IUSE+=" ${GODOT_IOS}"
 IUSE+=" -gdscript gdscript_lsp +visual-script" # for scripting languages
 IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
-IUSE+=" -gamepad +touch" # for input
 IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
 SANITIZERS=" asan lsan msan tsan ubsan"
 IUSE+=" ${SANITIZERS}"
@@ -110,7 +108,6 @@ REQUIRED_USE+="
 	denoise? ( lightmapper_cpu )
 	gdscript_lsp? ( jsonrpc websocket )
 	|| ( ${GODOT_IOS} )
-	lld? ( clang )
 	lsan? ( asan )
 	optimize-size? ( !optimize-speed )
 	optimize-speed? ( !optimize-size )
@@ -125,132 +122,10 @@ IOS_SDK_MIN_STORE="14"
 XCODE_SDK_MIN_STORE="12"
 EXPECTED_XCODE_SDK_MIN_VERSION_IOS="10"
 EXPECTED_IOS_SDK_MIN_VERSION="10"
-FREETYPE_V="2.10.4"
-LIBOGG_V="1.3.5"
-LIBVORBIS_V="1.3.7"
-NDK_V="21"
-ZLIB_V="1.2.11"
 
-LLVM_SLOTS=(12 13) # See https://github.com/godotengine/godot/blob/3.4-stable/misc/hooks/pre-commit-clang-format#L79
-gen_cdepend_lto_llvm() {
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-				(
-					sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-					sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-					>=sys-devel/lld-${s}
-				)
-		"
-	done
-	echo -e "${o}"
-}
-
-CDEPEND_GCC_SANITIZER="
-	!clang? ( sys-devel/gcc[sanitize] )
-"
-gen_clang_sanitizer() {
-	local san_type="${1}"
-	local s
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
-				 sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-				=sys-devel/clang-runtime-${s}[${MULTILIB_USEDEP},compiler-rt,sanitize]
-				 sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-				=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},${san_type}]
-			)
-		"
-	done
-	echo "${o}"
-}
-gen_cdepend_sanitizers() {
-	local a
-	for a in ${SANITIZERS} ; do
-		echo "
-	${a}? (
-		|| (
-			${CDEPEND_GCC_SANITIZER}
-			clang? ( || ( $(gen_clang_sanitizer ${a}) ) )
-		)
-	)
-
-		"
-	done
-}
-
-CDEPEND_SANITIZER="
-	$(gen_cdepend_sanitizers)
-"
-CDEPEND+="
-	${CDEPEND_SANITIZER}
-	sys-devel/osxcross
-"
-CDEPEND_CLANG="
-	clang? (
-		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
-		lto? ( || ( $(gen_cdepend_lto_llvm) ) )
-	)
-"
-CDEPEND_GCC="
-	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )
-"
-DISABLED_DEPEND+="
+BDEPEND+="
 	${PYTHON_DEPS}
-	${CDEPEND}
-	app-arch/bzip2[${MULTILIB_USEDEP}]
-	dev-libs/libbsd[${MULTILIB_USEDEP}]
-	media-libs/alsa-lib[${MULTILIB_USEDEP}]
-	media-libs/flac[${MULTILIB_USEDEP}]
-        >=media-libs/freetype-${FREETYPE_V}[${MULTILIB_USEDEP}]
-	>=media-libs/libogg-${LIBOGG_V}[${MULTILIB_USEDEP}]
-	media-libs/libpng[${MULTILIB_USEDEP}]
-	media-libs/libsndfile[${MULTILIB_USEDEP}]
-	>=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}]
-        media-sound/pulseaudio[${MULTILIB_USEDEP}]
-	net-libs/libasyncns[${MULTILIB_USEDEP}]
-	sys-apps/tcp-wrappers[${MULTILIB_USEDEP}]
-	sys-apps/util-linux[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}]
-	virtual/opengl[${MULTILIB_USEDEP}]
-	x11-libs/libICE[${MULTILIB_USEDEP}]
-	x11-libs/libSM[${MULTILIB_USEDEP}]
-	x11-libs/libXau[${MULTILIB_USEDEP}]
-	x11-libs/libXcursor[${MULTILIB_USEDEP}]
-	x11-libs/libXdmcp[${MULTILIB_USEDEP}]
-	x11-libs/libXext[${MULTILIB_USEDEP}]
-	x11-libs/libXfixes[${MULTILIB_USEDEP}]
-	x11-libs/libXi[${MULTILIB_USEDEP}]
-        x11-libs/libXinerama[${MULTILIB_USEDEP}]
-	x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	x11-libs/libXrender[${MULTILIB_USEDEP}]
-	x11-libs/libXtst[${MULTILIB_USEDEP}]
-	x11-libs/libXxf86vm[${MULTILIB_USEDEP}]
-	x11-libs/libX11[${MULTILIB_USEDEP}]
-	x11-libs/libxcb[${MULTILIB_USEDEP}]
-	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
-	!portable? (
-		ca-certs-relax? (
-			app-misc/ca-certificates[cacert]
-		)
-		!ca-certs-relax? (
-			>=app-misc/ca-certificates-20211101[cacert]
-		)
-	)
-        gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
-"
-DISABLED_RDEPEND+=" ${DEPEND}"
-DISABLED_BDEPEND+="
-	${CDEPEND}
-	${PYTHON_DEPS}
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	|| (
-		${CDEPEND_CLANG}
-		${CDEPEND_GCC}
-	)
 	dev-util/scons
-	lld? ( sys-devel/lld )
 	webm-simd? (
 		dev-lang/yasm
 	)
@@ -322,28 +197,6 @@ ewarn
 	check_store_apl
 
 	python-any-r1_pkg_setup
-	if use lto && use clang ; then
-		if has_version "sys-devel/clang:13" \
-			&& has_version "sys-devel/llvm:13" ; then
-			LLVM_MAX_SLOT=13
-		elif has_version "sys-devel/clang:12" \
-			&& has_version "sys-devel/llvm:12" ; then
-			LLVM_MAX_SLOT=12
-		elif has_version "sys-devel/clang:11" \
-			&& has_version "sys-devel/llvm:11" ; then
-			LLVM_MAX_SLOT=11
-		else
-eerror
-eerror "Both sys-devel/clang:\${SLOT} and sys-devel/llvm:\${SLOT} must have the"
-eerror "same slot.  LTO enabled for LLVM 11-13 for this series only."
-eerror
-			die
-		fi
-einfo
-einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
-einfo
-		llvm_pkg_setup
-	fi
 }
 
 pkg_nofetch() {
@@ -431,7 +284,6 @@ src_compile() {
 		builtin_libvorbis=True
 		builtin_libvpx=True
 		builtin_libwebp=True
-		builtin_libwebsockets=True
 		builtin_mbedtls=True
 		builtin_miniupnpc=True
 		builtin_pcre2=True
@@ -502,7 +354,6 @@ src_compile() {
 		module_webrtc_enabled=$(usex webrtc)
 		module_webxr_enabled=False
 		module_xatlas_enabled=$(usex xatlas)
-		${EGODOT_ADDITIONAL_CONFIG}
 	)
 
 	src_compile_ios
