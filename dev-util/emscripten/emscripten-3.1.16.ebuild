@@ -1,6 +1,8 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=7
+
 # For requirements, see
 # https://github.com/emscripten-core/emscripten/blob/3.1.16/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
@@ -10,8 +12,6 @@
 # Keep emscripten.config.x.yy.zz updated if changed from:
 # https://github.com/emscripten-core/emscripten/blob/3.1.16/tools/config_template.py
 
-EAPI=7
-
 LLVM_V=15
 LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{8..10} )
@@ -20,20 +20,35 @@ inherit cmake-utils flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1
 
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
-LICENSE="all-rights-reserved UoI-NCSA Apache-2.0 Apache-2.0-with-LLVM-exceptions
-BSD BSD-2 CC-BY-SA-3.0
-|| ( FTL GPL-2 ) GPL-2+ LGPL-2.1 LGPL-3 MIT MPL-2.0 OFL-1.1 PSF-2.4 Unlicense
-ZLIB
-closure-compiler? (
+LICENSE="
+	all-rights-reserved
+	UoI-NCSA
 	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
 	BSD
-	CPL-1.0
+	BSD-2
+	CC-BY-SA-3.0
+	|| ( FTL GPL-2 )
 	GPL-2+
-	LGPL-2.1+
+	LGPL-2.1
+	LGPL-3
 	MIT
 	MPL-2.0
-	NPL-1.1
-)"
+	OFL-1.1
+	PSF-2.4
+	Unlicense
+	ZLIB
+	closure-compiler? (
+		Apache-2.0
+		BSD
+		CPL-1.0
+		GPL-2+
+		LGPL-2.1+
+		MIT
+		MPL-2.0
+		NPL-1.1
+	)
+"
 #
 # LICENSE_NOTES=
 #
@@ -88,7 +103,8 @@ SLOT="${SLOT_MAJOR}/${PV}"
 CLOSURE_COMPILER_SLOT="0"
 IUSE+=" -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs system-closure-compiler test"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
 	closure_compiler_java? ( closure-compiler )
 	closure_compiler_native? ( closure-compiler )
 	closure_compiler_nodejs? ( closure-compiler )
@@ -96,7 +112,8 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		closure-compiler
 		^^ ( closure_compiler_java closure_compiler_native
 			closure_compiler_nodejs )
-	)"
+	)
+"
 # See also .circleci/config.yml
 # See also https://github.com/emscripten-core/emscripten/blob/3.1.16/tools/building.py EXPECTED_BINARYEN_VERSION
 JAVA_V="11" # See https://github.com/google/closure-compiler/blob/v20220502/.github/workflows/ci.yaml#L43
@@ -107,24 +124,28 @@ JAVA_V="11" # See https://github.com/google/closure-compiler/blob/v20220502/.git
 # For the required Node.js, see https://github.com/emscripten-core/emscripten/blob/3.1.16/tools/shared.py#L43
 BINARYEN_V="109"
 JDK_DEPEND="
-|| (
-	dev-java/openjdk-bin:${JAVA_V}
-	dev-java/openjdk:${JAVA_V}
-)"
+	|| (
+		dev-java/openjdk-bin:${JAVA_V}
+		dev-java/openjdk:${JAVA_V}
+	)
+"
 JRE_DEPEND="
-|| (
-	${JDK_DEPEND}
-	dev-java/openjdk-jre-bin:${JAVA_V}
-)"
+	|| (
+		${JDK_DEPEND}
+		dev-java/openjdk-jre-bin:${JAVA_V}
+	)
+"
 #JDK_DEPEND="virtual/jdk:${JAVA_V}"
 #JRE_DEPEND=">=virtual/jre-${JAVA_V}"
-RDEPEND+=" ${PYTHON_DEPS}
+RDEPEND+="
+	${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
 		system-closure-compiler? (
 			>=dev-util/closure-compiler-npm-20220502.0.0:\
 ${CLOSURE_COMPILER_SLOT}\
-[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?] )
+[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?]
+		)
 		closure_compiler_java? (
 			${JRE_DEPEND}
 		)
@@ -142,8 +163,10 @@ ${CLOSURE_COMPILER_SLOT}\
 		>=sys-devel/lld-${LLVM_V}
 		>=sys-devel/llvm-${LLVM_V}:${LLVM_V}=[llvm_targets_WebAssembly]
 		>=sys-devel/clang-${LLVM_V}:${LLVM_V}=[llvm_targets_WebAssembly]
-	)"
-DEPEND+=" ${RDEPEND}
+	)
+"
+DEPEND+="
+	${RDEPEND}
 	closure-compiler? (
 		closure_compiler_java? (
 			${JRE_DEPEND}
@@ -154,7 +177,8 @@ DEPEND+=" ${RDEPEND}
 		!system-closure-compiler? (
 			${JRE_DEPEND}
 		)
-	)"
+	)
+"
 BDEPEND+=" ${JDK_DEPEND}"
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
@@ -178,22 +202,46 @@ eerror "  ${FN_SRC}"
 eerror "from ${DOWNLOAD_SITE}"
 eerror "and rename it to ${FN_DEST} place it in ${distdir}."
 eerror
-eerror "If you are in a hurry, you can do \`wget -O ${distdir}/${FN_DEST}\
- https://github.com/emscripten-core/emscripten/archive/${FN_SRC}\`"
+eerror "If you are in a hurry, you can do \`wget -O ${distdir}/${FN_DEST} \
+https://github.com/emscripten-core/emscripten/archive/${FN_SRC}\`"
 }
 
 setup_openjdk() {
 	local jdk_bin_basepath
 	local jdk_basepath
 
-	if find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+	if find \
+		/usr/$(get_libdir)/openjdk-${JAVA_V}*/ \
+		-maxdepth 1 \
+		-type d \
+		2>/dev/null 1>/dev/null
+	then
+		export JAVA_HOME=$(find \
+				/usr/$(get_libdir)/openjdk-${JAVA_V}*/ \
+				-maxdepth 1 \
+				-type d \
+			| sort -V \
+			| head -n 1)
 		export PATH="${JAVA_HOME}/bin:${PATH}"
-	elif find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+	elif find \
+		/opt/openjdk-bin-${JAVA_V}*/ \
+		-maxdepth 1 \
+		-type d \
+		2>/dev/null 1>/dev/null
+	then
+		export JAVA_HOME=$(find \
+				/opt/openjdk-bin-${JAVA_V}*/ \
+				-maxdepth 1 \
+				-type d \
+			| sort -V \
+			| head -n 1)
 		export PATH="${JAVA_HOME}/bin:${PATH}"
 	else
-		die "dev-java/openjdk:${JDK_V} or dev-java/openjdk-bin:${JDK_V} is required to be installed"
+eerror
+eerror "dev-java/openjdk:${JDK_V} or dev-java/openjdk-bin:${JDK_V} is required"
+eerror "to be installed"
+eerror
+		die
 	fi
 }
 
@@ -398,10 +446,13 @@ pkg_postinst() {
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst
 	fi
-	einfo
-	einfo "Set to wasm (llvm) output via app-eselect/eselect-emscripten."
-	einfo
+einfo
+einfo "Set to wasm (llvm) output via app-eselect/eselect-emscripten."
+einfo
 	if use closure_compiler_java ; then
-		ewarn "You must manually setup the JAVA_HOME, and PATH when using closure-compiler for Java."
+ewarn
+ewarn "You must manually setup the JAVA_HOME, and PATH when using"
+ewarn "closure-compiler for Java."
+ewarn
 	fi
 }
