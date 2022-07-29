@@ -8,6 +8,12 @@
   </maintainer>
   <longdescription>
     This package is allowed to be emerged in native context.
+
+    Environment variables:
+
+      EGODOT_ANDROID_API_LEVEL - one of the target platforms (e.g. android-19).
+      Set the number between 16-28.
+
   </longdescription>
   <upstream>
 <!--

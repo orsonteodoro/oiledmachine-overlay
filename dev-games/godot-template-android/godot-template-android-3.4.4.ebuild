@@ -13,7 +13,7 @@ MY_P="${MY_PN}-${PV}"
 STATUS="stable"
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit desktop eutils flag-o-matic llvm multilib-build python-any-r1 scons-utils
+inherit desktop eutils flag-o-matic multilib-build python-any-r1 scons-utils
 
 DESCRIPTION="Godot export template for Android"
 HOMEPAGE="http://godotengine.org"
@@ -48,7 +48,7 @@ LICENSE="
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
-KEYWORDS=""
+KEYWORDS="~amd64"
 
 FN_SRC="${PV}-stable.tar.gz"
 FN_DEST="${MY_P}.tar.gz"
@@ -109,27 +109,8 @@ REQUIRED_USE+="
 	)
 "
 EXPECTED_MIN_ANDROID_API_LEVEL="29"
-FREETYPE_V="2.10.4"
 JAVA_V="11" # See https://github.com/godotengine/godot/blob/3.4-stable/.github/workflows/android_builds.yml#L32
-LIBOGG_V="1.3.5"
-LIBVORBIS_V="1.3.7"
-NDK_V="21"
-ZLIB_V="1.2.11"
-
-LLVM_SLOTS=(12 13) # See https://github.com/godotengine/godot/blob/3.4-stable/misc/hooks/pre-commit-clang-format#L79
-gen_cdepend_lto_llvm() {
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-				(
-					sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-					sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-					>=sys-devel/lld-${s}
-				)
-		"
-	done
-	echo -e "${o}"
-}
+NDK_V="17" # Upstream uses 21 but relaxed due to lack of newer version
 
 JDK_DEPEND="
 	|| (
@@ -146,119 +127,22 @@ JRE_DEPEND="
 #JDK_DEPEND=" virtual/jdk:${JAVA_V}"
 #JRE_DEPEND=" virtual/jre:${JAVA_V}"
 
-CDEPEND_GCC_SANITIZER="
-	!clang? ( sys-devel/gcc[sanitize] )
-"
-gen_clang_sanitizer() {
-	local san_type="${1}"
-	local s
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
-				 sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-				=sys-devel/clang-runtime-${s}[${MULTILIB_USEDEP},compiler-rt,sanitize]
-				 sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-				=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},${san_type}]
-			)
-		"
-	done
-	echo "${o}"
-}
-gen_cdepend_sanitizers() {
-	local a
-	for a in ${SANITIZERS} ; do
-		echo "
-	${a}? (
-		|| (
-			${CDEPEND_GCC_SANITIZER}
-			clang? ( || ( $(gen_clang_sanitizer ${a}) ) )
-		)
-	)
-
-		"
-	done
-}
-
-CDEPEND_SANITIZER="
-	$(gen_cdepend_sanitizers)
-"
 CDEPEND+="
-	${CDEPEND_SANITIZER}
-	godot_android_arm64v8? ( >=dev-util/android-ndk-${NDK_V} )
-	godot_android_x86? ( >=dev-util/android-ndk-${NDK_V} )
-	godot_android_x86_64? ( >=dev-util/android-ndk-${NDK_V} )
-
 	${JDK_DEPEND}
-	dev-util/android-sdk-update-manager
-	>=dev-util/android-ndk-17:=
-	dev-java/gradle-bin
+	>=dev-java/gradle-bin-7.2
+	>=dev-util/android-ndk-${NDK_V}:=
+	  dev-util/android-sdk-update-manager
 "
-CDEPEND_CLANG="
-	clang? (
-		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
-		lto? ( || ( $(gen_cdepend_lto_llvm) ) )
-	)
-"
-CDEPEND_GCC="
-	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )
-"
-DISABLED_DEPEND+="
+DEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
-	app-arch/bzip2[${MULTILIB_USEDEP}]
-	dev-libs/libbsd[${MULTILIB_USEDEP}]
-	media-libs/alsa-lib[${MULTILIB_USEDEP}]
-	media-libs/flac[${MULTILIB_USEDEP}]
-        >=media-libs/freetype-${FREETYPE_V}[${MULTILIB_USEDEP}]
-	>=media-libs/libogg-${LIBOGG_V}[${MULTILIB_USEDEP}]
-	media-libs/libpng[${MULTILIB_USEDEP}]
-	media-libs/libsndfile[${MULTILIB_USEDEP}]
-	>=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}]
-        media-sound/pulseaudio[${MULTILIB_USEDEP}]
-	net-libs/libasyncns[${MULTILIB_USEDEP}]
-	sys-apps/tcp-wrappers[${MULTILIB_USEDEP}]
-	sys-apps/util-linux[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}]
-	virtual/opengl[${MULTILIB_USEDEP}]
-	x11-libs/libICE[${MULTILIB_USEDEP}]
-	x11-libs/libSM[${MULTILIB_USEDEP}]
-	x11-libs/libXau[${MULTILIB_USEDEP}]
-	x11-libs/libXcursor[${MULTILIB_USEDEP}]
-	x11-libs/libXdmcp[${MULTILIB_USEDEP}]
-	x11-libs/libXext[${MULTILIB_USEDEP}]
-	x11-libs/libXfixes[${MULTILIB_USEDEP}]
-	x11-libs/libXi[${MULTILIB_USEDEP}]
-        x11-libs/libXinerama[${MULTILIB_USEDEP}]
-	x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	x11-libs/libXrender[${MULTILIB_USEDEP}]
-	x11-libs/libXtst[${MULTILIB_USEDEP}]
-	x11-libs/libXxf86vm[${MULTILIB_USEDEP}]
-	x11-libs/libX11[${MULTILIB_USEDEP}]
-	x11-libs/libxcb[${MULTILIB_USEDEP}]
-	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
-	!portable? (
-		ca-certs-relax? (
-			app-misc/ca-certificates[cacert]
-		)
-		!ca-certs-relax? (
-			>=app-misc/ca-certificates-20211101[cacert]
-		)
-	)
-        gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
 "
-DISABLED_RDEPEND+=" ${DEPEND}"
-DISABLED_BDEPEND+="
+RDEPEND+=" ${DEPEND}"
+BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	|| (
-		${CDEPEND_CLANG}
-		${CDEPEND_GCC}
-	)
 	dev-util/scons
 	${JDK_DEPEND}
-	lld? ( sys-devel/lld )
 	webm-simd? (
 		dev-lang/yasm
 	)
@@ -268,24 +152,16 @@ S="${WORKDIR}/godot-${PV}-stable"
 
 check_android_native()
 {
-	if [[ -z "${ANDROID_NDK_ROOT}" ]] ; then
-ewarn
-ewarn "ANDROID_NDK_ROOT must be set as a per-package environmental variable."
-ewarn
-	fi
-	if [[ -z "${ANDROID_HOME}" ]] ; then
-ewarn
-ewarn "ANDROID_HOME must be set as a per-package environmental variable"
-ewarn "pointing to the root of the SDK."
-ewarn
-	fi
+	export ANDROID_NDK_ROOT="/opt/android-ndk"
+	export ANDROID_HOME="${ANDROID_NDK_ROOT}" # dummy skip
 	if [[ -z "${EGODOT_ANDROID_API_LEVEL}" ]] ; then
-eerror
-eerror "EGODOT_ANDROID_API_LEVEL must be set as a per-package environmental"
-eerror "variable.  See metadata.xml or \`epkginfo -x godot\` for more info."
-eerror
-		die
+		EGODOT_ANDROID_API_LEVEL="android-19"
 	fi
+einfo
+einfo "Overridable environment variables:"
+einfo
+einfo "EGODOT_ANDROID_API_LEVEL=${EGODOT_ANDROID_API_LEVEL}"
+einfo
 }
 
 check_android_sandbox()
@@ -304,15 +180,36 @@ setup_openjdk() {
 	local jdk_bin_basepath
 	local jdk_basepath
 
-	if find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /usr/$(get_libdir)/openjdk-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+	if find \
+		/usr/$(get_libdir)/openjdk-${JAVA_V}*/ \
+		-maxdepth 1 \
+		-type d \
+		2>/dev/null 1>/dev/null
+	then
+		export JAVA_HOME=$(find\
+			 /usr/$(get_libdir)/openjdk-${JAVA_V}*/ \
+			-maxdepth 1 \
+			-type d \
+			| sort -V \
+			| head -n 1)
 		export PATH="${JAVA_HOME}/bin:${PATH}"
-	elif find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d 2>/dev/null 1>/dev/null ; then
-		export JAVA_HOME=$(find /opt/openjdk-bin-${JAVA_V}*/ -maxdepth 1 -type d | sort -V | head -n 1)
+	elif find \
+		/opt/openjdk-bin-${JAVA_V}*/ \
+		-maxdepth 1 \
+		-type d \
+		2>/dev/null 1>/dev/null
+	then
+		export JAVA_HOME=$(find \
+			/opt/openjdk-bin-${JAVA_V}*/ \
+			-maxdepth 1 \
+			-type d \
+			| sort -V \
+			| head -n 1)
 		export PATH="${JAVA_HOME}/bin:${PATH}"
 	else
 eerror
-eerror "dev-java/openjdk:${JAVA_V} or dev-java/openjdk-bin:${JAVA_V} must be installed."
+eerror "dev-java/openjdk:${JAVA_V} or dev-java/openjdk-bin:${JAVA_V} must be"
+eerror "installed."
 eerror
 		die
 	fi
@@ -336,28 +233,6 @@ ewarn
 	einfo "PATH=${PATH}"
 
 	python-any-r1_pkg_setup
-	if use lto && use clang ; then
-		if has_version "sys-devel/clang:13" \
-			&& has_version "sys-devel/llvm:13" ; then
-			LLVM_MAX_SLOT=13
-		elif has_version "sys-devel/clang:12" \
-			&& has_version "sys-devel/llvm:12" ; then
-			LLVM_MAX_SLOT=12
-		elif has_version "sys-devel/clang:11" \
-			&& has_version "sys-devel/llvm:11" ; then
-			LLVM_MAX_SLOT=11
-		else
-eerror
-eerror "Both sys-devel/clang:\${SLOT} and sys-devel/llvm:\${SLOT} must have the"
-eerror "same slot.  LTO enabled for LLVM 11-13 for this series only."
-eerror
-			die
-		fi
-einfo
-einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
-einfo
-		llvm_pkg_setup
-	fi
 }
 
 pkg_nofetch() {
@@ -391,14 +266,6 @@ src_configure() {
 src_compile_android()
 {
 	unset CCACHE
-	local options_modules_
-	if [[ -n "${EGODOT_ANDROID_CONFIG}" ]] ; then
-		einfo "Using config override for Android"
-		einfo "${EGODOT_ANDROID_CONFIG}"
-		options_modules_=(${EGODOT_ANDROID_CONFIG})
-	else
-		options_modules_=(${options_modules[@]})
-	fi
 	for a in ${GODOT_ANDROID} ; do
 		if use ${a} ; then
 			case "${a}" in
@@ -418,13 +285,13 @@ src_compile_android()
 			einfo "Creating export templates for Android (${a})"
 			for c in release release_debug ; do
 				scons ${options_android[@]} \
-					${options_modules_[@]} \
-					$([[ -z "${EGODOT_ANDROID_CONFIG}" ]] \
-						&& echo ${options_modules_static[@]}) \
+					${options_modules[@]} \
+					${options_modules_static[@]} \
 					android_arch=${a} \
 					bits=${bitness} \
 					target=${c} \
 					tools=no \
+					ndk_platform=${EGODOT_ANDROID_API_LEVEL} \
 					|| die
 			done
 		fi
