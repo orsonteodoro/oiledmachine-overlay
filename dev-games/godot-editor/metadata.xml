@@ -26,6 +26,9 @@
       * Packages with godot-template-* need to be emerge in native context.
       * See also metadata.xml in each package for details.
 
+
+    See dev-games/godot-meta for cross-compile package status.
+
   </longdescription>
   <upstream>
 <!--

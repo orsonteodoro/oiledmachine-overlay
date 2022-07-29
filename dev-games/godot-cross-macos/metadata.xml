@@ -10,6 +10,11 @@
     Emerge this package only within the crossdev context.
 
 
+    Package status:
+
+      Incomplete / Work In Progress (WIP) [needs community help]
+
+
     Required environment variables
 
       EGODOT_MACOS_SYSROOT - The crossdev install of the macOS cross toolchain

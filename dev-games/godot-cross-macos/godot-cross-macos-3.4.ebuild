@@ -84,6 +84,9 @@ SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
 pkg_setup() {
+ewarn
+ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
+ewarn
 	if [[ -z "${EGODOT_MACOS_SYSROOT}" ]] ; then
 eerror
 eerror "The environment variable EGODOT_MACOS_SYSROOT needs to be defined"

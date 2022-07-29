@@ -8,6 +8,12 @@
   </maintainer>
   <longdescription>
     This is allowed to be emerged in native context.
+
+
+    Ebuild completion status
+
+      Incomplete / Work In Progress (WIP) [community help is optional]
+
   </longdescription>
   <upstream>
 <!--

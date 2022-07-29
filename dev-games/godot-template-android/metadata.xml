@@ -9,6 +9,12 @@
   <longdescription>
     This package is allowed to be emerged in native context.
 
+
+    Ebuild completion status
+
+      Incomplete / Work In Progress (WIP) [needs community help]
+
+
     Environment variables:
 
       EGODOT_ANDROID_API_LEVEL - one of the target platforms (e.g. android-19).

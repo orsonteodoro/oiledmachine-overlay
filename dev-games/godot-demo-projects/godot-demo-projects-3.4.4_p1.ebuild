@@ -28,6 +28,12 @@ RDEPEND="
 	!dev-games/godot
 "
 
+pkg_setup() {
+ewarn
+ewarn "Do not emerge this directly use dev-games/godot-meta instead."
+ewarn
+}
+
 src_configure() { :; }
 src_compile() { :; }
 

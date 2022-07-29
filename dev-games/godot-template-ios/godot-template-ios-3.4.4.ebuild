@@ -186,7 +186,10 @@ ewarn
 
 pkg_setup() {
 ewarn
-ewarn "This ebuild is still a Work In Progress (WIP) as of 2021"
+ewarn "Do not emerge this directly use dev-games/godot-meta instead."
+ewarn
+ewarn
+ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
 ewarn
 	if use gdscript ; then
 ewarn

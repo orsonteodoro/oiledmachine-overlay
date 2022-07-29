@@ -9,6 +9,12 @@
   <longdescription>
     This package is allowed to be emerged in native context.
 
+
+    Ebuild completion status
+
+      Incomplete / Work In Progress (WIP) [needs community help]
+
+
     Required environment variables
 
       EGODOT_MACOS_SYSROOT - The crossdev install of the macOS cross toolchain
@@ -24,6 +30,7 @@
     See also:
 
       https://github.com/tpoechtrager/osxcross/blob/master/build.sh#L32
+
 
   </longdescription>
   <upstream>

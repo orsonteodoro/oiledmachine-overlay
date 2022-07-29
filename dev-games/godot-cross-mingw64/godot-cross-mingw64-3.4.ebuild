@@ -16,6 +16,9 @@ SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
 pkg_setup() {
+ewarn
+ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
+ewarn
 	export CTARGET="${CHOST:-${CTARGET}}"
 	[[ "${CTARGET}" =~ "x86_64" ]] || die "CTARGET must contain x86_64"
 	which "${CTARGET}-gcc" --version || die "Fix CTARGET"

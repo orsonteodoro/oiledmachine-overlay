@@ -7,14 +7,49 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
+    For overview of Godot see either the website or dev-games/godot-editor.
+
+
     This is a meta package for installing Godot on this distro.
+    Previous ebuild iterations built Godot as a monolithic ebuild.  These
+    ebuilds now are split in order to increase code clarity and improve
+    the tractable completion of each cross-compile port.
+    
 
+    Cross-compile or split ebuild design notes:
 
-    Cross-compile notes:
-
-      * Packages with godot-cross-* need to be emerged in crossdev context.
+      * Packages with godot-cross-* need to be emerged in prefix (crossdev) context.
       * Packages with godot-template-* need to be emerge in native context.
       * See also metadata.xml in each package for details.
+
+
+    Ebuild development priorities with top highest (subject to change):
+
+      * Re-add support for Mono (for Linux) in ebuild in a cleaner way [trivial]
+      * Completion of prefix (crossdev) / export-template ebuilds for MinGW-w64 (64-bit) [trivial]
+      * Completion of prefix (crossdev) / export-template ebuilds for MinGW-w64 (32-bit) [trivial]
+      * Completion of export-template ebuilds for javascript [trivial]
+      * Completion of prefix (crossdev) / export-template ebuilds for Android [least difficult]
+      * Re-add support for GDNative (C++ bindings) in ebuild in a cleaner way [trivial]
+      * Re-add support for Custom modules in ebuild in a cleaner way [trivial]
+      * Re-add support for Mono (Cross) in ebuild in a tractable and most complete way [most difficult]
+      * Completion of *most* prefix (crossdev) / export-template ebuilds for iOS (help needed) [most difficult]
+      * Completion of *most* prefix (crossdev) / export-template ebuilds for macOS (help needed) [most difficult]
+      * Ebuild for prebuilt export-templates (Standard / C#) [trivial]
+
+
+    Ebuild completion status:
+
+      Android:  Incomplete / Work In Progress (help needed)
+      Dedicated server:  Complete
+      Demos:  Complete
+      Editor:  Complete
+      Headless server:  Complete
+      iOS:  Incomplete / Work In Progress [community help is needed]
+      JavasSript:  Incomplete / Work In Progress [community help is optional]
+      macOS:  Incomplete / Work In Progress [community help is needed]
+      MinGW-w64 (32-bit):  Incomplete / Work In Progress [community help is optional]
+      MinGW-w64 (64-bit):  Incomplete / Work In Progress [community help is optional]
 
   </longdescription>
     <flag name="android">Adds the export template for Android</flag>

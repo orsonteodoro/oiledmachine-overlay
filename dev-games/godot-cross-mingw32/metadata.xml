@@ -8,5 +8,11 @@
   </maintainer>
   <longdescription>
     Emerge this package only within the crossdev context.
+
+
+    Package status:
+
+      Incomplete / Work In Progress (WIP) [community help is optional]
+
   </longdescription>
 </pkgmetadata>
