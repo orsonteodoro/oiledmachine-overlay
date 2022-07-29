@@ -410,21 +410,6 @@ src_compile() {
 		use_tsan=$(usex tsan)
 		use_ubsan=$(usex ubsan)
 	)
-	local options_x11=(
-		platform=x11
-		pulseaudio=$(usex pulseaudio)
-		udev=$(usex gamepad)
-		touch=$(usex touch)
-		use_asan=$(usex asan)
-		use_lld=$(usex lld)
-		use_llvm=$(usex clang)
-		use_lto=$(usex lto)
-		use_lsan=$(usex lsan)
-		use_msan=$(usex msan)
-		use_thinlto=$(usex lto)
-		use_tsan=$(usex tsan)
-		use_ubsan=$(usex ubsan)
-	)
 	local options_modules_shared=(
 		builtin_bullet=$(usex !system-bullet)
 		builtin_embree=$(usex !system-embree)

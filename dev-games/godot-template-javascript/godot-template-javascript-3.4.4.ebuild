@@ -181,9 +181,6 @@ BDEPEND="
 	${CDEPEND}
 	${PYTHON_DEPS}
 	dev-util/scons
-	webm-simd? (
-		dev-lang/yasm
-	)
 "
 S="${WORKDIR}/godot-${PV}-stable"
 #GEN_DL_MANIFEST=1
