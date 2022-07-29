@@ -419,7 +419,7 @@ einfo "The following still must be done:"
 einfo
 einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}"
 einfo "  echo \"${PV}.${STATUS}\" > ~/.local/share/godot/templates/${PV}.${STATUS}"
+einfo "  # You need to replace <ARCH> below with either one of ${arches}"
 einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/ios/templates/<ARCH> ~/.local/share/godot/templates/${PV}.${STATUS}"
-einfo "  # (replacing <ARCH> with either one of ${arches})"
 einfo
 }
