@@ -146,7 +146,6 @@ REQUIRED_USE+="
 FREETYPE_V="2.10.4"
 LIBOGG_V="1.3.5"
 LIBVORBIS_V="1.3.7"
-NDK_V="21"
 ZLIB_V="1.2.11"
 
 LLVM_SLOTS=(12 13) # See https://github.com/godotengine/godot/blob/3.4-stable/misc/hooks/pre-commit-clang-format#L79
@@ -213,7 +212,7 @@ CDEPEND_CLANG="
 CDEPEND_GCC="
 	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )
 "
-DISABLED_DEPEND+="
+DEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
 	app-arch/bzip2[${MULTILIB_USEDEP}]
@@ -231,22 +230,6 @@ DISABLED_DEPEND+="
 	sys-apps/util-linux[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}]
 	virtual/opengl[${MULTILIB_USEDEP}]
-	x11-libs/libICE[${MULTILIB_USEDEP}]
-	x11-libs/libSM[${MULTILIB_USEDEP}]
-	x11-libs/libXau[${MULTILIB_USEDEP}]
-	x11-libs/libXcursor[${MULTILIB_USEDEP}]
-	x11-libs/libXdmcp[${MULTILIB_USEDEP}]
-	x11-libs/libXext[${MULTILIB_USEDEP}]
-	x11-libs/libXfixes[${MULTILIB_USEDEP}]
-	x11-libs/libXi[${MULTILIB_USEDEP}]
-        x11-libs/libXinerama[${MULTILIB_USEDEP}]
-	x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	x11-libs/libXrender[${MULTILIB_USEDEP}]
-	x11-libs/libXtst[${MULTILIB_USEDEP}]
-	x11-libs/libXxf86vm[${MULTILIB_USEDEP}]
-	x11-libs/libX11[${MULTILIB_USEDEP}]
-	x11-libs/libxcb[${MULTILIB_USEDEP}]
-	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
 	mono? (
 		>=dev-lang/mono-6.0.0.176
 	)
@@ -283,8 +266,8 @@ DISABLED_DEPEND+="
 	system-zlib? ( >=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}] )
 	system-zstd? ( >=app-arch/zstd-1.4.8[${MULTILIB_USEDEP}] )
 "
-DISABLED_RDEPEND+=" ${DEPEND}"
-DISABLED_BDEPEND+="
+RDEPEND+=" ${DEPEND}"
+BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -294,9 +277,6 @@ DISABLED_BDEPEND+="
 	)
 	dev-util/scons
 	lld? ( sys-devel/lld )
-	webm-simd? (
-		dev-lang/yasm
-	)
 "
 S="${WORKDIR}/godot-${PV}-stable"
 #GEN_DL_MANIFEST=1
