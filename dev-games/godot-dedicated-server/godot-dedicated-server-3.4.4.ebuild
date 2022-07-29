@@ -543,7 +543,7 @@ src_compile() {
 
 _install_server() {
 	# NO EXPORT TEMPLATE
-	local d="/usr/$(get_libdir)/godot/${SLOT_MAJ}/dedicated-server"
+	local d="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/dedicated-server"
 	exeinto "${d}"
 	einfo "Installing export templates"
 	local x

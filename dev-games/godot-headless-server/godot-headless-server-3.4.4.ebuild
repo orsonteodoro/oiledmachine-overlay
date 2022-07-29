@@ -543,7 +543,7 @@ src_compile() {
 
 _install_server() {
 	# NO EXPORT TEMPLATE
-	local d="/usr/$(get_libdir)/godot/${SLOT_MAJ}/headless-server"
+	local d="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/headless-server"
 	exeinto "${d}"
 	einfo "Installing export templates"
 	local x
