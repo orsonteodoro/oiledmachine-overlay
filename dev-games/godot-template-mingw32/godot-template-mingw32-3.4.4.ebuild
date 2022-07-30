@@ -186,7 +186,9 @@ DISABLED_BDEPEND+="
 	)
 "
 S="${WORKDIR}/godot-${PV}-stable"
-#GEN_DL_MANIFEST=1
+PATCHES=(
+	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
+)
 
 check_mingw()
 {

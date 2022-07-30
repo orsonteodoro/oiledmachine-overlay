@@ -131,7 +131,9 @@ BDEPEND+="
 	app-bundle? ( app-arch/zip )
 "
 S="${WORKDIR}/godot-${PV}-stable"
-#GEN_DL_MANIFEST=1
+PATCHES=(
+	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
+)
 
 verify_cross_toolchain() {
 	export OSXCROSS_ROOT="${EGODOT_MACOS_SYSROOT}"

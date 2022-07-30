@@ -292,13 +292,14 @@ BDEPEND+=" ${CDEPEND}
 	)
 "
 S="${WORKDIR}/godot-${PV}-stable"
-#GEN_DL_MANIFEST=1
 # 20b171c - used for ccache
 PATCHES=(
 	"${FILESDIR}/godot-3.2.3-add-lld-thinlto-to-platform-server.patch"
+	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
 )
 
 pkg_setup() {
+einfo "PATH:  ${PATH}"
 ewarn
 ewarn "Do not emerge this directly use dev-games/godot-meta instead."
 ewarn
