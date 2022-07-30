@@ -361,22 +361,14 @@ src_configure() {
 	fi
 }
 
-src_compile_linux()
-{
-	unset CCACHE
-	einfo "Building Linux editor"
-	local options_mono=()
-	if use mono ; then
-		options_mono=(
-			module_mono_enabled=yes
-			mono_static=yes
-			mono_glue=no
-		)
-	else
-		options_mono=(
-			module_mono_enabled=no
-		)
-	fi
+src_compile_linux_yes_mono() {
+	local options_mono
+	# tools=yes (default)
+	einfo "Mono support:  Building temporary binary"
+	options_mono=(
+		module_mono_enabled=yes
+		mono_glue=no
+	)
 	scons ${options_x11[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
@@ -386,6 +378,48 @@ src_compile_linux()
 		"CFLAGS=${CFLAGS}" \
 		"CCFLAGS=${CXXFLAGS}" \
 		"LINKFLAGS=${LDFLAGS}" || die
+
+	einfo "Mono support:  Generating glue sources"
+	local f=$(basename bin/*)
+	bin/${f} --generate-mono-glue modules/mono/glue
+	rm -rf bin/godot* || die
+
+	einfo "Mono support:  Building final binary"
+	options_mono=( module_mono_enabled=yes )
+	scons ${options_x11[@]} \
+		${options_modules[@]} \
+		${options_modules_shared[@]} \
+		$(usex debug "target=debug_release" "") \
+		bits=default \
+		${options_mono[@]} \
+		"CFLAGS=${CFLAGS}" \
+		"CCFLAGS=${CXXFLAGS}" \
+		"LINKFLAGS=${LDFLAGS}" || die
+}
+
+src_compile_linux_no_mono() {
+	local options_mono=( module_mono_enabled=no )
+	# tools=yes (default)
+	scons ${options_x11[@]} \
+		${options_modules[@]} \
+		${options_modules_shared[@]} \
+		$(usex debug "target=debug_release" "") \
+		bits=default \
+		${options_mono[@]} \
+		"CFLAGS=${CFLAGS}" \
+		"CCFLAGS=${CXXFLAGS}" \
+		"LINKFLAGS=${LDFLAGS}" || die
+}
+
+src_compile_linux()
+{
+	unset CCACHE
+	einfo "Building Linux editor"
+	if use mono ; then
+		src_compile_linux_yes_mono
+	else
+		src_compile_linux_no_mono
+	fi
 }
 
 src_compile() {
@@ -525,7 +559,8 @@ src_compile() {
 _install_linux_editor() {
 	local d_base="/usr/$(get_libdir)/${MY_PN}/${SLOT_MAJ}"
 	exeinto "${d_base}/bin"
-	local f=$(basename bin/*)
+	local f
+	f=$(basename bin/godot*tools*)
 	doexe bin/${f}
 	dosym "${d_base}/bin/${f}" "/usr/bin/godot${SLOT_MAJ}"
 	einfo "Setting up Linux editor environment"
