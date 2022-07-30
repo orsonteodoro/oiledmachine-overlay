@@ -251,7 +251,10 @@ BDEPEND+="
 "
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
-DOCS=( "" "Readme.md" )
+DOCS=( "Readme.md" )
+PATCHES=(
+	"${FILESDIR}/enigma-9999-change-sdl2-audio-linking.patch"
+)
 
 _calculate_depends_fingerprint() {
 	local dfp=$(echo "${RDEPEND}:${DEPEND}:${BDEPEND}" \

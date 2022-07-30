@@ -7,11 +7,10 @@ engine"
 REVISION=0
 SLOT="0/${REVISION}"
 IUSE="box2d bullet freetype gles1 gles2 gme gtest joystick network opengl png
-sdl2 sound threads wine"
+sdl2 sound threads"
 REQUIRED_USE="
 	freetype
 	png
-	sound? ( wine )
 "
 
 ALURE_PV="1.2"
@@ -94,13 +93,6 @@ RDEPEND="
 			>=media-libs/opus-${OPUS_PV}
 			>=media-sound/mpg123-${MPG123_PV}
 			>=sys-devel/gcc-${GCC_PV}
-		)
-	)
-	wine? (
-		>=virtual/wine-${VIRTUAL_WINE_PV}
-		|| (
-			>=app-emulation/wine-staging-${WINE_STAGING_PV}
-			>=app-emulation/wine-vanilla-${WINE_VANILLA_PV}
 		)
 	)
 "

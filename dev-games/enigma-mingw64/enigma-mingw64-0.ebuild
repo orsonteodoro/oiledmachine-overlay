@@ -7,11 +7,10 @@ and Wine64 for the Enigma game engine"
 REVISION=0
 SLOT="0/${REVISION}"
 IUSE="box2d bullet freetype gme gtest gtk2 joystick network openal opengl png
-sdl2 sound threads wine"
+sdl2 sound threads"
 REQUIRED_USE="
 	freetype
 	png
-	sound? ( wine )
 "
 
 ALURE_PV="1.2"
@@ -103,13 +102,6 @@ RDEPEND="
 			>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[flac,mod,mp3,vorbis]
 			>=media-sound/mpg123-${MPG123_PV}
 			>=sys-devel/gcc-${GCC_PV}
-		)
-	)
-	wine? (
-		>=virtual/wine-${VIRTUAL_WINE_PV}
-		|| (
-			>=app-emulation/wine-staging-${WINE_STAGING_PV}
-			>=app-emulation/wine-vanilla-${WINE_VANILLA_PV}
 		)
 	)
 "

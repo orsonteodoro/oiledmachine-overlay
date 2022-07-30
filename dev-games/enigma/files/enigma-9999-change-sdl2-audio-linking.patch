@@ -1,0 +1,16 @@
+diff -urp enigma-9999.orig/ENIGMAsystem/SHELL/Audio_Systems/SDL/Makefile enigma-9999/ENIGMAsystem/SHELL/Audio_Systems/SDL/Makefile
+--- enigma-9999.orig/ENIGMAsystem/SHELL/Audio_Systems/SDL/Makefile	2022-07-30 12:08:15.308883833 -0700
++++ enigma-9999/ENIGMAsystem/SHELL/Audio_Systems/SDL/Makefile	2022-07-30 12:13:41.176880612 -0700
+@@ -10,5 +10,11 @@ ifeq ($(TARGET-PLATFORM), Android)
+ endif
+ 
+ override CXXFLAGS += $(shell pkg-config --cflags SDL2_mixer)
+-override LDLIBS += $(shell pkg-config --libs SDL2_mixer) -lopusfile -lopus -lvorbisfile -lvorbis -logg -lFLAC -lsndfile -lmodplug -lmpg123 -lole32 -lwinmm -lm -lshlwapi -lssp
++ifeq ($(TARGET-PLATFORM), Windows)
++  override LDLIBS += $(shell pkg-config --libs SDL2_mixer) -lopusfile -lopus -lvorbisfile -lvorbis -logg -lFLAC -lsndfile -lmodplug -lmpg123 -lole32 -lwinmm -lm -lshlwapi -lssp
++else ifeq ($(TARGET-PLATFORM), Android)
++  override LDLIBS += $(shell pkg-config --libs SDL2_mixer) -lopusfile -lopus -lvorbisfile -lvorbis -logg -lFLAC -lsndfile -lmodplug -lmpg123 -lm
++else
++  override LDLIBS += $(shell pkg-config --libs SDL2_mixer) -lopusfile -lopus -lvorbisfile -lvorbis -logg -lFLAC -lsndfile -lmodplug -lmpg123 -lm -lssp
++endif
+ 
