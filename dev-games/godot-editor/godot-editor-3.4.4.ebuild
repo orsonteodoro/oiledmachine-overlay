@@ -380,8 +380,20 @@ src_compile_linux_yes_mono() {
 		"LINKFLAGS=${LDFLAGS}" || die
 
 	einfo "Mono support:  Generating glue sources"
+	# Generates modules/mono/glue/mono_glue.gen.cpp
 	local f=$(basename bin/*)
-	bin/${f} --generate-mono-glue modules/mono/glue || die
+	bin/${f} \
+		--audio-driver Dummy \
+		--generate-mono-glue \
+		modules/mono/glue || die
+
+	if ! ( find bin -name "data.*" ) ; then
+eerror
+eerror "Missing export templates directory (data.mono.*.*.*).  Likely caused by"
+eerror "a crash while generating mono_glue.gen.cpp."
+eerror
+		die
+	fi
 
 	einfo "Mono support:  Building final binary"
 	options_mono=( module_mono_enabled=yes )
