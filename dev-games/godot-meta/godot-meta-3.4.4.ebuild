@@ -6,7 +6,7 @@ EAPI=8
 DESCRIPTION="Godot metapackage"
 KEYWORDS="~amd64 ~riscv ~x86"
 IUSE_EXPORT_TEMPLATES="android dedicated-server headless-server ios javascript
-linux32 +linux64 linux-server macos mingw32 mingw64"
+linux32 +linux64 linux-server macos mingw32 mingw64 prebuilt-export-templates"
 IUSE="${IUSE_EXPORT_TEMPLATES} +demos -export-templates"
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
@@ -14,7 +14,7 @@ RDEPEND="
 	!dev-games/godot
 	dev-games/godot-editor:${SLOT}
 	android? (
-		dev-games/godot-template-android:${SLOT}
+		dev-games/godot-export-template-android:${SLOT}
 	)
 	dedicated-server? (
 		dev-games/godot-dedicated-server:${SLOT}
@@ -26,24 +26,27 @@ RDEPEND="
 		dev-games/godot-headless-server:${SLOT}
 	)
 	ios? (
-		dev-games/godot-template-ios:${SLOT}
+		dev-games/godot-export-template-ios:${SLOT}
 	)
 	javascript? (
-		dev-games/godot-template-javascript:${SLOT}
+		dev-games/godot-export-template-javascript:${SLOT}
 	)
 	linux32? (
-		dev-games/godot-template-linux32:${SLOT}
+		dev-games/godot-export-template-linux32:${SLOT}
 	)
 	linux64? (
-		dev-games/godot-template-linux64:${SLOT}
+		dev-games/godot-export-template-linux64:${SLOT}
 	)
 	macos? (
-		dev-games/godot-template-macos:${SLOT}
+		dev-games/godot-export-template-macos:${SLOT}
 	)
 	mingw32? (
-		dev-games/godot-template-mingw32:${SLOT}
+		dev-games/godot-export-template-mingw32:${SLOT}
 	)
 	mingw64? (
-		dev-games/godot-template-mingw64:${SLOT}
+		dev-games/godot-export-template-mingw64:${SLOT}
+	)
+	prebuilt-export-templates? (
+		dev-games/godot-export-template-bin:${SLOT}
 	)
 "

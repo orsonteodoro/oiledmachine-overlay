@@ -26,6 +26,7 @@
     Ebuild development priorities with top highest (subject to change):
 
       * Re-add support for Mono (for Linux) in ebuild in a cleaner way [trivial]
+      * Ebuild for prebuilt export-templates (Standard / C#) [trivial]
       * Completion of prefix (crossdev) / export-template ebuilds for MinGW-w64 (64-bit) [trivial]
       * Completion of prefix (crossdev) / export-template ebuilds for MinGW-w64 (32-bit) [trivial]
       * Completion of export-template ebuilds for javascript [trivial]
@@ -35,7 +36,6 @@
       * Re-add support for Mono (Cross) in ebuild in a tractable and most complete way [most difficult]
       * Completion of *most* prefix (crossdev) / export-template ebuilds for iOS (help needed) [most difficult]
       * Completion of *most* prefix (crossdev) / export-template ebuilds for macOS (help needed) [most difficult]
-      * Ebuild for prebuilt export-templates (Standard / C#) [trivial]
 
 
     Ebuild completion status:
@@ -68,6 +68,8 @@
       for Wine32</flag>
     <flag name="mingw32">Adds the export template for MinGW-w64 (64-bit)
       for Wine64</flag>
+    <flag name="prebuilt-export-templates">Adds the prebuilt export templates
+      for all supported platforms.</flag>
   </use>
   <slots>
     <slot name="2">
