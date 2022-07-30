@@ -12,7 +12,7 @@ LICENSE="
 	Boost-1.0
 	BSD
 	BSD-2
-	CC-BY-3.0
+	CC-BY-4.0
 	FTL
 	ISC
 	LGPL-2.1
