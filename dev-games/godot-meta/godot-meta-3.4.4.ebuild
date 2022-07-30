@@ -6,7 +6,7 @@ EAPI=8
 DESCRIPTION="Godot metapackage"
 KEYWORDS="~amd64 ~riscv ~x86"
 IUSE_EXPORT_TEMPLATES="android dedicated-server headless-server ios javascript
-linux32 +linux64 linux-mono linux-server macos mingw32 mingw64"
+linux32 +linux64 linux-server macos mingw32 mingw64"
 IUSE="${IUSE_EXPORT_TEMPLATES} +demos -export-templates"
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
@@ -36,9 +36,6 @@ RDEPEND="
 	)
 	linux64? (
 		dev-games/godot-template-linux64:${SLOT}
-	)
-	linux-mono? (
-		dev-games/godot-template-linux-mono:${SLOT}
 	)
 	macos? (
 		dev-games/godot-template-macos:${SLOT}
