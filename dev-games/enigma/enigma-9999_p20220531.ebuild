@@ -36,11 +36,12 @@ b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
 ABI_FINGERPRINT="3660f4e5cab9d7d7db6fd8b5c4b6f7089b923e283daef5eb7c41094626b90001"
-DEPENDS_FINGERPRINT="0ec94f2f56757425c83281360d9d1f8266766b589747d553e143a88cb621760b"
+DEPENDS_FINGERPRINT="d19fdf4b4ab7cff7912d95f8da487082cdbd3c7bf51fc77ff1165dbb6db4f7c4"
 SLOT="0/${ABI_FINGERPRINT}"
-IUSE+=" android box2d bullet clang d3d ds doc externalfuncs +freetype gles2
-gles3 gme gnome gtk2 gtest headless joystick kde macos mingw32 mingw64 network
-+openal +opengl +png sdl2 sound test threads widgets wine +X xrandr xtest"
+IUSE+=" android box2d bullet clang d3d ds doc examples externalfuncs +freetype
+gles2 gles3 gme gnome gtk2 gtest headless joystick kde macos mingw32 mingw64
+network +openal +opengl +png sdl2 sound test threads widgets wine +X xrandr
+xtest"
 REQUIRED_USE_PLATFORMS="
 	|| ( android headless macos sdl2 X )
 "
@@ -168,6 +169,9 @@ DEPEND+="
 		)
 	)
 	bullet? ( >=sci-physics/bullet-${BULLET_PV}[${MULTILIB_USEDEP}] )
+	examples? (
+		dev-games/enigma-android-example
+	)
 	externalfuncs? (
 		>=dev-libs/libffi-${LIBFFI_PV}[${MULTILIB_USEDEP}]
 	)
@@ -255,6 +259,7 @@ RESTRICT="mirror"
 DOCS=( "Readme.md" )
 PATCHES=(
 	"${FILESDIR}/enigma-9999-change-sdl2-audio-linking.patch"
+	"${FILESDIR}/enigma-9999-fix-missing-workdir-references.patch"
 )
 
 _calculate_depends_fingerprint() {

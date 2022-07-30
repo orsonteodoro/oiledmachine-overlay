@@ -80,6 +80,7 @@
     <flag name="doc">Installs documents.</flag>
     <flag name="ds">Adds sound support for Wine.</flag>
     <flag name="d3d">Adds 3D support for Wine.</flag>
+    <flag name="examples">Adds the Android example project.</flag>
     <flag name="externalfuncs">Add support for GM ExternalFuncs to call DLL
       functions.</flag>
     <flag name="gles1">Installs and adds OpenGL ES 1.x support.</flag>

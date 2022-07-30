@@ -1,0 +1,25 @@
+Subject:  Replace ../../ with $(WORKDIR)
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+
+This prevents possible referencing of /usr/lib64/enigma when building the Android example project.
+All path references should be relative to /tmp/ENIGMA.
+
+diff -urp enigma-9999.orig/ENIGMAsystem/SHELL/Makefile enigma-9999/ENIGMAsystem/SHELL/Makefile
+--- enigma-9999.orig/ENIGMAsystem/SHELL/Makefile	2022-07-30 13:06:50.216355559 -0700
++++ enigma-9999/ENIGMAsystem/SHELL/Makefile	2022-07-30 13:12:25.237905894 -0700
+@@ -149,12 +149,12 @@ write_src_files:
+ 	@echo "$(ANDROID_SHARED_LIBRARIES)" > $(WORKDIR)/libs.in
+ 	@echo "$(ANDROIS_LDLIBS)" > $(WORKDIR)/ldlibs.in
+ 	@echo "$(ANDROID_MAKEFILES)" > $(WORKDIR)/makefiles.in
+-	@cat ../../android/enigma/build.gradle.template | sed -e 's/%ANDROID_API_LEVEL%/$(ANDROID_API_LEVEL)/g' | sed -e 's/%ANDROID_NDK_VERSION%/$(ANDROID_NDK_VERSION)/g' > ../../android/enigma/build.gradle
++	@cat $(WORKDIR)/android/enigma/build.gradle.template | sed -e 's/%ANDROID_API_LEVEL%/$(ANDROID_API_LEVEL)/g' | sed -e 's/%ANDROID_NDK_VERSION%/$(ANDROID_NDK_VERSION)/g' > $(WORKDIR)/android/enigma/build.gradle
+ 
+ android_game: write_src_files
+-	@cd ../../android && BASENAME=$(BASENAME) CODEGEN=$(CODEGEN) ./gradlew $(GRADLE_TARGET)
++	@cd $(WORKDIR)/android && BASENAME=$(BASENAME) CODEGEN=$(CODEGEN) ./gradlew $(GRADLE_TARGET)
+ 	@cp $(APK_OUT)/$(BASENAME) $(OUTPUTNAME)
+-	@rm -rf ../../android/enigma/src/main/assets/*
++	@rm -rf $(WORKDIR)/android/enigma/src/main/assets/*
+ 
+ compile_game: print_flags $(OBJECTS) $(RCFILES) $(RESOURCEBINARY) $(DEPENDENCIES)
+ 	@echo "Linking $(OUTPUTNAME)"
