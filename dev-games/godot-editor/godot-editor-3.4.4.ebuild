@@ -385,9 +385,9 @@ src_compile_linux_yes_mono() {
 	bin/${f} \
 		--audio-driver Dummy \
 		--generate-mono-glue \
-		modules/mono/glue || die
+		modules/mono/glue
 
-	if ! ( find bin -name "data.*" ) ; then
+	if ! ( find bin/data* ) ; then
 eerror
 eerror "Missing export templates directory (data.mono.*.*.*).  Likely caused by"
 eerror "a crash while generating mono_glue.gen.cpp."
@@ -573,6 +573,10 @@ _install_linux_editor() {
 	local f
 	f=$(basename bin/godot*tools*)
 	doexe bin/${f}
+	if use mono ; then
+		insinto "${d_base}/bin"
+		doins -r $(ls bin/data*)
+	fi
 	dosym "${d_base}/bin/${f}" "/usr/bin/godot${SLOT_MAJ}"
 	einfo "Setting up Linux editor environment"
 	make_desktop_entry \
