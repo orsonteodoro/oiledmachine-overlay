@@ -35,7 +35,7 @@ LICENSE="
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
-KEYWORDS="~amd64 ~riscv ~x86"
+KEYWORDS="~amd64"
 HOMEPAGE="https://godotengine.org"
 IUSE="standard mono"
 REQUIRED_USE="|| ( standard mono )"
