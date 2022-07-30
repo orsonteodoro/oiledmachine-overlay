@@ -230,11 +230,12 @@ src_configure() {
 		strip-flags
 		filter-flags -march=*
 	fi
+	# CCACHE disabled for cross-compile
+	unset CCACHE
 }
 
 src_compile_ios()
 {
-	unset CCACHE
 	for a in ${GODOT_IOS} ; do
 		if use ${a} ; then
 			case "${a}" in

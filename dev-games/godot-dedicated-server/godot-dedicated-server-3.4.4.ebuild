@@ -332,7 +332,6 @@ src_configure() {
 
 src_compile_server()
 {
-	unset CCACHE
 	local options_extra=(
 		$(usex debug "target=debug_release" "")
 	)

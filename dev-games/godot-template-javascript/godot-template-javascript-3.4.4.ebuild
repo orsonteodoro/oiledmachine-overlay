@@ -288,11 +288,12 @@ src_configure() {
 		strip-flags
 		filter-flags -march=*
 	fi
+	# CCACHE disabled for cross-compile
+	unset CCACHE
 }
 
 src_compile_web()
 {
-	unset CCACHE
 	einfo "Creating export templates"
 	_configure_emscripten
 

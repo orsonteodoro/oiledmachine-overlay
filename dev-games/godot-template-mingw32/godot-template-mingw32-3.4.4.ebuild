@@ -278,11 +278,12 @@ src_configure() {
 		strip-flags
 		filter-flags -march=*
 	fi
+	# CCACHE disabled for cross-compile
+	unset CCACHE
 }
 
 src_compile_windows()
 {
-	unset CCACHE
 	local bitness=32
 	einfo "Creating export template"
 	for c in release release_debug ; do

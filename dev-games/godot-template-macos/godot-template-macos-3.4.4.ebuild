@@ -293,11 +293,12 @@ src_configure() {
 		strip-flags
 		filter-flags -march=*
 	fi
+	# CCACHE disabled for cross-compile
+	unset CCACHE
 }
 
 src_compile_osx()
 {
-	unset CCACHE
 	for a in ${GODOT_OSX} ; do
 		if use ${a} ; then
 			local extra_options=(

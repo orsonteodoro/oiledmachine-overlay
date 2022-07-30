@@ -415,7 +415,6 @@ src_compile_linux_no_mono() {
 
 src_compile_linux()
 {
-	unset CCACHE
 	if use mono ; then
 		src_compile_linux_yes_mono
 	else
