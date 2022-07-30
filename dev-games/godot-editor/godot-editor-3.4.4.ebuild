@@ -381,8 +381,7 @@ src_compile_linux_yes_mono() {
 
 	einfo "Mono support:  Generating glue sources"
 	local f=$(basename bin/*)
-	bin/${f} --generate-mono-glue modules/mono/glue
-	rm -rf bin/godot* || die
+	bin/${f} --generate-mono-glue modules/mono/glue || die
 
 	einfo "Mono support:  Building final binary"
 	options_mono=( module_mono_enabled=yes )
