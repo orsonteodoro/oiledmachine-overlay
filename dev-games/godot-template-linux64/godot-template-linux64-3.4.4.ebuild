@@ -347,23 +347,60 @@ src_configure() {
 	fi
 }
 
-src_compile_linux()
-{
-	unset CCACHE
-
-	local options_mono=()
-	if use mono ; then
-		options_mono=(
-			module_mono_enabled=yes mono_static=yes mono_glue=no
-		)
-	else
-		options_mono=(
-			module_mono_enabled=no
-		)
-	fi
-
-	local bitness=64
+src_compile_linux_yes_mono() {
+	local bitness=32
+	local options_mono
 	einfo "Building export templates"
+	# tools=yes (default)
+	for c in release release_debug ; do
+		einfo "Mono support:  Building temporary binary"
+		options_mono=(
+			module_mono_enabled=yes
+			mono_glue=no
+		)
+		scons ${options_x11[@]} \
+			${options_modules[@]} \
+			${options_modules_shared[@]} \
+			${options_mono[@]} \
+			bits=${bitness} \
+			target=${c} \
+			tools=no \
+			|| die
+
+		einfo "Mono support:  Generating glue sources"
+		local f=$(basename bin/*)
+		bin/${f} \
+			--audio-driver Dummy \
+			--generate-mono-glue \
+			modules/mono/glue || die
+
+		if ! ( find bin -regextype 'posix-extended' -regex "bin/data.*${c}(.|$)" ) ; then
+eerror
+eerror "Missing export templates directory (data.mono.*.*.*).  Likely caused by"
+eerror "a crash while generating mono_glue.gen.cpp."
+eerror
+			die
+		fi
+
+		einfo "Mono support:  Building final binary"
+		options_mono=(
+			module_mono_enabled=yes
+		)
+		scons ${options_x11[@]} \
+			${options_modules[@]} \
+			${options_modules_shared[@]} \
+			${options_mono[@]} \
+			bits=${bitness} \
+			target=${c} \
+			tools=no \
+			|| die
+	done
+}
+
+src_compile_linux_no_mono() {
+	local bitness=32
+	einfo "Building export templates"
+	local options_mono=( module_mono_enabled=no )
 	for c in release release_debug ; do
 		scons ${options_x11[@]} \
 			${options_modules[@]} \
@@ -374,6 +411,16 @@ src_compile_linux()
 			tools=no \
 			|| die
 	done
+}
+
+src_compile_linux()
+{
+	unset CCACHE
+	if use mono ; then
+		src_compile_linux_yes_mono
+	else
+		src_compile_linux_no_mono
+	fi
 }
 
 src_compile() {
@@ -534,14 +581,19 @@ _get_configuration() {
 }
 
 _install_export_templates() {
+	insinto /usr/share/godot/${SLOT_MAJ}/linux64/templates
 	exeinto /usr/share/godot/${SLOT_MAJ}/linux64/templates
 	einfo "Installing export templates"
 
 	local x
-	for x in $(find bin -type f) ; do
+	for x in $(find bin -maxdepth 1 | sed -e "1d") ; do
 		local bitness=$(_get_bitness "${x}")
 		local c=$(_get_configuration "${x}")
-		newexe "${x}" "linux_x11_${bitness}_${c}"
+		if [[ "${x}" =~ "bin/data" ]] ; then
+			doins -r "${x}" # For builds using Mono
+		else
+			newexe "${x}" "linux_x11_${bitness}_${c}"
+		fi
 	done
 }
 
