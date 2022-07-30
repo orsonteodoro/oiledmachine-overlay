@@ -26,7 +26,6 @@
     Ebuild development priorities with top highest (subject to change):
 
       * Re-add support for Mono (for Linux) in ebuild in a cleaner way [trivial]
-      * Ebuild for prebuilt export-templates (Standard / C#) [trivial]
       * Completion of prefix (crossdev) / export-template ebuilds for MinGW-w64 (64-bit) [trivial]
       * Completion of prefix (crossdev) / export-template ebuilds for MinGW-w64 (32-bit) [trivial]
       * Completion of export-template ebuilds for javascript [trivial]
@@ -38,7 +37,7 @@
       * Completion of *most* prefix (crossdev) / export-template ebuilds for macOS (help needed) [most difficult]
 
 
-    Ebuild completion status:
+    Ebuild completion status (for build from source code):
 
       Android:  Incomplete / Work In Progress (help needed)
       Dedicated server:  Complete
@@ -52,24 +51,23 @@
       MinGW-w64 (64-bit):  Incomplete / Work In Progress [community help is optional]
 
   </longdescription>
-    <flag name="android">Adds the export template for Android</flag>
-    <flag name="dedicated-server">Adds a dedicated gaming Linux server</flag>
+    <flag name="android">Builds the export template for Android not prebuilt
+      </flag>
+    <flag name="dedicated-server">Builds a dedicated gaming Linux server</flag>
     <flag name="demos">Installs demos</flag>
-    <flag name="headless-server">Adds a headless Linux server for editing and
+    <flag name="headless-server">Builds a headless Linux server for editing and
       testing</flag>
-    <flag name="ios">Adds the export template for iOS</flag>
-    <flag name="javascript">Adds the export template for WASM HTML5</flag>
-    <flag name="linux32">Adds the export template for 32-bit Linux</flag>
-    <flag name="linux64">Adds the export template for 64-bit Linux</flag>
-    <flag name="linux-minimal">Adds the export template for minimal native
-      Linux</flag>
-    <flag name="macos">Adds the export template for macOS</flag>
-    <flag name="mingw32">Adds the export template for MinGW-w64 (32-bit)
+    <flag name="ios">Builds the export template for iOS built from source</flag>
+    <flag name="javascript">Builds the export template for WASM HTML5</flag>
+    <flag name="linux32">Builds the export template for 32-bit Linux</flag>
+    <flag name="linux64">Builds the export template for 64-bit Linux</flag>
+    <flag name="macos">Builds the export template for macOS</flag>
+    <flag name="mingw32">Builds the export template for MinGW-w64 (32-bit)
       for Wine32</flag>
-    <flag name="mingw32">Adds the export template for MinGW-w64 (64-bit)
+    <flag name="mingw32">Builds the export template for MinGW-w64 (64-bit)
       for Wine64</flag>
-    <flag name="prebuilt-export-templates">Adds the prebuilt export templates
-      for all supported platforms.</flag>
+    <flag name="prebuilt-export-templates">Installs the prebuilt export
+      templates for all supported platforms.</flag>
   </use>
   <slots>
     <slot name="2">
