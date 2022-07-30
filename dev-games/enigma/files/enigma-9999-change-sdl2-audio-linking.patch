@@ -1,3 +1,8 @@
+Subject:  Change linker libraries
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+
+Don't link to MinGW-w64 libraries in non Windows platforms.
+
 diff -urp enigma-9999.orig/ENIGMAsystem/SHELL/Audio_Systems/SDL/Makefile enigma-9999/ENIGMAsystem/SHELL/Audio_Systems/SDL/Makefile
 --- enigma-9999.orig/ENIGMAsystem/SHELL/Audio_Systems/SDL/Makefile	2022-07-30 12:08:15.308883833 -0700
 +++ enigma-9999/ENIGMAsystem/SHELL/Audio_Systems/SDL/Makefile	2022-07-30 12:13:41.176880612 -0700
@@ -9,7 +14,7 @@ diff -urp enigma-9999.orig/ENIGMAsystem/SHELL/Audio_Systems/SDL/Makefile enigma-
 +ifeq ($(TARGET-PLATFORM), Windows)
 +  override LDLIBS += $(shell pkg-config --libs SDL2_mixer) -lopusfile -lopus -lvorbisfile -lvorbis -logg -lFLAC -lsndfile -lmodplug -lmpg123 -lole32 -lwinmm -lm -lshlwapi -lssp
 +else ifeq ($(TARGET-PLATFORM), Android)
-+  override LDLIBS += $(shell pkg-config --libs SDL2_mixer) -lopusfile -lopus -lvorbisfile -lvorbis -logg -lFLAC -lsndfile -lmodplug -lmpg123 -lm
++  override LDLIBS += $(shell pkg-config --libs SDL2_mixer) -lopusfile -lopus -lvorbisfile -lvorbis -logg -lFLAC -lsndfile -lmodplug -lmpg123 -lm -lssp
 +else
 +  override LDLIBS += $(shell pkg-config --libs SDL2_mixer) -lopusfile -lopus -lvorbisfile -lvorbis -logg -lFLAC -lsndfile -lmodplug -lmpg123 -lm -lssp
 +endif
