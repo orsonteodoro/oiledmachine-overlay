@@ -62,6 +62,12 @@
     built and available in order to build for the target platform.  All
     dependencies must have matching ABI (all 32-bit or all 64-bit) in
     the crossdev image(s).
+
+
+    For the example Android project, see
+
+      https://github.com/enigma-dev/enigma-android
+
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/enigma-dev/enigma-dev/issues</bugs-to>
@@ -80,7 +86,6 @@
     <flag name="doc">Installs documents.</flag>
     <flag name="ds">Adds sound support for Wine.</flag>
     <flag name="d3d">Adds 3D support for Wine.</flag>
-    <flag name="examples">Adds the Android example project.</flag>
     <flag name="externalfuncs">Add support for GM ExternalFuncs to call DLL
       functions.</flag>
     <flag name="gles1">Installs and adds OpenGL ES 1.x support.</flag>

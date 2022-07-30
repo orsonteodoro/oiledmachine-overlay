@@ -35,9 +35,9 @@ b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
 "
 
 ABI_FINGERPRINT="4742c621d202c5d84b6a87efa7a371eaadc142fdb904b976f3fcbbc2517bb0b5"
-DEPENDS_FINGERPRINT="d19fdf4b4ab7cff7912d95f8da487082cdbd3c7bf51fc77ff1165dbb6db4f7c4"
+DEPENDS_FINGERPRINT="0ec94f2f56757425c83281360d9d1f8266766b589747d553e143a88cb621760b"
 SLOT="0/${ABI_FINGERPRINT}"
-IUSE+=" android box2d bullet clang d3d ds doc examples externalfuncs +freetype
+IUSE+=" android box2d bullet clang d3d ds doc externalfuncs +freetype
 gles2 gles3 gme gnome gtk2 gtest headless joystick kde macos mingw32 mingw64
 network +openal +opengl +png sdl2 sound test threads widgets wine +X xrandr
 xtest"
@@ -168,9 +168,6 @@ DEPEND+="
 		)
 	)
 	bullet? ( >=sci-physics/bullet-${BULLET_PV}[${MULTILIB_USEDEP}] )
-	examples? (
-		dev-games/enigma-android-example
-	)
 	externalfuncs? (
 		>=dev-libs/libffi-${LIBFFI_PV}[${MULTILIB_USEDEP}]
 	)
@@ -723,6 +720,12 @@ src_install() {
 pkg_postinst()
 {
 	if use android ; then
+einfo
+einfo "See https://github.com/enigma-dev/enigma-android which parts of the"
+einfo "build system uses.  The android projects require a gradle wrapper"
+einfo "when porting to android, or the build system requires modding."
+einfo
+
 einfo
 einfo "You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"
 einfo "for SYSROOT, -I, -L changes.  They should point/reference CTARGET not"
