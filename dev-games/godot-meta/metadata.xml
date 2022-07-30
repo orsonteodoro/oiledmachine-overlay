@@ -19,7 +19,7 @@
     Cross-compile or split ebuild design notes:
 
       * Packages with godot-cross-* need to be emerged in prefix (crossdev) context.
-      * Packages with godot-export-template-* need to be emerge in native context.
+      * Packages with godot-export-templates-* need to be emerge in native context.
       * See also metadata.xml in each package for details.
 
 

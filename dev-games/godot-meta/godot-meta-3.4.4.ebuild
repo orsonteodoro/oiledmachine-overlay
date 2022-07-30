@@ -14,7 +14,7 @@ RDEPEND="
 	!dev-games/godot
 	dev-games/godot-editor:${SLOT}
 	android? (
-		dev-games/godot-export-template-android:${SLOT}
+		dev-games/godot-export-templates-android:${SLOT}
 	)
 	dedicated-server? (
 		dev-games/godot-dedicated-server:${SLOT}
@@ -26,27 +26,27 @@ RDEPEND="
 		dev-games/godot-headless-server:${SLOT}
 	)
 	ios? (
-		dev-games/godot-export-template-ios:${SLOT}
+		dev-games/godot-export-templates-ios:${SLOT}
 	)
 	javascript? (
-		dev-games/godot-export-template-javascript:${SLOT}
+		dev-games/godot-export-templates-javascript:${SLOT}
 	)
 	linux32? (
-		dev-games/godot-export-template-linux32:${SLOT}
+		dev-games/godot-export-templates-linux32:${SLOT}
 	)
 	linux64? (
-		dev-games/godot-export-template-linux64:${SLOT}
+		dev-games/godot-export-templates-linux64:${SLOT}
 	)
 	macos? (
-		dev-games/godot-export-template-macos:${SLOT}
+		dev-games/godot-export-templates-macos:${SLOT}
 	)
 	mingw32? (
-		dev-games/godot-export-template-mingw32:${SLOT}
+		dev-games/godot-export-templates-mingw32:${SLOT}
 	)
 	mingw64? (
-		dev-games/godot-export-template-mingw64:${SLOT}
+		dev-games/godot-export-templates-mingw64:${SLOT}
 	)
 	prebuilt-export-templates? (
-		dev-games/godot-export-template-bin:${SLOT}
+		dev-games/godot-export-templates-bin:${SLOT}
 	)
 "
