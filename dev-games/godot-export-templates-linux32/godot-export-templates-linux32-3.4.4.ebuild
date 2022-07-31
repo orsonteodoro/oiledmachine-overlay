@@ -229,7 +229,9 @@ DEPEND+="
 	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
 	mono? (
+		dev-games/godot-editor:${SLOT}[mono]
 		>=dev-lang/mono-6.0.0.176
+		dev-util/msbuild
 	)
 	!portable? (
 		ca-certs-relax? (
@@ -339,6 +341,13 @@ einfo "in ${distdir} or you can \`wget -O ${distdir}/${FN_DEST} ${URI_A}\`"
 einfo
 }
 
+src_prepare() {
+	if use mono ; then
+		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/x11/modules/mono/glue" \
+			modules/mono/glue || die
+	fi
+}
+
 src_configure() {
 	default
 	if use portable ; then
@@ -347,79 +356,26 @@ src_configure() {
 	fi
 }
 
-src_compile_linux_yes_mono() {
-	local bitness=32
-	local options_mono
-	einfo "Building export templates"
-	# tools=yes (default)
-	for c in release release_debug ; do
-		einfo "Mono support:  Building temporary binary"
-		options_mono=(
-			module_mono_enabled=yes
-			mono_glue=no
-		)
-		scons ${options_x11[@]} \
-			${options_modules[@]} \
-			${options_modules_shared[@]} \
-			${options_mono[@]} \
-			bits=${bitness} \
-			target=${c} \
-			tools=no \
-			|| die
-
-		einfo "Mono support:  Generating glue sources"
-		local f=$(basename bin/*)
-		bin/${f} \
-			--audio-driver Dummy \
-			--generate-mono-glue \
-			modules/mono/glue || die
-
-		if ! ( find bin -regextype 'posix-extended' -regex "bin/data.*${c}(.|$)" ) ; then
-eerror
-eerror "Missing export templates directory (data.mono.*.*.*).  Likely caused by"
-eerror "a crash while generating mono_glue.gen.cpp."
-eerror
-			die
-		fi
-
-		einfo "Mono support:  Building final binary"
-		options_mono=(
-			module_mono_enabled=yes
-		)
-		scons ${options_x11[@]} \
-			${options_modules[@]} \
-			${options_modules_shared[@]} \
-			${options_mono[@]} \
-			bits=${bitness} \
-			target=${c} \
-			tools=no \
-			|| die
-	done
-}
-
-src_compile_linux_no_mono() {
-	local bitness=32
-	einfo "Building export templates"
-	local options_mono=( module_mono_enabled=no )
-	for c in release release_debug ; do
-		scons ${options_x11[@]} \
-			${options_modules[@]} \
-			${options_modules_shared[@]} \
-			${options_mono[@]} \
-			bits=${bitness} \
-			target=${c} \
-			tools=no \
-			|| die
-	done
-}
-
 src_compile_linux()
 {
+	local bitness=32
+	einfo "Building export templates"
+	local options_mono=()
 	if use mono ; then
-		src_compile_linux_yes_mono
+		options_mono=( module_mono_enabled=yes )
 	else
-		src_compile_linux_no_mono
+		options_mono=( module_mono_enabled=no )
 	fi
+	for c in release release_debug ; do
+		scons ${options_x11[@]} \
+			${options_modules[@]} \
+			${options_modules_shared[@]} \
+			${options_mono[@]} \
+			bits=${bitness} \
+			target=${c} \
+			tools=no \
+			|| die
+	done
 }
 
 src_compile() {
