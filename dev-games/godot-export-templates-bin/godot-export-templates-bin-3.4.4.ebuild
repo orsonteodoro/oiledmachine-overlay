@@ -3,6 +3,9 @@
 
 EAPI=8
 
+STATUS="stable"
+MONO_PV="6.12.0.158"
+
 DESCRIPTION="Godot export templates"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="
@@ -35,13 +38,61 @@ LICENSE="
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
 HOMEPAGE="https://godotengine.org"
-IUSE="standard mono"
-REQUIRED_USE="|| ( standard mono )"
+PLATFORMS="
+	android
+	ios
+	javascript
+	javascript_gdnative
+	javascript_threads
+	linux_x86
+	linux_x86_64
+	macos
+	uwp_arm
+	uwp_x86
+	uwp_x86_64
+	windows_x86
+	windows_x86_64
+"
+IUSE="${PLATFORMS} custom debug mono release standard"
+REQUIRED_USE="
+	|| ( standard mono )
+	|| (
+		android
+		ios
+		javascript
+		javascript_gdnative
+		javascript_threads
+		linux_x86
+		linux_x86_64
+		uwp_arm
+		uwp_x86
+		uwp_x86_64
+		windows_x86
+		windows_x86_64
+	)
+	android? ( || ( standard mono ) )
+	ios? ( || ( standard mono ) )
+	javascript? ( || ( standard mono ) )
+	javascript_gdnative? ( || ( standard ) )
+	javascript_threads? ( || ( standard ) )
+	linux_x86? ( || ( standard mono ) )
+	linux_x86_64? ( || ( standard mono ) )
+	macos? ( || ( standard mono ) )
+	uwp_arm? ( || ( standard ) )
+	uwp_x86? ( || ( standard ) )
+	uwp_x86_64? ( || ( standard ) )
+	windows_x86? ( || ( standard mono ) )
+	windows_x86_64? ( || ( standard mono ) )
+	custom? (
+		|| ( debug release )
+	)
+"
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 RESTRICT="binchecks"
+BDEPEND="app-arch/unzip"
 if [[ "AUPDATE" == "1" ]] ; then
 	SRC_URI="
 		https://downloads.tuxfamily.org/godotengine/3.4.4/mono/Godot_v3.4.4-stable_mono_export_templates.tpz
@@ -58,13 +109,215 @@ else
 	"
 fi
 
+pkg_setup() {
+	if use custom ; then
+einfo
+einfo "USE=custom (installing individually per microarch)"
+einfo
+	else
+ewarn
+ewarn "USE=-custom (installing in bulk)"
+ewarn
+	fi
+}
+
 src_unpack() {
-	# skip unpack
 	mkdir -p "${S}" || die
+	if use custom ; then
+		mkdir -p "${WORKDIR}/mono" || die
+		mkdir -p "${WORKDIR}/standard" || die
+		if use mono ; then
+			unzip -x "${DISTDIR}/Godot_v3.4.4-stable_mono_export_templates.tpz" -d "${WORKDIR}/mono" || die
+		fi
+		if use standard ; then
+			unzip -x "${DISTDIR}/Godot_v3.4.4-stable_export_templates.tpz" -d "${WORKDIR}/standard" || die
+		fi
+		for type in mono standard ; do
+			for c in debug release ; do
+				if use "${c}" ; then
+					if ! use android ; then
+						rm -rf "${WORKDIR}/${type}/templates/android"*"${c}"* || die
+					fi
+					if ! use javascript ; then
+						rm -rf "${WORKDIR}/${type}/templates/webassembly"*"${c}"* || die
+					fi
+					if ! use linux_x86 ; then
+						rm -rf "${WORKDIR}/${type}/templates/linux_x11_32"*"${c}"* || die
+					fi
+					if ! use linux_x86_64 ; then
+						rm -rf "${WORKDIR}/${type}/templates/linux_x11_64"*"${c}"* || die
+					fi
+					if ! use windows_x86 ; then
+						rm -rf "${WORKDIR}/${type}/templates/windows_32"*"${c}"* || die
+					fi
+					if ! use windows_x86_64 ; then
+						rm -rf "${WORKDIR}/${type}/templates/windows_64"*"${c}"* || die
+					fi
+					if [[ "${type}" == "mono" ]] ; then
+						local c2
+						c2="${c}"
+						# ambiguous between release and release_debug
+						[[ "${c}" == "debug" ]] && c2="debug_release"
+						if ! use linux_x86 ; then
+							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.32.${c2}") || die
+						fi
+						if ! use linux_x86_64 ; then
+							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.64.${c2}") || die
+						fi
+						if ! use windows_x86 ; then
+							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.32.${c2}") || die
+						fi
+						if ! use windows_x86_64 ; then
+							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.64.${c2}") || die
+						fi
+					fi
+					if [[ "${type}" == "standard" ]] ; then
+						if ! use javascript ; then
+							rm -rf "${WORKDIR}/${type}/templates/webassembly_${c}"* || die
+						fi
+						if ! use javascript_gdnative ; then
+							rm -rf "${WORKDIR}/${type}/templates/webassembly_gdnative_${c}"* || die
+						fi
+						if ! use javascript_threads ; then
+							rm -rf "${WORKDIR}/${type}/templates/webassembly_threads_${c}"* || die
+						fi
+						if ! use uwp_arm ; then
+							rm -rf "${WORKDIR}/${type}/templates/uwp_arm_${c}"* || die
+						fi
+						if ! use uwp_x86 ; then
+							rm -rf "${WORKDIR}/${type}/templates/uwp_x86_${c}"* || die
+						fi
+						if ! use uwp_x86_64 ; then
+							rm -rf "${WORKDIR}/${type}/templates/uwp_x64_${c}"* || die
+						fi
+					fi
+				else
+					rm -rf "${WORKDIR}/${type}/templates/android"*"${c}"* || die
+					rm -rf "${WORKDIR}/${type}/templates/webassembly"*"${c}"* || die
+					rm -rf "${WORKDIR}/${type}/templates/linux_x11_32"*"${c}"* || die
+					rm -rf "${WORKDIR}/${type}/templates/linux_x11_64"*"${c}"* || die
+					rm -rf "${WORKDIR}/${type}/templates/windows_32"*"${c}"* || die
+					rm -rf "${WORKDIR}/${type}/templates/windows_64"*"${c}"* || die
+					if [[ "${type}" == "mono" ]] ; then
+						local c2
+						c2="${c}"
+						# ambiguous between release and release_debug
+						[[ "${c}" == "debug" ]] && c2="debug_release"
+						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.32.${c2}") || die
+						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.64.${c2}") || die
+						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.32.${c2}") || die
+						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.64.${c2}") || die
+					fi
+					if [[ "${type}" == "standard" ]] ; then
+						rm -rf "${WORKDIR}/${type}/templates/webassembly_${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/webassembly_gdnative_${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/webassembly_threads_${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/uwp_arm_${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/uwp_x86_${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/uwp_x64_${c}"* || die
+					fi
+				fi
+			done
+			if ! use android ; then
+				rm -rf "${WORKDIR}/${type}/templates/android"*"source"* || die
+			fi
+			if ! use ios ; then
+				rm -rf "${WORKDIR}/${type}/templates/iphone"* || die
+			fi
+			if ! use macos ; then
+				rm -rf "${WORKDIR}/${type}/templates/osx"* || die
+			fi
+			if [[ "${type}" == "mono" ]] ; then
+				if ! use android ; then
+					rm -rf "${WORKDIR}/${type}/templates/bcl/monodroid"* || die
+					rm -rf "${WORKDIR}/${type}/templates/bcl/godot_android_ext"* || die
+				fi
+				if ! use ios ; then
+					rm -rf "${WORKDIR}/${type}/templates/bcl/monotouch"* || die
+					rm -rf "${WORKDIR}/${type}/templates/iphone-mono-libs"* || die
+				fi
+				if ! use javascript ; then
+					rm -rf "${WORKDIR}/${type}/templates/bcl/wasm"* || die
+				fi
+				if [[ ! ( "${USE}" =~ "linux" ) ]] && ! use macos ; then
+					rm -rf "${WORKDIR}/${type}/templates/bcl/net_4_x" || die
+				fi
+				if [[ ! ( "${USE}" =~ "windows" ) ]] ; then
+					rm -rf "${WORKDIR}/${type}/templates/bcl/net_4_x_win" || die
+				fi
+			fi
+		done
+	fi
+}
+
+src_configure() {
+	# Verify metadata:
+	local mono_pv=$(unzip -p $(realpath "${DISTDIR}/Godot_v3.4.4-stable_mono_export_templates.tpz") \
+		templates/data.mono.x11.64.release_debug/Mono/lib/libmono-native.so \
+		| strings \
+		| grep -o -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" \
+		| head -n 1)
+	if [[ "${mono_pv}" != "${MONO_PV}" ]] ; then
+eerror
+eerror "Expected Mono:  ${MONO_PV}"
+eerror "Actual Mono:  ${MONO_PV}"
+eerror
+eerror "Bump the MONO_PV in the ebuild."
+eerror
+		die
+	fi
 }
 
 src_install() {
-	insinto /usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates
-	use mono && doins $(realpath "${DISTDIR}/Godot_v3.4.4-stable_mono_export_templates.tpz")
-	use standard && doins $(realpath "${DISTDIR}/Godot_v3.4.4-stable_export_templates.tpz")
+	use debug && export STRIP="true"
+	insinto "/usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates"
+	if ! use custom ; then
+		use mono && doins $(realpath "${DISTDIR}/Godot_v3.4.4-stable_mono_export_templates.tpz")
+		use standard && doins $(realpath "${DISTDIR}/Godot_v3.4.4-stable_export_templates.tpz")
+	else
+		if use mono ; then
+			insinto "/usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates/mono"
+			doins -r "${WORKDIR}/mono/"*
+		fi
+		if use standard ; then
+			insinto "/usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates/standard"
+			doins -r "${WORKDIR}/standard/"*
+		fi
+		local p
+		for p in $(find "${ED}" -type f) ; do
+			if file "${p}" | grep -q -E -e "(executable|shared object)" ; then
+				p=$(echo "${p}" | sed -e "s|^${ED}||g")
+				fperms 0755 "${p}"
+			fi
+		done
+	fi
+}
+
+pkg_postinst() {
+	# Information provided for developers:
+	einfo
+	einfo "Developer details:"
+	einfo
+	use mono && einfo "Mono version:  ${MONO_PV}"
+	! use mono && einfo "Mono version:   Not installed"
+	einfo "CPU microarchitectures:  See metadata.xml"
+	einfo
+	if use custom ; then
+		if use standard ; then
+einfo
+einfo "The following still must be done for export templates (Mono/C#):"
+einfo
+einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}.mono"
+einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates/mono/templates ~/.local/share/godot/templates/${PV}.${STATUS}.mono"
+einfo
+		fi
+		if use mono ; then
+einfo
+einfo "The following still must be done for export templates (standard):"
+einfo
+einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}"
+einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates/standard/templates ~/.local/share/godot/templates/${PV}.${STATUS}"
+einfo
+		fi
+	fi
 }
