@@ -4,7 +4,12 @@
 EAPI=8
 
 STATUS="stable"
-MONO_PV="6.12.0.158"
+
+ANDROID_MIN_API="19"
+ANDROID_SDK_V="30"
+IOS_MIN="10.0"
+MONO_PV="6.12.0.158" # no release reference in godot-mono-builds repo
+EMSCRIPTEN_PV="2.0.25"
 
 DESCRIPTION="Godot export templates"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
@@ -95,16 +100,16 @@ RESTRICT="binchecks"
 BDEPEND="app-arch/unzip"
 if [[ "AUPDATE" == "1" ]] ; then
 	SRC_URI="
-		https://downloads.tuxfamily.org/godotengine/3.4.4/mono/Godot_v3.4.4-stable_mono_export_templates.tpz
-		https://downloads.tuxfamily.org/godotengine/3.4.4/Godot_v3.4.4-stable_export_templates.tpz
+		https://downloads.tuxfamily.org/godotengine/${PV}/mono/Godot_v${PV}-stable_mono_export_templates.tpz
+		https://downloads.tuxfamily.org/godotengine/${PV}/Godot_v${PV}-stable_export_templates.tpz
 	"
 else
 	SRC_URI="
 		mono? (
-			https://downloads.tuxfamily.org/godotengine/3.4.4/mono/Godot_v3.4.4-stable_mono_export_templates.tpz
+			https://downloads.tuxfamily.org/godotengine/${PV}/mono/Godot_v${PV}-stable_mono_export_templates.tpz
 		)
 		standard? (
-			https://downloads.tuxfamily.org/godotengine/3.4.4/Godot_v3.4.4-stable_export_templates.tpz
+			https://downloads.tuxfamily.org/godotengine/${PV}/Godot_v${PV}-stable_export_templates.tpz
 		)
 	"
 fi
@@ -127,12 +132,14 @@ src_unpack() {
 		mkdir -p "${WORKDIR}/mono" || die
 		mkdir -p "${WORKDIR}/standard" || die
 		if use mono ; then
-			unzip -x "${DISTDIR}/Godot_v3.4.4-stable_mono_export_templates.tpz" -d "${WORKDIR}/mono" || die
+			unzip -x "${DISTDIR}/Godot_v${PV}-stable_mono_export_templates.tpz" -d "${WORKDIR}/mono" || die
 		fi
 		if use standard ; then
-			unzip -x "${DISTDIR}/Godot_v3.4.4-stable_export_templates.tpz" -d "${WORKDIR}/standard" || die
+			unzip -x "${DISTDIR}/Godot_v${PV}-stable_export_templates.tpz" -d "${WORKDIR}/standard" || die
 		fi
 		for type in mono standard ; do
+			! use mono && [[ "${type}" == "mono" ]] && continue
+			! use standard && [[ "${type}" == "standard" ]] && continue
 			for c in debug release ; do
 				if use "${c}" ; then
 					if ! use android ; then
@@ -252,28 +259,125 @@ src_unpack() {
 
 src_configure() {
 	# Verify metadata:
-	local mono_pv=$(unzip -p $(realpath "${DISTDIR}/Godot_v3.4.4-stable_mono_export_templates.tpz") \
-		templates/data.mono.x11.64.release_debug/Mono/lib/libmono-native.so \
-		| strings \
-		| grep -o -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" \
-		| head -n 1)
-	if [[ "${mono_pv}" != "${MONO_PV}" ]] ; then
+	if use mono ; then
+		local mono_pv=$(unzip -p \
+			$(realpath "${DISTDIR}/Godot_v${PV}-stable_mono_export_templates.tpz") \
+			"templates/data.mono.x11.64.release_debug/Mono/lib/libmono-native.so" \
+			| strings \
+			| grep -o -E "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" \
+			| head -n 1)
+		if [[ "${mono_pv}" != "${MONO_PV}" ]] ; then
 eerror
 eerror "Expected Mono:  ${MONO_PV}"
-eerror "Actual Mono:  ${MONO_PV}"
+eerror "Actual Mono:  ${mono_pv}"
 eerror
 eerror "Bump the MONO_PV in the ebuild."
 eerror
+			die
+		fi
+	fi
+
+	local src_tarball
+	if use standard ; then
+		src_tarball="Godot_v${PV}-stable_export_templates.tpz"
+	else
+		src_tarball="Godot_v${PV}-stable_mono_export_templates.tpz"
+	fi
+
+	mkdir -p "${T}/sandbox" || die
+	unzip -x $(realpath "${DISTDIR}/${src_tarball}") \
+		"templates/android_debug.apk" \
+		-d "${T}/sandbox" || die
+	local android_min_api=$(unzip -p \
+		"${T}/sandbox/templates/android_debug.apk" \
+		"classes.dex" \
+		| strings \
+		| grep -o -E "min-api\":[0-9]+" \
+		| cut -f 2 -d ":")
+	if [[ "${android_min_api}" != "${ANDROID_MIN_API}" ]] ; then
+eerror
+eerror "Expected Android Min API:  ${ANDROID_MIN_API}"
+eerror "Actual Android Min API:  ${android_min_api}"
+eerror
+eerror "Bump the ANDROID_MIN_API in the ebuild."
+eerror
 		die
 	fi
+
+	unzip -x $(realpath "${DISTDIR}/${src_tarball}") \
+		"templates/android_source.zip" \
+		-d "${T}/sandbox" || die
+	local android_sdk_v=$(unzip -p \
+		"${T}/sandbox/templates/android_source.zip" \
+		"config.gradle" \
+		| grep -e "compileSdk" \
+		| grep -o -E -e "[0-9]+")
+	if [[ "${android_sdk_v}" != "${ANDROID_SDK_V}" ]] ; then
+eerror
+eerror "Expected Android SDK ver:  ${ANDROID_SDK_V}"
+eerror "Actual Android SDK ver:  ${android_sdk_v}"
+eerror
+eerror "Bump the ANDROID_SDK_V in the ebuild."
+eerror
+		die
+	fi
+
+	unzip -x \
+		$(realpath "${DISTDIR}/${src_tarball}") \
+		"templates/iphone.zip" \
+		-d "${T}/sandbox" || die
+	local ios_min=$(unzip -p \
+		"${T}/sandbox/templates/iphone.zip" \
+		"godot_ios.xcodeproj/project.pbxproj" \
+		| grep -e "IPHONEOS_DEPLOYMENT_TARGET" \
+		| head -n 1 \
+		| grep -o -E "[0-9\.]+")
+	if [[ "${ios_min}" != "${IOS_MIN}" ]] ; then
+eerror
+eerror "Expected iOS Min API:  ${IOS_MIN}"
+eerror "Actual iOS Min API:  ${ios_min}"
+eerror
+eerror "Bump the IOS_MIN in the ebuild."
+eerror
+		die
+	fi
+
+	if use standard ; then
+		unzip -x $(realpath "${DISTDIR}/${src_tarball}") \
+			"templates/webassembly_threads_debug.zip" \
+			-d "${T}/sandbox" || die
+		emscripten_pv=$(unzip -p \
+			"${T}/sandbox/templates/webassembly_threads_debug.zip" \
+			"godot.wasm" \
+			| strings \
+			| grep -e "emsdk_" \
+			| grep -o -E -e "[0-9]+\.[0-9]+\.[0-9]+")
+	fi
+	if use standard && [[ "${emscripten_pv}" != "${EMSCRIPTEN_PV}" ]] ; then
+eerror
+eerror "Expected Emscripten version:  ${EMSCRIPTEN_PV}"
+eerror "Actual Emscripten version:  ${emscripten_pv}"
+eerror
+eerror "Bump the EMSCRIPTEN_PV in the ebuild."
+eerror
+		die
+	fi
+
+	einfo "android_min_api=${android_min_api}"
+	einfo "android_sdk_v=${android_sdk_v}"
+	einfo "emscripten_pv=${emscripten_pv}"
+	einfo "ios_min=${ios_min}"
+	einfo "mono_pv=${mono_pv}"
+
+	rm -rf "${T}/sandbox" || die
 }
 
 src_install() {
 	use debug && export STRIP="true"
 	insinto "/usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates"
 	if ! use custom ; then
-		use mono && doins $(realpath "${DISTDIR}/Godot_v3.4.4-stable_mono_export_templates.tpz")
-		use standard && doins $(realpath "${DISTDIR}/Godot_v3.4.4-stable_export_templates.tpz")
+		use mono && doins $(realpath "${DISTDIR}/Godot_v${PV}-stable_mono_export_templates.tpz")
+		use standard && doins $(realpath "${DISTDIR}/Godot_v${PV}-stable_export_templates.tpz")
 	else
 		if use mono ; then
 			insinto "/usr/share/godot/${SLOT_MAJ}/prebuilt-export-templates/mono"
@@ -294,12 +398,27 @@ src_install() {
 }
 
 pkg_postinst() {
-	# Information provided for developers:
+	# Information provided for developers so others know or ebuilds know if
+	# they meet requirements or security advisories:
 	einfo
 	einfo "Developer details:"
 	einfo
+
+	use android && einfo "Android min API:  ${ANDROID_MIN_API}"
+	use android || einfo "Android min API:  N/A"
+
+	use android && einfo "Android SDK ver:  ${ANDROID_SDK_V}"
+	use android || einfo "Android SDK ver:  N/A"
+
+	use ios && einfo "iOS min:  ${IOS_MIN}"
+	use ios || einfo "iOS min:  N/A"
+
 	use mono && einfo "Mono version:  ${MONO_PV}"
-	! use mono && einfo "Mono version:   Not installed"
+	use mono || einfo "Mono version:  N/A"
+
+	[[ "${USE}" =~ "javascript" ]] && einfo "Emscripten version:  ${EMSCRIPTEN_PV}"
+	[[ "${USE}" =~ "javascript" ]] || einfo "Emscripten version:  N/A"
+
 	einfo "CPU microarchitectures:  See metadata.xml"
 	einfo
 	if use custom ; then
