@@ -601,11 +601,13 @@ src_install() {
 }
 
 pkg_postinst() {
+	local suffix=""
+	use mono && suffix=".mono"
 einfo
 einfo "The following still must be done:"
 einfo
-einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}"
-einfo "  echo \"${PV}.${STATUS}\" > ~/.local/share/godot/templates/${PV}.${STATUS}"
-einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/linux32/templates ~/.local/share/godot/templates/${PV}.${STATUS}"
+einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
+einfo "  echo \"${PV}.${STATUS}${suffix}\" > ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
+einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/linux32/templates ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
 einfo
 }
