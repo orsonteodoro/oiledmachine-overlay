@@ -1,0 +1,3 @@
+Select packages may be redone and reintergrated back into dev-dotnet folder.
+
+All ebuilds will be redone using the dotnet overlay eclasses instead.
