@@ -286,6 +286,7 @@ src_configure() {
 }
 
 _compile() {
+	einfo "Building for Windows (x86)"
 	scons ${options_windows[@]} \
 		${options_modules[@]} \
 		${options_modules_static[@]} \
@@ -322,21 +323,26 @@ eerror
 		die
 	fi
 
-	# Merge conflict?
+	# Merge conflict with 64-bit?
+	local src
+	local dest
+	src="${S}/bin/GodotSharp/Mono/lib/mono/4.5"
+	dest="${WORKDIR}/templates/bcl/net_4_x_win"
 	einfo "Mono support:  Collecting BCL"
-	mkdir -p "${WORKDIR}/templates/bcl/net_4_x_win"
-	cp -aT "${S}/bin/GodotSharp/Mono/lib/mono/4.5" \
-		"${WORKDIR}/templates/bcl/net_4_x_win" || die
+	mkdir -p "${dest}"
+	cp -aT "${src}" "${dest}" || die
 
+	src="${S}/bin/GodotSharp/Mono/etc/mono"
+	dest="${WORKDIR}/templates/data.mono.windows.${bitness}.${configuration}/Mono"
 	einfo "Mono support:  Collecting datafiles"
-	mkdir -p "${WORKDIR}/templates/data.mono.windows.${bitness}.${configuration}/Mono"
-	cp -aT "${S}/bin/GodotSharp/Mono/etc/mono" \
-		"${WORKDIR}/templates/data.mono.windows.${bitness}.${configuration}/Mono" || die
+	mkdir -p "${dest}"
+	cp -aT "${src}" "${dest}" || die
+
+	# Merge conflict with monogen-2.0.so (64-bit?)
 }
 
+# libmonosgen-2.0.so needs 32-bit or static linkage
 src_compile_windows_yes_mono() {
-	# libmonosgen-2.0.so needs 32-bit or static linkage
-	einfo "Creating export template"
 	local options_extra
 	options_extra=( module_mono_enabled=yes mono_glue=no tools=yes )
 	einfo "Mono support:  Building temporary binary"
@@ -348,7 +354,6 @@ src_compile_windows_yes_mono() {
 }
 
 src_compile_windows_no_mono() {
-	einfo "Creating export template"
 	local options_extra=( module_mono_enabled=no tools=no )
 	_compile
 }
@@ -356,7 +361,12 @@ src_compile_windows_no_mono() {
 src_compile_windows()
 {
 	local bitness=32
+	local configuration
 	for configuration in release release_debug ; do
+		einfo "Creating export template"
+		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+			continue
+		fi
 		if use mono ; then
 			einfo "USE=mono is under contruction"
 			src_compile_windows_yes_mono
@@ -499,11 +509,13 @@ _install_export_templates() {
 	for x in $(find bin -type f) ; do
 		local bitness=$(_get_bitness "${x}")
 		local configuration=$(_get_configuration "${x}")
-		newexe "${x}" "windows_${bitness}_${configuration}.exe"
+		if [[ "${x}" =~ "bin/godot" && "${x}" =~ "${configuration}" ]] ; then
+			newexe "${x}" "windows_${bitness}_${configuration}.exe"
+		fi
 	done
 
 	# Data files also
-	use mono && doins -r "${WORKDIR}/templates"
+	use mono && doins -r "${WORKDIR}/templates/"*
 }
 
 src_install() {

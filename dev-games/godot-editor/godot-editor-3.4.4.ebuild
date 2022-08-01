@@ -434,15 +434,19 @@ eerror
 		die
 	fi
 
+	local src
+	local dest
+	src="${S}/bin/GodotSharp/Mono/lib/mono/4.5"
+	dest="${WORKDIR}/templates/bcl/net_4_x"
 	einfo "Mono support:  Collecting BCL"
-	mkdir -p "${WORKDIR}/templates/bcl/net_4_x"
-	cp -aT "${S}/bin/GodotSharp/Mono/lib/mono/4.5" \
-		"${WORKDIR}/templates/bcl/net_4_x" || die
+	mkdir -p "${dest}"
+	cp -aT "${src}" "${dest}" || die
 
+	src="${S}/bin/GodotSharp/Mono/etc/mono"
+	dest="${WORKDIR}/templates/data.mono.x11.64.release/Mono"
 	einfo "Mono support:  Collecting datafiles"
-	mkdir -p "${WORKDIR}/templates/data.mono.x11.64.release/Mono"
-	cp -aT "${S}/bin/GodotSharp/Mono/etc/mono" \
-		"${WORKDIR}/templates/data.mono.x11.64.release/Mono" || die
+	mkdir -p "${dest}"
+	cp -aT "${src}" "${dest}" || die
 
 	# FIXME:  libmonosgen-2.0.so needs 32-bit or static linkage
 	if [[ -e "bin/"*monogen* ]] ; then
@@ -455,10 +459,7 @@ src_compile_linux_yes_mono() {
 	local options_extra
 	# tools=yes (default)
 	einfo "Mono support:  Building temporary binary"
-	options_extra=(
-		module_mono_enabled=yes
-		mono_glue=no
-	)
+	options_extra=( module_mono_enabled=yes mono_glue=no )
 	_compile
 	_gen_glue
 	einfo "Mono support:  Building final binary"
@@ -468,8 +469,8 @@ src_compile_linux_yes_mono() {
 
 src_compile_linux_no_mono() {
 	einfo "Creating export template"
-	local options_extra=( module_mono_enabled=no tools=no )
 	# tools=yes (default)
+	local options_extra=( module_mono_enabled=no )
 	_compile
 }
 

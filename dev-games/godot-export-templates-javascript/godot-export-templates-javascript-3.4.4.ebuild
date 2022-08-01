@@ -172,7 +172,14 @@ CDEPEND+="
 "
 
 RDEPEND=" ${CDEPEND}"
-DEPEND=" ${CDEPEND}"
+
+DEPEND+="
+	${CDEPEND}
+	mono? (
+		dev-games/godot-mono-runtime-wasm
+	)
+"
+
 BDEPEND="
 	${CDEPEND}
 	${PYTHON_DEPS}
@@ -298,82 +305,42 @@ src_configure() {
 _compile() {
 	einfo "Creating export templates"
 	_configure_emscripten
-
-	for c in release release_debug ; do
-		scons ${options_javascript[@]} \
-			${options_modules[@]} \
-			${options_modules_static[@]} \
-			${options_extra[@]} \
-			target=${configuration} \
-			tools=no \
-			|| die
-	done
+	scons ${options_javascript[@]} \
+		${options_modules[@]} \
+		${options_modules_static[@]} \
+		${options_extra[@]} \
+		target=${configuration} \
+		tools=no \
+		|| die
 }
 
-_gen_glue() {
-	# Sandbox violation prevention
-	# * ACCESS DENIED:  mkdir:         /var/lib/portage/home/.cache
-	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # Prevent sandbox violation
-	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
-	for x in $(find /dev/input -name "event*") ; do
-		einfo "Adding \`addwrite ${x}\` sandbox rule"
-		addwrite "${x}"
-	done
-
-	einfo "Mono support:  Generating glue sources"
-	# Generates modules/mono/glue/mono_glue.gen.cpp
-	local f=$(basename bin/godot*windows*)
-	virtx \
-	bin/${f} \
-		--audio-driver Dummy \
-		--generate-mono-glue \
-		modules/mono/glue
-
-	if [[ ! -e "bin/GodotSharp" ]] ; then
-eerror
-eerror "Missing export templates data directory.  It is likely caused by a"
-eerror "crash while generating mono_glue.gen.cpp."
-eerror
-		die
-	fi
-
-	einfo "Mono support:  Collecting BCL"
-	mkdir -p "${WORKDIR}/templates/bcl/wasm"
-	cp -aT "${S}/bin/GodotSharp/Mono/lib/mono/4.5" \
-		"${WORKDIR}/templates/bcl/wasm" || die
-
-	einfo "Mono support:  Collecting datafiles"
-	mkdir -p "${WORKDIR}/templates/data.mono.javascript.${bitness}.${configuration}/Mono"
-	cp -aT "${S}/bin/GodotSharp/Mono/etc/mono" \
-		"${WORKDIR}/templates/data.mono.javascript.${bitness}.${configuration}/Mono" || die
-}
-
-src_compile_web_yes_mono() {
-	einfo "Creating export templates"
-	local options_extra=()
-	einfo "Mono support:  Building temporary binary"
-	options_extra=( module_mono_enabled=yes mono_glue=no tools=yes )
-	_compile
-	_gen_glue
+src_compile_javascript_yes_mono() {
+	local options_extra
 	einfo "Mono support:  Building final binary"
-	options_extra=()
+	options_extra=( module_mono_enabled=yes tools=no )
 	_compile
 }
 
-src_compile_web_no_mono() {
-	einfo "Creating export templates"
+src_compile_javascript_no_mono() {
 	local options_extra=( module_mono_enabled=no tools=no )
 	_compile
 }
 
-src_compile_web()
+src_compile_javascript()
 {
-	if use mono ; then
-		einfo "USE=mono is under contruction"
-		src_compile_web_yes_mono
-	else
-		src_compile_web_no_mono
-	fi
+	local configuration
+	for configuration in release release_debug ; do
+		einfo "Creating export template"
+		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+			continue
+		fi
+		if use mono ; then
+			einfo "USE=mono is under contruction"
+			src_compile_javascript_yes_mono
+		else
+			src_compile_javascript_no_mono
+		fi
+	done
 }
 
 src_compile() {
@@ -469,7 +436,7 @@ src_compile() {
 		module_xatlas_enabled=$(usex xatlas)
 	)
 
-	src_compile_web
+	src_compile_javascript
 }
 
 _get_bitness() {
@@ -489,6 +456,17 @@ _get_configuration() {
 		echo "debug"
 	elif [[ "${x}" =~ ".opt" ]] ; then
 		echo "release"
+	else
+		echo -n ""
+	fi
+}
+
+_get_configuration2() {
+	local x="${1}"
+	if [[ "${x}" =~ ".opt.debug" ]] ; then
+		echo "opt.debug"
+	elif [[ "${x}" =~ ".opt" ]] ; then
+		echo "opt"
 	else
 		echo -n ""
 	fi
@@ -530,16 +508,16 @@ _install_export_templates() {
 		local name="webassembly"
 		local bitness=$(_get_bitness "${x}")
 		local configuration=$(_get_configuration "${x}")
+		local configuration2=$(_get_configuration2 "${x}")
 		local threads=$(_get_threads "${x}")
 		local gdnative=$(_get_gdnative "${x}")
 		[[ "${threads}" =~ "gdnative" ]] && name+="_threads"
 		[[ "${gdnative}" =~ "threads" ]] && name+="_gdnative"
 		name+="_${configuration}.zip"
-		newins "${x}" "${name}"
+		if [[ "${x}" =~ "bin/godot" && "${x}" =~ "${configuration2}" && "${x}" =~ ".zip" ]] ; then
+			newins "${x}" "${name}"
+		fi
 	done
-
-	# Data files also
-	use mono && doins -r "${WORKDIR}/templates"
 }
 
 src_install() {

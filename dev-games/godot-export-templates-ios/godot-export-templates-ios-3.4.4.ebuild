@@ -126,6 +126,12 @@ XCODE_SDK_MIN_STORE="12"
 EXPECTED_XCODE_SDK_MIN_VERSION_IOS="10"
 EXPECTED_IOS_SDK_MIN_VERSION="10"
 
+DEPEND+="
+	mono? (
+		dev-games/godot-mono-runtime-monotouch
+	)
+"
+
 BDEPEND+="
 	${PYTHON_DEPS}
 	dev-util/scons
@@ -253,88 +259,49 @@ _compile() {
 					;;
 			esac
 
-			einfo "Creating export template for iOS (${a})"
-			for c in release release_debug ; do
-				scons ${options_iphone[@]} \
-					${options_modules[@]} \
-					${options_modules_static[@]} \
-					${options_extra[@]} \
-					arch=${a} \
-					bits=${bitness} \
-					target=${configuration} \
-					tools=no \
-					|| die
-				local arch="${a/godot_ios_}"
-				mkdir -p "bin2/${configuration}/${arch}" || die
-				mv bin/* "bin2/${configuration}/${arch}" || die
-			done
+			einfo "Building for iOS (${a})"
+			scons ${options_iphone[@]} \
+				${options_modules[@]} \
+				${options_modules_static[@]} \
+				${options_extra[@]} \
+				arch=${a} \
+				bits=${bitness} \
+				target=${configuration} \
+				tools=no \
+				|| die
+			local arch="${a/godot_ios_}"
+			mkdir -p "bin2/${configuration}/${arch}" || die
+			mv bin/* "bin2/${configuration}/${arch}" || die
 		fi
 	done
 }
 
-_gen_glue() {
-	# Sandbox violation prevention
-	# * ACCESS DENIED:  mkdir:         /var/lib/portage/home/.cache
-	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # Prevent sandbox violation
-	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
-	for x in $(find /dev/input -name "event*") ; do
-		einfo "Adding \`addwrite ${x}\` sandbox rule"
-		addwrite "${x}"
-	done
-
-	einfo "Mono support:  Generating glue sources"
-	# Generates modules/mono/glue/mono_glue.gen.cpp
-	local f=$(basename bin/godot*windows*)
-	virtx \
-	bin/${f} \
-		--audio-driver Dummy \
-		--generate-mono-glue \
-		modules/mono/glue
-
-	if [[ ! -e "bin/GodotSharp" ]] ; then
-eerror
-eerror "Missing export templates data directory.  It is likely caused by a"
-eerror "crash while generating mono_glue.gen.cpp."
-eerror
-		die
-	fi
-
-	einfo "Mono support:  Collecting BCL"
-	mkdir -p "${WORKDIR}/templates/bcl/monotouch"
-	cp -aT "${S}/bin/GodotSharp/Mono/lib/mono/4.5" \
-		"${WORKDIR}/templates/bcl/monotouch" || die
-
-	# Not distributed in prepackaged
-	#einfo "Mono support:  Collecting datafiles"
-	#mkdir -p "${WORKDIR}/templates/data.mono.iphone.${bitness}.${configuration}/Mono"
-	#cp -aT "${S}/bin/GodotSharp/Mono/etc/mono" \
-	#	"${WORKDIR}/templates/data.mono.iphone.${bitness}.${configuration}/Mono" || die
-}
-
 src_compile_ios_yes_mono() {
 	local options_extra
-	einfo "Mono support:  Building temporary binary"
-	options_extra=( module_mono_enabled=yes mono_glue=no )
-	_compile
-	_gen_glue
 	einfo "Mono support:  Building final binary"
-	options_extra=( module_mono_enabled=yes )
+	options_extra=( module_mono_enabled=yes tools=no )
 	_compile
 }
 
 src_compile_ios_no_mono() {
-	einfo "Creating export template"
 	local options_extra=( module_mono_enabled=no tools=no )
 	_compile
 }
 
 src_compile_ios() {
-	if use mono ; then
-		einfo "USE=mono is under contruction"
-		src_compile_ios_yes_mono
-	else
-		src_compile_ios_no_mono
-	fi
+	local configuration
+	for configuration in release release_debug ; do
+		einfo "Creating export template"
+		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+			continue
+		fi
+		if use mono ; then
+			einfo "USE=mono is under contruction"
+			src_compile_ios_yes_mono
+		else
+			src_compile_ios_no_mono
+		fi
+	done
 }
 
 src_compile() {
@@ -433,40 +400,6 @@ src_compile() {
 	src_compile_ios
 }
 
-_get_bitness() {
-	local x="${1}"
-	if [[ "${x}" =~ "64" ]] ; then
-		echo "64"
-	elif [[ "${x}" =~ "32" ]] ; then
-		echo "32"
-	else
-		echo -n ""
-	fi
-}
-
-_get_configuration() {
-	local x="${1}"
-	if [[ "${x}" =~ ".debug" ]] ; then
-		echo "debug"
-	elif [[ "${x}" =~ ".opt" ]] ; then
-		echo "release"
-	else
-		echo -n ""
-	fi
-}
-
-_get_arch() {
-	local x="${1}"
-	local arch
-	for arch in ${GODOT_IOS_} ; do
-		if [[ "${x}" =~ "/${arch}/" ]] ; then
-			echo "${arch}"
-			return
-		fi
-	done
-	echo -n ""
-}
-
 _install_export_templates() {
 	local prefix
 	if use mono ; then
@@ -478,17 +411,8 @@ _install_export_templates() {
 	exeinto "${prefix}"
 	einfo "Installing export templates"
 
-	local x
-	for x in $(find bin -type f) ; do
-		local bitness=$(_get_bitness "${x}")
-		local configuration=$(_get_configuration "${x}")
-		local a=$(_get_arch "${x}")
-		insinto /usr/share/godot/${SLOT_MAJ}/export_templates/ios/${a}
-		newins "${x}" "iphone.zip"
-	done
-
-	# Data files also
-	use mono && doins -r "${WORKDIR}/templates"
+	[[ ! -e "iphone.zip" ]] || die "FIXME:  install from bin/?"
+	doins "iphone.zip"
 }
 
 src_install() {

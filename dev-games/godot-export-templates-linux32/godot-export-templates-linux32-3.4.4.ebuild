@@ -382,25 +382,15 @@ src_configure() {
 }
 
 _compile() {
-	# FIXME:  libmonosgen-2.0.so needs 32-bit or static linkage
-	local bitness=32
-	einfo "Building export templates"
-	local options_extra=()
-	if use mono ; then
-		options_extra=( module_mono_enabled=yes )
-	else
-		options_extra=( module_mono_enabled=no )
-	fi
-	for c in release release_debug ; do
-		scons ${options_x11[@]} \
-			${options_modules[@]} \
-			${options_modules_shared[@]} \
-			${options_extra[@]} \
-			bits=${bitness} \
-			target=${configuration} \
-			tools=no \
-			|| die
-	done
+	einfo "Building for 32-bit Linux"
+	scons ${options_x11[@]} \
+		${options_modules[@]} \
+		${options_modules_shared[@]} \
+		${options_extra[@]} \
+		bits=${bitness} \
+		target=${configuration} \
+		tools=no \
+		|| die
 }
 
 _gen_glue() {
@@ -430,16 +420,20 @@ eerror
 		die
 	fi
 
+	local src
+	local dest
+	src="${S}/bin/GodotSharp/Mono/lib/mono/4.5"
+	dest="${WORKDIR}/templates/bcl/net_4_x"
 	einfo "Mono support:  Collecting BCL"
-	mkdir -p "${WORKDIR}/templates/bcl/net_4_x"
-	cp -aT "${S}/bin/GodotSharp/Mono/lib/mono/4.5" \
-		"${WORKDIR}/templates/bcl/net_4_x" || die
+	mkdir -p "${dest}"
+	cp -aT "${src}" "${dest}" || die
 
 	# merge conflict?
+	src="${S}/bin/GodotSharp/Mono/etc/mono"
+	dest="${WORKDIR}/templates/data.mono.windows.${bitness}.${configuration}/Mono"
 	einfo "Mono support:  Collecting datafiles"
-	mkdir -p "${WORKDIR}/templates/data.mono.windows.${bitness}.${configuration}/Mono"
-	cp -aT "${S}/bin/GodotSharp/Mono/etc/mono" \
-		"${WORKDIR}/templates/data.mono.windows.${bitness}.${configuration}/Mono" || die
+	mkdir -p "${dest}"
+	cp -aT "${src}" "${dest}" || die
 }
 
 src_compile_linux_yes_mono() {
@@ -454,17 +448,26 @@ src_compile_linux_yes_mono() {
 }
 
 src_compile_linux_no_mono() {
-	einfo "Creating export template"
 	local options_extra=( module_mono_enabled=no tools=no )
 	_compile
 }
 
 src_compile_linux() {
-	if use mono ; then
-		src_compile_linux_yes_mono
-	else
-		src_compile_linux_no_mono
-	fi
+	# FIXME:  libmonosgen-2.0.so needs 32-bit or static linkage
+	# This is to prevent a merge conflict
+	local bitness=32
+	local configuration
+	for configuration in release release_debug ; do
+		einfo "Creating export template"
+		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+			continue
+		fi
+		if use mono ; then
+			src_compile_linux_yes_mono
+		else
+			src_compile_linux_no_mono
+		fi
+	done
 }
 
 src_compile() {
@@ -638,15 +641,13 @@ _install_export_templates() {
 	for x in $(find bin -maxdepth 1 | sed -e "1d") ; do
 		local bitness=$(_get_bitness "${x}")
 		local configuration=$(_get_configuration "${x}")
-		if [[ "${x}" =~ "bin/data" ]] ; then
-			doins -r "${x}" # For builds using Mono
-		else
+		if [[ "${x}" =~ "bin/godot" && "${x}" == "${configuration}" ]] ; then
 			newexe "${x}" "linux_x11_${bitness}_${configuration}"
 		fi
 	done
 
 	# Data files also
-	use mono && doins -r "${WORKDIR}/templates"
+	use mono && doins -r "${WORKDIR}/templates/"*
 }
 
 src_install() {

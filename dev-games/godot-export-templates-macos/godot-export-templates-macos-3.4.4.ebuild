@@ -70,10 +70,9 @@ fi
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
-IUSE+=" +3d +advanced-gui app-bundle camera +dds debug +denoise
+IUSE+=" +3d +advanced-gui camera +dds debug +denoise
 jit +lightmapper_cpu
 +neon +optimize-speed +opensimplex optimize-size +portable +raycast
-universal2
 "
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
 +theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
@@ -102,10 +101,9 @@ IUSE+=" ${SANITIZERS}"
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
-# See https://github.com/tpoechtrager/osxcross/blob/master/build.sh#L36      ; for XCODE VERSION <-> EOSXCROSS_SDK
+# See https://github.com/tpoechtrager/osxcross/blob/master/build.sh#L36      ; for XCODE VERSION <-> EGODOT_MACOS_SDK_VERSION
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
-	app-bundle? ( universal2 )
 	portable
 	denoise? ( lightmapper_cpu )
 	gdscript_lsp? ( jsonrpc websocket )
@@ -131,7 +129,7 @@ BDEPEND+="
 	)
 "
 BDEPEND+="
-	app-bundle? ( app-arch/zip )
+	app-arch/zip
 "
 S="${WORKDIR}/godot-${PV}-stable"
 PATCHES=(
@@ -268,6 +266,8 @@ ewarn
 	check_store_apl
 
 	python-any-r1_pkg_setup
+
+	which lipo 2>/dev/null 1>/dev/null || die "Missing lipo"
 }
 
 pkg_nofetch() {
@@ -300,51 +300,44 @@ src_configure() {
 	unset CCACHE
 }
 
+get_configuration2() {
+	[[ "${configuration}" == "release" ]] && echo "opt"
+	[[ "${configuration}" == "release_debug" ]] && echo "opt.debug"
+}
+
 _compile()
 {
+	local enabled_arches=()
+	local configuration2=$(get_configuration2)
 	for a in ${GODOT_OSX} ; do
 		if use ${a} ; then
-			local options_extra=(
-				OSXCROSS_ROOT=${EGODOT_MACOS_SYSROOT}
-				osxcross_sdk=${EGODOT_MACOS_SDK_VERSION}
-			)
-			einfo "Creating export template for OSX (${a})"
-			for configuration in release release_debug ; do
-				scons ${options_osx[@]} \
-					${options_modules[@]} \
-					${options_modules_static[@]} \
-					${options_extra[@]} \
-					arch=${a} \
-					target=${configuration} \
-					tools=no \
-					|| die
-			done
+			einfo "Building for macOS (${a})"
+			scons ${options_osx[@]} \
+				${options_modules[@]} \
+				${options_modules_static[@]} \
+				${options_extra[@]} \
+				arch=${a} \
+				target=${configuration} \
+				tools=no \
+				OSXCROSS_ROOT=${EGODOT_MACOS_SYSROOT} \
+				|| die
+			local arch="${a/godot_osx_}"
+			enabled_arches+=( bin/godot.osx.${configuration2}.${arch} )
 		fi
 	done
-	if use universal2 ; then
-		for configuration in opt opt.debug ; do
-			lipo -create \
-				bin/godot.osx.${configuration}.x86_64 \
-				bin/godot.osx.${configuration}.arm64 \
-				-output bin/godot.osx.${configuration}.universal || die
-		done
-	fi
 
-	if use app-bundle ; then
-		# Generate .app bundle
-		cp -r misc/dist/osx_template.app . || die
-		mkdir -p osx_template.app/Contents/MacOS || die
-		for configuration in opt opt.debug ; do
-			local c2=release
-			if [[ "${configuration}" =~ "debug" ]] ; then
-				c2=debug
-			fi
-			cp bin/godot.osx.${configuration}.universal \
-				osx_template.app/Contents/MacOS/godot_osx_${c2}.64 || die
-		done
-		chmod +x osx_template.app/Contents/MacOS/godot_osx* || die
-		zip -q -9 -r osx.zip osx_template.app || die
-	fi
+	# Generate universal2 binary
+	lipo -create \
+		${enabled_arches[@]} \
+		-output bin/godot.osx.${configuration2}.universal || die
+
+	# Generate .app bundle
+	cp -r misc/dist/osx_template.app . || die
+	mkdir -p osx_template.app/Contents/MacOS || die
+	cp bin/godot.osx.${configuration}.universal \
+		osx_template.app/Contents/MacOS/godot_osx_${configuration2}.64 || die
+	chmod +x osx_template.app/Contents/MacOS/godot_osx* || die
+	zip -q -9 -r osx.zip osx_template.app || die
 }
 
 _gen_glue() {
@@ -374,15 +367,19 @@ eerror
 		die
 	fi
 
+	local src
+	local dest
+	src="${S}/bin/GodotSharp/Mono/lib/mono/4.5"
+	dest="${WORKDIR}/osx_template.app/Contents/Resources/data.mono.osx.64.${configuration}/Mono/lib"
 	einfo "Mono support:  Collecting BCL"
-	mkdir -p "${WORKDIR}/templates/bcl/wasm"
-	cp -aT "${S}/bin/GodotSharp/Mono/lib/mono/4.5" \
-		"${WORKDIR}/templates/bcl/wasm" || die
+	mkdir -p "${dest}"
+	cp -aT "${src}" "${dest}" || die
 
+	src="${S}/bin/GodotSharp/Mono/etc/mono/etc"
+	dest="${WORKDIR}/osx_template.app/Contents/Resources/data.mono.osx.64.${configuration}/Mono/etc"
 	einfo "Mono support:  Collecting datafiles"
-	mkdir -p "${WORKDIR}/templates/data.mono.javascript.${bitness}.${configuration}/Mono"
-	cp -aT "${S}/bin/GodotSharp/Mono/etc/mono" \
-		"${WORKDIR}/templates/data.mono.javascript.${bitness}.${configuration}/Mono" || die
+	mkdir -p "${dest}"
+	cp -aT "${src}" "${dest}" || die
 }
 
 src_compile_osx_yes_mono() {
@@ -397,19 +394,25 @@ src_compile_osx_yes_mono() {
 }
 
 src_compile_osx_no_mono() {
-	einfo "Creating export template"
 	local options_extra=( module_mono_enabled=no tools=no )
 	_compile
 }
 
 src_compile_osx()
 {
-	if use mono ; then
-		einfo "USE=mono is under contruction"
-		src_compile_osx_yes_mono
-	else
-		src_compile_osx_no_mono
-	fi
+	local configuration
+	for configuration in release release_debug ; do
+		einfo "Creating export template"
+		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+			continue
+		fi
+		if use mono ; then
+			einfo "USE=mono is under contruction"
+			src_compile_osx_yes_mono
+		else
+			src_compile_osx_no_mono
+		fi
+	done
 }
 
 src_compile() {
@@ -417,7 +420,7 @@ src_compile() {
 	myoptions+=( production=$(usex !debug) )
 	local options_osx=(
 		platform=osx
-		osxcross_sdk=${EOSXCROSS_SDK}
+		osxcross_sdk=${EGODOT_MACOS_SDK_VERSION}
 		use_asan=$(usex asan)
 		use_tsan=$(usex tsan)
 		use_ubsan=$(usex ubsan)
@@ -508,30 +511,6 @@ src_compile() {
 	src_compile_osx
 }
 
-_get_bitness() {
-	local x="${1}"
-	if [[ "${x}" =~ "64" ]] ; then
-		echo "64"
-	elif [[ "${x}" =~ "32" ]] ; then
-		echo "32"
-	elif [[ "${x}" =~ "universal" ]] ; then
-		echo "64"
-	else
-		echo -n ""
-	fi
-}
-
-_get_configuration() {
-	local x="${1}"
-	if [[ "${x}" =~ ".debug" ]] ; then
-		echo "debug"
-	elif [[ "${x}" =~ ".opt" ]] ; then
-		echo "release"
-	else
-		echo -n ""
-	fi
-}
-
 _install_export_templates() {
 	local prefix
 	if use mono ; then
@@ -543,16 +522,7 @@ _install_export_templates() {
 	exeinto "${prefix}"
 	einfo "Installing export templates"
 
-	local x
-	for x in $(find bin -type f) ; do
-		local bitness=$(_get_bitness "${x}")
-		local configuration=$(_get_configuration "${x}")
-		if [[ "${x}" =~ "osx.zip" ]] ; then
-			doins "${x}"
-		else
-			newins "${x}" "godot_osx_${configuration}.${bitness}"
-		fi
-	done
+	doins "osx.zip"
 }
 
 src_install() {
