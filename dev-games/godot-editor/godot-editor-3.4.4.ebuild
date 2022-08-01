@@ -342,6 +342,18 @@ ewarn
 ewarn "LANG=POSIX not supported"
 ewarn
 	fi
+
+	if use mono ; then
+		if ls /opt/dotnet-sdk-bin-*/dotnet ; then
+			local p=$(ls /opt/dotnet-sdk-bin-*/dotnet | head -n 1)
+			export PATH="$(dirname ${p}):${PATH}"
+		else
+eerror
+eerror "Could not find dotnet.  Emerge dev-dotnet/dotnet-sdk-bin"
+eerror
+			die
+		fi
+	fi
 }
 
 pkg_nofetch() {
