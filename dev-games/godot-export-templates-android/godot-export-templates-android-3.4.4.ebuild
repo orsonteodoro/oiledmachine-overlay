@@ -77,6 +77,8 @@ jit +lightmapper_cpu
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
 +theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
 
+IUSE+=" mono" # for scripting languages
+
 GODOT_ANDROID_=(arm7 arm64v8 x86 x86_64)
 
 GODOT_ANDROID="${GODOT_ANDROID_[@]/#/godot_android_}"
@@ -94,6 +96,7 @@ IUSE+=" ${SANITIZERS}"
 # See https://docs.godotengine.org/en/3.4/development/compiling/compiling_for_android.html
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
+	!mono
 	portable
 	denoise? ( lightmapper_cpu )
 	gdscript_lsp? ( jsonrpc websocket )
@@ -275,8 +278,7 @@ src_configure() {
 	unset CCACHE
 }
 
-src_compile_android()
-{
+_compile() {
 	for a in ${GODOT_ANDROID} ; do
 		if use ${a} ; then
 			case "${a}" in
@@ -294,13 +296,14 @@ src_compile_android()
 			esac
 
 			einfo "Creating export templates for Android (${a})"
-			for c in release release_debug ; do
+			for configuration in release release_debug ; do
 				scons ${options_android[@]} \
 					${options_modules[@]} \
 					${options_modules_static[@]} \
+					${options_extra[@]} \
 					android_arch=${a} \
 					bits=${bitness} \
-					target=${c} \
+					target=${configuration} \
 					tools=no \
 					ndk_platform=${EGODOT_ANDROID_API_LEVEL} \
 					|| die
@@ -315,6 +318,71 @@ src_compile_android()
 		"${gradle_cmd}" wrapper || die
 		./gradlew generateGodotTemplates || die
 	popd
+}
+
+_gen_glue() {
+	# Sandbox violation prevention
+	# * ACCESS DENIED:  mkdir:         /var/lib/portage/home/.cache
+	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # Prevent sandbox violation
+	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
+	for x in $(find /dev/input -name "event*") ; do
+		einfo "Adding \`addwrite ${x}\` sandbox rule"
+		addwrite "${x}"
+	done
+
+	einfo "Mono support:  Generating glue sources"
+	# Generates modules/mono/glue/mono_glue.gen.cpp
+	local f=$(basename bin/godot*windows*)
+	virtx \
+	bin/${f} \
+		--audio-driver Dummy \
+		--generate-mono-glue \
+		modules/mono/glue
+
+	if [[ ! -e "bin/GodotSharp" ]] ; then
+eerror
+eerror "Missing export templates data directory.  It is likely caused by a"
+eerror "crash while generating mono_glue.gen.cpp."
+eerror
+		die
+	fi
+
+	einfo "Mono support:  Collecting BCL"
+	mkdir -p "${WORKDIR}/templates/bcl/monodroid"
+	cp -aT "${S}/bin/GodotSharp/Mono/lib/mono/4.5" \
+		"${WORKDIR}/templates/bcl/monodroid" || die
+
+	# Not distributed in prepackaged
+	#einfo "Mono support:  Collecting datafiles"
+	#mkdir -p "${WORKDIR}/templates/data.mono.android.${bitness}.${configuration}/Mono"
+	#cp -aT "${S}/bin/GodotSharp/Mono/etc/mono" \
+	#	"${WORKDIR}/templates/data.mono.android.${bitness}.${configuration}/Mono" || die
+}
+
+src_compile_android_yes_mono() {
+	local options_extra
+	einfo "Mono support:  Building temporary binary"
+	options_extra=( module_mono_enabled=yes mono_glue=no )
+	_compile
+	_gen_glue
+	einfo "Mono support:  Building final binary"
+	options_extra=( module_mono_enabled=yes )
+	_compile
+}
+
+src_compile_android_no_mono() {
+	einfo "Creating export template"
+	local options_extra=( module_mono_enabled=no tools=no )
+	_compile
+}
+
+src_compile_android() {
+	if use mono ; then
+		einfo "USE=mono is under contruction"
+		src_compile_android_yes_mono
+	else
+		src_compile_android_no_mono
+	fi
 }
 
 src_compile() {
@@ -422,7 +490,6 @@ _get_bitness() {
 
 _get_configuration() {
 	local x="${1}"
-	local c
 	if [[ "${x}" =~ ".debug" ]] ; then
 		echo "debug"
 	elif [[ "${x}" =~ ".opt" ]] ; then
@@ -444,17 +511,26 @@ _get_arch() {
 	echo -n ""
 }
 
-_install_export_templates()
-{
+_install_export_templates() {
+	local prefix
+	if use mono ; then
+		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/mono"
+	else
+		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/standard"
+	fi
+	insinto "${prefix}"
+	exeinto "${prefix}"
 	einfo "Installing export templates"
-	insinto /usr/share/godot/${SLOT_MAJ}/android/templates
 
 	local x
 	for x in $(find bin -type f) ; do
 		local bitness=$(_get_bitness "${x}")
-		local c=$(_get_configuration "${x}")
-		newins "${x}" "android_${c}.apk"
+		local configuration=$(_get_configuration "${x}")
+		newins "${x}" "android_${configuration}.apk"
 	done
+
+	# Data files also
+	use mono && doins -r "${WORKDIR}/templates"
 }
 
 src_install() {
@@ -462,11 +538,18 @@ src_install() {
 }
 
 pkg_postinst() {
+	local prefix
+	if use mono ; then
+		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/mono"
+	else
+		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/standard"
+	fi
+	local suffix=""
+	use mono && suffix=".mono"
 einfo
 einfo "The following still must be done:"
 einfo
-einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}"
-einfo "  echo \"${PV}.${STATUS}\" > ~/.local/share/godot/templates/${PV}.${STATUS}"
-einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/android/templates ~/.local/share/godot/templates/${PV}.${STATUS}"
+einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
+einfo "  cp -aT ${prefix} ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
 einfo
 }

@@ -78,6 +78,8 @@ IUSE+=" ca-certs-relax"
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
 +theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
 
+IUSE+=" -mono" # for scripting languages
+
 IUSE+=" -gdscript gdscript_lsp +mono +visual-script" # for scripting languages
 IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
@@ -186,6 +188,11 @@ CDEPEND_SANITIZER="
 "
 CDEPEND+="
 	${CDEPEND_SANITIZER}
+	mono? (
+		dev-games/godot-editor:${SLOT}[mono]
+		>=dev-lang/mono-6.0.0.176
+		dev-dotnet/dotnet-sdk-bin
+	)
 "
 CDEPEND_CLANG="
 	clang? (
@@ -231,11 +238,6 @@ DEPEND+="
 	x11-libs/libX11[${MULTILIB_USEDEP}]
 	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
-	mono? (
-		dev-games/godot-editor:${SLOT}[mono]
-		>=dev-lang/mono-6.0.0.176
-		dev-dotnet/dotnet-sdk-bin
-	)
 	!portable? (
 		ca-certs-relax? (
 			app-misc/ca-certificates[cacert]
@@ -324,6 +326,7 @@ einfo
 	fi
 
 	if use mono ; then
+		einfo "USE=mono is under contruction"
 		if ls /opt/dotnet-sdk-bin-*/dotnet 2>/dev/null 1>/dev/null ; then
 			local p=$(ls /opt/dotnet-sdk-bin-*/dotnet | head -n 1)
 			export PATH="$(dirname ${p}):${PATH}"
@@ -380,26 +383,51 @@ src_configure() {
 	fi
 }
 
-src_compile_linux()
-{
-	local bitness=64
-	einfo "Building export templates"
-	local options_mono=()
+_compile() {
+	local options_extra=()
 	if use mono ; then
-		options_mono=( module_mono_enabled=yes )
+		einfo "Building export templates with mono"
+		options_extra=( module_mono_enabled=yes )
 	else
-		options_mono=( module_mono_enabled=no )
+		einfo "Building export templates"
+		options_extra=( module_mono_enabled=no )
 	fi
 	for c in release release_debug ; do
 		scons ${options_x11[@]} \
 			${options_modules[@]} \
 			${options_modules_shared[@]} \
-			${options_mono[@]} \
+			${options_extra[@]} \
 			bits=${bitness} \
-			target=${c} \
+			target=${configuration} \
 			tools=no \
 			|| die
 	done
+}
+
+src_compile_linux_yes_mono() {
+	local options_extra
+	einfo "Mono support:  Building temporary binary"
+	options_extra=( module_mono_enabled=yes mono_glue=no tools=yes )
+	_compile
+	_gen_glue
+	einfo "Mono support:  Building final binary"
+	options_extra=( module_mono_enabled=yes tools=no )
+	_compile
+}
+
+src_compile_linux_no_mono() {
+	einfo "Creating export template"
+	local options_extra=( module_mono_enabled=no tools=no )
+	_compile
+}
+
+src_compile_linux() {
+	local bitness=64
+	if use mono ; then
+		src_compile_linux_yes_mono
+	else
+		src_compile_linux_no_mono
+	fi
 }
 
 src_compile() {
@@ -549,7 +577,6 @@ _get_bitness() {
 
 _get_configuration() {
 	local x="${1}"
-	local c
 	if [[ "${x}" =~ ".debug" ]] ; then
 		echo "debug"
 	elif [[ "${x}" =~ ".opt" ]] ; then
@@ -560,20 +587,29 @@ _get_configuration() {
 }
 
 _install_export_templates() {
-	insinto /usr/share/godot/${SLOT_MAJ}/linux64/templates
-	exeinto /usr/share/godot/${SLOT_MAJ}/linux64/templates
+	local prefix
+	if use mono ; then
+		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/mono"
+	else
+		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/standard"
+	fi
+	insinto "${prefix}"
+	exeinto "${prefix}"
 	einfo "Installing export templates"
 
 	local x
 	for x in $(find bin -maxdepth 1 | sed -e "1d") ; do
 		local bitness=$(_get_bitness "${x}")
-		local c=$(_get_configuration "${x}")
+		local configuration=$(_get_configuration "${x}")
 		if [[ "${x}" =~ "bin/data" ]] ; then
 			doins -r "${x}" # For builds using Mono
 		else
-			newexe "${x}" "linux_x11_${bitness}_${c}"
+			newexe "${x}" "linux_x11_${bitness}_${configuration}"
 		fi
 	done
+
+	# Data files also
+	use mono && doins -r "${WORKDIR}/templates"
 }
 
 src_install() {
@@ -581,13 +617,18 @@ src_install() {
 }
 
 pkg_postinst() {
+	local prefix
+	if use mono ; then
+		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/mono"
+	else
+		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/standard"
+	fi
 	local suffix=""
 	use mono && suffix=".mono"
 einfo
 einfo "The following still must be done:"
 einfo
 einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
-einfo "  echo \"${PV}.${STATUS}${suffix}\" > ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
-einfo "  cp -aT /usr/share/godot/${SLOT_MAJ}/linux64/templates ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
+einfo "  cp -aT ${prefix} ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
 einfo
 }

@@ -133,6 +133,7 @@ src_unpack() {
 		mkdir -p "${WORKDIR}/mono" || die
 		mkdir -p "${WORKDIR}/standard" || die
 		if use mono ; then
+			einfo "USE=mono is under contruction"
 			unzip -x "${DISTDIR}/Godot_v${PV}-stable_mono_export_templates.tpz" -d "${WORKDIR}/mono" || die
 		fi
 		if use standard ; then
@@ -141,88 +142,88 @@ src_unpack() {
 		for type in mono standard ; do
 			! use mono && [[ "${type}" == "mono" ]] && continue
 			! use standard && [[ "${type}" == "standard" ]] && continue
-			for c in debug release ; do
-				if use "${c}" ; then
+			for configuration in debug release ; do
+				if use "${configuration}" ; then
 					if ! use android ; then
-						rm -rf "${WORKDIR}/${type}/templates/android"*"${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/android"*"${configuration}"* || die
 					fi
 					if ! use javascript ; then
-						rm -rf "${WORKDIR}/${type}/templates/webassembly"*"${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/webassembly"*"${configuration}"* || die
 					fi
 					if ! use linux_x86 ; then
-						rm -rf "${WORKDIR}/${type}/templates/linux_x11_32"*"${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/linux_x11_32"*"${configuration}"* || die
 					fi
 					if ! use linux_x86_64 ; then
-						rm -rf "${WORKDIR}/${type}/templates/linux_x11_64"*"${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/linux_x11_64"*"${configuration}"* || die
 					fi
 					if ! use windows_x86 ; then
-						rm -rf "${WORKDIR}/${type}/templates/windows_32"*"${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/windows_32"*"${configuration}"* || die
 					fi
 					if ! use windows_x86_64 ; then
-						rm -rf "${WORKDIR}/${type}/templates/windows_64"*"${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/windows_64"*"${configuration}"* || die
 					fi
 					if [[ "${type}" == "mono" ]] ; then
-						local c2
-						c2="${c}"
+						local configuration2
+						configuration2="${configuration}"
 						# ambiguous between release and release_debug
-						[[ "${c}" == "debug" ]] && c2="debug_release"
+						[[ "${configuration}" == "debug" ]] && configuration2="debug_release"
 						if ! use linux_x86 ; then
-							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.32.${c2}") || die
+							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.32.${configuration2}") || die
 						fi
 						if ! use linux_x86_64 ; then
-							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.64.${c2}") || die
+							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.64.${configuration2}") || die
 						fi
 						if ! use windows_x86 ; then
-							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.32.${c2}") || die
+							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.32.${configuration2}") || die
 						fi
 						if ! use windows_x86_64 ; then
-							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.64.${c2}") || die
+							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.64.${configuration2}") || die
 						fi
 					fi
 					if [[ "${type}" == "standard" ]] ; then
 						if ! use javascript ; then
-							rm -rf "${WORKDIR}/${type}/templates/webassembly_${c}"* || die
+							rm -rf "${WORKDIR}/${type}/templates/webassembly_${configuration}"* || die
 						fi
 						if ! use javascript_gdnative ; then
-							rm -rf "${WORKDIR}/${type}/templates/webassembly_gdnative_${c}"* || die
+							rm -rf "${WORKDIR}/${type}/templates/webassembly_gdnative_${configuration}"* || die
 						fi
 						if ! use javascript_threads ; then
-							rm -rf "${WORKDIR}/${type}/templates/webassembly_threads_${c}"* || die
+							rm -rf "${WORKDIR}/${type}/templates/webassembly_threads_${configuration}"* || die
 						fi
 						if ! use uwp_arm ; then
-							rm -rf "${WORKDIR}/${type}/templates/uwp_arm_${c}"* || die
+							rm -rf "${WORKDIR}/${type}/templates/uwp_arm_${configuration}"* || die
 						fi
 						if ! use uwp_x86 ; then
-							rm -rf "${WORKDIR}/${type}/templates/uwp_x86_${c}"* || die
+							rm -rf "${WORKDIR}/${type}/templates/uwp_x86_${configuration}"* || die
 						fi
 						if ! use uwp_x86_64 ; then
-							rm -rf "${WORKDIR}/${type}/templates/uwp_x64_${c}"* || die
+							rm -rf "${WORKDIR}/${type}/templates/uwp_x64_${configuration}"* || die
 						fi
 					fi
 				else
-					rm -rf "${WORKDIR}/${type}/templates/android"*"${c}"* || die
-					rm -rf "${WORKDIR}/${type}/templates/webassembly"*"${c}"* || die
-					rm -rf "${WORKDIR}/${type}/templates/linux_x11_32"*"${c}"* || die
-					rm -rf "${WORKDIR}/${type}/templates/linux_x11_64"*"${c}"* || die
-					rm -rf "${WORKDIR}/${type}/templates/windows_32"*"${c}"* || die
-					rm -rf "${WORKDIR}/${type}/templates/windows_64"*"${c}"* || die
+					rm -rf "${WORKDIR}/${type}/templates/android"*"${configuration}"* || die
+					rm -rf "${WORKDIR}/${type}/templates/webassembly"*"${configuration}"* || die
+					rm -rf "${WORKDIR}/${type}/templates/linux_x11_32"*"${configuration}"* || die
+					rm -rf "${WORKDIR}/${type}/templates/linux_x11_64"*"${configuration}"* || die
+					rm -rf "${WORKDIR}/${type}/templates/windows_32"*"${configuration}"* || die
+					rm -rf "${WORKDIR}/${type}/templates/windows_64"*"${configuration}"* || die
 					if [[ "${type}" == "mono" ]] ; then
-						local c2
-						c2="${c}"
+						local configuration2
+						configuration2="${configuration}"
 						# ambiguous between release and release_debug
-						[[ "${c}" == "debug" ]] && c2="debug_release"
-						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.32.${c2}") || die
-						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.64.${c2}") || die
-						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.32.${c2}") || die
-						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.64.${c2}") || die
+						[[ "${configuration}" == "debug" ]] && configuration2="debug_release"
+						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.32.${configuration2}") || die
+						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.64.${configuration2}") || die
+						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.32.${configuration2}") || die
+						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.64.${configuration2}") || die
 					fi
 					if [[ "${type}" == "standard" ]] ; then
-						rm -rf "${WORKDIR}/${type}/templates/webassembly_${c}"* || die
-						rm -rf "${WORKDIR}/${type}/templates/webassembly_gdnative_${c}"* || die
-						rm -rf "${WORKDIR}/${type}/templates/webassembly_threads_${c}"* || die
-						rm -rf "${WORKDIR}/${type}/templates/uwp_arm_${c}"* || die
-						rm -rf "${WORKDIR}/${type}/templates/uwp_x86_${c}"* || die
-						rm -rf "${WORKDIR}/${type}/templates/uwp_x64_${c}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/webassembly_${configuration}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/webassembly_gdnative_${configuration}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/webassembly_threads_${configuration}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/uwp_arm_${configuration}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/uwp_x86_${configuration}"* || die
+						rm -rf "${WORKDIR}/${type}/templates/uwp_x64_${configuration}"* || die
 					fi
 				fi
 			done

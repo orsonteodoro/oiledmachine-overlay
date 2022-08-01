@@ -88,7 +88,7 @@ gen_required_use_template()
 	done
 }
 
-IUSE+=" -gdscript gdscript_lsp +mono +visual-script" # for scripting languages
+IUSE+=" -gdscript gdscript_lsp -mono +visual-script" # for scripting languages
 IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
 IUSE+=" -gamepad +touch" # for input
@@ -200,6 +200,10 @@ CDEPEND_SANITIZER="
 CDEPEND+="
 	${CDEPEND_SANITIZER}
 	!dev-games/godot
+	mono? (
+		>=dev-lang/mono-6.0.0.176
+		dev-dotnet/dotnet-sdk-bin
+	)
 "
 CDEPEND_CLANG="
 	clang? (
@@ -244,10 +248,6 @@ DEPEND+="
 	x11-libs/libX11
 	x11-libs/libxcb
 	x11-libs/libxshmfence
-	mono? (
-		>=dev-lang/mono-6.0.0.176
-		dev-dotnet/dotnet-sdk-bin
-	)
 	!portable? (
 		ca-certs-relax? (
 			app-misc/ca-certificates[cacert]
@@ -282,7 +282,8 @@ DEPEND+="
 	system-zstd? ( >=app-arch/zstd-1.4.8 )
 "
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${CDEPEND}
+BDEPEND+="
+	${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
 	|| (
@@ -344,6 +345,7 @@ ewarn
 	fi
 
 	if use mono ; then
+		einfo "USE=mono is under contruction"
 		if ls /opt/dotnet-sdk-bin-*/dotnet 2>/dev/null 1>/dev/null ; then
 			local p=$(ls /opt/dotnet-sdk-bin-*/dotnet | head -n 1)
 			export PATH="$(dirname ${p}):${PATH}"
@@ -393,24 +395,19 @@ src_configure() {
 	fi
 }
 
-src_compile_linux_yes_mono() {
-	local options_mono
-	# tools=yes (default)
-	einfo "Mono support:  Building temporary binary"
-	options_mono=(
-		module_mono_enabled=yes
-		mono_glue=no
-	)
+_compile() {
 	scons ${options_x11[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
 		$(usex debug "target=debug_release" "") \
 		bits=default \
-		${options_mono[@]} \
+		${options_extra[@]} \
 		"CFLAGS=${CFLAGS}" \
 		"CCFLAGS=${CXXFLAGS}" \
 		"LINKFLAGS=${LDFLAGS}" || die
+}
 
+_gen_glue() {
 	# Sandbox violation prevention
 	# * ACCESS DENIED:  mkdir:         /var/lib/portage/home/.cache
 	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # Prevent sandbox violation
@@ -429,41 +426,51 @@ src_compile_linux_yes_mono() {
 		--generate-mono-glue \
 		modules/mono/glue
 
-
-
-	einfo "Mono support:  Building final binary"
-	options_mono=( module_mono_enabled=yes )
-	scons ${options_x11[@]} \
-		${options_modules[@]} \
-		${options_modules_shared[@]} \
-		$(usex debug "target=debug_release" "") \
-		bits=default \
-		${options_mono[@]} \
-		"CFLAGS=${CFLAGS}" \
-		"CCFLAGS=${CXXFLAGS}" \
-		"LINKFLAGS=${LDFLAGS}" || die
-
-	if ! ( find bin/data* ) ; then
+	if [[ ! -e "bin/GodotSharp" ]] ; then
 eerror
-eerror "Missing export templates directory (data.mono.*.*.*).  Likely caused by"
-eerror "a crash while generating mono_glue.gen.cpp."
+eerror "Missing export templates data directory.  It is likely caused by a"
+eerror "crash while generating mono_glue.gen.cpp."
 eerror
 		die
 	fi
+
+	einfo "Mono support:  Collecting BCL"
+	mkdir -p "${WORKDIR}/templates/bcl/net_4_x"
+	cp -aT "${S}/bin/GodotSharp/Mono/lib/mono/4.5" \
+		"${WORKDIR}/templates/bcl/net_4_x" || die
+
+	einfo "Mono support:  Collecting datafiles"
+	mkdir -p "${WORKDIR}/templates/data.mono.x11.64.release/Mono"
+	cp -aT "${S}/bin/GodotSharp/Mono/etc/mono" \
+		"${WORKDIR}/templates/data.mono.x11.64.release/Mono" || die
+
+	# FIXME:  libmonosgen-2.0.so needs 32-bit or static linkage
+	if [[ -e "bin/"*monogen* ]] ; then
+		einfo "Collecting monogens runtime library"
+		cp -a bin/*monosgen* "${WORKDIR}/templates" || die
+	fi
+}
+
+src_compile_linux_yes_mono() {
+	local options_extra
+	# tools=yes (default)
+	einfo "Mono support:  Building temporary binary"
+	options_extra=(
+		module_mono_enabled=yes
+		mono_glue=no
+	)
+	_compile
+	_gen_glue
+	einfo "Mono support:  Building final binary"
+	options_extra=( module_mono_enabled=yes )
+	_compile
 }
 
 src_compile_linux_no_mono() {
-	local options_mono=( module_mono_enabled=no )
+	einfo "Creating export template"
+	local options_extra=( module_mono_enabled=no tools=no )
 	# tools=yes (default)
-	scons ${options_x11[@]} \
-		${options_modules[@]} \
-		${options_modules_shared[@]} \
-		$(usex debug "target=debug_release" "") \
-		bits=default \
-		${options_mono[@]} \
-		"CFLAGS=${CFLAGS}" \
-		"CCFLAGS=${CXXFLAGS}" \
-		"LINKFLAGS=${LDFLAGS}" || die
+	_compile
 }
 
 src_compile_linux()
@@ -630,6 +637,22 @@ _install_linux_editor() {
 	newicon icon.png godot${SLOT_MAJ}.png
 }
 
+_install_template_datafiles() {
+	local prefix
+	if use mono ; then
+		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/mono"
+		insinto "${prefix}"
+		doins -r "${WORKDIR}/templates"
+		echo "${PV}.${STATUS}.mono" > "${T}/version.txt" || die
+		doins "${T}/version.txt"
+	else
+		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/standard"
+		insinto "${prefix}"
+		echo "${PV}.${STATUS}" > "${T}/version.txt" || die
+		doins "${T}/version.txt"
+	fi
+}
+
 _install_mono_glue() {
 	local prefix="/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/x11"
 	insinto "${prefix}/modules/mono/glue"
@@ -642,5 +665,6 @@ _install_mono_glue() {
 
 src_install() {
 	_install_linux_editor
+	_install_template_datafiles
 	use mono && _install_mono_glue
 }
