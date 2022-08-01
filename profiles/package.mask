@@ -4,7 +4,6 @@
 #-------------------------------------------------------------------------------
 
 # undergoing rennovation with the dotnet.eclass
-dev-dotnet/aforgedotnet
 dev-dotnet/assimp-net
 dev-dotnet/atitextureconverter
 dev-dotnet/beatdetectorforgames
