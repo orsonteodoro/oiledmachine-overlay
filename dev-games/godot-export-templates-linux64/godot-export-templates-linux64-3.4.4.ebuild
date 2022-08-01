@@ -234,7 +234,7 @@ DEPEND+="
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
 		>=dev-lang/mono-6.0.0.176
-		dev-util/msbuild
+		dev-dotnet/dotnet-sdk-bin
 	)
 	!portable? (
 		ca-certs-relax? (
