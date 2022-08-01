@@ -322,12 +322,21 @@ einfo
 	fi
 
 	if use mono ; then
-		if ls /opt/dotnet-sdk-bin-*/dotnet ; then
+		if ls /opt/dotnet-sdk-bin-*/dotnet 2>/dev/null 1>/dev/null ; then
 			local p=$(ls /opt/dotnet-sdk-bin-*/dotnet | head -n 1)
 			export PATH="$(dirname ${p}):${PATH}"
 		else
 eerror
 eerror "Could not find dotnet.  Emerge dev-dotnet/dotnet-sdk-bin"
+eerror
+			die
+		fi
+		export DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+		if has network-sandbox ${FEATURES} ; then
+eerror
+eerror "Mono support requires network-sandbox to be disabled in FEATURES on a"
+eerror "per-package level."
 eerror
 			die
 		fi
