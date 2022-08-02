@@ -3,10 +3,6 @@
 
 EAPI=7
 
-# Live was chosen because it didn't specify ndk version in tagged
-
-# TODO: check each compiler flag for GODOT_IOS_
-
 MY_PV="df330ce"
 MY_PN="godot-mono-builds"
 MY_P="${MY_PN}-${PV}"
@@ -26,14 +22,49 @@ HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="MIT"
 
-MONO_LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
+# Extra licenses because it is in source code form and third party external
+# modules.
+MONO_LICENSE="
+	MIT
+	Apache-1.1
+	Apache-2.0
+	BSD-4
+	GPL-2+
+	GPL-2-with-linking-exception
+	GPL-2+-with-libtool-exception
+	GPL-3+
+	GPL-3+-with-autoconf-exception
+	GPL-3+-with-libtool-exception
+	IDPL
+	LGPL-2.1
+	LGPL-2.1-with-linking-exception
+	MPL-1.1
+	Ms-PL
+	OSL-3.0
+	ZLIB
+"
+# The GPL-2-with-linking-exception is actually GPL-2+-with-linking-exception"
+# since "or later" is present which makes it Apache-2.0 compatible, so the"
+# distro license file name is a misnomer.  A GPL-2 only usually will have
+# something like "version 2." or "version 2 of the license." without the word
+# "later".
+
+# Apache-1.1 - external/ikvm/THIRD_PARTY_README
+# GPL-2+-with-libtool-exception external/bdwgc/libtool
+# GPL-2+ GPL-3+ GPL-3+-with-libtool-exception external/bdwgc/libtool
+# GPL-2+-with-linking-exception mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs
+# GPL-3+-with-autoconf-exception - external/bdwgc/libatomic_ops/config.guess
+# LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
+# OSL-3.0 - external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/StackFilter.cs
+# ZLIB - ikvm-native/jni.h
 LICENSE+=" ${MONO_LICENSE}"
+# See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
 #KEYWORDS=""
 SLOT="0/${PV}"
-RUNTIME_TARGETS=" armv7 arm64v8 x86 x86_64"
 AOT_CROSS_TARGETS=" cross-arm cross-arm64 cross-x86 cross-x86_64"
 AOT_CROSS_MXE_TARGETS=" cross-arm-win cross-arm64-win cross-x86-win cross-x86_64-win"
+RUNTIME_TARGETS=" armv7 arm64v8 x86 x86_64"
 TARGETS=" ${RUNTIME_TARGETS} ${AOT_CROSS_TARGETS} ${AOT_CROSS_MXE_TARGETS}"
 IUSE+=" ${TARGETS}"
 REQUIRED_USE+="

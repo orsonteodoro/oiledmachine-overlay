@@ -50,8 +50,21 @@ LICENSE="
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
-MONO_LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
+# Listed because of possible mono_static=yes
+MONO_LICENSE="
+	Apache-2.0
+	MIT
+	BSD-4
+	IDPL
+	LGPL-2.1
+	LGPL-2.1-with-linking-exception
+	MPL-1.1
+	OSL-1.1
+"
+# Apache-2.0 MPL-1.1 -- mcs/class/RabbitMQ.Client/src/client/events/ModelShutdownEventHandler.cs (RabbitMQ.Client.dll)
+# LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
 LICENSE+=" mono? ( ${MONO_LICENSE} )"
+# See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
 KEYWORDS="~x86"
 

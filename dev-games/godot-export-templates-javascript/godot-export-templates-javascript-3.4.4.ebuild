@@ -49,8 +49,17 @@ LICENSE="
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
-MONO_LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
+# Listed because of mono_static=yes
+MONO_LICENSE="
+	MIT
+	BSD-4
+	IDPL
+	LGPL-2.1
+	MPL-1.1
+	OSL-1.1
+"
 LICENSE+=" mono? ( ${MONO_LICENSE} )"
+# See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
 KEYWORDS="~amd64"
 

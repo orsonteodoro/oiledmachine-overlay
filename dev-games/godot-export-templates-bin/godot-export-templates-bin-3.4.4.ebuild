@@ -46,10 +46,28 @@ LICENSE="
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
+# Listed because of mono_static=yes
 # mono_static=yes (applied to iOS, WASM builds) # See https://docs.godotengine.org/en/3.4/development/compiling/compiling_with_mono.html#command-line-options
-# See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
-MONO_LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
+MONO_LICENSE="
+	Apache-2.0
+	MIT
+	BSD-4
+	IDPL
+	LGPL-2.1
+	MPL-1.1
+	OSL-1.1
+"
+# ! = not
+# MIT IDPL -- BCL
+# !Apache-1.1 -- ikvm-disabled
+# Apache-2.0 MPL-1.1 -- mcs/class/RabbitMQ.Client/src/client/events/ModelShutdownEventHandler.cs (RabbitMQ.Client.dll)
+#  BSD-4 -- btls enabled for mono-desktop (osx, windows, linux)
+# !BSD-4 -- btls disabled for ios, wasm
+# IDPL MPL-1.1 -- RabbitMQ.Client
+# LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
+# OSL-1.1 -- external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/StackFilter.cs (nunitlite.dll)
 LICENSE+=" mono? ( ${MONO_LICENSE} )"
+# See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
 KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
 HOMEPAGE="https://godotengine.org"

@@ -51,10 +51,19 @@ LICENSE="
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
+# Listed because of mono_static=yes
 # mono_static=yes # See https://docs.godotengine.org/en/3.4/development/compiling/compiling_with_mono.html#command-line-options
-# See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
-MONO_LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
+MONO_LICENSE="
+	MIT
+	BSD-4
+	IDPL
+	LGPL-2.1
+	MPL-1.1
+	OSL-1.1
+"
+# ikvm-disabled
 LICENSE+=" mono? ( ${MONO_LICENSE} )"
+# See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
 #KEYWORDS=""
 
