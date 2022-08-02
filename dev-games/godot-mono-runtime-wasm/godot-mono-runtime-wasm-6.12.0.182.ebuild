@@ -26,7 +26,17 @@ HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="MIT"
 
-# Pulled by EMSDK (clang, nodejs, python, emscripten)
+# Pulled by EMSDK (nodejs, wasm-binaries [emscripten with third party, emscripten-fastcomp fork of clang])
+CLOSURE_COMPILER_LICENSE="
+		Apache-2.0
+		BSD
+		CPL-1.0
+		GPL-2+
+		LGPL-2.1+
+		MIT
+		MPL-2.0
+		NPL-1.1
+"
 EMSCRIPTEN_LICENSE="
 	all-rights-reserved
 	UoI-NCSA
@@ -45,22 +55,11 @@ EMSCRIPTEN_LICENSE="
 	PSF-2.4
 	Unlicense
 	ZLIB
-"
-RECHECK_OPTIONAL_DEPS_EMSCRIPTEN_LICENSE+="
-	closure-compiler? (
-		Apache-2.0
-		BSD
-		CPL-1.0
-		GPL-2+
-		LGPL-2.1+
-		MIT
-		MPL-2.0
-		NPL-1.1
-	)
+		${CLOSURE_COMPILER_LICENSE}
 "
 LICENSE+=" ${EMSCRIPTEN_LICENSE}"
 
-NODEJS_LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 icu MIT ZLIB"
+NODEJS_LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 icu ISC MIT unicode ZLIB"
 LICENSE+=" ${NODEJS_LICENSE}"
 
 MONO_LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
