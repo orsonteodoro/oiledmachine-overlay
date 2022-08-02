@@ -81,6 +81,7 @@ MONO_LICENSE="
 	LGPL-2.1-with-linking-exception
 	MPL-1.1
 	Ms-PL
+	openssl
 	OSL-3.0
 	ZLIB
 "
@@ -96,6 +97,7 @@ MONO_LICENSE="
 # GPL-2+-with-linking-exception mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs
 # GPL-3+-with-autoconf-exception - external/bdwgc/libatomic_ops/config.guess
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
+# openssl - external/boringssl/crypto/ecdh/ecdh.c
 # OSL-3.0 - external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/StackFilter.cs
 # ZLIB - ikvm-native/jni.h
 LICENSE+=" ${MONO_LICENSE}"
