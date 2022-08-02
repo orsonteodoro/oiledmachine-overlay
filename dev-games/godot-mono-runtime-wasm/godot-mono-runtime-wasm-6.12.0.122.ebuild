@@ -27,6 +27,10 @@ HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
 LICENSE="MIT"
 
 # Pulled by EMSDK (nodejs, wasm-binaries [emscripten with third party, emscripten-fastcomp fork of clang])
+# For licenses or copyright notices, see also
+# https://github.com/emscripten-core/emscripten
+# https://github.com/emscripten-core/emscripten-fastcomp
+# https://github.com/emscripten-core/emsdk
 CLOSURE_COMPILER_LICENSE="
 		Apache-2.0
 		BSD
@@ -62,6 +66,7 @@ LICENSE+=" ${EMSCRIPTEN_LICENSE}"
 NODEJS_LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 icu ISC MIT openssl unicode ZLIB"
 LICENSE+=" ${NODEJS_LICENSE}"
 
+# See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 MONO_LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
 LICENSE+=" ${MONO_LICENSE}"
 
