@@ -31,6 +31,7 @@ LICENSE="MIT"
 # https://github.com/emscripten-core/emscripten
 # https://github.com/emscripten-core/emscripten-fastcomp
 # https://github.com/emscripten-core/emsdk
+# https://github.com/nodejs/node
 CLOSURE_COMPILER_LICENSE="
 		Apache-2.0
 		BSD
