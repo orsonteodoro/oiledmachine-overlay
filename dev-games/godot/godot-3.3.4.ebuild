@@ -1566,7 +1566,7 @@ src_compile_linux()
 		scons ${options_x11[@]} \
 			${options_modules[@]} \
 			${options_modules_shared[@]} \
-			$(usex debug "target=debug_release" "") \
+			$(usex debug "target=release_debug" "") \
 			bits=default \
 			module_mono_enabled=no \
 			"CFLAGS=${CFLAGS}" \
@@ -1592,7 +1592,7 @@ src_compile_linux_server()
 {
 	unset CCACHE
 	local options_extra=(
-		$(usex debug "target=debug_release" "")
+		$(usex debug "target=release_debug" "")
 	)
 
 	if [[ "${EPLATFORM}" == "server_dedicated" ]] ; then
@@ -2066,7 +2066,7 @@ build_GodotSharp/GodotSharpEditor/bin/${configuration}/GodotSharpEditor.{dll,pdb
 
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	#myoptions+=( production=$(usex !debug) )
 	local options_android=(
 		platform=android
 	)

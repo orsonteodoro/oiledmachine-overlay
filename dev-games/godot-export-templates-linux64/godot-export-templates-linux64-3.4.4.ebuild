@@ -186,12 +186,17 @@ gen_cdepend_sanitizers() {
 CDEPEND_SANITIZER="
 	$(gen_cdepend_sanitizers)
 "
+# Some people on riscv or arm64 may want to export to x86_64
 CDEPEND+="
 	${CDEPEND_SANITIZER}
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
-		>=dev-lang/mono-6.0.0.176
-		dev-dotnet/dotnet-sdk-bin
+		portable? (
+			dev-games/godot-mono-runtime-linux-x86_64
+		)
+		!portable? (
+			>=dev-lang/mono-6.0.0.176
+		)
 	)
 "
 CDEPEND_CLANG="
@@ -370,7 +375,7 @@ einfo
 
 src_prepare() {
 	if use mono ; then
-		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/x11/modules/mono/glue" \
+		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
 			modules/mono/glue || die
 	fi
 }
@@ -397,12 +402,18 @@ _compile() {
 
 src_compile_linux_yes_mono() {
 	local options_extra
-	einfo "Mono support:  Building temporary binary"
-	options_extra=( module_mono_enabled=yes mono_glue=no tools=yes )
-	_compile
-	_gen_glue
 	einfo "Mono support:  Building final binary"
-	options_extra=( module_mono_enabled=yes tools=no )
+	# mono_glue=yes (default)
+	options_extra=(
+		module_mono_enabled=yes
+		mono_static=yes
+		tools=no
+	)
+	if use portable ; then
+		options_extra+=(
+			mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86_64"
+		)
+	fi
 	_compile
 }
 
@@ -429,7 +440,7 @@ src_compile_linux() {
 
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	#myoptions+=( production=$(usex !debug) )
 	local options_linux=(
 		platform=linux
 	)

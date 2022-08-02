@@ -152,11 +152,30 @@ gen_cdepend_sanitizers() {
 	done
 }
 
+
+# All DISABLED_* is kept around because of sanitizers.
+DISABLED_CDEPEND="
+	${CDEPEND_SANITIZER}
+"
+# All dependencies are in the project.
+DISABLED_DEPEND+="
+	${PYTHON_DEPS}
+	${CDEPEND}
+	virtual/opengl[${MULTILIB_USEDEP}]
+"
+DISABLED_RDEPEND+=" ${DEPEND}"
+DISABLED_BDEPEND+="
+	|| (
+		${CDEPEND_CLANG}
+		${CDEPEND_GCC}
+	)
+	lld? ( sys-devel/lld )
+"
+
 CDEPEND_SANITIZER="
 	$(gen_cdepend_sanitizers)
 "
 CDEPEND+="
-	${CDEPEND_SANITIZER}
 	sys-devel/crossdev
 "
 CDEPEND_CLANG="
@@ -168,22 +187,15 @@ CDEPEND_CLANG="
 CDEPEND_GCC="
 	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )
 "
-# All dependencies are in the project.
-DISABLED_DEPEND+="
-	${PYTHON_DEPS}
-	${CDEPEND}
-	virtual/opengl[${MULTILIB_USEDEP}]
-"
-DISABLED_RDEPEND+=" ${DEPEND}"
-DISABLED_BDEPEND+="
+
+BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
-	|| (
-		${CDEPEND_CLANG}
-		${CDEPEND_GCC}
-	)
 	dev-util/scons
-	lld? ( sys-devel/lld )
+	mono? (
+		dev-games/godot-editor:${SLOT}[mono]
+		dev-games/godot-mono-runtime-mingw32
+	)
 	webm-simd? (
 		dev-lang/yasm
 	)
@@ -275,6 +287,14 @@ einfo "in ${distdir} or you can \`wget -O ${distdir}/${FN_DEST} ${URI_A}\`"
 einfo
 }
 
+src_prepare() {
+	default
+	if use mono ; then
+		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
+			modules/mono/glue || die
+	fi
+}
+
 src_configure() {
 	default
 	if use portable ; then
@@ -296,60 +316,16 @@ _compile() {
 		|| die
 }
 
-_gen_glue() {
-	# Sandbox violation prevention
-	# * ACCESS DENIED:  mkdir:         /var/lib/portage/home/.cache
-	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # Prevent sandbox violation
-	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
-	for x in $(find /dev/input -name "event*") ; do
-		einfo "Adding \`addwrite ${x}\` sandbox rule"
-		addwrite "${x}"
-	done
-
-	einfo "Mono support:  Generating glue sources"
-	# Generates modules/mono/glue/mono_glue.gen.cpp
-	local f=$(basename bin/godot*windows*)
-	virtx \
-	bin/${f} \
-		--audio-driver Dummy \
-		--generate-mono-glue \
-		modules/mono/glue
-
-	if [[ ! -e "bin/GodotSharp" ]] ; then
-eerror
-eerror "Missing export templates data directory.  It is likely caused by a"
-eerror "crash while generating mono_glue.gen.cpp."
-eerror
-		die
-	fi
-
-	# Merge conflict with 64-bit?
-	local src
-	local dest
-	src="${S}/bin/GodotSharp/Mono/lib/mono/4.5"
-	dest="${WORKDIR}/templates/bcl/net_4_x_win"
-	einfo "Mono support:  Collecting BCL"
-	mkdir -p "${dest}"
-	cp -aT "${src}" "${dest}" || die
-
-	src="${S}/bin/GodotSharp/Mono/etc/mono"
-	dest="${WORKDIR}/templates/data.mono.windows.${bitness}.${configuration}/Mono"
-	einfo "Mono support:  Collecting datafiles"
-	mkdir -p "${dest}"
-	cp -aT "${src}" "${dest}" || die
-
-	# Merge conflict with monogen-2.0.so (64-bit?)
-}
-
 # libmonosgen-2.0.so needs 32-bit or static linkage
 src_compile_windows_yes_mono() {
 	local options_extra
-	options_extra=( module_mono_enabled=yes mono_glue=no tools=yes )
-	einfo "Mono support:  Building temporary binary"
-	_compile
-	_gen_glue
 	einfo "Mono support:  Building final binary"
-	options_extra=( module_mono_enabled=yes tools=no )
+	# mono_glue=yes (default)
+	options_extra=(
+		module_mono_enabled=yes
+		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/mingw32"
+		tools=no
+	)
 	_compile
 }
 
@@ -378,7 +354,7 @@ src_compile_windows()
 
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	#myoptions+=( production=$(usex !debug) )
 	local options_windows=(
 		platform=windows
 		use_llvm=$(usex clang)

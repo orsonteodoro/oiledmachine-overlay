@@ -166,7 +166,7 @@ src_unpack() {
 						local configuration2
 						configuration2="${configuration}"
 						# ambiguous between release and release_debug
-						[[ "${configuration}" == "debug" ]] && configuration2="debug_release"
+						[[ "${configuration}" == "debug" ]] && configuration2="release_debug"
 						if ! use linux_x86 ; then
 							rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.32.${configuration2}") || die
 						fi
@@ -211,7 +211,7 @@ src_unpack() {
 						local configuration2
 						configuration2="${configuration}"
 						# ambiguous between release and release_debug
-						[[ "${configuration}" == "debug" ]] && configuration2="debug_release"
+						[[ "${configuration}" == "debug" ]] && configuration2="release_debug"
 						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.32.${configuration2}") || die
 						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.x11.64.${configuration2}") || die
 						rm -rf $(find "${WORKDIR}/${type}/templates" -type d -name "data.mono.windows.32.${configuration2}") || die

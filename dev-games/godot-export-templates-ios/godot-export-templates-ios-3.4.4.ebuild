@@ -128,6 +128,7 @@ EXPECTED_IOS_SDK_MIN_VERSION="10"
 
 DEPEND+="
 	mono? (
+		dev-games/godot-editor:${SLOT}[mono]
 		dev-games/godot-mono-runtime-monotouch
 	)
 "
@@ -233,6 +234,14 @@ einfo "in ${distdir} or you can \`wget -O ${distdir}/${FN_DEST} ${URI_A}\`"
 einfo
 }
 
+src_prepare() {
+	default
+	if use mono ; then
+		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
+			modules/mono/glue || die
+	fi
+}
+
 src_configure() {
 	default
 	if use portable ; then
@@ -279,7 +288,13 @@ _compile() {
 src_compile_ios_yes_mono() {
 	local options_extra
 	einfo "Mono support:  Building final binary"
-	options_extra=( module_mono_enabled=yes tools=no )
+	# mono_static=yes (default on this platform)
+	# mono_glue=yes (default)
+	options_extra=(
+		module_mono_enabled=yes
+		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/ios"
+		tools=no
+	)
 	_compile
 }
 
@@ -306,7 +321,7 @@ src_compile_ios() {
 
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	#myoptions+=( production=$(usex !debug) )
 	local options_iphone=(
 		platform=iphone
 		game_center=$(usex game-center)

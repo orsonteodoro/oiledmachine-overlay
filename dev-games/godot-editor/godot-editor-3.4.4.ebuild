@@ -11,6 +11,7 @@ MY_P="${MY_PN}-${PV}"
 
 STATUS="stable"
 
+FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED=manual
 PYTHON_COMPAT=( python3_{8..10} )
 inherit desktop eutils flag-o-matic llvm python-any-r1 scons-utils \
@@ -399,7 +400,7 @@ _compile() {
 	scons ${options_x11[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
-		$(usex debug "target=debug_release" "") \
+		target=${configuration} \
 		bits=default \
 		${options_extra[@]} \
 		"CFLAGS=${CFLAGS}" \
@@ -407,7 +408,7 @@ _compile() {
 		"LINKFLAGS=${LDFLAGS}" || die
 }
 
-_gen_glue() {
+_gen_mono_glue() {
 	# Sandbox violation prevention
 	# * ACCESS DENIED:  mkdir:         /var/lib/portage/home/.cache
 	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # Prevent sandbox violation
@@ -425,7 +426,10 @@ _gen_glue() {
 		--audio-driver Dummy \
 		--generate-mono-glue \
 		modules/mono/glue
+}
 
+_assemble_datafiles() {
+	einfo "Mono support:  Assembling data files"
 	if [[ ! -e "bin/GodotSharp" ]] ; then
 eerror
 eerror "Missing export templates data directory.  It is likely caused by a"
@@ -436,34 +440,70 @@ eerror
 
 	local src
 	local dest
-	src="${S}/bin/GodotSharp/Mono/lib/mono/4.5"
+	src="${S}/bin/GodotSharp/Mono/lib/mono/${FRAMEWORK}"
 	dest="${WORKDIR}/templates/bcl/net_4_x"
 	einfo "Mono support:  Collecting BCL"
 	mkdir -p "${dest}"
 	cp -aT "${src}" "${dest}" || die
 
+	# You would expect it to be already packaged and ready to go.
+
+	# Api (Missing)
+	if [[ -e "${S}/bin/GodotSharp/Api" ]] ; then
+		src="${S}/bin/GodotSharp/Api"
+		dest="${WORKDIR}/templates/data.mono.x11.64.${configuration}/Api"
+		einfo "Mono support:  Collecting datafiles (Mono/Api)"
+		mkdir -p "${dest}"
+		cp -aT "${src}" "${dest}" || die
+	fi
+
+	# Mono/etc
 	src="${S}/bin/GodotSharp/Mono/etc/mono"
-	dest="${WORKDIR}/templates/data.mono.x11.64.release/Mono"
-	einfo "Mono support:  Collecting datafiles"
+	dest="${WORKDIR}/templates/data.mono.x11.64.${configuration}/Mono/etc/mono"
+	einfo "Mono support:  Collecting datafiles (Mono/etc)"
 	mkdir -p "${dest}"
 	cp -aT "${src}" "${dest}" || die
 
+
+	# Mono/lib (Missing)
+	if find "${S}/bin/GodotSharp" -name "libmono" -o -name "libMono" ; then
+		src="${S}/bin/GodotSharp/Mono/etc/mono"
+		dest="${WORKDIR}/templates/data.mono.x11.64.${configuration}/Mono/lib"
+		einfo "Mono support:  Collecting datafiles (Mono/lib)"
+		mkdir -p "${dest}"
+		for x in $(find "${S}/bin/GodotSharp" -name "libmono" -o -name "libMono") ; do
+			cp -aT "${src}" "${dest}" || die
+		done
+	fi
+
+	# Tools
+	if [[ -e "${S}/bin/GodotSharp/Api" ]] ; then
+		src="${S}/bin/GodotSharp/Tools"
+		dest="${WORKDIR}/templates/data.mono.x11.64.${configuration}/Tools"
+		einfo "Mono support:  Collecting datafiles (Tools)"
+		mkdir -p "${dest}"
+		cp -aT "${src}" "${dest}" || die
+	fi
+
 	# FIXME:  libmonosgen-2.0.so needs 32-bit or static linkage
-	if [[ -e "bin/"*monogen* ]] ; then
+	if [[ -e "bin/libmonosgen-2.0.so" ]] ; then
+		# Should be copied next to editor or export templates
 		einfo "Collecting monogens runtime library"
-		cp -a bin/*monosgen* "${WORKDIR}/templates" || die
+		cp -a "bin/libmonosgen-2.0.so" "${WORKDIR}/templates" || die
 	fi
 }
 
 src_compile_linux_yes_mono() {
 	local options_extra
 	# tools=yes (default)
+	# mono_glue=yes (default)
 	einfo "Mono support:  Building temporary binary"
 	options_extra=( module_mono_enabled=yes mono_glue=no )
 	_compile
-	_gen_glue
+	_gen_mono_glue
+	_assemble_datafiles
 	einfo "Mono support:  Building final binary"
-	options_extra=( module_mono_enabled=yes )
+	options_extra=( module_mono_enabled=yes mono_static=yes )
 	_compile
 }
 
@@ -474,8 +514,8 @@ src_compile_linux_no_mono() {
 	_compile
 }
 
-src_compile_linux()
-{
+src_compile_linux() {
+	local configuration=$(usex debug "release_debug" "release")
 	einfo "Building Linux editor"
 	if use mono ; then
 		src_compile_linux_yes_mono
@@ -486,7 +526,7 @@ src_compile_linux()
 
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	#myoptions+=( production=$(usex !debug) )
 	local options_linux=(
 		platform=linux
 	)
@@ -623,10 +663,10 @@ _install_linux_editor() {
 	exeinto "${d_base}/bin"
 	local f
 	f=$(basename bin/godot*tools*)
-	doexe bin/${f}
+	doexe "bin/${f}"
 	if use mono ; then
-		insinto "${d_base}/bin"
-		doins -r $(ls bin/data*)
+		exeinto "${d_base}/bin"
+		doexe "bin/libmonosgen-2.0.so"
 	fi
 	dosym "${d_base}/bin/${f}" "/usr/bin/godot${SLOT_MAJ}"
 	einfo "Setting up Linux editor environment"
@@ -635,7 +675,7 @@ _install_linux_editor() {
 		"Godot${SLOT_MAJ}" \
 		"/usr/share/pixmaps/godot${SLOT_MAJ}.png" \
 		"Development;IDE"
-	newicon icon.png godot${SLOT_MAJ}.png
+	newicon "icon.png" "godot${SLOT_MAJ}.png"
 }
 
 _install_template_datafiles() {
@@ -655,7 +695,7 @@ _install_template_datafiles() {
 }
 
 _install_mono_glue() {
-	local prefix="/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/x11"
+	local prefix="/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue"
 	insinto "${prefix}/modules/mono/glue"
 	doins "modules/mono/glue/mono_glue.gen.cpp"
 	insinto "${prefix}/modules/mono/glue/GodotSharp/GodotSharp"

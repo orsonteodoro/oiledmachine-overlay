@@ -189,8 +189,7 @@ CDEPEND+="
 	${CDEPEND_SANITIZER}
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
-		>=dev-lang/mono-6.0.0.176
-		dev-dotnet/dotnet-sdk-bin
+		dev-games/godot-mono-runtime-linux-x86
 	)
 "
 CDEPEND_CLANG="
@@ -367,8 +366,9 @@ einfo
 }
 
 src_prepare() {
+	default
 	if use mono ; then
-		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/x11/modules/mono/glue" \
+		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
 			modules/mono/glue || die
 	fi
 }
@@ -393,57 +393,16 @@ _compile() {
 		|| die
 }
 
-_gen_glue() {
-	# Sandbox violation prevention
-	# * ACCESS DENIED:  mkdir:         /var/lib/portage/home/.cache
-	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # Prevent sandbox violation
-	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
-	for x in $(find /dev/input -name "event*") ; do
-		einfo "Adding \`addwrite ${x}\` sandbox rule"
-		addwrite "${x}"
-	done
-
-	einfo "Mono support:  Generating glue sources"
-	# Generates modules/mono/glue/mono_glue.gen.cpp
-	local f=$(basename bin/godot*windows*)
-	virtx \
-	bin/${f} \
-		--audio-driver Dummy \
-		--generate-mono-glue \
-		modules/mono/glue
-
-	if [[ ! -e "bin/GodotSharp" ]] ; then
-eerror
-eerror "Missing export templates data directory.  It is likely caused by a"
-eerror "crash while generating mono_glue.gen.cpp."
-eerror
-		die
-	fi
-
-	local src
-	local dest
-	src="${S}/bin/GodotSharp/Mono/lib/mono/4.5"
-	dest="${WORKDIR}/templates/bcl/net_4_x"
-	einfo "Mono support:  Collecting BCL"
-	mkdir -p "${dest}"
-	cp -aT "${src}" "${dest}" || die
-
-	# merge conflict?
-	src="${S}/bin/GodotSharp/Mono/etc/mono"
-	dest="${WORKDIR}/templates/data.mono.windows.${bitness}.${configuration}/Mono"
-	einfo "Mono support:  Collecting datafiles"
-	mkdir -p "${dest}"
-	cp -aT "${src}" "${dest}" || die
-}
-
 src_compile_linux_yes_mono() {
 	local options_extra
-	einfo "Mono support:  Building temporary binary"
-	options_extra=( module_mono_enabled=yes mono_glue=no tools=yes )
-	_compile
-	_gen_glue
 	einfo "Mono support:  Building final binary"
-	options_extra=( module_mono_enabled=yes tools=no )
+	# mono_glue=yes (default)
+	# Distro is native
+	options_extra=(
+		module_mono_enabled=yes tools=no
+		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86"
+		mono_static=yes
+	)
 	_compile
 }
 
@@ -472,7 +431,7 @@ src_compile_linux() {
 
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	#myoptions+=( production=$(usex !debug) )
 	local options_linux=(
 		platform=linux
 	)

@@ -141,6 +141,7 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 	mono? (
+		dev-games/godot-editor:${SLOT}[mono]
 		dev-games/godot-mono-runtime-monodroid
 	)
 "
@@ -273,6 +274,14 @@ einfo "in ${distdir} or you can \`wget -O ${distdir}/${FN_DEST} ${URI_A}\`"
 einfo
 }
 
+src_prepare() {
+	default
+	if use mono ; then
+		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
+			modules/mono/glue || die
+	fi
+}
+
 src_configure() {
 	default
 	if use portable ; then
@@ -326,7 +335,12 @@ _compile() {
 src_compile_android_yes_mono() {
 	local options_extra
 	einfo "Mono support:  Building final binary"
-	options_extra=( module_mono_enabled=yes tools=no )
+	# mono_glue=yes (default)
+	options_extra=(
+		module_mono_enabled=yes
+		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/android"
+		tools=no
+	)
 	_compile
 }
 
@@ -353,7 +367,7 @@ src_compile_android() {
 
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	#myoptions+=( production=$(usex !debug) )
 	local options_android=(
 		platform=android
 	)
@@ -463,18 +477,6 @@ _get_configuration() {
 	else
 		echo -n ""
 	fi
-}
-
-_get_arch() {
-	local x="${1}"
-	local arch
-	for arch in ${GODOT_ANDROID_} ; do
-		if [[ "${x}" =~ "/${arch}/" ]] ; then
-			echo "${arch}"
-			return
-		fi
-	done
-	echo -n ""
 }
 
 _install_export_templates() {

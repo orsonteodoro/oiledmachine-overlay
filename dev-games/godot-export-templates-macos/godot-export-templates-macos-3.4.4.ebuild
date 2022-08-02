@@ -123,13 +123,15 @@ EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.12"
 
 BDEPEND+="
 	${PYTHON_DEPS}
+	app-arch/zip
 	dev-util/scons
+	mono? (
+		dev-games/godot-editor:${SLOT}[mono]
+		dev-games/godot-mono-runtime-macos
+	)
 	webm-simd? (
 		dev-lang/yasm
 	)
-"
-BDEPEND+="
-	app-arch/zip
 "
 S="${WORKDIR}/godot-${PV}-stable"
 PATCHES=(
@@ -290,6 +292,14 @@ einfo "in ${distdir} or you can \`wget -O ${distdir}/${FN_DEST} ${URI_A}\`"
 einfo
 }
 
+src_prepare() {
+	default
+	if use mono ; then
+		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
+			modules/mono/glue || die
+	fi
+}
+
 src_configure() {
 	default
 	if use portable ; then
@@ -340,56 +350,15 @@ _compile()
 	zip -q -9 -r osx.zip osx_template.app || die
 }
 
-_gen_glue() {
-	# Sandbox violation prevention
-	# * ACCESS DENIED:  mkdir:         /var/lib/portage/home/.cache
-	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # Prevent sandbox violation
-	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
-	for x in $(find /dev/input -name "event*") ; do
-		einfo "Adding \`addwrite ${x}\` sandbox rule"
-		addwrite "${x}"
-	done
-
-	einfo "Mono support:  Generating glue sources"
-	# Generates modules/mono/glue/mono_glue.gen.cpp
-	local f=$(basename bin/godot*osx*)
-	virtx \
-	bin/${f} \
-		--audio-driver Dummy \
-		--generate-mono-glue \
-		modules/mono/glue
-
-	if [[ ! -e "bin/GodotSharp" ]] ; then
-eerror
-eerror "Missing export templates data directory.  It is likely caused by a"
-eerror "crash while generating mono_glue.gen.cpp."
-eerror
-		die
-	fi
-
-	local src
-	local dest
-	src="${S}/bin/GodotSharp/Mono/lib/mono/4.5"
-	dest="${WORKDIR}/osx_template.app/Contents/Resources/data.mono.osx.64.${configuration}/Mono/lib"
-	einfo "Mono support:  Collecting BCL"
-	mkdir -p "${dest}"
-	cp -aT "${src}" "${dest}" || die
-
-	src="${S}/bin/GodotSharp/Mono/etc/mono/etc"
-	dest="${WORKDIR}/osx_template.app/Contents/Resources/data.mono.osx.64.${configuration}/Mono/etc"
-	einfo "Mono support:  Collecting datafiles"
-	mkdir -p "${dest}"
-	cp -aT "${src}" "${dest}" || die
-}
-
 src_compile_osx_yes_mono() {
 	local options_extra
-	einfo "Mono support:  Building temporary binary"
-	options_extra=( module_mono_enabled=yes mono_glue=no tools=yes )
-	_compile
-	_gen_glue
 	einfo "Mono support:  Building final binary"
-	options_extra=( module_mono_enabled=yes tools=no )
+	# mono_glue=yes (default)
+	options_extra=(
+		module_mono_enabled=yes
+		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/osx"
+		tools=no
+	)
 	_compile
 }
 
@@ -417,7 +386,7 @@ src_compile_osx()
 
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	#myoptions+=( production=$(usex !debug) )
 	local options_osx=(
 		platform=osx
 		osxcross_sdk=${EGODOT_MACOS_SDK_VERSION}

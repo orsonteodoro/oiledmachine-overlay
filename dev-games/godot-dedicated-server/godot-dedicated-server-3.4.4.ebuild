@@ -323,6 +323,14 @@ einfo "in ${distdir} or you can \`wget -O ${distdir}/${FN_DEST} ${URI_A}\`"
 einfo
 }
 
+src_prepare() {
+	default
+	if use mono ; then
+		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
+			modules/mono/glue || die
+	fi
+}
+
 src_configure() {
 	default
 	if use portable ; then
@@ -331,36 +339,51 @@ src_configure() {
 	fi
 }
 
-src_compile_server()
-{
-	local options_extra=(
-		$(usex debug "target=debug_release" "")
-	)
-
-	local options_mono=()
-	if use mono ; then
-		options_mono=(
-			module_mono_enabled=yes mono_static=yes mono_glue=no
-		)
-	else
-		options_mono=(
-			module_mono_enabled=no
-		)
-	fi
-
+_compile() {
 	einfo "Building dedicated gaming server"
 	scons ${options_server[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
-		${options_mono[@]} \
 		${options_extra[@]} \
+		target=${configuration} \
 		tools=no \
 		|| die
 }
 
+src_compile_server_yes_mono() {
+	einfo "Mono support:  Building final binary"
+	# mono_glue=yes (default)
+	# CI puts mono_glue=no without reason.
+	# There must be a good reason?
+	# Either for faster testing or security
+	local options_extra=( module_mono_enabled=yes mono_static=yes tools=no )
+	_compile
+}
+
+src_compile_server_no_mono() {
+	local options_extra=( module_mono_enabled=no tools=no )
+	_compile
+}
+
+src_compile_server() {
+	local configuration
+	for configuration in release release_debug ; do
+		einfo "Creating export template"
+		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
+			continue
+		fi
+		if use mono ; then
+			einfo "USE=mono is under contruction"
+			src_compile_server_yes_mono
+		else
+			src_compile_server_no_mono
+		fi
+	done
+}
+
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	#myoptions+=( production=$(usex !debug) )
 	local options_server=(
 		platform=server
 		use_asan=$(usex asan)
@@ -486,6 +509,17 @@ src_compile() {
 	src_compile_server
 }
 
+_get_configuration() {
+	local x="${1}"
+	if [[ "${x}" =~ ".debug" ]] ; then
+		echo "debug"
+	elif [[ "${x}" =~ ".opt" ]] ; then
+		echo "release"
+	else
+		echo -n ""
+	fi
+}
+
 _install_server() {
 	# NO EXPORT TEMPLATE
 	local d="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/dedicated-server"
@@ -494,10 +528,15 @@ _install_server() {
 	local x
 	for x in $(find bin -type f) ; do
 		[[ "${x}" =~ "godot_server" ]] || continue
+		local configuration=$(_get_configuration "${x}")
 		local p="${x}"
 		doexe "${p}"
 		dosym "${d}/$(basename ${x})" \
-			/usr/bin/godot-dedicated-server
+			/usr/bin/godot-dedicated-server-${configuration}
+		if [[ "${x}" =~ "release" ]] ; then
+			dosym "${d}/$(basename ${x})" \
+				/usr/bin/godot-dedicated-server
+		fi
 	done
 }
 

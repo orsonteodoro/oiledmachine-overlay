@@ -176,6 +176,7 @@ RDEPEND=" ${CDEPEND}"
 DEPEND+="
 	${CDEPEND}
 	mono? (
+		dev-games/godot-editor:${SLOT}[mono]
 		dev-games/godot-mono-runtime-wasm
 	)
 "
@@ -292,6 +293,14 @@ _configure_emscripten()
 	export EM_CACHE="${T}/emscripten/cache"
 }
 
+src_prepare() {
+	default
+	if use mono ; then
+		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
+			modules/mono/glue || die
+	fi
+}
+
 src_configure() {
 	default
 	if use portable ; then
@@ -317,7 +326,13 @@ _compile() {
 src_compile_javascript_yes_mono() {
 	local options_extra
 	einfo "Mono support:  Building final binary"
-	options_extra=( module_mono_enabled=yes tools=no )
+	# mono_static=yes (default on this platform)
+	# mono_glue=yes (default)
+	options_extra=(
+		module_mono_enabled=yes
+		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/wasm"
+		tools=no
+	)
 	_compile
 }
 
@@ -345,7 +360,7 @@ src_compile_javascript()
 
 src_compile() {
 	local myoptions=()
-	myoptions+=( production=$(usex !debug) )
+	#myoptions+=( production=$(usex !debug) )
 	local options_javascript=(
 		platform=javascript
 		javascript_eval=$(usex javascript_eval)
