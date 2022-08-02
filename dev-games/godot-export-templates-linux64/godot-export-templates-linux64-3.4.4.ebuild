@@ -37,6 +37,8 @@ LICENSE="
 	ZLIB
 "
 
+# See https://github.com/godotengine/godot/blob/3.4.4-stable/thirdparty/README.md for Apache-2.0 licensed third party.
+
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
 
@@ -47,6 +49,9 @@ LICENSE="
 
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
+
+MONO_LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
+LICENSE+=" mono? ( ${MONO_LICENSE} )"
 
 KEYWORDS="~amd64 ~riscv"
 
@@ -404,9 +409,9 @@ src_compile_linux_yes_mono() {
 	local options_extra
 	einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
+	# mono_static=yes ; CI uses this
 	options_extra=(
 		module_mono_enabled=yes
-		mono_static=yes
 		tools=no
 	)
 	if use portable ; then

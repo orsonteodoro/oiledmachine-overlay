@@ -38,6 +38,8 @@ LICENSE="
 	ZLIB
 "
 
+# See https://github.com/godotengine/godot/blob/3.4.4-stable/thirdparty/README.md for Apache-2.0 licensed third party.
+
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
 
@@ -48,6 +50,11 @@ LICENSE="
 
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
+
+# mono_static=yes # See https://docs.godotengine.org/en/3.4/development/compiling/compiling_with_mono.html#command-line-options
+# See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
+MONO_LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
+LICENSE+=" mono? ( ${MONO_LICENSE} )"
 
 #KEYWORDS=""
 

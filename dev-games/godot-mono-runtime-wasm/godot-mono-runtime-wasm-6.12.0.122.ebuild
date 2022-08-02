@@ -25,6 +25,47 @@ DESCRIPTION="Mono build scripts for Godot (monodroid)"
 HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="MIT"
+
+# Pulled by EMSDK (clang, nodejs, python, emscripten)
+EMSCRIPTEN_LICENSE="
+	all-rights-reserved
+	UoI-NCSA
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	BSD
+	BSD-2
+	CC-BY-SA-3.0
+	|| ( FTL GPL-2 )
+	GPL-2+
+	LGPL-2.1
+	LGPL-3
+	MIT
+	MPL-2.0
+	OFL-1.1
+	PSF-2.4
+	Unlicense
+	ZLIB
+"
+RECHECK_OPTIONAL_DEPS_EMSCRIPTEN_LICENSE+="
+	closure-compiler? (
+		Apache-2.0
+		BSD
+		CPL-1.0
+		GPL-2+
+		LGPL-2.1+
+		MIT
+		MPL-2.0
+		NPL-1.1
+	)
+"
+LICENSE+=" ${EMSCRIPTEN_LICENSE}"
+
+NODEJS_LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 icu MIT ZLIB"
+LICENSE+=" ${NODEJS_LICENSE}"
+
+MONO_LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
+LICENSE+=" ${MONO_LICENSE}"
+
 #KEYWORDS=""
 SLOT="0/${PV}"
 DEPEND+=""

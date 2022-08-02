@@ -21,6 +21,8 @@ HOMEPAGE="http://godotengine.org"
 LICENSE="all-rights-reserved Apache-2.0 BitstreamVera Boost-1.0 BSD BSD-2
 CC-BY-4.0 FTL ISC LGPL-2.1 MIT MPL-2.0 OFL-1.1 openssl Unlicense ZLIB"
 
+# See https://github.com/godotengine/godot/blob/3.3.4-stable/thirdparty/README.md for Apache-2.0 licensed third party.
+
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
 

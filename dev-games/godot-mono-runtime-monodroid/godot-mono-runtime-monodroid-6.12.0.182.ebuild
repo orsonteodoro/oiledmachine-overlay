@@ -25,6 +25,10 @@ DESCRIPTION="Mono build scripts for Godot (monodroid)"
 HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="MIT"
+
+MONO_LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
+LICENSE+=" ${MONO_LICENSE}"
+
 #KEYWORDS=""
 SLOT="0/${PV}"
 RUNTIME_TARGETS=" armv7 arm64v8 x86 x86_64"
