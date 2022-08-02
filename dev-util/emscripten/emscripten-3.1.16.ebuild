@@ -35,6 +35,7 @@ LICENSE="
 	MIT
 	MPL-2.0
 	OFL-1.1
+	OG-X11
 	PSF-2.4
 	Unlicense
 	ZLIB
