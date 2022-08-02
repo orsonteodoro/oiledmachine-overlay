@@ -64,7 +64,7 @@ EMSCRIPTEN_LICENSE="
 "
 LICENSE+=" ${EMSCRIPTEN_LICENSE}"
 
-NODEJS_LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 icu ISC MIT openssl unicode ZLIB"
+NODEJS_LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 icu-68.1 ISC MIT openssl unicode ZLIB"
 LICENSE+=" ${NODEJS_LICENSE}"
 
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
