@@ -10,7 +10,7 @@ PYTHON_REQ_USE="threads(+)"
 inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
 toolchain-funcs xdg-utils
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
-LICENSE="Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu ISC MIT openssl unicode ZLIB"
+LICENSE="Apache-1.1 Apache-2.0 Artistic-2 BSD BSD-2 icu-70.1 ISC MIT openssl unicode ZLIB"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
 HOMEPAGE="https://nodejs.org/"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
