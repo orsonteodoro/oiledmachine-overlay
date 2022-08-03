@@ -94,6 +94,7 @@ gen_required_use_template()
 }
 
 IUSE+=" -gdscript gdscript_lsp -mono +visual-script" # for scripting languages
+IUSE+=" csharp-external-editor monodevelop vscode"
 IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
 IUSE+=" -gamepad +touch" # for input
@@ -112,6 +113,10 @@ IUSE+=" ${SANITIZERS}"
 REQUIRED_USE+="
 	3d
 	advanced-gui
+	csharp-external-editor? (
+		|| ( monodevelop vscode )
+		mono
+	)
 	freetype
 	denoise? ( lightmapper_cpu )
 	gdscript_lsp? ( jsonrpc websocket )
@@ -119,6 +124,7 @@ REQUIRED_USE+="
 	lsan? ( asan )
 	optimize-size? ( !optimize-speed )
 	optimize-speed? ( !optimize-size )
+	monodevelop? ( csharp-external-editor )
 	portable? (
 		!asan
 		!system-bullet
@@ -144,6 +150,7 @@ REQUIRED_USE+="
 		!tsan
 		!tsan
 	)
+	vscode? ( csharp-external-editor )
 "
 FREETYPE_V="2.10.4"
 LIBOGG_V="1.3.5"
@@ -211,6 +218,12 @@ CDEPEND+="
 		>=dev-lang/mono-6.0.0.176
 		=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
 		dev-dotnet/dotnet-sdk-bin
+		csharp-external-editor? (
+			|| (
+				monodevelop? ( dev-util/monodevelop )
+				vscode? ( app-editors/vscode )
+			)
+		)
 	)
 "
 CDEPEND_CLANG="
@@ -501,7 +514,7 @@ eerror
 }
 
 set_production() {
-	if [[ "${configuration}" == "release" ]] ; then
+	if ! use debug ; then
 		echo "production=True"
 	fi
 }
@@ -519,6 +532,7 @@ src_compile_linux_yes_mono() {
 	_compile
 	_gen_mono_glue
 	#_assemble_datafiles
+	die
 	einfo "Mono support:  Building final binary"
 	options_extra=(
 		$(set_production)
@@ -732,4 +746,14 @@ src_install() {
 	_install_linux_editor
 	_install_template_datafiles
 	use mono && _install_mono_glue
+}
+
+pkg_postinst() {
+	if use csharp-external-editor ; then
+einfo
+einfo "Instructions in setting up the external editor can be found at:"
+einfo
+einfo "  https://docs.godotengine.org/en/$(ver_cut 1-2 ${PV})/tutorials/scripting/c_sharp/c_sharp_basics.html#configuring-an-external-editor"
+einfo
+	fi
 }

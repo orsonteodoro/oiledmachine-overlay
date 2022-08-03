@@ -81,6 +81,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       loading textures from the PKM file format.</flag>
     <flag name="exr">Enables support for OpenEXR texture images used in
       association with 3D animation.</flag>
+    <flag name="csharp-external-editor">Selects a compatible C# editor</flag>
     <flag name="freetype">Enables support for the FreeType library.</flag>
     <flag name="gamepad">Enables gamepad support.</flag>
     <flag name="gdscript">Enables the Python like scripting language.</flag>
@@ -122,6 +123,7 @@ https://godotengine.org/article/introducing-the-godot-gltf-2-0-scene-exporter
       formats are used by Amiga audio files or chiptune music.  It's only
       available in the 2.1 slot.</flag>
     <flag name="mono">Enables C# scripting support.</flag>
+    <flag name="monodevelop">Use MonoDevelop for C# scripting</flag>
     <flag name="mp3">Enables MP3 support.</flag>
     <flag name="msan">Enables MSAN for reporting but not necessarily
       fixing uninitialized variables.</flag>
@@ -215,7 +217,6 @@ https://godotengine.org/article/introducing-the-godot-gltf-2-0-scene-exporter
       accurate approximation for collison detection at the model's limbs instead
       of more spheroid or retangular shapes.</flag>
     <flag name="visual-script">Enables the visual scripting and editor.</flag>
-    <flag name="vorbis">Enables support for the Vorbis audio codec.</flag>
     <flag name="webm">Enables support for the WebM format for audio and
       video.</flag>
     <flag name="webm-simd">Builds internal libvpx as SIMD optimized for
@@ -225,6 +226,8 @@ https://godotengine.org/article/introducing-the-godot-gltf-2-0-scene-exporter
       support.</flag>
     <flag name="webxr">Enables WebXR support.</flag>
     <flag name="websocket">Enables support for the WebSocket protocol.</flag>
+    <flag name="vorbis">Enables support for the Vorbis audio codec.</flag>
+    <flag name="vscode">Use Visual Studio Code for C# scripting</flag>
     <flag name="xml">Enables XML support.</flag>
     <flag name="X">Enables building the editor with X support.</flag>
     <flag name="xatlas">Enables use of atlas texture packing for more efficient
