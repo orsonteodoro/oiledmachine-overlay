@@ -112,7 +112,7 @@ _unpack_mono() {
 	EGIT_CLONE_TYPE="${EGIT_CLONE_TYPE:-single}"
 	EGIT_REPO_URI="https://github.com/mono/mono.git"
 	EGIT_COMMIT="mono-${MONO_PV}"
-	EGIT_BRANCH="master"
+	EGIT_BRANCH="main"
 	git-r3_fetch
 	git-r3_checkout
 }
