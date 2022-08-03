@@ -218,12 +218,6 @@ CDEPEND+="
 		>=dev-lang/mono-6.0.0.176
 		=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
 		dev-dotnet/dotnet-sdk-bin
-		csharp-external-editor? (
-			|| (
-				monodevelop? ( dev-util/monodevelop )
-				vscode? ( app-editors/vscode )
-			)
-		)
 	)
 "
 CDEPEND_CLANG="
@@ -302,7 +296,17 @@ DEPEND+="
 	system-zlib? ( >=sys-libs/zlib-${ZLIB_V} )
 	system-zstd? ( >=app-arch/zstd-1.4.8 )
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+	mono? (
+		csharp-external-editor? (
+			|| (
+				monodevelop? ( dev-util/monodevelop )
+				vscode? ( app-editors/vscode )
+			)
+		)
+	)
+"
 BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
