@@ -130,7 +130,8 @@ eerror
 
 	${EPYTHON} windows.py configure ${build_targets[@]} \
 		${build_extras[@]} || die
-	${EPYTHON} windows.py make ${build_targets[@]} || die
+	${EPYTHON} windows.py make ${build_targets[@]} \
+		${build_extras[@]} || die
 
 	${EPYTHON} bcl.py make --product=desktop || die
 }
