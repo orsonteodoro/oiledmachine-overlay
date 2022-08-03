@@ -49,12 +49,12 @@ LICENSE="
 # Listed because of mono_static=yes
 # mono_static=yes (applied to iOS, WASM builds) # See https://docs.godotengine.org/en/3.4/development/compiling/compiling_with_mono.html#command-line-options
 MONO_LICENSE="
-	Apache-2.0
 	MIT
+	Apache-2.0
 	BSD
-	BSD-4
 	DOTNET-libraries-and-runtime-components-patents
 	IDPL
+	ISC
 	LGPL-2.1
 	Mono-patents
 	MPL-1.1
@@ -66,8 +66,8 @@ MONO_LICENSE="
 # !Apache-1.1 -- ikvm-disabled
 # Apache-2.0 MPL-1.1 -- mcs/class/RabbitMQ.Client/src/client/events/ModelShutdownEventHandler.cs (RabbitMQ.Client.dll)
 # BSD - mono/metadata/w32file-unix-glob.c, mono/metadata/w32file-unix-glob.h (libmonosgen.a)
-# BSD-4 openssl -- btls enabled for mono-desktop (osx, windows, linux)
-# !BSD-4 !openssl -- btls disabled for ios, wasm
+# BSD openssl ISC -- btls enabled for mono-desktop (osx, windows, linux)
+# !BSD !openssl !ISC -- btls disabled for ios, wasm
 # IDPL MPL-1.1 -- RabbitMQ.Client
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
 # openssl - external/boringssl/crypto/ecdh/ecdh.c (libmono-btls-shared.dll)

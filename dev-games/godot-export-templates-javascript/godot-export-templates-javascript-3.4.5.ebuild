@@ -53,7 +53,6 @@ LICENSE="
 # Listed because of mono_static=yes
 MONO_LICENSE="
 	MIT
-	BSD-4
 	DOTNET-libraries-and-runtime-components-patents
 	IDPL
 	LGPL-2.1

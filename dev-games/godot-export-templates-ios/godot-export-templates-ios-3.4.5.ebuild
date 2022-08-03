@@ -56,9 +56,9 @@ LICENSE="
 # mono_static=yes # See https://docs.godotengine.org/en/3.4/development/compiling/compiling_with_mono.html#command-line-options
 MONO_LICENSE="
 	MIT
-	BSD-4
 	DOTNET-libraries-and-runtime-components-patents
 	IDPL
+	ISC
 	LGPL-2.1
 	Mono-patents
 	MPL-1.1

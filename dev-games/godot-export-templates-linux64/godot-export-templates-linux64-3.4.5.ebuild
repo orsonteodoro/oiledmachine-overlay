@@ -53,11 +53,12 @@ LICENSE="
 
 # Listed because of possible mono_static=yes
 MONO_LICENSE="
-	Apache-2.0
 	MIT
-	BSD-4
+	Apache-2.0
+	BSD
 	DOTNET-libraries-and-runtime-components-patents
 	IDPL
+	ISC
 	LGPL-2.1
 	LGPL-2.1-with-linking-exception
 	Mono-patents

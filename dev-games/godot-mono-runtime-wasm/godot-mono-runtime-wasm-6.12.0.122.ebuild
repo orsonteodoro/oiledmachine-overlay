@@ -69,11 +69,13 @@ NODEJS_LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 icu-68.1 ISC MIT openssl unicode
 LICENSE+=" ${NODEJS_LICENSE}"
 
 # Extra licenses because it is in source code form and third party external
-# modules.
+# modules.  Also, additional licenses for additional files through git not
+# found in the tarball.
 MONO_LICENSE="
 	MIT
 	Apache-1.1
 	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
 	APSL-2
 	BSD
 	BSD-2
@@ -90,8 +92,10 @@ MONO_LICENSE="
 	GPL-3+-with-libtool-exception
 	IDPL
 	Info-ZIP
+	ISC
 	LGPL-2.1
 	LGPL-2.1-with-linking-exception
+	( MIT UoI-NCSA )
 	Mono-patents
 	MPL-1.1
 	Ms-PL
@@ -100,6 +104,9 @@ MONO_LICENSE="
 	SunPro
 	ZLIB
 "
+# The GPL-2, GPL-2+*, GPL-3* apply to build files and not for binary only
+# distribution after install.
+
 # The GPL-2-with-linking-exception is actually GPL-2+-with-linking-exception"
 # since "or later" is present which makes it Apache-2.0 compatible, so the"
 # distro license file name is a misnomer.  A GPL-2 only usually will have
@@ -107,11 +114,13 @@ MONO_LICENSE="
 # "later".
 
 # Apache-1.1 - external/ikvm/THIRD_PARTY_README
+# Apache-2.0-with-LLVM-exceptions - mono/tools/offsets-tool/clang/enumerations.py
 # APSL-2 BSD-4 - support/ios/net/route.h
 # BSD - mono/utils/bsearch.c
+# BSD ISC openssl custom -- boringssl
+#   custom - ssl/ssl_lib.c
 # BSD-2 - mono/utils/freebsd-elf64.h
 # BSD-2 SunPro - support/libm/complex.c
-# BSD-4 openssl -- boringssl
 # gcc-runtime-library-exception-3.1
 #   https://github.com/mono/mono/blob/mono-6.12.0.122/mono/mini/decompose.c#L966
 #   https://github.com/mono/mono/blob/mono-6.12.0.122/THIRD-PARTY-NOTICES.TXT#L69
@@ -120,8 +129,10 @@ MONO_LICENSE="
 # GPL-2+-with-linking-exception mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs
 # GPL-3+-with-autoconf-exception - external/bdwgc/libatomic_ops/config.guess
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
+# MIT UoI-NCSA - external/llvm-project/libunwind/src/EHHeaderParser.hpp
 # openssl - external/boringssl/crypto/ecdh/ecdh.c
 # OSL-3.0 - external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/StackFilter.cs
+# ZLIB - external/ikvm ; lists paths/names with different licenses but these files are removed or not present (option disabled by godot-mono-builds)
 # ZLIB - ikvm-native/jni.h
 LICENSE+=" ${MONO_LICENSE}"
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
@@ -258,11 +269,8 @@ src_prepare() {
 }
 
 src_compile() {
-	local build_targets=()
-	# Build the runtime for WebAssembly.
 	${EPYTHON} wasm.py configure --target=runtime || die
 	${EPYTHON} wasm.py make --target=runtime || die
-
 	${EPYTHON} bcl.py make --product=wasm || die
 }
 
