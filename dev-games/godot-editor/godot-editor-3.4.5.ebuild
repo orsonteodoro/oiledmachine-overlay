@@ -542,8 +542,10 @@ src_compile_linux_yes_mono() {
 	options_extra=(
 		$(set_production)
 		module_mono_enabled=yes
-		mono_static=yes
-		mono_prefix="${WORKDIR}/mono"
+
+# Will re-enable once the godot-mono-runtime* is complete
+#		mono_static=yes
+#		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86_64"
 	)
 	_compile
 }
