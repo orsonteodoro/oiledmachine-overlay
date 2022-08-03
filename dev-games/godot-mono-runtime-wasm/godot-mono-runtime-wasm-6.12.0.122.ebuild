@@ -26,9 +26,11 @@ LICENSE="MIT"
 # Downloads by EMSDK:  nodejs, wasm-binaries [emscripten with third party,
 # emscripten-fastcomp-clang fork of clang, emscripten-fastcom fork of llvm]
 #
-# For licenses or copyright notices, see also
+# For licenses or copyright notices, see also:
+#
 # https://github.com/emscripten-core/emscripten
 # https://github.com/emscripten-core/emscripten-fastcomp
+# https://github.com/emscripten-core/emscripten-fastcomp-clang
 # https://github.com/emscripten-core/emsdk
 # https://github.com/nodejs/node
 CLOSURE_COMPILER_LICENSE="
