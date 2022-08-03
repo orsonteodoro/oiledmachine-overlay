@@ -414,6 +414,11 @@ src_configure() {
 		strip-flags
 		filter-flags -march=*
 	fi
+	if use mono ; then
+		# The code assumes unilib system not multilib.
+		mkdir -p "${WORKDIR}/mono" || die
+		ln -s "/usr/$(get_libdir)" "${WORKDIR}/mono/lib" || die
+	fi
 }
 
 _compile() {
@@ -520,7 +525,7 @@ set_production() {
 }
 
 src_compile_linux_yes_mono() {
-	einfo "Mono support:  Building Mono glue generator"
+	einfo "Mono support:  Building the Mono glue generator"
 	# tools=yes (default)
 	# mono_glue=yes (default)
 	local options_extra=(
@@ -532,10 +537,12 @@ src_compile_linux_yes_mono() {
 	_gen_mono_glue
 	_assemble_datafiles
 	einfo "Mono support:  Building final binary"
+	# CI adds mono_static=yes
 	options_extra=(
 		$(set_production)
 		module_mono_enabled=yes
 		mono_static=yes
+		mono_prefix="${WORKDIR}/mono"
 	)
 	_compile
 }
