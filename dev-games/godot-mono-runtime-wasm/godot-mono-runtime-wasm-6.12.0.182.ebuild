@@ -34,14 +34,14 @@ LICENSE="MIT"
 # https://github.com/emscripten-core/emsdk
 # https://github.com/nodejs/node
 CLOSURE_COMPILER_LICENSE="
-		Apache-2.0
-		BSD
-		CPL-1.0
-		GPL-2+
-		LGPL-2.1+
-		MIT
-		MPL-2.0
-		NPL-1.1
+	Apache-2.0
+	BSD
+	CPL-1.0
+	GPL-2+
+	LGPL-2.1+
+	MIT
+	MPL-2.0
+	NPL-1.1
 "
 
 # Some parts may not be included in wasm-binaries but found in the emscripten
