@@ -9,6 +9,7 @@ EAPI=7
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
+MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
 PYTHON_COMPAT=( python3_{8..10} )
 inherit desktop eutils flag-o-matic llvm multilib-build python-any-r1 scons-utils
@@ -191,7 +192,7 @@ DEPEND+="
 	${CDEPEND}
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
-		dev-games/godot-mono-runtime-wasm
+		=dev-games/godot-mono-runtime-wasm-$(ver_cut 1-2 ${MONO_PV})*:=
 	)
 "
 
@@ -337,12 +338,18 @@ _compile() {
 		|| die
 }
 
+set_production() {
+	if [[ "${configuration}" == "release" ]] ; then
+		echo "production=True"
+	fi
+}
+
 src_compile_javascript_yes_mono() {
-	local options_extra
 	einfo "Mono support:  Building final binary"
 	# mono_static=yes (default on this platform)
 	# mono_glue=yes (default)
-	options_extra=(
+	local options_extra=(
+		$(set_production)
 		module_mono_enabled=yes
 		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/wasm"
 		tools=no
@@ -351,7 +358,11 @@ src_compile_javascript_yes_mono() {
 }
 
 src_compile_javascript_no_mono() {
-	local options_extra=( module_mono_enabled=no tools=no )
+	local options_extra=(
+		$(set_production)
+		module_mono_enabled=no
+		tools=no
+	)
 	_compile
 }
 
@@ -374,7 +385,6 @@ src_compile_javascript()
 
 src_compile() {
 	local myoptions=()
-	#myoptions+=( production=$(usex !debug) )
 	local options_javascript=(
 		platform=javascript
 		javascript_eval=$(usex javascript_eval)

@@ -9,6 +9,7 @@ EAPI=7
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
+MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
 PYTHON_COMPAT=( python3_{8..10} )
 inherit desktop eutils flag-o-matic llvm multilib-build python-any-r1 scons-utils
@@ -196,7 +197,7 @@ BDEPEND+="
 	dev-util/scons
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
-		dev-games/godot-mono-runtime-mingw32
+		=dev-games/godot-mono-runtime-mingw32-$(ver_cut 1-2 ${MONO_PV})*
 	)
 	webm-simd? (
 		dev-lang/yasm
@@ -318,12 +319,18 @@ _compile() {
 		|| die
 }
 
+set_production() {
+	if [[ "${configuration}" == "release" ]] ; then
+		echo "production=True"
+	fi
+}
+
 # libmonosgen-2.0.so needs 32-bit or static linkage
 src_compile_windows_yes_mono() {
-	local options_extra
 	einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
-	options_extra=(
+	local options_extra=(
+		$(set_production)
 		module_mono_enabled=yes
 		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/mingw32"
 		tools=no
@@ -332,7 +339,11 @@ src_compile_windows_yes_mono() {
 }
 
 src_compile_windows_no_mono() {
-	local options_extra=( module_mono_enabled=no tools=no )
+	local options_extra=(
+		$(set_production)
+		module_mono_enabled=no
+		tools=no
+	)
 	_compile
 }
 
@@ -356,7 +367,6 @@ src_compile_windows()
 
 src_compile() {
 	local myoptions=()
-	#myoptions+=( production=$(usex !debug) )
 	local options_windows=(
 		platform=windows
 		use_llvm=$(usex clang)

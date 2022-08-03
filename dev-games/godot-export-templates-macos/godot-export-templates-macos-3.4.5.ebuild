@@ -9,6 +9,7 @@ EAPI=7
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
+MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
 PYTHON_COMPAT=( python3_{8..10} )
 # 64 bit only
@@ -123,13 +124,14 @@ XCODE_SDK_MIN_STORE="12"
 EXPECTED_XCODE_SDK_MIN_VERSION_ARM64="10.15" # See https://github.com/godotengine/godot/blob/3.4-stable/platform/osx/detect.py#L80
 EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.12"
 
+# Forcing linking to godot-mono-runtime-macos for TLS security
 BDEPEND+="
 	${PYTHON_DEPS}
 	app-arch/zip
 	dev-util/scons
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
-		dev-games/godot-mono-runtime-macos
+		=dev-games/godot-mono-runtime-macos-$(ver_cut 1-2 ${MONO_PV})*
 	)
 	webm-simd? (
 		dev-lang/yasm
@@ -352,11 +354,17 @@ _compile()
 	zip -q -9 -r osx.zip osx_template.app || die
 }
 
+set_production() {
+	if [[ "${configuration}" == "release" ]] ; then
+		echo "production=True"
+	fi
+}
+
 src_compile_osx_yes_mono() {
-	local options_extra
 	einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
-	options_extra=(
+	local options_extra=(
+		$(set_production)
 		module_mono_enabled=yes
 		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/osx"
 		tools=no
@@ -365,7 +373,11 @@ src_compile_osx_yes_mono() {
 }
 
 src_compile_osx_no_mono() {
-	local options_extra=( module_mono_enabled=no tools=no )
+	local options_extra=(
+		$(set_production)
+		module_mono_enabled=no
+		tools=no
+	)
 	_compile
 }
 
@@ -388,7 +400,6 @@ src_compile_osx()
 
 src_compile() {
 	local myoptions=()
-	#myoptions+=( production=$(usex !debug) )
 	local options_osx=(
 		platform=osx
 		osxcross_sdk=${EGODOT_MACOS_SDK_VERSION}

@@ -9,6 +9,7 @@ EAPI=7
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
+MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
 MULTILIB_COMPAT=( abi_x86_32 )
 PYTHON_COMPAT=( python3_{8..10} )
@@ -63,6 +64,7 @@ MONO_LICENSE="
 	OSL-1.1
 "
 # Apache-2.0 MPL-1.1 -- mcs/class/RabbitMQ.Client/src/client/events/ModelShutdownEventHandler.cs (RabbitMQ.Client.dll)
+# BSD-4 openssl - btls=on
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
 # openssl - external/boringssl/crypto/ecdh/ecdh.c (libmono-btls-shared.dll)
 LICENSE+=" mono? ( ${MONO_LICENSE} )"
@@ -205,11 +207,12 @@ gen_cdepend_sanitizers() {
 CDEPEND_SANITIZER="
 	$(gen_cdepend_sanitizers)
 "
+# Forcing linking to godot-mono-runtime-linux for TLS security
 CDEPEND+="
 	${CDEPEND_SANITIZER}
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
-		dev-games/godot-mono-runtime-linux-x86
+		=dev-games/godot-mono-runtime-linux-x86-$(ver_cut 1-2 ${MONO_PV})*
 	)
 "
 CDEPEND_CLANG="
@@ -413,21 +416,32 @@ _compile() {
 		|| die
 }
 
+set_production() {
+	if [[ "${configuration}" == "release" ]] ; then
+		echo "production=True"
+	fi
+}
+
 src_compile_linux_yes_mono() {
-	local options_extra
 	einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
-	# Distro is native
-	# mono_static=yes ; CI uses this
-	options_extra=(
-		module_mono_enabled=yes tools=no
+	# mono_static=yes ; CI uses this on 64-bit but unknown in 32-bit
+	local options_extra=(
+		$(set_production)
+		module_mono_enabled=yes
 		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86"
+		mono_static=yes
+		tools=no
 	)
 	_compile
 }
 
 src_compile_linux_no_mono() {
-	local options_extra=( module_mono_enabled=no tools=no )
+	local options_extra=(
+		$(set_production)
+		module_mono_enabled=no
+		tools=no
+	)
 	_compile
 }
 
@@ -451,7 +465,6 @@ src_compile_linux() {
 
 src_compile() {
 	local myoptions=()
-	#myoptions+=( production=$(usex !debug) )
 	local options_linux=(
 		platform=linux
 	)

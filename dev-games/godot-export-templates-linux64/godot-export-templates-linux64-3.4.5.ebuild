@@ -9,6 +9,7 @@ EAPI=7
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
+MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
 MULTILIB_COMPAT=( abi_x86_64 )
 PYTHON_COMPAT=( python3_{8..10} )
@@ -63,6 +64,7 @@ MONO_LICENSE="
 	OSL-1.1
 "
 # Apache-2.0 MPL-1.1 -- mcs/class/RabbitMQ.Client/src/client/events/ModelShutdownEventHandler.cs (RabbitMQ.Client.dll)
+# BSD-4 openssl - btls=on
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
 # openssl - external/boringssl/crypto/ecdh/ecdh.c (libmono-btls-shared.dll)
 LICENSE+=" mono? ( ${MONO_LICENSE} )"
@@ -207,18 +209,23 @@ CDEPEND_SANITIZER="
 	$(gen_cdepend_sanitizers)
 "
 # Some people on riscv or arm64 may want to export to x86_64
+# Forcing linking to godot-mono-runtime-linux for TLS security
 CDEPEND+="
 	${CDEPEND_SANITIZER}
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
-		portable? (
-			dev-games/godot-mono-runtime-linux-x86_64
-		)
+		=dev-games/godot-mono-runtime-linux-x86_64-$(ver_cut 1-2 ${MONO_PV})*
+	)
+"
+DISABLED_CDEPEND="
+	mono? (
 		!portable? (
 			>=dev-lang/mono-6.0.0.176
+			=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
 		)
 	)
 "
+
 CDEPEND_CLANG="
 	clang? (
 		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
@@ -420,25 +427,32 @@ _compile() {
 		|| die
 }
 
+set_production() {
+	if [[ "${configuration}" == "release" ]] ; then
+		echo "production=True"
+	fi
+}
+
 src_compile_linux_yes_mono() {
-	local options_extra
 	einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
 	# mono_static=yes ; CI uses this
-	options_extra=(
+	local options_extra=(
+		$(set_production)
 		module_mono_enabled=yes
+		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86_64"
+		mono_static=yes
 		tools=no
 	)
-	if use portable ; then
-		options_extra+=(
-			mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86_64"
-		)
-	fi
 	_compile
 }
 
 src_compile_linux_no_mono() {
-	local options_extra=( module_mono_enabled=no tools=no )
+	local options_extra=(
+		$(set_production)
+		module_mono_enabled=no
+		tools=no
+	)
 	_compile
 }
 
@@ -460,7 +474,6 @@ src_compile_linux() {
 
 src_compile() {
 	local myoptions=()
-	#myoptions+=( production=$(usex !debug) )
 	local options_linux=(
 		platform=linux
 	)

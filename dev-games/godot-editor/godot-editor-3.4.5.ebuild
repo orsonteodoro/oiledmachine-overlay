@@ -10,10 +10,12 @@ MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
 STATUS="stable"
+MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
 FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED=manual
 PYTHON_COMPAT=( python3_{8..10} )
+
 inherit desktop eutils flag-o-matic llvm python-any-r1 scons-utils \
 virtualx
 
@@ -200,11 +202,14 @@ gen_cdepend_sanitizers() {
 CDEPEND_SANITIZER="
 	$(gen_cdepend_sanitizers)
 "
+# TODO:  Review if editor needs to link against godot-mono-runtime-linux for
+# TLS security in C# scripting.
 CDEPEND+="
 	${CDEPEND_SANITIZER}
 	!dev-games/godot
 	mono? (
 		>=dev-lang/mono-6.0.0.176
+		=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
 		dev-dotnet/dotnet-sdk-bin
 	)
 "
@@ -402,8 +407,8 @@ _compile() {
 	scons ${options_x11[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
-		target=${configuration} \
 		bits=default \
+		target=${configuration} \
 		${options_extra[@]} \
 		"CFLAGS=${CFLAGS}" \
 		"CCFLAGS=${CXXFLAGS}" \
@@ -495,29 +500,46 @@ eerror
 	fi
 }
 
+set_production() {
+	if [[ "${configuration}" == "release" ]] ; then
+		echo "production=True"
+	fi
+}
+
 src_compile_linux_yes_mono() {
-	local options_extra
+	einfo "Mono support:  Building temporary binary"
 	# tools=yes (default)
 	# mono_glue=yes (default)
-	einfo "Mono support:  Building temporary binary"
-	options_extra=( module_mono_enabled=yes mono_glue=no )
+	local options_extra=(
+		$(set_production)
+		copy_mono_root=yes
+		module_mono_enabled=yes
+		mono_glue=no
+	)
 	_compile
 	_gen_mono_glue
-	_assemble_datafiles
+	#_assemble_datafiles
 	einfo "Mono support:  Building final binary"
-	options_extra=( module_mono_enabled=yes mono_static=yes )
+	options_extra=(
+		$(set_production)
+		module_mono_enabled=yes
+		mono_static=yes
+	)
 	_compile
 }
 
 src_compile_linux_no_mono() {
 	einfo "Creating export template"
 	# tools=yes (default)
-	local options_extra=( module_mono_enabled=no )
+	local options_extra=(
+		$(set_production)
+		module_mono_enabled=no
+	)
 	_compile
 }
 
 src_compile_linux() {
-	local configuration=$(usex debug "release_debug" "release")
+	local configuration="release_debug"
 	einfo "Building Linux editor"
 	if use mono ; then
 		src_compile_linux_yes_mono
@@ -528,7 +550,7 @@ src_compile_linux() {
 
 src_compile() {
 	local myoptions=()
-	#myoptions+=( production=$(usex !debug) )
+	myoptions+=( production=$(usex !debug) )
 	local options_linux=(
 		platform=linux
 	)

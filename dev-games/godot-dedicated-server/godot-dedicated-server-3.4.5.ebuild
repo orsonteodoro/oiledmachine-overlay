@@ -9,6 +9,7 @@ EAPI=7
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
+MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
 PYTHON_COMPAT=( python3_{8..10} )
 inherit desktop eutils flag-o-matic llvm python-any-r1 scons-utils
@@ -48,6 +49,20 @@ LICENSE="
 
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
+
+# Listed because of mono_static=yes
+MONO_LICENSE="
+	MIT
+	BSD-4
+	IDPL
+	LGPL-2.1
+	MPL-1.1
+	openssl
+	OSL-1.1
+"
+# BSD-4 openssl - btls=on
+LICENSE+=" mono? ( ${MONO_LICENSE} )"
+# See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
 KEYWORDS="~amd64 ~riscv ~x86"
 
@@ -202,6 +217,10 @@ CDEPEND_CLANG="
 CDEPEND_GCC="
 	!clang? ( sys-devel/gcc )
 "
+#
+# We try not to link to distro Mono because Mono don't support TLS on OpenSSL
+# but only with internal BoringSSL.
+#
 DEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
@@ -220,7 +239,18 @@ DEPEND+="
 	>=sys-libs/zlib-${ZLIB_V}
 	virtual/opengl
 	mono? (
-		>=dev-lang/mono-6.0.0.176
+		|| (
+			x86? (
+				=dev-games/godot-mono-runtime-linux-x86-$(ver_cut 1-2 ${MONO_PV})*
+			)
+			amd64? (
+				=dev-games/godot-mono-runtime-linux-x86_64-$(ver_cut 1-2 ${MONO_PV})*
+			)
+			riscv? (
+				>=dev-lang/mono-6.0.0.176
+				=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
+			)
+		)
 	)
 	!portable? (
 		ca-certs-relax? (
@@ -352,18 +382,34 @@ _compile() {
 		|| die
 }
 
+set_production() {
+	if [[ "${configuration}" == "release" ]] ; then
+		echo "production=True"
+	fi
+}
+
 src_compile_server_yes_mono() {
 	einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
 	# CI puts mono_glue=no without reason.
 	# There must be a good reason?
 	# Either for faster testing or security
-	local options_extra=( module_mono_enabled=yes mono_static=yes tools=no )
+	local options_extra=(
+		$(set_production)
+		module_mono_enabled=yes
+		mono_glue=no
+		mono_static=yes
+		tools=no
+	)
 	_compile
 }
 
 src_compile_server_no_mono() {
-	local options_extra=( module_mono_enabled=no tools=no )
+	local options_extra=(
+		$(set_production)
+		module_mono_enabled=no
+		tools=no
+	)
 	_compile
 }
 

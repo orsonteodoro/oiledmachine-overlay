@@ -63,7 +63,7 @@ LICENSE+=" ${MONO_LICENSE}"
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
 #KEYWORDS=""
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 AOT_CROSS_TARGETS=" cross-armv7 cross-arm64"
 DEV_TARGETS=" armv7 arm64"
 SIM_TARGETS=" i386 x86_64 arm64-sim"

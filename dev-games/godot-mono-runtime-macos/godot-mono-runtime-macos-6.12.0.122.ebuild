@@ -63,7 +63,7 @@ LICENSE+=" ${MONO_LICENSE}"
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
 #KEYWORDS=""
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 TARGETS=" arm64 x86_64"
 IUSE+=" ${TARGETS}"
 IUSE+=" ${TARGETS}"
