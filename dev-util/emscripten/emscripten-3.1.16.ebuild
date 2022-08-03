@@ -25,10 +25,12 @@ LICENSE="
 	UoI-NCSA
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
+	Boost-1.0
 	BSD
 	BSD-2
 	CC-BY-SA-3.0
 	|| ( FTL GPL-2 )
+	freeglut-teapot
 	GPL-2+
 	LGPL-2.1
 	LGPL-3
@@ -67,6 +69,7 @@ LICENSE="
 #   WebIDL.py - MPL-2.0
 #   websockify LGPL-3 MPL-2 BSD BSD-2 MIT
 #     websockify/include/VT100.js LGPL-2.1
+#   wrtcp.js - all-rights-reserved MIT
 #
 # Tools
 #   acorn - MIT
@@ -75,6 +78,7 @@ LICENSE="
 #
 # Tests
 #   all-rights-reserved || (MIT UoI-NCSA)
+#   all-rights-reserved MIT - tests/full_es2_sdlproc.c
 #   box2d - ZLIB
 #     freeglut - MIT LGPL-2
 #   bullet - ZLIB GPL-2
@@ -87,6 +91,7 @@ LICENSE="
 #   openjpeg - BSD-2
 #   tests/python - PSF-2.4
 #   tests/sounds - cc-by-sa-3.0
+#   tests/third_party/box2d/freeglut/freeglut_teapot_data.h - MIT freeglut-teapot
 #   poppler - GPL-2
 #   poppler/cmake - BSD
 #
@@ -97,6 +102,8 @@ LICENSE="
 #   sdl - ZLIB
 #   musl - all-rights-reserved MIT
 #   libcxx, libcxxabi, libunwind - MIT UoI-NCSA
+#   system/include/GL/gl.h -- all-rights-reserved MIT
+#   system/lib/libcxx/src/ryu/f2s.cpp -- Apache-2.0-with-LLVM-exceptions, Boost-1.0
 #
 KEYWORDS="~amd64 ~arm64 ~x86" # See tests/clang_native.py for supported arches
 SLOT_MAJOR=$(ver_cut 1-2 ${PV})
