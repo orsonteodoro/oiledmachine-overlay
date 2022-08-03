@@ -8,14 +8,8 @@ MY_PN="godot-mono-builds"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
 
-EGIT_REPO_URI="https://github.com/godotengine/godot-mono-builds.git"
-EGIT_BRANCH="master"
-
 PYTHON_COMPAT=( python3_{8..10} )
-inherit eutils flag-o-matic python-any-r1
-if [[ ${PV} =~ 9999 ]] ; then
-	inherit git-r3
-fi
+inherit eutils flag-o-matic git-r3 python-any-r1
 
 DESCRIPTION="Mono build scripts for Godot (monodroid)"
 HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
@@ -179,7 +173,6 @@ PROPERTIES="live"
 EMSDK_PV="1.39.9"
 MONO_PV=$(ver_cut 1-4 "${PV}")
 SRC_URI="
-https://download.mono-project.com/sources/mono/mono-${MONO_PV}.tar.xz
 https://github.com/emscripten-core/emsdk/archive/refs/tags/${EMSDK_PV}.tar.gz
 	-> emsdk-${EMSDK_PV}.tar.gz
 "
@@ -190,26 +183,11 @@ https://github.com/godotengine/godot-mono-builds/archive/refs/tags/release-${MY_
 	"
 fi
 
-src_unpack() {
-	unpack ${A}
-	if [[ ${PV} =~ 9999 ]] ; then
-		git-r3_fetch
-		git-r3_checkout
-	fi
-	local expected_mono_pv=$(grep "Mono:" "${S}/README.md" \
-		| grep -o -E -e"[0-9.]+" \
-		| sed -e "s|\.$||g")
-	local actual_mono_pv="${MONO_PV}"
-	if ver_test ${expected_mono_pv} -ne ${actual_mono_pv} ; then
-eerror
-eerror "Expected Mono version:  ${expected_mono_pv}"
-eerror "Actual Mono version:  ${actual_mono_pv}"
-eerror
-eerror "Bump the ebuild package version"
-eerror
-		die
-	fi
+_unpack_emsdk() {
+	unpack emsdk-${EMSDK_PV}.tar.gz
+}
 
+_verify_emsdk() {
 	local expected_emsdk_pv=$(grep "Emscripten:" "${S}/README.md" \
 		| grep -o -E -e"[0-9.]+" \
 		| sed -e "s|\.$||g")
@@ -223,6 +201,51 @@ eerror "Bump the EMSDK_PV package version"
 eerror
 		die
 	fi
+}
+
+_unpack_godot_mono_builds() {
+	if [[ ${PV} =~ 9999 ]] ; then
+		EGIT_REPO_URI="https://github.com/godotengine/godot-mono-builds.git"
+		EGIT_BRANCH="master"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${MY_PN}-${MY_PV}.tar.gz
+	fi
+}
+
+_unpack_mono() {
+	# The tarball is missing mono/tools/offsets-tool
+	EGIT_CLONE_TYPE="${EGIT_CLONE_TYPE:-single}"
+	EGIT_REPO_URI="https://github.com/mono/mono.git"
+	EGIT_COMMIT="mono-${MONO_PV}"
+	EGIT_BRANCH="master"
+	git-r3_fetch
+	git-r3_checkout
+}
+
+_verify_mono() {
+	local expected_mono_pv=$(grep "Mono:" "${S}/README.md" \
+		| grep -o -E -e"[0-9.]+" \
+		| sed -e "s|\.$||g")
+	local actual_mono_pv="${MONO_PV}"
+	if ver_test ${expected_mono_pv} -ne ${actual_mono_pv} ; then
+eerror
+eerror "Expected Mono version:  ${expected_mono_pv}"
+eerror "Actual Mono version:  ${actual_mono_pv}"
+eerror
+eerror "Bump the ebuild package version"
+eerror
+		die
+	fi
+}
+
+src_unpack() {
+	_unpack_godot_mono_builds
+	_unpack_mono
+	_unpack_emsdk
+	_verify_mono
+	_verify_emsdk
 }
 
 src_prepare() {
