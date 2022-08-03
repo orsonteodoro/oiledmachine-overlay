@@ -727,11 +727,13 @@ _install_template_datafiles() {
 		insinto "${prefix}"
 		doins -r "${WORKDIR}/templates"
 		echo "${PV}.${STATUS}.mono" > "${T}/version.txt" || die
+		insinto "${prefix}/templates"
 		doins "${T}/version.txt"
 	else
 		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/standard"
 		insinto "${prefix}"
 		echo "${PV}.${STATUS}" > "${T}/version.txt" || die
+		insinto "${prefix}/templates"
 		doins "${T}/version.txt"
 	fi
 }
