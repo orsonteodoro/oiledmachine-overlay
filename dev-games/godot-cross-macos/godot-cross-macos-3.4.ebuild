@@ -23,7 +23,7 @@ REQUIRED_USE="
 GODOT_OSX_=(arm64 x86_64)
 GODOT_OSX="${GODOT_OSX_[@]/#/godot_osx_}"
 
-LLVM_SLOTS=(12 13) # See https://github.com/godotengine/godot/blob/3.4-stable/misc/hooks/pre-commit-clang-format#L79
+LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.4.5-stable/misc/hooks/pre-commit-clang-format#L79
 gen_depend_llvm() {
 	local o=""
 	for s in ${LLVM_SLOTS[@]} ; do

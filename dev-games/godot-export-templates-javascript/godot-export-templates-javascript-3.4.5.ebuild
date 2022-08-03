@@ -137,7 +137,7 @@ REQUIRED_USE+="
 "
 EMSCRIPTEN_V="2.0.10"
 
-LLVM_SLOTS=(13) # See https://github.com/godotengine/godot/blob/3.4-stable/misc/hooks/pre-commit-clang-format#L79
+LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.4.5-stable/misc/hooks/pre-commit-clang-format#L79
 gen_cdepend_llvm() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
