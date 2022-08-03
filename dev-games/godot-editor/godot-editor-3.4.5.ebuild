@@ -710,10 +710,6 @@ _install_linux_editor() {
 	local f
 	f=$(basename bin/godot*tools*)
 	doexe "bin/${f}"
-	if use mono ; then
-		exeinto "${d_base}/bin"
-		doexe "bin/libmonosgen-2.0.so"
-	fi
 	dosym "${d_base}/bin/${f}" "/usr/bin/godot${SLOT_MAJ}"
 	einfo "Setting up Linux editor environment"
 	make_desktop_entry \
