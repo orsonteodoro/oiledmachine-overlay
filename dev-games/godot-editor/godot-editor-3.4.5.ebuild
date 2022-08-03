@@ -520,7 +520,7 @@ set_production() {
 }
 
 src_compile_linux_yes_mono() {
-	einfo "Mono support:  Building temporary binary"
+	einfo "Mono support:  Building Mono glue generator"
 	# tools=yes (default)
 	# mono_glue=yes (default)
 	local options_extra=(
