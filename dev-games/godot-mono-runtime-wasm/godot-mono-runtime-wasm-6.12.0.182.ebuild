@@ -103,6 +103,7 @@ MONO_LICENSE="
 # "later".
 
 # Apache-1.1 - external/ikvm/THIRD_PARTY_README
+# BSD-4 openssl -- boringssl
 # GPL-2+-with-libtool-exception external/bdwgc/libtool
 # GPL-2+ GPL-3+ GPL-3+-with-libtool-exception external/bdwgc/libtool
 # GPL-2+-with-linking-exception mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs
