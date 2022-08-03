@@ -10,11 +10,11 @@ MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
 
-MULTILIB_COMPAT=( abi_x86_32 )
+MULTILIB_COMPAT=( abi_x86_64 )
 PYTHON_COMPAT=( python3_{8..10} )
 inherit desktop eutils flag-o-matic llvm multilib-build python-any-r1 scons-utils
 
-DESCRIPTION="Godot export template for Linux (32-bit)"
+DESCRIPTION="Godot export template for Linux (64-bit)"
 HOMEPAGE="http://godotengine.org"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="
@@ -68,7 +68,7 @@ MONO_LICENSE="
 LICENSE+=" mono? ( ${MONO_LICENSE} )"
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
-KEYWORDS="~x86"
+KEYWORDS="~amd64 ~riscv"
 
 FN_SRC="${PV}-stable.tar.gz"
 FN_DEST="${MY_P}.tar.gz"
@@ -187,6 +187,7 @@ gen_clang_sanitizer() {
 	done
 	echo "${o}"
 }
+
 gen_cdepend_sanitizers() {
 	local a
 	for a in ${SANITIZERS} ; do
@@ -205,11 +206,17 @@ gen_cdepend_sanitizers() {
 CDEPEND_SANITIZER="
 	$(gen_cdepend_sanitizers)
 "
+# Some people on riscv or arm64 may want to export to x86_64
 CDEPEND+="
 	${CDEPEND_SANITIZER}
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
-		dev-games/godot-mono-runtime-linux-x86
+		portable? (
+			dev-games/godot-mono-runtime-linux-x86_64
+		)
+		!portable? (
+			>=dev-lang/mono-6.0.0.176
+		)
 	)
 "
 CDEPEND_CLANG="
@@ -221,6 +228,7 @@ CDEPEND_CLANG="
 CDEPEND_GCC="
 	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )
 "
+# All dependencies are in the project.
 DEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
@@ -260,7 +268,7 @@ DEPEND+="
 			app-misc/ca-certificates[cacert]
 		)
 		!ca-certs-relax? (
-			>=app-misc/ca-certificates-20211101[cacert]
+			>=app-misc/ca-certificates-20220331[cacert]
 		)
 	)
         gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
@@ -274,7 +282,7 @@ DEPEND+="
 	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}] )
 	system-libvpx? ( >=media-libs/libvpx-1.6.0[${MULTILIB_USEDEP}] )
 	system-libwebp? ( >=media-libs/libwebp-1.1.0[${MULTILIB_USEDEP}] )
-	system-mbedtls? ( >=net-libs/mbedtls-2.16.12[${MULTILIB_USEDEP}] )
+	system-mbedtls? ( >=net-libs/mbedtls-2.18.1[${MULTILIB_USEDEP}] )
 	system-miniupnpc? ( >=net-libs/miniupnpc-2.2.2[${MULTILIB_USEDEP}] )
 	system-opus? (
 		>=media-libs/opus-1.1.5[${MULTILIB_USEDEP}]
@@ -386,7 +394,6 @@ einfo
 }
 
 src_prepare() {
-	default
 	if use mono ; then
 		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
 			modules/mono/glue || die
@@ -402,7 +409,7 @@ src_configure() {
 }
 
 _compile() {
-	einfo "Building for 32-bit Linux"
+	einfo "Building for 64-bit Linux"
 	scons ${options_x11[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
@@ -417,12 +424,16 @@ src_compile_linux_yes_mono() {
 	local options_extra
 	einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
-	# Distro is native
 	# mono_static=yes ; CI uses this
 	options_extra=(
-		module_mono_enabled=yes tools=no
-		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86"
+		module_mono_enabled=yes
+		tools=no
 	)
+	if use portable ; then
+		options_extra+=(
+			mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86_64"
+		)
+	fi
 	_compile
 }
 
@@ -432,9 +443,7 @@ src_compile_linux_no_mono() {
 }
 
 src_compile_linux() {
-	# FIXME:  libmonosgen-2.0.so needs 32-bit or static linkage
-	# This is to prevent a merge conflict
-	local bitness=32
+	local bitness=64
 	local configuration
 	for configuration in release release_debug ; do
 		einfo "Creating export template"

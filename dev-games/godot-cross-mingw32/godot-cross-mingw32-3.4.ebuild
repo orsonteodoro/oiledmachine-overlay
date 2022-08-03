@@ -31,6 +31,7 @@ eerror
 }
 
 src_configure() {
+	default
 cat << EOF > hello.c
 #include <windows.h>
 

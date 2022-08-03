@@ -227,7 +227,7 @@ DEPEND+="
 			app-misc/ca-certificates[cacert]
 		)
 		!ca-certs-relax? (
-			>=app-misc/ca-certificates-20211101[cacert]
+			>=app-misc/ca-certificates-20220331[cacert]
 		)
 	)
 	system-bullet? ( >=sci-physics/bullet-3.17 )
@@ -240,7 +240,7 @@ DEPEND+="
 	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V} )
 	system-libvpx? ( >=media-libs/libvpx-1.6.0 )
 	system-libwebp? ( >=media-libs/libwebp-1.1.0 )
-	system-mbedtls? ( >=net-libs/mbedtls-2.16.12 )
+	system-mbedtls? ( >=net-libs/mbedtls-2.18.1 )
 	system-miniupnpc? ( >=net-libs/miniupnpc-2.2.2 )
 	system-opus? (
 		>=media-libs/opus-1.1.5
@@ -342,46 +342,43 @@ src_configure() {
 }
 
 _compile() {
+	einfo "Building dedicated gaming server"
 	scons ${options_server[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
-		${options_mono[@]} \
 		${options_extra[@]} \
 		target=${configuration} \
-		tools=yes \
+		tools=no \
 		|| die
 }
 
-src_configure_server_yes_mono() {
-	local options_extra=()
-	local options_mono=()
+src_compile_server_yes_mono() {
+	einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
 	# CI puts mono_glue=no without reason.
 	# There must be a good reason?
 	# Either for faster testing or security
-	options_mono=( module_mono_enabled=yes mono_static=yes )
+	local options_extra=( module_mono_enabled=yes mono_static=yes tools=no )
 	_compile
 }
 
-src_configure_server_no_mono() {
-	local options_extra=()
-	local options_mono=()
-	options_mono=( module_mono_enabled=no )
+src_compile_server_no_mono() {
+	local options_extra=( module_mono_enabled=no tools=no )
 	_compile
 }
 
-src_compile_server()
-{
+src_compile_server() {
 	local configuration
 	for configuration in release release_debug ; do
+		einfo "Creating export template"
 		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
 			continue
 		fi
-		einfo "Building headless editor server"
 		if use mono ; then
-			src_configure_server_yes_mono
+			einfo "USE=mono is under contruction"
+			src_compile_server_yes_mono
 		else
-			src_configure_server_no_mono
+			src_compile_server_no_mono
 		fi
 	done
 }
@@ -527,20 +524,20 @@ _get_configuration() {
 
 _install_server() {
 	# NO EXPORT TEMPLATE
-	local d="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/headless-server"
+	local d="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/dedicated-server"
 	exeinto "${d}"
 	einfo "Installing export templates"
 	local x
 	for x in $(find bin -type f) ; do
 		[[ "${x}" =~ "godot_server" ]] || continue
-		local p="${x}"
 		local configuration=$(_get_configuration "${x}")
+		local p="${x}"
 		doexe "${p}"
 		dosym "${d}/$(basename ${x})" \
-			/usr/bin/godot-headless-server-${configuration}
-		if [[ "${configuration}" =~ "release" ]] ; then
+			/usr/bin/godot-dedicated-server-${configuration}
+		if [[ "${x}" =~ "release" ]] ; then
 			dosym "${d}/$(basename ${x})" \
-				/usr/bin/godot-headless-server
+				/usr/bin/godot-dedicated-server
 		fi
 	done
 }

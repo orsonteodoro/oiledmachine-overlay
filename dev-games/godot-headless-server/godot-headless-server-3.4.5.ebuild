@@ -10,11 +10,10 @@ MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
 
-MULTILIB_COMPAT=( abi_x86_64 )
 PYTHON_COMPAT=( python3_{8..10} )
-inherit desktop eutils flag-o-matic llvm multilib-build python-any-r1 scons-utils
+inherit desktop eutils flag-o-matic llvm python-any-r1 scons-utils
 
-DESCRIPTION="Godot export template for Linux (64-bit)"
+DESCRIPTION="Godot export template for Linux servers"
 HOMEPAGE="http://godotengine.org"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="
@@ -50,25 +49,7 @@ LICENSE="
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
-# Listed because of possible mono_static=yes
-MONO_LICENSE="
-	Apache-2.0
-	MIT
-	BSD-4
-	IDPL
-	LGPL-2.1
-	LGPL-2.1-with-linking-exception
-	MPL-1.1
-	openssl
-	OSL-1.1
-"
-# Apache-2.0 MPL-1.1 -- mcs/class/RabbitMQ.Client/src/client/events/ModelShutdownEventHandler.cs (RabbitMQ.Client.dll)
-# LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
-# openssl - external/boringssl/crypto/ecdh/ecdh.c (libmono-btls-shared.dll)
-LICENSE+=" mono? ( ${MONO_LICENSE} )"
-# See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
-
-KEYWORDS="~amd64 ~riscv"
+KEYWORDS="~amd64 ~riscv ~x86"
 
 FN_SRC="${PV}-stable.tar.gz"
 FN_DEST="${MY_P}.tar.gz"
@@ -92,23 +73,27 @@ SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
 IUSE+=" +3d +advanced-gui camera clang +dds debug +denoise
 jit +lightmapper_cpu lld
-lto +neon +optimize-speed +opensimplex optimize-size portable +raycast
-"
+lto +neon +optimize-speed +opensimplex optimize-size portable +raycast"
 IUSE+=" ca-certs-relax"
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
 +theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
 
-IUSE+=" -mono" # for scripting languages
+gen_required_use_template()
+{
+	local l=(${1})
+	for x in ${l[@]} ; do
+		echo "${x}? ( || ( ${2} ) )"
+	done
+}
 
 IUSE+=" -gdscript gdscript_lsp +mono +visual-script" # for scripting languages
 IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
-IUSE+=" -gamepad +touch" # for input
-IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
+IUSE+=" +cvtt +freetype +pcre2" # for libraries
 IUSE+=" system-bullet system-embree system-enet system-freetype system-libogg
 system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp
 system-libwebsockets system-mbedtls system-miniupnpc system-opus system-pcre2
-system-recast system-squish system-wslay system-xatlas
+system-squish system-wslay
 system-zlib system-zstd"
 SANITIZERS=" asan lsan msan tsan ubsan"
 IUSE+=" ${SANITIZERS}"
@@ -125,6 +110,7 @@ REQUIRED_USE+="
 	optimize-speed? ( !optimize-size )
 	portable? (
 		!asan
+		!asan
 		!system-bullet
 		!system-embree
 		!system-enet
@@ -140,11 +126,10 @@ REQUIRED_USE+="
 		!system-miniupnpc
 		!system-opus
 		!system-pcre2
-		!system-recast
 		!system-squish
-		!system-xatlas
 		!system-zlib
 		!system-zstd
+		!tsan
 		!tsan
 	)
 "
@@ -159,8 +144,8 @@ gen_cdepend_lto_llvm() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
 				(
-					sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-					sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+					sys-devel/clang:${s}
+					sys-devel/llvm:${s}
 					>=sys-devel/lld-${s}
 				)
 		"
@@ -178,16 +163,15 @@ gen_clang_sanitizer() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
 			(
-				 sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-				=sys-devel/clang-runtime-${s}[${MULTILIB_USEDEP},compiler-rt,sanitize]
-				 sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-				=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},${san_type}]
+				 sys-devel/clang:${s}
+				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
+				 sys-devel/llvm:${s}
+				=sys-libs/compiler-rt-sanitizers-${s}*[${san_type}]
 			)
 		"
 	done
 	echo "${o}"
 }
-
 gen_cdepend_sanitizers() {
 	local a
 	for a in ${SANITIZERS} ; do
@@ -206,113 +190,83 @@ gen_cdepend_sanitizers() {
 CDEPEND_SANITIZER="
 	$(gen_cdepend_sanitizers)
 "
-# Some people on riscv or arm64 may want to export to x86_64
 CDEPEND+="
 	${CDEPEND_SANITIZER}
-	mono? (
-		dev-games/godot-editor:${SLOT}[mono]
-		portable? (
-			dev-games/godot-mono-runtime-linux-x86_64
-		)
-		!portable? (
-			>=dev-lang/mono-6.0.0.176
-		)
-	)
 "
 CDEPEND_CLANG="
 	clang? (
-		!lto? ( sys-devel/clang[${MULTILIB_USEDEP}] )
+		!lto? ( sys-devel/clang )
 		lto? ( || ( $(gen_cdepend_lto_llvm) ) )
 	)
 "
 CDEPEND_GCC="
-	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )
+	!clang? ( sys-devel/gcc )
 "
-# All dependencies are in the project.
 DEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
-	app-arch/bzip2[${MULTILIB_USEDEP}]
-	dev-libs/libbsd[${MULTILIB_USEDEP}]
-	media-libs/alsa-lib[${MULTILIB_USEDEP}]
-	media-libs/flac[${MULTILIB_USEDEP}]
-        >=media-libs/freetype-${FREETYPE_V}[${MULTILIB_USEDEP}]
-	>=media-libs/libogg-${LIBOGG_V}[${MULTILIB_USEDEP}]
-	media-libs/libpng[${MULTILIB_USEDEP}]
-	media-libs/libsndfile[${MULTILIB_USEDEP}]
-	>=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}]
-        media-sound/pulseaudio[${MULTILIB_USEDEP}]
-	net-libs/libasyncns[${MULTILIB_USEDEP}]
-	sys-apps/tcp-wrappers[${MULTILIB_USEDEP}]
-	sys-apps/util-linux[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}]
-	virtual/opengl[${MULTILIB_USEDEP}]
-	x11-libs/libICE[${MULTILIB_USEDEP}]
-	x11-libs/libSM[${MULTILIB_USEDEP}]
-	x11-libs/libXau[${MULTILIB_USEDEP}]
-	x11-libs/libXcursor[${MULTILIB_USEDEP}]
-	x11-libs/libXdmcp[${MULTILIB_USEDEP}]
-	x11-libs/libXext[${MULTILIB_USEDEP}]
-	x11-libs/libXfixes[${MULTILIB_USEDEP}]
-	x11-libs/libXi[${MULTILIB_USEDEP}]
-        x11-libs/libXinerama[${MULTILIB_USEDEP}]
-	x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	x11-libs/libXrender[${MULTILIB_USEDEP}]
-	x11-libs/libXtst[${MULTILIB_USEDEP}]
-	x11-libs/libXxf86vm[${MULTILIB_USEDEP}]
-	x11-libs/libX11[${MULTILIB_USEDEP}]
-	x11-libs/libxcb[${MULTILIB_USEDEP}]
-	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
+	app-arch/bzip2
+	dev-libs/libbsd
+	media-libs/alsa-lib
+	media-libs/flac
+        >=media-libs/freetype-${FREETYPE_V}
+	>=media-libs/libogg-${LIBOGG_V}
+	media-libs/libpng
+	media-libs/libsndfile
+	>=media-libs/libvorbis-${LIBVORBIS_V}
+	net-libs/libasyncns
+	sys-apps/tcp-wrappers
+	sys-apps/util-linux
+	>=sys-libs/zlib-${ZLIB_V}
+	virtual/opengl
+	mono? (
+		>=dev-lang/mono-6.0.0.176
+	)
 	!portable? (
 		ca-certs-relax? (
 			app-misc/ca-certificates[cacert]
 		)
 		!ca-certs-relax? (
-			>=app-misc/ca-certificates-20211101[cacert]
+			>=app-misc/ca-certificates-20220331[cacert]
 		)
 	)
-        gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
-	system-bullet? ( >=sci-physics/bullet-3.17[${MULTILIB_USEDEP}] )
-	system-enet? ( >=net-libs/enet-1.3.17[${MULTILIB_USEDEP}] )
-	system-embree? ( >=media-libs/embree-3.13.0[${MULTILIB_USEDEP}] )
-	system-freetype? ( >=media-libs/freetype-${FREETYPE_V}[${MULTILIB_USEDEP}] )
-	system-libogg? ( >=media-libs/libogg-${LIBOGG_V}[${MULTILIB_USEDEP}] )
-	system-libpng? ( >=media-libs/libpng-1.6.37[${MULTILIB_USEDEP}] )
-	system-libtheora? ( >=media-libs/libtheora-1.1.1[${MULTILIB_USEDEP}] )
-	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}] )
-	system-libvpx? ( >=media-libs/libvpx-1.6.0[${MULTILIB_USEDEP}] )
-	system-libwebp? ( >=media-libs/libwebp-1.1.0[${MULTILIB_USEDEP}] )
-	system-mbedtls? ( >=net-libs/mbedtls-2.16.12[${MULTILIB_USEDEP}] )
-	system-miniupnpc? ( >=net-libs/miniupnpc-2.2.2[${MULTILIB_USEDEP}] )
+	system-bullet? ( >=sci-physics/bullet-3.17 )
+	system-enet? ( >=net-libs/enet-1.3.17 )
+	system-embree? ( >=media-libs/embree-3.13.0 )
+	system-freetype? ( >=media-libs/freetype-${FREETYPE_V} )
+	system-libogg? ( >=media-libs/libogg-${LIBOGG_V} )
+	system-libpng? ( >=media-libs/libpng-1.6.37 )
+	system-libtheora? ( >=media-libs/libtheora-1.1.1 )
+	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V} )
+	system-libvpx? ( >=media-libs/libvpx-1.6.0 )
+	system-libwebp? ( >=media-libs/libwebp-1.1.0 )
+	system-mbedtls? ( >=net-libs/mbedtls-2.18.1 )
+	system-miniupnpc? ( >=net-libs/miniupnpc-2.2.2 )
 	system-opus? (
-		>=media-libs/opus-1.1.5[${MULTILIB_USEDEP}]
-		>=media-libs/opusfile-0.8[${MULTILIB_USEDEP}]
+		>=media-libs/opus-1.1.5
+		>=media-libs/opusfile-0.8
 	)
-	system-pcre2? ( >=dev-libs/libpcre2-10.36[${MULTILIB_USEDEP},jit?] )
-	system-recast? ( dev-games/recastnavigation[${MULTILIB_USEDEP}] )
-	system-squish? ( >=media-libs/libsquish-1.15[${MULTILIB_USEDEP}] )
-	system-wslay? ( >=net-libs/wslay-1.1.1[${MULTILIB_USEDEP}] )
-	system-xatlas? ( media-libs/xatlas[${MULTILIB_USEDEP}] )
-	system-zlib? ( >=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}] )
-	system-zstd? ( >=app-arch/zstd-1.4.8[${MULTILIB_USEDEP}] )
+	system-pcre2? ( >=dev-libs/libpcre2-10.36[jit?] )
+	system-squish? ( >=media-libs/libsquish-1.15 )
+	system-wslay? ( >=net-libs/wslay-1.1.1 )
+	system-zlib? ( >=sys-libs/zlib-${ZLIB_V} )
+	system-zstd? ( >=app-arch/zstd-1.4.8 )
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
 	|| (
 		${CDEPEND_CLANG}
 		${CDEPEND_GCC}
 	)
 	dev-util/scons
 	lld? ( sys-devel/lld )
-	webm-simd? (
-		dev-lang/yasm
-	)
 "
 S="${WORKDIR}/godot-${PV}-stable"
 PATCHES=(
+	"${FILESDIR}/godot-3.2.3-add-lld-thinlto-to-platform-server.patch"
 	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
 )
 
@@ -349,28 +303,6 @@ einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
 einfo
 		llvm_pkg_setup
 	fi
-
-	if use mono ; then
-		einfo "USE=mono is under contruction"
-		if ls /opt/dotnet-sdk-bin-*/dotnet 2>/dev/null 1>/dev/null ; then
-			local p=$(ls /opt/dotnet-sdk-bin-*/dotnet | head -n 1)
-			export PATH="$(dirname ${p}):${PATH}"
-		else
-eerror
-eerror "Could not find dotnet.  Emerge dev-dotnet/dotnet-sdk-bin"
-eerror
-			die
-		fi
-		export DOTNET_CLI_TELEMETRY_OPTOUT=1
-
-		if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Mono support requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-			die
-		fi
-	fi
 }
 
 pkg_nofetch() {
@@ -394,6 +326,7 @@ einfo
 }
 
 src_prepare() {
+	default
 	if use mono ; then
 		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
 			modules/mono/glue || die
@@ -409,51 +342,46 @@ src_configure() {
 }
 
 _compile() {
-	einfo "Building for 64-bit Linux"
-	scons ${options_x11[@]} \
+	scons ${options_server[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
+		${options_mono[@]} \
 		${options_extra[@]} \
-		bits=${bitness} \
 		target=${configuration} \
-		tools=no \
+		tools=yes \
 		|| die
 }
 
-src_compile_linux_yes_mono() {
-	local options_extra
-	einfo "Mono support:  Building final binary"
+src_configure_server_yes_mono() {
+	local options_extra=()
+	local options_mono=()
 	# mono_glue=yes (default)
-	# mono_static=yes ; CI uses this
-	options_extra=(
-		module_mono_enabled=yes
-		tools=no
-	)
-	if use portable ; then
-		options_extra+=(
-			mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86_64"
-		)
-	fi
+	# CI puts mono_glue=no without reason.
+	# There must be a good reason?
+	# Either for faster testing or security
+	options_mono=( module_mono_enabled=yes mono_static=yes )
 	_compile
 }
 
-src_compile_linux_no_mono() {
-	local options_extra=( module_mono_enabled=no tools=no )
+src_configure_server_no_mono() {
+	local options_extra=()
+	local options_mono=()
+	options_mono=( module_mono_enabled=no )
 	_compile
 }
 
-src_compile_linux() {
-	local bitness=64
+src_compile_server()
+{
 	local configuration
 	for configuration in release release_debug ; do
-		einfo "Creating export template"
 		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
 			continue
 		fi
+		einfo "Building headless editor server"
 		if use mono ; then
-			src_compile_linux_yes_mono
+			src_configure_server_yes_mono
 		else
-			src_compile_linux_no_mono
+			src_configure_server_no_mono
 		fi
 	done
 }
@@ -461,14 +389,8 @@ src_compile_linux() {
 src_compile() {
 	local myoptions=()
 	#myoptions+=( production=$(usex !debug) )
-	local options_linux=(
-		platform=linux
-	)
-	local options_x11=(
-		platform=x11
-		pulseaudio=$(usex pulseaudio)
-		udev=$(usex gamepad)
-		touch=$(usex touch)
+	local options_server=(
+		platform=server
 		use_asan=$(usex asan)
 		use_lld=$(usex lld)
 		use_llvm=$(usex clang)
@@ -494,13 +416,13 @@ src_compile() {
 		builtin_miniupnpc=$(usex !system-miniupnpc)
 		builtin_pcre2=$(usex !system-pcre2)
 		builtin_opus=$(usex !system-opus)
-		builtin_recast=$(usex !system-recast)
+		builtin_recast=True
 		builtin_squish=$(usex !system-squish)
 		builtin_wslay=$(usex !system-wslay)
-		builtin_xatlas=$(usex !system-xatlas)
+		builtin_xatlas=True
 		builtin_zlib=$(usex !system-zlib)
 		builtin_zstd=$(usex !system-zstd)
-		pulseaudio=$(usex pulseaudio)
+		pulseaudio=False
 		use_static_cpp=$(usex portable)
 		builtin_certs=$(usex portable)
 		$(usex portable "" \
@@ -589,18 +511,7 @@ src_compile() {
 		module_xatlas_enabled=$(usex xatlas)
 	)
 
-	src_compile_linux
-}
-
-_get_bitness() {
-	local x="${1}"
-	if [[ "${x}" =~ "64" ]] ; then
-		echo "64"
-	elif [[ "${x}" =~ "32" ]] ; then
-		echo "32"
-	else
-		echo -n ""
-	fi
+	src_compile_server
 }
 
 _get_configuration() {
@@ -614,47 +525,26 @@ _get_configuration() {
 	fi
 }
 
-_install_export_templates() {
-	local prefix
-	if use mono ; then
-		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/mono"
-	else
-		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/standard"
-	fi
-	insinto "${prefix}"
-	exeinto "${prefix}"
+_install_server() {
+	# NO EXPORT TEMPLATE
+	local d="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/headless-server"
+	exeinto "${d}"
 	einfo "Installing export templates"
-
 	local x
-	for x in $(find bin -maxdepth 1 | sed -e "1d") ; do
-		local bitness=$(_get_bitness "${x}")
+	for x in $(find bin -type f) ; do
+		[[ "${x}" =~ "godot_server" ]] || continue
+		local p="${x}"
 		local configuration=$(_get_configuration "${x}")
-		if [[ "${x}" =~ "bin/godot" && "${x}" == "${configuration}" ]] ; then
-			newexe "${x}" "linux_x11_${bitness}_${configuration}"
+		doexe "${p}"
+		dosym "${d}/$(basename ${x})" \
+			/usr/bin/godot-headless-server-${configuration}
+		if [[ "${configuration}" =~ "release" ]] ; then
+			dosym "${d}/$(basename ${x})" \
+				/usr/bin/godot-headless-server
 		fi
 	done
-
-	# Data files also
-	use mono && doins -r "${WORKDIR}/templates/"*
 }
 
 src_install() {
-	_install_export_templates
-}
-
-pkg_postinst() {
-	local prefix
-	if use mono ; then
-		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/mono"
-	else
-		prefix="/usr/share/godot/${SLOT_MAJ}/export-templates/standard"
-	fi
-	local suffix=""
-	use mono && suffix=".mono"
-einfo
-einfo "The following still must be done:"
-einfo
-einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
-einfo "  cp -aT ${prefix} ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
-einfo
+	_install_server
 }

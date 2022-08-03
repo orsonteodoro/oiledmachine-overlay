@@ -256,7 +256,7 @@ DEPEND+="
 			app-misc/ca-certificates[cacert]
 		)
 		!ca-certs-relax? (
-			>=app-misc/ca-certificates-20211101[cacert]
+			>=app-misc/ca-certificates-20220331[cacert]
 		)
 	)
         gamepad? ( virtual/libudev )
@@ -270,7 +270,7 @@ DEPEND+="
 	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V} )
 	system-libvpx? ( >=media-libs/libvpx-1.6.0 )
 	system-libwebp? ( >=media-libs/libwebp-1.1.0 )
-	system-mbedtls? ( >=net-libs/mbedtls-2.16.12 )
+	system-mbedtls? ( >=net-libs/mbedtls-2.18.1 )
 	system-miniupnpc? ( >=net-libs/miniupnpc-2.2.2 )
 	system-opus? (
 		>=media-libs/opus-1.1.5
