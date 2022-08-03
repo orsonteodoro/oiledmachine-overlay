@@ -22,7 +22,10 @@ HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="MIT"
 
-# Pulled by EMSDK (nodejs, wasm-binaries [emscripten with third party, emscripten-fastcomp fork of clang])
+#
+# Downloads by EMSDK:  nodejs, wasm-binaries [emscripten with third party,
+# emscripten-fastcomp-clang fork of clang, emscripten-fastcom fork of llvm]
+#
 # For licenses or copyright notices, see also
 # https://github.com/emscripten-core/emscripten
 # https://github.com/emscripten-core/emscripten-fastcomp
@@ -38,15 +41,22 @@ CLOSURE_COMPILER_LICENSE="
 		MPL-2.0
 		NPL-1.1
 "
+
+# Some parts may not be included in wasm-binaries but found in the emscripten
+# source code.  They are added as a precaution.
+# See the dev-util/emscripten ebuild or the emscripten repo for details.
 EMSCRIPTEN_LICENSE="
-	all-rights-reserved
+	${CLOSURE_COMPILER_LICENSE}
+	( all-rights-reserved MIT )
 	UoI-NCSA
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
+	Boost-1.0
 	BSD
 	BSD-2
 	CC-BY-SA-3.0
 	|| ( FTL GPL-2 )
+	freeglut-teapot
 	GPL-2+
 	LGPL-2.1
 	LGPL-3
@@ -56,7 +66,6 @@ EMSCRIPTEN_LICENSE="
 	PSF-2.4
 	Unlicense
 	ZLIB
-		${CLOSURE_COMPILER_LICENSE}
 "
 LICENSE+=" ${EMSCRIPTEN_LICENSE}"
 
@@ -102,6 +111,41 @@ MONO_LICENSE="
 # ZLIB - ikvm-native/jni.h
 LICENSE+=" ${MONO_LICENSE}"
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
+
+EMSCRIPTEN_FASTCOMP_CLANG_LICENSE="
+	( MIT all-rights-reserved )
+	UoI-NCSA
+"
+
+# Some parts may not be included in wasm-binaries but found in the
+# emscripten-fastcomp source code.  They are added as a precaution.
+EMSCRIPTEN_FASTCOMP_LICENSE="
+	${EMSCRIPTEN_FASTCOMP_CLANG_LICENSE}
+	BSD
+	BSD-2
+	emscripten-fastcomp-md5
+	GPL-2+
+	LLVM-Grant
+	MIT
+	rc
+	UoI-NCSA
+"
+# for emscripten-fastcomp:
+#   ARM contributions (lib/Target/ARM) - LLVM-Grant
+#   cmake/config.guess - GPL-2+
+#   googlemock (utils/unittest/googlemock) - BSD
+#   Google Test (utils/unittest/googletest) - BSD
+#   LLVM System Interface Library (include/llvm/Support) - UoI-NCSA
+#   lib/Support/xxhash.cpp - BSD-2
+#   md5 contributions (lib/Support/MD5.cpp) - public domain + emscripten-fastcomp-md5 (no warranty)
+#   pyyaml tests (test/YAMLParser) - MIT
+#   OpenBSD regex (lib/Support/reg*) - BSD rc
+#   tools/gold (for lto, not installed, uses system's plugin-api.h) - GPL-3+ if built
+#
+# for emscripten-fastcomp-clang:
+#   ClangFormat, clang-format-vs - UoI-NCSA
+#   emscripten-fastcomp-clang-master/lib/Driver/ToolChains/MSVCSetupApi.h -- ( MIT all-rights-reserved )
+LICENSE+=" ${EMSCRIPTEN_FASTCOMP_LICENSE}"
 
 #KEYWORDS=""
 SLOT="0/${PV}"
