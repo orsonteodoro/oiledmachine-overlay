@@ -11,7 +11,7 @@ STATUS="stable"
 PYTHON_COMPAT=( python3_{8..10} )
 inherit eutils flag-o-matic git-r3 python-any-r1
 
-DESCRIPTION="Mono build scripts for Godot (monodroid)"
+DESCRIPTION="Mono build scripts for Godot on MonoTouch"
 HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="MIT"

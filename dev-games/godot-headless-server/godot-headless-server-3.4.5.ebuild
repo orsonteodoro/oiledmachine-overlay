@@ -14,7 +14,7 @@ MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 PYTHON_COMPAT=( python3_{8..10} )
 inherit desktop eutils flag-o-matic llvm python-any-r1 scons-utils
 
-DESCRIPTION="Godot export template for Linux servers"
+DESCRIPTION="Godot built as a Linux headless editor server"
 HOMEPAGE="http://godotengine.org"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="
