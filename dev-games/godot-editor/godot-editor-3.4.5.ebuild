@@ -418,6 +418,7 @@ src_configure() {
 		# The code assumes unilib system not multilib.
 		mkdir -p "${WORKDIR}/mono" || die
 		ln -s "/usr/$(get_libdir)" "${WORKDIR}/mono/lib" || die
+		ln -s "/usr/include" "${WORKDIR}/mono/include" || die
 	fi
 }
 
