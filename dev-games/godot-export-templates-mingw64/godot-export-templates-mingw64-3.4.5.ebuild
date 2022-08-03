@@ -245,19 +245,19 @@ ewarn
 
 	python-any-r1_pkg_setup
 	if use lto && use clang ; then
-		if has_version "sys-devel/clang:13" \
-			&& has_version "sys-devel/llvm:13" ; then
-			LLVM_MAX_SLOT=13
-		elif has_version "sys-devel/clang:12" \
-			&& has_version "sys-devel/llvm:12" ; then
-			LLVM_MAX_SLOT=12
-		elif has_version "sys-devel/clang:11" \
-			&& has_version "sys-devel/llvm:11" ; then
-			LLVM_MAX_SLOT=11
-		else
+		LLVM_MAX_SLOT="not_found"
+		local s
+		for s in ${LLVM_SLOTS[@]} ; do
+			if has_version "sys-devel/clang:${s}" \
+				&& has_version "sys-devel/llvm:${s}" ; then
+				LLVM_MAX_SLOT=${s}
+				break
+			fi
+		done
+		if [[ "${LLVM_MAX_SLOT}" == "not_found" ]] ; then
 eerror
 eerror "Both sys-devel/clang:\${SLOT} and sys-devel/llvm:\${SLOT} must have the"
-eerror "same slot.  LTO enabled for LLVM 11-13 for this series only."
+eerror "same slot."
 eerror
 			die
 		fi
