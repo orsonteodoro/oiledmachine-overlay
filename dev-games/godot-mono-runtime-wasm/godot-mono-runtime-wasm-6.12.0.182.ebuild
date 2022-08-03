@@ -80,7 +80,14 @@ MONO_LICENSE="
 	MIT
 	Apache-1.1
 	Apache-2.0
+	APSL-2
+	BSD
+	BSD-2
 	BSD-4
+	CC-BY-2.5
+	CC-BY-4.0
+	DOTNET-libraries-and-runtime-components-patents
+	gcc-runtime-library-exception-3.1
 	GPL-2+
 	GPL-2-with-linking-exception
 	GPL-2+-with-libtool-exception
@@ -88,12 +95,15 @@ MONO_LICENSE="
 	GPL-3+-with-autoconf-exception
 	GPL-3+-with-libtool-exception
 	IDPL
+	Info-ZIP
 	LGPL-2.1
 	LGPL-2.1-with-linking-exception
+	Mono-patents
 	MPL-1.1
 	Ms-PL
 	openssl
 	OSL-3.0
+	SunPro
 	ZLIB
 "
 # The GPL-2-with-linking-exception is actually GPL-2+-with-linking-exception"
@@ -103,7 +113,14 @@ MONO_LICENSE="
 # "later".
 
 # Apache-1.1 - external/ikvm/THIRD_PARTY_README
+# APSL-2 BSD-4 - support/ios/net/route.h
+# BSD - mono/utils/bsearch.c
+# BSD-2 - mono/utils/freebsd-elf64.h
+# BSD-2 SunPro - support/libm/complex.c
 # BSD-4 openssl -- boringssl
+# gcc-runtime-library-exception-3.1
+#   https://github.com/mono/mono/blob/mono-6.12.0.122/mono/mini/decompose.c#L966
+#   https://github.com/mono/mono/blob/mono-6.12.0.122/THIRD-PARTY-NOTICES.TXT#L69
 # GPL-2+-with-libtool-exception external/bdwgc/libtool
 # GPL-2+ GPL-3+ GPL-3+-with-libtool-exception external/bdwgc/libtool
 # GPL-2+-with-linking-exception mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs

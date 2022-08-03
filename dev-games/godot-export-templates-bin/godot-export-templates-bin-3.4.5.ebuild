@@ -51,9 +51,12 @@ LICENSE="
 MONO_LICENSE="
 	Apache-2.0
 	MIT
+	BSD
 	BSD-4
+	DOTNET-libraries-and-runtime-components-patents
 	IDPL
 	LGPL-2.1
+	Mono-patents
 	MPL-1.1
 	openssl
 	OSL-1.1
@@ -62,7 +65,8 @@ MONO_LICENSE="
 # MIT IDPL -- BCL
 # !Apache-1.1 -- ikvm-disabled
 # Apache-2.0 MPL-1.1 -- mcs/class/RabbitMQ.Client/src/client/events/ModelShutdownEventHandler.cs (RabbitMQ.Client.dll)
-#  BSD-4 openssl -- btls enabled for mono-desktop (osx, windows, linux)
+# BSD - mono/metadata/w32file-unix-glob.c, mono/metadata/w32file-unix-glob.h (libmonosgen.a)
+# BSD-4 openssl -- btls enabled for mono-desktop (osx, windows, linux)
 # !BSD-4 !openssl -- btls disabled for ios, wasm
 # IDPL MPL-1.1 -- RabbitMQ.Client
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)

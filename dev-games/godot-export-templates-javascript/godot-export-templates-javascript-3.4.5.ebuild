@@ -54,8 +54,10 @@ LICENSE="
 MONO_LICENSE="
 	MIT
 	BSD-4
+	DOTNET-libraries-and-runtime-components-patents
 	IDPL
 	LGPL-2.1
+	Mono-patents
 	MPL-1.1
 	OSL-1.1
 "

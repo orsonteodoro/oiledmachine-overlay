@@ -54,8 +54,10 @@ LICENSE="
 MONO_LICENSE="
 	MIT
 	BSD-4
+	DOTNET-libraries-and-runtime-components-patents
 	IDPL
 	LGPL-2.1
+	Mono-patents
 	MPL-1.1
 	openssl
 	OSL-1.1
@@ -381,7 +383,7 @@ _compile() {
 }
 
 set_production() {
-	if [[ "${configuration}" == "release" ]] ; then
+	if ! use debug ; then
 		echo "production=True"
 	fi
 }
@@ -409,18 +411,13 @@ src_configure_server_no_mono() {
 
 src_compile_server()
 {
-	local configuration
-	for configuration in release release_debug ; do
-		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
-			continue
-		fi
-		einfo "Building headless editor server"
-		if use mono ; then
-			src_configure_server_yes_mono
-		else
-			src_configure_server_no_mono
-		fi
-	done
+	local configuration="release_debug"
+	einfo "Building headless editor server"
+	if use mono ; then
+		src_configure_server_yes_mono
+	else
+		src_configure_server_no_mono
+	fi
 }
 
 src_compile() {

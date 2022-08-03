@@ -525,14 +525,12 @@ src_compile_linux_yes_mono() {
 	# mono_glue=yes (default)
 	local options_extra=(
 		$(set_production)
-		copy_mono_root=yes
 		module_mono_enabled=yes
 		mono_glue=no
 	)
 	_compile
 	_gen_mono_glue
-	#_assemble_datafiles
-	die
+	_assemble_datafiles
 	einfo "Mono support:  Building final binary"
 	options_extra=(
 		$(set_production)

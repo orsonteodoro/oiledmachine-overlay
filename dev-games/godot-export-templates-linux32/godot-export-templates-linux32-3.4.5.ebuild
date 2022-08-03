@@ -56,9 +56,11 @@ MONO_LICENSE="
 	Apache-2.0
 	MIT
 	BSD-4
+	DOTNET-libraries-and-runtime-components-patents
 	IDPL
 	LGPL-2.1
 	LGPL-2.1-with-linking-exception
+	Mono-patents
 	MPL-1.1
 	openssl
 	OSL-1.1

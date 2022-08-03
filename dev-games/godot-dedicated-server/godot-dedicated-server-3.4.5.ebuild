@@ -52,14 +52,18 @@ LICENSE="
 
 # Listed because of mono_static=yes
 MONO_LICENSE="
+	Apache-2.0
 	MIT
 	BSD-4
+	DOTNET-libraries-and-runtime-components-patents
 	IDPL
 	LGPL-2.1
+	Mono-patents
 	MPL-1.1
 	openssl
 	OSL-1.1
 "
+# Apache-2.0 MPL-1.1 -- mcs/class/RabbitMQ.Client/src/client/events/ModelShutdownEventHandler.cs (RabbitMQ.Client.dll)
 # BSD-4 openssl - btls=on
 LICENSE+=" mono? ( ${MONO_LICENSE} )"
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
