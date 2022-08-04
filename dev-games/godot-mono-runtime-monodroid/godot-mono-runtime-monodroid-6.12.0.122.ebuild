@@ -167,6 +167,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	default
 	export MONO_SOURCE_ROOT="${WORKDIR}/mono-${MONO_PV}"
 	[[ -e "${MONO_SOURCE_ROOT}" ]] || die
 	${EPYTHON} patch_mono.py || die

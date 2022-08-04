@@ -267,6 +267,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	default
 	export EMSDK_ROOT="${WORKDIR}/emsdk-${EMSDK_PV}"
 	[[ -e "${EMDSK_ROOT}" ]] || die
 
