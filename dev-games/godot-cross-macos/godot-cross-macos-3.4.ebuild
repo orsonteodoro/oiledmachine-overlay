@@ -97,8 +97,6 @@ ewarn
 ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
 ewarn
 	if [[ -z "${OSXCROSS_ROOT}" ]] ; then
-		:;
-	else
 eerror
 eerror "The environment variable OSXCROSS_ROOT needs to be defined."
 eerror
@@ -110,11 +108,11 @@ eerror
 	local arch
 	for arch in ${GODOT_OSX_[@]} ; do
 		if use "godot_osx_${arch}" ; then
-			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-apple-*-cc"
-			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-apple-*-c++"
-			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-apple-*-ar"
-			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-apple-*-ranlib"
-			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-apple-*-as"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-*-*-cc"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-*-*-c++"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-*-*-ar"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-*-*-ranlib"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-*-*-as"
 		fi
 	done
 }

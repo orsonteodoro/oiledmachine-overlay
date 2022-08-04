@@ -19,9 +19,8 @@ pkg_setup() {
 ewarn
 ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
 ewarn
-	export CTARGET="${CHOST:-${CTARGET}}"
-	[[ "${CTARGET}" =~ "i686" ]] || die "CTARGET must contain i686"
-	which "${CTARGET}-gcc" --version || die "Fix CTARGET"
+	[[ "${CHOST}" =~ "i686" ]] || die "CHOST must contain i686"
+	which "${CHOST}-gcc" --version || die "Fix CHOST"
 	if ! test-flags -mwindows ; then
 eerror
 eerror "-mwindows test fail.  Toolchain needs to be fixed."
@@ -32,6 +31,7 @@ eerror
 
 src_configure() {
 	default
+	einfo "Checking if the compiler is working properly"
 cat << EOF > hello.c
 #include <windows.h>
 
@@ -42,10 +42,10 @@ WinMain (HINSTANCE hInstance, HINSTANCE hPrevInst, LPTSTR lpCmdLine, int nShowCm
 	return 0;
 }
 EOF
-	${CTARGET}-gcc hello.c -o hello.exe -mwindows || die
+	${CHOST}-gcc hello.c -o hello.exe -mwindows || die
 	if ! ( file hello.exe | grep -q -e "PE32 executable.*386" ) ; then
 eerror
-eerror "Not 32-bit.  Change CTARGET."
+eerror "Not 32-bit.  Change CHOST."
 eerror
 		die
 	fi

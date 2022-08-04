@@ -50,6 +50,6 @@ eerror
 		die
 	fi
 
-	test_path "${OSXCROSS_IOS}/usr/bin/*-clang"
-	test_path "${OSXCROSS_IOS}/usr/bin/*-clang++"
+	test_path "${ESYSROOT}/${OSXCROSS_IOS}/usr/bin/*-clang"
+	test_path "${ESYSROOT}/${OSXCROSS_IOS}/usr/bin/*-clang++"
 }

@@ -155,13 +155,35 @@ src_prepare() {
 	${EPYTHON} patch_mono.py || die
 }
 
-src_compile() {
-	if [[ -z "${MINGW64_SYSROOT}" ]] ; then
+test_path() {
+	local p="${1}"
+	if ! realpath -e "${p}" ; then
 eerror
-eerror "MINGW64_SYSROOT must be defined as an environment variable."
+eerror "${p} is unreachable"
+eerror
+	fi
+}
+
+src_configure() {
+	export MINGW64_SYSROOT="${MINGW64_SYSROOT:-/usr/x86_64-w64-mingw32/usr}"
+	if [[ $(basename "${MINGW64_SYSROOT}") != "usr" ]] ; then
+eerror
+eerror "MINGW64_SYSROOT must have usr as the last path element."
 eerror
 		die
 	fi
+	test_path "${MINGW64_SYSROOT}/x86_64-w64-mingw32-ar"
+	test_path "${MINGW64_SYSROOT}/x86_64-w64-mingw32-as"
+	test_path "${MINGW64_SYSROOT}/x86_64-w64-mingw32-gcc"
+	test_path "${MINGW64_SYSROOT}/x86_64-w64-mingw32-g++"
+	test_path "${MINGW64_SYSROOT}/x86_64-w64-mingw32-dlltool"
+	test_path "${MINGW64_SYSROOT}/x86_64-w64-mingw32-ld"
+	test_path "${MINGW64_SYSROOT}/x86_64-w64-mingw32-objdump"
+	test_path "${MINGW64_SYSROOT}/x86_64-w64-mingw32-ranlib"
+	test_path "${MINGW64_SYSROOT}/x86_64-w64-mingw32-strip"
+}
+
+src_compile() {
 	mkdir -p "${WORKDIR}/build" || die
 	local args
 	local configuration
@@ -172,18 +194,18 @@ eerror
 			--install-dir="${WORKDIR}/build"
 		)
 		${EPYTHON} windows.py configure \
-			--mxe-prefix="${MINGW64_SYSROOT}/usr" \
+			--mxe-prefix="${MINGW64_SYSROOT}" \
 			--target=x86_64 \
 			${args[@]} \
 			|| die
 		${EPYTHON} windows.py make \
-			--mxe-prefix="${MINGW64_SYSROOT}/usr" \
+			--mxe-prefix="${MINGW64_SYSROOT}" \
 			--target=x86_64 \
 			${args[@]} \
 			|| die
 		${EPYTHON} bcl.py make --product=desktop ${args[@]} || die
 		${EPYTHON} windows.py copy-bcl \
-			--mxe-prefix="${MINGW32_SYSROOT}/usr" \
+			--mxe-prefix="${MINGW32_SYSROOT}" \
 			--target=x86_64 \
 			${args[@]} \
 			|| die
