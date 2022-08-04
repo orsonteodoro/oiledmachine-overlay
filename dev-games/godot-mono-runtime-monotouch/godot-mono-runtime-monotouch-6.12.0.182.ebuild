@@ -235,10 +235,11 @@ ewarn
 		${EPYTHON} ios.py configure ${args[@]} ${pargs[@]} || die
 		${EPYTHON} ios.py make ${args[@]} ${pargs[@]} || die
 		${EPYTHON} bcl.py make --product=ios ${args[@]} || die
+		rm -rf $(realpath "${WORKDIR}/build/*-bcl") || die
 	done
 }
 
 src_install() {
 	insinto "/usr/lib/godot/${GODOT_SLOT_MAJ}/mono-runtime"
-	doins -r "${WORKDIR}/build"
+	doins -r "${WORKDIR}/build/"*
 }

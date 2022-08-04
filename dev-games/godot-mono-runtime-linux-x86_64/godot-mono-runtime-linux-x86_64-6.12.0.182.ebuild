@@ -174,10 +174,11 @@ src_compile() {
 		${EPYTHON} linux.py make ${args[@]} ${pargs[@]} || die
 		${EPYTHON} bcl.py make --product=desktop ${args[@]} || die
 		${EPYTHON} linux.py copy-bcl ${args[@]} ${pargs[@]} || die
+		rm -rf $(realpath "${WORKDIR}/build/*-bcl") || die
 	done
 }
 
 src_install() {
 	insinto "/usr/lib/godot/${GODOT_SLOT_MAJ}/mono-runtime"
-	doins -r "${WORKDIR}/build"
+	doins -r "${WORKDIR}/build/"*
 }
