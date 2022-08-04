@@ -103,6 +103,7 @@ https://github.com/godotengine/godot-mono-builds/archive/refs/tags/release-${MY_
 	-> ${MY_PN}-${MY_PV}.tar.gz
 	"
 fi
+RESTRICT="strip"
 
 _unpack_godot_mono_builds() {
 	if [[ ${PV} =~ 9999 ]] ; then
@@ -190,7 +191,9 @@ src_compile() {
 	local configuration
 	local pargs
 	for configuration in debug release ; do
-		! use debug && [[ "${configuration}" == "debug" ]] && continue
+		if ! use debug && [[ "${configuration}" == "debug" ]] ; then
+			continue
+		fi
 		args=(
 			--install-dir="${WORKDIR}/build"
 		)
@@ -199,6 +202,9 @@ src_compile() {
 			--mxe-prefix="${MINGW64_SYSROOT}"
 			--target=x86_64
 		)
+		if use debug && [[ "${configuration}" == "debug" ]] ; then
+			pargs+=( --strip-libs=False )
+		fi
 		${EPYTHON} windows.py configure \
 			${args[@]} \
 			${pargs[@]} \
@@ -217,6 +223,7 @@ src_compile() {
 }
 
 src_install() {
+	use debug && export STRIP="true" # Don't strip debug builds
 	insinto "/usr/lib/godot/${GODOT_SLOT_MAJ}/mono-runtime"
 	doins -r "${WORKDIR}/build/"*
 }
