@@ -145,7 +145,6 @@ DEPEND+="
 	${RDEPEND}
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
-		=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
 		=dev-games/godot-mono-runtime-monodroid-$(ver_cut 1-2 ${MONO_PV})*
 	)
 "
@@ -296,9 +295,20 @@ src_configure() {
 	unset CCACHE
 }
 
+get_configuration3() {
+	if [[ "${configuration}" =~ "debug" ]] ; then
+		echo "debug"
+	elif [[ "${configuration}" =~ "release" ]] ; then
+		echo "release"
+	else
+		echo ""
+	fi
+}
+
 _compile() {
 	for a in ${GODOT_ANDROID} ; do
 		if use ${a} ; then
+			local arch="${a/godot_android_}"
 			case "${a}" in
 				godot_android_armv7 | \
 				godot_android_x86)
@@ -313,11 +323,19 @@ _compile() {
 					;;
 			esac
 
+			options_mono=()
+			if use mono ; then
+				options_mono=(
+					mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/android-${arch}-$(get_configuration3)"
+				)
+			fi
+
 			einfo "Building for Android (${a})"
 			scons ${options_android[@]} \
 				${options_modules[@]} \
 				${options_modules_static[@]} \
 				${options_extra[@]} \
+				${options_mono[@]} \
 				android_arch=${a} \
 				bits=${bitness} \
 				target=${configuration} \
@@ -347,8 +365,8 @@ src_compile_android_yes_mono() {
 	# mono_glue=yes (default)
 	local options_extra=(
 		$(set_production)
+		copy_mono_root=yes
 		module_mono_enabled=yes
-		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/android"
 		tools=no
 	)
 	_compile

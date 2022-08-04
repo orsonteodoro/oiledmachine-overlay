@@ -345,14 +345,26 @@ set_production() {
 	fi
 }
 
+get_configuration3() {
+	if [[ "${configuration}" =~ "debug" ]] ; then
+		echo "debug"
+	elif [[ "${configuration}" =~ "release" ]] ; then
+		echo "release"
+	else
+		echo ""
+	fi
+}
+
 src_compile_javascript_yes_mono() {
 	einfo "Mono support:  Building final binary"
 	# mono_static=yes (default on this platform)
 	# mono_glue=yes (default)
+	# TODO:  apply other targets (runtime-threads runtime-dynamic)
 	local options_extra=(
 		$(set_production)
+		copy_mono_root=yes
 		module_mono_enabled=yes
-		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/wasm"
+		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/wasm-runtime-$(get_configuration3)"
 		tools=no
 	)
 	_compile

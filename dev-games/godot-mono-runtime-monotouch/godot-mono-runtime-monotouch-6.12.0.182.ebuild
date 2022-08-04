@@ -7,6 +7,7 @@ MY_PV="fcf205c"
 MY_PN="godot-mono-builds"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
+GODOT_SLOT_MAJOR="3"
 
 PYTHON_COMPAT=( python3_{8..10} )
 inherit eutils flag-o-matic git-r3 python-any-r1
@@ -92,6 +93,7 @@ DEV_TARGETS=" armv7 arm64"
 SIM_TARGETS=" i386 x86_64 arm64-sim"
 TARGETS=" ${AOT_CROSS_TARGETS} ${DEV_TARGETS} ${SIM_TARGETS}"
 IUSE+=" ${TARGETS}"
+IUSE+=" debug"
 REQUIRED_USE+="
 	|| ( ${TARGETS} )
 "
@@ -115,6 +117,7 @@ _unpack_godot_mono_builds() {
 	if [[ ${PV} =~ 9999 ]] ; then
 		EGIT_REPO_URI="https://github.com/godotengine/godot-mono-builds.git"
 		EGIT_BRANCH="master"
+		EGIT_CHECKOUT_DIR="${S}"
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -128,6 +131,7 @@ _unpack_mono() {
 	EGIT_REPO_URI="https://github.com/mono/mono.git"
 	EGIT_COMMIT="mono-${MONO_PV}"
 	EGIT_BRANCH="main"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/mono-${MONO_PV}"
 	git-r3_fetch
 	git-r3_checkout
 }
@@ -161,19 +165,30 @@ src_prepare() {
 }
 
 src_compile() {
-	local build_targets=()
+	mkdir -p "${WORKDIR}/build" || die
+	local args
+	local build_targets
+	local configuration
 	local x
-	for x in ${TARGETS} ; do
-		if use "${x}" ; then
-			build_targets+=( --target=${x}  )
-		fi
+	for configuration in debug release ; do
+		! use debug && [[ "${configuration}" == "debug" ]] && continue
+		args=(
+			--configuration=${configuration}
+			--install-dir="${WORKDIR}/build"
+		)
+		build_targets=()
+		for x in ${TARGETS} ; do
+			if use "${x}" ; then
+				build_targets+=( --target=${x}  )
+			fi
+		done
+		${EPYTHON} ios.py configure ${build_targets[@]} ${args[@]} || die
+		${EPYTHON} ios.py make ${build_targets[@]} ${args[@]} || die
+		${EPYTHON} bcl.py make --product=ios ${args[@]} || die
 	done
-	${EPYTHON} ios.py configure ${build_targets[@]} || die
-	${EPYTHON} ios.py make ${build_targets[@]} || die
-	${EPYTHON} bcl.py make --product=ios || die
 }
 
 src_install() {
-	ewarn "TODO: src_install()"
-	die
+	insinto "/usr/lib/godot/${GODOT_SLOT_MAJ}/mono-runtime"
+	doins -r "${WORKDIR}/build"
 }

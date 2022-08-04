@@ -324,13 +324,24 @@ set_production() {
 	fi
 }
 
+get_configuration3() {
+	if [[ "${configuration}" =~ "debug" ]] ; then
+		echo "debug"
+	elif [[ "${configuration}" =~ "release" ]] ; then
+		echo "release"
+	else
+		echo ""
+	fi
+}
+
 src_compile_windows_yes_mono() {
 	einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
 	local options_extra=(
 		$(set_production)
+		copy_mono_root=yes
 		module_mono_enabled=yes
-		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/mingw64"
+		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-windows-x86_64-$(get_configuration3)"
 		tools=no
 	)
 	_compile

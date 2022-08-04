@@ -124,7 +124,6 @@ XCODE_SDK_MIN_STORE="12"
 EXPECTED_XCODE_SDK_MIN_VERSION_ARM64="10.15" # See https://github.com/godotengine/godot/blob/3.4-stable/platform/osx/detect.py#L80
 EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.12"
 
-# Forcing linking to godot-mono-runtime-macos for TLS security
 BDEPEND+="
 	${PYTHON_DEPS}
 	app-arch/zip
@@ -319,16 +318,34 @@ get_configuration2() {
 	[[ "${configuration}" == "release_debug" ]] && echo "opt.debug"
 }
 
+get_configuration3() {
+	if [[ "${configuration}" =~ "debug" ]] ; then
+		echo "debug"
+	elif [[ "${configuration}" =~ "release" ]] ; then
+		echo "release"
+	else
+		echo ""
+	fi
+}
+
+
 _compile()
 {
 	local enabled_arches=()
 	local configuration2=$(get_configuration2)
 	for a in ${GODOT_OSX} ; do
 		if use ${a} ; then
+			local options_mono=()
+			if use mono ; then
+				options_mono=(
+					mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-osx-${a}-$(get_configuration3)"
+				)
+			fi
 			einfo "Building for macOS (${a})"
 			scons ${options_osx[@]} \
 				${options_modules[@]} \
 				${options_modules_static[@]} \
+				${options_mono[@]} \
 				${options_extra[@]} \
 				arch=${a} \
 				target=${configuration} \
@@ -363,10 +380,11 @@ set_production() {
 src_compile_osx_yes_mono() {
 	einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
+	# FIXME:
 	local options_extra=(
 		$(set_production)
+		copy_mono_root=yes
 		module_mono_enabled=yes
-		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/osx"
 		tools=no
 	)
 	_compile

@@ -7,6 +7,7 @@ MY_PV="df330ce"
 MY_PN="godot-mono-builds"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
+GODOT_SLOT_MAJOR="3"
 
 PYTHON_COMPAT=( python3_{8..10} )
 inherit eutils flag-o-matic git-r3 python-any-r1
@@ -77,8 +78,8 @@ MONO_LICENSE="
 # GPL-2+-with-linking-exception mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs
 # GPL-3+-with-autoconf-exception - external/bdwgc/libatomic_ops/config.guess
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
-# openssl - external/boringssl/crypto/ecdh/ecdh.c
 # MIT UoI-NCSA - external/llvm-project/libunwind/src/EHHeaderParser.hpp
+# openssl - external/boringssl/crypto/ecdh/ecdh.c
 # OSL-3.0 - external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/StackFilter.cs
 # ZLIB - external/ikvm ; lists paths/names with different licenses but these files are removed or not present (option disabled by godot-mono-builds)
 # ZLIB - ikvm-native/jni.h
@@ -87,6 +88,7 @@ LICENSE+=" ${MONO_LICENSE}"
 
 #KEYWORDS=""
 SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" debug"
 DEPEND+=""
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -106,6 +108,7 @@ _unpack_godot_mono_builds() {
 	if [[ ${PV} =~ 9999 ]] ; then
 		EGIT_REPO_URI="https://github.com/godotengine/godot-mono-builds.git"
 		EGIT_BRANCH="master"
+		EGIT_CHECKOUT_DIR="${S}"
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -119,6 +122,7 @@ _unpack_mono() {
 	EGIT_REPO_URI="https://github.com/mono/mono.git"
 	EGIT_COMMIT="mono-${MONO_PV}"
 	EGIT_BRANCH="main"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/mono-${MONO_PV}"
 	git-r3_fetch
 	git-r3_checkout
 }
@@ -158,18 +162,35 @@ eerror "MINGW64_SYSROOT must be defined as an environment variable."
 eerror
 		die
 	fi
-	${EPYTHON} windows.py configure \
-		--mxe-prefix="${MINGW64_SYSROOT}/usr" \
-		--target=x86_64 \
-		|| die
-	${EPYTHON} windows.py make \
-		--mxe-prefix="${MINGW64_SYSROOT}/usr" \
-		--target=x86_64 \
-		|| die
-	${EPYTHON} bcl.py make --product=desktop || die
+	mkdir -p "${WORKDIR}/build" || die
+	local args
+	local configuration
+	for configuration in debug release ; do
+		! use debug && [[ "${configuration}" == "debug" ]] && continue
+		args=(
+			--configuration=${configuration}
+			--install-dir="${WORKDIR}/build"
+		)
+		${EPYTHON} windows.py configure \
+			--mxe-prefix="${MINGW64_SYSROOT}/usr" \
+			--target=x86_64 \
+			${args[@]} \
+			|| die
+		${EPYTHON} windows.py make \
+			--mxe-prefix="${MINGW64_SYSROOT}/usr" \
+			--target=x86_64 \
+			${args[@]} \
+			|| die
+		${EPYTHON} bcl.py make --product=desktop ${args[@]} || die
+		${EPYTHON} windows.py copy-bcl \
+			--mxe-prefix="${MINGW32_SYSROOT}/usr" \
+			--target=x86_64 \
+			${args[@]} \
+			|| die
+	done
 }
 
 src_install() {
-	ewarn "TODO: src_install()"
-	die
+	insinto "/usr/lib/godot/${GODOT_SLOT_MAJ}/mono-runtime"
+	doins -r "${WORKDIR}/build"
 }

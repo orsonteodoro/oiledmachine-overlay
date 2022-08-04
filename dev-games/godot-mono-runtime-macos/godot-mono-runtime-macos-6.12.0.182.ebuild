@@ -7,6 +7,7 @@ MY_PV="fcf205c"
 MY_PN="godot-mono-builds"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
+GODOT_SLOT_MAJOR="3"
 
 PYTHON_COMPAT=( python3_{8..10} )
 inherit eutils flag-o-matic git-r3 python-any-r1
@@ -77,8 +78,8 @@ MONO_LICENSE="
 # GPL-2+-with-linking-exception mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs
 # GPL-3+-with-autoconf-exception - external/bdwgc/libatomic_ops/config.guess
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
-# openssl - external/boringssl/crypto/ecdh/ecdh.c
 # MIT UoI-NCSA - external/llvm-project/libunwind/src/EHHeaderParser.hpp
+# openssl - external/boringssl/crypto/ecdh/ecdh.c
 # OSL-3.0 - external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/StackFilter.cs
 # ZLIB - external/ikvm ; lists paths/names with different licenses but these files are removed or not present (option disabled by godot-mono-builds)
 # ZLIB - ikvm-native/jni.h
@@ -88,6 +89,7 @@ LICENSE+=" ${MONO_LICENSE}"
 #KEYWORDS=""
 SLOT="0/$(ver_cut 1-2 ${PV})"
 TARGETS=" arm64 x86_64"
+IUSE+=" debug"
 IUSE+=" ${TARGETS}"
 REQUIRED_USE+="
 	|| ( ${TARGETS} )
@@ -112,6 +114,7 @@ _unpack_godot_mono_builds() {
 	if [[ ${PV} =~ 9999 ]] ; then
 		EGIT_REPO_URI="https://github.com/godotengine/godot-mono-builds.git"
 		EGIT_BRANCH="master"
+		EGIT_CHECKOUT_DIR="${S}"
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -125,6 +128,7 @@ _unpack_mono() {
 	EGIT_REPO_URI="https://github.com/mono/mono.git"
 	EGIT_COMMIT="mono-${MONO_PV}"
 	EGIT_BRANCH="main"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/mono-${MONO_PV}"
 	git-r3_fetch
 	git-r3_checkout
 }
@@ -158,19 +162,31 @@ src_prepare() {
 }
 
 src_compile() {
-	local build_targets=()
+	mkdir -p "${WORKDIR}/build" || die
+	local args
+	local build_targets
+	local configuration
 	local x
-	for x in ${TARGETS} ; do
-		if use "${x}" ; then
-			build_targets+=( --target=${x}  )
-		fi
+	for configuration in debug release ; do
+		! use debug && [[ "${configuration}" == "debug" ]] && continue
+		args=(
+			--configuration=${configuration}
+			--install-dir="${WORKDIR}/build"
+		)
+		build_targets=()
+		for x in ${TARGETS} ; do
+			if use "${x}" ; then
+				build_targets+=( --target=${x}  )
+			fi
+		done
+		${EPYTHON} osx.py configure ${build_targets[@]} ${args[@]} || die
+		${EPYTHON} osx.py make ${build_targets[@]} ${args[@]} || die
+		${EPYTHON} bcl.py make --product=desktop ${args[@]} || die
+		${EPYTHON} osx.py copy-bcl ${build_targets[@]} ${args[@]} || die
 	done
-	${EPYTHON} osx.py configure ${build_targets[@]} || die
-	${EPYTHON} osx.py make ${build_targets[@]} || die
-	${EPYTHON} bcl.py make --product=desktop || die
 }
 
 src_install() {
-	ewarn "TODO: src_install()"
-	die
+	insinto "/usr/lib/godot/${GODOT_SLOT_MAJ}/mono-runtime"
+	doins -r "${WORKDIR}/build"
 }

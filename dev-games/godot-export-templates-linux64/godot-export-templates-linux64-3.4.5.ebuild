@@ -112,9 +112,9 @@ IUSE+=" -gamepad +touch" # for input
 IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
 IUSE+=" system-bullet system-embree system-enet system-freetype system-libogg
 system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp
-system-libwebsockets system-mbedtls system-miniupnpc system-opus system-pcre2
-system-recast system-squish system-wslay system-xatlas
-system-zlib system-zstd"
+system-libwebsockets system-mbedtls system-miniupnpc system-mono system-opus
+system-pcre2 system-recast system-squish system-wslay system-xatlas system-zlib
+system-zstd"
 SANITIZERS=" asan lsan msan tsan ubsan"
 IUSE+=" ${SANITIZERS}"
 # media-libs/xatlas is a placeholder
@@ -143,6 +143,7 @@ REQUIRED_USE+="
 		!system-libwebsockets
 		!system-mbedtls
 		!system-miniupnpc
+		!system-mono
 		!system-opus
 		!system-pcre2
 		!system-recast
@@ -152,6 +153,7 @@ REQUIRED_USE+="
 		!system-zstd
 		!tsan
 	)
+	riscv? ( mono? ( system-mono ) )
 "
 FREETYPE_V="2.10.4"
 LIBOGG_V="1.3.5"
@@ -212,17 +214,21 @@ CDEPEND_SANITIZER="
 	$(gen_cdepend_sanitizers)
 "
 # Some people on riscv or arm64 may want to export to x86_64
-# Forcing linking to godot-mono-runtime-linux for TLS security
 CDEPEND+="
 	${CDEPEND_SANITIZER}
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
-		=dev-games/godot-mono-runtime-linux-x86_64-$(ver_cut 1-2 ${MONO_PV})*
+		!system-mono? (
+			=dev-games/godot-mono-runtime-linux-x86_64-$(ver_cut 1-2 ${MONO_PV})*
+		)
+		system-mono? (
+			=dev-games/godot-mono-runtime-linux-x86_64-$(ver_cut 1-2 ${MONO_PV})*
+		)
 	)
 "
 DISABLED_CDEPEND="
 	mono? (
-		!portable? (
+		system-mono? (
 			>=dev-lang/mono-6.0.0.176
 			=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
 		)
@@ -404,6 +410,7 @@ einfo
 }
 
 src_prepare() {
+	default
 	if use mono ; then
 		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
 			modules/mono/glue || die
@@ -415,6 +422,15 @@ src_configure() {
 	if use portable ; then
 		strip-flags
 		filter-flags -march=*
+	fi
+	if use mono ; then
+		# mono_static=yes bug
+		if use system-mono ; then
+			# The code assumes unilib system not multilib.
+			mkdir -p "${WORKDIR}/mono" || die
+			ln -s "/usr/$(get_libdir)" "${WORKDIR}/mono/lib" || die
+			ln -s "/usr/include" "${WORKDIR}/mono/include" || die
+		fi
 	fi
 }
 
@@ -436,17 +452,35 @@ set_production() {
 	fi
 }
 
+get_configuration3() {
+	if [[ "${configuration}" =~ "debug" ]] ; then
+		echo "debug"
+	elif [[ "${configuration}" =~ "release" ]] ; then
+		echo "release"
+	else
+		echo ""
+	fi
+}
+
 src_compile_linux_yes_mono() {
 	einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
 	# mono_static=yes ; CI uses this
 	local options_extra=(
 		$(set_production)
+		copy_mono_root=yes
 		module_mono_enabled=yes
-		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86_64"
 		mono_static=yes
 		tools=no
 	)
+	if ! use system-mono ; then
+		if use amd64 ; then
+			options_extra+=(
+				copy_mono_root=yes
+				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86_64-$(get_configuration3)"
+			)
+		fi
+	fi
 	_compile
 }
 

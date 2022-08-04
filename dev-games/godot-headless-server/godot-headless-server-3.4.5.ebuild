@@ -109,9 +109,8 @@ IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
 IUSE+=" +cvtt +freetype +pcre2" # for libraries
 IUSE+=" system-bullet system-embree system-enet system-freetype system-libogg
 system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp
-system-libwebsockets system-mbedtls system-miniupnpc system-opus system-pcre2
-system-squish system-wslay
-system-zlib system-zstd"
+system-libwebsockets system-mbedtls system-miniupnpc system-mono system-opus
+system-pcre2 system-squish system-wslay system-zlib system-zstd"
 SANITIZERS=" asan lsan msan tsan ubsan"
 IUSE+=" ${SANITIZERS}"
 # media-libs/xatlas is a placeholder
@@ -141,6 +140,7 @@ REQUIRED_USE+="
 		!system-libwebsockets
 		!system-mbedtls
 		!system-miniupnpc
+		!system-mono
 		!system-opus
 		!system-pcre2
 		!system-squish
@@ -149,6 +149,7 @@ REQUIRED_USE+="
 		!tsan
 		!tsan
 	)
+	riscv? ( mono? ( system-mono ) )
 "
 FREETYPE_V="2.10.4"
 LIBOGG_V="1.3.5"
@@ -219,10 +220,6 @@ CDEPEND_CLANG="
 CDEPEND_GCC="
 	!clang? ( sys-devel/gcc )
 "
-#
-# We try not to link to distro Mono because Mono don't support TLS on OpenSSL
-# but only with internal BoringSSL.
-#
 DEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
@@ -241,16 +238,17 @@ DEPEND+="
 	>=sys-libs/zlib-${ZLIB_V}
 	virtual/opengl
 	mono? (
-		|| (
-			x86? (
-				=dev-games/godot-mono-runtime-linux-x86-$(ver_cut 1-2 ${MONO_PV})*
-			)
-			amd64? (
-				=dev-games/godot-mono-runtime-linux-x86_64-$(ver_cut 1-2 ${MONO_PV})*
-			)
-			riscv? (
-				>=dev-lang/mono-6.0.0.176
-				=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
+		!system-mono? (
+			=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
+		)
+		system-mono? (
+			|| (
+				x86? (
+					=dev-games/godot-mono-runtime-linux-x86-$(ver_cut 1-2 ${MONO_PV})*
+				)
+				amd64? (
+					=dev-games/godot-mono-runtime-linux-x86_64-$(ver_cut 1-2 ${MONO_PV})*
+				)
 			)
 		)
 	)
@@ -371,6 +369,15 @@ src_configure() {
 		strip-flags
 		filter-flags -march=*
 	fi
+	if use mono ; then
+		# mono_static=yes bug
+		if use system-mono ; then
+			# The code assumes unilib system not multilib.
+			mkdir -p "${WORKDIR}/mono" || die
+			ln -s "/usr/$(get_libdir)" "${WORKDIR}/mono/lib" || die
+			ln -s "/usr/include" "${WORKDIR}/mono/include" || die
+		fi
+	fi
 }
 
 _compile() {
@@ -389,6 +396,14 @@ set_production() {
 	fi
 }
 
+get_configuration3() {
+	if use debug ; then
+		echo "debug"
+	else
+		echo "release"
+	fi
+}
+
 src_configure_server_yes_mono() {
 	# mono_glue=yes (default)
 	# CI puts mono_glue=no without reason.
@@ -399,6 +414,19 @@ src_configure_server_yes_mono() {
 		module_mono_enabled=yes
 		mono_static=yes
 	)
+	if ! use system-mono ; then
+		if use amd64 ; then
+			options_extra+=(
+				copy_mono_root=yes
+				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86_64-$(get_configuration3)"
+			)
+		elif use x86 ; then
+			options_extra+=(
+				copy_mono_root=yes
+				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86-$(get_configuration3)"
+			)
+		fi
+	fi
 	_compile
 }
 

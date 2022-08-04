@@ -7,6 +7,7 @@ MY_PV="fcf205c"
 MY_PN="godot-mono-builds"
 MY_P="${MY_PN}-${PV}"
 STATUS="stable"
+GODOT_SLOT_MAJOR="3"
 
 PYTHON_COMPAT=( python3_{8..10} )
 inherit eutils flag-o-matic git-r3 python-any-r1
@@ -175,6 +176,10 @@ LICENSE+=" ${EMSCRIPTEN_FASTCOMP_LICENSE}"
 
 #KEYWORDS=""
 SLOT="0/$(ver_cut 1-2 ${PV})"
+TARGETS=" runtime runtime-threads runtime-dynamic"
+IUSE+=" ${TARGETS}"
+REQUIRED_USE="|| ( ${TARGETS} ) runtime" # The other targets are undocumented.
+IUSE+=" debug"
 DEPEND+=""
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -218,6 +223,7 @@ _unpack_godot_mono_builds() {
 	if [[ ${PV} =~ 9999 ]] ; then
 		EGIT_REPO_URI="https://github.com/godotengine/godot-mono-builds.git"
 		EGIT_BRANCH="master"
+		EGIT_CHECKOUT_DIR="${S}"
 		git-r3_fetch
 		git-r3_checkout
 	else
@@ -231,6 +237,7 @@ _unpack_mono() {
 	EGIT_REPO_URI="https://github.com/mono/mono.git"
 	EGIT_COMMIT="mono-${MONO_PV}"
 	EGIT_BRANCH="main"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/mono-${MONO_PV}"
 	git-r3_fetch
 	git-r3_checkout
 }
@@ -269,15 +276,18 @@ src_prepare() {
 }
 
 src_compile() {
-	local build_targets=()
-	# Build the runtime for WebAssembly.
-	${EPYTHON} wasm.py configure --target=runtime || die
-	${EPYTHON} wasm.py make --target=runtime || die
-
-	${EPYTHON} bcl.py make --product=wasm || die
+	mkdir -p "${WORKDIR}/build" || die
+	local args
+	for configuration in debug release ; do
+		! use debug && [[ "${configuration}" == "debug" ]] && continue
+		args=( --install-dir="${WORKDIR}/build" )
+		${EPYTHON} wasm.py configure --target=runtime ${args[@]} || die
+		${EPYTHON} wasm.py make --target=runtime ${args[@]} || die
+		${EPYTHON} bcl.py make --product=wasm ${args[@]} || die
+	done
 }
 
 src_install() {
-	ewarn "TODO: src_install()"
-	die
+	insinto "/usr/lib/godot/${GODOT_SLOT_MAJ}/mono-runtime"
+	doins -r "${WORKDIR}/build"
 }

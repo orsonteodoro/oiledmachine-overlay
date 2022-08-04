@@ -96,7 +96,7 @@ lto +neon +optimize-speed +opensimplex optimize-size +portable +raycast
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
 +theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
 
-IUSE+=" mono" # for scripting languages
+IUSE+=" aot mono" # for scripting languages
 
 GODOT_IOS_=(arm armv7 armv64 x86 x86_64)
 
@@ -271,9 +271,21 @@ src_configure() {
 	unset CCACHE
 }
 
+get_configuration3() {
+	if [[ "${configuration}" =~ "debug" ]] ; then
+		echo "debug"
+	elif [[ "${configuration}" =~ "release" ]] ; then
+		echo "release"
+	else
+		echo ""
+	fi
+}
+
 _compile() {
 	for a in ${GODOT_IOS} ; do
 		if use ${a} ; then
+			local arch="${a/godot_ios_}"
+			local options_mono=()
 			case "${a}" in
 				godot_ios_armv7)
 					bitness=32
@@ -287,17 +299,39 @@ _compile() {
 					;;
 			esac
 
+			local mono_target
+			if use aot && [[ "${arch}" == "armv7" ]] ; then
+				ewarn "AOT support is not confirmed complete so build failure may happen"
+				mono_target="cross-armv7"
+			elif use aot && [[ "${arch}" == "arm64" ]] ; then
+				ewarn "AOT support is not confirmed complete so build failure may happen"
+				mono_target="cross-arm64"
+			elif [[ "${arch}" == "x86" ]] ; then
+				mono_target="i386"
+			elif [[ "${arch}" == "x86_64" ]] ; then
+				mono_target="x86_64"
+			else
+				mono_target="${arch}"
+			fi
+
+			local options_mono=()
+			if use mono ; then
+				options_mono=(
+					mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/ios-${mono_target}-$(get_configuration3)"
+				)
+			fi
+
 			einfo "Building for iOS (${a})"
 			scons ${options_iphone[@]} \
 				${options_modules[@]} \
 				${options_modules_static[@]} \
+				${options_mono[@]} \
 				${options_extra[@]} \
 				arch=${a} \
 				bits=${bitness} \
 				target=${configuration} \
 				tools=no \
 				|| die
-			local arch="${a/godot_ios_}"
 			mkdir -p "bin2/${configuration}/${arch}" || die
 			mv bin/* "bin2/${configuration}/${arch}" || die
 		fi
@@ -316,8 +350,8 @@ src_compile_ios_yes_mono() {
 	# mono_glue=yes (default)
 	local options_extra=(
 		$(set_production)
+		copy_mono_root=yes
 		module_mono_enabled=yes
-		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/ios"
 		tools=no
 	)
 	_compile

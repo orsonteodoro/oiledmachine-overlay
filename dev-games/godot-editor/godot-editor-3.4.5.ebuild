@@ -94,6 +94,7 @@ gen_required_use_template()
 }
 
 IUSE+=" -gdscript gdscript_lsp -mono +visual-script" # for scripting languages
+IUSE+=" -system-mono"
 IUSE+=" csharp-external-editor monodevelop vscode"
 IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
@@ -140,6 +141,7 @@ REQUIRED_USE+="
 		!system-libwebsockets
 		!system-mbedtls
 		!system-miniupnpc
+		!system-mono
 		!system-opus
 		!system-pcre2
 		!system-recast
@@ -150,6 +152,7 @@ REQUIRED_USE+="
 		!tsan
 		!tsan
 	)
+	riscv? ( mono? ( system-mono ) )
 	vscode? ( csharp-external-editor )
 "
 FREETYPE_V="2.10.4"
@@ -209,14 +212,24 @@ gen_cdepend_sanitizers() {
 CDEPEND_SANITIZER="
 	$(gen_cdepend_sanitizers)
 "
-# TODO:  Review if editor needs to link against godot-mono-runtime-linux for
-# TLS security in C# scripting.
 CDEPEND+="
 	${CDEPEND_SANITIZER}
 	!dev-games/godot
 	mono? (
-		>=dev-lang/mono-6.0.0.176
-		=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
+		system-mono? (
+			>=dev-lang/mono-6.0.0.176
+			=dev-lang/mono-$(ver_cut 1-2 ${MONO_PV})*
+		)
+		!system-mono? (
+			|| (
+				x86? (
+					=dev-games/godot-mono-runtime-linux-x86-$(ver_cut 1-2 ${MONO_PV})*
+				)
+				amd64? (
+					=dev-games/godot-mono-runtime-linux-x86_64-$(ver_cut 1-2 ${MONO_PV})*
+				)
+			)
+		)
 		dev-dotnet/dotnet-sdk-bin
 	)
 "
@@ -419,10 +432,13 @@ src_configure() {
 		filter-flags -march=*
 	fi
 	if use mono ; then
-		# The code assumes unilib system not multilib.
-		mkdir -p "${WORKDIR}/mono" || die
-		ln -s "/usr/$(get_libdir)" "${WORKDIR}/mono/lib" || die
-		ln -s "/usr/include" "${WORKDIR}/mono/include" || die
+		# mono_static=yes bug
+		if use system-mono ; then
+			# The code assumes unilib system not multilib.
+			mkdir -p "${WORKDIR}/mono" || die
+			ln -s "/usr/$(get_libdir)" "${WORKDIR}/mono/lib" || die
+			ln -s "/usr/include" "${WORKDIR}/mono/include" || die
+		fi
 	fi
 }
 
@@ -529,6 +545,30 @@ set_production() {
 	fi
 }
 
+get_configuration3() {
+	if use debug ; then
+		echo "debug"
+	else
+		echo "release"
+	fi
+}
+
+add_portable_mono_prefix() {
+	if ! use system-mono ; then
+		if use amd64 ; then
+			options_extra+=(
+				copy_mono_root=yes
+				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86_64-$(get_configuration3)"
+			)
+		elif use x86 ; then
+			options_extra+=(
+				copy_mono_root=yes
+				mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-linux-x86-$(get_configuration3)"
+			)
+		fi
+	fi
+}
+
 src_compile_linux_yes_mono() {
 	einfo "Mono support:  Building the Mono glue generator"
 	# tools=yes (default)
@@ -538,6 +578,7 @@ src_compile_linux_yes_mono() {
 		module_mono_enabled=yes
 		mono_glue=no
 	)
+	add_portable_mono_prefix
 	_compile
 	_gen_mono_glue
 	_assemble_datafiles
@@ -551,6 +592,7 @@ src_compile_linux_yes_mono() {
 #		mono_static=yes
 #		mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/linux-x86_64"
 	)
+	add_portable_mono_prefix
 	_compile
 }
 

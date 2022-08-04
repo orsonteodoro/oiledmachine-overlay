@@ -37,7 +37,6 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
 -->
     <doc lang="en">https://docs.godotengine.org/en/stable/</doc>
     <doc lang="en">https://docs.godotengine.org/en/3.4/</doc>
-    <doc lang="en">https://docs.godotengine.org/en/3.3/</doc>
     <doc lang="de">https://docs.godotengine.org/de/latest/</doc>
     <doc lang="es">https://docs.godotengine.org/es/latest/</doc>
     <doc lang="fi">https://docs.godotengine.org/fi/latest/</doc>
@@ -186,6 +185,8 @@ https://godotengine.org/article/introducing-the-godot-gltf-2-0-scene-exporter
     <flag name="system-mbedtls">Uses the system's external library instead of
       the internal version.</flag>
     <flag name="system-miniupnpc">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-mono">Uses the system's external library instead of
       the internal version.</flag>
     <flag name="system-openssl">Uses the system's external library instead of
       the internal version.</flag>
