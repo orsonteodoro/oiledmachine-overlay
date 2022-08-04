@@ -188,28 +188,30 @@ src_compile() {
 	mkdir -p "${WORKDIR}/build" || die
 	local args
 	local configuration
+	local pargs
 	for configuration in debug release ; do
 		! use debug && [[ "${configuration}" == "debug" ]] && continue
 		args=(
-			--configuration=${configuration}
 			--install-dir="${WORKDIR}/build"
 		)
+		pargs=(
+			--configuration=${configuration}
+			--mxe-prefix="${MINGW32_SYSROOT}"
+			--target=x86
+		)
 		${EPYTHON} windows.py configure \
-			--mxe-prefix="${MINGW32_SYSROOT}" \
-			--target=x86 \
 			${args[@]} \
+			${pargs[@]} \
 			|| die
 		${EPYTHON} windows.py make \
-			--mxe-prefix="${MINGW32_SYSROOT}" \
-			--target=x86 \
 			${args[@]} \
+			${pargs[@]} \
 			|| die
 		${EPYTHON} bcl.py make --product=desktop ${args[@]} || die
 		${EPYTHON} bcl.py make --product=desktop-win32 ${args[@]} || die
 		${EPYTHON} windows.py copy-bcl \
-			--mxe-prefix="${MINGW32_SYSROOT}" \
-			--target=x86 \
 			${args[@]} \
+			${pargs[@]} \
 			|| die
 	done
 }

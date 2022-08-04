@@ -160,16 +160,20 @@ src_compile() {
 	mkdir -p "${WORKDIR}/build" || die
 	local args
 	local configuration
+	local pargs
 	for configuration in debug release ; do
 		! use debug && [[ "${configuration}" == "debug" ]] && continue
 		args=(
-			--configuration=${configuration}
 			--install-dir="${WORKDIR}/build"
 		)
-		${EPYTHON} linux.py configure --target=x86_64 ${args[@]} || die
-		${EPYTHON} linux.py make --target=x86_64 ${args[@]} || die
+		pargs=(
+			--configuration=${configuration}
+			--target=x86_64
+		)
+		${EPYTHON} linux.py configure ${args[@]} ${pargs[@]} || die
+		${EPYTHON} linux.py make ${args[@]} ${pargs[@]} || die
 		${EPYTHON} bcl.py make --product=desktop ${args[@]} || die
-		${EPYTHON} linux.py copy-bcl --target=x86_64 ${args[@]} || die
+		${EPYTHON} linux.py copy-bcl ${args[@]} ${pargs[@]} || die
 	done
 }
 

@@ -279,11 +279,25 @@ src_prepare() {
 src_compile() {
 	mkdir -p "${WORKDIR}/build" || die
 	local args
+	local configuration
+	local pargs
 	for configuration in debug release ; do
 		! use debug && [[ "${configuration}" == "debug" ]] && continue
-		args=( --install-dir="${WORKDIR}/build" )
-		${EPYTHON} wasm.py configure --target=runtime ${args[@]} || die
-		${EPYTHON} wasm.py make --target=runtime ${args[@]} || die
+		args=(
+			--install-dir="${WORKDIR}/build"
+		)
+		build_targets=()
+		for x in ${TARGETS} ; do
+			if use "${x}" ; then
+				build_targets+=( --target=${x}  )
+			fi
+		done
+		pargs=(
+			${build_targets[@]}
+			--configuration=${configuration}
+		)
+		${EPYTHON} wasm.py configure ${args[@]} ${pargs[@]} || die
+		${EPYTHON} wasm.py make ${args[@]} ${pargs[@]} || die
 		${EPYTHON} bcl.py make --product=wasm ${args[@]} || die
 	done
 }

@@ -202,7 +202,7 @@ src_compile() {
 	if use cross-armv7 || use cross-arm64 ; then
 		# Works on arm64-macos or x64-macos prefixes?
 ewarn
-ewarn "AOT cross-compiler compilation may fail with osxcross."
+ewarn "AOT cross-compiler compilation may fail with OSXCross."
 ewarn "Disable cross-armv7 and cross-arm64 if it fails."
 ewarn
 	fi
@@ -210,14 +210,12 @@ ewarn
 	local args
 	local build_targets
 	local configuration
+	local pargs
 	local x
 	for configuration in debug release ; do
 		! use debug && [[ "${configuration}" == "debug" ]] && continue
 		args=(
-			--configuration=${configuration}
 			--install-dir="${WORKDIR}/build"
-			--ios-toolchain="${IPHONEPATH}"
-			--ios-sdk="${IPHONESDK}"
 		)
 		build_targets=()
 		for x in ${TARGETS} ; do
@@ -225,8 +223,14 @@ ewarn
 				build_targets+=( --target=${x}  )
 			fi
 		done
-		${EPYTHON} ios.py configure ${build_targets[@]} ${args[@]} || die
-		${EPYTHON} ios.py make ${build_targets[@]} ${args[@]} || die
+		pargs=(
+			${build_targets[@]}
+			--configuration=${configuration}
+			--ios-toolchain="${IPHONEPATH}"
+			--ios-sdk="${IPHONESDK}"
+		)
+		${EPYTHON} ios.py configure ${args[@]} ${pargs[@]} || die
+		${EPYTHON} ios.py make ${args[@]} ${pargs[@]} || die
 		${EPYTHON} bcl.py make --product=ios ${args[@]} || die
 	done
 }
@@ -235,3 +239,4 @@ src_install() {
 	insinto "/usr/lib/godot/${GODOT_SLOT_MAJ}/mono-runtime"
 	doins -r "${WORKDIR}/build"
 }
+

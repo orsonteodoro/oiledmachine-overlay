@@ -167,11 +167,11 @@ src_compile() {
 	local args
 	local build_targets
 	local configuration
+	local pargs
 	local x
 	for configuration in debug release ; do
 		! use debug && [[ "${configuration}" == "debug" ]] && continue
 		args=(
-			--configuration=${configuration}
 			--install-dir="${WORKDIR}/build"
 		)
 		build_targets=()
@@ -180,10 +180,14 @@ src_compile() {
 				build_targets+=( --target=${x}  )
 			fi
 		done
-		${EPYTHON} osx.py configure ${build_targets[@]} ${args[@]} || die
-		${EPYTHON} osx.py make ${build_targets[@]} ${args[@]} || die
+		pargs=(
+			${build_targets[@]}
+			--configuration=${configuration}
+		)
+		${EPYTHON} osx.py configure ${args[@]} ${pargs[@]} || die
+		${EPYTHON} osx.py make ${args[@]} ${pargs[@]} || die
 		${EPYTHON} bcl.py make --product=desktop ${args[@]} || die
-		${EPYTHON} osx.py copy-bcl ${build_targets[@]} ${args[@]} || die
+		${EPYTHON} osx.py copy-bcl ${args[@]} ${pargs[@]} || die
 	done
 }
 

@@ -204,19 +204,23 @@ src_compile() {
 	local build_targets
 	local x
 	local configuration
+	local pargs
 	for configuration in debug release ; do
 		! use debug && [[ "${configuration}" == "debug" ]] && continue
 		args=(
-			--configuration=${configuration}
 			--install-dir="${WORKDIR}/build"
-			--android_ndk_version=${NDK_VERSION}
 		)
 		build_targets=()
 		for x in ${TARGETS} ; do
 			build_targets+=( --target=${x} )
 		done
-		${EPYTHON} android.py configure ${build_targets[@]} ${args[@]} || die
-		${EPYTHON} android.py make ${build_targets[@]} ${args[@]} || die
+		pargs=(
+			${build_targets[@]}
+			--configuration=${configuration}
+			--android_ndk_version=${NDK_VERSION}
+		)
+		${EPYTHON} android.py configure ${args[@]} ${pargs[@]} || die
+		${EPYTHON} android.py make ${args[@]} ${pargs[@]} || die
 		${EPYTHON} bcl.py make --product=android ${args[@]} || die
 	done
 }
