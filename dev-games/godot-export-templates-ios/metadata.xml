@@ -10,6 +10,16 @@
     This package is allowed to be emerged in native context.
 
 
+    Required environment variables
+
+      IPHONEPATH - the toolchain path (can be the same as OSXCross)
+      IPHONESDK - the SDK path
+      IOS_SDK_VERSION - the iOS SDK version
+
+    Optional environment variables
+
+      XCODE_SDK_VERSION - the Xcode version
+
     Ebuild completion status
 
       Incomplete / Work In Progress (WIP) [needs community help]

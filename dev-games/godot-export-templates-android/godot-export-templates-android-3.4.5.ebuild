@@ -165,7 +165,14 @@ PATCHES=(
 check_android_native()
 {
 	export ANDROID_NDK_ROOT="/opt/android-ndk"
+#	ANDROID_SDK_DIR="/opt/android-sdk-update-manager"
 #	export ANDROID_HOME="${EPREFIX}${ANDROID_SDK_DIR}" # already set by dev-util/android-sdk-update-manager env.d
+	if [[ ! -e "${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/"*"/bin" ]] ; then
+eerror
+eerror "${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/*/bin is unreachable"
+eerror
+		die
+	fi
 	if [[ -z "${ANDROID_HOME}" ]] ; then
 eerror
 eerror "Missing ANDROID_HOME set by dev-util/android-sdk-update-manager."

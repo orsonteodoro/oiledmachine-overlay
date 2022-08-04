@@ -96,7 +96,7 @@ lto +neon +optimize-speed +opensimplex optimize-size +portable +raycast
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
 +theora +tga +vorbis +webm webm-simd +webp" # encoding/container formats
 
-IUSE+=" aot mono" # for scripting languages
+IUSE+=" mono" # for scripting languages
 
 GODOT_IOS_=(arm armv7 armv64 x86 x86_64)
 
@@ -139,9 +139,9 @@ REQUIRED_USE+="
 	)
 "
 # See https://developer.apple.com/ios/submit/ for app store requirement
-APST_REQ_STORE_DATE="April 2021"
-IOS_SDK_MIN_STORE="14"
-XCODE_SDK_MIN_STORE="12"
+APST_REQ_STORE_DATE="April 2022"
+IOS_SDK_MIN_STORE="15"
+XCODE_SDK_MIN_STORE="13"
 EXPECTED_XCODE_SDK_MIN_VERSION_IOS="10"
 EXPECTED_IOS_SDK_MIN_VERSION="10"
 
@@ -164,54 +164,74 @@ PATCHES=(
 	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
 )
 
-check_osxcross()
-{
-	if [[ -z "${OSXCROSS_ROOT}" ]] ; then
+test_path() {
+	local p="${1}"
+	if ! realpath -e "${p}" ; then
 eerror
-eerror "OSXCROSS_ROOT must be set as a per-package environmental variable.  See"
-eerror "metadata.xml or \`epkginfo -x godot\` for details."
-eerror
-		die
-	fi
-	if which xcrun ; then
-eerror
-eerror "Missing xcrun from the osxcross package."
-eerror
-		die
-	fi
-	if [[ -z "${EOSXCROSS_SDK}" ]] ; then
-eerror
-eerror "EOSXCROSS_SDK must be set as a per-package environmental variable.  See"
-eerror "metadata.xml or \`epkginfo -x godot\` for details."
-eerror
-		die
-	fi
-	if [[ ! -f \
-"${OSXCROSS_ROOT}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc" \
-	   ]] ; then
-eerror
-eerror "Cannot find x86_64-apple-${EOSXCROSS_SDK}-cc.  Fix either OSXCROSS_ROOT"
-eerror "(${OSXCROSS_ROOT}) or EOSXCROSS_SDK (${EOSXCROSS_SDK}).  Did not find"
-eerror "${OSXCROSS_ROOT}/target/bin/x86_64-apple-${EOSXCROSS_SDK}-cc"
+eerror "${p} is unreachable"
 eerror
 		die
 	fi
 }
 
+check_cross_compiler_paths() {
+	if [[ -z "${IPHONEPATH}" ]] ; then
+eerror
+eerror "IPHONEPATH must be defined as per-package environment variable."
+eerror "It is the path to the toolchain"
+eerror
+		die
+	fi
+	if [[ -z "${IPHONESDK}" ]] ; then
+eerror
+eerror "IPHONESDK must be defined as per-package environment variable."
+eerror "It is the path to the sdk"
+eerror
+		die
+	fi
+	export OSXCROSS_IOS="${IPHONEPATH}"
+
+	test_path "${IPHONEPATH}/usr/bin"
+	test_path "${IPHONEPATH}/usr/bin/*/clang"
+	test_path "${IPHONEPATH}/usr/bin/*/clang++"
+	test_path "${IPHONEPATH}/usr/bin/*/ar"
+	test_path "${IPHONEPATH}/usr/bin/*/ranlib"
+	test_path "${IPHONEPATH}/usr/include"
+	test_path "${IPHONESDK}/System/Library/Frameworks/OpenGLES.framework/Headers"
+	test_path "${IPHONESDK}/System/Library/Frameworks/AudioUnit.framework/Headers"
+
+	if [[ -z "${OSXCROSS_IOS}" ]] ; then
+ewarn
+ewarn "OSXCROSS_IOS must be defined as per-package environment variable."
+ewarn "It is set to 1 if you are using osxcross."
+ewarn
+	fi
+}
+
 check_store_apl()
 {
-	if ver_test ${EIOS_SDK_VERSION} -lt ${IOS_SDK_MIN_STORE} ; then
+	if ver_test ${IOS_SDK_VERSION} -lt ${IOS_SDK_MIN_STORE} ; then
 ewarn
 ewarn "Your IOS SDK does not meet minimum store requirements of"
 ewarn ">=${IOS_SDK_MIN_STORE} as of ${APLST_REQ_STORE_DATE}."
 ewarn
 	fi
 
-	if ver_test ${EXCODE_SDK_VERSION} -lt ${APST_REQ_STORE_DATE} ; then
+	if [[ -n "${XCODE_SDK_VERSION}" ]] \
+		&& ver_test ${XCODE_SDK_VERSION} -lt ${APST_REQ_STORE_DATE} ; then
 ewarn
 ewarn "Your Xcode SDK does not meet minimum store requirements of"
 ewarn ">=${XCODE_SDK_MIN_STORE} as of ${APLST_REQ_STORE_DATE}."
 ewarn
+	fi
+}
+
+check_sdk_versions() {
+	if ver_test ${IOS_SDK_VERSION} -lt ${EXPECTED_IOS_SDK_MIN_VERSION} ; then
+eerror
+eerror "Your iOS SDK version must be >= ${EXPECTED_IOS_SDK_MIN_VERSION}"
+eerror
+		die
 	fi
 }
 
@@ -227,8 +247,9 @@ ewarn
 ewarn "The gdscript USE flag is untested."
 ewarn
 	fi
-	check_osxcross
+	check_cross_compiler_paths
 	check_store_apl
+	check_sdk_versions
 
 	python-any-r1_pkg_setup
 }
@@ -300,13 +321,7 @@ _compile() {
 			esac
 
 			local mono_target
-			if use aot && [[ "${arch}" == "armv7" ]] ; then
-				ewarn "AOT support is not confirmed complete so build failure may happen"
-				mono_target="cross-armv7"
-			elif use aot && [[ "${arch}" == "arm64" ]] ; then
-				ewarn "AOT support is not confirmed complete so build failure may happen"
-				mono_target="cross-arm64"
-			elif [[ "${arch}" == "x86" ]] ; then
+			if [[ "${arch}" == "x86" ]] ; then
 				mono_target="i386"
 			elif [[ "${arch}" == "x86_64" ]] ; then
 				mono_target="x86_64"

@@ -141,113 +141,96 @@ PATCHES=(
 	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
 )
 
-verify_cross_toolchain() {
-	export OSXCROSS_ROOT="${EGODOT_MACOS_SYSROOT}"
-
-	local found_cc=0
-	local found_cxx=0
-	local arch
-	for arch in ${GODOT_OSX_[@]} ; do
-		if use "godot_osx_${arch}" ; then
-			# Modify project instead?
-			export CC="${OSXCROSS_ROOT}/target/bin/${arch}-apple-${EGODOT_MACOS_SDK_VERSION}-cc"
-			export CXX="${OSXCROSS_ROOT}/target/bin/${arch}-apple-${EGODOT_MACOS_SDK_VERSION}-c++"
-			if [[ -e "${CC}" ]] ; then
-einfo
-einfo "Found CC=${CC}"
-einfo
-				found_cc=1
-			else
-ewarn
-ewarn "CC=${CC} is missing.  It requires either symlinks, or a ebuild & project"
-ewarn "mod."
-ewarn
-			fi
-			if [[ -e "${CXX}" ]] ; then
-einfo
-einfo "Found CC=${CC}"
-einfo
-				found_cxx=1
-			else
-ewarn
-ewarn "CC=${CC} is missing.  It requires either symlinks, or a ebuild & project"
-ewarn "mod."
-ewarn
-			fi
-		fi
-	done
-
-	if (( ${found_cc} > 0 && ${found_cxx} > 0 )) ; then
+test_path() {
+	local p="${1}"
+	if ! realpath -e "${p}" ]] ; then
 eerror
-eerror "The cross toolchain is not ready.  It requires either symlinks, or"
-eerror "ebuild and project modding."
+eerror "${p} is unreachable"
+eerror
+	fi
+}
+
+yn_path() {
+	local p="${1}"
+	if ! realpath -e "${p}" ]] ; then
+		return 1
+	fi
+	return 0
+}
+
+test_osxcross() {
+	if [[ -z "${OSXCROSS_SDK}" ]] ; then
+eerror
+eerror "OSXCROSS_SDK must be defined as an environment variable."
+eerror "It must be darwin<version> replacing <version>."
+eerror
+		die
+	fi
+	test_path "${OSXCROSS_ROOT}/target/bin"
+	if use godot_osx_arm64 ; then
+		test_path "${OSXCROSS_ROOT}/target/bin/arm64*-cc"
+		test_path "${OSXCROSS_ROOT}/target/bin/arm64*-c++"
+		test_path "${OSXCROSS_ROOT}/target/bin/arm64*-ar"
+		test_path "${OSXCROSS_ROOT}/target/bin/arm64*-ranlib"
+		test_path "${OSXCROSS_ROOT}/target/bin/arm64*-as"
+	fi
+	if use godot_osx_x86_64 ; then
+		test_path "${OSXCROSS_ROOT}/target/bin/x86_64*-cc"
+		test_path "${OSXCROSS_ROOT}/target/bin/x86_64*-c++"
+		test_path "${OSXCROSS_ROOT}/target/bin/x86_64*-ar"
+		test_path "${OSXCROSS_ROOT}/target/bin/x86_64*-ranlib"
+		test_path "${OSXCROSS_ROOT}/target/bin/x86_64*-as"
+	fi
+}
+
+test_prefixed_toolchain() {
+	local found=0
+	yn_path "/opt/local/libexec/llvm-*/bin/clang" && found=1
+	clang --version 2>/dev/null 1>/dev/null && found=1
+	if (( ${found} == 0 )) ; then
+eerror
+eerror "Could not find a prefixed toolchain"
 eerror
 		die
 	fi
 }
 
-check_osxcross()
-{
-	if [[ -z "${EGODOT_MACOS_SYSROOT}" ]] ; then
+check_cross_toolchain() {
+	if [[ -n "${OSXCROSS_ROOT}" ]] ; then
+einfo
+einfo "Using osxcross"
+einfo
+		test_path "${OSXCROSS_ROOT}"
+		test_osxcross
+	elif [[ -n "${MACPORTS_PREFIX}" ]] ; then
+einfo
+einfo "Using prefixed toolchain"
+einfo
+		test_path "${MACPORTS_PREFIX}"
+		test_prefixed_toolchain
+	else
 eerror
-eerror "EGODOT_MACOS_SYSROOT must be set as a per-package environmental"
-eerror "variable.  See metadata.xml or \`epkginfo -x godot\` for details."
+eerror "Either one of the following needs to be defined as an environment"
+eerror "variable:"
 eerror
-		die
-	fi
-	if which xcrun ; then
-eerror
-eerror "Missing xcrun from the osxcross package."
-eerror
-		die
-	fi
-	if [[ -z "${EGODOT_MACOS_SDK_VERSION}" ]] ; then
-eerror
-eerror "EGODOT_MACOS_SDK_VERSION must be set as a per-package environmental"
-eerror "variable.  See metadata.xml or \`epkginfo -x godot\` for details."
-eerror
-		die
-	fi
-
-	if use godot_osx_x86_64 \
-		&& ver_test ${EGODOT_MACOS_SDK_VERSION} -lt 10.8 ; then
-eerror
-eerror "SDK version requested:  ${EGODOT_MACOS_SDK_VERSION}"
-eerror "SDK required:  >= 10.8"
-eerror
-eerror "Error:  x86_64 is not supported with < SDK 10.8."
-eerror "Solution:  Update the SDK."
+eerror "  OSXCROSS_ROOT"
+eerror "  MACPORTS_PREFIX"
 eerror
 		die
 	fi
 
-	verify_cross_toolchain
-
-	if use godot_osx_x86_64 ; then
-		if ver_test ${EGODOT_MACOS_SDK_VERSION} \
-			-lt ${EXPECTED_XCODE_SDK_MIN_VERSION_X86_64} ; then
+	if [[ -z "${MACOS_SDK_PATH}" ]] ; then
 eerror
-eerror "${PN} requires Xcode >= ${EXPECTED_XCODE_SDK_MIN_VERSION_X86_64} for"
-eerror "x86_64."
+eerror "MACOS_SDK_PATH must be defined as an environment variable."
 eerror
-			die
-		fi
+		die
 	fi
-	if use godot_osx_arm64 ; then
-		if ver_test ${EGODOT_MACOS_SDK_VERSION} \
-			-lt ${EXPECTED_XCODE_SDK_MIN_VERSION_ARM64} ; then
-eerror
-eerror "${PN} requires Xcode >= ${EXPECTED_XCODE_SDK_MIN_VERSION_ARM64} for"
-eerror "arm64."
-eerror
-			die
-		fi
-	fi
+	test_path "${MACOS_SDK_PATH}"
 }
 
 check_store_apl()
 {
-	if ver_test ${EGODOT_MACOS_SDK_VERSION} -lt ${APST_REQ_STORE_DATE} ; then
+	if ver_test ${MACOS_SDK_VERSION} -lt ${APST_REQ_STORE_DATE} ; then
 ewarn
 ewarn "Your Xcode SDK does not meet minimum store requirements of"
 ewarn ">=${XCODE_SDK_MIN_STORE} as of ${APLST_REQ_STORE_DATE}."
@@ -267,7 +250,7 @@ ewarn
 ewarn "The gdscript USE flag is untested."
 ewarn
 	fi
-	check_osxcross
+	check_cross_toolchain
 	check_store_apl
 
 	python-any-r1_pkg_setup

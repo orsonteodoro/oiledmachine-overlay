@@ -83,63 +83,38 @@ RDEPEND="
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
+test_path() {
+	local p="${1}"
+	if ! realpath -e "${p}" ; then
+eerror
+eerror "${p} is unreachable"
+eerror
+	fi
+}
+
 pkg_setup() {
 ewarn
 ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
 ewarn
-	if [[ -z "${EGODOT_MACOS_SYSROOT}" ]] ; then
+	if [[ -z "${OSXCROSS_ROOT}" ]] ; then
+		:;
+	else
 eerror
-eerror "The environment variable EGODOT_MACOS_SYSROOT needs to be defined"
-eerror
-		die
-	fi
-
-	if [[ -z "${EGODOT_MACOS_SDK_VERSION}" ]] ; then
-eerror
-eerror "The environment variable EGODOT_MACOS_SDK_VERSION needs to be defined"
+eerror "The environment variable OSXCROSS_ROOT needs to be defined."
 eerror
 		die
 	fi
-
-	export OSXCROSS_ROOT="${EGODOT_MACOS_SYSROOT}"
 
 	local found_cc=0
 	local found_cxx=0
 	local arch
 	for arch in ${GODOT_OSX_[@]} ; do
 		if use "godot_osx_${arch}" ; then
-			# Modify project instead?
-			export CC="${OSXCROSS_ROOT}/target/bin/${arch}-apple-${EGODOT_MACOS_SDK_VERSION}-cc"
-			export CXX="${OSXCROSS_ROOT}/target/bin/${arch}-apple-${EGODOT_MACOS_SDK_VERSION}-c++"
-			if [[ -e "${CC}" ]] ; then
-einfo
-einfo "Found CC=${CC}"
-einfo
-				found_cc=1
-			else
-ewarn
-ewarn "CC=${CC} is missing.  It requires either symlinks, or a ebuild & project"
-ewarn "mod."
-ewarn
-			fi
-			if [[ -e "${CXX}" ]] ; then
-einfo
-einfo "Found CC=${CC}"
-einfo
-				found_cxx=1
-			else
-ewarn
-ewarn "CC=${CC} is missing.  It requires either symlinks, or a ebuild & project"
-ewarn "mod."
-ewarn
-			fi
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-apple-*-cc"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-apple-*-c++"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-apple-*-ar"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-apple-*-ranlib"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-apple-*-as"
 		fi
 	done
-	if (( ${found_cc} > 0 && ${found_cxx} > 0 )) ; then
-eerror
-eerror "The cross toolchain is not ready.  It requires either symlinks, or"
-eerror "ebuild and project modding."
-eerror
-		die
-	fi
 }

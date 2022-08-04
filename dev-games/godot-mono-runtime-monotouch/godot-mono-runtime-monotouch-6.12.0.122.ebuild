@@ -96,6 +96,8 @@ IUSE+=" ${TARGETS}"
 IUSE+=" debug"
 REQUIRED_USE+="
 	|| ( ${TARGETS} )
+	cross-armv7? ( armv7 )
+	cross-arm64? ( arm64 )
 "
 DEPEND+=""
 BDEPEND+="
@@ -164,7 +166,45 @@ src_prepare() {
 	${EPYTHON} patch_mono.py || die
 }
 
+check_cross_compiler_paths() {
+	# TODO:  normalize variable names
+	if [[ -z "${IPHONEPATH}" ]] ; then
+eerror
+eerror "IPHONEPATH must be defined as per-package environment variable."
+eerror "It is the path to the toolchain"
+eerror
+		die
+	fi
+	[[ -e "${IPHONEPATH}/usr/bin" ]] || die "${IPHONEPATH}/usr/bin is unreachable"
+	if [[ -z "${IPHONESDK}" ]] ; then
+eerror
+eerror "IPHONESDK must be defined as per-package environment variable."
+eerror "It is the path to the sdk"
+eerror
+		die
+	fi
+	[[ -e "${IPHONESDK}/usr/include" ]] || die "${IPHONESDK}/usr/include is unreachable"
+
+	if [[ -z "${OSXCROSS_IOS}" ]] ; then
+ewarn
+ewarn "OSXCROSS_IOS must be defined as per-package environment variable."
+ewarn "It is set to 1 if you are using osxcross."
+ewarn
+	fi
+}
+
+src_configure() {
+	check_cross_compiler_paths
+}
+
 src_compile() {
+	if use cross-armv7 || use cross-arm64 ; then
+		# Works on arm64-macos or x64-macos prefixes?
+ewarn
+ewarn "AOT cross-compiler compilation may fail with osxcross."
+ewarn "Disable cross-armv7 and cross-arm64 if it fails."
+ewarn
+	fi
 	mkdir -p "${WORKDIR}/build" || die
 	local args
 	local build_targets
@@ -175,6 +215,8 @@ src_compile() {
 		args=(
 			--configuration=${configuration}
 			--install-dir="${WORKDIR}/build"
+			--ios-toolchain="${IPHONEPATH}"
+			--ios-sdk="${IPHONESDK}"
 		)
 		build_targets=()
 		for x in ${TARGETS} ; do

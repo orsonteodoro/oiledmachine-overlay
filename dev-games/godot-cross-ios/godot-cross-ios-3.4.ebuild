@@ -30,45 +30,26 @@ RDEPEND="
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
+test_path() {
+	local p="${1}"
+	if ! realpath -e "${p}" ; then
+eerror
+eerror "${p} is unreachable"
+eerror
+	fi
+}
+
 pkg_setup() {
 ewarn
 ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
 ewarn
-	if [[ -z "${EGODOT_IOS_SYSROOT}" ]] ; then
+	if [[ -z "${OSXCROSS_IOS}" ]] ; then
 eerror
-eerror "The environment variable EGODOT_IOS_SYSROOT needs to be defined"
-eerror
-		die
-	fi
-	if [[ -z "${EGODOT_IOS_CTARGET}" ]] ; then
-eerror
-eerror "The environment variable EGODOT_IOS_CTARGET needs to be defined"
+eerror "The environment variable OSXCROSS_IOS needs to be defined"
 eerror
 		die
 	fi
 
-	export CC="/usr/bin/${EGODOT_IOS_CTARGET}-clang"
-	export CXX="/usr/bin/${EGODOT_IOS_CTARGET}-clang++"
-
-	if [[ ! -e "${CC}" ]] ; then
-eerror
-eerror "CC=${CC} is missing"
-eerror
-		die
-	fi
-	if [[ ! -e "${CXX}" ]] ; then
-eerror
-eerror "CXX=${CXX} is missing"
-eerror
-		die
-	fi
-
-	export CC="/Developer/usr/bin/${EGODOT_IOS_CTARGET}-gcc"
-
-	if [[ ! -e "${CC}" ]] ; then
-eerror
-eerror "CC=${CC} is missing"
-eerror
-		die
-	fi
+	test_path "${OSXCROSS_IOS}/usr/bin/*-clang"
+	test_path "${OSXCROSS_IOS}/usr/bin/*-clang++"
 }

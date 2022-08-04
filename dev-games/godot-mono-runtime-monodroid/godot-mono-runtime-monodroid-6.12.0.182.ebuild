@@ -90,18 +90,24 @@ LICENSE+=" ${MONO_LICENSE}"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 AOT_CROSS_TARGETS=" cross-arm cross-arm64 cross-x86 cross-x86_64"
 AOT_CROSS_MXE_TARGETS=" cross-arm-win cross-arm64-win cross-x86-win cross-x86_64-win"
-RUNTIME_TARGETS=" armv7 arm64v8 x86 x86_64"
+RUNTIME_TARGETS=" armeabi-v7a arm64-v8a x86 x86_64"
 TARGETS=" ${RUNTIME_TARGETS} ${AOT_CROSS_TARGETS} ${AOT_CROSS_MXE_TARGETS}"
 IUSE+=" ${TARGETS}"
 IUSE+=" debug"
 REQUIRED_USE+="
 	|| ( ${TARGETS} )
+	cross-arm? ( armeabi-v7a )
+	cross-arm64? ( arm64-v8a )
+	cross-x86? ( x86 )
+	cross-x86_64? ( x86_64 )
 "
 DEPEND+=""
+# Distro is laggin in ndk version
+# Upstream uses 23 but is relaxed
 BDEPEND+="
 	${PYTHON_DEPS}
 	  dev-util/android-sdk-update-manager
-	>=dev-util/android-ndk-23
+	>=dev-util/android-ndk-18
 	>=dev-util/cmake-3.18.1
 "
 S="${WORKDIR}/${MY_PN}-release-${MY_PV}"
@@ -167,8 +173,28 @@ src_prepare() {
 }
 
 src_configure() {
-	# ANDROID_HOME is set by dev-util/android-sdk-update-manager
+#	Assumptions by distro:
+#	export ANDROID_NDK_ROOT="/opt/android-ndk"
+#	ANDROID_SDK_DIR="/opt/android-sdk-update-manager"
+#	ANDROID_HOME is set by dev-util/android-sdk-update-manager as
+#	ANDROID_HOME="${EPREFIX}${ANDROID_SDK_DIR}"
+
 	export ANDROID_SDK_ROOT=${ANDROID_HOME}
+	export NDK_VERSION=$(best_version "dev-util/android-ndk" \
+		| sed -e "s|dev-util/android-ndk-||g")
+	if [[ ! -e "${ANDROID_SDK_ROOT}/ndk/${NDK_VERSION}" ]] ; then
+eerror
+eerror "${ANDROID_SDK_ROOT}/ndk/${NDK_VERSION} is unreachable"
+eerror
+		die
+	fi
+	if [[ ! -e "${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager" ]] ; then
+eerror
+eerror "${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager is unreachable"
+eerror "Missing package."
+eerror
+		die
+	fi
 }
 
 src_compile() {
@@ -182,6 +208,7 @@ src_compile() {
 		args=(
 			--configuration=${configuration}
 			--install-dir="${WORKDIR}/build"
+			--android_ndk_version=${NDK_VERSION}
 		)
 		build_targets=()
 		for x in ${TARGETS} ; do

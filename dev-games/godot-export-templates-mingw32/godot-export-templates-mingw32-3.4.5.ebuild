@@ -208,26 +208,34 @@ PATCHES=(
 	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
 )
 
-check_mingw()
-{
-	if [[ -z "${EGODOT_MINGW32_SYSROOT}" ]] ; then
-ewarn
-ewarn "EGODOT_MINGW32_SYSROOT must be specified."
-ewarn
-	fi
-
-	if [[ -z "${EGODOT_MINGW32_CTARGET}" ]] ; then
-ewarn
-ewarn "EGODOT_MINGW32_CTARGET must be specified."
-ewarn
-	fi
-	export MINGW32_PREFIX="${EGODOT_MINGW32_SYSROOT}/${EGODOT_MINGW32_CTARGET}"
-
-	if [[ ! -f "${MINGW32_PREFIX}-gcc" ]] ; then
+test_path() {
+	local p="${1}"
+	if ! realpath -e "${p}" ]] ; then
 eerror
-eerror "${MINGW32_PREFIX}-gcc was not found."
+eerror "${p} was not found."
 eerror
 		die
+	fi
+}
+
+check_mingw()
+{
+	export MINGW32_CHOST=${MINGW32_CHOST:-i686-w64-mingw32-}
+	export MINGW32_SYSROOT="${ESYSROOT}/usr/${MINGW32_CHOST%-}"
+	export MINGW32_PREFIX="${MINGW32_SYSROOT}/${MINGW32_CHOST}"
+
+	if use clang ; then
+		test_path "${MINGW32_PREFIX}/clang"
+		test_path "${MINGW32_PREFIX}/clang++"
+		test_path "${MINGW32_PREFIX}/as"
+		test_path "${MINGW32_PREFIX}/ar"
+		test_path "${MINGW32_PREFIX}/ranlib"
+	else
+		test_path "${MINGW32_PREFIX}/gcc"
+		test_path "${MINGW32_PREFIX}/g++"
+		test_path "${MINGW32_PREFIX}/as"
+		test_path "${MINGW32_PREFIX}/gcc-ar"
+		test_path "${MINGW32_PREFIX}/gcc-ranlib"
 	fi
 }
 

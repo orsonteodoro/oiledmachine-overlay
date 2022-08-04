@@ -17,8 +17,17 @@
 
     Required environment variables
 
-      EGODOT_MACOS_SYSROOT - The crossdev install of the macOS cross toolchain
-      EGODOT_MACOS_SDK_VERSION - The macOS SDK version
+        MACOS_SDK_PATH - path to the macOS SDK
+
+      and either one of
+
+        MACPORTS_PREFIX - for native in arm-macos or x64-macos prefix)
+        OSXCROSS_ROOT - for cross-compile
+
+
+    Optional environment variables
+
+      MACOS_SDK_VERSION - version of the SDK
 
 
     These are to be defined in the per-package environment.  Details to set this

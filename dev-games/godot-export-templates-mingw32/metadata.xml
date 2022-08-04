@@ -9,12 +9,6 @@
   <longdescription>
     This package is allowed to be emerged in native context.
 
-
-    The following environment variables must be defined
-
-    EGODOT_MINGW32_CTARGET - crossdev target triple (i686-w64-mingw32)
-    EGODOT_MINGW32_SYSROOT - crossdev base image relative to CBUILD.  (/usr/i686-w64-mingw32)
-
     See https://wiki.gentoo.org/wiki/Mingw for crossdev details.
 
     This ebuild is meant to be merged with same CHOST as dev-games/godot-editor.
