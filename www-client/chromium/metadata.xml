@@ -50,7 +50,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     Full PGO (i.e. 3 step PGO) is not complete in this ebuild fork and is in
     development in the ebuild level.  PGO on *average* is 10% performance
     benefit relative to -O3.  (At the best case [or outlier cases], PGO can be
-    +40% benefit but usually in atypical scenarios.)
+    +40% benefit but usually in atypical scenarios some of which are related
+    to throughput.)
 
     If you choose to do Full PGO, it will double compilation time.  What this
     means is if you built Chromium in 36 hrs expect it optimized in 72 hours
@@ -58,26 +59,27 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
     Steps required
 
-      1 build browser as an self recording measuring instrument (USE=-pgo-start)
+      1 build browser as a self recording measuring instrument
       2 manually train*
-      3 rebuild as optimized (USE=-pgo-finish)
+      3 rebuild as optimized
 
     * When you manually train, just use the web browser as you normally would
-    use it.  You may use benchmark suite but may produce a performance
+    use it.  You may use benchmark suite but it may produce a performance
     regression.  For this ebuild fork, it was decided to go with manual
     training so that proper profiling can be done considering possibly
     bottlenecks near or in the disabled coded paths as a consequence of running
-    with software rendering (xvfb) such as side affects or code skipping as
-    disabled rendering or drawing due to hints and changes in this different
-    configuration.
+    with software rendering (xvfb) may introduce side affects, unintended
+    consequences, or code skipping resulting in disabled rendering or drawing
+    due to hints and changes in this different configuration.
 
     For training, it is recommended instead to use it usually the way you would
     use it for or use a replay script via selenium to maybe go to a video
-    streaming service and then play a video.  But the script should reflect
+    streaming service and then play a video, but the script should reflect
     typical use or it may introduce a performance regression.  Most packagers
-    would use a test suites or just basic runs.  When you do manual training,
-    you can actually use it in the gaming context.  An instrumented build
-    doesn't typically feel noticably slower actually.
+    would use test suites or just basic tasks.  When you do manual training,
+    you can actually use it in the gaming context or your own personal
+    situations.  An instrumented build doesn't typically feel noticably slower
+    actually.
 
     It is strongly recommended to skip PGO because the sub seconds gains are not
     noticable for most people or use the prebuilt profile to cut PGOing time in
@@ -90,9 +92,35 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     This ebuild fork version of PGO will allow reuse of generated profiles for
     the same BUILD in major.minor.build.patch, but may allow to select to reuse
     PGO profiles based on either same major.minor, BUILD, reuse profile by
-    point release, or always start from scratch.   The prebuilt profile is
+    point release.   The prebuilt profile is
     often reused between patch versions.
 
+    3 step PGO runs should be performed in the beginning of a major version
+    release or the beginning of a build version bump to avoid wasting time
+    doing 3 step PGO immediately before a vulnerability fix release which you
+    would need to toss out the thing that you just built.  The idea is to have 3
+    step followed by a series of 1 step PGO reusing an existing profile.
+
+
+    PGO data directories
+
+      ${ESYSROOT}/var/chromium/major.minor.build.patch/${ABI}
+
+    This data directory may have mixed versions that would annoy some compilers.
+    It may be removed to fix that issue.
+
+
+    Per package environment variables:
+
+    CR_PGO_REFRESH_MODE can be set to determine period of reusable profiles in
+    USE=pgo-full to the following:
+
+      major - A PGO profile is reusable in the same major version.
+      major-minor - A PGO profile is reusable in the same major.minor version
+      build - A PGO profile is reusable in the same major.minor.build version
+              (default)
+      patch - A PGO profile is reusable in the same major.minor.build.patch
+              version
 
     References:
       --lto-O2 is too large - https://github.com/chromium/chromium/commit/da072d13b2a1cc8459c29aa4e52584a4491a4ad6

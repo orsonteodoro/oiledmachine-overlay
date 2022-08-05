@@ -6,7 +6,7 @@
 # for security updates.  They are announced faster than NVD.
 # See https://omahaproxy.appspot.com/ for the latest linux version
 
-EAPI=8
+EAPI=7
 PYTHON_COMPAT=( python3_{8..10} )
 PYTHON_REQ_USE="xml"
 
@@ -22,7 +22,7 @@ CR_CLANG_SLOT_OFFICIAL=15
 LLVM_SLOTS=(${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils \
 python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
-inherit llvm multilib multilib-minimal
+inherit llvm multilib multilib-minimal user # Added by the oiledmachine-overlay
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
@@ -258,7 +258,7 @@ IUSE+=" +partitionalloc libcmalloc"
 IUSE_LIBCXX=( bundled-libcxx system-libstdcxx )
 IUSE+=" ${IUSE_LIBCXX[@]} +bundled-libcxx branch-protection-standard +cfi-vcall
 cfi-cast +cfi-icall +clang +pre-check-llvm +pre-check-vaapi lto-opt +pgo
--pgo-full pgo-start pgo-finish shadowcallstack"
+-pgo-full shadowcallstack"
 # perf-opt
 _ABIS=(
 	abi_x86_32
@@ -311,9 +311,7 @@ REQUIRED_USE+="
 	)
 	partitionalloc? ( !component-build )
 	pgo? ( clang !pgo-full )
-	pgo-full? ( clang !pgo ^^ ( pgo-start pgo-finish ) )
-	pgo-start? ( pgo-full )
-	pgo-finish? ( pgo-full )
+	pgo-full? ( clang !pgo )
 	ppc64? ( !shadowcallstack )
 	pre-check-llvm? ( clang )
 	pre-check-vaapi? ( vaapi )
@@ -1423,10 +1421,6 @@ ewarn "problems are encountered."
 ewarn
 	fi
 
-	if use vaapi ; then
-		find_vaapi
-	fi
-
 	if use system-libstdcxx ; then
 ewarn
 ewarn "The system's libstdcxx may weaken the security.  Consider"
@@ -1439,6 +1433,10 @@ ewarn
 	done
 
 	check_deps_cfi_cross_dso
+
+	if use pgo-full ; then
+		enewgroup crpgo
+	fi
 }
 
 USED_EAPPLY=0
@@ -1495,117 +1493,6 @@ _is_vaapi_allowed() {
 		return 0
 	fi
 	return 1
-}
-
-DRM_RENDER_NODE=
-find_vaapi() {
-	use pre-check-vaapi || return
-	use vaapi || return
-	if [[ -n "${CR_DRM_RENDER_NODE}" ]] ; then
-einfo
-einfo "User VA-API override"
-einfo
-		# Per-package envvar overridable
-		DRM_RENDER_NODE=${CR_DRM_RENDER_NODE}
-	else
-einfo
-einfo "Autodetecting VA-API device"
-einfo
-		unset LIBVA_DRIVERS_PATH
-		unset LIBVA_DRIVER_NAME
-		unset DRM_RENDER_NODE
-		# weight is based on microarchitecture age or on throughput
-		LIBVA_DRIVERS=(
-			# path:name:weight
-			/usr/lib/dri:iHD:30
-			/usr/lib/dri:i965:20
-
-			/opt/amdgpu/lib64/dri:radeonsi:30
-			/opt/amdgpu/lib/x86_64-linux-gnu/dri:radeonsi:30
-			/usr/lib/dri:radeonsi:29
-
-			/opt/amdgpu/lib64/dri:r600:21
-			/opt/amdgpu/lib/x86_64-linux-gnu/dri:r600:21
-			/usr/lib/dri:r600:20
-
-			/opt/amdgpu/lib64/dri:r300:11
-			/opt/amdgpu/lib/x86_64-linux-gnu/dri:r300:11
-			/usr/lib/dri:r300:10
-
-			/usr/lib64/dri/:nvidia:30
-			/usr/lib/dri:vdpau:27
-			/usr/lib/dri:nvidia:25
-			/usr/lib/dri:nouveau:9
-		)
-		local max_weight=0 # pick the highest weight based on highest performance
-		local FLIBVA_DRIVERS_PATH
-		local FLIBVA_DRIVER_NAME
-		for d in $(find /dev/dri -name "render*") ; do
-			# Permute
-			for v in $(seq 0 2) ; do # 2 GPU and 1 APU scenario
-				export DRI_PRIME=${v} # \
-				# See xrandr --listproviders for mapping, could be 1=dGPU, 0=APU/IGP
-				if vainfo 2>/dev/null 1>/dev/null ; then
-					export DRM_RENDER_NODE="${d}"
-					break
-				else
-					local r
-					for r in ${LIBVA_DRIVERS[@]} ; do
-						local path=$(echo "${r}" | cut -f 1 -d ":")
-						local name=$(echo "${r}" | cut -f 2 -d ":")
-						local weight=$(echo "${r}" | cut -f 3 -d ":")
-						export LIBVA_DRIVERS_PATH="${path}"
-						export LIBVA_DRIVER_NAME="${name}"
-						if vainfo 2>/dev/null 1>/dev/null \
-							&& (( ${weight} > ${max_weight} )) ; then
-							export FLIBVA_DRIVERS_PATH="${path}"
-							export FLIBVA_DRIVER_NAME="${name}"
-							export DRM_RENDER_NODE="${d}"
-							max_weight=${weight}
-						fi
-					done
-				fi
-			done
-		done
-		export LIBVA_DRIVERS_PATH="${FLIBVA_DRIVERS_PATH}"
-		export LIBVA_DRIVER_NAME="${FLIBVA_DRIVER_NAME}"
-	fi
-	vaapi_autodetect_failed_msg() {
-eerror
-eerror "VA-API autodetect failed.  Manual setup required."
-eerror
-eerror "Set the CR_DRM_RENDER_NODE per-package envvar to the abspath DRM render"
-eerror "node.  See \`ls /dev/dri\` for a list of possibilities."
-eerror "LIBVA_DRIVERS_PATH, LIBVA_DRIVER_NAME, DRI_PRIME may also need to be"
-eerror "set."
-eerror
-eerror "You may also disable the vaapi USE flag if there is difficulty"
-eerror "installing or configuring the driver."
-eerror
-	}
-	if [[ -n "${CR_DRM_RENDER_NODE}" ]] \
-		&& ! vainfo --display drm --device "${DRM_RENDER_NODE}" ; then
-		eerror "VA-API test failure"
-		vaapi_autodetect_failed_msg
-		die
-	elif [[ -z "${DRM_RENDER_NODE}" ]] ; then
-		vaapi_autodetect_failed_msg
-		die
-	else
-einfo
-einfo "Using VA-API device with DRM render node ${DRM_RENDER_NODE}"
-einfo
-		if [[ -n "${LIBVA_DRIVER_NAME}" ]] ; then
-einfo
-einfo "LIBVA_DRIVER_NAME=${LIBVA_DRIVER_NAME}"
-einfo
-		fi
-		if [[ -n "${LIBVA_DRIVERS_PATH}" ]] ; then
-einfo
-einfo "LIBVA_DRIVERS_PATH=${LIBVA_DRIVERS_PATH}"
-einfo
-		fi
-	fi
 }
 
 is_generating_credits() {
@@ -2036,6 +1923,23 @@ einfo
 		&& multilib_copy_sources
 }
 
+is_new_pgo() {
+	local ret="0"
+	local pgo_data_dir=$(get_pgo_data_dir)
+	if [[ ! -e "${pgo_data_dir}" ]] ; then
+		ret="0"
+	elif is-tc-clang ; then
+		if find "${pgo_data_dir}" -name "*.profraw" 2>/dev/null ; then
+			ret="1"
+		fi
+	elif is-tc-gcc ; then
+		if find "${pgo_data_dir}" -name "*.gcda" 2>/dev/null ; then
+			ret="1"
+		fi
+	fi
+	echo "${ret}"
+}
+
 _configure_pgx() {
 	local chost=$(get_abi_CHOST ${ABI})
 
@@ -2455,19 +2359,22 @@ einfo
 	fi
 
 	# The PGO data must not be wiped by the sandbox or generated in the sandbox.
-	local pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-3)/pgo-${ABI}"
-	if use pgo-start ; then
+	local pgo_data_dir=$(get_pgo_data_dir)
+	local is_new=$(is_new_pgo)
+	if ! use pgo-full ; then
+		:;
+	elif (( ${is_new} == 1 )) ; then
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${pgo_data_dir}"
 		else
 			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
 		fi
-	elif use pgo-finish ; then
+	else
 		mkdir -p "${T}/pgo-${ABI}" || die
 		if tc-is-clang ; then
-			llvm-profdata merge -output="${T}/pgo-custom.profdata" \
+			llvm-profdata merge -output="${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
 				"${pgo_data_dir}" || die
-			append-flags -fprofile-use="${T}/pgo-custom.profdata"
+			append-flags -fprofile-use="${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata"
 		else
 			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
 		fi
@@ -2660,20 +2567,6 @@ einfo
 	mv out/Release/chromedriver{.unstripped,} || die
 }
 
-_gen_pgo_profile() {
-	pushd "${BUILD_DIR}/out/Release" || die
-		if ! ls *.profraw 2>/dev/null 1>/dev/null ; then
-			die "Missing *.profraw files"
-		fi
-einfo
-einfo "Merging PGO profile data to build PGO profile"
-einfo
-		llvm-profdata merge *.profraw \
-			-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
-			|| die
-	popd
-}
-
 _update_licenses() {
 	# Upstream doesn't package PATENTS files
 	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" \
@@ -2735,14 +2628,14 @@ multilib_src_compile() {
 	#	--without-android || die
 
 	if use pgo-full ; then
-		if use pgo-start ; then
+		local is_new=$(is_new_pgo)
+		if (( ${is_new} == 1 )) \
+			|| [[ "${GEN_ABOUT_CREDITS}" == "1" ]] ; then
 			PGO_PHASE=1
 			_configure_pgx # pgi
 			_update_licenses
-			_init_pgo_training
 			_build_pgx
-		elif use pgo-finish ; then
-			_gen_pgo_profile
+		else
 			PGO_PHASE=2
 			_configure_pgx # pgo
 			_build_pgx
@@ -2855,6 +2748,28 @@ einfo
 	touch "${T}/.copied_licenses"
 }
 
+get_pgo_data_dir() {
+	local pgo_refresh_mode="${CR_PGO_REFRESH_MODE:-build}"
+	# CR_PGO_REFRESH_MODE is about the validity of PGO profile reuse.
+	# major = The PGO profile is good in the same major version.
+	# major-minor = The PGO profile is good in the same major.minor version.
+	# build = The PGO profile is good in the same major.minor.build version.
+	# patch = The PGO profile is good in the same major.minor.build.patch version.
+	if [[ "${pgo_refresh_mode}" == "major" ]] ; then
+		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1 ${PV})/${ABI}"
+	elif [[ "${pgo_refresh_mode}" == "major-minor" ]] ; then
+		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-2 ${PV})/${ABI}"
+	elif [[ "${pgo_refresh_mode}" == "build" ]] ; then
+		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-3 ${PV})/${ABI}"
+	elif [[ "${pgo_refresh_mode}" == "patch" ]] ; then
+		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-4 ${PV})/${ABI}"
+	else
+		# Build as fallback
+		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-3 ${PV})/${ABI}"
+	fi
+	echo "${pgo_data_dir}"
+}
+
 multilib_src_install() {
 	if (( ${NABIS} == 1 )) ; then
 		export BUILD_DIR="${S}"
@@ -2963,14 +2878,41 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	# and npm micropackages copyright notices and licenses which may not
 	# have been present in the listed the the .html (about:credits) file
 	_install_licenses
+
+	if use pgo-full ; then
+		local pgo_data_dir=$(get_pgo_data_dir)
+		dodir "${pgo_data_dir}"
+		fowners root:crpgo "${pgo_data_dir}"
+		fperms 0755 "${pgo_data_dir}"
+	fi
+}
+
+remove_pgo_profiles() {
+	local pvr
+	for pvr in ${REPLACING_VERSIONS} ; do
+		einfo "Removing PGO profile(s)"
+		pgo_data_dir=$(get_pgo_data_dir)
+		if [[ -n "${pgo_data_dir}" ]] \
+			&& realpath -e "${pgo_data_dir}" 2>/dev/null ; then
+			rm -rf "${pgo_data_dir}" || die
+		fi
+	done
 }
 
 pkg_postrm() {
 	xdg_icon_cache_update
 	xdg_desktop_database_update
+	if [[ -n "${REPLACING_VERSIONS}" ]] ; then
+		use pgo-full && remove_pgo_profiles
+	fi
 }
 
 print_vaapi_support() {
+#
+# This information is provided for a better WebRTC experience.
+# Instead of using the inferior software codec(s), it suggests better vaapi
+# drivers with hardware accelerated encoders.
+#
 	if has_version "x11-libs/libva-intel-driver" ; then
 ewarn
 ewarn "x11-libs/libva-intel-driver is the older vaapi driver but intended for"
@@ -3098,4 +3040,10 @@ einfo "  ln -sf /usr/lib/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/c
 einfo "  ln -sf /usr/lib32/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
 einfo "  ln -sf /usr/lib32/chromium-browser/chromedriver-${ABI} /usr/bin/chromedriver"
 einfo
+
+	if use pgo-full ; then
+einfo
+einfo "You must be a member of the crpgo group to collect PGO profiling data."
+einfo
+	fi
 }
