@@ -17,17 +17,20 @@ RPRSC_LICENSE="
 	MIT
 	BSD
 	MPL-2.0
-	Boost-1.0"
+	Boost-1.0
+"
 RPRSDK_LICENSE="
 	Apache-2.0
 	BSD
 	MIT
 	Khronos-IP-framework
-	BSD-2"
+	BSD-2
+"
 RIF_LICENSE="
 	Apache-2.0
 	MIT
-	UoI-NCSA"
+	UoI-NCSA
+"
 # See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.3.5/src/rprblender/EULA.html
 RPRBLENDER_EULA_LICENSE="
 	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES
@@ -36,26 +39,31 @@ RPRBLENDER_EULA_LICENSE="
 	CC-BY
 	BSD
 	MIT
-	Khronos-IP-framework"
-LICENSE="Apache-2.0
+	Khronos-IP-framework
+"
+LICENSE="
+	Apache-2.0
 	${RPRSC_LICENSE}
 	${RPRSDK_LICENSE}
 	${RIF_LICENSE}
-	${RPRBLENDER_EULA_LICENSE}"
-# KEYWORDS="~amd64" ebuild is still a Work In Progress (WIP) and needs testing
+	${RPRBLENDER_EULA_LICENSE}
+"
+# KEYWORDS="~amd64" ebuild is still a Work In Progress (WIP) and needs testing.
 PLUGIN_NAME="rprblender"
-# ceiling based on python compatibility matching the particular blender version
+# Ceiling values based on python compatibility matching the particular Blender
+# version.
 MIN_BLENDER_V="2.80"
 MAX_BLENDER_V="2.94" # exclusive
 SLOT="0"
 IUSE+=" +blender-lts +blender-stable blender-master"
 IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide
-video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia
+video_cards_amdgpu video_cards_intel video_cards_nvidia
 video_cards_radeonsi +vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
-# systemwide is preferred but currently doesn't work but did in the past in <2.0
-REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
+# Systemwide is preferred but currently doesn't work but did in the past in <2.0
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
 	|| ( blender-lts blender-master blender-stable )
 	!systemwide
 	python_targets_python3_9
@@ -85,13 +93,14 @@ DEPEND_NOT_LISTED=""
 DEPEND+="  ${CDEPEND_NOT_LISTED}
 	${DEPEND_NOT_LISTED}
 	${PYTHON_DEPS}
-	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/cffi:=[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/distro[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/imageio[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
 	dev-util/opencl-headers
 	sys-apps/pciutils
-	$(python_gen_cond_dep 'dev-python/cffi:=[${PYTHON_USEDEP}]')
-	x11-libs/libdrm"
+	x11-libs/libdrm
+"
 # These are mentioned in the command line output and downloaded after install.
 # They are not really used on linux since athena_send is disabled on Linux but
 # may crash if not installed.
@@ -100,7 +109,8 @@ DEPEND+="  ${CDEPEND_NOT_LISTED}
 PIP_DOWNLOADED="
 	$(python_gen_cond_dep 'dev-python/boto3[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_USEDEP}]')
-	$(python_gen_cond_dep 'dev-python/wheel[${PYTHON_USEDEP}]')"
+	$(python_gen_cond_dep 'dev-python/wheel[${PYTHON_USEDEP}]')
+"
 LEGACY_TBB_SLOT="2" # https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/blob/master/OpenVDB/include/tbb/tbb_stddef.h
 RDEPEND_NOT_LISTED="
 	${PIP_DOWNLOADED}
@@ -129,11 +139,12 @@ RDEPEND_NOT_LISTED="
 		)
 		dev-lang/vtune
 		sys-libs/libomp
-	)"
+	)
+"
 # See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.3.5/README-LNX.md#addon-runuse-linux-ubuntu-requirements
 
-
-RDEPEND+="  ${CDEPEND_NOT_LISTED}
+RDEPEND+="
+	${CDEPEND_NOT_LISTED}
 	${RDEPEND_NOT_LISTED}
 	blender-lts? (
 		>=media-gfx/blender-${MIN_BLENDER_V}[python_single_target_python3_9]
@@ -154,17 +165,14 @@ RDEPEND+="  ${CDEPEND_NOT_LISTED}
 		intel-ocl? ( dev-util/intel-ocl-sdk )
 		|| (
 			video_cards_amdgpu? (
-		opencl_orca? ( dev-libs/amdgpu-pro-opencl )
-		opencl_rocr? ( dev-libs/rocm-opencl-runtime )
+				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
+				opencl_rocr? ( dev-libs/rocm-opencl-runtime )
 			)
-			video_cards_i965? (
-				dev-libs/intel-neo
-			)
-			video_cards_iris? (
+			video_cards_intel? (
 				dev-libs/intel-neo
 			)
 			video_cards_nvidia? (
-		>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
+				>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
 			)
 			video_cards_radeonsi? (
 				dev-libs/amdgpu-pro-opencl
@@ -176,25 +184,24 @@ RDEPEND+="  ${CDEPEND_NOT_LISTED}
 		|| (
 			video_cards_amdgpu? (
 				|| (
-		media-libs/mesa[video_cards_radeonsi,vulkan]
-		media-libs/amdvlk
+					media-libs/mesa[video_cards_radeonsi,vulkan]
+					media-libs/amdvlk
 				)
 			)
-			video_cards_i965? (
-		media-libs/mesa[video_cards_i965,vulkan]
-			)
-			video_cards_iris? (
-		media-libs/mesa[video_cards_iris,vulkan]
+			video_cards_intel? (
+				media-libs/mesa[video_cards_intel,vulkan]
 			)
 			video_cards_nvidia? (
-		>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
+				>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
 			)
 			video_cards_radeonsi? (
-		media-libs/mesa[video_cards_radeonsi,vulkan]
+				media-libs/mesa[video_cards_radeonsi,vulkan]
 			)
 		)
-	)"
-BDEPEND+="  ${CDEPEND_NOT_LISTED}
+	)
+"
+BDEPEND+="
+	${CDEPEND_NOT_LISTED}
 	${PYTHON_DEPS}
 	app-arch/makeself
 	dev-util/patchelf
@@ -202,7 +209,8 @@ BDEPEND+="  ${CDEPEND_NOT_LISTED}
 	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_USEDEP}]')
 	$(python_gen_cond_dep '>=dev-python/pytest-3[${PYTHON_USEDEP}]')
 	>=dev-util/cmake-3.11
-	dev-vcs/git"
+	dev-vcs/git
+"
 RIF_V="1.7.2"
 RPRSDK_V="2.2.10_p20211216"
 RPRSC_V="9999_p20201109"
@@ -223,7 +231,8 @@ ${GH_ORG_BURI}/RadeonImageFilter/archive/${EGIT_COMMIT_RIF}.tar.gz
 ${GH_ORG_BURI}/RadeonProRenderSDK/archive/${EGIT_COMMIT_RPRSDK}.tar.gz
 	-> ${RPRSDK_DF}
 ${GH_ORG_BURI}/RadeonProRenderSharedComponents/archive/${EGIT_COMMIT_RPRSC}.tar.gz
-	-> ${RPRSC_DF}"
+	-> ${RPRSC_DF}
+"
 RESTRICT="mirror strip"
 S="${WORKDIR}/${P}"
 S_RIF="${WORKDIR}/RadeonImageFilter-${EGIT_COMMIT_RIF}"
@@ -271,9 +280,13 @@ ewarn
 
 	# We know because of embree and may be statically linked.
 	if cat /proc/cpuinfo | grep sse2 2>/dev/null 1>/dev/null ; then
-		einfo "CPU is compatible."
+einfo
+einfo "CPU is compatible."
+einfo
 	else
-		ewarn "CPU may not be compatible.  ${PN} requires SSE2."
+ewarn
+ewarn "CPU may not be compatible.  ${PN} requires SSE2."
+ewarn
 	fi
 
 	if use opencl_rocr ; then
@@ -385,7 +398,10 @@ src_install_packed_shared() {
 	popd
 	D_FN="${PLUGIN_NAME}-${PV}-${head_commit:0:7}-linux.zip"
 
-	einfo "Installing addon in shared"
+einfo
+einfo "Installing addon in shared"
+einfo
+
 	cd "${S}" || die
 	insinto "/usr/share/${PN}"
 	newins "${S}/BlenderPkg/.build/${D_FN}" "addon.zip"
@@ -423,48 +439,55 @@ pkg_postinst() {
 	fi
 
 	if use systemwide ; then
-		einfo
-		einfo "It is listed under: Edit > Preferences > Add-ons > Community > Render: Radeon ProRender"
-		einfo
+einfo
+einfo "It is listed under: Edit > Preferences > Add-ons > Community >"
+einfo "Render: Radeon ProRender"
+einfo
 	else
-		einfo
-		einfo "You must install this product manually through blender per user."
-		einfo "The addon can be found in /usr/share/${PN}/addon.zip"
-		einfo
-		einfo "The addon can be uninstalled/installed at:"
-		einfo "Edit > Preferences > Add-ons > Community > Install button at top right > navigate to /usr/share/${PN}/addon.zip"
-		einfo
-		einfo "The addon can be found and check enabled on after installation by going to:"
-		einfo "Edit > Preferences > Add-ons > Community > Render: Radeon ProRender"
-		einfo
-		ewarn
-		ewarn "You must completely uninstall and reinstall the addon through the same menu for changes or upgrades to take affect."
-		ewarn
+einfo
+einfo "You must install this product manually through blender per user."
+einfo "The addon can be found in /usr/share/${PN}/addon.zip"
+einfo
+einfo "The addon can be uninstalled/installed at:"
+einfo "Edit > Preferences > Add-ons > Community > Install button at top right >"
+einfo "navigate to /usr/share/${PN}/addon.zip"
+einfo
+einfo "The addon can be found and check enabled on after installation by going to:"
+einfo "Edit > Preferences > Add-ons > Community > Render: Radeon ProRender"
+einfo
+ewarn
+ewarn "You must completely uninstall and reinstall the addon through the same"
+ewarn "menu for changes or upgrades to take affect."
+ewarn
 	fi
 
-	einfo
-	einfo "You may need to clear the caches.  Run:"
-	einfo "rm -rf ~/.config/blender/*/cache/"
-	einfo
-	einfo "You need to switch to the new renderer:"
-	einfo "See https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/switching.html"
-	einfo
-	einfo "The Full Spectrum Rendering (FSR) modes Low, Medium, High require the vulkan USE flag.  For details, see"
-	einfo "https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/full_spectrum_rendering.html"
-	einfo
-	einfo "Don't forget to add your user account to the video group."
-	einfo "This can be done with: \`gpasswd -a USERNAME video\`"
-	einfo
-
-	ewarn
-	ewarn "If you notice artifacts such as long rectangles when rendering"
-	ewarn "the scene, disable CPU rendering.  Edge artifacts may appear when"
-	ewarn "using medium or lower quality settings.  Using the latest drivers"
-	ewarn "may improve initial compilation time."
-	ewarn
-
-	einfo
-	einfo "To see the material browser, the renderer must be set to Radeon ProRender"
-	einfo "It is located at the bottom of the materials property tab."
-	einfo
+einfo
+einfo "You may need to clear the caches.  Run:"
+einfo "rm -rf ~/.config/blender/*/cache/"
+einfo
+einfo
+einfo "You need to switch to the new renderer and see:"
+einfo
+einfo "  https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/switching.html"
+einfo
+einfo
+einfo "The Full Spectrum Rendering (FSR) modes Low, Medium, High require the"
+einfo "vulkan USE flag.  For details, see:"
+einfo
+einfo "  https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/full_spectrum_rendering.html"
+einfo
+einfo
+einfo "Don't forget to add your user account to the video group."
+einfo "This can be done with: \`gpasswd -a USERNAME video\`"
+einfo
+ewarn
+ewarn "If you notice artifacts such as long rectangles when rendering"
+ewarn "the scene, disable CPU rendering.  Edge artifacts may appear when"
+ewarn "using medium or lower quality settings.  Using the latest drivers"
+ewarn "may improve initial compilation time."
+ewarn
+einfo
+einfo "To see the material browser, the renderer must be set to Radeon ProRender"
+einfo "It is located at the bottom of the materials property tab."
+einfo
 }
