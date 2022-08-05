@@ -46,7 +46,6 @@ LICENSE="
 			MIT
 			all-rights-reserved
 			MPL-1.1
-			NAIST-IPADIC
 			unicode
 			W3C
 			W3C-document
