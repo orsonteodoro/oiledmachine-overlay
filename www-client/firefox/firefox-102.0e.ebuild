@@ -12,6 +12,9 @@
 # Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
 # curl -l http://ftp.mozilla.org/pub/firefox/releases/ | cut -f 3 -d ">" | cut -f 1 -d "<" | grep "esr" | sed -e "s|/||g" | grep "^[0-9]" | sort -V
 
+# Version announcements can be found here also:
+# https://wiki.mozilla.org/Release_Management/Calendar
+
 EAPI="7"
 
 FIREFOX_PATCHSET="firefox-102-patches-02j.tar.xz"
@@ -67,8 +70,10 @@ PATCH_URIS=(
 	https://dev.gentoo.org/~{juippis,polynomial-c,whissi,slashbeast}/mozilla/patchsets/${FIREFOX_PATCHSET}
 )
 
-SRC_URI="${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
-	${PATCH_URIS[@]}"
+SRC_URI="
+	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
+	${PATCH_URIS[@]}
+"
 
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
@@ -88,13 +93,15 @@ LICENSE_FINGERPRINT="\
 LICENSE_FILE_NAME="FF-$(ver_cut 1-2)-ESR-THIRD-PARTY-LICENSES"
 LICENSE+=" ${LICENSE_FILE_NAME}"
 LICENSE+="
-	( BSD-2
+	(
+		BSD-2
 		BSD
 		LGPL-2.1
 		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
 		( all-rights-reserved || ( MIT AFL-2.1 ) )
 		( MIT GPL-2 )
-		( all-rights-reserved || ( AFL-2.1 BSD ) ) )
+		( all-rights-reserved || ( AFL-2.1 BSD ) )
+	)
 	( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -107,7 +114,7 @@ LICENSE+="
 	curl
 	GPL-2+
 	GPL-3+
-	icu
+	icu-71.1
 	ISC
 	Ispell
 	libpng
@@ -123,16 +130,21 @@ LICENSE+="
 	unicode
 	W3C-document
 	ZLIB
-	pgo? ( ( BSD-2
-		( all-rights-reserved || ( MIT AFL-2.1 ) )
-		( MIT GPL-2 )
-		BSD
-		MIT )
+	pgo? (
+		(
+			BSD-2
+			( all-rights-reserved || ( MIT AFL-2.1 ) )
+			( MIT GPL-2 )
+			BSD
+			MIT
+		)
 		BSD
 		BSD-2
 		LGPL-2.1
 		LGPL-2.1+
-		MPL-2.0	)" # \
+		MPL-2.0
+	)
+" # \
 # emerge does not recognize ^^ for the LICENSE variable.  You must choose
 # at most one for some packages when || is present.
 
@@ -209,12 +221,15 @@ LICENSE+="
 # ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- \#
 #   the vanilla ZLIB lib license doesn't contain all rights reserved
 
-IUSE="+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel
+IUSE="
+	+clang cpu_flags_arm_neon dbus debug eme-free hardened hwaccel
 	jack libproxy lto +openh264 pgo pulseaudio sndio selinux
 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 	+system-libvpx system-png system-python-libs +system-webp
-	wayland wifi"
-_ABIS="abi_x86_32
+	wayland wifi
+"
+_ABIS="
+	abi_x86_32
 	abi_x86_64
 	abi_x86_x32
 	abi_mips_n32
@@ -223,17 +238,20 @@ _ABIS="abi_x86_32
 	abi_ppc_32
 	abi_ppc_64
 	abi_s390_32
-	abi_s390_64"
+	abi_s390_64
+"
 IUSE+=" ${_ABIS}"
 IUSE+=" -jemalloc"
 
 # Firefox-only IUSE
 IUSE+=" geckodriver +gmp-autoupdate screencast +X"
 
-REQUIRED_USE="debug? ( !system-av1 )
+REQUIRED_USE="
+	debug? ( !system-av1 )
 	pgo? ( lto )
 	wayland? ( dbus )
-	wifi? ( dbus )"
+	wifi? ( dbus )
+"
 
 # Firefox-only REQUIRED_USE flags
 REQUIRED_USE+=" || ( X wayland )"
@@ -245,7 +263,7 @@ LLVM_SLOTS=(14 13 12 11)
 gen_llvm_bdepends() {
 	local o=""
 	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
+		echo "
 		(
 			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
@@ -256,11 +274,11 @@ gen_llvm_bdepends() {
 		)
 		"
 	done
-	echo -e "${o}"
 }
 
 BDEPEND+=" || ( $(gen_llvm_bdepends) )"
-BDEPEND+=" ${PYTHON_DEPS}
+BDEPEND+="
+	${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
 	>=dev-util/cbindgen-0.24.0
@@ -268,7 +286,8 @@ BDEPEND+=" ${PYTHON_DEPS}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=virtual/rust-1.59.0[${MULTILIB_USEDEP}]
 	amd64? ( >=dev-lang/nasm-2.14 )
-	x86? ( >=dev-lang/nasm-2.14 )"
+	x86? ( >=dev-lang/nasm-2.14 )
+"
 
 CDEPEND="
 	dev-libs/atk[${MULTILIB_USEDEP}]
@@ -340,7 +359,8 @@ CDEPEND="
 	)
 "
 
-RDEPEND="${CDEPEND}
+RDEPEND="
+	${CDEPEND}
 	!www-client/firefox:0
 	!www-client/firefox:esr
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
@@ -351,9 +371,11 @@ RDEPEND="${CDEPEND}
 			>=media-sound/apulse-0.1.12-r4[${MULTILIB_USEDEP}]
 		)
 	)
-	selinux? ( sec-policy/selinux-mozilla )"
+	selinux? ( sec-policy/selinux-mozilla )
+"
 
-DEPEND="${CDEPEND}
+DEPEND="
+	${CDEPEND}
 	pulseaudio? (
 		|| (
 			media-sound/pulseaudio[${MULTILIB_USEDEP}]
@@ -363,7 +385,8 @@ DEPEND="${CDEPEND}
 	X? (
 		x11-libs/libICE[${MULTILIB_USEDEP}]
 		x11-libs/libSM[${MULTILIB_USEDEP}]
-	)"
+	)
+"
 RESTRICT="mirror"
 
 S="${WORKDIR}/${PN}-${PV%_*}"
@@ -600,7 +623,9 @@ pkg_pretend() {
 
 NABIS=0
 pkg_setup() {
+	einfo
 	einfo "This is the ESR release."
+	einfo
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if use pgo ; then
 			if ! has userpriv ${FEATURES} ; then
@@ -776,7 +801,9 @@ src_unpack() {
 }
 
 verify_license_fingerprint() {
+einfo
 einfo "Verifying about:license fingerprint"
+einfo
 	x_license_fingerprint=$(sha512sum "${S}/toolkit/content/license.html" \
 		| cut -f 1 -d " ")
 	# Check even between patched versions and/or new features.
