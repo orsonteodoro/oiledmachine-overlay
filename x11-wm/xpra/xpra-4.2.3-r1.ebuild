@@ -27,8 +27,8 @@ IUSE+=" avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups dbus
 	opengl openrc mdns mysql +notifications nvenc nvfbc nvjpeg pam pillow
 	png sd_listen selinux +server sound sqlite ssh sshpass +ssl systemd test
 	u2f vaapi vpx vsock v4l2 webcam webp websockets X xdg zeroconf zlib"
-IUSE+=" video_cards_amdgpu video_cards_intel video_cards_iris video_cards_i965
-video_cards_r600 video_cards_radeonsi"
+IUSE+=" video_cards_amdgpu video_cards_intel video_cards_r600
+video_cards_radeonsi"
 
 #LIMD # ATM, GEN 5-12
 #LID # C2M, GEN 5-9
@@ -159,21 +159,12 @@ DEPEND+=" ${PYTHON_DEPS}
 		       video_cards_amdgpu? (
 				media-libs/mesa[gallium,vaapi,video_cards_radeonsi]
 		       )
-		       video_cards_i965? (
-				|| (
-					x11-libs/libva-intel-media-driver
-					x11-libs/libva-intel-driver
-				)
-		       )
 		       video_cards_intel? (
 				|| (
 					x11-libs/libva-intel-media-driver
 					x11-libs/libva-intel-driver
 				)
 		       )
-		       video_cards_iris? (
-				x11-libs/libva-intel-media-driver
-                       )
 		       video_cards_r600? ( media-libs/mesa[gallium,vaapi,video_cards_r600] )
 		       video_cards_radeonsi? ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi] )
 		  )
