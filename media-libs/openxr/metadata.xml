@@ -18,10 +18,8 @@
     <flag name="test">Builds tests</flag>
     <flag name="video_cards_amdgpu">Checks if the mesa Vulkan driver is
       installed.</flag>
-    <flag name="video_cards_i965">Checks if the Gen7.5+ (Haswell or newer)
-      Vulkan driver is installed</flag>
-    <flag name="video_cards_iris">Checks if the Gen8+ (Broadwell or newer)
-      Vulkan driver is installed</flag>
+    <flag name="video_cards_intel">Checks if the Intel Vulkan driver is
+      installed</flag>
     <flag name="video_cards_nvidia">Checks if the NVIDIA Vulkan driver is
       installed</flag>
     <flag name="video_cards_radeonsi">Checks if the Mesa Vulkan driver is
