@@ -47,6 +47,7 @@ MONO_LICENSE="
 	LGPL-2.1
 	LGPL-2.1-with-linking-exception
 	( MIT UoI-NCSA )
+	Mono-gc_allocator.h
 	Mono-patents
 	MPL-1.1
 	Ms-PL
