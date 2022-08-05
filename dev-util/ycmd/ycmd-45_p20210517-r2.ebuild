@@ -114,6 +114,9 @@ LICENSE="
 	!system-mono? (
 		all-rights-reserved
 		MIT
+		BSD
+		DOTNET-libraries-and-runtime-components-patents
+		Mono-patents
 	)
 	!system-watchdog? (
 		Apache-2.0
