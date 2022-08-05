@@ -9,30 +9,130 @@ inherit cmake-utils eutils flag-o-matic multilib-build python-r1
 
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
-LICENSE="GPL-3+ BSD
-	clangd? ( !system-clangd? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA ) )
-	csharp? ( all-rights-reserved MIT )
-	examples? ( Apache-2.0 )
-	go? ( !system-go-tools? ( BSD MIT all-rights-reserved Apache-2.0 ) )
-	java? ( !system-jdtls? ( Apache-1.1 Apache-2.0 BSD BSD-2 dom4j EPL-2.0
-		JDOM MIT all-rights-reserved MPL-1.1 W3C W3C-document ) )
-	javascript? ( !system-tern? ( MIT all-rights-reserved CC-BY-SA-4.0 ISC ) )
-	libclang? ( !system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT
-		UoI-NCSA ) )
-	python? ( !system-jedi? ( Apache-2.0 BSD BSD-2 MIT PSF-2 ) )
-	!system-mrab-regex? ( all-rights-reserved CNRI PSF-2 )
-	rust? ( !system-rust? ( || ( MIT Apache-2.0 ) Apache-2.0
-		Apache-2.0-with-LLVM-exceptions BSD BSD-1 BSD-2 BSD-4
-		CC-BY-4.0 GPL-2-with-linking-exception LGPL-2.1 libcurl
-		MIT OFL-1.1 all-rights-reserved openssl Unlicense UoI-NCSA
-		ZLIB ) )
-	!system-bottle? ( MIT )
-	!system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA )
-	!system-mono? ( all-rights-reserved MIT )
-	!system-watchdog? ( Apache-2.0 )
-	typescript? ( !system-typescript? ( all-rights-reserved Apache-2.0
-		CC-BY-4.0 MIT unicode W3C ) )
-	test? ( BSD GPL-3+ )"
+LICENSE="
+	GPL-3+
+	BSD
+	clangd? (
+		!system-clangd? (
+			Apache-2.0-with-LLVM-exceptions
+			UoI-NCSA
+		)
+	)
+	csharp? (
+		all-rights-reserved
+		MIT
+	)
+	examples? (
+		Apache-2.0
+	)
+	go? (
+		!system-go-tools? (
+			BSD
+			MIT
+			all-rights-reserved
+			Apache-2.0
+		)
+	)
+	java? (
+		!system-jdtls? (
+			Apache-1.1
+			Apache-2.0
+			BSD
+			BSD-2
+			dom4j
+			EPL-2.0
+			JDOM
+			MIT
+			all-rights-reserved
+			MPL-1.1
+			W3C
+			W3C-document
+		)
+	)
+	javascript? (
+		!system-tern? (
+			MIT
+			all-rights-reserved
+			CC-BY-SA-4.0
+			ISC
+		)
+	)
+	libclang? (
+		!system-libclang? (
+			Apache-2.0-with-LLVM-exceptions
+			MIT
+			UoI-NCSA
+		)
+	)
+	python? (
+		!system-jedi? (
+			Apache-2.0
+			BSD
+			BSD-2
+			MIT
+			PSF-2
+		)
+	)
+	!system-mrab-regex? (
+		all-rights-reserved
+		CNRI
+		PSF-2
+	)
+	rust? (
+		!system-rust? (
+			|| (
+				MIT
+				Apache-2.0
+			)
+			Apache-2.0
+			Apache-2.0-with-LLVM-exceptions
+			BSD
+			BSD-1
+			BSD-2
+			BSD-4
+			CC-BY-4.0
+			GPL-2-with-linking-exception
+			LGPL-2.1
+			libcurl
+			MIT
+			OFL-1.1
+			all-rights-reserved
+			openssl
+			Unlicense
+			UoI-NCSA
+			ZLIB
+		)
+	)
+	!system-bottle? (
+		MIT
+	)
+	!system-libclang? (
+		Apache-2.0-with-LLVM-exceptions
+		MIT
+		UoI-NCSA
+	)
+	!system-mono? (
+		all-rights-reserved
+		MIT
+	)
+	!system-watchdog? (
+		Apache-2.0
+	)
+	typescript? (
+		!system-typescript? (
+			all-rights-reserved
+			Apache-2.0
+			CC-BY-4.0
+			MIT
+			unicode
+			W3C
+		)
+	)
+	test? (
+		BSD
+		GPL-3+
+	)
+"
 
 # Apache-2.0 with all-rights-reserved third_party/tsserver/node_modules/typescript/CopyrightNotice.txt [3]
 # The original Apache-2.0 license does not contain all rights reserved
@@ -114,12 +214,13 @@ LICENSE="GPL-3+ BSD
 
 SLOT_MAJ=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJ}/${PVR}"
-IUSE+=" c clangd csharp cuda cxx debug developer doc examples go java javascript
+IUSE+="
+c clangd csharp cuda cxx debug developer doc examples go java javascript
 libclang minimal netcore netfx objc objcxx python rust system-bottle
-system-boost system-clangd system-go-tools system-jdtls system-jedi system-libclang
-system-mono system-mrab-regex system-requests system-rust
-system-rust system-tern system-typescript system-watchdog test
-typescript vim"
+system-boost system-clangd system-go-tools system-jdtls system-jedi
+system-libclang system-mono system-mrab-regex system-requests system-rust
+system-rust system-tern system-typescript system-watchdog test typescript vim
+"
 CLANG_V="11.0"
 CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
 PV_MAJ=$(ver_cut 1 ${PV})
@@ -128,22 +229,98 @@ PV_MAJ=$(ver_cut 1 ${PV})
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	!system-rust
-	c? ( || ( clangd libclang ) cxx )
-	clangd? ( || ( c cxx objc objcxx ) )
-	csharp? ( || ( netcore netfx ) )
-	cuda? ( || ( clangd libclang ) cxx )
-	cxx? ( || ( clangd libclang ) )
-	libclang? ( || ( c cxx objc objcxx ) )
-	objc? ( || ( clangd libclang ) cxx )
-	objcxx? ( || ( clangd libclang ) cxx )
-	system-clangd? ( || ( c cxx objc objcxx ) clangd )
-	system-go-tools? ( go )
-	system-jdtls? ( java )
-	system-jedi? ( python )
-	system-libclang? ( || ( c cxx objc objcxx ) libclang )
-	system-rust? ( rust )
-	system-tern? ( javascript )
-	test? ( system-requests )
+	c? (
+		|| (
+			clangd
+			libclang
+		)
+		cxx
+	)
+	clangd? (
+		|| (
+			c
+			cxx
+			objc
+			objcxx
+		)
+	)
+	csharp? (
+		|| (
+			netcore
+			netfx
+		)
+	)
+	cuda? (
+		|| (
+			clangd
+			libclang
+		)
+		cxx
+	)
+	cxx? (
+		|| (
+			clangd
+			libclang
+		)
+	)
+	libclang? (
+		|| (
+			c
+			cxx
+			objc
+			objcxx
+		)
+	)
+	objc? (
+		|| (
+			clangd
+			libclang
+		)
+		cxx
+	)
+	objcxx? (
+		|| (
+			clangd
+			libclang
+		)
+		cxx
+	)
+	system-clangd? (
+		|| (
+			c
+			cxx
+			objc
+			objcxx
+		)
+		clangd
+	)
+	system-go-tools? (
+		go
+	)
+	system-jdtls? (
+		java
+	)
+	system-jedi? (
+		python
+	)
+	system-libclang? (
+		|| (
+			c
+			cxx
+			objc
+			objcxx
+		)
+		libclang
+	)
+	system-rust? (
+		rust
+	)
+	system-tern? (
+		javascript
+	)
+	test? (
+		system-requests
+	)
 "
 
 # gopls is 0.4.1
@@ -182,32 +359,62 @@ DEPEND+="
 	${PYTHON_DEPS}
 	csharp? (
 		system-mono? (
-			netfx? ( >=dev-lang/mono-6.10.0 )
+			netfx? (
+				>=dev-lang/mono-6.10.0
+			)
 			netcore? (
 				>=dev-lang/mono-6.10.0
 				>=dev-dotnet/dotnetcore-sdk-bin-3.1.201:3.1
 			)
 		)
 	)
-	java? ( virtual/jre:11 )
-	javascript? ( ${RDEPEND_NODEJS} )
-	system-boost? ( >=dev-libs/boost-1.72:=[python,threads,${PYTHON_USEDEP}] )
-	system-bottle? ( >=dev-python/bottle-${BOTTLE_V}[${PYTHON_USEDEP}] )
-	system-clangd? ( >=sys-devel/clang-${CLANGD_V}:${CLANG_V_MAJ} )
-	system-go-tools? ( >=dev-go/go-tools-0_pre20200701 )
-	system-jdtls? ( >=dev-java/jdt-${JDTLS_V%-*} )
-	system-jedi? ( >=dev-python/jedi-${JEDI_V}[${PYTHON_USEDEP}]
-			>=dev-python/numpydoc-0.9.0_pre20190408[${PYTHON_USEDEP}]
-			>=dev-python/parso-${PARSO_V}[${PYTHON_USEDEP}] )
-	system-libclang? ( >=sys-devel/clang-${LIBCLANG_V}:${CLANG_V_MAJ} )
+	java? (
+		virtual/jre:11
+	)
+	javascript? (
+		${RDEPEND_NODEJS}
+	)
+	system-boost? (
+		>=dev-libs/boost-1.72:=[python,threads,${PYTHON_USEDEP}]
+	)
+	system-bottle? (
+		>=dev-python/bottle-${BOTTLE_V}[${PYTHON_USEDEP}]
+	)
+	system-clangd? (
+		>=sys-devel/clang-${CLANGD_V}:${CLANG_V_MAJ}
+	)
+	system-go-tools? (
+		>=dev-go/go-tools-0_pre20200701
+	)
+	system-jdtls? (
+		>=dev-java/jdt-${JDTLS_V%-*}
+	)
+	system-jedi? (
+		>=dev-python/jedi-${JEDI_V}[${PYTHON_USEDEP}]
+		>=dev-python/numpydoc-0.9.0_pre20190408[${PYTHON_USEDEP}]
+		>=dev-python/parso-${PARSO_V}[${PYTHON_USEDEP}]
+	)
+	system-libclang? (
+		>=sys-devel/clang-${LIBCLANG_V}:${CLANG_V_MAJ}
+	)
 	system-mrab-regex? (
 		>=dev-python/regex-2020.10.15[${PYTHON_USEDEP}]
 	)
-	system-rust? ( >=dev-lang/rust-1.51.0_pre20210211[clippy,rustfmt] )
-	system-tern? ( >=dev-nodejs/tern-0.21.0 )
-	system-typescript? ( >=dev-lang/typescript-4.1.5 )
-	system-watchdog? ( >=dev-python/watchdog-${WATCHDOG_V} )
-	typescript? ( ${RDEPEND_NODEJS} )
+	system-rust? (
+		>=dev-lang/rust-1.51.0_pre20210211[clippy,rustfmt]
+	)
+	system-tern? (
+		>=dev-nodejs/tern-0.21.0
+	)
+	system-typescript? (
+		>=dev-lang/typescript-4.1.5
+	)
+	system-watchdog? (
+		>=dev-python/watchdog-${WATCHDOG_V}
+	)
+	typescript? (
+		${RDEPEND_NODEJS}
+	)
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
@@ -216,8 +423,11 @@ BDEPEND+="
 		>=sys-devel/gcc-8
 		>=sys-devel/clang-7
 	)
-	javascript? ( ${BDEPEND_NODEJS} )
-	test? ( >=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
+	javascript? (
+		${BDEPEND_NODEJS}
+	)
+	test? (
+		>=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
 		>=dev-python/coverage-4.2[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.0[${PYTHON_USEDEP}]
 		dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
@@ -229,8 +439,11 @@ BDEPEND+="
 		dev-python/pytest-rerunfailures[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )
-	typescript? ( ${BDEPEND_NODEJS} )
+		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}]
+	)
+	typescript? (
+		${BDEPEND_NODEJS}
+	)
 "
 # Speed up downloads for rebuilds.  Precache outside of sandbox so we don't keep
 #   redownloading.
@@ -274,57 +487,61 @@ https://github.com/davidhalter/typeshed/archive/${EGIT_COMMIT_TYPESHED}.tar.gz
 	-> ${TYPESHED_FN}
 https://github.com/gorakhargosh/watchdog/archive/refs/tags/v${WATCHDOG_V}.tar.gz
 	-> ${WATCHDOG_FN}
-!system-clangd? (
-	clangd? (
-		amd64? (
-			elibc_glibc? (
+	!system-clangd? (
+		clangd? (
+			amd64? (
+				elibc_glibc? (
 https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-x86_64-unknown-linux-gnu.tar.bz2
+				)
 			)
-		)
-		arm64? (
-			elibc_glibc? (
+			arm64? (
+				elibc_glibc? (
 https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-aarch64-linux-gnu.tar.bz2
+				)
 			)
-		)
-		arm? (
-			elibc_glibc? (
+			arm? (
+				elibc_glibc? (
 https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-armv7a-linux-gnueabihf.tar.bz2
+				)
 			)
 		)
 	)
-)
-!system-libclang? (
-	libclang? (
-		amd64? (
-			elibc_glibc? (
+	!system-libclang? (
+		libclang? (
+			amd64? (
+				elibc_glibc? (
 https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-x86_64-unknown-linux-gnu.tar.bz2
+				)
 			)
-		)
-		arm? (
-			elibc_glibc? (
+			arm? (
+				elibc_glibc? (
 https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-armv7a-linux-gnueabihf.tar.bz2
+				)
 			)
-		)
-		arm64? (
-			elibc_glibc? (
+			arm64? (
+				elibc_glibc? (
 https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-aarch64-linux-gnu.tar.bz2
+				)
 			)
 		)
 	)
-)
-java? ( !system-jdtls? ( http://download.eclipse.org/jdtls/snapshots/jdt-language-server-${JDTLS_V}.tar.gz ) )
-csharp? (
+	csharp? (
 https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_V}/omnisharp.http-linux-x64.tar.gz
 	-> omnisharp-${OMNISHARP_V}.http-linux-x64.tar.gz
 https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_V}/omnisharp.http-linux-x86.tar.gz
 	-> omnisharp-${OMNISHARP_V}.http-linux-x86.tar.gz
-)
-rust? (
-	!system-rust? (
-		https://static.rust-lang.org/dist/${RUST_V#*-}/rust-src-nightly.tar.gz
-			-> rust-src-nightly-${RUST_V#*-}.tar.gz
 	)
-)
+	java? (
+		!system-jdtls? (
+https://download.eclipse.org/jdtls/milestones/$(ver_cut 1-3 ${JDTLS_V})/jdt-language-server-${JDTLS_V}.tar.gz
+		)
+	)
+	rust? (
+		!system-rust? (
+https://static.rust-lang.org/dist/${RUST_V#*-}/rust-src-nightly.tar.gz
+	-> rust-src-nightly-${RUST_V#*-}.tar.gz
+		)
+	)
 "
 
 gen_rust_dls()
@@ -457,7 +674,6 @@ eerror "to be able to download the internal dependencies."
 eerror
 			die
 		fi
-		:;
 	fi
 
 	# No standard ebuild yet.
@@ -496,7 +712,9 @@ eerror
 	fi
 
 	if use rust ; then
-		ewarn "Rust support for this core version may be broken use 45 instead."
+ewarn
+ewarn "Rust support for this core version may be broken use 45 instead."
+ewarn
 	fi
 }
 
@@ -514,7 +732,8 @@ src_unpack() {
 		${WATCHDOG_FN}
 
 	cd "${S}" || die
-	rm -rf third_party/bottle \
+	rm -rf \
+		third_party/bottle \
 		third_party/jedi_deps/jedi \
 		third_party/jedi_deps/numpydoc \
 		third_party/jedi_deps/numpydoc/doc/scipy-sphinx-theme \
@@ -522,7 +741,8 @@ src_unpack() {
 		third_party/jedi_deps/jedi/jedi/third_party/typeshed \
 		third_party/jedi_deps/jedi/jedi/third_party/django-stubs \
 		third_party/mrab-regex \
-		third_party/watchdog_deps/watchdog || die
+		third_party/watchdog_deps/watchdog \
+		|| die
 
 	if ! use system-bottle ; then
 		mv "${S_BOTTLE}" \
@@ -625,7 +845,9 @@ unpack_go_pkg()
 	local tag="${3}"
 	local dest="${S_GO}/src/${pkg_name}"
 	local dest_name="${pkg_name//\//-}-${tag//\//-}"
-	einfo "Unpacking ${dest_name}.tar.gz"
+einfo
+einfo "Unpacking ${dest_name}.tar.gz"
+einfo
 	mkdir -p "${dest}" || die
 	if [[ "${pkg_name}" == "golang.org/x/tools" ]] ; then
 		tar --strip-components=1 -x -C "${dest}" \
@@ -659,7 +881,9 @@ unpack_gopls()
 
 src_compile_gopls()
 {
-	einfo "Building gopls"
+einfo
+einfo "Building gopls"
+einfo
 	export GO111MODULE=auto
 	export GOPATH="${BUILD_DIR}/third_party/go"
 	export GOBIN="${GOPATH}/bin"
@@ -688,7 +912,9 @@ unpack_rust_pkg()
 		fn="${pkg_name}-nightly-${nightly_date}.tar.gz"
 		root_path="${pkg_name}-nightly"
 	fi
-	einfo "Unpacking ${fn}"
+einfo
+einfo "Unpacking ${fn}"
+einfo
 	tar --overwrite \
 		--strip-components=2 \
 		-x -C "${dest}" \
@@ -703,8 +929,10 @@ _install_rust_locally()
 		for abi in $(multilib_get_enabled_abis) ; do
 			local chost=$(get_abi_CHOST ${abi})
 			local arch="${chost%%-*}"
-			einfo "chost: ${chost}"
-			einfo "arch: ${arch}"
+einfo
+einfo "chost: ${chost}"
+einfo "arch: ${arch}"
+einfo
 			case ${arch} in
 				aarch64*)
 					if use elibc_glibc ; then
@@ -760,10 +988,12 @@ _install_rust_locally()
 					fi
 					;;
 				*)
-					einfo "chost: ${chost}"
-					einfo "arch: ${arch}"
-					die \
-			"Please use the system-rust USE flag instead"
+eerror
+eerror "chost: ${chost}"
+eerror "arch: ${arch}"
+eerror "Please use the system-rust USE flag instead"
+eerror
+						die
 					;;
 			esac
 			unpack_rust_pkg rust-src ""
@@ -776,23 +1006,44 @@ _check_abi_supported()
 {
 	if ! use system-libclang && use libclang ; then
 		if use elibc_musl ; then
-			die "Please use the system-libclang USE flag instead"
+eerror
+eerror "Please use the system-libclang USE flag instead"
+eerror
+			die
 		fi
-		einfo "Checking precompiled libclang support"
+einfo
+einfo "Checking precompiled libclang support"
+einfo
 		for abi in $(multilib_get_enabled_abis) ; do
 			local chost=$(get_abi_CHOST ${abi})
 			local arch="${chost%%-*}"
-			einfo "chost: ${chost}"
-			einfo "arch: ${arch}"
+einfo
+einfo "chost: ${chost}"
+einfo "arch: ${arch}"
+einfo
 			case ${arch} in
-				aarch64*) einfo "Supported ${arch}" ;;
-				armv7a*h*) einfo "Supported ${arch}" ;;
-				x86_64*) einfo "Supported ${arch}" ;;
+				aarch64*)
+einfo
+einfo "Supported ${arch}"
+einfo
+					;;
+				armv7a*h*)
+einfo
+einfo "Supported ${arch}"
+einfo
+					;;
+				x86_64*)
+einfo
+einfo "Supported ${arch}"
+einfo
+					;;
 				*)
-					einfo "chost: ${chost}"
-					einfo "arch: ${arch}"
-					die \
-			"Please use the system-libclang USE flag instead" ;;
+eerror
+eerror "chost: ${chost}"
+eerror "arch: ${arch}"
+eerror "Please use the system-libclang USE flag instead"
+eerror
+					;;
 			esac
 		done
 	fi
@@ -810,7 +1061,9 @@ src_prepare() {
 		> ycmd/default_settings.json || die
 
 	if use clangd ; then
-		ewarn "Using clangd is experimental."
+ewarn
+ewarn "Using clangd is experimental."
+ewarn
 	fi
 
 	if use system-libclang ; then
@@ -821,9 +1074,10 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-42_p20200108-remove-ultisnips.patch"
 	fi
 
-	sed -i -e "s|\
-___HMAC_SECRET___|\
-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" \
+	local hash=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 \
+		| head -c16 \
+		| base64)
+	sed -i -e "s|___HMAC_SECRET___|${hash}|g" \
 		ycmd/default_settings.json || die
 
 	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|" \
@@ -1172,11 +1426,15 @@ src_compile() {
 			|| ! use system-rust \
 			|| ! use system-tern \
 			|| ! use system-typescript ; then
-			einfo "Path A: Running build.py"
-			einfo "${EPYTHON} build.py ${myargs[@]}"
+einfo
+einfo "Path A: Running build.py"
+einfo "${EPYTHON} build.py ${myargs[@]}"
+einfo
 			${EPYTHON} build.py ${myargs[@]}
 		elif use system-libclang ; then
-			einfo "Path B: Running cmake-utils_src_compile"
+einfo
+einfo "Path B: Running cmake-utils_src_compile"
+einfo
 			cmake-utils_src_compile
 		fi
 
@@ -1233,7 +1491,9 @@ _shrink_install() {
 		-o -iname "*NOTICE*"
 		-o -iname "*PATENTS*"
 		-o -iname "*README*" )
-	einfo "Cleaning third_party"
+einfo
+einfo "Cleaning third_party"
+einfo
 	find {third_party/bottle,third_party/jedi_deps,ycmd} \
 		! \( -name "*.py" \
 			-o -name "*.pyc" \
@@ -1249,7 +1509,9 @@ _shrink_install() {
 	rm -rf third_party/jedi_deps/jedi/scripts || die
 	rm -rf third_party/bottle/plugins || die
 	if use csharp ; then
-		einfo "Cleaning omnisharp-roslyn"
+einfo
+einfo "Cleaning omnisharp-roslyn"
+einfo
 		find third_party/omnisharp-roslyn \
 			! \(	-name "*.dll" \
 				-o -name "*.so" \
@@ -1270,7 +1532,9 @@ _shrink_install() {
 		fi
 	fi
 	if ! use system-mrab-regex ; then
-		einfo "Cleaning regex"
+einfo
+einfo "Cleaning regex"
+einfo
 		rm -rf third_party/mrab-regex || die
 		find third_party/regex-build \
 			! \( -name "*.so" \
@@ -1281,21 +1545,29 @@ _shrink_install() {
 			-exec rm -f "{}" + 2>/dev/null
 	fi
 	if use system-watchdog ; then
-		einfo "Cleaning watchdog"
+einfo
+einfo "Cleaning watchdog"
+einfo
 		rm -rf third_party/watchdog_deps/watchdog || die
 	fi
 
-	einfo "Cleaning out cpp build time files"
+einfo
+einfo "Cleaning out cpp build time files"
+einfo
 	rm -rf cpp || die
 
 	if use go ; then
-		einfo "Cleaning out go folders"
+einfo
+einfo "Cleaning out go folders"
+einfo
 		find third_party/go ! \( -executable \
 			-o ${arg_legal[@]} \) \
 			-exec rm "{}" +
 	fi
 
-	einfo "Cleaning out VCS, CI, testing"
+einfo
+einfo "Cleaning out VCS, CI, testing"
+einfo
 	find . \( -name ".git*" \
 			-o -name "azure" \
 			-o -name "azure-pipelines.yml" \
@@ -1308,11 +1580,15 @@ _shrink_install() {
 			|| die
 	fi
 
-	einfo "Cleaning out installer files"
+einfo
+einfo "Cleaning out installer files"
+einfo
 	find . \( -name "setup.py" \) \
 		-exec rm -rf "{}" +
 
-	einfo "Cleaning out completers"
+einfo
+einfo "Cleaning out completers"
+einfo
 	pushd ycmd/completers || die
 		if ! use c ; then
 			rm -rf c || die
@@ -1355,7 +1631,9 @@ _shrink_install() {
 		fi
 	popd
 
-	einfo "Cleaning out test files"
+einfo
+einfo "Cleaning out test files"
+einfo
 	find . \( -name "conftest.py" \
 			-o -name "test.py" \) \
 		-delete
@@ -1366,18 +1644,24 @@ _shrink_install() {
 	fi
 	rm -rf third_party/generic_server || die
 
-	einfo "Cleaning out test folders"
+einfo
+einfo "Cleaning out test folders"
+einfo
 	find {third_party,ycmd} -ipath "*/*test*/*" \
 		-exec rm -rf "{}" +
 
-	einfo "Cleaning out unused platforms"
+einfo
+einfo "Cleaning out unused platforms"
+einfo
 	if use java && ! use system-jdtls ; then
 		rm -rf \
 		third_party/eclipse.jdt.ls/target/repository/config_{mac,win} \
 		|| die
 	fi
 
-	einfo "Cleaning out cached archives"
+einfo
+einfo "Cleaning out cached archives"
+einfo
 	if use clangd && ! use system-clangd ; then
 		rm -rf third_party/clangd/cache || die
 	fi
@@ -1388,7 +1672,9 @@ _shrink_install() {
 		rm -rf third_party/eclipse.jdt.ls/target/cache || die
 	fi
 
-	einfo "Cleaning out empty files and folders"
+einfo
+einfo "Cleaning out empty files and folders"
+einfo
 	find . -empty -type f -delete
 	find . -empty -type d -delete
 }

@@ -1,0 +1,10 @@
+# Copyright 2022 Orson Teodoro
+# Distributed under the terms of the GNU General Public License v2
+
+apn - Build the apn plugin for iOS
+arkit - Build the arkit plugin for iOS
+camera - Build the camera plugin for iOS
+gamecenter - Build the gamecenter plugin for iOS
+icloud - Build the icloud plugin for iOS
+inappstore - Build the inappstore plugin for iOS
+photo_picker - Build the photo_picker plugin for iOS
