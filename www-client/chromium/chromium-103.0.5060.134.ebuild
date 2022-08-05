@@ -2887,11 +2887,36 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	fi
 }
 
+get_pgo_data_dir2() {
+	local pgo_refresh_mode="${CR_PGO_REFRESH_MODE:-build}"
+	# CR_PGO_REFRESH_MODE is about the validity of PGO profile reuse.
+	# major = The PGO profile is good in the same major version.
+	# major-minor = The PGO profile is good in the same major.minor version.
+	# build = The PGO profile is good in the same major.minor.build version.
+	# patch = The PGO profile is good in the same major.minor.build.patch version.
+	if [[ "${pgo_refresh_mode}" == "major" ]] \
+		&& ver_test $(ver_cut 1 ${pvr}) -ne $(ver_cut 1 ${PV}) ; then
+		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1 ${pvr})/${ABI}"
+	elif [[ "${pgo_refresh_mode}" == "major-minor" ]] \
+		&& ver_test $(ver_cut 1-2 ${pvr}) -ne $(ver_cut 1-2 ${PV}) ; then
+		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-2 ${pvr})/${ABI}"
+	elif [[ "${pgo_refresh_mode}" == "build" ]] \
+		&& ver_test $(ver_cut 1-3 ${pvr}) -ne $(ver_cut 1-3 ${PV}) ; then
+		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-3 ${pvr})/${ABI}"
+	elif [[ "${pgo_refresh_mode}" == "patch" ]] \
+		&& ver_test $(ver_cut 1-4 ${pvr}) -ne $(ver_cut 1-4 ${PV}) ; then
+		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-4 ${pvr})/${ABI}"
+	else
+		pgo_data_dir=""
+	fi
+	echo "${pgo_data_dir}"
+}
+
 remove_pgo_profiles() {
 	local pvr
 	for pvr in ${REPLACING_VERSIONS} ; do
 		einfo "Removing PGO profile(s)"
-		pgo_data_dir=$(get_pgo_data_dir)
+		pgo_data_dir=$(get_pgo_data_dir2)
 		if [[ -n "${pgo_data_dir}" ]] \
 			&& realpath -e "${pgo_data_dir}" 2>/dev/null ; then
 			rm -rf "${pgo_data_dir}" || die
