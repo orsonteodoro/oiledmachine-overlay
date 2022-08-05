@@ -608,5 +608,6 @@ _install_server() {
 }
 
 src_install() {
+	use debug && export STRIP="true" # Don't strip debug builds
 	_install_server
 }

@@ -795,6 +795,7 @@ _install_mono_glue() {
 }
 
 src_install() {
+	use debug && export STRIP="true" # Don't strip debug builds
 	_install_linux_editor
 	_install_template_datafiles
 	use mono && _install_mono_glue
