@@ -244,7 +244,7 @@ ewarn
 
 src_install() {
 	use debug && export STRIP="true" # Don't strip debug builds
-	insinto "/usr/lib/godot/${GODOT_SLOT_MAJ}/mono-runtime"
+	insinto "/usr/lib/godot/${GODOT_SLOT_MAJOR}/mono-runtime"
 	doins -r "${WORKDIR}/build/"*
 }
 
