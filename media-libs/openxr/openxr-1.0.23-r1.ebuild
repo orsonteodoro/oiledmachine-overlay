@@ -24,15 +24,13 @@ ${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 NV_DRIVER_VERSION_VULKAN="390.132"
-IUSE+=" doc gles2 +system-jsoncpp video_cards_amdgpu
-video_cards_i965 video_cards_iris
+IUSE+=" doc gles2 +system-jsoncpp video_cards_amdgpu video_cards_intel
 video_cards_nvidia video_cards_radeonsi wayland xcb +xlib"
 REQUIRED_USE+="
 	^^ ( xlib xcb wayland )
 	|| (
 		video_cards_amdgpu
-		video_cards_i965
-		video_cards_iris
+		video_cards_intel
 		video_cards_nvidia
 		video_cards_radeonsi
 	)
@@ -44,12 +42,9 @@ DEPEND+="
 			media-libs/mesa[video_cards_radeonsi,vulkan]
 			x11-base/xorg-drivers[video_cards_amdgpu]
 		)
-		video_cards_i965? (
-			media-libs/mesa[video_cards_i965,vulkan]
-			x11-base/xorg-drivers[video_cards_i965]
-		)
-		video_cards_iris? (
-			media-libs/mesa[video_cards_iris,vulkan]
+		video_cards_intel? (
+			media-libs/mesa[video_cards_intel,vulkan]
+			x11-base/xorg-drivers[video_cards_intel]
 		)
 		video_cards_nvidia? (
 			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
