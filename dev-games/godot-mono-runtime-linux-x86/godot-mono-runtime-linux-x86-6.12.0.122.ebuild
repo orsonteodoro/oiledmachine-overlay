@@ -26,6 +26,8 @@ MONO_LICENSE="
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
 	APSL-2
+	BoringSSL-ECC
+	BoringSSL-PSK
 	BSD
 	BSD-2
 	BSD-4

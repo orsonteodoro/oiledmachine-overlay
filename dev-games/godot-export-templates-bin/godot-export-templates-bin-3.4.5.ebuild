@@ -51,6 +51,8 @@ LICENSE="
 MONO_LICENSE="
 	MIT
 	Apache-2.0
+	BoringSSL-ECC
+	BoringSSL-PSK
 	BSD
 	DOTNET-libraries-and-runtime-components-patents
 	IDPL
