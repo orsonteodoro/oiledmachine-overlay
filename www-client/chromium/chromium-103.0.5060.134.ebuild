@@ -10,174 +10,45 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..10} )
 PYTHON_REQ_USE="xml"
 
-CHROMIUM_LANGS="af am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
-	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
-	sv sw ta te th tr uk ur vi zh-CN zh-TW"
+CHROMIUM_LANGS="
+af am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he hi hr hu id
+it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta te th tr
+uk ur vi zh-CN zh-TW
+"
 
 LLVM_MAX_SLOT=15
 LLVM_MIN_SLOT=15 # The pregenerated PGO profile needs profdata version 8
 CR_CLANG_SLOT_OFFICIAL=15
 LLVM_SLOTS=(${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
-inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
+inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils \
+python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
 inherit llvm multilib multilib-minimal
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
 PATCHSET="4"
 PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
-CIPD_V="8e9b0c80860d00dfe951f7ea37d74e210d376c13" # in \
-# third_party/depot_tools/cipd_client_version
 MTD_V="${PV}"
 CTDM_V="${PV}"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz
-	pgo-full? (
-		amd64? ( https://chrome-infra-packages.appspot.com/client?platform=linux-amd64&version=git_revision:${CIPD_V} -> .cipd_client-amd64-${CIPD_V} )
-		arm64? ( https://chrome-infra-packages.appspot.com/client?platform=linux-arm64&version=git_revision:${CIPD_V} -> .cipd_client-arm64-${CIPD_V} )
-		ppc64? ( https://chrome-infra-packages.appspot.com/client?platform=linux-ppc64&version=git_revision:${CIPD_V} -> .cipd_client-ppc64-${CIPD_V} )
-		x86? ( https://chrome-infra-packages.appspot.com/client?platform=linux-386&version=git_revision:${CIPD_V} -> .cipd_client-x86-${CIPD_V} )
-		cr_pgo_trainers_memory_desktop? (
-			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${CTDM_V}/chrome/test/data/media.tar.gz -> ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
-			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${MTD_V}/media/test/data.tar.gz -> ${PN}-${MTD_V}-media-test-data.tar.gz
-		)
-		cr_pgo_trainers_media_desktop? (
-			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${CTDM_V}/chrome/test/data/media.tar.gz -> ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
-			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${MTD_V}/media/test/data.tar.gz -> ${PN}-${MTD_V}-media-test-data.tar.gz
-		)
-		cr_pgo_trainers_media_mobile? (
-			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${CTDM_V}/chrome/test/data/media.tar.gz -> ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
-			https://chromium.googlesource.com/chromium/src.git/+archive/refs/tags/${MTD_V}/media/test/data.tar.gz -> ${PN}-${MTD_V}-media-test-data.tar.gz
-		)
-	)
 "
-
+#
 # Some assets encoded by proprietary-codecs (mp3, aac, h264) are found in both
 #   ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
 #   ${PN}-${MTD_V}-media-test-data.tar.gz
 # but shouldn't be necessary to use the USE flag.
-
+#
 RESTRICT="mirror"
-#PROPERTIES="interactive" # For interactive login in social networks for PGO profile generation. \
-# See _init_cr_pgo_trainers_rasterize_and_record_micro_top_25() function below. \
-# Disabled until the inner workings is understood.
 
-# all-rights-reserved is for unfree websites or content from them.
-LICENSE_BENCHMARK_WEBSITES="
-	cr_pgo_trainers_desktop_ui? (
-		all-rights-reserved
-	)
-	cr_pgo_trainers_loading_desktop? (
-		all-rights-reserved
-	)
-	cr_pgo_trainers_loading_mobile? (
-		all-rights-reserved
-	)
-	cr_pgo_trainers_power_mobile? (
-		all-rights-reserved
-	)
-	cr_pgo_trainers_rasterize_and_record_micro_top_25? (
-		all-rights-reserved
-	)
-	cr_pgo_trainers_rendering_desktop? (
-		all-rights-reserved
-	)
-	cr_pgo_trainers_rendering_mobile? (
-		all-rights-reserved
-	)
-	cr_pgo_trainers_tab_switching_typical_25? (
-		all-rights-reserved
-	)
-	cr_pgo_trainers_unscheduled_loading_mbi? (
-		all-rights-reserved
-	)
-	cr_pgo_trainers_unscheduled_v8_loading_desktop? (
-		all-rights-reserved
-	)
-	cr_pgo_trainers_v8_runtime_stats_top_25? (
-		all-rights-reserved
-	)
-	cr_pgo_trainers_dromaeo? (
-		( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
-		( all-rights-reserved MIT )
-		( ( all-rights-reserved || ( MIT AFL-2.1 ) ) ( MIT GPL-2 ) || ( AFL-2.1 BSD ) MIT )
-		( all-rights-reserved GPL-2+ )
-		( MIT GPL-2 )
-		( MIT BSD GPL )
-		BSD
-		BSD-2
-		LGPL-2.1
-	)
-	cr_pgo_trainers_jetstream? (
-		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
-		( all-rights-reserved Apache-2.0 )
-		( all-rights-reserved GPL-2+ )
-		( all-rights-reserved MIT )
-		Apache-2.0
-		BSD-2
-		BSD
-		GPL-2
-		GPL-2+
-		LGPL-2.1
-		MIT
-		UoI-NCSA
-		ZLIB
-	)
-	cr_pgo_trainers_jetstream2? (
-		|| ( BSD GPL-2+ )
-		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2+ ) )
-		( all-rights-reserved Apache-2.0 )
-		( all-rights-reserved GPL-2+ )
-		( all-rights-reserved MIT )
-		all-rights-reserved
-		Apache-2.0
-		BSD-2
-		BSD
-		FPL
-		GPL-2
-		LGPL-2+
-		LGPL-2.1
-		MIT
-		ZLIB
-	)
-	cr_pgo_trainers_kraken? (
-		( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
-		( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
-		( all-rights-reserved GPL-3+ )
-		|| ( BSD GPL-2 )
-		BSD
-		BSD-2
-		LGPL-2.1
-		MPL-1.1
-	)
-	cr_pgo_trainers_media_desktop? (
-		CC-BY-3.0
-		CC-BY-4.0
-	)
-	cr_pgo_trainers_media_mobile? (
-		CC-BY-3.0
-		CC-BY-4.0
-	)
-	cr_pgo_trainers_memory_desktop? (
-		CC-BY-3.0
-	)
-	cr_pgo_trainers_octane? (
-		BSD
-	)
-	cr_pgo_trainers_speedometer2? (
-		|| ( MIT BSD )
-		( all-rights-reserved GPL-2 )
-		( all-rights-reserved MIT )
-		( MIT CC0-1.0 )
-		Apache-2.0
-		BSD
-		CC-BY-4.0
-		MIT
-	)
-" # emerge does not understand ^^ in the LICENSE variable and have been replaced
+#
+# emerge does not understand ^^ in the LICENSE variable and have been replaced
 # with ||.  You should choose at most one at some instances.
 # GEN_ABOUT_CREDITS=1 # Uncomment to generate about_credits.html including bundled.
+#
 # SHA512 about_credits.html fingerprint:
+#
 LICENSE_FINGERPRINT="\
 b707687bcd996a2435b300e4c4a2553499725c411224cb6def2ff4c06371fb87\
 e7163217843755b076637fc476a46f25609a26c16432220552cddf8697e203d0"
@@ -231,7 +102,8 @@ LICENSE="BSD
 	x11proto
 	ZLIB
 	widevine? ( widevine )
-	${LICENSE_BENCHMARK_WEBSITES}"
+"
+#
 # Benchmark website licenses:
 # See the webkit-gtk ebuild
 #
@@ -340,14 +212,19 @@ LICENSE="BSD
 # * The public-domain entry was not added to the LICENSE ebuild variable to not
 #   give the wrong impression that the entire software was released in public
 #   domain.
+#
 SLOT="0/stable"
 KEYWORDS="amd64 arm64 ~x86" # Waiting for server to upload tarball
+#
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/103.0.5060.134/media/gpu/args.gni#L24
+#
 # Using the system-ffmpeg or system-icu breaks cfi-icall or cfi-cast which is
 #   incompatible as a shared lib.
+#
 # The suid is built by default upstream but not necessarily used:  \
 #   https://github.com/chromium/chromium/blob/103.0.5060.134/sandbox/linux/BUILD.gn
+#
 CPU_FLAGS_ARM=( neon )
 CPU_FLAGS_X86=( sse2 ssse3 sse4_2 )
 # CFI Basic (.a) mode requires all third party modules built as static.
@@ -367,6 +244,7 @@ IUSE+=" video_cards_amdgpu video_cards_intel video_cards_iris
 video_cards_i965 video_cards_nouveau video_cards_nvidia
 video_cards_r600 video_cards_radeonsi" # For VA-API
 IUSE+=" +partitionalloc libcmalloc"
+#
 # For cfi-vcall, cfi-icall defaults status, see \
 #   https://github.com/chromium/chromium/blob/103.0.5060.134/build/config/sanitizers/sanitizers.gni
 # For cfi-cast default status, see \
@@ -376,12 +254,14 @@ IUSE+=" +partitionalloc libcmalloc"
 # For libcxx default, see \
 #   https://github.com/chromium/chromium/blob/103.0.5060.134/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
+#
 IUSE_LIBCXX=( bundled-libcxx system-libstdcxx )
 IUSE+=" ${IUSE_LIBCXX[@]} +bundled-libcxx branch-protection-standard +cfi-vcall
 cfi-cast +cfi-icall +clang +pre-check-llvm +pre-check-vaapi lto-opt +pgo
--pgo-full shadowcallstack"
+-pgo-full pgo-start pgo-finish shadowcallstack"
 # perf-opt
-_ABIS=( abi_x86_32
+_ABIS=(
+	abi_x86_32
 	abi_x86_64
 	abi_x86_x32
 	abi_mips_n32
@@ -390,274 +270,11 @@ _ABIS=( abi_x86_32
 	abi_ppc_32
 	abi_ppc_64
 	abi_s390_32
-	abi_s390_64 )
+	abi_s390_64
+)
 IUSE+=" ${_ABIS[@]}"
-BENCHMARKS_DESKTOP=(
-	desktop_ui
-	loading.desktop
-	media.desktop
-	memory.desktop
-	power.desktop
-	rendering.desktop
-	system_health.common_desktop
-	system_health.memory_desktop
-	UNSCHEDULED_v8.loading_desktop
-	v8.browsing_desktop
-	v8.browsing_desktop-future
-)
-BENCHMARKS_MOBILE=(
-	loading.mobile
-	media.mobile
-	power.mobile
-	rendering.mobile
-	startup.mobile
-	system_health.common_mobile
-	system_health.memory_mobile
-	UNSCHEDULED_v8.loading_mobile
-	v8.browsing_mobile
-	v8.browsing_mobile-future
-)
 
-# Official except for UNSCHEDULED_*
-OFFICIAL_BENCHMARKS=(
-	blink_perf.accessibility
-	blink_perf.bindings
-	blink_perf.css
-	blink_perf.display_locking
-	blink_perf.dom
-	blink_perf.events
-	blink_perf.image_decoder
-	blink_perf.layout
-	blink_perf.owp_storage
-	blink_perf.paint
-	blink_perf.parser
-	blink_perf.sanitizer-api
-	blink_perf.shadow_dom
-	blink_perf.svg
-	blink_perf.webaudio
-	blink_perf.webgl
-	blink_perf.webgl_fast_call
-	blink_perf.webgpu
-	blink_perf.webgpu_fast_call
-	custom
-	desktop_ui
-	dromaeo
-	dummy_benchmark.noisy_benchmark_1
-	dummy_benchmark.stable_benchmark_1
-	jetstream
-	jetstream2
-	kraken
-	loading.desktop
-	loading.mobile
-	media.desktop
-	media.mobile
-	memory.desktop
-	octane
-	power.desktop
-	power.mobile
-	rasterize_and_record_micro
-	rasterize_and_record_micro.top_25
-	rendering.desktop
-	rendering.mobile
-	speedometer
-	speedometer-future
-	speedometer2
-	speedometer2-future
-	speedometer2-pcscan
-	startup.mobile
-	system_health.common_desktop
-	system_health.common_mobile
-	system_health.memory_desktop
-	system_health.memory_mobile
-	system_health.pcscan
-	system_health.weblayer_startup
-	system_health.webview_startup
-	tab_switching.typical_25
-	tracing.tracing_with_background_memory_infra
-	UNSCHEDULED_blink_perf.performance_apis
-	UNSCHEDULED_blink_perf.service_worker
-	UNSCHEDULED_loading.mbi
-	UNSCHEDULED_v8.loading_desktop
-	UNSCHEDULED_v8.loading_mobile
-	v8.browsing_desktop
-	v8.browsing_desktop-future
-	v8.browsing_mobile
-	v8.browsing_mobile-future
-	v8.runtime_stats.top_25
-	wasmpspdfkit
-	webrtc
-)
-
-CONTRIB_BENCHMARKS_DISABLED=(
-	ad_tagging.cluster_telemetry
-	blink_perf
-	blink_perf.layout_ng
-	blink_perf.paint_layout_ng
-	blink_perf.parser_layout_ng
-	blink_perf.privacy_budget
-	download.mobile
-	generic_trace_ct
-	generic_trace.top25
-	layout_shift.cluster_telemetry
-	leak_detection.cluster_telemetry
-	loading.cluster_telemetry
-	loading.desktop_layout_ng
-	loading.mobile_layout_ng
-	media_router.cpu_memory
-	media_router.cpu_memory.no_media_router
-	memory.cluster_telemetry
-	memory.leak_detection
-	memory.long_running_desktop_sites
-	multipage_skpicture_printer
-	multipage_skpicture_printer_ct
-	orderfile_generation.debugging
-	orderfile_generation.testing
-	orderfile_generation.training
-	orderfile_generation.variation.testing0
-	orderfile_generation.variation.testing1
-	orderfile_generation.variation.testing2
-	orderfile_generation.variation.training
-	orderfile.memory_mobile
-	rasterize_and_record_micro_ct
-	rendering.cluster_telemetry
-	repaint_ct
-	screenshot_ct
-	skpicture_printer
-	skpicture_printer_ct
-	system_health.scroll_jank_mobile
-	tracing.tracing_with_debug_overhead
-	v8.loading.cluster_telemetry
-	v8.loading_runtime_stats.cluster_telemetry
-)
-
-CONTRIB_BENCHMARKS=(
-	xr.webxr.static
-)
-
-gen_pgo_profile_use() {
-	for x in ${OFFICIAL_BENCHMARKS[@]} ${CONTRIB_BENCHMARKS[@]} ; do
-		t="${x}"
-		t="${t//-/_}"
-		t="${t//./_}"
-		t="${t,,}"
-		echo " cr_pgo_trainers_${t}"
-	done
-}
-gen_pgo_profile_required_use() {
-	for d in ${BENCHMARK_DESKTOP[@]} ; do
-		a="${d}"
-		a="${a//-/_}"
-		a="${a//./_}"
-		a="${a,,}"
-		for m in ${BENCHMARK_MOBILE[@]} ; do
-			b="${m}"
-			b="${b//-/_}"
-			b="${b//./_}"
-			b="${b,,}"
-			echo "
-				cr_pgo_trainers_${a}? ( pgo-full !cr_pgo_trainers_${b} )
-				cr_pgo_trainers_${b}? ( pgo-full !cr_pgo_trainers_${a} )
-			"
-		done
-	done
-	for x in ${OFFICIAL_BENCHMARKS[@]} ${CONTRIB_BENCHMARKS[@]} ; do
-		t="${x}"
-		t="${t//-/_}"
-		t="${t//./_}"
-		t="${t,,}"
-		echo " cr_pgo_trainers_${t}? ( pgo-full )"
-	done
-}
-
-# There is 2 official (perflab) platforms for linux:  linux and linux_rel.
-# ~50 benchmarks used.
-gen_required_use_pgo_profile_linux() { # For CI
-	# See
-# https://github.com/chromium/chromium/blob/103.0.5060.134/tools/perf/core/bot_platforms.py#L311
-# https://github.com/chromium/chromium/blob/103.0.5060.134/tools/perf/core/bot_platforms.py#L226
-# https://github.com/chromium/chromium/blob/103.0.5060.134/tools/perf/core/shard_maps/linux-perf_map.json
-	local exclude=(
-		blink_perf.display_locking
-		power.mobile
-		v8.runtime_stats.top_25
-	)
-	for x in ${OFFICIAL_BENCHMARKS[@]} ; do
-		t="${x}"
-		t_raw="${x}"
-		t="${t//-/_}"
-		t="${t//./_}"
-		t="${t,,}"
-		local excluded=0
-		for ex in ${exclude[@]} ; do
-			if [[ "${t_raw}" == "${ex}" ]] ; then
-				excluded=1
-			fi
-		done
-		if [[ "${t_raw}" =~ ^"UNSCHEDULED" \
-			|| "${t_raw}" == "custom" \
-			|| "${t_raw}" == ".mobile"$ \
-			]] ; then
-			excluded=1
-		fi
-		if (( excluded == 1 )) ; then
-			echo " !cr_pgo_trainers_${t}"
-		else
-			echo " cr_pgo_trainers_${t}"
-		fi
-	done
-	for x in ${CONTRIB_BENCHMARKS[@]} ; do
-		t="${x}"
-		t="${t//-/_}"
-		t="${t//./_}"
-		t="${t,,}"
-		echo " !cr_pgo_trainers_${t}"
-	done
-}
-
-# Only 1 benchmark used.
-gen_required_use_pgo_profile_linux_rel() { # For CI release
-	# See
-# https://github.com/chromium/chromium/blob/103.0.5060.134/tools/perf/core/bot_platforms.py#L307
-# https://github.com/chromium/chromium/blob/103.0.5060.134/tools/perf/core/shard_maps/linux-perf-rel_map.json
-	local whitelist=(
-		system_health.common_desktop
-	)
-	for x in ${OFFICIAL_BENCHMARKS[@]} ; do
-		t="${x}"
-		t_raw="${x}"
-		t="${t//-/_}"
-		t="${t//./_}"
-		t="${t,,}"
-		local included=0
-		for wl in ${whitelist[@]} ; do
-			if [[ "${t_raw}" == "${wl}" ]] ; then
-				included=1
-			fi
-		done
-		if (( included == 1 )) ; then
-			echo " cr_pgo_trainers_${t}"
-		else
-			echo " !cr_pgo_trainers_${t}"
-		fi
-	done
-	for x in ${CONTRIB_BENCHMARKS[@]} ; do
-		t="${x}"
-		t="${t//-/_}"
-		t="${t//./_}"
-		t="${t,,}"
-		echo " !cr_pgo_trainers_${t}"
-	done
-}
-
-PGO_PROFILE_LINUX_SET=$(gen_required_use_pgo_profile_linux)
-PGO_PROFILE_LINUX_SET_REL=$(gen_required_use_pgo_profile_linux_rel)
-IUSE+=" "$(gen_pgo_profile_use)
-REQUIRED_USE+=" $(gen_pgo_profile_required_use)"
-REQUIRED_USE+=" pgo-full? ( || ( $(gen_pgo_profile_use) ) )"
-# TODO:  Update pgo-full with complete (or near complete) PGO set
-# when official USE selected.
-# The cr_pgo_trainers_custom is disallowed for security reasons
-# when the official USE is set.
+#
 # vaapi is not conditioned on proprietary-codecs upstream, but should
 # be or by case-by-case (i.e. h264_vaapi, vp9_vaapi, av1_vaapi)
 # with additional USE flags.
@@ -666,6 +283,7 @@ REQUIRED_USE+=" pgo-full? ( || ( $(gen_pgo_profile_use) ) )"
 # cfi-icall, cfi-cast requires static linking.  See
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#indirect-function-call-checking
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#bad-cast-checking
+#
 REQUIRED_USE+="
 	^^ ( ${IUSE_LIBCXX[@]} )
 	^^ ( partitionalloc libcmalloc )
@@ -690,11 +308,12 @@ REQUIRED_USE+="
 		bundled-libcxx
 		partitionalloc
 		amd64? ( cfi-icall cfi-vcall )
-		pgo-full? ( ${PGO_PROFILE_LINUX_SET_REL} )
 	)
 	partitionalloc? ( !component-build )
 	pgo? ( clang !pgo-full )
-	pgo-full? ( clang !pgo )
+	pgo-full? ( clang !pgo ^^ ( pgo-start pgo-finish ) )
+	pgo-start? ( pgo-full )
+	pgo-finish? ( pgo-full )
 	ppc64? ( !shadowcallstack )
 	pre-check-llvm? ( clang )
 	pre-check-vaapi? ( vaapi )
@@ -915,40 +534,8 @@ BDEPEND="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	clang? ( $(gen_bdepend_llvm) )
 	js-type-check? ( virtual/jre )
-	pgo-full? (
-		sys-apps/dbus:=[${MULTILIB_USEDEP}]
-		sys-apps/grep[pcre]
-		!headless? (
-			!weston? (
-				x11-base/xorg-server[xvfb]
-				x11-misc/xcompmgr
-				x11-wm/openbox
-			)
-			weston? ( dev-libs/weston )
-		)
-		cr_pgo_trainers_memory_desktop? (
-			media-video/ffmpeg[encode,${MULTILIB_USEDEP}]
-		)
-		cr_pgo_trainers_media_desktop? (
-			proprietary-codecs? (
-				media-video/ffmpeg[encode,openh264,${MULTILIB_USEDEP}]
-				media-video/ffmpeg[encode,mp3,${MULTILIB_USEDEP}]
-			)
-			media-video/ffmpeg[encode,libaom,${MULTILIB_USEDEP}]
-			media-video/ffmpeg[opus,vorbis,vpx,${MULTILIB_USEDEP}]
-		)
-		cr_pgo_trainers_media_mobile? (
-			proprietary-codecs? (
-				media-video/ffmpeg[encode,openh264,${MULTILIB_USEDEP}]
-				media-video/ffmpeg[encode,mp3,${MULTILIB_USEDEP}]
-			)
-			media-video/ffmpeg[opus,vorbis,vpx,${MULTILIB_USEDEP}]
-		)
-	)
 	vaapi? ( media-video/libva-utils )
 "
-
-# pgo related:  dev-python/requests is python3 but testing/scripts/run_performance_tests.py is python2
 
 # Upstream uses llvm:13
 # When CFI + PGO + official was tested, it didn't work well with LLVM12.  Error noted in
@@ -988,31 +575,37 @@ fi
 
 DISABLE_AUTOFORMATTING="yes"
 DOC_CONTENTS="
-Some web pages may require additional fonts to display properly.
-Try installing some of the following packages if some characters
-are not displayed properly:
-- media-fonts/arphicfonts
-- media-fonts/droid
-- media-fonts/ipamonafont
-- media-fonts/noto
-- media-fonts/ja-ipafonts
-- media-fonts/takao-fonts
-- media-fonts/wqy-microhei
-- media-fonts/wqy-zenhei
 
-To fix broken icons on the Downloads page, you should install an icon
-theme that covers the appropriate MIME types, and configure this as your
-GTK+ icon theme.
+Some web pages may require additional fonts to display properly.  Try installing
+some of the following packages if some characters are not displayed properly:
+
+  - media-fonts/arphicfonts
+  - media-fonts/droid
+  - media-fonts/ipamonafont
+  - media-fonts/noto
+  - media-fonts/ja-ipafonts
+  - media-fonts/takao-fonts
+  - media-fonts/wqy-microhei
+  - media-fonts/wqy-zenhei
+
+
+To fix broken icons on the Downloads page, you should install an icon theme that
+covers the appropriate MIME types, and configure this as your GTK+ icon theme.
+
 
 For native file dialogs in KDE, install kde-apps/kdialog.
 
-To make password storage work with your desktop environment you may
-have install one of the supported credentials management applications:
-- app-crypt/libsecret (GNOME)
-- kde-frameworks/kwallet (KDE)
-If you have one of above packages installed, but don't want to use
-them in Chromium, then add --password-store=basic to CHROMIUM_FLAGS
-in /etc/chromium/default.
+
+To make password storage work with your desktop environment you may have install
+one of the supported credentials management applications:
+
+  - app-crypt/libsecret (GNOME)
+  - kde-frameworks/kwallet (KDE)
+
+If you have one of above packages installed, but don't want to use them in
+Chromium, then add --password-store=basic to CHROMIUM_FLAGS in
+/etc/chromium/default.
+
 "
 
 python_check_deps() {
@@ -1040,8 +633,8 @@ pre_build_checks() {
 		fi
 	fi
 
-	# https://github.com/chromium/chromium/blob/103.0.5060.134/docs/linux/build_instructions.md#system-requirements
-	# Check build requirements, bug #541816 and bug #471810 .
+# https://github.com/chromium/chromium/blob/103.0.5060.134/docs/linux/build_instructions.md#system-requirements
+# Check build requirements, bug #541816 and bug #471810 .
 	CHECKREQS_MEMORY="4G"
 	CHECKREQS_DISK_BUILD="10G"
 	tc-is-cross-compiler && CHECKREQS_DISK_BUILD="13G"
@@ -1076,13 +669,16 @@ pre_build_checks() {
 		total_memory=$((${total_memory} + ${total_memory_source}))
 	done
 	if (( ${total_memory} < ${required_total_memory} )) ; then
+#
 # It randomly fails and a success observed with 8 GiB of total memory
 # (ram + swap) when multitasking.  It works with 16 GiB of total memory when
 # multitasking, but peak virtual memory (used + reserved) is ~10.2 GiB for
 # ld.lld.
+#
 # [43742.787803] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/,task=ld.lld,pid=27154,uid=250
 # [43742.787817] Out of memory: Killed process 27154 (ld.lld) total-vm:10471016kB, anon-rss:2440396kB, file-rss:3180kB, shmem-rss:0kB, UID:250 pgtables:20168kB oom_score_adj:0
 # [43744.101600] oom_reaper: reaped process 27154 (ld.lld), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+#
 ewarn
 ewarn "You may need >= ${required_total_memory} GiB of total memory to link"
 ewarn "${PN}.  Please add more swap space or enable swap compression.  You"
@@ -1190,12 +786,22 @@ contains_slotted_zero() {
 }
 
 _print_timestamps() {
+	local timestamp
 	if [[ -n "${emerged_llvm_timestamp}" ]] ; then
-		einfo "System's ${p} timestamp:  "$(date -d "@${emerged_llvm_timestamp}")
+		timestamp=$(date -d "@${emerged_llvm_timestamp}")
+einfo
+einfo "System's ${p} timestamp:  ${timestamp}"
+einfo
 		if [[ "${p}" == "sys-devel/llvm" ]] ; then
-			einfo "${PN^}'s LLVM timestamp:  "$(date -d "@${cr_clang_used_unix_timestamp}")
+			timestamp=$(date -d "@${cr_clang_used_unix_timestamp}")
+einfo
+einfo "${PN^}'s LLVM timestamp:  ${timestamp}"
+einfo
 		else
-			einfo "System's sys-devel/llvm timestamp:  "$(date -d "@${LLVM_TIMESTAMP}")
+			timestamp=$(date -d "@${LLVM_TIMESTAMP}")
+einfo
+einfo "System's sys-devel/llvm timestamp:  ${timestamp}"
+einfo
 		fi
 	fi
 }
@@ -1212,7 +818,8 @@ _get_release_hash() {
 
 		# Get the tip
 		local hash=$(
-			wget -q -O - https://github.com/llvm/llvm-project/commits/llvmorg-${v} \
+			wget -q -O - \
+		https://github.com/llvm/llvm-project/commits/llvmorg-${v} \
 				| grep "/commit/" \
 				| head -n 1 \
 				| cut -f 2 -d "\"" \
@@ -1224,46 +831,59 @@ _get_release_hash() {
 }
 
 _get_llvm_timestamp() {
+	local emerged_llvm_commit
 	if [[ -z "${emerged_llvm_commit}" ]] ; then
 		# Should check against the llvm milestone if not live
-		#einfo "v=${v}"
-		#einfo "pv=${pv}"
 		while [[ "${pv:0:1}" =~ [A-Za-z] ]] ; do
 			pv="${pv#*-}"
 		done
-		v=$(ver_cut 1-3 "${pv}")
-		#einfo "v=${v} (2)"
+		local v=$(ver_cut 1-3 "${pv}")
 		local suffix=""
 		if [[ "${pv}" =~ "_rc" ]] ; then
 			suffix=$(echo "${pv}" | grep -E -o -e "_rc[0-9]+")
 			suffix=${suffix//_/-}
 		fi
 		v="${v}${suffix}"
-		#einfo "v=${v} (3)"
 		emerged_llvm_commit=$(_get_release_hash ${v})
-		einfo "emerged_llvm_commit=${emerged_llvm_commit}"
 	fi
-	einfo "emerged_llvm_commit=${emerged_llvm_commit}"
 	if [[ -z "${emerged_llvm_timestamps[${emerged_llvm_commit}]}" ]] ; then
-		einfo "Fetching timestamp for ${emerged_llvm_commit}"
+einfo
+einfo "Fetching timestamp for ${emerged_llvm_commit}"
+einfo
 		# Uncached
 		# Fetched uncached because of potential partial download problems.
 		local emerged_llvm_time_desc=$(wget -q -O - \
-			https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch)
-		[[ -z "${emerged_llvm_time_desc}" ]] \
-			&& die "${emerged_llvm_commit} didn't download anything."
-		echo "${emerged_llvm_time_desc}" | grep "Not Found" \
-			&& die "The commit ${emerged_llvm_commit} doesn't exist."
-		emerged_llvm_time_desc=$(echo -e "${emerged_llvm_time_desc}" | grep -F -e "Date:" | sed -e "s|Date: ||")
+	https://github.com/llvm/llvm-project/commit/${emerged_llvm_commit}.patch)
+		if [[ -z "${emerged_llvm_time_desc}" ]] ; then
+eerror
+eerror "${emerged_llvm_commit} didn't download anything."
+eerror
+			die
+		fi
+		if echo "${emerged_llvm_time_desc}" | grep "Not Found" ; then
+eerror
+eerror "The commit ${emerged_llvm_commit} doesn't exist."
+eerror
+			die
+		fi
+		emerged_llvm_time_desc=$(echo -e "${emerged_llvm_time_desc}" \
+			| grep -F -e "Date:" \
+			| sed -e "s|Date: ||")
 		emerged_llvm_timestamp=$(date -u -d "${emerged_llvm_time_desc}" +%s)
 		emerged_llvm_timestamps[${emerged_llvm_commit}]=${emerged_llvm_timestamp}
-		einfo "Timestamp comparison for ${p}"
+einfo
+einfo "Timestamp comparison for ${p}"
+einfo
 		_print_timestamps
 	else
-		einfo "Using cached timestamp for ${emerged_llvm_commit}"
+einfo
+einfo "Using cached timestamp for ${emerged_llvm_commit}"
+einfo
 		# Cached
 		emerged_llvm_timestamp=${emerged_llvm_timestamps[${emerged_llvm_commit}]}
-		einfo "Timestamp comparison for ${p}"
+einfo
+einfo "Timestamp comparison for ${p}"
+einfo
 		_print_timestamps
 	fi
 }
@@ -1274,15 +894,12 @@ _check_llvm_updated() {
 	local timestamp_type=-1
 	if [[ "${p}" == "sys-devel/llvm" ]] ; then
 		if use official ; then
-			#einfo "Using cr_clang_used_unix_timestamp"
 			root_pkg_timestamp="${cr_clang_used_unix_timestamp}"
 		else
-			#einfo "Using LLVM_TIMESTAMP"
 			root_pkg_timestamp="${LLVM_TIMESTAMP}"
 		fi
 		timestamp_type=0
 	else
-		#einfo "Using LLVM_TIMESTAMP"
 		root_pkg_timestamp="${LLVM_TIMESTAMP}"
 		timestamp_type=1
 	fi
@@ -1291,23 +908,17 @@ _check_llvm_updated() {
 	[[ -z "${root_pkg_timestamp}" ]] && die
 
 	if (( ${timestamp_type} == 0 )) ; then
-		#einfo "${emerged_llvm_timestamp} < ${root_pkg_timestamp} ? ${p} (1)"
 		if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
-			#einfo "needs merge"
 			needs_emerge=1
 			llvm_packages_status[${p_}]="1" # needs emerge
 		else
-			#einfo "no merge needed"
 			llvm_packages_status[${p_}]="0" # package is okay
 		fi
 	else
-		#einfo "${emerged_llvm_timestamp} < ${root_pkg_timestamp} ? ${p} (1)"
 		if (( ${emerged_llvm_timestamp} < ${root_pkg_timestamp} )) ; then
-			#einfo "needs merge"
 			needs_emerge=1
 			llvm_packages_status[${p_}]="1" # needs emerge
 		else
-			#einfo "no merge needed"
 			llvm_packages_status[${p_}]="0" # package is okay
 		fi
 	fi
@@ -1366,7 +977,9 @@ verify_llvm_report_card() {
 LLVM_TIMESTAMP=
 verify_llvm_toolchain() {
 	local llvm_slot=${1}
-	einfo "Inspecting for llvm:${llvm_slot}"
+einfo
+einfo "Inspecting for llvm:${llvm_slot}"
+einfo
 
 	if use official ; then
 		cr_clang_used_unix_timestamp=${CR_CLANG_USED_UNIX_TIMESTAMP}
@@ -1419,8 +1032,9 @@ verify_llvm_toolchain() {
 			local p_=${p//-/_}
 			p_=${p_//\//_}
 			if contains_slotted_major_version "${p}" ; then
-				einfo
-				einfo "Checking ${p}:${llvm_slot}"
+einfo
+einfo "Checking ${p}:${llvm_slot}"
+einfo
 				local path=$(realpath "${ESYSROOT}/var/db/pkg/${p}-${llvm_slot}"*"/environment.bz2")
 				if [[ -e "${path}" ]] ; then
 					emerged_llvm_commit=$(bzcat \
@@ -1431,14 +1045,17 @@ verify_llvm_toolchain() {
 					[[ "${p}" == "sys-devel/llvm" ]] \
 						&& LLVM_TIMESTAMP=${emerged_llvm_timestamp}
 				else
-					ewarn "Missing ${p}:${llvm_slot}"
+ewarn
+ewarn "Missing ${p}:${llvm_slot}"
+ewarn
 					p="sys-devel/llvm"
 					emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
 				fi
 				_check_llvm_updated
 			elif contains_slotted_zero "${p}" ; then
-				einfo
-				einfo "Checking ${p}:0"
+einfo
+einfo "Checking ${p}:0"
+einfo
 				local path=$(realpath "${ESYSROOT}/var/db/pkg/${p}"*"/environment.bz2")
 				if [[ -e "${path}" ]] ; then
 					emerged_llvm_commit=$(bzcat \
@@ -1447,7 +1064,9 @@ verify_llvm_toolchain() {
 					pv=$(cat "${ESYSROOT}/var/db/pkg/${p}"*"/PF" | sed "s|${p}-||")
 					_get_llvm_timestamp
 				else
-					ewarn "Missing ${p}:${llvm_slot}"
+ewarn
+ewarn "Missing ${p}:${llvm_slot}"
+ewarn
 					p="sys-devel/llvm"
 					emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
 				fi
@@ -1474,7 +1093,9 @@ verify_llvm_toolchain() {
 						pv=$(cat "${mp}/PF" | sed "s|${p}-||")
 						_get_llvm_timestamp
 					else
-						ewarn "Missing ${p}:${llvm_slot}"
+ewarn
+ewarn "Missing ${p}:${llvm_slot}"
+ewarn
 						emerged_llvm_timestamp=$(( ${cr_clang_used_unix_timestamp} -1 ))
 					fi
 					_check_llvm_updated_triple
@@ -1488,71 +1109,25 @@ verify_llvm_toolchain() {
 		[[ "${USE}" =~ "cfi" ]] && compiler_rt_sanitizers_args+=( cfi ubsan )
 		use shadowcallstack && compiler_rt_sanitizers_args+=( shadowcallstack )
 		if (( ${#compiler_rt_sanitizers_args[@]} > 0 )) ; then
-			local args=$(echo "${compiler_rt_sanitizers_args[@]}" | tr " " ",")
-			LLVM_REPORT_CARDS[${llvm_slot}]="emerge -1vuDN clang:${llvm_slot} llvm:${llvm_slot} =clang-runtime-${llvm_slot}*[compiler-rt,sanitize] =sys-libs/compiler-rt-sanitizers-${llvm_slot}*[${args}]\n"
+			local args=$(echo "${compiler_rt_sanitizers_args[@]}" \
+				| tr " " ",")
+			LLVM_REPORT_CARDS[${llvm_slot}]=\
+"emerge -1vuDN clang:${llvm_slot} llvm:${llvm_slot} "\
+"=clang-runtime-${llvm_slot}*[compiler-rt,sanitize] "\
+"=sys-libs/compiler-rt-sanitizers-${llvm_slot}*[${args}]\n"
 		else
-			LLVM_REPORT_CARDS[${llvm_slot}]="emerge -1vuDN clang:${llvm_slot} llvm:${llvm_slot}\n"
+			LLVM_REPORT_CARDS[${llvm_slot}]=\
+"emerge -1vuDN clang:${llvm_slot} llvm:${llvm_slot}\n"
 		fi
-	fi
-}
-
-find_video0() {
-	if [[ -z "${CR_PGO_VIDEO0}" ]] ; then
-eerror
-eerror "CR_PGO_VIDEO0 is missing the abspath to your vp8/vp9 video as a"
-eerror "per-package envvar.  The video must be 3840x2160 resolution,"
-eerror "60fps, >= 2 minutes."
-eerror
-		die
-	fi
-	if ffprobe "${CR_PGO_VIDEO0}" 2>/dev/null 1>/dev/null ; then
-		einfo "Verifying asset requirements"
-		if ! ( ffprobe "${CR_PGO_VIDEO0}" 2>&1 \
-			| grep -q -e "3840x2160" ) ; then
-eerror
-eerror "The PGO video sample must be 3840x2160."
-eerror
-			die
-		fi
-		if ! ( ffprobe "${CR_PGO_VIDEO0}" 2>&1 \
-			| grep -q -E -e ", (59|60)[.0-9]* fps" ) ; then
-eerror
-eerror "The PGO video sample must be >=59 fps."
-eerror
-			die
-		fi
-
-		local d=$(ffprobe "${CR_PGO_VIDEO0}" 2>&1 \
-			| grep -E -e "Duration" \
-			| cut -f 4 -d " " \
-			| sed -e "s|,||g" \
-			| cut -f 1 -d ".")
-		local h=$(($(echo "${d}" \
-			| cut -f 1 -d ":") * 60 * 60))
-		local m=$(($(echo "${d}" \
-			| cut -f 2 -d ":") * 60))
-		local s=$(($(echo "${d}" \
-			| cut -f 3 -d ":") * 1))
-		local t=$((${h} + ${m} + ${s}))
-		if (( ${t} < 120 )) ; then
-eerror
-eerror "The PGO video sample must be >= 2 minutes."
-eerror
-			die
-		fi
-	else
-eerror
-eerror "${CR_PGO_VIDEO0} is possibly not a valid video file.  Ensure that"
-eerror "the proper codec is supported for that file"
-eerror
-		die
 	fi
 }
 
 get_pregenerated_profdata_version()
 {
 	test -e "${S}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" || die
-	echo $(od -An -j 8 -N 1 -t d1 "${S}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" | grep -E -o -e "[0-9]+")
+	echo $(od -An -j 8 -N 1 -t d1 \
+		"${S}/chrome/build/pgo_profiles/chrome-linux-"*".profdata" \
+		| grep -E -o -e "[0-9]+")
 }
 
 get_llvm_profdata_version_info()
@@ -1597,7 +1172,9 @@ is_profdata_compatible() {
 # Check the system for security weaknesses.
 check_deps_cfi_cross_dso() {
 	if ! use cfi-vcall ; then
-		einfo "Skipping CFI Cross-DSO checks"
+einfo
+einfo "Skipping CFI Cross-DSO checks"
+einfo
 		return
 	fi
 	# These are libs required by the prebuilt bin version.
@@ -1669,49 +1246,58 @@ libz.so.1
 
 	# TODO: check dependency n levels deep.
 	# We assume CFI Cross-DSO.
-	einfo
-	einfo "Evaluating system for possible weaknesses."
-	einfo "Assuming systemwide CFI Cross-DSO."
-	einfo
+einfo
+einfo "Evaluating system for possible weaknesses."
+einfo "Assuming systemwide CFI Cross-DSO."
+einfo
 	for f in ${pkg_libs[@]} ; do
-		local paths=($(realpath {/usr/lib/gcc/*-pc-linux-gnu/{,32/},/lib,/usr/lib}*"/${f}" 2>/dev/null))
+		local paths=(
+$(realpath {/usr/lib/gcc/*-pc-linux-gnu/{,32/},/lib,/usr/lib}*"/${f}" 2>/dev/null)
+		)
 		if (( "${#paths[@]}" == 0 )) ; then
-			ewarn "${f} does not exist."
+ewarn "${f} does not exist."
 			continue
 		fi
 		local path
 		path=$(echo "${paths[@]}" | tr " " "\n" | tail -n 1)
 		local real_path=$(realpath "${path}")
-		#einfo "real_path=${real_path}"
-		if readelf -Ws "${real_path}" 2>/dev/null | grep -E -q -e "(cfi_bad_type|cfi_check_fail|__cfi_init)" ; then
-			einfo "${f} is CFI protected."
+		if readelf -Ws "${real_path}" 2>/dev/null \
+			| grep -E -q -e "(cfi_bad_type|cfi_check_fail|__cfi_init)" ; then
+einfo "${f} is CFI protected."
 		else
-			ewarn "${f} is NOT CFI protected."
+ewarn "${f} is NOT CFI protected."
 		fi
 	done
-	einfo
-	einfo "The information presented is a draft report that may not"
-	einfo "represent your configuration.  Some libraries listed"
-	einfo "may not be be able to be CFI Cross-DSOed."
-	einfo
-	einfo "An estimated >= 37.7% (26/69) of the libraries listed should be"
-	einfo "marked CFI protected."
-	einfo
+einfo
+einfo "The information presented is a draft report that may not"
+einfo "represent your configuration.  Some libraries listed"
+einfo "may not be be able to be CFI Cross-DSOed."
+einfo
+einfo "An estimated >= 37.7% (26/69) of the libraries listed should be"
+einfo "marked CFI protected."
+einfo
 }
 
 CURRENT_PROFDATA_VERSION=
 CURRENT_PROFDATA_LLVM_VERSION=
 NABIS=0
 pkg_setup() {
-	einfo "The $(ver_cut 1 ${PV}) series is the stable channel."
+einfo
+einfo "The $(ver_cut 1 ${PV}) series is the stable channel."
+einfo
 	pre_build_checks
 
 	chromium_suid_sandbox_check_kernel_config
 
-	# nvidia-drivers does not work correctly with Wayland due to unsupported EGLStreams
-	if use wayland && ! use headless && has_version "x11-drivers/nvidia-drivers" ; then
-		ewarn "Proprietary nVidia driver does not work with Wayland. You can disable"
-		ewarn "Wayland by setting DISABLE_OZONE_PLATFORM=true in /etc/chromium/default."
+	# nvidia-drivers does not work correctly with Wayland due to unsupported
+	# EGLStreams
+	if use wayland \
+		&& ! use headless \
+		&& has_version "x11-drivers/nvidia-drivers" ; then
+ewarn
+ewarn "Proprietary nVidia driver does not work with Wayland. You can disable"
+ewarn "Wayland by setting DISABLE_OZONE_PLATFORM=true in /etc/chromium/default."
+ewarn
 	fi
 
 	if ! use amd64 && [[ "${USE}" =~ cfi ]] ; then
@@ -1719,28 +1305,6 @@ ewarn
 ewarn "All variations of the cfi USE flags are not defaults for this platform."
 ewarn "Disable them if problematic."
 ewarn
-	fi
-
-	if use pgo-full ; then
-ewarn
-ewarn "The pgo-full USE flag is a Work In Progress (WIP) and not production ready."
-ewarn "Please only use the pgo USE flag instead.  This notice will be removed when"
-ewarn "it is ready."
-ewarn
-		if has network-sandbox $FEATURES ; then
-eerror
-eerror "The pgo-full USE flag requires FEATURES=\"\${FEATURES} -network-sandbox\""
-eerror "to be able to use vpython and other dependencies in order to generate"
-eerror "PGO profiles."
-eerror
-			die
-		fi
-		if use wayland && ! use weston ; then
-ewarn
-ewarn "Weston is required for PGO profile generation but mutually exclusive to"
-ewarn "X windowing system PGO profile generation."
-ewarn
-		fi
 	fi
 
 	if use official || ( use clang && use cfi-vcall && use pgo ) ; then
@@ -1756,6 +1320,7 @@ ewarn
 		# No LLVM multi version bug here.
 		# Cr will still work if Mesa slot is lower and Cr is built with
 		# a higher version.
+		local s
 		if use pre-check-llvm ; then
 			unset LLVM_REPORT_CARDS
 			for s in ${LLVM_SLOTS[@]} ; do
@@ -1766,7 +1331,10 @@ ewarn
 			if use official ; then
 				slots=${CR_CLANG_SLOT_OFFICIAL}
 			else
-				slots=$(echo "${LLVM_SLOTS[@]}" | tr " " "\n" | tac | tr "\n" " ")
+				slots=$(echo "${LLVM_SLOTS[@]}" \
+					| tr " " "\n" \
+					| tac \
+					| tr "\n" " ")
 			fi
 			for s in ${slots} ; do
 				if [[ ${LLVM_REPORT_CARDS[${s}]} == "pass" ]] ; then
@@ -1822,7 +1390,9 @@ eerror
 			# If ccache is installed, this really does nothing because
 			# /usr/lib/ccache/bin has a higher precedence.
 			export PATH+=":/usr/lib/llvm/${LLVM_SLOT}/bin"
-			einfo "Using sys-devel/llvm:${LLVM_SLOT}"
+einfo
+einfo "Using sys-devel/llvm:${LLVM_SLOT}"
+einfo
 			local lld_v_maj=$(ver_cut 1 $(best_version "sys-devel/lld" | sed -e "s|sys-devel/lld-||"))
 			v_major_lld=$(ver_cut 1 "${v_major_lld}")
 			export PATH+=":/usr/lib/llvm/${v_major_lld}/bin"
@@ -1857,11 +1427,6 @@ ewarn
 		find_vaapi
 	fi
 
-	if use cr_pgo_trainers_media_desktop \
-		|| use cr_pgo_trainers_media_mobile ; then
-		find_video0
-	fi
-
 	if use system-libstdcxx ; then
 ewarn
 ewarn "The system's libstdcxx may weaken the security.  Consider"
@@ -1882,50 +1447,12 @@ ceapply() {
 	eapply "${@}"
 }
 
-CIPD_CACHE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/cipd-cache"
-init_vpython() {
-	export CIPD_CACHE_DIR
-	export PATH="${S}/third_party/depot_tools:${PATH}"
-	# See https://github.com/chromium/chromium/blob/92.0.4577.42/DEPS#L4489
-	addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	mkdir -p "${CIPD_CACHE_DIR}" || die
-	addwrite "${CIPD_CACHE_DIR}"
-	einfo "Downloading VirtualEnvs ( ~287 MiB, ~1 hr wait )"
-	einfo "If build problems, remove the ${CIPD_CACHE_DIR} folder and try again."
-#		tools/perf/fetch_benchmark_deps.py
-	local scripts_to_run=(
-		out/Release/bin/run_performance_test_suite
-	)
-	cd "${S}" || die
-	for s in ${scripts_to_run[@]} ; do
-		einfo "Downloading a VirtualEnv for $(basename ${s})"
-		"${s}" -cache-dir "${CIPD_CACHE_DIR}" --help || die
-	done
-}
-
-fetching_pgo_deps() {
-	einfo "Downloading all benchmark deps used by PGO trainers"
-	cd "${S}" || die
-	vpython -cache-dir "${CIPD_CACHE_DIR}" tools/perf/fetch_benchmark_deps.py || die
-}
-
 src_unpack() {
 	for a in ${A} ; do
 		[[ "${a}" == "${PN}-${MTD_V}-media-test-data.tar.gz" ]] && continue
 		[[ "${a}" == "${PN}-${CTDM_V}-chrome-test-data-media.tar.gz" ]] && continue
 		unpack ${a}
 	done
-	if use pgo-full ; then
-		cp -a $(realpath "${DISTDIR}/.cipd_client-${ABI}-${CIPD_V}") \
-			"${S}/third_party/depot_tools/.cipd_client" || die
-		chmod +x "${S}/third_party/depot_tools/.cipd_client" || die
-		pushd "${S}/media/test/data" || die
-			unpack ${PN}-${MTD_V}-media-test-data.tar.gz
-		popd
-		pushd "${S}/chrome/test/data/media" || die
-			unpack ${PN}-${CTDM_V}-chrome-test-data-media.tar.gz
-		popd
-	fi
 }
 
 # Full list of hw accelerated image processing
@@ -1975,11 +1502,15 @@ find_vaapi() {
 	use pre-check-vaapi || return
 	use vaapi || return
 	if [[ -n "${CR_DRM_RENDER_NODE}" ]] ; then
-		einfo "User VA-API override"
+einfo
+einfo "User VA-API override"
+einfo
 		# Per-package envvar overridable
 		DRM_RENDER_NODE=${CR_DRM_RENDER_NODE}
 	else
-		einfo "Autodetecting VA-API device"
+einfo
+einfo "Autodetecting VA-API device"
+einfo
 		unset LIBVA_DRIVERS_PATH
 		unset LIBVA_DRIVER_NAME
 		unset DRM_RENDER_NODE
@@ -2061,1006 +1592,28 @@ eerror
 		vaapi_autodetect_failed_msg
 		die
 	else
-		einfo "Using VA-API device with DRM render node ${DRM_RENDER_NODE}"
-		[[ -n "${LIBVA_DRIVER_NAME}" ]] \
-			&& einfo " LIBVA_DRIVER_NAME=${LIBVA_DRIVER_NAME}"
-		[[ -n "${LIBVA_DRIVERS_PATH}" ]] \
-			&& einfo " LIBVA_DRIVERS_PATH=${LIBVA_DRIVERS_PATH}"
+einfo
+einfo "Using VA-API device with DRM render node ${DRM_RENDER_NODE}"
+einfo
+		if [[ -n "${LIBVA_DRIVER_NAME}" ]] ; then
+einfo
+einfo "LIBVA_DRIVER_NAME=${LIBVA_DRIVER_NAME}"
+einfo
+		fi
+		if [[ -n "${LIBVA_DRIVERS_PATH}" ]] ; then
+einfo
+einfo "LIBVA_DRIVERS_PATH=${LIBVA_DRIVERS_PATH}"
+einfo
+		fi
 	fi
 }
 
 is_generating_credits() {
-	if [[ -n "${GEN_ABOUT_CREDITS}" && "${GEN_ABOUT_CREDITS}" == "1" ]] ; then
+	if [[ -n "${GEN_ABOUT_CREDITS}" \
+		&& "${GEN_ABOUT_CREDITS}" == "1" ]] ; then
 		return 0
 	else
 		return 1
-	fi
-}
-
-gen_full_pgo_assets() {
-	#
-	# The function is used primarily for cr_pgo_trainers_memory_desktop PGO
-	# trainer USE flag.
-	#
-	if use pgo-full ; then
-		export ASSET_CACHE_REVISION=6 # Bump on every change of output.
-		ASSET_CACHE="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/${PN}/asset-cache"
-		addwrite "${ASSET_CACHE}"
-
-		restart_asset_cache() {
-			einfo "Restarting the asset cache"
-			rm -rf "${ASSET_CACHE}"
-			mkdir -p "${ASSET_CACHE}" || die
-			echo "REVISION=${ASSET_CACHE_REVISION}" \
-				> "${ASSET_CACHE}/.cache-control" || die
-		}
-		if [[ ! -f "${ASSET_CACHE}/.cache-control" ]] ; then
-			restart_asset_cache
-		else
-			local x_asset_cache_revision=$(grep -r \
-				-e "REVISION=" "${ASSET_CACHE}/.cache-control" \
-				| cut -f 2 -d "=")
-			einfo "x_asset_cache_revision=${x_asset_cache_revision}"
-			einfo "ASSET_CACHE_REVISION=${ASSET_CACHE_REVISION}"
-			if (( ${x_asset_cache_revision} < ${ASSET_CACHE_REVISION} )) ; then
-				restart_asset_cache
-			else
-				einfo "Reusing the asset-cache"
-			fi
-		fi
-
-		mkdir -p "${ASSET_CACHE}" || die
-		local drm_render_node=()
-		local init_ffmpeg_filter=()
-		if use vaapi ; then
-			if [[ -e ${DRM_RENDER_NODE} ]] ; then
-				export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # \
-				  # Prevent a sandbox violation and isolate between parallel running emerges.
-				drm_render_node=( -init_hw_device vaapi=drm_render_node:${DRM_RENDER_NODE} )
-			else
-				die "Missing VA-API device"
-			fi
-			if use vaapi && ffmpeg -filters 2>/dev/null \
-				| grep -q -F -e "scale_vaapi" ; then
-				init_ffmpeg_filter=( -filter_hw_device drm_render_node )
-			fi
-		fi
-		if use cr_pgo_trainers_memory_desktop ; then
-			einfo "Generating missing assets for the memory.desktop"
-
-			local vp8_decoding=()
-
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "VP8.*VAEntrypointVLD" \
-				&& [[ -e /dev/dri/renderD128 ]] ; then
-				vp8_decoding=( -hwaccel vaapi
-					-hwaccel_output_format vaapi
-					-hwaccel_device drm_render_node
-					-filter_hw_device drm_render_node )
-			fi
-
-			if use proprietary-codecs ; then
-				local aac_encoding=( -codec:a aac )
-				local h264_encoding=()
-
-				h264_baseline_profile=()
-				if use vaapi && vainfo 2>/dev/null \
-					| grep -q -G -e "H264.*VAEntrypointEncSlice" \
-					&& ffmpeg -hide_banner -encoders 2>/dev/null \
-						| grep -q -F -e "h264_vaapi" ; then
-					h264_encoding=( -c:v h264_vaapi )
-					h264_baseline_profile=( -profile:v 578 )
-					# For quality see, ffmpeg -h full
-				elif has_version "media-video/ffmpeg[openh264]" ;then
-					h264_encoding=( -c:v libopenh264 )
-					h264_baseline_profile=( -profile:v 578 )
-				fi
-
-				# bigbuck.webm -> buck-480p.mp4
-				einfo "Generating buck-480p.mp4 for the memory.desktop benchmark"
-				# The bunny.gif doesn't actually exist on the website but is converted from the
-				# movie explained in https://codereview.chromium.org/2243403006
-				filter_sw=()
-				filter_hw+=( $(_gen_vaapi_filter "H264") )
-				if _is_hw_scaling_supported "H264" ; then
-					filter_hw+=( "scale_vaapi=w=852:h=-1" )
-				else
-					filter_sw+=( "scale=w=852:h=-1" )
-					filter_sw+=( "crop=852:480:0:0" )
-				fi
-				cmd=( ffmpeg \
-					${drm_render_node[@]} \
-					${vp8_decoding[@]} \
-					-i "${S}/chrome/test/data/media/bigbuck.webm" \
-					${h264_encoding[@]} \
-					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
-						&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
-						&& echo " ${filter_hw[@]}") | tr " " ",") \
-					${aac_encoding[@]} \
-					"${S}/tools/perf/page_sets/trivial_sites/buck-480p.mp4" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-				sed -i -e "s|road_trip_640_480.mp4|buck-480p.mp4|g" \
-					"${S}/tools/perf/page_sets/trivial_sites/trivial_fullscreen_video.html" \
-					|| die
-			fi
-
-			# bigbuck.webm -> bunny.gif
-			einfo "Generating bunny.gif (animated gif) for the memory.desktop benchmark"
-			# The bunny.gif doesn't actually exist on the website but is converted from the
-			# movie explained in https://codereview.chromium.org/2243403006
-			filter_sw=( "scale=w=852:h=-1" )
-			filter_sw+=( "crop=852:480:0:0" )
-			cmd=( ffmpeg \
-				${drm_render_node[@]} \
-				${vp8_decoding[@]} \
-				-i "${S}/chrome/test/data/media/bigbuck.webm" \
-				$(_is_vaapi_allowed "GIF" && echo "${init_ffmpeg_filter[@]}") \
-				-vf $(echo "${filter_sw[@]}" | tr " " ",") \
-				-t 60.0 \
-				-f gif \
-				"${S}/tools/perf/page_sets/trivial_sites/bunny.gif" )
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die "${cmd[@]}"
-			# For animated gif alternatives:
-			#sed -i -e "s|bunny.gif|bunny.gif|g" \
-			#	"${S}/tools/perf/page_sets/trivial_sites/trivial_gif.html"
-		fi
-
-		# See also https://chromium.googlesource.com/chromium/src.git/+/refs/tags/103.0.5060.134/media/test/data/#media-test-data
-		# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/103.0.5060.134/tools/perf/page_sets/media_cases.py
-		if use cr_pgo_trainers_media_desktop \
-			|| use cr_pgo_trainers_media_mobile ; then
-			einfo "Generating missing assets for the media.desktop or media.mobile benchmarks"
-			local opus_encoding=( -c:a libopus )
-			local vorbis_encoding=( -c:a libvorbis )
-			local vp8_decoding=()
-			local vp8_encoding=()
-			local vp9_decoding=()
-			local vp9_encoding=()
-
-			# vp8, vorbis : bigbuck.webm, tulip2.webm
-			# vp9, opus : ${CR_PGO_VIDEO0}
-
-			# tulip2.webm is 1280x720 res, 2104 kb/s bitrate, 29.97 fps.  Audio bitrate is unknown.
-			# ${CR_PGO_VIDEO0} is 3840x2160 res, 24124k bitrate, 59.94 fps.  Audio bitrate is unknown.
-
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "VP8.*VAEntrypointVLD" \
-				&& [[ -e /dev/dri/renderD128 ]] ; then
-				vp8_decoding=( -hwaccel vaapi
-					-hwaccel_output_format vaapi
-					-hwaccel_device drm_render_node
-					-filter_hw_device drm_render_node )
-			fi
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "VP9.*VAEntrypointVLD" \
-				&& [[ -e /dev/dri/renderD128 ]] ; then
-				vp9_decoding=( -hwaccel vaapi
-					-hwaccel_output_format vaapi
-					-hwaccel_device drm_render_node
-					-filter_hw_device drm_render_node )
-			fi
-
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "VP8.*VAEntrypointEncSlice" \
-				&& ffmpeg -hide_banner -encoders 2>/dev/null \
-					| grep -q -F -e "vp8_vaapi" ; then
-				vp8_encoding=( -c:v vp8_vaapi )
-			else
-				vp8_encoding=( -c:v libvpx )
-			fi
-
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "VP9.*VAEntrypointEncSlice" \
-				&& ffmpeg -hide_banner -encoders 2>/dev/null \
-					| grep -q -F -e "vp9_vaapi" ; then
-				vp9_encoding=( -c:v vp9_vaapi )
-			else
-				vp9_encoding=( -c:v libvpx-vp9 )
-			fi
-
-			if use proprietary-codecs ; then
-				local aac_encoding=( -codec:a aac )
-				local h264_encoding=()
-				local mp3_encoding=( -c:a libmp3lame )
-
-				h264_baseline_profile=()
-				h264_high_profile_4_0=()
-				if use vaapi && vainfo 2>/dev/null \
-					| grep -q -G -e "H264.*VAEntrypointEncSlice" \
-					&& ffmpeg -hide_banner -encoders 2>/dev/null \
-						| grep -q -F -e "h264_vaapi" ; then
-					h264_encoding=( -c:v h264_vaapi )
-					h264_baseline_profile=( -profile:v 578 )
-					h264_high_profile_4_0=( -profile:v 100 -level:v 40 )
-				elif has_version "media-video/ffmpeg[openh264]" ;then
-					h264_encoding=( -c:v libopenh264 )
-					h264_baseline_profile=( -profile:v 578 )
-					h264_high_profile_4_0=( -profile:v 100 ) # no level
-				fi
-
-				# tulip2.webm -> tulip2.m4a
-				cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
-					-vn \
-					${aac_encoding[@]} \
-					"${S}/tools/perf/page_sets/media_cases/tulip2.m4a" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-
-				# tulip2.webm -> tulip2.mp3
-				cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
-					-vn \
-					${mp3_encoding[@]} \
-					"${S}/tools/perf/page_sets/media_cases/tulip2.mp3" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-
-				# tulip2.webm -> tulip2.mp4
-				h264_filter_args=( -vf "format=nv12,hwupload" )
-				cmd=( ffmpeg \
-					${drm_render_node[@]} \
-					${vp8_decoding[@]} \
-					-i "${S}/media/test/data/tulip2.webm" \
-					${h264_encoding[@]} \
-					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
-					${h264_baseline_profile[@]} \
-					${aac_encoding[@]} \
-					"${S}/tools/perf/page_sets/media_cases/tulip2.mp4" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-
-				# tulip2.webm -> aac_audio.mp4
-				# Asset must be AAC-LC.
-				aac_lc=( -profile:a aac_low )
-				cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
-					-vn \
-					${aac_encoding[@]} \
-					${aac_lc[@]} \
-					"${S}/tools/perf/page_sets/media_cases/aac_audio.mp4" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-
-				# tulip2.webm -> h264_video.mp4
-				# Asset must be h264, level 4, high profile
-				# See tools/perf/page_sets/media_cases/mse.js
-				h264_filter_args=( -vf "format=nv12,hwupload" )
-				cmd=( ffmpeg \
-					${drm_render_node[@]} \
-					-i "${S}/media/test/data/tulip2.webm" \
-					${h264_encoding[@]} \
-					${h264_high_profile_4_0[@]} \
-					$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-					$(_is_vaapi_allowed "H264" && echo "${h264_filter_args[@]}") \
-					-an \
-					"${S}/tools/perf/page_sets/media_cases/h264_video.mp4" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-
-				# ${CR_PGO_VIDEO0} -> video0_720p30fps.mp4
-				# 1280 x 720 res ; must be 2 min
-				if [[ -f "${ASSET_CACHE}/video0_720p30fps.mp4" \
-					&& -f "${ASSET_CACHE}/video0_720p30fps.mp4.sha512" \
-					&& $(cat "${ASSET_CACHE}/video0_720p30fps.mp4.sha512") \
-						== $(sha512sum "${ASSET_CACHE}/video0_720p30fps.mp4" \
-							| cut -f 1 -d " ") ]] ; then
-					einfo "Using pregenerated and cached video0_720p30fps.mp4"
-					cp -a "${ASSET_CACHE}/video0_720p30fps.mp4" \
-						"${S}/tools/perf/page_sets/media_cases/video0_720p30fps.mp4" \
-						|| die
-				else
-					filter_sw=()
-					filter_hw=( $(_gen_vaapi_filter "H264") )
-					if _is_hw_scaling_supported "H264" ; then
-						filter_hw+=( "scale_vaapi=w=-1:h=720" )
-					else
-						filter_sw+=( "scale=w=-1:h=720" )
-					fi
-					cmd=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp9_decoding[@]} \
-						-i $(realpath "${CR_PGO_VIDEO0}") \
-						${h264_encoding[@]} \
-						$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
-							&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
-							&& echo " ${filter_hw[@]}") | tr " " ",") \
-						-maxrate 1485k -minrate 512k -b:v 1024k \
-						-r 30 \
-						${aac_encoding[@]} \
-						-t 120.0 \
-						"${S}/tools/perf/page_sets/media_cases/video0_720p30fps.mp4" )
-					einfo "${cmd[@]}"
-					"${cmd[@]}" || die "${cmd[@]}"
-					einfo "Saving work to ${ASSET_CACHE}/video0_720p30fps.mp4 for faster rebuilds."
-					cp -a "${S}/tools/perf/page_sets/media_cases/video0_720p30fps.mp4" \
-						"${ASSET_CACHE}/video0_720p30fps.mp4" || die
-					sha512sum "${ASSET_CACHE}/video0_720p30fps.mp4" \
-						| cut -f 1 -d " " > "${ASSET_CACHE}/video0_720p30fps.mp4.sha512" || die
-				fi
-				sed -i -e "s|foodmarket_720p30fps.mp4|video0_720p30fps.mp4|g" \
-					"${S}/tools/perf/page_sets/media_cases.py" || die
-			fi
-
-			# tulip2.webm -> tulip2.ogg
-			cmd=( ffmpeg -i "${S}/media/test/data/tulip2.webm" \
-				-vn \
-				${vorbis_encoding[@]} \
-				"${S}/tools/perf/page_sets/media_cases/tulip2.ogg" )
-			einfo "${cmd[@]}"
-			"${cmd[@]}" || die "${cmd[@]}"
-
-			# tulip2.webm -> tulip2.vp9.webm
-			# Must be <= wifi bitrate.  U = 2.8Mbps upload, so A kbps for audio and V = ( U - A ) video max.
-			# For no audio, then V = U for max bitrate.
-			if [[ -f "${ASSET_CACHE}/tulip2.vp9.webm" \
-				&& -f "${ASSET_CACHE}/tulip2.vp9.webm.sha512" \
-				&& $(cat "${ASSET_CACHE}/tulip2.vp9.webm.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/tulip2.vp9.webm" \
-						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached tulip2.vp9.webm"
-				cp -a "${ASSET_CACHE}/tulip2.vp9.webm" \
-					"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" \
-					|| die
-			else
-				if _is_vaapi_allowed "VP9" ; then
-					# Likely only single pass supported
-					# Quality is auto but based on other args.
-					# https://trac.ffmpeg.org/wiki/Hardware/VAAPI mentions how vp9 quality is handled indirectly.
-					vp9_filter_args=( -vf "format=nv12,hwupload" )
-					cmd=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp8_decoding[@]} \
-						-i "${S}/media/test/data/tulip2.webm" \
-						${vp9_encoding[@]} \
-						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
-						$(_is_vaapi_allowed "VP9" && echo "${vp9_filter_args[@]}") \
-						-maxrate 1485k -minrate 512k -b:v 1024k \
-						${opus_encoding[@]} \
-						"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" )
-					einfo "${cmd[@]}"
-					"${cmd[@]}" || die "${cmd[@]}"
-				else
-					# See https://developers.google.com/media/vp9/settings/vod
-					cmd=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp8_decoding[@]} \
-						-i "${S}/media/test/data/tulip2.webm" \
-						${vp9_encoding[@]} \
-						-maxrate 1485k -minrate 512k -b:v 1024k -crf 31 \
-						${opus_encoding[@]} \
-						"${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" )
-					einfo "${cmd[@]}"
-					"${cmd[@]}" || die "${cmd[@]}"
-				fi
-				einfo "Saving work to ${ASSET_CACHE}/tulip2.vp9.webm for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/tulip2.vp9.webm" \
-					"${ASSET_CACHE}/tulip2.vp9.webm" || die
-				sha512sum "${ASSET_CACHE}/tulip2.vp9.webm" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/tulip2.vp9.webm.sha512" || die
-			fi
-
-			# ${CR_PGO_VIDEO0} -> video0_1080p60fps_vp9.webm
-			# 1920 x 1080 res ; must be 2 min
-			if [[ -f "${ASSET_CACHE}/video0_1080p60fps_vp9.webm" \
-				&& -f "${ASSET_CACHE}/video0_1080p60fps_vp9.webm.sha512" \
-				&& $(cat "${ASSET_CACHE}/video0_1080p60fps_vp9.webm.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/video0_1080p60fps_vp9.webm" \
-						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached video0_1080p60fps_vp9.webm"
-				cp -a "${ASSET_CACHE}/video0_1080p60fps_vp9.webm" \
-					"${S}/tools/perf/page_sets/media_cases/video0_1080p60fps_vp9.webm" \
-					|| die
-			else
-				if _is_vaapi_allowed "VP9" ; then
-					# Likely only single pass supported
-					filter_sw=()
-					filter_hw=( $(_gen_vaapi_filter "VP9") )
-					if _is_hw_scaling_supported "VP9" ; then
-						filter_hw+=( "scale_vaapi=w=-1:h=1080" )
-					else
-						filter_sw+=( "scale=w=-1:h=1080" )
-					fi
-					cmd=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp9_decoding[@]} \
-						-i $(realpath "${CR_PGO_VIDEO0}") \
-						${vp9_encoding[@]} \
-						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
-							&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
-							&& echo " ${filter_hw[@]}") | tr " " ",") \
-						-maxrate 4350k -minrate 1500k -b:v 3000k \
-						-r 60 \
-						-t 120.0 \
-						${opus_encoding[@]} \
-						"${S}/tools/perf/page_sets/media_cases/video0_1080p60fps_vp9.webm" )
-					einfo "${cmd[@]}"
-					"${cmd[@]}" || die "${cmd[@]}"
-				else
-					# See https://developers.google.com/media/vp9/settings/vod
-					cmd=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp9_decoding[@]} \
-						-i $(realpath "${CR_PGO_VIDEO0}") \
-						${vp9_encoding[@]} \
-						-vf scale=w=-1:h=1080 \
-						-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
-						-r 60 \
-						-t 120.0 \
-						${opus_encoding[@]} \
-						"${S}/tools/perf/page_sets/media_cases/video0_1080p60fps_vp9.webm" )
-					einfo "${cmd[@]}"
-					"${cmd[@]}" || die "${cmd[@]}"
-				fi
-				einfo "Saving work to ${ASSET_CACHE}/video0_1080p60fps_vp9.webm for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/video0_1080p60fps_vp9.webm" \
-					"${ASSET_CACHE}/video0_1080p60fps_vp9.webm" || die
-				sha512sum "${ASSET_CACHE}/video0_1080p60fps_vp9.webm" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/video0_1080p60fps_vp9.webm.sha512" || die
-			fi
-			sed -i -e "s|boat_1080p60fps_vp9.webm|animal_1080p60fps_vp9.webm|g" \
-				"${S}/tools/perf/page_sets/media_cases.py" || die
-		fi
-
-		if use cr_pgo_trainers_media_desktop ; then
-			einfo "Generating missing assets for the media.desktop benchmark"
-			local av1_encoding=()
-			local vp8_decoding=()
-			local vp8_encoding=()
-			local vp9_decoding=()
-			local vp9_encoding=()
-			local vorbis_encoding=( -c:a libvorbis )
-
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "VP8.*VAEntrypointVLD" \
-				&& [[ -e /dev/dri/renderD128 ]] ; then
-				vp8_decoding=( -hwaccel vaapi
-					-hwaccel_output_format vaapi
-					-hwaccel_device drm_render_node
-					-filter_hw_device drm_render_node )
-			fi
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "VP9.*VAEntrypointVLD" \
-				&& [[ -e /dev/dri/renderD128 ]] ; then
-				vp9_decoding=( -hwaccel vaapi
-					-hwaccel_output_format vaapi
-					-hwaccel_device drm_render_node
-					-filter_hw_device drm_render_node )
-			fi
-
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "AV1.*VAEntrypointEncSlice" \
-				&& ffmpeg -hide_banner -encoders 2>/dev/null \
-					| grep -q -F -e "av1_vaapi" ; then
-				av1_encoding=( -c:v av1_vaapi )
-			elif has_version "media-video/ffmpeg[libaom]" ; then
-				ncpus=$(lscpu \
-					| grep -E -e "^CPU\(s\):.*" \
-					| grep -E -o -e "[0-9]+")
-				nthreads_per_core=$(lscpu \
-					| grep -E -e "^Thread\(s\) per core:.*" \
-					| grep -E -o -e "[0-9]+")
-				# The defaults are slow.  Test?
-				local tot_tpc=$(( ${ncpus} * ${nthreads_per_core} ))
-				if (( ${ncpus} == 1 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 0
-						-tile-rows 0 -threads 1 )
-				elif (( ${ncpus} == 2 && ${nthreads_per_core} > 1 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 0
-						-tile-rows 1 -threads ${tpc}
-						-row-mt 1 )
-				elif (( ${ncpus} == 2 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 0
-						-tile-rows 1 -threads ${ncpus} )
-				elif (( ${ncpus} == 3 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 0
-						-tile-rows 1 -threads ${ncpus}
-						-row-mt 1 )
-				elif (( ${ncpus} == 4 && ${nthreads_per_core} > 1 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 1
-						-tile-rows 1 -threads ${tot_tpc}
-						-row-mt 1 )
-				elif (( ${ncpus} == 4 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 1
-						-tile-rows 1 -threads ${ncpus} )
-				elif (( ${ncpus} == 6 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 1
-						-tile-rows 1 -threads ${ncpus}
-						-row-mt 1 )
-				elif (( ${ncpus} == 8 && ${nthreads_per_core} > 1 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 1
-						-tile-rows 2 -threads ${tot_tpc}
-						-row-mt 1 )
-				elif (( ${ncpus} == 8 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 1
-						-tile-rows 2 -threads ${ncpus} )
-				elif (( ${ncpus} == 16 && ${nthreads_per_core} > 1 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 2
-						-tile-rows 2 -threads ${tot_tpc}
-						-row-mt 1 )
-				elif (( ${ncpus} == 16 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 2
-						-tile-rows 2 -threads ${ncpus} )
-				elif (( ${nthreads_per_core} > 1 )) ; then
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 2
-						-tile-rows 2 -threads ${tot_tpc}
-						-row-mt 1 )
-				else
-					av1_encoding=( -c:v libaom-av1
-						-cpu-used 8 -tile-columns 2
-						-tile-rows 2 -threads ${ncpus}
-						-row-mt 1 )
-				fi
-			fi
-
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "VP8.*VAEntrypointEncSlice" \
-				&& ffmpeg -hide_banner -encoders 2>/dev/null \
-					| grep -q -F -e "vp8_vaapi" ; then
-				vp8_encoding=( -c:v vp8_vaapi )
-			else
-				vp8_encoding=( -c:v libvpx )
-			fi
-
-			if use vaapi && vainfo 2>/dev/null \
-				| grep -q -G -e "VP9.*VAEntrypointEncSlice" \
-				&& ffmpeg -hide_banner -encoders 2>/dev/null \
-					| grep -q -F -e "vp9_vaapi" ; then
-				vp9_encoding=( -c:v vp9_vaapi )
-			else
-				vp9_encoding=( -c:v libvpx-vp9 )
-			fi
-
-			if use proprietary-codecs ; then
-				local aac_encoding=( -codec:a aac )
-				local h264_encoding=()
-
-				h264_baseline_profile=()
-				if use vaapi && vainfo 2>/dev/null \
-					| grep -q -G -e "H264.*VAEntrypointEncSlice" \
-					&& ffmpeg -hide_banner -encoders 2>/dev/null \
-						| grep -q -F -e "h264_vaapi" ; then
-					h264_encoding=( -c:v h264_vaapi )
-					h264_baseline_profile=( -profile:v 578 )
-				elif has_version "media-video/ffmpeg[openh264]" ;then
-					h264_encoding=( -c:v libopenh264 )
-					h264_baseline_profile=( -profile:v 578 )
-				fi
-
-				# tulip2.webm -> crowd1080.mp4
-				if [[ -f "${ASSET_CACHE}/crowd1080.mp4" \
-					&& -f "${ASSET_CACHE}/crowd1080.mp4.sha512" \
-					&& $(cat "${ASSET_CACHE}/crowd1080.mp4.sha512") \
-						== $(sha512sum "${ASSET_CACHE}/crowd1080.mp4" \
-							| cut -f 1 -d " ") ]] ; then
-					einfo "Using pregenerated and cached crowd1080.mp4"
-					cp -a "${ASSET_CACHE}/crowd1080.mp4" \
-						"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" \
-						|| die
-				else
-					filter_sw=( "minterpolate=vsbmc=1" )
-					filter_hw=( $(_gen_vaapi_filter "H264") )
-					if _is_hw_scaling_supported "H264" ; then
-						filter_hw+=( "scale_vaapi=w=-1:h=1080" )
-					else
-						filter_sw+=( "scale=w=-1:h=1080" )
-					fi
-					cmd=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp8_decoding[@]} \
-						-i "${S}/media/test/data/tulip2.webm" \
-						${h264_encoding[@]} \
-						$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
-							&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
-							&& echo " ${filter_hw[@]}") | tr " " ",") \
-						-maxrate 4350k -minrate 1500k -b:v 3000k \
-						${aac_encoding[@]} \
-						-r 50 \
-						"${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" )
-					einfo "${cmd[@]}"
-					"${cmd[@]}" || die "${cmd[@]}"
-					einfo "Saving work to ${ASSET_CACHE}/crowd1080.mp4 for faster rebuilds."
-					cp -a "${S}/tools/perf/page_sets/media_cases/crowd1080.mp4" \
-						"${ASSET_CACHE}/crowd1080.mp4" || die
-					sha512sum "${ASSET_CACHE}/crowd1080.mp4" \
-						| cut -f 1 -d " " > "${ASSET_CACHE}/crowd1080.mp4.sha512" || die
-				fi
-
-				# ${CR_PGO_VIDEO0} -> garden2_10s.mp4
-				# 3840 x 2160 resolution
-				if [[ -f "${ASSET_CACHE}/video0_10s.mp4" \
-					&& -f "${ASSET_CACHE}/video0_10s.mp4.sha512" \
-					&& $(cat "${ASSET_CACHE}/video0_10s.mp4.sha512") \
-						== $(sha512sum "${ASSET_CACHE}/video0_10s.mp4" \
-							| cut -f 1 -d " ") ]] ; then
-					einfo "Using pregenerated and cached video0_10s.mp4"
-					cp -a "${ASSET_CACHE}/video0_10s.mp4" \
-						"${S}/tools/perf/page_sets/media_cases/video0_10s.mp4" \
-						|| die
-				else
-					filter_sw=()
-					filter_hw=( $(_gen_vaapi_filter "H264") )
-					if _is_hw_scaling_supported "H264" ; then
-						filter_hw+=( "scale_vaapi=w=-1:h=2160" )
-					else
-						filter_sw+=( "scale=w=-1:h=2160" )
-					fi
-					cmd=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp9_decoding[@]} \
-						-i $(realpath "${CR_PGO_VIDEO0}") \
-						${h264_encoding[@]} \
-						$(_is_vaapi_allowed "H264" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
-							&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
-							&& echo " ${filter_hw[@]}") | tr " " ",") \
-						${aac_encoding[@]} \
-						-t 10 \
-						"${S}/tools/perf/page_sets/media_cases/video0_10s.mp4" )
-					einfo "${cmd[@]}"
-					"${cmd[@]}" || die "${cmd[@]}"
-					einfo "Saving work to ${ASSET_CACHE}/video0_10s.mp4 for faster rebuilds."
-					cp -a "${S}/tools/perf/page_sets/media_cases/video0_10s.mp4" \
-						"${ASSET_CACHE}/video0_10s.mp4" || die
-					sha512sum "${ASSET_CACHE}/video0_10s.mp4" \
-						| cut -f 1 -d " " > "${ASSET_CACHE}/video0_10s.mp4.sha512" || die
-				fi
-				sed -i -e "s|garden2_10s.mp4|video0_10s.mp4|g" \
-					"${S}/tools/perf/page_sets/media_cases.py" || die
-			fi
-
-			# tulip2.webm -> crowd1080.webm
-			if [[ -f "${ASSET_CACHE}/crowd1080.webm" \
-				&& -f "${ASSET_CACHE}/crowd1080.webm.sha512" \
-				&& $(cat "${ASSET_CACHE}/crowd1080.webm.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/crowd1080.webm" \
-						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached crowd1080.webm"
-				cp -a "${ASSET_CACHE}/crowd1080.webm" \
-					"${S}/tools/perf/page_sets/media_cases/crowd1080.webm" \
-					|| die
-			else
-				filter_sw=( "minterpolate=vsbmc=1" )
-				filter_hw=( $(_gen_vaapi_filter "VP8") )
-				if _is_hw_scaling_supported "VP8" ; then
-					filter_hw+=( "scale_vaapi=w=-1:h=1080" )
-				else
-					filter_sw+=( "scale=w=-1:h=1080" )
-				fi
-				cmd=( ffmpeg \
-					${drm_render_node[@]} \
-					${vp8_decoding[@]} \
-					-i "${S}/media/test/data/tulip2.webm" \
-					${vp8_encoding[@]} \
-					$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
-						&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
-						&& echo " ${filter_hw[@]}") | tr " " ",") \
-					-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
-					${vorbis_encoding[@]} \
-					-r 50 \
-					"${S}/tools/perf/page_sets/media_cases/crowd1080.webm" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/crowd1080.webm for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/crowd1080.webm" \
-					"${ASSET_CACHE}/crowd1080.webm" || die
-				sha512sum "${ASSET_CACHE}/crowd1080.webm" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/crowd1080.webm.sha512" || die
-			fi
-
-			# tulip2.webm -> crowd1080_vp9.webm
-			if [[ -f "${ASSET_CACHE}/crowd1080_vp9.webm" \
-				&& -f "${ASSET_CACHE}/crowd1080_vp9.webm.sha512" \
-				&& $(cat "${ASSET_CACHE}/crowd1080_vp9.webm.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/crowd1080_vp9.webm" \
-						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached crowd1080_vp9.webm"
-				cp -a "${ASSET_CACHE}/crowd1080_vp9.webm" \
-					"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" \
-					|| die
-			else
-				if _is_vaapi_allowed "VP9" ; then
-					filter_sw=( "minterpolate=vsbmc=1" )
-					filter_hw=( $(_gen_vaapi_filter "VP9") )
-					if _is_hw_scaling_supported "VP9" ; then
-						filter_hw+=( "scale_vaapi=w=-1:h=1080" )
-					else
-						filter_sw+=( "scale=w=-1:h=1080" )
-					fi
-					# Likely only single pass supported
-					cmd=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp8_decoding[@]} \
-						-i "${S}/media/test/data/tulip2.webm" \
-						${vp9_encoding[@]} \
-						$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
-						-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
-							&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
-							&& echo " ${filter_hw[@]}") | tr " " ",") \
-						-maxrate 4350k -minrate 1500k -b:v 3000k \
-						-r 50 \
-						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
-					einfo "${cmd[@]}"
-					"${cmd[@]}" || die "${cmd[@]}"
-				else
-					# See https://developers.google.com/media/vp9/settings/vod
-					cmd=( ffmpeg \
-						${drm_render_node[@]} \
-						${vp8_decoding[@]} \
-						-i "${S}/media/test/data/tulip2.webm" \
-						${vp9_encoding[@]} \
-						-vf "minterpolate=vsbmc=1" \
-						-maxrate 4350k -minrate 1500k -b:v 3000k -crf 31 \
-						-r 50 \
-						"${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" )
-					einfo "${cmd[@]}"
-					"${cmd[@]}" || die "${cmd[@]}"
-				fi
-				einfo "Saving work to ${ASSET_CACHE}/crowd1080_vp9.webm for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/crowd1080_vp9.webm" \
-					"${ASSET_CACHE}/crowd1080_vp9.webm" || die
-				sha512sum "${ASSET_CACHE}/crowd1080_vp9.webm" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/crowd1080_vp9.webm.sha512" || die
-			fi
-
-			# ${CR_PGO_VIDEO0} -> garden2_10s.webm
-			# 3840 x 2160 resolution
-			if [[ -f "${ASSET_CACHE}/video0_10s.webm" \
-				&& -f "${ASSET_CACHE}/video0_10s.webm.sha512" \
-				&& $(cat "${ASSET_CACHE}/video0_10s.webm.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/video0_10s.webm" \
-						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached video0_10s.webm"
-				cp -a "${ASSET_CACHE}/video0_10s.webm" \
-					"${S}/tools/perf/page_sets/media_cases/video0_10s.webm" \
-					|| die
-			else
-				filter_sw=()
-				filter_hw=( $(_gen_vaapi_filter "VP8") )
-				if _is_hw_scaling_supported "VP8" ; then
-					filter_hw+=( "scale_vaapi=w=-1:h=2160" )
-				else
-					filter_sw+=( "scale=w=-1:h=2160" )
-				fi
-				cmd=( ffmpeg \
-					${drm_render_node[@]} \
-					${vp9_decoding[@]} \
-					-i $(realpath "${CR_PGO_VIDEO0}") \
-					${vp8_encoding[@]} \
-					$(_is_vaapi_allowed "VP8" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
-						&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
-						&& echo " ${filter_hw[@]}") | tr " " ",") \
-					${vorbis_encoding[@]} \
-					-t 10 \
-					"${S}/tools/perf/page_sets/media_cases/video0_10s.webm" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/video0_10s.webm for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/video0_10s.webm" \
-					"${ASSET_CACHE}/video0_10s.webm" || die
-				sha512sum "${ASSET_CACHE}/video0_10s.webm" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/video0_10s.webm.sha512" || die
-			fi
-			sed -i -e "s|garden2_10s.webm|video0_10s.webm|g" \
-				"${S}/tools/perf/page_sets/media_cases.py" || die
-
-			# ffmpeg -> smpte_3840x2160_60fps_vp9.webm
-			# 3840 x 2160 resolution ; 120s required
-			if [[ -f "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" \
-				&& -f "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm.sha512" \
-				&& $(cat "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" \
-						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached smpte_3840x2160_60fps_vp9.webm"
-				cp -a "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" \
-					"${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
-					|| die
-			else
-				einfo "Generating test video.  Estimated completion time: several min to hour(s)."
-				vp9_filter_args=( -vf "format=nv12,hwupload" )
-				libvpx_vp9_args=( -crf 31 )
-				cmd=( ffmpeg \
-					${drm_render_node[@]} \
-					-f lavfi -i testsrc=duration=120:size=3840x2160:rate=60 \
-					${vp9_encoding[@]} \
-					$(_is_vaapi_allowed "VP9" && echo "${init_ffmpeg_filter[@]}") \
-					$(_is_vaapi_allowed "VP9" && echo "${vp9_filter_args[@]}") \
-					-maxrate 26100k -minrate 9000k -b:v 18000k \
-					$(_is_vaapi_allowed "VP9" || echo "${libvpx_vp9_args[@]}") \
-					-an \
-					"${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" )
-				einfo "${cmd[@]}"
-				"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/smpte_3840x2160_60fps_vp9.webm" \
-					"${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" || die
-				sha512sum "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/smpte_3840x2160_60fps_vp9.webm.sha512" || die
-			fi
-
-			# tulip2.webm -> tulip0.av1.mp4
-			# Must be 8 bit AV1
-			# An alternative exist (bear in the media/test/data) folder,
-			# but it was decided to stick to the tulip to match upstream testing.
-			if [[ -f "${ASSET_CACHE}/tulip0.av1.mp4" \
-				&& -f "${ASSET_CACHE}/tulip0.av1.mp4.sha512" \
-				&& $(cat "${ASSET_CACHE}/tulip0.av1.mp4.sha512") \
-					== $(sha512sum "${ASSET_CACHE}/tulip0.av1.mp4" \
-						| cut -f 1 -d " ") ]] ; then
-				einfo "Using pregenerated and cached tulip0.av1.mp4"
-				cp -a "${ASSET_CACHE}/tulip0.av1.mp4" \
-					"${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" \
-					|| die
-			else
-				filter_sw=( format=yuv420p )
-				filter_hw=( $(_gen_vaapi_filter "AV1") )
-				cmd=( ffmpeg \
-					${drm_render_node[@]} \
-					${vp8_decoding[@]} \
-					-i "${S}/media/test/data/tulip2.webm" \
-					${av1_encoding[@]} \
-					$(_is_vaapi_allowed "AV1" && echo "${init_ffmpeg_filter[@]}") \
-					-vf $(echo $((( ${#filter_sw[@]} > 0 )) \
-						&& echo " ${filter_sw[@]}")$((( ${#filter_hw[@]} > 0 )) \
-						&& echo " ${filter_hw[@]}") | tr " " ",") \
-					-an \
-					"${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" )
-					einfo "${cmd[@]}"
-					"${cmd[@]}" || die "${cmd[@]}"
-				einfo "Saving work to ${ASSET_CACHE}/tulip0.av1.mp4 for faster rebuilds."
-				cp -a "${S}/tools/perf/page_sets/media_cases/tulip0.av1.mp4" \
-					"${ASSET_CACHE}/tulip0.av1.mp4" || die
-				sha512sum "${ASSET_CACHE}/tulip0.av1.mp4" \
-					| cut -f 1 -d " " > "${ASSET_CACHE}/tulip0.av1.mp4.sha512" || die
-			fi
-		fi
-	fi
-}
-
-gen_full_pgo_external_access_uris() {
-	#
-	# Function just reports URIs used primarily by remote_access_use PGO
-	# trainers below.
-	#
-	# The package doesn't have some web benchmarks but you need to snapshot
-	# a website to PGO train from them.
-	#
-	if use pgo-full ; then
-		for u in ${remote_access_use[@]} ; do
-			# This section is still unfinished
-			# TODO: Still categorizing benchmarks if local copy
-			# or network access access is required
-			if [[ "${u}" =~ "blink_perf" \
-				|| "${u}" =~ "dummy_benchmark" \
-				|| "${u}" =~ "memory_desktop" \
-				|| "${u}" =~ "speedometer2" \
-				|| "${u}" =~ "webrtc" \
-				]] ; then
-				:; # Skip if local copy
-			elif has network-sandbox $FEATURES ; then
-				# -network-sandbox requirement applies to:
-				# dromaeo
-				# jetstream
-				# jetstream2
-				# kraken
-				# octane
-				# power.mobile
-				# speedometer
-				# speedometer-future
-				# system_health_pcscan
-				# tab_switching_typical_25
-				# wasmpspdfkit
-eerror
-eerror "The ${u} USE flag requires FEATURES=\"${FEATURES} -network-sandbox\" to"
-eerror "be added as a per-package envvar to allowed Internet access to a"
-eerror "website in order to perform benchmarks in the src_compile() phase."
-eerror
-				die
-			fi
-		done
-		# Backtrack tools/perf/benchmark.csv to find the USE flag
-		# All sites in remote_access_use assume real time retrieval.
-		# TODO: check if all relevant USE flags added:
-		local remote_access_use=(
-			cr_pgo_trainers_desktop_ui
-			cr_pgo_trainers_loading_desktop
-			cr_pgo_trainers_loading_mobile
-			cr_pgo_trainers_power_mobile
-			cr_pgo_trainers_rasterize_and_record_micro_top_25
-			cr_pgo_trainers_rendering_mobile
-			cr_pgo_trainers_system_health_common_desktop
-			cr_pgo_trainers_system_health_common_mobile
-			cr_pgo_trainers_system_health_memory_desktop
-			cr_pgo_trainers_system_health_memory_mobile
-			cr_pgo_trainers_system_health_pcscan
-			cr_pgo_trainers_tab_switching_typical_25
-			cr_pgo_trainers_unscheduled_loading_mbi
-			cr_pgo_trainers_unscheduled_v8_loading_desktop
-			cr_pgo_trainers_v8_runtime_stats_top_25
-		)
-		local warned=0
-ewarn
-ewarn "Discovered URIs for external access for PGO trainers:"
-ewarn
-		echo "http://dromaeo.com?"{'dom-attr','dom-modify','dom-query','dom-traverse'} \
-			> "${T}/found_uris" || die
-		( grep -Pzo -r -e "URL_LIST = \[[^\]]+\]" \
-			"${S}/tools/perf/page_sets" || die ) \
-			| tr "\0" "\n" \
-			| sed -e "s|.*URL_LIST =|URL_LIST =|g" \
-				-e "\|URL_LIST = \[DOWNLOAD_URL\]|d" \
-			>> "${T}/found_uris" || die
-		( grep  -Pzo -r -e "(urls_list|ads_urls_list) = \[\n([^\]]*\n)+" \
-			"${S}/tools/perf" || die ) \
-			| sed -e "s|/.*.py:||g" \
-			>> "${T}/found_uris" || die
-		( grep -Pzo -r -e "URL = ([(][^)]+|'[^']+)" \
-			"${S}/tools/perf/page_sets" || die ) \
-			| tr "\0" "\n" \
-			| sed -e "s|.*URL =|URL =|g" \
-			>> "${T}/found_uris" || die
-		( grep -Pzo -r -e "AddStor(ies|y)\((((.*)(\[|,)\n(.*#.*\n)*)+|(.*#.*\n)|([^']*\n.*http.*\n)|(.*http.*)) " \
-			"${S}/tools/perf/" || die ) \
-			| tr "\0" "\n" \
-			| sed -e "s|.*AddStories||g" \
-			| sed -e "s|.*.py:AddStory||"
-			>> "${T}/found_uris" || die
-		cat "${T}/found_uris" || die
-ewarn
-ewarn "A more comprehensive list of external URIs to be accessed that are"
-ewarn "possibly used by some PGO trainers can be read.  You can be read this"
-ewarn "info by scrolling up with ctrl + page up or by doing the following in"
-ewarn "another terminal:"
-ewarn
-ewarn "  \`cat ${T}/found_uris\`"
-ewarn
-ewarn "Some may or may not be relevant depending on the USE flags used."
-ewarn
-		local accepted_use_list=()
-		for u in ${remote_access_use[@]} ; do
-			if use "${u}" ; then
-				accepted_use_list+=( ${u} )
-				warned=1
-			fi
-		done
-		if (( ${warned} == 1 )) ; then
-ewarn
-ewarn "The following affected USE flags were consented for access and use of"
-ewarn "the web for PGO trainers:"
-ewarn
-for u in ${accepted_use_list[@]} ; do
-ewarn "  ${u}"
-done
-ewarn
-ewarn "The affected USE flag(s) may access external sites with possibly"
-ewarn "untrusted user contributed data when using PGO profile generation and"
-ewarn "may need site terms of use to be reviewed for acceptable use.  They also"
-ewarn "may access news, governmental, political, or corporate sites.  They may"
-ewarn "access or reference unfree trademarks and content."
-ewarn
-ewarn "You have 180 seconds to remove this USE flag if you disagree with such"
-ewarn "access.  You may cancel and make changes by pressing ctrl + c."
-ewarn
-			sleep 180
-		fi
 	fi
 }
 
@@ -3075,8 +1628,10 @@ verify_clang_commit() {
 		:;
 	else
 		# Update on every major version of this package.
-		eerror "The LLVM commit is out of date.  Update CR_CLANG_*,"
-		eerror "LLVM_SLOTS, CR_CLANG_SLOT_OFFICIAL variables."
+eerror
+eerror "The LLVM commit is out of date.  Update CR_CLANG_*,"
+eerror "LLVM_SLOTS, CR_CLANG_SLOT_OFFICIAL variables."
+eerror
 		die
 	fi
 }
@@ -3123,25 +1678,17 @@ ewarn
 
 	default
 
-	if use cr_pgo_trainers_custom && [[ ! -f "${T}/epatch_user.log" ]] ; then
-eerror
-eerror "You must supply a per-package patch to use the cr_pgo_trainers_custom"
-eerror "USE flag."
-eerror
-		die
-	fi
-
 	if ( (( ${#PATCHES[@]} > 0 || ${USED_EAPPLY} == 1 )) || [[ -f "${T}/epatch_user.log" ]] ) ; then
 		if use official ; then
-			ewarn
-			ewarn "The use of unofficial patches is not endorsed upstream."
-			ewarn
+ewarn
+ewarn "The use of unofficial patches is not endorsed upstream."
+ewarn
 		fi
 
 		if use pgo ; then
-			ewarn
-			ewarn "The use of patching can interfere with the pregenerated PGO profile."
-			ewarn
+ewarn
+ewarn "The use of patching can interfere with the pregenerated PGO profile."
+ewarn
 		fi
 	fi
 
@@ -3391,16 +1938,16 @@ eerror
 		third_party/xdg-utils
 	)
 	keeplibs+=( third_party/zlib )
+	#
 	# Do not remove the third_party/zlib above. \
-	# Error:  ninja: error: '../../third_party/zlib/adler32_simd.c', needed by 'obj/third_party/zlib/zlib_adler32_simd/adler32_simd.o', missing and no known rule to make it
-	# third_party/zlib is already kept but may use system no need split conditional for CFI or official builds.
-	if use pgo-full ; then
-		keeplibs+=(
-			third_party/catapult/third_party/gsutil
-			third_party/catapult/third_party/tsproxy
-			third_party/catapult/third_party/typ
-		)
-	fi
+	#
+	# Error:  ninja: error: '../../third_party/zlib/adler32_simd.c', \
+	# needed by 'obj/third_party/zlib/zlib_adler32_simd/adler32_simd.o', \
+	# missing and no known rule to make it
+	#
+	# third_party/zlib is already kept but may use system no need split \
+	# conditional for CFI or official builds.
+	#
 	if ! use system-ffmpeg ; then
 		keeplibs+=( third_party/ffmpeg third_party/opus )
 	fi
@@ -3410,8 +1957,8 @@ eerror
 	if ! use system-png; then
 		keeplibs+=( third_party/libpng )
 	fi
-	# For re2 see ! use system-libstdcxx conditional below
 	#
+	# For re2 see ! use system-libstdcxx conditional below
 	#
 	if use system-harfbuzz; then
 		keeplibs+=( third_party/harfbuzz-ng/utils )
@@ -3458,9 +2005,13 @@ eerror
 	fi
 
 	if ! is_generating_credits ; then
-		einfo "Unbundling third party internal libraries and packages"
+einfo
+einfo "Unbundling third party internal libraries and packages"
+einfo
 		# Remove most bundled libraries. Some are still needed.
-		build/linux/unbundle/remove_bundled_libraries.py "${keeplibs[@]}" --do-remove || die
+		build/linux/unbundle/remove_bundled_libraries.py \
+			"${keeplibs[@]}" \
+			--do-remove || die
 	fi
 
 	if use js-type-check ; then
@@ -3468,9 +2019,13 @@ eerror
 	fi
 
 	if ! is_generating_credits ; then
-		# bundled eu-strip is for amd64 only and we don't want to pre-stripped binaries
+		#
+		# bundled eu-strip is for amd64 only and we don't want to
+		# pre-strip binaries.
+		#
 		mkdir -p buildtools/third_party/eu-strip/bin || die
-		ln -s "${EPREFIX}"/bin/true buildtools/third_party/eu-strip/bin/eu-strip || die
+		ln -s "${EPREFIX}"/bin/true \
+			buildtools/third_party/eu-strip/bin/eu-strip || die
 	fi
 
 	verify_clang_commit
@@ -3483,16 +2038,9 @@ eerror
 
 _configure_pgx() {
 	local chost=$(get_abi_CHOST ${ABI})
+
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
-
-	if use pgo-full ; then
-		for f in $(grep -l -F -r -e "/opt/chromium/chrome_sandbox" testing) ; do
-			einfo "Changing hardcoded /opt/chromium/chrome_sandbox -> ${BUILD_DIR}/out/Release/chrome_sandbox for ${f}"
-			sed -i -e "s|/opt/chromium/chrome_sandbox|${BUILD_DIR}/out/Release/chrome_sandbox|" \
-				"${f}" || die
-		done
-	fi
 
 	local myconf_gn=""
 
@@ -3535,7 +2083,9 @@ ewarn
 			die "llvm-ar is unreachable"
 		fi
 	else
-		einfo "Forcing GCC"
+einfo
+einfo "Forcing GCC"
+einfo
 		export CC="gcc $(get_abi_CFLAGS ${ABI})"
 		export CXX="g++ $(get_abi_CFLAGS ${ABI})"
 		export AR=ar
@@ -3570,7 +2120,8 @@ ewarn
 		# setup cups-config, build system only uses --libs option
 		if use cups; then
 			mkdir "${T}/cups-config" || die
-			cp "${ESYSROOT}/usr/bin/${CHOST}-cups-config" "${T}/cups-config/cups-config" || die
+			cp "${ESYSROOT}/usr/bin/${CHOST}-cups-config" \
+				"${T}/cups-config/cups-config" || die
 			export PATH="${PATH}:${T}/cups-config"
 		fi
 
@@ -3635,7 +2186,8 @@ ewarn
 		gn_system_libraries+=( libpng )
 	fi
 	if use system-libstdcxx ; then
-		# unbundle only without libc++, because libc++ is not fully ABI compatible with libstdc++
+		# Unbundle only without libc++, because libc++ is not fully ABI
+		# compatible with libstdc++
 		gn_system_libraries+=( libxml )
 		gn_system_libraries+=( libxslt )
 		# re2 library interface relies on std::string and std::vector
@@ -3660,9 +2212,12 @@ einfo
 	else
 		if ! is_generating_credits ; then
 ewarn
-ewarn "Unbundling libs and disabling hardening (CFI, SSP, noexecstack, Full RELRO)."
+ewarn "Unbundling libs and disabling hardening (CFI, SSP, noexecstack,"
+ewarn "Full RELRO)."
 ewarn
-			build/linux/unbundle/replace_gn_files.py --system-libraries "${gn_system_libraries[@]}" || die
+			build/linux/unbundle/replace_gn_files.py \
+				--system-libraries \
+				"${gn_system_libraries[@]}" || die
 		fi
 	fi
 
@@ -3700,7 +2255,13 @@ ewarn
 	# Do not use bundled clang.
 	# Trying to use gold results in linker crash.
 	myconf_gn+=" use_gold=false use_sysroot=false"
-	if use official && ( use cfi-cast || use cfi-icall || use cfi-vcall ) || use bundled-libcxx ; then
+	if use official \
+		&& ( \
+			use cfi-cast \
+			|| use cfi-icall \
+			|| use cfi-vcall \
+		) \
+		|| use bundled-libcxx ; then
 		# If you didn't do systemwide CFI Cross-DSO, it must be static.
 		myconf_gn+=" use_custom_libcxx=true"
 	else
@@ -3724,6 +2285,7 @@ ewarn
 	myconf_gn+=" proprietary_codecs=$(usex proprietary-codecs true false)"
 	myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
 
+	#
 	# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
 	# Note: these are for Gentoo use ONLY. For your own distribution,
 	# please get your own set of keys. Feel free to contact chromium@gentoo.org
@@ -3733,6 +2295,7 @@ ewarn
 	# --oauth2-client-secret= switches for setting GOOGLE_DEFAULT_CLIENT_ID and
 	# GOOGLE_DEFAULT_CLIENT_SECRET at runtime. This allows signing into
 	# Chromium without baked-in values.
+	#
 	local google_api_key="AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc"
 	myconf_gn+=" google_api_key=\"${google_api_key}\""
 	local myarch="$(tc-arch)"
@@ -3743,14 +2306,24 @@ ewarn
 		strip-flags
 
 		# Debug info section overflows without component build
-		# Prevent linker from running out of address space, bug #471810 .
+		# Prevent linker from running out of address space, bug #471810.
 		if ! use component-build || use x86 ; then
 			filter-flags "-g*"
 		fi
 
-		# Prevent libvpx/xnnpack build failures. Bug 530248, 544702, 546984, 853646.
+		# Prevent libvpx/xnnpack build failures. Bug 530248, 544702,
+		# 546984, 853646.
 		if [[ ${myarch} == amd64 || ${myarch} == x86 ]] ; then
-			filter-flags -mno-mmx -mno-sse2 -mno-ssse3 -mno-sse4.1 -mno-avx -mno-avx2 -mno-fma -mno-fma4 -mno-xop
+			filter-flags \
+				-mno-avx \
+				-mno-avx2 \
+				-mno-fma \
+				-mno-fma4 \
+				-mno-mmx \
+				-mno-sse2 \
+				-mno-sse4.1 \
+				-mno-ssse3 \
+				-mno-xop
 		fi
 	fi
 
@@ -3795,7 +2368,9 @@ ewarn
 			target_cpu="x86"
 			;;
 		*)
-			einfo "${ABI} is not supported"
+einfo
+einfo "${ABI} is not supported"
+einfo
 			;;
 	esac
 
@@ -3848,7 +2423,9 @@ ewarn
 		fi
 
 		# Re-configure bundled ffmpeg. See bug #491378 for example reasons.
-		einfo "Configuring bundled ffmpeg..."
+einfo
+einfo "Configuring bundled ffmpeg..."
+einfo
 		pushd third_party/ffmpeg > /dev/null || die
 		chromium/scripts/build_ffmpeg.py linux ${ffmpeg_target_arch} \
 			--branding ${ffmpeg_branding} -- ${build_ffmpeg_args} || die
@@ -3874,6 +2451,25 @@ ewarn
 				export BUILD_CXXFLAGS+=" -Xclang -no-opaque-pointers"
 				export BUILD_CFLAGS+=" -Xclang -no-opaque-pointers"
 			fi
+		fi
+	fi
+
+	# The PGO data must not be wiped by the sandbox or generated in the sandbox.
+	local pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-3)/pgo-${ABI}"
+	if use pgo-start ; then
+		if tc-is-clang ; then
+			append-flags -fprofile-generate="${pgo_data_dir}"
+		else
+			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
+		fi
+	elif use pgo-finish ; then
+		mkdir -p "${T}/pgo-${ABI}" || die
+		if tc-is-clang ; then
+			llvm-profdata merge -output="${T}/pgo-custom.profdata" \
+				"${pgo_data_dir}" || die
+			append-flags -fprofile-use="${T}/pgo-custom.profdata"
+		else
+			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
 		fi
 	fi
 
@@ -3910,7 +2506,9 @@ ewarn
 	# Enable official builds
 	myconf_gn+=" is_official_build=$(usex official true false)"
 	if use clang || tc-is-clang ; then
-		ewarn "Using ThinLTO"
+ewarn
+ewarn "Using ThinLTO"
+ewarn
 		myconf_gn+=" use_thin_lto=true "
 		use lto-opt && myconf_gn+=" thin_lto_enable_optimizations=true"
 	else
@@ -3960,26 +2558,26 @@ ewarn
 
 	if use pgo ; then
 		if ! is_profdata_compatible ; then
-			eerror
-			eerror "Profdata compatibility:"
-			eerror
-			eerror "The PGO profile is not compatible with this version of LLVM."
-			eerror "Expected:  $(get_pregenerated_profdata_version)"
-			eerror "Found:  ${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
-			eerror
-			eerror "The solution is to rebuild using a newer/older commit or tag."
-			eerror
-			eerror "The mapping between INSTR_PROF_INDEX_VERSION and the commit or tag can be"
-			eerror "found in InstrProfData.inc in the LLVM repo."
-			eerror
+eerror
+eerror "Profdata compatibility:"
+eerror
+eerror "The PGO profile is not compatible with this version of LLVM."
+eerror "Expected:  $(get_pregenerated_profdata_version)"
+eerror "Found:  ${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
+eerror
+eerror "The solution is to rebuild using a newer/older commit or tag."
+eerror
+eerror "The mapping between INSTR_PROF_INDEX_VERSION and the commit or tag can be"
+eerror "found in InstrProfData.inc in the LLVM repo."
+eerror
 			die
 		else
-			einfo
-			einfo "Profdata compatibility:"
-			einfo
-			einfo "Expected:  $(get_pregenerated_profdata_version)"
-			einfo "Found:  ${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
-			einfo
+einfo
+einfo "Profdata compatibility:"
+einfo
+einfo "Expected:  $(get_pregenerated_profdata_version)"
+einfo "Found:  ${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
+einfo
 		fi
 	fi
 
@@ -4002,7 +2600,9 @@ ewarn
 		# myconf_gn+=" symbol_level=0"
 	fi
 
-	einfo "Configuring Chromium..."
+einfo
+einfo "Configuring Chromium..."
+einfo
 	set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" out/Release
 	echo "$@"
 	"$@" || die
@@ -4014,7 +2614,9 @@ _build() {
 	local pax_path="${3}"
 	local file_name=$(basename "${2}")
 
-	einfo "Building ${file_name}"
+einfo
+einfo "Building ${file_name}"
+einfo
 	eninja -C "${ninja_into}" "${target_id}"
 
 	if [[ -n "${pax_path}" ]] ; then
@@ -4031,7 +2633,9 @@ _build_pgx() {
 	fi
 	if [[ -f out/Release/build.ninja ]] ; then
 		pushd out/Release || popd
-			einfo "Cleaning out build"
+einfo
+einfo "Cleaning out build"
+einfo
 			eninja -t clean
 		popd
 	fi
@@ -4056,70 +2660,18 @@ _build_pgx() {
 	mv out/Release/chromedriver{.unstripped,} || die
 }
 
-_run_training_suite() {
-# See also https://github.com/chromium/chromium/blob/103.0.5060.134/docs/pgo.md
-# https://github.com/chromium/chromium/blob/103.0.5060.134/testing/buildbot/generate_buildbot_json.py
-# https://github.com/chromium/chromium/commit/8acfdce99c84fbc35ad259692ac083a9ea18392c
-# tools/perf/contrib/vr_benchmarks
-	export PYTHONPATH=$(_get_pythonpath)
-	einfo "PYTHONPATH=${PYTHONPATH}"
-	local benchmarks_allowed=()
-	# TODO add CONTRIB_BENCHMARKS
-	for x in ${OFFICIAL_BENCHMARKS[@]} ; do
-		t="${x}"
-		t="${t//-/_}"
-		t="${t//./_}"
-		t="${t,,}"
-		if use "cr_pgo_trainers_${t}" ; then
-			if [[ -d "${T}/${x}" ]] ; then
-				# Clear for different ABI builds
-				rm -vrf "${T}/${x}" || die
-			fi
-			benchmarks_allowed+=( ${x} )
-		fi
-	done
-	local benchmarks=$(echo "${benchmarks_allowed[@]}" | tr " " ",")
-	export CHROME_SANDBOX_ENV="${BUILD_DIR}/out/Release/chrome_sandbox" # For testing/test_env.py
-	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # \
-	  # Prevent a sandbox violation and isolate between parallel running emerges.
-	local display_args
-	if use headless ; then
-		display_args=()
-	elif use wayland ; then
-		display_args=(--xvfb --no-xvfb --use-weston)
-	else
-		display_args=(--xvfb)
-	fi
-	local run_benchmark_args=(
-		--assert-gpu-compositing
-		--browser=exact
-		--browser-executable="${BUILD_DIR}/out/Release/chrome")
-	local cmd=(vpython -cache-dir "${CIPD_CACHE_DIR}" bin/run_performance_test_suite
-		--benchmarks=${benchmarks}
-		--isolated-script-test-output="${T}/pgo-test-output.json"
-		${display_args[@]}
-		${run_benchmark_args[@]})
-	pushd out/Release || die
-		einfo "${cmd[@]}"
-		"${cmd[@]}" || die "${cmd[@]}"
-	popd
-}
-
 _gen_pgo_profile() {
 	pushd "${BUILD_DIR}/out/Release" || die
 		if ! ls *.profraw 2>/dev/null 1>/dev/null ; then
 			die "Missing *.profraw files"
 		fi
-		einfo "Merging PGO profile data to build PGO profile"
+einfo
+einfo "Merging PGO profile data to build PGO profile"
+einfo
 		llvm-profdata merge *.profraw \
 			-o "${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
 			|| die
 	popd
-}
-
-_start_pgo_training() {
-	_run_training_suite
-	_gen_pgo_profile
 }
 
 _update_licenses() {
@@ -4127,7 +2679,9 @@ _update_licenses() {
 	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" \
 		&& -n "${GEN_ABOUT_CREDITS}" \
 		&& "${GEN_ABOUT_CREDITS}" == "1" ]] ; then
-		einfo "Generating license and copyright notice file"
+einfo
+einfo "Generating license and copyright notice file"
+einfo
 		eninja -C out/Release about_credits
 		# It should be updated when the major.minor.build.x changes
 		# because of new features.
@@ -4145,12 +2699,6 @@ einfo
 	fi
 }
 
-_clean_profraw() {
-	if [[ -d "${BUILD_DIR}/out/Release" ]] ; then
-		find "${BUILD_DIR}/out/Release" -name "*.profraw" -delete || die
-	fi
-}
-
 _get_pythonpath() {
 	local pp=(
 		"${BUILD_DIR}/third_party/catapult/common/py_utils"
@@ -4162,77 +2710,6 @@ _get_pythonpath() {
 		"${BUILD_DIR}/tools/perf"
 	)
 	echo $(echo "${pp}" | tr " " ":")
-}
-
-_init_cr_pgo_trainers_rasterize_and_record_micro_top_25() {
-	# No automated script for this found.
-	# It's better to snapshot free websites instead of personal data or nonfree ones.
-	local static_pages_interactive=(
-		"https://mail.google.com/mail/ gmail.html"
-		"https://www.google.com/calendar/ googlecalendar.html"
-		"https://www.google.com/search?q=cats&tbm=isch googleimagesearch.html"
-		"https://docs.google.com/document/d/1X-IKNjtEnx-WW5JIKRLsyhz5sbsat3mfTpAPUSX3_s4/view googledocs.html"
-		"https://plus.google.com/110031535020051778989/posts googleplus.html"
-		"http://www.youtube.com youtube.html"
-	)
-	local static_pages_non_interactive=(
-		"http://www.amazon.com amazon.html"
-		"http://googlewebmastercentral.blogspot.com/ blogger.html"
-		"http://booking.com booking.html"
-		"http://www.cnn.com cnn.html"
-		"http://www.ebay.com ebay.html"
-		"http://espn.go.com espn.html"
-		"https://www.facebook.com/barackobama facebook.html"
-		"https://www.google.com/search?q=barack+obama google.html"
-		"http://www.linkedin.com/in/linustorvalds linkedin.html"
-		"http://pinterest.com pinterest.html"
-		"http://techcrunch.com techcrunch.html"
-		"https://twitter.com/katyperry twitter.html"
-		"http://www.weather.com/weather/right-now/Mountain+View+CA+94043 weather.html"
-		"http://en.wikipedia.org/wiki/Wikipedia wikipedia.html"
-		"http://en.blog.wordpress.com/2012/09/04/freshly-pressed-editors-picks-for-august-2012/ wordpress.html"
-		"http://answers.yahoo.com yahooanswers.html"
-		"http://games.yahoo.com yahoogames.html"
-		"http://news.yahoo.com yahoonews.html"
-		"http://sports.yahoo.com/ yahoosports.html"
-	)
-	# Update sync both columns from
-	#   tools/perf/page_sets/static_top_25/README.md
-	#   tools/perf/page_sets/static_top_25_pages.py
-#	for entry in ${static_pages_interactive[@]} ; do
-		# Temporary disabled
-#		local url=$(cut -f 1 -d " ")
-#		local file=$(cut -f 2 -d " ")
-#		einfo "Fetching interactive static page for ${url}"
-#		${EPYTHON} "${BUILD_DIR}/third_party/catapult/telemetry/bin/snap_page" \
-#			--browser=system \
-#			--url="${url}" \
-#			--snapshot-path=${file} \
-#			--interactive || die
-#	done
-	for entry in ${static_pages_non_interactive[@]} ; do
-		local url=$(cut -f 1 -d " ")
-		local file=$(cut -f 2 -d " ")
-		einfo "Fetching static page for ${url}"
-		${EPYTHON} "${BUILD_DIR}/third_party/catapult/telemetry/bin/snap_page" \
-			--browser=system \
-			--url="${url}" \
-			--snapshot-path=${file} || die
-	done
-}
-
-_init_pgo_training() {
-	if use pgo-full ; then
-		export PYTHONPATH=$(_get_pythonpath)
-		einfo "PYTHONPATH=${PYTHONPATH}"
-		eninja -C out/Release bin/run_performance_test_suite
-		init_vpython
-		fetching_pgo_deps
-		if use cr_pgo_trainers_rasterize_and_record_micro_top_25 ; then
-			# This also applies to generic_trace.top25
-			_init_cr_pgo_trainers_rasterize_and_record_micro_top_25
-		fi
-	fi
 }
 
 multilib_src_compile() {
@@ -4250,19 +2727,26 @@ multilib_src_compile() {
 	# Don't inherit PYTHONPATH from environment, bug #789021, #812689
 	local -x PYTHONPATH=
 
-	#"${EPYTHON}" tools/clang/scripts/update.py --force-local-build --gcc-toolchain /usr --skip-checkout --use-system-cmake --without-android || die
+	#"${EPYTHON}" tools/clang/scripts/update.py \
+	#	--force-local-build \
+	#	--gcc-toolchain /usr \
+	#	--skip-checkout \
+	#	--use-system-cmake \
+	#	--without-android || die
 
 	if use pgo-full ; then
-		_clean_profraw
-		PGO_PHASE=1
-		_configure_pgx # pgi
-		_update_licenses
-		_init_pgo_training
-		_build_pgx
-		_start_pgo_training
-		PGO_PHASE=2
-		_configure_pgx # pgo
-		_build_pgx
+		if use pgo-start ; then
+			PGO_PHASE=1
+			_configure_pgx # pgi
+			_update_licenses
+			_init_pgo_training
+			_build_pgx
+		elif use pgo-finish ; then
+			_gen_pgo_profile
+			PGO_PHASE=2
+			_configure_pgx # pgo
+			_build_pgx
+		fi
 	else
 		_configure_pgx # pgo / no-pgo
 		_update_licenses
@@ -4285,8 +2769,8 @@ multilib_src_compile() {
 
 	# Build vk_swiftshader_icd.json; bug #827861
 	sed -e 's|${ICD_LIBRARY_PATH}|./libvk_swiftshader.so|g' \
-		third_party/swiftshader/src/Vulkan/vk_swiftshader_icd.json.tmpl > \
-		out/Release/vk_swiftshader_icd.json || die
+		third_party/swiftshader/src/Vulkan/vk_swiftshader_icd.json.tmpl \
+		> out/Release/vk_swiftshader_icd.json || die
 
 	local suffix
 	if (( ${NABIS} > 1 )) ; then
@@ -4334,7 +2818,9 @@ _install_header_license_mid() {
 _install_licenses() {
 	[[ -f "${T}/.copied_licenses" ]] && return
 
-	einfo "Copying third party licenses and copyright notices"
+einfo
+einfo "Copying third party licenses and copyright notices"
+einfo
 	export IFS=$'\n'
 	for f in $(find "${S}" \
 	  -iname "*licens*" -type f \
@@ -4391,23 +2877,30 @@ multilib_src_install() {
 		use X && use wayland && ! use headless && echo true || echo false
 	}
 	local sedargs=( -e
-			"s:/usr/lib/:/usr/$(get_libdir)/:g;
-			s:chromium-browser-chromium.desktop:chromium-browser-chromium-${ABI}.desktop:g;
-			s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
+"s:/usr/lib/:/usr/$(get_libdir)/:g;
+s:chromium-browser-chromium.desktop:chromium-browser-chromium-${ABI}.desktop:g;
+s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	)
-	sed "${sedargs[@]}" "${FILESDIR}/chromium-launcher-r7.sh" > chromium-launcher.sh || die
+	sed "${sedargs[@]}" "${FILESDIR}/chromium-launcher-r7.sh" \
+		> chromium-launcher.sh || die
 	newexe chromium-launcher.sh chromium-launcher-${ABI}.sh
 
 	# It is important that we name the target "chromium-browser",
 	# xdg-utils expect it; bug #355517.
-	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" /usr/bin/chromium-browser-${ABI}
-	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" /usr/bin/chromium-browser
+	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+		/usr/bin/chromium-browser-${ABI}
+	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+		/usr/bin/chromium-browser
 	# keep the old symlink around for consistency
-	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" /usr/bin/chromium-${ABI}
-	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" /usr/bin/chromium
+	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+		/usr/bin/chromium-${ABI}
+	dosym "${CHROMIUM_HOME}/chromium-launcher-${ABI}.sh" \
+		/usr/bin/chromium
 
-	dosym "${CHROMIUM_HOME}/chromedriver-${ABI}" /usr/bin/chromedriver-${ABI}
-	dosym "${CHROMIUM_HOME}/chromedriver-${ABI}" /usr/bin/chromedriver
+	dosym "${CHROMIUM_HOME}/chromedriver-${ABI}" \
+		/usr/bin/chromedriver-${ABI}
+	dosym "${CHROMIUM_HOME}/chromedriver-${ABI}" \
+		/usr/bin/chromedriver
 
 	# Allow users to override command-line options, bug #357629.
 	insinto /etc/chromium
@@ -4453,7 +2946,8 @@ multilib_src_install() {
 	done
 
 	# Install desktop entry
-	newmenu out/Release/chromium-browser-chromium.desktop chromium-browser-chromium-${ABI}.desktop
+	newmenu out/Release/chromium-browser-chromium.desktop \
+		chromium-browser-chromium-${ABI}.desktop
 
 	# Install GNOME default application entry (bug #303100).
 	insinto /usr/share/gnome-control-center/default-apps
@@ -4476,6 +2970,87 @@ pkg_postrm() {
 	xdg_desktop_database_update
 }
 
+print_vaapi_support() {
+	if has_version "x11-libs/libva-intel-driver" ; then
+ewarn
+ewarn "x11-libs/libva-intel-driver is the older vaapi driver but intended for"
+ewarn "select hardware.  See also x11-libs/libva-intel-media-driver package"
+ewarn "to access more VA-API accelerated encoders if driver support overlaps."
+ewarn
+	fi
+
+	if use video_cards_intel || use video_cards_i965 || use video_cards_iris ; then
+einfo
+einfo "Intel Quick Sync Video is required for hardware accelerated H.264 VA-API"
+einfo "encode."
+einfo
+einfo "For hardware support, see the AVC row at"
+einfo "https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
+einfo
+einfo "Driver ebuild packages for their corresponding hardware can be found at:"
+einfo
+einfo "x11-libs/libva-intel-driver:"
+einfo "https://github.com/intel/intel-vaapi-driver/blob/master/README"
+einfo
+einfo "x11-libs/libva-intel-media-driver:"
+einfo "https://github.com/intel/media-driver#decodingencoding-features"
+einfo
+	fi
+	if use video_cards_amdgpu \
+		|| use video_cards_r600 \
+		|| use video_cards_radeonsi ; then
+einfo
+einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for"
+einfo "hardware accelerated H.264 VA-API encode."
+einfo
+einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
+einfo "or https://www.x.org/wiki/RadeonFeature/"
+einfo
+einfo "The r600 driver only supports ARUBA for VCE encode."
+einfo "For newer hardware, try a newer free driver like"
+einfo "the radeonsi driver or closed drivers."
+einfo
+	fi
+	if use video_cards_nouveau ; then
+einfo
+einfo "For details see, https://nouveau.freedesktop.org/VideoAcceleration.html"
+einfo "Reconsider using the official driver instead."
+einfo
+	fi
+einfo
+einfo "Some drivers may require firmware for proper VA-API support."
+einfo
+einfo "The user must be part of the video group to use VA-API support."
+# Because it touches /dev/dri/renderD128
+einfo
+einfo "The LIBVA_DRIVER_NAME envvar may need to be changed if both open"
+einfo "and closed drivers are installed to one of the following"
+einfo
+	if has_version "x11-libs/libva-intel-driver" ; then
+einfo
+einfo "  LIBVA_DRIVER_NAME=\"i965\""
+einfo
+	fi
+	if has_version "x11-libs/libva-intel-media-driver" ; then
+einfo
+einfo "  LIBVA_DRIVER_NAME=\"iHD\""
+einfo
+	fi
+	if use video_cards_r600 ; then
+einfo
+einfo "  LIBVA_DRIVER_NAME=\"r600\""
+einfo
+	fi
+	if ( use video_cards_radeonsi || use video_cards_amdgpu ) ; then
+einfo
+einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
+einfo
+	fi
+einfo
+einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
+einfo
+}
+
 pkg_postinst() {
 	xdg_icon_cache_update
 	xdg_desktop_database_update
@@ -4483,103 +3058,44 @@ pkg_postinst() {
 
 	if ! use headless; then
 		if use vaapi ; then
-			# It says 3 args:  https://github.com/chromium/chromium/blob/103.0.5060.134/docs/gpu/vaapi.md#vaapi-on-linux
-			elog "VA-API is disabled by default at runtime.  You have to enable it"
-			elog "by adding --enable-features=VaapiVideoDecoder --ignore-gpu-blocklist"
-			elog "with either --use-gl=desktop or --use-gl=egl to the CHROMIUM_FLAGS"
-			elog "in /etc/chromium/default."
+# It says 3 args:  https://github.com/chromium/chromium/blob/103.0.5060.134/docs/gpu/vaapi.md#vaapi-on-linux
+einfo
+einfo "VA-API is disabled by default at runtime.  You have to enable it"
+einfo "by adding --enable-features=VaapiVideoDecoder --ignore-gpu-blocklist"
+einfo "with either --use-gl=desktop or --use-gl=egl to the CHROMIUM_FLAGS"
+einfo "in /etc/chromium/default."
+einfo
 		fi
 		if use screencast ; then
-			elog "Screencast is disabled by default at runtime. Either enable it"
-			elog "by navigating to chrome://flags/#enable-webrtc-pipewire-capturer"
-			elog "inside Chromium or add --enable-features=WebRTCPipeWireCapturer"
-			elog "to CHROMIUM_FLAGS in /etc/chromium/default."
+einfo
+einfo "Screencast is disabled by default at runtime. Either enable it"
+einfo "by navigating to chrome://flags/#enable-webrtc-pipewire-capturer"
+einfo "inside Chromium or add --enable-features=WebRTCPipeWireCapturer"
+einfo "to CHROMIUM_FLAGS in /etc/chromium/default."
+einfo
 		fi
 		if use gtk4; then
-			elog "Chromium prefers GTK3 over GTK4 at runtime. To override this"
-			elog "behavior you need to pass --gtk-version=4, e.g. by adding it"
-			elog "to CHROMIUM_FLAGS in /etc/chromium/default."
+einfo
+einfo "Chromium prefers GTK3 over GTK4 at runtime. To override this"
+einfo "behavior you need to pass --gtk-version=4, e.g. by adding it"
+einfo "to CHROMIUM_FLAGS in /etc/chromium/default."
+einfo
 		fi
 		if use vaapi ; then
-			if has_version "x11-libs/libva-intel-driver" ; then
-				ewarn
-				ewarn "x11-libs/libva-intel-driver is the older vaapi driver but intended for"
-				ewarn "select hardware.  See also x11-libs/libva-intel-media-driver package"
-				ewarn "to access more VA-API accelerated encoders if driver support overlaps."
-				ewarn
-			fi
-
-			if use video_cards_intel || use video_cards_i965 || use video_cards_iris ; then
-				einfo
-				einfo "Intel Quick Sync Video is required for hardware accelerated H.264 VA-API"
-				einfo "encode."
-				einfo
-				einfo "For hardware support, see the AVC row at"
-				einfo "https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
-				einfo
-				einfo "Driver ebuild packages for their corresponding hardware can be found at:"
-				einfo
-				einfo "x11-libs/libva-intel-driver:"
-				einfo "https://github.com/intel/intel-vaapi-driver/blob/master/README"
-				einfo
-				einfo "x11-libs/libva-intel-media-driver:"
-				einfo "https://github.com/intel/media-driver#decodingencoding-features"
-				einfo
-			fi
-			if use video_cards_amdgpu \
-				|| use video_cards_r600 \
-				|| use video_cards_radeonsi ; then
-				einfo
-				einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for"
-				einfo "hardware accelerated H.264 VA-API encode."
-				einfo
-				einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
-				einfo "or https://www.x.org/wiki/RadeonFeature/"
-				einfo
-				einfo "The r600 driver only supports ARUBA for VCE encode."
-				einfo "For newer hardware, try a newer free driver like"
-				einfo "the radeonsi driver or closed drivers."
-				einfo
-			fi
-			if use video_cards_nouveau ; then
-				einfo
-				einfo "For details see, https://nouveau.freedesktop.org/VideoAcceleration.html"
-				einfo "Reconsider using the official driver instead."
-				einfo
-			fi
-			einfo
-			einfo "Some drivers may require firmware for proper VA-API support."
-			einfo
-			einfo "The user must be part of the video group to use VA-API support."
-			# Because it touches /dev/dri/renderD128
-			einfo
-			einfo "The LIBVA_DRIVER_NAME envvar may need to be changed if both open"
-			einfo "and closed drivers are installed to one of the following"
-			einfo
-			has_version "x11-libs/libva-intel-driver" \
-				&& einfo "  LIBVA_DRIVER_NAME=\"i965\""
-			has_version "x11-libs/libva-intel-media-driver" \
-				&& einfo "  LIBVA_DRIVER_NAME=\"iHD\""
-			use video_cards_r600 \
-				&& einfo "  LIBVA_DRIVER_NAME=\"r600\""
-			( use video_cards_radeonsi || use video_cards_amdgpu ) \
-				&& einfo "  LIBVA_DRIVER_NAME=\"radeonsi\""
-			einfo
-			einfo "to your ~/.bashrc or ~/.xinitrc and relogging."
-			einfo
+			print_vaapi_support
 		fi
 	fi
 
-	einfo
-	einfo "By default, the /usr/bin/chromium and /usr/bin/chromedriver symlinks are"
-	einfo "set to the last ABI installed.  You must change it manually if you want"
-	einfo "to run on a different default ABI."
-	einfo
-	einfo "Examples:"
-	einfo
-	einfo "  ln -sf /usr/lib64/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-	einfo "  ln -sf /usr/lib/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-	einfo "  ln -sf /usr/lib32/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
-	einfo "  ln -sf /usr/lib32/chromium-browser/chromedriver-${ABI} /usr/bin/chromedriver"
-	einfo
+einfo
+einfo "By default, the /usr/bin/chromium and /usr/bin/chromedriver symlinks are"
+einfo "set to the last ABI installed.  You must change it manually if you want"
+einfo "to run on a different default ABI."
+einfo
+einfo "Examples:"
+einfo
+einfo "  ln -sf /usr/lib64/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+einfo "  ln -sf /usr/lib/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+einfo "  ln -sf /usr/lib32/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
+einfo "  ln -sf /usr/lib32/chromium-browser/chromedriver-${ABI} /usr/bin/chromedriver"
+einfo
 }
