@@ -4,8 +4,9 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
+CMAKE_IN_SOURCE_BUILD=1
 
-inherit cmake eutils flag-o-matic multilib-build python-r1
+inherit cmake eutils flag-o-matic python-r1
 
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
@@ -584,10 +585,12 @@ https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_PV}-aarch64-linux-g
 		)
 	)
 	csharp? (
+		amd64? (
 https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_PV}/omnisharp.http-linux-x64.tar.gz
 	-> omnisharp-${OMNISHARP_PV}.http-linux-x64.tar.gz
 https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_PV}/omnisharp.http-linux-x86.tar.gz
 	-> omnisharp-${OMNISHARP_PV}.http-linux-x86.tar.gz
+		)
 	)
 	java? (
 		!system-jdtls? (
@@ -707,6 +710,7 @@ SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/sync golang/sync v0.0.0-201909111851
 SRC_URI+=" "$(gen_go_dl_gh_url github.com/BurntSushi/toml BurntSushi/toml v0.3.1)
 
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S_BAK="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 S_BOTTLE="${WORKDIR}/bottle-${BOTTLE_PV}"
 S_CHARDET="${WORKDIR}/chardet-${CHARDET_PV}"
 S_FLASK_SPHINX_THEMES="${WORKDIR}/flask-sphinx-themes-${EGIT_COMMIT_FLASK_SPHINX_THEMES}"
@@ -912,10 +916,14 @@ src_unpack() {
 
 	if use csharp ; then
 		mkdir -p third_party/omnisharp-roslyn/v${OMNISHARP_PV} || die
-		cp -a $(realpath "${DISTDIR}/omnisharp-${OMNISHARP_PV}.http-linux-x64.tar.gz") \
-			third_party/omnisharp-roslyn/v${OMNISHARP_PV}/omnisharp.http-linux-x64.tar.gz || die
-		cp -a $(realpath "${DISTDIR}/omnisharp-${OMNISHARP_PV}.http-linux-x64.tar.gz") \
-			third_party/omnisharp-roslyn/v${OMNISHARP_PV}/omnisharp.http-linux-x86.tar.gz || die
+		if use amd64 ; then
+			cp -a $(realpath "${DISTDIR}/omnisharp-${OMNISHARP_PV}.http-linux-x64.tar.gz") \
+				third_party/omnisharp-roslyn/v${OMNISHARP_PV}/omnisharp.http-linux-x64.tar.gz || die
+		fi
+		if use x86 ; then
+			cp -a $(realpath "${DISTDIR}/omnisharp-${OMNISHARP_PV}.http-linux-x86.tar.gz") \
+				third_party/omnisharp-roslyn/v${OMNISHARP_PV}/omnisharp.http-linux-x86.tar.gz || die
+		fi
 	fi
 
 	if use go && ! use system-go-tools ; then
@@ -1018,86 +1026,79 @@ _install_rust_locally()
 {
 	mkdir -p "${S_RUST}" || die
 	if ! use system-rust && use rust ; then
-		for abi in $(multilib_get_enabled_abis) ; do
-			local chost=$(get_abi_CHOST ${abi})
-			local arch="${chost%%-*}"
-einfo
-einfo "chost: ${chost}"
-einfo "arch: ${arch}"
-einfo
-			case ${arch} in
-				aarch64*)
-					if use elibc_glibc ; then
-			unpack_rust_pkg cargo aarch64-unknown-linux-gnu
-			unpack_rust_pkg clippy aarch64-unknown-linux-gnu clippy-preview
-			#unpack_rust_pkg rust-docs aarch64-unknown-linux-gnu
-			unpack_rust_pkg rust-std aarch64-unknown-linux-gnu rust-std-aarch64-unknown-linux-gnu
-			unpack_rust_pkg rustc aarch64-unknown-linux-gnu
-			unpack_rust_pkg rustfmt aarch64-unknown-linux-gnu rustfmt-preview
-			unpack_rust_pkg rls aarch64-unknown-linux-gnu rls-preview
-			unpack_rust_pkg rust-analysis aarch64-unknown-linux-gnu rust-analysis-aarch64-unknown-linux-gnu
-					fi
-					;;
-				armv7a*h*)
-					if use elibc_glibc ; then
-			unpack_rust_pkg cargo armv7-unknown-linux-gnueabihf
-			unpack_rust_pkg clippy armv7-unknown-linux-gnueabihf clippy-preview
-			#unpack_rust_pkg rust-docs armv7-unknown-linux-gnueabihf
-			unpack_rust_pkg rust-std armv7-unknown-linux-gnueabihf rust-std-armv7-unknown-linux-gnueabihf
-			unpack_rust_pkg rustc armv7-unknown-linux-gnueabihf
-			unpack_rust_pkg rustfmt armv7-unknown-linux-gnueabihf rustfmt-preview
-			unpack_rust_pkg rls armv7-unknown-linux-gnueabihf rls-preview
-			unpack_rust_pkg rust-analysis armv7-unknown-linux-gnueabihf rust-analysis-armv7-unknown-linux-gnueabihf
-					fi
-					;;
-				x86_64*)
-					if use elibc_glibc ; then
-			unpack_rust_pkg cargo x86_64-unknown-linux-gnu
-			unpack_rust_pkg clippy x86_64-unknown-linux-gnu clippy-preview
-			unpack_rust_pkg rust-docs x86_64-unknown-linux-gnu
-			unpack_rust_pkg rust-std x86_64-unknown-linux-gnu rust-std-x86_64-unknown-linux-gnu
-			unpack_rust_pkg rustc x86_64-unknown-linux-gnu
-			unpack_rust_pkg rustfmt x86_64-unknown-linux-gnu rustfmt-preview
-			unpack_rust_pkg rls x86_64-unknown-linux-gnu rls-preview
-			unpack_rust_pkg rust-analysis x86_64-unknown-linux-gnu rust-analysis-x86_64-unknown-linux-gnu
-					fi
-					if use elibc_musl ; then
-			unpack_rust_pkg cargo x86_64-unknown-linux-musl
-			unpack_rust_pkg clippy x86_64-unknown-linux-musl clippy-preview
-			#unpack_rust_pkg rust-docs x86_64-unknown-linux-musl
-			unpack_rust_pkg rust-std x86_64-unknown-linux-musl rust-std-x86_64-unknown-linux-musl
-			unpack_rust_pkg rustc x86_64-unknown-linux-musl
-			unpack_rust_pkg rustfmt x86_64-unknown-linux-musl rustfmt-preview
-			unpack_rust_pkg rls x86_64-unknown-linux-musl rls-preview
-			unpack_rust_pkg rust-analysis x86_64-unknown-linux-musl rust-analysis-x86_64-unknown-linux-musl
-					fi
-					;;
-				x86*)
-					if use elibc_glibc ; then
-			unpack_rust_pkg cargo i686-unknown-linux-gnu
-			unpack_rust_pkg clippy i686-unknown-linux-gnu clippy-preview
-			unpack_rust_pkg rust-docs i686-unknown-linux-gnu
-			unpack_rust_pkg rust-std i686-unknown-linux-gnu rust-std-i686-unknown-linux-gnu
-			unpack_rust_pkg rustc i686-unknown-linux-gnu
-			unpack_rust_pkg rustfmt i686-unknown-linux-gnu rustfmt-preview
-			unpack_rust_pkg rls i686-unknown-linux-gnu rls-preview
-			unpack_rust_pkg rust-analysis i686-unknown-linux-gnu rust-analysis-i686-unknown-linux-gnu
-					fi
-					;;
-				*)
+		local arch="${CHOST%%-*}"
+		case ${arch} in
+			aarch64*)
+				if use elibc_glibc ; then
+		unpack_rust_pkg cargo aarch64-unknown-linux-gnu
+		unpack_rust_pkg clippy aarch64-unknown-linux-gnu clippy-preview
+		#unpack_rust_pkg rust-docs aarch64-unknown-linux-gnu
+		unpack_rust_pkg rust-std aarch64-unknown-linux-gnu rust-std-aarch64-unknown-linux-gnu
+		unpack_rust_pkg rustc aarch64-unknown-linux-gnu
+		unpack_rust_pkg rustfmt aarch64-unknown-linux-gnu rustfmt-preview
+		unpack_rust_pkg rls aarch64-unknown-linux-gnu rls-preview
+		unpack_rust_pkg rust-analysis aarch64-unknown-linux-gnu rust-analysis-aarch64-unknown-linux-gnu
+				fi
+				;;
+			armv7a*h*)
+				if use elibc_glibc ; then
+		unpack_rust_pkg cargo armv7-unknown-linux-gnueabihf
+		unpack_rust_pkg clippy armv7-unknown-linux-gnueabihf clippy-preview
+		#unpack_rust_pkg rust-docs armv7-unknown-linux-gnueabihf
+		unpack_rust_pkg rust-std armv7-unknown-linux-gnueabihf rust-std-armv7-unknown-linux-gnueabihf
+		unpack_rust_pkg rustc armv7-unknown-linux-gnueabihf
+		unpack_rust_pkg rustfmt armv7-unknown-linux-gnueabihf rustfmt-preview
+		unpack_rust_pkg rls armv7-unknown-linux-gnueabihf rls-preview
+		unpack_rust_pkg rust-analysis armv7-unknown-linux-gnueabihf rust-analysis-armv7-unknown-linux-gnueabihf
+				fi
+				;;
+			x86_64*)
+				if use elibc_glibc ; then
+		unpack_rust_pkg cargo x86_64-unknown-linux-gnu
+		unpack_rust_pkg clippy x86_64-unknown-linux-gnu clippy-preview
+		unpack_rust_pkg rust-docs x86_64-unknown-linux-gnu
+		unpack_rust_pkg rust-std x86_64-unknown-linux-gnu rust-std-x86_64-unknown-linux-gnu
+		unpack_rust_pkg rustc x86_64-unknown-linux-gnu
+		unpack_rust_pkg rustfmt x86_64-unknown-linux-gnu rustfmt-preview
+		unpack_rust_pkg rls x86_64-unknown-linux-gnu rls-preview
+		unpack_rust_pkg rust-analysis x86_64-unknown-linux-gnu rust-analysis-x86_64-unknown-linux-gnu
+				fi
+				if use elibc_musl ; then
+		unpack_rust_pkg cargo x86_64-unknown-linux-musl
+		unpack_rust_pkg clippy x86_64-unknown-linux-musl clippy-preview
+		#unpack_rust_pkg rust-docs x86_64-unknown-linux-musl
+		unpack_rust_pkg rust-std x86_64-unknown-linux-musl rust-std-x86_64-unknown-linux-musl
+		unpack_rust_pkg rustc x86_64-unknown-linux-musl
+		unpack_rust_pkg rustfmt x86_64-unknown-linux-musl rustfmt-preview
+		unpack_rust_pkg rls x86_64-unknown-linux-musl rls-preview
+		unpack_rust_pkg rust-analysis x86_64-unknown-linux-musl rust-analysis-x86_64-unknown-linux-musl
+				fi
+				;;
+			x86*)
+				if use elibc_glibc ; then
+		unpack_rust_pkg cargo i686-unknown-linux-gnu
+		unpack_rust_pkg clippy i686-unknown-linux-gnu clippy-preview
+		unpack_rust_pkg rust-docs i686-unknown-linux-gnu
+		unpack_rust_pkg rust-std i686-unknown-linux-gnu rust-std-i686-unknown-linux-gnu
+		unpack_rust_pkg rustc i686-unknown-linux-gnu
+		unpack_rust_pkg rustfmt i686-unknown-linux-gnu rustfmt-preview
+		unpack_rust_pkg rls i686-unknown-linux-gnu rls-preview
+		unpack_rust_pkg rust-analysis i686-unknown-linux-gnu rust-analysis-i686-unknown-linux-gnu
+				fi
+				;;
+			*)
 eerror
 eerror
-eerror "chost: ${chost}"
+eerror "chost: ${CHOST}"
 eerror "arch: ${arch}"
 eerror
 eerror "Please use the system-rust USE flag instead"
 eerror
-					die
-					;;
-			esac
-			unpack_rust_pkg rust-src ""
-			echo "${RUST_PV}" > "${S_RUST}/TOOLCHAIN_VERSION" || die
-		done
+				die
+				;;
+		esac
+		unpack_rust_pkg rust-src ""
+		echo "${RUST_PV}" > "${S_RUST}/TOOLCHAIN_VERSION" || die
 	fi
 }
 
@@ -1113,39 +1114,36 @@ eerror
 einfo
 einfo "Checking precompiled libclang support"
 einfo
-		for abi in $(multilib_get_enabled_abis) ; do
-			local chost=$(get_abi_CHOST ${abi})
-			local arch="${chost%%-*}"
+		local arch="${CHOST%%-*}"
 einfo
-einfo "chost: ${chost}"
+einfo "chost: ${CHOST}"
 einfo "arch: ${arch}"
 einfo
-			case ${arch} in
-				aarch64*)
+		case ${arch} in
+			aarch64*)
 einfo
 einfo "Supported ${arch}"
 einfo
-					;;
-				armv7a*h*)
+				;;
+			armv7a*h*)
 einfo
 einfo "Supported ${arch}"
 einfo
-					;;
-				x86_64*)
+				;;
+			x86_64*)
 einfo
 einfo "Supported ${arch}"
 einfo
-					;;
-				*)
+				;;
+			*)
 eerror
-eerror "chost: ${chost}"
+eerror "chost: ${CHOST}"
 eerror "arch: ${arch}"
 eerror "Please use the system-libclang USE flag instead"
 eerror
-					die
-					;;
-			esac
-		done
+				die
+				;;
+		esac
 	fi
 }
 
@@ -1183,9 +1181,8 @@ ewarn
 	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|" \
 		ycmd/default_settings.json || die
 
-	CMAKE_USE_DIR="${S}/cpp" \
-	cmake_src_prepare
-
+	S="${S_BAK}" \
+	BUILD_DIR="${S_BAK}" \
 	python_copy_sources
 }
 
@@ -1222,6 +1219,7 @@ ycmd_config_set_default_json_path()
 src_configure() {
 	python_configure_all()
 	{
+		BUILD_DIR="${S}-${EPYTHON/./_}"
 		cd "${BUILD_DIR}" || die
 		local sitedir="$(python_get_sitedir)"
 		BD_ABS="$(python_get_sitedir)/${BD_REL}"
@@ -1429,50 +1427,22 @@ EXTERNAL_LIBCLANG_PATH \"/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)/libclang.so
 ___PYTHON_LIB_PATH___|\
 /usr/$(get_libdir)/lib${EPYTHON}.so|g" \
 			build.py || die
-
-		# ---
-
-		filter-flags -O0 -O1 -O3 -O4
-		append-cxxflags -O2
-		append-cflags -O2
-		# We need to do this ourselves instead of rely on the build
-		# script.  The build script has racing error when it tries to
-		# do it through emerge.
-		local mycmakeargs=(
-			-DUSE_CLANG_COMPLETER=$(usex system-boost)
-			-DUSE_DEV_FLAGS=$(usex debug)
-			-DUSE_SYSTEM_BOOST=$(usex system-boost)
-			-DUSE_SYSTEM_LIBCLANG=$(usex system-libclang)
-			-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
-		)
-		if [ -f /usr/$(get_libdir)/lib${EPYTHON}m.so ] ; then
-			mycmakeargs+=(
-			-DPYTHON_INCLUDE_DIR=/usr/include/${EPYTHON}m
-			-DPYTHON_LIBRARY=/usr/$(get_libdir)/lib${EPYTHON}m.so
-			)
-		else
-			mycmakeargs+=(
-			-DPYTHON_INCLUDE_DIR=/usr/include/${EPYTHON}
-			-DPYTHON_LIBRARY=/usr/$(get_libdir)/lib${EPYTHON}.so
-			)
-		fi
-		if use c || use cxx || use objc || use objcxx ; then
-			mycmakeargs+=( -DUSE_CLANG_COMPLETER=ON )
-		fi
-		CMAKE_USE_DIR="${BUILD_DIR}/cpp" \
-		cmake_src_configure
 	}
+	S="${S_BAK}" \
+	BUILD_DIR="${S_BAK}" \
 	python_foreach_impl python_configure_all
 }
 
 src_compile() {
 	python_compile_all() {
+		BUILD_DIR="${S}-${EPYTHON/./_}"
 		cd "${BUILD_DIR}"
 		if use go && ! use system-go-tools ; then
 			src_compile_gopls
 		fi
 
-		local myargs=()
+		local myargs=(
+		)
 		if use c || use cxx || use objc || use objcxx ; then
 			if use clangd ; then
 				myargs+=( --clangd-completer )
@@ -1510,32 +1480,16 @@ src_compile() {
 		if use typescript && ! use system-typescript ; then
 			myargs+=( --ts-completer )
 		fi
-		if         ! use system-boost \
-			|| ! use system-clangd \
-			|| ! use system-go-tools \
-			|| ! use system-jedi \
-			|| ! use system-libclang \
-			|| ! use system-rust \
-			|| ! use system-tern \
-			|| ! use system-typescript ; then
-einfo
-einfo "Path A: Running build.py"
-einfo "${EPYTHON} build.py ${myargs[@]}"
-einfo
-			${EPYTHON} build.py ${myargs[@]}
-		elif use system-libclang ; then
-einfo
-einfo "Path B: Running cmake_src_compile"
-einfo
-			cmake_src_compile
-		fi
+		einfo "Running:  ${EPYTHON} build.py ${myargs[@]}"
+		${EPYTHON} build.py ${myargs[@]}
 
 		if use csharp && use system-mono ; then
-ewarn "FIXME: fix use-system-omnisharp-run.patch"
-#			eapply \
-#"${FILESDIR}/${PN}-43_p20200516-omnisharp-use-system-omnisharp-run.patch"
+			eapply \
+"${FILESDIR}/${PN}-45_p20220706-omnisharp-use-system-omnisharp-run.patch"
 		fi
 	}
+	S="${S_BAK}" \
+	BUILD_DIR="${S_BAK}" \
 	python_foreach_impl python_compile_all
 }
 
@@ -1557,10 +1511,13 @@ src_test() {
 		if use typescript ; then
 			allowed_completers+=( typescript )
 		fi
+		BUILD_DIR="${S}-${EPYTHON/./_}"
 		cd "${BUILD_DIR}" || die
 		${EPYTHON} run_tests.py --skip-build --completers \
 			${allowed_completers[@]} || die
 	}
+	S="${S_BAK}" \
+	BUILD_DIR="${S_BAK}" \
 	python_foreach_impl python_test_all
 }
 
@@ -1793,6 +1750,7 @@ src_install() {
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 	python_install_all() {
+		BUILD_DIR="${S}-${EPYTHON/./_}"
 		cd "${BUILD_DIR}" || die
 		BD_ABS="$(python_get_sitedir)/${BD_REL}"
 		python_moduleinto "${BD_REL}"
@@ -1814,31 +1772,14 @@ src_install() {
 			&& ( use c || use cxx || use objc || use objcxx ) \
 			&& use libclang ; then
 			python_domodule lib
-			fperms 0755 "${BD_ABS}/lib/libclang.so.${CLANG_PV_MAJ}"
 			python_moduleinto "${BD_REL}/third_party"
 			python_domodule third_party/clang
-			fperms 0755 \
-"${BD_ABS}/third_party/clang/lib/libclang.so.${CLANG_PV_MAJ}"
 		fi
 
 		python_moduleinto "${BD_REL}/third_party"
 
 		if use csharp ; then
 			python_domodule third_party/omnisharp-roslyn
-			pushd "${ED}${BD_ABS}/third_party/omnisharp-roslyn" || die
-				for f in $(find . -name "*.dll" \
-						-o -name "*.so" \
-						| sed -e "s|^./||g") ; do
-					fperms 0755 \
-				"${BD_ABS}/third_party/omnisharp-roslyn/${f}"
-				done
-			popd
-			fperms 0755 \
-		"${BD_ABS}/third_party/omnisharp-roslyn/run"
-			if ! use system-mono ; then
-				fperms 0755 \
-		"${BD_ABS}/third_party/omnisharp-roslyn/bin/mono"
-			fi
 		fi
 
 		if ! use system-bottle ; then
@@ -1849,8 +1790,6 @@ src_install() {
 			&& ( use c || use cxx || use objc || use objcxx ) \
 			&& use clangd ; then
 			python_domodule third_party/clangd
-			fperms 0755 \
-				"${BD_ABS}/third_party/clangd/output/bin/clangd"
 		fi
 
 		if ! use system-jdtls && use java ; then
@@ -1859,7 +1798,6 @@ src_install() {
 
 		if ! use system-go-tools && use go ; then
 			python_domodule third_party/go
-			fperms 0755 "${BD_ABS}/third_party/go/bin/gopls"
 		fi
 
 		if ! use system-jedi && use python ; then
@@ -1868,8 +1806,6 @@ src_install() {
 
 		if ! use system-mrab-regex ; then
 			python_domodule third_party/cregex
-			fperms 0755 \
-			"${BD_ABS}/third_party/cregex/regex_3/_regex.so"
 		fi
 
 		if ! use system-requests ; then
@@ -1878,28 +1814,14 @@ src_install() {
 
 		if ! use system-rust && use rust ; then
 			python_domodule third_party/rls
-			pushd "${ED}${BD_ABS}/third_party/rls" || die
-				for f in $(find . -name "*.so" \
-					-o \( -ipath "*/bin/*" -type f \) ) ; do
-					fperms 0755 "${BD_ABS}/third_party/rls/${f}"
-				done
-			popd
 		fi
 
 		if ! use system-tern && use javascript ; then
 			python_domodule third_party/tern_runtime
-			fperms 0755 \
-	"${BD_ABS}/third_party/tern_runtime/node_modules/errno/cli.js" \
-	"${BD_ABS}/third_party/tern_runtime/node_modules/acorn/bin/acorn" \
-	"${BD_ABS}/third_party/tern_runtime/node_modules/tern/bin/condense" \
-	"${BD_ABS}/third_party/tern_runtime/node_modules/tern/bin/tern"
 		fi
 
 		if ! use system-typescript && use typescript ; then
 			python_domodule third_party/tsserver
-			fperms 0755 \
-"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsc" \
-"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
 		fi
 
 		if ! use system-waitress ; then
@@ -1915,7 +1837,22 @@ src_install() {
 			python_domodule third_party/watchdog_deps/watchdog/build/lib3
 		fi
 	}
+	S="${S_BAK}" \
+	BUILD_DIR="${S_BAK}" \
 	python_foreach_impl python_install_all
+	einfo "Restoring permissions"
+	local x
+	for x in $(find "${ED}" -type f) ; do
+		[[ -L "${x}" ]] && continue
+		local is_exe=0
+		file "${x}" | "executable" && is_exe=1
+		file "${x}" | "shared object" && is_exe=1
+		file "${x}" | "shell script" && is_exe=1
+		file "${x}" | "Python script" && is_exe=1
+		if (( ${is_exe} )) ; then
+			fperms 0755 $(echo "${x}" | sed -e "s|${ED}||g")
+		fi
+	done
 
 #	if ! use system-libclang ; then
 #		cat <<-EOF > "${T}"/50${P}-ycmd-${SLOT_MAJ}

@@ -1,0 +1,10 @@
+--- a/third_party/omnisharp-roslyn/run.orig	2020-10-09 09:45:16.000000000 -0700
++++ b/third_party/omnisharp-roslyn/run	2022-08-06 14:04:15.049001501 -0700
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env bash
+ 
+-base_dir="$(cd "$(dirname "$0")" && pwd -P)"
++base_dir="/usr"
+ bin_dir=${base_dir}/bin
+ etc_dir=${base_dir}/etc
+ omnisharp_dir=${base_dir}/omnisharp
