@@ -9,49 +9,111 @@ PYTHON_COMPAT=( python3_{8..10} )
 inherit autotools eutils flag-o-matic python-single-r1
 
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
-HOMEPAGE="https://www.nano-editor.org/
+HOMEPAGE="
+	https://www.nano-editor.org/
 	https://wiki.gentoo.org/wiki/Nano/Basics_Guide
-	https://github.com/orsonteodoro/nano-ycmd"
+	https://github.com/orsonteodoro/nano-ycmd
+"
 LICENSE="GPL-3+ LGPL-2+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-IUSE+=" bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls
-slang +spell static openmp openssl system-clangd system-gnulib system-gocode
+YCMD_SLOTS=(45 44 43)
+IUSE+="
+${YCMD_SLOTS[@]/#/ycmd-}
+bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
++spell static openmp openssl system-clangd system-gnulib system-gocode
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
-system-rustc system-tsserver unicode +ycmd-43 ycmd-44 ycmd-45 ycm-generator"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
-	^^ ( libgcrypt nettle openssl )
-	^^ ( ycmd-43 ycmd-44 ycmd-45 )
-	bear? ( ycm-generator )
-	ninja? ( ycm-generator )
-	ycm-generator? ( || ( bear ninja ) )"
+system-rustc system-tsserver unicode ycm-generator
+"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+	^^ (
+		libgcrypt
+		nettle
+		openssl
+	)
+	^^ (
+		${YCMD_SLOTS[@]/#/ycmd-}
+	)
+	bear? (
+		ycm-generator
+	)
+	ninja? (
+		ycm-generator
+	)
+	ycm-generator? (
+		|| (
+			bear
+			ninja
+		)
+	)
+"
 LIB_DEPEND="
-	!ncurses? ( slang? ( sys-libs/slang:=[static-libs(+)] ) )
+	!ncurses? (
+		slang? (
+			sys-libs/slang:=[static-libs(+)]
+		)
+	)
 	>=sys-libs/ncurses-5.9-r1:0=[unicode(+)]
 	sys-libs/ncurses:0=[static-libs(+)]
-	magic? ( sys-apps/file:=[static-libs(+)] )
-	nls? ( virtual/libintl )"
-RDEPEND+=" ${PYTHON_DEPS}
-	!static? ( ${LIB_DEPEND//\[static-libs(+)]} )
+	magic? (
+		sys-apps/file:=[static-libs(+)]
+	)
+	nls? (
+		virtual/libintl
+	)
+"
+gen_ycmd_rdepend() {
+	local s
+	for s in ${YCMD_SLOTS[@]} ; do
+		echo "
+			ycmd-${s}? (
+				$(python_gen_cond_dep "dev-util/ycmd:${s}[\${PYTHON_USEDEP}]")
+			)
+		"
+	done
+}
+RDEPEND+="
+	${PYTHON_DEPS}
+	$(gen_ycmd_rdepend)
+	!static? (
+		${LIB_DEPEND//\[static-libs(+)]}
+	)
 	>=app-shells/bash-4
 	dev-libs/nxjson
 	net-libs/neon
-	bear? ( dev-util/bear[${PYTHON_SINGLE_USEDEP}] )
-	libgcrypt? ( dev-libs/libgcrypt )
-	ninja? ( dev-util/ninja )
-	nettle? ( dev-libs/nettle )
-	openmp? ( sys-libs/libomp )
-	openssl? ( dev-libs/openssl
-		   dev-libs/glib )
-	ycm-generator? ( $(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]') )
-	ycmd-43? ( $(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]') )
-	ycmd-44? ( $(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]') )
-	ycmd-45? ( $(python_gen_cond_dep 'dev-util/ycmd:45[${PYTHON_USEDEP}]') )"
-DEPEND+=" ${RDEPEND}
-	system-gnulib? ( >=dev-libs/gnulib-2018.01.23.08.42.00 )"
-BDEPEND+=" virtual/pkgconfig
+	bear? (
+		dev-util/bear[${PYTHON_SINGLE_USEDEP}]
+	)
+	libgcrypt? (
+		dev-libs/libgcrypt
+	)
+	ninja? (
+		dev-util/ninja
+	)
+	nettle? (
+		dev-libs/nettle
+	)
+	openmp? (
+		sys-libs/libomp
+	)
+	openssl? (
+		dev-libs/openssl
+		dev-libs/glib
+	)
+	ycm-generator? (
+		$(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]')
+	)
+"
+DEPEND+="
+	${RDEPEND}
+	system-gnulib? ( >=dev-libs/gnulib-2018.01.23.08.42.00 )
+"
+BDEPEND+="
+	virtual/pkgconfig
 	nls? ( sys-devel/gettext )
-	static? ( ${LIB_DEPEND} )"
+	static? ( ${LIB_DEPEND} )
+"
 EGIT_COMMIT="7497cc6cee14d4a2d406975d478facb20d19e62a"
 GNULIB_COMMIT="c9b44f214c7c798c7701c7a281584e262b263655" # listed in ./autogen.sh
 GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
@@ -59,7 +121,8 @@ SRC_URI="
 https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
 http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz
-	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz"
+	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz
+"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 BD_REL="ycmd/${SLOT}"
 BD_ABS=""
@@ -172,13 +235,10 @@ econf_ycmd_slot_44() {
 }
 
 src_configure() {
-	if use ycmd-43 ; then
-		ycmd_slot=43
-	elif use ycmd-44 ; then
-		ycmd_slot=44
-	elif use ycmd-45 ; then
-		ycmd_slot=45
-	fi
+	local s
+	for s in ${YCMD_SLOTS[@]} ; do
+		use ycmd-${s} && ycmd_slot=${s}
+	done
 	BD_REL="ycmd/${ycmd_slot}"
 	BD_ABS="$(python_get_sitedir)/${BD_REL}"
 	use static && append-ldflags -static
@@ -233,26 +293,33 @@ src_configure() {
 	if use system-rust ; then
 		if use ycmd-43 ; then
 			if has_version 'dev-lang/rust-bin' ; then
-				local rv=$(best_version 'dev-lang/rust-bin' | sed -e "s|dev-lang/rust-bin-||")
+				local rv=$(best_version 'dev-lang/rust-bin' \
+					| sed -e "s|dev-lang/rust-bin-||")
 				rv=$(ver_cut 1-3 ${rv})
 				rls_path="/opt/rust-bin-${rv}/bin/rls"
 			elif has_version 'dev-lang/rust' ; then
-				local rv=$(best_version 'dev-lang/rust' | sed -e "s|dev-lang/rust-||")
+				local rv=$(best_version 'dev-lang/rust' \
+					| sed -e "s|dev-lang/rust-||")
 				rv=$(ver_cut 1-3 ${rv})
 				rls_path="/usr/lib/rust/${rv}/bin/rls"
 			fi
 		elif use ycmd-44 || use ycmd-45 ; then
 			if has_version 'dev-lang/rust-bin' ; then
-				local rv=$(best_version 'dev-lang/rust-bin' | sed -e "s|dev-lang/rust-bin-||")
+				local rv=$(best_version 'dev-lang/rust-bin' \
+					| sed -e "s|dev-lang/rust-bin-||")
 				rv=$(ver_cut 1-3 ${rv})
 				rust_toolchain_path="/opt/rust-bin-${rv}"
 			elif has_version 'dev-lang/rust' ; then
-				local rv=$(best_version 'dev-lang/rust' | sed -e "s|dev-lang/rust-||")
+				local rv=$(best_version 'dev-lang/rust' \
+					| sed -e "s|dev-lang/rust-||")
 				rv=$(ver_cut 1-3 ${rv})
 				rust_toolchain_path="/usr/lib/rust/${rv}"
 			fi
 		else
-			die "Unsupported ycmd version for system-rust USE flag"
+eerror
+eerror "Unsupported ycmd version for system-rust USE flag"
+eerror
+			die
 		fi
 	else
 		if use ycmd-43 ; then
@@ -286,15 +353,18 @@ src_configure() {
 	elif use ycmd-44 || use ycmd-45 ; then
 		econf_ycmd_slot_44
 	else
-		die "You must choose either ycmd-43, ycmd-44, or ycmd-45 USE flag."
+eerror
+eerror "You must choose either ${YCMD_SLOTS[@]/#/ycmd-} USE flag."
+eerror
+		die
 	fi
 }
 
 src_install() {
 	default
-	# removes htmldir
+	# Removes htmldir
 	rm -rf "${D}"/trash || die
-	# remove merge conflicts
+	# Remove merge conflicts
 	rm -rf "${D}/etc/" \
 		"${D}/bin/rnano" \
 		"${D}/usr/share" || die
