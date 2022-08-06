@@ -2,17 +2,19 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Only for this ebuild in the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
+
     YCMD is a code-completion &amp; code-comprehension server.
 
     YCMD supports C, C#, C++, CUDA C, Java, JavaScript, ObjC, ObjC++, Python,
     Rust, TypeScript programming languages.
 
-    YCMD is used to obtain API documentation from libraries; auto 
-    complete code and identifiers, automatically fix trivial errors.
+    YCMD is used to obtain API documentation from libraries; auto complete code
+    and identifiers, automatically fix trivial errors.
 
     It acts as frontend for several backend completers.  It uses a client and
     server model.  Messages are packaged as JSON objects and exchanged with
@@ -23,88 +25,150 @@
 
     oiledmachine-overlay tracks the last commit or before the last pull request
     for the previous CORE_VERSION which is assumed to be feature complete and
-    the final version.  This ebuild does not track the current version.
+    the final version.
+
 
     system-jdtls per-package environmental variables:
+
       EYCMD_JDT_LANGUAGE_SERVER_HOME_PATH - Absolute path of root directory of
         unpacked JDT.LS.
+
       EYCMD_JDT_WORKSPACE_ROOT_PATH - Absolute path of workspace which can be
         relocated to a directory of a home directory.
+
       EYCMD_JDT_EXTENSION_PATH - Absolute path of JDT.LS directories containing
         extensions.
+
   </longdescription>
   <upstream>
     <!-- send reports to oiledmachine-overlay first -->
-    <maintainer type="person">
-      <name>Val Markovic</name>
-    </maintainer>
-    <maintainer type="person" status="active">
-      <name>Ben Jackson</name>
-    </maintainer>
-    <maintainer type="person" status="active">
-      <name>Boris Staletic</name>
-    </maintainer>
     <remote-id type="github">ycm-core/ycmd</remote-id>
     <bugs-to>https://github.com/ycm-core/ycmd/issues</bugs-to>
   </upstream>
   <use>
-    <flag name="c">Adds the C language completer.</flag>
-    <flag name="clangd">Uses clangd lsp server for C/C++/ObjC/ObjC++ completion.
-      This USE flag is experimental.</flag>
-    <flag name="csharp">Adds the C# language completer.</flag>
-    <flag name="cuda">Adds the CUDA C completer.</flag>
-    <flag name="cxx">Adds the C++ language completer.</flag>
-    <flag name="docs">Installs doc files.</flag>
-    <flag name="debug">Compiles with debug symbols for the debugger.</flag>
-    <flag name="examples">Installs examples.</flag>
-    <flag name="go">Adds the Go language completer</flag>
-    <flag name="java">Adds the Java language completer.</flag>
-    <flag name="javascript">Adds the JavaScript completer.</flag>
-    <flag name="libclang">Uses libclang for C/C++/ObjC/ObjC++ completion.</flag>
-    <flag name="lsp">Adds support for the Language Server Protocol.</flag>
-    <flag name="minimal">Shrinks installation.  Enabling it may break
-      functionality such as missing documentation for GetDoc.</flag>
-    <flag name="netcore">Adds support for .NET core.</flag>
-    <flag name="netfx">Adds support for .NET Framework.</flag>
-    <flag name="objc">Adds the Objective C completer.</flag>
-    <flag name="objcxx">Adds the Objective C++ completer.</flag>
-    <flag name="python">Adds the Python completer.</flag>
-    <flag name="rust">Adds the Rust programming language completer.</flag>
-    <flag name="system-bottle">Use the system's bottle package instead of the
-      internal package.</flag>
-    <flag name="system-boost">Use the system's boost library instead of the
-      internal package.</flag>
-    <flag name="system-clangd">Uses the system's clangd instead of the internal
-      clangd package.</flag>
-    <flag name="system-frozendict">Uses the system's frozendict instead of the
-      internal package.
+    <flag name="c">
+      Adds the C language completer.
     </flag>
-    <flag name="system-go-tools">Use the system's Go Tools package instead of
-      the internal package.</flag>
-    <flag name="system-jdtls">Uses the system's JDT.LS package instead of the
-      internal.</flag>
-    <flag name="system-jedi">Uses the system's Jedi package instead of the
-      internal.</flag>
-    <flag name="system-libclang">Uses the system's libclang instead of the
-      internal package.</flag>
-    <flag name="system-lsp">Uses the system's lsp-sample-server package
-      instead of the internal package.  This is used for testing.</flag>
-    <flag name="system-mrab-regex">Uses the system's mrab-regex library instead
-      of the internal package.</flag>
-    <flag name="system-requests">Uses the system's Python request package
-      instead of the internal package.</flag>
-    <flag name="system-omnisharp-roslyn">Uses the system's OmniSharp-Roslyn
-      package instead of the internal package.</flag>
-    <flag name="system-rust">Uses the system's Rust instead of
-      the internal package.</flag>
-    <flag name="system-tern">Uses the system's Tern package instead of the
-      internal package.</flag>
-    <flag name="system-typescript">Uses the system's typescript server
-      instead of the internal package.</flag>
-    <flag name="system-waitress">Uses the system's waitress package instead of
-      the internal package.</flag>
-    <flag name="test">Runs tests on the package.</flag>
-    <flag name="typescript">Adds the Typescript completer.</flag>
-    <flag name="vim">Add UltiSnips suppport for Vim.</flag>
+    <flag name="clangd">
+      Uses clangd lsp server for C/C++/ObjC/ObjC++ completion.  This USE flag is
+      experimental.
+    </flag>
+    <flag name="csharp">
+      Adds the C# language completer.
+    </flag>
+    <flag name="cuda">
+      Adds the CUDA C completer.
+    </flag>
+    <flag name="cxx">
+      Adds the C++ language completer.
+    </flag>
+    <flag name="docs">
+      Installs doc files.
+    </flag>
+    <flag name="debug">
+      Compiles with debug symbols for the debugger.
+    </flag>
+    <flag name="examples">
+      Installs examples.
+    </flag>
+    <flag name="go">
+      Adds the Go language completer
+    </flag>
+    <flag name="java">
+      Adds the Java language completer.
+    </flag>
+    <flag name="javascript">
+      Adds the JavaScript completer.
+    </flag>
+    <flag name="libclang">
+      Uses libclang for C/C++/ObjC/ObjC++ completion.
+    </flag>
+    <flag name="lsp">
+      Adds support for the Language Server Protocol.
+    </flag>
+    <flag name="minimal">
+      Shrinks installation.  Enabling it may break functionality such as missing
+      documentation for GetDoc.
+    </flag>
+    <flag name="netcore">
+      Adds support for .NET core.
+    </flag>
+    <flag name="netfx">
+      Adds support for .NET Framework.
+    </flag>
+    <flag name="objc">
+      Adds the Objective C completer.
+    </flag>
+    <flag name="objcxx">
+      Adds the Objective C++ completer.
+    </flag>
+    <flag name="python">
+      Adds the Python completer.
+    </flag>
+    <flag name="rust">
+      Adds the Rust programming language completer.
+    </flag>
+    <flag name="system-bottle">
+      Use the system's bottle package instead of the internal package.
+    </flag>
+    <flag name="system-boost">
+      Use the system's boost library instead of the internal package.
+    </flag>
+    <flag name="system-clangd">
+      Uses the system's clangd instead of the internal clangd package.
+    </flag>
+    <flag name="system-frozendict">
+      Uses the system's frozendict instead of the internal package.
+    </flag>
+    <flag name="system-go-tools">
+      Use the system's Go Tools package instead of the internal package.
+    </flag>
+    <flag name="system-jdtls">
+      Uses the system's JDT.LS package instead of the internal.
+    </flag>
+    <flag name="system-jedi">
+      Uses the system's Jedi package instead of the internal.
+    </flag>
+    <flag name="system-libclang">
+      Uses the system's libclang instead of the internal package.
+    </flag>
+    <flag name="system-lsp">
+      Uses the system's lsp-sample-server package instead of the internal
+      package.  This is used for testing.
+    </flag>
+    <flag name="system-mrab-regex">
+      Uses the system's mrab-regex library instead of the internal package.
+    </flag>
+    <flag name="system-requests">
+      Uses the system's Python request package instead of the internal package.
+    </flag>
+    <flag name="system-omnisharp-roslyn">
+      Uses the system's OmniSharp-Roslyn package instead of the internal
+      package.
+    </flag>
+    <flag name="system-rust">
+      Uses the system's Rust instead of the internal package.
+    </flag>
+    <flag name="system-tern">
+      Uses the system's Tern package instead of the internal package.
+    </flag>
+    <flag name="system-typescript">
+      Uses the system's typescript server instead of the internal package.
+    </flag>
+    <flag name="system-waitress">
+      Uses the system's waitress package instead of the internal package.
+    </flag>
+    <flag name="test">
+      Runs tests on the package.
+    </flag>
+    <flag name="typescript">
+      Adds the TypeScript completer.
+    </flag>
+    <flag name="typescriptreact">
+      Adds the TypeScript completer for .tsx.
+    </flag>
+    <flag name="vim">
+      Add UltiSnips suppport for Vim.
+    </flag>
   </use>
 </pkgmetadata>

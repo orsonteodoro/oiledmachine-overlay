@@ -1,0 +1,19 @@
+--- a/cpp/CMakeLists.txt.orig	2022-08-05 23:31:35.623345125 -0700
++++ b/cpp/CMakeLists.txt	2022-08-05 23:31:48.775851761 -0700
+@@ -241,16 +241,6 @@ if ( USE_SYSTEM_ABSEIL )
+   find_package( absl REQUIRED )
+ else()
+   include( FetchContent )
+-  FetchContent_Declare(
+-    absl
+-    GIT_REPOSITORY https://github.com/abseil/abseil-cpp
+-    GIT_TAG 3b4a16abad2c2ddc494371cc39a2946e36d35d11
+-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/absl
+-  )
+-  FetchContent_GetProperties( absl )
+-  if ( NOT absl_POPULATED )
+-    FetchContent_Populate( absl )
+-  endif()
+   add_subdirectory( absl )
+ endif()
+ 

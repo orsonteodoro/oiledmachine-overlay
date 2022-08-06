@@ -5,7 +5,7 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
 
-inherit cmake-utils eutils flag-o-matic multilib-build python-r1
+inherit cmake eutils flag-o-matic multilib-build python-r1
 
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
@@ -40,6 +40,7 @@ LICENSE="
 			BSD
 			BSD-2
 			dom4j
+			EPL-1.0
 			EPL-2.0
 			icu-64.2
 			JDOM
@@ -58,6 +59,9 @@ LICENSE="
 			CC-BY-SA-4.0
 			ISC
 		)
+	)
+	javascriptreact? (
+		typescript
 	)
 	libclang? (
 		!system-libclang? (
@@ -148,6 +152,9 @@ LICENSE="
 			W3C
 		)
 	)
+	typescriptreact? (
+		typescript
+	)
 	test? (
 		BSD
 		GPL-3+
@@ -233,14 +240,14 @@ SLOT_MAJ=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJ}/${PVR}"
 IUSE+="
 c clangd csharp cuda cxx debug developer doc examples go java javascript
-libclang minimal netcore netfx objc objcxx python rust system-bottle
-system-boost system-clangd system-go-tools system-jdtls system-jedi
-system-libclang system-mono system-mrab-regex system-requests system-pathtools
-system-rust system-rust system-tern system-typescript system-waitress
-system-watchdog test typescript vim
+javascriptreact libclang minimal netcore netfx objc objcxx python rust
+system-bottle system-boost system-clangd system-go-tools system-jdtls
+system-jedi system-libclang system-mono system-mrab-regex system-requests
+system-pathtools system-rust system-rust system-tern system-typescript
+system-waitress system-watchdog test typescript typescriptreact vim
 "
-CLANG_V="10.0"
-CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
+CLANG_PV="10.0"
+CLANG_PV_MAJ=$(ver_cut 1 ${CLANG_PV})
 PV_MAJ=$(ver_cut 1 ${PV})
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -358,22 +365,23 @@ EGIT_COMMIT_PATHTOOLS="a3522fc61b00ee2d992ca375c600513bfb9020e9"
 EGIT_COMMIT_SCIPY_SPHINX_THEME="bc3b4b8383d4cd676fe75b7ca8c3e11d6afa8d97"
 EGIT_COMMIT_TYPESHED="d38645247816f862cafeed21a8f4466d306aacf3"
 EGIT_COMMIT_YCMD_CORE_REGEX="cc538bb6d0fcf0a6411537a5522d13cc9b86789d"
-BOTTLE_V="0.12.18"
-CLANGD_V="${CLANG_V_MAJ}.0.0"
-CHARDET_V="3.0.4"
-GOPLS_V="0.4.2"
-IDNA_V="2.8"
-JDTLS_V="0.54.0-202004152304" # MILESTONE-TIMESTAMP in build.py
-JEDI_V="0.17.0"
-OMNISHARP_V="1.35.3"
-PARSO_V="0.7.0"
+BOTTLE_PV="0.12.18"
+CLANGD_PV="${CLANG_PV_MAJ}.0.0"
+CHARDET_PV="3.0.4"
+CMAKE_PV="3.14"
+GOPLS_PV="0.4.2"
+IDNA_PV="2.8"
+JDTLS_PV="0.54.0-202004152304" # MILESTONE-TIMESTAMP in build.py
+JEDI_PV="0.17.0"
+OMNISHARP_PV="1.35.3"
+PARSO_PV="0.7.0"
 PYTHON_CERTIFI_V="2019.11.28"
-REQUESTS_V="2.22.0"
-RUST_V="nightly-2020-04-17"
-LIBCLANG_V="${CLANG_V_MAJ}.0.0"
-URLLIB3_V="1.25.8"
-WATCHDOG_V="0.10.2"
-WAITRESS_V="1.4.3"
+REQUESTS_PV="2.22.0"
+RUST_PV="nightly-2020-04-17"
+LIBCLANG_PV="${CLANG_PV_MAJ}.0.0"
+URLLIB3_PV="1.25.8"
+WATCHDOG_PV="0.10.2"
+WAITRESS_PV="1.4.3"
 
 RDEPEND_NODEJS="net-libs/nodejs"
 BDEPEND_NODEJS="net-libs/nodejs[npm]"
@@ -400,24 +408,24 @@ DEPEND+="
 		>=dev-libs/boost-1.72:=[python,threads,${PYTHON_USEDEP}]
 	)
 	system-bottle? (
-		>=dev-python/bottle-${BOTTLE_V}[${PYTHON_USEDEP}]
+		>=dev-python/bottle-${BOTTLE_PV}[${PYTHON_USEDEP}]
 	)
 	system-clangd? (
-		>=sys-devel/clang-${CLANGD_V}:${CLANG_V_MAJ}
+		>=sys-devel/clang-${CLANGD_PV}:${CLANG_PV_MAJ}
 	)
 	system-go-tools? (
 		>=dev-go/go-tools-0_pre20210119
 	)
 	system-jdtls? (
-		>=dev-java/jdt-${JDTLS_V%-*}
+		>=dev-java/jdt-${JDTLS_PV%-*}
 	)
 	system-jedi? (
-		>=dev-python/jedi-${JEDI_V}[${PYTHON_USEDEP}]
+		>=dev-python/jedi-${JEDI_PV}[${PYTHON_USEDEP}]
 		>=dev-python/numpydoc-0.9.0_pre20190408[${PYTHON_USEDEP}]
-		>=dev-python/parso-${PARSO_V}[${PYTHON_USEDEP}]
+		>=dev-python/parso-${PARSO_PV}[${PYTHON_USEDEP}]
 	)
 	system-libclang? (
-		>=sys-devel/clang-${LIBCLANG_V}:${CLANG_V_MAJ}
+		>=sys-devel/clang-${LIBCLANG_PV}:${CLANG_PV_MAJ}
 	)
 	system-mrab-regex? (
 		>=dev-python/regex-2019.06.08[${PYTHON_USEDEP}]
@@ -426,7 +434,7 @@ DEPEND+="
 		>=dev-python/pathtools-0.1.1_pre20161006
 	)
 	system-requests? (
-		>=dev-python/requests-${REQUESTS_V}[${PYTHON_USEDEP}]
+		>=dev-python/requests-${REQUESTS_PV}[${PYTHON_USEDEP}]
 	)
 	system-rust? (
 		>=dev-lang/rust-1.44.0_pre20200417[rls]
@@ -438,10 +446,10 @@ DEPEND+="
 		>=dev-lang/typescript-3.8.3
 	)
 	system-waitress? (
-		>=dev-python/waitress-${WAITRESS_V}[${PYTHON_USEDEP}]
+		>=dev-python/waitress-${WAITRESS_PV}[${PYTHON_USEDEP}]
 	)
 	system-watchdog? (
-		>=dev-python/watchdog-${WATCHDOG_V}
+		>=dev-python/watchdog-${WATCHDOG_PV}
 	)
 	typescript? (
 		${RDEPEND_NODEJS}
@@ -454,6 +462,7 @@ BDEPEND+="
 		>=sys-devel/gcc-4.8
 		>=sys-devel/clang-3.9
 	)
+	>=dev-util/cmake-${CMAKE_PV}
 	javascript? (
 		${BDEPEND_NODEJS}
 	)
@@ -484,55 +493,55 @@ BDEPEND+="
 #   https://forge.rust-lang.org/infra/channel-layout.html
 
 YCMD_FN="${P}-${EGIT_COMMIT:0:7}.tar.gz"
-BOTTLE_FN="bottle-${BOTTLE_V}.tar.gz"
-CHARDET_FN="chardet-${CHARDET_V}.tar.gz"
+BOTTLE_FN="bottle-${BOTTLE_PV}.tar.gz"
+CHARDET_FN="chardet-${CHARDET_PV}.tar.gz"
 FLASK_SPHINX_THEMES_FN="flask-sphinx-themes-${EGIT_COMMIT_FLASK_SPHINX_THEMES:0:7}.tar.gz"
-IDNA_FN="idna-${IDNA_V}.tar.gz"
-JEDI_FN="jedi-${JEDI_V}.tar.gz"
+IDNA_FN="idna-${IDNA_PV}.tar.gz"
+JEDI_FN="jedi-${JEDI_PV}.tar.gz"
 NUMPYDOC_FN="numpydoc-${EGIT_COMMIT_NUMPYDOC:0:7}.tar.gz"
-PARSO_FN="parso-${PARSO_V}.tar.gz"
+PARSO_FN="parso-${PARSO_PV}.tar.gz"
 PATHTOOLS_FN="pathtools-${EGIT_COMMIT_PATHTOOLS:0:7}.tar.gz"
 PYTHON_CERTIFI_FN="python-certifi-${PYTHON_CERTIFI_V}.tar.gz"
-REQUESTS_FN="requests-${REQUESTS_V}.tar.gz"
+REQUESTS_FN="requests-${REQUESTS_PV}.tar.gz"
 SCIPY_SPHINX_THEME_FN="scipy-sphinx-theme-${EGIT_COMMIT_SCIPY_SPHINX_THEME:0:7}.tar.gz"
 TYPESHED_FN="typeshed-${EGIT_COMMIT_TYPESHED:0:7}.tar.gz"
-URLLIB3_FN="urllib3-${URLLIB3_V}.tar.gz"
-WAITRESS_FN="waitress-${WAITRESS_V}.tar.gz"
-WATCHDOG_FN="watchdog-${WATCHDOG_V}.tar.gz"
+URLLIB3_FN="urllib3-${URLLIB3_PV}.tar.gz"
+WAITRESS_FN="waitress-${WAITRESS_PV}.tar.gz"
+WATCHDOG_FN="watchdog-${WATCHDOG_PV}.tar.gz"
 YCMD_CORE_REGEX_FN="ycm-core-regex-${EGIT_COMMIT_YCMD_CORE_REGEX:0:7}.tar.gz"
 
 SRC_URI="
 https://github.com/ycm-core/ycmd/archive/${EGIT_COMMIT}.tar.gz
 	-> ${YCMD_FN}
-https://github.com/bottlepy/bottle/archive/refs/tags/${BOTTLE_V}.tar.gz
+https://github.com/bottlepy/bottle/archive/refs/tags/${BOTTLE_PV}.tar.gz
 	-> ${BOTTLE_FN}
-https://github.com/chardet/chardet/archive/refs/tags/${CHARDET_V}.tar.gz
+https://github.com/chardet/chardet/archive/refs/tags/${CHARDET_PV}.tar.gz
 	-> ${CHARDET_FN}
 https://github.com/pallets/flask-sphinx-themes/archive/${EGIT_COMMIT_FLASK_SPHINX_THEMES}.tar.gz
 	-> ${FLASK_SPHINX_THEMES_FN}
-https://github.com/kjd/idna/archive/refs/tags/v${IDNA_V}.tar.gz
+https://github.com/kjd/idna/archive/refs/tags/v${IDNA_PV}.tar.gz
 	-> ${IDNA_FN}
-https://github.com/davidhalter/jedi/archive/refs/tags/v${JEDI_V}.tar.gz
+https://github.com/davidhalter/jedi/archive/refs/tags/v${JEDI_PV}.tar.gz
 	-> ${JEDI_FN}
 https://github.com/numpy/numpydoc/archive/${EGIT_COMMIT_NUMPYDOC}.tar.gz
 	-> ${NUMPYDOC_FN}
-https://github.com/davidhalter/parso/archive/refs/tags/v${PARSO_V}.tar.gz
+https://github.com/davidhalter/parso/archive/refs/tags/v${PARSO_PV}.tar.gz
 	-> ${PARSO_FN}
 https://github.com/gorakhargosh/pathtools/archive/${EGIT_COMMIT_PATHTOOLS}.tar.gz
 	-> ${PATHTOOLS_FN}
 https://github.com/certifi/python-certifi/archive/refs/tags/${PYTHON_CERTIFI_V}.tar.gz
 	-> ${PYTHON_CERTIFI_FN}
-https://github.com/psf/requests/archive/refs/tags/v${REQUESTS_V}.tar.gz
+https://github.com/psf/requests/archive/refs/tags/v${REQUESTS_PV}.tar.gz
 	-> ${REQUESTS_FN}
 https://github.com/scipy/scipy-sphinx-theme/archive/${EGIT_COMMIT_SCIPY_SPHINX_THEME}.tar.gz
 	-> ${SCIPY_SPHINX_THEME_FN}
 https://github.com/davidhalter/typeshed/archive/${EGIT_COMMIT_TYPESHED}.tar.gz
 	-> ${TYPESHED_FN}
-https://github.com/urllib3/urllib3/archive/refs/tags/${URLLIB3_V}.tar.gz
+https://github.com/urllib3/urllib3/archive/refs/tags/${URLLIB3_PV}.tar.gz
 	-> ${URLLIB3_FN}
-https://github.com/Pylons/waitress/archive/refs/tags/v${WAITRESS_V}.tar.gz
+https://github.com/Pylons/waitress/archive/refs/tags/v${WAITRESS_PV}.tar.gz
 	-> ${WAITRESS_FN}
-https://github.com/gorakhargosh/watchdog/archive/refs/tags/v${WATCHDOG_V}.tar.gz
+https://github.com/gorakhargosh/watchdog/archive/refs/tags/v${WATCHDOG_PV}.tar.gz
 	-> ${WATCHDOG_FN}
 https://github.com/ycm-core/regex/archive/${EGIT_COMMIT_YCMD_CORE_REGEX}.tar.gz
 	-> ${YCMD_CORE_REGEX_FN}
@@ -540,17 +549,17 @@ https://github.com/ycm-core/regex/archive/${EGIT_COMMIT_YCMD_CORE_REGEX}.tar.gz
 		clangd? (
 			amd64? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-x86_64-unknown-linux-gnu.tar.bz2
+https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_PV}-x86_64-unknown-linux-gnu.tar.bz2
 				)
 			)
 			arm64? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-aarch64-linux-gnu.tar.bz2
+https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_PV}-aarch64-linux-gnu.tar.bz2
 				)
 			)
 			arm? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-armv7a-linux-gnueabihf.tar.bz2
+https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_PV}-armv7a-linux-gnueabihf.tar.bz2
 				)
 			)
 		)
@@ -559,36 +568,36 @@ https://dl.bintray.com/ycm-core/clangd/clangd-${CLANGD_V}-armv7a-linux-gnueabihf
 		libclang? (
 			amd64? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-x86_64-unknown-linux-gnu.tar.bz2
+https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_PV}-x86_64-unknown-linux-gnu.tar.bz2
 				)
 			)
 			arm? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-armv7a-linux-gnueabihf.tar.bz2
+https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_PV}-armv7a-linux-gnueabihf.tar.bz2
 				)
 			)
 			arm64? (
 				elibc_glibc? (
-https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_V}-aarch64-linux-gnu.tar.bz2
+https://dl.bintray.com/ycm-core/libclang/libclang-${LIBCLANG_PV}-aarch64-linux-gnu.tar.bz2
 				)
 			)
 		)
 	)
 	csharp? (
-https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_V}/omnisharp.http-linux-x64.tar.gz
-	-> omnisharp-${OMNISHARP_V}.http-linux-x64.tar.gz
-https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_V}/omnisharp.http-linux-x86.tar.gz
-	-> omnisharp-${OMNISHARP_V}.http-linux-x86.tar.gz
+https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_PV}/omnisharp.http-linux-x64.tar.gz
+	-> omnisharp-${OMNISHARP_PV}.http-linux-x64.tar.gz
+https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v${OMNISHARP_PV}/omnisharp.http-linux-x86.tar.gz
+	-> omnisharp-${OMNISHARP_PV}.http-linux-x86.tar.gz
 	)
 	java? (
 		!system-jdtls? (
-https://download.eclipse.org/jdtls/milestones/$(ver_cut 1-3 ${JDTLS_V})/jdt-language-server-${JDTLS_V}.tar.gz
+https://download.eclipse.org/jdtls/milestones/$(ver_cut 1-3 ${JDTLS_PV})/jdt-language-server-${JDTLS_PV}.tar.gz
 		)
 	)
 	rust? (
 		!system-rust? (
-https://static.rust-lang.org/dist/${RUST_V#*-}/rust-src-nightly.tar.gz
-	-> rust-src-nightly-${RUST_V#*-}.tar.gz
+https://static.rust-lang.org/dist/${RUST_PV#*-}/rust-src-nightly.tar.gz
+	-> rust-src-nightly-${RUST_PV#*-}.tar.gz
 		)
 	)
 "
@@ -599,7 +608,7 @@ gen_rust_dls()
 	local elibc_impl="${2}"
 	local pkg_name="${3}"
 	local arch_triple="${4}"
-	local nightly_date="${RUST_V#*-}"
+	local nightly_date="${RUST_PV#*-}"
 	out="
 rust? (
 	${gentoo_arch}? (
@@ -698,23 +707,23 @@ SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/sync golang/sync v0.0.0-201909111851
 SRC_URI+=" "$(gen_go_dl_gh_url github.com/BurntSushi/toml BurntSushi/toml v0.3.1)
 
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
-S_BOTTLE="${WORKDIR}/bottle-${BOTTLE_V}"
-S_CHARDET="${WORKDIR}/chardet-${CHARDET_V}"
+S_BOTTLE="${WORKDIR}/bottle-${BOTTLE_PV}"
+S_CHARDET="${WORKDIR}/chardet-${CHARDET_PV}"
 S_FLASK_SPHINX_THEMES="${WORKDIR}/flask-sphinx-themes-${EGIT_COMMIT_FLASK_SPHINX_THEMES}"
 S_GO="${S}/third_party/go"
-S_IDNA="${WORKDIR}/idna-${IDNA_V}"
-S_JEDI="${WORKDIR}/jedi-${JEDI_V}"
+S_IDNA="${WORKDIR}/idna-${IDNA_PV}"
+S_JEDI="${WORKDIR}/jedi-${JEDI_PV}"
 S_NUMPYDOC="${WORKDIR}/numpydoc-${EGIT_COMMIT_NUMPYDOC}"
-S_PARSO="${WORKDIR}/parso-${PARSO_V}"
+S_PARSO="${WORKDIR}/parso-${PARSO_PV}"
 S_PATHTOOLS="${WORKDIR}/pathtools-${EGIT_COMMIT_PATHTOOLS}"
 S_PYTHON_CERTIFI="${WORKDIR}/python-certifi-${PYTHON_CERTIFI_V}"
-S_REQUESTS="${WORKDIR}/requests-${REQUESTS_V}"
+S_REQUESTS="${WORKDIR}/requests-${REQUESTS_PV}"
 S_RUST="${S}/third_party/rls"
 S_SCIPY_SPHINX_THEME="${WORKDIR}/scipy-sphinx-theme-${EGIT_COMMIT_SCIPY_SPHINX_THEME}"
 S_TYPESHED="${WORKDIR}/typeshed-${EGIT_COMMIT_TYPESHED}"
-S_URLLIB3="${WORKDIR}/urllib3-${URLLIB3_V}"
-S_WAITRESS="${WORKDIR}/waitress-${WAITRESS_V}"
-S_WATCHDOG="${WORKDIR}/watchdog-${WATCHDOG_V}"
+S_URLLIB3="${WORKDIR}/urllib3-${URLLIB3_PV}"
+S_WAITRESS="${WORKDIR}/waitress-${WAITRESS_PV}"
+S_WATCHDOG="${WORKDIR}/watchdog-${WATCHDOG_PV}"
 S_YCM_CORE_REGEX="${WORKDIR}/regex-${EGIT_COMMIT_YCMD_CORE_REGEX}"
 
 RESTRICT="mirror"
@@ -861,19 +870,19 @@ src_unpack() {
 		mkdir -p third_party/clangd/cache || die
 		if use amd64 ; then
 			if use elibc_glibc ; then
-				cp -a $(realpath "${DISTDIR}/clangd-${CLANGD_V}-x86_64-unknown-linux-gnu.tar.bz2") \
+				cp -a $(realpath "${DISTDIR}/clangd-${CLANGD_PV}-x86_64-unknown-linux-gnu.tar.bz2") \
 					third_party/clangd/cache || die
 			fi
 		fi
 		if use arm64 ; then
 			if use elibc_glibc ; then
-				cp -a $(realpath "${DISTDIR}/clangd-${CLANGD_V}-aarch64-linux-gnu.tar.bz2") \
+				cp -a $(realpath "${DISTDIR}/clangd-${CLANGD_PV}-aarch64-linux-gnu.tar.bz2") \
 					third_party/clangd/cache || die
 			fi
 		fi
 		if use arm ; then
 			if use elibc_glibc ; then
-				cp -a $(realpath "${DISTDIR}/clangd-${CLANGD_V}-armv7a-linux-gnueabihf.tar.bz2") \
+				cp -a $(realpath "${DISTDIR}/clangd-${CLANGD_PV}-armv7a-linux-gnueabihf.tar.bz2") \
 					third_party/clangd/cache || die
 			fi
 		fi
@@ -883,30 +892,30 @@ src_unpack() {
 		mkdir -p clang_archives || die
 		if use amd64 ; then
 			if use elibc_glibc ; then
-				cp -a $(realpath "${DISTDIR}/libclang-${LIBCLANG_V}-x86_64-unknown-linux-gnu.tar.bz2") \
+				cp -a $(realpath "${DISTDIR}/libclang-${LIBCLANG_PV}-x86_64-unknown-linux-gnu.tar.bz2") \
 					clang_archives || die
 			fi
 		fi
 		if use arm64 ; then
 			if use elibc_glibc ; then
-				cp -a $(realpath "${DISTDIR}/libclang-${LIBCLANG_V}-aarch64-linux-gnu.tar.bz2") \
+				cp -a $(realpath "${DISTDIR}/libclang-${LIBCLANG_PV}-aarch64-linux-gnu.tar.bz2") \
 					clang_archives || die
 			fi
 		fi
 		if use arm ; then
 			if use elibc_glibc ; then
-				cp -a $(realpath "${DISTDIR}/libclang-${LIBCLANG_V}-armv7a-linux-gnueabihf.tar.bz2") \
+				cp -a $(realpath "${DISTDIR}/libclang-${LIBCLANG_PV}-armv7a-linux-gnueabihf.tar.bz2") \
 					clang_archives || die
 			fi
 		fi
 	fi
 
 	if use csharp ; then
-		mkdir -p third_party/omnisharp-roslyn/v${OMNISHARP_V} || die
-		cp -a $(realpath "${DISTDIR}/omnisharp-${OMNISHARP_V}.http-linux-x64.tar.gz") \
-			third_party/omnisharp-roslyn/v${OMNISHARP_V}/omnisharp.http-linux-x64.tar.gz || die
-		cp -a $(realpath "${DISTDIR}/omnisharp-${OMNISHARP_V}.http-linux-x64.tar.gz") \
-			third_party/omnisharp-roslyn/v${OMNISHARP_V}/omnisharp.http-linux-x86.tar.gz || die
+		mkdir -p third_party/omnisharp-roslyn/v${OMNISHARP_PV} || die
+		cp -a $(realpath "${DISTDIR}/omnisharp-${OMNISHARP_PV}.http-linux-x64.tar.gz") \
+			third_party/omnisharp-roslyn/v${OMNISHARP_PV}/omnisharp.http-linux-x64.tar.gz || die
+		cp -a $(realpath "${DISTDIR}/omnisharp-${OMNISHARP_PV}.http-linux-x64.tar.gz") \
+			third_party/omnisharp-roslyn/v${OMNISHARP_PV}/omnisharp.http-linux-x86.tar.gz || die
 	fi
 
 	if use go && ! use system-go-tools ; then
@@ -915,7 +924,7 @@ src_unpack() {
 
 	if use java && ! use system-jdtls ; then
 		mkdir -p third_party/eclipse.jdt.ls/target/cache || die
-		cp -a $(realpath "${DISTDIR}/jdt-language-server-${JDTLS_V}.tar.gz") \
+		cp -a $(realpath "${DISTDIR}/jdt-language-server-${JDTLS_PV}.tar.gz") \
 			third_party/eclipse.jdt.ls/target/cache || die
 	fi
 
@@ -942,7 +951,7 @@ einfo
 	elif [[ "${pkg_name}" == "golang.org/x/tools/gopls" ]] ; then
 		tar --strip-components=2 -x -C "${dest}" \
 			-f "${DISTDIR}/${dest_name}.tar.gz" \
-			tools-gopls-v${GOPLS_V}/gopls || die
+			tools-gopls-v${GOPLS_PV}/gopls || die
 	else
 		tar --strip-components=1 -x -C "${dest}" \
 			-f "${DISTDIR}/${dest_name}.tar.gz" || die
@@ -981,7 +990,7 @@ unpack_rust_pkg()
 	local pkg_name="${1}"
 	local arch_triple="${2}"
 	local alt_name="${3}"
-	local nightly_date="${RUST_V#*-}"
+	local nightly_date="${RUST_PV#*-}"
 	local dest="${S_RUST}"
 	if [[ -z "${alt_name}" ]] ; then
 		alt_name="${pkg_name}"
@@ -1087,7 +1096,7 @@ eerror
 					;;
 			esac
 			unpack_rust_pkg rust-src ""
-			echo "${RUST_V}" > "${S_RUST}/TOOLCHAIN_VERSION" || die
+			echo "${RUST_PV}" > "${S_RUST}/TOOLCHAIN_VERSION" || die
 		done
 	fi
 }
@@ -1175,7 +1184,7 @@ ewarn
 		ycmd/default_settings.json || die
 
 	CMAKE_USE_DIR="${S}/cpp" \
-	cmake-utils_src_prepare
+	cmake_src_prepare
 
 	python_copy_sources
 }
@@ -1236,10 +1245,10 @@ src_configure() {
 			ycmd_config_use_system CLANGD
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_CLANGD_PATH___" \
-				"/usr/lib/llvm/${CLANG_V_MAJ}/bin/clangd"
+				"/usr/lib/llvm/${CLANG_PV_MAJ}/bin/clangd"
 			ycmd_config_set_default_json_path \
 				"___CLANGD_PATH___" \
-				"/usr/lib/llvm/${CLANG_V_MAJ}/bin/clangd"
+				"/usr/lib/llvm/${CLANG_PV_MAJ}/bin/clangd"
 		else
 			ycmd_config_set_default_json_path \
 				"___CLANGD_PATH___" \
@@ -1297,10 +1306,10 @@ src_configure() {
 			ycmd_config_use_system LIBCLANG
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_CLANG_LIB_PATH___" \
-				"/usr/lib/llvm/${CLANG_V_MAJ}/$(get_libdir)"
+				"/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)"
 			sed -i -e "s|\
 EXTERNAL_LIBCLANG_PATH \${TEMP}|\
-EXTERNAL_LIBCLANG_PATH \"/usr/lib/llvm/${CLANG_V_MAJ}/$(get_libdir)/libclang.so\"|g" \
+EXTERNAL_LIBCLANG_PATH \"/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)/libclang.so\"|g" \
 				cpp/ycm/CMakeLists.txt || die
 
 			# Prevent from raising an exception.
@@ -1451,7 +1460,7 @@ ___PYTHON_LIB_PATH___|\
 			mycmakeargs+=( -DUSE_CLANG_COMPLETER=ON )
 		fi
 		CMAKE_USE_DIR="${BUILD_DIR}/cpp" \
-		cmake-utils_src_configure
+		cmake_src_configure
 	}
 	python_foreach_impl python_configure_all
 }
@@ -1516,14 +1525,15 @@ einfo
 			${EPYTHON} build.py ${myargs[@]}
 		elif use system-libclang ; then
 einfo
-einfo "Path B: Running cmake-utils_src_compile"
+einfo "Path B: Running cmake_src_compile"
 einfo
-			cmake-utils_src_compile
+			cmake_src_compile
 		fi
 
 		if use csharp && use system-mono ; then
-			eapply \
-"${FILESDIR}/${PN}-43_p20200516-omnisharp-use-system-omnisharp-run.patch"
+ewarn "FIXME: fix use-system-omnisharp-run.patch"
+#			eapply \
+#"${FILESDIR}/${PN}-43_p20200516-omnisharp-use-system-omnisharp-run.patch"
 		fi
 	}
 	python_foreach_impl python_compile_all
@@ -1701,6 +1711,9 @@ einfo
 		if ! use javascript ; then
 			rm -rf javascript || die
 		fi
+		if ! use javascriptreact ; then
+			rm -rf javascriptreact || die
+		fi
 		if ! use objc ; then
 			rm -rf objc || die
 		fi
@@ -1714,7 +1727,10 @@ einfo
 			rm -rf rust || die
 		fi
 		if ! use typescript ; then
-			rm -rf typescript typescriptreact || die
+			rm -rf typescript || die
+		fi
+		if ! use typescriptreact ; then
+			rm -rf typescriptreact || die
 		fi
 		if ! use vim ; then
 			rm -rf general/ultisnips_completer.py || die
@@ -1757,7 +1773,7 @@ einfo
 		rm -rf third_party/clangd/cache || die
 	fi
 	if use csharp ; then
-		rm -rf third_party/omnisharp-roslyn/v${OMNISHARP_V}/omnisharp.http-linux-*.tar.gz || die
+		rm -rf third_party/omnisharp-roslyn/v${OMNISHARP_PV}/omnisharp.http-linux-*.tar.gz || die
 	fi
 	if use java && ! use system-jdtls ; then
 		rm -rf third_party/eclipse.jdt.ls/target/cache || die
@@ -1798,11 +1814,11 @@ src_install() {
 			&& ( use c || use cxx || use objc || use objcxx ) \
 			&& use libclang ; then
 			python_domodule lib
-			fperms 0755 "${BD_ABS}/lib/libclang.so.${CLANG_V_MAJ}"
+			fperms 0755 "${BD_ABS}/lib/libclang.so.${CLANG_PV_MAJ}"
 			python_moduleinto "${BD_REL}/third_party"
 			python_domodule third_party/clang
 			fperms 0755 \
-"${BD_ABS}/third_party/clang/lib/libclang.so.${CLANG_V_MAJ}"
+"${BD_ABS}/third_party/clang/lib/libclang.so.${CLANG_PV_MAJ}"
 		fi
 
 		python_moduleinto "${BD_REL}/third_party"
