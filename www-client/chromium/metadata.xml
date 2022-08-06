@@ -45,41 +45,28 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
         (report back if it works)
 
 
-    Full PGO
+    Event based Full PGO (EPGO)
 
-    Full PGO (i.e. 3 step PGO) is not complete in this ebuild fork and is in
-    development in the ebuild level.  PGO on *average* is 10% performance
-    benefit relative to -O3.  (At the best case [or outlier cases], PGO can be
-    +40% benefit but usually in atypical scenarios some of which are related
-    to throughput.)
+    Event based Full PGO (i.e. 1 step PGO) is not complete in this ebuild fork
+    and is in development in the ebuild level.  PGO on *average* is 10%
+    performance benefit relative to -O3.  (At the best case [or outlier cases],
+    PGO can be +40% benefit but usually in atypical scenarios some of which are
+    related to throughput.)
 
-    If you choose to do Full PGO, it will double compilation time.  What this
-    means is if you built Chromium in 36 hrs expect it optimized in 72 hours
-    plus training time.
+    If you choose to do the distro's Full PGO, it will double compilation time.
+    What this means is if you built Chromium in 36 hrs expect it optimized in
+    72 hours plus training time.  This implementation just does it passively,
+    but the time to optimize is just 36 hours with some weeks we can skip
+    instrumentation step.
 
     Steps required
 
-      1 build browser as a self recording measuring instrument
-      2 manually train*
-      3 rebuild as optimized
+      Just emerge as normal
 
-    * When you manually train, just use the web browser as you normally would
-    use it.  You may use benchmark suite but it may produce a performance
-    regression.  For this ebuild fork, it was decided to go with manual
-    training so that proper profiling can be done considering possibly
-    bottlenecks near or in the disabled coded paths as a consequence of running
-    with software rendering (xvfb) may introduce side affects, unintended
-    consequences, or code skipping resulting in disabled rendering or drawing
-    due to hints and changes in this different configuration.
-
-    For training, it is recommended instead to use it usually the way you would
-    use it for or use a replay script via selenium to maybe go to a video
-    streaming service and then play a video, but the script should reflect
-    typical use or it may introduce a performance regression.  Most packagers
-    would use test suites or just basic tasks.  When you do manual training,
-    you can actually use it in the gaming context or your own personal
-    situations.  An instrumented build doesn't typically feel noticably slower
-    actually.
+    Most packagers would use test suites or just basic tasks.  When you do
+    manual training, you can actually use it in the gaming context or your own
+    personal situations.  An instrumented build doesn't typically feel noticably
+    slower actually.
 
     It is strongly recommended to skip PGO because the sub seconds gains are not
     noticable for most people or use the prebuilt profile to cut PGOing time in
@@ -95,12 +82,39 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     point release.   The prebuilt profile is
     often reused between patch versions.
 
-    3 step PGO runs should be performed in the beginning of a major version
-    release or the beginning of a build version bump to avoid wasting time
-    doing 3 step PGO immediately before a vulnerability fix release which you
-    would need to toss out the thing that you just built.  The idea is to have 3
-    step followed by a series of 1 step PGO reusing an existing profile.
+    Most ebuild developers use 3 step PGO.  Every time a package is emerged, the
+    standard PGO ebuild always runs 3 steps - instrument, train, rebuild on
+    every emerge.   In this implementation, we run always 1 step but we schedule
+    based on configurable event based model.  When a version change happens we
+    use instrumentation.  When the select version components doesn't change, we
+    use optimized rebuild.  The granularity of update again is selectable via
+    the CR_PGO_REFRESH_MODE.  The idea is to maximize enjoyment of the product
+    but that can only happen when we actually use the product.  Adding more
+    build time decreases enjoyment.  The training step is done passively.
 
+    Diagram
+
+                week 1        week 2     week 3           week 4
+                  i             i           i              i
+Distro PGO        t             t           t              t
+                  o             o           o              o
+ vs
+
+EPGO (build)      i      t      o     t     i        t     o
+
+ vs
+
+EPGO (major)      i      t      o     t     o        t     o
+
+ vs
+
+Prebuilt    it    o             o           o              o
+
+             X.Y.5005.61  X.Y.5005.115  X.Y.5060.53   X.Y.5060.134 
+
+    Key: i = instrument, t = train, o = optimised rebuild
+
+    Usually, they're 2-3 releases per same build number.
 
     PGO data directories
 
