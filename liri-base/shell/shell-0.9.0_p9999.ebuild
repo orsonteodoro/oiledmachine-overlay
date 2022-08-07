@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils git-r3
+inherit cmake eutils git-r3
 
 DESCRIPTION="QtQuick and Wayland shell for convergence"
 HOMEPAGE="https://github.com/lirios/shell"
@@ -123,7 +123,7 @@ src_configure() {
 	if use systemd ; then
 		mycmakeargs+=( -DINSTALL_SYSTEMDUSERUNITDIR=/usr/lib/systemd/user )
 	fi
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 pkg_postinst() {
