@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils git-r3
+inherit cmake eutils git-r3
 
 DESCRIPTION="XWayland support for QtQuick Wayland compositors like Liri Shell"
 HOMEPAGE="https://github.com/lirios/qml-xwayland"
@@ -76,5 +76,5 @@ src_configure() {
 		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
