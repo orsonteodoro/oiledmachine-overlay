@@ -10,7 +10,7 @@ CMAKE_MAKEFILE_GENERATOR=emake
 LLVM_SLOTS=(15 14 13) # Previously tested with 9
 LLVM_MAX_SLOT=15 # It needs testing.  It can break with different LLVM.
 
-inherit cmake-utils eutils flag-o-matic linux-info llvm multilib-minimal platforms static-libs
+inherit cmake eutils flag-o-matic linux-info llvm multilib-minimal platforms static-libs
 
 DESCRIPTION="Cross-platform 2D and 3D game engine."
 HOMEPAGE="http://urho3d.github.io/"
@@ -780,7 +780,7 @@ src_prepare() {
 		SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-		cmake-utils_src_prepare
+		cmake_src_prepare
 	}
 
 	prepare_platform() {
@@ -820,21 +820,21 @@ src_prepare() {
 		prepare_platform
 }
 
-# From cmake-utils.eclass originally as cmake-utils_src_configure
+# From cmake.eclass originally as cmake_src_configure
 # Modified to use urho3d Toolchain .cmake files
-# @FUNCTION: _cmake-utils_src_configure
+# @FUNCTION: _cmake_src_configure
 # @DESCRIPTION:
 # General function for configuring with cmake. Default behaviour is to start an
 # out-of-source build.
-_cmake-utils_src_configure() {
+_cmake_src_configure() {
 	debug-print-function ${FUNCNAME} "$@"
 
 	if [[ ! ${_CMAKE_UTILS_SRC_PREPARE_HAS_RUN} ]]; then
 		if [[ ${EAPI} != [56] ]]; then
-			die "FATAL: cmake-utils_src_prepare has not been run"
+			die "FATAL: cmake_src_prepare has not been run"
 		else
 eqawarn
-eqawarn "cmake-utils_src_prepare has not been run, please open a bug on"
+eqawarn "cmake_src_prepare has not been run, please open a bug on"
 eqawarn "https://bugs.gentoo.org/"
 eqawarn
 		fi
@@ -1303,7 +1303,7 @@ einfo
 	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 configure_arm() {
@@ -1407,7 +1407,7 @@ einfo
 	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	_cmake-utils_src_configure
+	_cmake_src_configure
 }
 
 configure_native() {
@@ -1537,7 +1537,7 @@ einfo
 	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 configure_rpi() {
@@ -1636,7 +1636,7 @@ ewarn
 	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	_cmake-utils_src_configure
+	_cmake_src_configure
 }
 
 configure_web() {
@@ -1741,7 +1741,7 @@ configure_web() {
 	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	_cmake-utils_src_configure
+	_cmake_src_configure
 }
 
 src_configure() {
@@ -1805,7 +1805,7 @@ src_compile() {
 		SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-		cmake-utils_src_compile
+		cmake_src_compile
 	}
 
 	compile_platform() {
@@ -1859,7 +1859,7 @@ src_install() {
 		SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-		cmake-utils_src_install
+		cmake_src_install
 	}
 
 	install_platform() {
