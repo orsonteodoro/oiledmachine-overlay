@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils eutils flag-o-matic multilib-build python-any-r1 \
+inherit cmake eutils flag-o-matic multilib-build python-any-r1 \
 static-libs toolchain-funcs
 
 DESCRIPTION="A small C++ wrapper for the native C ODBC API"
@@ -87,7 +87,7 @@ src_prepare() {
 			#eapply "${FILESDIR}/nanodbc-2.11.3-boost-test.patch" || die p6
 			eapply "${FILESDIR}/nanodbc-2.13.0-disable-tests.patch" || die p7
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_prepare
+			cmake_src_prepare
 		}
 		static-libs_copy_sources
 		static-libs_foreach_impl \
@@ -130,7 +130,7 @@ src_configure() {
 				mycmakeargs=( -DBUILD_SHARED_LIBS=OFF )
 			fi
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_configure
+			cmake_src_configure
 		}
 		static-libs_foreach_impl \
 			static-libs_configure
@@ -191,7 +191,7 @@ src_compile() {
 		static-libs_compile() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_compile
+			cmake_src_compile
 
 			if multilib_is_native_abi ; then
 				src_compile_docs
@@ -241,7 +241,7 @@ src_install() {
 		static-libs_install() {
 			pushd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_install
+			cmake_src_install
 			if multilib_is_native_abi ; then
 				src_install_docs
 			fi
