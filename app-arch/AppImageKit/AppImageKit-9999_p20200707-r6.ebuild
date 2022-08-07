@@ -9,7 +9,7 @@
 
 EAPI=7
 
-inherit cmake-utils
+inherit cmake
 
 DESCRIPTION="appimagetool -- Generate, extract, and inspect AppImages"
 HOMEPAGE="https://github.com/AppImage/AppImageKit"
@@ -60,7 +60,7 @@ eerror
 }
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	sed -i -e "s|\
 /usr/lib64/cmake/sanitizers-cmake|\
 /usr/$(get_libdir)/cmake/sanitizers-cmake|g" \
