@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils git-r3 xdg
+inherit cmake eutils git-r3 xdg
 
 DESCRIPTION="A modern music app for modern people."
 HOMEPAGE="https://github.com/lirios/music"
@@ -170,7 +170,7 @@ src_unpack() {
 src_prepare() {
 	xdg_src_prepare
 	export PATCHES=${_PATCHES[@]}
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -187,5 +187,5 @@ src_configure() {
 		-DFLUID_WITH_DEMO=OFF
 		-DLIRI_LOCAL_ECM=$(usex system-fluid "OFF" "ON")
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
