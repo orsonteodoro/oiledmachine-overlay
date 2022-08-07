@@ -4,7 +4,7 @@
 EAPI=7
 
 LUA_COMPAT=( lua5-{1..4} ) # building with 5.1 is broken
-inherit cmake-utils eutils flag-o-matic lua multilib-minimal static-libs
+inherit cmake eutils flag-o-matic lua multilib-minimal static-libs
 
 DESCRIPTION="CivetWeb is an embedded C++ web server"
 HOMEPAGE="https://github.com/civetweb"
@@ -149,7 +149,7 @@ _prepare() {
 	fi
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 src_prepare() {
@@ -238,7 +238,7 @@ _configure() {
 	fi
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_configure() {
@@ -266,7 +266,7 @@ _compile() {
 	fi
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake-utils_src_compile
+	cmake_src_compile
 }
 
 src_compile() {
@@ -294,7 +294,7 @@ _install() {
 	fi
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake-utils_src_install
+	cmake_src_install
 }
 
 src_install() {
