@@ -14,7 +14,7 @@ EGIT_COMMIT="d2c6fba9d5b0d445722105dd2a64062c1309ac86"
 SRC_URI=\
 "https://github.com/yarosla/nxjson/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
-inherit cmake-utils eutils multilib-minimal static-libs toolchain-funcs
+inherit cmake eutils multilib-minimal static-libs toolchain-funcs
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 _PATCHES=( "${FILESDIR}/nxjson-9999_p20200927-libdir-path.patch" )
@@ -30,7 +30,7 @@ src_prepare() {
 				sed -i -e "s|STATIC|SHARED|" CMakeLists.txt || die
 			fi
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_prepare
+			cmake_src_prepare
 			eapply ${_PATCHES[@]}
 		}
 		static-libs_copy_sources
@@ -50,7 +50,7 @@ src_configure() {
 		static-libs_configure() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_configure
+			cmake_src_configure
 		}
 		static-libs_foreach_impl \
 			static-libs_configure
@@ -64,7 +64,7 @@ src_compile() {
 		static-libs_compile() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_compile
+			cmake_src_compile
 		}
 		static-libs_foreach_impl \
 			static-libs_compile
@@ -93,7 +93,7 @@ src_install() {
 		cd "${BUILD_DIR}" || die
 		static-libs_install() {
 			pushd "${BUILD_DIR}" || die
-			cmake-utils_src_install
+			cmake_src_install
 		}
 		static-libs_foreach_impl \
 			static-libs_install
