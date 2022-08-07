@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils git-r3
+inherit cmake eutils git-r3
 
 DESCRIPTION="Qt-style API for freedesktop.org's AccountsService DBus service"
 HOMEPAGE="https://github.com/lirios/qtaccountsservice"
@@ -83,5 +83,5 @@ src_configure() {
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 		-DQTACCOUNTSSERVICE_WITH_EXAMPLES:BOOL=$(usex examples)
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
