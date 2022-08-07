@@ -8,7 +8,7 @@ ELECTRON_APP_ELECTRON_V="18.2.2" # See \
 ELECTRON_APP_REACT_V="16.14.0" # See \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.0.138/newIDE/app/package-lock.json
 
-inherit check-reqs cmake-utils desktop electron-app eutils user \
+inherit check-reqs desktop electron-app eutils user \
 	toolchain-funcs xdg
 
 MY_PN="GDevelop"
