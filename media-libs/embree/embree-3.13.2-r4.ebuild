@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils flag-o-matic linux-info toolchain-funcs
+inherit cmake flag-o-matic linux-info toolchain-funcs
 
 DESCRIPTION="Collection of high-performance ray tracing kernels"
 HOMEPAGE="https://github.com/embree/embree"
@@ -157,7 +157,7 @@ ewarn
 
 src_prepare() {
 	eapply ${PATCHES_[@]}
-	cmake-utils_src_prepare
+	cmake_src_prepare
 
 	# disable RPM package building
 	sed -e 's|CPACK_RPM_PACKAGE_RELEASE 1|CPACK_RPM_PACKAGE_RELEASE 0|' \
@@ -274,11 +274,11 @@ src_configure() {
 		)
 	fi
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_compile() {
-	cmake-utils_src_compile
+	cmake_src_compile
 	if use doc ; then
 		pushd doc || die
 			if use doc-images ; then
@@ -302,7 +302,7 @@ src_compile() {
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 
 	doenvd "${FILESDIR}"/99${PN}${SLOT_MAJ}
 
