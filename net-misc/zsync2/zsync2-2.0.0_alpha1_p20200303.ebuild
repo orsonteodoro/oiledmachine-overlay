@@ -43,7 +43,7 @@ https://github.com/google/googletest/archive/${EGIT_COMMIT_GOOGLETEST}.tar.gz \
 "
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-inherit cmake-utils
+inherit cmake
 PATCHES=( "${FILESDIR}/${PN}-2.0.0_alpha1_p20200303-custom-libdir.patch" )
 
 src_unpack() {
@@ -65,7 +65,7 @@ src_unpack() {
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	dodoc README.md
 	docinto licenses
 	dodoc COPYING
