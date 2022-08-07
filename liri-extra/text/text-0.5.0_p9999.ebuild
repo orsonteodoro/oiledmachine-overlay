@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils git-r3 xdg
+inherit cmake eutils git-r3 xdg
 
 DESCRIPTION="Liri Text is a cross-platform text editor made in accordance with Material Design."
 HOMEPAGE="https://github.com/lirios/text"
@@ -88,7 +88,7 @@ src_unpack() {
 
 src_prepare() {
 	xdg_src_prepare
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -97,5 +97,5 @@ src_configure() {
 		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
