@@ -7,7 +7,7 @@
 EAPI=7
 
 VIRTUALX_REQUIRED="manual"
-inherit chromium-2 cmake-utils flag-o-matic multilib-minimal virtualx
+inherit chromium-2 cmake flag-o-matic multilib-minimal virtualx
 
 DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for embedding Chromium-based browsers in other applications."
 LICENSE="BSD"
@@ -184,7 +184,7 @@ src_prepare() {
 		cd "${S}" || die
 		eapply "${FILESDIR}/cef-bin-93.1.11-visibility-changes.patch"
 		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
-		cmake-utils_src_prepare
+		cmake_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
 }
@@ -213,7 +213,7 @@ src_configure() {
 			-DBUILD_SHARED_LIBS=ON
 		)
 		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
-		cmake-utils_src_configure
+		cmake_src_configure
 	}
 	multilib_foreach_abi configure_abi
 	if use test ; then
@@ -237,7 +237,7 @@ src_compile() {
 		S=$(S_abi)
 		cd "${S}" || die
 		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
-		cmake-utils_src_compile \
+		cmake_src_compile \
 			libcef_dll_wrapper \
 			$(usex cefclient cefclient "") \
 			$(usex cefsimple cefsimple "") \
