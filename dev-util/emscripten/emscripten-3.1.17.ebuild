@@ -15,7 +15,7 @@ EAPI=7
 LLVM_V=15
 LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1 \
+inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1 \
 	toolchain-funcs
 
 DESCRIPTION="LLVM-to-JavaScript Compiler"
@@ -187,7 +187,10 @@ DEPEND+="
 		)
 	)
 "
-BDEPEND+=" ${JDK_DEPEND}"
+BDEPEND+="
+	${JDK_DEPEND}
+	>=dev-util/cmake-3.4.3
+"
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
 RESTRICT="fetch mirror"
@@ -199,7 +202,6 @@ _PATCHES=(
 	"${FILESDIR}/emscripten-3.1.14-set-wrappers-path.patch"
 	"${FILESDIR}/emscripten-2.0.14-gentoo-wasm-ld-path.patch"
 )
-CMAKE_BUILD_TYPE=Release
 EMSCRIPTEN_CONFIG_V="2.0.26"
 
 pkg_nofetch() {
