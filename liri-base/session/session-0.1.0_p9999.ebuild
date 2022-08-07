@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils git-r3 xdg
+inherit cmake eutils git-r3 xdg
 
 DESCRIPTION="Session manager"
 HOMEPAGE="https://github.com/lirios/session"
@@ -54,7 +54,7 @@ einfo
 
 src_prepare() {
 	xdg_src_prepare # patching deferred
-	cmake-utils_src_prepare # patching deferred
+	cmake_src_prepare # patching deferred
 	eapply ${_PATCHES[@]}
 }
 
@@ -93,7 +93,7 @@ src_configure() {
 			-DINSTALL_SYSTEMDUSERGENERATORSDIR=/usr/lib/systemd/user-generators
 		)
 	fi
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 pkg_postinst() {
