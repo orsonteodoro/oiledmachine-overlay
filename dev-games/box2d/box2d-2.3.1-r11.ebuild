@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit eutils cmake-utils multilib-build static-libs
+inherit eutils cmake multilib-build static-libs
 
 DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
@@ -46,7 +46,7 @@ src_prepare() {
 			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-			cmake-utils_src_prepare
+			cmake_src_prepare
 		}
 		static-libs_copy_sources
 		static-libs_foreach_impl \
@@ -74,7 +74,7 @@ src_configure() {
 			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-			cmake-utils_src_configure
+			cmake_src_configure
 		}
 		static-libs_foreach_impl \
 			static-libs_configure
@@ -90,7 +90,7 @@ src_compile() {
 			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-			cmake-utils_src_compile
+			cmake_src_compile
 		}
 		static-libs_foreach_impl \
 			static-libs_compile
@@ -127,7 +127,7 @@ src_install() {
 			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_install
+			cmake_src_install
 
 			if use examples ; then
 				exeinto /usr/share/${PN}/Testbed
