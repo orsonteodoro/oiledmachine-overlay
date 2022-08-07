@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils linux-info
+inherit cmake linux-info
 
 DESCRIPTION="Implements functionality for dealing with AppImage files"
 LICENSE="MIT" # project default license
@@ -104,11 +104,11 @@ src_configure() {
 		-DUSE_SYSTEM_XDGUTILS=$(usex system-xdgutils)
 		-DUSE_SYSTEM_XZ=$(usex system-xz)
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	insinto /usr/$(get_libdir)
 	doins "${BUILD_DIR}/src/xdg-basedir/libxdg-basedir.a" \
 		"${BUILD_DIR}/src/libappimage/libappimage_static.a"
