@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils git-r3
+inherit cmake eutils git-r3
 
 DESCRIPTION="Client-side decoration for all Qt-based Wayland clients"
 HOMEPAGE="https://github.com/lirios/materialdecoration"
@@ -68,7 +68,7 @@ src_configure() {
 		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 pkg_postinst() {
