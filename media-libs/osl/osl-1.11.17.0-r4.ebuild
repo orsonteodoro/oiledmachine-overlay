@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} ) # upstream tested it up to 3.9 (inclusive)
-inherit cmake-utils llvm multilib-minimal python-any-r1 static-libs toolchain-funcs
+inherit cmake llvm multilib-minimal python-any-r1 static-libs toolchain-funcs
 
 DESCRIPTION="Advanced shading language for production GI renderers"
 HOMEPAGE="http://opensource.imageworks.com/?p=osl"
@@ -193,7 +193,7 @@ src_prepare() {
 		        S="${BUILD_DIR}" \
 		        CMAKE_USE_DIR="${BUILD_DIR}" \
 		        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
-			cmake-utils_src_prepare
+			cmake_src_prepare
 		}
 		static-libs_copy_sources
 		static-libs_foreach_impl \
@@ -248,7 +248,7 @@ src_configure() {
 		        S="${BUILD_DIR}" \
 		        CMAKE_USE_DIR="${BUILD_DIR}" \
 		        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
-			cmake-utils_src_configure
+			cmake_src_configure
 		}
 		static-libs_foreach_impl \
 			static-libs_configure
@@ -264,7 +264,7 @@ src_compile() {
 		        S="${BUILD_DIR}" \
 		        CMAKE_USE_DIR="${BUILD_DIR}" \
 		        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
-			cmake-utils_src_compile
+			cmake_src_compile
 		}
 		static-libs_foreach_impl \
 			static-libs_compile
@@ -280,7 +280,7 @@ src_install() {
 			        S="${BUILD_DIR}" \
 			        CMAKE_USE_DIR="${BUILD_DIR}" \
 			        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
-				cmake-utils_src_install
+				cmake_src_install
 			popd
 		}
 		static-libs_foreach_impl \
