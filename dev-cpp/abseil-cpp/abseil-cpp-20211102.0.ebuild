@@ -1,7 +1,7 @@
 # Copyright 2020-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 PYTHON_COMPAT=( python3_{8..10} )
 inherit cmake-multilib python-any-r1
@@ -48,7 +48,6 @@ src_prepare() {
 "${WORKDIR}/googletest-${GTEST_COMMIT}/googletest/cmake/internal_utils.cmake" \
 			|| die
 	fi
-	multilib_copy_sources
 }
 
 src_configure() {
