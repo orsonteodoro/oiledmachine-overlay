@@ -4,7 +4,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils eutils flag-o-matic python-any-r1 toolchain-funcs
+inherit cmake eutils flag-o-matic python-any-r1 toolchain-funcs
 
 DESCRIPTION="Generated headers and sources for OpenXR loader."
 LICENSE="
@@ -105,11 +105,11 @@ src_configure() {
 	else
 		die "Must choose a PRESENTATION_BACKEND"
 	fi
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	docinto licenses
 	dodoc .reuse/dep5
 	dodoc LICENSES/*
