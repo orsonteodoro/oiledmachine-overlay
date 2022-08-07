@@ -6,7 +6,7 @@ EAPI=7
 CMAKE_BUILD_TYPE=Release
 PYTHON_COMPAT=( python3_{8..10} )
 
-inherit cmake-utils eutils flag-o-matic python-single-r1 toolchain-funcs
+inherit cmake eutils flag-o-matic python-single-r1 toolchain-funcs
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
@@ -126,7 +126,7 @@ src_unpack() {
 
 src_prepare() {
 	eapply ${PATCHES_[@]}
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -186,11 +186,11 @@ einfo
 		)
 	fi
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	if ! use doc ; then
 		rm -vrf "${ED}/usr/share/doc/oidn-${PV}/readme.pdf" || die
 	fi
