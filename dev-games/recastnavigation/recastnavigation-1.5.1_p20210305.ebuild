@@ -8,7 +8,7 @@ LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 SLOT="0/${PV}"
 IUSE="debug demo examples static-libs test"
-inherit cmake-utils flag-o-matic multilib-minimal
+inherit cmake flag-o-matic multilib-minimal
 RDEPEND="demo? (
 		media-libs/libsdl2[${MULTILIB_USEDEP}]
 		virtual/opengl[${MULTILIB_USEDEP}]
@@ -39,7 +39,7 @@ src_prepare() {
 		prepare_impl() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_prepare
+			cmake_src_prepare
 			eapply -R "${_PATCHES[@]}"
 		}
 		static-libs_foreach_impl prepare_impl
@@ -68,7 +68,7 @@ src_configure() {
 			fi
 
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_configure
+			cmake_src_configure
 		}
 		static-libs_foreach_impl configure_impl
 	}
@@ -81,7 +81,7 @@ src_compile() {
 		compile_impl() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_compile
+			cmake_src_compile
 		}
 		static-libs_foreach_impl compile_impl
 	}
@@ -94,7 +94,7 @@ src_install() {
 		install_impl() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_install
+			cmake_src_install
 		}
 		static-libs_foreach_impl install_impl
 	}
