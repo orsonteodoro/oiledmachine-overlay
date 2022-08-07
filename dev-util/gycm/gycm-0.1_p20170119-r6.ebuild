@@ -6,7 +6,7 @@
 EAPI=7
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils eutils python-single-r1 toolchain-funcs
+inherit cmake eutils python-single-r1 toolchain-funcs
 
 DESCRIPTION="A Geany plugin to support the ycmd code completion server"
 LICENSE="GPL-3"
@@ -44,7 +44,7 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 
 	eapply "${FILESDIR}/${PN}-9999.20141216-missing-iostream.patch"
 	sed -i -e "s|\
