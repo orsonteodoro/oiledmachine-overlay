@@ -687,7 +687,7 @@ _install_export_templates() {
 	done
 
 	# Data files also
-	use mono && doins -r "${WORKDIR}/templates/"*
+	use mono && doins -r "${WORKDIR}/bin/data"*
 }
 
 src_install() {

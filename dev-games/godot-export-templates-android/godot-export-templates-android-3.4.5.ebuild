@@ -134,8 +134,13 @@ JRE_DEPEND="
 CDEPEND+="
 	${JDK_DEPEND}
 	>=dev-java/gradle-bin-7.2
-	>=dev-util/android-ndk-${NDK_V}:=
-	  dev-util/android-sdk-update-manager
+	godot_android_x86_64? (
+		>=dev-util/android-ndk-21:=
+	)
+	godot_android_arm64v8? (
+		>=dev-util/android-ndk-21:=
+	)
+	dev-util/android-sdk-update-manager
 "
 RDEPEND+="
 	${PYTHON_DEPS}
@@ -180,14 +185,9 @@ eerror "Do \`env-update ; source /etc/profile\` to fix it."
 eerror
 		die
 	fi
-	if [[ -z "${EGODOT_ANDROID_API_LEVEL}" ]] ; then
-		EGODOT_ANDROID_API_LEVEL="android-19"
-	fi
-einfo
-einfo "Overridable environment variables:"
-einfo
-einfo "EGODOT_ANDROID_API_LEVEL=${EGODOT_ANDROID_API_LEVEL}"
-einfo
+	local ndk_version=$(best_version "dev-util/android-ndk" \
+		| sed -e "s|dev-util/android-ndk-||g")
+	export NDK_PLATFORM="android-${ndk_version}"
 }
 
 check_android_sandbox()
@@ -330,6 +330,12 @@ _compile() {
 					;;
 			esac
 
+			if use neon && use godot_android_arm7 ; then
+				options_extra+=( android_neon=True )
+			elif ! use neon && use godot_android_arm7 ; then
+				options_extra+=( android_neon=False )
+			fi
+
 			options_mono=()
 			if use mono ; then
 				options_mono=(
@@ -343,11 +349,11 @@ _compile() {
 				${options_modules_static[@]} \
 				${options_extra[@]} \
 				${options_mono[@]} \
-				android_arch=${a} \
+				android_arch=${arch} \
 				bits=${bitness} \
 				target=${configuration} \
 				tools=no \
-				ndk_platform=${EGODOT_ANDROID_API_LEVEL} \
+				ndk_platform=${NDK_PLATFORM} \
 				|| die
 		fi
 	done
@@ -537,7 +543,7 @@ _install_export_templates() {
 		fi
 	done
 
-	# TODO: copy android_source.apk
+	doins bin/android_source.apk
 }
 
 src_install() {

@@ -17,17 +17,17 @@
 
     Required environment variables
 
-        MACOS_SDK_PATH - path to the macOS SDK
+        MACOS_SDK_PATH - Path to the macOS SDK
 
       and either one of
 
-        MACPORTS_PREFIX - for native in arm-macos or x64-macos prefix)
-        OSXCROSS_ROOT - for cross-compile
+        MACPORTS_PREFIX - For native in arm-macos or x64-macos prefix
+        OSXCROSS_ROOT - Path to OSXCross for cross-compile
 
 
     Optional environment variables
 
-      MACOS_SDK_VERSION - version of the SDK
+      MACOS_SDK_VERSION - The version of the SDK
 
 
     These are to be defined in the per-package environment.  Details to set this

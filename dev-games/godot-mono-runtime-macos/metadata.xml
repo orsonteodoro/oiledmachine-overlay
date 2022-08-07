@@ -16,5 +16,14 @@
     6.12.0.182 - corresponding to Mono latest stable
     6.12.0.122 - corresponding to the distro version
 
+    Required environment variables:
+
+      OSXCROSS_ROOT - Path to OSXCross
+
+    Configurable environment variables
+
+      OSXCROSS_SDK - The target version number for macOS OS.  It is part of the
+                     toolchain command line tool name.  (Default:  18)
+
   </longdescription>
 </pkgmetadata>

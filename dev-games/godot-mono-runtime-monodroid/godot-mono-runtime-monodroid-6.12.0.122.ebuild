@@ -112,6 +112,24 @@ BDEPEND+="
 	  dev-util/android-sdk-update-manager
 	>=dev-util/android-ndk-18
 	>=dev-util/cmake-3.18.1
+	arm64-v8a? (
+		>=dev-util/android-ndk-21:=
+	)
+	cross-arm64? (
+		>=dev-util/android-ndk-21:=
+	)
+	cross-arm64-win? (
+		>=dev-util/android-ndk-21:=
+	)
+	cross-x86_64? (
+		>=dev-util/android-ndk-21:=
+	)
+	cross-x86_64-win? (
+		>=dev-util/android-ndk-21:=
+	)
+	x86_64? (
+		>=dev-util/android-ndk-21:=
+	)
 "
 S="${WORKDIR}/${MY_PN}-release-${MY_PV}"
 PROPERTIES="live"

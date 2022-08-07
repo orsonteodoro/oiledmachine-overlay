@@ -166,6 +166,55 @@ src_prepare() {
 	${EPYTHON} patch_mono.py || die
 }
 
+test_path() {
+	local p="${1}"
+	if ! realpath -e "${p}" ; then
+eerror
+eerror "${p} is not reachable"
+eerror
+	fi
+}
+
+src_configure() {
+	if use arm64-macos || use x64-macos ; then
+		:;
+	elif [[ -z "${OSXCROSS_ROOT}" ]] ; then
+eerror
+eerror "OSXCROSS_ROOT must be defined as an environment variable."
+eerror
+		die
+	fi
+	export OSXCROSS_SDK="${OSXCROSS_SDK:-18}"
+einfo
+einfo "Changeable environment variables:"
+einfo
+einfo "  OSXCROSS_SDK=${OSXCROSS_SDK}"
+einfo
+	if [[ -n "${OSXCROSS_ROOT}" ]] ; then
+		test_path "${OSXCROSS_ROOT}/target"
+		if use arm64 ; then
+			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-ar"
+			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-as"
+			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-clang"
+			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-clang++"
+			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-ld"
+			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-ranlib"
+			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-cmake"
+			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-strip"
+		fi
+		if use x86_64 ; then
+			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-ar"
+			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-as"
+			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-clang"
+			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-clang++"
+			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-ld"
+			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-ranlib"
+			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-cmake"
+			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-strip"
+		fi
+	fi
+}
+
 src_compile() {
 	mkdir -p "${WORKDIR}/build" || die
 	local args

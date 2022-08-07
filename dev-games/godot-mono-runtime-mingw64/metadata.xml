@@ -16,5 +16,10 @@
     6.12.0.182 - corresponding to Mono latest stable
     6.12.0.122 - corresponding to the distro version
 
+    Configurable environment variables
+
+      MINGW64_SYSROOT - Points to the installation of MinGW-w64 (64-bit), and it
+                        must have a /usr in the path.
+
   </longdescription>
 </pkgmetadata>

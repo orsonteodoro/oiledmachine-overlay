@@ -98,7 +98,7 @@ IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +mp3 +ogg +opus +pvrtc +svg +s3tc
 
 IUSE+=" mono" # for scripting languages
 
-GODOT_IOS_=(arm armv7 armv64 x86 x86_64)
+GODOT_IOS_=(arm armv7 armv64 arm64-sim x86 x86_64)
 
 gen_required_use_template()
 {
@@ -154,6 +154,7 @@ DEPEND+="
 
 BDEPEND+="
 	${PYTHON_DEPS}
+	app-arch/zip
 	dev-util/scons
 	webm-simd? (
 		dev-lang/yasm
@@ -203,7 +204,7 @@ eerror
 	if [[ -z "${OSXCROSS_IOS}" ]] ; then
 ewarn
 ewarn "OSXCROSS_IOS must be defined as per-package environment variable."
-ewarn "It is set to 1 if you are using osxcross."
+ewarn "It is set to 1 if you are using OSXCross."
 ewarn
 	fi
 }
@@ -292,6 +293,11 @@ src_configure() {
 	unset CCACHE
 }
 
+get_configuration2() {
+	[[ "${configuration}" == "release" ]] && echo "opt"
+	[[ "${configuration}" == "release_debug" ]] && echo "opt.debug"
+}
+
 get_configuration3() {
 	if [[ "${configuration}" =~ "debug" ]] ; then
 		echo "debug"
@@ -303,6 +309,12 @@ get_configuration3() {
 }
 
 _compile() {
+	local enabled_arches_dev=()
+	local enabled_arches_sim=()
+	local configuration2=$(get_configuration2)
+	local configuration3=$(get_configuration3)
+	local plugin
+	ewarn "iOS export templates is incomplete"
 	for a in ${GODOT_IOS} ; do
 		if use ${a} ; then
 			local arch="${a/godot_ios_}"
@@ -320,6 +332,16 @@ _compile() {
 					;;
 			esac
 
+			local ios_simulator="False"
+
+			if [[ "${arch}" == "x86" \
+				|| "${arch}" == "x86_64" \
+				|| "${arch}" == "arm64-sim" ]] ; then
+				ios_simulator="True"
+			else
+				ios_simulator="False"
+			fi
+
 			local mono_target
 			if [[ "${arch}" == "x86" ]] ; then
 				mono_target="i386"
@@ -329,6 +351,10 @@ _compile() {
 				mono_target="${arch}"
 			fi
 
+			if [[ "${arch}" == "arm64-sim" ]] ; then
+				arch="arm64"
+			fi
+
 			local options_mono=()
 			if use mono ; then
 				options_mono=(
@@ -336,21 +362,55 @@ _compile() {
 				)
 			fi
 
+			local osxcross_arch=""
+			if [[ "${arch}" == "arm" ]] ; then
+				osxcross_arch="armv7"
+			elif [[ "${arch}" == "arm64" ]] ; then
+				osxcross_arch="aarch64"
+			elif [[ "${arch}" == "x86" ]] ; then
+				osxcross_arch="i386"
+			elif [[ "${arch}" == "x86_64" ]] ; then
+				osxcross_arch="x86_64"
+			fi
+
+			local ios_triple="${osxcross_arch}-apple-darwin11-"
+
 			einfo "Building for iOS (${a})"
 			scons ${options_iphone[@]} \
 				${options_modules[@]} \
 				${options_modules_static[@]} \
 				${options_mono[@]} \
 				${options_extra[@]} \
-				arch=${a} \
+				ios_simulator=${ios_simulator} \
+				arch=${arch} \
 				bits=${bitness} \
 				target=${configuration} \
 				tools=no \
+				ios_triple=${ios_triple} \
 				|| die
-			mkdir -p "bin2/${configuration}/${arch}" || die
-			mv bin/* "bin2/${configuration}/${arch}" || die
+			if [[ "${arch}" =~ "x86" || "${}" ]] ; then
+				enabled_arches_sim+=( bin/libgodot.iphone.${configuration2}.${arch}.a )
+			else
+				enabled_arches_dev+=( bin/libgodot.iphone.${configuration2}.${arch}.a )
+			fi
 		fi
 	done
+
+	# The documentation doesn't provide any reassurance after this point.
+	# There is a disagreement and/or disconnect between prepackaged filelist
+	# and the documentation.
+
+	# Generate universal2 binary
+	if (( ${enabled_arches_sim[@]} > 0 )) ; then
+		lipo -create \
+			${enabled_arches_sim[@]} \
+			-output out/libgodot.iphone.${configuration3}.xcframework/ios-arm64_x86_64-simulator/libgodot.a || die
+	fi
+	if (( ${enabled_arches_dev[@]} > 0 )) ; then
+		lipo -create \
+			${enabled_arches_arch[@]} \
+			-output out/libgodot.iphone.${configuration3}.xcframework/ios-arm64/libgodot.a || die
+	fi
 }
 
 set_production() {
@@ -382,6 +442,8 @@ src_compile_ios_no_mono() {
 }
 
 src_compile_ios() {
+	mkdir -p "out"
+	cp -a misc/dist/ios_xcode/* "out" || die
 	local configuration
 	for configuration in release release_debug ; do
 		einfo "Creating export template"
@@ -395,6 +457,8 @@ src_compile_ios() {
 			src_compile_ios_no_mono
 		fi
 	done
+	cd out || die
+	zip -q -9 -r ../iphone.zip * || die
 }
 
 src_compile() {
@@ -505,6 +569,7 @@ _install_export_templates() {
 
 	[[ ! -e "iphone.zip" ]] || die "FIXME:  install from bin/?"
 	doins "iphone.zip"
+	use mono && doins -r bin/iphone-mono-libs
 }
 
 src_install() {

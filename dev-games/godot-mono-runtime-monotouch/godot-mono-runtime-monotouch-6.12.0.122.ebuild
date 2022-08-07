@@ -193,7 +193,7 @@ eerror
 	if [[ -z "${OSXCROSS_IOS}" ]] ; then
 ewarn
 ewarn "OSXCROSS_IOS must be defined as per-package environment variable."
-ewarn "It is set to 1 if you are using osxcross."
+ewarn "It is set to the path of OSXCross if you are using OSXCross."
 ewarn
 	fi
 }

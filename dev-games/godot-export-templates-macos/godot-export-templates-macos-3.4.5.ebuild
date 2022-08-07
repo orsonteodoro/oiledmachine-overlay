@@ -198,7 +198,7 @@ eerror
 check_cross_toolchain() {
 	if [[ -n "${OSXCROSS_ROOT}" ]] ; then
 einfo
-einfo "Using osxcross"
+einfo "Using OSXCross"
 einfo
 		test_path "${OSXCROSS_ROOT}"
 		test_osxcross
@@ -318,10 +318,11 @@ _compile()
 	local configuration2=$(get_configuration2)
 	for a in ${GODOT_OSX} ; do
 		if use ${a} ; then
+			local arch="${a/godot_osx_}"
 			local options_mono=()
 			if use mono ; then
 				options_mono=(
-					mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-osx-${a}-$(get_configuration3)"
+					mono_prefix="/usr/lib/godot/${SLOT_MAJ}/mono-runtime/desktop-osx-${arch}-$(get_configuration3)"
 				)
 			fi
 			einfo "Building for macOS (${a})"
@@ -330,12 +331,11 @@ _compile()
 				${options_modules_static[@]} \
 				${options_mono[@]} \
 				${options_extra[@]} \
-				arch=${a} \
+				arch=${arch} \
 				target=${configuration} \
 				tools=no \
 				OSXCROSS_ROOT=${EGODOT_MACOS_SYSROOT} \
 				|| die
-			local arch="${a/godot_osx_}"
 			enabled_arches+=( bin/godot.osx.${configuration2}.${arch} )
 		fi
 	done
@@ -345,13 +345,9 @@ _compile()
 		${enabled_arches[@]} \
 		-output bin/godot.osx.${configuration2}.universal || die
 
-	# Generate .app bundle
-	cp -r misc/dist/osx_template.app . || die
-	mkdir -p osx_template.app/Contents/MacOS || die
 	cp bin/godot.osx.${configuration}.universal \
 		osx_template.app/Contents/MacOS/godot_osx_${configuration2}.64 || die
 	chmod +x osx_template.app/Contents/MacOS/godot_osx* || die
-	zip -q -9 -r osx.zip osx_template.app || die
 }
 
 set_production() {
@@ -384,6 +380,8 @@ src_compile_osx_no_mono() {
 
 src_compile_osx()
 {
+	cp -r misc/dist/osx_template.app . || die
+	mkdir -p osx_template.app/Contents/MacOS || die
 	local configuration
 	for configuration in release release_debug ; do
 		einfo "Creating export template"
@@ -397,6 +395,7 @@ src_compile_osx()
 			src_compile_osx_no_mono
 		fi
 	done
+	zip -q -9 -r osx.zip osx_template.app || die
 }
 
 src_compile() {

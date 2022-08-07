@@ -35,7 +35,10 @@
       * Re-add support for Mono (Cross) in ebuild in a tractable and most complete way [most difficult]
       * Completion of *most* prefix (crossdev) / export-template ebuilds for iOS (help needed) [most difficult]
       * Completion of *most* prefix (crossdev) / export-template ebuilds for macOS (help needed) [most difficult]
+      * Completion of godot-ios-plugins (community help is needed) [least difficult]
 
+    Some cannot be completed without community help.  Some require that
+    specific hardware.
 
     Ebuild completion status (for build from source code):
 
@@ -58,6 +61,7 @@
     <flag name="headless-server">Builds a headless Linux server for editing and
       testing</flag>
     <flag name="ios">Builds the export template for iOS built from source</flag>
+    <flag name="ios-plugins">Builds iOS plugins</flag>
     <flag name="javascript">Builds the export template for WASM HTML5</flag>
     <flag name="linux32">Builds the export template for 32-bit Linux</flag>
     <flag name="linux64">Builds the export template for 64-bit Linux</flag>
