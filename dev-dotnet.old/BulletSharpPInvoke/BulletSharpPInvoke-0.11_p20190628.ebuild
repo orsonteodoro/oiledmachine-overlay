@@ -14,7 +14,7 @@ RDEPEND="sci-physics/bullet:0/${LIBBULLETC_PV}"
 DEPEND="${RDEPEND}"
 BULLET_COMMIT="113c2a83ded447159c30bcb2a2e353b154c3879d"
 EGIT_COMMIT="23159ab02e69cea88709d8cd383aef86d56329f8"
-inherit cmake-utils dotnet eutils multilib-minimal
+inherit cmake dotnet eutils multilib-minimal
 SRC_URI="https://github.com/AndresTraks/BulletSharpPInvoke/archive/${EGIT_COMMIT}.tar.gz
 	   -> ${PN}-${PV}.tar.gz
 	 https://github.com/bulletphysics/bullet3/archive/${BULLET_COMMIT}.tar.gz
@@ -43,7 +43,7 @@ src_prepare() {
 	ml_prepare() {
 		cd "${BUILD_DIR}/libbulletc" || die
 		S="${BUILD_DIR}/libbulletc" \
-		cmake-utils_src_prepare
+		cmake_src_prepare
 	}
 	multilib_foreach_abi ml_prepare
 	dotnet_copy_sources
@@ -53,7 +53,7 @@ src_configure() {
 	ml_configure() {
 		cd "${BUILD_DIR}/libbulletc" || die
 	        local mycmakeargs=( -DBUILD_BULLET3=1 )
-		cmake-utils_src_configure
+		cmake_src_configure
 	}
 	multilib_foreach_abi ml_configure
 }
@@ -62,7 +62,7 @@ src_compile() {
 	ml_compile() {
 		cd "${BUILD_DIR}/libbulletc" || die
 		# Build native shared library wrapper
-		cmake-utils_src_compile
+		cmake_src_compile
 	}
 	multilib_foreach_abi ml_compile
 	compile_impl() {

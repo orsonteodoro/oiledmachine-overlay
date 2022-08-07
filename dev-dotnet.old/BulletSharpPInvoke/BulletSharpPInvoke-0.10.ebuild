@@ -12,7 +12,7 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 LIBBULLETC_PV="2.87"
 RDEPEND="sci-physics/bullet:0/${LIBBULLETC_PV}"
 DEPEND="${RDEPEND}"
-inherit cmake-utils dotnet eutils multilib-minimal
+inherit cmake dotnet eutils multilib-minimal
 SRC_URI="https://github.com/AndresTraks/${PN}/archive/${PV}.tar.gz
 	   -> ${PN}-${PV}.tar.gz
          https://github.com/bulletphysics/bullet3/archive/${LIBBULLETC_PV}.tar.gz
@@ -42,7 +42,7 @@ src_prepare() {
 	ml_prepare() {
 		cd "${BUILD_DIR}/libbulletc" || die
 		S="${BUILD_DIR}/libbulletc" \
-		cmake-utils_src_prepare
+		cmake_src_prepare
 	}
 	multilib_foreach_abi ml_prepare
 	dotnet_copy_sources
@@ -52,7 +52,7 @@ src_configure() {
 	ml_configure() {
 		cd "${BUILD_DIR}/libbulletc" || die
 	        local mycmakeargs=( -DBUILD_BULLET3=1 )
-		cmake-utils_src_configure
+		cmake_src_configure
 	}
 	multilib_foreach_abi ml_configure
 }
@@ -61,7 +61,7 @@ src_compile() {
 	ml_compile() {
 		cd "${BUILD_DIR}/libbulletc" || die
 		# Build native shared library wrapper
-		cmake-utils_src_compile
+		cmake_src_compile
 	}
 	multilib_foreach_abi ml_compile
 	compile_impl() {
