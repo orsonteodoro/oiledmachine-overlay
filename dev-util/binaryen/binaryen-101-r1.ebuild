@@ -3,10 +3,9 @@
 
 EAPI=7
 
-CMAKE_MIN_VERSION="3.10.2"
 CMAKE_BUILD_TYPE="Release"
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils python-any-r1 toolchain-funcs
+inherit cmake python-any-r1 toolchain-funcs
 
 DESCRIPTION="Compiler infrastructure and toolchain library for WebAssembly"
 HOMEPAGE="https://github.com/WebAssembly/binaryen"
@@ -23,12 +22,15 @@ CDEPEND+="
 		>=sys-devel/clang-3.4
 	)
 "
-RDEPEND+=" ${PYTHON_DEPS}
+RDEPEND+="
+	${PYTHON_DEPS}
 	${CDEPEND}
 "
 DEPEND+=" ${RDEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}
+BDEPEND+="
+	${PYTHON_DEPS}
 	${CDEPEND}
+	>=dev-util/cmake-3.10.2
 	dev-util/patchelf
 "
 SRC_URI="
@@ -61,7 +63,7 @@ src_prepare() {
 	sed -r -i \
 		-e '/INSTALL.+src\/binaryen-c\.h/d' \
 		CMakeLists.txt || die
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -72,11 +74,11 @@ src_configure() {
 		-DBUILD_STATIC_LIB=OFF
 		-DENABLE_WERROR=OFF
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	insinto "/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/include"
 	doins "${S}/src/"*.h
 	for hdir in asmjs emscripten-optimizer ir support; do
