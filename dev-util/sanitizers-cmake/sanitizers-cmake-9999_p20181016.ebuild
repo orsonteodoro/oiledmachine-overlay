@@ -17,7 +17,7 @@ SRC_URI=\
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 CMAKE_MAKEFILE_GENERATOR="emake"
-inherit cmake-utils
+inherit cmake
 
 src_install() {
 	insinto /usr/$(get_libdir)/cmake/${PN}
