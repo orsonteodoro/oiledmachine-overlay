@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils git-r3
+inherit cmake eutils git-r3
 
 DESCRIPTION="A backend implementation of xdg-desktop-portal for Liri"
 HOMEPAGE="https://github.com/lirios/xdg-desktop-portal-liri"
@@ -106,5 +106,5 @@ src_configure() {
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 		-DLIRI_ENABLE_SYSTEMD=$(usex systemd)
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
