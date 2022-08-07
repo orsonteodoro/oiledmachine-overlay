@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils git-r3
+inherit cmake eutils git-r3
 
 DESCRIPTION="This is the App Center for Liri OS for installing, updating, and managing applications built using Flatpak"
 HOMEPAGE="https://github.com/lirios/appcenter"
@@ -94,5 +94,5 @@ src_configure() {
 		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
