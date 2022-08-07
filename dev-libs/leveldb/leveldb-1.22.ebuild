@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils multilib-minimal static-libs toolchain-funcs
+inherit cmake eutils multilib-minimal static-libs toolchain-funcs
 
 DESCRIPTION="a fast key-value storage library written at Google"
 HOMEPAGE="http://leveldb.org/ https://github.com/google/leveldb"
@@ -44,7 +44,7 @@ src_prepare() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" \
 			CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_prepare
+			cmake_src_prepare
 		}
 		static-libs_foreach_impl prepare_impl
 	}
@@ -67,7 +67,7 @@ src_configure() {
 			fi
 			S="${BUILD_DIR}" \
 			CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_configure
+			cmake_src_configure
 		}
 		static-libs_foreach_impl configure_impl
 	}
@@ -81,7 +81,7 @@ src_compile() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" \
 			CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_compile
+			cmake_src_compile
 		}
 		static-libs_foreach_impl compile_impl
 	}
@@ -95,7 +95,7 @@ src_test() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" \
 			CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_test
+			cmake_src_test
 		}
 		static-libs_foreach_impl test_impl
 	}
@@ -109,7 +109,7 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" \
 			CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake-utils_src_install
+			cmake_src_install
 		}
 		static-libs_foreach_impl install_impl
 	}
