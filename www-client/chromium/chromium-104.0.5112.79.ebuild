@@ -52,7 +52,8 @@ RESTRICT="mirror"
 LICENSE_FINGERPRINT="\
 ce498e4da2de345614b7bd0da67bc6bed709e37617de0b48bac53f911a0f5595\
 af40e0eab8a2ed0152472726f00b2942d8aaf1a9a222d4d9177d87bc3757f3d4"
-LICENSE="BSD
+LICENSE="
+	BSD
 	chromium-$(ver_cut 1-3 ${PV}).x
 	APSL-2
 	Apache-2.0
@@ -1578,48 +1579,6 @@ src_unpack() {
 			&& continue
 		unpack ${a}
 	done
-}
-
-# Full list of hw accelerated image processing
-# ffmpeg -filters | grep vaapi
-_is_hw_scaling_supported() {
-	local encoding_format="${1}"
-	if use vaapi && ffmpeg -filters 2>/dev/null \
-		| grep -q -F -e "scale_vaapi" \
-		&& vainfo 2>/dev/null \
-		| grep -q -F -e "VAEntrypointVideoProc" \
-		&& vainfo 2>/dev/null \
-                | grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
-                && ffmpeg -hide_banner -encoders 2>/dev/null \
-                        | grep -q -F -e "${encoding_format,,}_vaapi" ; then
-		return 0
-	else
-		return 1
-	fi
-}
-
-_gen_vaapi_filter() {
-	local encoding_format="${1}"
-	if use vaapi \
-		&& vainfo 2>/dev/null \
-		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
-		&& ffmpeg -hide_banner -encoders 2>/dev/null \
-			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
-		echo "format=nv12,hwupload"
-	else
-		echo ""
-	fi
-}
-
-_is_vaapi_allowed() {
-	local encoding_format="${1}"
-	if use vaapi && vainfo 2>/dev/null \
-		| grep -q -G -e "${encoding_format}.*VAEntrypointEncSlice" \
-		&& ffmpeg -hide_banner -encoders 2>/dev/null \
-			| grep -q -F -e "${encoding_format,,}_vaapi" ; then
-		return 0
-	fi
-	return 1
 }
 
 is_generating_credits() {
