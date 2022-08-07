@@ -388,7 +388,9 @@ _compile() {
 				tools=no \
 				ios_triple=${ios_triple} \
 				|| die
-			if [[ "${arch}" =~ "x86" || "${}" ]] ; then
+			if [[ "${arch}" == "x86" \
+				|| "${arch}" == "x86_64" \
+				|| "${arch}" == "arm64-sim" ]] ; then
 				enabled_arches_sim+=( bin/libgodot.iphone.${configuration2}.${arch}.a )
 			else
 				enabled_arches_dev+=( bin/libgodot.iphone.${configuration2}.${arch}.a )
