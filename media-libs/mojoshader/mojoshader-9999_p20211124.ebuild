@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils
+inherit cmake eutils
 
 DESCRIPTION="MojoShader is a library to work with Direct3D shaders on alternate\
  3D APIs and non-Windows platforms."
@@ -42,7 +42,7 @@ src_prepare() {
 	eapply "${FILESDIR}/${PN}-1240-cmake-build-both-static-and-shared.patch"
 	eapply "${FILESDIR}/${PN}-9999_p20211124-remove-mercurial.patch"
 	eapply "${FILESDIR}/${PN}-9999_p20211124-hash_remove-ctx-fixes.patch"
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -78,15 +78,15 @@ src_configure() {
         )
 
 	MAKEOPTS="-j1" \
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_compile() {
 	MAKEOPTS="-j1" \
-	cmake-utils_src_compile
+	cmake_src_compile
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	dodoc LICENSE.txt
 }
