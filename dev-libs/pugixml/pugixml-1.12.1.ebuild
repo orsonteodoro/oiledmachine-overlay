@@ -1,7 +1,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit cmake-multilib
 
@@ -24,11 +24,6 @@ SRC_URI="https://github.com/zeux/${PN}/releases/download/v${PV}/${P}.tar.gz"
 RESTRICT="mirror"
 DOCS=( readme.txt docs )
 S="${WORKDIR}/${PN}-$(ver_cut 1-2 ${PV})"
-
-src_prepare() {
-	cmake-utils_src_prepare
-	multilib_copy_sources
-}
 
 src_configure() {
 	local mycmakeargs=(
