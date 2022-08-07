@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils eutils git-r3
+inherit cmake eutils git-r3
 
 DESCRIPTION="Shared CMake functions and macros"
 HOMEPAGE="https://github.com/lirios/cmake-shared"
