@@ -9,7 +9,7 @@ LICENSE="MIT" # appimaged project's default license
 LICENSE+=" all-rights-reserved" # src/main.c ; \
 # The vanilla MIT license doesn't have all-rights-reserved
 KEYWORDS="~amd64 ~x86"
-inherit cmake-utils linux-info user xdg
+inherit cmake linux-info user xdg
 IUSE+=" disable_watching_user_downloads_folder disable_watching_opt_folder
 firejail openrc +systemd system-inotify-tools"
 RDEPEND="${RDEPEND}
@@ -85,7 +85,7 @@ eerror
 
 src_prepare() {
 	eapply ${_PATCHES[@]}
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	xdg_src_prepare
 
 	if use disable_watching_user_downloads_folder ; then
@@ -100,11 +100,11 @@ src_configure() {
 	local mycmakeargs=(
 		-DUSE_SYSTEM_INOTIFY_TOOLS=ON
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	docinto licenses
 	dodoc LICENSE
 	docinto readmes
