@@ -16,7 +16,7 @@
     Export template platforms for standard (from zip file list inspection):
 
       Android (armv7, arm64v8, x86, x86-64)
-      iOS (arm64, arm64_x86_64-simulator)
+      iOS (arm64, arm64-x86_64-simulator [Universal 2 binary])
       Linux (x86, 32-bit)
       Linux (x86-64, 64-bit)
       JavaScript (WASM, GDnative, threads)
@@ -30,8 +30,8 @@
 
       Mono template libraries support BCL, .NET (2.0, 4.0, 4.5)
 
-      Android (armv7, arm64v8, x86, x86-64, monodroid)
-      iOS (arm64, arm64_x86_64-simulator, monotouch)
+      Android (armv7, arm64v8, x86, x86-64, MonoDroid)
+      iOS (arm64, arm64-x86_64-simulator [Universal 2 binary], MonoTouch)
       JavaScript (WASM)
       Linux (x86, 32-bit)
       Linux (x86-64 64-bit)
