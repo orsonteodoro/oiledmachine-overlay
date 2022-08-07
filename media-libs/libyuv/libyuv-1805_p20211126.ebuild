@@ -5,7 +5,7 @@
 
 EAPI=7
 
-inherit cmake-utils multilib-minimal
+inherit cmake multilib-minimal
 
 DESCRIPTION="libyuv is an open source project that includes YUV scaling and \
 conversion functionality."
@@ -41,7 +41,7 @@ src_unpack() {
 src_prepare() {
 	default
 	eapply "${FILESDIR}/${PN}-1741-cmake-libdir.patch"
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	multilib_copy_sources
 }
 
@@ -50,15 +50,15 @@ multilib_src_configure() {
 	if use test ; then
 		mycmakeargs+=( -DTEST=ON )
 	fi
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 multilib_src_compile() {
-	cmake-utils_src_compile
+	cmake_src_compile
 }
 
 multilib_src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	einstalldocs
 	insinto /usr/$(get_libdir)/pkgconfig
 	cat "${FILESDIR}/${PN}.pc.in" | \
