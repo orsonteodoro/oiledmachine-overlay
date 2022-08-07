@@ -7,7 +7,7 @@ information embedded in the AppImage itself. "
 HOMEPAGE="https://github.com/AppImage/AppImageUpdate/"
 LICENSE="MIT" # project's default license
 KEYWORDS="~amd64 ~x86"
-inherit cmake-utils
+inherit cmake
 RDEPEND="
 	dev-libs/libappimage
 	dev-libs/libdesktopenvironments
@@ -34,7 +34,7 @@ PATCHES=(
 )
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	sed -i -e "s|\
 /usr/lib64/cmake/sanitizers-cmake|\
 /usr/$(get_libdir)/cmake/sanitizers-cmake|g" \
@@ -42,7 +42,7 @@ src_prepare() {
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 	docinto licenses
 	dodoc LICENSE.txt
 	docinto readmes
