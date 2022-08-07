@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils multilib-minimal
+inherit cmake multilib-minimal
 
 DESCRIPTION="Modern open source high performance RPC framework"
 HOMEPAGE="https://www.grpc.io"
@@ -73,7 +73,7 @@ src_unpack() {
 
 src_prepare() {
 	soversion_check
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
 		# un-hardcode libdir
@@ -106,7 +106,7 @@ src_configure() {
 		)
 		CMAKE_USE_DIR="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}_${ABI}_build" \
-		cmake-utils_src_configure
+		cmake_src_configure
 	}
 	multilib_foreach_abi configure_abi
 }
@@ -116,7 +116,7 @@ src_compile() {
 		cd "${BUILD_DIR}" || die
 		CMAKE_USE_DIR="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}_${ABI}_build" \
-		cmake-utils_src_compile
+		cmake_src_compile
 	}
 	multilib_foreach_abi configure_abi
 }
@@ -126,7 +126,7 @@ src_install() {
 		cd "${BUILD_DIR}" || die
 		CMAKE_USE_DIR="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}_${ABI}_build" \
-		cmake-utils_src_install
+		cmake_src_install
 		if multilib_is_native_abi ; then
 			if use examples; then
 				find examples -name '.gitignore' -delete || die
