@@ -787,5 +787,5 @@ ewarn
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
-	cmake-utils_src_configure
+	cmake_src_configure
 }

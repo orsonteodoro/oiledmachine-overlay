@@ -10,7 +10,7 @@
 
 PGO_SAMPLE_SIZE_=${PGO_SAMPLE_SIZE:=30}
 
-inherit blender-multibuild check-reqs cmake-utils flag-o-matic llvm pax-utils \
+inherit blender-multibuild check-reqs cmake flag-o-matic llvm pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
@@ -624,7 +624,7 @@ _src_prepare() {
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
-	cmake-utils_src_prepare
+	cmake_src_prepare
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		# we don't want static glew, but it's scattered across
@@ -1114,7 +1114,7 @@ einfo
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
-	cmake-utils_src_compile
+	cmake_src_compile
 }
 
 _src_compile_docs() {
@@ -1438,7 +1438,7 @@ _src_install() {
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
-	cmake-utils_src_install
+	cmake_src_install
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		CMAKE_USE_DIR="${BUILD_DIR}" \
 		_src_install_doc
