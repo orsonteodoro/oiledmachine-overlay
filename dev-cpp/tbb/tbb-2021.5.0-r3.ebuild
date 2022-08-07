@@ -9,7 +9,7 @@ PV2="$(ver_cut 2)"
 MY_PV="${PV1}_U${PV2}"
 
 PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils flag-o-matic multilib-minimal python-r1 toolchain-funcs
+inherit cmake flag-o-matic multilib-minimal python-r1 toolchain-funcs
 
 DESCRIPTION="oneAPI Threading Building Blocks (oneTBB)"
 LICENSE="Apache-2.0"
@@ -123,7 +123,7 @@ src_prepare()
 {
 	cd "${S}" || die
 	eapply "${FILESDIR}/tbb-2021.2.0-fix-missing-header-cholesky.patch"
-	cmake-utils_src_prepare
+	cmake_src_prepare
 
 	src_prepare_abi() {
 		cd "${BUILD_DIR}" || die
@@ -201,7 +201,7 @@ _src_configure() {
 	fi
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_configure()
@@ -276,7 +276,7 @@ _src_compile() {
 	cd "${BUILD_DIR}" || die
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
 	CMAKE_USE_DIR="${BUILD_DIR}" \
-	cmake-utils_src_compile
+	cmake_src_compile
 	if use python ; then
 		cd "${BUILD_DIR}" || die
 		einfo "pwd="$(pwd)
@@ -323,7 +323,7 @@ run_native_tests()
 #	 55 - test_semaphore (Child aborted)
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
 	CMAKE_USE_DIR="${BUILD_DIR}" \
-	cmake-utils_src_test
+	cmake_src_test
 }
 
 run_python_tests()
@@ -426,7 +426,7 @@ _install_docs() {
 _src_install() {
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
 	CMAKE_USE_DIR="${BUILD_DIR}" \
-	cmake-utils_src_install
+	cmake_src_install
 	src_install_pkgconfig
 	if multilib_is_native_abi ; then
 		use doc && _install_docs
