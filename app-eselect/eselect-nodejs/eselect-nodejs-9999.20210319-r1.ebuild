@@ -1,8 +1,8 @@
 # Copyright 2019-2020 Orson Teodoro
-# Copyright 1999-2016 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI=8
 
 DESCRIPTION="Manages the /usr/include/node symlink"
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay"
@@ -25,3 +25,5 @@ src_install() {
 	insinto /usr/share/eselect/modules
 	doins nodejs.eselect
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
