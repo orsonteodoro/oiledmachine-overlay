@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -76,8 +76,8 @@ src_prepare() {
 			die "Recompile with system-libgit2 USE flag enabled."
 		fi
 	fi
-	epatch "${FILESDIR}/libgit2sharp-0.26.1-sln.patch"
-	#epatch "${FILESDIR}/packages-config-remove-xunit.patch"
+	eapply "${FILESDIR}/libgit2sharp-0.26.1-sln.patch"
+	#eapply "${FILESDIR}/packages-config-remove-xunit.patch"
 	dotnet_copy_sources
 	export Configuration=$(usex debug "debug" "release")
 	patch_impl() {
