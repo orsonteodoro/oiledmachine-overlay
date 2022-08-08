@@ -2230,3 +2230,5 @@ ewarn "CXX=${CXX}."
 		fi
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  hardened, pgo, cfi, lto, license-compatibility-correctness
