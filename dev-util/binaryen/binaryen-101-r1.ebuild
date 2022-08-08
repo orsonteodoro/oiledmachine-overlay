@@ -1,10 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 CMAKE_BUILD_TYPE="Release"
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake python-any-r1 toolchain-funcs
 
 DESCRIPTION="Compiler infrastructure and toolchain library for WebAssembly"
@@ -100,3 +100,4 @@ src_install() {
 		fi
 	done
 }
+
