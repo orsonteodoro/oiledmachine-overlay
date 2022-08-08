@@ -3164,4 +3164,5 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, build-32-bit-on-64-bit, license-completeness, license-transparency, prebuilt-pgo-access, shadowcallstack-option-access, disable-simd-on-old-microarches-with-zlib, allow-cfi-with-official-build-settings
+# OILEDMACHINE-OVERLAY-META-WIP: event-based-full-pgo
