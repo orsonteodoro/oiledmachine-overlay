@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit cmake eutils multilib-minimal static-libs toolchain-funcs
+inherit cmake multilib-minimal static-libs toolchain-funcs
 
 DESCRIPTION="a fast key-value storage library written at Google"
 HOMEPAGE="http://leveldb.org/ https://github.com/google/leveldb"
@@ -118,3 +118,5 @@ src_install() {
 	docinto licenses
 	dodoc LICENSE
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, static-libs
