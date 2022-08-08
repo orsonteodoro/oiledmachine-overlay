@@ -1,11 +1,11 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
 # For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V14.md
 
-EAPI=7
-PYTHON_COMPAT=( python3_{8..10} )
+EAPI=8
+PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="threads(+)"
 inherit bash-completion-r1 flag-o-matic ninja-utils pax-utils python-any-r1 \
 toolchain-funcs xdg-utils
@@ -683,3 +683,5 @@ einfo "corresponding SLOT.  This means that you cannot compile with different"
 einfo "SLOTS simultaneously."
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot, pgo
