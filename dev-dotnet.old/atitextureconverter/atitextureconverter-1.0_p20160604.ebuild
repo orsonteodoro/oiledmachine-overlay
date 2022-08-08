@@ -1,4 +1,5 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -60,3 +61,5 @@ pkg_postinst() {
 	einfo
 	einfo "For more details goto https://github.com/infinitespace-studios/ATI.TextureConverter"
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
