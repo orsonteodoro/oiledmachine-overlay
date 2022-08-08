@@ -36,7 +36,7 @@ PATCHES=(
 )
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	multilib_copy_sources
 }
 

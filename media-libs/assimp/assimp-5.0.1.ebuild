@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit cmake-multilib
 
@@ -42,7 +42,7 @@ PATCHES=(
 )
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	multilib_copy_sources
 }
 

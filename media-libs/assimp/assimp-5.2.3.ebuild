@@ -43,7 +43,7 @@ src_prepare() {
 		eapply "${FILESDIR}"/${P}-drop-failing-tests-for-abi_x86_32.patch
 	fi
 
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	multilib_copy_sources
 }
 
