@@ -1,7 +1,7 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 inherit autotools flag-o-matic
 inherit multilib-minimal
 
@@ -88,3 +88,6 @@ multilib_src_install() {
 	ln -s lib${PN}{-$(ver_cut 1).$(ver_cut 2).so.0.0.1,.so}
 	popd >/dev/null
 }
+
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib-support
