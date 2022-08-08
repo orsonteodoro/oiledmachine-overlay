@@ -1,12 +1,12 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 CMAKE_BUILD_TYPE=Release
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 
-inherit cmake eutils flag-o-matic python-single-r1 toolchain-funcs
+inherit cmake flag-o-matic python-single-r1 toolchain-funcs
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
@@ -215,3 +215,6 @@ src_install() {
 		done
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
+
