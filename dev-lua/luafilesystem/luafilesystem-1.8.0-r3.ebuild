@@ -1,7 +1,7 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 LUA_COMPAT=( lua5-{1..4} )
 inherit lua multilib-minimal toolchain-funcs
 DESCRIPTION="File System Library for the Lua Programming Language"
@@ -126,3 +126,5 @@ src_install() {
 	}
         multilib_foreach_abi install_abi
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
