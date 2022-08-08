@@ -1,12 +1,12 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # Based on startup-notification-0.12-r1.  Revisions may change on the oiledmachine-overlay.
 
-EAPI=7
+EAPI=8
 
 XORG_MULTILIB="yes"
-inherit eutils multilib-minimal xorg-3
+inherit multilib-minimal xorg-3
 
 DESCRIPTION="Application startup notification and feedback library"
 HOMEPAGE="https://www.freedesktop.org/wiki/Software/startup-notification"
@@ -28,3 +28,5 @@ PATCHES=(
 	"${FILESDIR}"/${P}-sys-select_h.patch
 	"${FILESDIR}"/${P}-time_t-crash-with-32bit.patch
 )
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild-changes
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  inherit, multilib
