@@ -1,13 +1,14 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 CXX_STANDARD="-std=c++17"
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
 
-inherit desktop eutils flag-o-matic git-r3 multilib-minimal \
+inherit desktop flag-o-matic git-r3 multilib-minimal \
 toolchain-funcs user
 
 DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation,
@@ -772,3 +773,5 @@ einfo "These extra checks and matching settings are to fix inconsistencies to"
 einfo "prevent game build failures."
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
