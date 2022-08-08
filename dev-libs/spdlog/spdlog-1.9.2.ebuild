@@ -1,7 +1,7 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit cmake-multilib
 
@@ -30,7 +30,7 @@ DEPEND="
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	rm -r include/spdlog/fmt/bundled || die "Failed to delete bundled libfmt"
 }
 
