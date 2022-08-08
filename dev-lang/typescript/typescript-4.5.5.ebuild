@@ -1,14 +1,15 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 NPM_SECAUDIT_AT_TYPES_NODE_V="16.11.6"
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
 
 NPM_SECAUDIT_TYPESCRIPT_V="${PV}"
-inherit eutils npm-secaudit npm-utils
+inherit npm-secaudit npm-utils
 
 DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean
 JavaScript output"
@@ -93,3 +94,5 @@ pkg_postinst() {
 		eselect typescript set ${SLOT}
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
