@@ -1,4 +1,5 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -6,7 +7,7 @@ EAPI=8
 MY_PN="${PN,,}"
 MY_PN="${MY_PN/-/_}"
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
 DESCRIPTION="C-API of RapidFuzz, which can be used to extend RapidFuzz from
@@ -26,3 +27,5 @@ BDEPEND+="
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
