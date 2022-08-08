@@ -1,9 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit check-reqs eutils java-utils-2 npm-secaudit
+inherit check-reqs java-utils-2 npm-secaudit
 
 DESCRIPTION="Check, compile, optimize and compress Javascript with \
 Closure-Compiler"
@@ -331,3 +332,5 @@ pkg_postinst() {
 		npm-secaudit_pkg_postinst
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
