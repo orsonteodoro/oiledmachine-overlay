@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -51,12 +51,12 @@ PATCHES=(
 )
 
 pkg_setup() {
+	use vala && vala_setup
 	python-any-r1_pkg_setup
 }
 
 src_prepare() {
 	default
-	use vala && vala_src_prepare
 	multilib_copy_sources
 }
 
@@ -116,3 +116,5 @@ pkg_postrm() {
 	xdg_pkg_postrm
 	gnome2_schemas_update
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
