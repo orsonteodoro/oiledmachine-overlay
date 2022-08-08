@@ -1,12 +1,13 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 ELECTRON_APP_ELECTRON_V="13.0.0"
 ELECTRON_APP_REACT_V="17.0.0"
 
-inherit desktop electron-app eutils npm-utils
+inherit desktop electron-app npm-utils
 
 DESCRIPTION="Democratizing Snippet Management (macOS/Win/Linux)"
 HOMEPAGE="http://hackjutsu.com/Lepton"
@@ -61,3 +62,5 @@ src_install() {
 	npm-utils_install_licenses
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
