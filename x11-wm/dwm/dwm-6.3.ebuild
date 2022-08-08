@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit savedconfig toolchain-funcs
+inherit toolchain-funcs
 
 DESCRIPTION="a dynamic window manager for X11"
 HOMEPAGE="https://dwm.suckless.org/"
@@ -84,7 +84,16 @@ src_prepare() {
 		-e "/^X11LIB/{s:/usr/X11R6/lib:/usr/$(get_libdir)/X11:}" \
 		-e '/^X11INC/{s:/usr/X11R6/include:/usr/include/X11:}' \
 		config.mk || die
-	restore_config config.h
+
+	if use savedconfig ; then
+		if [[ -z "${SAVEDCONFIG_PATH}" ]] ; then
+eerror
+eerror "You must define SAVEDCONFIG_PATH as the abspath to a personal config.h."
+eerror
+			die
+		fi
+		cat "${SAVEDCONFIG_PATH}" > config.h || die
+	fi
 	if use mod_sizehintsoff && [[ -e "${S}/config.h" ]] ; then
 		sed -i -e "s|resizehints = 1|resizehints = 0|g" config.h || die
 	fi
@@ -105,7 +114,6 @@ src_install() {
 	insinto /usr/share/xsessions
 	doins "${FILESDIR}"/dwm.desktop
 	dodoc README
-	save_config config.h
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
