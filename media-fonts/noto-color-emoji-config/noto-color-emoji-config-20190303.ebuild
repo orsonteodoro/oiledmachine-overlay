@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit eutils font
+inherit font
 
 DESCRIPTION="Minimal config to get colored Noto emojis working on Gentoo."
 SRC_URI=""
