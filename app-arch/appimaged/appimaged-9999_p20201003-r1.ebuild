@@ -1,4 +1,5 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -38,7 +39,7 @@ https://github.com/AppImage/appimaged/archive/${EGIT_COMMIT}.tar.gz
 "
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-_PATCHES=(
+PATCHES=(
 	"${FILESDIR}/${PN}-${PV}-fill-git-commit.patch"
 	"${FILESDIR}/${PN}-9999_p20200724-use-find_package.patch"
 	"${FILESDIR}/${PN}-9999_p20200724-add-libappimage-include-directories.patch"
@@ -84,7 +85,6 @@ eerror
 }
 
 src_prepare() {
-	eapply ${_PATCHES[@]}
 	cmake_src_prepare
 	xdg_src_prepare
 
@@ -148,3 +148,5 @@ einfo "from the README.md.   More can be found in the \"Home\" link."
 einfo
 	xdg_pkg_postinst
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
