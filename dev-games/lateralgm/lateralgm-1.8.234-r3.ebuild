@@ -1,9 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit desktop eutils java-utils-2
+inherit desktop java-utils-2
 
 DESCRIPTION="A free game maker source file editor"
 LICENSE="
@@ -465,3 +466,5 @@ einfo
 einfo "Run 'wmname LG3D' before you run 'lateralgm' or 'libmaker'"
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
