@@ -1,7 +1,8 @@
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 MY_PN="${PN/-bin}"
 
@@ -36,3 +37,5 @@ src_install() {
 		fowners root:root "${x}"
 	done
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
