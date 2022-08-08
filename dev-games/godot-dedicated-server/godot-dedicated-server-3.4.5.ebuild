@@ -1,4 +1,5 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # See profiles/desc/godot* for more related files.
@@ -11,7 +12,7 @@ MY_P="${MY_PN}-${PV}"
 STATUS="stable"
 MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit desktop eutils flag-o-matic llvm python-any-r1 scons-utils
 
 DESCRIPTION="Godot built as a Linux dedicated server"
@@ -627,3 +628,5 @@ src_install() {
 	use debug && export STRIP="true" # Don't strip debug builds
 	_install_server
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
