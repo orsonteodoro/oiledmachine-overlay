@@ -1,11 +1,12 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 EMTRS="release test"
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic linux-info mutex-test-release python-single-r1 \
 toolchain-funcs virtualx
 
@@ -246,6 +247,10 @@ BDEPEND+="
 	test? (
 		>=dev-tcltk/expect-5.45.4
 		>=app-arch/xz-utils-5.2.4
+	)
+	test-x11? (
+		x11-base/xorg-server[xvfb]
+		x11-apps/xhost
 	)
 "
 REQUIRED_USE+="
@@ -1409,3 +1414,6 @@ ewarn "Disabling firejail_profiles_server disables default sandboxing for the ro
 ewarn
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patches, ebuild-changes, profile-selection, testing-sections, audio-patch
