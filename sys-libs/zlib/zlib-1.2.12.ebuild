@@ -2,7 +2,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 # Worth keeping an eye on 'develop' branch upstream for possible backports.
 AUTOTOOLS_AUTO_DEPEND="no"
@@ -1455,3 +1455,5 @@ ewarn
 	fi
 }
 
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, pgo, cfi (disabled), lto, install-minizip-bin
