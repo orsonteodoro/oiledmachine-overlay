@@ -1,12 +1,12 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 CXX_STD_MIN="11"
 LLVM_MAX_SLOT=13
 FONT_PN=OpenImageIO
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake font llvm python-single-r1
 
 DESCRIPTION="A library for reading and writing images"
@@ -349,3 +349,5 @@ src_install() {
 		done
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
