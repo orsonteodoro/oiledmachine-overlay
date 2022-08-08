@@ -356,7 +356,9 @@ run_python_tests()
 
 _src_test() {
 	run_native_tests
-	run_python_tests
+	if use python && [[ "${ABI}" == "${DEFAULT_ABI}" ]] ; then
+		run_python_tests
+	fi
 }
 
 src_test()
@@ -369,13 +371,13 @@ src_test()
 				cd "${BUILD_DIR}" || die
 				_src_test
 			}
+			python_foreach_impl src_test_py
 		else
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 			cd "${BUILD_DIR}" || die
 			_src_test
 		fi
-		python_foreach_impl src_test_py
 	}
 	multilib_foreach_abi src_test_abi
 }
