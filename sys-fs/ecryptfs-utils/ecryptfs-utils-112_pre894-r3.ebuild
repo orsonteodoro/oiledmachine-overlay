@@ -1,9 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # This ebuild uses the exact revision in 111_p20170609.
 
-EAPI="7"
+EAPI=8
 
 PYTHON_COMPAT=( python3_{8..10} ) # fork ebuild and add for python2_7 support
 inherit autotools flag-o-matic linux-info pam python-single-r1
@@ -191,3 +192,6 @@ ewarn "local users may be able to gain root access on your machine."
 ewarn
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, source-directly-upstream, live-snapshot
