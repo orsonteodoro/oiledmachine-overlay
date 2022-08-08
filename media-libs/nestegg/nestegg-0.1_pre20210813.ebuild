@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit eutils autotools multilib-minimal
+inherit autotools multilib-minimal
 
 DESCRIPTION="WebM demuxer"
 HOMEPAGE="https://github.com/kinetiknz/nestegg/"
@@ -29,3 +29,6 @@ src_prepare() {
 multilib_src_install() {
 	emake install DESTDIR="${D}"
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
+# OILEDMACHINE-OVERLAY-META-REVDEP:  tizonia
