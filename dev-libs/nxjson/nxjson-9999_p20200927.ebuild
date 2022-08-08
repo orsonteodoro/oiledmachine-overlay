@@ -1,7 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 DESCRIPTION="Very small JSON parser written in C."
 HOMEPAGE="https://github.com/yarosla/nxjson"
 LICENSE="LGPL-3+"
@@ -14,7 +15,7 @@ EGIT_COMMIT="d2c6fba9d5b0d445722105dd2a64062c1309ac86"
 SRC_URI=\
 "https://github.com/yarosla/nxjson/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
-inherit cmake eutils multilib-minimal static-libs toolchain-funcs
+inherit cmake multilib-minimal static-libs toolchain-funcs
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 _PATCHES=( "${FILESDIR}/nxjson-9999_p20200927-libdir-path.patch" )
@@ -100,3 +101,5 @@ src_install() {
 	}
 	multilib_foreach_abi install_abi
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
