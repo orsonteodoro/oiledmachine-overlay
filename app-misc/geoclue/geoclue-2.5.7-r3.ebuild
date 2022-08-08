@@ -1,8 +1,8 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
-PYTHON_COMPAT=( python3_{7..9} )
+EAPI=8
+PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="xml(+)"
 VALA_USE_DEPEND="vapigen"
 
@@ -85,12 +85,12 @@ eerror
 			die "D-BUS must be enabled in order to do testing."
 		fi
 	fi
+	use vala && vala_setup
 	python-any-r1_pkg_setup
 }
 
 src_prepare() {
-	xdg_src_prepare
-	use vala && vala_src_prepare
+	default
 	if use fix-regression-142 ; then
 		# Still an open issue, See https://gitlab.freedesktop.org/geoclue/geoclue/-/issues/142
 		einfo
@@ -209,3 +209,5 @@ ewarn "/etc/geoclue/geoclue.conf file."
 ewarn
 	show_geolocation_opt_out
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  add-and-apply-patch-bugfix-wifi-geolocation-without-gps
