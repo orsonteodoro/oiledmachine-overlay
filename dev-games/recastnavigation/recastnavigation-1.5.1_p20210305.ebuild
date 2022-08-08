@@ -1,7 +1,7 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 DESCRIPTION="Navigation-mesh Toolset for Games"
 HOMEPAGE="https://github.com/memononen/recastnavigation"
 LICENSE="ZLIB"
@@ -15,7 +15,7 @@ RDEPEND="demo? (
 	)"
 DEPEND="${RDEPEND}
 	>=sys-devel/gcc-8.0"
-inherit eutils static-libs toolchain-funcs
+inherit static-libs toolchain-funcs
 EGIT_COMMIT="c5cbd53024c8a9d8d097a4371215e3342d2fdc87"
 SRC_URI="\
 https://github.com/${PN}/${PN}/archive/${EGIT_COMMIT}.tar.gz \
@@ -102,3 +102,5 @@ src_install() {
 	docinto licenses
 	dodoc License.txt
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, static-libs
