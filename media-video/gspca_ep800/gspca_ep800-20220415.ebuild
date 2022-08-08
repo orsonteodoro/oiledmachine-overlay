@@ -1,9 +1,10 @@
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit eutils linux-mod
+inherit linux-mod
 
 DESCRIPTION="Kernel Modules for Endpoints EP800/SE402/SE401*"
 HOMEPAGE="https://github.com/orsonteodoro/gspca_ep800"
@@ -36,3 +37,5 @@ pkg_postinst() {
 	linux-mod_pkg_postinst
 	einfo "Your module is called ep800.  You can do a modprobe ep800 to use it."
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
