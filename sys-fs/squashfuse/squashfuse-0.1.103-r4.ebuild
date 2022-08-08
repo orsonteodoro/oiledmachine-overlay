@@ -1,5 +1,5 @@
 # Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 2016-2019 Gentoo Authors
+# Copyright 2016-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # The libappimage uses 1f98030 dated in 2016.
