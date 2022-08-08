@@ -1,4 +1,5 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -49,3 +50,5 @@ src_install() {
 	dobin "${PN}"
 	einstalldocs
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
