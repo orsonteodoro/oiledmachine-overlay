@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
 DESCRIPTION="An implementation of pytest.raises as a pytest.mark fixture "
@@ -23,3 +23,6 @@ https://github.com/Lemmons/pytest-raises/archive/${PV}.tar.gz
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+# OILEDMACHINE-OVERLAY-META-REVDEP:  exhale -> orphaned
+# OILEDMACHINE-OVERLAY-META-TAGS:  orphaned
