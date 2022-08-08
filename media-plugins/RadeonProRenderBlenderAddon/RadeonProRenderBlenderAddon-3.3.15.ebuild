@@ -1,10 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 # It supports Python 3.7 but 3.7 is deprecated in this distro in python-utils-r1.eclass.
-PYTHON_COMPAT=( python3_9 ) # same as blender
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit check-reqs linux-info python-r1 unpacker
 
