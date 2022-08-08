@@ -1,4 +1,5 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # versioning based on src/appimagetoolnoglib.c, tag release, and current commit date
@@ -7,7 +8,7 @@
 # The AppImageKit project currently is just the non Go version of appimagetool.
 # AppImageKit is the set of utils and assets used for appimagetool.
 
-EAPI=7
+EAPI=8
 
 inherit cmake
 
@@ -95,3 +96,5 @@ src_install() {
 		doexe "build/out/runtime-${ABI}"
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
