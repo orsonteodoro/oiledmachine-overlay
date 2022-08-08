@@ -1,3 +1,4 @@
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
 # Copyright 2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -22,3 +23,5 @@ https://github.com/jketterl/csdr/archive/refs/tags/${PV}.tar.gz
 "
 RESTRICT="mirror"
 DOCS=( README.md )
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
