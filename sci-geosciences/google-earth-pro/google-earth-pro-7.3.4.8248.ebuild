@@ -503,4 +503,4 @@ pkg_postrm() {
 	xdg_pkg_postrm
 }
 
-# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild-changes, license-transparency, license-compleness
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild-changes, license-transparency, license-completeness
