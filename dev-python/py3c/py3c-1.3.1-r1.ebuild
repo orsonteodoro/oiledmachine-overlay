@@ -1,9 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
 DESCRIPTION="A Python 2/3 compatibility layer for C extensions"
@@ -24,3 +25,6 @@ S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
 distutils_enable_sphinx doc
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-META-TAGS:  orphaned
