@@ -1,10 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 LUA_COMPAT=( lua5-{1..4} ) # building with 5.1 is broken
-inherit cmake eutils flag-o-matic lua multilib-minimal static-libs
+inherit cmake flag-o-matic lua multilib-minimal static-libs
 
 DESCRIPTION="CivetWeb is an embedded C++ web server"
 HOMEPAGE="https://github.com/civetweb"
@@ -313,3 +313,5 @@ src_install() {
 	}
 	multilib_foreach_abi install_abi
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
