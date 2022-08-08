@@ -5,7 +5,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit flag-o-matic git-r3 multilib-minimal python-r1 savedconfig \
+inherit flag-o-matic git-r3 multilib-minimal python-r1 \
 toolchain-funcs
 
 DESCRIPTION="a simple web browser based on WebKit/GTK+"
@@ -24,7 +24,7 @@ SLOT="0"
 IUSE+=" doc +geolocation +libnotify mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux tabbed update_adblock -pointer-lock +pulseaudio
-+v4l"
+savedconfig +v4l"
 REQUIRED_USE+="
 	mod_adblock_easylist? ( mod_adblock )
 	mod_adblock_spam404? ( mod_adblock )
@@ -60,7 +60,6 @@ SRC_URI="mod_autoopen? ( ${AUTOOPEN_FN} )
 	 mod_searchengines? ( ${SEARCHENGINES_FN} )"
 PATCHES=( "${FILESDIR}/${PN}-2.1-gentoo.patch" )
 DOCS=( README )
-SAVEDCONFIG_PATH="${PORTAGE_CONFIGROOT%/}/etc/portage/savedconfig/${CATEGORY}/${PF}"
 
 _boilerplate_dl() {
 	local fn_s="${1}"
@@ -105,6 +104,15 @@ ewarn
 }
 
 pkg_setup() {
+	if use savedconfig ; then
+		if [[ -z "${SAVEDCONFIG_PATH}" ]] ; then
+eerror
+eerror "You need to define SAVEDCONFIG_PATH to the path of your settings."
+eerror
+			die
+		fi
+	fi
+
 	if use mod_autoopen ; then
 		_boilerplate_dl "${AUTOOPEN_FN}" "${AUTOOPEN_FN}" \
 			"https://surf.suckless.org/patches/autoopen/"
@@ -147,12 +155,16 @@ eerror
 	else
 einfo
 einfo "The default config.h assumes you have"
+einfo
 einfo "  net-misc/curl"
 einfo "  x11-terms/st"
+einfo
 einfo "installed to support the download function.  Without those, downloads"
 einfo "will fail (gracefully).  You can fix this by:"
-einfo "1) Installing these packages, or"
-einfo "2) Setting USE=savedconfig and running"
+einfo
+einfo "  1) Installing these packages, or"
+einfo "  2) Setting USE=savedconfig and running"
+einfo
 einfo "\`cp ${S}/config.def.h ${SAVEDCONFIG_PATH}\` and changing it accordingly."
 einfo
 	fi
@@ -237,7 +249,9 @@ eerror
 		fi
 	fi
 
-	restore_config config.h
+	if use saveconfig ; then
+		cat "${SAVEDCONFIG_PATH}" > "config.h" || die # new
+	fi
 
 	local config_file="config.def.h"
 	if use savedconfig ; then
@@ -350,8 +364,6 @@ multilib_src_compile() {
 multilib_src_install() {
 	PKG_CONFIG="/usr/bin/$(get_abi_CHOST ${ABI})-pkg-config" \
 	default
-
-	save_config config.h
 
 	dodoc LICENSE
 

@@ -13,6 +13,11 @@
   <longdescription>
     surf is a minimalist web browser that uses extensive use of the keyboard.
     It supports HTML5 and WebKit2GTK as the backend.
+
+    Build time environment variables:
+
+      SAVEDCONFIG_PATH - absolute path to config.h
+
   </longdescription>
   <upstream>
     <doc lang="en">https://git.suckless.org/surf/file/README.html</doc>
