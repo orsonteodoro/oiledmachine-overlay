@@ -1,7 +1,7 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=8
 DESCRIPTION="Graphical User Interface for PDF Toolkit (PDFtk)"
 HOMEPAGE="http://pdfchain.sourceforge.net/"
 KEYWORDS="~amd64 ~arm ~x86"
@@ -10,7 +10,8 @@ S="${WORKDIR}/${P/_/-}"
 LICENSE="GPL-3"
 SLOT="0"
 IUSE=""
-inherit autotools-multilib flag-o-matic toolchain-funcs
+# FIXME:  multilib support
+inherit multilib-minimal flag-o-matic toolchain-funcs
 DEPEND=">=app-text/pdftk-2.0
 	>=dev-cpp/atkmm-1.6[${MULTILIB_USEDEP}]
 	>=dev-cpp/glibmm-2.4[${MULTILIB_USEDEP}]
@@ -30,3 +31,5 @@ src_prepare() {
 multilib_src_configure() {
 	econf
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
