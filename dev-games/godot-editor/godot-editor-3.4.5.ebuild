@@ -1,4 +1,5 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # See profiles/desc/godot* for more related files.
@@ -14,7 +15,7 @@ MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
 FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED=manual
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit desktop eutils flag-o-matic llvm python-any-r1 scons-utils \
 virtualx
@@ -331,7 +332,8 @@ BDEPEND+="
 	dev-util/scons
 	lld? ( sys-devel/lld )
 	mono? (
-		"${VIRTUALX_DEPEND}"
+		x11-base/xorg-server[xvfb]
+		x11-apps/xhost
 	)
 	webm-simd? (
 		dev-lang/yasm
@@ -810,3 +812,7 @@ einfo "  https://docs.godotengine.org/en/$(ver_cut 1-2 ${PV})/tutorials/scriptin
 einfo
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  mono, csharp, split-packages, multiplatform, portable-games, multislot
