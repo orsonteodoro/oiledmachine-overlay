@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit autotools desktop eutils flag-o-matic toolchain-funcs xdg
+inherit autotools desktop flag-o-matic toolchain-funcs xdg
 
 DESCRIPTION="Gambas is a free development environment and a full powerful \
 development platform based on a Basic interpreter with object extensions
@@ -269,7 +269,6 @@ src_prepare() {
 			eautoreconf
 		popd
 	done
-	xdg_src_prepare
 }
 
 CODE_QUALITY_REPORT=
@@ -483,3 +482,5 @@ pkg_postinst() {
 		einfo "Relog or do \`source /etc/profile\` for changes to take affect."
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  jit, code-quality-selection
