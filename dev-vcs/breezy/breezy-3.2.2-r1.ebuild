@@ -1,7 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 PYTHON_COMPAT=( python3_{8..10} )
 inherit autotools distutils-r1
@@ -50,3 +51,5 @@ src_install() {
 	distutils-r1_src_install
 	mv "${ED}/usr/man" "${ED}/usr/share" || die
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
