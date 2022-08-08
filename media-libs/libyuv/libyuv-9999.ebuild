@@ -90,10 +90,10 @@ eerror "The build files has changed.  This means that either a change in"
 eerror "dependencies, supported arches, ABI, etc."
 eerror
 eerror "This means that the ebuild packager needs to update the *DEPENDS or"
-eerror "KEYWORDS.  Send a issue request about this."
+eerror "KEYWORDS.  Send an issue request about this."
 eerror
-eerror "expected:  ${expected}"
-eerror "actual:  ${actual}"
+eerror "Expected build files fingerprint:  ${expected}"
+eerror "Actual build files fingerprint:  ${actual}"
 eerror
 		die
 	fi
