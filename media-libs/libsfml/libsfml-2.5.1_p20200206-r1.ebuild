@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 DESCRIPTION="Simple and Fast Multimedia Library (SFML)"
 HOMEPAGE="https://www.sfml-dev.org/ https://github.com/SFML/SFML"
 LICENSE="ZLIB"
@@ -39,7 +39,7 @@ src_prepare() {
 	sed -i "s:DESTINATION .*:DESTINATION /usr/share/doc/${PF}:" \
 		doc/CMakeLists.txt || die
 	find examples -name CMakeLists.txt -delete || die
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	multilib_copy_sources
 }
 
