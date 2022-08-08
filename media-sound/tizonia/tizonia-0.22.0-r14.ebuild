@@ -1,10 +1,11 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
-inherit eutils meson multilib-minimal python-single-r1 xdg
+PYTHON_COMPAT=( python3_{8..11} )
+inherit meson multilib-minimal python-single-r1 xdg
 
 DESCRIPTION="Command-line cloud music player for Linux with support for \
 Spotify, Google Play Music, YouTube, SoundCloud, TuneIn, IHeartRadio, Plex \
@@ -146,7 +147,7 @@ https://github.com/tizonia/tizonia-openmax-il/commit/a1e8f8bddeae144ae634a031b54
 MY_PN="tizonia-openmax-il"
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
-_PATCHES=(
+PATCHES=(
 	"${FILESDIR}/tizonia-0.22.0-modular-1.patch"
 	"${FILESDIR}/tizonia-0.22.0-modular-2.patch"
 	"${FILESDIR}/tizonia-0.22.0-modular-3.patch"
@@ -179,8 +180,6 @@ is greater than \$(nproc)/2"
 
 src_prepare() {
 	default
-	xdg_src_prepare
-	eapply ${_PATCHES[@]}
 	multilib_copy_sources
 }
 
@@ -280,3 +279,5 @@ src_install() {
 	multilib_foreach_abi install_abi
 	einstalldocs
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
