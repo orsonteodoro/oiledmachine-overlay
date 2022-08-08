@@ -1,10 +1,11 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # Builds also the libcef_dll_wrapper
 # The -bin in ${PN} comes from the prebuilt chromium
 
-EAPI=7
+EAPI=8
 
 VIRTUALX_REQUIRED="manual"
 inherit chromium-2 cmake flag-o-matic multilib-minimal virtualx
@@ -140,7 +141,10 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-util/cmake-3.10.2
-	test? ( ${VIRTUALX_DEPEND} )
+	test? (
+		x11-base/xorg-server[xvfb]
+		x11-apps/xhost
+	)
 "
 RESTRICT="mirror"
 
@@ -297,3 +301,5 @@ ewarn
 ewarn "For full protection, use the regular browser bin package instead."
 ewarn
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
