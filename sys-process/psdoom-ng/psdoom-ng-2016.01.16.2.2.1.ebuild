@@ -1,9 +1,10 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=6
-inherit eutils autotools
+EAPI=8
+inherit autotools
 
 DESCRIPTION="psdoom-ng"
 HOMEPAGE="https://github.com/orsonteodoro/psdoom-ng"
@@ -57,3 +58,5 @@ src_install() {
 		cp "${S}"/psdoom-data/README "${D}"/usr/share/psdoom-ng/README.wad
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
