@@ -1,12 +1,13 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # This fork of nano is based on 5.6.1_p20210415 from the master branch
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
-inherit autotools eutils flag-o-matic python-single-r1
+PYTHON_COMPAT=( python3_{8..11} )
+inherit autotools flag-o-matic python-single-r1
 
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
 HOMEPAGE="
@@ -382,3 +383,5 @@ src_install() {
 	dodir /usr/bin
 	dosym /bin/ynano /usr/bin/ynano
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
