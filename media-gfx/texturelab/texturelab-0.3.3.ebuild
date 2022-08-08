@@ -1,13 +1,14 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 ELECTRON_APP_ELECTRON_V="13.1.4"
 ELECTRON_APP_VUE_V="2.6.11"
 ELECTRON_APP_MODE="yarn"
 
-inherit eutils desktop electron-app npm-utils
+inherit desktop electron-app npm-utils
 
 DESCRIPTION="Free, Cross-Platform, GPU-Accelerated Procedural Texture Generator"
 HOMEPAGE="https://njbrown.itch.io/texturelab"
@@ -54,3 +55,5 @@ src_install() {
 	fperms 0755 ${ELECTRON_APP_INSTALL_PATH}/texturelab
 	npm-utils_install_licenses
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
