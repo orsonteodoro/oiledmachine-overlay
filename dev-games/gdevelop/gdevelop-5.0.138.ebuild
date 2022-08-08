@@ -1,4 +1,5 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -297,6 +298,7 @@ einfo
 }
 
 src_prepare() {
+	default
 	# Patches have already have been applied.
 	# You need to fork to apply custom changes instead.
 	touch "${T}/.portage_user_patches_applied"
@@ -472,3 +474,5 @@ ewarn "https://github.com/4ian/GDevelop/commit/5d62f0c92655a3d83b8d5763c87d02265
 ewarn "https://github.com/4ian/GDevelop/commit/f650a6aa9cf5d123f1e5fe632a2523f2ac2faaaf"
 ewarn
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
