@@ -83,10 +83,13 @@ BDEPEND+="
 
 if [[ "${VER_SCH}" == "marketing" ]] ; then
 	S="${WORKDIR}/${MY_PN}-${MY_PV}"
+	S_BAK="${WORKDIR}/${MY_PN}-${MY_PV}"
 elif [[ "${VER_SCH}" == "semver" ]] ; then
 	S="${WORKDIR}/${MY_PN}-${PV}"
+	S_BAK="${WORKDIR}/${MY_PN}-${PV}"
 elif [[ "${VER_SCH}" == "live-snapshot" ]] ; then
 	S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
+	S_BAK="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 fi
 
 DOCS=( README.md )
@@ -123,15 +126,30 @@ src_prepare()
 {
 	cd "${S}" || die
 	eapply "${FILESDIR}/tbb-2021.2.0-fix-missing-header-cholesky.patch"
-	cmake_src_prepare
 
-	src_prepare_abi() {
-		cd "${BUILD_DIR}" || die
+	# EPYTHON
+	# ABI
+	# MULTILIB_ABI_FLAG
+
+	src_prepare_abi()
+	{
 		if use python ; then
-			python_copy_sources
+			prepare_python_impl() {
+				cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}" || die
+			}
+			python_foreach_impl prepare_python_impl
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}_build"
+			cd "${CMAKE_USE_DIR}" || die
+			cmake_src_prepare
+		else
+			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+			cd "${CMAKE_USE_DIR}" || die
+			cmake_src_prepare
 		fi
 	}
-	multilib_copy_sources
 	multilib_foreach_abi src_prepare_abi
 }
 
@@ -158,8 +176,6 @@ INCLUDE_PATH           = ${S}/include/oneapi ${S}/include/tbb|g" \
 }
 
 _src_configure() {
-	cd "${BUILD_DIR}" || die
-
 	sed -i -e "s|@CMAKE_CURRENT_SOURCE_DIR@|${S}|g" \
 		"${S}/doc/Doxyfile.in" || die
 
@@ -199,24 +215,24 @@ _src_configure() {
 			-DEXAMPLES_UI_MODE=$(usex X "x" "con")
 		)
 	fi
-	CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	cmake_src_configure
 }
 
 src_configure()
 {
 	src_configure_abi() {
-		cd "${BUILD_DIR}" || die
 		if use python ; then
 			src_configure_py() {
-				cd "${BUILD_DIR}" || die
-				SUFFIX="_${ABI}_${EPYTHON/./_}"
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}_build"
+				cd "${CMAKE_USE_DIR}" || die
 				_src_configure
 			}
 			python_foreach_impl src_configure_py
 		else
-			SUFFIX="_${ABI}"
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+			cd "${CMAKE_USE_DIR}" || die
 			_src_configure
 		fi
 	}
@@ -267,19 +283,17 @@ EOF
 
 src_compile_pkg_config()
 {
+	cd "${BUILD_DIR}"
 	[[ -f "${T}/pkg_config_generated_${ABI}" ]] && return
 	gen_pkg_config ""
 	touch "${T}/pkg_config_generated_${ABI}"
 }
 
 _src_compile() {
-	cd "${BUILD_DIR}" || die
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
-	CMAKE_USE_DIR="${BUILD_DIR}" \
+	cd "${CMAKE_USE_DIR}"
 	cmake_src_compile
-	if use python ; then
-		cd "${BUILD_DIR}" || die
-		einfo "pwd="$(pwd)
+	if use python && [[ "${ABI}" == "${DEFAULT_ABI}" ]] ; then
+		cd "${BUILD_DIR}"
 		eninja python_build || die
 	fi
 	if use doc ; then
@@ -295,16 +309,18 @@ _src_compile() {
 src_compile()
 {
 	src_compile_abi() {
-		cd "${BUILD_DIR}" || die
 		if use python ; then
 			src_compile_py() {
-				cd "${BUILD_DIR}" || die
-				SUFFIX="_${ABI}_${EPYTHON/./_}"
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}_build"
+				cd "${CMAKE_USE_DIR}" || die
 				_src_compile
 			}
 			python_foreach_impl src_compile_py
 		else
-			SUFFIX="_${ABI}"
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+			cd "${CMAKE_USE_DIR}" || die
 			_src_compile
 		fi
 	}
@@ -321,8 +337,6 @@ run_native_tests()
 #
 #The following tests FAILED:
 #	 55 - test_semaphore (Child aborted)
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
-	CMAKE_USE_DIR="${BUILD_DIR}" \
 	cmake_src_test
 }
 
@@ -348,15 +362,17 @@ _src_test() {
 src_test()
 {
 	src_test_abi() {
-		cd "${BUILD_DIR}" || die
 		if use python ; then
 			src_test_py() {
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}_build"
 				cd "${BUILD_DIR}" || die
-				SUFFIX="_${ABI}_${EPYTHON/./_}"
 				_src_test
 			}
 		else
-			SUFFIX="_${ABI}"
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+			cd "${BUILD_DIR}" || die
 			_src_test
 		fi
 		python_foreach_impl src_test_py
@@ -424,8 +440,7 @@ _install_docs() {
 }
 
 _src_install() {
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
-	CMAKE_USE_DIR="${BUILD_DIR}" \
+
 	cmake_src_install
 	src_install_pkgconfig
 	if multilib_is_native_abi ; then
@@ -437,16 +452,18 @@ _src_install() {
 src_install()
 {
 	src_install_abi() {
-		cd "${BUILD_DIR}" || die
 		if use python ; then
 			src_install_py() {
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}_build"
 				cd "${BUILD_DIR}" || die
-				SUFFIX="_${ABI}_${EPYTHON/./_}"
 				_src_install
 			}
 			python_foreach_impl src_install_py
 		else
-			SUFFIX="_${ABI}"
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+			cd "${BUILD_DIR}" || die
 			_src_install
 		fi
 	}
