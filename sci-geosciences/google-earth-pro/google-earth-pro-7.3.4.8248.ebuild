@@ -1,12 +1,12 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # To find the version use:
 # dpkg -I 'google-earth-pro-stable_7.3.3_amd64.deb'
 
-EAPI=7
+EAPI=8
 
-inherit desktop eutils pax-utils unpacker xdg
+inherit desktop pax-utils unpacker xdg
 
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
@@ -419,7 +419,7 @@ eerror
 }
 
 src_prepare() {
-	xdg_src_prepare
+	default
 	cd "${WORKDIR}" || die
 	rm -rf "etc" "usr/share/menu" || die
 	cd "${WORKDIR}/opt/google/earth/pro" || die
@@ -502,3 +502,5 @@ ewarn
 pkg_postrm() {
 	xdg_pkg_postrm
 }
+
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild-changes, license-transparency, license-compleness
