@@ -1,9 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit cmake eutils git-r3 xdg
+inherit cmake git-r3 xdg
 
 DESCRIPTION="A modern music app for modern people."
 HOMEPAGE="https://github.com/lirios/music"
@@ -59,7 +60,7 @@ EGIT_OVERRIDE_REPO_LIRIOS_CMAKE_SHARED="https://github.com/lirios/cmake-shared.g
 S="${WORKDIR}/${P}"
 PROPERTIES="live"
 RESTRICT="mirror"
-_PATCHES=(
+PATCHES=(
 	"${FILESDIR}/music-1.0.0_pre20200314-reference-taglib2.patch"
 	"${FILESDIR}/music-1.0.0_pre20200314-allow-system-fluid.patch"
 	"${FILESDIR}/music-1.0.0_pre20200314-add-qtmultimedia-to-cmakelists.patch"
@@ -168,8 +169,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	xdg_src_prepare
-	export PATCHES=${_PATCHES[@]}
 	cmake_src_prepare
 }
 
@@ -189,3 +188,5 @@ src_configure() {
 	)
 	cmake_src_configure
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
