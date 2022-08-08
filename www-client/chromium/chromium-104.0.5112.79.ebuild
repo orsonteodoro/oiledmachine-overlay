@@ -1,3 +1,4 @@
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
 # Copyright 2009-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -7,7 +8,7 @@
 # See https://omahaproxy.appspot.com/ for the latest linux version
 
 EAPI=7
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="xml"
 
 CHROMIUM_LANGS="
@@ -3161,3 +3162,6 @@ einfo "You must be a member of the crpgo group to collect PGO profiling data."
 einfo
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
