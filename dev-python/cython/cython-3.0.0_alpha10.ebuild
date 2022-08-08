@@ -1,3 +1,4 @@
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -112,3 +113,7 @@ pkg_postinst() {
 pkg_postrm() {
 	use emacs && elisp-site-regen
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot
+# OILEDMACHINE-OVERLAY-META-REVDEP:  RapidFuzz, JaroWinkler
