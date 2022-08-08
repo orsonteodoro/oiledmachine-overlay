@@ -1,7 +1,7 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit autotools flag-o-matic libtool multilib-minimal toolchain-funcs
 
@@ -87,3 +87,7 @@ multilib_src_install() {
 	# all .la files can be deleted unconditionally.
 	find "${ED}" -type f -name '*.la' -delete || die
 }
+
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib-support
+
