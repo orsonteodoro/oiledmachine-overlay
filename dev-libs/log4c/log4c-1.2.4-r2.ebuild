@@ -1,7 +1,7 @@
 # Copyright 2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 DESCRIPTION="Logging FrameWork for C, as Log4j or Log4Cpp"
 HOMEPAGE="http://log4c.sourceforge.net/"
 LICENSE="LGPL-2.1"
@@ -20,3 +20,5 @@ multilib_src_install() {
 	default
 	dodir /usr/$(get_libdir)/${PN}
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
