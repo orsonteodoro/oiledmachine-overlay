@@ -1,7 +1,7 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 DESCRIPTION="TheoraPlay is a simple library to make decoding of Ogg Theora \
 videos easier."
 HOMEPAGE="https://icculus.org/theoraplay/"
@@ -20,7 +20,7 @@ EGIT_COMMIT="99e5fc74603e"
 SRC_URI=\
 "https://hg.icculus.org/icculus/theoraplay/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
-inherit eutils
+inherit
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
@@ -74,3 +74,5 @@ src_install() {
 	}
 	multilib_foreach_abi install_abi
 }
+
+# OILEDMACHINE-OVERLAY-META-REVDEP:  fna
