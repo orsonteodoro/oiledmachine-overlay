@@ -1,7 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 DESCRIPTION="Beautiful images of your code from right inside your terminal."
 HOMEPAGE="https://github.com/mixn/carbon-now-cli"
 LICENSE="MIT"
@@ -11,7 +12,7 @@ IUSE="clipboard"
 RDEPEND="clipboard? ( x11-misc/xclip )"
 NODE_VERSION=14
 DEPEND=">=net-libs/nodejs-${NODE_VERSION}[npm]"
-inherit desktop eutils npm-secaudit npm-utils
+inherit desktop npm-secaudit npm-utils
 MY_PN="${PN//-cli/}"
 SRC_URI=\
 "https://github.com/mixn/carbon-now-cli/archive/v${PV}.tar.gz \
@@ -31,3 +32,5 @@ src_install() {
 	exeinto /usr/bin
 	doexe "${T}/${MY_PN}"
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
