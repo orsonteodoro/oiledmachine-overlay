@@ -1,10 +1,11 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake multilib-minimal python-any-r1
 
 DESCRIPTION="Function order shuffling to defend against ROP and other types of code reuse"
@@ -87,3 +88,5 @@ src_install() {
 		dodoc selfrando-vs-aslr.png
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
