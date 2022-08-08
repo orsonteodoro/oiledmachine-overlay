@@ -1,7 +1,8 @@
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit flag-o-matic autotools multilib-minimal
 
@@ -132,3 +133,6 @@ multilib_src_install_all() {
 	find "${D}" -name '*.la' -delete || die
 	einstalldocs
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  apply-patch-bugfix
