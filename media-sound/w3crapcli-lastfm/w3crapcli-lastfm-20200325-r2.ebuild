@@ -4,8 +4,6 @@
 
 EAPI=8
 
-inherit
-
 DESCRIPTION="w3crapcli/last.fm provides a command line interface for the
 last.fm web service"
 LICENSE="WTFPL-2"
@@ -14,7 +12,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
 IUSE+=" doc download-tracks gettracks glistfm grab-lastfm-userpic lastfmpost
 mpv mplayerfm savedconfig"
-REQUIRED_USE+=" !savedconfig" # \
+REQUIRED_USE+=" savedconfig" # \
 # Potential security problem.  Portage doesn't encrypt environment.bz2
 # especially security sensitive variables.
 # Some setups may have unencrypted root but encrypted home.
@@ -78,9 +76,25 @@ RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 DOCS=( README.md )
 
+sanitize_variables() {
+	USERFOLDER=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	USEROWNER=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	LFM_NAME=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	LFM_PASS=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	APP_NAME=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+	APP_API_KEYAPP_SHARED_SECRET=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
+}
+
 pkg_setup() {
 	if use savedconfig ; then
-		if [[ ! -f /etc/portage/savedconfig/media-sound/${PN}-${PV} ]] ; then
+		if [[ -z "${SAVEDCONFIG_PATH}" ]] ; then
+eerror
+eerror "You must define SAVEDCONFIG_PATH environment variable as the abspath"
+eerror "to the settings."
+eerror
+			die
+		fi
+		if [[ ! -f "${SAVEDCONFIG_PATH}" ]] ; then
 cat \
 <<EOF
 ------------------ CUT BELOW -------------------------------
@@ -96,8 +110,8 @@ APP_SHARED_SECRET="myappsharedsecret"
 EOF
 eerror
 eerror "You must fill out your own savedconfig before preceeding.  Copy and"
-eerror "edit the into /etc/portage/savedconfig/media-sound/${PN}-${PV} and try"
-eerror "again.  Make sure the permission is 700."
+eerror "edit the into ${SAVEDCONFIG_PATH} and try again.  Make sure the"
+eerror "permission is 700 and stored in a encrypted device."
 eerror
 			die
 		fi
@@ -185,6 +199,8 @@ _set_settings() {
 			"${USERFOLDER}/.config/mpv/scripts/"
 	fi
 	einfo "Add ${d} to your profile's PATH"
+	warn_sanitize_credentials
+	sanitize_variables
 	unset LFM_PASS
 	unset APP_API_KEY
 	unset APP_SHARED_SECRET
@@ -201,9 +217,19 @@ einfo
 einfo "Do a \`emerge ${PN} --config\` to manually complete the installation."
 einfo
 	else
-		source "/etc/portage/savedconfig/media-sound/${PN}-${PV}"
+		source "${SAVEDCONFIG_PATH}"
 		_set_settings
 	fi
+}
+
+warn_sanitize_credentials() {
+ewarn
+ewarn "When you unemerge this program, use shred on all of the following"
+ewarn
+ewarn "  ${USERFOLDER}/.local/bin/gettracks.hs"
+ewarn "  ${USERFOLDER}/.local/bin/glistfm.sh"
+ewarn "  ${USERFOLDER}/.local/bin/lastfmpost"
+ewarn
 }
 
 pkg_config() {

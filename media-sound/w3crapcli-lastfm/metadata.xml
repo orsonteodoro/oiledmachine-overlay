@@ -19,6 +19,11 @@
     mplayer http://|file | mplayerfm
 
     For the mpv script, just run mpv as usual.
+
+    Build time environment variables:
+
+      SAVEDCONFIG_PATH - absolute path to your tokens and keys
+
   </longdescription>
   <upstream>
     <maintainer>
