@@ -32,7 +32,7 @@ https://github.com/google/googletest/archive/${GTEST_COMMIT}.tar.gz
 RESTRICT="!test? ( test ) mirror"
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	# Un-hardcode abseil compiler flags
 	sed -i \
 		-e '/"-maes",/d' \
