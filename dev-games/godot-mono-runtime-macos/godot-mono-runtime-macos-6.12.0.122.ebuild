@@ -1,7 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 MY_PV="df330ce"
 MY_PN="godot-mono-builds"
@@ -9,8 +10,8 @@ MY_P="${MY_PN}-${PV}"
 STATUS="stable"
 GODOT_SLOT_MAJOR="3"
 
-PYTHON_COMPAT=( python3_{8..10} )
-inherit eutils flag-o-matic git-r3 python-any-r1
+PYTHON_COMPAT=( python3_{8..11} )
+inherit flag-o-matic git-r3 python-any-r1
 
 DESCRIPTION="Mono build scripts for Godot on macOS"
 HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
@@ -255,3 +256,5 @@ src_install() {
 	insinto "/usr/lib/godot/${GODOT_SLOT_MAJOR}/mono-runtime"
 	doins -r "${WORKDIR}/build/"*
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
