@@ -1,10 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake eutils flag-o-matic python-any-r1 toolchain-funcs
+PYTHON_COMPAT=( python3_{8..11} )
+inherit cmake flag-o-matic python-any-r1 toolchain-funcs
 
 DESCRIPTION="Generated headers and sources for OpenXR loader."
 LICENSE="
@@ -126,3 +126,6 @@ src_install() {
 		rm -rf "${ED}/usr/share/doc/${P}/README.md"
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  vulkan-driver-checks
+
