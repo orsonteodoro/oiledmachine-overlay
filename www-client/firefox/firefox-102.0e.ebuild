@@ -1,3 +1,4 @@
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -15,13 +16,13 @@
 # Version announcements can be found here also:
 # https://wiki.mozilla.org/Release_Management/Calendar
 
-EAPI="7"
+EAPI=8
 
 FIREFOX_PATCHSET="firefox-102-patches-02j.tar.xz"
 
 LLVM_MAX_SLOT=14
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 
 WANT_AUTOCONF="2.1"
@@ -83,7 +84,6 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 SLOT="rapid"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 LICENSE_FINGERPRINT="\
 43af3d4fd2b3fa834f0b37e9cd3d866d20820a2ba13f51c1aab1bcf23714b6ce\
 7508e8e4f7d4e010c91ea3c9341ab9623b7ac7dc455c70680eb913a7550d09ac" # SHA512
@@ -286,6 +286,10 @@ BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=virtual/rust-1.59.0[${MULTILIB_USEDEP}]
 	amd64? ( >=dev-lang/nasm-2.14 )
+	pgo? (
+		x11-base/xorg-server[xvfb]
+		x11-apps/xhost
+	)
 	x86? ( >=dev-lang/nasm-2.14 )
 "
 
@@ -886,7 +890,6 @@ src_prepare() {
 	echo -n "${MOZ_API_KEY_LOCATION//gGaPi/}" > "${S}"/api-location.key || die
 	echo -n "${MOZ_API_KEY_MOZILLA//m0ap1/}" > "${S}"/api-mozilla.key || die
 
-	xdg_src_prepare
 
 	if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
 		pushd "${S}" || die
@@ -1824,3 +1827,7 @@ einfo "WebGL performance is suboptimal and runs at ~40 FPS.  There is currently"
 einfo "no fix for this."
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, new-patches
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
