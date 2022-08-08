@@ -9,20 +9,24 @@ DESCRIPTION=\
 "Light-weight, simple, and fast XML parser for C++ with XPath support"
 HOMEPAGE="https://pugixml.org/ https://github.com/zeux/pugixml/"
 LICENSE="MIT"
-KEYWORDS=\
-"~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="
+~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
+~x86-linux
+"
 IUSE+=" doc static-libs"
 SLOT="0/${PV}"
 DEPEND+=" virtual/libc"
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" || (
+BDEPEND+="
+	|| (
 		sys-devel/clang
 		sys-devel/gcc
 	)
-	>=dev-util/cmake-3.4"
+	>=dev-util/cmake-3.4
+"
 SRC_URI="https://github.com/zeux/${PN}/releases/download/v${PV}/${P}.tar.gz"
 RESTRICT="mirror"
-DOCS=( readme.txt docs )
+DOCS=( docs readme.txt )
 S="${WORKDIR}/${PN}-$(ver_cut 1-2 ${PV})"
 
 src_configure() {
