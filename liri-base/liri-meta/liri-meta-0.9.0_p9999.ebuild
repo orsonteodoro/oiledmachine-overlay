@@ -1,7 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 DESCRIPTION="Meta package for liri"
 HOMEPAGE="https://liri.io/"
 SLOT="0/$(ver_cut 1-3 ${PV})" # based on liri-base/liri-shell
@@ -54,3 +55,5 @@ einfo "To run Liri in KMS from a VT run:"
 einfo "  liri-session -- -platform eglfs"
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
