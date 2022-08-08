@@ -6,7 +6,7 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR=emake
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake cuda flag-o-matic python-utils-r1 toolchain-funcs
 
@@ -152,3 +152,5 @@ src_install() {
 		done
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
