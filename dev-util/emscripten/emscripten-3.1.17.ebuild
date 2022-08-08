@@ -1,7 +1,7 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 # For requirements, see
 # https://github.com/emscripten-core/emscripten/blob/3.1.17/site/source/docs/building_from_source/toolchain_what_is_needed.rst
@@ -14,7 +14,7 @@ EAPI=7
 
 LLVM_V=15
 LLVM_MAX_SLOT=${LLVM_V}
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic java-utils-2 llvm npm-secaudit python-single-r1 \
 	toolchain-funcs
 
