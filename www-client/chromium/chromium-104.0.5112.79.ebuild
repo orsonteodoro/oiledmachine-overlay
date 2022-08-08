@@ -1459,7 +1459,7 @@ ewarn
 			done
 		else
 			if use official ; then
-				LLVM_SLOT=14
+				LLVM_SLOT=${CR_CLANG_SLOT_OFFICIAL}
 			else
 				LLVM_SLOT=$(ver_cut 1 $(best_version "sys-devel/clang" \
 					| sed -e "s|sys-devel/clang-||g"))
