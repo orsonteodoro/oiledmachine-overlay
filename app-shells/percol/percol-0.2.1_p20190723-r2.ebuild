@@ -1,10 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
-inherit eutils distutils-r1
+PYTHON_COMPAT=( python3_{8..11} )
+inherit distutils-r1
 
 DESCRIPTION="Adds flavor of interactive filtering to the traditional pipe \
 concept of shell"
