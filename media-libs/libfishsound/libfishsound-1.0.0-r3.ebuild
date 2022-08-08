@@ -1,7 +1,7 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit multilib-minimal
 
@@ -52,3 +52,5 @@ multilib_src_install() {
 		docdir="${D}/usr/share/doc/${PF}" install
 	dodoc AUTHORS ChangeLog README
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
