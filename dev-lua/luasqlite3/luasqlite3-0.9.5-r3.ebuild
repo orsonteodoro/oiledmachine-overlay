@@ -1,7 +1,7 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 DESCRIPTION="LuaSQLite3"
 HOMEPAGE="http://lua.sqlite.org"
 LICENSE="all-rights-reserved MIT"
@@ -18,7 +18,7 @@ RDEPEND="${LUA_DEPS}
 	${DEPEND}"
 DEPEND="${RDEPEND}"
 S="${WORKDIR}/lsqlite3_fsl09y"
-inherit eutils toolchain-funcs
+inherit toolchain-funcs
 SRC_URI="http://lua.sqlite.org/index.cgi/zip/lsqlite3_fsl09y.zip"
 DOCS=( HISTORY README )
 
@@ -102,3 +102,5 @@ src_install() {
 	}
         multilib_foreach_abi install_abi
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
