@@ -1,10 +1,11 @@
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1 user
 
 DESCRIPTION="Open source, multi-user SDR receiver software with a web interface"
@@ -280,3 +281,5 @@ pkg_postinst() {
 	einfo "To change the password do:  openwebrx admin resetpassword admin"
 	einfo
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
