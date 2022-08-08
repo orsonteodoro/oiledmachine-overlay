@@ -1,4 +1,5 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # See profiles/desc/godot* for more related files.
@@ -11,7 +12,7 @@ MY_P="${MY_PN}-${PV}"
 STATUS="stable"
 MONO_PV="6.12.0.158" # same as godot-export-templates-bin
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit desktop eutils flag-o-matic llvm multilib-build python-any-r1 scons-utils
 
 DESCRIPTION="Godot export template for Windows (using MinGW64-w64 for 64-bit)"
@@ -546,3 +547,5 @@ einfo "  mkdir -p ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
 einfo "  cp -aT ${prefix} ~/.local/share/godot/templates/${PV}.${STATUS}${suffix}"
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
