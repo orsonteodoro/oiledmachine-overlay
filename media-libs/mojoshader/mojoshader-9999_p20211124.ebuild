@@ -1,9 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit cmake eutils
+inherit cmake
 
 DESCRIPTION="MojoShader is a library to work with Direct3D shaders on alternate\
  3D APIs and non-Windows platforms."
@@ -90,3 +91,5 @@ src_install() {
 	cmake_src_install
 	dodoc LICENSE.txt
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
