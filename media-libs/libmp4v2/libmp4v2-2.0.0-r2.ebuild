@@ -1,7 +1,7 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 MY_P=${P/lib}
 inherit libtool multilib-minimal
@@ -74,3 +74,5 @@ multilib_src_install() {
 	default
 	find "${D}" -name '*.la' -delete || die
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi
