@@ -1,10 +1,10 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake-utils python-any-r1
+PYTHON_COMPAT=( python3_{8..11} )
+inherit cmake python-any-r1
 
 DESCRIPTION="Bear is a tool that generates a compilation database for clang
 tooling."
@@ -35,5 +35,5 @@ src_configure() {
 	local mycmakeargs=(
 		-DUSE_SHELL_COMPLETION=$(usex bash-completion)
 	)
-	cmake-utils_src_configure
+	cmake_src_configure
 }

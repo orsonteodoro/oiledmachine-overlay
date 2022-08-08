@@ -1,9 +1,9 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake-multilib python-any-r1
 
 DESCRIPTION="Bear is a tool that generates a compilation database for clang
@@ -56,7 +56,7 @@ pkg_setup()
 }
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 }
 
 src_configure() {
