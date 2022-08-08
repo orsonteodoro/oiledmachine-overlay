@@ -1,11 +1,12 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # See configure.ac for versioning
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
-inherit eutils meson python-r1 xdg-utils
+PYTHON_COMPAT=( python3_{8..11} )
+inherit meson python-r1 xdg-utils
 
 DESCRIPTION="This program is designed to allow you to change the frequency \
 limits of your cpu and its governor. The application is similar in \
@@ -79,3 +80,5 @@ src_install() {
 pkg_postinst() {
 	xdg_icon_cache_update
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
