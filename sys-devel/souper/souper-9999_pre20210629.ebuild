@@ -1,9 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 CMAKE_BUILD_TYPE=Release
 CMAKE_MAKEFILE_GENERATOR=ninja
 inherit cmake linux-info llvm multilib-build python-any-r1
@@ -474,3 +475,5 @@ einfo "https://github.com/google/souper#using-souper"
 einfo "for usage details."
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
