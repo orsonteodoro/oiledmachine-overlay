@@ -1,13 +1,14 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 ELECTRON_APP_ELECTRON_V="10.4.7"
 ELECTRON_APP_TYPESCRIPT_V="4.4.4"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 
-inherit desktop electron-app eutils
+inherit desktop electron-app
 
 DESCRIPTION="Elegant Facebook Messenger desktop app"
 HOMEPAGE="https://github.com/sindresorhus/caprine"
@@ -51,3 +52,5 @@ einfo
 einfo "then you may need to run \`rm -rf ~/.config/Caprine\`"
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
