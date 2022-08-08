@@ -1,11 +1,11 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 # TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
-PYTHON_COMPAT=( python3_{7..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake llvm python-r1 virtualx
 
@@ -131,6 +131,10 @@ DEPEND="${RDEPEND}
 "
 BDEPEND="
 	>=dev-python/shiboken2-${PV}[${PYTHON_USEDEP}]
+	test? (
+		x11-base/xorg-server[xvfb]
+		x11-apps/xhost
+	)
 "
 
 pkg_setup() {
@@ -262,3 +266,5 @@ src_install() {
 	sed -i -e 's~pyside2-python[[:digit:]]\+\.[[:digit:]]\+~pyside2${PYTHON_CONFIG_SUFFIX}~g' \
 		"${ED}/usr/$(get_libdir)/cmake/PySide2-$(ver_cut 1-3 ${PV})/PySide2Targets-gentoo.cmake" || die
 }
+
+# OILEDMACHINE-OVERLAY-META-REVDEP:  shiboken2
