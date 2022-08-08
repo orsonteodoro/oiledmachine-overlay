@@ -1,10 +1,10 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # Partially based on luaxml-9999.ebuild from the lua overlay
 # For civetweb which uses the same SRC_URI
 
-EAPI=7
+EAPI=8
 
 LUA_COMPAT=( lua5-{1..3} ) # See https://github.com/n1tehawk/LuaXML/#luaxml
 IS_MULTILIB=true
