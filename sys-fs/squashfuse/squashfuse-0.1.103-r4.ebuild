@@ -1,10 +1,11 @@
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
 # Copyright 2016-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # The libappimage uses 1f98030 dated in 2016.
 # This 0.1.103 is dated 2018
 
-EAPI=7
+EAPI=8
 inherit flag-o-matic squashfuse
 
 DESCRIPTION="FUSE filesystem to mount squashfs archives"
@@ -123,3 +124,5 @@ src_install() {
 	}
 	squashfuse_foreach_impl install
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
