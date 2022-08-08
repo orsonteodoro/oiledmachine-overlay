@@ -1,12 +1,13 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/orakaro/rainbowstream.git"
-PYTHON_COMPAT=( python3_{8..10} ) # Upstream list only up to 3.7
-inherit distutils-r1 eutils git-r3
+PYTHON_COMPAT=( python3_{8..11} )
+inherit distutils-r1 git-r3
 
 DESCRIPTION="A smart and nice Twitter client on terminal written in Python."
 HOMEPAGE="http://www.rainbowstream.org/"
@@ -89,3 +90,5 @@ einfo
 einfo "to your homedir."
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
