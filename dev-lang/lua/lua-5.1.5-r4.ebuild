@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -27,10 +27,10 @@ MULTILIB_WRAPPED_HEADERS=(
 src_prepare() {
 	local PATCH_PV=$(ver_cut 1-2)
 
-	epatch "${FILESDIR}/${P}-fix_vararg_calls.patch"
+	eapply "${FILESDIR}/${P}-fix_vararg_calls.patch"
 
-	epatch "${FILESDIR}"/${PN}-${PATCH_PV}-make-r1.patch
-	epatch "${FILESDIR}"/${PN}-${PATCH_PV}-module_paths.patch
+	eapply "${FILESDIR}"/${PN}-${PATCH_PV}-make-r1.patch
+	eapply "${FILESDIR}"/${PN}-${PATCH_PV}-module_paths.patch
 
 	# use glibtool on Darwin (versus Apple libtool)
 	if [[ ${CHOST} == *-darwin* ]] ; then
@@ -47,12 +47,12 @@ src_prepare() {
 
 	if ! use deprecated ; then
 		# patches from 5.1.4 still apply
-		epatch "${FILESDIR}"/${PN}-5.1.4-deprecated.patch
-		epatch "${FILESDIR}"/${PN}-5.1.4-test.patch
+		eapply "${FILESDIR}"/${PN}-5.1.4-deprecated.patch
+		eapply "${FILESDIR}"/${PN}-5.1.4-test.patch
 	fi
 
 	if ! use readline ; then
-		epatch "${FILESDIR}"/${PN}-${PATCH_PV}-readline.patch
+		eapply "${FILESDIR}"/${PN}-${PATCH_PV}-readline.patch
 	fi
 
 	# Using dynamic linked lua is not recommended for performance
@@ -62,11 +62,11 @@ src_prepare() {
 	# compiler (built statically) nor the lua libraries (both shared and static
 	# are installed)
 	if use static ; then
-		epatch "${FILESDIR}"/${PN}-${PATCH_PV}-make_static-r1.patch
+		eapply "${FILESDIR}"/${PN}-${PATCH_PV}-make_static-r1.patch
 	fi
 
 	if use urho3d ; then
-		epatch "${FILESDIR}/lua-5.1.5-urho3d-lua_getmainthread.patch"
+		eapply "${FILESDIR}/lua-5.1.5-urho3d-lua_getmainthread.patch"
 	fi
 
 	# custom Makefiles
@@ -140,3 +140,5 @@ multilib_src_test() {
 		test/lua.static test/${test}.lua && die "test $test failed"
 	done
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  apply-urho3d-patch
