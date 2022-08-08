@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 DISTUTILS_USE_SETUPTOOLS=rdepend
 inherit distutils-r1
 
@@ -45,3 +45,5 @@ python_install_all() {
 	use doc && local HTML_DOCS=( docs/_build/. )
 	distutils-r1_python_install_all
 }
+
+# OILEDMACHINE-OVERLAY-META-REVDEP:  puddletag
