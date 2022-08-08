@@ -1,7 +1,7 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 # -r revision notes
 # -rabcde
@@ -12,8 +12,8 @@ EAPI=7
 LLVM_MAX_SLOT=14 # This should not be more than Mesa's package LLVM_MAX_SLOT
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
-PYTHON_COMPAT=( python3_{8..10} )
-USE_RUBY="ruby26 ruby27 ruby30"
+PYTHON_COMPAT=( python3_{8..11} )
+USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
 inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
@@ -770,7 +770,11 @@ BDEPEND+="
 	virtual/perl-JSON-PP
 	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_V} )
 	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
-	pgo? ( dev-vcs/subversion )
+	pgo? (
+		dev-vcs/subversion
+		x11-base/xorg-server[xvfb]
+		x11-apps/xhost
+	)
 	thunder? ( net-libs/thunder )
 	webrtc? ( dev-vcs/subversion )
 "
@@ -1670,3 +1674,6 @@ einfo
 	fi
 	check_geolocation
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  license-transparency, webvtt, avif
+# OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
