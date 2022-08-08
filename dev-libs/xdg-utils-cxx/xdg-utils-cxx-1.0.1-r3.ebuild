@@ -1,7 +1,8 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit cmake static-libs
 
@@ -58,7 +59,12 @@ src_install() {
 	dodoc LICENSE
 	cat <<-EOF > "${T}"/99${P}
 		LDPATH=\
-"/usr/lib64/XdgUtils"
+"/usr/$(get_libdir)/XdgUtils"
 	EOF
 	doenvd "${T}"/99${P}
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  static-libs
+# OILEDMACHINE-OVERLAY-META-REVDEP:  libappimage, appimaged
+
