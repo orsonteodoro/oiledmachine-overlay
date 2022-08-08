@@ -1,9 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit eutils git-r3
+inherit git-r3
 
 DESCRIPTION="Shared imports and modules for projects using the qbs build system"
 HOMEPAGE="https://github.com/lirios/qbs-shared"
@@ -76,3 +77,5 @@ src_install() {
 	docinto licenses
 	dodoc LICENSE.BSD
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
