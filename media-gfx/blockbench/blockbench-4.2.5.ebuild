@@ -1,11 +1,12 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 ELECTRON_APP_ELECTRON_V="17.4.1"
 ELECTRON_APP_MODE="npm"
-inherit eutils desktop electron-app npm-utils
+inherit desktop electron-app npm-utils
 
 DESCRIPTION="Blockbench - A boxy 3D model editor"
 HOMEPAGE="https://www.blockbench.net"
@@ -41,3 +42,5 @@ src_install() {
 	fperms 0755 ${ELECTRON_APP_INSTALL_PATH}/blockbench
 	npm-utils_install_licenses
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
