@@ -1,7 +1,8 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 EPLATFORMS="android arm native rpi web"
 STATIC_LIBS_CUSTOM_LIB_TYPE_IMPL="module"
@@ -10,7 +11,7 @@ CMAKE_MAKEFILE_GENERATOR=emake
 LLVM_SLOTS=(15 14 13) # Previously tested with 9
 LLVM_MAX_SLOT=15 # It needs testing.  It can break with different LLVM.
 
-inherit cmake eutils flag-o-matic linux-info llvm multilib-minimal platforms static-libs
+inherit cmake flag-o-matic linux-info llvm multilib-minimal platforms static-libs
 
 DESCRIPTION="Cross-platform 2D and 3D game engine."
 HOMEPAGE="http://urho3d.github.io/"
@@ -2102,3 +2103,5 @@ einfo "can be avoided using \`emrun --browser chrome <path>\`"
 einfo
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
