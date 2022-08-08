@@ -1,11 +1,11 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # See also https://github.com/fedora-infra/kitchen
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} ) # setup.py says up to 3.4
+PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
 DESCRIPTION="A cornucopia of useful code"
@@ -20,3 +20,5 @@ BDEPEND+=" ${PYTHON_DEPS}
 	dev-python/setuptools[${PYTHON_USEDEP}]"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 RESTRICT="mirror"
+
+# OILEDMACHINE-OVERLAY-META-REVDEP:  rtv
