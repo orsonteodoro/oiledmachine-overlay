@@ -1,9 +1,9 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit cmake eutils flag-o-matic
+inherit cmake flag-o-matic
 
 DESCRIPTION="A lightweight GPU friendly version of VDB initially targeting
 rendering applications."
@@ -396,3 +396,5 @@ src_install()
 		done
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
