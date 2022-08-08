@@ -1,11 +1,11 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 EMTRS="release test"
-PYTHON_COMPAT=( python3_{8..10} )
-inherit autotools eutils flag-o-matic llvm multilib multilib-minimal \
+PYTHON_COMPAT=( python3_{8..11} )
+inherit autotools flag-o-matic llvm multilib multilib-minimal \
 mutex-test-release python-any-r1 toolchain-funcs
 
 DESCRIPTION="VIPS Image Processing Library"
@@ -529,3 +529,5 @@ multilib_src_install_all() {
 	docinto licenses
 	dodoc COPYING
 }
+
+# OILEDMACHINE-OVERLAY-META-REVDEP:  typescript
