@@ -1,4 +1,5 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -99,3 +100,4 @@ src_install() {
 	dotnet_multilib_comply
 }
 
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
