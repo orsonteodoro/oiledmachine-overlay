@@ -1,12 +1,18 @@
-# Copyright 2019-2020 Orson Teodoro
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2019-2022 Orson Teodoro
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: squashfuse.eclass
 # @MAINTAINER: orsonteodoro@hotmail.com
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: squashfuse multibuild helper
 # @DESCRIPTION:
 # The squashfuse eclass helps build both normal squashfuse and squashfuse modified for libappimage
+
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 inherit multibuild
 

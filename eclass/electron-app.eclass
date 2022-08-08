@@ -1,5 +1,5 @@
-# Copyright 2019-2020 Orson Teodoro
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2019-2022 Orson Teodoro
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: electron-app.eclass
@@ -7,29 +7,19 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 6 7
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: Eclass for GUI based Electron packages
 # @DESCRIPTION:
 # The electron-app eclass defines phase functions and utility functions for
 # Electron app packages. It depends on the app-portage/npm-secaudit package to
 # maintain a secure environment.
 
-case "${EAPI:-0}" in
-        0|1|2|3|4|5)
-                die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
-                ;;
-        6)
-		inherit eapi7-ver
-		;;
-	7)
-                ;;
-        *)
-                die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
-                ;;
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-
-inherit chromium-2 desktop eutils npm-utils
+inherit chromium-2 desktop npm-utils
 
 # ############## START Per-package environmental variables #####################
 

@@ -1,5 +1,5 @@
 # Copyright 2019-2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: ot-kernel-v5.4.eclass
@@ -7,11 +7,16 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: Eclass for patching the 5.4.x kernel
 # @DESCRIPTION:
 # The ot-kernel-v5.4 eclass defines specific applicable patching for the 5.4.x
 # linux kernel.
+
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 CXX_STD="-std=gnu++98"
 LLVM_MAX_SLOT=15

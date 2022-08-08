@@ -1,12 +1,18 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: blender.eclass
 # @MAINTAINER: orsonteodoro@hotmail.com
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender common implementation
 # @DESCRIPTION:
 # The blender eclass helps reduce code duplication
 # across the blender eclasses to reduce maintenance cost.
+
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 PGO_SAMPLE_SIZE_=${PGO_SAMPLE_SIZE:=30}
 

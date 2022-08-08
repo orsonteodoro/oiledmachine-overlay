@@ -1,12 +1,18 @@
-# Copyright 2019-2020 Orson Teodoro
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2019-2022 Orson Teodoro
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: blender-multibuild.eclass
 # @MAINTAINER: orsonteodoro@hotmail.com
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender multibuild helper
 # @DESCRIPTION:
 # The blender-multibuild.eclass helps build multiple configurations of blender.
+
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 # @ECLASS-VARIABLE: _BLENDER_IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the blender-multibuild context

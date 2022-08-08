@@ -1,5 +1,5 @@
-# Copyright 2019-2021 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 2019-2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: ot-kernel-cve.eclass
@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: Eclass for CVE patching the kernel
 # @DESCRIPTION:
 # The ot-kernel-cve eclass resolves CVE vulnerabilities for any linux kernel
@@ -19,6 +19,12 @@
 # These are not enabled by default because of licensing, government interest,
 # no crypto applied (as in PGP/GPG signed emails) to messages to authenticate
 # or verify them.
+
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
+
 IUSE+=" cve_hotfix"
 LICENSE+=" cve_hotfix? ( GPL-2 )"
 

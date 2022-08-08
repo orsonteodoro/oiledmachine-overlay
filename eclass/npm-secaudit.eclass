@@ -1,5 +1,5 @@
-# Copyright 2019-2020 Orson Teodoro
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2019-2022 Orson Teodoro
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: npm-secaudit.eclass
@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 6 7
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: Eclass for CLI based nodejs packages
 # @DESCRIPTION:
 # The npm-secaudit eclass defines phase functions and utility for npm packages.
@@ -18,21 +18,12 @@
 # reduce packaging time.
 #
 
-case "${EAPI:-0}" in
-        0|1|2|3|4|5)
-                die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
-                ;;
-        6)
-		inherit eapi7-ver
-		;;
-	7)
-                ;;
-        *)
-                die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
-                ;;
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-inherit eutils npm-utils
+inherit npm-utils
 
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm pkg_postinst
 

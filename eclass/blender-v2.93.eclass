@@ -3,6 +3,7 @@
 
 # @ECLASS: blender-v2.93.eclass
 # @MAINTAINER: orsonteodoro@hotmail.com
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender implementation
 # @DESCRIPTION:
 # The blender-v2.93.eclass helps reduce code duplication across ebuilds
@@ -13,6 +14,11 @@
 
 # The ebuild uses the same matching LLVM version used with Mesa to prevent
 # the multiple LLVM bug.
+
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
 PYTHON_COMPAT=( python3_{9,10} ) # For the max exclusive Python supported (and

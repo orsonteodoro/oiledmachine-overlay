@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: Eclass for patching the kernel
 # @DESCRIPTION:
 # The ot-kernel eclass defines common patching steps for any linux
@@ -87,9 +87,8 @@
 #   https://github.com/torvalds/linux/compare/v5.18...zen-kernel:5.18/zen-sauce
 
 case ${EAPI:-0} in
-	7) ;;
-	*) die "this eclass doesn't support EAPI ${EAPI}" ;;
-
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
 # I did a grep -i -r -e "SPDX" ./ | cut -f 3 -d ":" | sort | uniq

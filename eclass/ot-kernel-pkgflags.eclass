@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: Eclass for patching the kernel
 # @DESCRIPTION:
 # The ot-kernel-pkgflags eclass auto enables kernel config flags based on
@@ -18,6 +18,11 @@
 # should manually edit the .config instead of modifying this eclass.
 
 # This eclass is biased towards built in (=y) instead of modules (=m) for security reasons.
+
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 inherit ot-kernel-kutils
 

@@ -1,5 +1,5 @@
-# Copyright 2019-2020 Orson Teodoro
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2019-2022 Orson Teodoro
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: npm-utils.eclass
@@ -7,24 +7,15 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 6 7
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: Eclass for wrapper npm commands
 # @DESCRIPTION:
 # The npm-utils eclass defines convenience functions for working with npm with
 # subdirectories.
 
-case "${EAPI:-0}" in
-        0|1|2|3|4|5)
-                die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
-                ;;
-	6)
-		inherit eapi7-ver
-		;;
-        7)
-                ;;
-        *)
-                die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
-                ;;
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
 # ############## START Per-package environmental variables #####################

@@ -1,9 +1,10 @@
-# Copyright 2019-2020 Orson Teodoro
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2019-2022 Orson Teodoro
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: mutex-test-release.eclass
 # @MAINTAINER: orsonteodoro@hotmail.com
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: mutex-test-release multibuild helper
 # @DESCRIPTION:
 # The mutex-test-release eclass helps build for cases where the test build seems
@@ -12,6 +13,11 @@
 # installing only the release.  The test build will have more relaxed constants
 # or static build constants (e.g. prefix to ${D}/usr).  Release will have the
 # expected prefixes to /usr.
+
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 inherit multibuild
 
