@@ -1,7 +1,7 @@
-# Copyright 1999-2017 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 DESCRIPTION="The Subroutine library is a library of optimized subroutines \
 coded in assembly language."
 HOMEPAGE="http://www.agner.org/optimize/"
@@ -14,7 +14,7 @@ DEPEND="dev-lang/nasm
 	>=dev-util/objconv-2.51"
 SRC_URI=\
 "http://www.agner.org/optimize/asmlib.zip -> ${P}.zip"
-inherit autotools eutils flag-o-matic multilib-minimal unpacker
+inherit autotools flag-o-matic multilib-minimal unpacker
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( asmlib-instructions.pdf )
@@ -85,3 +85,5 @@ multilib_src_install() {
 	doins asmlibran.h
 	dodoc license.txt
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
