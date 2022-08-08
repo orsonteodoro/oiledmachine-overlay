@@ -935,3 +935,6 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-META-EBUILD-QUALITY:  TRASH
+# OILEDMACHINE-OVERLAY-META-TAGS:  to-be-trashed, kept-for-notes-for-newer-versions, notes-for-xmlstarlet, notes-for-multiline-sed
+# OILEDMACHINE-OVERLAY-META-DETAILED-NOTES:  Plans on newest ebuild on hold because of .NET6 and lack of install details.  Cannot revive this version because of probuild is EOL.
