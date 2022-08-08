@@ -1,14 +1,14 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 MY_PN="oneTBB"
 PV1="$(ver_cut 1)"
 PV2="$(ver_cut 2)"
 MY_PV="${PV1}_U${PV2}"
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake flag-o-matic multilib-minimal python-r1 toolchain-funcs
 
 DESCRIPTION="oneAPI Threading Building Blocks (oneTBB)"
@@ -461,3 +461,6 @@ einfo "either set the RPATH or add a LD_LIBRARY_PATH wrapper to use"
 einfo "this slot.  You must verify that the linking is proper via ldd."
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot

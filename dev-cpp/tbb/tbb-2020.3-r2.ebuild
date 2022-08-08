@@ -1,7 +1,7 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit flag-o-matic multilib-minimal multilib toolchain-funcs
 
@@ -174,3 +174,6 @@ einfo "either set the RPATH or add a LD_LIBRARY_PATH wrapper to use"
 einfo "this slot.  You must verify that the linking is proper via ldd."
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot
