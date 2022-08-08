@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # See NotoColorEmoji.tmpl.ttx.tmpl for versioning at
 # <namerecord nameID="5" platformID="3" platEncID="1" langID="0x409">
-EAPI=7
+EAPI=8
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
 LICENSE="OFL-1.1"
