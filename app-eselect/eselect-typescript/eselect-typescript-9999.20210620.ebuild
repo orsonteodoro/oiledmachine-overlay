@@ -1,8 +1,8 @@
 # Copyright 2019-2021 Orson Teodoro
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI=8
 
 DESCRIPTION="Manages the /usr/bin/tsc /usr/bin/tsserver symlinks"
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay"
@@ -22,3 +22,5 @@ src_install() {
 	insinto /usr/share/eselect/modules
 	doins typescript.eselect
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
