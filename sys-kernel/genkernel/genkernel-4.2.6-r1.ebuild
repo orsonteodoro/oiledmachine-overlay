@@ -1,4 +1,5 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # The reuse of revision r7 was used so that newer bumps
@@ -19,9 +20,9 @@
 # modified with subdir_mount, entry, llvm, pgo changes.  Revision
 # bumps may change on the oiledmachine-overlay.
 
-EAPI="7"
+EAPI=8
 
-PYTHON_COMPAT=( python3_{7..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit bash-completion-r1 python-single-r1
 
@@ -651,3 +652,6 @@ pkg_postinst() {
 	ewarn "Do not use at this time.  Use 4.2.3 instead."
 	ewarn
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, pgo, lto, patch-additions

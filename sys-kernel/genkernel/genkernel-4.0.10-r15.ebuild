@@ -1,4 +1,5 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # genkernel-9999        -> latest Git branch "master"
@@ -8,7 +9,7 @@
 # modified with subdir_mount, crypt_root_plain, llvm changes.  Revision
 # bumps may change on the oiledmachine-overlay.
 
-EAPI="7"
+EAPI=8
 
 inherit bash-completion-r1
 
@@ -429,3 +430,6 @@ pkg_postinst() {
 	ewarn "upgrading."
 	ewarn
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, pgo, lto, patch-additions
