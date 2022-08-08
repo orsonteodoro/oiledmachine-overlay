@@ -1,10 +1,10 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 DISTUTILS_USE_SETUPTOOLS=pyproject.toml
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit distutils-r1
 
 DESCRIPTION="Quart is a Python ASGI web microframework with the same API as Flask."
@@ -54,3 +54,5 @@ SRC_URI="
 https://gitlab.com/pgjones/${PN}/-/archive/${PV}/${PN}-${PV}.tar.bz2"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
+
+# OILEDMACHINE-OVERLAY-META-TAGS:  orphaned
