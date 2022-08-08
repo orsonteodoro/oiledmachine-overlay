@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 DESCRIPTION="The OpenAL Utility Toolkit"
 HOMEPAGE="https://kcat.strangesoft.net/alure.html"
 LICENSE="MIT"
@@ -25,7 +25,7 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT:0:7}"
 RESTRICT="mirror"
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	sed -i -e "/DESTINATION/s:doc/alure:doc/${PF}:" CMakeLists.txt || die
 	multilib_copy_sources
 }
