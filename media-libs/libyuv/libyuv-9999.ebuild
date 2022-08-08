@@ -87,10 +87,10 @@ dea5d9746a82a88d9ccf9eb9120d7f65c55150fb7bac480da3f3ea92d83e0208"
 	if [[ "${expected}" != "${actual}" ]] ; then
 eerror
 eerror "The build files has changed.  This means that either a change in"
-eerror "dependencies, supported arches, ABI, etc."
+eerror "dependencies, supported arches, ABI, config options, etc."
 eerror
-eerror "This means that the ebuild packager needs to update the *DEPENDS or"
-eerror "KEYWORDS.  Send an issue request about this."
+eerror "This means that the ebuild packager needs to update the *DEPENDS,"
+eerror "IUSE, KEYWORDS.  Send an issue request about this."
 eerror
 eerror "Expected build files fingerprint:  ${expected}"
 eerror "Actual build files fingerprint:  ${actual}"
