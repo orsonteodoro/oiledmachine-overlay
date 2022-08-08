@@ -1,9 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit cmake eutils git-r3
+inherit cmake git-r3
 
 DESCRIPTION="QtQuick and Wayland shell for convergence"
 HOMEPAGE="https://github.com/lirios/shell"
@@ -145,3 +146,5 @@ einfo "To run Liri in KMS from a VT run:"
 einfo "  liri-session -- -platform eglfs"
 einfo
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
