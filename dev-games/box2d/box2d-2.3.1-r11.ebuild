@@ -1,9 +1,9 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit eutils cmake multilib-build static-libs
+inherit cmake multilib-build static-libs
 
 DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
@@ -152,3 +152,6 @@ src_install() {
 pkg_postinst() {
 	ewarn "This was the last major.minor version released in 2014 and is no longer receiving updates."
 }
+
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib-support, static-libs
