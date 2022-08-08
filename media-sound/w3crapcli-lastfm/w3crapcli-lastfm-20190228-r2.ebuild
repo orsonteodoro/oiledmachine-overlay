@@ -1,9 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit eutils
+inherit
 
 DESCRIPTION="w3crapcli/last.fm provides a command line interface for the
 last.fm web service"
@@ -226,3 +227,5 @@ pkg_config() {
 		_set_settings
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
