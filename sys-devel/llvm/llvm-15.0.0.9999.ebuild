@@ -2,9 +2,9 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake llvm.org multilib-minimal pax-utils python-any-r1 \
 	toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils
@@ -1403,3 +1403,7 @@ eerror "Missing BOLT profile required for a BOLT optimized LLVM."
 	done
 	strip_package
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patch, stop-compile-spam
+# OILEDMACHINE-OVERLAY-META-WIP:  bolt, pgo
