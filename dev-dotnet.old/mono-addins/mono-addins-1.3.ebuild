@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -22,7 +22,7 @@ RESTRICT="mirror"
 
 src_prepare() {
 	default
-	#epatch "${FILESDIR}/gmcs.patch"
+	#eapply "${FILESDIR}/gmcs.patch"
 	eautoreconf
 	## with dev-dotnet/gtk-sharp-2.99.1
 	## it gives
