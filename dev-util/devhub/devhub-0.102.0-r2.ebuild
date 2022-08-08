@@ -1,13 +1,14 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 ELECTRON_APP_MODE=yarn
 ELECTRON_APP_ELECTRON_V="11.0.3"
 ELECTRON_APP_REACT_NATIVE_V="0.64.0_rc1"
 
-inherit desktop electron-app eutils npm-utils
+inherit desktop electron-app npm-utils
 
 DESCRIPTION="GitHub Notifications Manager & Activity Watcher - Web, Mobile & \
 Desktop"
@@ -50,3 +51,5 @@ src_install() {
         make_desktop_entry ${PN} "${MY_PN}" ${PN} "Development"
 	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
