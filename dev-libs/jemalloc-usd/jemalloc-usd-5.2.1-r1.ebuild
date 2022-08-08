@@ -1,7 +1,7 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="7"
+EAPI=8
 
 # This ebuild exists to prevent:
 # ImportError: /usr/lib64/libjemalloc.so.2: cannot allocate memory in static TLS block
@@ -65,3 +65,5 @@ multilib_src_install_all() {
 	use static-libs || find "${ED}" -name '*.a' -delete
 	rm -rf "${ED}/usr/share/man" || die
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  install-location
