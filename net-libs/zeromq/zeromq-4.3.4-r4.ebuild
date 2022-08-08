@@ -1,7 +1,7 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 inherit cmake-multilib
 inherit multilib-minimal
@@ -41,7 +41,7 @@ SRC_URI="https://github.com/zeromq/libzmq/releases/download/v${PV}/${P}.tar.gz"
 PATCHES=( "${FILESDIR}/zeromq-4.3.4-build-curve_keygen.patch" )
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 	multilib_copy_sources
 }
 
