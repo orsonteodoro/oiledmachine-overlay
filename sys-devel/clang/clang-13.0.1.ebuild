@@ -2,9 +2,9 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake llvm llvm.org multilib multilib-minimal \
 	prefix python-single-r1 toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils
@@ -960,3 +960,7 @@ pkg_postrm() {
 		eselect compiler-shadow clean all
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, patch, hardened-clang, add-souper-patch
+# OILEDMACHINE-OVERLAY-META-WIP:  bolt, pgo
