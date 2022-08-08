@@ -3,9 +3,9 @@
 
 # Based on openvdb-7.1.0-r1.ebuild from the gentoo overlay
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake flag-o-matic python-single-r1
 
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
@@ -269,3 +269,5 @@ eerror
 		fi
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
