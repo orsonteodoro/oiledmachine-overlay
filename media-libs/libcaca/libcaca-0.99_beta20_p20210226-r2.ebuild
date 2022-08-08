@@ -1,10 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{8..10} )
-USE_RUBY="ruby26 ruby27 ruby30"
+PYTHON_COMPAT=( python3_{8..11} )
+USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
 inherit autotools eutils flag-o-matic mono-env java-pkg-opt-2 \
 multilib-minimal python-single-r1 ruby-ng
 
@@ -151,3 +151,5 @@ multilib_src_install_all() {
 	rm -rf "${D}"/usr/share/java
 	find "${D}" -name '*.la' -type f -delete || die
 }
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  256-color-patch
