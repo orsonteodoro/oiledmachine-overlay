@@ -1,9 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-inherit cmake eutils git-r3
+inherit cmake git-r3
 
 DESCRIPTION="This is the App Center for Liri OS for installing, updating, and managing applications built using Flatpak"
 HOMEPAGE="https://github.com/lirios/appcenter"
@@ -96,3 +97,5 @@ src_configure() {
 	)
 	cmake_src_configure
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
