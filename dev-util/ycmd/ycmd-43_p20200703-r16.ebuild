@@ -1,12 +1,13 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 2022 Orson Teodoro <orsonteododoro@hotmail.com>
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 CMAKE_IN_SOURCE_BUILD=1
 
-inherit cmake eutils flag-o-matic python-r1
+inherit cmake flag-o-matic python-r1
 
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
@@ -1911,3 +1912,5 @@ einfo "locate it in the default_settings.json file."
 einfo
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
