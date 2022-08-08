@@ -1,12 +1,12 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
-PYTHON_COMPAT=( python3_{8..10} )
-USE_RUBY="ruby26 ruby27 ruby30"
+PYTHON_COMPAT=( python3_{8..11} )
+USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
 
-inherit eutils python-r1 ruby-ng
+inherit python-r1 ruby-ng
 
 DESCRIPTION="A delightful community-driven framework for managing your zsh \
 configuration that includes optional plugins and themes."
@@ -729,3 +729,7 @@ ewarn
 		echo "${MISSING_DEPENDS[@]/#/omz_plugins_}" | fold -w 80 -s
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  customization, delete-unused-themes, delete-unused-plugins, dependency-checks
+
