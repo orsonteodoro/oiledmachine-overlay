@@ -2,7 +2,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=8
+EAPI=7
 
 CXX_STANDARD="-std=c++17"
 EGIT_COMMIT="2ddad078c6cd355dcaa45996cf9f3a49df020102"
@@ -771,4 +771,4 @@ einfo "prevent game build failures."
 einfo
 }
 
-# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD FORCE_EAPI7
