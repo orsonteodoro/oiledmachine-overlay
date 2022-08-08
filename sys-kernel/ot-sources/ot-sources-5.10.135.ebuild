@@ -1,7 +1,7 @@
 # Copyright 2019-2022 Orson Teodoro
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="7"
+EAPI=8
 
 K_GENPATCHES_VER="144"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
@@ -13,3 +13,5 @@ inherit ot-kernel-v5.10
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v5.10.eclass
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
