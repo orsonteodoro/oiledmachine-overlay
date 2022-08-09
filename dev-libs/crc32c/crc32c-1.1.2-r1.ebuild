@@ -41,3 +41,4 @@ src_configure() {
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES: multilib-support EAPI8
+# OILEDMACHINE-OVERLAY-META-REVDEP: leveldb
