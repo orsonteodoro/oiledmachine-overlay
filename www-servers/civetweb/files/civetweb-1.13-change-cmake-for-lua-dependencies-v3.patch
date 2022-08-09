@@ -1,24 +1,52 @@
-diff -urp civetweb-1.13.orig/CMakeLists.txt civetweb-1.13/CMakeLists.txt
---- civetweb-1.13.orig/CMakeLists.txt	2021-02-20 20:59:51.873084829 -0800
-+++ civetweb-1.13/CMakeLists.txt	2021-02-20 21:00:16.130041632 -0800
-@@ -145,8 +145,6 @@ endif()
+diff -urp civetweb-1.15-abi_x86_32.x86_static_lua5.1.orig/CMakeLists.txt civetweb-1.15-abi_x86_32.x86_static_lua5.1/CMakeLists.txt
+--- civetweb-1.15-abi_x86_32.x86_static_lua5.1.orig/CMakeLists.txt	2022-08-09 16:30:34.398928266 -0700
++++ civetweb-1.15-abi_x86_32.x86_static_lua5.1/CMakeLists.txt	2022-08-09 16:31:38.885428436 -0700
+@@ -132,20 +132,17 @@ if (NOT CIVETWEB_ALLOW_WARNINGS)
+   endif()
+ endif()
+ 
+-# Link to the shared LUA library
+-cmake_dependent_option(
+-  CIVETWEB_ENABLE_LUA_SHARED  "Link to the shared LUA system library" OFF
+- CIVETWEB_ENABLE_LUA OFF)
+-if (CIVETWEB_ENABLE_LUA)
+-  message(STATUS "Linking shared Lua library - ${CIVETWEB_ENABLE_LUA_SHARED}")
+-endif()
++option(CIVETWEB_FETCH_LUA "Allow fetching Lua" OFF)
++option(CIVETWEB_FETCH_LUA_FILESYSTEM "Allow fetching LuaFileSystem" OFF)
++option(CIVETWEB_FETCH_LUA_SQLITE "Allow fetching LuaSQLite3" OFF)
++option(CIVETWEB_FETCH_LUA_XML "Allow fetching LuaXML" OFF)
++option(CIVETWEB_FETCH_SQLITE "Allow fetching SQLite" OFF)
++option(CIVETWEB_LUA_STATIC "Link lua and dependencies as static" OFF)
+ 
+ # Lua Third Party Settings
  if (CIVETWEB_ENABLE_LUA)
-   if (NOT CIVETWEB_ENABLE_LUA_SHARED)
+-  if (NOT CIVETWEB_ENABLE_LUA_SHARED)
++  if (CIVETWEB_FETCH_LUA)
      # Lua Version
 -    set(CIVETWEB_LUA_VERSION 5.2.4 CACHE STRING
 -      "The version of Lua to build and include statically")
      set_property(CACHE CIVETWEB_LUA_VERSION PROPERTY VALUE ${CIVETWEB_LUA_VERSION})
      message(STATUS "Lua Version - ${CIVETWEB_LUA_VERSION}")
      mark_as_advanced(CIVETWEB_LUA_VERSION)
-diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
---- civetweb-1.13.orig/src/CMakeLists.txt	2020-09-30 11:24:15.000000000 -0700
-+++ civetweb-1.13/src/CMakeLists.txt	2021-02-20 21:02:28.443258698 -0800
+@@ -627,7 +624,7 @@ set(CPACK_PACKAGE_DESCRIPTION_FILE "${CM
+ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.md")
+ set(CPACK_STRIP_FILES TRUE)
+ set(CPACK_PACKAGE_DEPENDS "openssl")
+-if (CIVETWEB_ENABLE_LUA_SHARED)
++if (CIVETWEB_FETCH_LUA)
+   set(CPACK_PACKAGE_DEPENDS "lua, ${CPACK_PACKAGE_DEPENDS}")
+ endif()
+ 
+diff -urp civetweb-1.15-abi_x86_32.x86_static_lua5.1.orig/src/CMakeLists.txt civetweb-1.15-abi_x86_32.x86_static_lua5.1/src/CMakeLists.txt
+--- civetweb-1.15-abi_x86_32.x86_static_lua5.1.orig/src/CMakeLists.txt	2021-09-01 01:46:33.000000000 -0700
++++ civetweb-1.15-abi_x86_32.x86_static_lua5.1/src/CMakeLists.txt	2022-08-09 16:34:47.488740671 -0700
 @@ -15,7 +15,9 @@ if (BUILD_SHARED_LIBS)
  endif()
  target_include_directories(
    civetweb-c-library PUBLIC
 -  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
-+  /usr/include/lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR}
++  ${EPREFIX}/usr/include/lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR}
 +  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 +  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/third_party>)
  install(
@@ -47,12 +75,37 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
    # Determine if we should print to the output
    if (CIVETWEB_ENABLE_THIRD_PARTY_OUTPUT)
      set(THIRD_PARTY_LOGGING 0)
-@@ -112,75 +130,88 @@ if (CIVETWEB_ENABLE_LUA)
-     set(LUA_LIBRARIES "${LUA_INSTALL_DIR}/lib/liblua.a")
+@@ -72,7 +90,7 @@ if (CIVETWEB_ENABLE_LUA)
+   endif()
+ 
+   # If Lua is static we must build it from source
+-  if (NOT CIVETWEB_ENABLE_LUA_SHARED)
++  if (CIVETWEB_FETCH_LUA)
+     if (LINUX)
+       set(LUA_MAKE_TARGET linux)
+     elseif(DARWIN)
+@@ -109,78 +127,123 @@ if (CIVETWEB_ENABLE_LUA)
+     unset(INSTALL_DIR)
+     link_directories("${LUA_INSTALL_DIR}/lib")
+     include_directories("${LUA_INSTALL_DIR}/include")
+-    set(LUA_LIBRARIES "${LUA_INSTALL_DIR}/lib/liblua.a")
++    if (CIVETWEB_LUA_STATIC)
++      add_library(lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR} STATIC IMPORTED)
++      set_property(TARGET lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR} PROPERTY IMPORTED_LOCATION "${LUA_INSTALL_DIR}/lib/liblua.a")
++    else()
++      add_library(lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR} SHARED IMPORTED)
++      set_property(TARGET lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR} PROPERTY IMPORTED_LOCATION "${LUA_INSTALL_DIR}/lib/liblua.a")
++    endif()
      add_dependencies(civetweb-c-library lua)
    else()
 -    find_package(Lua)
-+    find_package(Lua ${CIVETWEB_LUA_VERSION_MAJOR_MINOR} EXACT)
++    if (CIVETWEB_LUA_STATIC)
++      add_library(lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR} STATIC IMPORTED)
++      set_property(TARGET lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR} PROPERTY IMPORTED_LOCATION "${EPREFIX}/usr/${_GET_LIBDIR}/liblua${CIVETWEB_LUA_VERSION_MAJOR_MINOR}.a")
++    else()
++      add_library(lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR} SHARED IMPORTED)
++      set_property(TARGET lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR} PROPERTY IMPORTED_LOCATION "${EPREFIX}/usr/${_GET_LIBDIR}/liblua${CIVETWEB_LUA_VERSION_MAJOR_MINOR}.so")
++    endif()
    endif()
  
    # Lua Filesystem Support
@@ -79,7 +132,7 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
 -  include_directories("${LUA_FILESYSTEM_INSTALL_DIR}/include")
 -  set(LUA_LIBRARIES "${LUA_LIBRARIES};${LUA_FILESYSTEM_INSTALL_DIR}/lib/libluafilesystem.a")
 -  add_dependencies(civetweb-c-library luafilesystem)
-+  if (NOT CIVETWEB_ENABLE_LUA_FILESYSTEM_SHARED)
++  if (CIVETWEB_FETCH_LUA_FILESYSTEM)
 +    string(REPLACE "." "_" LUA_FILESYSTEM_VERSION_UNDERSCORE ${CIVETWEB_LUA_FILESYSTEM_VERSION})
 +    ExternalProject_Add(luafilesystem
 +      URL "https://github.com/keplerproject/luafilesystem/archive/v_${LUA_FILESYSTEM_VERSION_UNDERSCORE}.tar.gz"
@@ -101,12 +154,22 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
 +    unset(INSTALL_DIR)
 +    link_directories("${LUA_FILESYSTEM_INSTALL_DIR}/lib")
 +    include_directories("${LUA_FILESYSTEM_INSTALL_DIR}/include")
-+    add_library(lfs_lib STATIC IMPORTED)
-+    set_property(TARGET lfs_lib PROPERTY IMPORTED_LOCATION "${LUA_FILESYSTEM_INSTALL_DIR}/lib/libluafilesystem.a")
++    if (CIVETWEB_LUA_STATIC)
++      add_library(lfs_lib STATIC IMPORTED)
++      set_property(TARGET lfs_lib PROPERTY IMPORTED_LOCATION "${LUA_FILESYSTEM_INSTALL_DIR}/lib/libluafilesystem.a")
++    else()
++      add_library(lfs_lib SHARED IMPORTED)
++      set_property(TARGET lfs_lib PROPERTY IMPORTED_LOCATION "${LUA_FILESYSTEM_INSTALL_DIR}/lib/libluafilesystem.so")
++    endif()
 +    add_dependencies(civetweb-c-library luafilesystem)
 +  else()
-+    add_library(lfs_lib SHARED IMPORTED)
-+    set_property(TARGET lfs_lib PROPERTY IMPORTED_LOCATION "${LUA_CDIR}/lfs.so")
++    if (CIVETWEB_LUA_STATIC)
++      add_library(lfs_lib STATIC IMPORTED)
++      set_property(TARGET lfs_lib PROPERTY IMPORTED_LOCATION "${LUA_CDIR}/lfs.a")
++    else()
++      add_library(lfs_lib SHARED IMPORTED)
++      set_property(TARGET lfs_lib PROPERTY IMPORTED_LOCATION "${LUA_CDIR}/lfs.so")
++    endif()
 +  endif()
  
    # Lua SQLite Support
@@ -116,7 +179,7 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
 -    set(LUA_SQLITE_FILENAME lsqlite3_fsl09v.zip)
 -  elseif (${CIVETWEB_LUA_SQLITE_VERSION} VERSION_EQUAL "0.9.1")
 -    set(LUA_SQLITE_FILENAME lsqlite3_fsl09t.zip)
-+  if (NOT CIVETWEB_ENABLE_LUA_SQLITE_SHARED)
++  if (CIVETWEB_FETCH_LUA_SQLITE)
 +    if (${CIVETWEB_LUA_SQLITE_VERSION} VERSION_EQUAL "0.9.3")
 +      set(LUA_SQLITE_FILENAME lsqlite3_fsl09w.zip)
 +    elseif (${CIVETWEB_LUA_SQLITE_VERSION} VERSION_EQUAL "0.9.2")
@@ -145,13 +208,23 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
 +    set(LUA_SQLITE_INSTALL_DIR ${INSTALL_DIR})
 +    unset(INSTALL_DIR)
 +    link_directories("${LUA_SQLITE_INSTALL_DIR}/lib")
-+    add_library(lsqlite3_lib STATIC IMPORTED)
-+    set_property(TARGET lsqlite3_lib PROPERTY IMPORTED_LOCATION "${LUA_SQLITE_INSTALL_DIR}/lib/libluasqlite.a")
++    if (CIVETWEB_LUA_STATIC)
++      add_library(lsqlite3_lib STATIC IMPORTED)
++      set_property(TARGET lsqlite3_lib PROPERTY IMPORTED_LOCATION "${LUA_SQLITE_INSTALL_DIR}/lib/libluasqlite.a")
++    else()
++      add_library(lsqlite3_lib SHARED IMPORTED)
++      set_property(TARGET lsqlite3_lib PROPERTY IMPORTED_LOCATION "${LUA_SQLITE_INSTALL_DIR}/lib/libluasqlite.so")
++    endif()
 +    add_dependencies(civetweb-c-library luasqlite)
    else()
 -    message(FATAL_ERROR "The Lua SQLite archive filename is unknown for version ${CIVETWEB_LUA_SQLITE_VERSION}")
-+    add_library(lsqlite3_lib SHARED IMPORTED)
-+    set_property(TARGET lsqlite3_lib PROPERTY IMPORTED_LOCATION "${LUA_CDIR}/lsqlite3.so")
++    if (CIVETWEB_LUA_STATIC)
++      add_library(lsqlite3_lib STATIC IMPORTED)
++      set_property(TARGET lsqlite3_lib PROPERTY IMPORTED_LOCATION "${LUA_CDIR}/lsqlite3.a")
++    else()
++      add_library(lsqlite3_lib SHARED IMPORTED)
++      set_property(TARGET lsqlite3_lib PROPERTY IMPORTED_LOCATION "${LUA_CDIR}/lsqlite3.so")
++    endif()
    endif()
 -  ExternalProject_Add(luasqlite
 -    URL "http://lua.sqlite.org/index.cgi/zip/${LUA_SQLITE_FILENAME}"
@@ -184,7 +257,7 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
 -    message(FATAL_ERROR "The Lua XML archive filename is unknown for version ${CIVETWEB_LUA_XML_VERSION}")
 -  endif()
 -  ExternalProject_Add(luaxml
-+  if (NOT CIVETWEB_ENABLE_LUA_XML_SHARED)
++  if (CIVETWEB_FETCH_LUA_XML)
 +    if (${CIVETWEB_LUA_XML_VERSION} VERSION_EQUAL "1.8.0")
 +      set(LUA_XML_FILENAME LuaXML_130610.zip)
 +    elseif (${CIVETWEB_LUA_XML_VERSION} VERSION_EQUAL "1.7.4")
@@ -196,7 +269,7 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
  # Old:
  #    URL "http://viremo.eludi.net/LuaXML/${LUA_XML_FILENAME}"
  #    URL_MD5 ${CIVETWEB_LUA_XML_MD5_HASH}
-@@ -191,59 +222,71 @@ if (CIVETWEB_ENABLE_LUA)
+@@ -191,59 +254,91 @@ if (CIVETWEB_ENABLE_LUA)
  # An extended version is available at https://github.com/n1tehawk/LuaXML
  # but the last commit there was in 2015
  #
@@ -238,12 +311,22 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
 +    set(LUA_XML_INSTALL_DIR ${INSTALL_DIR})
 +    unset(INSTALL_DIR)
 +    link_directories("${LUA_XML_INSTALL_DIR}/lib")
-+    add_library(luaxml_lib STATIC IMPORTED)
-+    set_property(TARGET luaxml_lib PROPERTY IMPORTED_LOCATION "${LUA_XML_INSTALL_DIR}/lib/libluaxml.a")
++    if (CIVETWEB_LUA_STATIC)
++      add_library(luaxml_lib STATIC IMPORTED)
++      set_property(TARGET luaxml_lib PROPERTY IMPORTED_LOCATION "${LUA_XML_INSTALL_DIR}/lib/libluaxml.a")
++    else()
++      add_library(luaxml_lib SHARED IMPORTED)
++      set_property(TARGET luaxml_lib PROPERTY IMPORTED_LOCATION "${LUA_XML_INSTALL_DIR}/lib/libluaxml.so")
++    endif()
 +    add_dependencies(civetweb-c-library luaxml)
 +  else()
-+    add_library(luaxml_lib SHARED IMPORTED)
-+    set_property(TARGET luaxml_lib PROPERTY IMPORTED_LOCATION "${LUA_CDIR}/LuaXML_lib.so")
++    if (CIVETWEB_LUA_STATIC)
++      add_library(luaxml_lib STATIC IMPORTED)
++      set_property(TARGET luaxml_lib PROPERTY IMPORTED_LOCATION "${LUA_CDIR}/LuaXML_lib.a")
++    else()
++      add_library(luaxml_lib SHARED IMPORTED)
++      set_property(TARGET luaxml_lib PROPERTY IMPORTED_LOCATION "${LUA_CDIR}/LuaXML_lib.so")
++    endif()
 +  endif()
  
    # SQLite Support
@@ -274,7 +357,7 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
 -  include_directories("${SQLITE_INSTALL_DIR}/include")
 -  set(LUA_LIBRARIES "${LUA_LIBRARIES};${SQLITE_INSTALL_DIR}/lib/libsqlite.a")
 -  add_dependencies(civetweb-c-library sqlite)
-+  if (NOT CIVETWEB_ENABLE_SQLITE_SHARED)
++  if (CIVETWEB_FETCH_SQLITE)
 +    string (REGEX MATCHALL "[0-9]+" SQLITE_VERSION_MATCHES ${CIVETWEB_SQLITE_VERSION})
 +    list(GET SQLITE_VERSION_MATCHES 0 SQLITE_VERSION_MAJOR)
 +    list(GET SQLITE_VERSION_MATCHES 1 SQLITE_VERSION_MINOR)
@@ -300,22 +383,32 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
 +    unset(INSTALL_DIR)
 +    link_directories("${SQLITE_INSTALL_DIR}/lib")
 +    include_directories("${SQLITE_INSTALL_DIR}/include")
-+    add_library(sqlite_lib STATIC IMPORTED)
-+    set_property(TARGET sqlite_lib PROPERTY IMPORTED_LOCATION "${SQLITE_INSTALL_DIR}/lib/libsqlite.a")
++    if (CIVETWEB_LUA_STATIC)
++      add_library(sqlite_lib STATIC IMPORTED)
++      set_property(TARGET sqlite_lib PROPERTY IMPORTED_LOCATION "${SQLITE_INSTALL_DIR}/lib/libsqlite.a")
++    else()
++      add_library(sqlite_lib SHARED IMPORTED)
++      set_property(TARGET sqlite_lib PROPERTY IMPORTED_LOCATION "${SQLITE_INSTALL_DIR}/lib/libsqlite.so")
++    endif()
 +    add_dependencies(civetweb-c-library sqlite)
 +  else()
-+    add_library(sqlite_lib SHARED IMPORTED)
-+    set_property(TARGET sqlite_lib PROPERTY IMPORTED_LOCATION "/usr/${_GET_LIBDIR}/libsqlite3.so")
++    if (CIVETWEB_LUA_STATIC)
++      add_library(sqlite_lib STATIC IMPORTED)
++      set_property(TARGET sqlite_lib PROPERTY IMPORTED_LOCATION "${EPREFIX}/usr/${_GET_LIBDIR}/libsqlite3.a")
++    else()
++      add_library(sqlite_lib SHARED IMPORTED)
++      set_property(TARGET sqlite_lib PROPERTY IMPORTED_LOCATION "${EPREFIX}/usr/${_GET_LIBDIR}/libsqlite3.so")
++    endif()
 +  endif()
  
    # Link all the Lua libraries
 -  target_link_libraries(civetweb-c-library ${LUA_LIBRARIES})
-+  message(STATUS "LUA_LIBRARIES=${LUA_LIBRARIES}")
-+  target_link_libraries(civetweb-c-library ${LUA_LIBRARIES} lfs_lib lsqlite3_lib luaxml_lib sqlite_lib)
++  message(STATUS "LUA_LIBRARIES=lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR}")
++  target_link_libraries(civetweb-c-library lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR} lfs_lib lsqlite3_lib luaxml_lib sqlite_lib)
  endif()
  
- # The web server executable
-@@ -264,7 +307,12 @@ if (CIVETWEB_ENABLE_SERVER_EXECUTABLE)
+ if (CIVETWEB_ENABLE_ZLIB)
+@@ -268,7 +363,12 @@ if (CIVETWEB_ENABLE_SERVER_EXECUTABLE)
      endif()
      target_include_directories(
          civetweb-c-executable PUBLIC
@@ -329,11 +422,11 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
      target_link_libraries(civetweb-c-executable civetweb-c-library)
      if (LIBRT_FOUND)
          target_link_libraries(civetweb-c-executable LIBRT::LIBRT)
-@@ -278,9 +326,17 @@ if (CIVETWEB_ENABLE_LUA)
+@@ -282,9 +382,17 @@ if (CIVETWEB_ENABLE_LUA)
      VERSION ${CIVETWEB_VERSION}
      SOVERSION ${CIVETWEB_VERSION}
    )
-+  if (CIVETWEB_ENABLE_LUA_SHARED)
++  if (NOT CIVETWEB_FETCH_LUA)
 +  target_include_directories(
 +    lua-library PUBLIC
 +    ${LUA_INC}
@@ -348,7 +441,7 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
    install(
      TARGETS lua-library
      EXPORT ${PROJECT_NAME}-targets
-@@ -303,12 +359,17 @@ if (CIVETWEB_ENABLE_CXX)
+@@ -307,12 +415,17 @@ if (CIVETWEB_ENABLE_CXX)
    if (BUILD_SHARED_LIBS)
      target_compile_definitions(civetweb-cpp PRIVATE CIVETWEB_CXX_DLL_EXPORTS INTERFACE CIVETWEB_CXX_DLL_IMPORTS)
    endif()

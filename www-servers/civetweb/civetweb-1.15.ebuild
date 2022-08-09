@@ -39,22 +39,15 @@ gen_lua_targets() {
 		local v="LUA_${x/./_}_MIN"
 		echo "
 		lua_targets_lua${x/./-}? (
-			>=dev-lang/lua-${!v}:${x}=[${MULTILIB_USEDEP}]
+			>=dev-lang/lua-${!v}:${x}=[${MULTILIB_USEDEP},static-libs?]
 			>=dev-lang/lua-extra-headers-${!v}:${x}=
 		)
 		"
 	done
 }
-DEPEND+="
+RDEPEND+="
 	>=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
 	virtual/libc
-	lua? (
-		$(gen_lua_targets)
-		${LUA_DEPS}
-		>=dev-lua/luafilesystem-1.6.3[${MULTILIB_USEDEP},${LUA_USEDEP}]
-		>=dev-lua/luasqlite3-0.9.3[${MULTILIB_USEDEP},${LUA_USEDEP}]
-		>=dev-lua/luaxml-1.8[${LUA_USEDEP}]
-	)
 	ssl? (
 		ssl_1_1? ( =dev-libs/openssl-1.1*[${MULTILIB_USEDEP}] )
 		ssl_1_0? (
@@ -66,7 +59,17 @@ DEPEND+="
 	)
 	zlib? ( sys-libs/zlib[${MULTILIB_USEDEP}] )
 "
-RDEPEND+=" ${DEPEND}"
+DEPEND+="
+	${RDEPEND}
+	lua? (
+		$(gen_lua_targets)
+		${LUA_DEPS}
+		>=dev-db/sqlite-0.1.2[${MULTILIB_USEDEP},static-libs?]
+		>=dev-lua/luafilesystem-1.6.3[${MULTILIB_USEDEP},${LUA_USEDEP},static-libs?]
+		>=dev-lua/luasqlite3-0.9.3[${MULTILIB_USEDEP},${LUA_USEDEP},static-libs?]
+		>=dev-lua/luaxml-1.8[${MULTILIB_USEDEP},${LUA_USEDEP},static-libs?]
+	)
+"
 BDEPEND+=" >=dev-util/cmake-3.3.0"
 SRC_URI="
 https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz \
@@ -82,7 +85,7 @@ DOCS=(
 )
 PATCHES=(
 	"${FILESDIR}/civetweb-1.13-disable-pedantic-errors.patch"
-	"${FILESDIR}/civetweb-1.13-change-cmake-for-lua-dependencies-v2.patch"
+	"${FILESDIR}/civetweb-1.13-change-cmake-for-lua-dependencies-v3.patch"
 	"${FILESDIR}/civetweb-1.13-disable-fvisibility-for-c.patch"
 )
 
@@ -120,9 +123,9 @@ eerror
 		fi
 	done
 
-	if [[ -e "/usr/include/lua.h" ]] ; then
+	if [[ -e "${ESYSROOT}/usr/include/lua.h" ]] ; then
 eerror
-eerror "/usr/include/lua.h must be removed.  Switch lua implementation to"
+eerror "${ESYSROOT}/usr/include/lua.h must be removed.  Switch lua implementation to"
 eerror "alternative and back again via eselect."
 eerror
 		die
@@ -168,11 +171,6 @@ src_prepare() {
 		done
 	}
 	multilib_foreach_abi prepare_abi
-	if use lua ; then
-ewarn
-ewarn "Currently the luaxml ebuild is unilib.  Expect a build failure."
-ewarn
-	fi
 }
 
 _configure() {
@@ -211,15 +209,17 @@ _configure() {
 		-DCIVETWEB_ENABLE_WEBSOCKETS=$(usex websockets)
 		-DCIVETWEB_ENABLE_ZLIB=$(usex zlib)
 		-DCIVETWEB_SERVE_NO_FILES=$(usex serve_no_files)
-		-DCIVETWEB_ENABLE_LUA_FILESYSTEM_SHARED=$(usex lua)
-		-DCIVETWEB_ENABLE_LUA_SQLITE_SHARED=$(usex lua)
-		-DCIVETWEB_ENABLE_LUA_XML_SHARED=$(usex lua)
-		-DCIVETWEB_ENABLE_SQLITE_SHARED=$(usex lua)
 	)
 	if [[ "${lib_type}" == "shared" ]] ;then
-		mycmakeargs+=( -DBUILD_SHARED_LIBS=ON )
+		mycmakeargs+=(
+			-DBUILD_SHARED_LIBS=ON
+			-DCIVETWEB_LUA_STATIC=OFF
+		)
 	else
-		mycmakeargs+=( -DBUILD_SHARED_LIBS=OFF )
+		mycmakeargs+=(
+			-DBUILD_SHARED_LIBS=OFF
+			-DCIVETWEB_LUA_STATIC=ON
+		)
 	fi
 	if use lua ; then
 		mycmakeargs+=(
@@ -228,11 +228,6 @@ _configure() {
 			-DLUA_CDIR="$(lua_get_cmod_dir)"
 			-DLUA_INC="$(lua_get_include_dir)"
 		)
-		if [[ "${lib_type}" == "shared" ]] ;then
-			mycmakeargs+=( -DCIVETWEB_ENABLE_LUA_SHARED=ON )
-		elif [[ "${lib_type}" == "static" ]] ;then
-			mycmakeargs+=( -DCIVETWEB_ENABLE_LUA_SHARED=OFF ) # Missing lib
-		fi
 	fi
 	cmake_src_configure
 }
@@ -314,5 +309,4 @@ src_install() {
 	multilib_foreach_abi install_abi
 }
 
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
-# OILEDMACHINE-OVERLAY-META-WIP: lua-support
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib, lua-support, static-libs

@@ -11,7 +11,7 @@ SRC_URI="https://www.lua.org/ftp/${P}.tar.gz"
 LICENSE="MIT"
 SLOT="5.1"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
-IUSE="+deprecated readline"
+IUSE="+deprecated readline static-libs"
 IUSE+=" urho3d"
 
 COMMON_DEPEND="
@@ -25,6 +25,11 @@ BDEPEND="sys-devel/libtool"
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/lua${SLOT}/luaconf.h
 )
+
+get_lib_types() {
+	use static-libs && echo "static"
+	echo "shared"
+}
 
 src_prepare() {
 	PATCHES=(
@@ -76,10 +81,16 @@ src_prepare() {
 	fi
 
 	# custom Makefiles
-	multilib_copy_sources
+	prepare_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
+		done
+	}
+	multilib_foreach_abi prepare_abi
 }
 
-multilib_src_configure() {
+_configure() {
 	if use urho3d ; then
 		append-cppflags -DURHO3D
 	fi
@@ -90,7 +101,19 @@ multilib_src_configure() {
 		etc/lua.pc src/luaconf.h || die
 }
 
-multilib_src_compile() {
+src_configure() {
+	configure_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			_configure
+		done
+	}
+	multilib_foreach_abi configure_abi
+}
+
+_compile() {
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+	cd "${BUILD_DIR}" || die
 	tc-export CC
 	myflags=
 	# what to link to liblua
@@ -112,33 +135,60 @@ multilib_src_compile() {
 			gentoo_all
 
 	mv lua_test ../test/lua.static
+
 }
 
-multilib_src_install() {
+src_compile() {
+	compile_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			_compile
+		done
+	}
+	multilib_foreach_abi compile_abi
+}
+
+_install() {
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+	cd "${BUILD_DIR}" || die
 	emake INSTALL_TOP="${ED}/usr" INSTALL_LIB="${ED}/usr/$(get_libdir)" \
-			V=${SLOT} gentoo_install
+		V=${SLOT} gentoo_install
 
 	insinto /usr/$(get_libdir)/pkgconfig
 	newins etc/lua.pc lua${SLOT}.pc
 }
 
-multilib_src_install_all() {
+src_install() {
+	install_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			_install
+		done
+	}
+	multilib_foreach_abi install_abi
+	src_install_all
+}
+
+src_install_all() {
 	DOCS="HISTORY README"
 	HTML_DOCS="doc/*.html doc/*.png doc/*.css doc/*.gif"
 	einstalldocs
 	newman doc/lua.1 lua${SLOT}.1
 	newman doc/luac.1 luac${SLOT}.1
 	find "${ED}" -name '*.la' -delete || die
-	find "${ED}" -name 'liblua*.a' -delete || die
+	if ! use static-libs ; then
+		find "${ED}" -name 'liblua*.a' -delete || die
+	fi
 }
 
-multilib_src_test() {
+_test() {
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+	cd "${BUILD_DIR}" || die
 	local positive="bisect cf echo env factorial fib fibfor hello printf sieve
 	sort trace-calls trace-globals"
 	local negative="readonly"
 	local test
 
-	cd "${BUILD_DIR}" || die
 	for test in ${positive}; do
 		test/lua.static test/${test}.lua || die "test $test failed"
 	done
@@ -146,6 +196,16 @@ multilib_src_test() {
 	for test in ${negative}; do
 		test/lua.static test/${test}.lua && die "test $test failed"
 	done
+}
+
+src_test() {
+	test_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			_test
+		done
+	}
+	multilib_foreach_abi test_abi
 }
 
 pkg_postinst() {
