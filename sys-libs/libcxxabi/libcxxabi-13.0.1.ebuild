@@ -129,9 +129,9 @@ pkg_setup() {
 	use test && python-any-r1_pkg_setup
 }
 
-get_build_types() {
-	echo "shared-libs"
-	use static-libs && echo "static-libs"
+get_lib_types() {
+	echo "shared"
+	use static-libs && echo "static"
 }
 
 is_hardened_clang() {
@@ -150,8 +150,8 @@ is_hardened_gcc() {
 
 src_configure() {
 	configure_abi() {
-		for build_type in $(get_build_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
 			_configure_abi
 		done
 	}
@@ -160,9 +160,9 @@ src_configure() {
 
 is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		return 0
-	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 		return 0
 	fi
 	return 1
@@ -264,7 +264,7 @@ _configure_abi() {
 		fi
 	fi
 
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
 			-DLIBCXXABI_ENABLE_SHARED=OFF
 			-DLIBCXXABI_ENABLE_STATIC=ON
@@ -349,7 +349,7 @@ wrap_libcxx() {
 		fi
 	fi
 
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
 			-DLIBCXX_ENABLE_SHARED=OFF
 			-DLIBCXX_ENABLE_STATIC=ON
@@ -366,8 +366,8 @@ wrap_libcxx() {
 
 src_compile() {
 	compile_abi() {
-		for build_type in $(get_build_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_compile
 		done
@@ -377,8 +377,8 @@ src_compile() {
 
 src_test() {
 	test_abi() {
-		for build_type in $(get_build_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
 			cd "${BUILD_DIR}" || die
 			wrap_libcxx cmake_src_compile
 			mv "${BUILD_DIR}"/libcxx/lib/libc++* "${BUILD_DIR}/$(get_libdir)/" || die
@@ -391,8 +391,8 @@ src_test() {
 
 src_install() {
 	install_abi() {
-		for build_type in $(get_build_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
 		done
