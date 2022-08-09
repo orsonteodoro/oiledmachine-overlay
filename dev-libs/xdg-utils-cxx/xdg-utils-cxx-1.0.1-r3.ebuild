@@ -4,57 +4,68 @@
 
 EAPI=8
 
-inherit cmake static-libs
+inherit cmake
 
-DESCRIPTION="Implementation of the FreeDesktop specifications to be used in \
+DESCRIPTION="Implementation of the FreeDesktop specifications to be used in
 c++ projects"
 HOMEPAGE="https://github.com/azubieta/xdg-utils-cxx"
 LICENSE="MIT" # The project's default license.
 LICENSE+=" BSD" # code_coverage_utils.cmake is BSD
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-SRC_URI=\
-"https://github.com/azubieta/xdg-utils-cxx/archive/v${PV}.tar.gz
-	 -> ${P}.tar.gz"
-S="${WORKDIR}/${PN}-${PV}"
+IUSE+=" static-libs"
+SRC_URI="
+https://github.com/azubieta/xdg-utils-cxx/archive/v${PV}.tar.gz
+	 -> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
-src_prepare() {
-	cmake_src_prepare
-	static-libs_copy_sources
+get_lib_types() {
+	if use static-libs ; then
+		echo "static"
+	fi
+	echo "shared"
 }
 
 src_configure() {
-	configure_impl() {
+	local lib_type
+	for lib_type in $(get_lib_types) ; do
+		export CMAKE_USE_DIR="${S}"
+		export BUILD_DIR="${S}-${lib_type}_build"
+		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
 			-DXDG_UTILS_TESTS=OFF
 			-DXDG_UTILS_CODE_COVERAGE=OFF
 		)
-		if [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+		if [[ "${lib_type}" == "static" ]] ; then
 			mycmakeargs+=( -DXDG_UTILS_SHARED=OFF )
 		else
 			mycmakeargs+=( -DXDG_UTILS_SHARED=ON )
 		fi
-		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		cmake_src_configure
-	}
-	static-libs_foreach_impl configure_impl
+	done
 }
 
 src_compile() {
-	compile_impl() {
-		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+	local lib_type
+	for lib_type in $(get_lib_types) ; do
+		export CMAKE_USE_DIR="${S}"
+		export BUILD_DIR="${S}-${lib_type}_build"
+		cd "${BUILD_DIR}" || die
 		cmake_src_compile
-	}
-	static-libs_foreach_impl compile_impl
+	done
 }
 
 src_install() {
-	install_impl() {
-		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+	local lib_type
+	for lib_type in $(get_lib_types) ; do
+		export CMAKE_USE_DIR="${S}"
+		export BUILD_DIR="${S}-${lib_type}_build"
+		cd "${BUILD_DIR}" || die
 		cmake_src_install
-	}
-	static-libs_foreach_impl install_impl
+	done
+	cd "${S}" || die
 	docinto licenses
 	dodoc LICENSE
 	cat <<-EOF > "${T}"/99${P}
