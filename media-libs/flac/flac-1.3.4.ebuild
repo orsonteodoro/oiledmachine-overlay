@@ -132,9 +132,9 @@ PATCHES=(
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
 
-get_build_types() {
-	echo "shared-libs"
-	use static-libs && echo "static-libs"
+get_lib_types() {
+	echo "shared"
+	use static-libs && echo "static"
 }
 
 src_prepare() {
@@ -148,9 +148,9 @@ src_prepare() {
 	eautoreconf
 
 	prepare_abi() {
-		for build_type in $(get_build_types) ; do
-			einfo "Build type is ${build_type}"
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			einfo "Build type is ${lib_type}"
+			export S="${S_orig}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
 		done
@@ -168,7 +168,7 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${build_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static" ]] \
 			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
@@ -192,9 +192,9 @@ is_hardened_gcc() {
 
 is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		return 0
-	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 		return 0
 	fi
 	return 1
@@ -238,9 +238,9 @@ _src_configure() {
 		# -static-libc++ which does not exist.
 		append-cxxflags -stdlib=libc++
                 append-ldflags -stdlib=libc++
-		[[ "${build_type}" == "shared-libs" ]] \
+		[[ "${lib_type}" == "shared" ]] \
 			&& append-ldflags -lc++
-		[[ "${build_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static" ]] \
 			&& append-ldflags -static-libstdc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
@@ -252,9 +252,9 @@ _src_configure() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
 		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${build_type}" == "static-libs" ]] ; then
+			if [[ "${lib_type}" == "static" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+			elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -270,7 +270,7 @@ _src_configure() {
 			fi
 			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
 			use cfi-cross-dso \
-				&& [[ "${build_type}" == "shared-libs" ]] \
+				&& [[ "${lib_type}" == "shared" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 			append_all -fno-sanitize=cfi-icall # cfi-icall breaks CEF with illegal instruction
 		fi
@@ -318,7 +318,7 @@ _src_configure() {
 		--with-ogg
 	)
 
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		myeconfargs+=(
 			--enable-static
 			--disable-shared
@@ -335,8 +335,8 @@ _src_configure() {
 
 src_configure() {
 	configure_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_src_configure
@@ -347,11 +347,11 @@ src_configure() {
 
 src_compile() {
 	compile_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
-			einfo "Running src_compile for ${build_type}"
+			einfo "Running src_compile for ${lib_type}"
 			emake
 		done
 	}
@@ -360,8 +360,8 @@ src_compile() {
 
 src_test() {
 	test_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			if [[ ${UID} != 0 ]]; then
@@ -376,8 +376,8 @@ src_test() {
 
 src_install() {
 	install_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			emake DESTDIR="${D}" install
