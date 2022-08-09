@@ -836,8 +836,8 @@ src_prepare() {
 	einfo "Copying sources, please wait"
 	prepare_abi() {
 		for lib_type in $(get_lib_types) ; do
-			einfo "Copying sources to ${S_orig}.${ABI}_${lib_type/-*}"
-			cp -a "${S_orig}" "${S_orig}.${ABI}_${lib_type/-*}" || die
+			einfo "Copying sources to ${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			cp -a "${S_orig}" "${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
 
 		done
 	}
@@ -2062,7 +2062,7 @@ clean_pgx() {
 src_compile() {
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type/-*}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			einfo "Build type is ${lib_type}"
@@ -2099,7 +2099,7 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type/-*}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			export LD_LIBRARY_PATH=\
@@ -2181,7 +2181,7 @@ _install() {
 src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type/-*}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_install
