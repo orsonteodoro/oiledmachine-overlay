@@ -4,7 +4,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake llvm multilib-minimal python-any-r1 static-libs toolchain-funcs
+inherit cmake llvm multilib-minimal python-any-r1 toolchain-funcs
 
 DESCRIPTION="Advanced shading language for production GI renderers"
 HOMEPAGE="http://opensource.imageworks.com/?p=osl"
@@ -12,14 +12,28 @@ LICENSE="BSD"
 SLOT="0/${PV}"
 KEYWORDS="amd64 ~x86"
 X86_CPU_FEATURES=(
-	sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4.1 sse4_2:sse4.2
-	avx:avx avx2:avx2 avx512f:avx512f f16c:f16c )
+	sse2:sse2
+	sse3:sse3
+	ssse3:ssse3
+	sse4_1:sse4.1
+	sse4_2:sse4.2
+	avx:avx
+	avx2:avx2
+	avx512f:avx512f
+	f16c:f16c
+)
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 LLVM_SUPPORT=(10 11 12 13) # Upstream supports llvm:9 to llvm:12 but only >=10 available on the distro.
 LLVM_SUPPORT_=( ${LLVM_SUPPORT[@]/#/llvm-} )
 # The highest stable llvm was used as the default.  Revisions may update this in the future.
-IUSE+=" ${CPU_FEATURES[@]%:*} doc ${LLVM_SUPPORT_[@]} +llvm-13 optix partio python qt5 test"
-REQUIRED_USE+=" ^^ ( ${LLVM_SUPPORT_[@]} )"
+IUSE+="
+${CPU_FEATURES[@]%:*}
+${LLVM_SUPPORT_[@]}
+doc +llvm-13 optix partio python qt5 static-libs test
+"
+REQUIRED_USE+="
+	^^ ( ${LLVM_SUPPORT_[@]} )
+"
 # See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.11.17.0/INSTALL.md
 # For optix requirements, see
 #   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.11.17.0/src/cmake/externalpackages.cmake
@@ -128,7 +142,8 @@ BDEPEND+="
 	>=dev-util/cmake-3.12
 	>=sys-devel/bison-2.7
 	>=sys-devel/flex-2.5.35[${MULTILIB_USEDEP}]
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+"
 SRC_URI="
 https://github.com/imageworks/OpenShadingLanguage/archive/Release-${PV}.tar.gz
 	-> ${P}.tar.gz"
@@ -138,6 +153,13 @@ S="${WORKDIR}/OpenShadingLanguage-Release-${PV}"
 
 llvm_check_deps() {
 	has_version -r "sys-devel/clang:${LLVM_SLOT}"
+}
+
+get_lib_type() {
+	if use static-libs ; then
+		echo "static"
+	fi
+	echo "shared"
 }
 
 pkg_setup() {
@@ -158,19 +180,22 @@ pkg_setup() {
 	fi
 
 	if use qt5 ; then
-		ewarn \
-"Enabling the qt5 USE flag with this ebuild may cause build time failures.  \
-It may need to be disabled."
+ewarn
+ewarn "Enabling the qt5 USE flag with this ebuild may cause build time"
+ewarn "failures.  It may need to be disabled."
+ewarn
 	fi
 
 	if use optix ; then
-		ewarn \
-"The optix USE flag is untested.  Left for owners of those kinds of GPUs to \
-test and fix."
+ewarn
+ewarn "The optix USE flag is untested.  Left for owners of those kinds of GPUs"
+ewarn "to test and fix."
+ewarn
 		if [[ -z "${CUDA_TOOLKIT_ROOT_DIR}" ]] ; then
-			ewarn \
-"CUDA_TOOLKIT_ROOT_DIR is not set.  Please add it in your make.conf or as a \
-per-package environmental variable."
+ewarn
+ewarn "CUDA_TOOLKIT_ROOT_DIR is not set.  Please add it in your make.conf or as"
+ewarn "a per-package environmental variable."
+ewarn
 		fi
 	fi
 
@@ -187,27 +212,24 @@ src_prepare() {
 			"CMakeLists.txt" || die
 	fi
 	prepare_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_prepare() {
-			cd "${BUILD_DIR}" || die
-		        S="${BUILD_DIR}" \
-		        CMAKE_USE_DIR="${BUILD_DIR}" \
-		        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
+		local lib_type
+		for lib_type in $(get_lib_type) ; do
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${CMAKE_USE_DIR}" || die
 			cmake_src_prepare
-		}
-		static-libs_copy_sources
-		static-libs_foreach_impl \
-			static-libs_prepare
+		done
 	}
-	multilib_copy_sources
 	multilib_foreach_abi prepare_abi
 }
 
 src_configure() {
 	configure_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_configure() {
-			cd "${BUILD_DIR}" || die
+		local lib_type
+		for lib_type in $(get_lib_type) ; do
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${CMAKE_USE_DIR}" || die
 
 			local cpufeature
 			local mysimd=()
@@ -237,7 +259,7 @@ src_configure() {
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
 			)
 
-			if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+			if [[ "${lib_type}" == "shared" ]] ; then
 				mycmakeargs+=( -DBUILD_SHARED_LIBS=ON )
 			else
 				mycmakeargs+=( -DBUILD_SHARED_LIBS=OFF )
@@ -245,46 +267,34 @@ src_configure() {
 
 			append-cxxflags -fPIC
 
-		        S="${BUILD_DIR}" \
-		        CMAKE_USE_DIR="${BUILD_DIR}" \
-		        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
 			cmake_src_configure
-		}
-		static-libs_foreach_impl \
-			static-libs_configure
+		done
 	}
 	multilib_foreach_abi configure_abi
 }
 
 src_compile() {
 	compile_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_compile() {
+		local lib_type
+		for lib_type in $(get_lib_type) ; do
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
-		        S="${BUILD_DIR}" \
-		        CMAKE_USE_DIR="${BUILD_DIR}" \
-		        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
 			cmake_src_compile
-		}
-		static-libs_foreach_impl \
-			static-libs_compile
+		done
 	}
 	multilib_foreach_abi compile_abi
 }
 
 src_install() {
 	install_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_install() {
-			pushd "${BUILD_DIR}" || die
-			        S="${BUILD_DIR}" \
-			        CMAKE_USE_DIR="${BUILD_DIR}" \
-			        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
-				cmake_src_install
-			popd
-		}
-		static-libs_foreach_impl \
-			static-libs_install
+		local lib_type
+		for lib_type in $(get_lib_type) ; do
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${BUILD_DIR}" || die
+			cmake_src_install
+		done
 		if multilib_is_native_abi ; then
 			dosym /usr/$(get_libdir)/osl/bin/oslc /usr/bin/oslc
 			dosym /usr/$(get_libdir)/osl/bin/oslinfo /usr/bin/oslinfo
