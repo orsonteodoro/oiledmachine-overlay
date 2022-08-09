@@ -204,7 +204,6 @@ PDEPEND=" pgo? ( media-video/mpv )"
 MULTILIB_WRAPPED_HEADERS=( /usr/include/jconfig.h )
 
 S="${WORKDIR}/${P}"
-S_orig="${WORKDIR}/${P}"
 
 is_pgo_ready() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -251,16 +250,6 @@ EOF
 
 	cmake_src_prepare
 	java-pkg-opt-2_src_prepare
-
-	prepare_abi() {
-		for lib_type in $(get_lib_types) ; do
-			einfo "Build type is ${lib_type}"
-			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-			einfo "Copying to ${S}"
-			cp -a "${S_orig}" "${S}" || die
-		done
-	}
-	multilib_foreach_abi prepare_abi
 }
 
 has_pgo_requirement() {
@@ -312,6 +301,9 @@ is_cfi_supported() {
 }
 
 _configure_pgx() {
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+	cd "${CMAKE_USE_DIR}" || die
 	local mycmakeargs=()
 	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
@@ -477,7 +469,7 @@ _configure_pgx() {
 	cmake_src_configure
 }
 
-_build_pgx() {
+_compile_pgx() {
 	cmake_src_compile
 }
 
@@ -591,14 +583,11 @@ src_compile() {
 	export PATH="${D}/usr/bin:${PATH}"
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-			export BUILD_DIR="${S}"
-			cd "${BUILD_DIR}" || die
 			if use pgo && has_pgo_requirement ; then
 				PGO_PHASE="pgi"
 				if [[ "${lib_type}" == "shared" ]] ; then
 					_configure_pgx
-					_build_pgx
+					_compile_pgx
 					# This technique currently works on shared, but the generated profiling data
 					# may be compatible with static.
 					_install_pgx
@@ -614,12 +603,12 @@ src_compile() {
 					unset PGO_PHASE
 				fi
 				_configure_pgx
-				_build_pgx
+				_compile_pgx
 				export PGO_RAN=1
 			else
 				einfo "Skipping PGO training for ${ABI}"
 				_configure_pgx
-				_build_pgx
+				_compile_pgx
 			fi
 		done
 	}
@@ -633,7 +622,6 @@ _install_pgx() {
 
 _clean_pgx() {
 	einfo "Resetting sandbox staging area"
-	cd "${S}" || die
 	rm -rf "${ED}" || die
 }
 
@@ -670,8 +658,8 @@ _install_once() {
 src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-			export BUILD_DIR="${S}"
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			_install
 		done
