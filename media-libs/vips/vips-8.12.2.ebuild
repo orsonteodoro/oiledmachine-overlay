@@ -3,10 +3,9 @@
 
 EAPI=8
 
-EMTRS="release test"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit autotools flag-o-matic llvm multilib multilib-minimal \
-mutex-test-release python-any-r1 toolchain-funcs
+python-any-r1 toolchain-funcs
 
 DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
@@ -17,10 +16,12 @@ SO_R=56
 SO_A=14
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 SLOT="1/${PV}-${SO_MAJOR}"
-IUSE+=" +analyze aom cairo cgif cxx debug doxygen exif fftw fits gif graphicsmagick
-gsf -gtk-doc fontconfig +hdr heif imagemagick imagequant jpeg jpeg2k jxl lcms
+IUSE+="
++analyze aom cairo cgif cxx debug doxygen exif fftw fits gif graphicsmagick gsf
+-gtk-doc fontconfig +hdr heif imagemagick imagequant jpeg jpeg2k jxl lcms
 libde265 matio -minimal openexr openslide orc pangocairo png poppler python
-rav1e +ppm spng static-libs svg test tiff webp x265 zlib"
+rav1e +ppm spng static-libs svg test tiff webp x265 zlib
+"
 REQUIRED_USE="
 	cgif? ( imagequant )
 	imagequant? ( png )
@@ -75,6 +76,11 @@ RDEPEND+="
 "
 
 LLVM_SLOTS=(14 13 12)
+
+get_configurations() {
+	use test && echo "test"
+	echo "release"
+}
 
 gen_llvm_bdepend()
 {
@@ -229,12 +235,15 @@ src_prepare() {
 	fi
 	eautoreconf
 
-	src_prepare_mtr() {
-		cd "${BUILD_DIR}" || die
-		multilib_copy_sources
-	}
-	mutex-test-release_copy_sources
-	mutex-test-release_foreach_impl src_prepare_mtr
+	local configuration
+	for configuration in $(get_configurations) ; do
+		src_prepare_abi() {
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${configuration}"
+			cd "${BUILD_DIR}" || die
+			cp -a "${S}" "${BUILD_DIR}" || die
+		}
+		multilib_foreach_abi src_prepare_abi
+	done
 }
 
 _clear_env()
@@ -254,9 +263,9 @@ _clear_env()
 _apply_env()
 {
 	local detect_leaks="${1}"
-	if [[ "${EMTR}" == "release" ]] ; then
+	if [[ "${configuration}" == "release" ]] ; then
 		:;
-	elif [[ "${EMTR}" == "test" ]] ; then
+	elif [[ "${configuration}" == "test" ]] ; then
 		export ASAN_OPTIONS=\
 "suppressions=${S}/suppressions/asan.supp:detect_leaks=${detect_leaks}"
 		export ASAN_SYMBOLIZER_PATH=\
@@ -300,9 +309,9 @@ _strip_flags() {
 }
 
 _apply_flags() {
-	if [[ "${EMTR}" == "release" ]] ; then
+	if [[ "${configuration}" == "release" ]] ; then
 		:;
-	elif [[ "${EMTR}" == "test" ]] ; then
+	elif [[ "${configuration}" == "test" ]] ; then
 		append-cppflags -g \
 				-fsanitize=address,undefined \
 				-fno-omit-frame-pointer \
@@ -318,13 +327,14 @@ _apply_flags() {
 }
 
 src_configure_abi() {
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${configuration}"
 	cd "${BUILD_DIR}" || die
-	if [[ "${EMTR}" == "release" ]] ; then
+	if [[ "${configuration}" == "release" ]] ; then
 		_clear_env
 		_strip_flags
 		_apply_flags
 		_apply_env
-	elif [[ "${EMTR}" == "test" ]] ; then
+	elif [[ "${configuration}" == "test" ]] ; then
 		_clear_env
 
 		LLVM_MAX_SLOT=
@@ -413,18 +423,18 @@ eerror
 		$(use_with tiff) \
 		$(use_with webp libwebp) \
 		$(use_with zlib) \
-		--with-html-dir="/usr/share/gtk-doc/html"
+		--with-html-dir="${EPREFIX}/usr/share/gtk-doc/html"
 }
 
 src_configure() {
-	src_configure_mtr() {
-		cd "${BUILD_DIR}" || die
+	local configuration
+	for configuration in $(get_configurations) ; do
 		multilib_foreach_abi src_configure_abi
-	}
-	mutex-test-release_foreach_impl src_configure_mtr
+	done
 }
 
 src_compile_abi() {
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${configuration}"
 	cd "${BUILD_DIR}" || die
 	_clear_env
 	_apply_env 0
@@ -434,11 +444,10 @@ src_compile_abi() {
 }
 
 src_compile() {
-	src_compile_mtr() {
-		cd "${BUILD_DIR}" || die
+	local configuration
+	for configuration in $(get_configurations) ; do
 		multilib_foreach_abi src_compile_abi
-	}
-	mutex-test-release_foreach_impl src_compile_mtr
+	done
 }
 
 preload_libsan() {
@@ -487,6 +496,7 @@ eerror
 }
 
 src_test_abi() {
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${configuration}"
 	cd "${BUILD_DIR}" || die
 	local ctarget=$(get_abi_CTARGET ${ABI})
 	[[ -z "${ctarget}" ]] && ctarget=$(get_abi_CHOST ${ABI})
@@ -494,29 +504,28 @@ src_test_abi() {
 	export CXX=${ctarget}-clang++
 	_clear_env
 	_apply_env 1
-	python3 -m pytest -sv --log-cli-level=WARNING test/test-suite || die
+	${EPYTHON} -m pytest -sv --log-cli-level=WARNING test/test-suite || die
 }
 
 src_test() {
-	src_test_mtr() {
-		cd "${BUILD_DIR}" || die
+	local configuration
+	for configuration in $(get_configurations) ; do
 		multilib_foreach_abi src_test_abi
-	}
-	mutex-test-release_foreach_impl src_test_mtr
+	done
 	SANDBOX_ON=1
 }
 
 src_install_abi() {
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${configuration}"
 	cd "${BUILD_DIR}" || die
 	emake DESTDIR="${D}" install
 }
 
 src_install() {
-	src_install_mtr() {
-		cd "${BUILD_DIR}" || die
+	local configuration
+	for configuration in $(get_configurations) ; do
 		multilib_foreach_abi src_install_abi
-	}
-	mutex-test-release_foreach_impl src_install_mtr
+	done
 
 	# Verify that release is only installed
 	grep -r -e "png_set_crc_action" $(find "${ED}" -name "*.so*") \
@@ -524,6 +533,7 @@ src_install() {
 }
 
 multilib_src_install_all() {
+	cd "${S}" || die
 	einstalldocs
 	find "${ED}" -name '*.la' -delete || die
 	docinto licenses
