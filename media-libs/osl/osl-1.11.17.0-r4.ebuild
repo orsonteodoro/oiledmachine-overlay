@@ -243,7 +243,7 @@ src_configure() {
 			# LLVM_STATIC=ON is broken for llvm:10
 			local mycmakeargs=(
 				-DCMAKE_CXX_STANDARD=14
-				-DCMAKE_INSTALL_BINDIR="/usr/$(get_libdir)/osl/bin"
+				-DCMAKE_INSTALL_BINDIR="${EPREFIX}/usr/$(get_libdir)/osl/bin"
 				-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 				-DINSTALL_DOCS=$(usex doc)
 				-DLLVM_STATIC=OFF
