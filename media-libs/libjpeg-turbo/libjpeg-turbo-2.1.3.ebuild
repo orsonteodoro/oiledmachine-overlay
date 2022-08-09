@@ -255,7 +255,7 @@ EOF
 	prepare_abi() {
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
-			export S="${S_orig}.${ABI}_${lib_type/-*}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
 		done
@@ -591,7 +591,7 @@ src_compile() {
 	export PATH="${D}/usr/bin:${PATH}"
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type/-*}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			if use pgo && has_pgo_requirement ; then
@@ -670,7 +670,7 @@ _install_once() {
 src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type/-*}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_install
