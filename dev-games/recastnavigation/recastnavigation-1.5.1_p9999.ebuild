@@ -75,7 +75,6 @@ eerror
 }
 
 src_prepare() {
-	multilib_copy_sources
 	prepare_abi() {
 		local lib_type
 		for lib_type in $(get_lib_type) ; do
