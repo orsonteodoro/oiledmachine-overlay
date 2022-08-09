@@ -146,7 +146,7 @@ src_compile() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export EMESON_SOURCE="${S}"
-			export BUILD_DIR="${S}_${lib_type}_build"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			if use pgo ; then
 # See https://github.com/randy408/libspng/blob/master/docs/build.md#profile-guided-optimization
 				PGO_PHASE="pgi"
@@ -176,7 +176,7 @@ src_install() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			export EMESON_SOURCE="${S}"
-			export BUILD_DIR="${S}_${lib_type}_build"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			meson_src_install
 		done
