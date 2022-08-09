@@ -141,9 +141,9 @@ test_compiler() {
 		<<<'int main() { return 0; }' &>/dev/null
 }
 
-get_build_types() {
-	echo "shared-libs"
-	use static-libs && echo "static-libs"
+get_lib_types() {
+	echo "shared"
+	use static-libs && echo "static"
 }
 
 src_configure() {
@@ -160,8 +160,8 @@ src_configure() {
 	fi
 
 	configure_abi() {
-		for build_type in $(get_build_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
 			_configure_abi
 		done
 	}
@@ -184,9 +184,9 @@ is_hardened_gcc() {
 
 is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		return 0
-	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 		return 0
 	fi
 	return 1
@@ -326,7 +326,7 @@ _configure_abi() {
 		fi
 	fi
 
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
 			-DLIBCXX_ENABLE_SHARED=OFF
 			-DLIBCXX_ENABLE_STATIC=ON
@@ -354,8 +354,8 @@ _configure_abi() {
 
 src_compile() {
 	compile_abi() {
-		for build_type in $(get_build_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_compile
 		done
@@ -365,8 +365,8 @@ src_compile() {
 
 src_test() {
 	test_abi() {
-		for build_type in $(get_build_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
 			cd "${BUILD_DIR}" || die
 			local -x LIT_PRESERVES_TMP=1
 			cmake_build check-cxx
@@ -419,12 +419,12 @@ gen_shared_ldscript() {
 
 src_install() {
 	install_abi() {
-		for build_type in $(get_build_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${build_type/-*}_build"
+		for lib_type in $(get_lib_types) ; do
+			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
 			if [[ ${CHOST} != *-darwin* ]] ; then
-				if [[ "${build_type}" == "static-libs" ]] ; then
+				if [[ "${lib_type}" == "static" ]] ; then
 					gen_static_ldscript
 				else
 					gen_shared_ldscript
