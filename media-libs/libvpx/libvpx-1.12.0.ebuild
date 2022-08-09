@@ -298,9 +298,9 @@ has_pgo_requirement() {
 	fi
 }
 
-get_build_types() {
-	echo "shared-libs"
-	use static-libs && echo "static-libs"
+get_lib_types() {
+	echo "shared"
+	use static-libs && echo "static"
 }
 
 src_prepare() {
@@ -314,9 +314,9 @@ src_prepare() {
 	fi
 
 	prepare_abi() {
-		for build_type in $(get_build_types) ; do
-			einfo "Build type is ${build_type}"
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			einfo "Build type is ${lib_type}"
+			export S="${S_orig}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
 		done
@@ -344,7 +344,7 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${build_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static" ]] \
 			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
@@ -368,9 +368,9 @@ is_hardened_gcc() {
 
 is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		return 0
-	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 		return 0
 	fi
 	return 1
@@ -417,9 +417,9 @@ configure_pgx() {
 		# -static-libc++ which does not exist.
                 append-cxxflags -stdlib=libc++
                 append-ldflags -stdlib=libc++
-		[[ "${build_type}" == "shared-libs" ]] \
+		[[ "${lib_type}" == "shared" ]] \
 			&& append-ldflags -lc++
-		[[ "${build_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static" ]] \
 			&& append-ldflags -static-libstdc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
@@ -470,9 +470,9 @@ configure_pgx() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
 		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${build_type}" == "static-libs" ]] ; then
+			if [[ "${lib_type}" == "static" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+			elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -489,14 +489,14 @@ configure_pgx() {
 			fi
 			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
 			use cfi-cross-dso \
-				&& [[ "${build_type}" == "shared-libs" ]] \
+				&& [[ "${lib_type}" == "shared" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
 						-fsanitize=shadow-call-stack
 	}
 
-	if use chromium && [[ "${build_type}" == "static-libs" ]] ; then
+	if use chromium && [[ "${lib_type}" == "static" ]] ; then
 		export ASFLAGS="-DCHROMIUM"
 		myconfargs+=( --as=nasm )
 	else
@@ -529,7 +529,7 @@ configure_pgx() {
 		fi
 	fi
 
-	if [[ "${build_type}" == "shared-libs" ]] ; then
+	if [[ "${lib_type}" == "shared" ]] ; then
 		myconfargs+=(
 			--enable-shared
 			--disable-static
@@ -592,7 +592,7 @@ configure_pgx() {
 	elif use hardened ; then
 		export EXELDFLAGS="-pie"
 	fi
-	if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+	if [[ "${USE}" =~ "cfi" && "${lib_type}" == "static" ]] ; then
 		myconfargs+=( --enable-cfi )
 	fi
 
@@ -1036,14 +1036,14 @@ compile_pgx() {
 
 src_compile() {
 	compile_abi() {
-		for build_type in $(get_build_types) ; do
-			einfo "Build type is ${build_type}"
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			einfo "Build type is ${lib_type}"
+			export S="${S_orig}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			if use pgo \
 				&& has_pgo_requirement ; then
-				if [[ "${build_type}" == "shared-libs" ]] ; then
+				if [[ "${lib_type}" == "shared" ]] ; then
 					PGO_PHASE="pgi"
 					configure_pgx
 					compile_pgx
@@ -1051,7 +1051,7 @@ src_compile() {
 				fi
 				if (( $(find "${T}/pgo-${ABI}" 2>/dev/null | wc -l) > 0 )) ; then
 					PGO_PHASE="pgo"
-					[[ "${build_type}" == "static-libs" ]] \
+					[[ "${lib_type}" == "static" ]] \
 						&& ewarn "Reusing PGO data from shared-libs"
 				else
 					ewarn "No PGO data found.  Skipping PGO build and building normally."
@@ -1072,8 +1072,8 @@ src_compile() {
 
 src_test() {
 	test_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			local -x LD_LIBRARY_PATH="${BUILD_DIR}"
@@ -1086,8 +1086,8 @@ src_test() {
 
 src_install() {
 	install_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			emake verbose=yes GEN_EXAMPLES= DESTDIR="${D}" install
