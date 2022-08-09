@@ -512,6 +512,7 @@ src_test() {
 }
 
 src_install_abi() {
+	[[ "${configuration}" == "test" ]] && return
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${configuration}"
 	cd "${BUILD_DIR}" || die
 	emake DESTDIR="${D}" install
