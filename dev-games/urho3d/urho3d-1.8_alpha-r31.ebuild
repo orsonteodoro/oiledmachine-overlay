@@ -4,14 +4,13 @@
 
 EAPI=8
 
-EPLATFORMS="android arm native rpi web"
 STATIC_LIBS_CUSTOM_LIB_TYPE_IMPL="module"
 STATIC_LIBS_CUSTOM_LIB_TYPE_IUSE="+module"
 CMAKE_MAKEFILE_GENERATOR=emake
 LLVM_SLOTS=(15 14 13) # Previously tested with 9
 LLVM_MAX_SLOT=15 # It needs testing.  It can break with different LLVM.
 
-inherit cmake flag-o-matic linux-info llvm multilib-minimal platforms static-libs
+inherit cmake flag-o-matic linux-info llvm multilib-minimal
 
 DESCRIPTION="Cross-platform 2D and 3D game engine."
 HOMEPAGE="http://urho3d.github.io/"
@@ -78,7 +77,9 @@ KEYWORDS="~amd64 ~ppc ~ppc64 ~x86 ~arm ~arm64"
 SLOT="0/${PV}"
 X86_CPU_FEATURES_RAW=( 3dnow mmx sse sse2 )
 X86_CPU_FEATURES=( ${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_} )
+PLATFORMS="android arm native rpi web"
 IUSE+="
+	${PLATFORMS}
 	${X86_CPU_FEATURES[@]%:*}
 	 X
 	 abi_mips_n64
@@ -737,7 +738,7 @@ _prepare_common() {
 		Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg
 	)
 
-	if use box2d_2_4 && [[ "${EPLATFORM}" != "web" ]] ; then
+	if use box2d_2_4 && [[ "${platform}" != "web" ]] ; then
 		rm Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintRope2D.pkg \
 			Source/Urho3D/Urho2D/ConstraintRope2D.cpp \
 			|| die
@@ -760,7 +761,7 @@ _prepare_common() {
 		Docs/ScriptAPI.dox
 	)
 
-	if use system-box2d && [[ "${EPLATFORM}" != "web" ]] ; then
+	if use system-box2d && [[ "${platform}" != "web" ]] ; then
 		rm -rf Source/ThirdParty/Box2D || die
 		for f in ${files_system_box2d_lines[@]} ; do
 			sed -i -e "/URHO3D_SYSTEM_BOX2D/d" "${f}" || die
@@ -772,53 +773,41 @@ _prepare_common() {
 	fi
 }
 
+get_platforms() {
+	use android && echo "android"
+	use arm && echo "arm"
+	use native && echo "native"
+	use rpi && echo "rpi"
+	use web && echo "web"
+}
+
+get_lib_types() {
+	use static-libs && echo "static"
+	echo "shared"
+}
+
 src_prepare() {
 	default
 
 	prepare_common() {
 		_prepare_common
-
-		SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
-		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-		BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 		cmake_src_prepare
 	}
 
-	prepare_platform() {
-		cd "${BUILD_DIR}" || die
+	local platform
+	for platform in $(get_platforms) ; do
 		prepare_abi() {
-			cd "${BUILD_DIR}" || die
-			static-libs_prepare() {
-				einfo "In static-libs_prepare"
-				cd "${BUILD_DIR}" || die
-				if [[ "${EPLATFORM}" == "android" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
-					prepare_common
-				elif [[ "${EPLATFORM}" == "native" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
-					prepare_common
-				elif [[ "${EPLATFORM}" == "rpi" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
-					prepare_common
-				elif [[ "${EPLATFORM}" == "web" && ( \
-					"${ESTSH_LIB_TYPE}" == "module" || \
-					"${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
-					prepare_common
-				fi
-			}
-			einfo "Called static-libs_copy_sources"
-			static-libs_copy_sources
-			static-libs_foreach_impl \
-				static-libs_prepare
+			local lib_type
+			for lib_type in $(get_lib_types) ; do
+				cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${platform}" || die
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${platform}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${platform}_build"
+				cd "${CMAKE_USE_DIR}" || die
+				prepare_common
+			done
 		}
-		einfo "Called multilib_copy_sources"
-		multilib_copy_sources
 		multilib_foreach_abi prepare_abi
-	}
-	einfo "Called urho3d_copy_sources"
-	platforms_copy_sources
-	platforms_foreach_impl \
-		prepare_platform
+	done
 }
 
 # From cmake.eclass originally as cmake_src_configure
@@ -1065,7 +1054,7 @@ configure_sdl() {
 		-DVIDEO_DIRECTFB=OFF
 	)
 
-	if [[ "${EPLATFORM}" == "web" ]] ; then
+	if [[ "${platform}" == "web" ]] ; then
 		mycmakeargs+=(
 			-DSDL_SHARED=OFF
 			-DSDL_STATIC=ON
@@ -1077,13 +1066,13 @@ configure_sdl() {
 		)
 	fi
 
-	if [[ "${EPLATFORM}" == "android" ]] ; then
+	if [[ "${platform}" == "android" ]] ; then
 		mycmakeargs+=(
 			-DHIDAPI=$(usex joystick \
 					$(usex hidapi-hidraw ON OFF) \
 					OFF)
 		)
-	elif [[ "${EPLATFORM}" == "web" ]] ; then
+	elif [[ "${platform}" == "web" ]] ; then
 		mycmakeargs+=(
 			-DHIDAPI=OFF
 		)
@@ -1096,7 +1085,7 @@ configure_sdl() {
 		)
 	fi
 
-	if [[ "${EPLATFORM}" == "web" ]] ; then
+	if [[ "${platform}" == "web" ]] ; then
 		mycmakeargs+=(
 			-DVIDEO_RPI=OFF
 			-DVIDEO_VIVANTE=OFF
@@ -1108,9 +1097,9 @@ configure_sdl() {
 		)
 	fi
 
-	if [[ "${EPLATFORM}" == "android" \
-		|| "${EPLATFORM}" == "rpi" \
-		|| "${EPLATFORM}" == "web" ]] ; then
+	if [[ "${platform}" == "android" \
+		|| "${platform}" == "rpi" \
+		|| "${platform}" == "web" ]] ; then
 		# These uses it's own audio/video driver
 		mycmakeargs+=(
 			-DALSA=OFF
@@ -1267,12 +1256,12 @@ configure_android() {
 		${URHO3D_ANDROID_CONFIG[@]}
 	)
 
-	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+	if [[ "${lib_type}" == "shared" ]] ; then
 		mycmakeargs+=(
 			-DURHO3D_LIB_TYPE=SHARED
 			-DURHO3D_SAMPLES=$(usex samples)
 		)
-	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+	elif [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
 			-DURHO3D_LIB_TYPE=STATIC
 			-DURHO3D_SAMPLES=OFF
@@ -1293,7 +1282,7 @@ einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		else
 einfo
-einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
+einfo "Using Box2D 2.3 (default) for ${platform}"
 einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
@@ -1301,9 +1290,6 @@ einfo
 
 	configure_sdl
 
-	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
-	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	cmake_src_configure
 }
 
@@ -1370,12 +1356,12 @@ configure_arm() {
 		${URHO3D_ANDROID_CONFIG[@]}
 	)
 
-	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+	if [[ "${lib_type}" == "shared" ]] ; then
 		mycmakeargs+=(
 			-DURHO3D_LIB_TYPE=SHARED
 			-DURHO3D_SAMPLES=$(usex samples)
 		)
-	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+	elif [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
 			-DURHO3D_LIB_TYPE=STATIC
 			-DURHO3D_SAMPLES=OFF
@@ -1396,7 +1382,7 @@ einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		else
 einfo
-einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
+einfo "Using Box2D 2.3 (default) for ${platform}"
 einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
@@ -1404,15 +1390,12 @@ einfo
 
 	configure_sdl
 
-	URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/Arm.cmake"
-	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
-	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
+	export URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/Arm.cmake"
 	_cmake_src_configure
 }
 
 configure_native() {
-	if [[ "${EPLATFORM}" == "native" ]] ; then
+	if [[ "${platform}" == "native" ]] ; then
 		if use debug; then
 			append-cxxflags -g -O0
 			append-cflags -g -O0
@@ -1480,12 +1463,12 @@ configure_native() {
 		-DURHO3D_WEBP=$(usex webp)
         )
 
-	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+	if [[ "${lib_type}" == "shared" ]] ; then
 		mycmakeargs+=(
 			-DURHO3D_LIB_TYPE=SHARED
 			-DURHO3D_SAMPLES=$(usex samples)
 		)
-	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+	elif [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
 			-DURHO3D_LIB_TYPE=STATIC
 			-DURHO3D_SAMPLES=OFF
@@ -1495,18 +1478,18 @@ configure_native() {
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
 ewarn
-ewarn "Using Box2D 2.4 for ${EPLATFORM} while breaking ABI compatibility and"
+ewarn "Using Box2D 2.4 for ${platform} while breaking ABI compatibility and"
 ewarn "scripts.  Use Box2D 2.3 to maximize compatibility."
 ewarn
 			mycmakeargs+=( -DBOX2D_2_4=1 )
 		elif use box2d_2_3 ; then
 einfo
-einfo "Using Box2D 2.3 for ${EPLATFORM}"
+einfo "Using Box2D 2.3 for ${platform}"
 einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		else
 einfo
-einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
+einfo "Using Box2D 2.3 (default) for ${platform}"
 einfo
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
@@ -1535,9 +1518,6 @@ einfo
 
 	configure_sdl
 
-	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
-	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	cmake_src_configure
 }
 
@@ -1603,12 +1583,12 @@ configure_rpi() {
 		${URHO3D_RPI_CONFIG[@]}
 	)
 
-	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+	if [[ "${lib_type}" == "shared" ]] ; then
 		mycmakeargs+=(
 			-DURHO3D_LIB_TYPE=SHARED
 			-DURHO3D_SAMPLES=$(usex samples)
 		)
-	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+	elif [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
 			-DURHO3D_LIB_TYPE=STATIC
 			-DURHO3D_SAMPLES=OFF
@@ -1618,25 +1598,22 @@ configure_rpi() {
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
 ewarn
-ewarn "Using Box2D 2.4 for ${EPLATFORM} while breaking ABI compatibility and"
+ewarn "Using Box2D 2.4 for ${platform} while breaking ABI compatibility and"
 ewarn "scripts.  Use Box2D 2.3 to maximize compatibility."
 ewarn
 			mycmakeargs+=( -DBOX2D_2_4=1 )
 		elif use box2d_2_3 ; then
-			einfo "Using Box2D 2.3 for ${EPLATFORM}"
+			einfo "Using Box2D 2.3 for ${platform}"
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		else
-			einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
+			einfo "Using Box2D 2.3 (default) for ${platform}"
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
 	fi
 
 	configure_sdl
 
-	URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/RaspberryPi.cmake"
-	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
-	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
+	export URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/RaspberryPi.cmake"
 	_cmake_src_configure
 }
 
@@ -1659,7 +1636,7 @@ configure_web() {
 	# Setting EMSCRIPTEN_SYSROOT is not necessary
 	# URHO3D_PACKAGING depends on URHO3D_TOOLS
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/web
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/share/${P}/web"
 		-DANDROID=OFF
 		-DARM=OFF
 		-DRPI=OFF
@@ -1722,12 +1699,12 @@ configure_web() {
 		-DURHO3D_WEBP=$(usex webp)
 	)
 
-	if [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(
 			-DURHO3D_LIB_TYPE=STATIC
 			-DURHO3D_SAMPLES=$(usex samples)
 		)
-	elif [[ "${ESTSH_LIB_TYPE}" == "module" ]] ; then
+	elif [[ "${lib_type}" == "module" ]] ; then
 		mycmakeargs+=(
 			-DURHO3D_LIB_TYPE=MODULE
 			-DURHO3D_SAMPLES=OFF
@@ -1736,23 +1713,21 @@ configure_web() {
 
 	configure_sdl
 
-	einfo "Using Box2D 2.3 for ${EPLATFORM}"
+	einfo "Using Box2D 2.3 for ${platform}"
 
-	URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/Emscripten.cmake"
-	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
-	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
+	export URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/Emscripten.cmake"
 	_cmake_src_configure
 }
 
 src_configure() {
-	configure_platform() {
-		cd "${BUILD_DIR}" || die
+	local platform
+	for platform in $(get_platforms) ; do
 		configure_abi() {
-			cd "${BUILD_DIR}" || die
-			static-libs_configure() {
-				cd "${BUILD_DIR}" || die
-
+			local lib_type
+			for lib_type in $(get_lib_types) ; do
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${platform}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${platform}_build"
+				cd "${CMAKE_USE_DIR}" || die
 				local ctarget
 				if [[ -n "${CTARGET}" ]] ; then
 					ctarget="${CTARGET:-${CHOST}}"
@@ -1772,50 +1747,45 @@ src_configure() {
 					export CXX=${ctarget}-g++
 				fi
 
-				if [[	"${EPLATFORM}" == "android" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				if [[	"${platform}" == "android" && \
+					"${lib_type}" != "module" ]] ; then
 					configure_android
-				elif [[ "${EPLATFORM}" == "arm" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${platform}" == "arm" && \
+					"${lib_type}" != "module" ]] ; then
 					configure_arm
-				elif [[ "${EPLATFORM}" == "native" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${platform}" == "native" && \
+					"${lib_type}" != "module" ]] ; then
 					configure_native
-				elif [[ "${EPLATFORM}" == "rpi" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${platform}" == "rpi" && \
+					"${lib_type}" != "module" ]] ; then
 					configure_rpi
-				elif [[ "${EPLATFORM}" == "web" && ( \
-					"${ESTSH_LIB_TYPE}" == "module" || \
-					"${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+				elif [[ "${platform}" == "web" && ( \
+					"${lib_type}" == "module" || \
+					"${lib_type}" == "static" ) ]] ; then
 					export CC=clang-${LLVM_SLOT}
 					export CXX=clang++-${LLVM_SLOT}
 					configure_web
 				fi
-			}
-			static-libs_foreach_impl \
-				static-libs_configure
+			done
 		}
 		multilib_foreach_abi configure_abi
-	}
-	platforms_foreach_impl \
-		configure_platform
+	done
 }
 
 src_compile() {
 	compile_common() {
-		SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
-		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-		BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 		cmake_src_compile
 	}
 
-	compile_platform() {
-		cd "${BUILD_DIR}" || die
+	local platform
+	for platform in $(get_platforms) ; do
 		compile_abi() {
-			cd "${BUILD_DIR}" || die
-			static-libs_compile() {
+			local lib_type
+			for lib_type in $(get_lib_types) ; do
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${platform}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${platform}_build"
 				cd "${BUILD_DIR}" || die
-				if [[ "${EPLATFORM}" == "android" ]] ; then
+				if [[ "${platform}" == "android" ]] ; then
 ewarn
 ewarn "src_compile for android has not been tested.  Send back fixes to ebuild"
 ewarn "maintainer."
@@ -1827,80 +1797,70 @@ ewarn
 					fi
 					make -j 1 || die
 					ant debug || due
-				elif [[ "${EPLATFORM}" == "arm" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${platform}" == "arm" && \
+					"${lib_type}" != "module" ]] ; then
 					compile_common
-				elif [[ "${EPLATFORM}" == "native" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${platform}" == "native" && \
+					"${lib_type}" != "module" ]] ; then
 					compile_common
-				elif [[ "${EPLATFORM}" == "rpi" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${platform}" == "rpi" && \
+					"${lib_type}" != "module" ]] ; then
 ewarn
 ewarn "src_compile for rpi has not been tested.  Send back fixes to ebuild"
 ewarn "maintainer."
 ewarn
 					compile_common
-				elif [[ "${EPLATFORM}" == "web" && ( \
-					"${ESTSH_LIB_TYPE}" == "module" || \
-					"${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+				elif [[ "${platform}" == "web" && ( \
+					"${lib_type}" == "module" || \
+					"${lib_type}" == "static" ) ]] ; then
 					compile_common
 				fi
-			}
-			static-libs_foreach_impl \
-				static-libs_compile
+			done
 		}
 		multilib_foreach_abi compile_abi
-	}
-	platforms_foreach_impl \
-		compile_platform
+	done
 }
 
 src_install() {
 	install_common() {
-		SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
-		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-		BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 		cmake_src_install
 	}
 
-	install_platform() {
-		cd "${BUILD_DIR}" || die
+	local platform
+	for platform in $(get_platforms) ; do
 		install_abi() {
-			cd "${BUILD_DIR}" || die
-			static-libs_install() {
-				cd "${BUILD_DIR}" || die
-				if [[ "${EPLATFORM}" == "android" ]] ; then
+			local lib_type
+			for lib_type in $(get_lib_types) ; do
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${platform}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${platform}_build"
+				if [[ "${platform}" == "android" ]] ; then
 ewarn
 ewarn "src_install for android has not been tested.  Send back fixes to ebuild"
 ewarn "maintainer."
 ewarn
 					install_common
-				elif [[ "${EPLATFORM}" == "arm" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${platform}" == "arm" && \
+					"${lib_type}" != "module" ]] ; then
 					install_common
-				elif [[ "${EPLATFORM}" == "native" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${platform}" == "native" && \
+					"${lib_type}" != "module" ]] ; then
 					install_common
-				elif [[ "${EPLATFORM}" == "rpi" && \
-					"${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${platform}" == "rpi" && \
+					"${lib_type}" != "module" ]] ; then
 ewarn
 ewarn "src_install for rpi has not been tested.  Send back fixes to ebuild"
 ewarn "maintainer."
 ewarn
 					install_common
-				elif [[ "${EPLATFORM}" == "web" && ( \
-					"${ESTSH_LIB_TYPE}" == "module" || \
-					"${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+				elif [[ "${platform}" == "web" && ( \
+					"${lib_type}" == "module" || \
+					"${lib_type}" == "static" ) ]] ; then
 					install_common
 				fi
-			}
-			static-libs_foreach_impl \
-				static-libs_install
+			done
 		}
 		multilib_foreach_abi install_abi
-	}
-	platforms_foreach_impl \
-		install_platform
+	done
 
 	cd "${S}" || die
 
