@@ -20,11 +20,11 @@ SNAPPY_V="0.3.7"
 CDEPEND=">=sys-devel/gcc-8.4.0"
 DEPEND+="
 	${CDEPEND}
-	dev-libs/crc32c
+	dev-libs/crc32c[${MULTILIB_USEDEP}]
 	tcmalloc? ( >=dev-util/google-perftools-2.5[${MULTILIB_USEDEP}] )
 	snappy? (
 		>=app-arch/snappy-${SNAPPY_V}:=[${MULTILIB_USEDEP}]
-		static-libs? ( >=app-arch/snappy-${SNAPPY_V}:=[static-libs,${MULTILIB_USEDEP}] )
+		static-libs? ( >=app-arch/snappy-${SNAPPY_V}:=[${MULTILIB_USEDEP}] )
 	)
 "
 RDEPEND+=" ${DEPEND}"
