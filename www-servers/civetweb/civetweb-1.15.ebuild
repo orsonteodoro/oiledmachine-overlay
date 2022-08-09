@@ -4,7 +4,7 @@
 EAPI=8
 
 LUA_COMPAT=( lua5-{1..4} ) # building with 5.1 is broken
-inherit cmake flag-o-matic lua multilib-minimal static-libs
+inherit cmake flag-o-matic lua multilib-minimal
 
 DESCRIPTION="CivetWeb is an embedded C++ web server"
 HOMEPAGE="https://github.com/civetweb"
@@ -14,7 +14,7 @@ KEYWORDS="~amd64 ~ppc ~x86"
 IUSE+=" ${LUA_COMPAT[@]/#/lua_targets_}" # for some reason the lua eclass looks broken
 IUSE+=" +asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 -cxx +caching
 debug doc -duktape -ipv6 -lto -lua -serve_no_files +server_executable
--server_stats +ssl ssl_1_0 +ssl_1_1 static -test -websockets -zlib"
+-server_stats +ssl ssl_1_0 +ssl_1_1 static-libs -test -websockets -zlib"
 REQUIRED_USE+="
 	lua? ( ${LUA_REQUIRED_USE} gnu17 )
 	lua_targets_lua5-1? ( lua )
@@ -80,7 +80,7 @@ DOCS=(
 	README.md
 	RELEASE_NOTES.md
 )
-_PATCHES=(
+PATCHES=(
 	"${FILESDIR}/civetweb-1.13-disable-pedantic-errors.patch"
 	"${FILESDIR}/civetweb-1.13-change-cmake-for-lua-dependencies-v2.patch"
 	"${FILESDIR}/civetweb-1.13-disable-fvisibility-for-c.patch"
@@ -120,7 +120,7 @@ eerror
 		fi
 	done
 
-	if [[ -f /usr/include/lua.h ]] ; then
+	if [[ -e "/usr/include/lua.h" ]] ; then
 eerror
 eerror "/usr/include/lua.h must be removed.  Switch lua implementation to"
 eerror "alternative and back again via eselect."
@@ -129,56 +129,53 @@ eerror
 	fi
 }
 
-_prepare() {
-	cd "${BUILD_DIR}" || die
-
-	if use lua ; then
-#		if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
-			sed -i -e 's|"lauxlib.h"|<lauxlib.h>|' \
-				src/third_party/civetweb_lua.h || die
-			sed -i -e 's|"lua.h"|<lua.h>|' \
-				src/third_party/civetweb_lua.h || die
-			sed -i -e 's|"lualib.h"|<lualib.h>|' \
-				src/third_party/civetweb_lua.h || die
-#		fi
+get_lib_types() {
+	if use static-libs ; then
+		echo "static"
 	fi
-
-	SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-	if use lua ; then
-		SUFFIX+="_${ELUA}"
-	fi
-	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake_src_prepare
+	echo "shared"
 }
 
 src_prepare() {
-	default
-	if use lua ; then
-		rm -rf src/third_party/lua-* || die
-	fi
-	eapply ${_PATCHES[@]}
-	multilib_copy_sources
+	local nabis=0
 	prepare_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_copy_sources
-		prepare_stsh()
-		{
-			cd "${BUILD_DIR}" || die
+		nabis=$((${nabis} + 1))
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
 			if use lua ; then
-				lua_copy_sources
-				lua_foreach_impl _prepare
+				prepare_lua() {
+					cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}" || die
+					export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
+					export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}_build"
+					cd "${CMAKE_USE_DIR}" || die
+					sed -i -e 's|"lauxlib.h"|<lauxlib.h>|' \
+						src/third_party/civetweb_lua.h || die
+					sed -i -e 's|"lua.h"|<lua.h>|' \
+						src/third_party/civetweb_lua.h || die
+					sed -i -e 's|"lualib.h"|<lualib.h>|' \
+						src/third_party/civetweb_lua.h || die
+					rm -rf src/third_party/lua-* || die
+					cmake_src_prepare
+				}
+				lua_foreach_impl prepare_lua
 			else
-				_prepare
+				cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+				cd "${CMAKE_USE_DIR}" || die
+				cmake_src_prepare
 			fi
-		}
-		static-libs_foreach_impl prepare_stsh
+		done
 	}
 	multilib_foreach_abi prepare_abi
+	if use lua ; then
+ewarn
+ewarn "Currently the luaxml ebuild is unilib.  Expect a build failure."
+ewarn
+	fi
 }
 
 _configure() {
-	cd "${BUILD_DIR}" || die
 	# CIVETWEB_CXX_STANDARD auto is c++14 > c++11 > c++98 depending on
 	#   the compiler
 	# CIVETWEB_C_STANDARD auto is c11 > c98 > c89 depending on compiler
@@ -219,6 +216,11 @@ _configure() {
 		-DCIVETWEB_ENABLE_LUA_XML_SHARED=$(usex lua)
 		-DCIVETWEB_ENABLE_SQLITE_SHARED=$(usex lua)
 	)
+	if [[ "${lib_type}" == "shared" ]] ;then
+		mycmakeargs+=( -DBUILD_SHARED_LIBS=ON )
+	else
+		mycmakeargs+=( -DBUILD_SHARED_LIBS=OFF )
+	fi
 	if use lua ; then
 		mycmakeargs+=(
 			-DCIVETWEB_LUA_VERSION=$(lua_get_version)
@@ -226,34 +228,34 @@ _configure() {
 			-DLUA_CDIR="$(lua_get_cmod_dir)"
 			-DLUA_INC="$(lua_get_include_dir)"
 		)
-		if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ;then
+		if [[ "${lib_type}" == "shared" ]] ;then
 			mycmakeargs+=( -DCIVETWEB_ENABLE_LUA_SHARED=ON )
-		elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ;then
-			mycmakeargs+=( -DCIVETWEB_ENABLE_LUA_SHARED=ON ) # Missing lib
+		elif [[ "${lib_type}" == "static" ]] ;then
+			mycmakeargs+=( -DCIVETWEB_ENABLE_LUA_SHARED=OFF ) # Missing lib
 		fi
 	fi
-	SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-	if use lua ; then
-		SUFFIX+="_${ELUA}"
-	fi
-	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	cmake_src_configure
 }
 
 src_configure() {
 	configure_abi() {
-		cd "${BUILD_DIR}" || die
-		configure_stsh()
-		{
-			cd "${BUILD_DIR}" || die
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
 			if use lua ; then
-				lua_foreach_impl _configure
+				configure_lua() {
+					export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
+					export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}_build"
+					cd "${CMAKE_USE_DIR}" || die
+					_configure
+				}
+				lua_foreach_impl configure_lua
 			else
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+				cd "${CMAKE_USE_DIR}" || die
 				_configure
 			fi
-		}
-		static-libs_foreach_impl configure_stsh
+		done
 	}
 	multilib_foreach_abi configure_abi
 }
@@ -264,54 +266,53 @@ _compile() {
 	if use lua ; then
 		SUFFIX+="_${ELUA}"
 	fi
-	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake_src_compile
 }
 
 src_compile() {
 	compile_abi() {
-		cd "${BUILD_DIR}" || die
-		compile_stsh()
-		{
-			cd "${BUILD_DIR}" || die
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
 			if use lua ; then
-				lua_foreach_impl _compile
+				compile_lua() {
+					export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
+					export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}_build"
+					cd "${BUILD_DIR}" || die
+					cmake_src_compile
+				}
+				lua_foreach_impl compile_lua
 			else
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+				cd "${BUILD_DIR}" || die
 				_compile
 			fi
-		}
-		static-libs_foreach_impl compile_stsh
+		done
 	}
 	multilib_foreach_abi compile_abi
 }
 
-_install() {
-	cd "${BUILD_DIR}" || die
-	SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-	if use lua ; then
-		SUFFIX+="_${ELUA}"
-	fi
-	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake_src_install
-}
-
 src_install() {
 	install_abi() {
-		cd "${BUILD_DIR}" || die
-		install_stsh()
-		{
-			cd "${BUILD_DIR}" || die
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
 			if use lua ; then
-				lua_foreach_impl _install
+				install_lua() {
+					export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
+					export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}_build"
+					cd "${BUILD_DIR}" || die
+					cmake_src_install
+				}
+				lua_foreach_impl install_lua
 			else
-				_install
+				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+				cd "${BUILD_DIR}" || die
+				cmake_src_install
 			fi
-		}
-		static-libs_foreach_impl install_stsh
+		done
 	}
 	multilib_foreach_abi install_abi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
+# OILEDMACHINE-OVERLAY-META-WIP: lua-support
