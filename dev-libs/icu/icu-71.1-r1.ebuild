@@ -143,9 +143,9 @@ PATCHES=(
 	"${FILESDIR}/extra/${PN}-69.1-extra-so-flags.patch" # oiledmachine-overlay added
 )
 
-get_build_types() {
-	echo "shared-libs"
-	use static-libs && echo "static-libs"
+get_lib_types() {
+	echo "shared"
+	use static-libs && echo "static"
 }
 
 src_prepare() {
@@ -181,9 +181,9 @@ src_prepare() {
 	eautoreconf
 
 	prepare_abi() {
-		for build_type in $(get_build_types) ; do
-			einfo "Build type is ${build_type}"
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			einfo "Build type is ${lib_type}"
+			export S="${S_orig}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
 		done
@@ -201,7 +201,7 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${build_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static" ]] \
 			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
@@ -244,8 +244,8 @@ src_configure() {
 	fi
 
 	configure_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_configure_abi
@@ -256,9 +256,9 @@ src_configure() {
 
 is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		return 0
-	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 		return 0
 	fi
 	return 1
@@ -302,10 +302,10 @@ _configure_abi() {
 		# -static-libc++ which does not exist.
 		append-cxxflags -stdlib=libc++
 		append-ldflags -stdlib=libc++
-		if [[ "${build_type}" == "shared-libs" ]] ; then
+		if [[ "${lib_type}" == "shared" ]] ; then
 			append-ldflags -lc++
 		fi
-		if [[ "${build_type}" == "static-libs" ]] ; then
+		if [[ "${lib_type}" == "static" ]] ; then
 			append-cxxflags -Wno-unused-command-line-argument
 			append-cppflags -DDHAVE_DLOPEN=0 -DU_DISABLE_RENAMING=1 -DU_STATIC_IMPLEMENTATION
 			append-ldflags -Wno-unused-command-line-argument
@@ -317,9 +317,9 @@ _configure_abi() {
 
 	set_cfi() {
 		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${build_type}" == "static-libs" ]] ; then
+			if [[ "${lib_type}" == "static" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+			elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -335,7 +335,7 @@ _configure_abi() {
 			fi
 			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
 			if use cfi-cross-dso \
-				&& [[ "${build_type}" == "shared-libs" ]] ; then
+				&& [[ "${lib_type}" == "shared" ]] ; then
 				export ESHAREDLIBCFLAGS="-fsanitize-cfi-cross-dso"
 				export ESHAREDLIBCXXFLAGS="-fsanitize-cfi-cross-dso"
 				export ELD_SOOPTIONS="-fsanitize-cfi-cross-dso"
@@ -383,7 +383,7 @@ _configure_abi() {
 		$(multilib_native_use_enable examples samples)
 	)
 
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		myeconfargs+=(
 			--enable-static
 			--disable-dyload
@@ -402,7 +402,7 @@ _configure_abi() {
 			--enable-tools
 		)
 	elif use cfi-cross-dso ; then
-		if [[ "${build_type}" == "shared-libs" ]] ; then
+		if [[ "${lib_type}" == "shared" ]] ; then
 			# Link against CFI Cross DSO (.so)
 			myeconfargs+=(
 				--enable-extras
@@ -415,7 +415,7 @@ _configure_abi() {
 			)
 		fi
 	else
-		if [[ "${build_type}" == "static-libs" ]] ; then
+		if [[ "${lib_type}" == "static" ]] ; then
 			# Link against Basic mode (.a)
 			myeconfargs+=(
 				--enable-extras
@@ -453,8 +453,8 @@ _configure_abi() {
 src_compile() {
 	export VERBOSE=1
 	compile_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 
@@ -471,8 +471,8 @@ src_compile() {
 
 src_test() {
 	test_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			# INTLTEST_OPTS: intltest options
@@ -493,8 +493,8 @@ src_test() {
 
 src_install() {
 	install_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			default
