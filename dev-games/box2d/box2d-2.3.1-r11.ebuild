@@ -77,7 +77,7 @@ src_compile() {
 		for lib_type in $(get_lib_types) ; do
 			export CMAKE_USE_DIR="${S}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-			cd "${CMAKE_USE_DIR}" || die
+			cd "${BUILD_DIR}" || die
 			cmake_src_compile
 		done
 	}
