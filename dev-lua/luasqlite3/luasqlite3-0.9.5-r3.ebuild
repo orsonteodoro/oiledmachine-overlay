@@ -22,14 +22,22 @@ inherit toolchain-funcs
 SRC_URI="http://lua.sqlite.org/index.cgi/zip/lsqlite3_fsl09y.zip"
 DOCS=( HISTORY README )
 
+get_lib_types() {
+	use static-libs && echo "static"
+	echo "shared"
+}
+
 src_prepare() {
 	default
-	multilib_copy_sources
 	prepare_abi()
 	{
-		einfo "Preparing..."
-		cd "${BUILD_DIR}" || die
-		lua_copy_sources
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			lua_src_prepare() {
+				cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}" || die
+			}
+			lua_foreach_impl lua_src_prepare
+		done
 	}
         multilib_foreach_abi prepare_abi
 }
@@ -40,8 +48,9 @@ src_configure() {
 
 lua_src_compile()
 {
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
+	cd "${BUILD_DIR}"
 	local chost=$(get_abi_CHOST ${ABI})
-	cd "${BUILD_DIR}" || die
 	CC=$(tc-getCC ${ABI})
 	mkdir -p "shared" || die
 	einfo "ELUA=${ELUA}"
@@ -77,8 +86,10 @@ lua_src_compile()
 src_compile() {
 	compile_abi()
 	{
-		cd "${BUILD_DIR}" || die
-		lua_foreach_impl lua_src_compile
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			lua_foreach_impl lua_src_compile
+		done
 	}
         multilib_foreach_abi compile_abi
 }
@@ -86,19 +97,22 @@ src_compile() {
 src_install() {
 	install_abi()
 	{
-		cd "${BUILD_DIR}" || die
-		lua_src_install()
-		{
-			cd "${BUILD_DIR}" || die
-			exeinto $(lua_get_cmod_dir)
-			doexe shared/lsqlite3.so
-			if use static-libs ; then
-				insinto $(lua_get_cmod_dir)
-				doins static/lsqlite3complete.a
-			fi
-		}
-		lua_foreach_impl lua_src_install
-		dodoc doc/lsqlite3.wiki
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			lua_src_install()
+			{
+				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
+				cd "${BUILD_DIR}"
+				exeinto $(lua_get_cmod_dir)
+				doexe shared/lsqlite3.so
+				if use static-libs ; then
+					insinto $(lua_get_cmod_dir)
+					doins static/lsqlite3complete.a
+				fi
+			}
+			lua_foreach_impl lua_src_install
+			dodoc doc/lsqlite3.wiki
+		done
 	}
         multilib_foreach_abi install_abi
 }
