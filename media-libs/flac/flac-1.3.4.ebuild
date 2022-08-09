@@ -150,7 +150,7 @@ src_prepare() {
 	prepare_abi() {
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
 		done
@@ -336,7 +336,7 @@ _src_configure() {
 src_configure() {
 	configure_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_src_configure
@@ -348,7 +348,7 @@ src_configure() {
 src_compile() {
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			einfo "Running src_compile for ${lib_type}"
@@ -361,7 +361,7 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			if [[ ${UID} != 0 ]]; then
@@ -377,7 +377,7 @@ src_test() {
 src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			emake DESTDIR="${D}" install
