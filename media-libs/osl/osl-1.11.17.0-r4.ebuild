@@ -156,9 +156,7 @@ llvm_check_deps() {
 }
 
 get_lib_type() {
-	if use static-libs ; then
-		echo "static"
-	fi
+	use static-libs && echo "static"
 	echo "shared"
 }
 
