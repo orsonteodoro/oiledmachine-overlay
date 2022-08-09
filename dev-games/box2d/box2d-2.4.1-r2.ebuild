@@ -128,7 +128,7 @@ src_test() {
 			if [[ -x bin/unit_test ]] ; then
 				bin/unit_test || die
 			else
-				die "No unit test exist for ABI=${ABI} STSH=${ESTSH_LIB_TYPE}"
+				die "No unit test exist for ABI=${ABI} lib_type=${lib_type}"
 			fi
 		done
 	}

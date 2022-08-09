@@ -108,7 +108,7 @@ src_test() {
 			if [[ -x HelloWorld/HelloWorld ]] ; then
 				./HelloWorld/HelloWorld || die
 			else
-				die "No unit test exist for ABI=${ABI} STSH=${ESTSH_LIB_TYPE}"
+				die "No unit test exist for ABI=${ABI} lib_type=${lib_type}"
 			fi
 		done
 	}
