@@ -316,7 +316,7 @@ src_prepare() {
 	prepare_abi() {
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
 		done
@@ -428,25 +428,26 @@ configure_pgx() {
 	autofix_flags
 
 	export FFMPEG=$(get_multiabi_ffmpeg)
+	local pgo_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
-			append-flags -fprofile-generate="${T}/pgo-${ABI}"
-			append-ldflags -fprofile-generate="${T}/pgo-${ABI}"
+			append-flags -fprofile-generate="${pgo_dir}"
+			append-ldflags -fprofile-generate="${pgo_dir}"
 		else
-			append-flags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-generate -fprofile-dir="${pgo_dir}"
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGO"
 		if tc-is-clang ; then
-			llvm-profdata merge -output="${T}/pgo-${ABI}/pgo-custom.profdata" \
-				"${T}/pgo-${ABI}" || die
-			append-flags -fprofile-use="${T}/pgo-${ABI}/pgo-custom.profdata"
-			append-ldflags -fprofile-use="${T}/pgo-${ABI}/pgo-custom.profdata"
+			llvm-profdata merge -output="${pgo_dir}/pgo-custom.profdata" \
+				"${pgo_dir}" || die
+			append-flags -fprofile-use="${pgo_dir}/pgo-custom.profdata"
+			append-ldflags -fprofile-use="${pgo_dir}/pgo-custom.profdata"
 		else
-			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_dir}"
 		fi
 	fi
 
@@ -1038,7 +1039,7 @@ src_compile() {
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			if use pgo \
@@ -1049,7 +1050,8 @@ src_compile() {
 					compile_pgx
 					run_trainer
 				fi
-				if (( $(find "${T}/pgo-${ABI}" 2>/dev/null | wc -l) > 0 )) ; then
+				local pgo_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+				if (( $(find "${pgo_dir}" 2>/dev/null | wc -l) > 0 )) ; then
 					PGO_PHASE="pgo"
 					[[ "${lib_type}" == "static" ]] \
 						&& ewarn "Reusing PGO data from shared-libs"
@@ -1073,7 +1075,7 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			local -x LD_LIBRARY_PATH="${BUILD_DIR}"
@@ -1087,7 +1089,7 @@ src_test() {
 src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			emake verbose=yes GEN_EXAMPLES= DESTDIR="${D}" install
