@@ -117,7 +117,8 @@ gen_llvm_test_bdepend()
 }
 
 BDEPEND+="
-	|| (	>=sys-devel/gcc-10
+	|| (
+		>=sys-devel/gcc-10
 		|| ( $(gen_llvm_bdepend) )
 	)
 	>=dev-util/gtk-doc-am-1.32
@@ -184,36 +185,20 @@ eerror
 		die
 	fi
 
-	local abis=( $(multilib_get_enabled_abis) )
-	for a in ${abis[@]} ; do
-		for p in ${_MULTILIB_FLAGS[@]} ; do
-			if [[ "${p}" =~ "${a}" ]] ; then
-				local u=$(echo "${p}" | cut -f 1 -d ":")
-				if ! use ${u} ; then
-einfo
-einfo "Skipped sys-devel/clang[${u}]"
-einfo
-					continue
-				fi
-einfo
-einfo "Checking sys-devel/clang[${u}]"
-einfo
-				# `emerge -1 vips` is not good enough to make
-				# the fuzzer test happy.
-				if has_version "sys-devel/clang[${u}]" ; then
-einfo
-einfo "sys-devel/clang[${u}] found"
-einfo
-				else
+	setup_abi() {
+		# `emerge -1 vips` is not good enough to make
+		# the fuzzer test happy.
+		if ! has_version "sys-devel/clang[${MULTILIB_ABI_FLAG}]" ; then
 eerror
-eerror "Inconsistency with sys-devel/clang[${u}].  Run emerge with --deep or"
-eerror "-D."
+eerror "Inconsistency with sys-devel/clang[${MULTILIB_ABI_FLAG}].  Run emerge"
+eerror "with --deep or -D."
 eerror
-					die
-				fi
-			fi
-		done
-	done
+			die
+		fi
+	}
+	if use test || tc-is-clang ; then
+		multilib_foreach_abi setup_abi
+	fi
 }
 
 src_prepare() {
@@ -239,7 +224,6 @@ src_prepare() {
 	for configuration in $(get_configurations) ; do
 		src_prepare_abi() {
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${configuration}"
-			cd "${BUILD_DIR}" || die
 			cp -a "${S}" "${BUILD_DIR}" || die
 		}
 		multilib_foreach_abi src_prepare_abi
