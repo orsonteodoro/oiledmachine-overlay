@@ -236,9 +236,9 @@ PATCHES=(
 	"${FILESDIR}"/${P}-CRC-buggy-input.patch
 )
 
-get_build_types() {
-	echo "shared-libs"
-	use static-libs && echo "static-libs"
+get_lib_types() {
+	echo "shared"
+	use static-libs && echo "static"
 }
 
 is_clang_ready() {
@@ -402,9 +402,9 @@ src_prepare() {
 	esac
 
 	prepare_abi() {
-		for build_type in $(get_build_types) ; do
-			einfo "Build type is ${build_type}"
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			einfo "Build type is ${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
 		done
@@ -424,7 +424,7 @@ append_lto() {
 	if tc-is-clang && is_lto_ready ; then
 		append-flags -flto=thin -fuse-ld=lld
 		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${build_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static" ]] \
 			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
@@ -450,9 +450,9 @@ is_hardened_gcc() {
 
 is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		return 0
-	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 		return 0
 	fi
 	return 1
@@ -513,9 +513,9 @@ _configure_pgx() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
 		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${build_type}" == "static-libs" ]] ; then
+			if [[ "${lib_type}" == "static" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+			elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -531,7 +531,7 @@ _configure_pgx() {
 			fi
 			[[ "${USE}" =~ "cfi" ]] && append_all -Wl,-lubsan
 			use cfi-cross-dso \
-				&& [[ "${build_type}" == "shared-libs" ]] \
+				&& [[ "${lib_type}" == "shared" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
@@ -598,7 +598,7 @@ _configure_pgx() {
 			${uname:+--uname=${uname}}
 		)
 
-		if [[ "${build_type}" == "static-libs" ]] ; then
+		if [[ "${lib_type}" == "static" ]] ; then
 			myconf+=(
 				--static
 			)
@@ -608,19 +608,19 @@ _configure_pgx() {
 			)
 		fi
 
-		einfo "Configuring zlib for ${build_type} for ${ABI}"
+		einfo "Configuring zlib for ${lib_type} for ${ABI}"
 		# not an autoconf script, so can't use econf
 		echoit "${S}"/configure "${myconf[@]}" || die
 		;;
 	esac
 
 	if use minizip ; then
-		einfo "Configuring minizip for ${build_type} for ${ABI}"
+		einfo "Configuring minizip for ${lib_type} for ${ABI}"
 		local minizipdir="contrib/minizip"
 		mkdir -p "${BUILD_DIR}/${minizipdir}" || die
 		cd ${minizipdir} || die
 		local myconf=()
-		if [[ "${build_type}" == "static-libs" ]] ; then
+		if [[ "${lib_type}" == "static" ]] ; then
 			myconf+=(
 				--enable-static
 				--disable-shared
@@ -642,12 +642,12 @@ _configure_pgx() {
 }
 
 _build_pgx() {
-	einfo "Compiling ${build_type} for ${ABI}"
+	einfo "Compiling ${lib_type} for ${ABI}"
 	cd "${BUILD_DIR}" || die
-	einfo "Building zlib ${build_type} for ${ABI}"
+	einfo "Building zlib ${lib_type} for ${ABI}"
 	case ${CHOST} in
 	*-mingw*|mingw*|*-cygwin*)
-		emake -f win32/Makefile.gcc STRIP=true PREFIX=${CHOST}- ${build_type/-*}
+		emake -f win32/Makefile.gcc STRIP=true PREFIX=${CHOST}- ${lib_type}
 		sed \
 			-e 's|@prefix@|'"${EPREFIX}"'/usr|g' \
 			-e 's|@exec_prefix@|${prefix}|g' \
@@ -658,11 +658,11 @@ _build_pgx() {
 			zlib.pc.in > zlib.pc || die
 		;;
 	*)
-		emake ${build_type/-*}
+		emake ${lib_type}
 		;;
 	esac
 	if use minizip ; then
-		einfo "Building minizip ${build_type} for ${ABI}"
+		einfo "Building minizip ${lib_type} for ${ABI}"
 		emake -C contrib/minizip
 		if use minizip-utils ; then
 			emake -C contrib/minizip minizip miniunzip
@@ -1261,13 +1261,13 @@ has_pgo_requirement() {
 src_compile() {
 	export PATH_orig="${ED}/usr/bin:${PATH}"
 	compile_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			if use pgo && has_pgo_requirement ; then
 				PGO_PHASE="pgi"
-				if [[ "${build_type}" == "shared-libs" ]] ; then
+				if [[ "${lib_type}" == "shared" ]] ; then
 					_configure_pgx
 					_build_pgx
 					# This technique currently works on shared, but the generated profiling data
@@ -1278,7 +1278,7 @@ src_compile() {
 				fi
 				if (( $(find "${T}/pgo-${ABI}" -type f 2>/dev/null | wc -l) > 0 )) ; then
 					PGO_PHASE="pgo"
-					[[ "${build_type}" == "static-libs" ]] \
+					[[ "${lib_type}" == "static" ]] \
 						&& ewarn "Reusing PGO data from shared-libs"
 				else
 					ewarn "No PGO data found.  Skipping PGO build and building normally."
@@ -1304,7 +1304,7 @@ sed_macros() {
 }
 
 _install_pgx() {
-	einfo "Installing ${build_type} into sandbox for ${ABI}"
+	einfo "Installing ${lib_type} into sandbox for ${ABI}"
 	_install
 }
 
@@ -1329,7 +1329,7 @@ _install() {
 
 	*)
 		emake install DESTDIR="${D}" LDCONFIG=:
-		[[ "${build_type}" == "shared-libs" ]] && gen_usr_ldscript -a z
+		[[ "${lib_type}" == "shared" ]] && gen_usr_ldscript -a z
 		;;
 	esac
 	sed_macros "${ED}"/usr/include/*.h
@@ -1355,15 +1355,15 @@ _install() {
 		fi
 	fi
 
-	#if [[ "${build_type}" == "shared-libs" ]] ; then
+	#if [[ "${lib_type}" == "shared" ]] ; then
 	#	rm -f "${ED}"/usr/$(get_libdir)/lib{z,minizip}.{a,la} || die #419645
 	#fi
 }
 
 src_install() {
 	install_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_install
