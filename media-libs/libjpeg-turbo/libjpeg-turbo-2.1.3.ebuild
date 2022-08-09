@@ -232,9 +232,9 @@ pkg_setup() {
 	ewarn "PGO may randomly fail with CFI.  Disable the pgo USE flag to fix it."
 }
 
-get_build_types() {
-	echo "shared-libs"
-	use static-libs && echo "static-libs"
+get_lib_types() {
+	echo "shared"
+	use static-libs && echo "static"
 }
 
 src_prepare() {
@@ -253,9 +253,9 @@ EOF
 	java-pkg-opt-2_src_prepare
 
 	prepare_abi() {
-		for build_type in $(get_build_types) ; do
-			einfo "Build type is ${build_type}"
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			einfo "Build type is ${lib_type}"
+			export S="${S_orig}.${ABI}_${lib_type/-*}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
 		done
@@ -277,7 +277,7 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${build_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static" ]] \
 			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
@@ -303,9 +303,9 @@ src_configure() { :; }
 
 is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		return 0
-	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 		return 0
 	fi
 	return 1
@@ -348,9 +348,9 @@ _configure_pgx() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
 		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${USE}" =~ "cfi" && "${build_type}" == "static-libs" ]] ; then
+			if [[ "${USE}" =~ "cfi" && "${lib_type}" == "static" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cfi-cross-dso && [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] ; then
+			elif use cfi-cross-dso && [[ "${USE}" =~ "cfi" && "${lib_type}" == "shared" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -367,7 +367,7 @@ _configure_pgx() {
 			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
 			append_all -fno-sanitize=cfi-icall # breaks precompiled cef based apps
 			use cfi-cross-dso \
-				&& [[ "${USE}" =~ "cfi" && "${build_type}" == "shared-libs" ]] \
+				&& [[ "${USE}" =~ "cfi" && "${lib_type}" == "shared" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
@@ -400,7 +400,7 @@ _configure_pgx() {
 		fi
 	fi
 
-	if use static-libs && [[ "${build_type}" == "static-libs" ]] ;then
+	if use static-libs && [[ "${lib_type}" == "static" ]] ;then
 		mycmakeargs+=(
 			-DENABLE_SHARED=OFF
 			-DENABLE_STATIC=ON
@@ -590,13 +590,13 @@ _run_trainers() {
 src_compile() {
 	export PATH="${D}/usr/bin:${PATH}"
 	compile_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type/-*}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			if use pgo && has_pgo_requirement ; then
 				PGO_PHASE="pgi"
-				if [[ "${build_type}" == "shared-libs" ]] ; then
+				if [[ "${lib_type}" == "shared" ]] ; then
 					_configure_pgx
 					_build_pgx
 					# This technique currently works on shared, but the generated profiling data
@@ -607,7 +607,7 @@ src_compile() {
 				fi
 				if (( $(find "${T}/pgo-${ABI}" 2>/dev/null | wc -l) > 0 )) ; then
 					PGO_PHASE="pgo"
-					[[ "${build_type}" == "static-libs" ]] \
+					[[ "${lib_type}" == "static" ]] \
 						&& ewarn "Reusing PGO data from shared-libs"
 				else
 					ewarn "No PGO data found.  Skipping PGO build and building normally."
@@ -669,8 +669,8 @@ _install_once() {
 
 src_install() {
 	install_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type/-*}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_install
