@@ -13,7 +13,6 @@ if [[ ${PV} == *9999* ]]; then
 else
 	SRC_URI="https://storage.googleapis.com/aom-releases/${P}.tar.gz"
 	S="${WORKDIR}/${P}"
-	S_orig="${WORKDIR}/${P}"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 fi
 
@@ -245,7 +244,7 @@ eerror
 	fi
 }
 
-get_build_types() {
+get_lib_types() {
 	echo "shared-libs"
 	use static-libs && echo "static-libs"
 }
@@ -264,11 +263,10 @@ src_prepare() {
 		fi
 	fi
 	prepare_abi() {
-		for build_type in $(get_build_types) ; do
-			einfo "Build type is ${build_type}"
-			export S="${S_orig}.${ABI}_${build_type/-*}"
-			einfo "Copying to ${S}"
-			cp -a "${S_orig}" "${S}" || die
+		for lib_type in $(get_lib_types) ; do
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cp -a "${S}" "${BUILD_DIR}" || die
 		done
 	}
 	multilib_foreach_abi prepare_abi
@@ -338,7 +336,7 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${build_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static-libs" ]] \
 			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
@@ -362,15 +360,18 @@ is_hardened_gcc() {
 
 is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static-libs" ]] ; then
 		return 0
-	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${lib_type}" == "shared-libs" ]] ; then
 		return 0
 	fi
 	return 1
 }
 
 configure_pgx() {
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+	cd "${CMAKE_USE_DIR}" || die
 	[[ -f build.ninja ]] && eninja clean
 	find "${BUILD_DIR}" -name "CMakeCache.txt" -delete 2>/dev/null
 
@@ -412,9 +413,9 @@ configure_pgx() {
 		# -static-libc++ which does not exist.
                 append-cxxflags -stdlib=libc++
                 append-ldflags -stdlib=libc++
-		[[ "${build_type}" == "shared-libs" ]] \
+		[[ "${lib_type}" == "shared-libs" ]] \
 			&& append-ldflags -lc++
-		[[ "${build_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static-libs" ]] \
 			&& append-ldflags -static-libstdc++
 	elif ! tc-is-clang && use libcxx ; then
 		die "libcxx requires clang++"
@@ -475,7 +476,7 @@ configure_pgx() {
 			mycmakeargs+=( -DCFI_CAST=$(usex cfi-cast) )
 			#mycmakeargs+=( -DCFI_ICALL=$(usex cfi-icall) )
 			mycmakeargs+=( -DCFI_VCALL=$(usex cfi-vcall) )
-			if [[ "${build_type}" == "shared-libs" ]] ; then
+			if [[ "${lib_type}" == "shared-libs" ]] ; then
 				mycmakeargs+=( -DCROSS_DSO_CFI=$(usex cfi-cross-dso) )
 			fi
 			mycmakeargs+=( -DCFI_EXCEPTIONS="-fno-sanitize=cfi-icall" ) # Prevent Illegal instruction with /usr/bin/aomdec --help
@@ -484,7 +485,7 @@ configure_pgx() {
 						-fsanitize=shadow-call-stack
 	}
 
-	if use chromium && [[ "${build_type}" == "static-libs" ]] ; then
+	if use chromium && [[ "${lib_type}" == "static-libs" ]] ; then
 		mycmakeargs+=(
 			-DAOM_AS_FLAGS="-DCHROMIUM"
 			-DENABLE_NASM=ON
@@ -518,7 +519,7 @@ configure_pgx() {
 		fi
 	fi
 
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static-libs" ]] ; then
 		mycmakeargs+=(
 			-DBUILD_SHARED_LIBS=OFF
 		)
@@ -536,7 +537,7 @@ configure_pgx() {
 		if use static-libs ; then
 			# Build only once
 			# If static-libs, then use CFI basic mode, else use CFI Cross-DSO mode.
-			if [[ "${build_type}" == "static-libs" ]] ; then
+			if [[ "${lib_type}" == "static-libs" ]] ; then
 				mycmakeargs+=(
 					-DENABLE_EXAMPLES=$(multilib_native_usex examples ON OFF)
 				)
@@ -586,7 +587,6 @@ configure_pgx() {
 _vdecode() {
 	einfo "Decoding ${1}"
 	cmd=( "${FFMPEG}" -i "${T}/test.webm" -f null - )
-	LD_LIBRARY_PATH="${BUILD_DIR}" \
 	"${cmd[@]}" || die
 }
 
@@ -609,7 +609,8 @@ _trainer_plan_constrained_quality() {
 		einfo "Running PGO trainer for 1 pass constrained quality"
 		local cmd
 		einfo "Encoding as 720p for 3 sec, 30 fps"
-		cmd=( "${FFMPEG}" \
+		cmd=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -619,14 +620,14 @@ _trainer_plan_constrained_quality() {
 			-an \
 			-r 30 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd[@]}" || die
 		_vdecode "720p, 30 fps"
 
 		einfo "Encoding as 720p for 3 sec, 60 fps"
-		cmd=( "${FFMPEG}" \
+		cmd=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -636,14 +637,14 @@ _trainer_plan_constrained_quality() {
 			-an \
 			-r 60 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd[@]}" || die
 		_vdecode "720p, 60 fps"
 
 		einfo "Encoding as 1080p for 3 sec, 30 fps"
-		cmd=( "${FFMPEG}" \
+		cmd=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -653,14 +654,14 @@ _trainer_plan_constrained_quality() {
 			-an \
 			-r 30 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd[@]}" || die
 		_vdecode "1080p, 30 fps"
 
 		einfo "Encoding as 1080p for 3 sec, 60 fps"
-		cmd=( "${FFMPEG}" \
+		cmd=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -670,14 +671,14 @@ _trainer_plan_constrained_quality() {
 			-an \
 			-r 60 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd[@]}" || die
 		_vdecode "1080p, 60 fps"
 
 		einfo "Encoding as 4k for 3 sec, 30 fps"
-		cmd=( "${FFMPEG}" \
+		cmd=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -687,14 +688,14 @@ _trainer_plan_constrained_quality() {
 			-an \
 			-r 30 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd[@]}" || die
 		_vdecode "4k, 30 fps"
 
 		einfo "Encoding as 4k for 3 sec, 60 fps"
-		cmd=( "${FFMPEG}" \
+		cmd=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -704,9 +705,8 @@ _trainer_plan_constrained_quality() {
 			-an \
 			-r 60 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd[@]}" || die
 		_vdecode "4k, 60 fps"
 	fi
@@ -718,7 +718,8 @@ _trainer_plan_2_pass_constrained_quality() {
 		einfo "Running PGO trainer for 2 pass constrained quality"
 		local cmd
 		einfo "Encoding as 720p for 3 sec, 30 fps"
-		cmd1=( "${FFMPEG}" \
+		cmd1=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -729,8 +730,10 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 30 \
 			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
+			-f null /dev/null
+		)
+		cmd2=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -741,17 +744,15 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 30 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
 		"${cmd2[@]}" || die
 		_vdecode "720p, 30 fps"
 
 		einfo "Encoding as 720p for 3 sec, 60 fps"
-		cmd1=( "${FFMPEG}" \
+		cmd1=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -762,8 +763,10 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 60 \
 			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
+			-f null /dev/null
+		)
+		cmd2=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -774,17 +777,15 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 60 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
 		"${cmd2[@]}" || die
 		_vdecode "720p, 60 fps"
 
 		einfo "Encoding as 1080p for 3 sec, 30 fps"
-		cmd1=( "${FFMPEG}" \
+		cmd1=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -795,8 +796,10 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 30 \
 			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
+			-f null /dev/null
+		)
+		cmd2=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -807,17 +810,15 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 30 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
 		"${cmd2[@]}" || die
 		_vdecode "1080p, 30 fps"
 
 		einfo "Encoding as 1080p for 3 sec, 60 fps"
-		cmd1=( "${FFMPEG}" \
+		cmd1=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -828,8 +829,10 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 60 \
 			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
+			-f null /dev/null
+		)
+		cmd2=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -840,17 +843,15 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 60 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
 		"${cmd2[@]}" || die
 		_vdecode "1080p, 60 fps"
 
 		einfo "Encoding as 4k for 3 sec, 30 fps"
-		cmd1=( "${FFMPEG}" \
+		cmd1=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -861,8 +862,10 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 30 \
 			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
+			-f null /dev/null
+		)
+		cmd2=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -873,17 +876,15 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 30 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
 		"${cmd2[@]}" || die
 		_vdecode "4k, 30 fps"
 
 		einfo "Encoding as 4k for 3 sec, 60 fps"
-		cmd1=( "${FFMPEG}" \
+		cmd1=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -894,8 +895,10 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 60 \
 			-t 3 \
-			-f null /dev/null )
-		cmd2=( "${FFMPEG}" \
+			-f null /dev/null
+		)
+		cmd2=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -906,12 +909,9 @@ _trainer_plan_2_pass_constrained_quality() {
 			-an \
 			-r 60 \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd1[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd1[@]}" || die
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd2[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
 		"${cmd2[@]}" || die
 		_vdecode "4k, 60 fps"
 	fi
@@ -923,7 +923,8 @@ _trainer_plan_lossless() {
 		einfo "Running PGO trainer for lossless"
 		local cmd
 		einfo "Encoding for lossless"
-		cmd=( "${FFMPEG}" \
+		cmd=(
+			"${FFMPEG}" \
 			-y \
 			-i "${LIBAOM_PGO_VIDEO}" \
 			-c:v libaom-av1 \
@@ -931,15 +932,17 @@ _trainer_plan_lossless() {
 			${LIBAOM_PGO_TRAINING_ARGS_LOSSLESS} \
 			-an \
 			-t 3 \
-			"${T}/test.webm" )
-		einfo "LD_LIBRARY_PATH=\"${BUILD_DIR}\" ${cmd[@]}"
-		LD_LIBRARY_PATH="${BUILD_DIR}" \
+			"${T}/test.webm"
+		)
 		"${cmd[@]}" || die
 		_vdecode "lossless"
 	fi
 }
 
 run_trainer() {
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+	export LD_LIBRARY_PATH="${BUILD_DIR}"
 	if use pgo-trainer-constrained-quality ; then
 		_trainer_plan_constrained_quality
 	fi
@@ -952,21 +955,22 @@ run_trainer() {
 	if use pgo-custom ; then
 		_trainer_plan_custom
 	fi
+	unset LD_LIBRARY_PATH
 }
 
 compile_pgx() {
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+	cd "${BUILD_DIR}" || die
 	cmake_src_compile
 }
 
 src_compile() {
 	compile_abi() {
-		for build_type in $(get_build_types) ; do
-			einfo "Build type is ${build_type}"
-			export S="${S_orig}.${ABI}_${build_type/-*}"
-			export BUILD_DIR="${S}_build"
+		for lib_type in $(get_lib_types) ; do
 			if use pgo \
 				&& has_pgo_requirement ; then
-				if [[ "${build_type}" == "shared-libs" ]] ; then
+				if [[ "${lib_type}" == "shared-libs" ]] ; then
 					PGO_PHASE="pgi"
 					configure_pgx
 					compile_pgx
@@ -974,7 +978,7 @@ src_compile() {
 				fi
 				if (( $(find "${T}/pgo-${ABI}" 2>/dev/null | wc -l) > 0 )) ; then
 					PGO_PHASE="pgo"
-					[[ "${build_type}" == "static-libs" ]] \
+					[[ "${lib_type}" == "static-libs" ]] \
 						&& ewarn "Reusing PGO data from shared-libs"
 				else
 					ewarn "No PGO data found.  Skipping PGO build and building normally."
@@ -995,9 +999,9 @@ src_compile() {
 
 src_test() {
 	test_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
-			export BUILD_DIR="${S}_build"
+		for lib_type in $(get_lib_types) ; do
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			"${BUILD_DIR}"/test_libaom || die
 		done
@@ -1007,9 +1011,9 @@ src_test() {
 
 src_install() {
 	install_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
-			export BUILD_DIR="${S}_build"
+		for lib_type in $(get_lib_types) ; do
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			if multilib_is_native_abi && use doc ; then
 				local HTML_DOCS=( "${BUILD_DIR}"/docs/html/. )
