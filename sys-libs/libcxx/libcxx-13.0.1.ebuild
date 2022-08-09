@@ -161,7 +161,7 @@ src_configure() {
 
 	configure_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			_configure_abi
 		done
 	}
@@ -355,7 +355,7 @@ _configure_abi() {
 src_compile() {
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_compile
 		done
@@ -366,7 +366,7 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			local -x LIT_PRESERVES_TMP=1
 			cmake_build check-cxx
@@ -420,7 +420,7 @@ gen_shared_ldscript() {
 src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
 			if [[ ${CHOST} != *-darwin* ]] ; then
