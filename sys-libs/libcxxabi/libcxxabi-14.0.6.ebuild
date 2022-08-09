@@ -153,7 +153,7 @@ is_hardened_gcc() {
 src_configure() {
 	configure_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			_configure_abi
 		done
 	}
@@ -313,7 +313,7 @@ _configure_abi() {
 src_compile() {
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_build cxxabi
 		done
@@ -324,7 +324,7 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			local -x LIT_PRESERVES_TMP=1
 			cmake_build check-cxxabi
@@ -336,7 +336,7 @@ src_test() {
 src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			DESTDIR="${D}" cmake_build install-cxxabi
 		done

@@ -152,7 +152,7 @@ is_hardened_gcc() {
 src_configure() {
 	configure_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			_configure_abi
 		done
 	}
@@ -362,7 +362,7 @@ build_libcxx() {
 src_compile() {
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_compile
 		done
@@ -373,7 +373,7 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			# build a local copy of libc++ for testing to avoid circular dep
 			build_libcxx
@@ -388,7 +388,7 @@ src_test() {
 src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
 		done

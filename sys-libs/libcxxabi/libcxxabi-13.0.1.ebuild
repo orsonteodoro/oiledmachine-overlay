@@ -151,7 +151,7 @@ is_hardened_gcc() {
 src_configure() {
 	configure_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			_configure_abi
 		done
 	}
@@ -367,7 +367,7 @@ wrap_libcxx() {
 src_compile() {
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_compile
 		done
@@ -378,7 +378,7 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			wrap_libcxx cmake_src_compile
 			mv "${BUILD_DIR}"/libcxx/lib/libc++* "${BUILD_DIR}/$(get_libdir)/" || die
@@ -392,7 +392,7 @@ src_test() {
 src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export BUILD_DIR="${S}.${ABI}_${lib_type/-*}_build"
+			export BUILD_DIR="${S}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
 		done
