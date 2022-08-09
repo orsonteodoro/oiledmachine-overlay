@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit cmake multilib-build static-libs
+inherit cmake multilib-build
 
 DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
@@ -11,124 +11,118 @@ LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
 SLOT_MAJ="$(ver_cut 1-2 ${PV})"
 SLOT="${SLOT_MAJ}/${PV}"
-IUSE+=" doc examples test"
+IUSE+=" doc examples static-libs test"
 REQUIRED_USE+=" test? ( examples )"
-DEPEND+=" examples? (
+DEPEND+="
+	virtual/libc
+	examples? (
+		media-libs/freeglut:=[${MULTILIB_USEDEP},static-libs]
 		media-libs/glew[${MULTILIB_USEDEP}]
 		media-libs/glfw[${MULTILIB_USEDEP}]
 		media-libs/glui[${MULTILIB_USEDEP}]
-		media-libs/freeglut:=[${MULTILIB_USEDEP},static-libs] )
-	virtual/libc"
+	)
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-2.6"
-SRC_URI=\
-"https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz \
-	-> ${P}.tar.gz"
-S="${WORKDIR}/Box2D-${PV}/Box2D"
+SRC_URI="
+https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}/Box2D"
 RESTRICT="mirror"
-_PATCHES=(
+PATCHES=(
 	"${FILESDIR}/box2d-2.3.1-cmake-fixes.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 MY_PN="Box2D"
 
+get_lib_types() {
+	if use static-libs ; then
+		echo "static"
+	fi
+	echo "shared"
+}
+
 src_prepare() {
-	default
-
-	cd "${S}/.." || die
-	eapply "${_PATCHES[@]}"
-	cd "${S}" || die
-
 	prepare_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_prepare() {
-			cd "${BUILD_DIR}" || die
-			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${CMAKE_USE_DIR}" || die
 			cmake_src_prepare
-		}
-		static-libs_copy_sources
-		static-libs_foreach_impl \
-			static-libs_prepare
+		done
 	}
-	multilib_copy_sources
 	multilib_foreach_abi prepare_abi
 }
 
-src_configure() {
+_configure() {
 	local mycmakeargs=(
 		-DDOC_DEST_DIR=${PN}-${PVR}
 		-DBOX2D_INSTALL_DOC=$(usex doc)
 		-DBOX2D_BUILD_EXAMPLES=$(usex examples)
 	)
+	if [[ "${lib_type}" == "shared" ]] ; then
+		mycmakeargs+=( -DBOX2D_BUILD_SHARED=ON )
+	else
+		mycmakeargs+=( -DBOX2D_BUILD_STATIC=ON )
+	fi
+	cmake_src_configure
+
+}
+
+src_configure() {
 	configure_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_configure() {
-			cd "${BUILD_DIR}" || die
-			if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
-				mycmakeargs+=( -DBOX2D_BUILD_SHARED=ON )
-			elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
-				mycmakeargs+=( -DBOX2D_BUILD_STATIC=ON )
-			fi
-			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-			cmake_src_configure
-		}
-		static-libs_foreach_impl \
-			static-libs_configure
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${CMAKE_USE_DIR}" || die
+			_configure
+		done
 	}
 	multilib_foreach_abi configure_abi
 }
 
 src_compile() {
 	compile_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_compile() {
-			cd "${BUILD_DIR}" || die
-			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${CMAKE_USE_DIR}" || die
 			cmake_src_compile
-		}
-		static-libs_foreach_impl \
-			static-libs_compile
+		done
 	}
 	multilib_foreach_abi compile_abi
 }
 
 src_test() {
 	test_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_test() {
-			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}"
-			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
-
 			if [[ -x HelloWorld/HelloWorld ]] ; then
 				./HelloWorld/HelloWorld || die
 			else
 				die "No unit test exist for ABI=${ABI} STSH=${ESTSH_LIB_TYPE}"
 			fi
-		}
-		static-libs_foreach_impl \
-			static-libs_test
+		done
 	}
 	multilib_foreach_abi test_abi
 }
 
 src_install() {
 	install_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_install() {
-			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
-			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake_src_install
-
 			if use examples ; then
 				exeinto /usr/share/${PN}/Testbed
 				doexe Testbed/Testbed
@@ -136,9 +130,7 @@ src_install() {
 				exeinto /usr/share/${PN}/HelloWorld
 				doexe HelloWorld/HelloWorld
 			fi
-		}
-		static-libs_foreach_impl \
-			static-libs_install
+		done
 	}
 	multilib_foreach_abi install_abi
 

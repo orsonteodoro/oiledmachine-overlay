@@ -1,6 +1,6 @@
-diff -urp Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/Box2D/CMakeLists.txt
---- Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
-+++ Box2D-2.3.1/Box2D/Box2D/CMakeLists.txt	2021-02-24 15:31:39.117402779 -0800
+diff -urp Box2D-2.3.1.orig/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/CMakeLists.txt
+--- Box2D-2.3.1.orig/Box2D/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
++++ Box2D-2.3.1/Box2D/CMakeLists.txt	2021-02-24 15:31:39.117402779 -0800
 @@ -145,6 +145,7 @@ if(BOX2D_BUILD_SHARED)
  		OUTPUT_NAME "Box2D"
  		CLEAN_DIRECT_OUTPUT 1
@@ -59,9 +59,9 @@ diff -urp Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/Box2D/CM
 -        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Box2DConfig.cmake UseBox2D.cmake DESTINATION ${LIB_INSTALL_DIR}/cmake/Box2D)
 +        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Box2DConfig.cmake UseBox2D.cmake DESTINATION ${LIB_INSTALL_DIR}/cmake/Box2D-${BOX2D_VERSION_MAJOR_MINOR})
  endif(BOX2D_INSTALL)
-diff -urp Box2D-2.3.1.orig/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/CMakeLists.txt
---- Box2D-2.3.1.orig/Box2D/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
-+++ Box2D-2.3.1/Box2D/CMakeLists.txt	2021-02-24 15:30:41.283150167 -0800
+diff -urp Box2D-2.3.1.orig/CMakeLists.txt Box2D-2.3.1/CMakeLists.txt
+--- Box2D-2.3.1.orig/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
++++ Box2D-2.3.1/CMakeLists.txt	2021-02-24 15:30:41.283150167 -0800
 @@ -14,7 +14,9 @@ option(BOX2D_BUILD_SHARED "Build Box2D s
  option(BOX2D_BUILD_STATIC "Build Box2D static libraries" ON)
  option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" ON)
@@ -86,9 +86,9 @@ diff -urp Box2D-2.3.1.orig/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/CMakeLists.txt
 -  install(DIRECTORY Documentation DESTINATION share/doc/Box2D PATTERN ".svn" EXCLUDE)
 +  install(DIRECTORY Documentation DESTINATION share/doc/${DOC_DEST_DIR} PATTERN ".svn" EXCLUDE)
  endif(BOX2D_INSTALL_DOC)
-diff -urp Box2D-2.3.1.orig/Box2D/Testbed/CMakeLists.txt Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt
---- Box2D-2.3.1.orig/Box2D/Testbed/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
-+++ Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt	2021-02-24 15:30:41.283150167 -0800
+diff -urp Box2D-2.3.1.orig/Testbed/CMakeLists.txt Box2D-2.3.1/Testbed/CMakeLists.txt
+--- Box2D-2.3.1.orig/Testbed/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
++++ Box2D-2.3.1/Testbed/CMakeLists.txt	2021-02-24 15:30:41.283150167 -0800
 @@ -3,9 +3,12 @@ add_definitions( -DFREEGLUT_EXPORTS -DFR
  
  # Define the framework files.
