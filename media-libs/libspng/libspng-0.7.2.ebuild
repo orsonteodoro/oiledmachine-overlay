@@ -4,9 +4,9 @@
 
 EAPI=8
 
-inherit flag-o-matic meson multilib-build static-libs toolchain-funcs
+inherit flag-o-matic meson multilib-build toolchain-funcs
 
-DESCRIPTION="libspng is a C library for reading and writing Portable Network \
+DESCRIPTION="libspng is a C library for reading and writing Portable Network
 Graphics (PNG) format files with a focus on security and ease of use."
 HOMEPAGE="https://libspng.org"
 LICENSE="BSD-2
@@ -18,7 +18,8 @@ REQUIRED_USE+=" pgo? ( examples )"
 DEPEND+=" virtual/libc
 	 test? ( >=media-libs/libpng-1.6 )
 	 !zlib? ( dev-libs/miniz:=[static-libs?] )
-	 zlib? ( sys-libs/zlib:=[static-libs?,${MULTILIB_USEDEP}] )"
+	 zlib? ( sys-libs/zlib:=[static-libs?,${MULTILIB_USEDEP}] )
+"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -26,10 +27,12 @@ BDEPEND+="
 	doc? (
 		dev-python/mkdocs
 		dev-python/mkdocs-material
-	)"
+	)
+"
 # GitHub is bugged?  The ZIP does not have a image so download manually
 BENCHMARK_IMAGES_COMMIT="2478ec174d74d66343449f850d22e0eabb0f01b0"
-SRC_URI="https://github.com/randy408/libspng/archive/v${PV}.tar.gz
+SRC_URI="
+	https://github.com/randy408/libspng/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	pgo? (
 https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/medium_rgb8.png
@@ -38,11 +41,15 @@ https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/mediu
 	-> libspng-medium_rgba8-${BENCHMARK_IMAGES_COMMIT}.png
 https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/large_palette.png
 	-> libspng-large_palette-${BENCHMARK_IMAGES_COMMIT}.png
-	)"
+	)
+"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-DOCS=( CONTRIBUTING.md README.md "${S}/docs" )
+DOCS=( "${S}/CONTRIBUTING.md" "${S}/README.md" "${S}/docs" )
 HTML_DOCS=( "${S}/site" )
+PATCHES=(
+	"${FILESDIR}/libspng-0.6.2-disable-target-clones.patch"
+)
 
 src_unpack() {
 	unpack ${A}
@@ -59,17 +66,6 @@ src_unpack() {
 	fi
 }
 
-src_prepare() {
-	default
-	# Breaks pgo
-	eapply "${FILESDIR}/libspng-0.6.2-disable-target-clones.patch"
-	multilib_copy_sources
-	prepare_abi() {
-		static-libs_copy_sources
-	}
-	multilib_foreach_abi prepare_abi
-}
-
 _src_configure() {
 	local emesonargs=(
 		-Duse_miniz=$(usex zlib "false" "true")
@@ -79,7 +75,7 @@ _src_configure() {
 		$(meson_use test dev_build)
 		--buildtype release
 	)
-	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+	if [[ "${lib_type}" == "shared" ]] ; then
 		emesonargs+=(
 			-Dbuild.default_library=shared
 			-Dstatic_zlib=false
@@ -90,30 +86,31 @@ _src_configure() {
 			-Dstatic_zlib=true
 		)
 	fi
-	EMESON_SOURCE="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}-build-${ABI}-${ESTSH_LIB_TYPE}" \
 	meson_src_configure ${1}
 }
 
 _configure_pgx() {
-	mkdir -p "${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}" || die
+	cd "${EMESON_SOURCE}" || die
+	append-cppflags -I"${EPREFIX}/usr/include/miniz"
+	local d="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}-${lib_type}"
+	mkdir -p "${d}" || die
 	filter-flags '-fprofile*'
 	local arg=""
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		einfo "Instrumenting a PGO build"
 		if tc-is-clang ; then
-			append-cflags -fprofile-generate="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}"
+			append-cflags -fprofile-generate="${d}"
 		else
-			append-cflags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}"
+			append-cflags -fprofile-generate -fprofile-dir="${d}"
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Optimizing a PGO build"
 		if tc-is-clang ; then
-			llvm-profdata merge -output="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}/code.profdata" \
-				"${T}/pgo-${ABI}" || die
-			append-cflags -fprofile-use="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}/code.profdata"
+			llvm-profdata merge -output="${d}/code.profdata" \
+				"${d}" || die
+			append-cflags -fprofile-use="${d}/code.profdata"
 		else
-			append-cflags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}"
+			append-cflags -fprofile-use -fprofile-correction -fprofile-dir="${d}"
 		fi
 		arg="--wipe"
 	else
@@ -127,7 +124,7 @@ src_configure() {
 }
 
 _run_trainer() {
-	pushd "${WORKDIR}/${P}-build-${ABI}-${ESTSH_LIB_TYPE}/examples" || die
+	pushd "${BUILD_DIR}/examples" || die
 		./example ../../benchmark_images/medium_rgb8.png || die
 		./example ../../benchmark_images/medium_rgba8.png || die
 		./example ../../benchmark_images/large_palette.png || die
@@ -135,16 +132,21 @@ _run_trainer() {
 }
 
 _compile() {
-	EMESON_SOURCE="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}-build-${ABI}-${ESTSH_LIB_TYPE}" \
+	cd "${BUILD_DIR}" || die
 	meson_src_compile
+}
+
+get_lib_types() {
+	use static-libs && echo "static"
+	echo "shared"
 }
 
 src_compile() {
 	compile_abi() {
-		cd "${BUILD_DIR}" || die
-		compile_stsh() {
-			cd "${BUILD_DIR}" || die
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export EMESON_SOURCE="${S}"
+			export BUILD_DIR="${S}_${lib_type}_build"
 			if use pgo ; then
 # See https://github.com/randy408/libspng/blob/master/docs/build.md#profile-guided-optimization
 				PGO_PHASE="pgi"
@@ -159,8 +161,7 @@ src_compile() {
 				_configure_pgx
 				_compile
 			fi
-		}
-		static-libs_foreach_impl compile_stsh
+		done
 	}
 	multilib_foreach_abi compile_abi
 	cd "${S}" || die
@@ -172,17 +173,16 @@ src_compile() {
 src_install() {
 	use doc || unset HTML_DOCS
 	install_abi() {
-		cd "${BUILD_DIR}" || die
-		install_stsh() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export EMESON_SOURCE="${S}"
+			export BUILD_DIR="${S}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
-			EMESON_SOURCE="${BUILD_DIR}" \
-			BUILD_DIR="${WORKDIR}/${P}-build-${ABI}-${ESTSH_LIB_TYPE}" \
 			meson_src_install
-		}
-		static-libs_foreach_impl install_stsh
+		done
 	}
 	multilib_foreach_abi install_abi
-	use doc && einstalldocs
+	cd "${S}" || die
 	dodoc LICENSE
 }
 
