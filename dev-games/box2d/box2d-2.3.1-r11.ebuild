@@ -43,20 +43,6 @@ get_lib_types() {
 	echo "shared"
 }
 
-src_prepare() {
-	prepare_abi() {
-		local lib_type
-		for lib_type in $(get_lib_types) ; do
-			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
-			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-			cd "${CMAKE_USE_DIR}" || die
-			cmake_src_prepare
-		done
-	}
-	multilib_foreach_abi prepare_abi
-}
-
 _configure() {
 	local mycmakeargs=(
 		-DDOC_DEST_DIR=${PN}-${PVR}
@@ -76,7 +62,7 @@ src_configure() {
 	configure_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export CMAKE_USE_DIR="${S}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${CMAKE_USE_DIR}" || die
 			_configure
@@ -89,7 +75,7 @@ src_compile() {
 	compile_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export CMAKE_USE_DIR="${S}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${CMAKE_USE_DIR}" || die
 			cmake_src_compile
@@ -102,7 +88,7 @@ src_test() {
 	test_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export CMAKE_USE_DIR="${S}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			if [[ -x HelloWorld/HelloWorld ]] ; then
@@ -119,7 +105,7 @@ src_install() {
 	install_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export CMAKE_USE_DIR="${S}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			cmake_src_install
