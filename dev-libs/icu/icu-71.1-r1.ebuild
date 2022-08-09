@@ -183,7 +183,7 @@ src_prepare() {
 	prepare_abi() {
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
 			cp -a "${S_orig}" "${S}" || die
 		done
@@ -245,7 +245,7 @@ src_configure() {
 
 	configure_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_configure_abi
@@ -454,7 +454,7 @@ src_compile() {
 	export VERBOSE=1
 	compile_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 
@@ -472,7 +472,7 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			# INTLTEST_OPTS: intltest options
@@ -494,7 +494,7 @@ src_test() {
 src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}.${ABI}_${lib_type}"
+			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			default
