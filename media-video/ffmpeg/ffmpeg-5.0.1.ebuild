@@ -800,9 +800,9 @@ pkg_setup() {
 	llvm_pkg_setup
 }
 
-get_build_types() {
-	echo "shared-libs"
-	use static-libs && echo "static-libs"
+get_lib_types() {
+	echo "shared"
+	use static-libs && echo "static"
 }
 
 has_cfi() {
@@ -835,9 +835,9 @@ src_prepare() {
 
 	einfo "Copying sources, please wait"
 	prepare_abi() {
-		for build_type in $(get_build_types) ; do
-			einfo "Copying sources to ${S_orig}.${ABI}_${build_type/-*}"
-			cp -a "${S_orig}" "${S_orig}.${ABI}_${build_type/-*}" || die
+		for lib_type in $(get_lib_types) ; do
+			einfo "Copying sources to ${S_orig}.${ABI}_${lib_type/-*}"
+			cp -a "${S_orig}" "${S_orig}.${ABI}_${lib_type/-*}" || die
 
 		done
 	}
@@ -857,7 +857,7 @@ get_native_abi_use() {
 }
 
 get_multiabi_ffmpeg() {
-	local btype="${build_type/-*}"
+	local btype="${lib_type/-*}"
 	if multilib_is_native_abi && has_version "media-video/ffmpeg[$(get_native_abi_use)]" ; then
 		echo "${MY_ED}/usr/bin/ffmpeg-shared"
 	elif ! multilib_is_native_abi && has_version "media-video/ffmpeg[$(get_abi_use ${ABI})]" ; then
@@ -912,7 +912,7 @@ append_lto() {
 	if tc-is-clang ; then
 		append-flags -flto=thin
 		append-ldflags -fuse-ld=lld -flto=thin
-		[[ "${build_type}" == "static-libs" ]] \
+		[[ "${lib_type}" == "static" ]] \
 			&& append_all -fsplit-lto-unit
 	else
 		append-flags -flto
@@ -936,9 +936,9 @@ is_hardened_gcc() {
 
 is_cfi_supported() {
 	[[ "${USE}" =~ "cfi" ]] || return 1
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		return 0
-	elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+	elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 		return 0
 	fi
 	return 1
@@ -948,7 +948,7 @@ configure_pgx() {
 	local myconf=( )
 	local extra_libs=( )
 
-	einfo "configure_pgx is ${build_type} with PGO_PHASE=${PGO_PHASE}"
+	einfo "configure_pgx is ${lib_type} with PGO_PHASE=${PGO_PHASE}"
 
 	if use clang ; then
 		CC="clang $(get_abi_CFLAGS ${ABI})"
@@ -987,9 +987,9 @@ configure_pgx() {
 		# The cfi enables all cfi schemes, but the selective tries to balance
 		# performance and security while maintaining a performance limit.
 		if tc-is-clang && is_cfi_supported ; then
-			if [[ "${build_type}" == "static-libs" ]] ; then
+			if [[ "${lib_type}" == "static" ]] ; then
 				append_all -fvisibility=hidden
-			elif use cfi-cross-dso && [[ "${build_type}" == "shared-libs" ]] ; then
+			elif use cfi-cross-dso && [[ "${lib_type}" == "shared" ]] ; then
 				append_all -fvisibility=default
 			fi
 			if use cfi ; then
@@ -1006,7 +1006,7 @@ configure_pgx() {
 			[[ "${USE}" =~ "cfi" ]] && append-ldflags -Wl,-lubsan
 			append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with ffprobe
 			use cfi-cross-dso \
-				&& [[ "${build_type}" == "shared-libs" ]] \
+				&& [[ "${lib_type}" == "shared" ]] \
 				&& append_all -fsanitize-cfi-cross-dso
 		fi
 		use shadowcallstack && append-flags -fno-sanitize=safe-stack \
@@ -1250,7 +1250,7 @@ configure_pgx() {
 	fi
 
 	local static_args=()
-	if [[ "${build_type}" == "static-libs" ]] ; then
+	if [[ "${lib_type}" == "static" ]] ; then
 		static_args=( --enable-static --disable-shared )
 	else
 		static_args=( --disable-static --enable-shared )
@@ -2061,11 +2061,11 @@ clean_pgx() {
 
 src_compile() {
 	compile_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type/-*}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
-			einfo "Build type is ${build_type}"
+			einfo "Build type is ${lib_type}"
 			if use pgo \
 				&& has_pgo_requirement ; then
 				export MY_ED=""
@@ -2073,7 +2073,7 @@ src_compile() {
 				configure_pgx
 				compile_pgx
 				install_pgx
-				local btype="${build_type/-*}"
+				local btype="${lib_type/-*}"
 				if multilib_is_native_abi ; then
 					export FFMPEG="${ED}/usr/bin/ffmpeg-${btype}"
 				else
@@ -2098,8 +2098,8 @@ src_compile() {
 
 src_test() {
 	test_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type/-*}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			export LD_LIBRARY_PATH=\
@@ -2127,7 +2127,7 @@ _install() {
 	emake V=1 DESTDIR="${D}" install install-doc
 
 	# Prevent clobbering so that we can pgo optimize external codecs in different ABIs
-	local btype="${build_type/-*}"
+	local btype="${lib_type/-*}"
 	if ! multilib_is_native_abi ; then
 		mv "${ED}/usr/bin/ffmpeg"{,-${btype}-${ABI}} || die
 		mv "${ED}/usr/bin/ffprobe"{,-${btype}-${ABI}} || die
@@ -2180,8 +2180,8 @@ _install() {
 
 src_install() {
 	install_abi() {
-		for build_type in $(get_build_types) ; do
-			export S="${S_orig}.${ABI}_${build_type/-*}"
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_orig}.${ABI}_${lib_type/-*}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			_install
