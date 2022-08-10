@@ -4,7 +4,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake-multilib python-single-r1 toolchain-funcs
+inherit cmake multilib-build python-single-r1 toolchain-funcs
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
 HOMEPAGE="http://www.bulletphysics.com/"
@@ -123,7 +123,8 @@ SRC_URI="
 https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz
 	-> ${P}.tar.gz"
 SLOT="0/${PV}"
-IUSE+=" +bullet3
+IUSE+="
+	+bullet3
 	+bullet-robotics
 	+bullet-robotics-gui
 	+convex-decomposition
@@ -134,7 +135,7 @@ IUSE+=" +bullet3
 	+extras
 	+gimpactutils
 	+hacd
-	+inverse-dynamic
+	+inverse-dynamics
 	+network
 	-numpy
 	+obj2sdf
@@ -150,9 +151,10 @@ REQUIRED_USE+="
 	bullet-robotics-gui? ( extras )
 	convex-decomposition? ( extras )
 	demos? ( extras )
+	examples? ( bullet-robotics network serialize )
 	gimpactutils? ( extras )
 	hacd? ( extras )
-	inverse-dynamic? ( extras )
+	inverse-dynamics? ( extras )
 	numpy? ( python )
 	obj2sdf? ( extras )
 	openmp? ( threads )
@@ -163,16 +165,19 @@ REQUIRED_USE+="
 	)
 	serialize? ( extras )
 	tbb? ( threads )"
-CDEPEND="python? (
+CDEPEND="
+	python? (
 		${PYTHON_DEPS}
 		numpy? ( $(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]') )
-	 )"
+	)
+"
 LEGACY_TBB_SLOT="2"
-DEPEND+=" ${CDEPEND}
+DEPEND+="
+	${CDEPEND}
 	media-libs/freeglut[${MULTILIB_USEDEP}]
 	virtual/opengl[${MULTILIB_USEDEP}]
 	demos? (
-		media-libs/mesa[${MULTILIB_USEDEP},egl(+)]
+		media-libs/mesa[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
 	)
 	tbb? (
@@ -181,10 +186,14 @@ DEPEND+=" ${CDEPEND}
 	)
 "
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" ${CDEPEND}
+BDEPEND+="
+	${CDEPEND}
 	dev-util/patchelf
-	doc? ( app-doc/doxygen[dot] )"
-PATCHES=( "${FILESDIR}"/${PN}-2.85-soversion.patch )
+	doc? ( app-doc/doxygen[dot] )
+"
+PATCHES=(
+	"${FILESDIR}"/${PN}-2.85-soversion.patch
+)
 DOCS=( AUTHORS.txt LICENSE.txt README.md )
 # Building / linking of third Party library BussIK does not work out of the box
 RESTRICT="mirror test"
@@ -200,13 +209,15 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	# allow to generate docs
+	# Allow to generate docs
 	sed -i -e 's/GENERATE_HTMLHELP.*//g' Doxyfile || die
-	multilib_copy_sources
 }
 
 src_configure() {
 	configure_abi() {
+		export CMAKE_USE_DIR="${S}"
+		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
 			-DBUILD_BULLET2_DEMOS=$(usex demos)
 			-DBUILD_BULLET3=$(usex bullet3)
@@ -218,7 +229,7 @@ src_configure() {
 			-DBUILD_EXTRAS=$(usex extras)
 			-DBUILD_GIMPACTUTILS_EXTRA=$(usex gimpactutils)
 			-DBUILD_HACD_EXTRA=$(usex hacd)
-			-DBUILD_INVERSE_DYNAMIC_EXTRA=$(usex inverse-dynamic)
+			-DBUILD_INVERSE_DYNAMIC_EXTRA=$(usex inverse-dynamics)
 			-DBUILD_OBJ2SDF_EXTRA=$(usex obj2sdf)
 			-DBUILD_PYBULLET=$(multilib_native_usex python $(usex python) OFF)
 			-DBUILD_PYBULLET_NUMPY=$(multilib_native_usex python $(usex numpy) OFF)
@@ -239,15 +250,25 @@ src_configure() {
 				-DBULLET2_TBB_LIB_DIR="/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 			)
 		elif use tbb ; then
-			die "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} must be installed from the oiledmachine-overlay"
+eerror
+eerror "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} must be installed from the"
+eerror "oiledmachine-overlay."
+eerror
+			die
 		fi
-		cmake-utils_src_configure
+		cmake_src_configure
 	}
 	multilib_foreach_abi configure_abi
 }
 
 src_compile() {
-	cmake-multilib_src_compile
+	configure_abi() {
+		export CMAKE_USE_DIR="${S}"
+		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+		cd "${BUILD_DIR}" || die
+		cmake_src_compile
+	}
+	multilib_foreach_abi configure_abi
 	if use doc; then
 		doxygen || die
 		HTML_DOCS+=( html/. )
@@ -258,15 +279,15 @@ src_compile() {
 _install_licenses() {
 	export IFS=$'\n'
 	for f in $(find "${S}" \
-	  -iname "*licen*" -type f \
-	  -o -iname "*copyright*" \
-	  -o -iname "*copying*" \
-	  -o -iname "*patent*" \
-	  -o -iname "ofl.txt" \
-	  -o -iname "*notice*" \
-	  -o -iname "*author*" \
-	  -o -iname "*CONTRIBUTORS*" \
-	  ) $(grep -i -G -l \
+		-iname "*licen*" -type f \
+		-o -iname "*copyright*" \
+		-o -iname "*copying*" \
+		-o -iname "*patent*" \
+		-o -iname "ofl.txt" \
+		-o -iname "*notice*" \
+		-o -iname "*author*" \
+		-o -iname "*CONTRIBUTORS*" \
+	) $(grep -i -G -l \
 		-e "copyright" \
 		-e "licen" \
 		-e "warrant" \
@@ -285,7 +306,9 @@ _install_licenses() {
 
 sanitize_rpaths()
 {
-	einfo "Running sanitize_rpaths()"
+einfo
+einfo "Running sanitize_rpaths()"
+einfo
 	for f in $(find "${ED}" -executable -type f) ; do
 		ldd "${f}" 2>/dev/null 1>/dev/null || continue
 		local old_rpath=$(patchelf --print-rpath "${f}")
@@ -312,17 +335,11 @@ sanitize_rpaths()
 }
 
 src_install() {
-	cmake-multilib_src_install
-	if use examples ; then
-		insinto /usr/share/${PN}
-		doins -r examples
-		echo \
-"This folder contains source code examples.  For compiled demos see \
-/usr/share/${PN}/demos" \
-			>> "${ED}/usr/share/${PN}/examples/readme.txt" || die
-	fi
-	einstalldocs
 	install_abi() {
+		export CMAKE_USE_DIR="${S}"
+		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+		cd "${BUILD_DIR}" || die
+		cmake_src_install
 		if multilib_is_native_abi && use demos ; then
 			for f in $(find "${BUILD_DIR}/examples" -executable -type f) ; do
 				local d=$(dirname $(echo "${f}" | sed -e "s|${BUILD_DIR}||g"))
@@ -336,25 +353,36 @@ src_install() {
 			insinto /usr/share/${PN}/demos
 			doins -r "${BUILD_DIR}/data"
 			insinto /usr/share/${PN}/demos/pybullet
-			doins -r "${BUILD_DIR}/examples/pybullet/gym"
+			doins -r "${CMAKE_USE_DIR}/examples/pybullet/gym"
 		fi
 	}
 	multilib_foreach_abi install_abi
+	cd "${S}" || die
+	if use examples ; then
+		insinto /usr/share/${PN}
+		doins -r examples
+echo "This folder contains source code examples.  For compiled demos see" \
+	>> "${ED}/usr/share/${PN}/examples/readme.txt" || die
+echo "/usr/share/${PN}/demos" \
+	>> "${ED}/usr/share/${PN}/examples/readme.txt" || die
+	fi
+	einstalldocs
 	_install_licenses
 	sanitize_rpaths
 }
 
 pkg_postinst() {
 	if use demos ; then
-		einfo
-		einfo "To properly render the TwoJoint do:"
-		einfo "  cd /usr/share/bullet/demos/data"
-		einfo \
-"  /usr/share/bullet/demos/examples/TwoJoint/App_TwoJoint-${PV}"
-		einfo
-		einfo "To properly render the pybullet models do:"
-		einfo "  cd /usr/share/bullet/demos/data"
-		einfo \
-"  ${EPYTHON} /usr/share/bullet/demos/examples/pybullet/examples/inverse_kinematics_pole.py"
+einfo
+einfo "To properly render the TwoJoint do:"
+einfo
+einfo "  cd /usr/share/bullet/demos/data"
+einfo "  /usr/share/bullet/demos/examples/TwoJoint/App_TwoJoint-${PV}"
+einfo
+einfo "To properly render the pybullet models do:"
+einfo
+einfo "  cd /usr/share/bullet/demos/data"
+einfo "  ${EPYTHON} /usr/share/bullet/demos/examples/pybullet/examples/inverse_kinematics_pole.py"
+einfo
 	fi
 }
