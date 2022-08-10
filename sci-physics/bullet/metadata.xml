@@ -77,7 +77,7 @@
       Build the Serialize module
     </flag>
     <flag name="threads">
-      Build Bullet 2 with mutex locking from the pthread library
+      Build Bullet 2 with mutex locking and with pthread or PPL threading
     </flag>
   </use>
   <upstream>
