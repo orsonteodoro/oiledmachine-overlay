@@ -215,6 +215,13 @@ pkg_pretend() {
 
 pkg_setup() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+	if use threads && ! use tbb && ! use openmp ; then
+ewarn
+ewarn "The USE flag threads is a misnomer but means mutexes"
+ewarn "from the thread library.  For multithreading support"
+ewarn "you need to pick either USE=tbb or USE=openmp."
+ewarn
+	fi
 }
 
 src_prepare() {
