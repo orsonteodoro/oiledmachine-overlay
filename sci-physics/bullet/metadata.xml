@@ -6,21 +6,20 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!-- originator -->
   <maintainer type="project">
+    <!-- originator -->
     <email>sci-physics@gentoo.org</email>
     <name>Gentoo Physics Project</name>
   </maintainer>
   <longdescription lang="en">
-  Bullet is a professional open source multi-threaded 
-  3D Collision Detection and Rigid Body Dynamics Library
-  for games and animation.
+    Bullet is a professional open source multi-threaded 3D Collision Detection
+    and Rigid Body Dynamics Library for games and animation.
 
-  This ebuild fork is more license comprehensive,
-  has multilib support, has more accessible features.
+    This ebuild fork is more license comprehensive, has multilib support, has
+    more accessible features.
 
-  It may have intermediate version snapshots to satisfy C#
-  bindings requirements.
+    It may have intermediate version snapshots to satisfy C# bindings
+    requirements.
   </longdescription>
   <use>
     <flag name="bullet3">Build Bullet 3</flag>
@@ -39,6 +38,7 @@
       robotics library</flag>
     <flag name="obj2sdf">Build the obj2sdf module</flag>
     <flag name="openmp">Build Bullet 2 with mult-threading with OpenMP</flag>
+    <flag name="pgo">Build with Profile Guided Optimization (PGO)</flag>
     <flag name="python">Build Python bindings and demo</flag>
     <flag name="tbb">Build Bullet 2 with mult-threading with TBB</flag>
     <flag name="serialize">Build the Serialize module</flag>

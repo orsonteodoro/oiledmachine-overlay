@@ -1,10 +1,11 @@
+# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake multilib-build python-single-r1 toolchain-funcs
+inherit cmake flag-o-matic multilib-build python-single-r1 toolchain-funcs virtualx
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
 HOMEPAGE="http://www.bulletphysics.com/"
@@ -134,6 +135,7 @@ IUSE+="
 	examples
 	+extras
 	+gimpactutils
+	+graphical-benchmark
 	+hacd
 	+inverse-dynamics
 	+network
@@ -141,11 +143,13 @@ IUSE+="
 	+obj2sdf
 	-openmp
 	-openvr
+	pgo
 	-python
 	+serialize
 	-tbb
 	test
-	-threads"
+	-threads
+"
 REQUIRED_USE+="
 	bullet-robotics? ( extras )
 	bullet-robotics-gui? ( extras )
@@ -159,12 +163,14 @@ REQUIRED_USE+="
 	obj2sdf? ( extras )
 	openmp? ( threads )
 	openvr? ( examples )
+	pgo? ( examples )
 	python? (
 		${PYTHON_REQUIRED_USE}
 		demos
 	)
 	serialize? ( extras )
-	tbb? ( threads )"
+	tbb? ( threads )
+"
 CDEPEND="
 	python? (
 		${PYTHON_DEPS}
@@ -190,6 +196,10 @@ BDEPEND+="
 	${CDEPEND}
 	dev-util/patchelf
 	doc? ( app-doc/doxygen[dot] )
+	pgo? (
+		x11-base/xorg-server[xvfb]
+		x11-apps/xhost
+	)
 "
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.85-soversion.patch
@@ -213,62 +223,241 @@ src_prepare() {
 	sed -i -e 's/GENERATE_HTMLHELP.*//g' Doxyfile || die
 }
 
-src_configure() {
-	configure_abi() {
-		export CMAKE_USE_DIR="${S}"
-		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
-		cd "${CMAKE_USE_DIR}" || die
-		local mycmakeargs=(
-			-DBUILD_BULLET2_DEMOS=$(usex demos)
-			-DBUILD_BULLET3=$(usex bullet3)
-			-DBUILD_BULLET_ROBOTICS_GUI_EXTRA=$(usex bullet-robotics-gui)
-			-DBUILD_BULLET_ROBOTICS_EXTRA=$(usex bullet-robotics)
-			-DBUILD_CLSOCKET=$(usex network)
-			-DBUILD_CONVEX_DECOMPOSITION_EXTRA=$(usex convex-decomposition)
-			-DBUILD_ENET=$(usex network)
-			-DBUILD_EXTRAS=$(usex extras)
-			-DBUILD_GIMPACTUTILS_EXTRA=$(usex gimpactutils)
-			-DBUILD_HACD_EXTRA=$(usex hacd)
-			-DBUILD_INVERSE_DYNAMIC_EXTRA=$(usex inverse-dynamics)
-			-DBUILD_OBJ2SDF_EXTRA=$(usex obj2sdf)
-			-DBUILD_PYBULLET=$(multilib_native_usex python $(usex python) OFF)
-			-DBUILD_PYBULLET_NUMPY=$(multilib_native_usex python $(usex numpy) OFF)
-			-DBUILD_SERIALIZE_EXTRA=$(usex serialize)
-			-DBUILD_SHARED_LIBS=ON
-			-DBUILD_UNIT_TESTS=$(usex test)
-			-DBULLET2_MULTITHREADING=$(usex threads)
-			-DBULLET2_USE_OPEN_MP_MULTITHREADING=$(usex openmp)
-			-DBULLET2_USE_TBB_MULTITHREADING=$(usex tbb)
-			-DINSTALL_EXTRA_LIBS=ON
-			-DINSTALL_LIBS=ON
-			-DUSE_DOUBLE_PRECISION=$(usex double-precision)
-			-DUSE_GRAPHICAL_BENCHMARK=OFF
+_configure() {
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+	if [[ "${PGO_PHASE}" == "pgo" ]] ; then
+		cd "${BUILD_DIR}" || die
+		rm -rf "${BUILD_DIR}" || die
+	fi
+	cd "${CMAKE_USE_DIR}" || die
+	local mycmakeargs=(
+		-DBUILD_BULLET2_DEMOS=$(usex demos)
+		-DBUILD_BULLET3=$(usex bullet3)
+		-DBUILD_BULLET_ROBOTICS_GUI_EXTRA=$(usex bullet-robotics-gui)
+		-DBUILD_BULLET_ROBOTICS_EXTRA=$(usex bullet-robotics)
+		-DBUILD_CLSOCKET=$(usex network)
+		-DBUILD_CONVEX_DECOMPOSITION_EXTRA=$(usex convex-decomposition)
+		-DBUILD_ENET=$(usex network)
+		-DBUILD_EXTRAS=$(usex extras)
+		-DBUILD_GIMPACTUTILS_EXTRA=$(usex gimpactutils)
+		-DBUILD_HACD_EXTRA=$(usex hacd)
+		-DBUILD_INVERSE_DYNAMIC_EXTRA=$(usex inverse-dynamics)
+		-DBUILD_OBJ2SDF_EXTRA=$(usex obj2sdf)
+		-DBUILD_PYBULLET=$(multilib_native_usex python $(usex python) OFF)
+		-DBUILD_PYBULLET_NUMPY=$(multilib_native_usex python $(usex numpy) OFF)
+		-DBUILD_SERIALIZE_EXTRA=$(usex serialize)
+		-DBUILD_SHARED_LIBS=ON
+		-DBUILD_UNIT_TESTS=$(usex test)
+		-DBULLET2_MULTITHREADING=$(usex threads)
+		-DBULLET2_USE_OPEN_MP_MULTITHREADING=$(usex openmp)
+		-DBULLET2_USE_TBB_MULTITHREADING=$(usex tbb)
+		-DINSTALL_EXTRA_LIBS=ON
+		-DINSTALL_LIBS=ON
+		-DUSE_DOUBLE_PRECISION=$(usex double-precision)
+		-DUSE_GRAPHICAL_BENCHMARK=$(usex graphical-benchmark)
+	)
+	if use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+		mycmakeargs+=(
+			-DBULLET2_TBB_INCLUDE_DIR="/usr/include/tbb/${LEGACY_TBB_SLOT}"
+			-DBULLET2_TBB_LIB_DIR="/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 		)
-		if use tbb && has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
-			mycmakeargs+=(
-				-DBULLET2_TBB_INCLUDE_DIR="/usr/include/tbb/${LEGACY_TBB_SLOT}"
-				-DBULLET2_TBB_LIB_DIR="/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
-			)
-		elif use tbb ; then
+	elif use tbb ; then
 eerror
 eerror "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} must be installed from the"
 eerror "oiledmachine-overlay."
 eerror
+		die
+	fi
+	if [[ "${PGO_PHASE}" == "pg0" ]] ; then
+einfo
+einfo "Skipping PGO / Normal build"
+einfo
+	elif [[ "${PGO_PHASE}" == "pgi" ]] ; then
+einfo
+einfo "Instrumenting build"
+einfo
+	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
+einfo
+einfo "Optimizing build"
+einfo
+	fi
+
+	filter-flags -fprofile*
+	local pgo_datadir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] ; then
+		einfo "Setting up PGI"
+		if tc-is-clang ; then
+			append-flags -fprofile-generate="${pgo_datadir}"
+		else
+			append-flags -fprofile-generate -fprofile-dir="${pgo_datadir}"
+		fi
+	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] ; then
+		einfo "Setting up PGO"
+		if tc-is-clang ; then
+			llvm-profdata merge -output="${pgo_datadir}/pgo-custom.profdata" \
+				"${pgo_datadir}" || die
+			append-flags -fprofile-use="${pgo_datadir}/pgo-custom.profdata"
+		else
+			append-flags -fprofile-use -fprofile-dir="${pgo_datadir}"
+		fi
+	fi
+
+	cmake_src_configure
+}
+
+src_configure() { :; }
+
+_compile() {
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+	cd "${BUILD_DIR}" || die
+	cmake_src_compile
+}
+
+_set_demo() {
+	local name="${@}"
+cat > 0_Bullet3Demo.txt <<EOF
+--start_demo_name=${name}
+--mouse_move_multiplier=0.400000
+--mouse_wheel_multiplier=0.010000
+--background_color_red= 0.700000
+--background_color_green= 0.700000
+--background_color_blue= 0.800000
+--fixed_timestep= 0.000000
+EOF
+}
+
+_run_demo() {
+	local duration="${1}"
+	shift 1
+	local name="${@}"
+	local now=$(date +"%s")
+	local done_at=$((${now} + ${duration}))
+	local done_at_s=$(date --date="@${done_at}")
+einfo
+einfo "Running '${name}' demo for ${duration}s to be completed at"
+einfo "${done_at_s}"
+einfo
+cat > "run.sh" <<EOF
+#!/bin/sh
+timeout -s 3 ${duration} examples/ExampleBrowser/App_ExampleBrowser &
+sleep ${duration}
+true
+EOF
+	chmod +x "run.sh" || die
+	virtx ./run.sh
+	rm run.sh || die
+}
+
+is_benchmark_demo() {
+	local x="${@}"
+	# Typically 3 min runtime required
+	local benchmark_demos=(
+		"3000 boxes"
+		"2000 stack"
+		"1000 stack"
+		"Ragdolls"
+		"Convex stack"
+		"Prim vs Mesh"
+		"Convex vs Mesh"
+		"Raycast"
+		"Convex Pack"
+		"Heightfield"
+	)
+	IFS=$'\n'
+	local y
+	for y in ${benchmark_demos[@]} ; do
+		if [[ "${x}" == "${y}" ]] ; then
+			IFS=$' \n\r\t'
+			return 0
+		fi
+	done
+	IFS=$' \n\r\t'
+	return 1
+}
+
+_train() {
+	# Sandbox violation prevention
+	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # Prevent sandbox violation
+	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
+	for x in $(find /dev/input -name "event*") ; do
+		einfo "Adding \`addwrite ${x}\` sandbox rule"
+		addwrite "${x}"
+	done
+
+	# See examples/ExampleBrowser/ExampleEntries.cpp under each ExampleEntry
+	local all_demos=(
+	)
+
+	local pgo_datadir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	IFS=$'\n'
+	local x
+	for x in $(grep "ExampleEntry([01]" \
+			"${S}/examples/ExampleBrowser/ExampleEntries.cpp" \
+			| cut -f 2 -d '"' \
+			| sort) ; do
+		local duration=20 # seconds
+		if is_benchmark_demo "${x}" ; then
+			duration=180 # 3 min
+		fi
+		_set_demo "${x}"
+		_run_demo "${duration}" "${x}"
+		rm 0_Bullet3Demo.txt || die
+		if use pgo &&  tc-is-gcc ; then
+			if ! find "${pgo_datadir}" -name "*.gcda" \
+				2>/dev/null 1>/dev/null ; then
+ewarn
+ewarn "Didn't generate a PGO profile"
+ewarn
+			fi
+		elif use pgo && tc-is-clang ; then
+			if ! find "${pgo_datadir}" -name "*.profraw" \
+				2>/dev/null 1>/dev/null ; then
+ewarn
+ewarn "Didn't generate a PGO profile"
+ewarn
+			fi
+		fi
+	done
+	IFS=$' \n\r\t'
+	if use pgo && tc-is-gcc ; then
+		if ! find "${pgo_datadir}" -name "*.gcda" ; then
+eerror
+eerror "Didn't generate a PGO profile"
+eerror
 			die
 		fi
-		cmake_src_configure
-	}
-	multilib_foreach_abi configure_abi
+	elif use pgo && tc-is-clang ; then
+		if ! find "${pgo_datadir}" -name "*.profraw" ; then
+eerror
+eerror "Didn't generate a PGO profile"
+eerror
+			die
+		fi
+	fi
+	# It doesn't close some of them.
+	killall -9 App_ExampleBrowser || die
 }
 
 src_compile() {
-	configure_abi() {
-		export CMAKE_USE_DIR="${S}"
-		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
-		cd "${BUILD_DIR}" || die
-		cmake_src_compile
+	compile_abi() {
+		if use pgo ; then
+			# PGO on average is 10% performance benefit
+			PGO_PHASE="pgi"
+			_configure
+			_compile
+			_train
+			PGO_PHASE="pgo"
+			_configure
+			_compile
+		else
+			PGO_PHASE="pg0"
+			_configure
+			_compile
+		fi
 	}
-	multilib_foreach_abi configure_abi
+	multilib_foreach_abi compile_abi
 	if use doc; then
 		doxygen || die
 		HTML_DOCS+=( html/. )
@@ -379,10 +568,16 @@ einfo
 einfo "  cd /usr/share/bullet/demos/data"
 einfo "  /usr/share/bullet/demos/examples/TwoJoint/App_TwoJoint-${PV}"
 einfo
+		if use python ; then
 einfo "To properly render the pybullet models do:"
 einfo
 einfo "  cd /usr/share/bullet/demos/data"
 einfo "  ${EPYTHON} /usr/share/bullet/demos/examples/pybullet/examples/inverse_kinematics_pole.py"
 einfo
+		fi
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo
+# OILEDMACHINE-OVERLAY-META-TAGS:  profile-guided-optimization
