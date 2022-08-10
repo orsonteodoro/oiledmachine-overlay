@@ -306,7 +306,7 @@ einfo
 				"${pgo_datadir}" || die
 			append-flags -fprofile-use="${pgo_datadir}/pgo-custom.profdata"
 		else
-			append-flags -fprofile-use -fprofile-dir="${pgo_datadir}"
+			append-flags -fprofile-correction -fprofile-use -fprofile-dir="${pgo_datadir}"
 		fi
 	fi
 
