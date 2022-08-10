@@ -120,6 +120,7 @@ src_install() {
 			emake DESTDIR="${D}" install
 		}
 		lua_foreach_impl lua_src_install
+		cd "${S}" || die
 		use doc && local HTML_DOCS=( doc/us/. )
 		einstalldocs
 		docinto licenses
