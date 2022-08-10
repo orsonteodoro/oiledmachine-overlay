@@ -28,17 +28,19 @@ S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_prepare() {
 	default
-	multilib_copy_sources
 	prepare_abi()
 	{
-		cd "${BUILD_DIR}" || die
-		lua_copy_sources
+		lua_src_prepare() {
+			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}" || die
+		}
+		lua_foreach_impl lua_src_prepare
 	}
         multilib_foreach_abi prepare_abi
 }
 
 lua_src_configure()
 {
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
 	cd "${BUILD_DIR}" || die
 	local chost=$(get_abi_CHOST ${ABI})
 	local _pkgconfig="${chost}-pkg-config"
@@ -76,7 +78,6 @@ for lua is broken for multilib abi_x86_32."
 src_configure() {
 	configure_abi()
 	{
-		cd "${BUILD_DIR}" || die
 		lua_foreach_impl lua_src_configure
 	}
         multilib_foreach_abi configure_abi
@@ -85,9 +86,9 @@ src_configure() {
 src_compile() {
 	compile_abi()
 	{
-		cd "${BUILD_DIR}" || die
 		lua_src_compile()
 		{
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
 			cd "${BUILD_DIR}" || die
 			emake PKG_CONFIG_PATH="/usr/$(get_libdir)/pkgconfig"
 		}
@@ -99,8 +100,8 @@ src_compile() {
 src_test() {
 	test_abi()
 	{
-		cd "${BUILD_DIR}" || die
 		lua_src_test() {
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
 			cd "${BUILD_DIR}" || die
 			LUA_CPATH=./src/?.so $(usex luajit 'luajit' 'lua') \
 				tests/test.lua || die
@@ -113,8 +114,8 @@ src_test() {
 src_install() {
 	install_abi()
 	{
-		cd "${BUILD_DIR}" || die
 		lua_src_install() {
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
 			cd "${BUILD_DIR}" || die
 			emake DESTDIR="${D}" install
 		}
