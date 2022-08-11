@@ -490,14 +490,14 @@ src_install() {
 #		dosym "/opt/monogame-linux${libc_suffix}/ppc64le" "/opt/monogame"
 #	elif [[ "${CHOST}" == "${CBUILD}" ]] && use s390x ; then
 #		dosym "/opt/monogame-linux${libc_suffix}/s390x" "/opt/monogame"
-	elif [[ "${CHOST}" == "${CBUILD}" ]] && use x86 ; then
-		dosym "/opt/monogame-linux${libc_suffix}/x86" "/opt/monogame"
+#	elif [[ "${CHOST}" == "${CBUILD}" ]] && use x86 ; then
+#		dosym "/opt/monogame-linux${libc_suffix}/x86" "/opt/monogame"
 
 	# Gentoo Prefix / crossdev
-	elif use x86-linux ; then
+#	elif use x86-linux ; then
 # You can only do Gentoo Prefix because dev-dotnet/dotnet-sdk-bin ebuild is not
 # multiabi.  But, the same ebuild doesn't support Gentoo Prefix (no KEYWORD).
-		dosym "/opt/monogame-linux/x86" "/opt/monogame"
+#		dosym "/opt/monogame-linux/x86" "/opt/monogame"
 	elif use x64-macos  ; then
 		dosym "/opt/monogame-macos/x64" "/opt/monogame"
 	elif use arm64-macos  ; then
