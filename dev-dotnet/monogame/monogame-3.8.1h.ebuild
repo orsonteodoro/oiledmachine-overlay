@@ -3,6 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+MY_PN="MonoGame"
 MY_PV="3.8.1_HOTFIX"
 MY_P="${PN}-${MY_PV}"
 
@@ -72,67 +73,117 @@ KEYWORDS=" ~amd64 ~x64-cygwin ~arm64-macos"
 # For dotnet runtimes, see https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.NETCore.Platforms/src/runtime.json
 # For CI and supported platforms, see https://github.com/MonoGame/MonoGame/blob/v3.8.1_HOTFIX/build.cake
 #arm here is armv7
-# ANDROID_MARCH_=( arm arm64 x64 x86 ) # dotnet runtimes available
-ANDROID_MARCH_=( arm arm64 x64 x86 ) # Based on CI
+# ANDROID_MARCH=( arm arm64 x64 x86 ) # dotnet runtimes available
+ANDROID_MARCH=( arm arm64 x64 x86 ) # Based on CI
 #   arm=armv7
-ANDROID_MARCH="${ANDROID_MARCH_[@]/#/monogame_android_}"
+ANDROID_ERIDS="${ANDROID_MARCH[@]/#/dotnet_android_}"
 
 # IOS_MARCH_=( arm arm64 x64 x86 ) # dotnet runtimes available
-IOS_MARCH_=( arm arm64 ) # Based on CI
-IOS_MARCH="${IOS_MARCH_[@]/#/monogame_ios_}"
+IOS_MARCH=( arm arm64 ) # Based on CI
+IOS_ERIDS="${IOS_MARCH[@]/#/dotnet_ios_}"
 # OS >= 11.2
 
 # IOSSIMULATOR_MARCH_=( arm64 x64 x86 ) # dotnet runtimes available
-IOSSIMULATOR_MARCH_=( arm64 x64 x86 ) # Based on CI
-IOSSIMULATOR_MARCH="${IOSSIMULATOR_MARCH_[@]/#/monogame_iossimulator_}"
+IOSSIMULATOR_MARCH=( arm64 x64 x86 ) # Based on CI
+IOSSIMULATOR_ERIDS="${IOSSIMULATOR_MARCH[@]/#/dotnet_iossimulator_}"
 
 # arm here is armv7*hf only; armel is armv7*s*
-# LINUX_MARCH_=( arm arm64 armel armv6 loongarch64 ppc64le mips64 s390x x64 x86 ) # dotnet runtimes available
-LINUX_MARCH_=( x64 ) # Based on CI
-LINUX_MARCH="${LINUX_MARCH_[@]/#/monogame_linux_}"
+# LINUX_MARCH=( arm arm64 armel armv6 loongarch64 ppc64le mips64 s390x x64 x86 ) # dotnet runtimes available
+LINUX_MARCH=( x64 ) # Based on CI
+LINUX_ERIDS="${LINUX_MARCH[@]/#/dotnet_linux_}"
 
 # arm here is armv7 or armv6; armel is armv7*s*
-# LINUX_MUSL_MARCH_=( arm arm64 armel ppc64le s390x x64 x86 ) # dotnet runtimes available
-LINUX_MUSL_MARCH_=( ) # Based on CI
-LINUX_MUSL_MARCH="${LINUX_MUSL_MARCH_[@]/#/monogame_linux_musl_}"
+# LINUX_MUSL_MARCH=( arm arm64 armel ppc64le s390x x64 x86 ) # dotnet runtimes available
+LINUX_MUSL_MARCH=( ) # Based on CI
+LINUX_MUSL_ERIDS="${LINUX_MUSL_MARCH[@]/#/dotnet_linux_musl_}"
 
-# OSX_MARCH_=( arm64 x64 ) # dotnet runtimes available
-OSX_MARCH_=( x64 ) # Based on CI
-OSX_MARCH="${OSX_MARCH_[@]/#/monogame_osx_}"
+# OSX_MARCH=( arm64 x64 ) # dotnet runtimes available
+OSX_MARCH=( x64 ) # Based on CI
+OSX_ERIDS="${OSX_MARCH[@]/#/dotnet_osx_}"
 
-# WIN_MARCH_= ( arm arm64 x64 x86 ) # dotnet runtimes available
-WIN_MARCH_=( x64 ) # Based on CI
-WIN_MARCH="${WIN_MARCH_[@]/#/monogame_win_}"
+# UWP_MARCH=( arm arm64 x64 x86 ) # Based on Wikipedia
+UWP_MARCH=( x64 ) # Guess
+UWP_ERIDS="${UWP_MARCH[@]/#/dotnet_uwp_}"
 
+# WIN_MARCH=( arm arm64 x64 x86 ) # dotnet runtimes available
+WIN_MARCH=( x64 ) # Based on CI
+WIN_ERIDS="${WIN_MARCH[@]/#/dotnet_win_}"
 
-#	${LINUX_MUSL_MARCH[@]}
-#	${IOSSIMULATOR_MARCH[@]}
-ALL_ARCHES=(
-	${ANDROID_MARCH[@]}
-	${IOS_MARCH[@]}
-	${LINUX_MARCH[@]}
-	${OSX_MARCH[@]}
-	${WIN_MARCH[@]}
+# emerge RIDs
+#	${LINUX_MUSL_ERIDS[@]}
+#	${IOSSIMULATOR_ERIDS[@]}
+ERIDS=(
+	${ANDROID_ERIDS[@]}
+	${IOS_ERIDS[@]}
+	${LINUX_ERIDS[@]}
+	${OSX_ERIDS[@]}
+	${UWP_ERIDS[@]}
+	${WIN_ERIDS[@]}
 )
 
-IUSE+=" ${ALL_ARCHES[@]} "
+IUSE+=" ${ERIDS[@]} "
 REQUIRED_USE+="
-	|| ( ${ALL_ARCHES[@]} )
-	elibc_Cygwin? ( || ( ${WIN_MARCH[@]} ) )
-	elibc_glibc? ( || ( ${LINUX_MARCH[@]} ) linux )
-	uwp? ( elibc_Cygwin )
+	|| (
+		${ERIDS[@]}
+	)
+	elibc_Cygwin? (
+		|| (
+			${UWP_ERIDS[@]}
+			${WIN_ERIDS[@]}
+		)
+	)
+	elibc_glibc? (
+		|| (
+			${LINUX_ERIDS[@]}
+		)
+	)
 "
 #	elibc_musl? ( || ( ${LINUX_MUSL_MARCH[@]} ) )
+
+gen_linux_required_use() {
+	local erid
+	for erid in ${LINUX_ERIDS[@]} ; do
+		echo "
+			${erid}? (
+				elibc_glibc
+			)
+		"
+	done
+}
+REQUIRED_USE+=" "$(gen_linux_required_use)
+
+gen_win_required_use() {
+	local erid
+	for erid in ${WIN_ERIDS[@]} ; do
+		echo "
+			${erid}? (
+				elibc_Cygwin
+			)
+		"
+	done
+}
+REQUIRED_USE+=" "$(gen_win_required_use)
+
+gen_uwp_required_use() {
+	local erid
+	for erid in ${UWP_ERIDS[@]} ; do
+		echo "
+			${erid}? (
+				elibc_Cygwin
+			)
+		"
+	done
+}
+REQUIRED_USE+=" "$(gen_uwp_required_use)
+
 
 # The dev-dotnet/dotnet-sdk-bin ebuild supports only one march
 RDEPEND+="
 	>=dev-dotnet/dotnet-sdk-bin-${FRAMEWORK}:${FRAMEWORK}
-	linux? (
-		media-libs/libpng
-		sys-devel/gcc[openmp]
-		sys-libs/zlib[minizip]
-		virtual/libc
-	)
+	media-libs/libpng
+	sys-devel/gcc[openmp]
+	sys-libs/zlib[minizip]
+	virtual/libc
 "
 DEPEND+="
 	${RDEPEND}
@@ -140,101 +191,63 @@ DEPEND+="
 BDEPEND+="
 	>=dev-dotnet/dotnet-sdk-bin-${FRAMEWORK}:${FRAMEWORK}
 "
-PLATFORMS=(android ios linux macos uwp windowsdx)
 
 IUSE+="
 	${PLATFORMS[@]}
 	debug
 	+linux
 "
-REQUIRED_USE+=" || ( ${PLATFORMS[@]} )"
-
-gen_required_use_android() {
-	local flag
-	for flag in ${ANDROID_MARCH[@]} ; do
-		echo "
-			${flag}? ( android )
-		"
-	done
-}
-REQUIRED_USE+=" "$(gen_required_use_android)
-
-gen_required_use_ios() {
-	local flag
-	for flag in ${IOS_MARCH[@]} ; do
-		echo "
-			${flag}? ( ios )
-		"
-	done
-}
-REQUIRED_USE+=" "$(gen_required_use_ios)
-
-gen_required_use_iossimulator() {
-	local flag
-	for flag in ${IOSSIMULATOR_MARCH[@]} ; do
-		echo "
-			${flag}? ( ios )
-		"
-	done
-}
-#REQUIRED_USE+=" "$(gen_required_use_iossimulator)
-
-gen_required_use_linux() {
-	local flag
-	for flag in ${LINUX_MARCH[@]} ; do
-		echo "
-			${flag}? ( linux )
-		"
-	done
-}
-REQUIRED_USE+=" "$(gen_required_use_linux)
-
-gen_required_use_linux_musl() {
-	local flag
-	for flag in ${LINUX_MUSL_MARCH[@]} ; do
-		echo "
-			${flag}? ( linux )
-		"
-	done
-}
-#REQUIRED_USE+=" "$(gen_required_use_linux_musl)
-
-gen_required_use_osx() {
-	local flag
-	for flag in ${OSX_MARCH[@]} ; do
-		echo "
-			${flag}? ( macos )
-		"
-	done
-}
-REQUIRED_USE+=" "$(gen_required_use_osx)
-
-gen_required_use_uwp() {
-	local flag
-	for flag in ${UWP_MARCH[@]} ; do
-		echo "
-			${flag}? ( uwp )
-		"
-	done
-}
-REQUIRED_USE+=" "$(gen_required_use_uwp)
-
-gen_required_use_windowsdx() {
-	local flag
-	for flag in ${WIN_MARCH[@]} ; do
-		echo "
-			${flag}? ( windowsdx )
-		"
-	done
-}
-REQUIRED_USE+=" "$(gen_required_use_windowsdx)
 
 SRC_URI=""
 SLOT="0/${PV}"
 S="${WORKDIR}/${MY_P}"
 RESTRICT="mirror"
 
-SUPPORTED_SDKS=(6.0)
+DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-6.0" )
+
+get_crid_platform() {
+	local erid="${1}"
+	local cplatform="${erid%-*}"
+	cplatform="${cplatform/uwp/win}"
+	echo "${cplatform}"
+}
+
+get_hrid_platform() {
+	local erid="${1}"
+	echo "${erid%-*}"
+}
+
+get_hrid_arch() {
+	local erid="${1}"
+	echo "${erid##*-}"
+}
+
+# erid_arch -> Gentoo arch
+get_garch() {
+	local erid="${1}"
+	local garch="${erid/dotnet_}"
+	garch="${garch##*_}"
+	garch="${garch/x64/amd64}"
+	garch="${garch/armel/arm}"
+	echo "${garch}"
+}
+
+# Canonical rid (uwp is win)
+get_crid() {
+	local erid="${1}"
+	local crid="${erid/dotnet_}"
+	crid="${crid//_/-}"
+	crid="${crid/uwp/win}"
+	echo "${crid}"
+}
+
+# Hypothetical rid (uwp is uwp)
+get_hrid() {
+	local erid="${1}"
+	local hrid="${erid/dotnet_}"
+	hrid="${hrid//_/-}"
+	echo "${hrid}"
+}
 
 pkg_setup() {
 	if has network-sandbox ${FEATURES} ; then
@@ -246,18 +259,19 @@ eerror
 	fi
 
 	local found=0
-	for pv in ${SUPPORTED_SDKS} ; do
-		if [[ -e "${EPREFIX}/opt/dotnet-sdk-bin-${pv}" ]] ; then
-			export PATH="/opt/dotnet-sdk-bin-${pv}:${PATH}"
+	for sdk in ${DOTNET_SUPPORTED_SDKS[@]} ; do
+		if [[ -e "${EPREFIX}/opt/${sdk}" ]] ; then
+			export SDK="${sdk}"
+			export PATH="${EPREFIX}/opt/${sdk}:${PATH}"
 			found=1
 			break
 		fi
 	done
 	if (( ${found} != 1 )) ; then
 eerror
-eerror "You need dev-dotnet/dotnet-sdk-bin."
+eerror "You need a dotnet SDK."
 eerror
-eerror "Supported SDK versions: ${SUPPORTED_SDKS}"
+eerror "Supported SDK versions: ${DOTNET_SUPPORTED_SDKS[@]}"
 eerror
 		die
 	fi
@@ -288,186 +302,52 @@ src_compile() {
 	declare -A platforms=(
 		[android]="MonoGame.Framework.Android.sln"
 		[linux]="MonoGame.Tools.Linux.sln"
+		[linux-musl]="MonoGame.Tools.Linux.sln"
 		[ios]="MonoGame.Framework.iOS.sln"
-		[macos]="MonoGame.Tools.Mac.sln"
+		[osx]="MonoGame.Tools.Mac.sln"
 		[uwp]="MonoGame.Framework.WindowsUniversal.sln"
-		[windowsdx]="MonoGame.Framework.WindowsDX.sln"
+		[win]="MonoGame.Framework.WindowsDX.sln"
 	)
 
 	# It's still a mess or porting.
 	# It doesn't fully disclose all the RID or microarches
 	# See the rid-catalog
-	local arch
-
-	if use android ; then
-		for arch in ${ANDROID_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_android_}"
-				prun \
-				dotnet build "${platforms[android]}" ${args[@]} \
-					-c "${configuration}" \
-					-r "android-${arch}" \
-					-o "${S}_android_${arch}_${configuration}_build"
-			fi
-		done
-	fi
-	if use ios ; then
-		for arch in ${IOS_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_ios_}"
-				prun \
-				dotnet build "${platforms[ios]}" ${args[@]} \
-					-c "${configuration}" \
-					-r "ios-${arch}" \
-					-o "${S}_ios_${arch}_${configuration}_build"
-			fi
-		done
-		for arch in ${IOSSIMULATOR_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_iossimulator_}"
-				prun \
-				dotnet build "${platforms[ios]}" ${args[@]} \
-					-c "${configuration}" \
-					-r "iossimulator-${arch}" \
-					-o "${S}_iossimulator_${arch}_${configuration}_build"
-			fi
-		done
-	fi
-	if use linux ; then
-		for arch in ${LINUX_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_linux_}"
-				prun \
-				dotnet build "${platforms[linux]}" ${args[@]} \
-					-c "${configuration}" \
-					-r "linux-${arch}" \
-					-o "${S}_linux_${arch}_${configuration}_build"
-			fi
-		done
-#		for arch in ${LINUX_MUSL_MARCH[@]} ; do
-#			if use "${arch}" ; then
-#				arch="${arch/monogame_linux_musl_}"
-#				prun \
-#				dotnet build "${platforms[linux]}" ${args[@]} \
-#					-c "${configuration}" \
-#					-r "linux-musl-${arch}" \
-#					-o "${S}_linux_musl_${arch}_${configuration}_build"
-#			fi
-#		done
-	fi
-	if use macos ; then
-		for arch in ${OSX_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_osx_}"
-				prun \
-				dotnet build "${platforms[macos]}" ${args[@]} \
-					-c "${configuration}" \
-					-r "osx-${arch}" \
-					-o "${S}_macos_${arch}_${configuration}_build"
-			fi
-		done
-	fi
-	if use uwp ; then
-		for arch in ${WIN_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_win_}"
-				prun \
-				dotnet build "${platforms[uwp]}" ${args[@]} \
-					-c "${configuration}" \
-					-r "win-${arch}" \
-					-o "${S}_uwp_${configuration}_build"
-			fi
-		done
-	fi
-	if use windowsdx ; then
-		for arch in ${WIN_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_win_}"
-				prun \
-				dotnet build "${platforms[windowsdx]}" ${args[@]} \
-					-c "${configuration}" \
-					-r "win-${arch}" \
-					-o "${S}_windowsdx_${arch}_${configuration}_build"
-			fi
-		done
-	fi
+	local erid
+	for erid in ${ERIDS[@]} ; do
+		if use "${erid}" ; then
+			local hrid=$(get_hrid "${erid}")
+			local crid=$(get_crid "${erid}")
+			local harch=$(get_hrid_arch "${hrid}")
+			local hplatform=$(get_hrid_platform "${hrid}")
+			prun \
+			dotnet publish "${platforms[${hplatform}]}" ${args[@]} \
+				-c "${configuration}" \
+				-r "${crid}" \
+				-o "${S}_${hrid}_${configuration}_build" \
+				-p:PublishReadyToRun=false \
+				-p:TieredCompilation=false \
+				--self-contained
+		fi
+	done
+	ewarn "WIP (Under Construction)"
+	die
 }
 
 src_install() {
 	local configuration=$(usex debug "Debug" "Release")
-	local arch
-	if use android ; then
-		for arch in ${ANDROID_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_android_}"
-				insinto "/opt/monogame-android/${arch}"
-				doins -r "${S}_android_${arch}_${configuration}_build"
-			fi
-		done
-	fi
-	if use ios ; then
-		for arch in ${LINUX_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch=$"{arch/monogame_ios_}"
-				insinto "/opt/monogame-ios/${arch}"
-				doins -r "${S}_ios_${arch}_${configuration}_build"
-			fi
-		done
-		for arch in ${IOSSIMULATOR_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_iossimulator_}"
-				insinto "/opt/monogame-iossimulator/${arch}"
-				doins -r "${S}_iossimulator_${arch}_${configuration}_build"
-			fi
-		done
-	fi
-	if use linux ; then
-		for arch in ${LINUX_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_linux_}"
-				insinto "/opt/monogame-linux/${arch}"
-				doins -r "${S}_linux_${arch}_${configuration}_build"
-			fi
-		done
-
-#		for arch in ${LINUX_MUSL_MARCH[@]} ; do
-#			if use "${arch}" ; then
-#				arch="${arch/monogame_linux_musl_}"
-#				insinto "/opt/monogame-linux-musl/${arch}"
-#				doins -r "${S}_linux_musl_${arch}_${configuration}_build"
-#			fi
-#		done
-	fi
-	if use macos ; then
-		for arch in ${OSX_MARCH[@]} ; do
-			if use ${arch} ; then
-				arch="${arch/monogame_osx_}"
-				insinto "/opt/monogame-macos/${arch}"
-				doins -r "${S}_macos_${arch}_${configuration}_build"
-			fi
-		done
-	fi
-	if use uwp ; then
-		for arch in ${WIN_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_win_}"
-				insinto "/opt/monogame-uwp/${arch}"
-				doins -r "${S}_uwp_${arch}_${configuration}_build"
-			fi
-		done
-	fi
-	if use windowsdx ; then
-		for arch in ${WIN_MARCH[@]} ; do
-			if use "${arch}" ; then
-				arch="${arch/monogame_win_}"
-				insinto "/opt/monogame-windowsdx/${arch}"
-				doins -r "${S}_windowsdx_${arch}_${configuration}_build"
-			fi
-		done
-	fi
+	local erid
+	for erid in ${ERIDS} ; do
+		if use "${erid}" ; then
+			local hrid=$(get_hrid "${erid}")
+			local crid=$(get_crid "${erid}")
+			local harch=$(get_hrid_arch "${hrid}")
+			local hplatform=$(get_hrid_platform "${hrid}")
+			insinto "/opt/${SDK}/shared/${MY_PN}.Host.${crid}/${MY_PV}"
+			doins -r "${S}_${hrid}_${configuration}_build/"*
+		fi
+	done
 
 	local libc_suffix=""
-#	[[ "${CHOST}" == "${CBUILD}" && "${CHOST}" =~ "musl" ]] && libc_suffix="-musl"
 
 	#
 	# To claify the ambiguity of arm, armv6, armel, ..., etc, see
@@ -484,49 +364,6 @@ src_install() {
 	#
 
 	# Native
-	if [[ "${CHOST}" == "${CBUILD}" ]] && use arm && [[ "${CHOST}" =~ "armv7".*"hf" ]] ; then
-		dosym "/opt/monogame-linux${libc_suffix}/arm" "/opt/monogame"
-	elif [[ "${CHOST}" == "${CBUILD}" ]] && use arm && [[ "${CHOST}" =~ "armv7" ]] ; then
-		# Soft float
-		dosym "/opt/monogame-linux${libc_suffix}/armel" "/opt/monogame"
-#	elif [[ "${CHOST}" == "${CBUILD}" ]] && use arm && [[ "${CHOST}" =~ "armv6" ; then
-#		dosym "/opt/monogame-linux${libc_suffix}/armv6" "/opt/monogame"
-#	elif [[ "${CHOST}" == "${CBUILD}" ]] && use arm && [[ "${CHOST}" =~ "armv6" ; then
-#		dosym "/opt/monogame-linux${libc_suffix}/arm" "/opt/monogame"
-	elif [[ "${CHOST}" == "${CBUILD}" ]] && use arm64 ; then
-		dosym "/opt/monogame-linux${libc_suffix}/arm64" "/opt/monogame"
-
-	elif [[ "${CHOST}" == "${CBUILD}" ]] && use amd64 ; then
-		# It does have .so files and executible programs so multilib
-		dosym "/opt/monogame-linux/x64" "/opt/monogame"
-#	elif [[ "${CHOST}" == "${CBUILD}" ]] && use loong && [[ "${CHOST}" =~ "loongarch64" ]] ; then
-#		dosym "/opt/monogame-linux/loongarch64" "/opt/monogame"
-#	elif [[ "${CHOST}" == "${CBUILD}" ]] && use mips && [[ "${CHOST}" =~ "mips64" ]] ; then
-#		dosym "/opt/monogame-linux/mips64" "/opt/monogame"
-#	elif [[ "${CHOST}" == "${CBUILD}" ]] && use ppc64 ; then
-#		dosym "/opt/monogame-linux${libc_suffix}/ppc64le" "/opt/monogame"
-#	elif [[ "${CHOST}" == "${CBUILD}" ]] && use s390x ; then
-#		dosym "/opt/monogame-linux${libc_suffix}/s390x" "/opt/monogame"
-#	elif [[ "${CHOST}" == "${CBUILD}" ]] && use x86 ; then
-#		dosym "/opt/monogame-linux${libc_suffix}/x86" "/opt/monogame"
-
-	# Gentoo Prefix / crossdev
-#	elif use x86-linux ; then
-# You can only do Gentoo Prefix because dev-dotnet/dotnet-sdk-bin ebuild is not
-# multiabi.  But, the same ebuild doesn't support Gentoo Prefix (no KEYWORD).
-#		dosym "/opt/monogame-linux/x86" "/opt/monogame"
-	elif use x64-macos  ; then
-		dosym "/opt/monogame-macos/x64" "/opt/monogame"
-	elif use arm64-macos  ; then
-		dosym "/opt/monogame-macos/arm64" "/opt/monogame"
-	elif use x64-cygwin  ; then
-		dosym "/opt/monogame-win/x64" "/opt/monogame"
-	else
-einfo
-einfo "You are responsible to setting the symlink from"
-einfo "/opt/monogame-\${platform}/\${arch} -> opt/monogame"
-einfo
-	fi
 
 einfo
 einfo "Restoring file permissions"
