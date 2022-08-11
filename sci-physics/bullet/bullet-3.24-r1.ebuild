@@ -484,7 +484,7 @@ while (( \${now} < ${done_at} )) \
 	now=\$(date +"%s")
 done
 ps -p \${pid} 2>/dev/null 1>/dev/null \
-	&& kill -15 \${pid}
+	&& kill -9 \${pid}
 true
 EOF
 	chmod +x "run.sh" || die
