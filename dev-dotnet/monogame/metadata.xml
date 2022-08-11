@@ -6,8 +6,6 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
-  </longdescription>
   <upstream>
     <remote-id type="github">MonoGame/MonoGame</remote-id>
   </upstream>
