@@ -428,26 +428,27 @@ configure_pgx() {
 	autofix_flags
 
 	export FFMPEG=$(get_multiabi_ffmpeg)
-	local pgo_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	mkdir -p "${pgo_data_dir}" || die
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_dir}"
-			append-ldflags -fprofile-generate="${pgo_dir}"
+			append-flags -fprofile-generate="${pgo_data_dir}"
+			append-ldflags -fprofile-generate="${pgo_data_dir}"
 		else
-			append-flags -fprofile-generate -fprofile-dir="${pgo_dir}"
+			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGO"
 		if tc-is-clang ; then
-			llvm-profdata merge -output="${pgo_dir}/pgo-custom.profdata" \
-				"${pgo_dir}" || die
-			append-flags -fprofile-use="${pgo_dir}/pgo-custom.profdata"
-			append-ldflags -fprofile-use="${pgo_dir}/pgo-custom.profdata"
+			llvm-profdata merge -output="${pgo_data_dir}/pgo-custom.profdata" \
+				"${pgo_data_dir}" || die
+			append-flags -fprofile-use="${pgo_data_dir}/pgo-custom.profdata"
+			append-ldflags -fprofile-use="${pgo_data_dir}/pgo-custom.profdata"
 		else
-			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_dir}"
+			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
 		fi
 	fi
 
@@ -1050,8 +1051,8 @@ src_compile() {
 					compile_pgx
 					run_trainer
 				fi
-				local pgo_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-				if (( $(find "${pgo_dir}" 2>/dev/null | wc -l) > 0 )) ; then
+				local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+				if (( $(find "${pgo_data_dir}" 2>/dev/null | wc -l) > 0 )) ; then
 					PGO_PHASE="pgo"
 					[[ "${lib_type}" == "static" ]] \
 						&& ewarn "Reusing PGO data from shared-libs"
