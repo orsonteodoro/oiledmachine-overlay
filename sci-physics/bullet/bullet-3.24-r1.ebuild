@@ -316,7 +316,8 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}"/${PN}-2.85-soversion.patch
+	"${FILESDIR}/${PN}-2.85-soversion.patch"
+	"${FILESDIR}/${PN}-3.24-fix-tbb-linking.patch"
 )
 DOCS=( AUTHORS.txt LICENSE.txt README.md )
 # Building / linking of third Party library BussIK does not work out of the box
@@ -399,6 +400,7 @@ einfo
 
 	filter-flags -fprofile*
 	local pgo_datadir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	mkdir -p "${pgo_datadir}" || die # Make first demo produce a PGO profile?
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
@@ -464,13 +466,18 @@ einfo "${done_at_s}"
 einfo
 cat > "run.sh" <<EOF
 #!/bin/sh
-timeout -s 3 ${duration} examples/ExampleBrowser/App_ExampleBrowser &
-sleep ${duration}
+timeout -s 15 ${duration} examples/ExampleBrowser/App_ExampleBrowser
 true
 EOF
 	chmod +x "run.sh" || die
 	virtx ./run.sh
 	rm run.sh || die
+	if grep -q -r -e "cannot connect to X server" "${T}/build.log" ; then
+eerror
+eerror "Detected cannot connect to X server."
+eerror
+		die
+	fi
 }
 
 is_benchmark_demo() {
@@ -559,8 +566,6 @@ eerror
 			die
 		fi
 	fi
-	# It doesn't close some of them.
-	killall -9 App_ExampleBrowser || die
 }
 
 src_compile() {
