@@ -22,81 +22,165 @@ LICENSE="ZLIB" # The default license
 # src/BulletCollision/NarrowPhaseCollision,
 # src/Bullet3Collision/NarrowPhaseCollision/shared,
 # src/Bullet3OpenCL/NarrowphaseCollision/kernels/mprKernels.h
-LICENSE+=" BSD examples? ( BSD ) extras? ( BSD )"
+LICENSE+="
+	BSD
+	examples? ( BSD )
+	extras? ( BSD )
+"
 
 # The ^^ ( LGPL-2.1+ BSD ) conditional was subsituted with BSD.
 LICENSE+=" BSD ZLIB" # src/BulletDynamics/MLCPSolvers
 
 # data/MPL, test/OpenCL/RadixSortBenchmark/
-LICENSE+=" demos? ( Apache-2.0 ) test? ( Apache-2.0 )"
+LICENSE+="
+	demos? ( Apache-2.0 )
+	test? ( Apache-2.0 )
+"
 
 # data/MPL/mpl2.xml ; the Apache-2.0 does not have all rights reserved but
 #   the older 1.0 and 1.1 do
-LICENSE+=" demos? ( all-rights-reserved Apache-2.0 )"
+LICENSE+="
+	demos? (
+		all-rights-reserved
+		Apache-2.0
+	)
+"
 
 # data/quadruped
 # examples/ThirdPartyLibs/Wavefront
-LICENSE+=" demos? ( BSD-2 ) examples? ( BSD-2 )"
+LICENSE+="
+	demos? ( BSD-2 )
+	examples? ( BSD-2 )
+"
 
-LICENSE+=" demos? ( CC-BY-SA-4.0 )" # data/dinnerware (It actually says "CC-SA")
-LICENSE+=" demos? ( CC-BY-3.0 )" # data/kuka_lwr/meshes_arm
+# data/dinnerware (It actually says "CC-SA")
+LICENSE+="
+	demos? ( CC-BY-SA-4.0 )
+"
+
+# data/kuka_lwr/meshes_arm
+LICENSE+="
+	demos? ( CC-BY-3.0 )
+"
 
 # data/duck.dae
 # examples/pybullet/gym/data/duck.dae # SCEA
-LICENSE+=" demos? ( SCEA ) examples? ( SCEA )"
+LICENSE+="
+	demos? ( SCEA )
+	examples? ( SCEA )
+"
 
 # data/kitchens https://blog.turbosquid.com/royalty-free-license/
-LICENSE+=" demos? ( TurboSquid-Royalty-Free-License )"
+LICENSE+="
+	demos? ( TurboSquid-Royalty-Free-License )
+"
 
 # docs/pybullet_quickstart_guide/WordpressPreview/markdeep.min.js
 # docs/pybullet_quickstart_guide/WordpressPreview/PreviewBlogPage.htm
-LICENSE+=" doc? ( BSD-2 BSD GPL-2+ )"
+LICENSE+="
+	doc? (
+		BSD
+		BSD-2
+		GPL-2+
+	)
+"
 
 # examples/ThirdPartyLibs/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h
 # The LGPL-2.1+ does not have all rights reserved.
-LICENSE+=" examples? ( all-rights-reserved LGPL-2.1+ )"
+LICENSE+="
+	examples? (
+		all-rights-reserved
+		LGPL-2.1+
+	)
+"
 
 # examples/ThirdPartyLibs/openvr/bin/osx64/OpenVR.framework/Headers/openvr_api.cs
 # examples/ThirdPartyLibs/openvr/bin/osx64/OpenVR.framework/Headers/openvr_capi.h
 #  just contains all-rights-reserved but no mention of other license
-LICENSE+=" examples? ( all-rights-reserved )"
+LICENSE+="
+	examples? ( all-rights-reserved )
+"
 
 # In the root folder (examples/ThirdPartyLibs/openvr) it is BSD
-LICENSE+=" examples? ( BSD )"
+LICENSE+="
+	examples? ( BSD )
+"
 
 # examples/ThirdPartyLibs/Glew/CustomGL/wglew.h
-LICENSE+=" examples? ( BSD MIT )"
+LICENSE+="
+	examples? (
+		BSD
+		MIT
+	)
+"
 
 # examples/ThirdPartyLibs/clsocket/src/ActiveSocket.h
-LICENSE+=" examples? ( BSD-4 )"
+LICENSE+="
+	examples? ( BSD-4 )
+"
 
 # examples/Importers/ImportBsp/BspLoader.cpp,
-LICENSE+=" examples? ( GPL-2+ )"
+LICENSE+="
+	examples? ( GPL-2+ )
+"
 
-LICENSE+=" examples? ( Info-ZIP )" # examples/ThirdPartyLibs/minizip/unzip.c
+# examples/ThirdPartyLibs/minizip/unzip.c
+LICENSE+="
+	examples? ( Info-ZIP )
+"
 
 # The ^^ ( MIT Unlicense ) conditional was subsituted with Unlicense
 # You may fork the ebuild if you want the MIT license instead.
-LICENSE+=" examples? ( Unlicense )" # examples/ThirdPartyLibs/imgui/stb_truetype.h
+# examples/ThirdPartyLibs/imgui/stb_truetype.h
+LICENSE+="
+	examples? ( Unlicense )
+"
 
-LICENSE+=" examples? ( imgui-public-domain )" # examples/ThirdPartyLibs/imgui/stb_textedit.h
-LICENSE+=" examples? ( RtAudio )" # examples/TinyAudio ; modified MIT
-LICENSE+=" examples? ( RtMidi )" # examples/ThirdPartyLibs/midi ; modified MIT
+# examples/ThirdPartyLibs/imgui/stb_textedit.h
+LICENSE+="
+	examples? ( imgui-public-domain )
+"
+
+# examples/TinyAudio ; modified MIT
+LICENSE+="
+	examples? ( RtAudio )
+"
+
+# examples/ThirdPartyLibs/midi ; modified MIT
+LICENSE+="
+	examples? ( RtMidi )
+"
 
 # examples/ThirdPartyLibs/optionalX11/LICENSE.txt
 # examples/ThirdPartyLibs/optionalX11/X11/X.h
-LICENSE+=" examples? ( optionalX11-KP optionalX11-OG optionalX11-OG-DEC optionalX11-SGCSI )"
+LICENSE+="
+	examples? (
+		optionalX11-KP
+		optionalX11-OG
+		optionalX11-OG-DEC
+		optionalX11-SGCSI
+	)
+"
 
 # examples/ThirdPartyLibs/Gwen,
 # examples/ThirdPartyLibs/openvr/samples/shared/lodepng.h
 # test/GwenOpenGLTest,
-LICENSE+=" examples? ( ZLIB ) test? ( ZLIB )"
+LICENSE+="
+	examples? ( ZLIB )
+	test? ( ZLIB )
+"
 
 # Extras/Serialize/makesdna/makesdna.cpp (First line says ZLIB for complete
 #   rewrite in C++ but some parts look the same as original)
 # The GPL-2+ license does not contain all rights reserved but in the source it
 #   is explicit.
-LICENSE+=" extras? ( all-rights-reserved GPL-2+ ZLIB )"
+LICENSE+="
+	extras? (
+		all-rights-reserved
+		GPL-2+
+		ZLIB
+	)
+"
 
 # build3/lcpp.lua,
 # Extras/VHACD/inc/vhacdMutex.h
@@ -106,23 +190,51 @@ LICENSE+=" extras? ( all-rights-reserved GPL-2+ ZLIB )"
 # examples/ThirdPartyLibs/lua-5.2.3/src/lua.h
 # examples/ThirdPartyLibs/serial,
 # src/clew/clew.h,
-LICENSE+=" MIT examples? ( MIT Apache-2.0 ) extras? ( MIT )"
+LICENSE+="
+	MIT
+	examples? (
+		Apache-2.0
+		MIT
+	)
+	extras? (
+		MIT
+	)
+"
 
 LICENSE+=" MPL-2.0" # some files in examples/ThirdPartyLibs/Eigen
 
 # examples/pybullet/gym/pybullet_envs/agents # Apache-2.0
 # examples/pybullet/gym/pybullet_data/husky/husky.urdf # BSD
-LICENSE+=" examples? ( Apache-2.0 BSD ) demos? ( Apache-2.0 BSD ) python? ( Apache-2.0 BSD )"
+LICENSE+="
+	demos? (
+		Apache-2.0
+		BSD
+	)
+	examples? (
+		Apache-2.0
+		BSD
+	)
+	python? (
+		Apache-2.0
+		BSD
+	)
+"
 
 # test/Bullet2/vectormath/neon/quat_aos.h
 # the ZLIB does not have all rights reserved but in the source it is explicitly
 #   stated
-LICENSE+=" test? ( all-rights-reserved ZLIB )"
+LICENSE+="
+	test? (
+		all-rights-reserved
+		ZLIB
+	)
+"
 
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
 SRC_URI="
 https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 SLOT="0/${PV}"
 IUSE+="
 	+bullet3
@@ -174,7 +286,9 @@ REQUIRED_USE+="
 CDEPEND="
 	python? (
 		${PYTHON_DEPS}
-		numpy? ( $(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]') )
+		numpy? (
+			$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
+		)
 	)
 "
 LEGACY_TBB_SLOT="2"
@@ -288,18 +402,27 @@ einfo
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_datadir}"
+			append-flags \
+				-fprofile-generate="${pgo_datadir}"
 		else
-			append-flags -fprofile-generate -fprofile-dir="${pgo_datadir}"
+			append-flags \
+				-fprofile-generate \
+				-fprofile-dir="${pgo_datadir}"
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Setting up PGO"
 		if tc-is-clang ; then
-			llvm-profdata merge -output="${pgo_datadir}/pgo-custom.profdata" \
+			llvm-profdata \
+				merge \
+				-output="${pgo_datadir}/pgo-custom.profdata" \
 				"${pgo_datadir}" || die
-			append-flags -fprofile-use="${pgo_datadir}/pgo-custom.profdata"
+			append-flags \
+				-fprofile-use="${pgo_datadir}/pgo-custom.profdata"
 		else
-			append-flags -fprofile-correction -fprofile-use -fprofile-dir="${pgo_datadir}"
+			append-flags \
+				-fprofile-correction \
+				-fprofile-use \
+				-fprofile-dir="${pgo_datadir}"
 		fi
 	fi
 
@@ -379,7 +502,7 @@ is_benchmark_demo() {
 
 _train() {
 	# Sandbox violation prevention
-	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # Prevent sandbox violation
+	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache"
 	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
 	for x in $(find /dev/input -name "event*") ; do
 		einfo "Adding \`addwrite ${x}\` sandbox rule"
@@ -507,8 +630,12 @@ einfo
 		echo -e "${old_rpath}"
 		einfo "New sanitized rpath for ${f}:"
 		local old_rpath=$(echo "${old_rpath}" \
-			| sed -E -e "s|/var/tmp[^:]+||g" -e "s|^:||g" \
-				-e "s|:$||g" -e "s|:+|:|g" -e "s|^:$||g")
+			| sed -E \
+				-e "s|/var/tmp[^:]+||g" \
+				-e "s|^:||g" \
+				-e "s|:$||g" \
+				-e "s|:+|:|g" \
+				-e "s|^:$||g")
 		patchelf --set-rpath "${old_rpath}" "${f}" || die
 		echo -e "${old_rpath}"
 		if (( ${#old_rpath} == 0 )) ; then
@@ -517,7 +644,6 @@ einfo
 			patchelf --set-rpath "${old_rpath}" "${f}" || die
 		fi
 		[[ "${old_rpath}" =~ "tmp" ]] && die "rpath is still unsanitized."
-		echo
 	done
 	# There's no need to restore rpath for broken_rpaths libs/bins because
 	# they are already installed in system folders.
@@ -530,26 +656,29 @@ src_install() {
 		cd "${BUILD_DIR}" || die
 		cmake_src_install
 		if multilib_is_native_abi && use demos ; then
-			for f in $(find "${BUILD_DIR}/examples" -executable -type f) ; do
-				local d=$(dirname $(echo "${f}" | sed -e "s|${BUILD_DIR}||g"))
-				exeinto /usr/share/${PN}/demos/${d}
-				if ldd "${f}" 2>/dev/null 1>/dev/null ; then
+			for f in $(find "${BUILD_DIR}/examples" -type f) ; do
+				local d=$(dirname $(echo "${f}" \
+					| sed -e "s|${BUILD_DIR}||g"))
+				exeinto "/usr/share/${PN}/demos/${d}"
+				if file "${f}" | grep -q -e "executable" ; then
 					doexe "${f}"
-				elif [[ "${f}" =~ inverse_kinematics_pole.py ]] ; then
+				elif file "${f}" | grep -q -e "shared object" ; then
+					doexe "${f}"
+				elif [[ "${f}" =~ "inverse_kinematics_pole.py" ]] ; then
 					doexe "${f}"
 				fi
 			done
-			insinto /usr/share/${PN}/demos
+			insinto "/usr/share/${PN}/demos"
 			doins -r "${BUILD_DIR}/data"
-			insinto /usr/share/${PN}/demos/pybullet
+			insinto "/usr/share/${PN}/demos/pybullet"
 			doins -r "${CMAKE_USE_DIR}/examples/pybullet/gym"
 		fi
 	}
 	multilib_foreach_abi install_abi
 	cd "${S}" || die
 	if use examples ; then
-		insinto /usr/share/${PN}
-		doins -r examples
+		insinto "/usr/share/${PN}"
+		doins -r "examples"
 echo "This folder contains source code examples.  For compiled demos see" \
 	>> "${ED}/usr/share/${PN}/examples/readme.txt" || die
 echo "/usr/share/${PN}/demos" \
@@ -569,6 +698,7 @@ einfo "  cd /usr/share/bullet/demos/data"
 einfo "  /usr/share/bullet/demos/examples/TwoJoint/App_TwoJoint-${PV}"
 einfo
 		if use python ; then
+einfo
 einfo "To properly render the pybullet models do:"
 einfo
 einfo "  cd /usr/share/bullet/demos/data"
