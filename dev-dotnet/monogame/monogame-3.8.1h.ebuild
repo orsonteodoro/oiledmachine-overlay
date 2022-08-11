@@ -274,7 +274,15 @@ src_unpack() {
 	git-r3_checkout
 }
 
+# print command and run
+prun() {
+	local args=(${@})
+	einfo "command:  ${args[@]}"
+	"${args[@]}" || die
+}
+
 src_compile() {
+	local configuration=$(usex debug "Debug" "Release")
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 	declare -A platforms=(
@@ -295,10 +303,11 @@ src_compile() {
 		for arch in ${ANDROID_MARCH[@]} ; do
 			if use "${arch}" ; then
 				arch="${arch/monogame_android_}"
+				prun \
 				dotnet build "${platforms[android]}" ${args[@]} \
 					-c "${configuration}" \
 					-r "android-${arch}" \
-					-o "${S}_android_${arch}_${configuration}_build" || die
+					-o "${S}_android_${arch}_${configuration}_build"
 			fi
 		done
 	fi
@@ -306,19 +315,21 @@ src_compile() {
 		for arch in ${IOS_MARCH[@]} ; do
 			if use "${arch}" ; then
 				arch="${arch/monogame_ios_}"
+				prun \
 				dotnet build "${platforms[ios]}" ${args[@]} \
 					-c "${configuration}" \
 					-r "ios-${arch}" \
-					-o "${S}_ios_${arch}_${configuration}_build" || die
+					-o "${S}_ios_${arch}_${configuration}_build"
 			fi
 		done
 		for arch in ${IOSSIMULATOR_MARCH[@]} ; do
 			if use "${arch}" ; then
 				arch="${arch/monogame_iossimulator_}"
+				prun \
 				dotnet build "${platforms[ios]}" ${args[@]} \
 					-c "${configuration}" \
 					-r "iossimulator-${arch}" \
-					-o "${S}_iossimulator_${arch}_${configuration}_build" || die
+					-o "${S}_iossimulator_${arch}_${configuration}_build"
 			fi
 		done
 	fi
@@ -326,19 +337,21 @@ src_compile() {
 		for arch in ${LINUX_MARCH[@]} ; do
 			if use "${arch}" ; then
 				arch="${arch/monogame_linux_}"
+				prun \
 				dotnet build "${platforms[linux]}" ${args[@]} \
 					-c "${configuration}" \
 					-r "linux-${arch}" \
-					-o "${S}_linux_${arch}_${configuration}_build" || die
+					-o "${S}_linux_${arch}_${configuration}_build"
 			fi
 		done
 #		for arch in ${LINUX_MUSL_MARCH[@]} ; do
 #			if use "${arch}" ; then
 #				arch="${arch/monogame_linux_musl_}"
+#				prun \
 #				dotnet build "${platforms[linux]}" ${args[@]} \
 #					-c "${configuration}" \
 #					-r "linux-musl-${arch}" \
-#					-o "${S}_linux_musl_${arch}_${configuration}_build" || die
+#					-o "${S}_linux_musl_${arch}_${configuration}_build"
 #			fi
 #		done
 	fi
@@ -346,10 +359,11 @@ src_compile() {
 		for arch in ${OSX_MARCH[@]} ; do
 			if use "${arch}" ; then
 				arch="${arch/monogame_osx_}"
+				prun \
 				dotnet build "${platforms[macos]}" ${args[@]} \
 					-c "${configuration}" \
 					-r "osx-${arch}" \
-					-o "${S}_macos_${arch}_${configuration}_build" || die
+					-o "${S}_macos_${arch}_${configuration}_build"
 			fi
 		done
 	fi
@@ -357,10 +371,11 @@ src_compile() {
 		for arch in ${WIN_MARCH[@]} ; do
 			if use "${arch}" ; then
 				arch="${arch/monogame_win_}"
+				prun \
 				dotnet build "${platforms[uwp]}" ${args[@]} \
 					-c "${configuration}" \
 					-r "win-${arch}" \
-					-o "${S}_uwp_${configuration}_build" || die
+					-o "${S}_uwp_${configuration}_build"
 			fi
 		done
 	fi
@@ -368,16 +383,18 @@ src_compile() {
 		for arch in ${WIN_MARCH[@]} ; do
 			if use "${arch}" ; then
 				arch="${arch/monogame_win_}"
+				prun \
 				dotnet build "${platforms[windowsdx]}" ${args[@]} \
 					-c "${configuration}" \
 					-r "win-${arch}" \
-					-o "${S}_windowsdx_${arch}_${configuration}_build" || die
+					-o "${S}_windowsdx_${arch}_${configuration}_build"
 			fi
 		done
 	fi
 }
 
 src_install() {
+	local configuration=$(usex debug "Debug" "Release")
 	local arch
 	if use android ; then
 		for arch in ${ANDROID_MARCH[@]} ; do
