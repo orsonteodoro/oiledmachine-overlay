@@ -3,7 +3,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-MY_PV="3.8.1_HOTFIX"
+#MY_PV="3.8.1_HOTFIX"
+MY_PV="${PV}"
 MY_P="${PN}-${MY_PV}"
 
 inherit git-r3
@@ -231,7 +232,7 @@ REQUIRED_USE+=" "$(gen_required_use_windowsdx)
 
 SRC_URI=""
 SLOT="0/${PV}"
-S="${WORKDIR}/${MY_PN}"
+S="${WORKDIR}/${MY_P}"
 RESTRICT="mirror"
 
 SUPPORTED_SDKS=(6.0)
@@ -504,9 +505,6 @@ src_install() {
 		dosym "/opt/monogame-macos/arm64" "/opt/monogame"
 	elif use x64-cygwin  ; then
 		dosym "/opt/monogame-win/x64" "/opt/monogame"
-	elif use x64-cygwin  ; then
-		dosym "/opt/monogame-win/x64" "/opt/monogame"
-
 	else
 einfo
 einfo "You are responsible to setting the symlink from"

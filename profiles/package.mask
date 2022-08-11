@@ -18,7 +18,6 @@ dev-dotnet/libfreenect
 dev-dotnet/libgit2sharp
 dev-dotnet/lidgren-network-gen3
 dev-dotnet/mono-addins
-dev-dotnet/monogame
 dev-dotnet/monogame-extended
 dev-dotnet/ndesk-options
 dev-dotnet/nvorbis
@@ -28,7 +27,6 @@ dev-dotnet/sfmldotnet
 dev-dotnet/sharpfont
 dev-dotnet/sharpnav
 dev-dotnet/tesseract
-dev-dotnet/tiledsharp
 dev-dotnet/xwt
 
 # Masked for security reasons
@@ -36,9 +34,6 @@ dev-dotnet/xwt
 
 # ebuilds not updated since 2020
 app-text/pdfchain
-dev-lua/luafilesystem
-dev-lua/luasqlite3
-dev-lua/luaxml
 media-gfx/nvidia-texture-tools
 media-plugins/bitlbee-facebook
 sys-process/psdoom-ng
