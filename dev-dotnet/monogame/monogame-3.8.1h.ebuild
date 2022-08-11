@@ -3,8 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-#MY_PV="3.8.1_HOTFIX"
-MY_PV="${PV}"
+MY_PV="3.8.1_HOTFIX"
 MY_P="${PN}-${MY_PV}"
 
 inherit git-r3
@@ -329,7 +328,7 @@ src_compile() {
 				arch="${arch/monogame_linux_}"
 				dotnet build "${platforms[linux]}" ${args[@]} \
 					-c "${configuration}" \
-					-r "linux-${arch}"
+					-r "linux-${arch}" \
 					-o "${S}_linux_${arch}_${configuration}_build" || die
 			fi
 		done
