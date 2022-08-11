@@ -20,6 +20,15 @@
 
     It may have intermediate version snapshots to satisfy C# bindings
     requirements.
+
+
+    Hard unmasking USE=tbb 
+
+    Add the following line to /etc/portage/profile/package.use.mask to use
+    TBB threads:
+
+      sci-physics/bullet -tbb
+
   </longdescription>
   <use>
     <flag name="bullet3">
@@ -62,7 +71,8 @@
       Build the obj2sdf module
     </flag>
     <flag name="openmp">
-      Build Bullet 2 with mult-threading with OpenMP
+      Build Bullet 2 with multi-threading with OpenMP.
+      [Less upgrade issues and easier dependency resolution.]
     </flag>
     <flag name="pgo">
       Build with Profile Guided Optimization (PGO)
@@ -71,7 +81,9 @@
       Build Python bindings and demo
     </flag>
     <flag name="tbb">
-      Build Bullet 2 with mult-threading with TBB
+      Build Bullet 2 with multi-threading with TBB.
+      [Better oversubscription management but not forward compatible smooth.
+      Using multiple TBB slots can cause oversubscription.]
     </flag>
     <flag name="serialize">
       Build the Serialize module

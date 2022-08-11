@@ -330,6 +330,12 @@ pkg_pretend() {
 
 pkg_setup() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+einfo
+einfo "To hard unmasking USE=tbb add the following line to"
+einfo "/etc/portage/profile/package.use.mask:"
+einfo
+einfo "  sci-physics/bullet -tbb"
+einfo
 }
 
 src_prepare() {
@@ -466,7 +472,19 @@ einfo "${done_at_s}"
 einfo
 cat > "run.sh" <<EOF
 #!/bin/sh
-timeout -s 15 ${duration} examples/ExampleBrowser/App_ExampleBrowser
+
+# Using & will prevent stall
+examples/ExampleBrowser/App_ExampleBrowser &
+pid=\$!
+
+now=\$(date +"%s")
+while (( \${now} < ${done_at} )) \
+	&& ps -p \${pid} 2>/dev/null 1>/dev/null ; do
+	sleep 1
+	now=\$(date +"%s")
+done
+ps -p \${pid} 2>/dev/null 1>/dev/null \
+	&& kill -15 \${pid}
 true
 EOF
 	chmod +x "run.sh" || die
