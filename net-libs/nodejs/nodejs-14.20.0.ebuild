@@ -333,7 +333,7 @@ ewarn "PGO clang support is experimental"
 ewarn
 		fi
 		export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
-		export PGO_PROFILE_PROFDATA="${T}/pgo-${ABI}/pgo-custom.profdata"
+		export PGO_PROFILE_PROFDATA="${PGO_PROFILE_DIR}/pgo-custom.profdata"
 		mkdir -p "${PGO_PROFILE_DIR}" || die
 		if [[ "${PGO_PHASE}" == "pgo" && "${CC}" =~ "clang" ]] ; then
 # The "counter overflow" is either a discared result or a saturated max value.
@@ -341,8 +341,8 @@ einfo
 einfo "Converting .profraw -> .profdata"
 einfo
 			llvm-profdata merge \
-				-output="${T}/pgo-${ABI}/pgo-custom.profdata" \
-				"${T}/pgo-${ABI}" || die
+				-output="${PGO_PROFILE_DIR}/pgo-custom.profdata" \
+				"${PGO_PROFILE_DIR}" || die
 		fi
 		if [[ "${PGO_PHASE}" == "pgi" ]] ; then
 			myconf+=( --enable-pgo-generate )
@@ -516,7 +516,8 @@ eerror
 	if [[ -z "${CC}" || "${CC}" =~ "gcc" ]] && (( ${nlines} == 0 )) ; then
 		die "No PGO data produced."
 	fi
-	nlines=$(find "${T}/pgo-${ABI}" -name "*.profraw" | wc -l)
+	export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
+	nlines=$(find "${PGO_PROFILE_DIR}" -name "*.profraw" | wc -l)
 	if [[ "${CC}" =~ "clang" ]] && (( ${nlines} == 0 )) ; then
 		die "No PGO data produced."
 	fi
