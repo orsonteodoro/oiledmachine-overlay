@@ -38,8 +38,8 @@
 
     Motivations to integrate the EPGO technique again are long build times,
     difficult to use auto trainers, vulnerabilities that force rebuilds, 
-    questionable headless training cheating possibility (for maybe to safe
-    battery life), etc.
+    questionable headless training culling/cheating possibility (for maybe to
+    save battery life), etc.
 
     The vulnerability one is the biggest one.  We do not want to overinvest time
     on 3 step PGO to end up tossing it out on the same day.
@@ -62,7 +62,7 @@
       PGI transitions to PGT transitions to PGO.
 
 
-    PGO training.
+    PGO training
 
       The preference is for real world training.  You can use a trainer but it
       should reflect typical use by you.
@@ -73,43 +73,45 @@
       prefer event based real world PGO profiling.
 
 
-    Events / Rules
+    Events or rules
 
 
       If the compilers when entering PGO are not the same as PGI, PGI is
       required.  The reason why is because the compiler may not recognize the
       same profile version.
 
-      If the major and minor is the same, you may be allowed use PGO.
+      If the major and minor is the same between PGI and entering PGO, you may
+      be allowed use PGO.
 
       The minimal required for training is opening a webkit-gtk based
       application.
 
-      Upon re-emerging, Sometimes it will say you can do PGO or sometimes it may say you
-      need to do PGI.
+      Upon re-emerging, sometimes it will say you can do PGO or sometimes it may
+      say you need to do PGI.
 
       After every new PGI, the existing PGI profile is wiped.
 
-      []  A version with a different with different API versions will have
-      different PGO profiles.  Reason why is because different codepaths
-      enabled and possibility of different USE flags.
+      A version with a different with different API versions will have
+      different PGO profiles.  Reason why is because of the possiblility of
+      different codepaths enabled and possibility of different USE flags.
 
       A PGOed build cannot continue to collect and generate more PGO training
-      data.
+      data.  To restart all over you must wipe the training data, see the
+      ebuild for the paths to the PGO training data.
 
       It is recommended to emerge as normally.  This gives time to enjoy the
-      product based on webkit-gtk and at the same time passively train.  The
-      FSM state transition period is set by you.  You can transistion states
-      within the same day or 2, or you can wait upon each new release.   The
-      idea with delayed (per new release) is to do 1 step PGO instead of 3
-      step PGO every time you emerge.
+      product based on WebKitGTK and at the same time passively train.  The
+      state transition period is set by you.  You can push the states states
+      forward within the same day or 2, or you can wait upon each new release.
+      The idea with delayed (per new release) is to do 1 step PGO every time
+      instead of 3 step PGO every time you emerge.
 
 
     Hypothetical training schedule
 
  Version      2.36.1    2.36.2    2.36.3    2.36.4   2.37.0   2.37.1
 
-  EPGO           i    t   o          o         o        i   t   o
+  EPGO           i  t o   o          o         o        i   t   o
 
  versus
 
