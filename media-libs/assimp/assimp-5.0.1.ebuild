@@ -41,11 +41,6 @@ PATCHES=(
 	"${FILESDIR}/${P}-versiontest.patch"
 )
 
-src_prepare() {
-	cmake_src_prepare
-	multilib_copy_sources
-}
-
 src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_DEBUG_POSTFIX=""

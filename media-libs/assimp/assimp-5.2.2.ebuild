@@ -35,11 +35,6 @@ PATCHES=(
 	"${FILESDIR}"/${P}-disable-failing-tests.patch
 )
 
-src_prepare() {
-	cmake_src_prepare
-	multilib_copy_sources
-}
-
 src_configure() {
 	local mycmakeargs=(
 		-DASSIMP_ASAN=OFF
