@@ -853,11 +853,11 @@ meets_pgo_requirements() {
 get_pgo_phase() {
 	local result="NO_PGO"
 	if ! use pgo ; then
-		echo "NO_PGO"
+		result="NO_PGO"
 	elif use pgo && meets_pgo_requirements ; then
-		echo "PGO"
+		result="PGO"
 	elif use pgo && ! meets_pgo_requirements ; then
-		echo "PGI"
+		result"PGI"
 	fi
 	echo "${result}"
 }

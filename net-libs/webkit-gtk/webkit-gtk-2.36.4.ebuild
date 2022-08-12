@@ -794,6 +794,24 @@ Source/ThirdParty/libwebrtc
 	fi
 }
 
+src_prepare() {
+	use webrtc && eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
+	cmake_src_prepare
+	gnome2_src_prepare
+
+	prepare_abi() {
+		if use pgo ; then
+			local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
+			if [[ -e "${pgo_data_dir}" ]] ; then
+				local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+				mkdir -p "${d}" || die
+				cp -aT "${pgo_data_dir}" "${d}" || die
+			fi
+		fi
+	}
+	multilib_foreach_abi prepare_abi
+}
+
 meets_pgo_requirements() {
 	if use pgo ; then
 		local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
@@ -836,31 +854,13 @@ meets_pgo_requirements() {
 get_pgo_phase() {
 	local result="NO_PGO"
 	if ! use pgo ; then
-		echo "NO_PGO"
+		result="NO_PGO"
 	elif use pgo && meets_pgo_requirements ; then
-		echo "PGO"
+		result="PGO"
 	elif use pgo && ! meets_pgo_requirements ; then
-		echo "PGI"
+		result"PGI"
 	fi
 	echo "${result}"
-}
-
-src_prepare() {
-	use webrtc && eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
-	cmake_src_prepare
-	gnome2_src_prepare
-
-	prepare_abi() {
-		if use pgo ; then
-			local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
-			if [[ -e "${pgo_data_dir}" ]] ; then
-				local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-				mkdir -p "${d}" || die
-				cp -aT "${pgo_data_dir}" "${d}" || die
-			fi
-		fi
-	}
-	multilib_foreach_abi prepare_abi
 }
 
 _config_pgx() {
