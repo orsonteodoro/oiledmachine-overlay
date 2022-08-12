@@ -1072,25 +1072,27 @@ configure_pgx() {
 	fi
 
 	export FFMPEG=$(get_multiabi_ffmpeg)
+	local pgo_data_dir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	mkdir -p "${pgo_data_dir}" || die
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGI"
 		if tc-is-clang ; then
-			append-flags -fprofile-generate="${T}/pgo-${ABI}"
-			append-ldflags -fprofile-generate="${T}/pgo-${ABI}" # It needs to link to libclang_rt.profile-xxx.a
+			append-flags -fprofile-generate="${pgo_data_dir}"
+			append-ldflags -fprofile-generate="${pgo_data_dir}" # It needs to link to libclang_rt.profile-xxx.a
 		else
-			append-flags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
 		&& has_pgo_requirement ; then
 		einfo "Setting up PGO"
 		if tc-is-clang ; then
-			llvm-profdata merge -output="${T}/pgo-${ABI}/code.profdata" \
-				"${T}/pgo-${ABI}" || die
-			append-flags -fprofile-use="${T}/pgo-${ABI}/code.profdata"
-			append-ldflags -fprofile-use="${T}/pgo-${ABI}/code.profdata"
+			llvm-profdata merge -output="${pgo_data_dir}/code.profdata" \
+				"${pgo_data_dir}" || die
+			append-flags -fprofile-use="${pgo_data_dir}/code.profdata"
+			append-ldflags -fprofile-use="${pgo_data_dir}/code.profdata"
 		else
-			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
 		fi
 	fi
 
