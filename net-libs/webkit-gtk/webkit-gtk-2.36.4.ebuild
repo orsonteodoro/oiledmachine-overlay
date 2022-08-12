@@ -1158,7 +1158,7 @@ einfo
 	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
 	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
 	mkdir -p "${ED}/${pgo_data_dir}" || die
-	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] ; then
+	if [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${pgo_data_dir}"
 		elif tc-is-gcc ; then
@@ -1169,7 +1169,7 @@ eerror "Only GCC and Clang are supported for PGO."
 eerror
 			die
 		fi
-	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] && meets_pgo_requirements ; then
+	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		if tc-is-clang ; then
 einfo
 einfo "Merging PGO data to generate a PGO profile"
