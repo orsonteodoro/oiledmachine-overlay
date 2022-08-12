@@ -710,6 +710,25 @@ echo "/usr/share/${PN}/demos" \
 	einstalldocs
 	_install_licenses
 	sanitize_rpaths
+	if use tbb ; then
+		local found=0
+		local f
+		for f in "${ED}" ; do
+			if ldd "${f}" | grep -q "tbb.*not found" ; then
+einfo
+einfo "Setting rpath for ${f} for TBB"
+einfo
+				local old_rpath=$(patchelf \
+					--print-rpath \
+					"/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
+					"${f}") || die
+				patchelf \
+					--set-rpath \
+					"/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}:${old_rpath}" \
+					"${f}" || die
+			fi
+		done
+	fi
 }
 
 pkg_postinst() {
