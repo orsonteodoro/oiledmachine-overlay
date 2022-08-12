@@ -534,8 +534,6 @@ _train() {
 		addwrite "${x}"
 	done
 
-	fix_tbb_rpath
-
 	local pgo_datadir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
 	IFS=$'\n'
 	local x
@@ -674,6 +672,7 @@ fix_tbb_rpath() {
 	if use tbb ; then
 		local found=0
 		local f
+
 		for f in $(find "${ED}") ; do
 			if ldd "${f}" 2>/dev/null | grep -q "tbb.*not found" ; then
 einfo
