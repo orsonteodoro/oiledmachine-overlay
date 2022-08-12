@@ -26,27 +26,26 @@ PYTHON_COMPAT=( python3_{9,10} ) # For the max exclusive Python supported (and
 # https://github.com/blender/blender/blob/v2.93.0/build_files/build_environment/install_deps.sh#L382
 
 # Platform defaults based on CMakeList.txt
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 OPENVDB_ABIS_MAJOR_VERS=8
 OPENVDB_ABIS=( ${OPENVDB_ABIS_MAJOR_VERS/#/abi} )
 OPENVDB_ABIS=( ${OPENVDB_ABIS[@]/%/-compat} )
 IUSE+=" ${OPENVDB_ABIS[@]}"
-IUSE+=" X +abi8-compat +alembic -asan +boost +bullet +collada +color-management
--cpudetection +cuda +cycles -cycles-network +dds -debug doc +draco +elbeem
+IUSE+="
+X +abi8-compat +alembic -asan +boost +bullet +collada +color-management
+-cpudetection +cuda +cycles +dds -debug doc +draco +elbeem
 +embree +ffmpeg +fftw flac +gmp +jack +jemalloc +jpeg2k -llvm -man +nanovdb
 +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise +openimageio
 +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace +pulseaudio
-release +sdl +sndfile +tbb test +tiff +usd -valgrind -webp r1"
+release +sdl +sndfile +tbb test +tiff +usd -valgrind -webp r1
+"
 LLVM_MAX_UPSTREAM="11" # (inclusive)
 LLVM_SLOTS=(13 12 11)
 gen_llvm_iuse()
 {
-	local o=""
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
-		o+=" llvm-${s}"
+		echo " llvm-${s}"
 	done
-	echo "${o}"
 }
 IUSE+=" "$(gen_llvm_iuse) # same as Mesa and LLVM latest stable keyword \
 # For max and min package versions see link below. \
@@ -75,23 +74,67 @@ IMPLIED_RELEASE_BUILD_REQUIRED_USE="
 REQUIRED_USE+="
 	^^ ( ${LLVM_SLOTS[@]/#/llvm-} )
 	^^ ( ${OPENVDB_ABIS[@]} )
-	!boost? ( !alembic !cycles !cycles-network !nls !openvdb
-		!color-management )
-	!tbb? ( !cycles !elbeem !openimagedenoise !openvdb )
+	!boost? (
+		!alembic
+		!color-management
+		!cycles
+		!nls
+		!openvdb
+	)
+	!tbb? (
+		!cycles
+		!elbeem
+		!openimagedenoise
+		!openvdb
+	)
 	build_creator? ( X )
-	cuda? ( cycles ^^ ( nvcc nvrtc ) )
+	cuda? (
+		^^ (
+			nvcc
+			nvrtc
+		)
+		cycles
+	)
 	cycles? ( tbb )
 	embree? ( cycles )
 	mp3? ( ffmpeg )
-	nanovdb? ( cycles openvdb || ( cuda opencl ) )
-	nvcc? ( || ( cuda optix ) )
-	nvrtc? ( || ( cuda optix ) )
+	nanovdb? (
+		|| (
+			cuda
+			opencl
+		)
+		cycles
+		openvdb
+	)
+	nvcc? (
+		|| (
+			cuda
+			optix
+		)
+	)
+	nvrtc? (
+		|| (
+			cuda
+			optix
+		)
+	)
 	opencl? ( cycles )
 	openimagedenoise? ( tbb )
-	openvdb? ( || ( ${OPENVDB_ABIS[@]} ) openexr tbb )
-	optix? ( cuda cycles nvcc )
+	openvdb? (
+		|| ( ${OPENVDB_ABIS[@]} )
+		openexr
+		tbb
+	)
+	optix? (
+		cuda
+		cycles
+		nvcc
+	)
 	opus? ( ffmpeg )
-	osl? ( cycles llvm )
+	osl? (
+		cycles
+		llvm
+	)
 	release? (
 		alembic
 		boost
@@ -101,7 +144,6 @@ REQUIRED_USE+="
 		color-management
 		cuda? ( nvcc )
 		cycles
-		!cycles-network
 		dds
 		!debug
 		draco
@@ -140,9 +182,14 @@ REQUIRED_USE+="
 	usd? ( tbb )
 	vorbis? ( ffmpeg )
 	vpx? ( ffmpeg )
-	webm? ( ffmpeg opus vpx )
+	webm? (
+		ffmpeg
+		opus
+		vpx
+	)
 	x264? ( ffmpeg )
-	xvid? ( ffmpeg )"
+	xvid? ( ffmpeg )
+"
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # no need to look past those dates.
@@ -172,52 +219,44 @@ REQUIRED_USE+="
 
 gen_llvm_depends()
 {
-	local o
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
+		echo "
 			llvm-${s}? ( >=sys-devel/llvm-${s}:${s}= )
 		"
 	done
-	echo "${o}"
 }
 
 gen_oiio_depends() {
-	local o
 	local s
 	for s in ${OPENVDB_ABIS[@]} ; do
-		o+="
+		echo "
 			${s}? (
 				>=media-libs/openimageio-2.1.15.0[${s},color-management?,jpeg2k?,png,webp?]
 				<media-libs/openimageio-2.2.10.0
 			)
 		"
 	done
-	echo "${o}"
 }
 
 gen_openvdb_depends() {
-	local o
 	local s=${OPENVDB_ABIS_MAJOR_VERS}
-	o+="
+	echo "
 		abi${s}-compat? (
 			=media-gfx/openvdb-${s}.0*[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc]
 			>=media-gfx/openvdb-${s}.0.1
 		)
 	"
-	echo "${o}"
 }
 
 gen_osl_depends()
 {
-	local o
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
+		echo "
 			llvm-${s}? ( >=media-libs/osl-${OSL_V}:=[llvm-${s},static-libs] )
 		"
 	done
-	echo "${o}"
 }
 
 OPENEXR_V2="2.5.7 2.5.8"
@@ -264,8 +303,16 @@ CODECS="
 RDEPEND+="
 	${CODECS}
 	${PYTHON_DEPS}
+	|| (
+		>=media-libs/glu-9.0.1
+		virtual/glu
+	)
+	|| (
+		>=media-libs/libjpeg-turbo-2.0.4
+		virtual/jpeg:0=
+	)
 	>=dev-lang/python-3.9.2
-	dev-libs/lzo:2
+	  dev-libs/lzo:2
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2020.4.5.2[${PYTHON_USEDEP}]
 		>=dev-python/chardet-3.0.4[${PYTHON_USEDEP}]
@@ -276,35 +323,19 @@ RDEPEND+="
 	')
 	>=media-libs/freetype-2.10.2
 	>=media-libs/glew-1.13.0:*
+	  media-libs/libglvnd
 	>=media-libs/libpng-1.6.37:0=
-	media-libs/libsamplerate
+	  media-libs/libsamplerate
 	>=sys-libs/zlib-1.2.11
-	|| (
-		virtual/glu
-		>=media-libs/glu-9.0.1
-	)
-	|| (
-		virtual/jpeg:0=
-		>=media-libs/libjpeg-turbo-2.0.4
-	)
 	virtual/libintl
-	llvm-11? (
-		>=media-libs/mesa-20.3.5
-		>=sys-libs/libomp-11
+	alembic? (
+		>=media-gfx/alembic-1.7.16[boost(+),hdf(+)]
 	)
-	llvm-12? (
-		>=media-libs/mesa-20.1.1
-		>=sys-libs/libomp-12
-	)
-	llvm-13? (
-		>=media-libs/mesa-21.2.5
-		>=sys-libs/libomp-13
-	)
-	media-libs/libglvnd
-	alembic? ( >=media-gfx/alembic-1.7.16[boost(+),hdf(+)] )
 	boost? (
 		>=dev-libs/boost-${BOOST_V}:=[nls?,threads(+)]
-		usd? ( >=dev-libs/boost-${BOOST_V}:=[nls?,threads(+),python] )
+		usd? (
+			>=dev-libs/boost-${BOOST_V}:=[nls?,threads(+),python]
+		)
 	)
 	collada? (
 		dev-libs/libpcre:=[static-libs]
@@ -319,20 +350,51 @@ RDEPEND+="
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
 	cycles? (
-		osl? ( >=dev-libs/pugixml-${PUGIXML_V} )
+		osl? (
+			>=dev-libs/pugixml-${PUGIXML_V}
+		)
 	)
-	embree? ( >=media-libs/embree-3.10.0:=\
-[cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,raymask,static-libs] )
-	ffmpeg? ( >=media-video/ffmpeg-4.2.3:=\
+	embree? (
+		>=media-libs/embree-3.10.0:=\
+[cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,raymask,static-libs]
+	)
+	ffmpeg? (
+		>=media-video/ffmpeg-4.2.3:=\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
 	)
-	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
-	flac? ( >=media-libs/flac-1.3.3 )
-	gmp? ( >=dev-libs/gmp-6.2 )
-	jack? ( virtual/jack )
-	jemalloc? ( >=dev-libs/jemalloc-5.2.1:= )
-	jpeg2k? ( >=media-libs/openjpeg-2.3.1:2 )
-	llvm? ( $(gen_llvm_depends) )
+	fftw? (
+		>=sci-libs/fftw-3.3.8:3.0=
+	)
+	flac? (
+		>=media-libs/flac-1.3.3
+	)
+	gmp? (
+		>=dev-libs/gmp-6.2
+	)
+	jack? (
+		virtual/jack
+	)
+	jemalloc? (
+		>=dev-libs/jemalloc-5.2.1:=
+	)
+	jpeg2k? (
+		>=media-libs/openjpeg-2.3.1:2
+	)
+	llvm? (
+		$(gen_llvm_depends)
+	)
+	llvm-11? (
+		>=media-libs/mesa-20.3.5
+		>=sys-libs/libomp-11
+	)
+	llvm-12? (
+		>=media-libs/mesa-20.1.1
+		>=sys-libs/libomp-12
+	)
+	llvm-13? (
+		>=media-libs/mesa-21.2.5
+		>=sys-libs/libomp-13
+	)
 	ndof? (
 		app-misc/spacenavd
 		>=dev-libs/libspnav-0.2.3
@@ -343,8 +405,12 @@ RDEPEND+="
 			>=dev-libs/libiconv-1.16
 		)
 	)
-	openal? ( >=media-libs/openal-1.20.1 )
-	opencl? ( virtual/opencl )
+	openal? (
+		>=media-libs/openal-1.20.1
+	)
+	opencl? (
+		virtual/opencl
+	)
 	openimagedenoise? (
 		>=media-libs/oidn-1.3.0
 		<media-libs/oidn-1.4
@@ -354,25 +420,47 @@ RDEPEND+="
 		>=dev-libs/pugixml-${PUGIXML_V}
 	)
 	openexr? (
-		|| ( $(gen_openexr_pairs) )
+		|| (
+			$(gen_openexr_pairs)
+		)
 		!>=media-libs/openexr-3
 	)
-	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=,tbb?] )
+	opensubdiv? (
+		>=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=,tbb?]
+	)
 	openvdb? (
 		$(gen_openvdb_depends)
 		>=dev-libs/c-blosc-1.5.0[zlib]
-		nanovdb? ( ~media-gfx/nanovdb-25.0.0_pre20200924:0= )
+		nanovdb? (
+			~media-gfx/nanovdb-25.0.0_pre20200924:0=
+		)
 	)
-	openxr? ( >=media-libs/openxr-1.0.14 )
-	optix? ( >=dev-libs/optix-7 )
-	osl? ( $(gen_osl_depends) )
-	pdf? ( >=media-libs/libharu-2.3.0 )
-	potrace? ( >=media-gfx/potrace-1.16 )
-	pulseaudio? ( media-sound/pulseaudio )
-	sdl? ( >=media-libs/libsdl2-2.0.12[sound] )
+	openxr? (
+		>=media-libs/openxr-1.0.14
+	)
+	optix? (
+		>=dev-libs/optix-7
+	)
+	osl? (
+		$(gen_osl_depends)
+	)
+	pdf? (
+		>=media-libs/libharu-2.3.0
+	)
+	potrace? (
+		>=media-gfx/potrace-1.16
+	)
+	pulseaudio? (
+		media-sound/pulseaudio
+	)
+	sdl? (
+		>=media-libs/libsdl2-2.0.12[sound]
+	)
 	sndfile? (
 		>=media-libs/libsndfile-${LIBSNDFILE_V}
-		flac? ( >=media-libs/libsndfile-${LIBSNDFILE_V}[-minimal] )
+		flac? (
+			>=media-libs/libsndfile-${LIBSNDFILE_V}[-minimal]
+		)
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}
@@ -381,13 +469,19 @@ RDEPEND+="
 			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 		)
 	)
-	tiff? ( >=media-libs/tiff-4.1.0:0[webp?,zlib] )
+	tiff? (
+		>=media-libs/tiff-4.1.0:0[webp?,zlib]
+	)
 	usd? (
 		>=media-libs/openusd-21.11[monolithic]
 		<media-libs/openusd-22[monolithic]
 	)
-	valgrind? ( dev-util/valgrind )
-	webp? ( >=media-libs/libwebp-0.6.1 )
+	valgrind? (
+		dev-util/valgrind
+	)
+	webp? (
+		>=media-libs/libwebp-0.6.1
+	)
 	X? (
 		x11-libs/libX11
 		x11-libs/libXi
@@ -399,17 +493,15 @@ DEPEND+=" ${RDEPEND}
 "
 gen_asan_bdepend() {
 	local s
-	local o
 	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
+		echo "
 			llvm-${s}? (
-				sys-devel/clang:${s}
+				 sys-devel/clang:${s}
 				=sys-libs/compiler-rt-sanitizers-${s}*[asan]
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
 			)
 		"
 	done
-	echo "${o}"
 }
 BDEPEND+="
 	|| (
@@ -417,7 +509,7 @@ BDEPEND+="
 		>=sys-devel/gcc-${GCC_MIN}
 	)
 	>=dev-util/cmake-3.10
-	virtual/pkgconfig
+	  virtual/pkgconfig
 	asan? (
 		|| (
 			$(gen_asan_bdepend)
@@ -429,30 +521,30 @@ BDEPEND+="
 	cycles? (
 		x86? (
 			|| (
+				  dev-lang/icc
 				>=sys-devel/clang-${CLANG_MIN}
-				dev-lang/icc
 			)
 		)
 	)
 	doc? (
-		app-doc/doxygen[dot]
+		  app-doc/doxygen[dot]
 		>=dev-python/sphinx-3.3.1[latex]
 		>=dev-python/sphinx_rtd_theme-0.5.0
-		dev-texlive/texlive-bibtexextra
-		dev-texlive/texlive-fontsextra
-		dev-texlive/texlive-fontutils
-		dev-texlive/texlive-latex
-		dev-texlive/texlive-latexextra
+		  dev-texlive/texlive-bibtexextra
+		  dev-texlive/texlive-fontsextra
+		  dev-texlive/texlive-fontutils
+		  dev-texlive/texlive-latex
+		  dev-texlive/texlive-latexextra
 	)
 	nls? ( sys-devel/gettext )
 "
 
-_PATCHES=(
+PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
-	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
-	"${FILESDIR}/${PN}-2.83.1-device_network_h-fixes.patch"
-	"${FILESDIR}/${PN}-2.83.1-device_network_h-add-device-header.patch"
-	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
+#	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
+#	"${FILESDIR}/${PN}-2.83.1-device_network_h-fixes.patch"
+#	"${FILESDIR}/${PN}-2.83.1-device_network_h-add-device-header.patch"
+#	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.91.0-install-paths-change.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lib-renamed.patch"
 	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-python.patch"
@@ -471,8 +563,8 @@ check_multiple_llvm_versions_in_native_libs() {
 		use "llvm-${s}" && llvm_slot=${s}
 	done
 
-	if ls ldd "${EROOT}"/usr/$(get_libdir)/dri/*.so 2>/dev/null 1>/dev/null ; then
-		local llvm_ret=$(ldd "${EROOT}"/usr/$(get_libdir)/dri/*.so \
+	if ldd "${EPREFIX}/usr/$(get_libdir)/dri/"*".so" 2>/dev/null 1>/dev/null ; then
+		local llvm_ret=$(ldd "${EPREFIX}/usr/$(get_libdir)/dri/"*".so" \
 			| grep -q -e "LLVM-${llvm_slot}")
 		if [[ "${llvm_ret}" != "0" ]] ; then
 eerror
@@ -483,15 +575,15 @@ eerror
 		fi
 	fi
 
-	if use osl && [[ -e "/usr/$(get_libdir)/liboslexec.so" ]] ; then
+	if use osl && [[ -e "${EPREFIX}/usr/$(get_libdir)/liboslexec.so" ]] ; then
 		osl_llvm=
-		if ldd /usr/$(get_libdir)/liboslexec.so \
+		if ldd "${EPREFIX}/usr/$(get_libdir)/liboslexec.so" \
 			| grep -q -F "libLLVMAnalysis.so.9" ; then
 			# split llvm
 			osl_llvm=9
 		else
 			# monolithic llvm
-			osl_llvm=$(ldd /usr/$(get_libdir)/liboslexec.so \
+			osl_llvm=$(ldd "${EPREFIX}/usr/$(get_libdir)/liboslexec.so" \
 				| grep -F -i -e "LLVM" | head -n 1 \
 				| grep -o -E -e "libLLVM-[0-9]+.so" \
 				| head -n 1 | grep -o -E -e "[0-9]+")
@@ -576,21 +668,27 @@ ewarn
 	fi
 
 	if has_version ">=media-video/ffmpeg-5" ; then
-		eapply "${WORKDIR}"/${PN}-3.0.1-ffmpeg-5.0.patch
+		eapply "${WORKDIR}/${PN}-3.0.1-ffmpeg-5.0.patch"
 	fi
 }
 
 _src_configure() {
+	export CMAKE_USE_DIR="${S}_${impl}"
+	export BUILD_DIR="${S}_${impl}_build"
+	cd "${CMAKE_USE_DIR}" || die
+
 	filter-flags '-fprofile*'
+	local pgo_data_dir="${T}/pgo-${ABI}"
+	mkdir -p "${pgo_data_dir}"
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
 		&& has_pgo_requirement ; then
 einfo
 einfo "Setting up PGI"
 einfo
 		if tc-is-clang ; then
-			append-flags -fprofile-generate="${T}/pgo-${ABI}"
+			append-flags -fprofile-generate="${pgo_data_dir}"
 		else
-			append-flags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
 		&& has_pgo_requirement ; then
@@ -598,11 +696,11 @@ einfo
 einfo "Setting up PGO"
 einfo
 		if tc-is-clang ; then
-			llvm-profdata merge -output="${T}/pgo-${ABI}/pgo-custom.profdata" \
-				"${T}/pgo-${ABI}" || die
-			append-flags -fprofile-use="${T}/pgo-${ABI}/pgo-custom.profdata"
+			llvm-profdata merge -output="${pgo_data_dir}/pgo-custom.profdata" \
+				"${pgo_data_dir}" || die
+			append-flags -fprofile-use="${pgo_data_dir}/pgo-custom.profdata"
 		else
-			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
 		fi
 	fi
 
@@ -617,7 +715,7 @@ einfo
 	fi
 
 	local mycmakeargs=()
-	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
+	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH="${EPREFIX}/$(get_dest)" )
 
 	if use cycles-network ; then
 ewarn
@@ -636,12 +734,6 @@ ewarn
 	if use openxr || use osl ; then
 		blender_configure_mesa_match_system_llvm
 	fi
-
-	# Just attach the abi as a suffix for the key for multiabi support.
-	_LD_LIBRARY_PATHS[${EBLENDER}]="${_LD_LIBRARY_PATH}"
-	_LIBGL_DRIVERS_DIRS[${EBLENDER}]="${_LIBGL_DRIVERS_DIR}"
-	_LIBGL_DRIVERS_PATHS[${EBLENDER}]="${_LIBGL_DRIVERS_PATH}"
-	_PATHS[${EBLENDER}]="${_PATH}"
 
 	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated
 
@@ -699,7 +791,7 @@ ewarn
 		blender_configure_openusd
 	fi
 
-	if [[ "${EBLENDER}" == "build_creator" ]] ; then
+	if [[ "${impl}" == "build_creator" ]] ; then
 		if use jack || use openal || use pulseaudio ; then
 			mycmakeargs+=(
 				-DWITH_AUDASPACE=ON
@@ -721,8 +813,8 @@ ewarn
 
 # For details see,
 # https://github.com/blender/blender/tree/v2.93.0/build_files/cmake/config
-	if [[ "${EBLENDER}" == "build_creator" \
-		|| "${EBLENDER}" == "build_headless" ]] ; then
+	if [[ "${impl}" == "build_creator" \
+		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES=$(usex cycles)
 			-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
@@ -733,7 +825,7 @@ ewarn
 			-DWITH_CYCLES_EMBREE=$(usex embree)
 			-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
 			-DWITH_CYCLES_NATIVE_ONLY=$(usex cpudetection)
-			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
+			-DWITH_CYCLES_NETWORK=OFF
 			-DWITH_CYCLES_OSL=$(usex osl)
 			-DWITH_STATIC_LIBS=OFF
 			-DWITH_SYSTEM_EIGEN3=ON
@@ -742,7 +834,11 @@ ewarn
 		)
 	fi
 
-	if use pgo && [[ ${PGO_PHASE} == "pgi" ]] ; then
+	if true ; then
+		mycmakeargs+=(
+			-DWITH_INSTALL_PORTABLE=OFF
+		)
+	elif use pgo && [[ ${PGO_PHASE} == "pgi" ]] ; then
 		# The paths are relative
 		mycmakeargs+=(
 			-DWITH_INSTALL_PORTABLE=ON
@@ -754,7 +850,7 @@ ewarn
 		)
 	fi
 
-	if [[ "${EBLENDER}" == "build_headless" ]] ; then
+	if [[ "${impl}" == "build_headless" ]] ; then
 		# For render farms
 		mycmakeargs+=(
 			-DWITH_AUDASPACE=OFF
@@ -790,8 +886,5 @@ ewarn
 		mycmakeargs+=( ${BLENDER_CMAKE_ARGS[@]} )
 	fi
 
-	S="${BUILD_DIR}" \
-	CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake_src_configure
 }

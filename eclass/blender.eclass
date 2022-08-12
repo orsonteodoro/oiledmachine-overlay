@@ -16,51 +16,52 @@ esac
 
 PGO_SAMPLE_SIZE_=${PGO_SAMPLE_SIZE:=30}
 
-inherit blender-multibuild check-reqs cmake flag-o-matic llvm pax-utils \
+inherit check-reqs cmake flag-o-matic llvm pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
 KEYWORDS=${KEYWORDS:="~amd64 ~x86"}
 
-LICENSE=" || ( GPL-2 BL )
-all-rights-reserved
-LGPL-2.1+
-MPL-2.0
-build_creator? (
-	Apache-2.0
-	AFL-3.0
-	BitstreamVera
-	CC-BY-SA-3.0
-	color-management? ( BSD )
-	jemalloc? ( BSD-2 )
-	GPL-2
-	GPL-3
-	GPL-3-with-font-exception
+LICENSE="
+	|| ( GPL-2 BL )
+	all-rights-reserved
 	LGPL-2.1+
-	PSF-2
-	ZLIB
-)
-build_headless? (
-	Apache-2.0
-	AFL-3.0
-	BitstreamVera
-	CC-BY-SA-3.0
-	color-management? ( BSD )
-	jemalloc? ( BSD-2 )
-	GPL-2
-	GPL-3
-	GPL-3-with-font-exception
-	LGPL-2.1+
-	PSF-2
-	ZLIB
-)
-cycles? (
-	Apache-2.0
-	Boost-1.0
-	BSD
-	MIT
-)
+	MPL-2.0
+	build_creator? (
+		Apache-2.0
+		AFL-3.0
+		BitstreamVera
+		CC-BY-SA-3.0
+		color-management? ( BSD )
+		jemalloc? ( BSD-2 )
+		GPL-2
+		GPL-3
+		GPL-3-with-font-exception
+		LGPL-2.1+
+		PSF-2
+		ZLIB
+	)
+	build_headless? (
+		Apache-2.0
+		AFL-3.0
+		BitstreamVera
+		CC-BY-SA-3.0
+		color-management? ( BSD )
+		jemalloc? ( BSD-2 )
+		GPL-2
+		GPL-3
+		GPL-3-with-font-exception
+		LGPL-2.1+
+		PSF-2
+		ZLIB
+	)
+	cycles? (
+		Apache-2.0
+		Boost-1.0
+		BSD
+		MIT
+	)
 "
 PROPERTIES=interactive # For PGO
 
@@ -94,7 +95,8 @@ IUSE+=" ${CPU_FLAGS[@]%:*}"
 IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
-IUSE+=" pgo
+IUSE+="
+	pgo
 	pgo-trainer-cycles-still
 	pgo-trainer-cycles-anim
 	pgo-trainer-eevee-still
@@ -113,35 +115,69 @@ REQUIRED_USE+="
 # At the source code level, they mix the sse2 intrinsics functions up with the
 #   __KERNEL_SSE__.
 REQUIRED_USE_MINIMAL_CPU_FLAGS="
-	!cpu_flags_x86_mmx? ( !cpu_flags_x86_sse !cpu_flags_x86_sse2 )
-	cpu_flags_x86_sse2? ( !cpu_flags_x86_sse? ( cpu_flags_x86_mmx ) )
+	!cpu_flags_x86_mmx? (
+		!cpu_flags_x86_sse
+		!cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_sse2? (
+		!cpu_flags_x86_sse? (
+			cpu_flags_x86_mmx
+		)
+	)
 "
 
 REQUIRED_USE_CYCLES="
 	cycles? (
-		openexr tiff openimageio osl? ( llvm )
-		amd64? ( cpu_flags_x86_sse2 )
-		x86? ( cpu_flags_x86_sse2 )
-		cpu_flags_x86_sse? ( cpu_flags_x86_sse2 )
-		cpu_flags_x86_sse2? ( cpu_flags_x86_sse )
-		cpudetection? (
-			cpu_flags_x86_avx? ( cpu_flags_x86_sse )
-			cpu_flags_x86_avx2? ( cpu_flags_x86_sse )
+		openexr
+		openimageio
+		tiff
+		amd64? (
+			cpu_flags_x86_sse2
+		)
+		cpu_flags_x86_sse? (
+			cpu_flags_x86_sse2
+		)
+		cpu_flags_x86_sse2? (
+			cpu_flags_x86_sse
 		)
 		!cpudetection? (
 			amd64? (
-				cpu_flags_x86_sse4_1? ( cpu_flags_x86_sse3 )
-				cpu_flags_x86_avx? ( cpu_flags_x86_sse4_1 )
-				cpu_flags_x86_avx2? ( cpu_flags_x86_avx
-							cpu_flags_x86_sse4_1
-							cpu_flags_x86_fma
-							cpu_flags_x86_lzcnt
-							cpu_flags_x86_bmi
-							cpu_flags_x86_f16c )
+				cpu_flags_x86_sse4_1? (
+					cpu_flags_x86_sse3
+				)
+				cpu_flags_x86_avx? (
+					cpu_flags_x86_sse4_1
+				)
+				cpu_flags_x86_avx2? (
+					cpu_flags_x86_avx
+					cpu_flags_x86_sse4_1
+					cpu_flags_x86_fma
+					cpu_flags_x86_lzcnt
+					cpu_flags_x86_bmi
+					cpu_flags_x86_f16c
+				)
 			)
-			cpu_flags_x86_sse3? ( cpu_flags_x86_sse2
-						cpu_flags_x86_ssse3 )
-			cpu_flags_x86_ssse3? ( cpu_flags_x86_sse3 )
+			cpu_flags_x86_sse3? (
+				cpu_flags_x86_sse2
+				cpu_flags_x86_ssse3
+			)
+			cpu_flags_x86_ssse3? (
+				cpu_flags_x86_sse3
+			)
+		)
+		cpudetection? (
+			cpu_flags_x86_avx? (
+				cpu_flags_x86_sse
+			)
+			cpu_flags_x86_avx2? (
+				cpu_flags_x86_sse
+			)
+		)
+		osl? (
+			llvm
+		)
+		x86? (
+			cpu_flags_x86_sse2
 		)
 	)
 "
@@ -154,8 +190,12 @@ REQUIRED_USE_EIGEN="
 		cpu_flags_x86_sse4_1
 		cpu_flags_x86_sse4_2
 	)
-	cpu_flags_x86_avx512er? ( cpu_flags_x86_avx512f )
-	cpu_flags_x86_avx512dq? ( cpu_flags_x86_avx512f )
+	cpu_flags_x86_avx512er? (
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx512f
+	)
 	cpu_flags_x86_avx512f? (
 		cpu_flags_x86_fma
 		cpu_flags_x86_avx
@@ -177,20 +217,22 @@ RDEPEND+="
 	)
 "
 
-# This could be modded for multiabi builds.
-declare -A _LD_LIBRARY_PATHS
-declare -A _LIBGL_DRIVERS_DIRS
-declare -A _LIBGL_DRIVERS_PATHS
-declare -A _PATHS
-
-EXPORT_FUNCTIONS pkg_pretend pkg_setup src_prepare src_configure src_compile \
-	src_install src_test pkg_postinst pkg_postrm
+EXPORT_FUNCTIONS \
+	pkg_pretend \
+	pkg_setup \
+	src_prepare \
+	src_configure \
+	src_compile \
+	src_install \
+	src_test \
+	pkg_postinst \
+	pkg_postrm
 
 get_dest() {
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		echo "/usr/share/${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
+	if [[ "${impl}" == "build_portable" ]] ; then
+		echo "/usr/share/${PN}/${SLOT_MAJ}/${impl#*_}"
 	else
-		echo "/usr/$(get_libdir)/${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
+		echo "/usr/$(get_libdir)/${PN}/${SLOT_MAJ}/${impl#*_}"
 	fi
 }
 
@@ -200,16 +242,6 @@ blender_check_requirements() {
 	if use doc; then
 		CHECKREQS_DISK_BUILD="4G" check-reqs_pkg_pretend
 	fi
-}
-
-# Dependency PreFiX
-dpfx() {
-	echo "/usr/$(get_libdir)/${PN}"
-}
-
-# EROOT Dependency PreFiX
-erdpfx() {
-	echo "${EROOT}/$(dpfx)"
 }
 
 blender_pkg_pretend() {
@@ -624,52 +656,44 @@ einfo "CXX=${CXX}"
 einfo
 }
 
-_src_prepare() {
-	cd "${BUILD_DIR}" || die
+IMPLS=(
+	build_creator
+	build_headless
+)
 
-	S="${BUILD_DIR}" \
-	CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
+blender_src_prepare() {
+	cd "${S}" || die
 	cmake_src_prepare
+	if declare -f _src_prepare_patches > /dev/null ; then
+		_src_prepare_patches
+	fi
 
-	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
-		# we don't want static glew, but it's scattered across
-		# multiple files that differ from version to version
-		# !!!CHECK THIS SED ON EVERY VERSION BUMP!!!
-		local file
-		while IFS="" read -d $'\0' -r file ; do
-			if grep -q -F -e "-DGLEW_STATIC" "${file}" ; then
+	# we don't want static glew, but it's scattered across
+	# multiple files that differ from version to version
+	# !!!CHECK THIS SED ON EVERY VERSION BUMP!!!
+	local file
+	while IFS="" read -d $'\0' -r file ; do
+		if grep -q -F -e "-DGLEW_STATIC" "${file}" ; then
 einfo
 einfo "Removing -DGLEW_STATIC from ${file}"
 einfo
-				sed -i -e '/-DGLEW_STATIC/d' "${file}"
-			fi
-		done < <(find . -type f -name "CMakeLists.txt" -print0)
+			sed -i -e '/-DGLEW_STATIC/d' "${file}"
+		fi
+	done < <(find . -type f -name "CMakeLists.txt" -print0)
+	IFS=$' \n\t'
 
-		sed -i -e "s|bf_intern_glew_mx|bf_intern_glew_mx \${GLEW_LIBRARY}|g" \
-			intern/cycles/app/CMakeLists.txt || die
-	fi
+	sed -i -e "s|bf_intern_glew_mx|bf_intern_glew_mx \${GLEW_LIBRARY}|g" \
+		intern/cycles/app/CMakeLists.txt || die
 
 	# Disable MS Windows help generation. The variable doesn't do what it
 	# it sounds like.
 	sed -e "s|GENERATE_HTMLHELP      = YES|GENERATE_HTMLHELP      = NO|" \
 	    -i doc/doxygen/Doxyfile || die
-}
 
-blender_src_prepare() {
-	xdg_src_prepare
-
-	cd "${S}" || die
-	eapply ${_PATCHES[@]}
-	if declare -f _src_prepare_patches > /dev/null ; then
-		_src_prepare_patches
-	fi
-
-	blender_prepare() {
-		_src_prepare
-	}
-	blender-multibuild_copy_sources
-	blender-multibuild_foreach_impl blender_prepare
+	local impl
+	for impl in ${IMPLS[@]} ; do
+		cp -a "${S}" "${S}_${impl}" || die
+	done
 }
 
 blender_configure_eigen() {
@@ -935,98 +959,25 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 blender_configure_openusd() {
 	if use usd ; then
 		export USD_ROOT_DIR="/usr/$(get_libdir)/openusd/lib"
-		_LD_LIBRARY_PATH="/usr/$(get_libdir)/openusd/lib:${_LD_LIBRARY_PATH}"
-	fi
-}
-
-blender_configure_openxr_cxxyy() {
-	if use openxr ; then
-		export XR_OPENXR_SDK_ROOT_DIR="$(erdpfx)/openxr/${CXXABI_V}/usr"
-		_LD_LIBRARY_PATH="$(erdpfx)/openxr/${CXXABI_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
-	fi
-}
-
-blender_configure_openvdb_cxxyy() {
-	if use openvdb ; then
-		export OPENVDB_ROOT_DIR="$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr"
-		_LD_LIBRARY_PATH="$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
-	fi
-}
-
-blender_configure_mesa_match_llvm() {
-	mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
-	if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
-		mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
-	else
-eerror
-eerror "Install media-libs/libglvnd."
-eerror
-		die
-	fi
-	if [[ -e "${EROOT}/usr/$(get_libdir)/libOpenGL.so" ]] ; then
-		mycmakeargs+=( -DOPENGL_opengl_LIBRARY="${EROOT}/usr/$(get_libdir)/libOpenGL.so" )
-	else
-eerror
-eerror "Install media-libs/libglvnd."
-eerror
-		die
-	fi
-	if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
-		mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
-	fi
-
-	# Fix loading {vendor}_dri.so linked with LLVM-9
-	_LIBGL_DRIVERS_DIR="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri" # works but deprecated
-	_LIBGL_DRIVERS_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri" # not work but replaces LIBGL_DRIVERS_DIR
-}
-
-blender_configure_mesa_match_system_llvm() {
-	mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
-	if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
-		mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
-	else
-eerror
-eerror "Install media-libs/libglvnd."
-eerror
-		die
-	fi
-	if [[ -e "${EROOT}/usr/$(get_libdir)/libOpenGL.so" ]] ; then
-		mycmakeargs+=( -DOPENGL_opengl_LIBRARY="${EROOT}/usr/$(get_libdir)/libOpenGL.so" )
-	else
-eerror
-eerror "Install media-libs/libglvnd."
-eerror
-		die
-	fi
-	if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
-		mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
-	fi
-}
-
-blender_configure_osl_match_llvm() {
-	if use osl ; then
-		export OSL_ROOT_DIR="$(erdpfx)/osl/${LLVM_V}/usr"
-		_LD_LIBRARY_PATH="$(erdpfx)/osl/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
-		_PATH="$(erdpfx)/osl/${LLVM_V}/usr/bin:${_PATH}"
 	fi
 }
 
 blender_configure_nvcc() {
 	if use nvcc ; then
-		if [[ -x "${EROOT}/opt/cuda/bin/nvcc" ]] ; then
+		if [[ -x "${EPREFIX}/opt/cuda/bin/nvcc" ]] ; then
 			mycmakeargs+=(
-	-DCUDA_NVCC_EXECUTABLE="${EROOT}/opt/cuda/bin/nvcc"
+	-DCUDA_NVCC_EXECUTABLE="${EPREFIX}/opt/cuda/bin/nvcc"
 			)
 		elif [[ -n "${BLENDER_NVCC_PATH}" \
-		&& -x "${EROOT}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
+		&& -x "${EPREFIX}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
 			mycmakeargs+=(
-	-DCUDA_NVCC_EXECUTABLE="${EROOT}/${BLENDER_NVCC_PATH}/nvcc"
+	-DCUDA_NVCC_EXECUTABLE="${EPREFIX}/${BLENDER_NVCC_PATH}/nvcc"
 			)
 		elif [[ -n "${BLENDER_NVCC_PATH}" \
-		&& ! -x "${EROOT}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
+		&& ! -x "${EPREFIX}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
 eerror
-eerror "nvcc is unreachable from BLENDER_NVCC_PATH.  It should be an absolute"
-eerror "path like /opt/cuda/bin/nvcc."
+eerror "nvcc is unreachable from \${EPREFIX}\${BLENDER_NVCC_PATH}.  It should"
+eerror "be an absolute path like /opt/cuda/bin/nvcc."
 eerror
 			die
 		else
@@ -1041,19 +992,19 @@ eerror
 
 blender_configure_nvrtc() {
 	if use nvrtc ; then
-		if [[ -f "${EROOT}/opt/cuda/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
+		if [[ -f "${EPREFIX}/opt/cuda/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
 			mycmakeargs+=(
-	-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/opt/cuda"
+	-DCUDA_TOOLKIT_ROOT_DIR="${EPREFIX}/opt/cuda"
 			)
 		elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
-&& -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
+&& -f "${EPREFIX}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
 			mycmakeargs+=(
-	-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}"
+	-DCUDA_TOOLKIT_ROOT_DIR="${EPREFIX}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}"
 			)
 		elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
-&& ! -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
+&& ! -f "${EPREFIX}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
 eerror
-eerror "Cannot reach \$BLENDER_CUDA_TOOLKIT_ROOT_DIR/$(get_libdir)/libnvrtc-builtins.so"
+eerror "Cannot reach \${EPREFIX}\${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so"
 eerror
 			die
 		else
@@ -1070,23 +1021,23 @@ eerror
 blender_configure_optix() {
 	if use optix ; then
 		if [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
-&& -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+&& -f "${EPREFIX}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
 			mycmakeargs+=(
-		-DOPTIX_ROOT_DIR="${EROOT}/${BLENDER_OPTIX_ROOT_DIR}"
+		-DOPTIX_ROOT_DIR="${EPREFIX}/${BLENDER_OPTIX_ROOT_DIR}"
 			)
 		elif [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
-&& ! -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+&& ! -f "${EPREFIX}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
 eerror
-eerror "Cannot reach \$BLENDER_OPTIX_ROOT_DIR/include/optix.h.  Fix it?"
+eerror "Cannot reach \${EPREFIX}\${BLENDER_OPTIX_ROOT_DIR}/include/optix.h.  Fix it?"
 eerror
 			die
 		elif [[ -n "${OPTIX_ROOT_DIR}" \
-&& -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+&& -f "${EPREFIX}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
 			:;
 		elif [[ -n "${OPTIX_ROOT_DIR}" \
-&& ! -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+&& ! -f "${EPREFIX}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
 eerror
-eerror "Cannot reach \$OPTIX_ROOT_DIR/include/optix.h.  Fix it?"
+eerror "Cannot reach \${EPREFIX}\${OPTIX_ROOT_DIR}/include/optix.h.  Fix it?"
 eerror
 			die
 		else
@@ -1099,27 +1050,13 @@ eerror
 	fi
 }
 
-blender_src_configure() {
-	:;
-}
+blender_src_configure() { :; }
 
 _src_compile() {
-	if [[ -n "${_LD_LIBRARY_PATHS[${EBLENDER}]}" ]] ; then
-		export LD_LIBRARY_PATH="${_LD_LIBRARY_PATHS[${EBLENDER}]}"
-einfo
-einfo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
-einfo
-	fi
-	if [[ -n "${_PATHS[${EBLENDER}]}" ]] ; then
-		export PATH="${_PATHS[${EBLENDER}]}:${PATH}"
-einfo
-einfo "PATH=${PATH}"
-einfo
-	fi
+	export CMAKE_USE_DIR="${S}_${impl}"
+	export BUILD_DIR="${S}_${impl}_build"
+	cd "${BUILD_DIR}" || die
 
-	S="${BUILD_DIR}" \
-	CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake_src_compile
 }
 
@@ -1146,14 +1083,16 @@ eerror
 einfo
 einfo "Generating (BPY) Blender Python API docs ..."
 einfo
-		if ! "${BUILD_DIR}"/bin/blender --background \
-			--python doc/python_api/sphinx_doc_gen.py -noaudio ; then
+		if ! "${BUILD_DIR}/bin/blender" \
+			--background \
+			--python "doc/python_api/sphinx_doc_gen.py" \
+			-noaudio ; then
 eerror
 eerror "sphinx failed."
 eerror
 		fi
 
-		cd "${CMAKE_USE_DIR}"/doc/python_api || die
+		cd "${CMAKE_USE_DIR}/doc/python_api" || die
 		if ! sphinx-build sphinx-in BPY_API ; then
 eerror
 eerror "sphinx failed."
@@ -1163,14 +1102,19 @@ eerror
 	fi
 }
 
-_install_pgx() {
+# TODO
+# orphaned / deadcode
+_install() {
+	export CMAKE_USE_DIR="${S}_${impl}"
+	export BUILD_DIR="${S}_${impl}_build"
+	cd "${BUILD_DIR}" || die
 einfo
 einfo "Installing sandboxed copy"
 einfo
 	_src_install
 }
 
-_clean_pgx() {
+_clean() {
 einfo
 einfo "Wiping sandboxed install"
 einfo
@@ -1179,16 +1123,16 @@ einfo
 }
 
 blender_src_compile() {
-	blender_compile() {
+	local impl
+	for impl in ${IMPLS[@]} ; do
 		_ORIG_PATH="${PATH}"
-		cd "${BUILD_DIR}" || die
 		if use pgo ; then
 			PGO_PHASE="pgi"
 			_src_configure
 			_src_compile
 			_src_install
 			_run_trainer
-			_clean_pgx
+			_clean
 			PGO_PHASE="pgo"
 			_src_configure
 			_src_compile
@@ -1196,12 +1140,11 @@ blender_src_compile() {
 			_src_configure
 			_src_compile
 		fi
-		if [[ "${EBLENDER}" == "build_creator" ]] ; then
+		if [[ "${impl}" == "build_creator" ]] ; then
 			_src_compile_docs
 		fi
 		export PATH="${_ORIG_PATH}"
-	}
-	blender-multibuild_foreach_impl blender_compile
+	done
 }
 
 _run_trainer() {
@@ -1217,7 +1160,7 @@ _run_trainer() {
 
 	local asset_list=( $(find "${search_paths[@]}" -name "*.blend" ) )
 
-	export PATH="${D}/usr/bin:${PATH}"
+	export PATH="${ED}/usr/bin:${PATH}"
 
 	# See https://www.blender.org/download/demo-files/ for assets
 	if use pgo-trainer-cycles-still ; then
@@ -1229,7 +1172,7 @@ _run_trainer() {
 einfo
 einfo "Obtaining start and end frame data"
 einfo
-			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
+			O=$(${EPYTHON} "${ED}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
 			local start=$(echo "${O}" | cut -f 1 -d " ")
 			local end=$(echo "${O}" | cut -f 2 -d " ")
 
@@ -1257,7 +1200,7 @@ einfo
 einfo
 einfo "Obtaining start and end frame data"
 einfo
-			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
+			O=$(${EPYTHON} "${ED}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
 			local start=$(echo "${O}" | cut -f 1 -d " ")
 			local end=$(echo "${O}" | cut -f 2 -d " ")
 
@@ -1281,7 +1224,7 @@ einfo
 einfo
 einfo "Obtaining start and end frame data"
 einfo
-			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
+			O=$(${EPYTHON} "${ED}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
 			local start=$(echo "${O}" | cut -f 1 -d " ")
 			local end=$(echo "${O}" | cut -f 2 -d " ")
 
@@ -1309,7 +1252,7 @@ einfo
 einfo
 einfo "Obtaining start and end frame data"
 einfo
-			O=$(${EPYTHON} "${D}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
+			O=$(${EPYTHON} "${ED}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
 			local start=$(echo "${O}" | cut -f 1 -d " ")
 			local end=$(echo "${O}" | cut -f 2 -d " ")
 
@@ -1328,49 +1271,41 @@ einfo
 }
 
 _src_test() {
+	export CMAKE_USE_DIR="${S}_${impl}"
+	export BUILD_DIR="${S}_${impl}_build"
+	cd "${BUILD_DIR}" || die
 	if use test; then
 einfo
-einfo "Running Blender Unit Tests for ${EBLENDER} ..."
+einfo "Running Blender Unit Tests for ${impl} ..."
 einfo
-		cd "${BUILD_DIR}"/bin/tests || die
+		cd "${BUILD_DIR}/bin/tests" || die
 		local f
 		for f in *_test; do
-			./"${f}" || die
+			"./${f}" || die
 		done
 	fi
 }
 
 blender_src_test() {
-	blender_test() {
-		cd "${BUILD_DIR}" || die
+	local impl
+	for impl in ${IMPLS[@]} ; do
 		_src_test
-	}
-	blender-multibuild_foreach_impl blender_test
-}
-
-_src_install_cycles_network() {
-	if has cycles-network ${IUSE_EFFECTIVE} \
-		&& use cycles-network ; then
-		exeinto "${d_dest}"
-		dosym "../../..${d_dest}/cycles_server" \
-			"/usr/bin/cycles_server-${SLOT_MAJ}" || die
-		doexe "${CMAKE_BUILD_DIR}${d_dest}/cycles_server"
-	fi
+	done
 }
 
 _src_install_doc() {
 	if use doc; then
 		docinto "html/API/python"
-		dodoc -r "${CMAKE_USE_DIR}"/doc/python_api/BPY_API/.
+		dodoc -r "${CMAKE_USE_DIR}/doc/python_api/BPY_API/".
 
 		docinto "html/API/blender"
-		dodoc -r "${CMAKE_USE_DIR}"/doc/doxygen/html/.
+		dodoc -r "${CMAKE_USE_DIR}/doc/doxygen/html/".
 	fi
 
 	# fix doc installdir
 	docinto "html"
-	dodoc "${CMAKE_USE_DIR}"/release/text/readme.html
-	rm -r "${ED%/}"/usr/share/doc/blender || die
+	dodoc "${CMAKE_USE_DIR}/release/text/readme.html"
+	rm -r "${ED}/usr/share/doc/blender" || die
 }
 
 install_licenses() {
@@ -1401,11 +1336,11 @@ install_licenses() {
 			docinto "licenses/${d}"
 			dodoc -r "${f}"
 		else
-			if [[ "${EBLENDER}" == "build_portable" ]] ; then
+			if [[ "${impl}" == "build_portable" ]] ; then
 				insinto "${d_dest}/licenses/${d}"
 				doins -r "${f}"
-			elif [[ "${EBLENDER}" == "build_creator" \
-			     || "${EBLENDER}" == "build_headless" ]] ; then
+			elif [[ "${impl}" == "build_creator" \
+			     || "${impl}" == "build_headless" ]] ; then
 				docinto "licenses/${d}"
 				dodoc -r "${f}"
 			fi
@@ -1425,11 +1360,11 @@ install_readmes() {
 			docinto "readmes/${d}"
 			dodoc -r "${f}"
 		else
-			if [[ "${EBLENDER}" == "build_portable" ]] ; then
+			if [[ "${impl}" == "build_portable" ]] ; then
 				insinto "${d_dest}/readmes/${d}"
 				doins -r "${f}"
-			elif [[ "${EBLENDER}" == "build_creator" \
-			     || "${EBLENDER}" == "build_headless" ]] ; then
+			elif [[ "${impl}" == "build_creator" \
+			     || "${impl}" == "build_headless" ]] ; then
 				docinto "readmes/${d}"
 				dodoc -r "${f}"
 			fi
@@ -1438,44 +1373,30 @@ install_readmes() {
 }
 
 _src_install() {
-	# Pax mark blender for hardened support.
-	pax-mark m "${CMAKE_BUILD_DIR}"/bin/blender
+	export CMAKE_USE_DIR="${S}_${impl}"
+	export BUILD_DIR="${S}_${impl}_build"
+	cd "${BUILD_DIR}" || die
 
-	S="${BUILD_DIR}" \
-	CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
+	# Pax mark blender for hardened support.
+	pax-mark m "${CMAKE_BUILD_DIR}/bin/blender"
+
 	cmake_src_install
-	if [[ "${EBLENDER}" == "build_creator" ]] ; then
+	if [[ "${impl}" == "build_creator" ]] ; then
 		CMAKE_USE_DIR="${BUILD_DIR}" \
 		_src_install_doc
 	fi
 
 	local d_dest=$(get_dest)
-	if [[ "${EBLENDER}" == "build_creator" ]] ; then
-		if [[ -e "${ED%/}${d_dest}/blender-thumbnailer.py" ]] ; then
-			python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
+	if [[ "${impl}" == "build_creator" ]] ; then
+		if [[ -e "${ED}/${d_dest}/blender-thumbnailer.py" ]] ; then
+			python_fix_shebang "${ED}/${d_dest}/blender-thumbnailer.py"
 		fi
-		python_optimize "${ED%/}/usr/share/${PN}/${SLOT_MAJ}/scripts"
+		python_optimize "${ED}/usr/share/${PN}/${SLOT_MAJ}/scripts"
 	fi
-
-	if [[ "${EBLENDER}" == "build_creator" \
-		|| "${EBLENDER}" == "build_headless" ]] ; then
-		_src_install_cycles_network
-	fi
-
-	_LD_LIBRARY_PATH=()
-	_PATH=()
-	if declare -f blender_set_wrapper_deps > /dev/null ; then
-		blender_set_wrapper_deps
-	fi
-	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
-	_LIBGL_DRIVERS_DIR=$(echo -e "${_LIBGL_DRIVERS_DIR[0]}")
-	_LIBGL_DRIVERS_PATH=$(echo -e "${_LIBGL_DRIVERS_PATH[0]}")
-	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 
 	local suffix=
-	if [[ "${EBLENDER}" == "build_creator" ]] ; then
-		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die
+	if [[ "${impl}" == "build_creator" ]] ; then
+		cp "${ED}/usr/share/applications/blender"{,-${SLOT_MAJ}}".desktop" || die
 		local menu_file="${ED}/usr/share/applications/blender-${SLOT_MAJ}.desktop"
 		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
 		sed -i -e "s|Exec=blender|Exec=/usr/bin/${PN}-${SLOT_MAJ}|g" "${menu_file}" || die
@@ -1485,57 +1406,23 @@ _src_install() {
 		fi
 	fi
 
-	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
-		if [[ "${EBLENDER_NAME}" == "creator" ]] ; then
+	if [[ "${impl}" == "build_creator" || "${impl}" == "build_headless" ]] ; then
+		if [[ "${impl}" == "build_creator" ]] ; then
 			suffix=""
-		elif [[ "${EBLENDER_NAME}" == "headless" ]] ; then
+		elif [[ "${impl}" == "build_headless" ]] ; then
 			suffix="-headless"
 		fi
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
-		if declare -f blender_set_wrapper_deps > /dev/null ; then
-			sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
--e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}:\${LD_LIBRARY_PATH}\"|g" \
--e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
--e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|g" \
--e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|g" \
--e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
--e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
-				"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
-		else
-			sed -i \
+		sed -i \
 -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
 -e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
 -e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
-				"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
-		fi
+			"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
 		exeinto /usr/bin
 		doexe "${T}/${PN}${suffix}-${SLOT_MAJ}"
-		if has cycles-network ${IUSE_EFFECTIVE} \
-			&& use cycles-network ; then
-			cp "${FILESDIR}/blender-wrapper" \
-				"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
-			if declare -f blender_set_wrapper_deps > /dev/null ; then
-				sed -i \
--e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \
--e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}:\${LD_LIBRARY_PATH}\"|g" \
--e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
--e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|g" \
--e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|g" \
--e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
--e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
-					"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
-			else
-				sed -i \
--e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \
--e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
--e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
-					"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
-			fi
-			doexe "${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}"
-		fi
 	fi
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
+	if [[ "${impl}" == "build_portable" ]] ; then
 		fecho1() {
 			echo "${@}" > "${ED}${d_dest}/README.3rdparty_deps" || die
 		}
@@ -1595,17 +1482,14 @@ fecho1
 		doexe "${FILESDIR}/gamelaunch.sh"
 	fi
 	install_licenses
-	if use doc ; then
-		install_readmes
-	fi
+	use doc && install_readmes
 }
 
 blender_src_install() {
-	blender_install() {
-		cd "${BUILD_DIR}" || die
+	local impl
+	for impl in ${IMPLS[@]} ; do
 		_src_install
-	}
-	blender-multibuild_foreach_impl blender_install
+	done
 	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
 	local ed_icon_scale="${ed_icon_hc}/scalable"
 	local ed_icon_sym="${ed_icon_hc}/symbolic"
@@ -1626,7 +1510,7 @@ blender_src_install() {
 	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
 		mv "${ED}/usr/share/doc/blender"{,-${SLOT_MAJ}} || die
 	fi
-	mv "${ED}/usr/share/man/man1/blender"{,-${SLOT_MAJ}}".1"
+	mv "${ED}/usr/share/man/man1/blender"{,-${SLOT_MAJ}}".1" || die
 }
 
 blender_pkg_postinst() {
@@ -1646,33 +1530,8 @@ ewarn "these have caused security issues in the past."
 ewarn "If you are concerned about security, file a bug upstream:"
 ewarn "  https://developer.blender.org/"
 ewarn
-	if has cycles-network ${IUSE_EFFECTIVE} \
-		&& use cycles-network ; then
-einfo
-ewarn "The Cycles Networking support is experimental and"
-ewarn "incomplete."
-einfo
-einfo "To make a OpenCL GPU available do:"
-einfo "cycles_server --device OPENCL"
-einfo
-einfo "To make a CUDA GPU available do:"
-einfo "cycles_server --device CUDA"
-einfo
-einfo "To make a CPU available do:"
-einfo "cycles_server --device CPU"
-einfo
-einfo "Only one instance of a cycles_server can be used on a host."
-einfo
-einfo "You may want to run cycles_server on the client too, but"
-einfo "it is not necessary."
-einfo
-einfo "Clients need to set the Rendering Engine to Cycles and"
-einfo "Device to Networked Device.  Finding the server is done"
-einfo "automatically."
-einfo
-	fi
 	xdg_pkg_postinst
-	local d_src="${EROOT}/usr/$(get_libdir)/${PN}"
+	local d_src="${ESYSROOT}/usr/$(get_libdir)/${PN}"
 	local V=""
 	if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
 	&& "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
@@ -1690,22 +1549,12 @@ einfo
 	fi
 	if [[ -n "${V}" ]] ; then
 		if use build_creator ; then
-			ln -sf "${EROOT}/usr/bin/${PN}-${V}" \
-				"${EROOT}/usr/bin/${PN}" || die
-			if has cycles-network ${IUSE_EFFECTIVE} \
-				&& use cycles-network ; then
-				ln -sf "${EROOT}/usr/bin/cycles_server-${V}" \
-					"${EROOT}/usr/bin/cycles_server" || die
-			fi
+			ln -sf "${ESYSROOT}/usr/bin/${PN}-${V}" \
+				"${ESYSROOT}/usr/bin/${PN}" || die
 		fi
 		if use build_headless ; then
-			ln -sf "${EROOT}/usr/bin/${PN}-headless-${V}" \
-				"${EROOT}/usr/bin/${PN}-headless" || die
-			if has cycles-network ${IUSE_EFFECTIVE} \
-				&& use cycles-network ; then
-				ln -sf "${EROOT}/usr/bin/cycles_server_headless-${V}" \
-					"${EROOT}/usr/bin/cycles_server_headless" || die
-			fi
+			ln -sf "${ESYSROOT}/usr/bin/${PN}-headless-${V}" \
+				"${ESYSROOT}/usr/bin/${PN}-headless" || die
 		fi
 	fi
 }
@@ -1718,18 +1567,18 @@ ewarn "You may want to remove the following directory."
 ewarn "~/.config/${PN}/${SLOT_MAJ}/cache/"
 ewarn "It may contain extra render kernels not tracked by portage"
 ewarn
-	if [[ ! -d "${EROOT}/usr/bin/.blender" ]] ; then
-		if [[ -e "${EROOT}/usr/bin/blender" ]] ; then
-			rm -rf "${EROOT}/usr/bin/blender" || die
+	if [[ ! -d "${ESYSROOT}/usr/bin/.blender" ]] ; then
+		if [[ -e "${ESYSROOT}/usr/bin/blender" ]] ; then
+			rm -rf "${ESYSROOT}/usr/bin/blender" || die
 		fi
-		if [[ -e "${EROOT}/usr/bin/blender-headless" ]] ; then
-			rm -rf "${EROOT}/usr/bin/blender-headless" || die
+		if [[ -e "${ESYSROOT}/usr/bin/blender-headless" ]] ; then
+			rm -rf "${ESYSROOT}/usr/bin/blender-headless" || die
 		fi
-		if [[ -e "${EROOT}/usr/bin/cycles_server" ]] ; then
-			rm -rf "${EROOT}/usr/bin/cycles_server" || die
+		if [[ -e "${ESYSROOT}/usr/bin/cycles_server" ]] ; then
+			rm -rf "${ESYSROOT}/usr/bin/cycles_server" || die
 		fi
-		if [[ -e "${EROOT}/usr/bin/cycles_server_headless" ]] ; then
-			rm -rf "${EROOT}/usr/bin/cycles_server_headless" || die
+		if [[ -e "${ESYSROOT}/usr/bin/cycles_server_headless" ]] ; then
+			rm -rf "${ESYSROOT}/usr/bin/cycles_server_headless" || die
 		fi
 	fi
 }
