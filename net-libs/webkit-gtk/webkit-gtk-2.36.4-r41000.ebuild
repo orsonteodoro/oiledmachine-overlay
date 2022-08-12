@@ -58,183 +58,6 @@ LICENSE="
 		GPL-2+
 		LGPL-2+
 		LGPL-2.1+
-		wk_pgo_trainers_bigintbench? (
-			LGPL-2 BSD-2
-		)
-		wk_pgo_trainers_bindings? (
-			LGPL-2 BSD-2
-		)
-		wk_pgo_trainers_css? (
-			LGPL-2 BSD-2
-		)
-		wk_pgo_trainers_indexeddb? (
-			LGPL-2 BSD-2
-		)
-		wk_pgo_trainers_interactive? (
-			LGPL-2 BSD-2
-		)
-		wk_pgo_trainers_intl? (
-			LGPL-2 BSD-2
-		)
-		wk_pgo_trainers_media? (
-			LGPL-2 BSD-2
-		)
-		wk_pgo_trainers_mutation? (
-			LGPL-2 BSD-2
-		)
-		wk_pgo_trainers_stylebench? (
-			LGPL-2 BSD-2
-		)
-		wk_pgo_trainers_tailbench9000? (
-			LGPL-2 BSD-2
-		)
-		wk_pgo_trainers_apibench? (
-			BSD
-			BSD-2
-		)
-		wk_pgo_trainers_ares6? (
-			BSD
-			BSD-2
-			MIT
-		)
-		wk_pgo_trainers_canvas? (
-			BSD
-		)
-		wk_pgo_trainers_decodertest? (
-			BSD-2
-		)
-		wk_pgo_trainers_dom? (
-			BSD
-		)
-		wk_pgo_trainers_dromaeo-cssquery? (
-			${LICENSE_DROMAEO}
-		)
-		wk_pgo_trainers_dromaeo-dom? (
-			${LICENSE_DROMAEO}
-		)
-		wk_pgo_trainers_dromaeo-jslib? (
-			${LICENSE_DROMAEO}
-		)
-		wk_pgo_trainers_jetstream? (
-			( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
-			( all-rights-reserved Apache-2.0 )
-			( all-rights-reserved GPL-2+ )
-			( all-rights-reserved MIT )
-			Apache-2.0
-			BSD-2
-			BSD
-			GPL-2
-			GPL-2+
-			LGPL-2.1
-			MIT
-			UoI-NCSA
-			ZLIB
-		)
-		wk_pgo_trainers_jetstream2? (
-			|| ( BSD GPL-2+ )
-			( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2+ ) )
-			( all-rights-reserved Apache-2.0 )
-			( all-rights-reserved GPL-2+ )
-			( all-rights-reserved MIT )
-			all-rights-reserved
-			Apache-2.0
-			BSD-2
-			BSD
-			FPL
-			GPL-2
-			LGPL-2+
-			LGPL-2.1
-			MIT
-			ZLIB
-		)
-		wk_pgo_trainers_jsbench? (
-			BSD-2
-			MIT
-		)
-		wk_pgo_trainers_kraken? (
-			( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
-			( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
-			( all-rights-reserved GPL-3+ )
-			|| ( BSD GPL-2 )
-			BSD
-			BSD-2
-			LGPL-2.1
-			MPL-1.1
-		)
-		wk_pgo_trainers_layout? (
-			PGL
-		)
-		wk_pgo_trainers_launchtime? (
-			BSD-2
-		)
-		wk_pgo_trainers_longspider? (
-			( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
-			( all-rights-reserved Apache-2.0 )
-			BSD
-			BSD-2
-			LGPL-2.1
-		)
-		wk_pgo_trainers_mallocbench? (
-			BSD-2
-		)
-		wk_pgo_trainers_mediatime? (
-			BSD-2
-		)
-		wk_pgo_trainers_motionmark? (
-			all-rights-reserved
-			BSD-2
-		)
-		wk_pgo_trainers_octane? (
-			BSD
-		)
-		wk_pgo_trainers_parser? (
-			BSD
-		)
-		wk_pgo_trainers_resources? (
-			BSD-2
-			MIT
-		)
-		wk_pgo_trainers_rexbench? (
-			BSD
-			BSD-2
-		)
-		wk_pgo_trainers_sixspeed? (
-			MIT
-		)
-		wk_pgo_trainers_speedometer? (
-			|| ( MIT BSD )
-			( all-rights-reserved GPL-2 )
-			( all-rights-reserved MIT )
-			( MIT CC0-1.0 )
-			Apache-2.0
-			BSD
-			CC-BY-4.0
-			MIT
-		)
-		wk_pgo_trainers_sunspider? (
-			|| ( MIT AFL-2.1 )
-			( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
-			( all-rights-reserved MIT )
-			( MIT GPL-2 )
-			BSD
-			BSD-2
-			GPL-2+
-			LGPL-2.1
-		)
-		wk_pgo_trainers_testmem? (
-			( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2+ ) )
-			( all-rights-reserved Apache-2.0 )
-			BSD
-			BSD-2
-			ZLIB
-		)
-		wk_pgo_trainers_svg? (
-			CC-BY-ND-2.5
-			custom-public-domain-non-commercial
-			Free-Art-1.3
-			GPL-2
-			LGPL-2.1
-		)
 	)
 	webrtc? (
 		Apache-2.0
@@ -448,7 +271,8 @@ SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 LANGS=(
 ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hu id it ja
 kn ko lt lv ml mr nb nl or pa pl pt_BR pt ro ru sl sr@latin sr sv ta te tr uk
-vi zh_CN )
+vi zh_CN
+)
 
 # aqua (quartz) is enabled upstream but disabled
 # systemd is enabled upstream but gentoo uses openrc by default
@@ -463,127 +287,70 @@ dav1d +dfg-jit +egl -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring
 +webassembly +webassembly-b3-jit +webcrypto +webgl webm-eme -webrtc webvtt
 -webxr +X +yarr-jit"
 
-PGO_PLANS=(
-	ares6
-	content-animation
-	dromaeo-cssquery
-	dromaeo-dom
-	dromaeo-jslib
-	jetstream2
-	jetstream
-	jsbench
-	kraken
-	motionmark1.1
-	motionmark
-	octane
-	speedometer2
-	speedometer
-	stylebench
-	sunspider
-)
-
-#	Animation
-#	ARES-6
-#	Dromaeo
-PGO_LOCAL_COPY=(
-	APIBench
-	BigIntBench
-	Bindings
-	Canvas
-	CSS
-	DecoderTest
-	DOM
-	IndexedDB
-	Interactive
-	Intl
-	JetStream
-	JetStream2
-	JSBench
-	LaunchTime
-	Layout
-	LongSpider
-	MallocBench
-	Media
-	MediaTime
-	MotionMark
-	Mutation
-	Octane
-	Parser
-	resources
-	RexBench
-	ShadowDOM
-	SixSpeed
-	Speedometer
-	StyleBench
-	SunSpider
-	SVG
-	TailBench9000
-	testmem
-	XSSAuditor
-)
-
-PGO_USE_NORMALIZED=()
-gen_pgo_iuse() {
-	local out
-	for p in ${PGO_PLANS[@]} ${PGO_LOCAL_COPY[@]} ; do
-		local t="${p,,}"
-		t="${t/./_}"
-		found=0
-		for u in ${PGO_USE_NORMALIZED[@]} ; do
-			if [[ "${u}" == "wk_pgo_trainers_${t}" ]] ; then
-				found=1
-			fi
-		done
-		if (( ${found} == 0 )) ; then
-			PGO_USE_NORMALIZED+=( wk_pgo_trainers_${t} )
-		fi
-	done
-	for p in ${PGO_USE_NORMALIZED[@]} ; do
-		out+=" ${p}"
-	done
-	echo "${out}"
-}
-
-IUSE+=" "$(gen_pgo_iuse)
-
-gen_pgo_required_use() {
-	local out
-	for p in ${PGO_IUSE_NORMALIZED[@]} ; do
-		out+=" ${p}? ( pgo )"
-	done
-	echo "${out}"
-}
-
-REQUIRED_USE+=" "$(gen_pgo_required_use)
-REQUIRED_USE+=" pgo? ( || ( $(gen_pgo_iuse) ) )"
-
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
 # gstreamer with opengl/gles2 needs egl
 REQUIRED_USE+="
-	|| ( aqua wayland X )
+	|| (
+		aqua
+		wayland
+		X
+	)
 	egl
-	64k-pages? ( !bmalloc !dfg-jit !ftl-jit !jit !webassembly !webassembly-b3-jit )
-	cpu_flags_arm_thumb2? ( bmalloc !ftl-jit )
+	64k-pages? (
+		!bmalloc
+		!dfg-jit
+		!ftl-jit
+		!jit
+		!webassembly
+		!webassembly-b3-jit
+	)
+	cpu_flags_arm_thumb2? (
+		!ftl-jit
+		bmalloc
+	)
 	dav1d? ( gstreamer )
 	jit? ( bmalloc )
 	dfg-jit? ( jit )
 	ftl-jit? ( jit )
 	geolocation? ( introspection )
-	gles2? ( egl !opengl )
-	gstreamer? ( || ( opengl gles2 ) )
+	gles2? (
+		!opengl
+		egl
+	)
+	gstreamer? (
+		|| (
+			opengl
+			gles2
+		)
+	)
 	hardened? ( !jit )
-	opengl? ( egl !gles2 )
+	opengl? (
+		!gles2
+		egl
+	)
 	pgo? ( minibrowser )
 	pulseaudio? ( gstreamer )
 	thunder? ( eme )
 	v4l? ( gstreamer mediastream )
 	wayland? ( egl )
 	webassembly? ( jit )
-	webassembly-b3-jit? ( ftl-jit webassembly )
-	webgl? ( gstreamer
-		|| ( gles2 opengl ) )
-	webm-eme? ( eme gstreamer thunder )
+	webassembly-b3-jit? (
+		ftl-jit
+		webassembly
+	)
+	webgl? (
+		gstreamer
+		|| (
+			gles2
+			opengl
+		)
+	)
+	webm-eme? (
+		eme
+		gstreamer
+		thunder
+	)
 	webrtc? ( mediastream )
 	webvtt? ( gstreamer )
 	webxr? ( webgl )
@@ -1016,70 +783,6 @@ ewarn
 	done
 }
 
-unpack_pgo_trainers() {
-	declare -Ax USE_TO_LOCAL_COPY=(
-		[wk_pgo_trainers_ares6]="ARES-6"
-		[wk_pgo_trainers_content-animation]="Animation"
-		[wk_pgo_trainers_apibench]="APIBench"
-		[wk_pgo_trainers_bigintbench]="BigIntBench"
-		[wk_pgo_trainers_bindings]="Bindings"
-		[wk_pgo_trainers_canvas]="Canvas"
-		[wk_pgo_trainers_css]="CSS"
-		[wk_pgo_trainers_decodertest]="DecoderTest"
-		[wk_pgo_trainers_dom]="DOM"
-		[wk_pgo_trainers_dromaeo-cssquery]="Dromaeo"
-		[wk_pgo_trainers_dromaeo-dom]="Dromaeo"
-		[wk_pgo_trainers_dromaeo-jslib]="Dromaeo"
-		[wk_pgo_trainers_indexeddb]="IndexedDB"
-		[wk_pgo_trainers_interactive]="Interactive"
-		[wk_pgo_trainers_intl]="Intl"
-		[wk_pgo_trainers_jetstream]="JetStream"
-		[wk_pgo_trainers_jetstream2]="JetStream2"
-		[wk_pgo_trainers_jsbench]="JSBench"
-		[wk_pgo_trainers_kraken]="FIXME"
-		[wk_pgo_trainers_launchtime]="LaunchTime"
-		[wk_pgo_trainers_layout]="Layout"
-		[wk_pgo_trainers_longspider]="LongSpider"
-		[wk_pgo_trainers_mallocbench]="MallocBench"
-		[wk_pgo_trainers_media]="Media"
-		[wk_pgo_trainers_mediatime]="MediaTime"
-		[wk_pgo_trainers_motionmark1_1]="FIXME"
-		[wk_pgo_trainers_motionmark]="MotionMark"
-		[wk_pgo_trainers_mutation]="Mutation"
-		[wk_pgo_trainers_octane]="Octane"
-		[wk_pgo_trainers_parser]="Parser"
-		[wk_pgo_trainers_resources]="resources"
-		[wk_pgo_trainers_rexbench]="RexBench"
-		[wk_pgo_trainers_sixspeed]="SixSpeed"
-		[wk_pgo_trainers_shadowdom]="ShadowDOM"
-		[wk_pgo_trainers_speedometer2]="Speedometer"
-		[wk_pgo_trainers_speedometer]="FIXME"
-		[wk_pgo_trainers_stylebench]="StyleBench"
-		[wk_pgo_trainers_sunspider]="SunSpider"
-		[wk_pgo_trainers_svg]="SVG"
-		[wk_pgo_trainers_tailbench9000]="TailBench9000"
-		[wk_pgo_trainers_testmem]="testmem"
-		[wk_pgo_trainers_xssauditor]="XSSAuditor"
-	)
-
-	# Unpacked individually to resolve the all-rights-reserved issues
-	for u in ${!USE_TO_LOCAL_COPY[@]} ; do
-		local f="${USE_TO_LOCAL_COPY[${u}]}"
-		if use "${u}" ; then
-			if [[ "${f}" == "FIXME" ]] ; then
-eerror
-eerror "FIXME: Add algorithm for local copy of ${u} to ebuild.  Do not use the"
-eerror "${u} USE flag at this time."
-eerror
-				die
-			fi
-			subversion_fetch \
-https://svn.webkit.org/repository/webkit/trunk/PerformanceTests/${f} \
-PerformanceTests/${f}
-		fi
-	done
-}
-
 src_unpack() {
 	unpack ${A}
 	if use pgo ; then
@@ -1087,12 +790,6 @@ ewarn
 ewarn "The PGO use flag is a Work In Progress (WIP) and is not production"
 ewarn "ready."
 ewarn
-		unpack_pgo_trainers
-		# TODO: Add all-rights-reserved to exclusion for Tools/Scripts
-		# if possible
-		subversion_fetch \
-https://svn.webkit.org/repository/webkit/trunk/Tools/Scripts/ \
-Tools/Scripts
 	fi
 	if use webrtc ; then
 		subversion_fetch \
@@ -1106,6 +803,69 @@ src_prepare() {
 	cmake_src_prepare
 	gnome2_src_prepare
 	(( ${NABIS} > 1 )) && multilib_copy_sources
+
+	prepare_abi() {
+		if use pgo ; then
+			local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
+			if [[ -e "${pgo_data_dir}" ]] ; then
+				local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+				mkdir -p "${d}" || die
+				cp -aT "${pgo_data_dir}" "${d}" || die
+			fi
+		fi
+	}
+	multilib_foreach_abi prepare_abi
+}
+
+meets_pgo_requirements() {
+	if use pgo ; then
+		local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
+		local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+
+		# Has same compiler?
+		if tc-is-gcc ; then
+			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local expected=$(cat "${T}/compiler_fingerprint")
+			if [[ "${actual}" != "${expected}" ]] ; then
+				return 1
+			fi
+		elif tc-is-clang ; then
+			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local expected=$(cat "${T}/compiler_fingerprint")
+			if [[ "${actual}" != "${expected}" ]] ; then
+				return 1
+			fi
+		else
+			return 1
+			ewarn "Compiler is not supported."
+		fi
+
+		# Has profile?
+		if tc-is-gcc && find "${pgo_data_dir2}" -name "*.gcda" \
+			2>/dev/null 1>/dev/null ; then
+			:; # pass
+		elif tc-is-clang && find "${pgo_data_dir2}" -name "*.profraw" \
+			2>/dev/null 1>/dev/null ; then
+			:; # pass
+		else
+			return 1
+		fi
+
+		return 0
+	fi
+	return 1
+}
+
+get_pgo_phase() {
+	local result="NO_PGO"
+	if ! use pgo ; then
+		echo "NO_PGO"
+	elif use pgo && meets_pgo_requirements ; then
+		echo "PGO"
+	elif use pgo && ! meets_pgo_requirements ; then
+		echo "PGI"
+	fi
+	echo "${result}"
 }
 
 _config_pgx() {
@@ -1181,14 +941,14 @@ eerror
 	#	${S}/Source/cmake/WebKitFeatures.cmake
 	local mycmakeargs=(
 		${ruby_interpreter}
-		-DBWRAP_EXECUTABLE:FILEPATH="${EPREFIX}"/usr/bin/bwrap # \
+		-DBWRAP_EXECUTABLE:FILEPATH="${EPREFIX}/usr/bin/bwrap" # \
 # If bubblewrap[suid] then portage makes it go-r and cmake find_program fails \
 # with that
 		-DCMAKE_CXX_LIBRARY_ARCHITECTURE=$(get_abi_CHOST ${ABI})
 		-DCMAKE_INSTALL_BINDIR=$(get_libdir)/webkit-gtk-${API_VERSION}
 		-DCMAKE_INSTALL_LIBEXECDIR=$(get_libdir)/misc
 		-DCMAKE_LIBRARY_PATH=/usr/$(get_libdir)
-		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}"/usr/bin/xdg-dbus-proxy
+		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}/usr/bin/xdg-dbus-proxy"
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
 		-DENABLE_ENCRYPTED_MEDIA=$(usex eme)
@@ -1335,18 +1095,19 @@ einfo
 	fi
 
 	if use lto ; then
-		MESA_LLVM_V=$(bzcat "${ESYSROOT}/var/db/pkg/media-libs/mesa-"*"/environment.bz2" \
+		local mesa_llvm_v=$(bzcat \
+			"${EPREFIX}/var/db/pkg/media-libs/mesa-"*"/environment.bz2" \
 			| grep "LLVM_MAX_SLOT" \
 			| head -n 1 \
 			| cut -f 2 -d "\"")
-		local llvmp=$(get_llvm_prefix ${MESA_LLVM_V})
+		local llvm_prefix=$(get_llvm_prefix -d ${mesa_llvm_v})
 einfo
-einfo "MESA LLVM: ${MESA_LLVM_V}"
-einfo "LLVM path: ${llvmp}"
+einfo "MESA LLVM: ${mesa_llvm_v}"
+einfo "LLVM path: ${llvm_prefix}"
 einfo
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${llvmp}/bin/${ctarget}-clang"
-			-DCMAKE_CXX_COMPILER="${llvmp}/bin/${ctarget}-clang++"
+			-DCMAKE_C_COMPILER="${llvm_prefix}/bin/${ctarget}-clang"
+			-DCMAKE_CXX_COMPILER="${llvm_prefix}/bin/${ctarget}-clang++"
 			-DLTO_MODE=thin
 			-DUSE_LD_LLD=ON
 		)
@@ -1391,18 +1152,22 @@ einfo
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
 
+#	local pgo_data_dir="${T}/pgo-${ABI}"
+	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
+	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	mkdir -p "${ED}/${pgo_data_dir}" || die
 	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		if tc-is-clang ; then
-			append-flags -fprofile-generate="${T}/pgo-${ABI}"
+			append-flags -fprofile-generate="${pgo_data_dir}"
 		elif tc-is-gcc ; then
-			append-flags -fprofile-generate -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
 		else
 eerror
 eerror "Only GCC and Clang are supported for PGO."
 eerror
 			die
 		fi
-	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] ; then
+	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] && meets_pgo_requirements ; then
 		if tc-is-clang ; then
 einfo
 einfo "Merging PGO data to generate a PGO profile"
@@ -1413,11 +1178,11 @@ eerror "Missing *.profraw files"
 eerror
 				die
 			fi
-			llvm-profdata merge -output="${T}/pgo-${ABI}/custom-pgo.profdata" \
-				"${T}/pgo-${ABI}" || die
-			append-flags -fprofile-use="${T}/pgo-${ABI}/custom-pgo.profdata"
+			llvm-profdata merge -output="${pgo_data_dir}/custom-pgo.profdata" \
+				"${pgo_data_dir}" || die
+			append-flags -fprofile-use="${pgo_data_dir}/custom-pgo.profdata"
 		elif tc-is-gcc ; then
-			append-flags -fprofile-use -fprofile-dir="${T}/pgo-${ABI}"
+			append-flags -fprofile-use -fprofile-dir="${pgo_data_dir}"
 		fi
 	fi
 
@@ -1481,56 +1246,13 @@ eerror
 	esac
 }
 
-_get_benchmark_plan() {
-	local u="${1}"
-	for p in ${PGO_PLANS[@]} ; do
-		local t="${p,,}"
-		t="${t/./_}"
-		if [[ "${u}" == "wk_pgo_trainers_${t}" ]] ; then
-			echo "--plan ${p}"
-		fi
-	done
-}
-
-_run_trainer() {
-	if [[ ! -f "${BUILD_DIR}/minibrowser-gtk" ]] ; then
-eerror
-eerror "Missing ${BUILD_DIR}/minibrowser-gtk"
-eerror
-		die
-	fi
-	local train_with=()
-	for p in ${PGO_USE_NORMALIZED[@]} ; do
-		if use ${p} ; then
-			train_with+=( ${p} )
-		fi
-	done
-	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # \
-	  # Prevent a sandbox violation and isolate between parallel running emerges.
-	for t in ${train_with[@]} ; do
-einfo
-einfo "Training with ${t/wk_pgo_trainers_/}"
-einfo
-# See https://github.com/WebKit/WebKit/tree/9467df8e0134156fa95c4e654e956d8166a54a13/Tools/Scripts/webkitpy/benchmark_runner
-		virtx ${EPYTHON} Tools/Scripts/webkitpy/benchmark_runner/run_benchmark.py \
-			--build-directory "${BUILD_DIR}" \
-			$(_get_benchmark_plan ${t}) \
-			--local-copy $(_get_local_perf_path ${t}) \
-			|| die
-	done
-}
-
 multilib_src_compile() {
 	if (( ${NABIS} == 1 )) ; then
 		export BUILD_DIR="${S}"
 		cd "${BUILD_DIR}" || die
 	fi
 	if use pgo ; then
-		PGO_PHASE="pgi"
-		_config_pgx
-		_build_pgx
-		_run_trainer
-		PGO_PHASE="pgo"
+		export PGO_PHASE=$(get_pgo_phase)
 		_config_pgx
 		_build_pgx
 	else
@@ -1651,6 +1373,46 @@ multilib_src_install() {
 	done
 
 	_install_licenses
+
+	if use pgo ; then
+		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
+		dodir "${pgo_data_dir}"
+		if tc-is-gcc ; then
+			"${CC}" -dumpmachine > "${ED}/${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${ED}/${pgo_data_dir}/compiler_fingerprint" || die
+		elif tc-is-clang ; then
+			"${CC}" -dumpmachine > "${ED}/${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${ED}/${pgo_data_dir}/compiler_fingerprint" || die
+		fi
+	fi
+}
+
+wipe_pgo_profile() {
+	if [[ "${PGO_PHASE}" =~ "PGI" ]] ; then
+einfo
+einfo "Wiping previous PGO profile"
+einfo
+		local pgo_data_dir="${ESYSROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
+		find "${pgo_data_dir}" -type f -delete
+	fi
+}
+
+delete_old_pgo_profiles() {
+	if [[ -n "${REPLACING_VERSIONS}" ]] ; then
+		local pv
+		for pv in ${REPLACING_VERSIONS} ; do
+			if ver_test $(ver_cut 1-2 "${pv}") -eq $(ver_cut 1-2 "${PV}") ; then
+				# Don't delete permissions
+				continue
+			fi
+			local pgo_data_dir="${ESYSROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
+			if [[ -e "${pgo_data_dir}" ]] ; then
+				rm -rf "${pgo_data_dir}" || true
+			fi
+		done
+	fi
 }
 
 pkg_postinst() {
@@ -1673,6 +1435,9 @@ einfo "\`ln -sf /usr/lib/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/min
 einfo
 	fi
 	check_geolocation
+
+	use pgo && wipe_pgo_profile
+	delete_old_pgo_profiles
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  license-transparency, webvtt, avif

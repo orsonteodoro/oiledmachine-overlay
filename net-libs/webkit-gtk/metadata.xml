@@ -14,15 +14,119 @@
   <longdescription>
     The purpose of this ebuild fork was originally to provide multilib support
     for the ebuild fork for the surf web browser on the oiledmachine-overlay.
-    Currently the motivations are to provide latest stable as quickly as
-    possible for security reasons and expose more options related to
-    performance or next generation of web standards.
+    Currently the motivations are to provide latest stable as quickly as possible
+    for security reasons and expose more options related to performance or next
+    generation of web standards.
 
     Revision correspondence:
 
     -r50000 -- GTK 4
     -r41000 -- GTK+3 with libsoup3
             -- GTK+3 with libsoup2
+
+
+    Ebuild fork details.
+
+
+    EPGO (Event Based PGO)
+
+    PGO is event based.  You can use gcc or clang.  I call it 1 step PGO (but
+    dragged out over time).  EPGO is a more sane approach than what is promoted
+    and used by the distro when it comes to packages with very high estimated
+    lines of code of 20 EMLOC to +100 EMLOC that imply hours of build time
+    cost.
+
+    Motivations to integrate the EPGO technique again are long build times,
+    difficult to use auto trainers, vulnerabilities that force rebuilds, 
+    questionable headless training cheating possibility (for maybe to safe
+    battery life), etc.
+
+    The vulnerability one is the biggest one.  We do not want to overinvest time
+    on 3 step PGO to end up tossing it out on the same day.
+
+    Status: WIP (Work in Progress)
+
+
+    Basic info
+
+      PGI is an instrumented build designed to collect information.
+
+      PGT is the training step.
+
+      PGO is the optimized build.  On average 10% performance gains observed
+      in many PGOed apps, but may have 40% in some use cases like QPS (queries
+      per second) or throughput on rare cases.
+
+      1-2-3 simple right.
+
+      PGI transitions to PGT transitions to PGO.
+
+
+    PGO training.
+
+      The preference is for real world training.  You can use a trainer but it
+      should reflect typical use by you.
+
+      Web benchmarks can be found on the web.  These can be used to train.  It
+      is preferred not to use them because it can mess up the use efficiency
+      of the CPU cache by enlarging code that shouldn't be.  This is why we
+      prefer event based real world PGO profiling.
+
+
+    Events / Rules
+
+
+      If the compilers when entering PGO are not the same as PGI, PGI is
+      required.  The reason why is because the compiler may not recognize the
+      same profile version.
+
+      If the major and minor is the same, you may be allowed use PGO.
+
+      The minimal required for training is opening a webkit-gtk based
+      application.
+
+      Upon re-emerging, Sometimes it will say you can do PGO or sometimes it may say you
+      need to do PGI.
+
+      After every new PGI, the existing PGI profile is wiped.
+
+      []  A version with a different with different API versions will have
+      different PGO profiles.  Reason why is because different codepaths
+      enabled and possibility of different USE flags.
+
+      A PGOed build cannot continue to collect and generate more PGO training
+      data.
+
+      It is recommended to emerge as normally.  This gives time to enjoy the
+      product based on webkit-gtk and at the same time passively train.  The
+      FSM state transition period is set by you.  You can transistion states
+      within the same day or 2, or you can wait upon each new release.   The
+      idea with delayed (per new release) is to do 1 step PGO instead of 3
+      step PGO every time you emerge.
+
+
+    Hypothetical training schedule
+
+ Version      2.36.1    2.36.2    2.36.3    2.36.4   2.37.0   2.37.1
+
+  EPGO           i    t   o          o         o        i   t   o
+
+ versus
+
+Traditional      i        i          i         i        i       i
+3 step PGO       t        t          t         t        t       t
+                 o        o          o         o        o       o
+
+    Key:
+
+      i=instrumented
+      t=training
+      o=optimized
+
+
+
+
+    Additional sources:
 
     For PGO trainers, see contents of
     https://github.com/WebKit/WebKit/tree/main/PerformanceTests
@@ -33,72 +137,121 @@
 
   </longdescription>
   <use>
-    <flag name="64k-pages">Uses 64k pages but reduces security and performance.
-      It also disables JIT and WebAssembly.</flag>
-    <flag name="avif">Enables AVIF image support.</flag>
-    <flag name="bmalloc">Uses a mmap based page allocator to improve
-      overall performance.  Disable to use the system allocator.</flag>
-    <flag name="coverage">Enable code coverage support</flag>
+    <flag name="64k-pages">
+      Uses 64k pages but reduces security and performance.  It also disables JIT
+      and WebAssembly.
+    </flag>
+    <flag name="avif">
+      Enables AVIF image support.
+    </flag>
+    <flag name="bmalloc">
+      Uses a mmap based page allocator to improve overall performance.  Disable
+      to use the system allocator.
+    </flag>
+    <flag name="coverage">
+      Enable code coverage support
+    </flag>
     <flag name="dav1d">Check and pull in dependencies for AV1 video decoding
       support.</flag>
-    <flag name="eme">Enable Encrypted Media Extensions support (ClearKey CDM
-      only)</flag>
-    <flag name="egl">Enable EGL support</flag>
-    <flag name="examples">Install the MiniBrowser example application</flag>
-    <flag name="dfg-jit">Builds with the teir that does the bulk
-      of the optimizing.</flag>
-    <flag name="ftl-jit">Builds an additional tier for JIT used for
-      optimizing run-time performance marginally at the expense of 
-      faster load times or delayed execution time.</flag>
-    <flag name="gamepad">Enable gamepad input support via
-      <pkg>dev-libs/libmanette</pkg></flag>
-    <flag name="geolocation">Enable geolocation support through
-      <pkg>app-misc/geoclue</pkg></flag>
-    <flag name="gles2">Enable GLESv2 support.</flag>
-    <flag name="lto">Use ThinLTO LTO [link time optimization] when
-      when linking.  ThinLTO is used instead of full for efficient
-      multicore and memory usage.</flag>
-    <flag name="hardened">Ensures less problems with hardened build.</flag>
-    <flag name="jit">Enables JIT support for JavaScriptCore for
-      significantly faster code execution.  Disable for increased compatibility
-      on alternative ARCHs and ABIs</flag>
-    <flag name="jumbo-build">Combine source files to speed up build
-      process</flag>
-    <flag name="libsoup3">Link to libsoup3.  It consequently enables HTTP/2
-      by default when libsoup3 is 2.99.8 or newer.</flag>
-    <flag name="mediastream">Enables support for MediaStream API (IN DEVELOPMENT
-      / DRAFT).</flag>
-    <flag name="nsplugin">Enable full nsplugin support (GTK2 plugins)</flag>
-    <flag name="openmp">Use OpenMP to accelerate SVG filters</flag>
-    <flag name="pgo">Performs 3 phase Profile Guided Optimization (PGO).
-      One more more wk_pgo_trainers_* may be specified.  Historically,
-      upstream has ran SunSpider 3 times on the w32 builds for PGO profile
-      generation for JSC optimization. Expect double the time to build.</flag>
-    <flag name="pulseaudio">Adds PulseAudio and microphone support.</flag>
-    <flag name="thunder">Links to a framework with pluginable CDM
-      (content decryption module) support</flag>
-    <flag name="v4l">Adds and checks for proper v4l camera support.</flag>
-    <flag name="variation-fonts">Check dependencies for variation font
-      support</flag>
-    <flag name="webgl">Build support for the WebGL HTML API using
-      <pkg>virtual/opengl</pkg></flag>
-    <flag name="webassembly">Enables support for WebAssembly used for example
-      in web games.  Disable to decrease the attack surface.</flag>
-    <flag name="webassembly-b3-jit">Enables the B3 JIT support that does
-      additional optimizations beyond ftl-jit.</flag>
-    <flag name="webcrypto">Enables WebCrypto SubtleCrypto API support for
-      low level cryptographic fuctions</flag>
-    <flag name="webm-eme">Enable support for decrypting protected WebM files.
-      (It may require a license, the proprietary SDK, and a corresponding
-      proprietary OCDM plugin)</flag>
-    <flag name="webxr">Builds WebXR support.  (EXPERIMENTAL / IN
-      DEVELOPMENT)</flag>
-    <flag name="webvtt">Checks and pulls in dependencies required for
-      full WebVTT support.</flag>
-    <flag name="webrtc">Enables WebRTC support.  (WebKitGTK EXPERIMENTAL,
-      WebKit supported)</flag>
-    <flag name="yarr-jit">Enables JIT regex support.  Otherwise, it falls back
-      to interpretive</flag>
+    <flag name="eme">
+      Enable Encrypted Media Extensions support (ClearKey CDM only)
+    </flag>
+    <flag name="egl">
+      Enable EGL support
+    </flag>
+    <flag name="examples">
+      Install the MiniBrowser example application
+    </flag>
+    <flag name="dfg-jit">
+      Builds with the teir that does the bulk of the optimizing.
+    </flag>
+    <flag name="ftl-jit">
+      Builds an additional tier for JIT used for optimizing run-time performance
+      marginally at the expense of faster load times or delayed execution time.
+    </flag>
+    <flag name="gamepad">
+      Enable gamepad input support via <pkg>dev-libs/libmanette</pkg>
+    </flag>
+    <flag name="geolocation">
+      Enable geolocation support through <pkg>app-misc/geoclue</pkg>
+    </flag>
+    <flag name="gles2">
+      Enable GLESv2 support.
+    </flag>
+    <flag name="lto">
+      Use ThinLTO LTO [link time optimization] when when linking.  ThinLTO is
+      used instead of full for efficient multicore and memory usage.
+    </flag>
+    <flag name="hardened">
+      Ensures less problems with hardened build.
+    </flag>
+    <flag name="jit">
+      Enables JIT support for JavaScriptCore for significantly faster code
+      execution.  Disable for increased compatibility on alternative ARCHs and
+      ABIs
+    </flag>
+    <flag name="jumbo-build">
+      Combine source files to speed up build process
+    </flag>
+    <flag name="libsoup3">
+      Link to libsoup3.  It consequently enables HTTP/2 by default when libsoup3
+      is 2.99.8 or newer.
+    </flag>
+    <flag name="mediastream">
+      Enables support for MediaStream API (IN DEVELOPMENT / DRAFT).
+    </flag>
+    <flag name="nsplugin">
+      Enable full nsplugin support (GTK2 plugins)
+    </flag>
+    <flag name="openmp">
+      Use OpenMP to accelerate SVG filters
+    </flag>
+    <flag name="pgo">
+      Performs 1 step Profile Guided Optimization (PGO) per release.
+    </flag>
+    <flag name="pulseaudio">
+      Adds PulseAudio and microphone support.
+    </flag>
+    <flag name="thunder">
+      Links to a framework with pluginable CDM (content decryption module) support
+    </flag>
+    <flag name="v4l">
+      Adds and checks for proper v4l camera support.
+    </flag>
+    <flag name="variation-fonts">
+      Check dependencies for variation font support
+    </flag>
+    <flag name="webgl">
+      Build support for the WebGL HTML API using <pkg>virtual/opengl</pkg>
+    </flag>
+    <flag name="webassembly">
+      Enables support for WebAssembly used for example in web games.  Disable to
+      decrease the attack surface.
+    </flag>
+    <flag name="webassembly-b3-jit">
+      Enables the B3 JIT support that does additional optimizations beyond
+      ftl-jit.
+    </flag>
+    <flag name="webcrypto">
+      Enables WebCrypto SubtleCrypto API support for low level cryptographic
+      fuctions
+    </flag>
+    <flag name="webm-eme">
+      Enable support for decrypting protected WebM files.  (It may require a
+      license, the proprietary SDK, and a corresponding proprietary OCDM plugin)
+    </flag>
+    <flag name="webxr">
+      Builds WebXR support.  (EXPERIMENTAL / IN DEVELOPMENT)
+    </flag>
+    <flag name="webvtt">
+      Checks and pulls in dependencies required for full WebVTT support.
+    </flag>
+    <flag name="webrtc">
+      Enables WebRTC support.  (WebKitGTK EXPERIMENTAL, WebKit supported)
+    </flag>
+    <flag name="yarr-jit">
+      Enables JIT regex support.  Otherwise, it falls back to interpretive
+    </flag>
   </use>
   <slots>
     <slot name="4.0">
