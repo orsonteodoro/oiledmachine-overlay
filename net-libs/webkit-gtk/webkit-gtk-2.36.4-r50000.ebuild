@@ -628,7 +628,6 @@ ewarn
 	fi
 }
 
-NABIS=0
 pkg_setup() {
 ewarn
 ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
@@ -787,10 +786,6 @@ ewarn
 ewarn "WebRTC support is currently in development and feature incomplete."
 ewarn
 	fi
-
-	for a in $(multilib_get_enabled_abis) ; do
-		NABIS=$((${NABIS} + 1))
-	done
 }
 
 src_unpack() {
@@ -812,7 +807,6 @@ src_prepare() {
 	use webrtc && eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
 	cmake_src_prepare
 	gnome2_src_prepare
-	(( ${NABIS} > 1 )) && multilib_copy_sources
 
 	prepare_abi() {
 		if use pgo ; then
@@ -879,8 +873,15 @@ get_pgo_phase() {
 }
 
 _config_pgx() {
-	[[ -f build.ninja ]] && eninja clean
-	find "${BUILD_DIR}" -name "CMakeCache.txt" -delete
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+	if [[ -e "${BUILD_DIR}" ]] ; then
+		# For 3 step PGO only
+		cd "${BUILD_DIR}" || die
+		[[ -f build.ninja ]] && eninja clean
+		find "${BUILD_DIR}" -name "CMakeCache.txt" -delete
+	fi
+	cd "${CMAKE_USE_DIR}" || die
 
 	# Respect CC, otherwise fails on prefix #395875
 	tc-export CC
@@ -1199,31 +1200,23 @@ eerror
 	WK_USE_CCACHE=NO cmake_src_configure
 }
 
-_build_pgx() {
-	if [[ ! -f build.ninja ]] ; then
-eerror
-eerror "Missing build.ninja"
-eerror
-		die
-	fi
+_compile_pgx() {
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+	cd "${BUILD_DIR}" || die
 	cmake_src_compile
 }
 
 multilib_src_compile() {
-	if (( ${NABIS} == 1 )) ; then
-		export BUILD_DIR="${S}"
-		cd "${BUILD_DIR}" || die
-	fi
 	export PGO_PHASE=$(get_pgo_phase)
 	_config_pgx
-	_build_pgx
+	_compile_pgx
 }
 
 multilib_src_test() {
-	if (( ${NABIS} == 1 )) ; then
-		export BUILD_DIR="${S}"
-		cd "${BUILD_DIR}" || die
-	fi
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+	cd "${BUILD_DIR}"
 	# Prevent test failures on PaX systems
 	# Programs/unittests/.libs/test*
 	pax-mark m $(list-paxables Programs/*[Tt]ests/*)
@@ -1302,10 +1295,9 @@ einfo
 }
 
 multilib_src_install() {
-	if (( ${NABIS} == 1 )) ; then
-		export BUILD_DIR="${S}"
-		cd "${BUILD_DIR}" || die
-	fi
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+	cd "${BUILD_DIR}"
 	cmake_src_install
 
 	# Prevent crashes on PaX systems, bug #522808
