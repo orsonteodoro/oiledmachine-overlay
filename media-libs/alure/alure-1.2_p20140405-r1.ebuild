@@ -27,7 +27,6 @@ RESTRICT="mirror"
 src_prepare() {
 	cmake_src_prepare
 	sed -i -e "/DESTINATION/s:doc/alure:doc/${PF}:" CMakeLists.txt || die
-	multilib_copy_sources
 }
 
 src_configure() {
