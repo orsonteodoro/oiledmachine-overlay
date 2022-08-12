@@ -655,9 +655,9 @@ einfo
 		local old_rpath=$(echo "${old_rpath}" \
 			| sed -E \
 				-e "s|/var/tmp[^:]+||g" \
+				-e "s|:+|:|g" \
 				-e "s|^:||g" \
 				-e "s|:$||g" \
-				-e "s|:+|:|g" \
 				-e "s|^:$||g")
 		patchelf --set-rpath "${old_rpath}" "${f}" || die
 		echo -e "${old_rpath}"
@@ -709,26 +709,26 @@ echo "/usr/share/${PN}/demos" \
 	fi
 	einstalldocs
 	_install_licenses
-	sanitize_rpaths
 	if use tbb ; then
 		local found=0
 		local f
-		for f in "${ED}" ; do
-			if ldd "${f}" | grep -q "tbb.*not found" ; then
+		for f in $(find "${ED}") ; do
+			if ldd "${f}" 2>/dev/null | grep -q "tbb.*not found" ; then
 einfo
 einfo "Setting rpath for ${f} for TBB"
 einfo
 				local old_rpath=$(patchelf \
 					--print-rpath \
-					"/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 					"${f}") || die
+				[[ -n "${old_rpath}" ]] && old_rpath=":${old_rpath}"
 				patchelf \
 					--set-rpath \
-					"/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}:${old_rpath}" \
+					"/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}${old_rpath}" \
 					"${f}" || die
 			fi
 		done
 	fi
+	sanitize_rpaths
 }
 
 pkg_postinst() {
