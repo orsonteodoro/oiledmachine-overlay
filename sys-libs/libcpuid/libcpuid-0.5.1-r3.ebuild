@@ -5,7 +5,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit autotools cmake multilib-minimal python-any-r1
+inherit cmake multilib-minimal python-any-r1
 
 DESCRIPTION="a small C library for x86 CPU detection and feature extraction"
 HOMEPAGE="http://libcpuid.sourceforge.net/"
@@ -27,16 +27,10 @@ pkg_setup() {
 	use test && python-any-r1_pkg_setup
 }
 
-src_prepare() {
-	cmake_src_prepare
-	eautoreconf || die
-	multilib_copy_sources
-}
-
 src_configure() {
 	configure_abi() {
 	        local mycmakeargs=(
-			-DCMAKE_INSTALL_LIBDIR="${EPREFIX}"/usr/$(get_libdir)
+			-DCMAKE_INSTALL_LIBDIR="${EPREFIX}/usr/$(get_libdir)"
 		)
 		cmake_src_configure
 	}
