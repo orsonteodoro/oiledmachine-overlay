@@ -819,13 +819,13 @@ meets_pgo_requirements() {
 		# Has same compiler?
 		if tc-is-gcc ; then
 			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
-			local expected=$(cat "${T}/compiler_fingerprint")
+			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 				return 1
 			fi
 		elif tc-is-clang ; then
 			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
-			local expected=$(cat "${T}/compiler_fingerprint")
+			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 				return 1
 			fi
