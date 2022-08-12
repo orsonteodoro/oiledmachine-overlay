@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: blender-v3.0.eclass
-# @MAINTAINER: orsonteodoro@hotmail.com
+# @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender implementation
 # @DESCRIPTION:

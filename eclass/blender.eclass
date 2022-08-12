@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: blender.eclass
-# @MAINTAINER: orsonteodoro@hotmail.com
+# @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender common implementation
 # @DESCRIPTION:
@@ -21,7 +21,7 @@ inherit check-reqs cmake flag-o-matic llvm pax-utils \
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
-KEYWORDS=${KEYWORDS:="~amd64 ~x86"}
+KEYWORDS=${KEYWORDS:-"~amd64 ~x86"}
 
 LICENSE="
 	|| ( GPL-2 BL )
