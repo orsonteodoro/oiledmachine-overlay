@@ -115,7 +115,7 @@
 
  Version      2.36.1    2.36.2    2.36.3    2.36.4   2.37.0   2.37.1
 
-  EPGO           i  t o   o          o         o        i   t   o
+  EPGO           i  t o*  o          o         o        i   t   o
 
  versus
 
@@ -128,7 +128,7 @@ Traditional      i        i          i         i        i       i
       i=instrumented
       t=training
       o=optimized
-
+      *=optional step
 
 
 
