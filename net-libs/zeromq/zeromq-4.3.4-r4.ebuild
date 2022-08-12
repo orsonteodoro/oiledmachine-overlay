@@ -3,8 +3,7 @@
 
 EAPI=8
 
-inherit cmake-multilib
-inherit multilib-minimal
+inherit cmake-multilib multilib-minimal
 
 DESCRIPTION="A brokerless kernel"
 HOMEPAGE="https://zeromq.org/"
@@ -37,13 +36,7 @@ BDEPEND+="
 		app-text/xmlto
 	)"
 SRC_URI="https://github.com/zeromq/libzmq/releases/download/v${PV}/${P}.tar.gz"
-
 PATCHES=( "${FILESDIR}/zeromq-4.3.4-build-curve_keygen.patch" )
-
-src_prepare() {
-	cmake_src_prepare
-	multilib_copy_sources
-}
 
 src_configure() {
 	local mycmakeargs=(
