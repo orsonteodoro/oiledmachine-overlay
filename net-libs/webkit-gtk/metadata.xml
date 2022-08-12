@@ -87,13 +87,17 @@
       application.
 
       Upon re-emerging, sometimes it will say you can do PGO or sometimes it may
-      say you need to do PGI.
+      say you need to do PGI.  This means that the ebuilds are on autopilot
+      and will think it out for you when PGOing.  No rules have to be
+      remembered by you.
 
-      After every new PGI, the existing PGI profile is wiped.
+      Immediately after every new PGI build, the existing PGI profile is
+      wiped.  This is to prevent mixing same versions in the same data profile
+      directory.
 
-      A version with a different with different API versions will have
-      different PGO profiles.  Reason why is because of the possiblility of
-      different codepaths enabled and possibility of different USE flags.
+      A version with a different API versions will have different PGO profiles.
+      Reason why is because of the possiblility of different codepaths enabled
+      and possibility of different USE flags.
 
       A PGOed build cannot continue to collect and generate more PGO training
       data.  To restart all over you must wipe the training data, see the
