@@ -331,7 +331,7 @@ pkg_pretend() {
 pkg_setup() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
 einfo
-einfo "To hard unmasking USE=tbb add the following line to"
+einfo "To hard unmask the USE=tbb add the following line to"
 einfo "/etc/portage/profile/package.use.mask:"
 einfo
 einfo "  sci-physics/bullet -tbb"
@@ -534,9 +534,7 @@ _train() {
 		addwrite "${x}"
 	done
 
-	# See examples/ExampleBrowser/ExampleEntries.cpp under each ExampleEntry
-	local all_demos=(
-	)
+	fix_tbb_rpath
 
 	local pgo_datadir="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
 	IFS=$'\n'
@@ -672,6 +670,28 @@ einfo
 	# they are already installed in system folders.
 }
 
+fix_tbb_rpath() {
+	if use tbb ; then
+		local found=0
+		local f
+		for f in $(find "${ED}") ; do
+			if ldd "${f}" 2>/dev/null | grep -q "tbb.*not found" ; then
+einfo
+einfo "Setting rpath for ${f} for TBB"
+einfo
+				local old_rpath=$(patchelf \
+					--print-rpath \
+					"${f}") || die
+				[[ -n "${old_rpath}" ]] && old_rpath=":${old_rpath}"
+				patchelf \
+					--set-rpath \
+					"/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}${old_rpath}" \
+					"${f}" || die
+			fi
+		done
+	fi
+}
+
 src_install() {
 	install_abi() {
 		export CMAKE_USE_DIR="${S}"
@@ -709,25 +729,7 @@ echo "/usr/share/${PN}/demos" \
 	fi
 	einstalldocs
 	_install_licenses
-	if use tbb ; then
-		local found=0
-		local f
-		for f in $(find "${ED}") ; do
-			if ldd "${f}" 2>/dev/null | grep -q "tbb.*not found" ; then
-einfo
-einfo "Setting rpath for ${f} for TBB"
-einfo
-				local old_rpath=$(patchelf \
-					--print-rpath \
-					"${f}") || die
-				[[ -n "${old_rpath}" ]] && old_rpath=":${old_rpath}"
-				patchelf \
-					--set-rpath \
-					"/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}${old_rpath}" \
-					"${f}" || die
-			fi
-		done
-	fi
+	fix_tbb_rpath
 	sanitize_rpaths
 }
 
