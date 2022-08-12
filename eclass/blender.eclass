@@ -660,6 +660,8 @@ IMPLS=(
 	build_creator
 	build_headless
 )
+IUSE+=" ${IMPLS} "
+REQUIRED_USE+=" || ( ${IMPLS} ) "
 
 blender_src_prepare() {
 	cd "${S}" || die
