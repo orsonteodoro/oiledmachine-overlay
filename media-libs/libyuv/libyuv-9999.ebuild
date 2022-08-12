@@ -101,7 +101,6 @@ eerror
 
 src_prepare() {
 	cmake_src_prepare
-	multilib_copy_sources
 }
 
 multilib_src_configure() {
