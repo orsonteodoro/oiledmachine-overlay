@@ -1,0 +1,10 @@
+--- a/src/SFML/Window/Vulkan.cpp.orig	2022-08-12 15:54:45.308907320 -0700
++++ b/src/SFML/Window/Vulkan.cpp	2022-08-12 15:54:49.981088463 -0700
+@@ -26,6 +26,7 @@
+ // Headers
+ ////////////////////////////////////////////////////////////
+ #include <SFML/Window/Vulkan.hpp>
++#include <cstddef>
+ 
+ #if defined(SFML_SYSTEM_WINDOWS)
+ 

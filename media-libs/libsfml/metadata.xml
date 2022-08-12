@@ -9,6 +9,9 @@
 	You can use SFML as a minimal windowing system to interface with OpenGL, or
 	as a fully-featured multimedia library for building games or interactive
 	programs.
+
+	Build assumes separate ESYSROOTS
+
 	</longdescription>
 	<upstream>
 		<remote-id type="github">SFML/SFML</remote-id>

@@ -70,15 +70,12 @@ dev-python/pocket
 dev-python/py-stackexchange
 dev-python/python-plexapi
 dev-python/soundcloud-python
-media-libs/embree
 media-libs/glfw
 media-libs/libcaca
 media-libs/libfishsound
 media-libs/libmp4v2
 media-libs/liboggz
 media-libs/libomxil-bellagio
-media-libs/libsfml
-media-libs/libyuv
 media-libs/nestegg
 media-libs/openimageio
 media-libs/opusfile
