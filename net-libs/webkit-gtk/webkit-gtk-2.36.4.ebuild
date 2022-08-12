@@ -1200,66 +1200,14 @@ eerror
 	cmake_src_compile
 }
 
-_get_local_perf_path() {
-	local u="${1}"
-	case ${u} in
-		wk_pgo_trainers_ares6)
-			echo "${S}/PerformanceTests/ARES-6"
-			;;
-		wk_pgo_trainers_content-animation)
-			echo "${S}/PerformanceTests/Animation"
-			;;
-		wk_pgo_trainers_dromaeo-cssquery)
-			echo "${S}/PerformanceTests/Dromaeo"
-			;;
-		wk_pgo_trainers_dromaeo-dom)
-			echo "${S}/PerformanceTests/Dromaeo"
-			;;
-		wk_pgo_trainers_dromaeo-jslib)
-			echo "${S}/PerformanceTests/Dromaeo"
-			;;
-		wk_pgo_trainers_speedometer2)
-			echo "${S}/PerformanceTests/Speedometer"
-			;;
-		wk_pgo_trainers_speedometer)
-eerror
-eerror "Missing local copy speedometer"
-eerror
-			die
-			;;
-		*)
-			local found=0
-			for t in ${PGO_LOCAL_COPY[@]} ; do
-				[[ "${t,,}" != "${u/wk_pgo_trainers_/}" ]] && continue
-				if [[ "${t/wk_pgo_trainers_/}" == "${t,,}" ]] ; then
-					echo "${S}/PerformanceTests/${t}"
-					found=1
-					break
-				fi
-			done
-			if (( ${found} == 0 )) ; then
-eerror
-eerror "Missing local copy for ${u/wk_pgo_trainers_/}"
-eerror
-				die
-			fi
-			;;
-	esac
-}
-
 multilib_src_compile() {
 	if (( ${NABIS} == 1 )) ; then
 		export BUILD_DIR="${S}"
 		cd "${BUILD_DIR}" || die
 	fi
-	if use pgo ; then
-		export PGO_PHASE=$(get_pgo_phase)
-		_config_pgx
-		_build_pgx
-	else
-		_config_pgx
-		_build_pgx
-	fi
+	export PGO_PHASE=$(get_pgo_phase)
+	_config_pgx
+	_build_pgx
 }
 
 multilib_src_test() {
