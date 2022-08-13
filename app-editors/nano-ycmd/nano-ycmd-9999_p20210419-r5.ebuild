@@ -163,7 +163,7 @@ econf_ycmd_slot_43() {
 	)
 	local args=(
 		"${myconf[@]}"
-		--bindir="${EPREFIX}"/bin
+		--bindir="${EPREFIX}/bin"
 		--disable-wrapping-as-root
 		--enable-ycmd
 		--htmldir=/trash
@@ -207,7 +207,7 @@ econf_ycmd_slot_44() {
 	)
 	local args=(
 		"${myconf[@]}"
-		--bindir="${EPREFIX}"/bin
+		--bindir="${EPREFIX}/bin"
 		--disable-wrapping-as-root
 		--enable-ycmd
 		--htmldir=/trash
@@ -364,11 +364,11 @@ eerror
 src_install() {
 	default
 	# Removes htmldir
-	rm -rf "${D}"/trash || die
+	rm -rf "${ED}"/trash || die
 	# Remove merge conflicts
-	rm -rf "${D}/etc/" \
-		"${D}/bin/rnano" \
-		"${D}/usr/share" || die
+	rm -rf "${ED}/etc/" \
+		"${ED}/bin/rnano" \
+		"${ED}/usr/share" || die
 	dodoc doc/sample.nanorc
 	docinto html
 	dodoc doc/faq.html
