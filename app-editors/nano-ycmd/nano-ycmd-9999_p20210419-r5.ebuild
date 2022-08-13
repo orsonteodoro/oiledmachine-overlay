@@ -378,7 +378,7 @@ src_install() {
 		# Enable colorization by default.
 		sed -i \
 			-e '/^# include /s:# *::' \
-			"${ED}"/etc/nanorc || die
+			"${ED}/etc/nanorc" || die
 	fi
 	dodir /usr/bin
 	dosym /bin/ynano /usr/bin/ynano
