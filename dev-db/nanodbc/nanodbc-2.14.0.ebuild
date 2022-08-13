@@ -4,8 +4,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake flag-o-matic multilib-build python-any-r1 \
-static-libs toolchain-funcs
+inherit cmake flag-o-matic multilib-build python-any-r1  toolchain-funcs
 
 DESCRIPTION="A small C++ wrapper for the native C ODBC API"
 HOMEPAGE="https://nanodbc.github.io/nanodbc/"
@@ -14,12 +13,12 @@ LICENSE="MIT"
 # Live ebuilds/snapshots won't get KEYWORed.
 
 SLOT="0/${PV}"
-IUSE+=" -boost_convert doxygen +debug html +examples -handle_nodata_bug
+IUSE+=" -boost doxygen +debug html +examples -handle_nodata_bug
 +libcxx man pdf -unicode -static-libs singlehtml texinfo"
-REQUIRED_USE+=" !libcxx"
+REQUIRED_USE+=" !libcxx" # static-libs not supported unless boost has static-libs support
 #building with USE libcxx is broken?
 DEPEND+="
-	dev-libs/boost:=[${MULTILIB_USEDEP},nls,static-libs?]
+	dev-libs/boost:=[${MULTILIB_USEDEP},nls]
 	dev-db/unixODBC[${MULTILIB_USEDEP}]
 	libcxx? ( sys-libs/libcxx[${MULTILIB_USEDEP}] )
 "
@@ -73,72 +72,75 @@ ewarn
 		python-any-r1_pkg_setup
 	fi
 }
+PATCHES=(
+	#"${FILESDIR}/nanodbc-2.11.3-boost-test.patch"
+	"${FILESDIR}/nanodbc-2.13.0-disable-tests.patch"
+	"${FILESDIR}/nanodbc-2.14.0-odbc_config-chost-prefix.patch"
+)
 
 src_prepare() {
-	default
-	prepare_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_prepare() {
-			cd "${BUILD_DIR}" || die
-			sed -i -e "s|DESTINATION lib|DESTINATION \${CMAKE_INSTALL_LIBDIR}|" CMakeLists.txt || die
-			sed -i -e "s|lib/cmake/nanodbc|\${CMAKE_INSTALL_LIBDIR}/cmake/nanodbc|" CMakeLists.txt || die
-			#sed -i -e 's|check_cxx_compiler_flag("-stdlib=libc++" CXX_SUPPORTS_STDLIB)|set(CXX_SUPPORTS_STDLIB ON)|' \
-			# CMakeLists.txt || die
-			#eapply "${FILESDIR}/nanodbc-2.11.3-boost-test.patch" || die p6
-			eapply "${FILESDIR}/nanodbc-2.13.0-disable-tests.patch" || die p7
-			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
-			cmake_src_prepare
-		}
-		static-libs_copy_sources
-		static-libs_foreach_impl \
-			static-libs_prepare
-	}
-	multilib_copy_sources
-	multilib_foreach_abi prepare_abi
+	cd "${BUILD_DIR}" || die
+	sed -i -e "s|DESTINATION lib|DESTINATION \${CMAKE_INSTALL_LIBDIR}|" \
+		CMakeLists.txt || die
+	sed -i -e "s|lib/cmake/nanodbc|\${CMAKE_INSTALL_LIBDIR}/cmake/nanodbc|" \
+		CMakeLists.txt || die
+	cmake_src_prepare
+	#sed -i -e 's|check_cxx_compiler_flag("-stdlib=libc++" CXX_SUPPORTS_STDLIB)|set(CXX_SUPPORTS_STDLIB ON)|' \
+	#	CMakeLists.txt || die
+	sed -i -e "s|Boost_USE_STATIC_LIBS ON|Boost_USE_STATIC_LIBS OFF|g" \
+		CMakeLists.txt || die
 
-	multilib_copy_sources
+	prepare_abi() {
+		cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
+	}
+	multilib_foreach_abi prepare_abi
+}
+
+get_lib_types() {
+	use static-libs && echo "static"
+	echo "shared"
 }
 
 src_configure() {
 	configure_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_configure() {
-			cd "${BUILD_DIR}" || die
-
-			if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
-				append-cxxflags -fPIC
-			fi
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${CMAKE_USE_DIR}" || die
+			[[ "${lib_type}" == "shared" ]] && append-cxxflags -fPIC
 			if use libcxx; then
-				append-cxxflags -I/usr/include/c++/v1 -DBOOST_TEST_DYN_LINK
+				append-cxxflags \
+					-I"${EPREFIX}/usr/include/c++/v1" \
+					-DBOOST_TEST_DYN_LINK
 				if [[ "$(tc-getCXX)" == "clang++" ]]; then
 					append-cxxflags -Qunused-arguments
 				fi
-				append-ldflags -L/usr/$(get_libdir) -lc++
+				append-ldflags -L"${EPREFIX}/usr/$(get_libdir)" -lc++
 			fi
 		        local mycmakeargs=(
-				-DCMAKE_INSTALL_LIBDIR="${EPREFIX}"/usr/$(get_libdir)
+				-DCMAKE_INSTALL_LIBDIR="${EPREFIX}/usr/$(get_libdir)"
+				-DCMAKE_SYSTEM_LIBRARY_PATH="${EPREFIX}/usr/$(get_libdir)"
 		                -DNANODBC_DISABLE_LIBCXX=$(usex libcxx "OFF" "ON")
 		                -DNANODBC_DISABLE_EXAMPLES=$(usex examples "OFF" "ON")
 		                -DNANODBC_ENABLE_WORKAROUND_NODATA=$(usex handle_nodata_bug)
-		                -DNANODBC_ENABLE_BOOST=$(usex boost_convert)
+		                -DNANODBC_ENABLE_BOOST=$(usex boost)
 		                -DNANODBC_ENABLE_UNICODE=$(usex unicode)
 				-DUNIX=1
 		        )
-			if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
-				mycmakeargs=( -DBUILD_SHARED_LIBS=ON )
+			if [[ "${lib_type}" == "shared" ]] ; then
+				mycmakeargs+=( -DBUILD_SHARED_LIBS=ON )
 			else
-				mycmakeargs=( -DBUILD_SHARED_LIBS=OFF )
+				mycmakeargs+=( -DBUILD_SHARED_LIBS=OFF )
 			fi
-			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake_src_configure
-		}
-		static-libs_foreach_impl \
-			static-libs_configure
+		done
 	}
 	multilib_foreach_abi configure_abi
 }
 
 src_compile_docs() {
+	cd "${CMAKE_USE_DIR}" || die
 	cd doc || die
 	if use doxygen ; then
 		einfo "Building doxygen documentation"
@@ -187,18 +189,14 @@ src_compile_docs() {
 
 src_compile() {
 	compile_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_compile() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
-			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake_src_compile
-
-			if multilib_is_native_abi ; then
-				src_compile_docs
-			fi
-		}
-		static-libs_foreach_impl \
-			static-libs_compile
+			multilib_is_native_abi && src_compile_docs
+		done
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -237,20 +235,18 @@ src_install_docs()
 
 src_install() {
 	install_abi() {
-		cd "${BUILD_DIR}" || die
-		static-libs_install() {
-			pushd "${BUILD_DIR}" || die
-			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export CMAKE_USE_DIR="${S}"
+			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
+			cd "${BUILD_DIR}" || die
 			cmake_src_install
-			if multilib_is_native_abi ; then
-				src_install_docs
-			fi
-		}
-		static-libs_foreach_impl \
-			static-libs_install
+			multilib_is_native_abi && src_install_docs
+		done
 	}
 	multilib_foreach_abi install_abi
 }
 
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib-support, static-libs
+# OILEDMACHINE-OVERLAY-META-WIP: boost-without-static

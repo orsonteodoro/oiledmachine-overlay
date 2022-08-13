@@ -1,0 +1,12 @@
+diff -urp nanodbc-2.14.0.orig/CMakeLists.txt nanodbc-2.14.0/CMakeLists.txt
+--- nanodbc-2.14.0.orig/CMakeLists.txt	2022-08-12 17:44:00.967073132 -0700
++++ nanodbc-2.14.0/CMakeLists.txt	2022-08-12 18:06:42.639865798 -0700
+@@ -111,7 +111,7 @@ message(STATUS "nanodbc feature: Enable
+ ########################################
+ if(UNIX)
+   # Try to find unixODBC first via odbc_config program.
+-  find_program(ODBC_CONFIG odbc_config
++  find_program(ODBC_CONFIG ${CHOST}-odbc_config
+     PATHS $ENV{ODBC_PATH}/bin /usr/bin /usr/local/bin)
+   if(ODBC_CONFIG)
+     message(STATUS "nanodbc build: ODBC on Unix - unixODBC")
