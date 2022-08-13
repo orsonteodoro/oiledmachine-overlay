@@ -191,7 +191,7 @@ eerror
 }
 
 src_prepare() {
-	sed -i "s:DESTINATION .*:DESTINATION /usr/share/doc/${PF}:" \
+	sed -i "s:DESTINATION .*:DESTINATION ${EPREFIX}/usr/share/doc/${PF}:" \
 		"doc/CMakeLists.txt" || die
 	find "examples" -name "CMakeLists.txt" -delete || die
 
