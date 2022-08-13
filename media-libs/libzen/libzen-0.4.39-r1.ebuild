@@ -16,20 +16,22 @@ KEYWORDS="~amd64 ~x86"
 IUSE+=" doc static-libs"
 BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	doc? ( app-doc/doxygen )"
+	doc? ( app-doc/doxygen )
+"
 SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.bz2"
-#S=${WORKDIR}/${MY_PN}/Project/GNU/Library
 S="${WORKDIR}/${MY_PN}"
 
 src_prepare() {
-	multilib_copy_sources
 	default
+	pushd "Project/GNU/Library" || die
+		sed -i 's:-O2::' configure.ac || die
+		eautoreconf
+	popd
+	multilib_copy_sources
 }
 
 multilib_src_configure() {
 	cd "Project/GNU/Library" || die
-	sed -i 's:-O2::' configure.ac || die
-	eautoreconf
 	econf \
 		--enable-unicode \
 		--enable-shared \
@@ -41,7 +43,7 @@ multilib_src_compile() {
 	default
 
 	if use doc ; then
-		cd "${WORKDIR}"/${MY_PN}/Source/Doc
+		cd "${WORKDIR}/${MY_PN}/Source/Doc" || die
 		doxygen Doxyfile || die
 	fi
 }
@@ -50,21 +52,18 @@ multilib_src_install() {
 	cd "${BUILD_DIR}/Project/GNU/Library" || die
 	default
 
-	# remove since the pkgconfig file should be used instead
-	rm "${D}"/usr/bin/libzen-config
-
-	insinto /usr/$(get_libdir)/pkgconfig
-	doins ${PN}.pc
+	insinto "/usr/$(get_libdir)/pkgconfig"
+	doins "${PN}.pc"
 
 	for x in ./ Format/Html Format/Http HTTP_Client ; do
-		insinto /usr/include/${MY_PN}/${x}
-		doins "${WORKDIR}"/${MY_PN}/Source/${MY_PN}/${x}/*.h
+		insinto "/usr/include/${MY_PN}/${x}"
+		doins "${WORKDIR}/${MY_PN}/Source/${MY_PN}/${x}/"*.h
 	done
 
-	dodoc "${WORKDIR}"/${MY_PN}/History.txt
+	dodoc "${WORKDIR}/${MY_PN}/History.txt"
 	if use doc ; then
 		docinto html
-		dodoc "${WORKDIR}"/${MY_PN}/Doc/*
+		dodoc "${WORKDIR}/${MY_PN}/Doc/"*
 	fi
 
 	find "${ED}" -name '*.la' -delete || die
