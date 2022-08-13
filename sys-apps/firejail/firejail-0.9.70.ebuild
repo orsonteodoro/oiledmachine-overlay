@@ -4,10 +4,8 @@
 
 EAPI=8
 
-EMTRS="release test"
-
 PYTHON_COMPAT=( python3_{8..11} )
-inherit flag-o-matic linux-info mutex-test-release python-single-r1 \
+inherit flag-o-matic linux-info python-single-r1 \
 toolchain-funcs virtualx
 
 if [[ ${PV} != 9999 ]]; then
@@ -212,9 +210,12 @@ zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt zulip
 
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
 
-IUSE+=" ${FIREJAIL_PROFILES_IUSE[@]} X apparmor +chroot contrib +dbusproxy
+IUSE+="
+${FIREJAIL_PROFILES_IUSE[@]}
+X apparmor +chroot contrib +dbusproxy
 +file-transfer +globalcfg +network +private-home selinux +suid test-profiles
-test-x11 +userns +whitelist xpra"
+test-x11 +userns +whitelist xpra
+"
 IUSE+=" +firejail_profiles_default +firejail_profiles_server"
 RDEPEND+="
 	!sys-apps/firejail-lts
@@ -228,21 +229,24 @@ DEPEND+="
 	${RDEPEND}
 	>=sys-libs/libseccomp-2.4.3
 "
+
+SLOTS=(13 12 11)
+gen_clang_bdepend() {
+	local s
+	for s in ${SLOTS[@]} ; do
+		echo "
+		(
+			sys-devel/clang:${s}
+			sys-devel/llvm:${s}
+		)
+		"
+	done
+}
+
 BDEPEND+="
 	|| (
 		>=sys-devel/gcc-11
-		(
-			sys-devel/clang:11
-			sys-devel/llvm:11
-		)
-		(
-			sys-devel/clang:12
-			sys-devel/llvm:12
-		)
-		(
-			sys-devel/clang:13
-			sys-devel/llvm:13
-		)
+		$(gen_clang_bdepend)
 	)
 	test? (
 		>=dev-tcltk/expect-5.45.4
@@ -824,6 +828,11 @@ PATCHES=(
 )
 EFIREJAIL_MAX_ENVS=${EFIREJAIL_MAX_ENVS:=512}
 
+get_impls() {
+	echo "release"
+	use test && echo "test"
+}
+
 pkg_setup() {
 	python-single-r1_pkg_setup
 	CONFIG_CHECK="~SQUASHFS"
@@ -874,14 +883,20 @@ src_prepare() {
 		etc/profile-m-z/tar.profile || die
 
 	if use test ; then
-		# The problem with the tests is that they are not root agnostic,
-		# which makes it difficult to test (our customizations) before
-		# installing.  The tests reference the already installed version
-		# which is what we do not want.  We prefer the test the one that
-		# will be installed.
-		einfo "Redirecting paths to isolated image (from \${ROOT} to \${ED})"
+		#
+		# The problem with the tests is that they assume BROOT always,
+		# and not SYSROOT agnostic, which makes it difficult to test
+		# (our customizations) before installing.  The tests reference
+		# the already installed version which is what we do not want.
+		# We prefer the test the one that will be installed.
+		#
+einfo
+einfo "Redirecting paths to isolated image (from \${ROOT} to \${ED})"
+einfo
 		for f in $(grep -l -r -e "/etc/firejail" "${S}/test") ; do
-			einfo "Editing ${f}:  /etc/firejail -> ${ED}/etc/firejail"
+einfo
+einfo "Editing ${f}:  /etc/firejail -> ${ED}/etc/firejail"
+einfo
 			sed -i -e "s| /etc/firejail| ${ED}/etc/firejail|g" \
 				-e "s|--netfilter=/etc/firejail|--netfilter=${ED}/etc/firejail|g" \
 				-e "s|--output=/etc/firejail|--output=${ED}/etc/firejail|g" \
@@ -889,46 +904,63 @@ src_prepare() {
 				"${f}" || die
 		done
 		for f in $(grep -l -r -e "/usr/bin/firejail" "${S}/test") ; do
-			einfo "Editing ${f}:  /usr/bin/firejail -> ${ED}/usr/bin/firejail"
+einfo
+einfo "Editing ${f}:  /usr/bin/firejail -> ${ED}/usr/bin/firejail"
+einfo
 			sed -i -e "s|/usr/bin/firejail|${ED}/usr/bin/firejail|g" \
 				"${f}" || die
 		done
 		for f in $(grep -l -r -e "PATH:/usr/lib/firejail:/usr/lib64/firejail" "${S}/test") ; do
-			einfo "Editing ${f}:  \$PATH:/usr/lib/firejail:/usr/lib64/firejail -> \$PATH:${ED}/usr/lib/firejail:${ED}/usr/lib64/firejail"
+einfo
+einfo "Editing ${f}:  \$PATH:/usr/lib/firejail:/usr/lib64/firejail -> \$PATH:${ED}/usr/lib/firejail:${ED}/usr/lib64/firejail"
+einfo
 			sed -i -e "s|PATH:/usr/lib/firejail:/usr/lib64/firejail|PATH:${ED}/usr/lib/firejail:${ED}/usr/lib64/firejail|g" \
 				"${f}" || die
 		done
 		for f in $(grep -l -r -e "/usr/share/doc/firejail" "${S}/test") ; do
-			einfo "Editing ${f}:  /usr/share/doc/firejail -> ${ED}/usr/share/doc/firejail-${PVR}"
+einfo
+einfo "Editing ${f}:  /usr/share/doc/firejail -> ${ED}/usr/share/doc/firejail-${PVR}"
+einfo
 			sed -i -e "s|/usr/share/doc/firejail|${ED}/usr/share/doc/firejail-${PVR}|g" \
 				"${f}" || die
 		done
 #		for f in $(grep -l -r -e "PREFIX=/usr" "${S}") ; do
-#			einfo "Editing ${f}:  PREFIX=/usr -> PREFIX=${ED}/usr"
+#einfo
+#einfo "Editing ${f}:  PREFIX=/usr -> PREFIX=${ED}/usr"
+#einfo
 #			sed -i -e "s|PREFIX=/usr|PREFIX=${ED}/usr|g" \
 #				"${f}" || die
 #		done
 	fi
 
-	mutex-test-release_copy_sources
+	local impl
+	for impl in $(get_impls) ; do
+		cp -a "${S}" "${S}_${impl}" || die
+	done
 }
 
 _src_configure() {
 	local test_opts=()
-	if [[ "${EMTR}" == "test" ]] ; then
+	if [[ "${impl}" == "test" ]] ; then
 #		sed -i -e "s|MAX_ENVS 256|MAX_ENVS ${EFIREJAIL_MAX_ENVS}|g" \
 #			"src/firejail/firejail.h" || die
 #		grep -q -r -e "MAX_ENVS ${EFIREJAIL_MAX_ENVS}" "src/firejail/firejail.h" \
 #			|| die
-#		ewarn "Max envvars lifted to ${EFIREJAIL_MAX_ENVS} for test build."
-#		ewarn "Setting changable by setting per-package envvar EFIREJAIL_MAX_ENVS"
-#		einfo "Current envvar count: "$(env | wc -l)
+#ewarn
+#ewarn "Max envvars lifted to ${EFIREJAIL_MAX_ENVS} for test build."
+#ewarn "Setting changable by setting per-package envvar EFIREJAIL_MAX_ENVS"
+#ewarn
+#einfo
+#einfo "Current envvar count: "$(env | wc -l)
+#einfo
 
 		# firejail deprecated --profile-dir= so must be hardwired this way
 		sed -i -e "s|\$(sysconfdir)|${ED}/etc|g" "src/common.mk.in" || die
 #		test_opts+=(--prefix="${ED}/usr")
-		einfo "Editing ${BUILD_DIR}/test/filters/memwrexe.exp:  ./memwrexe -> ${S}/test/filters/memwrexe"
-		sed -i -e "s|\./memwrexe|${S}/test/filters/memwrexe|g" \
+einfo
+einfo "Editing ${BUILD_DIR}/test/filters/memwrexe.exp:  ./memwrexe -> ${BUILD_DIR}/test/filters/memwrexe"
+einfo
+		sed -i -e "s|\./memwrexe|${BUILD_DIR}/test/filters/memwrexe|g" \
 			"${BUILD_DIR}/test/filters/memwrexe.exp" || die
 #		:;
 	else
@@ -954,20 +986,29 @@ _src_configure() {
 
 src_configure()
 {
-	mutex-test-release_foreach_impl _src_configure
+	local impl
+	for impl in $(get_impls) ; do
+		export BUILD_DIR="${S}_${impl}"
+		cd "${BUILD_DIR}" || die
+		_src_configure
+	done
 }
 
 _src_compile() {
 	emake CC="$(tc-getCC)"
-	if [[ "${EMTR}" == "test" ]] ; then
-		# install now into D so we can use this image for testing
-		emake install DESTDIR="${ED}"
+	if [[ "${impl}" == "test" ]] ; then
+		DESTDIR="${D}" emake install
 	fi
 }
 
 src_compile()
 {
-	mutex-test-release_foreach_impl _src_compile
+	local impl
+	for impl in $(get_impls) ; do
+		export BUILD_DIR="${S}_${impl}"
+		cd "${BUILD_DIR}" || die
+		_src_compile
+	done
 }
 
 WHITELIST_READONLY=(
@@ -1099,8 +1140,10 @@ _src_test()
 	# Setting these to test against the to be installed version not the one to be replaced.
 	export PATH="${ED}/usr/bin:${PATH}"
 	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)/firejail:${LD_LIBRARY_PATH}"
-	einfo "PATH=\"${PATH}\""
-	einfo "LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\""
+einfo
+einfo "PATH=\"${PATH}\""
+einfo "LD_LIBRARY_PATH=\"${LD_LIBRARY_PATH}\""
+einfo
 
 	export SANDBOX_ON=0
 
@@ -1167,13 +1210,17 @@ _src_test()
 
 if true ; then
 	for x in ${profile_tests[@]} ${basic_tests[@]} ${misc_tests[@]} ; do
-		einfo "Testing ${x}"
+einfo
+einfo "Testing ${x}"
+einfo
 		wipe_env
 		make ${x} 2>&1 >"${T}/test.log"
 		local retcode=$?
 		restore_env
 		if (( ${retcode} == 0 )) ; then
-			einfo "${x} passed"
+einfo
+einfo "${x} passed"
+einfo
 		else
 eerror
 eerror "Test failed for ${x}.  Return code: ${retcode}.  For details see"
@@ -1206,7 +1253,9 @@ fi
 		)
 		for x in ${x11_tests[@]} ; do
 			cd "${BUILD_DIR}" || die
-			einfo "Testing ${x}"
+einfo
+einfo "Testing ${x}"
+einfo
 			cat <<EOF > "${BUILD_DIR}/run.sh"
 #!/bin/bash
 cat /dev/null > "${T}/test-retcode.log"
@@ -1225,7 +1274,9 @@ eerror
 				die
 			fi
 			if [[ ! -f "${T}/test-retcode.log" ]] ; then
-				eerror "Missing retcode for ${x}"
+eerror
+eerror "Missing retcode for ${x}"
+eerror
 				die
 			fi
 			local test_retcode=$(cat "${T}/test-retcode.log")
@@ -1245,7 +1296,9 @@ eerror
 	fi
 	export SANDBOX_ON=1
 
-	einfo "FIXME:  Error results:"
+einfo
+einfo "FIXME:  Error results:"
+einfo
 	grep -o -E -r \
 		-e "TESTING ERROR [0-9.]+" "${T}/test-all.log" \
 		-e "TESTING ERROR - grsecurity detection" \
@@ -1259,7 +1312,12 @@ eerror
 }
 
 src_test() {
-	mutex-test-release_foreach_impl _src_test
+	local impl
+	for impl in $(get_impls) ; do
+		export BUILD_DIR="${S}_${impl}"
+		cd "${BUILD_DIR}" || die
+		_src_test
+	done
 }
 
 DOTTED_FILENAMES=(
@@ -1280,6 +1338,7 @@ io.github.lainsce.Notejot
 mpg123.bin
 openoffice.org
 org.gnome.NautilusPreviewer
+ping-hardened.inc
 runenpass.sh
 start-tor-browser.desktop
 studio.sh
@@ -1334,13 +1393,20 @@ _src_install() {
 			dest="${ED}/etc/firejail/${u}.profile"
 		fi
 		if [[ ! -e "${src}" ]] ; then
-			die "${src} is missing"
+eerror
+eerror "u=${u}"
+eerror "${src} is missing"
+eerror
+eerror "QA:  Try converting u value underscores (_) to a period (.) and add to"
+eerror "DOTTED_FILENAMES"
+eerror
+			die
 		fi
 		if use ${pf} ; then
-			einfo "Adding ${u} profile"
+einfo "Adding ${u} profile"
 			mv "${src}" "${dest}" || die
 		else
-			einfo "Rejecting ${u} profile"
+einfo "Rejecting ${u} profile"
 			local dest="${T}/profiles_processed"
 			mv "${src}" "${dest}" || die
 		fi
@@ -1348,20 +1414,45 @@ _src_install() {
 
 	for pf in $(find "${T}/profiles" | sed -e "1d") ; do
 		local u=$(basename "${pf}" | sed -e "s|.profile||g")
-		ewarn "Q/A: Missing ${u} in IUSE flags."
+ewarn
+ewarn "Q/A: Missing ${u} in IUSE flags."
+ewarn
 	done
-	(( $(find "${T}/profiles" | sed -e "1d" | wc -l) != 0 )) \
-		&& die "${T}/profiles is not empty"
+	if (( $(find "${T}/profiles" | sed -e "1d" | wc -l) != 0 )) ; then
+eerror
+eerror "${T}/profiles is not empty"
+eerror
+		die
+	fi
 
-	einfo "Verifying release build"
-	grep -r -e "/image/" "${ED}/usr/bin" \
-		&& die "Detected test binaries"
-	grep -r -e "/image/" "${ED}/usr/$(get_libdir)" \
-		&& die "Detected test libraries"
+einfo
+einfo "Verifying release build"
+einfo
+	if grep -r -e "/image/" "${ED}/usr/bin" ; then
+eerror
+eerror "Detected test binaries"
+eerror
+		die
+	fi
+	if grep -r -e "/image/" "${ED}/usr/$(get_libdir)" ; then
+eerror
+eerror "Detected test libraries"
+eerror
+		die
+	fi
 }
 
 src_install() {
-	mutex-test-release_foreach_impl _src_install
+	local impl
+	for impl in $(get_impls) ; do
+		export BUILD_DIR="${S}_${impl}"
+		cd "${BUILD_DIR}" || die
+
+		# Test does not get installed due to modifications
+		[[ "${impl}" == "test" ]] && continue
+
+		_src_install
+	done
 }
 
 pkg_postinst() {
@@ -1417,3 +1508,5 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patches, ebuild-changes, profile-selection, testing-sections, audio-patch
+# OILEDMACHINE-OVERLAY-META-WIP:  test-USE-flag
+# OILEDMACHINE-OVERLAY-META-DETAILED-NOTES:  The test USE flag was found useful in correcting profile errors and why it kept around; however, it is garbage quality.
