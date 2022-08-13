@@ -25,6 +25,7 @@
 #   https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
 # KCFI:
 #   https://github.com/torvalds/linux/compare/v5.18...samitolvanen:kcfi-rfc-v2
+#   https://github.com/torvalds/linux/compare/v5.19...samitolvanen:kcfi-rfc-v3
 # futex (aka futex_wait_multiple):
 #   https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
 # futex2:
@@ -39,7 +40,6 @@
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
-#   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.17
 #   https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.18
 # kernel_compiler_patch:
 #   https://github.com/graysky2/kernel_compiler_patch
@@ -49,7 +49,6 @@
 #   https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
 # Multigenerational LRU:
 #   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
-#   https://github.com/torvalds/linux/compare/v5.17...zen-kernel:5.17/mglru
 #   https://github.com/torvalds/linux/compare/v5.18...zen-kernel:5.18/mglru
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
@@ -70,7 +69,6 @@
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
-#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.17/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.18/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
@@ -83,8 +81,8 @@
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
-#   https://github.com/torvalds/linux/compare/v5.17...zen-kernel:5.17/zen-sauce
 #   https://github.com/torvalds/linux/compare/v5.18...zen-kernel:5.18/zen-sauce
+#   https://github.com/torvalds/linux/compare/v5.19...zen-kernel:5.19/zen-sauce
 
 case ${EAPI:-0} in
 	[78]) ;;
@@ -550,7 +548,7 @@ PDS_FN="v${K_MAJOR_MINOR}_pds${PATCH_PDS_V}.patch"
 PDS_SRC_URI="${PDS_URI_BASE}${PDS_FN}"
 
 PRJC_URI_BASE=\
-"https://gitlab.com/alfredchen/projectc/-/raw/master/${K_MAJOR_MINOR}/"
+"https://gitlab.com/alfredchen/projectc/-/raw/master/${K_MAJOR_MINOR}${PRJC_LTS}/"
 PRJC_FN="prjc_v${PATCH_PROJC_VER}.patch"
 PRJC_SRC_URI="${PRJC_URI_BASE}${PRJC_FN}"
 
@@ -1612,35 +1610,33 @@ apply_uksm() {
 # @DESCRIPTION:
 # Applies all the point releases
 apply_vanilla_point_releases() {
-	if [[ -n "${KERNEL_NO_POINT_RELEASE}" \
-		&& "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; \
-		then
-		:
-	else
-		# genpatches places kernel incremental patches starting at 1000
-		local a
-		for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
-			local f="${T}/${a}"
-			cd "${T}" || die
-			unpack "$a.xz"
-			cd "${BUILD_DIR}" || die
+	[[ -n "${KERNEL_NO_POINT_RELEASE}" \
+		&& "${KERNEL_NO_POINT_RELEASE}" == "1" ]] || return
 
-			local output=$(patch --dry-run ${PATCH_OPTS} -N -i "${f}")
-			echo "${output}" | grep -F -e "FAILED at"
-			if [[ "$?" == "1" ]]; then
-				# Already patched or good
-				_fpatch "${f}"
-			else
-				eerror "Failed ${a}"
-				eerror
-				eerror "Patch details:"
-				eerror
-				echo -e "${output}"
-				eerror
-				die
-			fi
-		done
-	fi
+	# genpatches places kernel incremental patches starting at 1000
+	local a
+	for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
+		local f="${T}/${a}"
+		cd "${T}" || die
+		unpack "$a.xz"
+		cd "${BUILD_DIR}" || die
+
+		local output=$(patch --dry-run ${PATCH_OPTS} -N -i "${f}")
+		echo "${output}" | grep -F -e "FAILED at"
+		if [[ "$?" == "1" ]]; then
+			# Already patched or good
+			_fpatch "${f}"
+		else
+eerror
+eerror "Failed ${a}"
+eerror
+eerror "Patch details:"
+eerror
+echo -e "${output}"
+eerror
+			die
+		fi
+	done
 }
 
 # @FUNCTION: apply_zen_muqss
@@ -1785,37 +1781,9 @@ einfo
 
 	ot-kernel_unpack_tarball
 	einfo "Done unpacking."
-
-	# unpacking point releases found in apply_vanilla_point_releases
-	cd "${WORKDIR}" || die
 	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 	mv "linux-${K_MAJOR_MINOR}" "${BUILD_DIR}" || die
-	cd "${BUILD_DIR}" || die
-
-	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
-		if use tresor_sysfs ; then
-			cat "${EDISTDIR}/tresor_sysfs.c" > "${BUILD_DIR}/tresor_sysfs.c"
-		fi
-	fi
-
-	if use disable_debug ; then
-		cat "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" \
-			> "${BUILD_DIR}/disable_debug" || die
-	fi
-
-	cat "${FILESDIR}/all-kernel-options-as-modules" \
-		> "${BUILD_DIR}/all-kernel-options-as-modules" || die
-	cat "${FILESDIR}/all-kernel-options-as-yes" \
-		> "${BUILD_DIR}/all-kernel-options-as-yes" || die
-
-	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
-		cat "${FILESDIR}/pgo-trainer.sh" > "${BUILD_DIR}/pgo-trainer.sh"
-	fi
-
-	cat "${FILESDIR}/ep800/ep800.c" \
-		> "${BUILD_DIR}/drivers/media/usb/gspca/ep800.c" || die
-	cat "${FILESDIR}/ep800/ep800.h" \
-		> "${BUILD_DIR}/drivers/media/usb/gspca/ep800.h" || die
+	apply_vanilla_point_releases
 }
 
 # @FUNCTION: apply_all_patchsets
@@ -1961,10 +1929,37 @@ ot-kernel_copy_pgo_state() {
 # Patch the kernel a bit
 ot-kernel_src_prepare() {
 	einfo "Called ot-kernel_src_prepare()"
+
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export BUILD_DIR_MASTER="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
-	apply_vanilla_point_releases
+
+	cd "${BUILD_DIR}" || die
+
+	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
+		if use tresor_sysfs ; then
+			cat "${EDISTDIR}/tresor_sysfs.c" > "${BUILD_DIR}/tresor_sysfs.c"
+		fi
+	fi
+
+	if use disable_debug ; then
+		cat "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" \
+			> "${BUILD_DIR}/disable_debug" || die
+	fi
+
+	cat "${FILESDIR}/all-kernel-options-as-modules" \
+		> "${BUILD_DIR}/all-kernel-options-as-modules" || die
+	cat "${FILESDIR}/all-kernel-options-as-yes" \
+		> "${BUILD_DIR}/all-kernel-options-as-yes" || die
+
+	if has clang-pgo ${IUSE_EFFECTIVE} && use clang-pgo ; then
+		cat "${FILESDIR}/pgo-trainer.sh" > "${BUILD_DIR}/pgo-trainer.sh"
+	fi
+
+	cat "${FILESDIR}/ep800/ep800.c" \
+		> "${BUILD_DIR}/drivers/media/usb/gspca/ep800.c" || die
+	cat "${FILESDIR}/ep800/ep800.h" \
+		> "${BUILD_DIR}/drivers/media/usb/gspca/ep800.h" || die
 
 	# Patch for nv driver
 	sed -i -e "s|select FB_CMDLINE|select FB_CMDLINE\n\tselect DRM_KMS_HELPER|" \
@@ -2024,7 +2019,11 @@ ewarn
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		if (( ${moved} == 0 )) ; then
 			einfo "Renaming for -${extraversion}"
-			mv "${BUILD_DIR_MASTER}" "${BUILD_DIR}" || die
+			if [[ "${extraversion}" == "${K_EXTRAVERSION}" ]] ; then
+				:; # Avoid copy into self error
+			else
+				mv "${BUILD_DIR_MASTER}" "${BUILD_DIR}" || die
+			fi
 			mkdir -p "${S}" || die # Dummy dir for portage... Do not remove.
 			export BUILD_DIR_MASTER="${WORKDIR}/linux-${PV}-${extraversion}"
 			moved=1
