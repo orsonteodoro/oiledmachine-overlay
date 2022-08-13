@@ -4,7 +4,7 @@
 
 EAPI=7
 
-inherit cmake git-r3 multilib-build
+inherit cmake git-r3
 
 MY_PV=$(ver_cut 1-2 "${PV}")
 FRAMEWORK="6.0"
