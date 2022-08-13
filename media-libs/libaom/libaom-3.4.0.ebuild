@@ -286,9 +286,9 @@ get_native_abi_use() {
 
 get_multiabi_ffmpeg() {
 	if multilib_is_native_abi && has_version "media-video/ffmpeg[$(get_native_abi_use)]" ; then
-		echo "/usr/bin/ffmpeg"
+		echo "${EPREFIX}/usr/bin/ffmpeg"
 	elif ! multilib_is_native_abi && has_version "media-video/ffmpeg[$(get_abi_use ${ABI})]" ; then
-		echo "/usr/bin/ffmpeg-${ABI}"
+		echo "${EPREFIX}/usr/bin/ffmpeg-${ABI}"
 	else
 		echo ""
 	fi
