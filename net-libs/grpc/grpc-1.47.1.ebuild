@@ -75,20 +75,24 @@ src_prepare() {
 	soversion_check
 	cmake_src_prepare
 	prepare_abi() {
-		cd "${BUILD_DIR}" || die
+		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+		cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
+		cd "${CMAKE_USE_DIR}" || die
 		# un-hardcode libdir
 		sed -i "s@lib/pkgconfig@$(get_libdir)/pkgconfig@" \
 			CMakeLists.txt || die
 		sed -i "s@/lib@/$(get_libdir)@" \
 			cmake/pkg-config-template.pc.in || die
 	}
-	multilib_copy_sources
 	multilib_foreach_abi prepare_abi
 }
 
 src_configure() {
 	configure_abi() {
-		cd "${BUILD_DIR}" || die
+		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
+		cd "${CMAKE_USE_DIR}" || die
 		local mycmakeargs=(
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
@@ -104,8 +108,6 @@ src_configure() {
 			-DCMAKE_CXX_STANDARD=17
 			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
-		CMAKE_USE_DIR="${BUILD_DIR}" \
-		BUILD_DIR="${WORKDIR}/${P}_${ABI}_build" \
 		cmake_src_configure
 	}
 	multilib_foreach_abi configure_abi
@@ -113,9 +115,9 @@ src_configure() {
 
 src_compile() {
 	configure_abi() {
+		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 		cd "${BUILD_DIR}" || die
-		CMAKE_USE_DIR="${BUILD_DIR}" \
-		BUILD_DIR="${WORKDIR}/${P}_${ABI}_build" \
 		cmake_src_compile
 	}
 	multilib_foreach_abi configure_abi
@@ -123,9 +125,9 @@ src_compile() {
 
 src_install() {
 	configure_abi() {
+		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+		export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 		cd "${BUILD_DIR}" || die
-		CMAKE_USE_DIR="${BUILD_DIR}" \
-		BUILD_DIR="${WORKDIR}/${P}_${ABI}_build" \
 		cmake_src_install
 		if multilib_is_native_abi ; then
 			if use examples; then
