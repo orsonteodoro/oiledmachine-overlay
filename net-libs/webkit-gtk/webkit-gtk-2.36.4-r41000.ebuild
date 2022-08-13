@@ -609,7 +609,7 @@ ewarn
 check_geolocation() {
 	if use geolocation ; then
 		if has_version "~app-misc/geoclue-2.5.7" ; then
-			local geoclue_repo=$(cat /var/db/pkg/app-misc/geoclue-2.5.7*/repository)
+			local geoclue_repo=$(cat "${EROOT}/var/db/pkg/app-misc/geoclue-2.5.7"*"/repository")
 			if [[ "${geoclue_repo}" == "gentoo" ]] ; then
 ewarn
 ewarn "The gentoo repo version of geoclue may be broken if you have no GPS"
@@ -756,7 +756,7 @@ ewarn
 
 	if use v4l ; then
 		local gst_plugins_v4l2_repo=\
-$(cat "${ESYSROOT}/var/db/pkg/media-plugins/gst-plugins-v4l2-"*"/repository")
+$(cat "${EROOT}/var/db/pkg/media-plugins/gst-plugins-v4l2-"*"/repository")
 einfo
 einfo "gst-plugins-v4l2 repo:  ${gst_plugins_v4l2_repo}"
 einfo
@@ -948,7 +948,7 @@ eerror
 		-DCMAKE_CXX_LIBRARY_ARCHITECTURE=$(get_abi_CHOST ${ABI})
 		-DCMAKE_INSTALL_BINDIR=$(get_libdir)/webkit-gtk-${API_VERSION}
 		-DCMAKE_INSTALL_LIBEXECDIR=$(get_libdir)/misc
-		-DCMAKE_LIBRARY_PATH=/usr/$(get_libdir)
+		-DCMAKE_LIBRARY_PATH="${EPREFIX}/usr/$(get_libdir)"
 		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}/usr/bin/xdg-dbus-proxy"
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
@@ -1315,16 +1315,16 @@ multilib_src_install() {
 	_install_licenses
 
 	if use pgo ; then
-		local pgo_data_dir="/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
+		local pgo_data_dir="${ED}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
 		dodir "${pgo_data_dir}"
 		if tc-is-gcc ; then
-			"${CC}" -dumpmachine > "${ED}/${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
 			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${ED}/${pgo_data_dir}/compiler_fingerprint" || die
+				> "${pgo_data_dir}/compiler_fingerprint" || die
 		elif tc-is-clang ; then
-			"${CC}" -dumpmachine > "${ED}/${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
 			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
-				> "${ED}/${pgo_data_dir}/compiler_fingerprint" || die
+				> "${pgo_data_dir}/compiler_fingerprint" || die
 		fi
 	fi
 }
@@ -1334,7 +1334,7 @@ wipe_pgo_profile() {
 einfo
 einfo "Wiping previous PGO profile"
 einfo
-		local pgo_data_dir="${ESYSROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
+		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
 		find "${pgo_data_dir}" -type f -delete
 	fi
 }
@@ -1347,7 +1347,7 @@ delete_old_pgo_profiles() {
 				# Don't delete permissions
 				continue
 			fi
-			local pgo_data_dir="${ESYSROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
+			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
 			if [[ -e "${pgo_data_dir}" ]] ; then
 				rm -rf "${pgo_data_dir}" || true
 			fi
@@ -1358,11 +1358,9 @@ delete_old_pgo_profiles() {
 pkg_postinst() {
 	if use minibrowser ; then
 		create_minibrowser_symlink_abi() {
-			pushd "${ESYSROOT}/usr/bin" || die
-				ln -sf \
-../../usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser \
-					minibrowser || die
-			popd
+			ln -sf \
+"${EPREFIX}/usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser" \
+				"${EROOT}/usr/bin/minibrowser" || die
 		}
 		multilib_foreach_abi create_minibrowser_symlink_abi
 einfo
