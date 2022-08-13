@@ -13,7 +13,8 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SRC_URI="
 https://github.com/jarun/ddgr/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 SLOT="0"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 RDEPEND+=" ${PYTHON_DEPS}"
@@ -27,10 +28,9 @@ pkg_setup() {
 }
 
 src_install() {
-	SITEDIR="/usr/$(get_libdir)/${EPYTHON}/site-packages"
-	python_scriptinto "${SITEDIR}/${PN}"
+	python_scriptinto "$(python_get_sitedir)/${PN}"
 	python_doexe ddgr
-	dosym "/usr/lib/python-exec/${EPYTHON}/ddgr" "/usr/bin/ddgr"
+	dosym "$(python_get_scriptdir)/ddgr" "/usr/bin/ddgr"
 	doman ddgr.1
 }
 
