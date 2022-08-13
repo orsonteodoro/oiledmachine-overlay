@@ -1130,12 +1130,12 @@ einfo
 einfo
 einfo "Checking ${p}:${llvm_slot}"
 einfo
-				local path=$(realpath "${ESYSROOT}/var/db/pkg/${p}-${llvm_slot}"*"/environment.bz2")
+				local path=$(realpath "${EROOT}/var/db/pkg/${p}-${llvm_slot}"*"/environment.bz2")
 				if [[ -e "${path}" ]] ; then
 					emerged_llvm_commit=$(bzcat \
 						"${path}" \
 						| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
-					pv=$(cat "${ESYSROOT}/var/db/pkg/${p}-${llvm_slot}"*"/PF" | sed "s|${p}-||")
+					pv=$(cat "${EROOT}/var/db/pkg/${p}-${llvm_slot}"*"/PF" | sed "s|${p}-||")
 					_get_llvm_timestamp
 					[[ "${p}" == "sys-devel/llvm" ]] \
 						&& LLVM_TIMESTAMP=${emerged_llvm_timestamp}
@@ -1151,12 +1151,12 @@ ewarn
 einfo
 einfo "Checking ${p}:0"
 einfo
-				local path=$(realpath "${ESYSROOT}/var/db/pkg/${p}"*"/environment.bz2")
+				local path=$(realpath "${EROOT}/var/db/pkg/${p}"*"/environment.bz2")
 				if [[ -e "${path}" ]] ; then
 					emerged_llvm_commit=$(bzcat \
 						"${path}" \
 						| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
-					pv=$(cat "${ESYSROOT}/var/db/pkg/${p}"*"/PF" | sed "s|${p}-||")
+					pv=$(cat "${EROOT}/var/db/pkg/${p}"*"/PF" | sed "s|${p}-||")
 					_get_llvm_timestamp
 				else
 ewarn
@@ -1173,7 +1173,7 @@ ewarn
 				# We shouldn't have to deal with multiple sys-libs/compiler-rt-sanitizers
 				# 13.0.0.9999 13.0.0_rc3 13.0.0_rc2 versions installed at the same time
 				# for just 1 sys-libs/llvm but we have to.
-				for mp in $(find "${ESYSROOT}/var/db/pkg/${category}" \
+				for mp in $(find "${EROOT}/var/db/pkg/${category}" \
 					-maxdepth 1 \
 					-type d \
 					-regextype "posix-extended" \
@@ -1239,7 +1239,7 @@ get_llvm_profdata_version_info()
 		local llvm_version
 		if [[ "${v}" =~ "9999" ]] ; then
 			local llvm_version=$(bzless \
-				"${ESYSROOT}/var/db/pkg/sys-devel/llvm-${v}"*"/environment.bz2" \
+				"${EROOT}/var/db/pkg/sys-devel/llvm-${v}"*"/environment.bz2" \
 				| grep -F -e "EGIT_VERSION" | head -n 1 | cut -f 2 -d '"')
 		else
 			llvm_version="llvmorg-${v/_/-}"
@@ -1347,7 +1347,7 @@ einfo "Assuming systemwide CFI Cross-DSO."
 einfo
 	for f in ${pkg_libs[@]} ; do
 		local paths=(
-$(realpath {/usr/lib/gcc/*-pc-linux-gnu/{,32/},/lib,/usr/lib}*"/${f}" 2>/dev/null)
+$(realpath {"${EPREFIX}"/usr/lib/gcc/*/{,32/},/lib,/usr/lib}*"/${f}" 2>/dev/null)
 		)
 		if (( "${#paths[@]}" == 0 )) ; then
 ewarn "${f} does not exist."
@@ -1356,7 +1356,7 @@ ewarn "${f} does not exist."
 		local path
 		path=$(echo "${paths[@]}" | tr " " "\n" | tail -n 1)
 		local real_path=$(realpath "${path}")
-		if readelf -Ws "${real_path}" 2>/dev/null \
+		if "${BROOT}/usr/bin/readelf" -Ws "${real_path}" 2>/dev/null \
 			| grep -E -q -e "(cfi_bad_type|cfi_check_fail|__cfi_init)" ; then
 einfo "${f} is CFI protected."
 		else
@@ -1510,7 +1510,7 @@ eerror
 # 2.  Path to highest LLD (/usr/lib/llvm/${v_major_lld}/bin)
 # If ccache is installed, this really does nothing because
 # /usr/lib/ccache/bin has a higher precedence.
-			export PATH+=":/usr/lib/llvm/${LLVM_SLOT}/bin"
+			export PATH+=":${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}/bin"
 einfo
 einfo "Using sys-devel/llvm:${LLVM_SLOT}"
 einfo
@@ -1518,7 +1518,7 @@ einfo
 				$(best_version "sys-devel/lld" \
 					| sed -e "s|sys-devel/lld-||"))
 			v_major_lld=$(ver_cut 1 "${v_major_lld}")
-			export PATH+=":/usr/lib/llvm/${v_major_lld}/bin"
+			export PATH+=":${EPREFIX}/usr/lib/llvm/${v_major_lld}/bin"
 		fi
 		if use pgo ; then
 			local vi=$(get_llvm_profdata_version_info)
@@ -1558,8 +1558,6 @@ ewarn
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
-
-	check_deps_cfi_cross_dso
 
 	if use pgo-full ; then
 		enewgroup crpgo
@@ -1613,6 +1611,8 @@ eerror
 src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
+
+	check_deps_cfi_cross_dso
 
 	local PATCHES=()
 	if ( ! use clang ) || use system-libstdcxx ; then
@@ -2000,7 +2000,7 @@ einfo
 		# pre-strip binaries.
 		#
 		mkdir -p buildtools/third_party/eu-strip/bin || die
-		ln -s "${EPREFIX}"/bin/true \
+		ln -s "${BROOT}"/bin/true \
 			buildtools/third_party/eu-strip/bin/eu-strip || die
 	fi
 
@@ -2010,21 +2010,55 @@ einfo
 		&& multilib_copy_sources
 }
 
-is_new_pgo() {
-	local ret="0"
-	local pgo_data_dir=$(get_pgo_data_dir)
-	if [[ ! -e "${pgo_data_dir}" ]] ; then
-		ret="0"
-	elif is-tc-clang ; then
-		if find "${pgo_data_dir}" -name "*.profraw" 2>/dev/null ; then
-			ret="1"
+meets_pgo_requirements() {
+	if use pgo ; then
+		local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
+		local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+
+		# Has same compiler?
+		if tc-is-gcc ; then
+			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
+			if [[ "${actual}" != "${expected}" ]] ; then
+				return 1
+			fi
+		elif tc-is-clang ; then
+			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
+			if [[ "${actual}" != "${expected}" ]] ; then
+				return 1
+			fi
+		else
+			return 1
+			ewarn "Compiler is not supported."
 		fi
-	elif is-tc-gcc ; then
-		if find "${pgo_data_dir}" -name "*.gcda" 2>/dev/null ; then
-			ret="1"
+
+		# Has profile?
+		if tc-is-gcc && find "${pgo_data_dir2}" -name "*.gcda" \
+			2>/dev/null 1>/dev/null ; then
+			:; # pass
+		elif tc-is-clang && find "${pgo_data_dir2}" -name "*.profraw" \
+			2>/dev/null 1>/dev/null ; then
+			:; # pass
+		else
+			return 1
 		fi
+
+		return 0
 	fi
-	echo "${ret}"
+	return 1
+}
+
+get_pgo_phase() {
+	local result="NO_PGO"
+	if ! use pgo ; then
+		result="NO_PGO"
+	elif use pgo && meets_pgo_requirements ; then
+		result="PGO"
+	elif use pgo && ! meets_pgo_requirements ; then
+		result"PGI"
+	fi
+	echo "${result}"
 }
 
 _configure_pgx() {
@@ -2446,17 +2480,16 @@ einfo
 	fi
 
 	# The PGO data must not be wiped by the sandbox or generated in the sandbox.
-	local pgo_data_dir=$(get_pgo_data_dir)
-	local is_new=$(is_new_pgo)
+	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
 	if ! use pgo-full || tc-is-cross-compiler ; then
 		:;
-	elif (( ${is_new} == 1 )) ; then
+	elif [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${pgo_data_dir}"
 		else
 			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
 		fi
-	else
+	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		mkdir -p "${T}/pgo-${ABI}" || die
 		if tc-is-clang ; then
 			llvm-profdata merge -output="${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
@@ -2716,24 +2749,10 @@ multilib_src_compile() {
 	#	--use-system-cmake \
 	#	--without-android || die
 
-	if use pgo-full && ! tc-is-cross-compiler ; then
-		local is_new=$(is_new_pgo)
-		if (( ${is_new} == 1 )) \
-			|| [[ "${GEN_ABOUT_CREDITS}" == "1" ]] ; then
-			PGO_PHASE=1
-			_configure_pgx # pgi
-			_update_licenses
-			_build_pgx
-		else
-			PGO_PHASE=2
-			_configure_pgx # pgo
-			_build_pgx
-		fi
-	else
-		_configure_pgx # pgo / no-pgo
-		_update_licenses
-		_build_pgx
-	fi
+	export PGO_PHASE=$(get_pgo_phase)
+	_configure_pgx
+	_update_licenses
+	_build_pgx
 
 	# Build manpage; bug #684550
 	sed -e 's|@@PACKAGE@@|chromium-browser|g;
@@ -2835,28 +2854,6 @@ einfo
 	# calls here.
 
 	touch "${T}/.copied_licenses"
-}
-
-get_pgo_data_dir() {
-	local pgo_refresh_mode="${CR_PGO_REFRESH_MODE:-build}"
-	# CR_PGO_REFRESH_MODE is about the validity of PGO profile reuse.
-	# major = The PGO profile is good in the same major version.
-	# major-minor = The PGO profile is good in the same major.minor version.
-	# build = The PGO profile is good in the same major.minor.build version.
-	# patch = The PGO profile is good in the same major.minor.build.patch version.
-	if [[ "${pgo_refresh_mode}" == "major" ]] ; then
-		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1 ${PV})/${ABI}"
-	elif [[ "${pgo_refresh_mode}" == "major-minor" ]] ; then
-		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-2 ${PV})/${ABI}"
-	elif [[ "${pgo_refresh_mode}" == "build" ]] ; then
-		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-3 ${PV})/${ABI}"
-	elif [[ "${pgo_refresh_mode}" == "patch" ]] ; then
-		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-4 ${PV})/${ABI}"
-	else
-		# Build as fallback
-		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-3 ${PV})/${ABI}"
-	fi
-	echo "${pgo_data_dir}"
 }
 
 multilib_src_install() {
@@ -2969,43 +2966,25 @@ s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
 	_install_licenses
 
 	if use pgo-full ; then
-		local pgo_data_dir=$(get_pgo_data_dir)
+		local pgo_data_dir="${ED}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
 		dodir "${pgo_data_dir}"
-		fowners root:crpgo "${pgo_data_dir}"
-		fperms 0755 "${pgo_data_dir}"
+		if tc-is-gcc ; then
+			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${pgo_data_dir}/compiler_fingerprint" || die
+		elif tc-is-clang ; then
+			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${pgo_data_dir}/compiler_fingerprint" || die
+		fi
 	fi
-}
-
-get_pgo_data_dir2() {
-	local pgo_refresh_mode="${CR_PGO_REFRESH_MODE:-build}"
-	# CR_PGO_REFRESH_MODE is about the validity of PGO profile reuse.
-	# major = The PGO profile is good in the same major version.
-	# major-minor = The PGO profile is good in the same major.minor version.
-	# build = The PGO profile is good in the same major.minor.build version.
-	# patch = The PGO profile is good in the same major.minor.build.patch version.
-	if [[ "${pgo_refresh_mode}" == "major" ]] \
-		&& ver_test $(ver_cut 1 ${pvr}) -ne $(ver_cut 1 ${PV}) ; then
-		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1 ${pvr})/${ABI}"
-	elif [[ "${pgo_refresh_mode}" == "major-minor" ]] \
-		&& ver_test $(ver_cut 1-2 ${pvr}) -ne $(ver_cut 1-2 ${PV}) ; then
-		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-2 ${pvr})/${ABI}"
-	elif [[ "${pgo_refresh_mode}" == "build" ]] \
-		&& ver_test $(ver_cut 1-3 ${pvr}) -ne $(ver_cut 1-3 ${PV}) ; then
-		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-3 ${pvr})/${ABI}"
-	elif [[ "${pgo_refresh_mode}" == "patch" ]] \
-		&& ver_test $(ver_cut 1-4 ${pvr}) -ne $(ver_cut 1-4 ${PV}) ; then
-		pgo_data_dir="${ESYSROOT}/var/${PN}/$(ver_cut 1-4 ${pvr})/${ABI}"
-	else
-		pgo_data_dir=""
-	fi
-	echo "${pgo_data_dir}"
 }
 
 remove_pgo_profiles() {
 	local pvr
 	for pvr in ${REPLACING_VERSIONS} ; do
 		einfo "Removing PGO profile(s)"
-		pgo_data_dir=$(get_pgo_data_dir2)
+		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
 		if [[ -n "${pgo_data_dir}" ]] \
 			&& realpath -e "${pgo_data_dir}" 2>/dev/null ; then
 			rm -rf "${pgo_data_dir}" || die
