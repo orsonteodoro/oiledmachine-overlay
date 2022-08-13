@@ -442,7 +442,7 @@ DEPEND_NATIVE="
 	)
 	odbc? (
 		system-nanodbc? (
->=dev-db/nanodbc-2.12.4:=[${MULTILIB_USEDEP},-libcxx,boost_convert,static-libs?,-unicode]
+>=dev-db/nanodbc-2.12.4:=[${MULTILIB_USEDEP},-libcxx,boost,static-libs?,-unicode]
 			  dev-db/unixODBC[${MULTILIB_USEDEP}]
 		)
 	)
