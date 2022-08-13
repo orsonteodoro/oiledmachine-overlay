@@ -10,28 +10,34 @@ toolchain-funcs
 
 DESCRIPTION="a simple web browser based on WebKit/GTK+"
 HOMEPAGE="https://surf.suckless.org/"
-LICENSE="MIT SURF
-	 mod_adblock? ( CC-BY-NA-SA-3.0 MIT SURF-MOD_ADBLOCKER )
-         mod_adblock_easylist? ( CC-BY-SA-3.0 GPL-3+ SURF-MOD_ADBLOCKER-EASYLIST )
-         mod_adblock_spam404? ( CC-BY-SA-4.0 SURF-MOD_ADBLOCKER-SPAM404 )
-	 mod_autoopen? ( all-rights-reserved )
-	 mod_link_hints? ( all-rights-reserved )
-	 mod_searchengines? ( all-rights-reserved )
-	 mod_simple_bookmarking_redux? ( all-rights-reserved )"
-KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
-~sparc x86 ~x86-linux ~x86-macos"
+LICENSE="
+	MIT SURF
+	mod_adblock? ( CC-BY-NA-SA-3.0 MIT SURF-MOD_ADBLOCKER )
+        mod_adblock_easylist? ( CC-BY-SA-3.0 GPL-3+ SURF-MOD_ADBLOCKER-EASYLIST )
+        mod_adblock_spam404? ( CC-BY-SA-4.0 SURF-MOD_ADBLOCKER-SPAM404 )
+	mod_autoopen? ( all-rights-reserved )
+	mod_link_hints? ( all-rights-reserved )
+	mod_searchengines? ( all-rights-reserved )
+	mod_simple_bookmarking_redux? ( all-rights-reserved )
+"
+KEYWORDS="
+~alpha ~amd64 ~amd64-fbsd ~amd64-linux ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~sparc ~x86
+~x86-linux ~x86-macos
+"
 SLOT="0"
-IUSE+=" doc +geolocation +libnotify mod_adblock mod_adblock_spam404
-mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
-mod_simple_bookmarking_redux tabbed update_adblock -pointer-lock +pulseaudio
-savedconfig +v4l"
+IUSE+="
+doc +geolocation +libnotify mod_adblock mod_adblock_spam404 mod_adblock_easylist
+mod_autoopen mod_link_hints mod_searchengines mod_simple_bookmarking_redux
+tabbed update_adblock -pointer-lock +pulseaudio savedconfig +v4l
+"
 REQUIRED_USE+="
 	mod_adblock_easylist? ( mod_adblock )
 	mod_adblock_spam404? ( mod_adblock )
 	mod_searchengines? ( savedconfig )
 	mod_simple_bookmarking_redux? ( savedconfig )
-	update_adblock? ( mod_adblock )"
-DEPEND+="
+	update_adblock? ( mod_adblock )
+"
+RDEPEND+="
 	!sci-chemistry/surf
 	app-crypt/gcr[gtk,${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
@@ -44,20 +50,26 @@ DEPEND+="
 			x11-apps/xprop
 			>=x11-misc/dmenu-4.7
 			x11-terms/st )
-	tabbed? ( x11-misc/tabbed )"
-RDEPEND+=" ${DEPEND}"
+	tabbed? ( x11-misc/tabbed )
+"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	update_adblock? ( ${PYTHON_DEPS} )"
+	virtual/pkgconfig
+	update_adblock? ( ${PYTHON_DEPS} )
+"
 EGIT_BRANCH="surf-webkit2"
 EGIT_COMMIT="761ea9e4c6c4d8aba4a4d39da9c9b4db8ac471b1"
 EGIT_REPO_URI="https://git.suckless.org/surf"
 AUTOOPEN_FN="surf-0.3-autoopen.diff"
 LINK_HINTS_FN="surf-9999-link-hints.diff"
 SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
-SRC_URI="mod_autoopen? ( ${AUTOOPEN_FN} )
-	 mod_link_hints? ( ${LINK_HINTS_FN} )
-	 mod_searchengines? ( ${SEARCHENGINES_FN} )"
+SRC_URI="
+	mod_autoopen? ( ${AUTOOPEN_FN} )
+	mod_link_hints? ( ${LINK_HINTS_FN} )
+	mod_searchengines? ( ${SEARCHENGINES_FN} )
+"
 PATCHES=( "${FILESDIR}/${PN}-2.1-gentoo.patch" )
 DOCS=( README )
 
@@ -90,7 +102,8 @@ einfo
 check_geolocation() {
 	if use geolocation ; then
 		if has_version "~app-misc/geoclue-2.5.7" ; then
-			local geoclue_repo=$(cat /var/db/pkg/app-misc/geoclue-2.5.7*/repository)
+			local geoclue_repo=\
+$(cat "${EROOT}/var/db/pkg/app-misc/geoclue-2.5.7"*"/repository")
 			if [[ "${geoclue_repo}" == "gentoo" ]] ; then
 ewarn
 ewarn "The gentoo repo version of geoclue may be broken if you have no GPS"
@@ -143,7 +156,7 @@ src_prepare() {
 eerror
 eerror "Please run"
 eerror
-eerror "  mkdir -p \"/etc/portage/savedconfig/www-client\" ; \ "
+eerror "  mkdir -p \"${EPREFIX}/etc/portage/savedconfig/www-client\" ; \ "
 eerror "    cp \"${S}/config.def.h\" \"${SAVEDCONFIG_PATH}\""
 eerror
 eerror "or provide your edited config.h saved as"
@@ -315,21 +328,11 @@ eerror
 	fi
 
 	local my_cppflags=""
-	if use geolocation ; then
-		my_cppflags+=" -DUSE_GEOLOCATION"
-	fi
-	if use pointer-lock ; then
-		my_cppflags+=" -DUSE_POINTER_LOCK"
-	fi
-	if use pulseaudio ; then
-		my_cppflags+=" -DUSE_MICROPHONE"
-	fi
-	if use libnotify ; then
-		my_cppflags+=" -DUSE_NOTIFICATIONS"
-	fi
-	if use v4l ; then
-		my_cppflags+=" -DUSE_CAMERA"
-	fi
+	use geolocation && my_cppflags+=" -DUSE_GEOLOCATION"
+	use pointer-lock && my_cppflags+=" -DUSE_POINTER_LOCK"
+	use pulseaudio && my_cppflags+=" -DUSE_MICROPHONE"
+	use libnotify && my_cppflags+=" -DUSE_NOTIFICATIONS"
+	use v4l && my_cppflags+=" -DUSE_CAMERA"
 
 	sed -i -e "s|CPPFLAGS =|CPPFLAGS = ${my_cppflags}|g" \
 		config.mk || die
@@ -357,12 +360,14 @@ LIBPREFIX = \$(PREFIX)/$(get_libdir)|g" \
 }
 
 multilib_src_compile() {
-	PKG_CONFIG="/usr/bin/$(get_abi_CHOST ${ABI})-pkg-config" \
+	export PKG_CONFIG_LIBDIR="${SYSROOT}/usr/$(get_libdir)/pkgconfig"
+	export PKG_CONFIG="$(tc-getPKG_CONFIG)"
 	emake
 }
 
 multilib_src_install() {
-	PKG_CONFIG="/usr/bin/$(get_abi_CHOST ${ABI})-pkg-config" \
+	export PKG_CONFIG_LIBDIR="${SYSROOT}/usr/$(get_libdir)/pkgconfig"
+	export PKG_CONFIG="$(tc-getPKG_CONFIG)"
 	default
 
 	dodoc LICENSE
@@ -383,21 +388,21 @@ multilib_src_install() {
 		if use mod_adblock_easylist ; then
 			dodoc "${FILESDIR}/licenses/LICENSE.EasyList"
 		else
-			rm "${D}/etc/surf/scripts/adblock/LICENSE.EasyList" || die
+			rm "${ED}/etc/surf/scripts/adblock/LICENSE.EasyList" || die
 			sed -i \
 -e 's|https://raw.githubusercontent.com/Spam404/lists/master/adblock-list.txt||' \
-			"${D}/etc/surf/scripts/adblock/update.sh" || die
+			"${ED}/etc/surf/scripts/adblock/update.sh" || die
 		fi
                 if use mod_adblock_spam404 ; then
                         dodoc "${FILESDIR}/licenses/LICENSE.Spam404"
 		else
-			rm "${D}/etc/surf/scripts/adblock/LICENSE.Spam404" || die
+			rm "${ED}/etc/surf/scripts/adblock/LICENSE.Spam404" || die
 			sed -i \
 -e 's|https://easylist-downloads.adblockplus.org/easylist.txt||' \
-			"${D}/etc/surf/scripts/adblock/update.sh" || die
+			"${ED}/etc/surf/scripts/adblock/update.sh" || die
 			sed -i \
 -e 's|https://easylist-downloads.adblockplus.org/malwaredomains_full.txt||' \
-			"${D}/etc/surf/scripts/adblock/update.sh" || die
+			"${ED}/etc/surf/scripts/adblock/update.sh" || die
                 fi
 	fi
 
@@ -426,16 +431,14 @@ multilib_src_install() {
 
 _update_adblock() {
 	einfo "Updating adblock rules"
-	cd /etc/surf/scripts/adblock || die
+	cd "${EROOT}/etc/surf/scripts/adblock" || die
 	./update.sh
 	einfo "Done updating adblock rules"
 }
 
 src_install_all() {
 	einfo "Ran src_install_all,"
-	if use tabbed; then
-		dobin surf-open.sh
-	fi
+	use tabbed && dobin surf-open.sh
 }
 
 pkg_postinst() {
@@ -449,11 +452,16 @@ einfo
 	if use mod_adblock ; then
 einfo
 einfo "You must update the adblock filters manually at"
-einfo "/etc/surf/scripts/adblock/update.sh."
-einfo "Make sure the current working directory is /etc/surf/scripts/adblock/"
+einfo
+einfo "  ${EPREFIX}/etc/surf/scripts/adblock/update.sh."
+einfo
+einfo "Make sure the current working directory is"
+einfo
+einfo "  ${EPREFIX}/etc/surf/scripts/adblock/"
+einfo
 einfo "before running it."
 einfo
-einfo "You may run \`emerge --config ${CATEGORY}/${PN}\` to update the adblock."
+einfo "You may run \`emerge --config ${CATEGORY}/${PN}\` to update adblock."
 einfo
 		if use update_adblock ; then
 			_update_adblock
@@ -481,9 +489,7 @@ ewarn
 }
 
 pkg_config() {
-	if use mod_adblock ; then
-		_update_adblock
-	fi
+	use mod_adblock && _update_adblock
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
