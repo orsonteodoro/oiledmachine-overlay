@@ -10,7 +10,6 @@ EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/marshallward/TiledSharp.git"
 
 inherit dotnet eutils mono git-r3
-#inherit gac
 
 DESCRIPTION="C# library for parsing and importing TMX and TSX files generated
 by Tiled, a tile map generation tool."
@@ -19,12 +18,10 @@ LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 USE_DOTNET="net35 net40 net45 test"
 IUSE+=" ${USE_DOTNET} debug developer doc"
-#IUSE+=" gac"
 REQUIRED_USE+="
 	^^ ( ${USE_DOTNET} )
 	test? ( ^^ ( net35 net40 net45 ) )
 "
-#	gac? ( ^^ ( net40 net45 ) )
 BDEPEND+="
 	dev-dotnet/dotnet-sdk-bin
 	doc? ( app-doc/doxygen )
@@ -39,7 +36,6 @@ SRC_URI=""
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 TOOLS_VERSION="Current"
-STRONG_ARGS_NETFX="/p:SignAssembly=true /p:AssemblyOriginatorKeyFile="
 DOCS=( LICENSE NOTICE CHANGELOG README.rst )
 
 #PATCHES=(
@@ -120,23 +116,6 @@ src_compile() {
 	fi
 }
 
-strong_sign() {
-	local assembly="${1}"
-	local keyfile="${2}"
-	if use gac; then
-		einfo "Strong signing ${assembly}"
-		if ! sn -R "${assembly}" "${keyfile}" ; then
-eerror
-eerror "Failed to strong sign"
-eerror
-eerror "Assembly/DLL:  ${assembly}"
-eerror "Keyfile:  ${keyfile}"
-eerror
-			die
-		fi
-	fi
-}
-
 # Copy and sanitize permissions
 copy_next_to_file() {
 	local source="${1}"
@@ -165,9 +144,6 @@ src_install() {
 	local framework="${LFRAMEWORK[${FRAMEWORK}]}"
 	insinto "/usr/lib/mono/${framework}"
 	local p="TiledSharp/bin/${configuration}/${framework}"
-#	strong_sign "$(pwd)/${p}/TiledSharp.dll" \
-#		"${DISTDIR}/${KEYFILE}" || die
-#	egacinstall "${p}/TiledSharp.dll"
 	doins "${p}/TiledSharp.dll"
 	if use developer ; then
 		doins "${p}/TiledSharp.pdb"
