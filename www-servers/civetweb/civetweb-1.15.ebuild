@@ -140,6 +140,18 @@ get_lib_types() {
 }
 
 src_prepare() {
+	export CMAKE_USE_DIR="${S}"
+	cd "${CMAKE_USE_DIR}" || die
+	cmake_src_prepare
+	if use lua ; then
+		sed -i -e 's|"lauxlib.h"|<lauxlib.h>|' \
+			src/third_party/civetweb_lua.h || die
+		sed -i -e 's|"lua.h"|<lua.h>|' \
+			src/third_party/civetweb_lua.h || die
+		sed -i -e 's|"lualib.h"|<lualib.h>|' \
+			src/third_party/civetweb_lua.h || die
+		rm -rf src/third_party/lua-* || die
+	fi
 	local nabis=0
 	prepare_abi() {
 		nabis=$((${nabis} + 1))
@@ -148,25 +160,10 @@ src_prepare() {
 			if use lua ; then
 				prepare_lua() {
 					cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}" || die
-					export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
-					export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}_build"
-					cd "${CMAKE_USE_DIR}" || die
-					sed -i -e 's|"lauxlib.h"|<lauxlib.h>|' \
-						src/third_party/civetweb_lua.h || die
-					sed -i -e 's|"lua.h"|<lua.h>|' \
-						src/third_party/civetweb_lua.h || die
-					sed -i -e 's|"lualib.h"|<lualib.h>|' \
-						src/third_party/civetweb_lua.h || die
-					rm -rf src/third_party/lua-* || die
-					cmake_src_prepare
 				}
 				lua_foreach_impl prepare_lua
 			else
 				cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
-				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-				cd "${CMAKE_USE_DIR}" || die
-				cmake_src_prepare
 			fi
 		done
 	}
