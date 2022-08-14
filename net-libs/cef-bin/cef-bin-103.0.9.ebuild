@@ -8,7 +8,7 @@
 EAPI=8
 
 VIRTUALX_REQUIRED="manual"
-inherit chromium-2 cmake flag-o-matic multilib-minimal virtualx
+inherit chromium-2 cmake flag-o-matic virtualx
 
 DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for embedding Chromium-based browsers in other applications."
 LICENSE="BSD"
@@ -24,19 +24,22 @@ CEF_COMMIT="${CEF_COMMIT:1:7}"
 
 TARBALL_SUFFIX="" # can be _beta or "" (stable)
 SRC_URI="
-	amd64? (
-		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}_minimal.tar.bz2 )
-		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}.tar.bz2 )
-	)
-	arm? (
-		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm${TARBALL_SUFFIX}_minimal.tar.bz2 )
-		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm${TARBALL_SUFFIX}.tar.bz2 )
-	)
-	arm64? (
-		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}_minimal.tar.bz2 )
-		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}.tar.bz2 )
+	elibc_glibc? (
+		amd64? (
+			minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}_minimal.tar.bz2 )
+			!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64${TARBALL_SUFFIX}.tar.bz2 )
+		)
+		arm? (
+			minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm${TARBALL_SUFFIX}_minimal.tar.bz2 )
+			!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm${TARBALL_SUFFIX}.tar.bz2 )
+		)
+		arm64? (
+			minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}_minimal.tar.bz2 )
+			!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2Bg${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linuxarm64${TARBALL_SUFFIX}.tar.bz2 )
+		)
 	)
 "
+
 SLOT="0/${PV}"
 IUSE+=" cefclient cefsimple debug minimal test"
 REQUIRED_USE+="
@@ -50,93 +53,92 @@ REQUIRED_USE+="
 # For details see:
 # Chromium runtime:  https://github.com/chromium/chromium/blob/103.0.5060.114/build/install-build-deps.sh#L237
 # Chromium buildtime:  https://github.com/chromium/chromium/blob/103.0.5060.114/build/install-build-deps.sh#L151
-# TODO: app-accessibility/speech-dispatcher needs multilib
 GLIB_V="2.48"
 XI_V="1.7.6"
 CHROMIUM_CDEPEND="
-	>=app-accessibility/at-spi2-atk-2.18.3[${MULTILIB_USEDEP}]
+	>=app-accessibility/at-spi2-atk-2.18.3
 	>=app-accessibility/speech-dispatcher-0.8.3
-	>=dev-db/sqlite-3.11[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
-	>=dev-libs/libappindicator-12.10[${MULTILIB_USEDEP}]
-	>=dev-libs/libevdev-1.4.6[${MULTILIB_USEDEP}]
-	>=dev-libs/libffi-3.2.1[${MULTILIB_USEDEP}]
-	>=media-libs/alsa-lib-1.1.0[${MULTILIB_USEDEP}]
-	>=media-libs/mesa-11.2.0[gbm,${MULTILIB_USEDEP}]
-	>=net-print/cups-2.1.3[${MULTILIB_USEDEP}]
-	>=sys-apps/pciutils-3.3.1[${MULTILIB_USEDEP}]
-	>=sys-libs/libcap-2.24[${MULTILIB_USEDEP}]
-	>=sys-libs/pam-1.1.8[${MULTILIB_USEDEP}]
-	>=sys-apps/util-linux-2.27.1[${MULTILIB_USEDEP}]
+	>=dev-db/sqlite-3.11
+	>=dev-libs/glib-${GLIB_V}:2
+	>=dev-libs/libappindicator-12.10
+	>=dev-libs/libevdev-1.4.6
+	>=dev-libs/libffi-3.2.1
+	>=media-libs/alsa-lib-1.1.0
+	>=media-libs/mesa-11.2.0[gbm(+)]
+	>=net-print/cups-2.1.3
+	>=sys-apps/pciutils-3.3.1
+	>=sys-libs/libcap-2.24
+	>=sys-libs/pam-1.1.8
+	>=sys-apps/util-linux-2.27.1
 	>=sys-libs/glibc-2.23
-	>=x11-libs/cairo-1.14.6[${MULTILIB_USEDEP}]
-	>=x11-libs/gtk+-3.18.9:3[${MULTILIB_USEDEP}]
-	>=x11-libs/libXtst-1.2.2[${MULTILIB_USEDEP}]
-	>=x11-libs/libdrm-2.4.67[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-1.14.6
+	>=x11-libs/gtk+-3.18.9:3
+	>=x11-libs/libXtst-1.2.2
+	>=x11-libs/libdrm-2.4.67
 "
 # Unlisted based on ldd inspection not found in common_lib_list
 UNLISTED_RDEPEND="
-	dev-libs/fribidi[${MULTILIB_USEDEP}]
-	dev-libs/gmp[${MULTILIB_USEDEP}]
-	dev-libs/libbsd[${MULTILIB_USEDEP}]
-	dev-libs/libtasn1[${MULTILIB_USEDEP}]
-	dev-libs/libunistring[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.21[${MULTILIB_USEDEP}]
-	dev-libs/nettle[${MULTILIB_USEDEP}]
-	media-gfx/graphite2[${MULTILIB_USEDEP}]
-	media-libs/harfbuzz[${MULTILIB_USEDEP}]
-	media-libs/libglvnd[${MULTILIB_USEDEP}]
-	>=media-libs/mesa-11.2.0[egl(+),${MULTILIB_USEDEP}]
-	net-dns/libidn[${MULTILIB_USEDEP}]
-	>=x11-libs/libxkbcommon-0.5.0[${MULTILIB_USEDEP}]
+	dev-libs/fribidi
+	dev-libs/gmp
+	dev-libs/libbsd
+	dev-libs/libtasn1
+	dev-libs/libunistring
+	>=dev-libs/nss-3.21
+	dev-libs/nettle
+	media-gfx/graphite2
+	media-libs/harfbuzz
+	media-libs/libglvnd
+	>=media-libs/mesa-11.2.0[egl(+)]
+	net-dns/libidn
+	>=x11-libs/libxkbcommon-0.5.0
 "
 OPTIONAL_RDEPEND="
-	>=gnome-base/gnome-keyring-3.36[${MULTILIB_USEDEP},pam]
-	>=media-libs/vulkan-loader-1.0.8.0[${MULTILIB_USEDEP}]
+	>=gnome-base/gnome-keyring-3.36[pam]
+	>=media-libs/vulkan-loader-1.0.8.0
 "
 CHROMIUM_RDEPEND="
 	${CHROMIUM_CDEPEND}
 	${UNLISTED_RDEPEND}
 	${OPTIONAL_RDEPEND}
-	>=dev-libs/atk-2.18.0[${MULTILIB_USEDEP}]
-	>=dev-libs/expat-2.1.0[${MULTILIB_USEDEP}]
-	>=dev-libs/libpcre-8.38[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.11[${MULTILIB_USEDEP}]
-	  dev-libs/wayland[${MULTILIB_USEDEP}]
-	>=media-libs/fontconfig-2.11.94[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.6.1[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.6.20[${MULTILIB_USEDEP}]
+	>=dev-libs/atk-2.18.0
+	>=dev-libs/expat-2.1.0
+	>=dev-libs/libpcre-8.38
+	>=dev-libs/nspr-4.11
+	  dev-libs/wayland
+	>=media-libs/fontconfig-2.11.94
+	>=media-libs/freetype-2.6.1
+	>=media-libs/libpng-1.6.20
 	>=sys-devel/gcc-5.4.0[cxx(+)]
-	>=x11-libs/libX11-1.6.3[${MULTILIB_USEDEP}]
-	>=x11-libs/libXau-1.0.8[${MULTILIB_USEDEP}]
-	>=x11-libs/libxcb-1.6.3[${MULTILIB_USEDEP}]
-	>=x11-libs/libXcomposite-0.4.4[${MULTILIB_USEDEP}]
-	>=x11-libs/libXcursor-1.1.14[${MULTILIB_USEDEP}]
-	>=x11-libs/libXdamage-1.1.4[${MULTILIB_USEDEP}]
-	>=x11-libs/libXdmcp-1.1.2[${MULTILIB_USEDEP}]
-	>=x11-libs/libXext-1.3.3[${MULTILIB_USEDEP}]
-	>=x11-libs/libXfixes-5.0.1[${MULTILIB_USEDEP}]
-	>=x11-libs/libXi-${XI_V}[${MULTILIB_USEDEP}]
-	>=x11-libs/libXinerama-1.1.3[${MULTILIB_USEDEP}]
-	>=x11-libs/libXrandr-1.5.0[${MULTILIB_USEDEP}]
-	>=x11-libs/libXrender-0.9.9[${MULTILIB_USEDEP}]
-	>=x11-libs/pango-1.38.1[${MULTILIB_USEDEP}]
-	>=x11-libs/pixman-0.33.6[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]
+	>=x11-libs/libX11-1.6.3
+	>=x11-libs/libXau-1.0.8
+	>=x11-libs/libxcb-1.6.3
+	>=x11-libs/libXcomposite-0.4.4
+	>=x11-libs/libXcursor-1.1.14
+	>=x11-libs/libXdamage-1.1.4
+	>=x11-libs/libXdmcp-1.1.2
+	>=x11-libs/libXext-1.3.3
+	>=x11-libs/libXfixes-5.0.1
+	>=x11-libs/libXi-${XI_V}
+	>=x11-libs/libXinerama-1.1.3
+	>=x11-libs/libXrandr-1.5.0
+	>=x11-libs/libXrender-0.9.9
+	>=x11-libs/pango-1.38.1
+	>=x11-libs/pixman-0.33.6
+	>=sys-libs/zlib-1.2.8
 "
 # libcef alone uses aura not gtk
 RDEPEND+="
 	${CHROMIUM_RDEPEND}
 	cefclient? (
-		>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
-		>=x11-libs/gtk+-3:3[${MULTILIB_USEDEP}]
-		>=x11-libs/gtkglext-1.2.0[${MULTILIB_USEDEP}]
-		>=x11-libs/libXi-${XI_V}[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-${GLIB_V}:2
+		>=x11-libs/gtk+-3:3
+		>=x11-libs/gtkglext-1.2.0
+		>=x11-libs/libXi-${XI_V}
 	)
 "
 DEPEND+="
 	test? (
-		>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-${GLIB_V}:2
 	)
 "
 BDEPEND+="
@@ -147,18 +149,31 @@ BDEPEND+="
 	)
 "
 RESTRICT="mirror"
-
-S="${WORKDIR}"
-declare -Ax ABIx=( \
-        [x86]="linux32" \
-        [amd64]="linux64" \
-        [arm]="arm" \
-        [arm64]="arm64" \
+PATCHES=(
+	"${FILESDIR}/cef-bin-93.1.11-visibility-changes.patch"
 )
+
+get_xrid() {
+	if use elibc_glibc && [[ "${ABI}" == "amd64" ]] ; then
+		echo "linux64"
+	elif use elibc_glibc && [[ "${ABI}" == "x86" ]] ; then
+		echo "linux32"
+	elif use elibc_glibc && [[ "${ABI}" == "arm64" ]] ; then
+		echo "linuxarm64"
+	elif ( use elibc_Darwin || use elibc_Cygwin ) && [[ "${ABI}" == "amd64" ]] ; then
+		echo "macos64"
+	elif ( use elibc_Darwin || use elibc_Cygwin ) && [[ "${ABI}" == "arm64" ]] ; then
+		echo "macosarm64"
+	elif ( use elibc_Winnt || use elibc_Cygwin ) && [[ "${ABI}" == "amd64" ]] ; then
+		echo "windows64"
+	elif ( use elibc_Winnt || use elibc_Cygwin ) && [[ "${ABI}" == "arm64" ]] ; then
+		echo "windowsarm64"
+	fi
+}
 
 S_abi() {
 	local minimal=$(usex minimal "_minimal" "")
-	echo "${WORKDIR}/cef_binary_${PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_V}_${ABIx[${ABI}]}${TARBALL_SUFFIX}${minimal}"
+	echo "${WORKDIR}/cef_binary_${PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_V}_$(get_xrid)${TARBALL_SUFFIX}${minimal}"
 }
 
 append_all() {
@@ -183,11 +198,8 @@ ewarn
 }
 
 src_prepare() {
-	cd "${S}" || die
-	eapply "${FILESDIR}/cef-bin-93.1.11-visibility-changes.patch"
-	export CMAKE_USE_DIR="${S}"
-	export BUILD_DIR="${S}"
-	cmake_src_prepare
+	export S=$(S_abi)
+	default
 }
 
 src_configure() {
@@ -207,17 +219,14 @@ src_configure() {
 	fi
 
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
-	configure_abi() {
-		export CMAKE_USE_DIR="${S}"
-		export BUILD_DIR="${S}"
-		S=$(S_abi)
-		cd "${S}" || die
-		mycmakeargs=(
-			-DBUILD_SHARED_LIBS=ON
-		)
-		cmake_src_configure
-	}
-	multilib_foreach_abi configure_abi
+	export CMAKE_USE_DIR=$(S_abi)
+	export BUILD_DIR=$(S_abi)"_build"
+	cd "${CMAKE_USE_DIR}" || die
+	mycmakeargs=(
+		-DBUILD_SHARED_LIBS=ON
+	)
+	cmake_src_configure
+
 	if use test ; then
 ewarn
 ewarn "Adding sandbox exceptions for the GPU."
@@ -235,51 +244,40 @@ ewarn
 }
 
 src_compile() {
-	compile_abi() {
-		export CMAKE_USE_DIR="${S}"
-		export BUILD_DIR="${S}"
-		S=$(S_abi)
-		cd "${S}" || die
-		cmake_src_compile \
-			libcef_dll_wrapper \
-			$(usex cefclient cefclient "") \
-			$(usex cefsimple cefsimple "") \
-			$(usex test ceftests "")
-		if [[ -f "${S}/tests/ceftests/Release/chrome-sandbox" ]] && use test ; then
-			chmod 4755 "${S}/tests/ceftests/Release/chrome-sandbox" || die
-		fi
-	}
-	multilib_foreach_abi compile_abi
+	export CMAKE_USE_DIR=$(S_abi)
+	export BUILD_DIR=$(S_abi)"_build"
+	cd "${BUILD_DIR}" || die
+	cmake_src_compile \
+		libcef_dll_wrapper \
+		$(usex cefclient cefclient "") \
+		$(usex cefsimple cefsimple "") \
+		$(usex test ceftests "")
+	if [[ -f "${BUILD_DIR}/tests/ceftests/Release/chrome-sandbox" ]] && use test ; then
+		chmod 4755 "${BUILD_DIR}/tests/ceftests/Release/chrome-sandbox" || die
+	fi
 }
 
 src_test() {
 	ewarn "This test failed on 87.1.12+g03f9336+chromium-87.0.4280.88"
-	test_abi() {
-		export CMAKE_USE_DIR="${S}"
-		export BUILD_DIR="${S}"
-		S=$(S_abi)
-		local build_type=$(usex debug "Debug" "Release")
-		if use test ; then
-			cd "${S}/tests/ceftests/${build_type}" || die
-			# If it fails, it is likely an upstream problem
-			LD_LIBRARY_PATH="../../../libcef_dll_wrapper:../../../tests/gtest" \
-			virtx ./ceftests --no-sandbox
-		fi
-	}
-	multilib_foreach_abi test_abi
+	export CMAKE_USE_DIR=$(S_abi)
+	export BUILD_DIR=$(S_abi)"_build"
+	local build_type=$(usex debug "Debug" "Release")
+	if use test ; then
+		cd "${BUILD_DIR}/tests/ceftests/${build_type}" || die
+		# If it fails, it is likely an upstream problem
+		LD_LIBRARY_PATH="../../../libcef_dll_wrapper:../../../tests/gtest" \
+		virtx ./ceftests --no-sandbox
+	fi
 }
 
 src_install() {
-	install_abi() {
-		export CMAKE_USE_DIR="${S}"
-		export BUILD_DIR="${S}"
-		dodir "/opt/${PN}/${ABI}"
-		S=$(S_abi)
-		cp -rT "${S}" "${ED}/opt/${PN}/${ABI}" || die
-		echo "cef_binary_${PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_V}_${ABIx[${ABI}]}" \
-			> "${ED}/opt/${PN}/${ABI}/.version" || die
-	}
-	multilib_foreach_abi install_abi
+	export CMAKE_USE_DIR=$(S_abi)
+	export BUILD_DIR=$(S_abi)"_build"
+	dodir "/opt/${PN}"
+	cp -rT "${BUILD_DIR}" "${ED}/opt/${PN}" || die
+	local minimal=$(usex minimal "_minimal" "")
+	echo "cef_binary_${PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_V}_$(get_xrid)${minimal}" \
+		> "${ED}/opt/${PN}/$(get_xrid)/.version" || die
 	find "${ED}" -name "*.o" -delete
 }
 
