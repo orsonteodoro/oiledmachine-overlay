@@ -45,13 +45,14 @@ get_lib_types() {
 }
 
 src_prepare() {
+	export CMAKE_USE_DIR="${S}"
+	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
 	prepare_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${CMAKE_USE_DIR}" || die
 			if [[ "${lib_type}" == "static" ]] ; then
 				sed -i -e "s|STATIC|SHARED|" src/CMakeLists.txt || die
