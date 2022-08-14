@@ -37,15 +37,6 @@ https://github.com/immunant/selfrando/archive/${EGIT_COMMIT}.tar.gz \
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
-pkg_setup()
-{
-	python-any-r1_pkg_setup
-}
-
-src_prepare() {
-	cmake_src_prepare
-}
-
 src_configure() {
 	configure_abi() {
 		[[ "${ABI}" == "amd64" ]] && export SR_ARCH="x86_64"
