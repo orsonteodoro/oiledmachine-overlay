@@ -45,6 +45,7 @@ get_lib_types() {
 }
 
 src_prepare() {
+	cmake_src_prepare
 	prepare_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
@@ -66,7 +67,6 @@ src_prepare() {
 				# No package
 #				sed -i -e "s|STATIC|SHARED|" extern/sajson/CMakeLists.txt || die
 			fi
-			cmake_src_prepare
 		done
 	}
 	multilib_foreach_abi prepare_abi
