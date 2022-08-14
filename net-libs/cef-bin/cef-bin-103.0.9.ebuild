@@ -183,14 +183,11 @@ ewarn
 }
 
 src_prepare() {
-	prepare_abi() {
-		S=$(S_abi)
-		cd "${S}" || die
-		eapply "${FILESDIR}/cef-bin-93.1.11-visibility-changes.patch"
-		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
-		cmake_src_prepare
-	}
-	multilib_foreach_abi prepare_abi
+	cd "${S}" || die
+	eapply "${FILESDIR}/cef-bin-93.1.11-visibility-changes.patch"
+	export CMAKE_USE_DIR="${S}"
+	export BUILD_DIR="${S}"
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -211,12 +208,13 @@ src_configure() {
 
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 	configure_abi() {
+		export CMAKE_USE_DIR="${S}"
+		export BUILD_DIR="${S}"
 		S=$(S_abi)
 		cd "${S}" || die
 		mycmakeargs=(
 			-DBUILD_SHARED_LIBS=ON
 		)
-		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
 		cmake_src_configure
 	}
 	multilib_foreach_abi configure_abi
@@ -238,9 +236,10 @@ ewarn
 
 src_compile() {
 	compile_abi() {
+		export CMAKE_USE_DIR="${S}"
+		export BUILD_DIR="${S}"
 		S=$(S_abi)
 		cd "${S}" || die
-		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
 		cmake_src_compile \
 			libcef_dll_wrapper \
 			$(usex cefclient cefclient "") \
@@ -256,6 +255,8 @@ src_compile() {
 src_test() {
 	ewarn "This test failed on 87.1.12+g03f9336+chromium-87.0.4280.88"
 	test_abi() {
+		export CMAKE_USE_DIR="${S}"
+		export BUILD_DIR="${S}"
 		S=$(S_abi)
 		local build_type=$(usex debug "Debug" "Release")
 		if use test ; then
@@ -270,6 +271,8 @@ src_test() {
 
 src_install() {
 	install_abi() {
+		export CMAKE_USE_DIR="${S}"
+		export BUILD_DIR="${S}"
 		dodir "/opt/${PN}/${ABI}"
 		S=$(S_abi)
 		cp -rT "${S}" "${ED}/opt/${PN}/${ABI}" || die
