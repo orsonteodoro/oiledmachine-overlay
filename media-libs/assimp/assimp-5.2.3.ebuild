@@ -44,7 +44,6 @@ src_prepare() {
 	fi
 
 	cmake_src_prepare
-	multilib_copy_sources
 }
 
 src_configure() {
