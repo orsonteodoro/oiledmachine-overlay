@@ -250,6 +250,8 @@ get_lib_types() {
 }
 
 src_prepare() {
+	export CMAKE_USE_DIR="${S}"
+	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
 	if use clang && use lto ; then
 		sed -i -e "s|-fuse-ld=gold|-fuse-ld=lld|g" \
@@ -264,9 +266,8 @@ src_prepare() {
 	fi
 	prepare_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export CMAKE_USE_DIR="${S}"
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-			cp -a "${S}" "${BUILD_DIR}" || die
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			cp -a "${S}" "${CMAKE_USE_DIR}" || die
 		done
 	}
 	multilib_foreach_abi prepare_abi
@@ -369,7 +370,7 @@ is_cfi_supported() {
 }
 
 configure_pgx() {
-	export CMAKE_USE_DIR="${S}"
+	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
 	[[ -f build.ninja ]] && eninja clean
@@ -942,7 +943,7 @@ _trainer_plan_lossless() {
 }
 
 run_trainer() {
-	export CMAKE_USE_DIR="${S}"
+	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	export LD_LIBRARY_PATH="${BUILD_DIR}"
 	if use pgo-trainer-constrained-quality ; then
@@ -961,7 +962,7 @@ run_trainer() {
 }
 
 compile_pgx() {
-	export CMAKE_USE_DIR="${S}"
+	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${BUILD_DIR}" || die
 	cmake_src_compile
@@ -1003,7 +1004,7 @@ src_compile() {
 src_test() {
 	test_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export CMAKE_USE_DIR="${S}"
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			"${BUILD_DIR}"/test_libaom || die
@@ -1015,7 +1016,7 @@ src_test() {
 src_install() {
 	install_abi() {
 		for lib_type in $(get_lib_types) ; do
-			export CMAKE_USE_DIR="${S}"
+			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
 			if multilib_is_native_abi && use doc ; then
