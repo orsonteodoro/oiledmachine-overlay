@@ -99,10 +99,6 @@ eerror
 	fi
 }
 
-src_prepare() {
-	cmake_src_prepare
-}
-
 multilib_src_configure() {
 	local mycmakeargs=( )
 	use test && mycmakeargs+=( -DTEST=ON )
