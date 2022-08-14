@@ -586,11 +586,9 @@ src_configure() {
 
 	if use browser ; then
 		local cef_suffix=""
-		if has_version 'net-libs/cef-bin' ; then
-			cef_suffix="-bin"
-		fi
+		has_version 'net-libs/cef-bin' && cef_suffix="-bin"
 		mycmakeargs+=(
-			-DCEF_ROOT_DIR="${EROOT}/opt/cef${cef_suffix}/${ABI}"
+			-DCEF_ROOT_DIR="${EROOT}/opt/cef${cef_suffix}"
 		)
 	fi
 
