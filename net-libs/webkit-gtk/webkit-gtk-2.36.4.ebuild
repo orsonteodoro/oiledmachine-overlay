@@ -960,6 +960,7 @@ eerror
 		-DENABLE_GTKDOC=$(usex gtk-doc)
 		-DENABLE_GAMEPAD=$(usex gamepad)
 		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection)
+		-DENABLE_JOURNALD_LOG=$(usex systemd)
 		-DENABLE_MEDIA_STREAM=$(usex mediastream)
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
 		-DENABLE_OPENGL=${opengl_enabled}
