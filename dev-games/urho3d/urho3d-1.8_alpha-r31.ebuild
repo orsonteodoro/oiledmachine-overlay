@@ -787,12 +787,9 @@ get_lib_types() {
 }
 
 src_prepare() {
-	default
-
-	prepare_common() {
-		_prepare_common
-		cmake_src_prepare
-	}
+	export CMAKE_USE_DIR="${S}"
+	cd "${S}" || die
+	cmake_src_prepare
 
 	local platform
 	for platform in $(get_platforms) ; do
@@ -803,7 +800,7 @@ src_prepare() {
 				export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${platform}"
 				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${platform}_build"
 				cd "${CMAKE_USE_DIR}" || die
-				prepare_common
+				_prepare_common
 			done
 		}
 		multilib_foreach_abi prepare_abi
