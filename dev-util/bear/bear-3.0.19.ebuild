@@ -55,10 +55,6 @@ pkg_setup()
 	fi
 }
 
-src_prepare() {
-	cmake_src_prepare
-}
-
 src_configure() {
 	local nabis=0
 	for a in $(multilib_get_enabled_abis) ; do
