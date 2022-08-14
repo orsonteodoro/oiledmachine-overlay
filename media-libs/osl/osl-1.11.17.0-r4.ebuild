@@ -209,16 +209,9 @@ src_prepare() {
 		sed -i -e "s|osl_add_all_tests|#osl_add_all_tests|g" \
 			"CMakeLists.txt" || die
 	fi
-	prepare_abi() {
-		local lib_type
-		for lib_type in $(get_lib_type) ; do
-			export CMAKE_USE_DIR="${S}"
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-			cd "${CMAKE_USE_DIR}" || die
-			cmake_src_prepare
-		done
-	}
-	multilib_foreach_abi prepare_abi
+	export CMAKE_USE_DIR="${S}"
+	cd "${CMAKE_USE_DIR}" || die
+	cmake_src_prepare # patcher only patches relative to CMAKE_USE_DIR not $(pwd)
 }
 
 src_configure() {

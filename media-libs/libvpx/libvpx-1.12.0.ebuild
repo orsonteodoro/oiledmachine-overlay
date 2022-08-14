@@ -26,7 +26,7 @@ SLOT="0/7"
 KEYWORDS="~amd64 ~arm ~arm64 ~ia64 ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux"
 IUSE="cpu_flags_ppc_vsx3 doc +highbitdepth postproc static-libs test +threads"
 IUSE+=" svc +examples"
-IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang chromium hardened libcxx lto shadowcallstack"
+IUSE+=" cfi cfi-cast cfi-cross-dso cfi-icall cfi-vcall clang chromium hardened libcxx lto pie shadowcallstack"
 IUSE+=" pgo
 	pgo-custom
 	pgo-trainer-2-pass-constrained-quality
@@ -46,6 +46,7 @@ REQUIRED_USE="
 	cfi-icall? ( clang lto cfi-vcall )
 	cfi-vcall? ( clang lto )
 	cfi-cross-dso? ( || ( cfi cfi-vcall ) )
+	pie? ( hardened )
 	pgo? (
 		|| (
 			pgo-custom
@@ -526,8 +527,10 @@ configure_pgx() {
 			fi
 			append-ldflags -Wl,-z,relro -Wl,-z,now
 
-			# needs review or test
-			# append-ldflags -pie
+			if use pie ; then
+				ewarn "-pie hasn't been tested"
+				append-ldflags -pie
+			fi
 		fi
 	fi
 
