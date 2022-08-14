@@ -152,6 +152,7 @@ RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/cef-bin-93.1.11-visibility-changes.patch"
 )
+S="${WORKDIR}" # Dummy
 
 get_xrid() {
 	if use elibc_glibc && [[ "${ABI}" == "amd64" ]] ; then
@@ -198,8 +199,10 @@ ewarn
 }
 
 src_prepare() {
-	export S=$(S_abi)
-	default
+	export CMAKE_USE_DIR=$(S_abi)
+	einfo "CMAKE_USE_DIR=${CMAKE_USE_DIR}"
+	cd "${CMAKE_USE_DIR}" || die
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -220,7 +223,7 @@ src_configure() {
 
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 	export CMAKE_USE_DIR=$(S_abi)
-	export BUILD_DIR=$(S_abi)"_build"
+	export BUILD_DIR=$(S_abi)
 	cd "${CMAKE_USE_DIR}" || die
 	mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
@@ -245,7 +248,7 @@ ewarn
 
 src_compile() {
 	export CMAKE_USE_DIR=$(S_abi)
-	export BUILD_DIR=$(S_abi)"_build"
+	export BUILD_DIR=$(S_abi)
 	cd "${BUILD_DIR}" || die
 	cmake_src_compile \
 		libcef_dll_wrapper \
@@ -260,7 +263,7 @@ src_compile() {
 src_test() {
 	ewarn "This test failed on 87.1.12+g03f9336+chromium-87.0.4280.88"
 	export CMAKE_USE_DIR=$(S_abi)
-	export BUILD_DIR=$(S_abi)"_build"
+	export BUILD_DIR=$(S_abi)
 	local build_type=$(usex debug "Debug" "Release")
 	if use test ; then
 		cd "${BUILD_DIR}/tests/ceftests/${build_type}" || die
@@ -272,12 +275,12 @@ src_test() {
 
 src_install() {
 	export CMAKE_USE_DIR=$(S_abi)
-	export BUILD_DIR=$(S_abi)"_build"
+	export BUILD_DIR=$(S_abi)
 	dodir "/opt/${PN}"
 	cp -rT "${BUILD_DIR}" "${ED}/opt/${PN}" || die
 	local minimal=$(usex minimal "_minimal" "")
 	echo "cef_binary_${PV}+g${CEF_COMMIT}+chromium-${CHROMIUM_V}_$(get_xrid)${minimal}" \
-		> "${ED}/opt/${PN}/$(get_xrid)/.version" || die
+		> "${ED}/opt/${PN}/.version" || die
 	find "${ED}" -name "*.o" -delete
 }
 
