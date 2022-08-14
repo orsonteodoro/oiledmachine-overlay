@@ -1,0 +1,29 @@
+diff -urp BulletSharpPInvoke-0.12_p9999.orig/libbulletc/src/btMultiBodyConstraint_wrap.cpp BulletSharpPInvoke-0.12_p9999/libbulletc/src/btMultiBodyConstraint_wrap.cpp
+--- BulletSharpPInvoke-0.12_p9999.orig/libbulletc/src/btMultiBodyConstraint_wrap.cpp	2022-08-13 14:52:23.717610883 -0700
++++ BulletSharpPInvoke-0.12_p9999/libbulletc/src/btMultiBodyConstraint_wrap.cpp	2022-08-13 14:54:53.051400622 -0700
+@@ -29,10 +29,12 @@ btScalar btMultiBodyConstraint_getApplie
+ 	return obj->getAppliedImpulse(dof);
+ }
+ 
++#if BULLET_VERSION >= 0305000
+ int btMultiBodyConstraint_getConstraintType(btMultiBodyConstraint* obj)
+ {
+ 	return obj->getConstraintType();
+ }
++#endif
+ 
+ int btMultiBodyConstraint_getIslandIdA(btMultiBodyConstraint* obj)
+ {
+diff -urp BulletSharpPInvoke-0.12_p9999.orig/libbulletc/src/btMultiBodyConstraint_wrap.h BulletSharpPInvoke-0.12_p9999/libbulletc/src/btMultiBodyConstraint_wrap.h
+--- BulletSharpPInvoke-0.12_p9999.orig/libbulletc/src/btMultiBodyConstraint_wrap.h	2022-08-13 14:52:23.717610883 -0700
++++ BulletSharpPInvoke-0.12_p9999/libbulletc/src/btMultiBodyConstraint_wrap.h	2022-08-13 14:55:11.692123331 -0700
+@@ -8,7 +8,9 @@ extern "C" {
+ 	EXPORT void btMultiBodyConstraint_debugDraw(btMultiBodyConstraint* obj, btIDebugDraw* drawer);
+ 	EXPORT void btMultiBodyConstraint_finalizeMultiDof(btMultiBodyConstraint* obj);
+ 	EXPORT btScalar btMultiBodyConstraint_getAppliedImpulse(btMultiBodyConstraint* obj, int dof);
++#if BULLET_VERSION >= 0305000
+ 	EXPORT int btMultiBodyConstraint_getConstraintType(btMultiBodyConstraint* obj);
++#endif
+ 	EXPORT int btMultiBodyConstraint_getIslandIdA(btMultiBodyConstraint* obj);
+ 	EXPORT int btMultiBodyConstraint_getIslandIdB(btMultiBodyConstraint* obj);
+ 	EXPORT btScalar btMultiBodyConstraint_getMaxAppliedImpulse(btMultiBodyConstraint* obj);

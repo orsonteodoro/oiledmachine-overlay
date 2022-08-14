@@ -4,15 +4,17 @@
 
 EAPI=7
 
-inherit cmake git-r3
+inherit cmake flag-o-matic git-r3 multilib
 
-MY_PV=$(ver_cut 1-2 "${PV}")
+MY_PV="$(ver_cut 1-4 ${PV})"
+
+TARGET_FRAMEWORK="netstandard2.1"
 FRAMEWORK="6.0"
 DESCRIPTION=".NET wrapper for the Bullet physics library using Platform Invoke"
 HOMEPAGE="http://andrestraks.github.io/BulletSharp/"
 LICENSE="MIT ZLIB"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-IUSE+=" ${USE_DOTNET} debug test"
+IUSE+=" debug developer nupkg test"
 
 # For dotnet runtimes, see https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.NETCore.Platforms/src/runtime.json
 # For CI and supported platforms, see https://github.com/MonoGame/MonoGame/blob/v3.8.1_HOTFIX/build.cake
@@ -58,7 +60,7 @@ ERIDS=(
 	${WIN_ERIDS[@]}
 )
 
-IUSE+=" ${RIDS[@]} "
+IUSE+=" ${ERIDS[@]} "
 REQUIRED_USE+="
 	|| (
 		${ERIDS[@]}
@@ -139,10 +141,14 @@ DEPEND="
 BDEPEND="
 	~sci-physics/bullet-3.24
 	>=dev-dotnet/dotnet-sdk-bin-${FRAMEWORK}:${FRAMEWORK}
+	dev-util/patchelf
 "
 
 # Only tested versions allowed because the wrapper is version sensitive.
 BULLET_VERSIONS=(2.89)
+# Finding the correct commit or version is like finding a needle in a haystack
+# Must be commits between 2.89 and 3.05
+
 # Requires:
 # setCachedSeperatingAxis in src/BulletCollision/NarrowPhaseCollision/btGjkPairDetector.h
 # getAngularMomentum in src/BulletDynamics/Featherstone/btMultiBody.h
@@ -160,6 +166,8 @@ BULLET_IUSE=($(gen_iuse))
 IUSE+="
 	${BULLET_IUSE[@]}
 "
+
+# The dotnet-sdk-bin ebuild only supports one host
 REQUIRED_USE="
 	^^ ( ${BULLET_IUSE[@]} )
 "
@@ -176,34 +184,15 @@ https://github.com/bulletphysics/bullet3/archive/refs/tags/${pv}.tar.gz
 	done
 }
 
+PATCHES=(
+	"${FILESDIR}/BulletSharpPInvoke-0.12_p9999-bullet-versioning.patch"
+)
+
 SRC_URI+=" "$(gen_src_uris)
 SLOT="0/${PV}"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 DOTNET_SUPPORTED_SDKS=("dotnet-sdk-bin-6.0")
-
-# Copy and sanitize permissions
-copy_next_to_file() {
-	local source="${1}"
-	local attachment="${2}"
-	local bn_attachment=$(basename "${attachment}")
-	local permissions="${3}"
-	local owner="${4}"
-	local fingerprint=$(sha256sum "${source}" | cut -f 1 -d " ")
-	for x in $(find "${ED}" -type f) ; do
-		[[ -L "${x}" ]] && continue
-		x_fingerprint=$(sha256sum "${x}" | cut -f 1 -d " ")
-		if [[ "${fingerprint}" == "${x_fingerprint}" ]] ; then
-			local destdir=$(dirname "${x}")
-			cp -a "${attachment}" "${destdir}" || die
-			chmod "${permissions}" "${destdir}/${bn_attachment}" || die
-			chown "${owner}" "${destdir}/${bn_attachment}" || die
-einfo
-einfo "Copied ${attachment} -> ${destdir}"
-einfo
-		fi
-	done
-}
 
 get_crid_platform() {
 	local erid="${1}"
@@ -213,13 +202,13 @@ get_crid_platform() {
 }
 
 get_hrid_platform() {
-	local erid="${1}"
-	echo "${erid%-*}"
+	local hrid="${1}"
+	echo "${hrid%-*}"
 }
 
 get_hrid_arch() {
-	local erid="${1}"
-	echo "${erid##*-}"
+	local hrid="${1}"
+	echo "${hrid##*-}"
 }
 
 # erid_arch -> Gentoo arch
@@ -266,23 +255,15 @@ eerror "Supported SDK versions: ${DOTNET_SUPPORTED_SDKS[@]}"
 eerror
 		die
 	fi
+	einfo " -- USING .NET ${TARGET_FRAMEWORK} FRAMEWORK -- "
 }
 
 src_unpack() {
-ewarn
-ewarn "This ebuild is WIP (Work In Progress)"
-ewarn
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/AndresTraks/BulletSharpPInvoke.git"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	git-r3_fetch
 	git-r3_checkout
-
-#	EGIT_BRANCH="master"
-#	EGIT_REPO_URI="https://github.com/bulletphysics/bullet3.git"
-#	EGIT_CHECKOUT_DIR="${WORKDIR}/bullet"
-#	git-r3_fetch
-#	git-r3_checkout
 
 	local flag
 	for flag in ${BULLET_IUSE[@]} ; do
@@ -294,6 +275,24 @@ ewarn
 			break
 		fi
 	done
+
+	local actual_version=$(cat "${S}/BulletSharp/BulletSharp.csproj" \
+		| grep "Version" \
+		| cut -f 2 -d ">" \
+		| cut -f 1 -d "<")
+	local expected_version=$(ver_cut 1-4 "${PV}")
+	if [[ "${actual_version}" != "${expected_version}" ]] ; then
+eerror
+eerror "Version bump required"
+eerror
+eerror "Actual version:  ${actual_version}"
+eerror "Expected version:  ${expected_version}"
+eerror
+eerror "QA:  Bump and review IUSE, DEPENDs, patches"
+eerror
+
+		die
+	fi
 }
 
 src_prepare() {
@@ -307,18 +306,16 @@ src_prepare() {
 		sed -i -e 's|ADD_SUBDIRECTORY\(test\)||g' \
 			libbulletc/CMakeLists.txt || die
 	fi
-#	estrong_assembly_info "using System.Runtime.InteropServices;" \
-#		"${DISTDIR}/mono.snk" "BulletSharp/Properties/AssemblyInfo.cs"
+
+	export CMAKE_USE_DIR="${S}/libbulletc"
+	cd "${CMAKE_USE_DIR}"
+	cmake_src_prepare
 
 	local erid
 	for erid in ${ERIDS[@]} ; do
 		if use "${erid}" ; then
 			local hrid=$(get_hrid "${erid}")
-			export CMAKE_USE_DIR="${S}-${hrid}/libbulletc"
-			export BUILD_DIR="${S}-${hrid}_build"
 			cp -a "${S}" "${S}-${hrid}" || die
-			cd "${CMAKE_USE_DIR}" || die
-			cmake_src_prepare
 		fi
 	done
 }
@@ -328,21 +325,38 @@ src_configure() {
 	for erid in ${ERIDS[@]} ; do
 		if use "${erid}" ; then
 			local hrid=$(get_hrid "${erid}")
-			local hplatform=$(get_hrid_platform "${erid}")
+			local crid=$(get_crid "${erid}")
+			local hplatform=$(get_hrid_platform "${hrid}")
 
 			# Only allow for native for now
-			[[ "${hplatform}" != "linux" ]] || continue
-			local garch=$(get_garch "${rid}")
+			[[ "${hplatform}" == "linux" ]] || continue
+			local garch=$(get_garch "${erid}")
 			export CHOST=$(get_abi_CHOST "${garch}")
 			if [[ "${hplatform}" == "linux" ]] ; then
 				export CC="${CHOST}-gcc"
 				export CXX="${CHOST}-g++"
 			fi
 
+		        local mycmakeargs=( -DBUILD_BULLET3=1 -DBUILD_EXTRAS=1 )
+			filter-flags -DBULLET_VER=*
+			if use bullet_2_89 ; then
+				# 02.89.000 ${major}${minor}${patch}${letter}
+				append-cppflags -DBULLET_VER=0289000
+			elif has bullet_3_05 ${IUSE} && use bullet_3_05 ; then
+				# 03.05.000 ${major}${minor}${patch}${letter}
+				append-cppflags -DBULLET_VER=0305000
+			else
+				append-cppflags -DBULLET_VER=9999999
+			fi
+
+			einfo "CC=${CC}"
+			einfo "CXX=${CXX}"
+			einfo "CHOST=${CHOST}"
+
 			export CMAKE_USE_DIR="${S}-${hrid}/libbulletc"
-			export BUILD_DIR="${S}-${hrid}_build"
+			export BUILD_DIR="${S}-${hrid}/libbulletc"
 			cd "${CMAKE_USE_DIR}" || die
-		        local mycmakeargs=( -DBUILD_BULLET3=1 )
+			einfo "DEBUG: ${CMAKE_USE_DIR}"
 			cmake_src_configure
 		fi
 	done
@@ -355,65 +369,124 @@ src_compile() {
 		if use "${erid}" ; then
 			local crid=$(get_crid "${erid}")
 			local hrid=$(get_hrid "${erid}")
-			local hplatform=$(get_hrid_platform "${erid}")
+			local hplatform=$(get_hrid_platform "${hrid}")
 
 			# Only allow for native for now
-			[[ "${hplatform}" != "linux" ]] || continue
-			local garch=$(get_garch "${rid}")
+			einfo "hplatform=${hplatform}"
+			local garch=$(get_garch "${erid}")
 			export CHOST=$(get_abi_CHOST "${garch}")
 			if [[ "${hplatform}" == "linux" ]] ; then
 				export CC="${CHOST}-gcc"
 				export CXX="${CHOST}-g++"
+			else
+eerror
+eerror "Linux supported only for now"
+eerror "You may fork ebuild and modify it for ${hrid}"
+eerror
+				die
 			fi
 
 			export CMAKE_USE_DIR="${S}-${hrid}/libbulletc"
-			export BUILD_DIR="${S}-${hrid}_build"
+			export BUILD_DIR="${S}-${hrid}/libbulletc"
 			cd "${BUILD_DIR}" || die
 			# Build native shared library wrapper
 			cmake_src_compile
 
 			# Cross build requires Gentoo Prefix.
 			# Build C# wrapper
-			cd "${CMAKE_USE_DIR}/BulletSharp" || die
-			dotnet publich -c ${configuration} -r ${crid} --sc -o "${BUILD_DIR}" || die
+			export BUILD_DIR="${S}-${hrid}"
+			cd "${BUILD_DIR}/BulletSharp" || die
+			DOTNET_CLI_TELEMETRY_OPTOUT=1
+			dotnet publish "BulletSharp.sln" -c ${configuration} -r ${crid} --sc -o "${BUILD_DIR}/publish" || die
 		fi
 	done
 }
 
 _mydoins() {
 	local dll_path="$1"
-#	egacinstall "${dll_path}"
-	copy_next_to_file \
-		"${dll_path}" \
-		"${FILESDIR}/BulletSharp.dll.config" \
-		0644 \
-		root:root
-	use developer && \
-		copy_next_to_file \
-		"${dll_path}" \
-		"${dll_path}.mdb" \
-		0644 \
-		root:root
-	doins "${dll_path}"
-	doins "BulletSharp.dll.config"
-	use developer && doins "${dll_path}.mdb"
+	doexe "${dll_path}"
+	doins $(echo "${dll_path}" | sed -e "s|.dll|.deps.json|g")
+	use developer && doins $(echo "${dll_path}" | sed -e "s|.dll|.pdb|g")
+}
+
+_install_libbulletc() {
+	local x
+	cd "${BUILD_DIR}" || die
+	einfo "lib suffix:  $(get_libname)"
+	for x in $(find . -name "*$(get_libname)") ; do
+		if [[ "${erid}" =~ "linux" ]] ; then
+einfo "Changing rpath for ${x}"
+			patchelf --set-rpath "${d}" "${x}" || die
+		fi
+		doexe "${x}"
+	done
+	if ! [[ "${erid}" =~ "linux" ]] ; then
+ewarn
+ewarn "Missing rpath change."
+ewarn "${hrid} is untested or needs ebuild developer for this port"
+ewarn
+	fi
+	local L=(
+libBullet2FileLoader.so
+libBullet3Collision.so
+libBullet3Common.so
+libBullet3Dynamics.so
+libBullet3Geometry.so
+libBullet3OpenCL_clew.so
+libBulletCollision.so
+libBulletDynamics.so
+libBulletFileLoader.so
+libBulletInverseDynamics.so
+libBulletInverseDynamicsUtils.so
+libBulletRobotics.so
+libBulletSoftBody.so
+libBulletWorldImporter.so
+libBulletXmlWorldImporter.so
+libConvexDecomposition.so
+libGIMPACTUtils.so
+libHACD.so
+libLinearMath.so
+	)
+	for x in $(find . -name "*$(get_libname)") ; do
+		doexe "${x}"
+	done
+	for l in ${L[@]} ; do
+		for bullet_pv in ${BULLET_VERSIONS[@]} ; do
+			if use bullet_${bullet_pv/./_} ; then
+				mv "${ED}${d}/${l}"{,.${bullet_pv}} || die
+				dosym "${l}.${bullet_pv}" "${d}/${l}"
+			fi
+		done
+	done
+}
+
+_install_wrapper() {
+	cd "${BUILD_DIR}/publish" || die
+	_mydoins "$(pwd)/BulletSharp.dll"
+}
+
+_install_nupkg() {
+	cd "${BUILD_DIR}" || die
+	doins "BulletSharp/bin/Release/BulletSharp.$(ver_cut 1-3 ${MY_PV}).nupkg"
 }
 
 src_install() {
+	export STRIP="${EPREFIX}/usr/true" # Don't strip rpath
 	local configuration=$(usex debug "Debug" "Release")
 	local erid
 	for erid in ${ERIDS[@]} ; do
 		if use "${erid}" ; then
 			local hrid=$(get_hrid "${erid}")
-			export CMAKE_USE_DIR="${S}-${hrid}/libbulletc"
-			export BUILD_DIR="${S}-${hrid}_build"
-			cd "${BUILD_DIR}" || die
-
-			local d="/opt/${SDK}/shared/${PN}.Host.${platform}-${arch}/${MY_PV}"
+			local crid=$(get_crid "${erid}")
+			local garch=$(get_garch "${erid}")
+			export CHOST=$(get_abi_CHOST "${garch}")
+			export BUILD_DIR="${S}-${hrid}"
+			local d="/opt/${SDK}/shared/${PN}.Host.${hrid}/${MY_PV}"
 			insinto "${d}"
 			exeinto "${d}"
-			_mydoins "BulletSharp/bin/${configuration}/BulletSharp.dll"
-			doexe "libbulletc.so"
+			_install_libbulletc
+			_install_wrapper
+			_install_nupkg
 		fi
 	done
 
