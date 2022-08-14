@@ -127,9 +127,9 @@ src_prepare()
 	cd "${S}" || die
 	eapply "${FILESDIR}/tbb-2021.2.0-fix-missing-header-cholesky.patch"
 
-	# EPYTHON
-	# ABI
-	# MULTILIB_ABI_FLAG
+	export CMAKE_USE_DIR="${S}"
+	cd "${CMAKE_USE_DIR}" || die
+	cmake_src_prepare
 
 	src_prepare_abi()
 	{
@@ -138,16 +138,8 @@ src_prepare()
 				cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}" || die
 			}
 			python_foreach_impl prepare_python_impl
-			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}"
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${EPYTHON}_build"
-			cd "${CMAKE_USE_DIR}" || die
-			cmake_src_prepare
 		else
 			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}" || die
-			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
-			cd "${CMAKE_USE_DIR}" || die
-			cmake_src_prepare
 		fi
 	}
 	multilib_foreach_abi src_prepare_abi
