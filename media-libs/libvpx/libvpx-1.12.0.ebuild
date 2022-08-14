@@ -525,9 +525,9 @@ configure_pgx() {
 						-fstack-protector
 			fi
 			append-ldflags -Wl,-z,relro -Wl,-z,now
-			mycmakeargs+=(
-				-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS} -pie"
-			)
+
+			# needs review or test
+			# append-ldflags -pie
 		fi
 	fi
 
