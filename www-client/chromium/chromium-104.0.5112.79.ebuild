@@ -1608,6 +1608,18 @@ eerror
 	fi
 }
 
+_prepare_pgo() {
+	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
+	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	if [[ -e "${pgo_data_dir}" ]] ; then
+		mkdir -p "${pgo_data_dir2}" || die
+		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
+	else
+		mkdir -p "${pgo_data_dir2}" || die
+		touch "${pgo_data_dir2}/compiler_fingerprint" || die
+	fi
+}
+
 src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
@@ -2063,6 +2075,8 @@ get_pgo_phase() {
 
 _configure_pgx() {
 	local chost=$(get_abi_CHOST ${ABI})
+
+	_prepare_pgo
 
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
