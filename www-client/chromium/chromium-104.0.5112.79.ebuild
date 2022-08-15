@@ -2039,7 +2039,7 @@ meets_pgo_requirements() {
 				return 1
 			fi
 		else
-			return 1
+			return 2
 			ewarn "Compiler is not supported."
 		fi
 
@@ -2061,12 +2061,16 @@ meets_pgo_requirements() {
 
 get_pgo_phase() {
 	local result="NO_PGO"
+	meets_pgo_requirements
+	local ret=$?
 	if ! use pgo ; then
 		result="NO_PGO"
-	elif use pgo && meets_pgo_requirements ; then
+	elif use pgo && (( ${ret} == 0 )) ; then
 		result="PGO"
-	elif use pgo && ! meets_pgo_requirements ; then
+	elif use pgo && (( ${ret} == 1 )) ; then
 		result="PGI"
+	elif use pgo && (( ${ret} == 2 )) ; then
+		result="NO_PGO"
 	fi
 	echo "${result}"
 }
