@@ -2352,58 +2352,41 @@ ewarn
 		fi
 	fi
 
-	if [[ $myarch = amd64 ]] ; then
-		myconf_gn+=" target_cpu=\"x64\""
+	if [[ ${myarch} = amd64 ]] ; then
+		target_cpu="x64"
 		ffmpeg_target_arch=x64
-	elif [[ $myarch = x86 ]] ; then
-		myconf_gn+=" target_cpu=\"x86\""
+	elif [[ ${myarch} = x86 ]] ; then
+		target_cpu="x86"
 		ffmpeg_target_arch=ia32
 
 		# This is normally defined by compiler_cpu_abi in
 		# build/config/compiler/BUILD.gn, but we patch that part out.
 		append-flags -msse2 -mfpmath=sse -mmmx
-	elif [[ $myarch = arm64 ]] ; then
-		myconf_gn+=" target_cpu=\"arm64\""
+	elif [[ ${myarch} = arm64 ]] ; then
+		target_cpu="arm64"
 		ffmpeg_target_arch=arm64
-	elif [[ $myarch = arm ]] ; then
-		myconf_gn+=" target_cpu=\"arm\""
+	elif [[ ${myarch} = arm ]] ; then
+		target_cpu="arm"
 		ffmpeg_target_arch=$(usex cpu_flags_arm_neon arm-neon arm)
-	elif [[ $myarch = ppc64 ]] ; then
-		myconf_gn+=" target_cpu=\"ppc64\""
+	elif [[ ${myarch} = ppc64 ]] ; then
+		target_cpu="ppc64"
 		ffmpeg_target_arch=ppc64
 	else
-		die "Failed to determine target arch, got '$myarch'."
+		die "Failed to determine target arch, got '${myarch}'."
 	fi
-
-	local target_cpu=""
-	case "${ABI}" in
-		amd64*|x64*)
-			target_cpu="x64"
-			;;
-		arm|n32|n64|o32)
-			target_cpu="${chost%%-*}"
-			;;
-		arm64|ppc|ppc64|s390*)
-			target_cpu="${ABI}"
-			;;
-		ppc_aix,ppc_macos)
-			target_cpu="ppc"
-			;;
-		x86*)
-			target_cpu="x86"
-			;;
-		*)
-einfo
-einfo "${ABI} is not supported"
-einfo
-			;;
-	esac
 
 	myconf_gn+=" target_cpu=\"${target_cpu}\""
 	myconf_gn+=" v8_current_cpu=\"${target_cpu}\""
 	myconf_gn+=" current_cpu=\"${target_cpu}\""
 	myconf_gn+=" host_cpu=\"${target_cpu}\""
 	myconf_gyp+=" -Dtarget_arch=${target_arch}"
+	if [[ -n "${MULTILIB_ABI_FLAG}" ]] ; then
+		:;
+	else
+einfo
+einfo "Only single ABI is supported for this ${ABI} arch"
+einfo
+	fi
 
 	if ! use cpu_flags_x86_sse2 ; then
 		myconf_gn+=" use_sse2=false"
