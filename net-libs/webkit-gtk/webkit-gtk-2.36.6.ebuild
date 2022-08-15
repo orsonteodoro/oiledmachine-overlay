@@ -11,16 +11,15 @@ EAPI=8
 
 # See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.36.6/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
-LIBWEBRTC_REF="614.1.6"
 
 LLVM_MAX_SLOT=14 # This should not be more than Mesa's package LLVM_MAX_SLOT
+LLVM_SLOTS=(14 13)
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{8..11} )
 USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
-inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
-multilib-minimal pax-utils python-any-r1 ruby-single subversion \
-toolchain-funcs virtualx
+inherit check-reqs cmake desktop flag-o-matic git-r3 gnome2 linux-info llvm \
+multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs
 
 DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
 HOMEPAGE="https://www.webkitgtk.org"
@@ -285,7 +284,7 @@ vi zh_CN
 
 IUSE+="
 ${LANGS[@]/#/l10n_}
-64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2 dav1d +dfg-jit +egl -eme
+aqua avif +bmalloc cpu_flags_arm_thumb2 dav1d +dfg-jit +egl -eme
 +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer -gtk-doc hardened
 +introspection +jit +journald +jpeg2k jpegxl +jumbo-build +lcms +libhyphen
 +libnotify -libwebrtc lto -mediastream -minibrowser +opengl openmp pgo
@@ -304,14 +303,6 @@ REQUIRED_USE+="
 		X
 	)
 	egl
-	64k-pages? (
-		!bmalloc
-		!dfg-jit
-		!ftl-jit
-		!jit
-		!webassembly
-		!webassembly-b3-jit
-	)
 	cpu_flags_arm_thumb2? (
 		!ftl-jit
 		bmalloc
@@ -508,11 +499,13 @@ RDEPEND+="
 		>=media-libs/opus-1.1[${MULTILIB_USEDEP}]
 	)
 	woff2? ( >=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}] )
-	X? (	>=x11-libs/libX11-1.6.4[${MULTILIB_USEDEP}]
+	X? (
+		>=x11-libs/libX11-1.6.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXcomposite-0.4.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXdamage-1.1.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXrender-0.9.10[${MULTILIB_USEDEP}]
-		>=x11-libs/libXt-1.1.5[${MULTILIB_USEDEP}] )
+		>=x11-libs/libXt-1.1.5[${MULTILIB_USEDEP}]
+	)
 "
 # For ${OCDM_WV}, \
 #   You need a license, the proprietary SDK, and OCDM plugin.
@@ -521,25 +514,26 @@ unset WPE_DEPEND
 DEPEND+=" ${RDEPEND}"
 # paxctl is needed for bug #407085
 # It needs real bison, not yacc.
+gen_bdepend_clang() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				>=sys-devel/lld-${s}
+			)
+		"
+	done
+}
+
 BDEPEND+="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
-	lto? (
-		|| (
-			(
-				sys-devel/clang:11[${MULTILIB_USEDEP}]
-				sys-devel/llvm:11[${MULTILIB_USEDEP}]
-				>=sys-devel/lld-11
-			)
-			(
-				sys-devel/clang:12[${MULTILIB_USEDEP}]
-				sys-devel/llvm:12[${MULTILIB_USEDEP}]
-				>=sys-devel/lld-12
-			)
-		)
+	|| (
+		|| ( $(gen_bdepend_clang) )
+		>=sys-devel/gcc-8.3.0
 	)
-	|| ( >=sys-devel/clang-${CLANG_V}[${MULTILIB_USEDEP}]
-	     >=sys-devel/gcc-8.3.0 )
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
 	>=dev-util/cmake-3.12
 	>=dev-util/glib-utils-${GLIB_V}
@@ -554,14 +548,11 @@ BDEPEND+="
 	virtual/perl-JSON-PP
 	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_V} )
 	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
-	pgo? (
-		dev-vcs/subversion
-		x11-base/xorg-server[xvfb]
-		x11-apps/xhost
+	lto? (
+		|| ( $(gen_bdepend_clang) )
 	)
 	thunder? ( net-libs/thunder )
 	webcore? ( >=dev-util/gperf-3.0.1 )
-	webrtc? ( dev-vcs/subversion )
 "
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
@@ -577,9 +568,10 @@ BDEPEND+="
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
 EGIT_COMMIT="bec7040a3f8d8c18ae65fd9b22f0eced1215b4a4"
-ESVN_REVISION="294992" # SVN is not used
 SRC_URI="
-https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
+	!libwebrtc? (
+		https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
+	)
 "
 #
 # Tests fail to link for inexplicable reasons
@@ -651,105 +643,6 @@ einfo
 	fi
 	python-any-r1_pkg_setup
 
-	if use 64k-pages ; then
-		if [[ "${ABI}" == "arm64" \
-			|| "${ABI}" == "n32" \
-			|| "${ABI}" == "n64" \
-			|| "${ABI}" == "n64" \
-			|| "${ABI}" == "ppc64" \
-			|| "${ABI}" == "sparc32" \
-			|| "${ABI}" == "sparc64" \
-			]] ; then
-			local pagesize=$(getconf PAGESIZE)
-			if [[ "${pagesize}" != "16384" ]] ; then
-ewarn
-ewarn "Page size is not 16k but currently ${pagesize}.  Disable 64k-pages USE"
-ewarn "flag."
-ewarn
-			fi
-		else
-eerror
-eerror "64k pages is not supported.  Remove the 64k-pages USE flag."
-eerror
-			die
-		fi
-
-		if ! linux_config_exists ; then
-eerror
-eerror "Missing .config for kernel."
-eerror
-			die
-		fi
-
-		if [[ "${ABI}" == "arm64" ]] ; then
-			if ! linux_chkconfig_present "ARM64_64K_PAGES" ; then
-eerror
-eerror "CONFIG_ARM64_64K_PAGES is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "n32" ]] ; then
-			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
-eerror
-eerror "CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "n64" ]] ; then
-			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
-eerror
-eerror "CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "n64" ]] ; then
-			if ! linux_chkconfig_present "PAGE_SIZE_64KB" ; then
-eerror
-eerror "CONFIG_PAGE_SIZE_64KB is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "ppc64" ]] ; then
-			if ! linux_chkconfig_present "PPC_64K_PAGES" ; then
-eerror
-eerror "CONFIG_PPC_64K_PAGES is unset in the kernel config.  Remove the"
-eerror "64k-pages USE flag or change the kernel config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "sparc32" ]] ; then
-			if linux_chkconfig_present "HUGETLB_PAGE" ; then
-				:;
-			elif linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
-				:;
-			else
-eerror
-eerror "CONFIG_TRANSPARENT_HUGEPAGE or CONFIG_HUGETLB_PAGE is unset in the"
-eerror "kernel config.  Remove the 64k-pages USE flag or change the kernel"
-eerror "config."
-eerror
-				die
-			fi
-		elif [[ "${ABI}" == "sparc64" ]] ; then
-			if linux_chkconfig_present "HUGETLB_PAGE" ; then
-				:;
-			elif linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
-				:;
-			else
-eerror
-eerror "CONFIG_TRANSPARENT_HUGEPAGE or CONFIG_HUGETLB_PAGE is unset in the"
-eerror "kernel config.  Remove the 64k-pages USE flag or change the kernel"
-eerror "config."
-eerror
-				die
-			fi
-		fi
-	fi
-
 	check_geolocation
 
 	if ( use arm || use arm64 ) && ! use gles2 ; then
@@ -803,20 +696,19 @@ EXPECTED_BUILD_FINGERPRINT_WEBRTC="\
 ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
 2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3"
 src_unpack() {
-	unpack ${A}
-	if use pgo ; then
-ewarn
-ewarn "The PGO use flag is a Work In Progress (WIP) and is not production"
-ewarn "ready."
-ewarn
+	if use libwebrtc ; then
+		EGIT_CHECKOUT_DIR="Source/ThirdParty/libwebrtc"
+		EGIT_CLONE_TYPE="single"
+		EGIT_COMMIT="webkitgtk-$(ver_cut 1-3 ${PV})"
+		EGIT_REPO_URI="https://github.com/WebKit/WebKit.git"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
 	fi
 
 	local actual_build_fingerprint_webrtc
 	if use libwebrtc ; then
-		subversion_fetch \
-https://svn.webkit.org/repository/webkit/tags/Safari-${LIBWEBRTC_REF}/Source/ThirdParty/libwebrtc/ \
-Source/ThirdParty/libwebrtc
-
 		actual_build_fingerprint_webrtc=$(cat \
 		$(find "${S}/Source/ThirdParty/libwebrtc" \
 			\( \
@@ -865,7 +757,13 @@ eerror "Expected build files fingerprint=${EXPECTED_BUILD_FINGERPRINT_WEBRTC}"
 eerror
 eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
 eerror
-		die
+#		die
+	fi
+	if use pgo ; then
+ewarn
+ewarn "The PGO use flag is a Work In Progress (WIP) and is not production"
+ewarn "ready."
+ewarn
 	fi
 }
 
@@ -1082,31 +980,7 @@ eerror
 
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
-	if use 64k-pages ; then
-einfo
-einfo "Disabling JIT for ${ABI} with 64kb pages"
-einfo
-		mycmakeargs+=(
-			-DENABLE_JIT=OFF
-			-DENABLE_DFG_JIT=OFF
-			-DENABLE_FTL_JIT=OFF
-			-DENABLE_WEBASSEMBLY_B3JIT=OFF
-			-DUSE_64KB_PAGE_BLOCK=ON
-			-DUSE_SYSTEM_MALLOC=ON
-		)
-		if [[ "${ABI}" == "arm64" ]] ; then
-			mycmakeargs+=(
-				-DENABLE_C_LOOP=OFF
-				-DENABLE_SAMPLING_PROFILER=ON
-			)
-		else
-			mycmakeargs+=(
-				-DENABLE_C_LOOP=ON
-				-DENABLE_SAMPLING_PROFILER=OFF
-			)
-		fi
-		jit_enabled="0"
-	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && use jit ; then
+	if [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && use jit ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
