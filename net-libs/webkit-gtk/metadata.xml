@@ -188,6 +188,9 @@ Traditional      i        i          i         i        i       i
       Uses GstWebRTC as the backend for WebRTC.  Disabled by default through
       web view settings.
     </flag>
+    <flag name="journald">
+      Enables Journald logging
+    </flag>
     <flag name="lto">
       Use ThinLTO LTO [link time optimization] when when linking.  ThinLTO is
       used instead of full for efficient multicore and memory usage.
@@ -261,6 +264,9 @@ Traditional      i        i          i         i        i       i
     </flag>
     <flag name="webrtc">
       Enables WebRTC support.  (WebKitGTK EXPERIMENTAL, WebKit supported)
+    </flag>
+    <flag name="woff2">
+      Builds support for WOFF2 Web Fonts
     </flag>
     <flag name="yarr-jit">
       Enables JIT regex support.  Otherwise, it falls back to interpretive.

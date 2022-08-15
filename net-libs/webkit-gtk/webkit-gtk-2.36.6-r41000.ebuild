@@ -287,11 +287,11 @@ IUSE+="
 ${LANGS[@]/#/l10n_}
 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2 dav1d +dfg-jit +egl -eme
 +ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer -gtk-doc hardened
-+introspection +jit +jpeg2k +jumbo-build +lcms +libhyphen +libnotify -libwebrtc
-lto -mediastream -minibrowser +opengl openmp pgo +pulseaudio -seccomp -spell
--systemd test thunder variation-fonts +v4l wayland +webassembly
-+webassembly-b3-jit +webcrypto +webgl webm-eme -webrtc webvtt -webxr +X
-+yarr-jit
++introspection +jit +journald +jpeg2k jpegxl +jumbo-build +lcms +libhyphen
++libnotify -libwebrtc lto -mediastream -minibrowser +opengl openmp pgo
++pulseaudio -seccomp -spell test thunder variation-fonts +v4l wayland
++webassembly +webassembly-b3-jit +webcrypto +webgl webm-eme -webrtc webvtt
+-webxr +woff2 +X +yarr-jit
 "
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
@@ -317,7 +317,10 @@ REQUIRED_USE+="
 		bmalloc
 	)
 	dav1d? ( gstreamer )
-	jit? ( bmalloc )
+	jit? (
+		bmalloc
+		dfg-jit
+	)
 	dfg-jit? ( jit )
 	ftl-jit? ( jit )
 	geolocation? ( introspection )
@@ -436,7 +439,6 @@ RDEPEND+="
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
-	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
 	>=net-libs/libsoup-2.99.9:3.0[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
@@ -462,7 +464,14 @@ RDEPEND+="
 		)
 	)
 	introspection? ( >=dev-libs/gobject-introspection-1.56.1:= )
+	journald? (
+		|| (
+			sys-auth/elogind
+			>=sys-apps/systemd-245.4[${MULTILIB_USEDEP}]
+		)
+	)
 	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
+	jpegxl? ( media-libs/libjxl[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
 	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
@@ -498,6 +507,7 @@ RDEPEND+="
 		media-libs/openh264[${MULTILIB_USEDEP}]
 		>=media-libs/opus-1.1[${MULTILIB_USEDEP}]
 	)
+	woff2? ( >=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}] )
 	X? (	>=x11-libs/libX11-1.6.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXcomposite-0.4.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libXdamage-1.1.4[${MULTILIB_USEDEP}]
@@ -532,7 +542,6 @@ BDEPEND+="
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
 	>=dev-util/cmake-3.12
 	>=dev-util/glib-utils-${GLIB_V}
-	>=dev-util/gperf-3.0.1
 	>=dev-lang/perl-5.10.0
 	>=dev-lang/python-2.7
 	>=dev-lang/ruby-1.9
@@ -550,6 +559,7 @@ BDEPEND+="
 		x11-apps/xhost
 	)
 	thunder? ( net-libs/thunder )
+	webcore? ( >=dev-util/gperf-3.0.1 )
 	webrtc? ( dev-vcs/subversion )
 "
 #	test? (
@@ -996,9 +1006,7 @@ eerror
 	# opengl needs to be explictly handled, bug #576634
 
 	local use_wpe_renderer=OFF
-	local opengl_enabled=OFF
 	if use opengl || use gles2; then
-		opengl_enabled=ON
 		use wayland && use_wpe_renderer=ON
 	fi
 
@@ -1021,16 +1029,15 @@ eerror
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
 		-DENABLE_ENCRYPTED_MEDIA=$(usex eme)
+		-DENABLE_GAMEPAD=$(usex gamepad)
 		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation) # \
 # Runtime optional (talks over dbus service)
 		-DENABLE_GLES2=$(usex gles2)
 		-DENABLE_GTKDOC=$(usex gtk-doc)
-		-DENABLE_GAMEPAD=$(usex gamepad)
 		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection)
-		-DENABLE_JOURNALD_LOG=$(usex systemd)
+		-DENABLE_JOURNALD_LOG=$(usex journald)
 		-DENABLE_MEDIA_STREAM=$(usex mediastream)
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
-		-DENABLE_OPENGL=${opengl_enabled}
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
 		-DENABLE_UNIFIED_BUILDS=$(usex jumbo-build)
 		-DENABLE_SPELLCHECK=$(usex spell)
@@ -1046,6 +1053,7 @@ eerror
 		-DPORT=GTK
 		-DUSE_AVIF=$(usex avif)
 		-DUSE_GTK4=OFF
+		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBNOTIFY=$(usex libnotify)
@@ -1053,14 +1061,23 @@ eerror
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_SOUP2=OFF
-		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
-		-DUSE_WOFF2=ON
+		-DUSE_WOFF2=$(usex woff2)
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
 # WPE renderer is used to implement accelerated compositing under wayland
 		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package egl EGL)
 		$(cmake_use_find_package opengl OpenGL)
 	)
+
+	if use opengl || use gles2 ; then
+		mycmakeargs+=(
+			-DUSE_OPENGL_OR_ES=ON
+		)
+	else
+		mycmakeargs+=(
+			-DUSE_OPENGL_OR_ES=OFF
+		)
+	fi
 
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
