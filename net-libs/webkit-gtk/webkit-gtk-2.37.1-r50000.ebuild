@@ -905,10 +905,13 @@ src_prepare() {
 	prepare_abi() {
 		if use pgo ; then
 			local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
+			local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
 			if [[ -e "${pgo_data_dir}" ]] ; then
-				local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-				mkdir -p "${d}" || die
-				cp -aT "${pgo_data_dir}" "${d}" || die
+				mkdir -p "${pgo_data_dir2}" || die
+				cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
+			else
+				mkdir -p "${pgo_data_dir2}" || die
+				touch "${pgo_data_dir2}/compiler_fingerprint" || die
 			fi
 		fi
 	}
@@ -961,7 +964,7 @@ get_pgo_phase() {
 	elif use pgo && meets_pgo_requirements ; then
 		result="PGO"
 	elif use pgo && ! meets_pgo_requirements ; then
-		result"PGI"
+		result="PGI"
 	fi
 	echo "${result}"
 }
@@ -1264,7 +1267,7 @@ einfo
 	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
 	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
 	mkdir -p "${ED}/${pgo_data_dir}" || die
-	if [[ "${PGO_PHASE}" == "pgi" ]] ; then
+	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${pgo_data_dir}"
 		elif tc-is-gcc ; then
@@ -1275,7 +1278,7 @@ eerror "Only GCC and Clang are supported for PGO."
 eerror
 			die
 		fi
-	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
+	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		if tc-is-clang ; then
 einfo
 einfo "Merging PGO data to generate a PGO profile"
@@ -1312,6 +1315,12 @@ _compile_pgx() {
 }
 
 multilib_src_compile() {
+	export CC=$(tc-getCC ${CTARGET:-${CHOST}})
+	export CXX=$(tc-getCXX ${CTARGET:-${CHOST}})
+
+	einfo "CC=${CC}"
+	einfo "CXX=${CXX}"
+
 	export PGO_PHASE=$(get_pgo_phase)
 	_config_pgx
 	_compile_pgx
