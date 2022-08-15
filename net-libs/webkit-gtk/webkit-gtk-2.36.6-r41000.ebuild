@@ -861,25 +861,11 @@ eerror
 _prepare_pgo() {
 	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
 	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	mkdir -p "${pgo_data_dir2}" || die
 	if [[ -e "${pgo_data_dir}" ]] ; then
-		mkdir -p "${pgo_data_dir2}" || die
 		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
-	else
-		mkdir -p "${pgo_data_dir2}" || die
-		touch "${pgo_data_dir2}/compiler_fingerprint" || die
 	fi
-}
-
-_prepare_pgo() {
-	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
-	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-	if [[ -e "${pgo_data_dir}" ]] ; then
-		mkdir -p "${pgo_data_dir2}" || die
-		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
-	else
-		mkdir -p "${pgo_data_dir2}" || die
-		touch "${pgo_data_dir2}/compiler_fingerprint" || die
-	fi
+	touch "${pgo_data_dir2}/compiler_fingerprint" || die
 }
 
 src_prepare() {
