@@ -2066,7 +2066,7 @@ get_pgo_phase() {
 	elif use pgo && meets_pgo_requirements ; then
 		result="PGO"
 	elif use pgo && ! meets_pgo_requirements ; then
-		result"PGI"
+		result="PGI"
 	fi
 	echo "${result}"
 }
@@ -2471,13 +2471,13 @@ einfo
 	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-3 ${pv})"
 	if ! use pgo-full || tc-is-cross-compiler ; then
 		:;
-	elif [[ "${PGO_PHASE}" == "pgi" ]] ; then
+	elif [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		if tc-is-clang ; then
 			append-flags -fprofile-generate="${pgo_data_dir}"
 		else
 			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
 		fi
-	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
+	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		mkdir -p "${T}/pgo-${ABI}" || die
 		if tc-is-clang ; then
 			llvm-profdata merge -output="${BUILD_DIR}/chrome/build/pgo_profiles/custom.profdata" \
