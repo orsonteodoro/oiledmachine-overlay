@@ -457,6 +457,7 @@ RDEPEND+="
 		)
 		gstwebrtc? (
 			>=media-plugins/gst-plugins-webrtc-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+			>=dev-libs/openssl-1.1.1f[${MULTILIB_USEDEP}]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
