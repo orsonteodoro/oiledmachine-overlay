@@ -263,13 +263,6 @@ SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4.0/37 GTK3 SOUP2
 
-# find Source/WebCore/platform/gtk/po -name "*.po"  \
-# | cut -f 6 -d "/"  \
-# | sort  \
-# | sed -e "s|.po||g" \
-# | tr "\n" " " \
-# | fold -w 80 -s
-
 LANGS=(
 ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id it
 ja kn ko lt lv ml mr nb nl or pa pl pt pt_BR ro ru sl sr sr@latin sv ta te tr
@@ -715,6 +708,24 @@ ewarn
 	fi
 }
 
+_check_langs() {
+	cd "${S}" || die
+	local actual_list_raw=$(find Source/WebCore/platform/gtk/po -name "*.po"  \
+		| cut -f 6 -d "/"  \
+		| sort  \
+		| sed -e "s|.po||g" \
+		| tr "\n" " " \
+		| fold -w 80 -s)
+	local actual_list=(${actual_list_raw})
+	if [[ "${actual_list[@]}" != "${LANGS[@]}" ]] ; then
+eerror
+eerror "QA:  Update the LANGS variable:"
+eerror
+echo "${actual_list_raw}"
+		die
+	fi
+}
+
 EXPECTED_BUILD_FINGERPRINT="\
 701d81992160af88a320e27226915531da0c17d221b16fff370beb7dc75615b9\
 ece9dff979ab427e8fca45f7c598524383c077d235c5645224d0a0e2c87553af"
@@ -731,6 +742,8 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+
+	_check_langs
 
 	local actual_build_fingerprint_webrtc
 	if use libwebrtc ; then
