@@ -782,7 +782,7 @@ _prepare_pgo() {
 }
 
 src_prepare() {
-	use webrtc && eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
+#	use webrtc && eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
 	cmake_src_prepare
 	gnome2_src_prepare
 
