@@ -8,7 +8,10 @@ REVISION=0
 SLOT="0/${REVISION}"
 IUSE="box2d bullet freetype gles1 gles2 gme gtk2 gtest joystick network openal
 opengl png sdl2 sound threads"
-REQUIRED_USE="freetype png"
+REQUIRED_USE="
+	freetype
+	png
+"
 
 ALURE_PV="1.2"
 BOX2D_PV_EMAX="2.4"
@@ -93,7 +96,16 @@ RDEPEND="
 	)
 "
 
-pkg_setup() {
+test_path() {
+	local p="${1}"
+	if ! realpath -e "${p}" ; then
+eerror
+eerror "${p} is not reachable"
+eerror
+	fi
+}
+
+src_configure() {
 ewarn
 ewarn "This ebuild should only be used in a crossdev context."
 ewarn "Do not use it in your native build."
@@ -101,19 +113,6 @@ ewarn
 ewarn
 ewarn "macOS support is incomplete/untested"
 ewarn
-	if [[ -z "${MACOS_SYSROOT}" ]] ; then
-eerror
-eerror "MACOS_SYSROOT needs to point to the crossdev image."
-eerror
-		die
-	fi
-	if [[ -z "${MACOS_CTARGET}" ]] ; then
-eerror
-eerror "MACOS_CTARGET needs to be defined used to build this target"
-eerror "(eg. x86_64-apple-darwin13)."
-eerror
-		die
-	fi
 	if [[ -z "${MACOS_SDK_PV}" ]] ; then
 eerror
 eerror "MACOS_SDK_PV needs to be defined"
@@ -131,8 +130,6 @@ eerror "You will need to download a newer version of the SDK."
 eerror
 		die
 	fi
-	export CROSSDEV_CTARGET="${MACOS_CTARGET}"
-	export CROSSDEV_SYSROOT="${MACOS_SYSROOT}"
 	if ver_test ${MACOS_SDK_PV} -lt 10.5 \
 		&& has_version "<sys-devel/osxcross-1.2" ; then
 		:;
@@ -153,9 +150,10 @@ eerror "${MACOS_SDK_PV} is not supported."
 eerror "Requires ${MACOS_SDK_PV_MIN} to ${MACOS_SDK_PV_MAX}"
 eerror
 	fi
-	if ls /usr/lib/llvm/*/bin/${CROSSDEV_CTARGET}-clang 2>/dev/null 1>/dev/null ; then
-		die "Compiler is missing.  Fix MACOS_CTARGET"
-	fi
+
+	test_path "${OSXCROSS_ROOT}/target/bin/${OSXCROSS_CHOST}-clang"
+	test_path "${OSXCROSS_ROOT}/target/bin/${OSXCROSS_CHOST}-clang++"
+	test_path "${OSXCROSS_ROOT}/target/bin/${OSXCORSS_CHOST}-cpp"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

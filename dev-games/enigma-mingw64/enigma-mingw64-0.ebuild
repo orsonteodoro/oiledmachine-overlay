@@ -107,31 +107,11 @@ RDEPEND="
 	)
 "
 
-pkg_setup() {
-ewarn
-ewarn "This ebuild should only be used in a crossdev context."
-ewarn "Do not use it in your native build."
-ewarn
-ewarn
-ewarn "MINGW64 support is incomplete/untested"
-ewarn
-	if [[ -z "${MINGW64_SYSROOT}" ]] ; then
-eerror
-eerror "MINGW64_SYSROOT needs to point to the crossdev image."
-eerror
-		die
-	fi
-	if [[ -z "${MINGW64_CTARGET}" ]] ; then
-eerror
-eerror "MINGW64_CTARGET needs to be defined used to build this target"
-eerror "(eg. x86_64-w64-mingw32)."
-eerror
-		die
-	fi
-	export CROSSDEV_CTARGET="${MINGW64_CTARGET}"
-	export CROSSDEV_SYSROOT="${MINGW64_SYSROOT}"
-	which ${CROSSDEV_CTARGET}-gcc \
-		|| die "Compiler is missing.  Fix MINGW64_TARGET."
+src_configure() {
+	[[ "${CHOST}" != "x86_64-w64-mingw32" ]] \
+		&& die "Wrong CHOST.  It must be x86_64-w64-mingw32"
+	${CHOST}-gcc --version 2>/dev/null 1>/dev/null \
+		|| die "Compiler is missing."
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

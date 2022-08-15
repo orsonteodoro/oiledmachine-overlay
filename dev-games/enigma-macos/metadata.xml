@@ -6,6 +6,15 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <longdescription>
+
+    Required environment variables:
+
+      MACOS_SDK_PV - The macOS SDK version
+      OSXCROSS_ROOT - Path to OSXCross with target as a subfolder
+      OSXCROSS_CHOST - The CHOST prefix to clang, cpp, etc
+
+  </longdescription>
   <use>
     <flag name="box2">Adds Box2D support for 2D physics support.</flag>
     <flag name="bullet">Adds Bullet support for 3D physics support.</flag>

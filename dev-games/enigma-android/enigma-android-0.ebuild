@@ -50,8 +50,8 @@ ZLIB_PV="1.2.12"
 
 RDEPEND="
 	>=dev-cpp/gtest-${GTEST_PV}
+	  dev-util/android-ndk
 	>=media-libs/glm-${GLM_PV}
-	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/zlib-${ZLIB_PV}
 	box2d? (
 		|| (
@@ -98,31 +98,40 @@ RDEPEND="
 	)
 "
 
-pkg_setup() {
-ewarn
-ewarn "This ebuild should only be used in a crossdev context."
-ewarn "Do not use it in your native build."
-ewarn
-ewarn
-ewarn "Android support is incomplete/untested"
-ewarn
-	if [[ -z "${ANDROID_SYSROOT}" ]] ; then
+src_configure() {
+	local arch=${CHOST}
+	arch="${arch%%-*}"
+einfo
+einfo "CHOST=${CHOST}"
+einfo "arch=${arch}"
+einfo
+	case ${arch} in
+		aarch64|arm|armv6|armv7|armv7a|i686|x86_64)
+			;;
+		*)
 eerror
-eerror "ANDROID_SYSROOT needs to point to the crossdev image."
+eerror "${arch} is not supported."
+eerror
+eerror "NDK arches:  aarch64, arm, i686, x86_64"
+eerror "aarch64 and x86_64 require NDK 25 or later"
+eerror
+			die
+			;;
+	esac
+
+	if [[ "${arch}" =~ (aarch64|x86_64) ]] \
+		&& ! has_version ">=dev-util/android-ndk-25" ; then
+eerror
+eerror "${arch} requires >=dev-util/android-ndk-25"
 eerror
 		die
 	fi
-	if [[ -z "${ANDROID_CTARGET}" ]] ; then
-eerror
-eerror "ANDROID_CTARGET needs to be defined used to build this target"
-eerror "(eg. armv7a-hardfloat-linux-gnueabi)."
-eerror
-		die
-	fi
-	export CROSSDEV_CTARGET="${ANDROID_CTARGET}"
-	export CROSSDEV_SYSROOT="${ANDROID_SYSROOT}"
-	which ${CROSSDEV_CTARGET}-gcc \
-		|| die "Compiler is missing.  Fix ANDROID_CTARGET."
+
+	export CC=$(find "${EPREFIX}/opt/android-ndk/toolchains/" \
+		-path "*/bin/${arch}*android-gcc")
+	"${CC}" --version \
+		2>/dev/null 1>/dev/null \
+		|| die "Compiler is missing.  Fix CHOST."
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
