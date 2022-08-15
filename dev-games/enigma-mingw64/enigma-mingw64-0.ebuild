@@ -107,11 +107,60 @@ RDEPEND="
 	)
 "
 
+# Check all packages for CHOST compatibility
+verify_libs_abi() {
+	local arch=${CHOST}
+	arch="${arch%%-*}"
+	local packages=(
+		"dev-cpp/gtest"
+		"dev-games/box2d"
+		"dev-libs/libffi"
+		"games-engines/box2d"
+		"media-libs/alure"
+		"media-libs/flac"
+		"media-libs/freetype"
+		"media-libs/game-music-emu"
+		"media-libs/glew"
+		"media-libs/glm"
+		"media-libs/libmodplug"
+		"media-libs/libogg"
+		"media-libs/libpng"
+		"media-libs/libsdl2"
+		"media-libs/libsndfile"
+		"media-libs/libvorbis"
+		"media-libs/openal"
+		"media-libs/opus"
+		"media-libs/sdl2-mixer"
+		"media-sound/mpg123"
+		"media-sound/pulseaudio"
+		"net-misc/curl"
+		"sci-physics/bullet"
+
+		# Problems?
+		"sys-devel/gcc"
+		"sys-libs/zlib"
+	)
+
+	for package in ${packages[@]} ; do
+		has_version "${package}" || continue
+		local lib
+		for lib in $(grep -r -e "(.dylib|.so|.dll)" "${ESYSROOT}/var/db/pkg/${p}-"*"/CONTENTS" | cut -f 2 -d " ") ; do
+			if file "${lib}" | grep -q -e "PE32\+ " ; then
+				:;
+			else
+ewarn "${lib} needs to be rebuild with either ${CHOST}-gcc or ${CHOST}-clang."
+			fi
+		done
+	done
+}
+
 src_configure() {
 	[[ "${CHOST}" != "x86_64-w64-mingw32" ]] \
 		&& die "Wrong CHOST.  It must be x86_64-w64-mingw32"
 	${CHOST}-gcc --version 2>/dev/null 1>/dev/null \
 		|| die "Compiler is missing."
+
+	verify_libs_abi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

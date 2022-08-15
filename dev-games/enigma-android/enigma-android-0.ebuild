@@ -98,6 +98,60 @@ RDEPEND="
 	)
 "
 
+# Check all packages for CHOST compatibility
+verify_libs_abi() {
+	local arch=${CHOST}
+	arch="${arch%%-*}"
+	local tag=""
+	if [[ "${arch}" == "aarch64" ]] ; then
+		tag="aarch64"
+	elif [[ "${arch}" == "arch" ]] ; then
+		tag="EABI5"
+	elif [[ "${arch}" == "i686" ]] ; then
+		tag="80386"
+	elif [[ "${arch}" == "x86_64" ]] ; then
+		tag="x86-64"
+	fi
+
+	local packages=(
+		"dev-cpp/gtest"
+		"dev-games/box2d"
+		"games-engines/box2d"
+		"media-libs/flac"
+		"media-libs/freetype"
+		"media-libs/game-music-emu"
+		"media-libs/glew"
+		"media-libs/glm"
+		"media-libs/libmodplug"
+		"media-libs/libogg"
+		"media-libs/libpng"
+		"media-libs/libsdl2"
+		"media-libs/libsndfile"
+		"media-libs/libvorbis"
+		"media-libs/opus"
+		"media-libs/sdl2-mixer"
+		"media-sound/mpg123"
+		"net-misc/curl"
+		"sci-physics/bullet"
+
+		# Problems?
+		"sys-devel/gcc"
+		"sys-libs/zlib"
+	)
+
+	for package in ${packages[@]} ; do
+		has_version "${package}" || continue
+		local lib
+		for lib in $(grep -r -e "(.dylib|.so|.dll)" "${ESYSROOT}/var/db/pkg/${p}-"*"/CONTENTS" | cut -f 2 -d " ") ; do
+			if file "${lib}" | grep "${tag}" ; then
+				:;
+			else
+ewarn "${lib} needs to be rebuild with either ${CHOST}-gcc or ${CHOST}-clang."
+			fi
+		done
+	done
+}
+
 src_configure() {
 	local arch=${CHOST}
 	arch="${arch%%-*}"
@@ -106,13 +160,14 @@ einfo "CHOST=${CHOST}"
 einfo "arch=${arch}"
 einfo
 	case ${arch} in
-		aarch64|arm|armv6|armv7|armv7a|i686|x86_64)
+		aarch64|arm|armv7a|i686|x86_64)
 			;;
 		*)
 eerror
 eerror "${arch} is not supported."
 eerror
-eerror "NDK arches:  aarch64, arm, i686, x86_64"
+eerror "NDK18 arches:  aarch64, arm, i686, x86_64"
+eerror "NDK25 arches:  aarch64, armv7a, i686, x86_64"
 eerror "aarch64 and x86_64 require NDK 25 or later"
 eerror
 			die
@@ -127,11 +182,17 @@ eerror
 		die
 	fi
 
+	# 18 uses gcc
+	# 25 uses clang
 	export CC=$(find "${EPREFIX}/opt/android-ndk/toolchains/" \
-		-path "*/bin/${arch}*android-gcc")
+		-path "*/bin/${arch}*android-gcc" \
+		-o -path "*/bin/${arch}*android*-clang")
+	[[ -e "${CC}" ]] || die "Could not find compiler"
 	"${CC}" --version \
 		2>/dev/null 1>/dev/null \
 		|| die "Compiler is missing.  Fix CHOST."
+
+	verify_libs_abi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
