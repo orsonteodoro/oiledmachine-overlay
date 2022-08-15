@@ -859,23 +859,25 @@ eerror
 	fi
 }
 
+_prepare_pgo() {
+	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
+	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	if [[ -e "${pgo_data_dir}" ]] ; then
+		mkdir -p "${pgo_data_dir2}" || die
+		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
+	else
+		mkdir -p "${pgo_data_dir2}" || die
+		touch "${pgo_data_dir2}/compiler_fingerprint" || die
+	fi
+}
+
 src_prepare() {
 	use webrtc && eapply "${FILESDIR}/2.33.2-add-openh264-headers.patch"
 	cmake_src_prepare
 	gnome2_src_prepare
 
 	prepare_abi() {
-		if use pgo ; then
-			local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
-			local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-			if [[ -e "${pgo_data_dir}" ]] ; then
-				mkdir -p "${pgo_data_dir2}" || die
-				cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
-			else
-				mkdir -p "${pgo_data_dir2}" || die
-				touch "${pgo_data_dir2}/compiler_fingerprint" || die
-			fi
-		fi
+		_prepare_pgo
 	}
 	multilib_foreach_abi prepare_abi
 }

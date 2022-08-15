@@ -799,6 +799,20 @@ ewarn
 ewarn "WebRTC support is currently in development and feature incomplete."
 ewarn
 	fi
+
+	if ! use webcore ; then
+ewarn
+ewarn "Disabling webcore disables rendering support."
+ewarn "Only disable if you want JavaScript support."
+ewarn
+	fi
+
+	if ! use javascriptcore ; then
+ewarn
+ewarn "Disabling webcore disables website scripts completely"
+ewarn "or any contemporary websites."
+ewarn
+	fi
 }
 
 EXPECTED_BUILD_FINGERPRINT="\
@@ -817,7 +831,7 @@ ewarn
 	fi
 
 	local actual_build_fingerprint_webrtc
-	if use webrtc ; then
+	if use libwebrtc ; then
 		subversion_fetch \
 https://svn.webkit.org/repository/webkit/tags/Safari-${LIBWEBRTC_REF}/Source/ThirdParty/libwebrtc/ \
 Source/ThirdParty/libwebrtc
@@ -861,7 +875,7 @@ eerror
 		die
 	fi
 
-	if use webrtc && [[ "${actual_build_fingerprint_webrtc}" != "${EXPECTED_BUILD_FINGERPRINT_WEBRTC}" ]] ; then
+	if use libwebrtc && [[ "${actual_build_fingerprint_webrtc}" != "${EXPECTED_BUILD_FINGERPRINT_WEBRTC}" ]] ; then
 eerror
 eerror "Detected build files update for WebRTC"
 eerror
@@ -872,19 +886,17 @@ eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
 eerror
 		die
 	fi
+}
 
-	if ! use webcore ; then
-ewarn
-ewarn "Disabling webcore disables rendering support."
-ewarn "Only disable if you want JavaScript support."
-ewarn
-	fi
-
-	if ! use javascriptcore ; then
-ewarn
-ewarn "Disabling webcore disables website scripts completely"
-ewarn "or any contemporary websites."
-ewarn
+_prepare_pgo() {
+	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
+	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	if [[ -e "${pgo_data_dir}" ]] ; then
+		mkdir -p "${pgo_data_dir2}" || die
+		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
+	else
+		mkdir -p "${pgo_data_dir2}" || die
+		touch "${pgo_data_dir2}/compiler_fingerprint" || die
 	fi
 }
 
@@ -894,17 +906,7 @@ src_prepare() {
 	gnome2_src_prepare
 
 	prepare_abi() {
-		if use pgo ; then
-			local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}/${MULTILIB_ABI_FLAG}.${ABI}"
-			local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
-			if [[ -e "${pgo_data_dir}" ]] ; then
-				mkdir -p "${pgo_data_dir2}" || die
-				cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
-			else
-				mkdir -p "${pgo_data_dir2}" || die
-				touch "${pgo_data_dir2}/compiler_fingerprint" || die
-			fi
-		fi
+		_prepare_pgo
 	}
 	multilib_foreach_abi prepare_abi
 }
