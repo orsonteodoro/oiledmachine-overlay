@@ -350,6 +350,12 @@ REQUIRED_USE+="
 		ftl-jit
 		webassembly
 	)
+	webcore? (
+		^^ (
+			opengl
+			gles2
+		)
+	)
 	webgl? (
 		gstreamer
 		|| (
@@ -1286,6 +1292,13 @@ eerror
 		elif tc-is-gcc ; then
 			append-flags -fprofile-use -fprofile-dir="${pgo_data_dir}"
 		fi
+	fi
+
+	if is-flag -O0 ; then
+ewarn
+ewarn "Upstream doesn't like it when -O0 is used, but we allow it."
+ewarn
+		append-cppflags -DRELEASE_WITHOUT_OPTIMIZATIONS=1
 	fi
 
 	WK_USE_CCACHE=NO cmake_src_configure
