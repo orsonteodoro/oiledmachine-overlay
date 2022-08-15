@@ -2380,13 +2380,6 @@ ewarn
 	myconf_gn+=" current_cpu=\"${target_cpu}\""
 	myconf_gn+=" host_cpu=\"${target_cpu}\""
 	myconf_gyp+=" -Dtarget_arch=${target_arch}"
-	if [[ -n "${MULTILIB_ABI_FLAG}" ]] ; then
-		:;
-	else
-einfo
-einfo "Only single ABI is supported for this ${ABI} arch"
-einfo
-	fi
 
 	if ! use cpu_flags_x86_sse2 ; then
 		myconf_gn+=" use_sse2=false"
