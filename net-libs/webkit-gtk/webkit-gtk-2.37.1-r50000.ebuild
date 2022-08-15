@@ -723,7 +723,6 @@ ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
 2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3"
 src_unpack() {
 	if use libwebrtc ; then
-		EGIT_CHECKOUT_DIR="Source/ThirdParty/libwebrtc"
 		EGIT_CLONE_TYPE="single"
 		EGIT_COMMIT="webkitgtk-$(ver_cut 1-3 ${PV})"
 		EGIT_REPO_URI="https://github.com/WebKit/WebKit.git"
