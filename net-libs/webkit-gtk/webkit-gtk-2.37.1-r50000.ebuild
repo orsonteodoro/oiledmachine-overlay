@@ -5,9 +5,13 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.0)
+# ab = WEBKITGTK_API_VERSION version (5.0)
 # c = reserved
 # de = ebuild revision
+
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/WebKit/Configurations/Version.xcconfig
+# To make sure that libwebrtc is the same revision
+LIBWEBRTC_REF="UNKNOWN"
 
 LLVM_MAX_SLOT=14 # This should not be more than Mesa's package LLVM_MAX_SLOT
 
@@ -18,7 +22,7 @@ inherit check-reqs cmake desktop flag-o-matic gnome2 linux-info llvm \
 multilib-minimal pax-utils python-any-r1 ruby-single subversion \
 toolchain-funcs virtualx
 
-DESCRIPTION="Open source web browser engine (GTK+3 with libsoup2)"
+DESCRIPTION="Open source web browser engine (GTK 4)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	( all-rights-reserved || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) )
@@ -51,15 +55,7 @@ LICENSE="
 	( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) )
 	( all-rights-reserved || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) GIF )
 	|| ( AFL-2.0 LGPL-2+ )
-	pgo? (
-		all-rights-reserved
-		BSD
-		BSD-2
-		GPL-2+
-		LGPL-2+
-		LGPL-2.1+
-	)
-	webrtc? (
+	libwebrtc? (
 		Apache-2.0
 		BSD
 		BSD-2
@@ -76,6 +72,14 @@ LICENSE="
 		openssl
 		QU-fft
 		sigslot
+	)
+	pgo? (
+		all-rights-reserved
+		BSD
+		BSD-2
+		GPL-2+
+		LGPL-2+
+		LGPL-2.1+
 	)
 " # \
 # emerge does not understand ^^ when applied to licenses, but you should only \
@@ -246,14 +250,14 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~riscv ~x86"
 
-API_VERSION="4.0"
+API_VERSION="5.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.0
-CURRENT="93"
-AGE="56"
+# WEBKITGTK_API_VERSION is 5.0
+CURRENT="0"
+AGE="0"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}-${API_VERSION}"
 # SLOT=5.0/0  GTK4 SOUP*
@@ -279,13 +283,16 @@ vi zh_CN
 # wayland is enabled upstream but disabled because it is not defacto default
 #   standard for desktop yet
 
-IUSE+=" ${LANGS[@]/#/l10n_} 64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2
-dav1d +dfg-jit +egl -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring
-+gstreamer -gtk-doc hardened +introspection +jit +jpeg2k +jumbo-build +lcms
-+libhyphen +libnotify lto -mediastream -minibrowser +opengl openmp pgo
-+pulseaudio -seccomp -spell -systemd test thunder variation-fonts +v4l wayland
-+webassembly +webassembly-b3-jit +webcrypto +webgl webm-eme -webrtc webvtt
--webxr +X +yarr-jit"
+IUSE+="
+${LANGS[@]/#/l10n_}
+64k-pages aqua avif +bmalloc cpu_flags_arm_thumb2 dav1d +dfg-jit +doc +egl -eme
++ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc
+hardened +introspection +javascriptcore +jit +jpeg2k +jumbo-build +lcms
++libhyphen +libnotify -libwebrtc lto -mediastream +minibrowser +opengl openmp
+pgo +pulseaudio -seccomp -libsoup3 -spell -systemd test thunder variation-fonts
++v4l wayland +webassembly +webassembly-b3-jit +webcore +webcrypto +webgl
+webm-eme -webrtc webvtt -webxr +X +yarr-jit
+"
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
@@ -324,6 +331,10 @@ REQUIRED_USE+="
 			gles2
 		)
 	)
+	gstwebrtc? (
+		gstreamer
+		webrtc
+	)
 	hardened? ( !jit )
 	opengl? (
 		!gles2
@@ -351,11 +362,16 @@ REQUIRED_USE+="
 		gstreamer
 		thunder
 	)
-	webrtc? ( mediastream )
+	webrtc? (
+		!libwebrtc
+		^^ ( gstwebrtc libwebrtc )
+		mediastream
+	)
 	webvtt? ( gstreamer )
 	webxr? ( webgl )
 	yarr-jit? ( jit )
 "
+# libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
 
 # cannot use introspection for 32 webkit on 64 bit because it requires 32 bit
 # libs/build for python from gobject-introspection.  It produces this error:
@@ -365,19 +381,16 @@ REQUIRED_USE+="
 #
 # This means also you cannot use the geolocation feature.
 
-# Prev rev: 294992
-# Curr rev: 
 # For dependencies, see:
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/CMakeLists.txt?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/BubblewrapSandboxChecks.cmake?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/FindGStreamer.cmake?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/GStreamerChecks.cmake?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/OptionsGTK.cmake?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/WebKitCommon.cmake?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Tools/gtk/install-dependencies?rev=294992
-#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy?rev=294992
-#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement?rev=294992
-#   https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Tools/gstreamer/jhbuild.modules?rev=294992
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Tools/gtk/install-dependencies
+#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
+#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
 
 # Upstream tests with U 18.04 LTS and U 20.04
 # Ebuild target is 18.04 based on the lowest LTS builder-bot
@@ -410,12 +423,11 @@ MESA_V="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4?rev=294992
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 RDEPEND+="
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
-	>=dev-libs/atk-2.16.0[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
 	>=dev-libs/gmp-6.1.2[-pgo(-),${MULTILIB_USEDEP}]
@@ -423,6 +435,7 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
+	>=gui-libs/gtk-3.98.5:4[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.8.0:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.4.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-0.9.18:=[icu(+),${MULTILIB_USEDEP}]
@@ -430,11 +443,9 @@ RDEPEND+="
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	  virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
-	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
 	egl? ( >=media-libs/mesa-${MESA_V}[egl(+),${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
@@ -447,8 +458,12 @@ RDEPEND+="
 >=media-libs/gst-plugins-base-${GSTREAMER_V}:1.0[gles2?,egl(+),opengl?,X?,${MULTILIB_USEDEP}]
 		media-plugins/gst-plugins-meta:1.0[${MULTILIB_USEDEP},pulseaudio?,v4l?]
 		>=media-plugins/gst-plugins-opus-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
+		>=media-plugins/gst-transcoder-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 		dav1d? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},dav1d]
+		)
+		gstwebrtc? (
+			>=media-plugins/gst-plugins-webrtc-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]
@@ -458,6 +473,12 @@ RDEPEND+="
 	jpeg2k? ( >=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
 	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
+	!libsoup3? (
+		>=net-libs/libsoup-2.54.0:2.4[introspection?,${MULTILIB_USEDEP}]
+	)
+	libsoup3? (
+		>=net-libs/libsoup-2.99.9:3.0[introspection?,${MULTILIB_USEDEP}]
+	)
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
 	seccomp? (
@@ -536,8 +557,8 @@ BDEPEND+="
 	virtual/perl-Carp
 	virtual/perl-Data-Dumper
 	virtual/perl-JSON-PP
+	doc? ( dev-util/gi-docgen )
 	geolocation? ( >=dev-util/gdbus-codegen-${GLIB_V} )
-	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
 	pgo? (
 		dev-vcs/subversion
 		x11-base/xorg-server[xvfb]
@@ -559,8 +580,8 @@ BDEPEND+="
 # Commits can be found at:
 # https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
 # Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
-EGIT_COMMIT="9467df8e0134156fa95c4e654e956d8166a54a13"
-ESVN_REVISION="294992"
+EGIT_COMMIT="bec7040a3f8d8c18ae65fd9b22f0eced1215b4a4"
+ESVN_REVISION="294992" # SVN is not used
 SRC_URI="
 https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
 "
@@ -587,7 +608,7 @@ einfo
 		fi
 
 		if ! test-flag-CXX -std=c++20 ; then
-# See https://trac.webkit.org/browser/webkit/releases/WebKitGTK/webkit-2.36.4/Source/cmake/OptionsCommon.cmake?rev=294992
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.37.1/Source/cmake/OptionsCommon.cmake
 eerror
 eerror "You need at least GCC 8.3.x or Clang >= 6 for C++20-specific compiler"
 eerror "flags"
@@ -624,8 +645,12 @@ ewarn
 }
 
 pkg_setup() {
+ewarn
+ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
+ewarn "It is currently not recommended due to rendering bug(s)."
+ewarn
 einfo
-einfo "This is the stable branch."
+einfo "This is the unstable branch."
 einfo
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
@@ -777,8 +802,28 @@ ewarn
 ewarn "WebRTC support is currently in development and feature incomplete."
 ewarn
 	fi
+
+	if ! use webcore ; then
+ewarn
+ewarn "Disabling webcore disables rendering support."
+ewarn "Only disable if you want JavaScript support."
+ewarn
+	fi
+
+	if ! use javascriptcore ; then
+ewarn
+ewarn "Disabling webcore disables website scripts completely"
+ewarn "or any contemporary websites."
+ewarn
+	fi
 }
 
+EXPECTED_BUILD_FINGERPRINT="\
+701d81992160af88a320e27226915531da0c17d221b16fff370beb7dc75615b9\
+ece9dff979ab427e8fca45f7c598524383c077d235c5645224d0a0e2c87553af"
+EXPECTED_BUILD_FINGERPRINT_WEBRTC="\
+ce7a0164ea0da74de32de8eeac7e541c29355542710f270c2fc6125309315194\
+2c3acd8d773264875d99304da31c28ec05e5c97ee9af6a352504fb37fa59d8c3"
 src_unpack() {
 	unpack ${A}
 	if use pgo ; then
@@ -787,10 +832,62 @@ ewarn "The PGO use flag is a Work In Progress (WIP) and is not production"
 ewarn "ready."
 ewarn
 	fi
+
+	local actual_build_fingerprint_webrtc
 	if use webrtc ; then
 		subversion_fetch \
-https://svn.webkit.org/repository/webkit/trunk/Source/ThirdParty/libwebrtc/ \
+https://svn.webkit.org/repository/webkit/tags/Safari-${LIBWEBRTC_REF}/Source/ThirdParty/libwebrtc/ \
 Source/ThirdParty/libwebrtc
+
+		actual_build_fingerprint_webrtc=$(cat \
+		$(find "${S}/Source/ThirdParty/libwebrtc" \
+			\( \
+				   -name "*.cmake" \
+				-o -name "*CMakeLists.txt" \
+			\) \
+			| sort \
+		) \
+				| sha512sum \
+				| cut -f 1 -d " " \
+						)
+	fi
+
+	local actual_build_fingerprint=$(cat \
+		$(find "${S}" \
+			\( \
+				\( \
+					   -name "*.cmake" \
+					-o -name "*CMakeLists.txt" \
+				\) \
+				-not -path "*Source/ThirdParty/libwebrtc/*" \
+			\) \
+			| sort \
+		) \
+				| sha512sum \
+				| cut -f 1 -d " " \
+					)
+	if [[ "${actual_build_fingerprint}" != "${EXPECTED_BUILD_FINGERPRINT}" ]] ; then
+eerror
+eerror "Detected build files update"
+eerror
+eerror "Actual build files fingerprint=${actual_build_fingerprint}"
+eerror "Expected build files fingerprint=${EXPECTED_BUILD_FINGERPRINT}"
+eerror
+eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
+eerror
+		die
+	fi
+
+	if use webrtc && [[ "${actual_build_fingerprint_webrtc}" != "${EXPECTED_BUILD_FINGERPRINT_WEBRTC}" ]] ; then
+eerror
+eerror "Detected build files update for WebRTC"
+eerror
+eerror "Actual build files fingerprint=${actual_build_fingerprint_webrtc}"
+eerror "Expected build files fingerprint=${EXPECTED_BUILD_FINGERPRINT_WEBRTC}"
+eerror
+eerror "QA:  Update IUSE, *DEPENDS, options, KEYWORDS, patches"
+eerror
+		die
 	fi
 }
 
@@ -953,13 +1050,14 @@ eerror
 		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}/usr/bin/xdg-dbus-proxy"
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
+		-DENABLE_DOCUMENTATION=$(usex doc)
 		-DENABLE_ENCRYPTED_MEDIA=$(usex eme)
 		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation) # \
 # Runtime optional (talks over dbus service)
 		-DENABLE_GLES2=$(usex gles2)
-		-DENABLE_GTKDOC=$(usex gtk-doc)
 		-DENABLE_GAMEPAD=$(usex gamepad)
 		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection)
+		-DENABLE_JAVASCRIPTCORE=$(usex javascriptcore)
 		-DENABLE_JOURNALD_LOG=$(usex systemd)
 		-DENABLE_MEDIA_STREAM=$(usex mediastream)
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
@@ -974,18 +1072,19 @@ eerror
 		-DENABLE_WEB_CRYPTO=$(usex webcrypto)
 		-DENABLE_WEB_RTC=$(usex webrtc)
 		-DENABLE_WEBASSEMBLY=$(usex webassembly)
+		-DENABLE_WEBCORE=$(usex webcore)
 		-DENABLE_WEBGL=$(usex webgl)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
 		-DUSE_AVIF=$(usex avif)
-		-DUSE_GTK4=OFF
+		-DUSE_GTK4=ON
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=ON
+		-DUSE_SOUP2=$(usex libsoup3 OFF ON)
 		-DUSE_SYSTEMD=$(usex systemd) # Whether to enable journald logging
 		-DUSE_WOFF2=ON
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \

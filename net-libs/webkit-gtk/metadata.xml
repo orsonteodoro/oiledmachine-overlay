@@ -105,7 +105,7 @@
 
       It is recommended to emerge as normally.  This gives time to enjoy the
       product based on WebKitGTK and at the same time passively train.  The
-      state transition period is set by you.  You can push the states states
+      state transition period is set by you.  You can push the states
       forward within the same day or 2, or you can wait upon each new release.
       The idea with delayed (per new release) is to do 1 step PGO every time
       instead of 3 step PGO every time you emerge.
@@ -160,13 +160,13 @@ Traditional      i        i          i         i        i       i
     <flag name="dav1d">Check and pull in dependencies for AV1 video decoding
       support.</flag>
     <flag name="eme">
-      Enable Encrypted Media Extensions support (ClearKey CDM only)
+      Enable Encrypted Media Extensions support (ClearKey CDM only).
     </flag>
     <flag name="egl">
-      Enable EGL support
+      Enable EGL support.
     </flag>
     <flag name="examples">
-      Install the MiniBrowser example application
+      Install the MiniBrowser example application.
     </flag>
     <flag name="dfg-jit">
       Builds with the teir that does the bulk of the optimizing.
@@ -176,13 +176,17 @@ Traditional      i        i          i         i        i       i
       marginally at the expense of faster load times or delayed execution time.
     </flag>
     <flag name="gamepad">
-      Enable gamepad input support via <pkg>dev-libs/libmanette</pkg>
+      Enable gamepad input support via <pkg>dev-libs/libmanette</pkg>.
     </flag>
     <flag name="geolocation">
-      Enable geolocation support through <pkg>app-misc/geoclue</pkg>
+      Enable geolocation support through <pkg>app-misc/geoclue</pkg>.
     </flag>
     <flag name="gles2">
       Enable GLESv2 support.
+    </flag>
+    <flag name="gstwebrtc">
+      Uses GstWebRTC as the backend for WebRTC.  Disabled by default through
+      web view settings.
     </flag>
     <flag name="lto">
       Use ThinLTO LTO [link time optimization] when when linking.  ThinLTO is
@@ -194,23 +198,26 @@ Traditional      i        i          i         i        i       i
     <flag name="jit">
       Enables JIT support for JavaScriptCore for significantly faster code
       execution.  Disable for increased compatibility on alternative ARCHs and
-      ABIs
+      ABIs.
     </flag>
     <flag name="jumbo-build">
-      Combine source files to speed up build process
+      Combine source files to speed up build process.
     </flag>
     <flag name="libsoup3">
       Link to libsoup3.  It consequently enables HTTP/2 by default when libsoup3
       is 2.99.8 or newer.
     </flag>
+    <flag name="libwebrtc">
+      Uses libwebrtc as a backend for WebRTC.
+    </flag>
     <flag name="mediastream">
       Enables support for MediaStream API (IN DEVELOPMENT / DRAFT).
     </flag>
     <flag name="nsplugin">
-      Enable full nsplugin support (GTK2 plugins)
+      Enable full nsplugin support (GTK2 plugins).
     </flag>
     <flag name="openmp">
-      Use OpenMP to accelerate SVG filters
+      Use OpenMP to accelerate SVG filters.
     </flag>
     <flag name="pgo">
       Performs 1 step Profile Guided Optimization (PGO) per release.
@@ -219,16 +226,16 @@ Traditional      i        i          i         i        i       i
       Adds PulseAudio and microphone support.
     </flag>
     <flag name="thunder">
-      Links to a framework with pluginable CDM (content decryption module) support
+      Links to a framework with pluginable CDM (content decryption module) support.
     </flag>
     <flag name="v4l">
       Adds and checks for proper v4l camera support.
     </flag>
     <flag name="variation-fonts">
-      Check dependencies for variation font support
+      Check dependencies for variation font support.
     </flag>
     <flag name="webgl">
-      Build support for the WebGL HTML API using <pkg>virtual/opengl</pkg>
+      Build support for the WebGL HTML API using <pkg>virtual/opengl</pkg>.
     </flag>
     <flag name="webassembly">
       Enables support for WebAssembly used for example in web games.  Disable to
@@ -240,11 +247,11 @@ Traditional      i        i          i         i        i       i
     </flag>
     <flag name="webcrypto">
       Enables WebCrypto SubtleCrypto API support for low level cryptographic
-      fuctions
+      fuctions.
     </flag>
     <flag name="webm-eme">
       Enable support for decrypting protected WebM files.  (It may require a
-      license, the proprietary SDK, and a corresponding proprietary OCDM plugin)
+      license, the proprietary SDK, and a corresponding proprietary OCDM plugin.)
     </flag>
     <flag name="webxr">
       Builds WebXR support.  (EXPERIMENTAL / IN DEVELOPMENT)
@@ -256,7 +263,7 @@ Traditional      i        i          i         i        i       i
       Enables WebRTC support.  (WebKitGTK EXPERIMENTAL, WebKit supported)
     </flag>
     <flag name="yarr-jit">
-      Enables JIT regex support.  Otherwise, it falls back to interpretive
+      Enables JIT regex support.  Otherwise, it falls back to interpretive.
     </flag>
   </use>
   <slots>
