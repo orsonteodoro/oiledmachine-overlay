@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- ebuild fork only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- ebuild originally from zGentoo overlay -->
+  <longdescription>
+
+    The following tools are contained in this package:
+
+      apkanalyzer
+      avdmanager
+      lint
+      profgen
+      retrace
+      screenshot2
+      sdkmanager
+
+  </longdescription>
+  <upstream>
+    <doc lang="en">https://developer.android.com/studio/command-line</doc>
+    <changelog>https://developer.android.com/studio/releases/cmdline-tools</changelog>
+  </upstream>
+</pkgmetadata>
