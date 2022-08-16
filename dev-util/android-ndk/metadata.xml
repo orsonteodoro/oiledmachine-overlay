@@ -17,10 +17,10 @@
     prebuilt set of native libraries (with headers), and build system tools.
 
     The implementation of the standard C libraries (libc, libm), the deprecated
-    system c++ library (libstdc++) and linker library (libdl)
+    system C++ library (libstdc++) and linker library (libdl)
     collectively under Boinic which is included in the NDK for
     purposes of building and linking.  The libc++ is the full llvm project
-    implmentation.  The system c++ library is reduced to new and delete.
+    implementation.  The system C++ library is reduced to new and delete.
     See the stable_apis link in the docs section link for details.
 
     Filenames of native libraries per API level:
