@@ -175,7 +175,7 @@ $(cat ${FILESDIR}/eldoc.frag | sed ':a;N;$!ba;s/\n/\\n/g')#g" \
 	fi
 
 	if use system-gopls ; then
-		sed -i -e "s|___YCMD-EMACS_GOPLS_ABSPATH___|/usr/bin/gopls|g" \
+		sed -i -e "s|___YCMD-EMACS_GOPLS_ABSPATH___|${EPREFIX}/usr/bin/gopls|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -185,7 +185,7 @@ ${BD_ABS}/third_party/go/bin/gopls|g" \
 	fi
 
 	if use system-gocode ; then
-		sed -i -e "s|___YCMD-EMACS_GOCODE_ABSPATH___|/usr/bin/gocode|g" \
+		sed -i -e "s|___YCMD-EMACS_GOCODE_ABSPATH___|${EPREFIX}/usr/bin/gocode|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -195,7 +195,7 @@ ${BD_ABS}/third_party/gocode/gocode|g" \
 	fi
 
 	if use system-godef ; then
-		sed -i -e "s|___YCMD-EMACS_GODEF_ABSPATH___|/usr/bin/godef|g" \
+		sed -i -e "s|___YCMD-EMACS_GODEF_ABSPATH___|${EPREFIX}/usr/bin/godef|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -206,27 +206,27 @@ ${BD_ABS}/third_party/godef/godef|g" \
 
 	local jp=""
 	if use ycmd-44 || use ycmd-45 ; then
-		  if [[ -h /usr/lib/jvm/icedtea-bin-11 ]] ; then
-			jp="/usr/lib/jvm/icedtea-bin-11"
-		elif [[ -h /usr/lib/jvm/icedtea-11 ]] ; then
-			jp="/usr/lib/jvm/icedtea-11"
-		elif [[ -h /usr/lib/jvm/openjdk-11 ]] ; then
-			jp="/usr/lib/jvm/openjdk-11"
-		elif [[ -h /usr/lib/jvm/openjdk-bin-11 ]] ; then
-			jp="/usr/lib/jvm/openjdk-bin-11"
+		  if [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-11" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/icedtea-11"
+		elif [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-bin-11" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/icedtea-bin-11"
+		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-11" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/openjdk-11"
+		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-bin-11" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/openjdk-bin-11"
 		fi
 	else
-		  if [[ -h /usr/lib/jvm/icedtea-bin-8 ]] ; then
-			jp="/usr/lib/jvm/icedtea-bin-8"
-		elif [[ -h /usr/lib/jvm/icedtea-8 ]] ; then
-			jp="/usr/lib/jvm/icedtea-8"
-		elif [[ -h /usr/lib/jvm/openjdk-8 ]] ; then
-			jp="/usr/lib/jvm/openjdk-8"
-		elif [[ -h /usr/lib/jvm/openjdk-bin-8 ]] ; then
-			jp="/usr/lib/jvm/openjdk-bin-8"
+		  if [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-8" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/icedtea-8"
+		elif [[ -L "${EPREFIX}/usr/lib/jvm/icedtea-bin-8" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/icedtea-bin-8"
+		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-8" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/openjdk-8"
+		elif [[ -L "${EPREFIX}/usr/lib/jvm/openjdk-bin-8" ]] ; then
+			jp="${EPREFIX}/usr/lib/jvm/openjdk-bin-8"
 		fi
 	fi
-	[[ -n "${jp}" ]] && jp="${bp}/bin/java"
+	[[ -n "${jp}" ]] && jp="${jp}/bin/java"
 	sed -i -e "s|___YCMD-EMACS_JAVA_ABSPATH___|${jp}|g" \
 		"${sitefile_path}" || die
 
@@ -243,7 +243,7 @@ ${BD_ABS}/third_party/godef/godef|g" \
 	fi
 
 	if use system-mono ; then
-		sed -i -e "s|___YCMD-EMACS_MONO_ABSPATH___|/usr/bin/mono|g" \
+		sed -i -e "s|___YCMD-EMACS_MONO_ABSPATH___|${EPREFIX}/usr/bin/mono|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|___YCMD-EMACS_MONO_ABSPATH___|${BD_ABS}/third_party/omnisharp-roslyn/bin/mono|g" \
@@ -267,7 +267,7 @@ ${BD_ABS}/third_party/omnisharp-roslyn/run|g" \
 	fi
 
 	if use system-racerd ; then
-		sed -i -e "s|___YCMD-EMACS_RACERD_ABSPATH___|/usr/bin/racerd|g" \
+		sed -i -e "s|___YCMD-EMACS_RACERD_ABSPATH___|${EPREFIX}/usr/bin/racerd|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -277,7 +277,7 @@ ${BD_ABS}/third_party/racerd/racerd|g" \
 	fi
 
 	if use system-rust ; then
-		sed -i -e "s|___YCMD-EMACS_RLS_ABSPATH___|/usr/bin/rls|g" \
+		sed -i -e "s|___YCMD-EMACS_RLS_ABSPATH___|${EPREFIX}/usr/bin/rls|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -287,7 +287,7 @@ ${BD_ABS}/third_party/rls/bin/rls|g" \
 	fi
 
 	if use system-rust ; then
-		sed -i -e "s|___YCMD-EMACS_RUSTC_ABSPATH___|/usr/bin/rustc|g" \
+		sed -i -e "s|___YCMD-EMACS_RUSTC_ABSPATH___|${EPREFIX}/usr/bin/rustc|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -297,7 +297,7 @@ ${BD_ABS}/third_party/rls/bin/rustc|g" \
 	fi
 
 	if use system-typescript ; then
-		sed -i -e "s|___YCMD-EMACS_TSSERVER_ABSPATH___|/usr/bin/tsserver|g" \
+		sed -i -e "s|___YCMD-EMACS_TSSERVER_ABSPATH___|${EPREFIX}/usr/bin/tsserver|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
@@ -306,13 +306,13 @@ ${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserve
 			"${sitefile_path}" || die
 	fi
 
-	sed -i -e "s|___YCMD-EMACS_RUST_ABSPATH___|/usr/share/rust/src|g" \
+	sed -i -e "s|___YCMD-EMACS_RUST_ABSPATH___|${EPREFIX}/usr/share/rust/src|g" \
 		"${sitefile_path}" || die
 
 	sed -i -e "s|___YCMD-EMACS-YCMD-DIR___|${BD_ABS}/ycmd|g" \
 		"${sitefile_path}" || die
 
-	sed -i -e "s|___YCMD-EMACS_PYTHON_ABSPATH___|/usr/bin/${EPYTHON}|g" \
+	sed -i -e "s|___YCMD-EMACS_PYTHON_ABSPATH___|${EPREFIX}/usr/bin/${EPYTHON}|g" \
 		"${sitefile_path}" || die
 
 	sed -i -e "s|___YCMD-EMACS_GLOBAL_CONFIG_ABSPATH___|/tmp/.ycm_extra_conf.py|g" \
