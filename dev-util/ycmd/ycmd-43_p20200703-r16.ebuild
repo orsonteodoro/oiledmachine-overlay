@@ -753,7 +753,7 @@ eerror
 		if [[ -z "${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}" ]] ; then
 eerror
 eerror "You need to define EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH as a"
-eerror "per-package envvar."
+eerror "per-package envvar.  Do not include the EPREFIX."
 eerror
 			die
 		fi
@@ -1244,10 +1244,10 @@ src_configure() {
 			ycmd_config_use_system CLANGD
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_CLANGD_PATH___" \
-				"/usr/lib/llvm/${CLANG_PV_MAJ}/bin/clangd"
+				"${EPREFIX}/usr/lib/llvm/${CLANG_PV_MAJ}/bin/clangd"
 			ycmd_config_set_default_json_path \
 				"___CLANGD_PATH___" \
-				"/usr/lib/llvm/${CLANG_PV_MAJ}/bin/clangd"
+				"${EPREFIX}/usr/lib/llvm/${CLANG_PV_MAJ}/bin/clangd"
 		else
 			ycmd_config_set_default_json_path \
 				"___CLANGD_PATH___" \
@@ -1258,10 +1258,10 @@ src_configure() {
 			ycmd_config_use_system GOPLS
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_GOPLS_PATH___" \
-				"/usr/bin/gopls"
+				"${EPREFIX}/usr/bin/gopls"
 			ycmd_config_set_default_json_path \
 				"___GOPLS_PATH___" \
-				"/usr/bin/gopls"
+				"${EPREFIX}/usr/bin/gopls"
 		else
 			ycmd_config_set_default_json_path \
 				"___GOPLS_PATH___" \
@@ -1272,19 +1272,19 @@ src_configure() {
 			ycmd_config_use_system JDT
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_JDTLS_LANGUAGE_SERVER_HOME_PATH___" \
-				"${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}"
+				"${EPREFIX}/${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}"
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_JDTLS_WORKSPACE_ROOT_PATH___" \
-				"${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}"
+				"${EPREFIX}/${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}"
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_JDTLS_EXTENSION_PATH___" \
-				"${EYCMD_JDTLS_EXTENSION_PATH}"
+				"${EPREFIX}/${EYCMD_JDTLS_EXTENSION_PATH}"
 			ycmd_config_set_default_json_path \
 				"___JDTLS_WORKSPACE_ROOT_PATH___" \
-				"${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}"
+				"${EPREFIX}/${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}"
 			ycmd_config_set_default_json_path \
 				"___JDTLS_EXTENSION_PATH___" \
-				"${EYCMD_JDTLS_EXTENSION_PATH}"
+				"${EPREFIX}/${EYCMD_JDTLS_EXTENSION_PATH}"
 		else
 			ycmd_config_set_default_json_path \
 				"___JDTLS_WORKSPACE_ROOT_PATH___" \
@@ -1305,10 +1305,10 @@ src_configure() {
 			ycmd_config_use_system LIBCLANG
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_CLANG_LIB_PATH___" \
-				"/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)"
+				"${EPREFIX}/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)"
 			sed -i -e "s|\
 EXTERNAL_LIBCLANG_PATH \${TEMP}|\
-EXTERNAL_LIBCLANG_PATH \"/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)/libclang.so\"|g" \
+EXTERNAL_LIBCLANG_PATH \"${EPREFIX}/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)/libclang.so\"|g" \
 				cpp/ycm/CMakeLists.txt || die
 
 			# Prevent from raising an exception.
@@ -1321,7 +1321,7 @@ EXTERNAL_LIBCLANG_PATH \"/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)/libclang.so
 		if use system-mono ; then
 			ycmd_config_set_default_json_path \
 				"___MONO_PATH___" \
-				"/usr/bin/mono"
+				"${EPREFIX}/usr/bin/mono"
 		else
 			ycmd_config_set_default_json_path \
 				"___MONO_PATH___" \
@@ -1366,33 +1366,33 @@ EXTERNAL_LIBCLANG_PATH \"/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)/libclang.so
 			ycmd_config_use_system RUST
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_RLS_PATH___" \
-				"/usr/bin/rls"
+				"${EPREFIX}/usr/bin/rls"
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_RUSTC_PATH___" \
-				"/usr/bin/rustc"
+				"${EPREFIX}/usr/bin/rustc"
 			ycmd_config_set_default_json_path \
 				"___RLS_PATH___" \
-				"/usr/bin/rls"
+				"${EPREFIX}/usr/bin/rls"
 			ycmd_config_set_default_json_path \
 				"___RUSTC_PATH___" \
-				"/usr/bin/rustc"
+				"${EPREFIX}/usr/bin/rustc"
 		fi
 
 		if use system-tern ; then
 			ycmd_config_use_system TERN
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_TERN_PATH___" \
-				"/usr/bin/tern"
+				"${EPREFIX}/usr/bin/tern"
 		fi
 
 		if use system-typescript ; then
 			ycmd_config_use_system TYPESCRIPT
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_TSSERVER_PATH___" \
-				"/usr/bin/tsserver"
+				"${EPREFIX}/usr/bin/tsserver"
 			ycmd_config_set_default_json_path \
 				"___TSSERVER_PATH___" \
-				"/usr/bin/tsserver"
+				"${EPREFIX}/usr/bin/tsserver"
 		else
 			ycmd_config_set_default_json_path \
 				"___TSSERVER_PATH___" \
@@ -1422,7 +1422,7 @@ EXTERNAL_LIBCLANG_PATH \"/usr/lib/llvm/${CLANG_PV_MAJ}/$(get_libdir)/libclang.so
 
 		ycmd_config_set_default_json_path \
 			"___SYSTEM_PYTHON_PATH___" \
-			"/usr/bin/${EPYTHON}"
+			"${EPREFIX}/usr/bin/${EPYTHON}"
 
 		sed -i -e "s|\
 ___PYTHON_LIB_PATH___|\
