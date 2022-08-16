@@ -193,26 +193,21 @@ einfo "  OSXCROSS_SDK=${OSXCROSS_SDK}"
 einfo
 	if [[ -n "${OSXCROSS_ROOT}" ]] ; then
 		test_path "${OSXCROSS_ROOT}/target"
+		local arch="ARCH_MISSING"
 		if use arm64 ; then
-			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-ar"
-			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-as"
-			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-clang"
-			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-clang++"
-			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-ld"
-			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-ranlib"
-			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-cmake"
-			test_path "${OSXCROSS_ROOT}/target/bin/aarch64-*-${OSXCROSS_SDK}-strip"
+			arch="aarch64"
 		fi
 		if use x86_64 ; then
-			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-ar"
-			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-as"
-			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-clang"
-			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-clang++"
-			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-ld"
-			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-ranlib"
-			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-cmake"
-			test_path "${OSXCROSS_ROOT}/target/bin/x86_64-*-${OSXCROSS_SDK}-strip"
+			arch="x86_64"
 		fi
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-ar"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-as"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-clang"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-clang++"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-ld"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-ranlib"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-cmake"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-strip"
 	fi
 }
 

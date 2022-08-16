@@ -23,7 +23,8 @@
     Configurable environment variables
 
       OSXCROSS_SDK - The target version number for macOS OS.  It is part of the
-                     toolchain command line tool name.  (Default:  18)
+                     target triple used as the prefix to a toolchain command.
+                     (Default:  18)
 
   </longdescription>
 </pkgmetadata>
