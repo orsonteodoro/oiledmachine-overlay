@@ -276,25 +276,24 @@ uk vi zh_CN
 
 IUSE+="
 ${LANGS[@]/#/l10n_}
-aqua avif +bmalloc cpu_flags_arm_thumb2 dav1d +dfg-jit +doc +egl -eme
-+ftl-jit -gamepad +geolocation gles2 gnome-keyring +gstreamer gstwebrtc hardened
-+introspection +javascriptcore +jit +journald +jpeg2k jpegxl +jumbo-build +lcms
-+libhyphen +libnotify -libwebrtc lto -mediastream +minibrowser +opengl openmp
-pgo +pulseaudio -seccomp -spell test thunder variation-fonts +v4l wayland
-+webassembly +webassembly-b3-jit +webcore +webcrypto +webgl webm-eme -webrtc
-webvtt -webxr +woff2 +X +yarr-jit
+aqua avif +bmalloc -cache-partitioning -cache-partitioning cpu_flags_arm_thumb2
+dav1d +dfg-jit +doc -eme +ftl-jit -gamepad +geolocation gles2 gnome-keyring
++gstreamer gstwebrtc hardened +introspection +javascriptcore +jit +journald
++jpeg2k jpegxl +lcms +libhyphen +libnotify -libwebrtc lto -mediastream
++minibrowser +opengl openmp pgo +pulseaudio -seccomp -spell test thunder
++unified-builds variation-fonts +v4l wayland +webassembly +webassembly-b3-jit
++webcore +webcrypto -webdriver +webgl -webgl2 webm-eme -webrtc webvtt -webxr
++woff2 +X +yarr-jit
 "
 
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
-# gstreamer with opengl/gles2 needs egl
 REQUIRED_USE+="
 	|| (
 		aqua
 		wayland
 		X
 	)
-	egl
 	cpu_flags_arm_thumb2? (
 		!ftl-jit
 		bmalloc
@@ -309,12 +308,11 @@ REQUIRED_USE+="
 	geolocation? ( introspection )
 	gles2? (
 		!opengl
-		egl
 	)
 	gstreamer? (
 		|| (
-			opengl
 			gles2
+			opengl
 		)
 	)
 	gstwebrtc? (
@@ -324,25 +322,23 @@ REQUIRED_USE+="
 	hardened? ( !jit )
 	opengl? (
 		!gles2
-		egl
 	)
 	pgo? ( minibrowser )
 	pulseaudio? ( gstreamer )
 	thunder? ( eme )
 	v4l? ( gstreamer mediastream )
-	wayland? ( egl )
 	webassembly? ( jit )
 	webassembly-b3-jit? (
 		ftl-jit
 		webassembly
 	)
 	webgl? (
-		gstreamer
 		|| (
 			gles2
 			opengl
 		)
 	)
+	webgl2? ( webgl )
 	webm-eme? (
 		eme
 		gstreamer
@@ -432,10 +428,11 @@ RDEPEND+="
 	>=x11-libs/cairo-${CAIRO_V}:=[X?,${MULTILIB_USEDEP}]
 	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	avif? ( >=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}] )
-	egl? ( >=media-libs/mesa-${MESA_V}[egl(+),${MULTILIB_USEDEP}] )
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )
 	geolocation? ( >=app-misc/geoclue-0.12.99:2.0 )
-	gles2? ( >=media-libs/mesa-${MESA_V}[gles2,${MULTILIB_USEDEP}] )
+	gles2? (
+		>=media-libs/mesa-${MESA_V}[egl(+),gles2,${MULTILIB_USEDEP}]
+	)
 	gnome-keyring? ( >=app-crypt/libsecret-0.18.6[${MULTILIB_USEDEP}] )
 	gstreamer? (
 		>=media-libs/gstreamer-${GSTREAMER_V}:1.0[${MULTILIB_USEDEP}]
@@ -466,7 +463,10 @@ RDEPEND+="
 	jpegxl? ( media-libs/libjxl[${MULTILIB_USEDEP}] )
 	libhyphen? ( >=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}] )
 	libnotify? ( >=x11-libs/libnotify-0.7.7[${MULTILIB_USEDEP}] )
-	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
+	opengl? (
+		!kernel_Winnt? ( >=media-libs/mesa-${MESA_V}[egl(+),${MULTILIB_USEDEP}] )
+		virtual/opengl[${MULTILIB_USEDEP}]
+	)
 	openmp? ( >=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}] )
 	seccomp? (
 		>=sys-apps/bubblewrap-0.3.1
@@ -484,11 +484,18 @@ RDEPEND+="
 	wayland? (
 		>=dev-libs/wayland-1.14.0[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.12[${MULTILIB_USEDEP}]
-		opengl? ( ${WPE_DEPEND} )
+		>=media-libs/mesa-${MESA_V}[egl(+),${MULTILIB_USEDEP}]
 		gles2? ( ${WPE_DEPEND} )
+		opengl? ( ${WPE_DEPEND} )
 	)
 	webcrypto? (
 		>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
+	)
+	webgl? (
+		|| (
+			>=media-libs/mesa-${MESA_V}[${MULTILIB_USEDEP}]
+			>=x11-libs/libdrm-2.4.107[${MULTILIB_USEDEP}]
+		)
 	)
 	webm-eme? ( ${OCDM_WV} )
 	webxr? ( media-libs/openxr )
@@ -965,6 +972,7 @@ eerror
 		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}/usr/bin/xdg-dbus-proxy"
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
+		-DENABLE_CACHE_PARTITIONING=$(usex cache-partitioning)
 		-DENABLE_DOCUMENTATION=$(usex doc)
 		-DENABLE_ENCRYPTED_MEDIA=$(usex eme)
 		-DENABLE_GAMEPAD=$(usex gamepad)
@@ -977,7 +985,7 @@ eerror
 		-DENABLE_MEDIA_STREAM=$(usex mediastream)
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
-		-DENABLE_UNIFIED_BUILDS=$(usex jumbo-build)
+		-DENABLE_UNIFIED_BUILDS=$(usex unified-builds)
 		-DENABLE_SPELLCHECK=$(usex spell)
 		-DENABLE_THUNDER=$(usex thunder)
 		-DENABLE_VIDEO=$(usex gstreamer)
@@ -987,9 +995,12 @@ eerror
 		-DENABLE_WEB_RTC=$(usex webrtc)
 		-DENABLE_WEBASSEMBLY=$(usex webassembly)
 		-DENABLE_WEBCORE=$(usex webcore)
+		-DENABLE_WEBDRIVER=$(usex webdriver)
 		-DENABLE_WEBGL=$(usex webgl)
+		-DENABLE_WEBGL2=$(usex webgl2)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
+		-DUSE_ANGLE_WEBGL=$(usex webgl)
 		-DUSE_AVIF=$(usex avif)
 		-DUSE_GTK4=OFF
 		-DUSE_JPEGXL=$(usex jpegxl)
@@ -1004,9 +1015,18 @@ eerror
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # \
 # WPE renderer is used to implement accelerated compositing under wayland
 		$(cmake_use_find_package gles2 OpenGLES2)
-		$(cmake_use_find_package egl EGL)
 		$(cmake_use_find_package opengl OpenGL)
 	)
+
+	if ! use kernel_Winnt && ( use gles2 || use opengl || use wayland ) ; then
+		mycmakeargs+=(
+			-DCMAKE_DISABLE_FIND_PACKAGE_EGL=OFF
+		)
+	else
+		mycmakeargs+=(
+			-DCMAKE_DISABLE_FIND_PACKAGE_EGL=ON
+		)
+	fi
 
 	if use opengl || use gles2 ; then
 		mycmakeargs+=(

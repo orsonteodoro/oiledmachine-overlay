@@ -150,6 +150,9 @@ Traditional      i        i          i         i        i       i
       Uses a mmap based page allocator to improve overall performance.  Disable
       to use the system allocator.
     </flag>
+    <flag name="cache-partitioning">
+      Enable cache parititioning to block third party tracking
+    </flag>
     <flag name="coverage">
       Enable code coverage support
     </flag>
@@ -199,8 +202,8 @@ Traditional      i        i          i         i        i       i
       execution.  Disable for increased compatibility on alternative ARCHs and
       ABIs.
     </flag>
-    <flag name="jumbo-build">
-      Combine source files to speed up build process.
+    <flag name="unified-build">
+      Reduces the build time by half by parsing the headers once
     </flag>
     <flag name="libsoup3">
       Link to libsoup3.  It consequently enables HTTP/2 by default when libsoup3
@@ -239,6 +242,10 @@ Traditional      i        i          i         i        i       i
     <flag name="webassembly">
       Enables support for WebAssembly used for example in web games.  Disable to
       decrease the attack surface.
+    </flag>
+    <flag name="webdriver">
+      Enable WebDriver support for Selenium.  This allows for automated testing,
+      customized PGO training, controlling the web browser through scripting.
     </flag>
     <flag name="webassembly-b3-jit">
       Enables the B3 JIT support that does additional optimizations beyond
