@@ -701,7 +701,7 @@ eerror
 		if [[ -z "${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}" ]] ; then
 eerror
 eerror "You need to define EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH as a"
-eerror "per-package envvar.  Do not include the EPREFIX."
+eerror "per-package envvar.  You must include the EPREFIX if cross-compiling."
 eerror
 			die
 		fi
@@ -1215,19 +1215,19 @@ src_configure() {
 			ycmd_config_use_system JDT
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_JDTLS_LANGUAGE_SERVER_HOME_PATH___" \
-				"${EPREFIX}/${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}"
+				"${EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH}"
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_JDTLS_WORKSPACE_ROOT_PATH___" \
-				"${EPREFIX}/${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}"
+				"${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}"
 			ycmd_config_set_default_src_path \
 				"___SYSTEM_JDTLS_EXTENSION_PATH___" \
-				"${EPREFIX}/${EYCMD_JDTLS_EXTENSION_PATH}"
+				"${EYCMD_JDTLS_EXTENSION_PATH}"
 			ycmd_config_set_default_json_path \
 				"___JDTLS_WORKSPACE_ROOT_PATH___" \
-				"${EPREFIX}/${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}"
+				"${EYCMD_JDTLS_WORKSPACE_ROOT_PATH}"
 			ycmd_config_set_default_json_path \
 				"___JDTLS_EXTENSION_PATH___" \
-				"${EPREFIX}/${EYCMD_JDTLS_EXTENSION_PATH}"
+				"${EYCMD_JDTLS_EXTENSION_PATH}"
 		else
 			ycmd_config_set_default_json_path \
 				"___JDTLS_WORKSPACE_ROOT_PATH___" \

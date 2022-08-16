@@ -30,16 +30,16 @@
 
     system-jdtls per-package environmental variables:
 
-      EYCMD_JDT_LANGUAGE_SERVER_HOME_PATH - The path of root directory of
+      EYCMD_JDTLS_LANGUAGE_SERVER_HOME_PATH - The path of root directory of
         unpacked JDT.LS.
 
-      EYCMD_JDT_WORKSPACE_ROOT_PATH - The path of workspace which can be
+      EYCMD_JDTLS_WORKSPACE_ROOT_PATH - The path of workspace which can be
         relocated to a directory of a home directory.
 
-      EYCMD_JDT_EXTENSION_PATH - The path of JDT.LS directories containing
+      EYCMD_JDTLS_EXTENSION_PATH - The path of JDT.LS directories containing
         extensions.
 
-    Do not add EPREFIX to these variables.  It will be automatically added.
+    You must add EPREFIX to these variables if cross-compiling.
 
   </longdescription>
   <upstream>
