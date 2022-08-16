@@ -93,7 +93,7 @@ LICENSE+=" ${MONO_LICENSE}"
 #KEYWORDS=""
 SLOT="0/$(ver_cut 1-2 ${PV})"
 AOT_CROSS_TARGETS=" cross-arm cross-arm64 cross-x86 cross-x86_64"
-AOT_CROSS_MXE_TARGETS=" cross-arm-win cross-arm64-win cross-x86-win cross-x86_64-win"
+#AOT_CROSS_MXE_TARGETS=" cross-arm-win cross-arm64-win cross-x86-win cross-x86_64-win"
 RUNTIME_TARGETS=" armeabi-v7a arm64-v8a x86 x86_64"
 TARGETS=" ${RUNTIME_TARGETS} ${AOT_CROSS_TARGETS} ${AOT_CROSS_MXE_TARGETS}"
 IUSE+=" ${TARGETS}"
@@ -106,31 +106,11 @@ REQUIRED_USE+="
 	cross-x86_64? ( x86_64 )
 "
 DEPEND+=""
-# Distro is laggin in ndk version
-# Upstream uses 23 but is relaxed
 BDEPEND+="
 	${PYTHON_DEPS}
 	  dev-util/android-sdk-update-manager
-	>=dev-util/android-ndk-18
+	>=dev-util/android-ndk-21.4
 	>=dev-util/cmake-3.18.1
-	arm64-v8a? (
-		>=dev-util/android-ndk-21:=
-	)
-	cross-arm64? (
-		>=dev-util/android-ndk-21:=
-	)
-	cross-arm64-win? (
-		>=dev-util/android-ndk-21:=
-	)
-	cross-x86_64? (
-		>=dev-util/android-ndk-21:=
-	)
-	cross-x86_64-win? (
-		>=dev-util/android-ndk-21:=
-	)
-	x86_64? (
-		>=dev-util/android-ndk-21:=
-	)
 "
 S="${WORKDIR}/${MY_PN}-release-${MY_PV}"
 PROPERTIES="live"
