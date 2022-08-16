@@ -168,20 +168,18 @@ eerror
 		die
 	fi
 	test_path "${OSXCROSS_ROOT}/target/bin"
+	local arch="ARCH_NOT_DEFINED"
 	if use godot_osx_arm64 ; then
-		test_path "${OSXCROSS_ROOT}/target/bin/arm64*-cc"
-		test_path "${OSXCROSS_ROOT}/target/bin/arm64*-c++"
-		test_path "${OSXCROSS_ROOT}/target/bin/arm64*-ar"
-		test_path "${OSXCROSS_ROOT}/target/bin/arm64*-ranlib"
-		test_path "${OSXCROSS_ROOT}/target/bin/arm64*-as"
+		arch="arm64"
 	fi
 	if use godot_osx_x86_64 ; then
-		test_path "${OSXCROSS_ROOT}/target/bin/x86_64*-cc"
-		test_path "${OSXCROSS_ROOT}/target/bin/x86_64*-c++"
-		test_path "${OSXCROSS_ROOT}/target/bin/x86_64*-ar"
-		test_path "${OSXCROSS_ROOT}/target/bin/x86_64*-ranlib"
-		test_path "${OSXCROSS_ROOT}/target/bin/x86_64*-as"
+		arch="x86_64"
 	fi
+	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-cc"
+	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-c++"
+	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-ar"
+	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-ranlib"
+	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-as"
 }
 
 test_prefixed_toolchain() {
