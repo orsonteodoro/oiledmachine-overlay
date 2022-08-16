@@ -202,9 +202,6 @@ Traditional      i        i          i         i        i       i
       execution.  Disable for increased compatibility on alternative ARCHs and
       ABIs.
     </flag>
-    <flag name="unified-build">
-      Reduces the build time by half by parsing the headers once
-    </flag>
     <flag name="libsoup3">
       Link to libsoup3.  It consequently enables HTTP/2 by default when libsoup3
       is 2.99.8 or newer.
@@ -229,6 +226,9 @@ Traditional      i        i          i         i        i       i
     </flag>
     <flag name="thunder">
       Links to a framework with pluginable CDM (content decryption module) support.
+    </flag>
+    <flag name="unified-build">
+      Reduces the build time by half by parsing the headers once
     </flag>
     <flag name="v4l">
       Adds and checks for proper v4l camera support.
