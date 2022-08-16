@@ -52,7 +52,6 @@ RDEPEND="
 	>=dev-cpp/gtest-${GTEST_PV}
 	  dev-util/android-ndk
 	>=media-libs/glm-${GLM_PV}
-	>=sys-libs/zlib-${ZLIB_PV}
 	box2d? (
 		|| (
 			<dev-games/box2d-${BOX2D_PV_EMAX}:2.3
@@ -80,7 +79,6 @@ RDEPEND="
 	)
 	png? (
 		>=media-libs/libpng-${LIBPNG_PV}
-		>=sys-libs/zlib-${ZLIB_PV}
 	)
 	sdl2? (
 		>=media-libs/libsdl2-${LIBSDL2_PV}[gles1?,gles2?,joystick?,static-libs,threads?,sound?]
@@ -97,6 +95,8 @@ RDEPEND="
 		)
 	)
 "
+#	>=sys-libs/zlib-${ZLIB_PV}
+#	png? (	>=sys-libs/zlib-${ZLIB_PV}) # already in android-ndk
 
 # Check all packages for CHOST compatibility
 verify_libs_abi() {
@@ -135,8 +135,8 @@ verify_libs_abi() {
 		"sci-physics/bullet"
 
 		# Problems?
-		"sys-devel/gcc"
-		"sys-libs/zlib"
+#		"sys-devel/gcc"
+#		"sys-libs/zlib"
 	)
 
 	for package in ${packages[@]} ; do
