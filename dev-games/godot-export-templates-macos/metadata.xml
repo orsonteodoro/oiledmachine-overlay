@@ -24,6 +24,8 @@
         MACPORTS_PREFIX - For native in arm-macos or x64-macos prefix
         OSXCROSS_ROOT - Path to OSXCross for cross-compile
 
+        *The OSXCross install must contain the target subfolder.  Fork a local
+         copy of the the osxcross ebuild to fix mistakes.
 
     Optional environment variables
 

@@ -26,5 +26,8 @@
                      target triple used as the prefix to a toolchain command.
                      (Default:  18)
 
+      *The OSXCross install must contain the target subfolder.  Fork a local
+       copy of the the osxcross ebuild to fix mistakes.
+
   </longdescription>
 </pkgmetadata>

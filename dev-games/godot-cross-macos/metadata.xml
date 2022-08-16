@@ -30,6 +30,10 @@
 
       https://github.com/tpoechtrager/osxcross/blob/master/build.sh#L32
 
+
+    *The OSXCross install must contain the target subfolder.  Fork a local
+     copy of the the osxcross ebuild to fix mistakes.
+
   </longdescription>
   <use>
     <flag name="sdk_10_5_or_less">

@@ -97,12 +97,9 @@ pkg_setup() {
 ewarn
 ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
 ewarn
-	if [[ -z "${OSXCROSS_ROOT}" ]] ; then
-eerror
-eerror "The environment variable OSXCROSS_ROOT needs to be defined."
-eerror
-		die
-	fi
+	export OSXCROSS_ROOT="${OSXCROSS_ROOT:-/opt/osxcross}"
+	einfo "OSXCROSS_ROOT=${OSXCROSS_ROOT}"
+	einfo "PATH=${PATH}"
 
 	local found_cc=0
 	local found_cxx=0
