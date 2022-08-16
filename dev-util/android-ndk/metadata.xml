@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- ebuild fork only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- ebuild originator -->
+    <email>perfinion@gentoo.org</email>
+    <name>Jason Zaman</name>
+  </maintainer>
+  <longdescription>
+
+    The Android Native Development Kit (NDK) contains the prebuilt toolchain, and
+    prebuilt set of native libraries (with headers), and build system tools.
+
+    The implementation of the standard C libraries (libc, libm), the deprecated
+    system c++ library (libstdc++) and linker library (libdl)
+    collectively under the Boinic which is included in the NDK for
+    purposes of building and linking.  The libc++ is the full llvm project
+    implmentation.  The system c++ library is reduced to new and delete.
+    See the stable_apis link in the docs section link for details.
+
+    Filenames of native libraries per API level:
+
+      crtbegin_dynamic.o crtbegin_so.o crtbegin_static.o crtend_android.o 
+      crtend_so.o libEGL.so libGLESv1_CM.so libGLESv2.so libGLESv3.so 
+      libOpenMAXAL.so libOpenSLES.so libaaudio.so libamidi.so libandroid.so 
+      libbinder_ndk.so libc++.a libc++.so libc.so libcamera2ndk.so libdl.so 
+      libicu.so libjnigraphics.so liblog.so libm.so libmediandk.so 
+      libnativehelper.so libnativewindow.so libneuralnetworks.so 
+      libstdc++.so libsync.so libvulkan.so libz.so
+
+    * This list may vary per API level.
+
+    If the library is listed here, no effort is required to manually port that
+    ebuild-package to the device.  No effort is required to build the compiler
+    for the device.
+
+
+    Toolchain support:
+
+      NDK 25:  armv7a, aarch64, i686, x86_64; python 3.9 (internal);
+               clang 14.0.6 (internal)
+
+
+    API level support
+
+      NDK 25:  19 - 33
+
+
+    For API level to Android version correspondance, see
+
+      https://source.android.com/docs/setup/start/build-numbers
+
+
+    Long Term Support (LTS) policy:
+
+      https://github.com/android/ndk/wiki
+
+
+  </longdescription>
+  <upstream>
+    <doc lang="en">
+      https://developer.android.com/ndk/guides/stable_apis
+      https://developer.android.com/ndk/reference
+      https://android.googlesource.com/platform/bionic/
+      https://android.googlesource.com/platform/bionic/+/refs/tags/ndk-r25
+      https://android.googlesource.com/platform/bionic/+/master/docs/status.md
+    </doc>
+    <bugs-to>https://github.com/android/ndk/issues</bugs-to>
+    <changelog>https://developer.android.com/ndk/downloads/revision_history.html</changelog>
+    <remote-id type="github">android/ndk</remote-id>
+  </upstream>
+</pkgmetadata>
