@@ -41,7 +41,15 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0"
 BDEPEND="dev-util/android-sdk-update-manager"
+# libnative-platform-curses.so
+# libjnidispatch.so
+SO_RDEPEND="
+        sys-devel/gcc
+        sys-libs/ncurses-compat:5[tinfo]
+        sys-libs/glibc
+"
 RDEPEND="
+	${SO_RDEPEND}
 	app-arch/unzip
 	app-arch/xz-utils
 	app-arch/zip
