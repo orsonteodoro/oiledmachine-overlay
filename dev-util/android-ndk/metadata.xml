@@ -18,7 +18,7 @@
 
     The implementation of the standard C libraries (libc, libm), the deprecated
     system c++ library (libstdc++) and linker library (libdl)
-    collectively under the Boinic which is included in the NDK for
+    collectively under Boinic which is included in the NDK for
     purposes of building and linking.  The libc++ is the full llvm project
     implmentation.  The system c++ library is reduced to new and delete.
     See the stable_apis link in the docs section link for details.
