@@ -109,7 +109,7 @@ DEPEND+=""
 BDEPEND+="
 	${PYTHON_DEPS}
 	  dev-util/android-sdk-update-manager
-	>=dev-util/android-ndk-21.4
+	>=dev-util/android-ndk-21
 	>=dev-util/cmake-3.18.1
 "
 S="${WORKDIR}/${MY_PN}-release-${MY_PV}"

@@ -115,7 +115,7 @@ REQUIRED_USE+="
 "
 EXPECTED_MIN_ANDROID_API_LEVEL="29"
 JAVA_V="11" # See https://github.com/godotengine/godot/blob/3.4-stable/.github/workflows/android_builds.yml#L32
-NDK_V="17" # Upstream uses 21 but relaxed due to lack of newer version
+NDK_V="21"
 
 JDK_DEPEND="
 	|| (
