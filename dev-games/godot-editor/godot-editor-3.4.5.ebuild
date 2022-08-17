@@ -96,7 +96,7 @@ gen_required_use_template()
 
 IUSE+=" -gdscript gdscript_lsp -mono +visual-script" # for scripting languages
 IUSE+=" -system-mono"
-IUSE+=" csharp-external-editor monodevelop vscode"
+IUSE+=" csharp-external-editor vscode"
 IUSE+=" +bullet +csg +gridmap +gltf +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
 IUSE+=" -gamepad +touch" # for input
@@ -116,7 +116,7 @@ REQUIRED_USE+="
 	3d
 	advanced-gui
 	csharp-external-editor? (
-		|| ( monodevelop vscode )
+		|| ( vscode )
 		mono
 	)
 	freetype
@@ -126,7 +126,6 @@ REQUIRED_USE+="
 	lsan? ( asan )
 	optimize-size? ( !optimize-speed )
 	optimize-speed? ( !optimize-size )
-	monodevelop? ( csharp-external-editor )
 	portable? (
 		!asan
 		!system-bullet
@@ -315,7 +314,6 @@ RDEPEND+="
 	mono? (
 		csharp-external-editor? (
 			|| (
-				monodevelop? ( dev-util/monodevelop )
 				vscode? ( app-editors/vscode )
 			)
 		)

@@ -122,7 +122,6 @@ https://godotengine.org/article/introducing-the-godot-gltf-2-0-scene-exporter
       formats are used by Amiga audio files or chiptune music.  It's only
       available in the 2.1 slot.</flag>
     <flag name="mono">Enables C# scripting support.</flag>
-    <flag name="monodevelop">Use MonoDevelop for C# scripting</flag>
     <flag name="mp3">Enables MP3 support.</flag>
     <flag name="msan">Enables MSAN for reporting but not necessarily
       fixing uninitialized variables.</flag>
