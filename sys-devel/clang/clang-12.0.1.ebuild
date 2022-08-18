@@ -396,12 +396,7 @@ setup_clang() {
 
 _cmake_clean() {
 	[[ -e "${BUILD_DIR}" ]] || return
-	cd "${BUILD_DIR}" || die
-	if [[ -e "build.ninja" ]] ; then
-		eninja -t clean
-	else
-		emake clean
-	fi
+	rm -rf "${BUILD_DIR}" || die
 }
 
 src_configure() { :; }

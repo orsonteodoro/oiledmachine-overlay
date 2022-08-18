@@ -415,12 +415,7 @@ src_configure() { :; }
 
 _cmake_clean() {
 	[[ ! -d "${BUILD_DIR}" ]] && return
-	cd "${BUILD_DIR}" || die
-	if [[ ${CMAKE_MAKEFILE_GENERATOR} == ninja ]]; then
-		[[ -e "build.ninja" ]] && eninja -t clean
-	else
-		[[ -e "Makefile" ]] && emake clean
-	fi
+	rm -rf "${BUILD_DIR}" || die
 }
 
 setup_gcc() {
