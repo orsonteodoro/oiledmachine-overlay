@@ -6,7 +6,7 @@ EAPI=8
 CMAKE_BUILD_TYPE=Release
 PYTHON_COMPAT=( python3_{8..11} )
 
-inherit cmake flag-o-matic python-single-r1 toolchain-funcs
+inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
@@ -42,16 +42,19 @@ DEPEND+="
 		>=dev-cpp/tbb-2021.5:${ONETBB_SLOT}=
 	)
 	virtual/libc
-	openimageio? ( media-libs/openimageio )
+	openimageio? (
+		media-libs/openimageio
+	)
 "
 RDEPEND+=" ${DEPEND}"
 LLVM_SLOTS=(15 14 13 12 11 10)
-gen_depends() {
-	local o
+IUSE+=" ${LLVM_SLOTS[@]/#/llvm-}"
+REQUIRED_USE+=" ^^ ( ${LLVM_SLOTS[@]/#/llvm-} )"
+gen_clang_depends() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-		(
+		echo "
+		llvm-${s}? (
 			sys-devel/clang:${s}
 			sys-devel/llvm:${s}
 			=sys-devel/clang-runtime-${s}*
@@ -59,9 +62,8 @@ gen_depends() {
 		)
 		"
 	done
-	echo "${o}"
 }
-CLANG_DEPENDS=$(gen_depends)
+CLANG_DEPENDS=$(gen_clang_depends)
 BDEPEND+="
 	${CDEPEND}
 	|| (
@@ -113,6 +115,18 @@ eerror
 			fi
 		fi
 	fi
+
+	if tc-is-clang || use clang ; then
+		local s
+		for s in ${LLVM_SLOTS[@]} ; do
+			if use llvm-${s} ; then
+				LLVM_MAX_SLOT=${s}
+				llvm_pkg_setup
+				break
+			fi
+		done
+	fi
+
 	python-single-r1_pkg_setup
 }
 
