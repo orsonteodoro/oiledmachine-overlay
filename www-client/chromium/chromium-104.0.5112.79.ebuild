@@ -23,7 +23,7 @@ CR_CLANG_SLOT_OFFICIAL=15
 LLVM_SLOTS=(${LLVM_MAX_SLOT}) # [inclusive, inclusive] high to low
 inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils \
 python-any-r1 readme.gentoo-r1 toolchain-funcs xdg-utils
-inherit llvm multilib multilib-minimal user # Added by the oiledmachine-overlay
+inherit llvm multilib multilib-minimal # Added by the oiledmachine-overlay
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
@@ -1558,10 +1558,6 @@ ewarn
 	for a in $(multilib_get_enabled_abis) ; do
 		NABIS=$((${NABIS} + 1))
 	done
-
-	if use pgo-full ; then
-		enewgroup crpgo
-	fi
 }
 
 USED_EAPPLY=0
@@ -3126,12 +3122,6 @@ einfo "  ln -sf /usr/lib/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/c
 einfo "  ln -sf /usr/lib32/chromium-browser/chromium-launcher-${ABI}.sh /usr/bin/chromium"
 einfo "  ln -sf /usr/lib32/chromium-browser/chromedriver-${ABI} /usr/bin/chromedriver"
 einfo
-
-	if use pgo-full ; then
-einfo
-einfo "You must be a member of the crpgo group to collect PGO profiling data."
-einfo
-	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
