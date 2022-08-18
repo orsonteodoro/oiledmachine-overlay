@@ -5,6 +5,7 @@ EAPI=8
 
 CXX_STD_MIN="11"
 LLVM_MAX_SLOT=13
+LLVM_SLOTS=(13)
 FONT_PN=OpenImageIO
 PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake font llvm python-single-r1
@@ -155,7 +156,6 @@ RDEPEND+="
 	webp? ( >=media-libs/libwebp-0.6.1:= )
 "
 DEPEND+=" ${RDEPEND}"
-LLVM_SLOTS=(13 12)
 gen_bdepend_clang() {
 	local o=""
 	local s
