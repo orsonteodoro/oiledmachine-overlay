@@ -907,7 +907,7 @@ src_install() {
 	if use bolt-prepare ; then
 		# For BOLT requirements, see
 # https://github.com/llvm/llvm-project/tree/main/bolt#input-binary-requirements
-		export STRIP="/bin/true"
+		export STRIP="${BROOT}/bin/true"
 	fi
 	local MULTILIB_CHOST_TOOLS=(
 		/usr/lib/llvm/${SLOT}/bin/llvm-config

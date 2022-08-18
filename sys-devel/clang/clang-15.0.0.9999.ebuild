@@ -285,10 +285,6 @@ check_distribution_components() {
 					clang-libraries|distribution)
 						continue
 						;;
-					# headers for clang-tidy static library
-					clang-tidy-headers)
-						continue
-						;;
 					# tools
 					clang|clangd|clang-*)
 						;;
@@ -1078,6 +1074,7 @@ src_install() {
 	# Move runtime headers to /usr/lib/clang, where they belong
 	mv "${ED}"/usr/include/clangrt "${ED}"/usr/lib/clang || die
 	# move (remaining) wrapped headers back
+	mv "${T}"/clang-tidy "${ED}"/usr/include/ || die
 	mv "${ED}"/usr/include "${ED}"/usr/lib/llvm/${SLOT}/include || die
 
 	# Apply CHOST and version suffix to clang tools
