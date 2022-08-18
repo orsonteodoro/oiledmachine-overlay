@@ -41,21 +41,21 @@ QT_MIN=5.6
 
 gen_llvm_depend()
 {
-	for v in ${LLVM_SUPPORT[@]} ; do
+	local s
+	for s in ${LLVM_SUPPORT[@]} ; do
 		echo "
-		llvm-${v}? (
-			sys-devel/llvm:${v}[${MULTILIB_USEDEP}]
-			sys-devel/clang:${v}[${MULTILIB_USEDEP}]
+		llvm-${s}? (
+			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 		)
-
-"
+		"
 	done
 }
 
 gen_opx_llvm_rdepend() {
-	local o=""
+	local s
 	for s in ${LLVM_SUPPORT[@]} ; do
-		o+="
+		echo "
 			(
 				sys-devel/llvm:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
 				sys-devel/clang:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
@@ -63,21 +63,21 @@ gen_opx_llvm_rdepend() {
 			)
 		"
 	done
-	echo "${o}"
 }
 
 gen_llvm_bdepend() {
-	local o=""
+	local s
 	for s in ${LLVM_SUPPORT[@]} ; do
-		o+="
+		echo "
+		llvm-${s}? (
 			(
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 				>=sys-devel/lld-${s}
 			)
+		)
 		"
 	done
-	echo "${o}"
 }
 
 OPENEXR_V2="2.5.7 2.5.8"
@@ -127,7 +127,8 @@ RDEPEND+="
 		${PYTHON_DEPS}
 		$(python_gen_any_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
 		$(python_gen_any_dep '>=dev-python/pybind11-2.4.2[${PYTHON_USEDEP}]')
-	)"
+	)
+"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+=" "$(gen_llvm_depend)
 BDEPEND+="
@@ -136,8 +137,12 @@ BDEPEND+="
 			<sys-devel/gcc-12
 			>=sys-devel/gcc-6
 		)
-		$(gen_llvm_bdepend)
-		>=dev-lang/icc-13[${MULTILIB_USEDEP}]
+		(
+			$(gen_llvm_bdepend)
+		)
+		(
+			>=dev-lang/icc-13[${MULTILIB_USEDEP}]
+		)
 	)
 	>=dev-util/cmake-3.12
 	>=sys-devel/bison-2.7
@@ -146,7 +151,8 @@ BDEPEND+="
 "
 SRC_URI="
 https://github.com/imageworks/OpenShadingLanguage/archive/Release-${PV}.tar.gz
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 # Restricting tests as Make file handles them differently
 RESTRICT="mirror test"
 S="${WORKDIR}/OpenShadingLanguage-Release-${PV}"
