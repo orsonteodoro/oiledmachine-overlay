@@ -150,6 +150,12 @@ pkg_setup() {
 			ewarn "jemalloc may need rebuild if vdb_print -version stalls."
 		fi
 	fi
+	if ! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+eerror
+eerror "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} is required"
+eerror
+		die
+	fi
 }
 
 src_prepare() {
@@ -218,16 +224,7 @@ src_configure() {
 		mycmakeargs+=( -DOPENVDB_SIMD=SSE42 )
 	fi
 
-	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		einfo "Using oneTBB"
-		mycmakeargs+=(
-			-DUSE_PKGCONFIG=ON
-			-DTbb_INCLUDE_DIR="${ESYSROOT}/usr/include"
-			-DTBB_LIBRARYDIR="${ESYSROOT}/usr/$(get_libdir)"
-			-DTBB_FORCE_ONETBB=ON
-			-DTBB_SLOT=""
-		)
-	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		einfo "Legacy TBB"
 		mycmakeargs+=(
 			-DUSE_PKGCONFIG=ON
@@ -235,6 +232,15 @@ src_configure() {
 			-DTBB_LIBRARYDIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 			-DTBB_FORCE_ONETBB=OFF
 			-DTBB_SLOT="-${LEGACY_TBB_SLOT}"
+		)
+	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+		einfo "Using oneTBB"
+		mycmakeargs+=(
+			-DUSE_PKGCONFIG=ON
+			-DTbb_INCLUDE_DIR="${ESYSROOT}/usr/include"
+			-DTBB_LIBRARYDIR="${ESYSROOT}/usr/$(get_libdir)"
+			-DTBB_FORCE_ONETBB=ON
+			-DTBB_SLOT=""
 		)
 	fi
 
@@ -247,9 +253,7 @@ src_install()
 	dodoc README.md
 	docinto licenses
 	dodoc LICENSE openvdb/openvdb/COPYRIGHT
-	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		:;
-	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
+	if has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			if readelf -h "${f}" 2>/dev/null 1>/dev/null && test -x "${f}" ; then
 				einfo "Setting rpath for ${f}"
@@ -257,6 +261,8 @@ src_install()
 					"${f}" || die
 			fi
 		done
+	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
+		:;
 	fi
 
 	if ! is_crosscompile && which "${ED}/usr/bin/vdb_print" ; then
