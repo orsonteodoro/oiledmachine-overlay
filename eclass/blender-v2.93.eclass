@@ -560,7 +560,10 @@ check_multiple_llvm_versions_in_native_libs() {
 	local llvm_slot
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
-		use "llvm-${s}" && llvm_slot=${s}
+		if use "llvm-${s}" ; then
+			llvm_slot=${s}
+			break
+		fi
 	done
 
 	if ldd "${EPREFIX}/usr/$(get_libdir)/dri/"*".so" 2>/dev/null 1>/dev/null ; then
