@@ -1,12 +1,12 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: blender-v3.0.eclass
+# @ECLASS: blender-v3.2.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender-v3.0.eclass helps reduce code duplication across ebuilds
+# The blender-v3.2.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
 # Upstream uses LLVM 9 for Linux.  For prebuilt binary only addons, this may be
@@ -625,6 +625,9 @@ eerror
 }
 
 _blender_pkg_setup() {
+ewarn
+ewarn "This ebuild series is a WIP (WIP) and undergoing development."
+ewarn
 	# TODO: ldd oiio for webp and warn user if missing
 	# Needs OpenCL 1.2 (GCN 2)
 	check_multiple_llvm_versions_in_native_libs
