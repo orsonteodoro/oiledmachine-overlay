@@ -63,18 +63,27 @@ gen_clang_depends() {
 		"
 	done
 }
-CLANG_DEPENDS=$(gen_clang_depends)
+
+gen_ispc_depends() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+		llvm-${s}? (
+			>=dev-lang/ispc-1.17.0[llvm-${s}]
+		)
+		"
+	done
+}
+
 BDEPEND+="
 	${CDEPEND}
 	|| (
 		clang? (
-			|| (
-				${CLANG_DEPENDS}
-			)
+			$(gen_clang_depends)
 		)
 		gcc? ( >=sys-devel/gcc-${MIN_GCC_V} )
 	)
-	>=dev-lang/ispc-1.17.0
+	$(gen_ispc_depends)
 	>=dev-util/cmake-3.1
 "
 if [[ ${PV} = *9999 ]]; then
