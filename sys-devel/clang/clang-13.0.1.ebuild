@@ -389,24 +389,6 @@ setup_clang() {
 	autofix_flags # translate retpoline, strip unsupported flags during switch
 }
 
-get_m_abi() {
-	local r
-	for r in ${_MULTILIB_FLAGS[@]} ; do
-		local m_abi=$"${r%:*}"
-		local m_flag="${r#*:}"
-		local a
-		OIFS="${IFS}"
-		IFS=','
-		for a in ${m_flag} ; do
-			if [[ "${a}" == "${ABI}" ]] ; then
-				echo "${m_abi}"
-				return
-			fi
-		done
-		IFS="${OIFS}"
-	done
-}
-
 _cmake_clean() {
 	[[ -e "${BUILD_DIR}" ]] || return
 	cd "${BUILD_DIR}" || die
@@ -426,7 +408,7 @@ _gcc_fullversion() {
 _configure() {
 	einfo "Called _configure()"
 	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
-	BUILD_DIR="${WORKDIR}/x/y/clang-$(get_m_abi).${ABI}"
+	BUILD_DIR="${WORKDIR}/x/y/clang-${MULTILIB_ABI_FLAG}.${ABI}"
 	_cmake_clean
 	local llvm_version=$(llvm-config --version) || die
 	local clang_version=$(ver_cut 1-3 "${llvm_version}")
@@ -595,7 +577,7 @@ _configure() {
 	)
 
 	CMAKE_USE_DIR="${WORKDIR}/clang"
-	BUILD_DIR="${WORKDIR}/x/y/clang-$(get_m_abi).${ABI}"
+	BUILD_DIR="${WORKDIR}/x/y/clang-${MULTILIB_ABI_FLAG}.${ABI}"
 
 	if [[ "${PGO_PHASE}" == "pgv" ]] ; then
 		mycmakeargs+=(
@@ -635,7 +617,7 @@ _configure() {
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
 		)
-		BUILD_DIR="${WORKDIR}/x/y/clang-self-$(get_m_abi).${ABI}"
+		BUILD_DIR="${WORKDIR}/x/y/clang-self-${MULTILIB_ABI_FLAG}.${ABI}"
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
@@ -648,10 +630,10 @@ _configure() {
 			-DTEST_SUITE_RUN_TYPE=Train
 		)
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-$(get_m_abi).${ABI}"
+		BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-${MULTILIB_ABI_FLAG}.${ABI}"
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_train" ]] ; then
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-$(get_m_abi).${ABI}"
+		BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-${MULTILIB_ABI_FLAG}.${ABI}"
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
@@ -664,7 +646,7 @@ _configure() {
 			-DTEST_SUITE_RUN_TYPE=ref
 		)
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
-		BUILD_DIR="${WORKDIR}/x/y/test-suite-opt-$(get_m_abi).${ABI}"
+		BUILD_DIR="${WORKDIR}/x/y/test-suite-opt-${MULTILIB_ABI_FLAG}.${ABI}"
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
 		if use bootstrap ; then
@@ -925,7 +907,7 @@ multilib_src_install() {
 	else
 		PGO_PHASE="pg0"
 	fi
-	BUILD_DIR="${WORKDIR}/x/y/clang-$(get_m_abi).${ABI}"
+	BUILD_DIR="${WORKDIR}/x/y/clang-${MULTILIB_ABI_FLAG}.${ABI}"
 	_install
 }
 
