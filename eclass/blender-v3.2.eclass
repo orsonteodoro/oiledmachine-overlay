@@ -578,6 +578,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-3.0.0-intern-ghost-fix-typo-in-finding-XF86VMODE.patch"
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
+	"${FILESDIR}/${PN}-3.2.2-static-cyclic-avoidance.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -701,7 +702,7 @@ ewarn
 }
 
 _src_configure() {
-	export CMAKE_USE_DIR="${S}_${impl}"
+	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${CMAKE_USE_DIR}" || die
 
@@ -726,10 +727,6 @@ _src_configure() {
 
 	blender_configure_simd_cycles
 	blender_configure_eigen
-
-	if use openxr || use osl ; then
-		blender_configure_mesa_match_system_llvm
-	fi
 
 	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated
 

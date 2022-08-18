@@ -1,0 +1,35 @@
+--- a/intern/cycles/cmake/macros.cmake.orig	2022-05-02 06:58:45.000000000 -0700
++++ b/intern/cycles/cmake/macros.cmake	2022-08-18 00:10:55.095148536 -0700
+@@ -8,9 +8,19 @@ function(cycles_set_solution_folder targ
+     set_target_properties(${target} PROPERTIES FOLDER ${folderdir})
+   endif()
+ endfunction()
++# oteodoro - added space
++macro(cycles_add_library_static target library_deps) # oteodoro - added function
++  add_library(${target} STATIC ${ARGN})              # oteodoro - added function
++  _cycles_add_library(${target} ${ARGN})             # oteoodro - added function
++endmacro()                                        # oteodoro - added function
++# oteodoro - added space
++macro(cycles_add_library target library_deps)        # oteodoro - split function
++  add_library(${target} ${ARGN})                     # oteodoro - move into here
++  _cycles_add_library(${target} ${ARGN})             # oteoodro - added function
++endmacro()                                        # oteodoro - split function
+ 
+-macro(cycles_add_library target library_deps)
+-  add_library(${target} ${ARGN})
++macro(_cycles_add_library target library_deps)
++  # oteodoro - moved line
+ 
+   # On Windows certain libraries have two sets of binaries: one for debug builds and one for
+   # release builds. The root of this requirement goes into ABI, I believe, but that's outside
+--- a/intern/cycles/kernel/CMakeLists.txt.orig	2022-05-04 10:50:44.000000000 -0700
++++ b/intern/cycles/kernel/CMakeLists.txt	2022-08-18 00:11:58.489604216 -0700
+@@ -738,7 +738,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_C_C
+   unset(_has_cxxflag_double_promotion)
+ endif()
+ 
+-cycles_add_library(cycles_kernel "${LIB}"
++cycles_add_library_static(cycles_kernel "${LIB}" # oteodoro - changed line to avoid circular
+   ${SRC_KERNEL_DEVICE_CPU}
+   ${SRC_KERNEL_DEVICE_CUDA}
+   ${SRC_KERNEL_DEVICE_HIP}

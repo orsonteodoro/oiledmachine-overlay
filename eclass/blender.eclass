@@ -645,12 +645,6 @@ einfo
 
 	local impl
 	for impl in ${IMPLS[@]} ; do
-		einfo "Copying ${S} -> ${S}_${impl}"
-
-# We want to remove this but can't because of ${ABI} sed changes with
-# blender_configure_simd_cycles.
-		cp -a "${S}" "${S}_${impl}" || die
-
 		_prepare_pgo
 	done
 }
@@ -1007,7 +1001,7 @@ get_pgo_phase() {
 blender_src_configure() { :; }
 
 _src_compile() {
-	export CMAKE_USE_DIR="${S}_${impl}"
+	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${BUILD_DIR}" || die
 
@@ -1059,7 +1053,7 @@ eerror
 # TODO
 # orphaned / deadcode
 _install() {
-	export CMAKE_USE_DIR="${S}_${impl}"
+	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${BUILD_DIR}" || die
 einfo
@@ -1143,7 +1137,7 @@ _run_trainer() {
 }
 
 _src_test() {
-	export CMAKE_USE_DIR="${S}_${impl}"
+	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${BUILD_DIR}" || die
 	if use test; then
@@ -1245,7 +1239,7 @@ install_readmes() {
 }
 
 _src_install() {
-	export CMAKE_USE_DIR="${S}_${impl}"
+	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${BUILD_DIR}" || die
 
@@ -1254,7 +1248,6 @@ _src_install() {
 
 	cmake_src_install
 	if [[ "${impl}" == "build_creator" ]] ; then
-		CMAKE_USE_DIR="${BUILD_DIR}" \
 		_src_install_doc
 	fi
 
