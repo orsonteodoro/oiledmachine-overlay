@@ -410,7 +410,9 @@ ewarn
 }
 
 check_cpu() {
-	if [[ ! -e "/proc/cpuinfo" ]] ; then
+	if [[ ! -e "${BROOT}/proc/cpuinfo" ]] \
+		|| [[ "${CHOST}" != "${CBUILD}" ]] \
+		|| ! use linux_kernel ; then
 ewarn
 ewarn "Skipping cpu checks.  The compiled program may exhibit runtime failure."
 ewarn
@@ -419,39 +421,39 @@ ewarn
 
 	# Sorted by chronological order to be able to disable remaining
 	# incompatible.
-	grep -q -i -E -e 'mmx( |$)' /proc/cpuinfo # 1997
+	grep -q -i -E -e 'mmx( |$)' "${BROOT}/proc/cpuinfo" # 1997
 	local has_mmx="$?"
-	grep -q -i -E -e 'sse( |$)' /proc/cpuinfo # 1999
+	grep -q -i -E -e 'sse( |$)' "${BROOT}/proc/cpuinfo" # 1999
 	local has_sse="$?"
-	grep -q -i -E -e 'sse2( |$)' /proc/cpuinfo # 2000
+	grep -q -i -E -e 'sse2( |$)' "${BROOT}/proc/cpuinfo" # 2000
 	local has_sse2="$?"
-	grep -q -i -E -e 'sse3( |$)' /proc/cpuinfo # 2004
+	grep -q -i -E -e 'sse3( |$)' "${BROOT}/proc/cpuinfo" # 2004
 	local has_sse3="$?"
-	grep -q -i -E -e 'pni( |$)' /proc/cpuinfo # 2004, equivalent to sse3
+	grep -q -i -E -e 'pni( |$)' "${BROOT}/proc/cpuinfo" # 2004, equivalent to sse3
 	local has_pni="$?"
-	grep -q -i -E -e 'ssse3( |$)' /proc/cpuinfo # 2006
+	grep -q -i -E -e 'ssse3( |$)' "${BROOT}/proc/cpuinfo" # 2006
 	local has_ssse3="$?"
-	grep -q -i -E -e 'abm( |$)' /proc/cpuinfo # 2007
+	grep -q -i -E -e 'abm( |$)' "${BROOT}/proc/cpuinfo" # 2007
 	local has_abm="$?"
-	grep -q -i -E -e 'sse4_1( |$)' /proc/cpuinfo # 2008
+	grep -q -i -E -e 'sse4_1( |$)' "${BROOT}/proc/cpuinfo" # 2008
 	local has_sse4_1="$?"
-	grep -q -i -E -e 'sse4_2( |$)' /proc/cpuinfo # 2008
+	grep -q -i -E -e 'sse4_2( |$)' "${BROOT}/proc/cpuinfo" # 2008
 	local has_sse4_2="$?"
-	grep -q -i -E -e 'avx( |$)' /proc/cpuinfo # 2011
+	grep -q -i -E -e 'avx( |$)' "${BROOT}/proc/cpuinfo" # 2011
 	local has_avx="$?"
-	grep -q -i -E -e 'f16c( |$)' /proc/cpuinfo # 2011
+	grep -q -i -E -e 'f16c( |$)' "${BROOT}/proc/cpuinfo" # 2011
 	local has_f16c="$?"
-	grep -q -i -E -e 'fma( |$)' /proc/cpuinfo # 2012
+	grep -q -i -E -e 'fma( |$)' "${BROOT}/proc/cpuinfo" # 2012
 	local has_fma="$?"
-	grep -q -i -E -e 'bmi1( |$)' /proc/cpuinfo # 2013
+	grep -q -i -E -e 'bmi1( |$)' "${BROOT}/proc/cpuinfo" # 2013
 	local has_bmi1="$?"
-	grep -q -i -E -e 'avx2( |$)' /proc/cpuinfo # 2013
+	grep -q -i -E -e 'avx2( |$)' "${BROOT}/proc/cpuinfo" # 2013
 	local has_avx2="$?"
-	grep -q -i -E -e 'avx512f( |$)' /proc/cpuinfo # 2016 / 2017
+	grep -q -i -E -e 'avx512f( |$)' "${BROOT}/proc/cpuinfo" # 2016 / 2017
 	local has_avx512f="$?"
-	grep -q -i -E -e 'avx512er( |$)' /proc/cpuinfo # 2016
+	grep -q -i -E -e 'avx512er( |$)' "${BROOT}/proc/cpuinfo" # 2016
 	local has_avx512er="$?"
-	grep -q -i -E -e 'avx512dq( |$)' /proc/cpuinfo # 2017
+	grep -q -i -E -e 'avx512dq( |$)' "${BROOT}/proc/cpuinfo" # 2017
 	local has_avx512dq="$?"
 
 	# We cancel building to prevent runtime errors with dependencies
