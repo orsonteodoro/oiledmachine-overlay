@@ -429,7 +429,6 @@ setup_clang() {
 _configure() {
 	einfo "Called _configure()"
 	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
-	_cmake_clean
 	if use pgo && ! has_version ">=sys-devel/clang-${PV}:${SLOT}[${MULTILIB_ABI_FLAG}]" ; then
 		eerror
 		eerror "PGO requires >=sys-devel/clang-${PV}:${SLOT}[${MULTILIB_ABI_FLAG}]"
@@ -610,11 +609,12 @@ _configure() {
 		)
 	fi
 
+	local slot_prev="${SLOT}"
 	if [[ "${PGO_PHASE}" == "pgv" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER=gcc
-			-DCMAKE_CXX_COMPILER=g++
-			-DCMAKE_ASM_COMPILER=gcc
+			-DCMAKE_C_COMPILER=${CHOST}-gcc
+			-DCMAKE_CXX_COMPILER=${CHOST}-g++
+			-DCMAKE_ASM_COMPILER=${CHOST}-gcc
 			-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
 			-DCOMPILER_RT_BUILD_SANITIZERS=OFF
 			-DCOMPILER_RT_BUILD_XRAY=OFF
@@ -623,8 +623,8 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang"
+			-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang++"
 			-DLLVM_BUILD_INSTRUMENTED=ON
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -632,16 +632,16 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
 		# Use the package itself as the asset for training.
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang"
+			-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
 		)
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang"
+			-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -651,8 +651,8 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang"
+			-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -662,11 +662,11 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
-		"${ED}/usr/lib/llvm/${SLOT}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
+		"${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
 		append-ldflags -Wl,--emit-relocs
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang"
+			-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${slot_prev}/bin/${CHOST}-clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
 			-DLLVM_PROFDATA_FILE="${T}/pgo-custom.profdata"
@@ -684,11 +684,13 @@ _configure() {
 			)
 		fi
 	fi
+	_cmake_clean
 
 	if [[ "${PGO_PHASE}" =~ "pgt_test_suite" ]] ; then
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		BUILD_DIR_BAK="${BUILD_DIR}"
 		BUILD_DIR="${WORKDIR}/test-suite_build_${ABI}"
+		_cmake_clean
 		mkdir -p "${BUILD_DIR}" || die
 		cd "${BUILD_DIR}" || die
 		[[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] && _cmake_clean

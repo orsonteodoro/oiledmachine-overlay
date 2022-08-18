@@ -300,7 +300,7 @@ check_distribution_components() {
 
 				all_targets+=( "${l}" )
 			fi
-		done < <(ninja -t targets all)
+		done < <(${NINJA} -t targets all)
 
 		while read -r l; do
 			my_targets+=( "${l}" )
@@ -436,7 +436,6 @@ _gcc_fullversion() {
 _configure() {
 	einfo "Called _configure()"
 	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
-	_cmake_clean
 	local llvm_version=$(llvm-config --version) || die
 	local clang_version=$(ver_cut 1-3 "${llvm_version}")
 
@@ -634,22 +633,25 @@ _configure() {
 			-DLLVM_USE_LINKER=lld
 		)
 		if use bootstrap ; then
+			prev_slot="pgv"
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang"
-				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang++"
 			)
 		else
 			# Clang PGO flags only
+			prev_slot="$(ver_cut 1 ${PV})"
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="clang"
-				-DCMAKE_CXX_COMPILER="clang++"
+				-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${prev_slot}/bin/clang"
+				-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${prev_slot}/bin/clang++"
 			)
 		fi
 	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
 		# Use the package itself as the asset for training.
+		prev_slot="pgi"
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -658,15 +660,17 @@ _configure() {
 	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_inst"|"bolt_train_test_suite_inst") ]] ; then
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		if [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
+			prev_slot="pgi"
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang"
-				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang++"
 			)
 			BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-${MULTILIB_ABI_FLAG}.${ABI}"
 		elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_inst" ]] ; then
+			prev_slot="pgo"
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang"
-				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang++"
 			)
 			BUILD_DIR="${WORKDIR}/x/y/test-suite-bolt-inst-${MULTILIB_ABI_FLAG}.${ABI}"
 		fi
@@ -687,15 +691,17 @@ _configure() {
 	elif [[ "${PGO_PHASE}" =~ ("pgt_test_suite_opt"|"bolt_train_test_suite_opt") ]] ; then
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		if [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
+			prev_slot="pgi"
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang"
-				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang++"
 			)
 			BUILD_DIR="${WORKDIR}/x/y/test-suite-opt-${MULTILIB_ABI_FLAG}.${ABI}"
 		elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_opt" ]] ; then
+			prev_slot="pgo"
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang"
-				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang++"
 			)
 			BUILD_DIR="${WORKDIR}/x/y/test-suite-bolt-opt-${MULTILIB_ABI_FLAG}.${ABI}"
 		fi
@@ -710,17 +716,19 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
 		if use bootstrap ; then
-			"${ED}/usr/lib/llvm/pgv/bin/llvm-profdata" merge \
+			prev_slot="pgv"
+			"${ED}/usr/lib/llvm/${prev_slot}/bin/llvm-profdata" merge \
 				-output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang"
-				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang++"
 			)
 		else
-			llvm-profdata merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
+			prev_slot="$(ver_cut 1 ${PV})"
+			"${EPREFIX}/usr/lib/llvm/${prev_slot}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="clang"
-				-DCMAKE_CXX_COMPILER="clang++"
+				-DCMAKE_C_COMPILER="${EPREFIX}/usr/lib/llvm/${prev_slot}/bin/clang"
+				-DCMAKE_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${prev_slot}/bin/clang++"
 			)
 		fi
 		append-ldflags -Wl,--emit-relocs
@@ -731,9 +739,10 @@ _configure() {
 			-DLLVM_USE_LINKER=lld
 		)
 	elif [[ "${PGO_PHASE}" == "bolt_train_build_self" ]] ; then
+		prev_slot="pgo"
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${prev_slot}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
 			-DLLVM_USE_LINKER=lld
@@ -751,6 +760,7 @@ _configure() {
 			)
 		fi
 	fi
+	_cmake_clean
 
 	mkdir -p "${BUILD_DIR}" || die
 	cd "${BUILD_DIR}" || die
