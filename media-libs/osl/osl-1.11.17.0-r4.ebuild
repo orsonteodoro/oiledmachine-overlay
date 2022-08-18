@@ -56,11 +56,13 @@ gen_opx_llvm_rdepend() {
 	local s
 	for s in ${LLVM_SUPPORT[@]} ; do
 		echo "
+		llvm-${s}? (
 			(
 				sys-devel/llvm:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
 				sys-devel/clang:${s}[llvm_targets_NVPTX,${MULTILIB_USEDEP}]
 				>=sys-devel/lld-${s}
 			)
+		)
 		"
 	done
 }
@@ -137,9 +139,7 @@ BDEPEND+="
 			<sys-devel/gcc-12
 			>=sys-devel/gcc-6
 		)
-		(
-			$(gen_llvm_bdepend)
-		)
+		$(gen_llvm_bdepend)
 		(
 			>=dev-lang/icc-13[${MULTILIB_USEDEP}]
 		)
