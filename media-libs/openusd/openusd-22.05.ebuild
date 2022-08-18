@@ -154,7 +154,7 @@ src_prepare() {
 	# make dummy pyside-uid
 	if use usdview ; then
 		cat > pyside2-uic <<'EOF'
-#!/bin/bash
+#!${EPREFIX}/bin/bash
 uic -g python "$@"
 EOF
 		chmod +x pyside2-uic
@@ -215,18 +215,18 @@ src_configure() {
 	fi
 	if use jemalloc ; then
 		mycmakeargs+=(
-			-DPXR_MALLOC_LIBRARY="${EPREFIX}/usr/$(get_libdir)/${PN}/$(get_libdir)/libjemalloc.so"
+			-DPXR_MALLOC_LIBRARY="${ESYSROOT}/usr/$(get_libdir)/${PN}/$(get_libdir)/libjemalloc.so"
 		)
 	fi
 	if use experimental ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR="/usr/include"
-			-DTBB_LIBRARY="/usr/$(get_libdir)"
+			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
+			-DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)"
 		)
 	else
 		mycmakeargs+=(
-                        -DTBB_INCLUDE_DIR="/usr/include/tbb/${LEGACY_TBB_SLOT}"
-                        -DTBB_LIBRARY="/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
+                        -DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
+                        -DTBB_LIBRARY="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 		)
 	fi
 	cmake_src_configure
@@ -243,7 +243,7 @@ src_install() {
 		einfo "Removing rpath from ${f}"
 		patchelf --remove-rpath "${f}" || die # triggers warning
 	done
-	export STRIP="/bin/true" # strip breaks rpath
+	export STRIP="${BROOT}/bin/true" # strip breaks rpath
 	if use jemalloc ; then
 		for f in $(find "${ED}${USD_PATH}" -executable) ; do
 			if ldd "${f}" 2>/dev/null | grep -q -e "libjemalloc.so.2" ; then
@@ -252,7 +252,7 @@ src_install() {
 				if [[ -n "${old_rpath}" ]] ; then
 					old_rpath=":${old_rpath}"
 				fi
-				patchelf --set-rpath "/usr/$(get_libdir)/openusd/$(get_libdir)${old_rpath}" "${f}" || die
+				patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/openusd/$(get_libdir)${old_rpath}" "${f}" || die
 			fi
 		done
 
@@ -285,8 +285,8 @@ src_install() {
 			if [[ -e "${ED}/usr/$(get_libdir)/${PN}/.bin/${u}" ]] ; then
 				einfo "Creating wrapper for ${u}"
 				cat << EOF > "${T}/${u}"
-#!/bin/bash
-LD_PRELOAD="/usr/$(get_libdir)/openusd/$(get_libdir)/libjemalloc.so" "/usr/$(get_libdir)/${PN}/.bin/${u}" "\$@"
+#!${EPREFIX}/bin/bash
+LD_PRELOAD="${EPREFIX}/usr/$(get_libdir)/openusd/$(get_libdir)/libjemalloc.so" "${EPREFIX}/usr/$(get_libdir)/${PN}/.bin/${u}" "\$@"
 EOF
 				doexe "${T}/${u}"
 			fi
@@ -309,7 +309,7 @@ EOF
 					einfo "Old rpath for ${f}:"
 					patchelf --print-rpath "${f}" || die
 					einfo "Setting rpath for ${f}"
-					patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
+					patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 						"${f}" || die
 				fi
 			done
