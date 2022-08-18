@@ -97,16 +97,18 @@ PATCHES_=(
 )
 
 pkg_setup() {
-	if [[ ! -f /proc/cpuinfo ]] ; then
-		die "Cannot find /proc/cpuinfo"
-	fi
-	if ! use disable-sse41-check ; then
-		if ! grep -F -e "sse4_1" /proc/cpuinfo ; then
+	if [[ "${CHOST}" == "${CBUILD}" ]] && use kernel_linux ; then
+		if ! -e "${BROOT}/proc/cpuinfo" ]] ; then
+			die "Cannot find ${BROOT}/proc/cpuinfo"
+		fi
+		if ! use disable-sse41-check ; then
+			if ! grep -F -e "sse4_1" "${BROOT}/proc/cpuinfo" ; then
 eerror
 eerror "You need SSE4.1 to use this product.  Add disable-sse41-check to the"
 eerror "USE flag to build and emerge anyways."
 eerror
-			die
+				die
+			fi
 		fi
 	fi
 	python-single-r1_pkg_setup
