@@ -944,5 +944,5 @@ pkg_postrm() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
-# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, patch, hardened-clang, add-souper-patch
+# OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, patch, hardened-clang
 # OILEDMACHINE-OVERLAY-META-WIP:  bolt, pgo

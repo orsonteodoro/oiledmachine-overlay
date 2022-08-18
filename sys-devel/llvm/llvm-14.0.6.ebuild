@@ -23,17 +23,13 @@ SLOT="$(ver_cut 1)"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="+binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3"
 IUSE+=" bolt bolt-prepare +bootstrap -dump jemalloc lto pgo pgo_trainer_build_self
-pgo_trainer_test_suite souper tcmalloc r3"
+pgo_trainer_test_suite tcmalloc r3"
 REQUIRED_USE="
 	bolt-prepare? ( bolt )
 	jemalloc? ( bolt )
 	pgo? ( || ( pgo_trainer_build_self pgo_trainer_test_suite ) )
 	pgo_trainer_build_self? ( pgo )
 	pgo_trainer_test_suite? ( pgo )
-	souper? (
-		!z3
-		test? ( debug )
-	)
 	tcmalloc? ( bolt )
 "
 RESTRICT="!test? ( test )"
@@ -82,7 +78,6 @@ RDEPEND="${RDEPEND}
 	!sys-devel/llvm:0"
 PDEPEND="sys-devel/llvm-common
 	binutils-plugin? ( >=sys-devel/llvmgold-${SLOT} )
-	souper? ( sys-devel/souper[llvm-${SLOT}] )
 "
 PATCHES=(
 	"${FILESDIR}/llvm-14.0.0.9999-stop-triple-spam.patch"
@@ -133,7 +128,6 @@ eerror
 	use pgo && ewarn "The pgo USE flag is a Work In Progress (WIP)"
 	use pgo_trainer_build_self && ewarn "The pgo_trainer_build_self USE flag has not been tested."
 	use pgo_trainer_test_suite && ewarn "The pgo_trainer_test_suite USE flag has not been tested."
-	use souper && ewarn "The forward port of disable-peepholes-v07.diff is in testing."
 
 	if use bolt ; then
 		if perf record -e cpu-clock -j any -o /dev/null -- ls \
@@ -282,14 +276,6 @@ src_prepare() {
 	check_live_ebuild
 
 	llvm.org_src_prepare
-
-	if use souper ; then
-		cd "${WORKDIR}" || die
-		eapply "${FILESDIR}/llvm-14.0.0.9999-disable-peepholes-v07.diff"
-		if use test ; then
-			eapply "${FILESDIR}/disable-peepholes-v07-tests.diff"
-		fi
-	fi
 
 	export CFLAGS_BAK="${CFLAGS}"
 	export CXXFLAGS_BAK="${CXXFLAGS}"
@@ -469,15 +455,6 @@ setup_gcc() {
 	export CXX=g++
 
 	use test && filter-flags '-f*-aggressive-loop-optimizations'
-	if use test && use souper && (( ${s_idx} != 7 )) ; then
-		# Speed up build times
-		replace-flags '-O*' '-O1'
-		strip-flags
-
-		# Prevent possibility of generating undefined behavior (UB) that can interfere with testing UB.
-		append-flags -fno-aggressive-loop-optimizations
-		append-ldflags -fno-aggressive-loop-optimizations
-	fi
 	autofix_flags # translate retpoline, strip unsupported flags during switch
 }
 
@@ -507,35 +484,6 @@ _configure() {
 	# Also, we want to test the effects of the binary code generated homogenously throughout
 	# the LLVM library not just the source code associated with a few objs that was just changed.
 	export CCACHE_EXTRAFILES=$(readlink -f "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
-	if use souper ; then
-		einfo "wo=${wo} ph=${ph} (${s_idx}/7)"
-		if use test ; then
-			(( ${s_idx} > 1 )) && _cmake_clean
-			if (( ${s_idx} == 7 )) ; then
-				rm -rf "${ED}" || true
-				export PATH="${PATH_ORIG}"
-			else
-				# Use clang + previous llvm to build current llvm
-				local parity=$((${s_idx} % 2))
-				local prev_parity=$(((${s_idx} + 1) % 2))
-				rm -rf "${ED}/usr/lib/llvm/${parity}" || true # remove this
-				if [[ -e "${ED}/usr/lib/llvm/${prev_parity}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" ]] ; then
-					export PATH="${ED}/usr/lib/llvm/${prev_parity}/bin:${PATH_ORIG}"
-					export LD_LIBRARY_PATH="${ED}/usr/lib/llvm/${prev_parity}/$(get_libdir)"
-					export CCACHE_EXTRAFILES=\
-"${CCACHE_EXTRAFILES}:"$(readlink -f "${ED}/usr/lib/llvm/${prev_parity}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
-				fi
-			fi
-			if use bootstrap ; then
-				setup_gcc # Build with a reliable vanilla compiler.
-			else
-				setup_clang # Rebuild with the (patched disable-peephole) LLVM lib.
-			fi
-		fi
-		einfo "CC=${CC}"
-		einfo "CXX=${CXX}"
-		(( ${s_idx} == 7 )) && unset LD_LIBRARY_PATH
-	fi
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
 		ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
@@ -558,9 +506,7 @@ _configure() {
 		'-Wl,--emit-relocs' \
 		'-Wl,-q'
 
-	if use souper && (( ${s_idx} != 7 )) ; then
-		:;
-	elif [[ "${PGO_PHASE}" == "pg0" ]] ; then
+	if [[ "${PGO_PHASE}" == "pg0" ]] ; then
 		if use bootstrap ; then
 			setup_gcc
 		elif [[ "${CC}" == "clang" ]] ; then
@@ -649,35 +595,13 @@ _configure() {
 
 	local slot=""
 	if use pgo ; then
-		if use souper ; then
-			if (( ${s_idx} == 7 )) ; then
-				if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
-					slot="${SLOT}"
-				else
-					slot="${PGO_PHASE}"
-				fi
-			else
-				local parity=$((${s_idx} % 2))
-				slot="${parity}"
-			fi
+		if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
+			slot="${SLOT}"
 		else
-			if [[ "${PGO_PHASE}" =~ ("pgo"|"pg0") ]] ; then
-				slot="${SLOT}"
-			else
-				slot="${PGO_PHASE}"
-			fi
+			slot="${PGO_PHASE}"
 		fi
 	else
-		if use souper ; then
-			if (( ${s_idx} == 7 )) ; then
-				slot="${SLOT}"
-			else
-				local parity=$((${s_idx} % 2))
-				slot="${parity}"
-			fi
-		else
-			slot="${SLOT}"
-		fi
+		slot="${SLOT}"
 	fi
 	mycmakeargs+=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${slot}"
@@ -704,19 +628,6 @@ _configure() {
 	use bolt && mycmakeargs+=(
 		-DLLVM_ENABLE_PROJECTS="bolt"
 	)
-
-	if use souper ; then
-		filter-flags \
-			'-DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE*' \
-			'-DDISABLE_PEEPHOLES_DEFAULT_VALUE*'
-		# Setting DISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=false and running the souper pass can cause miscompile in other programs.
-		# See 2.10-2.11 section in academic paper.
-		# To match the LLVM defaults, set WO=false and PH=false.
-		append-cppflags -DDISABLE_WRONG_OPTIMIZATIONS_DEFAULT_VALUE=$(bool_trans ${wo}) -DDISABLE_PEEPHOLES_DEFAULT_VALUE=$(bool_trans ${ph})
-		mycmakeargs+=(
-			-DLLVM_FORCE_ENABLE_STATS=$(use test)
-		)
-	fi
 
 	use test && mycmakeargs+=(
 		-DLLVM_LIT_ARGS="$(get_lit_flags)"
@@ -913,92 +824,6 @@ _compile() {
 	fi
 }
 
-_souper_test() {
-	# This can be completed in a day
-	if [[ ! ( "${FEATURES}" =~ "ccache" ) ]] || ! which ccache 2>/dev/null 1>/dev/null ; then
-eerror
-eerror "It could take 7 days to test without ccache.  Please emerge ccache and"
-eerror "enable it."
-eerror
-		die
-	fi
-
-	# Required to avoid missing symbols problem
-	if ! has_version ">=sys-devel/clang-${PV}:${SLOT}[${MULTILIB_ABI_FLAG}]" ; then
-eerror
-eerror ">=sys-devel/clang-${PV}:${SLOT}[${MULTILIB_ABI_FLAG}] must be installed for testing the disable-peepholes patch."
-eerror
-		die
-	fi
-
-	CFLAGS_BAK="${CFLAGS}"
-	CXXFLAGS_BAK="${CXXFLAGS}"
-	LDFLAGS_BAK="${LDFLAGS}"
-	PATH_ORIG="${PATH}"
-
-	# Configuration set
-	# A:  (wo=0, ph=0)
-	# B:  (wo=1, ph=0)
-	# C:  (wo=1, ph=1)
-	# A > A > B > A > C > A # Build transition between configuration sets as 1 based index
-	#   x_i builds with non llvm default configuration when i is even and i >= 2
-	# else
-	#   x_i builds with vanilla toolchain and llvm default configuration when i is odd and i >= 1
-
-	wo=0
-	ph=0
-	s_idx=1
-	_configure
-	_compile
-	_install
-	_test
-
-	wo=0
-	ph=0
-	s_idx=2
-	_configure
-	_compile
-	_install
-	_test
-
-	wo=1
-	ph=0
-	s_idx=3
-	_configure
-	_compile
-	_install
-	_test
-
-	wo=0
-	ph=0
-	s_idx=4
-	_configure
-	_compile
-	_install
-	_test
-
-	wo=1
-	ph=1
-	s_idx=5
-	_configure
-	_compile
-	_install
-	_test
-
-	wo=0
-	ph=0
-	s_idx=6
-	_configure
-	_compile
-	_install
-	_test
-
-	export PATH="${PATH_ORIG}"
-	export CFLAGS="${CFLAGS_BAK}"
-	export CXXFLAGS="${CXXFLAGS_BAK}"
-	export LDFLAGS="${LDFLAGS_BAK}"
-}
-
 _build_final() {
 	wo=1
 	ph=0
@@ -1038,7 +863,7 @@ _build_final() {
 		_configure
 		_compile
 		_install
-		! use souper && use test && _test
+		use test && _test
 	else
 		PGO_PHASE="pg0"
 		_configure
@@ -1053,9 +878,6 @@ _build_abi() {
 	local wo
 	local ph
 	local s_idx
-	if use souper ; then
-		use test && _souper_test
-	fi
 	_build_final
 }
 
@@ -1076,77 +898,7 @@ _test() {
 	cd "${BUILD_DIR}" || die
 	# respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
-	if use souper ; then
-		einfo "Testing DISABLE_PEEPHOLES=${ph} DISABLE_WRONG_OPTIMIZATIONS=${wo}"
-		# Behavior wo meaning
-		#	0	possible undefined behavior allowed in LLVM lib [llvm default]
-		#	1	possible undefined behavior disallowed in LLVM lib [souper default]
-		# The undefined behavior described within LLVM is discussed in the academic paper 2.10-2.11 sections.
-
-		# Behavior ph meaning
-		#	0	allow llvm peepholes implementation [llvm default, souper default]
-		#	1	disallow llvm peepholes implementation
-
-		# Correctness table expectations based on test-disable-peepholes.sh comments
-		#	wo	ph	expected result
-		#	0	0	pass (llvm default)
-		#	0	1	? [guestimated fail for peephole tests]
-		#	1	0	fail on undefined behavior tests (souper default)
-		#	1	1	fail on peephole-like tests [and possibly undefined behavior tests]
-		# Did not observe ph test failures in llvm 12.x that were expected
-		cd "${BUILD_DIR}" || die
-		unset LD_LIBRARY_PATH # Use the lit generated LD_LIBRARY_PATH.
-		local results_path="${T}/test_results_${s_idx}_${ABI}.txt"
-		"${CMAKE_MAKEFILE_GENERATOR}" check 2>&1 | tee "${results_path}" || true # non fatal because failures are expected
-
-		if (( ${s_idx} == 3 || ${s_idx} == 5 )) ; then
-			# Checks immediately after building
-			grep -q -e "Failed Tests" \
-				"${T}/test_results_${s_idx}_${ABI}.txt" \
-				|| die "At least one failure must be present (wo == 1 || ph == 1) (${ABI})"
-		fi
-
-		if (( ${s_idx} == 6 )) ; then
-			for i in $(seq 1 6) ; do
-				if grep -q -e "Failed Tests" \
-	                                "${T}/test_results_${i}_${ABI}.txt" ; then
-					ewarn "Test FAILED in run ${i} (${ABI})"
-				else
-					einfo "Test PASSED in run ${i} (${ABI})"
-				fi
-			done
-			if ! use bootstrap ; then
-				# Checks when clang utilizes the just built patched libLLVM.so library.
-				grep -q -e "Failed Tests" \
-					"${T}/test_results_2_${ABI}.txt" \
-					"${T}/test_results_4_${ABI}.txt" \
-					"${T}/test_results_6_${ABI}.txt" \
-					|| die "At least one failure must be present (prev_wo == 1 || prev_ph == 1) (${ABI})"
-				grep -q -e "Failed Tests" \
-					"${T}/test_results_4_${ABI}.txt" \
-					&& ewarn "The undefined behavior tests (s_idx=4, prev_wo=1, prev_ph=0) should have failed. (${ABI})"
-				grep -q -e "Failed Tests" \
-					"${T}/test_results_6_${ABI}.txt" \
-					&& ewarn "The undefined behavior and peephole tests (s_idx=6, prev_wo=1, prev_ph=1) should have failed. (${ABI})"
-			fi
-			local total_tests=$(grep -o -E -e "of [0-9]+)" "${results_path}" | uniq | grep -E -o "[0-9]+") # 42k in 12.x
-			[[ -z "${total_tests}" ]] && die "total_tests cannot be empty"
-			local n_failed=$(grep -o -E -e "Failed Tests.*" "${results_path}"  | grep -o -E -e "[0-9]+")
-			[[ -z "${n_failed}" ]] && n_failed=0
-			local one_percent=$(${EPYTHON} -c "print(${total_tests}*0.01)" | cut -f 1 -d ".")
-			# Test the llvm library with unpatched equivalent configuration.
-			# Out of 42169 tests
-			# 1% fail (or 421) is still a lot compared to the actual number of fails which is 3.
-			grep -q -e "Failed Tests" \
-				"${T}/test_results_2_${ABI}.txt" \
-				&& (( ${n_failed} > 42 )) && die "The LLVM defaults (s_idx=2, wo=0, ph=0) failure should be <= 42 cutoff. (${ABI})"
-			# 42 is used because we didn't test all the features.  Ideally, this number is 0.
-			# Slack is given because in reality, unit tests can be broken.
-			# TODO:  Find tests that trigger UB FAIL and Peephole FAIL below
-		fi
-	else
-		cmake_build check
-	fi
+	cmake_build check
 }
 
 src_install() {
@@ -1177,22 +929,11 @@ _install() {
 
 	# move headers to /usr/include for wrapping
 	rm -rf "${ED}"/usr/include || die
-	if use souper ; then
-		if (( ${s_idx} == 7 )) ; then
-			mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
-			LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
-		else
-			local parity=$((${s_idx} % 2))
-			mv "${ED}"/usr/lib/llvm/${parity}/include "${ED}"/usr/include || die
-		fi
-	else
-		mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
-		LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
-	fi
+	mv "${ED}"/usr/lib/llvm/${SLOT}/include "${ED}"/usr/include || die
+	LLVM_LDPATHS+=( "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)" )
 }
 
 multilib_src_install() {
-	use souper && s_idx=7
 	_install
 }
 
