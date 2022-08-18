@@ -80,15 +80,18 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_any_dep '>=dev-python/jinja-2[${PYTHON_USEDEP}]')
 	>=dev-util/cmake-3.0
-	sys-devel/clang
+	|| (
+		sys-devel/clang
+		sys-devel/gcc
+	)
 "
 CMAKE_BUILD_TYPE=Release
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-release-${PV}"
 
 src_configure() {
-	export CC=clang
-	export CXX=clang++
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
 	strip-unsupported-flags
 	mycmakeargs=(
 		-DBUILD_API_LAYERS=OFF
