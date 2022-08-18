@@ -14,8 +14,6 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-PGO_SAMPLE_SIZE_=${PGO_SAMPLE_SIZE:=30}
-
 inherit check-reqs cmake flag-o-matic llvm pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
@@ -63,7 +61,6 @@ LICENSE="
 		MIT
 	)
 "
-PROPERTIES=interactive # For PGO
 
 # intern/mikktspace contains ZLIB
 # intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
@@ -95,22 +92,8 @@ IUSE+=" ${CPU_FLAGS[@]%:*}"
 IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
-IUSE+="
-	pgo
-	pgo-trainer-cycles-still
-	pgo-trainer-cycles-anim
-	pgo-trainer-eevee-still
-	pgo-trainer-eevee-anim
-"
-
+IUSE+=" pgo"
 # Assets categories are listed in https://www.blender.org/download/demo-files/
-# PGO is not ready yet
-REQUIRED_USE+="
-	pgo-trainer-cycles-still? ( pgo )
-	pgo-trainer-cycles-anim? ( pgo )
-	pgo-trainer-eevee-still? ( pgo )
-	pgo-trainer-eevee-anim? ( pgo )
-"
 
 # At the source code level, they mix the sse2 intrinsics functions up with the
 #   __KERNEL_SSE__.
@@ -208,13 +191,6 @@ REQUIRED_USE+="
 	${REQUIRED_USE_EIGEN}
 	${REQUIRED_USE_CYCLES}
 	${REQUIRED_USE_MINIMAL_CPU_FLAGS}
-"
-
-RDEPEND+="
-	pgo? (
-		app-admin/sudo
-		x11-base/xorg-server
-	)
 "
 
 EXPORT_FUNCTIONS \
@@ -339,41 +315,6 @@ eerror
 }
 
 blender_pkg_setup() {
-#      [ebuild developer note - rough draft]
-#      PGO Trainer (PGT) Options and still deciding:
-#      #1 - run the trainer as root accelerated (easiest but risky if assets are
-#           not vetted and assumed not)
-#      #2 - run the trainer as non-root with accelerated separate pgo account
-#           and video group permission (preferred in order to use GPU header
-#           only data structures like nvdb, follows typical use)
-#      #3 - run the trainer with headless software rendering (distro standard
-#           possibly skips nvdb code paths, fastest, but not typical. PGO
-#           assumes typical use or else performance regression)
-	if use pgo ; then
-ewarn
-ewarn "The pgo USE flag is in development"
-ewarn
-		if ! id pgo ; then
-eerror
-eerror "PGO requires a pgo system account in the video group with a password."
-eerror "Increase timestamp_timeout if frequent password request annoys you."
-eerror
-			die
-		fi
-		if [[ $(id pgo) =~ "(video)" ]] ; then
-eerror
-eerror "The pgo system account must be in the video group."
-eerror
-			die
-		fi
-		if [[ $(passwd --status pgo | cut -f 2 -d " ") != "P" ]] ; then
-eerror
-eerror "The pgo system account must have a password."
-eerror
-			die
-		fi
-	fi
-
 	llvm_pkg_setup
 	blender_check_requirements
 	python-single-r1_pkg_setup
@@ -660,8 +601,18 @@ IMPLS=(
 	build_creator
 	build_headless
 )
-IUSE+=" ${IMPLS} "
-REQUIRED_USE+=" || ( ${IMPLS} ) "
+IUSE+=" ${IMPLS[@]} "
+REQUIRED_USE+=" || ( ${IMPLS[@]} ) "
+
+_prepare_pgo() {
+	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
+	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	mkdir -p "${pgo_data_dir2}" || die
+	if [[ -e "${pgo_data_dir}" ]] ; then
+		cp -aT "${pgo_data_dir}" "${pgo_data_dir2}" || die
+	fi
+	touch "${pgo_data_dir2}/compiler_fingerprint" || die
+}
 
 blender_src_prepare() {
 	cd "${S}" || die
@@ -695,6 +646,7 @@ einfo
 	local impl
 	for impl in ${IMPLS[@]} ; do
 		cp -a "${S}" "${S}_${impl}" || die
+		_prepare_pgo
 	done
 }
 
@@ -960,96 +912,87 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 
 blender_configure_openusd() {
 	if use usd ; then
-		export USD_ROOT_DIR="/usr/$(get_libdir)/openusd/lib"
+		export USD_ROOT_DIR="${EPREFIX}/usr/$(get_libdir)/openusd/lib"
 	fi
 }
 
 blender_configure_nvcc() {
 	if use nvcc ; then
-		if [[ -x "${EPREFIX}/opt/cuda/bin/nvcc" ]] ; then
-			mycmakeargs+=(
-	-DCUDA_NVCC_EXECUTABLE="${EPREFIX}/opt/cuda/bin/nvcc"
-			)
-		elif [[ -n "${BLENDER_NVCC_PATH}" \
-		&& -x "${EPREFIX}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
-			mycmakeargs+=(
-	-DCUDA_NVCC_EXECUTABLE="${EPREFIX}/${BLENDER_NVCC_PATH}/nvcc"
-			)
-		elif [[ -n "${BLENDER_NVCC_PATH}" \
-		&& ! -x "${EPREFIX}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
-eerror
-eerror "nvcc is unreachable from \${EPREFIX}\${BLENDER_NVCC_PATH}.  It should"
-eerror "be an absolute path like /opt/cuda/bin/nvcc."
-eerror
-			die
-		else
-eerror
-eerror "You need to define BLENDER_NVCC_PATH as a per-package environmental"
-eerror "variable containing the absolute path to nvcc e.g. /opt/cuda/bin/nvcc."
-eerror
-			die
-		fi
+		mycmakeargs+=(
+			-DCUDA_NVCC_EXECUTABLE="${EPREFIX}/opt/cuda/bin/nvcc"
+		)
 	fi
 }
 
 blender_configure_nvrtc() {
 	if use nvrtc ; then
-		if [[ -f "${EPREFIX}/opt/cuda/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
-			mycmakeargs+=(
-	-DCUDA_TOOLKIT_ROOT_DIR="${EPREFIX}/opt/cuda"
-			)
-		elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
-&& -f "${EPREFIX}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
-			mycmakeargs+=(
-	-DCUDA_TOOLKIT_ROOT_DIR="${EPREFIX}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}"
-			)
-		elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
-&& ! -f "${EPREFIX}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
-eerror
-eerror "Cannot reach \${EPREFIX}\${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so"
-eerror
-			die
-		else
-eerror
-eerror "libnvrtc-builtins.so is unreachable.  Define"
-eerror "BLENDER_CUDA_TOOLKIT_ROOT_DIR as a per-package environmental variable"
-eerror "(e.g. /opt/cuda)."
-eerror
-			die
-		fi
+		mycmakeargs+=(
+			-DCUDA_TOOLKIT_ROOT_DIR="${EPREFIX}/opt/cuda"
+		)
 	fi
 }
 
 blender_configure_optix() {
 	if use optix ; then
-		if [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
-&& -f "${EPREFIX}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-			mycmakeargs+=(
-		-DOPTIX_ROOT_DIR="${EPREFIX}/${BLENDER_OPTIX_ROOT_DIR}"
-			)
-		elif [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
-&& ! -f "${EPREFIX}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-eerror
-eerror "Cannot reach \${EPREFIX}\${BLENDER_OPTIX_ROOT_DIR}/include/optix.h.  Fix it?"
-eerror
-			die
-		elif [[ -n "${OPTIX_ROOT_DIR}" \
-&& -f "${EPREFIX}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-			:;
-		elif [[ -n "${OPTIX_ROOT_DIR}" \
-&& ! -f "${EPREFIX}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-eerror
-eerror "Cannot reach \${EPREFIX}\${OPTIX_ROOT_DIR}/include/optix.h.  Fix it?"
-eerror
-			die
-		else
-eerror
-eerror "You need to define BLENDER_OPTIX_ROOT_DIR to point to the Optix SDK"
-eerror "folder.  The build scripts expect BLENDER_OPTIX_ROOT_DIR/include/optix.h."
-eerror
-			die
-		fi
+		mycmakeargs+=(
+			-DOPTIX_ROOT_DIR="${EPREFIX}/opt/optix"
+		)
 	fi
+}
+
+meets_pgo_requirements() {
+	if use pgo ; then
+		local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
+		local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+
+		# Has same compiler?
+		if tc-is-gcc ; then
+			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
+			if [[ "${actual}" != "${expected}" ]] ; then
+				return 1
+			fi
+		elif tc-is-clang ; then
+			local actual=$("${CC}" -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local expected=$(cat "${pgo_data_dir2}/compiler_fingerprint")
+			if [[ "${actual}" != "${expected}" ]] ; then
+				return 1
+			fi
+		else
+			return 2
+			ewarn "Compiler is not supported."
+		fi
+
+		# Has profile?
+		if tc-is-gcc && find "${pgo_data_dir2}" -name "*.gcda" \
+			2>/dev/null 1>/dev/null ; then
+			:; # pass
+		elif tc-is-clang && find "${pgo_data_dir2}" -name "*.profraw" \
+			2>/dev/null 1>/dev/null ; then
+			:; # pass
+		else
+			return 1
+		fi
+
+		return 0
+	fi
+	return 1
+}
+
+get_pgo_phase() {
+	local result="NO_PGO"
+	meets_pgo_requirements
+	local ret=$?
+	if ! use pgo ; then
+		result="NO_PGO"
+	elif use pgo && (( ${ret} == 0 )) ; then
+		result="PGO"
+	elif use pgo && (( ${ret} == 1 )) ; then
+		result="PGI"
+	elif use pgo && (( ${ret} == 2 )) ; then
+		result="NO_PGO"
+	fi
+	echo "${result}"
 }
 
 blender_src_configure() { :; }
@@ -1124,24 +1067,49 @@ einfo
 	rm -rf "${D}" || die
 }
 
+_pgo_configure() {
+	filter-flags '-fprofile*'
+	local pgo_data_dir="${EPREFIX}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
+	local pgo_data_dir2="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}"
+	mkdir -p "${ED}/${pgo_data_dir}" || die
+	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
+		if tc-is-clang ; then
+			append-flags -fprofile-generate="${pgo_data_dir}"
+		elif tc-is-gcc ; then
+			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
+		else
+eerror
+eerror "Only GCC and Clang are supported for PGO."
+eerror
+			die
+		fi
+	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
+		if tc-is-clang ; then
+einfo
+einfo "Merging PGO data to generate a PGO profile"
+einfo
+			if ! ls "${BUILD_DIR}/"*.profraw 2>/dev/null 1>/dev/null ; then
+eerror
+eerror "Missing *.profraw files"
+eerror
+				die
+			fi
+			llvm-profdata merge -output="${pgo_data_dir}/custom-pgo.profdata" \
+				"${pgo_data_dir}" || die
+			append-flags -fprofile-use="${pgo_data_dir}/custom-pgo.profdata"
+		elif tc-is-gcc ; then
+			append-flags -fprofile-use -fprofile-dir="${pgo_data_dir}"
+		fi
+	fi
+}
+
 blender_src_compile() {
 	local impl
 	for impl in ${IMPLS[@]} ; do
 		_ORIG_PATH="${PATH}"
-		if use pgo ; then
-			PGO_PHASE="pgi"
-			_src_configure
-			_src_compile
-			_src_install
-			_run_trainer
-			_clean
-			PGO_PHASE="pgo"
-			_src_configure
-			_src_compile
-		else
-			_src_configure
-			_src_compile
-		fi
+		export PGO_PHASE=$(get_pgo_phase)
+		_src_configure
+		_src_compile
 		if [[ "${impl}" == "build_creator" ]] ; then
 			_src_compile_docs
 		fi
@@ -1163,113 +1131,6 @@ _run_trainer() {
 	local asset_list=( $(find "${search_paths[@]}" -name "*.blend" ) )
 
 	export PATH="${ED}/usr/bin:${PATH}"
-
-	# See https://www.blender.org/download/demo-files/ for assets
-	if use pgo-trainer-cycles-still ; then
-		local renderer_name="Cycles"
-		for asset in ${asset_list[@]} ; do
-			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
-			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_CYCLES_ASSETS} ) ]] && continue
-
-einfo
-einfo "Obtaining start and end frame data"
-einfo
-			O=$(${EPYTHON} "${ED}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
-			local start=$(echo "${O}" | cut -f 1 -d " ")
-			local end=$(echo "${O}" | cut -f 2 -d " ")
-
-			local cmd
-einfo
-einfo "Running PGO trainer for ${asset} as still image using ${renderer_name}"
-einfo
-			for i in $(seq ${PGO_SAMPLE_SIZE}) ; do
-				local rand=$((${RANDOM} % $((${end}-${start}+1)) + ${start} ))
-				cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E CYCLES -f ${rand} -o /dev/null"
-einfo
-einfo "Note:  sudo may ask you for password"
-einfo "sudo -u pgo bash -c \"${cmd}\""
-einfo
-				sudo -u pgo bash -c "${cmd}"
-			done
-		done
-	fi
-	if use pgo-trainer-cycles-anim ; then
-		local renderer_name="Cycles"
-		for asset in ${asset_list[@]} ; do
-			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
-			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_CYCLES_ASSETS} ) ]] && continue
-
-einfo
-einfo "Obtaining start and end frame data"
-einfo
-			O=$(${EPYTHON} "${ED}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
-			local start=$(echo "${O}" | cut -f 1 -d " ")
-			local end=$(echo "${O}" | cut -f 2 -d " ")
-
-einfo
-einfo "Running PGO trainer for ${asset} as an animation using ${renderer_name}"
-einfo
-			cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E BLENDER_EEVEE -s ${start} -e ${end} -o /dev/null"
-einfo
-einfo "Note:  sudo may ask you for password"
-einfo "sudo -u pgo bash -c \"${cmd}\""
-einfo
-			sudo -u pgo bash -c "${cmd}"
-		done
-	fi
-	if use pgo-trainer-eevee-still ; then
-		local renderer_name="EEVEE"
-		for asset in ${asset_list[@]} ; do
-			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
-			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_EEVEE_ASSETS} ) ]] && continue
-
-einfo
-einfo "Obtaining start and end frame data"
-einfo
-			O=$(${EPYTHON} "${ED}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
-			local start=$(echo "${O}" | cut -f 1 -d " ")
-			local end=$(echo "${O}" | cut -f 2 -d " ")
-
-			local cmd
-einfo
-einfo "Running PGO trainer for ${asset} as a still image using ${renderer_name}"
-einfo
-			for i in $(seq ${PGO_SAMPLE_SIZE}) ; do
-				local rand=$((${RANDOM} % $((${end}-${start}+1)) + ${start} ))
-				cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E BLENDER_EEVEE -f ${rand} -o /dev/null"
-einfo
-einfo "Note:  sudo may ask you for password"
-einfo "sudo -u pgo bash -c \"${cmd}\""
-einfo
-				sudo -u pgo bash -c "${cmd}"
-			done
-		done
-	fi
-	if use pgo-trainer-eevee-anim ; then
-		local renderer_name="EEVEE"
-		for asset in ${asset_list[@]} ; do
-			[[ ! -e "${distdir}/blender/assets/${asset}" ]] && continue
-			[[ ! ( $(basename "${asset}") =~ ${BLENDER_PGO_EEVEE_ASSETS} ) ]] && continue
-
-einfo
-einfo "Obtaining start and end frame data"
-einfo
-			O=$(${EPYTHON} "${ED}/usr/share/blender/$(ver_cut 1-2 ${PV})/scripts/modules/blend_render_info.py" "${asset}")
-			local start=$(echo "${O}" | cut -f 1 -d " ")
-			local end=$(echo "${O}" | cut -f 2 -d " ")
-
-			local cmd
-einfo
-einfo "Running PGO trainer for ${asset} as an animation using ${renderer_name}"
-einfo
-			cmd="DISPLAY=${DISPLAY} blender -b $(realpath ${distdir}/${asset}) -E BLENDER_EEVEE -s ${start} -e ${end} -o /dev/null"
-einfo
-einfo "Note:  sudo may ask you for password"
-einfo "sudo -u pgo bash -c \"${cmd}\""
-einfo
-			sudo -u pgo bash -c "${cmd}"
-		done
-	fi
 }
 
 _src_test() {
@@ -1485,6 +1346,20 @@ fecho1
 	fi
 	install_licenses
 	use doc && install_readmes
+
+	if use pgo ; then
+		local pgo_data_dir="${ED}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${MULTILIB_ABI_FLAG}.${ABI}"
+		dodir "${pgo_data_dir}"
+		if tc-is-gcc ; then
+			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${pgo_data_dir}/compiler_fingerprint" || die
+		elif tc-is-clang ; then
+			"${CC}" -dumpmachine > "${pgo_data_dir}/compiler" || die
+			"${CC}" -dumpmachine | sha512sum | cut -f 1 -d " " \
+				> "${pgo_data_dir}/compiler_fingerprint" || die
+		fi
+	fi
 }
 
 blender_src_install() {
@@ -1513,6 +1388,32 @@ blender_src_install() {
 		mv "${ED}/usr/share/doc/blender"{,-${SLOT_MAJ}} || die
 	fi
 	mv "${ED}/usr/share/man/man1/blender"{,-${SLOT_MAJ}}".1" || die
+}
+
+wipe_pgo_profile() {
+	if [[ "${PGO_PHASE}" =~ "PGI" ]] ; then
+einfo
+einfo "Wiping previous PGO profile"
+einfo
+		local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
+		find "${pgo_data_dir}" -type f -delete
+	fi
+}
+
+delete_old_pgo_profiles() {
+	if [[ -n "${REPLACING_VERSIONS}" ]] ; then
+		local pv
+		for pv in ${REPLACING_VERSIONS} ; do
+			if ver_test $(ver_cut 1-2 "${pv}") -eq $(ver_cut 1-2 "${PV}") ; then
+				# Don't delete permissions
+				continue
+			fi
+			local pgo_data_dir="${EROOT}/var/lib/pgo-profiles/${CATEGORY}/${PN}/$(ver_cut 1-2 ${pv})/${API_VERSION}"
+			if [[ -e "${pgo_data_dir}" ]] ; then
+				rm -rf "${pgo_data_dir}" || true
+			fi
+		done
+	fi
 }
 
 blender_pkg_postinst() {
@@ -1559,6 +1460,9 @@ ewarn
 				"${ESYSROOT}/usr/bin/${PN}-headless" || die
 		fi
 	fi
+
+	use pgo && wipe_pgo_profile
+	delete_old_pgo_profiles
 }
 
 blender_pkg_postrm() {

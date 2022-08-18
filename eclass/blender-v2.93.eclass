@@ -677,32 +677,7 @@ _src_configure() {
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${CMAKE_USE_DIR}" || die
 
-	filter-flags '-fprofile*'
-	local pgo_data_dir="${T}/pgo-${ABI}"
-	mkdir -p "${pgo_data_dir}"
-	if use pgo && [[ "${PGO_PHASE}" == "pgi" ]] \
-		&& has_pgo_requirement ; then
-einfo
-einfo "Setting up PGI"
-einfo
-		if tc-is-clang ; then
-			append-flags -fprofile-generate="${pgo_data_dir}"
-		else
-			append-flags -fprofile-generate -fprofile-dir="${pgo_data_dir}"
-		fi
-	elif use pgo && [[ "${PGO_PHASE}" == "pgo" ]] \
-		&& has_pgo_requirement ; then
-einfo
-einfo "Setting up PGO"
-einfo
-		if tc-is-clang ; then
-			llvm-profdata merge -output="${pgo_data_dir}/pgo-custom.profdata" \
-				"${pgo_data_dir}" || die
-			append-flags -fprofile-use="${pgo_data_dir}/pgo-custom.profdata"
-		else
-			append-flags -fprofile-use -fprofile-correction -fprofile-dir="${pgo_data_dir}"
-		fi
-	fi
+	_pgo_configure
 
 	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
 	# shadows, see bug #276338 for reference
@@ -834,21 +809,9 @@ ewarn
 		)
 	fi
 
-	if true ; then
-		mycmakeargs+=(
-			-DWITH_INSTALL_PORTABLE=OFF
-		)
-	elif use pgo && [[ ${PGO_PHASE} == "pgi" ]] ; then
-		# The paths are relative
-		mycmakeargs+=(
-			-DWITH_INSTALL_PORTABLE=ON
-		)
-	else
-		# The paths are hardcoded?
-		mycmakeargs+=(
-			-DWITH_INSTALL_PORTABLE=OFF
-		)
-	fi
+	mycmakeargs+=(
+		-DWITH_INSTALL_PORTABLE=OFF
+	)
 
 	if [[ "${impl}" == "build_headless" ]] ; then
 		# For render farms

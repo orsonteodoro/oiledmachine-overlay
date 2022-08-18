@@ -51,20 +51,6 @@
     The release USE flag depends on the platform defaults which are the
     default set/unset USE flags.
 
-    Per-package use flags:
-
-    BLENDER_CMAKE_ARGS is a bash array to concatinate with mycmakeargs.  Useful
-    for customizing CUDA_NVCC_EXECUTABLE, CUDA_TOOLKIT_ROOT_DIR, OPTIX_ROOT_DIR
-    locations.
-
-    BLENDER_DISABLE_CUDA_AUTODETECT can be set to 1 to disable automatically
-    defining CUDA_NVCC_EXECUTABLE, CUDA_TOOLKIT_ROOT_DIR, OPTIX_ROOT_DIR
-    cmake variables.
-
-    BLENDER_CUDA_TOOLKIT_ROOT_DIR points to root directory for CUDA sdk. (e.g. /opt/cuda)
-
-    BLENDER_NVCC_PATH points to absolute path to nvcc. (e.g. /opt/cuda/bin/nvcc)
-
 
     x86 users (AKA 32-bit):
 
@@ -73,65 +59,66 @@
     defined, it will fall back to clang++, then icpc.
 
 
-    PGO (Profile Guided Optimized) build of Blender
+    Event Based PGO (EPGO) - (Work In Progress)
 
-    (Ebuild status:  In development)
+    For CPU based algorithms, PGO can result on average 10% benefit, but certain
+    scenarios such as QPS or throughput, it may result in 40% benefit.
 
-    This ebuild is currently being modified to be able to generate optimized
-    PGO Blender builds.  Only the CPU portions can be optimized.
+    The PGO technique used is event based PGO not the traditional 3 step PGO per
+    emerge.  In one step PGO, we reuse PGO profiles on every point release but
+    reset the PGO profile upon certain events.
 
-    Steps required for PGO optimized build:
+    EPGO is preferred because it is real world profiling meaning that the
+    side-effects and restrictions of sandboxing are eliminated.
 
-    Let USER0=root
-    Let USER1=the seated user running X currently
-    Let USER2=pgo
+    The eclass will essentially automate and decide when to do instrumentation
+    or optimization based on rules.
 
-      (1) Obtain assets for training (described in next section)
-          Be sure to choose an asset or your own that has all the features
-          of interest.
-      (2) Place them into ${DISTDIR}/blender/demo_assets
-          or /usr/share/blender/demo_assets
-      (3) Set the envvar to these assets
-      (3) Add media-gfx/blender pgo to /etc/portage/package.use/blender
-      (4) Create a pgo account with video, input permissions and given a password
-      (5) Run USE="suid -systemd elogind" emerge -1 xorg-server
-      (6) Close all running X servers
-      (7) Run X on USER1 account and take note of the value of the
-          $DISPLAY varaible
-      (8) Run with xhost +local: on USER1 account while in X
-      (9) Run  DISPLAY=":X" emerge -1 blender  in X with USER0 replacing :X with
-          the value of $DISPLAY in step 6 which is likely :0
-          (automatically handled by the ebuild)
-        - Build once with PGI compiler flags 
-        - Train (PGT)
-        - Build an optimized PGO build.
-      (10) Close X
-      (11) Run emerge -1 xorg-server
 
-    The reason why we don't use virtx (xvfb) is so we can profile
-    the code paths just before entering the GPU contexts.
+    Event rules that trigger (re-)instrumentation:
 
-    Environment variables:
-      BLENDER_PGO_CYCLES_ASSETS="a.blend b.blend c.blend" - a space separated
-        list of .blend files to run with the EEVEE renderer.  Accepts 1 or more
-        basenames.  You may use the demo(s) below or your own assets.
-      BLENDER_PGO_EEVEE_ASSETS="a.blend b.blend c.blend" - a space separated
-        list of .blend files to run with the Cycles renderer.  Accepts 1 or
-        more basenames.  You may use the demo(s) below or your own assets.
-      PGO_SAMPLE_SIZE - how many times to data collect.  Default 30.
+      No profile - instrument
+
+      Compiler differences in versioning - instrument
+
+      Changed minor version - instrument
+
+    
+
+    Hypothetical PGO schedule
+
+Version:     3.1.0    3.1.2    3.2.0   3.2.1   3.2.2
+
+EPGO           i    t   o        i   t   o       o
+
+vs
+    
+Traditional    i        i        i       i       i
+3 Step         t        t        t       t       t
+PGO            o        o        o       o       o
+
+    key:   i = instrumented
+           t = train
+           o = optimized
+
+
+    Steps required:
+
+    1.  Enable the PGO use flag.
+    2.  Training is done passively.
+    3.  Emerge either immediately after training or on the next upgrade with
+        the latter preferred.
+
+    The latter is preferred so that the time costs are minimized.
+
 
     PGO Training and Demos
 
-    The 2nd phase requires generating data to feedback into PGO stage 3.
-    Typically, this information is obtained through benchmarking a
-    instrumented build that is equipped with performance measuring code.
+    You may use your own projects or demos.
 
     Additional Blender assets can be found at
     https://www.blender.org/download/demo-files/
 
-    Some demos require manually to download since they do not come with
-    straight forward licensing details.  Additional assets for testing
-    can be placed in /usr/portage/distfiles/blender/assets.
   </longdescription>
   <upstream>
     <doc lang="en">https://docs.blender.org/manual/en/2.93/index.html</doc>
