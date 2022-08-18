@@ -66,14 +66,14 @@
 
     The PGO technique used is event based PGO not the traditional 3 step PGO per
     emerge.  In one step PGO, we reuse PGO profiles on every point release but
-    reset the PGO profile upon certain events.
+    reset back to PGI profile upon certain events.  Only 3 steps are required
+    instrumentation (PGI), training (PGT), optimization (PGO).  These state
+    transitions are are automatically handled by the eclass, but the pace is
+    set by you by re-emerging.  Some people may prefer it optimized in the
+    within the same 2 days or optimized on the next point release.
 
     EPGO is preferred because it is real world profiling meaning that the
     side-effects and restrictions of sandboxing are eliminated.
-
-    The eclass will essentially automate and decide when to do instrumentation
-    or optimization based on rules.
-
 
     Event rules that trigger (re-)instrumentation:
 
@@ -83,33 +83,37 @@
 
       Changed minor version - instrument
 
+
+    Events that trigger optimization
+
+
+    Same compiler and version AND same minor version AND PGO profile generated
     
-
-    Hypothetical PGO schedule
-
-Version:     3.1.0    3.1.2    3.2.0   3.2.1   3.2.2
-
-EPGO           i    t   o        i   t   o       o
-
-vs
-    
-Traditional    i        i        i       i       i
-3 Step         t        t        t       t       t
-PGO            o        o        o       o       o
-
-    key:   i = instrumented
-           t = train
-           o = optimized
-
 
     Steps required:
 
     1.  Enable the PGO use flag.
-    2.  Training is done passively.
-    3.  Emerge either immediately after training or on the next upgrade with
-        the latter preferred.
+    2.  Training is done passively.  Minimal required is to start
+        the app.
+    3.  Emerge either immediately after training or on the next upgrade.
+        The latter is preferred so that the time costs are minimized.
 
-    The latter is preferred so that the time costs are minimized.
+
+    Hypothetical PGO schedule
+
+     Version     3.1.0    3.1.2    3.2.0   3.2.1   3.2.2
+
+       EPGO        i    t   o        i   t   o       o
+
+        vs
+    
+    Traditional    i        i        i       i       i
+      3 Step       t        t        t       t       t
+       PGO         o        o        o       o       o
+
+    key:   i = instrumented
+           t = train
+           o = optimized
 
 
     PGO Training and Demos
