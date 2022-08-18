@@ -18,7 +18,7 @@ OIDN_WEIGHTS_COMMIT="59bad6bb6344f8fb8205772df3f795c2dc72e23b"
 ORG_GH="https://github.com/OpenImageDenoise"
 SLOT="0/${PV}"
 IUSE+="
-+apps +built-in-weights custom-tc doc disable-sse41-check gcc openimageio
++apps +built-in-weights custom-tc doc gcc openimageio
 "
 IUSE+=" +clang gcc"
 REQUIRED_USE+="
@@ -119,16 +119,13 @@ PATCHES=(
 pkg_setup() {
 	if [[ "${CHOST}" == "${CBUILD}" ]] && use kernel_linux ; then
 		if [[ ! -e "${BROOT}/proc/cpuinfo" ]] ; then
-			die "Cannot find ${BROOT}/proc/cpuinfo"
-		fi
-		if ! use disable-sse41-check ; then
-			if ! grep -F -e "sse4_1" "${BROOT}/proc/cpuinfo" ; then
-eerror
-eerror "You need SSE4.1 to use this product.  Add disable-sse41-check to the"
-eerror "USE flag to build and emerge anyways."
-eerror
-				die
-			fi
+ewarn
+ewarn "Cannot find ${BROOT}/proc/cpuinfo.  Skipping CPU flag check."
+ewarn
+		elif ! grep -F -e "sse4_1" "${BROOT}/proc/cpuinfo" ; then
+ewarn
+ewarn "You need SSE4.1 to use this product."
+ewarn
 		fi
 	fi
 
