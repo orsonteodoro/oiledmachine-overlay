@@ -281,13 +281,13 @@ src_configure()
 		:;
 	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDEDIR=/usr/include
-			-DTBB_LIBRARYDIR=/usr/$(get_libdir)
+			-DTBB_INCLUDEDIR="${ESYSROOT}/usr/include"
+			-DTBB_LIBRARYDIR="${ESYSROOT}/usr/$(get_libdir)"
 		)
 	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDEDIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
-			-DTBB_LIBRARYDIR=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
+			-DTBB_INCLUDEDIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
+			-DTBB_LIBRARYDIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 		)
 	fi
 
@@ -390,7 +390,7 @@ src_install()
 				einfo "Old rpath for ${f}:"
 				patchelf --print-rpath "${f}" || die
 				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
+				patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 					"${f}" || die
 			fi
 		done
