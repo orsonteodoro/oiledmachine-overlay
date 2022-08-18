@@ -69,7 +69,7 @@ src_prepare() {
 }
 
 src_configure() {
-	sed -i -e "s|/usr/lib|/usr/$(get_libdir)|g" Makefile || die
+	sed -i -e "s|/usr/lib|${ESYSROOT}/usr/$(get_libdir)|g" Makefile || die
 	if use custom-cflags ; then
 		sed -i -e "s|-O3|${CXXFLAGS}|g" \
 		-e "s|CXXFLAGS =|CXXFLAGS = ${CXXFLAGS}|g" Makefile || die
