@@ -645,7 +645,12 @@ einfo
 
 	local impl
 	for impl in ${IMPLS[@]} ; do
+		einfo "Copying ${S} -> ${S}_${impl}"
+
+# We want to remove this but can't because of ${ABI} sed changes with
+# blender_configure_simd_cycles.
 		cp -a "${S}" "${S}_${impl}" || die
+
 		_prepare_pgo
 	done
 }
@@ -655,8 +660,8 @@ blender_configure_eigen() {
 		if [[ "${CXXFLAGS}" =~ march=(\
 native|\
 \
-knl|knm|skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake\
-|cooperlake|tigerlake|sapphirerapids) ]] \
+knl|knm|skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake|\
+cooperlake|tigerlake|sapphirerapids|rocketlake) ]] \
 		|| [[ "${CXXFLAGS}" =~ mavx512f( |$) ]] ; then
 			# Already added
 			:;
@@ -671,8 +676,8 @@ knl|knm|skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake\
 		if [[ "${CXXFLAGS}" =~ march=(\
 native|\
 \
-skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake|cooperlake\
-|tigerlake|sapphirerapids) ]] \
+skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake|cooperlake|\
+tigerlake|sapphirerapids|rocketlake) ]] \
 		|| [[ "${CXXFLAGS}" =~ mavx512dq( |$) ]] ; then
 			# Already added
 			:;
@@ -830,7 +835,8 @@ blender_configure_simd_cycles() {
 native|\
 \
 haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
-icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|\
+icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|alderlake|\
+rocketlake|\
 \
 bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
 				|| [[ "${CXXFLAGS}" =~ mbmi( |$) ]] ; then
@@ -849,7 +855,8 @@ bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
 native|\
 \
 haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
-icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|\
+icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|alderlake|\
+rocketlake|\
 \
 amdfam10|barcelona|bdver1|bdver2|bdver3|bdver4|znver1|znver2|btver1|btver2) ]] \
 				|| [[ "${CXXFLAGS}" =~ mlzcnt ]] ; then
@@ -869,6 +876,7 @@ native|\
 \
 ivybridge|haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|\
 icelake-client|icelake-server|cascadelake|copperlake|tigerlake|sapphirerapids|\
+alderlake|rocketlake|\
 \
 bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
 			|| [[ "${CXXFLAGS}" =~ mf16c ]] ; then
@@ -888,6 +896,7 @@ native|\
 \
 haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
 icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|alderlake|\
+rocketlake|\
 \
 bdver2|bdver3|bdver4|znver1|znver2) ]] \
 			|| [[ "${CXXFLAGS}" =~ mfma ]] ; then
