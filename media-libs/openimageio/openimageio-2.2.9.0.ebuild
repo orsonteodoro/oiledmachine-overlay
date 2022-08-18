@@ -4,8 +4,8 @@
 EAPI=8
 
 CXX_STD_MIN="11"
-LLVM_MAX_SLOT=11
-LLVM_SLOTS=(11)
+LLVM_MAX_SLOT=13 # Originally 11..
+LLVM_SLOTS=(13 12 11) # INSTALL.md says minimum is 11.
 FONT_PN=OpenImageIO
 PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake font llvm python-single-r1
