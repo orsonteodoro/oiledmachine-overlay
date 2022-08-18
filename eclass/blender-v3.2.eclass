@@ -315,6 +315,18 @@ CODECS="
 	)
 "
 
+gen_oidn_depends() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+		llvm-${s}? (
+			>=media-libs/oidn-1.4.3[llvm-${s}]
+			<media-libs/oidn-1.5[llvm-${s}]
+		)
+		"
+	done
+}
+
 RDEPEND+="
 	${CODECS}
 	${PYTHON_DEPS}
@@ -440,8 +452,7 @@ static-libs]
 		virtual/opencl
 	)
 	openimagedenoise? (
-		>=media-libs/oidn-1.4.3
-		<media-libs/oidn-1.5
+		$(gen_oidn_depends)
 	)
 	openimageio? (
 		$(gen_oiio_depends)

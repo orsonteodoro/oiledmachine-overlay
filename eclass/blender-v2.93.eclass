@@ -300,6 +300,19 @@ CODECS="
 	x264? ( >=media-libs/x264-0.0.20200409 )
 	xvid? ( >=media-libs/xvid-1.3.7 )
 "
+
+gen_oidn_depends() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+		llvm-${s}? (
+			>=media-libs/oidn-1.3.0[llvm-${s}]
+			<media-libs/oidn-1.4[llvm-${s}]
+		)
+		"
+	done
+}
+
 RDEPEND+="
 	${CODECS}
 	${PYTHON_DEPS}
@@ -412,8 +425,7 @@ RDEPEND+="
 		virtual/opencl
 	)
 	openimagedenoise? (
-		>=media-libs/oidn-1.3.0
-		<media-libs/oidn-1.4
+		$(gen_oidn_depends)
 	)
 	openimageio? (
 		$(gen_oiio_depends)
