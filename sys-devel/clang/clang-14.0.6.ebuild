@@ -594,11 +594,11 @@ _configure() {
 	fi
 
 	if tc-is-cross-compiler; then
-		[[ -x "/usr/bin/clang-tblgen" ]] \
-			|| die "/usr/bin/clang-tblgen not found or usable"
+		[[ -x "${EPREFIX}/usr/bin/clang-tblgen" ]] \
+			|| die "${EPREFIX}/usr/bin/clang-tblgen not found or usable"
 		mycmakeargs+=(
 			-DCMAKE_CROSSCOMPILING=ON
-			-DCLANG_TABLEGEN=/usr/bin/clang-tblgen
+			-DCLANG_TABLEGEN="${EPREFIX}/usr/bin/clang-tblgen"
 		)
 	fi
 
@@ -645,8 +645,8 @@ _configure() {
 		)
 		if use bootstrap ; then
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang"
-				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang++"
 			)
 		else
 			# Clang PGO flags only
@@ -658,8 +658,8 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
 		# Use the package itself as the asset for training.
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -669,14 +669,14 @@ _configure() {
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		if [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
-				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang++"
 			)
 			BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-${MULTILIB_ABI_FLAG}.${ABI}"
 		elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_inst" ]] ; then
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang"
-				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang++"
 			)
 			BUILD_DIR="${WORKDIR}/x/y/test-suite-bolt-inst-${MULTILIB_ABI_FLAG}.${ABI}"
 		fi
@@ -698,14 +698,14 @@ _configure() {
 		CMAKE_USE_DIR="${WORKDIR}/test-suite"
 		if [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
-				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang++"
 			)
 			BUILD_DIR="${WORKDIR}/x/y/test-suite-opt-${MULTILIB_ABI_FLAG}.${ABI}"
 		elif [[ "${PGO_PHASE}" == "bolt_train_test_suite_opt" ]] ; then
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang"
-				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang++"
 			)
 			BUILD_DIR="${WORKDIR}/x/y/test-suite-bolt-opt-${MULTILIB_ABI_FLAG}.${ABI}"
 		fi
@@ -720,11 +720,11 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
 		if use bootstrap ; then
-			"${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/llvm-profdata" merge \
+			"${ED}/usr/lib/llvm/pgv/bin/llvm-profdata" merge \
 				-output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang"
-				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang++"
 			)
 		else
 			llvm-profdata merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
@@ -742,8 +742,8 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "bolt_train_build_self" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgo/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
 			-DLLVM_USE_LINKER=lld
@@ -791,7 +791,7 @@ _bolt_train_test_suite() {
 _bolt_train_build_self_profile_generator() {
 	einfo "Called _bolt_train_build_self_profile_generator()"
 	einfo "perf profile -> bolt profile"
-	perf2bolt "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}" \
+	perf2bolt "${ED}/usr/lib/llvm/pgo/bin/clang-${SLOT}" \
 		-p "${T}/bolt-profile/clang-${SLOT}_build_self.perfdata" \
 		-o "${T}/bolt-profile/clang-${SLOT}_build_self.fdata" \
 		-w "${T}/bolt-profile/clang-${SLOT}_build_self.yaml" || die
@@ -801,7 +801,7 @@ _bolt_profile_generator_test_suite() {
 	local tag="${1}"
 	einfo "Called _bolt_profile_generator_test_suite()"
 	einfo "perf profile -> bolt profile"
-	perf2bolt "${D}/${EPREFIX}/usr/lib/llvm/pgo/bin/clang-${SLOT}" \
+	perf2bolt "${ED}/usr/lib/llvm/pgo/bin/clang-${SLOT}" \
 		-p "${T}/bolt-profile/clang-${SLOT}_test_suite_${tag}.perfdata" \
 		-o "${T}/bolt-profile/clang-${SLOT}_test_suite_${tag}.fdata" \
 		-w "${T}/bolt-profile/clang-${SLOT}_test_suite_${tag}.yaml" || die
@@ -865,15 +865,15 @@ _bolt_optimize_file() {
 	fi
 
 	if use jemalloc ; then
-		LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" llvm-bolt ${args[@]} || die
+		LD_PRELOAD="${EPREFIX}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" llvm-bolt ${args[@]} || die
 	elif use tcmalloc ; then
-		if [[ -e "/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" ]] ; then
-			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" llvm-bolt ${args[@]} || die
+		if [[ -e "${EPREFIX}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" ]] ; then
+			LD_PRELOAD="${EPREFIX}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" llvm-bolt ${args[@]} || die
 		else
-			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" llvm-bolt ${args[@]} || die
+			LD_PRELOAD="${EPREFIX}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" llvm-bolt ${args[@]} || die
 		fi
 	else
-		llvm-bolt ${args[@]} || true
+		"${EPREFIX}/usr/lib/llvm/${SLOT}/bin/llvm-bolt" ${args[@]} || true
 	fi
 
 	[[ -e "${f}.bolt" ]] && mv "${f}{.bolt,}" || die
@@ -888,7 +888,7 @@ _cleanup() {
 		"pgt_test_suite_inst" \
 		"pgt_test_suite_train" \
 		"pgt_test_suite_opt" ; do
-		rm -rf "${D}/usr/lib/llvm/${PGO_PHASE}" || die
+		rm -rf "${ED}/usr/lib/llvm/${PGO_PHASE}" || die
 	done
 }
 
@@ -1192,18 +1192,18 @@ multilib_src_install_all() {
 		doins -r "${T}/bolt-profile"
 
 		# Fingerprint the llvm library
-		local llvm_so_path=$(readlink -f "${D}/${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM.so")
+		local llvm_so_path=$(readlink -f "${EROOT}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM.so")
 		[[ -e "${llvm_so_path}" ]] || die
 		local llvm_so_sha256=$(sha256sum "${llvm_so_path}" | cut -f 1 -d " ")
 		echo "${llvm_so_sha256}" \
-			> "${D}/${EPREFIX}${bolt_profile_dir}/llvm-fingerprint-${llvm_so_sha256:0:7}" || die
+			> "${EROOT}${bolt_profile_dir}/llvm-fingerprint-${llvm_so_sha256:0:7}" || die
 		local llvm_best_version=$(best_version "sys-devel/llvm:${SLOT}")
 		echo "${llvm_best_version}" | sed -e "s|sys-devel/llvm-||g" \
-			> "${D}/${EPREFIX}${bolt_profile_dir}/llvm-version" || die
+			> "${EROOT}${bolt_profile_dir}/llvm-version" || die
 		if [[ "${llvm_best_version}" =~ ".9999" ]] ; then
-			local commit_id=$(bzcat $(realpath /var/db/pkg/${llvm_best_version}/environment.bz2) \
+			local commit_id=$(bzcat $(realpath "${EROOT}/var/db/pkg/${llvm_best_version}/environment.bz2") \
 				| grep -e "-x EGIT_VERSION" | cut -f 2 -d "\"")
-			echo "${commit_id}" > "${D}/${EPREFIX}${bolt_profile_dir}/llvm-commit" || die
+			echo "${commit_id}" > "${EROOT}${bolt_profile_dir}/llvm-commit" || die
 		fi
 	fi
 }

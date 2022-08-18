@@ -486,11 +486,6 @@ _configure() {
 		die
 	fi
 
-	# Two choices really for correct testing:  disable ccache or update the hash calculation correctly.
-	# This is to ensure that all sibling obj files use the same libLLVM.so with the same fingerprint.
-	# Also, we want to test the effects of the binary code generated homogenously throughout
-	# the LLVM library not just the source code associated with a few objs that was just changed.
-	export CCACHE_EXTRAFILES=$(readlink -f "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
 		ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
@@ -686,8 +681,8 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=ON
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -695,16 +690,16 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
 		# Use the package itself as the asset for training.
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
 		)
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -714,8 +709,8 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -725,10 +720,10 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
-		"/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
+		"${ED}/usr/lib/llvm/${SLOT}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
 			-DLLVM_PROFDATA_FILE="${T}/pgo-custom.profdata"
@@ -1009,13 +1004,13 @@ _bolt_optimize_file() {
 	if [[ "${f}" =~ "/${SLOT}/$(get_libdir ${ABI})/" ]] ; then
 		# For libs
 		args+=(
-			-data="${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/clang-${SLOT}-merged-${ABI}.fdata"
+			-data="${EROOT}/usr/share/${PN}/${SLOT}/bolt-profile/clang-${SLOT}-merged-${ABI}.fdata"
 		)
 	elif [[ "${f}" =~ "/bin/" ]] ; then
 		# For exes
 		# It is maybe -all or -${ABI} but the exe is the DEFAULT_ABI.
 		args+=(
-			-data="${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/clang-${SLOT}-merged-all.fdata"
+			-data="${EROOT}/usr/share/${PN}/${SLOT}/bolt-profile/clang-${SLOT}-merged-all.fdata"
 		)
 	else
 		ewarn "${f} is skipped.  Not in lib* or bin"
@@ -1023,22 +1018,22 @@ _bolt_optimize_file() {
 	fi
 
 	if use jemalloc ; then
-		LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" llvm-bolt ${args[@]} || die
+		LD_PRELOAD="${EROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" llvm-bolt ${args[@]} || die
 	elif use tcmalloc ; then
-		if [[ -e "/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" ]] ; then
-			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" llvm-bolt ${args[@]} || die
+		if [[ -e "${EROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" ]] ; then
+			LD_PRELOAD="${EROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" llvm-bolt ${args[@]} || die
 		else
-			LD_PRELOAD="/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" llvm-bolt ${args[@]} || die
+			LD_PRELOAD="${EROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" llvm-bolt ${args[@]} || die
 		fi
 	else
-		llvm-bolt ${args[@]} || true
+		"${EROOT}/usr/lib/llvm/${SLOT}/bin/llvm-bolt" ${args[@]} || true
 	fi
 
 	[[ -e "${f}.bolt" ]] && mv "${f}{.bolt,}" || die
 }
 
 strip_package() {
-	if readelf -S "${EPREFIX}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM.so" 2>/dev/null \
+	if readelf -S "${EROOT}/usr/lib/llvm/${SLOT}/$(get_libdir)/libLLVM.so" 2>/dev/null \
 		| grep -F -e ".comment" ; then
 		einfo "${PN} is already stripped"
 		return
@@ -1065,7 +1060,7 @@ strip_package() {
 
 	einfo "Stripping package.  Please wait."
 	local f
-	for f in $(cat /var/db/pkg/${CATEGORY}/${P}/CONTENTS | cut -f 2 -d " ") ; do
+	for f in $(cat "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" | cut -f 2 -d " ") ; do
 		f=$(readlink -f "${f}")
 		local is_exe=0
 		local is_so=0
@@ -1096,7 +1091,7 @@ pkg_config() {
 	use bolt-prepare || return
 	local llvm_used_commit
 	if [[ ${PV} == *.9999 ]] ; then
-		llvm_used_commit=$(cat "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-commit")
+		llvm_used_commit=$(cat "${EROOT}/usr/share/${PN}/${SLOT}/bolt-profile/llvm-commit")
 	fi
 	if [[ "${EGIT_VERSION}" != "${llvm_used_commit}" ]] ; then
 		ewarn
@@ -1110,14 +1105,14 @@ eerror "Missing BOLT profile required for a BOLT optimized LLVM."
 	fi
 	# All binaries involved in building down the process tree should be added.
 	local f
-	for f in $(cat /var/db/pkg/sys-devel/${PN}-${SLOT}*/CONTENTS | cut -f 2 -d " ") ; do
+	for f in $(cat "${EROOT}/var/db/pkg/sys-devel/${PN}-${SLOT}"*"/CONTENTS" | cut -f 2 -d " ") ; do
 		f=$(readlink -f "${f}")
 		local is_exe=0
 		local is_so=0
 		file "${f}" 2>/dev/null | grep -q -E -e "ELF.*executable" && is_exe=1
 		file "${f}" 2>/dev/null | grep -q -E -e "ELF.*shared object" && is_so=1
 		if (( ${is_exe} == 1 || ${is_so} == 1 )) ; then
-			if grep -q -e $(basename "${f}") "${EPREFIX}/usr/share/${PN}/${SLOT}/bolt-profile" ; then
+			if grep -q -e $(basename "${f}") "${EROOT}/usr/share/${PN}/${SLOT}/bolt-profile" ; then
 				_bolt_optimize_file "${f}"
 			else
 				einfo "Skipping "$(basename "${f}")" because it was not BOLT profiled."

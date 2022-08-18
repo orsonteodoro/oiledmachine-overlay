@@ -446,11 +446,6 @@ _configure() {
 		die
 	fi
 
-	# Two choices really for correct testing:  disable ccache or update the hash calculation correctly.
-	# This is to ensure that all sibling obj files use the same libLLVM.so with the same fingerprint.
-	# Also, we want to test the effects of the binary code generated homogenously throughout
-	# the LLVM library not just the source code associated with a few objs that was just changed.
-	export CCACHE_EXTRAFILES=$(readlink -f "/usr/lib/llvm/${SLOT}/$(get_libdir ${DEFAULT_ABI})/libLLVM.so" 2>/dev/null)
 	local ffi_cflags ffi_ldflags
 	if use libffi; then
 		ffi_cflags=$($(tc-getPKG_CONFIG) --cflags-only-I libffi)
@@ -633,8 +628,8 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgi" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=ON
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -642,16 +637,16 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
 		# Use the package itself as the asset for training.
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
 		)
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -661,8 +656,8 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -672,11 +667,11 @@ _configure() {
 		)
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
-		"/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
+		"${ED}/usr/lib/llvm/${SLOT}/bin/llvm-profdata" merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
 		append-ldflags -Wl,--emit-relocs
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang"
-			-DCMAKE_CXX_COMPILER="/${EPREFIX}/usr/lib/llvm/${SLOT}/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/${SLOT}/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=$(usex lto "Thin" "Off")
 			-DLLVM_PROFDATA_FILE="${T}/pgo-custom.profdata"

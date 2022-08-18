@@ -557,11 +557,11 @@ _configure() {
 	fi
 
 	if tc-is-cross-compiler; then
-		[[ -x "/usr/bin/clang-tblgen" ]] \
-			|| die "/usr/bin/clang-tblgen not found or usable"
+		[[ -x "${EPREFIX}/usr/bin/clang-tblgen" ]] \
+			|| die "${EPREFIX}/usr/bin/clang-tblgen not found or usable"
 		mycmakeargs+=(
 			-DCMAKE_CROSSCOMPILING=ON
-			-DCLANG_TABLEGEN=/usr/bin/clang-tblgen
+			-DCLANG_TABLEGEN="${EPREFIX}/usr/bin/clang-tblgen"
 		)
 	fi
 
@@ -603,8 +603,8 @@ _configure() {
 		)
 		if use bootstrap ; then
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang"
-				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang++"
 			)
 		else
 			# Clang PGO flags only
@@ -616,8 +616,8 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgt_build_self" ]] ; then
 		# Use the package itself as the asset for training.
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -625,8 +625,8 @@ _configure() {
 		BUILD_DIR="${WORKDIR}/x/y/clang-self-${MULTILIB_ABI_FLAG}.${ABI}"
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_inst" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -641,8 +641,8 @@ _configure() {
 		BUILD_DIR="${WORKDIR}/x/y/test-suite-inst-${MULTILIB_ABI_FLAG}.${ABI}"
 	elif [[ "${PGO_PHASE}" == "pgt_test_suite_opt" ]] ; then
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang"
-			-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgi/bin/clang++"
+			-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgi/bin/clang++"
 			-DLLVM_BUILD_INSTRUMENTED=OFF
 			-DLLVM_ENABLE_LTO=Off
 			-DLLVM_USE_LINKER=lld
@@ -655,11 +655,11 @@ _configure() {
 	elif [[ "${PGO_PHASE}" == "pgo" ]] ; then
 		einfo "Merging .profraw -> .profdata"
 		if use bootstrap ; then
-			"${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/llvm-profdata" merge \
+			"${ED}/usr/lib/llvm/pgv/bin/llvm-profdata" merge \
 				-output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
 			mycmakeargs+=(
-				-DCMAKE_C_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang"
-				-DCMAKE_CXX_COMPILER="${D}/${EPREFIX}/usr/lib/llvm/pgv/bin/clang++"
+				-DCMAKE_C_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang"
+				-DCMAKE_CXX_COMPILER="${ED}/usr/lib/llvm/pgv/bin/clang++"
 			)
 		else
 			llvm-profdata merge -output="${T}/pgo-custom.profdata" "${T}/pgt/profiles/"*
@@ -705,7 +705,7 @@ _cleanup() {
 		"pgt_test_suite_inst" \
 		"pgt_test_suite_train" \
 		"pgt_test_suite_opt" ; do
-		rm -rf "${D}/usr/lib/llvm/${PGO_PHASE}" || die
+		rm -rf "${ED}/usr/lib/llvm/${PGO_PHASE}" || die
 	done
 }
 
