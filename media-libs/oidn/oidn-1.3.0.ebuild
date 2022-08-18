@@ -85,20 +85,25 @@ ${ORG_GH}/${PN}/releases/download/v${PV}/${P}.src.tar.gz
 	-> ${P}.tar.gz
 ${ORG_GH}/mkl-dnn/archive/${MKL_DNN_COMMIT}.tar.gz
 	-> ${PN}-mkl-dnn-${MKL_DNN_COMMIT:0:7}.tar.gz
-built-in-weights? (
+	built-in-weights? (
 ${ORG_GH}/oidn-weights/archive/${OIDN_WEIGHTS_COMMIT}.tar.gz
-	-> ${PN}-weights-${OIDN_WEIGHTS_COMMIT:0:7}.tar.gz )"
+	-> ${PN}-weights-${OIDN_WEIGHTS_COMMIT:0:7}.tar.gz
+	)
+https://github.com/OpenImageDenoise/oidn/commit/4180502f326dccd5e46ab67176b53cc800e32f7b.patch
+	-> oidn-commit-4180502.patch
+	"
 fi
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md readme.pdf )
-PATCHES_=(
+PATCHES=(
 	"${FILESDIR}/${PN}-1.4.1-findtbb-print-paths.patch"
 	"${FILESDIR}/${PN}-1.4.1-findtbb-alt-lib-path.patch"
+	"${FILESDIR}/${PN}-commit-4180502-backport-for-1.3.0.patch"
 )
 
 pkg_setup() {
 	if [[ "${CHOST}" == "${CBUILD}" ]] && use kernel_linux ; then
-		if ! -e "${BROOT}/proc/cpuinfo" ]] ; then
+		if [[ ! -e "${BROOT}/proc/cpuinfo" ]] ; then
 			die "Cannot find ${BROOT}/proc/cpuinfo"
 		fi
 		if ! use disable-sse41-check ; then
@@ -124,11 +129,6 @@ src_unpack() {
 	else
 		rm -rf "${WORKDIR}/oidn-weights-${OIDN_WEIGHTS_COMMIT}" || die
 	fi
-}
-
-src_prepare() {
-	eapply ${PATCHES_[@]}
-	cmake_src_prepare
 }
 
 src_configure() {
