@@ -323,18 +323,6 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     <flag name="pgo">
       Builds with PGO optimizations.  Only CPU side code will benefit.
     </flag>
-    <flag name="pgo-trainer-cycles-still">
-      Run the PGO trainer for cycles rendering still photo, like hitting the preview
-    </flag>
-    <flag name="pgo-trainer-cycles-anim">
-      Run the PGO trainer for cycles rendering animating and rendering all frames
-    </flag>
-    <flag name="pgo-trainer-eevee-still">
-      Run the PGO trainer for EEVEE rendering still photo, like hitting the preview
-    </flag>
-    <flag name="pgo-trainer-eevee-anim">
-      Run the PGO trainer for EEVEE rendering animating and rendering all frames
-    </flag>
     <flag name="potrace">
       Add support for converting bitmaps into a grease pencil line for smoother
       edges.
