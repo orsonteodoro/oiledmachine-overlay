@@ -567,11 +567,12 @@ check_multiple_llvm_versions_in_native_libs() {
 		local llvm_ret=$(ldd "${EPREFIX}/usr/$(get_libdir)/dri/"*".so" \
 			| grep -q -e "LLVM-${llvm_slot}")
 		if [[ "${llvm_ret}" != "0" ]] ; then
-eerror
-eerror "You need link media-libs/mesa with LLVM ${llvm_slot}.  See"
-eerror "media-libs/mesa ebuilds for compatibility details."
-eerror
-			die
+ewarn
+ewarn "Prebuilt binary video card drivers users:"
+ewarn
+ewarn "You need link media-libs/mesa with LLVM ${llvm_slot}.  See"
+ewarn "media-libs/mesa ebuilds for compatibility details."
+ewarn
 		fi
 	fi
 
