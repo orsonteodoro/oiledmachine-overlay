@@ -27,6 +27,7 @@ VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
 REQUIRED_USE+="
 	^^ ( ${OPENVDB_ABIS_[@]} )
 	^^ ( jemalloc tbbmalloc no-concurrent-malloc )
+	imath-half
 	jemalloc? ( || ( test ${VDB_UTILS} ) )
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
