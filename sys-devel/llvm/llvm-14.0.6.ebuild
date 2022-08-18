@@ -491,9 +491,9 @@ _configure() {
 	einfo "Called _configure()"
 	use pgo && einfo "PGO_PHASE=${PGO_PHASE}"
 	_cmake_clean
-	if use pgo && ! has_version ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]" ; then
+	if use pgo && ! has_version ">=sys-devel/clang-${PV}:${SLOT}[${MULTILIB_ABI_FLAG}]" ; then
 		eerror
-		eerror "PGO requires >=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]"
+		eerror "PGO requires >=sys-devel/clang-${PV}:${SLOT}[${MULTILIB_ABI_FLAG}]"
 		eerror
 		eerror "For correct steps to PGOing see the metadata.xml or"
 		eerror
@@ -924,9 +924,9 @@ eerror
 	fi
 
 	# Required to avoid missing symbols problem
-	if ! has_version ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)]" ; then
+	if ! has_version ">=sys-devel/clang-${PV}:${SLOT}[${MULTILIB_ABI_FLAG}]" ; then
 eerror
-eerror ">=sys-devel/clang-${PV}:${SLOT}[$(get_m_abi)] must be installed for testing the disable-peepholes patch."
+eerror ">=sys-devel/clang-${PV}:${SLOT}[${MULTILIB_ABI_FLAG}] must be installed for testing the disable-peepholes patch."
 eerror
 		die
 	fi
@@ -1059,27 +1059,9 @@ _build_abi() {
 	_build_final
 }
 
-get_m_abi() {
-	local r
-	for r in ${_MULTILIB_FLAGS[@]} ; do
-		local m_abi=$"${r%:*}"
-		local m_flag="${r#*:}"
-		local a
-		OIFS="${IFS}"
-		IFS=','
-		for a in ${m_flag} ; do
-			if [[ "${a}" == "${ABI}" ]] ; then
-				echo "${m_abi}"
-				return
-			fi
-		done
-		IFS="${OIFS}"
-	done
-}
-
 src_compile() {
 	_compile_abi() {
-		export BUILD_DIR="${WORKDIR}/${P}_build-$(get_m_abi).${ABI}"
+		export BUILD_DIR="${WORKDIR}/${P}_build-${MULTILIB_ABI_FLAG}.${ABI}"
 		mkdir -p "${BUILD_DIR}" || die
 		cd "${BUILD_DIR}" || die
 		_build_abi
