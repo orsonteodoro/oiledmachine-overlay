@@ -163,19 +163,14 @@ get_lib_type() {
 pkg_setup() {
 	# See https://github.com/imageworks/OpenShadingLanguage/blob/master/INSTALL.md
 	# Supports LLVM-{7..13} but should be the same throughout the system.
-	if use llvm-10 ; then
-		einfo "Linking with LLVM-10"
-		export LLVM_MAX_SLOT=10
-	elif use llvm-11 ; then
-		einfo "Linking with LLVM-11"
-		export LLVM_MAX_SLOT=11
-	elif use llvm-12 ; then
-		einfo "Linking with LLVM-12"
-		export LLVM_MAX_SLOT=12
-	elif use llvm-13 ; then
-		einfo "Linking with LLVM-13"
-		export LLVM_MAX_SLOT=13
-	fi
+	local s
+	for s in ${LLVM_SUPPORT[@]} ; do
+		if use llvm-${s} ; then
+			einfo "Linking with LLVM-${s}"
+			export LLVM_MAX_SLOT=${s}
+			break
+		fi
+	done
 
 	if use qt5 ; then
 ewarn
