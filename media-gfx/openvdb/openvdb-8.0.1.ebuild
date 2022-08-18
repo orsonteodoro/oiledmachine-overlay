@@ -30,6 +30,8 @@ REQUIRED_USE+="
 	jemalloc? ( || ( test ${VDB_UTILS} ) )
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
+	openexr? ( imath-half )
+	vdb_render? ( imath-half )
 "
 # See
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v8.0.1/doc/dependencies.txt
@@ -161,7 +163,6 @@ src_prepare() {
 
 src_configure() {
 	export MAKEOPTS="-j1" # prevent stall
-	local myprefix="${EPREFIX}/usr/"
 
 	local version
 	for s in ${OPENVDB_ABIS[@]} ; do
@@ -220,8 +221,8 @@ src_configure() {
 		einfo "Using oneTBB"
 		mycmakeargs+=(
 			-DUSE_PKGCONFIG=ON
-			-DTbb_INCLUDE_DIR=/usr/include
-			-DTBB_LIBRARYDIR=/usr/$(get_libdir)
+			-DTbb_INCLUDE_DIR="${ESYSROOT}/usr/include"
+			-DTBB_LIBRARYDIR="${ESYSROOT}/usr/$(get_libdir)"
 			-DTBB_FORCE_ONETBB=ON
 			-DTBB_SLOT=""
 		)
@@ -229,8 +230,8 @@ src_configure() {
 		einfo "Legacy TBB"
 		mycmakeargs+=(
 			-DUSE_PKGCONFIG=ON
-			-DTbb_INCLUDE_DIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
-			-DTBB_LIBRARYDIR=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
+			-DTbb_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
+			-DTBB_LIBRARYDIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 			-DTBB_FORCE_ONETBB=OFF
 			-DTBB_SLOT="-${LEGACY_TBB_SLOT}"
 		)
@@ -251,7 +252,7 @@ src_install()
 		for f in $(find "${ED}") ; do
 			if readelf -h "${f}" 2>/dev/null 1>/dev/null && test -x "${f}" ; then
 				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
+				patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 					"${f}" || die
 			fi
 		done
