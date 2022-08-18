@@ -62,6 +62,12 @@ gen_openexr_pairs() {
 	done
 }
 
+DEPEND_DISABLED="
+		(
+			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
+		)
+"
+
 DEPEND+="
 	|| (
                 $(gen_openexr_pairs)
@@ -72,9 +78,6 @@ DEPEND+="
 			>=dev-cpp/tbb-2018.0:${LEGACY_TBB_SLOT}=
 			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 			!<dev-cpp/tbb-2021:0=
-		)
-		(
-			>=dev-cpp/tbb-2021:${ONETBB_SLOT}=
 		)
 	)
 	>=dev-libs/boost-1.66:=
@@ -149,12 +152,6 @@ pkg_setup() {
 		if jemalloc-config --cflags | grep -q -e "cfi" ; then
 			ewarn "jemalloc may need rebuild if vdb_print -version stalls."
 		fi
-	fi
-	if ! has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
-eerror
-eerror "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT} is required"
-eerror
-		die
 	fi
 }
 
