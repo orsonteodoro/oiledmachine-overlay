@@ -174,14 +174,14 @@ einfo
 
 	if has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR=/usr/include
-			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)
-			-DTBB_SOVER=$(echo $(basename $(realpath /usr/$(get_libdir)/libtbb.so)) | cut -f 3 -d ".")
+			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
+			-DTBB_LIBRARY_DIR="${ESYSROOT}/usr/$(get_libdir)"
+			-DTBB_SOVER=$(echo $(basename $(realpath "${ESYSROOT}/usr/$(get_libdir)/libtbb.so")) | cut -f 3 -d ".")
 		)
 	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
-			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
+			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
+			-DTBB_LIBRARY_DIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 			-DTBB_SOVER="${LEGACY_TBB_SLOT}"
 		)
 	fi
@@ -209,7 +209,7 @@ src_install() {
 				einfo "Old rpath for ${f}:"
 				patchelf --print-rpath "${f}" || die
 				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
+				patchelf --set-rpath "${EPREFIX}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
 					"${f}" || die
 			fi
 		done
