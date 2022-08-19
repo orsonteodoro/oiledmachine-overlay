@@ -15,14 +15,16 @@ SRC_URI="https://github.com/embree/embree/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
 X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2
-avx512skx:avx512skx )
+avx512skx:avx512skx avx512:avx512 )
 ARM_CPU_FLAGS=( neon:neon neon2x:neon2x )
 CPU_FLAGS=(
 	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}
 )
-IUSE+=" clang custom-cflags debug doc doc-docfiles doc-html doc-images doc-man gcc ispc
-raymask -ssp static-libs +tbb tutorials ${CPU_FLAGS[@]%:*}"
+IUSE+="
+clang -compact-polys custom-cflags debug doc doc-docfiles doc-html doc-images
+doc-man gcc ispc raymask -ssp static-libs +tbb tutorials ${CPU_FLAGS[@]%:*}
+"
 REQUIRED_USE+=" ^^ ( clang gcc )"
 MIN_CLANG_V="3.3" # for c++11
 MIN_CLANG_V_AVX512SKX="3.6" # for -march=skx
@@ -98,20 +100,23 @@ eerror
 
 pkg_setup() {
 	export CMAKE_BUILD_TYPE=$(usex debug "RelWithDebInfo" "Release")
-	CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
-	WARNING_TRANSPARENT_HUGEPAGE=\
-"Not enabling Transparent Hugepages (CONFIG_TRANSPARENT_HUGEPAGE) will \
-impact rendering performance."
-	linux-info_pkg_setup
+	if use linux_kernel ; then
+		CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
+		WARNING_TRANSPARENT_HUGEPAGE=\
+"Not enabling Transparent Hugepages (CONFIG_TRANSPARENT_HUGEPAGE) will impact "\
+"rendering performance."
+		linux-info_pkg_setup
 
-	if ! ( cat /proc/cpuinfo | grep sse2 > /dev/null ) ; then
-		die "You need a CPU with at least sse2 support"
+		if ! ( cat "${BROOT}/proc/cpuinfo" \
+				| grep sse2 > "${BROOT}/dev/null" ) ; then
+			die "You need a CPU with at least sse2 support."
+		fi
 	fi
 
 	# This resolves multiple installed compilers or multiple version scenario.
 	if use clang ; then
-		export CC=clang
-		export CXX=clang++
+		export CC="${CHOST}-clang"
+		export CXX="${CHOST}-clang++"
 		local cc_v=$(clang-fullversion)
 		if ver_test ${cc_v} -lt ${MIN_CLANG_V} ; then
 			chcxx "Clang" "${MIN_CLANG_V}" "c++11"
@@ -121,8 +126,8 @@ impact rendering performance."
 			chcxx "Clang" "${MIN_CLANG_V_AVX512SKX}" "AVX512-SKX"
 		fi
 	else
-		export CC=${CC_ALT:-gcc}
-		export CXX=${CXX_ALT:-g++}
+		export CC="${CC_ALT:-${CHOST}-gcc}"
+		export CXX="${CXX_ALT:-${CHOST}-g++}"
 		if tc-is-gcc ; then
 			local cc_v=$(gcc-fullversion)
 			if ver_test ${cc_v} -lt ${MIN_GCC_V} ; then
@@ -170,9 +175,9 @@ src_configure() {
 	strip-unsupported-flags
 
 	if tc-is-clang && ! use clang ; then
-		eerror
-		eerror "Enable the clang USE flag or switch to GCC."
-		eerror
+eerror
+eerror "Enable the clang USE flag or switch to GCC."
+eerror
 		die
 	fi
 
@@ -211,6 +216,7 @@ src_configure() {
 		-DCMAKE_CXX_COMPILER=${CXX}
 		-DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON
 		-DEMBREE_BACKFACE_CULLING=OFF			# default
+		-DEMBREE_COMPACT_POLYS=$(usex compact-polys)
 		-DEMBREE_FILTER_FUNCTION=ON			# default
 		-DEMBREE_GEOMETRY_CURVE=ON			# default
 		-DEMBREE_GEOMETRY_GRID=ON			# default
@@ -247,6 +253,8 @@ src_configure() {
 		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="NEON" )
 	elif use cpu_flags_x86_avx512skx ; then
 		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX512SKX" )
+	elif use cpu_flags_x86_avx512 ; then
+		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX512" )
 	elif use cpu_flags_x86_avx2 ; then
 		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX2" )
 	elif use cpu_flags_x86_avx ; then
@@ -263,14 +271,14 @@ src_configure() {
 		:;
 	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR=/usr/include
-			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)
-			-DTBB_SOVER=$(echo $(basename $(realpath /usr/$(get_libdir)/libtbb.so)) | cut -f 3 -d ".")
+			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
+			-DTBB_LIBRARY_DIR="${ESYSROOT}/usr/$(get_libdir)"
+			-DTBB_SOVER=$(echo $(basename $(realpath "${ESYSROOT}/usr/$(get_libdir)/libtbb.so")) | cut -f 3 -d ".")
 		)
 	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		mycmakeargs+=(
-			-DTBB_INCLUDE_DIR=/usr/include/tbb/${LEGACY_TBB_SLOT}
-			-DTBB_LIBRARY_DIR=/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}
+			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include/tbb/${LEGACY_TBB_SLOT}"
+			-DTBB_LIBRARY_DIR="${ESYSROOT}/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}"
 			-DTBB_SOVER="${LEGACY_TBB_SLOT}"
 		)
 	fi
