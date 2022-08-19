@@ -583,9 +583,6 @@ check_optimal_compiler_for_cycles_x86() {
 		elif has_version 'sys-devel/clang' ; then
 			export CC="${CHOST}-clang"
 			export CXX="${CHOST}-clang++"
-		elif has_version 'dev-lang/icc' ; then
-			export CC="icc"
-			export CXX="icpc"
 		fi
 	else
 		if [[ ! -n "${CC}" || ! -n "${CXX}" ]] ; then
