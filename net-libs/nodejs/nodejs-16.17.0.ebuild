@@ -89,17 +89,17 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Jul 6, 2022
+# Last deps commit date:  Aug 1, 2022
 NGHTTP2_V="1.47.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=app-arch/brotli-1.0.9
-	>=dev-libs/libuv-1.43.0:=
+	>=dev-libs/libuv-1.44.0:=
 	>=net-dns/c-ares-1.18.1
 	>=net-libs/nghttp2-${NGHTTP2_V}
 	>=sys-libs/zlib-1.2.11
-	system-icu? ( >=dev-libs/icu-70.1:= )
+	system-icu? ( >=dev-libs/icu-71.1:= )
 	system-ssl? ( >=dev-libs/openssl-1.1.1q:0= )
 "
 DEPEND+=" ${RDEPEND}"
@@ -118,7 +118,7 @@ BDEPEND+="
 	test? ( net-misc/curl )
 "
 PDEPEND+="
-	acorn? ( >=dev-node/acorn-bin-8.6.0 )
+	acorn? ( >=dev-node/acorn-bin-8.7.0 )
 "
 SRC_URI="
 https://github.com/nodejs/node/archive/refs/tags/v${PV}.tar.gz
@@ -136,7 +136,7 @@ if [[ -d "${WORKDIR}/node-v${PV}" ]] ; then
 else
 	S="${WORKDIR}/node-${PV}"
 fi
-NPM_V="8.11.0" # See https://github.com/nodejs/node/blob/v16.16.0/deps/npm/package.json
+NPM_V="8.15.0" # See https://github.com/nodejs/node/blob/v16.17.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_V="7.4.0"

@@ -64,7 +64,7 @@ gen_iuse_pgo() {
 	done
 }
 
-IUSE+=" corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu
+IUSE+=" acorn corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu
 inspector lto npm pax-kernel +snapshot +ssl system-icu +system-ssl systemtap
 test
 
@@ -118,6 +118,9 @@ BDEPEND+="
 	)
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
+"
+PDEPEND+="
+	acorn? ( >=dev-node/acorn-bin-8.4.1 )
 "
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(

@@ -1,133 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person">
-		<!-- Only for this ebuild fork on the oiledmachine overlay -->
-		<email>orsonteodoro@hotmail.com</email>
-		<name>Orson Teodoro</name>
-	</maintainer>
-	<maintainer type="person">
-		<!-- ebuild originator -->
-		<email>jer@gentoo.org</email>
-	</maintainer>
-	<longdescription>
-		This is an ebuild fork for Node.js with SLOT support.
+  <maintainer type="person">
+    <!-- Only for this ebuild fork on the oiledmachine overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- ebuild originator -->
+    <email>jer@gentoo.org</email>
+  </maintainer>
+  <longdescription>
+    This is an ebuild fork for Node.js with SLOT support.
 
-		Ebuild planned support is LTS major version support only,
-		but version 10 will be hardmasked since Python 2.7 is 
-		End Of Life (EOL), meaning that security updates for
-		Python 2.7 has ended.
+    LTS will allow casual developers and non rolling release cycle packages a
+    chance to stay in the ebuild ecosystem.
 
-		LTS will allow casual developers and non rolling release
-		cycle packages a chance to stay in the ebuild ecosystem.
+    More info about LTS versions see:
+    https://nodejs.org/en/about/releases/
 
-		More info about LTS versions see:
-		https://nodejs.org/en/about/releases/
+    v14 EOL is 2023-04-30
+    v16 EOL is 2024-04-30
+    v18 EOL is 2025-04-30
 
-		v12 EOL is 2022-04-30
-		v14 EOL is 2023-04-30
-		v16 EOL is 2024-04-30
-		v17 EOL is 2022-06-31
-		v18 EOL is 2025-04-30
+    The removal cycle is now delayed to better enjoy the product for those with
+    longer compile times.  Minor versions before an announced security release
+    or ebuilds older than 2 point releases in the same major version are removed
+    without notice.
 
 
-		The removal cycle is now delayed to better enjoy the product
-		for those with longer compile times.  Minor versions before an
-		announced security release or ebuilds older than 2 point
-		releases in the same major version are removed without notice.
+    Petition for SLOT support at https://bugs.gentoo.org/580698
+    It has been an issue since 2016.
 
+    The design is based on a multiplexer wrapper.
 
-		Petition for SLOT support at https://bugs.gentoo.org/580698
-		It has been an issue since 2016.
+    Tentative additional packages:
 
-		The design is based on a multiplexer wrapper.
+      app-portage/nodejs (on the oiledmachine-overlay) for includes switch
 
-		Tentative additional packages:
-			app-portage/nodejs (on the oiledmachine-overlay) for
-				includes switch
+    NPM packages that require multislot:
 
-		NPM packages that require multislot:
-			Angular
-			Vue.js
+      Angular
+      Vue.js
 
-		The active implementation selected by app-portage/nodejs is
-		granted /usr/lib64/node_modules which is symlinked to one
-		of the directories above.
+    The active implementation selected by app-portage/nodejs is granted
+    /usr/lib64/node_modules which is symlinked to one of the directories above.
 
-		It's recommended to install a package to the slot based on
-		lowest required.  It's also recommended to use
-		node_multislot_10, node_multislot_12, node_multislot_14 USE
-		flags to pull the correct node version.
+    It's recommended to install a package to the slot based on lowest required.
+    It's also recommended to use node_multislot_10, node_multislot_12, 
+    node_multislot_14 USE flags to pull the correct node version.
 
-		Referencing /usr/includes/node is not multi-emerge
-		or multi-compilation safe when packages with differing
-		node_multislot_*  and requires a mutex in a new eclass, but
-		runtime use of node is multi-process safe.
+    Referencing /usr/includes/node is not multi-emerge or multi-compilation
+    safe when packages with differing node_multislot_*  and requires a mutex in
+    a new eclass, but runtime use of node is multi-process safe.
 
-		It is save to use the same node_modules with different node
-		but compliation must have special treatment.
+    It is save to use the same node_modules with different node but compliation
+    must have special treatment.
 
-		Certain USE flags should only be enabled for the highest
-		SLOT; otherwise, you will get a merge conflict.  They
-		are noted in the use flag section.
+    Certain USE flags should only be enabled for the highest SLOT; otherwise,
+    you will get a merge conflict.  They are noted in the use flag section.
 
-		If you run /usr/bin/node without the environmental
-		variable NODE_VERSION, it will default to node the
-		selected active from eselect nodejs (or the major version
-		contained in node_version.h from the active symlink.
+    If you run /usr/bin/node without the environmental variable NODE_VERSION, it
+    will default to node the selected active from eselect nodejs (or the major
+    version contained in node_version.h from the active symlink.
 
-		The NODE_VERSION valid values are 10, 12, 14 which
-		are the Long Term Support (LTS) versions.
+    The NODE_VERSION valid values are 10, 12, 14 which are the Long Term Support
+    (LTS) versions.
 
-		Running NODE_VERSION=10 /usr/bin/node --version
-		will show you node10's version.
+    Running NODE_VERSION=10 /usr/bin/node --version will show you node10's version.
 
-		The PGO trainer can be extended with your own customized
-		benchmark to optimize for typical use cases.  You must create
-		a folder located at ${S}/benchmark/custom and it must have at
-		least a createBenchmark() function having all of this created
-		as a per-package user patch.  For additonal details, see
+    The PGO trainer can be extended with your own customized benchmark to
+    optimize for typical use cases.  You must create a folder located at
+    ${S}/benchmark/custom and it must have at least a createBenchmark() function
+    having all of this created as a per-package user patch.  For additonal
+    details, see
 
 https://github.com/nodejs/node/blob/master/doc/guides/writing-and-running-benchmarks.md
 https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
 
-		NODEJS_EXCLUDED_BENCHMARKS is a per-package envvar that can
-		contain a space separated string of paths to exclude from
-		testing whenever a broken benchmark is encountered or
-		support for that particular benchmark is unfinished at the
-		ebuild level.
+    NODEJS_EXCLUDED_BENCHMARKS is a per-package envvar that can contain a space
+    separated string of paths to exclude from testing whenever a broken
+    benchmark is encountered or support for that particular benchmark is
+    unfinished at the ebuild level.
 
-		An additional user supplied script script called
-		${S}/pgo-custom-trainer.sh can be provided to install locally
-		a per package(s) to run	benchmark for that package if it
-		contains one.  All new npm packages to be trained must
-		installed in ${S}/node_modules.  If the package doesn't
-		contain a benchmark, then it is not suitable for PGO
-		training.
+    An additional user supplied script script called ${S}/pgo-custom-trainer.sh
+    can be provided to install locally a per package(s) to run	benchmark for
+    that package if it contains one.  All new npm packages to be trained must
+    installed in ${S}/node_modules.  If the package doesn't contain a benchmark,
+    then it is not suitable for PGO training.
 
-		When selecting a nodejs_pgo_trainers_*, only select those
-		that reflect typical use.  Choosing trainers that do
-		not reflect typical use may increase unwanted binary size
-		or may cause degraded performance.
-	</longdescription>
-	<use>
-		<flag name="custom-optimization">Override the default -O3
-			flag.</flag>
-		<flag name="doc">It installs docs.  It should only
-			be enabled for the highest request slot.</flag>
-		<flag name="inspector">Enable V8 inspector</flag>
-		<flag name="man">It installs man pages.  It should only
-			be enabled for the highest request slot.</flag>
-		<flag name="npm">Enable NPM package manager.  It should only
-			be enabled for the highest request slot.</flag>
-		<flag name="pax-kernel">Enable building under a PaX enabled
-			kernel</flag>
-		<flag name="pgo">Enable profile guided optimization.  It will
-			double build times.</flag>
-		<flag name="snapshot">Enable snapshot creation for faster
-			startup</flag>
-		<flag name="system-ssl">Use system OpenSSL instead of the
-			bundled one</flag>
-		<flag name="systemtap">Enable SystemTAP/DTrace tracing.</flag>
-	</use>
+    When selecting a nodejs_pgo_trainers_*, only select those that reflect
+    typical use.  Choosing trainers that do not reflect typical use may increase
+    unwanted binary size or may cause degraded performance.
+  </longdescription>
+  <use>
+    <flag name="acorn">
+      Install acorn JavaScript parser
+    </flag>
+    <flag name="custom-optimization">
+      Override the default -O3 flag.
+    </flag>
+    <flag name="doc">
+      It installs docs.  It should only be enabled for the highest request slot.
+    </flag>
+    <flag name="inspector">
+      Enable V8 inspector
+    </flag>
+    <flag name="man">
+      It installs man pages.  It should only be enabled for the highest request
+      slot.
+    </flag>
+    <flag name="npm">
+      Enable NPM package manager.  It should only be enabled for the highest
+      request slot.
+    </flag>
+    <flag name="pax-kernel">
+      Enable building under a PaX enabled kernel
+    </flag>
+    <flag name="pgo">
+      Enable profile guided optimization.  It will double build times.
+    </flag>
+    <flag name="snapshot">
+      Enable snapshot creation for faster startup
+    </flag>
+    <flag name="system-ssl">
+      Use system OpenSSL instead of the bundled one.
+    </flag>
+    <flag name="systemtap">
+      Enable SystemTAP/DTrace tracing.
+    </flag>
+  </use>
 </pkgmetadata>
