@@ -475,7 +475,10 @@ RDEPEND+="
 		)
 	)
 	tbb? (
-		>=dev-cpp/tbb-2021:${ONETBB_SLOT}
+		openvdb? (
+			!<dev-cpp/tbb-2021:0=
+			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+		)
 		usd? (
 			!<dev-cpp/tbb-2021:0=
 			 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
@@ -498,6 +501,11 @@ RDEPEND+="
 		x11-libs/libX11
 		x11-libs/libXi
 		x11-libs/libXxf86vm
+	)
+"
+DISABLED_RDEPENDS="
+	tbb? (
+		>=dev-cpp/tbb-2021:${ONETBB_SLOT}
 	)
 "
 DEPEND+=" ${RDEPEND}
@@ -656,7 +664,11 @@ eerror
 }
 
 _src_prepare_patches() {
+	eapply "${FILESDIR}/blender-2.93.10-findtbb2.patch"
 	eapply "${FILESDIR}/blender-2.91.0-parent-datafiles-dir-change.patch"
+	if use openvdb ; then
+		eapply "${FILESDIR}/blender-2.93.10-tbb2-openvdb.patch"
+	fi
 	if ( has_version "<dev-cpp/tbb-2021:0" \
 		|| \
 	     has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" \
@@ -672,7 +684,7 @@ _src_prepare_patches() {
 	if   has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
 	     has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
 	     use usd ; then
-		eapply "${FILESDIR}/blender-3.0.0-link-usd-to-legacy-tbb.patch"
+		eapply "${FILESDIR}/blender-2.93.10-tbb2-usd.patch"
 	elif use usd ;then
 ewarn
 ewarn "Untested tbb configuration.  It is assumed"

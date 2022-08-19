@@ -683,6 +683,7 @@ eerror
 }
 
 _src_prepare_patches() {
+	eapply "${FILESDIR}/blender-2.93.10-findtbb2.patch"
 	eapply "${FILESDIR}/blender-3.2.0-parent-datafiles-dir-change.patch"
 	if ( has_version "<dev-cpp/tbb-2021:0" \
 		|| \
@@ -699,7 +700,7 @@ _src_prepare_patches() {
 	if   has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
 	     has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
 	     use usd ; then
-		eapply "${FILESDIR}/blender-3.2.1-link-usd-to-legacy-tbb.patch"
+		eapply "${FILESDIR}/blender-2.93.10-tbb2-usd.patch"
 	elif use usd ;then
 ewarn
 ewarn "Untested tbb configuration.  It is assumed"
