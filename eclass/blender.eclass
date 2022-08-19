@@ -1122,22 +1122,6 @@ blender_src_compile() {
 	done
 }
 
-_run_trainer() {
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-
-	local search_paths=()
-	if [[ -d "${distdir}/blender/demo_assets" ]] ; then
-		search_paths+=( "${distdir}/blender/demo_assets" )
-	fi
-	if [[ -d "/usr/share/blender/demo_assets" ]] ; then
-		search_paths+=( "/usr/share/blender/demo_assets" )
-	fi
-
-	local asset_list=( $(find "${search_paths[@]}" -name "*.blend" ) )
-
-	export PATH="${ED}/usr/bin:${PATH}"
-}
-
 _src_test() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
@@ -1266,7 +1250,7 @@ _src_install() {
 		cp "${ED}/usr/share/applications/blender"{,-${SLOT_MAJ}}".desktop" || die
 		local menu_file="${ED}/usr/share/applications/blender-${SLOT_MAJ}.desktop"
 		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
-		sed -i -e "s|Exec=blender|Exec=/usr/bin/${PN}-${SLOT_MAJ}|g" "${menu_file}" || die
+		sed -i -e "s|Exec=blender|Exec=${EPREFIX}/usr/bin/${PN}-${SLOT_MAJ}|g" "${menu_file}" || die
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT_MAJ}|g" "${menu_file}" || die
 		if [[ -n "${IS_LTS}" && "${IS_LTS}" == "1" ]] ; then
 			touch "${ED}/${d_dest}/.lts"
@@ -1281,11 +1265,12 @@ _src_install() {
 		fi
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
-		sed -i \
--e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
--e "s|#PYTHONPATH|export PYTHONPATH=\"/usr/lib/${EPYTHON}:/usr/lib/${EPYTHON}/lib-dynload:/usr/lib/${EPYTHON}/site-packages:\${PYTHONPATH}\"|g" \
--e "s|#BLENDER_EXTERN_DRACO_LIBRARY_PATH|BLENDER_EXTERN_DRACO_LIBRARY_PATH=/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages|g" \
-			"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
+		cat <<EOF > "${T}/${PN}${suffix}-${SLOT_MAJ}"
+#!${EPREFIX}/bin/bash
+export PYTHONPATH="${EPREFIX}/usr/lib/${EPYTHON}:${EPREFIX}/usr/lib/${EPYTHON}/lib-dynload:${EPREFIX}/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+BLENDER_EXTERN_DRACO_LIBRARY_PATH="${EPREFIX}/usr/$(get_libdir)/${PN}/$(ver_cut 1-3 ${PV})/python/lib/${EPYTHON}/site-packages"
+"${EPREFIX}${d_dest}/blender" --python-use-system-env "\$@"
+EOF
 		exeinto /usr/bin
 		doexe "${T}/${PN}${suffix}-${SLOT_MAJ}"
 	fi
@@ -1337,16 +1322,10 @@ fecho1
 fecho1 "Place the shared libraries in the lib folder containing blenderplayer"
 fecho1 "along with licenses."
 fecho1
-fecho1 "A \`gamelaunch.sh\` launcher wrapper script has been provided.  Edit"
-fecho1 "the file and set the name of my_game_project.blend file."
-fecho1
 fecho1 "Blender adds mesa libs to their binary distribution.  You may need to"
 fecho1 "do the same especially to avoid the multiple LLVM versions being loaded"
 fecho1 "bug."
 fecho1
-		dodir "${d_dest}/lib/dri"
-		exeinto "${d_dest}"
-		doexe "${FILESDIR}/gamelaunch.sh"
 	fi
 	install_licenses
 	use doc && install_readmes
@@ -1438,7 +1417,7 @@ ewarn "If you are concerned about security, file a bug upstream:"
 ewarn "  https://developer.blender.org/"
 ewarn
 	xdg_pkg_postinst
-	local d_src="${ESYSROOT}/usr/$(get_libdir)/${PN}"
+	local d_src="${EROOT}/usr/$(get_libdir)/${PN}"
 	local V=""
 	if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
 	&& "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
@@ -1456,12 +1435,12 @@ ewarn
 	fi
 	if [[ -n "${V}" ]] ; then
 		if use build_creator ; then
-			ln -sf "${ESYSROOT}/usr/bin/${PN}-${V}" \
-				"${ESYSROOT}/usr/bin/${PN}" || die
+			ln -sf "${EROOT}/usr/bin/${PN}-${V}" \
+				"${EROOT}/usr/bin/${PN}" || die
 		fi
 		if use build_headless ; then
-			ln -sf "${ESYSROOT}/usr/bin/${PN}-headless-${V}" \
-				"${ESYSROOT}/usr/bin/${PN}-headless" || die
+			ln -sf "${EROOT}/usr/bin/${PN}-headless-${V}" \
+				"${EROOT}/usr/bin/${PN}-headless" || die
 		fi
 	fi
 
@@ -1477,18 +1456,18 @@ ewarn "You may want to remove the following directory."
 ewarn "~/.config/${PN}/${SLOT_MAJ}/cache/"
 ewarn "It may contain extra render kernels not tracked by portage"
 ewarn
-	if [[ ! -d "${ESYSROOT}/usr/bin/.blender" ]] ; then
-		if [[ -e "${ESYSROOT}/usr/bin/blender" ]] ; then
-			rm -rf "${ESYSROOT}/usr/bin/blender" || die
+	if [[ ! -d "${EROOT}/usr/bin/.blender" ]] ; then
+		if [[ -e "${EROOT}/usr/bin/blender" ]] ; then
+			rm -rf "${EROOT}/usr/bin/blender" || die
 		fi
-		if [[ -e "${ESYSROOT}/usr/bin/blender-headless" ]] ; then
-			rm -rf "${ESYSROOT}/usr/bin/blender-headless" || die
+		if [[ -e "${EROOT}/usr/bin/blender-headless" ]] ; then
+			rm -rf "${EROOT}/usr/bin/blender-headless" || die
 		fi
-		if [[ -e "${ESYSROOT}/usr/bin/cycles_server" ]] ; then
-			rm -rf "${ESYSROOT}/usr/bin/cycles_server" || die
+		if [[ -e "${EROOT}/usr/bin/cycles_server" ]] ; then
+			rm -rf "${EROOT}/usr/bin/cycles_server" || die
 		fi
-		if [[ -e "${ESYSROOT}/usr/bin/cycles_server_headless" ]] ; then
-			rm -rf "${ESYSROOT}/usr/bin/cycles_server_headless" || die
+		if [[ -e "${EROOT}/usr/bin/cycles_server_headless" ]] ; then
+			rm -rf "${EROOT}/usr/bin/cycles_server_headless" || die
 		fi
 	fi
 }
